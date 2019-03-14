@@ -6,7 +6,7 @@
 // Cache
 #pragma region
 
-namespace ECsRunnableDelegateCached
+namespace NCsRunnableDelegateCached
 {
 	namespace Str
 	{
@@ -57,11 +57,11 @@ void FCsRunnable_Delegate::Exit()
 
 void FCsRunnable_Delegate::Setup(const uint8& InIndex)
 {
-	const FString Name = ECsRunnableDelegateCached::Str::CsRunnable_Delegate + FString::FromInt(InIndex);
+	const FString Name = NCsRunnableDelegateCached::Str::CsRunnable_Delegate + FString::FromInt(InIndex);
 	Cache.Set(InIndex, Name);
 }
 
-void FCsRunnable_Delegate::Allocate(FCsRunnablePayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame)
+void FCsRunnable_Delegate::Allocate(FCsRunnablePayload* Payload, const float& Time, const float& RealTime, const uint64& Frame)
 {
 	Cache.Init(Payload, Time, RealTime, Frame);
 

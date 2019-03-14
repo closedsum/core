@@ -669,11 +669,11 @@ void UCsCoroutineScheduler::LogTransaction(const FString& FunctionName, const EC
 		const FString& ScheduleTypeAsString = EMCsCoroutineSchedule::Get().ToString(R->scheduleType);
 
 		AActor* Actor			= R->GetActor();
-		const FString ActorName = Actor ? Actor->GetName() : ECsCached::Str::Empty;
+		const FString ActorName = Actor ? Actor->GetName() : NCsCached::Str::Empty;
 		UObject* Object			= R->GetRObject();
-		const FString ObjectName = Object ? Object->GetName() : ECsCached::Str::Empty;
+		const FString ObjectName = Object ? Object->GetName() : NCsCached::Str::Empty;
 		UObject* Owner			= R->GetOwner();
-		const FString OwnerName	= Owner ? Owner->GetName() : ECsCached::Str::Empty;
+		const FString OwnerName	= Owner ? Owner->GetName() : NCsCached::Str::Empty;
 
 		UWorld* World = nullptr;
 
@@ -684,9 +684,9 @@ void UCsCoroutineScheduler::LogTransaction(const FString& FunctionName, const EC
 
 		const float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
 
-		const FString CoroutineName = R->name == NAME_None ? ECsCached::Str::None : R->nameAsString;
+		const FString CoroutineName = R->name == NAME_None ? NCsCached::Str::None : R->nameAsString;
 
-		FString Elapsed = ECsCached::Str::None;
+		FString Elapsed = NCsCached::Str::None;
 
 		if (Transaction == ECsCoroutineTransaction::End)
 		{
@@ -743,13 +743,13 @@ void UCsCoroutineScheduler::LogRunning(const ECsCoroutineSchedule& ScheduleType)
 		FCsRoutine* R = RoutinesToRun[Schedule][Index];
 
 		AActor* Actor			= R->GetActor();
-		const FString ActorName = Actor ? Actor->GetName() : ECsCached::Str::Empty;
+		const FString ActorName = Actor ? Actor->GetName() : NCsCached::Str::Empty;
 		UObject* Object			= R->GetRObject();
-		const FString ObjectName = Object ? Object->GetName() : ECsCached::Str::Empty;
+		const FString ObjectName = Object ? Object->GetName() : NCsCached::Str::Empty;
 		UObject* Owner			= R->GetOwner();
-		const FString OwnerName = Owner ? Owner->GetName() : ECsCached::Str::Empty;
+		const FString OwnerName = Owner ? Owner->GetName() : NCsCached::Str::Empty;
 
-		const FString CoroutineName = R->name == NAME_None ? ECsCached::Str::None : R->name.ToString();
+		const FString CoroutineName = R->name == NAME_None ? NCsCached::Str::None : R->name.ToString();
 
 		const float Duration = CurrentTime - R->startTime;
 

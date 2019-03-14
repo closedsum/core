@@ -1200,7 +1200,7 @@ struct CSCORE_API FCsInputActionMapping
 
 	FCsInputActionMapping()
 	{
-		KeyName = ECsCached::Str::Empty;
+		KeyName = NCsCached::Str::Empty;
 		Scale = 1.0f;
 	}
 
@@ -1320,7 +1320,7 @@ struct CSCORE_API FCsInputProfile
 		{
 			if (Action == Mapping.Action)
 			{
-				Mapping.KeyName = Key == EKeys::Invalid ? ECsCached::Str::Empty : Key.GetDisplayName().ToString();;
+				Mapping.KeyName = Key == EKeys::Invalid ? NCsCached::Str::Empty : Key.GetDisplayName().ToString();;
 				Mapping.Key		= Key;
 				break;
 			}

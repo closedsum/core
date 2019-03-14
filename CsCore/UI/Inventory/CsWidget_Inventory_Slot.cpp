@@ -38,7 +38,7 @@ void UCsWidget_Inventory_Slot::UpdateCurrentCount()
 	else
 	{
 				//TEXT("")
-		SetString(ECsCached::Str::Empty);
+		SetString(NCsCached::Str::Empty);
 	}
 	
 }

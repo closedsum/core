@@ -2197,7 +2197,7 @@ struct CSCORE_API FCsWidgetPayload : public FCsPooledObjectPayload
 	{
 		Super::Reset();
 
-		DisplayName = ECsCached::Str::Empty;
+		DisplayName = NCsCached::Str::Empty;
 		Size = FVector2D::ZeroVector;
 		Offset = FIntPoint::ZeroValue;
 		LifeTime = 0.0f;
@@ -2268,7 +2268,7 @@ struct CSCORE_API FCsWidgetActorPayload : public FCsPooledObjectPayload
 
 		Int32 = 0;
 		Float = 0.0f;
-		String = ECsCached::Str::Empty;
+		String = NCsCached::Str::Empty;
 	}
 
 	FORCEINLINE class UUserWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }

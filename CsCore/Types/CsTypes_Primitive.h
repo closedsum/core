@@ -7,7 +7,7 @@
 // Cached
 #pragma region
 
-namespace ECsCached
+namespace NCsCached
 {
 	namespace Str
 	{
@@ -70,9 +70,9 @@ namespace ECsCached
 	}
 }
 
-#define CS_INVALID_ENUM_TO_STRING ECsCached::Str::INVALID
-#define CS_INVALID_ENUM_TO_NAME ECsCached::Name::None
-#define CS_INVALID_SHORT_CODE ECsCached::Name::Null
+#define CS_INVALID_ENUM_TO_STRING NCsCached::Str::INVALID
+#define CS_INVALID_ENUM_TO_NAME NCsCached::Name::None
+#define CS_INVALID_SHORT_CODE NCsCached::Name::Null
 
 #pragma endregion Cached
 
@@ -124,12 +124,17 @@ public:
 		return Add(Enum, Name, Name);
 	}
 
-	FORCEINLINE const EnumType& operator[](const FString &Name)
+	FORCEINLINE const EnumType& operator[](const uint8& Index)
+	{
+		return Enums[Index];
+	}
+
+	FORCEINLINE const EnumType& operator[](const FString& Name)
 	{
 		return FromNameMap[Name];
 	}
 
-	FORCEINLINE const EnumType& operator[](const FName &Name)
+	FORCEINLINE const EnumType& operator[](const FName& Name)
 	{
 		return FromNameInternalMap[Name];
 	}
@@ -399,7 +404,7 @@ public:
 	FORCEINLINE FString MaskToString(const uint64& Mask)
 	{
 		//  TEXT("")
-		FString String = ECsCached::Str::Empty;
+		FString String = NCsCached::Str::Empty;
 		bool IsFirst   = true;
 
 		for (const EnumType& Enum : Enums)
@@ -416,8 +421,8 @@ public:
 		}
 
 		// (String == TEXT(""))
-		if (String == ECsCached::Str::Empty)
-			return ECsCached::Str::None;
+		if (String == NCsCached::Str::Empty)
+			return NCsCached::Str::None;
 		// TEXT("None")
 		return String;
 	}
@@ -622,7 +627,7 @@ public:
 	FORCEINLINE FString MaskToString(const uint32& Mask)
 	{
 		//  TEXT("")
-		FString String = ECsCached::Str::Empty;
+		FString String = NCsCached::Str::Empty;
 		bool IsFirst = true;
 
 		for (const uint32& Flag : Flags)
@@ -639,8 +644,8 @@ public:
 		}
 
 		// (String == TEXT(""))
-		if (String == ECsCached::Str::Empty)
-			return ECsCached::Str::None;
+		if (String == NCsCached::Str::Empty)
+			return NCsCached::Str::None;
 		// TEXT("None")
 		return String;
 	}
@@ -1551,7 +1556,7 @@ public:
 	FORCEINLINE FString MaskToString(const uint64& Mask)
 	{
 		//  TEXT("")
-		FString String = ECsCached::Str::Empty;
+		FString String = NCsCached::Str::Empty;
 		bool IsFirst = true;
 
 		for (const EnumStruct& Enum : Enums)
@@ -1568,8 +1573,8 @@ public:
 		}
 
 		// (String == TEXT(""))
-		if (String == ECsCached::Str::Empty)
-			return ECsCached::Str::None;
+		if (String == NCsCached::Str::Empty)
+			return NCsCached::Str::None;
 		// TEXT("None")
 		return String;
 	}
@@ -2718,7 +2723,7 @@ public:
 
 	FCsPrimitiveType_FString() : Super()
 	{
-		DefaultValue = ECsCached::Str::Empty;
+		DefaultValue = NCsCached::Str::Empty;
 	}
 	~FCsPrimitiveType_FString() {}
 
@@ -3436,7 +3441,7 @@ public:
 
 	TCsProperty_Multi_FString() : Super()
 	{
-		DefaultValue = ECsCached::Str::Empty;
+		DefaultValue = NCsCached::Str::Empty;
 	}
 	~TCsProperty_Multi_FString(){}
 };
@@ -3456,7 +3461,7 @@ public:
 
 	TCsProperty_Multi_FString_Enum_TwoParams() : Super()
 	{
-		DefaultValue = ECsCached::Str::Empty;
+		DefaultValue = NCsCached::Str::Empty;
 	}
 	~TCsProperty_Multi_FString_Enum_TwoParams(){}
 
@@ -3512,7 +3517,7 @@ public:
 
 	TCsProperty_Multi_FString_Enum_ThreeParams()
 	{
-		DefaultValue = ECsCached::Str::Empty;
+		DefaultValue = NCsCached::Str::Empty;
 	}
 	~TCsProperty_Multi_FString_Enum_ThreeParams(){}
 
@@ -5628,7 +5633,7 @@ private:
 
 	const FString& ToString_Internal(const bool &Value) const 
 	{
-		return Value ? ECsCached::Str::True : ECsCached::Str::False;
+		return Value ? NCsCached::Str::True : NCsCached::Str::False;
 	}
 
 public:
@@ -5638,9 +5643,9 @@ public:
 		X = Y = Z = false;
 
 		// The initialization is only successful if the X, Y and Z values can all be parsed from the string
-		const bool bSuccessful = InitFromString_Internal(InSourceString, ECsCached::Str::XEquals, X) && 
-								 InitFromString_Internal(InSourceString, ECsCached::Str::YEquals, Y) &&
-								 InitFromString_Internal(InSourceString, ECsCached::Str::ZEquals, Z);
+		const bool bSuccessful = InitFromString_Internal(InSourceString, NCsCached::Str::XEquals, X) && 
+								 InitFromString_Internal(InSourceString, NCsCached::Str::YEquals, Y) &&
+								 InitFromString_Internal(InSourceString, NCsCached::Str::ZEquals, Z);
 
 		return bSuccessful;
 	}
@@ -5654,12 +5659,12 @@ private:
 
 		Bool = Bool.ToLower();
 
-		if (Bool == ECsCached::Str::_true || Bool == ECsCached::Str::One)
+		if (Bool == NCsCached::Str::_true || Bool == NCsCached::Str::One)
 		{
 			Value = true;
 			return true;
 		}
-		if (Bool == ECsCached::Str::_false || Bool == ECsCached::Str::Zero)
+		if (Bool == NCsCached::Str::_false || Bool == NCsCached::Str::Zero)
 		{
 			Value = false;
 			return true;
@@ -5748,7 +5753,7 @@ private:
 
 	const FString& ToString_Internal(const bool &Value) const
 	{
-		return Value ? ECsCached::Str::True : ECsCached::Str::False;
+		return Value ? NCsCached::Str::True : NCsCached::Str::False;
 	}
 
 public:
@@ -5758,9 +5763,9 @@ public:
 		Roll = Pitch = Yaw = false;
 
 		// The initialization is only successful if the Roll, Pitch and Yaw values can all be parsed from the string
-		const bool bSuccessful = InitFromString_Internal(InSourceString, ECsCached::Str::RollEquals, Roll) &&
-								 InitFromString_Internal(InSourceString, ECsCached::Str::PitchEquals, Pitch) &&
-								 InitFromString_Internal(InSourceString, ECsCached::Str::YawEquals, Yaw);
+		const bool bSuccessful = InitFromString_Internal(InSourceString, NCsCached::Str::RollEquals, Roll) &&
+								 InitFromString_Internal(InSourceString, NCsCached::Str::PitchEquals, Pitch) &&
+								 InitFromString_Internal(InSourceString, NCsCached::Str::YawEquals, Yaw);
 
 		return bSuccessful;
 	}
@@ -5774,12 +5779,12 @@ private:
 
 		Bool = Bool.ToLower();
 
-		if (Bool == ECsCached::Str::_true || Bool == ECsCached::Str::One)
+		if (Bool == NCsCached::Str::_true || Bool == NCsCached::Str::One)
 		{
 			Value = true;
 			return true;
 		}
-		if (Bool == ECsCached::Str::_false || Bool == ECsCached::Str::Zero)
+		if (Bool == NCsCached::Str::_false || Bool == NCsCached::Str::Zero)
 		{
 			Value = false;
 			return true;

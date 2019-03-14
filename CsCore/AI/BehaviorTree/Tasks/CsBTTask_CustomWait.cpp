@@ -202,7 +202,7 @@ void UCsBTTask_CustomWait::DescribeRuntimeValues(const UBehaviorTreeComponent& O
 
 FString UCsBTTask_CustomWait::GetStaticDescription() const
 {
-	FString Description = ECsCached::Str::Empty;
+	FString Description = NCsCached::Str::Empty;
 
 	if (bTime)
 	{

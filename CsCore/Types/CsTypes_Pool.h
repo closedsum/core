@@ -9,35 +9,44 @@
 // Pooled Objects
 #pragma region
 
-UENUM(BlueprintType)
-namespace ECsPoolTransaction
-{
-	enum Type
-	{
-		Allocate				UMETA(DisplayName = "Allocate"),
-		PreDeallocate			UMETA(DisplayName = "Pre-Deallocate"),
-		Deallocate				UMETA(DisplayName = "Deallocate"),
-		ECsPoolTransaction_MAX	UMETA(Hidden),
-	};
-}
+	// PoolTransaction
+#pragma region
 
-namespace ECsPoolTransaction
+UENUM(BlueprintType)
+enum class ECsPoolTransaction : uint8
 {
+	Allocate				UMETA(DisplayName = "Allocate"),
+	PreDeallocate			UMETA(DisplayName = "Pre-Deallocate"),
+	Deallocate				UMETA(DisplayName = "Deallocate"),
+	ECsPoolTransaction_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsPoolTransaction : public TCsEnumMap<ECsPoolTransaction>
+{
+	CS_DECLARE_ENUM_MAP_BODY(EMCsPoolTransaction)
+};
+
+namespace NCsPoolTransaction
+{
+	typedef ECsPoolTransaction Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Allocate;
+		extern CSCORE_API const Type PreDeallocate;
+		extern CSCORE_API const Type Deallocate;
+		extern CSCORE_API const Type ECsPoolTransaction_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+
 	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
-		const TCsString Allocate = TCsString(TEXT("Allocate"), TEXT("allocate"), TEXT("Allocating"));
-		const TCsString PreDeallocate = TCsString(TEXT("PreDeallocate"), TEXT("predeallocate"), TEXT("PreDeallocating"));
-		const TCsString Deallocate = TCsString(TEXT("Deallocate"), TEXT("deallocate"), TEXT("Deallocating"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Allocate) { return Str::Allocate.Value; }
-		if (EType == Type::PreDeallocate) { return Str::PreDeallocate.Value; }
-		if (EType == Type::Deallocate) { return Str::Deallocate.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		extern CSCORE_API const TCsString Allocate;
+		extern CSCORE_API const TCsString PreDeallocate;
+		extern CSCORE_API const TCsString Deallocate;
 	}
 
 	FORCEINLINE const FString& ToActionString(const Type &EType)
@@ -47,55 +56,37 @@ namespace ECsPoolTransaction
 		if (EType == Type::Deallocate) { return Str::Deallocate.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Allocate) { return Type::Allocate; }
-		if (String == Str::PreDeallocate) { return Type::PreDeallocate; }
-		if (String == Str::Deallocate) { return Type::Deallocate; }
-		return Type::ECsPoolTransaction_MAX;
-	}
 }
 
-#define ECS_POOL_TRANSACTION_MAX (uint8)ECsPoolTransaction::ECsPoolTransaction_MAX
-typedef ECsPoolTransaction::Type TCsPoolTransaction;
+#define ECS_POOL_TRANSACTION_MAX NCsPoolTransaction::MAX
+
+#pragma endregion PoolTransaction
 
 UENUM(BlueprintType)
-namespace ECsPoolTransactionOrder
+enum class ECsPoolTransactionOrder : uint8
 {
-	enum Type
-	{
-		FillAny						UMETA(DisplayName = "Fill Any"),
-		FillOrKill					UMETA(DisplayName = "Fill Or Kill"),
-		ECsPoolTransactionOrder_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsPoolTransactionOrder::Type TCsPoolTransactionOrder;
-
-struct CSCORE_API EMCsPoolTransactionOrder : public TCsEnumMap<ECsPoolTransactionOrder::Type>
-{
-protected:
-	EMCsPoolTransactionOrder() {}
-	EMCsPoolTransactionOrder(const EMCsPoolTransactionOrder &) = delete;
-	EMCsPoolTransactionOrder(EMCsPoolTransactionOrder &&) = delete;
-public:
-	~EMCsPoolTransactionOrder() {}
-private:
-	static EMCsPoolTransactionOrder* Instance;
-
-public:
-	static EMCsPoolTransactionOrder& Get();
+	FillAny						UMETA(DisplayName = "Fill Any"),
+	FillOrKill					UMETA(DisplayName = "Fill Or Kill"),
+	ECsPoolTransactionOrder_MAX	UMETA(Hidden),
 };
 
-namespace ECsPoolTransactionOrder
+struct CSCORE_API EMCsPoolTransactionOrder : public TCsEnumMap<ECsPoolTransactionOrder>
 {
+	CS_DECLARE_ENUM_MAP_BODY(EMCsPoolTransactionOrder)
+};
+
+namespace NCsPoolTransactionOrder
+{
+	typedef ECsPoolTransactionOrder Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type FillAny;
 		extern CSCORE_API const Type FillOrKill;
 		extern CSCORE_API const Type ECsPoolTransactionOrder_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
 
 UENUM(BlueprintType)

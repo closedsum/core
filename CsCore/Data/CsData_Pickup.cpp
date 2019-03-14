@@ -28,7 +28,7 @@ FCsFxElement* ACsData_Pickup::GetFX(const FECsPickupFX &FxType) { return nullptr
 // Sound
 #pragma region
 
-const bool& ACsData_Pickup::UseCollectSound() { return ECsCached::Ref::False; }
+const bool& ACsData_Pickup::UseCollectSound() { return NCsCached::Ref::False; }
 
 FCsSoundElement* ACsData_Pickup::GetSound(const FECsPickupSound &SoundType) { return nullptr; }
 

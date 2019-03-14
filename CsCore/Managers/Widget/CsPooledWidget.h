@@ -52,7 +52,7 @@ struct FCsPooledWidgetCache : public FCsPooledObjectCache
 	{
 		FCsPooledObjectCache::Reset();
 
-		DisplayName = ECsCached::Str::Empty;
+		DisplayName = NCsCached::Str::Empty;
 		Offset = FIntPoint::ZeroValue;
 	}
 

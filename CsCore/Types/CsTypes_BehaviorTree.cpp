@@ -276,12 +276,12 @@ bool FCsBTTask_KeyValue_Compare::Evaluate_Internal(const UBlackboardComponent* B
 
 FString FCsBTTask_KeyValue_Compare::GetRuntimeDescription(const class UBlackboardComponent* Blackboard) const
 {
-	FString Description = ECsCached::Str::Empty;
+	FString Description = NCsCached::Str::Empty;
 	FString Result		= Last_Evaluation ? TEXT("True") : TEXT("False");
 	
 	const FString& Symbol	  = EBasicKeyOperation::ToSymbol(BasicOperation);
-	FString ValueAsString	  = ECsCached::Str::Empty;
-	FString DestValueAsString = ECsCached::Str::Empty;
+	FString ValueAsString	  = NCsCached::Str::Empty;
+	FString DestValueAsString = NCsCached::Str::Empty;
 
 	// Bool
 	if (Type == ECsBlackboardKeyType::Bool)
@@ -359,10 +359,10 @@ FString FCsBTTask_KeyValue_Compare::GetRuntimeDescription(const class UBlackboar
 
 FString FCsBTTask_KeyValue_Compare::GetStaticDescription() const
 {
-	FString Description = ECsCached::Str::Empty;
+	FString Description = NCsCached::Str::Empty;
 
 	const FECsBlackboardKeyType& KeyType = FCsBlackboardKeyTypeHelper::GetType(Key);
-	FString DestValueAsString			 = ECsCached::Str::Empty;
+	FString DestValueAsString			 = NCsCached::Str::Empty;
 
 	// Bool
 	if (KeyType == ECsBlackboardKeyType::Bool)

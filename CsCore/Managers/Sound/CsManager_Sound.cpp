@@ -34,21 +34,21 @@ FString FCsManager_Sound::GetObjectName(ACsSound* a)
 	return a->GetName();
 }
 
-void FCsManager_Sound::LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ACsSound* o)
+void FCsManager_Sound::LogTransaction(const FString& functionName, const ECsPoolTransaction& transaction, ACsSound* o)
 {
 	if ((*LogTransactions)->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		const FString& transactionAsString = ECsPoolTransaction::ToActionString(transaction);
+		const FString& transactionAsString = NCsPoolTransaction::ToActionString(transaction);
 
 		const FString objectName	= GetObjectName(o);
 		const FString cueName		= o->Cache.GetCue()->GetName();
 		const float currentTime		= GetCurrentTimeSeconds();
 		const UObject* objectOwner	= o->Cache.GetOwner();
-		const FString ownerName		= objectOwner ? objectOwner->GetName() : ECsCached::Str::None;
+		const FString ownerName		= objectOwner ? objectOwner->GetName() : NCsCached::Str::None;
 		const UObject* parent		= o->Cache.GetParent();
-		const FString parentName	= parent ? parent->GetName() : ECsCached::Str::None;
+		const FString parentName	= parent ? parent->GetName() : NCsCached::Str::None;
 
-		FString log = ECsCached::Str::Empty;
+		FString log = NCsCached::Str::Empty;
 		
 		if (objectOwner && parent)
 		{
@@ -233,7 +233,7 @@ ACsSound* AICsManager_Sound::ConstructObject()
 	return Actor;
 }
 
-void AICsManager_Sound::CreatePool(const int32 &Size)
+void AICsManager_Sound::CreatePool(const int32& Size)
 {
 	Internal->CreatePool(Size);
 }
@@ -248,7 +248,7 @@ void AICsManager_Sound::AddToActivePool(ACsSound* Actor)
 	Internal->AddToActivePool(Actor);
 }
 
-void AICsManager_Sound::OnTick(const float &DeltaTime)
+void AICsManager_Sound::OnTick(const float& DeltaTime)
 {
 	Internal->OnTick(DeltaTime);
 }
@@ -273,7 +273,7 @@ bool AICsManager_Sound::IsExhausted()
 	return Internal->IsExhausted();
 }
 
-bool AICsManager_Sound::DeAllocate(const int32 &Index)
+bool AICsManager_Sound::DeAllocate(const int32& Index)
 {
 	return Internal->DeAllocate(Index);
 }
@@ -288,12 +288,12 @@ FCsSoundPayload* AICsManager_Sound::AllocatePayload()
 	return Internal->AllocatePayload();
 }
 
-ACsSound* AICsManager_Sound::Play(FCsSoundPayload &Payload)
+ACsSound* AICsManager_Sound::Play(FCsSoundPayload& Payload)
 {
 	return Internal->Spawn(&Payload);
 }
 
-ACsSound* AICsManager_Sound::Play(FCsSoundPayload *Payload)
+ACsSound* AICsManager_Sound::Play(FCsSoundPayload* Payload)
 {
 	return Internal->Spawn(Payload);
 }

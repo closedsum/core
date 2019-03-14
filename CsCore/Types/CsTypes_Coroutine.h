@@ -380,7 +380,7 @@ public:
 		stopCondition.Clear();
 		index = CS_ROUTINE_FREE;
 		name = NAME_None;
-		nameAsString = ECsCached::Str::Empty;
+		nameAsString = NCsCached::Str::Empty;
 		type = CS_ROUTINE_MAX_TYPE;
 		a.Reset();
 		a = nullptr;
@@ -449,7 +449,7 @@ public:
 
 		for (int32 i = 0; i < CS_ROUTINE_STRING_SIZE; ++i)
 		{
-			strings[i] = ECsCached::Str::Empty;
+			strings[i] = NCsCached::Str::Empty;
 		}
 
 		for (int32 i = 0; i < CS_ROUTINE_OBJECT_SIZE; ++i)

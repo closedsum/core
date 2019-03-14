@@ -21,7 +21,7 @@ public:
 
 	virtual void DeconstructObject(ACsSound* a) override;
 	virtual FString GetObjectName(ACsSound* a) override;
-	virtual void LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ACsSound* o) override;
+	virtual void LogTransaction(const FString& functionName, const ECsPoolTransaction& transaction, ACsSound* o) override;
 	virtual void Log(const FString& log) override;
 	virtual ACsSound* Spawn(FCsSoundPayload* payload) override;
 
@@ -68,13 +68,13 @@ public:
 	virtual ACsSound* ConstructObject();
 
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	void CreatePool(const int32 &Size);
+	void CreatePool(const int32& Size);
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
 	void AddToPool(ACsSound* Sound);
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
 	void AddToActivePool(ACsSound* Sound);
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	void OnTick(const float &DeltaTime);
+	void OnTick(const float& DeltaTime);
 
 	const TMap<int32, ACsSound*>& GetAllActiveActors();
 
@@ -85,14 +85,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
 	bool IsExhausted();
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	bool DeAllocate(const int32 &Index);
+	bool DeAllocate(const int32& Index);
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
 	void DeAllocateAll();
 
 	FCsSoundPayload* AllocatePayload();
 
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	ACsSound* Play(FCsSoundPayload &Payload);
+	ACsSound* Play(FCsSoundPayload& Payload);
 	ACsSound* Play(FCsSoundPayload* Payload);
 
 	template<typename T>

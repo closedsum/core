@@ -20,11 +20,11 @@ UScriptStruct* ACsData_ProjectileWeapon::GetFireModeScriptStruct() { return null
 
 float ACsData_ProjectileWeapon::GetLocationDamageModifier(const FECsWeaponFireMode &FireMode, const FName &Bone) { return 1.0f; }
 
-const bool& ACsData_ProjectileWeapon::UseFakeProjectile(const FECsWeaponFireMode &FireMode) { return ECsCached::Ref::False; }
+const bool& ACsData_ProjectileWeapon::UseFakeProjectile(const FECsWeaponFireMode &FireMode) { return NCsCached::Ref::False; }
 ACsData_Projectile* ACsData_ProjectileWeapon::GetData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged) { return nullptr; }
 
-const FName& ACsData_ProjectileWeapon::GetMuzzleBone(const TEnumAsByte<ECsViewType::Type> &ViewType, const FECsWeaponFireMode &FireMode, const uint8 &Index /*=0*/) { return ECsCached::Name::None; }
-const FName& ACsData_ProjectileWeapon::GetMuzzleBone(const FECsWeaponFireMode &FireMode, const uint8 &Index /*=0*/){ return ECsCached::Name::None; }
+const FName& ACsData_ProjectileWeapon::GetMuzzleBone(const TEnumAsByte<ECsViewType::Type> &ViewType, const FECsWeaponFireMode &FireMode, const uint8 &Index /*=0*/) { return NCsCached::Name::None; }
+const FName& ACsData_ProjectileWeapon::GetMuzzleBone(const FECsWeaponFireMode &FireMode, const uint8 &Index /*=0*/){ return NCsCached::Name::None; }
 
 FVector ACsData_ProjectileWeapon::GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TEnumAsByte<ECsViewType::Type> &ViewType, const FECsWeaponFireMode &FireMode, const uint8 &Index /*=0*/)
 { 
@@ -36,13 +36,13 @@ FVector ACsData_ProjectileWeapon::GetMuzzleLocation(USkeletalMeshComponent* InMe
 
 const FECsWeaponGrip& ACsData_ProjectileWeapon::GetGripType() { return EMCsWeaponGrip::Get().GetMAX(); }
 
-const int32& ACsData_ProjectileWeapon::GetMaxAmmo() { return ECsCached::Ref::SInt; }
+const int32& ACsData_ProjectileWeapon::GetMaxAmmo() { return NCsCached::Ref::SInt; }
 int32* ACsData_ProjectileWeapon::GetMaxAmmoAddr() { return nullptr; }
-const float& ACsData_ProjectileWeapon::GetRechargeStartupDelay() { return ECsCached::Ref::Float; }
+const float& ACsData_ProjectileWeapon::GetRechargeStartupDelay() { return NCsCached::Ref::Float; }
 float* ACsData_ProjectileWeapon::GetRechargeStartupDelayAddr() { return nullptr; }
-const float& ACsData_ProjectileWeapon::GetRechargeSecondsPerAmmo() { return ECsCached::Ref::Float; }
+const float& ACsData_ProjectileWeapon::GetRechargeSecondsPerAmmo() { return NCsCached::Ref::Float; }
 float* ACsData_ProjectileWeapon::GetRechargeSecondsPerAmmoAddr() { return nullptr; }
-const float& ACsData_ProjectileWeapon::GetReloadTime() { return ECsCached::Ref::Float; }
+const float& ACsData_ProjectileWeapon::GetReloadTime() { return NCsCached::Ref::Float; }
 float* ACsData_ProjectileWeapon::GetReloadTimeAddr() { return nullptr; }
 
 #pragma endregion Stats

@@ -254,7 +254,7 @@ struct FCsFpvDrawDistance
 			return Distance1P;
 		if (ViewType == ECsViewType::ThirdPerson)
 			return Distance3P;
-		return ECsCached::Ref::Float;
+		return NCsCached::Ref::Float;
 	}
 
 	const float& GetSquared(const TCsViewType &ViewType) const
@@ -263,7 +263,7 @@ struct FCsFpvDrawDistance
 			return Distance1PSq;
 		if (ViewType == ECsViewType::ThirdPerson)
 			return Distance3PSq;
-		return ECsCached::Ref::Float;
+		return NCsCached::Ref::Float;
 	}
 
 	FString ToString() const

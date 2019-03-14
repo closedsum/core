@@ -201,17 +201,17 @@ struct FCsBlockchainContractArgument
 		// StringString
 		if (ValueType == ECsBlockchainContractArgumentType::StringString)
 			return TEXT("'") + Value_FString + TEXT("',");
-		return ECsCached::Str::Empty;
+		return NCsCached::Str::Empty;
 	}
 
 	FORCEINLINE void Reset()
 	{
-		Name = ECsCached::Str::Empty;
+		Name = NCsCached::Str::Empty;
 		ValueType = ECsBlockchainContractArgumentType::ECsBlockchainContractArgumentType_MAX;
 		Value_bool = false;
 		Value_int32 = 0;
 		Value_float  = 0.0f;
-		Value_FString = ECsCached::Str::Empty;
+		Value_FString = NCsCached::Str::Empty;
 	}
 };
 
@@ -356,14 +356,14 @@ struct FCsBlockchainContractFunctionArgument
 		// String
 		if (ValueType == ECsBlockchainContractFunctionArgumentType::String)
 			return TEXT("'") + Value_FString + TEXT("'");
-		return ECsCached::Str::Empty;
+		return NCsCached::Str::Empty;
 	}
 
 	FORCEINLINE void Clear()
 	{
 		Value_int32 = 0;
 		Value_float = 0.0f;
-		Value_FString = ECsCached::Str::Empty;
+		Value_FString = NCsCached::Str::Empty;
 	}
 };
 
@@ -484,14 +484,14 @@ struct FCsBlockchainContractFunctionReturn
 		// String
 		if (ValueType == ECsBlockchainContractFunctionReturnType::String)
 			return FString::SanitizeFloat(Value_float);
-		return ECsCached::Str::Empty;
+		return NCsCached::Str::Empty;
 	}
 
 	FORCEINLINE void Clear()
 	{
 		Value_int32 = 0;
 		Value_float = 0.0f;
-		Value_FString = ECsCached::Str::Empty;
+		Value_FString = NCsCached::Str::Empty;
 	}
 	
 	FORCEINLINE void Reset()
@@ -662,7 +662,7 @@ struct FCsBlockchainContractFunction
 
 	FORCEINLINE void Reset()
 	{
-		Signature = ECsCached::Str::Empty;
+		Signature = NCsCached::Str::Empty;
 		Arguments.Reset();
 		Return.Reset();
 	}

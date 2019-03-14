@@ -353,7 +353,7 @@ struct FCsBlockchainCommandInfo
 		Payload_bool = false;
 		Payload_int32 = 0;
 		Payload_float = 0.0f;
-		Payload_FString = ECsCached::Str::Empty;
+		Payload_FString = NCsCached::Str::Empty;
 		Payload_ptr = nullptr;
 	}
 };

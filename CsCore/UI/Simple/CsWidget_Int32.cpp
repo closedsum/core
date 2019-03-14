@@ -25,9 +25,9 @@ void UCsWidget_Int32::OnNativeConstruct()
 	Super::OnNativeConstruct();
 
 	Text.Set(MyText);
-	const FString& TextName   = ECsCached::Str::Text;
+	const FString& TextName   = NCsCached::Str::Text;
 	const FString& MyTextName = ECsWidgetInt32Cached::Str::MyText;
-	Text.Init(TextName, MyTextName, GetName() + ECsCached::Str::Dot + TextName);
+	Text.Init(TextName, MyTextName, GetName() + NCsCached::Str::Dot + TextName);
 }
 
 void UCsWidget_Int32::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)

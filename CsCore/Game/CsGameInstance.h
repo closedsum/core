@@ -90,7 +90,7 @@ namespace NCsGameInstanceOnBoardState
 
 #pragma endregion Enums
 
-#define CS_INVALID_UNIQUE_OBJECT_ID ECsCached::Ref::Long_MAX
+#define CS_INVALID_UNIQUE_OBJECT_ID NCsCached::Ref::Long_MAX
 
 class ACsDataMapping;
 

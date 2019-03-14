@@ -91,7 +91,7 @@ namespace ECsBTTask_LogicalOperator
 	{
 		if (EType == Type::And) { return Sym::And; }
 		if (EType == Type::Or) { return Sym::Or; }
-		return ECsCached::Str::Empty;
+		return NCsCached::Str::Empty;
 	}
 }
 
@@ -145,7 +145,7 @@ namespace EBasicKeyOperation
 	{
 		if (EType == Type::Set) { return Sym::Set; }
 		if (EType == Type::NotSet) { return Sym::NotSet; }
-		return ECsCached::Str::Empty;
+		return NCsCached::Str::Empty;
 	}
 }
 
@@ -169,7 +169,7 @@ namespace EArithmeticKeyOperation
 		if (EType == Type::LessOrEqual) { return Sym::LessOrEqual; }
 		if (EType == Type::Greater) { return Sym::Greater; }
 		if (EType == Type::GreaterOrEqual) { return Sym::GreaterOrEqual; }
-		return ECsCached::Str::Empty;
+		return NCsCached::Str::Empty;
 	}
 }
 
@@ -189,7 +189,7 @@ namespace ETextKeyOperation
 		if (EType == Type::NotEqual) { return Sym::NotEqual; }
 		if (EType == Type::Contain) { return Sym::Contain; }
 		if (EType == Type::NotContain) { return Sym::NotContain; }
-		return ECsCached::Str::Empty;
+		return NCsCached::Str::Empty;
 	}
 }
 

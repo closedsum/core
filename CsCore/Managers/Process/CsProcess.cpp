@@ -71,7 +71,7 @@ namespace NCsProcessPriorityModifier
 // Cache
 #pragma region
 
-namespace ECsProcessCached
+namespace NCsProcessCached
 {
 	namespace Name
 	{
@@ -115,7 +115,7 @@ UCsProcess::UCsProcess(const FObjectInitializer& ObjectInitializer) : Super(Obje
 {
 }
 
-void UCsProcess::Init(const int32 &Index, const FECsProcess &Type)
+void UCsProcess::Init(const int32 &Index, const FECsProcess& Type)
 {
 }
 
@@ -180,12 +180,12 @@ void UCsProcess::DeAllocate()
 // Routines
 #pragma region
 
-/*static*/ void UCsProcess::AddRoutine(UObject* InProcess, struct FCsRoutine* Routine, const uint8 &Type)
+/*static*/ void UCsProcess::AddRoutine(UObject* InProcess, struct FCsRoutine* Routine, const uint8& Type)
 {
 	Cast<UCsProcess>(InProcess)->AddRoutine_Internal(Routine, Type);
 }
 
-bool UCsProcess::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+bool UCsProcess::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8& Type)
 {
 	const ECsProcessRoutine RoutineType = (ECsProcessRoutine)Type;
 
@@ -198,12 +198,12 @@ bool UCsProcess::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Ty
 	return false;
 }
 
-/*static*/ void UCsProcess::RemoveRoutine(UObject* InProcess, struct FCsRoutine* Routine, const uint8 &Type)
+/*static*/ void UCsProcess::RemoveRoutine(UObject* InProcess, struct FCsRoutine* Routine, const uint8& Type)
 {
 	Cast<UCsProcess>(InProcess)->RemoveRoutine_Internal(Routine, Type);
 }
 
-bool UCsProcess::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+bool UCsProcess::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8& Type)
 {
 	const ECsProcessRoutine RoutineType = (ECsProcessRoutine)Type;
 
@@ -219,7 +219,7 @@ bool UCsProcess::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 
 
 #pragma endregion Routines
 
-void UCsProcess::RunCommand(const FString &Command)
+void UCsProcess::RunCommand(const FString& Command)
 {
 	if (CsCVarLogProcessIO->GetInt() == CS_CVAR_SHOW_LOG)
 	{
@@ -255,8 +255,8 @@ void UCsProcess::StartRead()
 	Payload->Type			= (uint8)ECsProcessRoutine::StartRead_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsProcessCached::Name::StartRead_Internal;
-	Payload->NameAsString	= ECsProcessCached::Str::StartRead_Internal;
+	Payload->Name			= NCsProcessCached::Name::StartRead_Internal;
+	Payload->NameAsString	= NCsProcessCached::Str::StartRead_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -311,12 +311,12 @@ void UCsProcess::StopRead()
 		StartRead_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 }
 
-void UCsProcess::AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent &Event)
+void UCsProcess::AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent& Event)
 {
 	MonitorOutputEvents.Add(Event);
 }
 
-void UCsProcess::ProcessMonitorOuputEvents(const FString &Output)
+void UCsProcess::ProcessMonitorOuputEvents(const FString& Output)
 {
 	const int32 Count = MonitorOutputEvents.Num();
 
@@ -340,7 +340,7 @@ void UCsProcess::ProcessMonitorOuputEvents(const FString &Output)
 	}
 }
 
-void UCsProcess::OnOutputRecieved(const FString &Output)
+void UCsProcess::OnOutputRecieved(const FString& Output)
 {
 	if (CsCVarLogProcessIO->GetInt() == CS_CVAR_SHOW_LOG)
 	{

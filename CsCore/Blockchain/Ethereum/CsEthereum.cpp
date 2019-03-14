@@ -419,7 +419,7 @@ void UCsEthereum::RunCommand(const int32 &ConsoleIndex, const FECsBlockchainComm
 			// Add in arguments
 			if ((Parts.Num() - 1) == Arguments.Num())
 			{
-				Composite = ECsCached::Str::Empty;
+				Composite = NCsCached::Str::Empty;
 
 				int32 Count = Arguments.Num();
 
@@ -1194,7 +1194,7 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 			CsEthereumAccount* Account =  new CsEthereumAccount(Nickname, Address, Passphrase);
 
 			const FString Json = Account->ToString();
-			const FString AccountFilePath = AccountsDirectory + TEXT("\\") + Nickname + TEXT("-") + Address + ECsCached::Ext::json;
+			const FString AccountFilePath = AccountsDirectory + TEXT("\\") + Nickname + TEXT("-") + Address + NCsCached::Ext::json;
 
 			FFileHelper::SaveStringToFile(Json, *AccountFilePath);
 
@@ -1218,7 +1218,7 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 	if (Command == ECsEthereumCommand::GetBalanceEther)
 	{
 		// Output != TEXT("") && !Output.StartsWith(TEXT(">"))
-		if (Output != ECsCached::Str::Empty &&
+		if (Output != NCsCached::Str::Empty &&
 			!Output.StartsWith(ECsEthereumCached::Str::ConsolePrompt))
 		{
 			CurrentCommandOuput.Value_float = FCString::Atof(*Output);
@@ -1256,7 +1256,7 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 	if (Command == ECsEthereumCommand::RunContractConstantFunction)
 	{
 		// Output != TEXT("") && !Output.StartsWith(TEXT(">"))
-		if (Output != ECsCached::Str::Empty &&
+		if (Output != NCsCached::Str::Empty &&
 			!Output.StartsWith(ECsEthereumCached::Str::ConsolePrompt))
 		{
 			CurrentCommandOuput.Value_FString = Output;
@@ -1272,7 +1272,7 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 	if (Command == ECsEthereumCommand::RunContractStateChangeFunction)
 	{
 		// Output != TEXT("") && !Output.StartsWith(TEXT(">"))
-		if (Output != ECsCached::Str::Empty &&
+		if (Output != NCsCached::Str::Empty &&
 			!Output.StartsWith(ECsEthereumCached::Str::ConsolePrompt))
 		{
 			CurrentCommandOuput.Value_FString = Output;
@@ -1345,14 +1345,14 @@ FString UCsEthereum::GetKeystoreFilePath(const FString &Address)
 			return KeystoreDirectory + TEXT("/") + File;
 		}
 	}
-	return ECsCached::Str::Empty;
+	return NCsCached::Str::Empty;
 }
 
 void UCsEthereum::CreateKeystore(CsEthereumAccount* Account)
 {
 	const FString Path = GetKeystoreFilePath(Account->Address);
 
-	if (Path == ECsCached::Str::Empty)
+	if (Path == NCsCached::Str::Empty)
 	{
 		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 		FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
@@ -1373,7 +1373,7 @@ void UCsEthereum::CreateKeystore(CsEthereumAccount* Account)
 
 		FCsRoutine* R = Scheduler->Allocate(Payload);
 
-		R->strings[CS_FIRST]	  = ECsCached::Str::Empty;
+		R->strings[CS_FIRST]	  = NCsCached::Str::Empty;
 		R->voidPointers[CS_FIRST] = Account;
 
 		Scheduler->StartRoutine(Schedule, R);
@@ -1419,16 +1419,16 @@ CS_COROUTINE(UCsEthereum, CreateKeystore_Internal)
 					break;
 				}
 
-				if (KeystoreFilePath != ECsCached::Str::Empty)
+				if (KeystoreFilePath != NCsCached::Str::Empty)
 					break;
 			}
 		}
 
-		if (KeystoreFilePath == ECsCached::Str::Empty)
+		if (KeystoreFilePath == NCsCached::Str::Empty)
 		{
 			CS_COROUTINE_YIELD(r);
 		}
-	} while (KeystoreFilePath == ECsCached::Str::Empty);
+	} while (KeystoreFilePath == NCsCached::Str::Empty);
 
 	{
 		FCsEthereumKeystore Keystore;
@@ -1795,7 +1795,7 @@ void UCsEthereum::LoadContract(const FECsBlockchainContract &EContract, const FE
 	FileManager.FindFiles(FilePaths, *ContractsDeployedDirectory);
 
 	// Only keep Files ending with EContract.Name + TEXT(".json")
-	const FString JsonSuffix = EContract.Name + ECsCached::Ext::json;
+	const FString JsonSuffix = EContract.Name + NCsCached::Ext::json;
 
 	for (const FString& File : FilePaths)
 	{
@@ -1808,7 +1808,7 @@ void UCsEthereum::LoadContract(const FECsBlockchainContract &EContract, const FE
 	}
 
 	// Check if Contract ABI file exists
-	const FString TxtSuffix = EContract.Name + ECsCached::Ext::txt;
+	const FString TxtSuffix = EContract.Name + NCsCached::Ext::txt;
 	const FString ABIPath   = ABIDirectory + TEXT("\\") + TxtSuffix;
 
 	if (FileManager.FileExists(*ABIPath))

@@ -1309,7 +1309,7 @@ void UCsManager_Input::UnbindActionMapping(const ECsInputDevice& Device, const F
 		if (Action == Mapping.Action &&
 			Key == Mapping.Key)
 		{
-			Mapping.KeyName = ECsCached::Str::Empty;
+			Mapping.KeyName = NCsCached::Str::Empty;
 			Mapping.Key		= EKeys::Invalid;
 			break;
 		}
@@ -1350,7 +1350,7 @@ void UCsManager_Input::UnbindAxisMapping(const ECsInputDevice& Device, const FEC
 		if (Action == Mapping.Action &&
 			Key == Mapping.Key)
 		{
-			Mapping.KeyName = ECsCached::Str::Empty;
+			Mapping.KeyName = NCsCached::Str::Empty;
 			Mapping.Key = EKeys::Invalid;
 			break;
 		}

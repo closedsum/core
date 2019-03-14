@@ -222,7 +222,7 @@ void UCsBTTask_PlayMontage::DescribeRuntimeValues(const UBehaviorTreeComponent& 
 
 FString UCsBTTask_PlayMontage::GetStaticDescription() const
 {
-	FString Description = ECsCached::Str::Empty;
+	FString Description = NCsCached::Str::Empty;
 
 #if WITH_EDITORONLY_DATA
 	if (bAnim)

@@ -8,32 +8,41 @@
 // Enums
 #pragma region
 
-UENUM(BlueprintType)
-namespace ECsTraceTransaction
-{
-	enum Type
-	{
-		Add						UMETA(DisplayName = "Add"),
-		Complete				UMETA(DisplayName = "Complete"),
-		ECsTraceTransaction_MAX	UMETA(Hidden),
-	};
-}
+	// TraceTransaction
+#pragma region
 
-namespace ECsTraceTransaction
+UENUM(BlueprintType)
+enum class ECsTraceTransaction : uint8
 {
+	Add						UMETA(DisplayName = "Add"),
+	Complete				UMETA(DisplayName = "Complete"),
+	ECsTraceTransaction_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsTraceTransaction : public TCsEnumMap<ECsTraceTransaction>
+{
+	CS_DECLARE_ENUM_MAP_BODY(EMCsTraceTransaction)
+};
+
+namespace NCsTraceTransaction
+{
+	typedef ECsTraceTransaction Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Add;
+		extern CSCORE_API const Type Complete;
+		extern CSCORE_API const Type ECsTraceTransaction_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+
 	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
-		const TCsString Add = TCsString(TEXT("Add"), TEXT("add"), TEXT("Adding"));
-		const TCsString Complete = TCsString(TEXT("Complete"), TEXT("complete"), TEXT("Completing"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Add) { return Str::Add.Value; }
-		if (EType == Type::Complete) { return Str::Complete.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		extern CSCORE_API const TCsString Add;
+		extern CSCORE_API const TCsString Complete;
 	}
 
 	FORCEINLINE const FString& ToActionString(const Type &EType)
@@ -42,17 +51,11 @@ namespace ECsTraceTransaction
 		if (EType == Type::Complete) { return Str::Complete.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Add) { return Type::Add; }
-		if (String == Str::Complete) { return Type::Complete; }
-		return Type::ECsTraceTransaction_MAX;
-	}
 }
 
-#define ECS_TRACE_TRANSACTION_MAX (uint8)ECsTraceTransaction::ECsTraceTransaction_MAX
-typedef ECsTraceTransaction::Type TCsTraceTransaction;
+#define ECS_TRACE_TRANSACTION_MAX NCsTraceTransaction::MAX
+
+#pragma endregion TraceTransaction
 
 #pragma endregion Enums
 
@@ -156,5 +159,5 @@ public:
 
 	FCsTraceResponse* Trace(FCsTraceRequest* Request);
 
-	virtual void LogTransaction(const FString &FunctionName, const TCsTraceTransaction &Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response);
+	virtual void LogTransaction(const FString& FunctionName, const ECsTraceTransaction& Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response);
 };

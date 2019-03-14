@@ -11,7 +11,7 @@ bool UCsManager_Runnable::s_bManagerHasShutdown = false;
 // Cache
 #pragma region
 
-namespace ECsManagerRunnableCached
+namespace NCsManagerRunnableCached
 {
 	namespace Str
 	{
@@ -85,7 +85,7 @@ bool UCsManager_Runnable::Tick(float DeltaSeconds)
 		{
 			UE_LOG(LogCs, Warning, TEXT("UCsManager_Runnable::OnTick: Runnable: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Runnable->Cache.Name), Runnable->Cache.Index);
 
-			LogTransaction(ECsManagerRunnableCached::Str::OnTick, ECsPoolTransaction::Deallocate, Runnable);
+			LogTransaction(NCsManagerRunnableCached::Str::OnTick, ECsPoolTransaction::Deallocate, Runnable);
 
 			ActiveRunnables.Remove(Runnable->Cache.Index);
 			continue;
@@ -93,7 +93,7 @@ bool UCsManager_Runnable::Tick(float DeltaSeconds)
 
 		if (Runnable->bExit)
 		{
-			LogTransaction(ECsManagerRunnableCached::Str::OnTick, ECsPoolTransaction::Deallocate, Runnable);
+			LogTransaction(NCsManagerRunnableCached::Str::OnTick, ECsPoolTransaction::Deallocate, Runnable);
 
 			Runnable->DeAllocate();
 			ActiveRunnables.Remove(Runnable->Cache.Index);
@@ -143,16 +143,16 @@ FCsRunnablePayload* UCsManager_Runnable::AllocatePayload()
 #pragma endregion Payload
 
 
-void UCsManager_Runnable::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, FCsRunnable_Delegate* Runnable)
+void UCsManager_Runnable::LogTransaction(const FString& FunctionName, const ECsPoolTransaction& Transaction, FCsRunnable_Delegate* Runnable)
 {
 	if (CsCVarLogManagerRunnableTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
+		const FString& TransactionAsString = NCsPoolTransaction::ToActionString(Transaction);
 
 		const FString& RunnableName  = Runnable->Cache.Name;
 		const float CurrentTime		 = GetCurrentWorld() ? GetCurrentWorld()->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
 		const UObject* RunnableOwner = Runnable->Cache.GetOwner();
-		const FString OwnerName		 = RunnableOwner ? RunnableOwner->GetName() : ECsCached::Str::None;
+		const FString OwnerName		 = RunnableOwner ? RunnableOwner->GetName() : NCsCached::Str::None;
 
 		if (RunnableOwner)
 		{
@@ -192,7 +192,7 @@ FCsRunnable_Delegate * UCsManager_Runnable::Prep(FCsRunnablePayload* Payload)
 	else
 		Runnable->Allocate(Payload, UCsCommon::GetCurrentDateTimeSeconds(), UCsCommon::GetCurrentDateTimeSeconds(), 0);
 
-	LogTransaction(ECsManagerRunnableCached::Str::Prep, ECsPoolTransaction::Allocate, Runnable);
+	LogTransaction(NCsManagerRunnableCached::Str::Prep, ECsPoolTransaction::Allocate, Runnable);
 	Payload->Reset();
 	return Runnable;
 }

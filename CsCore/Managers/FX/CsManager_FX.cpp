@@ -32,21 +32,21 @@ FString FCsManager_FX::GetObjectName(ACsEmitter* a)
 	return a->GetName();
 }
 
-void FCsManager_FX::LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ACsEmitter* o)
+void FCsManager_FX::LogTransaction(const FString& functionName, const ECsPoolTransaction& transaction, ACsEmitter* o)
 {
 	if ((*LogTransactions)->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		const FString& transactionAsString = ECsPoolTransaction::ToActionString(transaction);
+		const FString& transactionAsString = NCsPoolTransaction::ToActionString(transaction);
 
 		const FString objectName	= GetObjectName(o);
 		const FString particleName	= o->Cache.GetParticle()->GetName();
 		const float currentTime		= GetCurrentTimeSeconds();
 		const UObject* objectOwner	= o->Cache.GetOwner();
-		const FString ownerName		= objectOwner ? objectOwner->GetName() : ECsCached::Str::None;
+		const FString ownerName		= objectOwner ? objectOwner->GetName() : NCsCached::Str::None;
 		const UObject* parent		= o->Cache.GetParent();
-		const FString parentName	= parent ? parent->GetName() : ECsCached::Str::None;
+		const FString parentName	= parent ? parent->GetName() : NCsCached::Str::None;
 
-		FString log = ECsCached::Str::Empty;
+		FString log = NCsCached::Str::Empty;
 
 		if (objectOwner && parent)
 		{
@@ -84,7 +84,7 @@ void FCsManager_FX::Log(const FString& log)
 	UE_LOG(LogCs, Warning, TEXT("%s"), *log);
 }
 
-void FCsManager_FX::OnTick(const float &deltaTime)
+void FCsManager_FX::OnTick(const float& deltaTime)
 {
 	TArray<int32> keys;
 	ActiveObjects.GetKeys(keys);
@@ -192,7 +192,7 @@ ACsEmitter* FCsManager_FX::Allocate()
 #pragma endregion Interface
 
 #if WITH_EDITOR
-void FCsManager_FX::ToggleEmitterEditorIcons(const bool &toggle)
+void FCsManager_FX::ToggleEmitterEditorIcons(const bool& toggle)
 {
 	for (int32 i = 0; i < PoolSize; ++i)
 	{
@@ -281,7 +281,7 @@ ACsEmitter* AICsManager_FX::ConstructObject()
 	return Actor;
 }
 
-void AICsManager_FX::CreatePool(const int32 &Size)
+void AICsManager_FX::CreatePool(const int32& Size)
 {
 	Internal->CreatePool(Size);
 }
@@ -296,7 +296,7 @@ void AICsManager_FX::AddToActivePool(ACsEmitter* Actor)
 	Internal->AddToActivePool(Actor);
 }
 
-void AICsManager_FX::OnTick(const float &DeltaTime)
+void AICsManager_FX::OnTick(const float& DeltaTime)
 {
 	Internal->OnTick(DeltaTime);
 }
@@ -321,7 +321,7 @@ bool AICsManager_FX::IsExhausted()
 	return Internal->IsExhausted();
 }
 
-bool AICsManager_FX::DeAllocate(const int32 &Index)
+bool AICsManager_FX::DeAllocate(const int32& Index)
 {
 	return Internal->DeAllocate(Index);
 }
@@ -336,19 +336,19 @@ FCsFxPayload* AICsManager_FX::AllocatePayload()
 	return Internal->AllocatePayload();
 }
 
-ACsEmitter* AICsManager_FX::Play(FCsFxPayload &Payload)
+ACsEmitter* AICsManager_FX::Play(FCsFxPayload& Payload)
 {
 	return Internal->Spawn(&Payload);
 }
 
-ACsEmitter* AICsManager_FX::Play(FCsFxPayload *Payload)
+ACsEmitter* AICsManager_FX::Play(FCsFxPayload* Payload)
 {
 	return Internal->Spawn(Payload);
 }
 
 #if WITH_EDITOR
 
-void AICsManager_FX::ToggleEmitterEditorIcons(const bool &Toggle)
+void AICsManager_FX::ToggleEmitterEditorIcons(const bool& Toggle)
 {
 	Internal->ToggleEmitterEditorIcons(Toggle);
 }

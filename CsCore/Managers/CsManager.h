@@ -70,7 +70,7 @@ protected:
 
 public:
 
-	virtual void Init(const FString& name, const FString &objectClassName, UWorld* world, TAutoConsoleVariable<int32>* logTransactions)
+	virtual void Init(const FString& name, const FString& objectClassName, UWorld* world, TAutoConsoleVariable<int32>* logTransactions)
 	{
 		Name = name;
 		ObjectClassName = objectClassName;
@@ -123,10 +123,10 @@ public:
 
 	virtual FString GetObjectName(ObjectType* o)
 	{
-		return ECsCached::Str::Empty;
+		return NCsCached::Str::Empty;
 	}
 
-	virtual void CreatePool(const int32 &size)
+	virtual void CreatePool(const int32& size)
 	{
 		PoolSize = size;
 
@@ -160,20 +160,20 @@ public:
 		return CurrentWorld.IsValid() ? CurrentWorld.Get() : nullptr;
 	}
 
-	virtual void LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ObjectType* o)
+	virtual void LogTransaction(const FString& functionName, const ECsPoolTransaction& transaction, ObjectType* o)
 	{
 		if ((*LogTransactions)->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			const FString& transactionAsString = ECsPoolTransaction::ToActionString(transaction);
+			const FString& transactionAsString = NCsPoolTransaction::ToActionString(transaction);
 
 			const FString objectName	= GetObjectName(o);
 			const float currentTime		= GetCurrentTimeSeconds();
 			const UObject* objectOwner	= o->Cache.GetOwner();
-			const FString ownerName		= objectOwner ? objectOwner->GetName() : ECsCached::Str::None;
+			const FString ownerName		= objectOwner ? objectOwner->GetName() : NCsCached::Str::None;
 			const UObject* parent		= o->Cache.GetParent();
-			const FString parentName	= parent ? parent->GetName() : ECsCached::Str::None;
+			const FString parentName	= parent ? parent->GetName() : NCsCached::Str::None;
 
-			FString log = ECsCached::Str::Empty;
+			FString log = NCsCached::Str::Empty;
 
 			if (objectOwner && parent)
 			{
@@ -299,7 +299,7 @@ public:
 		return nullptr;
 	}
 
-	bool DeAllocate(const int32 &index)
+	bool DeAllocate(const int32& index)
 	{
 		if (ActiveObjects.Num() == CS_EMPTY ||
 			!ActiveObjects.Find(index))
@@ -418,7 +418,7 @@ protected:
 
 public:
 
-	virtual void Init(const FString& name, const FString &objectClassName, UWorld* world, TAutoConsoleVariable<int32>* logTransactions)
+	virtual void Init(const FString& name, const FString& objectClassName, UWorld* world, TAutoConsoleVariable<int32>* logTransactions)
 	{
 		Name			= name;
 		ObjectClassName = objectClassName;
@@ -475,10 +475,10 @@ public:
 
 	virtual FString GetObjectName(ObjectType* o)
 	{
-		return ECsCached::Str::Empty;
+		return NCsCached::Str::Empty;
 	}
 
-	virtual void CreatePool(const EnumType &e, const int32 &size)
+	virtual void CreatePool(const EnumType& e, const int32& size)
 	{
 		PoolSizes.Add(e, size);
 		PoolIndices.Add(e, 0);
@@ -499,7 +499,7 @@ public:
 		PoolSize = Pool.Num();
 	}
 
-	virtual void AddToPool(const EnumType &e, ObjectType* o)
+	virtual void AddToPool(const EnumType& e, ObjectType* o)
 	{
 		int32* size = PoolSizes.Find(e);
 
@@ -534,7 +534,7 @@ public:
 		o->Init(poolPtr->Num() - 1, e);
 	}
 
-	virtual void AddToActivePool(const EnumType &e, ObjectType* o)
+	virtual void AddToActivePool(const EnumType& e, ObjectType* o)
 	{
 		o->Cache.IsAllocated = true;
 
@@ -558,31 +558,31 @@ public:
 		return CurrentWorld.IsValid() ? CurrentWorld.Get() : nullptr;
 	}
 
-	virtual const FString& EnumTypeToString(const EnumType &e)
+	virtual const FString& EnumTypeToString(const EnumType& e)
 	{
-		return ECsCached::Str::Empty;
+		return NCsCached::Str::Empty;
 	}
 
 	virtual const FString& EnumTypeToString(const int32& index)
 	{
-		return ECsCached::Str::Empty;
+		return NCsCached::Str::Empty;
 	}
 
-	virtual void LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ObjectType* o)
+	virtual void LogTransaction(const FString& functionName, const ECsPoolTransaction& transaction, ObjectType* o)
 	{
 		if ((*LogTransactions)->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			const FString& transactionAsString = ECsPoolTransaction::ToActionString(transaction);
+			const FString& transactionAsString = NCsPoolTransaction::ToActionString(transaction);
 
 			const FString objectName	= GetObjectName(o);
 			const FString typeAsString  = EnumTypeToString(o->Cache.Type);
 			const float currentTime	    = GetCurrentTimeSeconds();
 			const UObject* objectOwner  = o->Cache.GetOwner();
-			const FString ownerName	    = objectOwner ? objectOwner->GetName() : ECsCached::Str::None;
+			const FString ownerName	    = objectOwner ? objectOwner->GetName() : NCsCached::Str::None;
 			const UObject* parent	    = o->Cache.GetParent();
-			const FString parentName    = parent ? parent->GetName() : ECsCached::Str::None;
+			const FString parentName    = parent ? parent->GetName() : NCsCached::Str::None;
 
-			FString log = ECsCached::Str::Empty;
+			FString log = NCsCached::Str::Empty;
 
 			if (objectOwner && parent)
 			{
@@ -611,7 +611,7 @@ public:
 		return GetCurrentWorld() ? GetCurrentWorld()->GetTimeSeconds() : 0.0f;
 	}
 
-	virtual void OnTick(const float &deltaTime)
+	virtual void OnTick(const float& deltaTime)
 	{
 		TArray<EnumType> enumKeys;
 		ActiveObjects.GetKeys(enumKeys);
@@ -675,7 +675,7 @@ public:
 		return Pool;
 	}
 
-	void GetAllActiveObjects(TArray<ObjectType*> &outObjects)
+	void GetAllActiveObjects(TArray<ObjectType*>& outObjects)
 	{
 		TArray<EnumType> enumKeys;
 		ActiveObjects.GetKeys(enumKeys);
@@ -699,7 +699,7 @@ public:
 		return Pools.Find(type);
 	}
 
-	int32 GetActivePoolSize(const EnumType &e)
+	int32 GetActivePoolSize(const EnumType& e)
 	{
 		TMap<int32, ObjectType*>* objectsPtr = ActiveObjects.Find(e);
 
@@ -708,7 +708,7 @@ public:
 		return objectsPtr->Num();
 	}
 
-	bool IsExhausted(const EnumType &e)
+	bool IsExhausted(const EnumType& e)
 	{
 		TArray<ObjectType*>* poolPtr = Pools.Find(e);
 
@@ -721,7 +721,7 @@ public:
 	// Allocate / DeAllocate
 #pragma region
 
-	virtual ObjectType* Allocate(const EnumType &e)
+	virtual ObjectType* Allocate(const EnumType& e)
 	{
 		TArray<ObjectType*>* pool = Pools.Find(e);
 		const int32 size		  = *(PoolSizes.Find(e));
@@ -748,7 +748,7 @@ public:
 		return nullptr;
 	}
 
-	bool DeAllocate(const EnumType &e, const int32 &index)
+	bool DeAllocate(const EnumType& e, const int32& index)
 	{
 		TMap<int32, ObjectType*>* objectsPtr = ActiveObjects.Find(e);
 
@@ -818,7 +818,7 @@ public:
 
 #pragma endregion Payload
 
-	ObjectType* Spawn(const EnumType &e, PayloadType* payload)
+	ObjectType* Spawn(const EnumType& e, PayloadType* payload)
 	{
 		ObjectType* o = Allocate(e);
 

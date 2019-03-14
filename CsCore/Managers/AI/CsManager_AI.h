@@ -25,11 +25,11 @@ public:
 	virtual void DeconstructObject(ACsAIPawn* a) override;
 	virtual void Shutdown() override;
 	virtual FString GetObjectName(ACsAIPawn* a) override;
-	virtual void CreatePool(const FECsAIType &e, const int32 &size) override;
-	virtual void AddToPool(const FECsAIType &e, ACsAIPawn* a) override;
-	virtual const FString& EnumTypeToString(const FECsAIType &e) override;
-	virtual const FString& EnumTypeToString(const int32 &index) override;
-	virtual void LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ACsAIPawn* o) override;
+	virtual void CreatePool(const FECsAIType& e, const int32& size) override;
+	virtual void AddToPool(const FECsAIType& e, ACsAIPawn* a) override;
+	virtual const FString& EnumTypeToString(const FECsAIType& e) override;
+	virtual const FString& EnumTypeToString(const int32& index) override;
+	virtual void LogTransaction(const FString& functionName, const ECsPoolTransaction& transaction, ACsAIPawn* o) override;
 	virtual void Log(const FString& log) override;
 
 #pragma endregion Interface
@@ -74,41 +74,41 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Manager AI")
 	TMap<FECsAIType, UClass*> ClassMap;
 
-	virtual ACsAIPawn* ConstructObject(const FECsAIType &Type);
+	virtual ACsAIPawn* ConstructObject(const FECsAIType& Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
-	void CreatePool(const FECsAIType &Type, const int32 &Size);
+	void CreatePool(const FECsAIType& Type, const int32& Size);
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
-	void AddToPool(const FECsAIType &Type, ACsAIPawn* Actor);
+	void AddToPool(const FECsAIType& Type, ACsAIPawn* Actor);
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
-	void AddToActivePool(const FECsAIType &Type, ACsAIPawn* Actor);
+	void AddToActivePool(const FECsAIType& Type, ACsAIPawn* Actor);
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
-	void OnTick(const float &DeltaTime);
+	void OnTick(const float& DeltaTime);
 
 	const TArray<class ACsAIPawn*>& GetAllPawns();
 
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
-	void GetAllActivePawns(TArray<ACsAIPawn*> &OutActors);
+	void GetAllActivePawns(TArray<ACsAIPawn*>& OutActors);
 
 	const TArray<class ACsAIPawn*>* GetPawns(const FECsAIType& Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
-	int32 GetActivePoolSize(const FECsAIType &Type);
+	int32 GetActivePoolSize(const FECsAIType& Type);
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
-	bool IsExhausted(const FECsAIType &Type);
+	bool IsExhausted(const FECsAIType& Type);
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
-	bool DeAllocate(const FECsAIType &Type, const int32 &Index);
+	bool DeAllocate(const FECsAIType& Type, const int32& Index);
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
 	void DeAllocateAll();
 
 	FCsAIPawnPayload* AllocatePayload();
 
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
-	ACsAIPawn* Spawn(const FECsAIType &Type, FCsAIPawnPayload &Payload);
-	ACsAIPawn* Spawn(const FECsAIType &Type, FCsAIPawnPayload* Payload);
+	ACsAIPawn* Spawn(const FECsAIType& Type, FCsAIPawnPayload& Payload);
+	ACsAIPawn* Spawn(const FECsAIType& Type, FCsAIPawnPayload* Payload);
 
 	template<typename T>
-	T* Spawn(const FECsAIType &Type, FCsAIPawnPayload* Payload)
+	T* Spawn(const FECsAIType& Type, FCsAIPawnPayload* Payload)
 	{
 		return Cast<T>(Spawn(Type, Payload));
 	}

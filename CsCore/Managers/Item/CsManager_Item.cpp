@@ -28,7 +28,7 @@
 // Cache
 #pragma region
 
-namespace ECsManagerItemCached
+namespace NCsManagerItemCached
 {
 	namespace Str
 	{
@@ -81,7 +81,7 @@ void ACsManager_Item::Rebuild()
 	}
 }
 
-void ACsManager_Item::OnTick(const float &DeltaSeconds)
+void ACsManager_Item::OnTick(const float& DeltaSeconds)
 {
 	OnTick_Handle_AsyncSave();
 	OnTick_Handle_DeAllocateQueue();
@@ -104,17 +104,17 @@ FGuid ACsManager_Item::GetUniqueId()
 	return FGuid::NewGuid();
 }
 
-void ACsManager_Item::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, const FCsItem* const Item)
+void ACsManager_Item::LogTransaction(const FString& FunctionName, const ECsPoolTransaction& Transaction, const FCsItem* const Item)
 {
 	if (CsCVarLogManagerItemTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
+		const FString& TransactionAsString = NCsPoolTransaction::ToActionString(Transaction);
 
 		const FString ItemName				  = Item->ShortCode.ToString();
 		const FString Id					  = Item->Id.ToString();
 		const FString DataName				  = Item->GetData()->ShortCode.ToString();
 		const ACsData_Interactive* Data_Actor = Item->GetData_Actor();
-		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : ECsCached::Str::Empty;
+		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : NCsCached::Str::Empty;
 		const float CurrentTime				  = GetWorld()->GetTimeSeconds();
 
 		if (Data_Actor)
@@ -162,7 +162,7 @@ FCsItem* ACsManager_Item::Allocate()
 	return Item;
 }
 
-FCsItem* ACsManager_Item::Allocate(const FName &ShortCode)
+FCsItem* ACsManager_Item::Allocate(const FName& ShortCode)
 {
 	FCsItem* Item = Allocate();
 
@@ -198,7 +198,7 @@ FCsItem* ACsManager_Item::Allocate(const FName &ShortCode)
 
 void ACsManager_Item::SetItemOwnerInfo(FCsItem* Item, UObject* ItemOwner){}
 
-FCsItem* ACsManager_Item::Allocate(const FName &ShortCode, UObject* ItemOwner)
+FCsItem* ACsManager_Item::Allocate(const FName& ShortCode, UObject* ItemOwner)
 {
 	FCsItem* Item = Allocate(ShortCode);
 
@@ -266,7 +266,7 @@ void ACsManager_Item::SetActiveItemData(FCsItem* Item)
 // Get
 #pragma region
 
-FCsItem* ACsManager_Item::GetItem(const TCsItemId &Id)
+FCsItem* ACsManager_Item::GetItem(const TCsItemId& Id)
 {
 	if (FCsItem** ItemPtr = ActiveItems.Find(Id))
 		return *ItemPtr;
@@ -278,7 +278,7 @@ FCsItem* ACsManager_Item::GetItem(const TCsItemId &Id)
 	return nullptr;
 }
 
-void ACsManager_Item::GetItemsByOwnerType(const FECsItemOwner &OwnerType, TArray<FCsItem*> &OutItems)
+void ACsManager_Item::GetItemsByOwnerType(const FECsItemOwner& OwnerType, TArray<FCsItem*>& OutItems)
 {
 	TArray<TCsItemId> OutKeys;
 	ActiveItems.GetKeys(OutKeys);
@@ -296,7 +296,7 @@ void ACsManager_Item::GetItemsByOwnerType(const FECsItemOwner &OwnerType, TArray
 	}
 }
 
-void ACsManager_Item::GetItemsByOwnerId(const TCsItemOwnerId &OwnerId, TArray<FCsItem*> &OutItems)
+void ACsManager_Item::GetItemsByOwnerId(const TCsItemOwnerId& OwnerId, TArray<FCsItem*>& OutItems)
 {
 	TArray<FCsItem*>* ItemsPtr = ActiveItemsByOwnerId.Find(OwnerId);
 
@@ -318,7 +318,7 @@ void ACsManager_Item::GetItemsByOwnerId(const TCsItemOwnerId &OwnerId, TArray<FC
 	}
 }
 
-void ACsManager_Item::GetItems(const TArray<TCsItemId> &Ids, TArray<FCsItem*> &OutItems)
+void ACsManager_Item::GetItems(const TArray<TCsItemId>& Ids, TArray<FCsItem*>& OutItems)
 {
 	for (const TCsItemId& Id : Ids)
 	{
@@ -341,7 +341,7 @@ void ACsManager_Item::GetItems(const TArray<TCsItemId> &Ids, TArray<FCsItem*> &O
 // DeAllocate
 #pragma region
 
-void ACsManager_Item::DeAllocate(const FGuid &Id)
+void ACsManager_Item::DeAllocate(const FGuid& Id)
 {
 	FCsItem* Item = *(ActiveItems.Find(Id));
 
@@ -364,7 +364,7 @@ void ACsManager_Item::DeAllocate(const FGuid &Id)
 	if (Item->IsSaved)
 	{
 		const FString Path = GetSavePath();
-		const FString Filename = Path + Item->FileName + ECsCached::Ext::json;
+		const FString Filename = Path + Item->FileName + NCsCached::Ext::json;
 
 		if (IFileManager::Get().FileExists(*Filename))
 		{
@@ -402,7 +402,7 @@ void ACsManager_Item::OnTick_Handle_DeAllocateQueue()
 		if (Item->IsSaved)
 		{
 			const FString Path = GetSavePath();
-			const FString Filename = Path + Item->FileName + ECsCached::Ext::json;
+			const FString Filename = Path + Item->FileName + NCsCached::Ext::json;
 
 			if (IFileManager::Get().FileExists(*Filename))
 			{
@@ -497,7 +497,7 @@ bool ACsManager_Item::Transfer(FCsItem* Item, UObject* Instigator)
 	return false;
 }
 
-bool ACsManager_Item::Transfer(TArray<FCsItem*> &Items, UObject* Instigator, const TCsPoolTransactionOrder &Order)
+bool ACsManager_Item::Transfer(TArray<FCsItem*>& Items, UObject* Instigator, const ECsPoolTransactionOrder& Order)
 {
 	// Get Manager_Inventory from Instigator
 	ACsManager_Inventory* Manager_Inventory = nullptr;
@@ -566,7 +566,7 @@ void ACsManager_Item::SetItemFileName(FCsItem* Item)
 	Item->FileName   = Id + TEXT("_") + Item->Type.Name;
 }
 
-void ACsManager_Item::SetRootSaveDirectory(const FString &Directory)
+void ACsManager_Item::SetRootSaveDirectory(const FString& Directory)
 {
 	RootSaveDirectory	   = Directory + TEXT("/");
 	CombinedSaveDirectory  = RootSaveDirectory + SaveDirectory;
@@ -642,14 +642,14 @@ void ACsManager_Item::Save(FCsItem* Item)
 	JsonWriter->Close();
 
 	const FString Path		= GetSavePath();
-	const FString Filename  = Path + Item->FileName + ECsCached::Ext::json;
+	const FString Filename  = Path + Item->FileName + NCsCached::Ext::json;
 
 	FFileHelper::SaveStringToFile(OutputString, *Filename);
 
 	Item->IsSaved = true;
 }
 
-void ACsManager_Item::SaveProduct(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemProduct* Product)
+void ACsManager_Item::SaveProduct(TSharedRef<TJsonWriter<TCHAR>>& JsonWriter, FCsItemProduct* Product)
 {
 	// Name
 	JsonWriter->WriteValue(ECsFileItemProductHeaderCached::Str::Name, Product->Name);
@@ -681,7 +681,7 @@ void ACsManager_Item::SaveProduct(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 	}
 }
 
-void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemHistory* ItemHistory)
+void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>>& JsonWriter, FCsItemHistory* ItemHistory)
 {
 	// OwnerId
 	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCached::Str::OwnerId, ItemHistory->OwnerId.ToString());
@@ -828,7 +828,7 @@ void ACsManager_Item::PopulateExistingItems()
 
 	const FString Path = GetSavePath();
 	// Get all .json files under Path
-	IFileManager::Get().FindFiles(FoundFiles, *Path, *ECsCached::Ext::json);
+	IFileManager::Get().FindFiles(FoundFiles, *Path, *NCsCached::Ext::json);
 
 	if (FoundFiles.Num() == CS_EMPTY)
 	{
@@ -1022,7 +1022,7 @@ void ACsManager_Item::AsyncPopulateExistingItems()
 	(new FAutoDeleteAsyncTask<FAsyncPopulateExistingItemsWorker>(this))->StartBackgroundTask();
 }
 
-void ACsManager_Item::LoadProduct(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemProduct* Product)
+void ACsManager_Item::LoadProduct(TSharedPtr<class FJsonObject>& JsonObject, FCsItem* Item, FCsItemProduct* Product)
 {
 	// Name
 	Product->Name = JsonObject->GetStringField(ECsFileItemProductHeaderCached::Str::Name);
@@ -1050,7 +1050,7 @@ void ACsManager_Item::LoadProduct(TSharedPtr<class FJsonObject> &JsonObject, FCs
 	}
 }
 
-void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemHistory* ItemHistory)
+void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject>& JsonObject, FCsItem* Item, FCsItemHistory* ItemHistory)
 {
 	// OwnerId
 	FGuid::Parse(JsonObject->GetStringField(ECsFileItemHistoryHeaderCached::Str::OwnerId), ItemHistory->OwnerId);
@@ -1165,7 +1165,7 @@ void ACsManager_Item::AsyncInitInventory(ACsManager_Inventory* Manager_Inventory
 // Action
 #pragma region
 
-void ACsManager_Item::RecordItemsInteraction(const TArray<FCsItem*> &Items, const FECsItemInteraction &Interaction)
+void ACsManager_Item::RecordItemsInteraction(const TArray<FCsItem*>& Items, const FECsItemInteraction& Interaction)
 {
 	for (FCsItem* Item : Items)
 	{

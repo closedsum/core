@@ -4,7 +4,7 @@
 // Cached
 #pragma region
 
-namespace ECsCached
+namespace NCsCached
 {
 	namespace Str
 	{

@@ -252,7 +252,7 @@ void UCsBTTask_Shoot::DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerC
 
 FString UCsBTTask_Shoot::GetStaticDescription() const
 {
-	FString Description = ECsCached::Str::Empty;
+	FString Description = NCsCached::Str::Empty;
 
 	if (Delay > 0.0f)
 		Description += TEXT("Delay: ") + FString::SanitizeFloat(Delay) + TEXT(" ");

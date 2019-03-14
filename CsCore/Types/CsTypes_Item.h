@@ -147,7 +147,7 @@ namespace ECsInventoryItemState_Editor
 
 	FORCEINLINE const FString& ToString(const int32 &State)
 	{
-		FString String = ECsCached::Str::Empty;
+		FString String = NCsCached::Str::Empty;
 		bool IsFirst   = true;
 
 		for (int32 I = 0; I < ECS_INVENTORY_ITEM_STATE_MAX; ++I)
@@ -528,7 +528,7 @@ struct CSCORE_API FCsItemHistory
 	{
 		OwnerId = ECsItemOwnerId::None;
 		OwnerType = EMCsItemOwner::Get().GetMAX();
-		OwnerName = ECsCached::Str::Empty;
+		OwnerName = NCsCached::Str::Empty;
 
 		Members.Reset();
 	}
@@ -623,7 +623,7 @@ struct FCsItemProduct
 
 	void Reset()
 	{
-		Name = ECsCached::Str::Empty;
+		Name = NCsCached::Str::Empty;
 		Id	 = ECsItemOwnerId::None;
 		CurrentHistory.Reset();
 		PreviousHistories.Reset();
@@ -798,8 +798,8 @@ struct CSCORE_API FCsItem
 		Type = EMCsItemType::Get().GetMAX();
 		Id = ECsItemOwnerId::None;
 		ShortCode = CS_INVALID_SHORT_CODE;
-		DisplayName = ECsCached::Str::Empty;
-		FileName = ECsCached::Str::Empty;
+		DisplayName = NCsCached::Str::Empty;
+		FileName = NCsCached::Str::Empty;
 		LifeTime = FTimespan::Zero();
 		Contents.Reset();
 		//Data.Reset();

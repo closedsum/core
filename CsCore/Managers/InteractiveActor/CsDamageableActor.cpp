@@ -29,40 +29,19 @@ namespace NCsDamageableActorCached
 // Enums
 #pragma region
 
-UENUM(BlueprintType)
-namespace ECsDamageableActorRoutine
+	// DamageableActorRoutine
+CS_DEFINE_ENUM_MAP_BODY(EMCsDamageableActorRoutine)
+
+namespace NCsDamageableActorRoutine
 {
-	enum Type
+	namespace Ref
 	{
-		Respawn_Internal				UMETA(DisplayName = "Respawn_Internal"),
-		ECsDamageableActorRoutine_MAX	UMETA(Hidden),
-	};
+		CSCORE_API const Type Respawn_Internal = EMCsDamageableActorRoutine::Get().Add(Type::Respawn_Internal, TEXT("Respawn_Internal"));
+		CSCORE_API const Type ECsDamageableActorRoutine_MAX = EMCsDamageableActorRoutine::Get().Add(Type::ECsDamageableActorRoutine_MAX, TEXT("ECsDamageableActorRoutine_MAX"), TEXT("MAX"));
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsDamageableActorRoutine_MAX;
 }
-
-namespace ECsDamageableActorRoutine
-{
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString Respawn_Internal = TCsString(TEXT("Respawn_Internal"), TEXT("respawn_internal"), TEXT("respawn internal"));
-	}
-
-	inline FString ToString(const Type &EType)
-	{
-		if (EType == Type::Respawn_Internal) { return Str::Respawn_Internal.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	inline Type ToType(const FString &String)
-	{
-		if (String == Str::Respawn_Internal) { return Type::Respawn_Internal; }
-		return Type::ECsDamageableActorRoutine_MAX;
-	}
-}
-
-#define ECS_DAMAGEABLE_ACTOR_ROUTINE_MAX (uint8)ECsDamageableActorRoutine::ECsDamageableActorRoutine_MAX
-typedef ECsDamageableActorRoutine::Type TCsDamageableActorRoutine;
 
 #pragma endregion Enums
 
@@ -75,12 +54,12 @@ ACsDamageableActor::ACsDamageableActor(const FObjectInitializer& ObjectInitializ
 // Routines
 #pragma region
 
-bool ACsDamageableActor::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)
+bool ACsDamageableActor::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8& InType)
 {
 	if (Super::AddRoutine_Internal(Routine, InType))
 		return true;
 
-	const TCsDamageableActorRoutine RoutineType = (TCsDamageableActorRoutine)InType;
+	const ECsDamageableActorRoutine& RoutineType = EMCsDamageableActorRoutine::Get()[InType];
 
 	// Respawn_Internal
 	if (RoutineType == ECsDamageableActorRoutine::Respawn_Internal)
@@ -92,12 +71,12 @@ bool ACsDamageableActor::AddRoutine_Internal(struct FCsRoutine* Routine, const u
 	return false;
 }
 
-bool ACsDamageableActor::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)
+bool ACsDamageableActor::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8& InType)
 {
 	if (Super::RemoveRoutine_Internal(Routine, InType))
 		return true;
 
-	const TCsDamageableActorRoutine RoutineType = (TCsDamageableActorRoutine)InType;
+	const ECsDamageableActorRoutine& RoutineType = EMCsDamageableActorRoutine::Get()[InType];
 
 	// Respawn_Internal
 	if (RoutineType == ECsDamageableActorRoutine::Respawn_Internal)

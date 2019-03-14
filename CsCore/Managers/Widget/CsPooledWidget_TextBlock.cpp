@@ -24,7 +24,7 @@ void UCsPooledWidget_TextBlock::NativeConstruct()
 
 	Text.Set(MyText);
 	const FString& MemberName = ECsPooledWidgetTextBlockCached::Str::Text;
-	Text.Init(MemberName, MemberName, GetName() + ECsCached::Str::Dot + MemberName);
+	Text.Init(MemberName, MemberName, GetName() + NCsCached::Str::Dot + MemberName);
 
 	HasNativeContructed = true;
 }
@@ -47,7 +47,7 @@ void UCsPooledWidget_TextBlock::DeAllocate()
 {
 	Super::DeAllocate();
 
-	Text.SetString(ECsCached::Str::Empty);
+	Text.SetString(NCsCached::Str::Empty);
 }
 
 void UCsPooledWidget_TextBlock::Show()

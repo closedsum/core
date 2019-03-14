@@ -12,15 +12,15 @@ ACsData_Weapon::ACsData_Weapon(const FObjectInitializer& ObjectInitializer)
 // Stats
 #pragma region
 
-const FName& ACsData_Weapon::GetItemShortCode() { return ECsCached::Ref::Name; }
-const bool& ACsData_Weapon::UseInventory() { return ECsCached::Ref::False; }
+const FName& ACsData_Weapon::GetItemShortCode() { return NCsCached::Ref::Name; }
+const bool& ACsData_Weapon::UseInventory() { return NCsCached::Ref::False; }
 
 #pragma endregion Stats
 
 // Mesh
 #pragma region
 
-const bool& ACsData_Weapon::UseMesh() { return ECsCached::Ref::True; }
+const bool& ACsData_Weapon::UseMesh() { return NCsCached::Ref::True; }
 
 USkeletalMesh* ACsData_Weapon::GetMesh(const TCsViewType &ViewType, const bool &IsLow /*=false*/){ return nullptr; }
 USkeletalMesh* ACsData_Weapon::GetMesh(const TEnumAsByte<ECsViewType::Type> &ViewType, const bool &IsLow /*=false*/) { return GetMesh((TCsViewType)ViewType, IsLow); }

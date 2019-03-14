@@ -12,8 +12,8 @@ ACsData_Character::ACsData_Character(const FObjectInitializer& ObjectInitializer
 // Stats
 #pragma region
 
-const int32& ACsData_Character::GetHealth() { return ECsCached::Ref::SInt; }
-const float& ACsData_Character::GetRespawnTime() { return ECsCached::Ref::Float; }
+const int32& ACsData_Character::GetHealth() { return NCsCached::Ref::SInt; }
+const float& ACsData_Character::GetRespawnTime() { return NCsCached::Ref::Float; }
 
 #pragma endregion Stats
 
@@ -27,8 +27,8 @@ FCsInventoryLoadout* ACsData_Character::GetLoadout() { return nullptr; }
 // Collision
 #pragma region
 
-const float& ACsData_Character::GetCapsuleRadius() { return ECsCached::Ref::Float; }
-const float& ACsData_Character::GetCapsuleHalfHeight() { return ECsCached::Ref::Float; }
+const float& ACsData_Character::GetCapsuleRadius() { return NCsCached::Ref::Float; }
+const float& ACsData_Character::GetCapsuleHalfHeight() { return NCsCached::Ref::Float; }
 FCollisionResponseContainer& ACsData_Character::GetCollisionResponseContainer() { return DefaultCollisionResponseContainer; }
 
 FCsHeadCollision* ACsData_Character::GetHeadCollision() { return nullptr; }
@@ -38,20 +38,20 @@ FCsHeadCollision* ACsData_Character::GetHeadCollision() { return nullptr; }
 // Movement
 #pragma region
 
-const float& ACsData_Character::GetMaxWalkSpeed() { return ECsCached::Ref::Float; }
-const float& ACsData_Character::GetMaxAcceleration() { return ECsCached::Ref::Float; }
-const float& ACsData_Character::GetJumpHeight() { return ECsCached::Ref::Float; }
-const float& ACsData_Character::GetJumpZVelocity() { return ECsCached::Ref::Float; }
-const float& ACsData_Character::GetGroundToJumpPeakTime() { return ECsCached::Ref::Float; }
-const float& ACsData_Character::GetGravityScale() { return ECsCached::Ref::Float; }
-const float& ACsData_Character::GetAirControl() { return ECsCached::Ref::Float; }
+const float& ACsData_Character::GetMaxWalkSpeed() { return NCsCached::Ref::Float; }
+const float& ACsData_Character::GetMaxAcceleration() { return NCsCached::Ref::Float; }
+const float& ACsData_Character::GetJumpHeight() { return NCsCached::Ref::Float; }
+const float& ACsData_Character::GetJumpZVelocity() { return NCsCached::Ref::Float; }
+const float& ACsData_Character::GetGroundToJumpPeakTime() { return NCsCached::Ref::Float; }
+const float& ACsData_Character::GetGravityScale() { return NCsCached::Ref::Float; }
+const float& ACsData_Character::GetAirControl() { return NCsCached::Ref::Float; }
 
 #pragma endregion Movement
 
 // Weapon
 #pragma region
 
-const FName& ACsData_Character::GetBoneToAttachWeaponTo() { return ECsCached::Name::None; }
+const FName& ACsData_Character::GetBoneToAttachWeaponTo() { return NCsCached::Name::None; }
 
 #pragma endregion Weapon
 
@@ -763,17 +763,17 @@ void ACsData_Character::StopAnimation(class UObject* InObject, const FECsCharact
 #pragma region
 
 FCsSenseData* ACsData_Character::GetSenseData() { return nullptr; }
-const bool& ACsData_Character::GetUseSenseRadius() { return ECsCached::Ref::False; }
-const float& ACsData_Character::GetSenseRadius() { return ECsCached::Ref::Float; }
-const float& ACsData_Character::GetSenseRadiusSq() { return ECsCached::Ref::Float; }
-const float& ACsData_Character::GetSenseViewMinAngle() { return ECsCached::Ref::Float; }
-const float& ACsData_Character::GetSenseViewMinDot() { return ECsCached::Ref::Float; }
+const bool& ACsData_Character::GetUseSenseRadius() { return NCsCached::Ref::False; }
+const float& ACsData_Character::GetSenseRadius() { return NCsCached::Ref::Float; }
+const float& ACsData_Character::GetSenseRadiusSq() { return NCsCached::Ref::Float; }
+const float& ACsData_Character::GetSenseViewMinAngle() { return NCsCached::Ref::Float; }
+const float& ACsData_Character::GetSenseViewMinDot() { return NCsCached::Ref::Float; }
 
 #pragma endregion Sense
 
 // AI
 #pragma region
 
-const float& ACsData_Character::GetAimTime() { return ECsCached::Ref::Float; }
+const float& ACsData_Character::GetAimTime() { return NCsCached::Ref::Float; }
 
 #pragma endregion AI

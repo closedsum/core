@@ -295,20 +295,20 @@ template<typename T>
 			const FString AssetName	= Member.ToString();
 
 			// (AssetName != TEXT(""))
-			if (AssetName != ECsCached::Str::Empty)
+			if (AssetName != NCsCached::Str::Empty)
 			{
 				InJsonWriter->WriteValue(MemberName, AssetName);
 			}
 			else
 			{
 												//   TEXT("")
-				InJsonWriter->WriteValue(MemberName, ECsCached::Str::Empty);
+				InJsonWriter->WriteValue(MemberName, NCsCached::Str::Empty);
 			}
 		}
 		else
 		{
 											//   TEXT("")
-			InJsonWriter->WriteValue(MemberName, ECsCached::Str::Empty);
+			InJsonWriter->WriteValue(MemberName, NCsCached::Str::Empty);
 		}
 	}
 
@@ -337,20 +337,20 @@ template<typename T>
 			const FString AssetName = AssetSubclassOf.ToString();
 
 			// (AssetName != TEXT(""))
-			if (AssetName != ECsCached::Str::Empty)
+			if (AssetName != NCsCached::Str::Empty)
 			{
 				InJsonWriter->WriteValue(MemberName, AssetName);
 			}
 			else
 			{
 												//   TEXT("")
-				InJsonWriter->WriteValue(MemberName, ECsCached::Str::Empty);
+				InJsonWriter->WriteValue(MemberName, NCsCached::Str::Empty);
 			}
 		}
 		else
 		{
 											//   TEXT("")
-			InJsonWriter->WriteValue(MemberName, ECsCached::Str::Empty);
+			InJsonWriter->WriteValue(MemberName, NCsCached::Str::Empty);
 		}
 	}
 
@@ -407,7 +407,7 @@ template<typename T>
 		{
 			InJsonWriter->WriteObjectStart();
 								//   TEXT("Index")
-			InJsonWriter->WriteValue(ECsCached::Str::Index, MemberName);
+			InJsonWriter->WriteValue(NCsCached::Str::Index, MemberName);
 		}
 		WriteStructToJson(InJsonWriter, (void*)Member, StructProperty->Struct, Internal);
 		InJsonWriter->WriteObjectEnd();
@@ -436,7 +436,7 @@ template<typename T>
 		{
 			InJsonWriter->WriteObjectStart();
 									//   TEXT("Index")
-				InJsonWriter->WriteValue(ECsCached::Str::Index, FString::FromInt(I));
+				InJsonWriter->WriteValue(NCsCached::Str::Index, FString::FromInt(I));
 				WriteStructToJson(InJsonWriter, (void*)&((*Member)[I]), InnerStructProperty->Struct, Internal);
 			InJsonWriter->WriteObjectEnd();
 		}
@@ -1019,10 +1019,10 @@ template<typename T>
 	{
 		const FStringAssetReference& AssetRef = AssetSubclassOf.ToSoftObjectPath();
 		const FString AssetName				  = AssetRef.ToString();
-		FString AssetDescription			  = ECsCached::Str::Empty;
+		FString AssetDescription			  = NCsCached::Str::Empty;
 
 		// (AssetName != TEXT(""))
-		if (AssetName != ECsCached::Str::Empty)
+		if (AssetName != NCsCached::Str::Empty)
 		{
 			AssetDescription = TEXT("Blueprint'") + AssetName + TEXT("'");
 		}
@@ -1046,7 +1046,7 @@ template<typename T>
 			const FString AssetName				 = AssetRef.ToString();
 			
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCached::Str::Empty)
+			if (AssetName == NCsCached::Str::Empty)
 				return;
 
 			OutAssetReferences.AddDefaulted();
@@ -1083,7 +1083,7 @@ template<typename T>
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCached::Str::Empty)
+			if (AssetName == NCsCached::Str::Empty)
 				return;
 
 			OutAssetReferences.AddDefaulted();
@@ -1149,7 +1149,7 @@ template<typename T>
 							const FString AssetName				 = AssetRef.ToString();
 							
 							// (AssetName == TEXT(""))
-							if (AssetName == ECsCached::Str::Empty)
+							if (AssetName == NCsCached::Str::Empty)
 								continue;
 
 							if (CS_TEST_BLUEPRINT_BITFLAG((*MemberLoadFlags)[I], LoadFlags))
@@ -1189,7 +1189,7 @@ template<typename T>
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
-				if (AssetName == ECsCached::Str::Empty)
+				if (AssetName == NCsCached::Str::Empty)
 					continue;
 
 				OutAssetReferences.AddDefaulted();
@@ -1238,7 +1238,7 @@ template<typename T>
 							const FString AssetName				 = AssetRef.ToString();
 
 							// (AssetName == TEXT(""))
-							if (AssetName == ECsCached::Str::Empty)
+							if (AssetName == NCsCached::Str::Empty)
 								continue;
 
 							if (CS_TEST_BLUEPRINT_BITFLAG((*MemberLoadFlags)[I], LoadFlags))
@@ -1280,7 +1280,7 @@ template<typename T>
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
-				if (AssetName == ECsCached::Str::Empty)
+				if (AssetName == NCsCached::Str::Empty)
 					continue;
 
 				OutAssetReferences.AddDefaulted();
@@ -1317,7 +1317,7 @@ template<typename T>
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
-				if (AssetName == ECsCached::Str::Empty)
+				if (AssetName == NCsCached::Str::Empty)
 					continue;
 
 				OutAssetReferences.AddDefaulted();
@@ -1366,7 +1366,7 @@ template<typename T>
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
-				if (AssetName == ECsCached::Str::Empty)
+				if (AssetName == NCsCached::Str::Empty)
 					continue;
 
 				OutAssetReferences.AddDefaulted();
@@ -1420,7 +1420,7 @@ template<typename T>
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
-				if (AssetName == ECsCached::Str::Empty)
+				if (AssetName == NCsCached::Str::Empty)
 					continue;
 
 				OutAssetReferences.AddDefaulted();
@@ -1460,7 +1460,7 @@ template<typename T>
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
-				if (AssetName == ECsCached::Str::Empty)
+				if (AssetName == NCsCached::Str::Empty)
 					continue;
 
 				OutAssetReferences.AddDefaulted();
@@ -1510,7 +1510,7 @@ template<typename T>
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCached::Str::Empty)
+			if (AssetName == NCsCached::Str::Empty)
 				return;
 
 			OutAssetReferences.AddDefaulted();
@@ -1547,7 +1547,7 @@ template<typename T>
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCached::Str::Empty)
+			if (AssetName == NCsCached::Str::Empty)
 				return;
 
 			OutAssetReferences.AddDefaulted();
@@ -1588,7 +1588,7 @@ template<typename T>
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
-				if (AssetName == ECsCached::Str::Empty)
+				if (AssetName == NCsCached::Str::Empty)
 					continue;
 
 				OutAssetReferences.AddDefaulted();
@@ -1630,7 +1630,7 @@ template<typename T>
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
-				if (AssetName == ECsCached::Str::Empty)
+				if (AssetName == NCsCached::Str::Empty)
 					continue;
 
 				OutAssetReferences.AddDefaulted();
@@ -1710,7 +1710,7 @@ template<typename T>
 		const FString& AssetName = AssetPtr.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCached::Str::Empty)
+		if (AssetName == NCsCached::Str::Empty)
 		{
 			Internal = nullptr;
 			return;
@@ -1751,7 +1751,7 @@ template<typename T>
 		const FString& AssetName = AssetPtr->ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCached::Str::Empty)
+		if (AssetName == NCsCached::Str::Empty)
 		{
 			Internal = nullptr;
 			return;
@@ -1792,7 +1792,7 @@ template<typename T>
 		const FString& AssetName = AssetPtr.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCached::Str::Empty)
+		if (AssetName == NCsCached::Str::Empty)
 		{
 			Internal = nullptr;
 			return;
@@ -1839,7 +1839,7 @@ template<typename T>
 		const FString& AssetName = AssetSubclassOf.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCached::Str::Empty)
+		if (AssetName == NCsCached::Str::Empty)
 		{
 			Internal = nullptr;
 			return;
@@ -1880,7 +1880,7 @@ template<typename T>
 		const FString& AssetName = AssetSubclassOf->ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCached::Str::Empty)
+		if (AssetName == NCsCached::Str::Empty)
 		{
 			Internal = nullptr;
 			return;
@@ -1921,7 +1921,7 @@ template<typename T>
 		const FString& AssetName = AssetSubclassOf.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCached::Str::Empty)
+		if (AssetName == NCsCached::Str::Empty)
 		{
 			Internal = nullptr;
 			return;
@@ -1964,7 +1964,7 @@ template<typename T>
 		const FString& AssetName = AssetSubclassOf.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCached::Str::Empty)
+		if (AssetName == NCsCached::Str::Empty)
 			return;
 
 		if (AssetSubclassOf.IsValid() && AssetSubclassOf.Get())
@@ -2065,7 +2065,7 @@ template<typename T>
 				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
-				if (AssetName != ECsCached::Str::Empty)
+				if (AssetName != NCsCached::Str::Empty)
 				{
 					const FString AssetDescription = AssetType + TEXT("'") + AssetName + TEXT("'");
 					T* Data						   = Cast<T>(StaticLoadObject(T::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL));
@@ -2111,7 +2111,7 @@ template<typename T>
 				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
-				if (AssetName != ECsCached::Str::Empty)
+				if (AssetName != NCsCached::Str::Empty)
 				{
 					const FString AssetDescription = AssetType + TEXT("'") + AssetName + TEXT("'");
 					T* Data						   = Cast<T>(StaticLoadObject(T::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL));
@@ -2157,7 +2157,7 @@ template<typename T>
 				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
-				if (AssetName != ECsCached::Str::Empty)
+				if (AssetName != NCsCached::Str::Empty)
 				{
 					const FString AssetDescription = AssetType + TEXT("'") + AssetName + TEXT("'");
 					T* Data						   = Cast<T>(StaticLoadObject(T::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL));
@@ -2232,7 +2232,7 @@ template<typename T>
 				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
-				if (AssetName != ECsCached::Str::Empty)
+				if (AssetName != NCsCached::Str::Empty)
 				{
 					const FString AssetDescription = TEXT("Blueprint'") + AssetName + TEXT("'");
 					UClass* DataClass			   = (UClass*)(StaticLoadObject(UClass::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL));
@@ -2310,7 +2310,7 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (T** Internal = InternalProperty->ContainerPtrToValuePtr<T*>(InObject))
-					LoadTSoftClassPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType);
+					LoadTSoftClassPtr<T>(ObjectName + NCsCached::Str::Dot + MemberName, Member, *Internal, AssetType);
 										//  ObjectName + TEXT(".") + MemberName
 			}
 		}
@@ -2330,7 +2330,7 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (T** Internal = InternalProperty->ContainerPtrToValuePtr<T*>(InObject))
-					LoadTSoftClassPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType);
+					LoadTSoftClassPtr<T>(ObjectName + NCsCached::Str::Dot + MemberName, Member, *Internal, AssetType);
 										//  ObjectName + TEXT(".") + MemberName
 			}
 		}
@@ -2350,7 +2350,7 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (TArray<T*>* Internal = InternalProperty->ContainerPtrToValuePtr<TArray<T*>>(InObject))
-					LoadTArrayTSoftClassPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetErrorMessageType);
+					LoadTArrayTSoftClassPtr<T>(ObjectName + NCsCached::Str::Dot + MemberName, Member, *Internal, AssetErrorMessageType);
 												//ObjectName + TEXT(".") + MemberName
 			}
 		}
@@ -2370,7 +2370,7 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (TArray<T*>* Internal = InternalProperty->ContainerPtrToValuePtr<TArray<T*>>(InObject))
-					LoadTArrayTSoftClassPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetErrorMessageType);
+					LoadTArrayTSoftClassPtr<T>(ObjectName + NCsCached::Str::Dot + MemberName, Member, *Internal, AssetErrorMessageType);
 												//ObjectName + TEXT(".") + MemberName
 			}
 		}
@@ -2390,7 +2390,7 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (T** Internal = InternalProperty->ContainerPtrToValuePtr<T*>(InObject))
-					LoadTSoftObjectPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
+					LoadTSoftObjectPtr<T>(ObjectName + NCsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
 								//   ObjectName + TEXT(".") + MemberName
 			}
 		}
@@ -2410,7 +2410,7 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (T** Internal = InternalProperty->ContainerPtrToValuePtr<T*>(InObject))
-					LoadTSoftObjectPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
+					LoadTSoftObjectPtr<T>(ObjectName + NCsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
 								//   ObjectName + TEXT(".") + MemberName
 			}
 		}
@@ -2436,7 +2436,7 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (TArray<T*>* Internal = InternalProperty->ContainerPtrToValuePtr<TArray<T*>>(InObject))
-					LoadTArrayTSoftObjectPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
+					LoadTArrayTSoftObjectPtr<T>(ObjectName + NCsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
 										// ObjectName + TEXT(".") + MemberName
 			}
 		}
@@ -2456,7 +2456,7 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (TArray<T*>* Internal = InternalProperty->ContainerPtrToValuePtr<TArray<T*>>(InObject))
-					LoadTArrayTSoftObjectPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
+					LoadTArrayTSoftObjectPtr<T>(ObjectName + NCsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
 										// ObjectName + TEXT(".") + MemberName
 			}
 		}

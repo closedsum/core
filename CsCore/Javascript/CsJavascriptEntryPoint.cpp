@@ -36,7 +36,7 @@ namespace ECsJavascriptEntryPointRoutine
 // Cache
 #pragma region
 
-namespace ECsJavascriptEntryPointCached
+namespace NCsJavascriptEntryPointCached
 {
 	namespace Name
 	{
@@ -83,8 +83,8 @@ void ACsJavascriptEntryPoint::Setup()
 	Payload->Type			= ECsJavascriptEntryPointRoutine::Setup_Internal.Value;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsJavascriptEntryPointCached::Name::Setup_Internal;
-	Payload->NameAsString	= ECsJavascriptEntryPointCached::Str::Setup_Internal;
+	Payload->Name			= NCsJavascriptEntryPointCached::Name::Setup_Internal;
+	Payload->NameAsString	= NCsJavascriptEntryPointCached::Str::Setup_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 

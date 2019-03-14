@@ -259,7 +259,7 @@ struct CSCORE_API FCsFpvFxElement
 			return Effect1P.Bone;
 		if (ViewType == ECsViewType::ThirdPerson)
 			return Effect3P.Bone;
-		return ECsCached::Name::None;
+		return NCsCached::Name::None;
 	}
 };
 

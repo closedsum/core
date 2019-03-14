@@ -8,9 +8,6 @@
 #include "Runtime/Core/Public/Containers/UnrealString.h"
 #include "Types/CsTypes_Runnable.h"
 
-DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsRunnableDelegate);
-DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsRunnableDelegate_OnExit);
-
 struct FCsRunnableCache
 {
 public:
@@ -39,13 +36,13 @@ public:
 
 	virtual ~FCsRunnableCache() {}
 
-	void Set(const uint8& InIndex, const FString &InName)
+	void Set(const uint8& InIndex, const FString& InName)
 	{
 		Index = InIndex;
 		Name = InName;
 	}
 
-	void Init(FCsRunnablePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(FCsRunnablePayload* Payload, const float& InTime, const float& InRealTime, const uint64& InFrame)
 	{
 		bAllocated = true;
 		Owner = Payload->GetOwner();
@@ -111,10 +108,15 @@ public:
 
 	void Setup(const uint8& InIndex);
 
-	FBindableEvent_CsRunnableDelegate Delegate;
-	FBindableEvent_CsRunnableDelegate_OnExit Delegate_OnExit;
+	DECLARE_MULTICAST_DELEGATE(FDelegate);
 
-	void Allocate(FCsRunnablePayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame);
+	FDelegate Delegate;
+
+	DECLARE_MULTICAST_DELEGATE(FOnExit);
+
+	FOnExit Delegate_OnExit;
+
+	void Allocate(FCsRunnablePayload* Payload, const float& Time, const float& RealTime, const uint64& Frame);
 	void Start();
 
 	bool bExit;

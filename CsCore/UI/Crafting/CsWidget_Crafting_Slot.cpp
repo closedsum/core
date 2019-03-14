@@ -36,7 +36,7 @@ void UCsWidget_Crafting_Slot::UpdateDisplayNameWithCurrentCount()
 	else
 	{
 				//TEXT("")
-		SetString(ECsCached::Str::Empty);
+		SetString(NCsCached::Str::Empty);
 	}
 }
 

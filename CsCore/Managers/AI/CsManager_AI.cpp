@@ -43,7 +43,7 @@ FString FCsManager_AI::GetObjectName(ACsAIPawn* a)
 	return a->GetName();
 }
 
-void FCsManager_AI::CreatePool(const FECsAIType &e, const int32 &size)
+void FCsManager_AI::CreatePool(const FECsAIType& e, const int32& size)
 {
 	PoolSizes.Add(e, size);
 	PoolIndices.Add(e, 0);
@@ -69,7 +69,7 @@ void FCsManager_AI::CreatePool(const FECsAIType &e, const int32 &size)
 	PoolSize = Pool.Num();
 }
 
-void FCsManager_AI::AddToPool(const FECsAIType &e, ACsAIPawn* a)
+void FCsManager_AI::AddToPool(const FECsAIType& e, ACsAIPawn* a)
 {
 	Super::AddToPool(e, a);
 
@@ -78,33 +78,33 @@ void FCsManager_AI::AddToPool(const FECsAIType &e, ACsAIPawn* a)
 	ControllerPool.Add(controller);
 }
 
-const FString& FCsManager_AI::EnumTypeToString(const FECsAIType &e)
+const FString& FCsManager_AI::EnumTypeToString(const FECsAIType& e)
 {
 	return e.Name;
 }
 
-const FString& FCsManager_AI::EnumTypeToString(const int32 &index)
+const FString& FCsManager_AI::EnumTypeToString(const int32& index)
 {
 	return EMCsAIType::Get().GetEnumAt(index).Name;
 }
 
-void FCsManager_AI::LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ACsAIPawn* o)
+void FCsManager_AI::LogTransaction(const FString& functionName, const ECsPoolTransaction& transaction, ACsAIPawn* o)
 {
 	if ((*LogTransactions)->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		const FString& transactionAsString = ECsPoolTransaction::ToActionString(transaction);
+		const FString& transactionAsString = NCsPoolTransaction::ToActionString(transaction);
 
 		const FString objectName		= GetObjectName(o);
 		const FString typeAsString		= EnumTypeToString(o->Cache.Type);
 		const float currentTime			= GetCurrentTimeSeconds();
 		const UObject* objectOwner		= o->Cache.GetOwner();
-		const FString ownerName			= objectOwner ? objectOwner->GetName() : ECsCached::Str::None;
+		const FString ownerName			= objectOwner ? objectOwner->GetName() : NCsCached::Str::None;
 		const UObject* parent			= o->Cache.GetParent();
-		const FString parentName		= parent ? parent->GetName() : ECsCached::Str::None;
+		const FString parentName		= parent ? parent->GetName() : NCsCached::Str::None;
 		const FString locationAsString	= o->GetActorLocation().ToString();
 		const FString rotationAsString	= o->GetActorRotation().ToString();
 
-		FString log = ECsCached::Str::Empty;
+		FString log = NCsCached::Str::Empty;
 
 		if (objectOwner && parent)
 		{
@@ -174,7 +174,7 @@ void AICsManager_AI::Destroyed()
 	Super::Destroyed();
 }
 
-ACsAIPawn* AICsManager_AI::ConstructObject(const FECsAIType &Type)
+ACsAIPawn* AICsManager_AI::ConstructObject(const FECsAIType& Type)
 {
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -184,22 +184,22 @@ ACsAIPawn* AICsManager_AI::ConstructObject(const FECsAIType &Type)
 	return Actor;
 }
 
-void AICsManager_AI::CreatePool(const FECsAIType &Type, const int32 &Size)
+void AICsManager_AI::CreatePool(const FECsAIType& Type, const int32& Size)
 {
 	Internal->CreatePool(Type, Size);
 }
 
-void AICsManager_AI::AddToPool(const FECsAIType &Type, ACsAIPawn* Actor)
+void AICsManager_AI::AddToPool(const FECsAIType& Type, ACsAIPawn* Actor)
 {
 	Internal->AddToPool(Type, Actor);
 }
 
-void AICsManager_AI::AddToActivePool(const FECsAIType &Type, ACsAIPawn* Actor)
+void AICsManager_AI::AddToActivePool(const FECsAIType& Type, ACsAIPawn* Actor)
 {
 	Internal->AddToActivePool(Type, Actor);
 }
 
-void AICsManager_AI::OnTick(const float &DeltaTime)
+void AICsManager_AI::OnTick(const float& DeltaTime)
 {
 	Internal->OnTick(DeltaTime);
 }
@@ -209,7 +209,7 @@ const TArray<ACsAIPawn*>& AICsManager_AI::GetAllPawns()
 	return Internal->GetAllObjects();
 }
 
-void AICsManager_AI::GetAllActivePawns(TArray<ACsAIPawn*> &OutActors)
+void AICsManager_AI::GetAllActivePawns(TArray<ACsAIPawn*>& OutActors)
 {
 	Internal->GetAllActiveObjects(OutActors);
 }
@@ -219,17 +219,17 @@ const TArray<ACsAIPawn*>* AICsManager_AI::GetPawns(const FECsAIType& Type)
 	return Internal->GetObjects(Type);
 }
 
-int32 AICsManager_AI::GetActivePoolSize(const FECsAIType &Type)
+int32 AICsManager_AI::GetActivePoolSize(const FECsAIType& Type)
 {
 	return Internal->GetActivePoolSize(Type);
 }
 
-bool AICsManager_AI::IsExhausted(const FECsAIType &Type)
+bool AICsManager_AI::IsExhausted(const FECsAIType& Type)
 {
 	return Internal->IsExhausted(Type);
 }
 
-bool AICsManager_AI::DeAllocate(const FECsAIType &Type, const int32 &Index)
+bool AICsManager_AI::DeAllocate(const FECsAIType& Type, const int32& Index)
 {
 	return Internal->DeAllocate(Type, Index);
 }
@@ -244,12 +244,12 @@ FCsAIPawnPayload* AICsManager_AI::AllocatePayload()
 	return Internal->AllocatePayload();
 }
 
-ACsAIPawn* AICsManager_AI::Spawn(const FECsAIType &Type, FCsAIPawnPayload &Payload)
+ACsAIPawn* AICsManager_AI::Spawn(const FECsAIType& Type, FCsAIPawnPayload& Payload)
 {
 	return Internal->Spawn(Type, &Payload);
 }
 
-ACsAIPawn* AICsManager_AI::Spawn(const FECsAIType &Type, FCsAIPawnPayload *Payload)
+ACsAIPawn* AICsManager_AI::Spawn(const FECsAIType& Type, FCsAIPawnPayload *Payload)
 {
 	return Internal->Spawn(Type, Payload);
 }

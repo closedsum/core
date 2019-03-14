@@ -20,15 +20,15 @@ public:
 
 	virtual void DeconstructObject(ACsEmitter* a) override;
 	virtual FString GetObjectName(ACsEmitter* a) override;
-	virtual void LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ACsEmitter* o) override;
+	virtual void LogTransaction(const FString& functionName, const ECsPoolTransaction& transaction, ACsEmitter* o) override;
 	virtual void Log(const FString& log) override;
-	virtual void OnTick(const float &deltaTime) override;
+	virtual void OnTick(const float& deltaTime) override;
 	virtual ACsEmitter* Allocate() override;
 
 #pragma endregion Interface
 
 #if WITH_EDITOR
-	void ToggleEmitterEditorIcons(const bool &toggle);
+	void ToggleEmitterEditorIcons(const bool& toggle);
 #endif // #if WITH_EDITOR
 };
 
@@ -75,13 +75,13 @@ public:
 	virtual ACsEmitter* ConstructObject();
 
 	UFUNCTION(BlueprintCallable, Category = "Manager FX")
-	void CreatePool(const int32 &Size);
+	void CreatePool(const int32& Size);
 	UFUNCTION(BlueprintCallable, Category = "Manager FX")
 	void AddToPool(ACsEmitter* Sound);
 	UFUNCTION(BlueprintCallable, Category = "Manager FX")
 	void AddToActivePool(ACsEmitter* Sound);
 	UFUNCTION(BlueprintCallable, Category = "Manager FX")
-	void OnTick(const float &DeltaTime);
+	void OnTick(const float& DeltaTime);
 
 	const TMap<int32, ACsEmitter*>& GetAllActiveActors();
 
@@ -92,14 +92,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Manager FX")
 	bool IsExhausted();
 	UFUNCTION(BlueprintCallable, Category = "Manager FX")
-	bool DeAllocate(const int32 &Index);
+	bool DeAllocate(const int32& Index);
 	UFUNCTION(BlueprintCallable, Category = "Manager FX")
 	void DeAllocateAll();
 
 	FCsFxPayload* AllocatePayload();
 
 	UFUNCTION(BlueprintCallable, Category = "Manager FX")
-	ACsEmitter* Play(FCsFxPayload &Payload);
+	ACsEmitter* Play(FCsFxPayload& Payload);
 	ACsEmitter* Play(FCsFxPayload* Payload);
 
 	template<typename T>
@@ -109,6 +109,6 @@ public:
 	}
 
 #if WITH_EDITOR
-	void ToggleEmitterEditorIcons(const bool &Toggle);
+	void ToggleEmitterEditorIcons(const bool& Toggle);
 #endif // #if WITH_EDITOR
 };

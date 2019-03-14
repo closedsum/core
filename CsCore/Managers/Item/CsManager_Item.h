@@ -26,7 +26,7 @@ public:
 
 	virtual void Rebuild();
 
-	virtual void OnTick(const float &DeltaSeconds);
+	virtual void OnTick(const float& DeltaSeconds);
 
 // Product
 #pragma region
@@ -48,7 +48,7 @@ public:
 
 	uint16 PoolIndex;
 
-	void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, const FCsItem* const Item);
+	void LogTransaction(const FString& FunctionName, const ECsPoolTransaction& Transaction, const FCsItem* const Item);
 
 	FECsAssetType ItemAssetType;
 	FECsAssetType InteractiveAssetType;
@@ -63,11 +63,11 @@ private:
 public:
 
 	virtual FCsItem* Allocate();
-	virtual FCsItem* Allocate(const FName &ShortCode);
+	virtual FCsItem* Allocate(const FName& ShortCode);
 
 	virtual void SetItemOwnerInfo(FCsItem* Item, UObject* ItemOwner);
 
-	virtual FCsItem* Allocate(const FName &ShortCode, UObject* ItemOwner);
+	virtual FCsItem* Allocate(const FName& ShortCode, UObject* ItemOwner);
 
 	TMap<TCsItemId, FCsItem*> ActiveItems;
 	TMap<TCsItemOwnerId, TArray<FCsItem*>> ActiveItemsByOwnerId;
@@ -84,12 +84,12 @@ public:
 #pragma region
 public:
 
-	virtual FCsItem* GetItem(const TCsItemId &Id);
+	virtual FCsItem* GetItem(const TCsItemId& Id);
 
-	void GetItemsByOwnerType(const FECsItemOwner &OwnerTyper, TArray<FCsItem*> &OutItems);
-	void GetItemsByOwnerId(const TCsItemOwnerId &OwnerId, TArray<FCsItem*> &OutItems);
+	void GetItemsByOwnerType(const FECsItemOwner& OwnerTyper, TArray<FCsItem*>& OutItems);
+	void GetItemsByOwnerId(const TCsItemOwnerId& OwnerId, TArray<FCsItem*>& OutItems);
 
-	void GetItems(const TArray<TCsItemId> &Ids, TArray<FCsItem*> &OutItems);
+	void GetItems(const TArray<TCsItemId>& Ids, TArray<FCsItem*>& OutItems);
 
 #pragma endregion Get
 
@@ -97,7 +97,7 @@ public:
 #pragma region
 public:
 
-	virtual void DeAllocate(const TCsItemId &Id);
+	virtual void DeAllocate(const TCsItemId& Id);
 	virtual void DeAllocate(FCsItem* Item);
 
 	TArray<FCsItem*> DeAllocateQueue;
@@ -112,7 +112,7 @@ public:
 
 	bool Transfer_Internal(FCsItem* Item, UObject* Instigator, class ACsManager_Inventory* Manager_Inventory);
 	virtual bool Transfer(FCsItem* Item, UObject* Instigator);
-	virtual bool Transfer(TArray<FCsItem*> &Items, UObject* Instigator, const TCsPoolTransactionOrder &Order);
+	virtual bool Transfer(TArray<FCsItem*>& Items, UObject* Instigator, const ECsPoolTransactionOrder& Order);
 
 #pragma endregion Transfer
 
@@ -125,7 +125,7 @@ public:
 	UPROPERTY()
 	FString RootSaveDirectory;
 
-	void SetRootSaveDirectory(const FString &Directory);
+	void SetRootSaveDirectory(const FString& Directory);
 
 	UPROPERTY()
 	FString SaveDirectory;
@@ -135,8 +135,8 @@ public:
 	FString GetSavePath();
 
 	virtual void Save(FCsItem* Item);
-	virtual void SaveProduct(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemProduct* Product);
-	virtual void SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemHistory* ItemHistory);
+	virtual void SaveProduct(TSharedRef<TJsonWriter<TCHAR>>& JsonWriter, FCsItemProduct* Product);
+	virtual void SaveHistory(TSharedRef<TJsonWriter<TCHAR>>& JsonWriter, FCsItemHistory* ItemHistory);
 
 	void SaveActiveItems();
 	
@@ -178,8 +178,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Load")
 	FBindableDynEvent_CsManagerItem_OnPopulateExistingItems OnPopulateExistingItems_ScriptEvent;
 
-	virtual void LoadProduct(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemProduct* Product);
-	virtual void LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemHistory* ItemHistory);
+	virtual void LoadProduct(TSharedPtr<class FJsonObject>& JsonObject, FCsItem* Item, FCsItemProduct* Product);
+	virtual void LoadHistory(TSharedPtr<class FJsonObject>& JsonObject, FCsItem* Item, FCsItemHistory* ItemHistory);
 
 	virtual void InitInventory(class ACsManager_Inventory* Manager_Inventory);
 	virtual void AsyncInitInventory(class ACsManager_Inventory* Manager_Inventory);
@@ -197,7 +197,7 @@ public:
 #pragma region
 public:
 
-	void RecordItemsInteraction(const TArray<FCsItem*> &Items, const FECsItemInteraction &Interaction);
+	void RecordItemsInteraction(const TArray<FCsItem*>& Items, const FECsItemInteraction& Interaction);
 	virtual void RecordItemInteraction(FCsItem* Item, const FECsItemInteraction& Interaction);
 
 #pragma endregion Action

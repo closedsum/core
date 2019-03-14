@@ -88,7 +88,7 @@ FCsStringParagraph NCsStringParagraphHelper::CreateOneWordParagraph(const FStrin
 void FCsStringHelper::GetLines(const FString& Input, TArray<FString> &OutLines)
 {
 	int32 Index = INDEX_NONE;
-	FString EscapeChar = ECsCached::Str::Empty;
+	FString EscapeChar = NCsCached::Str::Empty;
 
 	GetLineTerminatingIndexAndCharacter(Input, Index, EscapeChar);
 
@@ -116,7 +116,7 @@ void FCsStringHelper::GetLines(const FString& Input, TArray<FString> &OutLines)
 void FCsStringHelper::GetLineTerminatingIndexAndCharacter(const FString &Input, int32 &OutIndex, FString &OutEscapeChar)
 {
 	OutIndex = INDEX_NONE;
-	OutEscapeChar = ECsCached::Str::Empty;
+	OutEscapeChar = NCsCached::Str::Empty;
 
 	TArray<FString> Chars;
 

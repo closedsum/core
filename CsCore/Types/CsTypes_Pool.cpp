@@ -1,17 +1,33 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Pool.h"
 
-// PoolTransactionOrder
-EMCsPoolTransactionOrder* EMCsPoolTransactionOrder::Instance;
+// PoolTransaction
+CS_DEFINE_ENUM_MAP_BODY(EMCsPoolTransaction)
 
-EMCsPoolTransactionOrder& EMCsPoolTransactionOrder::Get()
+namespace NCsPoolTransaction
 {
-	if (!Instance)
-		Instance = new EMCsPoolTransactionOrder();
-	return *Instance;
+	namespace Ref
+	{
+		CSCORE_API const Type Allocate = EMCsPoolTransaction::Get().Add(Type::Allocate, TEXT("Allocate"));
+		CSCORE_API const Type PreDeallocate = EMCsPoolTransaction::Get().Add(Type::PreDeallocate, TEXT("PreDeallocate"));
+		CSCORE_API const Type Deallocate = EMCsPoolTransaction::Get().Add(Type::Deallocate, TEXT("Deallocate"));
+		CSCORE_API const Type ECsPoolTransaction_MAX = EMCsPoolTransaction::Get().Add(Type::ECsPoolTransaction_MAX, TEXT("ECsPoolTransaction_MAX"), TEXT("MAX"));
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsPoolTransaction_MAX;
+
+	namespace Str
+	{
+		CSCORE_API const TCsString Allocate = TCsString(TEXT("Allocate"), TEXT("allocate"), TEXT("Allocating"));
+		CSCORE_API const TCsString PreDeallocate = TCsString(TEXT("PreDeallocate"), TEXT("predeallocate"), TEXT("PreDeallocating"));
+		CSCORE_API const TCsString Deallocate = TCsString(TEXT("Deallocate"), TEXT("deallocate"), TEXT("Deallocating"));
+	}
 }
 
-namespace ECsPoolTransactionOrder
+// PoolTransactionOrder
+CS_DEFINE_ENUM_MAP_BODY(EMCsPoolTransactionOrder)
+
+namespace NCsPoolTransactionOrder
 {
 	namespace Ref
 	{
@@ -19,6 +35,8 @@ namespace ECsPoolTransactionOrder
 		CSCORE_API const Type FillOrKill = EMCsPoolTransactionOrder::Get().Add(Type::FillOrKill, TEXT("FillOrKill"), TEXT("Fill or Kill"));
 		CSCORE_API const Type ECsPoolTransactionOrder_MAX = EMCsPoolTransactionOrder::Get().Add(Type::ECsPoolTransactionOrder_MAX, TEXT("ECsPoolTransactionOrder_MAX"), TEXT("MAX"));
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsPoolTransactionOrder_MAX;
 }
 
 // PoolObjectState

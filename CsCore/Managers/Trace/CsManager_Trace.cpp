@@ -8,7 +8,7 @@
 // Cache
 #pragma region
 
-namespace ECsManagerTraceCached
+namespace NCsManagerTraceCached
 {
 	namespace Str
 	{
@@ -19,6 +19,32 @@ namespace ECsManagerTraceCached
 }
 
 #pragma endregion Cache
+
+// Enums
+#pragma region
+
+	// TraceTransaction
+CS_DEFINE_ENUM_MAP_BODY(EMCsTraceTransaction)
+
+namespace NCsTraceTransaction
+{
+	namespace Ref
+	{
+		CSCORE_API const Type Add = EMCsTraceTransaction::Get().Add(Type::Add, TEXT("Add"));
+		CSCORE_API const Type Complete = EMCsTraceTransaction::Get().Add(Type::Complete, TEXT("Complete"));
+		CSCORE_API const Type ECsTraceTransaction_MAX = EMCsTraceTransaction::Get().Add(Type::ECsTraceTransaction_MAX, TEXT("ECsTraceTransaction_MAX"), TEXT("MAX"));
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsTraceTransaction_MAX;
+
+	namespace Str
+	{
+		CSCORE_API const TCsString Add = TCsString(TEXT("Add"), TEXT("add"), TEXT("Adding"));
+		CSCORE_API const TCsString Complete = TCsString(TEXT("Complete"), TEXT("complete"), TEXT("Completing"));
+	}
+}
+
+#pragma endregion Enums
 
 ACsManager_Trace::ACsManager_Trace(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -530,7 +556,7 @@ void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
-	LogTransaction(ECsManagerTraceCached::Str::OnTraceResponse, ECsTraceTransaction::Complete, Request, Response);
+	LogTransaction(NCsManagerTraceCached::Str::OnTraceResponse, ECsTraceTransaction::Complete, Request, Response);
 
 	// Broadcast Response
 	Request->OnResponse_Event.Broadcast(Request->Id, Response);
@@ -715,19 +741,19 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 	return nullptr;
 }
 
-void ACsManager_Trace::LogTransaction(const FString &FunctionName, const TCsTraceTransaction &Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response)
+void ACsManager_Trace::LogTransaction(const FString& FunctionName, const ECsTraceTransaction& Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response)
 {
 #if !UE_BUILD_SHIPPING
 	if (CsCVarLogManagerTraceTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 	{
 		/*
-		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
+		const FString& TransactionAsString = NCsPoolTransaction::ToActionString(Transaction);
 
 		const FString ItemName				  = Item->ShortCode.ToString();
 		const FString Id					  = FString::Printf(TEXT("%llu"), Item->UniqueId);
 		const FString DataName				  = Item->GetData()->ShortCode.ToString();
 		const ACsData_Interactive* Data_Actor = Item->GetData_Actor();
-		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : ECsCached::Str::Empty;
+		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : NCsCached::Str::Empty;
 		const float CurrentTime				  = GetWorld()->GetTimeSeconds();
 
 		if (Data_Actor)

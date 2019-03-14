@@ -27,7 +27,7 @@ public:
 			return EnumStructMap::Get()[Name];
 
 		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Enum::%s: Enum of type %s and Name: %s does NOT exist."), *FunctionName, *EnumStructName, *Name);
-		return EnumStruct(0, ECsCached::Str::INVALID);
+		return EnumStruct(0, NCsCached::Str::INVALID);
 	}
 
 	template<typename EnumStructMap, typename EnumStruct>
@@ -39,7 +39,7 @@ public:
 			return EnumStructMap::Get().GetEnumAt(Index);
 
 		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Enum::%s: Enum of type %s and Index: %d (%d >= %d) does NOT exist."), *FunctionName, *EnumStructName, Index, Index, Count);
-		return EnumStruct(0, ECsCached::Str::INVALID);
+		return EnumStruct(0, NCsCached::Str::INVALID);
 	}
 
 	template<typename EnumStructMap, typename EnumStruct>

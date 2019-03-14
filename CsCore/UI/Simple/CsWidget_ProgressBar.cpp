@@ -23,7 +23,7 @@ void UCsWidget_ProgressBar::OnNativeConstruct()
 	Bar.Set(MyBar);
 	const FString& BarName   = ECsWidgetProgressBarCached::Str::Bar;
 	const FString& MyBarName = ECsWidgetProgressBarCached::Str::MyBar;
-	Bar.Init(BarName, MyBarName, GetName() + ECsCached::Str::Dot + BarName);
+	Bar.Init(BarName, MyBarName, GetName() + NCsCached::Str::Dot + BarName);
 }
 
 void UCsWidget_ProgressBar::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)

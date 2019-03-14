@@ -298,15 +298,15 @@ public:
 	{
 		Super::Reset();
 
-		Name = ECsCached::Str::Empty;
-		URL = ECsCached::Str::Empty;
-		Params = ECsCached::Str::Empty;
+		Name = NCsCached::Str::Empty;
+		URL = NCsCached::Str::Empty;
+		Params = NCsCached::Str::Empty;
 		bLaunchDetached = false;
 		bLaunchHidden = false;
 		bLaunchReallyHidden = false;
 		PriorityModifier = ECsProcessPriorityModifier::Normal;
 		bOptionalWorkingDirectory = false;
-		OptionalWorkingDirectory = ECsCached::Str::Empty;
+		OptionalWorkingDirectory = NCsCached::Str::Empty;
 	}
 };
 
@@ -364,15 +364,15 @@ struct FCsProcessCache : public FCsPooledObjectCache
 	{
 		FCsPooledObjectCache::Reset();
 
-		Name = ECsCached::Str::Empty;
-		URL = ECsCached::Str::Empty;
-		Params = ECsCached::Str::Empty;
+		Name = NCsCached::Str::Empty;
+		URL = NCsCached::Str::Empty;
+		Params = NCsCached::Str::Empty;
 		bLaunchDetached = false;
 		bLaunchHidden = false;
 		bLaunchReallyHidden = false;
 		PriorityModifier = ECsProcessPriorityModifier::Normal;
 		bOptionalWorkingDirectory = false;
-		OptionalWorkingDirectory = ECsCached::Str::Empty;
+		OptionalWorkingDirectory = NCsCached::Str::Empty;
 	}
 };
 
@@ -401,11 +401,11 @@ public:
 #pragma region
 public:
 
-	static void AddRoutine(UObject* InProcess, struct FCsRoutine* Routine, const uint8 &Type);
-	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+	static void AddRoutine(UObject* InProcess, struct FCsRoutine* Routine, const uint8& Type);
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8& Type);
 
-	static void RemoveRoutine(UObject* InProcess, struct FCsRoutine* Routine, const uint8 &Type);
-	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+	static void RemoveRoutine(UObject* InProcess, struct FCsRoutine* Routine, const uint8& Type);
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8& Type);
 
 #pragma endregion Routines
 
@@ -421,7 +421,7 @@ public:
 	bool ReadFlag;
 
 	UFUNCTION(BlueprintCallable, Category = "Process")
-	void RunCommand(const FString &Command);
+	void RunCommand(const FString& Command);
 	
 // Read / Output
 #pragma region
@@ -440,9 +440,9 @@ private:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Process")
-	void AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent &Event);
-	void ProcessMonitorOuputEvents(const FString &Output);
-	void OnOutputRecieved(const FString &Output);
+	void AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent& Event);
+	void ProcessMonitorOuputEvents(const FString& Output);
+	void OnOutputRecieved(const FString& Output);
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnOutputRecieved, const FString&);
 

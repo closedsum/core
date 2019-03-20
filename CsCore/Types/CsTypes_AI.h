@@ -41,11 +41,6 @@ struct CSCORE_API EMCsAIState : public TCsEnumStructMap<FECsAIState, uint8>
 	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsAIState)
 };
 
-namespace ECsAISetup
-{
-	enum Type : uint8;
-}
-
 	// AISetup
 
 USTRUCT(BlueprintType)

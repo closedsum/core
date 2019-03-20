@@ -47,7 +47,7 @@ void FCsEthereumWeb3DeployLink::Set(const FECsBlockchainContract &InContract, co
 // Cache
 #pragma region
 
-namespace ECsEthereumContractCache
+namespace NCsEthereumContractCache
 {
 	namespace Str
 	{
@@ -97,36 +97,36 @@ FString CsEthereumContract::ToString()
 	JsonWriter->WriteObjectStart();
 
 	// Name
-	JsonWriter->WriteValue(ECsEthereumContractCache::Str::Name, Name);
+	JsonWriter->WriteValue(NCsEthereumContractCache::Str::Name, Name);
 	// Address
-	JsonWriter->WriteValue(ECsEthereumContractCache::Str::Address, Address);
+	JsonWriter->WriteValue(NCsEthereumContractCache::Str::Address, Address);
 	// ContractVariableName
-	JsonWriter->WriteValue(ECsEthereumContractCache::Str::ContractVariableName, ContractVariableName);
+	JsonWriter->WriteValue(NCsEthereumContractCache::Str::ContractVariableName, ContractVariableName);
 	// InstanceVariableName
-	JsonWriter->WriteValue(ECsEthereumContractCache::Str::InstanceVariableName, InstanceVariableName);
+	JsonWriter->WriteValue(NCsEthereumContractCache::Str::InstanceVariableName, InstanceVariableName);
 
 	// ABI
 	{
-		JsonWriter->WriteArrayStart(ECsEthereumContractCache::Str::ABI);
+		JsonWriter->WriteArrayStart(NCsEthereumContractCache::Str::ABI);
 
 		for (const FCsEthereumABI& A : ABI)
 		{
 			JsonWriter->WriteObjectStart();
 
 			// constant
-			JsonWriter->WriteValue(ECsEthereumContractCache::Str::constant, A.constant);
+			JsonWriter->WriteValue(NCsEthereumContractCache::Str::constant, A.constant);
 			// inputs
 			{
-				JsonWriter->WriteArrayStart(ECsEthereumContractCache::Str::inputs);
+				JsonWriter->WriteArrayStart(NCsEthereumContractCache::Str::inputs);
 
 				for (const FCsEthereumABIInput& Input : A.inputs)
 				{
 					JsonWriter->WriteObjectStart();
 
 					// name
-					JsonWriter->WriteValue(ECsEthereumContractCache::Str::name, Input.name);
+					JsonWriter->WriteValue(NCsEthereumContractCache::Str::name, Input.name);
 					// type
-					JsonWriter->WriteValue(ECsEthereumContractCache::Str::type, Input.type);
+					JsonWriter->WriteValue(NCsEthereumContractCache::Str::type, Input.type);
 
 					JsonWriter->WriteObjectEnd();
 				}
@@ -134,19 +134,19 @@ FString CsEthereumContract::ToString()
 				JsonWriter->WriteArrayEnd();
 			}
 			// name
-			JsonWriter->WriteValue(ECsEthereumContractCache::Str::name, A.name);
+			JsonWriter->WriteValue(NCsEthereumContractCache::Str::name, A.name);
 			// outputs
 			{
-				JsonWriter->WriteArrayStart(ECsEthereumContractCache::Str::outputs);
+				JsonWriter->WriteArrayStart(NCsEthereumContractCache::Str::outputs);
 
 				for (const FCsEthereumABIOutput& Output : A.outputs)
 				{
 					JsonWriter->WriteObjectStart();
 
 					// name
-					JsonWriter->WriteValue(ECsEthereumContractCache::Str::name, Output.name);
+					JsonWriter->WriteValue(NCsEthereumContractCache::Str::name, Output.name);
 					// type
-					JsonWriter->WriteValue(ECsEthereumContractCache::Str::type, Output.type);
+					JsonWriter->WriteValue(NCsEthereumContractCache::Str::type, Output.type);
 
 					JsonWriter->WriteObjectEnd();
 				}
@@ -154,11 +154,11 @@ FString CsEthereumContract::ToString()
 				JsonWriter->WriteArrayEnd();
 			}
 			// payable
-			JsonWriter->WriteValue(ECsEthereumContractCache::Str::payable, A.payable);
+			JsonWriter->WriteValue(NCsEthereumContractCache::Str::payable, A.payable);
 			// stateMutability
-			JsonWriter->WriteValue(ECsEthereumContractCache::Str::stateMutability, A.stateMutability);
+			JsonWriter->WriteValue(NCsEthereumContractCache::Str::stateMutability, A.stateMutability);
 			// type
-			JsonWriter->WriteValue(ECsEthereumContractCache::Str::type, A.type);
+			JsonWriter->WriteValue(NCsEthereumContractCache::Str::type, A.type);
 
 			JsonWriter->WriteObjectEnd();
 		}
@@ -183,19 +183,19 @@ void CsEthereumContract::Parse(const FString &Str)
 	{
 
 		// Name
-		Name = JsonParsed->GetStringField(ECsEthereumContractCache::Str::Name);
+		Name = JsonParsed->GetStringField(NCsEthereumContractCache::Str::Name);
 		// Address
-		Address		 = JsonParsed->GetStringField(ECsEthereumContractCache::Str::Address);
+		Address		 = JsonParsed->GetStringField(NCsEthereumContractCache::Str::Address);
 		AddressAsArg = TEXT("'0x") + Address + TEXT("'");
 		// ContractVariableName
-		ContractVariableName = JsonParsed->GetStringField(ECsEthereumContractCache::Str::ContractVariableName);
+		ContractVariableName = JsonParsed->GetStringField(NCsEthereumContractCache::Str::ContractVariableName);
 		// InstanceVariableName
-		InstanceVariableName = JsonParsed->GetStringField(ECsEthereumContractCache::Str::InstanceVariableName);
+		InstanceVariableName = JsonParsed->GetStringField(NCsEthereumContractCache::Str::InstanceVariableName);
 		// ABI
 		{
 			ABI.Reset();
 
-			const TArray<TSharedPtr<FJsonValue>>& JsonArray = JsonParsed->Values.Find(ECsEthereumContractCache::Str::ABI)->Get()->AsArray();
+			const TArray<TSharedPtr<FJsonValue>>& JsonArray = JsonParsed->Values.Find(NCsEthereumContractCache::Str::ABI)->Get()->AsArray();
 
 			const int32 Count = JsonArray.Num();
 
@@ -207,14 +207,14 @@ void CsEthereumContract::Parse(const FString &Str)
 				const TSharedPtr<FJsonObject>& JsonObject = JsonValue->AsObject();
 
 				// constant
-				JsonObject->TryGetBoolField(ECsEthereumContractCache::Str::constant, ABI[I].constant);
+				JsonObject->TryGetBoolField(NCsEthereumContractCache::Str::constant, ABI[I].constant);
 				// inputs
 				{
 					ABI[I].inputs.Reset();
 
 					const TArray<TSharedPtr<FJsonValue>>* ArrayPtr;
 					
-					if (JsonObject->TryGetArrayField(ECsEthereumContractCache::Str::inputs, ArrayPtr))
+					if (JsonObject->TryGetArrayField(NCsEthereumContractCache::Str::inputs, ArrayPtr))
 					{
 						const TArray<TSharedPtr<FJsonValue>>& Array = *ArrayPtr;
 
@@ -228,21 +228,21 @@ void CsEthereumContract::Parse(const FString &Str)
 							const TSharedPtr<FJsonObject>& Object = Value->AsObject();
 
 							// name
-							ABI[I].inputs[J].name = Object->GetStringField(ECsEthereumContractCache::Str::name);
+							ABI[I].inputs[J].name = Object->GetStringField(NCsEthereumContractCache::Str::name);
 							// type
-							ABI[I].inputs[J].type = Object->GetStringField(ECsEthereumContractCache::Str::type);
+							ABI[I].inputs[J].type = Object->GetStringField(NCsEthereumContractCache::Str::type);
 						}
 					}
 				}
 				// name
-				JsonObject->TryGetStringField(ECsEthereumContractCache::Str::name, ABI[I].name);
+				JsonObject->TryGetStringField(NCsEthereumContractCache::Str::name, ABI[I].name);
 				// outputs
 				{
 					ABI[I].outputs.Reset();
 
 					const TArray<TSharedPtr<FJsonValue>>* ArrayPtr;
 
-					if (JsonObject->TryGetArrayField(ECsEthereumContractCache::Str::outputs, ArrayPtr))
+					if (JsonObject->TryGetArrayField(NCsEthereumContractCache::Str::outputs, ArrayPtr))
 					{
 						const TArray<TSharedPtr<FJsonValue>>& Array = *ArrayPtr;
 
@@ -256,18 +256,18 @@ void CsEthereumContract::Parse(const FString &Str)
 							const TSharedPtr<FJsonObject>& Object = Value->AsObject();
 
 							// name
-							ABI[I].outputs[J].name = Object->GetStringField(ECsEthereumContractCache::Str::name);
+							ABI[I].outputs[J].name = Object->GetStringField(NCsEthereumContractCache::Str::name);
 							// type
-							ABI[I].outputs[J].type = Object->GetStringField(ECsEthereumContractCache::Str::type);
+							ABI[I].outputs[J].type = Object->GetStringField(NCsEthereumContractCache::Str::type);
 						}
 					}
 				}
 				// payable
-				JsonObject->TryGetBoolField(ECsEthereumContractCache::Str::payable, ABI[I].payable);
+				JsonObject->TryGetBoolField(NCsEthereumContractCache::Str::payable, ABI[I].payable);
 				// stateMutability
-				JsonObject->TryGetStringField(ECsEthereumContractCache::Str::stateMutability, ABI[I].stateMutability);
+				JsonObject->TryGetStringField(NCsEthereumContractCache::Str::stateMutability, ABI[I].stateMutability);
 				// type
-				JsonObject->TryGetStringField(ECsEthereumContractCache::Str::type, ABI[I].type);
+				JsonObject->TryGetStringField(NCsEthereumContractCache::Str::type, ABI[I].type);
 			}
 		}
 	}

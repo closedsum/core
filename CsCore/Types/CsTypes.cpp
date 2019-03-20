@@ -284,3 +284,35 @@ namespace NCsColor
 }
 
 #pragma endregion Color
+
+// AttachmentTransformRules
+CS_DEFINE_ENUM_MAP_BODY(EMCsAttachmentTransformRules)
+
+namespace NCsAttachmentTransformRules
+{
+	namespace Ref
+	{
+		CSCORE_API const Type KeepRelativeTransform = EMCsAttachmentTransformRules::Get().Add(Type::KeepRelativeTransform, TEXT("KeepRelativeTransform"));
+		CSCORE_API const Type KeepWorldTransform = EMCsAttachmentTransformRules::Get().Add(Type::KeepWorldTransform, TEXT("KeepWorldTransform"));
+		CSCORE_API const Type SnapToTargetNotIncludingScale = EMCsAttachmentTransformRules::Get().Add(Type::SnapToTargetNotIncludingScale, TEXT("SnapToTargetNotIncludingScale"));
+		CSCORE_API const Type SnapToTargetIncludingScale = EMCsAttachmentTransformRules::Get().Add(Type::SnapToTargetIncludingScale, TEXT("SnapToTargetIncludingScale"));
+		CSCORE_API const Type ECsAttachmentTransformRules_MAX = EMCsAttachmentTransformRules::Get().Add(Type::ECsAttachmentTransformRules_MAX, TEXT("ECsAttachmentTransformRules_MAX"), TEXT("MAX"));
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsAttachmentTransformRules_MAX;
+}
+
+// DetachmentTransformRules
+CS_DEFINE_ENUM_MAP_BODY(EMCsDetachmentTransformRules)
+
+namespace NCsDetachmentTransformRules
+{
+	namespace Ref
+	{
+		CSCORE_API const Type KeepRelativeTransform = EMCsDetachmentTransformRules::Get().Add(Type::KeepRelativeTransform, TEXT("KeepRelativeTransform"));
+		CSCORE_API const Type KeepWorldTransform = EMCsDetachmentTransformRules::Get().Add(Type::KeepWorldTransform, TEXT("KeepWorldTransform"));
+		CSCORE_API const Type ECsDetachmentTransformRules_MAX = EMCsDetachmentTransformRules::Get().Add(Type::ECsDetachmentTransformRules_MAX, TEXT("ECsDetachmentTransformRules_MAX"), TEXT("MAX"));
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsDetachmentTransformRules_MAX;
+}

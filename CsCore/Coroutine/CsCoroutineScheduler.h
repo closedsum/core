@@ -111,7 +111,7 @@ namespace NCsCoroutineCached
 
 struct FCsCoroutinePayload
 {
-	bool IsAllocated;
+	bool bAllocated;
 
 	ECsCoroutineSchedule Schedule;
 
@@ -138,7 +138,7 @@ struct FCsCoroutinePayload
 
 	void Reset()
 	{
-		IsAllocated = false;
+		bAllocated = false;
 
 		Schedule = ECsCoroutineSchedule::ECsCoroutineSchedule_MAX;
 		Function = nullptr;

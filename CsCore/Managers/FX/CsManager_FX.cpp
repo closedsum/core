@@ -95,11 +95,11 @@ void FCsManager_FX::OnTick(const float& deltaTime)
 
 		// Check if ObjectType was DeAllocated NOT in a normal way (i.e. Out of Bounds)
 
-		if (!o->Cache.IsAllocated)
+		if (!o->Cache.bAllocated)
 		{
 			OnTick_Log_PrematureDeAllocation(o);
 
-			LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
+			LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
 			ActiveObjects.Remove(key);
 			continue;
@@ -116,7 +116,7 @@ void FCsManager_FX::OnTick(const float& deltaTime)
 		{
 			if (GetCurrentTimeSeconds() - o->Cache.DeathStartTime > o->Cache.DeathTime)
 			{
-				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
+				LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
 				o->DeAllocate();
 				ActiveObjects.Remove(key);
@@ -131,13 +131,13 @@ void FCsManager_FX::OnTick(const float& deltaTime)
 			{
 				if (o->Cache.DeathTime > 0.0f)
 				{
-					LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::PreDeallocate, o);
+					LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::PreDeallocate, o);
 
 					o->StartDeath();
 				}
 				else
 				{
-					LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
+					LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
 					o->DeAllocate();
 					ActiveObjects.Remove(key);
@@ -167,9 +167,9 @@ ACsEmitter* FCsManager_FX::Allocate()
 			oldestTime = e->Cache.Time;
 		}
 
-		if (!e->Cache.IsAllocated)
+		if (!e->Cache.bAllocated)
 		{
-			e->Cache.IsAllocated = true;
+			e->Cache.bAllocated = true;
 			return e;
 		}
 	}

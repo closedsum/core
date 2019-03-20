@@ -642,7 +642,7 @@ struct CSCORE_API FCsItem
 	uint16 Index;
 
 	UPROPERTY()
-	bool IsAllocated;
+	bool bAllocated;
 	UPROPERTY()
 	bool IsSaved;
 
@@ -793,7 +793,7 @@ struct CSCORE_API FCsItem
 
 	void Reset()
 	{
-		IsAllocated = false;
+		bAllocated = false;
 		IsSaved = false;
 		Type = EMCsItemType::Get().GetMAX();
 		Id = ECsItemOwnerId::None;

@@ -59,7 +59,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	{
 		Relevance = Payload->Relevance;
 
-		IsAllocated = true;
+		bAllocated = true;
 
 		Instigator = Payload->Instigator;
 		Owner	   = Payload->Owner;

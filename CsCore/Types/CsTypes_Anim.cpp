@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Anim.h"
 
-namespace ECsAnimCached
+namespace NCsAnimCached
 {
 	namespace Str
 	{
@@ -21,16 +21,9 @@ namespace ECsAnimCached
 }
 
 // FpvAnimMember
-EMCsFpvAnimMember* EMCsFpvAnimMember::Instance;
+CS_DEFINE_ENUM_MAP_BODY(EMCsFpvAnimMember)
 
-EMCsFpvAnimMember& EMCsFpvAnimMember::Get()
-{
-	if (!Instance)
-		Instance = new EMCsFpvAnimMember();
-	return *Instance;
-}
-
-namespace ECsFpvAnimMember
+namespace NCsFpvAnimMember
 {
 	namespace Ref
 	{
@@ -40,41 +33,31 @@ namespace ECsFpvAnimMember
 		CSCORE_API const Type AnimVR = EMCsFpvAnimMember::Get().Add(Type::AnimVR, TEXT("AnimVR"), TEXT("Anim VR"));
 		CSCORE_API const Type ECsFpvAnimMember_MAX = EMCsFpvAnimMember::Get().Add(Type::ECsFpvAnimMember_MAX, TEXT("ECsFpvAnimMember_MAX"), TEXT("MAX"));
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsFpvAnimMember_MAX;
 }
 
 // FpvAnimBlueprintMember
-EMCsFpvAnimBlueprintMember* EMCsFpvAnimBlueprintMember::Instance;
+CS_DEFINE_ENUM_MAP_BODY(EMCsFpvAnimBlueprintMember)
 
-EMCsFpvAnimBlueprintMember& EMCsFpvAnimBlueprintMember::Get()
-{
-	if (!Instance)
-		Instance = new EMCsFpvAnimBlueprintMember();
-	return *Instance;
-}
-
-namespace ECsFpvAnimBlueprintMember
+namespace NCsFpvAnimBlueprintMember
 {
 	namespace Ref
 	{
-		extern CSCORE_API const Type Blueprint1P = EMCsFpvAnimBlueprintMember::Get().Add(Type::Blueprint1P, TEXT("Blueprint1P"), TEXT("Blueprint 1P"));
-		extern CSCORE_API const Type Blueprint3P = EMCsFpvAnimBlueprintMember::Get().Add(Type::Blueprint3P, TEXT("Blueprint3P"), TEXT("Blueprint 3P"));
-		extern CSCORE_API const Type Blueprint3P_Low = EMCsFpvAnimBlueprintMember::Get().Add(Type::Blueprint3P_Low, TEXT("Blueprint3P_Low"), TEXT("Blueprint 3P Low"));
-		extern CSCORE_API const Type BlueprintVR = EMCsFpvAnimBlueprintMember::Get().Add(Type::BlueprintVR, TEXT("BlueprintVR"), TEXT("Blueprint VR"));
-		extern CSCORE_API const Type ECsFpvAnimBlueprintMember_MAX = EMCsFpvAnimBlueprintMember::Get().Add(Type::ECsFpvAnimBlueprintMember_MAX, TEXT("ECsFpvAnimBlueprintMember_MAX"), TEXT("MAX"));
+		CSCORE_API const Type Blueprint1P = EMCsFpvAnimBlueprintMember::Get().Add(Type::Blueprint1P, TEXT("Blueprint1P"), TEXT("Blueprint 1P"));
+		CSCORE_API const Type Blueprint3P = EMCsFpvAnimBlueprintMember::Get().Add(Type::Blueprint3P, TEXT("Blueprint3P"), TEXT("Blueprint 3P"));
+		CSCORE_API const Type Blueprint3P_Low = EMCsFpvAnimBlueprintMember::Get().Add(Type::Blueprint3P_Low, TEXT("Blueprint3P_Low"), TEXT("Blueprint 3P Low"));
+		CSCORE_API const Type BlueprintVR = EMCsFpvAnimBlueprintMember::Get().Add(Type::BlueprintVR, TEXT("BlueprintVR"), TEXT("Blueprint VR"));
+		CSCORE_API const Type ECsFpvAnimBlueprintMember_MAX = EMCsFpvAnimBlueprintMember::Get().Add(Type::ECsFpvAnimBlueprintMember_MAX, TEXT("ECsFpvAnimBlueprintMember_MAX"), TEXT("MAX"));
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsFpvAnimBlueprintMember_MAX;
 }
 
 // FpvAnimBlendSpaceMember
-EMCsFpvAnimBlendSpaceMember* EMCsFpvAnimBlendSpaceMember::Instance;
+CS_DEFINE_ENUM_MAP_BODY(EMCsFpvAnimBlendSpaceMember)
 
-EMCsFpvAnimBlendSpaceMember& EMCsFpvAnimBlendSpaceMember::Get()
-{
-	if (!Instance)
-		Instance = new EMCsFpvAnimBlendSpaceMember();
-	return *Instance;
-}
-
-namespace ECsFpvAnimBlendSpaceMember
+namespace NCsFpvAnimBlendSpaceMember
 {
 	namespace Ref
 	{
@@ -84,19 +67,14 @@ namespace ECsFpvAnimBlendSpaceMember
 		CSCORE_API const Type BlendVR = EMCsFpvAnimBlendSpaceMember::Get().Add(Type::BlendVR, TEXT("BlendVR"), TEXT("Blend VR"));
 		CSCORE_API const Type ECsFpvAnimBlendSpaceMember_MAX = EMCsFpvAnimBlendSpaceMember::Get().Add(Type::ECsFpvAnimBlendSpaceMember_MAX, TEXT("ECsFpvAnimBlendSpaceMember_MAX"), TEXT("MAX"));
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsFpvAnimBlendSpaceMember_MAX;
 }
 
 // AdditiveBasePoseType
-EMCsAdditiveBasePoseType* EMCsAdditiveBasePoseType::Instance;
+CS_DEFINE_ENUM_MAP_BODY(EMCsAdditiveBasePoseType)
 
-EMCsAdditiveBasePoseType& EMCsAdditiveBasePoseType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsAdditiveBasePoseType();
-	return *Instance;
-}
-
-namespace ECsAdditiveBasePoseType
+namespace NCsAdditiveBasePoseType
 {
 	namespace Ref
 	{
@@ -106,25 +84,22 @@ namespace ECsAdditiveBasePoseType
 		CSCORE_API const Type ABPT_AnimFrame = EMCsAdditiveBasePoseType::Get().Add(Type::ABPT_AnimFrame, TEXT("ABPT_AnimFrame"), TEXT("Anim Frame"));
 		CSCORE_API const Type ABPT_MAX = EMCsAdditiveBasePoseType::Get().Add(Type::ABPT_MAX, TEXT("ABPT_MAX"), TEXT("MAX"));
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ABPT_MAX;
 }
 
 // AdditiveAnimationType
-EMCsAdditiveAnimationType* EMCsAdditiveAnimationType::Instance;
+CS_DEFINE_ENUM_MAP_BODY(EMCsAdditiveAnimationType)
 
-EMCsAdditiveAnimationType& EMCsAdditiveAnimationType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsAdditiveAnimationType();
-	return *Instance;
-}
-
-namespace ECsAdditiveAnimationType
+namespace NCsAdditiveAnimationType
 {
 	namespace Ref
 	{
-		extern CSCORE_API const Type AAT_None = EMCsAdditiveAnimationType::Get().Add(Type::AAT_None, TEXT("AAT_None"), TEXT("None"));
-		extern CSCORE_API const Type AAT_LocalSpaceBase = EMCsAdditiveAnimationType::Get().Add(Type::AAT_LocalSpaceBase, TEXT("AAT_LocalSpaceBase"), TEXT("Local Space Base"));
-		extern CSCORE_API const Type AAT_RotationOffsetMeshSpace = EMCsAdditiveAnimationType::Get().Add(Type::AAT_RotationOffsetMeshSpace, TEXT("AAT_RotationOffsetMeshSpace"), TEXT("Rotation Offset Mesh Space"));
-		extern CSCORE_API const Type AAT_MAX = EMCsAdditiveAnimationType::Get().Add(Type::AAT_MAX, TEXT("AAT_MAX"), TEXT("None"));
+		CSCORE_API const Type AAT_None = EMCsAdditiveAnimationType::Get().Add(Type::AAT_None, TEXT("AAT_None"), TEXT("None"));
+		CSCORE_API const Type AAT_LocalSpaceBase = EMCsAdditiveAnimationType::Get().Add(Type::AAT_LocalSpaceBase, TEXT("AAT_LocalSpaceBase"), TEXT("Local Space Base"));
+		CSCORE_API const Type AAT_RotationOffsetMeshSpace = EMCsAdditiveAnimationType::Get().Add(Type::AAT_RotationOffsetMeshSpace, TEXT("AAT_RotationOffsetMeshSpace"), TEXT("Rotation Offset Mesh Space"));
+		CSCORE_API const Type AAT_MAX = EMCsAdditiveAnimationType::Get().Add(Type::AAT_MAX, TEXT("AAT_MAX"), TEXT("None"));
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::AAT_MAX;
 }

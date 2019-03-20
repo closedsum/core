@@ -92,7 +92,7 @@ ACsSound* FCsManager_Sound::Spawn(FCsSoundPayload* payload)
 
 	o->Allocate(payload);
 
-	LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::Spawn], ECsPoolTransaction::Allocate, o);
+	LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::Spawn], ECsPoolTransaction::Allocate, o);
 	payload->Reset();
 
 	if (GetActivePoolSize() >= CS_MAX_CONCURRENT_SOUNDS)

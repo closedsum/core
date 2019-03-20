@@ -361,7 +361,7 @@ struct FCsBlockchainCommandInfo
 // Cache
 #pragma region
 
-namespace ECsBlockchainCached
+namespace NCsBlockchainCached
 {
 	namespace Var
 	{

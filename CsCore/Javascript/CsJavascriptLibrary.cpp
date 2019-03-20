@@ -56,14 +56,14 @@ void UCsJavascriptLibrary::AddMoveIngoreActor(UPrimitiveComponent* InComponent, 
 
 FVector UCsJavascriptLibrary::GetComponentLocation(USceneComponent* InComponent) { return InComponent->GetComponentLocation(); }
 
-void UCsJavascriptLibrary::ComponentAttachToComponent(USceneComponent* InComponent, USceneComponent* Parent, const TEnumAsByte<ECsAttachmentTransformRules::Type>& AttachmentRules, const FName& SocketName /*= NAME_None*/)
+void UCsJavascriptLibrary::ComponentAttachToComponent(USceneComponent* InComponent, USceneComponent* Parent, const ECsAttachmentTransformRules& AttachmentRules, const FName& SocketName /*= NAME_None*/)
 {
-	InComponent->AttachToComponent(Parent, ECsAttachmentTransformRules::ToRule(AttachmentRules), SocketName);
+	InComponent->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(AttachmentRules), SocketName);
 }
 
-void UCsJavascriptLibrary::ComponentDetachFromComponent(USceneComponent* InComponent, const TEnumAsByte<ECsDetachmentTransformRules::Type>& DetachmentRules)
+void UCsJavascriptLibrary::ComponentDetachFromComponent(USceneComponent* InComponent, const ECsDetachmentTransformRules& DetachmentRules)
 {
-	InComponent->DetachFromComponent(ECsDetachmentTransformRules::ToRule(DetachmentRules));
+	InComponent->DetachFromComponent(NCsDetachmentTransformRules::ToRule(DetachmentRules));
 }
 
 void UCsJavascriptLibrary::SetComponentRelativeTransform(USceneComponent* InComponent, const FTransform& NewTransform, bool bSweep, FHitResult& SweepHitResult, bool bTeleport)
@@ -105,19 +105,19 @@ bool UCsJavascriptLibrary::TeleportTo(AActor* InActor, const FVector& DestLocati
 	return InActor->TeleportTo(DestLocation, DestRotation, bIsATest, bNoCheck);
 }
 
-void UCsJavascriptLibrary::ActorAttachToActor(AActor* InActor, AActor* ParentActor, const TEnumAsByte<ECsAttachmentTransformRules::Type>& AttachmentRules, const FName& SocketName /*= NAME_None*/)
+void UCsJavascriptLibrary::ActorAttachToActor(AActor* InActor, AActor* ParentActor, const ECsAttachmentTransformRules& AttachmentRules, const FName& SocketName /*= NAME_None*/)
 {
-	InActor->AttachToActor(ParentActor, ECsAttachmentTransformRules::ToRule(AttachmentRules), SocketName);
+	InActor->AttachToActor(ParentActor, NCsAttachmentTransformRules::ToRule(AttachmentRules), SocketName);
 }
 
-void UCsJavascriptLibrary::ActorAttachToComponent(AActor* InActor, USceneComponent* Parent, const TEnumAsByte<ECsAttachmentTransformRules::Type>& AttachmentRules, const FName& SocketName /*= NAME_None*/)
+void UCsJavascriptLibrary::ActorAttachToComponent(AActor* InActor, USceneComponent* Parent, const ECsAttachmentTransformRules& AttachmentRules, const FName& SocketName /*= NAME_None*/)
 {
-	InActor->AttachToComponent(Parent, ECsAttachmentTransformRules::ToRule(AttachmentRules), SocketName);
+	InActor->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(AttachmentRules), SocketName);
 }
 
-void UCsJavascriptLibrary::ActorDetachFromActor(AActor* InActor, const TEnumAsByte<ECsDetachmentTransformRules::Type>& DetachmentRules)
+void UCsJavascriptLibrary::ActorDetachFromActor(AActor* InActor, const ECsDetachmentTransformRules& DetachmentRules)
 {
-	InActor->DetachFromActor(ECsDetachmentTransformRules::ToRule(DetachmentRules));
+	InActor->DetachFromActor(NCsDetachmentTransformRules::ToRule(DetachmentRules));
 }
 
 #pragma endregion Actor

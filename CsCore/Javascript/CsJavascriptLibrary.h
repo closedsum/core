@@ -71,9 +71,9 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
 	static FVector GetComponentLocation(USceneComponent* InComponent);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static void ComponentAttachToComponent(USceneComponent* InComponent, USceneComponent* Parent, const TEnumAsByte<ECsAttachmentTransformRules::Type>& AttachmentRules, const FName& SocketName = NAME_None);
+	static void ComponentAttachToComponent(USceneComponent* InComponent, USceneComponent* Parent, const ECsAttachmentTransformRules& AttachmentRules, const FName& SocketName = NAME_None);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static void ComponentDetachFromComponent(USceneComponent* InComponent, const TEnumAsByte<ECsDetachmentTransformRules::Type>& DetachmentRules);
+	static void ComponentDetachFromComponent(USceneComponent* InComponent, const ECsDetachmentTransformRules& DetachmentRules);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
 	static void SetComponentRelativeTransform(USceneComponent* InComponent, const FTransform& NewTransform, bool bSweep, FHitResult& SweepHitResult, bool bTeleport);
 
@@ -99,11 +99,11 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
 	static bool TeleportTo(AActor* InActor, const FVector& DestLocation, const FRotator& DestRotation, bool bIsATest = false, bool bNoCheck = false);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static void ActorAttachToActor(AActor* InActor, AActor* ParentActor, const TEnumAsByte<ECsAttachmentTransformRules::Type>& AttachmentRules, const FName& SocketName = NAME_None);
+	static void ActorAttachToActor(AActor* InActor, AActor* ParentActor, const ECsAttachmentTransformRules& AttachmentRules, const FName& SocketName = NAME_None);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static void ActorAttachToComponent(AActor* InActor, USceneComponent* Parent, const TEnumAsByte<ECsAttachmentTransformRules::Type>& AttachmentRules, const FName& SocketName = NAME_None);
+	static void ActorAttachToComponent(AActor* InActor, USceneComponent* Parent, const ECsAttachmentTransformRules& AttachmentRules, const FName& SocketName = NAME_None);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static void ActorDetachFromActor(AActor* InActor, const TEnumAsByte<ECsDetachmentTransformRules::Type>& DetachmentRules);
+	static void ActorDetachFromActor(AActor* InActor, const ECsDetachmentTransformRules& DetachmentRules);
 
 #pragma endregion Actor
 

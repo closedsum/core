@@ -783,7 +783,7 @@ FCsCoroutinePayload* UCsCoroutineScheduler::AllocatePayload()
 	{
 		PayloadIndex = (PayloadIndex + 1) % CS_ROUTINE_POOL_SIZE;
 
-		if (!Payloads[PayloadIndex].IsAllocated)
+		if (!Payloads[PayloadIndex].bAllocated)
 		{
 			return &(Payloads[PayloadIndex]);
 		}

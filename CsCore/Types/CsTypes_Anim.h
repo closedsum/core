@@ -14,7 +14,7 @@
 #include "CsTypes_Anim.generated.h"
 #pragma once
 
-namespace ECsAnimCached
+namespace NCsAnimCached
 {
 	namespace Str
 	{
@@ -37,37 +37,25 @@ namespace ECsAnimCached
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsFpvAnimMember
+enum class ECsFpvAnimMember : uint8
 {
-	enum Type
-	{
-		Anim1P					UMETA(DisplayName = "Anim1P"),
-		Anim3P					UMETA(DisplayName = "Anim3P"),
-		Anim3P_Low				UMETA(DisplayName = "Anim3P_Low"),
-		AnimVR					UMETA(DisplayName = "AnimVR"),
-		ECsFpvAnimMember_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsFpvAnimMember::Type TCsFpvAnimMember;
-
-struct CSCORE_API EMCsFpvAnimMember: public TCsEnumMap<ECsFpvAnimMember::Type>
-{
-protected:
-	EMCsFpvAnimMember() {}
-	EMCsFpvAnimMember(const EMCsFpvAnimMember &) = delete;
-	EMCsFpvAnimMember(EMCsFpvAnimMember &&) = delete;
-public:
-	~EMCsFpvAnimMember() {}
-private:
-	static EMCsFpvAnimMember* Instance;
-
-public:
-	static EMCsFpvAnimMember& Get();
+	Anim1P					UMETA(DisplayName = "Anim1P"),
+	Anim3P					UMETA(DisplayName = "Anim3P"),
+	Anim3P_Low				UMETA(DisplayName = "Anim3P_Low"),
+	AnimVR					UMETA(DisplayName = "AnimVR"),
+	ECsFpvAnimMember_MAX	UMETA(Hidden),
 };
 
-namespace ECsFpvAnimMember
+
+struct CSCORE_API EMCsFpvAnimMember: public TCsEnumMap<ECsFpvAnimMember>
 {
+	CS_DECLARE_ENUM_MAP_BODY(EMCsFpvAnimMember)
+};
+
+namespace NCsFpvAnimMember
+{
+	typedef ECsFpvAnimMember Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type Anim1P;
@@ -76,6 +64,8 @@ namespace ECsFpvAnimMember
 		extern CSCORE_API const Type AnimVR;
 		extern CSCORE_API const Type ECsFpvAnimMember_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 
 	FORCEINLINE const FString& ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
@@ -524,37 +514,24 @@ public:
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsFpvAnimBlueprintMember
+enum class ECsFpvAnimBlueprintMember : uint8
 {
-	enum Type
-	{
-		Blueprint1P						UMETA(DisplayName = "Blueprint1P"),
-		Blueprint3P						UMETA(DisplayName = "Blueprint3P"),
-		Blueprint3P_Low					UMETA(DisplayName = "Blueprint3P_Low"),
-		BlueprintVR						UMETA(DisplayName = "BlueprintVR"),
-		ECsFpvAnimBlueprintMember_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsFpvAnimBlueprintMember::Type TCsFpvAnimBlueprintMember;
-
-struct CSCORE_API EMCsFpvAnimBlueprintMember : public TCsEnumMap<ECsFpvAnimBlueprintMember::Type>
-{
-protected:
-	EMCsFpvAnimBlueprintMember() {}
-	EMCsFpvAnimBlueprintMember(const EMCsFpvAnimBlueprintMember &) = delete;
-	EMCsFpvAnimBlueprintMember(EMCsFpvAnimBlueprintMember &&) = delete;
-public:
-	~EMCsFpvAnimBlueprintMember() {}
-private:
-	static EMCsFpvAnimBlueprintMember* Instance;
-
-public:
-	static EMCsFpvAnimBlueprintMember& Get();
+	Blueprint1P						UMETA(DisplayName = "Blueprint1P"),
+	Blueprint3P						UMETA(DisplayName = "Blueprint3P"),
+	Blueprint3P_Low					UMETA(DisplayName = "Blueprint3P_Low"),
+	BlueprintVR						UMETA(DisplayName = "BlueprintVR"),
+	ECsFpvAnimBlueprintMember_MAX	UMETA(Hidden),
 };
 
-namespace ECsFpvAnimBlueprintMember
+struct CSCORE_API EMCsFpvAnimBlueprintMember : public TCsEnumMap<ECsFpvAnimBlueprintMember>
 {
+	CS_DECLARE_ENUM_MAP_BODY(EMCsFpvAnimBlueprintMember)
+};
+
+namespace NCsFpvAnimBlueprintMember
+{
+	typedef ECsFpvAnimBlueprintMember Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type Blueprint1P;
@@ -563,6 +540,8 @@ namespace ECsFpvAnimBlueprintMember
 		extern CSCORE_API const Type BlueprintVR;
 		extern CSCORE_API const Type ECsFpvAnimBlueprintMember_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 
 	FORCEINLINE const FString& ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
@@ -741,37 +720,24 @@ public:
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsFpvAnimBlendSpaceMember
+enum class ECsFpvAnimBlendSpaceMember : uint8
 {
-	enum Type
-	{
-		Blend1P							UMETA(DisplayName = "Blend1P"),
-		Blend3P							UMETA(DisplayName = "Blend3P"),
-		Blend3P_Low						UMETA(DisplayName = "Blend3P_Low"),
-		BlendVR							UMETA(DisplayName = "BlendVR"),
-		ECsFpvAnimBlendSpaceMember_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsFpvAnimBlendSpaceMember::Type TCsFpvAnimBlendSpaceMember;
-
-struct CSCORE_API EMCsFpvAnimBlendSpaceMember : public TCsEnumMap<ECsFpvAnimBlendSpaceMember::Type>
-{
-protected:
-	EMCsFpvAnimBlendSpaceMember() {}
-	EMCsFpvAnimBlendSpaceMember(const EMCsFpvAnimBlendSpaceMember &) = delete;
-	EMCsFpvAnimBlendSpaceMember(EMCsFpvAnimBlendSpaceMember &&) = delete;
-public:
-	~EMCsFpvAnimBlendSpaceMember() {}
-private:
-	static EMCsFpvAnimBlendSpaceMember* Instance;
-
-public:
-	static EMCsFpvAnimBlendSpaceMember& Get();
+	Blend1P							UMETA(DisplayName = "Blend1P"),
+	Blend3P							UMETA(DisplayName = "Blend3P"),
+	Blend3P_Low						UMETA(DisplayName = "Blend3P_Low"),
+	BlendVR							UMETA(DisplayName = "BlendVR"),
+	ECsFpvAnimBlendSpaceMember_MAX	UMETA(Hidden),
 };
 
-namespace ECsFpvAnimBlendSpaceMember
+struct CSCORE_API EMCsFpvAnimBlendSpaceMember : public TCsEnumMap<ECsFpvAnimBlendSpaceMember>
 {
+	CS_DECLARE_ENUM_MAP_BODY(EMCsFpvAnimBlendSpaceMember)
+};
+
+namespace NCsFpvAnimBlendSpaceMember
+{
+	typedef ECsFpvAnimBlendSpaceMember Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type Blend1P;
@@ -780,6 +746,8 @@ namespace ECsFpvAnimBlendSpaceMember
 		extern CSCORE_API const Type BlendVR;
 		extern CSCORE_API const Type ECsFpvAnimBlendSpaceMember_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 
 	FORCEINLINE const FString& ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
@@ -1310,41 +1278,28 @@ public:
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsAdditiveBasePoseType
+enum class ECsAdditiveBasePoseType : uint8
 {
-	enum Type
-	{
-		/** Will be deprecated. */
-		ABPT_None		UMETA(DisplayName = "None"),
-		/** Use the Skeleton's ref pose as base. */
-		ABPT_RefPose	UMETA(DisplayName = "Skeleton Reference Pose"),
-		/** Use a whole animation as a base pose. BasePoseSeq must be set. */
-		ABPT_AnimScaled	UMETA(DisplayName = "Selected animation scaled"),
-		/** Use one frame of an animation as a base pose. BasePoseSeq and RefFrameIndex must be set (RefFrameIndex will be clamped). */
-		ABPT_AnimFrame	UMETA(DisplayName = "Selected animation frame"),
-		ABPT_MAX		UMETA(Hidden),
-	};
-}
-
-typedef ECsAdditiveBasePoseType::Type TCsAdditiveBasePoseType;
-
-struct CSCORE_API EMCsAdditiveBasePoseType : public TCsEnumMap<ECsAdditiveBasePoseType::Type>
-{
-protected:
-	EMCsAdditiveBasePoseType() {}
-	EMCsAdditiveBasePoseType(const EMCsAdditiveBasePoseType &) = delete;
-	EMCsAdditiveBasePoseType(EMCsAdditiveBasePoseType &&) = delete;
-public:
-	~EMCsAdditiveBasePoseType() {}
-private:
-	static EMCsAdditiveBasePoseType* Instance;
-
-public:
-	static EMCsAdditiveBasePoseType& Get();
+	/** Will be deprecated. */
+	ABPT_None		UMETA(DisplayName = "None"),
+	/** Use the Skeleton's ref pose as base. */
+	ABPT_RefPose	UMETA(DisplayName = "Skeleton Reference Pose"),
+	/** Use a whole animation as a base pose. BasePoseSeq must be set. */
+	ABPT_AnimScaled	UMETA(DisplayName = "Selected animation scaled"),
+	/** Use one frame of an animation as a base pose. BasePoseSeq and RefFrameIndex must be set (RefFrameIndex will be clamped). */
+	ABPT_AnimFrame	UMETA(DisplayName = "Selected animation frame"),
+	ABPT_MAX		UMETA(Hidden),
 };
 
-namespace ECsAdditiveBasePoseType
+struct CSCORE_API EMCsAdditiveBasePoseType : public TCsEnumMap<ECsAdditiveBasePoseType>
 {
+	CS_DECLARE_ENUM_MAP_BODY(EMCsAdditiveBasePoseType)
+};
+
+namespace NCsAdditiveBasePoseType
+{
+	typedef ECsAdditiveBasePoseType Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type ABPT_None;
@@ -1353,6 +1308,8 @@ namespace ECsAdditiveBasePoseType
 		extern CSCORE_API const Type ABPT_AnimFrame;
 		extern CSCORE_API const Type ABPT_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 
 	FORCEINLINE const FString& ToString(const EAdditiveBasePoseType &EType)
 	{
@@ -1381,39 +1338,26 @@ namespace ECsAdditiveBasePoseType
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsAdditiveAnimationType
+enum class ECsAdditiveAnimationType : uint8
 {
-	enum Type
-	{
-		/** No additive. */
-		AAT_None					UMETA(DisplayName = "None"),
-		/* Create Additive from LocalSpace Base. */
-		AAT_LocalSpaceBase			UMETA(DisplayName = "Local Space"),
-		/* Create Additive from MeshSpace Rotation Only, Translation still will be LocalSpace. */
-		AAT_RotationOffsetMeshSpace	UMETA(DisplayName = "Mesh Space"),
-		AAT_MAX						UMETA(Hidden),
-	};
-}
-
-typedef ECsAdditiveAnimationType::Type TCsAdditiveAnimationType;
-
-struct CSCORE_API EMCsAdditiveAnimationType : public TCsEnumMap<ECsAdditiveAnimationType::Type>
-{
-protected:
-	EMCsAdditiveAnimationType() {}
-	EMCsAdditiveAnimationType(const EMCsAdditiveAnimationType &) = delete;
-	EMCsAdditiveAnimationType(EMCsAdditiveAnimationType &&) = delete;
-public:
-	~EMCsAdditiveAnimationType() {}
-private:
-	static EMCsAdditiveAnimationType* Instance;
-
-public:
-	static EMCsAdditiveAnimationType& Get();
+	/** No additive. */
+	AAT_None					UMETA(DisplayName = "None"),
+	/* Create Additive from LocalSpace Base. */
+	AAT_LocalSpaceBase			UMETA(DisplayName = "Local Space"),
+	/* Create Additive from MeshSpace Rotation Only, Translation still will be LocalSpace. */
+	AAT_RotationOffsetMeshSpace	UMETA(DisplayName = "Mesh Space"),
+	AAT_MAX						UMETA(Hidden),
 };
 
-namespace ECsAdditiveAnimationType
+struct CSCORE_API EMCsAdditiveAnimationType : public TCsEnumMap<ECsAdditiveAnimationType>
 {
+	CS_DECLARE_ENUM_MAP_BODY(EMCsAdditiveAnimationType)
+};
+
+namespace NCsAdditiveAnimationType
+{
+	typedef ECsAdditiveAnimationType Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type AAT_None;
@@ -1421,6 +1365,8 @@ namespace ECsAdditiveAnimationType
 		extern CSCORE_API const Type AAT_RotationOffsetMeshSpace;
 		extern CSCORE_API const Type AAT_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 
 	FORCEINLINE const FString& ToString(const EAdditiveAnimationType &EType)
 	{

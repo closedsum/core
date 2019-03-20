@@ -116,7 +116,7 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 
 	void Init(FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		IsAllocated = true;
+		bAllocated = true;
 
 		SetLifeTime(Payload->LifeTime);
 

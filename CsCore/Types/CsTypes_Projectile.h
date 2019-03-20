@@ -444,7 +444,7 @@ struct CSCORE_API FCsProjectileFirePayload
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY()
-	bool IsAllocated;
+	bool bAllocated;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float Time;
@@ -483,7 +483,7 @@ struct CSCORE_API FCsProjectileFirePayload
 
 	FORCEINLINE FCsProjectileFirePayload& operator=(const FCsProjectileFirePayload& B)
 	{
-		IsAllocated = B.IsAllocated;
+		bAllocated = B.bAllocated;
 		Time = B.Time;
 		RealTime = B.RealTime;
 		Frame = B.Frame;
@@ -499,7 +499,7 @@ struct CSCORE_API FCsProjectileFirePayload
 
 	FORCEINLINE bool operator==(const FCsProjectileFirePayload& B) const
 	{
-		return	IsAllocated == B.IsAllocated &&
+		return	bAllocated == B.bAllocated &&
 				Time == B.Time &&
 				RealTime == B.RealTime &&
 				Frame == B.Frame &&
@@ -519,7 +519,7 @@ struct CSCORE_API FCsProjectileFirePayload
 
 	FORCEINLINE void Reset()
 	{
-		IsAllocated = false;
+		bAllocated = false;
 		Time = 0.0f;
 		RealTime = 0.0f;
 		Frame = 0;

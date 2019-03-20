@@ -637,7 +637,7 @@ FCsInput* UCsManager_Input::AllocateInput(const FECsInputAction& Action, const E
 		FCsInput* Input		  = &InputPool[CurrentInputPoolIndex];
 
 		// Add Input to InputFrame
-		if (!Input->IsAllocated)
+		if (!Input->bAllocated)
 		{
 			Input->Allocate(Action, Event, Value, Location, Rotation);
 			return Input;

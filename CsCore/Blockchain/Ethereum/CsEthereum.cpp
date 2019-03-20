@@ -115,7 +115,7 @@ void FCsEthereumJavascriptContractLink::Set(const FECsBlockchainContract &InCont
 // Cache
 #pragma region
 
-namespace ECsEthereumCached
+namespace NCsEthereumCached
 {
 	namespace Name
 	{
@@ -476,7 +476,7 @@ void UCsEthereum::StartProcess(const ECsBlockchainProcessType &ProcessType, cons
 			UE_LOG(LogCs, Log, TEXT("CgEthereum::StartProcess: Starting Process (%s): %s %s"), *ProcessTypeAsString, *(StartInfo.Filename), *(StartInfo.Arguments));
 		}
 
-		Process = UICsManager_Process::Get()->Spawn(EMCsProcess::Get()[ECsEthereumCached::Str::Geth], Payload);
+		Process = UICsManager_Process::Get()->Spawn(EMCsProcess::Get()[NCsEthereumCached::Str::Geth], Payload);
 
 		if (ProcessType == ECsBlockchainProcessType::RunningInstance)
 		{
@@ -590,8 +590,8 @@ void UCsEthereum::StartPrivateChain()
 	Payload->Type			= (uint8)ECsEthereumRoutine::StartPrivateChain_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsEthereumCached::Name::StartPrivateChain_Internal;
-	Payload->NameAsString	= ECsEthereumCached::Str::StartPrivateChain_Internal;
+	Payload->Name			= NCsEthereumCached::Name::StartPrivateChain_Internal;
+	Payload->NameAsString	= NCsEthereumCached::Str::StartPrivateChain_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -657,8 +657,8 @@ void UCsEthereum::OpenConsole()
 	Payload->Type			= (uint8)ECsEthereumRoutine::OpenConsole_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsEthereumCached::Name::OpenConsole_Internal;
-	Payload->NameAsString	= ECsEthereumCached::Str::OpenConsole_Internal;
+	Payload->Name			= NCsEthereumCached::Name::OpenConsole_Internal;
+	Payload->NameAsString	= NCsEthereumCached::Str::OpenConsole_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -1219,7 +1219,7 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 	{
 		// Output != TEXT("") && !Output.StartsWith(TEXT(">"))
 		if (Output != NCsCached::Str::Empty &&
-			!Output.StartsWith(ECsEthereumCached::Str::ConsolePrompt))
+			!Output.StartsWith(NCsEthereumCached::Str::ConsolePrompt))
 		{
 			CurrentCommandOuput.Value_float = FCString::Atof(*Output);
 
@@ -1229,7 +1229,7 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 	// DeployContract
 	if (Command == ECsEthereumCommand::DeployContract)
 	{
-		const FString& Mined = ECsEthereumCached::Str::ContractMined;
+		const FString& Mined = NCsEthereumCached::Str::ContractMined;
 
 		// Output.StartsWith(TEXT("Contract mined! address: "))
 		if (Output.StartsWith(Mined))
@@ -1257,7 +1257,7 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 	{
 		// Output != TEXT("") && !Output.StartsWith(TEXT(">"))
 		if (Output != NCsCached::Str::Empty &&
-			!Output.StartsWith(ECsEthereumCached::Str::ConsolePrompt))
+			!Output.StartsWith(NCsEthereumCached::Str::ConsolePrompt))
 		{
 			CurrentCommandOuput.Value_FString = Output;
 
@@ -1273,7 +1273,7 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 	{
 		// Output != TEXT("") && !Output.StartsWith(TEXT(">"))
 		if (Output != NCsCached::Str::Empty &&
-			!Output.StartsWith(ECsEthereumCached::Str::ConsolePrompt))
+			!Output.StartsWith(NCsEthereumCached::Str::ConsolePrompt))
 		{
 			CurrentCommandOuput.Value_FString = Output;
 
@@ -1297,14 +1297,14 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 	if (Command == ECsEthereumCommand::GetTransactionReceipt)
 	{
 		// Output == TEXT("null")
-		if (Output == ECsEthereumCached::Str::null)
+		if (Output == NCsEthereumCached::Str::null)
 		{
 			CurrentCommandOuput.Value_bool = false;
 
 			CommandCompleted_Event.Broadcast(Command);
 		}
-		// Output.Contains(ECsEthereumCached::Str::transactionIndex)
-		if (Output.Contains(ECsEthereumCached::Str::transactionIndex))
+		// Output.Contains(NCsEthereumCached::Str::transactionIndex)
+		if (Output.Contains(NCsEthereumCached::Str::transactionIndex))
 		{
 			CurrentCommandOuput.Value_bool = true;
 
@@ -1368,8 +1368,8 @@ void UCsEthereum::CreateKeystore(CsEthereumAccount* Account)
 		Payload->Type			= (uint8)ECsEthereumRoutine::CreateKeystore_Internal;
 		Payload->DoInit			= true;
 		Payload->PerformFirstRun = false;
-		Payload->Name			= ECsEthereumCached::Name::CreateKeystore_Internal;
-		Payload->NameAsString	= ECsEthereumCached::Str::CreateKeystore_Internal;
+		Payload->Name			= NCsEthereumCached::Name::CreateKeystore_Internal;
+		Payload->NameAsString	= NCsEthereumCached::Str::CreateKeystore_Internal;
 
 		FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -1507,8 +1507,8 @@ void UCsEthereum::SetupAccount(void* Payload)
 	CoroutinePayload->Type			= (uint8)ECsEthereumRoutine::SetupAccount_Internal;
 	CoroutinePayload->DoInit		= true;
 	CoroutinePayload->PerformFirstRun = false;
-	CoroutinePayload->Name			= ECsEthereumCached::Name::SetupAccount_Internal;
-	CoroutinePayload->NameAsString	= ECsEthereumCached::Str::SetupAccount_Internal;
+	CoroutinePayload->Name			= NCsEthereumCached::Name::SetupAccount_Internal;
+	CoroutinePayload->NameAsString	= NCsEthereumCached::Str::SetupAccount_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(CoroutinePayload);
 
@@ -1587,8 +1587,8 @@ void UCsEthereum::BringBalanceToThreshold(ICsBlockchainAccount* IAccount, const 
 	Payload->Type			= (uint8)ECsEthereumRoutine::BringBalanceToThreshold_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsEthereumCached::Name::BringBalanceToThreshold_Internal;
-	Payload->NameAsString	= ECsEthereumCached::Str::BringBalanceToThreshold_Internal;
+	Payload->Name			= NCsEthereumCached::Name::BringBalanceToThreshold_Internal;
+	Payload->NameAsString	= NCsEthereumCached::Str::BringBalanceToThreshold_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -1715,8 +1715,8 @@ void UCsEthereum::DeployContract(const FECsBlockchainContract &EContract, TArray
 	Payload->Type			= (uint8)ECsEthereumRoutine::DeployContract_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsEthereumCached::Name::DeployContract_Internal;
-	Payload->NameAsString	= ECsEthereumCached::Str::DeployContract_Internal;
+	Payload->Name			= NCsEthereumCached::Name::DeployContract_Internal;
+	Payload->NameAsString	= NCsEthereumCached::Str::DeployContract_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -2001,8 +2001,8 @@ void UCsEthereum::SetupContract(const FECsBlockchainContract &EContract, const F
 	Payload->Type			= (uint8)ECsEthereumRoutine::SetupContract_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsEthereumCached::Name::SetupContract_Internal;
-	Payload->NameAsString	= ECsEthereumCached::Str::SetupContract_Internal;
+	Payload->Name			= NCsEthereumCached::Name::SetupContract_Internal;
+	Payload->NameAsString	= NCsEthereumCached::Str::SetupContract_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -2091,8 +2091,8 @@ void UCsEthereum::RunContractStateChangeFunction(const FECsBlockchainContract &E
 	Payload->Type			= (uint8)ECsEthereumRoutine::RunContractStateChangeFunction_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsEthereumCached::Name::RunContractStateChangeFunction_Internal;
-	Payload->NameAsString	= ECsEthereumCached::Str::RunContractStateChangeFunction_Internal;
+	Payload->Name			= NCsEthereumCached::Name::RunContractStateChangeFunction_Internal;
+	Payload->NameAsString	= NCsEthereumCached::Str::RunContractStateChangeFunction_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -2235,8 +2235,8 @@ void UCsEthereum::CheckTransactionHasBeenMined(const FString &TransactionHash)
 	Payload->Type			= (uint8)ECsEthereumRoutine::CheckTransactionHasBeenMined_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsEthereumCached::Name::CheckTransactionHasBeenMined_Internal;
-	Payload->NameAsString	= ECsEthereumCached::Str::CheckTransactionHasBeenMined_Internal;
+	Payload->Name			= NCsEthereumCached::Name::CheckTransactionHasBeenMined_Internal;
+	Payload->NameAsString	= NCsEthereumCached::Str::CheckTransactionHasBeenMined_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 

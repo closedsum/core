@@ -53,7 +53,7 @@ struct FCsSoundCache : public FCsPooledObjectCache
 
 	void Init(FCsSoundPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		IsAllocated = true;
+		bAllocated = true;
 
 		Owner			 = Payload->GetOwner();
 		Cue				 = Payload->GetCue();

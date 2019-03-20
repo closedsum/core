@@ -85,7 +85,7 @@ namespace ECsPlayerStateBaseRoutine
 // Cache
 #pragma region
 
-namespace ECsPlayerStateBaseCached
+namespace NCsPlayerStateBaseCached
 {
 	namespace Name
 	{
@@ -228,8 +228,8 @@ void ACsPlayerStateBase::OnBoard()
 	Payload->Type			= ECsPlayerStateBaseRoutine::OnBoard_Internal.Value;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsPlayerStateBaseCached::Name::OnBoard_Internal;
-	Payload->NameAsString	= ECsPlayerStateBaseCached::Str::OnBoard_Internal;
+	Payload->Name			= NCsPlayerStateBaseCached::Name::OnBoard_Internal;
+	Payload->NameAsString	= NCsPlayerStateBaseCached::Str::OnBoard_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -653,8 +653,8 @@ void ACsPlayerStateBase::RequestUniqueMappingId_AI(ACsPlayerStateBase* Requestin
 	Payload->Type			 = ECsPlayerStateBaseRoutine::RequestUniqueMappingId_AI_Internal.Value;
 	Payload->DoInit			 = true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			 = ECsPlayerStateBaseCached::Name::RequestUniqueMappingId_AI_Internal;
-	Payload->NameAsString	 = ECsPlayerStateBaseCached::Str::RequestUniqueMappingId_AI_Internal;
+	Payload->Name			 = NCsPlayerStateBaseCached::Name::RequestUniqueMappingId_AI_Internal;
+	Payload->NameAsString	 = NCsPlayerStateBaseCached::Str::RequestUniqueMappingId_AI_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 

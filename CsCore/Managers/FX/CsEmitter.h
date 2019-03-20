@@ -51,7 +51,7 @@ struct FCsFxCache : public FCsPooledObjectCache
 	}
 	void Init(FCsFxPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		IsAllocated = true;
+		bAllocated = true;
 
 		Owner = Payload->Owner;
 		Particle = Payload->Particle;

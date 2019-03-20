@@ -471,7 +471,7 @@ AActor* ACsProjectile::GetIgnoreActor(const int32 &Index)
 
 void ACsProjectile::OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult)
 {
-	if (!Cache.IsAllocated)
+	if (!Cache.bAllocated)
 		return;
 
 	ACsManager_Damage* Manager_Damage = ACsManager_Damage::Get(GetWorld());

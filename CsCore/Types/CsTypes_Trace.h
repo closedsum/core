@@ -224,7 +224,7 @@ struct CSCORE_API FCsTraceRequest
 	uint8 Id;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
-	bool IsAllocated;
+	bool bAllocated;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
 	bool bForce;
@@ -325,7 +325,7 @@ struct CSCORE_API FCsTraceRequest
 
 	FORCEINLINE bool operator==(const FCsTraceRequest& B) const
 	{
-		return	IsAllocated == B.IsAllocated &&
+		return	bAllocated == B.bAllocated &&
 			StaleTime == B.StaleTime &&
 			bAsync == B.bAsync &&
 			Type == B.Type &&
@@ -345,7 +345,7 @@ struct CSCORE_API FCsTraceRequest
 
 	FORCEINLINE void Reset()
 	{
-		IsAllocated = false;
+		bAllocated = false;
 		bForce = false;
 		bProcessing = false;
 		Completed = false;

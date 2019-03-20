@@ -140,7 +140,7 @@ public:
 	int32 Index;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Cache")
-	bool IsAllocated;
+	bool bAllocated;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	TEnumAsByte<ECsPooledObjectState::Type> State;
@@ -184,7 +184,7 @@ public:
 
 	virtual void Reset()
 	{
-		IsAllocated = false;
+		bAllocated = false;
 		State = ECsPooledObjectState::Inactive;
 
 		Instigator.Reset();
@@ -239,7 +239,7 @@ struct CSCORE_API FCsPooledObjectPayload
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	bool IsAllocated;
+	bool bAllocated;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<UObject> Instigator;
@@ -256,7 +256,7 @@ struct CSCORE_API FCsPooledObjectPayload
 
 	virtual void Reset()
 	{
-		IsAllocated = false;
+		bAllocated = false;
 
 		Instigator.Reset();
 		Instigator = nullptr;

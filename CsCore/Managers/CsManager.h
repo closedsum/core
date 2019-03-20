@@ -12,17 +12,14 @@ class CSCORE_API ACsManager : public AActor
 	GENERATED_UCLASS_BODY()
 };
 
-namespace ECsManagerPooledObjectsFunctionNames
+enum class ECsManagerPooledObjectsFunctionNames : uint8
 {
-	enum Type
-	{
-		OnTick,
-		DeAllocate,
-		DeAllocateAll,
-		Spawn,
-		ECsManagerPooledObjectsFunctionNames_MAX,
-	};
-}
+	OnTick,
+	DeAllocate,
+	DeAllocateAll,
+	Spawn,
+	ECsManagerPooledObjectsFunctionNames_MAX,
+};
 
 template<typename ObjectType, typename PayloadType, int32 PAYLOAD_SIZE = 1>
 class TCsManager_PooledObjects
@@ -58,7 +55,7 @@ public:
 	TBaseDelegate<void, ObjectType*> OnTick_Handle_Object;
 
 protected:
-	FString FunctionNames[ECsManagerPooledObjectsFunctionNames::ECsManagerPooledObjectsFunctionNames_MAX];
+	FString FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::ECsManagerPooledObjectsFunctionNames_MAX];
 
 	TArray<ObjectType*> Pool;
 	int32 PoolSize;
@@ -77,10 +74,10 @@ public:
 		CurrentWorld = world;
 		LogTransactions = logTransactions;
 
-		FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick] = Name + TEXT("::OnTick");
-		FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocate] = Name + TEXT("::DeAllocate");
-		FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocateAll] = Name + TEXT("::DeAllocateAll");
-		FunctionNames[ECsManagerPooledObjectsFunctionNames::Spawn] = Name + TEXT("::Spawn");
+		FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::OnTick] = Name + TEXT("::OnTick");
+		FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::DeAllocate] = Name + TEXT("::DeAllocate");
+		FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::DeAllocateAll] = Name + TEXT("::DeAllocateAll");
+		FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::Spawn] = Name + TEXT("::Spawn");
 	}
 
 	virtual void DeconstructObject(ObjectType* o)
@@ -150,7 +147,7 @@ public:
 
 	virtual void AddToActivePool(ObjectType* o)
 	{
-		o->Cache.IsAllocated = true;
+		o->Cache.bAllocated = true;
 
 		ActiveObjects.Add(o->Cache.Index, o);
 	}
@@ -215,11 +212,11 @@ public:
 
 			// Check if ObjectType was DeAllocated NOT in a normal way (i.e. Out of Bounds)
 
-			if (!o->Cache.IsAllocated)
+			if (!o->Cache.bAllocated)
 			{
 				OnTick_Log_PrematureDeAllocation(o);
 
-				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
+				LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
 				ActiveObjects.Remove(key);
 				continue;
@@ -233,7 +230,7 @@ public:
 
 			if (GetCurrentTimeSeconds() - o->Cache.Time > o->Cache.LifeTime)
 			{
-				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
+				LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
 				o->DeAllocate();
 				ActiveObjects.Remove(key);
@@ -289,9 +286,9 @@ public:
 			PoolIndex	  = (PoolIndex + 1) % PoolSize;
 			ObjectType* o = Pool[PoolIndex];
 
-			if (!o->Cache.IsAllocated)
+			if (!o->Cache.bAllocated)
 			{
-				o->Cache.IsAllocated = true;
+				o->Cache.bAllocated = true;
 				return o;
 			}
 		}
@@ -310,7 +307,7 @@ public:
 
 		ObjectType* o = ActiveObjects[index];
 
-		LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocate], ECsPoolTransaction::Deallocate, o);
+		LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::DeAllocate], ECsPoolTransaction::Deallocate, o);
 
 		o->DeAllocate();
 		ActiveObjects.Remove(index);
@@ -328,7 +325,7 @@ public:
 		{
 			ObjectType* o = ActiveObjects[key];
 
-			LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocateAll], ECsPoolTransaction::Deallocate, o);
+			LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::DeAllocateAll], ECsPoolTransaction::Deallocate, o);
 
 			o->DeAllocate();
 			ActiveObjects.Remove(key);
@@ -347,9 +344,9 @@ public:
 			PayloadIndex		 = (PayloadIndex + 1) % PAYLOAD_SIZE;
 			PayloadType* Payload = &(Payloads[PayloadIndex]);
 
-			if (!Payload->IsAllocated)
+			if (!Payload->bAllocated)
 			{
-				Payload->IsAllocated = true;
+				Payload->bAllocated = true;
 				return Payload;
 			}
 		}
@@ -365,7 +362,7 @@ public:
 
 		o->Allocate(payload);
 
-		LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::Spawn], ECsPoolTransaction::Allocate, o);
+		LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::Spawn], ECsPoolTransaction::Allocate, o);
 		payload->Reset();
 		AddToActivePool(o);
 		return o;
@@ -404,7 +401,7 @@ public:
 	TBaseDelegate<void, ObjectType*> OnTick_Handle_Object;
 
 protected:
-	FString FunctionNames[ECsManagerPooledObjectsFunctionNames::ECsManagerPooledObjectsFunctionNames_MAX];
+	FString FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::ECsManagerPooledObjectsFunctionNames_MAX];
 
 	TArray<ObjectType*> Pool;
 	int32 PoolSize;
@@ -425,10 +422,10 @@ public:
 		CurrentWorld	= world;
 		LogTransactions = logTransactions;
 
-		FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick] = Name + TEXT("::OnTick");
-		FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocate] = Name + TEXT("::DeAllocate");
-		FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocateAll] = Name + TEXT("::DeAllocateAll");
-		FunctionNames[ECsManagerPooledObjectsFunctionNames::Spawn] = Name + TEXT("::Spawn");
+		FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::OnTick] = Name + TEXT("::OnTick");
+		FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::DeAllocate] = Name + TEXT("::DeAllocate");
+		FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::DeAllocateAll] = Name + TEXT("::DeAllocateAll");
+		FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::Spawn] = Name + TEXT("::Spawn");
 	}
 
 	virtual void DeconstructObject(ObjectType* o)
@@ -536,7 +533,7 @@ public:
 
 	virtual void AddToActivePool(const EnumType& e, ObjectType* o)
 	{
-		o->Cache.IsAllocated = true;
+		o->Cache.bAllocated = true;
 
 		// Add to ActiveObjects
 		TMap<int32, ObjectType*>* poolPtr = ActiveObjects.Find(e);
@@ -629,11 +626,11 @@ public:
 
 				// Check if ObjectType was DeAllocated NOT in a normal way (i.e. Out of Bounds)
 
-				if (!o->Cache.IsAllocated)
+				if (!o->Cache.bAllocated)
 				{
 					OnTick_Log_PrematureDeAllocation(key, o);
 
-					LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
+					LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
 					objects.Remove(index);
 					continue;
@@ -647,7 +644,7 @@ public:
 
 				if (GetCurrentTimeSeconds() - o->Cache.Time > o->Cache.LifeTime)
 				{
-					LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
+					LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
 					o->DeAllocate();
 					objects.Remove(index);
@@ -738,9 +735,9 @@ public:
 			*poolIndexPtr		= (*poolIndexPtr + 1) % size;
 			ObjectType* o		= (*pool)[*poolIndexPtr];
 
-			if (!o->Cache.IsAllocated)
+			if (!o->Cache.bAllocated)
 			{
-				o->Cache.IsAllocated = true;
+				o->Cache.bAllocated = true;
 				return o;
 			}
 		}
@@ -761,7 +758,7 @@ public:
 
 		ObjectType* o = (*objectsPtr)[index];
 
-		LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocate], ECsPoolTransaction::Deallocate, o);
+		LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::DeAllocate], ECsPoolTransaction::Deallocate, o);
 
 		o->DeAllocate();
 		objectsPtr->Remove(index);
@@ -786,7 +783,7 @@ public:
 			{
 				ObjectType* o = objects[index];
 
-				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocateAll], ECsPoolTransaction::Deallocate, o);
+				LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::DeAllocateAll], ECsPoolTransaction::Deallocate, o);
 
 				o->DeAllocate();
 				objects.Remove(index);
@@ -806,9 +803,9 @@ public:
 			PayloadIndex		 = (PayloadIndex + 1) % PAYLOAD_SIZE;
 			PayloadType* Payload = &(Payloads[PayloadIndex]);
 
-			if (!Payload->IsAllocated)
+			if (!Payload->bAllocated)
 			{
-				Payload->IsAllocated = true;
+				Payload->bAllocated = true;
 				return Payload;
 			}
 		}
@@ -824,7 +821,7 @@ public:
 
 		o->Allocate(payload);
 
-		LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::Spawn], ECsPoolTransaction::Allocate, o);
+		LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::Spawn], ECsPoolTransaction::Allocate, o);
 		payload->Reset();
 		AddToActivePool(e, o);
 		return o;

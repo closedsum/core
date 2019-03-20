@@ -249,9 +249,9 @@ FCsTraceRequest* ACsManager_Trace::AllocateRequest()
 		RequestIndex			 = (RequestIndex + 1) % CS_POOLED_TRACE_REQUEST_SIZE;
 		FCsTraceRequest* Request = &(Requests[RequestIndex]);
 
-		if (!Request->IsAllocated)
+		if (!Request->bAllocated)
 		{
-			Request->IsAllocated = true;
+			Request->bAllocated = true;
 			return Request;
 		}
 	}

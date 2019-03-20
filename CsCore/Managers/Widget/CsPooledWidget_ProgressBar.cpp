@@ -5,7 +5,7 @@
 // Cache
 #pragma region
 
-namespace ECsPooledWidgetProgressBarCached
+namespace NCsPooledWidgetProgressBarCached
 {
 	namespace Str
 	{
@@ -28,7 +28,7 @@ void UCsPooledWidget_ProgressBar::NativeConstruct()
 		return;
 
 	Bar.Set(MyBar);
-	const FString& MemberName = ECsPooledWidgetProgressBarCached::Str::Bar;
+	const FString& MemberName = NCsPooledWidgetProgressBarCached::Str::Bar;
 	Bar.Init(MemberName, MemberName, GetName() + NCsCached::Str::Dot + MemberName);
 
 	HasNativeContructed = true;

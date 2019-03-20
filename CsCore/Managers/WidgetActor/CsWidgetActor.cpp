@@ -37,7 +37,7 @@ void ACsWidgetActor::PostInitializeComponents()
 
 void ACsWidgetActor::Tick(float DeltaSeconds)
 {
-	if (!Cache.IsAllocated)
+	if (!Cache.bAllocated)
 		return;
 
 	Cache.ElapsedTime += DeltaSeconds;
@@ -138,7 +138,7 @@ void ACsWidgetActor::OnCalcCamera(const uint8 &MappingId, const float &DeltaTime
 	}
 #endif // #if WITH_EDITOR
 
-	if (!Cache.IsAllocated)
+	if (!Cache.bAllocated)
 		return;
 	if (Visibility == ECsVisibility::Hidden)
 		return;

@@ -1989,50 +1989,40 @@ namespace NCsColor
 // Attach / Detach
 #pragma region
 
+	// AttachmentTransformRules
+#pragma region
+
 UENUM(BlueprintType)
-namespace ECsAttachmentTransformRules
+enum class ECsAttachmentTransformRules : uint8
 {
-	enum Type
-	{
-		KeepRelativeTransform			UMETA(DisplayName = "Keep Relative Transform"),
-		KeepWorldTransform				UMETA(DisplayName = "Keep World Transform"),
-		SnapToTargetNotIncludingScale	UMETA(DisplayName = "Snap To Target Not Including Scale"),
-		SnapToTargetIncludingScale		UMETA(DisplayName = "Snap To Target Including Scale"),
-		ECsAttachmentTransformRules_MAX	UMETA(Hidden),
-	};
-}
+	KeepRelativeTransform			UMETA(DisplayName = "Keep Relative Transform"),
+	KeepWorldTransform				UMETA(DisplayName = "Keep World Transform"),
+	SnapToTargetNotIncludingScale	UMETA(DisplayName = "Snap To Target Not Including Scale"),
+	SnapToTargetIncludingScale		UMETA(DisplayName = "Snap To Target Including Scale"),
+	ECsAttachmentTransformRules_MAX	UMETA(Hidden),
+};
 
-namespace ECsAttachmentTransformRules
+struct CSCORE_API EMCsAttachmentTransformRules : public TCsEnumMap<ECsAttachmentTransformRules>
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
+	CS_DECLARE_ENUM_MAP_BODY(EMCsAttachmentTransformRules)
+};
 
-	namespace Str
+namespace NCsAttachmentTransformRules
+{
+	typedef ECsAttachmentTransformRules Type;
+
+	namespace Ref
 	{
-		const TCsString KeepRelativeTransform = TCsString(TEXT("KeepRelativeTransform"), TEXT("keeprelativetransform"), TEXT("keep relative transform"));
-		const TCsString KeepWorldTransform = TCsString(TEXT("KeepWorldTransform"), TEXT("keepworldtransform"), TEXT("keep world transform"));
-		const TCsString SnapToTargetNotIncludingScale = TCsString(TEXT("SnapToTargetNotIncludingScale"), TEXT("snaptotargetnotincludingscale"), TEXT("snap to target not including scale"));
-		const TCsString SnapToTargetIncludingScale = TCsString(TEXT("SnapToTargetIncludingScale"), TEXT("snaptotargetincludingscale"), TEXT("snap to target including scale"));
+		extern CSCORE_API const Type KeepRelativeTransform;
+		extern CSCORE_API const Type KeepWorldTransform;
+		extern CSCORE_API const Type SnapToTargetNotIncludingScale;
+		extern CSCORE_API const Type SnapToTargetIncludingScale;
+		extern CSCORE_API const Type ECsAttachmentTransformRules_MAX;
 	}
 
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::KeepRelativeTransform) { return Str::KeepRelativeTransform.Value; }
-		if (EType == Type::KeepWorldTransform) { return Str::KeepWorldTransform.Value; }
-		if (EType == Type::SnapToTargetNotIncludingScale) { return Str::SnapToTargetNotIncludingScale.Value; }
-		if (EType == Type::SnapToTargetIncludingScale) { return Str::SnapToTargetIncludingScale.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
+	extern CSCORE_API const uint8 MAX;
 
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::KeepRelativeTransform) { return Type::KeepRelativeTransform; }
-		if (String == Str::KeepWorldTransform) { return Type::KeepWorldTransform; }
-		if (String == Str::SnapToTargetNotIncludingScale) { return Type::SnapToTargetNotIncludingScale; }
-		if (String == Str::SnapToTargetIncludingScale) { return Type::SnapToTargetIncludingScale; }
-		return Type::ECsAttachmentTransformRules_MAX;
-	}
-
-	FORCEINLINE FAttachmentTransformRules ToRule(const Type &EType)
+	FORCEINLINE const FAttachmentTransformRules& ToRule(const Type& EType)
 	{
 		if (EType == Type::KeepRelativeTransform) { return FAttachmentTransformRules::KeepRelativeTransform; }
 		if (EType == Type::KeepWorldTransform) { return FAttachmentTransformRules::KeepWorldTransform; }
@@ -2042,45 +2032,40 @@ namespace ECsAttachmentTransformRules
 	}
 }
 
-#define ECS_ATTACHMENT_TRANSFORM_RULES_MAX (uint8)ECsAttachmentTransformRules::ECsAttachmentTransformRules_MAX
-typedef ECsAttachmentTransformRules::Type TCsAttachmentTransformRules;
+#define ECS_ATTACHMENT_TRANSFORM_RULES_MAX NCsAttachmentTransformRules::MAX
+
+#pragma region AttachmentTransformRules
+
+	// DetachmentTransformRules
+#pragma region
 
 UENUM(BlueprintType)
-namespace ECsDetachmentTransformRules
+enum class ECsDetachmentTransformRules : uint8
 {
-	enum Type
-	{
-		KeepRelativeTransform			UMETA(DisplayName = "Keep Relative Transform"),
-		KeepWorldTransform				UMETA(DisplayName = "Keep World Transform"),
-		ECsDetachmentTransformRules_MAX	UMETA(Hidden),
-	};
-}
+	KeepRelativeTransform			UMETA(DisplayName = "Keep Relative Transform"),
+	KeepWorldTransform				UMETA(DisplayName = "Keep World Transform"),
+	ECsDetachmentTransformRules_MAX	UMETA(Hidden),
+};
 
-namespace ECsDetachmentTransformRules
+struct CSCORE_API EMCsDetachmentTransformRules : public TCsEnumMap<ECsDetachmentTransformRules>
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
+	CS_DECLARE_ENUM_MAP_BODY(EMCsDetachmentTransformRules)
+};
 
-	namespace Str
+namespace NCsDetachmentTransformRules
+{
+	typedef ECsDetachmentTransformRules Type;
+
+	namespace Ref
 	{
-		const TCsString KeepRelativeTransform = TCsString(TEXT("KeepRelativeTransform"), TEXT("keeprelativetransform"), TEXT("keep relative transform"));
-		const TCsString KeepWorldTransform = TCsString(TEXT("KeepWorldTransform"), TEXT("keepworldtransform"), TEXT("keep world transform"));
+		extern CSCORE_API const Type KeepRelativeTransform;
+		extern CSCORE_API const Type KeepWorldTransform;
+		extern CSCORE_API const Type ECsDetachmentTransformRules_MAX;
 	}
 
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::KeepRelativeTransform) { return Str::KeepRelativeTransform.Value; }
-		if (EType == Type::KeepWorldTransform) { return Str::KeepWorldTransform.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
+	extern CSCORE_API const uint8 MAX;
 
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::KeepRelativeTransform) { return Type::KeepRelativeTransform; }
-		if (String == Str::KeepWorldTransform) { return Type::KeepWorldTransform; }
-		return Type::ECsDetachmentTransformRules_MAX;
-	}
-
-	FORCEINLINE FDetachmentTransformRules ToRule(const Type &EType)
+	FORCEINLINE const FDetachmentTransformRules& ToRule(const Type& EType)
 	{
 		if (EType == Type::KeepRelativeTransform) { return FDetachmentTransformRules::KeepRelativeTransform; }
 		if (EType == Type::KeepWorldTransform) { return FDetachmentTransformRules::KeepWorldTransform; }
@@ -2088,8 +2073,9 @@ namespace ECsDetachmentTransformRules
 	}
 }
 
-#define ECS_DETACHMENT_TRANSFORM_RULES_MAX (uint8)ECsDetachmentTransformRules::ECsDetachmentTransformRules_MAX
-typedef ECsDetachmentTransformRules::Type TCsDetachmentTransformRules;
+#define ECS_DETACHMENT_TRANSFORM_RULES_MAX NCsDetachmentTransformRules::MAX
+
+#pragma endregion DetachmentTransformRules
 
 #pragma endregion Attach / Detach
 

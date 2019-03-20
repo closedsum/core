@@ -388,7 +388,7 @@ struct CSCORE_API FCsInput
 	UPROPERTY(EditAnywhere, Category = "Input")
 	uint16 PoolIndex;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	bool IsAllocated;
+	bool bAllocated;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	bool IsConsumed;
 
@@ -421,7 +421,7 @@ struct CSCORE_API FCsInput
 
 	FORCEINLINE bool operator==(const FCsInput& B) const
 	{
-		if (IsAllocated != B.IsAllocated) { return false; }
+		if (bAllocated != B.bAllocated) { return false; }
 		if (IsConsumed != B.IsConsumed) { return false; }
 		if (Action != B.Action) { return false; }
 		if (Event != B.Event) { return false; }
@@ -473,7 +473,7 @@ struct CSCORE_API FCsInput
 
 	FORCEINLINE void Allocate(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const float& inValue, const FVector& inLocation, const FRotator& inRotation)
 	{
-		IsAllocated = true;
+		bAllocated = true;
 		Set(inAction, inEvent, inValue, inLocation, inRotation);
 	}
 
@@ -499,7 +499,7 @@ struct CSCORE_API FCsInput
 
 	FORCEINLINE void Reset()
 	{
-		IsAllocated   = false;
+		bAllocated	  = false;
 		IsConsumed	  = false;
 		Action		  = EMCsInputAction::Get().GetMAX();
 		Event		  = ECsInputEvent::ECsInputEvent_MAX;

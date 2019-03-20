@@ -138,9 +138,9 @@ FCsItem* ACsManager_Item::Allocate_Internal()
 		PoolIndex	  = (PoolIndex + 1) % CS_ITEM_POOL_SIZE;
 		FCsItem* Item = &(Pool[PoolIndex]);
 
-		if (!Item->IsAllocated)
+		if (!Item->bAllocated)
 		{
-			Item->IsAllocated = true;
+			Item->bAllocated = true;
 
 			FCsItemProduct Product;
 			Product.Name = ProductName;
@@ -744,9 +744,9 @@ FCsItem* ACsManager_Item::AllocateAsyncSave()
 		const uint8 Index = (AsyncSavePoolIndex + I) % CS_ITEM_ASYNC_SAVE_POOL_SIZE;
 		FCsItem* Item	  = &(AsyncSavePool[Index]);
 
-		if (!Item->IsAllocated)
+		if (!Item->bAllocated)
 		{
-			Item->IsAllocated = true;
+			Item->bAllocated = true;
 			return Item;
 		}
 	}

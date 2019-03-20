@@ -40,7 +40,7 @@ namespace ECsPawnRoutine
 // Cache
 #pragma region
 
-namespace ECsPawnCached
+namespace NCsPawnCached
 {
 	namespace Name
 	{
@@ -214,8 +214,8 @@ void ACsPawn::CheckLinkedToPlayerState()
 	Payload->Type			= ECsPawnRoutine::CheckLinkedToPlayerState_Internal.Value;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsPawnCached::Name::CheckLinkedToPlayerState_Internal;
-	Payload->NameAsString	= ECsPawnCached::Str::CheckLinkedToPlayerState_Internal;
+	Payload->Name			= NCsPawnCached::Name::CheckLinkedToPlayerState_Internal;
+	Payload->NameAsString	= NCsPawnCached::Str::CheckLinkedToPlayerState_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -274,8 +274,8 @@ void ACsPawn::HandleRespawnTimer()
 	Payload->Type			= ECsPawnRoutine::HandleRespawnTimer_Internal.Value;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsPawnCached::Name::HandleRespawnTimer_Internal;
-	Payload->NameAsString	= ECsPawnCached::Str::HandleRespawnTimer_Internal;
+	Payload->Name			= NCsPawnCached::Name::HandleRespawnTimer_Internal;
+	Payload->NameAsString	= NCsPawnCached::Str::HandleRespawnTimer_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 

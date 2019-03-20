@@ -36,7 +36,7 @@ struct FCsPooledWidgetCache : public FCsPooledObjectCache
 
 	void Init(FCsWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		IsAllocated = true;
+		bAllocated = true;
 
 		Owner = Payload->Owner;
 		Parent = Payload->Parent;

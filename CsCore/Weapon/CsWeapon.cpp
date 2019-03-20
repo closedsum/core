@@ -1626,9 +1626,9 @@ FCsProjectileFirePayload* ACsWeapon::AllocateProjectileFirePayload(const FECsWea
 	{
 		FCsProjectileFirePayload* Payload = &ProjectileFirePayloads[ProjectileFirePayloadPoolIndex];
 
-		if (!Payload->IsAllocated)
+		if (!Payload->bAllocated)
 		{
-			Payload->IsAllocated = true;
+			Payload->bAllocated = true;
 
 			Payload->Time		= GetWorld()->GetTimeSeconds();
 			Payload->RealTime	= GetWorld()->GetRealTimeSeconds();
@@ -1963,7 +1963,7 @@ CS_COROUTINE(ACsWeapon, DrawFireProjectile_Internal)
 
 		CS_COROUTINE_YIELD(r);
 
-	} while (p->Cache.IsAllocated);
+	} while (p->Cache.bAllocated);
 
 	CS_COROUTINE_END(r);
 }

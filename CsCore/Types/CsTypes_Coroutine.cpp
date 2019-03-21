@@ -2,14 +2,7 @@
 #include "Types/CsTypes_Coroutine.h"
 
 // CoroutineSchedule
-EMCsCoroutineSchedule* EMCsCoroutineSchedule::Instance;
-
-EMCsCoroutineSchedule& EMCsCoroutineSchedule::Get()
-{
-	if (!Instance)
-		Instance = new EMCsCoroutineSchedule();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsCoroutineSchedule)
 
 namespace NCsCoroutineSchedule
 {
@@ -20,19 +13,14 @@ namespace NCsCoroutineSchedule
 		CSCORE_API const Type LastTick = EMCsCoroutineSchedule::Get().Add(Type::LastTick, TEXT("LastTick"));
 		CSCORE_API const Type ECsCoroutineSchedule_MAX = EMCsCoroutineSchedule::Get().Add(Type::ECsCoroutineSchedule_MAX, TEXT("ECsCoroutineSchedule_MAX"), TEXT("MAX"));
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsCoroutineSchedule_MAX;
 }
 
 // CoroutineMessage
-EMCsCoroutineMessage* EMCsCoroutineMessage::Instance;
+CS_DEFINE_ENUM_MAP_BODY(EMCsCoroutineMessage)
 
-EMCsCoroutineMessage& EMCsCoroutineMessage::Get()
-{
-	if (!Instance)
-		Instance = new EMCsCoroutineMessage();
-	return *Instance;
-}
-
-namespace ECsCoroutineMessage
+namespace NCsCoroutineMessage
 {
 	namespace Ref
 	{
@@ -41,19 +29,14 @@ namespace ECsCoroutineMessage
 		CSCORE_API const Type Stop = EMCsCoroutineMessage::Get().Add(Type::Stop, TEXT("Stop"));
 		CSCORE_API const Type ECsCoroutineMessage_MAX = EMCsCoroutineMessage::Get().Add(Type::ECsCoroutineMessage_MAX, TEXT("ECsCoroutineMessage_MAX"), TEXT("MAX"));
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsCoroutineMessage_MAX;
 }
 
 // CoroutineEndReason
-EMCsCoroutineEndReason* EMCsCoroutineEndReason::Instance;
+CS_DEFINE_ENUM_MAP_BODY(EMCsCoroutineEndReason)
 
-EMCsCoroutineEndReason& EMCsCoroutineEndReason::Get()
-{
-	if (!Instance)
-		Instance = new EMCsCoroutineEndReason();
-	return *Instance;
-}
-
-namespace ECsCoroutineEndReason
+namespace NCsCoroutineEndReason
 {
 	namespace Ref
 	{
@@ -66,4 +49,6 @@ namespace ECsCoroutineEndReason
 		CSCORE_API const Type Manual = EMCsCoroutineEndReason::Get().Add(Type::Manual, TEXT("Manual"));
 		CSCORE_API const Type ECsCoroutineEndReason_MAX = EMCsCoroutineEndReason::Get().Add(Type::ECsCoroutineEndReason_MAX, TEXT("ECsCoroutineEndReason_MAX"), TEXT("MAX"));
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsCoroutineEndReason_MAX;
 }

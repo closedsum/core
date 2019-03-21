@@ -537,7 +537,7 @@ void UCsCoroutineScheduler::EndAll(const ECsCoroutineSchedule& ScheduleType /*= 
 	}
 }
 
-void UCsCoroutineScheduler::BroadcastMessage(const ECsCoroutineSchedule& ScheduleType, const TCsCoroutineMessage& MessageType, const FName& Message, UObject* InOwner)
+void UCsCoroutineScheduler::BroadcastMessage(const ECsCoroutineSchedule& ScheduleType, const ECsCoroutineMessage& MessageType, const FName& Message, UObject* InOwner)
 {
 	const uint8 Schedule = (uint8)ScheduleType;
 
@@ -564,7 +564,7 @@ void UCsCoroutineScheduler::BroadcastMessage(const ECsCoroutineSchedule& Schedul
 	}
 }
 
-void UCsCoroutineScheduler::BroadcastMessage(const ECsCoroutineSchedule& ScheduleType, const TCsCoroutineMessage& MessageType, const FName& Message)
+void UCsCoroutineScheduler::BroadcastMessage(const ECsCoroutineSchedule& ScheduleType, const ECsCoroutineMessage& MessageType, const FName& Message)
 {
 	BroadcastMessage(ScheduleType, MessageType, Message, nullptr);
 }

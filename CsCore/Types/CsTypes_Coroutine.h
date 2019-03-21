@@ -10,6 +10,9 @@
 // Coroutine
 #pragma region
 
+	// CoroutineSchedule
+#pragma region
+
 UENUM(BlueprintType)
 enum class ECsCoroutineSchedule : uint8
 {
@@ -21,64 +24,49 @@ enum class ECsCoroutineSchedule : uint8
 
 struct CSCORE_API EMCsCoroutineSchedule : public TCsEnumMap<ECsCoroutineSchedule>
 {
-protected:
-	EMCsCoroutineSchedule() {}
-	EMCsCoroutineSchedule(const EMCsCoroutineSchedule &) = delete;
-	EMCsCoroutineSchedule(EMCsCoroutineSchedule &&) = delete;
-public:
-	~EMCsCoroutineSchedule() {}
-private:
-	static EMCsCoroutineSchedule* Instance;
-
-public:
-	static EMCsCoroutineSchedule& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsCoroutineSchedule)
 };
 
 namespace NCsCoroutineSchedule
 {
+	typedef ECsCoroutineSchedule Type;
+
 	namespace Ref
 	{
-		typedef ECsCoroutineSchedule Type;
-
 		extern CSCORE_API const Type Tick;
 		extern CSCORE_API const Type CalcCamera;
 		extern CSCORE_API const Type LastTick;
 		extern CSCORE_API const Type ECsCoroutineSchedule_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
 
-#define ECS_COROUTINE_SCHEDULE_MAX (uint8)ECsCoroutineSchedule::ECsCoroutineSchedule_MAX
+#define ECS_COROUTINE_SCHEDULE_MAX NCsCoroutineSchedule::MAX
+
+#pragma endregion CoroutineSchedule
+
+	// CoroutineMessage
+#pragma region
 
 UENUM(BlueprintType)
-namespace ECsCoroutineMessage
+enum class ECsCoroutineMessage : uint8
 {
-	enum Type
-	{
-		Notify					UMETA(DisplayName = "Notify"),
-		Listen					UMETA(DisplayName = "Listen"),
-		Stop					UMETA(DisplayName = "Stop"),
-		ECsCoroutineMessage_MAX	UMETA(Hidden),
-	};
-}
-typedef ECsCoroutineMessage::Type TCsCoroutineMessage;
-
-struct CSCORE_API EMCsCoroutineMessage : public TCsEnumMap<ECsCoroutineMessage::Type>
-{
-protected:
-	EMCsCoroutineMessage() {}
-	EMCsCoroutineMessage(const EMCsCoroutineMessage &) = delete;
-	EMCsCoroutineMessage(EMCsCoroutineMessage &&) = delete;
-public:
-	~EMCsCoroutineMessage() {}
-private:
-	static EMCsCoroutineMessage* Instance;
-
-public:
-	static EMCsCoroutineMessage& Get();
+	Notify					UMETA(DisplayName = "Notify"),
+	Listen					UMETA(DisplayName = "Listen"),
+	Stop					UMETA(DisplayName = "Stop"),
+	ECsCoroutineMessage_MAX	UMETA(Hidden),
 };
 
-namespace ECsCoroutineMessage
+struct CSCORE_API EMCsCoroutineMessage : public TCsEnumMap<ECsCoroutineMessage>
 {
+	CS_DECLARE_ENUM_MAP_BODY(EMCsCoroutineMessage)
+};
+
+namespace NCsCoroutineMessage
+{
+	typedef ECsCoroutineMessage Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type Notify;
@@ -86,43 +74,37 @@ namespace ECsCoroutineMessage
 		extern CSCORE_API const Type Stop;
 		extern CSCORE_API const Type ECsCoroutineMessage_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
+
+#pragma endregion CoroutineMessage
+
+	// CoroutineEndReason
+#pragma region
 
 UENUM(BlueprintType)
-namespace ECsCoroutineEndReason
+enum class ECsCoroutineEndReason : uint8
 {
-	enum Type
-	{
-		EndOfExecution				UMETA(DisplayName = "End of Execution"),
-		StopMessage					UMETA(DisplayName = "Stop Message"),
-		StopCondition				UMETA(DisplayName = "Stop Condition"),
-		Parent						UMETA(DisplayName = "Parent"),
-		UniqueInstance				UMETA(DisplayName = "Unique Instance"),
-		Shutdown					UMETA(DisplayName = "Shutdown"),
-		Manual						UMETA(DisplayName = "Manual"),
-		ECsCoroutineEndReason_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsCoroutineEndReason::Type TCsCoroutineEndReason;
-
-struct CSCORE_API EMCsCoroutineEndReason : public TCsEnumMap<ECsCoroutineEndReason::Type>
-{
-protected:
-	EMCsCoroutineEndReason() {}
-	EMCsCoroutineEndReason(const EMCsCoroutineEndReason &) = delete;
-	EMCsCoroutineEndReason(EMCsCoroutineEndReason &&) = delete;
-public:
-	~EMCsCoroutineEndReason() {}
-private:
-	static EMCsCoroutineEndReason* Instance;
-
-public:
-	static EMCsCoroutineEndReason& Get();
+	EndOfExecution				UMETA(DisplayName = "End of Execution"),
+	StopMessage					UMETA(DisplayName = "Stop Message"),
+	StopCondition				UMETA(DisplayName = "Stop Condition"),
+	Parent						UMETA(DisplayName = "Parent"),
+	UniqueInstance				UMETA(DisplayName = "Unique Instance"),
+	Shutdown					UMETA(DisplayName = "Shutdown"),
+	Manual						UMETA(DisplayName = "Manual"),
+	ECsCoroutineEndReason_MAX	UMETA(Hidden),
 };
 
-namespace ECsCoroutineEndReason
+struct CSCORE_API EMCsCoroutineEndReason : public TCsEnumMap<ECsCoroutineEndReason>
 {
+	CS_DECLARE_ENUM_MAP_BODY(EMCsCoroutineEndReason)
+};
+
+namespace NCsCoroutineEndReason
+{
+	typedef ECsCoroutineEndReason Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type EndOfExecution;
@@ -134,7 +116,11 @@ namespace ECsCoroutineEndReason
 		extern CSCORE_API const Type Manual;
 		extern CSCORE_API const Type ECsCoroutineEndReason_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
+
+#pragma endregion CoroutineEndReason
 
 #define CS_ROUTINE_POOL_SIZE 2048
 #define CS_ROUTINE_INDEXER_SIZE 4
@@ -197,7 +183,7 @@ public:
 	TArray<FName> stopMessages;
 	TArray<FName> stopMessages_recieved;
 
-	TCsCoroutineEndReason endReason;
+	ECsCoroutineEndReason endReason;
 
 	int32 indexers[CS_ROUTINE_INDEXER_SIZE];
 	int32 counters[CS_ROUTINE_COUNTER_SIZE];
@@ -257,40 +243,32 @@ public:
 		return true;
 	}
 
-	void Start(CsCoroutine inCoroutine, const float &inStartTime)
+	void Start(CsCoroutine inCoroutine, const float& inStartTime)
 	{
 		Start(inCoroutine, nullptr, nullptr, nullptr, inStartTime);
 	}
 
-	void Start(CsCoroutine inCoroutine, AActor* inActor, const float &inStartTime)
+	void Start(CsCoroutine inCoroutine, AActor* inActor, const float& inStartTime)
 	{
 		Start(inCoroutine, nullptr, inActor, nullptr, inStartTime);
 	}
 
-	void Start(CsCoroutine inCoroutine, UObject* inObject, const float &inStartTime)
+	void Start(CsCoroutine inCoroutine, UObject* inObject, const float& inStartTime)
 	{
 		Start(inCoroutine, nullptr, nullptr, inObject, inStartTime);
 	}
 
-	void Start(CsCoroutine inCoroutine, AActor* inActor, UObject* inObject, const float &inStartTime)
+	void Start(CsCoroutine inCoroutine, AActor* inActor, UObject* inObject, const float& inStartTime)
 	{
 		Start(inCoroutine, nullptr, inActor, inObject, inStartTime);
 	}
 
-	void Start(CsCoroutine inCoroutine, CsCoroutineStopCondition inStopCondition, AActor* inActor, UObject* inObject, const float &inStartTime)
+	void Start(CsCoroutine inCoroutine, CsCoroutineStopCondition inStopCondition, AActor* inActor, UObject* inObject, const float& inStartTime)
 	{
 		Start(inCoroutine, inStopCondition, inActor, inObject, inStartTime, nullptr, nullptr, CS_ROUTINE_MAX_TYPE);
 	}
 
-	void Start(CsCoroutine inCoroutine, CsCoroutineStopCondition inStopCondition, AActor* inActor, UObject* inObject, const float &inStartTime, FCsRoutine** inOwnerMemberRoutine)
-	{
-		Start(inCoroutine, inStopCondition, inActor, inObject, inStartTime, nullptr, nullptr, CS_ROUTINE_MAX_TYPE);
-
-		ownerMemberRoutine = inOwnerMemberRoutine;
-		*ownerMemberRoutine = self;
-	}
-
-	void Start(CsCoroutine inCoroutine, FCoroutineStopCondition &inStopCondition, AActor* inActor, UObject* inObject, const float &inStartTime, FCsRoutine** inOwnerMemberRoutine)
+	void Start(CsCoroutine inCoroutine, CsCoroutineStopCondition inStopCondition, AActor* inActor, UObject* inObject, const float& inStartTime, FCsRoutine** inOwnerMemberRoutine)
 	{
 		Start(inCoroutine, inStopCondition, inActor, inObject, inStartTime, nullptr, nullptr, CS_ROUTINE_MAX_TYPE);
 
@@ -298,7 +276,15 @@ public:
 		*ownerMemberRoutine = self;
 	}
 
-	void Start(CsCoroutine inCoroutine, CsCoroutineStopCondition inStopCondition, AActor* inActor, UObject* inObject, const float &inStartTime, CsAddRoutine inAddRoutine, CsRemoveRoutine inRemoveRoutine, const uint8 &inType)
+	void Start(CsCoroutine inCoroutine, FCoroutineStopCondition &inStopCondition, AActor* inActor, UObject* inObject, const float& inStartTime, FCsRoutine** inOwnerMemberRoutine)
+	{
+		Start(inCoroutine, inStopCondition, inActor, inObject, inStartTime, nullptr, nullptr, CS_ROUTINE_MAX_TYPE);
+
+		ownerMemberRoutine = inOwnerMemberRoutine;
+		*ownerMemberRoutine = self;
+	}
+
+	void Start(CsCoroutine inCoroutine, CsCoroutineStopCondition inStopCondition, AActor* inActor, UObject* inObject, const float& inStartTime, CsAddRoutine inAddRoutine, CsRemoveRoutine inRemoveRoutine, const uint8& inType)
 	{
 		coroutine = inCoroutine;
 		stopCondition.Add(inStopCondition);
@@ -323,7 +309,7 @@ public:
 			addRoutine.Execute(GetOwner(), self, type);
 	}
 
-	void Start(CsCoroutine inCoroutine, FCoroutineStopCondition &inStopCondition, AActor* inActor, UObject* inObject, const float &inStartTime, CsAddRoutine inAddRoutine, CsRemoveRoutine inRemoveRoutine, const uint8 &inType)
+	void Start(CsCoroutine inCoroutine, FCoroutineStopCondition& inStopCondition, AActor* inActor, UObject* inObject, const float& inStartTime, CsAddRoutine inAddRoutine, CsRemoveRoutine inRemoveRoutine, const uint8& inType)
 	{
 		coroutine = inCoroutine;
 		stopCondition = inStopCondition;
@@ -348,7 +334,7 @@ public:
 			addRoutine.Execute(GetOwner(), self, type);
 	}
 
-	void End(const TCsCoroutineEndReason &inEndReason)
+	void End(const ECsCoroutineEndReason& inEndReason)
 	{
 		if (ownerMemberRoutine)
 			*ownerMemberRoutine = nullptr;
@@ -472,7 +458,7 @@ public:
 		stopMessages_recieved.Reset();
 	}
 
-	void Run(const float &inDeltaSeconds)
+	void Run(const float& inDeltaSeconds)
 	{
 		const int32 count = stopMessages_recieved.Num();
 
@@ -547,13 +533,13 @@ public:
 		Cast<T>(GetOwner());
 	}
 
-	UObject* GetObjectAt(const uint8 &inIndex)
+	UObject* GetObjectAt(const uint8& inIndex)
 	{
 		return objects[inIndex].IsValid() ? objects[inIndex].Get() : nullptr;
 	}
 
 	template<typename T>
-	T* GetObjectAt(const uint8 &inIndex)
+	T* GetObjectAt(const uint8& inIndex)
 	{
 		return Cast<T>(GetObjectAt(inIndex));
 	}
@@ -590,7 +576,7 @@ public:
 		}
 	}
 
-	void AddMessage(const TCsCoroutineMessage &MessageType, const FName &Message)
+	void AddMessage(const ECsCoroutineMessage& MessageType, const FName& Message)
 	{
 		if (MessageType == ECsCoroutineMessage::Stop)
 		{
@@ -599,7 +585,7 @@ public:
 		}
 	}
 
-	void ReceiveMessage(const TCsCoroutineMessage &MessageType, const FName &Message)
+	void ReceiveMessage(const ECsCoroutineMessage& MessageType, const FName& Message)
 	{
 		if (MessageType == ECsCoroutineMessage::Stop)
 		{

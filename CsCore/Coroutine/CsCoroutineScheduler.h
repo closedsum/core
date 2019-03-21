@@ -194,7 +194,7 @@ public:
 
 	UObject* GetMyOwner();
 
-	struct FCsRoutine RoutinePools[ECS_COROUTINE_SCHEDULE_MAX][CS_ROUTINE_POOL_SIZE];
+	struct FCsRoutine RoutinePools[ECsCoroutineSchedule::ECsCoroutineSchedule_MAX][CS_ROUTINE_POOL_SIZE];
 	TArray<int32> RoutinePoolIndices;
 	TArray<TArray<struct FCsRoutine*>> RoutinesToInit;
 	TArray<TArray<struct FCsRoutine*>> RoutinesToRun;
@@ -245,8 +245,8 @@ public:
 
 	void EndAll(const ECsCoroutineSchedule& ScheduleType = ECsCoroutineSchedule::ECsCoroutineSchedule_MAX);
 
-	void BroadcastMessage(const ECsCoroutineSchedule& ScheduleType, const TCsCoroutineMessage& MessageType, const FName& Message, UObject* InOwner);
-	void BroadcastMessage(const ECsCoroutineSchedule& ScheduleType, const TCsCoroutineMessage& MessageType, const FName& Message);
+	void BroadcastMessage(const ECsCoroutineSchedule& ScheduleType, const ECsCoroutineMessage& MessageType, const FName& Message, UObject* InOwner);
+	void BroadcastMessage(const ECsCoroutineSchedule& ScheduleType, const ECsCoroutineMessage& MessageType, const FName& Message);
 
 	void Update(const ECsCoroutineSchedule& ScheduleType, const float& DeltaSeconds);
 

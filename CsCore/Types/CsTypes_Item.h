@@ -29,26 +29,23 @@ struct CSCORE_API EMCsItemType : public TCsEnumStructMap<FECsItemType, uint8>
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsItemCollection
+enum class ECsItemCollection : uint8
 {
-	enum Type
-	{
-		Single					UMETA(DisplayName = "Single"),
-		GroupHomogeneous		UMETA(DisplayName = "Group Homogeneous"),
-		GroupMixed				UMETA(DisplayName = "Group Mixed"),
-		ECsItemCollection_MAX	UMETA(Hidden),
-	};
-}
+	Single					UMETA(DisplayName = "Single"),
+	GroupHomogeneous		UMETA(DisplayName = "Group Homogeneous"),
+	GroupMixed				UMETA(DisplayName = "Group Mixed"),
+	ECsItemCollection_MAX	UMETA(Hidden),
+};
 
-typedef ECsItemCollection::Type TCsItemCollection;
-
-struct CSCORE_API EMCsItemCollection : public TCsEnumMap<ECsItemCollection::Type>
+struct CSCORE_API EMCsItemCollection : public TCsEnumMap<ECsItemCollection>
 {
 	CS_DECLARE_ENUM_MAP_BODY(EMCsItemCollection)
 };
 
-namespace ECsItemCollection
+namespace NCsItemCollection
 {
+	typedef ECsItemCollection Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type Single;
@@ -56,11 +53,13 @@ namespace ECsItemCollection
 		extern CSCORE_API const Type GroupMixed;
 		extern CSCORE_API const Type ECsItemCollection_MAX;
 	};
+
+	extern CSCORE_API const uint8 MAX;
 }
 
 #pragma endregion ItemCollection
 
-namespace ECsItemCollectionCached
+namespace NCsItemCollectionCached
 {
 	namespace Str
 	{
@@ -115,77 +114,70 @@ enum class ECsInventoryItemState : uint8
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsInventoryItemState_Editor
+enum class ECsInventoryItemState_Editor : uint8
 {
-	enum Type
-	{
-		Visible								UMETA(DisplayName = "Visible"),
-		Ingredient							UMETA(DisplayName = "Ingredient"),
-		ECsInventoryItemState_Editor_MAX	UMETA(Hidden),
-	};
-}
+	Visible								UMETA(DisplayName = "Visible"),
+	Ingredient							UMETA(DisplayName = "Ingredient"),
+	ECsInventoryItemState_Editor_MAX	UMETA(Hidden),
+};
 
-#define ECS_INVENTORY_ITEM_STATE_MAX (uint8)ECsInventoryItemState_Editor::ECsInventoryItemState_Editor_MAX
-typedef ECsInventoryItemState_Editor::Type TCsInventoryItemState_Editor;
-
-namespace ECsInventoryItemState_Editor
+struct CSCORE_API EMCsInventoryItemState_Editor : public TCsEnumMap<ECsInventoryItemState_Editor>
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+	CS_DECLARE_ENUM_MAP_BODY(EMCsInventoryItemState_Editor)
+};
 
-	namespace Str
+namespace NCsInventoryItemState_Editor
+{
+	typedef ECsInventoryItemState_Editor Type;
+
+	namespace Ref
 	{
-		const TCsString Visible = TCsString(TEXT("Visible"), TEXT("visible"));
-		const TCsString Ingredient = TCsString(TEXT("Ingredient"), TEXT("ingredient"));
+		extern CSCORE_API const Type Visible;
+		extern CSCORE_API const Type Ingredient;
 	}
 
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Visible) { return Str::Visible.Value; }
-		if (EType == Type::Ingredient) { return Str::Ingredient.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
+	extern CSCORE_API const uint8 MAX;
 
-	FORCEINLINE const FString& ToString(const int32 &State)
+	FORCEINLINE const FString& ToString(const int32& State)
 	{
 		FString String = NCsCached::Str::Empty;
 		bool IsFirst   = true;
 
-		for (int32 I = 0; I < ECS_INVENTORY_ITEM_STATE_MAX; ++I)
+		const int32& Count = EMCsInventoryItemState_Editor::Get().Num();
+
+		for (int32 I = 0; I < Count; ++I)
 		{
-			if (CS_TEST_BLUEPRINT_BITFLAG(State, (ECsInventoryItemState)I))
+			if (CS_TEST_BLUEPRINT_BITFLAG(State, I))
 			{
 				if (!IsFirst)
 				{
 					String += TEXT(" | ");
 				}
-				String += ToString((TCsInventoryItemState_Editor)I);
+				String += EMCsInventoryItemState_Editor::Get().ToString(I);
 				IsFirst = false;
 			}
 		}
 		return String;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE ECsInventoryItemState ToBaseType(const Type& EType)
 	{
-		if (String == Str::Visible) { return Type::Visible; }
-		if (String == Str::Ingredient) { return Type::Ingredient; }
-		return Type::ECsInventoryItemState_Editor_MAX;
-	}
-
-	FORCEINLINE ECsInventoryItemState ToBaseType(const Type &EType)
-	{
-		if (EType == Type::Visible) { return ECsInventoryItemState::Visible; }
-		if (EType == Type::Ingredient) { return ECsInventoryItemState::Ingredient; }
+		if (EType == Ref::Visible) { return ECsInventoryItemState::Visible; }
+		if (EType == Ref::Ingredient) { return ECsInventoryItemState::Ingredient; }
 		return ECsInventoryItemState::Visible;
 	}
 
-	FORCEINLINE ECsInventoryItemState ToFlag(const FString &String)
+	FORCEINLINE ECsInventoryItemState ToFlag(const FString& String)
 	{
-		if (String == Str::Visible) { return ECsInventoryItemState::Visible; }
-		if (String == Str::Ingredient) { return ECsInventoryItemState::Ingredient; }
-		return ECsInventoryItemState::Visible;;
+		const ECsInventoryItemState_Editor& EType = EMCsInventoryItemState_Editor::Get().GetSafeEnum(String);
+
+		if (EType == Ref::Visible) { return ECsInventoryItemState::Visible; }
+		if (EType == Ref::Ingredient) { return ECsInventoryItemState::Ingredient; }
+		return ECsInventoryItemState::Visible;
 	}
 }
+
+#define ECS_INVENTORY_ITEM_STATE_MAX (uint8)NCsInventoryItemState_Editor::MAX
 
 #pragma endregion InventoryItemState_Editor
 

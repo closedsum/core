@@ -7,7 +7,7 @@ CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsItemType)
 // ItemCollection
 CS_DEFINE_ENUM_MAP_BODY(EMCsItemCollection)
 
-namespace ECsItemCollection
+namespace NCsItemCollection
 {
 	namespace Ref
 	{
@@ -16,9 +16,11 @@ namespace ECsItemCollection
 		CSCORE_API const Type GroupMixed = EMCsItemCollection::Get().Add(Type::GroupMixed, TEXT("GroupMixed"), TEXT("Group Mixed"));
 		CSCORE_API const Type ECsItemCollection_MAX = EMCsItemCollection::Get().Add(Type::ECsItemCollection_MAX, TEXT("ECsItemCollection_MAX"), TEXT("MAX"));
 	};
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsItemCollection_MAX;
 }
 
-namespace ECsItemCollectionCached
+namespace NCsItemCollectionCached
 {
 	namespace Str
 	{
@@ -28,6 +30,21 @@ namespace ECsItemCollectionCached
 
 // ItemOwner
 CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsItemOwner)
+
+// InventoryItemState_Editor
+CS_DEFINE_ENUM_MAP_BODY(EMCsInventoryItemState_Editor)
+
+namespace NCsInventoryItemState_Editor
+{
+	namespace Ref
+	{
+		CSCORE_API const Type Visible = EMCsInventoryItemState_Editor::Get().Add(Type::Visible, TEXT("Visible"));
+		CSCORE_API const Type Ingredient = EMCsInventoryItemState_Editor::Get().Add(Type::Ingredient, TEXT("Ingredient"));
+		CSCORE_API const Type ECsInventoryItemState_Editor_MAX = EMCsInventoryItemState_Editor::Get().Add(Type::ECsInventoryItemState_Editor_MAX, TEXT("ECsInventoryItemState_Editor_MAX"), TEXT("MAX"));
+	};
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsInventoryItemState_Editor_MAX;
+}
 
 // ItemMemberValueType
 CS_DEFINE_ENUM_MAP_BODY(EMCsItemMemberValueType)

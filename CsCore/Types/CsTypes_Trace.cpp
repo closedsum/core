@@ -2,16 +2,9 @@
 #include "Types/CsTypes_Trace.h"
 
 // TraceType
-EMCsTraceType* EMCsTraceType::Instance;
+CS_DEFINE_ENUM_MAP_BODY(EMCsTraceType)
 
-EMCsTraceType& EMCsTraceType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsTraceType();
-	return *Instance;
-}
-
-namespace ECsTraceType
+namespace NCsTraceType
 {
 	namespace Ref
 	{
@@ -20,40 +13,30 @@ namespace ECsTraceType
 		CSCORE_API const Type Overlap = EMCsTraceType::Get().Add(Type::Overlap, TEXT("Overlap"));
 		CSCORE_API const Type ECsTraceType_MAX = EMCsTraceType::Get().Add(Type::ECsTraceType_MAX, TEXT("ECsTraceType_MAX"), TEXT("MAX"));
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsTraceType_MAX;
 }
 
 // TraceMethod
-EMCsTraceMethod* EMCsTraceMethod::Instance;
+CS_DEFINE_ENUM_MAP_BODY(EMCsTraceMethod)
 
-EMCsTraceMethod& EMCsTraceMethod::Get()
+namespace NCsTraceMethod
 {
-	if (!Instance)
-		Instance = new EMCsTraceMethod();
-	return *Instance;
-}
-
-namespace ECsTraceMethod
-{
-	namespace Str
+	namespace Ref
 	{
 		CSCORE_API const Type Test = EMCsTraceMethod::Get().Add(Type::Test, TEXT("Test"));
 		CSCORE_API const Type Single = EMCsTraceMethod::Get().Add(Type::Single, TEXT("Single"));
 		CSCORE_API const Type Multi = EMCsTraceMethod::Get().Add(Type::Multi, TEXT("Multi"));
 		CSCORE_API const Type ECsTraceMethod_MAX = EMCsTraceMethod::Get().Add(Type::ECsTraceMethod_MAX, TEXT("ECsTraceMethod_MAX"), TEXT("MAX"));
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsTraceMethod_MAX;
 }
 
 // TraceQuery
-EMCsTraceQuery* EMCsTraceQuery::Instance;
+CS_DEFINE_ENUM_MAP_BODY(EMCsTraceQuery)
 
-EMCsTraceQuery& EMCsTraceQuery::Get()
-{
-	if (!Instance)
-		Instance = new EMCsTraceQuery();
-	return *Instance;
-}
-
-namespace ECsTraceQuery
+namespace NCsTraceQuery
 {
 	namespace Ref
 	{
@@ -62,4 +45,6 @@ namespace ECsTraceQuery
 		CSCORE_API const Type Profile = EMCsTraceQuery::Get().Add(Type::Profile, TEXT("Profile"));
 		CSCORE_API const Type ECsTraceQuery_MAX = EMCsTraceQuery::Get().Add(Type::ECsTraceQuery_MAX, TEXT("ECsTraceQuery_MAX"), TEXT("MAX"));
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsTraceQuery_MAX;
 }

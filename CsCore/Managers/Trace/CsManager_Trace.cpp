@@ -61,7 +61,7 @@ ACsManager_Trace::ACsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 		TraceCountThisFrameByType[I] = 0;
 
 		TMap<TCsTraceRequestId, FCsTraceRequest*> AddMap;
-		PendingRequestsByType.Add((TCsTraceType)I, AddMap);
+		PendingRequestsByType.Add((ECsTraceType)I, AddMap);
 	}
 
 	for (uint8 I = 0; I < ECS_TRACE_METHOD_MAX; ++I)
@@ -70,7 +70,7 @@ ACsManager_Trace::ACsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 		TraceCountThisFrameByMethod[I] = 0;
 
 		TMap<TCsTraceRequestId, FCsTraceRequest*> AddMap;
-		PendingRequestsByMethod.Add((TCsTraceMethod)I, AddMap);
+		PendingRequestsByMethod.Add((ECsTraceMethod)I, AddMap);
 	}
 
 	for (uint8 I = 0; I < ECS_TRACE_QUERY_MAX; ++I)
@@ -79,7 +79,7 @@ ACsManager_Trace::ACsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 		TraceCountThisFrameByQuery[I] = 0;
 
 		TMap<TCsTraceRequestId, FCsTraceRequest*> AddMap;
-		PendingRequestsByQuery.Add((TCsTraceQuery)I, AddMap);
+		PendingRequestsByQuery.Add((ECsTraceQuery)I, AddMap);
 	}
 
 	TraceDelegate.BindUObject(this, &ACsManager_Trace::OnTraceResponse);
@@ -183,7 +183,7 @@ void ACsManager_Trace::OnTick(const float &DeltaSeconds)
 		if (Request->bProcessing)
 			continue;
 		// If COMPLETED, Remove
-		if (Request->Completed)
+		if (Request->bCompleted)
 		{
 			RemovePendingRequest(Request);
 			continue;
@@ -563,7 +563,7 @@ void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 	Response->Reset();
 
 	Request->bProcessing = false;
-	Request->Completed = true;
+	Request->bCompleted = true;
 }
 
 void ACsManager_Trace::OnOverlapResponse(const FTraceHandle& Handle, FOverlapDatum& Datum)

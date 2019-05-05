@@ -6,41 +6,27 @@
 #include "CsTypes_Trace.generated.h"
 #pragma once
 
-// Trace
+// TraceType
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsTraceType
+enum class ECsTraceType : uint8
 {
-	enum Type
-	{
-		Line				UMETA(DisplayName = "Line"),
-		Sweep				UMETA(DisplayName = "Sweep"),
-		Overlap				UMETA(DisplayName = "Overlap"),
-		ECsTraceType_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsTraceType::Type TCsTraceType;
-#define ECS_TRACE_TYPE_MAX (uint8)ECsTraceType::ECsTraceType_MAX
-
-struct CSCORE_API EMCsTraceType : public TCsEnumMap<ECsTraceType::Type>
-{
-protected:
-	EMCsTraceType() {}
-	EMCsTraceType(const EMCsTraceType &) = delete;
-	EMCsTraceType(EMCsTraceType &&) = delete;
-public:
-	~EMCsTraceType() {}
-private:
-	static EMCsTraceType* Instance;
-
-public:
-	static EMCsTraceType& Get();
+	Line				UMETA(DisplayName = "Line"),
+	Sweep				UMETA(DisplayName = "Sweep"),
+	Overlap				UMETA(DisplayName = "Overlap"),
+	ECsTraceType_MAX	UMETA(Hidden),
 };
 
-namespace ECsTraceType
+struct CSCORE_API EMCsTraceType : public TCsEnumMap<ECsTraceType>
 {
+	CS_DECLARE_ENUM_MAP_BODY(EMCsTraceType)
+};
+
+namespace NCsTraceType
+{
+	typedef ECsTraceType Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type Line;
@@ -48,81 +34,70 @@ namespace ECsTraceType
 		extern CSCORE_API const Type Overlap;
 		extern CSCORE_API const Type ECsTraceType_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
+
+#define ECS_TRACE_TYPE_MAX NCsTraceType::MAX
+
+#pragma endregion TraceType
+
+#pragma region TraceMethod
 
 UENUM(BlueprintType)
-namespace ECsTraceMethod
+enum class ECsTraceMethod : uint8
 {
-	enum Type
-	{
-		Test				UMETA(DisplayName = "Test"),
-		Single				UMETA(DisplayName = "Single"),
-		Multi				UMETA(DisplayName = "Multi"),
-		ECsTraceMethod_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsTraceMethod::Type TCsTraceMethod;
-#define ECS_TRACE_METHOD_MAX (uint8)ECsTraceMethod::ECsTraceMethod_MAX
-
-struct CSCORE_API EMCsTraceMethod : public TCsEnumMap<ECsTraceMethod::Type>
-{
-protected:
-	EMCsTraceMethod() {}
-	EMCsTraceMethod(const EMCsTraceMethod &) = delete;
-	EMCsTraceMethod(EMCsTraceMethod &&) = delete;
-public:
-	~EMCsTraceMethod() {}
-private:
-	static EMCsTraceMethod* Instance;
-
-public:
-	static EMCsTraceMethod& Get();
+	Test				UMETA(DisplayName = "Test"),
+	Single				UMETA(DisplayName = "Single"),
+	Multi				UMETA(DisplayName = "Multi"),
+	ECsTraceMethod_MAX	UMETA(Hidden),
 };
 
-namespace ECsTraceMethod
+struct CSCORE_API EMCsTraceMethod : public TCsEnumMap<ECsTraceMethod>
 {
-	namespace Str
+	CS_DECLARE_ENUM_MAP_BODY(EMCsTraceMethod)
+};
+
+namespace NCsTraceMethod
+{
+	typedef ECsTraceMethod Type;
+
+	namespace Ref
 	{
 		extern CSCORE_API const Type Test;
 		extern CSCORE_API const Type Single;
 		extern CSCORE_API const Type Multi;
 		extern CSCORE_API const Type ECsTraceMethod_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
+
+#define ECS_TRACE_METHOD_MAX NCsTraceMethod::MAX
+
+#pragma endregion TraceMethod
+
+// TraceQuery
+#pragma region
 
 UENUM(BlueprintType)
-namespace ECsTraceQuery
+enum class ECsTraceQuery : uint8
 {
-	enum Type
-	{
-		Channel				UMETA(DisplayName = "Channel"),
-		ObjectType			UMETA(DisplayName = "ObjectType"),
-		Profile				UMETA(DisplayName = "Profile"),
-		ECsTraceQuery_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsTraceQuery::Type TCsTraceQuery;
-#define ECS_TRACE_QUERY_MAX (uint8)ECsTraceQuery::ECsTraceQuery_MAX
-
-struct CSCORE_API EMCsTraceQuery : public TCsEnumMap<ECsTraceQuery::Type>
-{
-protected:
-	EMCsTraceQuery() {}
-	EMCsTraceQuery(const EMCsTraceQuery &) = delete;
-	EMCsTraceQuery(EMCsTraceQuery &&) = delete;
-public:
-	~EMCsTraceQuery() {}
-private:
-	static EMCsTraceQuery* Instance;
-
-public:
-	static EMCsTraceQuery& Get();
+	Channel				UMETA(DisplayName = "Channel"),
+	ObjectType			UMETA(DisplayName = "ObjectType"),
+	Profile				UMETA(DisplayName = "Profile"),
+	ECsTraceQuery_MAX	UMETA(Hidden),
 };
 
-namespace ECsTraceQuery
+struct CSCORE_API EMCsTraceQuery : public TCsEnumMap<ECsTraceQuery>
 {
+	CS_DECLARE_ENUM_MAP_BODY(EMCsTraceQuery)
+};
+
+namespace NCsTraceQuery
+{
+	typedef ECsTraceQuery Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type Channel;
@@ -130,7 +105,13 @@ namespace ECsTraceQuery
 		extern CSCORE_API const Type Profile;
 		extern CSCORE_API const Type ECsTraceQuery_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
+
+#define ECS_TRACE_QUERY_MAX NCsTraceQuery::MAX
+
+#pragma endregion TraceQuery
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsTraceResponse
@@ -233,7 +214,7 @@ struct CSCORE_API FCsTraceRequest
 	bool bProcessing;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
-	bool Completed;
+	bool bCompleted;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
 	float StartTime;
@@ -257,13 +238,13 @@ struct CSCORE_API FCsTraceRequest
 	bool bAsync;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
-	TEnumAsByte<ECsTraceType::Type> Type;
+	ECsTraceType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
-	TEnumAsByte<ECsTraceMethod::Type> Method;
+	ECsTraceMethod Method;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
-	TEnumAsByte<ECsTraceQuery::Type> Query;
+	ECsTraceQuery Query;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	FVector Start;
@@ -348,7 +329,7 @@ struct CSCORE_API FCsTraceRequest
 		bAllocated = false;
 		bForce = false;
 		bProcessing = false;
-		Completed = false;
+		bCompleted = false;
 		StartTime = 0.0f;
 		StaleTime = 1.0f;
 		Caller.Reset();
@@ -400,5 +381,3 @@ struct CSCORE_API FCsTraceRequest
 		InHandle._Data.Index	   = 0;
 	}
 };
-
-#pragma endregion Trace

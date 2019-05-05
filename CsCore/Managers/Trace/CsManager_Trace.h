@@ -1,7 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "GameFramework/Actor.h"
-#include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_Trace.h"
 #include "CsManager_Trace.generated.h"
 
@@ -88,17 +87,17 @@ public:
 	uint64 TraceCountLifetime;
 
 	TMap<uint64, uint64> TraceCountLifetimeByObjectId;
-	uint64 TraceCountLifetimeByType[ECS_TRACE_TYPE_MAX];
-	uint64 TraceCountLifetimeByMethod[ECS_TRACE_METHOD_MAX];
-	uint64 TraceCountLifetimeByQuery[ECS_TRACE_QUERY_MAX];
+	uint64 TraceCountLifetimeByType[ECsTraceType::ECsTraceType_MAX];
+	uint64 TraceCountLifetimeByMethod[ECsTraceMethod::ECsTraceMethod_MAX];
+	uint64 TraceCountLifetimeByQuery[ECsTraceQuery::ECsTraceQuery_MAX];
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
 	int32 TraceCountThisFrame;
 
 	TMap<uint64, uint16> TraceCountThisFrameByObjectId;
-	uint16 TraceCountThisFrameByType[ECS_TRACE_TYPE_MAX];
-	uint16 TraceCountThisFrameByMethod[ECS_TRACE_METHOD_MAX];
-	uint16 TraceCountThisFrameByQuery[ECS_TRACE_QUERY_MAX];
+	uint16 TraceCountThisFrameByType[ECsTraceType::ECsTraceType_MAX];
+	uint16 TraceCountThisFrameByMethod[ECsTraceMethod::ECsTraceMethod_MAX];
+	uint16 TraceCountThisFrameByQuery[ECsTraceQuery::ECsTraceQuery_MAX];
 
 private:
 
@@ -122,9 +121,9 @@ public:
 	TMap<TCsTraceRequestId, FCsTraceRequest*> PendingRequests;
 	TMap<TCsTraceHandleId, FCsTraceRequest*> PendingRequestsByTraceId;
 	TMap<TCsObjectId, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByObjectId;
-	TMap<TCsTraceType, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByType;
-	TMap<TCsTraceMethod, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByMethod;
-	TMap<TCsTraceQuery, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByQuery;
+	TMap<ECsTraceType, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByType;
+	TMap<ECsTraceMethod, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByMethod;
+	TMap<ECsTraceQuery, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByQuery;
 
 private:
 

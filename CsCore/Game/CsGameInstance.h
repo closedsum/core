@@ -185,7 +185,7 @@ public:
 #pragma region
 public:
 
-	void PopulateEnumMapsFromUserDefinedEnums();
+	virtual void PopulateEnumMapsFromUserDefinedEnums();
 
 	template<typename EnumMap>
 	void PopulateEnumMapFromUserDefinedEnum(const FString& EnumName, const FString& UserDefinedEnumObjectPath)

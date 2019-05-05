@@ -65,9 +65,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
 	UCsManager_Input* Manager_Input;
 
+	UFUNCTION(BlueprintCallable, Category = "Input")
 	int32 GetCurrentInputActionMap();
+	UFUNCTION(BlueprintCallable, Category = "Input", meta = (AutoCreateRefTerm="ActionMap"))
 	void SetCurrentInputActionMap(const FECsInputActionMap& ActionMap);
 	void SetCurrentInputActionMap(const int32& ActionMap);
+	UFUNCTION(BlueprintCallable, Category = "Input", meta = (AutoCreateRefTerm = "ActionMap"))
 	void ClearCurrentInputActionMap(const FECsInputActionMap& ActionMap);
 	void ClearCurrentInputActionMap(const int32& ActionMap);
 

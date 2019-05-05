@@ -73,6 +73,13 @@ void ACsPlayerController::InitInputSystem()
 
 	if (!Manager_Input)
 	{
+		Manager_Input = NewObject<UCsManager_Input>(this, ManagerInputClass.Get(), FName("Manager_Input"));
+		Manager_Input->RegisterComponent();
+
+		Manager_Input->MyOwner = this;
+
+		Manager_Input->Init();
+
 		/*
 		FActorSpawnParameters SpawnInfo;
 		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;

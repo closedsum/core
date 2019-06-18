@@ -11,8 +11,8 @@ namespace NCsLibraryEnumCached
 	{
 		// Process
 		const FString FECsProcess = TEXT("FECsProcess");
-		const FString GetECsProcess = TEXT("GetECsProcess");
-		const FString GetECsProcessByIndex = TEXT("GetECsProcessByIndex");
+		const FString ECsProcess_Get = TEXT("ECsProcess_Get");
+		const FString ECsProcess_GetByIndex = TEXT("ECsProcess_GetByIndex");
 		// Blockchain
 
 			// Command
@@ -60,27 +60,27 @@ UCsLibrary_Enum::UCsLibrary_Enum(const FObjectInitializer& ObjectInitializer)
 // Process
 #pragma region
 
-FECsProcess UCsLibrary_Enum::GetECsProcess(const FString& Name)
+FECsProcess UCsLibrary_Enum::ECsProcess_Get(const FString& Name)
 {
-	return GetEnum<EMCsProcess, FECsProcess>(NCsLibraryEnumCached::Str::GetECsProcess, NCsLibraryEnumCached::Str::FECsProcess, Name);
+	return GetEnum<EMCsProcess, FECsProcess>(NCsLibraryEnumCached::Str::ECsProcess_Get, NCsLibraryEnumCached::Str::FECsProcess, Name);
 }
 
-FECsProcess UCsLibrary_Enum::GetECsProcessByIndex(const int32& Index)
+FECsProcess UCsLibrary_Enum::ECsProcess_GetByIndex(const int32& Index)
 {
-	return GetEnumByIndex<EMCsProcess, FECsProcess>(NCsLibraryEnumCached::Str::GetECsProcessByIndex, NCsLibraryEnumCached::Str::FECsProcess, Index);
+	return GetEnumByIndex<EMCsProcess, FECsProcess>(NCsLibraryEnumCached::Str::ECsProcess_GetByIndex, NCsLibraryEnumCached::Str::FECsProcess, Index);
 }
 
-FString UCsLibrary_Enum::ECsProcessToString(const FECsProcess& Enum)
+FString UCsLibrary_Enum::ECsProcess_ToString(const FECsProcess& Enum)
 {
 	return Enum.ToString();
 }
 
-uint8 UCsLibrary_Enum::GetECsProcessCount()
+uint8 UCsLibrary_Enum::ECsProcess_GetCount()
 {
 	return EMCsProcess::Get().Num();
 }
 
-void UCsLibrary_Enum::GetAllECsProcess(TArray<FECsProcess>& OutTypes)
+void UCsLibrary_Enum::ECsProcess_GetAll(TArray<FECsProcess>& OutTypes)
 {
 	GetAllEnum<EMCsProcess, FECsProcess>(OutTypes);
 }

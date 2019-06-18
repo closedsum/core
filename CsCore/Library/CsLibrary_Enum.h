@@ -88,20 +88,20 @@ public:
 #pragma region
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsProcess GetECsProcess(const FString& Name);
+	UFUNCTION(BlueprintCallable, Category = "Library Enum", meta = (DisplayName="ECsProcess - Get", AutoCreateRefTerm="Name"))
+	static FECsProcess ECsProcess_Get(const FString& Name);
 
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsProcess GetECsProcessByIndex(const int32& Index);
+	UFUNCTION(BlueprintCallable, Category = "Library Enum", meta = (DisplayName = "ECsProcess - Get by Index", AutoCreateRefTerm = "Index"))
+	static FECsProcess ECsProcess_GetByIndex(const int32& Index);
 
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FString ECsProcessToString(const FECsProcess& Enum);
+	UFUNCTION(BlueprintCallable, Category = "Library Enum", meta = (DisplayName = "ECsProcess - To String", AutoCreateRefTerm = "Enum"))
+	static FString ECsProcess_ToString(const FECsProcess& Enum);
 
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static uint8 GetECsProcessCount();
+	UFUNCTION(BlueprintCallable, Category = "Library Enum", meta = (DisplayName = "ECsProcess - Get Count"))
+	static uint8 ECsProcess_GetCount();
 
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsProcess(TArray<FECsProcess>& OutTypes);
+	UFUNCTION(BlueprintCallable, Category = "Library Enum", meta = (DisplayName = "ECsProcess - Get All"))
+	static void ECsProcess_GetAll(TArray<FECsProcess>& OutTypes);
 
 #pragma endregion Process
 

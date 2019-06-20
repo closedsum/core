@@ -136,7 +136,7 @@ void ACsDamageableActor::Respawn()
 	Payload->Remove			= &ACsDamageableActor::RemoveRoutine;
 	Payload->Type			= (uint8)ECsDamageableActorRoutine::Respawn_Internal;
 	Payload->bDoInit		= true;
-	Payload->PerformFirstRun = false;
+	Payload->bPerformFirstRun = false;
 	Payload->Name			= NCsDamageableActorCached::Name::Respawn_Internal;
 	Payload->NameAsString	= NCsDamageableActorCached::Str::Respawn_Internal;
 

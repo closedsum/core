@@ -188,7 +188,7 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule& S
 	Payload->Object = InObject;
 	Payload->Routine = InOwnerMemberRoutine;
 	Payload->bDoInit = DoInit;
-	Payload->PerformFirstRun = PerformFirstRun;
+	Payload->bPerformFirstRun = PerformFirstRun;
 
 	return Allocate(Payload);
 }
@@ -206,7 +206,7 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule& S
 	Payload->Remove = InRemoveRoutine;
 	Payload->Type = RoutineType;
 	Payload->bDoInit = DoInit;
-	Payload->PerformFirstRun = PerformFirstRun;
+	Payload->bPerformFirstRun = PerformFirstRun;
 
 	return Allocate(Payload);
 }
@@ -246,7 +246,7 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(FCsCoroutinePayload* Payload)
 				R->index = RoutinesToRun[Schedule].Num();
 				RoutinesToRun[Schedule].Add(R);
 
-				if (Payload->PerformFirstRun)
+				if (Payload->bPerformFirstRun)
 				{
 					R->Run(0.0f);
 				}
@@ -255,7 +255,7 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(FCsCoroutinePayload* Payload)
 			{
 				RoutinesToInit[Schedule].Add(R);
 			}
-			LogTransaction(NCsCoroutineCached::Str::Allocate, (Payload->bDoInit && Payload->PerformFirstRun) ? ECsCoroutineTransaction::Start : ECsCoroutineTransaction::Allocate, R);
+			LogTransaction(NCsCoroutineCached::Str::Allocate, (Payload->bDoInit && Payload->bPerformFirstRun) ? ECsCoroutineTransaction::Start : ECsCoroutineTransaction::Allocate, R);
 			Payload->Reset();
 			return R;
 		}

@@ -1834,7 +1834,7 @@ FCsRoutine* UCsCommon::ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleTy
 	Payload->Actor			= InActor;
 	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->bDoInit		= true;
-	Payload->PerformFirstRun = false;
+	Payload->bPerformFirstRun = false;
 	Payload->Name			= NCsCommonCached::Name::ScaleActorOverTime_Internal;
 	Payload->NameAsString	= NCsCommonCached::Str::ScaleActorOverTime_Internal;
 
@@ -1974,7 +1974,7 @@ FCsRoutine* UCsCommon::ScaleActorOverTime_AsCurve(const ECsCoroutineSchedule &Sc
 	Payload->Actor			= InActor;
 	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->bDoInit		= true;
-	Payload->PerformFirstRun = false;
+	Payload->bPerformFirstRun = false;
 	Payload->Name			= NCsCommonCached::Name::ScaleActorOverTime_AsCurve_Internal;
 	Payload->NameAsString	= NCsCommonCached::Str::ScaleActorOverTime_AsCurve_Internal;
 
@@ -2082,7 +2082,7 @@ FCsRoutine* UCsCommon::MoveActorOverTime(const ECsCoroutineSchedule &ScheduleTyp
 	Payload->Actor			= InActor;
 	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->bDoInit		= true;
-	Payload->PerformFirstRun = false;
+	Payload->bPerformFirstRun = false;
 	Payload->Name			= NCsCommonCached::Name::MoveActorOverTime_Internal;
 	Payload->NameAsString	= NCsCommonCached::Str::MoveActorOverTime_Internal;
 
@@ -2156,7 +2156,7 @@ FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamic(const ECsCoroutineSchedule
 	Payload->Object			= InMID;
 	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->bDoInit		= true;
-	Payload->PerformFirstRun = false;
+	Payload->bPerformFirstRun = false;
 	Payload->Name			= NCsCommonCached::Name::DestroyMaterialInstanceDynamic_Internal;
 	Payload->NameAsString	= NCsCommonCached::Str::DestroyMaterialInstanceDynamic_Internal;
 
@@ -2239,7 +2239,7 @@ FCsRoutine* UCsCommon::FadeCameraOverTime(const ECsCoroutineSchedule &ScheduleTy
 	Payload->Actor			= Controller;
 	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->bDoInit		= true;
-	Payload->PerformFirstRun = false;
+	Payload->bPerformFirstRun = false;
 	Payload->Name			= NCsCommonCached::Name::FadeCameraOverTime_Internal;
 	Payload->NameAsString	= NCsCommonCached::Str::FadeCameraOverTime_Internal;
 

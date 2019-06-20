@@ -125,7 +125,7 @@ void ACsManager_Crafting::CraftItems(FCsCraftingPayload* Payload)
 	CoroutinePayload->Actor			  = this;
 	CoroutinePayload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	CoroutinePayload->bDoInit		= true;
-	CoroutinePayload->PerformFirstRun = false;
+	CoroutinePayload->bPerformFirstRun = false;
 	CoroutinePayload->Name			  = NCsManagerCraftingCached::Name::CraftItems_Internal;
 	CoroutinePayload->NameAsString	  = NCsManagerCraftingCached::Str::CraftItems_Internal;
 

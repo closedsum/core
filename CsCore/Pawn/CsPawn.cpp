@@ -213,7 +213,7 @@ void ACsPawn::CheckLinkedToPlayerState()
 	Payload->Remove			= &ACsPawn::RemoveRoutine;
 	Payload->Type			= ECsPawnRoutine::CheckLinkedToPlayerState_Internal.Value;
 	Payload->bDoInit		= true;
-	Payload->PerformFirstRun = false;
+	Payload->bPerformFirstRun = false;
 	Payload->Name			= NCsPawnCached::Name::CheckLinkedToPlayerState_Internal;
 	Payload->NameAsString	= NCsPawnCached::Str::CheckLinkedToPlayerState_Internal;
 
@@ -273,7 +273,7 @@ void ACsPawn::HandleRespawnTimer()
 	Payload->Remove			= &ACsPawn::RemoveRoutine;
 	Payload->Type			= ECsPawnRoutine::HandleRespawnTimer_Internal.Value;
 	Payload->bDoInit		= true;
-	Payload->PerformFirstRun = false;
+	Payload->bPerformFirstRun = false;
 	Payload->Name			= NCsPawnCached::Name::HandleRespawnTimer_Internal;
 	Payload->NameAsString	= NCsPawnCached::Str::HandleRespawnTimer_Internal;
 

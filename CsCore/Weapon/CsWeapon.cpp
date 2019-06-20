@@ -1076,7 +1076,7 @@ void ACsWeapon::PlayAnimation_Reload()
 	Payload->Remove			= &ACsWeapon::RemoveRoutine;
 	Payload->Type			= (uint8)ECsWeaponRoutine::PlayAnimation_Reload_Internal.Value;
 	Payload->bDoInit		= true;
-	Payload->PerformFirstRun = false;
+	Payload->bPerformFirstRun = false;
 	Payload->Name			= ECsWeaponCached::Name::PlayAnimation_Reload_Internal;
 	Payload->NameAsString	= ECsWeaponCached::Str::PlayAnimation_Reload_Internal;
 	
@@ -1476,7 +1476,7 @@ void ACsWeapon::StartChargeFire(const FECsWeaponFireMode &FireMode)
 	Payload->Remove			= &ACsWeapon::RemoveRoutine;
 	Payload->Type			= (uint8)ECsWeaponRoutine::StartChargeFire_Internal.Value;
 	Payload->bDoInit		= true;
-	Payload->PerformFirstRun = false;
+	Payload->bPerformFirstRun = false;
 	Payload->Name			= ECsWeaponCached::Name::StartChargeFire_Internal;
 	Payload->NameAsString	= ECsWeaponCached::Str::StartChargeFire_Internal;
 
@@ -1691,7 +1691,7 @@ void ACsWeapon::FireWeapon(const FECsWeaponFireMode &FireMode)
 	Payload->Remove			= &ACsWeapon::RemoveRoutine;
 	Payload->Type			= (uint8)ECsWeaponRoutine::FireWeapon_Internal.Value;
 	Payload->bDoInit		= true;
-	Payload->PerformFirstRun = false;
+	Payload->bPerformFirstRun = false;
 	Payload->Name			= ECsWeaponCached::Name::FireWeapon_Internal;
 	Payload->NameAsString	= ECsWeaponCached::Str::FireWeapon_Internal;
 
@@ -1932,7 +1932,7 @@ void ACsWeapon::DrawFireProjectile(class ACsProjectile* Projectile, const FVecto
 	Payload->Object				= Projectile;
 	Payload->Stop.Add(&ACsWeapon::FireWeapon_StopCondition);
 	Payload->bDoInit			= true;
-	Payload->PerformFirstRun	= false;
+	Payload->bPerformFirstRun = false;
 	Payload->Name				= ECsWeaponCached::Name::DrawFireProjectile_Internal;
 	Payload->NameAsString		= ECsWeaponCached::Str::DrawFireProjectile_Internal;
 

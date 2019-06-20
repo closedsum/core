@@ -125,7 +125,7 @@ struct FCsCoroutinePayload
 	CsRemoveRoutine Remove;
 	uint8 Type;
 	bool bDoInit;
-	bool PerformFirstRun;
+	bool bPerformFirstRun;
 
 	FName Name;
 	FString NameAsString;
@@ -150,7 +150,7 @@ struct FCsCoroutinePayload
 		Remove = nullptr;
 		Type = CS_ROUTINE_MAX_TYPE;
 		bDoInit = true;
-		PerformFirstRun = false;
+		bPerformFirstRun = false;
 		Name = NAME_None;
 		NameAsString = NCsCached::Str::Empty;
 	}

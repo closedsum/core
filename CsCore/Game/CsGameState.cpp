@@ -321,7 +321,7 @@ void ACsGameState::OnBoard()
 	Payload->Remove			= &ACsGameState::RemoveRoutine;
 	Payload->Type			= NCsGameStateRoutine::OnBoard_Internal.Value;
 	Payload->bDoInit		= true;
-	Payload->PerformFirstRun = false;
+	Payload->bPerformFirstRun = false;
 	Payload->Name			= NCsGameStateCached::Name::OnBoard_Internal;
 	Payload->NameAsString	= NCsGameStateCached::Str::OnBoard_Internal;
 

@@ -1833,7 +1833,7 @@ FCsRoutine* UCsCommon::ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleTy
 	Payload->Function		= &UCsCommon::ScaleActorOverTime_Internal;
 	Payload->Actor			= InActor;
 	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsCommonCached::Name::ScaleActorOverTime_Internal;
 	Payload->NameAsString	= NCsCommonCached::Str::ScaleActorOverTime_Internal;
@@ -1973,7 +1973,7 @@ FCsRoutine* UCsCommon::ScaleActorOverTime_AsCurve(const ECsCoroutineSchedule &Sc
 	Payload->Function		= &UCsCommon::ScaleActorOverTime_AsCurve_Internal;
 	Payload->Actor			= InActor;
 	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsCommonCached::Name::ScaleActorOverTime_AsCurve_Internal;
 	Payload->NameAsString	= NCsCommonCached::Str::ScaleActorOverTime_AsCurve_Internal;
@@ -2081,7 +2081,7 @@ FCsRoutine* UCsCommon::MoveActorOverTime(const ECsCoroutineSchedule &ScheduleTyp
 	Payload->Function		= &UCsCommon::MoveActorOverTime_Internal;
 	Payload->Actor			= InActor;
 	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsCommonCached::Name::MoveActorOverTime_Internal;
 	Payload->NameAsString	= NCsCommonCached::Str::MoveActorOverTime_Internal;
@@ -2155,7 +2155,7 @@ FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamic(const ECsCoroutineSchedule
 	Payload->Function		= &UCsCommon::DestroyMaterialInstanceDynamic_Internal;
 	Payload->Object			= InMID;
 	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsCommonCached::Name::DestroyMaterialInstanceDynamic_Internal;
 	Payload->NameAsString	= NCsCommonCached::Str::DestroyMaterialInstanceDynamic_Internal;
@@ -2238,7 +2238,7 @@ FCsRoutine* UCsCommon::FadeCameraOverTime(const ECsCoroutineSchedule &ScheduleTy
 	Payload->Function		= &UCsCommon::FadeCameraOverTime_Internal;
 	Payload->Actor			= Controller;
 	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsCommonCached::Name::FadeCameraOverTime_Internal;
 	Payload->NameAsString	= NCsCommonCached::Str::FadeCameraOverTime_Internal;

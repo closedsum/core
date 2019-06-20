@@ -402,7 +402,7 @@ void UCsWidget_Crafting::IncrementCount()
 	Payload->Add			 = &UCsUserWidget::AddRoutine;
 	Payload->Remove			 = &UCsUserWidget::RemoveRoutine;
 	Payload->Type			 = (uint8)ECsWidgetCraftingRoutine::IncrementCount_Internal;
-	Payload->DoInit			 = true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			 = ECsWidgetCraftingCached::Name::IncrementCount_Internal;
 	Payload->NameAsString	 = ECsWidgetCraftingCached::Str::IncrementCount_Internal;
@@ -534,7 +534,7 @@ void UCsWidget_Crafting::DecrementCount()
 	Payload->Add			 = &UCsUserWidget::AddRoutine;
 	Payload->Remove			 = &UCsUserWidget::RemoveRoutine;
 	Payload->Type			 = (uint8)ECsWidgetCraftingRoutine::DecrementCount_Internal;
-	Payload->DoInit			 = true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			 = ECsWidgetCraftingCached::Name::DecrementCount_Internal;
 	Payload->NameAsString	 = ECsWidgetCraftingCached::Str::DecrementCount_Internal;
@@ -719,7 +719,7 @@ void UCsWidget_Crafting::UpdateProgress(const uint64 &PayloadId)
 	Payload->Add			 = &UCsUserWidget::AddRoutine;
 	Payload->Remove			 = &UCsUserWidget::RemoveRoutine;
 	Payload->Type			 = (uint8)ECsWidgetCraftingRoutine::UpdateProgress_Internal;
-	Payload->DoInit			 = true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			 = ECsWidgetCraftingCached::Name::UpdateProgress_Internal;
 	Payload->NameAsString	 = ECsWidgetCraftingCached::Str::UpdateProgress_Internal;

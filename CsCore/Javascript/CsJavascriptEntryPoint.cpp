@@ -81,7 +81,7 @@ void ACsJavascriptEntryPoint::Setup()
 	Payload->Add			= &ACsJavascriptEntryPoint::AddRoutine;
 	Payload->Remove			= &ACsJavascriptEntryPoint::RemoveRoutine;
 	Payload->Type			= ECsJavascriptEntryPointRoutine::Setup_Internal.Value;
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsJavascriptEntryPointCached::Name::Setup_Internal;
 	Payload->NameAsString	= NCsJavascriptEntryPointCached::Str::Setup_Internal;

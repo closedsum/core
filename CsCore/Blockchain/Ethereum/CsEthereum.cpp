@@ -588,7 +588,7 @@ void UCsEthereum::StartPrivateChain()
 	Payload->Add			= &UCsEthereum::AddRoutine;
 	Payload->Remove			= &UCsEthereum::RemoveRoutine;
 	Payload->Type			= (uint8)ECsEthereumRoutine::StartPrivateChain_Internal;
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsEthereumCached::Name::StartPrivateChain_Internal;
 	Payload->NameAsString	= NCsEthereumCached::Str::StartPrivateChain_Internal;
@@ -655,7 +655,7 @@ void UCsEthereum::OpenConsole()
 	Payload->Add			= &UCsEthereum::AddRoutine;
 	Payload->Remove			= &UCsEthereum::RemoveRoutine;
 	Payload->Type			= (uint8)ECsEthereumRoutine::OpenConsole_Internal;
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsEthereumCached::Name::OpenConsole_Internal;
 	Payload->NameAsString	= NCsEthereumCached::Str::OpenConsole_Internal;
@@ -1366,7 +1366,7 @@ void UCsEthereum::CreateKeystore(CsEthereumAccount* Account)
 		Payload->Add			= &UCsEthereum::AddRoutine;
 		Payload->Remove			= &UCsEthereum::RemoveRoutine;
 		Payload->Type			= (uint8)ECsEthereumRoutine::CreateKeystore_Internal;
-		Payload->DoInit			= true;
+		Payload->bDoInit		= true;
 		Payload->PerformFirstRun = false;
 		Payload->Name			= NCsEthereumCached::Name::CreateKeystore_Internal;
 		Payload->NameAsString	= NCsEthereumCached::Str::CreateKeystore_Internal;
@@ -1505,7 +1505,7 @@ void UCsEthereum::SetupAccount(void* Payload)
 	CoroutinePayload->Add			= &UCsEthereum::AddRoutine;
 	CoroutinePayload->Remove		= &UCsEthereum::RemoveRoutine;
 	CoroutinePayload->Type			= (uint8)ECsEthereumRoutine::SetupAccount_Internal;
-	CoroutinePayload->DoInit		= true;
+	CoroutinePayload->bDoInit		= true;
 	CoroutinePayload->PerformFirstRun = false;
 	CoroutinePayload->Name			= NCsEthereumCached::Name::SetupAccount_Internal;
 	CoroutinePayload->NameAsString	= NCsEthereumCached::Str::SetupAccount_Internal;
@@ -1585,7 +1585,7 @@ void UCsEthereum::BringBalanceToThreshold(ICsBlockchainAccount* IAccount, const 
 	Payload->Add			= &UCsEthereum::AddRoutine;
 	Payload->Remove			= &UCsEthereum::RemoveRoutine;
 	Payload->Type			= (uint8)ECsEthereumRoutine::BringBalanceToThreshold_Internal;
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsEthereumCached::Name::BringBalanceToThreshold_Internal;
 	Payload->NameAsString	= NCsEthereumCached::Str::BringBalanceToThreshold_Internal;
@@ -1713,7 +1713,7 @@ void UCsEthereum::DeployContract(const FECsBlockchainContract &EContract, TArray
 	Payload->Add			= &UCsEthereum::AddRoutine;
 	Payload->Remove			= &UCsEthereum::RemoveRoutine;
 	Payload->Type			= (uint8)ECsEthereumRoutine::DeployContract_Internal;
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsEthereumCached::Name::DeployContract_Internal;
 	Payload->NameAsString	= NCsEthereumCached::Str::DeployContract_Internal;
@@ -1999,7 +1999,7 @@ void UCsEthereum::SetupContract(const FECsBlockchainContract &EContract, const F
 	Payload->Add			= &UCsEthereum::AddRoutine;
 	Payload->Remove			= &UCsEthereum::RemoveRoutine;
 	Payload->Type			= (uint8)ECsEthereumRoutine::SetupContract_Internal;
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsEthereumCached::Name::SetupContract_Internal;
 	Payload->NameAsString	= NCsEthereumCached::Str::SetupContract_Internal;
@@ -2089,7 +2089,7 @@ void UCsEthereum::RunContractStateChangeFunction(const FECsBlockchainContract &E
 	Payload->Add			= &UCsEthereum::AddRoutine;
 	Payload->Remove			= &UCsEthereum::RemoveRoutine;
 	Payload->Type			= (uint8)ECsEthereumRoutine::RunContractStateChangeFunction_Internal;
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsEthereumCached::Name::RunContractStateChangeFunction_Internal;
 	Payload->NameAsString	= NCsEthereumCached::Str::RunContractStateChangeFunction_Internal;
@@ -2233,7 +2233,7 @@ void UCsEthereum::CheckTransactionHasBeenMined(const FString &TransactionHash)
 	Payload->Add			= &UCsEthereum::AddRoutine;
 	Payload->Remove			= &UCsEthereum::RemoveRoutine;
 	Payload->Type			= (uint8)ECsEthereumRoutine::CheckTransactionHasBeenMined_Internal;
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsEthereumCached::Name::CheckTransactionHasBeenMined_Internal;
 	Payload->NameAsString	= NCsEthereumCached::Str::CheckTransactionHasBeenMined_Internal;

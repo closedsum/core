@@ -253,7 +253,7 @@ void UCsProcess::StartRead()
 	Payload->Add			= &UCsProcess::AddRoutine;
 	Payload->Remove			= &UCsProcess::RemoveRoutine;
 	Payload->Type			= (uint8)ECsProcessRoutine::StartRead_Internal;
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsProcessCached::Name::StartRead_Internal;
 	Payload->NameAsString	= NCsProcessCached::Str::StartRead_Internal;

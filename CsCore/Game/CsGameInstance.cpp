@@ -559,7 +559,7 @@ void UCsGameInstance::CreateFullscreenWidget()
 	Payload->Add			= &UCsGameInstance::AddRoutine;
 	Payload->Remove			= &UCsGameInstance::RemoveRoutine;
 	Payload->Type			= ECsGameInstanceRoutine::CreateFullscreenWidget_Internal.Value;
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsGameInstanceCached::Name::CreateFullscreenWidget_Internal;
 	Payload->NameAsString	= NCsGameInstanceCached::Str::CreateFullscreenWidget_Internal;
@@ -633,7 +633,7 @@ void UCsGameInstance::HideMouseCursor()
 	Payload->Add			= &UCsGameInstance::AddRoutine;
 	Payload->Remove			= &UCsGameInstance::RemoveRoutine;
 	Payload->Type			= (uint8)ECsGameInstanceRoutine::HideMouseCursor_Internal;
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsGameInstanceCached::Name::HideMouseCursor_Internal;
 	Payload->NameAsString	= NCsGameInstanceCached::Str::HideMouseCursor_Internal;

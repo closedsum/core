@@ -226,7 +226,7 @@ void ACsPlayerStateBase::OnBoard()
 	Payload->Add			= &ACsPlayerStateBase::AddRoutine;
 	Payload->Remove			= &ACsPlayerStateBase::RemoveRoutine;
 	Payload->Type			= ECsPlayerStateBaseRoutine::OnBoard_Internal.Value;
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsPlayerStateBaseCached::Name::OnBoard_Internal;
 	Payload->NameAsString	= NCsPlayerStateBaseCached::Str::OnBoard_Internal;
@@ -651,7 +651,7 @@ void ACsPlayerStateBase::RequestUniqueMappingId_AI(ACsPlayerStateBase* Requestin
 	Payload->Add			 = &ACsPlayerStateBase::AddRoutine;
 	Payload->Remove			 = &ACsPlayerStateBase::RemoveRoutine;
 	Payload->Type			 = ECsPlayerStateBaseRoutine::RequestUniqueMappingId_AI_Internal.Value;
-	Payload->DoInit			 = true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			 = NCsPlayerStateBaseCached::Name::RequestUniqueMappingId_AI_Internal;
 	Payload->NameAsString	 = NCsPlayerStateBaseCached::Str::RequestUniqueMappingId_AI_Internal;

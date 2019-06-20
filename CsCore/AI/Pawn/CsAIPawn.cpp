@@ -232,7 +232,7 @@ void ACsAIPawn::SyncCurrentViewFromBone(const FName &Bone)
 	Payload->Add			= &ACsAIPawn::AddRoutine;
 	Payload->Remove			= &ACsAIPawn::RemoveRoutine;
 	Payload->Type			= ECsPawnRoutine::SyncCurrentViewFromBone_Internal.Value;
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsAIPawnCached::Name::SyncCurrentViewFromBone_Internal;
 	Payload->NameAsString	= NCsAIPawnCached::Str::SyncCurrentViewFromBone_Internal;
@@ -428,7 +428,7 @@ void ACsAIPawn::StartShootForCount(const int32 &Count)
 	Payload->Add			= &ACsAIPawn::AddRoutine;
 	Payload->Remove			= &ACsAIPawn::RemoveRoutine;
 	Payload->Type			= ECsPawnRoutine::StartShootForCount_Internal.Value;
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsAIPawnCached::Name::StartShootForCount_Internal;
 	Payload->NameAsString	= NCsAIPawnCached::Str::StartShootForCount_Internal;
@@ -486,7 +486,7 @@ void ACsAIPawn::StartShootForDuration(const float &Duration)
 	Payload->Add			= &ACsAIPawn::AddRoutine;
 	Payload->Remove			= &ACsAIPawn::RemoveRoutine;
 	Payload->Type			= ECsPawnRoutine::StartShootForDuration_Internal.Value;
-	Payload->DoInit			= true;
+	Payload->bDoInit		= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= NCsAIPawnCached::Name::StartShootForDuration_Internal;
 	Payload->NameAsString	= NCsAIPawnCached::Str::StartShootForDuration_Internal;

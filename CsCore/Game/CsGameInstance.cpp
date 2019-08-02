@@ -31,8 +31,6 @@
 #pragma region
 
 	// GameInstanceRoutine
-CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsGameInstanceRoutine)
-
 namespace ECsGameInstanceRoutine
 {
 	CSCORE_API const Type OnBoard_Internal = EMCsGameInstanceRoutine::Get().Create(TEXT("OnBoard_Internal"));
@@ -43,8 +41,6 @@ namespace ECsGameInstanceRoutine
 }
 
 	// GameInstanceOnBoardState
-CS_DEFINE_ENUM_MAP_BODY(EMCsGameInstanceOnBoardState)
-
 namespace NCsGameInstanceOnBoardState
 {
 	namespace Ref

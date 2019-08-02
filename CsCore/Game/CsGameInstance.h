@@ -31,7 +31,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsGameInstanceRoutine)
 
 struct CSCORE_API EMCsGameInstanceRoutine : public TCsEnumStructMap<FECsGameInstanceRoutine, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsGameInstanceRoutine)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsGameInstanceRoutine, FECsGameInstanceRoutine, uint8)
 };
 
 namespace ECsGameInstanceRoutine
@@ -63,7 +63,7 @@ enum class ECsGameInstanceOnBoardState : uint8
 
 struct CSCORE_API EMCsGameInstanceOnBoardState : public TCsEnumMap<ECsGameInstanceOnBoardState>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsGameInstanceOnBoardState)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsGameInstanceOnBoardState, ECsGameInstanceOnBoardState)
 };
 
 namespace NCsGameInstanceOnBoardState

@@ -16,7 +16,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsBlockchainContract)
 
 struct CSCORE_API EMCsBlockchainContract : public TCsEnumStructMap<FECsBlockchainContract, uint8>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainContract)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsBlockchainContract, FECsBlockchainContract, uint8)
 };
 
 // Argument
@@ -40,7 +40,7 @@ enum class ECsBlockchainContractArgumentType : uint8
 
 struct CSCORE_API EMCsBlockchainContractArgumentType : public TCsEnumMap<ECsBlockchainContractArgumentType>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainContractArgumentType)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsBlockchainContractArgumentType, ECsBlockchainContractArgumentType)
 };
 
 namespace NCsBlockchainContractArgumentType
@@ -235,7 +235,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsBlockchainContractFunction)
 
 struct CSCORE_API EMCsBlockchainContractFunction : public TCsEnumStructMap<FECsBlockchainContractFunction, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsBlockchainContractFunction)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsBlockchainContractFunction, FECsBlockchainContractFunction, uint8)
 };
 
 #pragma endregion BlockchainContractFunction
@@ -256,7 +256,7 @@ enum class ECsBlockchainContractFunctionArgumentType : uint8
 
 struct CSCORE_API EMCsBlockchainContractFunctionArgumentType : public TCsEnumMap<ECsBlockchainContractFunctionArgumentType>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainContractFunctionArgumentType)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsBlockchainContractFunctionArgumentType, ECsBlockchainContractFunctionArgumentType)
 };
 
 namespace NCsBlockchainContractFunctionArgumentType
@@ -383,7 +383,7 @@ enum class ECsBlockchainContractFunctionReturnType : uint8
 
 struct CSCORE_API EMCsBlockchainContractFunctionReturnType : public TCsEnumMap<ECsBlockchainContractFunctionReturnType>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainContractFunctionReturnType)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsBlockchainContractFunctionReturnType, ECsBlockchainContractFunctionReturnType)
 };
 
 namespace NCsBlockchainContractFunctionReturnType

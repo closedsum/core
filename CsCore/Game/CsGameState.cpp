@@ -66,8 +66,6 @@ namespace NCsGameStateCached
 #pragma region
 
 // GameStateOnBoardState
-CS_DEFINE_ENUM_MAP_BODY(EMCsGameStateOnBoardState)
-
 namespace NCsGameStateOnBoardState
 {
 	namespace Ref
@@ -89,8 +87,6 @@ namespace NCsGameStateOnBoardState
 }
 
 // GameStateRoutine
-CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsGameStateRoutine)
-
 namespace NCsGameStateRoutine
 {
 	CSCORE_API const FECsGameStateRoutine OnBoard_Internal = EMCsGameStateRoutine::Get().Create(TEXT("OnBoard_Internal"));

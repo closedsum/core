@@ -1,9 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Blockchain/CsBlockchainContract.h"
 
-// BlockchainContract
-CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainContract)
-
 ICsBlockchainContract::ICsBlockchainContract(){}
 ICsBlockchainContract::ICsBlockchainContract(const FString &InName){}
 ICsBlockchainContract::~ICsBlockchainContract(){}
@@ -12,8 +9,6 @@ ICsBlockchainContract::~ICsBlockchainContract(){}
 #pragma region
 
 	// BlockchainContractArgumentType
-CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainContractArgumentType)
-
 namespace NCsBlockchainContractArgumentType
 {
 	namespace Ref
@@ -32,12 +27,7 @@ namespace NCsBlockchainContractArgumentType
 // Function
 #pragma region
 
-	// BlockchainContractFunction
-CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsBlockchainContractFunction)
-
 	// BlockchainContractFunctionArgumentType
-CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainContractFunctionArgumentType)
-
 namespace NCsBlockchainContractFunctionArgumentType
 {
 	namespace Ref
@@ -50,8 +40,6 @@ namespace NCsBlockchainContractFunctionArgumentType
 }
 
 	// BlockchainContractFunctionReturnType
-CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainContractFunctionReturnType)
-
 namespace NCsBlockchainContractFunctionReturnType
 {
 	namespace Ref

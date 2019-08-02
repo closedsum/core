@@ -30,8 +30,6 @@ namespace NCsDamageableActorCached
 #pragma region
 
 	// DamageableActorRoutine
-CS_DEFINE_ENUM_MAP_BODY(EMCsDamageableActorRoutine)
-
 namespace NCsDamageableActorRoutine
 {
 	namespace Ref

@@ -24,8 +24,6 @@ namespace NCsManagerTraceCached
 #pragma region
 
 	// TraceTransaction
-CS_DEFINE_ENUM_MAP_BODY(EMCsTraceTransaction)
-
 namespace NCsTraceTransaction
 {
 	namespace Ref

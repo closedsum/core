@@ -1,12 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Blockchain/CsBlockchainCommand.h"
 
-// BlockchainCommand
-CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainCommand)
-
 // BlockchainCommandArgumentType
-CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainCommandArgumentType)
-
 namespace NCsBlockchainCommandArgumentType
 {
 	namespace Ref

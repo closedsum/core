@@ -20,7 +20,7 @@ enum class ECsTraceTransaction : uint8
 
 struct CSCORE_API EMCsTraceTransaction : public TCsEnumMap<ECsTraceTransaction>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsTraceTransaction)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsTraceTransaction, ECsTraceTransaction)
 };
 
 namespace NCsTraceTransaction

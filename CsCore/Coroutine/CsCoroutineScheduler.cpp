@@ -11,9 +11,7 @@ bool UCsCoroutineScheduler::s_bCoroutineSchedulerHasShutdown = false;
 // Enums
 #pragma region
 
-	// GameInstanceRoutine
-CS_DEFINE_ENUM_MAP_BODY(EMCsCoroutineTransaction)
-
+	// CoroutineTransaction
 namespace NCsCoroutineTransaction
 {
 	namespace Ref
@@ -454,7 +452,7 @@ struct FCsRoutine* UCsCoroutineScheduler::StartChild(FCsCoroutinePayload* Payloa
 
 			const int32 ParentIndex = Parent->index;
 
-			for (int32 J = R->index + 1; J <= ParentIndex; J++)
+			for (int32 J = R->index + 1; J <= ParentIndex; ++J)
 			{
 				R->index++;
 			}
@@ -514,7 +512,7 @@ void UCsCoroutineScheduler::EndAll(const ECsCoroutineSchedule& ScheduleType /*= 
 	{
 		int32 Count = RoutinesToInit[I].Num();
 
-		for (int32 Index = 0; Index < Count; Index++)
+		for (int32 Index = 0; Index < Count; ++Index)
 		{
 			FCsRoutine* R = RoutinesToInit[I][Index];
 
@@ -526,7 +524,7 @@ void UCsCoroutineScheduler::EndAll(const ECsCoroutineSchedule& ScheduleType /*= 
 
 		Count = RoutinesToRun[I].Num();
 
-		for (int32 Index = 0; Index < Count; Index++)
+		for (int32 Index = 0; Index < Count; ++Index)
 		{
 			FCsRoutine* R = RoutinesToRun[I][Index];
 

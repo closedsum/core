@@ -17,7 +17,7 @@ enum class ECsBlockchainType : uint8
 
 struct CSCORE_API EMCsBlockchainType : public TCsEnumMap<ECsBlockchainType>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainType)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsBlockchainType, ECsBlockchainType)
 };
 
 namespace NCsBlockchainType
@@ -43,7 +43,7 @@ enum class ECsBlockchainProcessType : uint8
 
 struct CSCORE_API EMCsBlockchainProcessType : public TCsEnumMap<ECsBlockchainProcessType>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainProcessType)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsBlockchainProcessType, ECsBlockchainProcessType)
 };
 
 namespace NCsBlockchainProcessType

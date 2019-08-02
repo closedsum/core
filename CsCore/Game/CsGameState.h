@@ -44,7 +44,7 @@ enum class ECsGameStateOnBoardState : uint8
 
 struct CSCORE_API EMCsGameStateOnBoardState : public TCsEnumMap<ECsGameStateOnBoardState>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsGameStateOnBoardState)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsGameStateOnBoardState, ECsGameStateOnBoardState)
 };
 
 namespace NCsGameStateOnBoardState
@@ -86,7 +86,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsGameStateRoutine)
 
 struct CSCORE_API EMCsGameStateRoutine : public TCsEnumStructMap<FECsGameStateRoutine, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsGameStateRoutine)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsGameStateRoutine, FECsGameStateRoutine, uint8)
 };
 
 namespace NCsGameStateRoutine

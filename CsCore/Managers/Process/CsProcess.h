@@ -24,7 +24,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsProcess)
 
 struct CSCORE_API EMCsProcess : public TCsEnumStructMap<FECsProcess, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsProcess)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsProcess, FECsProcess, uint8)
 };
 
 #pragma endregion Process
@@ -42,7 +42,7 @@ enum class ECsProcessRoutine : uint8
 
 struct CSCORE_API EMCsProcessRoutine : public TCsEnumMap<ECsProcessRoutine>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsProcessRoutine)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProcessRoutine, ECsProcessRoutine)
 };
 
 namespace NCsProcessRoutine
@@ -75,7 +75,7 @@ enum class ECsProcessMonitorOutputEventPurpose : uint8
 
 struct CSCORE_API EMCsProcessMonitorOutputEventPurpose : public TCsEnumMap<ECsProcessMonitorOutputEventPurpose>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsProcessMonitorOutputEventPurpose)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProcessMonitorOutputEventPurpose, ECsProcessMonitorOutputEventPurpose)
 };
 
 namespace NCsProcessMonitorOutputEventPurpose
@@ -219,7 +219,7 @@ enum class ECsProcessPriorityModifier : uint8
 
 struct CSCORE_API EMCsProcessPriorityModifier : public TCsEnumMap<ECsProcessPriorityModifier>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsProcessPriorityModifier)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProcessPriorityModifier, ECsProcessPriorityModifier)
 };
 
 namespace NCsProcessPriorityModifier

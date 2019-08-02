@@ -29,7 +29,7 @@ enum class ECsInventoryTransaction : uint8
 
 struct CSCORE_API EMCsInventoryTransaction : public TCsEnumMap<ECsInventoryTransaction>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsInventoryTransaction)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsInventoryTransaction, ECsInventoryTransaction)
 };
 
 namespace NCsInventoryTransaction
@@ -84,7 +84,7 @@ enum class ECsInventoryGetRequest : uint8
 
 struct CSCORE_API EMCsInventoryGetRequest : public TCsEnumMap<ECsInventoryGetRequest>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsInventoryGetRequest)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsInventoryGetRequest, ECsInventoryGetRequest)
 };
 
 namespace NCsInventoryGetRequest

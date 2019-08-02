@@ -27,8 +27,6 @@
 #pragma region
 
 	// PlayerStateBaseOnBoardState
-CS_DEFINE_ENUM_MAP_BODY(EMCsPlayerStateBaseOnBoardState)
-
 namespace NCsPlayerStateBaseOnBoardState
 {
 	namespace Ref
@@ -72,8 +70,6 @@ namespace NCsPlayerStateBaseOnBoardState
 }
 
 // PlayerStateBaseRoutine
-CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsPlayerStateBaseRoutine)
-
 namespace ECsPlayerStateBaseRoutine
 {
 	CSCORE_API const FECsPlayerStateBaseRoutine OnBoard_Internal = EMCsPlayerStateBaseRoutine::Get().Create(TEXT("OnBoard_Internal"));

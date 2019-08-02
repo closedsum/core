@@ -122,6 +122,25 @@ namespace NCsCoroutineEndReason
 
 #pragma endregion CoroutineEndReason
 
+USTRUCT(BlueprintType)
+struct FCsRoutineHandle
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(Transient)
+	uint64 Handle;
+
+	FCsRoutineHandle() : 
+		Handle(0)
+	{
+	}
+
+	friend uint32 GetTypeHash(const FCsRoutineHandle& InHandle)
+	{
+		return GetTypeHash(InHandle.Handle);
+	}
+};
+
 #define CS_ROUTINE_POOL_SIZE 2048
 #define CS_ROUTINE_INDEXER_SIZE 4
 #define CS_ROUTINE_COUNTER_SIZE 4

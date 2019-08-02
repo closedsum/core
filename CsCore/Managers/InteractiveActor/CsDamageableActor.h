@@ -24,7 +24,7 @@ enum class ECsDamageableActorRoutine : uint8
 
 struct CSCORE_API EMCsDamageableActorRoutine : public TCsEnumMap<ECsDamageableActorRoutine>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsDamageableActorRoutine)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsDamageableActorRoutine, ECsDamageableActorRoutine)
 };
 
 namespace NCsDamageableActorRoutine

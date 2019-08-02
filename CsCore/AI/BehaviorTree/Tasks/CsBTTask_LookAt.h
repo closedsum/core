@@ -22,7 +22,7 @@ enum class ECsBTTask_LookAtType : uint8
 
 struct CSCORE_API EMCsBTTask_LookAtType : public TCsEnumMap<ECsBTTask_LookAtType>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsBTTask_LookAtType)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsBTTask_LookAtType, ECsBTTask_LookAtType)
 };
 
 namespace NCsBTTask_LookAtType

@@ -13,8 +13,6 @@ bool UCsBlockchain::s_bBlockchainHasShutdown = false;
 #pragma region
 
 // BlockchainType
-CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainType)
-
 namespace NCsBlockchainType
 {
 	namespace Ref
@@ -27,8 +25,6 @@ namespace NCsBlockchainType
 }
 
 // BlockchainProcessType
-CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainProcessType)
-
 namespace NCsBlockchainProcessType
 {
 	namespace Ref

@@ -16,7 +16,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsBlockchainCommand)
 
 struct CSCORE_API EMCsBlockchainCommand : public TCsEnumStructMap<FECsBlockchainCommand, uint8>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainCommand)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsBlockchainCommand, FECsBlockchainCommand, uint8)
 };
 
 UENUM(BlueprintType)
@@ -33,7 +33,7 @@ enum class ECsBlockchainCommandArgumentType : uint8
 
 struct CSCORE_API EMCsBlockchainCommandArgumentType : public TCsEnumMap<ECsBlockchainCommandArgumentType>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainCommandArgumentType)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsBlockchainCommandArgumentType, ECsBlockchainCommandArgumentType)
 };
 
 namespace NCsBlockchainCommandArgumentType

@@ -21,8 +21,6 @@
 #pragma region
 
 	// BTTask_LookAtType
-CS_DEFINE_ENUM_MAP_BODY(EMCsBTTask_LookAtType)
-
 namespace NCsBTTask_LookAtType
 {
 	namespace Ref

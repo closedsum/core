@@ -14,8 +14,6 @@
 #pragma region
 
 	// InventoryTransaction
-CS_DEFINE_ENUM_MAP_BODY(EMCsInventoryTransaction)
-
 namespace NCsInventoryTransaction
 {
 	namespace Ref
@@ -39,8 +37,6 @@ namespace NCsInventoryTransaction
 }
 
 	// InventoryGetRequest
-CS_DEFINE_ENUM_MAP_BODY(EMCsInventoryGetRequest)
-
 namespace NCsInventoryGetRequest
 {
 	namespace Ref

@@ -101,15 +101,42 @@ protected:
 	TCsEnumMap()
 	{
 		Count = 0;
+		bExplicitAddMAX = false;
+		EndPosition = 0;
 	}
 public:
 	virtual ~TCsEnumMap() {}
+
+protected:
+	bool bExplicitAddMAX;
+private:
+	int32 EndPosition;
+public:
+
+	// Range-based for loop
+	class ConstIterator
+	{
+		TCsEnumMap<EnumType>* Map;
+		int32 Position;
+	public:
+		ConstIterator(TCsEnumMap<EnumType>* _Map, int32 _Position) :Map(_Map), Position(_Position) {}
+
+		const EnumType& operator*() const { return Map->GetEnumAt(Position); }
+		ConstIterator& operator++() { ++Position; return *this; }
+		bool operator!=(const ConstIterator& It) const { return Position != It.Position; }
+	};
+
+public:
+
+	ConstIterator const begin() { return { this, 0 }; }
+	ConstIterator const end() { return { this, EndPosition }; }
 
 	FORCEINLINE EnumType Add(const EnumType& Enum, const FString& Name, const FString& DisplayName)
 	{
 		Enums.Add(Enum);
 		MAX = Enum;
 		++Count;
+		EndPosition = bExplicitAddMAX ? Count - 1 : Count;
 		FromNameMap.Add(Name, Enum);
 		ToNameMap.Add(Enum, Name);
 		FromDisplayNameMap.Add(DisplayName, Enum);
@@ -241,6 +268,43 @@ public:
 		return MAX;
 	}
 };
+
+#define CS_ENUM_MAP_BODY(EnumMap, EnumType) \
+	private: \
+		typedef TCsEnumMap<EnumType> Super; \
+	protected: \
+		EnumMap() : Super() {} \
+		EnumMap(const EnumMap &) = delete; \
+		EnumMap(EnumMap &&) = delete; \
+	public: \
+		~EnumMap() {} \
+	\
+	public: \
+		static EnumMap& Get() \
+		{ \
+			static EnumMap Instance; \
+			return Instance; \
+		}
+
+#define CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EnumMap, EnumType) \
+	private: \
+		typedef TCsEnumMap<EnumType> Super; \
+	protected: \
+		EnumMap() : Super() \
+		{ \
+			bExplicitAddMAX = true; \
+		} \
+		EnumMap(const EnumMap &) = delete; \
+		EnumMap(EnumMap &&) = delete; \
+	public: \
+		~EnumMap() {} \
+	\
+	public: \
+		static EnumMap& Get() \
+		{ \
+			static EnumMap Instance; \
+			return Instance; \
+		}
 
 #define CS_DECLARE_ENUM_MAP_BODY(EnumMap) \
 	protected: \
@@ -1074,6 +1138,41 @@ public:
 
 #endif // #if WITH_EDITOR
 };
+
+#define CS_ENUM_STRUCT_MAP_BODY(EnumMap, EnumStruct, EnumType) \
+	private: \
+		typedef TCsEnumStructMap<EnumStruct, EnumType> Super; \
+	protected: \
+		EnumMap() : Super() {} \
+		EnumMap(const EnumMap &) = delete; \
+		EnumMap(EnumMap &&) = delete; \
+	public: \
+		~EnumMap() {} \
+		\
+		static EnumMap& Get() \
+		{ \
+			static EnumMap Instance; \
+			return Instance; \
+		}
+
+#define CS_ENUM_STRUCT_MAP_BODY_WITH_EXPLICIT_MAX(EnumMap, EnumStruct, EnumType) \
+	private: \
+		typedef TCsEnumStructMap<EnumStruct, EnumType> Super; \
+	protected: \
+		EnumMap() : Super() \
+		{ \
+			bExplicitAddMAX = true; \
+		} \
+		EnumMap(const EnumMap &) = delete; \
+		EnumMap(EnumMap &&) = delete; \
+	public: \
+		~EnumMap() {} \
+		\
+		static EnumMap& Get() \
+		{ \
+			static EnumMap Instance; \
+			return Instance; \
+		}
 
 #define CS_DECLARE_ENUM_STRUCT_MAP_BODY(EnumMap) \
 	protected: \

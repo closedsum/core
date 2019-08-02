@@ -13,12 +13,7 @@
 // Enums
 #pragma region
 
-	// Process
-CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsProcess)
-
 	// ProcessRoutine
-CS_DEFINE_ENUM_MAP_BODY(EMCsProcessRoutine)
-
 namespace NCsProcessRoutine
 {
 	namespace Ref
@@ -29,8 +24,6 @@ namespace NCsProcessRoutine
 }
 
 	// ProcessMonitorOutputEventPurpose
-CS_DEFINE_ENUM_MAP_BODY(EMCsProcessMonitorOutputEventPurpose)
-
 namespace NCsProcessMonitorOutputEventPurpose
 {
 	namespace Ref
@@ -42,8 +35,6 @@ namespace NCsProcessMonitorOutputEventPurpose
 }
 
 	// ProcessPriorityModifier
-CS_DEFINE_ENUM_MAP_BODY(EMCsProcessPriorityModifier)
-
 namespace NCsProcessPriorityModifier
 {
 	namespace Ref

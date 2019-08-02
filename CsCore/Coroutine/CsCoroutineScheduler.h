@@ -28,7 +28,7 @@ enum class ECsCoroutineTransaction : uint8
 
 struct CSCORE_API EMCsCoroutineTransaction : public TCsEnumMap<ECsCoroutineTransaction>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsCoroutineTransaction)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsCoroutineTransaction, ECsCoroutineTransaction)
 };
 
 namespace NCsCoroutineTransaction

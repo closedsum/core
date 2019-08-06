@@ -87,6 +87,9 @@ namespace NCsCached
 template<typename EnumType>
 struct TCsEnumMap
 {
+protected:
+	FString MapName;
+	FString EnumName;
 private:
 	TArray<EnumType> Enums;
 	int32 Count;
@@ -101,14 +104,14 @@ protected:
 	TCsEnumMap()
 	{
 		Count = 0;
-		bExplicitAddMAX = false;
+		bExplicitMAX = false;
 		EndPosition = 0;
 	}
 public:
 	virtual ~TCsEnumMap() {}
 
 protected:
-	bool bExplicitAddMAX;
+	bool bExplicitMAX;
 private:
 	int32 EndPosition;
 public:
@@ -131,12 +134,22 @@ public:
 	ConstIterator const begin() { return { this, 0 }; }
 	ConstIterator const end() { return { this, EndPosition }; }
 
+	FORCEINLINE const FString& GetName()
+	{
+		return MapName;
+	}
+
+	FORCEINLINE const FString& GetEnumName()
+	{
+		return EnumName;
+	}
+
 	FORCEINLINE EnumType Add(const EnumType& Enum, const FString& Name, const FString& DisplayName)
 	{
 		Enums.Add(Enum);
 		MAX = Enum;
 		++Count;
-		EndPosition = bExplicitAddMAX ? Count - 1 : Count;
+		EndPosition = bExplicitMAX ? Count - 1 : Count;
 		FromNameMap.Add(Name, Enum);
 		ToNameMap.Add(Enum, Name);
 		FromDisplayNameMap.Add(DisplayName, Enum);
@@ -273,13 +286,16 @@ public:
 	private: \
 		typedef TCsEnumMap<EnumType> Super; \
 	protected: \
-		EnumMap() : Super() {} \
+		EnumMap() : Super() \
+		{ \
+			MapName = #EnumMap; \
+			EnumName = #EnumType; \
+		} \
 		EnumMap(const EnumMap &) = delete; \
 		EnumMap(EnumMap &&) = delete; \
 	public: \
 		~EnumMap() {} \
-	\
-	public: \
+		\
 		static EnumMap& Get() \
 		{ \
 			static EnumMap Instance; \
@@ -292,14 +308,15 @@ public:
 	protected: \
 		EnumMap() : Super() \
 		{ \
-			bExplicitAddMAX = true; \
+			MapName = #EnumMap; \
+			EnumName = #EnumType; \
+			bExplicitMAX = true; \
 		} \
 		EnumMap(const EnumMap &) = delete; \
 		EnumMap(EnumMap &&) = delete; \
 	public: \
 		~EnumMap() {} \
-	\
-	public: \
+		\
 		static EnumMap& Get() \
 		{ \
 			static EnumMap Instance; \
@@ -332,6 +349,9 @@ public:
 template<typename EnumType>
 struct TCsEnumMaskMap
 {
+protected:
+	FString MapName;
+	FString EnumName;
 private:
 	TArray<EnumType> Enums;
 	int32 Count;
@@ -351,6 +371,16 @@ protected:
 	}
 public:
 	virtual ~TCsEnumMaskMap() {}
+
+	FORCEINLINE const FString& GetName()
+	{
+		return MapName;
+	}
+
+	FORCEINLINE const FString& GetEnumName()
+	{
+		return EnumName;
+	}
 
 	FORCEINLINE EnumType Add(const EnumType& Enum, const FString& Name, const FString& DisplayName)
 	{
@@ -520,28 +550,25 @@ public:
 	}
 };
 
-#define CS_DECLARE_ENUM_MASK_MAP_BODY(EnumMap) \
+#define CS_ENUM_MASK_MAP_BODY(EnumMap, EnumType) \
+	private: \
+		typedef TCsEnumMaskMap<EnumType> Super; \
 	protected: \
-		EnumMap() {} \
+		EnumMap() : Super() \
+		{ \
+			MapName = #EnumMap; \
+			EnumName = #EnumType; \
+		} \
 		EnumMap(const EnumMap &) = delete; \
 		EnumMap(EnumMap &&) = delete; \
 	public: \
 		~EnumMap() {} \
-	private: \
-		static EnumMap* Instance; \
 		\
-	public: \
-		static EnumMap& Get();
-
-#define CS_DEFINE_ENUM_MASK_MAP_BODY(EnumMap) \
-	EnumMap* EnumMap::Instance; \
-	\
-	EnumMap& EnumMap::Get() \
-	{ \
-		if (!Instance) \
-			Instance = new EnumMap(); \
-		return *Instance; \
-	}
+		static EnumMap& Get() \
+		{ \
+			static EnumMap Instance; \
+			return Instance; \
+		}
 
 template<typename EnumType>
 struct TCsEnumFlagMap
@@ -1161,7 +1188,7 @@ public:
 	protected: \
 		EnumMap() : Super() \
 		{ \
-			bExplicitAddMAX = true; \
+			bExplicitMAX = true; \
 		} \
 		EnumMap(const EnumMap &) = delete; \
 		EnumMap(EnumMap &&) = delete; \

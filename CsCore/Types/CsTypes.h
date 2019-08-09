@@ -80,7 +80,7 @@ enum class ECsAxes : uint8
 
 struct CSCORE_API EMCsAxes : public TCsEnumFlagMap<ECsAxes>
 {
-	CS_DECLARE_ENUM_FLAG_MAP_BODY(EMCsAxes)
+	CS_ENUM_FLAG_MAP_BODY(EMCsAxes, ECsAxes)
 };
 
 namespace NCsAxes

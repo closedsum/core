@@ -84,6 +84,9 @@ namespace NCsCached
 // Enums
 #pragma region
 
+	// EnumMap
+#pragma region
+
 template<typename EnumType>
 struct TCsEnumMap
 {
@@ -346,6 +349,11 @@ public:
 		return *Instance; \
 	}
 
+#pragma endregion EnumMap
+
+	// EnumMaskMap
+#pragma region
+
 template<typename EnumType>
 struct TCsEnumMaskMap
 {
@@ -570,9 +578,17 @@ public:
 			return Instance; \
 		}
 
+#pragma endregion EnumMaskMap
+
+	// EnumFlagMap
+#pragma region
+
 template<typename EnumType>
 struct TCsEnumFlagMap
 {
+protected:
+	FString MapName;
+	FString EnumName;
 private:
 	TArray<EnumType> Enums;
 	int32 Count;
@@ -594,10 +610,43 @@ protected:
 public:
 	virtual ~TCsEnumFlagMap() {}
 
+private:
+	int32 EndPosition;
+public:
+
+	// Range-based for loop
+	class ConstIterator
+	{
+		TCsEnumFlagMap<EnumType>* Map;
+		int32 Position;
+	public:
+		ConstIterator(TCsEnumFlagMap<EnumType>* _Map, int32 _Position) :Map(_Map), Position(_Position) {}
+
+		const EnumType& operator*() const { return Map->GetEnumAt(Position); }
+		ConstIterator& operator++() { ++Position; return *this; }
+		bool operator!=(const ConstIterator& It) const { return Position != It.Position; }
+	};
+
+public:
+
+	ConstIterator const begin() { return { this, 0 }; }
+	ConstIterator const end() { return { this, EndPosition }; }
+
+	FORCEINLINE const FString& GetName()
+	{
+		return MapName;
+	}
+
+	FORCEINLINE const FString& GetEnumName()
+	{
+		return EnumName;
+	}
+
 	FORCEINLINE EnumType Add(const EnumType& Enum, const FString& Name, const FString& DisplayName)
 	{
 		Enums.Add(Enum);
 		++Count;
+		EndPosition = Count;
 		FromNameMap.Add(Name, Enum);
 		ToNameMap.Add(Enum, Name);
 		FromDisplayNameMap.Add(DisplayName, Enum);
@@ -791,28 +840,27 @@ public:
 	}
 };
 
-#define CS_DECLARE_ENUM_FLAG_MAP_BODY(EnumMap) \
+#define CS_ENUM_FLAG_MAP_BODY(EnumMap, EnumType) \
+	private: \
+		typedef TCsEnumFlagMap<EnumType> Super; \
 	protected: \
-		EnumMap() {} \
+		EnumMap() : Super() \
+		{ \
+			MapName = #EnumMap; \
+			EnumName = #EnumType; \
+		} \
 		EnumMap(const EnumMap &) = delete; \
 		EnumMap(EnumMap &&) = delete; \
 	public: \
 		~EnumMap() {} \
-	private: \
-		static EnumMap* Instance; \
 		\
-	public: \
-		static EnumMap& Get();
+		static EnumMap& Get() \
+		{ \
+			static EnumMap Instance; \
+			return Instance; \
+		}
 
-#define CS_DEFINE_ENUM_FLAG_MAP_BODY(EnumMap) \
-	EnumMap* EnumMap::Instance; \
-	\
-	EnumMap& EnumMap::Get() \
-	{ \
-		if (!Instance) \
-			Instance = new EnumMap(); \
-		return *Instance; \
-	}
+#pragma endregion EnumFlagMap
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsEnum
@@ -861,6 +909,9 @@ struct CSCORE_API FECsEnum
 		return TEXT("Name: ") + Name;
 	}
 };
+
+	// Enum_uint8
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsEnum_uint8 : public FECsEnum
@@ -969,9 +1020,17 @@ public:
 		return GetTypeHash(b.Name_Internal) ^ GetTypeHash(b.Value); \
 	}
 
+#pragma endregion Enum_uint8
+
+	// EnumStructMap
+#pragma region
+
 template<typename EnumStruct, typename EnumType>
 struct TCsEnumStructMap
 {
+protected:
+	FString MapName;
+	FString EnumName;
 private:
 	TArray<EnumStruct> Enums;
 	int32 Count;
@@ -989,9 +1048,45 @@ protected:
 		MAX.Value = (EnumType)0;
 		MAX.Name = TEXT("MAX");
 		MAX.DisplayName = TEXT("MAX");
+		bExplicitMAX = false;
+		EndPosition = 0;
 	}
 public:
 	virtual ~TCsEnumStructMap() {}
+
+protected:
+	bool bExplicitMAX;
+private:
+	int32 EndPosition;
+public:
+
+	// Range-based for loop
+	class ConstIterator
+	{
+		TCsEnumStructMap<EnumStruct, EnumType>* Map;
+		int32 Position;
+	public:
+		ConstIterator(TCsEnumStructMap<EnumStruct, EnumType>* _Map, int32 _Position) :Map(_Map), Position(_Position) {}
+
+		const EnumStruct& operator*() const { return Map->GetEnumAt(Position); }
+		ConstIterator& operator++() { ++Position; return *this; }
+		bool operator!=(const ConstIterator& It) const { return Position != It.Position; }
+	};
+
+public:
+
+	ConstIterator const begin() { return { this, 0 }; }
+	ConstIterator const end() { return { this, EndPosition }; }
+
+	FORCEINLINE const FString& GetName()
+	{
+		return MapName;
+	}
+
+	FORCEINLINE const FString& GetEnumName()
+	{
+		return EnumName;
+	}
 
 	FORCEINLINE EnumStruct Create(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum = false)
 	{
@@ -1000,6 +1095,7 @@ public:
 
 		Enums.Add(E);
 		++Count;
+		EndPosition = bExplicitMAX ? Count - 1 : Count;
 		if (UserDefinedEnum)
 		{
 			UserDefinedEnums.Add(E);
@@ -1009,7 +1105,10 @@ public:
 		DisplayNameMap.Add(DisplayName, E);
 		NameInternalMap.Add(E.Name_Internal, E);
 		TypeMap.Add(Index, E);
-		MAX.Value = (EnumType)Count;
+		if (bExplicitMAX)
+			MAX = E;
+		else
+			MAX.Value = (EnumType)Count;
 		return E;
 	}
 
@@ -1170,7 +1269,11 @@ public:
 	private: \
 		typedef TCsEnumStructMap<EnumStruct, EnumType> Super; \
 	protected: \
-		EnumMap() : Super() {} \
+		EnumMap() : Super() \
+		{ \
+			MapName = #EnumMap; \
+			EnumName = #EnumStruct; \
+		} \
 		EnumMap(const EnumMap &) = delete; \
 		EnumMap(EnumMap &&) = delete; \
 	public: \
@@ -1188,6 +1291,8 @@ public:
 	protected: \
 		EnumMap() : Super() \
 		{ \
+			MapName = #EnumMap; \
+			EnumName = #EnumStruct; \
 			bExplicitMAX = true; \
 		} \
 		EnumMap(const EnumMap &) = delete; \
@@ -1223,6 +1328,11 @@ public:
 			Instance = new EnumMap(); \
 		return *Instance; \
 	}
+
+#pragma endregion EnumStructMap
+
+	// EnumMask_int32
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsEnumMask_int32 : public FECsEnum
@@ -1347,6 +1457,11 @@ public:
 			return Value == B.Value && Mask == B.Mask && Name_Internal == B.Name_Internal; \
 		}
 
+#pragma endregion EnumMask_int32
+
+	// EnumMask_uint32
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsEnumMask_uint32 : public FECsEnum
 {
@@ -1466,9 +1581,17 @@ public:
 	}
 };
 
+#pragma endregion EnumMask_uint32
+
+	// EnumStructMaskMap
+#pragma region
+
 template<typename EnumStruct, typename EnumType>
 struct TCsEnumStructMaskMap
 {
+protected:
+	FString MapName;
+	FString EnumName;
 private:
 	TArray<EnumStruct> Enums;
 	int32 Count;
@@ -1488,9 +1611,42 @@ protected:
 		NONE.Mask = 0;
 		NONE.Name = TEXT("NONE");
 		NONE.DisplayName = TEXT("NONE");
+		EndPosition = 0;
 	}
 public:
 	virtual ~TCsEnumStructMaskMap() {}
+
+private:
+	int32 EndPosition;
+public:
+
+	// Range-based for loop
+	class ConstIterator
+	{
+		TCsEnumStructMaskMap<EnumStruct, EnumType>* Map;
+		int32 Position;
+	public:
+		ConstIterator(TCsEnumStructMaskMap<EnumStruct, EnumType>* _Map, int32 _Position) :Map(_Map), Position(_Position) {}
+
+		const EnumStruct& operator*() const { return Map->GetEnumAt(Position); }
+		ConstIterator& operator++() { ++Position; return *this; }
+		bool operator!=(const ConstIterator& It) const { return Position != It.Position; }
+	};
+
+public:
+
+	ConstIterator const begin() { return { this, 0 }; }
+	ConstIterator const end() { return { this, EndPosition }; }
+
+	FORCEINLINE const FString& GetName()
+	{
+		return MapName;
+	}
+
+	FORCEINLINE const FString& GetEnumName()
+	{
+		return EnumName;
+	}
 
 	FORCEINLINE EnumStruct Create(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum = false)
 	{
@@ -1517,6 +1673,7 @@ public:
 
 		Enums.Add(E);
 		++Count;
+		EndPosition = 0;
 		if (UserDefinedEnum)
 		{
 			UserDefinedEnums.Add(E);
@@ -1565,6 +1722,7 @@ public:
 
 		Enums.Add(E);
 		++Count;
+		EndPosition = 0;
 		if (UserDefinedEnum)
 		{
 			UserDefinedEnums.Add(E);
@@ -1739,28 +1897,27 @@ public:
 #endif // #if WITH_EDITOR
 };
 
-#define CS_DECLARE_ENUM_STRUCT_MASK_MAP_BODY(EnumMap) \
+#define CS_ENUM_STRUCT_MASK_MAP_BODY(EnumMap, EnumStruct, EnumType) \
+	private: \
+		typedef TCsEnumStructMaskMap<EnumStruct, EnumType> Super; \
 	protected: \
-		EnumMap() {} \
+		EnumMap() : Super() \
+		{ \
+			MapName = #EnumMap; \
+			EnumName = #EnumStruct; \
+		} \
 		EnumMap(const EnumMap &) = delete; \
 		EnumMap(EnumMap &&) = delete; \
 	public: \
 		~EnumMap() {} \
-	private: \
-		static EnumMap* Instance; \
 		\
-	public: \
-		static EnumMap& Get();
+		static EnumMap& Get() \
+		{ \
+			static EnumMap Instance; \
+			return Instance; \
+		}
 
-#define CS_DEFINE_ENUM_STRUCT_MASK_MAP_BODY(EnumMap) \
-	EnumMap* EnumMap::Instance; \
-	\
-	EnumMap& EnumMap::Get() \
-	{ \
-		if (!Instance) \
-			Instance = new EnumMap(); \
-		return *Instance; \
-	}
+#pragma endregion EnumStructMaskMap
 
 #pragma endregion Enums
 

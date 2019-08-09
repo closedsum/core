@@ -174,7 +174,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsInputActionMap& b)
 
 struct CSCORE_API EMCsInputActionMap : public TCsEnumStructMaskMap<FECsInputActionMap, int32>
 {
-	CS_DECLARE_ENUM_STRUCT_MASK_MAP_BODY(EMCsInputActionMap)
+	CS_ENUM_STRUCT_MASK_MAP_BODY(EMCsInputActionMap, FECsInputActionMap, int32)
 };
 
 #pragma endregion InputActionMap

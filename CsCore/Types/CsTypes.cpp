@@ -25,8 +25,6 @@ namespace NCsLevelState
 #pragma region
 
 	// Axes
-CS_DEFINE_ENUM_FLAG_MAP_BODY(EMCsAxes)
-
 namespace NCsAxes
 {
 	namespace Ref

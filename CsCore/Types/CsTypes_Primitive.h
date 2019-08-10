@@ -1924,78 +1924,89 @@ public:
 // Property Types
 #pragma region
 
+struct ICsProperty
+{
+	virtual void UpdateIsDirty() = 0;
+	virtual void Clear() = 0;
+	virtual void ResetValue() = 0;
+	virtual void Reset() = 0;
+	virtual bool HasChanged() = 0;
+	virtual void Resolve() = 0;
+
+};
+
 	// Value
 #pragma region
 
-template<typename T>
-struct TCsProperty
+template<typename ValueType>
+struct TCsProperty : public ICsProperty
 {
 public:
-	T DefaultValue;
-	T Value;
-	T Last_Value;
+	ValueType DefaultValue;
+	ValueType Value;
+	ValueType Last_Value;
 protected:
-	bool IsDirty;
+	bool bDirty;
 public:
-	TMulticastDelegate<void, const T&> OnChange_Event;
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
 
 public:
 	TCsProperty()
 	{
-		IsDirty = false;
+		bDirty = false;
 		OnChange_Event.Clear();
 	}
 	virtual ~TCsProperty(){}
 
-	void SetDefaultValue(const T &inDefaultValue)
+	void SetDefaultValue(const ValueType& inDefaultValue)
 	{
 		DefaultValue = inDefaultValue;
 	}
 
 	FORCEINLINE virtual void UpdateIsDirty()
 	{
-		IsDirty	   = Value != Last_Value;
+		bDirty	   = Value != Last_Value;
 		Last_Value = Value;
 
-		if (IsDirty)
+		if (bDirty)
 			OnChange_Event.Broadcast(Value);
 	}
 
-	FORCEINLINE TCsProperty& operator=(const T& B)
+	FORCEINLINE TCsProperty& operator=(const ValueType& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE bool operator==(const T& B) const
+	FORCEINLINE bool operator==(const ValueType& B) const
 	{
 		return Value == B;
 	}
 
-	FORCEINLINE bool operator!=(const T& B) const
+	FORCEINLINE bool operator!=(const ValueType& B) const
 	{
 		return !(*this == B);
 	}
 
-	FORCEINLINE virtual void Set(const T &inValue)
+	FORCEINLINE virtual void Set(const ValueType& inValue)
 	{
 		Value = inValue;
 		UpdateIsDirty();
 	}
 
-	FORCEINLINE const T& Get() { return Value; }
+	FORCEINLINE const ValueType& Get() { return Value; }
 
 	FORCEINLINE virtual void Clear()
 	{
-		IsDirty	= false;
+		bDirty	= false;
 	}
 
 	void ResetValue()
 	{
 		Value	   = DefaultValue;
 		Last_Value = Value;
-		IsDirty	   = false;
+		bDirty	   = false;
 	}
 
 	void Reset()
@@ -2005,8 +2016,8 @@ public:
 		OnChange_Event.Clear();
 	}
 
-	FORCEINLINE bool HasChanged() { return IsDirty; }
-	FORCEINLINE void MarkDirty() { IsDirty = true; }
+	FORCEINLINE bool HasChanged() { return bDirty; }
+	FORCEINLINE void MarkDirty() { bDirty = true; }
 
 	FORCEINLINE void Resolve()
 	{
@@ -2014,6 +2025,9 @@ public:
 		Clear();
 	}
 };
+
+	// bool
+#pragma region
 
 struct CSCORE_API FCsProperty_bool : public TCsProperty<bool>
 {
@@ -2035,27 +2049,27 @@ public:
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const bool &Lhs, const FCsProperty_bool &Rhs)
+	FORCEINLINE friend bool operator==(const bool& Lhs, const FCsProperty_bool& Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsProperty_bool &Lhs, const bool &Rhs)
+	FORCEINLINE friend bool operator==(const FCsProperty_bool& Lhs, const bool& Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const bool &Lhs, const FCsProperty_bool &Rhs)
+	FORCEINLINE friend bool operator!=(const bool& Lhs, const FCsProperty_bool& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsProperty_bool &Lhs, const bool &Rhs)
+	FORCEINLINE friend bool operator!=(const FCsProperty_bool& Lhs, const bool& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator|(const bool &Lhs, const FCsProperty_bool& Rhs)
+	FORCEINLINE friend bool operator|(const bool& Lhs, const FCsProperty_bool& Rhs)
 	{
 		return Lhs | Rhs.Value;
 	}
@@ -2065,36 +2079,36 @@ public:
 		return Lhs.Value | Rhs;
 	}
 
-	FORCEINLINE friend bool& operator|=(bool &Lhs, const FCsProperty_bool& Rhs)
+	FORCEINLINE friend bool& operator|=(bool& Lhs, const FCsProperty_bool& Rhs)
 	{
 		Lhs = Lhs | Rhs.Value;
 		return Lhs;
 	}
 
-	FORCEINLINE friend FCsProperty_bool& operator|=(FCsProperty_bool &Lhs, const bool& Rhs)
+	FORCEINLINE friend FCsProperty_bool& operator|=(FCsProperty_bool& Lhs, const bool& Rhs)
 	{
 		Lhs.Value = Lhs.Value | Rhs;
 		Lhs.UpdateIsDirty();
 		return Lhs;
 	}
 
-	FORCEINLINE friend bool operator&(const bool &Lhs, const FCsProperty_bool& Rhs)
+	FORCEINLINE friend bool operator&(const bool& Lhs, const FCsProperty_bool& Rhs)
 	{
 		return Lhs & Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator&(const FCsProperty_bool &Lhs, const bool& Rhs)
+	FORCEINLINE friend bool operator&(const FCsProperty_bool& Lhs, const bool& Rhs)
 	{
 		return Lhs.Value & Rhs;
 	}
 
-	FORCEINLINE friend bool& operator&=(bool &Lhs, const FCsProperty_bool& Rhs)
+	FORCEINLINE friend bool& operator&=(bool& Lhs, const FCsProperty_bool& Rhs)
 	{
 		Lhs = Lhs & Rhs.Value;
 		return Lhs;
 	}
 
-	FORCEINLINE friend FCsProperty_bool& operator&=(FCsProperty_bool &Lhs, const bool& Rhs)
+	FORCEINLINE friend FCsProperty_bool& operator&=(FCsProperty_bool& Lhs, const bool& Rhs)
 	{
 		Lhs.Value = Lhs.Value & Rhs;
 		Lhs.UpdateIsDirty();
@@ -2103,6 +2117,11 @@ public:
 };
 
 typedef FCsProperty_bool TCsBool;
+
+#pragma endregion bool
+
+	// int32
+#pragma region
 
 struct CSCORE_API FCsPrimitiveType_int32 : public TCsProperty<int32>
 {
@@ -2276,6 +2295,11 @@ public:
 
 typedef FCsPrimitiveType_int32 TCsInt32;
 
+#pragma endregion int32
+
+	// uint32
+#pragma region
+
 struct CSCORE_API FCsPrimitiveType_uint32 : public TCsProperty<uint32>
 {
 private:
@@ -2448,6 +2472,11 @@ public:
 
 typedef FCsPrimitiveType_uint32 TCsUint32;
 
+#pragma endregion uint32
+
+	// float
+#pragma region
+
 struct CSCORE_API FCsPrimitiveType_float : public TCsProperty<float>
 {
 private:
@@ -2592,6 +2621,8 @@ public:
 
 typedef FCsPrimitiveType_float TCsFloat;
 
+#pragma endregion float
+
 #define CS_AXES_2D 2
 #define CS_AXES_3D 3
 #define CS_AXIS_X 0
@@ -2599,19 +2630,22 @@ typedef FCsPrimitiveType_float TCsFloat;
 #define CS_AXIS_Z 2
 #define CS_AXES_3D_ALL 3
 
+	// FVector2D
+#pragma region
+
 struct CSCORE_API FCsPrimitiveType_FVector2D : public TCsProperty<FVector2D>
 {
 private:
 	typedef TCsProperty<FVector2D> Super;
 
 protected:
-	bool IsDirtys[CS_AXES_2D];
+	bool bDirtys[CS_AXES_2D];
 
 public:
 
 	FCsPrimitiveType_FVector2D() : Super()
 	{
-		for (bool& b : IsDirtys)
+		for (bool& b : bDirtys)
 		{
 			b = false;
 		}
@@ -2621,11 +2655,11 @@ public:
 
 	virtual void UpdateIsDirty() override
 	{
-		IsDirty = Value != Last_Value;
-		IsDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
-		IsDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
+		bDirty = Value != Last_Value;
+		bDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
+		bDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
 
-		if (IsDirty)
+		if (bDirty)
 			OnChange_Event.Broadcast(Value);
 	}
 
@@ -2636,32 +2670,32 @@ public:
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const FVector2D &Lhs, const FCsPrimitiveType_FVector2D &Rhs)
+	FORCEINLINE friend bool operator==(const FVector2D& Lhs, const FCsPrimitiveType_FVector2D& Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FVector2D &Lhs, const FVector2D &Rhs)
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FVector2D& Lhs, const FVector2D& Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const FVector2D &Lhs, const FCsPrimitiveType_FVector2D &Rhs)
+	FORCEINLINE friend bool operator!=(const FVector2D& Lhs, const FCsPrimitiveType_FVector2D& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FVector2D &Lhs, const FVector2D &Rhs)
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FVector2D& Lhs, const FVector2D& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend FVector2D operator-(const FVector2D &Lhs, const FCsPrimitiveType_FVector2D &Rhs)
+	FORCEINLINE friend FVector2D operator-(const FVector2D& Lhs, const FCsPrimitiveType_FVector2D& Rhs)
 	{
 		return Lhs - Rhs.Value;
 	}
 
-	FORCEINLINE friend FVector2D operator-(const FCsPrimitiveType_FVector2D &Lhs, const FVector2D &Rhs)
+	FORCEINLINE friend FVector2D operator-(const FCsPrimitiveType_FVector2D& Lhs, const FVector2D& Rhs)
 	{
 		return Lhs.Value - Rhs;
 	}
@@ -2687,13 +2721,13 @@ public:
 		return *this;
 	}
 
-	virtual void Set(const FVector2D &inValue) override
+	virtual void Set(const FVector2D& inValue) override
 	{
 		Value = inValue;
 		UpdateIsDirty();
 	}
 
-	FVector2D GetAxes(const int32 &Axes)
+	FVector2D GetAxes(const int32& Axes)
 	{
 		FVector2D V = FVector2D::ZeroVector;
 
@@ -2707,27 +2741,27 @@ public:
 	virtual void Clear() override
 	{
 		Last_Value = Value;
-		IsDirty = false;
-		IsDirtys[CS_AXIS_X] = false;
-		IsDirtys[CS_AXIS_Y] = false;
+		bDirty = false;
+		bDirtys[CS_AXIS_X] = false;
+		bDirtys[CS_AXIS_Y] = false;
 	}
 
-	bool HasAxisChanged(const uint8 &Axis)
+	bool HasAxisChanged(const uint8& Axis)
 	{
-		if (!IsDirty)
+		if (!bDirty)
 			return false;
 		if (Axis < CS_AXIS_X || Axis > CS_AXIS_Y)
 			return true;
-		return IsDirtys[Axis];
+		return bDirtys[Axis];
 	}
 
-	bool HasAxesChanged(const int32 &Axes)
+	bool HasAxesChanged(const int32& Axes)
 	{
-		if (!IsDirty)
+		if (!bDirty)
 			return false;
-		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X) && IsDirtys[CS_AXIS_X])
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X) && bDirtys[CS_AXIS_X])
 			return true;
-		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Y) && IsDirtys[CS_AXIS_Y])
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Y) && bDirtys[CS_AXIS_Y])
 			return true;
 		return false;
 	}
@@ -2735,19 +2769,24 @@ public:
 
 typedef FCsPrimitiveType_FVector2D TCsFVector2D;
 
+#pragma endregion FVector2D
+
+	// FVector
+#pragma region
+
 struct CSCORE_API FCsPrimitiveType_FVector : public TCsProperty<FVector>
 {
 private:
 	typedef TCsProperty<FVector> Super;
 
 protected:
-	bool IsDirtys[CS_AXES_3D];
+	bool bDirtys[CS_AXES_3D];
 
 public:
 
 	FCsPrimitiveType_FVector() : Super()
 	{
-		for (bool& b : IsDirtys)
+		for (bool& b : bDirtys)
 		{
 			b = false;
 		}
@@ -2757,12 +2796,12 @@ public:
 
 	virtual void UpdateIsDirty() override
 	{
-		IsDirty = Value != Last_Value;
-		IsDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
-		IsDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
-		IsDirtys[CS_AXIS_Z] = Value.Z != Last_Value.Z;
+		bDirty = Value != Last_Value;
+		bDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
+		bDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
+		bDirtys[CS_AXIS_Z] = Value.Z != Last_Value.Z;
 
-		if (IsDirty)
+		if (bDirty)
 			OnChange_Event.Broadcast(Value);
 	}
 
@@ -2773,22 +2812,22 @@ public:
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const FVector &Lhs, const FCsPrimitiveType_FVector &Rhs)
+	FORCEINLINE friend bool operator==(const FVector& Lhs, const FCsPrimitiveType_FVector& Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FVector &Lhs, const FVector &Rhs)
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FVector& Lhs, const FVector& Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const FVector &Lhs, const FCsPrimitiveType_FVector &Rhs)
+	FORCEINLINE friend bool operator!=(const FVector& Lhs, const FCsPrimitiveType_FVector& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FVector &Lhs, const FVector &Rhs)
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FVector& Lhs, const FVector& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
@@ -2814,13 +2853,13 @@ public:
 		return *this;
 	}
 
-	virtual void Set(const FVector &inValue) override 
+	virtual void Set(const FVector& inValue) override 
 	{
 		Value = inValue;
 		UpdateIsDirty();
 	}
 
-	FVector GetAxes(const int32 &Axes)
+	FVector GetAxes(const int32& Axes)
 	{
 		FVector V = FVector::ZeroVector;
 
@@ -2836,30 +2875,30 @@ public:
 	virtual void Clear() override
 	{
 		Last_Value = Value;
-		IsDirty = false;
-		IsDirtys[CS_AXIS_X] = false;
-		IsDirtys[CS_AXIS_Y] = false;
-		IsDirtys[CS_AXIS_Z] = false;
+		bDirty = false;
+		bDirtys[CS_AXIS_X] = false;
+		bDirtys[CS_AXIS_Y] = false;
+		bDirtys[CS_AXIS_Z] = false;
 	}
 
-	bool HasAxisChanged(const uint8 &Axis)
+	bool HasAxisChanged(const uint8& Axis)
 	{
-		if (!IsDirty)
+		if (!bDirty)
 			return false;
 		if (Axis < CS_AXIS_X || Axis > CS_AXIS_Z)
 			return true;
-		return IsDirtys[Axis];
+		return bDirtys[Axis];
 	}
 
-	bool HasAxesChanged(const int32 &Axes)
+	bool HasAxesChanged(const int32& Axes)
 	{
-		if (!IsDirty)
+		if (!bDirty)
 			return false;
-		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X) && IsDirtys[CS_AXIS_X])
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X) && bDirtys[CS_AXIS_X])
 			return true;
-		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Y) && IsDirtys[CS_AXIS_Y])
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Y) && bDirtys[CS_AXIS_Y])
 			return true;
-		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Z) && IsDirtys[CS_AXIS_Z])
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Z) && bDirtys[CS_AXIS_Z])
 			return true;
 		return false;
 	}
@@ -2867,10 +2906,14 @@ public:
 
 typedef FCsPrimitiveType_FVector TCsFVector;
 
+#pragma endregion FVector
+
 #define CS_AXIS_ROLL 0
 #define CS_AXIS_PITCH 1
 #define CS_AXIS_YAW 2
 
+	// FRotator
+#pragma region
 
 struct CSCORE_API FCsPrimitiveType_FRotator : public TCsProperty<FRotator>
 {
@@ -2878,13 +2921,13 @@ private:
 	typedef TCsProperty<FRotator> Super;
 
 protected:
-	bool IsDirtys[CS_AXES_3D];
+	bool bDirtys[CS_AXES_3D];
 
 public:
 
 	FCsPrimitiveType_FRotator() : Super()
 	{
-		for (bool& b : IsDirtys)
+		for (bool& b : bDirtys)
 		{
 			b = false;
 		}
@@ -2894,12 +2937,12 @@ public:
 
 	virtual void UpdateIsDirty() override
 	{
-		IsDirty = Value != Last_Value;
-		IsDirtys[CS_AXIS_ROLL] = Value.Roll != Last_Value.Roll;
-		IsDirtys[CS_AXIS_PITCH] = Value.Pitch != Last_Value.Pitch;
-		IsDirtys[CS_AXIS_YAW] = Value.Yaw != Last_Value.Yaw;
+		bDirty = Value != Last_Value;
+		bDirtys[CS_AXIS_ROLL] = Value.Roll != Last_Value.Roll;
+		bDirtys[CS_AXIS_PITCH] = Value.Pitch != Last_Value.Pitch;
+		bDirtys[CS_AXIS_YAW] = Value.Yaw != Last_Value.Yaw;
 
-		if (IsDirty)
+		if (bDirty)
 			OnChange_Event.Broadcast(Value);
 	}
 
@@ -2910,22 +2953,22 @@ public:
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const FRotator &Lhs, const FCsPrimitiveType_FRotator &Rhs)
+	FORCEINLINE friend bool operator==(const FRotator& Lhs, const FCsPrimitiveType_FRotator& Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FRotator &Lhs, const FRotator &Rhs)
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FRotator& Lhs, const FRotator& Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const FRotator &Lhs, const FCsPrimitiveType_FRotator &Rhs)
+	FORCEINLINE friend bool operator!=(const FRotator& Lhs, const FCsPrimitiveType_FRotator& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FRotator &Lhs, const FRotator &Rhs)
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FRotator& Lhs, const FRotator& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
@@ -2944,13 +2987,13 @@ public:
 		return *this;
 	}
 
-	virtual void Set(const FRotator &inValue) override
+	virtual void Set(const FRotator& inValue) override
 	{
 		Value = inValue;
 		UpdateIsDirty();
 	}
 
-	FRotator GetAxes(const int32 &Axes)
+	FRotator GetAxes(const int32& Axes)
 	{
 		FRotator V = FRotator::ZeroRotator;
 
@@ -2966,36 +3009,41 @@ public:
 	virtual void Clear() override
 	{
 		Last_Value = Value;
-		IsDirty = false;
-		IsDirtys[CS_AXIS_ROLL] = false;
-		IsDirtys[CS_AXIS_PITCH] = false;
-		IsDirtys[CS_AXIS_YAW] = false;
+		bDirty = false;
+		bDirtys[CS_AXIS_ROLL] = false;
+		bDirtys[CS_AXIS_PITCH] = false;
+		bDirtys[CS_AXIS_YAW] = false;
 	}
 
-	bool HasAxisChanged(const uint8 &Axis)
+	bool HasAxisChanged(const uint8& Axis)
 	{
-		if (!IsDirty)
+		if (!bDirty)
 			return false;
 		if (Axis < CS_AXIS_PITCH || Axis > CS_AXIS_ROLL)
 			return true;
-		return IsDirtys[Axis];
+		return bDirtys[Axis];
 	}
 
-	bool HasAxesChanged(const int32 &Axes)
+	bool HasAxesChanged(const int32& Axes)
 	{
-		if (!IsDirty)
+		if (!bDirty)
 			return false;
-		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_ROLL) && IsDirtys[CS_AXIS_ROLL])
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_ROLL) && bDirtys[CS_AXIS_ROLL])
 			return true;
-		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_PITCH) && IsDirtys[CS_AXIS_PITCH])
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_PITCH) && bDirtys[CS_AXIS_PITCH])
 			return true;
-		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_YAW) && IsDirtys[CS_AXIS_YAW])
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_YAW) && bDirtys[CS_AXIS_YAW])
 			return true;
 		return false;
 	}
 };
 
 typedef FCsPrimitiveType_FRotator TCsFRotator;
+
+#pragma endregion FRotator
+
+	// FString
+#pragma region
 
 struct CSCORE_API FCsPrimitiveType_FString : public TCsProperty<FString>
 {
@@ -3040,6 +3088,11 @@ public:
 
 typedef FCsPrimitiveType_FString TCsFString;
 
+#pragma endregion FString
+
+	// FLinearColor
+#pragma region
+
 struct CSCORE_API FCsPrimitiveType_FLinearColor : public TCsProperty<FLinearColor>
 {
 private:
@@ -3083,37 +3136,39 @@ public:
 
 typedef FCsPrimitiveType_FLinearColor TCsFLinearColor;
 
+#pragma endregion FLinearColor
+
 #pragma endregion Value
 
 	// Ref
 #pragma region
 
 template<typename ValueType>
-struct TCsProperty_Ref
+struct TCsProperty_Ref : ICsProperty
 {
 public:
 	ValueType DefaultValue;
 	ValueType* Value;
 	ValueType Last_Value;
 protected:
-	bool IsDirty;
+	bool bDirty;
 public:
 	TMulticastDelegate<void, const ValueType&> OnChange_Event;
 
 public:
 	TCsProperty_Ref()
 	{
-		IsDirty = false;
+		bDirty = false;
 		OnChange_Event.Clear();
 	}
 	virtual ~TCsProperty_Ref(){}
 
 	FORCEINLINE virtual void UpdateIsDirty()
 	{
-		IsDirty	   = *Value != Last_Value;
+		bDirty	   = *Value != Last_Value;
 		Last_Value = *Value;
 
-		if (IsDirty)
+		if (bDirty)
 			OnChange_Event.Broadcast(*Value);
 	}
 
@@ -3140,7 +3195,7 @@ public:
 		UpdateIsDirty();
 	}
 
-	FORCEINLINE void Set(const ValueType &inValue)
+	FORCEINLINE void Set(const ValueType& inValue)
 	{
 		*Value = inValue;
 		UpdateIsDirty();
@@ -3150,14 +3205,14 @@ public:
 
 	FORCEINLINE void Clear()
 	{
-		IsDirty	= false;
+		bDirty = false;
 	}
 
 	void ResetValue()
 	{
 		Value	   = nullptr;
 		Last_Value = DefaultValue;
-		IsDirty	   = false;
+		bDirty	   = false;
 	}
 
 	void Reset()
@@ -3167,7 +3222,7 @@ public:
 		OnChange_Event.Clear();
 	}
 
-	FORCEINLINE bool HasChanged() { return IsDirty; }
+	FORCEINLINE bool HasChanged() { return bDirty; }
 
 	FORCEINLINE void Resolve()
 	{
@@ -3175,6 +3230,9 @@ public:
 		Clear();
 	}
 };
+
+	// bool
+#pragma region
 
 struct CSCORE_API FCsProperty_Ref_bool : public TCsProperty_Ref<bool>
 {
@@ -3265,6 +3323,11 @@ public:
 
 typedef FCsProperty_Ref_bool TCsBool_Ref;
 
+#pragma endregion bool
+
+	// int32
+#pragma region
+
 struct CSCORE_API FCsProperty_Ref_int32 : public TCsProperty_Ref<int32>
 {
 private:
@@ -3327,6 +3390,11 @@ public:
 };
 
 typedef FCsProperty_Ref_int32 TCsInt32_Ref;
+
+#pragma endregion int32
+
+	// float
+#pragma region
 
 struct CSCORE_API FCsProperty_Ref_float : public TCsProperty_Ref<float>
 {
@@ -3391,6 +3459,11 @@ public:
 
 typedef FCsProperty_Ref_float TCsFloat_Ref;
 
+#pragma endregion float
+
+	// FVector
+#pragma region
+
 struct CSCORE_API FCsProperty_Ref_FVector : public TCsProperty_Ref<FVector>
 {
 private:
@@ -3433,6 +3506,8 @@ public:
 };
 
 typedef FCsProperty_Ref_FVector TCsFVector_Ref;
+
+#pragma endregion FVector
 
 #pragma endregion Ref
 
@@ -3484,7 +3559,7 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	FORCEINLINE virtual void UpdateIsDirty(const int32 &Index)
+	FORCEINLINE virtual void UpdateIsDirty(const int32& Index)
 	{
 		IsDirtys[Index]		= Values[Index] != Last_Values[Index];
 		Last_Values[Index]	= Values[Index];
@@ -3521,13 +3596,13 @@ public:
 		return !(*this == B);
 	}
 
-	void Set(const ValueType &inValue)
+	void Set(const ValueType& inValue)
 	{
 		Value = inValue;
 		UpdateIsDirty();
 	}
 
-	void Set(const int32 &Index, const ValueType &inValue)
+	void Set(const int32& Index, const ValueType& inValue)
 	{
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
@@ -3542,7 +3617,7 @@ public:
 
 	FORCEINLINE const ValueType& Get() { return Value; }
 
-	FORCEINLINE const ValueType& Get(const int32 &Index)
+	FORCEINLINE const ValueType& Get(const int32& Index)
 	{
 		return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? Value : Values[Index];
 	}
@@ -3557,7 +3632,7 @@ public:
 		}
 	}
 
-	FORCEINLINE void Clear(const int32 &Index)
+	FORCEINLINE void Clear(const int32& Index)
 	{
 		IsDirtys[Index]	= false;
 	}
@@ -3585,7 +3660,7 @@ public:
 	}
 
 	FORCEINLINE bool HasChanged() { return IsDirty; }
-	FORCEINLINE bool HasChanged(const int32 &Index) { return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index]; }
+	FORCEINLINE bool HasChanged(const int32& Index) { return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index]; }
 
 	FORCEINLINE void Resolve()
 	{
@@ -3598,7 +3673,7 @@ public:
 		Clear();
 	}
 
-	FORCEINLINE void Resolve(const int32 &Index)
+	FORCEINLINE void Resolve(const int32& Index)
 	{
 		UpdateIsDirty(Index);
 		Clear(Index);
@@ -3616,13 +3691,13 @@ public:
 	TCsIntegralType_MultiValue() : Super(){}
 	~TCsIntegralType_MultiValue(){}
 
-	void Add(const ValueType &inValue)
+	void Add(const ValueType& inValue)
 	{ 
 		Value += inValue;
 		UpdateIsDirty();
 	}
 
-	void Add(const int32 &Index, const ValueType &inValue)
+	void Add(const int32& Index, const ValueType& inValue)
 	{
 		if (Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE)
 		{
@@ -3635,13 +3710,13 @@ public:
 		}
 	}
 
-	void Subtract(const ValueType &inValue)
+	void Subtract(const ValueType& inValue)
 	{ 
 		Value -= inValue;
 		UpdateIsDirty();
 	}
 
-	void Subtract(const int32 &Index, const ValueType &inValue)
+	void Subtract(const int32& Index, const ValueType& inValue)
 	{
 		if (Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE)
 		{
@@ -3676,6 +3751,9 @@ public:
 		return min;
 	}
 };
+
+	// bool
+#pragma region
 
 template<uint8 SIZE>
 struct TCsProperty_Multi_bool : public TCsProperty_Multi<bool, SIZE>
@@ -3714,6 +3792,11 @@ public:
 	}
 };
 
+#pragma endregion bool
+
+	// FString
+#pragma region
+
 template<uint8 SIZE>
 struct TCsProperty_Multi_FString : public TCsProperty_Multi<FString, SIZE>
 {
@@ -3729,11 +3812,16 @@ public:
 	~TCsProperty_Multi_FString(){}
 };
 
+#pragma endregion FString
+
 #define CS_FSTRING_ENUM_TWO_PARAMS 2
 #define CS_FSTRING_ENUM_THREE_PARAMS 3
 #define CS_FSTRING_ENUM_DEFAULT_VALUE 0
 #define CS_FSTRING_ENUM_LOWER_VALUE 1
 #define CS_FSTRING_ENUM_ALT_1_VALUE 2
+
+	// FString_Enum_TwoParams
+#pragma region
 
 struct CSCORE_API TCsProperty_Multi_FString_Enum_TwoParams : public TCsProperty_Multi_FString<CS_FSTRING_ENUM_TWO_PARAMS>
 {
@@ -3748,7 +3836,7 @@ public:
 	}
 	~TCsProperty_Multi_FString_Enum_TwoParams(){}
 
-	TCsProperty_Multi_FString_Enum_TwoParams(const FString &inValue1, const FString &inValue2)
+	TCsProperty_Multi_FString_Enum_TwoParams(const FString& inValue1, const FString& inValue2)
 	{
 		Value = inValue1;
 
@@ -3756,7 +3844,7 @@ public:
 		Values[CS_FSTRING_ENUM_LOWER_VALUE] = inValue2;
 	}
 
-	FORCEINLINE friend bool operator==(const FString &Lhs, const TCsProperty_Multi_FString_Enum_TwoParams &Rhs)
+	FORCEINLINE friend bool operator==(const FString& Lhs, const TCsProperty_Multi_FString_Enum_TwoParams& Rhs)
 	{
 		const FString Lower = Lhs.ToLower();
 
@@ -3768,7 +3856,7 @@ public:
 		return Rhs.Value == Lhs || Rhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator==(const TCsProperty_Multi_FString_Enum_TwoParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator==(const TCsProperty_Multi_FString_Enum_TwoParams& Lhs, const FString& Rhs)
 	{
 		const FString Lower = Rhs.ToLower();
 
@@ -3780,16 +3868,21 @@ public:
 		return Lhs.Value == Rhs || Lhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator!=(const FString &Lhs, const TCsProperty_Multi_FString_Enum_TwoParams &Rhs)
+	FORCEINLINE friend bool operator!=(const FString& Lhs, const TCsProperty_Multi_FString_Enum_TwoParams& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const TCsProperty_Multi_FString_Enum_TwoParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsProperty_Multi_FString_Enum_TwoParams& Lhs, const FString& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
+
+#pragma endregion FString_Enum_TwoParams
+
+	// FString_Enum_ThreeParams
+#pragma region
 
 struct CSCORE_API TCsProperty_Multi_FString_Enum_ThreeParams : public TCsProperty_Multi_FString<CS_FSTRING_ENUM_THREE_PARAMS>
 {
@@ -3804,7 +3897,7 @@ public:
 	}
 	~TCsProperty_Multi_FString_Enum_ThreeParams(){}
 
-	TCsProperty_Multi_FString_Enum_ThreeParams(const FString &inValue1, const FString &inValue2, const FString &inValue3)
+	TCsProperty_Multi_FString_Enum_ThreeParams(const FString& inValue1, const FString& inValue2, const FString& inValue3)
 	{
 		Value = inValue1;
 
@@ -3813,7 +3906,7 @@ public:
 		Values[CS_FSTRING_ENUM_ALT_1_VALUE]   = inValue3;
 	}
 	
-	FORCEINLINE friend bool operator==(const FString &Lhs, const TCsProperty_Multi_FString_Enum_ThreeParams &Rhs)
+	FORCEINLINE friend bool operator==(const FString& Lhs, const TCsProperty_Multi_FString_Enum_ThreeParams& Rhs)
 	{
 		const FString Lower = Lhs.ToLower();
 
@@ -3825,7 +3918,7 @@ public:
 		return Rhs.Value == Lhs || Rhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator==(const TCsProperty_Multi_FString_Enum_ThreeParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator==(const TCsProperty_Multi_FString_Enum_ThreeParams& Lhs, const FString& Rhs)
 	{
 		const FString Lower = Rhs.ToLower();
 
@@ -3837,16 +3930,18 @@ public:
 		return Lhs.Value == Rhs || Lhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator!=(const FString &Lhs, const TCsProperty_Multi_FString_Enum_ThreeParams &Rhs)
+	FORCEINLINE friend bool operator!=(const FString& Lhs, const TCsProperty_Multi_FString_Enum_ThreeParams& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const TCsProperty_Multi_FString_Enum_ThreeParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsProperty_Multi_FString_Enum_ThreeParams& Lhs, const FString& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
+
+#pragma endregion FString_Enum_ThreeParams
 
 #pragma endregion MultiValue
 

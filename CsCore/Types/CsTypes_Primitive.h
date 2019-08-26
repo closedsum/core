@@ -1978,10 +1978,7 @@ namespace NCsUserDefinedEnum
 {
 	typedef FECsUserDefinedEnum Type;
 
-	namespace Ref
-	{
-		extern CSCORE_API const Type FECsInputAction;
-	}
+	extern CSCORE_API const Type FECsInputAction;
 }
 
 #pragma endregion UserDefinedEnum
@@ -5621,18 +5618,15 @@ namespace NCsMemberType
 {
 	typedef FECsMemberType Type;
 
-	namespace Ref
-	{
-		extern CSCORE_API const Type Bool;
-		extern CSCORE_API const Type Uint8;
-		extern CSCORE_API const Type Int32;
-		extern CSCORE_API const Type Float;
-		extern CSCORE_API const Type String;
-		extern CSCORE_API const Type Name;
-		extern CSCORE_API const Type Vector;
-		extern CSCORE_API const Type Rotator;
-		extern CSCORE_API const Type Color;
-	}
+	extern CSCORE_API const Type Bool;
+	extern CSCORE_API const Type Uint8;
+	extern CSCORE_API const Type Int32;
+	extern CSCORE_API const Type Float;
+	extern CSCORE_API const Type String;
+	extern CSCORE_API const Type Name;
+	extern CSCORE_API const Type Vector;
+	extern CSCORE_API const Type Rotator;
+	extern CSCORE_API const Type Color;
 }
 
 #pragma endregion MemberType

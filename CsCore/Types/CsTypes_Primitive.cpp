@@ -74,10 +74,7 @@ namespace NCsCached
 
 namespace NCsUserDefinedEnum
 {
-	namespace Ref
-	{
-		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsUserDefinedEnum, FECsInputAction);
-	}
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsUserDefinedEnum, FECsInputAction);
 }
 
 #pragma endregion UserDefinedEnum
@@ -87,18 +84,15 @@ namespace NCsUserDefinedEnum
 
 namespace NCsMemberType
 {
-	namespace Ref
-	{
-		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Bool);
-		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Uint8);
-		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Int32);
-		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Float);
-		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, String);
-		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Name);
-		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Vector);
-		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Rotator);
-		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Color);
-	}
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Bool);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Uint8);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Int32);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Float);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, String);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Name);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Vector);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Rotator);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Color);
 }
 
 #pragma endregion MemberType

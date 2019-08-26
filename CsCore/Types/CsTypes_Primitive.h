@@ -92,7 +92,9 @@ struct TCsEnumMap
 {
 protected:
 	FString MapName;
+	FName MapFName;
 	FString EnumName;
+	FName EnumFName;
 private:
 	TArray<EnumType> Enums;
 	int32 Count;
@@ -142,9 +144,19 @@ public:
 		return MapName;
 	}
 
+	FORCEINLINE const FName& GetFName()
+	{
+		return MapFName;
+	}
+
 	FORCEINLINE const FString& GetEnumName()
 	{
 		return EnumName;
+	}
+
+	FORCEINLINE const FName& GetEnumFName()
+	{
+		return EnumFName;
 	}
 
 	FORCEINLINE EnumType Add(const EnumType& Enum, const FString& Name, const FString& DisplayName)
@@ -292,7 +304,9 @@ public:
 		EnumMap() : Super() \
 		{ \
 			MapName = #EnumMap; \
+			MapFName = FName(#EnumMap); \
 			EnumName = #EnumType; \
+			EnumFName = FName(#EnumType); \
 		} \
 		EnumMap(const EnumMap &) = delete; \
 		EnumMap(EnumMap &&) = delete; \
@@ -312,7 +326,9 @@ public:
 		EnumMap() : Super() \
 		{ \
 			MapName = #EnumMap; \
+			MapFName = FName(#EnumMap); \
 			EnumName = #EnumType; \
+			EnumFName = FName(#EnumType); \
 			bExplicitMAX = true; \
 		} \
 		EnumMap(const EnumMap &) = delete; \
@@ -1033,7 +1049,9 @@ struct TCsEnumStructMap
 {
 protected:
 	FString MapName;
+	FName MapFName;
 	FString EnumName;
+	FName EnumFName;
 private:
 	TArray<EnumStruct> Enums;
 	int32 Count;
@@ -1086,9 +1104,19 @@ public:
 		return MapName;
 	}
 
+	FORCEINLINE const FName& GetFName()
+	{
+		return MapFName;
+	}
+
 	FORCEINLINE const FString& GetEnumName()
 	{
 		return EnumName;
+	}
+
+	FORCEINLINE const FName& GetEnumFName()
+	{
+		return EnumFName;
 	}
 
 	FORCEINLINE EnumStruct Create(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum = false)
@@ -1331,6 +1359,10 @@ public:
 			Instance = new EnumMap(); \
 		return *Instance; \
 	}
+
+#define CS_CREATE_ENUM_STRUCT(EnumMap, EnumElementName) const Type EnumElementName = EnumMap::Get().Create(#EnumElementName)
+#define CS_CREATE_ENUM_STRUCT_CUSTOM(EnumMap, EnumElementName, DisplayName) const Type EnumElementName = EnumMap::Get().Create(#EnumElementName, TEXT(DisplayName))
+
 
 #pragma endregion EnumStructMap
 
@@ -1924,6 +1956,36 @@ public:
 
 #pragma endregion Enums
 
+// UserDefinedEnum
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsUserDefinedEnum : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsUserDefinedEnum)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsUserDefinedEnum)
+
+struct CSCORE_API EMCsUserDefinedEnum : public TCsEnumStructMap<FECsUserDefinedEnum, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsUserDefinedEnum, FECsUserDefinedEnum, uint8)
+};
+
+namespace NCsUserDefinedEnum
+{
+	typedef FECsUserDefinedEnum Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type FECsInputAction;
+	}
+}
+
+#pragma endregion UserDefinedEnum
+
 // Property Types
 #pragma region
 
@@ -1935,7 +1997,6 @@ struct ICsProperty
 	virtual void Reset() = 0;
 	virtual bool HasChanged() = 0;
 	virtual void Resolve() = 0;
-
 };
 
 	// Value
@@ -5541,29 +5602,24 @@ public:
 // MemberType
 #pragma region
 
-UENUM(BlueprintType)
-enum class ECsMemberType : uint8
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsMemberType: public FECsEnum_uint8
 {
-	Bool				UMETA(DisplayName = "Bool"),
-	Uint8				UMETA(DisplayName = "Uint8"),
-	Int32				UMETA(DisplayName = "Int32"),
-	Float				UMETA(DisplayName = "Float"),
-	String				UMETA(DisplayName = "String"),
-	Name				UMETA(DisplayName = "Name"),
-	Vector				UMETA(DisplayName = "Vector"),
-	Rotator				UMETA(DisplayName = "Rotator"),
-	Color				UMETA(DisplayName = "Color"),
-	ECsMemberType_MAX	UMETA(Hidden),
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsMemberType)
 };
 
-struct CSCORE_API EMCsMemberType : public TCsEnumMap<ECsMemberType>
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsMemberType)
+
+struct CSCORE_API EMCsMemberType : public TCsEnumStructMap<FECsMemberType, uint8>
 {
-	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsMemberType, ECsMemberType)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsMemberType, FECsMemberType, uint8)
 };
 
 namespace NCsMemberType
 {
-	typedef ECsMemberType Type;
+	typedef FECsMemberType Type;
 
 	namespace Ref
 	{
@@ -5576,10 +5632,7 @@ namespace NCsMemberType
 		extern CSCORE_API const Type Vector;
 		extern CSCORE_API const Type Rotator;
 		extern CSCORE_API const Type Color;
-		extern CSCORE_API const Type ECsMemberType_MAX;
 	}
-
-	extern CSCORE_API const uint8 MAX;
 }
 
 #pragma endregion MemberType

@@ -69,6 +69,19 @@ namespace NCsCached
 
 #pragma endregion Cached
 
+// UserDefinedEnum
+#pragma region
+
+namespace NCsUserDefinedEnum
+{
+	namespace Ref
+	{
+		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsUserDefinedEnum, FECsInputAction);
+	}
+}
+
+#pragma endregion UserDefinedEnum
+
 // MemberType
 #pragma region
 
@@ -76,19 +89,16 @@ namespace NCsMemberType
 {
 	namespace Ref
 	{
-		CSCORE_API const Type Bool = EMCsMemberType::Get().Add(Type::Bool, TEXT("Bool"));
-		CSCORE_API const Type Uint8 = EMCsMemberType::Get().Add(Type::Uint8, TEXT("Uint8"));
-		CSCORE_API const Type Int32 = EMCsMemberType::Get().Add(Type::Int32, TEXT("Int32"));
-		CSCORE_API const Type Float = EMCsMemberType::Get().Add(Type::Float, TEXT("Float"));
-		CSCORE_API const Type String = EMCsMemberType::Get().Add(Type::String, TEXT("String"));
-		CSCORE_API const Type Name = EMCsMemberType::Get().Add(Type::Name, TEXT("Name"));
-		CSCORE_API const Type Vector = EMCsMemberType::Get().Add(Type::Vector, TEXT("Vector"));
-		CSCORE_API const Type Rotator = EMCsMemberType::Get().Add(Type::Rotator, TEXT("Rotator"));
-		CSCORE_API const Type Color = EMCsMemberType::Get().Add(Type::Color, TEXT("Color"));
-		CSCORE_API const Type ECsMemberType_MAX = EMCsMemberType::Get().Add(Type::Bool, TEXT("Bool"));;
+		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Bool);
+		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Uint8);
+		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Int32);
+		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Float);
+		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, String);
+		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Name);
+		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Vector);
+		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Rotator);
+		CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsMemberType, Color);
 	}
-
-	CSCORE_API const uint8 MAX = (uint8)Type::ECsMemberType_MAX;
 }
 
 #pragma endregion MemberType

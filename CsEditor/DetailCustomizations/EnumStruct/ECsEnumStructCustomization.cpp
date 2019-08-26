@@ -6,16 +6,18 @@
 #include "DetailWidgetRow.h"
 #include "IDetailGroup.h"
 #include "DetailLayoutBuilder.h"
-
+// Type
 #include "Types/CsTypes_Primitive.h"
-
+// AssetRegistry
 #include "AssetRegistryModule.h"
 #include "Developer/AssetTools/Public/AssetToolsModule.h"
 #include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
-
+// Blueprint
 #include "Classes/Factories/BlueprintFactory.h"
 
 #include "Classes/Engine/UserDefinedEnum.h"
+
+#include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
 
 #define LOCTEXT_NAMESPACE "ECsEnumStructCustomization"
 
@@ -32,32 +34,42 @@ void FECsEnumStructCustomization::PopulateEnumMapFromUserDefinedEnum()
 		return;
 
 	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
+	IAssetRegistry& AssetRegistry			  = AssetRegistryModule.Get();
+
+	const FName ClassName = UCsEnumStructUserDefinedEnumMap::StaticClass()->GetFName();
+
 	TArray<FAssetData> OutAssetData;
-	IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
 
-	FAssetData Asset = AssetRegistry.GetAssetByObjectPath(UserDefinedEnumObjectPath);
-
-	if (UUserDefinedEnum* Enum = Cast<UUserDefinedEnum>(Asset.GetAsset()))
+	if (AssetRegistry.GetAssetsByClass(ClassName, OutAssetData))
 	{
-		const int32 Count = Enum->NumEnums() - 1;
-
-		for (int32 I = 0; I < Count; ++I)
+		if (OutAssetData.Num() > CS_SINGLETON)
 		{
-			const FString Name = Enum->GetDisplayNameTextByIndex(I).ToString();
+			UE_LOG(LogCsEditor, Warning, TEXT("FER6EnumStructCustomization::PopulateEnumMapFromUserDefinedEnum (%s): More than ONE class found of type: UCsEnumStructUserDefinedEnumMap. Choosing the FIRST one. There should only be ONE."), *GetEnumStructName());
+		}
 
-			AddEnumToMap(Name);
+		FAssetData& Asset = OutAssetData[CS_FIRST];
+
+		UCsEnumStructUserDefinedEnumMap* Map = Cast<UCsEnumStructUserDefinedEnumMap>(Asset.GetAsset());
+
+		if (UUserDefinedEnum* Enum = Map->GetUserDefinedEnum(GetUserDefinedEnumType()))
+		{
+			const int32 Count = Enum->NumEnums() - 1;
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				const FString Name = Enum->GetDisplayNameTextByIndex(I).ToString();
+
+				AddEnumToMap(Name);
+			}
+		}
+		else
+		{
+			UE_LOG(LogCsEditor, Warning, TEXT("FER6EnumStructCustomization::PopulateEnumMapFromUserDefinedEnum (%s): Failed to find a UserDefinedEnum associated with EnumStruct: %s."), *GetEnumStructName(), *(GetUserDefinedEnumType().Name));
 		}
 	}
 	else
 	{
-		if (UserDefinedEnumObjectPath == NAME_None)
-		{
-			UE_LOG(LogCsEditor, Warning, TEXT("FER6EnumStructCustomization::PopulateEnumMapFromUserDefinedEnum (%s): No valid UserDefinedEnumObjectPath set."), *GetEnumStructName());
-		}
-		else
-		{
-			UE_LOG(LogCsEditor, Warning, TEXT("FER6EnumStructCustomization::PopulateEnumMapFromUserDefinedEnum (%s): Failed to find UserDefinedEnum at: %s. It is possible it was deleted or moved."), *GetEnumStructName(), *(UserDefinedEnumObjectPath.ToString()));
-		}
+		UE_LOG(LogCsEditor, Warning, TEXT("FER6EnumStructCustomization::PopulateEnumMapFromUserDefinedEnum (%s): No class found of type: UCsEnumStructUserDefinedEnumMap."), *GetEnumStructName());
 	}
 }
 
@@ -66,9 +78,19 @@ void FECsEnumStructCustomization::AddEnumToMap(const FString& Name)
 
 }
 
-FString FECsEnumStructCustomization::GetEnumStructName()
+const FString& FECsEnumStructCustomization::GetEnumStructName()
 {
-	return TEXT("");
+	return NCsCached::Str::Empty;
+}
+
+const FName& FECsEnumStructCustomization::GetEnumStructFName()
+{
+	return NCsCached::Name::None;
+}
+
+const FECsUserDefinedEnum& FECsEnumStructCustomization::GetUserDefinedEnumType()
+{
+	return EMCsUserDefinedEnum::Get().GetMAX();
 }
 
 void FECsEnumStructCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
@@ -78,7 +100,7 @@ void FECsEnumStructCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> St
 	// Alter DisplayNameList for Properties that are visible and should NOT be edited
 	if (PerformDropDownCheck)
 	{
-		UProperty* Property				   = StructPropertyHandle->GetProperty();
+		UProperty* Property	= StructPropertyHandle->GetProperty();
 
 		if (Property->HasAnyPropertyFlags(CPF_DisableEditOnTemplate | CPF_DisableEditOnInstance | CPF_EditConst))
 		{

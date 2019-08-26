@@ -21,7 +21,11 @@ protected:
 	virtual void CustomPopulateEnumMap() override;
 
 	virtual void AddEnumToMap(const FString& Name) override;
-	virtual FString GetEnumStructName() override;
+
+	virtual const FString& GetEnumStructName() override;
+	virtual const FName& GetEnumStructFName() override;
+
+	virtual const FECsUserDefinedEnum& GetUserDefinedEnumType() override;
 
 	virtual void SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle) override;
 	virtual void SetEnumWithDisplayName(const FString& DisplayName) override;

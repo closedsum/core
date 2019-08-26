@@ -8,7 +8,6 @@
 
 FECsInputActionCustomization::FECsInputActionCustomization()
 {
-	UserDefinedEnumObjectPath		= FName("");
 	bPopulateEnumMapFromUserDefinedEnum 	= true;
 	
 	Init<FECsInputAction, EMCsInputAction>();
@@ -29,9 +28,19 @@ void FECsInputActionCustomization::AddEnumToMap(const FString& Name)
 	EMCsInputAction::Get().CreateSafe(Name, true);
 }
 
-FString FECsInputActionCustomization::GetEnumStructName()
+const FString& FECsInputActionCustomization::GetEnumStructName()
 {
-	return TEXT("FECsInputAction");
+	return EMCsInputAction::Get().GetEnumName();
+}
+
+const FName& FECsInputActionCustomization::GetEnumStructFName()
+{
+	return EMCsInputAction::Get().GetEnumFName();
+}
+
+const FECsUserDefinedEnum& FECsInputActionCustomization::GetUserDefinedEnumType()
+{
+	return NCsUserDefinedEnum::FECsInputAction;
 }
 
 void FECsInputActionCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)

@@ -23,13 +23,16 @@ protected:
 	virtual void CustomPopulateEnumMap();
 
 	bool bPopulateEnumMapFromUserDefinedEnum;
-	FName UserDefinedEnumObjectPath;
 
 	void PopulateEnumMapFromUserDefinedEnum();
 
 	virtual void AddEnumToMap(const FString& Name);
-	virtual FString GetEnumStructName();
+
+	virtual const FString& GetEnumStructName();
+	virtual const FName& GetEnumStructFName();
 	
+	virtual const FECsUserDefinedEnum& GetUserDefinedEnumType();
+
 	template<typename EnumStruct, typename EnumMap>
 	void Init()
 	{

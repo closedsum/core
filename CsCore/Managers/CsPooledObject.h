@@ -27,3 +27,14 @@ class CSCORE_API UCsPooledObject : public UObject
 	UPROPERTY(BlueprintAssignable, Category = "Pooled Object")
 	FBindableDynEvent_CsPooledObject_DeAllocate DeAllocate_ScriptEvent;
 };
+
+/*
+class CSCORE_API ICsPooledObject
+{
+	virtual void OnCreatePool() = 0;
+
+	virtual void Allocate() = 0;
+
+	virtual void DeAllocate() = 0;
+};
+*/

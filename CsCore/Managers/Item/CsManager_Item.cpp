@@ -425,7 +425,7 @@ void ACsManager_Item::OnTick_Handle_DeAllocateQueue()
 // Transfer
 #pragma region
 
-bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsManager_Inventory* Manager_Inventory)
+bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* InInstigator, ACsManager_Inventory* Manager_Inventory)
 {
 	if (Manager_Inventory)
 	{
@@ -433,7 +433,7 @@ bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsM
 		// TODO: Need a way to determine correct Bag
 		if (Manager_Inventory->IsFull(BAG, Item->ShortCode))
 		{
-			const FString OwnerName = Instigator->GetName();
+			const FString OwnerName = InInstigator->GetName();
 			const FString& Type		= Item->Type.Name;
 
 			UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer_Internal: %s's Inventory is FULL. DeAllocating %s with Id: %s"), *OwnerName, *Type, *(Item->Id.ToString()));
@@ -462,7 +462,7 @@ bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsM
 	{
 		FCsItem* ContentItem = Items[I];
 
-		ChangeActiveItemOwnerInfo(ContentItem, Instigator);
+		ChangeActiveItemOwnerInfo(ContentItem, InInstigator);
 
 		if (Manager_Inventory)
 			Manager_Inventory->AddItem(ContentItem);
@@ -470,13 +470,13 @@ bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsM
 	return true;
 }
 
-bool ACsManager_Item::Transfer(FCsItem* Item, UObject* Instigator)
+bool ACsManager_Item::Transfer(FCsItem* Item, UObject* InInstigator)
 {
 	// Get Manager_Inventory from Instigator
 	ACsManager_Inventory* Manager_Inventory = nullptr;
 
 	// Character
-	if (ACsPawn* Pawn = Cast<ACsPawn>(Instigator))
+	if (ACsPawn* Pawn = Cast<ACsPawn>(InInstigator))
 	{
 		// Player
 		if (ACsPlayerStateBase* PlayerState = Pawn->GetPlayerState<ACsPlayerStateBase>())
@@ -487,23 +487,23 @@ bool ACsManager_Item::Transfer(FCsItem* Item, UObject* Instigator)
 	// Manager_Inventory
 	else
 	{
-		Manager_Inventory = Cast<ACsManager_Inventory>(Instigator);
+		Manager_Inventory = Cast<ACsManager_Inventory>(InInstigator);
 	}
 
-	if (Transfer_Internal(Item, Instigator, Manager_Inventory))
+	if (Transfer_Internal(Item, InInstigator, Manager_Inventory))
 		return true;
 
 	UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Item: %s with Id: %d"), *(Item->Type.Name), *(Item->Id.ToString()));
 	return false;
 }
 
-bool ACsManager_Item::Transfer(TArray<FCsItem*>& Items, UObject* Instigator, const ECsPoolTransactionOrder& Order)
+bool ACsManager_Item::Transfer(TArray<FCsItem*>& Items, UObject* InInstigator, const ECsPoolTransactionOrder& Order)
 {
 	// Get Manager_Inventory from Instigator
 	ACsManager_Inventory* Manager_Inventory = nullptr;
 
 	// Character
-	if (ACsPawn* Pawn = Cast<ACsPawn>(Instigator))
+	if (ACsPawn* Pawn = Cast<ACsPawn>(InInstigator))
 	{
 		// Player
 		if (ACsPlayerStateBase* PlayerState = Pawn->GetPlayerState<ACsPlayerStateBase>())
@@ -514,7 +514,7 @@ bool ACsManager_Item::Transfer(TArray<FCsItem*>& Items, UObject* Instigator, con
 	// Manager_Inventory
 	else
 	{
-		Manager_Inventory = Cast<ACsManager_Inventory>(Instigator);
+		Manager_Inventory = Cast<ACsManager_Inventory>(InInstigator);
 	}
 
 	if (Manager_Inventory)
@@ -526,7 +526,7 @@ bool ACsManager_Item::Transfer(TArray<FCsItem*>& Items, UObject* Instigator, con
 
 			for (FCsItem* Item : Items)
 			{
-				Success |= Transfer_Internal(Item, Instigator, Manager_Inventory);
+				Success |= Transfer_Internal(Item, InInstigator, Manager_Inventory);
 			}
 			return Success;
 		}
@@ -545,7 +545,7 @@ bool ACsManager_Item::Transfer(TArray<FCsItem*>& Items, UObject* Instigator, con
 			{
 				for (FCsItem* Item : Items)
 				{
-					Transfer_Internal(Item, Instigator, Manager_Inventory);
+					Transfer_Internal(Item, InInstigator, Manager_Inventory);
 				}
 			}
 			return Success;

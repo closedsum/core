@@ -256,11 +256,11 @@ void UCsWidget_Crafting::PopulateRecipes()
 	}
 }
 
-void UCsWidget_Crafting::SetRecipe(const FName &ShortCode)
+void UCsWidget_Crafting::SetRecipe(const FName& InShortCode)
 {
 	// Get Data for selected Recipe
 	ACsDataMapping* DataMapping = UCsCommon::GetDataMapping(GetWorld());
-	ACsData_Recipe* Recipe		= Cast<ACsData_Recipe>(DataMapping->GetLoadedData(RecipeAssetType, ShortCode));
+	ACsData_Recipe* Recipe		= Cast<ACsData_Recipe>(DataMapping->GetLoadedData(RecipeAssetType, InShortCode));
 	// Update Grid with the Ingredients (Items)
 	MyGrid->Clear();
 
@@ -274,7 +274,7 @@ void UCsWidget_Crafting::SetRecipe(const FName &ShortCode)
 
 	if (IngredientCount > GridSize)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsWidget_Crafting::SetRecipe: Recipe: %s has MORE Ingredients than what the Crafting Grid supports (%d > %d)."), *(ShortCode.ToString()), IngredientCount, GridSize);
+		UE_LOG(LogCs, Warning, TEXT("UCsWidget_Crafting::SetRecipe: Recipe: %s has MORE Ingredients than what the Crafting Grid supports (%d > %d)."), *(InShortCode.ToString()), IngredientCount, GridSize);
 	}
 
 	const int32 Count = FMath::Min(GridSize, IngredientCount);
@@ -297,9 +297,9 @@ void UCsWidget_Crafting::SetRecipe(const FName &ShortCode)
 
 void UCsWidget_Crafting::UpdateRecipeWithSelectedOption()
 {
-	const FName& ShortCode = SelectedOptionShortCodes[CurrentSelectedOptionIndex];
+	const FName& SelectedShortCode = SelectedOptionShortCodes[CurrentSelectedOptionIndex];
 
-	SetRecipe(ShortCode);
+	SetRecipe(SelectedShortCode);
 }
 
 void UCsWidget_Crafting::OnRecipeSelectionChanged(FString SelectedItem, ESelectInfo::Type  SelectionType)
@@ -317,9 +317,9 @@ void UCsWidget_Crafting::OnRecipeSelectionChanged(FString SelectedItem, ESelectI
 			break;
 		}
 	}
-	const FName& ShortCode = SelectedOptionShortCodes[CurrentSelectedOptionIndex];
+	const FName& SelectedShortCode = SelectedOptionShortCodes[CurrentSelectedOptionIndex];
 
-	SetRecipe(ShortCode);
+	SetRecipe(SelectedShortCode);
 }
 
 bool UCsWidget_Crafting::CanCompleteRecipe(const uint32& Count)
@@ -329,9 +329,9 @@ bool UCsWidget_Crafting::CanCompleteRecipe(const uint32& Count)
 
 	// TODO: Need to check there is space in the CurrentBag for created Items
 
-	const FName& ShortCode		= SelectedOptionShortCodes[CurrentSelectedOptionIndex];
-	ACsDataMapping* DataMapping = UCsCommon::GetDataMapping(GetWorld());
-	ACsData_Recipe* Recipe		= Cast<ACsData_Recipe>(DataMapping->GetLoadedData(RecipeAssetType, ShortCode));
+	const FName& SelectedShortCode	= SelectedOptionShortCodes[CurrentSelectedOptionIndex];
+	ACsDataMapping* DataMapping		= UCsCommon::GetDataMapping(GetWorld());
+	ACsData_Recipe* Recipe			= Cast<ACsData_Recipe>(DataMapping->GetLoadedData(RecipeAssetType, SelectedShortCode));
 
 	ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
 
@@ -619,9 +619,9 @@ void UCsWidget_Crafting::CraftItems()
 	CancelCurrentCraftingProcess();
 
 	// Get Data for selected Recipe
-	ACsDataMapping* DataMapping  = UCsCommon::GetDataMapping(GetWorld());
-	const FName& ShortCode		 = SelectedOptionShortCodes[CurrentSelectedOptionIndex];
-	ACsData_Recipe* Recipe		 = Cast<ACsData_Recipe>(DataMapping->GetLoadedData(RecipeAssetType, ShortCode));
+	ACsDataMapping* DataMapping		= UCsCommon::GetDataMapping(GetWorld());
+	const FName& SelectedShortCode	= SelectedOptionShortCodes[CurrentSelectedOptionIndex];
+	ACsData_Recipe* Recipe			= Cast<ACsData_Recipe>(DataMapping->GetLoadedData(RecipeAssetType, SelectedShortCode));
 	// Prepare Payload
 	ACsManager_Crafting* Manager_Crafting = ACsManager_Crafting::Get(GetWorld());
 	FCsCraftingPayload* Payload			  = Manager_Crafting->AllocatePayload();

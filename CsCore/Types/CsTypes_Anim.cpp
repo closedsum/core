@@ -21,7 +21,7 @@ namespace NCsAnimCached
 }
 
 // FpvAnimMember
-CS_DEFINE_ENUM_MAP_BODY(EMCsFpvAnimMember)
+#pragma region
 
 namespace NCsFpvAnimMember
 {
@@ -36,6 +36,8 @@ namespace NCsFpvAnimMember
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsFpvAnimMember_MAX;
 }
+
+#pragma endregion EMCsFpvAnimMember
 
 // FpvAnimBlueprintMember
 CS_DEFINE_ENUM_MAP_BODY(EMCsFpvAnimBlueprintMember)

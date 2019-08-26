@@ -121,8 +121,8 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 	// Cache Raw Pressed Inputs
 	PressedKeys.Reset();
 
-	ACsPlayerController* Controller = GetMyOwner();
-	UPlayerInput* PlayerInput	    = Controller->PlayerInput;
+	ACsPlayerController* OwnerAsController = GetMyOwner();
+	UPlayerInput* PlayerInput			   = OwnerAsController->PlayerInput;
 
 	TArray<FKey> AllKeys;
 	EKeys::GetAllKeys(AllKeys);
@@ -142,7 +142,7 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 	// Capture Mouse Position
 
 	CurrentMousePosition		 = FVector::ZeroVector;
-	const bool bGotMousePosition = Controller->GetMousePosition(CurrentMousePosition.X, CurrentMousePosition.Y);
+	const bool bGotMousePosition = OwnerAsController->GetMousePosition(CurrentMousePosition.X, CurrentMousePosition.Y);
 
 	if (bGotMousePosition)
 		Mouse_Location_Raw.ExecuteIfBound(CurrentMousePosition);

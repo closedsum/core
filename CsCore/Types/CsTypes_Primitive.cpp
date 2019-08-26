@@ -69,46 +69,34 @@ namespace NCsCached
 
 #pragma endregion Cached
 
-namespace ECsMemberType
-{
-	namespace Str
-	{
-		CSCORE_API const TCsString Bool = TCsString(TEXT("Bool"), TEXT("bool"));
-		CSCORE_API const TCsString Uint8 = TCsString(TEXT("Uint8"), TEXT("uint8"));
-		CSCORE_API const TCsString Int32 = TCsString(TEXT("Int32"), TEXT("int32"));
-		CSCORE_API const TCsString Float = TCsString(TEXT("Float"), TEXT("float"));
-		CSCORE_API const TCsString _FString = TCsString(TEXT("FString"), TEXT("fstring"));
-		CSCORE_API const TCsString FName = TCsString(TEXT("FName"), TEXT("fname"));
-		CSCORE_API const TCsString FVector = TCsString(TEXT("FVector"), TEXT("fvector"));
-		CSCORE_API const TCsString FRotator = TCsString(TEXT("FRotator"), TEXT("frotator"));
-		CSCORE_API const TCsString FColor = TCsString(TEXT("FColor"), TEXT("fcolor"));
-	}
+// MemberType
+#pragma region
 
+namespace NCsMemberType
+{
 	namespace Ref
 	{
-		CSCORE_API const Type Bool = Type::Bool;
-		CSCORE_API const Type Uint8 = Type::Uint8;
-		CSCORE_API const Type Int32 = Type::Int32;
-		CSCORE_API const Type Float = Type::Float;
-		CSCORE_API const Type _FString = Type::_FString;
-		CSCORE_API const Type FName = Type::FName;
-		CSCORE_API const Type FVector = Type::FVector;
-		CSCORE_API const Type FRotator = Type::FRotator;
-		CSCORE_API const Type FColor = Type::FColor;
-		CSCORE_API const Type ECsMemberType_MAX = Type::ECsMemberType_MAX;
+		CSCORE_API const Type Bool = EMCsMemberType::Get().Add(Type::Bool, TEXT("Bool"));
+		CSCORE_API const Type Uint8 = EMCsMemberType::Get().Add(Type::Uint8, TEXT("Uint8"));
+		CSCORE_API const Type Int32 = EMCsMemberType::Get().Add(Type::Int32, TEXT("Int32"));
+		CSCORE_API const Type Float = EMCsMemberType::Get().Add(Type::Float, TEXT("Float"));
+		CSCORE_API const Type String = EMCsMemberType::Get().Add(Type::String, TEXT("String"));
+		CSCORE_API const Type Name = EMCsMemberType::Get().Add(Type::Name, TEXT("Name"));
+		CSCORE_API const Type Vector = EMCsMemberType::Get().Add(Type::Vector, TEXT("Vector"));
+		CSCORE_API const Type Rotator = EMCsMemberType::Get().Add(Type::Rotator, TEXT("Rotator"));
+		CSCORE_API const Type Color = EMCsMemberType::Get().Add(Type::Color, TEXT("Color"));
+		CSCORE_API const Type ECsMemberType_MAX = EMCsMemberType::Get().Add(Type::Bool, TEXT("Bool"));;
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsMemberType_MAX;
 }
 
-EMCsStringCompare* EMCsStringCompare::Instance;
+#pragma endregion MemberType
 
-EMCsStringCompare& EMCsStringCompare::Get()
-{
-	if (!Instance)
-		Instance = new EMCsStringCompare();
-	return *Instance;
-}
+// StringCompare
+#pragma region
 
-namespace ECsStringCompare
+namespace NCsStringCompare
 {
 	namespace Ref
 	{
@@ -118,4 +106,7 @@ namespace ECsStringCompare
 		CSCORE_API const Type Contains = EMCsStringCompare::Get().Add(Type::Contains, TEXT("Contains"));
 		CSCORE_API const Type ECsStringCompare_MAX = EMCsStringCompare::Get().Add(Type::ECsStringCompare_MAX, TEXT("ECsStringCompare_MAX"), TEXT("MAX"));
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsStringCompare_MAX;
 }
+#pragma endregion StringCompare

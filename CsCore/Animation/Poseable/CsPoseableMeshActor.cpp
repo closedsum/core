@@ -1313,7 +1313,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Expor
 	LevelSequenceActor->LevelSequence = Seq;
 	LevelSequenceActor->PlaybackSettings.bRestoreState = true;
 	LevelSequenceActor->SequencePlayer = NewObject<ULevelSequencePlayer>(LevelSequenceActor, "AnimationPlayer");
-	LevelSequenceActor->SequencePlayer->Initialize(Seq, GetWorld(), LevelSequenceActor->PlaybackSettings);
+	//LevelSequenceActor->SequencePlayer->Initialize(Seq, GetWorld(), LevelSequenceActor->PlaybackSettings);
 
 	// Now run our sequence
 	UMovieScene* MovieScene = Seq->GetMovieScene();
@@ -1321,7 +1321,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Expor
 	double StartTime		= (double)MovieScene->GetPlaybackRange().GetLowerBoundValue().Value;
 	double SequenceLength   = 0.0f;// Anim->SequenceLength = MovieScene->GetPlaybackRange().Size<float>();
 	const float FPS			= Shot.ExportInterval_FPS;
-	int32 FrameCount		= Anim->NumFrames = FMath::CeilToInt(SequenceLength * FPS);
+	int32 FrameCount = 0;// Anim->NumFrames = FMath::CeilToInt(SequenceLength * FPS);
 	double FrameCountDouble = (double)FrameCount;
 	double FrameLength		= 1.0 / (double)FPS;
 

@@ -49,7 +49,7 @@ enum class ECsFpvAnimMember : uint8
 
 struct CSCORE_API EMCsFpvAnimMember: public TCsEnumMap<ECsFpvAnimMember>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsFpvAnimMember)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsFpvAnimMember, ECsFpvAnimMember)
 };
 
 namespace NCsFpvAnimMember

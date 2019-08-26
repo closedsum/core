@@ -181,20 +181,20 @@ public:
 
 	void SetupInputActionMapping();
 
-	UFUNCTION(BlueprintNativeEvent, Category = "Action Map")
+	UFUNCTION(BlueprintNativeEvent, Category = "Manager|Input|Action Map")
 	void BP_GetInputActionNamesFromMapping(const FECsInputActionMap& Map, TArray<FName>& OutNames);
 
-	UPROPERTY(BlueprintReadOnly, Category = "Action Map")
+	UPROPERTY(BlueprintReadOnly, Category = "Manager|Input|Action Map")
 	TMap<FECsInputAction, int32> InputActionMapping;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Action Map")
+	UPROPERTY(BlueprintReadWrite, Category = "Manager|Input|Action Map")
 	int32 CurrentInputActionMap;
 
-	UFUNCTION(BlueprintCallable, Category = "Action Map")
+	UFUNCTION(BlueprintCallable, Category = "Manager|Input|Action Map")
 	void SetCurrentInputActionMap(const FECsInputActionMap& Map);
 	void SetCurrentInputActionMap(const int32& Map);
 
-	UFUNCTION(BlueprintCallable, Category = "Action Map")
+	UFUNCTION(BlueprintCallable, Category = "Manager|Input|Action Map")
 	void ClearCurrentInputActionMap(const FECsInputActionMap& Map);
 	void ClearCurrentInputActionMap(const int32& Map);
 

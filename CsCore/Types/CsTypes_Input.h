@@ -22,15 +22,15 @@ enum class ECsInputDevice : uint8
 
 struct CSCORE_API EMCsInputDevice : public TCsEnumMap<ECsInputDevice>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsInputDevice)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsInputDevice, ECsInputDevice)
 };
 
 namespace NCsInputDevice
 {
+	typedef ECsInputDevice Type;
+
 	namespace Ref
 	{
-		typedef ECsInputDevice Type;
-
 		extern CSCORE_API const Type MouseAndKeyboard;
 		extern CSCORE_API const Type Gamepad;
 		extern CSCORE_API const Type MotionController;
@@ -58,15 +58,15 @@ enum class ECsInputType : uint8
 
 struct CSCORE_API EMCsInputType : public TCsEnumMap<ECsInputType>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsInputType)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsInputType, ECsInputType)
 };
 
 namespace NCsInputType
 {
+	typedef ECsInputType Type;
+
 	namespace Ref
 	{
-		typedef ECsInputType Type;
-
 		extern CSCORE_API const Type Action;
 		extern CSCORE_API const Type Axis;
 		extern CSCORE_API const Type Trigger;
@@ -97,15 +97,15 @@ enum class ECsInputEvent: uint8
 
 struct CSCORE_API EMCsInputEvent : public TCsEnumMap<ECsInputEvent>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsInputEvent)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsInputEvent, ECsInputEvent)
 };
 
 namespace NCsInputEvent
 {
+	typedef ECsInputEvent Type;
+
 	namespace Ref
 	{
-		typedef ECsInputEvent Type;
-
 		extern CSCORE_API const Type FirstPressed;
 		extern CSCORE_API const Type Pressed;
 		extern CSCORE_API const Type FirstReleased;
@@ -135,15 +135,15 @@ enum class ECsInputValue : uint8
 
 struct CSCORE_API EMCsInputValue : public TCsEnumMap<ECsInputValue>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsInputValue)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsInputValue, ECsInputValue)
 };
 
 namespace NCsInputValue
 {
+	typedef ECsInputValue Type;
+
 	namespace Ref
 	{
-		typedef ECsInputValue Type;
-
 		extern CSCORE_API const Type Void;
 		extern CSCORE_API const Type Float;
 		extern CSCORE_API const Type Vector;
@@ -219,7 +219,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsInputAction)
 
 struct CSCORE_API EMCsInputAction : public TCsEnumStructMap<FECsInputAction, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsInputAction)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsInputAction, FECsInputAction, uint8)
 };
 
 #pragma endregion InputAction
@@ -1369,7 +1369,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsGameEvent)
 
 struct CSCORE_API EMCsGameEvent : public TCsEnumStructMap<FECsGameEvent, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsGameEvent)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsGameEvent, FECsGameEvent, uint8)
 };
 
 #pragma endregion GameEvent

@@ -384,7 +384,7 @@ void ACsFpsWeapon::OnTick(const float &DeltaSeconds)
 	{
 		const float TimeSeconds = GetWorld()->GetTimeSeconds();
 
-		ACsPawn* MyPawn = GetMyPawn();
+		ACsPawn* MyOwnerAsPawn = GetMyPawn();
 
 		// Spread
 		const int32& Count = EMCsWeaponFireMode::Get().Num();
@@ -396,11 +396,11 @@ void ACsFpsWeapon::OnTick(const float &DeltaSeconds)
 			if (DoSpread[FireMode])
 			{
 				// Jumping
-				if (!Last_OwnerIsFalling && MyPawn->GetCharacterMovement()->IsFalling())
+				if (!Last_OwnerIsFalling && MyOwnerAsPawn->GetCharacterMovement()->IsFalling())
 				{
 					CurrentBaseSpread.Add(FireMode, JumpSpreadImpulse[FireMode]);
 				}
-				Last_OwnerIsFalling = MyPawn->GetCharacterMovement()->IsFalling();
+				Last_OwnerIsFalling = MyOwnerAsPawn->GetCharacterMovement()->IsFalling();
 				// Firing
 				if (TimeSeconds - LastSpreadFireTime[FireMode] > FiringSpreadRecoveryDelay[FireMode])
 				{
@@ -408,7 +408,7 @@ void ACsFpsWeapon::OnTick(const float &DeltaSeconds)
 				}
 				// Moving
 				const float MovingThreshold = 0.5f;
-				const bool IsMoving			= MyPawn->CurrentSpeed > MovingThreshold;
+				const bool IsMoving			= MyOwnerAsPawn->CurrentSpeed > MovingThreshold;
 				float Bonus					= IsMoving ? MovingSpreadBonus[FireMode]: 0.f;
 				Bonus					   -= IsScopeActive ? ScopeAccuracyBonus[FireMode]: 0.f;
 				CurrentSpread.Set(FireMode, FMath::Clamp(CurrentBaseSpread[FireMode] + Bonus, 0.f, MaxSpread[FireMode]));
@@ -678,7 +678,7 @@ float ACsFpsWeapon::GetScopePowerGrowthRate(const FECsWeaponFireMode &FireMode) 
 
 void ACsFpsWeapon::FireProjectile_Internal(const FECsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload)
 {
-	ACsPawn* MyPawn = GetMyPawn();
+	ACsPawn* MyOwnerAsPawn = GetMyPawn();
 
 	// Scope
 	if (DoScopePower.Get(FireMode))
@@ -691,7 +691,7 @@ void ACsFpsWeapon::FireProjectile_Internal(const FECsWeaponFireMode &FireMode, F
 	// Kickback
 	if (DoKickback.Get(FireMode))
 	{
-		if (MyPawn->GetCharacterMovement()->IsFalling() || DoKickbackOnGround.Get(FireMode))
+		if (MyOwnerAsPawn->GetCharacterMovement()->IsFalling() || DoKickbackOnGround.Get(FireMode))
 		{
 			//KickbackPlayer(FireMode, -ShootDir);
 		}

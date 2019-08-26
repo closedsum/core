@@ -62,7 +62,7 @@ public:
 	}
 
 	template<typename T>
-	static T* GetAsset(const FString &Name, const TCsStringCompare& CompareType)
+	static T* GetAsset(const FString& Name, const ECsStringCompare& CompareType)
 	{
 		IAssetRegistry& AssetRegistry = GetAssetRegistry();
 
@@ -77,14 +77,14 @@ public:
 		{
 			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
 
-			if (ECsStringCompare::Compare(AssetStringName, NameLower, CompareType))
+			if (NCsStringCompare::Compare(AssetStringName, NameLower, CompareType))
 				return Cast<T>(OutAssetData[I].GetAsset());
 		}
 		return nullptr;
 	}
 
 	template<typename T>
-	static T* GetAsset(const TArray<FString> &KeywordsOR, const TCsStringCompare& CompareType)
+	static T* GetAsset(const TArray<FString>& KeywordsOR, const ECsStringCompare& CompareType)
 	{
 		IAssetRegistry& AssetRegistry = GetAssetRegistry();
 
@@ -109,7 +109,7 @@ public:
 
 			for (int32 J = 0; J < KeywordCount; ++J)
 			{
-				Pass |= ECsStringCompare::Compare(AssetStringName, KeywordsORLower[J], CompareType);
+				Pass |= NCsStringCompare::Compare(AssetStringName, KeywordsORLower[J], CompareType);
 
 				if (Pass)
 					break;
@@ -122,7 +122,7 @@ public:
 	}
 
 	template<typename T>
-	static void GetAssets(const FString &Name, const TCsStringCompare& CompareType, TArray<T*> &OutAssets)
+	static void GetAssets(const FString& Name, const ECsStringCompare& CompareType, TArray<T*>& OutAssets)
 	{
 		OutAssets.Reset();
 
@@ -139,19 +139,19 @@ public:
 		{
 			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
 			
-			if (ECsStringCompare::Compare(AssetStringName, NameLower, CompareType))
+			if (NCsStringCompare::Compare(AssetStringName, NameLower, CompareType))
 				OutAssets.Add(Cast<T>(OutAssetData[I].GetAsset()));
 		}
 	}
 
 	template<typename T>
-	static void GetAssets(const FName &Name, const TCsStringCompare& CompareType, TArray<T*> &OutAssets)
+	static void GetAssets(const FName& Name, const ECsStringCompare& CompareType, TArray<T*>& OutAssets)
 	{
 		GetAssets<T>(Name.ToString(), CompareType, OutAssets);
 	}
 
 	template<typename T>
-	static void GetAssets(const TArray<FString> &KeywordsAND, const TCsStringCompare& CompareType, TArray<T*> &OutAssets)
+	static void GetAssets(const TArray<FString>& KeywordsAND, const ECsStringCompare& CompareType, TArray<T*>& OutAssets)
 	{
 		OutAssets.Reset();
 
@@ -178,7 +178,7 @@ public:
 
 			for (int32 J = 0; J < KeywordCount; ++J)
 			{
-				Pass &= ECsStringCompare::Compare(AssetStringName, KeywordsORLower[J], CompareType);
+				Pass &= NCsStringCompare::Compare(AssetStringName, KeywordsORLower[J], CompareType);
 
 				if (!Pass)
 					break;
@@ -192,7 +192,7 @@ public:
 	}
 
 	template<typename T>
-	static void GetAssets(const FString &Name, const TCsStringCompare& CompareType, TArray<T*> &OutAssets, TArray<FString> &OutPackagePaths)
+	static void GetAssets(const FString& Name, const ECsStringCompare& CompareType, TArray<T*>& OutAssets, TArray<FString>& OutPackagePaths)
 	{
 		OutAssets.Reset();
 		OutPackagePaths.Reset();
@@ -210,7 +210,7 @@ public:
 		{
 			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
 
-			if (ECsStringCompare::Compare(AssetStringName, NameLower, CompareType))
+			if (NCsStringCompare::Compare(AssetStringName, NameLower, CompareType))
 			{
 				OutAssets.Add(Cast<T>(OutAssetData[I].GetAsset()));
 				OutPackagePaths.Add(OutAssetData[I].PackagePath.ToString());
@@ -219,7 +219,7 @@ public:
 	}
 
 	template<typename T>
-	static void GetAssets(const FName &Name, const TCsStringCompare& CompareType, TArray<T*> &OutAssets, TArray<FName> &OutPackagePaths)
+	static void GetAssets(const FName& Name, const ECsStringCompare& CompareType, TArray<T*>& OutAssets, TArray<FName>& OutPackagePaths)
 	{
 		OutAssets.Reset();
 		OutPackagePaths.Reset();
@@ -237,7 +237,7 @@ public:
 		{
 			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
 
-			if (ECsStringCompare::Compare(AssetStringName, NameLower, CompareType))
+			if (NCsStringCompare::Compare(AssetStringName, NameLower, CompareType))
 			{
 				OutAssets.Add(Cast<T>(OutAssetData[I].GetAsset()));
 				OutPackagePaths.Add(OutAssetData[I].PackagePath);
@@ -267,7 +267,7 @@ public:
 	}
 
 	template<typename T>
-	static T* GetBlueprintDefaultObject(const FString &Name, const TCsStringCompare& CompareType, UClass* InParentClass)
+	static T* GetBlueprintDefaultObject(const FString& Name, const ECsStringCompare& CompareType, UClass* InParentClass)
 	{
 		UBlueprint* Bp = GetAsset<UBlueprint>(Name, CompareType);
 
@@ -275,13 +275,13 @@ public:
 	}
 
 	template<typename T>
-	static T* GetBlueprintDefaultObject(const FName &Name, const TCsStringCompare& CompareType, UClass* InParentClass)
+	static T* GetBlueprintDefaultObject(const FName& Name, const ECsStringCompare& CompareType, UClass* InParentClass)
 	{
 		return GetBlueprintDefaultObject<T>(Name.ToString(), CompareType, InParentClass);
 	}
 
 	template<typename T>
-	static void GetBlueprintDefaultObjects(const FString &Name, const TCsStringCompare& CompareType, TArray<T*> &OutDefaultObjects, UClass* InParentClass)
+	static void GetBlueprintDefaultObjects(const FString& Name, const ECsStringCompare& CompareType, TArray<T*>& OutDefaultObjects, UClass* InParentClass)
 	{
 		TArray<UBlueprint*> OutAssets;
 		GetAssets<UBlueprint>(Name, CompareType, OutAssets);
@@ -302,7 +302,7 @@ public:
 	}
 
 	template<typename T>
-	static void GetBlueprintDefaultObjects(const TArray<FString>& KeywordsAND, const TCsStringCompare& CompareType, TArray<T*> &OutDefaultObjects, UClass* InParentClass)
+	static void GetBlueprintDefaultObjects(const TArray<FString>& KeywordsAND, const ECsStringCompare& CompareType, TArray<T*>& OutDefaultObjects, UClass* InParentClass)
 	{
 		TArray<UBlueprint*> OutAssets;
 		GetAssets<UBlueprint>(KeywordsAND, OutAssets, CompareType);

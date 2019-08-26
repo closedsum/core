@@ -41,21 +41,23 @@ enum class ECsLevelState : uint8
 
 struct CSCORE_API EMCsLevelState : public TCsEnumMap<ECsLevelState>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsLevelState)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsLevelState, ECsLevelState)
 };
 
 namespace NCsLevelState
 {
+	typedef ECsLevelState Type;
+
 	namespace Ref
 	{
-		typedef ECsLevelState Type;
-
 		extern CSCORE_API const Type None;
 		extern CSCORE_API const Type Loaded;
 		extern CSCORE_API const Type BeginTransition;
 		extern CSCORE_API const Type InTransition;
 		extern CSCORE_API const Type ECsLevelState_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
 
 #define ECS_LEVEL_STATE (uint8)ECsLevelState::ECsLevelState_MAX
@@ -116,7 +118,7 @@ enum class ECsAxes_Editor : uint8
 
 struct CSCORE_API EMCsAxes_Editor : public TCsEnumMap<ECsAxes_Editor>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsAxes_Editor)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsAxes_Editor, ECsAxes_Editor)
 };
 
 namespace NCsAxes_Editor
@@ -130,6 +132,8 @@ namespace NCsAxes_Editor
 		extern CSCORE_API const Type Z;
 		extern CSCORE_API const Type ECsAxes_Editor_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 
 	FORCEINLINE const ECsAxes& ToBaseType(const Type &EType)
 	{
@@ -158,20 +162,22 @@ enum class ECsTransformMember : uint8
 
 struct CSCORE_API EMCsTransformMember : public TCsEnumMap<ECsTransformMember>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsTransformMember)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsTransformMember, ECsTransformMember)
 };
 
 namespace NCsTransformMember
 {
+	typedef ECsTransformMember Type;
+
 	namespace Ref
 	{
-		typedef ECsTransformMember Type;
-
 		extern CSCORE_API const Type Location;
 		extern CSCORE_API const Type Rotation;
 		extern CSCORE_API const Type Scale;
 		extern CSCORE_API const Type ECsTransformMember_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
 
 #pragma endregion TransformMember
@@ -1293,15 +1299,15 @@ enum class ECsPhysicsImpulseType : uint8
 
 struct CSCORE_API EMCsPhysicsImpulseType : public TCsEnumMap<ECsPhysicsImpulseType>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsPhysicsImpulseType)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsPhysicsImpulseType, ECsPhysicsImpulseType)
 };
 
 namespace NCsPhysicsImpulseType
 {
+	typedef ECsPhysicsImpulseType Type;
+
 	namespace Ref
 	{
-		typedef ECsPhysicsImpulseType Type;
-
 		extern CSCORE_API const Type AddForce;
 		extern CSCORE_API const Type AddForceAtPosition;
 		extern CSCORE_API const Type AddTorque;
@@ -1310,6 +1316,8 @@ namespace NCsPhysicsImpulseType
 		extern CSCORE_API const Type AddImpulseAtPosition;
 		extern CSCORE_API const Type ECsPhysicsImpulseType_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
 
 #define ECS_PHYSICS_IMPULSE_TYPE_MAX (uint8)ECsPhysicsImpulseType::ECsPhysicsImpulseType_MAX
@@ -1554,15 +1562,15 @@ enum class ECsHMDDeviceType : uint8
 
 struct CSCORE_API EMCsHMDDeviceType : public TCsEnumMap<ECsHMDDeviceType>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsHMDDeviceType)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsHMDDeviceType, ECsHMDDeviceType)
 };
 
 namespace NCsHMDDeviceType
 {
+	typedef ECsHMDDeviceType Type;
+
 	namespace Ref
 	{
-		typedef ECsHMDDeviceType Type;
-
 		extern CSCORE_API const Type DT_OculusRift;
 		extern CSCORE_API const Type DT_Morpheus;
 		extern CSCORE_API const Type DT_ES2GenericStereoMesh;
@@ -1571,6 +1579,9 @@ namespace NCsHMDDeviceType
 		extern CSCORE_API const Type DT_GoogleVR;
 		extern CSCORE_API const Type ECsHMDDeviceType_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
+
 	/*
 	FORCEINLINE EHMDDeviceType::Type ToBaseType(const Type &EType)
 	{
@@ -1616,19 +1627,21 @@ enum class ECsGestureDevice : uint8
 
 struct CSCORE_API EMCsGestureDevice : public TCsEnumMap<ECsGestureDevice>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsGestureDevice)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsGestureDevice, ECsGestureDevice)
 };
 
 namespace NCsGestureDevice
 {
+	typedef ECsGestureDevice Type;
+
 	namespace Ref
 	{
-		typedef ECsGestureDevice Type;
-
 		extern CSCORE_API const Type Mouse;
 		extern CSCORE_API const Type MotionController;
 		extern CSCORE_API const Type ECsGestureDevice_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
 
 #pragma endregion GestureDevice
@@ -1678,19 +1691,21 @@ enum class ECsControllerHand : uint8
 
 struct CSCORE_API EMCsControllerHand : public TCsEnumMap<ECsControllerHand>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsControllerHand)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsControllerHand, ECsControllerHand)
 };
 
 namespace NCsControllerHand
 {
+	typedef ECsControllerHand Type;
+
 	namespace Ref
 	{
-		typedef ECsControllerHand Type;
-
 		extern CSCORE_API const Type Left;
 		extern CSCORE_API const Type Right;
 		extern CSCORE_API const Type ECsControllerHand_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
 
 #pragma endregion ControllerHand
@@ -1705,7 +1720,7 @@ namespace NCsControllerHand
 
 struct CSCORE_API EMCollisionEnabled : public TCsEnumMap<ECollisionEnabled::Type>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCollisionEnabled)
+	CS_ENUM_MAP_BODY(EMCollisionEnabled, ECollisionEnabled::Type)
 };
 
 namespace ECollisionEnabled
@@ -1726,49 +1741,51 @@ namespace ECollisionEnabled
 
 struct CSCORE_API EMCsCollisionChannel : public TCsEnumMap<ECollisionChannel>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsCollisionChannel)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsCollisionChannel, ECollisionChannel)
 };
 
-namespace ECsCollisionChannel
+namespace NCsCollisionChannel
 {
+	typedef ECollisionChannel Type;
+
 	namespace Ref
 	{
-		extern CSCORE_API const ECollisionChannel ECC_WorldStatic;
-		extern CSCORE_API const ECollisionChannel ECC_WorldDynamic;
-		extern CSCORE_API const ECollisionChannel ECC_Pawn;
-		extern CSCORE_API const ECollisionChannel ECC_Visibility;
-		extern CSCORE_API const ECollisionChannel ECC_Camera;
-		extern CSCORE_API const ECollisionChannel ECC_PhysicsBody;
-		extern CSCORE_API const ECollisionChannel ECC_Vehicle;
-		extern CSCORE_API const ECollisionChannel ECC_Destructible;
+		extern CSCORE_API const Type ECC_WorldStatic;
+		extern CSCORE_API const Type ECC_WorldDynamic;
+		extern CSCORE_API const Type ECC_Pawn;
+		extern CSCORE_API const Type ECC_Visibility;
+		extern CSCORE_API const Type ECC_Camera;
+		extern CSCORE_API const Type ECC_PhysicsBody;
+		extern CSCORE_API const Type ECC_Vehicle;
+		extern CSCORE_API const Type ECC_Destructible;
 
-		extern CSCORE_API const ECollisionChannel ECC_EngineTraceChannel1;
-		extern CSCORE_API const ECollisionChannel ECC_EngineTraceChannel2;
-		extern CSCORE_API const ECollisionChannel ECC_EngineTraceChannel3;
-		extern CSCORE_API const ECollisionChannel ECC_EngineTraceChannel4;
-		extern CSCORE_API const ECollisionChannel ECC_EngineTraceChannel5;
-		extern CSCORE_API const ECollisionChannel ECC_EngineTraceChannel6;
+		extern CSCORE_API const Type ECC_EngineTraceChannel1;
+		extern CSCORE_API const Type ECC_EngineTraceChannel2;
+		extern CSCORE_API const Type ECC_EngineTraceChannel3;
+		extern CSCORE_API const Type ECC_EngineTraceChannel4;
+		extern CSCORE_API const Type ECC_EngineTraceChannel5;
+		extern CSCORE_API const Type ECC_EngineTraceChannel6;
 
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel1;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel2;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel3;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel4;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel5;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel6;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel7;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel8;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel9;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel10;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel11;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel12;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel13;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel14;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel15;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel16;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel17;
-		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel18;
+		extern CSCORE_API const Type ECC_GameTraceChannel1;
+		extern CSCORE_API const Type ECC_GameTraceChannel2;
+		extern CSCORE_API const Type ECC_GameTraceChannel3;
+		extern CSCORE_API const Type ECC_GameTraceChannel4;
+		extern CSCORE_API const Type ECC_GameTraceChannel5;
+		extern CSCORE_API const Type ECC_GameTraceChannel6;
+		extern CSCORE_API const Type ECC_GameTraceChannel7;
+		extern CSCORE_API const Type ECC_GameTraceChannel8;
+		extern CSCORE_API const Type ECC_GameTraceChannel9;
+		extern CSCORE_API const Type ECC_GameTraceChannel10;
+		extern CSCORE_API const Type ECC_GameTraceChannel11;
+		extern CSCORE_API const Type ECC_GameTraceChannel12;
+		extern CSCORE_API const Type ECC_GameTraceChannel13;
+		extern CSCORE_API const Type ECC_GameTraceChannel14;
+		extern CSCORE_API const Type ECC_GameTraceChannel15;
+		extern CSCORE_API const Type ECC_GameTraceChannel16;
+		extern CSCORE_API const Type ECC_GameTraceChannel17;
+		extern CSCORE_API const Type ECC_GameTraceChannel18;
 
-		extern CSCORE_API const ECollisionChannel ECC_MAX;
+		extern CSCORE_API const Type ECC_MAX;
 	}
 }
 
@@ -1779,17 +1796,19 @@ namespace ECsCollisionChannel
 
 struct CSCORE_API EMCollisionResponse : public TCsEnumMap<ECollisionResponse>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCollisionResponse)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCollisionResponse, ECollisionResponse)
 };
 
-namespace ECsCollisionResponse
+namespace NCsCollisionResponse
 {
+	typedef ECollisionResponse Type;
+
 	namespace Ref
 	{
-		extern CSCORE_API const ECollisionResponse ECR_Ignore;
-		extern CSCORE_API const ECollisionResponse ECR_Overlap;
-		extern CSCORE_API const ECollisionResponse ECR_Block;
-		extern CSCORE_API const ECollisionResponse ECR_MAX;
+		extern CSCORE_API const Type ECR_Ignore;
+		extern CSCORE_API const Type ECR_Overlap;
+		extern CSCORE_API const Type ECR_Block;
+		extern CSCORE_API const Type ECR_MAX;
 	}
 };
 
@@ -1877,7 +1896,7 @@ enum class ECsLinearColor : uint8
 
 struct CSCORE_API EMCsLinearColor : public TCsEnumMap<ECsLinearColor>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsLinearColor)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsLinearColor, ECsLinearColor)
 };
 
 namespace NCsLinearColor
@@ -1896,6 +1915,8 @@ namespace NCsLinearColor
 		extern CSCORE_API const Type Yellow;
 		extern CSCORE_API const Type ECsLinearColor_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 
 	FORCEINLINE FLinearColor ToLinearColor(const Type &EType)
 	{
@@ -1937,7 +1958,7 @@ enum class ECsColor : uint8
 
 struct CSCORE_API EMCsColor : public TCsEnumMap<ECsColor>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsColor)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsColor, ECsColor)
 };
 
 namespace NCsColor
@@ -1960,7 +1981,10 @@ namespace NCsColor
 		extern CSCORE_API const Type Turquoise;
 		extern CSCORE_API const Type Silver;
 		extern CSCORE_API const Type Emerald;
+		extern CSCORE_API const Type ECsColor_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 
 	FORCEINLINE const FColor& ToColor(const Type &EType)
 	{
@@ -2004,7 +2028,7 @@ enum class ECsAttachmentTransformRules : uint8
 
 struct CSCORE_API EMCsAttachmentTransformRules : public TCsEnumMap<ECsAttachmentTransformRules>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsAttachmentTransformRules)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsAttachmentTransformRules, ECsAttachmentTransformRules)
 };
 
 namespace NCsAttachmentTransformRules
@@ -2049,7 +2073,7 @@ enum class ECsDetachmentTransformRules : uint8
 
 struct CSCORE_API EMCsDetachmentTransformRules : public TCsEnumMap<ECsDetachmentTransformRules>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsDetachmentTransformRules)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsDetachmentTransformRules, ECsDetachmentTransformRules)
 };
 
 namespace NCsDetachmentTransformRules

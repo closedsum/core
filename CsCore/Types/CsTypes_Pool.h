@@ -233,6 +233,7 @@ public:
 	}
 };
 
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsPooledObjectPayload
 {

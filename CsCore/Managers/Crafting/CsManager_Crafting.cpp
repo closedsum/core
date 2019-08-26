@@ -289,8 +289,8 @@ void ACsManager_Crafting::CancelCraftingProcess(const uint64& Id)
 		ACsData_Recipe* Recipe	 = Payload->GetRecipe();
 		const FString RecipeName = Recipe->ShortCode.ToString();
 		const FString ItemName	 = Recipe->GetCreatedItem().ToString();
-		UObject* Instigator		 = Process->GetInstigator();
-		const FString InstigatorName = Instigator->GetName();
+		UObject* TheInstigator		 = Process->GetInstigator();
+		const FString InstigatorName = TheInstigator->GetName();
 
 		UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CancelCraftingProcess: Canceling crafting (Process: %d, Payload: %d) for Recipe: %s to create Item: %s started by %s."), Process->Id, Payload->Id, *RecipeName, *ItemName, *InstigatorName);
 	}
@@ -305,7 +305,7 @@ void ACsManager_Crafting::CancelCraftingProcess(const uint64& Id)
 	Process->Reset();
 }
 
-void ACsManager_Crafting::CancelCraftingProcesses(UObject* Instigator)
+void ACsManager_Crafting::CancelCraftingProcesses(UObject* InInstigator)
 {
 	TArray<uint64> Keys;
 	ProcessMap.GetKeys(Keys);
@@ -317,7 +317,7 @@ void ACsManager_Crafting::CancelCraftingProcesses(UObject* Instigator)
 		const uint64& Id			= Keys[I];
 		FCsCraftingProcess* Process = *(ProcessMap.Find(Id));
 
-		if (Instigator == Process->GetInstigator())
+		if (InInstigator == Process->GetInstigator())
 		{
 			FCsCraftingPayload* Payload = (FCsCraftingPayload*)(Process->R->voidPointers[0]);
 
@@ -326,7 +326,7 @@ void ACsManager_Crafting::CancelCraftingProcesses(UObject* Instigator)
 				ACsData_Recipe* Recipe	 = Payload->GetRecipe();
 				const FString RecipeName = Recipe->ShortCode.ToString();
 				const FString ItemName   = Recipe->GetCreatedItem().ToString();
-				const FString InstigatorName = Instigator->GetName();
+				const FString InstigatorName = InInstigator->GetName();
 
 				UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CancelCraftingProcesses: Canceling crafting (Process: %d, Payload: %d) for Recipe: %s to create Item: %s started by %s."), Process->Id, Payload->Id, *RecipeName, *ItemName, *InstigatorName);
 			}

@@ -444,7 +444,14 @@ void ACsPawn::PerformViewTrace()
 	Request->Method		= ECsTraceMethod::Multi;
 	Request->Query		= ECsTraceQuery::ObjectType;
 	UCsCommon::CopyCollisionObjectQueryParams(ViewTraceInfo.ObjectParams, Request->ObjectParams);
-	Request->Params.AddIgnoredActors(ViewTraceInfo.IgnoredActors);
+
+	TArray<AActor*> Actors;
+
+	for (TWeakObjectPtr<AActor>& Actor : ViewTraceInfo.IgnoredActors)
+	{
+		Actors.Add(Actor.IsValid() ? Actor.Get() : nullptr);
+	}
+	Request->Params.AddIgnoredActors(Actors);
 
 	Request->ReplacePending = !ViewTraceInfo.bForce;
 	Request->PendingId		= ViewTraceInfo.RequestId;

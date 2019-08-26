@@ -349,6 +349,9 @@ public:
 		return *Instance; \
 	}
 
+#define CS_ADD_TO_ENUM_MAP(EnumMap, EnumElementName) const Type EnumElementName = EnumMap::Get().Add(Type::EnumElementName, #EnumElementName)
+#define CS_ADD_TO_ENUM_MAP_CUSTOM(EnumMap, EnumElementName, DisplayName) const Type EnumElementName = EnumMap::Get().Add(Type::EnumElementName, #EnumElementName, TEXT(DisplayName))
+
 #pragma endregion EnumMap
 
 	// EnumMaskMap
@@ -5535,40 +5538,32 @@ public:
 
 #pragma endregion TMapRef
 
+// MemberType
+#pragma region
+
 UENUM(BlueprintType)
-namespace ECsMemberType
+enum class ECsMemberType : uint8
 {
-	enum Type
-	{
-		Bool				UMETA(DisplayName = "Bool"),
-		Uint8				UMETA(DisplayName = "Uint8"),
-		Int32				UMETA(DisplayName = "Int32"),
-		Float				UMETA(DisplayName = "Float"),
-		_FString			UMETA(DisplayName = "FString"),
-		FName				UMETA(DisplayName = "FName"),
-		FVector				UMETA(DisplayName = "FVector"),
-		FRotator			UMETA(DisplayName = "FRotator"),
-		FColor				UMETA(DisplayName = "FColor"),
-		ECsMemberType_MAX	UMETA(Hidden),
-	};
-}
+	Bool				UMETA(DisplayName = "Bool"),
+	Uint8				UMETA(DisplayName = "Uint8"),
+	Int32				UMETA(DisplayName = "Int32"),
+	Float				UMETA(DisplayName = "Float"),
+	String				UMETA(DisplayName = "String"),
+	Name				UMETA(DisplayName = "Name"),
+	Vector				UMETA(DisplayName = "Vector"),
+	Rotator				UMETA(DisplayName = "Rotator"),
+	Color				UMETA(DisplayName = "Color"),
+	ECsMemberType_MAX	UMETA(Hidden),
+};
 
-namespace ECsMemberType
+struct CSCORE_API EMCsMemberType : public TCsEnumMap<ECsMemberType>
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsMemberType, ECsMemberType)
+};
 
-	namespace Str
-	{
-		extern CSCORE_API const TCsString Bool;
-		extern CSCORE_API const TCsString Uint8;
-		extern CSCORE_API const TCsString Int32;
-		extern CSCORE_API const TCsString Float;
-		extern CSCORE_API const TCsString _FString;
-		extern CSCORE_API const TCsString FName;
-		extern CSCORE_API const TCsString FVector;
-		extern CSCORE_API const TCsString FRotator;
-		extern CSCORE_API const TCsString FColor;
-	}
+namespace NCsMemberType
+{
+	typedef ECsMemberType Type;
 
 	namespace Ref
 	{
@@ -5576,45 +5571,18 @@ namespace ECsMemberType
 		extern CSCORE_API const Type Uint8;
 		extern CSCORE_API const Type Int32;
 		extern CSCORE_API const Type Float;
-		extern CSCORE_API const Type _FString;
-		extern CSCORE_API const Type FName;
-		extern CSCORE_API const Type FVector;
-		extern CSCORE_API const Type FRotator;
-		extern CSCORE_API const Type FColor;
+		extern CSCORE_API const Type String;
+		extern CSCORE_API const Type Name;
+		extern CSCORE_API const Type Vector;
+		extern CSCORE_API const Type Rotator;
+		extern CSCORE_API const Type Color;
 		extern CSCORE_API const Type ECsMemberType_MAX;
 	}
 
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Bool) { return Str::Bool.Value; }
-		if (EType == Type::Uint8) { return Str::Uint8.Value; }
-		if (EType == Type::Int32) { return Str::Int32.Value; }
-		if (EType == Type::Float) { return Str::Float.Value; }
-		if (EType == Type::_FString) { return Str::_FString.Value; }
-		if (EType == Type::FName) { return Str::FName.Value; }
-		if (EType == Type::FVector) { return Str::FVector.Value; }
-		if (EType == Type::FRotator) { return Str::FRotator.Value; }
-		if (EType == Type::FColor) { return Str::FColor.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Bool) { return Type::Bool; }
-		if (String == Str::Uint8) { return Type::Uint8; }
-		if (String == Str::Int32) { return Type::Int32; }
-		if (String == Str::Float) { return Type::Float; }
-		if (String == Str::_FString) { return Type::_FString; }
-		if (String == Str::FName) { return Type::FName; }
-		if (String == Str::FVector) { return Type::FVector; }
-		if (String == Str::FRotator) { return Type::FRotator; }
-		if (String == Str::FColor) { return Type::FColor; }
-		return Type::ECsMemberType_MAX;
-	}
+	extern CSCORE_API const uint8 MAX;
 }
 
-#define ECS_MEMBER_TYPE_MAX (uint8)ECsMemberType::ECsMemberType_MAX
-typedef ECsMemberType::Type TCsMemberType;
+#pragma endregion MemberType
 
 #define CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(Type, Integral, Value) const Type Integral = 1; \
 																		  Type* ptr = (Type*)(&Integral); \
@@ -6428,35 +6396,24 @@ struct CSCORE_API FCsOptionalRotatorInterval
 // String
 #pragma region
 
-namespace ECsStringCompare
+enum class ECsStringCompare : uint8
 {
-	enum Type
-	{
-		Equals,
-		StartsWith,
-		EndsWith,
-		Contains,
-		ECsStringCompare_MAX,
-	};
-}
-
-struct CSCORE_API EMCsStringCompare : public TCsEnumMap<ECsStringCompare::Type>
-{
-protected:
-	EMCsStringCompare() {}
-	EMCsStringCompare(const EMCsStringCompare &) = delete;
-	EMCsStringCompare(EMCsStringCompare &&) = delete;
-public:
-	~EMCsStringCompare() {}
-private:
-	static EMCsStringCompare* Instance;
-
-public:
-	static EMCsStringCompare& Get();
+	Equals					UMETA(DisplayName = "Equals"),
+	StartsWith				UMETA(DisplayName = "Starts With"),
+	EndsWith				UMETA(DisplayName = "Ends With"),
+	Contains				UMETA(DisplayName = "Contains"),
+	ECsStringCompare_MAX	UMETA(Hidden),
 };
 
-namespace ECsStringCompare
+struct CSCORE_API EMCsStringCompare : public TCsEnumMap<ECsStringCompare>
 {
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsStringCompare, ECsStringCompare)
+};
+
+namespace NCsStringCompare
+{
+	typedef ECsStringCompare Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type Equals;
@@ -6466,17 +6423,19 @@ namespace ECsStringCompare
 		extern CSCORE_API const Type ECsStringCompare_MAX;
 	}
 
-	FORCEINLINE const FString& ToString(const Type &EType)
+	extern CSCORE_API const uint8 MAX;
+
+	FORCEINLINE const FString& ToString(const Type& EType)
 	{
 		return EMCsStringCompare::Get().ToString(EType);
 	}
 
-	FORCEINLINE const Type& ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString& String)
 	{
 		return EMCsStringCompare::Get().ToType(String);
 	}
 
-	FORCEINLINE bool Compare(const FString &Source, const FString &String, const Type &EType)
+	FORCEINLINE bool Compare(const FString& Source, const FString& String, const Type& EType)
 	{
 		if (EType == Type::Equals) { return Source == String; }
 		if (EType == Type::StartsWith) { return Source.StartsWith(String); }
@@ -6485,9 +6444,6 @@ namespace ECsStringCompare
 		return false;
 	}
 }
-
-#define ECS_STRING_COMPARE_MAX (uint8)ECsStringCompare::ECsStringCompare_MAX
-typedef ECsStringCompare::Type TCsStringCompare;
 
 #pragma endregion String
 

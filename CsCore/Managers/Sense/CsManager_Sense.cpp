@@ -404,7 +404,7 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 	{
 		bool Sees = false;
 
-		TArray<FECsSenseActorType> TypeKeys;
+		TypeKeys.Reset();
 		bSeesAnyByDot.GetKeys(TypeKeys);
 
 		for (const FECsSenseActorType& ActorType : TypeKeys)

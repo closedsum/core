@@ -104,7 +104,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 // Game Action Delegates
 
 class AActor;
-class ACsPlayerController;
+class APlayerController;
 
 UCLASS(Blueprintable)
 class CSCORE_API UCsManager_Input : public UActorComponent
@@ -115,20 +115,20 @@ class CSCORE_API UCsManager_Input : public UActorComponent
 
 	static UCsManager_Input* Get(UWorld* World, const int32& Index = INDEX_NONE);
 
+// UActorComponent Interface
+#pragma region
+protected:
+
+	virtual void OnRegister() override;
+
+#pragma endregion UActorComponent Interface
+
 // Owner
 #pragma region
 public:
 
-	TWeakObjectPtr<ACsPlayerController> MyOwner;
-
-	UFUNCTION(BlueprintCallable, Category = "Owner")
-	ACsPlayerController* GetMyOwner();
-
-	template<typename T>
-	T* GetMyOwner()
-	{
-		return Cast<T>(GetMyOwner());
-	}
+	UPROPERTY(BlueprintReadOnly, Category = "Manager|Input|Owner")
+	APlayerController* OwnerAsController;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Owner")
 	int32 ControllerId;

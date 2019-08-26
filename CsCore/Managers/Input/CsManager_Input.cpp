@@ -2,11 +2,14 @@
 #include "Managers/Input/CsManager_Input.h"
 #include "CsCore.h"
 #include "CsCVars.h"
+
+// Library
 #include "Common/CsCommon.h"
 #include "Common/CsCommon_Load.h"
 
 #include "Managers/Input/CsInput_Base.h"
-
+// Player
+#include "GameFramework/PlayerController.h"
 #include "Player/CsPlayerController.h"
 #include "Player/CsCheatManager.h"
 
@@ -75,15 +78,25 @@ void UCsManager_Input::Init()
 	}
 }
 
-/*static*/ UCsManager_Input* UCsManager_Input::Get(UWorld* World, const int32 &Index /*= INDEX_NONE*/)
+/*static*/ UCsManager_Input* UCsManager_Input::Get(UWorld* World, const int32& Index /*= INDEX_NONE*/)
 {
+	// TODO: Fix
 	return UCsCommon::GetLocalPlayerController<ACsPlayerController>(World)->Manager_Input;
 }
 
-ACsPlayerController* UCsManager_Input::GetMyOwner()
+// UActorComponent Interface
+#pragma region
+
+void UCsManager_Input::OnRegister()
 {
-	return MyOwner.IsValid() ? MyOwner.Get() : nullptr;
+	Super::OnRegister();
+
+	OwnerAsController = Cast<APlayerController>(GetOwner());
+
+	Init();
 }
+
+#pragma endregion UActorComponent Interface
 
 /*
 void UCsManager_Input::SetupInputComponent()
@@ -101,8 +114,7 @@ void UCsManager_Input::SetupInputComponent()
 	// RunEditorGameJavascriptFile
 	InputComponent->BindAction("RunEditorGameJavascriptFile", IE_Pressed, this, &UCsManager_Input::RunEditorGameJavascriptFile_FirstPressed).bConsumeInput = false;
 
-	ACsPlayerController* Controller = GetMyOwner();
-	UCsCheatManager* CheatManager   = Cast<UCsCheatManager>(Controller->CheatManager);
+	UCsCheatManager* CheatManager   = Cast<UCsCheatManager>(OwnerAsController->CheatManager);
 
 	OnRunEditorGameBatchConsoleCommands_FirstPressed_Event.AddUObject(CheatManager, &UCsCheatManager::RunEditorGameBatchConsoleCommands);
 	OnRunEditorGameJavascriptFile_FirstPressed_Event.AddUObject(CheatManager, &UCsCheatManager::RunEditorGameJavascriptFile);
@@ -121,8 +133,7 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 	// Cache Raw Pressed Inputs
 	PressedKeys.Reset();
 
-	ACsPlayerController* OwnerAsController = GetMyOwner();
-	UPlayerInput* PlayerInput			   = OwnerAsController->PlayerInput;
+	UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
 
 	TArray<FKey> AllKeys;
 	EKeys::GetAllKeys(AllKeys);
@@ -277,7 +288,7 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 				const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
 				const FString& LastEvent	= EMCsInputEvent::Get().ToString(Info.Last_Event);
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PreProcessInput (%s): Time: %f. Action: %s[%s]. Event: %s -> %s."), *(MyOwner->GetName()), Time, *Action.Name, *(Mapping.Key.ToString()), *LastEvent, *CurrentEvent);
+				UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PreProcessInput (%s): Time: %f. Action: %s[%s]. Event: %s -> %s."), *(GetOwner()->GetName()), Time, *Action.Name, *(Mapping.Key.ToString()), *LastEvent, *CurrentEvent);
 			}
 #endif // #if WITH_EDITOR
 
@@ -292,7 +303,7 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 				const float& Time			= CurrentInputFrame.Time;
 				const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PreProcessInput (%s): Time: %f. Action: %s[%s]. Event: %s."), *(MyOwner->GetName()), Time, *(Action.Name), *(Mapping.Key.ToString()), *CurrentEvent);
+				UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PreProcessInput (%s): Time: %f. Action: %s[%s]. Event: %s."), *(GetOwner()->GetName()), Time, *(Action.Name), *(Mapping.Key.ToString()), *CurrentEvent);
 			}
 		}
 #endif // #if WITH_EDITOR
@@ -322,7 +333,7 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 			const float& Time			= CurrentInputFrame.Time;
 			const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
 
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PreProcessInput (%s): Time: %f. Action: %s[%s]. Event: %s. Value: %f"), *(MyOwner->GetName()), Time, *(Action.Name), *(Mapping.Key.ToString()), *CurrentEvent, Value);
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PreProcessInput (%s): Time: %f. Action: %s[%s]. Event: %s. Value: %f"), *(GetOwner()->GetName()), Time, *(Action.Name), *(Mapping.Key.ToString()), *CurrentEvent, Value);
 		}
 #endif // #if WITH_EDITOR
 
@@ -359,7 +370,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 			const float& Time			 = CurrentInputFrame.Time;
 			const FString& EventAsString = EMCsInputEvent::Get().ToString(Input->Event);
 
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PostProcessInput (%s): Time: %f. Action: %s Event: %s."), *(MyOwner->GetName()), Time, *(Action.Name), *EventAsString);
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PostProcessInput (%s): Time: %f. Action: %s Event: %s."), *(GetOwner()->GetName()), Time, *(Action.Name), *EventAsString);
 		}
 	}
 #endif // #if WITH_EDITOR
@@ -411,7 +422,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 			{
 				const float& Time = CurrentInputFrame.Time;
 
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Input::PostProcessInput (%s): Time: %f. Event: %s."), *(MyOwner->GetName()), Time, *(Info.Event.Name));
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Input::PostProcessInput (%s): Time: %f. Event: %s."), *(GetOwner()->GetName()), Time, *(Info.Event.Name));
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -718,7 +729,7 @@ void UCsManager_Input::ConsumeInput(const FECsInputAction& Action)
 
 void UCsManager_Input::SetupInputActionEventInfoMap()
 {
-	UPlayerInput* PlayerInput = GetMyOwner()->PlayerInput;
+	UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
 
 	const int32& ActionCount = EMCsInputAction::Get().Num();
 
@@ -781,7 +792,7 @@ void UCsManager_Input::SetupInputActionMapping()
 #if WITH_EDITOR
 		if (Names.Num() == CS_EMPTY)
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupInputActionMapping (%s): No InputActions set for Map: %s."), *(MyOwner->GetName()), *(Map.Name));
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupInputActionMapping (%s): No InputActions set for Map: %s."), *(GetOwner()->GetName()), *(Map.Name));
 		}
 #endif // #if WITH_EDITOR
 
@@ -887,7 +898,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 		if (!Def.IsValid())
 		{
 #if WITH_EDITOR
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupGameEventDefinitions (%s): GameEventDefinition set with GameEvent: %s is NOT Valid. Check the Sentence."), *(MyOwner->GetName()), *(Event.Name));
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupGameEventDefinitions (%s): GameEventDefinition set with GameEvent: %s is NOT Valid. Check the Sentence."), *(GetOwner()->GetName()), *(Event.Name));
 #endif // #if WITH_EDITOR
 			continue;
 		}
@@ -906,7 +917,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 		if (!Def.IsValid())
 		{
 #if WITH_EDITOR
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupGameEventDefinitions (%s): GameEventDefinitionSimple set with GameEvent: %s is NOT Valid. Action: %s. Event: %s"), *(MyOwner->GetName()), *(GameEvent.Name), *(Action.Name), *(EMCsInputEvent::Get().ToString(Event)));
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupGameEventDefinitions (%s): GameEventDefinitionSimple set with GameEvent: %s is NOT Valid. Action: %s. Event: %s"), *(GetOwner()->GetName()), *(GameEvent.Name), *(Action.Name), *(EMCsInputEvent::Get().ToString(Event)));
 #endif // #if WITH_EDITOR
 			continue;
 		}
@@ -914,7 +925,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 		if (GameEventDefinitionMap.Find(GameEvent))
 		{
 #if WITH_EDITOR
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupGameEventDefinitions (%s): GameEventDefinitionSimple set with GameEvent: %s is already Set in GameEventDefinitions."), *(MyOwner->GetName()), *(GameEvent.Name));
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupGameEventDefinitions (%s): GameEventDefinitionSimple set with GameEvent: %s is already Set in GameEventDefinitions."), *(GetOwner()->GetName()), *(GameEvent.Name));
 #endif // #if WITH_EDITOR
 			continue;
 		}
@@ -942,7 +953,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 
 		if (!GameEventDefinitionMap.Find(Event))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupGameEventDefinitions (%s): No GameEventDefinition set for GameEvent: %s."), *(MyOwner->GetName()), *(Event.Name));
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupGameEventDefinitions (%s): No GameEventDefinition set for GameEvent: %s."), *(GetOwner()->GetName()), *(Event.Name));
 		}
 	}
 #endif // #if WITH_EDITOR
@@ -966,7 +977,7 @@ void UCsManager_Input::LogProcessGameEventDefinition(const FString& FunctionName
 
 			const float& Time = CurrentInputFrame.Time;
 
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::%s (%s): Time: %f. (%s, %s) -> %s."), *FunctionName, *(MyOwner->GetName()), Time, *(Action.Name), *InputEventAsString, *(Event.Name));
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::%s (%s): Time: %f. (%s, %s) -> %s."), *FunctionName, *(GetOwner()->GetName()), Time, *(Action.Name), *InputEventAsString, *(Event.Name));
 		}
 	}
 }
@@ -1083,8 +1094,7 @@ void UCsManager_Input::LoadDefaultInputProfile()
 {
 	InputProfile.Reset();
 
-	ACsPlayerController* Controller = GetMyOwner();
-	UPlayerInput* PlayerInput		= Controller->PlayerInput;
+	UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
 
 	// ActionMappings
 	const int32 ActionCount = PlayerInput->ActionMappings.Num();
@@ -1278,8 +1288,7 @@ FKey UCsManager_Input::GetKeyFromAction(const FECsInputAction& Action)
 
 void UCsManager_Input::UnbindActionMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key)
 {
-	ACsPlayerController* Controller = GetMyOwner();
-	UPlayerInput* PlayerInput		= Controller->PlayerInput;
+	UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
 
 	const FName& ActionName = Action.Name_Internal;
 	// Remove binding from PlayerInput ActionMapping
@@ -1319,8 +1328,7 @@ void UCsManager_Input::UnbindActionMapping(const ECsInputDevice& Device, const F
 
 void UCsManager_Input::UnbindAxisMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key)
 {
-	ACsPlayerController* Controller = GetMyOwner();
-	UPlayerInput* PlayerInput		= Controller->PlayerInput;
+	UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
 
 	const FName& ActionName = Action.Name_Internal;
 	// Remove binding from PlayerInput ActionMapping
@@ -1373,8 +1381,7 @@ void UCsManager_Input::RebindActionMapping(const ECsInputDevice& Device, const F
 	if (!IsValidKey(Device, Key))
 		return;
 
-	ACsPlayerController* Controller = GetMyOwner();
-	UPlayerInput* PlayerInput		= Controller->PlayerInput;
+	UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
 	
 	FCsInputActionMapping& Mapping = InputProfile.GetMapping(Device, Action);
 	const FKey PreviousKey		   = Mapping.Key;
@@ -1428,8 +1435,7 @@ void UCsManager_Input::RebindAxisMapping(const ECsInputDevice& Device, const FEC
 	if (!IsValidKey(Device, Key))
 		return;
 
-	ACsPlayerController* Controller = GetMyOwner();
-	UPlayerInput* PlayerInput		= Controller->PlayerInput;
+	UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
 
 	FCsInputActionMapping& Mapping = InputProfile.GetMapping(Device, Action);
 	const FKey PreviousKey		   = Mapping.Key;

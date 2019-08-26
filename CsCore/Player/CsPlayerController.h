@@ -17,7 +17,7 @@ class CSCORE_API ACsPlayerController : public APlayerController
 
 	virtual void Destroyed() override;
 
-	UPROPERTY(BlueprintAssignable, Category = "Tick")
+	UPROPERTY(BlueprintAssignable, Category = "Player|Tick")
 	FBindableDynEvent_CsPlayerController_OnTickActor OnTickActor_ScriptEvent;
 
 	virtual void OnTickActor_HandleCVars();
@@ -30,7 +30,7 @@ public:
 
 	FOnCalcCamera OnCalcCamera_Event;
 
-	UPROPERTY(BlueprintAssignable, Category = "Camera")
+	UPROPERTY(BlueprintAssignable, Category = "Player|Camera")
 	FBindableDynEvent_CsPlayerController_OnCalcCamera OnCalcCamera_ScriptEvent;
 
 	UPROPERTY()
@@ -39,12 +39,12 @@ public:
 	TCsFRotator ViewRotation;
 	TCsFVector ViewLocation;
 
-	UFUNCTION(BlueprintCallable, Category = "Caemra")
+	UFUNCTION(BlueprintCallable, Category = "Player|Caemra")
 	virtual void SetTargetActor(AActor* InActor);
 
 	TWeakObjectPtr<AActor> TargetActor;
 
-	UFUNCTION(BlueprintCallable, Category = "Camera")
+	UFUNCTION(BlueprintCallable, Category = "Player|Camera")
 	AActor* GetTargetActor();
 
 	template<typename T>
@@ -59,18 +59,18 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Input")
 	TSubclassOf<UCsManager_Input> ManagerInputClass;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	UPROPERTY(BlueprintReadOnly, Category = "Player|Input")
 	UCsManager_Input* Manager_Input;
 
-	UFUNCTION(BlueprintCallable, Category = "Input")
+	UFUNCTION(BlueprintCallable, Category = "Player|Input")
 	int32 GetCurrentInputActionMap();
-	UFUNCTION(BlueprintCallable, Category = "Input", meta = (AutoCreateRefTerm="ActionMap"))
+	UFUNCTION(BlueprintCallable, Category = "Player|Input", meta = (AutoCreateRefTerm="ActionMap"))
 	void SetCurrentInputActionMap(const FECsInputActionMap& ActionMap);
 	void SetCurrentInputActionMap(const int32& ActionMap);
-	UFUNCTION(BlueprintCallable, Category = "Input", meta = (AutoCreateRefTerm = "ActionMap"))
+	UFUNCTION(BlueprintCallable, Category = "Player|Input", meta = (AutoCreateRefTerm = "ActionMap"))
 	void ClearCurrentInputActionMap(const FECsInputActionMap& ActionMap);
 	void ClearCurrentInputActionMap(const int32& ActionMap);
 

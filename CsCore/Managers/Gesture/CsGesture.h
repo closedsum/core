@@ -2,7 +2,7 @@
 #pragma once
 #include "../CoreUObject/Public/UObject/Object.h"
 #include "Types/CsTypes.h"
-#include "Types/CsTypes_Input.h"
+#include "Managers/Input/CsTypes_Input.h"
 #include "CsGesture.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGesture_Override_ProcessInputs, const FCsInputFrame&, InputFrame);

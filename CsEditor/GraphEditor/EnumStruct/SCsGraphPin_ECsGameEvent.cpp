@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsGameEvent.h"
 #include "CsEditor.h"
 
-#include "Types/CsTypes_Input.h"
+#include "Managers/Input/CsTypes_Input.h"
 
 
 void SCsGraphPin_ECsGameEvent::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)

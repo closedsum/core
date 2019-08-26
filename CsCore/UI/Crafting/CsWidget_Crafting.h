@@ -2,7 +2,7 @@
 #pragma once
 #include "UI/CsUserWidget.h"
 #include "Types/CsTypes_Coroutine.h"
-#include "Types/CsTypes_Input.h"
+#include "Managers/Input/CsTypes_Input.h"
 #include "CsWidget_Crafting.generated.h"
 
 // Enums

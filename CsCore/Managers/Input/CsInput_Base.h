@@ -2,7 +2,7 @@
 #pragma once
 
 #include "../CoreUObject/Public/UObject/Object.h"
-#include "Types/CsTypes_Input.h"
+#include "Managers/Input/CsTypes_Input.h"
 #include "CsInput_Base.generated.h"
 
 class UCsManager_Input;

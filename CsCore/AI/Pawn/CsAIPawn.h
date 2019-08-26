@@ -5,7 +5,7 @@
 #include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Trace.h"
-#include "Types/CsTypes_Input.h"
+#include "Managers/Input/CsTypes_Input.h"
 #include "CsAIPawn.generated.h"
 
 // Jump

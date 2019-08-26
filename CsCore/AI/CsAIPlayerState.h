@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Player/CsPlayerStateBase.h"
-#include "Types/CsTypes_Input.h"
+#include "Managers/Input/CsTypes_Input.h"
 #include "CsAIPlayerState.generated.h"
 
 

@@ -7,7 +7,7 @@
 #include "Common/CsCommon_Asset.h"
 
 #include "Types/CsTypes_Load.h"
-#include "Types/CsTypes_Input.h"
+#include "Managers/Input/CsTypes_Input.h"
 
 // Asset Registry
 #include "AssetRegistryModule.h"

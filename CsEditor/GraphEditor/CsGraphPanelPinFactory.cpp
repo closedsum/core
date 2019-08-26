@@ -3,7 +3,7 @@
 #include "CsEditor.h"
 
 #include "Types/CsTypes.h"
-#include "Types/CsTypes_Input.h"
+#include "Managers/Input/CsTypes_Input.h"
 #include "Types/CsTypes_Character.h"
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Item.h"

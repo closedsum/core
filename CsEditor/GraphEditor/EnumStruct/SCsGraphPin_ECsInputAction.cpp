@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsInputAction.h"
 #include "CsEditor.h"
 
-#include "Types/CsTypes_Input.h"
+#include "Managers/Input/CsTypes_Input.h"
 
 
 void SCsGraphPin_ECsInputAction::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)

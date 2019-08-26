@@ -3,7 +3,7 @@
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_UI.h"
-#include "Types/CsTypes_Input.h"
+#include "Managers/Input/CsTypes_Input.h"
 #include "CsUserWidget.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUserWidget_OnNativeTick, const FGeometry&, MyGeometry, const float&, InDeltaTime);

@@ -4,7 +4,7 @@
 #include "Runtime/UMG/Public/Components/SlateWrapperTypes.h"
 #include "Types/CsTypes.h" 
 #include "Types/CsTypes_UI.h"
-#include "Types/CsTypes_Input.h"
+#include "Managers/Input/CsTypes_Input.h"
 #include "CsUI.generated.h"
 
 // Update

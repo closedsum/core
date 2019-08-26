@@ -7,7 +7,7 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 
 #include "Types/CsTypes_Load.h"
-#include "Types/CsTypes_Input.h"
+#include "Managers/Input/CsTypes_Input.h"
 
 // Managers
 #include "Managers/CsManager_Loading.h"

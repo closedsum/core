@@ -93,6 +93,7 @@ namespace NCsGameInstanceOnBoardState
 #define CS_INVALID_UNIQUE_OBJECT_ID NCsCached::Ref::Long_MAX
 
 class ACsDataMapping;
+class UCsEnumStructUserDefinedEnumMap;
 
 UCLASS(config = Game)
 class CSCORE_API UCsGameInstance : public UGameInstance
@@ -158,10 +159,10 @@ public:
 
 	FString DataMappingAssetPath;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Instance")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Instance|Data Mapping")
 	TSoftClassPtr<ACsDataMapping> DataMappingClass;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
+	UPROPERTY(BlueprintReadOnly, Category = "Game Instance|Data Mapping")
 	ACsDataMapping* DataMapping;
 
 	bool bForcePopulateAssetReferences;
@@ -176,7 +177,7 @@ public:
 	UPROPERTY()
 	TArray<UObject*> LoadedDataAssets;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
+	UPROPERTY(BlueprintReadOnly, Category = "Game Instance|Data Mapping")
 	bool bHasLoadedDataMapping;
 
 #pragma endregion Data Mapping
@@ -184,6 +185,9 @@ public:
 // Enums
 #pragma region
 public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Instance|Enums")
+	TSoftClassPtr<UCsEnumStructUserDefinedEnumMap> EnumStructUserDefinedEnumMapClass;
 
 	virtual void PopulateEnumMapsFromUserDefinedEnums();
 
@@ -271,7 +275,7 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
+	UPROPERTY(BlueprintReadOnly, Category = "Game Instance|Level")
 	ECsLevelState LevelState;
 
 	FDelegateHandle OnPreWorldInitializationHandle;
@@ -289,7 +293,7 @@ public:
 
 	FBindableEvent_CsGameInstance_OnServerTravel OnServerTravel_Event;
 
-	UPROPERTY(BlueprintAssignable, Category = "Level")
+	UPROPERTY(BlueprintAssignable, Category = "Game Instance|Level")
 	FBindableDynEvent_CsGameInstance_OnServerTravel OnServerTravel_ScriptEvent;
 
 #pragma endregion Level

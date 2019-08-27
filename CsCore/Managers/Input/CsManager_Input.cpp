@@ -8,14 +8,16 @@
 #include "Common/CsCommon_Load.h"
 
 #include "Managers/Input/CsInput_Base.h"
+// Game
+#include "Game/CsGameInstance.h"
 // Player
 #include "GameFramework/PlayerController.h"
 #include "Player/CsPlayerController.h"
 #include "Player/CsCheatManager.h"
-
-#include "../Engine/Classes/GameFramework/PlayerInput.h"
 #include "../Engine/Classes/Engine/LocalPlayer.h"
-
+// Input
+#include "Managers/Input/CsInputSetting.h"
+#include "../Engine/Classes/GameFramework/PlayerInput.h"
 #include "../HeadMountedDisplay/Public/IMotionController.h"
 
 // Cached
@@ -777,37 +779,13 @@ void UCsManager_Input::SetupInputActionEventInfoMap()
 
 void UCsManager_Input::SetupInputActionMapping()
 {
-	// Populate InputActionMappings from Blueprint version
-	const int32& MapCount = EMCsInputActionMap::Get().Num();
-
-	for (int32 I = 0; I < MapCount; ++I)
+	for (const FECsInputActionMap& Map : EMCsInputActionMap::Get())
 	{
-		const FECsInputActionMap& Map = EMCsInputActionMap::Get().GetEnumAt(I);
-
-		TArray<FName> Names;
-		BP_GetInputActionNamesFromMapping(Map, Names);
-
-		InputActionMappings.Add(Map);
-
-#if WITH_EDITOR
-		if (Names.Num() == CS_EMPTY)
-		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupInputActionMapping (%s): No InputActions set for Map: %s."), *(GetOwner()->GetName()), *(Map.Name));
-		}
-#endif // #if WITH_EDITOR
-
-		for (const FName& Name : Names)
-		{
-			const FECsInputAction& Action = EMCsInputAction::Get().GetEnum(Name);
-
-			InputActionMappings[Map].Add(Action);
-		}
-
-		const int32& Mask					 = Map.Mask;
-		const TSet<FECsInputAction>& Actions = InputActionMappings[Map];
+		const int32& Mask			 = Map.Mask;
+		const FCsInputActionSet& Set = InputActionMappings[Map];
 
 		// Initialize InputActionMapping
-		for (const FECsInputAction& Action : Actions)
+		for (const FECsInputAction& Action : Set.Actions)
 		{
 			if (InputActionMapping.Find(Action))
 			{
@@ -819,10 +797,6 @@ void UCsManager_Input::SetupInputActionMapping()
 			}
 		}
 	}
-}
-
-void UCsManager_Input::BP_GetInputActionNamesFromMapping_Implementation(const FECsInputActionMap& Map, TArray<FName>& OutNames)
-{
 }
 
 /*

@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "GraphEditor/CsGraphPanelPinFactory.h"
 #include "CsEditor.h"
-
+// Types
 #include "Types/CsTypes.h"
 #include "Managers/Input/CsTypes_Input.h"
 #include "Types/CsTypes_Character.h"

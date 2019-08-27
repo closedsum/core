@@ -224,6 +224,21 @@ struct CSCORE_API EMCsInputAction : public TCsEnumStructMap<FECsInputAction, uin
 
 #pragma endregion InputAction
 
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsInputActionSet
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	TSet<FECsInputAction> Actions;
+
+	FCsInputActionSet() :
+		Actions()
+	{
+
+	}
+};
+
 #define CS_INVALID_INPUT_POOL_INDEX 65535
 
 USTRUCT(BlueprintType)

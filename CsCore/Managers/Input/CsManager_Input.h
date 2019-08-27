@@ -177,12 +177,10 @@ public:
 
 	void SetupInputActionEventInfoMap();
 
-	TMap<FECsInputActionMap, TSet<FECsInputAction>> InputActionMappings;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Manager|Input|Action Map")
+	TMap<FECsInputActionMap, FCsInputActionSet> InputActionMappings;
 
 	void SetupInputActionMapping();
-
-	UFUNCTION(BlueprintNativeEvent, Category = "Manager|Input|Action Map")
-	void BP_GetInputActionNamesFromMapping(const FECsInputActionMap& Map, TArray<FName>& OutNames);
 
 	UPROPERTY(BlueprintReadOnly, Category = "Manager|Input|Action Map")
 	TMap<FECsInputAction, int32> InputActionMapping;

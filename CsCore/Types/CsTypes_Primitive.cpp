@@ -74,7 +74,11 @@ namespace NCsCached
 
 namespace NCsUserDefinedEnum
 {
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsUserDefinedEnum, FECsDataType);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsUserDefinedEnum, FECsDataCollection);
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsUserDefinedEnum, FECsInputAction);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsUserDefinedEnum, FECsInputActionMap);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsUserDefinedEnum, FECsGameEvent);
 }
 
 #pragma endregion UserDefinedEnum

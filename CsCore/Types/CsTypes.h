@@ -1716,7 +1716,7 @@ namespace NCsControllerHand
 #pragma region
 
 	// CollisionEnabled
-#pragma endregion
+#pragma region
 
 struct CSCORE_API EMCollisionEnabled : public TCsEnumMap<ECollisionEnabled::Type>
 {
@@ -2058,7 +2058,7 @@ namespace NCsAttachmentTransformRules
 
 #define ECS_ATTACHMENT_TRANSFORM_RULES_MAX NCsAttachmentTransformRules::MAX
 
-#pragma region AttachmentTransformRules
+#pragma endregion AttachmentTransformRules
 
 	// DetachmentTransformRules
 #pragma region

@@ -2,13 +2,15 @@
 #include "Game/CsGameInstance.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
 
 #include "Coroutine/CsCoroutineScheduler.h"
 
+// Types
+#include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
 #include "Types/CsTypes_Load.h"
 #include "Managers/Input/CsTypes_Input.h"
-
+// Library
+#include "Common/CsCommon.h"
 // Managers
 #include "Managers/CsManager_Loading.h"
 #include "Managers/Runnable/CsManager_Runnable.h"
@@ -17,6 +19,8 @@
 #include "Data/CsData_Payload.h"
 #include "Data/CsData.h"
 #include "Data/CsData_UI_Common.h"
+// Input
+#include "Managers/Input/CsInputSetting.h"
 // UI
 #include "UI/CsUserWidget.h"
 #include "UI/CsWidget_Fullscreen.h"
@@ -33,11 +37,11 @@
 	// GameInstanceRoutine
 namespace ECsGameInstanceRoutine
 {
-	CSCORE_API const Type OnBoard_Internal = EMCsGameInstanceRoutine::Get().Create(TEXT("OnBoard_Internal"));
-	CSCORE_API const Type LoadDataMapping_Internal = EMCsGameInstanceRoutine::Get().Create(TEXT("LoadDataMapping_Internal"));
-	CSCORE_API const Type PerformLevelTransition_Internal = EMCsGameInstanceRoutine::Get().Create(TEXT("PerformLevelTransition_Internal"));
-	CSCORE_API const Type CreateFullscreenWidget_Internal = EMCsGameInstanceRoutine::Get().Create(TEXT("CreateFullscreenWidget_Internal"));
-	CSCORE_API const Type HideMouseCursor_Internal = EMCsGameInstanceRoutine::Get().Create(TEXT("HideMouseCursor_Internal"));
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameInstanceRoutine, OnBoard_Internal);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameInstanceRoutine, LoadDataMapping_Internal);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameInstanceRoutine, PerformLevelTransition_Internal);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameInstanceRoutine, CreateFullscreenWidget_Internal);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameInstanceRoutine, HideMouseCursor_Internal);
 }
 
 	// GameInstanceOnBoardState
@@ -45,13 +49,13 @@ namespace NCsGameInstanceOnBoardState
 {
 	namespace Ref
 	{
-		CSCORE_API const Type LoadDataMapping = EMCsGameInstanceOnBoardState::Get().Add(Type::LoadDataMapping, TEXT("OnBoard_Internal"));
-		CSCORE_API const Type FinishedLoadingDataAssets = EMCsGameInstanceOnBoardState::Get().Add(Type::FinishedLoadingDataAssets, TEXT("FinishedLoadingDataAssets"));
-		CSCORE_API const Type FinishedPopulatingAssetReferences = EMCsGameInstanceOnBoardState::Get().Add(Type::FinishedPopulatingAssetReferences, TEXT("FinishedPopulatingAssetReferences"));
-		CSCORE_API const Type LoadStartUpData = EMCsGameInstanceOnBoardState::Get().Add(Type::LoadStartUpData, TEXT("LoadStartUpData"));
-		CSCORE_API const Type LoadScreen = EMCsGameInstanceOnBoardState::Get().Add(Type::LoadScreen, TEXT("LoadScreen"));
-		CSCORE_API const Type Completed = EMCsGameInstanceOnBoardState::Get().Add(Type::Completed, TEXT("Completed"));
-		CSCORE_API const Type ECsGameInstanceOnBoardState_MAX = EMCsGameInstanceOnBoardState::Get().Add(Type::ECsGameInstanceOnBoardState_MAX, TEXT("ECsGameInstanceOnBoardState_MAX"), TEXT("MAX"));
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, LoadDataMapping);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, FinishedLoadingDataAssets);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, FinishedPopulatingAssetReferences);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, LoadStartUpData);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, LoadScreen);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, Completed);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsGameInstanceOnBoardState, ECsGameInstanceOnBoardState_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsGameInstanceOnBoardState_MAX;
@@ -118,6 +122,9 @@ void UCsGameInstance::Init()
 	OnLevelAddedToWorldHandle		= FWorldDelegates::LevelAddedToWorld.AddUObject(this, &UCsGameInstance::OnLevelAddedToWorld);
 	OnLevelRemovedFromWorldHandle	= FWorldDelegates::LevelRemovedFromWorld.AddUObject(this, &UCsGameInstance::OnLevelRemovedFromWorld);
 
+	InitSettings();
+	PopulateEnumMapsFromUserDefinedEnums();
+
 	UCsManager_Loading::Init();
 	UCsManager_Runnable::Init();
 	UCsCoroutineScheduler::Init();
@@ -128,8 +135,6 @@ void UCsGameInstance::Init()
 	OnBoard();
 
 	IsVR = GEngine->StereoRenderingDevice.IsValid() && GEngine->IsStereoscopic3D();
-	
-	//PopulateEnumMapsFromUserDefinedEnums();
 }
 
 void UCsGameInstance::Shutdown()
@@ -273,6 +278,89 @@ bool UCsGameInstance::RemoveRoutine_Internal(struct FCsRoutine* Routine, const u
 }
 
 #pragma endregion Routines
+
+// Enums
+#pragma region
+
+void UCsGameInstance::PopulateEnumMapsFromUserDefinedEnums()
+{ 
+	// Check AssetReference Path set for EnumStructUserDefinedEnumMapClass
+	FString Path = EnumStructUserDefinedEnumMapClass.ToString();
+
+	checkf(Path != NCsCached::Str::Empty, TEXT("UCsGameInstance::GetUserDefinedEnumNames: No valid Asset Path set for EnumStructUserDefinedEnumMapClass."));
+
+	// Check EnumStructUserDefinedEnumMapClass points to a valid cooked object
+	UClass* Class = EnumStructUserDefinedEnumMapClass.LoadSynchronous();
+
+	checkf(Class, TEXT("UCsGameInstance::GetUserDefinedEnumNames: Failed to load EnumStructUserDefinedEnumMapClass at Path: %s."), *Path);
+
+	// Check there is a Default Object for EnumStructUserDefinedEnumMapClass
+	EnumStructUserDefinedEnumMap = Class->GetDefaultObject<UCsEnumStructUserDefinedEnumMap>();
+
+	checkf(EnumStructUserDefinedEnumMap, TEXT("UCsGameInstance::GetUserDefinedEnumNames: Failed to get the Default Object for Class: %s at Path: %s."), *(Class->GetName()), *Path);
+
+	// DataType
+	PopulateEnumMapFromUserDefinedEnum<EMCsDataType>(NCsUserDefinedEnum::FECsDataType);
+	// DataCollection
+	PopulateEnumMapFromUserDefinedEnum<EMCsDataCollection>(NCsUserDefinedEnum::FECsDataType);
+	// Input
+	{
+		// InputAction
+		PopulateEnumMapFromUserDefinedEnum<EMCsInputAction>(NCsUserDefinedEnum::FECsInputAction);
+		// InputActionMap
+		PopulateEnumMapFromUserDefinedEnum<EMCsInputActionMap>(NCsUserDefinedEnum::FECsInputActionMap);
+		// GameEvent
+		PopulateEnumMapFromUserDefinedEnum<EMCsGameEvent>(NCsUserDefinedEnum::FECsGameEvent);
+	}
+}
+
+void UCsGameInstance::GetUserDefinedEnumNames(const FString& EnumName, const FECsUserDefinedEnum& EnumType, TArray<FString>& OutNames)
+{
+	if (UUserDefinedEnum* Enum = EnumStructUserDefinedEnumMap->GetUserDefinedEnum(EnumType))
+	{
+		const int32 Count = Enum->NumEnums() - 1;
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			OutNames.Add(Enum->GetDisplayNameTextByIndex(I).ToString());
+		}
+	}
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsGameInstance::GetUserDefinedEnumNames: Failed to find UserDefinedEnum: %s for EnumStruct: %s."), *(EnumType.Name), *EnumName);
+	}
+}
+
+#pragma endregion Enums
+
+// Settings
+#pragma region
+
+void UCsGameInstance::InitSettings()
+{
+	InitInputSetting();
+}
+
+void UCsGameInstance::InitInputSetting()
+{
+	// Check AssetReference Path set for InputSettingClass
+	FString Path = InputSettingClass.ToString();
+
+	checkf(Path != NCsCached::Str::Empty, TEXT("UCsGameInstance::InitInputSetting: No valid Asset Path set for InputSettingClass."));
+
+	// Check InputSettingClass points to a valid cooked object
+	UClass* Class = InputSettingClass.LoadSynchronous();
+
+	checkf(Class, TEXT("UCsGameInstance::InitInputSetting: Failed to load InputSettingClass at Path: %s."), *Path);
+
+	// Check there is a Default Object for InputSettingClass
+	InputSetting = Class->GetDefaultObject<UCsInputSetting>();
+
+	checkf(InputSetting, TEXT("UCsGameInstance::InitInputSetting: Failed to get the Default Object for Class: %s at Path: %s."), *(Class->GetName()), *Path);
+
+}
+
+#pragma endregion Settings
 
 // OnBoard
 #pragma region
@@ -488,47 +576,6 @@ void UCsGameInstance::AsyncPopulateAssetReferences()
 */
 
 #pragma endregion Data Mapping
-
-
-	// Enums
-#pragma region
-
-void UCsGameInstance::PopulateEnumMapsFromUserDefinedEnums()
-{
-	// AssetType
-	PopulateEnumMapFromUserDefinedEnum<EMCsAssetType>(TEXT("FECsAssetType"), TEXT(""));
-	// Input
-	{
-		// InputAction
-		PopulateEnumMapFromUserDefinedEnum<EMCsInputAction>(TEXT("FECsInputAction"), TEXT(""));
-		// InputActionMap
-		PopulateEnumMapFromUserDefinedEnum<EMCsInputActionMap>(TEXT("FECsInputActionMap"), TEXT(""));
-		// GameEvent
-		PopulateEnumMapFromUserDefinedEnum<EMCsGameEvent>(TEXT("FECsGameEvent"), TEXT(""));
-	}
-}
-
-void UCsGameInstance::GetUserDefinedEnumNames(const FString& EnumName, const FString& UserDefinedEnumObjectPath, TArray<FString>& OutNames)
-{
-	const FStringAssetReference AssetRef		 = FStringAssetReference(UserDefinedEnumObjectPath);
-	TSoftObjectPtr<UUserDefinedEnum> AssetObject = TSoftObjectPtr<UUserDefinedEnum>(AssetRef);
-
-	if (UUserDefinedEnum* Enum = AssetObject.LoadSynchronous())
-	{
-		const int32 Count = Enum->NumEnums() - 1;
-
-		for (int32 I = 0; I < Count; ++I)
-		{
-			OutNames.Add(Enum->GetDisplayNameTextByIndex(I).ToString());
-		}
-	}
-	else
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsGameInstance::GetUserDefinedEnumNames (%s): Failed to find UserDefinedEnum at: %s. It is possible it was deleted or moved."), *EnumName, *UserDefinedEnumObjectPath);
-	}
-}
-
-#pragma endregion Enums
 
 	// Load StartUp Data
 #pragma region

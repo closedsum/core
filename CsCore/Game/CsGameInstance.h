@@ -94,6 +94,7 @@ namespace NCsGameInstanceOnBoardState
 
 class ACsDataMapping;
 class UCsEnumStructUserDefinedEnumMap;
+class UCsInputSetting;
 
 UCLASS(config = Game)
 class CSCORE_API UCsGameInstance : public UGameInstance
@@ -145,6 +146,63 @@ public:
 
 #pragma endregion Routines
 
+// Enums
+#pragma region
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Instance|Enums")
+	TSoftClassPtr<UCsEnumStructUserDefinedEnumMap> EnumStructUserDefinedEnumMapClass;
+
+
+	UPROPERTY(BlueprintReadOnly, Category = "Game Instance|Enums")
+	UCsEnumStructUserDefinedEnumMap* EnumStructUserDefinedEnumMap;
+
+	virtual void PopulateEnumMapsFromUserDefinedEnums();
+
+	template<typename EnumMap>
+	void PopulateEnumMapFromUserDefinedEnum(const FECsUserDefinedEnum& EnumType)
+	{
+		TArray<FString> Names;
+		GetUserDefinedEnumNames(EnumMap::Get().GetEnumName(), EnumType, Names);
+#if WITH_EDITOR
+		EnumMap::Get().ClearUserDefinedEnums();
+#endif // #if WITH_EDITOR
+		AddEnumsByNameToEnumMap<EnumMap>(Names);
+	}
+
+	void GetUserDefinedEnumNames(const FString& EnumName, const FECsUserDefinedEnum& EnumType, TArray<FString>& OutNames);
+
+	template<typename EnumMap>
+	void AddEnumsByNameToEnumMap(const TArray<FString>& Names)
+	{
+		for (const FString& Name : Names)
+		{
+#if WITH_EDITOR
+			EnumMap::Get().CreateSafe(Name, true);
+#else
+			EnumMap::Get().Create(Name, true);
+#endif // #if WITH_EDITOR
+		}
+	}
+
+#pragma endregion Enums
+
+// Settings
+#pragma region
+public:
+
+	void InitSettings();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game Instance|Settings|Input")
+	TSoftClassPtr<UCsInputSetting> InputSettingClass;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Game Instance|Settings|Input")
+	UCsInputSetting* InputSetting;
+
+	void InitInputSetting();
+
+#pragma endregion Settings
+
 // OnBoard
 #pragma region
 public:
@@ -159,7 +217,7 @@ public:
 
 	FString DataMappingAssetPath;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Instance|Data Mapping")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game Instance|Data Mapping")
 	TSoftClassPtr<ACsDataMapping> DataMappingClass;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance|Data Mapping")
@@ -181,43 +239,6 @@ public:
 	bool bHasLoadedDataMapping;
 
 #pragma endregion Data Mapping
-
-// Enums
-#pragma region
-public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Instance|Enums")
-	TSoftClassPtr<UCsEnumStructUserDefinedEnumMap> EnumStructUserDefinedEnumMapClass;
-
-	virtual void PopulateEnumMapsFromUserDefinedEnums();
-
-	template<typename EnumMap>
-	void PopulateEnumMapFromUserDefinedEnum(const FString& EnumName, const FString& UserDefinedEnumObjectPath)
-	{
-		TArray<FString> Names;
-		GetUserDefinedEnumNames(EnumName, UserDefinedEnumObjectPath, Names);
-#if WITH_EDITOR
-		EnumMap::Get().ClearUserDefinedEnums();
-#endif // #if WITH_EDITOR
-		AddEnumsByNameToEnumMap<EnumMap>(Names);
-	}
-
-	void GetUserDefinedEnumNames(const FString& EnumName, const FString& UserDefinedEnumObjectPath, TArray<FString>& OutNames);
-
-	template<typename EnumMap>
-	void AddEnumsByNameToEnumMap(const TArray<FString>& Names)
-	{
-		for (const FString& Name : Names)
-		{
-#if WITH_EDITOR
-			EnumMap::Get().CreateSafe(Name, true);
-#else
-			EnumMap::Get().Create(Name, true);
-#endif // #if WITH_EDITOR
-		}
-	}
-
-#pragma endregion Enums
 
 	// Load StartUp Data
 #pragma region

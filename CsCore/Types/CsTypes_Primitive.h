@@ -1978,7 +1978,11 @@ namespace NCsUserDefinedEnum
 {
 	typedef FECsUserDefinedEnum Type;
 
+	extern CSCORE_API const Type FECsDataType;
+	extern CSCORE_API const Type FECsDataCollection;
 	extern CSCORE_API const Type FECsInputAction;
+	extern CSCORE_API const Type FECsInputActionMap;
+	extern CSCORE_API const Type FECsGameEvent;
 }
 
 #pragma endregion UserDefinedEnum

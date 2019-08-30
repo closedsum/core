@@ -322,6 +322,56 @@ struct CSCORE_API FCsCategoryMemberAssociation
 	TArray<FString> Members;
 };
 
+// DataType
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsDataType : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsDataType)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsDataType)
+
+struct CSCORE_API EMCsDataType : public TCsEnumStructMap<FECsDataType, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsDataType, FECsDataType, uint8)
+};
+
+namespace NCsDataType
+{
+	typedef FECsDataType Type;
+}
+
+#pragma endregion AssetType
+
+// DataCollection
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsDataCollection : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsDataCollection)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsDataCollection)
+
+struct CSCORE_API EMCsDataCollection : public TCsEnumStructMap<FECsDataCollection, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsDataCollection, FECsDataCollection, uint8)
+};
+
+namespace NCsDataCollection
+{
+	typedef FECsDataCollection Type;
+}
+
+#pragma endregion DataCollection
+
 // AssetType
 #pragma region
 
@@ -347,7 +397,7 @@ namespace ECsAssetType
 // GetAssetTypeStaticClass
 typedef UClass*(*TCsGetAssetTypeStaticClass)(const FECsAssetType&);
 
-#pragma endregion // AssetType
+#pragma endregion AssetType
 
 // LoadAssetsType
 #pragma region
@@ -367,7 +417,7 @@ struct CSCORE_API EMCsLoadAssetsType : public TCsEnumStructMap<FECsLoadAssetsTyp
 	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsLoadAssetsType)
 };
 
-#pragma endregion // LoadAssetsType
+#pragma endregion LoadAssetsType
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsPayload

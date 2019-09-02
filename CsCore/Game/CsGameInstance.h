@@ -278,8 +278,6 @@ public:
 
 #pragma endregion OnBoard
 
-	bool IsVR;
-
 // UI
 #pragma region
 public:

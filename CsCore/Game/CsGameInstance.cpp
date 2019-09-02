@@ -133,8 +133,6 @@ void UCsGameInstance::Init()
 	
 	HideMouseCursor();
 	OnBoard();
-
-	IsVR = GEngine->StereoRenderingDevice.IsValid() && GEngine->IsStereoscopic3D();
 }
 
 void UCsGameInstance::Shutdown()

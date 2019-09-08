@@ -1,0 +1,104 @@
+{
+	"FileVersion": 3,
+	"Version": 2,
+	"VersionName": "0.3.6",
+	"FriendlyName": "Unreal.js - Javascript Runtime",
+	"Description": "Javascript powered UnrealEngine",
+	"Category": "Programming",
+	"CreatedBy": "NCSOFT Corporation",
+	"CreatedByURL": "http://github.com/ncsoft",
+	"DocsURL": "",
+	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/be751eedc4a14cc09e39945bc5a531c4",
+	"SupportURL": "",
+	"EngineVersion": "4.22.0",
+	"CanContainContent": true,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "V8",
+			"Type": "Runtime",
+			"LoadingPhase": "PreDefault",
+			"WhitelistPlatforms": [
+				"Win64",
+				"Win32",
+				"Mac",
+				"Linux",
+				"Android",
+				"IOS"
+			]
+		},
+		{
+			"Name": "JavascriptUMG",
+			"Type": "Runtime",
+			"LoadingPhase": "PreDefault",
+			"WhitelistPlatforms": [
+				"Win64",
+				"Win32",
+				"Mac",
+				"Linux",
+				"Android",
+				"IOS"
+			]
+		},
+		{
+			"Name": "JavascriptHttp",
+			"Type": "Runtime",
+			"LoadingPhase": "PreDefault",
+			"WhitelistPlatforms": [
+				"Win64",
+				"Win32",
+				"Mac",
+				"Linux",
+				"Android",
+				"IOS"
+			]
+		},
+		{
+			"Name": "JavascriptWebSocket",
+			"Type": "Runtime",
+			"LoadingPhase": "PreDefault",
+			"WhitelistPlatforms": [
+				"Win64"
+			]
+		},
+		{
+			"Name": "JavascriptGraphEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostDefault",
+			"WhitelistPlatforms": [
+				"Win64",
+				"Win32",
+				"Mac",
+				"Linux"
+			]
+		},
+		{
+			"Name": "JavascriptEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostDefault",
+			"WhitelistPlatforms": [
+				"Win64",
+				"Win32",
+				"Mac",
+				"Linux"
+			]
+		},
+		{
+			"Name": "JavascriptConsole",
+			"Type": "Editor",
+			"LoadingPhase": "PostDefault",
+			"WhitelistPlatforms": [
+				"Win64",
+				"Win32",
+				"Mac",
+				"Linux"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "OnlineSubsystemUtils",
+			"Enabled": true
+		}
+	]
+}

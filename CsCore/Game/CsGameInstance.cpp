@@ -132,7 +132,7 @@ void UCsGameInstance::Init()
 	OnTick_Event.AddUObject(UCsCoroutineScheduler::Get(), &UCsCoroutineScheduler::OnTick_Update);
 	
 	HideMouseCursor();
-	OnBoard();
+	//OnBoard();
 }
 
 void UCsGameInstance::Shutdown()
@@ -176,6 +176,9 @@ FGameInstancePIEResult UCsGameInstance::StartPlayInEditorGameInstance(ULocalPlay
 
 #endif // #if WITH_EDITOR
 
+// Tick
+#pragma region
+
 bool UCsGameInstance::Tick(float DeltaSeconds)
 {
 	++CurrentGameFrame;
@@ -186,6 +189,8 @@ bool UCsGameInstance::Tick(float DeltaSeconds)
 #endif // #if WITH_EDITOR
 	return true;
 }
+
+#pragma endregion Tick
 
 bool UCsGameInstance::IsSimulateInEditor()
 {

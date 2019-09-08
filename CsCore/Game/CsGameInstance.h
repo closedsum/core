@@ -115,6 +115,10 @@ class CSCORE_API UCsGameInstance : public UGameInstance
 	FGameInstancePIEParameters GameInstancePIEParametersCache;
 #endif // #if WITH_EDITOR
 
+// Tick
+#pragma region
+public:
+
 	/** Delegate for callbacks to Tick */
 	FTickerDelegate	TickDelegate;
 
@@ -129,6 +133,8 @@ class CSCORE_API UCsGameInstance : public UGameInstance
 
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsGameInstance_OnTick OnTick_ScriptEvent;
+
+#pragma endregion Tick
 
 	uint64 CurrentGameFrame;
 
@@ -152,7 +158,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Instance|Enums")
 	TSoftClassPtr<UCsEnumStructUserDefinedEnumMap> EnumStructUserDefinedEnumMapClass;
-
 
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance|Enums")
 	UCsEnumStructUserDefinedEnumMap* EnumStructUserDefinedEnumMap;

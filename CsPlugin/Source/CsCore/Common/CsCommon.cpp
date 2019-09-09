@@ -34,8 +34,8 @@
 #if WITH_EDITOR
 
 // Javascript
-#include "../Plugins/UnrealJS/Source/V8/Public/JavascriptIsolate.h"
-#include "../Plugins/UnrealJS/Source/V8/Public/JavascriptContext.h"
+#include "JavascriptIsolate.h"
+#include "JavascriptContext.h"
 
 // Slate
 #include "Runtime/Slate/Public/Framework/Notifications/NotificationManager.h"

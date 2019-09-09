@@ -52,3 +52,6 @@ Temporary Items
 *.cs.meta
 *.meta
 *.png
+Binaries/
+Intermediate/
+Resources/

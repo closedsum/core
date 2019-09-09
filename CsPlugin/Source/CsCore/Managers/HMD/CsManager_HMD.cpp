@@ -2,6 +2,8 @@
 #include "Managers/HMD/CsManager_HMD.h"
 #include "CsCore.h"
 
+#include "HeadMountedDisplay/Public/HeadMountedDisplayFunctionLibrary.h"
+
 // static initializations
 UCsManager_HMD* UCsManager_HMD::s_Instance;
 bool UCsManager_HMD::s_bShutdown = false;
@@ -54,10 +56,15 @@ void UCsManager_HMD::Initialize()
 	// Register delegate for ticker callback
 	TickDelegate	   = FTickerDelegate::CreateUObject(this, &UCsManager_HMD::Tick);
 	TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
+
+	WornState.Set(EHMDWornState::Unknown);
+	WornState.Resolve();
+	WornState.OnChange_Event.AddUObject(this, &UCsManager_HMD::OnChange_WornState);
 }
 
 void UCsManager_HMD::CleanUp()
 {
+	
 }
 
 #pragma endregion Singleton
@@ -67,7 +74,32 @@ void UCsManager_HMD::CleanUp()
 
 bool UCsManager_HMD::Tick(float DeltaSeconds)
 {
+	WornState = UHeadMountedDisplayFunctionLibrary::GetHMDWornState();
 	return true;
 }
 
 #pragma endregion Tick
+
+// Worn State
+#pragma region
+
+void UCsManager_HMD::OnChange_WornState(const EHMDWornState::Type& NewState)
+{
+	OnChange_WornState_Event.Broadcast(NewState);
+	OnChange_WornState_ScriptEvent.Broadcast(NewState);
+	// FirstWorn
+	if (NewState == EHMDWornState::Worn)
+	{
+		OnWornState_FirstWorn_Event.Broadcast();
+		OnWornState_FirstWorn_ScriptEvent.Broadcast();
+	}
+	// NotWorn
+	else
+	if (NewState == EHMDWornState::NotWorn)
+	{
+		OnWornState_FirstNotWorn_Event.Broadcast();
+		OnWornState_FirstNotWorn_ScriptEvent.Broadcast();
+	}
+}
+
+#pragma endregion Worn State

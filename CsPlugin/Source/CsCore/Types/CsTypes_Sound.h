@@ -22,7 +22,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsSoundType)
 
 struct CSCORE_API EMCsSoundType : public TCsEnumStructMap<FECsSoundType, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsSoundType)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsSoundType, FECsSoundType, uint8)
 };
 
 #pragma endregion SoundType
@@ -44,11 +44,9 @@ namespace ECsSoundPriority
 	};
 }
 
-typedef ECsSoundPriority::Type TCsSoundPriority;
-
 struct CSCORE_API EMCsSoundPriority : public TCsEnumMap<ECsSoundPriority::Type>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsSoundPriority)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSoundPriority, ECsSoundPriority::Type)
 };
 
 namespace ECsSoundPriority
@@ -276,3 +274,28 @@ struct CSCORE_API FCsSoundPayload : public FCsPooledObjectPayload
 	template<typename T>
 	FORCEINLINE T* GetCue() { return Cast<T>(GetCue()); }
 };
+
+// NoiseEvent
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsNoiseEvent : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsNoiseEvent)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsNoiseEvent)
+
+struct CSCORE_API EMCsNoiseEvent final : public TCsEnumStructMap<FECsNoiseEvent, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsNoiseEvent, FECsNoiseEvent, uint8)
+};
+
+namespace NCsNoiseEvent
+{
+	typedef FECsNoiseEvent Type;
+}
+
+#pragma endregion NoiseEvent

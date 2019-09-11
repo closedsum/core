@@ -3,6 +3,7 @@
 #include "CsCore.h"
 
 #include "HeadMountedDisplay/Public/HeadMountedDisplayFunctionLibrary.h"
+#include "Misc/CoreDelegates.h"
 
 // static initializations
 UCsManager_HMD* UCsManager_HMD::s_Instance;
@@ -56,6 +57,16 @@ void UCsManager_HMD::Initialize()
 	// Register delegate for ticker callback
 	TickDelegate	   = FTickerDelegate::CreateUObject(this, &UCsManager_HMD::Tick);
 	TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
+
+	FCoreDelegates::VRHeadsetTrackingInitializingAndNeedsHMDToBeTrackedDelegate.AddUObject(this, &UCsManager_HMD::HMDTrackingInitializingAndNeedsHMDToBeTrackedDelegate_Handler);
+	FCoreDelegates::VRHeadsetTrackingInitializedDelegate.AddUObject(this, &UCsManager_HMD::HMDTrackingInitializedDelegate_Handler);
+	FCoreDelegates::VRHeadsetRecenter.AddUObject(this, &UCsManager_HMD::HMDRecenteredDelegate_Handler);
+	FCoreDelegates::VRHeadsetLost.AddUObject(this, &UCsManager_HMD::HMDLostDelegate_Handler);
+	FCoreDelegates::VRHeadsetReconnected.AddUObject(this, &UCsManager_HMD::HMDReconnectedDelegate_Handler);
+	FCoreDelegates::VRHeadsetConnectCanceled.AddUObject(this, &UCsManager_HMD::HMDConnectCanceledDelegate_Handler);
+	FCoreDelegates::VRHeadsetPutOnHead.AddUObject(this, &UCsManager_HMD::HMDPutOnHeadDelegate_Handler);
+	FCoreDelegates::VRHeadsetRemovedFromHead.AddUObject(this, &UCsManager_HMD::HMDRemovedFromHeadDelegate_Handler);
+	FCoreDelegates::VRControllerRecentered.AddUObject(this, &UCsManager_HMD::VRControllerRecentered_Handler);
 
 	WornState.Set(EHMDWornState::Unknown);
 	WornState.Resolve();

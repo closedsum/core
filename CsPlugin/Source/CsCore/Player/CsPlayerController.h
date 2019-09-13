@@ -5,8 +5,8 @@
 #include "Managers/Input/CsTypes_Input.h"
 #include "CsPlayerController.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPlayerController_OnTickActor, const uint8&, MappingId, const float&, DeltaSeconds);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPlayerController_OnCalcCamera, const uint8&, MappingId, const float&, DeltaTime, const struct FMinimalViewInfo&, ViewInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsPlayerController_OnTickActor, const uint8&, MappingId, const float&, DeltaSeconds);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsPlayerController_OnCalcCamera, const uint8&, MappingId, const float&, DeltaTime, const struct FMinimalViewInfo&, ViewInfo);
 
 class UCsManager_Input;
 
@@ -18,7 +18,7 @@ class CSCORE_API ACsPlayerController : public APlayerController
 	virtual void Destroyed() override;
 
 	UPROPERTY(BlueprintAssignable, Category = "Player|Tick")
-	FBindableDynEvent_CsPlayerController_OnTickActor OnTickActor_ScriptEvent;
+	FCsPlayerController_OnTickActor OnTickActor_ScriptEvent;
 
 	virtual void OnTickActor_HandleCVars();
 
@@ -31,7 +31,7 @@ public:
 	FOnCalcCamera OnCalcCamera_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Player|Camera")
-	FBindableDynEvent_CsPlayerController_OnCalcCamera OnCalcCamera_ScriptEvent;
+	FCsPlayerController_OnCalcCamera OnCalcCamera_ScriptEvent;
 
 	UPROPERTY()
 	FMinimalViewInfo MinimalViewInfoCache;
@@ -62,7 +62,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Input")
 	TSubclassOf<UCsManager_Input> ManagerInputClass;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Player|Input")
+	UPROPERTY()
 	UCsManager_Input* Manager_Input;
 
 	UFUNCTION(BlueprintCallable, Category = "Player|Input")
@@ -75,17 +75,6 @@ public:
 	void ClearCurrentInputActionMap(const int32& ActionMap);
 
 	virtual void InitInputSystem() override;
-	virtual void BindDelegatesToInputManager();
-	virtual void UnBindPawnDelegatesFromInputManager();
-
-	virtual void BuildInputStack(TArray<UInputComponent*>& InputStack) override;
-
-	virtual void PreProcessInput(const float DeltaTime, const bool bGamePaused) override;
-	virtual bool CanPostProcessInput();
-
-	TArray<FCsGameEventInfo> GameEventInfoPriorityList;
-
-	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
 
 #if WITH_EDITOR
 

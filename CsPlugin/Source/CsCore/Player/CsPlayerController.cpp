@@ -101,22 +101,4 @@ void ACsPlayerController::InitInputSystem()
 	}
 }
 
-void ACsPlayerController::BindDelegatesToInputManager(){}
-void ACsPlayerController::UnBindPawnDelegatesFromInputManager(){}
-
-void ACsPlayerController::BuildInputStack(TArray<UInputComponent*>& InputStack)
-{
-	Super::BuildInputStack(InputStack);
-}
-
-void ACsPlayerController::PreProcessInput(const float DeltaTime, const bool bGamePaused)
-{
-	if (Manager_Input)
-		Manager_Input->PreProcessInput(DeltaTime, bGamePaused);
-}
-
-bool ACsPlayerController::CanPostProcessInput() { return true; }
-
-void ACsPlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused){}
-
 #pragma endregion Input

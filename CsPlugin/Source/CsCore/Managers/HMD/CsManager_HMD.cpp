@@ -58,24 +58,38 @@ void UCsManager_HMD::Initialize()
 	TickDelegate	   = FTickerDelegate::CreateUObject(this, &UCsManager_HMD::Tick);
 	TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
 
-	FCoreDelegates::VRHeadsetTrackingInitializingAndNeedsHMDToBeTrackedDelegate.AddUObject(this, &UCsManager_HMD::HMDTrackingInitializingAndNeedsHMDToBeTrackedDelegate_Handler);
-	FCoreDelegates::VRHeadsetTrackingInitializedDelegate.AddUObject(this, &UCsManager_HMD::HMDTrackingInitializedDelegate_Handler);
-	FCoreDelegates::VRHeadsetRecenter.AddUObject(this, &UCsManager_HMD::HMDRecenteredDelegate_Handler);
-	FCoreDelegates::VRHeadsetLost.AddUObject(this, &UCsManager_HMD::HMDLostDelegate_Handler);
-	FCoreDelegates::VRHeadsetReconnected.AddUObject(this, &UCsManager_HMD::HMDReconnectedDelegate_Handler);
-	FCoreDelegates::VRHeadsetConnectCanceled.AddUObject(this, &UCsManager_HMD::HMDConnectCanceledDelegate_Handler);
-	FCoreDelegates::VRHeadsetPutOnHead.AddUObject(this, &UCsManager_HMD::HMDPutOnHeadDelegate_Handler);
-	FCoreDelegates::VRHeadsetRemovedFromHead.AddUObject(this, &UCsManager_HMD::HMDRemovedFromHeadDelegate_Handler);
-	FCoreDelegates::VRControllerRecentered.AddUObject(this, &UCsManager_HMD::VRControllerRecentered_Handler);
-
-	WornState.Set(EHMDWornState::Unknown);
-	WornState.Resolve();
-	WornState.OnChange_Event.AddUObject(this, &UCsManager_HMD::OnChange_WornState);
+	FCoreDelegates::VRHeadsetTrackingInitializingAndNeedsHMDToBeTrackedDelegate.AddUObject(this, &UCsManager_HMD::OnHMDTrackingInitializingAndNeedsHMDToBeTracked);
+	FCoreDelegates::VRHeadsetTrackingInitializedDelegate.AddUObject(this, &UCsManager_HMD::OnHMDTrackingInitialized);
+	FCoreDelegates::VRHeadsetRecenter.AddUObject(this, &UCsManager_HMD::OnHMDRecenter);
+	FCoreDelegates::VRHeadsetLost.AddUObject(this, &UCsManager_HMD::OnHMDLost);
+	FCoreDelegates::VRHeadsetReconnected.AddUObject(this, &UCsManager_HMD::OnHMDReconnected);
+	FCoreDelegates::VRHeadsetConnectCanceled.AddUObject(this, &UCsManager_HMD::OnHMDConnectCanceled);
+	FCoreDelegates::VRHeadsetPutOnHead.AddUObject(this, &UCsManager_HMD::OnHMDPutOnHead);
+	FCoreDelegates::VRHeadsetRemovedFromHead.AddUObject(this, &UCsManager_HMD::OnHMDRemovedFromHead);
+	FCoreDelegates::VRControllerRecentered.AddUObject(this, &UCsManager_HMD::OnVRControllerRecentered);
 }
 
 void UCsManager_HMD::CleanUp()
 {
-	
+	FCoreDelegates::VRHeadsetTrackingInitializingAndNeedsHMDToBeTrackedDelegate.RemoveAll(this);
+	FCoreDelegates::VRHeadsetTrackingInitializedDelegate.RemoveAll(this);
+	FCoreDelegates::VRHeadsetRecenter.RemoveAll(this);
+	FCoreDelegates::VRHeadsetLost.RemoveAll(this);
+	FCoreDelegates::VRHeadsetReconnected.RemoveAll(this);
+	FCoreDelegates::VRHeadsetConnectCanceled.RemoveAll(this);
+	FCoreDelegates::VRHeadsetPutOnHead.RemoveAll(this);
+	FCoreDelegates::VRHeadsetRemovedFromHead.RemoveAll(this);
+	FCoreDelegates::VRControllerRecentered.RemoveAll(this);
+
+	OnHMDTrackingInitializingAndNeedsHMDToBeTracked_Event.Clear();
+	OnHMDTrackingInitialized_Event.Clear();
+	OnHMDRecenter_Event.Clear();
+	OnHMDLost_Event.Clear();
+	OnHMDReconnected_Event.Clear();
+	OnHMDConnectCanceled_Event.Clear();
+	OnHMDPutOnHead_Event.Clear();
+	OnHMDRemovedFromHead_Event.Clear();
+	OnVRControllerRecentered_Event.Clear();
 }
 
 #pragma endregion Singleton
@@ -91,26 +105,52 @@ bool UCsManager_HMD::Tick(float DeltaSeconds)
 
 #pragma endregion Tick
 
-// Worn State
-#pragma region
-
-void UCsManager_HMD::OnChange_WornState(const EHMDWornState::Type& NewState)
+UWorld* UCsManager_HMD::GetCurrentWorld()
 {
-	OnChange_WornState_Event.Broadcast(NewState);
-	OnChange_WornState_ScriptEvent.Broadcast(NewState);
-	// FirstWorn
-	if (NewState == EHMDWornState::Worn)
-	{
-		OnWornState_FirstWorn_Event.Broadcast();
-		OnWornState_FirstWorn_ScriptEvent.Broadcast();
-	}
-	// NotWorn
-	else
-	if (NewState == EHMDWornState::NotWorn)
-	{
-		OnWornState_FirstNotWorn_Event.Broadcast();
-		OnWornState_FirstNotWorn_ScriptEvent.Broadcast();
-	}
+	return CurrentWorld.IsValid() ? CurrentWorld.Get() : nullptr;
 }
 
-#pragma endregion Worn State
+void UCsManager_HMD::OnHMDTrackingInitializingAndNeedsHMDToBeTracked()
+{
+	OnHMDTrackingInitializingAndNeedsHMDToBeTracked_Event.Broadcast();
+}
+
+void UCsManager_HMD::OnHMDTrackingInitialized()
+{
+	OnHMDTrackingInitialized_Event.Broadcast();
+}
+
+void UCsManager_HMD::OnHMDRecenter()
+{
+	OnHMDRecenter_Event.Broadcast();
+}
+
+void UCsManager_HMD::OnHMDLost()
+{
+	OnHMDLost_Event.Broadcast();
+}
+
+void UCsManager_HMD::OnHMDReconnected()
+{
+	OnHMDReconnected_Event.Broadcast();
+}
+
+void UCsManager_HMD::OnHMDConnectCanceled()
+{
+	OnHMDConnectCanceled_Event.Broadcast();
+}
+
+void UCsManager_HMD::OnHMDPutOnHead()
+{
+	OnHMDPutOnHead_Event.Broadcast();
+}
+
+void UCsManager_HMD::OnHMDRemovedFromHead()
+{
+	OnHMDRemovedFromHead_Event.Broadcast();
+}
+
+void UCsManager_HMD::OnVRControllerRecentered()
+{
+	OnVRControllerRecentered_Event.Broadcast();
+}

@@ -14,55 +14,37 @@
 #pragma region
 
 	// Pressed
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput, const FECsInputAction&, Action, const ECsInputEvent&, Event);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerInput_Action, const FECsInputAction&, Action, const ECsInputEvent&, Event);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_FirstPressed, const FECsInputAction&, Action);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_Pressed, const FECsInputAction&, Action);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_FirstReleased, const FECsInputAction&, Action);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_FirstPressed, AActor*, const FECsInputAction&);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_Pressed, AActor*, const FECsInputAction&);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_FirstReleased, AActor*, const FECsInputAction&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerInput_FirstPressed, const FECsInputAction&, Action);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerInput_Pressed, const FECsInputAction&, Action);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerInput_FirstReleased, const FECsInputAction&, Action);
 
 	// Axis
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManagerInput_Axis, const FECsInputAction&, Action, const ECsInputEvent&, Event, const float&, Val);
-DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsManagerInput_Axis, AActor*, const FECsInputAction&, const ECsInputEvent&, const float&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsManagerInput_Axis, const FECsInputAction&, Action, const ECsInputEvent&, Event, const float&, Val);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_FirstMoved, const FECsInputAction&, Action, const float&, Val);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_Moved, const FECsInputAction&, Action, const float&, Val);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_FirstStationary, const FECsInputAction&, Action, const float&, Val);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_Stationary, const FECsInputAction&, Action, const float&, Val);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_FirstMoved, AActor*, const FECsInputAction&, const float&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_Moved, AActor*, const FECsInputAction&, const float&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_FirstStationary, AActor*, const FECsInputAction&, const float&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_Stationary, AActor*, const FECsInputAction&, const float&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerInput_Axis_FirstMoved, const FECsInputAction&, Action, const float&, Val);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerInput_Axis_Moved, const FECsInputAction&, Action, const float&, Val);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerInput_Axis_FirstStationary, const FECsInputAction&, Action, const float&, Val);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerInput_Axis_Stationary, const FECsInputAction&, Action, const float&, Val);
 
 	// Location
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManagerInput_Location, const FECsInputAction&, Action, const ECsInputEvent&, Event, const FVector&, Location);
-DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsManagerInput_Location, AActor*, const FECsInputAction&, const ECsInputEvent&, const FVector&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsManagerInput_Location, const FECsInputAction&, Action, const ECsInputEvent&, Event, const FVector&, Location);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_FirstMoved, const FECsInputAction&, Action, const FVector&, Location);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_Moved, const FECsInputAction&, Action, const FVector&, Location);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_FirstStationary, const FECsInputAction&, Action, const FVector&, Location);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_Stationary, const FECsInputAction&, Action, const FVector&, Location);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_FirstMoved, AActor*, const FECsInputAction&, const FVector&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_Moved, AActor*, const FECsInputAction&, const FVector&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_FirstStationary, AActor*, const FECsInputAction&, const FVector&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_Stationary, AActor*, const FECsInputAction&, const FVector&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerInput_Location_FirstMoved, const FECsInputAction&, Action, const FVector&, Location);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerInput_Location_Moved, const FECsInputAction&, Action, const FVector&, Location);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerInput_Location_FirstStationary, const FECsInputAction&, Action, const FVector&, Location);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerInput_Location_Stationary, const FECsInputAction&, Action, const FVector&, Location);
 
 DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Location_Raw, const FVector&);
 
 	// Rotation
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManagerInput_Rotation, const FECsInputAction&, Action, const ECsInputEvent&, Event, const FRotator&, Rotation);
-DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsManagerInput_Rotation, AActor*, const FECsInputAction&, const ECsInputEvent&, const FRotator&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsManagerInput_Rotation, const FECsInputAction&, Action, const ECsInputEvent&, Event, const FRotator&, Rotation);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_FirstMoved, const FECsInputAction&, Action, const FRotator&, Rotation);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_Moved, const FECsInputAction&, Action, const FRotator&, Rotation);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_FirstStationary, const FECsInputAction&, Action, const FRotator&, Rotation);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_Stationary, const FECsInputAction&, Action, const FRotator&, Rotation);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_FirstMoved, AActor*, const FECsInputAction&, const FRotator&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_Moved, AActor*, const FECsInputAction&, const FRotator&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_FirstStationary, AActor*, const FECsInputAction&, const FRotator&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_Stationary, AActor*, const FECsInputAction&, const FRotator&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerInput_Rotation_FirstMoved, const FECsInputAction&, Action, const FRotator&, Rotation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerInput_Rotation_Moved, const FECsInputAction&, Action, const FRotator&, Rotation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerInput_Rotation_FirstStationary, const FECsInputAction&, Action, const FRotator&, Rotation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerInput_Rotation_Stationary, const FECsInputAction&, Action, const FRotator&, Rotation);
 
 DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRotator&);
 
@@ -347,26 +329,32 @@ protected:
 public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput Action_ScriptEvent;
+	FCsManagerInput_Action Action_ScriptEvent;
 
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnAction, AActor*, const FECsInputAction&, const ECsInputEvent&);
 
 	FOnAction Action_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_FirstPressed FirstPressed_ScriptEvent;
+	FCsManagerInput_FirstPressed FirstPressed_ScriptEvent;
 
-	FBindableEvent_CsManagerInput_FirstPressed FirstPressed_Event;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FFirstPressed, AActor*, const FECsInputAction&);
 
-	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Pressed Pressed_ScriptEvent;
-
-	FBindableEvent_CsManagerInput_Pressed Pressed_Event;
+	FFirstPressed FirstPressed_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_FirstReleased FirstReleased_ScriptEvent;
+	FCsManagerInput_Pressed Pressed_ScriptEvent;
 
-	FBindableEvent_CsManagerInput_FirstReleased FirstReleased_Event;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FPressed, AActor*, const FECsInputAction&);
+
+	FPressed Pressed_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Input")
+	FCsManagerInput_FirstReleased FirstReleased_ScriptEvent;
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FFirstReleased, AActor*, const FECsInputAction&);
+
+	FFirstReleased FirstReleased_Event;
 
 #pragma endregion
 
@@ -375,29 +363,39 @@ public:
 public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Axis Axis_ScriptEvent;
+	FCsManagerInput_Axis Axis_ScriptEvent;
 
-	FBindableEvent_CsManagerInput_Axis Axis_Event;
+	DECLARE_MULTICAST_DELEGATE_FourParams(FAxis, AActor*, const FECsInputAction&, const ECsInputEvent&, const float&);
 
-	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Axis_FirstMoved Axis_FirstMoved_ScriptEvent;
-
-	FBindableEvent_CsManagerInput_Axis_FirstMoved Axis_FirstMoved_Event;
+	FAxis Axis_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Axis_Moved Axis_Moved_ScriptEvent;
+	FCsManagerInput_Axis_FirstMoved Axis_FirstMoved_ScriptEvent;
 
-	FBindableEvent_CsManagerInput_Axis_Moved Axis_Moved_Event;
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FAxis_FirstMoved, AActor*, const FECsInputAction&, const float&);
 
-	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Axis_FirstStationary Axis_FirstStationary_ScriptEvent;
-
-	FBindableEvent_CsManagerInput_Axis_FirstStationary Axis_FirstStationary_Event;
+	FAxis_FirstMoved Axis_FirstMoved_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Axis_Stationary Axis_Stationary_ScriptEvent;
+	FCsManagerInput_Axis_Moved Axis_Moved_ScriptEvent;
 
-	FBindableEvent_CsManagerInput_Axis_Stationary Axis_Stationary_Event;
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FAxis_Moved, AActor*, const FECsInputAction&, const float&);
+
+	FAxis_Moved Axis_Moved_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Input")
+	FCsManagerInput_Axis_FirstStationary Axis_FirstStationary_ScriptEvent;
+
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FAxis_FirstStationary, AActor*, const FECsInputAction&, const float&);
+
+	FAxis_FirstStationary Axis_FirstStationary_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Input")
+	FCsManagerInput_Axis_Stationary Axis_Stationary_ScriptEvent;
+
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FAxis_Stationary, AActor*, const FECsInputAction&, const float&);
+
+	FAxis_Stationary Axis_Stationary_Event;
 
 #pragma endregion Axis Events
 
@@ -406,29 +404,39 @@ public:
 public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Location Location_ScriptEvent;
+	FCsManagerInput_Location Location_ScriptEvent;
 
-	FBindableEvent_CsManagerInput_Location Location_Event;
+	DECLARE_MULTICAST_DELEGATE_FourParams(FLocation, AActor*, const FECsInputAction&, const ECsInputEvent&, const FVector&);
 
-	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Location_FirstMoved Location_FirstMoved_ScriptEvent;
-
-	FBindableEvent_CsManagerInput_Location_FirstMoved Location_FirstMoved_Event;
+	FLocation Location_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Location_Moved Location_Moved_ScriptEvent;
+	FCsManagerInput_Location_FirstMoved Location_FirstMoved_ScriptEvent;
 
-	FBindableEvent_CsManagerInput_Location_Moved Location_Moved_Event;
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FLocation_FirstMoved, AActor*, const FECsInputAction&, const FVector&);
 
-	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Location_FirstStationary Location_FirstStationary_ScriptEvent;
-
-	FBindableEvent_CsManagerInput_Location_FirstStationary Location_FirstStationary_Event;
+	FLocation_FirstMoved Location_FirstMoved_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Location_Stationary Location_Stationary_ScriptEvent;
+	FCsManagerInput_Location_Moved Location_Moved_ScriptEvent;
 
-	FBindableEvent_CsManagerInput_Location_Stationary Location_Stationary_Event;
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FLocation_Moved, AActor*, const FECsInputAction&, const FVector&);
+
+	FLocation_Moved Location_Moved_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Input")
+	FCsManagerInput_Location_FirstStationary Location_FirstStationary_ScriptEvent;
+
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FLocation_FirstStationary, AActor*, const FECsInputAction&, const FVector&);
+
+	FLocation_FirstStationary Location_FirstStationary_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Input")
+	FCsManagerInput_Location_Stationary Location_Stationary_ScriptEvent;
+
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FLocation_Stationary, AActor*, const FECsInputAction&, const FVector&);
+
+	FLocation_Stationary Location_Stationary_Event;
 
 	// Mouse
 
@@ -450,29 +458,39 @@ public:
 public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Rotation Rotation_ScriptEvent;
+	FCsManagerInput_Rotation Rotation_ScriptEvent;
 
-	FBindableEvent_CsManagerInput_Rotation Rotation_Event;
+	DECLARE_MULTICAST_DELEGATE_FourParams(FCsManagerInput_Rotation, AActor*, const FECsInputAction&, const ECsInputEvent&, const FRotator&);
 
-	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Rotation_FirstMoved Rotation_FirstMoved_ScriptEvent;
-
-	FBindableEvent_CsManagerInput_Rotation_FirstMoved Rotation_FirstMoved_Event;
+	FCsManagerInput_Rotation Rotation_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Rotation_Moved Rotation_Moved_ScriptEvent;
+	FCsManagerInput_Rotation_FirstMoved Rotation_FirstMoved_ScriptEvent;
 
-	FBindableEvent_CsManagerInput_Rotation_Moved Rotation_Moved_Event;
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FCsManagerInput_Rotation_FirstMoved, AActor*, const FECsInputAction&, const FRotator&);
 
-	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Rotation_FirstStationary Rotation_FirstStationary_ScriptEvent;
-
-	FBindableEvent_CsManagerInput_Rotation_FirstStationary Rotation_FirstStationary_Event;
+	FCsManagerInput_Rotation_FirstMoved Rotation_FirstMoved_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput_Rotation_Stationary Rotation_Stationary_ScriptEvent;
+	FCsManagerInput_Rotation_Moved Rotation_Moved_ScriptEvent;
 
-	FBindableEvent_CsManagerInput_Rotation_Stationary Rotation_Stationary_Event;
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FCsManagerInput_Rotation_Moved, AActor*, const FECsInputAction&, const FRotator&);
+
+	FCsManagerInput_Rotation_Moved Rotation_Moved_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Input")
+	FCsManagerInput_Rotation_FirstStationary Rotation_FirstStationary_ScriptEvent;
+
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FCsManagerInput_Rotation_FirstStationary, AActor*, const FECsInputAction&, const FRotator&);
+
+	FCsManagerInput_Rotation_FirstStationary Rotation_FirstStationary_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Input")
+	FCsManagerInput_Rotation_Stationary Rotation_Stationary_ScriptEvent;
+
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FCsManagerInput_Rotation_Stationary, AActor*, const FECsInputAction&, const FRotator&);
+
+	FCsManagerInput_Rotation_Stationary Rotation_Stationary_Event;
 
 	// VR
 

@@ -4,21 +4,44 @@
 #include "Types/CsTypes_Load.h"
 #include "CsEdEngine.generated.h"
 
+class UCsEnumStructUserDefinedEnumMap;
+
 UCLASS()
 class CSEDITOR_API UCsEdEngine : public UUnrealEdEngine
 {
 public:
 	GENERATED_BODY()
 
-	//~ Begin UEngine Interface.
+// UEngine Interface
+#pragma region
+public:
+
 	virtual void Init(IEngineLoop* InEngineLoop) override;
 	virtual void PreExit() override;
 	virtual void Tick(float DeltaSeconds, bool bIdleMode) override;
-	//~ End UEngine Interface.
 
-	// Begin FExec Interface
+#pragma endregion UEngine Interface
+
+// FExec Interface
+#pragma region
+public:
+
 	virtual bool Exec(UWorld* InWorld, const TCHAR* Cmd, FOutputDevice& Ar = *GLog) override;
-	// End FExec Interface
+
+#pragma endregion FExec Interface
+
+// Tick
+#pragma region
+public:
+
+	bool bTicked;
+	TCsBool_Ref bTickedHandle;
+
+	virtual void OnFirstTick(const bool& Value);
+
+#pragma endregion Tick
+
+public:
 
 	class ACsDataMapping* DataMapping;
 
@@ -30,21 +53,23 @@ public:
 #pragma region
 public:
 
+	UCsEnumStructUserDefinedEnumMap* EnumStructUserDefinedEnumMap;
+
 	void PopulateUserDefinedEnums();
 	void PopulateUserDefinedEnum_InputAction();
 
 	void PopulateEnumMapsFromUserDefinedEnums();
 
 	template<typename EnumMap>
-	void PopulateEnumMapFromUserDefinedEnum(const FString& EnumName, const FName& UserDefinedEnumObjectPath)
+	void PopulateEnumMapFromUserDefinedEnum(const FECsUserDefinedEnum& EnumType)
 	{
 		TArray<FString> Names;
-		GetUserDefinedEnumNames(EnumName, UserDefinedEnumObjectPath, Names);
+		GetUserDefinedEnumNames(EnumMap::Get().GetEnumName(), EnumType, Names);
 		EnumMap::Get().ClearUserDefinedEnums();
 		AddEnumsByNameToEnumMap<EnumMap>(Names);
 	}
 
-	void GetUserDefinedEnumNames(const FString& EnumName, const FName& UserDefinedEnumObjectPath, TArray<FString>& OutNames);
+	void GetUserDefinedEnumNames(const FString& EnumName, const FECsUserDefinedEnum& EnumType, TArray<FString>& OutNames);
 
 	template<typename EnumMap>
 	void AddEnumsByNameToEnumMap(const TArray<FString>& Names)

@@ -2,25 +2,74 @@
 #include "Enum/CsEnumEditorUtils.h"
 #include "CsEditor.h"
 
+// Types
+#include "Managers/Input/CsTypes_Input.h"
+// Input
 #include "GameFramework/InputSettings.h"
-
+// Enum
+#include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
+#include "Classes/Engine/UserDefinedEnum.h"
+#include "UnrealEd/Public/Kismet2/EnumEditorUtils.h"
+// Asset
 #include "AssetRegistryModule.h"
 #include "Developer/AssetTools/Public/AssetToolsModule.h"
 #include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
 
-#include "Classes/Engine/UserDefinedEnum.h"
-#include "UnrealEd/Public/Kismet2/EnumEditorUtils.h"
 #include "UnrealEd/Public/Kismet2/BlueprintEditorUtils.h"
 #include "CoreUObject/Public/UObject/UObjectIterator.h"
 #include "Editor/BlueprintGraph/Classes/NodeDependingOnEnumInterface.h"
 #include "Editor/BlueprintGraph/Classes/K2Node_Variable.h"
+
+UUserDefinedEnum* FCsEnumEditorUtils::GetUserDefinedEnum(const FECsUserDefinedEnum& EnumType)
+{
+	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
+	IAssetRegistry& AssetRegistry			  = AssetRegistryModule.Get();
+
+	const FName ClassName = UCsEnumStructUserDefinedEnumMap::StaticClass()->GetFName();
+
+	TArray<FAssetData> OutAssetData;
+
+	if (AssetRegistry.GetAssetsByClass(ClassName, OutAssetData))
+	{
+		if (OutAssetData.Num() > CS_SINGLETON)
+		{
+			UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::GetUserDefinedEnum: More than ONE class found of type: UCsEnumStructUserDefinedEnumMap. Choosing the FIRST one. There should only be ONE."));
+		}
+
+		FAssetData& Asset = OutAssetData[CS_FIRST];
+
+		UCsEnumStructUserDefinedEnumMap* Map = Cast<UCsEnumStructUserDefinedEnumMap>(Asset.GetAsset());
+
+		if (UUserDefinedEnum* Enum = Map->GetUserDefinedEnum(EnumType))
+		{
+			return Enum;
+		}
+		else
+		{
+			UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::GetUserDefinedEnum: Failed to find a UserDefinedEnum associated with EnumStruct: %s."), *EnumType.Name);
+		}
+	}
+	else
+	{
+		UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::GetUserDefinedEnum: No class found of type: UCsEnumStructUserDefinedEnumMap."));
+	}
+	return nullptr;
+}
 
 void FCsEnumEditorUtils::SyncInputAction()
 {
 	// Populate from DefaultInput.ini
 	if (UInputSettings* InputSettings = GetMutableDefault<UInputSettings>())
 	{
-		const FString EnumPrefixName = TEXT("z_ECsInputAction::");
+		UUserDefinedEnum* Enum = GetUserDefinedEnum(NCsUserDefinedEnum::FECsInputAction);
+
+		if (!Enum)
+		{
+			UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::SyncInputAction: Failed to find a UserDefinedEnum associated with EnumStruct: FEcsInputAction."));
+			return;
+		}
+
+		const FString EnumPrefixName	   = Enum->GetName() + TEXT("::");
 		const FString EnumeratorPrefixName = TEXT("NewEnumerator");
 
 		TArray<FName> Names;
@@ -62,10 +111,7 @@ void FCsEnumEditorUtils::SyncInputAction()
 
 			DisplayNameMap.Add(EnumeratorName, FText::FromName(Name));
 		}
-
-		const FName UserDefinedEnumObjectPath;
-
-		UpdateNames(UserDefinedEnumObjectPath, EnumeratorNames, DisplayNameMap);
+		UpdateNames(NCsUserDefinedEnum::FECsInputAction, EnumeratorNames, DisplayNameMap);
 	}
 	else
 	{
@@ -73,15 +119,9 @@ void FCsEnumEditorUtils::SyncInputAction()
 	}
 }
 
-void FCsEnumEditorUtils::UpdateNames(const FName& UserDefinedEnumObjectPath, const TArray<FName>& Names, const TMap<FName, FText>& DisplayNameMap)
+void FCsEnumEditorUtils::UpdateNames(const FECsUserDefinedEnum& EnumType, const TArray<FName>& Names, const TMap<FName, FText>& DisplayNameMap)
 {
-	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
-	TArray<FAssetData> OutAssetData;
-	IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
-
-	FAssetData Asset = AssetRegistry.GetAssetByObjectPath(UserDefinedEnumObjectPath);
-
-	if (UUserDefinedEnum* Enum = Cast<UUserDefinedEnum>(Asset.GetAsset()))
+	if (UUserDefinedEnum* Enum = GetUserDefinedEnum(EnumType))
 	{
 		// Check if Enum has changed. If so, mark dirty
 
@@ -151,7 +191,7 @@ void FCsEnumEditorUtils::UpdateNames(const FName& UserDefinedEnumObjectPath, con
 		if (IndicesToRemove.Num() > 0 ||
 			IndicesToAdd.Num() > 0)
 		{
-			UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: UserDefinedEnum at : %s is being repopulated. This may affect blueprints using it."), *(UserDefinedEnumObjectPath.ToString()));
+			UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: UserDefinedEnum: %s is being repopulated. This may affect blueprints using it."), *EnumType.Name);
 
 			// Remove Names
 			for (const int32& Index : IndicesToRemove)
@@ -159,7 +199,7 @@ void FCsEnumEditorUtils::UpdateNames(const FName& UserDefinedEnumObjectPath, con
 				const FString EnumeratorName = Enum->GetNameStringByIndex(Index);
 				const FString DisplayName    = Enum->GetDisplayNameTextByIndex(Index).ToString();
 
-				UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: UserDefinedEnum at : %s. Removing Enumerator: %s. DisplayName: %s. Index: %d."), *(UserDefinedEnumObjectPath.ToString()), *EnumeratorName, *DisplayName, Index);
+				UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: UserDefinedEnum: %s. Removing Enumerator: %s. DisplayName: %s. Index: %d."), *EnumType.Name, *EnumeratorName, *DisplayName, Index);
 
 				FEnumEditorUtils::RemoveEnumeratorFromUserDefinedEnum(Enum, Index);
 			}
@@ -177,7 +217,7 @@ void FCsEnumEditorUtils::UpdateNames(const FName& UserDefinedEnumObjectPath, con
 				const FString EnumeratorName = Enum->GetNameStringByIndex(LastIndex);
 				const FString DisplayName	 = Enum->GetDisplayNameTextByIndex(LastIndex).ToString();
 
-				UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: UserDefinedEnum at : %s. Adding Enumerator: %s. DisplayName: %s. Index: %d."), *(UserDefinedEnumObjectPath.ToString()), *EnumeratorName, *DisplayName, LastIndex);
+				UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: UserDefinedEnum: %s. Adding Enumerator: %s. DisplayName: %s. Index: %d."), *EnumType.Name, *EnumeratorName, *DisplayName, LastIndex);
 			}
 
 			Enum->MarkPackageDirty();
@@ -185,14 +225,7 @@ void FCsEnumEditorUtils::UpdateNames(const FName& UserDefinedEnumObjectPath, con
 	}
 	else
 	{
-		if (UserDefinedEnumObjectPath == NAME_None)
-		{
-			UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: No valid UserDefinedEnumObjectPath set."));
-		}
-		else
-		{
-			UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: Failed to find UserDefinedEnum at: %s. It is possible it was deleted or moved."), *(UserDefinedEnumObjectPath.ToString()));
-		}
+		UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: Failed to find UserDefinedEnum: %s. It is possible it was deleted or moved."), *EnumType.Name);
 	}
 }
 

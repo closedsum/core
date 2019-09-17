@@ -48,45 +48,13 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerInput_Rotation_Stationary
 
 DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRotator&);
 
-// Macros - Should ONLY be used for testing
-#pragma region
-
-#define CS_DEFINE_INPUT_ACTION_VALUES(INPUT, MAP)	DefineInputValues<UCsInput_Action>(INPUT, EMCsInputAction::Get().GetEnum(FString(#INPUT)), MAP)
-
-#define CS_BIND_ACTION_INPUT(INPUT) InputComponent->BindAction(#INPUT, IE_Pressed, INPUT, &UCsInput_Action::FirstPressed).bConsumeInput = false; \
-									InputComponent->BindAction(#INPUT, IE_Released, INPUT, &UCsInput_Action::FirstReleased).bConsumeInput = false;
-
-#define CS_IS_INPUT_ACTION_FIRST_PRESSED(Input, ACTION) Input->Action == ECsInputAction::ACTION && Input->Event == ECsInputEvent::FirstPressed
-
-
-#define CS_DEFINE_INPUT_AXIS_VALUES_OLD(INPUT)	Infos[ECsInputAction::INPUT] = &INPUT; \
-												INPUT.Type = ECsInputType::Axis; \
-												INPUT.ValueType = ECsInputValue::Float; \
-												Actions[ECsInputAction::INPUT] = &INPUT.Event; \
-												INPUT.Event = ECsInputEvent::Stationary; \
-												Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
-												INPUT.Last_Event = ECsInputEvent::Stationary; \
-
-#define CS_DEFINE_INPUT_AXIS_VALUES(INPUT, MAP)	DefineInputValues<UCsInput_Axis>(INPUT, EMCsInputAction::Get().GetEnum(FString(#INPUT)), MAP)
-
-#define CS_BIND_AXIS_INPUT(INPUT) InputComponent->BindAxis(#INPUT, INPUT, &UCsInput_Axis::Raw).bConsumeInput = false
-
-#define CS_DEFINE_INPUT_TRIGGER_VALUES(INPUT, MAP)	DefineInputValues<UCsInput_Trigger>(INPUT, EMCsInputAction::Get().GetEnum(FString(#INPUT)), MAP)
-
-#define CS_BIND_TRIGGER_INPUT(INPUT) InputComponent->BindAxis(#INPUT, INPUT, &UCsInput_Trigger::Raw).bConsumeInput = false;
-
-#define CS_DEFINE_INPUT_LOCATION_VALUES(INPUT, MAP)	DefineInputValues<UCsInput_Location>(INPUT, EMCsInputAction::Get().GetEnum(FString(#INPUT)), MAP)
-
-#define CS_DEFINE_INPUT_ROTATION_VALUES(INPUT, MAP)	DefineInputValues<UCsInput_Rotation>(INPUT, EMCsInputAction::Get().GetEnum(FString(#INPUT)), MAP)
-
-#pragma endregion Macros
-
 #pragma endregion Input Delegates
 
 // Game Action Delegates
 
 class AActor;
 class APlayerController;
+struct FKeyState;
 
 UCLASS(Blueprintable)
 class CSCORE_API UCsManager_Input : public UActorComponent
@@ -109,10 +77,8 @@ protected:
 #pragma region
 public:
 
-	UPROPERTY(BlueprintReadOnly, Category = "Manager|Input|Owner")
 	APlayerController* OwnerAsController;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Owner")
 	int32 ControllerId;
 
 #pragma endregion Owner
@@ -145,36 +111,29 @@ public:
 
 	FCsInputFrame InputFrames[CS_MAX_INPUT_FRAMES];
 
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
 	int32 CurrentInputFrameIndex;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
 	FCsInputFrame CurrentInputFrame;
+
+	TArray<FKey> AllKeys;
+	TArray<FKeyState*> AllKeyStates;
 
 // Action Map
 #pragma region
 public:
 
-	TMap<FECsInputAction, FCsInputInfo> InputActionEventInfoMap;
+	TArray<FCsInputInfo> InputActionEventInfos;
 
-	void SetupInputActionEventInfoMap();
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Manager|Input|Action Map")
-	TMap<FECsInputActionMap, FCsInputActionSet> InputActionMappings;
-
+	void SetupInputActionEventInfos();
 	void SetupInputActionMapping();
 
-	UPROPERTY(BlueprintReadOnly, Category = "Manager|Input|Action Map")
 	TMap<FECsInputAction, int32> InputActionMapping;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Manager|Input|Action Map")
 	int32 CurrentInputActionMap;
 
-	UFUNCTION(BlueprintCallable, Category = "Manager|Input|Action Map")
 	void SetCurrentInputActionMap(const FECsInputActionMap& Map);
 	void SetCurrentInputActionMap(const int32& Map);
 
-	UFUNCTION(BlueprintCallable, Category = "Manager|Input|Action Map")
 	void ClearCurrentInputActionMap(const FECsInputActionMap& Map);
 	void ClearCurrentInputActionMap(const int32& Map);
 
@@ -191,29 +150,18 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(EditDefaultsOnly, Category = "Events")
-	TSet<FCsGameEventDefinitionSimple> GameEventDefinitionsSimple;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Events")
 	TSet<FCsGameEventDefinition> GameEventDefinitions;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Events")
 	TMap<FECsGameEvent, FCsInputSentence> GameEventDefinitionMap;
 
 	void SetupGameEventDefinitions();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Events")
 	TArray<FECsGameEvent> GameEventPriorityList;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Events")
-	TMap<FECsGameEvent, int32> GameEventPriorityMap;
+	TArray<int32> GameEventPriorityMap;
 
 	TArray<FCsGameEventInfo> CurrentGameEventInfos;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Events")
 	TArray<FCsGameEventInfo> CurrentValidGameEventInfos;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Events")
 	TArray<FCsGameEventInfo> QueuedGameEventInfosForNextFrame;
 
 #if WITH_EDITOR
@@ -226,20 +174,17 @@ public:
 
 	virtual void DetermineGameEvents(const TArray<FCsInput*>& InInputs);
 
-	UFUNCTION(BlueprintCallable, Category = "Input")
 	bool HasActionEventOccured(const FECsInputAction& Action, const ECsInputEvent& Event);
 
 #pragma endregion Events
 
-	UFUNCTION(BlueprintCallable, Category = "Input")
+
 	float GetInputValue(const FECsInputAction& Action);
-	UFUNCTION(BlueprintCallable, Category = "Input")
+
 	FVector GetInputLocation(const FECsInputAction& Action);
 
-	UFUNCTION(BlueprintCallable, Category = "Input")
 	ECsInputEvent GetInputEvent(const FECsInputAction& Action);
 
-	UFUNCTION(BlueprintCallable, Category = "Input")
 	float GetInputDuration(const FECsInputAction& Action);
 
 // Profile
@@ -259,11 +204,11 @@ public:
 
 	bool IsValidKey(const ECsInputDevice& Device, const FKey& Key);
 
-	struct FKey GetKey(const FString &KeyName);
+	const FKey& GetKey(const FString &KeyName);
 	
 	const FECsInputAction& GetActionFromKey(const ECsInputDevice& Device, const FKey& Key);
-	FKey GetKeyFromAction(const ECsInputDevice& Device, const FECsInputAction& Action);
-	FKey GetKeyFromAction(const FECsInputAction& Action);
+	const FKey& GetKeyFromAction(const ECsInputDevice& Device, const FECsInputAction& Action);
+	const FKey& GetKeyFromAction(const FECsInputAction& Action);
 
 	void UnbindActionMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key);
 	void UnbindAxisMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key);
@@ -301,28 +246,10 @@ public:
 #pragma region
 protected:
 
-	//CS_DECLARE_INPUT_ACTION
-
-	TArray<class UCsInput_Base*> Inputs;
-
 	TArray<FCsInputInfo*> Infos;
 
 	TArray<ECsInputEvent*> Actions;
 	TArray<ECsInputEvent*> Last_Actions;
-
-	template<typename T>
-	void DefineInputValues(T*& Input, const FECsInputAction& Action, const int32& ActionMap)
-	{
-		Input = NewObject<T>(GetWorld(), T::StaticClass(), *(Action.Name), RF_Transient);
-		Input->AddToRoot();
-		Input->Manager_Input = this;
-		Input->ActionMap = ActionMap;
-		Input->Action = Action;
-		Inputs[Action.Value] = Input;
-		Infos[Action.Value] = &(Input->Info);
-		Actions[Action.Value] = &(Input->Info.Event);
-		Last_Actions[Action.Value] = &(Input->Info.Last_Event);
-	}
 
 	// Pressed Events
 #pragma region

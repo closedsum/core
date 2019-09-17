@@ -49,12 +49,15 @@ UCsManager_Input::UCsManager_Input(const FObjectInitializer& ObjectInitializer) 
 
 void UCsManager_Input::Init() 
 {
-	SetupInputActionEventInfoMap();
+	SetupInputActionEventInfos();
 	SetupInputActionMapping();
 	SetupGameEventDefinitions();
 
 	// Initialize CurrentGameEventInfos
-	const int32 EventCount = GameEventPriorityList.Num();
+	UCsGameInstance* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance>();
+	UCsInputSetting* InputSetting = GameInstance->InputSetting;
+
+	const int32 EventCount = InputSetting->GameEventPriorityList.Num();
 
 #if WITH_EDITOR
 	if (EMCsGameEvent::Get().Num() != EventCount)
@@ -63,20 +66,23 @@ void UCsManager_Input::Init()
 	}
 #endif // #if WITH_EDITOR
 
+	for (const FECsGameEvent& GameEvent : InputSetting->GameEventPriorityList)
+	{
+		GameEventPriorityList.Add(GameEvent);
+	}
+
+	// Update GameEventPriorityMap
 	CurrentGameEventInfos.Reserve(EventCount);
+	GameEventPriorityMap.Reserve(EventCount);
 
 	for (int32 I = 0; I < EventCount; ++I)
 	{
 		CurrentGameEventInfos.AddDefaulted();
 		CurrentGameEventInfos.Last().Reset();
-	}
 
-	// Update GameEventPriorityMap
-	for (int32 I = 0; I < EventCount; ++I)
-	{
 		const FECsGameEvent& Event = GameEventPriorityList[I];
 
-		GameEventPriorityMap.Add(Event, I);
+		GameEventPriorityMap[Event.Value] = I;
 	}
 }
 
@@ -137,16 +143,17 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 
 	UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
 
-	TArray<FKey> AllKeys;
-	EKeys::GetAllKeys(AllKeys);
-
 	const int32 KeyCount = AllKeys.Num();
 
-	for (int32 I = 1; I < KeyCount; ++I)
+	for (int32 I = 0; I < KeyCount; ++I)
 	{
 		const FKey& Key = AllKeys[I];
 
-		if (PlayerInput->IsPressed(Key))
+		FKeyState* KeyState = PlayerInput->GetKeyState(Key);
+		AllKeyStates[I]		= KeyState;
+
+		if (KeyState &&
+			KeyState->bDown)
 		{
 			PressedKeys.AddDefaulted();
 			PressedKeys[PressedKeys.Num() - 1] = Key;
@@ -225,122 +232,116 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 		}
 	}
 
-	TArray<FECsInputAction> Keys;
-	InputActionEventInfoMap.GetKeys(Keys);
-
-	for (const FECsInputAction& Action : Keys)
+	for (FCsInputInfo& Info : InputActionEventInfos)
 	{
-		FCsInputInfo& Info = InputActionEventInfoMap[Action];
-
 		Info.EndEvaluation();
 	}
 
-	// Check Actions
-	for (const FInputActionKeyMapping& Mapping : PlayerInput->ActionMappings)
+	const int32 ActionCount = EMCsInputAction::Get().Num();
+
+	for (int32 I = 0; I < ActionCount; ++I)
 	{
-		const FECsInputAction& Action = EMCsInputAction::Get()[Mapping.ActionName];
-		FCsInputInfo& Info			  = InputActionEventInfoMap[Action];
-		ECsInputEvent& Event		  = Info.Event;
+		FCsInputInfo& Info	 = InputActionEventInfos[I];
+		ECsInputEvent& Event = Info.Event;
 
 		if (Info.IsEvaluated())
 			continue;
 
 		Info.StartEvaluation();
 
-		// Pressed
-		if (PlayerInput->IsPressed(Mapping.Key))
+		const FECsInputAction& Action = EMCsInputAction::Get().GetEnumAt(I);
+		const ECsInputType& Type	  = Info.Type;
+		const FKeyState* KeyState	  = AllKeyStates[Info.KeyIndex];
+
+		// Action
+		if (Type == ECsInputType::Action)
 		{
-			// (FirstReleased | Released) -> FirstPressed
-			if (Event == ECsInputEvent::FirstReleased ||
-				Event == ECsInputEvent::Released)
+			// Pressed
+			if (KeyState->bDown)
 			{
-				Event = ECsInputEvent::FirstPressed;
+				// (FirstReleased | Released) -> FirstPressed
+				if (Event == ECsInputEvent::FirstReleased ||
+					Event == ECsInputEvent::Released)
+				{
+					Event = ECsInputEvent::FirstPressed;
+				}
+				// FirstPressed -> Pressed
+				else
+				if (Event == ECsInputEvent::FirstPressed)
+				{
+					Event = ECsInputEvent::Pressed;
+				}
 			}
-			// FirstPressed -> Pressed
+			// Released
 			else
-			if (Event == ECsInputEvent::FirstPressed)
 			{
-				Event = ECsInputEvent::Pressed;
-			}
-		}
-		// Released
-		else
-		{
-			// (FirstPressed | Pressed) -> FirstReleased
-			if (Event == ECsInputEvent::FirstPressed ||
-				Event == ECsInputEvent::Pressed)
-			{
-				Event = ECsInputEvent::FirstReleased;
-			}
-			// FirstReleased -> Released
-			else
-			if (Event == ECsInputEvent::FirstReleased)
-			{
-				Event = ECsInputEvent::Released;
-			}
+				// (FirstPressed | Pressed) -> FirstReleased
+				if (Event == ECsInputEvent::FirstPressed ||
+					Event == ECsInputEvent::Pressed)
+				{
+					Event = ECsInputEvent::FirstReleased;
+				}
+				// FirstReleased -> Released
+				else
+				if (Event == ECsInputEvent::FirstReleased)
+				{
+					Event = ECsInputEvent::Released;
+				}
 		}
 
-		if (Info.HasEventChanged())
+			if (Info.HasEventChanged())
+			{
+#if !UE_BUILD_SHIPPING
+				if (FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRaw) ||
+					FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRawAction))
+				{
+					const float& Time			= CurrentInputFrame.Time;
+					const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
+					const FString& LastEvent	= EMCsInputEvent::Get().ToString(Info.Last_Event);
+
+					UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PreProcessInput (%s): Time: %f. Action: %s[%s]. Event: %s -> %s."), *(GetOwner()->GetName()), Time, *Action.Name, *(Info.Key.ToString()), *LastEvent, *CurrentEvent);
+				}
+#endif // #if !UE_BUILD_SHIPPING
+
+				TryAddInput(Type, Action, Event);
+			}
+#if !UE_BUILD_SHIPPING
+			else
+			{
+				if (FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRaw) ||
+					FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRawAction))
+				{
+					const float& Time			= CurrentInputFrame.Time;
+					const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
+
+					UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PreProcessInput (%s): Time: %f. Action: %s[%s]. Event: %s."), *(GetOwner()->GetName()), Time, *(Action.Name), *(Info.Key.ToString()), *CurrentEvent);
+				}
+			}
+#endif // #if !UE_BUILD_SHIPPING
+			Info.FlushEvent();
+		}
+		// Axis
+		else
+		if (Type == ECsInputType::Axis)
 		{
-#if WITH_EDITOR
+			// TODO: Handle FirstMoved and FirstStationary
+
+			const float& Value = KeyState->Value.X;
+
+#if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRaw) ||
-				FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRawAction))
+				FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRawAxis))
 			{
 				const float& Time			= CurrentInputFrame.Time;
 				const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
-				const FString& LastEvent	= EMCsInputEvent::Get().ToString(Info.Last_Event);
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PreProcessInput (%s): Time: %f. Action: %s[%s]. Event: %s -> %s."), *(GetOwner()->GetName()), Time, *Action.Name, *(Mapping.Key.ToString()), *LastEvent, *CurrentEvent);
+				UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PreProcessInput (%s): Time: %f. Action: %s[%s]. Event: %s. Value: %f"), *(GetOwner()->GetName()), Time, *(Action.Name), *(Info.Key.ToString()), *CurrentEvent, Value);
 			}
-#endif // #if WITH_EDITOR
+#endif // #if !UE_BUILD_SHIPPING
 
-			TryAddInput(Info.Type, Action, Event);
+			TryAddInput(Type, Action, Event, Value);
+			Info.FlushEvent();
 		}
-#if WITH_EDITOR
-		else
-		{
-			if (FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRaw) ||
-				FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRawAction))
-			{
-				const float& Time			= CurrentInputFrame.Time;
-				const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
-
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PreProcessInput (%s): Time: %f. Action: %s[%s]. Event: %s."), *(GetOwner()->GetName()), Time, *(Action.Name), *(Mapping.Key.ToString()), *CurrentEvent);
-			}
-		}
-#endif // #if WITH_EDITOR
-		Info.FlushEvent();
-	}
-
-	// Check Axis
-	for (const FInputAxisKeyMapping& Mapping : PlayerInput->AxisMappings)
-	{
-		const FECsInputAction& Action = EMCsInputAction::Get()[Mapping.AxisName];
-		FCsInputInfo& Info			  = InputActionEventInfoMap[Action];
-		ECsInputEvent& Event		  = Info.Event;
-
-		if (Info.IsEvaluated())
-			continue;
-
-		Info.StartEvaluation();
-
-		// TODO: Handle FirstMoved and FirstStationary
-
-		const float Value = PlayerInput->GetKeyValue(Mapping.Key);
-
-#if WITH_EDITOR
-		if (FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRaw) ||
-			FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRawAxis))
-		{
-			const float& Time			= CurrentInputFrame.Time;
-			const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
-
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PreProcessInput (%s): Time: %f. Action: %s[%s]. Event: %s. Value: %f"), *(GetOwner()->GetName()), Time, *(Action.Name), *(Mapping.Key.ToString()), *CurrentEvent, Value);
-		}
-#endif // #if WITH_EDITOR
-
-		TryAddInput(Info.Type, Action, Event, Value);
-		Info.FlushEvent();
 	}
 }
 
@@ -355,12 +356,12 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 	// TODO: Need to rework how events are being fired. Not just firing from TryAddInput
 
-#if WITH_EDITOR
+#if !UE_BUILD_SHIPPING
 	for (const FCsInput* Input : CurrentInputFrame.Inputs)
 	{
 		const FECsInputAction& Action = Input->Action;
 		const ECsInputEvent& Event	  = Input->Event;
-		const FCsInputInfo& Info	  = InputActionEventInfoMap[Action];
+		const FCsInputInfo& Info	  = InputActionEventInfos[Action.Value];
 		const ECsInputType& Type	  = Info.Type;
 
 		const bool ShowLog = FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInput) ||
@@ -375,7 +376,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PostProcessInput (%s): Time: %f. Action: %s Event: %s."), *(GetOwner()->GetName()), Time, *(Action.Name), *EventAsString);
 		}
 	}
-#endif // #if WITH_EDITOR
+#endif // #if !UE_BUILD_SHIPPING
 
 	// Reset CurrentGameEventInfos
 	for (FCsGameEventInfo& Info : CurrentGameEventInfos)
@@ -394,7 +395,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 		if (Sentence.bCompleted)
 		{
-			const int32& Index					= GameEventPriorityMap[Event];
+			const int32& Index					= GameEventPriorityMap[Event.Value];
 			CurrentGameEventInfos[Index].Event  = Event;
 
 #if WITH_EDITOR
@@ -407,7 +408,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 	for (const FCsGameEventInfo& Info : QueuedGameEventInfosForNextFrame)
 	{
 		const FECsGameEvent& Event  = Info.Event;
-		const int32& Index			= GameEventPriorityMap[Event];
+		const int32& Index			= GameEventPriorityMap[Event.Value];
 
 		CurrentGameEventInfos[Index] = Info;
 	}
@@ -419,14 +420,14 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		{
 			CurrentValidGameEventInfos.Add(Info);
 
-#if WITH_EDITOR
+#if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputGameEvent))
 			{
 				const float& Time = CurrentInputFrame.Time;
 
 				UE_LOG(LogCs, Warning, TEXT("ACsManager_Input::PostProcessInput (%s): Time: %f. Event: %s."), *(GetOwner()->GetName()), Time, *(Info.Event.Name));
 			}
-#endif // #if WITH_EDITOR
+#endif // #if !UE_BUILD_SHIPPING
 		}
 	}
 }
@@ -729,19 +730,19 @@ void UCsManager_Input::ConsumeInput(const FECsInputAction& Action)
 // Action Map
 #pragma region
 
-void UCsManager_Input::SetupInputActionEventInfoMap()
+void UCsManager_Input::SetupInputActionEventInfos()
 {
 	UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
 
 	const int32& ActionCount = EMCsInputAction::Get().Num();
 
-	for (int32 I = 0; I < ActionCount; ++I)
+	InputActionEventInfos.Reserve(ActionCount);
+
+	TMap<FKey, FCsInputInfo*> KeyInfoMap;
+
+	for (const FECsInputAction& Action : EMCsInputAction::Get())
 	{
-		const FECsInputAction& Action = EMCsInputAction::Get().GetEnumAt(I);
-
-		InputActionEventInfoMap.Add(Action);
-
-		FCsInputInfo& Info = InputActionEventInfoMap[Action];
+		FCsInputInfo& Info = InputActionEventInfos[Action.Value];
 
 		Info.Type		= ECsInputType::ECsInputType_MAX;
 		Info.ValueType	= ECsInputValue::Void;
@@ -755,6 +756,10 @@ void UCsManager_Input::SetupInputActionEventInfoMap()
 		{
 			if (Action.Name_Internal == Mapping.ActionName)
 			{
+				Info.Key = Mapping.Key;
+
+				KeyInfoMap.Add(Info.Key, &Info);
+
 				Info.Type		 = ECsInputType::Action;
 				Info.Event		 = ECsInputEvent::Released;
 				Info.Last_Event  = ECsInputEvent::Released;
@@ -769,16 +774,39 @@ void UCsManager_Input::SetupInputActionEventInfoMap()
 		{
 			if (Action.Name_Internal == Mapping.AxisName)
 			{
+				Info.Key = Mapping.Key;
+
+				KeyInfoMap.Add(Info.Key, &Info);
+
 				Info.Type		 = ECsInputType::Axis;
 				Info.Event		 = ECsInputEvent::Stationary;
 				Info.Last_Event	 = ECsInputEvent::Stationary;
 			}
 		}
 	}
+
+	EKeys::GetAllKeys(AllKeys);
+
+	const int32 KeyCount = AllKeys.Num();
+
+	for (int32 I = 0; I < KeyCount; ++I)
+	{
+		const FKey& Key = AllKeys[I];
+
+		if (FCsInputInfo** Info = KeyInfoMap.Find(Key))
+		{
+			(*Info)->KeyIndex = I;
+		}
+	}
 }
 
 void UCsManager_Input::SetupInputActionMapping()
 {
+	UCsGameInstance* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance>();
+	UCsInputSetting* InputSetting = GameInstance->InputSetting;
+
+	const TMap<FECsInputActionMap, FCsInputActionSet>& InputActionMappings = InputSetting->InputActionMappings;
+
 	for (const FECsInputActionMap& Map : EMCsInputActionMap::Get())
 	{
 		const int32& Mask			 = Map.Mask;
@@ -865,6 +893,14 @@ FCsInput* UCsManager_Input::GetPreviousPreviousInputAction(const FECsInputAction
 
 void UCsManager_Input::SetupGameEventDefinitions()
 {
+	UCsGameInstance* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance>();
+	UCsInputSetting* InputSetting = GameInstance->InputSetting;
+
+	for (const FCsGameEventDefinition& Def : InputSetting->GameEventDefinitions)
+	{
+		GameEventDefinitions.Add(Def);
+	}
+
 	for (const FCsGameEventDefinition& Def : GameEventDefinitions)
 	{
 		const FECsGameEvent& Event = Def.Event;
@@ -881,6 +917,8 @@ void UCsManager_Input::SetupGameEventDefinitions()
 
 		GameEventDefinitionMap.Add(Event, Sentence);
 	}
+
+	const TSet<FCsGameEventDefinitionSimple>& GameEventDefinitionsSimple = InputSetting->GameEventDefinitionsSimple;
 
 	for (const FCsGameEventDefinitionSimple& Def : GameEventDefinitionsSimple)
 	{
@@ -1143,17 +1181,12 @@ void UCsManager_Input::LoadInputProfile()
 			UCsCommon_Load::ReadStructFromJson(JsonParsed, &InputProfile, FCsInputProfile::StaticStruct(), nullptr);
 			// Update Action and Key members
 
-			for (int32 I = 0; I < ECS_INPUT_DEVICE_MAX; ++I)
+			for (FCsInputActionMappings& DeviceMapping : InputProfile.DeviceMappings)
 			{
-				FCsInputActionMappings& DeviceMapping   = InputProfile.DeviceMappings[I];
 				TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
 
-				const int32 Count = Mappings.Num();
-
-				for (int32 J = 0; J < Count; J++)
+				for (FCsInputActionMapping& Mapping : Mappings)
 				{
-					FCsInputActionMapping& Mapping = Mappings[J];
-
 					Mapping.Key	= GetKey(Mapping.KeyName);
 				}
 			}
@@ -1193,13 +1226,10 @@ bool UCsManager_Input::IsValidKey(const ECsInputDevice& Device, const FKey& Key)
 	return true;
 }
 
-FKey UCsManager_Input::GetKey(const FString& KeyName)
+const FKey& UCsManager_Input::GetKey(const FString& KeyName)
 {
-	if (KeyName == TEXT(""))
+	if (KeyName == NCsCached::Str::Empty)
 		return EKeys::Invalid;
-
-	TArray<FKey> AllKeys;
-	EKeys::GetAllKeys(AllKeys);
 
 	const int32 KeyCount = AllKeys.Num();
 
@@ -1226,7 +1256,7 @@ const FECsInputAction& UCsManager_Input::GetActionFromKey(const ECsInputDevice& 
 	return EMCsInputAction::Get().GetMAX();
 }
 
-FKey UCsManager_Input::GetKeyFromAction(const ECsInputDevice& Device, const FECsInputAction& Action)
+const FKey& UCsManager_Input::GetKeyFromAction(const ECsInputDevice& Device, const FECsInputAction& Action)
 {
 	FCsInputActionMappings& DeviceMapping   = InputProfile.DeviceMappings[(uint8)Device];
 	TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
@@ -1239,7 +1269,7 @@ FKey UCsManager_Input::GetKeyFromAction(const ECsInputDevice& Device, const FECs
 	return EKeys::Invalid;
 }
 
-FKey UCsManager_Input::GetKeyFromAction(const FECsInputAction& Action)
+const FKey& UCsManager_Input::GetKeyFromAction(const FECsInputAction& Action)
 {
 	UPlayerInput* PlayerInput = UCsCommon::GetLocalPlayerInput(GetWorld());
 

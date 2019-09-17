@@ -253,6 +253,10 @@ private:
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	FKey Key;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	int32 KeyIndex;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	ECsInputType Type;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	ECsInputValue ValueType;
@@ -271,6 +275,8 @@ public:
 
 	FCsInputInfo() :
 		bEvaluated(false),
+		Key(EKeys::AnyKey),
+		KeyIndex(INDEX_NONE),
 		Type(ECsInputType::ECsInputType_MAX),
 		ValueType(ECsInputValue::ECsInputValue_MAX),
 		Event(ECsInputEvent::ECsInputEvent_MAX),
@@ -286,6 +292,8 @@ public:
 
 	FORCEINLINE FCsInputInfo& operator=(const FCsInputInfo& B)
 	{
+		Key = B.Key;
+		KeyIndex = B.KeyIndex;
 		Type = B.Type;
 		ValueType = B.ValueType;
 		Event = B.Event;
@@ -299,7 +307,8 @@ public:
 
 	FORCEINLINE bool operator==(const FCsInputInfo& B) const
 	{
-		return Type == B.Type && ValueType == B.ValueType && 
+		return Key == B.Key && KeyIndex == B.KeyIndex &&
+			   Type == B.Type && ValueType == B.ValueType && 
 			   Event == B.Event && Last_Event == B.Last_Event &&
 			   Value == B.Value && Location == B.Location && Rotation == B.Rotation &&
 			   Duration == B.Duration;

@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Kismet/BlueprintFunctionLibrary.h"
+#include "CoreUObject/Public/UObject/Object.h"
 #include "Types/CsTypes_Primitive.h"
 
 #if WITH_EDITOR
@@ -11,12 +11,12 @@
 #include "Classes/Factories/BlueprintFactory.h"
 #endif WITH_EDITOR
 
-#include "CsCommon_Asset.generated.h"
+#include "CsLibrary_Asset.generated.h"
 
 class UCsEnumStructUserDefinedEnumMap;
 
 UCLASS()
-class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
+class CSCORE_API UCsLibrary_Asset : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
@@ -282,48 +282,7 @@ public:
 	}
 
 	template<typename T>
-	static void GetBlueprintDefaultObjects(UClass* ParentClass, TArray<T*>& OutDefaultObjects)
-	{
-		OutAssets.Reset();
-
-		IAssetRegistry& AssetRegistry = GetAssetRegistry();
-
-		TArray<FAssetData> OutAssetDatas;
-		
-		AssetRegistry.GetAssetsByClass(UBlueprint::StaticClass()->GetFName(), OutAssetDatas);
-
-		for (FAssetData& AssetData : OutAssetDatas)
-		{
-			UBlueprint* Bp = Cast<UBlueprint>(AssetData.GetAsset());
-
-			if (T* DOb = GetDefaultObject<T>(Bp, ParentClass))
-				OutDefaultObjects.Add(DOb);
-		}
-	}
-
-	template<typename T>
-	static void GetBlueprintDefaultObjects(UClass* ParentClass, TArray<T*>& OutDefaultObjects, TArray<FName>& OutObjectPaths)
-	{
-		IAssetRegistry& AssetRegistry = GetAssetRegistry();
-
-		TArray<FAssetData> OutAssetDatas;
-
-		AssetRegistry.GetAssetsByClass(UBlueprint::StaticClass()->GetFName(), OutAssetDatas);
-
-		for (FAssetData& AssetData : OutAssetDatas)
-		{
-			UBlueprint* Bp = Cast<UBlueprint>(AssetData.GetAsset());
-
-			if (T* DOb = GetDefaultObject<T>(Bp, ParentClass))
-			{
-				OutDefaultObjects.Add(DOb);
-				OutObjectPaths.Add(AssetData.ObjectPath);
-			}
-		}
-	}
-
-	template<typename T>
-	static void GetBlueprintDefaultObjects(const FString& Name, const ECsStringCompare& CompareType, TArray<T*>& OutDefaultObjects, UClass* InParentClass)
+	static void GetBlueprintDefaultObjects(const FString& Name, const ECsStringCompare& CompareType, UClass* InParentClass, TArray<T*>& OutDefaultObjects)
 	{
 		TArray<UBlueprint*> OutAssets;
 		GetAssets<UBlueprint>(Name, CompareType, OutAssets);
@@ -344,7 +303,28 @@ public:
 	}
 
 	template<typename T>
-	static void GetBlueprintDefaultObjects(const TArray<FString>& KeywordsAND, const ECsStringCompare& CompareType, TArray<T*>& OutDefaultObjects, UClass* InParentClass)
+	static void GetBlueprintDefaultObjects(const FString& Name, const ECsStringCompare& CompareType, UClass* InParentClass, TArray<T*>& OutDefaultObjects, TArray<FString>& OutPackagePaths)
+	{
+		TArray<UBlueprint*> OutAssets;
+		GetAssets<UBlueprint>(Name, CompareType, OutAssets, OutPackagePaths);
+
+		OutDefaultObjects.Reset();
+
+		UClass* ParentClass = InParentClass ? InParentClass : T::StaticClass();
+
+		const int32 Count = OutAssets.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			UBlueprint* Bp = Cast<UBlueprint>(OutAssets[I]);
+
+			if (T* DOb = GetDefaultObject<T>(Bp, InParentClass))
+				OutDefaultObjects.Add(DOb);
+		}
+	}
+
+	template<typename T>
+	static void GetBlueprintDefaultObjects(const TArray<FString>& KeywordsAND, const ECsStringCompare& CompareType, UClass* InParentClass, TArray<T*>& OutDefaultObjects)
 	{
 		TArray<UBlueprint*> OutAssets;
 		GetAssets<UBlueprint>(KeywordsAND, OutAssets, CompareType);

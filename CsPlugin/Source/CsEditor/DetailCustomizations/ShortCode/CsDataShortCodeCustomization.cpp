@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/ShortCode/CsDataShortCodeCustomization.h"
 #include "CsEditor.h"
-#include "Common/CsCommon_Asset.h"
+#include "Library/CsLibrary_Asset.h"
 
 #include "IDetailChildrenBuilder.h"
 #include "DetailWidgetRow.h"

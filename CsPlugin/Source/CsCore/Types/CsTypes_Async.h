@@ -4,7 +4,7 @@
 struct FCsMutex
 {
 private:
-	bool lock;
+	bool bLock;
 
 public:
 
@@ -14,12 +14,12 @@ public:
 	}
 	~FCsMutex(){}
 
-	void Lock() { lock = true; }
-	bool IsLocked() { return lock; }
-	void Unlock() { lock = false; }
+	void Lock() { bLock = true; }
+	bool IsLocked() { return bLock; }
+	void Unlock() { bLock = false; }
 
 	void Reset()
 	{
-		lock = false;
+		bLock = false;
 	}
 };

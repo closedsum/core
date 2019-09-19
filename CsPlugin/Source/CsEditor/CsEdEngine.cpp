@@ -3,13 +3,14 @@
 #include "CsEditor.h"
 #include "CsCVars.h"
 
-#include "Common/CsCommon.h"
-#include "Common/CsCommon_Asset.h"
 // Type
 #include "Types/CsTypes_Load.h"
 #include "Managers/Input/CsTypes_Input.h"
 // Enum
 #include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
+// Library
+#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Asset.h"
 // Asset Registry
 #include "AssetRegistryModule.h"
 #include "Developer/AssetTools/Public/AssetToolsModule.h"
@@ -174,6 +175,8 @@ void UCsEdEngine::Tick(float DeltaSeconds, bool bIdleMode)
 	Super::Tick(DeltaSeconds, bIdleMode);
 
 	bTickedHandle = true;
+
+	OnBlueprintPreCompile_HandleEnums_Mutex.Unlock();
 }
 
 #pragma endregion UEngine Interface
@@ -201,39 +204,17 @@ bool UCsEdEngine::Exec(UWorld* InWorld, const TCHAR* Stream, FOutputDevice& Ar)
 
 void UCsEdEngine::OnFirstTick(const bool& Value)
 {
-	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
-	IAssetRegistry& AssetRegistry			  = AssetRegistryModule.Get();
-
-	const FName ClassName = UCsEnumStructUserDefinedEnumMap::StaticClass()->GetFName();
-
-	TArray<FAssetData> OutAssetData;
-
-	if (AssetRegistry.GetAssetsByClass(ClassName, OutAssetData))
-	{
-		if (OutAssetData.Num() > CS_SINGLETON)
-		{
-			UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnFirstTick: More than ONE class found of type: UCsEnumStructUserDefinedEnumMap. Choosing the FIRST one. There should only be ONE."));
-		}
-
-		FAssetData& Asset = OutAssetData[CS_FIRST];
-
-		EnumStructUserDefinedEnumMap = Cast<UCsEnumStructUserDefinedEnumMap>(Asset.GetAsset());
-	}
-	else
-	{
-		UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnFirstTick: No class found of type: UCsEnumStructUserDefinedEnumMap."));
-	}
-
 	PopulateUserDefinedEnums();
 	PopulateEnumMapsFromUserDefinedEnums();
-
+	/*
 	if (!DataMapping)
 	{
-		DataMapping = UCsCommon_Asset::GetDataMapping();
+		DataMapping = UCsLibrary_Asset::GetDataMapping();
 
 		if (DataMapping)
 			DataMapping->GenerateMaps();
 	}
+	*/
 }
 
 #pragma endregion Tick
@@ -243,8 +224,7 @@ void UCsEdEngine::OnBlueprintPreCompile(UBlueprint* Blueprint)
 	if (!bTicked)
 		return;
 
-	PopulateUserDefinedEnums();
-	PopulateEnumMapsFromUserDefinedEnums();
+	OnBlueprintPreCompile_HandleEnums();
 }
 
 void UCsEdEngine::OnBeginPIE(bool IsSimulating)
@@ -255,6 +235,30 @@ void UCsEdEngine::OnBeginPIE(bool IsSimulating)
 
 // Enums
 #pragma region
+
+UCsEnumStructUserDefinedEnumMap* UCsEdEngine::GetEnumStructUserDefinedEnumMap()
+{
+	if (EnumStructUserDefinedEnumMap.IsValid() && EnumStructUserDefinedEnumMap.Get())
+	{
+		return EnumStructUserDefinedEnumMap.Get();
+	}
+
+	EnumStructUserDefinedEnumMap = UCsLibrary_Asset::GetEnumStructUserDefinedEnumMap();
+
+	return EnumStructUserDefinedEnumMap.Get();
+}
+
+void UCsEdEngine::OnBlueprintPreCompile_HandleEnums()
+{
+	if (OnBlueprintPreCompile_HandleEnums_Mutex.IsLocked())
+		return;
+
+	OnBlueprintPreCompile_HandleEnums_Mutex.Lock();
+
+
+	PopulateUserDefinedEnums();
+	PopulateEnumMapsFromUserDefinedEnums();
+}
 
 void UCsEdEngine::PopulateUserDefinedEnums()
 {
@@ -271,7 +275,7 @@ void UCsEdEngine::PopulateEnumMapsFromUserDefinedEnums()
 	// DataType
 	PopulateEnumMapFromUserDefinedEnum<EMCsDataType>(NCsUserDefinedEnum::FECsDataType);
 	// DataCollection
-	PopulateEnumMapFromUserDefinedEnum<EMCsDataCollection>(NCsUserDefinedEnum::FECsDataType);
+	PopulateEnumMapFromUserDefinedEnum<EMCsDataCollection>(NCsUserDefinedEnum::FECsDataCollection);
 	// Input
 	{
 		// InputAction
@@ -285,18 +289,21 @@ void UCsEdEngine::PopulateEnumMapsFromUserDefinedEnums()
 
 void UCsEdEngine::GetUserDefinedEnumNames(const FString& EnumName, const FECsUserDefinedEnum& EnumType, TArray<FString>& OutNames)
 {
-	if (UUserDefinedEnum* Enum = EnumStructUserDefinedEnumMap->GetUserDefinedEnum(EnumType))
+	if (UCsEnumStructUserDefinedEnumMap* Map = GetEnumStructUserDefinedEnumMap())
 	{
-		const int32 Count = Enum->NumEnums() - 1;
-
-		for (int32 I = 0; I < Count; ++I)
+		if (UUserDefinedEnum* Enum = Map->GetUserDefinedEnum(EnumType))
 		{
-			OutNames.Add(Enum->GetDisplayNameTextByIndex(I).ToString());
+			const int32 Count = Enum->NumEnums() - 1;
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				OutNames.Add(Enum->GetDisplayNameTextByIndex(I).ToString());
+			}
 		}
-	}
-	else
-	{
-		UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::GetUserDefinedEnumNames: Failed to find UserDefinedEnum: %s for EnumStruct: %s."), *(EnumType.Name), *EnumName);
+		else
+		{
+			UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::GetUserDefinedEnumNames: Failed to find UserDefinedEnum: %s for EnumStruct: %s."), *(EnumType.Name), *EnumName);
+		}
 	}
 }
 
@@ -343,11 +350,12 @@ bool UCsEdEngine::Check_MarkDatasDirty(const TCHAR* Stream)
 
 void UCsEdEngine::MarkDatasDirty(const FECsAssetType& AssetType)
 {
+	/*
 	TArray<ACsData*> Datas;
 
 	UClass* Class = (*GetAssetTypeStaticClass)(AssetType);
 
-	UCsCommon_Asset::GetBlueprintDefaultObjects<ACsData>(TEXT("bp_"), ECsStringCompare::StartsWith, Datas, Class);
+	UCsLibrary_Asset::GetBlueprintDefaultObjects<ACsData>(TEXT("bp_"), ECsStringCompare::StartsWith, Datas, Class);
 
 	const int32 Count = Datas.Num();
 
@@ -363,6 +371,7 @@ void UCsEdEngine::MarkDatasDirty(const FECsAssetType& AssetType)
 
 		UE_LOG(LogCsEditor, Log, TEXT("MarkAllDatasDirty: %s is marked DIRTY."), *Path);
 	}
+	*/
 }
 
 #pragma endregion Data

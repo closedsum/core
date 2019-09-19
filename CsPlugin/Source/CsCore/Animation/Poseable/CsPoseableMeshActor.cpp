@@ -2,7 +2,7 @@
 #include "Animation/Poseable/CsPoseableMeshActor.h"
 #include "CsCore.h"
 #include "Common/CsCommon.h"
-#include "Common/CsCommon_Asset.h"
+#include "Library/CsLibrary_Asset.h"
 
 #include "Components/CsPoseableMeshComponent.h"
 
@@ -415,7 +415,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 
 		TArray<ULevelSequence*> Sequences;
 		TArray<FString> PackagePaths;
-		UCsCommon_Asset::GetAssets<ULevelSequence>(AssetName, ECsStringCompare::Equals, Sequences, PackagePaths);
+		UCsLibrary_Asset::GetAssets<ULevelSequence>(AssetName, ECsStringCompare::Equals, Sequences, PackagePaths);
 
 		const int32 SeqCount = Sequences.Num();
 
@@ -447,7 +447,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 		}
 		else
 		{
-			AnimLevelSequence.Master = UCsCommon_Asset::CreateLevelSequence(AssetName, PackageName);
+			AnimLevelSequence.Master = UCsLibrary_Asset::CreateLevelSequence(AssetName, PackageName);
 		}
 
 		ULevelSequence* Seq						 = AnimLevelSequence.Master;
@@ -921,7 +921,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 
 	TArray<ULevelSequence*> Sequences;
 	TArray<FString> PackagePaths;
-	UCsCommon_Asset::GetAssets<ULevelSequence>(AssetName, ECsStringCompare::Equals, Sequences, PackagePaths);
+	UCsLibrary_Asset::GetAssets<ULevelSequence>(AssetName, ECsStringCompare::Equals, Sequences, PackagePaths);
 
 	const int32 SeqCount = Sequences.Num();
 	// Found
@@ -1133,7 +1133,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 			PackageName.RemoveAt(Len - 1);
 		}
 
-		AnimLevelSequence.Shots[Index].Shot = UCsCommon_Asset::CreateLevelSequence(AssetName, PackageName);
+		AnimLevelSequence.Shots[Index].Shot = UCsLibrary_Asset::CreateLevelSequence(AssetName, PackageName);
 
 		ULevelSequence* Seq     = AnimLevelSequence.Shots[Index].Shot;
 		const float DeltaTime   = 2.0f;
@@ -1257,7 +1257,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Expor
 
 		TArray<UAnimSequence*> Anims;
 		TArray<FString> PackagePaths;
-		UCsCommon_Asset::GetAssets<UAnimSequence>(AnimName, ECsStringCompare::Equals, Anims, PackagePaths);
+		UCsLibrary_Asset::GetAssets<UAnimSequence>(AnimName, ECsStringCompare::Equals, Anims, PackagePaths);
 
 		const int32 AnimCount = Anims.Num();
 
@@ -1301,12 +1301,12 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Expor
 			const int32 Len = PackageName.Len();
 			PackageName.RemoveAt(Len - 1);
 
-			Anim = UCsCommon_Asset::CreateAnimSequence(PoseableMeshComponent->SkeletalMesh, AnimName, PackageName);
+			Anim = UCsLibrary_Asset::CreateAnimSequence(PoseableMeshComponent->SkeletalMesh, AnimName, PackageName);
 			Shot.Anim = Anim;
 		}
 	}
 
-	UCsCommon_Asset::InitAnimSequence(Anim, PoseableMeshComponent);
+	UCsLibrary_Asset::InitAnimSequence(Anim, PoseableMeshComponent);
 
 	// Create a sequence actor to run the sequence off of
 	ALevelSequenceActor* LevelSequenceActor = GetWorld()->SpawnActor<ALevelSequenceActor>();

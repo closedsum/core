@@ -8,7 +8,7 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCsEditor, Log, All);
 
-class FCsEditor : public IModuleInterface
+class CSEDITOR_API FCsEditor : public IModuleInterface
 {
 public:
 

@@ -10,7 +10,7 @@ UCsEnumStructUserDefinedEnumMap::UCsEnumStructUserDefinedEnumMap(const FObjectIn
 UUserDefinedEnum* UCsEnumStructUserDefinedEnumMap::GetUserDefinedEnum(const FECsUserDefinedEnum& EnumType)
 {
 	// FECsInputAction
-	if (NCsUserDefinedEnum::FECsInputAction)
+	if (EnumType == NCsUserDefinedEnum::FECsInputAction)
 		return InputAction;
 	return nullptr;
 }

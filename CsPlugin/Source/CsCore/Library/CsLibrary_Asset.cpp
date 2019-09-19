@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Common/CsCommon_Asset.h"
+#include "Library/CsLibrary_Asset.h"
 #include "CsCore.h"
 
 // Enum
@@ -38,7 +38,7 @@ namespace NCsCommonAssetCached
 
 #pragma endregion // Cache
 
-UCsCommon_Asset::UCsCommon_Asset(const FObjectInitializer& ObjectInitializer)
+UCsLibrary_Asset::UCsLibrary_Asset(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
@@ -48,38 +48,46 @@ UCsCommon_Asset::UCsCommon_Asset(const FObjectInitializer& ObjectInitializer)
 
 #if WITH_EDITOR
 
-IAssetRegistry& UCsCommon_Asset::GetAssetRegistry()
+IAssetRegistry& UCsLibrary_Asset::GetAssetRegistry()
 {
 	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
 	return AssetRegistryModule.Get();
 }
 
-ACsDataMapping* UCsCommon_Asset::GetDataMapping()
+ACsDataMapping* UCsLibrary_Asset::GetDataMapping()
 {
 	return GetBlueprintDefaultObject<ACsDataMapping>(NCsCommonAssetCached::Str::bp_data_mapping, ECsStringCompare::Equals, ACsDataMapping::StaticClass());
 }
 
-UCsEnumStructUserDefinedEnumMap* UCsCommon_Asset::GetEnumStructUserDefinedEnumMap()
+UCsEnumStructUserDefinedEnumMap* UCsLibrary_Asset::GetEnumStructUserDefinedEnumMap()
 {
+	// TODO: Make Name a Config variable for UCsEdEngine
+	const FString Name					= TEXT("EnumStructUserDefinedEnumMap");
+	const ECsStringCompare& CompareType = ECsStringCompare::Contains;
 	TArray<UCsEnumStructUserDefinedEnumMap*> OutDefaultObjects;
-	TArray<FName> OutObjectPaths;
-	GetBlueprintDefaultObjects<UCsEnumStructUserDefinedEnumMap>(UCsEnumStructUserDefinedEnumMap::StaticClass(), OutDefaultObjects, OutObjectPaths);
+	TArray<FString> OutPackagePaths;
+
+	GetBlueprintDefaultObjects<UCsEnumStructUserDefinedEnumMap>(Name, CompareType, UCsEnumStructUserDefinedEnumMap::StaticClass(), OutDefaultObjects, OutPackagePaths);
 	
 	if (OutDefaultObjects.Num() == CS_EMPTY)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsCommon_Asset::GetEnumStructUserDefinedEnumMap: No class found of type: UCsEnumStructUserDefinedEnumMap."));
+		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Asset::GetEnumStructUserDefinedEnumMap: No class found of type: UCsEnumStructUserDefinedEnumMap."));
 		return nullptr;
 	}
 
 	if (OutDefaultObjects.Num() > CS_SINGLETON)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsCommon_Asset::GetEnumStructUserDefinedEnumMap: More than ONE class found of type: UCsEnumStructUserDefinedEnumMap. Choosing the FIRST one. There should only be ONE."));
-	}
+		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Asset::GetEnumStructUserDefinedEnumMap: More than ONE class found of type: UCsEnumStructUserDefinedEnumMap. Choosing the FIRST one. There should only be ONE."));
 
+		for (const FString& Path : OutPackagePaths)
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Asset::GetEnumStructUserDefinedEnumMap: Asset of type: UCsEnumStructUserDefinedEnumMap found at: %s."), *Path);
+		}
+	}
 	return OutDefaultObjects[CS_EMPTY];
 }
 
-void UCsCommon_Asset::SyncBrowserToAsset(UObject* InObject)
+void UCsLibrary_Asset::SyncBrowserToAsset(UObject* InObject)
 {
 	TArray<UObject*> ObjectsToSync;
 	ObjectsToSync.Add(InObject);
@@ -88,13 +96,13 @@ void UCsCommon_Asset::SyncBrowserToAsset(UObject* InObject)
 	ContentBrowserModule.Get().SyncBrowserToAssets(ObjectsToSync);
 }
 
-void UCsCommon_Asset::SyncBrowserToAssets(TArray<UObject*> Objects)
+void UCsLibrary_Asset::SyncBrowserToAssets(TArray<UObject*> Objects)
 {
 	FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
 	ContentBrowserModule.Get().SyncBrowserToAssets(Objects);
 }
 
-UFactory* UCsCommon_Asset::GetFactory(UClass* ClassToSpawn)
+UFactory* UCsLibrary_Asset::GetFactory(UClass* ClassToSpawn)
 {
 	for (TObjectIterator<UClass> It; It; ++It)
 	{
@@ -113,7 +121,7 @@ UFactory* UCsCommon_Asset::GetFactory(UClass* ClassToSpawn)
 	return nullptr;
 }
 
-UObject* UCsCommon_Asset::CreateAsset(UClass* ClassToSpawn, const FString& Name, const FString &PackagePath)
+UObject* UCsLibrary_Asset::CreateAsset(UClass* ClassToSpawn, const FString& Name, const FString &PackagePath)
 {
 	FAssetToolsModule& AssetToolsModule = FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools");
 	UFactory* Factory					= GetFactory(ClassToSpawn);
@@ -128,12 +136,12 @@ UObject* UCsCommon_Asset::CreateAsset(UClass* ClassToSpawn, const FString& Name,
 	return NewAsset;
 }
 
-ULevelSequence* UCsCommon_Asset::CreateLevelSequence(const FString &Name, const FString &PackagePath)
+ULevelSequence* UCsLibrary_Asset::CreateLevelSequence(const FString &Name, const FString &PackagePath)
 {
 	return Cast<ULevelSequence>(CreateAsset(ULevelSequence::StaticClass(), Name, PackagePath));
 }
 
-UAnimSequence* UCsCommon_Asset::CreateAnimSequence(USkeletalMesh* Mesh, const FString &Name, const FString &PackagePath)
+UAnimSequence* UCsLibrary_Asset::CreateAnimSequence(USkeletalMesh* Mesh, const FString &Name, const FString &PackagePath)
 {
 	FAssetToolsModule& AssetToolsModule = FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools");
 	UAnimSequenceFactory* Factory		= NewObject<UAnimSequenceFactory>();
@@ -152,7 +160,7 @@ UAnimSequence* UCsCommon_Asset::CreateAnimSequence(USkeletalMesh* Mesh, const FS
 	return NewAsset;
 }
 
-void UCsCommon_Asset::InitAnimSequence(class UAnimSequence* Anim, class USkeletalMeshComponent* Mesh)
+void UCsLibrary_Asset::InitAnimSequence(class UAnimSequence* Anim, class USkeletalMeshComponent* Mesh)
 {
 	Anim->RecycleAnimSequence();
 
@@ -177,7 +185,7 @@ void UCsCommon_Asset::InitAnimSequence(class UAnimSequence* Anim, class USkeleta
 	Anim->InitializeNotifyTrack();
 }
 
-void UCsCommon_Asset::InitAnimSequence(class UAnimSequence* Anim, class UPoseableMeshComponent* Mesh)
+void UCsLibrary_Asset::InitAnimSequence(class UAnimSequence* Anim, class UPoseableMeshComponent* Mesh)
 {
 	Anim->RecycleAnimSequence();
 

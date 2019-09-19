@@ -2,6 +2,7 @@
 #pragma once
 #include "Editor/UnrealEdEngine.h"
 #include "Types/CsTypes_Load.h"
+#include "Types/CsTypes_Async.h"
 #include "CsEdEngine.generated.h"
 
 class UCsEnumStructUserDefinedEnumMap;
@@ -53,7 +54,13 @@ public:
 #pragma region
 public:
 
-	UCsEnumStructUserDefinedEnumMap* EnumStructUserDefinedEnumMap;
+	TWeakObjectPtr<UCsEnumStructUserDefinedEnumMap> EnumStructUserDefinedEnumMap;
+
+	UCsEnumStructUserDefinedEnumMap* GetEnumStructUserDefinedEnumMap();
+
+	FCsMutex OnBlueprintPreCompile_HandleEnums_Mutex;
+
+	void OnBlueprintPreCompile_HandleEnums();
 
 	void PopulateUserDefinedEnums();
 	void PopulateUserDefinedEnum_InputAction();

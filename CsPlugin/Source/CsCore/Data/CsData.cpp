@@ -3,7 +3,7 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Common/CsCommon_Load.h"
-#include "Common/CsCommon_Asset.h"
+#include "Library/CsLibrary_Asset.h"
 #include "Common/CsCommon.h"
 
 #if WITH_EDITOR
@@ -377,7 +377,7 @@ ACsData_Payload* ACsData::GetPayload()
 {
 	TArray<UBlueprint*> Bps;
 
-	UCsCommon_Asset::GetAssets<UBlueprint>(PayloadName, ECsStringCompare::Equals, Bps);
+	UCsLibrary_Asset::GetAssets<UBlueprint>(PayloadName, ECsStringCompare::Equals, Bps);
 
 	const int32 Count = Bps.Num();
 

@@ -4,6 +4,8 @@
 
 // Types
 #include "Managers/Input/CsTypes_Input.h"
+// Library
+#include "Library/CsLibrary_Asset.h"
 // Input
 #include "GameFramework/InputSettings.h"
 // Enum
@@ -20,26 +22,23 @@
 #include "Editor/BlueprintGraph/Classes/NodeDependingOnEnumInterface.h"
 #include "Editor/BlueprintGraph/Classes/K2Node_Variable.h"
 
+#include "CsEdEngine.h"
+
 UUserDefinedEnum* FCsEnumEditorUtils::GetUserDefinedEnum(const FECsUserDefinedEnum& EnumType)
 {
-	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
-	IAssetRegistry& AssetRegistry			  = AssetRegistryModule.Get();
+	UCsEnumStructUserDefinedEnumMap* Map = nullptr;
 
-	const FName ClassName = UCsEnumStructUserDefinedEnumMap::StaticClass()->GetFName();
-
-	TArray<FAssetData> OutAssetData;
-
-	if (AssetRegistry.GetAssetsByClass(ClassName, OutAssetData))
+	if (UCsEdEngine* Engine = Cast<UCsEdEngine>(GEngine))
 	{
-		if (OutAssetData.Num() > CS_SINGLETON)
-		{
-			UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::GetUserDefinedEnum: More than ONE class found of type: UCsEnumStructUserDefinedEnumMap. Choosing the FIRST one. There should only be ONE."));
-		}
+		Map = Engine->GetEnumStructUserDefinedEnumMap();
+	}
+	else
+	{
+		Map = UCsLibrary_Asset::GetEnumStructUserDefinedEnumMap();
+	}
 
-		FAssetData& Asset = OutAssetData[CS_FIRST];
-
-		UCsEnumStructUserDefinedEnumMap* Map = Cast<UCsEnumStructUserDefinedEnumMap>(Asset.GetAsset());
-
+	if (Map)
+	{
 		if (UUserDefinedEnum* Enum = Map->GetUserDefinedEnum(EnumType))
 		{
 			return Enum;
@@ -48,10 +47,6 @@ UUserDefinedEnum* FCsEnumEditorUtils::GetUserDefinedEnum(const FECsUserDefinedEn
 		{
 			UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::GetUserDefinedEnum: Failed to find a UserDefinedEnum associated with EnumStruct: %s."), *EnumType.Name);
 		}
-	}
-	else
-	{
-		UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::GetUserDefinedEnum: No class found of type: UCsEnumStructUserDefinedEnumMap."));
 	}
 	return nullptr;
 }

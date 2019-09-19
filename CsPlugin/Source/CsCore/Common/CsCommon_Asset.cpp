@@ -2,6 +2,9 @@
 #include "Common/CsCommon_Asset.h"
 #include "CsCore.h"
 
+// Enum
+#include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
+
 #include "Engine.h"
 
 #include "Components/SkeletalMeshComponent.h"
@@ -54,6 +57,26 @@ IAssetRegistry& UCsCommon_Asset::GetAssetRegistry()
 ACsDataMapping* UCsCommon_Asset::GetDataMapping()
 {
 	return GetBlueprintDefaultObject<ACsDataMapping>(NCsCommonAssetCached::Str::bp_data_mapping, ECsStringCompare::Equals, ACsDataMapping::StaticClass());
+}
+
+UCsEnumStructUserDefinedEnumMap* UCsCommon_Asset::GetEnumStructUserDefinedEnumMap()
+{
+	TArray<UCsEnumStructUserDefinedEnumMap*> OutDefaultObjects;
+	TArray<FName> OutObjectPaths;
+	GetBlueprintDefaultObjects<UCsEnumStructUserDefinedEnumMap>(UCsEnumStructUserDefinedEnumMap::StaticClass(), OutDefaultObjects, OutObjectPaths);
+	
+	if (OutDefaultObjects.Num() == CS_EMPTY)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsCommon_Asset::GetEnumStructUserDefinedEnumMap: No class found of type: UCsEnumStructUserDefinedEnumMap."));
+		return nullptr;
+	}
+
+	if (OutDefaultObjects.Num() > CS_SINGLETON)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsCommon_Asset::GetEnumStructUserDefinedEnumMap: More than ONE class found of type: UCsEnumStructUserDefinedEnumMap. Choosing the FIRST one. There should only be ONE."));
+	}
+
+	return OutDefaultObjects[CS_EMPTY];
 }
 
 void UCsCommon_Asset::SyncBrowserToAsset(UObject* InObject)

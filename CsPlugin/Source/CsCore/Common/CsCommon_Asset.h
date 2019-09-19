@@ -1,8 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Types/CsTypes_Primitive.h"
-
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Types/CsTypes_Primitive.h"
 
 #if WITH_EDITOR
 #include "AssetRegistryModule.h"
@@ -13,6 +12,8 @@
 #endif WITH_EDITOR
 
 #include "CsCommon_Asset.generated.h"
+
+class UCsEnumStructUserDefinedEnumMap;
 
 UCLASS()
 class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
@@ -281,6 +282,47 @@ public:
 	}
 
 	template<typename T>
+	static void GetBlueprintDefaultObjects(UClass* ParentClass, TArray<T*>& OutDefaultObjects)
+	{
+		OutAssets.Reset();
+
+		IAssetRegistry& AssetRegistry = GetAssetRegistry();
+
+		TArray<FAssetData> OutAssetDatas;
+		
+		AssetRegistry.GetAssetsByClass(UBlueprint::StaticClass()->GetFName(), OutAssetDatas);
+
+		for (FAssetData& AssetData : OutAssetDatas)
+		{
+			UBlueprint* Bp = Cast<UBlueprint>(AssetData.GetAsset());
+
+			if (T* DOb = GetDefaultObject<T>(Bp, ParentClass))
+				OutDefaultObjects.Add(DOb);
+		}
+	}
+
+	template<typename T>
+	static void GetBlueprintDefaultObjects(UClass* ParentClass, TArray<T*>& OutDefaultObjects, TArray<FName>& OutObjectPaths)
+	{
+		IAssetRegistry& AssetRegistry = GetAssetRegistry();
+
+		TArray<FAssetData> OutAssetDatas;
+
+		AssetRegistry.GetAssetsByClass(UBlueprint::StaticClass()->GetFName(), OutAssetDatas);
+
+		for (FAssetData& AssetData : OutAssetDatas)
+		{
+			UBlueprint* Bp = Cast<UBlueprint>(AssetData.GetAsset());
+
+			if (T* DOb = GetDefaultObject<T>(Bp, ParentClass))
+			{
+				OutDefaultObjects.Add(DOb);
+				OutObjectPaths.Add(AssetData.ObjectPath);
+			}
+		}
+	}
+
+	template<typename T>
 	static void GetBlueprintDefaultObjects(const FString& Name, const ECsStringCompare& CompareType, TArray<T*>& OutDefaultObjects, UClass* InParentClass)
 	{
 		TArray<UBlueprint*> OutAssets;
@@ -326,6 +368,14 @@ public:
 	static T* GetDataMapping()
 	{
 		return Cast<T>(GetDataMapping());
+	}
+
+	static UCsEnumStructUserDefinedEnumMap* GetEnumStructUserDefinedEnumMap();
+
+	template<typename T>
+	static T* GetEnumStructUserDefinedEnumMap()
+	{
+		return Cast<T>(GetEnumStructUserDefinedEnumMap());
 	}
 
 	static void SyncBrowserToAsset(UObject* InObject);

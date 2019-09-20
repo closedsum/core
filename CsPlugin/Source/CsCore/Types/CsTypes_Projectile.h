@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Pool.h"
+#include "Managers/Pool/CsTypes_Pool.h"
 
 #include "CsTypes_Projectile.generated.h"
 #pragma once

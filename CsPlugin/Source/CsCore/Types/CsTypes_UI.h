@@ -2,7 +2,7 @@
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_Load.h"
 #include "Types/CsTypes_Math.h"
-#include "Types/CsTypes_Pool.h"
+#include "Managers/Pool/CsTypes_Pool.h"
 
 
 #include "Runtime/UMG/Public/Components/SlateWrapperTypes.h"

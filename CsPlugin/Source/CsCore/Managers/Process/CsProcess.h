@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Managers/CsPooledObjectOld.h"
-#include "Types/CsTypes_Pool.h"
+#include "Managers/Pool/CsTypes_Pool.h"
 #include "Types/CsTypes_String.h"
 #include "CsProcess.generated.h"
 

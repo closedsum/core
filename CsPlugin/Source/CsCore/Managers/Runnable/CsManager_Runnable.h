@@ -4,7 +4,7 @@
 #include "Runtime/Core/Public/Delegates/IDelegateInstance.h"
 #include "Managers/Runnable/CsRunnable_Delegate.h"
 #include "Types/CsTypes_Runnable.h"
-#include "Types/CsTypes_Pool.h"
+#include "Managers/Pool/CsTypes_Pool.h"
 #include "CsManager_Runnable.generated.h"
 
 #define CS_RUNNABLE_DELEGATE_POOL_SIZE 32		

@@ -1,8 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Pool.h"
+#include "Managers/Pool/CsTypes_Pool.h"
 
 // PoolTransaction
-CS_DEFINE_ENUM_MAP_BODY(EMCsPoolTransaction)
+#pragma region
 
 namespace NCsPoolTransaction
 {
@@ -24,8 +24,10 @@ namespace NCsPoolTransaction
 	}
 }
 
+#pragma endregion PoolTransaction
+
 // PoolTransactionOrder
-CS_DEFINE_ENUM_MAP_BODY(EMCsPoolTransactionOrder)
+#pragma region
 
 namespace NCsPoolTransactionOrder
 {
@@ -39,17 +41,12 @@ namespace NCsPoolTransactionOrder
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsPoolTransactionOrder_MAX;
 }
 
+#pragma endregion PoolTransactionOrder
+
 // PoolObjectState
-EMCsPoolObjectState* EMCsPoolObjectState::Instance;
+#pragma region
 
-EMCsPoolObjectState& EMCsPoolObjectState::Get()
-{
-	if (!Instance)
-		Instance = new EMCsPoolObjectState();
-	return *Instance;
-}
-
-namespace ECsPooledObjectState
+namespace NCsPooledObjectState
 {
 	namespace Ref
 	{
@@ -59,3 +56,5 @@ namespace ECsPooledObjectState
 		CSCORE_API const Type ECsPooledObjectState_MAX = EMCsPoolObjectState::Get().Add(Type::ECsPooledObjectState_MAX, TEXT("ECsPooledObjectState_MAX"), TEXT("MAX"));
 	}
 }
+
+#pragma endregion PoolObjectState

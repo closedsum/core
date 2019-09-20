@@ -23,7 +23,7 @@ enum class ECsPoolTransaction : uint8
 
 struct CSCORE_API EMCsPoolTransaction : public TCsEnumMap<ECsPoolTransaction>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsPoolTransaction)
+	CS_ENUM_MAP_BODY(EMCsPoolTransaction, ECsPoolTransaction)
 };
 
 namespace NCsPoolTransaction
@@ -72,7 +72,7 @@ enum class ECsPoolTransactionOrder : uint8
 
 struct CSCORE_API EMCsPoolTransactionOrder : public TCsEnumMap<ECsPoolTransactionOrder>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsPoolTransactionOrder)
+	CS_ENUM_MAP_BODY(EMCsPoolTransactionOrder, ECsPoolTransactionOrder)
 };
 
 namespace NCsPoolTransactionOrder
@@ -90,36 +90,23 @@ namespace NCsPoolTransactionOrder
 }
 
 UENUM(BlueprintType)
-namespace ECsPooledObjectState
+enum class ECsPooledObjectState : uint8
 {
-	enum Type
-	{
-		WarmUp						UMETA(DisplayName = "Warm Up"),
-		Active						UMETA(DisplayName = "Active"),
-		Inactive					UMETA(DisplayName = "Inactive"),
-		ECsPooledObjectState_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsPooledObjectState::Type TCsPooledObjectState;
-
-struct CSCORE_API EMCsPoolObjectState : public TCsEnumMap<ECsPooledObjectState::Type>
-{
-protected:
-	EMCsPoolObjectState() {}
-	EMCsPoolObjectState(const EMCsPoolObjectState &) = delete;
-	EMCsPoolObjectState(EMCsPoolObjectState &&) = delete;
-public:
-	~EMCsPoolObjectState() {}
-private:
-	static EMCsPoolObjectState* Instance;
-
-public:
-	static EMCsPoolObjectState& Get();
+	WarmUp						UMETA(DisplayName = "Warm Up"),
+	Active						UMETA(DisplayName = "Active"),
+	Inactive					UMETA(DisplayName = "Inactive"),
+	ECsPooledObjectState_MAX	UMETA(Hidden),
 };
 
-namespace ECsPooledObjectState
+struct CSCORE_API EMCsPoolObjectState : public TCsEnumMap<ECsPooledObjectState>
 {
+	CS_ENUM_MAP_BODY(EMCsPoolObjectState, ECsPooledObjectState)
+};
+
+namespace NCsPooledObjectState
+{
+	typedef ECsPooledObjectState Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type WarmUp;
@@ -143,7 +130,7 @@ public:
 	bool bAllocated;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Cache")
-	TEnumAsByte<ECsPooledObjectState::Type> State;
+	ECsPooledObjectState State;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<UObject> Instigator;

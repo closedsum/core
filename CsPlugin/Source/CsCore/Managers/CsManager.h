@@ -2,7 +2,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "Types/CsTypes_Pool.h"
+#include "Managers/Pool/CsTypes_Pool.h"
 #include "CsCVars.h"
 #include "CsManager.generated.h"
 

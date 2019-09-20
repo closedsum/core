@@ -2,7 +2,7 @@
 #pragma once
 #include "Pawn/CsPawn.h"
 #include "Types/CsTypes_AI.h"
-#include "Types/CsTypes_Pool.h"
+#include "Managers/Pool/CsTypes_Pool.h"
 #include "Types/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Trace.h"
 #include "Managers/Input/CsTypes_Input.h"

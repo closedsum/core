@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/CsTypes_Pool.h"
-
+#include "Types/CsTypes_Load.h"
 #include "CsTypes_Interactive.generated.h"
 #pragma once
 

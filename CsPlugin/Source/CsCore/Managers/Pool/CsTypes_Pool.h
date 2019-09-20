@@ -1,15 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_Primitive.h"
-#include "Types/CsTypes_Load.h"
 
 #include "CsTypes_Pool.generated.h"
 #pragma once
 
-// Pooled Objects
-#pragma region
-
-	// PoolTransaction
+// PoolTransaction
 #pragma region
 
 UENUM(BlueprintType)
@@ -116,6 +111,8 @@ namespace NCsPooledObjectState
 	}
 }
 
+class UObject;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsPooledObjectCache
 {
@@ -220,6 +217,7 @@ public:
 	}
 };
 
+class UObject;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsPooledObjectPayload
@@ -267,4 +265,69 @@ struct CSCORE_API FCsPooledObjectPayload
 	FORCEINLINE T* GetParent() { return Cast<T>(GetParent()); }
 };
 
-#pragma endregion Pooled Objects
+class UObject;
+struct ICsPooledObjectPayload;
+
+struct CSCORE_API ICsPooledObjectCache
+{
+	virtual const int32& GetIndex() const = 0;
+
+	virtual const bool& IsAllocated() const = 0;
+
+	virtual const ECsPooledObjectState& GetState() const = 0;
+
+	virtual UObject* GetInstigator() const = 0;
+
+	virtual UObject* GetOwner() const = 0;
+
+	virtual UObject* GetParent() const = 0;
+
+	virtual const float& GetWarmUpTime() const = 0;
+
+	virtual const bool& UseLifeTime() const = 0;
+
+	virtual const float& GetLifeTime() const = 0;
+
+	virtual const float& GetTime() const = 0;
+
+	virtual const float& GetRealTime() const = 0;
+
+	virtual const uint64& GetFrame() const = 0;
+
+	virtual const float& GetElapsedTime() const = 0;
+
+	virtual void Init(const int32& InIndex) = 0;
+
+	virtual void Allocate(ICsPooledObjectPayload* Payload, const float& InTime, const float& InRealTime, const uint64& InFrame) = 0;
+
+	virtual void Deallocate() = 0;
+
+	virtual void Reset() = 0;
+};
+
+class UObject;
+
+struct CSCORE_API ICsPooledObjectPayload
+{
+	virtual const bool& IsAllocated() const = 0;
+
+	virtual UObject* GetInstigator() const = 0;
+
+	virtual UObject* GetOwner() const = 0;
+
+	virtual UObject* GetParent() const = 0;
+
+	virtual void Allocate() = 0;
+
+	virtual void Reset() = 0;
+};
+
+class UWorld;
+
+class CSCORE_API ICsManager_PooledObjects
+{
+	virtual void Clear() = 0;
+	virtual void Shutdown() = 0;
+
+	virtual UWorld* GetCurrentWorld() = 0;
+};

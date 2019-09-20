@@ -2,13 +2,13 @@
 #pragma once
 
 #include "../CoreUObject/Public/UObject/Object.h"
-#include "CsPooledObject.generated.h"
+#include "CsPooledObjectOld.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableDynEvent_CsPooledObject_OnCreatePool);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableDynEvent_CsPooledObject_DeAllocate);
 
 UCLASS()
-class CSCORE_API UCsPooledObject : public UObject
+class CSCORE_API UCsPooledObjectOld : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
@@ -27,14 +27,3 @@ class CSCORE_API UCsPooledObject : public UObject
 	UPROPERTY(BlueprintAssignable, Category = "Pooled Object")
 	FBindableDynEvent_CsPooledObject_DeAllocate DeAllocate_ScriptEvent;
 };
-
-/*
-class CSCORE_API ICsPooledObject
-{
-	virtual void OnCreatePool() = 0;
-
-	virtual void Allocate() = 0;
-
-	virtual void DeAllocate() = 0;
-};
-*/

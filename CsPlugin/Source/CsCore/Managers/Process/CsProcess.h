@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "Managers/CsPooledObject.h"
+#include "Managers/CsPooledObjectOld.h"
 #include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_String.h"
 #include "CsProcess.generated.h"
@@ -377,7 +377,7 @@ struct FCsProcessCache : public FCsPooledObjectCache
 };
 
 UCLASS()
-class CSCORE_API UCsProcess : public UCsPooledObject
+class CSCORE_API UCsProcess : public UCsPooledObjectOld
 {
 	GENERATED_UCLASS_BODY()
 

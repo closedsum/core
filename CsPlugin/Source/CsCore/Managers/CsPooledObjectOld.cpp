@@ -1,12 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/CsPooledObject.h"
+#include "Managers/CsPooledObjectOld.h"
 #include "CsCore.h"
 
-UCsPooledObject::UCsPooledObject(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsPooledObjectOld::UCsPooledObjectOld(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
 
-void UCsPooledObject::OnCreatePool()
+void UCsPooledObjectOld::OnCreatePool()
 {
 	OnCreatePool_Event.Broadcast();
 #if WITH_EDITOR
@@ -14,7 +14,7 @@ void UCsPooledObject::OnCreatePool()
 #endif // #if WITH_EDITOR
 }
 
-void UCsPooledObject::DeAllocate()
+void UCsPooledObjectOld::DeAllocate()
 {
 	DeAllocate_Event.Broadcast();
 #if WITH_EDITOR

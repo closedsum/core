@@ -2,7 +2,7 @@
 #pragma once
 #include "Data/CsData.h"
 #include "Types/CsTypes.h"
-#include "Types/CsTypes_UI.h"
+#include "UI/CsTypes_UI.h"
 #include "CsData_UI_Common.generated.h"
 
 /* Current Order of Categories

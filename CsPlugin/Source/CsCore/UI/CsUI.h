@@ -3,7 +3,7 @@
 #include "GameFramework/HUD.h"
 #include "Runtime/UMG/Public/Components/SlateWrapperTypes.h"
 #include "Types/CsTypes.h" 
-#include "Types/CsTypes_UI.h"
+#include "UI/CsTypes_UI.h"
 #include "Managers/Input/CsTypes_Input.h"
 #include "CsUI.generated.h"
 

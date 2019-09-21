@@ -2,7 +2,7 @@
 
 #include "Components/CsStaticMeshComponent.h"
 #include "Types/CsTypes.h"
-#include "Types/CsTypes_UI.h"
+#include "UI/CsTypes_UI.h"
 #include "CsButtonComponent_StaticMesh.generated.h"
 
 // Interaction

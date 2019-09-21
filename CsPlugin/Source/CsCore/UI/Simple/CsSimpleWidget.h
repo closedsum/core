@@ -2,7 +2,7 @@
 #pragma once
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "Managers/Pool/CsTypes_Pool.h"
-#include "Types/CsTypes_UI.h"
+#include "UI/CsTypes_UI.h"
 #include "CsSimpleWidget.generated.h"
 
 UCLASS()

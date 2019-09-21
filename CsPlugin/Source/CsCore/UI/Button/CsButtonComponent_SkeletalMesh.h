@@ -2,7 +2,7 @@
 
 #include "Components/CsSkeletalMeshComponent.h"
 #include "Types/CsTypes.h"
-#include "Types/CsTypes_UI.h"
+#include "UI/CsTypes_UI.h"
 #include "CsButtonComponent_SkeletalMesh.generated.h"
 
 // Interaction

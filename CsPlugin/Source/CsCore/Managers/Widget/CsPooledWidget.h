@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UI/Simple/CsSimpleWidget.h"
-#include "Types/CsTypes_UI.h"
+#include "UI/CsTypes_UI.h"
 #include "CsPooledWidget.generated.h"
 
 USTRUCT(BlueprintType)

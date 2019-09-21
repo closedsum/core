@@ -292,8 +292,8 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 			if (Info.HasEventChanged())
 			{
 #if !UE_BUILD_SHIPPING
-				if (FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRaw) ||
-					FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRawAction))
+				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRaw) ||
+					FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRawAction))
 				{
 					const float& Time			= CurrentInputFrame.Time;
 					const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
@@ -308,8 +308,8 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 #if !UE_BUILD_SHIPPING
 			else
 			{
-				if (FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRaw) ||
-					FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRawAction))
+				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRaw) ||
+					FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRawAction))
 				{
 					const float& Time			= CurrentInputFrame.Time;
 					const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
@@ -329,8 +329,8 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 			const float& Value = KeyState->Value.X;
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRaw) ||
-				FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputRawAxis))
+			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRaw) ||
+				FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRawAxis))
 			{
 				const float& Time			= CurrentInputFrame.Time;
 				const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
@@ -364,9 +364,9 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		const FCsInputInfo& Info	  = InputActionEventInfos[Action.Value];
 		const ECsInputType& Type	  = Info.Type;
 
-		const bool ShowLog = FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInput) ||
-							(Type == ECsInputType::Action && FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputAction)) ||
-							(Type == ECsInputType::Axis && FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputAxis));
+		const bool ShowLog = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInput) ||
+							(Type == ECsInputType::Action && FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAction)) ||
+							(Type == ECsInputType::Axis && FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAxis));
 
 		if (ShowLog)
 		{
@@ -421,7 +421,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 			CurrentValidGameEventInfos.Add(Info);
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(ECsCVarLog::LogInputGameEvent))
+			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputGameEvent))
 			{
 				const float& Time = CurrentInputFrame.Time;
 

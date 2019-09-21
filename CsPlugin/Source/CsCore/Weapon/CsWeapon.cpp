@@ -13,7 +13,7 @@
 // Managers
 #include "Managers/FX/CsManager_FX.h"
 #include "Managers/Projectile/CsManager_Projectile.h"
-#include "Managers/Projectile/CsProjectile.h"
+#include "Managers/Projectile/CsProjectileBase.h"
 #include "Managers/Damage/CsManager_Damage.h"
 #include "Managers/Trace/CsManager_Trace.h"
 #include "Managers/Inventory/CsManager_Inventory.h"
@@ -1875,7 +1875,7 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectile
 
 	Payload->Set(FirePayload);
 
-	ACsProjectile* RealProjectile = Manager_Projectile->Fire(Data_Projectile->GetProjectileType(), Payload);
+	ACsProjectileBase* RealProjectile = Manager_Projectile->Fire(Data_Projectile->GetProjectileType(), Payload);
 
 	const bool IsLocalPawn = UCsCommon::IsLocalPawn(GetWorld(), GetMyPawn());
 
@@ -1902,7 +1902,7 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectile
 
 		FakePayload->Set(FakeFirePayload);
 
-		ACsProjectile* FakeProjectile = Manager_Projectile->Fire(Data_Projectile->GetProjectileType(), FakePayload);
+		ACsProjectileBase* FakeProjectile = Manager_Projectile->Fire(Data_Projectile->GetProjectileType(), FakePayload);
 
 		FakeFirePayload->Reset();
 
@@ -1919,7 +1919,7 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectile
 
 void ACsWeapon::FireProjectile_Internal(const FECsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload) {}
 
-void ACsWeapon::DrawFireProjectile(class ACsProjectile* Projectile, const FVector &Start, const FVector &End)
+void ACsWeapon::DrawFireProjectile(class ACsProjectileBase* Projectile, const FVector &Start, const FVector &End)
 {
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload     = Scheduler->AllocatePayload();
@@ -1945,7 +1945,7 @@ void ACsWeapon::DrawFireProjectile(class ACsProjectile* Projectile, const FVecto
 
 CS_COROUTINE(ACsWeapon, DrawFireProjectile_Internal)
 {
-	ACsProjectile* p		 = Cast<ACsProjectile>(r->GetRObject());
+	ACsProjectileBase* p	 = Cast<ACsProjectileBase>(r->GetRObject());
 	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = p->GetWorld();
 

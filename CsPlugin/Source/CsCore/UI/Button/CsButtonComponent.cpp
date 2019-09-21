@@ -97,9 +97,9 @@ void UCsButtonComponent::RemoveInstigator(const ECsButtonState &InState, UObject
 
 void UCsButtonComponent::ClearInstigators()
 {
-	for (int32 I = 0; I < ECS_BUTTON_STATE_MAX; ++I)
+	for (const ECsButtonState& Enum : EMCsButtonState::Get())
 	{
-		TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find((ECsButtonState)I);
+		TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find(Enum);
 
 		if (!Objects)
 			continue;

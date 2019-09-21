@@ -58,3 +58,20 @@ namespace NCsPooledObjectState
 }
 
 #pragma endregion PoolObjectState
+
+// PooledObjectConstruction
+#pragma region
+
+namespace NCsPooledObjectConstruction
+{
+	namespace Ref
+	{
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPooledObjectConstruction, Object);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPooledObjectConstruction, Actor);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPooledObjectConstruction, ECsPooledObjectConstruction_MAX, "MAX");
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsPooledObjectConstruction_MAX;
+}
+
+#pragma endregion PooledObjectConstruction

@@ -70,9 +70,9 @@ void UCsButtonComponent_SkeletalMesh::RemoveInstigator(const ECsButtonState &InS
 
 void UCsButtonComponent_SkeletalMesh::ClearInstigators()
 {
-	for (int32 I = 0; I < ECS_BUTTON_STATE_MAX; ++I)
+	for (const ECsButtonState& Enum : EMCsButtonState::Get())
 	{
-		TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find((ECsButtonState)I);
+		TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find(Enum);
 
 		if (!Objects)
 			continue;

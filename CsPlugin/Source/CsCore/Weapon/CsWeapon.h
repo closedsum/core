@@ -800,7 +800,7 @@ public:
 	virtual void FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectileFirePayload* FirePayload);
 	virtual void FireProjectile_Internal(const FECsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload);
 
-	void DrawFireProjectile(class ACsProjectile* Projectile, const FVector &Start, const FVector &End);
+	void DrawFireProjectile(class ACsProjectileBase* Projectile, const FVector &Start, const FVector &End);
 	static char DrawFireProjectile_Internal(struct FCsRoutine* r);
 
 	// Hitscan

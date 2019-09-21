@@ -111,6 +111,38 @@ namespace NCsPooledObjectState
 	}
 }
 
+// PooledObjectConstruction
+#pragma region
+
+UENUM(BlueprintType)
+enum class ECsPooledObjectConstruction : uint8
+{
+	Object							UMETA(DisplayName = "Object"),
+	Actor							UMETA(DisplayName = "Actor"),
+	ECsPooledObjectConstruction_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsPooledObjectConstruction final : public TCsEnumMap<ECsPooledObjectConstruction>
+{
+	CS_ENUM_MAP_BODY(EMCsPooledObjectConstruction, ECsPooledObjectConstruction)
+};
+
+namespace NCsPooledObjectConstruction
+{
+	typedef ECsPooledObjectConstruction Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Object;
+		extern CSCORE_API const Type Actor;
+		extern CSCORE_API const Type ECsPooledObjectConstruction_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+}
+
+#pragma endregion PooledObjectContruction
+
 class UObject;
 
 USTRUCT(BlueprintType)

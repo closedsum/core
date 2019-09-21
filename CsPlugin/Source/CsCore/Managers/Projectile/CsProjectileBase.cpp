@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Projectile/CsProjectile.h"
+#include "Managers/Projectile/CsProjectileBase.h"
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Common/CsCommon.h"
@@ -21,10 +21,10 @@
 
 #define CS_COLLISION_PROJECTILE	ECC_GameTraceChannel2
 
-ACsProjectile::ACsProjectile(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+ACsProjectileBase::ACsProjectileBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	Warning_FellOutOfWorld	   = TEXT("ACsProjectile::FellOutOfWorld");
-	Warning_OutsideWorldBounds = TEXT("ACsProjectile::OutsideWorldBounds");
+	Warning_FellOutOfWorld	   = TEXT("ACsProjectileBase::FellOutOfWorld");
+	Warning_OutsideWorldBounds = TEXT("ACsProjectileBase::OutsideWorldBounds");
 
 	// Collision Component
 	CollisionComponent = ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("CollisionComponent"));
@@ -80,11 +80,11 @@ ACsProjectile::ACsProjectile(const FObjectInitializer& ObjectInitializer) : Supe
 	InitialLifeSpan = 0.0f;
 }
 
-void ACsProjectile::PostInitializeComponents()
+void ACsProjectileBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	CollisionComponent->OnComponentHit.AddDynamic(this, &ACsProjectile::OnHitCallback);
+	CollisionComponent->OnComponentHit.AddDynamic(this, &ACsProjectileBase::OnHitCallback);
 	CollisionComponent->SetComponentTickEnabled(false);
 	MovementComponent->SetComponentTickEnabled(false);
 	MeshComponent->SetComponentTickEnabled(false);
@@ -92,7 +92,7 @@ void ACsProjectile::PostInitializeComponents()
 	SetActorTickEnabled(false);
 }
 
-void ACsProjectile::Tick(float DeltaSeconds)
+void ACsProjectileBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
@@ -103,7 +103,7 @@ void ACsProjectile::Tick(float DeltaSeconds)
 	OnTick_HandleMovementFunction(DeltaSeconds);
 }
 
-void ACsProjectile::OnTick_HandleCVars(const float &DeltaSeconds)
+void ACsProjectileBase::OnTick_HandleCVars(const float &DeltaSeconds)
 {
 	if (CsCVarDrawProjectileCollision->GetInt() == CS_CVAR_DRAW)
 	{
@@ -117,7 +117,7 @@ void ACsProjectile::OnTick_HandleCVars(const float &DeltaSeconds)
 	}
 }
 
-void ACsProjectile::OnTick_HandleMovementFunction(const float &DeltaSeconds)
+void ACsProjectileBase::OnTick_HandleMovementFunction(const float &DeltaSeconds)
 {
 	ACsData_Projectile* Data				 = Cache.GetData();
 	const TCsProjectileMovement MovementType = Data->GetMovementType();
@@ -134,7 +134,7 @@ void ACsProjectile::OnTick_HandleMovementFunction(const float &DeltaSeconds)
 	DrawPath(DeltaSeconds);
 }
 
-void ACsProjectile::DrawPath(const float &DeltaSeconds)
+void ACsProjectileBase::DrawPath(const float &DeltaSeconds)
 {
 	// Local Player
 	if (CsCVarDrawLocalPlayerProjectilePath->GetInt() == CS_CVAR_DRAW)
@@ -163,7 +163,7 @@ void ACsProjectile::DrawPath(const float &DeltaSeconds)
 	}
 }
 
-void ACsProjectile::DrawPath_Internal(const float &DeltaSeconds, const float &Interval, const uint8 &SegmentsPerInterval, const float &Thickness)
+void ACsProjectileBase::DrawPath_Internal(const float &DeltaSeconds, const float &Interval, const uint8 &SegmentsPerInterval, const float &Thickness)
 {
 	const float DeltaTime	  = Interval / (float)SegmentsPerInterval;
 	const float RemainingTime = Cache.LifeTime - Cache.ElapsedTime;
@@ -182,12 +182,12 @@ void ACsProjectile::DrawPath_Internal(const float &DeltaSeconds, const float &In
 	}
 }
 
-FVector ACsProjectile::EvaluateMovementFunction(const float &Time)
+FVector ACsProjectileBase::EvaluateMovementFunction(const float &Time)
 {
 	return Cache.GetData()->EvaluateMovementFunction(Time, Cache.Location, Cache.Transform);
 }
 
-void ACsProjectile::Init(const int32 &Index, const FECsProjectileType& InType)
+void ACsProjectileBase::Init(const int32 &Index, const FECsProjectileType& InType)
 {
 	PoolIndex = Index;
 	Type	  = InType;
@@ -195,7 +195,7 @@ void ACsProjectile::Init(const int32 &Index, const FECsProjectileType& InType)
 	Cache.Set(Index, this);
 }
 
-void ACsProjectile::Allocate(FCsProjectilePayload* Payload)
+void ACsProjectileBase::Allocate(FCsProjectilePayload* Payload)
 {
 	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
 
@@ -203,14 +203,14 @@ void ACsProjectile::Allocate(FCsProjectilePayload* Payload)
 
 }
 
-void ACsProjectile::Allocate_Internal(FCsProjectilePayload* Payload)
+void ACsProjectileBase::Allocate_Internal(FCsProjectilePayload* Payload)
 {
 #if WITH_EDITOR 
 	if (Override_Allocate_Internal_ScriptEvent.IsBound())
 	{
 		if (CsCVarLogOverrideFunctions->GetInt() == CS_CVAR_DISPLAY)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsProjectile::Allocate_Internal (%s): Using Override Function."), *GetName());
+			UE_LOG(LogCs, Warning, TEXT("ACsProjectileBase::Allocate_Internal (%s): Using Override Function."), *GetName());
 		}
 		Override_Allocate_Internal_ScriptEvent.Broadcast(PoolIndex);
 		return;
@@ -401,7 +401,7 @@ void ACsProjectile::Allocate_Internal(FCsProjectilePayload* Payload)
 	}
 }
 
-void ACsProjectile::DeAllocate()
+void ACsProjectileBase::DeAllocate()
 {
 	Super::DeAllocate();
 
@@ -447,29 +447,29 @@ void ACsProjectile::DeAllocate()
 	SetActorHiddenInGame(true);
 	SetActorTickEnabled(false);
 
-	if (ACsProjectile* Projectile = GetFakeProjectile())
+	if (ACsProjectileBase* Projectile = GetFakeProjectile())
 		Projectile->DeAllocate();
 	Cache.DeAllocate();
 }
 
-ACsProjectile* ACsProjectile::GetFakeProjectile()
+ACsProjectileBase* ACsProjectileBase::GetFakeProjectile()
 {
 	return FakeProjectile.IsValid() ? FakeProjectile.Get() : nullptr;
 }
 
-void ACsProjectile::AddIgnoreActor(AActor* InActor)
+void ACsProjectileBase::AddIgnoreActor(AActor* InActor)
 {
 	IgnoreActors.Add(InActor);
 }
 
-AActor* ACsProjectile::GetIgnoreActor(const int32 &Index)
+AActor* ACsProjectileBase::GetIgnoreActor(const int32 &Index)
 {
 	if (Index >= IgnoreActors.Num())
 		return nullptr;
 	return IgnoreActors[Index].IsValid() ? IgnoreActors[Index].Get() : nullptr;
 }
 
-void ACsProjectile::OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult)
+void ACsProjectileBase::OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult)
 {
 	if (!Cache.bAllocated)
 		return;
@@ -531,9 +531,9 @@ void ACsProjectile::OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherAct
 // Script
 #pragma region
 
-UObject* ACsProjectile::Cache_GetOwner() { return Cache.GetOwner(); }
-UObject* ACsProjectile::Cache_GetInstigator() { return Cache.GetInstigator(); }
-ACsProjectile* ACsProjectile::Cache_GetProjectile() { return Cache.GetProjectile(); }
-ACsData_Projectile* ACsProjectile::Cache_GetData() { return Cache.GetData(); }
+UObject* ACsProjectileBase::Cache_GetOwner() { return Cache.GetOwner(); }
+UObject* ACsProjectileBase::Cache_GetInstigator() { return Cache.GetInstigator(); }
+ACsProjectileBase* ACsProjectileBase::Cache_GetProjectile() { return Cache.GetProjectile(); }
+ACsData_Projectile* ACsProjectileBase::Cache_GetData() { return Cache.GetData(); }
 
 #pragma endregion Script

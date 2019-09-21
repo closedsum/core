@@ -70,9 +70,9 @@ void UCsButtonComponent_StaticMesh::RemoveInstigator(const ECsButtonState &InSta
 
 void UCsButtonComponent_StaticMesh::ClearInstigators()
 {
-	for (int32 I = 0; I < ECS_BUTTON_STATE_MAX; ++I)
+	for (const ECsButtonState& Enum : EMCsButtonState::Get())
 	{
-		TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find((ECsButtonState)I);
+		TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find(Enum);
 
 		if (!Objects)
 			continue;

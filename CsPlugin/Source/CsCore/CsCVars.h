@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Engine.h"
+#include "Types/CsTypes_Primitive.h"
+#include "CsCVars.generated.h"
 
 #define CS_CVAR_SHOW_LOG 1
 #define CS_CVAR_HIDE_LOG 0
@@ -9,6 +11,8 @@
 #define CS_CVAR_SHOW 1
 #define CS_CVAR_HIDE 0
 #define CS_CVAR_VALID 1
+#define CS_CVAR_ENABLED 1
+#define CS_CVAR_DISABLED 0
 
 // Loading
 #pragma region
@@ -357,196 +361,507 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerSenseSeesActorByDo
 
 #pragma endregion Sense
 
+struct ICsAutoConsoleVariable
+{
+	virtual void UpdateIsDirty() = 0;
+	virtual void Clear() = 0;
+	virtual bool HasChanged() = 0;
+	virtual void Resolve() = 0;
+};
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FCsAutoConsoleVariable_int32_OnChange, const int32&);
+
+template<typename ValueType>
+struct TCsAutoConsoleVariable : public ICsAutoConsoleVariable
+{
+protected:
+	TAutoConsoleVariable<ValueType>* CVar;
+	ValueType(IConsoleVariable::*GetValue)() const;
+	void(IConsoleVariable::*SetValue)(ValueType, EConsoleVariableFlags);
+public:
+	ValueType Value;
+	ValueType Last_Value;
+protected:
+	bool bDirty;
+public:
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
+
+public:
+	TCsAutoConsoleVariable()
+	{
+		bDirty = false;
+		OnChange_Event.Clear();
+	}
+	virtual ~TCsAutoConsoleVariable() {}
+
+	void Init(TAutoConsoleVariable<ValueType>* InCVar)
+	{
+		CVar = InCVar;
+
+		IConsoleVariable* Var = (*CVar).AsVariable();
+		Value				  = ((*Var).*(GetValue))();
+		Last_Value			  = Value;
+	}
+
+	FORCEINLINE ValueType Get()
+	{
+		IConsoleVariable* Var = (*CVar).AsVariable();
+		return ((*Var).*(GetValue))();
+	}
+
+	void Set(const ValueType& InValue, const EConsoleVariableFlags& SetBy = ECVF_SetByCode)
+	{
+		IConsoleVariable* Var = (*CVar).AsVariable();
+		((*Var).*(SetValue))(InValue, SetBy);
+
+		Value = InValue;
+
+		UpdateIsDirty();
+	}
+
+protected:
+
+	FORCEINLINE void UpdateIsDirty()
+	{
+		bDirty	   = Value != Last_Value;
+		Last_Value = Value;
+
+		if (bDirty)
+			OnChange_Event.Broadcast(Value);
+	}
+
+public:
+
+	FORCEINLINE void Clear()
+	{
+		bDirty = false;
+	}
+
+	FORCEINLINE bool HasChanged() { return bDirty; }
+
+	FORCEINLINE void Resolve()
+	{
+		UpdateIsDirty();
+		Clear();
+	}
+};
+
+struct TCsAutoConsoleVariable_int32 : public TCsAutoConsoleVariable<int32>
+{
+private:
+	typedef TCsAutoConsoleVariable<int32> Super;
+
+public:
+
+	TCsAutoConsoleVariable_int32() : Super()
+	{
+		GetValue = &IConsoleVariable::GetInt;
+		SetValue = &IConsoleVariable::Set;
+
+		Value = 0;
+		Last_Value = 0;
+	}
+	~TCsAutoConsoleVariable_int32() {}
+};
+
+struct CSCORE_API ICsCVarMap
+{
+	virtual void Resolve() = 0;
+	virtual void Reset() = 0;
+	virtual void ResetDirty() = 0;
+};
+
+#define CS_ADD_TO_CVAR_MAP(CVarMap, EnumStruct, CVar) const Type __##EnumStruct = CVarMap::Get().Add(EnumStruct, &CVar);
+
 // CVarLog
 #pragma region
 
-UENUM(BlueprintType)
-enum class ECsCVarLog : uint8
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsCVarLog : public FECsEnum_uint8
 {
-	// Loading
-	LogManagerLoading								UMETA(DisplayName = "Log Manager Loading"),
+	GENERATED_USTRUCT_BODY()
 
-	// Input
-	LogInputRaw										UMETA(DisplayName = "Log Input Raw"),
-	LogInputRawAction								UMETA(DisplayName = "Log Input Raw Action"),
-	LogInputRawAxis									UMETA(DisplayName = "Log Input Raw Axis"),
-
-	LogInput										UMETA(DisplayName = "Log Input"),
-	LogInputAction									UMETA(DisplayName = "Log Input Action"),
-	LogInputAxis									UMETA(DisplayName = "Log Input Axis"),
-	LogInputTrigger									UMETA(DisplayName = "Log Input Trigger"),
-	LogInputLocation								UMETA(DisplayName = "Log Input Location"),
-	LogInputRotation								UMETA(DisplayName = "Log Input Rotation"),
-
-	LogInputGameEvent								UMETA(DisplayName = "Log Input Game Event"),
-
-	// OnBoard
-	LogPlayerStateOnBoard							UMETA(DisplayName = "Log PlayerState OnBoard"),
-
-	// GameState
-	LogGameStateOnBoard								UMETA(DisplayName = "Log GameState OnBoard"),
-
-	// Json
-	LogJsonDataFilenames							UMETA(DisplayName = "Log Json Data Filenames"),
-
-	// Interactive Actor
-	LogInteractiveActorPhysicsStateChange			UMETA(DisplayName = "Log Interactive Actor Physics State Change"),
-	LogManagerInteractiveActorTransactions			UMETA(DisplayName = "Log Manager Interactive Actor Transactions"),
-
-	// Widget Actor
-	LogManagerWidgetActorTransactions				UMETA(DisplayName = "Log Manager Widget Actor Transactions"),
-
-	// AI
-	LogManagerAITransactions						UMETA(DisplayName = "Log Manager AI Transactions"),
-
-		// Interactive AI Pawn
-	LogInteractiveAIPawnPhysicsStateChange			UMETA(DisplayName = "Log Interactive AI Pawn Physics State Change"),
-
-		// Behavior Tree
-	LogAIBTTasks									UMETA(DisplayName = "Log AI BT Tasks"),
-
-	// Script
-	LogOverrideFunctions							UMETA(DisplayName = "Log Override Functions"),
-
-	// Sound
-	LogManagerSoundTransactions						UMETA(DisplayName = "Log Manager Sound Transactions"),
-
-	// FX
-	LogManagerFxTransactions						UMETA(DisplayName = "Log Manager FX Transactions"),
-
-	// Projectile
-	LogManagerProjectileTransactions				UMETA(DisplayName = "Log Manager Projectile Transactions"),
-
-	// Coroutine
-	LogCoroutineTransactions						UMETA(DisplayName = "Log Coroutine Transactions"),
-	LogCoroutineRunning								UMETA(DisplayName = "Log Coroutine Running"),
-
-	// UI
-
-		// Widget
-	LogManagerWidgetTransactions					UMETA(DisplayName = "Log Manager Widget Transactions"),
-
-	// Item
-	LogManagerItemTransactions						UMETA(DisplayName = "Log Manager Item Transactions"),
-	LogManagerItemActionGetFail						UMETA(DisplayName = "Log Manager Item Action Get Fail"),
-
-	// Inventory
-	LogManagerInventoryTransactions					UMETA(DisplayName = "Log Manager Inventory Transactions"),
-
-	// Crafting
-	LogManagerCraftingTransactions					UMETA(DisplayName = "Log Manager Crafting Transactions"),
-
-	// Collision
-
-		// Trace
-	LogManagerTraceTransactions						UMETA(DisplayName = "Log Manager Trace Transactions"),
-
-	// Runnable
-	LogManagerRunnableTransactions					UMETA(DisplayName = "Log Manager Runnable Transactions"),
-
-	// Process
-	LogManagerProcessTransactions					UMETA(DisplayName = "Log Manager Process Transactions"),
-	LogProcessIO									UMETA(DisplayName = "Log Process IO"),
-
-	// Blockchain
-	LogBlockchainIO									UMETA(DisplayName = "Log Blockchain IO"),
-	LogBlockchainIORunning							UMETA(DisplayName = "Log Blockchain IO Running"),
-	LogBlockchainIOConsole							UMETA(DisplayName = "Log Blockchain IO Console"),
-		// Process
-	LogBlockchainProcessStart						UMETA(DisplayName = "Log Blockchain Process Start"),
-		// Command
-	LogBlockchainCommandCompleted					UMETA(DisplayName = "Log Blockchain Command Completed"),
-		// Account
-	LogBlockchainAccountCreated						UMETA(DisplayName = "Log Blockchain Account Created"),
-
-	// Ethereum
-	LogBlockchainAccountLoad						UMETA(DisplayName = "Log Blockchain Account Load"),
-	LogBlockchainAccountSetup						UMETA(DisplayName = "Log Blockchain Account Setup"),
-	LogBlockchainBalance							UMETA(DisplayName = "Log Blockchain Balance"),
-
-	// Sense
-	LogManagerSenseSeesActorByDot					UMETA(DisplayName = "Log Manager Sense Sees Actor by Dot"),
-
-	ECsCVarLog_MAX									UMETA(Hidden),
+	CS_ENUM_UINT8_BODY(FECsCVarLog)
 };
 
-struct CSCORE_API EMCsCVarLog : public TCsEnumMap<ECsCVarLog>
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsCVarLog)
+
+struct CSCORE_API EMCsCVarLog final : public TCsEnumStructMap<FECsCVarLog, uint8>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsCVarLog)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsCVarLog, FECsCVarLog, uint8)
 };
 
 namespace NCsCVarLog
 {
-	namespace Ref
-	{
-		typedef ECsCVarLog Type;
+	typedef FECsCVarLog Type;
 
-		//extern CSCORE_API const Type FirstPressed;
-		//extern CSCORE_API const Type ECsInputEvent_MAX;
-	}
+	// Loading
+	extern CSCORE_API const Type LogManagerLoading;
+	// Input
+	extern CSCORE_API const Type LogInputRaw;
+	extern CSCORE_API const Type LogInputRawAction;
+	extern CSCORE_API const Type LogInputRawAxis;
+
+	extern CSCORE_API const Type LogInput;
+	extern CSCORE_API const Type LogInputAction;
+	extern CSCORE_API const Type LogInputAxis;
+	extern CSCORE_API const Type LogInputTrigger;
+	extern CSCORE_API const Type LogInputLocation;
+	extern CSCORE_API const Type LogInputRotation;
+
+	extern CSCORE_API const Type LogInputGameEvent;
+	// OnBoard
+	extern CSCORE_API const Type LogPlayerStateOnBoard;
+	// GameState
+	extern CSCORE_API const Type LogGameStateOnBoard;
+	// Json
+	extern CSCORE_API const Type LogJsonDataFilenames;
+	// Interactive Actor
+	extern CSCORE_API const Type LogInteractiveActorPhysicsStateChange;
+	extern CSCORE_API const Type LogManagerInteractiveActorTransactions;
+	// Widget Actor
+	extern CSCORE_API const Type LogManagerWidgetActorTransactions;
+	// AI
+	extern CSCORE_API const Type LogManagerAITransactions;
+	// Interactive AI Pawn
+	extern CSCORE_API const Type LogInteractiveAIPawnPhysicsStateChange;
+	// Behavior Tree
+	extern CSCORE_API const Type LogAIBTTasks;
+	// Script
+	extern CSCORE_API const Type LogOverrideFunctions;
+	// Sound
+	extern CSCORE_API const Type LogManagerSoundTransactions;
+	// FX
+	extern CSCORE_API const Type LogManagerFxTransactions;
+	// Projectile
+	extern CSCORE_API const Type LogManagerProjectileTransactions;
+	// Coroutine
+	extern CSCORE_API const Type LogCoroutineTransactions;
+	extern CSCORE_API const Type LogCoroutineRunning;
+	// UI
+
+		// Widget
+	extern CSCORE_API const Type LogManagerWidgetTransactions;
+	// Item
+	extern CSCORE_API const Type LogManagerItemTransactions;
+	extern CSCORE_API const Type LogManagerItemActionGetFail;
+	// Inventory
+	extern CSCORE_API const Type LogManagerInventoryTransactions;
+	// Crafting
+	extern CSCORE_API const Type LogManagerCraftingTransactions;
+	// Collision
+
+		// Trace
+	extern CSCORE_API const Type LogManagerTraceTransactions;
+	// Runnable
+	extern CSCORE_API const Type LogManagerRunnableTransactions;
+	// Process
+	extern CSCORE_API const Type LogManagerProcessTransactions;
+	extern CSCORE_API const Type LogProcessIO;
+	// Blockchain
+	extern CSCORE_API const Type LogBlockchainIO;
+	extern CSCORE_API const Type LogBlockchainIORunning;
+	extern CSCORE_API const Type LogBlockchainIOConsole;
+		// Process
+	extern CSCORE_API const Type LogBlockchainProcessStart;
+		// Command
+	extern CSCORE_API const Type LogBlockchainCommandCompleted;
+		// Account
+	extern CSCORE_API const Type LogBlockchainAccountCreated;
+		// Ethereum
+	extern CSCORE_API const Type LogBlockchainAccountLoad;
+	extern CSCORE_API const Type LogBlockchainAccountSetup;
+	extern CSCORE_API const Type LogBlockchainBalance;
+	// Sense
+	extern CSCORE_API const Type LogManagerSenseSeesActorByDot;
 }
 
 #pragma endregion CVarLog
 
-struct CSCORE_API FCsCVarLogMap
+// CVarLogMap
+#pragma region
+
+struct CSCORE_API FCsCVarLogMap : public ICsCVarMap
 {
 protected:
 	FCsCVarLogMap() {}
 	FCsCVarLogMap(const FCsCVarLogMap &) = delete;
 	FCsCVarLogMap(FCsCVarLogMap &&) = delete;
 public:
-	~FCsCVarLogMap() {}
+	virtual ~FCsCVarLogMap() {}
 private:
-	static FCsCVarLogMap* Instance;
-		
-	TMap<ECsCVarLog, TAutoConsoleVariable<int32>*> Map;
-	TMap<ECsCVarLog, int32> DefaultValues;
-	TMap<ECsCVarLog, bool> DirtyValues;
+	TMap<FECsCVarLog, TCsAutoConsoleVariable_int32> Map;
+	TMap<FECsCVarLog, int32> DefaultValues;
+	TMap<FECsCVarLog, bool> DirtyMap;
 
 public:
-	static FCsCVarLogMap& Get();
-
-private:
-	void Init();
+	static FCsCVarLogMap& Get()
+	{
+		static FCsCVarLogMap Instance;
+		return Instance;
+	}
 
 public:
 
+	FORCEINLINE const FECsCVarLog& Add(const FECsCVarLog& Log, TAutoConsoleVariable<int32>* CVar)
+	{
+		Map.Add(Log);
+		Map[Log].Init(CVar);
+		DefaultValues.Add(Log, GetValue(Log));
+		DirtyMap.Add(Log, false);
+		return Log;
+	}
+
+	FORCEINLINE int32 GetValue(const FECsCVarLog& Log)
+	{
+		return Map[Log].Get();
+	}
+
+	FORCEINLINE bool IsShowing(const FECsCVarLog& Log)
+	{
+		return Map[Log].Get() == CS_CVAR_SHOW_LOG;
+	}
+
+	FORCEINLINE bool IsHiding(const FECsCVarLog& Log)
+	{
+		return Map[Log].Get() == CS_CVAR_HIDE_LOG;
+	}
+
+	FORCEINLINE void Show(const FECsCVarLog& Log, bool MarkDirty = false)
+	{
+		Map[Log].Set(CS_CVAR_SHOW_LOG, ECVF_SetByConsole);
+
+		if (MarkDirty)
+			DirtyMap[Log] = true;
+	}
+
+	FORCEINLINE void Hide(const FECsCVarLog& Log, bool MarkDirty = false)
+	{
+		Map[Log].Set(CS_CVAR_HIDE_LOG, ECVF_SetByConsole);
+
+		if (MarkDirty)
+			DirtyMap[Log] = true;
+	}
+
+	void Resolve();
 	void Reset();
 	void ResetDirty();
-
-	FORCEINLINE int32 GetValue(const ECsCVarLog& Log)
-	{
-		return 0;
-	}
-
-	FORCEINLINE void SetValue(const ECsCVarLog& Log, const int32& Value)
-	{
-		(*Map[Log])->Set(Value, ECVF_SetByConsole);
-	}
-
-	FORCEINLINE bool IsShowing(const ECsCVarLog& Log)
-	{
-		return (*Map[Log])->GetInt() == CS_CVAR_SHOW_LOG;
-	}
-
-	FORCEINLINE bool IsHiding(const ECsCVarLog& Log)
-	{
-		return (*Map[Log])->GetInt() == CS_CVAR_HIDE_LOG;
-	}
-
-	FORCEINLINE void Show(const ECsCVarLog& Log, const bool& MarkDirty = false)
-	{
-		(*Map[Log])->Set(CS_CVAR_SHOW_LOG, ECVF_SetByConsole);
-
-		if (MarkDirty)
-			DirtyValues[Log] = true;
-	}
-
-	FORCEINLINE void Hide(const ECsCVarLog& Log, const bool& MarkDirty = false)
-	{
-		(*Map[Log])->Set(CS_CVAR_HIDE_LOG, ECVF_SetByConsole);
-
-		if (MarkDirty)
-			DirtyValues[Log] = true;
-	}
 };
+
+#pragma endregion CVarLogMap
+
+// CVarToggle
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsCVarToggle : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsCVarToggle)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsCVarToggle)
+
+struct CSCORE_API EMCsCVarToggle final : public TCsEnumStructMap<FECsCVarToggle, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsCVarToggle, FECsCVarToggle, uint8)
+};
+
+namespace NCsCVarToggle
+{
+	typedef FECsCVarToggle Type;
+
+	namespace Ref
+	{
+	}
+
+	namespace Map
+	{
+	}
+}
+
+#pragma endregion CVarToggle
+
+// CVarToggleMap
+#pragma region
+
+struct CSCORE_API FCsCVarToggleMap : public ICsCVarMap
+{
+protected:
+	FCsCVarToggleMap() {}
+	FCsCVarToggleMap(const FCsCVarToggleMap &) = delete;
+	FCsCVarToggleMap(FCsCVarToggleMap &&) = delete;
+public:
+	virtual ~FCsCVarToggleMap() {}
+private:
+	TMap<FECsCVarToggle, TCsAutoConsoleVariable_int32> Map;
+	TMap<FECsCVarToggle, int32> DefaultValues;
+	TMap<FECsCVarToggle, bool> DirtyMap;
+
+public:
+	static FCsCVarToggleMap& Get()
+	{
+		static FCsCVarToggleMap Instance;
+		return Instance;
+	}
+
+public:
+
+	FORCEINLINE const FECsCVarToggle& Add(const FECsCVarToggle& Toggle, TAutoConsoleVariable<int32>* CVar)
+	{
+		Map.Add(Toggle);
+		Map[Toggle].Init(CVar);
+		DefaultValues.Add(Toggle, GetValue(Toggle));
+		DirtyMap.Add(Toggle, false);
+		return Toggle;
+	}
+
+	FORCEINLINE bool GetValue(const FECsCVarToggle& Toggle)
+	{
+		return Map[Toggle].Get() != CS_CVAR_DISABLED;
+	}
+
+	FORCEINLINE bool IsEnabled(const FECsCVarToggle& Toggle)
+	{
+		return Map[Toggle].Get() == CS_CVAR_ENABLED;
+	}
+
+	FORCEINLINE bool IsDisabled(const FECsCVarToggle& Toggle)
+	{
+		return Map[Toggle].Get() == CS_CVAR_DISABLED;
+	}
+
+	FORCEINLINE void Enable(const FECsCVarToggle& Toggle, bool MarkDirty = false)
+	{
+		Map[Toggle].Set(CS_CVAR_ENABLED, ECVF_SetByConsole);
+
+		if (MarkDirty)
+			DirtyMap[Toggle] = true;
+	}
+
+	FORCEINLINE void Disable(const FECsCVarToggle& Toggle, bool MarkDirty = false)
+	{
+		Map[Toggle].Set(CS_CVAR_DISABLED, ECVF_SetByConsole);
+
+		if (MarkDirty)
+			DirtyMap[Toggle] = true;
+	}
+
+	void Resolve();
+	void Reset();
+	void ResetDirty();
+};
+
+#pragma endregion CVarToggleMap
+
+// CVarDraw
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsCVarDraw : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsCVarDraw)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsCVarDraw)
+
+struct CSCORE_API EMCsCVarDraw final : public TCsEnumStructMap<FECsCVarDraw, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsCVarDraw, FECsCVarDraw, uint8)
+};
+
+namespace NCsCVarDraw
+{
+	typedef FECsCVarDraw Type;
+
+	namespace Ref
+	{
+		// Trace
+		extern CSCORE_API const Type DrawManagerTraceRequests;
+		extern CSCORE_API const Type DrawManagerTraceResponses;
+	}
+
+	namespace Map
+	{
+		// Trace
+		extern CSCORE_API const Type DrawManagerTraceRequests;
+		extern CSCORE_API const Type DrawManagerTraceResponses;
+	}
+}
+
+#pragma endregion CVarDraw
+
+// CVarDrawMap
+#pragma region
+
+struct CSCORE_API FCsCVarDrawMap : ICsCVarMap
+{
+protected:
+	FCsCVarDrawMap() {}
+	FCsCVarDrawMap(const FCsCVarDrawMap &) = delete;
+	FCsCVarDrawMap(FCsCVarDrawMap &&) = delete;
+public:
+	virtual ~FCsCVarDrawMap() {}
+private:
+	TMap<FECsCVarDraw, TCsAutoConsoleVariable_int32> Map;
+	TMap<FECsCVarDraw, int32> DefaultValues;
+	TMap<FECsCVarDraw, bool> DirtyMap;
+
+public:
+	static FCsCVarDrawMap& Get()
+	{
+		static FCsCVarDrawMap Instance;
+		return Instance;
+	}
+
+public:
+
+	FORCEINLINE const FECsCVarDraw& Add(const FECsCVarDraw& Draw, TAutoConsoleVariable<int32>* CVar)
+	{
+		Map.Add(Draw);
+		Map[Draw].Init(CVar);
+		DefaultValues.Add(Draw, GetValue(Draw));
+		DirtyMap.Add(Draw, false);
+		return Draw;
+	}
+
+	FORCEINLINE int32 GetValue(const FECsCVarDraw& Draw)
+	{
+		return Map[Draw].Get();
+	}
+
+	FORCEINLINE bool IsDrawing(const FECsCVarDraw& Draw)
+	{
+		return Map[Draw].Get() == CS_CVAR_DRAW;
+	}
+
+	FORCEINLINE bool IsHiding(const FECsCVarDraw& Draw)
+	{
+		return Map[Draw].Get() == CS_CVAR_HIDE;
+	}
+
+	FORCEINLINE void Draw(const FECsCVarDraw& Draw, bool MarkDirty = false)
+	{
+		Map[Draw].Set(CS_CVAR_DRAW, ECVF_SetByConsole);
+
+		if (MarkDirty)
+			DirtyMap[Draw] = true;
+	}
+
+	FORCEINLINE void Hide(const FECsCVarDraw& Draw, bool MarkDirty = false)
+	{
+		Map[Draw].Set(CS_CVAR_HIDE, ECVF_SetByConsole);
+
+		if (MarkDirty)
+			DirtyMap[Draw] = true;
+	}
+
+	void Resolve();
+	void Reset();
+	void ResetDirty();
+};
+
+#pragma endregion CVarDrawMap

@@ -4,7 +4,7 @@
 #include "CsCVars.h"
 #include "Types/CsTypes.h"
 #include "Common/CsCommon.h"
-#include "Managers/Projectile/CsProjectile.h"
+#include "Managers/Projectile/CsProjectileBase.h"
 #include "Game/CsGameState.h"
 // Data
 #include "Data/CsData_Projectile.h"
@@ -20,13 +20,13 @@ FCsManager_Projectile::~FCsManager_Projectile() {}
 	// Interface
 #pragma region
 
-void FCsManager_Projectile::DeconstructObject(ACsProjectile* a)
+void FCsManager_Projectile::DeconstructObject(ACsProjectileBase* a)
 {
 	if (a && !a->IsPendingKill())
 		a->Destroy(true);
 }
 
-FString FCsManager_Projectile::GetObjectName(ACsProjectile* a)
+FString FCsManager_Projectile::GetObjectName(ACsProjectileBase* a)
 {
 	return a->GetName();
 }
@@ -54,7 +54,7 @@ AICsManager_Projectile::AICsManager_Projectile(const FObjectInitializer& ObjectI
 	: Super(ObjectInitializer)
 {
 	Internal = new FCsManager_Projectile();
-	Internal->Init(TEXT("CsManager_Projectile"), TEXT("ACsProjectile"), nullptr, &CsCVarLogManagerProjectileTransactions);
+	Internal->Init(TEXT("CsManager_Projectile"), TEXT("ACsProjectileBase"), nullptr, &CsCVarLogManagerProjectileTransactions);
 	Internal->OnTick_Handle_Object.Unbind();
 	Internal->ConstructObject_Call.BindUObject(this, &AICsManager_Projectile::ConstructObject);
 	Internal->OnTick_Handle_Object.BindUObject(this, &AICsManager_Projectile::OnTick_Handle_Projectile);
@@ -109,13 +109,13 @@ void AICsManager_Projectile::Destroyed()
 	Super::Destroyed();
 }
 
-ACsProjectile* AICsManager_Projectile::ConstructObject(const FECsProjectileType &Type)
+ACsProjectileBase* AICsManager_Projectile::ConstructObject(const FECsProjectileType &Type)
 {
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnInfo.ObjectFlags |= RF_Transient;
 
-	ACsProjectile* Actor = GetWorld()->SpawnActor<ACsProjectile>(ClassMap.Find(Type) ? ClassMap[Type] : ACsProjectile::StaticClass(), SpawnInfo);
+	ACsProjectileBase* Actor = GetWorld()->SpawnActor<ACsProjectileBase>(ClassMap.Find(Type) ? ClassMap[Type] : ACsProjectileBase::StaticClass(), SpawnInfo);
 	Actor->SetReplicates(false);
 	Actor->Role = ROLE_None;
 	GetWorld()->RemoveNetworkActor(Actor);
@@ -127,12 +127,12 @@ void AICsManager_Projectile::CreatePool(const FECsProjectileType &Type, const in
 	Internal->CreatePool(Type, Size);
 }
 
-void AICsManager_Projectile::AddToPool(const FECsProjectileType &Type, ACsProjectile* Actor)
+void AICsManager_Projectile::AddToPool(const FECsProjectileType &Type, ACsProjectileBase* Actor)
 {
 	Internal->AddToPool(Type, Actor);
 }
 
-void AICsManager_Projectile::AddToActivePool(const FECsProjectileType &Type, ACsProjectile* Actor)
+void AICsManager_Projectile::AddToActivePool(const FECsProjectileType &Type, ACsProjectileBase* Actor)
 {
 	Internal->AddToActivePool(Type, Actor);
 }
@@ -142,7 +142,7 @@ void AICsManager_Projectile::OnTick(const float &DeltaTime)
 	Internal->OnTick(DeltaTime);
 }
 
-void AICsManager_Projectile::OnTick_Handle_Projectile(ACsProjectile* Projectile)
+void AICsManager_Projectile::OnTick_Handle_Projectile(ACsProjectileBase* Projectile)
 {
 	// Check DrawDistance
 	if (Projectile->Cache.DrawDistanceSq > 0.0f)
@@ -155,12 +155,12 @@ void AICsManager_Projectile::OnTick_Handle_Projectile(ACsProjectile* Projectile)
 	}
 }
 
-void AICsManager_Projectile::GetAllActiveActors(TArray<ACsProjectile*> &OutActors)
+void AICsManager_Projectile::GetAllActiveActors(TArray<ACsProjectileBase*> &OutActors)
 {
 	Internal->GetAllActiveObjects(OutActors);
 }
 
-const TArray<class ACsProjectile*>* AICsManager_Projectile::GetActors(const FECsProjectileType& Type)
+const TArray<class ACsProjectileBase*>* AICsManager_Projectile::GetActors(const FECsProjectileType& Type)
 {
 	return Internal->GetObjects(Type);
 }
@@ -190,12 +190,12 @@ FCsProjectilePayload* AICsManager_Projectile::AllocatePayload()
 	return Internal->AllocatePayload();
 }
 
-ACsProjectile* AICsManager_Projectile::Fire(const FECsProjectileType &Type, FCsProjectilePayload &Payload)
+ACsProjectileBase* AICsManager_Projectile::Fire(const FECsProjectileType &Type, FCsProjectilePayload &Payload)
 {
 	return Internal->Spawn(Type, &Payload);
 }
 
-ACsProjectile* AICsManager_Projectile::Fire(const FECsProjectileType &Type, FCsProjectilePayload *Payload)
+ACsProjectileBase* AICsManager_Projectile::Fire(const FECsProjectileType &Type, FCsProjectilePayload *Payload)
 {
 	return Internal->Spawn(Type, Payload);
 }

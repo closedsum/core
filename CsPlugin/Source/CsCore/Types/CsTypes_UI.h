@@ -58,7 +58,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWidgetActorType)
 
 struct CSCORE_API EMCsWidgetActorType : public TCsEnumStructMap<FECsWidgetActorType, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWidgetActorType)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsWidgetActorType, FECsWidgetActorType, uint8)
 };
 
 #pragma endregion WidgetActorType
@@ -78,7 +78,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWidgetType)
 
 struct CSCORE_API EMCsWidgetType : public TCsEnumStructMap<FECsWidgetType, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWidgetType)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsWidgetType, FECsWidgetType, uint8)
 };
 
 #pragma endregion WidgetType
@@ -98,7 +98,7 @@ enum class ECsSimpleWidgetType : uint8
 
 struct CSCORE_API EMCsSimpleWidgetType : public TCsEnumMap<ECsSimpleWidgetType>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsSimpleWidgetType)
+	CS_ENUM_MAP_BODY(EMCsSimpleWidgetType, ECsSimpleWidgetType)
 };
 
 namespace NCsSimpleWidgetType
@@ -380,7 +380,7 @@ public:
 
 struct CSCORE_API EMHorizTextAligment : public TCsEnumMap<EHorizTextAligment>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMHorizTextAligment)
+	CS_ENUM_MAP_BODY(EMHorizTextAligment, EHorizTextAligment)
 };
 
 namespace ECsHorizTextAligment
@@ -402,7 +402,7 @@ namespace ECsHorizTextAligment
 
 struct CSCORE_API EMVerticalTextAligment : public TCsEnumMap<EVerticalTextAligment>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMVerticalTextAligment)
+	CS_ENUM_MAP_BODY(EMVerticalTextAligment, EVerticalTextAligment)
 };
 
 namespace ECsVerticalTextAligment
@@ -420,6 +420,9 @@ namespace ECsVerticalTextAligment
 
 #pragma endregion VerticalTextAligment
 
+	// ButtonState
+#pragma region
+
 UENUM(BlueprintType)
 enum class ECsButtonState : uint8
 {
@@ -435,7 +438,7 @@ enum class ECsButtonState : uint8
 
 struct CSCORE_API EMCsButtonState : public TCsEnumMap<ECsButtonState>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsButtonState)
+	CS_ENUM_MAP_BODY(EMCsButtonState, ECsButtonState)
 };
 
 namespace NCsButtonState
@@ -456,6 +459,8 @@ namespace NCsButtonState
 }
 
 #define ECS_BUTTON_STATE_MAX (uint8)ECsButtonState::ECsButtonState_MAX
+
+#pragma endregion ButtonState
 
 #pragma endregion UI
 

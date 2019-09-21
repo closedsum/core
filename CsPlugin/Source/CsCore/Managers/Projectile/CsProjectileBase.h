@@ -3,7 +3,7 @@
 #include "Managers/CsPooledActor.h"
 #include "Types/CsTypes_Projectile.h"
 #include "Data/CsData_Projectile.h"
-#include "CsProjectile.generated.h"
+#include "CsProjectileBase.generated.h"
 
 // Allocate
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsProjectile_Override_Allocate_Internal, const int32&, PoolIndex);
@@ -14,7 +14,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	TWeakObjectPtr<class ACsProjectile> Projectile;
+	TWeakObjectPtr<class ACsProjectileBase> Projectile;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class ACsData_Projectile> Data;
 
@@ -49,7 +49,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 
 	~FCsProjectileCache(){}
 
-	void Set(const int32 &InIndex, ACsProjectile* InProjectile)
+	void Set(const int32 &InIndex, ACsProjectileBase* InProjectile)
 	{
 		Index = InIndex;
 		Projectile = InProjectile;
@@ -103,7 +103,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		DrawDistanceSq = 0.0f;
 	}
 
-	FORCEINLINE ACsProjectile* GetProjectile() { return Projectile.IsValid() ? Projectile.Get() : nullptr; }
+	FORCEINLINE ACsProjectileBase* GetProjectile() { return Projectile.IsValid() ? Projectile.Get() : nullptr; }
 	template<typename T>
 	FORCEINLINE T* GetProjectile() { return Cast<T>(GetProjectile()); }
 
@@ -113,7 +113,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 };
 
 UCLASS()
-class CSCORE_API ACsProjectile : public ACsPooledActor
+class CSCORE_API ACsProjectileBase : public ACsPooledActor
 {
 	GENERATED_UCLASS_BODY()
 
@@ -155,9 +155,9 @@ public:
 
 	virtual void DeAllocate() override;
 
-	TWeakObjectPtr<ACsProjectile> FakeProjectile;
+	TWeakObjectPtr<ACsProjectileBase> FakeProjectile;
 
-	ACsProjectile* GetFakeProjectile();
+	ACsProjectileBase* GetFakeProjectile();
 
 	UPROPERTY(BlueprintReadWrite, Category = "Projectile")
 	TEnumAsByte<ECsProjectileState::Type> State;
@@ -185,7 +185,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	UObject* Cache_GetInstigator();
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
-	ACsProjectile* Cache_GetProjectile();
+	ACsProjectileBase* Cache_GetProjectile();
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	ACsData_Projectile* Cache_GetData();
 

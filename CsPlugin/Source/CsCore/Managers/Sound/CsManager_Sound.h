@@ -91,7 +91,7 @@ public:
 
 	FCsSoundPayload* AllocatePayload();
 
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	//UFUNCTION(BlueprintCallable, Category = "Manager Sound")
 	ACsSound* Play(FCsSoundPayload& Payload);
 	ACsSound* Play(FCsSoundPayload* Payload);
 

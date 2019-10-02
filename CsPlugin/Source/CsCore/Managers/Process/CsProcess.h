@@ -256,35 +256,39 @@ namespace NCsProcessPriorityModifier
 	}
 }
 
-USTRUCT(BlueprintType)
-struct FCsProcessPayload : public FCsPooledObjectPayload
+struct FCsProcessPayload : public ICsPooledObjectPayload
 {
-	GENERATED_USTRUCT_BODY()
+	bool bAllocated;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	UObject* Instigator;
+
+	UObject* Owner;
+
+	UObject* Parent;
+
 	FString Name;
+
 	/** executable name */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	FString URL;
+
 	/** command line arguments */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	FString Params;
+
 	/** if true, the new process will have its own window */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	bool bLaunchDetached;
+
 	/** if true, the new process will be minimized in the task bar */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	bool bLaunchHidden;
+
 	/** if true, the new process will not have a window or be in the task bar */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	bool bLaunchReallyHidden;
+
 	/** idle, low, normal, high, higher */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	ECsProcessPriorityModifier PriorityModifier;
+
 	/** Directory to start in when running the program, or NULL to use the current working directory */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	bool bOptionalWorkingDirectory;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+
 	FString OptionalWorkingDirectory;
 
 public:
@@ -294,9 +298,41 @@ public:
 	}
 	~FCsProcessPayload() {}
 
-	virtual void Reset() override
+	// ICsPooledObjectPayload
+#pragma region
+
+	const bool& IsAllocated() const
 	{
-		Super::Reset();
+		return bAllocated;
+	}
+
+	UObject* GetInstigator() const
+	{
+		return Instigator;
+	}
+
+	UObject* GetOwner() const
+	{
+		return Owner;
+	}
+
+	UObject* GetParent() const
+	{
+		return Parent;
+	}
+
+	void Allocate()
+	{
+		bAllocated = true;
+	}
+
+	void Reset()
+	{
+		bAllocated = false;
+
+		Instigator = nullptr;
+		Owner = nullptr;
+		Parent = nullptr;
 
 		Name = NCsCached::Str::Empty;
 		URL = NCsCached::Str::Empty;
@@ -308,6 +344,8 @@ public:
 		bOptionalWorkingDirectory = false;
 		OptionalWorkingDirectory = NCsCached::Str::Empty;
 	}
+
+#pragma endregion ICsPooledObjectPayload
 };
 
 #pragma endregion Payload

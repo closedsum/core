@@ -75,3 +75,5 @@ namespace NCsPooledObjectConstruction
 }
 
 #pragma endregion PooledObjectConstruction
+
+const FCsPooledObject FCsPooledObject::Empty;

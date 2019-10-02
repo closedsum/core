@@ -101,7 +101,7 @@ public:
 
 	FCsProjectilePayload* AllocatePayload();
 
-	UFUNCTION(BlueprintCallable, Category = "Manager Projectile")
+	//UFUNCTION(BlueprintCallable, Category = "Manager Projectile")
 	ACsProjectileBase* Fire(const FECsProjectileType &Type, FCsProjectilePayload &Payload);
 	ACsProjectileBase* Fire(const FECsProjectileType &Type, FCsProjectilePayload* Payload);
 

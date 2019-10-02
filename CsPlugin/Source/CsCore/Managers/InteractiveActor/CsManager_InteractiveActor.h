@@ -79,7 +79,7 @@ public:
 
 	FCsInteractiveActorPayload* AllocatePayload();
 
-	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
+	//UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
 	ACsInteractiveActor* Spawn(const FECsInteractiveType &Type, FCsInteractiveActorPayload &Payload);
 	ACsInteractiveActor* Spawn(const FECsInteractiveType &Type, FCsInteractiveActorPayload* Payload);
 

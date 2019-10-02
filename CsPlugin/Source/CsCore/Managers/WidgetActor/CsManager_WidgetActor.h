@@ -90,7 +90,7 @@ public:
 
 	FCsWidgetActorPayload* AllocatePayload();
 
-	UFUNCTION(BlueprintCallable, Category = "Manager WidgetActor")
+	//UFUNCTION(BlueprintCallable, Category = "Manager WidgetActor")
 	ACsWidgetActor* Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload &Payload);
 	ACsWidgetActor* Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload* Payload);
 

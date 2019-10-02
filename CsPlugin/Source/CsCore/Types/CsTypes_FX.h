@@ -263,36 +263,34 @@ struct CSCORE_API FCsFpvFxElement
 	}
 };
 
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsFxPayload : public FCsPooledObjectPayload
+struct CSCORE_API FCsFxPayload : public ICsPooledObjectPayload
 {
-	GENERATED_USTRUCT_BODY()
+public:
 
-	UPROPERTY(EditAnywhere, Category = "Payload")
+	bool bAllocated;
+
+	UObject* Instigator;
+
+	UObject* Owner;
+
+	UObject* Parent;
+
 	TWeakObjectPtr<UParticleSystem> Particle;
 
-	UPROPERTY(EditAnywhere, Category = "Payload")
 	TEnumAsByte<ECsFxPriority::Type> Priority;
 
-	UPROPERTY(EditAnywhere, Category = "Payload", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
-	UPROPERTY(EditAnywhere, Category = "Payload", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float DeathTime;
 
-	UPROPERTY(EditAnywhere, Category = "Payload", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Scale;
 
-	UPROPERTY(EditAnywhere, Category = "FX")
 	FCsFpvDrawDistance DrawDistances;
 
-	UPROPERTY(EditAnywhere, Category = "FX")
 	FName Bone;
 
-	UPROPERTY(EditAnywhere, Category = "FX")
 	FVector Location;
 
-	UPROPERTY(EditAnywhere, Category = "FX")
 	FRotator Rotation;
 
 	FCsFxPayload() 
@@ -300,6 +298,56 @@ struct CSCORE_API FCsFxPayload : public FCsPooledObjectPayload
 		Reset();
 	}
 	~FCsFxPayload() {}
+
+// ICsPooledObjectPayload
+#pragma region
+public:
+
+	const bool& IsAllocated() const
+	{
+		return bAllocated;
+	}
+
+	UObject* GetInstigator() const
+	{
+		return Instigator;
+	}
+
+	UObject* GetOwner() const
+	{
+		return Owner;
+	}
+
+	UObject* GetParent() const
+	{
+		return Parent;
+	}
+
+	void Allocate()
+	{
+		bAllocated = true;
+	}
+
+	void Reset()
+	{
+		bAllocated = false;
+
+		Instigator = nullptr;
+		Owner = nullptr;
+		Parent = nullptr;
+
+		Particle = nullptr;
+		Priority = ECsFxPriority::Medium;
+		LifeTime = 0.0f;
+		DeathTime = 0.0f;
+		Scale = 1.0f;
+		DrawDistances.Reset();
+		Bone = NAME_None;
+		Location = FVector::ZeroVector;
+		Rotation = FRotator::ZeroRotator;
+	}
+
+#pragma endregion ICsPooledObjectPayload
 
 	FORCEINLINE void Set(FCsFxElement* Element)
 	{
@@ -317,21 +365,6 @@ struct CSCORE_API FCsFxPayload : public FCsPooledObjectPayload
 	FORCEINLINE void Set(FCsFxElement& Element)
 	{
 		Set(&Element);
-	}
-
-	FORCEINLINE virtual void Reset() override
-	{
-		Super::Reset();
-
-		Particle = nullptr;
-		Priority = ECsFxPriority::Medium;
-		LifeTime = 0.0f;
-		DeathTime = 0.0f;
-		Scale = 1.0f;
-		DrawDistances.Reset();
-		Bone = NAME_None;
-		Location = FVector::ZeroVector;
-		Rotation = FRotator::ZeroRotator;
 	}
 
 	FORCEINLINE UParticleSystem* GetParticle() { return Particle.IsValid() ? Particle.Get() : nullptr; }

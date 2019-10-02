@@ -103,7 +103,7 @@ public:
 
 	FCsAIPawnPayload* AllocatePayload();
 
-	UFUNCTION(BlueprintCallable, Category = "Manager AI")
+	//UFUNCTION(BlueprintCallable, Category = "Manager AI")
 	ACsAIPawn* Spawn(const FECsAIType& Type, FCsAIPawnPayload& Payload);
 	ACsAIPawn* Spawn(const FECsAIType& Type, FCsAIPawnPayload* Payload);
 

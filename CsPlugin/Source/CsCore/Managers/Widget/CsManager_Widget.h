@@ -74,7 +74,7 @@ public:
 
 	FCsWidgetPayload* AllocatePayload();
 
-	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
+	//UFUNCTION(BlueprintCallable, Category = "Manager Widget")
 	UCsPooledWidget* Display(const ECsSimpleWidgetType& Type, FCsWidgetPayload &Payload);
 	UCsPooledWidget* Display(const ECsSimpleWidgetType& Type, FCsWidgetPayload* Payload);
 

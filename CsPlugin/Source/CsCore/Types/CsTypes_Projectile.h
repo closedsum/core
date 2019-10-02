@@ -547,28 +547,34 @@ struct CSCORE_API FCsProjectileFirePayload
 	}
 };
 
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsProjectilePayload : public FCsPooledObjectPayload
+struct CSCORE_API FCsProjectilePayload : public ICsPooledObjectPayload
 {
-	GENERATED_USTRUCT_BODY()
+public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	bool bAllocated;
+
+	UObject* Instigator;
+
+	UObject* Owner;
+
+	UObject* Parent;
+
 	TEnumAsByte<ECsProjectileRelevance::Type> Relevance;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	TWeakObjectPtr<class ACsData_Projectile> Data;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	float ChargePercent;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	FVector Direction;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	FVector Location;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	float AdditionalSpeed;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	TWeakObjectPtr<AActor> HomingTarget;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	FName HomingBone;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	float HomingAccelerationMagnitude;
 
 	FCsProjectilePayload()
@@ -610,6 +616,56 @@ struct CSCORE_API FCsProjectilePayload : public FCsPooledObjectPayload
 		return !(*this == B);
 	}
 
+// ICsPooledObjectPayload
+#pragma region
+public:
+
+	const bool& IsAllocated() const
+	{
+		return bAllocated;
+	}
+
+	UObject* GetInstigator() const
+	{
+		return Instigator;
+	}
+
+	UObject* GetOwner() const
+	{
+		return Owner;
+	}
+
+	UObject* GetParent() const
+	{
+		return Parent;
+	}
+
+	void Allocate()
+	{
+		bAllocated = true;
+	}
+
+	void Reset()
+	{
+		bAllocated = false;
+
+		Instigator = nullptr;
+		Owner = nullptr;
+		Parent = nullptr;
+
+		Relevance = ECsProjectileRelevance::ECsProjectileRelevance_MAX;
+		ChargePercent = 0.0f;
+		Location = FVector::ZeroVector;
+		Direction = FVector::ZeroVector;
+		AdditionalSpeed = 0.0f;
+		HomingTarget.Reset();
+		HomingTarget = nullptr;
+		HomingBone = NAME_None;
+		HomingAccelerationMagnitude = 0.0f;
+	}
+
+#pragma endregion ICsPooledObjectPayload
+
 	FORCEINLINE void Set(FCsProjectileFirePayload* Payload)
 	{
 		ChargePercent = Payload->ChargePercent;
@@ -619,22 +675,6 @@ struct CSCORE_API FCsProjectilePayload : public FCsPooledObjectPayload
 		HomingTarget = Payload->HomingTarget;
 		HomingBone = Payload->HomingBoneName;
 		HomingAccelerationMagnitude = Payload->HomingAccelerationMagnitude;
-	}
-
-	FORCEINLINE virtual void Reset() override
-	{
-		Super::Reset();
-
-		Relevance = ECsProjectileRelevance::ECsProjectileRelevance_MAX;
-		Instigator.Reset();
-		ChargePercent = 0.0f;
-		Location = FVector::ZeroVector;
-		Direction = FVector::ZeroVector;
-		AdditionalSpeed = 0.0f;
-		HomingTarget.Reset();
-		HomingTarget = nullptr;
-		HomingBone = NAME_None;
-		HomingAccelerationMagnitude = 0.0f;
 	}
 
 	FORCEINLINE ACsData_Projectile* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }

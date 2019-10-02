@@ -78,7 +78,7 @@ public:
 
 	FCsProcessPayload* AllocatePayload();
 
-	UFUNCTION(BlueprintCallable, Category = "Manager Process")
+	//UFUNCTION(BlueprintCallable, Category = "Manager Process")
 	virtual UCsProcess* Spawn(const FECsProcess &Type, FCsProcessPayload &Payload);
 	virtual UCsProcess* Spawn(const FECsProcess &Type, FCsProcessPayload* Payload);
 

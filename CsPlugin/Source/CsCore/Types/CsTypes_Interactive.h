@@ -374,22 +374,28 @@ struct CSCORE_API EMCsPickupSound : public TCsEnumStructMap<FECsPickupSound, uin
 	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsPickupSound)
 };
 
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsInteractiveActorPayload : public FCsPooledObjectPayload
+struct CSCORE_API FCsInteractiveActorPayload : public ICsPooledObjectPayload
 {
-	GENERATED_USTRUCT_BODY()
+public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	bool bAllocated;
+
+	UObject* Instigator;
+
+	UObject* Owner;
+
+	UObject* Parent;
+
 	TWeakObjectPtr<class ACsData_Interactive> Data;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	float LifeTime;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	bool bLocation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	bool bRotation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	bool bScale;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	FTransform Transform;
 
 	void* Blob;
@@ -400,9 +406,42 @@ struct CSCORE_API FCsInteractiveActorPayload : public FCsPooledObjectPayload
 	}
 	~FCsInteractiveActorPayload() {}
 
-	FORCEINLINE virtual void Reset() override
+// ICsPooledObjectPayload
+#pragma region
+public:
+
+	const bool& IsAllocated() const
 	{
-		Super::Reset();
+		return bAllocated;
+	}
+
+	UObject* GetInstigator() const
+	{
+		return Instigator;
+	}
+
+	UObject* GetOwner() const
+	{
+		return Owner;
+	}
+
+	UObject* GetParent() const
+	{
+		return Parent;
+	}
+
+	void Allocate()
+	{
+		bAllocated = true;
+	}
+
+	void Reset()
+	{
+		bAllocated = false;
+
+		Instigator = nullptr;
+		Owner = nullptr;
+		Parent = nullptr;
 
 		LifeTime = 0.0f;
 		bLocation = false;
@@ -411,6 +450,8 @@ struct CSCORE_API FCsInteractiveActorPayload : public FCsPooledObjectPayload
 		Transform = FTransform::Identity;
 		Blob = nullptr;
 	}
+
+#pragma endregion ICsPooledObjectPayload
 
 	FORCEINLINE class ACsData_Interactive* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 	template<typename T>

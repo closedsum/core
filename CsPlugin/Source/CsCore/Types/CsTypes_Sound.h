@@ -214,28 +214,34 @@ public:
 	}
 };
 
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsSoundPayload : public FCsPooledObjectPayload
+struct CSCORE_API FCsSoundPayload : public ICsPooledObjectPayload
 {
-	GENERATED_USTRUCT_BODY()
+public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	bool bAllocated;
+
+	UObject* Instigator;
+
+	UObject* Owner;
+
+	UObject* Parent;
+
 	TWeakObjectPtr<class USoundCue> Sound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	TEnumAsByte<ECsSoundPriority::Type> Priority;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	bool bSpatialize;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload", meta = (ClampMin = "0.05", UIMin = "0.05"))
+
 	float Duration;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	bool IsLooping;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	float VolumeMultiplier;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	float PitchMultiplier;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	FName Bone;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	FVector Location;
 
 	FCsSoundPayload()
@@ -243,6 +249,56 @@ struct CSCORE_API FCsSoundPayload : public FCsPooledObjectPayload
 		Reset();
 	}
 	~FCsSoundPayload(){}
+
+// ICsPooledObjectPayload
+#pragma region
+public:
+
+	const bool& IsAllocated() const
+	{
+		return bAllocated;
+	}
+
+	UObject* GetInstigator() const
+	{
+		return Instigator;
+	}
+
+	UObject* GetOwner() const
+	{
+		return Owner;
+	}
+
+	UObject* GetParent() const
+	{
+		return Parent;
+	}
+
+	void Allocate()
+	{
+		bAllocated = true;
+	}
+
+	void Reset()
+	{
+		bAllocated = false;
+
+		Instigator = nullptr;
+		Owner = nullptr;
+		Parent = nullptr;
+
+		Sound = nullptr;
+		Priority = ECsSoundPriority::Medium;
+		bSpatialize = true;
+		Duration = 0.05f;
+		IsLooping = false;
+		VolumeMultiplier = 1.0f;
+		PitchMultiplier = 1.0f;
+		Bone = NAME_None;
+		Location = FVector::ZeroVector;
+	}
+
+#pragma endregion ICsPooledObjectPayload
 
 	FORCEINLINE void Set(FCsSoundElement* Element)
 	{
@@ -254,21 +310,6 @@ struct CSCORE_API FCsSoundPayload : public FCsPooledObjectPayload
 		VolumeMultiplier = Element->VolumeMultiplier;
 		PitchMultiplier = Element->PitchMultiplier;
 		Bone = Element->Bone;
-	}
-
-	FORCEINLINE virtual void Reset() override
-	{
-		Super::Reset();
-
-		Sound = nullptr;
-		Priority = ECsSoundPriority::Medium;
-		bSpatialize = true;
-		Duration = 0.05f;
-		IsLooping = false;
-		VolumeMultiplier = 1.0f;
-		PitchMultiplier = 1.0f;
-		Bone = NAME_None;
-		Location = FVector::ZeroVector;
 	}
 
 	FORCEINLINE USoundCue* GetCue() { return Sound.IsValid() ? Sound.Get() : nullptr; }

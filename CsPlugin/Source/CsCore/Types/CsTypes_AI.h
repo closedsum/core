@@ -58,18 +58,24 @@ struct CSCORE_API EMCsAISetup : public TCsEnumStructMap<FECsAISetup, uint8>
 	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsAISetup)
 };
 
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsAIPawnPayload : public FCsPooledObjectPayload
+struct CSCORE_API FCsAIPawnPayload : public ICsPooledObjectPayload
 {
-	GENERATED_USTRUCT_BODY()
+public:
 
-	UPROPERTY(BlueprintReadWrite, Category = "Payload")
+	bool bAllocated;
+
+	UObject* Instigator;
+
+	UObject* Owner;
+
+	UObject* Parent;
+
 	bool bLocation;
-	UPROPERTY(BlueprintReadWrite, Category = "Payload")
+
 	FVector Location;
-	UPROPERTY(BlueprintReadWrite, Category = "Payload")
+
 	bool bRotation;
-	UPROPERTY(BlueprintReadWrite, Category = "Payload")
+
 	FRotator Rotation;
 
 	FCsAIPawnPayload()
@@ -78,15 +84,50 @@ struct CSCORE_API FCsAIPawnPayload : public FCsPooledObjectPayload
 	}
 	~FCsAIPawnPayload() {}
 
-	FORCEINLINE virtual void Reset() override
+// ICsPooledObjectPayload
+#pragma region
+public:
+
+	const bool& IsAllocated() const
 	{
-		Super::Reset();
+		return bAllocated;
+	}
+
+	UObject* GetInstigator() const
+	{
+		return Instigator;
+	}
+
+	UObject* GetOwner() const
+	{
+		return Owner;
+	}
+
+	UObject* GetParent() const
+	{
+		return Parent;
+	}
+
+	void Allocate()
+	{
+		bAllocated = true;
+	}
+
+	void Reset()
+	{
+		bAllocated = false;
+
+		Instigator = nullptr;
+		Owner = nullptr;
+		Parent = nullptr;
 
 		bLocation = false;
 		Location = FVector::ZeroVector;
 		bRotation = false;
 		Rotation = FRotator::ZeroRotator;
 	}
+
+#pragma endregion ICsPooledObjectPayload
 };
 
 #pragma endregion AI

@@ -2178,18 +2178,24 @@ public:
 
 #pragma endregion Structs
 
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsWidgetPayload : public FCsPooledObjectPayload
+struct CSCORE_API FCsWidgetPayload : public ICsPooledObjectPayload
 {
-	GENERATED_USTRUCT_BODY()
+public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	bool bAllocated;
+
+	UObject* Instigator;
+
+	UObject* Owner;
+
+	UObject* Parent;
+
 	FString DisplayName;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	FVector2D Size;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	FIntPoint Offset;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	float LifeTime;
 
 	FCsWidgetPayload() 
@@ -2198,53 +2204,96 @@ struct CSCORE_API FCsWidgetPayload : public FCsPooledObjectPayload
 	}
 	~FCsWidgetPayload() {}
 
-	FORCEINLINE virtual void Reset() override
+// ICsPooledObjectPayload
+#pragma region
+public:
+
+	const bool& IsAllocated() const
 	{
-		Super::Reset();
+		return bAllocated;
+	}
+
+	UObject* GetInstigator() const
+	{
+		return Instigator;
+	}
+
+	UObject* GetOwner() const
+	{
+		return Owner;
+	}
+
+	UObject* GetParent() const
+	{
+		return Parent;
+	}
+
+	void Allocate()
+	{
+		bAllocated = true;
+	}
+
+	void Reset()
+	{
+		bAllocated = false;
+
+		Instigator = nullptr;
+		Owner = nullptr;
+		Parent = nullptr;
+
 
 		DisplayName = NCsCached::Str::Empty;
 		Size = FVector2D::ZeroVector;
 		Offset = FIntPoint::ZeroValue;
 		LifeTime = 0.0f;
 	}
+
+#pragma endregion ICsPooledObjectPayload
 };
 
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsWidgetActorPayload : public FCsPooledObjectPayload
-{
-	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+struct CSCORE_API FCsWidgetActorPayload : public ICsPooledObjectPayload
+{
+public:
+
+	bool bAllocated;
+
+	UObject* Instigator;
+
+	UObject* Owner;
+
+	UObject* Parent;
+
 	TWeakObjectPtr<class UUserWidget> Widget;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	FVector2D Size;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	float LifeTime;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	bool bMinDrawDistance;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	FCsDrawDistance MinDrawDistance;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	bool ScaleByDistance;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	FTransform Transform;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	bool FollowCamera;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	float DistanceProjectedOutFromCamera;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	bool LookAtCamera;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	FCsRotatorFlag LockAxes;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	bool bMovementFunction;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	FCsParametricFunction MovementFunction;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	int32 Int32;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	float Float;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+
 	FString String;
 
 	FCsWidgetActorPayload()
@@ -2253,9 +2302,42 @@ struct CSCORE_API FCsWidgetActorPayload : public FCsPooledObjectPayload
 	}
 	~FCsWidgetActorPayload() {}
 
-	FORCEINLINE virtual void Reset() override
+// ICsPooledObjectPayload
+#pragma region
+public:
+
+	const bool& IsAllocated() const
 	{
-		Super::Reset();
+		return bAllocated;
+	}
+
+	UObject* GetInstigator() const
+	{
+		return Instigator;
+	}
+
+	UObject* GetOwner() const
+	{
+		return Owner;
+	}
+
+	UObject* GetParent() const
+	{
+		return Parent;
+	}
+
+	void Allocate()
+	{
+		bAllocated = true;
+	}
+
+	void Reset()
+	{
+		bAllocated = false;
+
+		Instigator = nullptr;
+		Owner = nullptr;
+		Parent = nullptr;
 
 		Widget.Reset();
 		Widget = nullptr;
@@ -2275,6 +2357,8 @@ struct CSCORE_API FCsWidgetActorPayload : public FCsPooledObjectPayload
 		Float = 0.0f;
 		String = NCsCached::Str::Empty;
 	}
+
+#pragma endregion ICsPooledObjectPayload
 
 	FORCEINLINE class UUserWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }
 	template<typename T>

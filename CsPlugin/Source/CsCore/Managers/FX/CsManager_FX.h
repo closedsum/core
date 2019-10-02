@@ -98,7 +98,7 @@ public:
 
 	FCsFxPayload* AllocatePayload();
 
-	UFUNCTION(BlueprintCallable, Category = "Manager FX")
+	//UFUNCTION(BlueprintCallable, Category = "Manager FX")
 	ACsEmitter* Play(FCsFxPayload& Payload);
 	ACsEmitter* Play(FCsFxPayload* Payload);
 

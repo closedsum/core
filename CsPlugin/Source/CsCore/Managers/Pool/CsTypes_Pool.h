@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Primitive.h"
+#include "CsCVars.h"
 
 #include "CsTypes_Pool.generated.h"
 #pragma once
@@ -251,20 +252,38 @@ public:
 
 class UObject;
 
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsPooledObjectPayload
+struct CSCORE_API ICsPooledObjectPayload
 {
-	GENERATED_USTRUCT_BODY()
+public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	virtual ~ICsPooledObjectPayload(){}
+
+	virtual const bool& IsAllocated() const = 0;
+
+	virtual UObject* GetInstigator() const = 0;
+
+	virtual UObject* GetOwner() const = 0;
+
+	virtual UObject* GetParent() const = 0;
+
+	virtual void Allocate() = 0;
+
+	virtual void Reset() = 0;
+};
+
+class UObject;
+
+struct CSCORE_API FCsPooledObjectPayload : ICsPooledObjectPayload
+{
+public:
+
 	bool bAllocated;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	TWeakObjectPtr<UObject> Instigator;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	TWeakObjectPtr<UObject> Owner;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	TWeakObjectPtr<UObject> Parent;
+	UObject* Instigator;
+
+	UObject* Owner;
+
+	UObject* Parent;
 
 	FCsPooledObjectPayload()
 	{
@@ -272,29 +291,45 @@ struct CSCORE_API FCsPooledObjectPayload
 	}
 	virtual ~FCsPooledObjectPayload(){}
 
-	virtual void Reset()
+// ICsPooledObjectPayload
+#pragma region
+public:
+
+	const bool& IsAllocated() const
+	{
+		return bAllocated;
+	}
+
+	UObject* GetInstigator() const
+	{
+		return Instigator;
+	}
+
+	UObject* GetOwner() const
+	{
+		return Owner;
+	}
+
+	UObject* GetParent() const
+	{
+		return Parent;
+	}
+
+	void Allocate()
+	{
+		bAllocated = true;
+	}
+
+	void Reset()
 	{
 		bAllocated = false;
 
-		Instigator.Reset();
 		Instigator = nullptr;
-		Owner.Reset();
 		Owner = nullptr;
-		Parent.Reset();
 		Parent = nullptr;
 	}
 
-	FORCEINLINE UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
-
-	FORCEINLINE UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetOwner() { return Cast<T>(GetOwner()); }
-
-	FORCEINLINE UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetParent() { return Cast<T>(GetParent()); }
+#pragma endregion ICsPooledObjectPayload
 };
 
 class UObject;
@@ -302,6 +337,8 @@ struct ICsPooledObjectPayload;
 
 struct CSCORE_API ICsPooledObjectCache
 {
+	virtual ~ICsPooledObjectCache(){}
+
 	virtual const int32& GetIndex() const = 0;
 
 	virtual const bool& IsAllocated() const = 0;
@@ -338,26 +375,163 @@ struct CSCORE_API ICsPooledObjectCache
 };
 
 class UObject;
+class ICsPooledObject;
 
-struct CSCORE_API ICsPooledObjectPayload
+struct CSCORE_API FCsPooledObject
 {
-	virtual const bool& IsAllocated() const = 0;
+public:
 
-	virtual UObject* GetInstigator() const = 0;
+	static const FCsPooledObject Empty;
 
-	virtual UObject* GetOwner() const = 0;
+private:
 
-	virtual UObject* GetParent() const = 0;
+	ICsPooledObject* Interface;
+	TWeakObjectPtr<UObject> WeakObject;
+	UObject* Object;
 
-	virtual void Allocate() = 0;
+	bool bObject;
 
-	virtual void Reset() = 0;
+public:
+
+	FCsPooledObject() :
+		Interface(nullptr),
+		WeakObject(nullptr),
+		Object(nullptr),
+		bObject(false)
+	{
+	}
+
+	virtual ~FCsPooledObject() {}
+
+public:
+
+	ICsPooledObject* GetInterface() const
+	{
+		return Interface;
+	}
+
+	void SetInterface(ICsPooledObject* InInterface)
+	{
+		Interface = InInterface;
+	}
+
+	UObject* GetSafeObject() const
+	{
+		return WeakObject.IsValid() ? WeakObject.Get() : nullptr;
+	}
+
+	template<typename T>
+	T* GetSafeObject() const
+	{
+		return Cast<T>(GetSafeObject());
+	}
+
+	UObject* GetObject() const
+	{
+		return Object;
+	}
+
+	template<typename T>
+	T* GetObject() const
+	{
+		return Cast<T>(GetObject());
+	}
+
+	void SetObject(UObject* InObject)
+	{
+		Object = InObject;
+		WeakObject = Object;
+		bObject = Object != nullptr;
+	}
+
+	const bool& IsObject() const
+	{
+		return bObject;
+	}
+
+	bool IsValid() const
+	{
+		return Interface != nullptr;
+	}
 };
 
 class UWorld;
+class UObject;
+class UClass;
 
-class CSCORE_API ICsManager_PooledObjects
+struct CSCORE_API FCsManagerPooledObjectConstructParams
 {
+public:
+
+	UClass* Class;
+
+	FString ClassName;
+
+	ECsPooledObjectConstruction ConstructionType;
+
+	FActorSpawnParameters ConstructionInfo;
+
+	bool bReplicates;
+
+	FCsManagerPooledObjectConstructParams() :
+		Class(nullptr),
+		ClassName(),
+		ConstructionType(ECsPooledObjectConstruction::Object),
+		ConstructionInfo(),
+		bReplicates(false)
+	{
+	}
+
+	virtual ~FCsManagerPooledObjectConstructParams() {}
+};
+
+struct CSCORE_API FCsManagerPooledObjectParams
+{
+public:
+
+	FString Name;
+
+	UWorld* World;
+
+	FECsCVarLog LogType;
+
+	FCsManagerPooledObjectConstructParams ConstructParams;
+
+	FCsManagerPooledObjectParams() :
+		Name(),
+		World(nullptr),
+		LogType(),
+		ConstructParams()
+	{
+	}
+
+	virtual ~FCsManagerPooledObjectParams() {}
+};
+
+class UWorld;
+class UObject;
+class ICsPooledObject;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FCsManagerPooledObject_OnAddToPool, const FCsPooledObject&);
+
+DECLARE_DELEGATE_OneParam(FCsManagerPooledObject_CreatePayloads, const int32&)
+
+class UWorld;
+
+class CSCORE_API ICsManager_PooledObject
+{
+	virtual void Clear() = 0;
+	virtual void Shutdown() = 0;
+
+	virtual UWorld* GetCurrentWorld() = 0;
+};
+
+class CSCORE_API ICsManager_PooledObject_Map
+{
+public:
+
+	virtual ~ICsManager_PooledObject_Map() {}
+
 	virtual void Clear() = 0;
 	virtual void Shutdown() = 0;
 

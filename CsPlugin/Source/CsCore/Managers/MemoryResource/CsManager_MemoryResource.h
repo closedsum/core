@@ -1,26 +1,44 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-template<typename ResourceType>
-class FCsManager_MemoryResource
+#include "Managers/MemoryResource/CsMemoryResource.h"
+
+template<typename ResourceType, typename ResourceContainerType = TCsMemoryResource<ResourceType>, uint32 SIZE = 128>
+class TCsManager_MemoryResource
 {
+	static_assert(std::is_base_of<TCsMemoryResource<ResourceType>, ResourceContainerType>(), "TCsManager_MemoryResource: ResourceContainerType does NOT implement interface: TCsMemoryResource<ResourceType>.");
+
 public:
 
-	FCsManager_MemoryResource() :
+	TCsManager_MemoryResource() :
 		Name(),
+		ResourceContainers(),
+		Resources(),
 		Pool(),
-		Links(),
 		PoolSize(0),
+		PoolSizeMinusOne(0),
 		PoolIndex(INDEX_NONE),
+		Links(),
 		ActiveHead(nullptr),
 		ActiveTail(nullptr),
 		ActiveSize(0)
 	{
-		ContructResourceContainter_Impl.BindRaw(this, &FCsManager_MemoryResource::ConstructResourceContainer);
-		ConstructResource_Impl.BindRaw(this, &FCsManager_MemoryResource::ConstructResource);
+		// Make PoolSize a power of 2.
+		PoolSize = SIZE;
+		--PoolSize;
+		PoolSize |= PoolSize >> 1;
+		PoolSize |= PoolSize >> 2;
+		PoolSize |= PoolSize >> 4;
+		PoolSize |= PoolSize >> 8;
+		PoolSize |= PoolSize >> 16;
+		++PoolSize;
+
+		PoolSizeMinusOne = PoolSize - 1;
+
+		CreatePool();
 	}
 
-	virtual ~FCsManager_MemoryResource()
+	virtual ~TCsManager_MemoryResource()
 	{
 		Shutdown();
 	}
@@ -29,12 +47,18 @@ private:
 
 	FString Name;
 
-	TArray<ICsMemoryResource*> Pool;
-	TArray<TLinkedList<ICsMemoryResource*>*> Links;
+	TArray<ResourceContainerType> ResourceContainers;
+	TArray<ResourceType> Resources;
+	TArray<ResourceContainerType*> Pool;
+
 	int32 PoolSize;
-	int32 PoolIndex;
-	TLinkedList<ICsMemoryResource*>* ActiveHead;
-	TLinkedList<ICsMemoryResource*>* ActiveTail;
+	int32 PoolSizeMinusOne;
+	uint32 PoolIndex;
+
+	TArray<TLinkedList<ResourceContainerType*>> Links;
+
+	TLinkedList<ResourceContainerType*>* ActiveHead;
+	TLinkedList<ResourceContainerType*>* ActiveTail;
 	int32 ActiveSize;
 
 public:
@@ -54,83 +78,63 @@ public:
 
 		// Pool
 		{
-			const int32 Count = Pool.Num();
-
-			for (int32 I = 0; I < Count; ++I)
+			for (int32 I = 0; I < PoolSize; ++I)
 			{
-				ICsMemoryResource* M = Pool[I];
-				delete M;
 				Pool[I] = nullptr;
 			}
 			Pool.Reset();
 		}
 		PoolSize = 0;
+		PoolSizeMinusOne = 0;
 		PoolIndex = 0;
+
+		Resources.Reset();
 
 		// Links
 		{
-			const int32 Count = Links.Num();
-
-			for (int32 I = 0; I < Count; ++I)
+			for (TLinkedList<ResourceContainerType*>& Link : Links)
 			{
-				TLinkedList<ICsMemoryResource*>* L = Links[I];
-				(**L) = nullptr;
-				delete L;
-				Links[I] = nullptr;
+				(*Link) = nullptr;
 			}
 			Links.Reset();
 		}
+		ActiveHead = nullptr;
+		ActiveTail = nullptr;
 		ActiveSize = 0;
 
-		ContructResourceContainter_Impl.Unbind();
+		ResourceContainers.Reset();
 	}
 
-	virtual ICsMemoryResource* ConstructResourceContainer()
+private:
+
+	void CreatePool()
 	{
-		return new FCsMemoryResource();
-	}
+		ResourceContainers.Reserve(PoolSize);
+		ResourceContainers.AddDefaulted(PoolSize);
 
-	TBaseDelegate<ICsMemoryResource*> ContructResourceContainter_Impl;
+		Resources.Reserve(PoolSize);
+		Resources.AddDefaulted(PoolSize);
 
-	virtual ResourceType* ConstructResource()
-	{
-		return new ResourceType();
-	}
+		Pool.Reserve(PoolSize);
 
-	TBaseDelegate<ResourceType*> ConstructResource_Impl;
+		Links.Reserve(PoolSize);
+		Links.AddDefaulted(PoolSize);
 
-	void CreatePool(const int32& Size)
-	{
-		Pool.Reserve(Size);
-		Links.Reserve(Size);
-
-		for (int32 I = 0; I < Size; ++I)
+		for (int32 I = 0; I < PoolSize; ++I)
 		{
-			Add(1);
-		}
-	}
-
-	void Add(const int32 Count = 1)
-	{
-		for (int32 I = 0; I < Count; ++I)
-		{
-			ICsMemoryResource* M = ContructResourceContainter_Impl.Execute();
-			M->SetIndex(PoolSize);
-			M->Set(ConstructResource_Impl.Execute());
+			ResourceContainerType* M = &(ResourceContainers[I]);
+			M->SetIndex(I);
+			ResourceType* R = &(Resources[I]);
+			M->Set(R);
 			Pool.Add(M);
-			++PoolSize;
 
-			// Add Link
-			Links.Add(new TLinkedList<ICsMemoryResource*>());
 			// Set Element for Link
-			TLinkedList<ICsMemoryResource*>* Link = Links.Last();
-			(**Link) = M;
+			TLinkedList<ResourceContainerType*>& Link = Links[I];
+			(*Link) = M;
 		}
 	}
 
-protected:
-
-	void AddActiveLink(TLinkedList<ICsMemoryResource*>* Link)
+	void AddActiveLink(TLinkedList<ResourceContainerType*>* Link)
 	{
 		if (ActiveTail)
 		{
@@ -144,12 +148,12 @@ protected:
 		}
 	}
 
-	void RemoveActiveLink(TLinkedList<ICsMemoryResource*>* Link)
+	void RemoveActiveLink(TLinkedList<ResourceContainerType*>* Link)
 	{
 		// Check to Update HEAD
 		if (Link == ActiveHead)
 		{
-			if (ActiveSize > CS_SINGLETON)
+			if (ActiveSize > RS_SINGLETON)
 			{
 				ActiveHead = Link->GetNextLink();
 			}
@@ -164,7 +168,117 @@ protected:
 
 public:
 
-	ICsMemoryResource* Allocate()
+	TLinkedList<ResourceContainerType*>* GetActiveHead()
+	{
+		return ActiveHead;
+	}
+
+	TLinkedList<ResourceContainerType*>* GetActiveTail()
+	{
+		return ActiveTail;
+	}
+
+	ResourceContainerType* AllocateAfter(ResourceContainerType* ResourceContainer)
+	{
+		checkf(ResourceContainer, TEXT("%s::AllocateAfter: ResourceContainer is NULL."));
+
+		if (IsExhausted())
+		{
+			checkf(0, TEXT("%s::AllocateAfter: Pool is exhausted."), *Name);
+			return nullptr;
+		}
+
+		// New Resource
+		ResourceContainerType* R				  = nullptr;
+		TLinkedList<ResourceContainerType*>* Link = nullptr;
+		
+		for (int32 I = 0; I < PoolSize; ++I)
+		{
+			PoolIndex				 = (PoolIndex + 1) & PoolSizeMinusOne;
+			ResourceContainerType* M = Pool[PoolIndex];
+
+			if (!M->IsAllocated())
+			{
+				M->Allocate();
+				R    = M;
+				Link = &(Links[PoolIndex]);
+				break;
+			}
+		}
+
+		if (!R)
+		{
+			checkf(0, TEXT("%s::AllocateAfter: Pool is exhausted."), *Name);
+			return nullptr;
+		}
+
+		// Resource to Link After
+		const int32& LinkAfterIndex = ResourceContainer->GetIndex();
+
+		TLinkedList<ResourceContainerType*>* LinkAfter = &(Links[LinkAfterIndex]);
+
+		// Make Resource (Link) LinkAfter the link for ResourceContainer (LinkAfter)
+		Link->LinkAfter(LinkAfter);
+
+		if (LinkAfter == ActiveTail)
+		{
+			ActiveTail = Link;
+		}
+		++ActiveSize;
+		return R;
+	}
+
+	ResourceContainerType* AllocateBefore(ResourceContainerType* ResourceContainer)
+	{
+		checkf(ResourceContainer, TEXT("%s::AllocateBefore: ResourceContainer is NULL."));
+
+		if (IsExhausted())
+		{
+			checkf(0, TEXT("%s::AllocateBefore: Pool is exhausted."), *Name);
+			return nullptr;
+		}
+
+		// New Resource
+		ResourceContainerType* R				  = nullptr;
+		TLinkedList<ResourceContainerType*>* Link = nullptr;
+		
+		for (int32 I = 0; I < PoolSize; ++I)
+		{
+			PoolIndex				 = (PoolIndex + 1) & PoolSizeMinusOne;
+			ResourceContainerType* M = Pool[PoolIndex];
+
+			if (!M->IsAllocated())
+			{
+				M->Allocate();
+				R    = M;
+				Link = &(Links[PoolIndex]);
+				break;
+			}
+		}
+
+		if (!R)
+		{
+			checkf(0, TEXT("%s::AllocateBefore: Pool is exhausted."), *Name);
+			return nullptr;
+		}
+
+		// Resource to Link Before
+		const int32& LinkBeforeIndex = ResourceContainer->GetIndex();
+
+		TLinkedList<ResourceContainerType*>* LinkBefore = &(Links[LinkBeforeIndex]);
+
+		// Make Resource (Link) LinkBefore the link for ResourceContainer (LinkBefore)
+		Link->LinkBefore(LinkBefore);
+
+		if (LinkBefore == ActiveHead)
+		{
+			ActiveHead = Link;
+		}
+		++ActiveSize;
+		return R;
+	}
+
+	ResourceContainerType* Allocate()
 	{
 		if (IsExhausted())
 		{
@@ -174,13 +288,13 @@ public:
 
 		for (int32 I = 0; I < PoolSize; ++I)
 		{
-			PoolIndex			 = (PoolIndex + 1) % PoolSize;
-			ICsMemoryResource* M = Pool[PoolIndex];
+			PoolIndex				 = (PoolIndex + 1) & PoolSizeMinusOne;
+			ResourceContainerType* M = Pool[PoolIndex];
 
 			if (!M->IsAllocated())
 			{
 				M->Allocate();
-				AddActiveLink(Links[PoolIndex]);
+				AddActiveLink(&(Links[PoolIndex]));
 				++ActiveSize;
 				return M;
 			}
@@ -189,77 +303,43 @@ public:
 		return nullptr;
 	}
 
-	template<typename ResourceContainerType>
-	ResourceContainerType* Allocate()
+	bool Deallocate(ResourceContainerType* ResourceContainer)
 	{
-		return (ResourceContainerType*)Allocate();
-	}
-
-	ICsMemoryResource* SafeAllocate()
-	{
-		if (IsExhausted())
-		{
-			Add(1);
-		}
-
-		for (int32 I = 0; I < PoolSize; ++I)
-		{
-			PoolIndex			 = (PoolIndex + 1) % PoolSize;
-			ICsMemoryResource* M = Pool[PoolIndex];
-
-			if (!M->IsAllocated())
-			{
-				M->Allocate();
-				AddActiveLink(Links[PoolIndex]);
-				++ActiveSize;
-				return M;
-			}
-		}
-		checkf(0, TEXT("%s::Allocate: Pool is exhausted."), *Name);
-		return nullptr;
-	}
-
-	template<typename ResourceContainerType>
-	ResourceContainerType* SafeAllocate()
-	{
-		return (ResourceContainerType*)SafeAllocate();
-	}
-
-	bool Deallocate(ICsMemoryResource* Resource)
-	{
-		if (!Resource->IsAllocated())
+		if (!ResourceContainer->IsAllocated())
 			return false;
 
-		checkf(Resource->Get(), TEXT("%s::Deallocate: Resource is NULL."), *Name);
+		checkf(ResourceContainer->Get(), TEXT("%s::Deallocate: Resource is NULL."), *Name);
 
-		const int32& Index = Resource->GetIndex();
+		const int32& Index = ResourceContainer->GetIndex();
 
 		checkf(Index >= 0 && Index < PoolSize, TEXT("%s::Deallocate: Index: %d (< 0 or >= %d) of Resource Container is NOT Valid."), *Name, Index, PoolSize);
 
-		ICsMemoryResource* R = Pool[Index];
+		ResourceContainerType* M = Pool[Index];
 
-		checkf(R == Resource, TEXT("%s::Deallocate: Resource is NOT contained in Pool."), *Name);
+		checkf(M == ResourceContainer, TEXT("%s::Deallocate: Resource is NOT contained in Pool."), *Name);
 
-		RemoveActiveLink(Links[Index]);
+		M->Deallocate();
+		RemoveActiveLink(&(Links[Index]));
 		--ActiveSize;
 		return true;
 	}
 
 	bool Deallocate(ResourceType* Resource)
 	{
-		TLinkedList<ICsMemoryResource*>* Current = ActiveHead;
-		TLinkedList<ICsMemoryResource*>* Next = Current;
+		TLinkedList<ResourceContainerType*>* Current = ActiveHead;
+		TLinkedList<ResourceContainerType*>* Next	   = Current;
 
 		while (Next)
 		{
-			Current				 = Next;
-			ICsMemoryResource* M = **Current;
-			Next				 = Current->GetNextLink();
+			Current					 = Next;
+			ResourceContainerType* M = **Current;
+			Next					 = Current->GetNextLink();
 
-			ResourceType* R = (ResourceType*)M->Get();
+			ResourceType* R = M->Get();
 
 			if (R == Resource)
 			{
+				M->Deallocate();
 				RemoveActiveLink(Current);
 				--ActiveSize;
 				return true;

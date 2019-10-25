@@ -64,12 +64,12 @@ public:
 public:
 	TCsManager_PooledObject_Map()
 	{
-		Name = NRsCached::Str::Empty;
+		Name = NCsCached::Str::Empty;
 		CurrentWorld = nullptr;
 
 		ConstructParams.Reset();
 
-		ConstructManagerPooledObjects_Impl.BindRaw(this, &TRsManager_PooledObjects_Map<KeyType>::ConstructManagerPooledObjects);
+		ConstructManagerPooledObjects_Impl.BindRaw(this, &TCsManager_PooledObject_Map<KeyType>::ConstructManagerPooledObjects);
 
 		OnAddToPool_Event.Clear();
 		OnSpawn_Event.Clear();

@@ -1265,7 +1265,7 @@ public:
 	
 #if WITH_EDITOR
 
-	FORCEINLINE void ClearUserDefinedEnums()
+	void ClearUserDefinedEnums()
 	{
 		const int32 StartSize = Enums.Num();
 
@@ -1360,8 +1360,8 @@ public:
 		return *Instance; \
 	}
 
-#define CS_CREATE_ENUM_STRUCT(EnumMap, EnumElementName) const Type EnumElementName = EnumMap::Get().Create(#EnumElementName)
-#define CS_CREATE_ENUM_STRUCT_CUSTOM(EnumMap, EnumElementName, DisplayName) const Type EnumElementName = EnumMap::Get().Create(#EnumElementName, TEXT(DisplayName))
+#define CS_CREATE_ENUM_STRUCT(EnumMap, EnumElementName) const Type EnumElementName = EnumMap::Get().Create(#EnumElementName, false)
+#define CS_CREATE_ENUM_STRUCT_CUSTOM(EnumMap, EnumElementName, DisplayName) const Type EnumElementName = EnumMap::Get().Create(#EnumElementName, TEXT(DisplayName), false)
 
 
 #pragma endregion EnumStructMap

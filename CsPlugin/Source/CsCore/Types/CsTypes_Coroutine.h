@@ -7,10 +7,7 @@
 #include "CsTypes_Coroutine.generated.h"
 #pragma once
 
-// Coroutine
-#pragma region
-
-	// CoroutineSchedule
+// CoroutineSchedule
 #pragma region
 
 UENUM(BlueprintType)
@@ -626,5 +623,3 @@ public:
 #define CS_COROUTINE_EXIT(r)	PT_EXIT(&((r)->pt))
 #define CS_COROUTINE_YIELD(r)	PT_YIELD(&((r)->pt));
 #define CS_COROUTINE_WAIT_UNTIL(r, condition) PT_WAIT_UNTIL(&((r)->pt), condition);
-
-#pragma endregion Coroutine

@@ -1,49 +1,49 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_Primitive.h"
-#include "Types/CsTypes_Delegate.h"
 #include "Coroutine/pt.h"
+#include "Managers/Time/CsTypes_Time.h"
+#include "Utility/CsWeakObjectPtr.h"
 
 #include "CsTypes_Coroutine.generated.h"
 #pragma once
 
-// CoroutineSchedule
+// CoroutineState
 #pragma region
 
 UENUM(BlueprintType)
-enum class ECsCoroutineSchedule : uint8
+enum class ECsCoroutineState : uint8
 {
-	Tick						UMETA(DisplayName = "Tick"),
-	CalcCamera					UMETA(DisplayName = "CalcCamera"),
-	LastTick					UMETA(DisplayName = "LastTick"),
-	ECsCoroutineSchedule_MAX	UMETA(Hidden),
+	Free					UMETA(DisplayName = "Free"),
+	Init					UMETA(DisplayName = "Init"),
+	Run						UMETA(DisplayName = "Run"),
+	End						UMETA(DisplayName = "End"),
+	ECsCoroutineState_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsCoroutineSchedule : public TCsEnumMap<ECsCoroutineSchedule>
+struct CSCORE_API EMCsCoroutineState : public TCsEnumMap<ECsCoroutineState>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsCoroutineSchedule)
+	CS_ENUM_MAP_BODY(EMCsCoroutineState, ECsCoroutineState)
 };
 
-namespace NCsCoroutineSchedule
+namespace NCsCoroutineState
 {
-	typedef ECsCoroutineSchedule Type;
+	typedef ECsCoroutineState Type;
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type Tick;
-		extern CSCORE_API const Type CalcCamera;
-		extern CSCORE_API const Type LastTick;
-		extern CSCORE_API const Type ECsCoroutineSchedule_MAX;
+		extern CSCORE_API const Type Free;
+		extern CSCORE_API const Type Init;
+		extern CSCORE_API const Type Run;
+		extern CSCORE_API const Type End;
+		extern CSCORE_API const Type ECsCoroutineState_MAX;
 	}
 
 	extern CSCORE_API const uint8 MAX;
 }
 
-#define ECS_COROUTINE_SCHEDULE_MAX NCsCoroutineSchedule::MAX
+#pragma endregion CoroutineState
 
-#pragma endregion CoroutineSchedule
-
-	// CoroutineMessage
+// CoroutineMessage
 #pragma region
 
 UENUM(BlueprintType)
@@ -57,7 +57,7 @@ enum class ECsCoroutineMessage : uint8
 
 struct CSCORE_API EMCsCoroutineMessage : public TCsEnumMap<ECsCoroutineMessage>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsCoroutineMessage)
+	CS_ENUM_MAP_BODY(EMCsCoroutineMessage, ECsCoroutineMessage)
 };
 
 namespace NCsCoroutineMessage
@@ -77,7 +77,7 @@ namespace NCsCoroutineMessage
 
 #pragma endregion CoroutineMessage
 
-	// CoroutineEndReason
+// CoroutineEndReason
 #pragma region
 
 UENUM(BlueprintType)
@@ -86,6 +86,7 @@ enum class ECsCoroutineEndReason : uint8
 	EndOfExecution				UMETA(DisplayName = "End of Execution"),
 	StopMessage					UMETA(DisplayName = "Stop Message"),
 	StopCondition				UMETA(DisplayName = "Stop Condition"),
+	OwnerIsInvalid				UMETA(DisplayName = "Owner is Invalid"),
 	Parent						UMETA(DisplayName = "Parent"),
 	UniqueInstance				UMETA(DisplayName = "Unique Instance"),
 	Shutdown					UMETA(DisplayName = "Shutdown"),
@@ -95,7 +96,7 @@ enum class ECsCoroutineEndReason : uint8
 
 struct CSCORE_API EMCsCoroutineEndReason : public TCsEnumMap<ECsCoroutineEndReason>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsCoroutineEndReason)
+	CS_ENUM_MAP_BODY(EMCsCoroutineEndReason, ECsCoroutineEndReason)
 };
 
 namespace NCsCoroutineEndReason
@@ -107,6 +108,7 @@ namespace NCsCoroutineEndReason
 		extern CSCORE_API const Type EndOfExecution;
 		extern CSCORE_API const Type StopMessage;
 		extern CSCORE_API const Type StopCondition;
+		extern CSCORE_API const Type OwnerIsInvalid;
 		extern CSCORE_API const Type Parent;
 		extern CSCORE_API const Type UniqueInstance;
 		extern CSCORE_API const Type Shutdown;
@@ -119,16 +121,95 @@ namespace NCsCoroutineEndReason
 
 #pragma endregion CoroutineEndReason
 
+// CoroutineTransaction
+#pragma region
+
+UENUM(BlueprintType)
+enum class ECsCoroutineTransaction : uint8
+{
+	Allocate					UMETA(DisplayName = "Allocate"),
+	Start						UMETA(DisplayName = "Start"),
+	End							UMETA(DisplayName = "End"),
+	ECsCoroutineTransaction_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsCoroutineTransaction : public TCsEnumMap<ECsCoroutineTransaction>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsCoroutineTransaction, ECsCoroutineTransaction)
+};
+
+namespace NCsCoroutineTransaction
+{
+	typedef ECsCoroutineTransaction Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Allocate;
+		extern CSCORE_API const Type Start;
+		extern CSCORE_API const Type End;
+		extern CSCORE_API const Type ECsCoroutineTransaction_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+
+	namespace Str
+	{
+		typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
+
+		extern CSCORE_API const TCsString Allocate;
+		extern CSCORE_API const TCsString Start;
+		extern CSCORE_API const TCsString End;
+	}
+
+	FORCEINLINE const FString& ToString(const Type& EType)
+	{
+		if (EType == Type::Allocate) { return Str::Allocate.Value; }
+		if (EType == Type::Start) { return Str::Start.Value; }
+		if (EType == Type::End) { return Str::End.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const FString& ToActionString(const Type& EType)
+	{
+		if (EType == Type::Allocate) { return Str::Allocate.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
+		if (EType == Type::Start) { return Str::Start.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
+		if (EType == Type::End) { return Str::End.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const Type& ToType(const FString& String)
+	{
+		if (String == Str::Allocate) { return Ref::Allocate; }
+		if (String == Str::Start) { return Ref::Start; }
+		if (String == Str::End) { return Ref::End; }
+		return Ref::ECsCoroutineTransaction_MAX;
+	}
+}
+
+#define ECS_COROUTINE_TRANSACTION_MAX (uint8)NCsCoroutineTransaction::MAX
+
+#pragma endregion CoroutineTransaction
+
 USTRUCT(BlueprintType)
-struct FCsRoutineHandle
+struct CSCORE_API FCsRoutineHandle
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(Transient)
-	uint64 Handle;
+public:
 
-	FCsRoutineHandle() : 
-		Handle(0)
+	static const FCsRoutineHandle Invalid;
+
+public:
+
+	UPROPERTY()
+	int32 Index;
+
+	UPROPERTY()
+	FGuid Handle;
+
+	FCsRoutineHandle() :
+		Index(INDEX_NONE),
+		Handle()
 	{
 	}
 
@@ -136,13 +217,212 @@ struct FCsRoutineHandle
 	{
 		return GetTypeHash(InHandle.Handle);
 	}
+
+	bool IsValid() const
+	{
+		return Index > INDEX_NONE && Handle.IsValid();
+	}
+
+	void New()
+	{
+		Handle.NewGuid();
+	}
+
+	void Reset()
+	{
+		Handle.Invalidate();
+	}
 };
 
-#define CS_ROUTINE_POOL_SIZE 2048
+class UObject;
+class AActor;
+
+struct CSCORE_API FCsRoutineOwner
+{
+private:
+
+	void* Owner;
+
+	UObject* Object;
+	TWeakObjectPtr<UObject> WeakObject;
+	bool bObject;
+
+	AActor* Actor;
+
+public:
+
+	FCsRoutineOwner() :
+		Owner(nullptr),
+		Object(nullptr),
+		WeakObject(nullptr),
+		bObject(false),
+		Actor(nullptr)
+	{
+	}
+
+	~FCsRoutineOwner()
+	{
+	}
+
+	void SetOwner(void* InOwner)
+	{
+		Owner = InOwner;
+	}
+
+	FORCEINLINE void* GetOwner()
+	{
+		return Owner;
+	}
+
+	void SetObject(UObject* InObject)
+	{
+		Object		= InObject;
+		WeakObject  = Object;
+		bObject		= true;
+		Actor		= Cast<AActor>(Object);
+	}
+
+	FORCEINLINE UObject* GetObject()
+	{
+		return Object;
+	}
+
+	template<typename T>
+	FORCEINLINE T* GetObject()
+	{
+		return Cast<T>(GetObject());
+	}
+
+	FORCEINLINE UObject* GetSafeObject()
+	{
+		return WeakObject.IsValid() ? WeakObject.Get() : nullptr;
+	}
+
+	template<typename T>
+	FORCEINLINE T* GetSafeObject()
+	{
+		return Cast<T>(GetSafeObject());
+	}
+
+	FORCEINLINE bool IsObject() const
+	{
+		return bObject;
+	}
+
+	FORCEINLINE AActor* GetActor()
+	{
+		return Actor;
+	}
+
+	void Reset()
+	{
+		Owner = nullptr;
+		Object = nullptr;
+		WeakObject = nullptr;
+		bObject = false;
+		Actor = nullptr;
+	}
+};
+
+// RoutineRegisterValue
+#pragma region
+
+UENUM(BlueprintType)
+enum class ECsRoutineRegisterValueType : uint8
+{
+	Indexer							UMETA(DisplayName = "Indexer"),
+	Counter							UMETA(DisplayName = "Counter"),
+	Flag							UMETA(DisplayName = "Flag"),
+	Timer							UMETA(DisplayName = "Timer"),
+	DeltaTime						UMETA(DisplayName = "Delta Time"),
+	Int								UMETA(DisplayName = "Int"),
+	Float							UMETA(DisplayName = "Float"),
+	Vector							UMETA(DisplayName = "Vector"),
+	Rotator							UMETA(DisplayName = "Rotator"),
+	Color							UMETA(DisplayName = "Color"),
+	Name							UMETA(DisplayName = "Name"),
+	String							UMETA(DisplayName = "String"),
+	Object							UMETA(DisplayName = "Object"),
+	Void							UMETA(DisplayName = "Void"),
+	ECsRoutineRegisterValueType_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsRoutineRegisterValueType : public TCsEnumMap<ECsRoutineRegisterValueType>
+{
+	CS_ENUM_MAP_BODY(EMCsRoutineRegisterValueType, ECsRoutineRegisterValueType)
+};
+
+namespace NCsRoutineRegisterValueType
+{
+	typedef ECsRoutineRegisterValueType Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Indexer;
+		extern CSCORE_API const Type Counter;
+		extern CSCORE_API const Type Flag;
+		extern CSCORE_API const Type Timer;
+		extern CSCORE_API const Type DeltaTime;
+		extern CSCORE_API const Type Int;
+		extern CSCORE_API const Type Float;
+		extern CSCORE_API const Type Vector;
+		extern CSCORE_API const Type Rotator;
+		extern CSCORE_API const Type Color;
+		extern CSCORE_API const Type Name;
+		extern CSCORE_API const Type String;
+		extern CSCORE_API const Type Object;
+		extern CSCORE_API const Type Void;
+		extern CSCORE_API const Type ECsRoutineRegisterValueType_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+
+	void SetDefaultValue(const Type& ValueType, void* Ptr);
+	void SetValue(const Type& ValueType, void* From, void* To);
+
+	template<typename ValueType>
+	void SetValue_Internal(void* From, void* To)
+	{
+		ValueType* F = (ValueType*)From;
+		ValueType* T = (ValueType*)To;
+		*F			 = *T;
+	}
+}
+
+#pragma endregion RoutineRegisterValue
+
+struct CSCORE_API FCsRoutineRegisterInfo
+{
+public:
+
+	ECsRoutineRegisterValueType ValueType;
+
+	int32 Index;
+
+	FCsRoutineRegisterInfo() :
+		ValueType(ECsRoutineRegisterValueType::ECsRoutineRegisterValueType_MAX),
+		Index(INDEX_NONE)
+	{
+	}
+
+	~FCsRoutineRegisterInfo()
+	{
+	}
+};
+
+struct FCsRoutine;
+
+// Run
+DECLARE_DELEGATE_RetVal_OneParam(char, FCsCoroutine, FCsRoutine*);
+// Stop Condition
+DECLARE_DELEGATE_RetVal_OneParam(bool, FCsCoroutineStopCondition, FCsRoutine*);
+
+#define CS_ROUTINE_MAX_TYPE 255
 #define CS_ROUTINE_INDEXER_SIZE 4
 #define CS_ROUTINE_COUNTER_SIZE 4
-#define CS_ROUTINE_FLAG_SIZE 16
+#define CS_ROUTINE_FLAG_SIZE 4
 #define CS_ROUTINE_TIMER_SIZE 4
+#define CS_ROUTINE_DELTA_TIME_SIZE 4
 #define CS_ROUTINE_INT_SIZE 4
 #define CS_ROUTINE_FLOAT_SIZE 4
 #define CS_ROUTINE_VECTOR_SIZE 4
@@ -152,463 +432,184 @@ struct FCsRoutineHandle
 #define CS_ROUTINE_STRING_SIZE 4
 #define CS_ROUTINE_OBJECT_SIZE 4
 #define CS_ROUTINE_VOID_POINTER_SIZE 4
-#define CS_ROUTINE_VOID_DOUBLE_POINTER_SIZE 4
-#define CS_ROUTINE_MAX_TYPE 255
 #define CS_ROUTINE_END -1
 #define CS_ROUTINE_FREE -2
 
-typedef char(*CsCoroutine)(struct FCsRoutine*);
-typedef bool(*CsCoroutineStopCondition)(struct FCsRoutine*);
-typedef void(*CsAddRoutine)(class UObject*, struct FCsRoutine*, const uint8&);
-typedef void(*CsRemoveRoutine)(class UObject*, struct FCsRoutine*, const uint8&);
-
-struct FCsRoutine
+struct CSCORE_API FCsCoroutinePayload
 {
-public:
+private:
 
-	struct FCoroutineStopCondition : TCsMulticastDelegate_Static_RetOrBool_OneParam<struct FCsRoutine*> {};
-	struct FAddRoutine : TCsDelegate_Static_Three_Params<class UObject*, struct FCsRoutine*, const uint8&> {};
-	struct FRemoveRoutine : TCsDelegate_Static_Three_Params<class UObject*, struct FCsRoutine*, const uint8&> {};
+	int32 Index;
 
 public:
 
-	struct FCsRoutine* self;
-	struct pt pt;
-	struct FCsRoutine* parent;
-	TArray<struct FCsRoutine*> children;
-	ECsCoroutineSchedule scheduleType;
-	CsCoroutine coroutine;
-	FCoroutineStopCondition stopCondition;
-	int32 poolIndex;
-	int32 index;
-	FName name;
-	FString nameAsString;
-	uint8 type;
-	TWeakObjectPtr<AActor> a;
-	TWeakObjectPtr<UObject> o;
-	TWeakObjectPtr<UObject> owner;
-	struct FCsRoutine** ownerMemberRoutine;
-	FAddRoutine addRoutine;
-	FRemoveRoutine removeRoutine;
-	float startTime;
-	float elapsedTime;
-	float deltaSeconds;
-	int32 tickCount;
-	float delay;
+	FECsTimeGroup Group;
 
-	TArray<FName> stopMessages;
-	TArray<FName> stopMessages_recieved;
+	FCsCoroutine Coroutine;
 
-	ECsCoroutineEndReason endReason;
+	FCsTime StartTime;
 
-	int32 indexers[CS_ROUTINE_INDEXER_SIZE];
-	int32 counters[CS_ROUTINE_COUNTER_SIZE];
-	bool flags[CS_ROUTINE_FLAG_SIZE];
-	float timers[CS_ROUTINE_TIMER_SIZE];
-	int32 ints[CS_ROUTINE_INT_SIZE];
-	float floats[CS_ROUTINE_FLOAT_SIZE];
-	FVector vectors[CS_ROUTINE_VECTOR_SIZE];
-	FRotator rotators[CS_ROUTINE_ROTATOR_SIZE];
-	FLinearColor colors[CS_ROUTINE_COLOR_SIZE];
-	FName names[CS_ROUTINE_NAME_SIZE];
-	FString strings[CS_ROUTINE_STRING_SIZE];
-	TWeakObjectPtr<UObject> objects[CS_ROUTINE_OBJECT_SIZE];
-	void* voidPointers[CS_ROUTINE_VOID_POINTER_SIZE];
-	void** voidDoublePointers[CS_ROUTINE_VOID_DOUBLE_POINTER_SIZE];
+	FCsRoutineOwner Owner;
 
-	FCsRoutine()
+	TArray<FCsCoroutineStopCondition> Stops;
+
+	FCsRoutineHandle ParentHandle;
+
+	bool bDoInit;
+
+	bool bPerformFirstRun;
+
+	FName Name;
+
+	FString NameAsString;
+
+	TArray<FName> StopMessages;
+
+public:
+
+	FRsCoroutinePayload();
+
+	~FRsCoroutinePayload() {}
+
+	void SetIndex(const int32& InIndex);
+
+	FORCEINLINE const int32& GetIndex() const
 	{
-		self = nullptr;
-		parent = nullptr;
-
-		children.Reset();
-
-		Reset();
+		return Index;
 	}
 
-	void Init(const ECsCoroutineSchedule &inScheduleType, const int32 &inPoolIndex)
+	void Reset();
+
+// Registers
+#pragma region
+public:
+
+	TArray<FCsRoutineRegisterInfo> RegisterInfos;
+	TArray<TArray<void*>> Registers;
+
+protected:
+
+	TArray<TArray<bool>> RegisterFlags;
+
+	TArray<int32, TFixedAllocator<CS_ROUTINE_INDEXER_SIZE>> Indexers;
+	TArray<int32, TFixedAllocator<CS_ROUTINE_COUNTER_SIZE>> Counters;
+	TArray<bool, TFixedAllocator<CS_ROUTINE_FLAG_SIZE>> Flags;
+	TArray<FCsTime, TFixedAllocator<CS_ROUTINE_TIMER_SIZE>> Timers;
+	TArray<FCsDeltaTime, TFixedAllocator<CS_ROUTINE_DELTA_TIME_SIZE>> DeltaTimes;
+	TArray<int32, TFixedAllocator<CS_ROUTINE_INT_SIZE>> Ints;
+	TArray<float, TFixedAllocator<CS_ROUTINE_FLOAT_SIZE>> Floats;
+	TArray<FVector, TFixedAllocator<CS_ROUTINE_VECTOR_SIZE>> Vectors;
+	TArray<FRotator, TFixedAllocator<CS_ROUTINE_ROTATOR_SIZE>> Rotators;
+	TArray<FLinearColor, TFixedAllocator<CS_ROUTINE_COLOR_SIZE>> Colors;
+	TArray<FName, TFixedAllocator<CS_ROUTINE_NAME_SIZE>> Names;
+	TArray<FString, TFixedAllocator<CS_ROUTINE_STRING_SIZE>> Strings;
+	TArray<TCsWeakObjectPtr<UObject>, TFixedAllocator<CS_ROUTINE_OBJECT_SIZE>> Objects;
+	TArray<void*, TFixedAllocator<CS_ROUTINE_VOID_POINTER_SIZE>> VoidPointers;
+
+	// Set
+#pragma region
+protected:
+
+	FORCEINLINE void SetRegisterFlag(const ECsRoutineRegisterValueType& ValueType, const int32& InIndex)
 	{
-		self = this;
-		scheduleType = inScheduleType;
-		poolIndex = inPoolIndex;
-
-		Reset();
-	}
-
-	void SetIndex(const int32 &inIndex)
-	{
-		index = inIndex;
-	}
-
-	int32 GetIndex()
-	{
-		return index;
-	}
-
-	void IncrementIndex()
-	{
-		index++;
-	}
-
-	bool IsValid()
-	{
-		if (!self)
-			return false;
-		if (this != self)
-			return false;
-		return true;
-	}
-
-	void Start(CsCoroutine inCoroutine, const float& inStartTime)
-	{
-		Start(inCoroutine, nullptr, nullptr, nullptr, inStartTime);
-	}
-
-	void Start(CsCoroutine inCoroutine, AActor* inActor, const float& inStartTime)
-	{
-		Start(inCoroutine, nullptr, inActor, nullptr, inStartTime);
-	}
-
-	void Start(CsCoroutine inCoroutine, UObject* inObject, const float& inStartTime)
-	{
-		Start(inCoroutine, nullptr, nullptr, inObject, inStartTime);
-	}
-
-	void Start(CsCoroutine inCoroutine, AActor* inActor, UObject* inObject, const float& inStartTime)
-	{
-		Start(inCoroutine, nullptr, inActor, inObject, inStartTime);
-	}
-
-	void Start(CsCoroutine inCoroutine, CsCoroutineStopCondition inStopCondition, AActor* inActor, UObject* inObject, const float& inStartTime)
-	{
-		Start(inCoroutine, inStopCondition, inActor, inObject, inStartTime, nullptr, nullptr, CS_ROUTINE_MAX_TYPE);
-	}
-
-	void Start(CsCoroutine inCoroutine, CsCoroutineStopCondition inStopCondition, AActor* inActor, UObject* inObject, const float& inStartTime, FCsRoutine** inOwnerMemberRoutine)
-	{
-		Start(inCoroutine, inStopCondition, inActor, inObject, inStartTime, nullptr, nullptr, CS_ROUTINE_MAX_TYPE);
-
-		ownerMemberRoutine = inOwnerMemberRoutine;
-		*ownerMemberRoutine = self;
-	}
-
-	void Start(CsCoroutine inCoroutine, FCoroutineStopCondition &inStopCondition, AActor* inActor, UObject* inObject, const float& inStartTime, FCsRoutine** inOwnerMemberRoutine)
-	{
-		Start(inCoroutine, inStopCondition, inActor, inObject, inStartTime, nullptr, nullptr, CS_ROUTINE_MAX_TYPE);
-
-		ownerMemberRoutine = inOwnerMemberRoutine;
-		*ownerMemberRoutine = self;
-	}
-
-	void Start(CsCoroutine inCoroutine, CsCoroutineStopCondition inStopCondition, AActor* inActor, UObject* inObject, const float& inStartTime, CsAddRoutine inAddRoutine, CsRemoveRoutine inRemoveRoutine, const uint8& inType)
-	{
-		coroutine = inCoroutine;
-		stopCondition.Add(inStopCondition);
-		a = inActor;
-		o = inObject;
-		startTime = inStartTime;
-		addRoutine.Bind(inAddRoutine);
-		removeRoutine.Bind(inRemoveRoutine);
-		type = inType;
-
-		if (GetActor())
+		if (!RegisterFlags[(uint8)ValueType][InIndex])
 		{
-			owner = a;
-		}
-		else
-		if (GetRObject())
-		{
-			owner = o;
-		}
-
-		if (GetOwner())
-			addRoutine.Execute(GetOwner(), self, type);
-	}
-
-	void Start(CsCoroutine inCoroutine, FCoroutineStopCondition& inStopCondition, AActor* inActor, UObject* inObject, const float& inStartTime, CsAddRoutine inAddRoutine, CsRemoveRoutine inRemoveRoutine, const uint8& inType)
-	{
-		coroutine = inCoroutine;
-		stopCondition = inStopCondition;
-		a = inActor;
-		o = inObject;
-		startTime = inStartTime;
-		addRoutine.Bind(inAddRoutine);
-		removeRoutine.Bind(inRemoveRoutine);
-		type = inType;
-
-		if (GetActor())
-		{
-			owner = a;
-		}
-		else
-		if (GetRObject())
-		{
-			owner = o;
-		}
-
-		if (GetOwner())
-			addRoutine.Execute(GetOwner(), self, type);
-	}
-
-	void End(const ECsCoroutineEndReason& inEndReason)
-	{
-		if (ownerMemberRoutine)
-			*ownerMemberRoutine = nullptr;
-		else
-		if (GetOwner())
-			removeRoutine.Execute(GetOwner(), self, type);
-		EndChildren();
-		index = CS_ROUTINE_END;
-		endReason = inEndReason;
-	}
-
-	bool HasEnded()
-	{
-		return index == CS_ROUTINE_END || index == CS_ROUTINE_FREE;
-	}
-
-	void Reset()
-	{
-		if (parent)
-		{
-			parent->children.Remove(self);
-		}
-
-		parent = nullptr;
-
-		EndChildren();
-
-		coroutine = nullptr;
-		stopCondition.Clear();
-		index = CS_ROUTINE_FREE;
-		name = NAME_None;
-		nameAsString = NCsCached::Str::Empty;
-		type = CS_ROUTINE_MAX_TYPE;
-		a.Reset();
-		a = nullptr;
-		o.Reset();
-		o = nullptr;
-		owner.Reset();
-		owner = nullptr;
-		addRoutine.Unbind();
-		removeRoutine.Unbind();
-		ownerMemberRoutine = nullptr;
-		startTime = 0.0f;
-		elapsedTime = 0.0f;
-		tickCount = 0;
-		delay = 0.0f;
-		endReason = ECsCoroutineEndReason::ECsCoroutineEndReason_MAX;
-
-		for (int32 i = 0; i < CS_ROUTINE_INDEXER_SIZE; ++i)
-		{
-			indexers[i] = 0;
-		}
-
-		for (int32 i = 0; i < CS_ROUTINE_COUNTER_SIZE; ++i)
-		{
-			counters[i] = 0;
-		}
-
-		for (int32 i = 0; i < CS_ROUTINE_FLAG_SIZE; ++i)
-		{
-			flags[i] = false;
-		}
-
-		for (int32 i = 0; i < CS_ROUTINE_TIMER_SIZE; ++i)
-		{
-			timers[i] = 0.0f;
-		}
-
-		for (int32 i = 0; i < CS_ROUTINE_INT_SIZE; ++i)
-		{
-			ints[i] = 0;
-		}
-
-		for (int32 i = 0; i < CS_ROUTINE_FLOAT_SIZE; ++i)
-		{
-			floats[i] = 0.0f;
-		}
-
-		for (int32 i = 0; i < CS_ROUTINE_VECTOR_SIZE; ++i)
-		{
-			vectors[i] = FVector::ZeroVector;
-		}
-
-		for (int32 i = 0; i < CS_ROUTINE_ROTATOR_SIZE; ++i)
-		{
-			rotators[i] = FRotator::ZeroRotator;
-		}
-
-		for (int32 i = 0; i < CS_ROUTINE_COLOR_SIZE; ++i)
-		{
-			colors[i] = FLinearColor::White;
-		}
-
-		for (int32 i = 0; i < CS_ROUTINE_NAME_SIZE; ++i)
-		{
-			names[i] = NAME_None;
-		}
-
-		for (int32 i = 0; i < CS_ROUTINE_STRING_SIZE; ++i)
-		{
-			strings[i] = NCsCached::Str::Empty;
-		}
-
-		for (int32 i = 0; i < CS_ROUTINE_OBJECT_SIZE; ++i)
-		{
-			objects[i].Reset();
-			objects[i] = nullptr;
-		}
-
-		for (int32 i = 0; i < CS_ROUTINE_VOID_POINTER_SIZE; ++i)
-		{
-			voidPointers[i] = nullptr;
-		}
-
-		for (int32 i = 0; i < CS_ROUTINE_VOID_DOUBLE_POINTER_SIZE; ++i)
-		{
-			voidDoublePointers[i] = nullptr;
-		}
-
-		stopMessages.Reset();
-		stopMessages_recieved.Reset();
-	}
-
-	void Run(const float& inDeltaSeconds)
-	{
-		const int32 count = stopMessages_recieved.Num();
-
-		for (int32 i = 0; i < count; ++i)
-		{
-			if (stopMessages.Find(stopMessages_recieved[i]) != INDEX_NONE)
-			{
-				stopMessages.Reset();
-				End(ECsCoroutineEndReason::StopMessage);
-				break;
-			}
-		}
-		stopMessages_recieved.Reset();
-
-		if (index == CS_ROUTINE_END &&
-			endReason == ECsCoroutineEndReason::StopMessage)
-		{
-			return;
-		}
-
-		if (stopCondition.Broadcast(self))
-		{
-			End(ECsCoroutineEndReason::StopCondition);
-			return;
-		}
-
-		if (index == CS_ROUTINE_END)
-		{
-			if (endReason == ECsCoroutineEndReason::ECsCoroutineEndReason_MAX)
-				End(ECsCoroutineEndReason::EndOfExecution);
-			return;
-		}
-		deltaSeconds = inDeltaSeconds;
-		elapsedTime += deltaSeconds;
-		++tickCount;
-		(*coroutine)(self);
-
-		if (index == CS_ROUTINE_END)
-			End(ECsCoroutineEndReason::EndOfExecution);
-	}
-
-	AActor* GetActor()
-	{
-		return a.IsValid() ? a.Get() : nullptr;
-	}
-
-	template<typename T>
-	T* GetActor()
-	{
-		return Cast<T>(GetActor());
-	}
-
-	UObject* GetRObject()
-	{
-		return o.IsValid() ? o.Get() : nullptr;
-	}
-
-	template<typename T>
-	T* GetRObject()
-	{
-		return Cast<T>(GetRObject());
-	}
-
-	UObject* GetOwner()
-	{
-		return owner.IsValid() ? owner.Get() : nullptr;
-	}
-
-	template<typename T>
-	T* GetOwner()
-	{
-		Cast<T>(GetOwner());
-	}
-
-	UObject* GetObjectAt(const uint8& inIndex)
-	{
-		return objects[inIndex].IsValid() ? objects[inIndex].Get() : nullptr;
-	}
-
-	template<typename T>
-	T* GetObjectAt(const uint8& inIndex)
-	{
-		return Cast<T>(GetObjectAt(inIndex));
-	}
-
-	void AddChild(struct FCsRoutine* child)
-	{
-		child->parent = self;
-		children.Add(child);
-	}
-
-	void EndChildren()
-	{
-		const int32 count = children.Num();
-
-		for (int32 i = 0; i < count; ++i)
-		{
-			children[i]->End(ECsCoroutineEndReason::Parent);
-		}
-		children.Reset();
-	}
-
-	void EndChild(struct FCsRoutine* child)
-	{
-		const int32 count = children.Num();
-
-		for (int32 i = count - 1; i >= 0; --i)
-		{
-			if (child == children[i])
-			{
-				child->End(ECsCoroutineEndReason::Parent);
-				children.RemoveAt(i);
-				break;
-			}
+			RegisterInfos.AddDefaulted();
+			FCsRoutineRegisterInfo& Info = RegisterInfos.Last();
+			Info.ValueType				 = ValueType;
+			Info.Index					 = InIndex;
 		}
 	}
 
-	void AddMessage(const ECsCoroutineMessage& MessageType, const FName& Message)
+public:
+
+	FORCEINLINE void SetValue_Indexer(const int32& InIndex, const int32& Value)
 	{
-		if (MessageType == ECsCoroutineMessage::Stop)
-		{
-			if (stopMessages.Find(Message) == INDEX_NONE)
-				stopMessages.Add(Message);
-		}
+		SetRegisterFlag(ECsRoutineRegisterValueType::Indexer, InIndex);
+		Indexers[InIndex] = Value;
 	}
 
-	void ReceiveMessage(const ECsCoroutineMessage& MessageType, const FName& Message)
+	FORCEINLINE void SetValue_Counter(const int32& InIndex, const int32& Value)
 	{
-		if (MessageType == ECsCoroutineMessage::Stop)
-		{
-			if (stopMessages_recieved.Find(Message) == INDEX_NONE)
-				stopMessages_recieved.Add(Message);
-		}
+		SetRegisterFlag(ECsRoutineRegisterValueType::Counter, InIndex);
+		Counters[InIndex] = Value;
 	}
+
+	FORCEINLINE void SetValue_Flag(const int32& InIndex, const bool& Value)
+	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Flag, InIndex);
+		Flags[InIndex] = Value;
+	}
+
+	FORCEINLINE void SetValue_Timer(const int32& InIndex, const FCsTime& Value)
+	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Timer, InIndex);
+		Timers[InIndex] = Value;
+	}
+
+	FORCEINLINE void SetValue_DeltaTime(const int32& InIndex, const FCsDeltaTime& Value)
+	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::DeltaTime, InIndex);
+		DeltaTimes[InIndex] = Value;
+	}
+
+	FORCEINLINE void SetValue_Int(const int32& InIndex, const int32& Value)
+	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Int, InIndex);
+		Ints[InIndex] = Value;
+	}
+
+	FORCEINLINE void SetValue_Float(const int32& InIndex, const float& Value)
+	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Float, InIndex);
+		Floats[InIndex] = Value;
+	}
+
+	FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector& Value)
+	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Vector, InIndex);
+		Vectors[InIndex] = Value;
+	}
+
+	FORCEINLINE void SetValue_Rotator(const int32& InIndex, const FRotator& Value)
+	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Rotator, InIndex);
+		Rotators[InIndex] = Value;
+	}
+
+	FORCEINLINE void SetValue_Color(const int32& InIndex, const FLinearColor& Value)
+	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Color, InIndex);
+		Colors[InIndex] = Value;
+	}
+
+	FORCEINLINE void SetValue_Name(const int32& InIndex, const FName& Value)
+	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Indexer, InIndex);
+		Names[InIndex] = Value;
+	}
+
+	FORCEINLINE void SetValue_String(const int32& InIndex, const FString& Value)
+	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Name, InIndex);
+		Strings[InIndex] = Value;
+	}
+
+	FORCEINLINE void SetValue_Object(const int32& InIndex, UObject* Value)
+	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Object, InIndex);
+		Objects[InIndex].Set(Value);
+	}
+
+	FORCEINLINE void SetValue_Void(const int32& InIndex, void* Value)
+	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Void, InIndex);
+		VoidPointers[InIndex] = Value;
+	}
+
+#pragma endregion Set
+
+#pragma endregion Registers
 };
 
 #define CS_COROUTINE_DECLARE(Func)	virtual void Func(); \
@@ -618,7 +619,7 @@ public:
 
 #define CS_COROUTINE_INIT(r)  PT_INIT(&((r)->pt))
 #define CS_COROUTINE_BEGIN(r)   { char PT_YIELD_FLAG = 1; LC_RESUME((&((r)->pt))->lc)
-#define CS_COROUTINE_END(r)	(r)->index = CS_ROUTINE_END; LC_END((&((r)->pt))->lc); PT_YIELD_FLAG = 0; \
+#define CS_COROUTINE_END(r)	(r)->State = ECsCoroutineState::End; LC_END((&((r)->pt))->lc); PT_YIELD_FLAG = 0; \
 							PT_INIT(&((r)->pt)); return PT_ENDED; }			
 #define CS_COROUTINE_EXIT(r)	PT_EXIT(&((r)->pt))
 #define CS_COROUTINE_YIELD(r)	PT_YIELD(&((r)->pt));

@@ -11,30 +11,6 @@ UCsManager_Time::UCsManager_Time(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-// UObject Interface
-#pragma region
-
-void UCsManager_Time::BeginDestroy()
-{
-	Super::BeginDestroy();
-
-	Shutdown();
-}
-
-#pragma endregion UObject Interface
-
-// UActorComponent Interface
-#pragma region
-
-void UCsManager_Time::OnRegister()
-{
-	Super::OnRegister();
-
-	Init(this);
-}
-
-#pragma endregion UActorComponent Interface
-
 // Singleton
 #pragma region
 
@@ -45,8 +21,9 @@ void UCsManager_Time::OnRegister()
 
 	if (!s_Instance)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Time::Get: Manager must be attached and registered on a game object in order to call Get()."));
-		return nullptr;
+		s_Instance = NewObject<UCsManager_Time>(GetTransientPackage(), UCsManager_Time::StaticClass(), TEXT("Manager_Time_Singleton"), RF_Transient | RF_Public);
+		s_Instance->AddToRoot();
+		s_Instance->Initialize();
 	}
 
 	return s_Instance;
@@ -55,12 +32,7 @@ void UCsManager_Time::OnRegister()
 /*static*/ void UCsManager_Time::Init(UCsManager_Time* Manager)
 {
 	s_bShutdown = false;
-
-	if (s_Instance)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Time::Init: This is being called before the previous instance of the manager has been Shutdown."));
-	}
-	s_Instance = Manager;
+	UCsManager_Time::Get();
 }
 
 /*static*/ void UCsManager_Time::Shutdown()
@@ -69,12 +41,24 @@ void UCsManager_Time::OnRegister()
 		return;
 
 	s_Instance->CleanUp();
+	s_Instance->RemoveFromRoot();
 	s_Instance = nullptr;
 	s_bShutdown = true;
 }
 
 void UCsManager_Time::Initialize()
 {
+	// Time Groups
+	{
+		const int32& Count = EMCsTimeGroup::Get().Num();
+
+		TimeGroups.Reserve(Count);
+
+		for (const FECsTimeGroup& Group : EMCsTimeGroup::Get())
+		{
+			TimeGroups.AddDefaulted();
+		}
+	}
 }
 
 void UCsManager_Time::CleanUp()
@@ -82,3 +66,38 @@ void UCsManager_Time::CleanUp()
 }
 
 #pragma endregion Singleton
+
+void UCsManager_Time::Start(const FECsTimeGroup& Group)
+{
+	TimeGroups[Group.Value].Start();
+}
+
+// Pause
+#pragma region
+
+void UCsManager_Time::Pause(const FECsTimeGroup& Group)
+{
+	TimeGroups[Group.Value].Pause();
+}
+
+void UCsManager_Time::Unpause(const FECsTimeGroup& Group)
+{
+	TimeGroups[Group.Value].Unpause();
+}
+
+#pragma endregion Pause
+
+// Update
+#pragma region
+
+void UCsManager_Time::Update(const FECsTimeGroup& Group, const float& DeltaTime)
+{
+	TimeGroups[Group.Value].Update(DeltaTime);
+}
+
+void UCsManager_Time::Update(const FECsTimeGroup& Group, const float& DeltaTime, const float& Time, const float& RealTime)
+{
+	TimeGroups[Group.Value].Update(DeltaTime, Time, RealTime);
+}
+
+#pragma endregion Update

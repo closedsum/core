@@ -15,7 +15,7 @@ class AActor;
 class APawn;
 class ACharacter;
 
-struct RSCORE_API FCsClassPropertyMap final
+struct CSCORE_API FCsClassPropertyMap final
 {
 protected:
 	TMap<FName, TMap<FName, TWeakObjectPtr<UProperty>>> Map;
@@ -46,7 +46,7 @@ struct CSCORE_API FCsClassInstancePropertyMap
 public:
 	TMap<FName, TCsBool_Ref*> Map_bool;
 	TMap<FName, TCsInt32_Ref*> Map_int32;
-	TMap<FName, ICsProperty_Ref*> Map_EnumClass;
+	TMap<FName, ICsProperty*> Map_EnumClass;
 	TMap<FName, TCsUint8_Ref*> Map_EnumNamespaced;
 	TMap<FName, TCsFVector_Ref*> Map_Vector;
 	TMap<FName, TCsObject_Ref*> Map_Object;
@@ -58,7 +58,7 @@ public:
 	TMap<FName, TCsStaticMeshComponent_Ref*> Map_StaticMeshComponent;
 	TMap<FName, TCsSkeletalMeshComponent_Ref*> Map_SkeletalMeshComponent;
 
-	TMap<FECsMemberType, TMap<FName, ICsProperty_Ref*>> Maps;
+	TMap<FECsMemberType, TMap<FName, ICsProperty*>> Maps;
 
 	TMap<FName, UUserDefinedEnum*> Map_UserDefinedEnum;
 
@@ -78,9 +78,9 @@ public:
 	{
 		for (const FECsMemberType& MemberType : EMCsMemberType::Get())
 		{
-			for (TPair<FName, ICsProperty_Ref*>& Pair : Maps[MemberType])
+			for (TPair<FName, ICsProperty*>& Pair : Maps[MemberType])
 			{
-				ICsProperty_Ref* Ref = Pair.Value;
+				ICsProperty* Ref = Pair.Value;
 				delete Ref;
 				Pair.Value = nullptr;
 			}
@@ -128,7 +128,7 @@ public:
 	template<typename EnumType>
 	EnumType GetValue_EnumClass(const FName& PropertyName)
 	{
-		ICsProperty_Ref* Ref = Map_EnumClass.Find(PropertyName);
+		ICsProperty* Ref = Map_EnumClass.Find(PropertyName);
 		TCsProperty_Ref<EnumType>* Enum_Ref = (TCsProperty_Ref<EnumType>*)(Ref);
 		return Enum_Ref->Get();
 	}
@@ -138,7 +138,7 @@ public:
 	{
 		Success = true;
 
-		if (ICsProperty_Ref** Ref = Map_EnumClass.Find(PropertyName))
+		if (ICsProperty** Ref = Map_EnumClass.Find(PropertyName))
 		{
 			TCsProperty_Ref<EnumType>* Enum_Ref = (TCsProperty_Ref<EnumType>*)(*Ref);
 			return Enum_Ref->Get();
@@ -184,7 +184,7 @@ public:
 	template<typename EnumType>
 	void SetValue_EnumClass(const FName& PropertyName, const EnumType& Value)
 	{
-		ICsProperty_Ref* Ref = Map_EnumClass.Find(PropertyName);
+		ICsProperty* Ref = Map_EnumClass.Find(PropertyName);
 		TCsProperty_Ref<EnumType>* Enum_Ref = (TCsProperty_Ref<EnumType>*)(Ref);
 
 		*(Enum_Ref) = Value;
@@ -193,7 +193,7 @@ public:
 	template<typename EnumType>
 	bool SetSafeValue_EnumClass(const FName& PropertyName, const EnumType& Value)
 	{
-		if (ICsProperty_Ref** Ref = Map_EnumClass.Find(PropertyName))
+		if (ICsProperty** Ref = Map_EnumClass.Find(PropertyName))
 		{
 			TCsProperty_Ref<EnumType>* Enum_Ref = (TCsProperty_Ref<EnumType>*)(*Ref);
 

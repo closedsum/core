@@ -109,7 +109,7 @@ public:
 		FCsDeltaTime DeltaTime;
 		DeltaTime.Time = A.Time - B.Time;
 		DeltaTime.RealTime = A.RealTime - B.RealTime;
-		DeltaTime.Timespan = A.Time - B.Time;
+		DeltaTime.Timespan = A.DateTime - B.DateTime;
 		DeltaTime.Frame = A.Frame - B.Frame;
 		return DeltaTime;
 	}

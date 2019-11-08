@@ -83,7 +83,7 @@ void FCsClassPropertyMap::CreateMap(UClass* Class, const TArray<FName>& Property
 			}
 		}
 
-		if (Names.Num() == RS_EMPTY)
+		if (Names.Num() == CS_EMPTY)
 			break;
 	}
 
@@ -326,7 +326,7 @@ void FCsClassInstancePropertyMap::Resolve()
 {
 	for (const FECsMemberType& MemberType : EMCsMemberType::Get())
 	{
-		for (TPair<FName, ICsProperty_Ref*>& Pair : Maps[MemberType])
+		for (TPair<FName, ICsProperty*>& Pair : Maps[MemberType])
 		{
 			Pair.Value->Resolve();
 		}

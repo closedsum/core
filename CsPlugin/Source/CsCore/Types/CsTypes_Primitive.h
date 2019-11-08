@@ -3390,6 +3390,74 @@ typedef FCsProperty_Ref_bool TCsBool_Ref;
 
 #pragma endregion bool
 
+	// uint8
+#pragma region
+
+struct CSCORE_API FCsProperty_Ref_uint8 : public TCsProperty_Ref<uint8>
+{
+private:
+	typedef TCsProperty_Ref<uint8> Super;
+
+public:
+
+	FCsProperty_Ref_uint8() : Super()
+	{
+		DefaultValue = 0;
+	}
+	~FCsProperty_Ref_uint8() {}
+
+	FORCEINLINE FCsProperty_Ref_uint8& operator=(const uint8& B)
+	{
+		*Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator==(const uint8& Lhs, const FCsProperty_Ref_uint8& Rhs)
+	{
+		return Lhs == *(Rhs.Value);
+	}
+
+	FORCEINLINE friend bool operator==(const FCsProperty_Ref_uint8& Lhs, const uint8& Rhs)
+	{
+		return *(Lhs.Value) == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const uint8& Lhs, const FCsProperty_Ref_uint8& Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsProperty_Ref_uint8& Lhs, const uint8& Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator<(const FCsProperty_Ref_uint8& Lhs, const uint8& Rhs)
+	{
+		return (*Lhs.Value) < Rhs;
+	}
+
+	FORCEINLINE friend bool operator<(const uint8 &Lhs, const FCsProperty_Ref_uint8 &Rhs)
+	{
+		return Lhs < (*Rhs.Value);
+	}
+
+	FORCEINLINE friend bool operator>(const FCsProperty_Ref_uint8 &Lhs, const uint8 &Rhs)
+	{
+		return (*Lhs.Value) > Rhs;
+	}
+
+	FORCEINLINE friend bool operator>(const uint8& Lhs, const FCsProperty_Ref_uint8 &Rhs)
+	{
+		return Lhs > (*Rhs.Value);
+	}
+};
+
+typedef FCsProperty_Ref_uint8 TCsUint8_Ref;
+
+#pragma endregion uint8
+
 	// int32
 #pragma region
 
@@ -3457,6 +3525,74 @@ public:
 typedef FCsProperty_Ref_int32 TCsInt32_Ref;
 
 #pragma endregion int32
+
+	// int64
+#pragma region
+
+struct CSCORE_API FCsProperty_Ref_int64 : public TCsProperty_Ref<int64>
+{
+private:
+	typedef TCsProperty_Ref<int64> Super;
+
+public:
+
+	FCsProperty_Ref_int64() : Super()
+	{
+		DefaultValue = 0L;
+	}
+	~FCsProperty_Ref_int64() {}
+
+	FORCEINLINE FCsProperty_Ref_int64& operator=(const int32& B)
+	{
+		*Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator==(const int32& Lhs, const FCsProperty_Ref_int64& Rhs)
+	{
+		return Lhs == *(Rhs.Value);
+	}
+
+	FORCEINLINE friend bool operator==(const FCsProperty_Ref_int64& Lhs, const int32& Rhs)
+	{
+		return *(Lhs.Value) == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const int32& Lhs, const FCsProperty_Ref_int64& Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsProperty_Ref_int64& Lhs, const int32& Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator<(const FCsProperty_Ref_int64& Lhs, const int32& Rhs)
+	{
+		return (*Lhs.Value) < Rhs;
+	}
+
+	FORCEINLINE friend bool operator<(const int32& Lhs, const FCsProperty_Ref_int64& Rhs)
+	{
+		return Lhs < (*Rhs.Value);
+	}
+
+	FORCEINLINE friend bool operator>(const FCsProperty_Ref_int64& Lhs, const int32& Rhs)
+	{
+		return (*Lhs.Value) > Rhs;
+	}
+
+	FORCEINLINE friend bool operator>(const int32& Lhs, const FCsProperty_Ref_int64& Rhs)
+	{
+		return Lhs > (*Rhs.Value);
+	}
+};
+
+typedef FCsProperty_Ref_int64 TCsInt64_Ref;
+
+#pragma endregion int64
 
 	// float
 #pragma region
@@ -3573,6 +3709,256 @@ public:
 typedef FCsProperty_Ref_FVector TCsFVector_Ref;
 
 #pragma endregion FVector
+
+template<typename ClassType>
+struct TCsProperty_Ref_Ptr : public ICsProperty
+{
+public:
+	ClassType** Value;
+	TWeakObjectPtr<ClassType> Last_Value;
+protected:
+	bool IsDirty;
+public:
+	TMulticastDelegate<void, ClassType*> OnChange_Event;
+
+public:
+	TCsProperty_Ref_Ptr()
+	{
+		Value = nullptr;
+		Last_Value = nullptr;
+		IsDirty = false;
+		OnChange_Event.Clear();
+	}
+	virtual ~TCsProperty_Ref_Ptr() {}
+
+	FORCEINLINE virtual void UpdateIsDirty()
+	{
+		ClassType* _Last_Value = Last_Value.IsValid() ? Last_Value.Get() : nullptr;
+		IsDirty				   = *Value != _Last_Value;
+		Last_Value			   = *Value;
+
+		if (IsDirty)
+			OnChange_Event.Broadcast(*Value);
+	}
+
+	FORCEINLINE TCsProperty_Ref_Ptr& operator=(ClassType* B)
+	{
+		*Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FORCEINLINE bool operator==(const ClassType*& B) const
+	{
+		return *Value == B;
+	}
+
+	FORCEINLINE bool operator!=(const ClassType*& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE void Set(ClassType** inValue)
+	{
+		Value = inValue;
+		UpdateIsDirty();
+	}
+
+	FORCEINLINE void Set(ClassType* inValue)
+	{
+		*Value = inValue;
+		UpdateIsDirty();
+	}
+
+	FORCEINLINE ClassType* Get() { return *Value; }
+
+	FORCEINLINE void Clear()
+	{
+		IsDirty = false;
+	}
+
+	void ResetValue()
+	{
+		Value = nullptr;
+		Last_Value = nullptr;
+		IsDirty = false;
+	}
+
+	void Reset()
+	{
+		ResetValue();
+
+		OnChange_Event.Clear();
+	}
+
+	FORCEINLINE bool HasChanged() { return IsDirty; }
+
+	FORCEINLINE void Resolve()
+	{
+		UpdateIsDirty();
+		Clear();
+	}
+};
+
+	// UObject
+#pragma region
+
+class UObject;
+
+struct CSCORE_API FCsProperty_Ref_Object : public TCsProperty_Ref_Ptr<UObject>
+{
+private:
+	typedef TCsProperty_Ref_Ptr<UObject> Super;
+
+public:
+
+	FCsProperty_Ref_Object() : Super(){}
+	~FCsProperty_Ref_Object() {}
+};
+
+typedef FCsProperty_Ref_Object TCsObject_Ref;
+
+#pragma endregion UObject
+
+	// AActor
+#pragma region
+
+class AActor;
+
+struct CSCORE_API FCsProperty_Ref_Actor : public TCsProperty_Ref_Ptr<AActor>
+{
+private:
+	typedef TCsProperty_Ref_Ptr<AActor> Super;
+
+public:
+
+	FCsProperty_Ref_Actor() : Super() {}
+	~FCsProperty_Ref_Actor() {}
+};
+
+typedef FCsProperty_Ref_Actor TCsActor_Ref;
+
+#pragma endregion AActor
+
+	// APawn
+#pragma region
+
+class APawn;
+
+struct CSCORE_API FCsProperty_Ref_Pawn : public TCsProperty_Ref_Ptr<APawn>
+{
+private:
+	typedef TCsProperty_Ref_Ptr<APawn> Super;
+
+public:
+
+	FCsProperty_Ref_Pawn() : Super() {}
+	~FCsProperty_Ref_Pawn() {}
+};
+
+typedef FCsProperty_Ref_Pawn TCsPawn_Ref;
+
+#pragma endregion APawn
+
+	// UActorComponent
+#pragma region
+
+class UActorComponent;
+
+struct CSCORE_API FCsProperty_Ref_ActorComponent : public TCsProperty_Ref_Ptr<UActorComponent>
+{
+private:
+	typedef TCsProperty_Ref_Ptr<UActorComponent> Super;
+
+public:
+
+	FCsProperty_Ref_ActorComponent() : Super() {}
+	~FCsProperty_Ref_ActorComponent() {}
+};
+
+typedef FCsProperty_Ref_ActorComponent TCsActorComponent_Ref;
+
+#pragma endregion UActorComponent
+	
+	// USceneComponent
+#pragma region
+
+class USceneComponent;
+
+struct CSCORE_API FCsProperty_Ref_SceneComponent : public TCsProperty_Ref_Ptr<USceneComponent>
+{
+private:
+	typedef TCsProperty_Ref_Ptr<USceneComponent> Super;
+
+public:
+
+	FCsProperty_Ref_SceneComponent() : Super() {}
+	~FCsProperty_Ref_SceneComponent() {}
+};
+
+typedef FCsProperty_Ref_SceneComponent TCsSceneComponent_Ref;
+
+#pragma endregion USceneComponent
+
+	// UPrimitiveComponent
+#pragma region
+
+class UPrimitiveComponent;
+
+struct CSCORE_API FCsProperty_Ref_PrimitiveComponent : public TCsProperty_Ref_Ptr<UPrimitiveComponent>
+{
+private:
+	typedef TCsProperty_Ref_Ptr<UPrimitiveComponent> Super;
+
+public:
+
+	FCsProperty_Ref_PrimitiveComponent() : Super() {}
+	~FCsProperty_Ref_PrimitiveComponent() {}
+};
+
+typedef FCsProperty_Ref_PrimitiveComponent TCsPrimitiveComponent_Ref;
+
+#pragma endregion UPrimitiveComponent
+
+	// UStaticMeshComponent
+#pragma region
+
+class UStaticMeshComponent;
+
+struct CSCORE_API FCsProperty_Ref_StaticMeshComponent : public TCsProperty_Ref_Ptr<UStaticMeshComponent>
+{
+private:
+	typedef TCsProperty_Ref_Ptr<UStaticMeshComponent> Super;
+
+public:
+
+	FCsProperty_Ref_StaticMeshComponent() : Super() {}
+	~FCsProperty_Ref_StaticMeshComponent() {}
+};
+
+typedef FCsProperty_Ref_StaticMeshComponent TCsStaticMeshComponent_Ref;
+
+#pragma endregion UStaticMeshComponent
+
+	// USkeletalMeshComponent
+#pragma region
+
+class USkeletalMeshComponent;
+
+struct CSCORE_API FCsProperty_Ref_SkeletalMeshComponent : public TCsProperty_Ref_Ptr<USkeletalMeshComponent>
+{
+private:
+	typedef TCsProperty_Ref_Ptr<USkeletalMeshComponent> Super;
+
+public:
+
+	FCsProperty_Ref_SkeletalMeshComponent() : Super() {}
+	~FCsProperty_Ref_SkeletalMeshComponent() {}
+};
+
+typedef FCsProperty_Ref_SkeletalMeshComponent TCsSkeletalMeshComponent_Ref;
+
+#pragma endregion UStaticMeshComponent
 
 #pragma endregion Ref
 
@@ -5600,11 +5986,13 @@ public:
 
 #pragma endregion TMapRef
 
+#pragma endregion Property Types
+
 // MemberType
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsMemberType: public FECsEnum_uint8
+struct CSCORE_API FECsMemberType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -5625,12 +6013,23 @@ namespace NCsMemberType
 	extern CSCORE_API const Type Bool;
 	extern CSCORE_API const Type Uint8;
 	extern CSCORE_API const Type Int32;
+	extern CSCORE_API const Type Enum;
+	extern CSCORE_API const Type EnumClass;
+	extern CSCORE_API const Type EnumNamespaced;
 	extern CSCORE_API const Type Float;
 	extern CSCORE_API const Type String;
 	extern CSCORE_API const Type Name;
 	extern CSCORE_API const Type Vector;
 	extern CSCORE_API const Type Rotator;
 	extern CSCORE_API const Type Color;
+	extern CSCORE_API const Type Object;
+	extern CSCORE_API const Type Actor;
+	extern CSCORE_API const Type Pawn;
+	extern CSCORE_API const Type ActorComponent;
+	extern CSCORE_API const Type SceneComponent;
+	extern CSCORE_API const Type PrimitiveComponent;
+	extern CSCORE_API const Type StaticMeshComponent;
+	extern CSCORE_API const Type SkeletalMeshComponent;
 }
 
 #pragma endregion MemberType
@@ -5638,8 +6037,6 @@ namespace NCsMemberType
 #define CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(Type, Integral, Value) const Type Integral = 1; \
 																		  Type* ptr = (Type*)(&Integral); \
 																		  *ptr = Value;
-
-#pragma endregion Property Types
 
 // Blueprint Property Types
 #pragma region

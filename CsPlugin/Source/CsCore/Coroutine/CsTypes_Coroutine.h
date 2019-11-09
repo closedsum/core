@@ -2,6 +2,7 @@
 #include "Types/CsTypes_Primitive.h"
 #include "Coroutine/pt.h"
 #include "Managers/Time/CsTypes_Time.h"
+#include "Managers/Time/CsTypes_Update.h"
 #include "Utility/CsWeakObjectPtr.h"
 
 #include "CsTypes_Coroutine.generated.h"
@@ -15,7 +16,7 @@ enum class ECsCoroutineState : uint8
 {
 	Free					UMETA(DisplayName = "Free"),
 	Init					UMETA(DisplayName = "Init"),
-	Run						UMETA(DisplayName = "Run"),
+	Update					UMETA(DisplayName = "Update"),
 	End						UMETA(DisplayName = "End"),
 	ECsCoroutineState_MAX	UMETA(Hidden),
 };
@@ -33,7 +34,7 @@ namespace NCsCoroutineState
 	{
 		extern CSCORE_API const Type Free;
 		extern CSCORE_API const Type Init;
-		extern CSCORE_API const Type Run;
+		extern CSCORE_API const Type Update;
 		extern CSCORE_API const Type End;
 		extern CSCORE_API const Type ECsCoroutineState_MAX;
 	}
@@ -51,7 +52,7 @@ enum class ECsCoroutineMessage : uint8
 {
 	Notify					UMETA(DisplayName = "Notify"),
 	Listen					UMETA(DisplayName = "Listen"),
-	Stop					UMETA(DisplayName = "Stop"),
+	Abort					UMETA(DisplayName = "Abort"),
 	ECsCoroutineMessage_MAX	UMETA(Hidden),
 };
 
@@ -68,7 +69,7 @@ namespace NCsCoroutineMessage
 	{
 		extern CSCORE_API const Type Notify;
 		extern CSCORE_API const Type Listen;
-		extern CSCORE_API const Type Stop;
+		extern CSCORE_API const Type Abort;
 		extern CSCORE_API const Type ECsCoroutineMessage_MAX;
 	}
 
@@ -84,8 +85,8 @@ UENUM(BlueprintType)
 enum class ECsCoroutineEndReason : uint8
 {
 	EndOfExecution				UMETA(DisplayName = "End of Execution"),
-	StopMessage					UMETA(DisplayName = "Stop Message"),
-	StopCondition				UMETA(DisplayName = "Stop Condition"),
+	AbortMessage				UMETA(DisplayName = "Abort Message"),
+	AbortCondition				UMETA(DisplayName = "Abort Condition"),
 	OwnerIsInvalid				UMETA(DisplayName = "Owner is Invalid"),
 	Parent						UMETA(DisplayName = "Parent"),
 	UniqueInstance				UMETA(DisplayName = "Unique Instance"),
@@ -106,8 +107,8 @@ namespace NCsCoroutineEndReason
 	namespace Ref
 	{
 		extern CSCORE_API const Type EndOfExecution;
-		extern CSCORE_API const Type StopMessage;
-		extern CSCORE_API const Type StopCondition;
+		extern CSCORE_API const Type AbortMessage;
+		extern CSCORE_API const Type AbortCondition;
 		extern CSCORE_API const Type OwnerIsInvalid;
 		extern CSCORE_API const Type Parent;
 		extern CSCORE_API const Type UniqueInstance;
@@ -415,7 +416,7 @@ struct FCsRoutine;
 // Run
 DECLARE_DELEGATE_RetVal_OneParam(char, FCsCoroutine, FCsRoutine*);
 // Stop Condition
-DECLARE_DELEGATE_RetVal_OneParam(bool, FCsCoroutineStopCondition, FCsRoutine*);
+DECLARE_DELEGATE_RetVal_OneParam(bool, FCsCoroutineAbortCondition, FCsRoutine*);
 
 #define CS_ROUTINE_MAX_TYPE 255
 #define CS_ROUTINE_INDEXER_SIZE 4
@@ -443,7 +444,7 @@ private:
 
 public:
 
-	FECsTimeGroup Group;
+	FECsUpdateGroup Group;
 
 	FCsCoroutine Coroutine;
 
@@ -451,7 +452,7 @@ public:
 
 	FCsRoutineOwner Owner;
 
-	TArray<FCsCoroutineStopCondition> Stops;
+	TArray<FCsCoroutineAbortCondition> Aborts;
 
 	FCsRoutineHandle ParentHandle;
 
@@ -467,9 +468,9 @@ public:
 
 public:
 
-	FRsCoroutinePayload();
+	FCsCoroutinePayload();
 
-	~FRsCoroutinePayload() {}
+	~FCsCoroutinePayload() {}
 
 	void SetIndex(const int32& InIndex);
 

@@ -9,7 +9,7 @@
 #include "Classes/Components/StaticMeshComponent.h"
 #include "Classes/Components/SkeletalMeshComponent.h"
 
-// FRsClassPropertyMap
+// FCsClassPropertyMap
 #pragma region
 
 bool FCsClassPropertyMap::DoesMapExist(const FName& ClassName)
@@ -609,4 +609,4 @@ bool FCsClassInstancePropertyMap::SetSafeValue_Vector(const FName& PropertyName,
 
 #pragma endregion Set
 
-#pragma endregion FRsClassInstancePropertyMap
+#pragma endregion FCsClassInstancePropertyMap

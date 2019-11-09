@@ -169,7 +169,7 @@ public:
 
 	virtual const FString& KeyTypeToString(const KeyType& Type)
 	{
-		return NRsCached::Str::Empty;
+		return NCsCached::Str::Empty;
 	}
 
 // Object
@@ -195,7 +195,7 @@ protected:
 
 	virtual FString GetObjectName(const FCsPooledObject& O)
 	{
-		return NRsCached::Str::Empty;
+		return NCsCached::Str::Empty;
 	}
 
 #pragma endregion Object
@@ -246,7 +246,7 @@ public:
 		}
 
 		CurrentCreatePoolType = Type;
-		FDelegateHandle Handle = Pool->GetOnAddToPool_Event().AddRaw(this, &TRsManager_PooledObjects_Map<KeyType>::OnCreatePool_AddToPool);
+		FDelegateHandle Handle = Pool->GetOnAddToPool_Event().AddRaw(this, &TCsManager_PooledObjects_Map<KeyType>::OnCreatePool_AddToPool);
 
 		Pool->CreatePool(Size);
 
@@ -427,7 +427,7 @@ protected:
 
 	FECsCVarLog LogType;
 
-	virtual void LogTransaction(const FString& FunctionName, const ERsPoolTransaction& Transaction, ICsPooledObject* O)
+	virtual void LogTransaction(const FString& FunctionName, const ECsPoolTransaction& Transaction, ICsPooledObject* O)
 	{
 
 	}

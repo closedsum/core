@@ -21,9 +21,9 @@ public:
 		PoolSizeMinusOne(0),
 		PoolIndex(0),
 		Links(),
-		ActiveHead(nullptr),
-		ActiveTail(nullptr),
-		ActiveSize(0)
+		AllocatedHead(nullptr),
+		AllocatedTail(nullptr),
+		AllocatedSize(0)
 	{
 		Name = TEXT("TCsManager_MemoryResource");
 
@@ -71,11 +71,11 @@ private:
 	TArray<TCsDoubleLinkedList<ResourceContainerType*>> Links;
 
 	/** Current head of the linked list of allocated ResourceContainerTypes */
-	TCsDoubleLinkedList<ResourceContainerType*>* ActiveHead;
+	TCsDoubleLinkedList<ResourceContainerType*>* AllocatedHead;
 	/** Current tail of the linked list of allocated ResourceContainerTypes */
-	TCsDoubleLinkedList<ResourceContainerType*>* ActiveTail;
+	TCsDoubleLinkedList<ResourceContainerType*>* AllocatedTail;
 	/** The current number of allocated ResourceContainerTypes */
-	int32 ActiveSize;
+	int32 AllocatedSize;
 
 public:
 
@@ -126,9 +126,9 @@ public:
 			}
 			Links.Reset();
 		}
-		ActiveHead = nullptr;
-		ActiveTail = nullptr;
-		ActiveSize = 0;
+		AllocatedHead = nullptr;
+		AllocatedTail = nullptr;
+		AllocatedSize = 0;
 
 		ResourceContainers.Reset();
 	}
@@ -196,7 +196,7 @@ public:
 	*/
 	FORCEINLINE bool IsExhausted() const
 	{
-		return PoolSize == ActiveSize;
+		return PoolSize == AllocatedSize;
 	}
 
 	/**
@@ -221,8 +221,8 @@ public:
 	{
 		checkf(Resource, TEXT("%s::GetContainer: Resource is NULL."), *Name);
 
-		TCsDoubleLinkedList<ResourceContainerType*>* Current = ActiveHead;
-		TCsDoubleLinkedList<ResourceContainerType*>* Next   = Current;
+		TCsDoubleLinkedList<ResourceContainerType*>* Current = AllocatedHead;
+		TCsDoubleLinkedList<ResourceContainerType*>* Next    = Current;
 
 		while (Next)
 		{
@@ -247,22 +247,22 @@ public:
 private:
 
 	/**
-	* Add a link, LinkedList pointer to a ResourceContainerType, to the end, ActiveTail,
-	*  of the active linked list, list of Resources that have been allocated.
+	* Add a link, LinkedList pointer to a ResourceContainerType, to the end, AllocatedTail,
+	*  of the allocated linked list, list of Resources that have been allocated.
 	*
 	* @param Link	Pointer to LinkedList element containing a ResourceContainerType.
 	*/
-	void AddActiveLink(TCsDoubleLinkedList<ResourceContainerType*>* Link)
+	void AddAllocatedLink(TCsDoubleLinkedList<ResourceContainerType*>* Link)
 	{
-		if (ActiveTail)
+		if (AllocatedTail)
 		{ 
-			Link->LinkAfter(ActiveTail);
-			ActiveTail = Link;
+			Link->LinkAfter(AllocatedTail);
+			AllocatedTail = Link;
 		}
 		else
 		{
-			ActiveHead = Link;
-			ActiveTail = ActiveHead;
+			AllocatedHead = Link;
+			AllocatedTail = AllocatedHead;
 		}
 	}
 
@@ -274,7 +274,7 @@ private:
 	* @param Link					Pointer to LinkedList element containing a ResourceContainerType.
 	* @param ResourceContainer		Container for a ResourceType
 	*/
-	void AddActiveLinkAfter(TCsDoubleLinkedList<ResourceContainerType*>* Link, ResourceContainerType* ResourceContainer)
+	void AddAllocatedLinkAfter(TCsDoubleLinkedList<ResourceContainerType*>* Link, ResourceContainerType* ResourceContainer)
 	{
 		// Resource to Link After
 		const int32& LinkAfterIndex = ResourceContainer->GetIndex();
@@ -284,21 +284,21 @@ private:
 		// Make Resource (Link) LinkAfter the link for ResourceContainer (LinkAfter)
 		Link->LinkAfter(LinkAfter);
 
-		if (LinkAfter == ActiveTail)
+		if (LinkAfter == AllocatedTail)
 		{
-			ActiveTail = Link;
+			AllocatedTail = Link;
 		}
 	}
 
 	/**
 	* Add a link, LinkedList pointer to a ResourceContainerTytpe, before the ResourceContainer
-	*  in the active linked list, list of ResourceTypes that have been allocated.
+	*  in the allocated linked list, list of ResourceTypes that have been allocated.
 	*  This is equivalent to inserting a linked list element before another element.
 	*
 	* @param Link					Pointer to LinkedList element containing a ResourceContainerType.
 	* @param ResourceContainer		Container for a ResourceType
 	*/
-	void AddActiveLinkBefore(TCsDoubleLinkedList<ResourceContainerType*>* Link, ResourceContainerType* ResourceContainer)
+	void AddAllocatedLinkBefore(TCsDoubleLinkedList<ResourceContainerType*>* Link, ResourceContainerType* ResourceContainer)
 	{
 		// Resource to Link Before
 		const int32& LinkBeforeIndex = ResourceContainer->GetIndex();
@@ -308,14 +308,14 @@ private:
 		// Make Resource (Link) LinkBefore the link for ResourceContainer (LinkBefore)
 		Link->LinkBefore(LinkBefore);
 
-		if (LinkBefore == ActiveHead)
+		if (LinkBefore == AllocatedHead)
 		{
-			ActiveHead = Link;
+			AllocatedHead = Link;
 		}
 	}
 
 	/**
-	* Remove a link, LinkedList pointer to a ResourceContainerType, from the active linked
+	* Remove a link, LinkedList pointer to a ResourceContainerType, from the allocated linked
 	*  list, list of ResourceTypes that have been allocated.
 	*
 	* @param Link	Pointer to LinkedList element containing a ResourceContainerType.
@@ -323,23 +323,23 @@ private:
 	void RemoveActiveLink(TCsDoubleLinkedList<ResourceContainerType*>* Link)
 	{
 		// Check to Update HEAD
-		if (Link == ActiveHead)
+		if (Link == AllocatedHead)
 		{
-			if (ActiveSize > RS_SINGLETON)
+			if (AllocatedSize > RS_SINGLETON)
 			{
-				ActiveHead = Link->GetNextLink();
+				AllocatedHead = Link->GetNextLink();
 			}
 			else
 			{
-				ActiveHead = nullptr;
-				ActiveTail = nullptr;
+				AllocatedHead = nullptr;
+				AllocatedTail = nullptr;
 			}
 		}
 		// Check to Update TAIL
 		else
-		if (Link == ActiveTail)
+		if (Link == AllocatedTail)
 		{
-			ActiveTail = Link->GetPrevLink();
+			AllocatedTail = Link->GetPrevLink();
 		}
 		Link->Unlink();
 	}
@@ -347,13 +347,13 @@ private:
 public:
 
 	/**
-	* Get the current head of the active linked list.
+	* Get the current head of the allocated linked list.
 	*
-	* return Active Head.
+	* return Allocated Head.
 	*/
-	FORCEINLINE TCsDoubleLinkedList<ResourceContainerType*>* GetActiveHead()
+	FORCEINLINE TCsDoubleLinkedList<ResourceContainerType*>* GetAllocatedHead()
 	{
-		return ActiveHead;
+		return AllocatedHead;
 	}
 
 	/**
@@ -361,9 +361,9 @@ public:
 	*
 	* return Active Tail.
 	*/
-	FORCEINLINE TCsDoubleLinkedList<ResourceContainerType*>* GetActiveTail()
+	FORCEINLINE TCsDoubleLinkedList<ResourceContainerType*>* GetAllocatedTail()
 	{
-		return ActiveTail;
+		return AllocatedTail;
 	}
 
 #pragma endregion LinkedList
@@ -408,22 +408,22 @@ public:
 
 		checkf(R, TEXT("%s::AllocateAfter: Pool is exhausted."), *Name);
 
-		AddActiveLinkAfter(Link, ResourceContainer);
-		++ActiveSize;
+		AddAllocatedLinkAfter(Link, ResourceContainer);
+		++AllocatedSize;
 		return R;
 	}
 
 	/**
 	* Allocate a ResourceType and add the corresponding linked list element AFTER
-	*  the ActiveHead. This is equivalent to inserting a linked list element
+	*  the AllocatedHead. This is equivalent to inserting a linked list element
 	*  after the head of the list.
 	*
 	* return ResourceContainerType	Allocated ResourceType wrapped in a container.
 	*/
 	ResourceContainerType* AllocateAfterHead()
 	{
-		if (ActiveHead)
-			return AllocateAfter(**ActiveHead);
+		if (AllocatedHead)
+			return AllocateAfter(**AllocatedHead);
 		return Allocate();
 	}
 
@@ -463,22 +463,22 @@ public:
 
 		checkf(R, TEXT("%s::AllocateBefore: Pool is exhausted."), *Name);
 
-		AddActiveLinkBefore(Link, ResourceContainer);
-		++ActiveSize;
+		AddAllocatedLinkBefore(Link, ResourceContainer);
+		++AllocatedSize;
 		return R;
 	}
 
 	/**
 	* Allocate a ResourceType and add the corresponding linked list element BEFORE
-	*  the ActiveHead. This is equivalent to inserting a linked list element
+	*  the AllocatedHead. This is equivalent to inserting a linked list element
 	*  after the head of the list.
 	*
 	* return ResourceContainerType	Allocated ResourceType wrapped in a container.
 	*/
 	ResourceContainerType* AllocateBeforeHead()
 	{
-		if (ActiveHead)
-			return AllocateBefore(**ActiveHead);
+		if (AllocatedHead)
+			return AllocateBefore(**AllocatedHead);
 		return Allocate();
 	}
 
@@ -500,8 +500,8 @@ public:
 			if (!M->IsAllocated())
 			{
 				M->Allocate();
-				AddActiveLink(&(Links[PoolIndex]));
-				++ActiveSize;
+				AddAllocatedLink(&(Links[PoolIndex]));
+				++AllocatedSize;
 				return M;
 			}
 		}
@@ -541,7 +541,7 @@ public:
 
 		M->Deallocate();
 		RemoveActiveLink(&(Links[Index]));
-		--ActiveSize;
+		--AllocatedSize;
 		return true;
 	}
 
@@ -580,16 +580,16 @@ public:
 
 	/**
 	* Deallocate the current head of the list of allocated ResourceContainerTypes.
-	*  This is equivalent to called Deallocate on the ActiveHead.
+	*  This is equivalent to called Deallocate on the AllocatedHead.
 	*
 	* return ResourceContainerType
 	*/
 	ResourceContainerType* Dequeue()
 	{
-		if (ActiveHead)
+		if (AllocatedHead)
 		{
-			if (Deallocate(**ActiveHead))
-				return **ActiveHead;
+			if (Deallocate(**AllocatedHead))
+				return **AllocatedHead;
 		}
 		return nullptr;
 	}
@@ -613,16 +613,16 @@ public:
 
 	/**
 	* Deallocate the head of the list of allocated ResourceContainerTypes. 
-	*  This is equivalent to calling Deallocate() on the ActiveHead.
+	*  This is equivalent to calling Deallocate() on the AllocatedHead.
 	*
 	* return ResourceContainerType
 	*/
 	ResourceContainerType* Pop()
 	{
-		if (ActiveHead)
+		if (AllocatedHead)
 		{
-			if (Deallocate(**ActiveHead))
-				return **ActiveHead;
+			if (Deallocate(**AllocatedHead))
+				return **AllocatedHead;
 		}
 		return nullptr;
 	}

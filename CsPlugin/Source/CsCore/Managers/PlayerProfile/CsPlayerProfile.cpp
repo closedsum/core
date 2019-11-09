@@ -17,7 +17,7 @@ UCsPlayerProfile::UCsPlayerProfile(const class FObjectInitializer& ObjectInitial
 	Manager_Achievement_Class = UCsManager_Achievement::StaticClass();
 }
 
-void UCsPlayerProfile::SetProfileType(const ERsPlayerProfile& InProfileType)
+void UCsPlayerProfile::SetProfileType(const ECsPlayerProfile& InProfileType)
 {
 	ProfileType = InProfileType;
 }

@@ -127,14 +127,14 @@ void UCsManager_UnitTest::Start()
 	}
 	*/
 
-	const FECsTimeGroup& TimeGroup = NCsTimeGroup::GameInstance;
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
 	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
-	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(TimeGroup);
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(UpdateGroup);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindUObject(this, &UCsManager_UnitTest::Start_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(TimeGroup);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
 	Payload->bPerformFirstRun = true;
 	Payload->Name			  = NCsManagerUnitTestCached::Name::Start_Internal;

@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/Time/CsTypes_Time.h"
+#include "Managers/Time/CsTypes_Update.h"
+#include "Managers/Time/CsUpdateGroup.h"
 #include "CsManager_Time.generated.h"
 
 UCLASS()
@@ -31,22 +33,22 @@ private:
 
 protected:
 
-	TArray<FCsTimeGroup> TimeGroups;
+	TArray<FCsUpdateGroup> UpdateGroups;
 
 public:
 
-	void Start(const FECsTimeGroup& Group);
+	void Start(const FECsUpdateGroup& Group);
 
 	// Pause
 #pragma region
 public:
 
-	void Pause(const FECsTimeGroup& Group);
-	void Unpause(const FECsTimeGroup& Group);
+	void Pause(const FECsUpdateGroup& Group);
+	void Unpause(const FECsUpdateGroup& Group);
 
-	FORCEINLINE bool IsPaused(const FECsTimeGroup& Group)
+	FORCEINLINE bool IsPaused(const FECsUpdateGroup& Group)
 	{
-		return TimeGroups[Group.Value].IsPaused();
+		return UpdateGroups[Group.Value].IsPaused();
 	}
 
 #pragma endregion Pause
@@ -55,18 +57,18 @@ public:
 #pragma region
 public:
 
-	void Update(const FECsTimeGroup& Group, const float& DeltaTime);
-	void Update(const FECsTimeGroup& Group, const float& DeltaTime, const float& Time, const float& RealTime);
+	void Update(const FECsUpdateGroup& Group, const float& DeltaTime);
+	void Update(const FECsUpdateGroup& Group, const float& DeltaTime, const float& Time, const float& RealTime);
 
 #pragma endregion Update
 
-	FORCEINLINE const FCsTime& GetTime(const FECsTimeGroup& Group)
+	FORCEINLINE const FCsTime& GetTime(const FECsUpdateGroup& Group)
 	{
-		return TimeGroups[Group.Value].GetTime();
+		return UpdateGroups[Group.Value].GetTime();
 	}
 
-	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FECsTimeGroup& Group)
+	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FECsUpdateGroup& Group)
 	{
-		return TimeGroups[Group.Value].GetScaledDeltaTime();
+		return UpdateGroups[Group.Value].GetScaledDeltaTime();
 	}
 };

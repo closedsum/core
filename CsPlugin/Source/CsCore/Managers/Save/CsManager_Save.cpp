@@ -124,7 +124,7 @@ void UCsManager_Save::SetProfileName(const FString& Name)
 
 void UCsManager_Save::OnTick(const float& DeltaSeconds)
 {
-	TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* Current = Manager_MemoryResource.GetActiveHead();
+	TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* Current = Manager_MemoryResource.GetAllocatedHead();
 	TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* Next    = Current;
 
 	while (Next)
@@ -589,9 +589,9 @@ void UCsManager_Save::ReadAll_Internal(FCsSaveActionInfo* ActionInfo)
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
-		TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* Current = Manager_MemoryResource.GetActiveHead();
-		FCsMemoryResource_SaveActionInfo* InfoContainer			= **Current;
-		FCsSaveActionInfo* ReadAllActionInfo					= InfoContainer->Get();
+		TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* Current = Manager_MemoryResource.GetAllocatedHead();
+		FCsMemoryResource_SaveActionInfo* InfoContainer					= **Current;
+		FCsSaveActionInfo* ReadAllActionInfo							= InfoContainer->Get();
 
 		// Queue Read for all Files
 		if (EnumerateUserFilesState.bSuccess)
@@ -772,8 +772,8 @@ void UCsManager_Save::WriteAll_Internal(FCsSaveActionInfo* ActionInfo)
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
-		TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* Current = Manager_MemoryResource.GetActiveHead();
-		FCsMemoryResource_SaveActionInfo* InfoContainer			= **Current;
+		TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* Current = Manager_MemoryResource.GetAllocatedHead();
+		FCsMemoryResource_SaveActionInfo* InfoContainer					= **Current;
 
 		const int32 Count = SaveFileInfos.Num();
 
@@ -901,8 +901,8 @@ void UCsManager_Save::Delete_Internal(FCsSaveActionInfo* ActionInfo)
 			{
 				// Delete, Enumerate, then ReadAll
 
-				TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* ActiveHead = Manager_MemoryResource.GetActiveHead();
-				FCsMemoryResource_SaveActionInfo* InfoContainer			   = **ActiveHead;
+				TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
+				FCsMemoryResource_SaveActionInfo* InfoContainer						  = **AllocatedHead;
 
 				// Enumerate
 				{
@@ -1094,8 +1094,8 @@ void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
-		TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* Current = Manager_MemoryResource.GetActiveHead();
-		FCsMemoryResource_SaveActionInfo* InfoContainer			= **Current;
+		TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* Current = Manager_MemoryResource.GetAllocatedHead();
+		FCsMemoryResource_SaveActionInfo* InfoContainer					= **Current;
 
 		const int32 Count = ActionInfo->IsAllProfiles() ? SaveFileInfosAll.Num() : SaveFileInfos.Num();
 
@@ -1206,11 +1206,11 @@ void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUn
 	EnumerateUserFilesState.bSuccess = WasSuccessful;
 	EnumerateUserFilesState.Complete();
 
-	TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* ActiveHead = Manager_MemoryResource.GetActiveHead();
+	TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
 	
-	checkf(ActiveHead, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: No Read Action was queued."));
+	checkf(AllocatedHead, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: No Read Action was queued."));
 
-	FCsMemoryResource_SaveActionInfo* InfoContainer	= **ActiveHead;
+	FCsMemoryResource_SaveActionInfo* InfoContainer	= **AllocatedHead;
 	FCsSaveActionInfo* ActionInfo					= InfoContainer->Get();
 
 	checkf(ActionInfo->Action == ECsSaveAction::Enumerate, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: Current Action: %s is NOT Enumerate."), *(EMCsSaveAction::Get().ToChar(ActionInfo->Action)));
@@ -1336,11 +1336,11 @@ void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUn
 
 void UCsManager_Save::OnReadUserFileComplete(bool WasSuccessful, const FUniqueNetId& UserId, const FString& FileName)
 {
-	TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* ActiveHead = Manager_MemoryResource.GetActiveHead();
+	TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
 
-	checkf(ActiveHead, TEXT("UCsManager_Save::OnReadUserFileComplete: No Read Action was queued."));
+	checkf(AllocatedHead, TEXT("UCsManager_Save::OnReadUserFileComplete: No Read Action was queued."));
 
-	FCsMemoryResource_SaveActionInfo* InfoContainer = **ActiveHead;
+	FCsMemoryResource_SaveActionInfo* InfoContainer = **AllocatedHead;
 	FCsSaveActionInfo* ActionInfo					= InfoContainer->Get();
 
 	checkf(ActionInfo->Action == ECsSaveAction::Read, TEXT("UCsManager_Save::OnReadUserFileComplete: Current Action: %s is NOT Read."), *(EMCsSaveAction::Get().ToChar(ActionInfo->Action)));
@@ -1401,11 +1401,11 @@ void UCsManager_Save::OnReadUserFileComplete(bool WasSuccessful, const FUniqueNe
 
 void UCsManager_Save::OnWriteUserFileComplete(bool WasSuccessful, const FUniqueNetId& UserId, const FString& FileName)
 {
-	TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* ActiveHead = Manager_MemoryResource.GetActiveHead();
+	TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
 
-	checkf(ActiveHead, TEXT("UCsManager_Save::OnWriteUserFileComplete: No Write Action was queued."));
+	checkf(AllocatedHead, TEXT("UCsManager_Save::OnWriteUserFileComplete: No Write Action was queued."));
 
-	FCsMemoryResource_SaveActionInfo* InfoContainer = **ActiveHead;
+	FCsMemoryResource_SaveActionInfo* InfoContainer = **AllocatedHead;
 	FCsSaveActionInfo* ActionInfo					= InfoContainer->Get();
 
 	checkf(ActionInfo->Action == ECsSaveAction::Write, TEXT("UCsManager_Save::OnWriteUserFileComplete: Current Action: %s is NOT Write."), *(EMCsSaveAction::Get().ToChar(ActionInfo->Action)));
@@ -1448,11 +1448,11 @@ void UCsManager_Save::OnWriteUserFileComplete(bool WasSuccessful, const FUniqueN
 
 void UCsManager_Save::OnDeleteUserFileComplete(bool WasSuccessful, const FUniqueNetId& UserId, const FString& FileName)
 {
-	TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* ActiveHead = Manager_MemoryResource.GetActiveHead();
+	TCsDoubleLinkedList<FCsMemoryResource_SaveActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
 
-	checkf(ActiveHead, TEXT("UCsManager_Save::OnDeleteUserFileComplete: No Delete Action was queued."));
+	checkf(AllocatedHead, TEXT("UCsManager_Save::OnDeleteUserFileComplete: No Delete Action was queued."));
 
-	FCsMemoryResource_SaveActionInfo* InfoContainer = **ActiveHead;
+	FCsMemoryResource_SaveActionInfo* InfoContainer = **AllocatedHead;
 	FCsSaveActionInfo* ActionInfo					= InfoContainer->Get();
 
 	checkf(ActionInfo->Action == ECsSaveAction::Delete, TEXT("UCsManager_Save::OnDeleteUserFileComplete: Current Action: %s is NOT Delete."), *(EMCsSaveAction::Get().ToChar(ActionInfo->Action)));

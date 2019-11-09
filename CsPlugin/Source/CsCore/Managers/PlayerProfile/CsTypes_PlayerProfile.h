@@ -26,7 +26,7 @@ struct CSCORE_API EMCsPlayerProfile final : public TCsEnumMap<ECsPlayerProfile>
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsPlayerProfile, ECsPlayerProfile)
 };
 
-namespace NRsPlayerProfile
+namespace NCsPlayerProfile
 {
 	typedef ECsPlayerProfile Type;
 

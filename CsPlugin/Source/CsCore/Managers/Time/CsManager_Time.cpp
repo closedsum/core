@@ -50,13 +50,13 @@ void UCsManager_Time::Initialize()
 {
 	// Time Groups
 	{
-		const int32& Count = EMCsTimeGroup::Get().Num();
+		const int32& Count = EMCsUpdateGroup::Get().Num();
 
-		TimeGroups.Reserve(Count);
+		UpdateGroups.Reserve(Count);
 
-		for (const FECsTimeGroup& Group : EMCsTimeGroup::Get())
+		for (const FECsUpdateGroup& Group : EMCsUpdateGroup::Get())
 		{
-			TimeGroups.AddDefaulted();
+			UpdateGroups.AddDefaulted();
 		}
 	}
 }
@@ -67,22 +67,22 @@ void UCsManager_Time::CleanUp()
 
 #pragma endregion Singleton
 
-void UCsManager_Time::Start(const FECsTimeGroup& Group)
+void UCsManager_Time::Start(const FECsUpdateGroup& Group)
 {
-	TimeGroups[Group.Value].Start();
+	UpdateGroups[Group.Value].Start();
 }
 
 // Pause
 #pragma region
 
-void UCsManager_Time::Pause(const FECsTimeGroup& Group)
+void UCsManager_Time::Pause(const FECsUpdateGroup& Group)
 {
-	TimeGroups[Group.Value].Pause();
+	UpdateGroups[Group.Value].Pause();
 }
 
-void UCsManager_Time::Unpause(const FECsTimeGroup& Group)
+void UCsManager_Time::Unpause(const FECsUpdateGroup& Group)
 {
-	TimeGroups[Group.Value].Unpause();
+	UpdateGroups[Group.Value].Unpause();
 }
 
 #pragma endregion Pause
@@ -90,14 +90,14 @@ void UCsManager_Time::Unpause(const FECsTimeGroup& Group)
 // Update
 #pragma region
 
-void UCsManager_Time::Update(const FECsTimeGroup& Group, const float& DeltaTime)
+void UCsManager_Time::Update(const FECsUpdateGroup& Group, const float& DeltaTime)
 {
-	TimeGroups[Group.Value].Update(DeltaTime);
+	UpdateGroups[Group.Value].Update(DeltaTime);
 }
 
-void UCsManager_Time::Update(const FECsTimeGroup& Group, const float& DeltaTime, const float& Time, const float& RealTime)
+void UCsManager_Time::Update(const FECsUpdateGroup& Group, const float& DeltaTime, const float& Time, const float& RealTime)
 {
-	TimeGroups[Group.Value].Update(DeltaTime, Time, RealTime);
+	UpdateGroups[Group.Value].Update(DeltaTime, Time, RealTime);
 }
 
 #pragma endregion Update

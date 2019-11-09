@@ -9,14 +9,14 @@
 
 void ICsUnitTest_Impl::Start()
 {
-	const FERsTimeGroup& TimeGroup = NRsTimeGroup::GameInstance;
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
 	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
-	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(TimeGroup);
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(UpdateGroup);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindRaw(this, &ICsUnitTest_Impl::Start_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(TimeGroup);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(UpdateGroup);
 	Payload->Owner.SetOwner(this);
 	Payload->bPerformFirstRun = true;
 	Payload->Name			  = Start_Internal_Name;

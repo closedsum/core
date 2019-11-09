@@ -249,7 +249,7 @@ public:
 		If Profile == ECsPlayerProfile_MAX, then perform action on ALL Profiles. */
 	ECsPlayerProfile Profile;
 
-	/** Index of File in SaveFileInfos in URsManager_Save. */
+	/** Index of File in SaveFileInfos in UCsManager_Save. */
 	int32 FileIndex;
 
 	/** Action to processed. See ECsSaveAction. */

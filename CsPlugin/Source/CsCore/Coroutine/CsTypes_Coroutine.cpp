@@ -10,7 +10,7 @@ namespace NCsCoroutineState
 	{
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineState, Free);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineState, Init);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineState, Run);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineState, Update);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineState, End);
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineState, ECsCoroutineState_MAX, "MAX");
 	}
@@ -29,7 +29,7 @@ namespace NCsCoroutineMessage
 	{
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineMessage, Notify);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineMessage, Listen);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineMessage, Stop);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineMessage, Abort);
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineMessage, ECsCoroutineMessage_MAX, "MAX");
 	}
 
@@ -46,8 +46,8 @@ namespace NCsCoroutineEndReason
 	namespace Ref
 	{
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineEndReason, EndOfExecution, "End of Execution");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineEndReason, StopMessage, "Stop Message");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineEndReason, StopCondition, "Stop Condition");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineEndReason, AbortMessage, "Abort Message");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineEndReason, AbortCondition, "Abort Condition");
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineEndReason, OwnerIsInvalid, "Owner is Invalid");
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineEndReason, Parent);
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineEndReason, UniqueInstance, "Unique Instance");
@@ -71,7 +71,7 @@ namespace NCsCoroutineTransaction
 		CSCORE_API const Type Allocate = EMCsCoroutineTransaction::Get().Add(Type::Allocate, TEXT("Allocate"));
 		CSCORE_API const Type Start = EMCsCoroutineTransaction::Get().Add(Type::Start, TEXT("Start"));
 		CSCORE_API const Type End = EMCsCoroutineTransaction::Get().Add(Type::End, TEXT("End"));
-		CSCORE_API const Type ERsCoroutineTransaction_MAX = EMCsCoroutineTransaction::Get().Add(Type::ECsCoroutineTransaction_MAX, TEXT("ECsCoroutineTransaction_MAX"), TEXT("MAX"));
+		CSCORE_API const Type ECsCoroutineTransaction_MAX = EMCsCoroutineTransaction::Get().Add(Type::ECsCoroutineTransaction_MAX, TEXT("ECsCoroutineTransaction_MAX"), TEXT("MAX"));
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsCoroutineTransaction_MAX;
@@ -496,11 +496,11 @@ void FCsCoroutinePayload::SetIndex(const int32& InIndex)
 
 void FCsCoroutinePayload::Reset()
 {
-	Group = EMCsTimeGroup::Get().GetMAX();
+	Group = EMCsUpdateGroup::Get().GetMAX();
 	Coroutine.Unbind();
 	StartTime.Reset();
 	Owner.Reset();
-	Stops.Reset(Stops.Max());
+	Aborts.Reset(Aborts.Max());
 	ParentHandle.Reset();
 	bDoInit = true;
 	bPerformFirstRun = false;

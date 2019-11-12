@@ -14,6 +14,7 @@
 // Managers
 #include "Managers/CsManager_Loading.h"
 #include "Managers/Runnable/CsManager_Runnable.h"
+#include "Managers/Time/CsManager_Time.h"
 // Data
 #include "Data/CsDataMapping.h"
 #include "Data/CsData_Payload.h"
@@ -129,7 +130,7 @@ void UCsGameInstance::Init()
 	UCsManager_Runnable::Init();
 	UCsCoroutineScheduler::Init();
 
-	OnTick_Event.AddUObject(UCsCoroutineScheduler::Get(), &UCsCoroutineScheduler::OnTick_Update);
+	//OnTick_Event.AddUObject(UCsCoroutineScheduler::Get(), &UCsCoroutineScheduler::OnTick_Update);
 	
 	HideMouseCursor();
 	//OnBoard();
@@ -370,24 +371,22 @@ void UCsGameInstance::InitInputSetting()
 
 void UCsGameInstance::OnBoard()
 {
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	CsCoroutine Function		  = &UCsGameInstance::OnBoard_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
-	CsAddRoutine Add			  = &UCsGameInstance::AddRoutine;
-	CsRemoveRoutine Remove		  = &UCsGameInstance::RemoveRoutine;
-	const uint8 Type			  = ECsGameInstanceRoutine::OnBoard_Internal.Value;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
+	Payload->Coroutine.BindStatic(&UCsGameInstance::OnBoard_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
 
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
 {
-	UCsGameInstance* gi		 = Cast<UCsGameInstance>(r->GetRObject());
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+	UCsGameInstance* gi = r->GetOwnerAsObject<UCsGameInstance>();
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -438,37 +437,35 @@ void UCsGameInstance::LoadDataMapping()
 		return;
 	}
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	CsCoroutine Function		  = &UCsGameInstance::LoadDataMapping_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
-	CsAddRoutine Add			  = &UCsGameInstance::AddRoutine;
-	CsRemoveRoutine Remove		  = &UCsGameInstance::RemoveRoutine;
-	const uint8 Type			  = (uint8)ECsGameInstanceRoutine::LoadDataMapping_Internal;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
+	Payload->Coroutine.BindStatic(&UCsGameInstance::LoadDataMapping_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
 
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
-PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
+PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(FCsRoutine* R))
 {
-	UCsGameInstance* gi			= Cast<UCsGameInstance>(r->GetRObject());
-	UCsCoroutineScheduler* s	= UCsCoroutineScheduler::Get();
+	UCsGameInstance* gi			= R->GetOwnerAsObject<UCsGameInstance>();
 	ACsDataMapping* dataMapping = gi->DataMapping;
 
-	CS_COROUTINE_BEGIN(r);
+	CS_COROUTINE_BEGIN(R);
 
 	if (gi->bForcePopulateAssetReferences || dataMapping->bForcePopulateAssetReferences)
 	{
 		UCsManager_Loading::Get()->LoadAssetReferences(gi->GetWorld(), dataMapping->DataAssetReferences, ECsLoadAsyncOrder::Bulk, gi, &UCsGameInstance::OnFinishedLoadingDataAssets);
 
 		// Wait until Data Assets are LOADED
-		CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::FinishedLoadingDataAssets);
+		CS_COROUTINE_WAIT_UNTIL(R, gi->OnBoardState == ECsGameInstanceOnBoardState::FinishedLoadingDataAssets);
 
 #if WITH_EDITOR
-		CS_COROUTINE_WAIT_UNTIL(r, !dataMapping->AsyncTaskMutex.IsLocked());
+		CS_COROUTINE_WAIT_UNTIL(R, !dataMapping->AsyncTaskMutex.IsLocked());
 #endif // #if WITH_EDITOR
 
 		if (UCsCommon::CanAsyncTask())
@@ -480,7 +477,7 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 			gi->PopulateAssetReferences();
 		}
 		// Wait until ALL Asset References
-		CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::FinishedPopulatingAssetReferences);
+		CS_COROUTINE_WAIT_UNTIL(R, gi->OnBoardState == ECsGameInstanceOnBoardState::FinishedPopulatingAssetReferences);
 	}
 
 #if WITH_EDITOR
@@ -500,7 +497,7 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 	gi->bHasLoadedDataMapping = true;
 	gi->OnBoardState = ECsGameInstanceOnBoardState::LoadStartUpData;
 
-	CS_COROUTINE_END(r);
+	CS_COROUTINE_END(R);
 }
 
 void UCsGameInstance::OnFinishedLoadingDataAssets(const TArray<UObject*> &LoadedAssets, const float& LoadingTime)
@@ -593,33 +590,26 @@ void UCsGameInstance::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*>&
 
 void UCsGameInstance::CreateFullscreenWidget()
 {
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= Schedule;
-	Payload->Function		= &UCsGameInstance::CreateFullscreenWidget_Internal;
-	Payload->Object			= this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
-	Payload->Add			= &UCsGameInstance::AddRoutine;
-	Payload->Remove			= &UCsGameInstance::RemoveRoutine;
-	Payload->Type			= ECsGameInstanceRoutine::CreateFullscreenWidget_Internal.Value;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&UCsGameInstance::CreateFullscreenWidget_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+
 	Payload->Name			= NCsGameInstanceCached::Name::CreateFullscreenWidget_Internal;
 	Payload->NameAsString	= NCsGameInstanceCached::Str::CreateFullscreenWidget_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(UCsGameInstance, CreateFullscreenWidget_Internal)
 {
-	UCsGameInstance* gi		 = r->GetRObject<UCsGameInstance>();
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-	UWorld* w				 = gi->GetWorld();
+	UCsGameInstance* gi = r->GetOwnerAsObject<UCsGameInstance>();
+	UWorld* w			= gi->GetWorld();
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -667,32 +657,25 @@ void UCsGameInstance::CheckFullscreenWidget()
 
 void UCsGameInstance::HideMouseCursor()
 {
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= Schedule;
-	Payload->Function		= &UCsGameInstance::HideMouseCursor_Internal;
-	Payload->Object			= this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
-	Payload->Add			= &UCsGameInstance::AddRoutine;
-	Payload->Remove			= &UCsGameInstance::RemoveRoutine;
-	Payload->Type			= (uint8)ECsGameInstanceRoutine::HideMouseCursor_Internal;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&UCsGameInstance::HideMouseCursor_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+
 	Payload->Name			= NCsGameInstanceCached::Name::HideMouseCursor_Internal;
 	Payload->NameAsString	= NCsGameInstanceCached::Str::HideMouseCursor_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(UCsGameInstance, HideMouseCursor_Internal)
 {
-	UCsGameInstance* gi		 = r->GetRObject<UCsGameInstance>();
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+	UCsGameInstance* gi = r->GetOwnerAsObject<UCsGameInstance>();
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -737,34 +720,35 @@ void UCsGameInstance::PerformLevelTransition(const FString& Level, const FString
 {
 	LevelState = ECsLevelState::BeginTransition;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	CsCoroutine Function		  = &UCsGameInstance::PerformLevelTransition_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
-	CsAddRoutine Add			  = &UCsGameInstance::AddRoutine;
-	CsRemoveRoutine Remove		  = &UCsGameInstance::RemoveRoutine;
-	const uint8 Type			  = ECsGameInstanceRoutine::PerformLevelTransition_Internal.Value;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
+	Payload->Coroutine.BindStatic(&UCsGameInstance::PerformLevelTransition_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
 
-	R->strings[0] = Level;
-	R->strings[1] = GameMode;
+	static const int32 LEVEL_INDEX = 0;
+	Payload->SetValue_String(LEVEL_INDEX, Level);
+
+	static const int32 GAME_MODE_INDEX = 1;
+	Payload->SetValue_String(GAME_MODE_INDEX, GameMode);
 	//R->floats[0] = Time;
 
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
 {
-	UCsGameInstance* gi		 = r->GetRObject<UCsGameInstance>();
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-	UWorld* w				 = gi->GetWorld();
+	UCsGameInstance* gi = r->GetOwnerAsObject<UCsGameInstance>();
+	UWorld* w			= gi->GetWorld();
 
 	UCsWidget_Fullscreen* Widget = Cast<UCsWidget_Fullscreen>(gi->FullscreenWidget);
 
-	const float CurrentTime = w->GetTimeSeconds();
-	const float StartTime	= r->startTime;
+	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
+	const FCsTime& StartTime   = r->StartTime;
 
 	const float Delay = 1.0f;
 
@@ -773,13 +757,16 @@ CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
 	// Set Screen to Black
 	Widget->Fullscreen.SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f));
 	// Slight delay before transitioning
-	CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime > Delay);
+	CS_COROUTINE_WAIT_UNTIL(r, CurrentTime.Time - StartTime.Time > Delay);
 
 	gi->LevelState = ECsLevelState::InTransition;
 
 	{
-		const FString Level	   = r->strings[0];
-		const FString GameMode = r->strings[1];
+		static const int32 LEVEL_INDEX = 0;
+		const FString& Level = r->GetValue_String(LEVEL_INDEX);
+
+		static const int32 GAME_MODE_INDEX = 1;
+		const FString& GameMode = r->GetValue_String(GAME_MODE_INDEX);
 
 		gi->OnServerTravel_Event.Broadcast();
 #if WITH_EDITOR

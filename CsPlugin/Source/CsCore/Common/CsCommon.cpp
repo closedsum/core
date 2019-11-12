@@ -2,9 +2,11 @@
 #include "Common/CsCommon.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Types/CsTypes_Curve.h"
-#include "Coroutine/CsCoroutineScheduler.h"
 
+// Types
+#include "Types/CsTypes_Curve.h"
+// Coroutine
+#include "Coroutine/CsCoroutineScheduler.h"
 // Game
 #include "GameFramework/GameState.h"
 #include "GameFramework/GameMode.h"
@@ -30,6 +32,7 @@
 #include "Data/CsData.h"
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
+#include "Managers/Time/CsManager_Time.h"
 
 #if WITH_EDITOR
 
@@ -1803,123 +1806,115 @@ void UCsCommon::SetAndAttachEmitter(AEmitter* InEmitter, USceneComponent* Parent
 // Coroutine
 #pragma region
 
-void UCsCommon::EndRoutine(struct FCsRoutine* r)
+const FCsRoutineHandle& UCsCommon::ScaleActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const float& StartScale, const float& EndScale, const float& Time, const bool& IsRelativeScale)
 {
-	if (r && r->IsValid())
-		r->End(ECsCoroutineEndReason::Manual);
+	return ScaleActorOverTime(Group, EasingType, InActor, FVector(StartScale), FVector(EndScale), Time, IsRelativeScale);
 }
 
-void UCsCommon::EndAndClearRoutine(struct FCsRoutine* &r)
-{
-	if (r && r->IsValid())
-		r->End(ECsCoroutineEndReason::Manual);
-	r = nullptr;
-}
-
-FCsRoutine* UCsCommon::ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, const ECsEasingType &EasingType, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale)
-{
-	return ScaleActorOverTime(ScheduleType, EasingType, InActor, FVector(StartScale), FVector(EndScale), Time, IsRelativeScale);
-}
-
-FCsRoutine* UCsCommon::ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, const ECsEasingType &EasingType, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale)
+const FCsRoutineHandle& UCsCommon::ScaleActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const FVector& StartScale, const FVector& EndScale, const float& Time, const bool& IsRelativeScale)
 {
 	if (Time <= 0.0f)
-		return nullptr;
+	{
+		// LOG Warning
+		return FCsRoutineHandle::Invalid;
+	}
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= ScheduleType;
-	Payload->Function		= &UCsCommon::ScaleActorOverTime_Internal;
-	Payload->Actor			= InActor;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&UCsCommon::ScaleActorOverTime_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(InActor);
+
 	Payload->Name			= NCsCommonCached::Name::ScaleActorOverTime_Internal;
 	Payload->NameAsString	= NCsCommonCached::Str::ScaleActorOverTime_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
+	static const int32 START_SCALE_INDEX = 0;
+	Payload->SetValue_Vector(START_SCALE_INDEX, StartScale);
 
-	UWorld* World			= InActor ? InActor->GetWorld() : nullptr;
-	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
-	
-	R->timers[0] = CurrentTime;
-	R->vectors[0] = StartScale;
-	R->vectors[1] = EndScale;
-	R->floats[2] = Time;
-	R->flags[0] = IsRelativeScale;
-	R->ints[0] = (int32)EasingType;
+	static const int32 END_SCALE_INDEX = 1;
+	Payload->SetValue_Vector(END_SCALE_INDEX, EndScale);
 
-	Scheduler->StartRoutine(ScheduleType, R);
-	return R;
+	static const int32 TIME_INDEX = 2;
+	Payload->SetValue_Float(TIME_INDEX, Time);
+
+	Payload->SetValue_Flag(CS_FIRST, IsRelativeScale);
+	Payload->SetValue_Int(CS_FIRST, (int32)EasingType);
+
+	return Scheduler->Start(Payload);
 }
 
-FCsRoutine* UCsCommon::ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale)
+const FCsRoutineHandle& UCsCommon::ScaleActorOverTime(const FECsUpdateGroup& Group, UCurveBase* Curve, AActor* InActor, const float& StartScale, const float& EndScale, const float& Time, const bool& IsRelativeScale)
 {
-	return ScaleActorOverTime(ScheduleType, Curve, InActor, FVector(StartScale), FVector(EndScale), Time, IsRelativeScale);
+	return ScaleActorOverTime(Group, Curve, InActor, FVector(StartScale), FVector(EndScale), Time, IsRelativeScale);
 }
 
-FCsRoutine* UCsCommon::ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale)
+const FCsRoutineHandle& UCsCommon::ScaleActorOverTime(const FECsUpdateGroup& Group, UCurveBase* Curve, AActor* InActor, const FVector& StartScale, const FVector& EndScale, const float& Time, const bool& IsRelativeScale)
 {
 	if (Time <= 0.0f)
-		return nullptr;
+	{
+		// LOG Warning
+		return FCsRoutineHandle::Invalid;
+	}
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	if (!Scheduler)
-		return nullptr;
+	Payload->Coroutine.BindStatic(&UCsCommon::ScaleActorOverTime_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(InActor);
 
-	FCsRoutine* R = nullptr;
+	Payload->Name = NCsCommonCached::Name::ScaleActorOverTime_Internal;
+	Payload->NameAsString = NCsCommonCached::Str::ScaleActorOverTime_Internal;
 
-	CsCoroutine Function		  = &UCsCommon::ScaleActorOverTime_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
+	static const int32 START_SCALE_INDEX = 0;
+	Payload->SetValue_Vector(START_SCALE_INDEX, StartScale);
 
-	R = Scheduler->Allocate(ScheduleType, Function, Stop, InActor, true, false);
+	static const int32 END_SCALE_INDEX = 1;
+	Payload->SetValue_Vector(END_SCALE_INDEX, EndScale);
 
-	UWorld* World			= InActor ? InActor->GetWorld() : nullptr;
-	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
+	static const int32 TIME_INDEX = 2;
+	Payload->SetValue_Float(TIME_INDEX, Time);
 
-	R->name = NCsCommonCached::Name::ScaleActorOverTime_Internal;
-	R->nameAsString = NCsCommonCached::Str::ScaleActorOverTime_Internal;
+	Payload->SetValue_Flag(CS_FIRST, IsRelativeScale);
+	Payload->SetValue_Object(CS_FIRST, Curve);
 
-	R->timers[0] = CurrentTime;
-	R->vectors[0] = StartScale;
-	R->vectors[1] = EndScale;
-	R->floats[2] = Time;
-	R->flags[0] = IsRelativeScale;
-	R->objects[0] = Curve;
-
-	Scheduler->StartRoutine(ScheduleType, R);
-	return R;
+	return Scheduler->Start(Payload);
 }
 
-PT_THREAD(UCsCommon::ScaleActorOverTime_Internal(struct FCsRoutine* r))
+char UCsCommon::ScaleActorOverTime_Internal(FCsRoutine* R)
 {
-	AActor* a			     = r->GetActor();
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-	UWorld* w			     = a->GetWorld();
+	AActor* A = R->GetOwnerAsActor();
 
-	const float CurrentTime = w->GetTimeSeconds();
-	const float StartTime	= r->timers[0];
-	const float MaxTime		= r->floats[2];
+	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
 
-	const FVector StartScale = ClampVectorComponents(r->vectors[0], CS_ACTOR_SMALLEST_SCALE);
-	const FVector EndScale   = ClampVectorComponents(r->vectors[1], CS_ACTOR_SMALLEST_SCALE);
+	const FCsTime& StartTime = R->GetValue_Timer(CS_FIRST);
 
-	const bool IsRelativeScale		= r->flags[0];
-	const ECsEasingType& EasingType = EMCsEasingType::Get().GetEnumAt(r->ints[0]);
-	UCurveFloat* CurveFloat			= r->objects[0].IsValid() && r->objects[0].Get() ? Cast<UCurveFloat>(r->objects[0].Get()) : nullptr;
-	UCurveVector* CurveVector		= r->objects[0].IsValid() && r->objects[0].Get() ? Cast<UCurveVector>(r->objects[0].Get()) : nullptr;
+	static const int32 TIME_INDEX = 2;
+	const float& MaxTime = R->GetValue_Float(TIME_INDEX);
 
-	CS_COROUTINE_BEGIN(r);
+	static const int32 START_SCALE_INDEX = 0;
+	const FVector StartScale = ClampVectorComponents(R->GetValue_Vector(START_SCALE_INDEX), CS_ACTOR_SMALLEST_SCALE);
 
-	if (r->delay > 0)
-		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime > r->delay);
+	static const int32 END_SCALE_INDEX = 1;
+	const FVector EndScale   = ClampVectorComponents(R->GetValue_Vector(END_SCALE_INDEX), CS_ACTOR_SMALLEST_SCALE);
+
+	const bool& IsRelativeScale		= R->GetValue_Flag(CS_FIRST);
+	const ECsEasingType& EasingType = EMCsEasingType::Get().GetEnumAt(R->GetValue_Int(CS_FIRST));
+	UCurveFloat* CurveFloat			= Cast<UCurveFloat>(R->GetValue_Object(CS_FIRST).Get());
+	UCurveVector* CurveVector		= Cast<UCurveVector>(R->GetValue_Object(CS_FIRST).Get());
+
+	CS_COROUTINE_BEGIN(R);
+
+	if (R->Delay > 0.0f)
+		CS_COROUTINE_WAIT_UNTIL(R, CurrentTime.Time - StartTime.Time > R->Delay);
 
 	do
 	{
 		{
-			const float Percent = FMath::Clamp((CurrentTime - StartTime) / MaxTime, 0.0f, 1.0f);
+			const float Percent = FMath::Clamp((CurrentTime.Time - StartTime.Time) / MaxTime, 0.0f, 1.0f);
 			FVector Scale		= EndScale;
 
 			if (CurveFloat)
@@ -1946,91 +1941,103 @@ PT_THREAD(UCsCommon::ScaleActorOverTime_Internal(struct FCsRoutine* r))
 			}
 
 			if (IsRelativeScale)
-				a->SetActorRelativeScale3D(Scale);
+				A->SetActorRelativeScale3D(Scale);
 			else
-				a->SetActorScale3D(Scale);
+				A->SetActorScale3D(Scale);
 		}
-		CS_COROUTINE_YIELD(r);
-	} while (CurrentTime - StartTime <= MaxTime);
+		CS_COROUTINE_YIELD(R);
+	} while (CurrentTime.Time - StartTime.Time <= MaxTime);
 
 	if (IsRelativeScale)
-		a->SetActorRelativeScale3D(EndScale);
+		A->SetActorRelativeScale3D(EndScale);
 	else
-		a->SetActorScale3D(EndScale);
+		A->SetActorScale3D(EndScale);
 
-	CS_COROUTINE_END(r);
+	CS_COROUTINE_END(R);
 }
 
-FCsRoutine* UCsCommon::ScaleActorOverTime_AsCurve(const ECsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const bool &IsRelativeScale)
+const FCsRoutineHandle& UCsCommon::ScaleActorOverTime_AsCurve(const FECsUpdateGroup& Group, UCurveBase* Curve, AActor* InActor, const bool& IsRelativeScale)
 {
 	if (!Cast<UCurveFloat>(Curve) && !Cast<UCurveVector>(Curve))
-		return nullptr;
+	{
+		// Log Warning
+		return FCsRoutineHandle::Invalid;
+	}
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= ScheduleType;
-	Payload->Function		= &UCsCommon::ScaleActorOverTime_AsCurve_Internal;
-	Payload->Actor			= InActor;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&UCsCommon::ScaleActorOverTime_AsCurve_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(InActor);
+
 	Payload->Name			= NCsCommonCached::Name::ScaleActorOverTime_AsCurve_Internal;
 	Payload->NameAsString	= NCsCommonCached::Str::ScaleActorOverTime_AsCurve_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-
-	UWorld* World			= InActor ? InActor->GetWorld() : nullptr;
-	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
-
-	R->timers[0] = CurrentTime;
+	// TODO: Add Delay to Payload
 	float MinTime = 0.0f;
 	float MaxTime = 0.0f;
+	/*
 	Curve->GetTimeRange(MinTime, MaxTime);
 	R->delay	  = MinTime > 0.0f ? MinTime : 0.0f;
-	R->floats[2]  = MaxTime;
-	R->flags[0]   = IsRelativeScale;
-	R->flags[1] = Cast<UCurveFloat>(Curve) != nullptr; // Use CurveFloat
-	R->flags[2] = Cast<UCurveVector>(Curve) != nullptr; // Use CurveVector;
-	R->objects[0] = Curve;
+	*/
+	static const int32 MAX_TIME_INDEX = 2;
+	Payload->SetValue_Float(MAX_TIME_INDEX, MaxTime);
 
-	Scheduler->StartRoutine(ScheduleType, R);
-	return R;
+	static const int32 RELATIVE_SCALE_INDEX = 0;
+	Payload->SetValue_Flag(RELATIVE_SCALE_INDEX, IsRelativeScale);
+
+	static const int32 USE_CURVE_FLOAT_INDEX = 1;
+	Payload->SetValue_Flag(USE_CURVE_FLOAT_INDEX, Cast<UCurveFloat>(Curve) != nullptr); // Use CurveFloat
+
+	static const int32 USE_CURVE_VECTOR_INDEX = 2;
+	Payload->SetValue_Flag(USE_CURVE_VECTOR_INDEX, Cast<UCurveVector>(Curve) != nullptr); // Use CurveVector;
+	
+	Payload->SetValue_Object(CS_FIRST, Curve);
+
+	return Scheduler->Start(Payload);
 }
 
-PT_THREAD(UCsCommon::ScaleActorOverTime_AsCurve_Internal(struct FCsRoutine* r))
+char UCsCommon::ScaleActorOverTime_AsCurve_Internal(FCsRoutine* R)
 {
-	AActor* a				 = r->GetActor();
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-	UWorld* w				 = a->GetWorld();
+	AActor* A= R->GetOwnerAsActor();
 
-	const float CurrentTime = w->GetTimeSeconds();
-	const float StartTime   = r->timers[0];
-	const float MaxTime     = r->floats[2];
+	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
+	const FCsTime& StartTime   = R->StartTime;
 
-	const bool IsRelativeScale = r->flags[0];
-	const bool UseCurveFloat = r->flags[1];
-	const bool UseCurveVector = r->flags[2];
-	FVector EndScale		   = FVector(1.0f);
+	static const int32 MAX_TIME_INDEX = 2;
+	const float& MaxTime = R->GetValue_Float(MAX_TIME_INDEX);
+	 
+	static const int32 RELATIVE_SCALE_INDEX = 0;
+	const bool& IsRelativeScale = R->GetValue_Flag(RELATIVE_SCALE_INDEX);
 
-	UCurveFloat* CurveFloat	= UseCurveFloat && r->objects[0].IsValid() && r->objects[0].Get() ? Cast<UCurveFloat>(r->objects[0].Get()) : nullptr;
+	static const int32 USE_CURVE_FLOAT_INDEX = 1;
+	const bool& UseCurveFloat = R->GetValue_Flag(USE_CURVE_FLOAT_INDEX);
+
+	static const int32 USE_CURVE_VECTOR_INDEX = 2;
+	const bool& UseCurveVector = R->GetValue_Flag(USE_CURVE_VECTOR_INDEX);
+
+	FVector EndScale = FVector(1.0f);
+
+	UCurveFloat* CurveFloat	= UseCurveFloat ? Cast<UCurveFloat>(R->GetValue_Object(CS_FIRST).Get()) : nullptr;
 
 	if (CurveFloat)
 	{
 		EndScale = FVector(CurveFloat->GetFloatValue(MaxTime));
 	}
 
-	UCurveVector* CurveVector = UseCurveVector && r->objects[0].IsValid() && r->objects[0].Get() ? Cast<UCurveVector>(r->objects[0].Get()) : nullptr;
+	UCurveVector* CurveVector = UseCurveVector ? Cast<UCurveVector>(R->GetValue_Object(CS_FIRST).Get()) : nullptr;
 
 	if (CurveVector)
 	{
 		EndScale = CurveVector->GetVectorValue(MaxTime);
 	}
 
-	CS_COROUTINE_BEGIN(r);
+	CS_COROUTINE_BEGIN(R);
 
-	if (r->delay > 0)
-		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime > r->delay);
+	if (R->Delay > 0)
+		CS_COROUTINE_WAIT_UNTIL(R, CurrentTime.Time - StartTime.Time > R->Delay);
 
 	do
 	{
@@ -2038,7 +2045,7 @@ PT_THREAD(UCsCommon::ScaleActorOverTime_AsCurve_Internal(struct FCsRoutine* r))
 			if (!UseCurveFloat && !UseCurveVector)
 				break;
 
-			const float Percent = FMath::Clamp((CurrentTime - StartTime) / MaxTime, 0.0f, 1.0f);
+			const float Percent = FMath::Clamp((CurrentTime.Time - StartTime.Time) / MaxTime, 0.0f, 1.0f);
 			FVector Scale		= FVector(1.0f);
 
 			if (CurveFloat)
@@ -2054,252 +2061,243 @@ PT_THREAD(UCsCommon::ScaleActorOverTime_AsCurve_Internal(struct FCsRoutine* r))
 			}
 
 			if (IsRelativeScale)
-				a->SetActorRelativeScale3D(Scale);
+				A->SetActorRelativeScale3D(Scale);
 			else
-				a->SetActorScale3D(Scale);
+				A->SetActorScale3D(Scale);
 		}
-		CS_COROUTINE_YIELD(r);
-	} while (CurrentTime - StartTime <= MaxTime);
+		CS_COROUTINE_YIELD(R);
+	} while (CurrentTime.Time - StartTime.Time <= MaxTime);
 
 	if (IsRelativeScale)
-		a->SetActorRelativeScale3D(EndScale);
+		A->SetActorRelativeScale3D(EndScale);
 	else
-		a->SetActorScale3D(EndScale);
+		A->SetActorScale3D(EndScale);
 
-	CS_COROUTINE_END(r);
+	CS_COROUTINE_END(R);
 }
 
-FCsRoutine* UCsCommon::MoveActorOverTime(const ECsCoroutineSchedule &ScheduleType, const ECsEasingType &EasingType, AActor* InActor, const FVector &StartLocation, const FVector &EndLocation, const float &Time, const bool &IsRelativeLocation)
+const FCsRoutineHandle& UCsCommon::MoveActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const FVector& StartLocation, const FVector& EndLocation, const float& Time, const bool& IsRelativeLocation)
 {
 	if (Time <= 0.0f)
-		return nullptr;
+	{
+		// Log Warning
+		return FCsRoutineHandle::Invalid;
+	}
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= ScheduleType;
-	Payload->Function		= &UCsCommon::MoveActorOverTime_Internal;
-	Payload->Actor			= InActor;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&UCsCommon::MoveActorOverTime_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(InActor);
+
 	Payload->Name			= NCsCommonCached::Name::MoveActorOverTime_Internal;
 	Payload->NameAsString	= NCsCommonCached::Str::MoveActorOverTime_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
+	static const int32 START_LOCATION_INDEX = 0;
+	Payload->SetValue_Vector(START_LOCATION_INDEX, StartLocation);
 
-	UWorld* World			= InActor ? InActor->GetWorld() : nullptr;
-	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
+	static const int32 END_LOCATION_INDEX = 1;
+	Payload->SetValue_Vector(END_LOCATION_INDEX, EndLocation);
 
-	R->timers[0] = CurrentTime;
-	R->vectors[0] = StartLocation;
-	R->vectors[1] = EndLocation;
-	R->floats[0] = Time;
-	R->flags[0] = IsRelativeLocation;
-	R->ints[0] = (int32)EasingType;
+	Payload->SetValue_Float(CS_FIRST, Time);
+	Payload->SetValue_Flag(CS_FIRST, IsRelativeLocation);
+	Payload->SetValue_Int(CS_FIRST, (int32)EasingType);
 
-	Scheduler->StartRoutine(ScheduleType, R);
-	return R;
+	return Scheduler->Start(Payload);
 }
 
-PT_THREAD(UCsCommon::MoveActorOverTime_Internal(struct FCsRoutine* r))
+char UCsCommon::MoveActorOverTime_Internal(FCsRoutine* R)
 {
-	AActor* a			     = r->GetActor();
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-	UWorld* w			     = a->GetWorld();
+	AActor* A = R->GetOwnerAsActor();
 
-	const float CurrentTime = w->GetTimeSeconds();
-	const float StartTime   = r->timers[0];
-	const float MaxTime     = r->floats[0];
+	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
+	const FCsTime& StartTime   = R->StartTime;
 
-	const FVector StartLocation = r->vectors[0];
-	const FVector EndLocation   = r->vectors[1];
+	const float& MaxTime = R->GetValue_Float(CS_FIRST);
 
-	const bool IsRelativeLocation	= r->flags[0];
-	const ECsEasingType& EasingType = EMCsEasingType::Get().GetEnumAt(r->ints[0]);
+	static const int32 START_LOCATION_INDEX = 0;
+	const FVector& StartLocation = R->GetValue_Vector(START_LOCATION_INDEX);
 
-	CS_COROUTINE_BEGIN(r);
+	static const int32 END_LOCATION_INDEX = 1;
+	const FVector& EndLocation = R->GetValue_Vector(END_LOCATION_INDEX);
 
-	if (r->delay > 0)
-		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime > r->delay);
+	const bool& IsRelativeLocation	= R->GetValue_Flag(CS_FIRST);
+	const ECsEasingType& EasingType = EMCsEasingType::Get().GetEnumAt(R->GetValue_Int(CS_FIRST));
+
+	CS_COROUTINE_BEGIN(R);
+
+	if (R->Delay > 0)
+		CS_COROUTINE_WAIT_UNTIL(R, CurrentTime.Time - StartTime.Time > R->Delay);
 
 	do
 	{
 		{
-			const float Percent    = FMath::Clamp((CurrentTime - StartTime) / MaxTime, 0.0f, 1.0f);
+			const float Percent    = FMath::Clamp((CurrentTime.Time - StartTime.Time) / MaxTime, 0.0f, 1.0f);
 			float Time			   = Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
 			const FVector Location = FMath::Lerp(StartLocation, EndLocation, Time);
 
 			if (IsRelativeLocation)
-				a->SetActorRelativeLocation(Location);
+				A->SetActorRelativeLocation(Location);
 			else
-				a->SetActorLocation(Location);
+				A->SetActorLocation(Location);
 		}
-		CS_COROUTINE_YIELD(r);
-	} while (CurrentTime - StartTime <= MaxTime);
+		CS_COROUTINE_YIELD(R);
+	} while (CurrentTime.Time - StartTime.Time <= MaxTime);
 
 	if (IsRelativeLocation)
-		a->SetActorRelativeLocation(EndLocation);
+		A->SetActorRelativeLocation(EndLocation);
 	else
-		a->SetActorLocation(EndLocation);
+		A->SetActorLocation(EndLocation);
 
-	CS_COROUTINE_END(r);
+	CS_COROUTINE_END(R);
 }
 
-FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamic(const ECsCoroutineSchedule &ScheduleType, UMaterialInstanceDynamic* InMID, const float &Delay)
+const FCsRoutineHandle& UCsCommon::DestroyMaterialInstanceDynamic(const FECsUpdateGroup& Group, UMaterialInstanceDynamic* InMID, const float& Delay)
 {
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= ScheduleType;
-	Payload->Function		= &UCsCommon::DestroyMaterialInstanceDynamic_Internal;
-	Payload->Object			= InMID;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&UCsCommon::DestroyMaterialInstanceDynamic_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(InMID);
+
 	Payload->Name			= NCsCommonCached::Name::DestroyMaterialInstanceDynamic_Internal;
 	Payload->NameAsString	= NCsCommonCached::Str::DestroyMaterialInstanceDynamic_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
+	//R->delay	 = Delay;
 
-	UWorld* World			= InMID ? InMID->GetWorld() : nullptr;
-	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
-
-	R->timers[0] = CurrentTime;
-	R->delay	 = Delay;
-
-	Scheduler->StartRoutine(ScheduleType, R);
-	return R;
+	return Scheduler->Start(Payload);
 }
 
-PT_THREAD(UCsCommon::DestroyMaterialInstanceDynamic_Internal(struct FCsRoutine* r))
+char UCsCommon::DestroyMaterialInstanceDynamic_Internal(FCsRoutine* R)
 {
-	UMaterialInstanceDynamic* m = Cast<UMaterialInstanceDynamic>(r->GetRObject());
-	UCsCoroutineScheduler* s	= UCsCoroutineScheduler::Get();
-	UWorld* w					= m->GetWorld();
+	UMaterialInstanceDynamic* M = R->GetOwnerAsObject<UMaterialInstanceDynamic>();
 
-	const float CurrentTime = w->GetTimeSeconds();
-	const float StartTime   = r->startTime;
+	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
+	const FCsTime& StartTime   = R->StartTime;
 
-	CS_COROUTINE_BEGIN(r);
+	CS_COROUTINE_BEGIN(R);
 
-	if (r->delay > 0)
-		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime > r->delay);
+	if (R->Delay > 0)
+		CS_COROUTINE_WAIT_UNTIL(R, CurrentTime.Time - StartTime.Time > R->Delay);
 
-	if (m && !m->IsPendingKill())
-	{
-		m->MarkPendingKill();
-	}
+	M->MarkPendingKill();
 
-	CS_COROUTINE_END(r);
+	CS_COROUTINE_END(R);
 }
 
-FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamics(const ECsCoroutineSchedule &ScheduleType, TArray<UMaterialInstanceDynamic*>& InMIDs, const float &Delay)
+/*
+const FCsRoutineHandle& UCsCommon::DestroyMaterialInstanceDynamics(const FECsUpdateGroup& Group, TArray<UMaterialInstanceDynamic*>& InMIDs, const float& Delay)
 {
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-
-	if (!Scheduler)
-		return nullptr;
-
 	FCsRoutine* R = nullptr;
 
-	CsCoroutine Function		  = &UCsCommon::DestroyMaterialInstanceDynamic_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
 	int32 Count = InMIDs.Num();
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		R = Scheduler->Allocate(ScheduleType, Function, Stop, InMIDs[I], true, false);
+		FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+		FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-		R->name			= NCsCommonCached::Name::DestroyMaterialInstanceDynamic_Internal;
-		R->nameAsString = NCsCommonCached::Str::DestroyMaterialInstanceDynamic_Internal;
+		Payload->Coroutine.BindStatic(&UCsCommon::DestroyMaterialInstanceDynamic_Internal);
+		Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+		Payload->Owner.SetObject(InMIDs[I]);
 
-		UWorld* World			= InMIDs[I] ? InMIDs[I]->GetWorld() : nullptr;
-		const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
+		Payload->Name		  = NCsCommonCached::Name::DestroyMaterialInstanceDynamic_Internal;
+		Payload->NameAsString = NCsCommonCached::Str::DestroyMaterialInstanceDynamic_Internal;
 
-		R->timers[0] = CurrentTime;
-		R->delay	 = Delay;
+		//Payload->Delay = Delay;
 
 		Scheduler->StartRoutine(ScheduleType, R);
 	}
 	return R;
 }
+*/
 
-FCsRoutine* UCsCommon::FadeCameraOverTime(const ECsCoroutineSchedule &ScheduleType, const ECsEasingType &EasingType, APlayerController* Controller, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
+const FCsRoutineHandle& UCsCommon::FadeCameraOverTime(const FECsUpdateGroup &Group, const ECsEasingType& EasingType, APlayerController* Controller, const float& Start, const float& End, const float& Time, const FLinearColor& Color)
 {
 	if (Time <= 0.0f)
-		return nullptr;
+	{
+		// Log Warning
+		return FCsRoutineHandle::Invalid;
+	}
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= ScheduleType;
-	Payload->Function		= &UCsCommon::FadeCameraOverTime_Internal;
-	Payload->Actor			= Controller;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&UCsCommon::FadeCameraOverTime_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(Controller);
+
 	Payload->Name			= NCsCommonCached::Name::FadeCameraOverTime_Internal;
 	Payload->NameAsString	= NCsCommonCached::Str::FadeCameraOverTime_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
+	Payload->SetValue_Int(CS_FIRST, (int32)EasingType);
 
-	UWorld* World		    = Controller ? Controller->GetWorld() : nullptr;
-	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
+	static const int32 START_INDEX = 0;
+	Payload->SetValue_Float(START_INDEX, Start);
 
-	R->timers[0] = CurrentTime;
-	R->ints[0] = (int32)EasingType;
-	R->floats[0] = Start;
-	R->floats[1] = End;
-	R->floats[2] = Time;
-	R->colors[0] = Color;
+	static const int32 END_INDEX = 1;
+	Payload->SetValue_Float(END_INDEX, End);
 
-	Scheduler->StartRoutine(ScheduleType, R);
-	return R;
+	static const int32 TIME_INDEX = 2;
+	Payload->SetValue_Float(TIME_INDEX, Time);
+
+	Payload->SetValue_Color(CS_FIRST, Color);
+
+	return Scheduler->Start(Payload);
 }
 
-PT_THREAD(UCsCommon::FadeCameraOverTime_Internal(struct FCsRoutine* r))
+char UCsCommon::FadeCameraOverTime_Internal(FCsRoutine* R)
 {
-	APlayerController* pc    = Cast<APlayerController>(r->GetRObject());
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-	UWorld* w			     = pc->GetWorld();
+	APlayerController* PC = R->GetOwnerAsObject<APlayerController>();
 
-	const float CurrentTime = w->GetTimeSeconds();
-	const float StartTime   = r->timers[0];
-	const float MaxTime		= r->floats[2];
+	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
+	const FCsTime& StartTime   = R->StartTime;
 
-	const ECsEasingType& EasingType = EMCsEasingType::Get().GetEnumAt(r->ints[0]);
+	static const int32 MAX_TIME_INDEX = 2;
+	const float& MaxTime = R->GetValue_Float(MAX_TIME_INDEX);
 
-	const float Start	 = r->floats[0];
-	const float End		 = r->floats[1];
+	const ECsEasingType& EasingType = EMCsEasingType::Get().GetEnumAt(R->GetValue_Int(CS_FIRST));
+
+	static const int32 START_INDEX = 0;
+	const float& Start = R->GetValue_Float(START_INDEX);
+
+	static const int32 END_INDEX = 1;
+	const float& End = R->GetValue_Float(END_INDEX);
+
 	const bool IsFadeOut = Start > End;
 	const float Max		 = FMath::Max(Start, End);
 	const float Min		 = FMath::Min(Start, End);
 	const float Delta	 = Max - Min;
 
-	const FLinearColor Color = r->colors[0];
+	const FLinearColor& Color = R->GetValue_Color(CS_FIRST);
 
-	CS_COROUTINE_BEGIN(r);
+	CS_COROUTINE_BEGIN(R);
 
-	if (r->delay > 0)
-		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime > r->delay);
+	if (R->Delay > 0)
+		CS_COROUTINE_WAIT_UNTIL(R, CurrentTime.Time - StartTime.Time > R->Delay);
 
 	do
 	{
 		{
-			const float Percent = FMath::Clamp((CurrentTime - StartTime) / MaxTime, 0.0f, 1.0f);
+			const float Percent = FMath::Clamp((CurrentTime.Time - StartTime.Time) / MaxTime, 0.0f, 1.0f);
 			const float Time    = Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
 			const float Alpha	= IsFadeOut ? 1.0f - (Min + Percent * Delta) : Min + Percent * Delta;
 
-			pc->PlayerCameraManager->SetManualCameraFade(Alpha, Color, false);
+			PC->PlayerCameraManager->SetManualCameraFade(Alpha, Color, false);
 		}
-		CS_COROUTINE_YIELD(r);
-	} while (CurrentTime - StartTime <= MaxTime);
+		CS_COROUTINE_YIELD(R);
+	} while (CurrentTime.Time - StartTime.Time <= MaxTime);
 
-	pc->PlayerCameraManager->SetManualCameraFade(End, Color, false);
+	PC->PlayerCameraManager->SetManualCameraFade(End, Color, false);
 
-	CS_COROUTINE_END(r);
+	CS_COROUTINE_END(R);
 }
 /*
 FCsRoutine* UCsCommon::AllocateAndActivateEmitter(ACsCoroutineScheduler* ScheduleType, const ECsCoroutineSchedule &CoroutineSchedule, FEffectsElement* InEffectsElement, FVector Location, float Delay)
@@ -2328,19 +2326,6 @@ PT_THREAD(UCsCommon::AllocateAndActivateEmitter_Internal(struct FCsRoutine* r))
 	CS_COROUTINE_END(r);
 }
 */
-bool UCsCommon::CoroutineStopCondition_CheckActor(struct FCsRoutine* r)
-{
-	if (!r->GetActor())
-		return true;
-	return false;
-}
-
-bool UCsCommon::CoroutineStopCondition_CheckObject(struct FCsRoutine* r)
-{
-	if (!r->GetRObject())
-		return true;
-	return false;
-}
 
 #pragma endregion Coroutine
 

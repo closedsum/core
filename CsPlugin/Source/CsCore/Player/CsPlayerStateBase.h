@@ -2,7 +2,7 @@
 #pragma once
 #include "GameFramework/PlayerState.h"
 #include "Types/CsTypes.h"
-#include "Types/CsTypes_Coroutine.h"
+#include "Coroutine/CsTypes_Coroutine.h"
 #include "CsPlayerStateBase.generated.h"
 
 // Tick

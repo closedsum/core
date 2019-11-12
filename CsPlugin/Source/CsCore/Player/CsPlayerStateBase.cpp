@@ -8,6 +8,7 @@
 // Managers
 #include "Managers/CsManager_Loading.h"
 #include "Managers/Runnable/CsManager_Runnable.h"
+#include "Managers/Time/CsManager_Time.h"
 // Data
 #include "Data/CsDataMapping.h"
 
@@ -210,32 +211,25 @@ bool ACsPlayerStateBase::RemoveRoutine_Internal(struct FCsRoutine* Routine, cons
 
 void ACsPlayerStateBase::OnBoard()
 {
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= Schedule;
-	Payload->Function		= &ACsPlayerStateBase::OnBoard_Internal;
-	Payload->Actor			= this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	Payload->Add			= &ACsPlayerStateBase::AddRoutine;
-	Payload->Remove			= &ACsPlayerStateBase::RemoveRoutine;
-	Payload->Type			= ECsPlayerStateBaseRoutine::OnBoard_Internal.Value;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&ACsPlayerStateBase::OnBoard_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+
 	Payload->Name			= NCsPlayerStateBaseCached::Name::OnBoard_Internal;
 	Payload->NameAsString	= NCsPlayerStateBaseCached::Str::OnBoard_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(ACsPlayerStateBase, OnBoard_Internal)
 {
-	ACsPlayerStateBase* ps	 = r->GetActor<ACsPlayerStateBase>();
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+	ACsPlayerStateBase* ps = r->GetOwnerAsObject<ACsPlayerStateBase>();
 
 	ps->OnTick_OnBoard();
 
@@ -635,39 +629,38 @@ void ACsPlayerStateBase::ServerRequestUniqueMappingId_AI_Internal(const uint8 &C
 
 void ACsPlayerStateBase::RequestUniqueMappingId_AI(ACsPlayerStateBase* RequestingPlayerState)
 {
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		 = Schedule;
-	Payload->Function		 = &ACsPlayerStateBase::RequestUniqueMappingId_AI_Internal;
-	Payload->Actor			 = this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	Payload->Add			 = &ACsPlayerStateBase::AddRoutine;
-	Payload->Remove			 = &ACsPlayerStateBase::RemoveRoutine;
-	Payload->Type			 = ECsPlayerStateBaseRoutine::RequestUniqueMappingId_AI_Internal.Value;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&ACsPlayerStateBase::RequestUniqueMappingId_AI_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+
 	Payload->Name			 = NCsPlayerStateBaseCached::Name::RequestUniqueMappingId_AI_Internal;
 	Payload->NameAsString	 = NCsPlayerStateBaseCached::Str::RequestUniqueMappingId_AI_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
+	static const int32 CLIENT_INDEX = 0;
+	Payload->SetValue_Object(CLIENT_INDEX, this);
 
-	R->objects[0] = this;
-	R->objects[1] = RequestingPlayerState;
+	static const int32 REQUEST_INDEX = 1;
+	Payload->SetValue_Object(REQUEST_INDEX, RequestingPlayerState);
 
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(ACsPlayerStateBase, RequestUniqueMappingId_AI_Internal)
 {
-	ACsPlayerStateBase* ps   = r->GetActor<ACsPlayerStateBase>();
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+	ACsPlayerStateBase* ps = r->GetOwnerAsObject<ACsPlayerStateBase>();
 	UWorld* w				 = ps->GetWorld();
 
-	ACsPlayerStateBase* ClientPlayerState	  = r->GetObjectAt<ACsPlayerStateBase>(0);
-	ACsPlayerStateBase* RequestingPlayerState = r->GetObjectAt<ACsPlayerStateBase>(1);
+	static const int32 CLIENT_INDEX = 0;
+	ACsPlayerStateBase* ClientPlayerState = Cast<ACsPlayerStateBase>(r->GetValue_Object(CLIENT_INDEX).Get());
+
+	static const int32 REQUEST_INDEX = 0;
+	ACsPlayerStateBase* RequestingPlayerState = Cast<ACsPlayerStateBase>(r->GetValue_Object(REQUEST_INDEX).Get());
 
 	CS_COROUTINE_BEGIN(r);
 

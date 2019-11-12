@@ -11,6 +11,7 @@
 #include "Data/CsData_Character.h"
 // Managers
 #include "Managers/Trace/CsManager_Trace.h"
+#include "Managers/Time/CsManager_Time.h"
 // Game
 #include "Game/CsGameState.h"
 // Player
@@ -217,41 +218,34 @@ void ACsAIPawn::PerformViewTrace_Response(const uint8 &RequestId, FCsTraceRespon
 void ACsAIPawn::SyncCurrentViewFromBone(const FName &Bone)
 {
 	// Clear SyncCurrentViewFromBone
-	if (SyncCurrentViewFromBone_Internal_Routine && SyncCurrentViewFromBone_Internal_Routine->IsValid())
+	if (SyncCurrentViewFromBone_Internal_Routine)
 		SyncCurrentViewFromBone_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= Schedule;
-	Payload->Function		= &ACsAIPawn::SyncCurrentViewFromBone_Internal;
-	Payload->Actor			= this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	Payload->Add			= &ACsAIPawn::AddRoutine;
-	Payload->Remove			= &ACsAIPawn::RemoveRoutine;
-	Payload->Type			= ECsPawnRoutine::SyncCurrentViewFromBone_Internal.Value;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&ACsAIPawn::SyncCurrentViewFromBone_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+
 	Payload->Name			= NCsAIPawnCached::Name::SyncCurrentViewFromBone_Internal;
 	Payload->NameAsString	= NCsAIPawnCached::Str::SyncCurrentViewFromBone_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-
-	R->names[0] = Bone;
+	Payload->SetValue_Name(CS_FIRST, Bone);
 
 	bSyncCurrentViewFromBone = true;
 
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(ACsAIPawn, SyncCurrentViewFromBone_Internal)
 {
-	ACsAIPawn* p			 = r->GetActor<ACsAIPawn>();
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-
-	const FName& Bone		= r->names[0];
+	ACsAIPawn* p = r->GetOwnerAsObject<ACsAIPawn>();
+	
+	const FName& Bone		= r->GetValue_Name(CS_FIRST);
 	const FRotator Rotation	= p->GetMesh()->GetBoneQuaternion(Bone).Rotator();
 
 	p->CurrentAimPitch	= Rotation.Pitch;
@@ -268,7 +262,7 @@ CS_COROUTINE(ACsAIPawn, SyncCurrentViewFromBone_Internal)
 void ACsAIPawn::StopSyncCurrentViewFromBone()
 {
 	// Clear SyncCurrentViewFromBone
-	if (SyncCurrentViewFromBone_Internal_Routine && SyncCurrentViewFromBone_Internal_Routine->IsValid())
+	if (SyncCurrentViewFromBone_Internal_Routine)
 		SyncCurrentViewFromBone_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 
 	bSyncCurrentViewFromBone = false;
@@ -407,49 +401,48 @@ void ACsAIPawn::StartShoot()
 void ACsAIPawn::StartShootForCount(const int32 &Count)
 {
 	// Clear StartShootForCount
-	if (StartShootForCount_Internal_Routine && StartShootForCount_Internal_Routine->IsValid())
+	if (StartShootForCount_Internal_Routine)
 		StartShootForCount_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 	// Clear StartShootForDuration
-	if (StartShootForDuration_Internal_Routine && StartShootForDuration_Internal_Routine->IsValid())
+	if (StartShootForDuration_Internal_Routine)
 		StartShootForDuration_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
 	ACsAIPlayerState* MyPlayerState = GetPlayerState<ACsAIPlayerState>();
 	MyPlayerState->AddQueuedGameEvent(StartShootEvent);
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= Schedule;
-	Payload->Function		= &ACsAIPawn::StartShootForCount_Internal;
-	Payload->Actor			= this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	Payload->Add			= &ACsAIPawn::AddRoutine;
-	Payload->Remove			= &ACsAIPawn::RemoveRoutine;
-	Payload->Type			= ECsPawnRoutine::StartShootForCount_Internal.Value;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&ACsAIPawn::StartShootForCount_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(Controller);
+
 	Payload->Name			= NCsAIPawnCached::Name::StartShootForCount_Internal;
 	Payload->NameAsString	= NCsAIPawnCached::Str::StartShootForCount_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-
 	ACsWeapon* CurrentWeapon = GetCurrentWeapon();
 
-	R->counters[0] = Count;
-	R->counters[1] = CurrentWeapon->FireCount;
+	static const int32 COUNT_INDEX = 0;
+	Payload->SetValue_Counter(COUNT_INDEX, Count);
 
-	Scheduler->StartRoutine(Schedule, R);
+	static const int32 FIRE_COUNT_INDEX = 1;
+	Payload->SetValue_Counter(FIRE_COUNT_INDEX, CurrentWeapon->FireCount);
+
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(ACsAIPawn, StartShootForCount_Internal)
 {
-	ACsAIPawn* p			 = r->GetActor<ACsAIPawn>();
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+	ACsAIPawn* p = r->GetOwnerAsObject<ACsAIPawn>();
 
-	const int32& Count		= r->counters[0];
-	const int32& StartCount = r->counters[1];
+	static const int32 COUNT_INDEX = 0;
+	const int32& Count = r->GetValue_Counter(COUNT_INDEX);
+
+	static const int32 START_COUNT_INDEX = 1;
+	const int32& StartCount = r->GetValue_Counter(START_COUNT_INDEX);
 
 	ACsWeapon* CurrentWeapon = p->GetCurrentWeapon();
 
@@ -465,50 +458,44 @@ CS_COROUTINE(ACsAIPawn, StartShootForCount_Internal)
 void ACsAIPawn::StartShootForDuration(const float &Duration)
 {
 	// Clear StartShootForDuration
-	if (StartShootForDuration_Internal_Routine && StartShootForDuration_Internal_Routine->IsValid())
+	if (StartShootForDuration_Internal_Routine)
 		StartShootForDuration_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 	// Clear StartShootForCount
-	if (StartShootForCount_Internal_Routine && StartShootForCount_Internal_Routine->IsValid())
+	if (StartShootForCount_Internal_Routine)
 		StartShootForCount_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
 	ACsAIPlayerState* MyPlayerState = GetPlayerState<ACsAIPlayerState>();
 	MyPlayerState->AddQueuedGameEvent(StartShootEvent);
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= Schedule;
-	Payload->Function		= &ACsAIPawn::StartShootForDuration_Internal;
-	Payload->Actor			= this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	Payload->Add			= &ACsAIPawn::AddRoutine;
-	Payload->Remove			= &ACsAIPawn::RemoveRoutine;
-	Payload->Type			= ECsPawnRoutine::StartShootForDuration_Internal.Value;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&ACsAIPawn::StartShootForDuration_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+
 	Payload->Name			= NCsAIPawnCached::Name::StartShootForDuration_Internal;
 	Payload->NameAsString	= NCsAIPawnCached::Str::StartShootForDuration_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
+	Payload->SetValue_Float(CS_FIRST, Duration);
 
-	R->floats[0] = Duration;
-
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(ACsAIPawn, StartShootForDuration_Internal)
 {
-	ACsAIPawn* p			 = r->GetActor<ACsAIPawn>();
+	ACsAIPawn* p			 = r->GetOwnerAsObject<ACsAIPawn>();
 	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 
-	const float& Duration	 = r->floats[0];
-	const float& ElapsedTime = r->elapsedTime;
+	const float& Duration			= r->GetValue_Float(CS_FIRST);
+	const FCsDeltaTime& ElapsedTime = r->ElapsedTime;
 
 	CS_COROUTINE_BEGIN(r);
 
-	CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime >= Duration);
+	CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime.Time >= Duration);
 
 	p->StopShoot();
 
@@ -518,10 +505,10 @@ CS_COROUTINE(ACsAIPawn, StartShootForDuration_Internal)
 void ACsAIPawn::StopShoot()
 {
 	// Clear StartShootForCount
-	if (StartShootForCount_Internal_Routine && StartShootForCount_Internal_Routine->IsValid())
+	if (StartShootForCount_Internal_Routine)
 		StartShootForCount_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 	// Clear StartShootForDuration
-	if (StartShootForDuration_Internal_Routine && StartShootForDuration_Internal_Routine->IsValid())
+	if (StartShootForDuration_Internal_Routine)
 		StartShootForDuration_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 
 	ACsAIPlayerState* MyPlayerState = GetPlayerState<ACsAIPlayerState>();

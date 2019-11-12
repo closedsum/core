@@ -1,12 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "CoreUObject/Public/UObject/Object.h"
-#include "ManagECs/Save/CsTypes_Save.h"
+#include "Managers/Save/CsTypes_Save.h"
 #include "OnlineSubsystem.h"
 #include "OnlineStats.h"
 #include "Interfaces/OnlineUserCloudInterface.h"
-#include "ManagECs/MemoryResource/CsManager_MemoryResource.h"
-#include "ManagECs/PlayerProfile/CsTypes_PlayerProfile.h"
+#include "Managers/MemoryResource/CsManager_MemoryResource.h"
+#include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"
 #include "CsManager_Save.generated.h"
 
 // Structs

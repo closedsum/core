@@ -111,7 +111,9 @@ const FCsRoutineHandle& FCsCoroutineSchedule::Start(FCsMemoryResource_CoroutineP
 	}
 
 	//LogTransaction(NCsCoroutineCached::Str::Allocate, (Payload->bDoInit && Payload->bPerformFirstRun) ? ECsCoroutineTransaction::Start : ECsCoroutineTransaction::Allocate, R);
+
 	Payload->Reset();
+	Manager_Payload.Deallocate(PayloadContainer);
 	return R->Handle;
 }
 

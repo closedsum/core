@@ -1,14 +1,14 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/UnitTest/RsManager_UnitTest.h"
-#include "RsCore.h"
-#include "RsCVars.h"
+#include "Managers/UnitTest/CsManager_UnitTest.h"
+#include "CsCore.h"
+#include "CsCVars.h"
 
 // Coroutine
-#include "Coroutine/RsCoroutineScheduler.h"
+#include "Coroutine/CsCoroutineScheduler.h"
 // Managers
-#include "Managers/Time/RsManager_Time.h"
+#include "Managers/Time/CsManager_Time.h"
 
-#include "Managers/UnitTest/RsUnitTestSuite.h"
+#include "Managers/UnitTest/CsUnitTestSuite.h"
 
 // static initializations
 UCsManager_UnitTest* UCsManager_UnitTest::s_Instance;
@@ -136,7 +136,7 @@ void UCsManager_UnitTest::Start()
 	Payload->Coroutine.BindUObject(this, &UCsManager_UnitTest::Start_Internal);
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
-	Payload->bPerformFirstRun = true;
+
 	Payload->Name			  = NCsManagerUnitTestCached::Name::Start_Internal;
 	Payload->NameAsString	  = NCsManagerUnitTestCached::Str::Start_Internal;
 
@@ -148,11 +148,11 @@ void UCsManager_UnitTest::Start()
 
 char UCsManager_UnitTest::Start_Internal(FCsRoutine* R)
 {
-	int32& SuiteIndex		= R->GetValue_Indexer(RS_FIRST);
+	int32& SuiteIndex		= R->GetValue_Indexer(CS_FIRST);
 	ICsUnitTestSuite* Suite = Suites[SuiteIndex];
 
 	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
-	FCsTime& StartTime		   = R->GetValue_Timer(RS_FIRST);
+	FCsTime& StartTime		   = R->GetValue_Timer(CS_FIRST);
 
 	FCsDeltaTime ElapsedTime = FCsDeltaTime::GetDeltaTime(CurrentTime, StartTime);
 

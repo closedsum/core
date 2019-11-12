@@ -14,6 +14,7 @@
 #include "Managers/Inventory/CsManager_Inventory.h"
 #include "Managers/Sense/CsManager_Sense.h"
 #include "Managers/Trace/CsManager_Trace.h"
+#include "Managers/Time/CsManager_Time.h"
 // UI
 #include "UI/State/CsHealthBarComponent.h"
 // Game
@@ -200,31 +201,25 @@ void ACsPawn::OnTickActor_HandleCVars(const float &DeltaSeconds) {};
 
 void ACsPawn::CheckLinkedToPlayerState()
 {
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= Schedule;
-	Payload->Function		= &ACsPawn::CheckLinkedToPlayerState_Internal;
-	Payload->Actor			= this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	Payload->Add			= &ACsPawn::AddRoutine;
-	Payload->Remove			= &ACsPawn::RemoveRoutine;
-	Payload->Type			= ECsPawnRoutine::CheckLinkedToPlayerState_Internal.Value;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&ACsPawn::CheckLinkedToPlayerState_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+
 	Payload->Name			= NCsPawnCached::Name::CheckLinkedToPlayerState_Internal;
 	Payload->NameAsString	= NCsPawnCached::Str::CheckLinkedToPlayerState_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(ACsPawn, CheckLinkedToPlayerState_Internal)
 {
-	ACsPawn* p			   = r->GetActor<ACsPawn>();
+	ACsPawn* p			   = r->GetOwnerAsObject<ACsPawn>();
 	ACsPlayerStateBase* ps = p->GetPlayerState<ACsPlayerStateBase>();
 
 	CS_COROUTINE_BEGIN(r);
@@ -260,42 +255,35 @@ void ACsPawn::OnFirstSpawn(){}
 
 void ACsPawn::HandleRespawnTimer()
 {
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= Schedule;
-	Payload->Function		= &ACsPawn::HandleRespawnTimer_Internal;
-	Payload->Actor			= this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	Payload->Add			= &ACsPawn::AddRoutine;
-	Payload->Remove			= &ACsPawn::RemoveRoutine;
-	Payload->Type			= ECsPawnRoutine::HandleRespawnTimer_Internal.Value;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&ACsPawn::HandleRespawnTimer_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+
 	Payload->Name			= NCsPawnCached::Name::HandleRespawnTimer_Internal;
 	Payload->NameAsString	= NCsPawnCached::Str::HandleRespawnTimer_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(ACsPawn, HandleRespawnTimer_Internal)
 {
-	ACsPawn* p				 = r->GetActor<ACsPawn>();
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+	ACsPawn* p				 = r->GetOwnerAsObject<ACsPawn>();
 	ACsPlayerStateBase* ps	 = p->GetPlayerState<ACsPlayerStateBase>();
 
 	ACsData_Character* Data_Character = p->GetMyData_Character();
 
-	const float& ElapsedTime = r->elapsedTime;
-	const float RespawnTime  = Data_Character->GetRespawnTime();
+	const FCsDeltaTime& ElapsedTime = r->ElapsedTime;
+	const float RespawnTime			= Data_Character->GetRespawnTime();
 
 	CS_COROUTINE_BEGIN(r);
 
-	CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime >= RespawnTime);
+	CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime.Time >= RespawnTime);
 
 	p->OnHandleRespawnTimerFinished_Event.Broadcast(ps->UniqueMappingId);
 

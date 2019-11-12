@@ -3,7 +3,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "../Engine/Classes/Engine/EngineTypes.h"
 #include "Types/CsTypes.h"
-#include "Types/CsTypes_Coroutine.h"
+#include "Coroutine/CsTypes_Coroutine.h"
 #include "CsJavascriptLibrary.generated.h"
 
 UCLASS()
@@ -138,16 +138,6 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 	static float GetRealTimeSeconds(UWorld* InWorld);
 
 #pragma endregion World
-
-// Coroutine
-#pragma region
-
-	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static uint8 CoroutineScheduleToUint8(const ECsCoroutineSchedule& Schedule);
-	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static uint8 GetCoroutineScheduleMax();
-
-#pragma endregion Coroutine
 
 // CVars
 #pragma region

@@ -1,8 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "UI/CsWidget_Fullscreen.h"
 #include "CsCore.h"
+
 #include "Common/CsCommon.h"
+// Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
+// Managers
+#include "Managers/Time/CsManager_Time.h"
 
 UCsWidget_Fullscreen::UCsWidget_Fullscreen(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -78,87 +82,104 @@ bool UCsWidget_Fullscreen::RemoveRoutine_Internal(struct FCsRoutine* Routine, co
 
 void UCsWidget_Fullscreen::FadeOut(const ECsEasingType &EasingType, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
 {
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	CsCoroutine Function		  = &UCsWidget_Fullscreen::Fade_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
-	CsAddRoutine Add			  = &UCsUserWidget::AddRoutine;
-	CsRemoveRoutine Remove		  = &UCsUserWidget::RemoveRoutine;
-	const uint8 RoutineType		  = (uint8)ECsWidgetFullscreenRoutine::FadeOut_Internal;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, RoutineType, true, false);
+	Payload->Coroutine.BindStatic(&UCsWidget_Fullscreen::Fade_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
 
-	R->ints[0] = (int32)EasingType;
-	R->floats[0] = Start;
-	R->floats[1] = End;
-	R->floats[2] = Time;
-	R->colors[0] = Color;
+	Payload->SetValue_Int(CS_FIRST, (int32)EasingType);
 
-	Scheduler->StartRoutine(Schedule, R);
+	static const int32 START_INDEX = 0;
+	Payload->SetValue_Float(START_INDEX, Start);
+
+	static const int32 END_INDEX = 1;
+	Payload->SetValue_Float(END_INDEX, End);
+
+	static const int32 TIME_INDEX = 2;
+	Payload->SetValue_Float(TIME_INDEX, Time);
+
+	Payload->SetValue_Color(CS_FIRST, Color);
+
+	Scheduler->Start(Payload);
 }
 
 void UCsWidget_Fullscreen::FadeIn(const ECsEasingType &EasingType, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
 {
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	CsCoroutine Function		  = &UCsWidget_Fullscreen::Fade_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
-	CsAddRoutine Add			  = &UCsUserWidget::AddRoutine;
-	CsRemoveRoutine Remove		  = &UCsUserWidget::RemoveRoutine;
-	const uint8 RoutineType		  = (uint8)ECsWidgetFullscreenRoutine::FadeIn_Internal;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, RoutineType, true, false);
+	Payload->Coroutine.BindStatic(&UCsWidget_Fullscreen::Fade_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
 
-	R->ints[0] = (int32)EasingType;
-	R->floats[0] = Start;
-	R->floats[1] = End;
-	R->floats[2] = Time;
-	R->colors[0] = Color;
+	Payload->SetValue_Int(CS_FIRST, (int32)EasingType);
 
-	Scheduler->StartRoutine(Schedule, R);
+	static const int32 START_INDEX = 0;
+	Payload->SetValue_Float(START_INDEX, Start);
+
+	static const int32 END_INDEX = 1;
+	Payload->SetValue_Float(END_INDEX, End);
+
+	static const int32 TIME_INDEX = 2;
+	Payload->SetValue_Float(TIME_INDEX, Time);
+
+	Payload->SetValue_Color(CS_FIRST, Color);
+
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(UCsWidget_Fullscreen, Fade_Internal)
 {
-	UCsWidget_Fullscreen* wd = Cast<UCsWidget_Fullscreen>(r->GetRObject());
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+	UCsWidget_Fullscreen* wd = r->GetOwnerAsObject<UCsWidget_Fullscreen>();
 	UWorld* w				 = wd->GetWorld();
 
-	const float CurrentTime = w->GetTimeSeconds();
-	const float StartTime   = r->startTime;
-	const float MaxTime     = r->floats[2];
+	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
+	const FCsTime& StartTime   = r->StartTime;
 
-	const ECsEasingType& EasingType = EMCsEasingType::Get().GetEnumAt(r->ints[0]);
+	static const int32 MAX_TIME_INDEX = 2;
+	const float& MaxTime = r->GetValue_Float(MAX_TIME_INDEX);
 
-	const float Start	 = r->floats[0];
-	const float End		 = r->floats[1];
+	const ECsEasingType& EasingType = EMCsEasingType::Get().GetEnumAt(r->GetValue_Int(CS_FIRST));
+
+	static const int32 START_INDEX = 0;
+	const float& Start = r->GetValue_Float(START_INDEX);
+
+	static const int32 END_INDEX = 1;
+	const float& End = r->GetValue_Float(END_INDEX);
+
 	const bool IsFadeOut = Start > End;
 	const float Max		 = FMath::Max(Start, End);
 	const float Min		 = FMath::Min(Start, End);
 	const float Delta	 = Max - Min;
 
-	const FLinearColor Color = r->colors[0];
+	const FLinearColor& Color = r->GetValue_Color(CS_FIRST);
 
 	CS_COROUTINE_BEGIN(r);
 
 	wd->Fullscreen.SetColorAndOpacity(Color);
 
-	if (r->delay > 0)
-		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime > r->delay);
+	if (r->Delay > 0)
+		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime.Time - StartTime.Time > r->Delay);
 
 	do
 	{
 		{
-			const float Percent = FMath::Clamp((CurrentTime - StartTime) / MaxTime, 0.0f, 1.0f);
+			const float Percent = FMath::Clamp((CurrentTime.Time - StartTime.Time) / MaxTime, 0.0f, 1.0f);
 			const float Time    = UCsCommon::Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
 			const float Alpha   = IsFadeOut ? 1.0f - (Min + Percent * Delta) : Min + Percent * Delta;
 
 			wd->Fullscreen.SetOpacity(Alpha);
 		}
 		CS_COROUTINE_YIELD(r);
-	} while (CurrentTime - StartTime <= MaxTime);
+	} while (CurrentTime.Time - StartTime.Time <= MaxTime);
 
 	wd->Fullscreen.SetOpacity(End);
 

@@ -825,6 +825,23 @@ TAutoConsoleVariable<int32> CsCVarLogManagerSenseSeesActorByDot(
 
 #pragma endregion Sense
 
+// Managers
+#pragma region
+
+	// Save
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogManagerSaveTransactions(
+	TEXT("log.manager.save.transactions"),
+	0,
+	TEXT("Log Manager Save Transactions."),
+	ECVF_SetByConsole | ECVF_SetByCode
+);
+
+#pragma endregion Save
+
+#pragma endregion Managers
+
 // CVarLog
 #pragma region
 
@@ -909,6 +926,10 @@ namespace NCsCVarLog
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogBlockchainBalance);
 	// Sense
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerSenseSeesActorByDot);
+	// Managers
+
+		// Save
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerSaveTransactions);
 }
 
 #pragma endregion CVarLog

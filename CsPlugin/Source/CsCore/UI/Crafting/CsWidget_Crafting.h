@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UI/CsUserWidget.h"
-#include "Types/CsTypes_Coroutine.h"
+#include "Coroutine/CsTypes_Coroutine.h"
 #include "Managers/Input/CsTypes_Input.h"
 #include "CsWidget_Crafting.generated.h"
 

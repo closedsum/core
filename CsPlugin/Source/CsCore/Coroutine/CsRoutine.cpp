@@ -249,7 +249,7 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 	TSet<FName>& AbortMessages		    = Messages[AbortIndex];
 	TSet<FName>& AbortMessages_Recieved = Messages_Recieved[AbortIndex];
 
-	if (AbortMessages.Num() > RS_EMPTY)
+	if (AbortMessages.Num() > CS_EMPTY)
 	{
 		bool MatchFound = false;
 
@@ -275,11 +275,16 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 		return;
 	}
 
-	if (Owner.IsObject() &&
-		Owner.GetSafeObject() == nullptr)
+	if (Owner.IsObject())
 	{
-		End(ECsCoroutineEndReason::OwnerIsInvalid);
-		return;
+		UObject* O = Owner.GetSafeObject();
+
+		if (!O ||
+			O->IsPendingKill())
+		{
+			End(ECsCoroutineEndReason::OwnerIsInvalid);
+			return;
+		}
 	}
 
 	for (FCsCoroutineAbortCondition& Abort : AbortConditions)

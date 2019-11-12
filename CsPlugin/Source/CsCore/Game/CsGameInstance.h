@@ -4,7 +4,7 @@
 #include "Engine/GameInstance.h"
 #include "../Core/Public/Containers/Ticker.h"
 #include "Types/CsTypes.h"
-#include "Types/CsTypes_Coroutine.h"
+#include "Coroutine/CsTypes_Coroutine.h"
 #include "CsGameInstance.generated.h"
 
 // OnTick

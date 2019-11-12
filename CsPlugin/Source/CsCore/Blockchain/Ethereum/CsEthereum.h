@@ -4,7 +4,7 @@
 #include "Blockchain/CsBlockchain.h"
 #include "Blockchain/Ethereum/CsEthereumContract.h"
 #include "Blockchain/Ethereum/CsEthereumKeystore.h"
-#include "Types/CsTypes_Coroutine.h"
+#include "Coroutine/CsTypes_Coroutine.h"
 #include "CsEthereum.generated.h"
 
 USTRUCT(BlueprintType)

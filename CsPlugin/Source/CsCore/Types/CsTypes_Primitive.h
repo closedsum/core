@@ -268,6 +268,16 @@ public:
 		return ToString(Enums[Index]);
 	}
 
+	FORCEINLINE const TCHAR* ToChar(const EnumType& Enum)
+	{
+		return *ToString(Enum);
+	}
+
+	FORCEINLINE const TCHAR* ToChar(const int32& Index)
+	{
+		return ToChar(Enums[Index]);
+	}
+
 	FORCEINLINE const FName& ToName(const EnumType& Enum)
 	{
 		if (FName* Name = ToNameInternalMap.Find(Enum))

@@ -2,7 +2,7 @@
 #pragma once
 #include "GameFramework/Actor.h"
 #include "Types/CsTypes_Recipe.h"
-#include "Types/CsTypes_Coroutine.h"
+#include "Coroutine/CsTypes_Coroutine.h"
 #include "CsManager_Crafting.generated.h"
 
 // OnBegin

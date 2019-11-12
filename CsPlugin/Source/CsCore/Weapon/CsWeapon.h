@@ -522,7 +522,6 @@ public:
 	virtual void PlayAnimation_Reload();
 	static char PlayAnimation_Reload_Internal(struct FCsRoutine* r);
 	struct FCsRoutine* PlayAnimation_Reload_Internal_Routine;
-	static bool PlayAnimation_Reload_StopCondition(struct FCsRoutine* r);
 
 	UFUNCTION(BlueprintCallable, Category = "Animation")
 	virtual float GetAnimationLength(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType, const int32 &Index = 0);

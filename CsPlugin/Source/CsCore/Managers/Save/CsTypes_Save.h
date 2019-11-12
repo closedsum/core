@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "ManagECs/PlayerProfile/CsTypes_PlayerProfile.h"
+#include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"
 
 #include "CsTypes_Save.generated.h"
 #pragma once

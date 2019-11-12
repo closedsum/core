@@ -2,7 +2,7 @@
 #pragma once
 #include "GameFramework/Character.h"
 #include "Types/CsTypes_Weapon.h"
-#include "Types/CsTypes_Coroutine.h"
+#include "Coroutine/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Damage.h"
 #include "Types/CsTypes_Sense.h"
 #include "Types/CsTypes_Trace.h"

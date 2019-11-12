@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "UI/Crafting/CsWidget_Crafting.h"
 #include "CsCore.h"
+
 #include "Common/CsCommon.h"
 
 #include "UI/Crafting/CsWidget_Crafting_Grid.h"
@@ -8,12 +9,13 @@
 
 #include "Runtime/UMG/Public/Blueprint/SlateBlueprintLibrary.h"
 
+// Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
-
 // Managers
 #include "Managers/Input/CsManager_Input.h"
 #include "Managers/Crafting/CsManager_Crafting.h"
 #include "Managers/Inventory/CsManager_Inventory.h"
+#include "Managers/Time/CsManager_Time.h"
 // Data
 #include "Data/CsDataMapping.h"
 #include "Data/CsData_Recipe.h"
@@ -390,51 +392,46 @@ void UCsWidget_Crafting::IncrementCount()
 
 	StopIncrementCount();
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		 = Schedule;
-	Payload->Function		 = &UCsWidget_Crafting::IncrementCount_Internal;
-	Payload->Object			 = this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
-	Payload->Add			 = &UCsUserWidget::AddRoutine;
-	Payload->Remove			 = &UCsUserWidget::RemoveRoutine;
-	Payload->Type			 = (uint8)ECsWidgetCraftingRoutine::IncrementCount_Internal;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&UCsWidget_Crafting::IncrementCount_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+
 	Payload->Name			 = ECsWidgetCraftingCached::Name::IncrementCount_Internal;
 	Payload->NameAsString	 = ECsWidgetCraftingCached::Str::IncrementCount_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-
-	R->floats[0] = GetWorld()->GetTimeSeconds();
-
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(UCsWidget_Crafting, IncrementCount_Internal)
 {
-	UCsWidget_Crafting* c	 = Cast<UCsWidget_Crafting>(r->GetRObject());
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-	UWorld* w				 = c->GetWorld();
+	UCsWidget_Crafting* c = r->GetOwnerAsObject<UCsWidget_Crafting>();
+	UWorld* w			  = c->GetWorld();
 
-	const float CurrentTime = w->GetTimeSeconds();
-	const float& StartTime  = r->floats[0];
+	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
+	const FCsTime& StartTime   = r->StartTime;
+
+	FCsTime& Time = r->GetValue_Timer(CS_FIRST);
 
 	const float AutoIncrementTime = c->AutoIncrementTime > 0.0f ? c->AutoIncrementTime : 0.01f;
 
 	CS_COROUTINE_BEGIN(r);
+
+	Time = CurrentTime;
 
 	do
 	{
 		{
 			c->PerformIncrementCount();
 		}
-		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= AutoIncrementTime);
+		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime.Time - StartTime.Time >= AutoIncrementTime);
 
-		r->floats[0] = CurrentTime;
+		Time = CurrentTime;
 	} while (true);
 
 	CS_COROUTINE_END(r);
@@ -451,7 +448,7 @@ void UCsWidget_Crafting::PerformIncrementCount()
 
 void UCsWidget_Crafting::StopIncrementCount()
 {
-	if (IncrementCount_Internal_Routine && IncrementCount_Internal_Routine->IsValid())
+	if (IncrementCount_Internal_Routine)
 		IncrementCount_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 }
 
@@ -522,51 +519,46 @@ void UCsWidget_Crafting::DecrementCount()
 
 	StopDecrementCount();
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		 = Schedule;
-	Payload->Function		 = &UCsWidget_Crafting::DecrementCount_Internal;
-	Payload->Object			 = this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
-	Payload->Add			 = &UCsUserWidget::AddRoutine;
-	Payload->Remove			 = &UCsUserWidget::RemoveRoutine;
-	Payload->Type			 = (uint8)ECsWidgetCraftingRoutine::DecrementCount_Internal;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&UCsWidget_Crafting::DecrementCount_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+
 	Payload->Name			 = ECsWidgetCraftingCached::Name::DecrementCount_Internal;
 	Payload->NameAsString	 = ECsWidgetCraftingCached::Str::DecrementCount_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-
-	R->floats[0] = GetWorld()->GetTimeSeconds();
-
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(UCsWidget_Crafting, DecrementCount_Internal)
 {
-	UCsWidget_Crafting* c	 = Cast<UCsWidget_Crafting>(r->GetRObject());
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+	UCsWidget_Crafting* c	 = r->GetOwnerAsObject<UCsWidget_Crafting>();
 	UWorld* w				 = c->GetWorld();
 
-	const float CurrentTime = w->GetTimeSeconds();
-	const float& StartTime  = r->floats[0];
+	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
+	const FCsTime& StartTime   = r->StartTime;
+
+	FCsTime& Time = r->GetValue_Timer(CS_FIRST);
 
 	const float AutoDecrementTime = c->AutoDecrementTime > 0.0f ? c->AutoDecrementTime : 0.01f;
 
 	CS_COROUTINE_BEGIN(r);
+
+	Time = CurrentTime;
 
 	do
 	{
 		{
 			c->PerformDecrementCount();
 		}
-		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= AutoDecrementTime);
+		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime.Time - StartTime.Time >= AutoDecrementTime);
 
-		r->floats[0] = CurrentTime;
+		Time = CurrentTime;
 	} while (true);
 
 	CS_COROUTINE_END(r);
@@ -583,7 +575,7 @@ void UCsWidget_Crafting::PerformDecrementCount()
 
 void UCsWidget_Crafting::StopDecrementCount()
 {
-	if (DecrementCount_Internal_Routine && DecrementCount_Internal_Routine->IsValid())
+	if (DecrementCount_Internal_Routine)
 		DecrementCount_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 }
 
@@ -707,44 +699,36 @@ void UCsWidget_Crafting::UpdateProgress(const uint64 &PayloadId)
 {
 	StopUpdateProgress();
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		 = Schedule;
-	Payload->Function		 = &UCsWidget_Crafting::UpdateProgress_Internal;
-	Payload->Object			 = this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
-	Payload->Add			 = &UCsUserWidget::AddRoutine;
-	Payload->Remove			 = &UCsUserWidget::RemoveRoutine;
-	Payload->Type			 = (uint8)ECsWidgetCraftingRoutine::UpdateProgress_Internal;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&UCsWidget_Crafting::UpdateProgress_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
 	Payload->Name			 = ECsWidgetCraftingCached::Name::UpdateProgress_Internal;
 	Payload->NameAsString	 = ECsWidgetCraftingCached::Str::UpdateProgress_Internal;
-
-	FCsRoutine* R = Scheduler->Allocate(Payload);
 
 	ACsManager_Crafting* Manager_Crafting = ACsManager_Crafting::Get(GetWorld());
 	FCsCraftingPayload* CraftingPayload   = Manager_Crafting->GetPayload(PayloadId);
 	ACsData_Recipe* Recipe				  = CraftingPayload->GetRecipe();
 
-	R->floats[0] = Recipe->GetUseBulkTime() ? Recipe->GetBulkTime() : Recipe->GetTime();
+	Payload->SetValue_Float(CS_FIRST, Recipe->GetUseBulkTime() ? Recipe->GetBulkTime() : Recipe->GetTime());
 
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(UCsWidget_Crafting, UpdateProgress_Internal)
 {
-	UCsWidget_Crafting* c	 = Cast<UCsWidget_Crafting>(r->GetRObject());
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-	UWorld* w				 = c->GetWorld();
+	UCsWidget_Crafting* c = r->GetOwnerAsObject<UCsWidget_Crafting>()
 
-	const float CurrentTime = w->GetTimeSeconds();
-	const float& StartTime  = r->startTime;
-	const float& Time		= r->floats[0];
-	const float Percent		= CurrentTime - StartTime / Time;
+	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
+	const FCsTime& StartTime   = r->StartTime;
+
+	const float& Time		= r->GetValue_Float(CS_FIRST);
+	const float Percent		= (CurrentTime.Time - StartTime.Time) / Time;
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -753,14 +737,14 @@ CS_COROUTINE(UCsWidget_Crafting, UpdateProgress_Internal)
 		c->ProgressBar.SetPercent(Percent);
 
 		CS_COROUTINE_YIELD(r);
-	} while (CurrentTime - StartTime < Time);
+	} while (CurrentTime.Time - StartTime.Time < Time);
 
 	CS_COROUTINE_END(r);
 }
 
 void UCsWidget_Crafting::StopUpdateProgress()
 {
-	if (UpdateProgress_Internal_Routine && UpdateProgress_Internal_Routine->IsValid())
+	if (UpdateProgress_Internal_Routine)
 		UpdateProgress_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 
 	ProgressBar.SetPercent(0.0f);

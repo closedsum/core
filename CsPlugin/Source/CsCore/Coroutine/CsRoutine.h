@@ -155,7 +155,7 @@ public:
 
 	FORCEINLINE FCsRoutine* GetLastChild()
 	{
-		return Parent->Children.Num() > RS_EMPTY ? Parent->Children.Last() : nullptr;
+		return Parent->Children.Num() > CS_EMPTY ? Parent->Children.Last() : nullptr;
 	}
 
 	void EndChildren();

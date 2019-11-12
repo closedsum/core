@@ -24,6 +24,7 @@
 #include "Managers/AI/CsManager_AI.h"
 #include "Managers/Decals/CsManager_Decal.h"
 #include "Managers/Trace/CsManager_Trace.h"
+#include "Managers/Time/CsManager_Time.h"
 // Data
 #include "Data/CsDataMapping.h"
 // Player
@@ -304,33 +305,26 @@ bool ACsGameState::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint
 
 void ACsGameState::OnBoard()
 {
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= Schedule;
-	Payload->Function		= &ACsGameState::OnBoard_Internal;
-	Payload->Actor			= this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	Payload->Add			= &ACsGameState::AddRoutine;
-	Payload->Remove			= &ACsGameState::RemoveRoutine;
-	Payload->Type			= NCsGameStateRoutine::OnBoard_Internal.Value;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&ACsGameState::OnBoard_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+
 	Payload->Name			= NCsGameStateCached::Name::OnBoard_Internal;
 	Payload->NameAsString	= NCsGameStateCached::Str::OnBoard_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(ACsGameState, OnBoard_Internal)
 {
-	ACsGameState* gs		 = Cast<ACsGameState>(r->GetActor());
+	ACsGameState* gs		 = r->GetOwnerAsObject<ACsGameState>();
 	UCsGameInstance* gi		 = Cast<UCsGameInstance>(gs->GetGameInstance());
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = gs->GetWorld();
 	
 	ACsPlayerController* pc = UCsCommon::GetLocalPlayerController<ACsPlayerController>(w);

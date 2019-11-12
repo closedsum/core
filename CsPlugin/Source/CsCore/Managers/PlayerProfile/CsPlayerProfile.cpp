@@ -57,13 +57,15 @@ void UCsPlayerProfile::Init()
 	Manager_Save->Init();
 
 	Manager_Achievement = NewObject<UCsManager_Achievement>(this, Manager_Achievement_Class);
+	/*
 	Manager_Achievement->SetCurrentWorld(GetCurrentWorld());
 	Manager_Achievement->SetLocalPlayer(LocalPlayer);
 	Manager_Achievement->Init();
+	*/
 }
 
 void UCsPlayerProfile::OnTick(const float& DeltaSeconds)
 {
 	Manager_Save->OnTick(DeltaSeconds);
-	Manager_Achievement->OnTick(DeltaSeconds);
+	//Manager_Achievement->OnTick(DeltaSeconds);
 }

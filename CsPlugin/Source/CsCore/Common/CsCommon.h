@@ -4,10 +4,12 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Anim.h"
-#include "Types/CsTypes_Coroutine.h"
+#include "Coroutine/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Interpolation.h"
 
 #include "CsCommon.generated.h"
+
+struct FCsRoutine;
 
 UCLASS()
 class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
@@ -392,37 +394,35 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 // Coroutine
 #pragma region
 
-	static void EndRoutine(struct FCsRoutine* r);
-	static void EndAndClearRoutine(struct FCsRoutine* &r);
+	static void EndRoutine(FCsRoutine* R);
+	static void EndAndClearRoutine(FCsRoutine*& R);
 
-	static FCsRoutine* ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, const ECsEasingType &EasingType, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale=false);
-	static FCsRoutine* ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, const ECsEasingType &EasingType, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale=false);
-	static FCsRoutine* ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale=false);
-	static FCsRoutine* ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale=false);
-	static char ScaleActorOverTime_Internal(struct FCsRoutine* r);
+	static const FCsRoutineHandle& ScaleActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const float& StartScale, const float& EndScale, const float& Time, const bool& IsRelativeScale=false);
+	static const FCsRoutineHandle& ScaleActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const FVector& StartScale, const FVector& EndScale, const float& Time, const bool& IsRelativeScale=false);
+	static const FCsRoutineHandle& ScaleActorOverTime(const FECsUpdateGroup& Group, UCurveBase* Curve, AActor* InActor, const float& StartScale, const float& EndScale, const float& Time, const bool& IsRelativeScale=false);
+	static const FCsRoutineHandle& ScaleActorOverTime(const FECsUpdateGroup& Group, UCurveBase* Curve, AActor* InActor, const FVector& StartScale, const FVector& EndScale, const float& Time, const bool& IsRelativeScale=false);
+	static char ScaleActorOverTime_Internal(FCsRoutine* R);
 
-	static FCsRoutine* ScaleActorOverTime_AsCurve(const ECsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const bool &IsRelativeScale = false);
-	static char ScaleActorOverTime_AsCurve_Internal(struct FCsRoutine* r);
+	static const FCsRoutineHandle& ScaleActorOverTime_AsCurve(const FECsUpdateGroup& Group, UCurveBase* Curve, AActor* InActor, const bool& IsRelativeScale = false);
+	static char ScaleActorOverTime_AsCurve_Internal(FCsRoutine* R);
 
-	static FCsRoutine* MoveActorOverTime(const ECsCoroutineSchedule &ScheduleType, const ECsEasingType &EasingType, AActor* InActor, const FVector &StartLocation, const FVector &EndLocation, const float &Time, const bool &IsRelativeLocation=false);
-	static char MoveActorOverTime_Internal(struct FCsRoutine* r);
+	static const FCsRoutineHandle& MoveActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const FVector& StartLocation, const FVector& EndLocation, const float& Time, const bool& IsRelativeLocation=false);
+	static char MoveActorOverTime_Internal(FCsRoutine* R);
 	/*
 	static FCsRoutine* DeAllocateActor(const ECsCoroutineSchedule &CoroutineSchedule, AActor* InActor, const int32 &Index, const float &Delay);
 	static char DeAllocateActor_Internal(struct FCsRoutine* r);
 	*/
-	static FCsRoutine* DestroyMaterialInstanceDynamic(const ECsCoroutineSchedule &ScheduleType, UMaterialInstanceDynamic* InMID, const float &Delay);
-	static char DestroyMaterialInstanceDynamic_Internal(struct FCsRoutine* r);
+	static const FCsRoutineHandle& DestroyMaterialInstanceDynamic(const FECsUpdateGroup& Group, UMaterialInstanceDynamic* InMID, const float& Delay);
+	static char DestroyMaterialInstanceDynamic_Internal(FCsRoutine* R);
 
-	static FCsRoutine* DestroyMaterialInstanceDynamics(const ECsCoroutineSchedule &ScheduleType, TArray<UMaterialInstanceDynamic*>& InMIDs, const float &Delay);
+	//static const FCsRoutineHandle& DestroyMaterialInstanceDynamics(const FECsUpdateGroup& Group, TArray<UMaterialInstanceDynamic*>& InMIDs, const float& Delay);
 
-	static FCsRoutine* FadeCameraOverTime(const ECsCoroutineSchedule &ScheduleType, const ECsEasingType &EasingType, APlayerController* Controller, const float &Start, const float &End, const float &Time, const FLinearColor &Color);
-	static char FadeCameraOverTime_Internal(struct FCsRoutine* r);
+	static const FCsRoutineHandle& FadeCameraOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, APlayerController* Controller, const float& Start, const float& End, const float& Time, const FLinearColor& Color);
+	static char FadeCameraOverTime_Internal(FCsRoutine* R);
 	/*
 	static FCsRoutine* AllocateAndActivateEmitter(ECsCoroutineSchedule CoroutineSchedule, FCsFxElement* InEffectsElement, FVector Location, float Delay);
 	static char AllocateAndActivateEmitter_Internal(struct FCsRoutine* r);
 	*/
-	static bool CoroutineStopCondition_CheckActor(struct FCsRoutine* r);
-	static bool CoroutineStopCondition_CheckObject(struct FCsRoutine* r);
 
 #pragma endregion Coroutine
 

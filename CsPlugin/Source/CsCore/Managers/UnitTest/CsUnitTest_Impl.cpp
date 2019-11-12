@@ -18,7 +18,7 @@ void ICsUnitTest_Impl::Start()
 	Payload->Coroutine.BindRaw(this, &ICsUnitTest_Impl::Start_Internal);
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(UpdateGroup);
 	Payload->Owner.SetOwner(this);
-	Payload->bPerformFirstRun = true;
+
 	Payload->Name			  = Start_Internal_Name;
 	Payload->NameAsString	  = Start_Internal_NameAsString;
 

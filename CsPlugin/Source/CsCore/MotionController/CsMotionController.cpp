@@ -2,12 +2,18 @@
 #include "MotionController/CsMotionController.h"
 #include "CsCore.h"
 #include "CsCVars.h"
+
 #include "Common/CsCommon.h"
+// Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 #include "MotionControllerComponent.h"
 #include "../InputCore/Classes/InputCoreTypes.h"
+// Managers
 #include "Managers/InteractiveActor/CsInteractiveActor.h"
+#include "Managers/Time/CsManager_Time.h"
+// AI
 #include "AI/Pawn/CsInteractiveAIPawn.h"
+// Player
 #include "Player/CsPlayerController.h"
 // UI
 #include "UI/Button/CsButtonComponent.h"
@@ -400,41 +406,39 @@ void ACsMotionController::RemoveRoutine_Internal(struct FCsRoutine* Routine, con
 
 void ACsMotionController::Setup_OnCalcCamera()
 {
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	CsCoroutine Function		  = &ACsMotionController::Setup_OnCalcCamera_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
-	CsAddRoutine Add			  = &ACsMotionController::AddRoutine;
-	CsRemoveRoutine Remove		  = &ACsMotionController::RemoveRoutine;
-	const uint8 Type			  = (uint8)ECsRoutineMotionController::Setup_OnCalcCamera_Internal;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
+	Payload->Coroutine.BindStatic(&ACsMotionController::Setup_OnCalcCamera_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
 
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
-PT_THREAD(ACsMotionController::Setup_OnCalcCamera_Internal(struct FCsRoutine* r))
+PT_THREAD(ACsMotionController::Setup_OnCalcCamera_Internal(FCsRoutine* R))
 {
-	ACsMotionController* mc  = Cast<ACsMotionController>(r->GetActor());
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-	UWorld* w				 = mc->GetWorld();
-	ACsPlayerController* pc  = UCsCommon::GetLocalPlayerController<ACsPlayerController>(w);
+	ACsMotionController* MC  = R->GetOwnerAsObject<ACsMotionController>();
+	UWorld* W				 = MC->GetWorld();
+	ACsPlayerController* PC  = UCsCommon::GetLocalPlayerController<ACsPlayerController>(W);
 
-	CS_COROUTINE_BEGIN(r);
+	CS_COROUTINE_BEGIN(R);
 
 	// Wait until valid player controller
-	CS_COROUTINE_WAIT_UNTIL(r, pc);
+	CS_COROUTINE_WAIT_UNTIL(R, PC);
 
 	// Wait until the Collision Type has been set
-	CS_COROUTINE_WAIT_UNTIL(r, mc->CollisionType != ECsInteractiveCollision::ECsInteractiveCollision_MAX)
+	CS_COROUTINE_WAIT_UNTIL(R, MC->CollisionType != ECsInteractiveCollision::ECsInteractiveCollision_MAX)
 
-	if (mc->CollisionType = ECsInteractiveCollision::Trace)
+	if (MC->CollisionType = ECsInteractiveCollision::Trace)
 	{
-		pc->OnCalcCamera_Event.AddUObject(mc, &ACsMotionController::OnCalcCamera);
+		PC->OnCalcCamera_Event.AddUObject(MC, &ACsMotionController::OnCalcCamera);
 	}
 
-	CS_COROUTINE_END(r);
+	CS_COROUTINE_END(R);
 }
 
 void ACsMotionController::OnCalcCamera(const uint8 &MappingId, const float &DeltaTime, const struct FMinimalViewInfo &ViewInfo)

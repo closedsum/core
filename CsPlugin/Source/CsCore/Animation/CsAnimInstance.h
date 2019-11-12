@@ -3,7 +3,7 @@
 #include "Animation/AnimInstance.h"
 #include "Types/CsTypes_Anim.h"
 #include "Types/CsTypes_AnimInstance.h"
-#include "Types/CsTypes_Coroutine.h"
+#include "Coroutine/CsTypes_Coroutine.h"
 #include "CsAnimInstance.generated.h"
 
 // Enums

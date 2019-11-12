@@ -361,6 +361,18 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerSenseSeesActorByDo
 
 #pragma endregion Sense
 
+// Managers
+#pragma region
+
+	// Save
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerSaveTransactions;
+
+#pragma endregion Save
+
+#pragma endregion Managers
+
 struct ICsAutoConsoleVariable
 {
 	virtual void UpdateIsDirty() = 0;
@@ -574,6 +586,10 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogBlockchainBalance;
 	// Sense
 	extern CSCORE_API const Type LogManagerSenseSeesActorByDot;
+	// Managers
+
+		// Save
+	extern CSCORE_API const Type LogManagerSaveTransactions;
 }
 
 #pragma endregion CVarLog

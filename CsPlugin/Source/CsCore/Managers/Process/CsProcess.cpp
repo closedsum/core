@@ -2,9 +2,13 @@
 #include "Managers/Process/CsProcess.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Types/CsTypes_String.h"
 
+// Types
+#include "Types/CsTypes_String.h"
+// Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
+// Managers
+#include "Managers/Time/CsManager_Time.h"
 
 #if PLATFORM_WINDOWS
 #include "Windows/WindowsHWrapper.h"
@@ -227,42 +231,36 @@ void UCsProcess::RunCommand(const FString& Command)
 
 void UCsProcess::StartRead()
 {
-	if (StartRead_Internal_Routine && StartRead_Internal_Routine->IsValid())
+	if (StartRead_Internal_Routine)
 		StartRead_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
 	ReadFlag = true;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= Schedule;
-	Payload->Function		= &UCsProcess::StartRead_Internal;
-	Payload->Object			= this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
-	Payload->Add			= &UCsProcess::AddRoutine;
-	Payload->Remove			= &UCsProcess::RemoveRoutine;
-	Payload->Type			= (uint8)ECsProcessRoutine::StartRead_Internal;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	Payload->Coroutine.BindStatic(&UCsProcess::StartRead_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+
 	Payload->Name			= NCsProcessCached::Name::StartRead_Internal;
 	Payload->NameAsString	= NCsProcessCached::Str::StartRead_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(UCsProcess, StartRead_Internal)
 {
-	UCsProcess* p			 = r->GetRObject<UCsProcess>();
+	UCsProcess* p = r->GetOwnerAsObject<UCsProcess>();
 	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 
 	const float INTERVAL = 0.1f;
-	float& Elapsed		 = r->timers[CS_FIRST];
-	Elapsed				+= r->deltaSeconds;
-	FString& LastRead	 = r->strings[CS_FIRST];
+	float& Elapsed		 = r->GetValue_Float(CS_FIRST);
+	Elapsed				+= r->DeltaTime.Time;
+	FString& LastRead	 = r->GetValue_String(CS_FIRST);
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -298,7 +296,7 @@ void UCsProcess::StopRead()
 {
 	ReadFlag = false;
 
-	if (StartRead_Internal_Routine && StartRead_Internal_Routine->IsValid())
+	if (StartRead_Internal_Routine)
 		StartRead_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 }
 

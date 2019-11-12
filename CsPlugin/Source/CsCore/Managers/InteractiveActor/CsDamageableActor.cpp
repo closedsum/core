@@ -3,10 +3,12 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 
+// Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
-
 // Data
 #include "Data/CsData_Damageable.h"
+// Managers
+#include "Managers/Time/CsManager_Time.h"
 
 // Cache
 #pragma region
@@ -118,56 +120,49 @@ void ACsDamageableActor::Respawn()
 	}
 #endif // #if WITH_EDITOR
 
-	if (Respawn_Internal_Routine && Respawn_Internal_Routine->IsValid())
+	if (Respawn_Internal_Routine)
 		Respawn_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	const FECsUpdateGroup Group = NCsUpdateGroup::GameState;
 
-	Payload->Schedule		= Schedule;
-	Payload->Function		= &ACsDamageableActor::Respawn_Internal;
-	Payload->Actor			= this;
-	//Payload->Stop			= &ACsWeapon::FireWeapon_StopCondition;
-	Payload->Add			= &ACsDamageableActor::AddRoutine;
-	Payload->Remove			= &ACsDamageableActor::RemoveRoutine;
-	Payload->Type			= (uint8)ECsDamageableActorRoutine::Respawn_Internal;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
+
+	Payload->Coroutine.BindStatic(&ACsDamageableActor::Respawn_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+
 	Payload->Name			= NCsDamageableActorCached::Name::Respawn_Internal;
 	Payload->NameAsString	= NCsDamageableActorCached::Str::Respawn_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
-PT_THREAD(ACsDamageableActor::Respawn_Internal(struct FCsRoutine* r))
+PT_THREAD(ACsDamageableActor::Respawn_Internal(FCsRoutine* R))
 {
-	ACsDamageableActor* d	 = Cast<ACsDamageableActor>(r->GetActor());
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-	UWorld* w			     = d->GetWorld();
+	ACsDamageableActor* D = R->GetOwnerAsObject<ACsDamageableActor>();
 
-	ACsData_Damageable* data = Cast<ACsData_Damageable>(d->Cache.GetData());
+	ACsData_Damageable* Data = Cast<ACsData_Damageable>(D->Cache.GetData());
 
-	const float CurrentTime = w->GetTimeSeconds();
-	const float StartTime   = r->startTime;
+	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
+	const FCsTime& StartTime   = R->StartTime;
 
-	CS_COROUTINE_BEGIN(r);
+	CS_COROUTINE_BEGIN(R);
 
-	CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - r->startTime >= d->RespawnTime);
+	CS_COROUTINE_WAIT_UNTIL(R, CurrentTime.Time - StartTime.Time >= D->RespawnTime);
 
-	d->Health = data->GetHealth();
+	D->Health = Data->GetHealth();
 
-	d->Show();
+	D->Show();
 
 #if WITH_EDITOR
-	d->OnRespawn_ScriptEvent.Broadcast(d->Cache.Index);
+	D->OnRespawn_ScriptEvent.Broadcast(D->Cache.Index);
 #endif // #if WITH_EDITOR
-	d->OnRespawn_Event.Broadcast(d->Cache.Index);
+	D->OnRespawn_Event.Broadcast(D->Cache.Index);
 
-	CS_COROUTINE_END(r);
+	CS_COROUTINE_END(R);
 }
 
 void ACsDamageableActor::ApplyDamage(FCsDamageEvent* Event)

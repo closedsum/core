@@ -3,7 +3,7 @@
 
 #include "Managers/InteractiveActor/CsInteractiveActor.h"
 #include "Types/CsTypes_Damage.h"
-#include "Types/CsTypes_Coroutine.h"
+#include "Coroutine/CsTypes_Coroutine.h"
 #include "CsDamageableActor.generated.h"
 
 // Despawn

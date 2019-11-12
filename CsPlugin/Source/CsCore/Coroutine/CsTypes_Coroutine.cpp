@@ -503,10 +503,10 @@ void FCsCoroutinePayload::Reset()
 	Aborts.Reset(Aborts.Max());
 	ParentHandle.Reset();
 	bDoInit = true;
-	bPerformFirstRun = false;
+	bPerformFirstUpdate = false;
 	Name = NAME_None;
 	NameAsString.Empty();
-	StopMessages.Reset(StopMessages.Max());
+	AbortMessages.Reset(AbortMessages.Max());
 
 	// Registers
 

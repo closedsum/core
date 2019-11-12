@@ -2,7 +2,7 @@
 #pragma once
 #include "Player/CsPlayerStateBase.h"
 #include "Types/CsTypes.h"
-#include "Types/CsTypes_Coroutine.h"
+#include "Coroutine/CsTypes_Coroutine.h"
 #include "CsPlayerState.generated.h"
 
 // Enums

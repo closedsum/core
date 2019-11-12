@@ -3,7 +3,7 @@
 #include "Coroutine/pt.h"
 #include "Managers/Time/CsTypes_Time.h"
 #include "Managers/Time/CsTypes_Update.h"
-#include "Utility/CsWeakObjectPtr.h"
+#include "Containers/CsWeakObjectPtr.h"
 
 #include "CsTypes_Coroutine.generated.h"
 #pragma once
@@ -458,13 +458,13 @@ public:
 
 	bool bDoInit;
 
-	bool bPerformFirstRun;
+	bool bPerformFirstUpdate;
 
 	FName Name;
 
 	FString NameAsString;
 
-	TArray<FName> StopMessages;
+	TArray<FName> AbortMessages;
 
 public:
 

@@ -576,32 +576,24 @@ void UCsEthereum::CreatePrivateChain()
 
 void UCsEthereum::StartPrivateChain()
 {
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= Schedule;
-	Payload->Function		= &UCsEthereum::StartPrivateChain_Internal;
-	Payload->Object			= this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
-	Payload->Add			= &UCsEthereum::AddRoutine;
-	Payload->Remove			= &UCsEthereum::RemoveRoutine;
-	Payload->Type			= (uint8)ECsEthereumRoutine::StartPrivateChain_Internal;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
-	Payload->Name			= NCsEthereumCached::Name::StartPrivateChain_Internal;
-	Payload->NameAsString	= NCsEthereumCached::Str::StartPrivateChain_Internal;
+	Payload->Coroutine.BindStatic(&UCsEthereum::StartPrivateChain_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+	Payload->Name			 = NCsEthereumCached::Name::StartPrivateChain_Internal;
+	Payload->NameAsString	 = NCsEthereumCached::Str::StartPrivateChain_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(UCsEthereum, StartPrivateChain_Internal)
 {
-	UCsEthereum* eth		 = r->GetRObject<UCsEthereum>();
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+	UCsEthereum* eth = r->GetOwnerAsObject<UCsEthereum>();
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -643,32 +635,24 @@ void UCsEthereum::OpenConsole()
 
 	CommandFlag = false;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= Schedule;
-	Payload->Function		= &UCsEthereum::OpenConsole_Internal;
-	Payload->Object			= this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
-	Payload->Add			= &UCsEthereum::AddRoutine;
-	Payload->Remove			= &UCsEthereum::RemoveRoutine;
-	Payload->Type			= (uint8)ECsEthereumRoutine::OpenConsole_Internal;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
-	Payload->Name			= NCsEthereumCached::Name::OpenConsole_Internal;
-	Payload->NameAsString	= NCsEthereumCached::Str::OpenConsole_Internal;
+	Payload->Coroutine.BindStatic(&UCsEthereum::OpenConsole_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+	Payload->Name			 = NCsEthereumCached::Name::OpenConsole_Internal;
+	Payload->NameAsString	 = NCsEthereumCached::Str::OpenConsole_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(UCsEthereum, OpenConsole_Internal)
 {
-	UCsEthereum* eth		 = r->GetRObject<UCsEthereum>();
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+	UCsEthereum* eth = r->GetOwnerAsObject<UCsEthereum>();
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -1354,29 +1338,24 @@ void UCsEthereum::CreateKeystore(CsEthereumAccount* Account)
 
 	if (Path == NCsCached::Str::Empty)
 	{
-		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-		FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-		const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+		const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-		Payload->Schedule		= Schedule;
-		Payload->Function		= &UCsEthereum::CreateKeystore_Internal;
-		Payload->Object			= this;
-		Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
-		Payload->Add			= &UCsEthereum::AddRoutine;
-		Payload->Remove			= &UCsEthereum::RemoveRoutine;
-		Payload->Type			= (uint8)ECsEthereumRoutine::CreateKeystore_Internal;
-		Payload->bDoInit		= true;
-		Payload->bPerformFirstRun = false;
+		UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+		FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+		FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
+
+		Payload->Coroutine.BindStatic(&UCsEthereum::CreateKeystore_Internal);
+		Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+		Payload->Owner.SetObject(this);
+
 		Payload->Name			= NCsEthereumCached::Name::CreateKeystore_Internal;
 		Payload->NameAsString	= NCsEthereumCached::Str::CreateKeystore_Internal;
+	
+		Payload->SetValue_String(CS_FIRST, NCsCached::Str::Empty);
+		Payload->SetValue_Void(CS_FIRST, Account);
 
-		FCsRoutine* R = Scheduler->Allocate(Payload);
-
-		R->strings[CS_FIRST]	  = NCsCached::Str::Empty;
-		R->voidPointers[CS_FIRST] = Account;
-
-		Scheduler->StartRoutine(Schedule, R);
+		Scheduler->Start(Payload);
 	}
 	else
 	{

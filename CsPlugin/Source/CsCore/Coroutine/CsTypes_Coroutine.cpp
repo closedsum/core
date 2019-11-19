@@ -501,6 +501,7 @@ void FCsCoroutinePayload::Reset()
 	StartTime.Reset();
 	Owner.Reset();
 	Aborts.Reset(Aborts.Max());
+	OnAborts.Reset(OnAborts.Max());
 	ParentHandle.Reset();
 	bDoInit = true;
 	bPerformFirstUpdate = false;

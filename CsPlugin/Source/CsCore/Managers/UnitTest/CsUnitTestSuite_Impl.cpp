@@ -4,7 +4,7 @@
 #include "CsCVars.h"
 
 // Coroutine
-#include "Coroutine/RsCoroutineScheduler.h"
+#include "Coroutine/CsCoroutineScheduler.h"
 // Managers
 #include "Managers/Time/RsManager_Time.h"
 // UnitTest

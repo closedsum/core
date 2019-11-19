@@ -722,7 +722,7 @@ void UCsWidget_Crafting::UpdateProgress(const uint64 &PayloadId)
 
 CS_COROUTINE(UCsWidget_Crafting, UpdateProgress_Internal)
 {
-	UCsWidget_Crafting* c = r->GetOwnerAsObject<UCsWidget_Crafting>()
+	UCsWidget_Crafting* c = r->GetOwnerAsObject<UCsWidget_Crafting>();
 
 	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
 	const FCsTime& StartTime   = r->StartTime;

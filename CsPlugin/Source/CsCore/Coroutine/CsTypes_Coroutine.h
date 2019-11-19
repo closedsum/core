@@ -415,8 +415,9 @@ struct FCsRoutine;
 
 // Run
 DECLARE_DELEGATE_RetVal_OneParam(char, FCsCoroutine, FCsRoutine*);
-// Stop Condition
+// Abort Condition
 DECLARE_DELEGATE_RetVal_OneParam(bool, FCsCoroutineAbortCondition, FCsRoutine*);
+DECLARE_DELEGATE_OneParam(FCsOnCoroutineAbort, FCsRoutine*);
 
 #define CS_ROUTINE_MAX_TYPE 255
 #define CS_ROUTINE_INDEXER_SIZE 4
@@ -453,6 +454,8 @@ public:
 	FCsRoutineOwner Owner;
 
 	TArray<FCsCoroutineAbortCondition> Aborts;
+
+	TArray<FCsOnCoroutineAbort> OnAborts;
 
 	FCsRoutineHandle ParentHandle;
 

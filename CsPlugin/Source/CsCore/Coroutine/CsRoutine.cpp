@@ -217,8 +217,8 @@ void FCsRoutine::Init(FCsCoroutinePayload* Payload)
 
 	for (const FCsCoroutineAbortCondition& Abort : Payload->Aborts)
 	{
-		AbortConditions.AddDefaulted();
-		FCsCoroutineAbortCondition& Last = AbortConditions.Last();
+		Aborts.AddDefaulted();
+		FCsCoroutineAbortCondition& Last = Aborts.Last();
 		Last = Abort;
 	}
 
@@ -287,10 +287,14 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 		}
 	}
 
-	for (FCsCoroutineAbortCondition& Abort : AbortConditions)
+	for (FCsCoroutineAbortCondition& Abort : Aborts)
 	{
 		if (Abort.Execute(this))
 		{
+			for (FCsOnCoroutineAbort& OnAbort : OnAborts)
+			{
+				OnAbort.Execute(this);
+			}
 			End(ECsCoroutineEndReason::AbortCondition);
 			return;
 		}
@@ -350,7 +354,8 @@ void FCsRoutine::Reset()
 	Delay = 0.0f;
 
 	Handle.Reset();
-	AbortConditions.Reset(AbortConditions.Max());
+	Aborts.Reset(Aborts.Max());
+	OnAborts.Reset(OnAborts.Max());
 	State = ECsCoroutineState::Free;
 	Name = NAME_None;
 	NameAsString.Empty();

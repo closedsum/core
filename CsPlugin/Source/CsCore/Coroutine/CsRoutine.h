@@ -47,7 +47,9 @@ public:
 
 	FCsRoutineHandle Handle;
 
-	TArray<FCsCoroutineAbortCondition> AbortConditions;
+	TArray<FCsCoroutineAbortCondition> Aborts;
+
+	TArray<FCsOnCoroutineAbort> OnAborts;
 
 	ECsCoroutineState State;
 

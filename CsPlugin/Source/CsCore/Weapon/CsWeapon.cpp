@@ -2,15 +2,19 @@
 #include "Weapon/CsWeapon.h"
 #include "CsCore.h"
 #include "CsCVars.h"
+
+// Library
 #include "Common/CsCommon.h"
+
+// Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
-
+// Anim
 #include "Animation/CsAnimInstance.h"
-
 // Data
 #include "Data/CsData_ProjectileImpact.h"
 #include "Data/CsData_Character.h"
 // Managers
+#include "Managers/Time/CsManager_Time.h"
 #include "Managers/FX/CsManager_FX.h"
 #include "Managers/Projectile/CsManager_Projectile.h"
 #include "Managers/Projectile/CsProjectileBase.h"
@@ -18,7 +22,6 @@
 #include "Managers/Trace/CsManager_Trace.h"
 #include "Managers/Inventory/CsManager_Inventory.h"
 #include "Managers/InteractiveActor/CsDamageableActor.h"
-#include "Managers/Time/CsManager_Time.h"
 // Game
 #include "Game/CsGameInstance.h"
 #include "Game/CsGameState.h"
@@ -1452,8 +1455,7 @@ void ACsWeapon::StartChargeFire(const FECsWeaponFireMode &FireMode)
 
 CS_COROUTINE(ACsWeapon, StartChargeFire_Internal)
 {
-	ACsWeapon* mw			 = Cast<ACsWeapon>(r->GetActor());
-	UWorld* w				 = mw->GetWorld();
+	ACsWeapon* mw = r->GetOwnerAsObject<ACsWeapon>();
 
 	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
 	
@@ -1641,43 +1643,36 @@ void ACsWeapon::FireWeapon(const FECsWeaponFireMode &FireMode)
 	}
 #endif // #if WITH_EDITOR
 
-	if (FireWeapon_Internal_Routine && FireWeapon_Internal_Routine->IsValid())
+	if (FireWeapon_Internal_Routine)
 		FireWeapon_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 	
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= Schedule;
-	Payload->Function		= &ACsWeapon::FireWeapon_Internal;
-	Payload->Actor			= this;
-	Payload->Stop.Add(&ACsWeapon::FireWeapon_StopCondition);
-	Payload->Add			= &ACsWeapon::AddRoutine;
-	Payload->Remove			= &ACsWeapon::RemoveRoutine;
-	Payload->Type			= (uint8)ECsWeaponRoutine::FireWeapon_Internal.Value;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
-	Payload->Name			= ECsWeaponCached::Name::FireWeapon_Internal;
-	Payload->NameAsString	= ECsWeaponCached::Str::FireWeapon_Internal;
+	Payload->Coroutine.BindStatic(&ACsWeapon::FireWeapon_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+	Payload->Name			 = ECsWeaponCached::Name::FireWeapon_Internal;
+	Payload->NameAsString	 = ECsWeaponCached::Str::FireWeapon_Internal;
 
-	FCsRoutine* R		= Scheduler->Allocate(Payload);
-	R->timers[CS_FIRST] = 0;
-	R->ints[CS_FIRST]	= FireMode.Value;
+	Payload->SetValue_Int(CS_FIRST, FireMode.Value);
 
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 {
-	ACsWeapon* mw			 = Cast<ACsWeapon>(r->GetActor());
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-	UWorld* w				 = mw->GetWorld();
+	ACsWeapon* mw = r->GetOwnerAsObject<ACsWeapon>();
 
-	const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(r->ints[0]);
+	const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(r->GetValue_Int(CS_FIRST));
 
-	r->timers[CS_FIRST]		+= r->deltaSeconds;
-	const float& ElapsedTime = r->timers[CS_FIRST];
+	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
+	FCsDeltaTime& ElapsedTime	   = r->GetValue_DeltaTime(CS_FIRST);
+
+	ElapsedTime += r->DeltaTime;
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
@@ -1692,7 +1687,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 
 	CS_COROUTINE_BEGIN(r);
 
-	r->AddMessage(ECsCoroutineMessage::Stop, ECsWeaponCached::Name::Stop_FireWeapon_Internal);
+	r->AddMessage(ECsCoroutineMessage::Abort, ECsWeaponCached::Name::Stop_FireWeapon_Internal);
 
 	mw->StopChargeFire(FireMode);
 
@@ -1700,7 +1695,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 	{
 		{
 			// Set the StartTime
-			r->timers[CS_FIRST] = 0;
+			ElapsedTime.Reset();
 
 			// Play Fire Sound
 			if (!mw->LoopFireSound.Get(FireMode))
@@ -1738,7 +1733,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 
 		if (mw->CurrentProjectilePerShotIndex[FireMode] < mw->ProjectilesPerShot[FireMode])
 		{
-			CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime >= mw->TimeBetweenProjectilesPerShot[FireMode]);
+			CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime.Time >= mw->TimeBetweenProjectilesPerShot[FireMode]);
 		}
 	} while (mw->CurrentProjectilePerShotIndex[FireMode] < mw->ProjectilesPerShot[FireMode]);
 
@@ -1746,10 +1741,10 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 	CS_COROUTINE_END(r);
 }
 
-bool ACsWeapon::FireWeapon_StopCondition(struct FCsRoutine* r)
+bool ACsWeapon::FireWeapon_StopCondition(FCsRoutine* r)
 {
-	ACsWeapon* mw				       = Cast<ACsWeapon>(r->GetActor());
-	const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(r->ints[0]);
+	ACsWeapon* mw				       = r->GetOwnerAsObject<ACsWeapon>();
+	const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(r->GetValue_Int(CS_FIRST));
 
 	if (mw &&
 		!mw->GetMyOwner())
@@ -1887,45 +1882,47 @@ void ACsWeapon::FireProjectile_Internal(const FECsWeaponFireMode &FireMode, FCsP
 
 void ACsWeapon::DrawFireProjectile(class ACsProjectileBase* Projectile, const FVector &Start, const FVector &End)
 {
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload     = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule			= Schedule;
-	Payload->Function			= &ACsWeapon::DrawFireProjectile_Internal;
-	Payload->Actor				= this;
-	Payload->Object				= Projectile;
-	Payload->Stop.Add(&ACsWeapon::FireWeapon_StopCondition);
-	Payload->bDoInit			= true;
-	Payload->bPerformFirstRun = false;
-	Payload->Name				= ECsWeaponCached::Name::DrawFireProjectile_Internal;
-	Payload->NameAsString		= ECsWeaponCached::Str::DrawFireProjectile_Internal;
+	Payload->Coroutine.BindStatic(&ACsWeapon::DrawFireProjectile_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->Owner.SetObject(this);
+	Payload->Name			 = ECsWeaponCached::Name::DrawFireProjectile_Internal;
+	Payload->NameAsString	 = ECsWeaponCached::Str::DrawFireProjectile_Internal;
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-	R->vectors[0] = Start;
-	R->vectors[1] = End;
+	static const int32 START_INDEX = 0;
+	Payload->SetValue_Vector(START_INDEX, Start);
 
-	Scheduler->StartRoutine(Schedule, R);
+	static const int32 END_INDEX = 1;
+	Payload->SetValue_Vector(END_INDEX, End);
+
+	Scheduler->Start(Payload);
 }
 
 CS_COROUTINE(ACsWeapon, DrawFireProjectile_Internal)
 {
-	ACsProjectileBase* p	 = Cast<ACsProjectileBase>(r->GetRObject());
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-	UWorld* w				 = p->GetWorld();
+	ACsProjectileBase* p = r->GetOwnerAsObject<ACsProjectileBase>();
+	UWorld* w			 = p->GetWorld();
+	
+	static const int32 START_INDEX = 0;
+	const FVector& Start = r->GetValue_Vector(START_INDEX);
+	
+	static const int32 END_INDEX = 1;
+	const FVector& End = r->GetValue_Vector(END_INDEX);
 
-	const FVector& Start	  = r->vectors[0];
-	const FVector& End		  = r->vectors[1];
-	const float& DeltaSeconds = r->deltaSeconds;
+	const FCsDeltaTime& DeltaTime = r->DeltaTime;
 
 	CS_COROUTINE_BEGIN(r);
 
-	r->AddMessage(ECsCoroutineMessage::Stop, ECsWeaponCached::Name::Stop_DrawFireProjectile_Internal);
+	r->AddMessage(ECsCoroutineMessage::Abort, ECsWeaponCached::Name::Stop_DrawFireProjectile_Internal);
 
 	do
 	{
-		DrawDebugLine(w, Start, End, FColor::Red, false, DeltaSeconds + 0.005f, 0, 0.25f);
+		DrawDebugLine(w, Start, End, FColor::Red, false, DeltaTime.Time + 0.005f, 0, 0.25f);
 
 		CS_COROUTINE_YIELD(r);
 
@@ -2369,7 +2366,7 @@ void ACsWeapon::Reload()
 			StopChargeFire(EMCsWeaponFireMode::Get().GetEnumAt(I));
 		}
 
-		Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCached::Name::Stop_FireWeapon_Internal, this);
+		Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, ECsWeaponCached::Name::Stop_FireWeapon_Internal, this);
 
 		for (int32 I = 0; I < Count; ++I)
 		{

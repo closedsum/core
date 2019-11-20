@@ -115,44 +115,45 @@ void ACsManager_Crafting::CraftItems(FCsCraftingPayload* Payload)
 		return;
 	}
 
-	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* CoroutinePayload	= Scheduler->AllocatePayload();
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* CoroutinePayload				 = PayloadContainer->Get();
 
-	CoroutinePayload->Schedule		  = Schedule;
-	CoroutinePayload->Function		  = &ACsManager_Crafting::CraftItems_Internal;
-	CoroutinePayload->Actor			  = this;
-	CoroutinePayload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	CoroutinePayload->bDoInit		= true;
-	CoroutinePayload->bPerformFirstRun = false;
-	CoroutinePayload->Name			  = NCsManagerCraftingCached::Name::CraftItems_Internal;
-	CoroutinePayload->NameAsString	  = NCsManagerCraftingCached::Str::CraftItems_Internal;
+	CoroutinePayload->Coroutine.BindStatic(&ACsManager_Crafting::CraftItems_Internal);
+	CoroutinePayload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	CoroutinePayload->Owner.SetObject(this);
 
-	FCsRoutine* R = Scheduler->Allocate(CoroutinePayload);
+	CoroutinePayload->Name			 = NCsManagerCraftingCached::Name::CraftItems_Internal;
+	CoroutinePayload->NameAsString	 = NCsManagerCraftingCached::Str::CraftItems_Internal;
 
-	R->floats[0]	   = GetWorld()->GetTimeSeconds();
-	R->voidPointers[0] = (void*)Payload;
+	CoroutinePayload->SetValue_Float(CS_FIRST, GetWorld()->GetTimeSeconds());
+
+	static const uint8 PAYLOAD = 0;
+	CoroutinePayload->SetValue_Void(PAYLOAD, Payload);
 
 	// Allocate Process
 	FCsCraftingProcess* Process = AllocateProcess();
-	Process->R					= R;
+	//Process->R					= CoroutinePayload;
 	Process->Instigator			= Payload->GetInstigator();
 
-	R->voidPointers[1] = (void*)Process;
+	static const uint8 PROCESS = 1;
+	CoroutinePayload->SetValue_Void(PROCESS, Process);
 
 	// Start Routine
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(CoroutinePayload);
 }
 
 CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 {
-	ACsManager_Crafting* c	 = Cast<ACsManager_Crafting>(r->GetActor());
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+	ACsManager_Crafting* c	 = r->GetOwnerAsObject<ACsManager_Crafting>();
 	UWorld* w				 = c->GetWorld();
 	
-	ACsManager_Item* Manager_Item			= ACsManager_Item::Get(w);
-	FCsCraftingPayload* Payload				= (FCsCraftingPayload*)r->voidPointers[0];
+	ACsManager_Item* Manager_Item = ACsManager_Item::Get(w);
+
+	static const uint8 PAYLOAD = 0;
+	FCsCraftingPayload* Payload				= r->GetValue_Void<FCsCraftingPayload>(PAYLOAD);
 	ACsManager_Inventory* Manager_Inventory = Payload->GetManager_Inventory();
 	AActor* InventoryOwner					= Manager_Inventory->GetMyOwner();
 	ACsData_Recipe* Recipe					= Payload->GetRecipe();
@@ -162,12 +163,13 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 	const bool& UseBulkTime	 = Recipe->GetUseBulkTime();
 	const int32 ProcessCount = UseBulkTime ? 1 : Payload->Count;
 	const float Time		= UseBulkTime ? Recipe->GetUseBulkTime() : Recipe->GetTime();
-	const float& StartTime	= r->floats[0];
+	const float& StartTime	= r->GetValue_Float(CS_FIRST);
 	const float CurrentTime	= w->GetTimeSeconds();
 
-	const int32& Index = r->indexers[0];
+	const int32& Index = r->GetValue_Indexer(CS_FIRST);
 
-	FCsCraftingProcess* Process = (FCsCraftingProcess*)r->voidPointers[1];
+	static const uint8 PROCESS = 1;
+	FCsCraftingProcess* Process = r->GetValue_Void<FCsCraftingProcess>(PROCESS) ;
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -242,7 +244,7 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 				Process->OnCraftItem_Event.Broadcast(Process->Id, Payload->Id);
 			}
 		}
-		++(r->indexers[0]);
+		++(r->GetValue_Indexer(CS_FIRST));
 	} while (Index < ProcessCount);
 
 	// Check to Add Crafted Items to the Inventory
@@ -282,7 +284,7 @@ void ACsManager_Crafting::CancelCraftingProcess(const uint64& Id)
 	}
 
 	FCsCraftingProcess* Process	= *ProcessPtr;
-	FCsCraftingPayload* Payload = (FCsCraftingPayload*)(Process->R->voidPointers[0]);
+	FCsCraftingPayload* Payload = Process->R->GetValue_Void<FCsCraftingPayload>(CS_FIRST);
 
 	if (CsCVarLogManagerCraftingTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 	{
@@ -319,7 +321,7 @@ void ACsManager_Crafting::CancelCraftingProcesses(UObject* InInstigator)
 
 		if (InInstigator == Process->GetInstigator())
 		{
-			FCsCraftingPayload* Payload = (FCsCraftingPayload*)(Process->R->voidPointers[0]);
+			FCsCraftingPayload* Payload = Process->R->GetValue_Void<FCsCraftingPayload>(CS_FIRST);
 
 			if (CsCVarLogManagerCraftingTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 			{

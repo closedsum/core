@@ -325,7 +325,7 @@ private:
 		// Check to Update HEAD
 		if (Link == AllocatedHead)
 		{
-			if (AllocatedSize > RS_SINGLETON)
+			if (AllocatedSize > CS_SINGLETON)
 			{
 				AllocatedHead = Link->GetNextLink();
 			}

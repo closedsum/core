@@ -6,9 +6,9 @@
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Managers
-#include "Managers/Time/RsManager_Time.h"
+#include "Managers/Time/CsManager_Time.h"
 // UnitTest
-#include "Managers/UnitTest/RsUnitTest.h"
+#include "Managers/UnitTest/CsUnitTest.h"
 
 FCsUnitTestSuite_Impl::FCsUnitTestSuite_Impl()
 {
@@ -65,7 +65,7 @@ void FCsUnitTestSuite_Impl::Start()
 	Payload->Coroutine.BindRaw(this, &FCsUnitTestSuite_Impl::Start_Internal);
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(UpdateGroup);
 	Payload->Owner.SetOwner(this);
-	Payload->bPerformFirstRun = true;
+
 	Payload->Name			  = Start_Internal_Name;
 	Payload->NameAsString	  = Start_Internal_NameAsString;
 
@@ -77,11 +77,11 @@ void FCsUnitTestSuite_Impl::Start()
 
 char FCsUnitTestSuite_Impl::Start_Internal(FCsRoutine* R)
 {
-	int32& TestIndex  = R->GetValue_Indexer(RS_FIRST);
+	int32& TestIndex  = R->GetValue_Indexer(CS_FIRST);
 	ICsUnitTest* Test = Tests[TestIndex];
 
 	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
-	FCsTime& StartTime		   = R->GetValue_Timer(RS_FIRST);
+	FCsTime& StartTime		   = R->GetValue_Timer(CS_FIRST);
 
 	FCsDeltaTime ElapsedTime = FCsDeltaTime::GetDeltaTime(CurrentTime, StartTime);
 

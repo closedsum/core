@@ -105,6 +105,7 @@ namespace NCsRoutineRegisterValueType
 		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Color);
 		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Name);
 		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, String);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, StringPtr);
 		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Object);
 		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Void);
 		extern CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRoutineRegisterValueType, ECsRoutineRegisterValueType_MAX, "MAX");
@@ -197,6 +198,13 @@ namespace NCsRoutineRegisterValueType
 			FString* V = (FString*)Ptr;
 			V->Empty();
 		}
+		// StringPtr
+		else
+		if (ValueType == Type::String)
+		{
+			FString** V = (FString**)Ptr;
+			*V = nullptr;
+		}
 		// Object
 		else
 		if (ValueType == Type::Object)
@@ -286,6 +294,12 @@ namespace NCsRoutineRegisterValueType
 		{
 			SetValue_Internal<FString>(From, To);
 		}
+		// String
+		else
+		if (ValueType == Type::StringPtr)
+		{
+			SetValue_Internal<FString*>(From, To);
+		}
 		// Object
 		else
 		if (ValueType == Type::Object)
@@ -321,8 +335,8 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 		// Indexers
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
-	Registers[(uint8)ECsRoutineRegisterValueType::Indexer].AddDefaulted(Indexers.Max());
 	Indexers.AddDefaulted(CS_ROUTINE_INDEXER_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::Indexer].AddDefaulted(Indexers.Max());
 
 	for (int32& I : Indexers)
 	{
@@ -333,8 +347,8 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 		// Counter
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
-	Registers[(uint8)ECsRoutineRegisterValueType::Counter].AddDefaulted(Counters.Max());
 	Counters.AddDefaulted(CS_ROUTINE_COUNTER_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::Counter].AddDefaulted(Counters.Max());
 
 	for (int32& I : Counters)
 	{
@@ -345,8 +359,8 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 		// Flags
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
-	Registers[(uint8)ECsRoutineRegisterValueType::Flag].AddDefaulted(Flags.Max());
 	Flags.AddDefaulted(CS_ROUTINE_FLAG_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::Flag].AddDefaulted(Flags.Max());
 
 	for (bool& Flag : Flags)
 	{
@@ -357,8 +371,8 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 		// Timer
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
-	Registers[(uint8)ECsRoutineRegisterValueType::Timer].AddDefaulted(Timers.Max());
 	Timers.AddDefaulted(CS_ROUTINE_TIMER_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::Timer].AddDefaulted(Timers.Max());
 
 	for (FCsTime& Timer : Timers)
 	{
@@ -369,8 +383,8 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 		// DeltaTime
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
-	Registers[(uint8)ECsRoutineRegisterValueType::DeltaTime].AddDefaulted(DeltaTimes.Max());
 	DeltaTimes.AddDefaulted(CS_ROUTINE_DELTA_TIME_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::DeltaTime].AddDefaulted(DeltaTimes.Max());
 
 	for (FCsDeltaTime& DT : DeltaTimes)
 	{
@@ -381,8 +395,8 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 		// Ints
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
-	Registers[(uint8)ECsRoutineRegisterValueType::Int].AddDefaulted(Ints.Max());
 	Ints.AddDefaulted(CS_ROUTINE_INT_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::Int].AddDefaulted(Ints.Max());
 
 	for (int32& I : Ints)
 	{
@@ -393,8 +407,8 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 		// Float
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
-	Registers[(uint8)ECsRoutineRegisterValueType::Int].AddDefaulted(Ints.Max());
 	Floats.AddDefaulted(CS_ROUTINE_FLOAT_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::Float].AddDefaulted(Floats.Max());
 
 	for (float& Float : Floats)
 	{
@@ -405,8 +419,8 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 		// Vector
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
-	Registers[(uint8)ECsRoutineRegisterValueType::Vector].AddDefaulted(Vectors.Max());
 	Vectors.AddDefaulted(CS_ROUTINE_VECTOR_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::Vector].AddDefaulted(Vectors.Max());
 
 	for (FVector& V : Vectors)
 	{
@@ -417,8 +431,8 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 		// Rotator
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
-	Registers[(uint8)ECsRoutineRegisterValueType::Rotator].AddDefaulted(Rotators.Max());
 	Rotators.AddDefaulted(CS_ROUTINE_ROTATOR_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::Rotator].AddDefaulted(Rotators.Max());
 
 	for (FRotator& R : Rotators)
 	{
@@ -429,8 +443,8 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 		// Color
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
-	Registers[(uint8)ECsRoutineRegisterValueType::Color].AddDefaulted(Colors.Max());
 	Colors.AddDefaulted(CS_ROUTINE_COLOR_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::Color].AddDefaulted(Colors.Max());
 
 	for (FLinearColor& C : Colors)
 	{
@@ -441,8 +455,8 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 		// Name
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
-	Registers[(uint8)ECsRoutineRegisterValueType::Name].AddDefaulted(Names.Max());
 	Names.AddDefaulted(CS_ROUTINE_NAME_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::Name].AddDefaulted(Names.Max());
 
 	for (FName& N : Names)
 	{
@@ -453,8 +467,8 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 		// String
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
-	Registers[(uint8)ECsRoutineRegisterValueType::String].AddDefaulted(Strings.Max());
 	Strings.AddDefaulted(CS_ROUTINE_STRING_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::String].AddDefaulted(Strings.Max());
 
 	for (FString& S : Strings)
 	{
@@ -462,11 +476,23 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 		Registers[(uint8)ECsRoutineRegisterValueType::String].Add(&S);
 	}
 
+		// String
+	Registers.AddDefaulted();
+	RegisterFlags.AddDefaulted();
+	StringPointers.AddDefaulted(CS_ROUTINE_STRING_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::StringPtr].AddDefaulted(StringPointers.Max());
+
+	for (FString*& S : StringPointers)
+	{
+		S = nullptr;
+		Registers[(uint8)ECsRoutineRegisterValueType::StringPtr].Add(&S);
+	}
+
 		// Object
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
-	Registers[(uint8)ECsRoutineRegisterValueType::Object].AddDefaulted(Objects.Max());
 	Objects.AddDefaulted(CS_ROUTINE_OBJECT_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::Object].AddDefaulted(Objects.Max());
 
 	for (TCsWeakObjectPtr<UObject>& Object : Objects)
 	{
@@ -477,8 +503,8 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 		// VoidPointers
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
-	Registers[(uint8)ECsRoutineRegisterValueType::Void].AddDefaulted(VoidPointers.Max());
 	VoidPointers.AddDefaulted(CS_ROUTINE_VOID_POINTER_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::Void].AddDefaulted(VoidPointers.Max());
 
 	for (void*& V : VoidPointers)
 	{

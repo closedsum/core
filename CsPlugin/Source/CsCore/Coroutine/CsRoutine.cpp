@@ -161,6 +161,18 @@ FCsRoutine::FCsRoutine()
 		Registers[(uint8)ECsRoutineRegisterValueType::String].Add(&S);
 	}
 
+		// StringPtr
+	Registers.AddDefaulted();
+	RegisterFlags.AddDefaulted();
+	StringPointers.AddDefaulted(CS_ROUTINE_STRING_POINTER_SIZE);
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::StringPtr].AddDefaulted(StringPointers.Max());
+	
+	for (FString*& S : StringPointers)
+	{
+		S = nullptr;
+		Registers[(uint8)ECsRoutineRegisterValueType::StringPtr].Add(&S);
+	}
+
 		// Object
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();

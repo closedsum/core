@@ -343,6 +343,7 @@ enum class ECsRoutineRegisterValueType : uint8
 	Color							UMETA(DisplayName = "Color"),
 	Name							UMETA(DisplayName = "Name"),
 	String							UMETA(DisplayName = "String"),
+	StringPtr						UMETA(DisplayName = "String Pointer"),
 	Object							UMETA(DisplayName = "Object"),
 	Void							UMETA(DisplayName = "Void"),
 	ECsRoutineRegisterValueType_MAX	UMETA(Hidden),
@@ -371,6 +372,7 @@ namespace NCsRoutineRegisterValueType
 		extern CSCORE_API const Type Color;
 		extern CSCORE_API const Type Name;
 		extern CSCORE_API const Type String;
+		extern CSCORE_API const Type StringPtr;
 		extern CSCORE_API const Type Object;
 		extern CSCORE_API const Type Void;
 		extern CSCORE_API const Type ECsRoutineRegisterValueType_MAX;
@@ -432,6 +434,7 @@ DECLARE_DELEGATE_OneParam(FCsOnCoroutineAbort, FCsRoutine*);
 #define CS_ROUTINE_COLOR_SIZE 4
 #define CS_ROUTINE_NAME_SIZE 4
 #define CS_ROUTINE_STRING_SIZE 4
+#define CS_ROUTINE_STRING_POINTER_SIZE 4
 #define CS_ROUTINE_OBJECT_SIZE 4
 #define CS_ROUTINE_VOID_POINTER_SIZE 4
 #define CS_ROUTINE_END -1
@@ -507,6 +510,7 @@ protected:
 	TArray<FLinearColor, TFixedAllocator<CS_ROUTINE_COLOR_SIZE>> Colors;
 	TArray<FName, TFixedAllocator<CS_ROUTINE_NAME_SIZE>> Names;
 	TArray<FString, TFixedAllocator<CS_ROUTINE_STRING_SIZE>> Strings;
+	TArray<FString*, TFixedAllocator<CS_ROUTINE_STRING_POINTER_SIZE>> StringPointers;
 	TArray<TCsWeakObjectPtr<UObject>, TFixedAllocator<CS_ROUTINE_OBJECT_SIZE>> Objects;
 	TArray<void*, TFixedAllocator<CS_ROUTINE_VOID_POINTER_SIZE>> VoidPointers;
 
@@ -589,14 +593,20 @@ public:
 
 	FORCEINLINE void SetValue_Name(const int32& InIndex, const FName& Value)
 	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Indexer, InIndex);
+		SetRegisterFlag(ECsRoutineRegisterValueType::Name, InIndex);
 		Names[InIndex] = Value;
 	}
 
 	FORCEINLINE void SetValue_String(const int32& InIndex, const FString& Value)
 	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Name, InIndex);
+		SetRegisterFlag(ECsRoutineRegisterValueType::String, InIndex);
 		Strings[InIndex] = Value;
+	}
+
+	FORCEINLINE void SetValue_StringPtr(const int32& InIndex, FString* Value)
+	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::StringPtr, InIndex);
+		StringPointers[InIndex] = Value;
 	}
 
 	FORCEINLINE void SetValue_Object(const int32& InIndex, UObject* Value)

@@ -2,6 +2,12 @@
 #include "Managers/Time/CsManager_Time.h"
 #include "CsCore.h"
 
+#if WITH_EDITOR
+#include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Managers/Time/CsGetManagerTime.h"
+#endif // #if WITH_EDITOR
+
 // static initializations
 UCsManager_Time* UCsManager_Time::s_Instance;
 bool UCsManager_Time::s_bShutdown = false;
@@ -29,7 +35,7 @@ UCsManager_Time::UCsManager_Time(const FObjectInitializer& ObjectInitializer)
 	return s_Instance;
 }
 
-/*static*/ void UCsManager_Time::Init(UCsManager_Time* Manager)
+/*static*/ void UCsManager_Time::Init()
 {
 	s_bShutdown = false;
 	UCsManager_Time::Get();
@@ -45,6 +51,56 @@ UCsManager_Time::UCsManager_Time(const FObjectInitializer& ObjectInitializer)
 	s_Instance = nullptr;
 	s_bShutdown = true;
 }
+
+#if WITH_EDITOR
+
+/*static*/ ICsGetManagerTime* UCsManager_Time::Get_GetManagerTime(UObject* InOwner)
+{
+	checkf(InOwner, TEXT("UCsManager_Time::Get: InOwner is NULL."));
+
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InOwner);
+
+	checkf(GetManagerSingleton, TEXT("UCsManager_Time::Get: InOwner: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InOwner->GetName()), *(InOwner->GetClass()->GetName()));
+
+	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
+
+	checkf(Manager_Singleton, TEXT("UCsManager_Time::Get: Manager_Singleton is NULL."));
+
+	ICsGetManagerTime* GetManagerTime = Cast<ICsGetManagerTime>(Manager_Singleton);
+
+	checkf(GetManagerTime, TEXT("UCsManager_Time::Get: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetManagerTime."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
+
+	return GetManagerTime;
+}
+
+/*static*/ UCsManager_Time* UCsManager_Time::Get(UObject* InOwner)
+{
+	ICsGetManagerTime* GetManagerTime = Get_GetManagerTime(InOwner);
+
+	return GetManagerTime->GetManager_Time();
+}
+
+/*static*/ void UCsManager_Time::Init(UObject* InOwner)
+{
+	ICsGetManagerTime* GetManagerTime = Get_GetManagerTime(InOwner);
+
+	UCsManager_Time* Manager_Time = NewObject<UCsManager_Time>(InOwner, UCsManager_Time::StaticClass(), TEXT("Manager_Time_Singleton"), RF_Transient | RF_Public);
+
+	GetManagerTime->SetManager_Time(Manager_Time);
+
+	Manager_Time->Initialize();
+}
+
+/*static*/ void UCsManager_Time::Shutdown(UObject* InOwner)
+{
+	ICsGetManagerTime* GetManagerTime = Get_GetManagerTime(InOwner);
+	UCsManager_Time* Manager_Time	  = GetManagerTime->GetManager_Time();
+	Manager_Time->CleanUp();
+
+	GetManagerTime->SetManager_Time(nullptr);
+}
+
+#endif // #if WITH_EDITOR
 
 void UCsManager_Time::Initialize()
 {

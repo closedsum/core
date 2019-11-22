@@ -3,8 +3,8 @@
 #include "CsCore.h"
 #include "Common/CsCommon.h"
 
+// Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
-
 // Game
 #include "Game/CsGameInstance.h"
 #include "Game/CsGameState.h"
@@ -14,6 +14,7 @@
 #include "Player/CsPlayerController.h"
 #include "Player/CsPlayerState.h"
 // Managers
+#include "Managers/Time/CsManager_Time.h"
 #include "Managers/Input/CsManager_Input.h"
 // Data
 #include "Data/CsDataMapping.h"
@@ -69,31 +70,25 @@ ACsJavascriptEntryPoint::ACsJavascriptEntryPoint(const FObjectInitializer& Objec
 
 void ACsJavascriptEntryPoint::Setup()
 {
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
-	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(UpdateGroup);
+	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
-	Payload->Schedule		= Schedule;
-	Payload->Function		= &ACsJavascriptEntryPoint::Setup_Internal;
-	Payload->Actor			= this;
-	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
-	Payload->Add			= &ACsJavascriptEntryPoint::AddRoutine;
-	Payload->Remove			= &ACsJavascriptEntryPoint::RemoveRoutine;
-	Payload->Type			= ECsJavascriptEntryPointRoutine::Setup_Internal.Value;
-	Payload->bDoInit		= true;
-	Payload->bPerformFirstRun = false;
-	Payload->Name			= NCsJavascriptEntryPointCached::Name::Setup_Internal;
-	Payload->NameAsString	= NCsJavascriptEntryPointCached::Str::Setup_Internal;
+	Payload->Coroutine.BindStatic(&ACsJavascriptEntryPoint::Setup_Internal);
+	Payload->StartTime = UCsManager_Time::Get()->GetTime(UpdateGroup);
+	Payload->Owner.SetObject(this);
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
+	Payload->Name			  = NCsJavascriptEntryPointCached::Name::Setup_Internal;
+	Payload->NameAsString	  = NCsJavascriptEntryPointCached::Str::Setup_Internal;
 
-	Scheduler->StartRoutine(Schedule, R);
+	Scheduler->Start(Payload);
 }
 
 PT_THREAD(ACsJavascriptEntryPoint::Setup_Internal(FCsRoutine* r))
 {
-	ACsJavascriptEntryPoint* js = Cast<ACsJavascriptEntryPoint>(r->GetActor());
+	ACsJavascriptEntryPoint* js = r->GetOwnerAsObject<ACsJavascriptEntryPoint>();
 	UWorld* w					= js->GetWorld();
 	UCsGameInstance* gi			= Cast<UCsGameInstance>(w->GetGameInstance());
 	ACsGameState* gs			= w->GetGameState<ACsGameState>();

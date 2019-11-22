@@ -2,10 +2,14 @@
 
 #include "Animation/CsAnimInstance.h"
 #include "CsCore.h"
+
+// Library
 #include "Common/CsCommon_Load.h"
 #include "Common/CsCommon.h"
+// Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Managers
+#include "Managers/Time/CsManager_Time.h"
 #include "Managers/FX/CsManager_FX.h"
 #include "Managers/Sound/CsManager_Sound.h"
 
@@ -41,10 +45,12 @@ void UCsAnimInstance::BeginDestroy()
 #if WITH_EDITOR 
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 	{
+		// Manager_Time
+		if (UCsManager_Time* Manager = UCsManager_Time::Get())
+			Manager->Shutdown();
+		// CoroutineScheduler
 		if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get())
-		{
 			Scheduler->Shutdown();
-		}
 	}
 #endif // #if WITH_EDITOR
 }
@@ -102,6 +108,7 @@ void UCsAnimInstance::SetupInGameSimulation()
 	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
 		return;
 
+	Spawn_Manager_Time();
 	Spawn_CoroutineScheduler();
 	Spawn_Manager_FX();
 	Spawn_Manager_Sound();
@@ -146,6 +153,11 @@ void UCsAnimInstance::OnTick_Handle_GlobalPlayRate()
 
 		GlobalPlayRateHandle.Clear();
 	}
+}
+
+void UCsAnimInstance::Spawn_Manager_Time()
+{
+
 }
 
 void UCsAnimInstance::Spawn_CoroutineScheduler()
@@ -237,12 +249,24 @@ void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 		OnTick_Handle_ShowEditorIcons();
 		OnTick_Handle_GlobalPlayRate();
 
-		if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get())
-			Scheduler->OnTick_Update(DeltaTimeX);
-		if (AICsManager_FX* MyManager_FX = GetManager_FX())
-			MyManager_FX->OnTick(DeltaTimeX);
-		if (AICsManager_Sound* MyManager_Sound = GetManager_Sound())
-			MyManager_Sound->OnTick(DeltaTimeX);
+		if (UCsManager_Time* Manager_Time = UCsManager_Time::Get())
+		{
+			const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
+
+			Manager_Time->Update(Group, DeltaTimeX);
+
+			const FCsDeltaTime& DeltaTime = Manager_Time->GetScaledDeltaTime(Group);
+
+			// CoroutineScheduler
+			if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get())
+				Scheduler->Update(Group, DeltaTime);
+			// Manager_FX
+			if (AICsManager_FX* MyManager_FX = GetManager_FX())
+				MyManager_FX->OnTick(DeltaTimeX);
+			// Manager_Sound
+			if (AICsManager_Sound* MyManager_Sound = GetManager_Sound())
+				MyManager_Sound->OnTick(DeltaTimeX);
+		}
 	}
 #endif // #if WITH_EDITOR
 }

@@ -5,6 +5,8 @@
 #include "Managers/Time/CsUpdateGroup.h"
 #include "CsManager_Time.generated.h"
 
+class ICsGetManagerTime;
+
 UCLASS()
 class CSCORE_API UCsManager_Time : public UObject
 {
@@ -12,12 +14,24 @@ class CSCORE_API UCsManager_Time : public UObject
 
 // Singleton
 #pragma region
-
 public:
 
 	static UCsManager_Time* Get();
-	static void Init(UCsManager_Time* Manager);
+	static void Init();
 	static void Shutdown();
+
+#if WITH_EDITOR
+protected:
+
+	static ICsGetManagerTime* Get_GetManagerTime(UObject* InOwner);
+
+public:
+
+	static UCsManager_Time* Get(UObject* InOwner);
+	static void Init(UObject* InOwner);
+	static void Shutdown(UObject* InOwner);
+
+#endif // #if WITH_EDITOR
 
 protected:
 

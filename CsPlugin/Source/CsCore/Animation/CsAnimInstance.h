@@ -30,6 +30,9 @@ namespace ECsAnimInstanceRoutine
 
 #pragma endregion Enums
 
+class AICsManager_FX;
+class AICsManager_Sound;
+
 UCLASS()
 class CSCORE_API UCsAnimInstance : public UAnimInstance
 {
@@ -138,23 +141,28 @@ public:
 	TCsViewType CurrentViewType;
 
 #if WITH_EDITOR
+
+	// Manager Time
+
+	void Spawn_Manager_Time();
+
 	// Coroutine Scheduler
 
 	void Spawn_CoroutineScheduler();
 
 	// Manager FX
 
-	TWeakObjectPtr<class AICsManager_FX> Manager_FX;
+	TWeakObjectPtr<AICsManager_FX> Manager_FX;
 
-	class AICsManager_FX* GetManager_FX();
+	AICsManager_FX* GetManager_FX();
 
 	void Spawn_Manager_FX();
 
 	// Manager Sound
 
-	TWeakObjectPtr<class AICsManager_Sound> Manager_Sound;
+	TWeakObjectPtr<AICsManager_Sound> Manager_Sound;
 
-	class AICsManager_Sound* GetManager_Sound();
+	AICsManager_Sound* GetManager_Sound();
 
 	void Spawn_Manager_Sound();
 

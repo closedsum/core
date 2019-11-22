@@ -1666,6 +1666,7 @@ void ACsWeapon::FireWeapon(const FECsWeaponFireMode &FireMode)
 CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 {
 	ACsWeapon* mw = r->GetOwnerAsObject<ACsWeapon>();
+	UWorld* w	  = mw->GetWorld();
 
 	const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(r->GetValue_Int(CS_FIRST));
 

@@ -14,6 +14,8 @@ namespace NCsCoroutineCached
 	}
 }
 
+class ICsGetCoroutineScheduler;
+
 UCLASS(transient)
 class CSCORE_API UCsCoroutineScheduler : public UObject
 {
@@ -24,9 +26,21 @@ class CSCORE_API UCsCoroutineScheduler : public UObject
 public:
 
 	static UCsCoroutineScheduler* Get();
-
 	static void Init();
 	static void Shutdown();
+
+#if WITH_EDITOR
+protected:
+
+	static ICsGetCoroutineScheduler* Get_GetCoroutineScheduler(UObject* InOwner);
+
+public:
+
+	static UCsCoroutineScheduler* Get(UObject* InOwner);
+	static void Init(UObject* InOwner);
+	static void Shutdown(UObject* InOwner);
+
+#endif // #if WITH_EDITOR
 
 protected:
 

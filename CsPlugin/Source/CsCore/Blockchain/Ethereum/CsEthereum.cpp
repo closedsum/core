@@ -585,8 +585,8 @@ void UCsEthereum::StartPrivateChain()
 	Payload->Coroutine.BindStatic(&UCsEthereum::StartPrivateChain_Internal);
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
-	Payload->Name			 = NCsEthereumCached::Name::StartPrivateChain_Internal;
-	Payload->NameAsString	 = NCsEthereumCached::Str::StartPrivateChain_Internal;
+	Payload->SetName(NCsEthereumCached::Name::StartPrivateChain_Internal);
+	Payload->SetNameAsString(NCsEthereumCached::Str::StartPrivateChain_Internal);
 
 	Scheduler->Start(Payload);
 }
@@ -644,8 +644,8 @@ void UCsEthereum::OpenConsole()
 	Payload->Coroutine.BindStatic(&UCsEthereum::OpenConsole_Internal);
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
-	Payload->Name			 = NCsEthereumCached::Name::OpenConsole_Internal;
-	Payload->NameAsString	 = NCsEthereumCached::Str::OpenConsole_Internal;
+	Payload->SetName(NCsEthereumCached::Name::OpenConsole_Internal);
+	Payload->SetNameAsString(NCsEthereumCached::Str::OpenConsole_Internal);
 
 	Scheduler->Start(Payload);
 }
@@ -1348,8 +1348,8 @@ void UCsEthereum::CreateKeystore(CsEthereumAccount* Account)
 		Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 		Payload->Owner.SetObject(this);
 
-		Payload->Name			= NCsEthereumCached::Name::CreateKeystore_Internal;
-		Payload->NameAsString	= NCsEthereumCached::Str::CreateKeystore_Internal;
+		Payload->SetName(NCsEthereumCached::Name::CreateKeystore_Internal);
+		Payload->SetNameAsString(NCsEthereumCached::Str::CreateKeystore_Internal);
 	
 		Payload->SetValue_String(CS_FIRST, NCsCached::Str::Empty);
 		Payload->SetValue_Void(CS_FIRST, Account);
@@ -1480,8 +1480,8 @@ void UCsEthereum::SetupAccount(void* Payload)
 	CoroutinePayload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	CoroutinePayload->Owner.SetObject(this);
 
-	CoroutinePayload->Name			= NCsEthereumCached::Name::SetupAccount_Internal;
-	CoroutinePayload->NameAsString	= NCsEthereumCached::Str::SetupAccount_Internal;
+	CoroutinePayload->SetName(NCsEthereumCached::Name::SetupAccount_Internal);
+	CoroutinePayload->SetNameAsString(NCsEthereumCached::Str::SetupAccount_Internal);
 
 	CoroutinePayload->SetValue_Void(CS_FIRST, Payload);
 
@@ -1553,8 +1553,8 @@ void UCsEthereum::BringBalanceToThreshold(ICsBlockchainAccount* IAccount, const 
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->Name			= NCsEthereumCached::Name::BringBalanceToThreshold_Internal;
-	Payload->NameAsString	= NCsEthereumCached::Str::BringBalanceToThreshold_Internal;
+	Payload->SetName(NCsEthereumCached::Name::BringBalanceToThreshold_Internal);
+	Payload->SetNameAsString(NCsEthereumCached::Str::BringBalanceToThreshold_Internal);
 
 	Payload->SetValue_Void(CS_FIRST, IAccount);
 	Payload->SetValue_Int(CS_FIRST, Threshold);
@@ -1678,8 +1678,8 @@ void UCsEthereum::DeployContract(const FECsBlockchainContract &EContract, TArray
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->Name			= NCsEthereumCached::Name::DeployContract_Internal;
-	Payload->NameAsString	= NCsEthereumCached::Str::DeployContract_Internal;
+	Payload->SetName(NCsEthereumCached::Name::DeployContract_Internal);
+	Payload->SetNameAsString(NCsEthereumCached::Str::DeployContract_Internal);
 
 	Payload->SetValue_String(CS_FIRST, EContract.Name);
 	Payload->SetValue_Void(CS_FIRST, &Args);
@@ -1957,8 +1957,8 @@ void UCsEthereum::SetupContract(const FECsBlockchainContract &EContract, const F
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->Name			= NCsEthereumCached::Name::SetupContract_Internal;
-	Payload->NameAsString	= NCsEthereumCached::Str::SetupContract_Internal;
+	Payload->SetName(NCsEthereumCached::Name::SetupContract_Internal);
+	Payload->SetNameAsString(NCsEthereumCached::Str::SetupContract_Internal);
 
 	static const uint8 CONTRACT_NAME = 0;
 	Payload->SetValue_String(CONTRACT_NAME, EContract.Name);
@@ -2047,8 +2047,8 @@ void UCsEthereum::RunContractStateChangeFunction(const FECsBlockchainContract &E
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->Name			= NCsEthereumCached::Name::RunContractStateChangeFunction_Internal;
-	Payload->NameAsString	= NCsEthereumCached::Str::RunContractStateChangeFunction_Internal;
+	Payload->SetName(NCsEthereumCached::Name::RunContractStateChangeFunction_Internal);
+	Payload->SetNameAsString(NCsEthereumCached::Str::RunContractStateChangeFunction_Internal);
 	
 	static const uint8 CONTRACT_NAME = 0;
 	Payload->SetValue_String(CONTRACT_NAME,	EContract.Name);
@@ -2198,8 +2198,8 @@ void UCsEthereum::CheckTransactionHasBeenMined(const FString &TransactionHash)
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->Name			= NCsEthereumCached::Name::CheckTransactionHasBeenMined_Internal;
-	Payload->NameAsString	= NCsEthereumCached::Str::CheckTransactionHasBeenMined_Internal;
+	Payload->SetName(NCsEthereumCached::Name::CheckTransactionHasBeenMined_Internal);
+	Payload->SetNameAsString(NCsEthereumCached::Str::CheckTransactionHasBeenMined_Internal);
 
 	Payload->SetValue_String(CS_FIRST, TransactionHash);
 

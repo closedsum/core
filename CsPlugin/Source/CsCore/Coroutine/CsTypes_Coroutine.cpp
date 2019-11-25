@@ -532,7 +532,7 @@ void FCsCoroutinePayload::Reset()
 	bDoInit = true;
 	bPerformFirstUpdate = false;
 	Name = NAME_None;
-	NameAsString.Empty();
+	NameAsString = nullptr;
 	AbortMessages.Reset(AbortMessages.Max());
 
 	// Registers

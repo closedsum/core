@@ -231,8 +231,8 @@ void ACsAIPawn::SyncCurrentViewFromBone(const FName &Bone)
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->Name			= NCsAIPawnCached::Name::SyncCurrentViewFromBone_Internal;
-	Payload->NameAsString	= NCsAIPawnCached::Str::SyncCurrentViewFromBone_Internal;
+	Payload->SetName(NCsAIPawnCached::Name::SyncCurrentViewFromBone_Internal);
+	Payload->SetNameAsString(NCsAIPawnCached::Str::SyncCurrentViewFromBone_Internal);
 
 	Payload->SetValue_Name(CS_FIRST, Bone);
 
@@ -420,8 +420,8 @@ void ACsAIPawn::StartShootForCount(const int32 &Count)
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(Controller);
 
-	Payload->Name			= NCsAIPawnCached::Name::StartShootForCount_Internal;
-	Payload->NameAsString	= NCsAIPawnCached::Str::StartShootForCount_Internal;
+	Payload->SetName(NCsAIPawnCached::Name::StartShootForCount_Internal);
+	Payload->SetNameAsString(NCsAIPawnCached::Str::StartShootForCount_Internal);
 
 	ACsWeapon* CurrentWeapon = GetCurrentWeapon();
 
@@ -477,8 +477,8 @@ void ACsAIPawn::StartShootForDuration(const float &Duration)
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->Name			= NCsAIPawnCached::Name::StartShootForDuration_Internal;
-	Payload->NameAsString	= NCsAIPawnCached::Str::StartShootForDuration_Internal;
+	Payload->SetName(NCsAIPawnCached::Name::StartShootForDuration_Internal);
+	Payload->SetNameAsString(NCsAIPawnCached::Str::StartShootForDuration_Internal);
 
 	Payload->SetValue_Float(CS_FIRST, Duration);
 

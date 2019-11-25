@@ -137,8 +137,8 @@ void UCsManager_UnitTest::Start()
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
 
-	Payload->Name			  = NCsManagerUnitTestCached::Name::Start_Internal;
-	Payload->NameAsString	  = NCsManagerUnitTestCached::Str::Start_Internal;
+	Payload->SetName(NCsManagerUnitTestCached::Name::Start_Internal);
+	Payload->SetNameAsString(NCsManagerUnitTestCached::Str::Start_Internal);
 
 	UE_LOG(LogCs, Warning, TEXT("UCsManager_UnitTest::Start: Starting Unit Test Suites."));
 	UE_LOG(LogCs, Warning, TEXT("UCsManager_UnitTest::Start: - Processing %d Suites."), Suites.Num());

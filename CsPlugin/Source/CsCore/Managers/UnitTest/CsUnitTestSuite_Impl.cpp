@@ -66,8 +66,8 @@ void FCsUnitTestSuite_Impl::Start()
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(UpdateGroup);
 	Payload->Owner.SetOwner(this);
 
-	Payload->Name			  = Start_Internal_Name;
-	Payload->NameAsString	  = Start_Internal_NameAsString;
+	Payload->SetName(Start_Internal_Name);
+	Payload->SetNameAsString(Start_Internal_NameAsString);
 
 	UE_LOG(LogCs, Warning, TEXT("%s::Start: Starting Unit Tests."), *NameAsString);
 	UE_LOG(LogCs, Warning, TEXT("%s::Start: - Processing %d Tests."), *NameAsString, Tests.Num());

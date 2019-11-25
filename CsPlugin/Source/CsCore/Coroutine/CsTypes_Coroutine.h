@@ -466,10 +466,6 @@ public:
 
 	bool bPerformFirstUpdate;
 
-	FName Name;
-
-	FString NameAsString;
-
 	TArray<FName> AbortMessages;
 
 public:
@@ -624,6 +620,38 @@ public:
 #pragma endregion Set
 
 #pragma endregion Registers
+
+// Name
+#pragma region
+protected:
+
+	FName Name;
+
+	FString* NameAsString;
+
+public:
+
+	FORCEINLINE void SetName(const FName& InName)
+	{
+		Name = InName;
+	}
+
+	FORCEINLINE void SetNameAsString(const FString& InNameAsString)
+	{
+		NameAsString = const_cast<FString*>(&InNameAsString);
+	}
+
+	FORCEINLINE const FName& GetName()
+	{
+		return Name;
+	}
+
+	FORCEINLINE const FString* GetNameAsString()
+	{
+		return NameAsString;
+	}
+
+#pragma endregion Name
 };
 
 #define CS_COROUTINE_DECLARE(Func)	virtual void Func(); \

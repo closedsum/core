@@ -234,8 +234,8 @@ void FCsRoutine::Init(FCsCoroutinePayload* Payload)
 		Last = Abort;
 	}
 
-	Name		 = Payload->Name;
-	NameAsString = Payload->NameAsString;
+	Name		 = Payload->GetName();
+	NameAsString = const_cast<FString*>(Payload->GetNameAsString());
 
 	// Copy Register values over
 	for (const FCsRoutineRegisterInfo& Info : Payload->RegisterInfos)
@@ -370,7 +370,7 @@ void FCsRoutine::Reset()
 	OnAborts.Reset(OnAborts.Max());
 	State = ECsCoroutineState::Free;
 	Name = NAME_None;
-	NameAsString.Empty();
+	NameAsString = nullptr;
 
 	EndReason = ECsCoroutineEndReason::ECsCoroutineEndReason_MAX;
 

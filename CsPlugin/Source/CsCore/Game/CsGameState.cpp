@@ -315,8 +315,8 @@ void ACsGameState::OnBoard()
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->Name			= NCsGameStateCached::Name::OnBoard_Internal;
-	Payload->NameAsString	= NCsGameStateCached::Str::OnBoard_Internal;
+	Payload->SetName(NCsGameStateCached::Name::OnBoard_Internal);
+	Payload->SetNameAsString(NCsGameStateCached::Str::OnBoard_Internal);
 
 	Scheduler->Start(Payload);
 }

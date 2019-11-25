@@ -80,8 +80,8 @@ void ACsJavascriptEntryPoint::Setup()
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
 
-	Payload->Name			  = NCsJavascriptEntryPointCached::Name::Setup_Internal;
-	Payload->NameAsString	  = NCsJavascriptEntryPointCached::Str::Setup_Internal;
+	Payload->SetName(NCsJavascriptEntryPointCached::Name::Setup_Internal);
+	Payload->SetNameAsString(NCsJavascriptEntryPointCached::Str::Setup_Internal);
 
 	Scheduler->Start(Payload);
 }

@@ -402,8 +402,8 @@ void UCsWidget_Crafting::IncrementCount()
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->Name			 = ECsWidgetCraftingCached::Name::IncrementCount_Internal;
-	Payload->NameAsString	 = ECsWidgetCraftingCached::Str::IncrementCount_Internal;
+	Payload->SetName(ECsWidgetCraftingCached::Name::IncrementCount_Internal);
+	Payload->SetNameAsString(ECsWidgetCraftingCached::Str::IncrementCount_Internal);
 
 	Scheduler->Start(Payload);
 }
@@ -529,8 +529,8 @@ void UCsWidget_Crafting::DecrementCount()
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->Name			 = ECsWidgetCraftingCached::Name::DecrementCount_Internal;
-	Payload->NameAsString	 = ECsWidgetCraftingCached::Str::DecrementCount_Internal;
+	Payload->SetName(ECsWidgetCraftingCached::Name::DecrementCount_Internal);
+	Payload->SetNameAsString(ECsWidgetCraftingCached::Str::DecrementCount_Internal);
 
 	Scheduler->Start(Payload);
 }
@@ -708,8 +708,8 @@ void UCsWidget_Crafting::UpdateProgress(const uint64 &PayloadId)
 	Payload->Coroutine.BindStatic(&UCsWidget_Crafting::UpdateProgress_Internal);
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
-	Payload->Name			 = ECsWidgetCraftingCached::Name::UpdateProgress_Internal;
-	Payload->NameAsString	 = ECsWidgetCraftingCached::Str::UpdateProgress_Internal;
+	Payload->SetName(ECsWidgetCraftingCached::Name::UpdateProgress_Internal);
+	Payload->SetNameAsString(ECsWidgetCraftingCached::Str::UpdateProgress_Internal);
 
 	ACsManager_Crafting* Manager_Crafting = ACsManager_Crafting::Get(GetWorld());
 	FCsCraftingPayload* CraftingPayload   = Manager_Crafting->GetPayload(PayloadId);

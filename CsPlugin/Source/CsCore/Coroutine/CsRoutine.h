@@ -53,10 +53,6 @@ public:
 
 	ECsCoroutineState State;
 
-	FName Name;
-
-	FString NameAsString;
-
 // Index
 #pragma region
 private:
@@ -73,6 +69,38 @@ public:
 	}
 
 #pragma endregion Index
+
+// Name
+#pragma region
+private:
+
+	FName Name;
+
+	FString* NameAsString;
+
+public:
+
+	FORCEINLINE void SetName(const FName& InName)
+	{
+		Name = InName;
+	}
+
+	FORCEINLINE void SetNameAsString(const FString* InNameAsString)
+	{
+		NameAsString = const_cast<FString*>(InNameAsString);
+	}
+
+	FORCEINLINE const FName& GetName()
+	{
+		return Name;
+	}
+
+	FORCEINLINE const FString* GetNameAsString()
+	{
+		return NameAsString;
+	}
+
+#pragma endregion Name
 
 public:
 

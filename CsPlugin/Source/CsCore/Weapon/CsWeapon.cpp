@@ -34,7 +34,7 @@
 // Cache
 #pragma region
 
-namespace ECsWeaponCached
+namespace NCsWeaponCached
 {
 	namespace Name
 	{
@@ -617,10 +617,10 @@ void ACsWeapon::ClearRoutines()
 {
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
-	Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, ECsWeaponCached::Name::Stop_PlayAnimation_Reload_Internal, this);
-	Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, ECsWeaponCached::Name::Stop_StartChargeFire_Internal, this);
-	Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, ECsWeaponCached::Name::Stop_FireWeapon_Internal, this);
-	Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, ECsWeaponCached::Name::Stop_DrawFireProjectile_Internal, this);
+	Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, NCsWeaponCached::Name::Stop_PlayAnimation_Reload_Internal, this);
+	Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, NCsWeaponCached::Name::Stop_StartChargeFire_Internal, this);
+	Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, NCsWeaponCached::Name::Stop_FireWeapon_Internal, this);
+	Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, NCsWeaponCached::Name::Stop_DrawFireProjectile_Internal, this);
 }
 
 #pragma endregion Routines
@@ -1077,8 +1077,8 @@ void ACsWeapon::PlayAnimation_Reload()
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->Name			= ECsWeaponCached::Name::PlayAnimation_Reload_Internal;
-	Payload->NameAsString	= ECsWeaponCached::Str::PlayAnimation_Reload_Internal;
+	Payload->SetName(NCsWeaponCached::Name::PlayAnimation_Reload_Internal);
+	Payload->SetNameAsString(NCsWeaponCached::Str::PlayAnimation_Reload_Internal);
 	
 	Payload->SetValue_Float(CS_FIRST, GetAnimationLength(EMCsWeaponFireMode::Get().GetMAX(), ReloadAnim));
 
@@ -1097,7 +1097,7 @@ CS_COROUTINE(ACsWeapon, PlayAnimation_Reload_Internal)
 
 	CS_COROUTINE_BEGIN(r);
 
-	r->AddMessage(ECsCoroutineMessage::Abort, ECsWeaponCached::Name::Stop_PlayAnimation_Reload_Internal);
+	r->AddMessage(ECsCoroutineMessage::Abort, NCsWeaponCached::Name::Stop_PlayAnimation_Reload_Internal);
 
 	mw->PlayAnimation(EMCsWeaponFireMode::Get().GetMAX(), ReloadAnim, 0);
 
@@ -1445,8 +1445,8 @@ void ACsWeapon::StartChargeFire(const FECsWeaponFireMode &FireMode)
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->Name			= ECsWeaponCached::Name::StartChargeFire_Internal;
-	Payload->NameAsString	= ECsWeaponCached::Str::StartChargeFire_Internal;
+	Payload->SetName(NCsWeaponCached::Name::StartChargeFire_Internal);
+	Payload->SetNameAsString(NCsWeaponCached::Str::StartChargeFire_Internal);
 
 	Payload->SetValue_Int(CS_FIRST,	FireMode.Value);
 
@@ -1473,7 +1473,7 @@ CS_COROUTINE(ACsWeapon, StartChargeFire_Internal)
 
 	StartTime = CurrentTime;
 
-	r->AddMessage(ECsCoroutineMessage::Abort, ECsWeaponCached::Name::Stop_StartChargeFire_Internal);
+	r->AddMessage(ECsCoroutineMessage::Abort, NCsWeaponCached::Name::Stop_StartChargeFire_Internal);
 
 	// ChargeFireStart
 	mw->PlayAnimation(FireMode, mw->ChargeFireStartAnim);
@@ -1552,7 +1552,7 @@ void ACsWeapon::StopChargeFire(const FECsWeaponFireMode &FireMode)
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
-	Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, ECsWeaponCached::Name::Stop_StartChargeFire_Internal, this);
+	Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, NCsWeaponCached::Name::Stop_StartChargeFire_Internal, this);
 
 	if (StartChargeFire_Internal_Routine)
 		StartChargeFire_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
@@ -1655,8 +1655,8 @@ void ACsWeapon::FireWeapon(const FECsWeaponFireMode &FireMode)
 	Payload->Coroutine.BindStatic(&ACsWeapon::FireWeapon_Internal);
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
-	Payload->Name			 = ECsWeaponCached::Name::FireWeapon_Internal;
-	Payload->NameAsString	 = ECsWeaponCached::Str::FireWeapon_Internal;
+	Payload->SetName(NCsWeaponCached::Name::FireWeapon_Internal);
+	Payload->SetNameAsString(NCsWeaponCached::Str::FireWeapon_Internal);
 
 	Payload->SetValue_Int(CS_FIRST, FireMode.Value);
 
@@ -1688,7 +1688,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 
 	CS_COROUTINE_BEGIN(r);
 
-	r->AddMessage(ECsCoroutineMessage::Abort, ECsWeaponCached::Name::Stop_FireWeapon_Internal);
+	r->AddMessage(ECsCoroutineMessage::Abort, NCsWeaponCached::Name::Stop_FireWeapon_Internal);
 
 	mw->StopChargeFire(FireMode);
 
@@ -1892,8 +1892,8 @@ void ACsWeapon::DrawFireProjectile(class ACsProjectileBase* Projectile, const FV
 	Payload->Coroutine.BindStatic(&ACsWeapon::DrawFireProjectile_Internal);
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
-	Payload->Name			 = ECsWeaponCached::Name::DrawFireProjectile_Internal;
-	Payload->NameAsString	 = ECsWeaponCached::Str::DrawFireProjectile_Internal;
+	Payload->SetName(NCsWeaponCached::Name::DrawFireProjectile_Internal);
+	Payload->SetNameAsString(NCsWeaponCached::Str::DrawFireProjectile_Internal);
 
 	static const int32 START_INDEX = 0;
 	Payload->SetValue_Vector(START_INDEX, Start);
@@ -1919,7 +1919,7 @@ CS_COROUTINE(ACsWeapon, DrawFireProjectile_Internal)
 
 	CS_COROUTINE_BEGIN(r);
 
-	r->AddMessage(ECsCoroutineMessage::Abort, ECsWeaponCached::Name::Stop_DrawFireProjectile_Internal);
+	r->AddMessage(ECsCoroutineMessage::Abort, NCsWeaponCached::Name::Stop_DrawFireProjectile_Internal);
 
 	do
 	{
@@ -2367,7 +2367,7 @@ void ACsWeapon::Reload()
 			StopChargeFire(EMCsWeaponFireMode::Get().GetEnumAt(I));
 		}
 
-		Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, ECsWeaponCached::Name::Stop_FireWeapon_Internal, this);
+		Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, NCsWeaponCached::Name::Stop_FireWeapon_Internal, this);
 
 		for (int32 I = 0; I < Count; ++I)
 		{

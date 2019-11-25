@@ -32,13 +32,13 @@ public:
 #if WITH_EDITOR
 protected:
 
-	static ICsGetCoroutineScheduler* Get_GetCoroutineScheduler(UObject* InOwner);
+	static ICsGetCoroutineScheduler* Get_GetCoroutineScheduler(UObject* InRoot);
 
 public:
 
-	static UCsCoroutineScheduler* Get(UObject* InOwner);
-	static void Init(UObject* InOwner);
-	static void Shutdown(UObject* InOwner);
+	static UCsCoroutineScheduler* Get(UObject* InRoot);
+	static void Init(UObject* InRoot);
+	static void Shutdown(UObject* InRoot);
 
 #endif // #if WITH_EDITOR
 
@@ -53,6 +53,26 @@ private:
 	static bool s_bShutdown;
 
 #pragma endregion Singleton
+
+// Root
+#pragma region
+private:
+
+	TWeakObjectPtr<UObject> MyRoot;
+
+public:
+
+	FORCEINLINE void SetMyRoot(UObject* InRoot)
+	{
+		MyRoot = InRoot;
+	}
+
+	FORCEINLINE const UObject* GetMyRoot()
+	{
+		return MyRoot.IsValid() ? MyRoot.Get() : nullptr;
+	}
+
+#pragma endregion Root
 
 // Owner
 #pragma region

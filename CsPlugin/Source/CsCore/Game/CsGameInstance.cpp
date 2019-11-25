@@ -3,14 +3,14 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 
-#include "Coroutine/CsCoroutineScheduler.h"
-
 // Types
 #include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
 #include "Types/CsTypes_Load.h"
 #include "Managers/Input/CsTypes_Input.h"
 // Library
 #include "Common/CsCommon.h"
+// CoroutineScheduler
+#include "Coroutine/CsCoroutineScheduler.h"
 // Managers
 #include "Managers/CsManager_Loading.h"
 #include "Managers/Runnable/CsManager_Runnable.h"
@@ -108,8 +108,6 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 	LevelState   = ECsLevelState::None;
 }
 
-void UCsGameInstance::InitCVars(){}
-
 void UCsGameInstance::Init()
 {
 	Super::Init();
@@ -128,11 +126,21 @@ void UCsGameInstance::Init()
 
 	UCsManager_Loading::Init();
 	UCsManager_Runnable::Init();
+
+#if WITH_EDITOR
+	UCsManager_Time::Init(this);
+	Manager_Time = UCsManager_Time::Get();
+
+	UCsCoroutineScheduler::Init(this);
+	CoroutineScheduler = UCsCoroutineScheduler::Get();
+#else
+	UCsManager_Time::Init();
 	UCsCoroutineScheduler::Init();
+#endif // #if WITH_EDITOR
 
 	//OnTick_Event.AddUObject(UCsCoroutineScheduler::Get(), &UCsCoroutineScheduler::OnTick_Update);
 	
-	HideMouseCursor();
+	//HideMouseCursor();
 	//OnBoard();
 }
 
@@ -153,7 +161,19 @@ void UCsGameInstance::Shutdown()
 
 	UCsManager_Loading::Shutdown();
 	UCsManager_Runnable::Shutdown();
+
+#if WITH_EDITOR
+	UCsManager_Time::Shutdown(this);
+	Manager_Time->MarkPendingKill();
+	Manager_Time = nullptr;
+
+	UCsCoroutineScheduler::Shutdown(this);
+	CoroutineScheduler->MarkPendingKill();
+	CoroutineScheduler = nullptr;
+#else
+	UCsManager_Time::Shutdown();
 	UCsCoroutineScheduler::Shutdown();
+#endif // #if WITH_EDITOR
 }
 
 void UCsGameInstance::StartGameInstance()
@@ -183,6 +203,14 @@ FGameInstancePIEResult UCsGameInstance::StartPlayInEditorGameInstance(ULocalPlay
 bool UCsGameInstance::Tick(float DeltaSeconds)
 {
 	++CurrentGameFrame;
+
+	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
+
+	UCsManager_Time::Get()->Update(Group, DeltaSeconds);
+
+	const FCsDeltaTime& DeltaTime = UCsManager_Time::Get()->GetScaledDeltaTime(Group);
+
+	UCsCoroutineScheduler::Get()->Update(Group, DeltaTime);
 
 	OnTick_Event.Broadcast(DeltaSeconds);
 #if WITH_EDITOR

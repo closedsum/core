@@ -69,13 +69,13 @@ UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectIni
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetCoroutineScheduler* UCsCoroutineScheduler::Get_GetCoroutineScheduler(UObject* InOwner)
+/*static*/ ICsGetCoroutineScheduler* UCsCoroutineScheduler::Get_GetCoroutineScheduler(UObject* InRoot)
 {
-	checkf(InOwner, TEXT("UCsCoroutineScheduler::Get: InOwner is NULL."));
+	checkf(InRoot, TEXT("UCsCoroutineScheduler::Get: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InOwner);
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
-	checkf(GetManagerSingleton, TEXT("UCsCoroutineScheduler::Get: InOwner: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InOwner->GetName()), *(InOwner->GetClass()->GetName()));
+	checkf(GetManagerSingleton, TEXT("UCsCoroutineScheduler::Get: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
@@ -88,27 +88,28 @@ UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectIni
 	return GetCoroutineScheduler;
 }
 
-/*static*/ UCsCoroutineScheduler* UCsCoroutineScheduler::Get(UObject* InOwner)
+/*static*/ UCsCoroutineScheduler* UCsCoroutineScheduler::Get(UObject* InRoot)
 {
-	ICsGetCoroutineScheduler* GetCoroutineScheduler = Get_GetCoroutineScheduler(InOwner);
+	ICsGetCoroutineScheduler* GetCoroutineScheduler = Get_GetCoroutineScheduler(InRoot);
 
 	return GetCoroutineScheduler->GetCoroutineScheduler();
 }
 
-/*static*/ void UCsCoroutineScheduler::Init(UObject* InOwner)
+/*static*/ void UCsCoroutineScheduler::Init(UObject* InRoot)
 {
-	ICsGetCoroutineScheduler* GetCoroutineScheduler = Get_GetCoroutineScheduler(InOwner);
+	ICsGetCoroutineScheduler* GetCoroutineScheduler = Get_GetCoroutineScheduler(InRoot);
 
-	UCsCoroutineScheduler* Scheduler = NewObject<UCsCoroutineScheduler>(InOwner, UCsCoroutineScheduler::StaticClass(), TEXT("Coroutine_Scheduler_Singleton"), RF_Transient | RF_Public);
+	UCsCoroutineScheduler* Scheduler = NewObject<UCsCoroutineScheduler>(InRoot, UCsCoroutineScheduler::StaticClass(), TEXT("Coroutine_Scheduler_Singleton"), RF_Transient | RF_Public);
 
 	GetCoroutineScheduler->SetCoroutineScheduler(Scheduler);
 
+	Scheduler->SetMyRoot(InRoot);
 	Scheduler->Initialize();
 }
 
-/*static*/ void UCsCoroutineScheduler::Shutdown(UObject* InOwner)
+/*static*/ void UCsCoroutineScheduler::Shutdown(UObject* InRoot)
 {
-	ICsGetCoroutineScheduler* GetCoroutineScheduler = Get_GetCoroutineScheduler(InOwner);
+	ICsGetCoroutineScheduler* GetCoroutineScheduler = Get_GetCoroutineScheduler(InRoot);
 	UCsCoroutineScheduler* Scheduler				= GetCoroutineScheduler->GetCoroutineScheduler();
 	Scheduler->CleanUp();
 

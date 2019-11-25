@@ -8,7 +8,7 @@
 #include "CsGameInstance.generated.h"
 
 // OnTick
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameInstance_OnTick, const float&, DeltaSeconds);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsGameInstance_OnTick, const float&, DeltaSeconds);
 // OnServerTravel
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableDynEvent_CsGameInstance_OnServerTravel);
 DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsGameInstance_OnServerTravel);
@@ -95,13 +95,16 @@ namespace NCsGameInstanceOnBoardState
 class ACsDataMapping;
 class UCsEnumStructUserDefinedEnumMap;
 class UCsInputSetting;
+class UCsManager_Singleton;
+class UCsManager_Time;
+class UCsCoroutineScheduler;
 
 UCLASS(config = Game)
 class CSCORE_API UCsGameInstance : public UGameInstance
 {
 	GENERATED_UCLASS_BODY()
 
-	virtual void InitCVars();
+public:
 
 	virtual void Init() override;
 	virtual void Shutdown() override;
@@ -117,7 +120,7 @@ class CSCORE_API UCsGameInstance : public UGameInstance
 
 // Tick
 #pragma region
-public:
+protected:
 
 	/** Delegate for callbacks to Tick */
 	FTickerDelegate	TickDelegate;
@@ -127,12 +130,14 @@ public:
 
 	virtual bool Tick(float DeltaSeconds);
 
+public:
+
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnTick, const float&);
 
 	FOnTick OnTick_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
-	FBindableDynEvent_CsGameInstance_OnTick OnTick_ScriptEvent;
+	FCsGameInstance_OnTick OnTick_ScriptEvent;
 
 #pragma endregion Tick
 
@@ -322,9 +327,13 @@ public:
 
 #pragma endregion Level
 
+// Exit
+#pragma region
 public:
 
 	virtual void ExitGame();
+
+#pragma endregion Exit
 
 // Object
 #pragma region
@@ -370,4 +379,21 @@ public:
 	}
 
 #pragma endregion Object
+
+protected:
+
+	UPROPERTY()
+	UCsCoroutineScheduler* CoroutineScheduler;
+
+// Managers
+#pragma region
+protected:
+
+	UPROPERTY()
+	UCsManager_Singleton* Manager_Singleton;
+
+	UPROPERTY()
+	UCsManager_Time* Manager_Time;
+
+#pragma endregion Managers
 };

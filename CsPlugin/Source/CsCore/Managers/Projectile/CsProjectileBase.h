@@ -1,22 +1,22 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsPooledActor.h"
-#include "Types/CsTypes_Projectile.h"
-#include "Data/CsData_Projectile.h"
+#include "Managers/Projectile/CsTypes_Projectile.h"
+#include "Data/CsData_ProjectileBase.h"
 #include "CsProjectileBase.generated.h"
 
 // Allocate
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsProjectile_Override_Allocate_Internal, const int32&, PoolIndex);
 
 USTRUCT(BlueprintType)
-struct FCsProjectileCache : public FCsPooledObjectCache
+struct FCsProjectileBaseCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class ACsProjectileBase> Projectile;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	TWeakObjectPtr<class ACsData_Projectile> Data;
+	TWeakObjectPtr<class ACsData_ProjectileBase> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FECsProjectileType Type;
@@ -42,12 +42,12 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float DrawDistanceSq;
 
-	FCsProjectileCache()
+	FCsProjectileBaseCache()
 	{
 		Reset();
 	}
 
-	~FCsProjectileCache(){}
+	~FCsProjectileBaseCache(){}
 
 	void Set(const int32 &InIndex, ACsProjectileBase* InProjectile)
 	{
@@ -107,7 +107,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	template<typename T>
 	FORCEINLINE T* GetProjectile() { return Cast<T>(GetProjectile()); }
 
-	FORCEINLINE ACsData_Projectile* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	FORCEINLINE ACsData_ProjectileBase* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 	template<typename T>
 	FORCEINLINE T* GetData() { return Cast<T>(GetData()); }
 };
@@ -139,7 +139,7 @@ public:
 	virtual FVector EvaluateMovementFunction(const float &Time);
 
 	UPROPERTY(BlueprintReadWrite, Category = "Projectile")
-	FCsProjectileCache Cache;
+	FCsProjectileBaseCache Cache;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Projectile")
 	FECsProjectileType Type;
@@ -187,7 +187,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	ACsProjectileBase* Cache_GetProjectile();
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
-	ACsData_Projectile* Cache_GetData();
+	ACsData_ProjectileBase* Cache_GetData();
 
 #pragma endregion Script
 };

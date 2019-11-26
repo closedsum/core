@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/EnumStruct/Projectile/ECsProjectileTypeCustomization.h"
 
-#include "Types/CsTypes_Projectile.h"
+#include "Managers/Projectile/CsTypes_Projectile.h"
 
 #define LOCTEXT_NAMESPACE "ECsAssetTypeCustomization"
 

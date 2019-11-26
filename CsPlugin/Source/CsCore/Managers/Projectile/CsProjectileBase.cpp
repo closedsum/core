@@ -7,7 +7,7 @@
 
 // Data
 #include "Data/CsData_Weapon.h"
-#include "Data/CsData_Projectile.h"
+#include "Data/CsData_ProjectileBase.h"
 #include "Data/CsData_ProjectileImpact.h"
 
 // Managers
@@ -119,7 +119,7 @@ void ACsProjectileBase::OnTick_HandleCVars(const float &DeltaSeconds)
 
 void ACsProjectileBase::OnTick_HandleMovementFunction(const float &DeltaSeconds)
 {
-	ACsData_Projectile* Data				 = Cache.GetData();
+	ACsData_ProjectileBase* Data			 = Cache.GetData();
 	const TCsProjectileMovement MovementType = Data->GetMovementType();
 
 	if (MovementType != ECsProjectileMovement::Function)
@@ -223,7 +223,7 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectilePayload* Payload)
 
 	ACsWeapon* OwnerWeapon				= Cast<ACsWeapon>(Cache.GetOwner());
 	ACsData_Weapon* Data_Weapon			= OwnerWeapon ? OwnerWeapon->GetMyData_Weapon() : nullptr;
-	ACsData_Projectile* Data_Projectile = Cache.GetData();
+	ACsData_ProjectileBase* Data_Projectile = Cache.GetData();
 
 	const TCsProjectileRelevance Relevance = Cache.Relevance;
 
@@ -534,6 +534,6 @@ void ACsProjectileBase::OnHitCallback(UPrimitiveComponent* HitComp, AActor* Othe
 UObject* ACsProjectileBase::Cache_GetOwner() { return Cache.GetOwner(); }
 UObject* ACsProjectileBase::Cache_GetInstigator() { return Cache.GetInstigator(); }
 ACsProjectileBase* ACsProjectileBase::Cache_GetProjectile() { return Cache.GetProjectile(); }
-ACsData_Projectile* ACsProjectileBase::Cache_GetData() { return Cache.GetData(); }
+ACsData_ProjectileBase* ACsProjectileBase::Cache_GetData() { return Cache.GetData(); }
 
 #pragma endregion Script

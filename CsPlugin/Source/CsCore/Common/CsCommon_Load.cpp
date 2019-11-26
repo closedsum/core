@@ -1,13 +1,16 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Common/CsCommon_Load.h"
 #include "CsCore.h"
+#include "CsCVars.h"
+
+// Type
 #include "Types/CsTypes.h"
 #include "Managers/Input/CsTypes_Input.h"
 #include "UI/CsTypes_UI.h"
 #include "Types/CsTypes_FX.h"
 #include "Types/CsTypes_Sound.h"
 #include "Types/CsTypes_Anim.h"
-#include "Types/CsTypes_Projectile.h"
+#include "Managers/Projectile/CsTypes_Projectile.h"
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Damage.h"
 #include "Types/CsTypes_Character.h"
@@ -16,10 +19,9 @@
 #include "Types/CsTypes_Recipe.h"
 #include "Types/CsTypes_Math.h"
 #include "Types/CsTypes_Sense.h"
-#include "CsCVars.h"
-
+// Data
 #include "Data/CsData.h"
-#include "Data/CsData_Projectile.h"
+#include "Data/CsData_ProjectileBase.h"
 #include "Data/CsData_ProjectileImpact.h"
 
 // Cache
@@ -86,7 +88,7 @@ namespace NCsCommonLoadCached
 		const FString CurveVector = TEXT("CurveVector");
 		const FString Curve_Vector = TEXT("Curve Vector");
 
-		const FString CsData_Projectile = TEXT("CsData_Projectile");
+		const FString CsData_ProjectileBase = TEXT("CsData_ProjectileBase");
 		const FString CsData_ProjectileImpact = TEXT("CsData_ProjectileImpact");
 	}
 }
@@ -342,9 +344,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// TSoftClassPtr
 		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
-			// ACsData_Projectile
-			if (SoftClassProperty->MetaClass == ACsData_Projectile::StaticClass())
-			{ WriteSoftClassPropertyToJson<ACsData_Projectile>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
+			// ACsData_ProjectileBase
+			if (SoftClassProperty->MetaClass == ACsData_ProjectileBase::StaticClass())
+			{ WriteSoftClassPropertyToJson<ACsData_ProjectileBase>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
 			// ACsData_ProjectileImpact
 			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
 			{ WriteSoftClassPropertyToJson<ACsData_ProjectileImpact>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
@@ -684,9 +686,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if (StructProperty->Struct == FCsData_FpsWeapon_FireMode_Sounds::StaticStruct())
 				{ WriteMemberStructPropertyToJson<FCsData_FpsWeapon_FireMode_Sounds>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			}
-			// FCsData_ProjectilePtr
-			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsData_ProjectilePtr>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsData_ProjectileBasePtr
+			if (StructProperty->Struct == FCsData_ProjectileBasePtr::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsData_ProjectileBasePtr>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			// FCsData_ProjectileImpactPtr
 			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsData_ProjectileImpactPtr>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
@@ -1110,9 +1112,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// TSoftClassPtr
 		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
-			// ACsData_Projectile
-			if (SoftClassProperty->MetaClass == ACsData_Projectile::StaticClass())
-			{ WriteSoftClassPropertyToJson<ACsData_Projectile>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
+			// ACsData_ProjectileBase
+			if (SoftClassProperty->MetaClass == ACsData_ProjectileBase::StaticClass())
+			{ WriteSoftClassPropertyToJson<ACsData_ProjectileBase>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
 			// ACsData_ProjectileImpact
 			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
 			{ WriteSoftClassPropertyToJson<ACsData_ProjectileImpact>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
@@ -1455,9 +1457,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if (StructProperty->Struct == FCsData_FpsWeapon_FireMode_Sounds::StaticStruct())
 				{ WriteMemberStructPropertyToJson<FCsData_FpsWeapon_FireMode_Sounds>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			}
-			// FCsData_ProjectilePtr
-			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsData_ProjectilePtr>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsData_ProjectileBasePtr
+			if (StructProperty->Struct == FCsData_ProjectileBasePtr::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsData_ProjectileBasePtr>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			// FCsData_ProjectileImpactPtr
 			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsData_ProjectileImpactPtr>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
@@ -2718,9 +2720,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 		// TSoftClassPtr
 		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
-			// ACsData_Projectile
-			if (SoftClassProperty->MetaClass == ACsData_Projectile::StaticClass())
-			{ WriteToSoftClassPropertyFromJson<ACsData_Projectile>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
+			// ACsData_ProjectileBase
+			if (SoftClassProperty->MetaClass == ACsData_ProjectileBase::StaticClass())
+			{ WriteToSoftClassPropertyFromJson<ACsData_ProjectileBase>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
 			// ACsData_ProjectileImpact
 			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
 			{ WriteToSoftClassPropertyFromJson<ACsData_ProjectileImpact>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
@@ -3059,9 +3061,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				if (StructProperty->Struct == FCsData_FpsWeapon_FireMode_Sounds::StaticStruct())
 				{ WriteToMemberStructPropertyFromJson<FCsData_FpsWeapon_FireMode_Sounds>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			}
-			// FCsData_ProjectilePtr
-			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsData_ProjectilePtr>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsData_ProjectileBasePtr
+			if (StructProperty->Struct == FCsData_ProjectileBasePtr::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsData_ProjectileBasePtr>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FCsData_ProjectileImpactPtr
 			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsData_ProjectileImpactPtr>(JsonObject, StructProperty, InStruct, MemberName); continue; }
@@ -3487,9 +3489,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 		// TSoftClassPtr
 		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
-			// ACsData_Projectile
-			if (SoftClassProperty->MetaClass == ACsData_Projectile::StaticClass())
-			{ WriteToSoftClassPropertyFromJson<ACsData_Projectile>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
+			// ACsData_ProjectileBase
+			if (SoftClassProperty->MetaClass == ACsData_ProjectileBase::StaticClass())
+			{ WriteToSoftClassPropertyFromJson<ACsData_ProjectileBase>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
 			// ACsData_ProjectileImpact
 			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
 			{ WriteToSoftClassPropertyFromJson<ACsData_ProjectileImpact>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
@@ -3831,9 +3833,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				if (StructProperty->Struct == FCsData_FpsWeapon_FireMode_Sounds::StaticStruct())
 				{ WriteToMemberStructPropertyFromJson<FCsData_FpsWeapon_FireMode_Sounds>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			}
-			// FCsData_ProjectilePtr
-			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsData_ProjectilePtr>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsData_ProjectileBasePtr
+			if (StructProperty->Struct == FCsData_ProjectileBasePtr::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsData_ProjectileBasePtr>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FCsData_ProjectileImpactPtr
 			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsData_ProjectileImpactPtr>(JsonObject, StructProperty, InStruct, MemberName); continue; }
@@ -5661,9 +5663,9 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 		// TSoftClassPtr
 		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
-			// ACsData_Projectile
-			if (SoftClassProperty->MetaClass == ACsData_Projectile::StaticClass())
-			{ GetAssetReferenceFromSoftClassProperty<ACsData_Projectile>(SoftClassProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
+			// ACsData_ProjectileBase
+			if (SoftClassProperty->MetaClass == ACsData_ProjectileBase::StaticClass())
+			{ GetAssetReferenceFromSoftClassProperty<ACsData_ProjectileBase>(SoftClassProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
 			// ACsData_ProjectileImpact
 			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
 			{ GetAssetReferenceFromSoftClassProperty<ACsData_ProjectileImpact>(SoftClassProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
@@ -5888,9 +5890,9 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 				if (StructProperty->Struct == FCsData_FpsWeapon_FireMode_Sounds::StaticStruct())
 				{ GetAssetReferencesFromStructProperty<FCsData_FpsWeapon_FireMode_Sounds>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			}
-			// FCsData_ProjectilePtr
-			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
-			{ GetAssetReferencesFromStructProperty<FCsData_ProjectilePtr>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+			// FCsData_ProjectileBasePtr
+			if (StructProperty->Struct == FCsData_ProjectileBasePtr::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsData_ProjectileBasePtr>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 
 			if (Internal)
 			{
@@ -6834,9 +6836,9 @@ void UCsCommon_Load::LoadStructWithTSoftObjectPtrs(const FString &ObjectName, vo
 		// TSoftClassPtr
 		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
-			// ACsData_Projectile
-			if (SoftClassProperty->MetaClass == ACsData_Projectile::StaticClass())
-			{ LoadSoftClassProperty<ACsData_Projectile>(SoftClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, NCsCommonLoadCached::Str::CsData_Projectile, LoadFlags); continue; }
+			// ACsData_ProjectileBase
+			if (SoftClassProperty->MetaClass == ACsData_ProjectileBase::StaticClass())
+			{ LoadSoftClassProperty<ACsData_ProjectileBase>(SoftClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, NCsCommonLoadCached::Str::CsData_ProjectileBase, LoadFlags); continue; }
 			// ACsData_ProjectileImpact
 			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
 			{ LoadSoftClassProperty<ACsData_ProjectileImpact>(SoftClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, NCsCommonLoadCached::Str::CsData_ProjectileImpact, LoadFlags); continue; }
@@ -7135,9 +7137,9 @@ void UCsCommon_Load::LoadStructWithTSoftObjectPtrs(const FString &ObjectName, vo
 				if (StructProperty->Struct == FCsData_FpsWeapon_FireMode_Sounds::StaticStruct())
 				{ LoadMemberStructProperty<FCsData_FpsWeapon_FireMode_Sounds>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 			}
-			// FCsData_ProjectilePtr
-			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
-			{ LoadMemberStructProperty<FCsData_ProjectilePtr>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+			// FCsData_ProjectileBasePtr
+			if (StructProperty->Struct == FCsData_ProjectileBasePtr::StaticStruct())
+			{ LoadMemberStructProperty<FCsData_ProjectileBasePtr>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 
 			if (Internal)
 			{

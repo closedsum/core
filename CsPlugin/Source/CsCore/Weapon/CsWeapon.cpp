@@ -540,7 +540,7 @@ ACsData_Weapon* ACsWeapon::GetMyData_Weapon()
 	return MyData_Weapon.IsValid() ? MyData_Weapon.Get() : nullptr;
 }
 
-ACsData_Projectile* ACsWeapon::GetMyData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged)
+ACsData_ProjectileBase* ACsWeapon::GetMyData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged)
 {
 	return GetMyData_Weapon<ACsData_ProjectileWeapon>()->GetData_Projectile(FireMode, IsCharged);
 }
@@ -1221,7 +1221,7 @@ void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 
 		if (ShortCode == NAME_None)
 		{
-			ACsData_Projectile* Data_Projectile = GetMyData_Projectile(PrimaryFireMode, false);
+			ACsData_ProjectileBase* Data_Projectile = GetMyData_Projectile(PrimaryFireMode, false);
 
 			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::IncrementCurrentAmmo: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
 			check(0);
@@ -1263,7 +1263,7 @@ void ACsWeapon::ResetCurrentAmmo(const int32 &Index)
 
 		if (ShortCode == NAME_None)
 		{
-			ACsData_Projectile* Data_Projectile = GetMyData_Projectile(PrimaryFireMode, false);
+			ACsData_ProjectileBase* Data_Projectile = GetMyData_Projectile(PrimaryFireMode, false);
 
 			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::ResetCurrentAmmo: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
 			check(0);
@@ -1283,7 +1283,7 @@ void ACsWeapon::ResetCurrentAmmo(const int32 &Index)
 
 const FName& ACsWeapon::GetAmmoShortCode(const FECsWeaponFireMode &FireMode, const bool &IsCharged) 
 { 
-	return GetMyData_Projectile<ACsData_Projectile>(FireMode, IsCharged)->GetItemShortCode();
+	return GetMyData_Projectile<ACsData_ProjectileBase>(FireMode, IsCharged)->GetItemShortCode();
 }
 
 int32 ACsWeapon::GetAmmoReserve(const int32 &Index, const FECsWeaponFireMode &FireMode, const bool &IsCharged)
@@ -1303,7 +1303,7 @@ int32 ACsWeapon::GetAmmoReserve(const int32 &Index, const FECsWeaponFireMode &Fi
 
 		if (ShortCode == NAME_None)
 		{
-			ACsData_Projectile* Data_Projectile = GetMyData_Projectile(FireMode, IsCharged);
+			ACsData_ProjectileBase* Data_Projectile = GetMyData_Projectile(FireMode, IsCharged);
 
 			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::GetAmmoReserve: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
 			check(0);
@@ -1320,7 +1320,7 @@ void ACsWeapon::ConsumeAmmo(const FECsWeaponFireMode& FireMode, const bool& IsCh
 	
 	if (GetMyData_Weapon()->UseInventory())
 	{
-		ACsData_Projectile* Data_Projectile = GetMyData_Projectile<ACsData_Projectile>(PrimaryFireMode, false);
+		ACsData_ProjectileBase* Data_Projectile = GetMyData_Projectile<ACsData_ProjectileBase>(PrimaryFireMode, false);
 		const FName& ShortCode = Data_Projectile->GetItemShortCode();
 
 		OnConsumeAmmo_Event.Broadcast(ShortCode);
@@ -1340,7 +1340,7 @@ void ACsWeapon::ConsumeAmmoItem(const FECsWeaponFireMode &FireMode, const bool &
 	if (GetMyData_Weapon()->UseInventory())
 	{
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
-		ACsData_Projectile* Data_Projectile		= GetMyData_Projectile<ACsData_Projectile>(FireMode, IsCharged);
+		ACsData_ProjectileBase* Data_Projectile		= GetMyData_Projectile<ACsData_ProjectileBase>(FireMode, IsCharged);
 		const FName& ShortCode					= Data_Projectile->GetItemShortCode();
 
 		if (ShortCode == NAME_None)
@@ -1776,7 +1776,7 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectile
 	FVector RealDir			  = FirePayload->Direction;
 
 	ACsData_ProjectileWeapon* Data_Weapon	= GetMyData_Weapon<ACsData_ProjectileWeapon>();
-	ACsData_Projectile* Data_Projectile		= Data_Weapon->GetData_Projectile(FireMode, FirePayload->ChargePercent > 0.0f);
+	ACsData_ProjectileBase* Data_Projectile		= Data_Weapon->GetData_Projectile(FireMode, FirePayload->ChargePercent > 0.0f);
 	const bool UseFakeProjectile			= Data_Weapon->UseFakeProjectile(FireMode);
 
 	FVector RealEnd = RealStart;
@@ -1953,7 +1953,7 @@ void ACsWeapon::FireHitscan(const FECsWeaponFireMode &FireMode, const FCsProject
 	//ACsPawn* Pawn					 = GetMyPawn();
 	//ACsPlayerState* MyPlayerState	 = Cast<ACsPlayerState>(Pawn->PlayerState);
 	ACsData_ProjectileWeapon* Data_Weapon	= GetMyData_Weapon<ACsData_ProjectileWeapon>();
-	ACsData_Projectile* Data_Projectile		= Data_Weapon->GetData_Projectile(FireMode, Payload->ChargePercent > 0.0f);
+	ACsData_ProjectileBase* Data_Projectile		= Data_Weapon->GetData_Projectile(FireMode, Payload->ChargePercent > 0.0f);
 	ACsManager_Trace* Manager_Trace			= ACsManager_Trace::Get(GetWorld());
 
 	const ECollisionChannel ProjectileCollision = Data_Projectile->GetCollisionObjectType();

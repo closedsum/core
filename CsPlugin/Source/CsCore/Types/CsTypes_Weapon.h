@@ -3,7 +3,7 @@
 #include "Types/CsTypes_Primitive.h"
 #include "Types/CsTypes_Curve.h"
 #include "Types/CsTypes_Sound.h"
-#include "Types/CsTypes_Projectile.h"
+#include "Managers/Projectile/CsTypes_Projectile.h"
 #include "Types/CsTypes_FX.h"
 #include "Types/CsTypes_Anim.h"
 
@@ -302,10 +302,10 @@ struct FCsData_Weapon_FireMode_Firing
 	bool UseFake;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	FCsData_ProjectilePtr Data;
+	FCsData_ProjectileBasePtr Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	FCsData_ProjectilePtr ChargeData;
+	FCsData_ProjectileBasePtr ChargeData;
 
 	FCsData_Weapon_FireMode_Firing() :
 		DoFireOnRelease(false),
@@ -331,12 +331,12 @@ struct FCsData_Weapon_FireMode_Firing
 	}
 	virtual ~FCsData_Weapon_FireMode_Firing() {}
 
-	class ACsData_Projectile* GetData()
+	class ACsData_ProjectileBase* GetData()
 	{
 		return Data.Get();
 	}
 
-	class ACsData_Projectile* GetChargeData()
+	class ACsData_ProjectileBase* GetChargeData()
 	{
 		return ChargeData.Get();
 	}

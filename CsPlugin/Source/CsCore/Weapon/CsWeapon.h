@@ -368,7 +368,7 @@ public:
 	FBindableDynEvent_CsWeapon_OnApplyDataWeapon OnApplyData_Weapon_ScriptEvent;
 
 	UFUNCTION(BlueprintCallable, Category = "Data")
-	class ACsData_Projectile* GetMyData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged);
+	class ACsData_ProjectileBase* GetMyData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged);
 
 	template<typename T>
 	T* GetMyData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged)

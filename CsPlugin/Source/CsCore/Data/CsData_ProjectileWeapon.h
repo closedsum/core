@@ -4,6 +4,8 @@
 #include "Types/CsTypes_Weapon.h"
 #include "CsData_ProjectileWeapon.generated.h"
 
+class ACsData_ProjectileBase;
+
 UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsData_ProjectileWeapon : public ACsData_Weapon
 {
@@ -19,7 +21,7 @@ class CSCORE_API ACsData_ProjectileWeapon : public ACsData_Weapon
 
 	virtual const bool& UseFakeProjectile(const FECsWeaponFireMode &FireMode);
 	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
-	virtual class ACsData_Projectile* GetData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged = false);
+	virtual ACsData_ProjectileBase* GetData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
 	virtual const FName& GetMuzzleBone(const TEnumAsByte<ECsViewType::Type> &ViewType, const FECsWeaponFireMode &FireMode, const uint8 &Index = 0);

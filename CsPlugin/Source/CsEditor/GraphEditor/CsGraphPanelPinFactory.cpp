@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "GraphEditor/CsGraphPanelPinFactory.h"
 #include "CsEditor.h"
+
 // Types
 #include "Types/CsTypes.h"
 #include "Managers/Input/CsTypes_Input.h"
@@ -13,7 +14,7 @@
 #include "Types/CsTypes_Interactive.h"
 #include "Types/CsTypes_AI.h"
 #include "Types/CsTypes_Sense.h"
-#include "Types/CsTypes_Projectile.h"
+#include "Managers/Projectile/CsTypes_Projectile.h"
 
 #include "SlateBasics.h"
 

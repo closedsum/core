@@ -7,7 +7,7 @@
 #include "Managers/Projectile/CsProjectileBase.h"
 #include "Game/CsGameState.h"
 // Data
-#include "Data/CsData_Projectile.h"
+#include "Data/CsData_ProjectileBase.h"
 
 // static initializations
 TWeakObjectPtr<UObject> AICsManager_Projectile::MyOwner;

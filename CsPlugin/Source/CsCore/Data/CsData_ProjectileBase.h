@@ -2,12 +2,12 @@
 #pragma once
 #include "Data/CsData.h"
 #include "Types/CsTypes_View.h"
-#include "Types/CsTypes_Projectile.h"
+#include "Managers/Projectile/CsTypes_Projectile.h"
 #include "Types/CsTypes_FX.h"
-#include "CsData_Projectile.generated.h"
+#include "CsData_ProjectileBase.generated.h"
 
 UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
-class CSCORE_API ACsData_Projectile : public ACsData
+class CSCORE_API ACsData_ProjectileBase : public ACsData
 {
 	GENERATED_UCLASS_BODY()
 

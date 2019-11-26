@@ -5,49 +5,41 @@
 #include "CsTypes_Projectile.generated.h"
 #pragma once
 
-// ACsData_Projectile
+// ACsData_ProjectileBase
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsData_ProjectilePtr
+struct CSCORE_API FCsData_ProjectileBasePtr
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TSoftClassPtr<class ACsData_Projectile> Data;
+	TSoftClassPtr<class ACsData_ProjectileBase> Data;
 
 	UPROPERTY(EditAnywhere, Category = "Data", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Data_LoadFlags;
 
 private:
 	UPROPERTY(Transient)
-	class ACsData_Projectile* Data_Internal;
+	class ACsData_ProjectileBase* Data_Internal;
 
 public:
-	FCsData_ProjectilePtr() :
+	FCsData_ProjectileBasePtr() :
 		Data_LoadFlags(0),
 		Data_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Data_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	FORCEINLINE FCsData_ProjectilePtr& operator=(const FCsData_ProjectilePtr& B)
-	{
-		Data = B.Data;
-		Data_LoadFlags = B.Data_LoadFlags;
-		Data_Internal = B.Data_Internal;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsData_ProjectilePtr& B) const
+	FORCEINLINE bool operator==(const FCsData_ProjectileBasePtr& B) const
 	{
 		return Data == B.Data && Data_LoadFlags == B.Data_LoadFlags && Data_Internal == B.Data_Internal;
 	}
 
-	FORCEINLINE bool operator!=(const FCsData_ProjectilePtr& B) const
+	FORCEINLINE bool operator!=(const FCsData_ProjectileBasePtr& B) const
 	{
 		return !(*this == B);
 	}
 
-	FORCEINLINE class ACsData_Projectile* Get() const
+	FORCEINLINE class ACsData_ProjectileBase* Get() const
 	{
 		return Data_Internal;
 	}
@@ -547,6 +539,8 @@ struct CSCORE_API FCsProjectileFirePayload
 	}
 };
 
+class ACsData_ProjectileBase;
+
 struct CSCORE_API FCsProjectilePayload : public ICsPooledObjectPayload
 {
 public:
@@ -561,7 +555,7 @@ public:
 
 	TEnumAsByte<ECsProjectileRelevance::Type> Relevance;
 
-	TWeakObjectPtr<class ACsData_Projectile> Data;
+	TWeakObjectPtr<ACsData_ProjectileBase> Data;
 
 	float ChargePercent;
 
@@ -677,7 +671,7 @@ public:
 		HomingAccelerationMagnitude = Payload->HomingAccelerationMagnitude;
 	}
 
-	FORCEINLINE ACsData_Projectile* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	FORCEINLINE ACsData_ProjectileBase* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 	template<typename T>
 	FORCEINLINE T* GetData() { return Cast<T>(GetData()); }
 

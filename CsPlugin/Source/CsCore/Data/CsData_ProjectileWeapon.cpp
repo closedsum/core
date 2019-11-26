@@ -3,7 +3,7 @@
 #include "CsCore.h"
 
 // Data
-#include "Data/CsData_Projectile.h"
+#include "Data/CsData_ProjectileBase.h"
 // Managers
 #include "Managers/Sound/CsManager_Sound.h"
 
@@ -21,7 +21,7 @@ UScriptStruct* ACsData_ProjectileWeapon::GetFireModeScriptStruct() { return null
 float ACsData_ProjectileWeapon::GetLocationDamageModifier(const FECsWeaponFireMode &FireMode, const FName &Bone) { return 1.0f; }
 
 const bool& ACsData_ProjectileWeapon::UseFakeProjectile(const FECsWeaponFireMode &FireMode) { return NCsCached::Ref::False; }
-ACsData_Projectile* ACsData_ProjectileWeapon::GetData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged) { return nullptr; }
+ACsData_ProjectileBase* ACsData_ProjectileWeapon::GetData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged) { return nullptr; }
 
 const FName& ACsData_ProjectileWeapon::GetMuzzleBone(const TEnumAsByte<ECsViewType::Type> &ViewType, const FECsWeaponFireMode &FireMode, const uint8 &Index /*=0*/) { return NCsCached::Name::None; }
 const FName& ACsData_ProjectileWeapon::GetMuzzleBone(const FECsWeaponFireMode &FireMode, const uint8 &Index /*=0*/){ return NCsCached::Name::None; }

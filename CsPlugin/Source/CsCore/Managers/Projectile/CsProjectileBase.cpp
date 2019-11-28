@@ -120,7 +120,7 @@ void ACsProjectileBase::OnTick_HandleCVars(const float &DeltaSeconds)
 void ACsProjectileBase::OnTick_HandleMovementFunction(const float &DeltaSeconds)
 {
 	ACsData_ProjectileBase* Data			 = Cache.GetData();
-	const TCsProjectileMovement MovementType = Data->GetMovementType();
+	const ECsProjectileMovement MovementType = Data->GetMovementType();
 
 	if (MovementType != ECsProjectileMovement::Function)
 		return;
@@ -187,7 +187,7 @@ FVector ACsProjectileBase::EvaluateMovementFunction(const float &Time)
 	return Cache.GetData()->EvaluateMovementFunction(Time, Cache.Location, Cache.Transform);
 }
 
-void ACsProjectileBase::Init(const int32 &Index, const FECsProjectileType& InType)
+void ACsProjectileBase::Init(const int32& Index, const FECsProjectile& InType)
 {
 	PoolIndex = Index;
 	Type	  = InType;
@@ -195,7 +195,7 @@ void ACsProjectileBase::Init(const int32 &Index, const FECsProjectileType& InTyp
 	Cache.Set(Index, this);
 }
 
-void ACsProjectileBase::Allocate(FCsProjectilePayload* Payload)
+void ACsProjectileBase::Allocate(FCsProjectileBasePayload* Payload)
 {
 	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
 
@@ -203,7 +203,7 @@ void ACsProjectileBase::Allocate(FCsProjectilePayload* Payload)
 
 }
 
-void ACsProjectileBase::Allocate_Internal(FCsProjectilePayload* Payload)
+void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 {
 #if WITH_EDITOR 
 	if (Override_Allocate_Internal_ScriptEvent.IsBound())
@@ -225,7 +225,7 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectilePayload* Payload)
 	ACsData_Weapon* Data_Weapon			= OwnerWeapon ? OwnerWeapon->GetMyData_Weapon() : nullptr;
 	ACsData_ProjectileBase* Data_Projectile = Cache.GetData();
 
-	const TCsProjectileRelevance Relevance = Cache.Relevance;
+	const ECsProjectileRelevance& Relevance = Cache.Relevance;
 
 	SetActorHiddenInGame(false);
 
@@ -355,7 +355,7 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectilePayload* Payload)
 	
 	SetActorTickEnabled(true);
 
-	const TCsProjectileMovement MovementType = Data_Projectile->GetMovementType();
+	const ECsProjectileMovement MovementType = Data_Projectile->GetMovementType();
 
 	// Simulated
 	if (MovementType == ECsProjectileMovement::Simulated)

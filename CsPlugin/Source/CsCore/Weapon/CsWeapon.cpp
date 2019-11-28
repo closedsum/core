@@ -1822,10 +1822,10 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectile
 
 	// Allocate Projectiles
 	ACsGameState* GameState					  = GetWorld()->GetGameState<ACsGameState>();
-	AICsManager_Projectile* Manager_Projectile = GameState->Manager_Projectile;
+	UCsManager_Projectile* Manager_Projectile = GameState->Manager_Projectile;
 	
 	// Real
-	FCsProjectilePayload* Payload = Manager_Projectile->AllocatePayload();
+	FCsProjectileBasePayload* Payload = nullptr;// Manager_Projectile->AllocatePayload<FCsProjectileBasePayload>(Data_Projectile->GetProjectileType());
 
 	Payload->Relevance = UseFakeProjectile ? ECsProjectileRelevance::RealInvisible : ECsProjectileRelevance::RealVisible;
 	Payload->Instigator = GetMyOwner();
@@ -1837,7 +1837,7 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectile
 
 	Payload->Set(FirePayload);
 
-	ACsProjectileBase* RealProjectile = Manager_Projectile->Fire(Data_Projectile->GetProjectileType(), Payload);
+	ACsProjectileBase* RealProjectile = nullptr;// Manager_Projectile->Fire(Data_Projectile->GetProjectileType(), Payload);
 
 	const bool IsLocalPawn = UCsCommon::IsLocalPawn(GetWorld(), GetMyPawn());
 
@@ -1851,7 +1851,7 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectile
 	// Fake
 	if (UseFakeProjectile)
 	{
-		FCsProjectilePayload* FakePayload = Manager_Projectile->AllocatePayload();
+		FCsProjectileBasePayload* FakePayload = nullptr;// Manager_Projectile->AllocatePayload<FCsProjectileBasePayload>(Data_Projectile->GetProjectileType());
 
 		FakePayload->Relevance	= ECsProjectileRelevance::Fake;
 		FakePayload->Instigator = GetMyOwner();
@@ -1864,7 +1864,7 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectile
 
 		FakePayload->Set(FakeFirePayload);
 
-		ACsProjectileBase* FakeProjectile = Manager_Projectile->Fire(Data_Projectile->GetProjectileType(), FakePayload);
+		ACsProjectileBase* FakeProjectile = nullptr;// Manager_Projectile->Fire(Data_Projectile->GetProjectileType(), FakePayload);
 
 		FakeFirePayload->Reset();
 

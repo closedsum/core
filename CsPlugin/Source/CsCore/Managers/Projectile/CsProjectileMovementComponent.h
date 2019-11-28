@@ -10,7 +10,7 @@ class CSCORE_API UCsProjectileMovementComponent : public UProjectileMovementComp
 	GENERATED_UCLASS_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ProjectileSimulation)
-	TEnumAsByte<ECsProjectileMovement::Type> MovementType;
+	ECsProjectileMovement MovementType;
 
 	virtual bool ShouldUseSubStepping() const;
 };

@@ -58,6 +58,9 @@ namespace NCsPoolTransaction
 
 #pragma endregion PoolTransaction
 
+// PoolTransactionOrder
+#pragma region
+
 UENUM(BlueprintType)
 enum class ECsPoolTransactionOrder : uint8
 {
@@ -85,6 +88,11 @@ namespace NCsPoolTransactionOrder
 	extern CSCORE_API const uint8 MAX;
 }
 
+#pragma endregion PoolTransactionOrder
+
+// PooledObjectState
+#pragma region
+
 UENUM(BlueprintType)
 enum class ECsPooledObjectState : uint8
 {
@@ -111,6 +119,8 @@ namespace NCsPooledObjectState
 		extern CSCORE_API const Type ECsPooledObjectState_MAX;
 	}
 }
+
+#pragma endregion PooledObjectState
 
 // PooledObjectConstruction
 #pragma region
@@ -143,6 +153,9 @@ namespace NCsPooledObjectConstruction
 }
 
 #pragma endregion PooledObjectContruction
+
+// FCsPooledObjectCache
+#pragma region
 
 class UObject;
 
@@ -250,6 +263,11 @@ public:
 	}
 };
 
+#pragma endregion FCsPooledObjectCache
+
+// ICsPooledObjectPayload
+#pragma region
+
 class UObject;
 
 struct CSCORE_API ICsPooledObjectPayload
@@ -270,6 +288,11 @@ public:
 
 	virtual void Reset() = 0;
 };
+
+#pragma endregion ICsPooledObjectPayload
+
+// FCsPooledObjectPayload
+#pragma region
 
 class UObject;
 
@@ -332,6 +355,11 @@ public:
 #pragma endregion ICsPooledObjectPayload
 };
 
+#pragma endregion FCsPooledObjectPayload
+
+// ICsPooledObjectCache
+#pragma region
+
 class UObject;
 struct ICsPooledObjectPayload;
 
@@ -374,166 +402,4 @@ struct CSCORE_API ICsPooledObjectCache
 	virtual void Reset() = 0;
 };
 
-class UObject;
-class ICsPooledObject;
-
-struct CSCORE_API FCsPooledObject
-{
-public:
-
-	static const FCsPooledObject Empty;
-
-private:
-
-	ICsPooledObject* Interface;
-	TWeakObjectPtr<UObject> WeakObject;
-	UObject* Object;
-
-	bool bObject;
-
-public:
-
-	FCsPooledObject() :
-		Interface(nullptr),
-		WeakObject(nullptr),
-		Object(nullptr),
-		bObject(false)
-	{
-	}
-
-	virtual ~FCsPooledObject() {}
-
-public:
-
-	ICsPooledObject* GetInterface() const
-	{
-		return Interface;
-	}
-
-	void SetInterface(ICsPooledObject* InInterface)
-	{
-		Interface = InInterface;
-	}
-
-	UObject* GetSafeObject() const
-	{
-		return WeakObject.IsValid() ? WeakObject.Get() : nullptr;
-	}
-
-	template<typename T>
-	T* GetSafeObject() const
-	{
-		return Cast<T>(GetSafeObject());
-	}
-
-	UObject* GetObject() const
-	{
-		return Object;
-	}
-
-	template<typename T>
-	T* GetObject() const
-	{
-		return Cast<T>(GetObject());
-	}
-
-	void SetObject(UObject* InObject)
-	{
-		Object = InObject;
-		WeakObject = Object;
-		bObject = Object != nullptr;
-	}
-
-	const bool& IsObject() const
-	{
-		return bObject;
-	}
-
-	bool IsValid() const
-	{
-		return Interface != nullptr;
-	}
-};
-
-class UWorld;
-class UObject;
-class UClass;
-
-struct CSCORE_API FCsManagerPooledObjectConstructParams
-{
-public:
-
-	UClass* Class;
-
-	FString ClassName;
-
-	ECsPooledObjectConstruction ConstructionType;
-
-	FActorSpawnParameters ConstructionInfo;
-
-	bool bReplicates;
-
-	FCsManagerPooledObjectConstructParams() :
-		Class(nullptr),
-		ClassName(),
-		ConstructionType(ECsPooledObjectConstruction::Object),
-		ConstructionInfo(),
-		bReplicates(false)
-	{
-	}
-
-	virtual ~FCsManagerPooledObjectConstructParams() {}
-};
-
-struct CSCORE_API FCsManagerPooledObjectParams
-{
-public:
-
-	FString Name;
-
-	UWorld* World;
-
-	FECsCVarLog LogType;
-
-	FCsManagerPooledObjectConstructParams ConstructParams;
-
-	FCsManagerPooledObjectParams() :
-		Name(),
-		World(nullptr),
-		LogType(),
-		ConstructParams()
-	{
-	}
-
-	virtual ~FCsManagerPooledObjectParams() {}
-};
-
-class UWorld;
-class UObject;
-class ICsPooledObject;
-
-DECLARE_MULTICAST_DELEGATE_OneParam(FCsManagerPooledObject_OnAddToPool, const FCsPooledObject&);
-
-DECLARE_DELEGATE_OneParam(FCsManagerPooledObject_CreatePayloads, const int32&)
-
-class UWorld;
-
-class CSCORE_API ICsManager_PooledObject
-{
-	virtual void Clear() = 0;
-	virtual void Shutdown() = 0;
-
-	virtual UWorld* GetCurrentWorld() = 0;
-};
-
-class CSCORE_API ICsManager_PooledObject_Map
-{
-public:
-
-	virtual ~ICsManager_PooledObject_Map() {}
-
-	virtual void Clear() = 0;
-	virtual void Shutdown() = 0;
-
-	virtual UWorld* GetCurrentWorld() = 0;
-};
+#pragma endregion ICsPooledObjectCache

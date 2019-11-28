@@ -76,7 +76,7 @@
 		// Sense
 #include "DetailCustomizations/EnumStruct/Sense/ECsSenseActorTypeCustomization.h"
 		// Projectile
-#include "DetailCustomizations/EnumStruct/Projectile/ECsProjectileTypeCustomization.h"
+#include "DetailCustomizations/EnumStruct/Projectile/ECsProjectileCustomization.h"
 	// ShortCode
 #include "DetailCustomizations/ShortCode/CsDataShortCodeCustomization.h"
 
@@ -149,7 +149,7 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 			// Sense
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsSenseActorType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSenseActorTypeCustomization::MakeInstance));
 			// Projectile
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsProjectileType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProjectileTypeCustomization::MakeInstance));
+			PropertyModule.RegisterCustomPropertyTypeLayout("ECsProjectile", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProjectileCustomization::MakeInstance));
 		}
 		// ShortCode
 		{

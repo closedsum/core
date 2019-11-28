@@ -1,8 +1,177 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 
 #pragma once
-#include "Managers/Pool/CsTypes_Pool.h"
+#include "Managers/Pool/CsPooledObject.h"
 #include "CsCVars.h"
+
+// Structs
+#pragma region
+
+class UWorld;
+class UObject;
+class UClass;
+
+struct CSCORE_API FCsManagerPooledObjectConstructParams
+{
+public:
+
+	UClass* Class;
+
+	FString ClassName;
+
+	ECsPooledObjectConstruction ConstructionType;
+
+	FActorSpawnParameters ConstructionInfo;
+
+	bool bReplicates;
+
+	FCsManagerPooledObjectConstructParams() :
+		Class(nullptr),
+		ClassName(),
+		ConstructionType(ECsPooledObjectConstruction::Object),
+		ConstructionInfo(),
+		bReplicates(false)
+	{
+	}
+
+	virtual ~FCsManagerPooledObjectConstructParams() {}
+};
+
+struct CSCORE_API FCsManagerPooledObjectParams
+{
+public:
+
+	FString Name;
+
+	UWorld* World;
+
+	FECsCVarLog LogType;
+
+	FCsManagerPooledObjectConstructParams ConstructParams;
+
+	FCsManagerPooledObjectParams() :
+		Name(),
+		World(nullptr),
+		LogType(),
+		ConstructParams()
+	{
+	}
+
+	virtual ~FCsManagerPooledObjectParams() {}
+};
+
+#pragma endregion Structs
+
+// ICsManager_PooledObject
+#pragma region
+
+class UWorld;
+class UObject;
+class ICsPooledObject;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FCsManagerPooledObject_OnAddToPool, const FCsPooledObject& /*Object*/);
+
+DECLARE_DELEGATE_OneParam(FCsManagerPooledObject_CreatePayloads, const int32& /*Size*/);
+
+class CSCORE_API ICsManager_PooledObject
+{
+public:
+
+	virtual ~ICsManager_PooledObject() {}
+
+	virtual void Init(const FCsManagerPooledObjectParams& Params)  = 0;
+
+	virtual void Clear() = 0;
+	virtual void Shutdown() = 0;
+
+	virtual UWorld* GetCurrentWorld() = 0;
+
+	virtual float GetCurrentTimeSeconds() = 0;
+
+// Object
+#pragma region
+public:
+
+	virtual FCsPooledObject ConstructObject() = 0;
+
+	virtual void DeconstructObject(const FCsPooledObject& Object) = 0;
+
+	virtual FString GetObjectName(const FCsPooledObject& Object) = 0;
+
+#pragma endregion Object
+
+// Pool
+#pragma region
+public:
+
+	virtual void CreatePool(const int32& Size) = 0;
+
+	virtual void AddToPool(ICsPooledObject* PooledObject, UObject* Object) = 0;
+	virtual void AddToPool(ICsPooledObject* Object) = 0;
+
+	virtual FCsManagerPooledObject_OnAddToPool& GetOnAddToPool_Event() = 0;
+
+	virtual void AddToActivePool(ICsPooledObject* PooledObject, UObject* Object) = 0;
+	virtual void AddToActivePool(ICsPooledObject* Object) = 0;
+
+	virtual const TArray<FCsPooledObject>& GetAllActiveObjects() = 0;
+
+	virtual const TArray<FCsPooledObject>& GetObjects() = 0;
+
+	virtual const int32& GetPoolSize() = 0;
+	virtual int32 GetActivePoolSize() = 0;
+
+	virtual bool IsExhausted() = 0;
+
+	virtual const FCsPooledObject& FindObject(const int32& Index) = 0;
+	virtual const FCsPooledObject& FindObject(ICsPooledObject* Object) = 0;
+
+#pragma endregion Pool
+
+// Tick
+#pragma region
+public:
+
+	virtual void OnTick(const float &DeltaTime) = 0;
+
+#pragma endregion Tick
+
+// Payload
+#pragma region
+public:
+
+	virtual void CreatePayloads(const int32& Size) = 0;
+
+	virtual FCsManagerPooledObject_CreatePayloads& GetCreatePayloads_Impl() = 0;
+
+	virtual void DestroyPayloads() = 0;
+
+	virtual ICsPooledObjectPayload* AllocatePayload() = 0;
+
+#pragma endregion Payload
+
+// Spawn
+#pragma region
+public:
+
+	virtual const FCsPooledObject& Spawn(ICsPooledObjectPayload* Payload) = 0;
+
+#pragma endregion Spawn
+
+// Destroy
+#pragma region
+public:
+
+	virtual bool Destroy(const int32& Index) = 0;
+	virtual bool Destroy(ICsPooledObject* Object) = 0;
+
+#pragma endregion Destroy
+};
+
+#pragma endregion ICsManager_PooledObject
+
+// Enums
+#pragma region
 
 enum class ECsManagerPooledObjectFunctionNames : uint8
 {
@@ -12,6 +181,8 @@ enum class ECsManagerPooledObjectFunctionNames : uint8
 	Spawn,
 	ECsManagerPooledObjectFunctionNames_MAX,
 };
+
+#pragma endregion Enums
 
 class UWorld;
 class UObject;
@@ -51,11 +222,17 @@ public:
 	*/
 	virtual FCsPooledObject ConstructObject();
 
-	DECLARE_DELEGATE_RetVal(FCsPooledObject, FConstructObject)
+	/**
+	*
+	*/
+	DECLARE_DELEGATE_RetVal(FCsPooledObject /*Object*/, FConstructObject)
 
 	FConstructObject ConstructObject_Impl;
 
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnConstructObject, const FCsPooledObject&);
+	/*
+	*
+	*/
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnConstructObject, const FCsPooledObject& /*Object*/);
 
 	FOnConstructObject OnConstructObject_Event;
 

@@ -3,16 +3,16 @@
 #include "DetailCustomizations/EnumStruct/ECsEnumStructCustomization.h"
 
 /**
-* Customizes a FECsProjectiveType property to use a dropdown
+* Customizes a FECsProjective property to use a dropdown
 */
-class CSEDITOR_API FECsProjectileTypeCustomization : public FECsEnumStructCustomization
+class CSEDITOR_API FECsProjectileCustomization : public FECsEnumStructCustomization
 {
 private:
 	typedef FECsEnumStructCustomization Super;
 
 public:
 
-	FECsProjectileTypeCustomization();
+	FECsProjectileCustomization();
 
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
 

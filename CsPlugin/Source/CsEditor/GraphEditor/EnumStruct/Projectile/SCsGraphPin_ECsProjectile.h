@@ -2,10 +2,10 @@
 #pragma once
 #include "GraphEditor/EnumStruct/SCsGraphPin_EnumStruct.h"
 
-class SCsGraphPin_ECsProjectileType : public SCsGraphPin_EnumStruct
+class SCsGraphPin_ECsProjectile : public SCsGraphPin_EnumStruct
 {
 public:
-	SLATE_BEGIN_ARGS(SCsGraphPin_ECsProjectileType) {}
+	SLATE_BEGIN_ARGS(SCsGraphPin_ECsProjectile) {}
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj);

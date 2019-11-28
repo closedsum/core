@@ -151,12 +151,22 @@ FCsPooledObject FCsManager_PooledObject::ConstructObject()
 
 		checkf(Actor, TEXT("%s:ContructObject: Actor did NOT spawn."), *Name);
 
-		ICsPooledObject* O = Cast<ICsPooledObject>(Actor);
-
-		checkf(O, TEXT("%s:ContructObject: Actor: %s does NOT implement the interface: ICsPooledObject."), *Name, *(Actor->GetName()));
-
 		FCsPooledObject Object;
-		Object.SetInterface(O);
+
+		if (ICsPooledObject* O = Cast<ICsPooledObject>(Actor))
+		{
+			Object.SetInterface(O);
+		}
+		else
+		if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
+		{
+			Object.SetScript();
+		}
+		else
+		{
+			checkf(false, TEXT("%s:ContructObject: Actor: %s does NOT implement the interface: ICsPooledObject."), *Name, *(Actor->GetName()));
+		}
+
 		Object.SetObject(Actor);
 
 		OnConstructObject_Event.Broadcast(Object);
@@ -193,13 +203,26 @@ void FCsManager_PooledObject::CreatePool(const int32& Size)
 
 	for (int32 I = 0; I < Size; ++I)
 	{
-		FCsPooledObject O		   = ConstructObject_Impl.Execute();
+		FCsPooledObject O = ConstructObject_Impl.Execute();
+
+#if WITH_EDITOR
+		if (O.IsScript())
+		{
+			checkf(O.Script_GetCache_Impl.IsBound(), TEXT("%s:CreatePool: Failed to Construct Object with Class: %s. Script_GetCache_Impl is NOT bound for Object implementing script interface."));
+
+			checkf(O.Script_Allocate_Impl.IsBound(), TEXT("%s:CreatePool: Failed to Construct Object with Class: %s. Script_Allocate_Impl is NOT bound for Object implementing script interface."));
+
+			checkf(O.Script_Deallocate_Impl.IsBound(), TEXT("%s:CreatePool: Failed to Construct Object with Class: %s. Script_Deallocate_Impl is NOT bound for Object implementing script interface."));
+		}
+#endif // #if WTIH_EDITOR
+
 		ICsPooledObject* Interface = O.GetInterface();
 
 		checkf(Interface, TEXT("%s:CreatePool: Failed to Construct Object with Class: %s."), *Name, *(ConstructParams.ClassName));
 
-		Interface->GetCache()->Init(I);
-		Interface->Deallocate();
+		O.GetCache()->Init(I);
+		O.Deallocate();
+
 		Pool.Add(O);
 
 		// Add Link
@@ -267,8 +290,7 @@ void FCsManager_PooledObject::AddToActivePool(ICsPooledObject* Object)
 
 void FCsManager_PooledObject::AddToActivePool_Internal(const FCsPooledObject& Object)
 {
-	ICsPooledObject* Interface = Object.GetInterface();
-	const int32& Index		   = Interface->GetCache()->GetIndex();
+	const int32& Index = Object.GetCache()->GetIndex();
 
 	TLinkedList<FCsPooledObject>* Link = Links[Index];
 
@@ -370,14 +392,12 @@ void FCsManager_PooledObject::OnTick(const float &DeltaTime)
 		FCsPooledObject& O = **Current;
 		Next			   = Current->GetNextLink();
 
-		ICsPooledObject* Interface = O.GetInterface();
-
 		// Check if ObjectType was Deallocated NOT in a normal way (i.e. Out of Bounds)
 
-		if (!Interface->GetCache()->IsAllocated())
+		if (!O.GetCache()->IsAllocated())
 		{
 #if !UE_BUILD_SHIPPING
-			UE_LOG(LogCs, Warning, TEXT("%s::OnTick: %s: %s at PoolIndex: %d was prematurely deallocated NOT in a normal way."), *Name, *(ConstructParams.ClassName), *(GetObjectName(O)), Interface->GetCache()->GetIndex());
+			UE_LOG(LogCs, Warning, TEXT("%s::OnTick: %s: %s at PoolIndex: %d was prematurely deallocated NOT in a normal way."), *Name, *(ConstructParams.ClassName), *(GetObjectName(O)), O.GetCache()->GetIndex());
 
 			LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::OnTick], ECsPoolTransaction::Deallocate, O);
 #endif // #if !UE_BUILD_SHIPPING
@@ -385,18 +405,18 @@ void FCsManager_PooledObject::OnTick(const float &DeltaTime)
 			continue;
 		}
 
-		if (!Interface->GetCache()->UseLifeTime())
+		if (!O.GetCache()->UseLifeTime())
 		{
 			OnTick_Handle_Object.ExecuteIfBound(O);
 			continue;
 		}
 
-		if (GetCurrentTimeSeconds() - Interface->GetCache()->GetTime() > Interface->GetCache()->GetLifeTime())
+		if (GetCurrentTimeSeconds() - O.GetCache()->GetTime() > O.GetCache()->GetLifeTime())
 		{
 #if !UE_BUILD_SHIPPING
 			LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::OnTick], ECsPoolTransaction::Deallocate, O);
 #endif // #if !UE_BUILD_SHIPPING
-			Interface->Deallocate();
+			O.Deallocate();
 			RemoveActiveLink(Current);
 
 			OnDeallocate_Event.Broadcast(O);
@@ -437,11 +457,9 @@ const FCsPooledObject& FCsManager_PooledObject::Allocate(ICsPooledObjectPayload*
 		PoolIndex		   = (PoolIndex + 1) % PoolSize;
 		FCsPooledObject& O = Pool[PoolIndex];
 		
-		ICsPooledObject* Interface = O.GetInterface();
-
-		if (!Interface->GetCache()->IsAllocated())
+		if (!O.GetCache()->IsAllocated())
 		{
-			Interface->Allocate(Payload);
+			O.Allocate(Payload);
 			return O;
 		}
 	}
@@ -477,7 +495,7 @@ bool FCsManager_PooledObject::Deallocate(const int32& Index)
 	LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Deallocate], ECsPoolTransaction::Deallocate, O);
 #endif // #if !UE_BUILD_SHIPPING
 
-	O.GetInterface()->Deallocate();
+	O.Deallocate();
 	RemoveActiveLink(Link);
 
 	TLinkedList<FCsPooledObject>* Current = ActiveHead;
@@ -516,7 +534,7 @@ void FCsManager_PooledObject::DeallocateAll()
 #if !UE_BUILD_SHIPPING
 		LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::DeallocateAll], ECsPoolTransaction::Deallocate, O);
 #endif // #if !UE_BUILD_SHIPPING
-		O.GetInterface()->Deallocate();
+		O.Deallocate();
 		OnDeallocate_Event.Broadcast(O);
 	}
 

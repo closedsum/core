@@ -6,7 +6,7 @@ class UObject;
 template<typename ObjectType>
 struct TCsWeakObjectPtr
 {
-	static_assert(std::is_base_of<UObject, ObjectType>(), "");
+	static_assert(std::is_base_of<UObject, ObjectType>(), "TCsWeakObjectPtr: ObjectType does not extend from UObject.");
 
 private:
 

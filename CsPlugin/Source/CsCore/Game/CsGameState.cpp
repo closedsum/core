@@ -180,12 +180,14 @@ void ACsGameState::SeamlessTravelTransitionCheckpoint(bool bToTransitionMap)
 
 	}
 	// Manager Projectile
+	/*
 	if (Manager_Projectile && !Manager_Projectile->IsPendingKill())
 	{
 		Manager_Projectile->Destroy(true);
 		Manager_Projectile = nullptr;
 
 	}
+	*/
 	// Manager Damage
 	if (Manager_Damage && !Manager_Damage->IsPendingKill())
 	{

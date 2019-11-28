@@ -333,7 +333,7 @@ struct CSCORE_API FCsDamageEvent
 	FECsHitType HitType;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	//TEnumAsByte<EProjectileType::Type> ProjectileType;
+	//EProjectileType ProjectileType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	bool HasImpulse;

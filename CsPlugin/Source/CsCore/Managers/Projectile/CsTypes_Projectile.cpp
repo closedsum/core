@@ -2,79 +2,89 @@
 #include "Managers/Projectile/CsTypes_Projectile.h"
 
 // ProjectileRelevance
-EMCsProjectileRelevance* EMCsProjectileRelevance::Instance;
+#pragma region
 
-EMCsProjectileRelevance& EMCsProjectileRelevance::Get()
-{
-	if (!Instance)
-		Instance = new EMCsProjectileRelevance();
-	return *Instance;
-}
-
-namespace ECsProjectileRelevance
+namespace NCsProjectileRelevance
 {
 	namespace Ref
 	{
-		CSCORE_API const Type RealVisible = EMCsProjectileRelevance::Get().Add(Type::RealVisible, TEXT("RealVisible"), TEXT("Real Visible"));
-		CSCORE_API const Type RealInvisible = EMCsProjectileRelevance::Get().Add(Type::RealInvisible, TEXT("RealInvisible"), TEXT("Real Invisible"));
-		CSCORE_API const Type Fake = EMCsProjectileRelevance::Get().Add(Type::Fake, TEXT("Fake"));
-		CSCORE_API const Type ECsProjectileRelevance_MAX = EMCsProjectileRelevance::Get().Add(Type::ECsProjectileRelevance_MAX, TEXT("ECsProjectileRelevance_MAX"), TEXT("MAX"));
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsProjectileRelevance, RealVisible, "Real Visible");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsProjectileRelevance, RealInvisible, "Real Invisible");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsProjectileRelevance, Fake);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsProjectileRelevance, ECsProjectileRelevance_MAX, "MAX");
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsProjectileRelevance_MAX;
 }
 
-// ProjectileType
-CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsProjectileType)
+#pragma endregion ProjectileRelevance
 
 // ProjectileState
-CS_DEFINE_ENUM_MAP_BODY(EMCsProjectileState)
+#pragma region
 
-namespace ECsProjectileState
+namespace NCsProjectileState
 {
 	namespace Ref
 	{
-		CSCORE_API const Type Active = EMCsProjectileState::Get().Add(Type::Active, TEXT("Active"));
-		CSCORE_API const Type DeActivating = EMCsProjectileState::Get().Add(Type::DeActivating, TEXT("DeActivating"));
-		CSCORE_API const Type InActive = EMCsProjectileState::Get().Add(Type::InActive, TEXT("InActive"));
-		CSCORE_API const Type ECsProjectileState_MAX = EMCsProjectileState::Get().Add(Type::ECsProjectileState_MAX, TEXT("ECsProjectileState_MAX"), TEXT("MAX"));
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsProjectileState, Active);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsProjectileState, DeActivating);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsProjectileState, InActive);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsProjectileState, ECsProjectileState_MAX, "MAX");
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsProjectileState_MAX;
 }
+
+#pragma endregion ProjectileState
 
 // ProjectileDeActivate
-CS_DEFINE_ENUM_MAP_BODY(EMCsProjectileDeActivate)
+#pragma region
 
-namespace ECsProjectileDeActivate
+namespace NCsProjectileDeActivate
 {
 	namespace Ref
 	{
-		CSCORE_API const Type Collision = EMCsProjectileDeActivate::Get().Add(Type::Collision, TEXT("Collision"));
-		CSCORE_API const Type Movement = EMCsProjectileDeActivate::Get().Add(Type::Movement, TEXT("Movement"));
-		CSCORE_API const Type Mesh = EMCsProjectileDeActivate::Get().Add(Type::Mesh, TEXT("Mesh"));
-		CSCORE_API const Type ECsProjectileDeActivate_MAX = EMCsProjectileDeActivate::Get().Add(Type::ECsProjectileDeActivate_MAX, TEXT("ECsProjectileDeActivate_MAX"), TEXT("MAX"));
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsProjectileDeActivate, Collision);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsProjectileDeActivate, Movement);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsProjectileDeActivate, Mesh);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsProjectileDeActivate, ECsProjectileDeActivate_MAX, "MAX");
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsProjectileDeActivate_MAX;
 }
+
+#pragma endregion ProjectileDeActivate
 
 // ProjectileMovement
-CS_DEFINE_ENUM_MAP_BODY(EMCsProjectileMovement)
+#pragma region
 
-namespace ECsProjectileMovement
+namespace NCsProjectileMovement
 {
 	namespace Ref
 	{
-		CSCORE_API const Type Simulated = EMCsProjectileMovement::Get().Add(Type::Simulated, TEXT("Simulated"));
-		CSCORE_API const Type Function = EMCsProjectileMovement::Get().Add(Type::Function, TEXT("Function"));
-		CSCORE_API const Type ECsProjectileMovement_MAX = EMCsProjectileMovement::Get().Add(Type::ECsProjectileMovement_MAX, TEXT("ECsProjectileMovement_MAX"), TEXT("MAX"));
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsProjectileMovement, Simulated);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsProjectileMovement, Function);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsProjectileMovement, ECsProjectileMovement_MAX,"MAX");
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsProjectileMovement_MAX;
 }
+
+#pragma endregion ProjectileMovement
 
 // ProjectileMovementFunctionType
-CS_DEFINE_ENUM_MAP_BODY(EMCsProjectileMovementFunctionType)
+#pragma region
 
-namespace ECsProjectileMovementFunctionType
+namespace NCsProjectileMovementFunctionType
 {
 	namespace Ref
 	{
-		CSCORE_API const Type Linear = EMCsProjectileMovementFunctionType::Get().Add(Type::Linear, TEXT("Linear"));
-		CSCORE_API const Type Sine = EMCsProjectileMovementFunctionType::Get().Add(Type::Sine, TEXT("Sine"));
-		CSCORE_API const Type ECsProjectileMovementFunctionType_MAX = EMCsProjectileMovementFunctionType::Get().Add(Type::ECsProjectileMovementFunctionType_MAX, TEXT("ECsProjectileMovementFunctionType_MAX"), TEXT("MAX"));
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsProjectileMovementFunctionType, Linear);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsProjectileMovementFunctionType, Sine);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsProjectileMovementFunctionType, ECsProjectileMovementFunctionType_MAX, "MAX");
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsProjectileMovementFunctionType_MAX;
 }
+
+#pragma endregion ProjectileMovementFunctionType

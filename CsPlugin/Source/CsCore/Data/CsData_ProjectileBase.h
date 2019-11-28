@@ -13,7 +13,7 @@ class CSCORE_API ACsData_ProjectileBase : public ACsData
 
 	virtual void Load(const ECsLoadFlags &LoadFlags = ECsLoadFlags::All) override;
 
-	virtual const FECsProjectileType& GetProjectileType();
+	virtual const FECsProjectile& GetProjectileType();
 
 // Stats
 #pragma region
@@ -41,7 +41,7 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	virtual TEnumAsByte<ECsProjectileMovement::Type> GetMovementType();
+	virtual ECsProjectileMovement GetMovementType();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	virtual FVector EvaluateMovementFunction(const float &Time, const FVector &Location, const FTransform &Transform);

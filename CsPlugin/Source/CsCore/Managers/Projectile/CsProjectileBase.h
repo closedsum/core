@@ -19,13 +19,13 @@ struct FCsProjectileBaseCache : public FCsPooledObjectCache
 	TWeakObjectPtr<class ACsData_ProjectileBase> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	FECsProjectileType Type;
+	FECsProjectile Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	TEnumAsByte<ECsProjectileRelevance::Type> Relevance;
+	ECsProjectileRelevance Relevance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	TEnumAsByte<ECsProjectileMovement::Type> Movement;
+	ECsProjectileMovement Movement;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector Location;
@@ -55,7 +55,7 @@ struct FCsProjectileBaseCache : public FCsPooledObjectCache
 		Projectile = InProjectile;
 	}
 
-	void Init(FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(FCsProjectileBasePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
 		Relevance = Payload->Relevance;
 
@@ -142,13 +142,13 @@ public:
 	FCsProjectileBaseCache Cache;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Projectile")
-	FECsProjectileType Type;
+	FECsProjectile Type;
 
-	void Init(const int32 &Index, const FECsProjectileType& InType);
+	void Init(const int32& Index, const FECsProjectile& InType);
 
-	virtual void Allocate(FCsProjectilePayload* Payload);
+	virtual void Allocate(FCsProjectileBasePayload* Payload);
 
-	virtual void Allocate_Internal(FCsProjectilePayload* Payload);
+	virtual void Allocate_Internal(FCsProjectileBasePayload* Payload);
 
 	UPROPERTY(BlueprintAssignable, Category = "Projectile")
 	FBindableDynEvent_CsProjectile_Override_Allocate_Internal Override_Allocate_Internal_ScriptEvent;
@@ -160,7 +160,7 @@ public:
 	ACsProjectileBase* GetFakeProjectile();
 
 	UPROPERTY(BlueprintReadWrite, Category = "Projectile")
-	TEnumAsByte<ECsProjectileState::Type> State;
+	ECsProjectileState State;
 
 	float InitialSpeed;
 	float CurrentSpeed;

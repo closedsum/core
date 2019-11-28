@@ -5,21 +5,25 @@
 #include "CsTypes_Projectile.generated.h"
 #pragma once
 
-// ACsData_ProjectileBase
+// FCsData_ProjectileBasePtr
+#pragma region
+
+class ACsData_ProjectileBase;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsData_ProjectileBasePtr
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TSoftClassPtr<class ACsData_ProjectileBase> Data;
+	TSoftClassPtr<ACsData_ProjectileBase> Data;
 
 	UPROPERTY(EditAnywhere, Category = "Data", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Data_LoadFlags;
 
 private:
 	UPROPERTY(Transient)
-	class ACsData_ProjectileBase* Data_Internal;
+	ACsData_ProjectileBase* Data_Internal;
 
 public:
 	FCsData_ProjectileBasePtr() :
@@ -45,21 +49,27 @@ public:
 	}
 };
 
-// ACsData_ProjectileImpact
+#pragma endregion FCsData_ProjectileBasePtr
+
+// FCsData_ProjectileImpactPtr
+#pragma region
+
+class ACsData_ProjectileImpact;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsData_ProjectileImpactPtr
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TSoftClassPtr<class ACsData_ProjectileImpact> Data;
+	TSoftClassPtr<ACsData_ProjectileImpact> Data;
 
 	UPROPERTY(EditAnywhere, Category = "Data", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Data_LoadFlags;
 
 private:
 	UPROPERTY(Transient)
-	class ACsData_ProjectileImpact* Data_Internal;
+	ACsData_ProjectileImpact* Data_Internal;
 
 public:
 	FCsData_ProjectileImpactPtr() :
@@ -67,14 +77,6 @@ public:
 		Data_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Data_LoadFlags, ECsLoadFlags::Game);
-	}
-
-	FORCEINLINE FCsData_ProjectileImpactPtr& operator=(const FCsData_ProjectileImpactPtr& B)
-	{
-		Data = B.Data;
-		Data_LoadFlags = B.Data_LoadFlags;
-		Data_Internal = B.Data_Internal;
-		return *this;
 	}
 
 	FORCEINLINE bool operator==(const FCsData_ProjectileImpactPtr& B) const
@@ -93,40 +95,29 @@ public:
 	}
 };
 
+#pragma endregion FCsData_ProjectileImpactPtr
+
 // ProjectileRelevance
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsProjectileRelevance
+enum class ECsProjectileRelevance : uint8
 {
-	enum Type
-	{
-		RealVisible					UMETA(DisplayName = "Real Visible"),
-		RealInvisible				UMETA(DisplayName = "Real Invisible"),
-		Fake						UMETA(DisplayName = "Fake"),
-		ECsProjectileRelevance_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsProjectileRelevance::Type TCsProjectileRelevance;
-
-struct CSCORE_API EMCsProjectileRelevance : public TCsEnumMap<ECsProjectileRelevance::Type>
-{
-protected:
-	EMCsProjectileRelevance() {}
-	EMCsProjectileRelevance(const EMCsProjectileRelevance &) = delete;
-	EMCsProjectileRelevance(EMCsProjectileRelevance &&) = delete;
-public:
-	~EMCsProjectileRelevance() {}
-private:
-	static EMCsProjectileRelevance* Instance;
-
-public:
-	static EMCsProjectileRelevance& Get();
+	RealVisible					UMETA(DisplayName = "Real Visible"),
+	RealInvisible				UMETA(DisplayName = "Real Invisible"),
+	Fake						UMETA(DisplayName = "Fake"),
+	ECsProjectileRelevance_MAX	UMETA(Hidden),
 };
 
-namespace ECsProjectileRelevance
+struct CSCORE_API EMCsProjectileRelevance : public TCsEnumMap<ECsProjectileRelevance>
 {
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProjectileRelevance, ECsProjectileRelevance)
+};
+
+namespace NCsProjectileRelevance
+{
+	typedef ECsProjectileRelevance Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type RealVisible;
@@ -134,54 +125,53 @@ namespace ECsProjectileRelevance
 		extern CSCORE_API const Type Fake;
 		extern CSCORE_API const Type ECsProjectileRelevance_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
 
 #pragma endregion ProjectileRelevance
 
-// ProjectileType
+// Projectile
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsProjectileType : public FECsEnum_uint8
+struct CSCORE_API FECsProjectile : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-	CS_ENUM_UINT8_BODY(FECsProjectileType)
+	CS_ENUM_UINT8_BODY(FECsProjectile)
 };
 
-CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsProjectileType)
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsProjectile)
 
-struct CSCORE_API EMCsProjectileType : public TCsEnumStructMap<FECsProjectileType, uint8>
+struct CSCORE_API EMCsProjectile : public TCsEnumStructMap<FECsProjectile, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsProjectileType)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsProjectile, FECsProjectile, uint8)
 };
 
-#pragma endregion ProjectileType
+#pragma endregion Projectile
 
 // ProjectileState
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsProjectileState
+enum class ECsProjectileState : uint8
 {
-	enum Type
-	{
-		Active				   UMETA(DisplayName = "Active"),
-		DeActivating		   UMETA(DisplayName = "DeActivating"),
-		InActive			   UMETA(DisplayName = "InActive"),
-		ECsProjectileState_MAX UMETA(Hidden),
-	};
-}
-
-typedef ECsProjectileState::Type TCsProjectileState;
-
-struct CSCORE_API EMCsProjectileState : public TCsEnumMap<ECsProjectileState::Type>
-{
-	CS_DECLARE_ENUM_MAP_BODY(EMCsProjectileState)
+	Active				   UMETA(DisplayName = "Active"),
+	DeActivating		   UMETA(DisplayName = "DeActivating"),
+	InActive			   UMETA(DisplayName = "InActive"),
+	ECsProjectileState_MAX UMETA(Hidden),
 };
 
-namespace ECsProjectileState
+struct CSCORE_API EMCsProjectileState : public TCsEnumMap<ECsProjectileState>
 {
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProjectileState, ECsProjectileState)
+};
+
+namespace NCsProjectileState
+{
+	typedef ECsProjectileState Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type Active;
@@ -189,6 +179,8 @@ namespace ECsProjectileState
 		extern CSCORE_API const Type InActive;
 		extern CSCORE_API const Type ECsProjectileState_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
 
 #pragma endregion ProjectileState
@@ -197,26 +189,23 @@ namespace ECsProjectileState
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsProjectileDeActivate
+enum class ECsProjectileDeActivate : uint8
 {
-	enum Type
-	{
-		Collision					UMETA(DisplayName = "Collision"),
-		Movement					UMETA(DisplayName = "Movement"),
-		Mesh						UMETA(DisplayName = "Mesh"),
-		ECsProjectileDeActivate_MAX UMETA(Hidden),
-	};
-}
-
-typedef ECsProjectileDeActivate::Type TCsProjectileDeActivate;
-
-struct CSCORE_API EMCsProjectileDeActivate : public TCsEnumMap<ECsProjectileDeActivate::Type>
-{
-	CS_DECLARE_ENUM_MAP_BODY(EMCsProjectileDeActivate)
+	Collision					UMETA(DisplayName = "Collision"),
+	Movement					UMETA(DisplayName = "Movement"),
+	Mesh						UMETA(DisplayName = "Mesh"),
+	ECsProjectileDeActivate_MAX UMETA(Hidden),
 };
 
-namespace ECsProjectileDeActivate
+struct CSCORE_API EMCsProjectileDeActivate : public TCsEnumMap<ECsProjectileDeActivate>
 {
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProjectileDeActivate, ECsProjectileDeActivate)
+};
+
+namespace NCsProjectileDeActivate
+{
+	typedef ECsProjectileDeActivate Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type Collision;
@@ -224,6 +213,8 @@ namespace ECsProjectileDeActivate
 		extern CSCORE_API const Type Mesh;
 		extern CSCORE_API const Type ECsProjectileDeActivate_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
 
 #pragma endregion ProjectileDeActivate
@@ -232,31 +223,30 @@ namespace ECsProjectileDeActivate
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsProjectileMovement
+enum class ECsProjectileMovement : uint8
 {
-	enum Type
-	{
-		Simulated					UMETA(DisplayName = "Simulated"),
-		Function					UMETA(DisplayName = "Function"),
-		ECsProjectileMovement_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsProjectileMovement::Type TCsProjectileMovement;
-
-struct CSCORE_API EMCsProjectileMovement : public TCsEnumMap<ECsProjectileMovement::Type>
-{
-	CS_DECLARE_ENUM_MAP_BODY(EMCsProjectileMovement)
+	Simulated					UMETA(DisplayName = "Simulated"),
+	Function					UMETA(DisplayName = "Function"),
+	ECsProjectileMovement_MAX	UMETA(Hidden),
 };
 
-namespace ECsProjectileMovement
+struct CSCORE_API EMCsProjectileMovement : public TCsEnumMap<ECsProjectileMovement>
 {
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProjectileMovement, ECsProjectileMovement)
+};
+
+namespace NCsProjectileMovement
+{
+	typedef ECsProjectileMovement Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type Simulated;
 		extern CSCORE_API const Type Function;
 		extern CSCORE_API const Type ECsProjectileMovement_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
 
 #pragma endregion ProjectileMovement
@@ -265,34 +255,36 @@ namespace ECsProjectileMovement
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsProjectileMovementFunctionType
+enum class ECsProjectileMovementFunctionType : uint8
 {
-	enum Type
-	{
-		Linear									UMETA(DisplayName = "t"),
-		Sine									UMETA(DisplayName = "sin(t)"),
-		ECsProjectileMovementFunctionType_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsProjectileMovementFunctionType::Type TCsProjectileMovementFunctionType;
-
-struct CSCORE_API EMCsProjectileMovementFunctionType : public TCsEnumMap<ECsProjectileMovementFunctionType::Type>
-{
-	CS_DECLARE_ENUM_MAP_BODY(EMCsProjectileMovementFunctionType)
+	Linear									UMETA(DisplayName = "t"),
+	Sine									UMETA(DisplayName = "sin(t)"),
+	ECsProjectileMovementFunctionType_MAX	UMETA(Hidden),
 };
 
-namespace ECsProjectileMovementFunctionType
+struct CSCORE_API EMCsProjectileMovementFunctionType : public TCsEnumMap<ECsProjectileMovementFunctionType>
 {
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProjectileMovementFunctionType, ECsProjectileMovementFunctionType)
+};
+
+namespace NCsProjectileMovementFunctionType
+{
+	typedef ECsProjectileMovementFunctionType Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type Linear;
 		extern CSCORE_API const Type Sine;
 		extern CSCORE_API const Type ECsProjectileMovementFunctionType_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
 
 #pragma endregion ProjectileMovementFunctionType
+
+// FCsProjectileMovementFunctionAxis
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsProjectileMovementFunctionAxis
@@ -303,7 +295,7 @@ struct CSCORE_API FCsProjectileMovementFunctionAxis
 	bool IsActive;
 	/** Types are t, sin(t), ... etc */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
-	TEnumAsByte<ECsProjectileMovementFunctionType::Type> Function;
+	ECsProjectileMovementFunctionType Function;
 
 	/** "Axis" F(t) = A * ((B*G(t))^N) + C. G(t) = t, sin(t), ... etc. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
@@ -329,17 +321,6 @@ struct CSCORE_API FCsProjectileMovementFunctionAxis
 	}
 
 	~FCsProjectileMovementFunctionAxis(){}
-
-	FORCEINLINE FCsProjectileMovementFunctionAxis& operator=(const FCsProjectileMovementFunctionAxis& D)
-	{
-		IsActive = D.IsActive;
-		Function = D.Function;
-		A = D.A;
-		B = D.B;
-		N = D.N;
-		C = D.C;
-		return *this;
-	}
 
 	FORCEINLINE bool operator==(const FCsProjectileMovementFunctionAxis& D) const
 	{
@@ -369,6 +350,11 @@ struct CSCORE_API FCsProjectileMovementFunctionAxis
 		return 0.0f;
 	}
 };
+
+#pragma endregion FCsProjectileMovementFunctionAxis
+
+// FCsProjectileMovementFunction
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsProjectileMovementFunction
@@ -430,6 +416,11 @@ struct CSCORE_API FCsProjectileMovementFunction
 		return WorldTransform.GetTranslation();
 	}
 };
+
+#pragma endregion FCsProjectileMovementFunction
+
+// FCsProjectileFirePayload
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsProjectileFirePayload
@@ -539,9 +530,14 @@ struct CSCORE_API FCsProjectileFirePayload
 	}
 };
 
+#pragma endregion FCsProjectileFirePayload
+
+// FCsProjectilePayload
+#pragma region
+
 class ACsData_ProjectileBase;
 
-struct CSCORE_API FCsProjectilePayload : public ICsPooledObjectPayload
+struct CSCORE_API FCsProjectileBasePayload : public ICsPooledObjectPayload
 {
 public:
 
@@ -553,7 +549,7 @@ public:
 
 	UObject* Parent;
 
-	TEnumAsByte<ECsProjectileRelevance::Type> Relevance;
+	ECsProjectileRelevance Relevance;
 
 	TWeakObjectPtr<ACsData_ProjectileBase> Data;
 
@@ -571,28 +567,14 @@ public:
 
 	float HomingAccelerationMagnitude;
 
-	FCsProjectilePayload()
+	FCsProjectileBasePayload()
 	{
 		Reset();
 	}
 
-	~FCsProjectilePayload(){}
+	~FCsProjectileBasePayload(){}
 
-	FORCEINLINE FCsProjectilePayload& operator=(const FCsProjectilePayload& B)
-	{
-		Relevance = B.Relevance;
-		Data = B.Data;
-		ChargePercent = B.ChargePercent;
-		Location = B.Location;
-		Direction = B.Direction;
-		AdditionalSpeed = B.AdditionalSpeed;
-		HomingTarget = B.HomingTarget;
-		HomingBone = B.HomingBone;
-		HomingAccelerationMagnitude = B.HomingAccelerationMagnitude;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsProjectilePayload& B) const
+	FORCEINLINE bool operator==(const FCsProjectileBasePayload& B) const
 	{
 		return	Relevance == B.Relevance &&
 				Data == B.Data &&
@@ -605,7 +587,7 @@ public:
 				HomingAccelerationMagnitude == B.HomingAccelerationMagnitude;
 	}
 
-	FORCEINLINE bool operator!=(const FCsProjectilePayload& B) const
+	FORCEINLINE bool operator!=(const FCsProjectileBasePayload& B) const
 	{
 		return !(*this == B);
 	}
@@ -686,3 +668,59 @@ public:
 		return Cast<T>(GetHomingTarget());
 	}
 };
+
+#pragma endregion FCsProjectilePayload
+
+// ICsProjectilePayload
+#pragma region
+
+struct CSCORE_API ICsProjectilePayload
+{
+	virtual const FVector& GetDirection() const = 0;
+
+	virtual const FVector& GetLocation() const = 0;
+
+	virtual ~ICsProjectilePayload(){}
+};
+
+#pragma endregion ICsProjectilePayload
+
+// FCsScriptProjectilePayload
+#pragma region
+
+class UObject;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsScriptProjectilePayload
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(BlueprintReadWrite, Category = "Payload")
+	UObject* Instigator;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Payload")
+	UObject* Owner;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Payload")
+	UObject* Parent;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Payload")
+	FVector Location;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Payload")
+	FVector Direction;
+
+	FCsScriptProjectilePayload() :
+		Instigator(nullptr),
+		Owner(nullptr),
+		Parent(nullptr),
+		Location(0.0f),
+		Direction(0.0f)
+	{
+	}
+	~FCsScriptProjectilePayload() {}
+};
+
+#pragma endregion FCsScriptProjectilePayload

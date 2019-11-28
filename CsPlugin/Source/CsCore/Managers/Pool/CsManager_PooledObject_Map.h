@@ -1,8 +1,26 @@
 // Copyright 2017 Respawn Entertainment, Inc. All rights reserved.
 
 #pragma once
+#include "Managers/Pool/CsManager_PooledObject.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "CsCVars.h"
+
+// ICsManager_PooledObject_Map
+#pragma region
+
+class CSCORE_API ICsManager_PooledObject_Map
+{
+public:
+
+	virtual ~ICsManager_PooledObject_Map() {}
+
+	virtual void Clear() = 0;
+	virtual void Shutdown() = 0;
+
+	virtual UWorld* GetCurrentWorld() = 0;
+};
+
+#pragma endregion ICsManager_PooledObject_Map
 
 // Enums
 #pragma region
@@ -246,7 +264,7 @@ public:
 		}
 
 		CurrentCreatePoolType = Type;
-		FDelegateHandle Handle = Pool->GetOnAddToPool_Event().AddRaw(this, &TCsManager_PooledObjects_Map<KeyType>::OnCreatePool_AddToPool);
+		FDelegateHandle Handle = Pool->GetOnAddToPool_Event().AddRaw(this, &TCsManager_PooledObject_Map<KeyType>::OnCreatePool_AddToPool);
 
 		Pool->CreatePool(Size);
 

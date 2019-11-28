@@ -761,9 +761,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FECsInteractiveType
 				if (StructProperty->Struct == FECsInteractiveType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsInteractiveType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
-				// FECsProjectileType
-				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
-				{ WriteMemberEnumStructPropertyToJson<FECsProjectileType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsProjectile
+				if (StructProperty->Struct == FECsProjectile::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsProjectile>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 				// FECsSoundType
 				if (StructProperty->Struct == FECsSoundType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsSoundType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
@@ -937,6 +937,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// ECsEasingType
 			if (EnumProperty->GetEnum()->CppType.Contains(NCsCommonLoadCached::Str::CsEasingType))
 			{ WriteMemberEnumPropertyToJson<ECsEasingType, EMCsEasingType>(InJsonWriter, EnumProperty, InStruct, MemberName); continue; }
+			// ECsProjectileMovementFunctionType
+			if (EnumProperty->GetEnum()->CppType.Contains(NCsCommonLoadCached::Str::CsProjectileMovementFunctionType))
+			{ WriteMemberEnumPropertyToJson<ECsProjectileMovementFunctionType, EMCsProjectileMovementFunctionType>(InJsonWriter, EnumProperty, InStruct, MemberName); continue; }
 			continue;
 		}
 		// Byte / Enum
@@ -969,9 +972,6 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// ECsSoundPriority
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
 				{ WriteMemberEnumAsBytePropertyToJson<ECsSoundPriority::Type, EMCsSoundPriority>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
-				// ECsProjectileMovementFunctionType
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsProjectileMovementFunctionType))
-				{ WriteMemberEnumAsBytePropertyToJson<ECsProjectileMovementFunctionType::Type, EMCsProjectileMovementFunctionType>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
 				// ECsParametricFunctionType
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
 				{ WriteMemberEnumAsBytePropertyToJson<ECsParametricFunctionType::Type, EMCsParametricFunctionType>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
@@ -1532,9 +1532,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FECsInteractiveType
 				if (StructProperty->Struct == FECsInteractiveType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsInteractiveType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
-				// FECsProjectileType
-				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
-				{ WriteMemberEnumStructPropertyToJson<FECsProjectileType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsProjectile
+				if (StructProperty->Struct == FECsProjectile::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsProjectile>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 				// FECsSoundType
 				if (StructProperty->Struct == FECsSoundType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsSoundType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
@@ -1708,6 +1708,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// ECsEasingType
 			if (EnumProperty->GetEnum()->CppType.Contains(NCsCommonLoadCached::Str::CsEasingType))
 			{ WriteMemberEnumPropertyToJson<ECsEasingType, EMCsEasingType>(InJsonWriter, EnumProperty, InStruct, MemberName); continue; }
+			// ECsProjectileMovementFunctionType
+			if (EnumProperty->GetEnum()->CppType.Contains(NCsCommonLoadCached::Str::CsProjectileMovementFunctionType))
+			{ WriteMemberEnumPropertyToJson<ECsProjectileMovementFunctionType, EMCsProjectileMovementFunctionType>(InJsonWriter, EnumProperty, InStruct, MemberName); continue; }
 			continue;
 		}
 		// Byte / Enum
@@ -1740,9 +1743,6 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// ECsSoundPriority
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
 				{ WriteMemberEnumAsBytePropertyToJson<ECsSoundPriority::Type, EMCsSoundPriority>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
-				// ECsProjectileMovementFunctionType
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsProjectileMovementFunctionType))
-				{ WriteMemberEnumAsBytePropertyToJson<ECsProjectileMovementFunctionType::Type, EMCsProjectileMovementFunctionType>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
 				// ECsParametricFunctionType
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
 				{ WriteMemberEnumAsBytePropertyToJson<ECsParametricFunctionType::Type, EMCsParametricFunctionType>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
@@ -2245,9 +2245,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FECsInteractiveType
 				if (StructProperty->Struct == FECsInteractiveType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsInteractiveType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
-				// FECsProjectileType
-				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
-				{ WriteMemberEnumStructPropertyToJson<FECsProjectileType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsProjectile
+				if (StructProperty->Struct == FECsProjectile::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsProjectile>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 				// FECsSoundType
 				if (StructProperty->Struct == FECsSoundType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsSoundType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
@@ -3136,9 +3136,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				// FECsInteractiveType
 				if (StructProperty->Struct == FECsInteractiveType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsInteractiveType, EMCsInteractiveType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
-				// FECsProjectileType
-				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
-				{ WriteToMemberEnumStructPropertyFromJson<FECsProjectileType, EMCsProjectileType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsProjectile
+				if (StructProperty->Struct == FECsProjectile::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsProjectile, EMCsProjectile>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 				// FECsSoundType
 				if (StructProperty->Struct == FECsSoundType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsSoundType, EMCsSoundType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
@@ -3310,6 +3310,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// ECsEasingType
 			if (EnumProperty->GetEnum()->CppType.Contains(NCsCommonLoadCached::Str::CsEasingType))
 			{ WriteToMemberEnumPropertyFromJson<ECsEasingType, EMCsEasingType>(JsonObject, EnumProperty, InStruct, MemberName); continue; }
+			// ECsProjectileMovementFunctionType
+			if (EnumProperty->GetEnum()->CppType.Contains(NCsCommonLoadCached::Str::CsProjectileMovementFunctionType))
+			{ WriteToMemberEnumPropertyFromJson<ECsProjectileMovementFunctionType, EMCsProjectileMovementFunctionType>(JsonObject, EnumProperty, InStruct, MemberName); continue; }
 			continue;
 		}
 		// Byte / Enum
@@ -3342,9 +3345,6 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				// ECsSoundPriority
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
 				{ WriteToMemberEnumAsBytePropertyFromJson<ECsSoundPriority::Type, EMCsSoundPriority>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
-				// ECsProjectileMovementFunctionType
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsProjectileMovementFunctionType))
-				{ WriteToMemberEnumAsBytePropertyFromJson<ECsProjectileMovementFunctionType::Type, EMCsProjectileMovementFunctionType>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
 				// ECsParametricFunctionType
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
 				{ WriteToMemberEnumAsBytePropertyFromJson<ECsParametricFunctionType::Type, EMCsParametricFunctionType>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
@@ -3908,9 +3908,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FECsInteractiveType
 				if (StructProperty->Struct == FECsInteractiveType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsInteractiveType, EMCsInteractiveType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
-				// FECsProjectileType
-				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
-				{ WriteToMemberEnumStructPropertyFromJson<FECsProjectileType, EMCsProjectileType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsProjectile
+				if (StructProperty->Struct == FECsProjectile::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsProjectile, EMCsProjectile>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 				// FECsSoundType
 				if (StructProperty->Struct == FECsSoundType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsSoundType, EMCsSoundType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
@@ -4082,6 +4082,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// ECsEasingType
 			if (EnumProperty->GetEnum()->CppType.Contains(NCsCommonLoadCached::Str::CsEasingType))
 			{ WriteToMemberEnumPropertyFromJson<ECsEasingType, EMCsEasingType>(JsonObject, EnumProperty, InStruct, MemberName); continue; }
+			// ECsProjectileMovementFunctionType
+			if (EnumProperty->GetEnum()->CppType.Contains(NCsCommonLoadCached::Str::CsProjectileMovementFunctionType))
+			{ WriteToMemberEnumPropertyFromJson<ECsProjectileMovementFunctionType, EMCsProjectileMovementFunctionType>(JsonObject, EnumProperty, InStruct, MemberName); continue; }
 			continue;
 		}
 		// Byte / Enum
@@ -4114,9 +4117,6 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// ECsSoundPriority
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
 				{ WriteToMemberEnumAsBytePropertyFromJson<ECsSoundPriority::Type, EMCsSoundPriority>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
-				// ECsProjectileMovementFunctionType
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsProjectileMovementFunctionType))
-				{ WriteToMemberEnumAsBytePropertyFromJson<ECsProjectileMovementFunctionType::Type, EMCsProjectileMovementFunctionType>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
 				// ECsParametricFunctionType
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
 				{ WriteToMemberEnumAsBytePropertyFromJson<ECsParametricFunctionType::Type, EMCsParametricFunctionType>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
@@ -4627,9 +4627,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FECsInteractiveType
 				if (StructProperty->Struct == FECsInteractiveType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsInteractiveType, EMCsInteractiveType>(JsonObject, StructProperty, InObject, MemberName); continue; }
-				// FECsProjectileType
-				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
-				{ WriteToMemberEnumStructPropertyFromJson<FECsProjectileType, EMCsProjectileType>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				// FECsProjectile
+				if (StructProperty->Struct == FECsProjectile::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsProjectile, EMCsProjectile>(JsonObject, StructProperty, InObject, MemberName); continue; }
 				// FECsSoundType
 				if (StructProperty->Struct == FECsSoundType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsSoundType, EMCsSoundType>(JsonObject, StructProperty, InObject, MemberName); continue; }

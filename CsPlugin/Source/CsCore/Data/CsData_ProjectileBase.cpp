@@ -19,7 +19,7 @@ void ACsData_ProjectileBase::Load(const ECsLoadFlags &LoadFlags /*=ECsLoadFlags:
 		Data->Load(LoadFlags);
 }
 
-const FECsProjectileType& ACsData_ProjectileBase::GetProjectileType() { return EMCsProjectileType::Get().GetMAX(); }
+const FECsProjectile& ACsData_ProjectileBase::GetProjectileType() { return EMCsProjectile::Get().GetMAX(); }
 
 // Stats
 #pragma region
@@ -38,7 +38,7 @@ const float& ACsData_ProjectileBase::GetMaxRange() { return NCsCached::Ref::Floa
 // Movement
 #pragma region
 
-TEnumAsByte<ECsProjectileMovement::Type> ACsData_ProjectileBase::GetMovementType() { return ECsProjectileMovement::Simulated; }
+ECsProjectileMovement ACsData_ProjectileBase::GetMovementType() { return ECsProjectileMovement::Simulated; }
 FVector ACsData_ProjectileBase::EvaluateMovementFunction(const float &Time, const FVector &Location, const FTransform &Transform) { return Location; }
 
 const float& ACsData_ProjectileBase::GetInitialSpeed() { return NCsCached::Ref::Float; }

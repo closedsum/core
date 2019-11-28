@@ -5,3 +5,5 @@
 UCsProjectile::UCsProjectile(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
+
+const FCsProjectile FCsProjectile::Empty;

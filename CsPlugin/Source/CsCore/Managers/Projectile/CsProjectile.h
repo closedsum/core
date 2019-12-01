@@ -56,6 +56,7 @@ public:
 
 protected:
 
+	/** Reference to interface of type: ICsProjecitle. */
 	ICsProjectile* Projectile;
 
 // Script
@@ -63,17 +64,29 @@ protected:
 public:
 
 	/**
+	* Delegate type for getting the Owner of a Projectile.
+	*  The Projectile implements a script interface of type: ICsProjectile.
 	*
+	* @param Object		A Projectile of type: ICsProjectile.
+	* return Owner		Owner of the Projectile.
 	*/
 	DECLARE_DELEGATE_RetVal_OneParam(UObject* /*Owner*/, FScript_GetOwner, UObject* /*Object*/);
 
+	/** Delegate for getting the Owner of a Projectile. 
+		 The Projectile implements a script interface of type: ICsProjectile. */
 	FScript_GetOwner Script_GetOwner_Impl;
 
 	/**
+	* Delegate type for getting the Instigator of a Projectile.
+	*  The Projectile implements a script interface of type: ICsProjectile.
 	*
+	* @param Object			A Projectile of type: ICsProjectile.
+	* return Instigator		Instigator of the Projectile.
 	*/
 	DECLARE_DELEGATE_RetVal_OneParam(UObject* /*Instigator*/, FScript_GetInstigator, UObject* /*Object*/);
 
+	/** Delegate for getting the Instigator of a Projectile. 
+		 The Projectile implements a script interface of type: ICsProjectile. */
 	FScript_GetInstigator Script_GetInstigator_Impl;
 
 #pragma endregion Script

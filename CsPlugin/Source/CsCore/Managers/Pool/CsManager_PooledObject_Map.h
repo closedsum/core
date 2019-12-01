@@ -263,6 +263,12 @@ public:
 			// Log Warning
 		}
 
+		// Bind the appropriate Script delegates.
+		Pool->GetScript_GetCache_Impl() = Script_GetCache_Impl;
+		Pool->GetScript_Allocate_Impl() = Script_Allocate_Impl;
+		Pool->GetScript_Deallocate_Impl() = Script_Deallocate_Impl;
+
+		// Bind to OnAddToPool so the event OnAddToPool_Event can properly broadcast events.
 		CurrentCreatePoolType = Type;
 		FDelegateHandle Handle = Pool->GetOnAddToPool_Event().AddRaw(this, &TCsManager_PooledObject_Map<KeyType>::OnCreatePool_AddToPool);
 
@@ -338,40 +344,40 @@ public:
 
 	TMulticastDelegate<void, const KeyType&, const FCsPooledObject&> OnAddToPool_Event;
 
-	virtual void AddToActivePool(const KeyType& Type, ICsPooledObject* PooledObject, UObject* Object)
+	virtual void AddToAllocatedPool(const KeyType& Type, ICsPooledObject* PooledObject, UObject* Object)
 	{
 		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
 
 		const int32& Index = PooledObject->GetCache()->GetIndex();
 
-		checkf(Index < Pool->GetPoolSize(), TEXT("%:AddToActivePool: PooledObject is in another pool."), *Name);
+		checkf(Index < Pool->GetPoolSize(), TEXT("%:AddToAllocatedPool: PooledObject is in another pool."), *Name);
 
 		if (Index <= INDEX_NONE)
 		{
 			AddToPool(Type, PooledObject, Object);
 		}
 
-		Pool->AddToActivePool(PooledObject, Object);
+		Pool->AddToAllocatedPool(PooledObject, Object);
 
 		const TArray<FCsPooledObject>& Objects = Pool->GetObjects();
 		const FCsPooledObject& O			   = Objects[Index];
 
-		OnAddToActivePool_Event.Broadcast(Type, O);
+		OnAddToAllocatedPool_Event.Broadcast(Type, O);
 	}
 
-	virtual void AddToActivePool(const KeyType& Type, ICsPooledObject* Object)
+	virtual void AddToAllocatedPool(const KeyType& Type, ICsPooledObject* Object)
 	{
-		AddToActivePool(Type, Object, nullptr);
+		AddToAllocatedPool(Type, Object, nullptr);
 	}
 
-	TMulticastDelegate<void, const KeyType&, const FCsPooledObject&> OnAddToActivePool_Event;
+	TMulticastDelegate<void, const KeyType&, const FCsPooledObject&> OnAddToAllocatedPool_Event;
 
 public:
 
-	const TArray<FCsPooledObject>& GetAllActiveObjects(const KeyType& Type)
+	const TArray<FCsPooledObject>& GetAllAllocatedObjects(const KeyType& Type)
 	{
 		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
-		return Pool->GetAllActiveObjects();
+		return Pool->GetAllAllocatedObjects();
 	}
 
 	const TArray<FCsPooledObject>& GetObjects(const KeyType& Type)
@@ -380,10 +386,10 @@ public:
 		return Pool->GetObjects();
 	}
 
-	int32 GetActivePoolSize(const KeyType& Type)
+	int32 GetAllocatedPoolSize(const KeyType& Type)
 	{
 		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
-		return Pool->GetActivePoolSize();
+		return Pool->GetAllocatedPoolSize();
 	}
 
 	bool IsExhausted(const KeyType& Type)
@@ -398,11 +404,11 @@ public:
 #pragma region
 public:
 
-	virtual void OnTick(const float& DeltaTime)
+	virtual void Update(const float& DeltaTime)
 	{
 		for (TPair<KeyType, ICsManager_PooledObject*>& Pair : Pools)
 		{
-			Pair.Value->OnTick(DeltaTime);
+			Pair.Value->Update(DeltaTime);
 		}
 	}
 
@@ -528,4 +534,16 @@ public:
 	TMulticastDelegate<void, const KeyType&, const FCsPooledObject&> OnDestroy_Event;
 
 #pragma endregion Destroy
+
+// Script
+#pragma region
+public:
+
+	FCsPooledObject::FScript_GetCache Script_GetCache_Impl;
+
+	FCsPooledObject::FScript_Allocate Script_Allocate_Impl;
+
+	FCsPooledObject::FScript_Deallocate Script_Deallocate_Impl;
+
+#pragma endregion Script
 };

@@ -204,38 +204,88 @@ protected:
 	TCsManager_Internal* Internal;
 	 
 	virtual void ConstructInternal();
-
 public:
 
 	void InitInternal(const TCsManager_Internal::FCsManagerPooledObjectMapParams& Params);
 
 	virtual void Clear();
 
+	// Pool
+#pragma region
+public:
+
+	/**
+	* 
+	* @param Type
+	* @param Size
+	*/
 	virtual void CreatePool(const FECsProjectile& Type, const int32& Size);
 
+		// Add
+#pragma region
 protected:
 
+	/**
+	*
+	* @param Type
+	*/
 	virtual TArray<FCsProjectile>& CheckAndAddType_Pools(const FECsProjectile& Type);
-
-	virtual void AddToPool(const FECsProjectile& Type, ICsProjectile* Object);
-
-protected:
-
-	virtual void OnAddToPool(const FECsProjectile& Type, const FCsPooledObject& Object);
 
 public:
 
-	virtual void AddToActivePool(const FECsProjectile& Type, ICsProjectile* Object);
+	/**
+	*
+	*
+	* @param Type
+	* @param Object
+	*/
+	virtual void AddToPool(const FECsProjectile& Type, ICsProjectile* Object);
 
-	const TArray<FCsPooledObject>& GetAllActiveObjects(const FECsProjectile& Type);
+	/**
+	*
+	*
+	* @param Type
+	* @param Object
+	*/
+	virtual void AddToPool(const FECsProjectile& Type, FCsProjectile& Object);
+
+	/**
+	*
+	*
+	* @param Type
+	* @param Object
+	*/
+	virtual void AddToPool(const FECsProjectile& Type, UObject* Object);
+
+	/**
+	*
+	*
+	* @param Type
+	* @param Object
+	*/
+	virtual void AddToAllocatedPool(const FECsProjectile& Type, ICsProjectile* Object);
+
+#pragma endregion Add
+
+public:
+
+	const TArray<FCsPooledObject>& GetAllAllocatedObjects(const FECsProjectile& Type);
 
 	const TArray<FCsPooledObject>& GetObjects(const FECsProjectile& Type);
 
-	int32 GetActivePoolSize(const FECsProjectile& Type);
+	int32 GetAllocatedPoolSize(const FECsProjectile& Type);
 
 	bool IsExhausted(const FECsProjectile& Type);
 
-	virtual void OnTick(const float& DeltaTime);
+#pragma endregion Pool
+
+	// Update
+#pragma region
+public:
+
+	virtual void Update(const float& DeltaTime);
+
+#pragma endregion Update
 
 	// Payload
 #pragma region
@@ -265,15 +315,26 @@ public:
 #pragma region
 public:
 
+	/**
+	*
+	*
+	* @param Type
+	* @param Payload
+	*/
 	virtual const FCsProjectile& Spawn(const FECsProjectile& Type, ICsPooledObjectPayload* Payload);
 
 	/**
-	*
+	* Delegate type after a Projectile has been Spawned.
+	* 
+	* @param Type
+	* @param Object
 	*/
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSpawn, const FECsProjectile& /*Type*/, const FCsProjectile& /*Object*/);
 
+	/** */
 	FOnSpawn OnSpawn_Event;
 
+	/** */
 	FCsManagerProjectile_OnSpawn OnSpawn_ScriptEvent;
 
 #pragma endregion Spawn
@@ -282,12 +343,21 @@ public:
 #pragma region
 public:
 
+	/**
+	*
+	*
+	* @param Type
+	* @param Projectile
+	*/
 	virtual bool Destroy(const FECsProjectile& Type, ICsProjectile* Projectile);
 
 	virtual bool Destroy(ICsProjectile* Projectile);
 
 	/**
+	* Delegate type after a Projectile has been Destroyed.
 	*
+	* @param Type
+	* @param Object
 	*/
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDestroy, const FECsProjectile& /*Type*/, const FCsProjectile& /*Object*/);
 
@@ -306,7 +376,45 @@ protected:
 	UPROPERTY()
 	TArray<UObject*> Pool;
 
-	TMap<FECsProjectile, TArray<FCsProjectile>> ActiveObjects;
+	TMap<FECsProjectile, TArray<FCsProjectile>> AllocatedObjects;
 
 #pragma endregion Pool
+
+// Script
+#pragma region
+public:
+
+	// ICsProjectile
+#pragma region
+public:
+
+	/** Delegate for getting the Owner of a Projectile. 
+		 The Projectile implements a script interface of type: ICsProjectile. */
+	FCsProjectile::FScript_GetOwner Script_GetOwner_Impl;
+
+	/** Delegate for getting the Instigator of a Projectile. 
+		 The Projectile implements a script interface of type: ICsProjectile. */
+	FCsProjectile::FScript_GetInstigator Script_GetInstigator_Impl;
+
+#pragma endregion ICsProjectile
+
+	// ICsPooledObject
+#pragma region
+public:
+
+	/** Delegate for getting the Cache associated with a Pooled Object. 
+		 The Pooled Object implements a script interface of type: ICsPooledObject. */
+	FCsPooledObject::FScript_GetCache Script_GetCache_Impl;
+
+	/** Delegate called after allocating a Pooled Object. 
+		 The Pooled Object implements a script interface of type: ICsPooledObject. */
+	FCsPooledObject::FScript_Allocate Script_Allocate_Impl;
+
+	/** Delegate called after allocating a Pooled Object. 
+		 The Pooled Object implements a script interface of type: ICsPooledObject.*/
+	FCsPooledObject::FScript_Deallocate Script_Deallocate_Impl;
+
+#pragma endregion ICsPooledObject
+
+#pragma endregion Script
 };

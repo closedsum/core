@@ -111,15 +111,15 @@ public:
 
 	virtual FCsManagerPooledObject_OnAddToPool& GetOnAddToPool_Event() = 0;
 
-	virtual void AddToActivePool(ICsPooledObject* PooledObject, UObject* Object) = 0;
-	virtual void AddToActivePool(ICsPooledObject* Object) = 0;
+	virtual void AddToAllocatedPool(ICsPooledObject* PooledObject, UObject* Object) = 0;
+	virtual void AddToAllocatedPool(ICsPooledObject* Object) = 0;
 
-	virtual const TArray<FCsPooledObject>& GetAllActiveObjects() = 0;
+	virtual const TArray<FCsPooledObject>& GetAllAllocatedObjects() = 0;
 
 	virtual const TArray<FCsPooledObject>& GetObjects() = 0;
 
 	virtual const int32& GetPoolSize() = 0;
-	virtual int32 GetActivePoolSize() = 0;
+	virtual int32 GetAllocatedPoolSize() = 0;
 
 	virtual bool IsExhausted() = 0;
 
@@ -128,13 +128,13 @@ public:
 
 #pragma endregion Pool
 
-// Tick
+// Update
 #pragma region
 public:
 
-	virtual void OnTick(const float &DeltaTime) = 0;
+	virtual void Update(const float& DeltaTime) = 0;
 
-#pragma endregion Tick
+#pragma endregion Update
 
 // Payload
 #pragma region
@@ -166,6 +166,18 @@ public:
 	virtual bool Destroy(ICsPooledObject* Object) = 0;
 
 #pragma endregion Destroy
+
+// Script
+#pragma region
+public:
+
+	virtual FCsPooledObject::FScript_GetCache& GetScript_GetCache_Impl() = 0;
+
+	virtual FCsPooledObject::FScript_Allocate& GetScript_Allocate_Impl() = 0;
+
+	virtual FCsPooledObject::FScript_Deallocate& GetScript_Deallocate_Impl() = 0;
+
+#pragma endregion Script
 };
 
 #pragma endregion ICsManager_PooledObject
@@ -255,10 +267,10 @@ protected:
 	int32 PoolSize;
 	int32 PoolIndex;
 
-	TArray<FCsPooledObject> ActiveObjects;
-	TLinkedList<FCsPooledObject>* ActiveHead;
-	TLinkedList<FCsPooledObject>* ActiveTail;
-	int32 ActiveObjectsSize;
+	TArray<FCsPooledObject> AllocatedObjects;
+	TLinkedList<FCsPooledObject>* AllocatedHead;
+	TLinkedList<FCsPooledObject>* AllocatedTail;
+	int32 AllocatedObjectsSize;
 
 public:
 
@@ -269,28 +281,31 @@ public:
 
 	FCsManagerPooledObject_OnAddToPool OnAddToPool_Event;
 
-	FCsManagerPooledObject_OnAddToPool& GetOnAddToPool_Event();
+	FORCEINLINE FCsManagerPooledObject_OnAddToPool& GetOnAddToPool_Event()
+	{
+		return OnAddToPool_Event;
+	}
 
 public: 
 
-	virtual void AddToActivePool(ICsPooledObject* PooledObject, UObject* Object);
-	virtual void AddToActivePool(ICsPooledObject* Object);
+	virtual void AddToAllocatedPool(ICsPooledObject* PooledObject, UObject* Object);
+	virtual void AddToAllocatedPool(ICsPooledObject* Object);
 
 protected:
 
-	virtual void AddToActivePool_Internal(const FCsPooledObject& Object);
+	virtual void AddToAllocatedPool_Internal(const FCsPooledObject& Object);
 
-	virtual void AddActiveLink(TLinkedList<FCsPooledObject>* Link);
-	virtual void RemoveActiveLink(TLinkedList<FCsPooledObject>* Link);
+	virtual void AddAllocatedLink(TLinkedList<FCsPooledObject>* Link);
+	virtual void RemoveAllocatedLink(TLinkedList<FCsPooledObject>* Link);
 
 public:
 
 	const TArray<FCsPooledObject>& GetObjects();
 
-	const TArray<FCsPooledObject>& GetAllActiveObjects();
+	const TArray<FCsPooledObject>& GetAllAllocatedObjects();
 
 	const int32& GetPoolSize();
-	int32 GetActivePoolSize();
+	int32 GetAllocatedPoolSize();
 
 	bool IsExhausted();
 
@@ -303,11 +318,16 @@ public:
 #pragma region
 public:
 
-	virtual void OnTick(const float &DeltaTime);
+	virtual void Update(const float& DeltaTime);
 
-	DECLARE_DELEGATE_OneParam(FOnTick_Handle_Object, const FCsPooledObject&);
+	/**
+	*
+	*
+	* @param Object
+	*/
+	DECLARE_DELEGATE_OneParam(FOnUpdate_Handle_Object, const FCsPooledObject& /*Object*/);
 
-	FOnTick_Handle_Object OnTick_Handle_Object;
+	FOnUpdate_Handle_Object OnUpdate_Handle_Object;
 
 #pragma endregion Tick
 
@@ -360,7 +380,10 @@ public:
 
 	FCsManagerPooledObject_CreatePayloads CreatePayloads_Impl;
 
-	FCsManagerPooledObject_CreatePayloads& GetCreatePayloads_Impl();
+	FORCEINLINE FCsManagerPooledObject_CreatePayloads& GetCreatePayloads_Impl()
+	{
+		return CreatePayloads_Impl;
+	}
 
 	void DestroyPayloads();
 
@@ -398,4 +421,31 @@ public:
 	virtual bool Destroy(ICsPooledObject* Object);
 
 #pragma endregion Destroy
+
+// Script
+#pragma region
+public:
+
+	FCsPooledObject::FScript_GetCache Script_GetCache_Impl;
+
+	FORCEINLINE FCsPooledObject::FScript_GetCache& GetScript_GetCache_Impl()
+	{
+		return Script_GetCache_Impl;
+	}
+
+	FCsPooledObject::FScript_Allocate Script_Allocate_Impl;
+
+	FORCEINLINE FCsPooledObject::FScript_Allocate& GetScript_Allocate_Impl()
+	{
+		return Script_Allocate_Impl;
+	}
+
+	FCsPooledObject::FScript_Deallocate Script_Deallocate_Impl;
+
+	FORCEINLINE FCsPooledObject::FScript_Deallocate& GetScript_Deallocate_Impl()
+	{
+		return Script_Deallocate_Impl;
+	}
+
+#pragma endregion Script
 };

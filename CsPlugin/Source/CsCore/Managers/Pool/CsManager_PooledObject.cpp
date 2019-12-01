@@ -7,7 +7,7 @@
 
 FCsManager_PooledObject::FCsManager_PooledObject()
 {
-	Name			= NCsCached::Str::Empty;
+	Name = NCsCached::Str::Empty;
 
 	CurrentWorld = nullptr;
 
@@ -20,7 +20,7 @@ FCsManager_PooledObject::FCsManager_PooledObject()
 
 	ConstructObject_Impl.BindRaw(this, &FCsManager_PooledObject::ConstructObject);
 
-	ActiveObjects.Reset();
+	AllocatedObjects.Reset();
 
 	Payloads.Reset();
 	PayloadSize = 0;
@@ -76,7 +76,7 @@ void FCsManager_PooledObject::Clear()
 
 	Pool.Reset();
 	PoolSize = 0;
-	ActiveObjects.Reset();
+	AllocatedObjects.Reset();
 
 	for (ICsPooledObjectPayload* P : Payloads)
 	{
@@ -115,7 +115,7 @@ void FCsManager_PooledObject::Shutdown()
 		Payloads.Reset();
 	}
 
-	OnTick_Handle_Object.Unbind();
+	OnUpdate_Handle_Object.Unbind();
 }
 
 UWorld* FCsManager_PooledObject::GetCurrentWorld()
@@ -199,7 +199,7 @@ void FCsManager_PooledObject::CreatePool(const int32& Size)
 
 	Pool.Reserve(PoolSize);
 	Links.Reserve(PoolSize);
-	ActiveObjects.Reserve(PoolSize);
+	AllocatedObjects.Reserve(PoolSize);
 
 	for (int32 I = 0; I < Size; ++I)
 	{
@@ -237,17 +237,12 @@ void FCsManager_PooledObject::CreatePool(const int32& Size)
 
 void FCsManager_PooledObject::AddToPool(ICsPooledObject* PooledObject, UObject* Object)
 {
+	checkf(PooledObject, TEXT("FCsManager_PooledObject::AddToPool: PooledObject is NULL."));
+
 	const int32& Index = PooledObject->GetCache()->GetIndex();
 
-	if (Index < INDEX_NONE)
-	{
+	if (Index != INDEX_NONE)
 		return;
-	}
-
-	if (Index >= PoolSize)
-	{
-		return;
-	}
 
 	PooledObject->GetCache()->Init(PoolSize);
 	PooledObject->Deallocate();
@@ -272,59 +267,54 @@ void FCsManager_PooledObject::AddToPool(ICsPooledObject* Object)
 	AddToPool(Object, nullptr);
 }
 
-FCsManagerPooledObject_OnAddToPool& FCsManager_PooledObject::GetOnAddToPool_Event()
-{
-	return OnAddToPool_Event;
-}
-
-void FCsManager_PooledObject::AddToActivePool(ICsPooledObject* PooledObject, UObject* Object)
+void FCsManager_PooledObject::AddToAllocatedPool(ICsPooledObject* PooledObject, UObject* Object)
 {
 	// TODO: Do check is Object is in Pool
-	//AddToActivePool_Internal(Object);
+	//AddToAllocatedPool_Internal(Object);
 }
 
-void FCsManager_PooledObject::AddToActivePool(ICsPooledObject* Object)
+void FCsManager_PooledObject::AddToAllocatedPool(ICsPooledObject* Object)
 {
 
 }
 
-void FCsManager_PooledObject::AddToActivePool_Internal(const FCsPooledObject& Object)
+void FCsManager_PooledObject::AddToAllocatedPool_Internal(const FCsPooledObject& Object)
 {
 	const int32& Index = Object.GetCache()->GetIndex();
 
 	TLinkedList<FCsPooledObject>* Link = Links[Index];
 
-	AddActiveLink(Link);
-	ActiveObjects.Add(Object);
+	AddAllocatedLink(Link);
+	AllocatedObjects.Add(Object);
 }
 
-void FCsManager_PooledObject::AddActiveLink(TLinkedList<FCsPooledObject>* Link)
+void FCsManager_PooledObject::AddAllocatedLink(TLinkedList<FCsPooledObject>* Link)
 {
-	if (ActiveTail)
+	if (AllocatedTail)
 	{
-		Link->LinkAfter(ActiveTail);
-		ActiveTail = Link;
+		Link->LinkAfter(AllocatedTail);
+		AllocatedTail = Link;
 	}
 	else
 	{
-		ActiveHead = Link;
-		ActiveTail = ActiveHead;
+		AllocatedHead = Link;
+		AllocatedTail = AllocatedHead;
 	}
 }
 
-void FCsManager_PooledObject::RemoveActiveLink(TLinkedList<FCsPooledObject>* Link)
+void FCsManager_PooledObject::RemoveAllocatedLink(TLinkedList<FCsPooledObject>* Link)
 {
 	// Check to Update HEAD
-	if (Link == ActiveHead)
+	if (Link == AllocatedHead)
 	{
-		if (ActiveObjectsSize > CS_SINGLETON)
+		if (AllocatedObjectsSize > CS_SINGLETON)
 		{
-			ActiveHead = Link->GetNextLink();
+			AllocatedHead = Link->GetNextLink();
 		}
 		else
 		{
-			ActiveHead = nullptr;
-			ActiveTail = nullptr;
+			AllocatedHead = nullptr;
+			AllocatedTail = nullptr;
 		}
 	}
 	Link->Unlink();
@@ -335,9 +325,9 @@ const TArray<FCsPooledObject>& FCsManager_PooledObject::GetObjects()
 	return Pool;
 }
 
-const TArray<FCsPooledObject>& FCsManager_PooledObject::GetAllActiveObjects()
+const TArray<FCsPooledObject>& FCsManager_PooledObject::GetAllAllocatedObjects()
 {
-	return ActiveObjects;
+	return AllocatedObjects;
 }
 
 const int32& FCsManager_PooledObject::GetPoolSize()
@@ -345,14 +335,14 @@ const int32& FCsManager_PooledObject::GetPoolSize()
 	return PoolSize;
 }
 
-int32 FCsManager_PooledObject::GetActivePoolSize()
+int32 FCsManager_PooledObject::GetAllocatedPoolSize()
 {
-	return ActiveObjectsSize;
+	return AllocatedObjectsSize;
 }
 
 bool FCsManager_PooledObject::IsExhausted()
 {
-	return ActiveObjectsSize == PoolSize;
+	return AllocatedObjectsSize == PoolSize;
 }
 
 const FCsPooledObject& FCsManager_PooledObject::FindObject(const int32& Index)
@@ -376,12 +366,12 @@ const FCsPooledObject& FCsManager_PooledObject::FindObject(ICsPooledObject* Obje
 
 #pragma endregion Pool
 
-// Tick
+// Update
 #pragma region
 
-void FCsManager_PooledObject::OnTick(const float &DeltaTime)
+void FCsManager_PooledObject::Update(const float& DeltaTime)
 {
-	TLinkedList<FCsPooledObject>* Current = ActiveHead;
+	TLinkedList<FCsPooledObject>* Current = AllocatedHead;
 	TLinkedList<FCsPooledObject>* Next    = Current;
 
 	int32 NewSize = 0;
@@ -401,13 +391,13 @@ void FCsManager_PooledObject::OnTick(const float &DeltaTime)
 
 			LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::OnTick], ECsPoolTransaction::Deallocate, O);
 #endif // #if !UE_BUILD_SHIPPING
-			RemoveActiveLink(Current);
+			RemoveAllocatedLink(Current);
 			continue;
 		}
 
 		if (!O.GetCache()->UseLifeTime())
 		{
-			OnTick_Handle_Object.ExecuteIfBound(O);
+			OnUpdate_Handle_Object.ExecuteIfBound(O);
 			continue;
 		}
 
@@ -417,29 +407,29 @@ void FCsManager_PooledObject::OnTick(const float &DeltaTime)
 			LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::OnTick], ECsPoolTransaction::Deallocate, O);
 #endif // #if !UE_BUILD_SHIPPING
 			O.Deallocate();
-			RemoveActiveLink(Current);
+			RemoveAllocatedLink(Current);
 
 			OnDeallocate_Event.Broadcast(O);
 			continue;
 		}
 
-		if (NewSize < ActiveObjectsSize)
+		if (NewSize < AllocatedObjectsSize)
 		{
-			ActiveObjects[NewSize] = O;
+			AllocatedObjects[NewSize] = O;
 		}
 
-		OnTick_Handle_Object.ExecuteIfBound(O);
+		OnUpdate_Handle_Object.ExecuteIfBound(O);
 		++NewSize;
 	}
 
-	for (int32 I = ActiveObjectsSize - 1; I >= NewSize; --I)
+	for (int32 I = AllocatedObjectsSize - 1; I >= NewSize; --I)
 	{
-		ActiveObjects.RemoveAt(I, 1, false);
+		AllocatedObjects.RemoveAt(I, 1, false);
 	}
-	ActiveObjectsSize = ActiveObjects.Num();
+	AllocatedObjectsSize = AllocatedObjects.Num();
 }
 
-#pragma endregion Tick
+#pragma endregion Update
 
 // Allocate / DeAllocate
 #pragma region
@@ -475,14 +465,14 @@ bool FCsManager_PooledObject::Deallocate(const int32& Index)
 		return false;
 	}
 
-	if (Links[Index] != ActiveHead && 
+	if (Links[Index] != AllocatedHead && 
 		!Links[Index]->IsLinked())
 	{
 		UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s at PoolIndex: %d is already deallocated or not in the Pool."), *Name, *(ConstructParams.ClassName), Index);
 		return false;
 	}
 
-	if (ActiveObjectsSize == CS_EMPTY)
+	if (AllocatedObjectsSize == CS_EMPTY)
 	{
 		UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s at PoolIndex: %d is already deallocated or not in the Pool."), *Name, *(ConstructParams.ClassName), Index);
 		return false;
@@ -496,9 +486,9 @@ bool FCsManager_PooledObject::Deallocate(const int32& Index)
 #endif // #if !UE_BUILD_SHIPPING
 
 	O.Deallocate();
-	RemoveActiveLink(Link);
+	RemoveAllocatedLink(Link);
 
-	TLinkedList<FCsPooledObject>* Current = ActiveHead;
+	TLinkedList<FCsPooledObject>* Current = AllocatedHead;
 	TLinkedList<FCsPooledObject>* Next	   = Current;
 
 	int32 NewSize = 0;
@@ -509,19 +499,19 @@ bool FCsManager_PooledObject::Deallocate(const int32& Index)
 		O		 = **Current;
 		Next	 = Current->GetNextLink();
 
-		if (NewSize < ActiveObjectsSize)
+		if (NewSize < AllocatedObjectsSize)
 		{
-			ActiveObjects[NewSize] = O;
+			AllocatedObjects[NewSize] = O;
 		}
 
 		++NewSize;
 	}
 
-	for (int32 I = ActiveObjectsSize - 1; I >= NewSize; --I)
+	for (int32 I = AllocatedObjectsSize - 1; I >= NewSize; --I)
 	{
-		ActiveObjects.RemoveAt(I, 1, false);
+		AllocatedObjects.RemoveAt(I, 1, false);
 	}
-	ActiveObjectsSize = ActiveObjects.Num();
+	AllocatedObjectsSize = AllocatedObjects.Num();
 
 	OnDeallocate_Event.Broadcast(O);
 	return true;
@@ -529,7 +519,7 @@ bool FCsManager_PooledObject::Deallocate(const int32& Index)
 
 void FCsManager_PooledObject::DeallocateAll()
 {
-	for (FCsPooledObject& O : ActiveObjects)
+	for (FCsPooledObject& O : AllocatedObjects)
 	{
 #if !UE_BUILD_SHIPPING
 		LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::DeallocateAll], ECsPoolTransaction::Deallocate, O);
@@ -538,9 +528,9 @@ void FCsManager_PooledObject::DeallocateAll()
 		OnDeallocate_Event.Broadcast(O);
 	}
 
-	ActiveObjects.Reset(PoolSize);
+	AllocatedObjects.Reset(PoolSize);
 
-	TLinkedList<FCsPooledObject>* Current = ActiveHead;
+	TLinkedList<FCsPooledObject>* Current = AllocatedHead;
 	TLinkedList<FCsPooledObject>* Next	  = Current;
 
 
@@ -552,8 +542,8 @@ void FCsManager_PooledObject::DeallocateAll()
 		Current->Unlink();
 	}
 
-	ActiveHead = nullptr;
-	ActiveTail = nullptr;
+	AllocatedHead = nullptr;
+	AllocatedTail = nullptr;
 }
 
 #pragma endregion Allocate / DeAllocate
@@ -576,11 +566,6 @@ void FCsManager_PooledObject::CreatePayloads_Internal(const int32& Size)
 	{
 		Payloads.Add(new FCsPooledObjectPayload());
 	}
-}
-
-FCsManagerPooledObject_CreatePayloads& FCsManager_PooledObject::GetCreatePayloads_Impl()
-{
-	return CreatePayloads_Impl;
 }
 
 void FCsManager_PooledObject::DestroyPayloads()
@@ -663,7 +648,7 @@ const FCsPooledObject& FCsManager_PooledObject::Spawn(ICsPooledObjectPayload* Pa
 
 	LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn], ECsPoolTransaction::Allocate, O);
 	Payload->Reset();
-	AddToActivePool_Internal(O);
+	AddToAllocatedPool_Internal(O);
 	OnSpawn_Event.Broadcast(O);
 	return O;
 }

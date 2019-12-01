@@ -43,24 +43,40 @@ public:
 public:
 
 	/**
-	* 
+	* Delegate type for getting the Cache associated with a Pooled Object.
+	*  The Pooled Object implements a script interface of type: ICsPooledObject.
+	*
+	* @param Object		A Pooled Object of type: ICsPooledObject.
+	* return Cache		The cache associated with the Pooled Object.
 	*/
 	DECLARE_DELEGATE_RetVal_OneParam(ICsPooledObjectCache* /*Cache*/, FScript_GetCache, UObject* /*Object*/);
 
+	/** Delegate for getting the Cache associated with a Pooled Object. 
+		 The Pooled Object implements a script interface of type: ICsPooledObject. */
 	FScript_GetCache Script_GetCache_Impl;
 
 	/**
+	* Delegate type for allocating a Pooled Object.
+	*  The Pooled Object implements a script interface of type: ICsPooledObject.
 	*
+	* @param Object		A Pooled Object of type: ICsPooledObject.
+	* @param Payload	A "blob" of parameters to pass in when allocating a Pooled Object.
 	*/
 	DECLARE_DELEGATE_TwoParams(FScript_Allocate, UObject* /*Object*/, ICsPooledObjectPayload* /*Payload*/);
 
+	/** Delegate for allocating a Pooled Object. 
+		  The Pooled Object implements a script interface of type: ICsPooledObject. */
 	FScript_Allocate Script_Allocate_Impl;
 
 	/**
+	* Delegate type for deallocating a Pooled Object.
+	*   The Pooled Object implements a script interface of type: ICsPooledObject.
 	*
+	* @param Object		A Pooled Object of type: ICsPooledObject.
 	*/
 	DECLARE_DELEGATE_OneParam(FScript_Deallocate, UObject* /*Object*/);
 
+	/** Delegate for deallocating a Pooled Object. */
 	FScript_Deallocate Script_Deallocate_Impl;
 
 #pragma endregion Script

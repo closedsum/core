@@ -237,7 +237,7 @@ public:
 		return new FCsManager_PooledObject();
 	}
 
-	ICsManager_PooledObject* GetPool(const KeyType& Type)
+	ICsManager_PooledObject* GetManagerPooledObjects(const KeyType& Type)
 	{
 		return CheckAndAddType(Type);
 	}
@@ -322,57 +322,95 @@ private:
 		return Pool;
 	}
 
+	// Add
+#pragma region
 public:
 
-	virtual void AddToPool(const KeyType& Type, ICsPooledObject* PooledObject, UObject* Object)
+	/**
+	* Adds an Object to the pool of appropriate Type.
+	*  The Object must implement the interface: ICsPooledObject.
+	*
+	* @param Type			Type of pool to add the Object to.
+	* @param PooledObject	Object that implements the interface: ICsPooledObject.
+	* @param Object			UObject reference.
+	* return				Reference to the container for the Pooled Object.
+	*/
+	const FCsPooledObject& AddToPool(const KeyType& Type, ICsPooledObject* PooledObject, UObject* Object)
 	{
 		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
 
-		Pool->AddToPool(PooledObject, Object);
-
-		const TArray<FCsPooledObject>& Objects = Pool->GetObjects();
-		const int32& Index					   = PooledObject->GetCache()->GetIndex();
-		const FCsPooledObject& O			   = Objects[Index];
+		const FCsPooledObject& O = Pool->AddToPool(PooledObject, Object);
 
 		OnAddToPool_Event.Broadcast(Type, O);
+
+		return O;
 	}
 
-	virtual void AddToPool(const KeyType& Type, ICsPooledObject* Object)
+	const FCsPooledObject& AddToPool(const KeyType& Type, ICsPooledObject* Object)
 	{
-		AddToPool(Type, Object, nullptr);
+		return AddToPool(Type, Object, nullptr);
 	}
 
-	TMulticastDelegate<void, const KeyType&, const FCsPooledObject&> OnAddToPool_Event;
-
-	virtual void AddToAllocatedPool(const KeyType& Type, ICsPooledObject* PooledObject, UObject* Object)
+	const FCsPooledObject& AddToPool(const KeyType& Type, UObject* Object)
 	{
+		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
+
+		const FCsPooledObject& O = Pool->AddToPool(Object);
+
+		OnAddToPool_Event.Broadcast(Type, O);
+
+		return O;
+	}
+
+	/***/
+	TMulticastDelegate<void, const KeyType& /*Type*/, const FCsPooledObject& /*Object*/> OnAddToPool_Event;
+
+	const FCsPooledObject& AddToAllocatedPool(const KeyType& Type, ICsPooledObject* PooledObject, UObject* Object)
+	{
+		checkf(PooledObject, TEXT("%s::AddToAllocatedPool: PooledObject is NULL."), *Name);
+
 		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
 
 		const int32& Index = PooledObject->GetCache()->GetIndex();
 
-		checkf(Index < Pool->GetPoolSize(), TEXT("%:AddToAllocatedPool: PooledObject is in another pool."), *Name);
+		checkf(Index < Pool->GetPoolSize(), TEXT("%::AddToAllocatedPool: PooledObject is in another pool."), *Name);
 
-		if (Index <= INDEX_NONE)
-		{
-			AddToPool(Type, PooledObject, Object);
-		}
-
-		Pool->AddToAllocatedPool(PooledObject, Object);
-
-		const TArray<FCsPooledObject>& Objects = Pool->GetObjects();
-		const FCsPooledObject& O			   = Objects[Index];
+		const FCsPooledObject& O = Pool->AddToAllocatedPool(PooledObject, Object);
 
 		OnAddToAllocatedPool_Event.Broadcast(Type, O);
+
+		return O;
 	}
 
-	virtual void AddToAllocatedPool(const KeyType& Type, ICsPooledObject* Object)
+	const FCsPooledObject& AddToAllocatedPool(const KeyType& Type, ICsPooledObject* Object)
 	{
-		AddToAllocatedPool(Type, Object, nullptr);
+		return AddToAllocatedPool(Type, Object, nullptr);
 	}
 
-	TMulticastDelegate<void, const KeyType&, const FCsPooledObject&> OnAddToAllocatedPool_Event;
+	const FCsPooledObject& AddToAllocatedPool(const KeyType& Type, UObject* Object)
+	{
+		checkf(Object, TEXT("%s::AddToAllocatedPool: Object is NULL."), *Name);
+
+		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
+
+		const FCsPooledObject& O = Pool->AddToAllocatedPool(Object);
+
+		OnAddToAllocatedPool_Event.Broadcast(Type, O);
+
+		return O;
+	}
+
+	TMulticastDelegate<void, const KeyType& /*Type*/, const FCsPooledObject& /*Object*/> OnAddToAllocatedPool_Event;
+
+#pragma endregion Add
 
 public:
+
+	const TArray<FCsPooledObject>& GetPool(const KeyType& Type)
+	{
+		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
+		return Pool->GetPool();
+	}
 
 	const TArray<FCsPooledObject>& GetAllAllocatedObjects(const KeyType& Type)
 	{
@@ -380,10 +418,10 @@ public:
 		return Pool->GetAllAllocatedObjects();
 	}
 
-	const TArray<FCsPooledObject>& GetObjects(const KeyType& Type)
+	const int32& GetPoolSize(const KeyType& Type)
 	{
 		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
-		return Pool->GetObjects();
+		return Pool->GetPoolSize();
 	}
 
 	int32 GetAllocatedPoolSize(const KeyType& Type)
@@ -398,9 +436,17 @@ public:
 		return Pool->IsExhausted();
 	}
 
+	// Find
+#pragma region
+public:
+
+
+
+#pragma endregion Find
+
 #pragma endregion Pool
 
-// Tick
+// Update
 #pragma region
 public:
 
@@ -412,22 +458,22 @@ public:
 		}
 	}
 
-#pragma endregion Tick
+#pragma endregion Update
 
 // Payload
 #pragma region
 public:
 
-	void CreatePayloads(const KeyType& Type, const int32& Size)
+	void ConstructPayloads(const KeyType& Type, const int32& Size)
 	{
 		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
-		Pool->CreatePayloads(Size);
+		Pool->ConstructPayloads(Size);
 	}
 
-	void DestroyPayloads(const KeyType& Type)
+	void DeconstructPayloads(const KeyType& Type)
 	{
 		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
-		Pool->DestroyPayloads();
+		Pool->DeconstructPayloads();
 	}
 
 	ICsPooledObjectPayload* AllocatePayload(const KeyType& Type)

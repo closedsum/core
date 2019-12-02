@@ -3,6 +3,7 @@
 #pragma once
 #include "Managers/Pool/CsPooledObject.h"
 #include "CsCVars.h"
+#include "Containers/CsDoubleLinkedList.h"
 
 // Structs
 #pragma region
@@ -71,7 +72,7 @@ class ICsPooledObject;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FCsManagerPooledObject_OnAddToPool, const FCsPooledObject& /*Object*/);
 
-DECLARE_DELEGATE_OneParam(FCsManagerPooledObject_CreatePayloads, const int32& /*Size*/);
+DECLARE_DELEGATE_OneParam(FCsManagerPooledObject_ConstructPayloads, const int32& /*Size*/);
 
 class CSCORE_API ICsManager_PooledObject
 {
@@ -106,25 +107,45 @@ public:
 
 	virtual void CreatePool(const int32& Size) = 0;
 
-	virtual void AddToPool(ICsPooledObject* PooledObject, UObject* Object) = 0;
-	virtual void AddToPool(ICsPooledObject* Object) = 0;
+	// Add
+#pragma region
+public:
+
+	virtual const FCsPooledObject& AddToPool(ICsPooledObject* PooledObject, UObject* Object) = 0;
+	virtual const FCsPooledObject& AddToPool(ICsPooledObject* Object) = 0;
+	virtual const FCsPooledObject& AddToPool(UObject* Object) = 0;
 
 	virtual FCsManagerPooledObject_OnAddToPool& GetOnAddToPool_Event() = 0;
 
-	virtual void AddToAllocatedPool(ICsPooledObject* PooledObject, UObject* Object) = 0;
-	virtual void AddToAllocatedPool(ICsPooledObject* Object) = 0;
+	virtual const FCsPooledObject& AddToAllocatedPool(ICsPooledObject* PooledObject, UObject* Object) = 0;
+	virtual const FCsPooledObject& AddToAllocatedPool(ICsPooledObject* Object) = 0;
+	virtual const FCsPooledObject& AddToAllocatedPool(UObject* Object) = 0;
+
+#pragma endregion Add
+
+public:
+
+	virtual const TArray<FCsPooledObject>& GetPool() = 0;
 
 	virtual const TArray<FCsPooledObject>& GetAllAllocatedObjects() = 0;
-
-	virtual const TArray<FCsPooledObject>& GetObjects() = 0;
 
 	virtual const int32& GetPoolSize() = 0;
 	virtual int32 GetAllocatedPoolSize() = 0;
 
 	virtual bool IsExhausted() = 0;
 
+
+	// Find
+#pragma region
+public:
+
 	virtual const FCsPooledObject& FindObject(const int32& Index) = 0;
 	virtual const FCsPooledObject& FindObject(ICsPooledObject* Object) = 0;
+
+	virtual const FCsPooledObject& FindSafeObject(const int32& Index) = 0;
+	virtual const FCsPooledObject& FindSafeObject(ICsPooledObject* Object) = 0;
+
+#pragma endregion Find
 
 #pragma endregion Pool
 
@@ -140,11 +161,11 @@ public:
 #pragma region
 public:
 
-	virtual void CreatePayloads(const int32& Size) = 0;
+	virtual void ConstructPayloads(const int32& Size) = 0;
 
-	virtual FCsManagerPooledObject_CreatePayloads& GetCreatePayloads_Impl() = 0;
+	virtual FCsManagerPooledObject_ConstructPayloads& GetConstructPayloads_Impl() = 0;
 
-	virtual void DestroyPayloads() = 0;
+	virtual void DeconstructPayloads() = 0;
 
 	virtual ICsPooledObjectPayload* AllocatePayload() = 0;
 
@@ -276,9 +297,39 @@ public:
 
 	virtual void CreatePool(const int32& Size);
 
-	virtual void AddToPool(ICsPooledObject* PooledObject, UObject* Object);
-	virtual void AddToPool(ICsPooledObject* Object);
+	// Add
+#pragma region
+public:
 
+	/**
+	* Adds an Object to the pool.
+	*  The Object must implement the interface: ICsPooledObject.
+	*
+	* @param PooledObject	Object that implements the interface: ICsPooledObject.
+	* @param Object			UObject reference.
+	* return				Reference to the container for the Pooled Object.
+	*/
+	const FCsPooledObject& AddToPool(ICsPooledObject* PooledObject, UObject* Object);
+
+	/**
+	* Adds an Object to the pool.
+	*  The Object must implement the interface: ICsPooledObject.
+	*
+	* @param Object		UObject reference.
+	* return			Reference to the container for the Pooled Object.
+	*/
+	const FCsPooledObject& AddToPool(ICsPooledObject* Object);
+
+	/**
+	* Adds an Object to the pool.
+	*  The Object must implement the interface: ICsPooledObject.
+	*
+	* @param Object		UObject reference.
+	* return			Reference to the container for the PooledObject.
+	*/
+	const FCsPooledObject& AddToPool(UObject* Object);
+
+	/** Delegate called after Adding an Object to the pool. */
 	FCsManagerPooledObject_OnAddToPool OnAddToPool_Event;
 
 	FORCEINLINE FCsManagerPooledObject_OnAddToPool& GetOnAddToPool_Event()
@@ -286,35 +337,74 @@ public:
 		return OnAddToPool_Event;
 	}
 
-public: 
-
-	virtual void AddToAllocatedPool(ICsPooledObject* PooledObject, UObject* Object);
-	virtual void AddToAllocatedPool(ICsPooledObject* Object);
+	const FCsPooledObject& AddToAllocatedPool(ICsPooledObject* PooledObject, UObject* Object);
+	const FCsPooledObject& AddToAllocatedPool(ICsPooledObject* Object);
+	const FCsPooledObject& AddToAllocatedPool(UObject* Object);
 
 protected:
 
 	virtual void AddToAllocatedPool_Internal(const FCsPooledObject& Object);
 
-	virtual void AddAllocatedLink(TLinkedList<FCsPooledObject>* Link);
-	virtual void RemoveAllocatedLink(TLinkedList<FCsPooledObject>* Link);
+	void AddAllocatedLink(TLinkedList<FCsPooledObject>* Link);
+	void RemoveAllocatedLink(TLinkedList<FCsPooledObject>* Link);
+
+#pragma endregion Add
 
 public:
 
-	const TArray<FCsPooledObject>& GetObjects();
+	FORCEINLINE const TArray<FCsPooledObject>& GetPool()
+	{
+		return Pool;
+	}
 
-	const TArray<FCsPooledObject>& GetAllAllocatedObjects();
+	FORCEINLINE const TArray<FCsPooledObject>& GetAllAllocatedObjects()
+	{
+		return AllocatedObjects;
+	}
 
-	const int32& GetPoolSize();
-	int32 GetAllocatedPoolSize();
+	FORCEINLINE const int32& GetPoolSize()
+	{
+		return PoolSize;
+	}
 
-	bool IsExhausted();
+	FORCEINLINE int32 GetAllocatedPoolSize()
+	{
+		return AllocatedObjectsSize;
+	}
 
-	const FCsPooledObject& FindObject(const int32& Index);
-	const FCsPooledObject& FindObject(ICsPooledObject* Object);
+	FORCEINLINE bool IsExhausted()
+	{
+		return AllocatedObjectsSize == PoolSize;
+	}
+
+	// Find
+#pragma region
+public:
+
+	FORCEINLINE const FCsPooledObject& FindObject(const int32& Index)
+	{
+		checkf(Index > 0 && Index < PoolSize, TEXT("FCsManager_PooledObject::FindObject: Index: %d is NOT valid for pool."), Index);
+
+		return Pool[Index];
+	}
+
+	FORCEINLINE const FCsPooledObject& FindObject(ICsPooledObject* Object)
+	{
+		const FCsPooledObject& O = FindObject(Object->GetCache()->GetIndex());
+
+		checkf(Object == O.GetInterface(), TEXT("FCsManager_PooledObject::FindObject: Object is NOT apart of this pool."));
+		
+		return O;
+	}
+
+	const FCsPooledObject& FindSafeObject(const int32& Index);
+	const FCsPooledObject& FindSafeObject(ICsPooledObject* Object);
+
+#pragma endregion Find
 
 #pragma endregion Pool
 
-// Tick
+// Update
 #pragma region
 public:
 
@@ -329,7 +419,7 @@ public:
 
 	FOnUpdate_Handle_Object OnUpdate_Handle_Object;
 
-#pragma endregion Tick
+#pragma endregion Update
 
 // Allocate / DeAllocate
 #pragma region
@@ -360,7 +450,7 @@ protected:
 public:
 
 	template<typename PayloadType>
-	void CreatePayloads(const int32& Size)
+	void ConstructPayloads(const int32& Size)
 	{
 		PayloadSize = Size;
 
@@ -370,22 +460,22 @@ public:
 		}
 	}
 
-	void CreatePayloads(const int32& Size);
+	void ConstructPayloads(const int32& Size);
 
 protected:
 
-	void CreatePayloads_Internal(const int32& Size);
+	void ConstructPayloads_Internal(const int32& Size);
 
 public:
 
-	FCsManagerPooledObject_CreatePayloads CreatePayloads_Impl;
+	FCsManagerPooledObject_ConstructPayloads ConstructPayloads_Impl;
 
-	FORCEINLINE FCsManagerPooledObject_CreatePayloads& GetCreatePayloads_Impl()
+	FORCEINLINE FCsManagerPooledObject_ConstructPayloads& GetConstructPayloads_Impl()
 	{
-		return CreatePayloads_Impl;
+		return ConstructPayloads_Impl;
 	}
 
-	void DestroyPayloads();
+	void DeconstructPayloads();
 
 	ICsPooledObjectPayload* AllocatePayload();
 

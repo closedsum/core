@@ -59,6 +59,9 @@ protected:
 	/** Reference to interface of type: ICsProjecitle. */
 	ICsProjectile* Projectile;
 
+	/** Does the Projectile implement a script interface of type: ICsProjectile. */
+	bool bScriptProjectile;
+
 // Script
 #pragma region
 public:
@@ -135,6 +138,16 @@ public:
 #pragma endregion ICsProjectile
 
 public:
+
+	void SetScriptProjectile()
+	{
+		bScriptProjectile = true;
+	}
+
+	FORCEINLINE bool GetScriptProjectile() const 
+	{
+		return bScriptProjectile;
+	}
 
 	FORCEINLINE ICsProjectile* GetProjectile() const
 	{

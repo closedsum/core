@@ -11,11 +11,6 @@ FCsManager_Projectile_Internal::FCsManager_Projectile_Internal()
 {
 }
 
-const FString& FCsManager_Projectile_Internal::KeyTypeToString(const FECsProjectile& Type)
-{
-	return Type.Name;
-}
-
 #pragma endregion Internal
 
 // static initializations
@@ -116,6 +111,12 @@ void UCsManager_Projectile::CleanUp()
 void UCsManager_Projectile::ConstructInternal()
 {
 	Internal = new FCsManager_Projectile_Internal();
+
+	// Bind delegates for a script interface.
+
+	Internal->Script_GetCache_Impl = Script_GetCache_Impl;
+	Internal->Script_Allocate_Impl = Script_Allocate_Impl;
+	Internal->Script_Deallocate_Impl = Script_Deallocate_Impl;
 }
 
 void UCsManager_Projectile::InitInternal(const TCsManager_Internal::FCsManagerPooledObjectMapParams& Params)
@@ -130,11 +131,39 @@ void UCsManager_Projectile::Clear()
 
 void UCsManager_Projectile::CreatePool(const FECsProjectile& Type, const int32& Size)
 {
+	checkf(Size > 0, TEXT("UCsManager_Projectile::CreatePool: Size must be GREATER THAN 0."));
+
+	FCsManager_MemoryResource_Projectile* Manager_MemoryResource = nullptr;
+
+	if (FCsManager_MemoryResource_Projectile** Manager_MemoryResourcePtr = Pools.Find(Type))
+	{
+		Manager_MemoryResource = *Manager_MemoryResourcePtr;
+
+		Manager_MemoryResource->Shutdown();
+	}
+	else
+	{
+		Manager_MemoryResource->CreatePool(Size);
+	}
+
 	Internal->CreatePool(Type, Size);
 }
 
 	// Add
 #pragma region
+
+TArray<FCsProjectile>& UCsManager_Projectile::CheckAndAddType_Pools(const FECsProjectile& Type)
+{
+	TArray<FCsProjectile>* ValuePtr = Pools.Find(Type);
+
+	if (!ValuePtr)
+	{
+		TArray<FCsProjectile>& Value = Pools.Add(Type);
+		AllocatedObjects.Add(Type);
+		return Value;
+	}
+	return *ValuePtr;
+}
 
 void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, ICsProjectile* Object)
 {
@@ -149,6 +178,8 @@ void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, ICsProjectile*
 	// UObject
 	if (UObject* U = Object->_getUObject())
 	{
+		P.SetObject(U);
+
 		UClass* Class = U->GetClass();
 
 		// Check ICsPooledObject interface
@@ -164,15 +195,32 @@ void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, ICsProjectile*
 		else
 		if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
 		{
-			checkf(false, TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s implements a script interface of ICsPooledObject. This method does NOT support script interfaces."), *(U->GetName()), *(Class->GetName()));
+			Internal->AddToPool(Type, U);
+
+			P.SetScript();
+
+			// Check and bind delegates for the script interface.
+
+			// GetCache
+			checkf(Script_GetCache_Impl.IsBound(), TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT have Script_GetCache_Impl Bound to any function."), *(U->GetName()), *(Class->GetName()));
+
+			P.Script_GetCache_Impl = Script_GetCache_Impl;
+
+			// Allocate
+			checkf(P.Script_Allocate_Impl.IsBound(), TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT have Script_Allocate_Impl Bound to any function."), *(U->GetName()), *(Class->GetName()));
+
+			P.Script_Allocate_Impl = Script_Allocate_Impl;
+
+			// Deallocate
+			checkf(P.Script_Deallocate_Impl.IsBound(), TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT have Script_Deallocate_Impl Bound to any function."), *(U->GetName()), *(Class->GetName()));
+
+			P.Script_Deallocate_Impl = Script_Deallocate_Impl;
 		}
 			// INVALID
 		else
 		{
 			checkf(false, TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(U->GetName()), *(Class->GetName()));
 		}
-
-		P.SetObject(U);
 	}
 	else
 	{
@@ -190,10 +238,16 @@ void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, ICsProjectile*
 	}
 }
 
-void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, FCsProjectile& Object)
+void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, const FCsProjectile& Object)
 {
+	TArray<FCsProjectile>& Projectiles = CheckAndAddType_Pools(Type);
+	Projectiles.AddDefaulted();
+	FCsProjectile& P = Projectiles.Last();
+
 	if (UObject* O = Object.GetObject())
 	{
+		P.SetObject(O);
+
 		UClass* Class = O->GetClass();
 
 		// Add ICsPooledObject interface
@@ -202,15 +256,36 @@ void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, FCsProjectile&
 		if (ICsPooledObject* Interface = Object.GetInterface())
 		{
 			Internal->AddToPool(Type, Interface);
+
+			P.SetInterface(Interface);
 		}
 			// Script Interface
 		else
 		if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
 		{
-			// Check Script delegates are bound.
+			Internal->AddToPool(Type, O);
 
-			//Script_GetOwner_Impl.BindStatic
-			// TODO
+			P.SetScript();
+
+			// Check and bind delegates for the script interface.
+
+			// GetCache
+			if (!P.Script_GetCache_Impl.IsBound())
+				P.Script_GetCache_Impl = Script_GetCache_Impl;
+
+			checkf(P.Script_GetCache_Impl.IsBound(), TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT have Script_GetCache_Impl Bound to any function."), *(O->GetName()), *(Class->GetName()));
+
+			// Allocate
+			if (!P.Script_Allocate_Impl.IsBound())
+				P.Script_Allocate_Impl = Script_Allocate_Impl;
+
+			checkf(P.Script_Allocate_Impl.IsBound(), TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT have Script_Allocate_Impl Bound to any function."), *(O->GetName()), *(Class->GetName()));
+
+			// Deallocate
+			if (!P.Script_Deallocate_Impl.IsBound())
+				P.Script_Deallocate_Impl = Script_Deallocate_Impl;
+
+			checkf(P.Script_Deallocate_Impl.IsBound(), TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT have Script_Deallocate_Impl Bound to any function."), *(O->GetName()), *(Class->GetName()));
 		}
 			// INVALID
 		else
@@ -219,9 +294,6 @@ void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, FCsProjectile&
 		}
 
 		// Add ICsProjectile interface
-		TArray<FCsProjectile>& Projectiles = CheckAndAddType_Pools(Type);
-		Projectiles.AddDefaulted();
-		FCsProjectile& P = Projectiles.Last();
 
 			// Interface
 		if (ICsProjectile* Projectile = Object.GetProjectile())
@@ -232,18 +304,21 @@ void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, FCsProjectile&
 		else
 		if (Class->ImplementsInterface(UCsProjectile::StaticClass()))
 		{
-			// Check Script delegates are bound.
+			P.SetScriptProjectile();
+
+			// Check and bind delegates for the script interface.
 
 			// GetOwner
-			//if (!Object.Script_GetOwner_Impl.IsBound())
-			//	Object.Script_GetOwner_Impl = Script_GetOwner_Impl;
+			if (!P.Script_GetOwner_Impl.IsBound())
+				P.Script_GetOwner_Impl = Script_GetOwner_Impl;
 
-			checkf(Object.Script_GetOwner_Impl.IsBound(), TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT have Script_GetOwner_Impl Bound to any function."), *(O->GetName()), *(Class->GetName()));
+			checkf(P.Script_GetOwner_Impl.IsBound(), TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT have Script_GetOwner_Impl Bound to any function."), *(O->GetName()), *(Class->GetName()));
 
 			// GetInstigator
-			checkf(Object.Script_GetInstigator_Impl.IsBound(), TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT have Script_GetInstigator_Impl Bound to any function."), *(O->GetName()), *(Class->GetName()));
+			if (!P.Script_GetInstigator_Impl.IsBound())
+				P.Script_GetInstigator_Impl = Script_GetInstigator_Impl;
 
-			P.SetProjectile(Projectile);
+			checkf(P.Script_GetInstigator_Impl.IsBound(), TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT have Script_GetInstigator_Impl Bound to any function."), *(O->GetName()), *(Class->GetName()));
 		}
 			// INVALID
 		else
@@ -265,10 +340,6 @@ void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, FCsProjectile&
 
 		checkf(Projectile, TEXT("UCsManager_Projectile::AddToPool: Projectile is NULL."));
 
-		TArray<FCsProjectile>& Projectiles = CheckAndAddType_Pools(Type);
-		Projectiles.AddDefaulted();
-		FCsProjectile& P = Projectiles.Last();
-
 		P.SetProjectile(Projectile);
 	}
 }
@@ -276,6 +347,12 @@ void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, FCsProjectile&
 void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, UObject* Object)
 {
 	checkf(Object, TEXT("UCsManager_Projectile::AddToPool: Object is NULL."));
+
+	TArray<FCsProjectile>& Projectiles = CheckAndAddType_Pools(Type);
+	Projectiles.AddDefaulted();
+	FCsProjectile& P = Projectiles.Last();
+
+	P.SetObject(Object);
 
 	UClass* Class = Object->GetClass();
 
@@ -285,12 +362,36 @@ void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, UObject* Objec
 	if (ICsPooledObject* Interface = Cast<ICsPooledObject>(Object))
 	{
 		Internal->AddToPool(Type, Interface);
+
+		P.SetInterface(Interface);
 	}
 		// Script Interface
 	else
 	if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
 	{
-		checkf(false, TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. This method does NOT support script interfaces."), *(Object->GetName()), *(Class->GetName()));
+		Internal->AddToPool(Type, Object);
+
+		P.SetScript();
+
+		// Check and bind delegates for the script interface.
+
+		// GetCache
+		if (!P.Script_GetCache_Impl.IsBound())
+			P.Script_GetCache_Impl = Script_GetCache_Impl;
+
+		checkf(P.Script_GetCache_Impl.IsBound(), TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT have Script_GetCache_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
+
+		// Allocate
+		if (!P.Script_Allocate_Impl.IsBound())
+			P.Script_Allocate_Impl = Script_Allocate_Impl;
+
+		checkf(P.Script_Allocate_Impl.IsBound(), TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT have Script_Allocate_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
+
+		// Deallocate
+		if (!P.Script_Deallocate_Impl.IsBound())
+			P.Script_Deallocate_Impl = Script_Deallocate_Impl;
+
+		checkf(P.Script_Deallocate_Impl.IsBound(), TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT have Script_Deallocate_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
 	}
 		// INVALID
 	else
@@ -299,9 +400,6 @@ void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, UObject* Objec
 	}
 
 	// Add ICsProjectile interface
-	TArray<FCsProjectile>& Projectiles = CheckAndAddType_Pools(Type);
-	Projectiles.AddDefaulted();
-	FCsProjectile& P = Projectiles.Last();
 
 		// Projectile
 	if (ICsProjectile* Projectile = Cast<ICsProjectile>(Object))
@@ -312,7 +410,21 @@ void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, UObject* Objec
 	else
 	if (Class->ImplementsInterface(UCsProjectile::StaticClass()))
 	{
-		checkf(false, TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s implements a script interface of ICsProjectile. This method does NOT support script interfaces."), *(Object->GetName()), *(Class->GetName()));
+		P.SetScriptProjectile();
+
+		// Check and bind delegates for the script interface.
+
+		// GetOwner
+		if (!P.Script_GetOwner_Impl.IsBound())
+			P.Script_GetOwner_Impl = Script_GetOwner_Impl;
+
+		checkf(P.Script_GetOwner_Impl.IsBound(), TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT have Script_GetOwner_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
+
+		// GetInstigator
+		if (!P.Script_GetInstigator_Impl.IsBound())
+			P.Script_GetInstigator_Impl = Script_GetInstigator_Impl;
+
+		checkf(P.Script_GetInstigator_Impl.IsBound(), TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT have Script_GetInstigator_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
 	}
 		// INVALID
 	else
@@ -321,29 +433,58 @@ void UCsManager_Projectile::AddToPool(const FECsProjectile& Type, UObject* Objec
 	}
 }
 
-TArray<FCsProjectile>& UCsManager_Projectile::CheckAndAddType_Pools(const FECsProjectile& Type)
+void UCsManager_Projectile::OnAddToPool(const FECsProjectile& Type, const FCsPooledObject& Object)
 {
-	TArray<FCsProjectile>* ValuePtr = Pools.Find(Type);
+	FCsManager_MemoryResource_Projectile* Manager_MemoryResource = Pools[Type];
 
-	if (!ValuePtr)
+	const int32& Index = Object.GetCache()->GetIndex();
+
+	FCsMemoryResource_Projectile* R = Manager_MemoryResource->Allocate(Index);
+	FCsProjectile* P				= R->Get();
+
+	if (UObject* O = Object.GetObject())
 	{
-		TArray<FCsProjectile>& Value = Pools.Add(Type);
-		AllocatedObjects.Add(Type);
-		return Value;
+		UClass* Class = O->GetClass();
+
+		// Interface
+		if (ICsProjectile* Projectile = Cast<ICsProjectile>(O))
+		{
+		}
+		// Script Interface
+		else
+		if (Class->ImplementsInterface(UCsProjectile::StaticClass()))
+		{
+		}
+		// INVALID
+		else
+		{
+
+		}
 	}
-	return *ValuePtr;
 }
 
 void UCsManager_Projectile::AddToAllocatedPool(const FECsProjectile& Type, ICsProjectile* Object)
 {
 	checkf(Object, TEXT("UCsManager_Projectile::AddToAllocatedPool: Object is NULL."));
 		
-	UObject* U		   = Object->_getUObject();
-	ICsPooledObject* O = Cast<ICsPooledObject>(U);
+	if (UObject* U = Object->_getUObject())
+	{
+		if (ICsPooledObject* Interface = Cast<ICsPooledObject>(U))
+		{
+			const int32& Index = Interface->GetCache()->GetIndex();
 
-	checkf(O, TEXT("UCsManager_Projectile::AddToAllocatedPool: Object is NULL or does NOT implement interface: ICsPooledObject."));
+			if (Index == INDEX_NONE)
+			{
+				AddToPool(Type, Object);
 
-	Internal->AddToAllocatedPool(Type, O);
+				Internal->AddToAllocatedPool(Type, Interface);
+
+			}
+			Internal->AddToAllocatedPool(Type, Interface);
+		}
+
+		//checkf(O, TEXT("UCsManager_Projectile::AddToAllocatedPool: Object is NULL or does NOT implement interface: ICsPooledObject."));
+	}
 }
 
 #pragma endregion Add
@@ -353,9 +494,14 @@ const TArray<FCsPooledObject>& UCsManager_Projectile::GetAllAllocatedObjects(con
 	return Internal->GetAllAllocatedObjects(Type);
 }
 
-const TArray<FCsPooledObject>& UCsManager_Projectile::GetObjects(const FECsProjectile& Type)
+const TArray<FCsPooledObject>& UCsManager_Projectile::GetPool(const FECsProjectile& Type)
 {
-	return Internal->GetObjects(Type);
+	return Internal->GetPool(Type);
+}
+
+const int32& UCsManager_Projectile::GetPoolSize(const FECsProjectile& Type)
+{
+	return Internal->GetPoolSize(Type);
 }
 
 int32 UCsManager_Projectile::GetAllocatedPoolSize(const FECsProjectile& Type)
@@ -370,23 +516,23 @@ bool UCsManager_Projectile::IsExhausted(const FECsProjectile& Type)
 
 void UCsManager_Projectile::Update(const float& DeltaTime)
 {
-	return Internal->Update(DeltaTime);
+	Internal->Update(DeltaTime);
 }
 
 	// Payload
 #pragma region
 
-void UCsManager_Projectile::CreatePayloads(const FECsProjectile& Type, const int32& Size)
+void UCsManager_Projectile::ConstructPayloads(const FECsProjectile& Type, const int32& Size)
 {
-	Internal->DestroyPayloads(Type);
+	Internal->DeconstructPayloads(Type);
 
-	ICsManager_PooledObject* Interface = Internal->GetPool(Type);
-	FCsManager_PooledObject* P			= (FCsManager_PooledObject*)Interface;
+	ICsManager_PooledObject* Interface = Internal->GetManagerPooledObjects(Type);
+	FCsManager_PooledObject* P		   = (FCsManager_PooledObject*)Interface;
 
-	P->GetCreatePayloads_Impl().Unbind();
-	P->GetCreatePayloads_Impl().BindRaw(P, &FCsManager_PooledObject::CreatePayloads<FCsProjectilePayload>);
+	P->GetConstructPayloads_Impl().Unbind();
+	P->GetConstructPayloads_Impl().BindRaw(P, &FCsManager_PooledObject::ConstructPayloads<FCsProjectilePayload>);
 
-	Internal->CreatePayloads(Type, Size);
+	Internal->ConstructPayloads(Type, Size);
 }
 
 ICsPooledObjectPayload* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)

@@ -5,7 +5,7 @@
 #include "OnlineSubsystem.h"
 #include "OnlineStats.h"
 #include "Interfaces/OnlineUserCloudInterface.h"
-#include "Managers/MemoryResource/CsManager_MemoryResource.h"
+#include "Managers/MemoryResource/CsManager_MemoryResource_Fixed.h"
 #include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"
 #include "CsManager_Save.generated.h"
 
@@ -19,7 +19,7 @@ struct CSCORE_API FCsMemoryResource_SaveActionInfo : public TCsMemoryResource<FC
 {
 };
 
-struct CSCORE_API FCsManager_MemoryResource_SaveActionInfo : public TCsManager_MemoryResource<FCsSaveActionInfo, FCsMemoryResource_SaveActionInfo, 64>
+struct CSCORE_API FCsManager_MemoryResource_SaveActionInfo : public TCsManager_MemoryResource_Fixed<FCsSaveActionInfo, FCsMemoryResource_SaveActionInfo, 64>
 {
 };
 

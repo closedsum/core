@@ -5,9 +5,13 @@
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
 #include "Managers/Projectile/CsProjectile.h"
+#include "Managers/MemoryResource/CsManager_MemoryResource.h"
 #include "CsManager_Projectile.generated.h"
 
 // Structs
+#pragma region
+
+	// ProjectilePayload
 #pragma region
 
 class UObject;
@@ -114,6 +118,16 @@ public:
 	}
 };
 
+#pragma endregion ProjectilePayload
+
+struct CSCORE_API FCsMemoryResource_Projectile : public TCsMemoryResource<FCsProjectile>
+{
+};
+
+struct CSCORE_API FCsManager_MemoryResource_Projectile : public TCsManager_MemoryResource<FCsProjectile, FCsMemoryResource_Projectile>
+{
+};
+
 #pragma endregion Structs
 
 // Delegates
@@ -138,7 +152,10 @@ public:
 
 	FCsManager_Projectile_Internal();
 
-	virtual const FString& KeyTypeToString(const FECsProjectile& Type) override;
+	FORCEINLINE virtual const FString& KeyTypeToString(const FECsProjectile& Type) override
+	{
+		return Type.Name;
+	}
 };
 
 #pragma endregion Internal
@@ -200,12 +217,22 @@ private:
 	typedef TCsManager_PooledObject_Map<FECsProjectile> TCsManager_Internal;
 
 protected:
-
+	
+	/** Reference to the internal manager for handling the pool of projectiles. */
 	TCsManager_Internal* Internal;
-	 
+	
+	/**
+	* Construct the internal manager for handling the pool of projectiles.
+	*/
 	virtual void ConstructInternal();
+
 public:
 
+	/**
+	*
+	*
+	* @param Params
+	*/
 	void InitInternal(const TCsManager_Internal::FCsManagerPooledObjectMapParams& Params);
 
 	virtual void Clear();
@@ -247,7 +274,7 @@ public:
 	* @param Type
 	* @param Object
 	*/
-	virtual void AddToPool(const FECsProjectile& Type, FCsProjectile& Object);
+	virtual void AddToPool(const FECsProjectile& Type, const FCsProjectile& Object);
 
 	/**
 	*
@@ -256,6 +283,8 @@ public:
 	* @param Object
 	*/
 	virtual void AddToPool(const FECsProjectile& Type, UObject* Object);
+
+	virtual void OnAddToPool(const FECsProjectile& Type, const FCsPooledObject& Object);
 
 	/**
 	*
@@ -271,8 +300,9 @@ public:
 
 	const TArray<FCsPooledObject>& GetAllAllocatedObjects(const FECsProjectile& Type);
 
-	const TArray<FCsPooledObject>& GetObjects(const FECsProjectile& Type);
+	const TArray<FCsPooledObject>& GetPool(const FECsProjectile& Type);
 
+	const int32& GetPoolSize(const FECsProjectile& Type);
 	int32 GetAllocatedPoolSize(const FECsProjectile& Type);
 
 	bool IsExhausted(const FECsProjectile& Type);
@@ -291,7 +321,7 @@ public:
 #pragma region
 public:
 
-	void CreatePayloads(const FECsProjectile& Type, const int32& Size);
+	void ConstructPayloads(const FECsProjectile& Type, const int32& Size);
 
 	ICsPooledObjectPayload* AllocatePayload(const FECsProjectile& Type);
 
@@ -371,7 +401,7 @@ public:
 #pragma region
 protected:
 
-	TMap<FECsProjectile, TArray<FCsProjectile>> Pools;
+	TMap<FECsProjectile, FCsManager_MemoryResource_Projectile*> Pools;
 
 	UPROPERTY()
 	TArray<UObject*> Pool;

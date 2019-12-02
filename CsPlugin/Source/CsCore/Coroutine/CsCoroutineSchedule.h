@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "Managers/MemoryResource/CsManager_MemoryResource.h"
+#include "Managers/MemoryResource/CsManager_MemoryResource_Fixed.h"
 #include "Coroutine/CsRoutine.h"
 
 #define CS_ROUTINE_POOL_SIZE 2048
@@ -10,23 +10,23 @@
 // Structs
 #pragma region
 
-// Routine
+	// Routine
 
 struct CSCORE_API FCsMemoryResource_Routine : public TCsMemoryResource<FCsRoutine>
 {
 };
 
-struct CSCORE_API FCsManager_Routine : public TCsManager_MemoryResource<FCsRoutine, FCsMemoryResource_Routine, CS_ROUTINE_POOL_SIZE>
+struct CSCORE_API FCsManager_Routine : public TCsManager_MemoryResource_Fixed<FCsRoutine, FCsMemoryResource_Routine, CS_ROUTINE_POOL_SIZE>
 {
 };
 
-// Payload
+	// Payload
 
 struct CSCORE_API FCsMemoryResource_CoroutinePayload : public TCsMemoryResource<FCsCoroutinePayload>
 {
 };
 
-struct CSCORE_API FCsManager_CoroutinePayload : public TCsManager_MemoryResource<FCsCoroutinePayload, FCsMemoryResource_CoroutinePayload, CS_COROUTINE_PAYLOAD_SIZE>
+struct CSCORE_API FCsManager_CoroutinePayload : public TCsManager_MemoryResource_Fixed<FCsCoroutinePayload, FCsMemoryResource_CoroutinePayload, CS_COROUTINE_PAYLOAD_SIZE>
 {
 };
 

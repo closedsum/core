@@ -1,4 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+#ifndef __CS_MEMORY_RESOURCE_H__
+#define __CS_MEMORY_RESOURCE_H__
 
 /**
 * Container to store any resource. Usually the resource will be a struct.
@@ -10,7 +12,7 @@ struct TCsMemoryResource
 {
 private:
 
-	/** Index of the container stored in the internal list in TCsManager_MemoryResource. */
+	/** Index of the container stored in the internal list in TCsManager_MemoryResource or TCsManager_MemoryResource_Fixed. */
 	int32 Index;
 
 	/** Whether the container is allocated or not. */
@@ -70,3 +72,5 @@ public:
 		Resource = InResource;
 	}
 };
+
+#endif // #ifndef __CS_MEMORY_RESOURCE_H__

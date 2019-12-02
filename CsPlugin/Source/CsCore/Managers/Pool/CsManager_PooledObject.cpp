@@ -26,7 +26,7 @@ FCsManager_PooledObject::FCsManager_PooledObject()
 	PayloadSize = 0;
 	PayloadIndex = 0;
 
-	CreatePayloads_Impl.BindRaw(this, &FCsManager_PooledObject::CreatePayloads_Internal);
+	ConstructPayloads_Impl.BindRaw(this, &FCsManager_PooledObject::ConstructPayloads_Internal);
 
 	OnSpawn_Event.Clear();
 }
@@ -235,14 +235,16 @@ void FCsManager_PooledObject::CreatePool(const int32& Size)
 	}
 }
 
-void FCsManager_PooledObject::AddToPool(ICsPooledObject* PooledObject, UObject* Object)
+	// Add
+#pragma region
+
+const FCsPooledObject& FCsManager_PooledObject::AddToPool(ICsPooledObject* PooledObject, UObject* Object)
 {
 	checkf(PooledObject, TEXT("FCsManager_PooledObject::AddToPool: PooledObject is NULL."));
 
 	const int32& Index = PooledObject->GetCache()->GetIndex();
 
-	if (Index != INDEX_NONE)
-		return;
+	checkf(Index == INDEX_NONE, TEXT("FCsManager_PooledObject::AddToPool: PooledObject is already a part of an existing pool."))
 
 	PooledObject->GetCache()->Init(PoolSize);
 	PooledObject->Deallocate();
@@ -260,22 +262,121 @@ void FCsManager_PooledObject::AddToPool(ICsPooledObject* PooledObject, UObject* 
 	++PoolSize;
 
 	OnAddToPool_Event.Broadcast(O);
+
+	return O;
 }
 
-void FCsManager_PooledObject::AddToPool(ICsPooledObject* Object)
+const FCsPooledObject& FCsManager_PooledObject::AddToPool(ICsPooledObject* Object)
 {
-	AddToPool(Object, nullptr);
+	return AddToPool(Object, nullptr);
 }
 
-void FCsManager_PooledObject::AddToAllocatedPool(ICsPooledObject* PooledObject, UObject* Object)
+const FCsPooledObject& FCsManager_PooledObject::AddToPool(UObject* Object)
 {
-	// TODO: Do check is Object is in Pool
-	//AddToAllocatedPool_Internal(Object);
+	checkf(Object, TEXT("FCsManager_PooledObject:AddToPool: Object is NULL."));
+
+	Pool.AddDefaulted();
+	FCsPooledObject& O = Pool.Last();
+
+	O.SetObject(Object);
+
+	UClass* Class = Object->GetClass();
+
+	// Interface
+	if (ICsPooledObject* Interface = Cast<ICsPooledObject>(Object))
+	{
+		O.SetInterface(Interface);
+	}
+	// Script Interface
+	else
+	if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
+	{
+		O.SetScript();
+
+		// GetCache
+		checkf(Script_GetCache_Impl.IsBound(), TEXT("FCsManager_PooledObject::AddToPool: Object: %s with Class: %s does NOT have Script_GetCache_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
+
+		O.Script_GetCache_Impl = Script_GetCache_Impl;
+
+		// Allocate
+		checkf(Script_Allocate_Impl.IsBound(), TEXT("FCsManager_PooledObject::AddToPool: Object: %s with Class: %s does NOT have Script_Allocate_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
+
+		O.Script_Allocate_Impl = Script_Allocate_Impl;
+
+		// Deallocate
+		checkf(Script_Deallocate_Impl.IsBound(), TEXT("FCsManager_PooledObject::AddToPool: Object: %s with Class: %s does NOT have Script_Deallocate_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
+
+		O.Script_Deallocate_Impl = Script_Deallocate_Impl;
+	}
+	// INVALID
+	else
+	{
+		checkf(false, TEXT("FCsManager_PooledObject::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsProjectile."), *(Object->GetName()), *(Class->GetName()));
+	}
+
+	O.GetCache()->Init(PoolSize);
+	O.Deallocate();
+
+	// Add Link
+	Links.Add(new TLinkedList<FCsPooledObject>());
+	// Set Element for Link
+	TLinkedList<FCsPooledObject>* Link = Links.Last();
+	(**Link) = O;
+
+	++PoolSize;
+
+	OnAddToPool_Event.Broadcast(O);
+
+	return O;
 }
 
-void FCsManager_PooledObject::AddToAllocatedPool(ICsPooledObject* Object)
+const FCsPooledObject& FCsManager_PooledObject::AddToAllocatedPool(ICsPooledObject* PooledObject, UObject* Object)
 {
+	checkf(PooledObject, TEXT("FCsManager_PooledObject:AddToAllocatedPool: PooledObject is NULL."));
 
+	const int32& Index = PooledObject->GetCache()->GetIndex();
+
+	// Add to pool
+	if (Index == INDEX_NONE)
+	{
+		const FCsPooledObject& O = AddToPool(PooledObject, Object);
+
+		AddToAllocatedPool_Internal(O);
+
+		return O;
+	}
+	// Already exists in pool
+	else
+	{
+		checkf(PoolSize > 0, TEXT("FCsManager_PooledObject:AddToAllocatedPool: No pool created. Call CreatePool."));
+
+		checkf(Index >= 0 && Index < PoolSize, TEXT("FCsManager_PooledObject:AddToAllocatedPool: Index: %d is NOT Valid for this pool."), Index);
+
+		const FCsPooledObject& O = Pool[Index];
+
+		if (O.GetCache()->IsAllocated())
+			return O;
+
+		AddToAllocatedPool_Internal(O);
+
+		return O;
+	}
+}
+
+const FCsPooledObject& FCsManager_PooledObject::AddToAllocatedPool(ICsPooledObject* Object)
+{
+	return AddToAllocatedPool(Object, nullptr);
+}
+
+const FCsPooledObject& FCsManager_PooledObject::AddToAllocatedPool(UObject* Object)
+{
+	checkf(Object, TEXT("FCsManager_PooledObject:AddToAllocatedPool: Object is NULL."));
+
+	const FCsPooledObject& O = AddToPool(Object);
+
+	AddToAllocatedPool_Internal(O);
+
+	return O;
 }
 
 void FCsManager_PooledObject::AddToAllocatedPool_Internal(const FCsPooledObject& Object)
@@ -320,42 +421,19 @@ void FCsManager_PooledObject::RemoveAllocatedLink(TLinkedList<FCsPooledObject>* 
 	Link->Unlink();
 }
 
-const TArray<FCsPooledObject>& FCsManager_PooledObject::GetObjects()
-{
-	return Pool;
-}
+#pragma endregion Add
 
-const TArray<FCsPooledObject>& FCsManager_PooledObject::GetAllAllocatedObjects()
-{
-	return AllocatedObjects;
-}
+	// Find
+#pragma region
 
-const int32& FCsManager_PooledObject::GetPoolSize()
+const FCsPooledObject& FCsManager_PooledObject::FindSafeObject(const int32& Index)
 {
-	return PoolSize;
-}
-
-int32 FCsManager_PooledObject::GetAllocatedPoolSize()
-{
-	return AllocatedObjectsSize;
-}
-
-bool FCsManager_PooledObject::IsExhausted()
-{
-	return AllocatedObjectsSize == PoolSize;
-}
-
-const FCsPooledObject& FCsManager_PooledObject::FindObject(const int32& Index)
-{
-	if (Index >= PoolSize)
-	{
-		//Log
+	if (Index < 0 || Index >= PoolSize)
 		return FCsPooledObject::Empty;
-	}
 	return Pool[Index];
 }
 
-const FCsPooledObject& FCsManager_PooledObject::FindObject(ICsPooledObject* Object)
+const FCsPooledObject& FCsManager_PooledObject::FindSafeObject(ICsPooledObject* Object)
 {
 	const FCsPooledObject& O = FindObject(Object->GetCache()->GetIndex());
 
@@ -363,6 +441,8 @@ const FCsPooledObject& FCsManager_PooledObject::FindObject(ICsPooledObject* Obje
 		return O;
 	return FCsPooledObject::Empty;
 }
+
+#pragma endregion Find
 
 #pragma endregion Pool
 
@@ -431,7 +511,7 @@ void FCsManager_PooledObject::Update(const float& DeltaTime)
 
 #pragma endregion Update
 
-// Allocate / DeAllocate
+// Allocate / Deallocate
 #pragma region
 
 const FCsPooledObject& FCsManager_PooledObject::Allocate(ICsPooledObjectPayload* Payload)
@@ -546,17 +626,17 @@ void FCsManager_PooledObject::DeallocateAll()
 	AllocatedTail = nullptr;
 }
 
-#pragma endregion Allocate / DeAllocate
+#pragma endregion Allocate / Deallocate
 
 // Payload
 #pragma region
 
-void FCsManager_PooledObject::CreatePayloads(const int32& Size)
+void FCsManager_PooledObject::ConstructPayloads(const int32& Size)
 {
-	CreatePayloads_Impl.Execute(Size);
+	ConstructPayloads_Impl.Execute(Size);
 }
 
-void FCsManager_PooledObject::CreatePayloads_Internal(const int32& Size)
+void FCsManager_PooledObject::ConstructPayloads_Internal(const int32& Size)
 {
 	PayloadSize = Size;
 
@@ -568,7 +648,7 @@ void FCsManager_PooledObject::CreatePayloads_Internal(const int32& Size)
 	}
 }
 
-void FCsManager_PooledObject::DestroyPayloads()
+void FCsManager_PooledObject::DeconstructPayloads()
 {
 	for (int32 I = 0; I < PayloadSize; ++I)
 	{

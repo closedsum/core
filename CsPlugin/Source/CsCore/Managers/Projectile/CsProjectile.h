@@ -44,7 +44,7 @@ public:
 // FCsProjectile
 #pragma region
 
-struct CSCORE_API FCsProjectile : FCsPooledObject
+struct CSCORE_API FCsProjectile : public FCsPooledObject
 {
 private:
 
@@ -138,6 +138,31 @@ public:
 #pragma endregion ICsProjectile
 
 public:
+
+	void SetPooledObject(const FCsPooledObject& PooledObject)
+	{
+		SetInterface(PooledObject.GetInterface());
+		SetObject(PooledObject.GetObject());
+
+		if (PooledObject.IsScript())
+			SetScript();
+
+		Script_GetCache_Impl = PooledObject.Script_GetCache_Impl;
+		Script_Allocate_Impl = PooledObject.Script_Allocate_Impl;
+		Script_Deallocate_Impl = PooledObject.Script_Deallocate_Impl;
+
+		if (bScript)
+		{
+			UClass* Class = Object->GetClass();
+
+			// GetCache
+			checkf(Script_GetCache_Impl.IsBound(), TEXT("FCsProjectile::SetPooledObject: Object: %s with Class: %s does NOT have Script_GetCache_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
+			// Allocate
+			checkf(Script_Allocate_Impl.IsBound(), TEXT("FCsProjectile::SetPooledObject: Object: %s with Class: %s does NOT have Script_Allocate_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
+			// Deallocate
+			checkf(Script_Deallocate_Impl.IsBound(), TEXT("FCsProjectile::SetPooledObject: Object: %s with Class: %s does NOT have Script_Deallocate_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
+		}
+	}
 
 	void SetScriptProjectile()
 	{

@@ -74,6 +74,13 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FCsManagerPooledObject_OnAddToPool, const FC
 
 DECLARE_DELEGATE_OneParam(FCsManagerPooledObject_ConstructPayloads, const int32& /*Size*/);
 
+/**
+*
+*
+* @param Object
+*/
+DECLARE_MULTICAST_DELEGATE_OneParam(FCsManagerPooledObject_OnUpdate_Object, const FCsPooledObject& /*Object*/);
+
 class CSCORE_API ICsManager_PooledObject
 {
 public:
@@ -134,7 +141,6 @@ public:
 
 	virtual bool IsExhausted() = 0;
 
-
 	// Find
 #pragma region
 public:
@@ -154,6 +160,8 @@ public:
 public:
 
 	virtual void Update(const float& DeltaTime) = 0;
+
+	virtual FCsManagerPooledObject_OnUpdate_Object& GetOnUpdate_Object_Event() = 0;
 
 #pragma endregion Update
 
@@ -410,14 +418,12 @@ public:
 
 	virtual void Update(const float& DeltaTime);
 
-	/**
-	*
-	*
-	* @param Object
-	*/
-	DECLARE_DELEGATE_OneParam(FOnUpdate_Handle_Object, const FCsPooledObject& /*Object*/);
+	FCsManagerPooledObject_OnUpdate_Object OnUpdate_Object_Event;
 
-	FOnUpdate_Handle_Object OnUpdate_Handle_Object;
+	FORCEINLINE FCsManagerPooledObject_OnUpdate_Object& GetOnUpdate_Object_Event()
+	{
+		return OnUpdate_Object_Event;
+	}
 
 #pragma endregion Update
 

@@ -115,7 +115,7 @@ void FCsManager_PooledObject::Shutdown()
 		Payloads.Reset();
 	}
 
-	OnUpdate_Handle_Object.Unbind();
+	OnUpdate_Object_Event.Clear();
 }
 
 UWorld* FCsManager_PooledObject::GetCurrentWorld()
@@ -477,7 +477,7 @@ void FCsManager_PooledObject::Update(const float& DeltaTime)
 
 		if (!O.GetCache()->UseLifeTime())
 		{
-			OnUpdate_Handle_Object.ExecuteIfBound(O);
+			OnUpdate_Object_Event.Broadcast(O);
 			continue;
 		}
 
@@ -498,7 +498,7 @@ void FCsManager_PooledObject::Update(const float& DeltaTime)
 			AllocatedObjects[NewSize] = O;
 		}
 
-		OnUpdate_Handle_Object.ExecuteIfBound(O);
+		OnUpdate_Object_Event.Broadcast(O);
 		++NewSize;
 	}
 

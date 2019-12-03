@@ -275,6 +275,8 @@ public:
 		Pool->CreatePool(Size);
 
 		Pool->GetOnAddToPool_Event().Remove(Handle);
+
+		Pool->GetOnUpdate_Object_Event().AddRaw(this, &TCsManager_PooledObject_Map<KeyType>::OnUpdate_Pool_Object);
 	}
 
 	virtual void CreatePool(const KeyType& Type, const int32& Size)
@@ -454,8 +456,54 @@ public:
 	{
 		for (TPair<KeyType, ICsManager_PooledObject*>& Pair : Pools)
 		{
+			CurrentUpdatePoolType = Pair.Key;
+
+			OnPreUpdate_Pool_Impl.ExecuteIfBound(CurrentUpdatePoolType);
+
 			Pair.Value->Update(DeltaTime);
+
+			OnPostUpdate_Pool_Impl.ExecuteIfBound(CurrentUpdatePoolType);
 		}
+	}
+
+	/**
+	* Delegate type for updating before a pool is updated.
+	*
+	* @param KeyType	Current type of pool.
+	*/
+	DECLARE_DELEGATE_OneParam(FOnPreUpdate_Pool, const KeyType& /*Type*/);
+
+	/** Delegate called before a pool is updated. */
+	FOnPreUpdate_Pool OnPreUpdate_Pool_Impl;
+
+	/**
+	* Delegate type for updating a pooled object.
+	*
+	* @param KeyType	Current type of pool.
+	* @param Object		Container for pooled object.
+	*/
+	DECLARE_DELEGATE_TwoParams(FOnUpdate_Object, const KeyType& /*Type*/, const FCsPooledObject& /*Object*/);
+
+	/** Delegate called when updating a pooled object. */
+	FOnUpdate_Object OnUpdate_Object_Event;
+
+	/**
+	* Delegate type for updating after a pool is updated.
+	*
+	* @param KeyType	Current type of pool.
+	*/
+	DECLARE_DELEGATE_OneParam(FOnPostUpdate_Pool, const KeyType& /*Type*/);
+
+	/** Delegate called after a pool is updated. */
+	FOnPostUpdate_Pool OnPostUpdate_Pool_Impl;
+
+private:
+
+	KeyType CurrentUpdatePoolType;
+
+	void OnUpdate_Pool_Object(const FCsPooledObject& Object)
+	{
+		OnUpdate_Object_Event.Execute(CurrentCreatePoolType, Object);
 	}
 
 #pragma endregion Update

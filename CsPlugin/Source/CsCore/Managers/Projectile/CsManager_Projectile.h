@@ -401,7 +401,7 @@ public:
 #pragma region
 protected:
 
-	TMap<FECsProjectile, FCsManager_MemoryResource_Projectile*> Pools;
+	TMap<FECsProjectile, TArray<FCsProjectile>> Pools;
 
 	UPROPERTY()
 	TArray<UObject*> Pool;

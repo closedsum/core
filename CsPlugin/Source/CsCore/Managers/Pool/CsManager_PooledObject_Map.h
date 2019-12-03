@@ -364,78 +364,74 @@ public:
 		return O;
 	}
 
-	/***/
+	/** */
 	TMulticastDelegate<void, const KeyType& /*Type*/, const FCsPooledObject& /*Object*/> OnAddToPool_Event;
 
-	const FCsPooledObject& AddToAllocatedPool(const KeyType& Type, ICsPooledObject* PooledObject, UObject* Object)
+	const FCsPooledObject& AddToAllocatedObjects(const KeyType& Type, ICsPooledObject* PooledObject, UObject* Object)
 	{
-		checkf(PooledObject, TEXT("%s::AddToAllocatedPool: PooledObject is NULL."), *Name);
+		checkf(PooledObject, TEXT("%s::AddToAllocatedObjects: PooledObject is NULL."), *Name);
 
 		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
 
 		const int32& Index = PooledObject->GetCache()->GetIndex();
 
-		checkf(Index < Pool->GetPoolSize(), TEXT("%::AddToAllocatedPool: PooledObject is in another pool."), *Name);
+		checkf(Index < Pool->GetPoolSize(), TEXT("%::AddToAllocatedObjects: PooledObject is in another pool."), *Name);
 
-		const FCsPooledObject& O = Pool->AddToAllocatedPool(PooledObject, Object);
+		const FCsPooledObject& O = Pool->AddToAllocatedObjects(PooledObject, Object);
 
-		OnAddToAllocatedPool_Event.Broadcast(Type, O);
+		OnAddToAllocatedObjects_Event.Broadcast(Type, O);
 
 		return O;
 	}
 
-	const FCsPooledObject& AddToAllocatedPool(const KeyType& Type, ICsPooledObject* Object)
+	const FCsPooledObject& AddToAllocatedObjects(const KeyType& Type, ICsPooledObject* Object)
 	{
-		return AddToAllocatedPool(Type, Object, nullptr);
+		return AddToAllocatedObjects(Type, Object, nullptr);
 	}
 
-	const FCsPooledObject& AddToAllocatedPool(const KeyType& Type, UObject* Object)
+	const FCsPooledObject& AddToAllocatedObjects(const KeyType& Type, UObject* Object)
 	{
-		checkf(Object, TEXT("%s::AddToAllocatedPool: Object is NULL."), *Name);
+		checkf(Object, TEXT("%s::AddToAllocatedObjects: Object is NULL."), *Name);
 
 		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
 
-		const FCsPooledObject& O = Pool->AddToAllocatedPool(Object);
+		const FCsPooledObject& O = Pool->AddToAllocatedObjects(Object);
 
-		OnAddToAllocatedPool_Event.Broadcast(Type, O);
+		OnAddToAllocatedObjects_Event.Broadcast(Type, O);
 
 		return O;
 	}
 
-	TMulticastDelegate<void, const KeyType& /*Type*/, const FCsPooledObject& /*Object*/> OnAddToAllocatedPool_Event;
+	/** */
+	TMulticastDelegate<void, const KeyType& /*Type*/, const FCsPooledObject& /*Object*/> OnAddToAllocatedObjects_Event;
 
 #pragma endregion Add
 
 public:
 
-	const TArray<FCsPooledObject>& GetPool(const KeyType& Type)
+	FORCEINLINE const TArray<FCsPooledObject>& GetPool(const KeyType& Type)
 	{
-		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
-		return Pool->GetPool();
+		return CheckAndAddType(Type)->GetPool();
 	}
 
-	const TArray<FCsPooledObject>& GetAllAllocatedObjects(const KeyType& Type)
+	FORCEINLINE const TArray<FCsPooledObject>& GetAllocatedObjects(const KeyType& Type)
 	{
-		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
-		return Pool->GetAllAllocatedObjects();
+		return CheckAndAddType(Type)->GetAllocatedObjects();
 	}
 
-	const int32& GetPoolSize(const KeyType& Type)
+	FORCEINLINE const int32& GetPoolSize(const KeyType& Type)
 	{
-		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
-		return Pool->GetPoolSize();
+		return CheckAndAddType(Type)->GetPoolSize();
 	}
 
-	int32 GetAllocatedPoolSize(const KeyType& Type)
+	FORCEINLINE int32 GetAllocatedObjectsSize(const KeyType& Type)
 	{
-		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
-		return Pool->GetAllocatedPoolSize();
+		return CheckAndAddType(Type)->GetAllocatedObjectsSize();
 	}
 
-	bool IsExhausted(const KeyType& Type)
+	FORCEINLINE bool IsExhausted(const KeyType& Type)
 	{
-		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
-		return Pool->IsExhausted();
+		return CheckAndAddType(Type)->IsExhausted();
 	}
 
 	// Find
@@ -480,7 +476,7 @@ public:
 	* Delegate type for updating a pooled object.
 	*
 	* @param KeyType	Current type of pool.
-	* @param Object		Container for pooled object.
+	* @param Object		Container holding a pooled object.
 	*/
 	DECLARE_DELEGATE_TwoParams(FOnUpdate_Object, const KeyType& /*Type*/, const FCsPooledObject& /*Object*/);
 

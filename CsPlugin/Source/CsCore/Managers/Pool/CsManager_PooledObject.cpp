@@ -330,9 +330,9 @@ const FCsPooledObject& FCsManager_PooledObject::AddToPool(UObject* Object)
 	return O;
 }
 
-const FCsPooledObject& FCsManager_PooledObject::AddToAllocatedPool(ICsPooledObject* PooledObject, UObject* Object)
+const FCsPooledObject& FCsManager_PooledObject::AddToAllocatedObjects(ICsPooledObject* PooledObject, UObject* Object)
 {
-	checkf(PooledObject, TEXT("FCsManager_PooledObject:AddToAllocatedPool: PooledObject is NULL."));
+	checkf(PooledObject, TEXT("FCsManager_PooledObject:AddToAllocatedObjects: PooledObject is NULL."));
 
 	const int32& Index = PooledObject->GetCache()->GetIndex();
 
@@ -341,45 +341,45 @@ const FCsPooledObject& FCsManager_PooledObject::AddToAllocatedPool(ICsPooledObje
 	{
 		const FCsPooledObject& O = AddToPool(PooledObject, Object);
 
-		AddToAllocatedPool_Internal(O);
+		AddToAllocatedObjects_Internal(O);
 
 		return O;
 	}
 	// Already exists in pool
 	else
 	{
-		checkf(PoolSize > 0, TEXT("FCsManager_PooledObject:AddToAllocatedPool: No pool created. Call CreatePool."));
+		checkf(PoolSize > 0, TEXT("FCsManager_PooledObject:AddToAllocatedObjects: No pool created. Call CreatePool."));
 
-		checkf(Index >= 0 && Index < PoolSize, TEXT("FCsManager_PooledObject:AddToAllocatedPool: Index: %d is NOT Valid for this pool."), Index);
+		checkf(Index >= 0 && Index < PoolSize, TEXT("FCsManager_PooledObject:AddToAllocatedObjects: Index: %d is NOT Valid for this pool."), Index);
 
 		const FCsPooledObject& O = Pool[Index];
 
 		if (O.GetCache()->IsAllocated())
 			return O;
 
-		AddToAllocatedPool_Internal(O);
+		AddToAllocatedObjects_Internal(O);
 
 		return O;
 	}
 }
 
-const FCsPooledObject& FCsManager_PooledObject::AddToAllocatedPool(ICsPooledObject* Object)
+const FCsPooledObject& FCsManager_PooledObject::AddToAllocatedObjects(ICsPooledObject* Object)
 {
-	return AddToAllocatedPool(Object, nullptr);
+	return AddToAllocatedObjects(Object, nullptr);
 }
 
-const FCsPooledObject& FCsManager_PooledObject::AddToAllocatedPool(UObject* Object)
+const FCsPooledObject& FCsManager_PooledObject::AddToAllocatedObjects(UObject* Object)
 {
-	checkf(Object, TEXT("FCsManager_PooledObject:AddToAllocatedPool: Object is NULL."));
+	checkf(Object, TEXT("FCsManager_PooledObject:AddToAllocatedObjects: Object is NULL."));
 
 	const FCsPooledObject& O = AddToPool(Object);
 
-	AddToAllocatedPool_Internal(O);
+	AddToAllocatedObjects_Internal(O);
 
 	return O;
 }
 
-void FCsManager_PooledObject::AddToAllocatedPool_Internal(const FCsPooledObject& Object)
+void FCsManager_PooledObject::AddToAllocatedObjects_Internal(const FCsPooledObject& Object)
 {
 	const int32& Index = Object.GetCache()->GetIndex();
 
@@ -728,7 +728,7 @@ const FCsPooledObject& FCsManager_PooledObject::Spawn(ICsPooledObjectPayload* Pa
 
 	LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn], ECsPoolTransaction::Allocate, O);
 	Payload->Reset();
-	AddToAllocatedPool_Internal(O);
+	AddToAllocatedObjects_Internal(O);
 	OnSpawn_Event.Broadcast(O);
 	return O;
 }

@@ -292,18 +292,18 @@ public:
 	* @param Type
 	* @param Object
 	*/
-	virtual void AddToAllocatedPool(const FECsProjectile& Type, ICsProjectile* Object);
+	virtual void AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* Object);
 
 #pragma endregion Add
 
 public:
 
-	const TArray<FCsPooledObject>& GetAllAllocatedObjects(const FECsProjectile& Type);
+	const TArray<FCsPooledObject>& GetAllocatedObjects(const FECsProjectile& Type);
 
 	const TArray<FCsPooledObject>& GetPool(const FECsProjectile& Type);
 
 	const int32& GetPoolSize(const FECsProjectile& Type);
-	int32 GetAllocatedPoolSize(const FECsProjectile& Type);
+	int32 GetAllocatedObjectsSize(const FECsProjectile& Type);
 
 	bool IsExhausted(const FECsProjectile& Type);
 

@@ -446,9 +446,9 @@ void UCsManager_Projectile::OnAddToPool(const FECsProjectile& Type, const FCsPoo
 	}
 }
 
-void UCsManager_Projectile::AddToAllocatedPool(const FECsProjectile& Type, ICsProjectile* Object)
+void UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* Object)
 {
-	checkf(Object, TEXT("UCsManager_Projectile::AddToAllocatedPool: Object is NULL."));
+	checkf(Object, TEXT("UCsManager_Projectile::AddToAllocatedObjects: Object is NULL."));
 		
 	if (UObject* U = Object->_getUObject())
 	{
@@ -460,21 +460,21 @@ void UCsManager_Projectile::AddToAllocatedPool(const FECsProjectile& Type, ICsPr
 			{
 				AddToPool(Type, Object);
 
-				Internal->AddToAllocatedPool(Type, Interface);
+				Internal->AddToAllocatedObjects(Type, Interface);
 
 			}
-			Internal->AddToAllocatedPool(Type, Interface);
+			Internal->AddToAllocatedObjects(Type, Interface);
 		}
 
-		//checkf(O, TEXT("UCsManager_Projectile::AddToAllocatedPool: Object is NULL or does NOT implement interface: ICsPooledObject."));
+		//checkf(O, TEXT("UCsManager_Projectile::AddToAllocatedObjects: Object is NULL or does NOT implement interface: ICsPooledObject."));
 	}
 }
 
 #pragma endregion Add
 
-const TArray<FCsPooledObject>& UCsManager_Projectile::GetAllAllocatedObjects(const FECsProjectile& Type)
+const TArray<FCsPooledObject>& UCsManager_Projectile::GetAllocatedObjects(const FECsProjectile& Type)
 {
-	return Internal->GetAllAllocatedObjects(Type);
+	return Internal->GetAllocatedObjects(Type);
 }
 
 const TArray<FCsPooledObject>& UCsManager_Projectile::GetPool(const FECsProjectile& Type)
@@ -487,9 +487,9 @@ const int32& UCsManager_Projectile::GetPoolSize(const FECsProjectile& Type)
 	return Internal->GetPoolSize(Type);
 }
 
-int32 UCsManager_Projectile::GetAllocatedPoolSize(const FECsProjectile& Type)
+int32 UCsManager_Projectile::GetAllocatedObjectsSize(const FECsProjectile& Type)
 {
-	return Internal->GetAllocatedPoolSize(Type);
+	return Internal->GetAllocatedObjectsSize(Type);
 }
 
 bool UCsManager_Projectile::IsExhausted(const FECsProjectile& Type)
@@ -586,7 +586,7 @@ bool UCsManager_Projectile::Destroy(const FECsProjectile& Type, ICsProjectile* P
 
 		const int32 OldSize = Objects.Num();
 
-		const TArray<FCsPooledObject>& Internal_AllocatedObjects = Internal->GetAllAllocatedObjects(Type);
+		const TArray<FCsPooledObject>& Internal_AllocatedObjects = Internal->GetAllocatedObjects(Type);
 
 		const int32 NewSize = Internal_AllocatedObjects.Num();
 

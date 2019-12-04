@@ -329,51 +329,86 @@ private:
 public:
 
 	/**
-	* Adds an Object to the pool of appropriate Type.
+	* Adds an Object to the pool for the appropriate Type.
 	*  The Object must implement the interface: ICsPooledObject.
 	*
 	* @param Type			Type of pool to add the Object to.
 	* @param PooledObject	Object that implements the interface: ICsPooledObject.
 	* @param Object			UObject reference.
-	* return				Reference to the container for the Pooled Object.
+	* return				Container holding a reference to a pooled object.
+	*						Pooled Object implements the interface: ICsPooledObject.
 	*/
 	const FCsPooledObject& AddToPool(const KeyType& Type, ICsPooledObject* PooledObject, UObject* Object)
 	{
-		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
-
-		const FCsPooledObject& O = Pool->AddToPool(PooledObject, Object);
+		const FCsPooledObject& O = CheckAndAddType(Type)->AddToPool(PooledObject, Object);
 
 		OnAddToPool_Event.Broadcast(Type, O);
 
 		return O;
 	}
 
+	/**
+	* Adds an Object to the pool for the appropriate Type.
+	*  Object must implement the interface: ICsPooledObject.
+	*
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object that implements the interface: ICsPooledObject.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object implements the interface: ICsPooledObject.
+	*/
 	const FCsPooledObject& AddToPool(const KeyType& Type, ICsPooledObject* Object)
 	{
 		return AddToPool(Type, Object, nullptr);
 	}
 
+	/**
+	* Adds an Object to the pool for the appropriate Type.
+	*  Object must implement the interface: ICsPooledObject or the UClass 
+	*  associated with the Object have ImplementsInterface(UCsPooledObject::StaticClass()) == true.
+	*
+	* @param Type		Type of the pool to add the object to.
+	* @param Object		Object or Object->GetClass() that implements the interface: ICsPooledObject.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object or UClass associated with Pooled Object implements
+	*					the interface: ICsPooledObject.
+	*/
 	const FCsPooledObject& AddToPool(const KeyType& Type, UObject* Object)
 	{
-		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
-
-		const FCsPooledObject& O = Pool->AddToPool(Object);
+		const FCsPooledObject& O = CheckAndAddType(Type)->AddToPool(Object);
 
 		OnAddToPool_Event.Broadcast(Type, O);
 
 		return O;
 	}
 
-	/** */
+	/** Event called after adding an Object to the pool of specified Type. */
 	TMulticastDelegate<void, const KeyType& /*Type*/, const FCsPooledObject& /*Object*/> OnAddToPool_Event;
 
+	/**
+	* Adds an Object to the allocated objects for the appropriate Type.
+	* If the Object is NOT added to the pool, add it to the pool.
+	*  Object must implement the interface: ICsPooledObject.
+	*
+	* @param Type			Type of pool to add the Object to.
+	* @param PooledObject	Object that implements the interface: ICsPooledObject.
+	* @param Object			UObject reference.
+	* return				Container holding a reference to a pooled object.
+	*						Pooled Object implements the interface: ICsPooledObject.
+	*/
 	const FCsPooledObject& AddToAllocatedObjects(const KeyType& Type, ICsPooledObject* PooledObject, UObject* Object)
 	{
 		checkf(PooledObject, TEXT("%s::AddToAllocatedObjects: PooledObject is NULL."), *Name);
 
+		checkf(PooledObject == Cast<ICsPooledObject>(Object), TEXT("%s::AddToAllocatedObjects: PooledObject != Object. These must be the SAME object."), *Name);
+
 		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
 
 		const int32& Index = PooledObject->GetCache()->GetIndex();
+
+		if (Index == INDEX_NONE)
+		{
+			Pool->AddToPool(PooledObject, Object);
+		}
 
 		checkf(Index < Pool->GetPoolSize(), TEXT("%::AddToAllocatedObjects: PooledObject is in another pool."), *Name);
 
@@ -395,6 +430,13 @@ public:
 
 		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
 
+		const FCsPooledObject& FoundObject = Pool->FindSafeObject(Object);
+
+		if (!FoundObject.IsValid())
+		{
+			Pool->AddToPool(Object);
+		}
+
 		const FCsPooledObject& O = Pool->AddToAllocatedObjects(Object);
 
 		OnAddToAllocatedObjects_Event.Broadcast(Type, O);
@@ -402,33 +444,69 @@ public:
 		return O;
 	}
 
-	/** */
+	/** Event called after AddToAllocatedObjects has completed. */
 	TMulticastDelegate<void, const KeyType& /*Type*/, const FCsPooledObject& /*Object*/> OnAddToAllocatedObjects_Event;
 
 #pragma endregion Add
 
 public:
 
+	/**
+	* Get the pool for the appropriate Type.
+	*  Pool is an array of containers holding references to objects that 
+	*  implement the interface: ICsPooledObject.
+	*
+	* @param Type	Type of pool to get.
+	* return		Pool associated with the type.
+	*/
 	FORCEINLINE const TArray<FCsPooledObject>& GetPool(const KeyType& Type)
 	{
 		return CheckAndAddType(Type)->GetPool();
 	}
 
+	/**
+	* Get the allocated objects for the appropriate Type.
+	*  Allocated Objects are an array of containers holding references to objects that
+	*  implement the interface: ICsPooledObject.
+	*
+	* @param Type	Type of allocated objects to get.
+	* return		Allocated Objects associated with the Type.
+	*/
 	FORCEINLINE const TArray<FCsPooledObject>& GetAllocatedObjects(const KeyType& Type)
 	{
 		return CheckAndAddType(Type)->GetAllocatedObjects();
 	}
 
+	/**
+	* Get the number of elements in the pool for the appropriate Type.
+	*
+	*
+	* @param Type	Type of pool.
+	* return		Number of elements in the pool for the associated Type.
+	*/
 	FORCEINLINE const int32& GetPoolSize(const KeyType& Type)
 	{
 		return CheckAndAddType(Type)->GetPoolSize();
 	}
 
+	/**
+	* Get the number of allocated objects for the appropriate Type.
+	*
+	* @param Type	Type of allocated objects.
+	* return		Number of allocated objects for the associated Type.
+	*/ 
 	FORCEINLINE int32 GetAllocatedObjectsSize(const KeyType& Type)
 	{
 		return CheckAndAddType(Type)->GetAllocatedObjectsSize();
 	}
 
+	/**
+	* Get whether all elements in the pool for the appropriate Type 
+	* have been allocated.
+	*
+	@ @param Type	Type of pool to check against.
+	* return		All elements allocated or not.
+	*/
 	FORCEINLINE bool IsExhausted(const KeyType& Type)
 	{
 		return CheckAndAddType(Type)->IsExhausted();
@@ -475,12 +553,12 @@ public:
 	/**
 	* Delegate type for updating a pooled object.
 	*
-	* @param KeyType	Current type of pool.
+	* @param Type		Current type of pool.
 	* @param Object		Container holding a pooled object.
 	*/
 	DECLARE_DELEGATE_TwoParams(FOnUpdate_Object, const KeyType& /*Type*/, const FCsPooledObject& /*Object*/);
 
-	/** Delegate called when updating a pooled object. */
+	/** Event called when updating a pooled object. */
 	FOnUpdate_Object OnUpdate_Object_Event;
 
 	/**
@@ -508,27 +586,38 @@ private:
 #pragma region
 public:
 
+	/**
+	* Create a number (Size) of payload objects for the appropriate Type.
+	*  Payload implements the interface: ICsPooledObjectPayload.
+	*
+	* @param Type	Type of payload.
+	* @param Size	Number of payload objects to create.
+	*/
 	void ConstructPayloads(const KeyType& Type, const int32& Size)
 	{
-		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
-		Pool->ConstructPayloads(Size);
+		CheckAndAddType(Type)->ConstructPayloads(Size);
 	}
 
+	/**
+	* Delete all payload objects for the appropriate Type.
+	*
+	* @param Type	Type of payload.
+	*/
 	void DeconstructPayloads(const KeyType& Type)
 	{
-		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
-		Pool->DeconstructPayloads();
+		CheckAndAddType(Type)->DeconstructPayloads();
 	}
 
-	ICsPooledObjectPayload* AllocatePayload(const KeyType& Type)
+	/**
+	* Get a payload object from a pool of payload objects for the appropriate Type.
+	*  Payload implements the interface: ICsPooledObjectPayload.
+	*
+	* @param Type	Type of payload.
+	* return		Payload that implements the interface: ICsPooledObjectPayload.
+	*/
+	FORCEINLINE ICsPooledObjectPayload* AllocatePayload(const KeyType& Type)
 	{
-		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
-
-		ICsPooledObjectPayload* Payload = Pool->AllocatePayload();
-
-		checkf(Payload, TEXT("%s::AllocatePayload: Pool: %s is exhausted"), *Name, *KeyTypeToString(Type));
-
-		return Payload;
+		return CheckAndAddType(Type)->AllocatePayload();
 	}
 
 #pragma endregion Payload
@@ -552,6 +641,15 @@ protected:
 #pragma region
 public:
 
+	/**
+	* Spawn a pooled object from a pool for the appropriate Type with 
+	* information stored in the Payload.
+	*
+	* @param Type		Type of pool to spawn from.
+	* @param Payload	Payload to use when spawning from pool.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object implements the interface: ICsPooledObject.
+	*/
 	virtual const FCsPooledObject& Spawn(const KeyType& Type, ICsPooledObjectPayload* Payload)
 	{
 		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
@@ -562,7 +660,8 @@ public:
 		return Object;
 	}
 
-	TMulticastDelegate<void, const KeyType&, const FCsPooledObject&> OnSpawn_Event;
+	/** */
+	TMulticastDelegate<void, const KeyType& /*Type*/, const FCsPooledObject&> OnSpawn_Event;
 
 #pragma endregion Spawn
 
@@ -570,6 +669,14 @@ public:
 #pragma region
 public:
 
+	/**
+	* Destroy a pooled object with specified Index from a pool for the
+	* appropriate Type.
+	*
+	* @param Type	Type of pool to destroy from.
+	* @param Index	Index of the object in the pool.
+	* return		Whether successfully destroyed the object or not.
+	*/
 	virtual bool Destroy(const KeyType& Type, const int32& Index)
 	{
 		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
@@ -584,6 +691,14 @@ public:
 		return false;
 	}
 
+	/**
+	* Destroy an object from a pool for the appropriate Type.
+	*  Object must implement the interface: ICsPooledObject.
+	*
+	* @param Type		Type of pool to destroy from.
+	* @param Object		Object that implements the interface: ICsPooledObject.
+	* return			Whether successfully destroyed the object or not.
+	*/
 	virtual bool Destroy(const KeyType& Type, ICsPooledObject* Object)
 	{
 		ICsManager_PooledObject* Pool = CheckAndAddType(Type);
@@ -598,6 +713,13 @@ public:
 		return false;
 	}
 
+	/**
+	* Destroy an object.
+	*  Object must implement the interface: ICsPooledObject.
+	*
+	* @param Object		Object that implements the interface: ICsPooledObject.
+	* return			Whether successfully destroyed the object or not.
+	*/
 	virtual bool Destroy(ICsPooledObject* Object)
 	{
 		for (TPair<KeyType, ICsManager_PooledObject*>& Pair : Pools)
@@ -621,7 +743,8 @@ public:
 		return false;
 	}
 
-	TMulticastDelegate<void, const KeyType&, const FCsPooledObject&> OnDestroy_Event;
+	/** */
+	TMulticastDelegate<void, const KeyType& /*Type*/, const FCsPooledObject& /*Object*/> OnDestroy_Event;
 
 #pragma endregion Destroy
 

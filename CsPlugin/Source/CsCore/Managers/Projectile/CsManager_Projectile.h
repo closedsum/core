@@ -213,6 +213,7 @@ private:
 
 // Internal
 #pragma region
+protected:
 
 	typedef TCsManager_PooledObject_Map<FECsProjectile> TCsManager_Internal;
 

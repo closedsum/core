@@ -118,15 +118,27 @@ public:
 #pragma region
 public:
 
+		// Pool
+#pragma region
+public:
+
 	virtual const FCsPooledObject& AddToPool(ICsPooledObject* PooledObject, UObject* Object) = 0;
 	virtual const FCsPooledObject& AddToPool(ICsPooledObject* Object) = 0;
 	virtual const FCsPooledObject& AddToPool(UObject* Object) = 0;
 
 	virtual FCsManagerPooledObject_OnAddToPool& GetOnAddToPool_Event() = 0;
 
+#pragma endregion Pool
+
+		// Allocated Objects
+#pragma region
+public:
+
 	virtual const FCsPooledObject& AddToAllocatedObjects(ICsPooledObject* PooledObject, UObject* Object) = 0;
 	virtual const FCsPooledObject& AddToAllocatedObjects(ICsPooledObject* Object) = 0;
 	virtual const FCsPooledObject& AddToAllocatedObjects(UObject* Object) = 0;
+
+#pragma endregion Allocated Objects
 
 #pragma endregion Add
 
@@ -147,9 +159,11 @@ public:
 
 	virtual const FCsPooledObject& FindObject(const int32& Index) = 0;
 	virtual const FCsPooledObject& FindObject(ICsPooledObject* Object) = 0;
+	virtual const FCsPooledObject& FindObject(UObject* Object) = 0;
 
 	virtual const FCsPooledObject& FindSafeObject(const int32& Index) = 0;
 	virtual const FCsPooledObject& FindSafeObject(ICsPooledObject* Object) = 0;
+	virtual const FCsPooledObject& FindSafeObject(UObject* Object) = 0;
 
 #pragma endregion Find
 
@@ -366,6 +380,9 @@ public:
 #pragma region
 public:
 
+		// Pool
+#pragma region
+
 	/**
 	* Adds an Object to the pool.
 	*  The Object must implement the interface: ICsPooledObject.
@@ -390,7 +407,7 @@ public:
 	*  The Object must implement the interface: ICsPooledObject.
 	*
 	* @param Object		UObject reference.
-	* return			Reference to the container for the PooledObject.
+	* return			Container holding a reference to a pooled object.
 	*/
 	const FCsPooledObject& AddToPool(UObject* Object);
 
@@ -402,8 +419,13 @@ public:
 		return OnAddToPool_Event;
 	}
 
+#pragma endregion Pool
+
+	// Allocated Objects
+#pragma region
+
 	/**
-	*
+	* Adds an Object to the allocated objects.
 	*
 	* @param PooledObject
 	* @param Object
@@ -436,6 +458,10 @@ protected:
 	*/
 	virtual void AddToAllocatedObjects_Internal(const FCsPooledObject& Object);
 
+#pragma endregion Allocated Objects
+
+protected:
+
 	/**
 	*
 	*
@@ -455,7 +481,9 @@ protected:
 public:
 
 	/**
-	* Get the pool of pooled objects.
+	* Get the pool.
+	*  Pool is an array of containers holding references to objects that
+	*  implement the interface: ICsPooledObject.
 	*
 	* return	Pool
 	*/
@@ -465,7 +493,9 @@ public:
 	}
 
 	/**
-	* Get all the allocated objects.
+	* Get the allocated objects.
+	*  Allocated Objects are an array of containers holding references to objects that
+	*  implement the interface: ICsPooledObject.
 	*
 	* return	Allocated Objects
 	*/
@@ -536,6 +566,8 @@ public:
 		return O;
 	}
 
+	const FCsPooledObject& FindObject(UObject* Object);
+
 	/**
 	* Safely, via checks, find the container holding a pooled object in the pool by Index.
 	*
@@ -551,6 +583,8 @@ public:
 	* return			Container holding a pooled object.
 	*/
 	const FCsPooledObject& FindSafeObject(ICsPooledObject* Object);
+
+	const FCsPooledObject& FindSafeObject(UObject* Object);
 
 #pragma endregion Find
 

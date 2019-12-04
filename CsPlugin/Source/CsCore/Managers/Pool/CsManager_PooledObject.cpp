@@ -238,6 +238,9 @@ void FCsManager_PooledObject::CreatePool(const int32& Size)
 	// Add
 #pragma region
 
+		// Pool
+#pragma region
+
 const FCsPooledObject& FCsManager_PooledObject::AddToPool(ICsPooledObject* PooledObject, UObject* Object)
 {
 	checkf(PooledObject, TEXT("FCsManager_PooledObject::AddToPool: PooledObject is NULL."));
@@ -285,6 +288,8 @@ const FCsPooledObject& FCsManager_PooledObject::AddToPool(UObject* Object)
 	// Interface
 	if (ICsPooledObject* Interface = Cast<ICsPooledObject>(Object))
 	{
+		checkf(Interface->GetCache()->GetIndex() == INDEX_NONE, TEXT("FCsManager_PooledObject::AddToPool: Object: %s with Class: %s is already in a pool."), *(Object->GetName()), *(Class->GetName()));
+
 		O.SetInterface(Interface);
 	}
 	// Script Interface
@@ -297,6 +302,8 @@ const FCsPooledObject& FCsManager_PooledObject::AddToPool(UObject* Object)
 		checkf(Script_GetCache_Impl.IsBound(), TEXT("FCsManager_PooledObject::AddToPool: Object: %s with Class: %s does NOT have Script_GetCache_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
 
 		O.Script_GetCache_Impl = Script_GetCache_Impl;
+
+		checkf(O.GetCache()->GetIndex() == INDEX_NONE, TEXT("FCsManager_PooledObject::AddToPool: Object: %s with Class: %s is already in a pool."), *(Object->GetName()), *(Class->GetName()));
 
 		// Allocate
 		checkf(Script_Allocate_Impl.IsBound(), TEXT("FCsManager_PooledObject::AddToPool: Object: %s with Class: %s does NOT have Script_Allocate_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
@@ -311,7 +318,7 @@ const FCsPooledObject& FCsManager_PooledObject::AddToPool(UObject* Object)
 	// INVALID
 	else
 	{
-		checkf(false, TEXT("FCsManager_PooledObject::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsProjectile."), *(Object->GetName()), *(Class->GetName()));
+		checkf(false, TEXT("FCsManager_PooledObject::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(Object->GetName()), *(Class->GetName()));
 	}
 
 	O.GetCache()->Init(PoolSize);
@@ -329,6 +336,11 @@ const FCsPooledObject& FCsManager_PooledObject::AddToPool(UObject* Object)
 
 	return O;
 }
+
+#pragma endregion Pool
+
+		// Allocated Objects
+#pragma region
 
 const FCsPooledObject& FCsManager_PooledObject::AddToAllocatedObjects(ICsPooledObject* PooledObject, UObject* Object)
 {
@@ -389,6 +401,8 @@ void FCsManager_PooledObject::AddToAllocatedObjects_Internal(const FCsPooledObje
 	AllocatedObjects.Add(Object);
 }
 
+#pragma endregion Allocated Objects
+
 void FCsManager_PooledObject::AddAllocatedLink(TLinkedList<FCsPooledObject>* Link)
 {
 	if (AllocatedTail)
@@ -426,6 +440,38 @@ void FCsManager_PooledObject::RemoveAllocatedLink(TLinkedList<FCsPooledObject>* 
 	// Find
 #pragma region
 
+const FCsPooledObject& FCsManager_PooledObject::FindObject(UObject* Object)
+{
+	UClass* Class = Object->GetClass();
+
+	// Interface
+	if (ICsPooledObject* Interface = Cast<ICsPooledObject>(Object))
+	{
+		const int32& Index = Interface->GetCache()->GetIndex();
+
+		checkf(Index != INDEX_NONE && Index < PoolSize, TEXT("FCsManager_PooledObject::FindObject: Object: %s with Class: %s is already in a pool."), *(Object->GetName()), *(Class->GetName()));
+
+		return Pool[Index];
+	}
+	// Script Interface
+	else
+	if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
+	{
+		checkf(Script_GetCache_Impl.IsBound(), TEXT("FCsManager_PooledObject::FindObject: Object: %s with Class: %s does NOT have Script_GetCache_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
+
+		const int32& Index = Script_GetCache_Impl.Execute(Object)->GetIndex();
+
+		checkf(Index != INDEX_NONE && Index < PoolSize, TEXT("FCsManager_PooledObject::FindObject: Object: %s with Class: %s is already in a pool."), *(Object->GetName()), *(Class->GetName()));
+
+		return Pool[Script_GetCache_Impl.Execute(Object)->GetIndex()];
+	}
+	
+	// INVALID
+	checkf(false, TEXT("FCsManager_PooledObject::FindObject: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(Object->GetName()), *(Class->GetName()));
+
+	return FCsPooledObject::Empty;
+}
+
 const FCsPooledObject& FCsManager_PooledObject::FindSafeObject(const int32& Index)
 {
 	if (Index < 0 || Index >= PoolSize)
@@ -439,6 +485,39 @@ const FCsPooledObject& FCsManager_PooledObject::FindSafeObject(ICsPooledObject* 
 
 	if (Object == O.GetInterface())
 		return O;
+	return FCsPooledObject::Empty;
+}
+
+const FCsPooledObject& FCsManager_PooledObject::FindSafeObject(UObject* Object)
+{
+	UClass* Class = Object->GetClass();
+
+	// Interface
+	if (ICsPooledObject* Interface = Cast<ICsPooledObject>(Object))
+	{
+		const int32& Index = Interface->GetCache()->GetIndex();
+
+		if (Index == INDEX_NONE || Index >= PoolSize)
+			return FCsPooledObject::Empty;
+
+		return Pool[Index];
+	}
+	// Script Interface
+	else
+	if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
+	{
+		if (!Script_GetCache_Impl.IsBound())
+			return FCsPooledObject::Empty;
+
+		const int32& Index = Script_GetCache_Impl.Execute(Object)->GetIndex();
+
+		if (Index == INDEX_NONE || Index >= PoolSize)
+			return FCsPooledObject::Empty;
+
+		return Pool[Index];
+	}
+	
+	// INVALID
 	return FCsPooledObject::Empty;
 }
 

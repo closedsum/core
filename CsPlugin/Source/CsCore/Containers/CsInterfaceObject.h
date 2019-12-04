@@ -93,7 +93,7 @@ public:
 
 	FORCEINLINE bool IsValid() const
 	{
-		return Interface != nullptr;
+		return Interface != nullptr || (bScript && Object != nullptr);
 	}
 
 	virtual void Reset()

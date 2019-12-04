@@ -403,3 +403,33 @@ struct CSCORE_API ICsPooledObjectCache
 };
 
 #pragma endregion ICsPooledObjectCache
+
+// ManagerPooledObject
+#pragma region
+
+UENUM(BlueprintType)
+enum class ECsManagerPooledObject : uint8
+{
+	Dynamic						UMETA(DisplayName = "Dynamic"),
+	Fixed						UMETA(DisplayName = "Fixed"),
+	ECsManagerPooledObject_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsManagerPooledObject : public TCsEnumMap<ECsManagerPooledObject>
+{
+	CS_ENUM_MAP_BODY(EMCsManagerPooledObject, ECsManagerPooledObject)
+};
+
+namespace NCsManagerPooledObject
+{
+	typedef ECsManagerPooledObject Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Dynamic;
+		extern CSCORE_API const Type Fixed;
+		extern CSCORE_API const Type ECsManagerPooledObject_MAX;
+	}
+}
+
+#pragma endregion ManagerPooledObject

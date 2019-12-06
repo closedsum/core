@@ -644,6 +644,168 @@ bool UCsManager_Projectile::IsExhausted(const FECsProjectile& Type)
 	return Internal->IsExhausted(Type);
 }
 
+	// Find
+#pragma region
+
+const FCsProjectile& UCsManager_Projectile::FindObject(const FECsProjectile& Type, const int32& Index)
+{
+	const FCsPooledObject& O = Internal->FindObject(Type, Index);
+
+	return CheckAndAddType_Pools(Type)[Index];
+}
+
+const FCsProjectile& UCsManager_Projectile::FindObject(const FECsProjectile& Type, ICsProjectile* Object)
+{
+	if (UObject* U = Object->_getUObject())
+	{
+		UClass* Class = U->GetClass();
+
+		// Interface
+		if (ICsPooledObject* Interface = Cast<ICsPooledObject>(U))
+		{
+			const FCsPooledObject& O = Internal->FindObject(Type, Interface);
+
+			return FindObject_Internal(Type, O);
+		}
+		// Script Interface
+		else
+		if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
+		{
+			const FCsPooledObject& O = Internal->FindObject(Type, U);
+
+			return FindObject_Internal(Type, O);
+		}
+		// INVALID
+		else
+		{
+			checkf(false, TEXT(""));
+		}
+	}
+	else
+	{
+#if !UE_BUILD_SHIPPING
+		ICsPooledObject* Interface = dynamic_cast<ICsPooledObject*>(Object);
+#else
+		ICsPooledObject* Interface = (ICsPooledObject*)Object;
+#endif // #if !UE_BUILD_SHIPPING
+
+		checkf(Interface, TEXT(""));
+
+		const FCsPooledObject& O = Internal->FindObject(Type, Interface);
+
+		return FindObject_Internal(Type, O);
+	}
+	return FCsProjectile::Empty;
+}
+
+const FCsProjectile& UCsManager_Projectile::FindObject(const FECsProjectile& Type, UObject* Object)
+{
+	const FCsPooledObject& O = Internal->FindObject(Type, Object);
+	const int32& Index		 = O.GetCache()->GetIndex();
+
+	return CheckAndAddType_Pools(Type)[Index];
+}
+
+const FCsProjectile& UCsManager_Projectile::FindObject_Internal(const FECsProjectile& Type, const FCsPooledObject& Object)
+{
+	const int32& Index = Object.GetCache()->GetIndex();
+
+	return CheckAndAddType_Pools(Type)[Index];
+}
+
+const FCsProjectile& UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, const int32& Index)
+{
+	if (Index < 0)
+		return FCsProjectile::Empty;
+
+	const FCsPooledObject& O = Internal->FindSafeObject(Type, Index);
+
+	if (!O.IsValid())
+		return FCsProjectile::Empty;
+
+	TArray<FCsProjectile>& Projectiles = CheckAndAddType_Pools(Type);
+
+	if (Index >= Projectiles.Num())
+		return FCsProjectile::Empty;
+
+	return Projectiles[Index];
+}
+
+const FCsProjectile& UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, ICsProjectile* Object)
+{
+	if (!Object)
+		return FCsProjectile::Empty;
+
+	if (UObject* U = Object->_getUObject())
+	{
+		UClass* Class = U->GetClass();
+
+		// Interface
+		if (ICsPooledObject* Interface = Cast<ICsPooledObject>(U))
+		{
+			const FCsPooledObject& O = Internal->FindObject(Type, Interface);
+
+			return FindSafeObject_Internal(Type, O);
+		}
+		// Script Interface
+		else
+		if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
+		{
+			const FCsPooledObject& O = Internal->FindObject(Type, U);
+
+			return FindSafeObject_Internal(Type, O);
+		}
+		// INVALID
+		else
+		{
+			return FCsProjectile::Empty;
+		}
+	}
+	else
+	{
+#if !UE_BUILD_SHIPPING
+		ICsPooledObject* Interface = dynamic_cast<ICsPooledObject*>(Object);
+#else
+		ICsPooledObject* Interface = (ICsPooledObject*)Object;
+#endif // #if !UE_BUILD_SHIPPING
+
+		if (!Interface)
+			return FCsProjectile::Empty;
+
+		const FCsPooledObject& O = Internal->FindObject(Type, Interface);
+
+		return FindSafeObject_Internal(Type, O);
+	}
+	return FCsProjectile::Empty;
+}
+
+const FCsProjectile& UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, UObject* Object)
+{
+	if (!Object)
+		return FCsProjectile::Empty;
+
+	const FCsPooledObject& O = Internal->FindObject(Type, Object);
+
+	return FindSafeObject_Internal(Type, O);
+}
+
+const FCsProjectile& UCsManager_Projectile::FindSafeObject_Internal(const FECsProjectile& Type, const FCsPooledObject& Object)
+{
+	if (!Object.IsValid())
+		return FCsProjectile::Empty;
+
+	const int32& Index = Object.GetCache()->GetIndex();
+
+	TArray<FCsProjectile>& Projectiles = CheckAndAddType_Pools(Type);
+
+	if (Index >= Projectiles.Num())
+		return FCsProjectile::Empty;
+
+	return Projectiles[Index];
+}
+
+#pragma endregion Find
+
 #pragma endregion Pool
 
 	// Update

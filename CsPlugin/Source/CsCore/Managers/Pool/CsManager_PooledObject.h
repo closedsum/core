@@ -573,10 +573,11 @@ public:
 public:
 
 	/**
-	* Find the container holding a pooled object in the pool by Index.
+	* Find the container holding a reference to a pooled object in the pool by Index.
 	*
 	* @param Index	Index of the pooled object.
-	* return		Container for the pooled object.
+	* return		Container holding a reference to a pooled object.
+	*				Pooled Object implements the interface: ICsPooledObject.
 	*/
 	FORCEINLINE const FCsPooledObject& FindObject(const int32& Index)
 	{
@@ -586,10 +587,12 @@ public:
 	}
 
 	/**
-	* Find the container holding a pooled object in the pool by the interface.
+	* Find the container holding a reference to a pooled object in the pool by Interface.
+	*  Object must implement the interface: ICsPooledObject.
 	*
 	* @param Object		Object of interface type: ICsPooledObject.
-	* return			Container for the pooled object.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object implements the interface: ICsPooledObject.
 	*/
 	FORCEINLINE const FCsPooledObject& FindObject(ICsPooledObject* Object)
 	{
@@ -600,24 +603,44 @@ public:
 		return O;
 	}
 
+	/**
+	* Find the container holding a reference to a pooled object in the pool by UObject.
+	*  Object must implement the interface: ICsPooledObject or the UClass
+	*  associated with the Object have ImplementsInterface(UCsPooledObject::StaticClass()) == true.
+	*
+	* @param Object		Object or Object->GetClass() that implements the interface: ICsPooledObject.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object or UClass associated with Pooled Object implements
+	*					the interface: ICsPooledObject.
+	*/
 	const FCsPooledObject& FindObject(UObject* Object);
 
 	/**
-	* Safely, via checks, find the container holding a pooled object in the pool by Index.
+	* Safely, via checks, find the container holding a reference to a pooled object in the pool by Index.
 	*
 	* @param Index	Index of the pooled object.
-	* return		Container for the pooled object.
+	* return		Container holding a reference to a pooled object.
+	*				Pooled Object implements the interface: ICsPooledObject.
 	*/
 	const FCsPooledObject& FindSafeObject(const int32& Index);
 
 	/**
-	* Safely, via checks, find the container holding a pooled object in the pool by the interface.
+	* Safely, via checks, find the container holding a reference to a pooled object in the pool by the Interface.
 	*
 	* @param Object		Object that implements the interface: ICsPooledObject.
-	* return			Container holding a pooled object.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object implements the interface: ICsPooledObject.
 	*/
 	const FCsPooledObject& FindSafeObject(ICsPooledObject* Object);
 
+	/**
+	* Safely, via checks, find the container holding a reference to a pooled object in the pool by the UObject.
+	*
+	* @param Object		Object or Object->GetClass() that implements the interface: ICsPooledObject.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object or UClass associated with Pooled Object implements
+	*					the interface: ICsPooledObject.
+	*/
 	const FCsPooledObject& FindSafeObject(UObject* Object);
 
 #pragma endregion Find

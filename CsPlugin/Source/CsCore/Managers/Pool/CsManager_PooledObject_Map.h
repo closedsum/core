@@ -603,7 +603,94 @@ public:
 #pragma region
 public:
 
+	/**
+	* Find the container holding reference to a pooled object from the pool 
+	* for the appropriate Type by Index.
+	*
+	* @param Type	Type of pool to add the Object to.
+	* @param Index	Index of the pooled object.
+	* return		Container holding a reference to a pooled object.
+	*				Pooled Object implements the interface: ICsPooledObject.
+	*/
+	FORCEINLINE const FCsPooledObject& FindObject(const KeyType& Type, const int32& Index)
+	{
+		return CheckAndAddType(Type)->FindObject(Index);
+	}
 
+	/**
+	* Find the container holding a reference to a pooled object in the pool 
+	* for the appropriate Type by Interface.
+	*  Object must implement the interface: ICsPooledObject.
+	*
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object of interface type: ICsPooledObject.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object implements the interface: ICsPooledObject.
+	*/
+	FORCEINLINE const FCsPooledObject& FindObject(const KeyType& Type, ICsPooledObject* Object)
+	{
+		return CheckAndAddType(Type)->FindObject(Object);
+	}
+
+	/**
+	* Find the container holding a reference to a pooled object in the pool 
+	* for the appropriate Type by UObject.
+	*  Object must implement the interface: ICsPooledObject or the UClass
+	*  associated with the Object have ImplementsInterface(UCsPooledObject::StaticClass()) == true.
+	*
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object or Object->GetClass() that implements the interface: ICsPooledObject.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object or UClass associated with Pooled Object implements
+	*					the interface: ICsPooledObject.
+	*/
+	FORCEINLINE const FCsPooledObject& FindObject(const KeyType& Type, UObject* Object)
+	{
+		return CheckAndAddType(Type)->FindObject(Object);
+	}
+
+	/**
+	* Safely, via checks, find the container holding a reference to a pooled object in the pool 
+	* for the appropriate Type by Index.
+	*
+	* @param Type	Type of pool to add the Object to.
+	* @param Index	Index of the pooled object.
+	* return		Container holding a reference to a pooled object.
+	*				Pooled Object implements the interface: ICsPooledObject.
+	*/
+	FORCEINLINE const FCsPooledObject& FindSafeObject(const KeyType& Type, const int32& Index)
+	{
+		return CheckAndAddType(Type)->FindSafeObject(Index);
+	}
+
+	/**
+	* Safely, via checks, find the container holding a reference to a pooled object in the pool 
+	* for the appropriate Type by the Interface.
+	*
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object that implements the interface: ICsPooledObject.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object implements the interface: ICsPooledObject.
+	*/
+	FORCEINLINE const FCsPooledObject& FindSafeObject(const KeyType& Type, ICsPooledObject* Object)
+	{
+		return CheckAndAddType(Type)->FindSafeObject(Object);
+	}
+
+	/**
+	* Safely, via checks, find the container holding a reference to a pooled object in the pool 
+	* for the appropriate Type by the UObject.
+	*
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object or Object->GetClass() that implements the interface: ICsPooledObject.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object or UClass associated with Pooled Object implements
+	*					the interface: ICsPooledObject.
+	*/
+	FORCEINLINE const FCsPooledObject& FindSafeObject(const KeyType& Type, UObject* Object)
+	{
+		return CheckAndAddType(Type)->FindObject(Object);
+	}
 
 #pragma endregion Find
 

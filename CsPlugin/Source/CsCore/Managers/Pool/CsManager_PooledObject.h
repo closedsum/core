@@ -102,7 +102,7 @@ public:
 
 	virtual FCsPooledObject ConstructObject() = 0;
 
-	virtual void DeconstructObject(const FCsPooledObject& Object) = 0;
+	virtual void DeconstructObject(FCsPooledObject& Object) = 0;
 
 	virtual FString GetObjectName(const FCsPooledObject& Object) = 0;
 
@@ -327,7 +327,7 @@ public:
 	*
 	* @param Object		Container holding a pooled object.
 	*/
-	virtual void DeconstructObject(const FCsPooledObject& Object);
+	virtual void DeconstructObject(FCsPooledObject& Object);
 
 	/**
 	* Get the name of a pooled object.
@@ -389,25 +389,31 @@ public:
 	*
 	* @param PooledObject	Object that implements the interface: ICsPooledObject.
 	* @param Object			UObject reference.
-	* return				Reference to the container for the Pooled Object.
+	* return				Container holding a reference to a pooled object.
+	*						Pooled Object implements the interface: ICsPooledObject.
 	*/
 	const FCsPooledObject& AddToPool(ICsPooledObject* PooledObject, UObject* Object);
 
 	/**
 	* Adds an Object to the pool.
-	*  The Object must implement the interface: ICsPooledObject.
+	*  Object must implement the interface: ICsPooledObject.
 	*
-	* @param Object		UObject reference.
-	* return			Reference to the container for the Pooled Object.
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object that implements the interface: ICsPooledObject.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object implements the interface: ICsPooledObject.
 	*/
 	const FCsPooledObject& AddToPool(ICsPooledObject* Object);
 
 	/**
 	* Adds an Object to the pool.
-	*  The Object must implement the interface: ICsPooledObject.
+	*  Object must implement the interface: ICsPooledObject or the UClass
+	*  associated with the Object have ImplementsInterface(UCsPooledObject::StaticClass()) == true.
 	*
-	* @param Object		UObject reference.
+	* @param Object		Object or Object->GetClass() that implements the interface: ICsPooledObject.
 	* return			Container holding a reference to a pooled object.
+	*					Pooled Object or UClass associated with Pooled Object implements
+	*					the interface: ICsPooledObject.
 	*/
 	const FCsPooledObject& AddToPool(UObject* Object);
 
@@ -425,27 +431,39 @@ public:
 #pragma region
 
 	/**
-	* Adds an Object to the allocated objects.
+	* Adds an Object to the allocated objects. 
+	* If the Object is NOT added to the pool, add it to the pool.
+	*  Object must implement the interface: ICsPooledObject.
 	*
-	* @param PooledObject
-	* @param Object
-	* return
+	* @param PooledObject	Object that implements the interface: ICsPooledObject.
+	* @param Object			UObject reference.
+	* return				Container holding a reference to a pooled object.
+	*						Pooled Object implements the interface: ICsPooledObject.
 	*/
 	const FCsPooledObject& AddToAllocatedObjects(ICsPooledObject* PooledObject, UObject* Object);
 
 	/**
+	* Adds an Object to the Allocated Objects.
+	* If the Object is NOT added to the pool, add it to the pool.
+	*  Object must implement the interface: ICsPooledObject.
 	*
-	*
-	* @param Object
-	* return
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object that implements the interface: ICsPooledObject.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object implements the interface: ICsPooledObject.
 	*/
 	const FCsPooledObject& AddToAllocatedObjects(ICsPooledObject* Object);
 
 	/**
+	* Adds an Object to the allocated objects.
+	* If the Object is NOT added to the pool, add it to the pool.
+	*  Object must implement the interface: ICsPooledObject or the UClass
+	*  associated with the Object have ImplementsInterface(UCsPooledObject::StaticClass()) == true.
 	*
-	*
-	* @param Object
-	* return
+	* @param Object		Object or Object->GetClass() that implements the interface: ICsPooledObject.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object or UClass associated with Pooled Object implements
+	*					the interface: ICsPooledObject.
 	*/
 	const FCsPooledObject& AddToAllocatedObjects(UObject* Object);
 
@@ -459,6 +477,22 @@ protected:
 	virtual void AddToAllocatedObjects_Internal(const FCsPooledObject& Object);
 
 #pragma endregion Allocated Objects
+
+#pragma endregion Add
+
+	// Linked List
+#pragma region
+public:
+
+	FORCEINLINE const TLinkedList<FCsPooledObject>* GetAllocatedHead()
+	{
+		return AllocatedHead;
+	}
+
+	FORCEINLINE const TLinkedList<FCsPooledObject>* GetAllocatedTail()
+	{
+		return AllocatedTail;
+	}
 
 protected:
 
@@ -476,7 +510,7 @@ protected:
 	*/
 	void RemoveAllocatedLink(TLinkedList<FCsPooledObject>* Link);
 
-#pragma endregion Add
+#pragma endregion Linked List
 
 public:
 

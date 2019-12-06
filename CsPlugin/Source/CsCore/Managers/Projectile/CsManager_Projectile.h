@@ -120,14 +120,6 @@ public:
 
 #pragma endregion ProjectilePayload
 
-struct CSCORE_API FCsMemoryResource_Projectile : public TCsMemoryResource<FCsProjectile>
-{
-};
-
-struct CSCORE_API FCsManager_MemoryResource_Projectile : public TCsManager_MemoryResource<FCsProjectile, FCsMemoryResource_Projectile>
-{
-};
-
 #pragma endregion Structs
 
 // Delegates
@@ -159,6 +151,8 @@ public:
 };
 
 #pragma endregion Internal
+
+class ICsGetManagerProjectile;
 
 UCLASS()
 class CSCORE_API UCsManager_Projectile : public UActorComponent
@@ -199,6 +193,33 @@ public:
 	static void Init(UCsManager_Projectile* Manager);
 	static void Shutdown();
 
+#if WITH_EDITOR
+protected:
+
+	static ICsGetManagerProjectile* Get_GetManagerProjectile(UObject* InRoot);
+	static ICsGetManagerProjectile* GetSafe_GetManagerProjectile(UObject* Object);
+
+public:
+
+	static UCsManager_Projectile* Get(UObject* InRoot);
+
+	template<typename T>
+	static T* Get(UObject* InRoot)
+	{
+		return Cast<T>(Get(InRoot));
+	}
+
+protected:
+
+	static UCsManager_Projectile* GetSafe(UObject* Object);
+
+public:
+
+	static UCsManager_Projectile* GetFromWorldContextObject(const UObject* WorldContextObject);
+
+	static void Shutdown(UObject* InRoot);
+#endif // #if WITH_EDITOR
+
 protected:
 
 	virtual void Initialize();
@@ -208,6 +229,23 @@ private:
 	// Singleton data
 	static UCsManager_Projectile* s_Instance;
 	static bool s_bShutdown;
+
+	// Root
+#pragma region
+protected:
+
+	UObject* MyRoot;
+
+	void SetMyRoot(UObject* InRoot);
+
+public:
+
+	FORCEINLINE UObject* GetMyRoot()
+	{
+		return MyRoot;
+	}
+
+#pragma endregion Root
 
 #pragma endregion Singleton
 
@@ -249,7 +287,14 @@ public:
 	*/
 	virtual void CreatePool(const FECsProjectile& Type, const int32& Size);
 
+protected:
+
+	void OnCreatePool_AddToPool(const FECsProjectile& Type, const FCsPooledObject& Object);
+
 		// Add
+#pragma region
+
+			// Pool
 #pragma region
 protected:
 
@@ -262,50 +307,152 @@ protected:
 public:
 
 	/**
+	* Adds an Object to the pool for the appropriate Type.
+	*  The Object must implement the interface: ICsProjectile.
 	*
-	*
-	* @param Type
-	* @param Object
+	* @param Type			Type of pool to add the Object to.
+	* @param PooledObject	Object that implements the interface: ICsProjectile.
+	* @param Object			UObject reference.
+	* return				Container holding a reference to a pooled object.
+	*						Pooled Object implements the interface: ICsProjectile.
 	*/
-	virtual void AddToPool(const FECsProjectile& Type, ICsProjectile* Object);
+	virtual const FCsProjectile& AddToPool(const FECsProjectile& Type, ICsProjectile* Object);
+
+	/**
+	* Adds an Object to the pool for the appropriate Type.
+	*  Object must implement the interface: ICsProjectile.
+	*
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object that implements the interface: ICsProjectile.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object implements the interface: ICsProjectile.
+	*/
+	virtual const FCsProjectile& AddToPool(const FECsProjectile& Type, const FCsProjectile& Object);
+
+	/**
+	* Adds an Object to the pool for the appropriate Type.
+	*  Object must implement the interface: ICsProjectile or the UClass
+	*  associated with the Object have ImplementsInterface(UCsProjectile::StaticClass()) == true.
+	*
+	* @param Type		Type of the pool to add the object to.
+	* @param Object		Object or Object->GetClass() that implements the interface: ICsProjectile.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object or UClass associated with Pooled Object implements
+	*					the interface: ICsProjectile.
+	*/
+	virtual const FCsProjectile& AddToPool(const FECsProjectile& Type, UObject* Object);
+
+protected:
+
+	virtual const FCsProjectile& AddToPool_Internal(const FECsProjectile& Type, const FCsPooledObject& Object);
+
+#pragma endregion Pool
+
+			// Allocated Objects
+#pragma region
+protected:
 
 	/**
 	*
-	*
 	* @param Type
-	* @param Object
 	*/
-	virtual void AddToPool(const FECsProjectile& Type, const FCsProjectile& Object);
+	virtual TArray<FCsProjectile>& CheckAndAddType_AllocatedObjects(const FECsProjectile& Type);
+
+public:
 
 	/**
+	* Adds an Object to the allocated objects for the appropriate Type.
+	* If the Object is NOT added to the pool, add it to the pool.
+	*  Object must implement the interface: ICsProjectile.
 	*
-	*
-	* @param Type
-	* @param Object
+	* @param Type			Type of pool to add the Object to.
+	* @param PooledObject	Object that implements the interface: ICsProjectile.
+	* @param Object			UObject reference.
+	* return				Container holding a reference to a pooled object.
+	*						Pooled Object implements the interface: ICsProjectile.
 	*/
-	virtual void AddToPool(const FECsProjectile& Type, UObject* Object);
-
-	virtual void OnAddToPool(const FECsProjectile& Type, const FCsPooledObject& Object);
+	virtual const FCsProjectile& AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* PooledObject, UObject* Object);
 
 	/**
+	* Adds an Object to the allocated objects for the appropriate Type.
+	* If the Object is NOT added to the pool, add it to the pool.
+	*  Object must implement the interface: ICsProjectile.
 	*
-	*
-	* @param Type
-	* @param Object
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object that implements the interface: ICsProjectile.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object implements the interface: ICsProjectile.
 	*/
-	virtual void AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* Object);
+	virtual const FCsProjectile& AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* Object);
+
+	/**
+	* Adds an Object to the allocated objects for the appropriate Type.
+	* If the Object is NOT added to the pool, add it to the pool.
+	*  Object must implement the interface: ICsProjectile or the UClass
+	*  associated with the Object have ImplementsInterface(UCsProjectile::StaticClass()) == true.
+	*
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object or Object->GetClass() that implements the interface: ICsProjectile.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object or UClass associated with Pooled Object implements
+	*					the interface: ICsProjectile.
+	*/
+	virtual const FCsProjectile& AddToAllocatedObjects(const FECsProjectile& Type, UObject* Object);
+
+protected:
+
+	virtual const FCsProjectile& AddToAllocatedObjects_Internal(const FECsProjectile& Type, const FCsPooledObject& Object);
+
+#pragma endregion Allocated Objects
 
 #pragma endregion Add
 
 public:
 
-	const TArray<FCsPooledObject>& GetAllocatedObjects(const FECsProjectile& Type);
+	/**
+	* Get the pool for the appropriate Type.
+	*  Pool is an array of containers holding references to objects that
+	*  implement the interface: ICsProjectile.
+	*
+	* @param Type	Type of pool to get.
+	* return		Pool associated with the type.
+	*/
+	const TArray<FCsProjectile>& GetPool(const FECsProjectile& Type);
 
-	const TArray<FCsPooledObject>& GetPool(const FECsProjectile& Type);
+	/**
+	* Get the allocated objects for the appropriate Type.
+	*  Allocated Objects are an array of containers holding references to objects that
+	*  implement the interface: ICsProjectile.
+	*
+	* @param Type	Type of allocated objects to get.
+	* return		Allocated Objects associated with the Type.
+	*/
+	const TArray<FCsProjectile>& GetAllocatedObjects(const FECsProjectile& Type);
 
+	/**
+	* Get the number of elements in the pool for the appropriate Type.
+	*
+	*
+	* @param Type	Type of pool.
+	* return		Number of elements in the pool for the associated Type.
+	*/
 	const int32& GetPoolSize(const FECsProjectile& Type);
+
+	/**
+	* Get the number of allocated objects for the appropriate Type.
+	*
+	* @param Type	Type of allocated objects.
+	* return		Number of allocated objects for the associated Type.
+	*/
 	int32 GetAllocatedObjectsSize(const FECsProjectile& Type);
 
+	/**
+	* Get whether all elements in the pool for the appropriate Type
+	* have been allocated.
+	*
+	@ @param Type	Type of pool to check against.
+	* return		All elements allocated or not.
+	*/
 	bool IsExhausted(const FECsProjectile& Type);
 
 #pragma endregion Pool
@@ -316,29 +463,43 @@ public:
 
 	virtual void Update(const float& DeltaTime);
 
+private:
+
+	FECsProjectile CurrentUpdatePoolType;
+
+	int32 CurrentUpdatePoolObjectIndex;
+
+protected:
+
+	void OnPreUpdate_Pool(const FECsProjectile& Type);
+
+	void OnUpdate_Object(const FECsProjectile& Type, const FCsPooledObject& Object);
+
+	void OnPostUpdate_Pool(const FECsProjectile& Type);
+
 #pragma endregion Update
 
 	// Payload
 #pragma region
 public:
 
+	/**
+	* Create a number (Size) of payload objects for the appropriate Type.
+	*  Payload implements the interface: ICsProjectilePayload.
+	*
+	* @param Type	Type of payload.
+	* @param Size	Number of payload objects to create.
+	*/
 	void ConstructPayloads(const FECsProjectile& Type, const int32& Size);
 
-	ICsPooledObjectPayload* AllocatePayload(const FECsProjectile& Type);
-
-	template<typename T>
-	T* AllocatePayload(const FECsProjectile& Type)
-	{
-#if !UE_BUILD_SHIPPING
-		T* Payload = dynamic_cast<T>(AllocatePayload(Type));
-
-		check(Payload);
-
-		return Payload;
-#else
-		return (T*)AllocatePayload(Type);
-#endif // #if !UE_BUILD_SHIPPING
-	}
+	/**
+	* Get a payload object from a pool of payload objects for the appropriate Type.
+	*  Payload implements the interface: ICsPooledObjectPayload.
+	*
+	* @param Type	Type of payload.
+	* return		Payload that implements the interface: ICsPooledObjectPayload.
+	*/
+	FCsProjectilePayload* AllocatePayload(const FECsProjectile& Type);
 
 #pragma endregion Payload
 

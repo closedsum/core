@@ -177,8 +177,10 @@ FCsPooledObject FCsManager_PooledObject::ConstructObject()
 	return FCsPooledObject();
 }
 
-void FCsManager_PooledObject::DeconstructObject(const FCsPooledObject& Object)
+void FCsManager_PooledObject::DeconstructObject(FCsPooledObject& Object)
 {
+	if (UObject* O = Object.GetObject())
+		O->MarkPendingKill();
 }
 
 FString FCsManager_PooledObject::GetObjectName(const FCsPooledObject& Object)
@@ -403,6 +405,11 @@ void FCsManager_PooledObject::AddToAllocatedObjects_Internal(const FCsPooledObje
 
 #pragma endregion Allocated Objects
 
+#pragma endregion Add
+
+	// Linked List
+#pragma region
+
 void FCsManager_PooledObject::AddAllocatedLink(TLinkedList<FCsPooledObject>* Link)
 {
 	if (AllocatedTail)
@@ -435,7 +442,7 @@ void FCsManager_PooledObject::RemoveAllocatedLink(TLinkedList<FCsPooledObject>* 
 	Link->Unlink();
 }
 
-#pragma endregion Add
+#pragma endregion Linked List
 
 	// Find
 #pragma region
@@ -541,8 +548,7 @@ void FCsManager_PooledObject::Update(const float& DeltaTime)
 		FCsPooledObject& O = **Current;
 		Next			   = Current->GetNextLink();
 
-		// Check if ObjectType was Deallocated NOT in a normal way (i.e. Out of Bounds)
-
+		// Check if PooledObject was Deallocated NOT in a normal way (i.e. Out of Bounds)
 		if (!O.GetCache()->IsAllocated())
 		{
 #if !UE_BUILD_SHIPPING
@@ -554,13 +560,9 @@ void FCsManager_PooledObject::Update(const float& DeltaTime)
 			continue;
 		}
 
-		if (!O.GetCache()->UseLifeTime())
-		{
-			OnUpdate_Object_Event.Broadcast(O);
-			continue;
-		}
-
-		if (GetCurrentTimeSeconds() - O.GetCache()->GetTime() > O.GetCache()->GetLifeTime())
+		// Check if PooledObject LifeTime has expired.
+		if (O.GetCache()->UseLifeTime() &&
+			GetCurrentTimeSeconds() - O.GetCache()->GetTime() > O.GetCache()->GetLifeTime())
 		{
 #if !UE_BUILD_SHIPPING
 			LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::OnTick], ECsPoolTransaction::Deallocate, O);

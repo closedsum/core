@@ -7,16 +7,26 @@
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 
+#include "UObject/Object.h"
+
+// ICsUnitTest
+#pragma region
+
+void ICsUnitTest_Impl::SetMyRoot(UObject* InRoot)
+{
+	MyRoot = InRoot;
+}
+
 void ICsUnitTest_Impl::Start()
 {
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(MyRoot);
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(UpdateGroup);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindRaw(this, &ICsUnitTest_Impl::Start_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(UpdateGroup);
+	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
 	Payload->Owner.SetOwner(this);
 
 	Payload->SetName(Start_Internal_Name);
@@ -26,3 +36,5 @@ void ICsUnitTest_Impl::Start()
 
 	Scheduler->Start(Payload);
 }
+
+#pragma endregion ICsUnitTest

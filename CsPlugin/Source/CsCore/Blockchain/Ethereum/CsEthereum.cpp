@@ -580,11 +580,7 @@ void UCsEthereum::StartPrivateChain()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-#if WITH_EDITOR
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
-#else
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-#endif // #if WITH_EDITOR
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(MyRoot);
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 

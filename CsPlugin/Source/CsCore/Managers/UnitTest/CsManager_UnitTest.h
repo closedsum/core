@@ -3,6 +3,7 @@
 #include "Coroutine/CsRoutine.h"
 #include "CsManager_UnitTest.generated.h"
 
+class ICsGetManagerUnitTest;
 class ICsUnitTestSuite;
 
 UCLASS(transient)
@@ -22,10 +23,17 @@ virtual bool ProcessConsoleExec(const TCHAR* Cmd, FOutputDevice& Ar, UObject* Ex
 #pragma region
 public:
 
-	static UCsManager_UnitTest* Get();
+	static UCsManager_UnitTest* Get(UObject* InRoot = nullptr);
 
-	static void Init();
-	static void Shutdown();
+	static void Init(UObject* InRoot);
+	static void Shutdown(UObject* InRoot = nullptr);
+
+#if WITH_EDITOR
+protected:
+
+	static ICsGetManagerUnitTest* Get_GetManagerUnitTest(UObject* InRoot);
+
+#endif // #if WITH_EDITOR
 
 protected:
 
@@ -36,6 +44,26 @@ private:
 	// Singleton data
 	static UCsManager_UnitTest* s_Instance;
 	static bool s_bShutdown;
+
+	// Root
+#pragma region
+private:
+
+	UObject* MyRoot;
+
+public:
+
+	FORCEINLINE void SetMyRoot(UObject* InRoot)
+	{
+		MyRoot = InRoot;
+	}
+
+	FORCEINLINE const UObject* GetMyRoot() const
+	{
+		return MyRoot;
+	}
+
+#pragma endregion Root
 
 #pragma endregion Singleton
 

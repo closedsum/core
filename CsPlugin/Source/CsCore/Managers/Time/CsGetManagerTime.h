@@ -18,7 +18,7 @@ class ICsGetManagerTime
 
 public:
 
-	virtual UCsManager_Time* GetManager_Time() = 0;
+	virtual UCsManager_Time* GetManager_Time() const = 0;
 
 	virtual void SetManager_Time(UCsManager_Time* InManager) = 0;
 };

@@ -8,7 +8,14 @@
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 
+#include "Managers/UnitTest/CsGetManagerUnitTest.h"
 #include "Managers/UnitTest/CsUnitTestSuite.h"
+
+#if WITH_EDITOR
+#include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Managers/Time/CsGetManagerTime.h"
+#endif // #if WITH_EDITOR
 
 // static initializations
 UCsManager_UnitTest* UCsManager_UnitTest::s_Instance;
@@ -44,29 +51,51 @@ bool UCsManager_UnitTest::ProcessConsoleExec(const TCHAR* Cmd, FOutputDevice& Ar
 // Singleton
 #pragma region
 
-/*static*/ UCsManager_UnitTest* UCsManager_UnitTest::Get()
+/*static*/ UCsManager_UnitTest* UCsManager_UnitTest::Get(UObject* InRoot /*=nullptr*/)
 {
+#if WITH_EDITOR
+	return Get_GetManagerUnitTest(InRoot)->GetManager_UnitTest();
+#else
 	if (s_bShutdown)
 		return nullptr;
 
+	return s_Instance;
+#endif // #if WITH_EDITOR
+}
+
+/*static*/ void UCsManager_UnitTest::Init(UObject* InRoot)
+{
+#if WITH_EDITOR
+	ICsGetManagerUnitTest* GetManagerUnitTest = Get_GetManagerUnitTest(InRoot);
+
+	UCsManager_UnitTest* Manager_UnitTest = NewObject<UCsManager_UnitTest>(InRoot, UCsManager_UnitTest::StaticClass(), TEXT("Manager_UnitTest_Singleton"), RF_Transient | RF_Public);
+
+	GetManagerUnitTest->SetManager_UnitTest(Manager_UnitTest);
+
+	Manager_UnitTest->SetMyRoot(InRoot);
+	Manager_UnitTest->Initialize();
+#else
+	s_bShutdown = false;
+	
 	if (!s_Instance)
 	{
 		s_Instance = NewObject<UCsManager_UnitTest>(GetTransientPackage(), UCsManager_UnitTest::StaticClass(), TEXT("Manager_UnitTest_Singleton"), RF_Transient | RF_Public);
 		s_Instance->AddToRoot();
+		s_Instance->SetMyRoot(InRoot);
 		s_Instance->Initialize();
 	}
-
-	return s_Instance;
+#endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_UnitTest::Init()
+/*static*/ void UCsManager_UnitTest::Shutdown(UObject* InRoot /*=nullptr*/)
 {
-	s_bShutdown = false;
-	UCsManager_UnitTest::Get();
-}
+#if WITH_EDITOR
+	ICsGetManagerUnitTest* GetManagerUnitTest = Get_GetManagerUnitTest(InRoot);
+	UCsManager_UnitTest* Manager_UnitTest	  = GetManagerUnitTest->GetManager_UnitTest();
+	Manager_UnitTest->CleanUp();
 
-/*static*/ void UCsManager_UnitTest::Shutdown()
-{
+	GetManagerUnitTest->SetManager_UnitTest(nullptr);
+#else
 	if (!s_Instance)
 		return;
 
@@ -74,7 +103,31 @@ bool UCsManager_UnitTest::ProcessConsoleExec(const TCHAR* Cmd, FOutputDevice& Ar
 	s_Instance->RemoveFromRoot();
 	s_Instance = nullptr;
 	s_bShutdown = true;
+#endif // #if WITH_EDITOR
 }
+
+#if WITH_EDITOR
+
+/*static*/ ICsGetManagerUnitTest* UCsManager_UnitTest::Get_GetManagerUnitTest(UObject* InRoot)
+{
+	checkf(InRoot, TEXT("UCsManager_UnitTest::Get_GetManagerUnitTest: InRoot is NULL."));
+
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+
+	checkf(GetManagerSingleton, TEXT("UCsManager_UnitTest::Get_GetManagerUnitTest: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
+
+	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
+
+	checkf(Manager_Singleton, TEXT("UCsManager_UnitTest::Get_GetManagerUnitTest: Manager_Singleton is NULL."));
+
+	ICsGetManagerUnitTest* GetManagerUnitTest = Cast<ICsGetManagerUnitTest>(Manager_Singleton);
+
+	checkf(GetManagerUnitTest, TEXT("UCsManager_UnitTest::Get_GetManagerUnitTest: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetManagerUnitTest."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
+
+	return GetManagerUnitTest;
+}
+
+#endif // #if WITH_EDITOR
 
 void UCsManager_UnitTest::Initialize()
 {
@@ -108,6 +161,8 @@ void UCsManager_UnitTest::Add(ICsUnitTestSuite* Suite)
 
 	const FName& Name = Suite->GetFName();
 
+	Suite->SetMyRoot(MyRoot);
+
 	ICsUnitTestSuite** SuitePtr = SuiteMap.Find(Name);
 
 	checkf(!SuitePtr, TEXT("UCsManager_UnitTest::Add: Suite: %s has already been added."), *(Suite->GetName()));
@@ -129,12 +184,12 @@ void UCsManager_UnitTest::Start()
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(MyRoot);
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(UpdateGroup);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindUObject(this, &UCsManager_UnitTest::Start_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(UpdateGroup);
+	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(NCsManagerUnitTestCached::Name::Start_Internal);
@@ -151,7 +206,7 @@ char UCsManager_UnitTest::Start_Internal(FCsRoutine* R)
 	int32& SuiteIndex		= R->GetValue_Indexer(CS_FIRST);
 	ICsUnitTestSuite* Suite = Suites[SuiteIndex];
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(R->Group);
 	FCsTime& StartTime		   = R->GetValue_Timer(CS_FIRST);
 
 	FCsDeltaTime ElapsedTime = FCsDeltaTime::GetDeltaTime(CurrentTime, StartTime);

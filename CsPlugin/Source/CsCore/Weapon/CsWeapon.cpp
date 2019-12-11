@@ -1069,12 +1069,12 @@ void ACsWeapon::PlayAnimation_Reload()
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsWeapon::PlayAnimation_Reload_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(NCsWeaponCached::Name::PlayAnimation_Reload_Internal);
@@ -1437,12 +1437,12 @@ void ACsWeapon::StartChargeFire(const FECsWeaponFireMode &FireMode)
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsWeapon::StartChargeFire_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(NCsWeaponCached::Name::StartChargeFire_Internal);
@@ -1457,7 +1457,7 @@ CS_COROUTINE(ACsWeapon, StartChargeFire_Internal)
 {
 	ACsWeapon* mw = r->GetOwnerAsObject<ACsWeapon>();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(mw->GetGameInstance())->GetTime(r->Group);
 	
 	FCsTime& StartTime		= r->GetValue_Timer(CS_FIRST);
 	const float ElapsedTime = CurrentTime.Time - StartTime.Time;
@@ -1648,12 +1648,12 @@ void ACsWeapon::FireWeapon(const FECsWeaponFireMode &FireMode)
 	
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsWeapon::FireWeapon_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(NCsWeaponCached::Name::FireWeapon_Internal);
 	Payload->SetNameAsString(NCsWeaponCached::Str::FireWeapon_Internal);
@@ -1670,7 +1670,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 
 	const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(r->GetValue_Int(CS_FIRST));
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(mw->GetGameInstance())->GetTime(r->Group);
 	FCsDeltaTime& ElapsedTime	   = r->GetValue_DeltaTime(CS_FIRST);
 
 	ElapsedTime += r->DeltaTime;
@@ -1885,12 +1885,12 @@ void ACsWeapon::DrawFireProjectile(class ACsProjectileBase* Projectile, const FV
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsWeapon::DrawFireProjectile_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(NCsWeaponCached::Name::DrawFireProjectile_Internal);
 	Payload->SetNameAsString(NCsWeaponCached::Str::DrawFireProjectile_Internal);

@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
+class UObject;
+
 class CSCORE_API ICsUnitTest
 {
 public:
@@ -10,16 +12,30 @@ public:
 	/**
 	* Get the Name of the Test as a FName.
 	*
-	* return Name as a FName for the Test.
+	* return	Name as a FName for the Test.
 	*/
 	virtual const FName& GetFName() const = 0;
 
 	/**
 	* Get the Name of the Test as a FString.
 	*
-	* return Name as a FString for the Test.
+	* return	Name as a FString for the Test.
 	*/
 	virtual const FString& GetName() const = 0;
+
+	/**
+	*
+	*
+	* @param InRoot
+	*/
+	virtual void SetMyRoot(UObject* InRoot) = 0;
+
+	/**
+	*
+	*
+	* return	
+	*/
+	virtual UObject* GetMyRoot() = 0;
 
 	/**
 	* Start the Test.
@@ -29,7 +45,7 @@ public:
 	/**
 	* Check whether the Test is complete or not.
 	*
-	* return true if the Test is complete, false otherwise.
+	* return	true if the Test is complete, false otherwise.
 	*/
 	virtual bool IsComplete() const = 0;
 };

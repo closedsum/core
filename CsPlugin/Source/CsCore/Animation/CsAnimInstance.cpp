@@ -162,13 +162,13 @@ void UCsAnimInstance::Spawn_Manager_Time()
 
 void UCsAnimInstance::Spawn_CoroutineScheduler()
 {
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this);
 
 	if (!Scheduler)
 	{
-		UCsCoroutineScheduler::Init();
+		UCsCoroutineScheduler::Init(this);
 
-		Scheduler = UCsCoroutineScheduler::Get();
+		Scheduler = UCsCoroutineScheduler::Get(this);
 	}
 	Scheduler->MyOwner = this;
 }
@@ -258,7 +258,7 @@ void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 			const FCsDeltaTime& DeltaTime = Manager_Time->GetScaledDeltaTime(Group);
 
 			// CoroutineScheduler
-			if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get())
+			if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this))
 				Scheduler->Update(Group, DeltaTime);
 			// Manager_FX
 			if (AICsManager_FX* MyManager_FX = GetManager_FX())

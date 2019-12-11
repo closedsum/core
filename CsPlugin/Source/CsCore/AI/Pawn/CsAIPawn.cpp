@@ -488,7 +488,7 @@ void ACsAIPawn::StartShootForDuration(const float &Duration)
 CS_COROUTINE(ACsAIPawn, StartShootForDuration_Internal)
 {
 	ACsAIPawn* p			 = r->GetOwnerAsObject<ACsAIPawn>();
-	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get(p->GetGameInstance());
 
 	const float& Duration			= r->GetValue_Float(CS_FIRST);
 	const FCsDeltaTime& ElapsedTime = r->ElapsedTime;

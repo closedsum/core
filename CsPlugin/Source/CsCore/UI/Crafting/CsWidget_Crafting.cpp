@@ -394,12 +394,12 @@ void UCsWidget_Crafting::IncrementCount()
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsWidget_Crafting::IncrementCount_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(ECsWidgetCraftingCached::Name::IncrementCount_Internal);
@@ -413,7 +413,7 @@ CS_COROUTINE(UCsWidget_Crafting, IncrementCount_Internal)
 	UCsWidget_Crafting* c = r->GetOwnerAsObject<UCsWidget_Crafting>();
 	UWorld* w			  = c->GetWorld();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(c->GetGameInstance())->GetTime(r->Group);
 	const FCsTime& StartTime   = r->StartTime;
 
 	FCsTime& Time = r->GetValue_Timer(CS_FIRST);
@@ -521,12 +521,12 @@ void UCsWidget_Crafting::DecrementCount()
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsWidget_Crafting::DecrementCount_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(ECsWidgetCraftingCached::Name::DecrementCount_Internal);
@@ -540,7 +540,7 @@ CS_COROUTINE(UCsWidget_Crafting, DecrementCount_Internal)
 	UCsWidget_Crafting* c	 = r->GetOwnerAsObject<UCsWidget_Crafting>();
 	UWorld* w				 = c->GetWorld();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(c->GetGameInstance())->GetTime(r->Group);
 	const FCsTime& StartTime   = r->StartTime;
 
 	FCsTime& Time = r->GetValue_Timer(CS_FIRST);
@@ -701,12 +701,12 @@ void UCsWidget_Crafting::UpdateProgress(const uint64 &PayloadId)
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsWidget_Crafting::UpdateProgress_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(ECsWidgetCraftingCached::Name::UpdateProgress_Internal);
 	Payload->SetNameAsString(ECsWidgetCraftingCached::Str::UpdateProgress_Internal);
@@ -724,7 +724,7 @@ CS_COROUTINE(UCsWidget_Crafting, UpdateProgress_Internal)
 {
 	UCsWidget_Crafting* c = r->GetOwnerAsObject<UCsWidget_Crafting>();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(c->GetGameInstance())->GetTime(r->Group);
 	const FCsTime& StartTime   = r->StartTime;
 
 	const float& Time		= r->GetValue_Float(CS_FIRST);

@@ -179,19 +179,18 @@ protected:
 
 // Singleton
 #pragma region
-
 public:
 
-	static UCsManager_Projectile* Get();
+	static UCsManager_Projectile* Get(UObject* InRoot = nullptr);
 	
 	template<typename T>
-	static T* Get()
+	static T* Get(UObject* InRoot = nullptr)
 	{
-		return Cast<T>(Get());
+		return Cast<T>(Get(InRoot));
 	}
 
 	static void Init(UCsManager_Projectile* Manager);
-	static void Shutdown();
+	static void Shutdown(UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
 protected:
@@ -199,25 +198,12 @@ protected:
 	static ICsGetManagerProjectile* Get_GetManagerProjectile(UObject* InRoot);
 	static ICsGetManagerProjectile* GetSafe_GetManagerProjectile(UObject* Object);
 
-public:
-
-	static UCsManager_Projectile* Get(UObject* InRoot);
-
-	template<typename T>
-	static T* Get(UObject* InRoot)
-	{
-		return Cast<T>(Get(InRoot));
-	}
-
-protected:
-
 	static UCsManager_Projectile* GetSafe(UObject* Object);
 
 public:
 
 	static UCsManager_Projectile* GetFromWorldContextObject(const UObject* WorldContextObject);
 
-	static void Shutdown(UObject* InRoot);
 #endif // #if WITH_EDITOR
 
 protected:

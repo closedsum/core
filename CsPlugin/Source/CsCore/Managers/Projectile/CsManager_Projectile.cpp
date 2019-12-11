@@ -63,8 +63,11 @@ void UCsManager_Projectile::OnRegister()
 // Singleton
 #pragma region
 
-/*static*/ UCsManager_Projectile* UCsManager_Projectile::Get()
+/*static*/ UCsManager_Projectile* UCsManager_Projectile::Get(UObject* InRoot /*=nullptr*/)
 {
+#if WITH_EDITOR
+	return Get_GetManagerProjectile(InRoot)->GetManager_Projectile();
+#else
 	if (s_bShutdown)
 		return nullptr;
 
@@ -75,6 +78,7 @@ void UCsManager_Projectile::OnRegister()
 	}
 
 	return s_Instance;
+#endif // #if WITH_EDITOR
 }
 
 /*static*/ void UCsManager_Projectile::Init(UCsManager_Projectile* Manager)
@@ -90,14 +94,22 @@ void UCsManager_Projectile::OnRegister()
 	s_Instance->Initialize();
 }
 
-/*static*/ void UCsManager_Projectile::Shutdown()
+/*static*/ void UCsManager_Projectile::Shutdown(UObject* InRoot /*=nullptr*/)
 {
+#if WITH_EDITOR
+	ICsGetManagerProjectile* GetManagerProjectile = Get_GetManagerProjectile(InRoot);
+	UCsManager_Projectile* Manager_Projectile	  = GetManagerProjectile->GetManager_Projectile();
+	Manager_Projectile->CleanUp();
+
+	GetManagerProjectile->SetManager_Projectile(nullptr);
+#else
 	if (!s_Instance)
 		return;
 
 	s_Instance->CleanUp();
 	s_Instance = nullptr;
 	s_bShutdown = true;
+#endif // #if WITH_EDITOR
 }
 
 #if WITH_EDITOR
@@ -137,11 +149,6 @@ void UCsManager_Projectile::OnRegister()
 		return nullptr;
 
 	return Cast<ICsGetManagerProjectile>(Manager_Singleton);
-}
-
-/*static*/ UCsManager_Projectile* UCsManager_Projectile::Get(UObject* InRoot)
-{
-	return Get_GetManagerProjectile(InRoot)->GetManager_Projectile();
 }
 
 /*static*/ UCsManager_Projectile* UCsManager_Projectile::GetSafe(UObject* Object)
@@ -184,15 +191,6 @@ void UCsManager_Projectile::OnRegister()
 	{
 		return nullptr;
 	}
-}
-
-/*static*/ void UCsManager_Projectile::Shutdown(UObject* InRoot)
-{
-	ICsGetManagerProjectile* GetManagerProjectile = Get_GetManagerProjectile(InRoot);
-	UCsManager_Projectile* Manager_Projectile	  = GetManagerProjectile->GetManager_Projectile();
-	Manager_Projectile->CleanUp();
-
-	GetManagerProjectile->SetManager_Projectile(nullptr);
 }
 
 #endif // #if WITH_EDITOR

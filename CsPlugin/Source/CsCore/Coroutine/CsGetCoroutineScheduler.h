@@ -18,7 +18,7 @@ class ICsGetCoroutineScheduler
 
 public:
 
-	virtual UCsCoroutineScheduler* GetCoroutineScheduler() = 0;
+	virtual UCsCoroutineScheduler* GetCoroutineScheduler() const = 0;
 
 	virtual void SetCoroutineScheduler(UCsCoroutineScheduler* InScheduler) = 0;
 };

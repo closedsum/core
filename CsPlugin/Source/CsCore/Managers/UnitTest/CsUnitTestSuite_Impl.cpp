@@ -40,11 +40,21 @@ FCsUnitTestSuite_Impl::~FCsUnitTestSuite_Impl()
 	Tests.Reset();
 }
 
+// ICsUnitTestSuite
+#pragma region
+
+void FCsUnitTestSuite_Impl::SetMyRoot(UObject* InRoot)
+{
+	MyRoot = InRoot;
+}
+
 void FCsUnitTestSuite_Impl::Add(ICsUnitTest* Test)
 {
 	checkf(Test, TEXT("%s::Add: Test is NULL."), *NameAsString);
 
 	const FName& TestName = Test->GetFName();
+
+	Test->SetMyRoot(MyRoot);
 
 	ICsUnitTest** TestPtr = TestMap.Find(TestName);
 
@@ -58,12 +68,12 @@ void FCsUnitTestSuite_Impl::Start()
 {
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(MyRoot);
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(UpdateGroup);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindRaw(this, &FCsUnitTestSuite_Impl::Start_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(UpdateGroup);
+	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
 	Payload->Owner.SetOwner(this);
 
 	Payload->SetName(Start_Internal_Name);
@@ -75,12 +85,14 @@ void FCsUnitTestSuite_Impl::Start()
 	Scheduler->Start(Payload);
 }
 
+#pragma endregion ICsUnitTestSuite
+
 char FCsUnitTestSuite_Impl::Start_Internal(FCsRoutine* R)
 {
 	int32& TestIndex  = R->GetValue_Indexer(CS_FIRST);
 	ICsUnitTest* Test = Tests[TestIndex];
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(Test->GetMyRoot())->GetTime(R->Group);
 	FCsTime& StartTime		   = R->GetValue_Timer(CS_FIRST);
 
 	FCsDeltaTime ElapsedTime = FCsDeltaTime::GetDeltaTime(CurrentTime, StartTime);

@@ -22,6 +22,20 @@ public:
 	*/
 	virtual const FString& GetName() const = 0;
 
+	/**
+	*
+	*
+	* @param InRoot
+	*/
+	virtual void SetMyRoot(UObject* InRoot) = 0;
+
+	/**
+	*
+	*
+	* return	
+	*/
+	virtual UObject* GetMyRoot() = 0;
+
 protected:
 
 	/**

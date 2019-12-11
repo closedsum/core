@@ -2,6 +2,7 @@
 #pragma once
 #include "Managers/UnitTest/CsUnitTest.h"
 
+class UObject;
 struct FCsRoutine;
 
 class ICsUnitTest_Impl : public ICsUnitTest
@@ -24,6 +25,13 @@ public:
 		return NameAsString;
 	}
 
+	void SetMyRoot(UObject* InRoot);
+
+	FORCEINLINE UObject* GetMyRoot() const
+	{
+		return MyRoot;
+	}
+
 	void Start();
 
 	FORCEINLINE bool IsComplete() const
@@ -37,6 +45,8 @@ protected:
 
 	FName Name;
 	FString NameAsString;
+
+	UObject* MyRoot;
 
 	bool bComplete;
 

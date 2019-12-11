@@ -3,6 +3,7 @@
 #include "Managers/UnitTest/CsUnitTestSuite.h"
 
 class ICsUnitTest;
+class UObject;
 struct FCsRoutine;
 
 class CSCORE_API FCsUnitTestSuite_Impl : public ICsUnitTestSuite
@@ -26,6 +27,13 @@ public:
 		return NameAsString;
 	}
 
+	void SetMyRoot(UObject* InRoot);
+
+	FORCEINLINE UObject* GetMyRoot() const
+	{
+		return MyRoot;
+	}
+
 protected:
 
 	void Add(ICsUnitTest* Test);
@@ -45,6 +53,8 @@ protected:
 
 	FName Name;
 	FString NameAsString;
+
+	UObject* MyRoot;
 
 	TMap<FName, ICsUnitTest*> TestMap;
 	TArray<ICsUnitTest*> Tests;

@@ -2,12 +2,19 @@
 #include "Blockchain/CsBlockchain.h"
 #include "CsCore.h"
 
+#include "Blockchain/CsGetBlockchain.h"
 #include "Blockchain/CsBlockchainAccount.h"
 #include "Blockchain/CsBlockchainContract.h"
 
+#if WITH_EDITOR
+#include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Managers/Time/CsGetManagerTime.h"
+#endif // #if WITH_EDITOR
+
 // static initializations
-UCsBlockchain* UCsBlockchain::s_blockchainSingleton;
-bool UCsBlockchain::s_bBlockchainHasShutdown = false;
+UCsBlockchain* UCsBlockchain::s_Instance;
+bool UCsBlockchain::s_bShutdown = false;
 
 // Enums
 #pragma region
@@ -44,36 +51,81 @@ UCsBlockchain::UCsBlockchain(const FObjectInitializer& ObjectInitializer) : Supe
 // Singleton
 #pragma region
 
-/*static*/ UCsBlockchain* UCsBlockchain::Get()
+/*static*/ UCsBlockchain* UCsBlockchain::Get(UObject* InRoot /*=nullptr*/)
 {
-	if (s_bBlockchainHasShutdown)
+#if WITH_EDITOR
+	return Get_GetBlockchain(InRoot)->GetBlockchain();
+#else
+	if (s_bShutdown)
 		return nullptr;
 
-	return s_blockchainSingleton;
+	return s_Instance;
+#endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsBlockchain::Init(UClass* InSpawnClass)
+/*static*/ void UCsBlockchain::Init(UObject* InRoot, UClass* BlockchainClass)
 {
-	s_bBlockchainHasShutdown = false;
+#if WITH_EDITOR
+	ICsGetBlockchain* GetBlockchain = Get_GetBlockchain(InRoot);
 
-	if (!s_blockchainSingleton)
+	UCsBlockchain* Blockchain = NewObject<UCsBlockchain>(InRoot, BlockchainClass, TEXT("Blockchain_Singleton"), RF_Transient | RF_Public);
+
+	GetBlockchain->SetBlockchain(Blockchain);
+
+	Blockchain->SetMyRoot(InRoot);
+	Blockchain->Initialize();
+#else
+	s_bShutdown = false;
+
+	if (!s_Instance)
 	{
-		s_blockchainSingleton = NewObject<UCsBlockchain>(GetTransientPackage(), InSpawnClass, TEXT("Blockchain_Singleton"), RF_Transient | RF_Public);
-		s_blockchainSingleton->SpawnClass = InSpawnClass;
-		s_blockchainSingleton->AddToRoot();
-		s_blockchainSingleton->Initialize();
+		s_Instance = NewObject<UCsBlockchain>(GetTransientPackage(), BlockchainClass, TEXT("Blockchain_Singleton"), RF_Transient | RF_Public);
+		s_Instance->AddToRoot();
+		s_Instance->Initialize();
 	}
+#endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsBlockchain::Shutdown()
+/*static*/ void UCsBlockchain::Shutdown(UObject* InRoot /*=nullptr*/)
 {
-	if (!s_blockchainSingleton)
+#if WITH_EDITOR
+	ICsGetBlockchain* GetBlockchain = Get_GetBlockchain(InRoot);
+	UCsBlockchain* Blockchain		= GetBlockchain->GetBlockchain();
+	Blockchain->CleanUp();
+
+	GetBlockchain->SetBlockchain(nullptr);
+#else
+	if (!s_bShutdown)
 		return;
 
-	s_blockchainSingleton->CleanUp();
-	s_blockchainSingleton->RemoveFromRoot();
-	s_blockchainSingleton = nullptr;
+	s_Instance->CleanUp();
+	s_Instance->RemoveFromRoot();
+	s_Instance = nullptr;
+#endif // #if WITH_EDITOR
 }
+
+#if WITH_EDITOR
+
+/*static*/ ICsGetBlockchain* UCsBlockchain::Get_GetBlockchain(UObject* InRoot)
+{
+	checkf(InRoot, TEXT("UCsBlockchain::Get_GetBlockchain: InRoot is NULL."));
+
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+
+	checkf(GetManagerSingleton, TEXT("UCsBlockchain::Get_GetBlockchain: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
+
+	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
+
+	checkf(Manager_Singleton, TEXT("UCsBlockchain::Get_GetBlockchain: Manager_Singleton is NULL."));
+
+	ICsGetBlockchain* GetBlockchain = Cast<ICsGetBlockchain>(Manager_Singleton);
+
+	checkf(GetBlockchain, TEXT("UCsBlockchain::Get_GetBlockchain: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetBlockchain."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
+
+	return GetBlockchain;
+}
+
+#endif // #if WITH_EDITOR
 
 void UCsBlockchain::Initialize()
 {

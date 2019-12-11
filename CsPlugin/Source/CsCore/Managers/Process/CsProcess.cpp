@@ -237,7 +237,7 @@ void UCsProcess::StartRead()
 	ReadFlag = true;
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
-
+	
 	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();

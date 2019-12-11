@@ -20,29 +20,51 @@ UCsManager_Time::UCsManager_Time(const FObjectInitializer& ObjectInitializer)
 // Singleton
 #pragma region
 
-/*static*/ UCsManager_Time* UCsManager_Time::Get()
+/*static*/ UCsManager_Time* UCsManager_Time::Get(UObject* InRoot /*=nullptr*/)
 {
+#if WITH_EDITOR
+	return Get_GetManagerTime(InRoot)->GetManager_Time();
+#else
 	if (s_bShutdown)
 		return nullptr;
+
+	return s_Instance;
+#endif // #if WITH_EDITOR
+}
+
+/*static*/ void UCsManager_Time::Init(UObject* InRoot)
+{
+#if WITH_EDITOR
+	ICsGetManagerTime* GetManagerTime = Get_GetManagerTime(InRoot);
+
+	UCsManager_Time* Manager_Time = NewObject<UCsManager_Time>(InRoot, UCsManager_Time::StaticClass(), TEXT("Manager_Time_Singleton"), RF_Transient | RF_Public);
+
+	GetManagerTime->SetManager_Time(Manager_Time);
+
+	Manager_Time->SetMyRoot(InRoot);
+	Manager_Time->Initialize();
+#else
+	s_bShutdown = false;
 
 	if (!s_Instance)
 	{
 		s_Instance = NewObject<UCsManager_Time>(GetTransientPackage(), UCsManager_Time::StaticClass(), TEXT("Manager_Time_Singleton"), RF_Transient | RF_Public);
 		s_Instance->AddToRoot();
+		s_Instance->SetMyRoot(InRoot);
 		s_Instance->Initialize();
 	}
-
-	return s_Instance;
+#endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_Time::Init()
+/*static*/ void UCsManager_Time::Shutdown(UObject* InRoot /*=nullptr*/)
 {
-	s_bShutdown = false;
-	UCsManager_Time::Get();
-}
+#if WITH_EDITOR
+	ICsGetManagerTime* GetManagerTime = Get_GetManagerTime(InRoot);
+	UCsManager_Time* Manager_Time	  = GetManagerTime->GetManager_Time();
+	Manager_Time->CleanUp();
 
-/*static*/ void UCsManager_Time::Shutdown()
-{
+	GetManagerTime->SetManager_Time(nullptr);
+#else
 	if (!s_Instance)
 		return;
 
@@ -50,6 +72,7 @@ UCsManager_Time::UCsManager_Time(const FObjectInitializer& ObjectInitializer)
 	s_Instance->RemoveFromRoot();
 	s_Instance = nullptr;
 	s_bShutdown = true;
+#endif // #if WITH_EDITOR
 }
 
 #if WITH_EDITOR
@@ -71,34 +94,6 @@ UCsManager_Time::UCsManager_Time(const FObjectInitializer& ObjectInitializer)
 	checkf(GetManagerTime, TEXT("UCsManager_Time::Get: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetManagerTime."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
 
 	return GetManagerTime;
-}
-
-/*static*/ UCsManager_Time* UCsManager_Time::Get(UObject* InRoot)
-{
-	ICsGetManagerTime* GetManagerTime = Get_GetManagerTime(InRoot);
-
-	return GetManagerTime->GetManager_Time();
-}
-
-/*static*/ void UCsManager_Time::Init(UObject* InRoot)
-{
-	ICsGetManagerTime* GetManagerTime = Get_GetManagerTime(InRoot);
-
-	UCsManager_Time* Manager_Time = NewObject<UCsManager_Time>(InRoot, UCsManager_Time::StaticClass(), TEXT("Manager_Time_Singleton"), RF_Transient | RF_Public);
-
-	GetManagerTime->SetManager_Time(Manager_Time);
-
-	Manager_Time->SetMyRoot(InRoot);
-	Manager_Time->Initialize();
-}
-
-/*static*/ void UCsManager_Time::Shutdown(UObject* InRoot)
-{
-	ICsGetManagerTime* GetManagerTime = Get_GetManagerTime(InRoot);
-	UCsManager_Time* Manager_Time	  = GetManagerTime->GetManager_Time();
-	Manager_Time->CleanUp();
-
-	GetManagerTime->SetManager_Time(nullptr);
 }
 
 #endif // #if WITH_EDITOR

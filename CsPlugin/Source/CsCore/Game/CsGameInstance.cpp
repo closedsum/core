@@ -134,7 +134,7 @@ void UCsGameInstance::Init()
 	UCsCoroutineScheduler::Init(this);
 	CoroutineScheduler = UCsCoroutineScheduler::Get();
 #else
-	UCsManager_Time::Init();
+	UCsManager_Time::Init(this);
 	UCsCoroutineScheduler::Init();
 #endif // #if WITH_EDITOR
 
@@ -206,11 +206,11 @@ bool UCsGameInstance::Tick(float DeltaSeconds)
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsManager_Time::Get()->Update(Group, DeltaSeconds);
+	UCsManager_Time::Get(this)->Update(Group, DeltaSeconds);
 
-	const FCsDeltaTime& DeltaTime = UCsManager_Time::Get()->GetScaledDeltaTime(Group);
+	const FCsDeltaTime& DeltaTime = UCsManager_Time::Get(this)->GetScaledDeltaTime(Group);
 
-	UCsCoroutineScheduler::Get()->Update(Group, DeltaTime);
+	UCsCoroutineScheduler::Get(this)->Update(Group, DeltaTime);
 
 	OnTick_Event.Broadcast(DeltaSeconds);
 #if WITH_EDITOR
@@ -401,12 +401,12 @@ void UCsGameInstance::OnBoard()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(this);
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsGameInstance::OnBoard_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Scheduler->Start(Payload);
@@ -467,12 +467,12 @@ void UCsGameInstance::LoadDataMapping()
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(this);
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsGameInstance::LoadDataMapping_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Scheduler->Start(Payload);
@@ -620,12 +620,12 @@ void UCsGameInstance::CreateFullscreenWidget()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(this);
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsGameInstance::CreateFullscreenWidget_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(NCsGameInstanceCached::Name::CreateFullscreenWidget_Internal);
@@ -687,12 +687,12 @@ void UCsGameInstance::HideMouseCursor()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(this);
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsGameInstance::HideMouseCursor_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(NCsGameInstanceCached::Name::HideMouseCursor_Internal);
@@ -775,7 +775,7 @@ CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
 
 	UCsWidget_Fullscreen* Widget = Cast<UCsWidget_Fullscreen>(gi->FullscreenWidget);
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(gi)->GetTime(r->Group);
 	const FCsTime& StartTime   = r->StartTime;
 
 	const float Delay = 1.0f;

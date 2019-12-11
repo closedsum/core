@@ -678,7 +678,7 @@ const FCsProjectile& UCsManager_Projectile::FindObject(const FECsProjectile& Typ
 		// INVALID
 		else
 		{
-			checkf(false, TEXT(""));
+			checkf(false, TEXT("UCsManager_Projectile::FindObject: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(U->GetName()), *(Class->GetName()));
 		}
 	}
 	else
@@ -689,7 +689,7 @@ const FCsProjectile& UCsManager_Projectile::FindObject(const FECsProjectile& Typ
 		ICsPooledObject* Interface = (ICsPooledObject*)Object;
 #endif // #if !UE_BUILD_SHIPPING
 
-		checkf(Interface, TEXT(""));
+		checkf(Interface, TEXT("UCsManager_Projectile::FindObject: Object does NOT implement interface: ICsPooledObject."));
 
 		const FCsPooledObject& O = Internal->FindObject(Type, Interface);
 

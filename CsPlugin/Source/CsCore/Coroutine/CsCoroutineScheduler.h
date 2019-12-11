@@ -25,20 +25,14 @@ class CSCORE_API UCsCoroutineScheduler : public UObject
 #pragma region
 public:
 
-	static UCsCoroutineScheduler* Get();
-	static void Init();
-	static void Shutdown();
+	static UCsCoroutineScheduler* Get(UObject* InRoot = nullptr);
+	static void Init(UObject* InRoot);
+	static void Shutdown(UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
 protected:
 
 	static ICsGetCoroutineScheduler* Get_GetCoroutineScheduler(UObject* InRoot);
-
-public:
-
-	static UCsCoroutineScheduler* Get(UObject* InRoot);
-	static void Init(UObject* InRoot);
-	static void Shutdown(UObject* InRoot);
 
 #endif // #if WITH_EDITOR
 
@@ -52,13 +46,11 @@ private:
 	static UCsCoroutineScheduler* s_Instance;
 	static bool s_bShutdown;
 
-#pragma endregion Singleton
-
-// Root
+	// Root
 #pragma region
 private:
 
-	TWeakObjectPtr<UObject> MyRoot;
+	UObject* MyRoot;
 
 public:
 
@@ -67,12 +59,14 @@ public:
 		MyRoot = InRoot;
 	}
 
-	FORCEINLINE const UObject* GetMyRoot()
+	FORCEINLINE const UObject* GetMyRoot() const
 	{
-		return MyRoot.IsValid() ? MyRoot.Get() : nullptr;
+		return MyRoot;
 	}
 
 #pragma endregion Root
+
+#pragma endregion Singleton
 
 // Owner
 #pragma region

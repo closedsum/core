@@ -3,9 +3,11 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 
+// Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 
 // Managers
+#include "Managers/Time/CsManager_Time.h"
 #include "Managers/Process/CsManager_Process.h"
 
 #include "Blockchain/Ethereum/CsEthereumGenesis.h"
@@ -578,12 +580,16 @@ void UCsEthereum::StartPrivateChain()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+#if WITH_EDITOR
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
+#else
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+#endif // #if WITH_EDITOR
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsEthereum::StartPrivateChain_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(NCsEthereumCached::Name::StartPrivateChain_Internal);
 	Payload->SetNameAsString(NCsEthereumCached::Str::StartPrivateChain_Internal);
@@ -637,12 +643,16 @@ void UCsEthereum::OpenConsole()
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+#if WITH_EDITOR
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
+#else
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+#endif // #if WITH_EDITOR
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsEthereum::OpenConsole_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(NCsEthereumCached::Name::OpenConsole_Internal);
 	Payload->SetNameAsString(NCsEthereumCached::Str::OpenConsole_Internal);
@@ -1340,12 +1350,16 @@ void UCsEthereum::CreateKeystore(CsEthereumAccount* Account)
 	{
 		const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-		UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+#if WITH_EDITOR
+		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
+#else
+		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+#endif // #if WITH_EDITOR
 		FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 		FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 		Payload->Coroutine.BindStatic(&UCsEthereum::CreateKeystore_Internal);
-		Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+		Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(Group);
 		Payload->Owner.SetObject(this);
 
 		Payload->SetName(NCsEthereumCached::Name::CreateKeystore_Internal);
@@ -1472,12 +1486,16 @@ void UCsEthereum::SetupAccount(void* Payload)
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+#if WITH_EDITOR
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
+#else
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+#endif // #if WITH_EDITOR
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* CoroutinePayload				 = PayloadContainer->Get();
 
 	CoroutinePayload->Coroutine.BindStatic(&UCsEthereum::SetupAccount_Internal);
-	CoroutinePayload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	CoroutinePayload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(Group);
 	CoroutinePayload->Owner.SetObject(this);
 
 	CoroutinePayload->SetName(NCsEthereumCached::Name::SetupAccount_Internal);
@@ -1545,12 +1563,16 @@ void UCsEthereum::BringBalanceToThreshold(ICsBlockchainAccount* IAccount, const 
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+#if WITH_EDITOR
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
+#else
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+#endif // #if WITH_EDITOR
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsEthereum::BringBalanceToThreshold_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(NCsEthereumCached::Name::BringBalanceToThreshold_Internal);
@@ -1573,7 +1595,7 @@ CS_COROUTINE(UCsEthereum, BringBalanceToThreshold_Internal)
 
 	float& Balance = r->GetValue_Float(CS_FIRST);
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(r->Group);
 	FCsDeltaTime& ElapsedTime  = r->GetValue_DeltaTime(CS_FIRST);
 
 	ElapsedTime += r->DeltaTime;
@@ -1670,12 +1692,12 @@ void UCsEthereum::DeployContract(const FECsBlockchainContract &EContract, TArray
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(MyRoot);
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsEthereum::DeployContract_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(NCsEthereumCached::Name::DeployContract_Internal);
@@ -1949,12 +1971,12 @@ void UCsEthereum::SetupContract(const FECsBlockchainContract &EContract, const F
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(MyRoot);
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsEthereum::SetupContract_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(NCsEthereumCached::Name::SetupContract_Internal);
@@ -2039,12 +2061,12 @@ void UCsEthereum::RunContractStateChangeFunction(const FECsBlockchainContract &E
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(MyRoot);
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsEthereum::RunContractStateChangeFunction_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(NCsEthereumCached::Name::RunContractStateChangeFunction_Internal);
@@ -2190,12 +2212,12 @@ void UCsEthereum::CheckTransactionHasBeenMined(const FString &TransactionHash)
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(MyRoot);
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsEthereum::CheckTransactionHasBeenMined_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(NCsEthereumCached::Name::CheckTransactionHasBeenMined_Internal);
@@ -2215,7 +2237,7 @@ CS_COROUTINE(UCsEthereum, CheckTransactionHasBeenMined_Internal)
 	bool& Success				= r->GetValue_Flag(CS_FIRST);
 	static const float INTERVAL = 0.1f;
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(r->Group);
 	FCsDeltaTime& ElapsedTime  = r->GetValue_DeltaTime(CS_FIRST);
 
 	ElapsedTime += r->DeltaTime;

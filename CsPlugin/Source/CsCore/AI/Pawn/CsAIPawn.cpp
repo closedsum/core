@@ -223,12 +223,12 @@ void ACsAIPawn::SyncCurrentViewFromBone(const FName &Bone)
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
-
+	
 	Payload->Coroutine.BindStatic(&ACsAIPawn::SyncCurrentViewFromBone_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(NCsAIPawnCached::Name::SyncCurrentViewFromBone_Internal);
@@ -412,12 +412,12 @@ void ACsAIPawn::StartShootForCount(const int32 &Count)
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsAIPawn::StartShootForCount_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(Controller);
 
 	Payload->SetName(NCsAIPawnCached::Name::StartShootForCount_Internal);
@@ -469,12 +469,12 @@ void ACsAIPawn::StartShootForDuration(const float &Duration)
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsAIPawn::StartShootForDuration_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(NCsAIPawnCached::Name::StartShootForDuration_Internal);

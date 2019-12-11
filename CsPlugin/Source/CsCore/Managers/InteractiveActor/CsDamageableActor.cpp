@@ -123,7 +123,7 @@ void ACsDamageableActor::Respawn()
 	if (Respawn_Internal_Routine)
 		Respawn_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 
 	const FECsUpdateGroup Group = NCsUpdateGroup::GameState;
 
@@ -131,7 +131,7 @@ void ACsDamageableActor::Respawn()
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsDamageableActor::Respawn_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(NCsDamageableActorCached::Name::Respawn_Internal);
@@ -146,7 +146,7 @@ PT_THREAD(ACsDamageableActor::Respawn_Internal(FCsRoutine* R))
 
 	ACsData_Damageable* Data = Cast<ACsData_Damageable>(D->Cache.GetData());
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(D->GetGameInstance())->GetTime(R->Group);
 	const FCsTime& StartTime   = R->StartTime;
 
 	CS_COROUTINE_BEGIN(R);

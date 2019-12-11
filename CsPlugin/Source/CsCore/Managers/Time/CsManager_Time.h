@@ -16,20 +16,14 @@ class CSCORE_API UCsManager_Time : public UObject
 #pragma region
 public:
 
-	static UCsManager_Time* Get();
-	static void Init();
-	static void Shutdown();
+	static UCsManager_Time* Get(UObject* InRoot = nullptr);
+	static void Init(UObject* InRoot);
+	static void Shutdown(UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
 protected:
 
 	static ICsGetManagerTime* Get_GetManagerTime(UObject* InRoot);
-
-public:
-
-	static UCsManager_Time* Get(UObject* InRoot);
-	static void Init(UObject* InRoot);
-	static void Shutdown(UObject* InRoot);
 
 #endif // #if WITH_EDITOR
 
@@ -43,13 +37,11 @@ private:
 	static UCsManager_Time* s_Instance;
 	static bool s_bShutdown;
 
-#pragma endregion Singleton
-
-// Root
+	// Root
 #pragma region
 private:
 
-	TWeakObjectPtr<UObject> MyRoot;
+	UObject* MyRoot;
 
 public:
 
@@ -58,12 +50,14 @@ public:
 		MyRoot = InRoot;
 	}
 
-	FORCEINLINE const UObject* GetMyRoot()
+	FORCEINLINE const UObject* GetMyRoot() const
 	{
-		return MyRoot.IsValid() ? MyRoot.Get() : nullptr;
+		return MyRoot;
 	}
 
 #pragma endregion Root
+
+#pragma endregion Singleton
 
 protected:
 

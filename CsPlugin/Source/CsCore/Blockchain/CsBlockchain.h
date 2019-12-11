@@ -381,6 +381,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsBlockchain_Cont
 
 #define CS_BLOCKCHAIN_SINGLE_NODE_INDEX 0
 
+class ICsGetBlockchain;
+
 UCLASS(transient)
 class CSCORE_API UCsBlockchain: public UObject
 {
@@ -390,17 +392,23 @@ class CSCORE_API UCsBlockchain: public UObject
 #pragma region
 public:
 
-	UClass* SpawnClass;
+	static UCsBlockchain* Get(UObject* InRoot = nullptr);
 
-	static UCsBlockchain* Get();
 	template<typename T>
-	static T* Get()
+	static T* Get(UObject* InRoot = nullptr)
 	{
-		Cast<T>(Get());
+		Cast<T>(Get(InRoot));
 	}
 
-	static void Init(UClass* InSpawnClass);
-	static void Shutdown();
+	static void Init(UObject* InRoot, UClass* BlockchainClass);
+	static void Shutdown(UObject* InRoot = nullptr);
+
+#if WITH_EDITOR
+protected:
+
+	static ICsGetBlockchain* Get_GetBlockchain(UObject* InRoot);
+
+#endif // #if WITH_EDITOR
 
 protected:
 
@@ -409,8 +417,28 @@ protected:
 
 private:
 	// Singleton data
-	static UCsBlockchain* s_blockchainSingleton;
-	static bool s_bBlockchainHasShutdown;
+	static UCsBlockchain* s_Instance;
+	static bool s_bShutdown;
+
+	// Root
+#pragma region
+protected:
+
+	UObject* MyRoot;
+
+public:
+
+	FORCEINLINE void SetMyRoot(UObject* InRoot)
+	{
+		MyRoot = InRoot;
+	}
+
+	FORCEINLINE const UObject* GetMyRoot() const
+	{
+		return MyRoot;
+	}
+
+#pragma endregion Root
 
 #pragma endregion Singleton
 

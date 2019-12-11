@@ -117,12 +117,12 @@ void ACsManager_Crafting::CraftItems(FCsCraftingPayload* Payload)
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* CoroutinePayload				 = PayloadContainer->Get();
 
 	CoroutinePayload->Coroutine.BindStatic(&ACsManager_Crafting::CraftItems_Internal);
-	CoroutinePayload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	CoroutinePayload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	CoroutinePayload->Owner.SetObject(this);
 
 	CoroutinePayload->SetName(NCsManagerCraftingCached::Name::CraftItems_Internal);

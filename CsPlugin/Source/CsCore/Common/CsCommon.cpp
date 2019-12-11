@@ -1819,12 +1819,12 @@ const FCsRoutineHandle& UCsCommon::ScaleActorOverTime(const FECsUpdateGroup& Gro
 		return FCsRoutineHandle::Invalid;
 	}
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(InActor->GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsCommon::ScaleActorOverTime_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(InActor->GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(InActor);
 
 	Payload->SetName(NCsCommonCached::Name::ScaleActorOverTime_Internal);
@@ -1858,12 +1858,12 @@ const FCsRoutineHandle& UCsCommon::ScaleActorOverTime(const FECsUpdateGroup& Gro
 		return FCsRoutineHandle::Invalid;
 	}
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(InActor->GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsCommon::ScaleActorOverTime_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(InActor->GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(InActor);
 
 	Payload->SetName(NCsCommonCached::Name::ScaleActorOverTime_Internal);
@@ -1888,7 +1888,7 @@ char UCsCommon::ScaleActorOverTime_Internal(FCsRoutine* R)
 {
 	AActor* A = R->GetOwnerAsActor();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(A->GetGameInstance())->GetTime(R->Group);
 
 	const FCsTime& StartTime = R->GetValue_Timer(CS_FIRST);
 
@@ -1969,7 +1969,7 @@ const FCsRoutineHandle& UCsCommon::ScaleActorOverTime_AsCurve(const FECsUpdateGr
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsCommon::ScaleActorOverTime_AsCurve_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(InActor->GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(InActor);
 
 	Payload->SetName(NCsCommonCached::Name::ScaleActorOverTime_AsCurve_Internal);
@@ -2003,7 +2003,7 @@ char UCsCommon::ScaleActorOverTime_AsCurve_Internal(FCsRoutine* R)
 {
 	AActor* A= R->GetOwnerAsActor();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(A->GetGameInstance())->GetTime(R->Group);
 	const FCsTime& StartTime   = R->StartTime;
 
 	static const int32 MAX_TIME_INDEX = 2;
@@ -2084,12 +2084,12 @@ const FCsRoutineHandle& UCsCommon::MoveActorOverTime(const FECsUpdateGroup& Grou
 		return FCsRoutineHandle::Invalid;
 	}
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(InActor->GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsCommon::MoveActorOverTime_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(InActor->GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(InActor);
 
 	Payload->SetName(NCsCommonCached::Name::MoveActorOverTime_Internal);
@@ -2112,7 +2112,7 @@ char UCsCommon::MoveActorOverTime_Internal(FCsRoutine* R)
 {
 	AActor* A = R->GetOwnerAsActor();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(A->GetGameInstance())->GetTime(R->Group);
 	const FCsTime& StartTime   = R->StartTime;
 
 	const float& MaxTime = R->GetValue_Float(CS_FIRST);
@@ -2226,12 +2226,12 @@ const FCsRoutineHandle& UCsCommon::FadeCameraOverTime(const FECsUpdateGroup &Gro
 		return FCsRoutineHandle::Invalid;
 	}
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(Controller->GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsCommon::FadeCameraOverTime_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(Controller->GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(Controller);
 
 	Payload->SetName(NCsCommonCached::Name::FadeCameraOverTime_Internal);
@@ -2257,7 +2257,7 @@ char UCsCommon::FadeCameraOverTime_Internal(FCsRoutine* R)
 {
 	APlayerController* PC = R->GetOwnerAsObject<APlayerController>();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(PC->GetGameInstance())->GetTime(R->Group);
 	const FCsTime& StartTime   = R->StartTime;
 
 	static const int32 MAX_TIME_INDEX = 2;

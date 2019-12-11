@@ -46,11 +46,11 @@ void UCsAnimInstance::BeginDestroy()
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 	{
 		// Manager_Time
-		if (UCsManager_Time* Manager = UCsManager_Time::Get())
-			Manager->Shutdown();
+		if (UCsManager_Time* Manager = UCsManager_Time::Get(this))
+			Manager->Shutdown(this);
 		// CoroutineScheduler
-		if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get())
-			Scheduler->Shutdown();
+		if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this))
+			Scheduler->Shutdown(this);
 	}
 #endif // #if WITH_EDITOR
 }
@@ -249,7 +249,7 @@ void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 		OnTick_Handle_ShowEditorIcons();
 		OnTick_Handle_GlobalPlayRate();
 
-		if (UCsManager_Time* Manager_Time = UCsManager_Time::Get())
+		if (UCsManager_Time* Manager_Time = UCsManager_Time::Get(this))
 		{
 			const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 

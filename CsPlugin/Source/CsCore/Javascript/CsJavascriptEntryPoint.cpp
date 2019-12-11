@@ -72,12 +72,12 @@ void ACsJavascriptEntryPoint::Setup()
 {
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(UpdateGroup);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsJavascriptEntryPoint::Setup_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(UpdateGroup);
+	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(NCsJavascriptEntryPointCached::Name::Setup_Internal);
@@ -92,7 +92,7 @@ PT_THREAD(ACsJavascriptEntryPoint::Setup_Internal(FCsRoutine* r))
 	UWorld* w					= js->GetWorld();
 	UCsGameInstance* gi			= Cast<UCsGameInstance>(w->GetGameInstance());
 	ACsGameState* gs			= w->GetGameState<ACsGameState>();
-	UCsCoroutineScheduler* s	= UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* s	= UCsCoroutineScheduler::Get(gi);
 	ACsPlayerController* pc		= UCsCommon::GetLocalPlayerController<ACsPlayerController>(w);
 	ACsUI* hud					= pc ? Cast<ACsUI>(pc->MyHUD) : nullptr;
 	ACsPlayerState* ps			= UCsCommon::GetLocalPlayerState<ACsPlayerState>(w);

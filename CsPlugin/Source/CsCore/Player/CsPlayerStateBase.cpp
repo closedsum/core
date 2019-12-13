@@ -631,12 +631,12 @@ void ACsPlayerStateBase::RequestUniqueMappingId_AI(ACsPlayerStateBase* Requestin
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsPlayerStateBase::RequestUniqueMappingId_AI_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
+	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Payload->SetName(NCsPlayerStateBaseCached::Name::RequestUniqueMappingId_AI_Internal);

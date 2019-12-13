@@ -840,6 +840,18 @@ TAutoConsoleVariable<int32> CsCVarLogManagerSaveTransactions(
 
 #pragma endregion Save
 
+	// Achievement
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogManagerAchievementTransactions(
+	TEXT("log.manager.achievement.transactions"),
+	0,
+	TEXT("Log Manager Achievement Transactions."),
+	ECVF_SetByConsole | ECVF_SetByCode
+);
+
+#pragma endregion Achievement
+
 #pragma endregion Managers
 
 // CVarLog
@@ -930,6 +942,8 @@ namespace NCsCVarLog
 
 		// Save
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerSaveTransactions);
+		// Achievement
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerAchievementTransactions);
 }
 
 #pragma endregion CVarLog

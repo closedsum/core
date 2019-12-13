@@ -615,7 +615,7 @@ bool ACsWeapon::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &
 
 void ACsWeapon::ClearRoutines()
 {
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 
 	Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, NCsWeaponCached::Name::Stop_PlayAnimation_Reload_Internal, this);
 	Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, NCsWeaponCached::Name::Stop_StartChargeFire_Internal, this);
@@ -1550,7 +1550,7 @@ void ACsWeapon::StopChargeFire(const FECsWeaponFireMode &FireMode)
 
 	PerformingChargeFire = false;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 
 	Scheduler->BroadcastMessage(NCsUpdateGroup::GameState, ECsCoroutineMessage::Abort, NCsWeaponCached::Name::Stop_StartChargeFire_Internal, this);
 
@@ -2358,7 +2358,7 @@ void ACsWeapon::Reload()
 	// Firing
 	if (CurrentState == FiringState)
 	{
-		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 
 		const int32& Count = EMCsWeaponFireMode::Get().Num();
 

@@ -61,7 +61,7 @@ public:
 
 	bool bValid;
 
-	// Read
+// Read
 
 	bool bRead;
 
@@ -69,7 +69,7 @@ public:
 
 	FString ReadContents;
 
-	// Write
+// Write
 
 	bool bWrite;
 
@@ -77,7 +77,7 @@ public:
 
 	FString WriteContents;
 
-	// Delete
+// Delete
 
 	bool bDelete;
 
@@ -149,7 +149,7 @@ public:
 	void Complete()
 	{
 		bComplete = true;
-		bQueued = false;
+		bQueued	  = false;
 	}
 
 	bool IsComplete() const
@@ -255,9 +255,8 @@ public:
 	/** Action to processed. See ECsSaveAction. */
 	ECsSaveAction Action;
 
-	/** Whether to preform the Action on all contents vECsus a subset (i.e. Profile).
-		This should primarily used as a debug option (Deleting All Saves, ... etc). */
-	bool bAllContent;
+	/** Data to be used in the action. */
+	FString Data;
 
 private:
 
@@ -273,7 +272,7 @@ public:
 		Profile(ECsPlayerProfile::ECsPlayerProfile_MAX),
 		FileIndex(INDEX_NONE),
 		Action(ECsSaveAction::ECsSaveAction_MAX),
-		bAllContent(false),
+		Data(),
 		State(ECsSaveActionState::None),
 		bSuccess(false)
 	{
@@ -325,7 +324,7 @@ public:
 		Profile = ECsPlayerProfile::ECsPlayerProfile_MAX;
 		FileIndex = INDEX_NONE;
 		Action = ECsSaveAction::ECsSaveAction_MAX;
-		bAllContent = false;
+		Data.Empty();
 		State = ECsSaveActionState::None;
 		bSuccess = false;
 	}

@@ -7,8 +7,6 @@
 
 class UWorld;
 class ULocalPlayer;
-class UCsManager_Save;
-class UCsManager_Achievement;
 
 UCLASS(transient)
 class CSCORE_API UCsPlayerProfile : public UObject
@@ -53,25 +51,5 @@ public:
 
 	virtual void Init();
 
-// Managers
-#pragma region
-public:
-
-	// Save
-
-	TSubclassOf<UCsManager_Save> Manager_Save_Class;
-
-	UPROPERTY()
-	UCsManager_Save* Manager_Save;
-
-	// Achievement
-
-	TSubclassOf<UCsManager_Achievement> Manager_Achievement_Class;
-
-	UPROPERTY()
-	UCsManager_Achievement* Manager_Achievement;
-
-#pragma endregion Managers
-
-	virtual void OnTick(const float& DeltaSeconds);
+	virtual void Update(const float& DeltaSeconds);
 };

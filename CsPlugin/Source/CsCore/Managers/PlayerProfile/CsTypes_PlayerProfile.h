@@ -44,6 +44,8 @@ namespace NCsPlayerProfile
 	}
 
 	extern CSCORE_API const uint8 MAX;
+
+	extern CSCORE_API const Type AllProfiles;
 }
 
 #pragma endregion PlayerProfile

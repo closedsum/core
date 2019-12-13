@@ -135,7 +135,7 @@ void ACsGameState::PostActorCreated()
 	GameInstance->CurrentGameFrame = 0;
 
 	// Coroutine Scheduler
-	UCsCoroutineScheduler::Get()->MyOwner = this;
+	UCsCoroutineScheduler::Get(GetGameInstance())->MyOwner = this;
 
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -151,9 +151,9 @@ void ACsGameState::SeamlessTravelTransitionCheckpoint(bool bToTransitionMap)
 {
 	Super::SeamlessTravelTransitionCheckpoint(bToTransitionMap);
 
-	//UCsCoroutineScheduler::Get()->EndAll();
-	//UCsCoroutineScheduler::Get()->CalcCamera_EndAll();
-	UCsCoroutineScheduler::Get()->MyOwner = nullptr;
+	//UCsCoroutineScheduler::Get(GetGameInstance())->EndAll();
+	//UCsCoroutineScheduler::Get(GetGameInstance())->CalcCamera_EndAll();
+	UCsCoroutineScheduler::Get(GetGameInstance())->MyOwner = nullptr;
 
 	OnTick_Event.Clear();
 	OnTick_ScriptEvent.Clear();

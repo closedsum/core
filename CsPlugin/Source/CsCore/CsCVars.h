@@ -371,6 +371,13 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerSaveTransactions;
 
 #pragma endregion Save
 
+	// Achievement
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerAchievementTransactions;
+
+#pragma endregion Save
+
 #pragma endregion Managers
 
 struct ICsAutoConsoleVariable
@@ -590,6 +597,8 @@ namespace NCsCVarLog
 
 		// Save
 	extern CSCORE_API const Type LogManagerSaveTransactions;
+		// Achievement
+	extern CSCORE_API const Type LogManagerAchievementTransactions;
 }
 
 #pragma endregion CVarLog

@@ -127,17 +127,14 @@ void UCsGameInstance::Init()
 	UCsManager_Loading::Init();
 	UCsManager_Runnable::Init();
 
-#if WITH_EDITOR
 	UCsManager_Time::Init(this);
-	Manager_Time = UCsManager_Time::Get();
-
 	UCsCoroutineScheduler::Init(this);
-	CoroutineScheduler = UCsCoroutineScheduler::Get();
-#else
-	UCsManager_Time::Init(this);
-	UCsCoroutineScheduler::Init();
-#endif // #if WITH_EDITOR
 
+#if WITH_EDITOR
+	Manager_Time = UCsManager_Time::Get();
+	CoroutineScheduler = UCsCoroutineScheduler::Get();
+#endif // #if WITH_EDITOR
+	
 	//OnTick_Event.AddUObject(UCsCoroutineScheduler::Get(), &UCsCoroutineScheduler::OnTick_Update);
 	
 	//HideMouseCursor();
@@ -162,17 +159,15 @@ void UCsGameInstance::Shutdown()
 	UCsManager_Loading::Shutdown();
 	UCsManager_Runnable::Shutdown();
 
-#if WITH_EDITOR
 	UCsManager_Time::Shutdown(this);
+	UCsCoroutineScheduler::Shutdown(this);
+
+#if WITH_EDITOR
 	Manager_Time->MarkPendingKill();
 	Manager_Time = nullptr;
 
-	UCsCoroutineScheduler::Shutdown(this);
 	CoroutineScheduler->MarkPendingKill();
 	CoroutineScheduler = nullptr;
-#else
-	UCsManager_Time::Shutdown();
-	UCsCoroutineScheduler::Shutdown();
 #endif // #if WITH_EDITOR
 }
 

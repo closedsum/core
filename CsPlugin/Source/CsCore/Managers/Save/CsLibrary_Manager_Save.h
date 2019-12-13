@@ -12,13 +12,13 @@
 // Enumerate
 DECLARE_DYNAMIC_DELEGATE_OneParam(FCsLibraryManagerSave_OnEnumerate, bool, WasSuccessful);
 // Read
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FCsLibraryManagerSave_OnRead, bool, WasSuccessful, const ECsSave&, Save);
+DECLARE_DYNAMIC_DELEGATE_ThreeParams(FCsLibraryManagerSave_OnRead, bool, WasSuccessful, const ECsPlayerProfile&, Profile, const ECsSave&, Save);
 DECLARE_DYNAMIC_DELEGATE(FCsLibraryManagerSave_OnReadAll);
 // Write
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FCsLibraryManagerSave_OnWrite, bool, WasSuccessful, const ECsSave&, Save);
+DECLARE_DYNAMIC_DELEGATE_ThreeParams(FCsLibraryManagerSave_OnWrite, bool, WasSuccessful, const ECsPlayerProfile&, Profile, const ECsSave&, Save);
 DECLARE_DYNAMIC_DELEGATE(FCsLibraryManagerSave_OnWriteAll);
 // Delete
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FCsLibraryManagerSave_OnDelete, bool, WasSuccessful, const ECsSave&, Save);
+DECLARE_DYNAMIC_DELEGATE_ThreeParams(FCsLibraryManagerSave_OnDelete, bool, WasSuccessful, const ECsPlayerProfile&, Profile, const ECsSave&, Save);
 DECLARE_DYNAMIC_DELEGATE(FCsLibraryManagerSave_OnDeleteAll);
 
 #pragma endregion Delegates
@@ -29,6 +29,21 @@ class CSCORE_API UCsLibrary_Manager_Save : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+// FileName
+#pragma region
+public:
+
+	/**
+	* Set the current save (slot).
+	*
+	* @param WorldContextObject
+	* @param Save					Save (slot) to set as the current save.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Save"))
+	static void SetCurrentSave(const UObject* WorldContextObject, const ECsSave& Save);
+
+#pragma endregion FileName
+
 // Enumerate
 #pragma region
 public:
@@ -36,18 +51,18 @@ public:
 	/**
 	* Get a list of all save filenames for specified profile.
 	*
-	* @param ProfileType	Profile to get filenames for.
+	* @param WorldContextObject
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (AutoCreateRefTerm = "ProfileType"))
-	static void Enumerate(const ECsPlayerProfile& ProfileType);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (WorldContext = "WorldContextObject"))
+	static void Enumerate(const UObject* WorldContextObject);
 
 	/**
 	* Bind to the event when the Enumerate action has completed.
-	*
+	*		
 	* @param Event / Delegate	Event to call when Enumerate action has completed.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (DisplayName = "BindToEvent: OnEnumerate", AutoCreateRefTerm = "ProfileType"))
-	static void BindToEvent_OnEnumerate(const ECsPlayerProfile& ProfileType, UPARAM(DisplayName = "Event") FCsLibraryManagerSave_OnEnumerate Delegate);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (DisplayName = "BindToEvent: OnEnumerate", WorldContext = "WorldContextObject"))
+	static void BindToEvent_OnEnumerate(const UObject* WorldContextObject, UPARAM(DisplayName = "Event") FCsLibraryManagerSave_OnEnumerate Delegate);
 
 #pragma endregion Enumerate
 
@@ -58,37 +73,40 @@ public:
 	/**
 	* Read a save for a specified profile and Save (slot)
 	* 
-	* @param ProfileType	Profile to read save from.
-	* @param Save			Save (slot) to read from.
+	* @param WorldContextObject
+	* @param Profile				Profile to read save from.
+	* @param Save					Save (slot) to read from.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (AutoCreateRefTerm = "ProfileType,Save"))
-	static void Read(const ECsPlayerProfile& ProfileType, const ECsSave& Save);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Profile,Save"))
+	static void Read(const UObject* WorldContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save);
 
 	/**
 	* Bind to the event when the Read action has completed.
 	*
-	* @param ProfileType		Profile to read save from.
-	* @param Event / Delegate	Event to call when the Read action has completed.
+	* @param WorldContextObject
+	* @param Profile				Profile to read save from.
+	* @param Event / Delegate		Event to call when the Read action has completed.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (DisplayName = "BindToEvent: OnRead", AutoCreateRefTerm = "ProfileType"))
-	static void BindToEvent_OnRead(const ECsPlayerProfile& ProfileType, UPARAM(DisplayName = "Event") FCsLibraryManagerSave_OnRead Delegate);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (DisplayName = "BindToEvent: OnRead", WorldContext = "WorldContextObject", AutoCreateRefTerm = "Profile"))
+	static void BindToEvent_OnRead(const UObject* WorldContextObject, UPARAM(DisplayName = "Event") FCsLibraryManagerSave_OnRead Delegate);
 
 	/**
 	* Read all saves for a specified profile.
 	*
-	* @param ProfileType	Profile to read all saves from.
+	* @param WorldContextObject
+	* @param Profile				Profile to read all saves from.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (AutoCreateRefTerm = "ProfileType"))
-	static void ReadAll(const ECsPlayerProfile& ProfileType);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Profile"))
+	static void ReadAll(const UObject* WorldContextObject, const ECsPlayerProfile& Profile);
 
 	/**
 	* Bind to the event when the Read All action has completed.
 	*
-	* @param ProfileType		Profile to read saves from.
-	* @param Event / Delegate	Event to call when the Read All action has completed.
+	* @param WorldContextObject
+	* @param Event / Delegate		Event to call when the Read All action has completed.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (DisplayName = "BindToEvent: OnReadAll", AutoCreateRefTerm = "ProfileType"))
-	static void BindToEvent_OnReadAll(const ECsPlayerProfile& ProfileType, UPARAM(DisplayName = "Event") FCsLibraryManagerSave_OnReadAll Delegate);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (DisplayName = "BindToEvent: OnReadAll", WorldContext = "WorldContextObject"))
+	static void BindToEvent_OnReadAll(const UObject* WorldContextObject, UPARAM(DisplayName = "Event") FCsLibraryManagerSave_OnReadAll Delegate);
 
 #pragma endregion Read
 
@@ -99,37 +117,39 @@ public:
 	/**
 	* Write a save for a specified profile and Save (slot). 
 	*
-	* @param ProfileType	Profile to write save to.
-	* @param Save			Save (slot) to write to.
+	* @param WorldContextObject
+	* @param Profile				Profile to write save to.
+	* @param Save					Save (slot) to write to.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (AutoCreateRefTerm = "ProfileType,Save"))
-	static void Write(const ECsPlayerProfile& ProfileType, const ECsSave& Save);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Profile,Save"))
+	static void Write(const UObject* WorldContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save);
 
 	/**
 	* Bind to the event when the Write action has completed.
 	*
-	* @param ProfileType		Profile to write save to.
-	* @param Event / Delegate	Event to call when the Write action has completed.
+	* @param WorldContextObject
+	* @param Event / Delegate		Event to call when the Write action has completed.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (DisplayName = "BindToEvent: OnWrite", AutoCreateRefTerm = "ProfileType"))
-	static void BindToEvent_OnWrite(const ECsPlayerProfile& ProfileType, UPARAM(DisplayName = "Event") FCsLibraryManagerSave_OnWrite Delegate);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (DisplayName = "BindToEvent: OnWrite", WorldContext = "WorldContextObject"))
+	static void BindToEvent_OnWrite(const UObject* WorldContextObject, UPARAM(DisplayName = "Event") FCsLibraryManagerSave_OnWrite Delegate);
 
 	/**
 	* Write all saves for a specified profile.
 	* 
-	* @param ProfileType	Profile to write all saves to.
+	* @param WorldContextObject
+	* @param Profile				Profile to write all saves to.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (AutoCreateRefTerm = "ProfileType"))
-	static void WriteAll(const ECsPlayerProfile& ProfileType);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Profile"))
+	static void WriteAll(const UObject* WorldContextObject, const ECsPlayerProfile& Profile);
 
 	/**
 	* Bind to the event when the Write All action has completed.
 	*
-	* @param ProfileType		Profile to write all saves to.
-	* @param Event / Delegate	Event to call when the Write All action has completed.
+	* @param WorldContextObject
+	* @param Event / Delegate		Event to call when the Write All action has completed.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (DisplayName = "BindToEvent: OnWriteAll", AutoCreateRefTerm = "ProfileType"))
-	static void BindToEvent_OnWriteAll(const ECsPlayerProfile& ProfileType, UPARAM(DisplayName = "Event") FCsLibraryManagerSave_OnWriteAll Delegate);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (DisplayName = "BindToEvent: OnWriteAll", WorldContext = "WorldContextObject"))
+	static void BindToEvent_OnWriteAll(const UObject* WorldContextObject, UPARAM(DisplayName = "Event") FCsLibraryManagerSave_OnWriteAll Delegate);
 
 #pragma endregion Write
 
@@ -140,44 +160,48 @@ public:
 	/**
 	* Delete a save for a specified profile and Save (slot).
 	*
-	* @param ProfileType	Profile to delete save from.
-	* @param Save			Save (slot) to delete.
+	* @param WorldContextObject
+	* @param Profile				Profile to delete save from.
+	* @param Save					Save (slot) to delete.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (AutoCreateRefTerm = "ProfileType,Save"))
-	static void Delete(const ECsPlayerProfile& ProfileType, const ECsSave& Save);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Profile,Save"))
+	static void Delete(const UObject* WorldContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save);
 
 	/**
 	* Bind to the event when the Delete action has completed.
 	*
-	* @param ProfileType		Profile to delete save from.
-	* @param Event / Delegate	Event to call when the Delete action has completed.
+	* @param WorldContextObject
+	* @param Event / Delegate		Event to call when the Delete action has completed.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (DisplayName = "BindToEvent: OnDelete", AutoCreateRefTerm = "ProfileType"))
-	static void BindToEvent_OnDelete(const ECsPlayerProfile& ProfileType, UPARAM(DisplayName = "Event") FCsLibraryManagerSave_OnDelete Delegate);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (DisplayName = "BindToEvent: OnDelete", WorldContext = "WorldContextObject"))
+	static void BindToEvent_OnDelete(const UObject* WorldContextObject, UPARAM(DisplayName = "Event") FCsLibraryManagerSave_OnDelete Delegate);
 
 
 	/**
 	* Delete all saves for a specified profile.
 	*
-	* @param ProfileType	Profile to delete all saves from.
+	* @param WorldContextObject
+	* @param Profile				Profile to delete all saves from.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (AutoCreateRefTerm = "ProfileType"))
-	static void DeleteAll(const ECsPlayerProfile& ProfileType);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Profile"))
+	static void DeleteAll(const UObject* WorldContextObject, const ECsPlayerProfile& Profile);
 
 	/**
 	* Bind to the event when the Delete All action has completed.
 	*
-	* @param ProfileType		Profile to delete all saves from.
-	* @param Event / Delegate	Event to call when the Delete All action has completed.
+	* @param WorldContextObject
+	* @param Event / Delegate		Event to call when the Delete All action has completed.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (DisplayName = "BindToEvent: OnDeleteAll", AutoCreateRefTerm = "ProfileType"))
-	static void BindToEvent_OnDeleteAll(const ECsPlayerProfile& ProfileType, UPARAM(DisplayName = "Event") FCsLibraryManagerSave_OnDeleteAll Delegate);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (DisplayName = "BindToEvent: OnDeleteAll", WorldContext = "WorldContextObject"))
+	static void BindToEvent_OnDeleteAll(const UObject* WorldContextObject, UPARAM(DisplayName = "Event") FCsLibraryManagerSave_OnDeleteAll Delegate);
 
 	/**
 	* Delete all saves for all profiles.
+	*
+	* * @param WorldContextObject
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save")
-	static void DeleteAllContent();
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Save", meta = (WorldContext = "WorldContextObject"))
+	static void DeleteAllContent(const UObject* WorldContextObject);
 
 #pragma endregion Delete
 };

@@ -5,7 +5,7 @@
 #include "CsManager_PlayerProfile.generated.h"
 
 class UCsPlayerProfile;
-class UCsManager_Achievement;
+class ICsGetManagerPlayerProfile;
 
 UCLASS(transient)
 class CSCORE_API UCsManager_PlayerProfile : public UObject
@@ -16,11 +16,25 @@ class CSCORE_API UCsManager_PlayerProfile : public UObject
 #pragma region
 public:
 
-	static UCsManager_PlayerProfile* Get();
+	static UCsManager_PlayerProfile* Get(UObject* InRoot = nullptr);
 	static bool IsValid();
-	static void Init();
-	static void Shutdown();
+	static void Init(UObject* InRoot);
+	static void Shutdown(UObject* InRoot = nullptr);
 	static bool HasShutdown();
+
+#if WITH_EDITOR
+protected:
+
+	static ICsGetManagerPlayerProfile* Get_GetManagerPlayerProfile(UObject* InRoot);
+	static ICsGetManagerPlayerProfile* GetSafe_GetManagerPlayerProfile(UObject* InRoot);
+
+	static UCsManager_PlayerProfile* GetSafe(UObject* InRoot);
+
+public:
+
+	static UCsManager_PlayerProfile* GetFromWorldContextObject(const UObject* WorldContextObject);
+
+#endif // #if WITH_EDITOR
 
 protected:
 
@@ -32,11 +46,28 @@ private:
 	static UCsManager_PlayerProfile* s_Instance;
 	static bool s_bShutdown;
 
+	// Root
+#pragma region
+protected:
+
+	UObject* MyRoot;
+
+	void SetMyRoot(UObject* InRoot);
+
+public:
+
+	FORCEINLINE UObject* GetMyRoot() const
+	{
+		return MyRoot;
+	}
+
+#pragma endregion Root
+
 #pragma endregion Singleton
 
 public:
 
-	virtual void OnTick(const float& DeltaSeconds);
+	virtual void Update(const float& DeltaSeconds);
 
 protected:
 
@@ -50,4 +81,18 @@ public:
 	virtual UCsPlayerProfile* CreateProfile(const ECsPlayerProfile& ProfileType);
 
 	UCsPlayerProfile* GetProfile(const ECsPlayerProfile& ProfileType);
+
+protected:
+
+	UCsPlayerProfile* CurrentActiveProfile;
+
+	ECsPlayerProfile CurrentActiveProfileType;
+
+public:
+
+	void SetCurrentActiveProfile(const ECsPlayerProfile& ProfileType);
+
+	const UCsPlayerProfile* GetCurrentActiveProfile();
+
+	const ECsPlayerProfile& GetCurrentActiveProfileType();
 };

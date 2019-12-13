@@ -31,37 +31,91 @@ struct CSCORE_API FCsManager_MemoryResource_SaveActionInfo : public TCsManager_M
 #pragma region
 	
 	// Enumerate
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagECsave_OnEnumerate, bool, WasSuccessful);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerSave_OnEnumerate, bool, WasSuccessful);
 	// Read
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagECsave_OnRead, bool, WasSuccessful, const ECsSave&, Save);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagECsave_OnReadAll);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsManagerSave_OnRead, bool, WasSuccessful, const ECsPlayerProfile&, Profile, const ECsSave&, Save);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerSave_OnReadAll);
 	// Write
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagECsave_OnWrite, bool, WasSuccessful, const ECsSave&, Save);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagECsave_OnWriteAll);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsManagerSave_OnWrite, bool, WasSuccessful, const ECsPlayerProfile&, Profile, const ECsSave&, Save);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerSave_OnWriteAll);
 	// Delete
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagECsave_OnDelete, bool, WasSuccessful, const ECsSave&, Save);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagECsave_OnDeleteAll);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsManagerSave_OnDelete, bool, WasSuccessful, const ECsPlayerProfile&, Profile, const ECsSave&, Save);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerSave_OnDeleteAll);
 
 #pragma endregion Delegates
 
+class UClass;
 class ULocalPlayer;
+class ICsGetManagerSave;
 
 UCLASS(transient)
 class CSCORE_API UCsManager_Save : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-// UObject Interface
+// Singleton
 #pragma region
 public:
 
-	virtual void BeginDestroy() override;
+	static UCsManager_Save* Get(UObject* InRoot = nullptr);
 
-#pragma endregion UObject Interface
+	template<typename T>
+	static T* Get(UObject* InRoot = nullptr)
+	{
+		return Cast<T>(Get(InRoot));
+	}
+
+	static bool IsValid();
+	static void Init(UObject* InRoot, UClass* ManagerSaveClass);
+	static void Shutdown(UObject* InRoot = nullptr);
+	static bool HasShutdown();
+
+#if WITH_EDITOR
+protected:
+
+	static ICsGetManagerSave* Get_GetManagerSave(UObject* InRoot);
+	static ICsGetManagerSave* GetSafe_GetManagerSave(UObject* Object);
+
+	static UCsManager_Save* GetSafe(UObject* Object);
 
 public:
 
-	virtual void Init();
+	static UCsManager_Save* GetFromWorldContextObject(const UObject* WorldContextObject);
+
+#endif // #if WITH_EDITOR
+
+protected:
+
+	virtual void Initialize();
+	virtual void CleanUp();
+
+private:
+	// Singleton data
+	static UCsManager_Save* s_Instance;
+	static bool s_bShutdown;
+
+	// Root
+#pragma region
+protected:
+
+	UObject * MyRoot;
+
+	void SetMyRoot(UObject* InRoot);
+
+public:
+
+	FORCEINLINE UObject* GetMyRoot() const
+	{
+		return MyRoot;
+	}
+
+#pragma endregion Root
+
+#pragma endregion Singleton
+
+public:
+
+	virtual void Start();
 
 // Player
 #pragma region
@@ -99,56 +153,44 @@ public:
 #pragma region
 protected:
 
-	/** Player Profile associated with this manager. */
-	ECsPlayerProfile ProfileType;
-
-public:
-
-	/**
-	* Set the player profile associated with this manager.
-	*
-	* @param InProfileType	New player profile for this manager.
-	*/
-	void SetProfileType(const ECsPlayerProfile& InProfileType);
-
-protected:
-
 	/** Name of the profile associated with this manager. */
-	FString ProfileName;
+	TArray<FString> ProfileNames;
 
 public:
 
 	/**
-	* Set the name of the profile associated with this manager.
+	* Set the name of the profile for particular profile type.
 	*
-	* @param Name	Name of the profile.
+	* @param Profile	Type of profile.
+	* @param Name		Name of the profile.
 	*/
-	void SetProfileName(const FString& Name);
+	void SetProfileName(const ECsPlayerProfile& Profile, const FString& Name);
 
 #pragma endregion Profile
 
 public:
 
-	virtual void OnTick(const float& DeltaSeconds);
+	virtual void Update(const float& DeltaSeconds);
 
 // FileName
 #pragma region
 protected:
 
-	/** Name to be appended in from the save filename (i.e. Profile1 to make Profile1_Save1). */
-	FString ProfileFileNamePrefix;
+	/** Name to be appended in front of the save filename (i.e. Profile1 to make Profile1_Save1). */
+	TArray<FString> ProfileFileNamePrefixes;
 
-	/** Name to be appended in from the save filename (i.e. Profile1_ to make Profile1_Save1). */
-	FString ProfileFileNamePrefixWithUndECscore;
+	/** Name to be appended in front of the save filename (i.e. Profile1_ to make Profile1_Save1). */
+	TArray<FString> ProfileFileNamePrefixesWithUnderscore;
 
 public:
 
 	/**
 	* Set the name of the prefix to append to the save filename.
 	*
-	* @ param Prefix	Name of the prefix to append to the save filename.
+	* @param Profile
+	* @param Prefix		Name of the prefix to append to the save filename.
 	*/
-	void SetProfileFileNamePrefix(const FString& Prefix);
+	void SetProfileFileNamePrefix(const ECsPlayerProfile& Profile, const FString& Prefix);
 
 protected:
 
@@ -159,6 +201,7 @@ public:
 
 	/**
 	* Set the File extension for Save Files.
+	*
 	* @param Ext	Name of the extension (i.e. .json, ... etc).
 	*/
 	void SetSaveFileNameExt(const FString& Ext);
@@ -166,23 +209,25 @@ public:
 	/**
 	*
 	*
+	* @param Profile
 	* @param Save
 	* @param FileName
 	*/
-	void SetSaveFileName(const ECsSave& Save, const FString& FileName);
+	void SetSaveFileName(const ECsPlayerProfile& Profile, const ECsSave& Save, const FString& FileName);
 
 	/**
 	*
 	*
+	* @param Profile
 	* @param Save
 	* return FileName
 	*/
-	const FString& GetSaveFileName(const ECsSave& Save);
+	const FString& GetSaveFileName(const ECsPlayerProfile& Profile, const ECsSave& Save);
 
 protected:
 
 	/** */
-	TArray<FCsSaveFileInfo> SaveFileInfos;
+	TArray<TArray<FCsSaveFileInfo>> SaveFileInfos;
 
 	/** */
 	TArray<FCsSaveFileInfo> SaveFileInfosAll;
@@ -192,10 +237,39 @@ public:
 	/**
 	*
 	*
+	* @param Profile
 	* @param Save
 	* return SaveFileInfo associated with Save.
 	*/
-	const FCsSaveFileInfo& GetSaveFileInfo(const ECsSave& Save);
+	const FCsSaveFileInfo& GetSaveFileInfo(const ECsPlayerProfile& Profile, const ECsSave& Save);
+
+protected:
+
+	/** */
+	int32 CurrentSaveIndex;
+
+public:
+
+	/**
+	*
+	*
+	* @param Index
+	*/
+	void SetCurrentSaveIndex(const int32& Index);
+
+protected:
+
+	/** */
+	ECsSave CurrentSave;
+
+public:
+
+	/**
+	*
+	*
+	* @param Index
+	*/
+	void SetCurrentSave(const ECsSave& Save);
 
 #pragma endregion FileName
 
@@ -203,14 +277,18 @@ public:
 #pragma region
 public:
 
-	void SetSaveDataTest(const ECsSave& Save, const FString& InData);
+	void SetSaveDataTest(const ECsPlayerProfile& Profile, const ECsSave& Save, const FString& InData);
 
 protected:
 
-	virtual void SetSaveData(const ECsSave& Save);
+	virtual void SetSaveData(const ECsPlayerProfile& Profile, const ECsSave& Save);
+	virtual void SetSaveData(const ECsPlayerProfile& Profile, const int32& Index);
 
-	virtual void GetSaveData(const ECsSave& Save, FString& OutData);
-	virtual void GetSaveData(const int32& Index, FString& OutData);
+	virtual void GetSaveData(const ECsPlayerProfile& Profile, const ECsSave& Save, FString& OutData);
+	virtual void GetSaveData(const ECsPlayerProfile& Profile, const int32& Index, FString& OutData);
+
+	virtual void ClearSaveData(const ECsPlayerProfile& Profile, const ECsSave& Save);
+	virtual void ClearSaveData(const ECsPlayerProfile& Profile, const int32& Index);
 
 #pragma endregion Data
 
@@ -224,42 +302,50 @@ protected:
 public:
 
 	/**
+	*
+	*
+	* @param Profile
 	* @param Action		Type of action to queue (Enumerate, Read, Write, or Delete).
 	* @param Save		The Save (slot) to perform the action on.
+	* @param Data		Data for the action.
 	*/
-	void QueueAction(const ECsSaveAction& Action, const ECsSave& Save);
+	void QueueAction(const ECsPlayerProfile& Profile, const ECsSaveAction& Action, const ECsSave& Save, const FString& Data = NCsCached::Str::Empty);
 
 protected:
 
 	/**
 	* Queue action. The action gets enqueued into the list of actions being processed.
 	*
+	* @param Profile
 	* @param Action		Type of action to queue (Enumerate, Read, Write, or Delete).
 	* @param Index		The File Index to perform the action on.
+	* @param Data		Data for the action.
 	*/
-	void QueueAction(const ECsSaveAction& Action, const int32& Index);
+	void QueueAction(const ECsPlayerProfile& Profile, const ECsSaveAction& Action, const int32& Index, const FString& Data = NCsCached::Str::Empty);
 
 	/**
 	* Queue action. The action gets enqueued into the list of actions being processed.
 	*
+	* @param Profile
 	* @param Action		Type of action to queue (Enumerate, Read, Write, or Delete).
 	*/
-	void QueueAction(const ECsSaveAction& Action);
+	void QueueAction(const ECsPlayerProfile& Profile, const ECsSaveAction& Action);
 
 protected:
 
-	void QueueActionAsHead(const ECsSaveAction& Action, const int32& Index);
+	void QueueActionAsHead(const ECsPlayerProfile& Profile, const ECsSaveAction& Action, const int32& Index);
 
 	/**
 	* Queue action as the first action (Head) to be processed.
 	*
+	* @param Profile
 	* @param Action		Type of action to queue (Enumerate, Read, Write, or Delete).
 	*/
-	void QueueActionAsHead(const ECsSaveAction& Action);
+	void QueueActionAsHead(const ECsPlayerProfile& Profile, const ECsSaveAction& Action);
 
-	void QueueActionAfterHead(const ECsSaveAction& Action, const int32& Index);
+	void QueueActionAfterHead(const ECsPlayerProfile& Profile, const ECsSaveAction& Action, const int32& Index);
 
-	void QueueActionAfterHead(const ECsSaveAction& Action);
+	void QueueActionAfterHead(const ECsPlayerProfile& Profile, const ECsSaveAction& Action);
 
 #pragma endregion Action
 
@@ -289,14 +375,14 @@ public:
 	FOnEnumerate OnEnumerate_Event;
 	/** Script Event for when save files have been enumerated / file names recorded.
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FCsManagECsave_OnEnumerate OnEnumerate_ScriptEvent;
+	FCsManagerSave_OnEnumerate OnEnumerate_ScriptEvent;
 
 	/** Event for when save files have been enumerated / file names recorded.
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
 	FOnEnumerate OnEnumerate_AsyncEvent;
 	/** Script Event for when save files have been enumerated / file names recorded.
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
-	FCsManagECsave_OnEnumerate OnEnumerate_AsyncScriptEvent;
+	FCsManagerSave_OnEnumerate OnEnumerate_AsyncScriptEvent;
 
 #pragma endregion Enumerate
 
@@ -307,51 +393,54 @@ public:
 	/**
 	* Read a save from a defined Save (slot)
 	* 
+	* @param Profile	Profile to read from.
 	* @param Save		Save (slot) to read from.
 	*/
-	void Read(const ECsSave& Save);
+	void Read(const ECsPlayerProfile& Profile, const ECsSave& Save);
 
 protected:
 
 	/**
 	* Read a save at Index.
 	* 
+	* @param Profile	Profile to read from.
 	* @param Index		Index of the save to read from.
 	*/
-	void Read(const int32& Index);
+	void Read(const ECsPlayerProfile& Profile, const int32& Index);
 	void Read_Internal(FCsSaveActionInfo* ActionInfo);
 
 public:
 
 	/** Delegate type when successfully finished reading a Save. 
 	*
-	* @param WasSuccessful
-	* @param Save
+	* @param WasSuccessful		If the save was successful or not.
+	* @param Profile			Profile the save was read from.
+	* @param Save				Save (slot) that was read from.
 	*/
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRead, bool /*WasSuccessful*/, const ECsSave& /*Save*/);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnRead, bool /*WasSuccessful*/, const ECsPlayerProfile& /*Profile*/, const ECsSave& /*Save*/);
 
 	/** Event for when successfully finished reading a Save.
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
 	FOnRead OnRead_Event;
 	/** Script Event for when successfully finished reading a Save.
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FCsManagECsave_OnRead OnRead_ScriptEvent;
+	FCsManagerSave_OnRead OnRead_ScriptEvent;
 
 	/** Event for when successfully finished reading a Save.
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
 	FOnRead OnRead_AsyncEvent;
 	/** Script Event for when successfully finished reading a Save.
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
-	FCsManagECsave_OnRead OnRead_AsyncScriptEvent;
+	FCsManagerSave_OnRead OnRead_AsyncScriptEvent;
 
 public:
 
 	/**
-	* Read all saves for a Profile.
+	* Read all saves.
 	* 
 	* @param Profile
 	*/
-	void ReadAll();
+	void ReadAll(const ECsPlayerProfile& Profile);
 
 protected:
 
@@ -368,7 +457,7 @@ public:
 	FOnReadAll OnReadAll_Event;
 
 	/** Script Event for when successfully finished reading all saves. */
-	FCsManagECsave_OnReadAll OnReadAll_ScriptEvent;
+	FCsManagerSave_OnReadAll OnReadAll_ScriptEvent;
 
 #pragma endregion Read
 
@@ -377,51 +466,56 @@ public:
 public:
 
 	/**
-	* Write save at defined Save (slot).
+	* Write a save to a defined Save (slot).
 	* 
-	* @param Save	Save (slot) to write to.
+	* @param Profile	Profile to write to.
+	* @param Save		Save (slot) to write to.
 	*/
-	void Write(const ECsSave& Save);
+	void Write(const ECsPlayerProfile& Profile, const ECsSave& Save);
 
 protected:
 
 	/**
 	* Write save at Index.
 	*
-	* @param Index	Index of the save to write to.
+	* @param Profile	Profile to write to.
+	* @param Index		Index of the save to write to.
 	*/
-	void Write(const int32& Index);
+	void Write(const ECsPlayerProfile& Profile, const int32& Index);
 	void Write_Internal(FCsSaveActionInfo* ActionInfo);
 
 public:
 
 	/** Delegate type when successfully finished writing a Save.
 	* 
-	* @param WasSuccessful
-	* @param Save
+	* @param WasSuccessful		If the write was successful or not.
+	* @param Profile			Profile the save was written to.
+	* @param Save				Save (slot) that was written to.
 	*/
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnWrite, bool /*WasSuccessful*/, const ECsSave& /*Save*/);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnWrite, bool /*WasSuccessful*/, const ECsPlayerProfile& /*Profile*/, const ECsSave& /*Save*/);
 
 	/** Event for when successfully finished writing a Save.
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
 	FOnWrite OnWrite_Event;
 	/** Script Event for when successfully finished writing a Save.
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FCsManagECsave_OnWrite OnWrite_ScriptEvent;
+	FCsManagerSave_OnWrite OnWrite_ScriptEvent;
 
 	/** Event for when successfully finished writing a Save.
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
 	FOnWrite OnWrite_AsyncEvent;
 	/** Script Event for when successfully finished writing a Save.
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
-	FCsManagECsave_OnWrite OnWrite_AsyncScriptEvent;
+	FCsManagerSave_OnWrite OnWrite_AsyncScriptEvent;
 
 public:
 
 	/**
 	* Write all saves for a Profile.
+	*
+	* @param Profile
 	*/
-	void WriteAll();
+	void WriteAll(const ECsPlayerProfile& Profile);
 
 protected:
 
@@ -438,7 +532,7 @@ public:
 	FOnWriteAll OnWriteAll_Event;
 
 	/** Script Event for when successfully finished writing all saves. */
-	FCsManagECsave_OnWriteAll OnWriteAll_ScriptEvent;
+	FCsManagerSave_OnWriteAll OnWriteAll_ScriptEvent;
 
 #pragma endregion Write
 
@@ -447,51 +541,60 @@ public:
 public:
 
 	/**
-	* Delete save a defined Save (slot).
+	* Delete a save at a defined Save (slot).
 	*
-	* @param Save	Save (slot) to delete.
+	* @param Profile	Profile to delete save from.
+	* @param Save		Save (slot) to delete.
 	*/
-	void Delete(const ECsSave& Save);
+	void Delete(const ECsPlayerProfile& Profile, const ECsSave& Save);
 
 protected:
 
 	/**
-	* Delete save at Index.
+	* Delete a save at Index.
 	*
-	* @param Index	Index of the save to delete to.
+	* @param Profile	Profile to delete save from.
+	* @param Index		Index of the save to delete to.
 	*/
-	void Delete(const int32& Index);
+	void Delete(const ECsPlayerProfile& Profile, const int32& Index);
 	void Delete_Internal(FCsSaveActionInfo* ActionInfo);
 
 public:
 
 	/** Delegate type when successfully finished deleting a Save. 
 	*
-	* @param WasSuccessful
-	* @param Save
+	* @param WasSuccessful		If the delete was successful or not.
+	* @param Profile			Profile the save was deleted from.
+	* @param Save				Save (slot) that has been deleted.
 	*/
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDelete, bool /*WasSuccessful*/, const ECsSave& /*Save*/);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnDelete, bool /*WasSuccessful*/, const ECsPlayerProfile& /*Profile*/, const ECsSave& /*Save*/);
 
 	/** Event for when successfully finished deleting a Save.
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
 	FOnDelete OnDelete_Event;
 	/** Script Event for when successfully finished deleting a Save.
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FCsManagECsave_OnDelete OnDelete_ScriptEvent;
+	FCsManagerSave_OnDelete OnDelete_ScriptEvent;
 
 	/** Event for when successfully finished deleting a Save.
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
 	FOnDelete OnDelete_AsyncEvent;
 	/** Script Event for when successfully finished deleting a Save.
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
-	FCsManagECsave_OnDelete OnDelete_AsyncScriptEvent;
+	FCsManagerSave_OnDelete OnDelete_AsyncScriptEvent;
 
 public:
 
 	/**
-	* Delete all saves for a Profile.
+	* Delete all saves.
+	*
+	* @param Profile
 	*/
-	void DeleteAll();
+	void DeleteAll(const ECsPlayerProfile& Profile);
+
+	/**
+	* Delete all saves for all profiles.
+	*/
 	void DeleteAllContent();
 
 protected:
@@ -509,11 +612,11 @@ public:
 	FOnDeleteAll OnDeleteAll_Event;
 
 	/** Script Event for when successfully finished deleting all saves. */
-	FCsManagECsave_OnDeleteAll OnDeleteAll_ScriptEvent;
+	FCsManagerSave_OnDeleteAll OnDeleteAll_ScriptEvent;
 
 #pragma endregion Delete
 
-// NOTE: If saving special charactECs, need to look convECsion to and from UTF-16
+// NOTE: If saving special characters, need to look conversion to and from UTF-16
 
 // IOnlineUserCloud
 #pragma region

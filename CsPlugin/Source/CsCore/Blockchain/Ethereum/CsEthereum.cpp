@@ -639,11 +639,7 @@ void UCsEthereum::OpenConsole()
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-#if WITH_EDITOR
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
-#else
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-#endif // #if WITH_EDITOR
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(MyRoot);
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
@@ -1346,11 +1342,7 @@ void UCsEthereum::CreateKeystore(CsEthereumAccount* Account)
 	{
 		const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-#if WITH_EDITOR
-		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
-#else
-		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-#endif // #if WITH_EDITOR
+		UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(MyRoot);
 		FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 		FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
@@ -1482,11 +1474,7 @@ void UCsEthereum::SetupAccount(void* Payload)
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-#if WITH_EDITOR
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
-#else
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-#endif // #if WITH_EDITOR
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(MyRoot);
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* CoroutinePayload				 = PayloadContainer->Get();
 
@@ -1559,11 +1547,7 @@ void UCsEthereum::BringBalanceToThreshold(ICsBlockchainAccount* IAccount, const 
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-#if WITH_EDITOR
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
-#else
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-#endif // #if WITH_EDITOR
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(MyRoot);
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 
@@ -1591,7 +1575,7 @@ CS_COROUTINE(UCsEthereum, BringBalanceToThreshold_Internal)
 
 	float& Balance = r->GetValue_Float(CS_FIRST);
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(eth->GetMyRoot())->GetTime(r->Group);
 	FCsDeltaTime& ElapsedTime  = r->GetValue_DeltaTime(CS_FIRST);
 
 	ElapsedTime += r->DeltaTime;
@@ -2233,7 +2217,7 @@ CS_COROUTINE(UCsEthereum, CheckTransactionHasBeenMined_Internal)
 	bool& Success				= r->GetValue_Flag(CS_FIRST);
 	static const float INTERVAL = 0.1f;
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(eth->GetMyRoot())->GetTime(r->Group);
 	FCsDeltaTime& ElapsedTime  = r->GetValue_DeltaTime(CS_FIRST);
 
 	ElapsedTime += r->DeltaTime;

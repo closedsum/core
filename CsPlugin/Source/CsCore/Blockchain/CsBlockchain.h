@@ -433,7 +433,7 @@ public:
 		MyRoot = InRoot;
 	}
 
-	FORCEINLINE const UObject* GetMyRoot() const
+	FORCEINLINE UObject* GetMyRoot() const
 	{
 		return MyRoot;
 	}

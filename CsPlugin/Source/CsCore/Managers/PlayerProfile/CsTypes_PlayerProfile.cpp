@@ -22,6 +22,8 @@ namespace NCsPlayerProfile
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsPlayerProfile_MAX;
+
+	CSCORE_API const Type AllProfiles = Type::ECsPlayerProfile_MAX;
 }
 
 #pragma endregion PlayerProfile

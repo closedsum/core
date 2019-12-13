@@ -13,8 +13,6 @@
 UCsPlayerProfile::UCsPlayerProfile(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	Manager_Save_Class = UCsManager_Save::StaticClass();
-	Manager_Achievement_Class = UCsManager_Achievement::StaticClass();
 }
 
 void UCsPlayerProfile::SetProfileType(const ECsPlayerProfile& InProfileType)
@@ -49,23 +47,8 @@ void UCsPlayerProfile::SetLocalPlayer(ULocalPlayer* Player)
 
 void UCsPlayerProfile::Init()
 {
-	Manager_Save = NewObject<UCsManager_Save>(this, Manager_Save_Class);
-	Manager_Save->SetLocalPlayer(LocalPlayer);
-	Manager_Save->SetProfileType(ProfileType);
-	Manager_Save->SetProfileName(EMCsPlayerProfile::Get().ToString(ProfileType));
-	Manager_Save->SetProfileFileNamePrefix(EMCsPlayerProfile::Get().ToString(ProfileType));
-	Manager_Save->Init();
-
-	Manager_Achievement = NewObject<UCsManager_Achievement>(this, Manager_Achievement_Class);
-	/*
-	Manager_Achievement->SetCurrentWorld(GetCurrentWorld());
-	Manager_Achievement->SetLocalPlayer(LocalPlayer);
-	Manager_Achievement->Init();
-	*/
 }
 
-void UCsPlayerProfile::OnTick(const float& DeltaSeconds)
+void UCsPlayerProfile::Update(const float& DeltaSeconds)
 {
-	Manager_Save->OnTick(DeltaSeconds);
-	//Manager_Achievement->OnTick(DeltaSeconds);
 }

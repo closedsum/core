@@ -35,7 +35,7 @@ public:
 	*
 	* return	
 	*/
-	virtual UObject* GetMyRoot() = 0;
+	virtual UObject* GetMyRoot() const = 0;
 
 	/**
 	* Start the Test.

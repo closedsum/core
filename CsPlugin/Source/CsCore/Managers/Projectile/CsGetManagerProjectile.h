@@ -18,7 +18,7 @@ class ICsGetManagerProjectile
 
 public:
 
-	virtual UCsManager_Projectile* GetManager_Projectile() = 0;
+	virtual UCsManager_Projectile* GetManager_Projectile() const = 0;
 
 	virtual void SetManager_Projectile(UCsManager_Projectile* InManager) = 0;
 };

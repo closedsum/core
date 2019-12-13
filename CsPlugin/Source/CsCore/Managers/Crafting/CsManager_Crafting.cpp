@@ -8,6 +8,7 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 
 // Managers
+#include "Managers/Time/CsManager_Time.h"
 #include "Managers/Item/CsManager_Item.h"
 #include "Managers/Inventory/CsManager_Inventory.h"
 // Data

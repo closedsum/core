@@ -1964,7 +1964,7 @@ const FCsRoutineHandle& UCsCommon::ScaleActorOverTime_AsCurve(const FECsUpdateGr
 		return FCsRoutineHandle::Invalid;
 	}
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get();
+	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(InActor->GetGameInstance());
 	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
 

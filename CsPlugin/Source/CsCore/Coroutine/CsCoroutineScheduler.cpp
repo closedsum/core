@@ -110,6 +110,49 @@ UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectIni
 	return GetCoroutineScheduler;
 }
 
+/*static*/ ICsGetCoroutineScheduler* UCsCoroutineScheduler::GetSafe_GetCoroutineScheduler(UObject* Object)
+{
+	if (!Object)
+		return nullptr;
+
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+
+	if (!GetManagerSingleton)
+		return nullptr;
+
+	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
+
+	if (!Manager_Singleton)
+		return nullptr;
+
+	return Cast<ICsGetCoroutineScheduler>(Manager_Singleton);
+}
+
+/*static*/ UCsCoroutineScheduler* UCsCoroutineScheduler::GetSafe(UObject* Object)
+{
+	if (ICsGetCoroutineScheduler* GetCoroutineScheduler = GetSafe_GetCoroutineScheduler(Object))
+		return GetCoroutineScheduler->GetCoroutineScheduler();
+	return nullptr;
+}
+
+/*static*/ UCsCoroutineScheduler* UCsCoroutineScheduler::GetFromWorldContextObject(const UObject* WorldContextObject)
+{
+	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		// Game Instance
+		if (UCsCoroutineScheduler* Scheduler = GetSafe(World->GetGameInstance()))
+			return Scheduler;
+
+		UE_LOG(LogCs, Warning, TEXT("UCsCoroutineScheduler::GetFromWorldContextObject: Failed to Manager Save of type UCsCoroutineScheduler from GameInstance."));
+
+		return nullptr;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
 #endif // #if WITH_EDITOR
 
 void UCsCoroutineScheduler::Initialize()

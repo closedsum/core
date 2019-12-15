@@ -33,6 +33,13 @@ public:
 protected:
 
 	static ICsGetCoroutineScheduler* Get_GetCoroutineScheduler(UObject* InRoot);
+	static ICsGetCoroutineScheduler* GetSafe_GetCoroutineScheduler(UObject* Object);
+
+	static UCsCoroutineScheduler* GetSafe(UObject* Object);
+
+public:
+
+	static UCsCoroutineScheduler* GetFromWorldContextObject(const UObject* WorldContextObject);
 
 #endif // #if WITH_EDITOR
 

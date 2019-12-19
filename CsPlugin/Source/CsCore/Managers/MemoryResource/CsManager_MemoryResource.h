@@ -389,6 +389,50 @@ public:
 public:
 
 	/**
+	* Allocate a ResourceType and add the corresponding linked list element to the 
+	*  end of the list
+	*
+	* return ResourceContainerType	Allocated ResourceType wrapped in a container.
+	*/
+	ResourceContainerType* Allocate()
+	{
+		checkf(!IsExhausted(), TEXT("%s::Allocate: Pool is exhausted."), *Name);
+
+		for (int32 I = 0; I < PoolSize; ++I)
+		{
+			PoolIndex				 = (PoolIndex + 1) & PoolSize;
+			ResourceContainerType* M = Pool[PoolIndex];
+
+			if (!M->IsAllocated())
+			{
+				M->Allocate();
+				AddAllocatedLink(Links[PoolIndex]);
+				++AllocatedSize;
+				return M;
+			}
+		}
+		checkf(0, TEXT("%s::Allocate: Pool is exhausted."), *Name);
+		return nullptr;
+	}
+
+	/*
+	ResourceContainerType* Allocate(const int32& Index)
+	{
+		checkf(Index > 0 && Index < PoolSize, TEXT("%s::Allocate: Index: %d is NOT Valid. Index must be > 0 and < PoolSize: %d."), Index, PoolSize);
+
+		ResourceContainerType* M = Pool[Index];
+
+		if (M->IsAllocated())
+			return M;
+
+		M->Allocate();
+		AddAllocatedLink(Links[PoolIndex]);
+		++AllocatedSize;
+		return M;
+	}
+	*/
+
+	/**
 	* Allocate a ResourceType and add the corresponding linked list element after
 	*  another ResourceContainerType. This is equivalent to inserting a linked list element
 	*  after another element. 
@@ -496,48 +540,6 @@ public:
 		if (AllocatedHead)
 			return AllocateBefore(**AllocatedHead);
 		return Allocate();
-	}
-
-	/**
-	* Allocate a ResourceType and add the corresponding linked list element to the 
-	*  end of the list
-	*
-	* return ResourceContainerType	Allocated ResourceType wrapped in a container.
-	*/
-	ResourceContainerType* Allocate()
-	{
-		checkf(!IsExhausted(), TEXT("%s::Allocate: Pool is exhausted."), *Name);
-
-		for (int32 I = 0; I < PoolSize; ++I)
-		{
-			PoolIndex				 = (PoolIndex + 1) & PoolSize;
-			ResourceContainerType* M = Pool[PoolIndex];
-
-			if (!M->IsAllocated())
-			{
-				M->Allocate();
-				AddAllocatedLink(Links[PoolIndex]);
-				++AllocatedSize;
-				return M;
-			}
-		}
-		checkf(0, TEXT("%s::Allocate: Pool is exhausted."), *Name);
-		return nullptr;
-	}
-
-	ResourceContainerType* Allocate(const int32& Index)
-	{
-		checkf(Index > 0 && Index < PoolSize, TEXT("%s::Allocate: Index: %d is NOT Valid. Index must be > 0 and < PoolSize: %d."), Index, PoolSize);
-
-		ResourceContainerType* M = Pool[Index];
-
-		if (M->IsAllocated())
-			return M;
-
-		M->Allocate();
-		AddAllocatedLink(Links[PoolIndex]);
-		++AllocatedSize;
-		return M;
 	}
 
 #pragma endregion Allocate

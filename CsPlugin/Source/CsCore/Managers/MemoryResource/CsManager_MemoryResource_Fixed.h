@@ -4,12 +4,13 @@
 
 #pragma once
 
+#include "Managers/MemoryResource/ICsManager_MemoryResource.h"
 #include "Managers/MemoryResource/CsMemoryResource.h"
 #include "Types/CsTypes_Macro.h"
 #include "Containers/CsDoubleLinkedList.h"
 
 template<typename ResourceType, typename ResourceContainerType = TCsMemoryResource<ResourceType>, uint32 BUCKET_SIZE = 128>
-class TCsManager_MemoryResource_Fixed
+class TCsManager_MemoryResource_Fixed : public ICsManager_MemoryResource
 {
 	static_assert(std::is_base_of<TCsMemoryResource<ResourceType>, ResourceContainerType>(), "TCsManager_MemoryResource_Fixed: ResourceContainerType does NOT implement interface: ICsMemoryResource.");
 
@@ -381,6 +382,43 @@ public:
 public:
 
 	/**
+	* Allocate a ResourceType and add the corresponding linked list element to the 
+	*  end of the list
+	*
+	* return ResourceContainerType	Allocated ResourceType wrapped in a container.
+	*/
+	ResourceContainerType* Allocate()
+	{
+		checkf(!IsExhausted(), TEXT("%s::Allocate: Pool is exhausted."), *Name);
+
+		for (int32 I = 0; I < PoolSize; ++I)
+		{
+			PoolIndex				 = (PoolIndex + 1) & PoolSizeMinusOne;
+			ResourceContainerType* M = Pool[PoolIndex];
+
+			if (!M->IsAllocated())
+			{
+				M->Allocate();
+				AddAllocatedLink(&(Links[PoolIndex]));
+				++AllocatedSize;
+				return M;
+			}
+		}
+		checkf(0, TEXT("%s::Allocate: Pool is exhausted."), *Name);
+		return nullptr;
+	}
+
+	/**
+	*
+	*
+	* return
+	*/
+	ResourceType* AllocateResource()
+	{
+		return Allocate()->Get();
+	}
+
+	/**
 	* Allocate a ResourceType and add the corresponding linked list element after
 	*  another ResourceContainerType. This is equivalent to inserting a linked list element
 	*  after another element. 
@@ -397,7 +435,7 @@ public:
 		checkf(!IsExhausted(), TEXT("%s::AllocateAfter: Pool is exhausted."), *Name);
 
 		// New Resource
-		ResourceContainerType* R				  = nullptr;
+		ResourceContainerType* R						  = nullptr;
 		TCsDoubleLinkedList<ResourceContainerType*>* Link = nullptr;
 		
 		for (int32 I = 0; I < PoolSize; ++I)
@@ -490,33 +528,6 @@ public:
 		return Allocate();
 	}
 
-	/**
-	* Allocate a ResourceType and add the corresponding linked list element to the 
-	*  end of the list
-	*
-	* return ResourceContainerType	Allocated ResourceType wrapped in a container.
-	*/
-	ResourceContainerType* Allocate()
-	{
-		checkf(!IsExhausted(), TEXT("%s::Allocate: Pool is exhausted."), *Name);
-
-		for (int32 I = 0; I < PoolSize; ++I)
-		{
-			PoolIndex				 = (PoolIndex + 1) & PoolSizeMinusOne;
-			ResourceContainerType* M = Pool[PoolIndex];
-
-			if (!M->IsAllocated())
-			{
-				M->Allocate();
-				AddAllocatedLink(&(Links[PoolIndex]));
-				++AllocatedSize;
-				return M;
-			}
-		}
-		checkf(0, TEXT("%s::Allocate: Pool is exhausted."), *Name);
-		return nullptr;
-	}
-
 #pragma endregion Allocate
 
 // Deallocate
@@ -525,7 +536,7 @@ public:
 
 	/**
 	* Deallocate a ResourceType and remove the corresponding linked list element from the
-	*  active linked list.
+	*  allocated linked list.
 	*
 	* @param ResourceContainer		Container for a ResourceType to deallocate.
 	* return Success				Whether the Deallocate performed successfully or not.
@@ -555,7 +566,7 @@ public:
 
 	/**
 	* Deallocate a ResourceType and remove the corresponding linked list element from the
-	*  active linked list.
+	*  allocated linked list.
 	*
 	* @param Resource	ResourceType to deallocate.
 	* return Success	Whether the Deallocate performed successfully or not.
@@ -567,6 +578,39 @@ public:
 		ResourceContainerType* ResourceContainer = GetContainer(Resource);
 
 		return Deallocate(ResourceContainer);
+	}
+
+	/**
+	*
+	*
+	* return
+	*/
+	bool DellocateHead()
+	{
+		if (!AllocatedHead)
+			return false;
+		return Deallocate(**AllocatedHead);
+	}
+
+	/**
+	*
+	*/
+	void DeallocateAll()
+	{
+		TCsDoubleLinkedList<ResourceContainerType*>* Current = AllocatedHead;
+		TCsDoubleLinkedList<ResourceContainerType*>* Next	 = Current;
+
+		while (Next)
+		{
+			Current					 = Next;
+			ResourceContainerType* M = **Current;
+
+			const int32& Index = M->GetIndex();
+
+			M->Deallocate();
+			RemoveActiveLink(&(Links[Index]));
+			--AllocatedSize;
+		}
 	}
 
 #pragma endregion Deallocate

@@ -48,19 +48,10 @@ namespace NCsManagerTArraySize
 // Structs
 #pragma region
 
-#define CS_DECLARE_MANAGER_TARRAY_TYPE(ValueType, PoolSize) \
-	struct FCsMemoryResource_TArray_##ValueType : public TCsMemoryResource<TArray<ValueType>> \
-	{ \
-	}; \
-	\
-	struct FCsManager_TArray_##ValueType : public TCsManager_MemoryResource_Fixed<TArray<bool>, FCsMemoryResource_TArray_##ValueType, PoolSize> \
-	{ \
-	};
-
-// FCsManager_TArray_bool
-CS_DECLARE_MANAGER_TARRAY_TYPE(bool, CS_MANAGER_TARRAY_POOL_SIZE)
-
 #pragma endregion Structs
+
+// TCsManager_TArray_ValueType
+#pragma region
 
 template<typename ManagerResourceType, typename ResourceContainerType, typename ValueType>
 class TCsManager_TArray_ValueType
@@ -117,32 +108,192 @@ protected:
 
 public:
 
-	TArray<ValueType>& AllocateRef_TArray(const ECsManagerTArraySize& Size)
+	TArray<ValueType>& AllocateRef(const ECsManagerTArraySize& Size)
 	{
 		const uint8 Index	   = (uint8)Size;
 		const int32& Max	   = Sizes[Index];
 		TArray<ValueType>* Ptr = Pool[Index]->AllocateResource();
 
-		checkf(Ptr->Max() == Max, TEXT("TCsManager_TArray::AllocateRef_TArray: Array Max has been altered."));
+		checkf(Ptr->Max() == Max, TEXT("TCsManager_TArray_ValueType::AllocateRef_TArray: Array Max has been altered."));
 
 		Ptr->Reset(Ptr->Max());
 
 		return *Ptr;
 	}
 
-	TArray<ValueType>& ForceAllocateRef_TArray(const ECsManagerTArraySize& Size)
+	TArray<ValueType>& ForceAllocateRef(const ECsManagerTArraySize& Size)
 	{
 		if (Pool[(uint8)Size]->IsExhausted())
 			Pool[(uint8)Size]->DellocateHead();
 
-		return AllocateRef_TArray(Size);
+		return AllocateRef(Size);
 	}
 
-	void DeallocateAll_TArray(const ECsManagerTArraySize& Size)
+	void DeallocateAll(const ECsManagerTArraySize& Size)
 	{
 		Pool[(uint8)Size]->DeallocateAll();
 	}
 };
+
+#pragma endregion TCsManager_TArray_PointerType
+
+// TCsManager_TArray_PointerType
+#pragma region
+
+template<typename ManagerResourceType, typename ResourceContainerType, typename PointerType>
+class TCsManager_TArray_PointerType
+{
+public:
+
+	TArray<int32> Sizes;
+
+	TCsManager_TArray_PointerType() :
+		Sizes()
+	{
+		Sizes.Reserve((uint8)ECsManagerTArraySize::ECsManagerTArraySize_MAX);
+		Sizes.Add(8);
+		Sizes.Add(64);
+		Sizes.Add(128);
+		Sizes.Add(512);
+
+		Pool.Reserve((uint8)ECsManagerTArraySize::ECsManagerTArraySize_MAX);
+
+		for (const ECsManagerTArraySize& Size : EMCsManagerTArraySize::Get())
+		{
+			ManagerResourceType* M = new ManagerResourceType();
+
+			const TArray<ResourceContainerType*>& Array = M->GetPool();
+
+			for (ResourceContainerType* C : Array)
+			{
+				TArray<PointerType*>* R = C->Get();
+				R->Reserve(Sizes[(uint8)Size]);
+			}
+
+			Pool.Add(M);
+		}
+	}
+
+	~TCsManager_TArray_PointerType()
+	{
+		const int32 Count = Pool.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			ManagerResourceType* P = Pool[I];
+
+			delete P;
+
+			Pool[I] = nullptr;
+		}
+		Pool.Reset();
+	}
+
+protected:
+
+	TArray<ManagerResourceType*> Pool;
+
+public:
+
+	TArray<PointerType*>& AllocateRef(const ECsManagerTArraySize& Size)
+	{
+		const uint8 Index		  = (uint8)Size;
+		const int32& Max		  = Sizes[Index];
+		TArray<PointerType*>* Ptr = Pool[Index]->AllocateResource();
+
+		checkf(Ptr->Max() == Max, TEXT("TCsManager_TArray_PointerType::AllocateRef_TArray: Array Max has been altered."));
+
+		Ptr->Reset(Ptr->Max());
+
+		return *Ptr;
+	}
+
+	TArray<PointerType*>& ForceAllocateRef(const ECsManagerTArraySize& Size)
+	{
+		if (Pool[(uint8)Size]->IsExhausted())
+			Pool[(uint8)Size]->DellocateHead();
+
+		return AllocateRef(Size);
+	}
+
+	void DeallocateAll(const ECsManagerTArraySize& Size)
+	{
+		Pool[(uint8)Size]->DeallocateAll();
+	}
+};
+
+#pragma endregion TCsManager_TArray_PointerType
+
+// Macros
+#pragma region
+
+#define CS_DECLARE_MANAGER_TARRAY_VALUE_TYPE(ValueType) \
+	protected: \
+	\
+		struct FCsMemoryResource_TArray_##ValueType : public TCsMemoryResource<TArray<ValueType>> \
+		{ \
+		}; \
+		\
+		struct FCsManager_TArray_##ValueType : public TCsManager_MemoryResource_Fixed<TArray<ValueType>, FCsMemoryResource_TArray_##ValueType, CS_MANAGER_TARRAY_POOL_SIZE> \
+		{ \
+		}; \
+	\
+		TCsManager_TArray_ValueType<FCsManager_TArray_##ValueType, FCsMemoryResource_TArray_##ValueType, ValueType> Pool_##ValueType; \
+	\
+	public: \
+	\
+		template<> \
+		TArray<ValueType>& AllocateRef<ValueType>(const ECsManagerTArraySize& Size) \
+		{ \
+			return Pool_##ValueType.AllocateRef(Size); \
+		} \
+	\
+		template<> \
+		TArray<ValueType>& ForceAllocateRef<ValueType>(const ECsManagerTArraySize& Size) \
+		{ \
+			return Pool_##ValueType.ForceAllocateRef(Size); \
+		} \
+	\
+		template<> \
+		void DeallocateAll<ValueType>(const ECsManagerTArraySize& Size) \
+		{ \
+			Pool_##ValueType.DeallocateAll(Size); \
+		}
+
+#define CS_DECLARE_MANAGER_TARRAY_POINTER_TYPE(PointerType) \
+	protected: \
+	\
+		struct FCsMemoryResource_TArray_##PointerType : public TCsMemoryResource<TArray<PointerType*>> \
+		{ \
+		}; \
+		\
+		struct FCsManager_TArray_##PointerType : public TCsManager_MemoryResource_Fixed<TArray<PointerType*>, FCsMemoryResource_TArray_##PointerType, CS_MANAGER_TARRAY_POOL_SIZE> \
+		{ \
+		}; \
+	\
+		TCsManager_TArray_PointerType<FCsManager_TArray_##PointerType, FCsMemoryResource_TArray_##PointerType, PointerType> Pool_##PointerType; \
+	\
+	public: \
+	\
+		template<> \
+		TArray<PointerType*>& AllocateRef<PointerType*>(const ECsManagerTArraySize& Size) \
+		{ \
+			return Pool_##PointerType.AllocateRef(Size); \
+		} \
+	\
+		template<> \
+		TArray<PointerType*>& ForceAllocateRef<PointerType*>(const ECsManagerTArraySize& Size) \
+		{ \
+			return Pool_##PointerType.ForceAllocateRef(Size); \
+		} \
+	\
+		template<> \
+		void DeallocateAll<PointerType*>(const ECsManagerTArraySize& Size) \
+		{ \
+			Pool_##PointerType.DeallocateAll(Size); \
+		}
+
+#pragma endregion Macros
 
 class CSCORE_API FCsManager_TArray
 {
@@ -152,30 +303,24 @@ public:
 
 	virtual ~FCsManager_TArray();
 
-	TArray<int32> Sizes;
-
-// bool
-#pragma region
-protected:
-
-	TCsManager_TArray_ValueType<FCsManager_TArray_bool, FCsMemoryResource_TArray_bool, bool> Pool_bool;
-
 public:
 
 	template<typename ValueType>
-	TArray<ValueType>& AllocateRef_TArray(const ECsManagerTArraySize& Size)
-	{
-		// bool
-		if (typeid(ValueType) == typeid(bool))
-		{
-			return Pool_bool.AllocateRef_TArray(Size);
-		}
-	}
+	TArray<ValueType>& AllocateRef(const ECsManagerTArraySize& Size);
 
-	TArray<bool>& AllocateRef_TArray_bool(const ECsManagerTArraySize& Size);
-	TArray<bool>& ForceAllocateRef_TArray_bool(const ECsManagerTArraySize& Size);
+	template<typename ValueType>
+	TArray<ValueType>& ForceAllocateRef(const ECsManagerTArraySize& Size);
 
-	void DeallocateAll_TArray_bool(const ECsManagerTArraySize& Size);
+	template<typename ValueType>
+	void DeallocateAll(const ECsManagerTArraySize& Size);
 
-#pragma endregion bool
+	// bool
+	CS_DECLARE_MANAGER_TARRAY_VALUE_TYPE(bool)
+	// int32
+	CS_DECLARE_MANAGER_TARRAY_VALUE_TYPE(int32)
+
+	// UObject
+	CS_DECLARE_MANAGER_TARRAY_POINTER_TYPE(UObject)
+	// AActor
+	CS_DECLARE_MANAGER_TARRAY_POINTER_TYPE(AActor)
 };

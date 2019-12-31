@@ -2,28 +2,28 @@
 #include "Data/CsData_Item.h"
 #include "CsCore.h"
 
-ACsData_Item::ACsData_Item(const FObjectInitializer& ObjectInitializer)
+UCsData_Item::UCsData_Item(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-const FECsItemType& ACsData_Item::GetItemType() { return EMCsItemType::Get().GetMAX(); }
+const FECsItemType& UCsData_Item::GetItemType() { return EMCsItemType::Get().GetMAX(); }
 
 // Stats
 #pragma region
 
-const bool& ACsData_Item::IsIngredient() { return NCsCached::Ref::False; }
+const bool& UCsData_Item::IsIngredient() { return NCsCached::Ref::False; }
 
 #pragma endregion Stats
 
 // Members
 #pragma region
 
-UScriptStruct* ACsData_Item::GetMembersScriptStruct() { return nullptr; }
+UScriptStruct* UCsData_Item::GetMembersScriptStruct() { return nullptr; }
 
-TArray<FCsItemMemberDescription>* ACsData_Item::GetMembers() { return nullptr; }
+TArray<FCsItemMemberDescription>* UCsData_Item::GetMembers() { return nullptr; }
 
-void ACsData_Item::SetMembers(FCsItemHistory& History)
+void UCsData_Item::SetMembers(FCsItemHistory& History)
 {
 	if (TArray<FCsItemMemberDescription>* Members = GetMembers())
 	{
@@ -46,26 +46,26 @@ void ACsData_Item::SetMembers(FCsItemHistory& History)
 // UI
 #pragma region
 
-const FString& ACsData_Item::GetDisplayName() { return NCsCached::Str::INVALID; }
-UMaterialInstanceConstant* ACsData_Item::GetMaterial() { return nullptr; }
-FCsUint8MatrixDimension* ACsData_Item::GetDimension() { return nullptr; }
-const int32& ACsData_Item::GetCapacity() { return NCsCached::Ref::SInt; }
+const FString& UCsData_Item::GetDisplayName() { return NCsCached::Str::INVALID; }
+UMaterialInstanceConstant* UCsData_Item::GetMaterial() { return nullptr; }
+FCsUint8MatrixDimension* UCsData_Item::GetDimension() { return nullptr; }
+const int32& UCsData_Item::GetCapacity() { return NCsCached::Ref::SInt; }
 
 #pragma endregion UI
 
 // Drop
 #pragma region
 
-const bool& ACsData_Item::OnDropSpawnActor() { return NCsCached::Ref::False; }
-const FName& ACsData_Item::GetSpawnedActorDataShortCode() { return NCsCached::Name::None; }
+const bool& UCsData_Item::OnDropSpawnActor() { return NCsCached::Ref::False; }
+const FName& UCsData_Item::GetSpawnedActorDataShortCode() { return NCsCached::Name::None; }
 
 #pragma endregion Drop
 
 // Consume
 #pragma region
 
-const TArray<FCsItemOnConsumeContentRule>* ACsData_Item::GetOnConsumeContentRules() { return nullptr; }
+const TArray<FCsItemOnConsumeContentRule>* UCsData_Item::GetOnConsumeContentRules() { return nullptr; }
 
-const bool& ACsData_Item::OnConsumeDropContents() { return NCsCached::Ref::False; }
+const bool& UCsData_Item::OnConsumeDropContents() { return NCsCached::Ref::False; }
 
 #pragma endregion Consume

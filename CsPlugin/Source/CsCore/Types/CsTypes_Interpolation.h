@@ -17,17 +17,7 @@ enum class ECsBlendDirection : uint8
 
 struct CSCORE_API EMCsBlendDirection : public TCsEnumMap<ECsBlendDirection>
 {
-protected:
-	EMCsBlendDirection() {}
-	EMCsBlendDirection(const EMCsBlendDirection &) = delete;
-	EMCsBlendDirection(EMCsBlendDirection &&) = delete;
-public:
-	~EMCsBlendDirection() {}
-private:
-	static EMCsBlendDirection* Instance;
-
-public:
-	static EMCsBlendDirection& Get();
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsBlendDirection, ECsBlendDirection)
 };
 
 namespace NCsBlendDirection
@@ -65,17 +55,7 @@ enum class ECsEasingType : uint8
 
 struct CSCORE_API EMCsEasingType : public TCsEnumMap<ECsEasingType>
 {
-protected:
-	EMCsEasingType() {}
-	EMCsEasingType(const EMCsEasingType &) = delete;
-	EMCsEasingType(EMCsEasingType &&) = delete;
-public:
-	~EMCsEasingType() {}
-private:
-	static EMCsEasingType* Instance;
-
-public:
-	static EMCsEasingType& Get();
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsEasingType, ECsEasingType)
 };
 
 namespace NCsEasingType

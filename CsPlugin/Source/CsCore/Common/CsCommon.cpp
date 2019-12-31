@@ -454,7 +454,7 @@ TCsViewType UCsCommon::Stream_GetViewType(const TCHAR*& Str)
 // Data
 #pragma region
 
-ACsDataMapping* UCsCommon::GetDataMapping(UWorld* InWorld)
+UCsDataMapping* UCsCommon::GetDataMapping(UWorld* InWorld)
 {
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(InWorld->GetGameInstance());
 	return GameInstance->DataMapping;

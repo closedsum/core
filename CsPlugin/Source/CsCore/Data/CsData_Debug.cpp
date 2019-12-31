@@ -3,7 +3,7 @@
 #include "CsCore.h"
 #include "UI/CsUserWidget.h"
 
-ACsData_Debug::ACsData_Debug(const FObjectInitializer& ObjectInitializer)
+UCsData_Debug::UCsData_Debug(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }

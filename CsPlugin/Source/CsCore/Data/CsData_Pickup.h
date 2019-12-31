@@ -6,8 +6,8 @@
 #include "Types/CsTypes_Sound.h"
 #include "CsData_Pickup.generated.h"
 
-UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
-class CSCORE_API ACsData_Pickup : public ACsData_Interactive
+UCLASS(Abstract)
+class CSCORE_API UCsData_Pickup : public UCsData_Interactive
 {
 	GENERATED_UCLASS_BODY()
 
@@ -25,7 +25,7 @@ class CSCORE_API ACsData_Pickup : public ACsData_Interactive
 // FX
 #pragma region
 
-	virtual FCsFxElement* GetFX(const FECsPickupFX &FxType);
+	virtual FCsFxElement* GetFX(const FECsPickupFX& FxType);
 
 #pragma endregion FX
 
@@ -35,8 +35,8 @@ class CSCORE_API ACsData_Pickup : public ACsData_Interactive
 	UFUNCTION(BlueprintCallable, Category = "Sound")
 	virtual const bool& UseCollectSound();
 
-	virtual FCsSoundElement* GetSound(const FECsPickupSound &SoundType);
-	virtual void PlaySound(UWorld* InWorld, const FECsPickupSound &SoundType, UObject* InOwner, UObject* InParent);
+	virtual FCsSoundElement* GetSound(const FECsPickupSound& SoundType);
+	virtual void PlaySound(UWorld* InWorld, const FECsPickupSound& SoundType, UObject* InOwner, UObject* InParent);
 
 #pragma endregion Sound
 };

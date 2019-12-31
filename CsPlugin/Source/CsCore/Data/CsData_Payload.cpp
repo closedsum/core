@@ -6,7 +6,7 @@
 #include "Data/CsDataMapping.h"
 #endif WITH_EDITOR
 
-ACsData_Payload::ACsData_Payload(const FObjectInitializer& ObjectInitializer)
+UCsData_Payload::UCsData_Payload(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
@@ -16,7 +16,7 @@ ACsData_Payload::ACsData_Payload(const FObjectInitializer& ObjectInitializer)
 
 #if WITH_EDITOR
 
-bool ACsData_Payload::PerformFindEntry(const FName &InShortCode, TArray<FCsPayload*> &OutPayloads, TArray<FECsLoadAssetsType> &OutLoadAssetsTypes, TArray<int32> &OutIndices)
+bool UCsData_Payload::PerformFindEntry(const FName& InShortCode, TArray<FCsPayload*>& OutPayloads, TArray<FECsLoadAssetsType>& OutLoadAssetsTypes, TArray<int32>& OutIndices)
 {
 	UClass* Class = GetClass();
 
@@ -71,7 +71,7 @@ bool ACsData_Payload::PerformFindEntry(const FName &InShortCode, TArray<FCsPaylo
 	return OutPayloads.Num() > CS_EMPTY;
 }
 
-bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const FECsLoadAssetsType &LoadAssetsType, const TEnumAsByte<ECsLoadFlags_Editor::Type> &LoadFlags, FString &OutMessage, FString &OutOutput)
+bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsLoadAssetsType& LoadAssetsType, const TEnumAsByte<ECsLoadFlags_Editor::Type>& LoadFlags, FString& OutMessage, FString& OutOutput)
 {
 	// Check for VALID ShortCode
 	if (InShortCode == NAME_None ||
@@ -99,7 +99,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const FECsLoadAs
 			UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
 		}
 
-		UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::PerformAddEntry: Valid LoadAssetsTypes are:"));
+		UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::PerformAddEntry: Valid LoadAssetsTypes are:"));
 
 		const int32& Count = EMCsLoadAssetsType::Get().Num();
 
@@ -132,9 +132,9 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const FECsLoadAs
 
 			FCsPayload* Payload = OutPayloads[Index];
 
-			const FString AssetTypeAsString = Payload->AssetType;
+			const FString& DataTypeAsString = Payload->DataType;
 
-			OutOutput += TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(OutIndices[Index]) + TEXT("]");
+			OutOutput += TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + DataTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(OutIndices[Index]) + TEXT("]");
 			OutMessage = TEXT("Already Exists.");
 
 			if (UCsCommon::IsDefaultObject(this))
@@ -148,13 +148,13 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const FECsLoadAs
 	// Attempt to ADD it
 
 	// Check ShortCode entry EXISTS in DataMapping
-	ACsDataMapping* DataMapping = GetDataMapping();
+	UCsDataMapping* DataMapping = GetDataMapping();
 
 	TArray<FCsDataMappingEntry*> OutEntries;
-	TArray<FECsAssetType> OutAssetTypes;
+	TArray<FECsDataType> OutDataTypes;
 	OutIndices.Reset();
 
-	DataMapping->PerformFindEntry(InShortCode, OutEntries, OutAssetTypes, OutIndices);
+	DataMapping->PerformFindEntry(InShortCode, OutEntries, OutDataTypes, OutIndices);
 
 	const int32 EntryCount = OutEntries.Num();
 
@@ -172,9 +172,9 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const FECsLoadAs
 				CS_SET_BLUEPRINT_BITFLAG(OutEntries[CS_FIRST]->Data_LoadFlags, Flags);
 
 				const FString& LoadFlagsAsString = EMCsLoadFlags_Editor::Get().ToString(LoadFlags);
-				const FString& AssetTypeAsString = OutAssetTypes[CS_FIRST].Name;
+				const FString& DataTypeAsString = OutDataTypes[CS_FIRST].Name;
 
-				const FString Output = TEXT("ACsData_Payload::PostEditChangeProperty: Missing LoadFlags: ") + LoadFlagsAsString + TEXT(" in DataMapping: [") + AssetTypeAsString + TEXT(",") + InShortCode.ToString() + TEXT(",") + FString::FromInt(OutIndices[CS_FIRST]) + TEXT("]. Manually adding LoadFlag: ") + LoadFlagsAsString + TEXT(".");
+				const FString Output = TEXT("UCsData_Payload::PostEditChangeProperty: Missing LoadFlags: ") + LoadFlagsAsString + TEXT(" in DataMapping: [") + AssetTypeAsString + TEXT(",") + InShortCode.ToString() + TEXT(",") + FString::FromInt(OutIndices[CS_FIRST]) + TEXT("]. Manually adding LoadFlag: ") + LoadFlagsAsString + TEXT(".");
 					
 				if (UCsCommon::IsDefaultObject(this))
 					UCsCommon::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("PerformAddEntryLoadFlags"), 1.5f);
@@ -208,17 +208,17 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const FECsLoadAs
 
 								const int32 ArraySize = Array.Num();
 
-								const FString& AssetTypeAsString = OutAssetTypes[CS_FIRST].Name;
+								const FString& DataTypeAsString = OutDataTypes[CS_FIRST].Name;
 
 								Array.AddDefaulted();
-								Array[ArraySize].AssetType  = OutAssetTypes[CS_FIRST];
+								Array[ArraySize].AssetType  = OutDataTypes[CS_FIRST];
 								Array[ArraySize].ShortCode	= InShortCode;
 								Array[ArraySize].LoadFlags	= LoadFlags;
 
 								const FString& LoadAssetsTypeAsString = LoadAssetsType.Name;
 								const FString& LoadFlagsAsString	  = EMCsLoadFlags_Editor::Get().ToString(LoadFlags);
 
-								OutOutput = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
+								OutOutput = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + DataTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
 								OutMessage = TEXT("SUCCESS.");
 
 								if (UCsCommon::IsDefaultObject(this))
@@ -236,23 +236,23 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const FECsLoadAs
 		// Multiple in DataMapping
 		else
 		{
-			bool IsAssetTypeMismatch   = false;
-			FECsAssetType LastAssetType = OutAssetTypes[CS_FIRST];
+			bool IsDataTypeMismatch   = false;
+			FECsDataType LastDataType = OutDataTypes[CS_FIRST];
 
 			for (int32 I = 0; I < EntryCount; ++I)
 			{
-				const FString& AssetTypeAsString = OutAssetTypes[I].Name;
+				const FString& DataTypeAsString = OutDataTypes[I].Name;
 
-				OutOutput += TEXT("[") + AssetTypeAsString + TEXT(", ") + FString::FromInt(OutIndices[I]) + TEXT("]");
+				OutOutput += TEXT("[") + DataTypeAsString + TEXT(", ") + FString::FromInt(OutIndices[I]) + TEXT("]");
 
-				if (LastAssetType != OutAssetTypes[I])
-					IsAssetTypeMismatch |= true;
-				LastAssetType = OutAssetTypes[I];
+				if (LastDataType != OutDataTypes[I])
+					IsDataTypeMismatch |= true;
+				LastDataType = OutDataTypes[I];
 			}
 
 			OutMessage = TEXT("Can NOT ADD. WARNING, Duplicates. REMOVE extra entries in DataMapping.");
 
-			if (IsAssetTypeMismatch)
+			if (IsDataTypeMismatch)
 				OutMessage += TEXT(" ShortCode listed under multiple AssetTypes in DataMapping. Should ONLY be ONE.");
 
 			if (UCsCommon::IsDefaultObject(this))
@@ -276,10 +276,10 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const FECsLoadAs
 			DataMapping->GenerateMaps();
 
 			OutEntries.Reset();
-			OutAssetTypes.Reset();
+			OutDataTypes.Reset();
 			OutIndices.Reset();
 
-			DataMapping->PerformFindEntry(InShortCode, OutEntries, OutAssetTypes, OutIndices);
+			DataMapping->PerformFindEntry(InShortCode, OutEntries, OutDataTypes, OutIndices);
 
 			UClass* Class = GetClass();
 
@@ -307,17 +307,17 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const FECsLoadAs
 
 								const int32 ArraySize = Array.Num();
 
-								const FString& AssetTypeAsString = OutAssetTypes[CS_FIRST].Name;
+								const FString& DataTypeAsString = OutDataTypes[CS_FIRST].Name;
 
 								Array.AddDefaulted();
-								Array[ArraySize].AssetType	= OutAssetTypes[CS_FIRST];
+								Array[ArraySize].DataType	= OutDataTypes[CS_FIRST];
 								Array[ArraySize].ShortCode	= InShortCode;
 								Array[ArraySize].LoadFlags	= LoadFlags;
 
 								const FString& LoadAssetsTypeAsString = LoadAssetsType.Name;
 								const FString& LoadFlagsAsString	  = EMCsLoadFlags_Editor::Get().ToString(LoadFlags);
 
-								OutOutput  = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
+								OutOutput  = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + DataTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
 								OutMessage = TEXT("SUCCESS. Check LOG.");
 
 								MarkPackageDirty();
@@ -331,7 +331,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const FECsLoadAs
 	return true;
 }
 
-bool ACsData_Payload::Editor_IsValid(ACsDataMapping* DataMapping)
+bool UCsData_Payload::Editor_IsValid(UCsDataMapping* DataMapping)
 {
 	bool Pass = true;
 
@@ -369,38 +369,38 @@ bool ACsData_Payload::Editor_IsValid(ACsDataMapping* DataMapping)
 							// FCsPayload
 							for (int32 J = 0; J < ArraySize; J++)
 							{
-								const FString AssetTypeAsString = Array[J].AssetType;
+								const FString DataTypeAsString  = Array[J].DataType;
 								const FString _ShortCodeAsString = Array[J].ShortCode.ToString();
 
 								TArray<FCsDataMappingEntry*> OutEntries;
-								TArray<FECsAssetType> OutAssetTypes;
+								TArray<FECsDataType> OutDataTypes;
 								TArray<int32> OutIndices;
 
 								// Search in DataMapping
-								if (DataMapping->PerformFindEntry(Array[J].ShortCode, OutEntries, OutAssetTypes, OutIndices))
+								if (DataMapping->PerformFindEntry(Array[J].ShortCode, OutEntries, OutDataTypes, OutIndices))
 								{
 									// Check Multiple Entries in DataMapping
 									const int32 EntryCount = OutEntries.Num();
 
 									if (EntryCount > 1)
 									{
-										UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::Editor_IsValid: [%s, %s, %d] Multiple entries found for ShortCode: %s in DataMapping. Fix DataMapping."), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *_ShortCodeAsString);
+										UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::Editor_IsValid: [%s, %s, %d] Multiple entries found for ShortCode: %s in DataMapping. Fix DataMapping."), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *_ShortCodeAsString);
 
 										for (int32 K = 0; K < EntryCount; K++)
 										{
-											const FString& OutAssetTypeAsString = OutAssetTypes[K].Name;
+											const FString& OutDataTypeAsString = OutDataTypes[K].Name;
 
-											UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::Editor_IsValid: In DataMapping, ShortCode: %s at [%s, %d]."), *_ShortCodeAsString, *OutAssetTypeAsString, K);
+											UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::Editor_IsValid: In DataMapping, ShortCode: %s at [%s, %d]."), *_ShortCodeAsString, *OutDataTypeAsString, K);
 										}
 									}
 									else
 									{
 										// Check AssetType Mismatch
-										const FString& OutAssetTypeAsString = OutAssetTypes[CS_FIRST].Name;
+										const FString& OutDataTypeAsString = OutDataTypes[CS_FIRST].Name;
 
-										if (AssetTypeAsString != OutAssetTypeAsString)
+										if (DataTypeAsString != OutDataTypeAsString)
 										{
-											UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::Editor_IsValid: [%s, %s, %d] AssetType Mismatch for ShortCode: %s. %s != %s"), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *_ShortCodeAsString, *AssetTypeAsString, *OutAssetTypeAsString);
+											UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::Editor_IsValid: [%s, %s, %d] AssetType Mismatch for ShortCode: %s. %s != %s"), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *_ShortCodeAsString, *DataTypeAsString, *OutDataTypeAsString);
 											Pass &= false;
 										}
 										// Check for LoadFlags
@@ -409,14 +409,14 @@ bool ACsData_Payload::Editor_IsValid(ACsDataMapping* DataMapping)
 											const FString DataLoadFlagsAsString    = EMCsLoadFlags::Get().MaskToString(OutEntries[CS_FIRST]->Data_LoadFlags);
 											const FString& PayloadLoadFlagsAsString = EMCsLoadFlags_Editor::Get().ToString(Array[J].LoadFlags);
 
-											UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::Editor_IsValid: [%s, %s, %d] LoadFlags NOT present in DataMapping Entry [%s, %d]. (%s) does NOT containt %s"), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *OutAssetTypeAsString, OutIndices[CS_FIRST], *DataLoadFlagsAsString, *PayloadLoadFlagsAsString);
+											UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::Editor_IsValid: [%s, %s, %d] LoadFlags NOT present in DataMapping Entry [%s, %d]. (%s) does NOT containt %s"), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *OutDataTypeAsString, OutIndices[CS_FIRST], *DataLoadFlagsAsString, *PayloadLoadFlagsAsString);
 											Pass &= false;
 										}
 									}
 								}
 								else
 								{
-									UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::Editor_IsValid: [%s, %s, %d] ShortCode: %s NOT Found in DataMapping."), *LoadAssetsTypeAsString, *ShortCodeAsString, J, *ShortCodeAsString);
+									UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::Editor_IsValid: [%s, %s, %d] ShortCode: %s NOT Found in DataMapping."), *LoadAssetsTypeAsString, *ShortCodeAsString, J, *ShortCodeAsString);
 									Pass &= false;
 								}
 							}
@@ -429,7 +429,7 @@ bool ACsData_Payload::Editor_IsValid(ACsDataMapping* DataMapping)
 	return Pass;
 }
 
-void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
+void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
 	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
 
@@ -553,7 +553,7 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 				UCsCommon::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
 			}
 
-			FString Output = TEXT("ACsData_Payload::PostEditChangeProperty: Valid LoadAssetsTypes are:");
+			FString Output = TEXT("UCsData_Payload::PostEditChangeProperty: Valid LoadAssetsTypes are:");
 
 			if (UCsCommon::IsDefaultObject(this))
 				UCsCommon::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("RemoveEntryAdditionalOutput"), 1.5f);

@@ -165,7 +165,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 // Data
 #pragma region
 
-	static class ACsDataMapping* GetDataMapping(UWorld* InWorld);
+	static class UCsDataMapping* GetDataMapping(UWorld* InWorld);
 
 	template<typename T>
 	static T* GetDataMapping(UWorld* InWorld)

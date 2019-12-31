@@ -8,8 +8,8 @@
 
 */
 
-UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
-class CSCORE_API ACsData_ProjectileImpact : public ACsData_Impact
+UCLASS(Abstract)
+class CSCORE_API UCsData_ProjectileImpact : public UCsData_Impact
 {
 	GENERATED_UCLASS_BODY()
 

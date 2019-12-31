@@ -2,14 +2,7 @@
 #include "Types/CsTypes_Interpolation.h"
 
 // BlendDirection
-EMCsBlendDirection* EMCsBlendDirection::Instance;
-
-EMCsBlendDirection& EMCsBlendDirection::Get()
-{
-	if (!Instance)
-		Instance = new EMCsBlendDirection();
-	return *Instance;
-}
+#pragma region
 
 namespace NCsBlendDirection
 {
@@ -21,15 +14,10 @@ namespace NCsBlendDirection
 	}
 }
 
-// EasingType
-EMCsEasingType* EMCsEasingType::Instance;
+#pragma endregion BlendDirection
 
-EMCsEasingType& EMCsEasingType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsEasingType();
-	return *Instance;
-}
+// EasingType
+#pragma region
 
 namespace NCsEasingType
 {
@@ -48,3 +36,5 @@ namespace NCsEasingType
 		CSCORE_API const Type ECsEasingType_MAX = EMCsEasingType::Get().Add(Type::ECsEasingType_MAX, TEXT("ECsEasingType_MAX"), TEXT("MAX"));
 	}
 }
+
+#pragma endregion EasingType

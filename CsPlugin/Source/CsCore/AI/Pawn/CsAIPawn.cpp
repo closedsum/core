@@ -280,7 +280,7 @@ void ACsAIPawn::SetStartJumpEventInfoConstrainedByTime(const FVector &Direction,
 {
 	StartJumpEventInfo.Direction = Direction == FVector::ZeroVector ? CurrentRootDirXY : Direction;
 
-	ACsData_Character* Data = GetMyData_Character();
+	UCsData_Character* Data = GetMyData_Character();
 	const float Time		= 2.0f * Data->GetGroundToJumpPeakTime();
 	StartJumpEventInfo.Time = Time;
 	const float SpeedXY		= Distance / Time;
@@ -294,7 +294,7 @@ void ACsAIPawn::SetStartJumpEventInfoConstrainedBySpeedXY(const FVector &Directi
 {
 	StartJumpEventInfo.Direction = Direction == FVector::ZeroVector ? CurrentRootDirXY : Direction;
 
-	ACsData_Character* Data = GetMyData_Character();
+	UCsData_Character* Data = GetMyData_Character();
 	const float& SpeedXY    = Data->GetMaxWalkSpeed();
 	const float Time		= Distance / SpeedXY;
 	StartJumpEventInfo.Time = Time;
@@ -310,7 +310,7 @@ void ACsAIPawn::SetStartJumpEventInfo(const FVector &Direction, const float &Spe
 {
 	StartJumpEventInfo.Direction = Direction == FVector::ZeroVector ? CurrentRootDirXY : Direction;
 
-	ACsData_Character* Data				= GetMyData_Character();
+	UCsData_Character* Data				= GetMyData_Character();
 	const float Time					= 2.0f * Data->GetGroundToJumpPeakTime();
 	StartJumpEventInfo.Time				= Time;
 	StartJumpEventInfo.Height			= Data->GetJumpHeight();
@@ -322,7 +322,7 @@ void ACsAIPawn::SetStartJumpEventInfoByTime(const FVector &Direction, const floa
 {
 	StartJumpEventInfo.Direction = Direction == FVector::ZeroVector ? CurrentRootDirXY : Direction;
 
-	ACsData_Character* Data			 = GetMyData_Character();
+	UCsData_Character* Data			 = GetMyData_Character();
 	const float& GravityScale		 = Data->GetGravityScale();
 	// V0 = -a*t;
 	StartJumpEventInfo.JumpZVelocity = GravityScale * 980.0f * Time * 0.5f;
@@ -336,7 +336,7 @@ void ACsAIPawn::SetStartJumpEventInfoByHeight(const FVector &Direction, const fl
 {
 	StartJumpEventInfo.Direction = Direction == FVector::ZeroVector ? CurrentRootDirXY : Direction;
 
-	ACsData_Character* Data		= GetMyData_Character();
+	UCsData_Character* Data		= GetMyData_Character();
 	const float& GravityScale	= Data->GetGravityScale();
 	// V0 = Sqrt(2*a*s);
 	StartJumpEventInfo.JumpZVelocity = FMath::Sqrt(1960.0f * GravityScale * Height);

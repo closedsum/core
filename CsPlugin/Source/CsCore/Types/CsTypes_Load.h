@@ -351,23 +351,23 @@ namespace NCsDataType
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsDataCollection : public FECsEnum_uint8
+struct CSCORE_API FECsDataCollectionType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-	CS_ENUM_UINT8_BODY(FECsDataCollection)
+	CS_ENUM_UINT8_BODY(FECsDataCollectionType)
 };
 
-CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsDataCollection)
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsDataCollectionType)
 
-struct CSCORE_API EMCsDataCollection : public TCsEnumStructMap<FECsDataCollection, uint8>
+struct CSCORE_API EMCsDataCollectionType : public TCsEnumStructMap<FECsDataCollectionType, uint8>
 {
-	CS_ENUM_STRUCT_MAP_BODY(EMCsDataCollection, FECsDataCollection, uint8)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsDataCollectionType, FECsDataCollectionType, uint8)
 };
 
-namespace NCsDataCollection
+namespace NCsDataCollectionType
 {
-	typedef FECsDataCollection Type;
+	typedef FECsDataCollectionType Type;
 }
 
 #pragma endregion DataCollection
@@ -428,7 +428,7 @@ struct CSCORE_API FCsPayload
 	FName ShortCode;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	FECsAssetType AssetType;
+	FECsDataType DataType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TEnumAsByte<ECsLoadFlags_Editor::Type> LoadFlags;
@@ -436,7 +436,7 @@ struct CSCORE_API FCsPayload
 	FORCEINLINE FCsPayload& operator=(const FCsPayload& B)
 	{
 		ShortCode = B.ShortCode;
-		AssetType = B.AssetType;
+		DataType = B.DataType;
 		LoadFlags = B.LoadFlags;
 		return *this;
 	}
@@ -444,7 +444,7 @@ struct CSCORE_API FCsPayload
 	FORCEINLINE bool operator==(const FCsPayload& B) const
 	{
 		if (ShortCode != B.ShortCode) { return false; }
-		if (AssetType != B.AssetType) { return false; }
+		if (DataType != B.DataType) { return false; }
 		if (LoadFlags != B.LoadFlags) { return false; }
 		return true;
 	}

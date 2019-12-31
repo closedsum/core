@@ -3,10 +3,10 @@
 #include "CsCore.h"
 #include "Types/CsTypes.h"
 
-ACsData_Level::ACsData_Level(const FObjectInitializer& ObjectInitializer)
+UCsData_Level::UCsData_Level(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-FString ACsData_Level::GetMapName() { return NCsCached::Str::Empty; }
-TArray<FName>* ACsData_Level::GetShortCodes() { return nullptr; }
+FString UCsData_Level::GetMapName() { return NCsCached::Str::Empty; }
+TArray<FName>* UCsData_Level::GetShortCodes() { return nullptr; }

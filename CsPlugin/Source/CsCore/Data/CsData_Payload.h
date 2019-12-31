@@ -1,5 +1,5 @@
 #pragma once
-#include "Data/CsData.h"
+#include "Data/CsData_Impl.h"
 #include "Types/CsTypes_Load.h"
 #include "CsData_Payload.generated.h"
 
@@ -86,8 +86,10 @@ struct FCsPayloadValidate
 
 #pragma endregion Structs
 
-UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
-class CSCORE_API ACsData_Payload : public ACsData
+class UCsDataMapping;
+
+UCLASS(Abstract)
+class CSCORE_API UCsData_Payload : public UCsData_Impl
 {
 	GENERATED_UCLASS_BODY()
 
@@ -105,10 +107,10 @@ class CSCORE_API ACsData_Payload : public ACsData
 
 #if WITH_EDITOR
 
-	bool PerformFindEntry(const FName &InShortCode, TArray<FCsPayload*> &OutPayloads, TArray<FECsLoadAssetsType> &OutLoadAssetsTypes, TArray<int32> &OutIndices);
-	bool PerformAddEntry(const FName &InShortCode, const FECsLoadAssetsType &LoadAssetsType, const TEnumAsByte<ECsLoadFlags_Editor::Type> &LoadFlags, FString &OutMessage, FString &OutOutput);
+	bool PerformFindEntry(const FName& InShortCode, TArray<FCsPayload*>& OutPayloads, TArray<FECsLoadAssetsType>& OutLoadAssetsTypes, TArray<int32>& OutIndices);
+	bool PerformAddEntry(const FName& InShortCode, const FECsLoadAssetsType& LoadAssetsType, const TEnumAsByte<ECsLoadFlags_Editor::Type>& LoadFlags, FString& OutMessage, FString& OutOutput);
 
-	virtual bool Editor_IsValid(class ACsDataMapping* DataMapping);
+	virtual bool Editor_IsValid(UCsDataMapping* DataMapping);
 
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
 

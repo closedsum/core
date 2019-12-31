@@ -3,21 +3,21 @@
 #include "Managers/FX/CsManager_FX.h"
 #include "Managers/Sound/CsManager_Sound.h"
 
-ACsData_Impact::ACsData_Impact(const FObjectInitializer& ObjectInitializer)
+UCsData_Impact::UCsData_Impact(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-FCsFxElement* ACsData_Impact::GetImpactFX(const TCsSurfaceType &SurfaceType) { return nullptr; }
+FCsFxElement* UCsData_Impact::GetImpactFX(const TCsSurfaceType& SurfaceType) { return nullptr; }
 
-void ACsData_Impact::PlayImpactFX(UWorld* InWorld, const TEnumAsByte<EPhysicalSurface> &PhysicalSurface, UObject* InOwner, const FVector &Location, const FVector &Normal)
+void UCsData_Impact::PlayImpactFX(UWorld* InWorld, const TEnumAsByte<EPhysicalSurface>& PhysicalSurface, UObject* InOwner, const FVector& Location, const FVector& Normal)
 {
 	const TCsSurfaceType SurfaceType = (*PhysicalSurfaceToSurfaceType)(PhysicalSurface);
 	FCsFxElement* FxElement			 = GetImpactFX(SurfaceType);
 
 	if (!FxElement->Get())
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsData_Impact::PlayImpactFX: Attempting to Play a NULL ParticleSystem."));
+		UE_LOG(LogCs, Warning, TEXT("UCsData_Impact::PlayImpactFX: Attempting to Play a NULL ParticleSystem."));
 		return;
 	}
 
@@ -31,16 +31,16 @@ void ACsData_Impact::PlayImpactFX(UWorld* InWorld, const TEnumAsByte<EPhysicalSu
 	Manager_FX->Play(Payload);
 }
 
-FCsSoundElement* ACsData_Impact::GetImpactSound(const TCsSurfaceType &SurfaceType) { return nullptr; }
+FCsSoundElement* UCsData_Impact::GetImpactSound(const TCsSurfaceType& SurfaceType) { return nullptr; }
 
-void ACsData_Impact::PlayImpactSound(UWorld* InWorld, const TEnumAsByte<EPhysicalSurface> &PhysicalSurface, UObject* InOwner, const FVector &Location)
+void UCsData_Impact::PlayImpactSound(UWorld* InWorld, const TEnumAsByte<EPhysicalSurface>& PhysicalSurface, UObject* InOwner, const FVector& Location)
 {
 	const TCsSurfaceType SurfaceType = (*PhysicalSurfaceToSurfaceType)(PhysicalSurface);
 	FCsSoundElement* SoundElement	 = GetImpactSound(SurfaceType);
 
 	if (!SoundElement->Get())
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsData_Impact::PlayImpactSound: Attempting to Play a NULL Sound."));
+		UE_LOG(LogCs, Warning, TEXT("UCsData_Impact::PlayImpactSound: Attempting to Play a NULL Sound."));
 		return;
 	}
 

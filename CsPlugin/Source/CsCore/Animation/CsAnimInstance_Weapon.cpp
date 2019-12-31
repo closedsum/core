@@ -29,13 +29,13 @@ void UCsAnimInstance_Weapon::NativeInitializeAnimation()
 		return;
 
 	// Data_Weapon
-	Data_Weapon.Data		  = TSoftClassPtr<ACsData_Weapon>(MyWeapon->GetMyData_Weapon());
+	Data_Weapon.Data		  = TSoftClassPtr<UCsData_Weapon>(MyWeapon->GetMyData_Weapon());
 	Data_Weapon.Data_Internal = MyWeapon->GetMyData_Weapon();
 
 	if (ACsGunWeapon* MyGunWeapon = Cast<ACsGunWeapon>(MyWeapon))
 	{
 		// Data_WeaponMaterialSkin
-		Data_WeaponMaterialSkin.Data		  = TSoftClassPtr<ACsData_WeaponMaterialSkin>(MyGunWeapon->GetMyData_WeaponMaterialSkin());
+		Data_WeaponMaterialSkin.Data		  = TSoftClassPtr<UCsData_WeaponMaterialSkin>(MyGunWeapon->GetMyData_WeaponMaterialSkin());
 		Data_WeaponMaterialSkin.Data_Internal = MyGunWeapon->GetMyData_WeaponMaterialSkin();
 	}
 	LoadAnims();
@@ -77,12 +77,12 @@ void UCsAnimInstance_Weapon::SetupInGameSimulation()
 
 	UCsCommon_Load::LoadTSoftClassPtr(TEXT("Data_Weapon"), Data_Weapon.Data, Data_Weapon.Data_Internal, TEXT("MboData_Weapon"));
 
-	if (ACsData_Weapon* MyData_Weapon = GetData_Weapon())
+	if (UCsData_Weapon* MyData_Weapon = GetData_Weapon())
 		MyData_Weapon->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
 
 	UCsCommon_Load::LoadTSoftClassPtr(TEXT("Data_WeaponMaterialSkin"), Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, TEXT("CsData_WeaponMaterialSkin"));
 
-	if (ACsData_WeaponMaterialSkin* MyData_WeaponMaterialSkin = GetData_WeaponMaterialSkin())
+	if (UCsData_WeaponMaterialSkin* MyData_WeaponMaterialSkin = GetData_WeaponMaterialSkin())
 		MyData_WeaponMaterialSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
 
 	LoadAnims();
@@ -119,7 +119,7 @@ void UCsAnimInstance_Weapon::NativeUpdateAnimation(float DeltaTimeX)
 // Data
 #pragma region
 
-ACsData_Weapon* UCsAnimInstance_Weapon::GetData_Weapon()
+UCsData_Weapon* UCsAnimInstance_Weapon::GetData_Weapon()
 {
 	return Data_Weapon.Get();
 }
@@ -138,7 +138,7 @@ void UCsAnimInstance_Weapon::OnTick_Handle_Data_Weapon()
 
 #endif // #if WITH_EDITOR
 
-ACsData_WeaponMaterialSkin* UCsAnimInstance_Weapon::GetData_WeaponMaterialSkin()
+UCsData_WeaponMaterialSkin* UCsAnimInstance_Weapon::GetData_WeaponMaterialSkin()
 {
 	return Data_WeaponMaterialSkin.Get();
 }

@@ -3,8 +3,8 @@
 #include "Data/CsData_Interactive.h"
 #include "CsData_Damageable.generated.h"
 
-UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
-class CSCORE_API ACsData_Damageable : public ACsData_Interactive
+UCLASS(Abstract)
+class CSCORE_API UCsData_Damageable : public UCsData_Interactive
 {
 	GENERATED_UCLASS_BODY()
 

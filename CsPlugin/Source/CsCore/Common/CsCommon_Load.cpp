@@ -344,15 +344,15 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// TSoftClassPtr
 		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
-			// ACsData_ProjectileBase
-			if (SoftClassProperty->MetaClass == ACsData_ProjectileBase::StaticClass())
-			{ WriteSoftClassPropertyToJson<ACsData_ProjectileBase>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
-			// ACsData_ProjectileImpact
-			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
-			{ WriteSoftClassPropertyToJson<ACsData_ProjectileImpact>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
-			// ACsData
-			if (SoftClassProperty->MetaClass == ACsData::StaticClass())
-			{ WriteSoftClassPropertyToJson<ACsData>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
+			// UCsData_ProjectileBase
+			if (SoftClassProperty->MetaClass == UCsData_ProjectileBase::StaticClass())
+			{ WriteSoftClassPropertyToJson<UCsData_ProjectileBase>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
+			// UCsData_ProjectileImpact
+			if (SoftClassProperty->MetaClass == UCsData_ProjectileImpact::StaticClass())
+			{ WriteSoftClassPropertyToJson<UCsData_ProjectileImpact>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
+			// UCsData_Impl
+			if (SoftClassProperty->MetaClass == UCsData_Impl::StaticClass())
+			{ WriteSoftClassPropertyToJson<UCsData_Impl>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -737,9 +737,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 
 			// EnumStruct
 			{
-				// FECsAssetType
-				if (StructProperty->Struct == FECsAssetType::StaticStruct())
-				{ WriteMemberEnumStructPropertyToJson<FECsAssetType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsDataType
+				if (StructProperty->Struct == FECsDataType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsDataType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 				// FECsLoadAssetsType
 				if (StructProperty->Struct == FECsLoadAssetsType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsLoadAssetsType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
@@ -1112,15 +1112,15 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// TSoftClassPtr
 		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
-			// ACsData_ProjectileBase
-			if (SoftClassProperty->MetaClass == ACsData_ProjectileBase::StaticClass())
-			{ WriteSoftClassPropertyToJson<ACsData_ProjectileBase>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
-			// ACsData_ProjectileImpact
-			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
-			{ WriteSoftClassPropertyToJson<ACsData_ProjectileImpact>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
-			// ACsData
-			if (SoftClassProperty->MetaClass == ACsData::StaticClass())
-			{ WriteSoftClassPropertyToJson<ACsData>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
+			// UCsData_ProjectileBase
+			if (SoftClassProperty->MetaClass == UCsData_ProjectileBase::StaticClass())
+			{ WriteSoftClassPropertyToJson<UCsData_ProjectileBase>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
+			// UCsData_ProjectileImpact
+			if (SoftClassProperty->MetaClass == UCsData_ProjectileImpact::StaticClass())
+			{ WriteSoftClassPropertyToJson<UCsData_ProjectileImpact>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
+			// UCsData_Impl
+			if (SoftClassProperty->MetaClass == UCsData_Impl::StaticClass())
+			{ WriteSoftClassPropertyToJson<UCsData_Impl>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -1508,9 +1508,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 
 			// EnumStruct
 			{
-				// FECsAssetType
-				if (StructProperty->Struct == FECsAssetType::StaticStruct())
-				{ WriteMemberEnumStructPropertyToJson<FECsAssetType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsDataType
+				if (StructProperty->Struct == FECsDataType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsDataType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 				// FECsLoadAssetsType
 				if (StructProperty->Struct == FECsLoadAssetsType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsLoadAssetsType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
@@ -2221,9 +2221,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 
 			// EnumStruct
 			{
-				// FECsAssetType
-				if (StructProperty->Struct == FECsAssetType::StaticStruct())
-				{ WriteMemberEnumStructPropertyToJson<FECsAssetType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsDataType
+				if (StructProperty->Struct == FECsDataType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsDataType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 				// FECsLoadAssetsType
 				if (StructProperty->Struct == FECsLoadAssetsType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsLoadAssetsType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
@@ -2720,15 +2720,15 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 		// TSoftClassPtr
 		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
-			// ACsData_ProjectileBase
-			if (SoftClassProperty->MetaClass == ACsData_ProjectileBase::StaticClass())
-			{ WriteToSoftClassPropertyFromJson<ACsData_ProjectileBase>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
-			// ACsData_ProjectileImpact
-			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
-			{ WriteToSoftClassPropertyFromJson<ACsData_ProjectileImpact>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
-			// ACsData
-			if (SoftClassProperty->MetaClass == ACsData::StaticClass())
-			{ WriteToSoftClassPropertyFromJson<ACsData>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
+			// UCsData_ProjectileBase
+			if (SoftClassProperty->MetaClass == UCsData_ProjectileBase::StaticClass())
+			{ WriteToSoftClassPropertyFromJson<UCsData_ProjectileBase>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
+			// UCsData_ProjectileImpact
+			if (SoftClassProperty->MetaClass == UCsData_ProjectileImpact::StaticClass())
+			{ WriteToSoftClassPropertyFromJson<UCsData_ProjectileImpact>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
+			// UCsData_Impl
+			if (SoftClassProperty->MetaClass == UCsData_Impl::StaticClass())
+			{ WriteToSoftClassPropertyFromJson<UCsData_Impl>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
 			
 			if (Internal)
 			{
@@ -3489,15 +3489,15 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 		// TSoftClassPtr
 		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
-			// ACsData_ProjectileBase
-			if (SoftClassProperty->MetaClass == ACsData_ProjectileBase::StaticClass())
-			{ WriteToSoftClassPropertyFromJson<ACsData_ProjectileBase>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
-			// ACsData_ProjectileImpact
-			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
-			{ WriteToSoftClassPropertyFromJson<ACsData_ProjectileImpact>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
-			// ACsData
-			if (SoftClassProperty->MetaClass == ACsData::StaticClass())
-			{ WriteToSoftClassPropertyFromJson<ACsData>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
+			// UCsData_ProjectileBase
+			if (SoftClassProperty->MetaClass == UCsData_ProjectileBase::StaticClass())
+			{ WriteToSoftClassPropertyFromJson<UCsData_ProjectileBase>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
+			// UCsData_ProjectileImpact
+			if (SoftClassProperty->MetaClass == UCsData_ProjectileImpact::StaticClass())
+			{ WriteToSoftClassPropertyFromJson<UCsData_ProjectileImpact>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
+			// UCsData
+			if (SoftClassProperty->MetaClass == UCsData_Impl::StaticClass())
+			{ WriteToSoftClassPropertyFromJson<UCsData_Impl>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -3884,9 +3884,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 
 			// EnumStruct
 			{
-				// FECsAssetType
-				if (StructProperty->Struct == FECsAssetType::StaticStruct())
-				{ WriteToMemberEnumStructPropertyFromJson<FECsAssetType, EMCsAssetType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsDataType
+				if (StructProperty->Struct == FECsDataType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsDataType, EMCsDataType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 				// FECsLoadAssetsType
 				if (StructProperty->Struct == FECsLoadAssetsType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsLoadAssetsType, EMCsLoadAssetsType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
@@ -4603,9 +4603,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 
 			// EnumStruct
 			{
-				// FECsAssetType
-				if (StructProperty->Struct == FECsAssetType::StaticStruct())
-				{ WriteToMemberEnumStructPropertyFromJson<FECsAssetType, EMCsAssetType>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				// FECsDataType
+				if (StructProperty->Struct == FECsDataType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsDataType, EMCsDataType>(JsonObject, StructProperty, InObject, MemberName); continue; }
 				// FECsLoadAssetsType
 				if (StructProperty->Struct == FECsLoadAssetsType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsLoadAssetsType, EMCsLoadAssetsType>(JsonObject, StructProperty, InObject, MemberName); continue; }
@@ -5663,12 +5663,12 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 		// TSoftClassPtr
 		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
-			// ACsData_ProjectileBase
-			if (SoftClassProperty->MetaClass == ACsData_ProjectileBase::StaticClass())
-			{ GetAssetReferenceFromSoftClassProperty<ACsData_ProjectileBase>(SoftClassProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
-			// ACsData_ProjectileImpact
-			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
-			{ GetAssetReferenceFromSoftClassProperty<ACsData_ProjectileImpact>(SoftClassProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
+			// UCsData_ProjectileBase
+			if (SoftClassProperty->MetaClass == UCsData_ProjectileBase::StaticClass())
+			{ GetAssetReferenceFromSoftClassProperty<UCsData_ProjectileBase>(SoftClassProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
+			// UCsData_ProjectileImpact
+			if (SoftClassProperty->MetaClass == UCsData_ProjectileImpact::StaticClass())
+			{ GetAssetReferenceFromSoftClassProperty<UCsData_ProjectileImpact>(SoftClassProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
 
 			if (Internal)
 			{
@@ -6836,12 +6836,12 @@ void UCsCommon_Load::LoadStructWithTSoftObjectPtrs(const FString &ObjectName, vo
 		// TSoftClassPtr
 		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
-			// ACsData_ProjectileBase
-			if (SoftClassProperty->MetaClass == ACsData_ProjectileBase::StaticClass())
-			{ LoadSoftClassProperty<ACsData_ProjectileBase>(SoftClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, NCsCommonLoadCached::Str::CsData_ProjectileBase, LoadFlags); continue; }
-			// ACsData_ProjectileImpact
-			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
-			{ LoadSoftClassProperty<ACsData_ProjectileImpact>(SoftClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, NCsCommonLoadCached::Str::CsData_ProjectileImpact, LoadFlags); continue; }
+			// UCsData_ProjectileBase
+			if (SoftClassProperty->MetaClass == UCsData_ProjectileBase::StaticClass())
+			{ LoadSoftClassProperty<UCsData_ProjectileBase>(SoftClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, NCsCommonLoadCached::Str::CsData_ProjectileBase, LoadFlags); continue; }
+			// UCsData_ProjectileImpact
+			if (SoftClassProperty->MetaClass == UCsData_ProjectileImpact::StaticClass())
+			{ LoadSoftClassProperty<UCsData_ProjectileImpact>(SoftClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, NCsCommonLoadCached::Str::CsData_ProjectileImpact, LoadFlags); continue; }
 
 			if (Internal)
 			{

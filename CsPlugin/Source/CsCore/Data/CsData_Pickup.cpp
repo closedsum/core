@@ -5,7 +5,7 @@
 // Managers
 #include "Managers/Sound/CsManager_Sound.h"
 
-ACsData_Pickup::ACsData_Pickup(const FObjectInitializer& ObjectInitializer)
+UCsData_Pickup::UCsData_Pickup(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
@@ -13,32 +13,32 @@ ACsData_Pickup::ACsData_Pickup(const FObjectInitializer& ObjectInitializer)
 // Movement
 #pragma region
 
-FVector ACsData_Pickup::GetSpawnVelocity() { return FVector::ZeroVector; }
-FVector ACsData_Pickup::GetSpawnAcceleration() { return FVector::ZeroVector; }
+FVector UCsData_Pickup::GetSpawnVelocity() { return FVector::ZeroVector; }
+FVector UCsData_Pickup::GetSpawnAcceleration() { return FVector::ZeroVector; }
 
 #pragma endregion Movement
 
 // FX
 #pragma region
 
-FCsFxElement* ACsData_Pickup::GetFX(const FECsPickupFX &FxType) { return nullptr; }
+FCsFxElement* UCsData_Pickup::GetFX(const FECsPickupFX& FxType) { return nullptr; }
 
 #pragma endregion FX
 
 // Sound
 #pragma region
 
-const bool& ACsData_Pickup::UseCollectSound() { return NCsCached::Ref::False; }
+const bool& UCsData_Pickup::UseCollectSound() { return NCsCached::Ref::False; }
 
-FCsSoundElement* ACsData_Pickup::GetSound(const FECsPickupSound &SoundType) { return nullptr; }
+FCsSoundElement* UCsData_Pickup::GetSound(const FECsPickupSound& SoundType) { return nullptr; }
 
-void ACsData_Pickup::PlaySound(UWorld* InWorld, const FECsPickupSound &SoundType, UObject* InOwner, UObject* InParent)
+void UCsData_Pickup::PlaySound(UWorld* InWorld, const FECsPickupSound& SoundType, UObject* InOwner, UObject* InParent)
 {
 	FCsSoundElement* SoundElement = GetSound(SoundType);
 
 	if (!SoundElement->Get())
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsData_Pickup::PlaySound: Attempting to Play a NULL Sound."));
+		UE_LOG(LogCs, Warning, TEXT("UCsData_Pickup::PlaySound: Attempting to Play a NULL Sound."));
 		return;
 	}
 

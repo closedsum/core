@@ -1,5 +1,5 @@
 #pragma once
-#include "Data/CsData.h"
+#include "Data/CsData_Impl.h"
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_FX.h"
 #include "Types/CsTypes_Sound.h"
@@ -11,8 +11,8 @@
 
 */
 
-UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
-class CSCORE_API ACsData_Impact : public ACsData
+UCLASS(Abstract)
+class CSCORE_API UCsData_Impact : public UCsData_Impl
 {
 	GENERATED_UCLASS_BODY()
 
@@ -21,15 +21,15 @@ class CSCORE_API ACsData_Impact : public ACsData
 
 	CS_DECLARE_SURFACE_TYPE_FUNCTIONS
 
-	virtual FCsFxElement* GetImpactFX(const TCsSurfaceType &SurfaceType);
+	virtual FCsFxElement* GetImpactFX(const TCsSurfaceType& SurfaceType);
 
 	UFUNCTION(BlueprintCallable, Category = "Impacts")
-	virtual void PlayImpactFX(UWorld* InWorld, const TEnumAsByte<EPhysicalSurface> &PhysicalSurface, UObject* InOwner, const FVector &Location, const FVector &Normal);
+	virtual void PlayImpactFX(UWorld* InWorld, const TEnumAsByte<EPhysicalSurface>& PhysicalSurface, UObject* InOwner, const FVector& Location, const FVector& Normal);
 
-	virtual FCsSoundElement* GetImpactSound(const TCsSurfaceType &SurfaceType);
+	virtual FCsSoundElement* GetImpactSound(const TCsSurfaceType& SurfaceType);
 
 	UFUNCTION(BlueprintCallable, Category = "Impacts")
-	virtual void PlayImpactSound(UWorld* InWorld, const TEnumAsByte<EPhysicalSurface> &PhysicalSurface, UObject* InOwner, const FVector &Location);
+	virtual void PlayImpactSound(UWorld* InWorld, const TEnumAsByte<EPhysicalSurface>& PhysicalSurface, UObject* InOwner, const FVector& Location);
 
 #pragma endregion Impacts
 

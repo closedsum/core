@@ -66,7 +66,7 @@ EBTNodeResult::Type UCsBTTask_PlayMontage::ExecuteTask(UBehaviorTreeComponent& O
 	if (!bAnim)
 #endif // #if WITH_EDITORONLY_DATA
 	{
-		ACsData_Character* Data  = Pawn->GetMyData_Character();
+		UCsData_Character* Data  = Pawn->GetMyData_Character();
 		UAnimMontage* AnimToPlay = Data->GetAnimMontage(AnimType, 0, false);
 
 		if (!AnimToPlay)
@@ -88,7 +88,7 @@ EBTNodeResult::Type UCsBTTask_PlayMontage::ExecuteTask(UBehaviorTreeComponent& O
 	else
 #endif // #if WITH_EDITORONLY_DATA
 	{
-		ACsData_Character* Data = Pawn->GetMyData_Character();
+		UCsData_Character* Data = Pawn->GetMyData_Character();
 		Data->PlayAnimation(Pawn->GetMesh(), AnimType, 0, PlayRate, bLooping, false);
 	}
 
@@ -148,7 +148,7 @@ void UCsBTTask_PlayMontage::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* N
 		else
 #endif // #if WITH_EDITORONLY_DATA
 		{
-			ACsData_Character* Data = Pawn->GetMyData_Character();
+			UCsData_Character* Data = Pawn->GetMyData_Character();
 			CurrentAnim				= Data->GetAnimMontage(AnimType, 0, false);
 		}
 
@@ -190,7 +190,7 @@ EBTNodeResult::Type UCsBTTask_PlayMontage::AbortTask(UBehaviorTreeComponent& Own
 				else
 #endif // #if WITH_EDITORONLY_DATA
 				{
-					ACsData_Character* Data = Pawn->GetMyData_Character();
+					UCsData_Character* Data = Pawn->GetMyData_Character();
 					Data->StopAnimation(Pawn->GetMesh(), AnimType, 0, StopOnAbort.BlendOutTime, false);
 				}
 

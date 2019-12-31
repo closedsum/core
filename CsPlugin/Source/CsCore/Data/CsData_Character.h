@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Data/CsData.h"
+#include "Data/CsData_Impl.h"
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_Character.h"
 #include "Types/CsTypes_Weapon.h"
@@ -9,8 +9,8 @@
 #include "Types/CsTypes_Sense.h"
 #include "CsData_Character.generated.h"
 
-UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
-class CSCORE_API ACsData_Character : public ACsData
+UCLASS(Abstract)
+class CSCORE_API UCsData_Character : public UCsData_Impl
 {
 	GENERATED_UCLASS_BODY()
 

@@ -77,19 +77,19 @@ void UCsAnimInstance_Character::NativeInitializeAnimation()
 		return;
 
 	// Data_Character
-	Data_Character.Data = TSoftClassPtr<ACsData_Character>(MyPawn->GetMyData_Character());
+	Data_Character.Data = TSoftClassPtr<UCsData_Character>(MyPawn->GetMyData_Character());
 	Data_Character.Data_Internal = MyPawn->GetMyData_Character();
 	// Data_CharacterMeshSkin
-	Data_CharacterMeshSkin.Data = TSoftClassPtr<ACsData_CharacterMeshSkin>(MyPawn->GetMyData_CharacterMeshSkin());
+	Data_CharacterMeshSkin.Data = TSoftClassPtr<UCsData_CharacterMeshSkin>(MyPawn->GetMyData_CharacterMeshSkin());
 	Data_CharacterMeshSkin.Data_Internal = MyPawn->GetMyData_CharacterMeshSkin();
 	// Data_CharacterMaterialSkin
-	Data_CharacterMaterialSkin.Data = TSoftClassPtr<ACsData_CharacterMaterialSkin>(MyPawn->GetMyData_CharacterMaterialSkin());
+	Data_CharacterMaterialSkin.Data = TSoftClassPtr<UCsData_CharacterMaterialSkin>(MyPawn->GetMyData_CharacterMaterialSkin());
 	Data_CharacterMaterialSkin.Data_Internal = MyPawn->GetMyData_CharacterMaterialSkin();
 	// Data_Weapon
-	Data_Weapon.Data = TSoftClassPtr<ACsData_Weapon>(MyPawn->GetCurrentData_Weapon());
+	Data_Weapon.Data = TSoftClassPtr<UCsData_Weapon>(MyPawn->GetCurrentData_Weapon());
 	Data_Weapon.Data_Internal = MyPawn->GetCurrentData_Weapon();
 	// Data_WeaponMaterialSkin
-	Data_WeaponMaterialSkin.Data = TSoftClassPtr<ACsData_WeaponMaterialSkin>(MyPawn->GetCurrentData_WeaponMaterialSkin());
+	Data_WeaponMaterialSkin.Data = TSoftClassPtr<UCsData_WeaponMaterialSkin>(MyPawn->GetCurrentData_WeaponMaterialSkin());
 	Data_WeaponMaterialSkin.Data_Internal = MyPawn->GetCurrentData_WeaponMaterialSkin();
 	
 	LoadAnims();
@@ -192,7 +192,7 @@ void UCsAnimInstance_Character::OnTick_Handle_Weapon(const float &DeltaTimeX)
 	// Character
 #pragma region
 
-ACsData_Character* UCsAnimInstance_Character::GetData()
+UCsData_Character* UCsAnimInstance_Character::GetData()
 {
 	return Data_Character.Get();
 }
@@ -204,7 +204,7 @@ void UCsAnimInstance_Character::LoadData_Character()
 
 	UCsCommon_Load::LoadTSoftClassPtr(DataString, Data_Character.Data, Data_Character.Data_Internal, CsDataString);
 
-	if (ACsData_Character* MyData_Charater = GetData())
+	if (UCsData_Character* MyData_Charater = GetData())
 		MyData_Charater->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
 }
 
@@ -226,7 +226,7 @@ void UCsAnimInstance_Character::OnTick_Handle_Data_Character()
 	// CharacterMeshSkin
 #pragma region
 
-ACsData_CharacterMeshSkin* UCsAnimInstance_Character::GetData_CharacterMeshSkin()
+UCsData_CharacterMeshSkin* UCsAnimInstance_Character::GetData_CharacterMeshSkin()
 {
 	return Data_CharacterMeshSkin.Get();
 }
@@ -238,7 +238,7 @@ void UCsAnimInstance_Character::LoadData_CharacterMeshSkin()
 
 	UCsCommon_Load::LoadTSoftClassPtr(DataString, Data_CharacterMeshSkin.Data, Data_CharacterMeshSkin.Data_Internal, CsDataString);
 
-	if (ACsData_CharacterMeshSkin* MyData_CharacterMeshSkin = GetData_CharacterMeshSkin())
+	if (UCsData_CharacterMeshSkin* MyData_CharacterMeshSkin = GetData_CharacterMeshSkin())
 		MyData_CharacterMeshSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
 }
 
@@ -260,7 +260,7 @@ void UCsAnimInstance_Character::OnTick_Handle_Data_CharacterMeshSkin()
 	// CharacterMaterialSkin
 #pragma region
 
-ACsData_CharacterMaterialSkin* UCsAnimInstance_Character::GetData_CharacterMaterialSkin()
+UCsData_CharacterMaterialSkin* UCsAnimInstance_Character::GetData_CharacterMaterialSkin()
 {
 	return Data_CharacterMaterialSkin.Get();
 }
@@ -272,7 +272,7 @@ void UCsAnimInstance_Character::LoadData_CharacterMaterialSkin()
 
 	UCsCommon_Load::LoadTSoftClassPtr(DataString, Data_CharacterMaterialSkin.Data, Data_CharacterMaterialSkin.Data_Internal, CsDataString);
 
-	if (ACsData_CharacterMaterialSkin* MyData_CharacterMaterialSkin = GetData_CharacterMaterialSkin())
+	if (UCsData_CharacterMaterialSkin* MyData_CharacterMaterialSkin = GetData_CharacterMaterialSkin())
 		MyData_CharacterMaterialSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
 }
 
@@ -294,7 +294,7 @@ void UCsAnimInstance_Character::OnTick_Handle_Data_CharacterMaterialSkin()
 	// Weapon
 #pragma region
 
-ACsData_Weapon* UCsAnimInstance_Character::GetData_Weapon()
+UCsData_Weapon* UCsAnimInstance_Character::GetData_Weapon()
 {
 	return Data_Weapon.Get();
 }
@@ -306,7 +306,7 @@ void UCsAnimInstance_Character::LoadData_Weapon()
 
 	UCsCommon_Load::LoadTSoftClassPtr(DataString, Data_Weapon.Data, Data_Weapon.Data_Internal, CsDataString);
 
-	if (ACsData_Weapon* MyData_Weapon = GetData_Weapon())
+	if (UCsData_Weapon* MyData_Weapon = GetData_Weapon())
 		MyData_Weapon->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
 }
 
@@ -328,7 +328,7 @@ void UCsAnimInstance_Character::OnTick_Handle_Data_Weapon()
 	// WeaponMaterialSkin
 #pragma region
 
-ACsData_WeaponMaterialSkin* UCsAnimInstance_Character::GetData_WeaponMaterialSkin()
+UCsData_WeaponMaterialSkin* UCsAnimInstance_Character::GetData_WeaponMaterialSkin()
 {
 	return Data_WeaponMaterialSkin.Get();
 }
@@ -340,7 +340,7 @@ void UCsAnimInstance_Character::LoadData_WeaponMaterialSkin()
 
 	UCsCommon_Load::LoadTSoftClassPtr(DataString, Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, CsDataString);
 
-	if (ACsData_WeaponMaterialSkin* MyData_WeaponMaterialSkin = GetData_WeaponMaterialSkin())
+	if (UCsData_WeaponMaterialSkin* MyData_WeaponMaterialSkin = GetData_WeaponMaterialSkin())
 		MyData_WeaponMaterialSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
 }
 

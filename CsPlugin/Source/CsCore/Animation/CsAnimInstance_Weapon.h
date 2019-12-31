@@ -52,7 +52,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_WeaponPtr Data_Weapon;
 
-	class ACsData_Weapon* GetData_Weapon();
+	class UCsData_Weapon* GetData_Weapon();
 
 	template<typename T>
 	T* GetData_Weapon()
@@ -67,7 +67,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_WeaponMaterialSkinPtr Data_WeaponMaterialSkin;
 
-	class ACsData_WeaponMaterialSkin* GetData_WeaponMaterialSkin();
+	class UCsData_WeaponMaterialSkin* GetData_WeaponMaterialSkin();
 
 	template<typename T>
 	T* GetData_WeaponMaterialSkin()

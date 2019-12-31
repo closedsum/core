@@ -1,41 +1,39 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "GameFramework/Actor.h"
+
+#include "CoreUObject/Public/UObject/Object.h"
 #include "Types/CsTypes_Load.h"
-#include "Common/CsCommon_Load.h"
-#include "Managers/CsManager_Loading.h"
-#include "Types/CsTypes_Async.h"
 #include "CsDataMapping.generated.h"
 
 // Macros - Only use for CHILD of ACsDataMapping
 #pragma region
 
-#define CS_DATA_MAPPINGS_CLEAR_LOADED(TYPE) TYPE##_Loaded.Reset(); \
+#define RS_DATA_MAPPINGS_CLEAR_LOADED(TYPE) TYPE##_Loaded.Reset(); \
 											TYPE##_Loaded_Map.Reset();
 
-#define CS_GET_DATA_MAPPINGS(TYPE)	if (AssetType == ECsAssetType::TYPE) \
+#define RS_GET_DATA_MAPPINGS(TYPE)	if (DataType == NCsDataType::TYPE) \
 										return &TYPE;
 
-#define CS_GET_DATA_MAPPINGS_MAP(TYPE)	if (AssetType == ECsAssetType::TYPE) \
+#define RS_GET_DATA_MAPPINGS_MAP(TYPE)	if (DataType == NCsDataType::TYPE) \
 											return &TYPE##_Map;
 
-#define CS_ADD_LOADED_DATA_BY_SHORTCODE(MAPPING, CLASS, LOG, TYPE)	if (AssetType == ECsAssetType::TYPE) \
+#define RS_ADD_LOADED_DATA_BY_SHORTCODE(MAPPING, CLASS, LOG, TYPE)	if (DataType == NCsDataType::TYPE) \
 																	{ \
 																		if (TYPE##_Loaded_Map.Find(ShortCode)) \
 																		{ \
-																			UE_LOG(LOG, Warning, TEXT("%s::AddLoadedData: Attempting to Add AssetType: %s with ShortCode: %s which has ALREADY been Added."), #MAPPING, *(AssetType.Name), *ShortCode.ToString()); \
+																			UE_LOG(LOG, Warning, TEXT("%s::AddLoadedData: Attempting to Add DataType: %s with ShortCode: %s which has ALREADY been Added."), #MAPPING, *(DataType.Name), *ShortCode.ToString()); \
 																			return; \
 																		} \
 																		AddLoadData_Internal<CLASS>(TYPE, TYPE##_Loaded_Map, TYPE##_Loaded, ShortCode, InData); \
 																		return; \
 																	}
 
-#define CS_ADD_LOADED_DATA_BY_LOOKUPCODE(MAPPING, CLASS, LOG, TYPE)	if (AssetType == ECsAssetType::TYPE) \
+#define RS_ADD_LOADED_DATA_BY_LOOKUPCODE(MAPPING, CLASS, LOG, TYPE)	if (DataType == NCsDataType::TYPE) \
 																	{ \
 																		if (LookUpCode < TYPE.Num() && TYPE##_Loaded[LookUpCode]) \
 																		{ \
 																			const FName ShortCode = TYPE[LookUpCode].ShortCode; \
-																			UE_LOG(LOG, Warning, TEXT("%s::AddLoadedData: Attempting to Add AssetType: %s with ShortCode: %s and LookUpCode: %d which has ALREADY been Added."), #MAPPING, *(AssetType.Name), *ShortCode.ToString(), LookUpCode); \
+																			UE_LOG(LOG, Warning, TEXT("%s::AddLoadedData: Attempting to Add DataType: %s with ShortCode: %s and LookUpCode: %d which has ALREADY been Added."), #MAPPING, *(DataType.Name), *ShortCode.ToString(), LookUpCode); \
 																		} \
 																		else \
 																		{ \
@@ -44,19 +42,19 @@
 																		return; \
 																	}
 
-#define CS_GET_LOADED_DATA_BY_SHORTCODE(CLASS, TYPE) if (AssetType == ECsAssetType::TYPE) \
-														return GetLoadedData_Internal<ACsData, CLASS>(TYPE, TYPE##_Map, TYPE##_Loaded_Map, TYPE##_Loaded, ShortCode);
+#define RS_GET_LOADED_DATA_BY_SHORTCODE(CLASS, TYPE) if (DataType == NCsDataType::TYPE) \
+														return GetLoadedData_Internal<ICsData, CLASS>(TYPE, TYPE##_Map, TYPE##_Loaded_Map, TYPE##_Loaded, ShortCode);
 
-#define CS_GET_LOADED_DATA_OUT(CLASS, TYPE) if (CLASS** Data = TYPE##_Loaded_Map.Find(ShortCode)) \
+#define RS_GET_LOADED_DATA_OUT(CLASS, TYPE) if (CLASS** Data = TYPE##_Loaded_Map.Find(ShortCode)) \
 											{ \
-												OutAssetType = ECsAssetType::TYPE; \
+												OutDataType = NCsDataType::TYPE; \
 												return *Data; \
 											}
 
-#define CS_GET_LOADED_DATA_BY_LOOKUPCODE(CLASS, TYPE)	if (AssetType == ECsAssetType::TYPE) \
-															return GetLoadedData_Internal<ACsData, CLASS>(TYPE, TYPE##_Loaded_Map, TYPE##_Loaded, LookUpCode);
+#define RS_GET_LOADED_DATA_BY_LOOKUPCODE(CLASS, TYPE)	if (DataType == NCsDataType::TYPE) \
+															return GetLoadedData_Internal<ICsData, CLASS>(TYPE, TYPE##_Loaded_Map, TYPE##_Loaded, LookUpCode);
 
-#define CS_GET_LOADED_DATAS(TYPE)	if (AssetType == ECsAssetType::TYPE) \
+#define RS_GET_LOADED_DATAS(TYPE)	if (DataType == NCsDataType::TYPE) \
 									{ \
 										TArray<FName> Keys; \
 										TYPE##_Loaded_Map.GetKeys(Keys); \
@@ -72,140 +70,71 @@
 
 #pragma endregion Macros
 
-DECLARE_DELEGATE_TwoParams(FBindableDynEvent_CsDataMapping_OnGetLoadAssetsShortCodes, const FECsLoadAssetsType&, TArray<FName>&);
-
-// Structs
-#pragma region
-
-USTRUCT(BlueprintType)
-struct FCsDataMappingFindEntry
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	bool Find;
-
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	FName ShortCode;
-
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
-	FString Message;
-
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
-	FString Output;
-};
-
-USTRUCT(BlueprintType)
-struct FCsDataMappingAddEntry
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	bool Add;
-
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	FName ShortCode;
-
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	FECsAssetType AssetType;
-
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
-	int32 LoadFlags;
-
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
-	FString Message;
-
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
-	FString Output;
-
-	FCsDataMappingAddEntry() :
-		Add(false),
-		ShortCode(NAME_None),
-		AssetType(EMCsAssetType::Get().GetMAX()),
-		LoadFlags(0),
-		Message(),
-		Output()
-
-	{
-		CS_SET_BLUEPRINT_BITFLAG(LoadFlags, ECsLoadFlags::All);
-		CS_SET_BLUEPRINT_BITFLAG(LoadFlags, ECsLoadFlags::Game);
-	}
-};
-
-USTRUCT(BlueprintType)
-struct FCsDataMappingRemoveEntry
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	bool Remove;
-
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	FName ShortCode;
-
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
-	FString Message;
-
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
-	FString Output;
-};
-
-USTRUCT(BlueprintType)
-struct FCsDataMappingValidate
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	bool Validate;
-
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
-	FString Message;
-
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
-	FString Output;
-};
-
-#pragma endregion Structs
-
 // Cache
 #pragma region
 
-namespace NCsDataMappingCache
+namespace NCsDataMappingCached
 {
 	namespace Str
 	{
-		extern CSCORE_API const FString LoadData;
+		extern RSCORE_API const FString LoadData;
 	}
 }
 
 #pragma endregion Cache
 
-UCLASS(Abstract, NotBlueprintable, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
-class CSCORE_API ACsDataMapping : public AActor
+class ICsData;
+
+UCLASS(Abstract, NotBlueprintable)
+class RSCORE_API UCsDataMapping : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
 	virtual void ClearLoaded();
 
-	virtual TArray<FCsDataMappingEntry>* GetDataMappings(const FECsAssetType &AssetType);
+// Mapping
+#pragma region
+protected:
 
-	virtual TMap<FName, FCsDataMappingEntry>* GetDataMappings_Map(const FECsAssetType &AssetType);
+	TArray<FCsDataMappingEntry>* GetDataMappings(const FECsDataType& DataType);
 
-	FCsDataMappingEntry* GetDataMappingEntry(const FECsAssetType &AssetType, const FName& ShortCode);
+	TMap<FName, FCsDataMappingEntry>* GetDataMappings_Map(const FECsDataType& DataType);
 
-	void GenerateMaps(const FECsAssetType &AssetType);
-	void GenerateMaps();
+	FCsDataMappingEntry* GetDataMappingEntry(const FECsDataType& DataType, const FName& ShortCode);
 
-	const FECsAssetType& GetDataAssetType(const FName &ShortCode);
+	/**
+	* Assign Datas_Entry and Datas_Entry_Map references from the entries setup in the child class.
+	* This should only be called ONCE.
+	*/
+	virtual void AssignDataMappingReferences();
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "00 Default")
-	TArray<FCsCategoryMemberAssociation> CategoryMemberAssociations;
+public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "00 Default")
-	TSubclassOf<class ACsData_Payload> Payload;
+	virtual void GenerateMaps();
 
-	UFUNCTION(BlueprintCallable, Category = "Payload")
-	class ACsData_Payload* GetPayload();
+protected:
+
+	TMap<FECsDataType, TArray<FCsDataMappingEntry>*> Datas_Entry;
+	TMap<FECsDataType, TMap<FName, FCsDataMappingEntry>*> Datas_Entry_Map;
+	TMap<FECsDataType, TArray<ICsData*>> Datas_Loaded;
+	TMap<FECsDataType, TMap<FName, ICsData*>> Datas_Loaded_Map;
+	TMap<FECsDataType, TMap<FName, uint16>> Datas_ShortCodeToLookUpCode_Map;
+	TMap<FECsDataType, TMap<uint16, FName>> Datas_LookUpCodeToShortCode_Map;
+
+#pragma endregion Mapping
+
+public:
+
+	const FECsDataType& GetDataType(const FName &ShortCode);
+
+	//UPROPERTY(VisibleDefaultsOnly, Category = "Data Mapping")
+	//TArray<FCsCategoryMemberAssociation> CategoryMemberAssociations;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data Mapping")
+	//TSubclassOf<class ACsData_Payload> Payload;
+
+	//UFUNCTION(BlueprintCallable, Category = "Payload")
+	//class ACsData_Payload* GetPayload();
 
 // Asset References
 #pragma region
@@ -213,27 +142,27 @@ public:
 
 	virtual void PreSave(const class ITargetPlatform* TargetPlatform) override;
 
-	bool DoesDataAssetReferenceExist(const FECsAssetType &AssetType, const FName &ShortCode);
-	bool DoesDataAssetReferenceExist(const FName &ShortCode);
+	bool DoesDataAssetReferenceExist(const FECsDataType& DataType, const FName& ShortCode);
+	bool DoesDataAssetReferenceExist(const FName& ShortCode);
 
-	bool AddDataAssetReference(const FECsAssetType &AssetType, const FName &ShortCode, AActor* InData);
+	bool AddDataAssetReference(const FECsDataType& DataType, const FName& ShortCode, ICsData* InData);
 
-	FStringAssetReference GetStringAssetReference(const FECsAssetType &AssetType, const FName &ShortCode);
-	FStringAssetReference GetStringAssetReference(const FECsAssetType &AssetType, const uint16 &LookUpCode);
+	FStringAssetReference GetStringAssetReference(const FECsDataType& DataType, const FName& ShortCode);
+	FStringAssetReference GetStringAssetReference(const FECsDataType& DataType, const uint16& LookUpCode);
 
-	void GetStringAssetReferences(const FECsAssetType &AssetType, const FName &ShortCode, const ECsLoadFlags &LoadFlags, TArray<FStringAssetReference> &OutReferences);
-	void GetStringAssetReferences(const FECsAssetType &AssetType, const uint16 &LookUpCode, const ECsLoadFlags &LoadFlags, TArray<FStringAssetReference> &OutReferences);
+	void GetStringAssetReferences(const FECsDataType& DataType, const FName& ShortCode, const ECsLoadFlags& LoadFlags, TArray<FStringAssetReference>& OutReferences);
+	void GetStringAssetReferences(const FECsDataType& DataType, const uint16& LookUpCode, const ECsLoadFlags& LoadFlags, TArray<FStringAssetReference>& OutReferences);
 
 	void PopulateDataAssetReferences();
 
 	TArray<FStringAssetReference> DataAssetReferences;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "00 Default")
+	UPROPERTY(VisibleDefaultsOnly, Category = "Data Mapping")
 	bool bForcePopulateAssetReferences;
 
 	void PopulateAssetReferences();
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "00 Default")
+	UPROPERTY(VisibleDefaultsOnly, Category = "Data Mapping")
 	FCsTArrayStringAssetReference AssetReferences[ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX];
 
 #pragma endregion Asset References
@@ -242,202 +171,100 @@ public:
 #pragma region
 public:
 
-	virtual ECsLoadFlags GetLoadAssetsFlags(const FECsLoadAssetsType &AssetsType);
-	virtual void GetLoadAssetsShortCodes(const FECsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes);
+	virtual ECsLoadFlags GetLoadAssetsFlags(const FECsDataCollectionType& CollectionType);
+	virtual void GetDataCollectionShortCodes(const FECsDataCollectionType& CollectionType, TArray<FName>& OutShortCodes);
 
-	FBindableDynEvent_CsDataMapping_OnGetLoadAssetsShortCodes OnGetLoadAssetsShortCodes_Event;
+	DECLARE_DELEGATE_TwoParams(FOnGetDataCollectionShortCodes, const FECsDataCollectionType&, TArray<FName>&);
 
-	virtual const FECsAssetType& GetAssetTypeFromShortCode(const FName &ShortCode);
+	FOnGetDataCollectionShortCodes OnGetDataCollectionShortCodes_Event;
 
-	virtual void GetLoadStringAssetReferences(const FECsLoadAssetsType &AssetsType, TArray<FStringAssetReference> &OutAssetReferences);
+	virtual const FECsDataType& GetDataTypeFromShortCode(const FName& ShortCode);
+
+	virtual void GetLoadStringAssetReferences(const FECsDataCollectionType& CollectionType, TArray<FStringAssetReference>& OutAssetReferences);
 
 	template<typename T>
-	void AsyncLoadAssets(const FECsLoadAssetsType &AssetsType, const TCsLoadAsyncOrder &AsyncOrder, T* CallbackCaller,  void (T::*Callback)(const TArray<UObject*>&, const float&))
+	void AsyncLoadAssets(const FECsDataCollectionType& CollectionType, const ECsLoadAsyncOrder& AsyncOrder, T* CallbackCaller,  void (T::*Callback)(const TArray<UObject*>&, const float&))
 	{
 		TArray<FStringAssetReference> References;
 
-		GetLoadStringAssetReferences(AssetsType, References);
+		GetLoadStringAssetReferences(CollectionType, References);
 
-		if (References.Num() == 0)
+		if (References.Num() == RS_EMPTY)
 		{
-			UE_LOG(LogLoad, Warning, TEXT("ACsDataMapping::AsyncLoadAssets: Trying to load 0 assets."));
+			UE_LOG(LogLoad, Warning, TEXT("UCsDataMapping::AsyncLoadAssets: Trying to load 0 assets."));
 
 			TArray<UObject*> LoadedAssets;
 			(CallbackCaller->*Callback)(LoadedAssets, 0.0f);
 			return;
 		}
-		UCsManager_Loading::Get()->LoadAssetReferences<T>(Cast<UObject>(CallbackCaller)->GetWorld(), References, AsyncOrder, CallbackCaller, Callback);
+		UCsManager_Load::Get()->LoadAssetReferences<T>(Cast<UObject>(CallbackCaller)->GetWorld(), References, AsyncOrder, CallbackCaller, Callback);
 	}
 
-	virtual void OnFinishedAsyncLoadingAssetsSetReferences(const FECsLoadAssetsType &AssetsType, const TArray<UObject*> &LoadedAssets);
+	virtual void OnFinishedAsyncLoadingAssetsSetReferences(const FECsDataCollectionType& CollectionType, const TArray<UObject*>& LoadedAssets);
 
-	ACsData* LoadData(const FName &ShortCode, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game);
-
-	template<typename T>
-	T* LoadData(const FString &FunctionName, const FECsAssetType &AssetType, const uint16 &LookUpCode, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
-	{
-		if (LookUpCode == INVALID_LOOK_UP_CODE_MAX)
-			return nullptr;
-
-		// Search Loaded Data TMaps / TArray
-		if (ACsData* Data = GetLoadedData(AssetType, LookUpCode))
-			return Data;
-
-		TArray<FCsDataMappingEntry>& Mapping = *GetDataMappings(AssetType);
-		const int32 Count					 = Mapping.Num();
-
-		if (LookUpCode > Count)
-		{
-			UE_LOG(LogLoad, Warning, TEXT("%s: Trying to load AssetType: %s. LookUpCode: %d does NOT exist."), *FunctionName, *(AssetType.Name), LookUpCode);
-			return nullptr;
-		}
-
-		// Load the Data
-		if (T* DataDOb = LoadData_Internal<T>(FunctionName, AssetType, Mapping[LookUpCode]))
-			return DataDOb;
-		UE_LOG(LogLoad, Warning, TEXT("%s: Trying to load AssetType: %s. LookUpCode: %d does NOT exist."), *FunctionName, *(AssetType.Name), LookUpCode);
-		return nullptr;
-	}
-
-	template<typename T>
-	T* LoadData(const FECsAssetType &AssetType, const uint16 &LookUpCode, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
-	{
-		return LoadData<T>(NCsDataMappingCache::Str::LoadData, AssetType, LookUpCode, LoadFlags);
-	}
-
-	template<typename T>
-	T* LoadData(const FString &FunctionName, const FECsAssetType &AssetType, const uint8 &LookUpCode, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
-	{
-		if (LookUpCode == CS_INVALID_LOOK_UP_CODE)
-			return nullptr;
-
-		// Search Loaded Data TMaps / TArray
-		if (ACsData* Data = GetLoadedData(AssetType, LookUpCode))
-			return Data;
-
-		TArray<FCsDataMappingEntry>& Mapping = *GetDataMappings(AssetType);
-		const int32 Count					 = Mapping.Num();
-
-		if (LookUpCode > Count)
-		{
-			UE_LOG(LogLoad, Warning, TEXT("%s: Trying to load AssetType: %s. LookUpCode: %d does NOT exist."), *FunctionName, *(AssetType.Name), LookUpCode);
-			return nullptr;
-		}
-
-		// Load the Data
-		if (T* DataDOb = LoadData_Internal<T>(FunctionName, AssetType, Mapping[LookUpCode]))
-			return DataDOb;
-		UE_LOG(LogLoad, Warning, TEXT("%s: Trying to load AssetType: %s. LookUpCode: %d does NOT exist."), *FunctionName, *(AssetType.Name), LookUpCode);
-		return nullptr;
-	}
-
-	template<typename T>
-	T* LoadData(const FECsAssetType &AssetType, const uint8 &LookUpCode, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
-	{
-		return LoadData<T>(NCsDataMappingCache::Str::LoadData, AssetType, LookUpCode, LoadFlags);
-	}
-
-	template<typename T>
-	T* LoadData(const FString &FunctionName, const FECsAssetType &AssetType, const FName &ShortCode, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
-	{
-		if (ShortCode == NAME_None)
-			return nullptr;
-
-		// Search Loaded Data TMaps
-		if (ACsData* Data = GetLoadedData(AssetType, ShortCode))
-			return Cast<T>(Data);
-
-		// Search TMap
-		TMap<FName, FCsDataMappingEntry>& Map = *GetDataMappings_Map(AssetType);
-
-		if (FCsDataMappingEntry* Entry = Map.Find(ShortCode))
-		{
-			// Load the Data
-			if (T* DataDOb = LoadData_Internal<T>(FunctionName, AssetType, *Entry, LoadFlags))
-				return DataDOb;
-		}
-
-		// Search TArray
-		TArray<FCsDataMappingEntry>& Mapping = *GetDataMappings(AssetType);
-		const int32 Count					 = Mapping.Num();
-
-		for (int32 Index = 0; Index < Count; Index++)
-		{
-			if (ShortCode != Mapping[Index].ShortCode)
-				continue;
-
-			// Load the Data
-			if (T* DataDOb = LoadData_Internal<T>(FunctionName, AssetType, Mapping[Index], LoadFlags))
-				return DataDOb;
-		}
-		UE_LOG(LogLoad, Warning, TEXT("%s: Trying to load AssetType: %s. ShortCode: %s does NOT exist."), *FunctionName, *(AssetType.Name), *ShortCode.ToString());
-		return nullptr;
-	}
-
-	template<typename T>
-	T* LoadData(const FECsAssetType &AssetType, const FName &ShortCode, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
-	{
-		return LoadData<T>(NCsDataMappingCache::Str::LoadData, AssetType, ShortCode, LoadFlags);
-	}
-
-	template<typename T>
-	T* LoadData_Internal(const FECsAssetType &AssetType, FCsDataMappingEntry& Mapping, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
-	{
-		return LoadData_Internal<T>(NCsDataMappingCache::Str::LoadData, AssetType, Mapping, LoadFlags);
-	}
-
-	template<typename T>
-	T* LoadData_Internal(const FString &FunctionName, const FECsAssetType &AssetType, FCsDataMappingEntry& Mapping, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
-	{
-		// Load the Data
-		ACsData* OutAsset;
-
-		UCsCommon_Load::LoadTSoftClassPtr<ACsData>(Mapping.Data, OutAsset, TEXT("Actor"));
-
-		T* DataDOb = Cast<T>(OutAsset);
-
-		if (!DataDOb)
-		{
-			const FString ShortCode		   = Mapping.ShortCode.ToString();
-			const FString AssetDescription = UCsCommon_Load::GetAssetDescription<ACsData>(Mapping.Data);
-
-			UE_LOG(LogLoad, Warning, TEXT("%s: Failed to load data using Short Code: %s with Path Location: %s"), *FunctionName, *ShortCode, *AssetDescription);
-			return nullptr;
-		}
-
-		ACsData* Data = CastChecked<ACsData>(DataDOb);
-
-		AddLoadedData(AssetType, Mapping.ShortCode, Data);
-		Data->Load(LoadFlags);
-
-		FString Name = Data->ShortCode == CS_INVALID_SHORT_CODE || Data->ShortCode == NAME_None ? Data->GetName() : Data->ShortCode.ToString();
-		checkf(Data->IsValid(), TEXT("%s: Data: %s is NOT Valid"), *FunctionName, *Name);
-		return DataDOb;
-	}
-
-	template<typename T>
-	void LoadAllData(const FString &FunctionName, const FECsAssetType &AssetType, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
-	{
-		TArray<FCsDataMappingEntry>& Mapping = *GetDataMappings(AssetType);
-		const int32 Count					 = Mapping.Num();
-
-		for (int32 Index = 0; Index < Count; Index++)
-		{
-			LoadData<T>(FunctionName, AssetType, Mapping[Index], LoadFlags);
-		}
-	}
-
-	// Add
+	// ShortCode
 #pragma region
 public:
 
-	virtual void AddLoadedData(const FECsAssetType &AssetType, const FName &ShortCode, ACsData* InData);
-protected:
+	ICsData* LoadData(const FString& FunctionName, const FECsDataType& DataType, const FName& ShortCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+	ICsData* LoadData(const FECsDataType& DataType, const FName& ShortCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+	ICsData* LoadData(const FName& ShortCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+
 	template<typename T>
-	void AddLoadData_Internal(TArray<FCsDataMappingEntry> &Datas, TMap<FName, T*> &Datas_Loaded_Map, TArray<T*> &Datas_Loaded, const FName &ShortCode, ACsData* InData)
+	T* LoadData(const FString& FunctionName, const FECsDataType& DataType, const FName& ShortCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game)
+	{
+		return Cast<T>(LoadData(FunctionName, DataType, ShortCode, LoadFlags));
+	}
+
+	template<typename T>
+	T* LoadData(const FECsDataType& DataType, const FName& ShortCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game)
+	{
+		return Cast<T>(LoadData(NCsDataMappingCached::Str::LoadData, DataType, ShortCode, LoadFlags));
+	}
+
+#pragma endregion ShortCode
+
+	// LookUpCode
+#pragma region
+public:
+
+	ICsData* LoadData(const FString& FunctionName, const FECsDataType& DataType, const uint16& LookUpCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+	ICsData* LoadData(const FECsDataType& DataType, const uint16& LookUpCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+
+	template<typename T>
+	T* LoadData(const FECsDataType& DataType, const uint16& LookUpCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game)
+	{
+		return Cast<T>(LoadData(NCsDataMappingCached::Str::LoadData, DataType, LookUpCode, LoadFlags));
+	}
+
+	template<typename T>
+	T* LoadData(const FString& FunctionName, const FECsDataType& DataType, const uint16& LookUpCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game)
+	{
+		return Cast<T>(LoadData(FunctionName, DataType, LookUpCode, LoadFlags));
+	}
+
+#pragma endregion LookUpCode
+
+protected:
+
+	ICsData* LoadData_Internal(const FString& FunctionName, const FECsDataType& DataType, FCsDataMappingEntry& Mapping, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+	ICsData* LoadData_Internal(const FECsDataType& DataType, FCsDataMappingEntry& Mapping, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+
+public:
+
+	void LoadAllData(const FString& FunctionName, const FECsDataType& DataType, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+
+	// Add
+#pragma region
+protected:
+
+	virtual void AddLoadedData(const FECsDataType& DataType, const FName& ShortCode, ICsData* InData);
+
+	template<typename T>
+	void AddLoadData_Internal(const TArray<FCsDataMappingEntry>& Datas, TMap<FName, T*>& OutDatas_Loaded_Map, TArray<T*>& OutDatas_Loaded, const FName& ShortCode, ICsData* InData)
 	{
 		const uint16 Count = Datas.Num();
-		uint16 LookUpCode  = CS_INVALID_LOOK_UP_CODE_MAX;
+		uint16 LookUpCode  = RS_INVALID_LOOK_UP_CODE;
 
 		for (uint16 I = 0; I < Count; ++I)
 		{
@@ -448,42 +275,44 @@ protected:
 			}
 		}
 
-		Datas_Loaded_Map.Add(ShortCode, Cast<T>(InData));
-		Datas_Loaded_Map.KeySort(TLess<FName>());
+		OutDatas_Loaded_Map.Add(ShortCode, Cast<T>(InData));
+		OutDatas_Loaded_Map.KeySort(TLess<FName>());
 
-		if (Datas_Loaded.Num() == CS_EMPTY)
+		if (OutDatas_Loaded.Num() == RS_EMPTY)
 		{
 			for (uint16 I = 0; I < Count; ++I)
 			{
-				Datas_Loaded.Add(nullptr);
+				OutDatas_Loaded.Add(nullptr);
 			}
 		}
-		Datas_Loaded[LookUpCode] = Cast<T>(InData);
+		OutDatas_Loaded[LookUpCode] = Cast<T>(InData);
 	}
-public:
-	virtual void AddLoadedData(const FECsAssetType &AssetType, const uint16 &LookUpCode, ACsData* InData);
-protected:
+
+	virtual void AddLoadedData(const FECsDataType& DataType, const uint16& LookUpCode, ICsData* InData);
+
 	template<typename T>
-	void AddLoadData_Internal(TArray<FCsDataMappingEntry> &Datas, TMap<FName, T*> &Datas_Loaded_Map, TArray<T*> &Datas_Loaded, const uint16 &LookUpCode, ACsData* InData)
+	void AddLoadData_Internal(const TArray<FCsDataMappingEntry>& Datas, TMap<FName, T*>& OutDatas_Loaded_Map, TArray<T*>& OutDatas_Loaded, const uint16& LookUpCode, ICsData* InData)
 	{
 		const FName ShortCode = Datas[LookUpCode].ShortCode;
-		T** Data			  = Datas_Loaded_Map.Find(ShortCode);
+		T** Data			  = OutDatas_Loaded_Map.Find(ShortCode);
 
-		check(InData == *Data);
+		T* DataOb = Cast<T>(InData->GetObject());
 
-		Datas_Loaded_Map.Add(ShortCode, Cast<T>(InData));
-		Datas_Loaded_Map.KeySort(TLess<FName>());
+		check(DataOb == *Data);
 
-		if (Datas_Loaded.Num() == CS_EMPTY)
+		OutDatas_Loaded_Map.Add(ShortCode, DataOb);
+		OutDatas_Loaded_Map.KeySort(TLess<FName>());
+
+		if (OutDatas_Loaded.Num() == RS_EMPTY)
 		{
 			const uint16 Count = Datas.Num();
 
 			for (uint16 I = 0; I < Count; ++I)
 			{
-				Datas_Loaded.Add(nullptr);
+				OutDatas_Loaded.Add(nullptr);
 			}
 		}
-		Datas_Loaded[LookUpCode] = Cast<T>(InData);
+		OutDatas_Loaded[LookUpCode] = DataOb;
 	}
 
 #pragma endregion Add
@@ -492,20 +321,20 @@ protected:
 #pragma region
 public:
 
-	virtual class ACsData* GetLoadedData(const FECsAssetType &AssetType, const FName &ShortCode);
+	virtual ICsData* GetLoadedData(const FECsDataType& DataType, const FName& ShortCode);
 protected:
 	template<typename T, typename U>
-	T* GetLoadedData_Internal(TArray<FCsDataMappingEntry> &Datas, TMap<FName, FCsDataMappingEntry> &Datas_Map, TMap<FName, U*> &Datas_Loaded_Map, TArray<U*> &Datas_Loaded, const FName &ShortCode)
+	T* GetLoadedData_Internal(const TArray<FCsDataMappingEntry>& Datas, const TMap<FName, FCsDataMappingEntry>& Datas_Map, const TMap<FName, U*>& InDatas_Loaded_Map, TArray<U*>& OutDatas_Loaded, const FName& ShortCode)
 	{
-		U** Data = Datas_Loaded_Map.Find(ShortCode);
+		U** Data = InDatas_Loaded_Map.Find(ShortCode);
 
-		if (Datas_Loaded.Num() == CS_EMPTY)
+		if (OutDatas_Loaded.Num() == RS_EMPTY)
 		{
 			const uint16 Count = Datas.Num();
 
 			for (uint16 I = 0; I < Count; ++I)
 			{
-				Datas_Loaded.Add(nullptr);
+				OutDatas_Loaded.Add(nullptr);
 			}
 		}
 
@@ -513,37 +342,37 @@ protected:
 			return nullptr;
 
 		FCsDataMappingEntry* Entry = Datas_Map.Find(ShortCode);
-		const uint16 LookUpCode	   = Entry->LookUpCode;
-		Datas_Loaded[LookUpCode]   = *Data;
+		const uint16& LookUpCode   = Entry->LookUpCode;
+		OutDatas_Loaded[LookUpCode]= *Data;
 
 		return Cast<T>(*Data);
 	}
 public:
-	virtual class ACsData* GetLoadedData(const FName &ShortCode, FECsAssetType &OutAssetType);
-	virtual class ACsData* GetLoadedData(const FName &ShortCode);
-	virtual class ACsData* GetLoadedData(const FECsAssetType &AssetType, const uint16 &LookUpCode);
+	virtual ICsData* GetLoadedData(const FName& ShortCode, FECsDataType& OutDataType);
+	virtual ICsData* GetLoadedData(const FName& ShortCode);
+	virtual ICsData* GetLoadedData(const FECsDataType& DataType, const uint16& LookUpCode);
 protected:
 	template<typename T, typename U>
-	T* GetLoadedData_Internal(TArray<FCsDataMappingEntry> &Datas, TMap<FName, U*> &Datas_Loaded_Map, TArray<U*> &Datas_Loaded, const uint16 &LookUpCode)
+	T* GetLoadedData_Internal(const TArray<FCsDataMappingEntry>& Datas, const TMap<FName, U*>& InDatas_Loaded_Map, TArray<U*>& OutDatas_Loaded, const uint16& LookUpCode)
 	{
 		const FName ShortCode = Datas[LookUpCode].ShortCode;
-		U** Data			  = Datas_Loaded_Map.Find(ShortCode);
+		U** Data			  = InDatas_Loaded_Map.Find(ShortCode);
 
-		if (Datas_Loaded.Num() == CS_EMPTY)
+		if (OutDatas_Loaded.Num() == RS_EMPTY)
 		{
 			uint16 Count = Datas.Num();
 
 			for (uint16 I = 0; I < Count; ++I)
 			{
-				Datas_Loaded.Add(nullptr);
+				OutDatas_Loaded.Add(nullptr);
 			}
 		}
-		Datas_Loaded[LookUpCode] = *Data;
+		OutDatas_Loaded[LookUpCode] = *Data;
 		return Cast<T>(*Data);
 	}
 public:
-	virtual void GetLoadedDatas(const FECsAssetType &AssetType, TArray<ACsData*> &OutDatas);
-	virtual void GetLoadedDataShortCodes(const FECsAssetType &AssetType, TArray<FName> &OutShortCodes);
+	virtual void GetLoadedDatas(const FECsDataType& DataType, TArray<ICsData*>& OutDatas);
+	virtual void GetLoadedDataShortCodes(const FECsDataType& DataType, TArray<FName>& OutShortCodes);
 
 #pragma endregion Get
 
@@ -553,14 +382,10 @@ public:
 #pragma region
 public:
 
-	template<typename T>
-	bool CheckDataIsValid(const FString &FunctionName, const FECsAssetType &AssetType, const FName &ShortCode, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game);
+	bool CheckDataIsValid(const FString& FunctionName, const FECsDataType& DataType, const FName& ShortCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+	bool CheckDataIsValid(const FString& FunctionName, const FECsDataType& DataType, FCsDataMappingEntry& Mapping, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
 
-	template<typename T>
-	bool CheckDataIsValid(const FString &FunctionName, const FECsAssetType &AssetType, FCsDataMappingEntry& Mapping, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game);
-
-	template<typename T>
-	bool CheckAllDataIsValid(const FString &FunctionName, const FECsAssetType &AssetType, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game);
+	bool CheckAllDataIsValid(const FString& FunctionName, const FECsDataType& DataType, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
 
 #pragma endregion IsValid
 	
@@ -568,9 +393,9 @@ public:
 #pragma region
 public:
 
-	FName GetShortCode(const FECsAssetType &AssetType, const uint16 &LookUpCode);
+	FName GetShortCode(const FECsDataType& DataType, const uint16& LookUpCode);
 
-	uint16 GetLookUpCode(const FECsAssetType &AssetType, const FName &ShortCode);
+	uint16 GetLookUpCode(const FECsDataType& DataType, const FName& ShortCode);
 
 #pragma endregion Get
 
@@ -581,48 +406,48 @@ public:
 
 	virtual FString GetAbsolutePath();
 
-	TCsWriteObjectToJson_Internal WriteObjectToJson_Internal;
-	TCsReadObjectFromJson_Internal ReadObjectFromJson_Internal;
+	//TCsWriteObjectToJson_Internal WriteObjectToJson_Internal;
+	//TCsReadObjectFromJson_Internal ReadObjectFromJson_Internal;
 
 	virtual void SaveToJson();
 
-	bool HasLoadedFromJson;
+	bool bHasLoadedFromJson;
 
 	virtual void LoadFromJson();
 
 #pragma endregion Json
 
-// 99 Editor
+// Editor
 #pragma region
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-99 Editor")
+/*
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data Mapping|Editor")
 	FCsDataMappingFindEntry FindEntry;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-99 Editor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data Mapping|Editor")
 	FCsDataMappingAddEntry AddEntry;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-99 Editor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data Mapping|Editor")
 	FCsDataMappingRemoveEntry RemoveEntry;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-99 Editor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data Mapping|Editor")
 	FCsDataMappingValidate Validate;
 
 #if WITH_EDITOR
 
-	bool PerformFindEntry(const FName &ShortCode, TArray<FCsDataMappingEntry*> &OutEntries, TArray<FECsAssetType> &OutAssetTypes, TArray<int32> &OutIndices);
-	bool PerformAddEntry(const FName &ShortCode, const FECsAssetType &AssetType, const int32 &LoadFlags, FString &OutMessage, FString &OutOutput);
-	bool PerformAddEntry(const FName &ShortCode, const int32 &LoadFlags, FString &OutMessage, FString &OutOutput);
+	bool PerformFindEntry(const FName& ShortCode, TArray<FCsDataMappingEntry*>& OutEntries, TArray<FECsDataType>& OutDataTypes, TArray<int32>& OutIndices);
+	bool PerformAddEntry(const FName& ShortCode, const FECsDataType& DataType, const int32& LoadFlags, FString& OutMessage, FString& OutOutput);
+	bool PerformAddEntry(const FName& ShortCode, const int32& LoadFlags, FString& OutMessage, FString& OutOutput);
 	
 	virtual bool IsValid();
-	virtual bool PerformValidate(FString &OutMessage, FString &OutOutput);
+	virtual bool PerformValidate(FString& OutMessage, FString& OutOutput);
 
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
 
-	bool CheckEntryExists(const FName &ShortCode, const FECsAssetType &AssetType, const TCsLoadFlags_Editor &LoadFlags, FString &OutMessage);
+	bool CheckEntryExists(const FName& ShortCode, const FECsDataType& DataType, const ECsLoadFlags_Editor& LoadFlags, FString& OutMessage);
 
 #endif // #if WITH_EDITOR
 
 	FCsMutex AsyncTaskMutex;
-
-#pragma endregion 99 Editor
+*/
+#pragma endregion Editor
 };

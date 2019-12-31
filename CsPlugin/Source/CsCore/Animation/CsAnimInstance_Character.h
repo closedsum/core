@@ -65,7 +65,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_CharacterPtr Data_Character;
 
-	class ACsData_Character* GetData();
+	class UCsData_Character* GetData();
 
 	template<typename T>
 	T* GetData()
@@ -90,7 +90,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_CharacterMeshSkinPtr Data_CharacterMeshSkin;
 
-	class ACsData_CharacterMeshSkin* GetData_CharacterMeshSkin();
+	class UCsData_CharacterMeshSkin* GetData_CharacterMeshSkin();
 
 	template<typename T>
 	T* GetData_CharacterMeshSkin()
@@ -115,7 +115,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_CharacterMaterialSkinPtr Data_CharacterMaterialSkin;
 
-	class ACsData_CharacterMaterialSkin* GetData_CharacterMaterialSkin();
+	class UCsData_CharacterMaterialSkin* GetData_CharacterMaterialSkin();
 
 	template<typename T>
 	T* GetData_CharacterMaterialSkin()
@@ -140,7 +140,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_WeaponPtr Data_Weapon;
 
-	class ACsData_Weapon* GetData_Weapon();
+	class UCsData_Weapon* GetData_Weapon();
 
 	template<typename T>
 	T* GetData_Weapon()
@@ -165,7 +165,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_WeaponMaterialSkinPtr Data_WeaponMaterialSkin;
 
-	class ACsData_WeaponMaterialSkin* GetData_WeaponMaterialSkin();
+	class UCsData_WeaponMaterialSkin* GetData_WeaponMaterialSkin();
 
 	template<typename T>
 	T* GetData_WeaponMaterialSkin()

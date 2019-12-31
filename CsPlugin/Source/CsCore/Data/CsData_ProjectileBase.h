@@ -1,17 +1,19 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Data/CsData.h"
+#include "Data/CsData_Impl.h"
 #include "Types/CsTypes_View.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
 #include "Types/CsTypes_FX.h"
 #include "CsData_ProjectileBase.generated.h"
 
-UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
-class CSCORE_API ACsData_ProjectileBase : public ACsData
+class UCsData_ProjectileImpact;
+
+UCLASS(Abstract)
+class CSCORE_API UCsData_ProjectileBase : public UCsData_Impl
 {
 	GENERATED_UCLASS_BODY()
 
-	virtual void Load(const ECsLoadFlags &LoadFlags = ECsLoadFlags::All) override;
+	virtual void Load(const ECsLoadFlags& LoadFlags = ECsLoadFlags::All) override;
 
 	virtual const FECsProjectile& GetProjectileType();
 
@@ -44,7 +46,7 @@ public:
 	virtual ECsProjectileMovement GetMovementType();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	virtual FVector EvaluateMovementFunction(const float &Time, const FVector &Location, const FTransform &Transform);
+	virtual FVector EvaluateMovementFunction(const float& Time, const FVector& Location, const FTransform& Transform);
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	virtual const float& GetInitialSpeed();
@@ -74,7 +76,7 @@ public:
 	virtual const bool& CanDamageRadial();
 
 	UFUNCTION(BlueprintCallable, Category = "Damage")
-	virtual float GetDamageRadial(const FVector &Origin, const FVector &Location);
+	virtual float GetDamageRadial(const FVector& Origin, const FVector& Location);
 
 #pragma endregion Damage
 
@@ -83,13 +85,13 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
-	virtual UStaticMesh* GetMesh(const TEnumAsByte<ECsViewType::Type> &ViewType);
+	virtual UStaticMesh* GetMesh(const TEnumAsByte<ECsViewType::Type>& ViewType);
 
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
-	virtual float GetDrawDistance(const TEnumAsByte<ECsViewType::Type> &ViewType);
+	virtual float GetDrawDistance(const TEnumAsByte<ECsViewType::Type>& ViewType);
 
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
-	virtual float GetDrawDistanceSq(const TEnumAsByte<ECsViewType::Type> &ViewType);
+	virtual float GetDrawDistanceSq(const TEnumAsByte<ECsViewType::Type>& ViewType);
 
 #pragma endregion Mesh
 
@@ -132,7 +134,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "FX")
 	virtual const bool& GetUseTrailFX();
 
-	virtual FCsFxElement* GetTrailFX(const TCsViewType &ViewType);
+	virtual FCsFxElement* GetTrailFX(const TCsViewType& ViewType);
 
 #pragma endregion FX
 
@@ -140,7 +142,7 @@ public:
 #pragma region
 public:
 
-	virtual class ACsData_ProjectileImpact* GetData_Impact();
+	virtual UCsData_ProjectileImpact* GetData_Impact();
 
 #pragma endregion Impact
 };

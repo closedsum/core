@@ -1,181 +1,278 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "GameFramework/Actor.h"
+
+#include "UObject/Interface.h"
 #include "Types/CsTypes_Load.h"
+#include "Containers/CsInterfaceObject.h"
 #include "CsData.generated.h"
 
-// Macros
-#pragma region
-
-#define CS_DATA_DEFINE_LOAD_INTERNAL_FUNCTION_POINTERS(CLASS)	GetAssetReferencesFromObject_Internal = &CLASS::GetAssetReferencesFromObject_Internal; \
-																LoadObjectWithTSoftObjectPtrs_Internal = &CLASS::LoadObjectWithTSoftObjectPtrs_Internal; \
-																WriteObjectToJson_Internal = &CLASS::WriteObjectToJson_Internal; \
-																ReadObjectFromJson_Internal = &CLASS::ReadObjectFromJson_Internal;
-
-#pragma endregion Macros
-
-// Structs
-#pragma region
-
-USTRUCT(BlueprintType)
-struct FCsDataAddToDataMapping
+UINTERFACE(Blueprintable)
+class UCsData : public UInterface
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_UINTERFACE_BODY()
+};
 
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	bool AddToDataMapping;
+class ICsData
+{
+	GENERATED_IINTERFACE_BODY()
 
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
-	int32 LoadFlags;
+public:
+	
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const FECsDataType& GetType() const = 0;
 
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
-	FString Message;
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const FName& GetShortCode() const = 0;
 
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
-	FString Output;
+	/**
+	*
+	*
+	* @param LoadFlags
+	* return
+	*/
+	virtual bool IsValid(const ECsLoadFlags& LoadFlags = ECsLoadFlags::All) = 0;
 
-	FCsDataAddToDataMapping() :
-		AddToDataMapping(false),
-		LoadFlags(0),
-		Message(),
-		Output()
+	/**
+	*
+	*
+	* @param LoadFlags
+	*/
+	virtual void Load(const ECsLoadFlags& LoadFlags = ECsLoadFlags::All) = 0;
+
+	/**
+	*
+	*
+	*
+	*/
+	virtual void Unload() = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual bool IsLoaded() const = 0;
+};
+
+// FCsData
+#pragma region
+
+struct CSCORE_API FCsData : public TCsInterfaceObject<ICsData>
+{
+private:
+
+	typedef TCsInterfaceObject<ICsData> Super;
+
+public:
+
+	static const FCsData Empty;
+
+	// Script
+#pragma region
+public:
+
+	/**
+	* Delegate type for getting the Type associated with a Data.
+	*  The Data implements a script interface of type: ICsData and the UClass
+	*  associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true.
+	*
+	* @param Object		Object->GetClass() that implements the interface: ICsData.
+	* return Cache		The cache associated with the Pooled Object.
+	*/
+	DECLARE_DELEGATE_TwoParams(FScript_GetType, UObject* /*Object*/, FECsDataType& /*OutDatatType*/);
+
+	/** Delegate for getting the Type associated with a Data.
+		 The Data implements a script interface of type: ICsData. */
+	FScript_GetType Script_GetType_Impl;
+	
+private:
+
+	FECsDataType Internal_Script_GetType_OutDataType;
+
+public:
+
+	/**
+	* Delegate type for getting the Short Code associated with a Data.
+	*  The Short Code a unique FName associated with a Data.
+	*  The Data implements a script interface of type: ICsData and the UClass
+	*  associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true.
+	*
+	* @param Object		Object->GetClass() that implements the interface: ICsData.
+	* @param Payload	A "blob" of parameters to pass in when allocating a Pooled Object.
+	*/
+	DECLARE_DELEGATE_TwoParams(FScript_GetShortCode, UObject* /*Object*/, FName& /*OutShortCode*/);
+
+	/** Delegate type for getting the Short Code associated with a Data.
+		 The Data implements a script interface of type: ICsData and the UClass
+		 associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true. */
+	FScript_GetShortCode Script_GetShortCode_Impl;
+
+private:
+
+	FName Internal_Script_GetShortCode_OutShortCode;
+
+public:
+
+	/**
+	* Delegate type for checking whether a Data is valid for the given Load Flags.
+	*  The Data implements a script interface of type: ICsData and the UClass
+	*  associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true.
+	*
+	* @param Object		Object->GetClass() that implements the interface: ICsData.
+	* @param LoadFlags	Subsets of a Data to test whether they have actually loaded.
+	* return			Whether the subsets of Data have successful loaded or not.
+	*/
+	DECLARE_DELEGATE_RetVal_TwoParams(bool /*IsValid*/, FScript_IsValid, UObject* /*Object*/, const ECsLoadFlags& /*LoadFlags*/);
+
+	/** Delegate type for checking whether a Data is valid for the given Load Flags. 
+		 The Data implements a script interface of type: ICsData and the UClass
+		 associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true. */
+	FScript_IsValid Script_IsValid_Impl;
+	
+	/**
+	* Delegate type for loading a Data with the given Load Flags.
+	*  The Data implements a script interface of type: ICsData and the UClass
+	*  associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true.
+	*
+	* @param Object		Object->GetClass() that implements the interface: ICsData.
+	* @param LoadFlags	Subsets of a Data to test whether they have actually loaded.
+	*/
+	DECLARE_DELEGATE_TwoParams(FScript_Load, UObject* /*Object*/, const ECsLoadFlags& /*LoadFlags*/);
+
+	/** Delegate type for loading a Data with the given Load Flags.
+		 The Data implements a script interface of type: ICsData and the UClass
+		 associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true. */
+	FScript_Load Script_Load_Impl;
+
+	/**
+	* Delegate type for unloading a Data.
+	*  The Data implements a script interface of type: ICsData and the UClass
+	*  associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true.
+	*
+	* @param Object		Object->GetClass() that implements the interface: ICsData.
+	*/
+	DECLARE_DELEGATE_OneParam(FScript_Unload, UObject* /*Object*/);
+
+	/** Delegate type for unloading a Data.
+		 The Data implements a script interface of type: ICsData and the UClass
+		 associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true. */
+	FScript_Unload Script_Unload_Impl;
+
+	/**
+	* Delegate type to determine if a Data is loaded.
+	*  The Data implements a script interface of type: ICsData and the UClass
+	*  associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true.
+	*
+	* @param Object		Object->GetClass() that implements the interface: ICsData.
+	* return			Whether the data is loaded or not.
+	*/
+	DECLARE_DELEGATE_RetVal_OneParam(bool /*IsLoaded*/, FScript_IsLoaded, UObject* /*Object*/);
+
+	/** Delegate type for unloading a Data.
+		 The Data implements a script interface of type: ICsData and the UClass
+		 associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true. */
+	FScript_IsLoaded Script_IsLoaded_Impl;
+
+#pragma endregion Script
+
+public:
+
+	FCsData() :
+		Super(),
+		Script_GetType_Impl(),
+		Script_GetShortCode_Impl(),
+		Script_IsValid_Impl(),
+		Script_Load_Impl(),
+		Script_Unload_Impl(),
+		Script_IsLoaded_Impl()
 	{
-		CS_SET_BLUEPRINT_BITFLAG(LoadFlags, ECsLoadFlags::Game);
 	}
-};
 
-USTRUCT(BlueprintType)
-struct FCsDataAddToPayload
-{
-	GENERATED_USTRUCT_BODY()
+	virtual ~FCsData() {}
 
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	bool AddToPayload;
-
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	FECsLoadAssetsType LoadAssetsType;
-
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
-	TEnumAsByte<ECsLoadFlags_Editor::Type> LoadFlags;
-
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
-	FString Message;
-
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
-	FString Output;
-};
-
-USTRUCT(BlueprintType)
-struct FCsDataLoadFromJson
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	bool Load;
-};
-
-#pragma endregion Structs
-
-UCLASS(Abstract, NotBlueprintable, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
-class CSCORE_API ACsData : public AActor
-{
-	GENERATED_UCLASS_BODY()
-
-	// Default
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Default")
-	FECsAssetType Type;
-
-	/** Short Code - linked with Backend */
-	UPROPERTY(EditDefaultsOnly, Category = "00 Default")
-	FName ShortCode;
-
-	FString ShortCodeAsString;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "00 Default")
-	FName Name;
-
-	/** Alternative Names - used for to quickly access class - DEBUG */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "00 Default")
-	TArray<FName> AlternativeNames;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "00 Default")
-	bool IgnoreIsValidCheck;
-
-	virtual void PostLoad() override;
-	virtual void PreSave(const class ITargetPlatform* TargetPlatform) override;
-
-#if WITH_EDITOR
-	virtual void OnPreSave();
-#endif // #if WITH_EDITOR
-
-	virtual bool IsValid(const ECsLoadFlags &LoadFlags = ECsLoadFlags::All);
-
-	TCsGetAssetReferencesFromObject_Internal GetAssetReferencesFromObject_Internal;
-
-	virtual void PopulateAssetReferences(const bool &CalculateResourceSizes);
-
-	UPROPERTY(VisibleDefaultsOnly, Category = "00 Default")
-	TArray<FCsCategoryMemberAssociation> CategoryMemberAssociations;
-
-#if WITH_EDITOR
-	void VerifyJsonIntegrity();
-#endif // #if WITH_EDITOR
-
-	UPROPERTY(VisibleDefaultsOnly, Category = "00 Default")
-	FCsTArrayStringAssetReference AssetReferences[ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX];
-
-	virtual void Load(const ECsLoadFlags &LoadFlags = ECsLoadFlags::All);
-
-	TCsLoadObjectWithTSoftObjectPtrs_Internal LoadObjectWithTSoftObjectPtrs_Internal;
-
-	virtual void UnLoad();
-	virtual bool IsLoaded();
-
-	virtual FString GetAbsolutePath();
-
-	TCsWriteObjectToJson_Internal WriteObjectToJson_Internal;
-	TCsReadObjectFromJson_Internal ReadObjectFromJson_Internal;
-
-	virtual void SaveToJson();
-
-	bool HasLoadedFromJson;
-
-	virtual void LoadFromJson();
-
-// 99 Data Mapping
+	// TCsInterfaceObject
 #pragma region
+public:
 
-	UPROPERTY()
-	FString DataMappingName;
+	virtual void Reset() override
+	{
+		Super::Reset();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-99 Data Mapping")
-	FCsDataAddToDataMapping AddToDataMapping;
+		Script_GetType_Impl.Unbind();
+		Script_GetShortCode_Impl.Unbind();
+		Script_IsValid_Impl.Unbind();
+		Script_Load_Impl.Unbind();
+		Script_Unload_Impl.Unbind();
+		Script_IsLoaded_Impl.Unbind();
+	}
 
-	UPROPERTY()
-	FString PayloadName;
+#pragma endregion TCsInterfaceObject
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-99 Data Mapping")
-	FCsDataAddToPayload AddToPayload;
-
-#if WITH_EDITOR
-
-	class UClass* DataMappingClass;
-
-	class ACsDataMapping* GetDataMapping();
-	class ACsData_Payload* GetPayload();
-
-	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
-
-#endif // #if WITH_EDITOR
-
-#pragma endregion 99 Data Mapping
-
-// 100 Json
+	// ICsData
 #pragma region
+public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-100 Json")
-	FCsDataLoadFromJson PerformLoadFromJson;
+	FORCEINLINE const FECsDataType& GetType()
+	{
+		if (bScript)
+		{
+			Script_GetType_Impl.Execute(Object, Internal_Script_GetType_OutDataType);
+			return Internal_Script_GetType_OutDataType;
+		}
+		return Interface->GetType();
+	}
 
-#pragma endregion 100 Json
+	FORCEINLINE const FName& GetShortCode()
+	{
+		if (bScript)
+		{
+			Script_GetShortCode_Impl.Execute(Object, Internal_Script_GetShortCode_OutShortCode);
+			return Internal_Script_GetShortCode_OutShortCode;
+		}
+		return Interface->GetShortCode();
+	}
+
+	FORCEINLINE bool IsValid()
+	{
+		if (bScript)
+			return Script_IsValid_Impl.Execute(Object);
+		else
+			return Interface->IsValid();
+	}
+
+	FORCEINLINE void Load(const ECsLoadFlags& LoadFlags = ECsLoadFlags::All)
+	{
+		if (bScript)
+			Script_Load_Impl.Execute(Object, LoadFlags);
+		else
+			Interface->Load();
+	}
+
+	FORCEINLINE void Unload()
+	{
+		if (bScript)
+			Script_Unload_Impl.Execute(Object);
+		else
+			Interface->Unload();
+	}
+
+	FORCEINLINE bool IsLoaded()
+	{
+		if (bScript)
+			return Script_IsLoaded_Impl.Execute(Object);
+		else
+			return Interface->IsLoaded();
+	}
+
+#pragma endregion ICsData
 };
+
+#pragma endregion FCsData

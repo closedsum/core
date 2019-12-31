@@ -109,7 +109,7 @@ void UCsBTTask_AimAt::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 		MyMemory->ElapsedTime += DeltaSeconds;
 
 		ACsAIPawn* Pawn			= Cast<ACsAIPawn>(AIController->GetPawn());
-		ACsData_Character* Data = Pawn->GetMyData_Character();
+		UCsData_Character* Data = Pawn->GetMyData_Character();
 
 		if (MyMemory->ElapsedTime >= Data->GetAimTime())
 		{

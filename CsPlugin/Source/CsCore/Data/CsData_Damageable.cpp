@@ -2,7 +2,7 @@
 #include "Data/CsData_Damageable.h"
 #include "CsCore.h"
 
-ACsData_Damageable::ACsData_Damageable(const FObjectInitializer& ObjectInitializer)
+UCsData_Damageable::UCsData_Damageable(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
@@ -10,7 +10,7 @@ ACsData_Damageable::ACsData_Damageable(const FObjectInitializer& ObjectInitializ
 // Stats
 #pragma region
 
-int32 ACsData_Damageable::GetHealth() { return 0; }
-float ACsData_Damageable::GetRespawnTime() { return 0.0f; }
+int32 UCsData_Damageable::GetHealth() { return 0; }
+float UCsData_Damageable::GetRespawnTime() { return 0.0f; }
 
 #pragma endregion Stats

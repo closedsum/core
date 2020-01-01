@@ -115,7 +115,7 @@ void ACsInteractiveActor::Allocate(FCsInteractiveActorPayload* Payload)
 
 void ACsInteractiveActor::Allocate_Internal(FCsInteractiveActorPayload* Payload)
 {
-	ACsData_Interactive* Data = Cache.GetData();
+	UCsData_Interactive* Data = Cache.GetData();
 
 	if (WorldCollisionComponent)
 	{
@@ -537,7 +537,7 @@ void ACsInteractiveActor::Show()
 {
 	Super::Show();
 
-	ACsData_Interactive* Data = Cache.GetData();
+	UCsData_Interactive* Data = Cache.GetData();
 
 	if (WorldCollisionComponent)
 	{
@@ -562,7 +562,7 @@ void ACsInteractiveActor::Hide()
 {
 	Super::Hide();
 
-	ACsData_Interactive* Data = Cache.GetData();
+	UCsData_Interactive* Data = Cache.GetData();
 
 	if (WorldCollisionComponent)
 	{

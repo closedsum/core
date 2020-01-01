@@ -332,7 +332,7 @@ CS_COROUTINE(ACsGameState, OnBoard_Internal)
 	ACsPlayerController* pc = UCsCommon::GetLocalPlayerController<ACsPlayerController>(w);
 	ACsUI* hud				= pc ? Cast<ACsUI>(pc->MyHUD) : nullptr;
 
-	ACsDataMapping* dataMapping = UCsCommon::GetDataMapping(w);
+	UCsDataMapping* dataMapping = UCsCommon::GetDataMapping(w);
 
 	CS_COROUTINE_BEGIN(r);
 

@@ -163,6 +163,13 @@ struct FCsPawnJumpingFallingInfo
 
 #pragma endregion Structs
 
+class UCsDataMapping;
+class UCsData_Character;
+class UCsData_CharacterMeshSkin;
+class UCsData_CharacterMaterialSkin;
+class UCsData_Weapon;
+class UCsData_WeaponMaterialSkin;
+
 UCLASS()
 class CSCORE_API ACsPawn : public ACharacter
 {
@@ -523,7 +530,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	bool bCacheData;
 
-	class ACsDataMapping* GetDataMapping();
+	UCsDataMapping* GetDataMapping();
 
 	template<typename T>
 	T* GetDataMapping()
@@ -531,10 +538,10 @@ public:
 		return Cast<T>(GetDataMapping());
 	}
 
-	TWeakObjectPtr<class ACsData_Character> MyData_Character;
+	TWeakObjectPtr<UCsData_Character> MyData_Character;
 
 	UFUNCTION(BlueprintCallable, Category = "Datas")
-	class ACsData_Character* GetMyData_Character();
+	UCsData_Character* GetMyData_Character();
 
 	template<typename T>
 	T* GetMyData_Character()
@@ -542,10 +549,10 @@ public:
 		return Cast<T>(GetMyData_Character());
 	}
 
-	TWeakObjectPtr<class ACsData_CharacterMeshSkin> MyData_CharacterMeshSkin;
+	TWeakObjectPtr<UCsData_CharacterMeshSkin> MyData_CharacterMeshSkin;
 
 	UFUNCTION(BlueprintCallable, Category = "Datas")
-	class ACsData_CharacterMeshSkin* GetMyData_CharacterMeshSkin();
+	UCsData_CharacterMeshSkin* GetMyData_CharacterMeshSkin();
 
 	template<typename T>
 	T* GetMyData_CharacterMeshSkin()
@@ -553,10 +560,10 @@ public:
 		return Cast<T>(GetMyData_CharacterMeshSkin());
 	}
 
-	TWeakObjectPtr<class ACsData_CharacterMaterialSkin> MyData_CharacterMaterialSkin;
+	TWeakObjectPtr<UCsData_CharacterMaterialSkin> MyData_CharacterMaterialSkin;
 
 	UFUNCTION(BlueprintCallable, Category = "Datas")
-	class ACsData_CharacterMaterialSkin* GetMyData_CharacterMaterialSkin();
+	UCsData_CharacterMaterialSkin* GetMyData_CharacterMaterialSkin();
 
 	template<typename T>
 	T* GetMyData_CharacterMaterialSkin()
@@ -621,10 +628,10 @@ public:
 	}
 
 	UPROPERTY(Transient)
-	TArray<TWeakObjectPtr<class ACsData_Weapon>> Data_Weapons;
+	TArray<TWeakObjectPtr<UCsData_Weapon>> Data_Weapons;
 
 	UFUNCTION(BlueprintCallable, Category = "Weapons")
-	class ACsData_Weapon* GetData_Weapon(const FECsWeaponSlot &Slot);
+	UCsData_Weapon* GetData_Weapon(const FECsWeaponSlot &Slot);
 	
 	template<typename T>
 	T* GetData_Weapon(const FECsWeaponSlot &Slot)
@@ -633,7 +640,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "Weapons")
-	class ACsData_Weapon* GetCurrentData_Weapon();
+	UCsData_Weapon* GetCurrentData_Weapon();
 
 	template<typename T>
 	T* GetCurrentData_Weapon()
@@ -642,10 +649,10 @@ public:
 	}
 
 	UPROPERTY(Transient)
-	TArray<TWeakObjectPtr<class ACsData_WeaponMaterialSkin>> Data_WeaponMaterialSkins;
+	TArray<TWeakObjectPtr<UCsData_WeaponMaterialSkin>> Data_WeaponMaterialSkins;
 
 	UFUNCTION(BlueprintCallable, Category = "Weapons")
-	class ACsData_WeaponMaterialSkin* GetData_WeaponMaterialSkin(const FECsWeaponSlot &Slot);
+	UCsData_WeaponMaterialSkin* GetData_WeaponMaterialSkin(const FECsWeaponSlot &Slot);
 
 	template<typename T>
 	T* GetData_WeaponMaterialSkin(const FECsWeaponSlot &Slot)
@@ -654,7 +661,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "Weapons")
-	class ACsData_WeaponMaterialSkin* GetCurrentData_WeaponMaterialSkin();
+	UCsData_WeaponMaterialSkin* GetCurrentData_WeaponMaterialSkin();
 
 	template<typename T>
 	T* GetCurrentData_WeaponMaterialSkin()

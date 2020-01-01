@@ -171,8 +171,8 @@ void ACsFpsPawn::ApplyData_Weapon()
 
 		const FECsWeaponSlot& Slot = EMCsWeaponSlot::Get().GetEnumAt(I);
 
-		ACsData_Weapon* Data_Weapon							= GetData_Weapon(Slot);
-		ACsData_WeaponMaterialSkin* Data_WeaponMaterialSkin = GetData_WeaponMaterialSkin(Slot);
+		UCsData_Weapon* Data_Weapon							= GetData_Weapon(Slot);
+		UCsData_WeaponMaterialSkin* Data_WeaponMaterialSkin = GetData_WeaponMaterialSkin(Slot);
 
 		Weapon->ApplyData_Weapon(Slot, Data_Weapon, Data_WeaponMaterialSkin, CurrentWeaponIndex == I);
 	}

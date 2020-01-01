@@ -14,6 +14,7 @@
 #include "CsLibrary_Asset.generated.h"
 
 class UCsEnumStructUserDefinedEnumMap;
+class UCsDataMapping;
 
 UCLASS()
 class CSCORE_API UCsLibrary_Asset : public UObject
@@ -342,7 +343,7 @@ public:
 		}
 	}
 
-	static class ACsDataMapping* GetDataMapping();
+	static UCsDataMapping* GetDataMapping();
 
 	template<typename T>
 	static T* GetDataMapping()

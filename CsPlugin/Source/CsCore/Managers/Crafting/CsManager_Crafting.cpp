@@ -109,7 +109,7 @@ void ACsManager_Crafting::CraftItems(FCsCraftingPayload* Payload)
 {
 	if (Payload->Count == CS_EMPTY)
 	{
-		ACsData_Recipe* Recipe   = Payload->GetRecipe();
+		UCsData_Recipe* Recipe   = Payload->GetRecipe();
 		const FString RecipeName = Recipe->ShortCode.ToString();
 
 		UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CraftItems: Attemping to craft Recipe: %s 0 times. Count must be > 0."), *RecipeName);
@@ -157,7 +157,7 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 	FCsCraftingPayload* Payload				= r->GetValue_Void<FCsCraftingPayload>(PAYLOAD);
 	ACsManager_Inventory* Manager_Inventory = Payload->GetManager_Inventory();
 	AActor* InventoryOwner					= Manager_Inventory->GetMyOwner();
-	ACsData_Recipe* Recipe					= Payload->GetRecipe();
+	UCsData_Recipe* Recipe					= Payload->GetRecipe();
 
 	TArray<FCsRecipeIngredient>* Ingredients = Recipe->GetIngredients();
 
@@ -289,7 +289,7 @@ void ACsManager_Crafting::CancelCraftingProcess(const uint64& Id)
 
 	if (CsCVarLogManagerCraftingTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		ACsData_Recipe* Recipe	 = Payload->GetRecipe();
+		UCsData_Recipe* Recipe	 = Payload->GetRecipe();
 		const FString RecipeName = Recipe->ShortCode.ToString();
 		const FString ItemName	 = Recipe->GetCreatedItem().ToString();
 		UObject* TheInstigator		 = Process->GetInstigator();
@@ -326,7 +326,7 @@ void ACsManager_Crafting::CancelCraftingProcesses(UObject* InInstigator)
 
 			if (CsCVarLogManagerCraftingTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				ACsData_Recipe* Recipe	 = Payload->GetRecipe();
+				UCsData_Recipe* Recipe	 = Payload->GetRecipe();
 				const FString RecipeName = Recipe->ShortCode.ToString();
 				const FString ItemName   = Recipe->GetCreatedItem().ToString();
 				const FString InstigatorName = InInstigator->GetName();

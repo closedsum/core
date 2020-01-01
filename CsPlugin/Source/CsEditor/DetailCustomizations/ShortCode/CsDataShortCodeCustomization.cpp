@@ -25,7 +25,7 @@ void FCsDataShortCodeCustomization::Init()
 	uint8 AssetTypeAsByte;
 	AssetTypeHandle->GetValue(AssetTypeAsByte);
 
-	ACsDataMapping* DataMapping = Cast<UCsEdEngine>(GEditor)->DataMapping;
+	UCsDataMapping* DataMapping = Cast<UCsEdEngine>(GEditor)->DataMapping;
 
 	const FECsAssetType& AssetType = EMCsAssetType::Get()[AssetTypeAsByte];
 

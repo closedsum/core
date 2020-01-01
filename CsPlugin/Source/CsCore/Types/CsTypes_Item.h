@@ -624,6 +624,9 @@ struct FCsItemProduct
 
 typedef FGuid TCsItemId;
 
+class UCsData_Item;
+class UCsData_Interactive;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsItem
 {
@@ -657,9 +660,9 @@ struct CSCORE_API FCsItem
 	UPROPERTY()
 	TArray<FGuid> Contents;
 
-	TWeakObjectPtr<class ACsData_Item> Data;
+	TWeakObjectPtr<UCsData_Item> Data;
 	/** Data for Actor spawned when Item leaves Inventory */
-	TWeakObjectPtr<class ACsData_Interactive> Data_Actor;
+	TWeakObjectPtr<UCsData_Interactive> Data_Actor;
 
 	UPROPERTY()
 	FCsInventoryItemProperties InventoryProperties;
@@ -803,11 +806,11 @@ struct CSCORE_API FCsItem
 		AsycTaskMutex.Reset();
 	}
 
-	FORCEINLINE class ACsData_Item* GetData() const { return Data.IsValid() ? Data.Get() : nullptr; }
+	FORCEINLINE UCsData_Item* GetData() const { return Data.IsValid() ? Data.Get() : nullptr; }
 	template<typename T>
 	FORCEINLINE T* GetData() { return Cast<T>(GetData()); }
 
-	FORCEINLINE class ACsData_Interactive* GetData_Actor() const { return Data_Actor.IsValid() ? Data_Actor.Get() : nullptr; }
+	FORCEINLINE UCsData_Interactive* GetData_Actor() const { return Data_Actor.IsValid() ? Data_Actor.Get() : nullptr; }
 	template<typename T>
 	FORCEINLINE T* GetData_Actor() const { return Cast<T>(GetData_Actor()); }
 };

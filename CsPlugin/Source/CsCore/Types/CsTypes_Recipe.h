@@ -79,6 +79,10 @@ struct FCsRecipeIngredient
 
 #define CS_INVALID_CRAFTING_PAYLOAD_BAG 255
 
+class UObject;
+class ACsManager_Inventory;
+class UCsData_Recipe;
+
 USTRUCT(BlueprintType)
 struct FCsCraftingPayload
 {
@@ -91,9 +95,9 @@ struct FCsCraftingPayload
 	UPROPERTY()
 	TWeakObjectPtr<UObject> Instigator;
 	UPROPERTY()
-	TWeakObjectPtr<class ACsManager_Inventory> Manager_Inventory;
+	TWeakObjectPtr<ACsManager_Inventory> Manager_Inventory;
 	UPROPERTY()
-	TWeakObjectPtr<class ACsData_Recipe> Recipe;
+	TWeakObjectPtr<UCsData_Recipe> Recipe;
 	UPROPERTY()
 	uint8 Bag;
 	UPROPERTY()
@@ -125,13 +129,13 @@ struct FCsCraftingPayload
 		OutItems.Reset();
 	}
 
-	FORCEINLINE class UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+	FORCEINLINE UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
 	template<typename T>
 	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
-	FORCEINLINE class ACsManager_Inventory* GetManager_Inventory() { return Manager_Inventory.IsValid() ? Manager_Inventory.Get() : nullptr; }
+	FORCEINLINE ACsManager_Inventory* GetManager_Inventory() { return Manager_Inventory.IsValid() ? Manager_Inventory.Get() : nullptr; }
 	template<typename T>
 	FORCEINLINE T* GetManager_Inventory() { return Cast<T>(GetManager_Inventory()); }
-	FORCEINLINE class ACsData_Recipe* GetRecipe() { return Recipe.IsValid() ? Recipe.Get() : nullptr; }
+	FORCEINLINE UCsData_Recipe* GetRecipe() { return Recipe.IsValid() ? Recipe.Get() : nullptr; }
 	template<typename T>
 	FORCEINLINE T* GetRecipe() { return Cast<T>(GetRecipe()); }
 

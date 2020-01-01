@@ -54,9 +54,9 @@ IAssetRegistry& UCsLibrary_Asset::GetAssetRegistry()
 	return AssetRegistryModule.Get();
 }
 
-ACsDataMapping* UCsLibrary_Asset::GetDataMapping()
+UCsDataMapping* UCsLibrary_Asset::GetDataMapping()
 {
-	return GetBlueprintDefaultObject<ACsDataMapping>(NCsCommonAssetCached::Str::bp_data_mapping, ECsStringCompare::Equals, ACsDataMapping::StaticClass());
+	return GetBlueprintDefaultObject<UCsDataMapping>(NCsCommonAssetCached::Str::bp_data_mapping, ECsStringCompare::Equals, UCsDataMapping::StaticClass());
 }
 
 UCsEnumStructUserDefinedEnumMap* UCsLibrary_Asset::GetEnumStructUserDefinedEnumMap()

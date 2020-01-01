@@ -5,7 +5,7 @@
 #include "Types/CsTypes_Load.h"
 #include "CsDataMapping.generated.h"
 
-// Macros - Only use for CHILD of ACsDataMapping
+// Macros - Only use for CHILD of UCsDataMapping
 #pragma region
 
 #define RS_DATA_MAPPINGS_CLEAR_LOADED(TYPE) TYPE##_Loaded.Reset(); \
@@ -77,7 +77,7 @@ namespace NCsDataMappingCached
 {
 	namespace Str
 	{
-		extern RSCORE_API const FString LoadData;
+		extern CSCORE_API const FString LoadData;
 	}
 }
 
@@ -86,7 +86,7 @@ namespace NCsDataMappingCached
 class ICsData;
 
 UCLASS(Abstract, NotBlueprintable)
-class RSCORE_API UCsDataMapping : public UObject
+class CSCORE_API UCsDataMapping : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

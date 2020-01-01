@@ -45,7 +45,7 @@ void ACsTpsWeapon::PostInitializeComponents()
 
 void ACsTpsWeapon::AttachMeshToPawn()
 {
-	ACsData_Character* Data_Character	  = nullptr;
+	UCsData_Character* Data_Character	  = nullptr;
 	USkeletalMeshComponent* CharacterMesh = GetCharacterMesh();
 
 #if WITH_EDITOR 
@@ -204,7 +204,7 @@ void ACsTpsWeapon::SetMesh()
 		if (!AltMesh)
 			return;
 
-		if (ACsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
+		if (UCsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
 		{
 			Skin->SetMaterials(AltMesh);
 			UCsCommon::SetMIDs(AltMesh, MeshMIDs, *Skin->GetMaterials());
@@ -224,7 +224,7 @@ void ACsTpsWeapon::SetMesh()
 		Data_Weapon->SetMesh(Mesh);
 		Data_Weapon->SetAnimBlueprint(Mesh);
 
-		if (ACsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
+		if (UCsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
 		{
 			Skin->SetMaterials(Mesh);
 			UCsCommon::SetMIDs(Mesh, MeshMIDs, *Skin->GetMaterials());

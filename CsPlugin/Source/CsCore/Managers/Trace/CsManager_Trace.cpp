@@ -750,7 +750,7 @@ void ACsManager_Trace::LogTransaction(const FString& FunctionName, const ECsTrac
 		const FString ItemName				  = Item->ShortCode.ToString();
 		const FString Id					  = FString::Printf(TEXT("%llu"), Item->UniqueId);
 		const FString DataName				  = Item->GetData()->ShortCode.ToString();
-		const ACsData_Interactive* Data_Actor = Item->GetData_Actor();
+		const UCsData_Interactive* Data_Actor = Item->GetData_Actor();
 		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : NCsCached::Str::Empty;
 		const float CurrentTime				  = GetWorld()->GetTimeSeconds();
 

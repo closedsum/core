@@ -21,9 +21,6 @@
 UCsData_Impl::UCsData_Impl(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	PrimaryActorTick.bCanEverTick		   = false;
-	PrimaryActorTick.bStartWithTickEnabled = false;
-
 	GetAssetReferencesFromObject_Internal = nullptr;
 	LoadObjectWithTSoftObjectPtrs_Internal = nullptr;
 	WriteObjectToJson_Internal = nullptr;

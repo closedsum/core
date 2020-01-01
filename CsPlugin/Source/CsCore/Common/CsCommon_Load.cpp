@@ -4905,21 +4905,6 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 // Loading
 #pragma region
 
-float UCsCommon_Load::BytesToKilobytes(const int32 &Bytes)
-{
-	return Bytes * FMath::Pow(10, -3);
-}
-
-float UCsCommon_Load::BytesToMegabytes(const int32 &Bytes)
-{
-	return Bytes * FMath::Pow(10, -6);
-}
-
-int32 UCsCommon_Load::KilobytesToBytes(const float &Kilobytes)
-{
-	return Kilobytes * FMath::Pow(10, 3);
-}
-
 	// Asset References
 #pragma region
 
@@ -4968,8 +4953,8 @@ void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimMontage(USoftOb
 				}
 			}
 
-			Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
@@ -5053,8 +5038,8 @@ void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimSequence(USoftO
 			UAnimSequence* Asset = Cast<UAnimSequence>(Member->LoadSynchronous());
 
 			Reference.Size.Bytes	 = Asset->GetApproxCompressedSize();
-			Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
@@ -5089,8 +5074,8 @@ void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimSequence(USoftO
 			UAnimSequence* Asset = Cast<UAnimSequence>(Member->LoadSynchronous());
 
 			Reference.Size.Bytes	 = Asset->GetApproxCompressedSize();
-			Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
@@ -5136,8 +5121,8 @@ void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_MaterialInstanceCon
 				Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 			}
 
-			Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
@@ -5221,8 +5206,8 @@ void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_Blueprint(USoftObje
 			UObject* Asset = Member->LoadSynchronous();
 
 			Reference.Size.Bytes = Asset->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
-			Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
@@ -5312,8 +5297,8 @@ void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimMontage(UA
 					}
 				}
 
-				Reference.Size.Kilobytes = KilobytesToBytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = UCsLibrary_Math::KilobytesToBytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -5366,8 +5351,8 @@ void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimMontage(UA
 					}
 				}
 
-				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -5407,8 +5392,8 @@ void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimSequence(U
 				UAnimSequence* Asset = Cast<UAnimSequence>((*Member)[I].LoadSynchronous());
 
 				Reference.Size.Bytes = Asset->GetApproxCompressedSize();
-				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -5448,8 +5433,8 @@ void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimSequence(U
 				UAnimSequence* Asset = Cast<UAnimSequence>((*Member)[I].LoadSynchronous());
 
 				Reference.Size.Bytes = Asset->GetApproxCompressedSize();
-				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -5506,8 +5491,8 @@ void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_MaterialInstan
 					Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 				}
 
-				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -5558,8 +5543,8 @@ void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_MaterialInstan
 					Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 				}
 
-				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -5600,8 +5585,8 @@ void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_Blueprint(UArr
 				UBlueprint* Asset = (*Member)[I].LoadSynchronous();
 
 				Reference.Size.Bytes = Asset->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
-				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -8405,10 +8390,10 @@ void UCsCommon_Load::IsLoaded_LogMessages(const FString &DataName, TArray<FStrin
 
 #pragma endregion IsLoaded
 
-TCsLoadAsyncOrder UCsCommon_Load::GetLoadAsyncOrder()
+ECsLoadAsyncOrder UCsCommon_Load::GetLoadAsyncOrder()
 {
 	if (CsCVarManagerLoadingAsyncOrder->GetInt() > CS_CVAR_LOAD_UNSET)
-		return (TCsLoadAsyncOrder)CsCVarManagerLoadingAsyncOrder->GetInt();
+		return (ECsLoadAsyncOrder)CsCVarManagerLoadingAsyncOrder->GetInt();
 	return ECsLoadAsyncOrder::Bulk;
 }
 

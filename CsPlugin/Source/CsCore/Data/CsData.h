@@ -240,12 +240,12 @@ public:
 		return Interface->GetShortCode();
 	}
 
-	FORCEINLINE bool IsValid()
+	FORCEINLINE bool IsValid(const ECsLoadFlags& LoadFlags = ECsLoadFlags::All)
 	{
 		if (bScript)
-			return Script_IsValid_Impl.Execute(Object);
+			return Script_IsValid_Impl.Execute(Object, LoadFlags);
 		else
-			return Interface->IsValid();
+			return Interface->IsValid(LoadFlags);
 	}
 
 	FORCEINLINE void Load(const ECsLoadFlags& LoadFlags = ECsLoadFlags::All)

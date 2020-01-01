@@ -306,7 +306,7 @@ void ACsManager_Inventory::LogTransaction(const FString& FunctionName, const ECs
 
 		const FString ItemName				  = Item->ShortCode.ToString();
 		const FString DataName				  = Item->GetData()->ShortCode.ToString();
-		const ACsData_Interactive* Data_Actor = Item->GetData_Actor();
+		const UCsData_Interactive* Data_Actor = Item->GetData_Actor();
 		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : NCsCached::Str::Empty;
 		const float CurrentTime				  = GetWorld()->GetTimeSeconds();
 
@@ -446,7 +446,7 @@ void ACsManager_Inventory::ConsumeItem_Internal(const TCsItemId& Id)
 
 void ACsManager_Inventory::ConsumeItem(FCsItem* Item, TArray<FCsItem*>& OutResultingItems)
 {
-	ACsData_Item* Data = Item->GetData();
+	UCsData_Item* Data = Item->GetData();
 	
 	// Handle Contents
 	const TArray<FCsItemOnConsumeContentRule>* Rules = Data->GetOnConsumeContentRules();

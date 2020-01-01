@@ -306,18 +306,20 @@ public:
 	}
 };
 
+class UCsData_Character;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsDataAnimInstance_CharacterPtr
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TSoftClassPtr<class ACsData_Character> Data;
+	TSoftClassPtr<UCsData_Character> Data;
 
-	TSoftClassPtr<class ACsData_Character> Last_Data;
+	TSoftClassPtr<UCsData_Character> Last_Data;
 
 	UPROPERTY(Transient)
-	TWeakObjectPtr<class ACsData_Character> Data_Internal;
+	TWeakObjectPtr<UCsData_Character> Data_Internal;
 
 public:
 	FCsDataAnimInstance_CharacterPtr()
@@ -341,7 +343,7 @@ public:
 		return !(*this == B);
 	}
 
-	FORCEINLINE class ACsData_Character* Get() const
+	FORCEINLINE UCsData_Character* Get() const
 	{
 		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
 	}
@@ -356,18 +358,20 @@ public:
 	FORCEINLINE void Update() { Last_Data = Data; }
 };
 
+class UCsData_CharacterMeshSkin;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsDataAnimInstance_CharacterMeshSkinPtr
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TSoftClassPtr<class ACsData_CharacterMeshSkin> Data;
+	TSoftClassPtr<UCsData_CharacterMeshSkin> Data;
 
-	TSoftClassPtr<class ACsData_CharacterMeshSkin> Last_Data;
+	TSoftClassPtr<UCsData_CharacterMeshSkin> Last_Data;
 
 	UPROPERTY(Transient)
-	TWeakObjectPtr<class ACsData_CharacterMeshSkin> Data_Internal;
+	TWeakObjectPtr<UCsData_CharacterMeshSkin> Data_Internal;
 
 public:
 	FCsDataAnimInstance_CharacterMeshSkinPtr()
@@ -391,7 +395,7 @@ public:
 		return !(*this == B);
 	}
 
-	FORCEINLINE class ACsData_CharacterMeshSkin* Get() const
+	FORCEINLINE UCsData_CharacterMeshSkin* Get() const
 	{
 		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
 	}
@@ -406,18 +410,20 @@ public:
 	FORCEINLINE void Update() { Last_Data = Data; }
 };
 
+class UCsData_CharacterMaterialSkin;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsDataAnimInstance_CharacterMaterialSkinPtr
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TSoftClassPtr<class ACsData_CharacterMaterialSkin> Data;
+	TSoftClassPtr<UCsData_CharacterMaterialSkin> Data;
 
-	TSoftClassPtr<class ACsData_CharacterMaterialSkin> Last_Data;
+	TSoftClassPtr<UCsData_CharacterMaterialSkin> Last_Data;
 
 	UPROPERTY(Transient)
-	TWeakObjectPtr<class ACsData_CharacterMaterialSkin> Data_Internal;
+	TWeakObjectPtr<UCsData_CharacterMaterialSkin> Data_Internal;
 
 public:
 	FCsDataAnimInstance_CharacterMaterialSkinPtr()
@@ -441,7 +447,7 @@ public:
 		return !(*this == B);
 	}
 
-	FORCEINLINE class ACsData_CharacterMaterialSkin* Get() const
+	FORCEINLINE UCsData_CharacterMaterialSkin* Get() const
 	{
 		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
 	}
@@ -456,18 +462,20 @@ public:
 	FORCEINLINE void Update() { Last_Data = Data; }
 };
 
+class UCsData_Weapon;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsDataAnimInstance_WeaponPtr
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TSoftClassPtr<class ACsData_Weapon> Data;
+	TSoftClassPtr<UCsData_Weapon> Data;
 
-	TSoftClassPtr<class ACsData_Weapon> Last_Data;
+	TSoftClassPtr<UCsData_Weapon> Last_Data;
 
 	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Data")
-	TWeakObjectPtr<class ACsData_Weapon> Data_Internal;
+	TWeakObjectPtr<UCsData_Weapon> Data_Internal;
 
 public:
 	FCsDataAnimInstance_WeaponPtr()
@@ -491,7 +499,7 @@ public:
 		return !(*this == B);
 	}
 
-	FORCEINLINE class ACsData_Weapon* Get() const
+	FORCEINLINE UCsData_Weapon* Get() const
 	{
 		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
 	}
@@ -506,18 +514,20 @@ public:
 	FORCEINLINE void Update() { Last_Data = Data; }
 };
 
+class UCsData_WeaponMaterialSkin;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsDataAnimInstance_WeaponMaterialSkinPtr
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TSoftClassPtr<class ACsData_WeaponMaterialSkin> Data;
+	TSoftClassPtr<UCsData_WeaponMaterialSkin> Data;
 
-	TSoftClassPtr<class ACsData_WeaponMaterialSkin> Last_Data;
+	TSoftClassPtr<UCsData_WeaponMaterialSkin> Last_Data;
 
 	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Data")
-	TWeakObjectPtr<class ACsData_WeaponMaterialSkin> Data_Internal;
+	TWeakObjectPtr<UCsData_WeaponMaterialSkin> Data_Internal;
 
 public:
 	FCsDataAnimInstance_WeaponMaterialSkinPtr()
@@ -541,7 +551,7 @@ public:
 		return !(*this == B);
 	}
 
-	FORCEINLINE class ACsData_WeaponMaterialSkin* Get() const
+	FORCEINLINE UCsData_WeaponMaterialSkin* Get() const
 	{
 		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
 	}

@@ -5,8 +5,8 @@
 // Library
 #include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Math.h"
-#include "Library/CsLibrary_Data.h"
 #include "Library/CsLibrary_Asset.h"
+#include "Common/CsCommon_Load.h"
 // Interface
 #include "Data/CsData.h"
 
@@ -17,7 +17,7 @@ namespace NCsDataMappingCached
 {
 	namespace Str
 	{
-		RSCORE_API const FString LoadData = TEXT("UCsDataMapping::LoadData");
+		CSCORE_API const FString LoadData = TEXT("UCsDataMapping::LoadData");
 	}
 }
 
@@ -262,7 +262,7 @@ bool UCsDataMapping::AddDataAssetReference(const FECsDataType& DataType, const F
 			// Add to DataMappings
 			FCsDataMappingEntry Mapping;
 			Mapping.ShortCode = ShortCode;
-			Mapping.Data	  = InData->GetObject();
+			Mapping.Data	  = InData->_getUObject();
 			Mappings->Add(Mapping);
 			// Add to TMap DataMappings
 			TMap<FName, FCsDataMappingEntry>* Map = GetDataMappings_Map(DataType);
@@ -430,7 +430,7 @@ void UCsDataMapping::PopulateAssetReferences()
 								Entry.AssetReferences[J].References.Reset();
 
 								if (J != (uint8)ECsLoadFlags::All &&
-									!RS_TEST_BLUEPRINT_BITFLAG(LoadFlags, (ECsLoadFlags)J))
+									!CS_TEST_BLUEPRINT_BITFLAG(LoadFlags, (ECsLoadFlags)J))
 								{
 									continue;
 								}
@@ -507,7 +507,7 @@ void UCsDataMapping::OnFinishedAsyncLoadingAssetsSetReferences(const FECsDataCol
 
 ICsData* UCsDataMapping::LoadData(const FString& FunctionName, const FECsDataType& DataType, const FName& ShortCode, const ECsLoadFlags& LoadFlags /*= ECsLoadFlags::Game*/)
 {
-	if (ShortCode == RS_INVALID_SHORT_CODE)
+	if (ShortCode == CS_INVALID_SHORT_CODE)
 		return nullptr;
 
 	// Search Loaded Data TMaps / TArray
@@ -603,7 +603,7 @@ ICsData* UCsDataMapping::LoadData(const FName& ShortCode, const ECsLoadFlags& Lo
 
 ICsData* UCsDataMapping::LoadData(const FString& FunctionName, const FECsDataType& DataType, const uint16& LookUpCode, const ECsLoadFlags& LoadFlags /*= ECsLoadFlags::Game*/)
 {
-	if (LookUpCode == RS_INVALID_LOOK_UP_CODE)
+	if (LookUpCode == CS_INVALID_LOOK_UP_CODE)
 		return nullptr;
 
 	// Search Loaded Data TMaps / TArray
@@ -638,7 +638,7 @@ ICsData* UCsDataMapping::LoadData_Internal(const FString& FunctionName, const FE
 	// Load the Data
 	ICsData* Data = nullptr;
 
-	UCsLibrary_Data::LoadTSoftClassPtr(Mapping.Data, Data);
+	UCsCommon_Load::LoadTSoftClassPtr(Mapping.Data, Data);
 
 	if (!Data)
 	{
@@ -710,7 +710,7 @@ ICsData* UCsDataMapping::GetLoadedData(const FECsDataType& DataType, const FName
 
 ICsData* UCsDataMapping::GetLoadedData(const FName& ShortCode, FECsDataType& OutDataType)
 {
-	if (ShortCode == RS_INVALID_SHORT_CODE)
+	if (ShortCode == CS_INVALID_SHORT_CODE)
 		return nullptr;
 
 	OutDataType = EMCsDataType::Get().GetMAX();
@@ -810,7 +810,7 @@ bool UCsDataMapping::CheckDataIsValid(const FString& FunctionName, const FECsDat
 	// Load the Data
 	ICsData* Data = nullptr;
 
-	UCsLibrary_Data::LoadTSoftClassPtr(Mapping.Data, Data);
+	UCsCommon_Load::LoadTSoftClassPtr(Mapping.Data, Data);
 
 	if (!Data)
 	{
@@ -845,10 +845,10 @@ bool UCsDataMapping::CheckAllDataIsValid(const FString& FunctionName, const FECs
 
 FName UCsDataMapping::GetShortCode(const FECsDataType& DataType, const uint16& LookUpCode)
 {
-	if (LookUpCode == RS_INVALID_LOOK_UP_CODE)
+	if (LookUpCode == CS_INVALID_LOOK_UP_CODE)
 	{
 		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::GetShortCode: Failed find ShortCode using INVALID LookUpCode."));
-		return RS_INVALID_SHORT_CODE;
+		return CS_INVALID_SHORT_CODE;
 	}
 
 	TArray<FCsDataMappingEntry>* Mapping= GetDataMappings(DataType);
@@ -858,17 +858,17 @@ FName UCsDataMapping::GetShortCode(const FECsDataType& DataType, const uint16& L
 	if (LookUpCode >= Count)
 	{
 		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::GetShortCode: LookUpCode: %d is Out of Bounds (%d)."), LookUpCode, Count);
-		return RS_INVALID_SHORT_CODE;
+		return CS_INVALID_SHORT_CODE;
 	}
 	return (*Mapping)[LookUpCode].ShortCode;
 }
 
 uint16 UCsDataMapping::GetLookUpCode(const FECsDataType& DataType, const FName& ShortCode)
 {
-	if (ShortCode == RS_INVALID_SHORT_CODE)
+	if (ShortCode == CS_INVALID_SHORT_CODE)
 	{
 		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::GetLookUpCode: Failed to find LookUpCode using INVALID ShortCode."));
-		return RS_INVALID_LOOK_UP_CODE;
+		return CS_INVALID_LOOK_UP_CODE;
 	}
 
 	TMap<FName, FCsDataMappingEntry>* Mapping = GetDataMappings_Map(DataType);
@@ -877,7 +877,7 @@ uint16 UCsDataMapping::GetLookUpCode(const FECsDataType& DataType, const FName& 
 	if (!Entry)
 	{
 		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::GetLookUpCode: Failed to find LookUpCode using ShortCode: %s."), *ShortCode.ToString());
-		return RS_INVALID_LOOK_UP_CODE;
+		return CS_INVALID_LOOK_UP_CODE;
 	}
 	return Entry->LookUpCode;
 }

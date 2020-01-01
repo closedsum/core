@@ -5,6 +5,7 @@
 #include "Types/CsTypes_Async.h"
 #include "CsEdEngine.generated.h"
 
+class UCsDataMapping;
 class UCsEnumStructUserDefinedEnumMap;
 
 UCLASS()
@@ -44,7 +45,7 @@ public:
 
 public:
 
-	class ACsDataMapping* DataMapping;
+	UCsDataMapping* DataMapping;
 
 	void OnBlueprintPreCompile(UBlueprint* Blueprint);
 

@@ -92,7 +92,7 @@ namespace NCsGameInstanceOnBoardState
 
 #define CS_INVALID_UNIQUE_OBJECT_ID NCsCached::Ref::Long_MAX
 
-class ACsDataMapping;
+class UCsDataMapping;
 class UCsEnumStructUserDefinedEnumMap;
 class UCsInputSetting;
 class UCsManager_Singleton;
@@ -228,10 +228,10 @@ public:
 	FString DataMappingAssetPath;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game Instance|Data Mapping")
-	TSoftClassPtr<ACsDataMapping> DataMappingClass;
+	TSoftClassPtr<UCsDataMapping> DataMappingClass;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance|Data Mapping")
-	ACsDataMapping* DataMapping;
+	UCsDataMapping* DataMapping;
 
 	bool bForcePopulateAssetReferences;
 

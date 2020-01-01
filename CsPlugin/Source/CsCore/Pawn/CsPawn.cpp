@@ -276,7 +276,7 @@ CS_COROUTINE(ACsPawn, HandleRespawnTimer_Internal)
 	ACsPawn* p				 = r->GetOwnerAsObject<ACsPawn>();
 	ACsPlayerStateBase* ps	 = p->GetPlayerState<ACsPlayerStateBase>();
 
-	ACsData_Character* Data_Character = p->GetMyData_Character();
+	UCsData_Character* Data_Character = p->GetMyData_Character();
 
 	const FCsDeltaTime& ElapsedTime = r->ElapsedTime;
 	const float RespawnTime			= Data_Character->GetRespawnTime();
@@ -731,22 +731,22 @@ void ACsPawn::Async_TraceToGroundWhileJumping_Response(const uint8 &RequestId, F
 // Data
 #pragma region
 
-ACsDataMapping* ACsPawn::GetDataMapping()
+UCsDataMapping* ACsPawn::GetDataMapping()
 {
 	return UCsCommon::GetDataMapping(GetWorld());
 }
 
-ACsData_Character* ACsPawn::GetMyData_Character()
+UCsData_Character* ACsPawn::GetMyData_Character()
 {
 	return MyData_Character.IsValid() ? MyData_Character.Get() : nullptr;
 }
 
-ACsData_CharacterMeshSkin* ACsPawn::GetMyData_CharacterMeshSkin()
+UCsData_CharacterMeshSkin* ACsPawn::GetMyData_CharacterMeshSkin()
 {
 	return MyData_CharacterMeshSkin.IsValid() ? MyData_CharacterMeshSkin.Get() : nullptr;
 }
 
-ACsData_CharacterMaterialSkin* ACsPawn::GetMyData_CharacterMaterialSkin()
+UCsData_CharacterMaterialSkin* ACsPawn::GetMyData_CharacterMaterialSkin()
 {
 	return MyData_CharacterMaterialSkin.IsValid() ? MyData_CharacterMaterialSkin.Get() : nullptr;
 }
@@ -780,22 +780,22 @@ ACsWeapon* ACsPawn::GetCurrentWeapon()
 	return GetWeapon(CurrentWeaponSlot);
 }
 
-ACsData_Weapon* ACsPawn::GetData_Weapon(const FECsWeaponSlot &Slot)
+UCsData_Weapon* ACsPawn::GetData_Weapon(const FECsWeaponSlot &Slot)
 {
 	return Data_Weapons[Slot.Value].IsValid() ? Data_Weapons[Slot.Value].Get() : nullptr;
 }
 
-ACsData_Weapon* ACsPawn::GetCurrentData_Weapon()
+UCsData_Weapon* ACsPawn::GetCurrentData_Weapon()
 {
 	return GetData_Weapon(CurrentWeaponSlot);
 }
 
-ACsData_WeaponMaterialSkin* ACsPawn::GetData_WeaponMaterialSkin(const FECsWeaponSlot &Slot)
+UCsData_WeaponMaterialSkin* ACsPawn::GetData_WeaponMaterialSkin(const FECsWeaponSlot &Slot)
 {
 	return Data_WeaponMaterialSkins[Slot.Value].IsValid() ? Data_WeaponMaterialSkins[Slot.Value].Get() : nullptr;
 }
 
-ACsData_WeaponMaterialSkin* ACsPawn::GetCurrentData_WeaponMaterialSkin()
+UCsData_WeaponMaterialSkin* ACsPawn::GetCurrentData_WeaponMaterialSkin()
 {
 	return GetData_WeaponMaterialSkin(CurrentWeaponSlot);
 }
@@ -810,7 +810,7 @@ void ACsPawn::OnRespawn_Setup_Weapon(){}
 
 void ACsPawn::ApplySenseData()
 {
-	ACsData_Character* Data_Character = GetMyData_Character();
+	UCsData_Character* Data_Character = GetMyData_Character();
 	FCsSenseData* OtherData			  = Data_Character->GetSenseData();
 
 	// Radius

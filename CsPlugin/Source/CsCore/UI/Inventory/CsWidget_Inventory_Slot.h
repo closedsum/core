@@ -4,6 +4,8 @@
 #include "Types/CsTypes_Item.h"
 #include "CsWidget_Inventory_Slot.generated.h"
 
+class UCsData_Item;
+
 UCLASS()
 class CSCORE_API UCsWidget_Inventory_Slot : public UCsWidget_ButtonAndText
 {
@@ -23,9 +25,9 @@ class CSCORE_API UCsWidget_Inventory_Slot : public UCsWidget_ButtonAndText
 	void AddItem(FCsItem* Item);
 	void RemoveItem(const FCsItem* const Item);
 
-	TWeakObjectPtr<class ACsData_Item> MyData;
+	TWeakObjectPtr<UCsData_Item> MyData;
 
-	class ACsData_Item* GetMyData();
+	UCsData_Item* GetMyData();
 
 	void Empty();
 };

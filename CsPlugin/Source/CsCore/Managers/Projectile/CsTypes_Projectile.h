@@ -8,7 +8,7 @@
 // FCsData_ProjectileBasePtr
 #pragma region
 
-class ACsData_ProjectileBase;
+class UCsData_ProjectileBase;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsData_ProjectileBasePtr
@@ -16,14 +16,14 @@ struct CSCORE_API FCsData_ProjectileBasePtr
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TSoftClassPtr<ACsData_ProjectileBase> Data;
+	TSoftClassPtr<UCsData_ProjectileBase> Data;
 
 	UPROPERTY(EditAnywhere, Category = "Data", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Data_LoadFlags;
 
 private:
 	UPROPERTY(Transient)
-	ACsData_ProjectileBase* Data_Internal;
+	UCsData_ProjectileBase* Data_Internal;
 
 public:
 	FCsData_ProjectileBasePtr() :
@@ -43,7 +43,7 @@ public:
 		return !(*this == B);
 	}
 
-	FORCEINLINE class ACsData_ProjectileBase* Get() const
+	FORCEINLINE UCsData_ProjectileBase* Get() const
 	{
 		return Data_Internal;
 	}
@@ -54,7 +54,7 @@ public:
 // FCsData_ProjectileImpactPtr
 #pragma region
 
-class ACsData_ProjectileImpact;
+class UCsData_ProjectileImpact;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsData_ProjectileImpactPtr
@@ -62,14 +62,14 @@ struct CSCORE_API FCsData_ProjectileImpactPtr
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TSoftClassPtr<ACsData_ProjectileImpact> Data;
+	TSoftClassPtr<UCsData_ProjectileImpact> Data;
 
 	UPROPERTY(EditAnywhere, Category = "Data", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Data_LoadFlags;
 
 private:
 	UPROPERTY(Transient)
-	ACsData_ProjectileImpact* Data_Internal;
+	UCsData_ProjectileImpact* Data_Internal;
 
 public:
 	FCsData_ProjectileImpactPtr() :
@@ -89,7 +89,7 @@ public:
 		return !(*this == B);
 	}
 
-	FORCEINLINE class ACsData_ProjectileImpact* Get() const
+	FORCEINLINE UCsData_ProjectileImpact* Get() const
 	{
 		return Data_Internal;
 	}
@@ -535,7 +535,7 @@ struct CSCORE_API FCsProjectileFirePayload
 // FCsProjectilePayload
 #pragma region
 
-class ACsData_ProjectileBase;
+class UCsData_ProjectileBase;
 
 struct CSCORE_API FCsProjectileBasePayload : public ICsPooledObjectPayload
 {
@@ -551,7 +551,7 @@ public:
 
 	ECsProjectileRelevance Relevance;
 
-	TWeakObjectPtr<ACsData_ProjectileBase> Data;
+	TWeakObjectPtr<UCsData_ProjectileBase> Data;
 
 	float ChargePercent;
 
@@ -653,7 +653,7 @@ public:
 		HomingAccelerationMagnitude = Payload->HomingAccelerationMagnitude;
 	}
 
-	FORCEINLINE ACsData_ProjectileBase* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	FORCEINLINE UCsData_ProjectileBase* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 	template<typename T>
 	FORCEINLINE T* GetData() { return Cast<T>(GetData()); }
 

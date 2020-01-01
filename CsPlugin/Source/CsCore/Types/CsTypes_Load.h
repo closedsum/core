@@ -255,6 +255,8 @@ struct CSCORE_API FCsTArrayStringAssetReference
 	}
 };
 
+class UObject;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsDataMappingEntry
 {
@@ -267,8 +269,8 @@ struct CSCORE_API FCsDataMappingEntry
 	UPROPERTY(VisibleDefaultsOnly, Category = "Data")
 	uint16 LookUpCode;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
-	TSoftClassPtr<class ACsData> Data;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data", meta = (MustImplement = "CsData"))
+	TSoftClassPtr<UCsData> Data;
 
 	UPROPERTY(EditAnywhere, Category = "Data", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Data_LoadFlags;
@@ -499,29 +501,26 @@ struct CSCORE_API FCsTArrayPayload
 // LoadAsyncOrder
 
 UENUM(BlueprintType)
-namespace ECsLoadAsyncOrder
+enum class ECsLoadAsyncOrder : uint8
 {
-	enum Type
-	{
-		// Default to Bulk
-		None					UMETA(DisplayName = "None"),
-		// Process Assets IN ORDER 1 by 1
-		FirstToLast				UMETA(DisplayName = "First to Last"),
-		// Group Assets, only get notification once ENTIRE Group is Finished
-		Bulk					UMETA(DisplayName = "Bulk"),
-		ECsLoadAsyncOrder_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsLoadAsyncOrder::Type TCsLoadAsyncOrder;
-
-struct CSCORE_API EMCsLoadAsyncOrder : public TCsEnumMap<ECsLoadAsyncOrder::Type>
-{
-	CS_DECLARE_ENUM_MAP_BODY(EMCsLoadAsyncOrder)
+	// Default to Bulk
+	None					UMETA(DisplayName = "None"),
+	// Process Assets IN ORDER 1 by 1
+	FirstToLast				UMETA(DisplayName = "First to Last"),
+	// Group Assets, only get notification once ENTIRE Group is Finished
+	Bulk					UMETA(DisplayName = "Bulk"),
+	ECsLoadAsyncOrder_MAX	UMETA(Hidden),
 };
 
-namespace ECsLoadAsyncOrder
+struct CSCORE_API EMCsLoadAsyncOrder : public TCsEnumMap<ECsLoadAsyncOrder>
 {
+	CS_ENUM_MAP_BODY(EMCsLoadAsyncOrder, ECsLoadAsyncOrder)
+};
+
+namespace NCsLoadAsyncOrder
+{
+	typedef ECsLoadAsyncOrder Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type None;

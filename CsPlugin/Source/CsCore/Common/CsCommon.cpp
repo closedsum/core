@@ -927,21 +927,6 @@ void UCsCommon::ClampMaxVectorComponents(FVector &V, const float &Max)
 	V.Z = FMath::Min(V.Z, Max);
 }
 
-float UCsCommon::BytesToKilobytes(const int32 &Bytes)
-{
-	return Bytes * FMath::Pow(10, -3);
-}
-
-float UCsCommon::BytesToMegabytes(const int32 &Bytes)
-{
-	return Bytes * FMath::Pow(10, -6);
-}
-
-int32 UCsCommon::KilobytesToBytes(const float &Kilobytes)
-{
-	return Kilobytes * FMath::Pow(10, 3);
-}
-
 #pragma endregion Math
 
 /*

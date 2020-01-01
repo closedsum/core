@@ -71,15 +71,17 @@ CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsAssetType)
 CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsLoadAssetsType)
 
 // LoadAsyncOrder
-CS_DEFINE_ENUM_MAP_BODY(EMCsLoadAsyncOrder)
+#pragma region
 
-namespace ECsLoadAsyncOrder
+namespace NCsLoadAsyncOrder
 {
 	namespace Ref
 	{
-		CSCORE_API const Type None = EMCsLoadAsyncOrder::Get().Add(Type::None, TEXT("None"));
-		CSCORE_API const Type FirstToLast = EMCsLoadAsyncOrder::Get().Add(Type::FirstToLast, TEXT("FirstToLast"), TEXT("First to Last"));
-		CSCORE_API const Type Bulk = EMCsLoadAsyncOrder::Get().Add(Type::Bulk, TEXT("Bulk"));
-		CSCORE_API const Type ECsLoadAsyncOrder_MAX = EMCsLoadAsyncOrder::Get().Add(Type::ECsLoadAsyncOrder_MAX, TEXT("ECsLoadAsyncOrder_MAX"), TEXT("MAX"));
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsLoadAsyncOrder, None);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsLoadAsyncOrder, FirstToLast, "First to Last");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsLoadAsyncOrder, Bulk);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsLoadAsyncOrder, ECsLoadAsyncOrder_MAX, MAX);
 	}
 }
+
+#pragma endregion ECsLoadAsyncOrder

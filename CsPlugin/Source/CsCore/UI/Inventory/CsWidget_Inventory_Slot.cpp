@@ -70,7 +70,7 @@ void UCsWidget_Inventory_Slot::RemoveItem(const FCsItem* const Item)
 	UpdateCurrentCount();
 }
 
-class ACsData_Item* UCsWidget_Inventory_Slot::GetMyData()
+UCsData_Item* UCsWidget_Inventory_Slot::GetMyData()
 {
 	return MyData.IsValid() ? MyData.Get() : nullptr;
 }

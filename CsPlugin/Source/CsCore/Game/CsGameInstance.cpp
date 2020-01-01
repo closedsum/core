@@ -12,7 +12,7 @@
 // CoroutineScheduler
 #include "Coroutine/CsCoroutineScheduler.h"
 // Managers
-#include "Managers/CsManager_Loading.h"
+#include "Managers/CsManager_Load.h"
 #include "Managers/Runnable/CsManager_Runnable.h"
 #include "Managers/Time/CsManager_Time.h"
 // Data
@@ -439,12 +439,12 @@ CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
 
 void UCsGameInstance::LoadDataMapping()
 {
-	const FStringAssetReference AssetRef			 = FStringAssetReference(DataMappingAssetPath);
-	TSoftClassPtr<ACsDataMapping> AssetSubclassOf = TSoftClassPtr<ACsDataMapping>(AssetRef);
+	const FStringAssetReference AssetRef		  = FStringAssetReference(DataMappingAssetPath);
+	TSoftClassPtr<UCsDataMapping> AssetSubclassOf = TSoftClassPtr<UCsDataMapping>(AssetRef);
 
 	if (UClass* DataClass = AssetSubclassOf.LoadSynchronous())
 	{
-		DataMapping = DataClass->GetDefaultObject<ACsDataMapping>();
+		DataMapping = DataClass->GetDefaultObject<UCsDataMapping>();
 #if WITH_EDITOR
 
 		checkf(DataMapping->IsValid(), TEXT("UCsGameInstance::LoadDataMapping: DataMapping is NOT Valid."));

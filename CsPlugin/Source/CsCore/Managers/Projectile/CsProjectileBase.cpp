@@ -119,7 +119,7 @@ void ACsProjectileBase::OnTick_HandleCVars(const float &DeltaSeconds)
 
 void ACsProjectileBase::OnTick_HandleMovementFunction(const float &DeltaSeconds)
 {
-	ACsData_ProjectileBase* Data			 = Cache.GetData();
+	UCsData_ProjectileBase* Data			 = Cache.GetData();
 	const ECsProjectileMovement MovementType = Data->GetMovementType();
 
 	if (MovementType != ECsProjectileMovement::Function)
@@ -221,9 +221,9 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 	const bool IsLocalClient   = UCsCommon::IsLocalPawn(GetWorld(), InstigatingPawn);
 	const TCsViewType& ViewType = IsLocalClient ? ECsViewType::FirstPerson : ECsViewType::ThirdPerson;
 
-	ACsWeapon* OwnerWeapon				= Cast<ACsWeapon>(Cache.GetOwner());
-	ACsData_Weapon* Data_Weapon			= OwnerWeapon ? OwnerWeapon->GetMyData_Weapon() : nullptr;
-	ACsData_ProjectileBase* Data_Projectile = Cache.GetData();
+	ACsWeapon* OwnerWeapon					= Cast<ACsWeapon>(Cache.GetOwner());
+	UCsData_Weapon* Data_Weapon				= OwnerWeapon ? OwnerWeapon->GetMyData_Weapon() : nullptr;
+	UCsData_ProjectileBase* Data_Projectile = Cache.GetData();
 
 	const ECsProjectileRelevance& Relevance = Cache.Relevance;
 
@@ -534,6 +534,6 @@ void ACsProjectileBase::OnHitCallback(UPrimitiveComponent* HitComp, AActor* Othe
 UObject* ACsProjectileBase::Cache_GetOwner() { return Cache.GetOwner(); }
 UObject* ACsProjectileBase::Cache_GetInstigator() { return Cache.GetInstigator(); }
 ACsProjectileBase* ACsProjectileBase::Cache_GetProjectile() { return Cache.GetProjectile(); }
-ACsData_ProjectileBase* ACsProjectileBase::Cache_GetData() { return Cache.GetData(); }
+UCsData_ProjectileBase* ACsProjectileBase::Cache_GetData() { return Cache.GetData(); }
 
 #pragma endregion Script

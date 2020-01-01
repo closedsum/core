@@ -2,7 +2,7 @@
 #pragma once
 #include "UObject/Object.h"
 #include "Types/CsTypes_Load.h"
-#include "CsData.generated.h"
+#include "CsData_Impl.generated.h"
 
 // Macros
 #pragma region

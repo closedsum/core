@@ -6,7 +6,7 @@
 
 class UMaterialInstanceConstant;
 class USkeletalMeshComponent;
-class USkeletalMeshActor;
+class ASkeletalMeshActor;
 
 UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API UCsData_Weapon : public UCsData_Impl

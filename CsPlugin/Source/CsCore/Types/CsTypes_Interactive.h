@@ -374,6 +374,8 @@ struct CSCORE_API EMCsPickupSound : public TCsEnumStructMap<FECsPickupSound, uin
 	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsPickupSound)
 };
 
+class UCsData_Interactive;
+
 struct CSCORE_API FCsInteractiveActorPayload : public ICsPooledObjectPayload
 {
 public:
@@ -386,7 +388,7 @@ public:
 
 	UObject* Parent;
 
-	TWeakObjectPtr<class ACsData_Interactive> Data;
+	TWeakObjectPtr<UCsData_Interactive> Data;
 
 	float LifeTime;
 
@@ -453,7 +455,7 @@ public:
 
 #pragma endregion ICsPooledObjectPayload
 
-	FORCEINLINE class ACsData_Interactive* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	FORCEINLINE UCsData_Interactive* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 	template<typename T>
 	FORCEINLINE T* GetData() { return Cast<T>(GetData()); }
 };

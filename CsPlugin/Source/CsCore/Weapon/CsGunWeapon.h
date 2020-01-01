@@ -10,6 +10,9 @@
 
 #pragma endregion Enums
 
+class UCsData_Weapon;
+class UCsData_WeaponMaterialSkin;
+
 UCLASS()
 class CSCORE_API ACsGunWeapon : public ACsWeapon
 {
@@ -19,12 +22,12 @@ class CSCORE_API ACsGunWeapon : public ACsWeapon
 #pragma region
 public:
 
-	virtual void ApplyData_Weapon(const FECsWeaponSlot &Slot, class ACsData_Weapon* InData, class ACsData_WeaponMaterialSkin* InSkin, const bool &Equipped = true);
+	virtual void ApplyData_Weapon(const FECsWeaponSlot &Slot, UCsData_Weapon* InData, UCsData_WeaponMaterialSkin* InSkin, const bool &Equipped = true);
 
-	TWeakObjectPtr<class ACsData_WeaponMaterialSkin> MyData_WeaponMaterialSkin;
+	TWeakObjectPtr<UCsData_WeaponMaterialSkin> MyData_WeaponMaterialSkin;
 
 	UFUNCTION(BlueprintCallable, Category = "Data")
-	class ACsData_WeaponMaterialSkin* GetMyData_WeaponMaterialSkin();
+	UCsData_WeaponMaterialSkin* GetMyData_WeaponMaterialSkin();
 
 	template<typename T>
 	T* GetMyData_WeaponMaterialSkin()
@@ -33,7 +36,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "Data")
-	class ACsData_Character* GetMyData_Character();
+	UCsData_Character* GetMyData_Character();
 
 	template<typename T>
 	T* GetMyData_Character()

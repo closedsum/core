@@ -5,10 +5,12 @@
 
 #include "Json.h"
 #include "JsonObjectConverter.h"
-
+// Types
 #include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_Load.h"
 #include "Types/CsTypes_View.h"
+// Library
+#include "Library/CsLibrary_Math.h"
 
 #include "CsCommon_Load.generated.h"
 
@@ -1007,10 +1009,6 @@ template<typename T>
 // Loading
 #pragma region
 
-	static float BytesToKilobytes(const int32 &Bytes);
-	static float BytesToMegabytes(const int32 &Bytes);
-	static int32 KilobytesToBytes(const float &Kilobytes);
-
 	// Asset References
 #pragma region
 
@@ -1062,8 +1060,8 @@ template<typename T>
 				UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -1099,8 +1097,8 @@ template<typename T>
 				UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -1167,8 +1165,8 @@ template<typename T>
 									UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 									Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-									Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-									Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+									Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+									Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 								}
 #endif // #if WITH_EDITOR
 							}
@@ -1203,8 +1201,8 @@ template<typename T>
 				UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 #endif // #if WITH_EDITOR
 			}
 		}
@@ -1294,8 +1292,8 @@ template<typename T>
 				UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 #endif // #if WITH_EDITOR
 			}
 		}
@@ -1333,8 +1331,8 @@ template<typename T>
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-					Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
@@ -1393,8 +1391,8 @@ template<typename T>
 						Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 					}
 
-					Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
@@ -1436,8 +1434,8 @@ template<typename T>
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(EResourceSizeMode::Inclusive);
-					Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
@@ -1476,8 +1474,8 @@ template<typename T>
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(EResourceSizeMode::Inclusive);
-					Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
@@ -1563,8 +1561,8 @@ template<typename T>
 				UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -1604,8 +1602,8 @@ template<typename T>
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-					Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = sBytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
@@ -1646,8 +1644,8 @@ template<typename T>
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-					Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
@@ -2891,7 +2889,7 @@ template<typename T>
 
 #pragma endregion IsLoaded
 
-	static TCsLoadAsyncOrder GetLoadAsyncOrder();
+	static ECsLoadAsyncOrder GetLoadAsyncOrder();
 
 	// Enum
 #pragma region

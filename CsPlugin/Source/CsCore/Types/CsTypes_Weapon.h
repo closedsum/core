@@ -331,12 +331,12 @@ struct FCsData_Weapon_FireMode_Firing
 	}
 	virtual ~FCsData_Weapon_FireMode_Firing() {}
 
-	class ACsData_ProjectileBase* GetData()
+	UCsData_ProjectileBase* GetData()
 	{
 		return Data.Get();
 	}
 
-	class ACsData_ProjectileBase* GetChargeData()
+	UCsData_ProjectileBase* GetChargeData()
 	{
 		return ChargeData.Get();
 	}

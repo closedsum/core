@@ -193,6 +193,8 @@ struct FCsWeapon_TMapRef_float : public TCsIntegralType_TMapRef_float<FECsWeapon
 #define CS_WEAPON_CUSTOM_VALUE -1
 #define CS_PROJECTILE_FIRE_PAYLOAD_POOL_SIZE 64
 
+class UCsData_Weapon;
+
 UCLASS()
 class CSCORE_API ACsWeapon : public AActor
 {
@@ -249,7 +251,7 @@ public:
 	template<typename T>
 	void SetMemberRefValue(struct TCsProperty_TArrayRef<T> &Member, const FString &MemberName)
 	{
-		ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
+		UCsData_Weapon* Data_Weapon = GetMyData_Weapon();
 
 		Member.ResetValues();
 
@@ -346,10 +348,10 @@ public:
 #pragma region
 public:
 
-	TWeakObjectPtr<class ACsData_Weapon> MyData_Weapon;
+	TWeakObjectPtr<UCsData_Weapon> MyData_Weapon;
 
 	UFUNCTION(BlueprintCallable, Category = "Data")
-	class ACsData_Weapon* GetMyData_Weapon();
+	UCsData_Weapon* GetMyData_Weapon();
 
 	template<typename T>
 	T* GetMyData_Weapon()
@@ -368,7 +370,7 @@ public:
 	FBindableDynEvent_CsWeapon_OnApplyDataWeapon OnApplyData_Weapon_ScriptEvent;
 
 	UFUNCTION(BlueprintCallable, Category = "Data")
-	class ACsData_ProjectileBase* GetMyData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged);
+	UCsData_ProjectileBase* GetMyData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged);
 
 	template<typename T>
 	T* GetMyData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged)

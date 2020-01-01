@@ -89,7 +89,7 @@ void UCsWidget_Inventory::UpdateGrid()
 			// Set Data for Slot starting to be populated
 			if (CurrentSlot->Count == CS_EMPTY)
 			{
-				ACsData_Item* Data = Item->GetData();
+				UCsData_Item* Data = Item->GetData();
 				CurrentSlot->MyData = Data;
 
 				CurrentSlot->SetImage(Data->GetMaterial());

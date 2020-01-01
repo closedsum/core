@@ -59,12 +59,12 @@ void ACsGunWeapon::ApplyData_Weapon(const FECsWeaponSlot &Slot, ACsData_Weapon* 
 #endif // #if WITH_EDITOR
 }
 
-ACsData_WeaponMaterialSkin* ACsGunWeapon::GetMyData_WeaponMaterialSkin()
+UCsData_WeaponMaterialSkin* ACsGunWeapon::GetMyData_WeaponMaterialSkin()
 {
 	return MyData_WeaponMaterialSkin.IsValid() ? MyData_WeaponMaterialSkin.Get() : nullptr;
 }
 
-ACsData_Character* ACsGunWeapon::GetMyData_Character()
+UCsData_Character* ACsGunWeapon::GetMyData_Character()
 {
 #if WITH_EDITOR 
 	// In Editor Preview Window

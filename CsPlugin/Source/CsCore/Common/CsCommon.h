@@ -297,13 +297,6 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static void ClampMinVectorComponents(FVector &V, const float &Min);
 	static void ClampMaxVectorComponents(FVector &V, const float &Max);
 
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float BytesToKilobytes(const int32 &Bytes);
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float BytesToMegabytes(const int32 &Bytes);
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static int32 KilobytesToBytes(const float &Kilobytes);
-
 #pragma endregion Math
 
 	/*

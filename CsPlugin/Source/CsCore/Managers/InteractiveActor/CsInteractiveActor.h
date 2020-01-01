@@ -104,15 +104,18 @@ namespace ECsInteractiveActorRoutine
 
 #pragma endregion Enums
 
+class ACsInteractiveActor;
+class UCsData_Interactive;
+
 USTRUCT(BlueprintType)
 struct FCsInteractiveActorCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	TWeakObjectPtr<class ACsInteractiveActor> Actor;
+	TWeakObjectPtr<ACsInteractiveActor> Actor;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	TWeakObjectPtr<class ACsData_Interactive> Data;
+	TWeakObjectPtr<UCsData_Interactive> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FECsInteractiveType Type;
@@ -175,11 +178,11 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 		Scale = FVector::OneVector;
 	}
 
-	FORCEINLINE class ACsInteractiveActor* GetActor() { return Actor.IsValid() ? Actor.Get() : nullptr; }
+	FORCEINLINE ACsInteractiveActor* GetActor() { return Actor.IsValid() ? Actor.Get() : nullptr; }
 	template<typename T>
 	FORCEINLINE T* GetActor() { return Cast<T>(GetActor()); }
 
-	FORCEINLINE class ACsData_Interactive* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	FORCEINLINE UCsData_Interactive* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 	template<typename T>
 	FORCEINLINE T* GetData() { return Cast<T>(GetData()); }
 };

@@ -241,7 +241,7 @@ float ACsFpsWeapon::GetMemberValue_float(const FECsWeaponMultiValueMember &Membe
 
 void ACsFpsWeapon::AttachMeshToPawn()
 {
-	ACsData_Character* Data_Character	  = nullptr;
+	UCsData_Character* Data_Character	  = nullptr;
 	const TCsViewType ViewType			  = GetCurrentViewType();
 	USkeletalMeshComponent* CharacterMesh = GetCharacterMesh(ViewType);
 
@@ -503,7 +503,7 @@ void ACsFpsWeapon::SetMesh1P()
 {
 	Mesh1P->SetAnimInstanceClass(nullptr);
 
-	ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
+	UCsData_Weapon* Data_Weapon = GetMyData_Weapon();
 
 #if WITH_EDITOR
 	// In Editor Preview Window
@@ -526,7 +526,7 @@ void ACsFpsWeapon::SetMesh1P()
 		if (!Mesh)
 			return;
 
-		if (ACsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
+		if (UCsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
 		{
 			Skin->SetMaterials(Mesh, ECsViewType::FirstPerson);
 			UCsCommon::SetMIDs(Mesh, MeshMIDs1P, *Skin->GetMaterials(ECsViewType::FirstPerson));
@@ -546,7 +546,7 @@ void ACsFpsWeapon::SetMesh1P()
 		Data_Weapon->SetMesh(Mesh1P, ECsViewType::FirstPerson);
 		Data_Weapon->SetAnimBlueprint(Mesh1P, ECsViewType::FirstPerson);
 
-		if (ACsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
+		if (UCsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
 		{
 			Skin->SetMaterials(Mesh1P, ECsViewType::FirstPerson);
 			UCsCommon::SetMIDs(Mesh1P, MeshMIDs1P, *Skin->GetMaterials(ECsViewType::FirstPerson));
@@ -566,7 +566,7 @@ void ACsFpsWeapon::SetMesh3P()
 {
 	Mesh3P->SetAnimInstanceClass(nullptr);
 
-	ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
+	UCsData_Weapon* Data_Weapon = GetMyData_Weapon();
 
 #if WITH_EDITOR
 	// In Editor Preview Window
@@ -589,7 +589,7 @@ void ACsFpsWeapon::SetMesh3P()
 		if (!Mesh)
 			return;
 
-		if (ACsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
+		if (UCsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
 		{
 			Skin->SetMaterials(Mesh, ECsViewType::ThirdPerson);
 			UCsCommon::SetMIDs(Mesh, MeshMIDs3P, *Skin->GetMaterials(ECsViewType::ThirdPerson));
@@ -609,7 +609,7 @@ void ACsFpsWeapon::SetMesh3P()
 		Data_Weapon->SetMesh(Mesh3P, ECsViewType::ThirdPerson, UseMesh3PLow);
 		Data_Weapon->SetAnimBlueprint(Mesh3P, ECsViewType::ThirdPerson, UseMesh3PLow);
 
-		if (ACsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
+		if (UCsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
 		{
 			Skin->SetMaterials(Mesh3P, ECsViewType::ThirdPerson);
 			UCsCommon::SetMIDs(Mesh3P, MeshMIDs3P, *Skin->GetMaterials(ECsViewType::ThirdPerson));
@@ -667,7 +667,7 @@ USkeletalMeshComponent* ACsFpsWeapon::GetCurrentMesh()
 
 FVector ACsFpsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode)
 {
-	return GetMyData_Weapon<ACsData_ProjectileWeapon>()->GetMuzzleLocation(GetMesh(ViewType), ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
+	return GetMyData_Weapon<UCsData_ProjectileWeapon>()->GetMuzzleLocation(GetMesh(ViewType), ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
 }
 
 float ACsFpsWeapon::GetMovingSpreadBonus(const FECsWeaponFireMode &FireMode) { return MovingSpreadBonus.Get(FireMode); }

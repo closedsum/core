@@ -8,15 +8,18 @@
 // Allocate
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsProjectile_Override_Allocate_Internal, const int32&, PoolIndex);
 
+class ACsProjectileBase;
+class UCsData_ProjectileBase;
+
 USTRUCT(BlueprintType)
 struct FCsProjectileBaseCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	TWeakObjectPtr<class ACsProjectileBase> Projectile;
+	TWeakObjectPtr<ACsProjectileBase> Projectile;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	TWeakObjectPtr<class ACsData_ProjectileBase> Data;
+	TWeakObjectPtr<UCsData_ProjectileBase> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FECsProjectile Type;
@@ -107,7 +110,7 @@ struct FCsProjectileBaseCache : public FCsPooledObjectCache
 	template<typename T>
 	FORCEINLINE T* GetProjectile() { return Cast<T>(GetProjectile()); }
 
-	FORCEINLINE ACsData_ProjectileBase* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	FORCEINLINE UCsData_ProjectileBase* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 	template<typename T>
 	FORCEINLINE T* GetData() { return Cast<T>(GetData()); }
 };
@@ -187,7 +190,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	ACsProjectileBase* Cache_GetProjectile();
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
-	ACsData_ProjectileBase* Cache_GetData();
+	UCsData_ProjectileBase* Cache_GetData();
 
 #pragma endregion Script
 };

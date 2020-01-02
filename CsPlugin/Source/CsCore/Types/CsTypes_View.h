@@ -8,48 +8,38 @@
 // View
 #pragma region
 
+	// ViewType
+#pragma region
+
 UENUM(BlueprintType)
-namespace ECsViewType
+enum class ECsViewType : uint8
 {
-	enum Type
-	{
-		FirstPerson		UMETA(DisplayName = "1st Person"),
-		ThirdPerson		UMETA(DisplayName = "3rd Person"),
-		VR				UMETA(DisplayName = "VR"),
-		ECsViewType_MAX	UMETA(Hidden),
-	};
-}
+	FirstPerson		UMETA(DisplayName = "1st Person"),
+	ThirdPerson		UMETA(DisplayName = "3rd Person"),
+	VR				UMETA(DisplayName = "VR"),
+	ECsViewType_MAX	UMETA(Hidden),
+};
 
-namespace ECsViewType
+struct CSCORE_API EMCsViewType : public TCsEnumMap<ECsViewType>
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
+	CS_ENUM_MAP_BODY(EMCsViewType, ECsViewType)
+};
 
-	namespace Str
-	{
-		const TCsString FirstPerson = TCsString(TEXT("FirstPerson"), TEXT("firstperson"), TEXT("1st person"));
-		const TCsString ThirdPerson = TCsString(TEXT("ThirdPerson"), TEXT("thirdperson"), TEXT("3rd person"));
-		const TCsString VR = TCsString(TEXT("VR"), TEXT("vr"), TEXT("vr"));
-	}
+namespace NCsViewType
+{
+	typedef ECsViewType Type;
 
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::FirstPerson) { return Str::FirstPerson.Value; }
-		if (EType == Type::ThirdPerson) { return Str::ThirdPerson.Value; }
-		if (EType == Type::VR) { return Str::VR.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
+	extern CSCORE_API const Type FirstPerson;
+	extern CSCORE_API const Type ThirdPerson;
+	extern CSCORE_API const Type VR;
+	extern CSCORE_API const Type ECsViewType_MAX;
 
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::FirstPerson) { return Type::FirstPerson; }
-		if (String == Str::ThirdPerson) { return Type::ThirdPerson; }
-		if (String == Str::VR) { return Type::VR; }
-		return Type::ECsViewType_MAX;
-	}
+	extern CSCORE_API const uint8 MAX;
 }
 
 #define ECS_VIEW_TYPE_MAX (uint8)ECsViewType::ECsViewType_MAX
-typedef ECsViewType::Type TCsViewType;
+
+#pragma endregion ViewType
 
 USTRUCT(BlueprintType)
 struct FCsViewFlags
@@ -65,7 +55,7 @@ struct FCsViewFlags
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flags")
 	bool FlagVR;
 
-	bool Get(const TCsViewType &ViewType)
+	bool Get(const ECsViewType& ViewType)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Flag1P;
@@ -248,7 +238,7 @@ struct FCsFpvDrawDistance
 		Distance3PSq = Distance3P * Distance3P;
 	}
 
-	const float& Get(const TCsViewType &ViewType) const
+	const float& Get(const ECsViewType& ViewType) const
 	{
 		if (ViewType == ECsViewType::FirstPerson || ViewType == ECsViewType::VR)
 			return Distance1P;
@@ -257,7 +247,7 @@ struct FCsFpvDrawDistance
 		return NCsCached::Ref::Float;
 	}
 
-	const float& GetSquared(const TCsViewType &ViewType) const
+	const float& GetSquared(const ECsViewType& ViewType) const
 	{
 		if (ViewType == ECsViewType::FirstPerson || ViewType == ECsViewType::VR)
 			return Distance1PSq;

@@ -85,13 +85,13 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
-	virtual UStaticMesh* GetMesh(const TEnumAsByte<ECsViewType::Type>& ViewType);
+	virtual UStaticMesh* GetMesh(const ECsViewType& ViewType);
 
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
-	virtual float GetDrawDistance(const TEnumAsByte<ECsViewType::Type>& ViewType);
+	virtual float GetDrawDistance(const ECsViewType& ViewType);
 
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
-	virtual float GetDrawDistanceSq(const TEnumAsByte<ECsViewType::Type>& ViewType);
+	virtual float GetDrawDistanceSq(const ECsViewType& ViewType);
 
 #pragma endregion Mesh
 
@@ -134,7 +134,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "FX")
 	virtual const bool& GetUseTrailFX();
 
-	virtual FCsFxElement* GetTrailFX(const TCsViewType& ViewType);
+	virtual FCsFxElement* GetTrailFX(const ECsViewType& ViewType);
 
 #pragma endregion FX
 

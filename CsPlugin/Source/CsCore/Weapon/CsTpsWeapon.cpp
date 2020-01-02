@@ -178,7 +178,7 @@ void ACsTpsWeapon::SetMesh()
 {
 	Mesh->SetAnimInstanceClass(nullptr);
 
-	ACsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<ACsData_ProjectileWeapon>();
+	UCsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<UCsData_ProjectileWeapon>();
 
 	if (!Data_Weapon->UseMesh())
 		return;
@@ -265,9 +265,9 @@ USkeletalMeshComponent* ACsTpsWeapon::GetMesh()
 // Firing
 #pragma region
 
-FVector ACsTpsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode)
+FVector ACsTpsWeapon::GetMuzzleLocation(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode)
 {
-	return GetMyData_Weapon<ACsData_ProjectileWeapon>()->GetMuzzleLocation(GetMesh(), FireMode, CurrentProjectilePerShotIndex[FireMode]);
+	return GetMyData_Weapon<UCsData_ProjectileWeapon>()->GetMuzzleLocation(GetMesh(), FireMode, CurrentProjectilePerShotIndex[FireMode]);
 }
 
 #pragma endregion Firing

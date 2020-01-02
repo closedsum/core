@@ -356,9 +356,9 @@ public:
 public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "View")
-	TEnumAsByte<ECsViewType::Type> CurrentViewType;
+	ECsViewType CurrentViewType;
 
-	virtual TEnumAsByte<ECsViewType::Type> GetCurrentViewType();
+	virtual ECsViewType GetCurrentViewType();
 
 	UPROPERTY(BlueprintReadOnly, Category = "View")
 	FRotator CurrentViewRotation;

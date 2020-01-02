@@ -23,15 +23,10 @@ float UCsData_ProjectileWeapon::GetLocationDamageModifier(const FECsWeaponFireMo
 const bool& UCsData_ProjectileWeapon::UseFakeProjectile(const FECsWeaponFireMode& FireMode) { return NCsCached::Ref::False; }
 UCsData_ProjectileBase* UCsData_ProjectileWeapon::GetData_Projectile(const FECsWeaponFireMode& FireMode, const bool& IsCharged) { return nullptr; }
 
-const FName& UCsData_ProjectileWeapon::GetMuzzleBone(const TEnumAsByte<ECsViewType::Type>& ViewType, const FECsWeaponFireMode& FireMode, const uint8& Index /*=0*/) { return NCsCached::Name::None; }
+const FName& UCsData_ProjectileWeapon::GetMuzzleBone(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const uint8& Index /*=0*/) { return NCsCached::Name::None; }
 const FName& UCsData_ProjectileWeapon::GetMuzzleBone(const FECsWeaponFireMode& FireMode, const uint8& Index /*=0*/){ return NCsCached::Name::None; }
 
-FVector UCsData_ProjectileWeapon::GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TEnumAsByte<ECsViewType::Type>& ViewType, const FECsWeaponFireMode& FireMode, const uint8& Index /*=0*/)
-{ 
-	return GetMuzzleLocation(InMesh, (TCsViewType)ViewType, FireMode, Index);
-}
-
-FVector UCsData_ProjectileWeapon::GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const uint8& Index /*=0*/) { return FVector::ZeroVector; }
+FVector UCsData_ProjectileWeapon::GetMuzzleLocation(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const uint8& Index /*=0*/) { return FVector::ZeroVector; }
 FVector UCsData_ProjectileWeapon::GetMuzzleLocation(USkeletalMeshComponent* InMesh, const FECsWeaponFireMode& FireMode, const uint8& Index /*=0*/){ return FVector::ZeroVector; }
 
 const FECsWeaponGrip& UCsData_ProjectileWeapon::GetGripType() { return EMCsWeaponGrip::Get().GetMAX(); }
@@ -50,13 +45,13 @@ float* UCsData_ProjectileWeapon::GetReloadTimeAddr() { return nullptr; }
 // Anims
 #pragma region
 
-UAnimMontage* UCsData_ProjectileWeapon::GetAnimMontage(const TEnumAsByte<ECsViewType::Type>& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*=0*/, const bool& IsLow /*=false*/){ return nullptr; }
+UAnimMontage* UCsData_ProjectileWeapon::GetAnimMontage(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*=0*/, const bool& IsLow /*=false*/){ return nullptr; }
 UAnimMontage* UCsData_ProjectileWeapon::GetAnimMontage(const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*=0*/, const bool& IsLow /*=false*/) { return nullptr; }
 
-UAnimSequence* UCsData_ProjectileWeapon::GetAnimSequence(const TEnumAsByte<ECsViewType::Type>& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*=0*/, const bool &IsLow /*=false*/){ return nullptr; }
+UAnimSequence* UCsData_ProjectileWeapon::GetAnimSequence(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*=0*/, const bool &IsLow /*=false*/){ return nullptr; }
 UAnimSequence* UCsData_ProjectileWeapon::GetAnimSequence(const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*=0*/, const bool& IsLow /*=false*/) { return nullptr; }
 
-void UCsData_ProjectileWeapon::GetAnim(UAnimSequence*& OutAnimSequence, UAnimMontage*& OutAnimMontage, const TEnumAsByte<ECsViewType::Type>& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*=0*/, const bool& IsLow /*=false*/)
+void UCsData_ProjectileWeapon::GetAnim(UAnimSequence*& OutAnimSequence, UAnimMontage*& OutAnimMontage, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*=0*/, const bool& IsLow /*=false*/)
 {
 	OutAnimSequence = GetAnimSequence(ViewType, FireMode, AnimType, Index, IsLow);
 	OutAnimMontage = GetAnimMontage(ViewType, FireMode, AnimType, Index, IsLow);
@@ -68,7 +63,7 @@ void UCsData_ProjectileWeapon::GetAnim(UAnimSequence*& OutAnimSequence, UAnimMon
 	OutAnimMontage = GetAnimMontage(FireMode, AnimType, Index, IsLow);
 }
 
-void UCsData_ProjectileWeapon::PlayAnimation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*0*/, const float& PlayRate /*=1.0f*/, const bool& IsLow /*=false*/)
+void UCsData_ProjectileWeapon::PlayAnimation(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*0*/, const float& PlayRate /*=1.0f*/, const bool& IsLow /*=false*/)
 {
 	UAnimSequence* Seq = nullptr;
 	UAnimMontage* Mon = nullptr;
@@ -120,7 +115,7 @@ void UCsData_ProjectileWeapon::PlayAnimation(USkeletalMeshComponent* InMesh, con
 	}
 }
 
-void UCsData_ProjectileWeapon::PlayAnimation(ASkeletalMeshActor* InActor, const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*=0*/, const float& PlayRate /*=1.0f*/, const bool& IsLow /*=false*/)
+void UCsData_ProjectileWeapon::PlayAnimation(ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*=0*/, const float& PlayRate /*=1.0f*/, const bool& IsLow /*=false*/)
 {
 	PlayAnimation(InActor->GetSkeletalMeshComponent(), ViewType, FireMode, AnimType, Index, PlayRate, IsLow);
 }
@@ -130,13 +125,13 @@ void UCsData_ProjectileWeapon::PlayAnimation(ASkeletalMeshActor* InActor, const 
 	PlayAnimation(InActor->GetSkeletalMeshComponent(), FireMode, AnimType, Index, PlayRate, IsLow);
 }
 
-void UCsData_ProjectileWeapon::StopAnimation(USkeletalMeshComponent* InMesh, const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*=0*/, const float& BlendOutTime /*=0.0f*/, const bool& IsLow /*=false*/)
+void UCsData_ProjectileWeapon::StopAnimation(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*=0*/, const float& BlendOutTime /*=0.0f*/, const bool& IsLow /*=false*/)
 {
 	UAnimMontage* Anim = GetAnimMontage(ViewType, FireMode, AnimType, Index, IsLow);
 
 	if (!Anim)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_ProjectileWeapon::StopAnimation (%s): No Animation found for AnimType: %s and ViewType: %s."), *ShortCode.ToString(), *(AnimType.Name), *ECsViewType::ToString(ViewType));
+		UE_LOG(LogCs, Warning, TEXT("UCsData_ProjectileWeapon::StopAnimation (%s): No Animation found for AnimType: %s and ViewType: %s."), *ShortCode.ToString(), *(AnimType.Name), EMCsViewType::Get().ToChar(ViewType));
 		return;
 	}
 
@@ -174,7 +169,7 @@ void UCsData_ProjectileWeapon::StopAnimation(USkeletalMeshComponent* InMesh, con
 		AnimInstance->Montage_Stop(BlendOutTime, Anim);
 }
 
-void UCsData_ProjectileWeapon::StopAnimation(ASkeletalMeshActor* InActor, const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*=0*/, const float& BlendOutTime /*=0.0f*/, const bool& IsLow /*=false*/)
+void UCsData_ProjectileWeapon::StopAnimation(ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index /*=0*/, const float& BlendOutTime /*=0.0f*/, const bool& IsLow /*=false*/)
 {
 	StopAnimation(InActor->GetSkeletalMeshComponent(), ViewType, FireMode, AnimType, Index, BlendOutTime, IsLow);
 }
@@ -194,7 +189,7 @@ FCsFpvAnimMontage* UCsData_ProjectileWeapon::GetFCsFpvAnimMontage(const FECsWeap
 // FX
 #pragma region
 
-FCsFxElement* UCsData_ProjectileWeapon::GetMuzzleFX(const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const int32& Index /*=0*/){ return nullptr; }
+FCsFxElement* UCsData_ProjectileWeapon::GetMuzzleFX(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const int32& Index /*=0*/){ return nullptr; }
 FCsFxElement* UCsData_ProjectileWeapon::GetMuzzleFX(const FECsWeaponFireMode& FireMode, const int32& Index /*=0*/) { return nullptr; }
 
 #pragma endregion FX
@@ -202,10 +197,10 @@ FCsFxElement* UCsData_ProjectileWeapon::GetMuzzleFX(const FECsWeaponFireMode& Fi
 // Sounds
 #pragma region
 
-FCsSoundElement* UCsData_ProjectileWeapon::GetSound(const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType) { return nullptr; }
+FCsSoundElement* UCsData_ProjectileWeapon::GetSound(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType) { return nullptr; }
 FCsSoundElement* UCsData_ProjectileWeapon::GetSound(const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType) { return nullptr; }
 
-void UCsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, UObject* InParent)
+void UCsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, UObject* InParent)
 {
 	FCsSoundElement* SoundElement	= GetSound(ViewType, FireMode, SoundType);
 
@@ -245,7 +240,7 @@ void UCsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const FECsWeaponFireMo
 	Manager_Sound->Play(Payload);
 }
 
-void UCsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, const FVector& Location)
+void UCsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, const FVector& Location)
 {
 	FCsSoundElement* SoundElement = GetSound(ViewType, FireMode, SoundType);
 
@@ -285,7 +280,7 @@ void UCsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const FECsWeaponFireMo
 	Manager_Sound->Play(Payload);
 }
 
-void UCsData_ProjectileWeapon::StopSound(UWorld* InWorld, const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, UObject* InParent)
+void UCsData_ProjectileWeapon::StopSound(UWorld* InWorld, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, UObject* InParent)
 {
 	FCsSoundElement* SoundElement	= GetSound(ViewType, FireMode, SoundType);
 	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);

@@ -98,18 +98,18 @@ public:
 
 	virtual bool IsAnimMemberAStruct(const FECsCharacterAnim &AnimType);
 
-	virtual void GetAnim(UAnimSequence* &OutAnimSequence, UAnimMontage* &OutAnimMontage, const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
+	virtual void GetAnim(UAnimSequence* &OutAnimSequence, UAnimMontage* &OutAnimMontage, const ECsViewType& ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 	virtual void GetAnim(UAnimSequence* &OutAnimSequence, UAnimMontage* &OutAnimMontage, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
-	virtual void GetAnim(UAnimSequence* &OutAnimSequence, UAnimMontage* &OutAnimMontage, const TCsViewType &ViewType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
+	virtual void GetAnim(UAnimSequence* &OutAnimSequence, UAnimMontage* &OutAnimMontage, const ECsViewType& ViewType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 	virtual void GetAnim(UAnimSequence* &OutAnimSequence, UAnimMontage* &OutAnimMontage, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 
 	// Sequence
 #pragma region
 public:
 
-	virtual UAnimSequence* GetAnimSequence(const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
+	virtual UAnimSequence* GetAnimSequence(const ECsViewType& ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 	virtual UAnimSequence* GetAnimSequence(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
-	virtual UAnimSequence* GetAnimSequence(const TCsViewType &ViewType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
+	virtual UAnimSequence* GetAnimSequence(const ECsViewType& ViewType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 	virtual UAnimSequence* GetAnimSequence(const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 
 	virtual FCsAnimSequence* GetFCsAnimSequence(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0);
@@ -123,10 +123,10 @@ public:
 #pragma region
 public:
 
-	virtual UAnimMontage* GetAnimMontage(const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
+	virtual UAnimMontage* GetAnimMontage(const ECsViewType& ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 	virtual UAnimMontage* GetAnimMontage(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
-	virtual UAnimMontage* GetAnimMontage(const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const bool &IsLow = false);
-	virtual UAnimMontage* GetAnimMontage(const TCsViewType &ViewType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
+	virtual UAnimMontage* GetAnimMontage(const ECsViewType& ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const bool &IsLow = false);
+	virtual UAnimMontage* GetAnimMontage(const ECsViewType& ViewType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 	virtual UAnimMontage* GetAnimMontage(const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 	
 	virtual FCsAnimMontage* GetFCsAnimMontage(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0);
@@ -140,7 +140,7 @@ public:
 #pragma region
 public:
 
-	virtual UBlendSpace1D* GetBlendSpace1D(const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
+	virtual UBlendSpace1D* GetBlendSpace1D(const ECsViewType& ViewType, const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
 	virtual UBlendSpace1D* GetBlendSpace1D(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
 	virtual UBlendSpace1D* GetBlendSpace1D(const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
 
@@ -157,7 +157,7 @@ public:
 
 	virtual bool IsBlendMemberStruct(const FECsCharacterBlendSpace &BlendType);
 	
-	virtual UBlendSpace* GetBlendSpace(const TCsViewType &ViewType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
+	virtual UBlendSpace* GetBlendSpace(const ECsViewType& ViewType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
 	virtual UBlendSpace* GetBlendSpace(const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
 
 	virtual FCsBlendSpace* GetFCsBlendSpace(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
@@ -171,7 +171,7 @@ public:
 #pragma region
 public:
 
-	virtual UAimOffsetBlendSpace* GetAimOffset(const TCsViewType &ViewType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
+	virtual UAimOffsetBlendSpace* GetAimOffset(const ECsViewType& ViewType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
 	virtual UAimOffsetBlendSpace* GetAimOffset(const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
 
 	virtual FCsAimOffset* GetFCsAimOffset(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
@@ -181,9 +181,9 @@ public:
 
 #pragma endregion AimOffset
 
-	virtual USkeleton* GetSkeleton(const TCsViewType &ViewType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
+	virtual USkeleton* GetSkeleton(const ECsViewType& ViewType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
 	virtual USkeleton* GetSkeleton(const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
-	virtual USkeleton* GetSkeleton(const TCsViewType &ViewType, const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
+	virtual USkeleton* GetSkeleton(const ECsViewType& ViewType, const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
 	virtual USkeleton* GetSkeleton(const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
 
 	// AnimBlueprint
@@ -192,14 +192,14 @@ public:
 
 	virtual bool IsAnimBlueprintMemberStruct(const FECsCharacterAnimBlueprint &BlueprintType);
 
-	virtual UAnimBlueprintGeneratedClass* GetAnimBlueprint(const TCsViewType &ViewType, const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
+	virtual UAnimBlueprintGeneratedClass* GetAnimBlueprint(const ECsViewType& ViewType, const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
 	virtual UAnimBlueprintGeneratedClass* GetAnimBlueprint(const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
 
-	virtual void SetAnimBlueprint(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
+	virtual void SetAnimBlueprint(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
 	virtual void SetAnimBlueprint(USkeletalMeshComponent* InMesh, const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
-	virtual void SetAnimBlueprint(class ASkeletalMeshActor* InActor, const TCsViewType &ViewType, const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
+	virtual void SetAnimBlueprint(class ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
 	virtual void SetAnimBlueprint(class ASkeletalMeshActor* InActor, const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
-	virtual void SetAnimBlueprint(UObject* InObject, const TCsViewType &ViewType, const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
+	virtual void SetAnimBlueprint(UObject* InObject, const ECsViewType& ViewType, const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
 	virtual void SetAnimBlueprint(UObject* InObject, const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
 
 #pragma endregion AnimBlueprint
@@ -208,17 +208,17 @@ public:
 #pragma region
 public:
 
-	virtual void PlayAnimation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
+	virtual void PlayAnimation(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
 	virtual void PlayAnimation(USkeletalMeshComponent* InMesh, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
-	virtual void PlayAnimation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
+	virtual void PlayAnimation(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
 	virtual void PlayAnimation(USkeletalMeshComponent* InMesh, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
-	virtual void PlayAnimation(class ASkeletalMeshActor* InActor, const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
+	virtual void PlayAnimation(class ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
 	virtual void PlayAnimation(class ASkeletalMeshActor* InActor, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
-	virtual void PlayAnimation(class ASkeletalMeshActor* InActor, const TCsViewType &ViewType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
+	virtual void PlayAnimation(class ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
 	virtual void PlayAnimation(class ASkeletalMeshActor* InActor, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
-	virtual void PlayAnimation(UObject* InObject, const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
+	virtual void PlayAnimation(UObject* InObject, const ECsViewType& ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
 	virtual void PlayAnimation(UObject* InObject, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
-	virtual void PlayAnimation(UObject* InObject, const TCsViewType &ViewType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
+	virtual void PlayAnimation(UObject* InObject, const ECsViewType& ViewType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
 	virtual void PlayAnimation(UObject* InObject, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
 
 #pragma endregion Play
@@ -227,17 +227,17 @@ public:
 #pragma region
 public:
 
-	virtual void Montage_JumpToSection(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
+	virtual void Montage_JumpToSection(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
 	virtual void Montage_JumpToSection(USkeletalMeshComponent* InMesh, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
-	virtual void Montage_JumpToSection(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
+	virtual void Montage_JumpToSection(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
 	virtual void Montage_JumpToSection(USkeletalMeshComponent* InMesh, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
-	virtual void Montage_JumpToSection(class ASkeletalMeshActor* InActor, const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
+	virtual void Montage_JumpToSection(class ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
 	virtual void Montage_JumpToSection(class ASkeletalMeshActor* InActor, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
-	virtual void Montage_JumpToSection(class ASkeletalMeshActor* InActor, const TCsViewType &ViewType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
+	virtual void Montage_JumpToSection(class ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
 	virtual void Montage_JumpToSection(class ASkeletalMeshActor* InActor, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
-	virtual void Montage_JumpToSection(UObject* InObject, const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
+	virtual void Montage_JumpToSection(UObject* InObject, const ECsViewType& ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
 	virtual void Montage_JumpToSection(UObject* InObject, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
-	virtual void Montage_JumpToSection(UObject* InObject, const TCsViewType &ViewType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
+	virtual void Montage_JumpToSection(UObject* InObject, const ECsViewType& ViewType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
 	virtual void Montage_JumpToSection(UObject* InObject, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
 
 #pragma endregion JumpTo
@@ -246,17 +246,17 @@ public:
 #pragma region
 public:
 
-	virtual void StopAnimation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
+	virtual void StopAnimation(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
 	virtual void StopAnimation(USkeletalMeshComponent* InMesh, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
-	virtual void StopAnimation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
+	virtual void StopAnimation(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
 	virtual void StopAnimation(USkeletalMeshComponent* InMesh, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
-	virtual void StopAnimation(class ASkeletalMeshActor* InActor, const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
+	virtual void StopAnimation(class ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
 	virtual void StopAnimation(class ASkeletalMeshActor* InActor, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
-	virtual void StopAnimation(class ASkeletalMeshActor* InActor, const TCsViewType &ViewType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
+	virtual void StopAnimation(class ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
 	virtual void StopAnimation(class ASkeletalMeshActor* InActor, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
-	virtual void StopAnimation(class UObject* InObject, const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
+	virtual void StopAnimation(class UObject* InObject, const ECsViewType& ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
 	virtual void StopAnimation(class UObject* InObject, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
-	virtual void StopAnimation(class UObject* InObject, const TCsViewType &ViewType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
+	virtual void StopAnimation(class UObject* InObject, const ECsViewType& ViewType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
 	virtual void StopAnimation(class UObject* InObject, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
 
 #pragma endregion Stop

@@ -333,7 +333,7 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, FCsAnimInstance_AnimMo
 	}
 }
 
-void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_AnimSequence &Anim, FCsFpvAnimSequence* DataAnim)
+void UCsAnimInstance::LoadAnim(const FString& MemberName, const ECsViewType& ViewType, FCsAnimInstance_AnimSequence& Anim, FCsFpvAnimSequence* DataAnim)
 {
 	if (DataAnim &&
 		Anim.UseDataValueAsDefault)
@@ -362,7 +362,7 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &Vie
 	}
 }
 
-void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_AnimMontage &Anim, FCsFpvAnimMontage* DataAnim)
+void UCsAnimInstance::LoadAnim(const FString& MemberName, const ECsViewType& ViewType, FCsAnimInstance_AnimMontage& Anim, FCsFpvAnimMontage* DataAnim)
 {
 	if (DataAnim &&
 		Anim.UseDataValueAsDefault)
@@ -450,7 +450,7 @@ void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, FCsAnimInstance_
 	}
 }
 
-void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace1D &Blend, FCsFpvBlendSpace1D* DataBlend)
+void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const ECsViewType& ViewType, FCsAnimInstance_BlendSpace1D& Blend, FCsFpvBlendSpace1D* DataBlend)
 {
 	if (DataBlend &&
 		Blend.UseDataValueAsDefault)
@@ -479,7 +479,7 @@ void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewTyp
 	}
 }
 
-void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace &Blend, FCsFpvBlendSpace* DataBlend)
+void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const ECsViewType& ViewType, FCsAnimInstance_BlendSpace& Blend, FCsFpvBlendSpace* DataBlend)
 {
 	if (DataBlend &&
 		Blend.UseDataValueAsDefault)
@@ -537,7 +537,7 @@ void UCsAnimInstance::LoadAimOffset(const FString& MemberName, FCsAnimInstance_A
 	}
 }
 
-void UCsAnimInstance::LoadAimOffset(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_AimOffset &Blend, FCsFpvAimOffset* DataBlend)
+void UCsAnimInstance::LoadAimOffset(const FString& MemberName, const ECsViewType& ViewType, FCsAnimInstance_AimOffset& Blend, FCsFpvAimOffset* DataBlend)
 {
 	if (DataBlend &&
 		Blend.UseDataValueAsDefault)

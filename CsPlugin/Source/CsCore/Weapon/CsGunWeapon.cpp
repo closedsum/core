@@ -27,7 +27,7 @@ void ACsGunWeapon::ApplyData_Weapon(const FECsWeaponSlot &Slot, ACsData_Weapon* 
 
 	MyData_Weapon = InData;
 
-	ACsData_ProjectileWeapon* Data_Weapon = Cast<ACsData_ProjectileWeapon>(InData);
+	UCsData_ProjectileWeapon* Data_Weapon = Cast<UCsData_ProjectileWeapon>(InData);
 	GripType = Data_Weapon->GetGripType();
 
 	MyData_WeaponMaterialSkin = InSkin;

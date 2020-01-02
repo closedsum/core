@@ -571,14 +571,14 @@ struct FCsData_FpsWeapon_FireMode_FXs
 	FCsData_FpsWeapon_FireMode_FXs() {}
 	virtual ~FCsData_FpsWeapon_FireMode_FXs() {}
 
-	FCsFxElement* GetMuzzleFX(const TCsViewType &ViewType, const int32 Index = 0)
+	FCsFxElement* GetMuzzleFX(const ECsViewType& ViewType, const int32 Index = 0)
 	{
 		const int32 Count = MuzzleFXs.Num();
 
 		return MuzzleFXs[Index % Count].Get(ViewType);
 	}
 
-	const FName& GetMuzzleBone(const TCsViewType &ViewType, const int32 Index = 0)
+	const FName& GetMuzzleBone(const ECsViewType& ViewType, const int32 Index = 0)
 	{
 		const int32 Count = MuzzleFXs.Num();
 

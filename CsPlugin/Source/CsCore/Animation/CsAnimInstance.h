@@ -138,7 +138,7 @@ public:
 
 #endif // #if WITH_EDITOR
 
-	TCsViewType CurrentViewType;
+	ECsViewType CurrentViewType;
 
 #if WITH_EDITOR
 
@@ -179,18 +179,18 @@ public:
 
 	ECsLoadFlags DefaultLoadFlags;
 
-	void LoadAnim(const FString& MemberName, FCsAnimInstance_AnimSequence &Anim, FCsAnimSequence* DataAnim);
-	void LoadAnim(const FString& MemberName, FCsAnimInstance_AnimMontage &Anim, FCsAnimMontage* DataAnim);
-	void LoadAnim(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_AnimSequence &Anim, FCsFpvAnimSequence* DataAnim);
-	void LoadAnim(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_AnimMontage &Anim, FCsFpvAnimMontage* DataAnim);
+	void LoadAnim(const FString& MemberName, FCsAnimInstance_AnimSequence& Anim, FCsAnimSequence* DataAnim);
+	void LoadAnim(const FString& MemberName, FCsAnimInstance_AnimMontage& Anim, FCsAnimMontage* DataAnim);
+	void LoadAnim(const FString& MemberName, const ECsViewType& ViewType, FCsAnimInstance_AnimSequence& Anim, FCsFpvAnimSequence* DataAnim);
+	void LoadAnim(const FString& MemberName, const ECsViewType& ViewType, FCsAnimInstance_AnimMontage& Anim, FCsFpvAnimMontage* DataAnim);
 
-	void LoadBlendSpace(const FString& MemberName, FCsAnimInstance_BlendSpace1D &Blend, FCsBlendSpace1D* DataBlend);
-	void LoadBlendSpace(const FString& MemberName, FCsAnimInstance_BlendSpace &Blend, FCsBlendSpace* DataBlend);
-	void LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace1D &Blend, FCsFpvBlendSpace1D* DataBlend);
-	void LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace &Blend, FCsFpvBlendSpace* DataBlend);
+	void LoadBlendSpace(const FString& MemberName, FCsAnimInstance_BlendSpace1D& Blend, FCsBlendSpace1D* DataBlend);
+	void LoadBlendSpace(const FString& MemberName, FCsAnimInstance_BlendSpace& Blend, FCsBlendSpace* DataBlend);
+	void LoadBlendSpace(const FString& MemberName, const ECsViewType& ViewType, FCsAnimInstance_BlendSpace1D& Blend, FCsFpvBlendSpace1D* DataBlend);
+	void LoadBlendSpace(const FString& MemberName, const ECsViewType& ViewType, FCsAnimInstance_BlendSpace& Blend, FCsFpvBlendSpace* DataBlend);
 
-	void LoadAimOffset(const FString& MemberName, FCsAnimInstance_AimOffset &Blend, FCsAimOffset* DataBlend);
-	void LoadAimOffset(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_AimOffset &Blend, FCsFpvAimOffset* DataBlend);
+	void LoadAimOffset(const FString& MemberName, FCsAnimInstance_AimOffset& Blend, FCsAimOffset* DataBlend);
+	void LoadAimOffset(const FString& MemberName, const ECsViewType& ViewType, FCsAnimInstance_AimOffset& Blend, FCsFpvAimOffset* DataBlend);
 
 #pragma endregion Anims
 

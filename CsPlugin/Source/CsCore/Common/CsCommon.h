@@ -143,7 +143,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 // Enum to Enum Conversion
 #pragma region
 
-	static ECsLoadFlags ViewTypeToLoadFlags(const TCsViewType &ViewType, const bool &IsLow = false);
+	static ECsLoadFlags ViewTypeToLoadFlags(const ECsViewType& ViewType, const bool& IsLow = false);
 
 #pragma endregion Enum to Enum Conversion
 
@@ -158,7 +158,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static float Stream_GetFloat(const TCHAR*& Str);
 	static ERichCurveInterpMode Stream_GetRichCurveInterpMode(const TCHAR*& Str);
 	static ERichCurveTangentMode Stream_GetRichCurveTangentMode(const TCHAR*& Str);
-	static TCsViewType Stream_GetViewType(const TCHAR*& Str);
+	static ECsViewType Stream_GetViewType(const TCHAR*& Str);
 
 #pragma endregion
 
@@ -345,14 +345,14 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static bool GrabOption(FString& Options, FString& Result);
 	static FString ParseOption(const FString& Options, const FString& InKey);
 
-	static bool IsValidFpsAnimMontageArray(TArray<FCsFpvAnimMontage> & InArray, const TCsViewType &ViewType, const bool &IsLow=false);
+	static bool IsValidFpsAnimMontageArray(TArray<FCsFpvAnimMontage>& InArray, const ECsViewType& ViewType, const bool& IsLow=false);
 
 // Component
 #pragma region
 
-	static void InitComponent(USceneComponent* Component, USceneComponent* RootComponent, const ECollisionChannel &Channel, const TCsViewType &ViewType=ECsViewType::ECsViewType_MAX);
-	static void EnableComponent(USceneComponent* Component, const bool &SetUpdateFlag=false);
-	static void DisableComponent(USceneComponent* Component, const bool &Detach=false, const bool &DisableCollision=false, const bool &SetUpdateFlag=false);
+	static void InitComponent(USceneComponent* Component, USceneComponent* RootComponent, const ECollisionChannel& Channel, const ECsViewType& ViewType=ECsViewType::ECsViewType_MAX);
+	static void EnableComponent(USceneComponent* Component, const bool& SetUpdateFlag=false);
+	static void DisableComponent(USceneComponent* Component, const bool& Detach=false, const bool& DisableCollision=false, const bool& SetUpdateFlag=false);
 	static void ClearComponent(USceneComponent* Component);
 
 	static bool CanDetachFromComponent(USceneComponent* Component);

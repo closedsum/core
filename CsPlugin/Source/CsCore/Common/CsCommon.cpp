@@ -359,7 +359,7 @@ FString UCsCommon::InteractivePhysicsStateToString(const int32 &PhysicsState)
 // Enum to Enum Conversion
 #pragma region
 
-ECsLoadFlags UCsCommon::ViewTypeToLoadFlags(const TCsViewType &ViewType, const bool &IsLow /*=false*/)
+ECsLoadFlags UCsCommon::ViewTypeToLoadFlags(const ECsViewType& ViewType, const bool& IsLow /*=false*/)
 {
 	if (ViewType == ECsViewType::FirstPerson)
 		return ECsLoadFlags::Game1P;
@@ -441,12 +441,12 @@ ERichCurveTangentMode UCsCommon::Stream_GetRichCurveTangentMode(const TCHAR*& St
 	return ECsRichCurveTangentMode::ToBaseType(Arg);
 }
 
-TCsViewType UCsCommon::Stream_GetViewType(const TCHAR*& Str)
+ECsViewType UCsCommon::Stream_GetViewType(const TCHAR*& Str)
 {
 	FString Arg;
 	FParse::Token(Str, Arg, false);
 
-	return ECsViewType::ToType(Arg);
+	return EMCsViewType::Get().GetEnum(Arg);
 }
 
 #pragma endregion
@@ -1282,7 +1282,7 @@ FString UCsCommon::ParseOption(const FString& Options, const FString& InKey)
 	return TEXT("");
 }
 
-bool UCsCommon::IsValidFpsAnimMontageArray(TArray<FCsFpvAnimMontage> & InArray, const TCsViewType &ViewType, const bool &IsLow)
+bool UCsCommon::IsValidFpsAnimMontageArray(TArray<FCsFpvAnimMontage>& InArray, const ECsViewType& ViewType, const bool& IsLow)
 {
 	const int32 Count = InArray.Num();
 
@@ -1300,7 +1300,7 @@ bool UCsCommon::IsValidFpsAnimMontageArray(TArray<FCsFpvAnimMontage> & InArray, 
 // Component
 #pragma region
 
-void UCsCommon::InitComponent(USceneComponent* Component, USceneComponent* RootComponent, const ECollisionChannel &Channel, const TCsViewType &ViewType /*=ECsViewType::ECsViewType_MAXv*/)
+void UCsCommon::InitComponent(USceneComponent* Component, USceneComponent* RootComponent, const ECollisionChannel& Channel, const ECsViewType& ViewType /*=ECsViewType::ECsViewType_MAXv*/)
 {
 	// Mesh Component
 	if (UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(Component))

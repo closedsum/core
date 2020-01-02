@@ -7,6 +7,7 @@
 class UMaterialInstanceConstant;
 class USkeletalMeshComponent;
 class ASkeletalMeshActor;
+class USkeletalMesh;
 
 UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API UCsData_Weapon : public UCsData_Impl
@@ -32,21 +33,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
 	virtual const bool& UseMesh();
 
-	virtual USkeletalMesh* GetMesh(const TCsViewType& ViewType, const bool& IsLow = false);
-	UFUNCTION(BlueprintCallable, Category = "Mesh")
-	virtual USkeletalMesh* GetMesh(const TEnumAsByte<ECsViewType::Type>& ViewType, const bool& IsLow = false);
+	virtual USkeletalMesh* GetMesh(const ECsViewType& ViewType, const bool& IsLow = false);
 	virtual USkeletalMesh* GetMesh();
 
-	virtual void SetMesh(USkeletalMeshComponent* InMesh, const TCsViewType& ViewType, const bool& IsLow = false);
-	virtual void SetMesh(ASkeletalMeshActor* InActor, const TCsViewType& ViewType, const bool& IsLow = false);
+	virtual void SetMesh(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const bool& IsLow = false);
+	virtual void SetMesh(ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const bool& IsLow = false);
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
-	virtual void SetMesh(UObject* InObject, const TEnumAsByte<ECsViewType::Type>& ViewType, const bool& IsLow = false);
+	virtual void SetMesh(UObject* InObject, const ECsViewType& ViewType, const bool& IsLow = false);
 
 	virtual void SetMesh(USkeletalMeshComponent* InMesh);
 	virtual void SetMesh(ASkeletalMeshActor* InActor);
 	virtual void SetMesh(UObject* InObject);
 
-	virtual void GetDefaultMaterials(TArray<UMaterialInstanceConstant*>& OutMaterials, const TCsViewType& ViewType, const bool& IsLow = false);
+	virtual void GetDefaultMaterials(TArray<UMaterialInstanceConstant*>& OutMaterials, const ECsViewType& ViewType, const bool& IsLow = false);
 	virtual void GetDefaultMaterials(TArray<UMaterialInstanceConstant*>& OutMaterials);
 
 #pragma endregion Mesh
@@ -55,10 +54,10 @@ public:
 #pragma region
 public:
 
-	virtual void SetAnimBlueprint(USkeletalMeshComponent* InMesh, const TCsViewType& ViewType, const bool& IsLow = false);
-	virtual void SetAnimBlueprint(ASkeletalMeshActor* InActor, const TCsViewType& ViewType, const bool& IsLow = false);
+	virtual void SetAnimBlueprint(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const bool& IsLow = false);
+	virtual void SetAnimBlueprint(ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const bool& IsLow = false);
 	UFUNCTION(BlueprintCallable, Category = Animation)
-	virtual void SetAnimBlueprint(UObject* InActor, const TEnumAsByte<ECsViewType::Type>& ViewType, const bool& IsLow = false);
+	virtual void SetAnimBlueprint(UObject* InActor, const ECsViewType& ViewType, const bool& IsLow = false);
 
 	virtual void SetAnimBlueprint(USkeletalMeshComponent* InMesh);
 	virtual void SetAnimBlueprint(ASkeletalMeshActor* InActor);

@@ -249,7 +249,7 @@ public:
 public:
 
 	template<typename T>
-	void SetMemberRefValue(struct TCsProperty_TArrayRef<T> &Member, const FString &MemberName)
+	void SetMemberRefValue(struct TCsProperty_TArrayRef<T>& Member, const FString& MemberName)
 	{
 		UCsData_Weapon* Data_Weapon = GetMyData_Weapon();
 
@@ -281,9 +281,9 @@ public:
 	}
 
 	template<typename ValueType>
-	void SetMemberMultiRefValue(struct TCsProperty_TMapRef<FECsWeaponFireMode, ValueType> &Member, const FECsData_Weapon_FireMode &FireModeMember, const FString &MemberName)
+	void SetMemberMultiRefValue(struct TCsProperty_TMapRef<FECsWeaponFireMode, ValueType>& Member, const FECsData_Weapon_FireMode &FireModeMember, const FString& MemberName)
 	{
-		ACsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<ACsData_ProjectileWeapon>();
+		UCsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<UCsData_ProjectileWeapon>();
 
 		Member.ResetValues();
 
@@ -306,13 +306,13 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual void SetMemberValue_bool(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const bool &Value);
+	virtual void SetMemberValue_bool(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode, const bool& Value);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual void SetMemberValue_uint8(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const uint8 &Value);
+	virtual void SetMemberValue_uint8(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode, const uint8& Value);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual void SetMemberValue_int32(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const int32 &Value);
+	virtual void SetMemberValue_int32(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode, const int32& Value);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual void SetMemberValue_float(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const float &Value);
+	virtual void SetMemberValue_float(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode, const float& Value);
 
 	virtual void SetMultiValueMembers();
 
@@ -323,13 +323,13 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual bool GetMemberValue_bool(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode);
+	virtual bool GetMemberValue_bool(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual uint8 GetMemberValue_uint8(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode);
+	virtual uint8 GetMemberValue_uint8(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual int32 GetMemberValue_int32(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode);
+	virtual int32 GetMemberValue_int32(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual float GetMemberValue_float(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode);
+	virtual float GetMemberValue_float(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode);
 
 #pragma endregion Get
 
@@ -338,7 +338,7 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	void AddMemberValue_uint8(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const uint8 &Value);
+	void AddMemberValue_uint8(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode, const uint8& Value);
 
 #pragma endregion Add
 
@@ -370,10 +370,10 @@ public:
 	FBindableDynEvent_CsWeapon_OnApplyDataWeapon OnApplyData_Weapon_ScriptEvent;
 
 	UFUNCTION(BlueprintCallable, Category = "Data")
-	UCsData_ProjectileBase* GetMyData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged);
+	UCsData_ProjectileBase* GetMyData_Projectile(const FECsWeaponFireMode& FireMode, const bool &IsCharged);
 
 	template<typename T>
-	T* GetMyData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged)
+	T* GetMyData_Projectile(const FECsWeaponFireMode& FireMode, const bool &IsCharged)
 	{
 		return Cast<T>(GetMyData_Projectile(FireMode, IsCharged));
 	}
@@ -452,7 +452,7 @@ public:
 	FECsWeaponOwner PawnWeaponOwner;
 
 	UFUNCTION(BlueprintCallable, Category = "Owner")
-	virtual TEnumAsByte<ECsViewType::Type> GetCurrentViewType();
+	virtual ECsViewType GetCurrentViewType();
 
 #pragma endregion Owner
 
@@ -489,16 +489,16 @@ public:
 	void OnTick_HandleStates();
 
 	UFUNCTION(BlueprintCallable, Category = "State")
-	bool CanFire(const FECsWeaponFireMode &FireMode);
+	bool CanFire(const FECsWeaponFireMode& FireMode);
 	UFUNCTION(BlueprintCallable, Category = "State")
-	bool CanFire_Auto(const FECsWeaponFireMode &FireMode);
+	bool CanFire_Auto(const FECsWeaponFireMode& FireMode);
 
 	void CheckState_Idle();
 
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsWeapon_Override_CheckStateIdle Override_CheckState_Idle_ScriptEvent;
 
-	void HandleState_Firing(const FECsWeaponFireMode &FireMode);
+	void HandleState_Firing(const FECsWeaponFireMode& FireMode);
 
 	void Enable();
 	virtual void Disable();
@@ -515,7 +515,7 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Animation")
-	virtual void PlayAnimation(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType, const int32 &Index = 0);
+	virtual void PlayAnimation(const FECsWeaponFireMode& FireMode, const FECsWeaponAnim &AnimType, const int32 &Index = 0);
 
 	UPROPERTY(BlueprintReadOnly, Category = "State")
 	FECsWeaponAnim ReloadAnim;
@@ -526,9 +526,9 @@ public:
 	struct FCsRoutine* PlayAnimation_Reload_Internal_Routine;
 
 	UFUNCTION(BlueprintCallable, Category = "Animation")
-	virtual float GetAnimationLength(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType, const int32 &Index = 0);
+	virtual float GetAnimationLength(const FECsWeaponFireMode& FireMode, const FECsWeaponAnim &AnimType, const int32 &Index = 0);
 	UFUNCTION(BlueprintCallable, Category = "Animation")
-	virtual void StopAnimation(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType, const int32 &Index = 0);
+	virtual void StopAnimation(const FECsWeaponFireMode& FireMode, const FECsWeaponAnim &AnimType, const int32 &Index = 0);
 
 #pragma endregion Animation
 
@@ -545,8 +545,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Sound")
 	virtual class ACsSound* GetSound(const FECsWeaponSound &SoundType);
 
-	virtual void PlaySound(const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType);
-	virtual void StopSound(const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType);
+	virtual void PlaySound(const FECsWeaponFireMode& FireMode, const FECsWeaponSound &SoundType);
+	virtual void StopSound(const FECsWeaponFireMode& FireMode, const FECsWeaponSound &SoundType);
 
 #pragma endregion Sound
 
@@ -623,10 +623,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Firing")
 	bool bUnlimitedAmmo;
 
-	virtual const FName& GetAmmoShortCode(const FECsWeaponFireMode &FireMode, const bool &IsCharged);
-	virtual int32 GetAmmoReserve(const int32 &Index, const FECsWeaponFireMode &FireMode, const bool &IsCharged);
+	virtual const FName& GetAmmoShortCode(const FECsWeaponFireMode& FireMode, const bool &IsCharged);
+	virtual int32 GetAmmoReserve(const int32 &Index, const FECsWeaponFireMode& FireMode, const bool &IsCharged);
 
-	virtual void ConsumeAmmo(const FECsWeaponFireMode &FireMode, const bool &IsCharged);
+	virtual void ConsumeAmmo(const FECsWeaponFireMode& FireMode, const bool &IsCharged);
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnConsumeAmmo, const FName&);
 
@@ -635,7 +635,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Firing")
 	FBindableDynEvent_CsWeapon_OnConsumeAmmo OnConsumeAmmo_ScriptEvent;
 
-	void ConsumeAmmoItem(const FECsWeaponFireMode &FireMode, const bool &IsCharged, TArray<FCsItem*> &OutItems);
+	void ConsumeAmmoItem(const FECsWeaponFireMode& FireMode, const bool &IsCharged, TArray<FCsItem*> &OutItems);
 
 	FBindableEvent_CsWeapon_OnConsumeAmmoItem OnConsumeAmmoItem_Event;
 
@@ -643,7 +643,7 @@ public:
 
 	FCsWeapon_TMapRef_uint8 ProjectilesPerShot;
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual uint8 GetProjectilesPerShot(const FECsWeaponFireMode &FireMode);
+	virtual uint8 GetProjectilesPerShot(const FECsWeaponFireMode& FireMode);
 
 	FCsWeapon_TMap_uint8 CurrentProjectilePerShotIndex;
 
@@ -652,13 +652,13 @@ public:
 
 	FCsWeapon_TMapRef_float TimeBetweenProjectilesPerShot;
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual float GetTimeBetweenProjectilesPerShot(const FECsWeaponFireMode &FireMode);
+	virtual float GetTimeBetweenProjectilesPerShot(const FECsWeaponFireMode& FireMode);
 	FCsWeapon_TMapRef_float TimeBetweenShots;
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual float GetTimeBetweenShots(const FECsWeaponFireMode &FireMode);
+	virtual float GetTimeBetweenShots(const FECsWeaponFireMode& FireMode);
 	FCsWeapon_TMapRef_float TimeBetweenAutoShots;
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual float GetTimeBetweenAutoShots(const FECsWeaponFireMode &FireMode);
+	virtual float GetTimeBetweenAutoShots(const FECsWeaponFireMode& FireMode);
 
 	int32 Seed;
 
@@ -670,7 +670,7 @@ public:
 	FCsWeapon_TMap_bool IsFirePressed;
 	FCsWeapon_TMap_bool Last_IsFirePressed;
 
-	void SetIsFirePressed(const FECsWeaponFireMode &FireMode, const bool &Value, const bool &DoOnTick = true);
+	void SetIsFirePressed(const FECsWeaponFireMode& FireMode, const bool &Value, const bool &DoOnTick = true);
 
 	FCsWeapon_TMap_float IsFirePressed_StartTime;
 	FCsWeapon_TMap_float IsFireReleased_StartTime;
@@ -692,12 +692,12 @@ public:
 
 	FCsWeapon_TMapRef_float MaxChargeFireTime;
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual float GetMaxChargeFireTime(const FECsWeaponFireMode &FireMode);
+	virtual float GetMaxChargeFireTime(const FECsWeaponFireMode& FireMode);
 
 	UFUNCTION(BlueprintCallable, Category = "Firing")
 	void HandleChargeFire();
 
-	void StartChargeFire(const FECsWeaponFireMode &FireMode);
+	void StartChargeFire(const FECsWeaponFireMode& FireMode);
 	static char StartChargeFire_Internal(struct FCsRoutine* r);
 	struct FCsRoutine* StartChargeFire_Internal_Routine;
 
@@ -712,9 +712,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Firing")
 	float GetCurrentChargeFireHeldTime();
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	float GetCurrentChargeFireHeldPercent(const FECsWeaponFireMode &FireMode);
+	float GetCurrentChargeFireHeldPercent(const FECsWeaponFireMode& FireMode);
 
-	void StopChargeFire(const FECsWeaponFireMode &FireMode);
+	void StopChargeFire(const FECsWeaponFireMode& FireMode);
 
 #pragma endregion Charge
 
@@ -728,22 +728,22 @@ public:
 	FCsWeapon_TMapRef_bool DoSpread;
 	FCsWeapon_TMapRef_float MinSpread;
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual float GetMinSpread(const FECsWeaponFireMode &FireMode);
+	virtual float GetMinSpread(const FECsWeaponFireMode& FireMode);
 	FCsWeapon_TMapRef_float MaxSpread;
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual float GetMaxSpread(const FECsWeaponFireMode &FireMode);
+	virtual float GetMaxSpread(const FECsWeaponFireMode& FireMode);
 	FCsWeapon_TMapRef_float SpreadAddedPerShot;
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual float GetSpreadAddedPerShot(const FECsWeaponFireMode &FireMode);
+	virtual float GetSpreadAddedPerShot(const FECsWeaponFireMode& FireMode);
 	FCsWeapon_TMapRef_float SpreadRecoveryRate;
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual float GetSpreadRecoveryRate(const FECsWeaponFireMode &FireMode);
+	virtual float GetSpreadRecoveryRate(const FECsWeaponFireMode& FireMode);
 	FCsWeapon_TMapRef_float FiringSpreadRecoveryDelay;
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual float GetFiringSpreadRecoveryDelay(const FECsWeaponFireMode &FireMode);
+	virtual float GetFiringSpreadRecoveryDelay(const FECsWeaponFireMode& FireMode);
 	FCsWeapon_TMapRef_float MovingSpreadBonus;
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual float GetMovingSpreadBonus(const FECsWeaponFireMode &FireMode);
+	virtual float GetMovingSpreadBonus(const FECsWeaponFireMode& FireMode);
 
 	FCsWeapon_TMap_float CurrentBaseSpread;
 	FCsWeapon_TMap_float CurrentSpread;
@@ -773,17 +773,17 @@ public:
 	int32 FireCount;
 
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual FVector GetFireWeaponStartLocation(const FECsWeaponFireMode &FireMode);
+	virtual FVector GetFireWeaponStartLocation(const FECsWeaponFireMode& FireMode);
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual FVector GetFireWeaponStartDirection(const FECsWeaponFireMode &FireMode);
+	virtual FVector GetFireWeaponStartDirection(const FECsWeaponFireMode& FireMode);
 
 	struct FCsProjectileFirePayload ProjectileFirePayloads[CS_PROJECTILE_FIRE_PAYLOAD_POOL_SIZE];
 
 	uint8 ProjectileFirePayloadPoolIndex;
 
-	struct FCsProjectileFirePayload* AllocateProjectileFirePayload(const FECsWeaponFireMode &FireMode);
+	struct FCsProjectileFirePayload* AllocateProjectileFirePayload(const FECsWeaponFireMode& FireMode);
 
-	void FireWeapon(const FECsWeaponFireMode &FireMode);
+	void FireWeapon(const FECsWeaponFireMode& FireMode);
 	static char FireWeapon_Internal(struct FCsRoutine* r);
 	struct FCsRoutine* FireWeapon_Internal_Routine;
 
@@ -798,8 +798,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Firing")
 	virtual FVector GetFireProjectileDestination();
 
-	virtual void FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectileFirePayload* FirePayload);
-	virtual void FireProjectile_Internal(const FECsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload);
+	virtual void FireProjectile(const FECsWeaponFireMode& FireMode, FCsProjectileFirePayload* FirePayload);
+	virtual void FireProjectile_Internal(const FECsWeaponFireMode& FireMode, FCsProjectileFirePayload* Payload);
 
 	void DrawFireProjectile(class ACsProjectileBase* Projectile, const FVector &Start, const FVector &End);
 	static char DrawFireProjectile_Internal(struct FCsRoutine* r);
@@ -814,24 +814,24 @@ public:
 
 	FCsWeapon_TMapRef_int32 ObstaclePenetrations;
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual int32 GetObstaclePenetractions(const FECsWeaponFireMode &FireMode);
+	virtual int32 GetObstaclePenetractions(const FECsWeaponFireMode& FireMode);
 	FCsWeapon_TMapRef_int32 PawnPenetrations;
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual int32 GetPawnPenetrations(const FECsWeaponFireMode &FireMode);
+	virtual int32 GetPawnPenetrations(const FECsWeaponFireMode& FireMode);
 
 	virtual void GetFireHitscanIgnoreActors(TArray<AActor*> &OutActors);
 	virtual void GetFireHitscanIgnoreComponents(TArray<UPrimitiveComponent*> &OutComponents);
 
-	void FireHitscan(const FECsWeaponFireMode &FireMode, const FCsProjectileFirePayload* Payload);
+	void FireHitscan(const FECsWeaponFireMode& FireMode, const FCsProjectileFirePayload* Payload);
 
 #pragma endregion Hitscan
 
-	virtual UObject* GetMuzzleFlashParent(const TCsViewType &ViewType);
+	virtual UObject* GetMuzzleFlashParent(const ECsViewType& ViewType);
 
-	virtual FVector GetMuzzleLocation(const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode);
+	virtual FVector GetMuzzleLocation(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode);
 
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual void PlayMuzzleFlash(const FECsWeaponFireMode &FireMode);
+	virtual void PlayMuzzleFlash(const FECsWeaponFireMode& FireMode);
 
 #pragma endregion Firing
 
@@ -878,9 +878,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Reload")
 	bool CanReload();
 	UFUNCTION(BlueprintCallable, Category = "Reload")
-	bool CanAutoReload(const FECsWeaponFireMode &FireMode);
+	bool CanAutoReload(const FECsWeaponFireMode& FireMode);
 	UFUNCTION(BlueprintCallable, Category = "Reload")
-	bool ShouldAutoReload(const FECsWeaponFireMode &FireMode);
+	bool ShouldAutoReload(const FECsWeaponFireMode& FireMode);
 
 	void Reload();
 

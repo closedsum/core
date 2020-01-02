@@ -7,6 +7,9 @@
 
 #pragma endregion Enums
 
+class USceneComponent;
+class UCsSkeletalMeshComponent;
+
 UCLASS(config=Game)
 class CSCORE_API ACsFpsPawn : public ACsPlayerPawn
 {
@@ -15,16 +18,16 @@ class CSCORE_API ACsFpsPawn : public ACsPlayerPawn
 	virtual void PostInitializeComponents() override;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Pawn")
-	class USceneComponent* Eye;
+	USceneComponent* Eye;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Mesh)
-	class UCsSkeletalMeshComponent* Mesh1P;
+	UCsSkeletalMeshComponent* Mesh1P;
 
 // View
 #pragma region
 public:
 
-	virtual TEnumAsByte<ECsViewType::Type> GetCurrentViewType() override;
+	virtual ECsViewType GetCurrentViewType() override;
 
 #pragma endregion View
 

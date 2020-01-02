@@ -332,7 +332,7 @@ public:
 		return !(*this == B);
 	}
 
-	FORCEINLINE UStaticMesh* Get(const TCsViewType &ViewType, const bool &IsLow = false) const
+	FORCEINLINE UStaticMesh* Get(const ECsViewType& ViewType, const bool &IsLow = false) const
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Mesh1P_Internal;
@@ -574,7 +574,7 @@ public:
 		return !(*this == B);
 	}
 
-	FORCEINLINE USkeletalMesh* Get(const TCsViewType &ViewType, const bool &IsLow = false) const
+	FORCEINLINE USkeletalMesh* Get(const ECsViewType& ViewType, const bool &IsLow = false) const
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Mesh1P_Internal;
@@ -1090,7 +1090,7 @@ public:
 		return !(*this == B);
 	}
 
-	FORCEINLINE TArray<UMaterialInstanceConstant*>* Get(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TArray<UMaterialInstanceConstant*>* Get(const ECsViewType& ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return &Materials1P_Internal;
@@ -1101,7 +1101,7 @@ public:
 		return &Materials3P_Internal;
 	}
 
-	FORCEINLINE class UMaterialInstanceConstant* Get(const TCsViewType &ViewType, const int32 &Index, const bool &IsLow = false)
+	FORCEINLINE class UMaterialInstanceConstant* Get(const ECsViewType& ViewType, const int32 &Index, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Index < Materials1P_Internal.Num() ? Materials1P_Internal[Index] : NULL;

@@ -195,7 +195,7 @@ public:
 		return !(*this == B);
 	}
 
-	FORCEINLINE FCsSoundElement* Get(const TCsViewType &ViewType)
+	FORCEINLINE FCsSoundElement* Get(const ECsViewType& ViewType)
 	{
 		if (ViewType == ECsViewType::FirstPerson || ViewType == ECsViewType::VR)
 			return &Sound1P;
@@ -204,7 +204,7 @@ public:
 		return nullptr;
 	}
 
-	FORCEINLINE USoundCue* GetCue(const TCsViewType &ViewType)
+	FORCEINLINE USoundCue* GetCue(const ECsViewType& ViewType)
 	{
 		if (ViewType == ECsViewType::FirstPerson || ViewType == ECsViewType::VR)
 			return Sound1P.Get();

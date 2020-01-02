@@ -22,27 +22,26 @@ const bool& UCsData_Weapon::UseInventory() { return NCsCached::Ref::False; }
 
 const bool& UCsData_Weapon::UseMesh() { return NCsCached::Ref::True; }
 
-USkeletalMesh* UCsData_Weapon::GetMesh(const TCsViewType& ViewType, const bool& IsLow /*=false*/){ return nullptr; }
-USkeletalMesh* UCsData_Weapon::GetMesh(const TEnumAsByte<ECsViewType::Type>& ViewType, const bool& IsLow /*=false*/) { return GetMesh((TCsViewType)ViewType, IsLow); }
+USkeletalMesh* UCsData_Weapon::GetMesh(const ECsViewType& ViewType, const bool& IsLow /*=false*/){ return nullptr; }
 USkeletalMesh* UCsData_Weapon::GetMesh() { return nullptr; }
 
-void UCsData_Weapon::SetMesh(USkeletalMeshComponent* InMesh, const TCsViewType& ViewType, const bool& IsLow /*=false*/)
+void UCsData_Weapon::SetMesh(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const bool& IsLow /*=false*/)
 {
 	InMesh->SetSkeletalMesh(GetMesh(ViewType, IsLow));
 }
 
-void UCsData_Weapon::SetMesh(ASkeletalMeshActor* InActor, const TCsViewType& ViewType, const bool& IsLow /*=false*/)
+void UCsData_Weapon::SetMesh(ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const bool& IsLow /*=false*/)
 {
 	SetMesh(InActor->GetSkeletalMeshComponent(), ViewType, IsLow);
 }
 
-void UCsData_Weapon::SetMesh(UObject* InObject, const TEnumAsByte<ECsViewType::Type>& ViewType, const bool& IsLow /*=false*/)
+void UCsData_Weapon::SetMesh(UObject* InObject, const ECsViewType& ViewType, const bool& IsLow /*=false*/)
 {
 	if (USkeletalMeshComponent* InMesh = Cast<USkeletalMeshComponent>(InObject))
-		SetMesh(InMesh, (TCsViewType)ViewType, IsLow);
+		SetMesh(InMesh, ViewType, IsLow);
 	else
 	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
-		SetMesh(Actor, (TCsViewType)ViewType, IsLow);
+		SetMesh(Actor, ViewType, IsLow);
 }
 
 void UCsData_Weapon::SetMesh(USkeletalMeshComponent* InMesh)
@@ -64,7 +63,7 @@ void UCsData_Weapon::SetMesh(UObject* InObject)
 		SetMesh(Actor);
 }
 
-void UCsData_Weapon::GetDefaultMaterials(TArray<UMaterialInstanceConstant*>& OutMaterials, const TCsViewType& ViewType, const bool& IsLow /*=false*/)
+void UCsData_Weapon::GetDefaultMaterials(TArray<UMaterialInstanceConstant*>& OutMaterials, const ECsViewType& ViewType, const bool& IsLow /*=false*/)
 {
 	USkeletalMesh* InMesh = GetMesh(ViewType, IsLow);
 
@@ -97,20 +96,20 @@ void UCsData_Weapon::GetDefaultMaterials(TArray<UMaterialInstanceConstant*>& Out
 // Anims
 #pragma region
 
-void UCsData_Weapon::SetAnimBlueprint(USkeletalMeshComponent* InMesh, const TCsViewType& ViewType, const bool& IsLow /*=false*/){}
+void UCsData_Weapon::SetAnimBlueprint(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const bool& IsLow /*=false*/){}
 
-void UCsData_Weapon::SetAnimBlueprint(ASkeletalMeshActor* InActor, const TCsViewType& ViewType, const bool& IsLow /*=false*/)
+void UCsData_Weapon::SetAnimBlueprint(ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const bool& IsLow /*=false*/)
 {
 	SetAnimBlueprint(InActor->GetSkeletalMeshComponent(), ViewType, IsLow);
 }
 
-void UCsData_Weapon::SetAnimBlueprint(UObject* InObject, const TEnumAsByte<ECsViewType::Type>& ViewType, const bool& IsLow /*=false*/)
+void UCsData_Weapon::SetAnimBlueprint(UObject* InObject, const ECsViewType& ViewType, const bool& IsLow /*=false*/)
 {
 	if (USkeletalMeshComponent* InMesh = Cast<USkeletalMeshComponent>(InObject))
-		SetAnimBlueprint(InMesh, (TCsViewType)ViewType, IsLow);
+		SetAnimBlueprint(InMesh, ViewType, IsLow);
 	else
 	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
-		SetAnimBlueprint(Actor, (TCsViewType)ViewType, IsLow);
+		SetAnimBlueprint(Actor, ViewType, IsLow);
 }
 
 void UCsData_Weapon::SetAnimBlueprint(USkeletalMeshComponent* InMesh) {}

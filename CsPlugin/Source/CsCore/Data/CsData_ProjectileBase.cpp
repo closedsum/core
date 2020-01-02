@@ -61,9 +61,9 @@ float UCsData_ProjectileBase::GetDamageRadial(const FVector& Origin, const FVect
 // Mesh
 #pragma region
 
-UStaticMesh* UCsData_ProjectileBase::GetMesh(const TEnumAsByte<ECsViewType::Type>& ViewType) { return nullptr; }
-float UCsData_ProjectileBase::GetDrawDistance(const TEnumAsByte<ECsViewType::Type>& ViewType) { return 3000.0f; }
-float UCsData_ProjectileBase::GetDrawDistanceSq(const TEnumAsByte<ECsViewType::Type>& ViewType) { return GetDrawDistance(ViewType) * GetDrawDistance(ViewType); }
+UStaticMesh* UCsData_ProjectileBase::GetMesh(const ECsViewType& ViewType) { return nullptr; }
+float UCsData_ProjectileBase::GetDrawDistance(const ECsViewType& ViewType) { return 3000.0f; }
+float UCsData_ProjectileBase::GetDrawDistanceSq(const ECsViewType& ViewType) { return GetDrawDistance(ViewType) * GetDrawDistance(ViewType); }
 
 #pragma endregion Mesh
 
@@ -88,7 +88,7 @@ const float& UCsData_ProjectileBase::GetSphereRadius() { return NCsCached::Ref::
 #pragma region
 
 const bool& UCsData_ProjectileBase::GetUseTrailFX() { return NCsCached::Ref::False; }
-FCsFxElement* UCsData_ProjectileBase::GetTrailFX(const TCsViewType &ViewType) { return nullptr; }
+FCsFxElement* UCsData_ProjectileBase::GetTrailFX(const ECsViewType& ViewType) { return nullptr; }
 
 #pragma endregion FX
 

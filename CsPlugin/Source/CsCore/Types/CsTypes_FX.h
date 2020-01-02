@@ -225,7 +225,7 @@ struct CSCORE_API FCsFpvFxElement
 		CS_SET_BLUEPRINT_BITFLAG(Effect3P.Particle_LoadFlags, ECsLoadFlags::Game3P);
 	}
 
-	FORCEINLINE FCsFxElement* Get(const TCsViewType &ViewType)
+	FORCEINLINE FCsFxElement* Get(const ECsViewType& ViewType)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return &Effect1P;
@@ -253,7 +253,7 @@ struct CSCORE_API FCsFpvFxElement
 		return !(*this == B);
 	}
 
-	FORCEINLINE const FName& GetBone(const TCsViewType &ViewType)
+	FORCEINLINE const FName& GetBone(const ECsViewType& ViewType)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Effect1P.Bone;

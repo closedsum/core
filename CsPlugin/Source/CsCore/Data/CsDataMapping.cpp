@@ -636,9 +636,12 @@ ICsData* UCsDataMapping::LoadData(const FECsDataType& DataType, const uint16& Lo
 ICsData* UCsDataMapping::LoadData_Internal(const FString& FunctionName, const FECsDataType& DataType, FCsDataMappingEntry& Mapping, const ECsLoadFlags& LoadFlags /*= ECsLoadFlags::Game*/)
 {
 	// Load the Data
+	UObject* Object = nullptr;
 	ICsData* Data = nullptr;
 
-	UCsCommon_Load::LoadTSoftClassPtr(Mapping.Data, Data);
+	UCsCommon_Load::LoadTSoftClassPtr(Mapping.Data,  Object);
+
+	Data = Cast<ICsData>(Object);
 
 	if (!Data)
 	{

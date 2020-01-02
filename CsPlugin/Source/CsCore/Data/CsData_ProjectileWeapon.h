@@ -26,12 +26,10 @@ class CSCORE_API UCsData_ProjectileWeapon : public UCsData_Weapon
 	virtual UCsData_ProjectileBase* GetData_Projectile(const FECsWeaponFireMode& FireMode, const bool& IsCharged = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
-	virtual const FName& GetMuzzleBone(const TEnumAsByte<ECsViewType::Type>& ViewType, const FECsWeaponFireMode& FireMode, const uint8& Index = 0);
+	virtual const FName& GetMuzzleBone(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const uint8& Index = 0);
 	virtual const FName& GetMuzzleBone(const FECsWeaponFireMode& FireMode, const uint8& Index = 0);
 
-	virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const uint8& Index = 0);
-	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
-	virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TEnumAsByte<ECsViewType::Type>& ViewType, const FECsWeaponFireMode& FireMode, const uint8& Index = 0);
+	virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const uint8& Index = 0);
 	virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const FECsWeaponFireMode& FireMode, const uint8& Index = 0);
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
@@ -59,25 +57,25 @@ class CSCORE_API UCsData_ProjectileWeapon : public UCsData_Weapon
 #pragma region
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
-	virtual UAnimMontage* GetAnimMontage(const TEnumAsByte<ECsViewType::Type>& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const bool& IsLow = false);
+	virtual UAnimMontage* GetAnimMontage(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const bool& IsLow = false);
 	virtual UAnimMontage* GetAnimMontage(const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const bool& IsLow = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
-	virtual UAnimSequence* GetAnimSequence(const TEnumAsByte<ECsViewType::Type>& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const bool& IsLow = false);
+	virtual UAnimSequence* GetAnimSequence(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const bool& IsLow = false);
 	virtual UAnimSequence* GetAnimSequence(const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const bool& IsLow = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
-	virtual void GetAnim(UAnimSequence*& OutAnimSequence, UAnimMontage*& OutAnimMontage, const TEnumAsByte<ECsViewType::Type>& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const bool& IsLow = false);
+	virtual void GetAnim(UAnimSequence*& OutAnimSequence, UAnimMontage*& OutAnimMontage, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const bool& IsLow = false);
 	virtual void GetAnim(UAnimSequence*& OutAnimSequence, UAnimMontage*& OutAnimMontage, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const bool& IsLow = false);
 
-	virtual void PlayAnimation(USkeletalMeshComponent* InMesh, const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const float& PlayRate = 1.0f, const bool& IsLow = false);
+	virtual void PlayAnimation(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const float& PlayRate = 1.0f, const bool& IsLow = false);
 	virtual void PlayAnimation(USkeletalMeshComponent* InMesh, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const float& PlayRate = 1.0f, const bool& IsLow = false);
-	virtual void PlayAnimation(ASkeletalMeshActor* InActor, const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const float& PlayRate = 1.0f, const bool& IsLow = false);
+	virtual void PlayAnimation(ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const float& PlayRate = 1.0f, const bool& IsLow = false);
 	virtual void PlayAnimation(ASkeletalMeshActor* InActor, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const float& PlayRate = 1.0f, const bool& IsLow = false);
 
-	virtual void StopAnimation(USkeletalMeshComponent* InMesh, const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const float& BlendOutTime = 0.0f, const bool& IsLow = false);
+	virtual void StopAnimation(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const float& BlendOutTime = 0.0f, const bool& IsLow = false);
 	virtual void StopAnimation(USkeletalMeshComponent* InMesh, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const float& BlendOutTime = 0.0f, const bool& IsLow = false);
-	virtual void StopAnimation(ASkeletalMeshActor* InActor, const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const float& BlendOutTime = 0.0f, const bool& IsLow = false);
+	virtual void StopAnimation(ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const float& BlendOutTime = 0.0f, const bool& IsLow = false);
 	virtual void StopAnimation(ASkeletalMeshActor* InActor, const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType, const int32& Index = 0, const float& BlendOutTime = 0.0f, const bool& IsLow = false);
 
 	virtual FCsAnimSequence* GetFCsAnimSequence(const FECsWeaponFireMode& FireMode, const FECsWeaponAnim& AnimType);
@@ -90,7 +88,7 @@ class CSCORE_API UCsData_ProjectileWeapon : public UCsData_Weapon
 // FX
 #pragma region
 
-	virtual FCsFxElement* GetMuzzleFX(const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const int32& Index = 0);
+	virtual FCsFxElement* GetMuzzleFX(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const int32& Index = 0);
 	virtual FCsFxElement* GetMuzzleFX(const FECsWeaponFireMode& FireMode, const int32& Index = 0);
 
 #pragma endregion FX
@@ -98,15 +96,15 @@ class CSCORE_API UCsData_ProjectileWeapon : public UCsData_Weapon
 // Sound
 #pragma region
 
-	virtual FCsSoundElement* GetSound(const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType);
+	virtual FCsSoundElement* GetSound(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType);
 	virtual FCsSoundElement* GetSound(const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType);
 
-	virtual void PlaySound(UWorld* InWorld, const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, UObject* InParent);
+	virtual void PlaySound(UWorld* InWorld, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, UObject* InParent);
 	virtual void PlaySound(UWorld* InWorld, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, UObject* InParent);
-	virtual void PlaySound(UWorld* InWorld, const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, const FVector& Location);
+	virtual void PlaySound(UWorld* InWorld, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, const FVector& Location);
 	virtual void PlaySound(UWorld* InWorld, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, const FVector& Location);
 
-	virtual void StopSound(UWorld* InWorld, const TCsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, UObject* InParent);
+	virtual void StopSound(UWorld* InWorld, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, UObject* InParent);
 	virtual void StopSound(UWorld* InWorld, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, UObject* InParent);
 
 #pragma endregion Sound

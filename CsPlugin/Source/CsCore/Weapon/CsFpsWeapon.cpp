@@ -119,7 +119,7 @@ void ACsFpsWeapon::InitMultiValueMembers()
 	// Set
 #pragma region
 
-void ACsFpsWeapon::SetMemberValue_float(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const float &Value)
+void ACsFpsWeapon::SetMemberValue_float(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode, const float &Value)
 {
 	if (Member.Value < ECsFpsWeaponMultiValueMember::MovingSpreadBonus.Value)
 	{
@@ -180,7 +180,7 @@ void ACsFpsWeapon::SetMultiValueMembers()
 	// Get
 #pragma region
 
-bool ACsFpsWeapon::GetMemberValue_bool(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode)
+bool ACsFpsWeapon::GetMemberValue_bool(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode)
 {
 	if (Member.Value < ECsFpsWeaponMultiValueMember::MovingSpreadBonus.Value)
 	{
@@ -203,7 +203,7 @@ bool ACsFpsWeapon::GetMemberValue_bool(const FECsWeaponMultiValueMember &Member,
 	return false;
 }
 
-float ACsFpsWeapon::GetMemberValue_float(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode)
+float ACsFpsWeapon::GetMemberValue_float(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode)
 {
 	if (Member.Value < ECsFpsWeaponMultiValueMember::MovingSpreadBonus.Value)
 	{
@@ -242,7 +242,7 @@ float ACsFpsWeapon::GetMemberValue_float(const FECsWeaponMultiValueMember &Membe
 void ACsFpsWeapon::AttachMeshToPawn()
 {
 	UCsData_Character* Data_Character	  = nullptr;
-	const TCsViewType ViewType			  = GetCurrentViewType();
+	const ECsViewType ViewType			  = GetCurrentViewType();
 	USkeletalMeshComponent* CharacterMesh = GetCharacterMesh(ViewType);
 
 #if WITH_EDITOR 
@@ -435,7 +435,7 @@ void ACsFpsWeapon::Disable()
 
 void ACsFpsWeapon::Show()
 {
-	const TCsViewType ViewType = GetCurrentViewType();
+	const ECsViewType ViewType = GetCurrentViewType();
 
 	Mesh1P->SetHiddenInGame(ViewType != ECsViewType::FirstPerson);
 	Mesh1P->SetVisibility(ViewType == ECsViewType::FirstPerson);
@@ -489,7 +489,7 @@ void ACsFpsWeapon::Hide()
 
 void ACsFpsWeapon::SetMesh()
 {
-	const TCsViewType ViewType = GetCurrentViewType();
+	const ECsViewType ViewType = GetCurrentViewType();
 
 	// 1P
 	if (ViewType == ECsViewType::FirstPerson)
@@ -626,7 +626,7 @@ void ACsFpsWeapon::SetMesh3P()
 	}
 }
 
-USkeletalMeshComponent* ACsFpsWeapon::GetMesh(const TCsViewType &ViewType)
+USkeletalMeshComponent* ACsFpsWeapon::GetMesh(const ECsViewType& ViewType)
 {
 #if WITH_EDITOR 
 	// In Editor Preview Window
@@ -665,18 +665,18 @@ USkeletalMeshComponent* ACsFpsWeapon::GetCurrentMesh()
 // Firing
 #pragma region
 
-FVector ACsFpsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode)
+FVector ACsFpsWeapon::GetMuzzleLocation(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode)
 {
 	return GetMyData_Weapon<UCsData_ProjectileWeapon>()->GetMuzzleLocation(GetMesh(ViewType), ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
 }
 
-float ACsFpsWeapon::GetMovingSpreadBonus(const FECsWeaponFireMode &FireMode) { return MovingSpreadBonus.Get(FireMode); }
-float ACsFpsWeapon::GetJumpSpreadImpulse(const FECsWeaponFireMode &FireMode) { return JumpSpreadImpulse.Get(FireMode); }
-float ACsFpsWeapon::GetScopeAccuracyBonus(const FECsWeaponFireMode &FireMode) { return ScopeAccuracyBonus.Get(FireMode); }
-float ACsFpsWeapon::GetMaxScopePower(const FECsWeaponFireMode &FireMode) { return MaxScopePower.Get(FireMode); }
-float ACsFpsWeapon::GetScopePowerGrowthRate(const FECsWeaponFireMode &FireMode) { return ScopePowerGrowthRate.Get(FireMode); }
+float ACsFpsWeapon::GetMovingSpreadBonus(const FECsWeaponFireMode& FireMode) { return MovingSpreadBonus.Get(FireMode); }
+float ACsFpsWeapon::GetJumpSpreadImpulse(const FECsWeaponFireMode& FireMode) { return JumpSpreadImpulse.Get(FireMode); }
+float ACsFpsWeapon::GetScopeAccuracyBonus(const FECsWeaponFireMode& FireMode) { return ScopeAccuracyBonus.Get(FireMode); }
+float ACsFpsWeapon::GetMaxScopePower(const FECsWeaponFireMode& FireMode) { return MaxScopePower.Get(FireMode); }
+float ACsFpsWeapon::GetScopePowerGrowthRate(const FECsWeaponFireMode& FireMode) { return ScopePowerGrowthRate.Get(FireMode); }
 
-void ACsFpsWeapon::FireProjectile_Internal(const FECsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload)
+void ACsFpsWeapon::FireProjectile_Internal(const FECsWeaponFireMode& FireMode, FCsProjectileFirePayload* Payload)
 {
 	ACsPawn* MyOwnerAsPawn = GetMyPawn();
 

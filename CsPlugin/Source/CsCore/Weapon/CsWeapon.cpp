@@ -267,7 +267,7 @@ void ACsWeapon::InitMultiValueMembers()
 	// Set
 #pragma region
 
-void ACsWeapon::SetMemberValue_bool(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const bool &Value)
+void ACsWeapon::SetMemberValue_bool(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode, const bool &Value)
 {
 	// Firing
 	{
@@ -276,7 +276,7 @@ void ACsWeapon::SetMemberValue_bool(const FECsWeaponMultiValueMember &Member, co
 	}
 }
 
-void ACsWeapon::SetMemberValue_uint8(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const uint8 &Value)
+void ACsWeapon::SetMemberValue_uint8(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode, const uint8 &Value)
 {
 	// Firing
 	{
@@ -284,14 +284,14 @@ void ACsWeapon::SetMemberValue_uint8(const FECsWeaponMultiValueMember &Member, c
 	}
 }
 
-void ACsWeapon::SetMemberValue_int32(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const int32 &Value)
+void ACsWeapon::SetMemberValue_int32(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode, const int32 &Value)
 {
 	// Firing
 	{
 	}
 }
 
-void ACsWeapon::SetMemberValue_float(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const float &Value)
+void ACsWeapon::SetMemberValue_float(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode, const float &Value)
 {
 	// Firing
 	{
@@ -306,7 +306,7 @@ void ACsWeapon::SetMemberValue_float(const FECsWeaponMultiValueMember &Member, c
 
 void ACsWeapon::SetMultiValueMembers()
 {
-	ACsData_ProjectileWeapon* Data = GetMyData_Weapon<ACsData_ProjectileWeapon>();
+	UCsData_ProjectileWeapon* Data = GetMyData_Weapon<UCsData_ProjectileWeapon>();
 
 	// MaxAmmo
 	MaxAmmo.ResetValues();
@@ -417,7 +417,7 @@ void ACsWeapon::SetMultiValueMembers()
 	// Get
 #pragma region
 
-bool ACsWeapon::GetMemberValue_bool(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode)
+bool ACsWeapon::GetMemberValue_bool(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode)
 {
 	// Firing
 	{
@@ -446,7 +446,7 @@ bool ACsWeapon::GetMemberValue_bool(const FECsWeaponMultiValueMember &Member, co
 	return false;
 }
 
-uint8 ACsWeapon::GetMemberValue_uint8(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode)
+uint8 ACsWeapon::GetMemberValue_uint8(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode)
 {
 	// Firing
 	{
@@ -456,7 +456,7 @@ uint8 ACsWeapon::GetMemberValue_uint8(const FECsWeaponMultiValueMember &Member, 
 	return 0;
 }
 
-int32 ACsWeapon::GetMemberValue_int32(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode)
+int32 ACsWeapon::GetMemberValue_int32(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode)
 {
 	// Firing
 	{
@@ -468,7 +468,7 @@ int32 ACsWeapon::GetMemberValue_int32(const FECsWeaponMultiValueMember &Member, 
 	return 0;
 }
 
-float ACsWeapon::GetMemberValue_float(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode)
+float ACsWeapon::GetMemberValue_float(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode)
 {
 	// Firing
 	{
@@ -503,7 +503,7 @@ float ACsWeapon::GetMemberValue_float(const FECsWeaponMultiValueMember &Member, 
 	// Add
 #pragma region
 
-void ACsWeapon::AddMemberValue_uint8(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const uint8 &Value)
+void ACsWeapon::AddMemberValue_uint8(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode, const uint8 &Value)
 {
 #if WITH_EDITOR
 	// Firing
@@ -540,9 +540,9 @@ UCsData_Weapon* ACsWeapon::GetMyData_Weapon()
 	return MyData_Weapon.IsValid() ? MyData_Weapon.Get() : nullptr;
 }
 
-UCsData_ProjectileBase* ACsWeapon::GetMyData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged)
+UCsData_ProjectileBase* ACsWeapon::GetMyData_Projectile(const FECsWeaponFireMode& FireMode, const bool &IsCharged)
 {
-	return GetMyData_Weapon<ACsData_ProjectileWeapon>()->GetData_Projectile(FireMode, IsCharged);
+	return GetMyData_Weapon<UCsData_ProjectileWeapon>()->GetData_Projectile(FireMode, IsCharged);
 }
 
 #pragma endregion Data
@@ -932,7 +932,7 @@ void ACsWeapon::CheckState_Idle()
 	}
 }
 
-void ACsWeapon::HandleState_Firing(const FECsWeaponFireMode &FireMode)
+void ACsWeapon::HandleState_Firing(const FECsWeaponFireMode& FireMode)
 {
 	CurrentProjectilePerShotIndex.Set(FireMode, CurrentAmmo > ProjectilesPerShot.GetEX(FireMode) ? 0 : ProjectilesPerShot.GetEX(FireMode) - CurrentAmmo);
 
@@ -960,7 +960,7 @@ void ACsWeapon::HandleState_Firing(const FECsWeaponFireMode &FireMode)
 	}
 }
 
-bool ACsWeapon::CanFire(const FECsWeaponFireMode &FireMode)
+bool ACsWeapon::CanFire(const FECsWeaponFireMode& FireMode)
 {
 	const float TimeSeconds = GetWorld()->GetTimeSeconds();
 
@@ -973,7 +973,7 @@ bool ACsWeapon::CanFire(const FECsWeaponFireMode &FireMode)
 	return (Pass_IsFirePressed || Pass_FireOnRelease) && Pass_Ammo && !bReloading;
 }
 
-bool ACsWeapon::CanFire_Auto(const FECsWeaponFireMode &FireMode)
+bool ACsWeapon::CanFire_Auto(const FECsWeaponFireMode& FireMode)
 {
 	const float TimeSeconds = GetWorld()->GetTimeSeconds();
 
@@ -1058,7 +1058,7 @@ void ACsWeapon::OnCalcCamera(float DeltaTime, struct FMinimalViewInfo& OutResult
 // Animation
 #pragma region
 
-void ACsWeapon::PlayAnimation(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType, const int32 &Index /*=0*/)
+void ACsWeapon::PlayAnimation(const FECsWeaponFireMode& FireMode, const FECsWeaponAnim &AnimType, const int32 &Index /*=0*/)
 {
 }
 
@@ -1107,12 +1107,12 @@ CS_COROUTINE(ACsWeapon, PlayAnimation_Reload_Internal)
 	CS_COROUTINE_END(r);
 }
 
-float ACsWeapon::GetAnimationLength(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType, const int32 &Index /*=0*/)
+float ACsWeapon::GetAnimationLength(const FECsWeaponFireMode& FireMode, const FECsWeaponAnim &AnimType, const int32 &Index /*=0*/)
 {
 	return 0.0f;
 }
 
-void ACsWeapon::StopAnimation(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType, const int32 &Index /*=0*/)
+void ACsWeapon::StopAnimation(const FECsWeaponFireMode& FireMode, const FECsWeaponAnim &AnimType, const int32 &Index /*=0*/)
 {
 }
 
@@ -1124,18 +1124,18 @@ void ACsWeapon::StopAnimation(const FECsWeaponFireMode &FireMode, const FECsWeap
 UObject* ACsWeapon::GetSoundParent() { return nullptr; }
 ACsSound* ACsWeapon::GetSound(const FECsWeaponSound &SoundType){ return nullptr; }
 
-void ACsWeapon::PlaySound(const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType)
+void ACsWeapon::PlaySound(const FECsWeaponFireMode& FireMode, const FECsWeaponSound &SoundType)
 {
-	ACsData_ProjectileWeapon* Data	= GetMyData_Weapon<ACsData_ProjectileWeapon>();
-	const TCsViewType ViewType		= GetCurrentViewType();
+	UCsData_ProjectileWeapon* Data	= GetMyData_Weapon<UCsData_ProjectileWeapon>();
+	const ECsViewType ViewType		= GetCurrentViewType();
 
 	Data->PlaySound(GetWorld(), ViewType, FireMode, SoundType, GetMyOwner(), GetSoundParent());
 }
 
-void ACsWeapon::StopSound(const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType)
+void ACsWeapon::StopSound(const FECsWeaponFireMode& FireMode, const FECsWeaponSound &SoundType)
 {
-	ACsData_ProjectileWeapon* Data  = GetMyData_Weapon<ACsData_ProjectileWeapon>();
-	const TCsViewType ViewType		= GetCurrentViewType();
+	UCsData_ProjectileWeapon* Data  = GetMyData_Weapon<UCsData_ProjectileWeapon>();
+	const ECsViewType ViewType		= GetCurrentViewType();
 
 	Data->StopSound(GetWorld(), ViewType, FireMode, SoundType, GetMyOwner(), GetSoundParent());
 }
@@ -1281,12 +1281,12 @@ void ACsWeapon::ResetCurrentAmmo(const int32 &Index)
 	CurrentAmmoHandle.Resolve();
 }
 
-const FName& ACsWeapon::GetAmmoShortCode(const FECsWeaponFireMode &FireMode, const bool &IsCharged) 
+const FName& ACsWeapon::GetAmmoShortCode(const FECsWeaponFireMode& FireMode, const bool &IsCharged) 
 { 
 	return GetMyData_Projectile<UCsData_ProjectileBase>(FireMode, IsCharged)->GetItemShortCode();
 }
 
-int32 ACsWeapon::GetAmmoReserve(const int32 &Index, const FECsWeaponFireMode &FireMode, const bool &IsCharged)
+int32 ACsWeapon::GetAmmoReserve(const int32 &Index, const FECsWeaponFireMode& FireMode, const bool &IsCharged)
 {
 #if WITH_EDITOR
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
@@ -1330,7 +1330,7 @@ void ACsWeapon::ConsumeAmmo(const FECsWeaponFireMode& FireMode, const bool& IsCh
 	}
 }
 
-void ACsWeapon::ConsumeAmmoItem(const FECsWeaponFireMode &FireMode, const bool &IsCharged, TArray<FCsItem*> &OutItems)
+void ACsWeapon::ConsumeAmmoItem(const FECsWeaponFireMode& FireMode, const bool &IsCharged, TArray<FCsItem*> &OutItems)
 {
 #if WITH_EDITOR
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
@@ -1366,12 +1366,12 @@ void ACsWeapon::ConsumeAmmoItem(const FECsWeaponFireMode &FireMode, const bool &
 
 #pragma endregion Ammo
 
-uint8 ACsWeapon::GetProjectilesPerShot(const FECsWeaponFireMode &FireMode) { return ProjectilesPerShot.Get(FireMode); }
-float ACsWeapon::GetTimeBetweenProjectilesPerShot(const FECsWeaponFireMode &FireMode) { return TimeBetweenProjectilesPerShot.Get(FireMode); }
-float ACsWeapon::GetTimeBetweenShots(const FECsWeaponFireMode &FireMode) { return TimeBetweenShots.Get(FireMode); }
-float ACsWeapon::GetTimeBetweenAutoShots(const FECsWeaponFireMode &FireMode) { return TimeBetweenAutoShots.Get(FireMode); }
+uint8 ACsWeapon::GetProjectilesPerShot(const FECsWeaponFireMode& FireMode) { return ProjectilesPerShot.Get(FireMode); }
+float ACsWeapon::GetTimeBetweenProjectilesPerShot(const FECsWeaponFireMode& FireMode) { return TimeBetweenProjectilesPerShot.Get(FireMode); }
+float ACsWeapon::GetTimeBetweenShots(const FECsWeaponFireMode& FireMode) { return TimeBetweenShots.Get(FireMode); }
+float ACsWeapon::GetTimeBetweenAutoShots(const FECsWeaponFireMode& FireMode) { return TimeBetweenAutoShots.Get(FireMode); }
 
-void ACsWeapon::SetIsFirePressed(const FECsWeaponFireMode &FireMode, const bool &Value, const bool &DoOnTick)
+void ACsWeapon::SetIsFirePressed(const FECsWeaponFireMode& FireMode, const bool &Value, const bool &DoOnTick)
 {
 	IsFirePressed.Set(FireMode, Value);
 
@@ -1405,7 +1405,7 @@ void ACsWeapon::SetIsFirePressed(const FECsWeaponFireMode &FireMode, const bool 
 	// Charge
 #pragma region
 
-float ACsWeapon::GetMaxChargeFireTime(const FECsWeaponFireMode &FireMode) { return MaxChargeFireTime.Get(FireMode); }
+float ACsWeapon::GetMaxChargeFireTime(const FECsWeaponFireMode& FireMode) { return MaxChargeFireTime.Get(FireMode); }
 
 void ACsWeapon::HandleChargeFire()
 {
@@ -1427,7 +1427,7 @@ void ACsWeapon::HandleChargeFire()
 	}
 }
 
-void ACsWeapon::StartChargeFire(const FECsWeaponFireMode &FireMode)
+void ACsWeapon::StartChargeFire(const FECsWeaponFireMode& FireMode)
 {
 	PerformingChargeFire = true;
 	ChargeFire_StartTime = GetWorld()->TimeSeconds;
@@ -1528,7 +1528,7 @@ float ACsWeapon::GetChargeFireHeldTime()
 	return GetWorld()->TimeSeconds - ChargeFire_StartTime;
 }
 
-float ACsWeapon::GetChargeFireHeldPercent(const FECsWeaponFireMode &FireMode)
+float ACsWeapon::GetChargeFireHeldPercent(const FECsWeaponFireMode& FireMode)
 {
 	return FMath::Clamp(GetChargeFireHeldTime(), 0.0f, MaxChargeFireTime.GetEX(FireMode) / MaxChargeFireTime.GetEX(FireMode));
 }
@@ -1538,12 +1538,12 @@ float ACsWeapon::GetCurrentChargeFireHeldTime()
 	return PerformingChargeFire ? GetWorld()->TimeSeconds - ChargeFire_StartTime : 0.0f;
 }
 
-float ACsWeapon::GetCurrentChargeFireHeldPercent(const FECsWeaponFireMode &FireMode)
+float ACsWeapon::GetCurrentChargeFireHeldPercent(const FECsWeaponFireMode& FireMode)
 {
 	return PerformingChargeFire ? FMath::Clamp(GetChargeFireHeldTime(), 0.0f, MaxChargeFireTime.GetEX(FireMode) / MaxChargeFireTime.GetEX(FireMode)) : 0.0f;
 }
 
-void ACsWeapon::StopChargeFire(const FECsWeaponFireMode &FireMode)
+void ACsWeapon::StopChargeFire(const FECsWeaponFireMode& FireMode)
 {
 	if (!AllowChargeFire[FireMode])
 		return;
@@ -1566,26 +1566,26 @@ void ACsWeapon::StopChargeFire(const FECsWeaponFireMode &FireMode)
 	// Spread
 #pragma region
 
-float ACsWeapon::GetMinSpread(const FECsWeaponFireMode &FireMode) { return MinSpread.Get(FireMode); }
-float ACsWeapon::GetMaxSpread(const FECsWeaponFireMode &FireMode) { return MaxSpread.Get(FireMode); }
-float ACsWeapon::GetSpreadAddedPerShot(const FECsWeaponFireMode &FireMode) { return SpreadAddedPerShot.Get(FireMode); }
-float ACsWeapon::GetSpreadRecoveryRate(const FECsWeaponFireMode &FireMode) { return SpreadRecoveryRate.Get(FireMode); }
-float ACsWeapon::GetFiringSpreadRecoveryDelay(const FECsWeaponFireMode &FireMode) { return FiringSpreadRecoveryDelay.Get(FireMode); }
-float ACsWeapon::GetMovingSpreadBonus(const FECsWeaponFireMode &FireMode) { return MovingSpreadBonus.Get(FireMode); }
+float ACsWeapon::GetMinSpread(const FECsWeaponFireMode& FireMode) { return MinSpread.Get(FireMode); }
+float ACsWeapon::GetMaxSpread(const FECsWeaponFireMode& FireMode) { return MaxSpread.Get(FireMode); }
+float ACsWeapon::GetSpreadAddedPerShot(const FECsWeaponFireMode& FireMode) { return SpreadAddedPerShot.Get(FireMode); }
+float ACsWeapon::GetSpreadRecoveryRate(const FECsWeaponFireMode& FireMode) { return SpreadRecoveryRate.Get(FireMode); }
+float ACsWeapon::GetFiringSpreadRecoveryDelay(const FECsWeaponFireMode& FireMode) { return FiringSpreadRecoveryDelay.Get(FireMode); }
+float ACsWeapon::GetMovingSpreadBonus(const FECsWeaponFireMode& FireMode) { return MovingSpreadBonus.Get(FireMode); }
 
 #pragma endregion Spread
 
-FVector ACsWeapon::GetFireWeaponStartLocation(const FECsWeaponFireMode &FireMode)
+FVector ACsWeapon::GetFireWeaponStartLocation(const FECsWeaponFireMode& FireMode)
 {
 	return FVector::ZeroVector;
 }
 
-FVector ACsWeapon::GetFireWeaponStartDirection(const FECsWeaponFireMode &FireMode)
+FVector ACsWeapon::GetFireWeaponStartDirection(const FECsWeaponFireMode& FireMode)
 {
 	return FVector::ZeroVector;
 }
 
-FCsProjectileFirePayload* ACsWeapon::AllocateProjectileFirePayload(const FECsWeaponFireMode &FireMode)
+FCsProjectileFirePayload* ACsWeapon::AllocateProjectileFirePayload(const FECsWeaponFireMode& FireMode)
 {
 	const uint8 Count = CS_PROJECTILE_FIRE_PAYLOAD_POOL_SIZE;
 	uint8 PoolIndex	  = 0;
@@ -1629,7 +1629,7 @@ FCsProjectileFirePayload* ACsWeapon::AllocateProjectileFirePayload(const FECsWea
 	return nullptr;
 }
 
-void ACsWeapon::FireWeapon(const FECsWeaponFireMode &FireMode)
+void ACsWeapon::FireWeapon(const FECsWeaponFireMode& FireMode)
 {
 #if WITH_EDITOR 
 	if (Override_FireWeapon_ScriptEvent.IsBound())
@@ -1770,12 +1770,12 @@ FVector ACsWeapon::GetFireProjectileDestination()
 	return FVector::ZeroVector;
 }
 
-void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectileFirePayload* FirePayload)
+void ACsWeapon::FireProjectile(const FECsWeaponFireMode& FireMode, FCsProjectileFirePayload* FirePayload)
 {
 	const FVector& RealStart  = FirePayload->Location;
 	FVector RealDir			  = FirePayload->Direction;
 
-	ACsData_ProjectileWeapon* Data_Weapon	= GetMyData_Weapon<ACsData_ProjectileWeapon>();
+	UCsData_ProjectileWeapon* Data_Weapon	= GetMyData_Weapon<UCsData_ProjectileWeapon>();
 	UCsData_ProjectileBase* Data_Projectile	= Data_Weapon->GetData_Projectile(FireMode, FirePayload->ChargePercent > 0.0f);
 	const bool UseFakeProjectile			= Data_Weapon->UseFakeProjectile(FireMode);
 
@@ -1791,7 +1791,7 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectile
 		RealEnd						 = RealStart + MAX_RANGE * RealDir;
 	}
 
-	const TCsViewType ViewType = GetCurrentViewType();
+	const ECsViewType ViewType = GetCurrentViewType();
 	const FVector FakeStart	   = GetMuzzleLocation(ViewType, FireMode);
 	FVector FakeDir			   = (RealEnd - FakeStart).GetSafeNormal();
 
@@ -1879,7 +1879,7 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectile
 	}
 }
 
-void ACsWeapon::FireProjectile_Internal(const FECsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload) {}
+void ACsWeapon::FireProjectile_Internal(const FECsWeaponFireMode& FireMode, FCsProjectileFirePayload* Payload) {}
 
 void ACsWeapon::DrawFireProjectile(class ACsProjectileBase* Projectile, const FVector &Start, const FVector &End)
 {
@@ -1935,8 +1935,8 @@ CS_COROUTINE(ACsWeapon, DrawFireProjectile_Internal)
 	// Hitscan
 #pragma region
 
-int32 ACsWeapon::GetObstaclePenetractions(const FECsWeaponFireMode &FireMode) { return ObstaclePenetrations.Get(FireMode); }
-int32 ACsWeapon::GetPawnPenetrations(const FECsWeaponFireMode &FireMode) { return PawnPenetrations.Get(FireMode); }
+int32 ACsWeapon::GetObstaclePenetractions(const FECsWeaponFireMode& FireMode) { return ObstaclePenetrations.Get(FireMode); }
+int32 ACsWeapon::GetPawnPenetrations(const FECsWeaponFireMode& FireMode) { return PawnPenetrations.Get(FireMode); }
 
 void ACsWeapon::GetFireHitscanIgnoreActors(TArray<AActor*> &OutActors)
 { 
@@ -1948,11 +1948,11 @@ void ACsWeapon::GetFireHitscanIgnoreActors(TArray<AActor*> &OutActors)
 
 void ACsWeapon::GetFireHitscanIgnoreComponents(TArray<UPrimitiveComponent*> &OutComponents){}
 
-void ACsWeapon::FireHitscan(const FECsWeaponFireMode &FireMode, const FCsProjectileFirePayload* Payload)
+void ACsWeapon::FireHitscan(const FECsWeaponFireMode& FireMode, const FCsProjectileFirePayload* Payload)
 {
 	//ACsPawn* Pawn					 = GetMyPawn();
 	//ACsPlayerState* MyPlayerState	 = Cast<ACsPlayerState>(Pawn->PlayerState);
-	ACsData_ProjectileWeapon* Data_Weapon	= GetMyData_Weapon<ACsData_ProjectileWeapon>();
+	UCsData_ProjectileWeapon* Data_Weapon	= GetMyData_Weapon<UCsData_ProjectileWeapon>();
 	UCsData_ProjectileBase* Data_Projectile	= Data_Weapon->GetData_Projectile(FireMode, Payload->ChargePercent > 0.0f);
 	ACsManager_Trace* Manager_Trace			= ACsManager_Trace::Get(GetWorld());
 
@@ -2239,14 +2239,14 @@ void ACsWeapon::FireHitscan(const FECsWeaponFireMode &FireMode, const FCsProject
 
 #pragma endregion Hitscan
 
-UObject* ACsWeapon::GetMuzzleFlashParent(const TCsViewType &ViewType) { return nullptr; }
+UObject* ACsWeapon::GetMuzzleFlashParent(const ECsViewType& ViewType) { return nullptr; }
 
-FVector ACsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode)
+FVector ACsWeapon::GetMuzzleLocation(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode)
 {
 	return FVector::ZeroVector;
 }
 
-void ACsWeapon::PlayMuzzleFlash(const FECsWeaponFireMode &FireMode)
+void ACsWeapon::PlayMuzzleFlash(const FECsWeaponFireMode& FireMode)
 {
 	AICsManager_FX* Manager_FX = nullptr;
 
@@ -2265,8 +2265,8 @@ void ACsWeapon::PlayMuzzleFlash(const FECsWeaponFireMode &FireMode)
 		Manager_FX				 = GameState->Manager_FX;
 	}
 
-	ACsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<ACsData_ProjectileWeapon>();
-	const TCsViewType ViewType			  = GetCurrentViewType();
+	UCsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<UCsData_ProjectileWeapon>();
+	const ECsViewType ViewType			  = GetCurrentViewType();
 	FCsFxElement* FX					  = Data_Weapon->GetMuzzleFX(ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
 
 	if (!FX->Get())
@@ -2313,7 +2313,7 @@ bool ACsWeapon::CanReload()
 	return true;
 }
 
-bool ACsWeapon::CanAutoReload(const FECsWeaponFireMode &FireMode)
+bool ACsWeapon::CanAutoReload(const FECsWeaponFireMode& FireMode)
 {
 	if (!CanReload())
 		return false;
@@ -2337,7 +2337,7 @@ bool ACsWeapon::CanAutoReload(const FECsWeaponFireMode &FireMode)
 	return true;
 }
 
-bool ACsWeapon::ShouldAutoReload(const FECsWeaponFireMode &FireMode)
+bool ACsWeapon::ShouldAutoReload(const FECsWeaponFireMode& FireMode)
 {
 	if (CurrentAmmo > CS_EMPTY)
 		return false;

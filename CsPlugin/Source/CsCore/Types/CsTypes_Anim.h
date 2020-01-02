@@ -67,7 +67,7 @@ namespace NCsFpvAnimMember
 
 	extern CSCORE_API const uint8 MAX;
 
-	FORCEINLINE const FString& ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE const FString& ToStringFromViewType(const ECsViewType& ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson) { return EMCsFpvAnimMember::Get().ToString(Ref::Anim1P); }
 		if (ViewType == ECsViewType::ThirdPerson && !IsLow) { return EMCsFpvAnimMember::Get().ToString(Ref::Anim3P); }
@@ -197,7 +197,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(AnimVR_LoadFlags, ECsLoadFlags::GameVR);
 	}
 
-	FORCEINLINE TSoftObjectPtr<UAnimSequence> GeTSoftObjectPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TSoftObjectPtr<UAnimSequence> GeTSoftObjectPtr(const ECsViewType& ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Anim1P;
@@ -208,7 +208,7 @@ public:
 		return Anim3P;
 	}
 
-	FORCEINLINE UAnimSequence* Get(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE UAnimSequence* Get(const ECsViewType& ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Anim1P_Internal;
@@ -369,7 +369,7 @@ public:
 	}
 
 
-	FORCEINLINE TSoftObjectPtr<UAnimMontage> GeTSoftObjectPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TSoftObjectPtr<UAnimMontage> GeTSoftObjectPtr(const ECsViewType& ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Anim1P;
@@ -380,7 +380,7 @@ public:
 		return Anim3P;
 	}
 
-	FORCEINLINE UAnimMontage* Get(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE UAnimMontage* Get(const ECsViewType& ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Anim1P_Internal;
@@ -543,7 +543,7 @@ namespace NCsFpvAnimBlueprintMember
 
 	extern CSCORE_API const uint8 MAX;
 
-	FORCEINLINE const FString& ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE const FString& ToStringFromViewType(const ECsViewType& ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson) { return EMCsFpvAnimBlueprintMember::Get().ToString(Ref::Blueprint1P); }
 		if (ViewType == ECsViewType::ThirdPerson && !IsLow) { return EMCsFpvAnimBlueprintMember::Get().ToString(Ref::Blueprint3P); }
@@ -673,7 +673,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(BlueprintVR_LoadFlags, ECsLoadFlags::GameVR);
 	}
 
-	FORCEINLINE UAnimBlueprintGeneratedClass* Get(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE UAnimBlueprintGeneratedClass* Get(const ECsViewType& ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Blueprint1P_Internal;
@@ -749,7 +749,7 @@ namespace NCsFpvAnimBlendSpaceMember
 
 	extern CSCORE_API const uint8 MAX;
 
-	FORCEINLINE const FString& ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE const FString& ToStringFromViewType(const ECsViewType& ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson) { return EMCsFpvAnimBlendSpaceMember::Get().ToString(Type::Blend1P); }
 		if (ViewType == ECsViewType::ThirdPerson && !IsLow) { return EMCsFpvAnimBlendSpaceMember::Get().ToString(Type::Blend3P); }
@@ -878,7 +878,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(BlendVR_LoadFlags, ECsLoadFlags::GameVR);
 	}
 
-	FORCEINLINE UBlendSpace1D* Get(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE UBlendSpace1D* Get(const ECsViewType& ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Blend1P_Internal;
@@ -889,7 +889,7 @@ public:
 		return Blend3P_Internal;
 	}
 
-	FORCEINLINE TSoftObjectPtr<UBlendSpace1D> GeTSoftObjectPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TSoftObjectPtr<UBlendSpace1D> GeTSoftObjectPtr(const ECsViewType& ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Blend1P;
@@ -1049,7 +1049,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(BlendVR_LoadFlags, ECsLoadFlags::GameVR);
 	}
 
-	FORCEINLINE UBlendSpace* Get(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE UBlendSpace* Get(const ECsViewType& ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Blend1P_Internal;
@@ -1060,7 +1060,7 @@ public:
 		return Blend3P_Internal;
 	}
 
-	FORCEINLINE TSoftObjectPtr<UBlendSpace> GeTSoftObjectPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TSoftObjectPtr<UBlendSpace> GeTSoftObjectPtr(const ECsViewType& ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Blend1P;
@@ -1220,7 +1220,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(BlendVR_LoadFlags, ECsLoadFlags::GameVR);
 	}
 
-	FORCEINLINE UAimOffsetBlendSpace* Get(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE UAimOffsetBlendSpace* Get(const ECsViewType& ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Blend1P_Internal;
@@ -1231,7 +1231,7 @@ public:
 		return Blend3P_Internal;
 	}
 
-	FORCEINLINE TSoftObjectPtr<UAimOffsetBlendSpace> GeTSoftObjectPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TSoftObjectPtr<UAimOffsetBlendSpace> GeTSoftObjectPtr(const ECsViewType& ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Blend1P;

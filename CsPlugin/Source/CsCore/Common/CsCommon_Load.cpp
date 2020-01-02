@@ -108,7 +108,7 @@ UCsCommon_Load::UCsCommon_Load(const FObjectInitializer& ObjectInitializer)
 // Enum to Enum Conversion
 #pragma region
 
-ECsLoadFlags UCsCommon_Load::ViewTypeToLoadFlags(const TCsViewType &ViewType, const bool &IsLow /*=false*/)
+ECsLoadFlags UCsCommon_Load::ViewTypeToLoadFlags(const ECsViewType& ViewType, const bool& IsLow /*=false*/)
 {
 	if (ViewType == ECsViewType::FirstPerson)
 		return ECsLoadFlags::Game1P;
@@ -162,12 +162,12 @@ bool UCsCommon_Load::InitFromString_FFloatInterval(const FString& InSourceString
 	// Write
 #pragma region
 
-void UCsCommon_Load::JsonWriter(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, const FName &Member)
+void UCsCommon_Load::JsonWriter(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, const FString& MemberName, const FName &Member)
 {
 	InJsonWriter->WriteValue(MemberName, Member.ToString());
 }
 
-void UCsCommon_Load::JsonWriter(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TArray<FName> &Member, const FString &ElementName)
+void UCsCommon_Load::JsonWriter(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, const FString& MemberName, TArray<FName> &Member, const FString &ElementName)
 {
 	InJsonWriter->WriteArrayStart(MemberName);
 
@@ -180,14 +180,14 @@ void UCsCommon_Load::JsonWriter(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, co
 	InJsonWriter->WriteArrayEnd();
 }
 
-void UCsCommon_Load::JsonWriter_ArrayElement(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, const FName &Member)
+void UCsCommon_Load::JsonWriter_ArrayElement(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, const FString& MemberName, const FName &Member)
 {
 	InJsonWriter->WriteObjectStart();
 		JsonWriter(InJsonWriter, MemberName, Member);
 	InJsonWriter->WriteObjectEnd();
 }
 
-void UCsCommon_Load::WriteTSoftObjectPtrToJson_AnimBlueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TSoftObjectPtr<UAnimBlueprint> &Member)
+void UCsCommon_Load::WriteTSoftObjectPtrToJson_AnimBlueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, const FString& MemberName, TSoftObjectPtr<UAnimBlueprint> &Member)
 {
 	if (Member.IsValid() && Member.Get())
 	{
@@ -211,13 +211,13 @@ void UCsCommon_Load::WriteTSoftObjectPtrToJson_AnimBlueprint(TSharedRef<TJsonWri
 	}
 }
 
-void UCsCommon_Load::WriteSoftObjectPropertyToJson_AnimBlueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteSoftObjectPropertyToJson_AnimBlueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString& MemberName)
 {
 	if (TSoftObjectPtr<UAnimBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimBlueprint>>(InObject))
 		WriteTSoftObjectPtrToJson_AnimBlueprint(InJsonWriter, MemberName, *Member);
 }
 
-void UCsCommon_Load::WriteTSoftObjectPtrToJson_Blueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TSoftObjectPtr<UBlueprint> &Member)
+void UCsCommon_Load::WriteTSoftObjectPtrToJson_Blueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, const FString& MemberName, TSoftObjectPtr<UBlueprint> &Member)
 {
 	if (Member.IsValid() && Member.Get())
 	{
@@ -241,13 +241,13 @@ void UCsCommon_Load::WriteTSoftObjectPtrToJson_Blueprint(TSharedRef<TJsonWriter<
 	}
 }
 
-void UCsCommon_Load::WriteSoftObjectPropertyToJson_Blueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteSoftObjectPropertyToJson_Blueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString& MemberName)
 {
 	if (TSoftObjectPtr<UBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UBlueprint>>(InObject))
 		WriteTSoftObjectPtrToJson_Blueprint(InJsonWriter, MemberName, *Member);
 }
 
-void UCsCommon_Load::WriteMemberIntegralArrayPropertyToJson_uint64(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteMemberIntegralArrayPropertyToJson_uint64(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString& MemberName)
 {
 	TArray<uint64>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<uint64>>(InObject);
 
@@ -262,7 +262,7 @@ void UCsCommon_Load::WriteMemberIntegralArrayPropertyToJson_uint64(TSharedRef<cl
 	InJsonWriter->WriteObjectEnd();
 }
 
-void UCsCommon_Load::WriteMemberStructPropertyToJson_Transform(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteMemberStructPropertyToJson_Transform(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString& MemberName)
 {
 	if (FTransform* Member = StructProperty->ContainerPtrToValuePtr<FTransform>(InObject))
 	{
@@ -279,7 +279,7 @@ void UCsCommon_Load::WriteMemberStructPropertyToJson_Transform(TSharedRef<TJsonW
 	}
 }
 
-void UCsCommon_Load::WriteMemberArrayStructPropertyToJson_Transform(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteMemberArrayStructPropertyToJson_Transform(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString& MemberName)
 {
 	TArray<FTransform>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<FTransform>>(InObject);
 
@@ -305,7 +305,7 @@ void UCsCommon_Load::WriteMemberArrayStructPropertyToJson_Transform(TSharedRef<T
 	InJsonWriter->WriteArrayEnd();
 }
 
-void UCsCommon_Load::WriteMemberStructPropertyToJson_FCsData_ShortCode(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteMemberStructPropertyToJson_FCsData_ShortCode(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString& MemberName)
 {
 	InJsonWriter->WriteObjectStart(MemberName);
 
@@ -2520,7 +2520,7 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 	// Read
 #pragma region
 
-void UCsCommon_Load::WriteToSoftObjectPropertyFromJson_AnimBlueprint(TSharedPtr<FJsonObject> &JsonObject, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteToSoftObjectPropertyFromJson_AnimBlueprint(TSharedPtr<FJsonObject> &JsonObject, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString& MemberName)
 {
 	if (TSoftObjectPtr<UAnimBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimBlueprint>>(InObject))
 	{
@@ -2534,7 +2534,7 @@ void UCsCommon_Load::WriteToSoftObjectPropertyFromJson_AnimBlueprint(TSharedPtr<
 	}
 }
 
-void UCsCommon_Load::WriteToSoftObjectPropertyFromJson_Blueprint(TSharedPtr<FJsonObject> &JsonObject, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteToSoftObjectPropertyFromJson_Blueprint(TSharedPtr<FJsonObject> &JsonObject, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString& MemberName)
 {
 	if (TSoftObjectPtr<UBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UBlueprint>>(InObject))
 	{
@@ -2548,7 +2548,7 @@ void UCsCommon_Load::WriteToSoftObjectPropertyFromJson_Blueprint(TSharedPtr<FJso
 	}
 }
 
-void UCsCommon_Load::WriteToMemberStructPropertyFromJson_Transform(TSharedPtr<FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteToMemberStructPropertyFromJson_Transform(TSharedPtr<FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString& MemberName)
 {
 	if (FTransform* Member = StructProperty->ContainerPtrToValuePtr<FTransform>(InObject))
 	{
@@ -2577,7 +2577,7 @@ void UCsCommon_Load::WriteToMemberStructPropertyFromJson_Transform(TSharedPtr<FJ
 	}
 }
 
-void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_Transform(TSharedPtr<FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_Transform(TSharedPtr<FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString& MemberName)
 {
 	TArray<FTransform>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<FTransform>>(InObject);
 
@@ -2623,7 +2623,7 @@ void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_Transform(TSharedP
 	}
 }
 
-void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_Name(TSharedPtr<FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_Name(TSharedPtr<FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString& MemberName)
 {
 	TArray<FName>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<FName>>(InObject);
 
@@ -2653,7 +2653,7 @@ void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_Name(TSharedPtr<FJ
 	}
 }
 
-void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_uint64(TSharedPtr<FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_uint64(TSharedPtr<FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString& MemberName)
 {
 	TArray<uint64>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<uint64>>(InObject);
 
@@ -2683,7 +2683,7 @@ void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_uint64(TSharedPtr<
 	}
 }
 
-void UCsCommon_Load::WriteToMemberStructPropertyFromJson_FCsData_ShortCode(TSharedPtr<class FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteToMemberStructPropertyFromJson_FCsData_ShortCode(TSharedPtr<class FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString& MemberName)
 {
 	FCsData_ShortCode* Member = StructProperty->ContainerPtrToValuePtr<FCsData_ShortCode>(InObject);
 
@@ -4911,7 +4911,7 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 		// FCsStringAssetReference
 #pragma region
 
-void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimMontage(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimMontage(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = SoftObjectProperty->GetName();
 
@@ -4960,7 +4960,7 @@ void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimMontage(USoftOb
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimMontage(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimMontage(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = SoftObjectProperty->GetName();
 
@@ -5009,7 +5009,7 @@ void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimMontage(USoftOb
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimSequence(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimSequence(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = SoftObjectProperty->GetName();
 
@@ -5045,7 +5045,7 @@ void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimSequence(USoftO
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimSequence(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimSequence(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = SoftObjectProperty->GetName();
 
@@ -5081,7 +5081,7 @@ void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimSequence(USoftO
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_MaterialInstanceConstant(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_MaterialInstanceConstant(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = SoftObjectProperty->GetName();
 
@@ -5128,7 +5128,7 @@ void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_MaterialInstanceCon
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_MaterialInstanceConstant(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_MaterialInstanceConstant(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = SoftObjectProperty->GetName();
 
@@ -5175,7 +5175,7 @@ void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_MaterialInstanceCon
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = SoftObjectProperty->GetName();
 
@@ -5213,7 +5213,7 @@ void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_Blueprint(USoftObje
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = SoftObjectProperty->GetName();
 
@@ -5251,7 +5251,7 @@ void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_Blueprint(USoftObje
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimMontage(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimMontage(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = ArraySoftObjectProperty->GetName();
 
@@ -5305,7 +5305,7 @@ void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimMontage(UA
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimMontage(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimMontage(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = ArraySoftObjectProperty->GetName();
 
@@ -5359,7 +5359,7 @@ void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimMontage(UA
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimSequence(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimSequence(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = ArraySoftObjectProperty->GetName();
 
@@ -5400,7 +5400,7 @@ void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimSequence(U
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimSequence(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimSequence(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = ArraySoftObjectProperty->GetName();
 
@@ -5441,7 +5441,7 @@ void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimSequence(U
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = ArraySoftObjectProperty->GetName();
 
@@ -5499,7 +5499,7 @@ void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_MaterialInstan
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = ArraySoftObjectProperty->GetName();
 
@@ -5551,7 +5551,7 @@ void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_MaterialInstan
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_Blueprint(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_Blueprint(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = ArraySoftObjectProperty->GetName();
 
@@ -5593,7 +5593,7 @@ void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_Blueprint(UArr
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_Blueprint(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_Blueprint(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
 	const FString MemberName = ArraySoftObjectProperty->GetName();
 
@@ -5637,7 +5637,7 @@ void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_Blueprint(UArr
 
 #pragma endregion FCsStringAssetReference
 
-void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct* const &InScriptStruct, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal /*=nullptr*/, const int32 &LoadCodes /*=ECsLoadCodes::CalculateResourceSizes*/)
+void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct* const &InScriptStruct, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal /*=nullptr*/, const int32 &LoadCodes /*=ECsLoadCodes::CalculateResourceSizes*/)
 {
 	for (TFieldIterator<UProperty> It(InScriptStruct); It; ++It)
 	{
@@ -5987,7 +5987,7 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 	}
 }
 
-void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromObject_Internal Internal /*=nullptr*/, const int32 &LoadCodes /*=ECsLoadCodes::CalculateResourceSizes*/)
+void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromObject_Internal Internal /*=nullptr*/, const int32 &LoadCodes /*=ECsLoadCodes::CalculateResourceSizes*/)
 {
 	for (TFieldIterator<UProperty> It(InClass); It; ++It)
 	{
@@ -6252,7 +6252,7 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 	// Load
 #pragma region
 
-void UCsCommon_Load::LoadTSoftObjectPtr_AnimBlueprint(const FString &MemberName, TSoftObjectPtr<UAnimBlueprint> AssetPtr, UAnimBlueprintGeneratedClass* &Internal)
+void UCsCommon_Load::LoadTSoftObjectPtr_AnimBlueprint(const FString& MemberName, TSoftObjectPtr<UAnimBlueprint> AssetPtr, UAnimBlueprintGeneratedClass* &Internal)
 {
 	const FString& AssetName = AssetPtr.ToString();
 
@@ -6288,7 +6288,7 @@ void UCsCommon_Load::LoadTSoftObjectPtr_AnimBlueprint(const FString &MemberName,
 	}
 }
 
-void UCsCommon_Load::LoadTSoftObjectPtr_AnimBlueprint(const FString &MemberName, TSoftObjectPtr<UAnimBlueprint>* AssetPtr, UAnimBlueprintGeneratedClass* &Internal)
+void UCsCommon_Load::LoadTSoftObjectPtr_AnimBlueprint(const FString& MemberName, TSoftObjectPtr<UAnimBlueprint>* AssetPtr, UAnimBlueprintGeneratedClass* &Internal)
 {
 	const FString& AssetName = AssetPtr->ToString();
 
@@ -6324,7 +6324,7 @@ void UCsCommon_Load::LoadTSoftObjectPtr_AnimBlueprint(const FString &MemberName,
 	}
 }
 
-void UCsCommon_Load::LoadSoftObjectProperty_AnimBlueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadSoftObjectProperty_AnimBlueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString& MemberName, const ECsLoadFlags& LoadFlags)
 {
 	if (TSoftObjectPtr<UAnimBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimBlueprint>>(InObject))
 	{
@@ -6343,7 +6343,7 @@ void UCsCommon_Load::LoadSoftObjectProperty_AnimBlueprint(USoftObjectProperty* &
 	}
 }
 
-void UCsCommon_Load::LoadSoftObjectProperty_AnimBlueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadSoftObjectProperty_AnimBlueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString& MemberName, const ECsLoadFlags& LoadFlags)
 {
 	if (TSoftObjectPtr<UAnimBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimBlueprint>>(InObject))
 	{
@@ -6362,7 +6362,7 @@ void UCsCommon_Load::LoadSoftObjectProperty_AnimBlueprint(USoftObjectProperty* &
 	}
 }
 
-void UCsCommon_Load::LoadTSoftObjectPtr_Blueprint(const FString &MemberName, TSoftObjectPtr<UBlueprint> AssetPtr, UBlueprintGeneratedClass* &Internal)
+void UCsCommon_Load::LoadTSoftObjectPtr_Blueprint(const FString& MemberName, TSoftObjectPtr<UBlueprint> AssetPtr, UBlueprintGeneratedClass* &Internal)
 {
 	const FString& AssetName = AssetPtr.ToString();
 
@@ -6398,7 +6398,7 @@ void UCsCommon_Load::LoadTSoftObjectPtr_Blueprint(const FString &MemberName, TSo
 	}
 }
 
-void UCsCommon_Load::LoadTSoftObjectPtr_Blueprint(const FString &MemberName, TSoftObjectPtr<UBlueprint>* AssetPtr, UBlueprintGeneratedClass* &Internal)
+void UCsCommon_Load::LoadTSoftObjectPtr_Blueprint(const FString& MemberName, TSoftObjectPtr<UBlueprint>* AssetPtr, UBlueprintGeneratedClass* &Internal)
 {
 	const FString& AssetName = AssetPtr->ToString();
 
@@ -6434,7 +6434,7 @@ void UCsCommon_Load::LoadTSoftObjectPtr_Blueprint(const FString &MemberName, TSo
 	}
 }
 
-void UCsCommon_Load::LoadTArrayTSoftObjectPtr_Blueprint(const FString &MemberName, TArray<TSoftObjectPtr<UBlueprint>> &ArrayAssetPtr, TArray<UBlueprintGeneratedClass*> &ArrayInternal)
+void UCsCommon_Load::LoadTArrayTSoftObjectPtr_Blueprint(const FString& MemberName, TArray<TSoftObjectPtr<UBlueprint>> &ArrayAssetPtr, TArray<UBlueprintGeneratedClass*> &ArrayInternal)
 {
 	if (ArrayInternal.Num() > 0 &&
 		AreAllElementsInTArrayNotNull(ArrayInternal))
@@ -6481,7 +6481,7 @@ void UCsCommon_Load::LoadTArrayTSoftObjectPtr_Blueprint(const FString &MemberNam
 	}
 }
 
-void UCsCommon_Load::LoadTArrayTSoftObjectPtr_Blueprint(const FString &MemberName, TArray<TSoftObjectPtr<UBlueprint>>* &ArrayAssetPtr, TArray<UBlueprintGeneratedClass*> &ArrayInternal)
+void UCsCommon_Load::LoadTArrayTSoftObjectPtr_Blueprint(const FString& MemberName, TArray<TSoftObjectPtr<UBlueprint>>* &ArrayAssetPtr, TArray<UBlueprintGeneratedClass*> &ArrayInternal)
 {
 	if (ArrayInternal.Num() > 0 &&
 		AreAllElementsInTArrayNotNull(ArrayInternal))
@@ -6528,22 +6528,22 @@ void UCsCommon_Load::LoadTArrayTSoftObjectPtr_Blueprint(const FString &MemberNam
 	}
 }
 
-void UCsCommon_Load::LoadFCsAnimSequence(const FString &MemberName, FCsAnimSequence* Anim, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadFCsAnimSequence(const FString& MemberName, FCsAnimSequence* Anim, const ECsLoadFlags& LoadFlags)
 {
 	LoadFCsStruct<FCsAnimSequence>(MemberName, Anim, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsAnimSequence(const FString &MemberName, FCsAnimSequence* Anim)
+void UCsCommon_Load::LoadFCsAnimSequence(const FString& MemberName, FCsAnimSequence* Anim)
 {
 	LoadFCsAnimSequence(MemberName, Anim, ECsLoadFlags::All);
 }
 
-void UCsCommon_Load::LoadFCsFpvAnimSequence(const FString &MemberName, FCsFpvAnimSequence* Anim, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadFCsFpvAnimSequence(const FString& MemberName, FCsFpvAnimSequence* Anim, const ECsLoadFlags& LoadFlags)
 {
 	LoadFCsStruct<FCsFpvAnimSequence>(MemberName, Anim, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsFpvAnimSequence(const FString &MemberName, FCsFpvAnimSequence* Anim, const TCsViewType &ViewType)
+void UCsCommon_Load::LoadFCsFpvAnimSequence(const FString& MemberName, FCsFpvAnimSequence* Anim, const ECsViewType& ViewType)
 {
 	ECsLoadFlags LoadFlags = ECsLoadFlags::All;
 
@@ -6557,22 +6557,22 @@ void UCsCommon_Load::LoadFCsFpvAnimSequence(const FString &MemberName, FCsFpvAni
 	LoadFCsFpvAnimSequence(MemberName, Anim, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsAnimMontage(const FString &MemberName, FCsAnimMontage* Anim, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadFCsAnimMontage(const FString& MemberName, FCsAnimMontage* Anim, const ECsLoadFlags& LoadFlags)
 {
 	LoadFCsStruct<FCsAnimMontage>(MemberName, Anim, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsAnimMontage(const FString &MemberName, FCsAnimMontage* Anim)
+void UCsCommon_Load::LoadFCsAnimMontage(const FString& MemberName, FCsAnimMontage* Anim)
 {
 	LoadFCsAnimMontage(MemberName, Anim, ECsLoadFlags::All);
 }
 
-void UCsCommon_Load::LoadFCsFpvAnimMontage(const FString &MemberName, FCsFpvAnimMontage* Anim, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadFCsFpvAnimMontage(const FString& MemberName, FCsFpvAnimMontage* Anim, const ECsLoadFlags& LoadFlags)
 {
 	LoadFCsStruct<FCsFpvAnimMontage>(MemberName, Anim, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsFpvAnimMontage(const FString &MemberName, FCsFpvAnimMontage* Anim, const TCsViewType &ViewType)
+void UCsCommon_Load::LoadFCsFpvAnimMontage(const FString& MemberName, FCsFpvAnimMontage* Anim, const ECsViewType& ViewType)
 {
 	ECsLoadFlags LoadFlags = ECsLoadFlags::All;
 
@@ -6586,22 +6586,22 @@ void UCsCommon_Load::LoadFCsFpvAnimMontage(const FString &MemberName, FCsFpvAnim
 	LoadFCsFpvAnimMontage(MemberName, Anim, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsBlendSpace1D(const FString &MemberName, FCsBlendSpace1D* Blend, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadFCsBlendSpace1D(const FString& MemberName, FCsBlendSpace1D* Blend, const ECsLoadFlags& LoadFlags)
 {
 	LoadFCsStruct<FCsBlendSpace1D>(MemberName, Blend, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsBlendSpace1D(const FString &MemberName, FCsBlendSpace1D* Blend)
+void UCsCommon_Load::LoadFCsBlendSpace1D(const FString& MemberName, FCsBlendSpace1D* Blend)
 {
 	LoadFCsBlendSpace1D(MemberName, Blend, ECsLoadFlags::All);
 }
 
-void UCsCommon_Load::LoadFCsFpvBlendSpace1D(const FString &MemberName, FCsFpvBlendSpace1D* Blend , const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadFCsFpvBlendSpace1D(const FString& MemberName, FCsFpvBlendSpace1D* Blend , const ECsLoadFlags& LoadFlags)
 {
 	LoadFCsStruct<FCsFpvBlendSpace1D>(MemberName, Blend, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsFpvBlendSpace1D(const FString &MemberName, FCsFpvBlendSpace1D* Blend, const TCsViewType &ViewType)
+void UCsCommon_Load::LoadFCsFpvBlendSpace1D(const FString& MemberName, FCsFpvBlendSpace1D* Blend, const ECsViewType& ViewType)
 {
 	ECsLoadFlags LoadFlags = ECsLoadFlags::All;
 
@@ -6615,22 +6615,22 @@ void UCsCommon_Load::LoadFCsFpvBlendSpace1D(const FString &MemberName, FCsFpvBle
 	LoadFCsFpvBlendSpace1D(MemberName, Blend, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsBlendSpace(const FString &MemberName, FCsBlendSpace* Blend, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadFCsBlendSpace(const FString& MemberName, FCsBlendSpace* Blend, const ECsLoadFlags& LoadFlags)
 {
 	LoadFCsStruct<FCsBlendSpace>(MemberName, Blend, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsBlendSpace(const FString &MemberName, FCsBlendSpace* Blend)
+void UCsCommon_Load::LoadFCsBlendSpace(const FString& MemberName, FCsBlendSpace* Blend)
 {
 	LoadFCsBlendSpace(MemberName, Blend, ECsLoadFlags::All);
 }
 
-void UCsCommon_Load::LoadFCsFpvBlendSpace(const FString &MemberName, FCsFpvBlendSpace* Blend, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadFCsFpvBlendSpace(const FString& MemberName, FCsFpvBlendSpace* Blend, const ECsLoadFlags& LoadFlags)
 {
 	LoadFCsStruct<FCsFpvBlendSpace>(MemberName, Blend, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsFpvBlendSpace(const FString &MemberName, FCsFpvBlendSpace* Blend, const TCsViewType &ViewType)
+void UCsCommon_Load::LoadFCsFpvBlendSpace(const FString& MemberName, FCsFpvBlendSpace* Blend, const ECsViewType& ViewType)
 {
 	ECsLoadFlags LoadFlags = ECsLoadFlags::All;
 
@@ -6644,22 +6644,22 @@ void UCsCommon_Load::LoadFCsFpvBlendSpace(const FString &MemberName, FCsFpvBlend
 	LoadFCsFpvBlendSpace(MemberName, Blend, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsAimOffset(const FString &MemberName, FCsAimOffset* Blend, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadFCsAimOffset(const FString& MemberName, FCsAimOffset* Blend, const ECsLoadFlags& LoadFlags)
 {
 	LoadFCsStruct<FCsAimOffset>(MemberName, Blend, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsAimOffset(const FString &MemberName, FCsAimOffset* Blend)
+void UCsCommon_Load::LoadFCsAimOffset(const FString& MemberName, FCsAimOffset* Blend)
 {
 	LoadFCsAimOffset(MemberName, Blend, ECsLoadFlags::All);
 }
 
-void UCsCommon_Load::LoadFCsFpvAimOffset(const FString &MemberName, FCsFpvAimOffset* Blend, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadFCsFpvAimOffset(const FString& MemberName, FCsFpvAimOffset* Blend, const ECsLoadFlags& LoadFlags)
 {
 	LoadFCsStruct<FCsFpvAimOffset>(MemberName, Blend, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsFpvAimOffset(const FString &MemberName, FCsFpvAimOffset* Blend, const TCsViewType &ViewType)
+void UCsCommon_Load::LoadFCsFpvAimOffset(const FString& MemberName, FCsFpvAimOffset* Blend, const ECsViewType& ViewType)
 {
 	ECsLoadFlags LoadFlags = ECsLoadFlags::All;
 
@@ -6673,7 +6673,7 @@ void UCsCommon_Load::LoadFCsFpvAimOffset(const FString &MemberName, FCsFpvAimOff
 	LoadFCsFpvAimOffset(MemberName, Blend, LoadFlags);
 }
 
-bool UCsCommon_Load::CanLoad(void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, const int32 &LoadCodes)
+bool UCsCommon_Load::CanLoad(void* InObject, UScriptStruct* const &InClass, const FString& MemberName, const ECsLoadFlags& LoadFlags, const int32 &LoadCodes)
 {
 								// MemberName + TEXT("_LoadFlags")
 	const FString FlagMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;
@@ -6705,7 +6705,7 @@ bool UCsCommon_Load::CanLoad(void* InObject, UScriptStruct* const &InClass, cons
 	return false;
 }
 
-bool UCsCommon_Load::CanLoad(void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, const int32 &LoadCodes)
+bool UCsCommon_Load::CanLoad(void* InObject, UClass* const &InClass, const FString& MemberName, const ECsLoadFlags& LoadFlags, const int32 &LoadCodes)
 {
 								// MemberName + TEXT("_LoadFlags")
 	const FString FlagMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;
@@ -6737,7 +6737,7 @@ bool UCsCommon_Load::CanLoad(void* InObject, UClass* const &InClass, const FStri
 	return false;
 }
 
-void UCsCommon_Load::LoadSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString& MemberName, const ECsLoadFlags& LoadFlags)
 {
 	if (TSoftObjectPtr<UBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UBlueprint>>(InObject))
 	{
@@ -6753,7 +6753,7 @@ void UCsCommon_Load::LoadSoftObjectProperty_Blueprint(USoftObjectProperty* &Soft
 	}
 }
 
-void UCsCommon_Load::LoadSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString& MemberName, const ECsLoadFlags& LoadFlags)
 {
 	if (TSoftObjectPtr<UBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UBlueprint>>(InObject))
 	{
@@ -6772,7 +6772,7 @@ void UCsCommon_Load::LoadSoftObjectProperty_Blueprint(USoftObjectProperty* &Soft
 	}
 }
 
-void UCsCommon_Load::LoadArraySoftObjectProperty_Blueprint(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadArraySoftObjectProperty_Blueprint(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString& MemberName, const ECsLoadFlags& LoadFlags)
 {
 	if (TArray<TSoftObjectPtr<UBlueprint>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<UBlueprint>>>(InObject))
 	{
@@ -6791,7 +6791,7 @@ void UCsCommon_Load::LoadArraySoftObjectProperty_Blueprint(UArrayProperty* &Arra
 	}
 }
 
-void UCsCommon_Load::LoadArraySoftObjectProperty_Blueprint(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadArraySoftObjectProperty_Blueprint(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString& MemberName, const ECsLoadFlags& LoadFlags)
 {
 	if (TArray<TSoftObjectPtr<UBlueprint>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<UBlueprint>>>(InObject))
 	{
@@ -6810,7 +6810,7 @@ void UCsCommon_Load::LoadArraySoftObjectProperty_Blueprint(UArrayProperty* &Arra
 	}
 }
 
-void UCsCommon_Load::LoadStructWithTSoftObjectPtrs(const FString &ObjectName, void* InStruct, UScriptStruct* const &InScriptStruct, const ECsLoadFlags &LoadFlags, TCsLoadStructWithTSoftObjectPtrs_Internal Internal /*=nullptr*/)
+void UCsCommon_Load::LoadStructWithTSoftObjectPtrs(const FString &ObjectName, void* InStruct, UScriptStruct* const &InScriptStruct, const ECsLoadFlags& LoadFlags, TCsLoadStructWithTSoftObjectPtrs_Internal Internal /*=nullptr*/)
 {
 	for (TFieldIterator<UProperty> It(InScriptStruct); It; ++It)
 	{
@@ -7236,7 +7236,7 @@ void UCsCommon_Load::LoadStructWithTSoftObjectPtrs(const FString &ObjectName, vo
 //#if PLATFORM_WINDOWS
 //#pragma optimize("", off)
 //#endif // #if PLATFORM_WINDOWS
-void UCsCommon_Load::LoadObjectWithTSoftObjectPtrs(const FString &ObjectName, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TCsLoadObjectWithTSoftObjectPtrs_Internal Internal /*=nullptr*/)
+void UCsCommon_Load::LoadObjectWithTSoftObjectPtrs(const FString &ObjectName, void* InObject, UClass* const &InClass, const ECsLoadFlags& LoadFlags, TCsLoadObjectWithTSoftObjectPtrs_Internal Internal /*=nullptr*/)
 {
 	for (TFieldIterator<UProperty> It(InClass); It; ++It)
 	{
@@ -8402,7 +8402,7 @@ ECsLoadAsyncOrder UCsCommon_Load::GetLoadAsyncOrder()
 
 #if WITH_EDITOR
 
-void UCsCommon_Load::CheckEnumLoadFlags(int32* LoadFlags, const FString &ObjectName, const FString &MemberName)
+void UCsCommon_Load::CheckEnumLoadFlags(int32* LoadFlags, const FString &ObjectName, const FString& MemberName)
 {
 	if (*LoadFlags == CS_LOAD_FLAGS_NONE)
 	{
@@ -8986,7 +8986,7 @@ void UCsCommon_Load::GetCategoryMemberAssociations(void* InObject, UClass* const
 // Set
 #pragma region
 
-bool UCsCommon_Load::SetObjectMember(void* InObject, UClass* const &InClass, const FString &MemberName, void* MemberValue)
+bool UCsCommon_Load::SetObjectMember(void* InObject, UClass* const &InClass, const FString& MemberName, void* MemberValue)
 {
 	for (TFieldIterator<UProperty> It(InClass); It; ++It)
 	{
@@ -9044,7 +9044,7 @@ bool UCsCommon_Load::SetObjectMember(void* InObject, UClass* const &InClass, con
 	return false;
 }
 
-bool UCsCommon_Load::SetStructMember(void* InStruct, UScriptStruct* const &InScriptStruct, const FString &MemberName, void* MemberValue)
+bool UCsCommon_Load::SetStructMember(void* InStruct, UScriptStruct* const &InScriptStruct, const FString& MemberName, void* MemberValue)
 {
 	for (TFieldIterator<UProperty> It(InScriptStruct); It; ++It)
 	{
@@ -9418,7 +9418,7 @@ void UCsCommon_Load::SetObjectMembers(void* FromObject, void* ToObject, UClass* 
 // Get
 #pragma region
 
-void* UCsCommon_Load::GetStructMemberEX(UProperty* Property, void* InStruct, UScriptStruct* const &InScriptStruct, const FString &MemberName)
+void* UCsCommon_Load::GetStructMemberEX(UProperty* Property, void* InStruct, UScriptStruct* const &InScriptStruct, const FString& MemberName)
 {
 	const FString PropertyName = Property->GetName();
 
@@ -9468,7 +9468,7 @@ void* UCsCommon_Load::GetStructMemberEX(UProperty* Property, void* InStruct, USc
 	return nullptr;
 }
 
-UScriptStruct* UCsCommon_Load::GetScriptStructMember(void* InStruct, UScriptStruct* const &InScriptStruct, const FString &MemberName, TCsGetScriptStructMember_Internal Internal /*=nullptr*/)
+UScriptStruct* UCsCommon_Load::GetScriptStructMember(void* InStruct, UScriptStruct* const &InScriptStruct, const FString& MemberName, TCsGetScriptStructMember_Internal Internal /*=nullptr*/)
 {
 	for (TFieldIterator<UProperty> It(InScriptStruct); It; ++It)
 	{
@@ -9531,7 +9531,7 @@ UScriptStruct* UCsCommon_Load::GetScriptStructMember(void* InStruct, UScriptStru
 }
 
 /*
-TEnumAsByte<EMemberType::Type> UCsCommon_Load::GetObjectMemberType(UClass* const &InClass, const FString &MemberName)
+TEnumAsByte<EMemberType::Type> UCsCommon_Load::GetObjectMemberType(UClass* const &InClass, const FString& MemberName)
 {
 	for (TFieldIterator<UProperty> It(InClass); It; ++It)
 	{
@@ -9587,7 +9587,7 @@ TEnumAsByte<EMemberType::Type> UCsCommon_Load::GetObjectMemberType(UClass* const
 	return EMemberType::EMemberType_MAX;
 }
 
-TEnumAsByte<EMemberType::Type> UCsCommon_Load::GetStructMemberType(UScriptStruct* const &InScriptStruct, const FString &MemberName)
+TEnumAsByte<EMemberType::Type> UCsCommon_Load::GetStructMemberType(UScriptStruct* const &InScriptStruct, const FString& MemberName)
 {
 	for (TFieldIterator<UProperty> It(InScriptStruct); It; ++It)
 	{
@@ -9642,7 +9642,7 @@ TEnumAsByte<EMemberType::Type> UCsCommon_Load::GetStructMemberType(UScriptStruct
 	return EMemberType::EMemberType_MAX;
 }
 */
-uint16 UCsCommon_Load::GetObjectMemberIndex(UClass* const &InClass, const FString &MemberName)
+uint16 UCsCommon_Load::GetObjectMemberIndex(UClass* const &InClass, const FString& MemberName)
 {
 	uint16 Index = 0;
 

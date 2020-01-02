@@ -15,26 +15,26 @@ UCsData_WeaponMaterialSkin::UCsData_WeaponMaterialSkin(const FObjectInitializer&
 // Skin
 #pragma region
 
-TArray<UMaterialInstanceConstant*>* UCsData_WeaponMaterialSkin::GetMaterials(const TCsViewType& ViewType, const bool& IsLow /*=false*/){ return nullptr; }
+TArray<UMaterialInstanceConstant*>* UCsData_WeaponMaterialSkin::GetMaterials(const ECsViewType& ViewType, const bool& IsLow /*=false*/){ return nullptr; }
 TArray<UMaterialInstanceConstant*>* UCsData_WeaponMaterialSkin::GetMaterials() { return nullptr; }
 
-void UCsData_WeaponMaterialSkin::SetMaterials(USkeletalMeshComponent* InMesh, const TCsViewType& ViewType, const bool& IsLow /*=false*/)
+void UCsData_WeaponMaterialSkin::SetMaterials(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const bool& IsLow /*=false*/)
 {
 	UCsCommon::SetMaterials(InMesh, *GetMaterials(ViewType, IsLow));
 }
 
-void UCsData_WeaponMaterialSkin::SetMaterials(ASkeletalMeshActor* InActor, const TCsViewType& ViewType, const bool& IsLow /*=false*/)
+void UCsData_WeaponMaterialSkin::SetMaterials(ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const bool& IsLow /*=false*/)
 {
 	SetMaterials(InActor->GetSkeletalMeshComponent(), ViewType, IsLow);
 }
 
-void UCsData_WeaponMaterialSkin::SetMaterials(UObject* InObject, const TEnumAsByte<ECsViewType::Type>& ViewType, const bool& IsLow /*=false*/)
+void UCsData_WeaponMaterialSkin::SetMaterials(UObject* InObject, const ECsViewType& ViewType, const bool& IsLow /*=false*/)
 {
 	if (USkeletalMeshComponent* Mesh = Cast<USkeletalMeshComponent>(InObject))
-		SetMaterials(Mesh, (TCsViewType)ViewType, IsLow);
+		SetMaterials(Mesh, ViewType, IsLow);
 	else
 	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
-		SetMaterials(Actor->GetSkeletalMeshComponent(), (TCsViewType)ViewType, IsLow);
+		SetMaterials(Actor->GetSkeletalMeshComponent(), ViewType, IsLow);
 }
 
 void UCsData_WeaponMaterialSkin::SetMaterials(USkeletalMeshComponent* InMesh)

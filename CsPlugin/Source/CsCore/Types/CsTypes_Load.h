@@ -270,7 +270,7 @@ struct CSCORE_API FCsDataMappingEntry
 	uint16 LookUpCode;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data", meta = (MustImplement = "CsData"))
-	TSoftClassPtr<UCsData> Data;
+	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(EditAnywhere, Category = "Data", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Data_LoadFlags;

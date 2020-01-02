@@ -41,7 +41,7 @@ class CSCORE_API ACsFpsWeapon : public ACsGunWeapon
 	// Set
 #pragma region
 
-	virtual void SetMemberValue_float(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const float &Value) override;
+	virtual void SetMemberValue_float(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode, const float &Value) override;
 
 	virtual void SetMultiValueMembers() override;
 
@@ -50,8 +50,8 @@ class CSCORE_API ACsFpsWeapon : public ACsGunWeapon
 	// Get
 #pragma region
 
-	virtual bool GetMemberValue_bool(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode) override;
-	virtual float GetMemberValue_float(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode) override;
+	virtual bool GetMemberValue_bool(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode) override;
+	virtual float GetMemberValue_float(const FECsWeaponMultiValueMember& Member, const FECsWeaponFireMode& FireMode) override;
 
 #pragma endregion Get
 
@@ -93,7 +93,7 @@ public:
 
 	void SetMesh3P();
 
-	USkeletalMeshComponent* GetMesh(const TCsViewType &ViewType);
+	USkeletalMeshComponent* GetMesh(const ECsViewType& ViewType);
 	USkeletalMeshComponent* GetCurrentMesh();
 
 	bool UseMesh3PLow;
@@ -115,16 +115,16 @@ protected:
 // Firing
 #pragma region
 
-	virtual FVector GetMuzzleLocation(const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode) override;
+	virtual FVector GetMuzzleLocation(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode) override;
 
 	// Spread
 
 	FCsWeapon_TMapRef_float MovingSpreadBonus;
-	virtual float GetMovingSpreadBonus(const FECsWeaponFireMode &FireMode);
+	virtual float GetMovingSpreadBonus(const FECsWeaponFireMode& FireMode);
 	FCsWeapon_TMapRef_float JumpSpreadImpulse;
-	virtual float GetJumpSpreadImpulse(const FECsWeaponFireMode &FireMode);
+	virtual float GetJumpSpreadImpulse(const FECsWeaponFireMode& FireMode);
 	FCsWeapon_TMapRef_float ScopeAccuracyBonus;
-	virtual float GetScopeAccuracyBonus(const FECsWeaponFireMode &FireMode);
+	virtual float GetScopeAccuracyBonus(const FECsWeaponFireMode& FireMode);
 
 	UPROPERTY()
 	bool Last_OwnerIsFalling;
@@ -141,14 +141,14 @@ protected:
 
 	FCsWeapon_TMapRef_bool DoScopePower;
 	FCsWeapon_TMapRef_float MaxScopePower;
-	virtual float GetMaxScopePower(const FECsWeaponFireMode &FireMode);
+	virtual float GetMaxScopePower(const FECsWeaponFireMode& FireMode);
 	FCsWeapon_TMapRef_float ScopePowerGrowthRate;
-	virtual float GetScopePowerGrowthRate(const FECsWeaponFireMode &FireMode);
+	virtual float GetScopePowerGrowthRate(const FECsWeaponFireMode& FireMode);
 
 	FCsWeapon_TMap_float CurrentScopePower;
 	FCsWeapon_TMap_float LastScopePower;
 
-	virtual void FireProjectile_Internal(const FECsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload) override;
+	virtual void FireProjectile_Internal(const FECsWeaponFireMode& FireMode, FCsProjectileFirePayload* Payload) override;
 
 #pragma endregion Firing
 

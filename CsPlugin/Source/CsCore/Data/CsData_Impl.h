@@ -53,7 +53,7 @@ struct FCsDataAddToPayload
 	bool AddToPayload;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	FECsLoadAssetsType LoadAssetsType;
+	FECsDataCollectionType DataCollectionType;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	TEnumAsByte<ECsLoadFlags_Editor::Type> LoadFlags;

@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/ShortCode/CsDataShortCodeCustomization.h"
 #include "CsEditor.h"
+
+// Library
 #include "Library/CsLibrary_Asset.h"
 
 #include "IDetailChildrenBuilder.h"
@@ -22,14 +24,14 @@ FCsDataShortCodeCustomization::FCsDataShortCodeCustomization()
 
 void FCsDataShortCodeCustomization::Init()
 {
-	uint8 AssetTypeAsByte;
-	AssetTypeHandle->GetValue(AssetTypeAsByte);
+	uint8 DataTypeAsByte;
+	AssetTypeHandle->GetValue(DataTypeAsByte);
 
 	UCsDataMapping* DataMapping = Cast<UCsEdEngine>(GEditor)->DataMapping;
 
-	const FECsAssetType& AssetType = EMCsAssetType::Get()[AssetTypeAsByte];
+	const FECsDataType& DataType = EMCsDataType::Get()[DataTypeAsByte];
 
-	if (TArray<FCsDataMappingEntry>* EntriesPtr = DataMapping->GetDataMappings(AssetType))
+	if (TArray<FCsDataMappingEntry>* EntriesPtr = DataMapping->GetDataMappings(DataType))
 	{
 		TArray<FCsDataMappingEntry>& Entries = *EntriesPtr;
 

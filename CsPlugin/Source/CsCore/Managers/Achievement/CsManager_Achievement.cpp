@@ -167,7 +167,7 @@ UCsManager_Achievement::UCsManager_Achievement(const FObjectInitializer& ObjectI
 		// Player Controller
 		TArray<APlayerController*> Controllers;
 
-		UCsLibrary_Common::GetAllLocalPlayerControllers(World, Controllers);
+		//UCsLibrary_Common::GetAllLocalPlayerControllers(World, Controllers);
 
 		if (Controllers.Num() == CS_EMPTY)
 			return nullptr;

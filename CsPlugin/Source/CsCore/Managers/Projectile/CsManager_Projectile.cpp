@@ -172,7 +172,7 @@ void UCsManager_Projectile::OnRegister()
 		// Player Controller
 		TArray<APlayerController*> Controllers;
 
-		UCsLibrary_Common::GetAllLocalPlayerControllers(World, Controllers);
+		//UCsLibrary_Common::GetAllLocalPlayerControllers(World, Controllers);
 
 		if (Controllers.Num() == CS_EMPTY)
 			return nullptr;

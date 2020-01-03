@@ -231,7 +231,7 @@ UCsManager_Save::UCsManager_Save(const FObjectInitializer& ObjectInitializer)
 		// Player Controller
 		TArray<APlayerController*> Controllers;
 
-		UCsLibrary_Common::GetAllLocalPlayerControllers(World, Controllers);
+		//UCsLibrary_Common::GetAllLocalPlayerControllers(World, Controllers);
 
 		if (Controllers.Num() == CS_EMPTY)
 			return nullptr;

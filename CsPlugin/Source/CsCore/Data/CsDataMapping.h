@@ -2,8 +2,10 @@
 #pragma once
 
 #include "CoreUObject/Public/UObject/Object.h"
+// Types
 #include "Types/CsTypes_Load.h"
 #include "Types/CsTypes_Async.h"
+// Data
 #include "Data/CsData.h"
 #include "CsDataMapping.generated.h"
 
@@ -85,7 +87,101 @@ namespace NCsDataMappingCached
 
 #pragma endregion Cache
 
+// Structs
+#pragma region
+
+USTRUCT(BlueprintType)
+struct FCsDataMappingFindEntry
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
+	bool Find;
+
+	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
+	FName ShortCode;
+
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
+	FString Message;
+
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
+	FString Output;
+};
+
+USTRUCT(BlueprintType)
+struct FCsDataMappingAddEntry
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
+	bool Add;
+
+	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
+	FName ShortCode;
+
+	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
+	FECsDataType DataType;
+
+	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 LoadFlags;
+
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
+	FString Message;
+
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
+	FString Output;
+
+	FCsDataMappingAddEntry() :
+		Add(false),
+		ShortCode(NAME_None),
+		DataType(EMCsDataType::Get().GetMAX()),
+		LoadFlags(0),
+		Message(),
+		Output()
+
+	{
+		CS_SET_BLUEPRINT_BITFLAG(LoadFlags, ECsLoadFlags::All);
+		CS_SET_BLUEPRINT_BITFLAG(LoadFlags, ECsLoadFlags::Game);
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsDataMappingRemoveEntry
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
+	bool Remove;
+
+	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
+	FName ShortCode;
+
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
+	FString Message;
+
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
+	FString Output;
+};
+
+USTRUCT(BlueprintType)
+struct FCsDataMappingValidate
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
+	bool Validate;
+
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
+	FString Message;
+
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
+	FString Output;
+};
+
+#pragma endregion Structs
+
 class ICsData;
+class UCsData_Payload;
 
 UCLASS(Abstract, NotBlueprintable)
 class CSCORE_API UCsDataMapping : public UObject
@@ -96,7 +192,7 @@ class CSCORE_API UCsDataMapping : public UObject
 
 // Mapping
 #pragma region
-protected:
+public:
 
 	TArray<FCsDataMappingEntry>* GetDataMappings(const FECsDataType& DataType);
 
@@ -132,11 +228,11 @@ public:
 	//UPROPERTY(VisibleDefaultsOnly, Category = "Data Mapping")
 	//TArray<FCsCategoryMemberAssociation> CategoryMemberAssociations;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data Mapping")
-	//TSubclassOf<class ACsData_Payload> Payload;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data Mapping")
+	TSubclassOf<UCsData_Payload> Payload;
 
-	//UFUNCTION(BlueprintCallable, Category = "Payload")
-	//class ACsData_Payload* GetPayload();
+	UFUNCTION(BlueprintCallable, Category = "Payload")
+	UCsData_Payload* GetPayload();
 
 // Asset References
 #pragma region
@@ -427,13 +523,10 @@ public:
 
 #pragma endregion Json
 
-public:
-
-	FCsMutex AsyncTaskMutex;
-
 // Editor
 #pragma region
-/*
+public:
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data Mapping|Editor")
 	FCsDataMappingFindEntry FindEntry;
 
@@ -457,11 +550,11 @@ public:
 
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
 
-	bool CheckEntryExists(const FName& ShortCode, const FECsDataType& DataType, const ECsLoadFlags_Editor& LoadFlags, FString& OutMessage);
+	bool CheckEntryExists(const FName& ShortCode, const FECsDataType& DataType, const TCsLoadFlags_Editor& LoadFlags, FString& OutMessage);
 
 #endif // #if WITH_EDITOR
 
 	FCsMutex AsyncTaskMutex;
-*/
+
 #pragma endregion Editor
 };

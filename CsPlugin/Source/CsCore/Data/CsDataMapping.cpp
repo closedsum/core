@@ -162,12 +162,10 @@ const FECsDataType& UCsDataMapping::GetDataType(const FName& ShortCode)
 	return EMCsDataType::Get().GetMAX();
 }
 
-/*
 UCsData_Payload* UCsDataMapping::GetPayload()
 {
 	return Payload->GetDefaultObject<UCsData_Payload>();
 }
-*/
 
 // Asset References
 #pragma region
@@ -412,7 +410,7 @@ void UCsDataMapping::PopulateAssetReferences()
 						{
 							UObject* OutAsset = nullptr;
 
-							//UCsLibrary_Load::LoadTSoftClassPtr<ACsData>((*Member)[I].Data, OutAsset, TEXT("Actor"));
+							//UCsLibrary_Load::LoadTSoftClassPtr<UObject>((*Member)[I].Data, OutAsset, TEXT("Object"));
 
 							if (!OutAsset)
 							{
@@ -1044,10 +1042,9 @@ void UCsDataMapping::LoadFromJson()
 // Editor
 #pragma region
 
-/*
 #if WITH_EDITOR
 
-bool UCsDataMapping::PerformFindEntry(const FName &ShortCode, TArray<FCsDataMappingEntry*> &OutEntries, TArray<FECsDataType> &OutDataTypes, TArray<int32> &OutIndices)
+bool UCsDataMapping::PerformFindEntry(const FName& ShortCode, TArray<FCsDataMappingEntry*>& OutEntries, TArray<FECsDataType>& OutDataTypes, TArray<int32>& OutIndices)
 {
 	int32 DataTypeIndex = INDEX_NONE;
 
@@ -1096,7 +1093,7 @@ bool UCsDataMapping::PerformFindEntry(const FName &ShortCode, TArray<FCsDataMapp
 	return OutEntries.Num() > CS_EMPTY;
 }
 
-bool UCsDataMapping::PerformAddEntry(const FName &ShortCode, const FECsDataType &DataType, const int32 &LoadFlags, FString &OutMessage, FString &OutOutput)
+bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType& DataType, const int32& LoadFlags, FString& OutMessage, FString& OutOutput)
 {
 	// Check for valid ShortCode
 	if (ShortCode == NAME_None ||
@@ -1234,7 +1231,7 @@ bool UCsDataMapping::PerformAddEntry(const FName &ShortCode, const FECsDataType 
 						{
 							TArray<UBlueprint*> Bps;
 
-							UCsLibrary_Common_Asset::GetAssets<UBlueprint>(ShortCode, ECsStringCompare::Equals, Bps);
+							UCsLibrary_Asset::GetAssets<UBlueprint>(ShortCode, ECsStringCompare::Equals, Bps);
 
 							// Multiple Assets with the same name.
 							if (Bps.Num() > 1)
@@ -1263,11 +1260,13 @@ bool UCsDataMapping::PerformAddEntry(const FName &ShortCode, const FECsDataType 
 							if (Bps.Num() == 1)
 							{
 								// Check ShortCode on Data
-								if (ACsData* DOb = Cast<UBlueprintCore>(Bps[0])->GeneratedClass->GetDefaultObject<ACsData>())
+								if (UObject* DOb = Cast<UBlueprintCore>(Bps[0])->GeneratedClass->GetDefaultObject())
 								{
+									ICsData* IData = Cast<ICsData>(DOb);
+
 									// ADD
-									if (ShortCode == DOb->ShortCode &&
-										DataType == DOb->Type)
+									if (ShortCode == IData->GetShortCode() &&
+										DataType == IData->GetType())
 									{
 										Member->AddDefaulted();
 										(*Member)[EntryCount].ShortCode		 = ShortCode;
@@ -1290,10 +1289,10 @@ bool UCsDataMapping::PerformAddEntry(const FName &ShortCode, const FECsDataType 
 									// Mismatch. FAILED
 									else
 									{
-										if (ShortCode != DOb->ShortCode)
-											OutOutput = TEXT("ShortCode mismatch. ") + DOb->ShortCode.ToString() + TEXT(" != ") + ShortCode.ToString();
+										if (ShortCode != IData->GetShortCode())
+											OutOutput = TEXT("ShortCode mismatch. ") + IData->GetShortCode().ToString() + TEXT(" != ") + ShortCode.ToString();
 										else
-											OutOutput = TEXT("DataType mismatch. ") + DOb->Type.Name + TEXT(" != ") + DataTypeAsString;
+											OutOutput = TEXT("DataType mismatch. ") + IData->GetType().Name + TEXT(" != ") + DataTypeAsString;
 										OutMessage = TEXT("FAILED.");
 
 										if (UCsLibrary_Common::IsDefaultObject(this))
@@ -1307,9 +1306,9 @@ bool UCsDataMapping::PerformAddEntry(const FName &ShortCode, const FECsDataType 
 								// Data NOT the correct Class type
 								else
 								{
-									UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::PerformAddEntry: FAILED. %s at %s is NOT of type ACsData."), *DataTypeAsString, *(Bps[0]->GetPathName()));
+									UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::PerformAddEntry: FAILED. %s at %s is NOT of type IsCsData."), *DataTypeAsString, *(Bps[0]->GetPathName()));
 
-									OutOutput = TEXT("Asset is NOT of type ACsData. Check LOG.");
+									OutOutput = TEXT("Asset is NOT of type ICsData. Check LOG.");
 									OutMessage = TEXT("FAILED.");
 
 									if (UCsLibrary_Common::IsDefaultObject(this))
@@ -1342,7 +1341,7 @@ bool UCsDataMapping::PerformAddEntry(const FName &ShortCode, const FECsDataType 
 	return false;
 }
 
-bool UCsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFlags, FString &OutMessage, FString &OutOutput)
+bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFlags, FString& OutMessage, FString& OutOutput)
 {
 	// Check for valid ShortCode
 	if (ShortCode == NAME_None ||
@@ -1362,10 +1361,11 @@ bool UCsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 	// Search for Asset
 	TArray<UBlueprint*> Bps;
 
-	UCsLibrary_Common_Asset::GetAssets<UBlueprint>(ShortCode, ECsStringCompare::Equals, Bps);
+	UCsLibrary_Asset::GetAssets<UBlueprint>(ShortCode, ECsStringCompare::Equals, Bps);
 
 	TSubclassOf<UObject> Data = nullptr;
-	ACsData* DataDOb		  = nullptr;
+	UObject* DataDOb		  = nullptr;
+	ICsData* IData		      = nullptr;
 
 	const int32 BpCount = Bps.Num();
 
@@ -1404,21 +1404,22 @@ bool UCsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 	if (BpCount == 1)
 	{
 		// Check ShortCode on Data
-		DataDOb = Cast<UBlueprintCore>(Bps[0])->GeneratedClass->GetDefaultObject<ACsData>();
+		DataDOb = Cast<UBlueprintCore>(Bps[0])->GeneratedClass->GetDefaultObject();
+		IData   = Cast<ICsData>(DataDOb);
 
-		if (DataDOb)
+		if (IData)
 		{
 			// ADD
-			if (ShortCode == DataDOb->ShortCode &&
-				EMCsDataType::Get().IsValidEnum(DataDOb->Type))
+			if (ShortCode == IData->GetShortCode() &&
+				EMCsDataType::Get().IsValidEnum(IData->GetType()))
 			{
 				Data = Cast<UBlueprintCore>(Bps[0])->GeneratedClass;
 			}
 			// Mismatch. FAILED
 			else
 			{
-				if (ShortCode != DataDOb->ShortCode)
-					OutOutput = TEXT("ShortCode mismatch. ") + DataDOb->ShortCode.ToString() + TEXT(" != ") + ShortCode.ToString();
+				if (ShortCode != IData->GetShortCode())
+					OutOutput = TEXT("ShortCode mismatch. ") + IData->GetShortCode().ToString() + TEXT(" != ") + ShortCode.ToString();
 				else
 					OutOutput = TEXT("Asset: ") + ShortCode.ToString() + TEXT(" has an INVALID DataType");
 				OutMessage = TEXT("FAILED.");
@@ -1434,9 +1435,9 @@ bool UCsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 		// Data NOT the correct Class type
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::PerformAddEntry: FAILED. %s is NOT of type ACsData."), *(Bps[0]->GetPathName()));
+			UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::PerformAddEntry: FAILED. %s is NOT of type ICsData."), *(Bps[0]->GetPathName()));
 
-			OutOutput = TEXT("Asset is NOT of type ACsData. Check LOG.");
+			OutOutput = TEXT("Asset is NOT of type ICsData. Check LOG.");
 			OutMessage = TEXT("FAILED.");
 
 			if (UCsLibrary_Common::IsDefaultObject(this))
@@ -1461,7 +1462,7 @@ bool UCsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 		return false;
 	}
 
-	const FECsDataType& DataType = DataDOb->Type;
+	const FECsDataType& DataType = IData->GetType();
 
 	// Search Entries
 	int32 DataTypeIndex = INDEX_NONE;
@@ -1602,7 +1603,7 @@ bool UCsDataMapping::IsValid()
 		return false;
 	}
 	// Check Payload is VALID
-	ACsData_Payload* PayloadDOb = Payload->GetDefaultObject<ACsData_Payload>();
+	UCsData_Payload* PayloadDOb = Payload->GetDefaultObject<UCsData_Payload>();
 
 	if (!PayloadDOb->IsValid())
 	{
@@ -1612,7 +1613,7 @@ bool UCsDataMapping::IsValid()
 	return true;
 }
 
-bool UCsDataMapping::PerformValidate(FString &OutMessage, FString &OutOutput)
+bool UCsDataMapping::PerformValidate(FString& OutMessage, FString& OutOutput)
 {
 	bool Pass = true;
 
@@ -1632,7 +1633,7 @@ bool UCsDataMapping::PerformValidate(FString &OutMessage, FString &OutOutput)
 		return false;
 	}
 	// Check Payload is VALID
-	ACsData_Payload* PayloadDOb = Payload->GetDefaultObject<ACsData_Payload>();
+	UCsData_Payload* PayloadDOb = Payload->GetDefaultObject<UCsData_Payload>();
 
 	if (!PayloadDOb->IsValid())
 	{
@@ -1670,7 +1671,7 @@ bool UCsDataMapping::PerformValidate(FString &OutMessage, FString &OutOutput)
 				{
 					++DataTypeIndex;
 
-					const FECsDataType& DataType   = EMCsDataType::Get().GetEnumAt(DataTypeIndex);
+					const FECsDataType& DataType    = EMCsDataType::Get().GetEnumAt(DataTypeIndex);
 					const FString& DataTypeAsString = DataType.Name;
 
 					if (TArray<FCsDataMappingEntry>* Member = Property->ContainerPtrToValuePtr<TArray<FCsDataMappingEntry>>(this))
@@ -1684,7 +1685,7 @@ bool UCsDataMapping::PerformValidate(FString &OutMessage, FString &OutOutput)
 							TArray<UBlueprint*> Bps;
 							TArray<FName> PackagePaths;
 
-							UCsLibrary_Common_Asset::GetAssets<UBlueprint>(Entry.ShortCode, ECsStringCompare::Equals, Bps, PackagePaths);
+							UCsLibrary_Asset::GetAssets<UBlueprint>(Entry.ShortCode, ECsStringCompare::Equals, Bps, PackagePaths);
 
 							const int32 BpCount = Bps.Num();
 							// ShortCode NO longer EXISTS in AssetRegistry
@@ -1721,12 +1722,13 @@ bool UCsDataMapping::PerformValidate(FString &OutMessage, FString &OutOutput)
 								Pass &= false;
 								continue;
 							}
-							// Asset is NOT of type ACsData
-							ACsData* DataDOb = Cast<UBlueprintCore>(Bps[CS_FIRST])->GeneratedClass->GetDefaultObject<ACsData>();
+							// Check Asset is NOT of type ICsData
+							UObject* DataDOb = Cast<UBlueprintCore>(Bps[CS_FIRST])->GeneratedClass->GetDefaultObject();
+							ICsData* IData   = Cast<ICsData>(DataDOb);
 
-							if (!DataDOb)
+							if (!IData)
 							{
-								const FString Output = TEXT("UCsDataMapping::PerformValidate: Data with ShortCode: ") + Entry.ShortCode.ToString() + TEXT(" is NOT of type ACsData.");
+								const FString Output = TEXT("UCsDataMapping::PerformValidate: Data with ShortCode: ") + Entry.ShortCode.ToString() + TEXT(" is NOT of type ICsData.");
 
 								if (UCsLibrary_Common::IsDefaultObject(this))
 									UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
@@ -1950,7 +1952,7 @@ void UCsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	GenerateMaps();
 }
 
-bool UCsDataMapping::CheckEntryExists(const FName &ShortCode, const FECsDataType &DataType, const TCsLoadFlags_Editor &LoadFlags, FString &OutMessage)
+bool UCsDataMapping::CheckEntryExists(const FName& ShortCode, const FECsDataType& DataType, const TCsLoadFlags_Editor& LoadFlags, FString& OutMessage)
 {
 	UClass* Class = GetClass();
 
@@ -2012,6 +2014,5 @@ bool UCsDataMapping::CheckEntryExists(const FName &ShortCode, const FECsDataType
 }
 
 #endif // #if WITH_EDITOR
-*/
 
 #pragma endregion Editor

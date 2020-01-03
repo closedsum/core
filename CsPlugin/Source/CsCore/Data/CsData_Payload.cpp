@@ -16,7 +16,7 @@ UCsData_Payload::UCsData_Payload(const FObjectInitializer& ObjectInitializer)
 
 #if WITH_EDITOR
 
-bool UCsData_Payload::PerformFindEntry(const FName& InShortCode, TArray<FCsPayload*>& OutPayloads, TArray<FECsLoadAssetsType>& OutLoadAssetsTypes, TArray<int32>& OutIndices)
+bool UCsData_Payload::PerformFindEntry(const FName& InShortCode, TArray<FCsPayload*>& OutPayloads, TArray<FECsDataCollectionType>& OutDataCollectionTypes, TArray<int32>& OutIndices)
 {
 	UClass* Class = GetClass();
 
@@ -32,20 +32,20 @@ bool UCsData_Payload::PerformFindEntry(const FName& InShortCode, TArray<FCsPaylo
 			// FCsTArrayPayload
 			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
 			{
-				const uint8 LoadAssetsTypeCount = EMCsLoadAssetsType::Get().Num();
+				const uint8 DataCollectionTypeCount = EMCsDataCollectionType::Get().Num();
 
-				if (StructProperty->ArrayDim == LoadAssetsTypeCount)
+				if (StructProperty->ArrayDim == DataCollectionTypeCount)
 				{
-					CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(uint8, MAX, LoadAssetsTypeCount)
+					CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(uint8, MAX, DataCollectionTypeCount)
 
 					if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 					{
-						// Find LoadAssetsType
-						for (int32 I = 0; I < LoadAssetsTypeCount; ++I)
+						// Find DataCollectionType
+						for (int32 I = 0; I < DataCollectionTypeCount; ++I)
 						{
 							TArray<FCsPayload>& Array = ((*Member)[I]).Payloads;
 
-							const FECsLoadAssetsType& LoadAssetsType = EMCsLoadAssetsType::Get().GetEnumAt(I);
+							const FECsDataCollectionType& DataCollectionType = EMCsDataCollectionType::Get().GetEnumAt(I);
 
 							bool Found = false;
 
@@ -58,7 +58,7 @@ bool UCsData_Payload::PerformFindEntry(const FName& InShortCode, TArray<FCsPaylo
 								if (InShortCode == Payload.ShortCode)
 								{
 									OutPayloads.Add(&Payload);
-									OutLoadAssetsTypes.Add(LoadAssetsType);
+									OutDataCollectionTypes.Add(DataCollectionType);
 									OutIndices.Add(J);
 								}
 							}
@@ -71,7 +71,7 @@ bool UCsData_Payload::PerformFindEntry(const FName& InShortCode, TArray<FCsPaylo
 	return OutPayloads.Num() > CS_EMPTY;
 }
 
-bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsLoadAssetsType& LoadAssetsType, const TEnumAsByte<ECsLoadFlags_Editor::Type>& LoadFlags, FString& OutMessage, FString& OutOutput)
+bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCollectionType& DataCollectionType, const TEnumAsByte<ECsLoadFlags_Editor::Type>& LoadFlags, FString& OutMessage, FString& OutOutput)
 {
 	// Check for VALID ShortCode
 	if (InShortCode == NAME_None ||
@@ -88,9 +88,9 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsLoadAs
 		return false;
 	}
 	// Check for VALID LoadAssetsType
-	if (!EMCsLoadAssetsType::Get().IsValidEnum(LoadAssetsType))
+	if (!EMCsDataCollectionType::Get().IsValidEnum(DataCollectionType))
 	{
-		OutMessage = TEXT("INVALID LoadAssetsType. See Output Log.");
+		OutMessage = TEXT("INVALID DataCollectionType. See Output Log.");
 		OutOutput  = TEXT("ERROR");
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
@@ -101,40 +101,40 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsLoadAs
 
 		UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::PerformAddEntry: Valid LoadAssetsTypes are:"));
 
-		const int32& Count = EMCsLoadAssetsType::Get().Num();
+		const int32& Count = EMCsDataCollectionType::Get().Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			const FECsLoadAssetsType& Enum = EMCsLoadAssetsType::Get().GetEnumAt(I);
+			const FECsDataCollectionType& Enum = EMCsDataCollectionType::Get().GetEnumAt(I);
 
-			UE_LOG(LogCs, Warning, TEXT("LoadAssetsType: %s"), *(Enum.Name));
+			UE_LOG(LogCs, Warning, TEXT("DataCollectionType: %s"), *(Enum.Name));
 		}
 		return false;
 	}
 
 	// Check if ShortCode has ALREADY been ADDED
 	TArray<FCsPayload*> OutPayloads;
-	TArray<FECsLoadAssetsType> OutLoadAssetsTypes;
+	TArray<FECsDataCollectionType> OutDataCollectionTypes;
 	TArray<int32> OutIndices;
 
-	PerformFindEntry(InShortCode, OutPayloads, OutLoadAssetsTypes, OutIndices);
+	PerformFindEntry(InShortCode, OutPayloads, OutDataCollectionTypes, OutIndices);
 
 	const int32 PayloadCount = OutPayloads.Num();
 	// Entries Found
 	if (PayloadCount > CS_EMPTY)
 	{
-		const int32 Index = OutLoadAssetsTypes.Find(LoadAssetsType);
+		const int32 Index = OutDataCollectionTypes.Find(DataCollectionType);
 
 		if (Index != INDEX_NONE)
 		{
-			const FString& LoadFlagsAsString	  = EMCsLoadFlags_Editor::Get().ToString(LoadFlags);
-			const FString& LoadAssetsTypeAsString = OutLoadAssetsTypes[Index].Name;
+			const FString& LoadFlagsAsString		  = EMCsLoadFlags_Editor::Get().ToString(LoadFlags);
+			const FString& DataCollectionTypeAsString = OutDataCollectionTypes[Index].Name;
 
 			FCsPayload* Payload = OutPayloads[Index];
 
 			const FString& DataTypeAsString = Payload->DataType;
 
-			OutOutput += TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + DataTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(OutIndices[Index]) + TEXT("]");
+			OutOutput += TEXT("[") + DataCollectionTypeAsString + TEXT(", ") + DataTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(OutIndices[Index]) + TEXT("]");
 			OutMessage = TEXT("Already Exists.");
 
 			if (UCsLibrary_Common::IsDefaultObject(this))
@@ -204,7 +204,7 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsLoadAs
 
 							if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 							{
-								TArray<FCsPayload>& Array = ((*Member)[(uint8)LoadAssetsType]).Payloads;
+								TArray<FCsPayload>& Array = ((*Member)[(uint8)DataCollectionType]).Payloads;
 
 								const int32 ArraySize = Array.Num();
 
@@ -215,10 +215,10 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsLoadAs
 								Array[ArraySize].ShortCode	= InShortCode;
 								Array[ArraySize].LoadFlags	= LoadFlags;
 
-								const FString& LoadAssetsTypeAsString = LoadAssetsType.Name;
-								const FString& LoadFlagsAsString	  = EMCsLoadFlags_Editor::Get().ToString(LoadFlags);
+								const FString& DataCollectionTypeAsString = DataCollectionType.Name;
+								const FString& LoadFlagsAsString		  = EMCsLoadFlags_Editor::Get().ToString(LoadFlags);
 
-								OutOutput = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + DataTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
+								OutOutput = TEXT("[") + DataCollectionTypeAsString + TEXT(", ") + DataTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
 								OutMessage = TEXT("SUCCESS.");
 
 								if (UCsLibrary_Common::IsDefaultObject(this))
@@ -303,7 +303,7 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsLoadAs
 
 							if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 							{
-								TArray<FCsPayload>& Array = ((*Member)[(uint8)LoadAssetsType]).Payloads;
+								TArray<FCsPayload>& Array = ((*Member)[(uint8)DataCollectionType]).Payloads;
 
 								const int32 ArraySize = Array.Num();
 
@@ -314,10 +314,10 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsLoadAs
 								Array[ArraySize].ShortCode	= InShortCode;
 								Array[ArraySize].LoadFlags	= LoadFlags;
 
-								const FString& LoadAssetsTypeAsString = LoadAssetsType.Name;
-								const FString& LoadFlagsAsString	  = EMCsLoadFlags_Editor::Get().ToString(LoadFlags);
+								const FString& DataCollectionTypeAsString = DataCollectionType.Name;
+								const FString& LoadFlagsAsString		  = EMCsLoadFlags_Editor::Get().ToString(LoadFlags);
 
-								OutOutput  = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + DataTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
+								OutOutput  = TEXT("[") + DataCollectionTypeAsString + TEXT(", ") + DataTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
 								OutMessage = TEXT("SUCCESS. Check LOG.");
 
 								MarkPackageDirty();
@@ -463,10 +463,10 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		}
 
 		TArray<FCsPayload*> OutPayloads;
-		TArray<FECsLoadAssetsType> OutLoadAssetsTypes;
+		TArray<FECsDataCollectionType> OutDataCollectionTypes;
 		TArray<int32> OutIndices;
 
-		PerformFindEntry(FindEntry.ShortCode, OutPayloads, OutLoadAssetsTypes, OutIndices);
+		PerformFindEntry(FindEntry.ShortCode, OutPayloads, OutDataCollectionTypes, OutIndices);
 
 		const int32 PayloadCount = OutPayloads.Num();
 
@@ -475,11 +475,11 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			if (I > 0)
 				FindEntry.Output += TEXT(", ");
 
-			const FString& LoadAssetsTypeAsString = OutLoadAssetsTypes[I].Name;
-			const FString& DataTypeAsString		  = OutPayloads[I]->DataType;
-			const FString& LoadFlagsAsString	  = EMCsLoadFlags_Editor::Get().ToString(OutPayloads[I]->LoadFlags);
+			const FString& DataCollectionTypeAsString = OutDataCollectionTypes[I].Name;
+			const FString& DataTypeAsString			  = OutPayloads[I]->DataType;
+			const FString& LoadFlagsAsString		  = EMCsLoadFlags_Editor::Get().ToString(OutPayloads[I]->LoadFlags);
 
-			FindEntry.Output += TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + DataTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(OutIndices[I]) + TEXT("]");
+			FindEntry.Output += TEXT("[") + DataCollectionTypeAsString + TEXT(", ") + DataTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(OutIndices[I]) + TEXT("]");
 		}
 
 		if (PayloadCount == CS_EMPTY)
@@ -505,9 +505,9 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		AddEntry.Message = TEXT("");
 		AddEntry.Output  = TEXT("");
 
-		const FECsLoadAssetsType& LoadAssetsType = AddEntry.LoadAssetsType;
+		const FECsDataCollectionType& DataCollectionType = AddEntry.DataCollectionType;
 
-		PerformAddEntry(AddEntry.ShortCode, LoadAssetsType, AddEntry.LoadFlags, AddEntry.Message, AddEntry.Output);
+		PerformAddEntry(AddEntry.ShortCode, DataCollectionType, AddEntry.LoadFlags, AddEntry.Message, AddEntry.Output);
 		AddEntry.Add = false;
 	}
 	// Remove Entry

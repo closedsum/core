@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Animation/Poseable/CsPoseableMeshActor.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Asset.h"
 
 #include "Components/CsPoseableMeshComponent.h"
@@ -79,7 +79,7 @@ void ACsPoseableMeshActor::Tick(float DeltaSeconds)
 
 #if WITH_EDITOR
 	// Handle Waypoints placed in Editor
-	if (UCsCommon::IsPlayInEditor(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditor(GetWorld()))
 	{
 		OnTick_Editor(DeltaSeconds);
 		return;
@@ -90,7 +90,7 @@ void ACsPoseableMeshActor::Tick(float DeltaSeconds)
 bool ACsPoseableMeshActor::ShouldTickIfViewportsOnly() const
 {
 #if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditor(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditor(GetWorld()))
 		return true;
 #endif // #if WITH_EDITOR
 	return Super::ShouldTickIfViewportsOnly();
@@ -312,7 +312,7 @@ FString ACsPoseableMeshActor::GetBaseAssetName()
 
 void ACsPoseableMeshActor::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
-	if (!UCsCommon::IsPlayInEditor(GetWorld()))
+	if (!UCsLibrary_Common::IsPlayInEditor(GetWorld()))
 	{
 		Super::PostEditChangeProperty(e);
 		return;
@@ -358,7 +358,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 
 		if (!AnimLevelSequence.Master)
 		{
-			UCsCommon::DisplayNotificationInfo(TEXT("No Level Sequence created. LevelSequence.Master is NULL."), TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(TEXT("No Level Sequence created. LevelSequence.Master is NULL."), TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
 			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): No Level Sequence created. LevelSequence.Master is NULL."), *GetName());
 			return;
@@ -368,7 +368,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 
 		if (!AssetEditor)
 		{
-			UCsCommon::DisplayNotificationInfo(TEXT("Failed to Open Level Sequence Editor."), TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(TEXT("Failed to Open Level Sequence Editor."), TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
 			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): Failed to Open Level Sequence Editor."), *GetName());
 			return;
@@ -381,7 +381,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 			const FString AssetName = AnimLevelSequence.Master->GetName();
 			const FString Message   = TEXT("Failed to Open Level Sequence: ") + AssetName + TEXT(".");
 
-			UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
 			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
 			return;
@@ -429,7 +429,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 			{
 				FString Message = TEXT("Multiple Level Sequences found with the Name: ") + AssetName;
 
-				UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
 				UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
 
@@ -438,7 +438,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 					const FString FullPathName = PackagePaths[I] + TEXT("/") + AssetName;
 					Message						= TEXT("Level Sequence already exists at ") + FullPathName;
 
-					UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+					UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
 					UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
 				}
@@ -462,7 +462,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 
 void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedChainEvent& e)
 {
-	if (!UCsCommon::IsPlayInEditor(GetWorld()))
+	if (!UCsLibrary_Common::IsPlayInEditor(GetWorld()))
 	{
 		Super::PostEditChangeChainProperty(e);
 		return;
@@ -709,7 +709,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_TwoBoneIK(struct FPropert
 	// SkeletalMesh is NULL
 	if (!PoseableMeshComponent->SkeletalMesh)
 	{
-		UCsCommon::DisplayNotificationInfo(TEXT("SkeletalMesh is NULL."), TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
+		UCsLibrary_Common::DisplayNotificationInfo(TEXT("SkeletalMesh is NULL."), TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
 
 		UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_TwoBoneIK(%s): SkeletalMesh is NULL. Can NOT update Controls."), *GetName());
 		return;
@@ -900,7 +900,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 	{
 		const FString Message = TEXT("SkeletalMesh is NULL.");
 
-		UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
+		UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
 
 		UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
 		return;
@@ -910,7 +910,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 	{
 		const FString Message = TEXT("No Name set for AnimLevelSequence.Shots[") + FString::FromInt(Index) + TEXT("].Name.");
 
-		UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
+		UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
 
 		UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
 		return;
@@ -1103,7 +1103,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 		{
 			FString Message = TEXT("Multiple Level Sequences with the AnimLevelSequence.Shots[") + FString::FromInt(Index) + TEXT("].Name: ") + AssetName + TEXT(".");
 
-			UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
 
 			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
 
@@ -1112,7 +1112,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 				const FString FullPathName = PackagePaths[I] + TEXT("/") + AssetName;
 				Message = TEXT("Level Sequence already exists at ") + FullPathName;
 
-				UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 2.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 2.0f);
 
 				UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
 			}
@@ -1275,7 +1275,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Expor
 			{
 				FString Message = TEXT("Multiple Anim Sequences found with the Name: ") + AnimName;
 
-				UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
 				UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Export(%s): %s"), *GetName(), *Message);
 
@@ -1284,7 +1284,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Expor
 					const FString FullPathName = PackagePaths[I] + TEXT("/") + AnimName;
 					Message = TEXT("Anim Sequence already exists at ") + FullPathName;
 
-					UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 2.0f);
+					UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 2.0f);
 
 					UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Export(%s): %s"), *GetName(), *Message);
 				}
@@ -1769,8 +1769,8 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 			continue;
 		}
 
-		const int32 NumOutputAxes = UCsCommon::GetNumBitFlags(Connection.Output.Axes, ECS_AXES_EDITOR_MAX);
-		const int32 NumInputAxes  = UCsCommon::GetNumBitFlags(Connection.Input.Axes, ECS_AXES_EDITOR_MAX);
+		const int32 NumOutputAxes = UCsLibrary_Common::GetNumBitFlags(Connection.Output.Axes, ECS_AXES_EDITOR_MAX);
+		const int32 NumInputAxes  = UCsLibrary_Common::GetNumBitFlags(Connection.Input.Axes, ECS_AXES_EDITOR_MAX);
 
 		if (NumOutputAxes > NumInputAxes)
 		{
@@ -1805,7 +1805,7 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 				if (InMember == ECsTransformMember::Location)
 				{
 					const FVector Location = Control->Location.GetAxes(OutAxes);
-					const FVector V		   = OneToMany ? UCsCommon::BuildUniformVector(Location, OutAxes) : Location;
+					const FVector V		   = OneToMany ? UCsLibrary_Common::BuildUniformVector(Location, OutAxes) : Location;
 					Bone->UpdateLocation(V, InAxes);
 					continue;
 				}
@@ -1814,7 +1814,7 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 				{
 					const FVector Location  = Control->Location.GetAxes(OutAxes);
 					const FRotator Rotation = FRotator(Location.Y, Location.Z, Location.X);
-					const FRotator R		= OneToMany ? UCsCommon::BuildUniformRotator(Rotation, OutAxes) : Rotation;
+					const FRotator R		= OneToMany ? UCsLibrary_Common::BuildUniformRotator(Rotation, OutAxes) : Rotation;
 					Bone->UpdateRotation(R, InAxes);
 					continue;
 				}
@@ -1822,7 +1822,7 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 				if (InMember == ECsTransformMember::Scale)
 				{
 					const FVector Location = Control->Location.GetAxes(OutAxes);
-					const FVector V		   = OneToMany ? UCsCommon::BuildUniformVector(Location, OutAxes) : Location;
+					const FVector V		   = OneToMany ? UCsLibrary_Common::BuildUniformVector(Location, OutAxes) : Location;
 					Bone->UpdateScale(V, InAxes);
 					continue;
 				}
@@ -1836,7 +1836,7 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 				{
 					const FRotator Rotation = Control->Rotation.GetAxes(OutAxes);
 					const FVector Location  = FVector(Rotation.Roll, Rotation.Pitch, Rotation.Yaw);
-					const FVector V			= OneToMany ? UCsCommon::BuildUniformVector(Location, OutAxes) : Location;
+					const FVector V			= OneToMany ? UCsLibrary_Common::BuildUniformVector(Location, OutAxes) : Location;
 					Bone->UpdateLocation(V, InAxes);
 					continue;
 				}
@@ -1844,7 +1844,7 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 				if (InMember == ECsTransformMember::Rotation)
 				{
 					const FRotator Rotation = Control->Rotation.GetAxes(OutAxes);
-					const FRotator R		= OneToMany ? UCsCommon::BuildUniformRotator(Rotation, OutAxes) : Rotation;
+					const FRotator R		= OneToMany ? UCsLibrary_Common::BuildUniformRotator(Rotation, OutAxes) : Rotation;
 					Bone->UpdateRotation(R, InAxes);
 					continue;
 				}
@@ -1853,7 +1853,7 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 				{
 					const FRotator Rotation = Control->Rotation.GetAxes(OutAxes);
 					const FVector Location  = FVector(Rotation.Roll, Rotation.Pitch, Rotation.Yaw);
-					const FVector V			= OneToMany ? UCsCommon::BuildUniformVector(Location, OutAxes) : Location;
+					const FVector V			= OneToMany ? UCsLibrary_Common::BuildUniformVector(Location, OutAxes) : Location;
 					Bone->UpdateScale(V, InAxes);
 					continue;
 				}
@@ -1866,7 +1866,7 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 				if (InMember == ECsTransformMember::Location)
 				{
 					const FVector Scale = Control->Scale.GetAxes(OutAxes);
-					const FVector V		= OneToMany ? UCsCommon::BuildUniformVector(Scale, OutAxes) : Scale;
+					const FVector V		= OneToMany ? UCsLibrary_Common::BuildUniformVector(Scale, OutAxes) : Scale;
 					Bone->UpdateLocation(V, InAxes);
 					continue;
 				}
@@ -1875,7 +1875,7 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 				{
 					const FVector Scale		= Control->Scale.GetAxes(OutAxes);
 					const FRotator Rotation = FRotator(Scale.Y, Scale.Z, Scale.X);
-					const FRotator R		= OneToMany ? UCsCommon::BuildUniformRotator(Rotation, OutAxes) : Rotation;
+					const FRotator R		= OneToMany ? UCsLibrary_Common::BuildUniformRotator(Rotation, OutAxes) : Rotation;
 					Bone->UpdateRotation(R, InAxes);
 					continue;
 				}
@@ -1883,7 +1883,7 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 				if (InMember == ECsTransformMember::Scale)
 				{
 					const FVector Scale = Control->Scale.GetAxes(OutAxes);
-					const FVector V		= OneToMany ? UCsCommon::BuildUniformVector(Scale, OutAxes) : Scale;
+					const FVector V		= OneToMany ? UCsLibrary_Common::BuildUniformVector(Scale, OutAxes) : Scale;
 					Bone->UpdateScale(V, InAxes);
 					continue;
 				}

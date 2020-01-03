@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 ACsAnim_ControlHelper::ACsAnim_ControlHelper(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -30,7 +30,7 @@ void ACsAnim_ControlHelper::Tick(float DeltaSeconds)
 
 #if WITH_EDITOR
 	// Handle Waypoints placed in Editor
-	if (UCsCommon::IsPlayInEditor(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditor(GetWorld()))
 	{
 		OnTick_Editor(DeltaSeconds);
 		return;
@@ -41,7 +41,7 @@ void ACsAnim_ControlHelper::Tick(float DeltaSeconds)
 bool ACsAnim_ControlHelper::ShouldTickIfViewportsOnly() const
 {
 #if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditor(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditor(GetWorld()))
 		return true;
 #endif // #if WITH_EDITOR
 	return Super::ShouldTickIfViewportsOnly();

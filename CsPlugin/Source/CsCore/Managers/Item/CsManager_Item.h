@@ -50,8 +50,8 @@ public:
 
 	void LogTransaction(const FString& FunctionName, const ECsPoolTransaction& Transaction, const FCsItem* const Item);
 
-	FECsAssetType ItemAssetType;
-	FECsAssetType InteractiveAssetType;
+	FECsDataType ItemDataType;
+	FECsDataType InteractiveDataType;
 
 // Allocate
 #pragma region

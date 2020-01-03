@@ -1,9 +1,11 @@
 #include "Animation/CsAnimInstance_Weapon.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
-#include "Common/CsCommon_Load.h"
-#include "Coroutine/CsCoroutineScheduler.h"
 
+// Coroutine
+#include "Coroutine/CsCoroutineScheduler.h"
+// Library
+#include "Library/CsLibrary_Common.h"
+#include "Library/CsLibrary_Load.h"
 // Data
 #include "Data/CsData_Weapon.h"
 #include "Data/CsData_WeaponMaterialSkin.h"
@@ -48,7 +50,7 @@ void UCsAnimInstance_Weapon::NativeInitializeAnimation()
 
 void UCsAnimInstance_Weapon::SetupInGameSimulation()
 {
-	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (!UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 		return;
 
 	Super::SetupInGameSimulation();
@@ -75,15 +77,15 @@ void UCsAnimInstance_Weapon::SetupInGameSimulation()
 		Weapon->SetMyOwner(this);
 	}
 
-	UCsCommon_Load::LoadTSoftClassPtr(TEXT("Data_Weapon"), Data_Weapon.Data, Data_Weapon.Data_Internal, TEXT("MboData_Weapon"));
+	UCsLibrary_Load::LoadTSoftClassPtr(TEXT("Data_Weapon"), Data_Weapon.Data, Data_Weapon.Data_Internal, TEXT("MboData_Weapon"));
 
 	if (UCsData_Weapon* MyData_Weapon = GetData_Weapon())
-		MyData_Weapon->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
+		MyData_Weapon->Load(UCsLibrary_Common::ViewTypeToLoadFlags(CurrentViewType));
 
-	UCsCommon_Load::LoadTSoftClassPtr(TEXT("Data_WeaponMaterialSkin"), Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, TEXT("CsData_WeaponMaterialSkin"));
+	UCsLibrary_Load::LoadTSoftClassPtr(TEXT("Data_WeaponMaterialSkin"), Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, TEXT("CsData_WeaponMaterialSkin"));
 
 	if (UCsData_WeaponMaterialSkin* MyData_WeaponMaterialSkin = GetData_WeaponMaterialSkin())
-		MyData_WeaponMaterialSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
+		MyData_WeaponMaterialSkin->Load(UCsLibrary_Common::ViewTypeToLoadFlags(CurrentViewType));
 
 	LoadAnims();
 	ApplyData_Weapon();

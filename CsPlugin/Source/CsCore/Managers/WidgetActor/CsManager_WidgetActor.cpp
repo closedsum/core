@@ -2,7 +2,7 @@
 #include "Managers/WidgetActor/CsManager_WidgetActor.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 // UI
 #include "UI/CsUserWidget.h"
@@ -72,7 +72,7 @@ void AICsManager_WidgetActor::PostActorCreated()
 {
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(InWorld))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(InWorld))
 	{
 	}
 	// In Game

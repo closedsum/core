@@ -1,6 +1,6 @@
 #include "Player/CsFpsPawn.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 // Component
 #include "Components/CsSkeletalMeshComponent.h"
@@ -85,8 +85,8 @@ void ACsFpsPawn::PostInitializeComponents()
 	Eye->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
 	Eye->SetRelativeTransform(FTransform::Identity);
 
-	//UCsCommon::DisableComponent(Mesh1P, false, true);
-	//UCsCommon::DisableComponent(GetMesh(), false, true);
+	//UCsLibrary_Common::DisableComponent(Mesh1P, false, true);
+	//UCsLibrary_Common::DisableComponent(GetMesh(), false, true);
 	//GetCharacterMovement()->PrimaryComponentTick.bStartWithTickEnabled = false;
 
 	/*
@@ -128,9 +128,9 @@ void ACsFpsPawn::PostInitializeComponents()
 // View
 #pragma region
 
-TEnumAsByte<ECsViewType::Type> ACsFpsPawn::GetCurrentViewType()
+ECsViewType ACsFpsPawn::GetCurrentViewType()
 {
-	return UCsCommon::IsLocalPawn(GetWorld(), this) ? ECsViewType::FirstPerson : ECsViewType::ThirdPerson;
+	return UCsLibrary_Common::IsLocalPawn(GetWorld(), this) ? ECsViewType::FirstPerson : ECsViewType::ThirdPerson;
 }
 
 #pragma endregion View
@@ -155,7 +155,7 @@ FVector ACsFpsPawn::GetFeetLocation() const
 
 USkeletalMeshComponent* ACsFpsPawn::GetCurrentMesh()
 {
-	return UCsCommon::IsLocalPawn(GetWorld(), this) ? Cast<USkeletalMeshComponent>(Mesh1P) : GetMesh();
+	return UCsLibrary_Common::IsLocalPawn(GetWorld(), this) ? Cast<USkeletalMeshComponent>(Mesh1P) : GetMesh();
 }
 
 #pragma endregion Mesh

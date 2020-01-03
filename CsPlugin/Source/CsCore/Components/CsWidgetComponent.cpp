@@ -2,7 +2,7 @@
 #include "Components/CsWidgetComponent.h"
 #include "CsCore.h"
 #include "Types/CsTypes.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 // UI
 #include "UI/CsUserWidget.h"
@@ -30,7 +30,7 @@ void UCsWidgetComponent::TickComponent(float DeltaTime, enum ELevelTick TickType
 
 	if (!bOnCalcCamera)
 	{
-		ACsPlayerController* LocalController = UCsCommon::GetLocalPlayerController<ACsPlayerController>(GetWorld());
+		ACsPlayerController* LocalController = UCsLibrary_Common::GetLocalPlayerController<ACsPlayerController>(GetWorld());
 
 		OnTick_Handle_LocalCamera(LocalController->MinimalViewInfoCache.Location, LocalController->MinimalViewInfoCache.Rotation);
 	}
@@ -65,9 +65,9 @@ void UCsWidgetComponent::OnTick_Handle_LocalCamera(const FVector &ViewLocation, 
 
 	if (FollowLocalCamera)
 	{
-		if (UCsCommon::IsVR())
+		if (UCsLibrary_Common::IsVR())
 		{
-			UCsCommon::GetHMDWorldViewPoint(GetWorld(), CameraLocation, CameraRotation);
+			UCsLibrary_Common::GetHMDWorldViewPoint(GetWorld(), CameraLocation, CameraRotation);
 		}
 		CameraRotation.Roll = 0.f;
 
@@ -183,7 +183,7 @@ void UCsWidgetComponent::Hide()
 
 void UCsWidgetComponent::OnTick_Handle_Scale()
 {
-	ACsPawn* LocalPawn	 = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
+	ACsPawn* LocalPawn	 = UCsLibrary_Common::GetLocalPawn<ACsPawn>(GetWorld());
 	const float Distance = (LocalPawn->GetActorLocation() - GetComponentLocation()).Size2D();
 	const float Scale	 = MyMinDrawDistance.Distance > 0 ? Distance / MyMinDrawDistance.Distance : 1.0f;
 
@@ -192,7 +192,7 @@ void UCsWidgetComponent::OnTick_Handle_Scale()
 
 void UCsWidgetComponent::OnTick_Handle_DrawDistance()
 {
-	ACsPawn* LocalPawn	   = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
+	ACsPawn* LocalPawn	   = UCsLibrary_Common::GetLocalPawn<ACsPawn>(GetWorld());
 	const float DistanceSq = (LocalPawn->GetActorLocation() - GetComponentLocation()).SizeSquared2D();
 
 	if (DistanceSq < MyMinDrawDistance.DistanceSq)

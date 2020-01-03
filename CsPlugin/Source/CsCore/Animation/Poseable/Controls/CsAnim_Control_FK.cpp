@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Animation/Poseable/Controls/CsAnim_Control_FK.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 ACsAnim_Control_FK::ACsAnim_Control_FK(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -13,7 +13,7 @@ void ACsAnim_Control_FK::Tick(float DeltaSeconds)
 
 #if WITH_EDITOR
 	// Handle Waypoints placed in Editor
-	if (UCsCommon::IsPlayInEditor(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditor(GetWorld()))
 	{
 		OnTick_Editor(DeltaSeconds);
 		return;
@@ -24,7 +24,7 @@ void ACsAnim_Control_FK::Tick(float DeltaSeconds)
 bool ACsAnim_Control_FK::ShouldTickIfViewportsOnly() const
 {
 #if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditor(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditor(GetWorld()))
 		return true;
 #endif // #if WITH_EDITOR
 	return Super::ShouldTickIfViewportsOnly();

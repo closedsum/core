@@ -2,7 +2,7 @@
 #include "Managers/Item/CsManager_Item.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 #include "Game/CsGameState.h"
 
 #include "Json.h"
@@ -166,8 +166,9 @@ FCsItem* ACsManager_Item::Allocate(const FName& ShortCode)
 {
 	FCsItem* Item = Allocate();
 
-	UCsDataMapping* DataMapping = UCsCommon::GetDataMapping(GetWorld());
-	UCsData_Item* Data			= Cast<UCsData_Item>(DataMapping->GetLoadedData(ItemAssetType, ShortCode));
+	UCsDataMapping* DataMapping = UCsLibrary_Common::GetDataMapping(GetWorld());
+	const FCsData& IData		= DataMapping->GetLoadedData(ItemDataType, ShortCode);
+	UCsData_Item* Data			= IData.GetObject<UCsData_Item>();
 	const FECsItemType& ItemType = Data->GetItemType();
 
 	Item->Type			= ItemType;
@@ -191,8 +192,10 @@ FCsItem* ACsManager_Item::Allocate(const FName& ShortCode)
 	Item->Data = Data;
 	// Get Data for Actor when this Item is Dropped
 	if (Data->OnDropSpawnActor())
-		Item->Data_Actor = Cast<UCsData_Interactive>(DataMapping->GetLoadedData(InteractiveAssetType, Data->GetSpawnedActorDataShortCode()));
-
+	{
+		const FCsData& ID = DataMapping->GetLoadedData(InteractiveDataType, Data->GetSpawnedActorDataShortCode());
+		Item->Data_Actor  = ID.GetObject<UCsData_Interactive>();
+	}
 	return Item;
 }
 
@@ -248,8 +251,9 @@ void ACsManager_Item::ChangeActiveItemOwnerInfo(FCsItem* Item, UObject* ItemOwne
 
 void ACsManager_Item::SetActiveItemData(FCsItem* Item)
 {
-	UCsDataMapping* DataMapping = UCsCommon::GetDataMapping(GetWorld());
-	UCsData_Item* Data			= Cast<UCsData_Item>(DataMapping->GetLoadedData(ItemAssetType, Item->ShortCode));
+	UCsDataMapping* DataMapping = UCsLibrary_Common::GetDataMapping(GetWorld());
+	const FCsData& IData		= DataMapping->GetLoadedData(ItemDataType, Item->ShortCode);
+	UCsData_Item* Data			= IData.GetObject<UCsData_Item>();
 	Item->Data					= Data;
 
 	if (Data->IsIngredient())
@@ -258,7 +262,8 @@ void ACsManager_Item::SetActiveItemData(FCsItem* Item)
 	Item->InventoryProperties.Dimension = *(Data->GetDimension());
 	Item->InventoryProperties.Capacity	= Data->GetCapacity();
 
-	Item->Data_Actor = Cast<UCsData_Interactive>(DataMapping->GetLoadedData(InteractiveAssetType, Data->GetSpawnedActorDataShortCode()));
+	const FCsData& ID = DataMapping->GetLoadedData(InteractiveDataType, Data->GetSpawnedActorDataShortCode());
+	Item->Data_Actor  = ID.GetObject<UCsData_Interactive>();
 }
 
 #pragma endregion Allocate

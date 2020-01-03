@@ -3,7 +3,7 @@
 #include "CsCore.h"
 
 // Library
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 UCsData_Interactive::UCsData_Interactive(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -31,13 +31,13 @@ USkeletalMesh* UCsData_Interactive::GetSkeletalMesh() { return nullptr; }
 void UCsData_Interactive::SetMeshAndMaterials(UStaticMeshComponent* InMesh)
 {
 	InMesh->SetStaticMesh(GetStaticMesh());
-	UCsCommon::SetMaterials(InMesh, *GetMaterials());
+	UCsLibrary_Common::SetMaterials(InMesh, *GetMaterials());
 }
 
 void UCsData_Interactive::SetMeshAndMaterials(USkeletalMeshComponent* InMesh)
 {
 	InMesh->SetSkeletalMesh(GetSkeletalMesh());
-	UCsCommon::SetMaterials(InMesh, *GetMaterials());
+	UCsLibrary_Common::SetMaterials(InMesh, *GetMaterials());
 }
 
 TArray<UMaterialInstanceConstant*>* UCsData_Interactive::GetMaterials() { return nullptr; }

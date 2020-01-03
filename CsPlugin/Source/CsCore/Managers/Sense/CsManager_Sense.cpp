@@ -2,7 +2,7 @@
 #include "Managers/Sense/CsManager_Sense.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 // Managers
 #include "Managers/Trace/CsManager_Trace.h"
@@ -60,7 +60,7 @@ void ACsManager_Sense::PostActorCreated()
 	Super::PostActorCreated();
 
 #if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 		return;
 #endif // #if WITH_EDITOR
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
@@ -467,7 +467,7 @@ void ACsManager_Sense::CheckMeToActorDot(FCsSenseInfo& Info)
 	Info.MeToActorDistanceSq = Info.MeToActorDistance * Info.MeToActorDistance;
 	Info.MeToActorDir		= MeToActor / Info.MeToActorDistance;
 	
-	Info.MeToActorBodyRotation	  = UCsCommon::AngleClamp360(Info.MeToActorDir.Rotation());
+	Info.MeToActorBodyRotation	  = UCsLibrary_Common::AngleClamp360(Info.MeToActorDir.Rotation());
 	Info.MeToActorBodyRotation.Roll = 0.0f;
 		// XY
 	const FVector MeToActorXY	= FVector(MeToActor.X, MeToActor.Y, 0.0f);

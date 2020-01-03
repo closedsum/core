@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Weapon/CsGunWeapon.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 #include "Pawn/CsPawn.h"
 #include "Animation/CsAnimInstance_Character.h"
@@ -18,7 +18,7 @@ ACsGunWeapon::ACsGunWeapon(const FObjectInitializer& ObjectInitializer)
 // Data
 #pragma region
 
-void ACsGunWeapon::ApplyData_Weapon(const FECsWeaponSlot &Slot, ACsData_Weapon* InData, class ACsData_WeaponMaterialSkin* InSkin, const bool &Equipped)
+void ACsGunWeapon::ApplyData_Weapon(const FECsWeaponSlot &Slot, UCsData_Weapon* InData, UCsData_WeaponMaterialSkin* InSkin, const bool &Equipped)
 {
 	Reset();
 
@@ -39,7 +39,7 @@ void ACsGunWeapon::ApplyData_Weapon(const FECsWeaponSlot &Slot, ACsData_Weapon* 
 	// UseMeshLow
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 	}
 	// In Game
@@ -68,7 +68,7 @@ UCsData_Character* ACsGunWeapon::GetMyData_Character()
 {
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 		// Character
 		if (UCsAnimInstance_Character* AnimInstance = Cast<UCsAnimInstance_Character>(GetMyOwner()))

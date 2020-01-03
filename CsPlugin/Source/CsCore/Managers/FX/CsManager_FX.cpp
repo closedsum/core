@@ -2,7 +2,7 @@
 #include "Managers/FX/CsManager_FX.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 #include "Game/CsGameState.h"
 
@@ -174,7 +174,7 @@ ACsEmitter* FCsManager_FX::Allocate()
 		}
 	}
 #if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditorPreview(GetCurrentWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetCurrentWorld()))
 	{
 		UE_LOG(LogCs, Warning, TEXT("ACsManager_FX::Allocate: Warning. Pool is exhausted. Using Oldest Active Emitter."));
 
@@ -235,7 +235,7 @@ void AICsManager_FX::PostActorCreated()
 {
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(InWorld))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(InWorld))
 	{
 		if (UCsAnimInstance* AnimInstance = Cast<UCsAnimInstance>(GetMyOwner()))
 			return AnimInstance->GetManager_FX();

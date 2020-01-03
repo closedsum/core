@@ -97,7 +97,7 @@ void ACsAIPawn::OnPostCreatePool(){}
 
 void ACsAIPawn::Allocate(FCsAIPawnPayload* Payload)
 {
-	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsLibrary_Common::GetCurrentFrame(GetWorld()));
 
 	Allocate_Internal(Payload);
 }

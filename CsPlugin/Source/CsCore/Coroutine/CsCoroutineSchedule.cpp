@@ -325,7 +325,7 @@ void FCsCoroutineSchedule::LogTransaction(const FString& FunctionName, const ECs
 		if (Object)
 			World = Object->GetWorld();
 
-		const float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
+		const float CurrentTime = World ? World->GetTimeSeconds() : UCsLibrary_Common::GetCurrentDateTimeSeconds();
 
 		const FString CoroutineName = R->name == NAME_None ? NCsCached::Str::None : R->nameAsString;
 
@@ -334,7 +334,7 @@ void FCsCoroutineSchedule::LogTransaction(const FString& FunctionName, const ECs
 		if (Transaction == ECsCoroutineTransaction::End)
 		{
 			const float Duration = CurrentTime - R->startTime;
-			Elapsed = TEXT("Ran for ") + FString::FromInt(R->tickCount) + TEXT(" Ticks and  ") + UCsCommon::GetFloatAsStringWithPrecision(Duration, 2) + TEXT(" Seconds.");
+			Elapsed = TEXT("Ran for ") + FString::FromInt(R->tickCount) + TEXT(" Ticks and  ") + UCsLibrary_Common::GetFloatAsStringWithPrecision(Duration, 2) + TEXT(" Seconds.");
 		}
 
 		if (Actor && Object)
@@ -376,7 +376,7 @@ void FCsCoroutineSchedule::LogRunning()
 	if (UObject* Object = GetMyOwner())
 		World = Object->GetWorld();
 
-	float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
+	float CurrentTime = World ? World->GetTimeSeconds() : UCsLibrary_Common::GetCurrentDateTimeSeconds();
 
 	const FString& FunctionName		    = NCsCoroutineCached::Str::Update;
 	const FString& ScheduleTypeAsString = EMCsCoroutineSchedule::Get().ToString(ScheduleType);

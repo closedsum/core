@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/FX/CsEmitter.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 #define CS_EMITTER_DEFAULT_LOCATION FVector(10000.0f)
 
@@ -62,7 +62,7 @@ void ACsEmitter::Allocate(FCsFxPayload* Payload)
 		return;
 	}
 
-	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsLibrary_Common::GetCurrentFrame(GetWorld()));
 
 	SetActorHiddenInGame(false);
 	SetTemplate(Particle);

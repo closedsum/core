@@ -2,7 +2,7 @@
 #include "AI/Pawn/CsInteractiveAIPawn.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 ACsInteractiveAIPawn::ACsInteractiveAIPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -272,8 +272,8 @@ void ACsInteractiveAIPawn::SetPhysicsState(const ECsInteractivePhysicsState &Sta
 	if (CsCVarLogInteractiveAIPawnPhysicsStateChange->GetInt() == CS_CVAR_SHOW_LOG)
 	{
 		const FString& StateAsString		   = ECsInteractivePhysicsState_Editor::ToString(StateType);
-		const FString LastPhysicsStateAsString = UCsCommon::InteractivePhysicsStateToString(Last_PhysicsState);
-		const FString PhysicsStateAsString	   = UCsCommon::InteractivePhysicsStateToString(PhysicsState);
+		const FString LastPhysicsStateAsString = UCsLibrary_Common::InteractivePhysicsStateToString(Last_PhysicsState);
+		const FString PhysicsStateAsString	   = UCsLibrary_Common::InteractivePhysicsStateToString(PhysicsState);
 
 		UE_LOG(LogCs, Log, TEXT("ACsInteractiveAIPawn::SetPhysicsState (%s): Setting PhysicsState: %s. (%s) -> (%s)"), *GetName(), *StateAsString, *LastPhysicsStateAsString, *PhysicsStateAsString);
 	}
@@ -288,8 +288,8 @@ void ACsInteractiveAIPawn::ClearPhysicsState(const ECsInteractivePhysicsState &S
 	if (CsCVarLogInteractiveAIPawnPhysicsStateChange->GetInt() == CS_CVAR_SHOW_LOG)
 	{
 		const FString& StateAsString		   = ECsInteractivePhysicsState_Editor::ToString(StateType);
-		const FString LastPhysicsStateAsString = UCsCommon::InteractivePhysicsStateToString(Last_PhysicsState);
-		const FString PhysicsStateAsString	   = UCsCommon::InteractivePhysicsStateToString(PhysicsState);
+		const FString LastPhysicsStateAsString = UCsLibrary_Common::InteractivePhysicsStateToString(Last_PhysicsState);
+		const FString PhysicsStateAsString	   = UCsLibrary_Common::InteractivePhysicsStateToString(PhysicsState);
 
 		UE_LOG(LogCs, Log, TEXT("ACsInteractiveAIPawn::ClearPhysicsState (%s): Clearing PhysicsState: %s. (%s) -> (%s)"), *GetName(), *StateAsString, *LastPhysicsStateAsString, *PhysicsStateAsString);
 	}

@@ -2,7 +2,7 @@
 #include "Pawn/CsPawn.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 #include "Coroutine/CsCoroutineScheduler.h"
 
 // Data
@@ -122,7 +122,7 @@ void ACsPawn::Destroyed()
 	Super::Destroyed();
 
 #if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditor(GetWorld()) || UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditor(GetWorld()) || UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 		return;
 #endif // #if WITH_EDITOR
 
@@ -145,7 +145,7 @@ void ACsPawn::PostInitializeComponents()
 
 	// TODO: Test placing actors in the level and see how this affects spawning weapons
 #if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditor(GetWorld()) || UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditor(GetWorld()) || UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 		return;
 #endif // #if WITH_EDITOR
 
@@ -403,7 +403,7 @@ bool ACsPawn::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &In
 // View
 #pragma region
 
-TEnumAsByte<ECsViewType::Type> ACsPawn::GetCurrentViewType()
+ECsViewType ACsPawn::GetCurrentViewType()
 {
 	return CurrentViewType;
 }
@@ -431,7 +431,7 @@ void ACsPawn::PerformViewTrace()
 	Request->Type		= ECsTraceType::Line;
 	Request->Method		= ECsTraceMethod::Multi;
 	Request->Query		= ECsTraceQuery::ObjectType;
-	UCsCommon::CopyCollisionObjectQueryParams(ViewTraceInfo.ObjectParams, Request->ObjectParams);
+	UCsLibrary_Common::CopyCollisionObjectQueryParams(ViewTraceInfo.ObjectParams, Request->ObjectParams);
 
 	TArray<AActor*> Actors;
 
@@ -461,7 +461,7 @@ void ACsPawn::PerformViewTrace_Response(const uint8 &RequestId, FCsTraceResponse
 	const bool HitFound = Response->bResult;
 
 	if (Response->OutHits.Num() > CS_EMPTY)
-		UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], ViewTraceInfo.HitResult);
+		UCsLibrary_Common::CopyHitResult(Response->OutHits[CS_FIRST], ViewTraceInfo.HitResult);
 
 	Response->Reset();
 
@@ -495,7 +495,7 @@ void ACsPawn::PerformViewTrace_Response(const uint8 &RequestId, FCsTraceResponse
 		{
 			ViewTraceInfo.HitLocation = OutHits[ClosestIndex].Location;
 
-			UCsCommon::CopyHitResult(OutHits[ClosestIndex], ViewTraceInfo.HitResult);
+			UCsLibrary_Common::CopyHitResult(OutHits[ClosestIndex], ViewTraceInfo.HitResult);
 		}
 		else
 		{
@@ -733,7 +733,7 @@ void ACsPawn::Async_TraceToGroundWhileJumping_Response(const uint8 &RequestId, F
 
 UCsDataMapping* ACsPawn::GetDataMapping()
 {
-	return UCsCommon::GetDataMapping(GetWorld());
+	return UCsLibrary_Common::GetDataMapping(GetWorld());
 }
 
 UCsData_Character* ACsPawn::GetMyData_Character()

@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Player/CsCheatManager.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 #include "Game/CsGameState.h"
 #include "Javascript/CsJavascriptEntryPoint.h"
 
@@ -47,7 +47,7 @@ void UCsCheatManager::OnTick_Handle_EditorGameBatchConsoleCommands()
 		return;
 	}
 
-	if (APlayerController* PlayerController = UCsCommon::GetLocalPlayerController<APlayerController>(GetWorld()))
+	if (APlayerController* PlayerController = UCsLibrary_Common::GetLocalPlayerController<APlayerController>(GetWorld()))
 	{
 		FString Command = EditorGameBatchConsoleCommands[0];
 		PlayerController->ConsoleCommand(Command);
@@ -63,7 +63,7 @@ void UCsCheatManager::OnTick_Handle_EditorGameBatchConsoleCommands()
 
 bool UCsCheatManager::Stream_GetString(const TCHAR*& Str, const FString &StringName, FString &OutString, const FString &Cheat, const FString &Format)
 {
-	OutString = UCsCommon::Stream_GetString(Str, false);
+	OutString = UCsLibrary_Common::Stream_GetString(Str, false);
 
 	if (OutString == TEXT(""))
 	{
@@ -76,7 +76,7 @@ bool UCsCheatManager::Stream_GetString(const TCHAR*& Str, const FString &StringN
 
 bool UCsCheatManager::Stream_GetName(const TCHAR*& Str, const FString &StringName, FName &OutName, const FString &Cheat, const FString &Format)
 {
-	OutName = UCsCommon::Stream_GetName(Str);
+	OutName = UCsLibrary_Common::Stream_GetName(Str);
 
 	if (OutName == NAME_None)
 	{

@@ -2,7 +2,7 @@
 #include "Managers/AI/CsManager_AI.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 #include "AI/CsAIController.h"
 // Player

@@ -2,7 +2,7 @@
 #include "Managers/Trace/CsManager_Trace.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 #include "Game/CsGameState.h"
 
 // Cache
@@ -538,7 +538,7 @@ void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 	{
 		Response->OutHits.AddDefaulted();
 
-		UCsCommon::CopyHitResult(Datum.OutHits[I], Response->OutHits[I]);
+		UCsLibrary_Common::CopyHitResult(Datum.OutHits[I], Response->OutHits[I]);
 	}
 	
 #if !UE_BUILD_SHIPPING

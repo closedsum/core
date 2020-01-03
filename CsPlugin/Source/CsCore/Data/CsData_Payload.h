@@ -33,7 +33,7 @@ struct FCsPayloadAddEntry
 	bool Add;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	FECsLoadAssetsType LoadAssetsType;
+	FECsDataCollectionType DataCollectionType;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
 	FName ShortCode;
@@ -57,7 +57,7 @@ struct FCsPayloadRemoveEntry
 	bool Remove;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	FECsLoadAssetsType LoadAssetsType;
+	FECsDataCollectionType DataCollectionType;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
 	FName ShortCode;

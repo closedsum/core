@@ -1,10 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "GameFramework/Actor.h"
+// Types
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Item.h"
-#include "Common/CsCommon_Load.h"
+// Library
+#include "Library/CsLibrary_Load.h"
+// Data
 #include "Data/CsData_ProjectileWeapon.h"
 #include "CsWeapon.generated.h"
 
@@ -257,7 +260,7 @@ public:
 
 		for (uint8 I = 0; I < Member.Num(); ++I)
 		{
-			T* DataMember = UCsCommon_Load::GetObjectMember<T>(Data_Weapon, Data_Weapon->GetClass(), MemberName, GetObjectMember_Internal);
+			T* DataMember = UCsLibrary_Load::GetObjectMember<T>(Data_Weapon, Data_Weapon->GetClass(), MemberName, GetObjectMember_Internal);
 
 			if (I == 0)
 				Member.Set(*DataMember);
@@ -295,9 +298,9 @@ public:
 		{
 			const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(I);
 
-			void* Struct				= UCsCommon_Load::GetStructMember<void>(Data_Weapon->GetFireModeStruct(FireMode), Data_Weapon->GetFireModeScriptStruct(), StructName, GetStructMember_Internal);
-			UScriptStruct* ScriptStruct = UCsCommon_Load::GetScriptStructMember(Data_Weapon->GetFireModeStruct(FireMode), Data_Weapon->GetFireModeScriptStruct(), StructName, GetScriptStructMember_Internal);
-			ValueType* StructMember		= UCsCommon_Load::GetStructMember<ValueType>(Struct, ScriptStruct, MemberName, GetStructMember_Internal);
+			void* Struct				= UCsLibrary_Load::GetStructMember<void>(Data_Weapon->GetFireModeStruct(FireMode), Data_Weapon->GetFireModeScriptStruct(), StructName, GetStructMember_Internal);
+			UScriptStruct* ScriptStruct = UCsLibrary_Load::GetScriptStructMember(Data_Weapon->GetFireModeStruct(FireMode), Data_Weapon->GetFireModeScriptStruct(), StructName, GetScriptStructMember_Internal);
+			ValueType* StructMember		= UCsLibrary_Load::GetStructMember<ValueType>(Struct, ScriptStruct, MemberName, GetStructMember_Internal);
 
 			if (I == 0)
 				Member.Set(*StructMember);

@@ -2,15 +2,15 @@
 #include "UI/Crafting/CsWidget_Crafting.h"
 #include "CsCore.h"
 
-#include "Common/CsCommon.h"
-
+// Coroutine
+#include "Coroutine/CsCoroutineScheduler.h"
+// Library
+#include "Library/CsLibrary_Common.h"
+// UI
 #include "UI/Crafting/CsWidget_Crafting_Grid.h"
 #include "UI/Crafting/CsWidget_Crafting_Slot.h"
 
 #include "Runtime/UMG/Public/Blueprint/SlateBlueprintLibrary.h"
-
-// Coroutine
-#include "Coroutine/CsCoroutineScheduler.h"
 // Managers
 #include "Managers/Input/CsManager_Input.h"
 #include "Managers/Crafting/CsManager_Crafting.h"
@@ -230,10 +230,10 @@ bool UCsWidget_Crafting::ProcessGameEventInfo(const FCsGameEventInfo &Info)
 
 void UCsWidget_Crafting::PopulateRecipes()
 {
-	UCsDataMapping* DataMapping = UCsCommon::GetDataMapping(GetWorld());
+	UCsDataMapping* DataMapping = UCsLibrary_Common::GetDataMapping(GetWorld());
 
-	TArray<ACsData*> Datas;
-	DataMapping->GetLoadedDatas(RecipeAssetType, Datas);
+	TArray<FCsData> Datas;
+	DataMapping->GetLoadedDatas(RecipeDataType, Datas);
 
 	Options_ComboBox->ClearOptions();
 	SelectedOptionShortCodes.Reset();
@@ -242,7 +242,7 @@ void UCsWidget_Crafting::PopulateRecipes()
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		UCsData_Recipe* Data = Cast<UCsData_Recipe>(Datas[I]);
+		UCsData_Recipe* Data = Datas[I].GetObject<UCsData_Recipe>();
 
 		Options_ComboBox->AddOption(Data->GetDisplayName());
 		SelectedOptionShortCodes.Add(Data->ShortCode);
@@ -252,7 +252,7 @@ void UCsWidget_Crafting::PopulateRecipes()
 
 	if (Count > CS_EMPTY)
 	{
-		UCsData_Recipe* Data = Cast<UCsData_Recipe>(Datas[CS_FIRST]);
+		UCsData_Recipe* Data = Datas[CS_FIRST].GetObject<UCsData_Recipe>();
 
 		Options_ComboBox->SetSelectedOption(Data->GetDisplayName());
 	}
@@ -261,8 +261,9 @@ void UCsWidget_Crafting::PopulateRecipes()
 void UCsWidget_Crafting::SetRecipe(const FName& InShortCode)
 {
 	// Get Data for selected Recipe
-	UCsDataMapping* DataMapping = UCsCommon::GetDataMapping(GetWorld());
-	UCsData_Recipe* Recipe		= Cast<UCsData_Recipe>(DataMapping->GetLoadedData(RecipeAssetType, InShortCode));
+	UCsDataMapping* DataMapping = UCsLibrary_Common::GetDataMapping(GetWorld());
+	const FCsData& IData		= DataMapping->GetLoadedData(RecipeDataType, InShortCode);
+	UCsData_Recipe* Recipe		= IData.GetObject<UCsData_Recipe>();
 	// Update Grid with the Ingredients (Items)
 	MyGrid->Clear();
 
@@ -285,7 +286,8 @@ void UCsWidget_Crafting::SetRecipe(const FName& InShortCode)
 	{
 		const FCsRecipeIngredient& Ingredient = (*Ingredients)[I];
 		const FName& ItemShortCode			  = Ingredient.ShortCode;
-		UCsData_Item* Item					  = Cast<UCsData_Item>(DataMapping->GetLoadedData(ItemAssetType, ItemShortCode));
+		const FCsData& ID					  = DataMapping->GetLoadedData(ItemDataType, ItemShortCode);
+		UCsData_Item* Item					  = ID.GetObject<UCsData_Item>();
 
 		UCsWidget_Crafting_Slot* CurrentSlot = MyGrid->Slots[I];
 
@@ -332,8 +334,9 @@ bool UCsWidget_Crafting::CanCompleteRecipe(const uint32& Count)
 	// TODO: Need to check there is space in the CurrentBag for created Items
 
 	const FName& SelectedShortCode	= SelectedOptionShortCodes[CurrentSelectedOptionIndex];
-	UCsDataMapping* DataMapping		= UCsCommon::GetDataMapping(GetWorld());
-	UCsData_Recipe* Recipe			= Cast<UCsData_Recipe>(DataMapping->GetLoadedData(RecipeAssetType, SelectedShortCode));
+	UCsDataMapping* DataMapping		= UCsLibrary_Common::GetDataMapping(GetWorld());
+	const FCsData& IData			= DataMapping->GetLoadedData(RecipeDataType, SelectedShortCode);
+	UCsData_Recipe* Recipe			= IData.GetObject<UCsData_Recipe>();
 
 	ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
 
@@ -611,9 +614,10 @@ void UCsWidget_Crafting::CraftItems()
 	CancelCurrentCraftingProcess();
 
 	// Get Data for selected Recipe
-	UCsDataMapping* DataMapping		= UCsCommon::GetDataMapping(GetWorld());
+	UCsDataMapping* DataMapping		= UCsLibrary_Common::GetDataMapping(GetWorld());
 	const FName& SelectedShortCode	= SelectedOptionShortCodes[CurrentSelectedOptionIndex];
-	UCsData_Recipe* Recipe			= Cast<UCsData_Recipe>(DataMapping->GetLoadedData(RecipeAssetType, SelectedShortCode));
+	const FCsData& IData			= DataMapping->GetLoadedData(RecipeDataType, SelectedShortCode);
+	UCsData_Recipe* Recipe			= IData.GetObject<UCsData_Recipe>();
 	// Prepare Payload
 	ACsManager_Crafting* Manager_Crafting = ACsManager_Crafting::Get(GetWorld());
 	FCsCraftingPayload* Payload			  = Manager_Crafting->AllocatePayload();

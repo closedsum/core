@@ -3,7 +3,7 @@
 #include "AI/BehaviorTree/Tasks/CsBTTask_CustomRotateToFaceBBEntry.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 // Behavior Tree
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
@@ -185,7 +185,7 @@ void UCsBTTask_CustomRotateToFaceBBEntry::TickTask(UBehaviorTreeComponent& Owner
 		const FVector Origin				= Pawn->GetActorLocation();
 		const FVector DestinationDirection	= (Destination - Origin).GetSafeNormal2D();
 		const float DestinationYaw			= DestinationDirection.Rotation().Yaw;
-		const float DeltaYaw				= UCsCommon::GetAngleDelta(CurrentYaw, DestinationYaw);
+		const float DeltaYaw				= UCsLibrary_Common::GetAngleDelta(CurrentYaw, DestinationYaw);
 		const float AbsDeltaYaw				= FMath::Abs(DeltaYaw);
 		// EXIT, if near AngleDeltaForSuccess
 		if (AbsDeltaYaw <= AngleDeltaForSuccess)

@@ -2,7 +2,7 @@
 #include "Managers/Widget/CsManager_Widget.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 // Internal
 #pragma region

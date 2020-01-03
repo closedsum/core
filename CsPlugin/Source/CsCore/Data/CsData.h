@@ -240,7 +240,7 @@ public:
 		return Interface->GetShortCode();
 	}
 
-	FORCEINLINE bool IsValid(const ECsLoadFlags& LoadFlags = ECsLoadFlags::All)
+	FORCEINLINE bool _IsValid(const ECsLoadFlags& LoadFlags = ECsLoadFlags::All)
 	{
 		if (bScript)
 			return Script_IsValid_Impl.Execute(Object, LoadFlags);

@@ -28,6 +28,8 @@ namespace ECsFpsWeaponMultiValueMember
 
 #pragma endregion Enums
 
+class USkeletalMeshComponent;
+
 UCLASS()
 class CSCORE_API ACsFpsWeapon : public ACsGunWeapon
 {
@@ -63,7 +65,7 @@ class CSCORE_API ACsFpsWeapon : public ACsGunWeapon
 	virtual void AttachMeshToPawn() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Owner")
-	virtual USkeletalMeshComponent* GetCharacterMesh(const TEnumAsByte<ECsViewType::Type> &ViewType);
+	virtual USkeletalMeshComponent* GetCharacterMesh(const ECsViewType& ViewType);
 
 #pragma endregion Owner
 

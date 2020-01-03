@@ -2,7 +2,7 @@
 #include "Managers/Crafting/CsManager_Crafting.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 #include "Game/CsGameState.h"
 
 #include "Coroutine/CsCoroutineScheduler.h"

@@ -12,7 +12,7 @@ namespace NCsViewType
 	typedef ECsViewType Type;
 
 	CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsViewType, FirstPerson, "1st Person");
-	CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsViewType, ThirdPerson. "3rd Person");
+	CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsViewType, ThirdPerson, "3rd Person");
 	CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsViewType, VR);
 	CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsViewType, ECsViewType_MAX, "MAX");
 

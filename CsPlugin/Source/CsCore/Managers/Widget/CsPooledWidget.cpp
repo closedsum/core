@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Widget/CsPooledWidget.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 #include "Runtime/Engine/Public/UnrealEngine.h"
 
@@ -22,7 +22,7 @@ void UCsPooledWidget::Init(const int32& Index, const ECsSimpleWidgetType& InType
 
 void UCsPooledWidget::Allocate(FCsWidgetPayload* Payload)
 {
-	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsLibrary_Common::GetCurrentFrame(GetWorld()));
 
 	SetSize(Payload->Size);
 	Show();

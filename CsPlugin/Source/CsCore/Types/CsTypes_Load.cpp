@@ -80,7 +80,7 @@ namespace NCsLoadAsyncOrder
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsLoadAsyncOrder, None);
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsLoadAsyncOrder, FirstToLast, "First to Last");
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsLoadAsyncOrder, Bulk);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsLoadAsyncOrder, ECsLoadAsyncOrder_MAX, MAX);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsLoadAsyncOrder, ECsLoadAsyncOrder_MAX, "MAX");
 	}
 }
 

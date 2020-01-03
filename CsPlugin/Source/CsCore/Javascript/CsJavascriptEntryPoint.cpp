@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Javascript/CsJavascriptEntryPoint.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
@@ -93,60 +93,60 @@ PT_THREAD(ACsJavascriptEntryPoint::Setup_Internal(FCsRoutine* r))
 	UCsGameInstance* gi			= Cast<UCsGameInstance>(w->GetGameInstance());
 	ACsGameState* gs			= w->GetGameState<ACsGameState>();
 	UCsCoroutineScheduler* s	= UCsCoroutineScheduler::Get(gi);
-	ACsPlayerController* pc		= UCsCommon::GetLocalPlayerController<ACsPlayerController>(w);
+	ACsPlayerController* pc		= UCsLibrary_Common::GetLocalPlayerController<ACsPlayerController>(w);
 	ACsUI* hud					= pc ? Cast<ACsUI>(pc->MyHUD) : nullptr;
-	ACsPlayerState* ps			= UCsCommon::GetLocalPlayerState<ACsPlayerState>(w);
+	ACsPlayerState* ps			= UCsLibrary_Common::GetLocalPlayerState<ACsPlayerState>(w);
 
 	CS_COROUTINE_BEGIN(r);
 
 	// Create Javascript hooks
-	UCsCommon::SetupJavascript(js, w, js->Isolate, js->Context);
+	UCsLibrary_Common::SetupJavascript(js, w, js->Isolate, js->Context);
 
 	// Root
-	UCsCommon::Javascript_ExposeObject(js->Context, TEXT("Root"), js);
+	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("Root"), js);
 
 	// GameInstance
-	UCsCommon::Javascript_ExposeObject(js->Context, TEXT("GameInstance"), gi);
+	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("GameInstance"), gi);
 
 	// DataMapping
-	UCsCommon::Javascript_ExposeObject(js->Context, TEXT("DataMapping"), gi->DataMapping);
+	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("DataMapping"), gi->DataMapping);
 
 	// World
-	UCsCommon::Javascript_ExposeObject(js->Context, TEXT("MyWorld"), w);
+	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("MyWorld"), w);
 
 	// Game State
-	UCsCommon::Javascript_ExposeObject(js->Context, TEXT("MyGameState"), gs);
+	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("MyGameState"), gs);
 
 	// Local Player Controller
 	CS_COROUTINE_WAIT_UNTIL(r, pc);
 
-	UCsCommon::Javascript_ExposeObject(js->Context, TEXT("MyPC"), pc);
+	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("MyPC"), pc);
 
 	// HUD
 	CS_COROUTINE_WAIT_UNTIL(r, hud);
 
-	UCsCommon::Javascript_ExposeObject(js->Context, TEXT("MyHUD"), hud);
+	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("MyHUD"), hud);
 
 	// Local Player State
 	CS_COROUTINE_WAIT_UNTIL(r, ps);
 
-	UCsCommon::Javascript_ExposeObject(js->Context, TEXT("MyPS"), ps);
+	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("MyPS"), ps);
 
 	// Local Character
 	CS_COROUTINE_WAIT_UNTIL(r, pc->GetPawn());
 
-	UCsCommon::Javascript_ExposeObject(js->Context, TEXT("MyPawn"), pc->GetPawn());
+	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("MyPawn"), pc->GetPawn());
 
 	// Manager Input
 	CS_COROUTINE_WAIT_UNTIL(r, pc->Manager_Input);
 
-	UCsCommon::Javascript_ExposeObject(js->Context, TEXT("Manager_Input"), pc->Manager_Input);
+	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("Manager_Input"), pc->Manager_Input);
 
 	// Additional Setup
 	CS_COROUTINE_WAIT_UNTIL(r, js->HasCompletedAdditionalSetup());
 
 	// Run Javascript
-	UCsCommon::Javascript_RunFile(js->Context, js->EditorFile);
+	UCsLibrary_Common::Javascript_RunFile(js->Context, js->EditorFile);
 
 	js->HasCompletedSetup = true;
 
@@ -221,6 +221,6 @@ void ACsJavascriptEntryPoint::Run()
 
 	DoPerformCleanUpOnEditorFile = true;
 
-	UCsCommon::Javascript_RunFile(Context, EditorFile);
+	UCsLibrary_Common::Javascript_RunFile(Context, EditorFile);
 #endif // #if WITH_EDITOR
 }

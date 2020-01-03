@@ -3,6 +3,8 @@
 
 #include "CoreUObject/Public/UObject/Object.h"
 #include "Types/CsTypes_Load.h"
+#include "Types/CsTypes_Async.h"
+#include "Data/CsData.h"
 #include "CsDataMapping.generated.h"
 
 // Macros - Only use for CHILD of UCsDataMapping
@@ -116,8 +118,8 @@ protected:
 
 	TMap<FECsDataType, TArray<FCsDataMappingEntry>*> Datas_Entry;
 	TMap<FECsDataType, TMap<FName, FCsDataMappingEntry>*> Datas_Entry_Map;
-	TMap<FECsDataType, TArray<ICsData*>> Datas_Loaded;
-	TMap<FECsDataType, TMap<FName, ICsData*>> Datas_Loaded_Map;
+	TMap<FECsDataType, TArray<FCsData>> Datas_Loaded;
+	TMap<FECsDataType, TMap<FName, FCsData>> Datas_Loaded_Map;
 	TMap<FECsDataType, TMap<FName, uint16>> Datas_ShortCodeToLookUpCode_Map;
 	TMap<FECsDataType, TMap<uint16, FName>> Datas_LookUpCodeToShortCode_Map;
 
@@ -125,7 +127,7 @@ protected:
 
 public:
 
-	const FECsDataType& GetDataType(const FName &ShortCode);
+	const FECsDataType& GetDataType(const FName& ShortCode);
 
 	//UPROPERTY(VisibleDefaultsOnly, Category = "Data Mapping")
 	//TArray<FCsCategoryMemberAssociation> CategoryMemberAssociations;
@@ -206,9 +208,9 @@ public:
 #pragma region
 public:
 
-	ICsData* LoadData(const FString& FunctionName, const FECsDataType& DataType, const FName& ShortCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
-	ICsData* LoadData(const FECsDataType& DataType, const FName& ShortCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
-	ICsData* LoadData(const FName& ShortCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+	const FCsData& LoadData(const FString& FunctionName, const FECsDataType& DataType, const FName& ShortCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+	const FCsData& LoadData(const FECsDataType& DataType, const FName& ShortCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+	const FCsData& LoadData(const FName& ShortCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
 
 	template<typename T>
 	T* LoadData(const FString& FunctionName, const FECsDataType& DataType, const FName& ShortCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game)
@@ -228,8 +230,8 @@ public:
 #pragma region
 public:
 
-	ICsData* LoadData(const FString& FunctionName, const FECsDataType& DataType, const uint16& LookUpCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
-	ICsData* LoadData(const FECsDataType& DataType, const uint16& LookUpCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+	const FCsData& LoadData(const FString& FunctionName, const FECsDataType& DataType, const uint16& LookUpCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+	const FCsData& LoadData(const FECsDataType& DataType, const uint16& LookUpCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
 
 	template<typename T>
 	T* LoadData(const FECsDataType& DataType, const uint16& LookUpCode, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game)
@@ -247,8 +249,8 @@ public:
 
 protected:
 
-	ICsData* LoadData_Internal(const FString& FunctionName, const FECsDataType& DataType, FCsDataMappingEntry& Mapping, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
-	ICsData* LoadData_Internal(const FECsDataType& DataType, FCsDataMappingEntry& Mapping, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+	const FCsData& LoadData_Internal(const FString& FunctionName, const FECsDataType& DataType, FCsDataMappingEntry& Mapping, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
+	const FCsData& LoadData_Internal(const FECsDataType& DataType, FCsDataMappingEntry& Mapping, const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
 
 public:
 
@@ -258,7 +260,7 @@ public:
 #pragma region
 protected:
 
-	virtual void AddLoadedData(const FECsDataType& DataType, const FName& ShortCode, ICsData* InData);
+	virtual const FCsData& AddLoadedData(const FECsDataType& DataType, const FName& ShortCode, ICsData* InData);
 
 	template<typename T>
 	void AddLoadData_Internal(const TArray<FCsDataMappingEntry>& Datas, TMap<FName, T*>& OutDatas_Loaded_Map, TArray<T*>& OutDatas_Loaded, const FName& ShortCode, ICsData* InData)
@@ -288,7 +290,7 @@ protected:
 		OutDatas_Loaded[LookUpCode] = Cast<T>(InData);
 	}
 
-	virtual void AddLoadedData(const FECsDataType& DataType, const uint16& LookUpCode, ICsData* InData);
+	virtual const FCsData& AddLoadedData(const FECsDataType& DataType, const uint16& LookUpCode, ICsData* InData);
 
 	template<typename T>
 	void AddLoadData_Internal(const TArray<FCsDataMappingEntry>& Datas, TMap<FName, T*>& OutDatas_Loaded_Map, TArray<T*>& OutDatas_Loaded, const uint16& LookUpCode, ICsData* InData)
@@ -321,8 +323,10 @@ protected:
 #pragma region
 public:
 
-	virtual ICsData* GetLoadedData(const FECsDataType& DataType, const FName& ShortCode);
+	virtual const FCsData& GetLoadedData(const FECsDataType& DataType, const FName& ShortCode);
+
 protected:
+
 	template<typename T, typename U>
 	T* GetLoadedData_Internal(const TArray<FCsDataMappingEntry>& Datas, const TMap<FName, FCsDataMappingEntry>& Datas_Map, const TMap<FName, U*>& InDatas_Loaded_Map, TArray<U*>& OutDatas_Loaded, const FName& ShortCode)
 	{
@@ -347,11 +351,15 @@ protected:
 
 		return Cast<T>(*Data);
 	}
+
 public:
-	virtual ICsData* GetLoadedData(const FName& ShortCode, FECsDataType& OutDataType);
-	virtual ICsData* GetLoadedData(const FName& ShortCode);
-	virtual ICsData* GetLoadedData(const FECsDataType& DataType, const uint16& LookUpCode);
+
+	virtual const FCsData& GetLoadedData(const FName& ShortCode, FECsDataType& OutDataType);
+	virtual const FCsData& GetLoadedData(const FName& ShortCode);
+	virtual const FCsData& GetLoadedData(const FECsDataType& DataType, const uint16& LookUpCode);
+
 protected:
+
 	template<typename T, typename U>
 	T* GetLoadedData_Internal(const TArray<FCsDataMappingEntry>& Datas, const TMap<FName, U*>& InDatas_Loaded_Map, TArray<U*>& OutDatas_Loaded, const uint16& LookUpCode)
 	{
@@ -370,8 +378,10 @@ protected:
 		OutDatas_Loaded[LookUpCode] = *Data;
 		return Cast<T>(*Data);
 	}
+
 public:
-	virtual void GetLoadedDatas(const FECsDataType& DataType, TArray<ICsData*>& OutDatas);
+
+	virtual void GetLoadedDatas(const FECsDataType& DataType, TArray<FCsData>& OutDatas);
 	virtual void GetLoadedDataShortCodes(const FECsDataType& DataType, TArray<FName>& OutShortCodes);
 
 #pragma endregion Get
@@ -416,6 +426,10 @@ public:
 	virtual void LoadFromJson();
 
 #pragma endregion Json
+
+public:
+
+	FCsMutex AsyncTaskMutex;
 
 // Editor
 #pragma region

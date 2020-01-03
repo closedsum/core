@@ -2,7 +2,7 @@
 #include "Player/CsPlayerPawn.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
@@ -138,7 +138,7 @@ FRotator ACsPlayerPawn::GetViewRotation() const
 
 FVector ACsPlayerPawn::GetPawnViewLocation() const
 {
-	if (UCsCommon::IsVive())
+	if (UCsLibrary_Common::IsVive())
 		return Super::GetPawnViewLocation() + FVector(0.0f, 0.0f, -2.0f * GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight());
 	return GetFeetLocation() + FVector(0.0f, 0.0f, EyeHeight);
 }
@@ -163,7 +163,7 @@ void ACsPlayerPawn::RecordView()
 	const FRotator Last_CurrentViewRotation = CurrentViewRotation;
 
 	CurrentViewRotation		 = GetViewRotation();
-	CurrentViewRotationDelta = UCsCommon::GetAngleDelta(Last_CurrentViewRotation, CurrentViewRotation);
+	CurrentViewRotationDelta = UCsLibrary_Common::GetAngleDelta(Last_CurrentViewRotation, CurrentViewRotation);
 
 	CurrentViewLocation = GetPawnViewLocation();
 	CurrentViewDir		= CurrentViewRotation.Vector();

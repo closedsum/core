@@ -349,7 +349,7 @@ namespace NCsDataType
 
 #pragma endregion AssetType
 
-// DataCollection
+// DataCollectionType
 #pragma region
 
 USTRUCT(BlueprintType)
@@ -372,7 +372,7 @@ namespace NCsDataCollectionType
 	typedef FECsDataCollectionType Type;
 }
 
-#pragma endregion DataCollection
+#pragma endregion DataCollectionType
 
 // AssetType
 #pragma region

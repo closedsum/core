@@ -3,7 +3,7 @@
 #include "AI/BehaviorTree/Tasks/CsBTTask_LookAt.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 // Behavior Tree
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
@@ -155,8 +155,8 @@ void UCsBTTask_LookAt::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 				AActor* ActorValue	= Cast<AActor>(KeyValue);
 
 				const FRotator FinalRotation = Pawn->GetFinalLookAtRotation(ActorValue, Bone);
-				AbsDeltaPitch				 = UCsCommon::GetAbsAngleDelta(Pawn->CurrentAimPitch, FinalRotation.Pitch);
-				AbsDeltaYaw					 = UCsCommon::GetAbsAngleDelta(Pawn->CurrentAimYaw, FinalRotation.Yaw);
+				AbsDeltaPitch				 = UCsLibrary_Common::GetAbsAngleDelta(Pawn->CurrentAimPitch, FinalRotation.Pitch);
+				AbsDeltaYaw					 = UCsLibrary_Common::GetAbsAngleDelta(Pawn->CurrentAimYaw, FinalRotation.Yaw);
 			}
 			// Vector
 			else 
@@ -165,8 +165,8 @@ void UCsBTTask_LookAt::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 				const FVector KeyValue = MyBlackboard->GetValue<UBlackboardKeyType_Vector>(BlackboardKey.GetSelectedKeyID());
 
 				const FRotator FinalRotation = Pawn->GetFinalLookAtRotation(KeyValue);
-				AbsDeltaPitch				 = UCsCommon::GetAbsAngleDelta(Pawn->CurrentAimPitch, FinalRotation.Pitch);
-				AbsDeltaYaw					 = UCsCommon::GetAbsAngleDelta(Pawn->CurrentAimYaw, FinalRotation.Yaw);
+				AbsDeltaPitch				 = UCsLibrary_Common::GetAbsAngleDelta(Pawn->CurrentAimPitch, FinalRotation.Pitch);
+				AbsDeltaYaw					 = UCsLibrary_Common::GetAbsAngleDelta(Pawn->CurrentAimYaw, FinalRotation.Yaw);
 			}
 
 			if (AbsDeltaPitch < Tolerance &&

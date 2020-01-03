@@ -2,7 +2,7 @@
 #include "Managers/WidgetActor/CsWidgetActor.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 // Managers
 #include "Managers/Widget/CsPooledWidget.h"
@@ -51,7 +51,7 @@ void ACsWidgetActor::Tick(float DeltaSeconds)
 	if (Cache.ScaleByDistance)
 		OnTick_Handle_Scale();
 
-	ACsPlayerController* LocalController = UCsCommon::GetLocalPlayerController<ACsPlayerController>(GetWorld());
+	ACsPlayerController* LocalController = UCsLibrary_Common::GetLocalPlayerController<ACsPlayerController>(GetWorld());
 
 	OnTick_Handle_LocalCamera(LocalController->MinimalViewInfoCache.Location, LocalController->MinimalViewInfoCache.Rotation);
 
@@ -72,7 +72,7 @@ void ACsWidgetActor::Init(const int32 &Index, const FECsWidgetActorType &InType)
 
 void ACsWidgetActor::Allocate( FCsWidgetActorPayload* Payload)
 {
-	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsLibrary_Common::GetCurrentFrame(GetWorld()));
 
 	Allocate_Internal(Payload);
 }
@@ -153,9 +153,9 @@ void ACsWidgetActor::OnTick_Handle_LocalCamera(const FVector &ViewLocation, cons
 
 	if (Cache.FollowCamera)
 	{
-		if (UCsCommon::IsVR())
+		if (UCsLibrary_Common::IsVR())
 		{
-			UCsCommon::GetHMDWorldViewPoint(GetWorld(), CameraLocation, CameraRotation);
+			UCsLibrary_Common::GetHMDWorldViewPoint(GetWorld(), CameraLocation, CameraRotation);
 		}
 		CameraRotation.Roll = 0.f;
 
@@ -288,7 +288,7 @@ void ACsWidgetActor::OnRemove(const FCsInteractedActorInfo &Info)
 
 void ACsWidgetActor::OnTick_Handle_Scale()
 {
-	ACsPawn* LocalPawn   = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
+	ACsPawn* LocalPawn   = UCsLibrary_Common::GetLocalPawn<ACsPawn>(GetWorld());
 	const float Distance = (LocalPawn->GetActorLocation() - GetActorLocation()).Size2D();
 	const float Scale	 = Cache.MinDrawDistance.Distance > 0 ? Distance / Cache.MinDrawDistance.Distance : 1.0f;
 
@@ -320,7 +320,7 @@ void ACsWidgetActor::Hide()
 
 void ACsWidgetActor::OnTick_Handle_DrawDistance()
 {
-	ACsPawn* LocalPawn	   = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
+	ACsPawn* LocalPawn	   = UCsLibrary_Common::GetLocalPawn<ACsPawn>(GetWorld());
 	const float DistanceSq = (LocalPawn->GetActorLocation() - GetActorLocation()).SizeSquared2D();
 
 	if (DistanceSq < Cache.MinDrawDistance.DistanceSq)

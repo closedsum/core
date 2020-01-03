@@ -2,7 +2,7 @@
 #include "Managers/Damage/CsManager_Damage.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 // Game
 #include "Game/CsGameState.h"
@@ -35,7 +35,7 @@ ACsManager_Damage::ACsManager_Damage(const FObjectInitializer& ObjectInitializer
 {
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(InWorld))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(InWorld))
 	{
 	}
 	// In Game

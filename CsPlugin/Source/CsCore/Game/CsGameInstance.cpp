@@ -8,11 +8,11 @@
 #include "Types/CsTypes_Load.h"
 #include "Managers/Input/CsTypes_Input.h"
 // Library
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 // CoroutineScheduler
 #include "Coroutine/CsCoroutineScheduler.h"
 // Managers
-#include "Managers/CsManager_Load.h"
+#include "Managers/Load/CsManager_Load.h"
 #include "Managers/Runnable/CsManager_Runnable.h"
 #include "Managers/Time/CsManager_Time.h"
 // Data
@@ -124,7 +124,7 @@ void UCsGameInstance::Init()
 	InitSettings();
 	PopulateEnumMapsFromUserDefinedEnums();
 
-	UCsManager_Loading::Init();
+	UCsManager_Load::Init();
 	UCsManager_Runnable::Init();
 
 	UCsManager_Time::Init(this);
@@ -156,7 +156,7 @@ void UCsGameInstance::Shutdown()
 	FWorldDelegates::LevelAddedToWorld.Remove(OnLevelAddedToWorldHandle);
 	FWorldDelegates::LevelRemovedFromWorld.Remove(OnLevelRemovedFromWorldHandle);
 
-	UCsManager_Loading::Shutdown();
+	UCsManager_Load::Shutdown();
 	UCsManager_Runnable::Shutdown();
 
 	UCsManager_Time::Shutdown(this);
@@ -329,7 +329,7 @@ void UCsGameInstance::PopulateEnumMapsFromUserDefinedEnums()
 	// DataType
 	PopulateEnumMapFromUserDefinedEnum<EMCsDataType>(NCsUserDefinedEnum::FECsDataType);
 	// DataCollection
-	PopulateEnumMapFromUserDefinedEnum<EMCsDataCollection>(NCsUserDefinedEnum::FECsDataType);
+	PopulateEnumMapFromUserDefinedEnum<EMCsDataCollectionType>(NCsUserDefinedEnum::FECsDataCollectionType);
 	// Input
 	{
 		// InputAction
@@ -476,13 +476,13 @@ void UCsGameInstance::LoadDataMapping()
 PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(FCsRoutine* R))
 {
 	UCsGameInstance* gi			= R->GetOwnerAsObject<UCsGameInstance>();
-	ACsDataMapping* dataMapping = gi->DataMapping;
+	UCsDataMapping* dataMapping = gi->DataMapping;
 
 	CS_COROUTINE_BEGIN(R);
 
 	if (gi->bForcePopulateAssetReferences || dataMapping->bForcePopulateAssetReferences)
 	{
-		UCsManager_Loading::Get()->LoadAssetReferences(gi->GetWorld(), dataMapping->DataAssetReferences, ECsLoadAsyncOrder::Bulk, gi, &UCsGameInstance::OnFinishedLoadingDataAssets);
+		UCsManager_Load::Get()->LoadAssetReferences(gi->GetWorld(), dataMapping->DataAssetReferences, ECsLoadAsyncOrder::Bulk, gi, &UCsGameInstance::OnFinishedLoadingDataAssets);
 
 		// Wait until Data Assets are LOADED
 		CS_COROUTINE_WAIT_UNTIL(R, gi->OnBoardState == ECsGameInstanceOnBoardState::FinishedLoadingDataAssets);
@@ -491,7 +491,7 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(FCsRoutine* R))
 		CS_COROUTINE_WAIT_UNTIL(R, !dataMapping->AsyncTaskMutex.IsLocked());
 #endif // #if WITH_EDITOR
 
-		if (UCsCommon::CanAsyncTask())
+		if (UCsLibrary_Common::CanAsyncTask())
 		{
 			gi->AsyncPopulateAssetReferences();
 		}
@@ -505,7 +505,7 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(FCsRoutine* R))
 
 #if WITH_EDITOR
 	{
-		ACsData_Payload* Payload = dataMapping->GetPayload();
+		UCsData_Payload* Payload = dataMapping->GetPayload();
 
 		checkf(Payload->Editor_IsValid(dataMapping), TEXT("UCsGameInstance::LoadDataMapping_Internal: Payload is NOT Valid."));
 	}
@@ -541,9 +541,11 @@ void UCsGameInstance::PopulateAssetReferences()
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		ACsData* Data = Cast<UBlueprintGeneratedClass>(LoadedDataAssets[I])->GetDefaultObject<ACsData>();
-		Data->LoadFromJson();
-		Data->PopulateAssetReferences(false);
+		UObject* DataAsObject = Cast<UBlueprintGeneratedClass>(LoadedDataAssets[I])->GetDefaultObject();
+		ICsData* Data		  = Cast<ICsData>(DataAsObject);
+
+		//Data->LoadFromJson();
+		//Data->PopulateAssetReferences(false);
 	}
 	DataMapping->PopulateAssetReferences();
 	LoadedDataAssets.Reset();
@@ -649,14 +651,16 @@ CS_COROUTINE(UCsGameInstance, CreateFullscreenWidget_Internal)
 			}
 		}
 
-		if (ACsData_UI_Common* bp_ui_common = Cast<ACsData_UI_Common>(gi->DataMapping->LoadData(FName("bp_ui_common"))))
+		const FCsData& Data = gi->DataMapping->LoadData(FName("bp_ui_common"));
+
+		if (UCsData_UI_Common* bp_ui_common = Data.GetObject<UCsData_UI_Common>())
 		{
 			gi->FullscreenWidget = CreateWidget<UCsUserWidget>(gi, bp_ui_common->FullscreenWidget.Get());
 			gi->FullscreenWidget->AddToViewport();
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsGameInstance::CreateFullscreenWidget_Internal: Failed to Load bp_ui_common (ACsData_UI_Common)."));
+			UE_LOG(LogCs, Warning, TEXT("UCsGameInstance::CreateFullscreenWidget_Internal: Failed to Load bp_ui_common (UCsData_UI_Common)."));
 		}
 	}
 

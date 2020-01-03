@@ -2,7 +2,7 @@
 
 #include "Animation/AnimNotifies/CsAnimNotify_PlayParticleEffect.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 #include "Particles/ParticleSystem.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -69,7 +69,7 @@ void UCsAnimNotify_PlayParticleEffect::Notify(class USkeletalMeshComponent* Mesh
 
 	// TODO: need to check case of AnimInstance
 
-	const bool InGame = UCsCommon::IsPlayInGame(CurrentWorld) || UCsCommon::IsPlayInPIE(CurrentWorld);
+	const bool InGame = UCsLibrary_Common::IsPlayInGame(CurrentWorld) || UCsLibrary_Common::IsPlayInPIE(CurrentWorld);
 
 	// Use FX Manager
 	if (InGame)

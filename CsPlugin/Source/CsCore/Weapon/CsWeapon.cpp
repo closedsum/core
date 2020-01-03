@@ -4,7 +4,7 @@
 #include "CsCVars.h"
 
 // Library
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
@@ -173,7 +173,7 @@ void ACsWeapon::PostActorCreated()
 {
 	Super::PostActorCreated();
 
-	if (UCsCommon::IsPlayInEditor(GetWorld()) || UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditor(GetWorld()) || UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 		return;
 
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
@@ -184,7 +184,7 @@ void ACsWeapon::Destroyed()
 {
 	Super::Destroyed();
 
-	if (UCsCommon::IsPlayInEditor(GetWorld()) || UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditor(GetWorld()) || UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 		return;
 
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
@@ -658,11 +658,11 @@ ACsPawn* ACsWeapon::GetMyPawn()
 	return MyPawn.IsValid() ? MyPawn.Get() : nullptr;
 }
 
-TEnumAsByte<ECsViewType::Type> ACsWeapon::GetCurrentViewType()
+ECsViewType ACsWeapon::GetCurrentViewType()
 {
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 		if (UCsAnimInstance* AnimInstance = GetMyOwner<UCsAnimInstance>())
 			return AnimInstance->CurrentViewType;
@@ -672,7 +672,7 @@ TEnumAsByte<ECsViewType::Type> ACsWeapon::GetCurrentViewType()
 #endif // #if WITH_EDITOR
 	{
 		if (ACsPawn* Pawn = GetMyPawn())
-			return UCsCommon::IsLocalPawn(GetWorld(), Pawn) ? ECsViewType::FirstPerson : ECsViewType::ThirdPerson;
+			return UCsLibrary_Common::IsLocalPawn(GetWorld(), Pawn) ? ECsViewType::FirstPerson : ECsViewType::ThirdPerson;
 	}
 	return ECsViewType::ECsViewType_MAX;
 }
@@ -698,7 +698,7 @@ void ACsWeapon::OnTick(const float &DeltaSeconds)
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 	}
 	// In Game
@@ -844,7 +844,7 @@ void ACsWeapon::OnTick_HandleStates()
 
 #if WITH_EDITOR 
 			// In Editor Preview Window
-			if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+			if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 			{
 			}
 			// In Game
@@ -1205,7 +1205,7 @@ void ACsWeapon::OnChange_CurrentAmmo(const int32 &Value)
 void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 {
 #if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 		if (CurrentAmmo < GetMaxAmmo(Index))
 			++CurrentAmmo;
@@ -1247,7 +1247,7 @@ void ACsWeapon::ResetCurrentAmmo(const int32 &Index)
 { 
 #if WITH_EDITOR
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 		CurrentAmmo = GetMaxAmmo(Index);
 	}
@@ -1289,7 +1289,7 @@ const FName& ACsWeapon::GetAmmoShortCode(const FECsWeaponFireMode& FireMode, con
 int32 ACsWeapon::GetAmmoReserve(const int32 &Index, const FECsWeaponFireMode& FireMode, const bool &IsCharged)
 {
 #if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 		return GetMaxAmmo(Index);
 	}
@@ -1333,7 +1333,7 @@ void ACsWeapon::ConsumeAmmo(const FECsWeaponFireMode& FireMode, const bool& IsCh
 void ACsWeapon::ConsumeAmmoItem(const FECsWeaponFireMode& FireMode, const bool &IsCharged, TArray<FCsItem*> &OutItems)
 {
 #if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 		return;
 #endif // #if WITH_EDITOR
 
@@ -1388,7 +1388,7 @@ void ACsWeapon::SetIsFirePressed(const FECsWeaponFireMode& FireMode, const bool 
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 		if (DoOnTick)
 			OnTick(0.0f);
@@ -1500,7 +1500,7 @@ bool ACsWeapon::StartChargeFire_StopCondition(FCsRoutine* r)
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (mw && UCsCommon::IsPlayInEditorPreview(mw->GetWorld()))
+	if (mw && UCsLibrary_Common::IsPlayInEditorPreview(mw->GetWorld()))
 	{
 		if (!mw->GetMyOwner())
 		{
@@ -1600,7 +1600,7 @@ FCsProjectileFirePayload* ACsWeapon::AllocateProjectileFirePayload(const FECsWea
 
 			Payload->Time		= GetWorld()->GetTimeSeconds();
 			Payload->RealTime	= GetWorld()->GetRealTimeSeconds();
-			Payload->Frame		= UCsCommon::GetCurrentFrame(GetWorld());
+			Payload->Frame		= UCsLibrary_Common::GetCurrentFrame(GetWorld());
 
 			Payload->Location		 = GetFireWeaponStartLocation(FireMode);
 			Payload->Direction	 = GetFireWeaponStartDirection(FireMode);
@@ -1677,7 +1677,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(w))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(w))
 	{
 	}
 	// In Game
@@ -1707,7 +1707,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 
 #if WITH_EDITOR 
 			// In Editor Preview Window
-			if (UCsCommon::IsPlayInEditorPreview(w))
+			if (UCsLibrary_Common::IsPlayInEditorPreview(w))
 			{
 				mw->ConsumeAmmo(FireMode, false);
 			}
@@ -1839,7 +1839,7 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode& FireMode, FCsProjectile
 
 	ACsProjectileBase* RealProjectile = nullptr;// Manager_Projectile->Fire(Data_Projectile->GetProjectileType(), Payload);
 
-	const bool IsLocalPawn = UCsCommon::IsLocalPawn(GetWorld(), GetMyPawn());
+	const bool IsLocalPawn = UCsLibrary_Common::IsLocalPawn(GetWorld(), GetMyPawn());
 
 	if ((CsCVarDrawLocalPlayerWeaponFireProjectile->GetInt() == CS_CVAR_DRAW &&
 		 IsLocalPawn) ||
@@ -2042,7 +2042,7 @@ void ACsWeapon::FireHitscan(const FECsWeaponFireMode& FireMode, const FCsProject
 						HitFound = Response->bResult;
 
 						if (Response->OutHits.Num() > CS_EMPTY)
-							UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
+							UCsLibrary_Common::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
 
 						Response->Reset();
 
@@ -2094,7 +2094,7 @@ void ACsWeapon::FireHitscan(const FECsWeaponFireMode& FireMode, const FCsProject
 					HitFound = Response->bResult;
 
 					if (Response->OutHits.Num() > CS_EMPTY)
-						UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
+						UCsLibrary_Common::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
 
 					Response->Reset();
 
@@ -2127,12 +2127,12 @@ void ACsWeapon::FireHitscan(const FECsWeaponFireMode& FireMode, const FCsProject
 			HitFound = Response->bResult;
 
 			if (Response->OutHits.Num() > CS_EMPTY)
-				UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
+				UCsLibrary_Common::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
 
 			Response->Reset();
 
 			if ((CsCVarDrawLocalPlayerWeaponFireProjectile->GetInt() == CS_CVAR_DRAW &&
-				UCsCommon::IsLocalPawn(GetWorld(), GetMyPawn())) ||
+				UCsLibrary_Common::IsLocalPawn(GetWorld(), GetMyPawn())) ||
 				CsCVarDrawWeaponFireProjectile->GetInt() == CS_CVAR_DRAW)
 			{
 				const float DrawTime = FMath::Max(TimeBetweenAutoShots.GetEX(FireMode), TimeBetweenShots.GetEX(FireMode));
@@ -2152,7 +2152,7 @@ void ACsWeapon::FireHitscan(const FECsWeaponFireMode& FireMode, const FCsProject
 			//Event->SetDamageType();
 			//Event->SetHitType();
 			
-			UCsCommon::CopyHitResult(HitResult, Event->HitInfo);
+			UCsLibrary_Common::CopyHitResult(HitResult, Event->HitInfo);
 			
 			//if (PawnToHit && UShooterStatics::IsOnSameTeam(GetWorld(), PawnToHit, MyPawn))
 			//{
@@ -2252,7 +2252,7 @@ void ACsWeapon::PlayMuzzleFlash(const FECsWeaponFireMode& FireMode)
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 		if (UCsAnimInstance* AnimInstance = GetMyOwner<UCsAnimInstance>())
 			Manager_FX = AnimInstance->GetManager_FX();

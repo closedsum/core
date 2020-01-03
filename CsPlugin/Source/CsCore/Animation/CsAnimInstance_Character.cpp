@@ -1,8 +1,10 @@
 #include "Animation/CsAnimInstance_Character.h"
 #include "CsCore.h"
-#include "Common/CsCommon_Load.h"
-#include "Coroutine/CsCoroutineScheduler.h"
 
+// Coroutine
+#include "Coroutine/CsCoroutineScheduler.h"
+// Library
+#include "Library/CsLibrary_Load.h"
 // Data
 #include "Data/CsData_Character.h"
 #include "Data/CsData_CharacterMeshSkin.h"
@@ -55,10 +57,10 @@ void UCsAnimInstance_Character::NativeInitializeAnimation()
 	ACsPawn* MyPawn = Cast<ACsPawn>(GetOwningPawn());
 
 #if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditor(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditor(GetWorld()))
 		return;
 
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 		if (!MyPawn)
 			return;
@@ -104,7 +106,7 @@ void UCsAnimInstance_Character::SetupInGameSimulation()
 {
 	Super::SetupInGameSimulation();
 
-	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (!UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 		return;
 
 	Spawn_Weapon();
@@ -163,7 +165,7 @@ void UCsAnimInstance_Character::NativeUpdateAnimation(float DeltaTimeX)
 	Super::NativeUpdateAnimation(DeltaTimeX);
 
 #if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 		OnTick_Handle_Data_Character();
 		OnTick_Handle_Data_CharacterMeshSkin();
@@ -202,10 +204,10 @@ void UCsAnimInstance_Character::LoadData_Character()
 	const FString& DataString   = NCsAnimInstanceCharacterCached::Str::Data_Character;
 	const FString& CsDataString = NCsAnimInstanceCharacterCached::Str::CsData_Character;
 
-	UCsCommon_Load::LoadTSoftClassPtr(DataString, Data_Character.Data, Data_Character.Data_Internal, CsDataString);
+	UCsLibrary_Load::LoadTSoftClassPtr(DataString, Data_Character.Data, Data_Character.Data_Internal, CsDataString);
 
 	if (UCsData_Character* MyData_Charater = GetData())
-		MyData_Charater->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
+		MyData_Charater->Load(UCsLibrary_Common::ViewTypeToLoadFlags(CurrentViewType));
 }
 
 #if WITH_EDITOR
@@ -236,10 +238,10 @@ void UCsAnimInstance_Character::LoadData_CharacterMeshSkin()
 	const FString& DataString   = NCsAnimInstanceCharacterCached::Str::Data_CharacterMeshSkin;
 	const FString& CsDataString = NCsAnimInstanceCharacterCached::Str::CsData_CharacterMeshSkin;
 
-	UCsCommon_Load::LoadTSoftClassPtr(DataString, Data_CharacterMeshSkin.Data, Data_CharacterMeshSkin.Data_Internal, CsDataString);
+	UCsLibrary_Load::LoadTSoftClassPtr(DataString, Data_CharacterMeshSkin.Data, Data_CharacterMeshSkin.Data_Internal, CsDataString);
 
 	if (UCsData_CharacterMeshSkin* MyData_CharacterMeshSkin = GetData_CharacterMeshSkin())
-		MyData_CharacterMeshSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
+		MyData_CharacterMeshSkin->Load(UCsLibrary_Common::ViewTypeToLoadFlags(CurrentViewType));
 }
 
 #if WITH_EDITOR
@@ -270,10 +272,10 @@ void UCsAnimInstance_Character::LoadData_CharacterMaterialSkin()
 	const FString& DataString   = NCsAnimInstanceCharacterCached::Str::Data_CharacterMaterialSkin;
 	const FString& CsDataString = NCsAnimInstanceCharacterCached::Str::CsData_CharacterMaterialSkin;
 
-	UCsCommon_Load::LoadTSoftClassPtr(DataString, Data_CharacterMaterialSkin.Data, Data_CharacterMaterialSkin.Data_Internal, CsDataString);
+	UCsLibrary_Load::LoadTSoftClassPtr(DataString, Data_CharacterMaterialSkin.Data, Data_CharacterMaterialSkin.Data_Internal, CsDataString);
 
 	if (UCsData_CharacterMaterialSkin* MyData_CharacterMaterialSkin = GetData_CharacterMaterialSkin())
-		MyData_CharacterMaterialSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
+		MyData_CharacterMaterialSkin->Load(UCsLibrary_Common::ViewTypeToLoadFlags(CurrentViewType));
 }
 
 #if WITH_EDITOR
@@ -304,10 +306,10 @@ void UCsAnimInstance_Character::LoadData_Weapon()
 	const FString& DataString   = NCsAnimInstanceCharacterCached::Str::Data_Weapon;
 	const FString& CsDataString = NCsAnimInstanceCharacterCached::Str::CsData_Weapon;
 
-	UCsCommon_Load::LoadTSoftClassPtr(DataString, Data_Weapon.Data, Data_Weapon.Data_Internal, CsDataString);
+	UCsLibrary_Load::LoadTSoftClassPtr(DataString, Data_Weapon.Data, Data_Weapon.Data_Internal, CsDataString);
 
 	if (UCsData_Weapon* MyData_Weapon = GetData_Weapon())
-		MyData_Weapon->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
+		MyData_Weapon->Load(UCsLibrary_Common::ViewTypeToLoadFlags(CurrentViewType));
 }
 
 #if WITH_EDITOR
@@ -338,10 +340,10 @@ void UCsAnimInstance_Character::LoadData_WeaponMaterialSkin()
 	const FString& DataString   = NCsAnimInstanceCharacterCached::Str::Data_WeaponMaterialSkin;
 	const FString& CsDataString = NCsAnimInstanceCharacterCached::Str::CsData_WeaponMaterialSkin;
 
-	UCsCommon_Load::LoadTSoftClassPtr(DataString, Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, CsDataString);
+	UCsLibrary_Load::LoadTSoftClassPtr(DataString, Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, CsDataString);
 
 	if (UCsData_WeaponMaterialSkin* MyData_WeaponMaterialSkin = GetData_WeaponMaterialSkin())
-		MyData_WeaponMaterialSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
+		MyData_WeaponMaterialSkin->Load(UCsLibrary_Common::ViewTypeToLoadFlags(CurrentViewType));
 }
 
 #if WITH_EDITOR

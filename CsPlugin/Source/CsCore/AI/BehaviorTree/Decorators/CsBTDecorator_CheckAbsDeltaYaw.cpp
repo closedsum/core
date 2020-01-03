@@ -2,7 +2,7 @@
 
 #include "AI/BehaviorTree/Decorators/CsBTDecorator_CheckAbsDeltaYaw.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 // Behavior Tree
 #include "BehaviorTree/BlackboardComponent.h"
@@ -44,22 +44,22 @@ bool UCsBTDecorator_CheckAbsDeltaYaw::CalculateRawConditionValue(UBehaviorTreeCo
 
 		// =
 		if (Operation == EArithmeticKeyOperation::Equal)
-			return FMath::Abs(UCsCommon::GetAbsAngleDelta(Rotation.Yaw, KeyValue) - Delta) <= EqualTolerance;
+			return FMath::Abs(UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, KeyValue) - Delta) <= EqualTolerance;
 		// !=
 		if (Operation == EArithmeticKeyOperation::NotEqual)
-			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, KeyValue) != Delta;
+			return UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, KeyValue) != Delta;
 		// <
 		if (Operation == EArithmeticKeyOperation::Less)
-			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, KeyValue) < Delta;
+			return UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, KeyValue) < Delta;
 		// <=
 		if (Operation == EArithmeticKeyOperation::LessOrEqual)
-			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, KeyValue) <= Delta;
+			return UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, KeyValue) <= Delta;
 		// >
 		if (Operation == EArithmeticKeyOperation::Greater)
-			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, KeyValue) > Delta;
+			return UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, KeyValue) > Delta;
 		// >=
 		if (Operation == EArithmeticKeyOperation::GreaterOrEqual)
-			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, KeyValue) >= Delta;
+			return UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, KeyValue) >= Delta;
 	}
 	// Rotator
 	else
@@ -69,22 +69,22 @@ bool UCsBTDecorator_CheckAbsDeltaYaw::CalculateRawConditionValue(UBehaviorTreeCo
 
 		// =
 		if (Operation == EArithmeticKeyOperation::Equal)
-			return FMath::Abs(UCsCommon::GetAbsAngleDelta(Rotation.Yaw, KeyValue.Yaw) - Delta) <= EqualTolerance;
+			return FMath::Abs(UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, KeyValue.Yaw) - Delta) <= EqualTolerance;
 		// !=
 		if (Operation == EArithmeticKeyOperation::NotEqual)
-			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, KeyValue.Yaw) != Delta;
+			return UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, KeyValue.Yaw) != Delta;
 		// <
 		if (Operation == EArithmeticKeyOperation::Less)
-			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, KeyValue.Yaw) < Delta;
+			return UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, KeyValue.Yaw) < Delta;
 		// <=
 		if (Operation == EArithmeticKeyOperation::LessOrEqual)
-			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, KeyValue.Yaw) <= Delta;
+			return UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, KeyValue.Yaw) <= Delta;
 		// >
 		if (Operation == EArithmeticKeyOperation::Greater)
-			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, KeyValue.Yaw) > Delta;
+			return UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, KeyValue.Yaw) > Delta;
 		// >=
 		if (Operation == EArithmeticKeyOperation::GreaterOrEqual)
-			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, KeyValue.Yaw) >= Delta;
+			return UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, KeyValue.Yaw) >= Delta;
 	}
 	// Vector
 	else
@@ -97,22 +97,22 @@ bool UCsBTDecorator_CheckAbsDeltaYaw::CalculateRawConditionValue(UBehaviorTreeCo
 
 		// =
 		if (Operation == EArithmeticKeyOperation::Equal)
-			return FMath::Abs(UCsCommon::GetAbsAngleDelta(Rotation.Yaw, Yaw) - Delta) <= EqualTolerance;
+			return FMath::Abs(UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, Yaw) - Delta) <= EqualTolerance;
 		// !=
 		if (Operation == EArithmeticKeyOperation::NotEqual)
-			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, Yaw) != Delta;
+			return UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, Yaw) != Delta;
 		// <
 		if (Operation == EArithmeticKeyOperation::Less)
-			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, Yaw) < Delta;
+			return UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, Yaw) < Delta;
 		// <=
 		if (Operation == EArithmeticKeyOperation::LessOrEqual)
-			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, Yaw) <= Delta;
+			return UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, Yaw) <= Delta;
 		// >
 		if (Operation == EArithmeticKeyOperation::Greater)
-			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, Yaw) > Delta;
+			return UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, Yaw) > Delta;
 		// >=
 		if (Operation == EArithmeticKeyOperation::GreaterOrEqual)
-			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, Yaw) >= Delta;
+			return UCsLibrary_Common::GetAbsAngleDelta(Rotation.Yaw, Yaw) >= Delta;
 	}
 	return false;
 }

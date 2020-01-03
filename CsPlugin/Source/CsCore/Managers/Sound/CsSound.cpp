@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Sound/CsSound.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 ACsSound::ACsSound(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -44,7 +44,7 @@ void ACsSound::Init(const int32 &Index)
 
 void ACsSound::Allocate(FCsSoundPayload* Payload)
 {
-	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsLibrary_Common::GetCurrentFrame(GetWorld()));
 
 	Play();
 }
@@ -71,7 +71,7 @@ bool ACsSound::Play()
 		AudioComponent->AttenuationSettings->Attenuation = *Settings;
 
 #if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 		AudioComponent->bAllowSpatialization = false;
 		AudioComponent->bIsUISound = true;

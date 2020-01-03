@@ -2,7 +2,7 @@
 #include "Managers/InteractiveActor/CsManager_InteractiveActor.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 #include "Managers/InteractiveActor/CsInteractiveActor.h"
 #include "Game/CsGameState.h"

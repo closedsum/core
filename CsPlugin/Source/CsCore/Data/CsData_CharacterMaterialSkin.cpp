@@ -1,6 +1,6 @@
 #include "Data/CsData_CharacterMaterialSkin.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 #include "../Engine/Classes/Animation/SkeletalMeshActor.h"
 #include "Materials/MaterialInstanceConstant.h"
@@ -25,7 +25,7 @@ TArray<UMaterialInstanceConstant*>* UCsData_CharacterMaterialSkin::GetMaterials(
 
 void UCsData_CharacterMaterialSkin::SetMaterials(USkeletalMeshComponent* InMesh, const ECsViewType& ViewType, const bool& IsLow /*=false*/)
 {
-	UCsCommon::SetMaterials(InMesh, *GetMaterials(ViewType, IsLow));
+	UCsLibrary_Common::SetMaterials(InMesh, *GetMaterials(ViewType, IsLow));
 }
 
 void UCsData_CharacterMaterialSkin::SetMaterials(ASkeletalMeshActor* InActor, const ECsViewType& ViewType, const bool& IsLow /*=false*/)
@@ -45,7 +45,7 @@ void UCsData_CharacterMaterialSkin::SetMaterials(UObject* InObject, const ECsVie
 
 void UCsData_CharacterMaterialSkin::SetMaterials(USkeletalMeshComponent* InMesh)
 {
-	UCsCommon::SetMaterials(InMesh, *GetMaterials());
+	UCsLibrary_Common::SetMaterials(InMesh, *GetMaterials());
 }
 
 void UCsData_CharacterMaterialSkin::SetMaterials(ASkeletalMeshActor* InActor)

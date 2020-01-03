@@ -9,7 +9,7 @@
 // Enum
 #include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
 // Library
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Asset.h"
 // Asset Registry
 #include "AssetRegistryModule.h"
@@ -275,7 +275,7 @@ void UCsEdEngine::PopulateEnumMapsFromUserDefinedEnums()
 	// DataType
 	PopulateEnumMapFromUserDefinedEnum<EMCsDataType>(NCsUserDefinedEnum::FECsDataType);
 	// DataCollection
-	PopulateEnumMapFromUserDefinedEnum<EMCsDataCollection>(NCsUserDefinedEnum::FECsDataCollection);
+	PopulateEnumMapFromUserDefinedEnum<EMCsDataCollectionType>(NCsUserDefinedEnum::FECsDataCollectionType);
 	// Input
 	{
 		// InputAction
@@ -314,7 +314,7 @@ void UCsEdEngine::GetUserDefinedEnumNames(const FString& EnumName, const FECsUse
 
 bool UCsEdEngine::Stream_GetString(const TCHAR*& Str, const FString& StringType, FString& OutString, const FString& Check, const FString& Format)
 {
-	OutString = UCsCommon::Stream_GetString(Str, false);
+	OutString = UCsLibrary_Common::Stream_GetString(Str, false);
 
 	if (OutString == TEXT(""))
 	{
@@ -339,7 +339,7 @@ bool UCsEdEngine::Check_MarkDatasDirty(const TCHAR* Stream)
 	if (FParse::Command(&Stream, *Command))
 	{
 		// AssetType
-		const FString AssetTypeAsString = UCsCommon::Stream_GetString(Stream, false);
+		const FString AssetTypeAsString = UCsLibrary_Common::Stream_GetString(Stream, false);
 		const FECsAssetType AssetType   = EMCsAssetType::Get().GetSafeEnum(AssetTypeAsString);
 
 		MarkDatasDirty(AssetType);

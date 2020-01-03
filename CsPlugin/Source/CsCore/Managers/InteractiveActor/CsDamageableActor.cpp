@@ -144,7 +144,7 @@ PT_THREAD(ACsDamageableActor::Respawn_Internal(FCsRoutine* R))
 {
 	ACsDamageableActor* D = R->GetOwnerAsObject<ACsDamageableActor>();
 
-	ACsData_Damageable* Data = Cast<ACsData_Damageable>(D->Cache.GetData());
+	UCsData_Damageable* Data = Cast<UCsData_Damageable>(D->Cache.GetData());
 
 	const FCsTime& CurrentTime = UCsManager_Time::Get(D->GetGameInstance())->GetTime(R->Group);
 	const FCsTime& StartTime   = R->StartTime;

@@ -2,7 +2,7 @@
 #include "Managers/InteractiveActor/CsInteractiveActor.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 // Components
 #include "Components/CsSkeletalMeshComponent.h"
@@ -67,25 +67,25 @@ void ACsInteractiveActor::PostInitializeComponents()
 	if (UseSkeletalMesh)
 	{
 		if (!IsPlaceable)
-			UCsCommon::InitComponent(SkeletalMeshComponent, nullptr, ECollisionChannel::ECC_WorldStatic, ECsViewType::ECsViewType_MAX);
+			UCsLibrary_Common::InitComponent(SkeletalMeshComponent, nullptr, ECollisionChannel::ECC_WorldStatic, ECsViewType::ECsViewType_MAX);
 	}
 	// Static Mesh
 	if (UseStaticMesh)
 	{
 		if (!IsPlaceable)
-			UCsCommon::InitComponent(StaticMeshComponent, nullptr, ECollisionChannel::ECC_WorldStatic, ECsViewType::ECsViewType_MAX);
+			UCsLibrary_Common::InitComponent(StaticMeshComponent, nullptr, ECollisionChannel::ECC_WorldStatic, ECsViewType::ECsViewType_MAX);
 	}
 	// Box Collision
 	if (UseBoxCollision)
 	{
 		if (!IsPlaceable)
-			UCsCommon::InitComponent(BoxComponent, nullptr, ECollisionChannel::ECC_WorldStatic, ECsViewType::ECsViewType_MAX);
+			UCsLibrary_Common::InitComponent(BoxComponent, nullptr, ECollisionChannel::ECC_WorldStatic, ECsViewType::ECsViewType_MAX);
 	}
 	// SphereCollision
 	if (UseSphereCollision)
 	{
 		if (!IsPlaceable)
-			UCsCommon::InitComponent(SphereComponent, nullptr, ECollisionChannel::ECC_WorldStatic, ECsViewType::ECsViewType_MAX);
+			UCsLibrary_Common::InitComponent(SphereComponent, nullptr, ECollisionChannel::ECC_WorldStatic, ECsViewType::ECsViewType_MAX);
 	}
 }
 
@@ -108,7 +108,7 @@ void ACsInteractiveActor::Init(const int32 &Index, const FECsInteractiveType &In
 
 void ACsInteractiveActor::Allocate(FCsInteractiveActorPayload* Payload)
 {
-	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsLibrary_Common::GetCurrentFrame(GetWorld()));
 
 	Allocate_Internal(Payload);
 }
@@ -600,8 +600,8 @@ void ACsInteractiveActor::SetPhysicsState(const ECsInteractivePhysicsState &Stat
 	if (CsCVarLogInteractiveActorPhysicsStateChange->GetInt() == CS_CVAR_SHOW_LOG)
 	{
 		const FString& StateAsString		   = ECsInteractivePhysicsState_Editor::ToString(StateType);
-		const FString LastPhysicsStateAsString = UCsCommon::InteractivePhysicsStateToString(Last_PhysicsState);
-		const FString PhysicsStateAsString	   = UCsCommon::InteractivePhysicsStateToString(PhysicsState);
+		const FString LastPhysicsStateAsString = UCsLibrary_Common::InteractivePhysicsStateToString(Last_PhysicsState);
+		const FString PhysicsStateAsString	   = UCsLibrary_Common::InteractivePhysicsStateToString(PhysicsState);
 
 		UE_LOG(LogCs, Log, TEXT("ACsInteractiveActor::SetPhysicsState (%s): Setting PhysicsState: %s. (%s) -> (%s)"), *GetName(), *StateAsString, *LastPhysicsStateAsString, *PhysicsStateAsString);
 	}
@@ -616,8 +616,8 @@ void ACsInteractiveActor::ClearPhysicsState(const ECsInteractivePhysicsState &St
 	if (CsCVarLogInteractiveActorPhysicsStateChange->GetInt() == CS_CVAR_SHOW_LOG)
 	{
 		const FString& StateAsString		   = ECsInteractivePhysicsState_Editor::ToString(StateType);
-		const FString LastPhysicsStateAsString = UCsCommon::InteractivePhysicsStateToString(Last_PhysicsState);
-		const FString PhysicsStateAsString	   = UCsCommon::InteractivePhysicsStateToString(PhysicsState);
+		const FString LastPhysicsStateAsString = UCsLibrary_Common::InteractivePhysicsStateToString(Last_PhysicsState);
+		const FString PhysicsStateAsString	   = UCsLibrary_Common::InteractivePhysicsStateToString(PhysicsState);
 
 		UE_LOG(LogCs, Log, TEXT("ACsInteractiveActor::ClearPhysicsState (%s): Clearing PhysicsState: %s. (%s) -> (%s)"), *GetName(), *StateAsString, *LastPhysicsStateAsString, *PhysicsStateAsString);
 	}
@@ -682,7 +682,7 @@ void ACsInteractiveActor::CalculateScreenPosition()
 
 	HasChanged |= WorldPosition.HasChanged();
 
-	ACsPlayerController* Controller = UCsCommon::GetLocalPlayerController<ACsPlayerController>(GetWorld());
+	ACsPlayerController* Controller = UCsLibrary_Common::GetLocalPlayerController<ACsPlayerController>(GetWorld());
 
 	HasChanged |= Controller->ViewRotation.HasChanged();
 	HasChanged |= Controller->ViewLocation.HasChanged();

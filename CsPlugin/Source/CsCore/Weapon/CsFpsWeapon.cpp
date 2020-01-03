@@ -2,7 +2,7 @@
 #include "Weapon/CsFpsWeapon.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 #include "Player/CsFpsPawn.h"
 #include "Animation/CsAnimInstance_Character.h"
@@ -247,7 +247,7 @@ void ACsFpsWeapon::AttachMeshToPawn()
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 		if (UCsAnimInstance_Character* AnimInstance = GetMyOwner<UCsAnimInstance_Character>())
 			Data_Character = AnimInstance->GetData();
@@ -270,7 +270,7 @@ void ACsFpsWeapon::AttachMeshToPawn()
 	{
 #if WITH_EDITOR 
 		// In Editor Preview Window
-		if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 		{
 			Mesh1P->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 			Mesh1P->SetOnlyOwnerSee(false);
@@ -304,7 +304,7 @@ void ACsFpsWeapon::AttachMeshToPawn()
 	{
 #if WITH_EDITOR 
 		// In Editor Preview Window
-		if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 		{
 			Mesh3P->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 			Mesh3P->SetOnlyOwnerSee(false);
@@ -334,11 +334,11 @@ void ACsFpsWeapon::AttachMeshToPawn()
 	}
 }
 
-USkeletalMeshComponent* ACsFpsWeapon::GetCharacterMesh(const TEnumAsByte<ECsViewType::Type> &ViewType)
+USkeletalMeshComponent* ACsFpsWeapon::GetCharacterMesh(const ECsViewType& ViewType)
 {
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 		if (UCsAnimInstance_Character* AnimInstance = GetMyOwner<UCsAnimInstance_Character>())
 			return AnimInstance->GetSkeletalMeshComponent();
@@ -375,7 +375,7 @@ void ACsFpsWeapon::OnTick(const float &DeltaSeconds)
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 	}
 	// In Game
@@ -507,7 +507,7 @@ void ACsFpsWeapon::SetMesh1P()
 
 #if WITH_EDITOR
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 		USkeletalMeshComponent* Mesh = nullptr;
 
@@ -529,14 +529,14 @@ void ACsFpsWeapon::SetMesh1P()
 		if (UCsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
 		{
 			Skin->SetMaterials(Mesh, ECsViewType::FirstPerson);
-			UCsCommon::SetMIDs(Mesh, MeshMIDs1P, *Skin->GetMaterials(ECsViewType::FirstPerson));
+			UCsLibrary_Common::SetMIDs(Mesh, MeshMIDs1P, *Skin->GetMaterials(ECsViewType::FirstPerson));
 		}
 		else
 		{
 			TArray<UMaterialInstanceConstant*> Materials;
 			Data_Weapon->GetDefaultMaterials(Materials, ECsViewType::FirstPerson);
 
-			UCsCommon::SetMIDs(Mesh, MeshMIDs1P, Materials);
+			UCsLibrary_Common::SetMIDs(Mesh, MeshMIDs1P, Materials);
 		}
 		return;
 	}
@@ -549,14 +549,14 @@ void ACsFpsWeapon::SetMesh1P()
 		if (UCsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
 		{
 			Skin->SetMaterials(Mesh1P, ECsViewType::FirstPerson);
-			UCsCommon::SetMIDs(Mesh1P, MeshMIDs1P, *Skin->GetMaterials(ECsViewType::FirstPerson));
+			UCsLibrary_Common::SetMIDs(Mesh1P, MeshMIDs1P, *Skin->GetMaterials(ECsViewType::FirstPerson));
 		}
 		else
 		{
 			TArray<UMaterialInstanceConstant*> Materials;
 			Data_Weapon->GetDefaultMaterials(Materials, ECsViewType::FirstPerson);
 
-			UCsCommon::SetMIDs(Mesh1P, MeshMIDs1P, Materials);
+			UCsLibrary_Common::SetMIDs(Mesh1P, MeshMIDs1P, Materials);
 		}
 		//Mesh1P->SetRelativeScale3D(Data_Weapon->Mesh1PScale);
 	}
@@ -570,7 +570,7 @@ void ACsFpsWeapon::SetMesh3P()
 
 #if WITH_EDITOR
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 		USkeletalMeshComponent* Mesh = nullptr;
 
@@ -592,14 +592,14 @@ void ACsFpsWeapon::SetMesh3P()
 		if (UCsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
 		{
 			Skin->SetMaterials(Mesh, ECsViewType::ThirdPerson);
-			UCsCommon::SetMIDs(Mesh, MeshMIDs3P, *Skin->GetMaterials(ECsViewType::ThirdPerson));
+			UCsLibrary_Common::SetMIDs(Mesh, MeshMIDs3P, *Skin->GetMaterials(ECsViewType::ThirdPerson));
 		}
 		else
 		{
 			TArray<UMaterialInstanceConstant*> Materials;
 			Data_Weapon->GetDefaultMaterials(Materials, ECsViewType::ThirdPerson);
 
-			UCsCommon::SetMIDs(Mesh, MeshMIDs3P, Materials);
+			UCsLibrary_Common::SetMIDs(Mesh, MeshMIDs3P, Materials);
 		}
 		return;
 	}
@@ -612,14 +612,14 @@ void ACsFpsWeapon::SetMesh3P()
 		if (UCsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
 		{
 			Skin->SetMaterials(Mesh3P, ECsViewType::ThirdPerson);
-			UCsCommon::SetMIDs(Mesh3P, MeshMIDs3P, *Skin->GetMaterials(ECsViewType::ThirdPerson));
+			UCsLibrary_Common::SetMIDs(Mesh3P, MeshMIDs3P, *Skin->GetMaterials(ECsViewType::ThirdPerson));
 		}
 		else
 		{
 			TArray<UMaterialInstanceConstant*> Materials;
 			Data_Weapon->GetDefaultMaterials(Materials, ECsViewType::ThirdPerson);
 
-			UCsCommon::SetMIDs(Mesh3P, MeshMIDs3P, Materials);
+			UCsLibrary_Common::SetMIDs(Mesh3P, MeshMIDs3P, Materials);
 		}
 		//Mesh3P->SetRelativeScale3D(WeaponData->Mesh3PScale);
 		Mesh3P->SetCastShadow(false);
@@ -630,7 +630,7 @@ USkeletalMeshComponent* ACsFpsWeapon::GetMesh(const ECsViewType& ViewType)
 {
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 	{
 		// Character
 		if (UCsAnimInstance_Character* AnimInstance = GetMyOwner<UCsAnimInstance_Character>())

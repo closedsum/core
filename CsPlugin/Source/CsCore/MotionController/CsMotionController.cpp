@@ -3,7 +3,7 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 #include "MotionControllerComponent.h"
@@ -26,13 +26,13 @@ ACsMotionController::ACsMotionController(const FObjectInitializer& ObjectInitial
 
 	DefaultRootComponent = ObjectInitializer.CreateDefaultSubobject<USceneComponent>(this, TEXT("DefaultRootComponent"));
 	SetRootComponent(DefaultRootComponent);
-	UCsCommon::InitComponent(DefaultRootComponent, nullptr, ECollisionChannel::ECC_Visibility, ECsViewType::ECsViewType_MAX);
+	UCsLibrary_Common::InitComponent(DefaultRootComponent, nullptr, ECollisionChannel::ECC_Visibility, ECsViewType::ECsViewType_MAX);
 
 	UseSkeletalMesh = true;
 	UseStaticMesh   = false;
 
 	AnchorComponent = ObjectInitializer.CreateDefaultSubobject<USceneComponent>(this, TEXT("AnchorComponent"));
-	UCsCommon::InitComponent(AnchorComponent, DefaultRootComponent, ECollisionChannel::ECC_Visibility, ECsViewType::ECsViewType_MAX);
+	UCsLibrary_Common::InitComponent(AnchorComponent, DefaultRootComponent, ECollisionChannel::ECC_Visibility, ECsViewType::ECsViewType_MAX);
 
 	Hand = ECsControllerHand::Left;
 
@@ -56,14 +56,14 @@ void ACsMotionController::PostInitializeComponents()
 	{
 		SkeletalMeshComponent = NewObject<USkeletalMeshComponent>(this, TEXT("SkeletalMeshComponent"));
 		SkeletalMeshComponent->RegisterComponent();
-		UCsCommon::InitComponent(SkeletalMeshComponent, nullptr, ECollisionChannel::ECC_Pawn, ECsViewType::ECsViewType_MAX);
+		UCsLibrary_Common::InitComponent(SkeletalMeshComponent, nullptr, ECollisionChannel::ECC_Pawn, ECsViewType::ECsViewType_MAX);
 	}
 	// StaticMesh
 	if (UseStaticMesh)
 	{
 		StaticMeshComponent = NewObject<UStaticMeshComponent>(this, TEXT("StaticMeshComponent"));
 		StaticMeshComponent->RegisterComponent();
-		UCsCommon::InitComponent(StaticMeshComponent, nullptr, ECollisionChannel::ECC_Pawn, ECsViewType::ECsViewType_MAX);
+		UCsLibrary_Common::InitComponent(StaticMeshComponent, nullptr, ECollisionChannel::ECC_Pawn, ECsViewType::ECsViewType_MAX);
 	}
 }
 
@@ -318,7 +318,7 @@ void ACsMotionController::SetCollisionType(const TCsInteractiveCollision &InColl
 
 	CollisionPreset = InPreset;
 
-	UCsCommon::InitComponent(InteractiveCollisionComponent, GetMotionControllerComponent(), CollisionPreset.ObjectType, ECsViewType::ECsViewType_MAX);
+	UCsLibrary_Common::InitComponent(InteractiveCollisionComponent, GetMotionControllerComponent(), CollisionPreset.ObjectType, ECsViewType::ECsViewType_MAX);
 
 	Box->SetBoxExtent(BoxExtent);
 
@@ -334,7 +334,7 @@ void ACsMotionController::SetCollisionType(const TCsInteractiveCollision &InColl
 
 	CollisionPreset = InPreset;
 
-	UCsCommon::InitComponent(InteractiveCollisionComponent, GetMotionControllerComponent(), CollisionPreset.ObjectType, ECsViewType::ECsViewType_MAX);
+	UCsLibrary_Common::InitComponent(InteractiveCollisionComponent, GetMotionControllerComponent(), CollisionPreset.ObjectType, ECsViewType::ECsViewType_MAX);
 
 	Sphere->SetSphereRadius(SphereRadius);
 
@@ -423,7 +423,7 @@ PT_THREAD(ACsMotionController::Setup_OnCalcCamera_Internal(FCsRoutine* R))
 {
 	ACsMotionController* MC  = R->GetOwnerAsObject<ACsMotionController>();
 	UWorld* W				 = MC->GetWorld();
-	ACsPlayerController* PC  = UCsCommon::GetLocalPlayerController<ACsPlayerController>(W);
+	ACsPlayerController* PC  = UCsLibrary_Common::GetLocalPlayerController<ACsPlayerController>(W);
 
 	CS_COROUTINE_BEGIN(R);
 
@@ -1440,14 +1440,14 @@ void ACsMotionController::Show()
 
 	USceneComponent* Component = GetRootComponent();
 
-	UCsCommon::EnableComponent(Component, true);
-	UCsCommon::EnableComponent(GetMotionControllerComponent(), true);
-	UCsCommon::EnableComponent(AnchorComponent, true);
+	UCsLibrary_Common::EnableComponent(Component, true);
+	UCsLibrary_Common::EnableComponent(GetMotionControllerComponent(), true);
+	UCsLibrary_Common::EnableComponent(AnchorComponent, true);
 
 	if (UseSkeletalMesh)
-		UCsCommon::EnableComponent(SkeletalMeshComponent, true);
+		UCsLibrary_Common::EnableComponent(SkeletalMeshComponent, true);
 	if (UseSkeletalMesh)
-		UCsCommon::EnableComponent(SkeletalMeshComponent, true);
+		UCsLibrary_Common::EnableComponent(SkeletalMeshComponent, true);
 
 	if (CollisionType != ECsInteractiveCollision::Trace &&
 		InteractiveCollisionComponent)
@@ -1464,14 +1464,14 @@ void ACsMotionController::Hide()
 {
 	USceneComponent* Component = GetRootComponent();
 
-	UCsCommon::DisableComponent(Component, false, true, true);
-	UCsCommon::DisableComponent(GetMotionControllerComponent(), false, true, true);
-	UCsCommon::DisableComponent(AnchorComponent, false, true, true);
+	UCsLibrary_Common::DisableComponent(Component, false, true, true);
+	UCsLibrary_Common::DisableComponent(GetMotionControllerComponent(), false, true, true);
+	UCsLibrary_Common::DisableComponent(AnchorComponent, false, true, true);
 
 	if (UseSkeletalMesh)
-		UCsCommon::DisableComponent(SkeletalMeshComponent, false, true, true);
+		UCsLibrary_Common::DisableComponent(SkeletalMeshComponent, false, true, true);
 	if (UseSkeletalMesh)
-		UCsCommon::DisableComponent(SkeletalMeshComponent, false, true, true);
+		UCsLibrary_Common::DisableComponent(SkeletalMeshComponent, false, true, true);
 
 	if (InteractiveCollisionComponent)
 	{

@@ -2,7 +2,7 @@
 #include "AI/CsAIPlayerState.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 #include "Game/CsGameState.h"
 
 #include "AI/CsAIController.h"
@@ -73,7 +73,7 @@ void ACsAIPlayerState::OnTick_OnBoard()
 		// Waiting for Local PlayerState
 		if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForLocalPlayerState)
 		{
-			if (ACsPlayerStateBase* LocalPlayerState = UCsCommon::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld()))
+			if (ACsPlayerStateBase* LocalPlayerState = UCsLibrary_Common::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld()))
 			{
 				OnBoardState = ECsPlayerStateBaseOnBoardState::RequestLocalUniqueMappingId;
 
@@ -86,7 +86,7 @@ void ACsAIPlayerState::OnTick_OnBoard()
 		// Request Local Unique Mapping Id
 		if (OnBoardState == ECsPlayerStateBaseOnBoardState::RequestLocalUniqueMappingId)
 		{
-			ACsPlayerStateBase* LocalPlayerState = UCsCommon::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
+			ACsPlayerStateBase* LocalPlayerState = UCsLibrary_Common::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
 
 			if (LocalPlayerState->UniqueMappingId == CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID)
 			{
@@ -119,7 +119,7 @@ void ACsAIPlayerState::OnTick_OnBoard()
 		// Waiting for Local Unique Mapping Id
 		if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForLocalUniqueMappingId)
 		{
-			ACsPlayerStateBase* LocalPlayerState = UCsCommon::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
+			ACsPlayerStateBase* LocalPlayerState = UCsLibrary_Common::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
 
 			if (LocalPlayerState->UniqueMappingId < CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID)
 			{
@@ -153,7 +153,7 @@ void ACsAIPlayerState::OnTick_OnBoard()
 			{
 				UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: RequestUniqueMappingId -> WaitingForUniqueMappingId"));
 			}
-			ACsPlayerStateBase* LocalPlayerState = UCsCommon::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
+			ACsPlayerStateBase* LocalPlayerState = UCsLibrary_Common::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
 
 			LocalPlayerState->ServerRequestUniqueMappingId_AI(LocalPlayerState->UniqueMappingId, this);
 		}
@@ -180,7 +180,7 @@ void ACsAIPlayerState::OnTick_OnBoard()
 			{
 				UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: RequestAIData -> WaitingForAIData"));
 			}
-			ACsPlayerStateBase* LocalPlayerState = UCsCommon::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
+			ACsPlayerStateBase* LocalPlayerState = UCsLibrary_Common::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
 
 			LocalPlayerState->ServerRequestAIData(LocalPlayerState->UniqueMappingId, UniqueMappingId);
 		}
@@ -228,7 +228,7 @@ void ACsAIPlayerState::OnTick_OnBoard()
 			{
 				UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: SendOnBoardCompleted -> WaitingForOnBoardCompleted"));
 			}
-			ACsPlayerStateBase* LocalPlayerState = UCsCommon::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
+			ACsPlayerStateBase* LocalPlayerState = UCsLibrary_Common::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
 
 			LocalPlayerState->ServerSendOnBoardCompleted_AI(LocalPlayerState->UniqueMappingId, UniqueMappingId);
 		}

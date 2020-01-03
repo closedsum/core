@@ -5,10 +5,10 @@
 // Loading
 #pragma region
 
-TAutoConsoleVariable<int32> CsCVarLogManagerLoading(
-	TEXT("log.manager.loading"),
+TAutoConsoleVariable<int32> CsCVarLogManagerLoad(
+	TEXT("log.manager.load"),
 	0,
-	TEXT("Log Manager Loading"),
+	TEXT("Log Manager Load"),
 	ECVF_SetByConsole
 );
 

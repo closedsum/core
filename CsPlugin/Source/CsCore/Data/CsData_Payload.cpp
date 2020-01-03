@@ -1,6 +1,6 @@
 #include "Data/CsData_Payload.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 #if WITH_EDITOR
 #include "Data/CsDataMapping.h"
@@ -80,10 +80,10 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsLoadAs
 		OutMessage = TEXT("INVALID ShortCode.");
 		OutOutput  = TEXT("ERROR");
 
-		if (UCsCommon::IsDefaultObject(this))
+		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
-			UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
 		}
 		return false;
 	}
@@ -93,10 +93,10 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsLoadAs
 		OutMessage = TEXT("INVALID LoadAssetsType. See Output Log.");
 		OutOutput  = TEXT("ERROR");
 
-		if (UCsCommon::IsDefaultObject(this))
+		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
-			UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
 		}
 
 		UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::PerformAddEntry: Valid LoadAssetsTypes are:"));
@@ -137,10 +137,10 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsLoadAs
 			OutOutput += TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + DataTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(OutIndices[Index]) + TEXT("]");
 			OutMessage = TEXT("Already Exists.");
 
-			if (UCsCommon::IsDefaultObject(this))
+			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
-				UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
 			}
 			return false;
 		}
@@ -174,10 +174,10 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsLoadAs
 				const FString& LoadFlagsAsString = EMCsLoadFlags_Editor::Get().ToString(LoadFlags);
 				const FString& DataTypeAsString = OutDataTypes[CS_FIRST].Name;
 
-				const FString Output = TEXT("UCsData_Payload::PostEditChangeProperty: Missing LoadFlags: ") + LoadFlagsAsString + TEXT(" in DataMapping: [") + AssetTypeAsString + TEXT(",") + InShortCode.ToString() + TEXT(",") + FString::FromInt(OutIndices[CS_FIRST]) + TEXT("]. Manually adding LoadFlag: ") + LoadFlagsAsString + TEXT(".");
+				const FString Output = TEXT("UCsData_Payload::PostEditChangeProperty: Missing LoadFlags: ") + LoadFlagsAsString + TEXT(" in DataMapping: [") + DataTypeAsString + TEXT(",") + InShortCode.ToString() + TEXT(",") + FString::FromInt(OutIndices[CS_FIRST]) + TEXT("]. Manually adding LoadFlag: ") + LoadFlagsAsString + TEXT(".");
 					
-				if (UCsCommon::IsDefaultObject(this))
-					UCsCommon::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("PerformAddEntryLoadFlags"), 1.5f);
+				if (UCsLibrary_Common::IsDefaultObject(this))
+					UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("PerformAddEntryLoadFlags"), 1.5f);
 
 				UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
 			}
@@ -211,7 +211,7 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsLoadAs
 								const FString& DataTypeAsString = OutDataTypes[CS_FIRST].Name;
 
 								Array.AddDefaulted();
-								Array[ArraySize].AssetType  = OutDataTypes[CS_FIRST];
+								Array[ArraySize].DataType  = OutDataTypes[CS_FIRST];
 								Array[ArraySize].ShortCode	= InShortCode;
 								Array[ArraySize].LoadFlags	= LoadFlags;
 
@@ -221,10 +221,10 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsLoadAs
 								OutOutput = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + DataTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
 								OutMessage = TEXT("SUCCESS.");
 
-								if (UCsCommon::IsDefaultObject(this))
+								if (UCsLibrary_Common::IsDefaultObject(this))
 								{
-									UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
-									UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+									UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+									UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
 								}
 								MarkPackageDirty();
 							}
@@ -253,12 +253,12 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsLoadAs
 			OutMessage = TEXT("Can NOT ADD. WARNING, Duplicates. REMOVE extra entries in DataMapping.");
 
 			if (IsDataTypeMismatch)
-				OutMessage += TEXT(" ShortCode listed under multiple AssetTypes in DataMapping. Should ONLY be ONE.");
+				OutMessage += TEXT(" ShortCode listed under multiple DataTypes in DataMapping. Should ONLY be ONE.");
 
-			if (UCsCommon::IsDefaultObject(this))
+			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
-				UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
 			}
 			return false;
 		}
@@ -395,12 +395,12 @@ bool UCsData_Payload::Editor_IsValid(UCsDataMapping* DataMapping)
 									}
 									else
 									{
-										// Check AssetType Mismatch
+										// Check DataType Mismatch
 										const FString& OutDataTypeAsString = OutDataTypes[CS_FIRST].Name;
 
 										if (DataTypeAsString != OutDataTypeAsString)
 										{
-											UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::Editor_IsValid: [%s, %s, %d] AssetType Mismatch for ShortCode: %s. %s != %s"), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *_ShortCodeAsString, *DataTypeAsString, *OutDataTypeAsString);
+											UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::Editor_IsValid: [%s, %s, %d] DataType Mismatch for ShortCode: %s. %s != %s"), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *_ShortCodeAsString, *DataTypeAsString, *OutDataTypeAsString);
 											Pass &= false;
 										}
 										// Check for LoadFlags
@@ -453,10 +453,10 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			FindEntry.Output = TEXT("ERROR");
 			FindEntry.Find = false;
 
-			if (UCsCommon::IsDefaultObject(this))
+			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsCommon::DisplayNotificationInfo(FindEntry.Output, TEXT("Payload"), TEXT("FindEntryOutput"), 5.0f);
-				UCsCommon::DisplayNotificationInfo(FindEntry.Message, TEXT("Payload"), TEXT("FindEntryMessage"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(FindEntry.Output, TEXT("Payload"), TEXT("FindEntryOutput"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(FindEntry.Message, TEXT("Payload"), TEXT("FindEntryMessage"), 5.0f);
 			}
 			Super::PostEditChangeProperty(e);
 			return;
@@ -476,20 +476,20 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 				FindEntry.Output += TEXT(", ");
 
 			const FString& LoadAssetsTypeAsString = OutLoadAssetsTypes[I].Name;
-			const FString& AssetTypeAsString	  = OutPayloads[I]->AssetType;
+			const FString& DataTypeAsString		  = OutPayloads[I]->DataType;
 			const FString& LoadFlagsAsString	  = EMCsLoadFlags_Editor::Get().ToString(OutPayloads[I]->LoadFlags);
 
-			FindEntry.Output += TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(OutIndices[I]) + TEXT("]");
+			FindEntry.Output += TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + DataTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(OutIndices[I]) + TEXT("]");
 		}
 
 		if (PayloadCount == CS_EMPTY)
 			FindEntry.Output = TEXT("No Results.");
 		FindEntry.Message = TEXT("SUCCESS");
 
-		if (UCsCommon::IsDefaultObject(this))
+		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsCommon::DisplayNotificationInfo(FindEntry.Output, TEXT("Payload"), TEXT("FindEntryOutput"), 5.0f);
-			UCsCommon::DisplayNotificationInfo(FindEntry.Message, TEXT("Payload"), TEXT("FindEntryMessage"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(FindEntry.Output, TEXT("Payload"), TEXT("FindEntryOutput"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(FindEntry.Message, TEXT("Payload"), TEXT("FindEntryMessage"), 5.0f);
 		}
 		FindEntry.Find = false;
 	}
@@ -530,48 +530,48 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			RemoveEntry.Output = TEXT("ERROR");
 			RemoveEntry.Remove = false;
 
-			if (UCsCommon::IsDefaultObject(this))
+			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsCommon::DisplayNotificationInfo(RemoveEntry.Output, TEXT("Payload"), TEXT("RemoveEntryOutput"), 5.0f);
-				UCsCommon::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Output, TEXT("Payload"), TEXT("RemoveEntryOutput"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
 			}
 			Super::PostEditChangeProperty(e);
 			return;
 		}
-		// Check for VALID LoadAssetsType
-		const FECsLoadAssetsType& LoadAssetsType = RemoveEntry.LoadAssetsType;
+		// Check for VALID DataCollectionType
+		const FECsDataCollectionType& DataCollectionType = RemoveEntry.DataCollectionType;
 
-		if (!EMCsLoadAssetsType::Get().IsValidEnum(LoadAssetsType))
+		if (!EMCsDataCollectionType::Get().IsValidEnum(DataCollectionType))
 		{
-			RemoveEntry.Message = TEXT("INVALID LoadAssetsType. See Output Log.");
+			RemoveEntry.Message = TEXT("INVALID DataCollectionType. See Output Log.");
 			RemoveEntry.Output  = TEXT("ERROR");
 			RemoveEntry.Remove	= false;
 
-			if (UCsCommon::IsDefaultObject(this))
+			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsCommon::DisplayNotificationInfo(RemoveEntry.Output, TEXT("Payload"), TEXT("RemoveEntryOutput"), 5.0f);
-				UCsCommon::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Output, TEXT("Payload"), TEXT("RemoveEntryOutput"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
 			}
 
 			FString Output = TEXT("UCsData_Payload::PostEditChangeProperty: Valid LoadAssetsTypes are:");
 
-			if (UCsCommon::IsDefaultObject(this))
-				UCsCommon::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("RemoveEntryAdditionalOutput"), 1.5f);
+			if (UCsLibrary_Common::IsDefaultObject(this))
+				UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("RemoveEntryAdditionalOutput"), 1.5f);
 
 			UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
 
-			const int32& Count = EMCsLoadAssetsType::Get().Num();
+			const int32& Count = EMCsDataCollectionType::Get().Num();
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				const FECsLoadAssetsType& Enum = EMCsLoadAssetsType::Get().GetEnumAt(I);
-				Output						   = TEXT("LoadAssetsType: ") + Enum.Name;
+				const FECsDataCollectionType& Enum = EMCsDataCollectionType::Get().GetEnumAt(I);
+				Output							   = TEXT("DataCollectionType: ") + Enum.Name;
 
-				if (UCsCommon::IsDefaultObject(this))
+				if (UCsLibrary_Common::IsDefaultObject(this))
 				{
 					const FString AdditionalOutput = TEXT("RemoveEntryAdditionalOutput") + FString::FromInt(I);
 
-					UCsCommon::DisplayNotificationInfo(Output, TEXT("Payload"), AdditionalOutput, 1.5f);
+					UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("Payload"), AdditionalOutput, 1.5f);
 				}
 				UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
 			}
@@ -591,28 +591,28 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			// Struct
 			if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
 			{
-				// FCorgiTArrayPayload
+				// TArrayPayload
 				if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
 				{
-					const uint8 LoadAssetTypeCount = EMCsLoadAssetsType::Get().Num();
+					const uint8 DataCollectionTypeCount = EMCsDataCollectionType::Get().Num();
 
-					if (StructProperty->ArrayDim == LoadAssetTypeCount)
+					if (StructProperty->ArrayDim == DataCollectionTypeCount)
 					{
-						CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(uint8, MAX, LoadAssetTypeCount)
+						CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(uint8, MAX, DataCollectionTypeCount)
 
 						if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 						{
 							// Find LoadAssetsType
-							for (int32 I = 0; I < LoadAssetTypeCount; ++I)
+							for (int32 I = 0; I < DataCollectionTypeCount; ++I)
 							{
 								TArray<FCsPayload>& Array = ((*Member)[I]).Payloads;
 
-								const FECsLoadAssetsType& AssetsType = EMCsLoadAssetsType::Get().GetEnumAt(I);
+								const FECsDataCollectionType& CollectionType = EMCsDataCollectionType::Get().GetEnumAt(I);
 
-								if (AssetsType != LoadAssetsType)
+								if (CollectionType != DataCollectionType)
 									continue;
 
-								const FString& LoadAssetsTypeAsString = LoadAssetsType.Name;
+								const FString& DataCollectionTypeAsString = CollectionType.Name;
 
 								bool Found = false;
 
@@ -627,10 +627,10 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 										if (Found)
 											RemoveEntry.Output += TEXT(", ");
 
-										const FString& AssetTypeAsString = Payload.AssetType;
+										const FString& DataTypeAsString = Payload.DataType;
 										const FString& LoadFlagsAsString = EMCsLoadFlags_Editor::Get().ToString(Payload.LoadFlags);
 
-										RemoveEntry.Output += TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(J) + TEXT("]");
+										RemoveEntry.Output += TEXT("[") + DataCollectionTypeAsString + TEXT(", ") + DataTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(J) + TEXT("]");
 
 										Found = true;
 
@@ -648,10 +648,10 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			RemoveEntry.Output = TEXT("Nothing Removed.");
 		RemoveEntry.Message = TEXT("SUCCESS");
 
-		if (UCsCommon::IsDefaultObject(this))
+		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsCommon::DisplayNotificationInfo(RemoveEntry.Output, TEXT("Payload"), TEXT("RemoveEntryOutput"), 5.0f);
-			UCsCommon::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Output, TEXT("Payload"), TEXT("RemoveEntryOutput"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
 		}
 		RemoveEntry.Remove = false;
 	}

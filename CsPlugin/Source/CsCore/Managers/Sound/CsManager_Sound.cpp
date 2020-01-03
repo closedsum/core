@@ -2,7 +2,7 @@
 #include "Managers/Sound/CsManager_Sound.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 #include "Managers/Sound/CsSound.h"
 
@@ -122,7 +122,7 @@ void FCsManager_Sound::Stop(FCsSoundElement* sound, UObject* owner, UObject* par
 	{
 		if (UWorld* currentWorld = owner->GetWorld())
 		{
-			if (UCsCommon::IsPlayInEditorPreview(currentWorld) || UCsCommon::IsPlayInEditor(currentWorld))
+			if (UCsLibrary_Common::IsPlayInEditorPreview(currentWorld) || UCsLibrary_Common::IsPlayInEditor(currentWorld))
 				return;
 		}
 	}
@@ -187,7 +187,7 @@ void AICsManager_Sound::PostActorCreated()
 {
 #if WITH_EDITOR 
 	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(InWorld))
+	if (UCsLibrary_Common::IsPlayInEditorPreview(InWorld))
 	{
 		if (UCsAnimInstance* AnimInstance = Cast<UCsAnimInstance>(GetMyOwner()))
 			return AnimInstance->GetManager_Sound();

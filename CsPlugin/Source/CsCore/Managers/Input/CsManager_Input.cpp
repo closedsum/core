@@ -4,8 +4,8 @@
 #include "CsCVars.h"
 
 // Library
-#include "Common/CsCommon.h"
-#include "Common/CsCommon_Load.h"
+#include "Library/CsLibrary_Common.h"
+#include "Library/CsLibrary_Load.h"
 
 #include "Managers/Input/CsInput_Base.h"
 // Game
@@ -89,7 +89,7 @@ void UCsManager_Input::Init()
 /*static*/ UCsManager_Input* UCsManager_Input::Get(UWorld* World, const int32& Index /*= INDEX_NONE*/)
 {
 	// TODO: Fix
-	return UCsCommon::GetLocalPlayerController<ACsPlayerController>(World)->Manager_Input;
+	return UCsLibrary_Common::GetLocalPlayerController<ACsPlayerController>(World)->Manager_Input;
 }
 
 // UActorComponent Interface
@@ -136,7 +136,7 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 	CurrentDeltaTime	   = DeltaTime;
 	CurrentInputFrameIndex = (CurrentInputFrameIndex + 1) % CS_MAX_INPUT_FRAMES;
 
-	InputFrames[CurrentInputFrameIndex].Init(GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), DeltaTime, UCsCommon::GetCurrentFrame(GetWorld()));
+	InputFrames[CurrentInputFrameIndex].Init(GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), DeltaTime, UCsLibrary_Common::GetCurrentFrame(GetWorld()));
 
 	// Cache Raw Pressed Inputs
 	PressedKeys.Reset();
@@ -181,14 +181,14 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 	*/
 
 	// Capture VR related Input
-	const bool IsVR = UCsCommon::IsVR();
+	const bool IsVR = UCsLibrary_Common::IsVR();
 
 	if (IsVR)
 	{
 		FRotator Rotation;
 		FVector Location;
 
-		UCsCommon::GetHMDOrientationAndPosition(Rotation, Location);
+		UCsLibrary_Common::GetHMDOrientationAndPosition(Rotation, Location);
 
 		HMD_Rotation_Raw.ExecuteIfBound(Rotation);
 		HMD_Location_Raw.ExecuteIfBound(Location);
@@ -858,7 +858,7 @@ void UCsManager_Input::ClearCurrentInputActionMap(const int32& Map)
 
 FCsInput* UCsManager_Input::GetPreviousInputAction(const FECsInputAction& Action)
 {
-	const int32 LastInputFrame = UCsCommon::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
+	const int32 LastInputFrame = UCsLibrary_Common::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action);
 
 	return Input;
@@ -866,7 +866,7 @@ FCsInput* UCsManager_Input::GetPreviousInputAction(const FECsInputAction& Action
 
 FCsInput* UCsManager_Input::GetPreviousInputAction(const FECsInputAction& Action, const ECsInputEvent& Event)
 {
-	const int32 LastInputFrame = UCsCommon::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
+	const int32 LastInputFrame = UCsLibrary_Common::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action, Event);
 
 	return Input;
@@ -874,7 +874,7 @@ FCsInput* UCsManager_Input::GetPreviousInputAction(const FECsInputAction& Action
 
 FCsInput* UCsManager_Input::GetPreviousInputAction(const FECsInputAction& Action, const TArray<ECsInputEvent>& Events)
 {
-	const int32 LastInputFrame = UCsCommon::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
+	const int32 LastInputFrame = UCsLibrary_Common::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action, Events);
 
 	return Input;
@@ -882,7 +882,7 @@ FCsInput* UCsManager_Input::GetPreviousInputAction(const FECsInputAction& Action
 
 FCsInput* UCsManager_Input::GetPreviousPreviousInputAction(const FECsInputAction& Action)
 {
-	const int32 LastInputFrame = UCsCommon::Mod(CurrentInputFrameIndex - 2, CS_MAX_INPUT_FRAMES);
+	const int32 LastInputFrame = UCsLibrary_Common::Mod(CurrentInputFrameIndex - 2, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action);
 
 	return Input;
@@ -1091,7 +1091,7 @@ void UCsManager_Input::SaveInputProfile()
 
 	JsonWriter->WriteObjectStart();
 
-	UCsCommon_Load::WriteStructToJson(JsonWriter, (void*)(&InputProfile), FCsInputProfile::StaticStruct(), nullptr);
+	UCsLibrary_Load::WriteStructToJson(JsonWriter, (void*)(&InputProfile), FCsInputProfile::StaticStruct(), nullptr);
 
 	JsonWriter->WriteObjectEnd();
 
@@ -1178,7 +1178,7 @@ void UCsManager_Input::LoadInputProfile()
 
 		if (FJsonSerializer::Deserialize(JsonReader, JsonParsed) && JsonParsed.IsValid())
 		{
-			UCsCommon_Load::ReadStructFromJson(JsonParsed, &InputProfile, FCsInputProfile::StaticStruct(), nullptr);
+			UCsLibrary_Load::ReadStructFromJson(JsonParsed, &InputProfile, FCsInputProfile::StaticStruct(), nullptr);
 			// Update Action and Key members
 
 			for (FCsInputActionMappings& DeviceMapping : InputProfile.DeviceMappings)
@@ -1271,7 +1271,7 @@ const FKey& UCsManager_Input::GetKeyFromAction(const ECsInputDevice& Device, con
 
 const FKey& UCsManager_Input::GetKeyFromAction(const FECsInputAction& Action)
 {
-	UPlayerInput* PlayerInput = UCsCommon::GetLocalPlayerInput(GetWorld());
+	UPlayerInput* PlayerInput = UCsLibrary_Common::GetLocalPlayerInput(GetWorld());
 
 	const FString& ActionAsString = Action.Name;
 	const FName& ActionName		  = Action.Name_Internal;

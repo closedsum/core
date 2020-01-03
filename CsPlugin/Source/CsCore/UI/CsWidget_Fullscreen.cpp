@@ -2,7 +2,7 @@
 #include "UI/CsWidget_Fullscreen.h"
 #include "CsCore.h"
 
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Managers
@@ -173,7 +173,7 @@ CS_COROUTINE(UCsWidget_Fullscreen, Fade_Internal)
 	{
 		{
 			const float Percent = FMath::Clamp((CurrentTime.Time - StartTime.Time) / MaxTime, 0.0f, 1.0f);
-			const float Time    = UCsCommon::Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
+			const float Time    = UCsLibrary_Common::Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
 			const float Alpha   = IsFadeOut ? 1.0f - (Min + Percent * Delta) : Min + Percent * Delta;
 
 			wd->Fullscreen.SetOpacity(Alpha);

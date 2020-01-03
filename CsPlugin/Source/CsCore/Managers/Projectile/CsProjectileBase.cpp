@@ -2,7 +2,7 @@
 #include "Managers/Projectile/CsProjectileBase.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 #include "Managers/Projectile/CsProjectileMovementComponent.h"
 
 // Data
@@ -140,7 +140,7 @@ void ACsProjectileBase::DrawPath(const float &DeltaSeconds)
 	if (CsCVarDrawLocalPlayerProjectilePath->GetInt() == CS_CVAR_DRAW)
 	{
 		APawn* Pawn					 = Cast<APawn>(Cache.GetInstigator());
-		const bool IsLocalInstigator = UCsCommon::IsLocalPawn(GetWorld(), Pawn);
+		const bool IsLocalInstigator = UCsLibrary_Common::IsLocalPawn(GetWorld(), Pawn);
 
 		if (IsLocalInstigator)
 		{
@@ -197,7 +197,7 @@ void ACsProjectileBase::Init(const int32& Index, const FECsProjectile& InType)
 
 void ACsProjectileBase::Allocate(FCsProjectileBasePayload* Payload)
 {
-	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsLibrary_Common::GetCurrentFrame(GetWorld()));
 
 	Allocate_Internal(Payload);
 
@@ -218,7 +218,7 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 #endif // #if WITH_EDITOR
 
 	ACsPawn* InstigatingPawn   = Cast<ACsPawn>(Cache.GetInstigator());
-	const bool IsLocalClient   = UCsCommon::IsLocalPawn(GetWorld(), InstigatingPawn);
+	const bool IsLocalClient   = UCsLibrary_Common::IsLocalPawn(GetWorld(), InstigatingPawn);
 	const ECsViewType& ViewType = IsLocalClient ? ECsViewType::FirstPerson : ECsViewType::ThirdPerson;
 
 	ACsWeapon* OwnerWeapon					= Cast<ACsWeapon>(Cache.GetOwner());
@@ -384,7 +384,7 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 
 	if (DrawDistanceSq > 0)
 	{
-		const float DistanceSq = UCsCommon::GetSquaredDistanceToLocalControllerEye(GetWorld(), GetActorLocation());
+		const float DistanceSq = UCsLibrary_Common::GetSquaredDistanceToLocalControllerEye(GetWorld(), GetActorLocation());
 		const bool Hide		   = DistanceSq > DrawDistanceSq;
 
 		if (Hide != bHidden)
@@ -437,7 +437,7 @@ void ACsProjectileBase::DeAllocate()
 	}
 
 	// Mesh
-	UCsCommon::ClearOverrideMaterials(MeshComponent);
+	UCsLibrary_Common::ClearOverrideMaterials(MeshComponent);
 	MeshComponent->SetStaticMesh(nullptr);
 	MeshComponent->SetVisibility(false);
 	MeshComponent->SetHiddenInGame(true);

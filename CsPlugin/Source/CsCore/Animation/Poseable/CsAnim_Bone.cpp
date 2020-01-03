@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Animation/Poseable/CsAnim_Bone.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 #include "Types/CsTypes.h"
 #include "Components/CsStaticMeshComponent.h"
 
@@ -46,7 +46,7 @@ void ACsAnim_Bone::Tick(float DeltaSeconds)
 
 #if WITH_EDITOR
 	// Handle Waypoints placed in Editor
-	if (UCsCommon::IsPlayInEditor(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditor(GetWorld()))
 	{
 		OnTick_Editor(DeltaSeconds);
 		return;
@@ -57,7 +57,7 @@ void ACsAnim_Bone::Tick(float DeltaSeconds)
 bool ACsAnim_Bone::ShouldTickIfViewportsOnly() const
 {
 #if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditor(GetWorld()))
+	if (UCsLibrary_Common::IsPlayInEditor(GetWorld()))
 		return true;
 #endif // #if WITH_EDITOR
 	return Super::ShouldTickIfViewportsOnly();
@@ -247,7 +247,7 @@ void ACsAnim_Bone::UpdateScale(const FVector &InScale, const int32 &Axes /*= ECS
 
 void ACsAnim_Bone::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
-	if (!UCsCommon::IsPlayInEditor(GetWorld()))
+	if (!UCsLibrary_Common::IsPlayInEditor(GetWorld()))
 	{
 		Super::PostEditChangeProperty(e);
 		return;

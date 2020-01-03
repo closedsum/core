@@ -2,7 +2,7 @@
 #include "Managers/Runnable/CsManager_Runnable.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 // static initializations
 UCsManager_Runnable* UCsManager_Runnable::s_managerRunnableSingleton;
@@ -150,7 +150,7 @@ void UCsManager_Runnable::LogTransaction(const FString& FunctionName, const ECsP
 		const FString& TransactionAsString = NCsPoolTransaction::ToActionString(Transaction);
 
 		const FString& RunnableName  = Runnable->Cache.Name;
-		const float CurrentTime		 = GetCurrentWorld() ? GetCurrentWorld()->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
+		const float CurrentTime		 = GetCurrentWorld() ? GetCurrentWorld()->GetTimeSeconds() : UCsLibrary_Common::GetCurrentDateTimeSeconds();
 		const UObject* RunnableOwner = Runnable->Cache.GetOwner();
 		const FString OwnerName		 = RunnableOwner ? RunnableOwner->GetName() : NCsCached::Str::None;
 
@@ -188,9 +188,9 @@ FCsRunnable_Delegate * UCsManager_Runnable::Prep(FCsRunnablePayload* Payload)
 	ActiveRunnables.Add(Runnable->Cache.Index, Runnable);
 
 	if (UWorld* World = GetCurrentWorld())
-		Runnable->Allocate(Payload, World->GetTimeSeconds(), World->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(World));
+		Runnable->Allocate(Payload, World->GetTimeSeconds(), World->GetRealTimeSeconds(), UCsLibrary_Common::GetCurrentFrame(World));
 	else
-		Runnable->Allocate(Payload, UCsCommon::GetCurrentDateTimeSeconds(), UCsCommon::GetCurrentDateTimeSeconds(), 0);
+		Runnable->Allocate(Payload, UCsLibrary_Common::GetCurrentDateTimeSeconds(), UCsLibrary_Common::GetCurrentDateTimeSeconds(), 0);
 
 	LogTransaction(NCsManagerRunnableCached::Str::Prep, ECsPoolTransaction::Allocate, Runnable);
 	Payload->Reset();

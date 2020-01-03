@@ -63,23 +63,23 @@ bool UCsManager_Load::Tick(float DeltaSeconds)
 	if (AssetReferencesQueue.Num() == CS_EMPTY)
 		return true;
 
-	TArray<FStringAssetReference>& AssetReferences = AssetReferencesQueue[CS_FICST];
+	TArray<FStringAssetReference>& AssetReferences = AssetReferencesQueue[CS_FIRST];
 
-	if (AsyncOrders[CS_FICST] == ECsLoadAsyncOrder::Bulk)
+	if (AsyncOrders[CS_FIRST] == ECsLoadAsyncOrder::Bulk)
 		OnLoadProgressUpdated_Event.Broadcast(LoadHandle->GetProgress());
 
 	// If Still Loading, EXIT
 	if (AssetReferencesLoadedCount < AssetReferences.Num())
 		return true;
 	
-	const float CurrentTime = CurrentWorlds[CS_FICST] ? CurrentWorlds[CS_FICST]->GetTimeSeconds() : UCsLibrary_Common::GetCurrentDateTimeSeconds();
+	const float CurrentTime = CurrentWorlds[CS_FIRST] ? CurrentWorlds[CS_FIRST]->GetTimeSeconds() : UCsLibrary_Common::GetCurrentDateTimeSeconds();
 	const float LoadingTime = CurrentTime - LoadingTotalStartTime;
 
 	// All AssetReferences are LOADED
 	if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
 	{
 		// FirstToLast
-		if (AsyncOrders[CS_FICST] == ECsLoadAsyncOrder::FirstToLast)
+		if (AsyncOrders[CS_FIRST] == ECsLoadAsyncOrder::FirstToLast)
 		{
 			UE_LOG(LogCs, Log, TEXT("UCsManager_Load::Tick: Finished Loading %d Assets. %f mb (%f kb, %d bytes) in %f seconds."), AssetReferencesLoadedCount, ResourceSizeLoaded.Megabytes, ResourceSizeLoaded.Kilobytes, ResourceSizeLoaded.Bytes, LoadingTime);
 		}
@@ -90,12 +90,12 @@ bool UCsManager_Load::Tick(float DeltaSeconds)
 		}
 	}
 
-	AsyncOrders.RemoveAt(CS_FICST);
-	AssetReferencesQueue.RemoveAt(CS_FICST);
-	CurrentWorlds.RemoveAt(CS_FICST);
+	AsyncOrders.RemoveAt(CS_FIRST);
+	AssetReferencesQueue.RemoveAt(CS_FIRST);
+	CurrentWorlds.RemoveAt(CS_FIRST);
 
-	OnFinishedLoadingAssetReferences_Events[CS_FICST].Broadcast(LoadedAssets, LoadingTime);
-	OnFinishedLoadingAssetReferences_Events.RemoveAt(CS_FICST);
+	OnFinishedLoadingAssetReferences_Events[CS_FIRST].Broadcast(LoadedAssets, LoadingTime);
+	OnFinishedLoadingAssetReferences_Events.RemoveAt(CS_FIRST);
 
 	OnFinishedLoadingAssetReferences_Event.Broadcast(LoadedAssets, LoadingTime);
 	Bulk_OnFinishedLoadingAssetReferences_Event.Broadcast(LoadedAssets, LoadingTime);
@@ -108,7 +108,7 @@ bool UCsManager_Load::Tick(float DeltaSeconds)
 	// If Queue is NOT Empty, Load the next batch of AssetReferences 
 	if (AssetReferencesQueue.Num() != CS_EMPTY)
 	{
-		LoadAssetReferences_Internal(AssetReferencesQueue[CS_FICST], AsyncOrders[CS_FICST]);
+		LoadAssetReferences_Internal(AssetReferencesQueue[CS_FIRST], AsyncOrders[CS_FIRST]);
 	}
 	return true;
 }
@@ -133,7 +133,7 @@ void UCsManager_Load::CleanUp()
 
 void UCsManager_Load::OnFinishedLoadingAssetReference()
 {
-	TArray<FStringAssetReference>& AssetReferences = AssetReferencesQueue[CS_FICST];
+	TArray<FStringAssetReference>& AssetReferences = AssetReferencesQueue[CS_FIRST];
 	FStringAssetReference& AssetReference		   = AssetReferences[AssetReferencesLoadedCount];
 
 	UObject* Asset = AssetReference.ResolveObject();
@@ -154,7 +154,7 @@ void UCsManager_Load::OnFinishedLoadingAssetReference()
 	ResourceSizeLoaded.Kilobytes += Kilobytes;
 	ResourceSizeLoaded.Megabytes += Megabytes;
 
-	const float CurrentTime = CurrentWorlds[CS_FICST] ? CurrentWorlds[CS_FICST]->GetTimeSeconds() : UCsLibrary_Common::GetCurrentDateTimeSeconds();
+	const float CurrentTime = CurrentWorlds[CS_FIRST] ? CurrentWorlds[CS_FIRST]->GetTimeSeconds() : UCsLibrary_Common::GetCurrentDateTimeSeconds();
 	const float LoadingTime	= CurrentTime - LoadingStartTime;
 
 	if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
@@ -186,7 +186,7 @@ void UCsManager_Load::OnFinishedLoadingAssetReference()
 
 void UCsManager_Load::OnFinishedLoadingAssetReferences()
 {
-	TArray<FStringAssetReference>& AssetReferences = AssetReferencesQueue[CS_FICST];
+	TArray<FStringAssetReference>& AssetReferences = AssetReferencesQueue[CS_FIRST];
 
 	for (FStringAssetReference& AssetReference : AssetReferences)
 	{
@@ -231,10 +231,10 @@ void UCsManager_Load::LoadAssetReferences_Internal(TArray<FStringAssetReference>
 	{
 		if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			UE_LOG(LogCs, Log, TEXT("UCsManager_Load::LoadAssetReferences_Internal: Requesting Load of %s."), *(AssetReferences[CS_FICST].ToString()));
+			UE_LOG(LogCs, Log, TEXT("UCsManager_Load::LoadAssetReferences_Internal: Requesting Load of %s."), *(AssetReferences[CS_FIRST].ToString()));
 		}
-		OnStartLoadingAssetReference_Event.Broadcast(AssetReferences[CS_FICST]);
-		StreamableManager.RequestAsyncLoad(AssetReferences[CS_FICST], AssetReferenceLoadedDelegate);
+		OnStartLoadingAssetReference_Event.Broadcast(AssetReferences[CS_FIRST]);
+		StreamableManager.RequestAsyncLoad(AssetReferences[CS_FIRST], AssetReferenceLoadedDelegate);
 	}
 		// Bulk
 	else
@@ -242,6 +242,6 @@ void UCsManager_Load::LoadAssetReferences_Internal(TArray<FStringAssetReference>
 		LoadHandle = StreamableManager.RequestAsyncLoad(AssetReferences, AssetReferencesLoadedDelegate);
 	}
 
-	LoadingStartTime	  = CurrentWorlds[CS_FICST] ? CurrentWorlds[CS_FICST]->GetTimeSeconds() : UCsLibrary_Common::GetCurrentDateTimeSeconds();
+	LoadingStartTime	  = CurrentWorlds[CS_FIRST] ? CurrentWorlds[CS_FIRST]->GetTimeSeconds() : UCsLibrary_Common::GetCurrentDateTimeSeconds();
 	LoadingTotalStartTime = LoadingStartTime;
 }

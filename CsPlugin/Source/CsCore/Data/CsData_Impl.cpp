@@ -4,9 +4,9 @@
 #include "CsCVars.h"
 
 // Library
-#include "Common/CsCommon_Load.h"
+#include "Library/CsLibrary_Load.h"
 #include "Library/CsLibrary_Asset.h"
-#include "Common/CsCommon.h"
+#include "Library/CsLibrary_Common.h"
 
 #if WITH_EDITOR
 #include "Data/CsDataMapping.h"
@@ -41,7 +41,7 @@ void UCsData_Impl::PostLoad()
 	ShortCodeAsString = ShortCode.ToString();
 
 #if WITH_EDITOR
-	if (UCsCommon::IsAnyWorldContextEditorOrEditorPreview())
+	if (UCsLibrary_Common::IsAnyWorldContextEditorOrEditorPreview())
 	{
 		VerifyJsonIntegrity();
 	}
@@ -56,7 +56,7 @@ void UCsData_Impl::PreSave(const class ITargetPlatform* TargetPlatform)
 #if WITH_EDITOR
 	OnPreSave();
 	PopulateAssetReferences(true);
-	UCsCommon_Load::GetCategoryMemberAssociations(this, GetClass(), CategoryMemberAssociations);
+	UCsLibrary_Load::GetCategoryMemberAssociations(this, GetClass(), CategoryMemberAssociations);
 	SaveToJson();
 #endif WITH_EDITOR
 }
@@ -100,7 +100,7 @@ void UCsData_Impl::PopulateAssetReferences(const bool& CalculateResourceSizes)
 		if (I == Count - 1)
 			CS_SET_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning);
 
-		UCsCommon_Load::GetAssetReferencesFromObject(this, GetClass(), (ECsLoadFlags)I, AssetReferences[I].References, GetAssetReferencesFromObject_Internal, LoadCodes);
+		UCsLibrary_Load::GetAssetReferencesFromObject(this, GetClass(), (ECsLoadFlags)I, AssetReferences[I].References, GetAssetReferencesFromObject_Internal, LoadCodes);
 		
 		AssetReferences[I].CalculateSize();
 	}
@@ -115,7 +115,7 @@ void UCsData_Impl::VerifyJsonIntegrity()
 	// Get Latest CategoryMemberAssociations. Check for changes do to Code updates
 	TArray<FCsCategoryMemberAssociation> LatestCategoryMemberAssociations;
 
-	UCsCommon_Load::GetCategoryMemberAssociations(this, GetClass(), LatestCategoryMemberAssociations);
+	UCsLibrary_Load::GetCategoryMemberAssociations(this, GetClass(), LatestCategoryMemberAssociations);
 
 	// Check for change in number of categories
 	const int32 LatestCount  = LatestCategoryMemberAssociations.Num();
@@ -219,19 +219,19 @@ void UCsData_Impl::Load(const ECsLoadFlags& LoadFlags /*=ECsLoadFlags::All*/)
 	if (!HasLoadedFromJson)
 		LoadFromJson();
 
-	UCsCommon_Load::LoadObjectWithTSoftObjectPtrs(ShortCodeAsString, (void*)this, GetClass(), LoadFlags, LoadObjectWithTSoftObjectPtrs_Internal);
+	UCsLibrary_Load::LoadObjectWithTSoftObjectPtrs(ShortCodeAsString, (void*)this, GetClass(), LoadFlags, LoadObjectWithTSoftObjectPtrs_Internal);
 }
 
 void UCsData_Impl::UnLoad()
 {
-	UCsCommon_Load::UnLoadObjectWithTSoftObjectPtrs((void*)this, GetClass());
+	UCsLibrary_Load::UnLoadObjectWithTSoftObjectPtrs((void*)this, GetClass());
 }
 
 bool UCsData_Impl::IsLoaded()
 {
 	const FString DataName = ShortCode.ToString();
 
-	return UCsCommon_Load::IsLoadedObjectWithTSoftObjectPtrs(DataName, (void*)this, GetClass());
+	return UCsLibrary_Load::IsLoadedObjectWithTSoftObjectPtrs(DataName, (void*)this, GetClass());
 }
 
 FString UCsData_Impl::GetAbsolutePath()
@@ -256,7 +256,7 @@ void UCsData_Impl::SaveToJson()
 
 	JsonWriter->WriteObjectStart();
 
-	UCsCommon_Load::WriteObjectToJson(JsonWriter, (void*)this, GetClass(), CategoryMemberAssociations, WriteObjectToJson_Internal);
+	UCsLibrary_Load::WriteObjectToJson(JsonWriter, (void*)this, GetClass(), CategoryMemberAssociations, WriteObjectToJson_Internal);
 	
 	JsonWriter->WriteObjectEnd();
 
@@ -299,7 +299,7 @@ void UCsData_Impl::LoadFromJson()
 #if WITH_EDITOR
 			VerifyJsonIntegrity();
 #endif // #if WITH_EDITOR
-			UCsCommon_Load::ReadObjectFromJson(JsonParsed, this, GetClass(), CategoryMemberAssociations, ReadObjectFromJson_Internal);
+			UCsLibrary_Load::ReadObjectFromJson(JsonParsed, this, GetClass(), CategoryMemberAssociations, ReadObjectFromJson_Internal);
 		}
 		else
 		{
@@ -421,15 +421,15 @@ void UCsData_Impl::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		AddToDataMapping.Message = TEXT("");
 		AddToDataMapping.Output  = TEXT("");
 
-		if (!EMCsAssetType::Get().IsValidEnum(Type))
+		if (!EMCsDataType::Get().IsValidEnum(Type))
 		{
 			AddToDataMapping.Message = TEXT("INVALID Type.");
 			AddToDataMapping.Output  = TEXT("ERROR");
 
-			if (UCsCommon::IsDefaultObject(this))
+			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsCommon::DisplayNotificationInfo(AddToDataMapping.Output, TEXT("Data"), TEXT("AddToDataMappingOutput"), 5.0f);
-				UCsCommon::DisplayNotificationInfo(AddToDataMapping.Message, TEXT("DataMapping"), TEXT("AddToDataMappingMessage"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(AddToDataMapping.Output, TEXT("Data"), TEXT("AddToDataMappingOutput"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(AddToDataMapping.Message, TEXT("DataMapping"), TEXT("AddToDataMappingMessage"), 5.0f);
 			}
 
 			AddToDataMapping.AddToDataMapping = false;
@@ -442,10 +442,10 @@ void UCsData_Impl::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		DataMapping->PerformAddEntry(ShortCode, Type, AddToDataMapping.LoadFlags, AddToDataMapping.Message, AddToDataMapping.Output);
 		DataMapping->GenerateMaps();
 
-		if (UCsCommon::IsDefaultObject(this))
+		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsCommon::DisplayNotificationInfo(AddToDataMapping.Output, TEXT("Data"), TEXT("AddToDataMappingOutput"), 5.0f);
-			UCsCommon::DisplayNotificationInfo(AddToDataMapping.Message, TEXT("Data"), TEXT("AddToDataMappingMessage"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(AddToDataMapping.Output, TEXT("Data"), TEXT("AddToDataMappingOutput"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(AddToDataMapping.Message, TEXT("Data"), TEXT("AddToDataMappingMessage"), 5.0f);
 		}
 		AddToDataMapping.AddToDataMapping = false;
 	}
@@ -461,15 +461,15 @@ void UCsData_Impl::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		AddToPayload.Message = TEXT("");
 		AddToPayload.Output  = TEXT("");
 
-		if (!EMCsAssetType::Get().IsValidEnum(Type))
+		if (!EMCsDataType::Get().IsValidEnum(Type))
 		{
 			AddToPayload.Message = TEXT("INVALID Type.");
 			AddToPayload.Output = TEXT("ERROR");
 
-			if (UCsCommon::IsDefaultObject(this))
+			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsCommon::DisplayNotificationInfo(AddToPayload.Output, TEXT("Data"), TEXT("AddToPayloadOutput"), 5.0f);
-				UCsCommon::DisplayNotificationInfo(AddToPayload.Message, TEXT("Data"), TEXT("AddToPayloadMessage"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(AddToPayload.Output, TEXT("Data"), TEXT("AddToPayloadOutput"), 5.0f);
+				UCsLibrary_Common::DisplayNotificationInfo(AddToPayload.Message, TEXT("Data"), TEXT("AddToPayloadMessage"), 5.0f);
 			}
 
 			AddToPayload.AddToPayload = false;
@@ -481,10 +481,10 @@ void UCsData_Impl::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		Payload->PerformAddEntry(ShortCode, AddToPayload.LoadAssetsType, AddToPayload.LoadFlags, AddToPayload.Message, AddToPayload.Output);
 
-		if (UCsCommon::IsDefaultObject(this))
+		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsCommon::DisplayNotificationInfo(AddToPayload.Output, TEXT("Data"), TEXT("AddToPayloadOutput"), 5.0f);
-			UCsCommon::DisplayNotificationInfo(AddToPayload.Message, TEXT("Data"), TEXT("AddToPayloadMessage"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(AddToPayload.Output, TEXT("Data"), TEXT("AddToPayloadOutput"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(AddToPayload.Message, TEXT("Data"), TEXT("AddToPayloadMessage"), 5.0f);
 		}
 		AddToPayload.AddToPayload = false;
 	}
@@ -497,10 +497,10 @@ void UCsData_Impl::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			return;
 		}
 
-		if (UCsCommon::IsDefaultObject(this))
+		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
 			LoadFromJson();
-			UCsCommon::DisplayNotificationInfo(TEXT("COMPLETE"), TEXT("Data"), TEXT("LoadFromJsonMessage"), 5.0f);
+			UCsLibrary_Common::DisplayNotificationInfo(TEXT("COMPLETE"), TEXT("Data"), TEXT("LoadFromJsonMessage"), 5.0f);
 		}
 
 		PerformLoadFromJson.Load = false;

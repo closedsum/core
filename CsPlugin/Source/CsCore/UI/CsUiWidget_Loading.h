@@ -6,7 +6,7 @@
 // Loading
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUiWidgetLoading_OnStartLoadingAssets, const int32&, AssetCount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUiWidgetLoading_OnStartLoadingAsset, const FStringAssetReference&, Reference);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUiWidgetLoading_OnFinishedLoadingAsset, const FCsAssetReferenceLoadedCache&, Cache);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUiWidgetLoading_OnFinishedLoadingAsset, const FCsObjectPathLoadedCache&, Cache);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUiWidgetLoading_OnFinishedLoadingAssets, const TArray<UObject*>&, LoadedAssets, const float&, LoadingTime);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUiWidgetLoading_OnStartLoadProgress, const int32&, AssetCount);
@@ -57,7 +57,7 @@ class CSCORE_API UCsUiWidget_Loading : public UCsUserWidget
 	UPROPERTY(BlueprintAssignable, Category = "Loading")
 	FBindableDynEvent_CsUiWidgetLoading_OnStartLoadingAsset OnStartLoadingAsset_ScriptEvent;
 
-	virtual void OnFinishedLoadingAsset(const FCsAssetReferenceLoadedCache &Cache);
+	virtual void OnFinishedLoadingAsset(const FCsObjectPathLoadedCache &Cache);
 
 	UPROPERTY(BlueprintAssignable, Category = "Loading")
 	FBindableDynEvent_CsUiWidgetLoading_OnFinishedLoadingAsset OnFinishedLoadingAsset_ScriptEvent;

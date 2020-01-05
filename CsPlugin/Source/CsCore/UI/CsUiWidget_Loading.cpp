@@ -73,9 +73,9 @@ void UCsUiWidget_Loading::OnStartLoadingAsset(const FStringAssetReference &Refer
 #endif // #if WITH_EDITOR
 }
 
-void UCsUiWidget_Loading::OnFinishedLoadingAsset(const FCsAssetReferenceLoadedCache &Cache)
+void UCsUiWidget_Loading::OnFinishedLoadingAsset(const FCsObjectPathLoadedCache &Cache)
 {
-	Loading.SetFinished(Cache.Reference.ToString(), Cache.Count + 1, Cache.Size.Megabytes, Cache.Size.Kilobytes, Cache.Size.Bytes, Cache.Time);
+	Loading.SetFinished(Cache.Path.ToString(), Cache.Count + 1, Cache.Size.Megabytes, Cache.Size.Kilobytes, Cache.Size.Bytes, Cache.Time);
 
 #if WITH_EDITOR
 	OnFinishedLoadingAsset_ScriptEvent.Broadcast(Cache);

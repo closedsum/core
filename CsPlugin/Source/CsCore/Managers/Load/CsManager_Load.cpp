@@ -163,14 +163,14 @@ void UCsManager_Load::OnFinishedLoadingAssetReference()
 	}
 
 	// Broadcast the event to anyone listening
-	AssetReferenceLoadedCache.Reference		 = AssetReference;
-	AssetReferenceLoadedCache.Count			 = LastCount;
-	AssetReferenceLoadedCache.Size.Bytes	 = Bytes;
-	AssetReferenceLoadedCache.Size.Kilobytes = Kilobytes;
-	AssetReferenceLoadedCache.Size.Megabytes = Megabytes;
-	AssetReferenceLoadedCache.Time			 = LoadingTime;
+	ObjectPathLoadedCache.Path			 = AssetReference;
+	ObjectPathLoadedCache.Count			 = LastCount;
+	ObjectPathLoadedCache.Size.Bytes	 = Bytes;
+	ObjectPathLoadedCache.Size.Kilobytes = Kilobytes;
+	ObjectPathLoadedCache.Size.Megabytes = Megabytes;
+	ObjectPathLoadedCache.Time			 = LoadingTime;
 
-	OnFinishedLoadingAssetReference_Event.Broadcast(AssetReferenceLoadedCache);
+	OnFinishedLoadingAssetReference_Event.Broadcast(ObjectPathLoadedCache);
 	// FirstToLast, Queue the NEXT Asset for Async Load
 	if (AssetReferencesLoadedCount < AssetReferences.Num())
 	{

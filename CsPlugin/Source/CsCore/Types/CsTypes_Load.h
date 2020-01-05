@@ -295,12 +295,12 @@ struct CSCORE_API FCsDataMappingEntry
 };
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsAssetReferenceLoadedCache
+struct CSCORE_API FCsObjectPathLoadedCache
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY()
-	FStringAssetReference Reference;
+	FSoftObjectPath Path;
 
 	UPROPERTY()
 	int32 Count;

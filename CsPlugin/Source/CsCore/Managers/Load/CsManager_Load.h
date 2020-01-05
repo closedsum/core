@@ -4,6 +4,47 @@
 #include "Types/CsTypes_Load.h"
 #include "CsManager_Load.generated.h"
 
+DECLARE_DELEGATE_TwoParams(FCsManagerLoad_OnFinishedLoadingObjects, const TArray<UObject*>&, const float&);
+
+// Structs
+#pragma region
+
+class UWorld;
+
+struct CSCORE_API FCsManagerLoad_Task_LoadObjects
+{
+public:
+
+	ECsLoadAsyncOrder Order;
+
+	TArray<FSoftObjectPath> Paths;
+
+	FCsManagerLoad_OnFinishedLoadingObjects OnFinishedLoadingObjects_Event;
+
+	UWorld* CurrentWorld;
+
+	int32 LoadedCount;
+
+	FCsResourceSize ResourceSizeLoaded;
+
+	FCsManagerLoad_Task_LoadObjects()
+	{
+
+	}
+
+	void Reset()
+	{
+		Order = ECsLoadAsyncOrder::Bulk;
+		Paths.Reset(Paths.Max());
+		OnFinishedLoadingObjects_Event.Unbind();
+		CurrentWorld = nullptr;
+		LoadedCount = 0;
+		ResourceSizeLoaded.Reset();
+	}
+};
+
+#pragma endregion Structs
+
 class UWorld;
 
 UCLASS(transient)
@@ -50,7 +91,7 @@ public:
 
 	FOnStartLoadingAssetReference OnStartLoadingAssetReference_Event;
 
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnFinishedLoadingAssetReference, const FCsAssetReferenceLoadedCache&);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnFinishedLoadingAssetReference, const FCsObjectPathLoadedCache&);
 
 	FOnFinishedLoadingAssetReference OnFinishedLoadingAssetReference_Event;
 
@@ -83,11 +124,17 @@ protected:
 
 	TSharedPtr<FStreamableHandle> LoadHandle;
 
+	TArray<FCsManagerLoad_Task_LoadObjects> Tasks;
+
+public:
+
+protected:
+
 	int32 AssetReferencesLoadedCount;
 
 	FCsResourceSize ResourceSizeLoaded;
 
-	FCsAssetReferenceLoadedCache AssetReferenceLoadedCache;
+	FCsObjectPathLoadedCache ObjectPathLoadedCache;
 
 	void OnFinishedLoadingAssetReference();
 	void OnFinishedLoadingAssetReferences();

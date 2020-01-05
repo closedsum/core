@@ -3,6 +3,7 @@
 
 #include "Engine/GameInstance.h"
 #include "../Core/Public/Containers/Ticker.h"
+// Types
 #include "Types/CsTypes.h"
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "CsGameInstance.generated.h"
@@ -237,13 +238,13 @@ public:
 
 	CS_COROUTINE_DECLARE(LoadDataMapping)
 
-	virtual void OnFinishedLoadingDataAssets(const TArray<UObject*>& LoadedAssets, const float& LoadingTime);
+	virtual void OnFinishedLoadingDataObjects(const TArray<UObject*>& LoadedObjects, const float& LoadingTime);
 
 	void PopulateAssetReferences();
 	void AsyncPopulateAssetReferences();
 
 	UPROPERTY()
-	TArray<UObject*> LoadedDataAssets;
+	TArray<UObject*> LoadedDataObjects;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance|Data Mapping")
 	bool bHasLoadedDataMapping;

@@ -1,12 +1,19 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Engine/StreamableManager.h"
+// Types
 #include "Types/CsTypes_Load.h"
+#include "Managers/Time/CsTypes_Time.h"
+// Managers
+#include "Managers/MemoryResource/CsManager_MemoryResource_Fixed.h"
 #include "CsManager_Load.generated.h"
 
 DECLARE_DELEGATE_TwoParams(FCsManagerLoad_OnFinishedLoadingObjects, const TArray<UObject*>&, const float&);
 
 // Structs
+#pragma region
+
+	// FCsManagerLoad_Task_LoadObjects
 #pragma region
 
 class UWorld;
@@ -27,6 +34,16 @@ public:
 
 	FCsResourceSize ResourceSizeLoaded;
 
+protected:
+
+	FStreamableManager		StreamableManager;
+	FStreamableDelegate		AssetReferenceLoadedDelegate;
+	FStreamableDelegate		AssetReferencesLoadedDelegate;
+
+	TSharedPtr<FStreamableHandle> LoadHandle;
+
+public:
+
 	FCsManagerLoad_Task_LoadObjects()
 	{
 
@@ -41,7 +58,27 @@ public:
 		LoadedCount = 0;
 		ResourceSizeLoaded.Reset();
 	}
+
+	void OnUpdate(const FCsDeltaTime& DeltaTime);
+
+	void OnFinishedLoadingObjectPath();
+	void OnFinishedLoadingObjectPaths();
 };
+
+#pragma endregion FCsManagerLoad_Task_LoadObjects
+
+	// Memory Resource
+#pragma region
+
+struct CSCORE_API FCsMemoryResource_ManagerLoad_Task_LoadObjects : public TCsMemoryResource<FCsManagerLoad_Task_LoadObjects>
+{
+};
+
+struct CSCORE_API FCsManager_MemoryResource_ManagerLoad_Task_LoadObjects : public TCsManager_MemoryResource_Fixed<FCsManagerLoad_Task_LoadObjects, FCsMemoryResource_ManagerLoad_Task_LoadObjects, 64>
+{
+};
+
+#pragma endregion Memory Resource
 
 #pragma endregion Structs
 
@@ -124,9 +161,15 @@ protected:
 
 	TSharedPtr<FStreamableHandle> LoadHandle;
 
-	TArray<FCsManagerLoad_Task_LoadObjects> Tasks;
+// Tasks
+#pragma region
+protected:
+
+	FCsManager_MemoryResource_ManagerLoad_Task_LoadObjects Manager_Tasks;
 
 public:
+
+#pragma endregion Tasks
 
 protected:
 
@@ -147,24 +190,6 @@ protected:
 
 public:
 
-	template<typename T>
-	void LoadAssetReferences(UWorld* CurrentWorld, TArray<FStringAssetReference>& AssetReferences, const ECsLoadAsyncOrder& AsyncOrder, T* CallbackCaller, void (T::*Callback)(const TArray<UObject*>&, const float&))
-	{
-		// Add Callback
-		OnFinishedLoadingAssetReferences_Events.AddDefaulted();
-
-		const int32 Count = OnFinishedLoadingAssetReferences_Events.Num();
-
-		OnFinishedLoadingAssetReferences_Events[Count - 1].AddUObject(CallbackCaller, Callback);
-
-		AsyncOrders.Add(AsyncOrder);
-		AssetReferencesQueue.Add(AssetReferences);
-		CurrentWorlds.Add(CurrentWorld);
-
-		// If the FIRST batch of AssetReferences, queue loading immediately
-		if (AssetReferencesQueue.Num() == 1)
-			LoadAssetReferences_Internal(AssetReferences, AsyncOrder);
-	}
-
+	void LoadAssetReferences(UWorld* CurrentWorld, TArray<FStringAssetReference>& AssetReferences, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishedLoadingObjects Delegate);
 	void LoadAssetReferences_Internal(TArray<FStringAssetReference> &AssetReferences, const ECsLoadAsyncOrder& AsyncOrder);
 };

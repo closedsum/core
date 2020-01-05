@@ -5,6 +5,8 @@
 // Types
 #include "Types/CsTypes_Load.h"
 #include "Types/CsTypes_Async.h"
+// Managers
+#include "Managers/Load/CsManager_Load.h"
 // Data
 #include "Data/CsData.h"
 #include "CsDataMapping.generated.h"
@@ -182,6 +184,7 @@ struct FCsDataMappingValidate
 
 class ICsData;
 class UCsData_Payload;
+class UWorld;
 
 UCLASS(Abstract, NotBlueprintable)
 class CSCORE_API UCsDataMapping : public UObject
@@ -280,23 +283,7 @@ public:
 
 	virtual void GetLoadStringAssetReferences(const FECsDataCollectionType& CollectionType, TArray<FStringAssetReference>& OutAssetReferences);
 
-	template<typename T>
-	void AsyncLoadAssets(const FECsDataCollectionType& CollectionType, const ECsLoadAsyncOrder& AsyncOrder, T* CallbackCaller,  void (T::*Callback)(const TArray<UObject*>&, const float&))
-	{
-		TArray<FStringAssetReference> References;
-
-		GetLoadStringAssetReferences(CollectionType, References);
-
-		if (References.Num() == RS_EMPTY)
-		{
-			UE_LOG(LogLoad, Warning, TEXT("UCsDataMapping::AsyncLoadAssets: Trying to load 0 assets."));
-
-			TArray<UObject*> LoadedAssets;
-			(CallbackCaller->*Callback)(LoadedAssets, 0.0f);
-			return;
-		}
-		UCsManager_Load::Get()->LoadAssetReferences<T>(Cast<UObject>(CallbackCaller)->GetWorld(), References, AsyncOrder, CallbackCaller, Callback);
-	}
+	void AsyncLoadAssets(UWorld* World, const FECsDataCollectionType& CollectionType, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishedLoadingObjects& Delegate);
 
 	virtual void OnFinishedAsyncLoadingAssetsSetReferences(const FECsDataCollectionType& CollectionType, const TArray<UObject*>& LoadedAssets);
 

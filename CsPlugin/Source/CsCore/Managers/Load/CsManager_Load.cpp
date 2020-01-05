@@ -10,6 +10,31 @@
 
 #include "Classes/Engine/World.h"
 
+// Structs
+#pragma region
+
+	// FCsManagerLoad_Task_LoadObjects
+#pragma region
+
+void FCsManagerLoad_Task_LoadObjects::OnUpdate(const FCsDeltaTime& DeltaTime)
+{
+
+}
+
+void FCsManagerLoad_Task_LoadObjects::OnFinishedLoadingObjectPath()
+{
+
+}
+
+void FCsManagerLoad_Task_LoadObjects::OnFinishedLoadingObjectPaths()
+{
+
+}
+
+#pragma endregion FCsManagerLoad_Task_LoadObjects
+
+#pragma endregion Structs
+
 // static initializations
 UCsManager_Load* UCsManager_Load::s_Instance;
 bool UCsManager_Load::s_bShutdown = false;
@@ -196,6 +221,24 @@ void UCsManager_Load::OnFinishedLoadingAssetReferences()
 		LoadedAssets.Add(Asset);
 	}
 	AssetReferencesLoadedCount = AssetReferences.Num();
+}
+
+void UCsManager_Load::LoadAssetReferences(UWorld* CurrentWorld, TArray<FStringAssetReference>& AssetReferences, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishedLoadingObjects Delegate)
+{
+	// Add Callback
+	OnFinishedLoadingAssetReferences_Events.AddDefaulted();
+
+	const int32 Count = OnFinishedLoadingAssetReferences_Events.Num();
+
+	OnFinishedLoadingAssetReferences_Events[Count - 1].Add(Delegate);
+
+	AsyncOrders.Add(AsyncOrder);
+	AssetReferencesQueue.Add(AssetReferences);
+	CurrentWorlds.Add(CurrentWorld);
+
+	// If the FIRST batch of AssetReferences, queue loading immediately
+	if (AssetReferencesQueue.Num() == 1)
+		LoadAssetReferences_Internal(AssetReferences, AsyncOrder);
 }
 
 void UCsManager_Load::LoadAssetReferences_Internal(TArray<FStringAssetReference>& AssetReferences, const ECsLoadAsyncOrder& AsyncOrder)

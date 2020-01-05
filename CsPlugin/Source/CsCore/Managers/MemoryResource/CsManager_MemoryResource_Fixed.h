@@ -128,7 +128,7 @@ public:
 
 // Pool
 #pragma region
-private:
+public:
 
 	/**
 	* Creates a pool of resource containers and resources of size PoolSize.
@@ -175,8 +175,6 @@ private:
 			(*Link) = M;
 		}
 	}
-
-public:
 
 	/**
 	* Get a reference to the Pool.

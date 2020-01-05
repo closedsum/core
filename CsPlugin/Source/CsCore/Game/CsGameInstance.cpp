@@ -482,7 +482,7 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(FCsRoutine* R))
 
 	if (gi->bForcePopulateAssetReferences || dataMapping->bForcePopulateAssetReferences)
 	{
-		UCsManager_Load::Get()->LoadAssetReferences(gi->GetWorld(), dataMapping->DataAssetReferences, ECsLoadAsyncOrder::Bulk, gi, &UCsGameInstance::OnFinishedLoadingDataAssets);
+		UCsManager_Load::Get()->LoadAssetReferences(gi->GetWorld(), dataMapping->DataAssetReferences, ECsLoadAsyncOrder::Bulk, FCsManagerLoad_OnFinishedLoadingObjects::CreateUObject(gi, &UCsGameInstance::OnFinishedLoadingDataObjects));
 
 		// Wait until Data Assets are LOADED
 		CS_COROUTINE_WAIT_UNTIL(R, gi->OnBoardState == ECsGameInstanceOnBoardState::FinishedLoadingDataAssets);
@@ -523,13 +523,11 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(FCsRoutine* R))
 	CS_COROUTINE_END(R);
 }
 
-void UCsGameInstance::OnFinishedLoadingDataAssets(const TArray<UObject*> &LoadedAssets, const float& LoadingTime)
+void UCsGameInstance::OnFinishedLoadingDataObjects(const TArray<UObject*>& LoadedObjects, const float& LoadingTime)
 {
-	const int32 Count = LoadedAssets.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	for (UObject* Object : LoadedObjects)
 	{
-		LoadedDataAssets.Add(LoadedAssets[I]);
+		LoadedDataObjects.Add(Object);
 	}
 	OnBoardState = ECsGameInstanceOnBoardState::FinishedLoadingDataAssets;
 }
@@ -537,18 +535,18 @@ void UCsGameInstance::OnFinishedLoadingDataAssets(const TArray<UObject*> &Loaded
 void UCsGameInstance::PopulateAssetReferences()
 {
 	// TODO: Maybe time slice this for built game 
-	const int32 Count = LoadedDataAssets.Num();
+	const int32 Count = LoadedDataObjects.Num();
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		UObject* DataAsObject = Cast<UBlueprintGeneratedClass>(LoadedDataAssets[I])->GetDefaultObject();
+		UObject* DataAsObject = Cast<UBlueprintGeneratedClass>(LoadedDataObjects[I])->GetDefaultObject();
 		ICsData* Data		  = Cast<ICsData>(DataAsObject);
 
 		//Data->LoadFromJson();
 		//Data->PopulateAssetReferences(false);
 	}
 	DataMapping->PopulateAssetReferences();
-	LoadedDataAssets.Reset();
+	LoadedDataObjects.Reset(LoadedDataObjects.Max());
 
 	OnBoardState = ECsGameInstanceOnBoardState::FinishedPopulatingAssetReferences;
 }

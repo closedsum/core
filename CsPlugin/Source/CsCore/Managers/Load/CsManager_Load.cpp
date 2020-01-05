@@ -11,8 +11,8 @@
 #include "Classes/Engine/World.h"
 
 // static initializations
-UCsManager_Load* UCsManager_Load::s_managerLoadSingleton;
-bool UCsManager_Load::s_bManagerLoadHasShutdown = false;
+UCsManager_Load* UCsManager_Load::s_Instance;
+bool UCsManager_Load::s_bShutdown = false;
 
 UCsManager_Load::UCsManager_Load(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -24,37 +24,37 @@ UCsManager_Load::UCsManager_Load(const FObjectInitializer& ObjectInitializer)
 
 /*static*/ UCsManager_Load* UCsManager_Load::Get()
 {
-	if (s_bManagerLoadHasShutdown)
+	if (s_bShutdown)
 		return nullptr;
 
-	if (!s_managerLoadSingleton)
+	if (!s_Instance)
 	{
-		s_managerLoadSingleton = NewObject<UCsManager_Load>(GetTransientPackage(), UCsManager_Load::StaticClass(), TEXT("Manager_Load_Singleton"), RF_Transient | RF_Public);
-		s_managerLoadSingleton->AddToRoot();
-		s_managerLoadSingleton->Initialize();
+		s_Instance = NewObject<UCsManager_Load>(GetTransientPackage(), UCsManager_Load::StaticClass(), TEXT("Manager_Load_Singleton"), RF_Transient | RF_Public);
+		s_Instance->AddToRoot();
+		s_Instance->Initialize();
 	}
 
-	return s_managerLoadSingleton;
+	return s_Instance;
 }
 
 /*static*/ void UCsManager_Load::Init()
 {
-	s_bManagerLoadHasShutdown = false;
+	s_bShutdown = false;
 	UCsManager_Load::Get();
 }
 
 /*static*/ void UCsManager_Load::Shutdown()
 {
-	if (!s_managerLoadSingleton)
+	if (!s_Instance)
 		return;
 
 	// Unregister ticker delegate
-	FTicker::GetCoreTicker().RemoveTicker(s_managerLoadSingleton->TickDelegateHandle);
+	FTicker::GetCoreTicker().RemoveTicker(s_Instance->TickDelegateHandle);
 
-	s_managerLoadSingleton->CleanUp();
-	s_managerLoadSingleton->RemoveFromRoot();
-	s_managerLoadSingleton = nullptr;
-	s_bManagerLoadHasShutdown = true;
+	s_Instance->CleanUp();
+	s_Instance->RemoveFromRoot();
+	s_Instance = nullptr;
+	s_bShutdown = true;
 }
 
 bool UCsManager_Load::Tick(float DeltaSeconds)

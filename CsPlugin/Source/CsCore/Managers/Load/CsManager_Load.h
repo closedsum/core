@@ -35,8 +35,8 @@ protected:
 
 private:
 	// Singleton data
-	static UCsManager_Load* s_managerLoadSingleton;
-	static bool s_bManagerLoadHasShutdown;
+	static UCsManager_Load* s_Instance;
+	static bool s_bShutdown;                                      
 
 #pragma endregion Singleton
 

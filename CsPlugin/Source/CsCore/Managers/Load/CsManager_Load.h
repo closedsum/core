@@ -82,6 +82,7 @@ struct CSCORE_API FCsManager_MemoryResource_ManagerLoad_Task_LoadObjects : publi
 
 #pragma endregion Structs
 
+class ICsGetManagerLoad;
 class UWorld;
 
 UCLASS(transient)
@@ -94,9 +95,23 @@ public:
 #pragma region
 public:
 
-	static UCsManager_Load* Get();
-	static void Init();
-	static void Shutdown();
+	static UCsManager_Load* Get(UObject* InRoot = nullptr);
+	static void Init(UObject* InRoot);
+	static void Shutdown(UObject* InRoot = nullptr);
+
+#if WITH_EDITOR
+protected:
+
+	static ICsGetManagerLoad* Get_GetManagerLoad(UObject* InRoot);
+	static ICsGetManagerLoad* GetSafe_GetManagerLoad(UObject* InRoot);
+
+	static UCsManager_Load* GetSafe(UObject* InRoot);
+
+public:
+
+	static UCsManager_Load* GetFromWorldContextObject(const UObject* WorldContextObject);
+
+#endif // #if WITH_EDITOR
 
 	/** Delegate for callbacks to Tick */
 	FTickerDelegate	TickDelegate;
@@ -115,6 +130,23 @@ private:
 	// Singleton data
 	static UCsManager_Load* s_Instance;
 	static bool s_bShutdown;                                      
+
+	// Root
+#pragma region
+protected:
+
+	UObject* MyRoot;
+
+	void SetMyRoot(UObject* InRoot);
+
+public:
+
+	FORCEINLINE UObject* GetMyRoot() const
+	{
+		return MyRoot;
+	}
+
+#pragma endregion Root
 
 #pragma endregion Singleton
 

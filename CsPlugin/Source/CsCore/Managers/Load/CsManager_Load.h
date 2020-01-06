@@ -8,7 +8,18 @@
 #include "Managers/MemoryResource/CsManager_MemoryResource_Fixed.h"
 #include "CsManager_Load.generated.h"
 
-DECLARE_DELEGATE_TwoParams(FCsManagerLoad_OnFinishedLoadingObjects, const TArray<UObject*>&, const float&);
+/**
+* StartLoadObjectPath
+*  Delegate type
+*
+* @param ObjectPath
+*/
+DECLARE_DELEGATE_OneParam(FCsManagerLoad_OnStartLoadObjectPath, const FSoftObjectPath& /*ObjectPath*/);
+
+// FinishLoadObjectPath
+DECLARE_DELEGATE_TwoParams(FCsManagerLoad_OnFinishLoadObjectPath, const FCsObjectPathLoadedInfo& /*LoadedInfo*/, UObject* /*LoadedObject*/);
+// FinishLoadObjects
+DECLARE_DELEGATE_TwoParams(FCsManagerLoad_OnFinishLoadObjects, const TArray<UObject*>& /*LoadedObjects*/, const float& /*LoadTime*/);
 
 // Structs
 #pragma region
@@ -17,52 +28,98 @@ DECLARE_DELEGATE_TwoParams(FCsManagerLoad_OnFinishedLoadingObjects, const TArray
 #pragma region
 
 class UWorld;
+class UCsManager_Load;
 
 struct CSCORE_API FCsManagerLoad_Task_LoadObjects
 {
 public:
 
+	/** Internal Index of the struct in the Manager_MemoryResource. */
+	int32 Index;
+
+	/** Async order for loading assets (i.e. FirstToLast, Bulk, ... etc). */
 	ECsLoadAsyncOrder Order;
 
+	/** The Object Paths to load. */
 	TArray<FSoftObjectPath> Paths;
 
-	FCsManagerLoad_OnFinishedLoadingObjects OnFinishedLoadingObjects_Event;
+	/** Event to broadcast when starting to load an Object's Path. */
+	FCsManagerLoad_OnStartLoadObjectPath OnStartLoadObjectPath_Event;
 
-	UWorld* CurrentWorld;
+	/** Event to broadcast when finished loading all Paths. */
+	FCsManagerLoad_OnFinishLoadObjects OnFinishLoadObjects_Event;
 
-	int32 LoadedCount;
+	/** World Context associated with the load. */
+	UWorld* World;
 
-	FCsResourceSize ResourceSizeLoaded;
+	/** Current number of objects loaded. */
+	int32 Count;
+
+	/** Current memory size of all objects loaded. */
+	FCsResourceSize SizeLoaded;
+
+	/** */
+	FCsObjectPathLoadedInfo Info;
+
+	/** */
+	float StartTime;
 
 protected:
 
-	FStreamableManager		StreamableManager;
-	FStreamableDelegate		AssetReferenceLoadedDelegate;
-	FStreamableDelegate		AssetReferencesLoadedDelegate;
+	/** */
+	FStreamableManager StreamableManager;
 
+	/** */
+	FStreamableDelegate OnFinishLoadObjectPathDelegate;
+
+	/** */
+	FStreamableDelegate	OnFinishLoadObjectPathsDelegate;
+
+	/** */
 	TSharedPtr<FStreamableHandle> LoadHandle;
 
 public:
 
-	FCsManagerLoad_Task_LoadObjects()
-	{
+	UCsManager_Load* Manager_Load;
 
+public:
+
+	FCsManagerLoad_Task_LoadObjects() :
+		Index(INDEX_NONE),
+		Order(ECsLoadAsyncOrder::Bulk),
+		Paths(),
+		OnStartLoadObjectPath_Event(),
+		OnFinishLoadObjects_Event(),
+		World(nullptr),
+		Count(0),
+		SizeLoaded(),
+		Info(),
+		StartTime(0.0f),
+		Manager_Load(nullptr)
+	{
 	}
+
+	void Init();
 
 	void Reset()
 	{
 		Order = ECsLoadAsyncOrder::Bulk;
 		Paths.Reset(Paths.Max());
-		OnFinishedLoadingObjects_Event.Unbind();
-		CurrentWorld = nullptr;
-		LoadedCount = 0;
-		ResourceSizeLoaded.Reset();
+		OnStartLoadObjectPath_Event.Unbind();
+		OnFinishLoadObjects_Event.Unbind();
+		World = nullptr;
+		Count = 0;
+		SizeLoaded.Reset();
+		Info.Reset();
+		StartTime = 0.0f;
 	}
 
 	void OnUpdate(const FCsDeltaTime& DeltaTime);
 
-	void OnFinishedLoadingObjectPath();
-	void OnFinishedLoadingObjectPaths();
+	void LoadObjectPaths(UWorld* InWorld, const TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishLoadObjects Delegate);
+
+	void OnFinishLoadObjectPath();
+	void OnFinishLoadObjectPaths();
 };
 
 #pragma endregion FCsManagerLoad_Task_LoadObjects
@@ -160,7 +217,7 @@ public:
 
 	FOnStartLoadingAssetReference OnStartLoadingAssetReference_Event;
 
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnFinishedLoadingAssetReference, const FCsObjectPathLoadedCache&);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnFinishedLoadingAssetReference, const FCsObjectPathLoadedInfo&);
 
 	FOnFinishedLoadingAssetReference OnFinishedLoadingAssetReference_Event;
 
@@ -209,7 +266,7 @@ protected:
 
 	FCsResourceSize ResourceSizeLoaded;
 
-	FCsObjectPathLoadedCache ObjectPathLoadedCache;
+	FCsObjectPathLoadedInfo ObjectPathLoadedCache;
 
 	void OnFinishedLoadingAssetReference();
 	void OnFinishedLoadingAssetReferences();
@@ -218,10 +275,12 @@ protected:
 	float LoadingTotalStartTime;
 
 	UPROPERTY()
-	TArray<UObject*> LoadedAssets;
+	TArray<TArray<UObject*>> LoadedObjects;
 
 public:
 
-	void LoadAssetReferences(UWorld* CurrentWorld, TArray<FStringAssetReference>& AssetReferences, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishedLoadingObjects Delegate);
-	void LoadAssetReferences_Internal(TArray<FStringAssetReference> &AssetReferences, const ECsLoadAsyncOrder& AsyncOrder);
+	TArray<UObject*>& GetLoadedObjects(const int32& Index);
+
+	FCsManagerLoad_Task_LoadObjects& LoadObjectPaths(UWorld* CurrentWorld, TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishLoadObjects Delegate);
+	void LoadObjectPaths_Internal(TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder);
 };

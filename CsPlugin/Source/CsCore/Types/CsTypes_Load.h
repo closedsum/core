@@ -295,8 +295,10 @@ struct CSCORE_API FCsDataMappingEntry
 };
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsObjectPathLoadedCache
+struct CSCORE_API FCsObjectPathLoadedInfo
 {
+public:
+
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY()
@@ -310,6 +312,22 @@ struct CSCORE_API FCsObjectPathLoadedCache
 
 	UPROPERTY()
 	float Time;
+
+	FCsObjectPathLoadedInfo() :
+		Path(),
+		Count(0),
+		Size(),
+		Time(0.0f)
+	{
+	}
+
+	void Reset()
+	{
+		Path.Reset();
+		Count = 0;
+		Size.Reset();
+		Time = 0.0f;
+	}
 };
 
 USTRUCT(BlueprintType)

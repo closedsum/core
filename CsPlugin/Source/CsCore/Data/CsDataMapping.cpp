@@ -496,7 +496,7 @@ void UCsDataMapping::GetLoadStringAssetReferences(const FECsDataCollectionType& 
 {
 }
 
-void UCsDataMapping::AsyncLoadAssets(UWorld* World, const FECsDataCollectionType& CollectionType, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishedLoadingObjects& Delegate)
+void UCsDataMapping::AsyncLoadObjects(UWorld* World, const FECsDataCollectionType& CollectionType, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishLoadObjects& Delegate)
 {
 	TArray<FStringAssetReference> References;
 
@@ -504,13 +504,13 @@ void UCsDataMapping::AsyncLoadAssets(UWorld* World, const FECsDataCollectionType
 
 	if (References.Num() == CS_EMPTY)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::AsyncLoadAssets: Trying to load 0 assets."));
+		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::AsyncLoadObjects: Trying to load 0 assets."));
 
 		TArray<UObject*> LoadedObjects;
 		Delegate.Execute(LoadedObjects, 0.0f);
 		return;
 	}
-	UCsManager_Load::Get()->LoadAssetReferences(World, References, AsyncOrder, Delegate);
+	UCsManager_Load::Get()->LoadObjectPaths(World, References, AsyncOrder, Delegate);
 }
 
 void UCsDataMapping::OnFinishedAsyncLoadingAssetsSetReferences(const FECsDataCollectionType& CollectionType, const TArray<UObject*>& LoadedAssets)

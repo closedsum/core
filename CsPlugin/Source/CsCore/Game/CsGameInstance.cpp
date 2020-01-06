@@ -124,7 +124,7 @@ void UCsGameInstance::Init()
 	InitSettings();
 	PopulateEnumMapsFromUserDefinedEnums();
 
-	UCsManager_Load::Init();
+	UCsManager_Load::Init(this);
 	UCsManager_Runnable::Init();
 
 	UCsManager_Time::Init(this);
@@ -156,7 +156,7 @@ void UCsGameInstance::Shutdown()
 	FWorldDelegates::LevelAddedToWorld.Remove(OnLevelAddedToWorldHandle);
 	FWorldDelegates::LevelRemovedFromWorld.Remove(OnLevelRemovedFromWorldHandle);
 
-	UCsManager_Load::Shutdown();
+	UCsManager_Load::Shutdown(this);
 	UCsManager_Runnable::Shutdown();
 
 	UCsManager_Time::Shutdown(this);
@@ -482,7 +482,7 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(FCsRoutine* R))
 
 	if (gi->bForcePopulateAssetReferences || dataMapping->bForcePopulateAssetReferences)
 	{
-		UCsManager_Load::Get()->LoadObjectPaths(gi->GetWorld(), dataMapping->DataAssetReferences, ECsLoadAsyncOrder::Bulk, FCsManagerLoad_OnFinishLoadObjects::CreateUObject(gi, &UCsGameInstance::OnFinishedLoadingDataObjects));
+		UCsManager_Load::Get()->LoadObjectPaths(gi->GetWorld(), dataMapping->DataAssetReferences, ECsLoadAsyncOrder::Bulk, FCsManagerLoad_OnFinishLoadObjectPaths::CreateUObject(gi, &UCsGameInstance::OnFinishedLoadingDataObjects));
 
 		// Wait until Data Assets are LOADED
 		CS_COROUTINE_WAIT_UNTIL(R, gi->OnBoardState == ECsGameInstanceOnBoardState::FinishedLoadingDataAssets);

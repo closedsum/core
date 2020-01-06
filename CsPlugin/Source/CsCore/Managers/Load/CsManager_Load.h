@@ -15,11 +15,43 @@
 * @param ObjectPath
 */
 DECLARE_DELEGATE_OneParam(FCsManagerLoad_OnStartLoadObjectPath, const FSoftObjectPath& /*ObjectPath*/);
-
-// FinishLoadObjectPath
+/**
+* FinishLoadObjectPath
+*  Delegate type
+*
+* @param LoadedInfo
+* @param LoadedObject
+*/
 DECLARE_DELEGATE_TwoParams(FCsManagerLoad_OnFinishLoadObjectPath, const FCsObjectPathLoadedInfo& /*LoadedInfo*/, UObject* /*LoadedObject*/);
-// FinishLoadObjects
-DECLARE_DELEGATE_TwoParams(FCsManagerLoad_OnFinishLoadObjects, const TArray<UObject*>& /*LoadedObjects*/, const float& /*LoadTime*/);
+/**
+* OnStartLoadObjectPaths
+*  Delegate type
+*
+* @param LoadSize
+*/
+DECLARE_DELEGATE_OneParam(FCsManagerLoad_OnStartLoadObjectPaths, const int32& /*LoadSize*/);
+/**
+* FinishLoadObjectPaths
+*  Delegate type
+*
+* @param LoadedObjects
+* @param LoadTime
+*/
+DECLARE_DELEGATE_TwoParams(FCsManagerLoad_OnFinishLoadObjectPaths, const TArray<UObject*>& /*LoadedObjects*/, const float& /*LoadTime*/);
+/**
+* OnStartLoadProgress
+*  Delegate type
+*
+* @param LoadSize
+*/
+DECLARE_DELEGATE_OneParam(FCsManagerLoad_OnStartLoadProgress, const int32& /*LoadSize*/);
+/**
+* OnLoadProgressUpdated
+*  Delegate type
+*
+* @param Progress
+*/
+DECLARE_DELEGATE_OneParam(FCsManagerLoad_OnLoadProgressUpdated, const float& /*Progress*/);
 
 // Structs
 #pragma region
@@ -37,17 +69,35 @@ public:
 	/** Internal Index of the struct in the Manager_MemoryResource. */
 	int32 Index;
 
+protected:
+
 	/** Async order for loading assets (i.e. FirstToLast, Bulk, ... etc). */
 	ECsLoadAsyncOrder Order;
 
 	/** The Object Paths to load. */
 	TArray<FSoftObjectPath> Paths;
 
+public:
+
 	/** Event to broadcast when starting to load an Object's Path. */
 	FCsManagerLoad_OnStartLoadObjectPath OnStartLoadObjectPath_Event;
 
-	/** Event to broadcast when finished loading all Paths. */
-	FCsManagerLoad_OnFinishLoadObjects OnFinishLoadObjects_Event;
+	/** Event to broadcast when finish loading an Object's Path. */
+	FCsManagerLoad_OnFinishLoadObjectPath OnFinishLoadObjectPath_Event;
+
+	/** Event to broadcast when starting to load all Object Paths. */
+	FCsManagerLoad_OnStartLoadObjectPaths OnStartLoadObjectPaths_Event;
+
+	/** Event to broadcast when finished loading all Object Paths. */
+	FCsManagerLoad_OnFinishLoadObjectPaths OnFinishLoadObjectPaths_Event;
+
+	/** */
+	FCsManagerLoad_OnStartLoadProgress OnStartLoadProgress_Event;
+
+	/** */
+	FCsManagerLoad_OnLoadProgressUpdated OnLoadProgressUpdated_Event;
+
+protected:
 
 	/** World Context associated with the load. */
 	UWorld* World;
@@ -64,10 +114,13 @@ public:
 	/** */
 	float StartTime;
 
+	/** */
+	float SingleStartTime;
+
 protected:
 
 	/** */
-	FStreamableManager StreamableManager;
+	//FStreamableManager StreamableManager;
 
 	/** */
 	FStreamableDelegate OnFinishLoadObjectPathDelegate;
@@ -76,7 +129,7 @@ protected:
 	FStreamableDelegate	OnFinishLoadObjectPathsDelegate;
 
 	/** */
-	TSharedPtr<FStreamableHandle> LoadHandle;
+	TSharedPtr<FStreamableHandle> Handle;
 
 public:
 
@@ -89,12 +142,17 @@ public:
 		Order(ECsLoadAsyncOrder::Bulk),
 		Paths(),
 		OnStartLoadObjectPath_Event(),
-		OnFinishLoadObjects_Event(),
+		OnFinishLoadObjectPath_Event(),
+		OnStartLoadObjectPaths_Event(),
+		OnFinishLoadObjectPaths_Event(),
+		OnStartLoadProgress_Event(),
+		OnLoadProgressUpdated_Event(),
 		World(nullptr),
 		Count(0),
 		SizeLoaded(),
 		Info(),
 		StartTime(0.0f),
+		SingleStartTime(0.0f),
 		Manager_Load(nullptr)
 	{
 	}
@@ -106,17 +164,23 @@ public:
 		Order = ECsLoadAsyncOrder::Bulk;
 		Paths.Reset(Paths.Max());
 		OnStartLoadObjectPath_Event.Unbind();
-		OnFinishLoadObjects_Event.Unbind();
+		OnFinishLoadObjectPath_Event.Unbind();
+		OnStartLoadObjectPaths_Event.Unbind();
+		OnFinishLoadObjectPaths_Event.Unbind();
+		OnStartLoadProgress_Event.Unbind();
+		OnLoadProgressUpdated_Event.Unbind();
 		World = nullptr;
 		Count = 0;
 		SizeLoaded.Reset();
 		Info.Reset();
 		StartTime = 0.0f;
+		SingleStartTime = 0.0f;
+		Handle = nullptr;
 	}
 
 	void OnUpdate(const FCsDeltaTime& DeltaTime);
 
-	void LoadObjectPaths(UWorld* InWorld, const TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishLoadObjects Delegate);
+	void LoadObjectPaths(UWorld* InWorld, const TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishLoadObjectPaths Delegate);
 
 	void OnFinishLoadObjectPath();
 	void OnFinishLoadObjectPaths();
@@ -207,80 +271,27 @@ public:
 
 #pragma endregion Singleton
 
-public:
-
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnStartLoadingAssetReferences, const int32&);
-
-	FOnStartLoadingAssetReferences OnStartLoadingAssetReferences_Event;
-
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnStartLoadingAssetReference, const FStringAssetReference&);
-
-	FOnStartLoadingAssetReference OnStartLoadingAssetReference_Event;
-
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnFinishedLoadingAssetReference, const FCsObjectPathLoadedInfo&);
-
-	FOnFinishedLoadingAssetReference OnFinishedLoadingAssetReference_Event;
-
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnFinishedLoadingAssetReferences, const TArray<UObject*>&, const float&);
-
-	FOnFinishedLoadingAssetReferences OnFinishedLoadingAssetReferences_Event;
-
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnStartLoadProgress, const int32&);
-
-	FOnStartLoadProgress OnStartLoadProgress_Event;
-
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnLoadProgressUpdated, const float&);
-
-	FOnLoadProgressUpdated OnLoadProgressUpdated_Event;
-
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnFinishedLoadingAssetReferences, const TArray<UObject*>&, const float&);
-
-	FOnFinishedLoadingAssetReferences Bulk_OnFinishedLoadingAssetReferences_Event;
-
-	TArray<ECsLoadAsyncOrder> AsyncOrders;
-	TArray<TArray<FStringAssetReference>> AssetReferencesQueue;
-	TArray<FOnFinishedLoadingAssetReferences> OnFinishedLoadingAssetReferences_Events;
-	TArray<UWorld*> CurrentWorlds;
-
-protected:
-
-	FStreamableManager		StreamableManager;
-	FStreamableDelegate		AssetReferenceLoadedDelegate;
-	FStreamableDelegate		AssetReferencesLoadedDelegate;
-
-	TSharedPtr<FStreamableHandle> LoadHandle;
-
 // Tasks
 #pragma region
 protected:
 
 	FCsManager_MemoryResource_ManagerLoad_Task_LoadObjects Manager_Tasks;
 
+#pragma endregion Tasks
+
 public:
 
-#pragma endregion Tasks
+	FStreamableManager StreamableManager;
 
 protected:
 
-	int32 AssetReferencesLoadedCount;
-
-	FCsResourceSize ResourceSizeLoaded;
-
-	FCsObjectPathLoadedInfo ObjectPathLoadedCache;
-
-	void OnFinishedLoadingAssetReference();
-	void OnFinishedLoadingAssetReferences();
-
-	float LoadingStartTime;
-	float LoadingTotalStartTime;
-
-	UPROPERTY()
+	//UPROPERTY()
 	TArray<TArray<UObject*>> LoadedObjects;
 
 public:
 
 	TArray<UObject*>& GetLoadedObjects(const int32& Index);
 
-	FCsManagerLoad_Task_LoadObjects& LoadObjectPaths(UWorld* CurrentWorld, TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishLoadObjects Delegate);
+	FCsManagerLoad_Task_LoadObjects& LoadObjectPaths(UWorld* CurrentWorld, TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishLoadObjectPaths Delegate);
 	void LoadObjectPaths_Internal(TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder);
 };

@@ -400,7 +400,7 @@ public:
 
 		for (int32 I = 0; I < PoolSize; ++I)
 		{
-			PoolIndex				 = (PoolIndex + 1) & PoolSize;
+			PoolIndex				 = (PoolIndex + 1) % PoolSize;
 			ResourceContainerType* M = Pool[PoolIndex];
 
 			if (!M->IsAllocated())
@@ -504,12 +504,12 @@ public:
 		checkf(!IsExhausted(), TEXT("%s::AllocateBefore: Pool is exhausted."), *Name);
 
 		// New Resource
-		ResourceContainerType* R				  = nullptr;
+		ResourceContainerType* R						  = nullptr;
 		TCsDoubleLinkedList<ResourceContainerType*>* Link = nullptr;
 		
 		for (int32 I = 0; I < PoolSize; ++I)
 		{
-			PoolIndex				 = (PoolIndex + 1) & PoolSize;
+			PoolIndex				 = (PoolIndex + 1) % PoolSize;
 			ResourceContainerType* M = Pool[PoolIndex];
 
 			if (!M->IsAllocated())

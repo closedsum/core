@@ -191,11 +191,11 @@ public:
 	// Memory Resource
 #pragma region
 
-struct CSCORE_API FCsMemoryResource_ManagerLoad_Task_LoadObjects : public TCsMemoryResource<FCsManagerLoad_Task_LoadObjects>
+struct CSCORE_API FCsResourceContainer_ManagerLoad_Task_LoadObjects : public TCsResourceContainer<FCsManagerLoad_Task_LoadObjects>
 {
 };
 
-struct CSCORE_API FCsManager_MemoryResource_ManagerLoad_Task_LoadObjects : public TCsManager_MemoryResource_Fixed<FCsManagerLoad_Task_LoadObjects, FCsMemoryResource_ManagerLoad_Task_LoadObjects, 64>
+struct CSCORE_API FCsManager_MemoryResource_ManagerLoad_Task_LoadObjects : public TCsManager_MemoryResource_Fixed<FCsManagerLoad_Task_LoadObjects, FCsResourceContainer_ManagerLoad_Task_LoadObjects, 64>
 {
 };
 

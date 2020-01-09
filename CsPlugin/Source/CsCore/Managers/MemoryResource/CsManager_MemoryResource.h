@@ -4,14 +4,14 @@
 
 #pragma once
 
-#include "Managers/MemoryResource/CsMemoryResource.h"
+#include "Managers/MemoryResource/CsResourceContainer.h"
 #include "Types/CsTypes_Macro.h"
 #include "Containers/CsDoubleLinkedList.h"
 
-template<typename ResourceType, typename ResourceContainerType = TCsMemoryResource<ResourceType>>
+template<typename ResourceType, typename ResourceContainerType = TCsResourceContainer<ResourceType>>
 class TCsManager_MemoryResource
 {
-	static_assert(std::is_base_of<TCsMemoryResource<ResourceType>, ResourceContainerType>(), "TCsManager_MemoryResource: ResourceContainerType does NOT derive from TCsMemoryResource<ResourceType>.");
+	static_assert(std::is_base_of<TCsResourceContainer<ResourceType>, ResourceContainerType>(), "TCsManager_MemoryResource: ResourceContainerType does NOT derive from TCsResourceContainer<ResourceType>.");
 
 public:
 

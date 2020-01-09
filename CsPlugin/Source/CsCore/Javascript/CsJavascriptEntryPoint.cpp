@@ -72,9 +72,9 @@ void ACsJavascriptEntryPoint::Setup()
 {
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(GetGameInstance());
-	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(UpdateGroup);
-	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler						= UCsCoroutineScheduler::Get(GetGameInstance());
+	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(UpdateGroup);
+	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsJavascriptEntryPoint::Setup_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(UpdateGroup);

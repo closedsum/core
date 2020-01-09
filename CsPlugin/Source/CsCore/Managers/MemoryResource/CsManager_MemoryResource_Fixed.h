@@ -5,14 +5,14 @@
 #pragma once
 
 #include "Managers/MemoryResource/ICsManager_MemoryResource.h"
-#include "Managers/MemoryResource/CsMemoryResource.h"
+#include "Managers/MemoryResource/CsResourceContainer.h"
 #include "Types/CsTypes_Macro.h"
 #include "Containers/CsDoubleLinkedList.h"
 
-template<typename ResourceType, typename ResourceContainerType = TCsMemoryResource<ResourceType>, uint32 BUCKET_SIZE = 128>
+template<typename ResourceType, typename ResourceContainerType = TCsResourceContainer<ResourceType>, uint32 BUCKET_SIZE = 128>
 class TCsManager_MemoryResource_Fixed : public ICsManager_MemoryResource
 {
-	static_assert(std::is_base_of<TCsMemoryResource<ResourceType>, ResourceContainerType>(), "TCsManager_MemoryResource_Fixed: ResourceContainerType does NOT implement interface: ICsMemoryResource.");
+	static_assert(std::is_base_of<TCsResourceContainer<ResourceType>, ResourceContainerType>(), "TCsManager_MemoryResource_Fixed: ResourceContainerType does NOT implement interface: TCsResourceContainer<ResourceType>.");
 
 public:
 
@@ -91,7 +91,7 @@ public:
 	}
 
 	/**
-	* Releases all memory and resets and containers.
+	* Releases all memory and resets any containers.
 	*/
 	void Shutdown()
 	{

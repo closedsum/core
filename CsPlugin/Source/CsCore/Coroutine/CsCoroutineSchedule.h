@@ -12,21 +12,21 @@
 
 	// Routine
 
-struct CSCORE_API FCsMemoryResource_Routine : public TCsMemoryResource<FCsRoutine>
+struct CSCORE_API FCsResourceContainer_Routine : public TCsResourceContainer<FCsRoutine>
 {
 };
 
-struct CSCORE_API FCsManager_Routine : public TCsManager_MemoryResource_Fixed<FCsRoutine, FCsMemoryResource_Routine, CS_ROUTINE_POOL_SIZE>
+struct CSCORE_API FCsManager_Routine : public TCsManager_MemoryResource_Fixed<FCsRoutine, FCsResourceContainer_Routine, CS_ROUTINE_POOL_SIZE>
 {
 };
 
 	// Payload
 
-struct CSCORE_API FCsMemoryResource_CoroutinePayload : public TCsMemoryResource<FCsCoroutinePayload>
+struct CSCORE_API FCsResourceContainer_CoroutinePayload : public TCsResourceContainer<FCsCoroutinePayload>
 {
 };
 
-struct CSCORE_API FCsManager_CoroutinePayload : public TCsManager_MemoryResource_Fixed<FCsCoroutinePayload, FCsMemoryResource_CoroutinePayload, CS_COROUTINE_PAYLOAD_SIZE>
+struct CSCORE_API FCsManager_CoroutinePayload : public TCsManager_MemoryResource_Fixed<FCsCoroutinePayload, FCsResourceContainer_CoroutinePayload, CS_COROUTINE_PAYLOAD_SIZE>
 {
 };
 
@@ -60,7 +60,7 @@ protected:
 
 public:
 
-	FCsMemoryResource_Routine* GetRoutineContainer(const FCsRoutineHandle& Handle);
+	FCsResourceContainer_Routine* GetRoutineContainer(const FCsRoutineHandle& Handle);
 
 #pragma endregion Routine
 
@@ -68,10 +68,10 @@ public:
 #pragma region
 public:
 
-	const FCsRoutineHandle& Start(FCsMemoryResource_CoroutinePayload* PayloadContainer);
+	const FCsRoutineHandle& Start(FCsResourceContainer_CoroutinePayload* PayloadContainer);
 	const FCsRoutineHandle& Start(FCsCoroutinePayload* Payload);
 
-	const FCsRoutineHandle& StartChild(FCsMemoryResource_CoroutinePayload* PayloadContainer);
+	const FCsRoutineHandle& StartChild(FCsResourceContainer_CoroutinePayload* PayloadContainer);
 	const FCsRoutineHandle& StartChild(FCsCoroutinePayload* Payload);
 
 #pragma endregion Start
@@ -100,14 +100,14 @@ protected:
 
 public:
 
-	FORCEINLINE FCsMemoryResource_CoroutinePayload* AllocatePayload()
+	FORCEINLINE FCsResourceContainer_CoroutinePayload* AllocatePayload()
 	{
 		return Manager_Payload.Allocate();
 	}
 
 protected:
 
-	FCsMemoryResource_CoroutinePayload* GetPayloadContainer(FCsCoroutinePayload* Payload);
+	FCsResourceContainer_CoroutinePayload* GetPayloadContainer(FCsCoroutinePayload* Payload);
 
 #pragma endregion Payload
 

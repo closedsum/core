@@ -97,10 +97,10 @@ protected:
 #pragma region
 public:
 
-	const FCsRoutineHandle& Start(FCsMemoryResource_CoroutinePayload* PayloadContainer);
+	const FCsRoutineHandle& Start(FCsResourceContainer_CoroutinePayload* PayloadContainer);
 	const FCsRoutineHandle& Start(FCsCoroutinePayload* Payload);
 
-	const FCsRoutineHandle& StartChild(FCsMemoryResource_CoroutinePayload* PayloadContainer);
+	const FCsRoutineHandle& StartChild(FCsResourceContainer_CoroutinePayload* PayloadContainer);
 	const FCsRoutineHandle& StartChild(FCsCoroutinePayload* Payload);
 
 #pragma endregion Start
@@ -126,7 +126,7 @@ public:
 #pragma region
 public:
 
-	FCsMemoryResource_CoroutinePayload* AllocatePayload(const FECsUpdateGroup& Group);
+	FCsResourceContainer_CoroutinePayload* AllocatePayload(const FECsUpdateGroup& Group);
 
 #pragma endregion Payload
 

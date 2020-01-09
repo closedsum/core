@@ -15,11 +15,11 @@
 	// Memory Resource
 #pragma region
 
-struct CSCORE_API FCsMemoryResource_SaveActionInfo : public TCsMemoryResource<FCsSaveActionInfo>
+struct CSCORE_API FCsResourceContainer_SaveActionInfo : public TCsResourceContainer<FCsSaveActionInfo>
 {
 };
 
-struct CSCORE_API FCsManager_MemoryResource_SaveActionInfo : public TCsManager_MemoryResource_Fixed<FCsSaveActionInfo, FCsMemoryResource_SaveActionInfo, 64>
+struct CSCORE_API FCsManager_MemoryResource_SaveActionInfo : public TCsManager_MemoryResource_Fixed<FCsSaveActionInfo, FCsResourceContainer_SaveActionInfo, 64>
 {
 };
 

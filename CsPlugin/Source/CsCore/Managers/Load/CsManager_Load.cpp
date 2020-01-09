@@ -337,14 +337,14 @@ UCsManager_Load::UCsManager_Load(const FObjectInitializer& ObjectInitializer)
 
 bool UCsManager_Load::Tick(float DeltaSeconds)
 {
-	TCsDoubleLinkedList<FCsMemoryResource_ManagerLoad_Task_LoadObjects*>* Current = Manager_Tasks.GetAllocatedHead();
-	TCsDoubleLinkedList<FCsMemoryResource_ManagerLoad_Task_LoadObjects*>* Next = Current;
+	TCsDoubleLinkedList<FCsResourceContainer_ManagerLoad_Task_LoadObjects*>* Current = Manager_Tasks.GetAllocatedHead();
+	TCsDoubleLinkedList<FCsResourceContainer_ManagerLoad_Task_LoadObjects*>* Next    = Current;
 
 	while (Next)
 	{
-		Current													  = Next;
-		FCsMemoryResource_ManagerLoad_Task_LoadObjects* Container = **Current;
-		Next													  = Current->GetNextLink();
+		Current														 = Next;
+		FCsResourceContainer_ManagerLoad_Task_LoadObjects* Container = **Current;
+		Next														 = Current->GetNextLink();
 
 		FCsManagerLoad_Task_LoadObjects* Task = Container->Get();
 
@@ -362,9 +362,9 @@ void UCsManager_Load::Initialize()
 
 	// Init Tasks
 	{
-		const TArray<FCsMemoryResource_ManagerLoad_Task_LoadObjects*>& Pool = Manager_Tasks.GetPool();
+		const TArray<FCsResourceContainer_ManagerLoad_Task_LoadObjects*>& Pool = Manager_Tasks.GetPool();
 
-		for (FCsMemoryResource_ManagerLoad_Task_LoadObjects* Container : Pool)
+		for (FCsResourceContainer_ManagerLoad_Task_LoadObjects* Container : Pool)
 		{
 			LoadedObjects.AddDefaulted();
 			LoadedObjects.Last().Reset();
@@ -405,8 +405,8 @@ TArray<UObject*>& UCsManager_Load::GetLoadedObjects(const int32& Index)
 
 FCsManagerLoad_Task_LoadObjects& UCsManager_Load::LoadObjectPaths(UWorld* CurrentWorld, TArray<FStringAssetReference>& AssetReferences, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishLoadObjectPaths Delegate)
 {
-	FCsMemoryResource_ManagerLoad_Task_LoadObjects* Resource = Manager_Tasks.Allocate();
-	FCsManagerLoad_Task_LoadObjects* Task					 = Resource->Get();
+	FCsResourceContainer_ManagerLoad_Task_LoadObjects* Resource = Manager_Tasks.Allocate();
+	FCsManagerLoad_Task_LoadObjects* Task						= Resource->Get();
 
 	Task->LoadObjectPaths(CurrentWorld, AssetReferences, AsyncOrder, Delegate);
 

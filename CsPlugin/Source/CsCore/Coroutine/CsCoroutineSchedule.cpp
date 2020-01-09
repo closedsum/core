@@ -9,9 +9,9 @@ FCsCoroutineSchedule::FCsCoroutineSchedule()
 
 	// Routine
 	{
-		const TArray<FCsMemoryResource_Routine*>& Pool = Manager_Routine.GetPool();
+		const TArray<FCsResourceContainer_Routine*>& Pool = Manager_Routine.GetPool();
 
-		for (FCsMemoryResource_Routine* Container : Pool)
+		for (FCsResourceContainer_Routine* Container : Pool)
 		{
 			FCsRoutine* R	   = Container->Get();
 			const int32& Index = Container->GetIndex();
@@ -20,9 +20,9 @@ FCsCoroutineSchedule::FCsCoroutineSchedule()
 	}
 	// Payload
 	{
-		const TArray<FCsMemoryResource_CoroutinePayload*>& Pool = Manager_Payload.GetPool();
+		const TArray<FCsResourceContainer_CoroutinePayload*>& Pool = Manager_Payload.GetPool();
 
-		for (FCsMemoryResource_CoroutinePayload* Container : Pool)
+		for (FCsResourceContainer_CoroutinePayload* Container : Pool)
 		{
 			FCsCoroutinePayload* P = Container->Get();
 			const int32& Index	   = Container->GetIndex();
@@ -46,9 +46,9 @@ void FCsCoroutineSchedule::SetGroup(const FECsUpdateGroup& InGroup)
 
 	// Routine
 	{
-		const TArray<FCsMemoryResource_Routine*>& Pool = Manager_Routine.GetPool();
+		const TArray<FCsResourceContainer_Routine*>& Pool = Manager_Routine.GetPool();
 
-		for (FCsMemoryResource_Routine* Container : Pool)
+		for (FCsResourceContainer_Routine* Container : Pool)
 		{
 			FCsRoutine* R = Container->Get();
 			R->Group	  = Group;
@@ -56,9 +56,9 @@ void FCsCoroutineSchedule::SetGroup(const FECsUpdateGroup& InGroup)
 	}
 	// Payload
 	{
-		const TArray<FCsMemoryResource_CoroutinePayload*>& Pool = Manager_Payload.GetPool();
+		const TArray<FCsResourceContainer_CoroutinePayload*>& Pool = Manager_Payload.GetPool();
 
-		for (FCsMemoryResource_CoroutinePayload* Container : Pool)
+		for (FCsResourceContainer_CoroutinePayload* Container : Pool)
 		{
 			FCsCoroutinePayload* P = Container->Get();
 			P->Group			   = Group;
@@ -71,7 +71,7 @@ void FCsCoroutineSchedule::SetGroup(const FECsUpdateGroup& InGroup)
 // Routine
 #pragma region
 
-FCsMemoryResource_Routine* FCsCoroutineSchedule::GetRoutineContainer(const FCsRoutineHandle& Handle)
+FCsResourceContainer_Routine* FCsCoroutineSchedule::GetRoutineContainer(const FCsRoutineHandle& Handle)
 {
 	if (!Handle.IsValid())
 		return nullptr;
@@ -89,7 +89,7 @@ FCsMemoryResource_Routine* FCsCoroutineSchedule::GetRoutineContainer(const FCsRo
 // Start
 #pragma region
 
-const FCsRoutineHandle& FCsCoroutineSchedule::Start(FCsMemoryResource_CoroutinePayload* PayloadContainer)
+const FCsRoutineHandle& FCsCoroutineSchedule::Start(FCsResourceContainer_CoroutinePayload* PayloadContainer)
 {
 	FCsCoroutinePayload* Payload = PayloadContainer->Get();
 
@@ -97,8 +97,8 @@ const FCsRoutineHandle& FCsCoroutineSchedule::Start(FCsMemoryResource_CoroutineP
 
 	checkf(Group == Payload->Group, TEXT("FCsCoroutineSchedule::Start: Mismatch between Payload->Group: %s and Group: %s"), *(Payload->Group.Name), *(Group.Name));
 
-	FCsMemoryResource_Routine* RoutineContainer = Manager_Routine.Allocate();
-	FCsRoutine* R								= RoutineContainer->Get();
+	FCsResourceContainer_Routine* RoutineContainer = Manager_Routine.Allocate();
+	FCsRoutine* R								   = RoutineContainer->Get();
 
 	R->Init(Payload);
 
@@ -122,7 +122,7 @@ const FCsRoutineHandle& FCsCoroutineSchedule::Start(FCsCoroutinePayload* Payload
 	return Start(GetPayloadContainer(Payload));
 }
 
-const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(FCsMemoryResource_CoroutinePayload* PayloadContainer)
+const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(FCsResourceContainer_CoroutinePayload* PayloadContainer)
 {
 	FCsCoroutinePayload* Payload = PayloadContainer->Get();
 
@@ -130,7 +130,7 @@ const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(FCsMemoryResource_Corou
 
 	checkf(Group = Payload->Group, TEXT("FCsCoroutineSchedule::StartChild: Mismatch between Payload->Group: %s and Group: %s"), *(Payload->Group.Name), *(Group.Name));
 
-	FCsMemoryResource_Routine* ParentContainer = GetRoutineContainer(Payload->ParentHandle);
+	FCsResourceContainer_Routine* ParentContainer = GetRoutineContainer(Payload->ParentHandle);
 
 	checkf(ParentContainer, TEXT("FCsCoroutineSchedule::StartChild: Failed to find a container for Payload."));
 
@@ -138,12 +138,12 @@ const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(FCsMemoryResource_Corou
 
 	FCsRoutine* LastChild = Parent->GetLastChild();
 
-	FCsMemoryResource_Routine* RoutineContainer = nullptr;
+	FCsResourceContainer_Routine* RoutineContainer = nullptr;
 
 	// Add after Last Child
 	if (LastChild)
 	{
-		FCsMemoryResource_Routine* LastChildContainer = Manager_Routine.GetAt(LastChild->GetIndex());
+		FCsResourceContainer_Routine* LastChildContainer = Manager_Routine.GetAt(LastChild->GetIndex());
 
 		RoutineContainer = Manager_Routine.AllocateAfter(LastChildContainer);
 	}
@@ -181,14 +181,14 @@ const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(FCsCoroutinePayload* Pa
 
 void FCsCoroutineSchedule::End()
 {
-	TCsDoubleLinkedList<FCsMemoryResource_Routine*>* Current = Manager_Routine.GetAllocatedHead();
-	TCsDoubleLinkedList<FCsMemoryResource_Routine*>* Next	 = Current;
+	TCsDoubleLinkedList<FCsResourceContainer_Routine*>* Current = Manager_Routine.GetAllocatedHead();
+	TCsDoubleLinkedList<FCsResourceContainer_Routine*>* Next	= Current;
 
 	while (Next)
 	{
-		Current										= Next;
-		FCsMemoryResource_Routine* RoutineContainer = **Current;
-		Next										= Current->GetNextLink();
+		Current										   = Next;
+		FCsResourceContainer_Routine* RoutineContainer = **Current;
+		Next										   = Current->GetNextLink();
 
 		FCsRoutine* R = RoutineContainer->Get();
 
@@ -208,14 +208,14 @@ void FCsCoroutineSchedule::End()
 
 void FCsCoroutineSchedule::Update(const FCsDeltaTime& DeltaTime)
 {
-	TCsDoubleLinkedList<FCsMemoryResource_Routine*>* Current = Manager_Routine.GetAllocatedHead();
-	TCsDoubleLinkedList<FCsMemoryResource_Routine*>* Next    = Current;
+	TCsDoubleLinkedList<FCsResourceContainer_Routine*>* Current = Manager_Routine.GetAllocatedHead();
+	TCsDoubleLinkedList<FCsResourceContainer_Routine*>* Next    = Current;
 
 	while (Next)
 	{
-		Current										= Next;
-		FCsMemoryResource_Routine* RoutineContainer = **Current;
-		Next										= Current->GetNextLink();
+		Current										   = Next;
+		FCsResourceContainer_Routine* RoutineContainer = **Current;
+		Next										   = Current->GetNextLink();
 
 		FCsRoutine* R = RoutineContainer->Get();
 
@@ -250,12 +250,12 @@ void FCsCoroutineSchedule::Update(const FCsDeltaTime& DeltaTime)
 // Payload
 #pragma region
 
-FCsMemoryResource_CoroutinePayload* FCsCoroutineSchedule::GetPayloadContainer(FCsCoroutinePayload* Payload)
+FCsResourceContainer_CoroutinePayload* FCsCoroutineSchedule::GetPayloadContainer(FCsCoroutinePayload* Payload)
 {
 	if (Payload->GetIndex() == INDEX_NONE)
 	{
-		FCsMemoryResource_CoroutinePayload* PayloadContainer = Manager_Payload.Allocate();
-		FCsCoroutinePayload* P								 = PayloadContainer->Get();
+		FCsResourceContainer_CoroutinePayload* PayloadContainer = Manager_Payload.Allocate();
+		FCsCoroutinePayload* P									= PayloadContainer->Get();
 
 		*P = *Payload;
 
@@ -271,14 +271,14 @@ FCsMemoryResource_CoroutinePayload* FCsCoroutineSchedule::GetPayloadContainer(FC
 
 void FCsCoroutineSchedule::BroadcastMessage(const ECsCoroutineMessage& MessageType, const FName& Message, void* Owner /*=nullptr*/)
 {
-	TCsDoubleLinkedList<FCsMemoryResource_Routine*>* Current = Manager_Routine.GetAllocatedHead();
-	TCsDoubleLinkedList<FCsMemoryResource_Routine*>* Next    = Current;
+	TCsDoubleLinkedList<FCsResourceContainer_Routine*>* Current = Manager_Routine.GetAllocatedHead();
+	TCsDoubleLinkedList<FCsResourceContainer_Routine*>* Next    = Current;
 
 	while (Next)
 	{
-		Current										= Next;
-		FCsMemoryResource_Routine* RoutineContainer = **Current;
-		Next										= Current->GetNextLink();
+		Current										   = Next;
+		FCsResourceContainer_Routine* RoutineContainer = **Current;
+		Next										   = Current->GetNextLink();
 
 		FCsRoutine* R = RoutineContainer->Get();
 

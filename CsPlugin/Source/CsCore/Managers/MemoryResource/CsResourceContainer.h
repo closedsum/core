@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#ifndef __CS_MEMORY_RESOURCE_H__
-#define __CS_MEMORY_RESOURCE_H__
+#ifndef __CS_RESOURCE_CONTAINER_H__
+#define __CS_RESOURCE_CONTAINER_H__
 
 /**
 * Container to store any resource. Usually the resource will be a struct.
@@ -8,11 +8,11 @@
 * for releasing or destroying the resource.
 */
 template<typename ResourceType>
-struct TCsMemoryResource
+struct TCsResourceContainer
 {
 private:
 
-	/** Index of the container stored in the internal list in TCsManager_MemoryResource or TCsManager_MemoryResource_Fixed. */
+	/** Index of the container stored in the internal list in ICsManager_Resource. */
 	int32 Index;
 
 	/** Whether the container is allocated or not. */
@@ -23,14 +23,14 @@ private:
 
 public:
 
-	TCsMemoryResource() :
+	TCsResourceContainer() :
 		Index(INDEX_NONE),
 		bAllocated(false),
 		Resource(nullptr)
 	{
 	}
 
-	virtual ~TCsMemoryResource() {}
+	virtual ~TCsResourceContainer() {}
 
 	const int32& GetIndex() const
 	{
@@ -73,4 +73,4 @@ public:
 	}
 };
 
-#endif // #ifndef __CS_MEMORY_RESOURCE_H__
+#endif // #ifndef __CS_RESOURCE_CONTAINER_H__

@@ -408,9 +408,9 @@ void ACsMotionController::Setup_OnCalcCamera()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(GetGameInstance());
-	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler						= UCsCoroutineScheduler::Get(GetGameInstance());
+	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsMotionController::Setup_OnCalcCamera_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);

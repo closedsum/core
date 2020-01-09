@@ -68,9 +68,9 @@ void FCsUnitTestSuite_Impl::Start()
 {
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler					 = UCsCoroutineScheduler::Get(MyRoot);
-	FCsMemoryResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(UpdateGroup);
-	FCsCoroutinePayload* Payload						 = PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler						= UCsCoroutineScheduler::Get(MyRoot);
+	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(UpdateGroup);
+	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
 
 	Payload->Coroutine.BindRaw(this, &FCsUnitTestSuite_Impl::Start_Internal);
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);

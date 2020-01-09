@@ -19,11 +19,11 @@ class ICsGetManagerAchievement;
 	// Memory Resource
 #pragma region
 
-struct CSCORE_API FCsMemoryResource_AchievementActionInfo : public TCsMemoryResource<FCsAchievementActionInfo>
+struct CSCORE_API FCsResourceContainer_AchievementActionInfo : public TCsResourceContainer<FCsAchievementActionInfo>
 {
 };
 
-struct CSCORE_API FCsManager_MemoryResource_AchievementActionInfo : public TCsManager_MemoryResource_Fixed<FCsAchievementActionInfo, FCsMemoryResource_AchievementActionInfo, 256>
+struct CSCORE_API FCsManager_MemoryResource_AchievementActionInfo : public TCsManager_MemoryResource_Fixed<FCsAchievementActionInfo, FCsResourceContainer_AchievementActionInfo, 256>
 {
 };
 

@@ -186,7 +186,7 @@ void UCsCoroutineScheduler::CleanUp()
 // Start
 #pragma region
 
-const FCsRoutineHandle& UCsCoroutineScheduler::Start(FCsMemoryResource_CoroutinePayload* PayloadContainer)
+const FCsRoutineHandle& UCsCoroutineScheduler::Start(FCsResourceContainer_CoroutinePayload* PayloadContainer)
 {
 	FCsCoroutinePayload* Payload = PayloadContainer->Get();
 
@@ -198,7 +198,7 @@ const FCsRoutineHandle& UCsCoroutineScheduler::Start(FCsCoroutinePayload* Payloa
 	return Schedules[Payload->Group.Value].Start(Payload);
 }
 
-const FCsRoutineHandle& UCsCoroutineScheduler::StartChild(FCsMemoryResource_CoroutinePayload* PayloadContainer)
+const FCsRoutineHandle& UCsCoroutineScheduler::StartChild(FCsResourceContainer_CoroutinePayload* PayloadContainer)
 {
 	FCsCoroutinePayload* Payload = PayloadContainer->Get();
 
@@ -243,7 +243,7 @@ void UCsCoroutineScheduler::UCsCoroutineScheduler::EndAll()
 // Payload
 #pragma region
 
-FCsMemoryResource_CoroutinePayload* UCsCoroutineScheduler::AllocatePayload(const FECsUpdateGroup& Group)
+FCsResourceContainer_CoroutinePayload* UCsCoroutineScheduler::AllocatePayload(const FECsUpdateGroup& Group)
 {
 	return Schedules[Group.Value].AllocatePayload();
 }

@@ -304,14 +304,14 @@ const FUniqueNetId& UCsManager_Achievement::GetLocalPlayerIdRef()
 
 void UCsManager_Achievement::Update(const float& DeltaSeconds)
 {
-	TCsDoubleLinkedList<FCsMemoryResource_AchievementActionInfo*>* Current = Manager_MemoryResource.GetAllocatedHead();
-	TCsDoubleLinkedList<FCsMemoryResource_AchievementActionInfo*>* Next    = Current;
+	TCsDoubleLinkedList<FCsResourceContainer_AchievementActionInfo*>* Current = Manager_MemoryResource.GetAllocatedHead();
+	TCsDoubleLinkedList<FCsResourceContainer_AchievementActionInfo*>* Next    = Current;
 
 	while (Next)
 	{
-		Current												   = Next;
-		FCsMemoryResource_AchievementActionInfo* InfoContainer = **Current;
-		Next												   = Current->GetNextLink();
+		Current													  = Next;
+		FCsResourceContainer_AchievementActionInfo* InfoContainer = **Current;
+		Next													  = Current->GetNextLink();
 
 		FCsAchievementActionInfo* Info = InfoContainer->Get();
 		
@@ -457,8 +457,8 @@ void UCsManager_Achievement::Update(const float& DeltaSeconds)
 void UCsManager_Achievement::QueueAction(const ECsAchievementAction& Action, const FECsAchievement& Achievement, const float& Percent /*=0.0f*/)
 {
 	// Allocate AchievementActionInfo from a pool
-	FCsMemoryResource_AchievementActionInfo* InfoContainer = Manager_MemoryResource.Allocate();
-	FCsAchievementActionInfo* Info						   = InfoContainer->Get();
+	FCsResourceContainer_AchievementActionInfo* InfoContainer = Manager_MemoryResource.Allocate();
+	FCsAchievementActionInfo* Info							  = InfoContainer->Get();
 
 	Info->Reset();
 
@@ -475,8 +475,8 @@ void UCsManager_Achievement::QueueAction(const ECsAchievementAction& Action)
 void UCsManager_Achievement::QueueActionAsHead(const ECsAchievementAction& Action, const FECsAchievement& Achievement, const float& Percent /*=0.0f*/)
 {
 	// Allocate AchievementActionInfo from a pool
-	FCsMemoryResource_AchievementActionInfo* InfoContainer = Manager_MemoryResource.AllocateBeforeHead();
-	FCsAchievementActionInfo* Info						   = InfoContainer->Get();
+	FCsResourceContainer_AchievementActionInfo* InfoContainer = Manager_MemoryResource.AllocateBeforeHead();
+	FCsAchievementActionInfo* Info							  = InfoContainer->Get();
 
 	Info->Reset();
 
@@ -493,8 +493,8 @@ void UCsManager_Achievement::QueueActionAsHead(const ECsAchievementAction& Actio
 void UCsManager_Achievement::QueueActionAfterHead(const ECsAchievementAction& Action, const FECsAchievement& Achievement, const float& Percent /*=0.0f*/)
 {
 	// Allocate AchievementActionInfo from a pool
-	FCsMemoryResource_AchievementActionInfo* InfoContainer = Manager_MemoryResource.AllocateAfterHead();
-	FCsAchievementActionInfo* Info						   = InfoContainer->Get();
+	FCsResourceContainer_AchievementActionInfo* InfoContainer = Manager_MemoryResource.AllocateAfterHead();
+	FCsAchievementActionInfo* Info							  = InfoContainer->Get();
 
 	Info->Reset();
 
@@ -1148,16 +1148,16 @@ void UCsManager_Achievement::CompleteAll_Internal(FCsAchievementActionInfo* Acti
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
-		TCsDoubleLinkedList<FCsMemoryResource_AchievementActionInfo*>* Current = Manager_MemoryResource.GetAllocatedHead();
-		FCsMemoryResource_AchievementActionInfo* InfoContainer				   = **Current;
+		TCsDoubleLinkedList<FCsResourceContainer_AchievementActionInfo*>* Current = Manager_MemoryResource.GetAllocatedHead();
+		FCsResourceContainer_AchievementActionInfo* InfoContainer				  = **Current;
 
 		for (ICsAchievement* IA : Achievements)
 		{
 			if (!IA->IsValid())
 				continue;
 
-			FCsMemoryResource_AchievementActionInfo* CompleteInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
-			FCsAchievementActionInfo* CompleteInfo						   = CompleteInfoContainer->Get();
+			FCsResourceContainer_AchievementActionInfo* CompleteInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+			FCsAchievementActionInfo* CompleteInfo							  = CompleteInfoContainer->Get();
 
 			CompleteInfo->Reset();
 
@@ -1179,8 +1179,8 @@ void UCsManager_Achievement::CompleteAll_Internal(FCsAchievementActionInfo* Acti
 		}
 
 		// Queue Complete All event at end
-		FCsMemoryResource_AchievementActionInfo* CompleteAllInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
-		FCsAchievementActionInfo* CompleteAllInfo						  = CompleteAllInfoContainer->Get();
+		FCsResourceContainer_AchievementActionInfo* CompleteAllInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+		FCsAchievementActionInfo* CompleteAllInfo							 = CompleteAllInfoContainer->Get();
 
 		CompleteAllInfo->Reset();
 
@@ -1190,8 +1190,8 @@ void UCsManager_Achievement::CompleteAll_Internal(FCsAchievementActionInfo* Acti
 		InfoContainer = CompleteAllInfoContainer;
 
 		// Queue Query Descriptions
-		FCsMemoryResource_AchievementActionInfo* QueryDescriptionsInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
-		FCsAchievementActionInfo* QueryDescriptionsInfo							= QueryDescriptionsInfoContainer->Get();
+		FCsResourceContainer_AchievementActionInfo* QueryDescriptionsInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+		FCsAchievementActionInfo* QueryDescriptionsInfo							   = QueryDescriptionsInfoContainer->Get();
 
 		QueryDescriptionsInfo->Reset();
 
@@ -1369,16 +1369,16 @@ void UCsManager_Achievement::ResetAll_Internal(FCsAchievementActionInfo* ActionI
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
-		TCsDoubleLinkedList<FCsMemoryResource_AchievementActionInfo*>* Current = Manager_MemoryResource.GetAllocatedHead();
-		FCsMemoryResource_AchievementActionInfo* InfoContainer				   = **Current;
+		TCsDoubleLinkedList<FCsResourceContainer_AchievementActionInfo*>* Current = Manager_MemoryResource.GetAllocatedHead();
+		FCsResourceContainer_AchievementActionInfo* InfoContainer				  = **Current;
 
 		for (ICsAchievement* IA : Achievements)
 		{
 			if (!IA->IsValid())
 				continue;
 
-			FCsMemoryResource_AchievementActionInfo* ResetInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
-			FCsAchievementActionInfo* ResetInfo						    = ResetInfoContainer->Get();
+			FCsResourceContainer_AchievementActionInfo* ResetInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+			FCsAchievementActionInfo* ResetInfo							   = ResetInfoContainer->Get();
 
 			ResetInfo->Reset();
 
@@ -1400,8 +1400,8 @@ void UCsManager_Achievement::ResetAll_Internal(FCsAchievementActionInfo* ActionI
 		}
 
 		// Queue Reset All event at end
-		FCsMemoryResource_AchievementActionInfo* ResetAllInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
-		FCsAchievementActionInfo* ResetAllInfo						   = ResetAllInfoContainer->Get();
+		FCsResourceContainer_AchievementActionInfo* ResetAllInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+		FCsAchievementActionInfo* ResetAllInfo							  = ResetAllInfoContainer->Get();
 
 		ResetAllInfo->Reset();
 
@@ -1411,8 +1411,8 @@ void UCsManager_Achievement::ResetAll_Internal(FCsAchievementActionInfo* ActionI
 		InfoContainer = ResetAllInfoContainer;
 
 		// Queue Query Descriptions
-		FCsMemoryResource_AchievementActionInfo* QueryDescriptionsInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
-		FCsAchievementActionInfo* QueryDescriptionsInfo							= QueryDescriptionsInfoContainer->Get();
+		FCsResourceContainer_AchievementActionInfo* QueryDescriptionsInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+		FCsAchievementActionInfo* QueryDescriptionsInfo							   = QueryDescriptionsInfoContainer->Get();
 
 		QueryDescriptionsInfo->Reset();
 
@@ -1573,12 +1573,12 @@ IOnlineAchievementsPtr UCsManager_Achievement::GetAchievementsInterface()
 
 void UCsManager_Achievement::OnQueryAchievementsComplete(const FUniqueNetId& PlayerId, const bool Success)
 {
-	TCsDoubleLinkedList<FCsMemoryResource_AchievementActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
+	TCsDoubleLinkedList<FCsResourceContainer_AchievementActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
 
 	checkf(AllocatedHead, TEXT("UCsManager_Achievement::OnQueryAchievementsComplete: No Action was queued."));
 
-	FCsMemoryResource_AchievementActionInfo* InfoContainer = **AllocatedHead;
-	FCsAchievementActionInfo* ActionInfo				   = InfoContainer->Get();
+	FCsResourceContainer_AchievementActionInfo* InfoContainer = **AllocatedHead;
+	FCsAchievementActionInfo* ActionInfo				      = InfoContainer->Get();
 
 	checkf(ActionInfo->Action == ECsAchievementAction::QueryIds, TEXT("UCsManager_Achievement::OnQueryAchievementsComplete: Current Action: %s is NOT QueryIds."), *(EMCsAchievementAction::Get().ToChar(ActionInfo->Action)));
 
@@ -1607,12 +1607,12 @@ void UCsManager_Achievement::OnQueryAchievementsComplete(const FUniqueNetId& Pla
 
 void UCsManager_Achievement::OnQueryAchievementDescriptionsComplete(const FUniqueNetId& PlayerId, const bool Success)
 {
-	TCsDoubleLinkedList<FCsMemoryResource_AchievementActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
+	TCsDoubleLinkedList<FCsResourceContainer_AchievementActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
 
 	checkf(AllocatedHead, TEXT("UCsManager_Achievement::OnQueryAchievementDescriptionsComplete: No Action was queued."));
 
-	FCsMemoryResource_AchievementActionInfo* InfoContainer = **AllocatedHead;
-	FCsAchievementActionInfo* ActionInfo				   = InfoContainer->Get();
+	FCsResourceContainer_AchievementActionInfo* InfoContainer = **AllocatedHead;
+	FCsAchievementActionInfo* ActionInfo				      = InfoContainer->Get();
 
 	checkf(ActionInfo->Action == ECsAchievementAction::QueryDescriptions, TEXT("UCsManager_Achievement::OnQueryAchievementDescriptionsComplete: Current Action: %s is NOT QueryDescriptions."), *(EMCsAchievementAction::Get().ToChar(ActionInfo->Action)));
 
@@ -1641,12 +1641,12 @@ void UCsManager_Achievement::OnQueryAchievementDescriptionsComplete(const FUniqu
 
 void UCsManager_Achievement::OnAchievementsWritten(const FUniqueNetId& PlayerId, bool Success)
 {
-	TCsDoubleLinkedList<FCsMemoryResource_AchievementActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
+	TCsDoubleLinkedList<FCsResourceContainer_AchievementActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
 
 	checkf(AllocatedHead, TEXT("UCsManager_Achievement::OnAchievementsWritten: No Action was queued."));
 
-	FCsMemoryResource_AchievementActionInfo* InfoContainer = **AllocatedHead;
-	FCsAchievementActionInfo* ActionInfo				   = InfoContainer->Get();
+	FCsResourceContainer_AchievementActionInfo* InfoContainer = **AllocatedHead;
+	FCsAchievementActionInfo* ActionInfo					  = InfoContainer->Get();
 
 	const FECsAchievement& Achievement = ActionInfo->Achievement;
 	const ECsAchievementAction& Action = ActionInfo->Action;

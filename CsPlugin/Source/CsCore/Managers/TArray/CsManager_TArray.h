@@ -230,15 +230,15 @@ public:
 #define CS_DECLARE_MANAGER_TARRAY_VALUE_TYPE(ValueType) \
 	protected: \
 	\
-		struct FCsMemoryResource_TArray_##ValueType : public TCsMemoryResource<TArray<ValueType>> \
+		struct FCsResourceContainer_TArray_##ValueType : public TCsResourceContainer<TArray<ValueType>> \
 		{ \
 		}; \
 		\
-		struct FCsManager_TArray_##ValueType : public TCsManager_MemoryResource_Fixed<TArray<ValueType>, FCsMemoryResource_TArray_##ValueType, CS_MANAGER_TARRAY_POOL_SIZE> \
+		struct FCsManager_TArray_##ValueType : public TCsManager_MemoryResource_Fixed<TArray<ValueType>, FCsResourceContainer_TArray_##ValueType, CS_MANAGER_TARRAY_POOL_SIZE> \
 		{ \
 		}; \
 	\
-		TCsManager_TArray_ValueType<FCsManager_TArray_##ValueType, FCsMemoryResource_TArray_##ValueType, ValueType> Pool_##ValueType; \
+		TCsManager_TArray_ValueType<FCsManager_TArray_##ValueType, FCsResourceContainer_TArray_##ValueType, ValueType> Pool_##ValueType; \
 	\
 	public: \
 	\
@@ -263,15 +263,15 @@ public:
 #define CS_DECLARE_MANAGER_TARRAY_POINTER_TYPE(PointerType) \
 	protected: \
 	\
-		struct FCsMemoryResource_TArray_##PointerType : public TCsMemoryResource<TArray<PointerType*>> \
+		struct FCsResourceContainer_TArray_##PointerType : public TCsResourceContainer<TArray<PointerType*>> \
 		{ \
 		}; \
 		\
-		struct FCsManager_TArray_##PointerType : public TCsManager_MemoryResource_Fixed<TArray<PointerType*>, FCsMemoryResource_TArray_##PointerType, CS_MANAGER_TARRAY_POOL_SIZE> \
+		struct FCsManager_TArray_##PointerType : public TCsManager_MemoryResource_Fixed<TArray<PointerType*>, FCsResourceContainer_TArray_##PointerType, CS_MANAGER_TARRAY_POOL_SIZE> \
 		{ \
 		}; \
 	\
-		TCsManager_TArray_PointerType<FCsManager_TArray_##PointerType, FCsMemoryResource_TArray_##PointerType, PointerType> Pool_##PointerType; \
+		TCsManager_TArray_PointerType<FCsManager_TArray_##PointerType, FCsResourceContainer_TArray_##PointerType, PointerType> Pool_##PointerType; \
 	\
 	public: \
 	\

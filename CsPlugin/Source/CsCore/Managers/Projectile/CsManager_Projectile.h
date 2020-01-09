@@ -5,7 +5,7 @@
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
 #include "Managers/Projectile/CsProjectile.h"
-#include "Managers/MemoryResource/CsManager_MemoryResource.h"
+#include "Managers/Resource/CsManager_ResourceValueType.h"
 #include "CsManager_Projectile.generated.h"
 
 // Structs

@@ -1,21 +1,22 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#ifndef __CS_MANAGER_MEMORY_RESOURCE_H__
-#define __CS_MANAGER_MEMORY_RESOURCE_H__
+#ifndef __CS_MANAGER_RESOURCE_VALUE_TYPE_H__
+#define __CS_MANAGER_RESOURCE_VALUE_TYPE_H__
 
 #pragma once
 
-#include "Managers/MemoryResource/CsResourceContainer.h"
+#include "Managers/Resource/CsManager_Resource.h"
+#include "Managers/Resource/CsResourceContainer.h"
 #include "Types/CsTypes_Macro.h"
 #include "Containers/CsDoubleLinkedList.h"
 
 template<typename ResourceType, typename ResourceContainerType = TCsResourceContainer<ResourceType>>
-class TCsManager_MemoryResource
+class TCsManager_ResourceValueType : public ICsManager_Resource
 {
-	static_assert(std::is_base_of<TCsResourceContainer<ResourceType>, ResourceContainerType>(), "TCsManager_MemoryResource: ResourceContainerType does NOT derive from TCsResourceContainer<ResourceType>.");
+	static_assert(std::is_base_of<TCsResourceContainer<ResourceType>, ResourceContainerType>(), "TCsManager_ResourceValueType: ResourceContainerType does NOT derive from TCsResourceContainer<ResourceType>.");
 
 public:
 
-	TCsManager_MemoryResource() :
+	TCsManager_ResourceValueType() :
 		Name(),
 		Resources(),
 		Pool(),
@@ -26,10 +27,10 @@ public:
 		AllocatedTail(nullptr),
 		AllocatedSize(0)
 	{
-		Name = TEXT("TCsManager_MemoryResource");
+		Name = TEXT("TCsManager_ResourceValueType");
 	}
 
-	virtual ~TCsManager_MemoryResource()
+	virtual ~TCsManager_ResourceValueType()
 	{
 		Shutdown();
 	}
@@ -63,7 +64,7 @@ public:
 
 	/**
 	* Set the name of the Manager. This is mostly used for debugging.
-	*  Default value is TCsManager_MemoryResource.
+	*  Default value is TCsManager_ResourceValueType.
 	*
 	* @param InName		Name to set for the Manager.
 	*/
@@ -136,7 +137,7 @@ public:
 	*/
 	void CreatePool(const int32& InSize)
 	{
-		checkf(InSize > 0, TEXT("TCsManager_MemoryResource::CreatePool: InSize must be GREATER THAN 0."));
+		checkf(InSize > 0, TEXT("%s::CreatePool: InSize must be GREATER THAN 0."), *Name);
 
 		Shutdown();
 
@@ -166,7 +167,7 @@ public:
 
 	void Add(const int32& Count)
 	{
-		checkf(Count > 0, TEXT("TCsManager_MemoryResource::Add: Count must be GREATER THAN 0."));
+		checkf(Count > 0, TEXT("%s::Add: Count must be GREATER THAN 0."), *Name);
 
 		for (int32 I = 0; I < Count; ++I)
 		{
@@ -594,6 +595,39 @@ public:
 		return Deallocate(ResourceContainer);
 	}
 
+	/**
+	*
+	*
+	* return
+	*/
+	bool DeallocateHead()
+	{
+		if (!AllocatedHead)
+			return false;
+		return Deallocate(**AllocatedHead);
+	}
+
+	/**
+	*
+	*/
+	void DeallocateAll()
+	{
+		TCsDoubleLinkedList<ResourceContainerType*>* Current = AllocatedHead;
+		TCsDoubleLinkedList<ResourceContainerType*>* Next	 = Current;
+
+		while (Next)
+		{
+			Current					 = Next;
+			ResourceContainerType* M = **Current;
+
+			const int32& Index = M->GetIndex();
+
+			M->Deallocate();
+			RemoveActiveLink(&(Links[Index]));
+			--AllocatedSize;
+		}
+	}
+
 #pragma endregion Deallocate
 
 // Queue
@@ -663,4 +697,4 @@ public:
 #pragma endregion Stack
 };
 
-#endif // #ifndef __CS_MANAGER_MEMORY_RESOURCE_H__
+#endif // #ifndef __CS_MANAGER_RESOURCE_VALUE_TYPE_H__

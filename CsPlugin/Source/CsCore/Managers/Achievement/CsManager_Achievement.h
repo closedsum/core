@@ -2,7 +2,7 @@
 #pragma once
 #include "CoreUObject/Public/UObject/Object.h"
 #include "Managers/Achievement/CsTypes_Achievement.h"
-#include "Managers/MemoryResource/CsManager_MemoryResource_Fixed.h"
+#include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 #include "OnlineSubsystem.h"
 #include "OnlineStats.h"
 #include "Interfaces/OnlineAchievementsInterface.h"
@@ -23,7 +23,7 @@ struct CSCORE_API FCsResourceContainer_AchievementActionInfo : public TCsResourc
 {
 };
 
-struct CSCORE_API FCsManager_MemoryResource_AchievementActionInfo : public TCsManager_MemoryResource_Fixed<FCsAchievementActionInfo, FCsResourceContainer_AchievementActionInfo, 256>
+struct CSCORE_API FCsManager_AchievementActionInfo : public TCsManager_ResourceValueType_Fixed<FCsAchievementActionInfo, FCsResourceContainer_AchievementActionInfo, 256>
 {
 };
 
@@ -157,7 +157,7 @@ public:
 protected:
 
 	/** Manager to handle a resource pool of FCsAchievementActionInfo. */
-	FCsManager_MemoryResource_AchievementActionInfo Manager_MemoryResource;
+	FCsManager_AchievementActionInfo Manager_Resource;
 
 	/**
 	* Queue an action (Write, Complete, or Reset) to perform on an achievement.

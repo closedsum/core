@@ -1,22 +1,22 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#ifndef __CS_MANAGER_MEMORY_RESOURCE_FIXED_H__
-#define __CS_MANAGER_MEMORY_RESOURCE_FIXED_H__
+#ifndef __CS_MANAGER_RESOURCE_VALUE_TYPE_FIXED_H__
+#define __CS_MANAGER_RESOURCE_VALUE_TYPE_FIXED_H__
 
 #pragma once
 
-#include "Managers/MemoryResource/ICsManager_MemoryResource.h"
-#include "Managers/MemoryResource/CsResourceContainer.h"
+#include "Managers/Resource/CsManager_Resource.h"
+#include "Managers/Resource/CsResourceContainer.h"
 #include "Types/CsTypes_Macro.h"
 #include "Containers/CsDoubleLinkedList.h"
 
 template<typename ResourceType, typename ResourceContainerType = TCsResourceContainer<ResourceType>, uint32 BUCKET_SIZE = 128>
-class TCsManager_MemoryResource_Fixed : public ICsManager_MemoryResource
+class TCsManager_ResourceValueType_Fixed : public ICsManager_Resource
 {
-	static_assert(std::is_base_of<TCsResourceContainer<ResourceType>, ResourceContainerType>(), "TCsManager_MemoryResource_Fixed: ResourceContainerType does NOT implement interface: TCsResourceContainer<ResourceType>.");
+	static_assert(std::is_base_of<TCsResourceContainer<ResourceType>, ResourceContainerType>(), "TCsManager_ResourceValueType_Fixed: ResourceContainerType does NOT implement interface: TCsResourceContainer<ResourceType>.");
 
 public:
 
-	TCsManager_MemoryResource_Fixed() :
+	TCsManager_ResourceValueType_Fixed() :
 		Name(),
 		ResourceContainers(),
 		Resources(),
@@ -29,13 +29,13 @@ public:
 		AllocatedTail(nullptr),
 		AllocatedSize(0)
 	{
-		Name = TEXT("TCsManager_MemoryResource_Fixed");
+		Name = TEXT("TCsManager_ResourceValueType_Fixed");
 
 		if (BUCKET_SIZE > 0)
 			CreatePool(BUCKET_SIZE);
 	}
 
-	virtual ~TCsManager_MemoryResource_Fixed()
+	virtual ~TCsManager_ResourceValueType_Fixed()
 	{
 		Shutdown();
 	}
@@ -74,7 +74,7 @@ public:
 
 	/**
 	* Set the name of the Manager. This is mostly used for debugging.
-	*  Default value is TCsManager_MemoryResource.
+	*  Default value is TCsManager_ResourceValueType_Fixed.
 	*
 	* @param InName		Name to set for the Manager.
 	*/
@@ -583,7 +583,7 @@ public:
 	*
 	* return
 	*/
-	bool DellocateHead()
+	bool DeallocateHead()
 	{
 		if (!AllocatedHead)
 			return false;
@@ -680,4 +680,4 @@ public:
 #pragma endregion Stack
 };
 
-#endif // #ifndef __CS_MANAGER_MEMORY_RESOURCE_FIXED_H__
+#endif // #ifndef __CS_MANAGER_RESOURCE_VALUE_TYPE_FIXED_H__

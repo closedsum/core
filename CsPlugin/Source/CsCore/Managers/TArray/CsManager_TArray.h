@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "Managers/MemoryResource/CsManager_MemoryResource_Fixed.h"
+#include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 #include "Types/CsTypes_Primitive.h"
 #include <typeinfo>
 
@@ -124,7 +124,7 @@ public:
 	TArray<ValueType>& ForceAllocateRef(const ECsManagerTArraySize& Size)
 	{
 		if (Pool[(uint8)Size]->IsExhausted())
-			Pool[(uint8)Size]->DellocateHead();
+			Pool[(uint8)Size]->DeallocateHead();
 
 		return AllocateRef(Size);
 	}
@@ -211,7 +211,7 @@ public:
 	TArray<PointerType*>& ForceAllocateRef(const ECsManagerTArraySize& Size)
 	{
 		if (Pool[(uint8)Size]->IsExhausted())
-			Pool[(uint8)Size]->DellocateHead();
+			Pool[(uint8)Size]->DeallocateHead();
 
 		return AllocateRef(Size);
 	}
@@ -234,7 +234,7 @@ public:
 		{ \
 		}; \
 		\
-		struct FCsManager_TArray_##ValueType : public TCsManager_MemoryResource_Fixed<TArray<ValueType>, FCsResourceContainer_TArray_##ValueType, CS_MANAGER_TARRAY_POOL_SIZE> \
+		struct FCsManager_TArray_##ValueType : public TCsManager_ResourceValueType_Fixed<TArray<ValueType>, FCsResourceContainer_TArray_##ValueType, CS_MANAGER_TARRAY_POOL_SIZE> \
 		{ \
 		}; \
 	\
@@ -267,7 +267,7 @@ public:
 		{ \
 		}; \
 		\
-		struct FCsManager_TArray_##PointerType : public TCsManager_MemoryResource_Fixed<TArray<PointerType*>, FCsResourceContainer_TArray_##PointerType, CS_MANAGER_TARRAY_POOL_SIZE> \
+		struct FCsManager_TArray_##PointerType : public TCsManager_ResourceValueType_Fixed<TArray<PointerType*>, FCsResourceContainer_TArray_##PointerType, CS_MANAGER_TARRAY_POOL_SIZE> \
 		{ \
 		}; \
 	\

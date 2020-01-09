@@ -1,12 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#ifndef __ICS_MANAGER_MEMORY_RESOURCE_H__
-#define __ICS_MANAGER_MEMORY_RESOURCE_H__
+#ifndef __CS_MANAGER_RESOURCE_H__
+#define __CS_MANAGER_RESOURCE_H__
 
-class CSCORE_API ICsManager_MemoryResource
+class CSCORE_API ICsManager_Resource
 {
 public:
 
-	virtual ~ICsManager_MemoryResource(){}
+	virtual ~ICsManager_Resource(){}
 
 	virtual void SetName(const FString& InName) = 0;
 
@@ -29,11 +29,11 @@ public:
 	// Deallocate
 #pragma region
 
-	virtual bool DellocateHead() = 0;
+	virtual bool DeallocateHead() = 0;
 
 	virtual void DeallocateAll() = 0;
 
 #pragma endregion Deallocate
 };
 
-#endif // #ifndef __ICS_MANAGER_MEMORY_RESOURCE_H__
+#endif // #ifndef __CS_MANAGER_RESOURCE_H__

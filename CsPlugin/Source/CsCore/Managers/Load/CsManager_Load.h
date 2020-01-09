@@ -5,7 +5,7 @@
 #include "Types/CsTypes_Load.h"
 #include "Managers/Time/CsTypes_Time.h"
 // Managers
-#include "Managers/MemoryResource/CsManager_MemoryResource_Fixed.h"
+#include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 #include "CsManager_Load.generated.h"
 
 /**
@@ -66,7 +66,7 @@ struct CSCORE_API FCsManagerLoad_Task_LoadObjects
 {
 public:
 
-	/** Internal Index of the struct in the Manager_MemoryResource. */
+	/** Internal Index of the struct in the Manager_Resource. */
 	int32 Index;
 
 protected:
@@ -195,7 +195,7 @@ struct CSCORE_API FCsResourceContainer_ManagerLoad_Task_LoadObjects : public TCs
 {
 };
 
-struct CSCORE_API FCsManager_MemoryResource_ManagerLoad_Task_LoadObjects : public TCsManager_MemoryResource_Fixed<FCsManagerLoad_Task_LoadObjects, FCsResourceContainer_ManagerLoad_Task_LoadObjects, 64>
+struct CSCORE_API FCsManager_ManagerLoad_Task_LoadObjects : public TCsManager_ResourceValueType_Fixed<FCsManagerLoad_Task_LoadObjects, FCsResourceContainer_ManagerLoad_Task_LoadObjects, 64>
 {
 };
 
@@ -275,7 +275,7 @@ public:
 #pragma region
 protected:
 
-	FCsManager_MemoryResource_ManagerLoad_Task_LoadObjects Manager_Tasks;
+	FCsManager_ManagerLoad_Task_LoadObjects Manager_Tasks;
 
 #pragma endregion Tasks
 

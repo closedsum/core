@@ -351,7 +351,7 @@ void UCsManager_Save::SetProfileName(const ECsPlayerProfile& Profile, const FStr
 
 void UCsManager_Save::Update(const float& DeltaSeconds)
 {
-	TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* Current = Manager_MemoryResource.GetAllocatedHead();
+	TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* Current = Manager_Resource.GetAllocatedHead();
 	TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* Next    = Current;
 
 	while (Next)
@@ -435,7 +435,7 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 				OnDeleteAll_Event.Broadcast();
 				OnDeleteAll_ScriptEvent.Broadcast();
 			}
-			Manager_MemoryResource.Deallocate(InfoContainer);
+			Manager_Resource.Deallocate(InfoContainer);
 			continue;
 		}
 		// If Ready to Process, Start
@@ -465,7 +465,7 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 				// Update Next since Current's Next could have changed
 				Next = Current->GetNextLink();
 
-				Manager_MemoryResource.Deallocate(InfoContainer);
+				Manager_Resource.Deallocate(InfoContainer);
 			}
 			// Write
 			else
@@ -484,7 +484,7 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 				// Update Next since Current's Next could have changed
 				Next = Current->GetNextLink();
 
-				Manager_MemoryResource.Deallocate(InfoContainer);
+				Manager_Resource.Deallocate(InfoContainer);
 			}
 			// Delete
 			else
@@ -503,7 +503,7 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 				// Update Next since Current's Next could have changed
 				Next = Current->GetNextLink();
 
-				Manager_MemoryResource.Deallocate(InfoContainer);
+				Manager_Resource.Deallocate(InfoContainer);
 			}
 		}
 	}
@@ -604,7 +604,7 @@ void UCsManager_Save::QueueAction(const ECsPlayerProfile& Profile, const ECsSave
 void UCsManager_Save::QueueAction(const ECsPlayerProfile& Profile, const ECsSaveAction& Action, const int32& Index, const FString& Data /*= NCsCached::Str::Empty*/)
 {
 	// Allocate SaveActionInfo from a pool
-	FCsResourceContainer_SaveActionInfo* InfoContainer = Manager_MemoryResource.Allocate();
+	FCsResourceContainer_SaveActionInfo* InfoContainer = Manager_Resource.Allocate();
 	FCsSaveActionInfo* Info							   = InfoContainer->Get();
 
 	Info->Reset();
@@ -622,7 +622,7 @@ void UCsManager_Save::QueueAction(const ECsPlayerProfile& Profile, const ECsSave
 
 void UCsManager_Save::QueueActionAsHead(const ECsPlayerProfile& Profile, const ECsSaveAction& Action, const int32& Index)
 {
-	FCsResourceContainer_SaveActionInfo* InfoContainer = Manager_MemoryResource.AllocateBeforeHead();
+	FCsResourceContainer_SaveActionInfo* InfoContainer = Manager_Resource.AllocateBeforeHead();
 	FCsSaveActionInfo* Info							   = InfoContainer->Get();
 
 	Info->Reset();
@@ -639,7 +639,7 @@ void UCsManager_Save::QueueActionAsHead(const ECsPlayerProfile& Profile, const E
 
 void UCsManager_Save::QueueActionAfterHead(const ECsPlayerProfile& Profile, const ECsSaveAction& Action, const int32& Index)
 {
-	FCsResourceContainer_SaveActionInfo* InfoContainer = Manager_MemoryResource.AllocateAfterHead();
+	FCsResourceContainer_SaveActionInfo* InfoContainer = Manager_Resource.AllocateAfterHead();
 	FCsSaveActionInfo* Info							   = InfoContainer->Get();
 
 	Info->Reset();
@@ -881,7 +881,7 @@ void UCsManager_Save::ReadAll_Internal(FCsSaveActionInfo* ActionInfo)
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
-		TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* Current = Manager_MemoryResource.GetAllocatedHead();
+		TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* Current = Manager_Resource.GetAllocatedHead();
 		FCsResourceContainer_SaveActionInfo* InfoContainer				   = **Current;
 		FCsSaveActionInfo* ReadAllActionInfo							   = InfoContainer->Get();
 
@@ -908,7 +908,7 @@ void UCsManager_Save::ReadAll_Internal(FCsSaveActionInfo* ActionInfo)
 					{
 						FileInfo.bRead = false;
 
-						FCsResourceContainer_SaveActionInfo* ReadInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+						FCsResourceContainer_SaveActionInfo* ReadInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
 						FCsSaveActionInfo* ReadInfo							   = ReadInfoContainer->Get();
 
 						ReadInfo->Reset();
@@ -933,7 +933,7 @@ void UCsManager_Save::ReadAll_Internal(FCsSaveActionInfo* ActionInfo)
 			}
 
 			// Queue Read All event at end
-			FCsResourceContainer_SaveActionInfo* ReadAllInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+			FCsResourceContainer_SaveActionInfo* ReadAllInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
 			FCsSaveActionInfo* ReadAllInfo						      = ReadAllInfoContainer->Get();
 
 			ReadAllInfo->Reset();
@@ -1109,7 +1109,7 @@ void UCsManager_Save::WriteAll_Internal(FCsSaveActionInfo* ActionInfo)
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
-		TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* Current = Manager_MemoryResource.GetAllocatedHead();
+		TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* Current = Manager_Resource.GetAllocatedHead();
 		FCsResourceContainer_SaveActionInfo* InfoContainer				   = **Current;
 
 		for (const ECsPlayerProfile& PlayerProfile : EMCsPlayerProfile::Get())
@@ -1126,7 +1126,7 @@ void UCsManager_Save::WriteAll_Internal(FCsSaveActionInfo* ActionInfo)
 			{
 				FCsSaveFileInfo& FileInfo = SaveFileInfos[(uint8)PlayerProfile][I];
 
-				FCsResourceContainer_SaveActionInfo* WriteInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+				FCsResourceContainer_SaveActionInfo* WriteInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
 				FCsSaveActionInfo* WriteInfo						    = WriteInfoContainer->Get();
 
 				WriteInfo->Reset();
@@ -1150,7 +1150,7 @@ void UCsManager_Save::WriteAll_Internal(FCsSaveActionInfo* ActionInfo)
 		}
 
 		// Queue Write All event at end
-		FCsResourceContainer_SaveActionInfo* WriteAllInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+		FCsResourceContainer_SaveActionInfo* WriteAllInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
 		FCsSaveActionInfo* WriteAllInfo							   = WriteAllInfoContainer->Get();
 
 		WriteAllInfo->Reset();
@@ -1162,7 +1162,7 @@ void UCsManager_Save::WriteAll_Internal(FCsSaveActionInfo* ActionInfo)
 		InfoContainer = WriteAllInfoContainer;
 
 		// Queue Enumerate
-		FCsResourceContainer_SaveActionInfo* EnumerateInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+		FCsResourceContainer_SaveActionInfo* EnumerateInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
 		FCsSaveActionInfo* EnumerateInfo						    = EnumerateInfoContainer->Get();
 
 		EnumerateInfo->Reset();
@@ -1266,12 +1266,12 @@ void UCsManager_Save::Delete_Internal(FCsSaveActionInfo* ActionInfo)
 			{
 				// Delete, Enumerate, then ReadAll
 
-				TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
+				TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
 				FCsResourceContainer_SaveActionInfo* InfoContainer						 = **AllocatedHead;
 
 				// Enumerate
 				{
-					FCsResourceContainer_SaveActionInfo* EnumerateInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+					FCsResourceContainer_SaveActionInfo* EnumerateInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
 					FCsSaveActionInfo* EnumerateInfo						    = EnumerateInfoContainer->Get();
 
 					EnumerateInfo->Reset();
@@ -1283,7 +1283,7 @@ void UCsManager_Save::Delete_Internal(FCsSaveActionInfo* ActionInfo)
 				}
 				// ReadAll
 				{
-					FCsResourceContainer_SaveActionInfo* ReadAllInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+					FCsResourceContainer_SaveActionInfo* ReadAllInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
 					FCsSaveActionInfo* ReadAllInfo						      = ReadAllInfoContainer->Get();
 
 					ReadAllInfo->Reset();
@@ -1432,7 +1432,7 @@ void UCsManager_Save::DeleteAllContent()
 #endif // #if !UE_BUILD_SHIPPING
 
 		// Allocate SaveActionInfo from a pool
-		FCsResourceContainer_SaveActionInfo* InfoContainer = Manager_MemoryResource.Allocate();
+		FCsResourceContainer_SaveActionInfo* InfoContainer = Manager_Resource.Allocate();
 		FCsSaveActionInfo* Info							   = InfoContainer->Get();
 
 		Info->Reset();
@@ -1476,7 +1476,7 @@ void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
-		TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* Current = Manager_MemoryResource.GetAllocatedHead();
+		TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* Current = Manager_Resource.GetAllocatedHead();
 		FCsResourceContainer_SaveActionInfo* InfoContainer				   = **Current;
 
 		// All Content
@@ -1492,7 +1492,7 @@ void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
 				{
 					FileInfo.bRead = false;
 
-					FCsResourceContainer_SaveActionInfo* DeleteInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+					FCsResourceContainer_SaveActionInfo* DeleteInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
 					FCsSaveActionInfo* DeleteInfo						     = DeleteInfoContainer->Get();
 
 					DeleteInfo->Reset();
@@ -1527,7 +1527,7 @@ void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
 				{
 					FileInfo.bRead = false;
 
-					FCsResourceContainer_SaveActionInfo* DeleteInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+					FCsResourceContainer_SaveActionInfo* DeleteInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
 					FCsSaveActionInfo* DeleteInfo						     = DeleteInfoContainer->Get();
 
 					DeleteInfo->Reset();
@@ -1552,7 +1552,7 @@ void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
 		}
 		
 		// Queue Delete All at end
-		FCsResourceContainer_SaveActionInfo* DeleteAllInfoContainer = Manager_MemoryResource.AllocateAfter(InfoContainer);
+		FCsResourceContainer_SaveActionInfo* DeleteAllInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
 		FCsSaveActionInfo* DeleteAllInfo						    = DeleteAllInfoContainer->Get();
 
 		DeleteAllInfo->Reset();
@@ -1620,7 +1620,7 @@ IOnlineUserCloudPtr UCsManager_Save::GetUserCloudInterface()
 
 void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUniqueNetId& UserId)
 {
-	TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
+	TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
 	
 	checkf(AllocatedHead, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: No Read Action was queued."));
 
@@ -1763,7 +1763,7 @@ void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUn
 
 void UCsManager_Save::OnReadUserFileComplete(bool WasSuccessful, const FUniqueNetId& UserId, const FString& FileName)
 {
-	TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
+	TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
 
 	checkf(AllocatedHead, TEXT("UCsManager_Save::OnReadUserFileComplete: No Read Action was queued."));
 
@@ -1831,7 +1831,7 @@ void UCsManager_Save::OnReadUserFileComplete(bool WasSuccessful, const FUniqueNe
 
 void UCsManager_Save::OnWriteUserFileComplete(bool WasSuccessful, const FUniqueNetId& UserId, const FString& FileName)
 {
-	TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
+	TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
 
 	checkf(AllocatedHead, TEXT("UCsManager_Save::OnWriteUserFileComplete: No Write Action was queued."));
 
@@ -1881,7 +1881,7 @@ void UCsManager_Save::OnWriteUserFileComplete(bool WasSuccessful, const FUniqueN
 
 void UCsManager_Save::OnDeleteUserFileComplete(bool WasSuccessful, const FUniqueNetId& UserId, const FString& FileName)
 {
-	TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* AllocatedHead = Manager_MemoryResource.GetAllocatedHead();
+	TCsDoubleLinkedList<FCsResourceContainer_SaveActionInfo*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
 
 	checkf(AllocatedHead, TEXT("UCsManager_Save::OnDeleteUserFileComplete: No Delete Action was queued."));
 

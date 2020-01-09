@@ -5,7 +5,7 @@
 #include "OnlineSubsystem.h"
 #include "OnlineStats.h"
 #include "Interfaces/OnlineUserCloudInterface.h"
-#include "Managers/MemoryResource/CsManager_MemoryResource_Fixed.h"
+#include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 #include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"
 #include "CsManager_Save.generated.h"
 
@@ -19,7 +19,7 @@ struct CSCORE_API FCsResourceContainer_SaveActionInfo : public TCsResourceContai
 {
 };
 
-struct CSCORE_API FCsManager_MemoryResource_SaveActionInfo : public TCsManager_MemoryResource_Fixed<FCsSaveActionInfo, FCsResourceContainer_SaveActionInfo, 64>
+struct CSCORE_API FCsManager_SaveActionInfo : public TCsManager_ResourceValueType_Fixed<FCsSaveActionInfo, FCsResourceContainer_SaveActionInfo, 64>
 {
 };
 
@@ -297,7 +297,7 @@ protected:
 protected:
 
 	/** Manager to handle a resource pool of FCsSaveActionInfo. */
-	FCsManager_MemoryResource_SaveActionInfo Manager_MemoryResource;
+	FCsManager_SaveActionInfo Manager_Resource;
 
 public:
 

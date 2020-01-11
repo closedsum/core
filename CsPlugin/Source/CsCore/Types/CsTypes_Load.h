@@ -1,8 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Primitive.h"
 
+// Json
 #include "Json.h"
 #include "JsonObjectConverter.h"
+// DataTable
+#include "Engine/DataTable.h"
 
 #include "CsTypes_Load.generated.h"
 #pragma once
@@ -26,6 +29,9 @@ namespace ECsLoadCached
 	}
 }
 
+// LoadCode
+#pragma region
+
 UENUM(BlueprintType, meta = (Bitflags))
 enum class ECsLoadCode : uint8
 {
@@ -34,6 +40,8 @@ enum class ECsLoadCode : uint8
 };
 
 #define ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES 1
+
+#pragma endregion LoadCode
 
 // LoadFlags
 #pragma region
@@ -154,7 +162,10 @@ namespace ECsLoadFlags_Editor
 
 #pragma endregion // LoadFlags_Editor
 
-USTRUCT()
+// FCsResourceSize
+#pragma region
+
+USTRUCT(BlueprintType)
 struct CSCORE_API FCsResourceSize
 {
 	GENERATED_USTRUCT_BODY()
@@ -191,13 +202,192 @@ struct CSCORE_API FCsResourceSize
 		return *this;
 	}
 
+	FORCEINLINE bool operator==(const FCsResourceSize& B) const
+	{
+		return Bytes == B.Bytes && Kilobytes == B.Kilobytes && Megabytes == B.Megabytes;
+	}
+
 	FORCEINLINE void Reset()
 	{
 		Bytes = 0;
 		Kilobytes = 0.0f;
 		Megabytes = 0.0f;
 	}
+
+	void SetBytes(const int32& InBytes)
+	{
+		Bytes	  = InBytes;
+		Kilobytes = Bytes * FMath::Pow(10, -3);
+		Megabytes = Bytes * FMath::Pow(10, -6);
+	}
+
+	FString ToString()
+	{
+		return FString::Printf(TEXT("%f mb, %f kb, %d b"), Megabytes, Kilobytes, Bytes);
+	}
 };
+
+#pragma endregion FCsResourceSize
+
+// FCsSoftObjectPath
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsSoftObjectPath
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Path")
+	FSoftObjectPath Path;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Path")
+	FCsResourceSize Size;
+
+	FCsSoftObjectPath() :
+		Path(),
+		Size()
+	{
+	}
+
+	FORCEINLINE bool operator==(const FCsSoftObjectPath& B) const
+	{
+		return Path.GetAssetPathName() == B.Path.GetAssetPathName() && Path.GetSubPathString() == B.Path.GetSubPathString() && Size == B.Size;
+	}
+};
+
+#pragma endregion FCsSoftObjectPath
+
+// FCsSoftObjectPath_Test
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsSoftObjectPath_Test
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Path")
+	FString Path;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Path")
+	FCsResourceSize Size;
+
+	FCsSoftObjectPath_Test() :
+		Path(),
+		Size()
+	{
+	}
+};
+
+#pragma endregion FCsSoftObjectPath_Test
+
+// FCsTArraySoftObjectPath
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsTArraySoftObjectPath
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Reference")
+	TArray<FCsSoftObjectPath> Paths;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Reference")
+	TArray<FSoftObjectPath> Paths_Internal;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Reference")
+	FCsResourceSize Size;
+
+	FCsTArraySoftObjectPath() :
+		Paths(),
+		Paths_Internal(),
+		Size()
+	{
+	}
+
+	void Reset()
+	{
+		Paths.Reset();
+		Paths_Internal.Reset();
+		Size.Reset();
+	}
+
+	FORCEINLINE void CalculateSize()
+	{
+		Size.Reset();
+
+		for (const FCsSoftObjectPath& Path : Paths)
+		{
+			Size += Path.Size;
+		}
+	}
+
+	void Add(const FCsSoftObjectPath& Path)
+	{
+		Paths.Add(Path);
+		Paths_Internal.Add(Path.Path);
+		Size += Path.Size;
+	}
+
+	void AppendUnique(const FCsTArraySoftObjectPath& InPaths)
+	{
+		for (const FCsSoftObjectPath& Path : InPaths.Paths)
+		{
+			Paths.AddUnique(Path);
+		}
+
+		Paths_Internal.Reset(Paths.Num());
+
+		for (const FCsSoftObjectPath& Path : Paths)
+		{
+			Paths_Internal.Add(Path.Path);
+		}
+		CalculateSize();
+	}
+};
+
+#pragma endregion FCsTArraySoftObjectPath
+
+// FCsTArraySoftObjectPath_Test
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsTArraySoftObjectPath_Test
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Reference")
+	TArray<FCsSoftObjectPath_Test> Paths;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Reference")
+	FCsResourceSize Size;
+
+	FCsTArraySoftObjectPath_Test() :
+		Paths(),
+		Size()
+	{
+	}
+
+	void Reset()
+	{
+		Paths.Reset();
+		Size.Reset();
+	}
+
+	FORCEINLINE void CalculateSize()
+	{
+		Size.Reset();
+
+		for (const FCsSoftObjectPath_Test& Path : Paths)
+		{
+			Size += Path.Size;
+		}
+	}
+};
+
+#pragma endregion FCsTArraySoftObjectPath_Test
+
+// FCsStringAssetReference
+#pragma region
 
 USTRUCT()
 struct CSCORE_API FCsStringAssetReference
@@ -218,6 +408,11 @@ struct CSCORE_API FCsStringAssetReference
 		return &Reference_Internal;
 	}
 };
+
+#pragma endregion FCsStringAssetReference
+
+// FCsTArrayStringAssetReference
+#pragma region
 
 USTRUCT()
 struct CSCORE_API FCsTArrayStringAssetReference
@@ -254,6 +449,11 @@ struct CSCORE_API FCsTArrayStringAssetReference
 		}
 	}
 };
+
+#pragma endregion FCsTArrayStringAssetReference
+
+// FCsDataMappingEntry
+#pragma region
 
 class UObject;
 
@@ -294,6 +494,11 @@ struct CSCORE_API FCsDataMappingEntry
 	}
 };
 
+#pragma endregion FCsDataMappingEntry
+
+// FCsObjectPathLoadedInfo
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsObjectPathLoadedInfo
 {
@@ -330,6 +535,11 @@ public:
 	}
 };
 
+#pragma endregion FCsObjectPathLoadedInfo
+
+// FCsCategoryMemberAssociation
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsCategoryMemberAssociation
 {
@@ -341,6 +551,8 @@ struct CSCORE_API FCsCategoryMemberAssociation
 	UPROPERTY(VisibleDefaultsOnly, Category = "Member")
 	TArray<FString> Members;
 };
+
+#pragma endregion FCsCategoryMemberAssociation
 
 // DataType
 #pragma region
@@ -440,7 +652,7 @@ struct CSCORE_API EMCsLoadAssetsType : public TCsEnumStructMap<FECsLoadAssetsTyp
 #pragma endregion LoadAssetsType
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsPayload
+struct CSCORE_API FCsPayloadOld
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -453,7 +665,7 @@ struct CSCORE_API FCsPayload
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TEnumAsByte<ECsLoadFlags_Editor::Type> LoadFlags;
 
-	FORCEINLINE FCsPayload& operator=(const FCsPayload& B)
+	FORCEINLINE FCsPayloadOld& operator=(const FCsPayloadOld& B)
 	{
 		ShortCode = B.ShortCode;
 		DataType = B.DataType;
@@ -461,7 +673,7 @@ struct CSCORE_API FCsPayload
 		return *this;
 	}
 
-	FORCEINLINE bool operator==(const FCsPayload& B) const
+	FORCEINLINE bool operator==(const FCsPayloadOld& B) const
 	{
 		if (ShortCode != B.ShortCode) { return false; }
 		if (DataType != B.DataType) { return false; }
@@ -469,11 +681,14 @@ struct CSCORE_API FCsPayload
 		return true;
 	}
 
-	FORCEINLINE bool operator!=(const FCsPayload& B) const
+	FORCEINLINE bool operator!=(const FCsPayloadOld& B) const
 	{
 		return !(*this == B);
 	}
 };
+
+// FCsTArrayPayload
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsTArrayPayload
@@ -481,13 +696,13 @@ struct CSCORE_API FCsTArrayPayload
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TArray<FCsPayload> Payloads;
+	TArray<FCsPayloadOld> Payloads;
 
 	FORCEINLINE FCsTArrayPayload& operator=(const FCsTArrayPayload& B)
 	{
 		Payloads.Reset();
 
-		for (const FCsPayload& Payload : B.Payloads)
+		for (const FCsPayloadOld& Payload : B.Payloads)
 		{
 			Payloads.Add(Payload);
 		}
@@ -516,7 +731,10 @@ struct CSCORE_API FCsTArrayPayload
 	}
 };
 
+#pragma endregion FCsTArrayPayload
+
 // LoadAsyncOrder
+#pragma region
 
 UENUM(BlueprintType)
 enum class ECsLoadAsyncOrder : uint8
@@ -548,7 +766,284 @@ namespace NCsLoadAsyncOrder
 	}
 }
 
-#pragma endregion // LoadAsyncOrder
+#pragma endregion LoadAsyncOrder
+
+// Payload
+#pragma region
+
+	// FCsPayload_Data
+#pragma region
+
+class UObject;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsPayload_Data
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftClassPtr<UObject> Data;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	FName ShortCode;
+
+	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	//ECsLoadFlags_Editor Load_Flags;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	FCsTArraySoftObjectPath Paths;
+
+	FCsPayload_Data() :
+		Data(),
+		ShortCode(NAME_None),
+		Paths()
+	{
+	}
+
+	void Populate();
+};
+
+#pragma endregion FCsPayload_Data
+
+	// FCsPayload_DataTable
+#pragma region
+
+class UDataTable;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsPayload_DataTable
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<UDataTable> DataTable;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	FName ShortCode;
+
+	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	//ECsLoadFlags_Editor Load_Flags;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bAllRows;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FName> Rows;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	FCsTArraySoftObjectPath Paths;
+
+	FCsPayload_DataTable() :
+		DataTable(),
+		ShortCode(NAME_None),
+		bAllRows(false),
+		Rows(),
+		Paths()
+	{
+	}
+
+	FORCEINLINE bool IsValid() const
+	{
+		return DataTable.IsValid();
+	}
+
+	void Reset()
+	{
+		DataTable.Reset();
+		ShortCode = NAME_None;
+		bAllRows = false;
+		Rows.Reset();
+		Paths.Reset();
+	}
+
+	void Populate();
+};
+
+#pragma endregion FCsPayload_DataTable
+
+	// FCsPayload
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsPayload : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FCsPayload_Data> Datas;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FCsPayload_DataTable> DataTables;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	FCsTArraySoftObjectPath Paths;
+
+	FCsPayload() :
+		Datas(),
+		DataTables(),
+		Paths()
+	{
+	}
+
+	void Reset()
+	{
+		Datas.Reset();
+		DataTables.Reset();
+		Paths.Reset();
+	}
+
+	void Populate()
+	{
+		Paths.Reset();
+
+		for (FCsPayload_Data& Data : Datas)
+		{
+			Data.Populate();
+
+			Paths.AppendUnique(Data.Paths);
+		}
+
+		for (FCsPayload_DataTable& DataTable : DataTables)
+		{
+			DataTable.Populate();
+
+			Paths.AppendUnique(DataTable.Paths);
+		}
+	}
+};
+
+#pragma endregion FCsPayload
+
+		// Test
+#pragma region
+
+			// FCsPayload_Test_Data
+#pragma region
+
+class UObject;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsPayload_Test_Data
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Name of the Data asset. This should be unique. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName Data;
+
+	/** Short unique name for Data. By default this will be the same
+	    name as the Data asset. */
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	FName ShortCode;
+
+	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	//ECsLoadFlags_Editor Load_Flags;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	FCsSoftObjectPath_Test Path;
+
+	FCsPayload_Test_Data() :
+		Data(NAME_None),
+		ShortCode(NAME_None),
+		Path()
+	{
+	}
+
+	void Populate()
+	{
+
+	}
+};
+
+#pragma endregion FCsPayload_Data
+
+			// FCsPayload_Test_DataTable
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsPayload_Test_DataTable
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Name of the DataTable. This should be unique. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName DataTable;
+
+	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	//ECsLoadFlags_Editor Load_Flags;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bAllRows;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FName> Rows;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	FCsTArraySoftObjectPath_Test Paths;
+
+	FCsPayload_Test_DataTable() :
+		DataTable(),
+		bAllRows(false),
+		Rows(),
+		Paths()
+	{
+	}
+
+	void Populate()
+	{
+
+	}
+};
+
+#pragma endregion FCsPayload_Test_DataTable
+
+			// FCsPayload_Test
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsPayload_Test : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FCsPayload_Test_Data> Datas;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FCsPayload_Test_DataTable> DataTables;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	FCsTArraySoftObjectPath_Test Paths;
+
+	FCsPayload_Test() :
+		Datas(),
+		DataTables(),
+		Paths()
+	{
+	}
+
+	void Populate()
+	{
+
+	}
+};
+
+#pragma endregion FCsPayload_Test
+
+#pragma endregion Test
+
+#pragma endregion Payload
 
 // JsonWriter
 typedef bool(*TCsWriteStructToJson_Internal)(UProperty*, TSharedRef<class TJsonWriter<TCHAR>> &, void*, UScriptStruct* const &);

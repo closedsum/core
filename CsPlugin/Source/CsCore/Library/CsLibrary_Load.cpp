@@ -728,9 +728,9 @@ void UCsLibrary_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWr
 			// FCsTArrayPayload
 			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsTArrayPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
-			// FCsPayload
-			if (StructProperty->Struct == FCsPayload::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsPayloadOld
+			if (StructProperty->Struct == FCsPayloadOld::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsPayloadOld>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			// FCsData_ShortCode
 			if (StructProperty->Struct == FCsData_ShortCode::StaticStruct())
 			{ WriteMemberStructPropertyToJson_FCsData_ShortCode(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
@@ -879,9 +879,9 @@ void UCsLibrary_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWr
 				// FCsPlayerData_Inventory_Slot
 				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsPlayerData_Inventory_Slot>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsPayload
-				if (InnerStructProperty->Struct == FCsPayload::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsPayload>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsPayloadOld
+				if (InnerStructProperty->Struct == FCsPayloadOld::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsPayloadOld>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -1499,9 +1499,9 @@ void UCsLibrary_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWr
 			// FCsTArrayPayload
 			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsTArrayPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
-			// FCsPayload
-			if (StructProperty->Struct == FCsPayload::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsPayloadOld
+			if (StructProperty->Struct == FCsPayloadOld::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsPayloadOld>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			// FCsData_ShortCode
 			if (StructProperty->Struct == FCsData_ShortCode::StaticStruct())
 			{ WriteMemberStructPropertyToJson_FCsData_ShortCode(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
@@ -1650,9 +1650,9 @@ void UCsLibrary_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWr
 				// FCsPlayerData_Inventory_Slot
 				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsPlayerData_Inventory_Slot>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsPayload
-				if (InnerStructProperty->Struct == FCsPayload::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsPayload>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsPayloadOld
+				if (InnerStructProperty->Struct == FCsPayloadOld::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsPayloadOld>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -3103,9 +3103,9 @@ void UCsLibrary_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, vo
 			// FCsTArrayPayload
 			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsTArrayPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
-			// FCsPayload
-			if (StructProperty->Struct == FCsPayload::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsPayloadOld
+			if (StructProperty->Struct == FCsPayloadOld::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsPayloadOld>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FCsData_ShortCode
 			if (StructProperty->Struct == FCsData_ShortCode::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_FCsData_ShortCode(JsonObject, StructProperty, InStruct, MemberName); continue; }
@@ -3252,9 +3252,9 @@ void UCsLibrary_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, vo
 				// FCsPlayerData_Inventory_Slot
 				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsPlayerData_Inventory_Slot>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
-				// FCsPayload
-				if (InnerStructProperty->Struct == FCsPayload::StaticStruct())
-				{ WriteToMemberArrayStructPropertyFromJson<FCsPayload>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsPayloadOld
+				if (InnerStructProperty->Struct == FCsPayloadOld::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsPayloadOld>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
 				{
@@ -3875,9 +3875,9 @@ void UCsLibrary_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, vo
 			// FCsTArrayPayload
 			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsTArrayPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
-			// FCsPayload
-			if (StructProperty->Struct == FCsPayload::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsPayloadOld
+			if (StructProperty->Struct == FCsPayloadOld::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsPayloadOld>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FCsData_ShortCode
 			if (StructProperty->Struct == FCsData_ShortCode::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_FCsData_ShortCode(JsonObject, StructProperty, InStruct, MemberName); continue; }
@@ -4024,9 +4024,9 @@ void UCsLibrary_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, vo
 				// FCsPlayerData_Inventory_Slot
 				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsPlayerData_Inventory_Slot>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
-				// FCsPayload
-				if (InnerStructProperty->Struct == FCsPayload::StaticStruct())
-				{ WriteToMemberArrayStructPropertyFromJson<FCsPayload>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsPayloadOld
+				if (InnerStructProperty->Struct == FCsPayloadOld::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsPayloadOld>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
 				{
@@ -6245,6 +6245,210 @@ void UCsLibrary_Load::GetAssetReferencesFromObject(void* InObject, UClass* const
 			continue;
 		}
 	}
+}
+
+void UCsLibrary_Load::GetObjectPaths(const void* StructValue, UStruct* const& Struct, TArray<FSoftObjectPath>& OutObjectPaths)
+{
+	for (TPropertyValueIterator<UProperty> It(Struct, StructValue); It; ++It)
+	{
+		UProperty* Property		  = It.Key();
+		const void* PropertyValue = It.Value();
+
+		// TSoftClassPtr
+		if (const USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
+		{
+			if (const TSoftClassPtr<UObject>* Ptr = reinterpret_cast<const TSoftClassPtr<UObject>*>(PropertyValue))
+			{
+				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
+
+				if (Path.IsValid())
+				{
+					OutObjectPaths.Add(Path);
+
+					// TODO: Load SoftClassPtr and GetObjectPaths from that. Have an optional enum for recursive look up with load
+				}
+			}
+			continue;
+		}
+		// TSoftObjectPtr
+		if (const USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(Property))
+		{
+			if (const TSoftObjectPtr<UObject>* Ptr = reinterpret_cast<const TSoftObjectPtr<UObject>*>(PropertyValue))
+			{
+				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
+
+				if (Path.IsValid())
+					OutObjectPaths.Add(Path);
+			}
+			continue;
+		}
+		// Struct
+		if (const UStructProperty* StructProperty = Cast<UStructProperty>(Property))
+		{
+			// SoftClassPath
+			if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
+			{
+				if (const FSoftClassPath* Ptr = reinterpret_cast<const FSoftClassPath*>(PropertyValue))
+				{
+					if (Ptr->IsValid())
+						OutObjectPaths.Add(*Ptr);
+				}
+				continue;
+			}
+			// SoftObjectPath
+			if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
+			{
+				if (const FSoftObjectPath* Ptr = reinterpret_cast<const FSoftObjectPath*>(PropertyValue))
+				{
+					if (Ptr->IsValid())
+						OutObjectPaths.Add(*Ptr);
+				}
+				continue;
+			}
+			continue;
+		}
+		// Array
+		if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
+		{
+			// TODO: Look at FScriptArray, FScriptArrayHelper
+			continue;
+		}
+		// Map
+		if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
+		{
+			// TODO: Look at FScriptArray, FScriptArrayHelper
+			continue;
+		}
+	}
+
+	/*
+	for (TFieldIterator<UProperty> It(InClass); It; ++It)
+	{
+		UProperty* Property = Cast<UProperty>(*It);
+
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
+		{
+			continue;
+		}
+		// TSoftObjectPtr
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
+		{
+			// USouncCue
+			if (TryGetObjectPathFromSoftObjectProperty<USoundCue>(SoftObjectProperty, InObject, InClass, OutObjectPaths))
+				continue;
+			// UParticleSystem
+			if (TryGetObjectPathFromSoftObjectProperty<UParticleSystem>(SoftObjectProperty, InObject, InClass, OutObjectPaths))
+				continue;
+			// UDataTable
+			if (TryGetObjectPathFromSoftObjectProperty<UDataTable>(SoftObjectProperty, InObject, InClass, OutObjectPaths))
+				continue;
+			continue;
+		}
+	}
+	*/
+}
+
+void UCsLibrary_Load::GetUniqueObjectPaths(const void* StructValue, UStruct* const& Struct, TArray<FSoftObjectPath>& OutObjectPaths)
+{
+	for (TPropertyValueIterator<UProperty> It(Struct, StructValue); It; ++It)
+	{
+		UProperty* Property		  = It.Key();
+		const void* PropertyValue = It.Value();
+
+		// TSoftClassPtr
+		if (const USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
+		{
+			if (const TSoftClassPtr<UObject>* Ptr = reinterpret_cast<const TSoftClassPtr<UObject>*>(PropertyValue))
+			{
+				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
+
+				if (Path.IsValid())
+				{
+					OutObjectPaths.AddUnique(Path);
+
+					// TODO: Load SoftClassPtr and GetObjectPaths from that. Have an optional enum for recursive look up with load
+				}
+			}
+			continue;
+		}
+		// TSoftObjectPtr
+		if (const USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(Property))
+		{
+			if (const TSoftObjectPtr<UObject>* Ptr = reinterpret_cast<const TSoftObjectPtr<UObject>*>(PropertyValue))
+			{
+				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
+
+				if (Path.IsValid())
+					OutObjectPaths.AddUnique(Path);
+			}
+			continue;
+		}
+		// Struct
+		if (const UStructProperty* StructProperty = Cast<UStructProperty>(Property))
+		{
+			// SoftClassPath
+			if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
+			{
+				if (const FSoftClassPath* Ptr = reinterpret_cast<const FSoftClassPath*>(PropertyValue))
+				{
+					if (Ptr->IsValid())
+						OutObjectPaths.AddUnique(*Ptr);
+				}
+				continue;
+			}
+			// SoftObjectPath
+			if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
+			{
+				if (const FSoftObjectPath* Ptr = reinterpret_cast<const FSoftObjectPath*>(PropertyValue))
+				{
+					if (Ptr->IsValid())
+						OutObjectPaths.AddUnique(*Ptr);
+				}
+				continue;
+			}
+			continue;
+		}
+		// Array
+		if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
+		{
+			// TODO: Look at FScriptArray, FScriptArrayHelper
+			continue;
+		}
+		// Map
+		if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
+		{
+			// TODO: Look at FScriptArray, FScriptArrayHelper
+			continue;
+		}
+	}
+
+	/*
+	for (TFieldIterator<UProperty> It(InClass); It; ++It)
+	{
+		UProperty* Property = Cast<UProperty>(*It);
+
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
+		{
+			continue;
+		}
+		// TSoftObjectPtr
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
+		{
+			// USouncCue
+			if (TryGetObjectPathFromSoftObjectProperty<USoundCue>(SoftObjectProperty, InObject, InClass, OutObjectPaths))
+				continue;
+			// UParticleSystem
+			if (TryGetObjectPathFromSoftObjectProperty<UParticleSystem>(SoftObjectProperty, InObject, InClass, OutObjectPaths))
+				continue;
+			// UDataTable
+			if (TryGetObjectPathFromSoftObjectProperty<UDataTable>(SoftObjectProperty, InObject, InClass, OutObjectPaths))
+				continue;
+			continue;
+		}
+	}
+	*/
 }
 
 #pragma endregion Asset References

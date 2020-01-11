@@ -16,7 +16,7 @@ UCsData_Payload::UCsData_Payload(const FObjectInitializer& ObjectInitializer)
 
 #if WITH_EDITOR
 
-bool UCsData_Payload::PerformFindEntry(const FName& InShortCode, TArray<FCsPayload*>& OutPayloads, TArray<FECsDataCollectionType>& OutDataCollectionTypes, TArray<int32>& OutIndices)
+bool UCsData_Payload::PerformFindEntry(const FName& InShortCode, TArray<FCsPayloadOld*>& OutPayloads, TArray<FECsDataCollectionType>& OutDataCollectionTypes, TArray<int32>& OutIndices)
 {
 	UClass* Class = GetClass();
 
@@ -43,7 +43,7 @@ bool UCsData_Payload::PerformFindEntry(const FName& InShortCode, TArray<FCsPaylo
 						// Find DataCollectionType
 						for (int32 I = 0; I < DataCollectionTypeCount; ++I)
 						{
-							TArray<FCsPayload>& Array = ((*Member)[I]).Payloads;
+							TArray<FCsPayloadOld>& Array = ((*Member)[I]).Payloads;
 
 							const FECsDataCollectionType& DataCollectionType = EMCsDataCollectionType::Get().GetEnumAt(I);
 
@@ -53,7 +53,7 @@ bool UCsData_Payload::PerformFindEntry(const FName& InShortCode, TArray<FCsPaylo
 
 							for (int32 J = 0; J < ArraySize; J++)
 							{
-								FCsPayload& Payload = Array[J];
+								FCsPayloadOld& Payload = Array[J];
 
 								if (InShortCode == Payload.ShortCode)
 								{
@@ -113,7 +113,7 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCo
 	}
 
 	// Check if ShortCode has ALREADY been ADDED
-	TArray<FCsPayload*> OutPayloads;
+	TArray<FCsPayloadOld*> OutPayloads;
 	TArray<FECsDataCollectionType> OutDataCollectionTypes;
 	TArray<int32> OutIndices;
 
@@ -130,7 +130,7 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCo
 			const FString& LoadFlagsAsString		  = EMCsLoadFlags_Editor::Get().ToString(LoadFlags);
 			const FString& DataCollectionTypeAsString = OutDataCollectionTypes[Index].Name;
 
-			FCsPayload* Payload = OutPayloads[Index];
+			FCsPayloadOld* Payload = OutPayloads[Index];
 
 			const FString& DataTypeAsString = Payload->DataType;
 
@@ -204,7 +204,7 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCo
 
 							if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 							{
-								TArray<FCsPayload>& Array = ((*Member)[(uint8)DataCollectionType]).Payloads;
+								TArray<FCsPayloadOld>& Array = ((*Member)[(uint8)DataCollectionType]).Payloads;
 
 								const int32 ArraySize = Array.Num();
 
@@ -303,7 +303,7 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCo
 
 							if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 							{
-								TArray<FCsPayload>& Array = ((*Member)[(uint8)DataCollectionType]).Payloads;
+								TArray<FCsPayloadOld>& Array = ((*Member)[(uint8)DataCollectionType]).Payloads;
 
 								const int32 ArraySize = Array.Num();
 
@@ -357,16 +357,16 @@ bool UCsData_Payload::Editor_IsValid(UCsDataMapping* DataMapping)
 
 					if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 					{
-						// TArray<FCsPayload>
+						// TArray<FCsPayloadOld>
 						for (int32 I = 0; I < MAX; ++I)
 						{
-							TArray<FCsPayload>& Array = ((*Member)[I]).Payloads;
+							TArray<FCsPayloadOld>& Array = ((*Member)[I]).Payloads;
 							const int32 ArraySize	  = Array.Num();
 
 							const FECsLoadAssetsType& LoadAssetsType = EMCsLoadAssetsType::Get().GetEnumAt(I);
 							const FString LoadAssetsTypeAsString	 = LoadAssetsType.Name;
 
-							// FCsPayload
+							// FCsPayloadOld
 							for (int32 J = 0; J < ArraySize; J++)
 							{
 								const FString DataTypeAsString  = Array[J].DataType;
@@ -462,7 +462,7 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			return;
 		}
 
-		TArray<FCsPayload*> OutPayloads;
+		TArray<FCsPayloadOld*> OutPayloads;
 		TArray<FECsDataCollectionType> OutDataCollectionTypes;
 		TArray<int32> OutIndices;
 
@@ -605,7 +605,7 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 							// Find LoadAssetsType
 							for (int32 I = 0; I < DataCollectionTypeCount; ++I)
 							{
-								TArray<FCsPayload>& Array = ((*Member)[I]).Payloads;
+								TArray<FCsPayloadOld>& Array = ((*Member)[I]).Payloads;
 
 								const FECsDataCollectionType& CollectionType = EMCsDataCollectionType::Get().GetEnumAt(I);
 
@@ -620,7 +620,7 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 								for (int32 J = ArraySize - 1; J >= 0; --J)
 								{
-									FCsPayload& Payload = Array[J];
+									FCsPayloadOld& Payload = Array[J];
 
 									if (RemoveEntry.ShortCode == Payload.ShortCode)
 									{

@@ -2369,8 +2369,6 @@ template<typename T>
 		}
 	}
 
-	static void LoadSoftClassProperty(USoftClassProperty*& SoftClassProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags);
-
 	template<typename T>
 	static void LoadArraySoftClassProperty(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString& MemberName, const FString& AssetErrorMessageType, const ECsLoadFlags& LoadFlags)
 	{
@@ -2411,8 +2409,6 @@ template<typename T>
 		}
 	}
 
-	static void LoadArraySoftClassProperty(UArrayProperty*& ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags);
-
 	template<typename T>
 	static void LoadSoftObjectProperty(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString& MemberName, const FString &AssetType, const FString& AssetErrorMessageType, const ECsLoadFlags& LoadFlags)
 	{
@@ -2452,8 +2448,6 @@ template<typename T>
 			}
 		}
 	}
-
-	static void LoadSoftObjectProperty(USoftObjectProperty*& SoftObjectProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags);
 
 	static void LoadSoftObjectProperty_AnimBlueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString& MemberName, const ECsLoadFlags& LoadFlags);
 	static void LoadSoftObjectProperty_AnimBlueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString& MemberName, const ECsLoadFlags& LoadFlags);
@@ -2500,8 +2494,6 @@ template<typename T>
 			}
 		}
 	}
-
-	static void LoadArraySoftObjectProperty(UArrayProperty*& ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags);
 
 	template<typename T, typename E, int32 SIZE>
 	static void LoadFixedArraySoftObjectProperty_EnumSize(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString& MemberName, const FString &AssetType, const FString& AssetErrorMessageType, const ECsLoadFlags& LoadFlags, const FString&(*ToString)(const E&))
@@ -2690,6 +2682,14 @@ template<typename T>
 		}
 	}
 
+	static void LoadSoftClassProperty(USoftClassProperty*& SoftClassProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags);
+
+	static void LoadArraySoftClassProperty(UArrayProperty*& ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags);
+
+	static void LoadSoftObjectProperty(USoftObjectProperty*& SoftObjectProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags);
+
+	static void LoadArraySoftObjectProperty(UArrayProperty*& ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags);
+
 	static void LoadArrayStructProperty(UArrayProperty*& ArrayProperty, void* StructValue);
 
 	static void LoadStruct(void* StructValue, UStruct* const& Struct);
@@ -2789,6 +2789,10 @@ template<typename T>
 
 	static void UnLoadStructWithTSoftObjectPtrs(void* InStruct, UScriptStruct* const &InScriptStruct);
 	static void UnLoadObjectWithTSoftObjectPtrs(void* InObject, UClass* const &InClass);
+
+	static void UnloadSoftClassProperty(USoftClassProperty*& SoftClassProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags);
+
+	static void UnloadStruct(void* StructValue, UStruct* const& Struct);
 
 #pragma endregion UnLoad
 

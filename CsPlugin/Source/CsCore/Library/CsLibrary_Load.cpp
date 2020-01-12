@@ -7047,204 +7047,6 @@ bool UCsLibrary_Load::CanLoad(void* StructValue, UStruct* const& Struct, const F
 	return true;
 }
 
-void UCsLibrary_Load::LoadSoftClassProperty(USoftClassProperty*& SoftClassProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags)
-{
-	if (TSoftClassPtr<UObject>* Member = SoftClassProperty->ContainerPtrToValuePtr<TSoftClassPtr<UObject>>(Struct))
-	{
-		if (!Member->IsValid())
-			return;
-
-		if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
-			return;
-
-		// Check if an "Internal" member exists (i.e. MemberName + _Internal)
-
-										// MemberName + TEXT("_Internal")
-		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
-
-		if (UObjectProperty* InternalObjectProperty = FindField<UObjectProperty>(Struct, *InternalMemberName))
-		{
-			// Check Member is the same type as the Member_Internal
-			if (SoftClassProperty->MetaClass == InternalObjectProperty->PropertyClass)
-			{
-				if (UObject** Internal = InternalObjectProperty->ContainerPtrToValuePtr<UObject*>(Struct))
-				{
-					UClass* Class = Member->LoadSynchronous();
-					*Internal	  = Class->GetDefaultObject();
-				}
-			}
-		}
-
-		// Check if a "Class" member exists (i.e. MemberName + _Class)
-
-										// MemberName + TEXT("_Class")
-		const FString InternalClassName = MemberName + ECsLoadCached::Str::_Class;
-
-		if (UClassProperty* InternalClassProperty = FindField<UClassProperty>(Struct, *InternalClassName))
-		{
-			// Check Member is the same type as the Member_Internal
-			if (SoftClassProperty->MetaClass == InternalClassProperty->MetaClass)
-			{
-				if (UClass** Class = InternalClassProperty->ContainerPtrToValuePtr<UClass*>(Struct))
-				{
-					*Class = Member->LoadSynchronous();
-				}
-			}
-		}
-	}
-}
-
-void UCsLibrary_Load::LoadArraySoftClassProperty(UArrayProperty*& ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags)
-{
-	if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
-		return;
-
-	// Check if an "Internal" member exists (i.e. MemberName + _Internal)
-
-									// MemberName + TEXT("_Internal")
-	const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
-
-	if (UArrayProperty* InternalArrayProperty = FindField<UArrayProperty>(Struct, *InternalMemberName))
-	{
-		if (USoftObjectProperty* InternalSoftObjectProperty = Cast<USoftObjectProperty>(InternalArrayProperty->Inner))
-		{
-			USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner);
-
-			// Check Member is the same type as the Member_Internal
-			if (SoftClassProperty->MetaClass == InternalSoftObjectProperty->PropertyClass)
-			{
-				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
-				FScriptArrayHelper_InContainer InternalHelper(InternalArrayProperty, StructValue);
-
-				const int32 Count = Helper.Num();
-
-				InternalHelper.EmptyAndAddUninitializedValues(Helper.Num());
-
-				for (int32 I = 0; I < Count; ++I)
-				{
-					TSoftClassPtr<UObject>* Ptr = reinterpret_cast<TSoftClassPtr<UObject>*>(Helper.GetRawPtr(I));
-					UObject** InternalPtr		= reinterpret_cast<UObject**>(InternalHelper.GetRawPtr(I));
-
-					*InternalPtr = nullptr;
-
-					if (Ptr->IsValid())
-					{
-						UClass* Class = Ptr->LoadSynchronous();
-						*InternalPtr  = Class->GetDefaultObject();
-					}
-				}
-			}
-		}
-	}
-
-	// Check if an "Class" member exists (i.e. MemberName + _Class)
-
-									// MemberName + TEXT("_Class")
-	const FString InternalClassName = MemberName + ECsLoadCached::Str::_Class;
-
-	if (UArrayProperty* InternalArrayProperty = FindField<UArrayProperty>(Struct, *InternalClassName))
-	{
-		if (USoftClassProperty* InternalSoftClassProperty = Cast<USoftClassProperty>(InternalArrayProperty->Inner))
-		{
-			USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner);
-
-			// Check Member is the same type as the Member_Internal
-			if (SoftClassProperty->MetaClass == InternalSoftClassProperty->MetaClass)
-			{
-				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
-				FScriptArrayHelper_InContainer InternalHelper(InternalArrayProperty, StructValue);
-
-				const int32 Count = Helper.Num();
-
-				InternalHelper.EmptyAndAddUninitializedValues(Helper.Num());
-
-				for (int32 I = 0; I < Count; ++I)
-				{
-					TSoftClassPtr<UObject>* Ptr = reinterpret_cast<TSoftClassPtr<UObject>*>(Helper.GetRawPtr(I));
-					UClass** InternalPtr		= reinterpret_cast<UClass**>(InternalHelper.GetRawPtr(I));
-
-					*InternalPtr = nullptr;
-
-					if (Ptr->IsValid())
-					{
-						*InternalPtr  = Ptr->LoadSynchronous();
-					}
-				}
-			}
-		}
-	}
-}
-
-void UCsLibrary_Load::LoadSoftObjectProperty(USoftObjectProperty*& SoftObjectProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags)
-{
-	if (TSoftObjectPtr<UObject>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UObject>>(Struct))
-	{
-		if (!Member->IsValid())
-			return;
-
-		if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
-			return;
-
-		// Check if an "Internal" member exists (i.e. MemberName + _Internal)
-
-										// MemberName + TEXT("_Internal")
-		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
-
-		if (UObjectProperty* InternalObjectProperty = FindField<UObjectProperty>(Struct, *InternalMemberName))
-		{
-			// Check Member is the same type as the Member_Internal
-			if (SoftObjectProperty->PropertyClass == InternalObjectProperty->PropertyClass)
-			{
-				if (UObject** Internal = InternalObjectProperty->ContainerPtrToValuePtr<UObject*>(Struct))
-				{
-					*Internal = Member->LoadSynchronous();
-				}
-			}
-		}
-	}
-}
-
-void UCsLibrary_Load::LoadArraySoftObjectProperty(UArrayProperty*& ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags)
-{
-	if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
-		return;
-
-	// Check if an "Internal" member exists (i.e. MemberName + _Internal)
-
-									// MemberName + TEXT("_Internal")
-	const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
-
-	if (UArrayProperty* InternalArrayProperty = FindField<UArrayProperty>(Struct, *InternalMemberName))
-	{
-		if (USoftObjectProperty* InternalSoftObjectProperty = Cast<USoftObjectProperty>(InternalArrayProperty->Inner))
-		{
-			USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner);
-
-			// Check Member is the same type as the Member_Internal
-			if (SoftObjectProperty->PropertyClass == InternalSoftObjectProperty->PropertyClass)
-			{
-				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
-				FScriptArrayHelper_InContainer InternalHelper(InternalArrayProperty, StructValue);
-
-				const int32 Count = Helper.Num();
-
-				InternalHelper.EmptyAndAddUninitializedValues(Helper.Num());
-
-				for (int32 I = 0; I < Count; ++I)
-				{
-					TSoftObjectPtr<UObject>* Ptr = reinterpret_cast<TSoftObjectPtr<UObject>*>(Helper.GetRawPtr(I));
-					UObject** InternalPtr		 = reinterpret_cast<UObject**>(InternalHelper.GetRawPtr(I));
-
-					*InternalPtr = nullptr;
-
-					if (Ptr->IsValid())
-						*InternalPtr = Ptr->LoadSynchronous();
-				}
-			}
-		}
-	}
-}
-
 void UCsLibrary_Load::LoadSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString& MemberName, const ECsLoadFlags& LoadFlags)
 {
 	if (TSoftObjectPtr<UBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UBlueprint>>(InObject))
@@ -8117,6 +7919,204 @@ void UCsLibrary_Load::LoadObjectWithTSoftObjectPtrs(const FString &ObjectName, v
 //#pragma optimize("", on)
 //#endif // #if PLATFORM_WINDOWS
 
+void UCsLibrary_Load::LoadSoftClassProperty(USoftClassProperty*& SoftClassProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags)
+{
+	if (TSoftClassPtr<UObject>* Member = SoftClassProperty->ContainerPtrToValuePtr<TSoftClassPtr<UObject>>(Struct))
+	{
+		if (!Member->IsValid())
+			return;
+
+		if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
+			return;
+
+		// Check if an "Internal" member exists (i.e. MemberName + _Internal)
+
+										// MemberName + TEXT("_Internal")
+		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
+
+		if (UObjectProperty* InternalObjectProperty = FindField<UObjectProperty>(Struct, *InternalMemberName))
+		{
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalObjectProperty->PropertyClass)
+			{
+				if (UObject** Internal = InternalObjectProperty->ContainerPtrToValuePtr<UObject*>(Struct))
+				{
+					UClass* Class = Member->LoadSynchronous();
+					*Internal	  = Class->GetDefaultObject();
+				}
+			}
+		}
+
+		// Check if a "Class" member exists (i.e. MemberName + _Class)
+
+										// MemberName + TEXT("_Class")
+		const FString InternalClassName = MemberName + ECsLoadCached::Str::_Class;
+
+		if (UClassProperty* InternalClassProperty = FindField<UClassProperty>(Struct, *InternalClassName))
+		{
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalClassProperty->MetaClass)
+			{
+				if (UClass** Class = InternalClassProperty->ContainerPtrToValuePtr<UClass*>(Struct))
+				{
+					*Class = Member->LoadSynchronous();
+				}
+			}
+		}
+	}
+}
+
+void UCsLibrary_Load::LoadArraySoftClassProperty(UArrayProperty*& ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags)
+{
+	if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
+		return;
+
+	// Check if an "Internal" member exists (i.e. MemberName + _Internal)
+
+									// MemberName + TEXT("_Internal")
+	const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
+
+	if (UArrayProperty* InternalArrayProperty = FindField<UArrayProperty>(Struct, *InternalMemberName))
+	{
+		if (USoftObjectProperty* InternalSoftObjectProperty = Cast<USoftObjectProperty>(InternalArrayProperty->Inner))
+		{
+			USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner);
+
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalSoftObjectProperty->PropertyClass)
+			{
+				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+				FScriptArrayHelper_InContainer InternalHelper(InternalArrayProperty, StructValue);
+
+				const int32 Count = Helper.Num();
+
+				InternalHelper.EmptyAndAddUninitializedValues(Helper.Num());
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					TSoftClassPtr<UObject>* Ptr = reinterpret_cast<TSoftClassPtr<UObject>*>(Helper.GetRawPtr(I));
+					UObject** InternalPtr		= reinterpret_cast<UObject**>(InternalHelper.GetRawPtr(I));
+
+					*InternalPtr = nullptr;
+
+					if (Ptr->IsValid())
+					{
+						UClass* Class = Ptr->LoadSynchronous();
+						*InternalPtr  = Class->GetDefaultObject();
+					}
+				}
+			}
+		}
+	}
+
+	// Check if an "Class" member exists (i.e. MemberName + _Class)
+
+									// MemberName + TEXT("_Class")
+	const FString InternalClassName = MemberName + ECsLoadCached::Str::_Class;
+
+	if (UArrayProperty* InternalArrayProperty = FindField<UArrayProperty>(Struct, *InternalClassName))
+	{
+		if (USoftClassProperty* InternalSoftClassProperty = Cast<USoftClassProperty>(InternalArrayProperty->Inner))
+		{
+			USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner);
+
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalSoftClassProperty->MetaClass)
+			{
+				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+				FScriptArrayHelper_InContainer InternalHelper(InternalArrayProperty, StructValue);
+
+				const int32 Count = Helper.Num();
+
+				InternalHelper.EmptyAndAddUninitializedValues(Helper.Num());
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					TSoftClassPtr<UObject>* Ptr = reinterpret_cast<TSoftClassPtr<UObject>*>(Helper.GetRawPtr(I));
+					UClass** InternalPtr		= reinterpret_cast<UClass**>(InternalHelper.GetRawPtr(I));
+
+					*InternalPtr = nullptr;
+
+					if (Ptr->IsValid())
+					{
+						*InternalPtr  = Ptr->LoadSynchronous();
+					}
+				}
+			}
+		}
+	}
+}
+
+void UCsLibrary_Load::LoadSoftObjectProperty(USoftObjectProperty*& SoftObjectProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags)
+{
+	if (TSoftObjectPtr<UObject>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UObject>>(Struct))
+	{
+		if (!Member->IsValid())
+			return;
+
+		if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
+			return;
+
+		// Check if an "Internal" member exists (i.e. MemberName + _Internal)
+
+										// MemberName + TEXT("_Internal")
+		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
+
+		if (UObjectProperty* InternalObjectProperty = FindField<UObjectProperty>(Struct, *InternalMemberName))
+		{
+			// Check Member is the same type as the Member_Internal
+			if (SoftObjectProperty->PropertyClass == InternalObjectProperty->PropertyClass)
+			{
+				if (UObject** Internal = InternalObjectProperty->ContainerPtrToValuePtr<UObject*>(Struct))
+				{
+					*Internal = Member->LoadSynchronous();
+				}
+			}
+		}
+	}
+}
+
+void UCsLibrary_Load::LoadArraySoftObjectProperty(UArrayProperty*& ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags)
+{
+	if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
+		return;
+
+	// Check if an "Internal" member exists (i.e. MemberName + _Internal)
+
+									// MemberName + TEXT("_Internal")
+	const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
+
+	if (UArrayProperty* InternalArrayProperty = FindField<UArrayProperty>(Struct, *InternalMemberName))
+	{
+		if (USoftObjectProperty* InternalSoftObjectProperty = Cast<USoftObjectProperty>(InternalArrayProperty->Inner))
+		{
+			USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner);
+
+			// Check Member is the same type as the Member_Internal
+			if (SoftObjectProperty->PropertyClass == InternalSoftObjectProperty->PropertyClass)
+			{
+				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+				FScriptArrayHelper_InContainer InternalHelper(InternalArrayProperty, StructValue);
+
+				const int32 Count = Helper.Num();
+
+				InternalHelper.EmptyAndAddUninitializedValues(Helper.Num());
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					TSoftObjectPtr<UObject>* Ptr = reinterpret_cast<TSoftObjectPtr<UObject>*>(Helper.GetRawPtr(I));
+					UObject** InternalPtr		 = reinterpret_cast<UObject**>(InternalHelper.GetRawPtr(I));
+
+					*InternalPtr = nullptr;
+
+					if (Ptr->IsValid())
+						*InternalPtr = Ptr->LoadSynchronous();
+				}
+			}
+		}
+	}
+}
+
 void UCsLibrary_Load::LoadArrayStructProperty(UArrayProperty*& ArrayProperty, void* StructValue)
 {
 	FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
@@ -8575,6 +8575,62 @@ void UCsLibrary_Load::UnLoadObjectWithTSoftObjectPtrs(void* InObject, UClass* co
 				continue;
 			}
 		}
+	}
+}
+
+void UCsLibrary_Load::UnloadSoftClassProperty(USoftClassProperty*& SoftClassProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags)
+{
+	if (TSoftClassPtr<UObject>* Member = SoftClassProperty->ContainerPtrToValuePtr<TSoftClassPtr<UObject>>(Struct))
+	{
+		if (!Member->IsValid())
+			return;
+
+		//if (!CanUnload(StructValue, Struct, MemberName, LoadFlags, 0))
+		//	return;
+
+		// Check if an "Internal" member exists (i.e. MemberName + _Internal)
+
+										// MemberName + TEXT("_Internal")
+		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
+
+		if (UObjectProperty* InternalObjectProperty = FindField<UObjectProperty>(Struct, *InternalMemberName))
+		{
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalObjectProperty->PropertyClass)
+			{
+				if (UObject** Internal = InternalObjectProperty->ContainerPtrToValuePtr<UObject*>(Struct))
+				{
+					*Internal = nullptr;
+				}
+			}
+		}
+
+		// Check if a "Class" member exists (i.e. MemberName + _Class)
+
+										// MemberName + TEXT("_Class")
+		const FString InternalClassName = MemberName + ECsLoadCached::Str::_Class;
+
+		if (UClassProperty* InternalClassProperty = FindField<UClassProperty>(Struct, *InternalClassName))
+		{
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalClassProperty->MetaClass)
+			{
+				if (UClass** Class = InternalClassProperty->ContainerPtrToValuePtr<UClass*>(Struct))
+				{
+					*Class = nullptr;
+				}
+			}
+		}
+	}
+}
+
+void UCsLibrary_Load::UnloadStruct(void* StructValue, UStruct* const& Struct)
+{
+	for (TFieldIterator<UProperty> It(Struct); It; ++It)
+	{
+		UProperty* Property = Cast<UProperty>(*It);
+
+		const FString PropertyName = Property->GetName();
 	}
 }
 

@@ -8,11 +8,14 @@
 
 class UDataTable;
 class ICsData;
+class UScriptStruct;
 
-UINTERFACE(Blueprintable)
+UCLASS(Blueprintable)
 class UCsManager_Data : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	UDataTable* Datas;
@@ -21,10 +24,55 @@ class UCsManager_Data : public UObject
 	UDataTable* DataTables;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
+	UDataTable* Payloads;
+
+	/*
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	UDataTable* Datas_Test;
+	*/
+
+protected:
 
 	TMap<FName, FCsDataEntry_Data*> DataEntryMap;
 	TMap<FName, FCsDataEntry_Data*> DataEntryMap_Loaded;
 
-	TMap<FName, ICsData*> DataMap;
+	TMap<FName, ICsData*> DataMap_Loaded;
+
+	TMap<FName, FCsDataEntry_DataTable*> DataTableEntryMap;
+	TMap<FName, TMap<FName, FCsDataEntry_DataTable*>> DataTableEntryRowMap_Loaded;
+
+	TMap<FName, UDataTable*> DataTableMap_Loaded;
+	TMap<FName, TMap<FName, uint8*>> DataTableRowMap_Loaded;
+
+	TMap<FName, FCsPayload*> PayloadMap;
+
+// Load
+#pragma region
+public:
+
+	void LoadPayload(const FName& PayloadName);
+
+	// DataTable
+#pragma region
+public:
+
+	UDataTable* LoadDataTable(const FName& TableName);
+
+	uint8* LoadDataTableRow(const FName& TableName, const FName& RowName);
+
+	bool IsLoadedDataTableRow(const FName& TableName, const FName& RowName);
+
+#pragma endregion DataTable
+
+#pragma endregion Load
+
+// Get
+#pragma region
+public:
+
+	UDataTable* GetDataTable(const FName& TableName);
+
+	uint8* GetDataTableRow(const FName& TableName, const FName& RowName);
+
+#pragma endregion Get
 };

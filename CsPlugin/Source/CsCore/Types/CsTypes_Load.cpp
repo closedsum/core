@@ -100,6 +100,8 @@ namespace NCsLoadAsyncOrder
 	// FCsPayload_Data
 #pragma region
 
+#if WITH_EDITOR
+
 void FCsPayload_Data::Populate()
 {
 	Paths.Reset();
@@ -179,6 +181,8 @@ void FCsPayload_Data::Populate()
 	}
 	*/
 }
+
+#endif // #if WITH_EDITOR
 
 #pragma endregion FCsPayload_Data
 

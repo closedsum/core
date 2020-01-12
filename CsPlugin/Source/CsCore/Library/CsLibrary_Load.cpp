@@ -7044,7 +7044,7 @@ bool UCsLibrary_Load::CanLoad(void* StructValue, UStruct* const& Struct, const F
 				return true;
 		}
 	}
-	return false;
+	return true;
 }
 
 void UCsLibrary_Load::LoadSoftClassProperty(USoftClassProperty*& SoftClassProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags)
@@ -8117,6 +8117,22 @@ void UCsLibrary_Load::LoadObjectWithTSoftObjectPtrs(const FString &ObjectName, v
 //#pragma optimize("", on)
 //#endif // #if PLATFORM_WINDOWS
 
+void UCsLibrary_Load::LoadArrayStructProperty(UArrayProperty*& ArrayProperty, void* StructValue)
+{
+	FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+
+	const int32 Count = Helper.Num();
+
+	UStructProperty* StructProperty = Cast<UStructProperty>(ArrayProperty->Inner);
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		uint8* Ptr = Helper.GetRawPtr(I);
+
+		LoadStruct(Ptr, StructProperty->Struct);
+	}
+}
+
 void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct)
 {
 	for (TFieldIterator<UProperty> It(Struct); It; ++It)
@@ -8140,16 +8156,11 @@ void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct)
 		// Struct
 		if (UStructProperty* StructProperty = Cast<UStructProperty>(Property))
 		{
-			// Single
-			if (StructProperty->ArrayDim == CS_SINGLETON)
+			for (int32 I = 0; I < StructProperty->ArrayDim; ++I)
 			{
-				uint8* Value = StructProperty->ContainerPtrToValuePtr<uint8>(StructValue);
+				uint8* Value = StructProperty->ContainerPtrToValuePtr<uint8>(StructValue, I);
 
 				LoadStruct(Value, StructProperty->Struct);
-			}
-			// Fixed Array
-			else
-			{
 			}
 			continue;
 		}
@@ -8171,17 +8182,7 @@ void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct)
 			// Struct
 			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
 			{
-				// Single
-				if (InnerStructProperty->ArrayDim == CS_SINGLETON)
-				{
-					uint8* Value = InnerStructProperty->ContainerPtrToValuePtr<uint8>(StructValue);
-
-					LoadStruct(Value, InnerStructProperty->Struct);
-				}
-				// Fixed Array
-				else
-				{
-				}
+				LoadArrayStructProperty(ArrayProperty, StructValue);
 				continue;
 			}
 		}	

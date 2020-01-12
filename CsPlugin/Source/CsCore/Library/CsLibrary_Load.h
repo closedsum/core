@@ -2690,6 +2690,8 @@ template<typename T>
 		}
 	}
 
+	static void LoadArrayStructProperty(UArrayProperty*& ArrayProperty, void* StructValue);
+
 	static void LoadStruct(void* StructValue, UStruct* const& Struct);
 
 #pragma endregion Load

@@ -388,28 +388,16 @@ struct CSCORE_API FCsTArraySoftObjectPath
 		}
 	}
 
-	void Add(const FCsSoftObjectPath& Path)
+#if WITH_EDITOR
+
+	void Append(const FCsTArraySoftObjectPath& InPaths)
 	{
-		Paths.Add(Path);
-		Internal.Add(Path.Path);
-		Size += Path.Size;
+		Map.Append(InPaths.Map);
+
+		BuildFromMap();
 	}
 
-	void AppendUnique(const FCsTArraySoftObjectPath& InPaths)
-	{
-		for (const FCsSoftObjectPath& Path : InPaths.Paths)
-		{
-			Paths.AddUnique(Path);
-		}
-
-		Internal.Reset(Paths.Num());
-
-		for (const FCsSoftObjectPath& Path : Paths)
-		{
-			Internal.Add(Path.Path);
-		}
-		CalculateSize();
-	}
+#endif // #if WITH_EDITOR
 };
 
 #pragma endregion FCsTArraySoftObjectPath
@@ -869,7 +857,9 @@ public:
 	{
 	}
 
+#if WITH_EDITOR
 	void Populate();
+#endif // #if WITH_EDITOR
 };
 
 #pragma endregion FCsPayload_Data
@@ -888,9 +878,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UDataTable> DataTable;
-
-	UPROPERTY(Transient, BlueprintReadOnly)
-	UDataTable* DataTable_Internal;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	FName ShortCode;
@@ -979,14 +966,14 @@ public:
 		{
 			Data.Populate();
 
-			Paths.AppendUnique(Data.Paths);
+			Paths.Append(Data.Paths);
 		}
 
 		for (FCsPayload_DataTable& DataTable : DataTables)
 		{
 			DataTable.Populate();
 
-			Paths.AppendUnique(DataTable.Paths);
+			Paths.Append(DataTable.Paths);
 		}
 	}
 #endif // #if WITH_EDITOR

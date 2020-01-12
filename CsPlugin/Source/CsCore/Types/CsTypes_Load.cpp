@@ -122,6 +122,8 @@ void FCsPayload_Data::Populate()
 	
 	UObject* Object = Class->GetDefaultObject();
 
+	ShortCode = Object->GetFName();
+
 	const FString ClassName = Class->GetName();
 
 	if (!Object)
@@ -205,6 +207,8 @@ void FCsPayload_DataTable::Populate()
 		UE_LOG(LogCs, Warning, TEXT("FCsPayload_DataTable::Populate:"));
 		return;
 	}
+
+	ShortCode = DT->GetFName();
 
 	const UScriptStruct* ScriptStruct = DT->GetRowStruct();
 	UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
@@ -308,3 +312,8 @@ void FCsPayload_DataTable::Populate()
 #pragma endregion FCsPayload_DataTable
 
 #pragma endregion Payload
+
+// DataEntry
+#pragma region
+
+#pragma endregion DataEntry

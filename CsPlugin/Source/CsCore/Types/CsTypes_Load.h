@@ -838,21 +838,21 @@ struct CSCORE_API FCsPayload_Data
 
 public:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSoftClassPtr<UObject> Data;
-
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	FName ShortCode;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftClassPtr<UObject> Data;
+
 	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	//ECsLoadFlags_Editor Load_Flags;
+	//ECsLoadFlags_Editor Data_LoadFlags;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	FCsTArraySoftObjectPath Paths;
 
 	FCsPayload_Data() :
-		Data(),
 		ShortCode(NAME_None),
+		Data(),
 		Paths()
 	{
 	}
@@ -876,14 +876,14 @@ struct CSCORE_API FCsPayload_DataTable
 
 public:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSoftObjectPtr<UDataTable> DataTable;
-
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	FName ShortCode;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<UDataTable> DataTable;
+
 	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	//ECsLoadFlags_Editor Load_Flags;
+	//ECsLoadFlags_Editor DataTable_LoadFlags;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bAllRows;
@@ -895,8 +895,8 @@ public:
 	FCsTArraySoftObjectPath Paths;
 
 	FCsPayload_DataTable() :
-		DataTable(),
 		ShortCode(NAME_None),
+		DataTable(),
 		bAllRows(false),
 		Rows(),
 		Paths()
@@ -1105,6 +1105,128 @@ public:
 #pragma endregion Test
 
 #pragma endregion Payload
+
+// DataEntry
+#pragma region
+
+	// FCsDataEntry_Data
+#pragma region
+
+class UObject;
+class UClass;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDataEntry_Data
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	FName ShortCode;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftClassPtr<UObject> Data;
+
+	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	//ECsLoadFlags_Editor Data_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UObject* Data_Internal;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UClass* Data_Class;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	FCsTArraySoftObjectPath Paths;
+
+	FCsDataEntry_Data() :
+		ShortCode(NAME_None),
+		Data(),
+		Data_Internal(nullptr),
+		Data_Class(nullptr),
+		Paths()
+	{
+	}
+
+	FORCEINLINE UObject* Get() { return Data_Internal; }
+
+	FORCEINLINE UClass* GetClass() { return Data_Class; }
+
+#if WITH_EDITOR
+	//void Populate();
+#endif // #if WITH_EDITOR
+};
+
+#pragma endregion FCsPayload_Data
+
+	// FCsDataEntry_DataTable
+#pragma region
+
+class UDataTable;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDataEntry_DataTable
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	FName ShortCode;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<UDataTable> DataTable;
+
+	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	//ECsLoadFlags_Editor DataTable_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UDataTable* DataTable_Internal;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bAllRows;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FName> Rows;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	FCsTArraySoftObjectPath Paths;
+
+	FCsDataEntry_DataTable() :
+		ShortCode(NAME_None),
+		DataTable(),
+		DataTable_Internal(nullptr),
+		bAllRows(false),
+		Rows(),
+		Paths()
+	{
+	}
+
+	FORCEINLINE bool IsValid() const
+	{
+		return DataTable.IsValid();
+	}
+
+	void Reset()
+	{
+		DataTable.Reset();
+		ShortCode = NAME_None;
+		bAllRows = false;
+		Rows.Reset();
+		Paths.Reset();
+	}
+
+	FORCEINLINE UDataTable* Get() { return DataTable_Internal; }
+
+#if WITH_EDITOR
+	//void Populate();
+#endif // #if WITH_EDITOR
+};
+
+#pragma endregion FCsPayload_DataTable
+
+#pragma endregion DataEntry
 
 // JsonWriter
 typedef bool(*TCsWriteStructToJson_Internal)(UProperty*, TSharedRef<class TJsonWriter<TCHAR>> &, void*, UScriptStruct* const &);

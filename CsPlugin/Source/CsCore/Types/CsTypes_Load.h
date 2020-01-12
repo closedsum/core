@@ -20,6 +20,7 @@ namespace ECsLoadCached
 	namespace Str
 	{
 		extern CSCORE_API const FString _Internal;// = TEXT("_Internal");
+		extern CSCORE_API const FString _Class;// = TEXT("_Class");
 		extern CSCORE_API const FString _LoadFlags;//= TEXT("_LoadFlags");
 		extern CSCORE_API const FString _1P_LoadFlags;// = TEXT("1P_LoadFlags");
 		extern CSCORE_API const FString _3P_LoadFlags;// = TEXT("3P_LoadFlags");
@@ -291,15 +292,23 @@ struct CSCORE_API FCsTArraySoftObjectPath
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Reference")
 	TArray<FCsSoftObjectPath> Paths;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Reference")
-	TArray<FSoftObjectPath> Paths_Internal;
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Reference")
+	TMap<FName, FCsSoftObjectPath> Map;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Reference")
+	TArray<FSoftObjectPath> Internal;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Reference")
+	TMap<FName, FSoftObjectPath> InternalMap;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "Reference")
 	FCsResourceSize Size;
 
 	FCsTArraySoftObjectPath() :
 		Paths(),
-		Paths_Internal(),
+		Map(),
+		Internal(),
+		InternalMap(),
 		Size()
 	{
 	}
@@ -307,9 +316,67 @@ struct CSCORE_API FCsTArraySoftObjectPath
 	void Reset()
 	{
 		Paths.Reset();
-		Paths_Internal.Reset();
+		Map.Reset();
+		Internal.Reset();
+		InternalMap.Reset();
 		Size.Reset();
 	}
+
+	void BuildFromPaths()
+	{
+		for (const FCsSoftObjectPath& Path : Paths)
+		{
+			const FName Name = Path.Path.GetAssetPathName();
+
+			// Map
+			{
+				FCsSoftObjectPath& Value = Map.FindOrAdd(Name);
+				Value = Path;
+			}
+			// InternalMap
+			{
+				FSoftObjectPath& Value = InternalMap.FindOrAdd(Name);
+				Value = Path.Path;
+			}
+		}
+		
+		// Reset Paths since there could be duplicates
+		Paths.Reset(Paths.Max());
+		Internal.Reset(Paths.Max());
+
+		for (const TPair<FName, FCsSoftObjectPath>& Pair : Map)
+		{
+			const FCsSoftObjectPath& Path = Pair.Value;
+
+			Paths.Add(Path);
+			Internal.Add(Path.Path);
+		}
+		CalculateSize();
+	}
+
+#if WITH_EDITOR
+	
+	void BuildFromMap()
+	{
+		TArray<FName> Keys;
+		const int32 Count = Map.GetKeys(Keys);
+
+		Paths.Reset(Count);
+		Internal.Reset(Count);
+		InternalMap.Reset();
+
+		for (const TPair<FName, FCsSoftObjectPath>& Pair : Map)
+		{
+			const FCsSoftObjectPath& Path = Pair.Value;
+
+			Paths.Add(Path);
+			Internal.Add(Path.Path);
+			InternalMap.Add(Pair.Key, Path.Path);
+		}
+		CalculateSize();
+	}
+
+#endif // #if WITH_EDITOR
 
 	FORCEINLINE void CalculateSize()
 	{
@@ -324,7 +391,7 @@ struct CSCORE_API FCsTArraySoftObjectPath
 	void Add(const FCsSoftObjectPath& Path)
 	{
 		Paths.Add(Path);
-		Paths_Internal.Add(Path.Path);
+		Internal.Add(Path.Path);
 		Size += Path.Size;
 	}
 
@@ -335,11 +402,11 @@ struct CSCORE_API FCsTArraySoftObjectPath
 			Paths.AddUnique(Path);
 		}
 
-		Paths_Internal.Reset(Paths.Num());
+		Internal.Reset(Paths.Num());
 
 		for (const FCsSoftObjectPath& Path : Paths)
 		{
-			Paths_Internal.Add(Path.Path);
+			Internal.Add(Path.Path);
 		}
 		CalculateSize();
 	}
@@ -822,6 +889,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UDataTable> DataTable;
 
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UDataTable* DataTable_Internal;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	FName ShortCode;
 
@@ -860,7 +930,9 @@ public:
 		Paths.Reset();
 	}
 
+#if WITH_EDITOR
 	void Populate();
+#endif // #if WITH_EDITOR
 };
 
 #pragma endregion FCsPayload_DataTable
@@ -898,6 +970,7 @@ public:
 		Paths.Reset();
 	}
 
+#if WITH_EDITOR
 	void Populate()
 	{
 		Paths.Reset();
@@ -916,6 +989,7 @@ public:
 			Paths.AppendUnique(DataTable.Paths);
 		}
 	}
+#endif // #if WITH_EDITOR
 };
 
 #pragma endregion FCsPayload

@@ -65,6 +65,40 @@ namespace ECsSoundPriority
 
 #pragma endregion SoundPriority
 
+// FCsSoundCue
+#pragma region
+
+class USoundCue;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsSoundCue
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftObjectPtr<USoundCue> Sound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Sound_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	USoundCue* Sound_Internal;
+
+	FCsSoundCue() :
+		Sound(),
+		Sound_LoadFlags(0),
+		Sound_Internal(nullptr)
+	{
+	}
+
+	FORCEINLINE USoundCue* Get() { return Sound_Internal; }
+};
+
+#pragma endregion FCsSoundCue
+
+// FCsSoundElement
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsSoundElement
 {
@@ -165,6 +199,11 @@ public:
 	}
 };
 
+#pragma endregion FCsSoundElement
+
+// FCsFpvSoundElement
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsFpvSoundElement
 {
@@ -213,6 +252,11 @@ public:
 		return nullptr;
 	}
 };
+
+#pragma endregion FCsFpvSoundElement
+
+// FCsSoundPayload
+#pragma region
 
 struct CSCORE_API FCsSoundPayload : public ICsPooledObjectPayload
 {
@@ -316,6 +360,8 @@ public:
 	template<typename T>
 	FORCEINLINE T* GetCue() { return Cast<T>(GetCue()); }
 };
+
+#pragma endregion FCsSoundPayload
 
 // NoiseEvent
 #pragma region

@@ -187,6 +187,8 @@ namespace NCsTransformMember
 // Static Mesh
 #pragma region
 
+class UStaticMesh;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsStaticMesh
 {
@@ -198,9 +200,8 @@ struct CSCORE_API FCsStaticMesh
 	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Mesh_LoadFlags;
 
-private:
 	UPROPERTY(Transient)
-	class UStaticMesh* Mesh_Internal;
+	UStaticMesh* Mesh_Internal;
 
 public:
 	FCsStaticMesh() :

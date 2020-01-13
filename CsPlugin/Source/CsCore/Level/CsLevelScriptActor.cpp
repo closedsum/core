@@ -14,7 +14,28 @@
 ACsLevelScriptActor::ACsLevelScriptActor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	// FCoreUObjectDelegates::FOnObjectSaved FCoreUObjectDelegates::OnObjectSaved;
 }
+
+// UObject Interface
+#pragma region
+
+void ACsLevelScriptActor::PreSave(const ITargetPlatform* TargetPlatform)
+{
+	Super::PreSave(TargetPlatform);
+}
+
+void ACsLevelScriptActor::PostLoad()
+{
+	Super::PostLoad();
+}
+
+void ACsLevelScriptActor::BeginDestroy()
+{
+	Super::BeginDestroy();
+}
+
+#pragma endregion UObject Interface
 
 // Editor
 #pragma region

@@ -6,6 +6,8 @@
 #include "Types/CsTypes_Load.h"
 #include "CsLevelScriptActor.generated.h"
 
+class ITargetPlatform;
+
 UCLASS()
 class ACsLevelScriptActor : public ALevelScriptActor
 {
@@ -15,6 +17,11 @@ class ACsLevelScriptActor : public ALevelScriptActor
 #pragma region
 public:
 
+	virtual void PreSave(const ITargetPlatform* TargetPlatform) override;
+
+	virtual void PostLoad() override;
+
+	virtual void BeginDestroy() override;
 
 #pragma endregion UObject Interface
 

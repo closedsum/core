@@ -62,7 +62,7 @@ void ACsLevelScriptActor::PostEditChangeChainProperty(FPropertyChangedChainEvent
 				Payload.Populate();
 
 				// Get Level Name
-				UBlueprintGeneratedClass* BpClass = Cast<UBlueprintGeneratedClass>(GetOuter());
+				UBlueprintGeneratedClass* BpClass = Cast<UBlueprintGeneratedClass>(GetClass());
 				ULevelScriptBlueprint* LevelBp	  = Cast<ULevelScriptBlueprint>(BpClass->ClassGeneratedBy);
 				FString LevelName				  = LevelBp->GetFriendlyName();
 

@@ -11,6 +11,13 @@ class ACsLevelScriptActor : public ALevelScriptActor
 {
 	GENERATED_UCLASS_BODY()
 
+// UObject Interface
+#pragma region
+public:
+
+
+#pragma endregion UObject Interface
+
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Payload")

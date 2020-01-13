@@ -6954,3 +6954,30 @@ public:
 		return true;
 	}
 };
+
+// FCsUserDefinedEnum
+#pragma region
+
+class UUserDefinedEnum;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsUserDefinedEnum
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftObjectPtr<UUserDefinedEnum> Enum;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UUserDefinedEnum* Enum_Internal;
+
+	FCsUserDefinedEnum() :
+		Enum(),
+		Enum_Internal()
+	{
+	}
+
+	FORCEINLINE UUserDefinedEnum* Get() { return Enum_Internal; }
+};
+
+#pragma endregion FCsUserDefinedEnum

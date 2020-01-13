@@ -2,6 +2,15 @@
 #include "Level/CsLevelScriptActor.h"
 #include "CsCore.h"
 
+// Library
+#include "Library/CsLibrary_Load.h"
+
+#if WITH_EDITOR
+#include "Settings/CsDeveloperSettings.h"
+#include "Engine/BlueprintGeneratedClass.h"
+#include "Engine/LevelScriptBlueprint.h"
+#endif // #if WITH_EDITOR
+
 ACsLevelScriptActor::ACsLevelScriptActor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -51,6 +60,51 @@ void ACsLevelScriptActor::PostEditChangeChainProperty(FPropertyChangedChainEvent
 				else
 					Entry.Reset();
 				Payload.Populate();
+
+				// Get Level Name
+				UBlueprintGeneratedClass* BpClass = Cast<UBlueprintGeneratedClass>(GetOuter());
+				ULevelScriptBlueprint* LevelBp	  = Cast<ULevelScriptBlueprint>(BpClass->ClassGeneratedBy);
+				FString LevelName				  = LevelBp->GetFriendlyName();
+
+				UWorld* World = GetWorld();
+
+				/*
+				const FString ClassName = GetOuter()->GetName();
+
+				const FString Name = GetName();
+				FString LevelName;
+
+				// Default
+				if (Name.StartsWith(TEXT("Default__")))
+				{
+					LevelName = Name;
+					LevelName.RemoveFromStart(TEXT("Default__"));
+					LevelName.RemoveFromEnd(TEXT("_C"));
+				}
+				else
+				{
+					LevelName = Name;
+
+					const int32 I = LevelName.Find(TEXT("_C_"));
+
+					if (I != INDEX_NONE)
+					{
+						LevelName = LevelName.Left(I);
+					}
+				}
+				*/
+				// Update Payloads in Settings
+				if (Entry.IsValid())
+				{
+					UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+					UCsLibrary_Load::LoadStruct(Settings, UCsDeveloperSettings::StaticClass());
+
+					if (UDataTable* Payloads = Settings->Payloads.Get())
+					{
+						//Payloads->FindRow
+					}
+				}
 			}
 		}
 	}

@@ -15,6 +15,11 @@ class UCsManager_Data : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+// UObject Interface
+#pragma region
+
+#pragma endregion UObject Interface
+
 public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
@@ -45,6 +50,11 @@ protected:
 	TMap<FName, TMap<FName, uint8*>> DataTableRowMap_Loaded;
 
 	TMap<FName, FCsPayload*> PayloadMap;
+	TMap<FName, FCsPayload*> PayloadMap_Loaded;
+
+public:
+
+	void GenerateMaps();
 
 // Load
 #pragma region
@@ -75,4 +85,15 @@ public:
 	uint8* GetDataTableRow(const FName& TableName, const FName& RowName);
 
 #pragma endregion Get
+
+// Editor
+#pragma region
+#if WITH_EDITOR
+public:
+
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& e) override;
+	virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& e) override;
+
+#endif // #if WITH_EDITOR
+#pragma endregion Editor
 };

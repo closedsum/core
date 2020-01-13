@@ -17,7 +17,12 @@ public:
 	FCsPayload Payload;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Payload")
-	FCsPayload_Test Payload_Test;
+	FCsPayload Payload_Level;
+
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Payload")
+	FCsPayload Payload_Test;
+#endif // #if WITH_EDITORONLY_DATA
 
 // Editor
 #pragma region

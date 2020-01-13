@@ -1228,6 +1228,37 @@ public:
 
 #pragma endregion DataEntry
 
+// FCsDataTable
+#pragma region
+
+class UDataTable;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDataTable
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftObjectPtr<UDataTable> DataTable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 DataTable_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UDataTable* DataTable_Internal;
+
+	FCsDataTable() :
+		DataTable(),
+		DataTable_LoadFlags(0),
+		DataTable_Internal()
+	{
+	}
+
+	FORCEINLINE UDataTable* Get() { return DataTable_Internal; }
+};
+
+#pragma endregion FCsDataTable
+
 // JsonWriter
 typedef bool(*TCsWriteStructToJson_Internal)(UProperty*, TSharedRef<class TJsonWriter<TCHAR>> &, void*, UScriptStruct* const &);
 typedef bool(*TCsWriteObjectToJson_Internal)(UProperty*, TSharedRef<class TJsonWriter<TCHAR>> &, void*, UClass* const &);

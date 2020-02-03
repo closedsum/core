@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/EnumStruct/Sense/ECsSenseActorTypeCustomization.h"
 
-#include "Types/CsTypes_Sense.h"
+#include "Managers/Sense/CsTypes_Sense.h"
 
 #define LOCTEXT_NAMESPACE "ECsAssetTypeCustomization"
 

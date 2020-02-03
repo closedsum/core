@@ -4,7 +4,7 @@
 #include "Types/CsTypes_Weapon.h"
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Damage.h"
-#include "Types/CsTypes_Sense.h"
+#include "Managers/Sense/CsTypes_Sense.h"
 #include "Types/CsTypes_Trace.h"
 #include "Types/CsTypes_Character.h"
 #include "CsPawn.generated.h"
@@ -679,7 +679,7 @@ public:
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
-	FCsSenseData_Override SenseData;
+	FCsSenseData_Override_DEPRECATED SenseData;
 
 	virtual void ApplySenseData();
 
@@ -692,7 +692,7 @@ public:
 	virtual class ACsManager_Inventory* GetMyManager_Inventory();
 
 	UPROPERTY(BlueprintReadOnly, Category = "Managers")
-	class ACsManager_Sense* Manager_Sense;
+	class ACsManager_Sense_DEPRECATED* Manager_Sense;
 
 #pragma endregion Managers
 

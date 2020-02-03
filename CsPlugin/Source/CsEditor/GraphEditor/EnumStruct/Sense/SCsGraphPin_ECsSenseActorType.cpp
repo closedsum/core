@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/Sense/SCsGraphPin_ECsSenseActorType.h"
 #include "CsEditor.h"
 
-#include "Types/CsTypes_Sense.h"
+#include "Managers/Sense/CsTypes_Sense.h"
 
 
 void SCsGraphPin_ECsSenseActorType::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)

@@ -4,31 +4,33 @@
 #include "CsTypes_Sense.generated.h"
 #pragma once
 
-// SenseActorType
+// SenseObjectType
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsSenseActorType : public FECsEnum_uint8
+struct CSCORE_API FECsSenseObjectType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-	CS_ENUM_UINT8_BODY(FECsSenseActorType)
+	CS_ENUM_UINT8_BODY(FECsSenseObjectType)
 };
 
-CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsSenseActorType)
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsSenseObjectType)
 
-struct CSCORE_API EMCsSenseActorType : public TCsEnumStructMap<FECsSenseActorType, uint8>
+struct CSCORE_API EMCsSenseObjectType : public TCsEnumStructMap<FECsSenseObjectType, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsSenseActorType)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsSenseObjectType, FECsSenseObjectType, uint8)
 };
 
-namespace ECsSenseActorType
+namespace NCsSenseObjectType
 {
-	extern CSCORE_API const FECsSenseActorType Player;
-	extern CSCORE_API const FECsSenseActorType AI;
+	typedef FECsSenseObjectType Type;
+
+	extern CSCORE_API const Type Player;
+	extern CSCORE_API const Type AI;
 }
 
-#pragma endregion SenseActorType
+#pragma endregion SenseObjectType
 
 // SenseTeam
 #pragma region
@@ -65,8 +67,37 @@ namespace ECsSenseTeam
 
 #pragma endregion SenseTeam
 
+// SenseActorType
+#pragma region
+
 USTRUCT(BlueprintType)
-struct FCsSenseInfo
+struct CSCORE_API FECsSenseActorType : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsSenseActorType)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsSenseActorType)
+
+struct CSCORE_API EMCsSenseActorType : public TCsEnumStructMap<FECsSenseActorType, uint8>
+{
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsSenseActorType)
+};
+
+namespace ECsSenseActorType
+{
+	extern CSCORE_API const FECsSenseActorType Player;
+	extern CSCORE_API const FECsSenseActorType AI;
+}
+
+#pragma endregion SenseActorType
+
+// FCsSenseInfo_DEPRECATED
+#pragma region
+
+USTRUCT(BlueprintType)
+struct FCsSenseInfo_DEPRECATED
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -190,7 +221,7 @@ struct FCsSenseInfo
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChange_LastKnown_ActorLocation, const uint64&, const uint64&, const FVector&);
 	FOnChange_LastKnown_ActorLocation OnChange_LastKnown_ActorLocation_Event;
 
-	FCsSenseInfo()
+	FCsSenseInfo_DEPRECATED()
 	{
 		ActorType = EMCsSenseActorType::Get().GetMAX();
 		Team = ECsSenseTeam::Friendly;
@@ -231,7 +262,7 @@ struct FCsSenseInfo
 		LastKnown_ActorLocation = FVector::ZeroVector;
 	}
 
-	~FCsSenseInfo() 
+	~FCsSenseInfo_DEPRECATED()
 	{
 		bSeesActorByRadiusHandle.Reset();
 		bSeesActorByDotHandle.Reset();
@@ -246,23 +277,23 @@ public:
 	void Init()
 	{
 		bSeesActorByRadiusHandle.Set(&bSeesActorByRadius);
-		bSeesActorByRadiusHandle.OnChange_Event.AddRaw(this, &FCsSenseInfo::OnChange_bSeesActorByRadius);
+		bSeesActorByRadiusHandle.OnChange_Event.AddRaw(this, &FCsSenseInfo_DEPRECATED::OnChange_bSeesActorByRadius);
 		OnSeesActorByRadius_Event.Clear();
 		bSeesActorByDotHandle.Set(&bSeesActorByDot);
-		bSeesActorByDotHandle.OnChange_Event.AddRaw(this, &FCsSenseInfo::OnChange_bSeesActorByDot);
+		bSeesActorByDotHandle.OnChange_Event.AddRaw(this, &FCsSenseInfo_DEPRECATED::OnChange_bSeesActorByDot);
 		OnSeesActorByDot_Event.Clear();
 		bSeesActorHandle.Set(&bSeesActor);
-		bSeesActorHandle.OnChange_Event.AddRaw(this, &FCsSenseInfo::OnChange_bSeesActor);
+		bSeesActorHandle.OnChange_Event.AddRaw(this, &FCsSenseInfo_DEPRECATED::OnChange_bSeesActor);
 		OnSeesActor_Event.Clear();
 		bSeesActorBodyHandle.Set(&bSeesActorBody);
-		bSeesActorBodyHandle.OnChange_Event.AddRaw(this, &FCsSenseInfo::OnChange_bSeesActorBody);
+		bSeesActorBodyHandle.OnChange_Event.AddRaw(this, &FCsSenseInfo_DEPRECATED::OnChange_bSeesActorBody);
 		OnSeesActorBody_Event.Clear();
 		bSeesActorHeadHandle.Set(&bSeesActorHead);
-		bSeesActorHeadHandle.OnChange_Event.AddRaw(this, &FCsSenseInfo::OnChange_bSeesActorHead);
+		bSeesActorHeadHandle.OnChange_Event.AddRaw(this, &FCsSenseInfo_DEPRECATED::OnChange_bSeesActorHead);
 		OnSeesActorHead_Event.Clear();
 
 		LastKnown_ActorLocationHandle.Set(&LastKnown_ActorLocation);
-		LastKnown_ActorLocationHandle.OnChange_Event.AddRaw(this, &FCsSenseInfo::OnChange_LastKnown_ActorLocation);
+		LastKnown_ActorLocationHandle.OnChange_Event.AddRaw(this, &FCsSenseInfo_DEPRECATED::OnChange_LastKnown_ActorLocation);
 		OnChange_LastKnown_ActorLocation_Event.Clear();
 	}
 
@@ -327,8 +358,13 @@ public:
 	}
 };
 
+#pragma endregion FCsSenseInfo_DEPRECATED
+
+// FCsSenseData_DEPRECATED
+#pragma region
+
 USTRUCT(BlueprintType)
-struct FCsSenseData
+struct FCsSenseData_DEPRECATED
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -352,7 +388,7 @@ struct FCsSenseData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
 	TMap<FECsSenseActorType, float> TraceIntervals;
 
-	FCsSenseData()
+	FCsSenseData_DEPRECATED()
 	{
 		bRadius = false;
 		Radius = 3000.0f;
@@ -368,9 +404,9 @@ struct FCsSenseData
 			TraceIntervals.Add(EMCsSenseActorType::Get().GetEnumAt(I), 0.1f);
 		}
 	}
-	~FCsSenseData(){}
+	~FCsSenseData_DEPRECATED(){}
 
-	FORCEINLINE FCsSenseData& operator=(const FCsSenseData& B)
+	FORCEINLINE FCsSenseData_DEPRECATED& operator=(const FCsSenseData_DEPRECATED& B)
 	{
 		bRadius = B.bRadius;
 		Radius = B.Radius;
@@ -381,30 +417,35 @@ struct FCsSenseData
 		return *this;
 	}
 
-	FORCEINLINE bool operator==(const FCsSenseData& B) const
+	FORCEINLINE bool operator==(const FCsSenseData_DEPRECATED& B) const
 	{
 		return bRadius == B.bRadius && Radius == B.Radius && RadiusSq == B.RadiusSq && Angle == B.Angle && Radians == B.Radians && Dot == B.Dot;
 	}
 
-	FORCEINLINE bool operator!=(const FCsSenseData& B) const
+	FORCEINLINE bool operator!=(const FCsSenseData_DEPRECATED& B) const
 	{
 		return !(*this == B);
 	}
 };
 
-// PostEditChangeProperty FCsSenseData
-#define CS_PECP_FCS_SENSE_DATA(PropertyName, MemberName)	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsSenseData, Radius)) \
+// PostEditChangeProperty FCsSenseData_DEPRECATED
+#define CS_PECP_FCS_SENSE_DATA(PropertyName, MemberName)	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsSenseData_DEPRECATED, Radius)) \
 															{ \
 																MemberName.RadiusSq = MemberName.Radius * MemberName.Radius; \
 															} \
-															if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsSenseData, Angle)) \
+															if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsSenseData_DEPRECATED, Angle)) \
 															{ \
 																MemberName.Radians = FMath::DegreesToRadians(MemberName.Angle); \
 																MemberName.Dot = FMath::Cos(MemberName.Radians); \
 															}
 
+#pragma endregion FCsSenseData_DEPRECATED
+
+// FCsSenseData_Override_DEPRECATED
+#pragma region
+
 USTRUCT(BlueprintType)
-struct FCsSenseData_Override
+struct FCsSenseData_Override_DEPRECATED
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -432,7 +473,7 @@ struct FCsSenseData_Override
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense", meta = (editcondition = "bOverride_TraceIntervals"))
 	TMap<FECsSenseActorType, float> TraceIntervals;
 
-	FCsSenseData_Override()
+	FCsSenseData_Override_DEPRECATED()
 	{
 		bOverride_Radius = false;
 		Radius = 3000.0f;
@@ -451,9 +492,9 @@ struct FCsSenseData_Override
 			TraceIntervals.Add(EMCsSenseActorType::Get().GetEnumAt(I), 0.1f);
 		}
 	}
-	~FCsSenseData_Override() {}
+	~FCsSenseData_Override_DEPRECATED() {}
 
-	FORCEINLINE FCsSenseData_Override& operator=(const FCsSenseData_Override& B)
+	FORCEINLINE FCsSenseData_Override_DEPRECATED& operator=(const FCsSenseData_Override_DEPRECATED& B)
 	{
 		bOverride_Radius = B.bOverride_Radius;
 		Radius = B.Radius;
@@ -473,7 +514,7 @@ struct FCsSenseData_Override
 		return *this;
 	}
 
-	FORCEINLINE bool operator==(const FCsSenseData_Override& B) const
+	FORCEINLINE bool operator==(const FCsSenseData_Override_DEPRECATED& B) const
 	{
 		if (bOverride_Radius != B.bOverride_Radius)
 			return false;
@@ -501,19 +542,21 @@ struct FCsSenseData_Override
 		return true;
 	}
 
-	FORCEINLINE bool operator!=(const FCsSenseData_Override& B) const
+	FORCEINLINE bool operator!=(const FCsSenseData_Override_DEPRECATED& B) const
 	{
 		return !(*this == B);
 	}
 };
 
-// PostEditChangeProperty FCsSenseData
-#define CS_PECP_FCS_SENSE_DATA_OVERRIDE(PropertyName, MemberName)	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsSenseData_Override, Radius)) \
+// PostEditChangeProperty FCsSenseData_Override_DEPRECATED
+#define CS_PECP_FCS_SENSE_DATA_OVERRIDE(PropertyName, MemberName)	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsSenseData_Override_DEPRECATED, Radius)) \
 																	{ \
 																		MemberName.RadiusSq = MemberName.Radius * MemberName.Radius; \
 																	} \
-																	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsSenseData_Override, Angle)) \
+																	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsSenseData_Override_DEPRECATED, Angle)) \
 																	{ \
 																		MemberName.Radians = FMath::DegreesToRadians(MemberName.Angle); \
 																		MemberName.Dot = FMath::Cos(MemberName.Radians); \
 																	}
+
+#pragma endregion FCsSenseData_Override_DEPRECATED

@@ -8,6 +8,8 @@
 
 #include "Game/CsGameInstance.h"
 
+// Library
+#include "Library/CsLibrary_Common.h"
 // Managers
 #include "Managers/Load/CsManager_Load.h"
 #include "Managers/Input/CsManager_Input.h"

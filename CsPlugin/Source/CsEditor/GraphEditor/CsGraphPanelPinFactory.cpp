@@ -13,7 +13,7 @@
 #include "Types/CsTypes_Sound.h"
 #include "Types/CsTypes_Interactive.h"
 #include "Types/CsTypes_AI.h"
-#include "Types/CsTypes_Sense.h"
+#include "Managers/Sense/CsTypes_Sense.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
 
 #include "SlateBasics.h"

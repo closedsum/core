@@ -6,7 +6,7 @@
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Anim.h"
 #include "Types/CsTypes_Item.h"
-#include "Types/CsTypes_Sense.h"
+#include "Managers/Sense/CsTypes_Sense.h"
 #include "CsData_Character.generated.h"
 
 UCLASS(Abstract)
@@ -267,7 +267,7 @@ public:
 #pragma region
 public:
 
-	virtual FCsSenseData* GetSenseData();
+	virtual FCsSenseData_DEPRECATED* GetSenseData();
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
 	virtual const bool& GetUseSenseRadius();

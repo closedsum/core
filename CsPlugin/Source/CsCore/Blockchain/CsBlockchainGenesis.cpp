@@ -2,6 +2,8 @@
 #include "Blockchain/CsBlockchainGenesis.h"
 #include "CsCore.h"
 
+#include "Types/CsTypes_Primitive.h"
+
 UCsBlockchainGenesis::UCsBlockchainGenesis(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }

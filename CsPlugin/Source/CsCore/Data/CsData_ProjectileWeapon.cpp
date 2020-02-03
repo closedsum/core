@@ -7,6 +7,8 @@
 // Managers
 #include "Managers/Sound/CsManager_Sound.h"
 
+#include "Animation/SkeletalMeshActor.h"
+
 UCsData_ProjectileWeapon::UCsData_ProjectileWeapon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

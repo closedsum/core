@@ -12,7 +12,7 @@
 #include "Data/CsData_CharacterMaterialSkin.h"
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
-#include "Managers/Sense/CsManager_Sense.h"
+#include "Managers/Sense/CsManager_Sense_DEPRECATED.h"
 #include "Managers/Trace/CsManager_Trace.h"
 #include "Managers/Time/CsManager_Time.h"
 // UI
@@ -811,7 +811,7 @@ void ACsPawn::OnRespawn_Setup_Weapon(){}
 void ACsPawn::ApplySenseData()
 {
 	UCsData_Character* Data_Character = GetMyData_Character();
-	FCsSenseData* OtherData			  = Data_Character->GetSenseData();
+	FCsSenseData_DEPRECATED* OtherData			  = Data_Character->GetSenseData();
 
 	// Radius
 	if (!SenseData.bOverride_Radius)

@@ -18,7 +18,7 @@
 #include "Types/CsTypes_Item.h"
 #include "Types/CsTypes_Recipe.h"
 #include "Types/CsTypes_Math.h"
-#include "Types/CsTypes_Sense.h"
+#include "Managers/Sense/CsTypes_Sense.h"
 // Data
 #include "Data/CsData.h"
 #include "Data/CsData_ProjectileBase.h"
@@ -2212,9 +2212,9 @@ void UCsLibrary_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWr
 				if (WriteObjectToJson_Internal_Helper(Internal, Property, InJsonWriter, InObject, InClass)) { continue; }
 				continue;
 			}
-			// FCsSenseData
-			if (StructProperty->Struct == FCsSenseData::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsSenseData>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
+			// FCsSenseData_DEPRECATED
+			if (StructProperty->Struct == FCsSenseData_DEPRECATED::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsSenseData_DEPRECATED>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
 			// FCsData_ShortCode
 			if (StructProperty->Struct == FCsData_ShortCode::StaticStruct())
 			{ WriteMemberStructPropertyToJson_FCsData_ShortCode(InJsonWriter, StructProperty, InObject, MemberName); continue; }
@@ -4594,9 +4594,9 @@ void UCsLibrary_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, vo
 				if (ReadObjectFromJson_Internal_Helper(Internal, Property, JsonObject, InObject, InClass)) { continue; }
 				continue;
 			}
-			// FCsSenseData
-			if (StructProperty->Struct == FCsSenseData::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsSenseData>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsSenseData_DEPRECATED
+			if (StructProperty->Struct == FCsSenseData_DEPRECATED::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsSenseData_DEPRECATED>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsData_ShortCode
 			if (StructProperty->Struct == FCsData_ShortCode::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_FCsData_ShortCode(JsonObject, StructProperty, InObject, MemberName); continue; }
@@ -7921,7 +7921,7 @@ void UCsLibrary_Load::LoadObjectWithTSoftObjectPtrs(const FString &ObjectName, v
 
 void UCsLibrary_Load::LoadSoftClassProperty(USoftClassProperty*& SoftClassProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags)
 {
-	if (TSoftClassPtr<UObject>* Member = SoftClassProperty->ContainerPtrToValuePtr<TSoftClassPtr<UObject>>(Struct))
+	if (FSoftObjectPtr* Member = SoftClassProperty->GetPropertyValuePtr(StructValue))
 	{
 		if (!Member->IsValid())
 			return;
@@ -7930,10 +7930,11 @@ void UCsLibrary_Load::LoadSoftClassProperty(USoftClassProperty*& SoftClassProper
 			return;
 
 		// Check if an "Internal" member exists (i.e. MemberName + _Internal)
+		// TODO: Check if Struct is UserDefinedStruct
 
 										// MemberName + TEXT("_Internal")
 		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
-
+		
 		if (UObjectProperty* InternalObjectProperty = FindField<UObjectProperty>(Struct, *InternalMemberName))
 		{
 			// Check Member is the same type as the Member_Internal
@@ -7941,14 +7942,15 @@ void UCsLibrary_Load::LoadSoftClassProperty(USoftClassProperty*& SoftClassProper
 			{
 				if (UObject** Internal = InternalObjectProperty->ContainerPtrToValuePtr<UObject*>(Struct))
 				{
-					UClass* Class = Member->LoadSynchronous();
+					UClass* Class = Cast<UClass>(Member->LoadSynchronous());
 					*Internal	  = Class->GetDefaultObject();
 				}
 			}
 		}
 
 		// Check if a "Class" member exists (i.e. MemberName + _Class)
-
+		// TODO: Check if Struct is UserDefinedStruct
+		
 										// MemberName + TEXT("_Class")
 		const FString InternalClassName = MemberName + ECsLoadCached::Str::_Class;
 
@@ -7959,7 +7961,7 @@ void UCsLibrary_Load::LoadSoftClassProperty(USoftClassProperty*& SoftClassProper
 			{
 				if (UClass** Class = InternalClassProperty->ContainerPtrToValuePtr<UClass*>(Struct))
 				{
-					*Class = Member->LoadSynchronous();
+					*Class = Cast<UClass>(Member->LoadSynchronous());
 				}
 			}
 		}
@@ -8049,7 +8051,7 @@ void UCsLibrary_Load::LoadArraySoftClassProperty(UArrayProperty*& ArrayProperty,
 
 void UCsLibrary_Load::LoadSoftObjectProperty(USoftObjectProperty*& SoftObjectProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags)
 {
-	if (TSoftObjectPtr<UObject>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UObject>>(Struct))
+	if (FSoftObjectPtr* Member = SoftObjectProperty->GetPropertyValuePtr(StructValue))
 	{
 		if (!Member->IsValid())
 			return;
@@ -8580,7 +8582,7 @@ void UCsLibrary_Load::UnLoadObjectWithTSoftObjectPtrs(void* InObject, UClass* co
 
 void UCsLibrary_Load::UnloadSoftClassProperty(USoftClassProperty*& SoftClassProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags)
 {
-	if (TSoftClassPtr<UObject>* Member = SoftClassProperty->ContainerPtrToValuePtr<TSoftClassPtr<UObject>>(Struct))
+	if (FSoftObjectPtr* Member = SoftClassProperty->GetPropertyValuePtr(StructValue))
 	{
 		if (!Member->IsValid())
 			return;

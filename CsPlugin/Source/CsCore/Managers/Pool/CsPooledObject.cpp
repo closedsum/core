@@ -5,3 +5,5 @@
 UCsPooledObject::UCsPooledObject(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
+
+const FCsPooledObject FCsPooledObject::Empty;

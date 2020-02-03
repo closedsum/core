@@ -5,6 +5,7 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 // Library
 #include "Library/CsLibrary_Load.h"
+#include "Library/CsLibrary_Common.h"
 // Data
 #include "Data/CsData_Character.h"
 #include "Data/CsData_CharacterMeshSkin.h"

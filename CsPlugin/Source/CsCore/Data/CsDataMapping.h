@@ -9,6 +9,7 @@
 #include "Managers/Load/CsManager_Load.h"
 // Data
 #include "Data/CsData.h"
+#include "Data/CsData_Payload.h"
 #include "CsDataMapping.generated.h"
 
 // Macros - Only use for CHILD of UCsDataMapping

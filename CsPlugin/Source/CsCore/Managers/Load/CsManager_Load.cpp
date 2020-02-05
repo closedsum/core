@@ -32,7 +32,7 @@ void FCsManagerLoad_Task_LoadObjects::Init()
 	OnFinishLoadObjectPathsDelegate = FStreamableDelegate::CreateRaw(this, &FCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPaths);
 }
 
-void FCsManagerLoad_Task_LoadObjects::OnUpdate(const FCsDeltaTime& DeltaTime)
+void FCsManagerLoad_Task_LoadObjects::Update(const FCsDeltaTime& DeltaTime)
 {
 	// If Queue Empty, EXIT
 	if (Paths.Num() == CS_EMPTY)
@@ -381,7 +381,7 @@ void UCsManager_Load::Initialize()
 void UCsManager_Load::CleanUp()
 {
 	// Unregister ticker delegate
-	FTicker::GetCoreTicker().RemoveTicker(s_Instance->TickDelegateHandle);
+	FTicker::GetCoreTicker().RemoveTicker(TickDelegateHandle);
 
 	Manager_Tasks.Shutdown();
 }

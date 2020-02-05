@@ -6,7 +6,7 @@
 
 class UCsManager_Achievement;
 
-UINTERFACE(Blueprintable)
+UINTERFACE(BlueprintType, MinimalApi, meta = (CannotImplementInterfaceInBlueprint))
 class UCsGetManagerAchievement : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()

@@ -1,16 +1,26 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 //#include "Types/CsTypes_Primitive.h"
 
-//#include "CsTypes_Time.generated.h"
+#include "CsTypes_Time.generated.h"
 #pragma once
 
+USTRUCT(BlueprintType)
 struct CSCORE_API FCsTime
 {
+	GENERATED_USTRUCT_BODY()
+
 public:
 
+	UPROPERTY(BlueprintReadOnly)
 	float Time;
+
+	UPROPERTY(BlueprintReadOnly)
 	float RealTime;
+
+	UPROPERTY(BlueprintReadOnly)
 	FDateTime DateTime;
+
+	UPROPERTY()
 	uint64 Frame;
 
 	FCsTime()
@@ -28,17 +38,27 @@ public:
 	}
 };
 
+USTRUCT(BlueprintType)
 struct CSCORE_API FCsDeltaTime
 {
+	GENERATED_USTRUCT_BODY()
+
 public:
 
 	static const FCsDeltaTime Zero;
 
 public:
 
+	UPROPERTY(BlueprintReadOnly)
 	float Time;
+
+	UPROPERTY(BlueprintReadOnly)
 	float RealTime;
+
+	UPROPERTY(BlueprintReadOnly)
 	FTimespan Timespan;
+
+	UPROPERTY()
 	uint64 Frame;
 
 	FCsDeltaTime()

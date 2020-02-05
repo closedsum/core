@@ -8,22 +8,37 @@ struct CSCORE_API FCsUpdateGroup
 {
 private:
 
+	/** Is the group paused. */
 	bool bPause;
 
+	/** The current multiplier to delta time. Defaults to 1.0. */
 	float Scale;
 
+	/** A map of additional multipliers to delta time. These values are multiplied with Scale. */
+	TMap<FName, float> Scales;
+
+	/** The current time. */
 	FCsTime StartTime;
 
+	/** The time since Update was last called. */
 	FCsTime LastTime;
 
+	/** The time when Update was called. */
 	FCsTime Time;
 
+	/** The difference between Time and LastTime (Time - LastTime). */
 	FCsDeltaTime DeltaTime;
 
+	/** The scaled version of DeltaTime (Scale * DeltaTime). */
 	FCsDeltaTime ScaledDeltaTime;
 
+	/** The scaled version of DeltaTime for additional scales (Scale * Scales[Name] * DeltaTime). */
+	TMap<FName, FCsDeltaTime> ScaledDeltaTimes;
+
+	/** The time elapsed since the group as started. */
 	FCsDeltaTime TimeSinceStart;
 
+	/** The time elapsed since bPause was set to true. */
 	FCsDeltaTime TimePaused;
 
 public:
@@ -31,6 +46,7 @@ public:
 	FCsUpdateGroup() :
 		bPause(false),
 		Scale(1.0f),
+		Scales(),
 		StartTime(),
 		LastTime(),
 		Time(),
@@ -52,6 +68,7 @@ public:
 
 		DeltaTime.Reset();
 		ScaledDeltaTime.Reset();
+		TimePaused.Reset();
 	}
 
 	void Unpause()
@@ -80,6 +97,13 @@ public:
 			ScaledDeltaTime			 = DeltaTime;
 			ScaledDeltaTime.Time	 = Scale * DeltaTime.Time;
 			ScaledDeltaTime.RealTime = Scale * DeltaTime.RealTime;
+			// ScaledDeltaTimes
+			for (TPair<FName, FCsDeltaTime>& Pair : ScaledDeltaTimes)
+			{
+				Pair.Value			 = ScaledDeltaTime;
+				Pair.Value.Time		*= Scale;
+				Pair.Value.RealTime *= Scale;
+			}
 		}
 		else
 		{
@@ -115,6 +139,13 @@ public:
 			ScaledDeltaTime			 = DeltaTime;
 			ScaledDeltaTime.Time	 = Scale * DeltaTime.Time;
 			ScaledDeltaTime.RealTime = Scale * DeltaTime.RealTime;
+			// ScaledDeltaTimes
+			for (TPair<FName, FCsDeltaTime>& Pair : ScaledDeltaTimes)
+			{
+				Pair.Value			 = ScaledDeltaTime;
+				Pair.Value.Time		*= Scale;
+				Pair.Value.RealTime *= Scale;
+			}
 		}
 		else
 		{
@@ -140,6 +171,11 @@ public:
 	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime()
 	{
 		return ScaledDeltaTime;
+	}
+
+	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FName& ScaleName)
+	{
+		return ScaledDeltaTimes[ScaleName];
 	}
 
 	FORCEINLINE const FCsDeltaTime& GetTimeSinceStart()

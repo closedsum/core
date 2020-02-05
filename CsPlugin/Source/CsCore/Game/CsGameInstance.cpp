@@ -120,19 +120,20 @@ void UCsGameInstance::Init()
 	OnPostWorldInitializationHandle = FWorldDelegates::OnPostWorldInitialization.AddUObject(this, &UCsGameInstance::OnPostWorldInitialization);
 	OnLevelAddedToWorldHandle		= FWorldDelegates::LevelAddedToWorld.AddUObject(this, &UCsGameInstance::OnLevelAddedToWorld);
 	OnLevelRemovedFromWorldHandle	= FWorldDelegates::LevelRemovedFromWorld.AddUObject(this, &UCsGameInstance::OnLevelRemovedFromWorld);
+	
+	ConstructManagerSingleton();
 
-	InitSettings();
-	PopulateEnumMapsFromUserDefinedEnums();
-
-	UCsManager_Load::Init(this);
-	UCsManager_Runnable::Init();
+	//InitSettings();
+	//PopulateEnumMapsFromUserDefinedEnums();
 
 	UCsManager_Time::Init(this);
 	UCsCoroutineScheduler::Init(this);
+	UCsManager_Load::Init(this);
+	UCsManager_Runnable::Init();
 
 #if WITH_EDITOR
-	Manager_Time = UCsManager_Time::Get();
-	CoroutineScheduler = UCsCoroutineScheduler::Get();
+	Manager_Time = UCsManager_Time::Get(this);
+	CoroutineScheduler = UCsCoroutineScheduler::Get(this);
 #endif // #if WITH_EDITOR
 	
 	//OnTick_Event.AddUObject(UCsCoroutineScheduler::Get(), &UCsCoroutineScheduler::OnTick_Update);
@@ -156,11 +157,11 @@ void UCsGameInstance::Shutdown()
 	FWorldDelegates::LevelAddedToWorld.Remove(OnLevelAddedToWorldHandle);
 	FWorldDelegates::LevelRemovedFromWorld.Remove(OnLevelRemovedFromWorldHandle);
 
-	UCsManager_Load::Shutdown(this);
-	UCsManager_Runnable::Shutdown();
 
 	UCsManager_Time::Shutdown(this);
 	UCsCoroutineScheduler::Shutdown(this);
+	UCsManager_Load::Shutdown(this);
+	UCsManager_Runnable::Shutdown();
 
 #if WITH_EDITOR
 	Manager_Time->MarkPendingKill();
@@ -865,3 +866,10 @@ AActor* UCsGameInstance::GetSafeUniqueActorById(const uint64& Id)
 }
 
 #pragma endregion Object
+
+// Managers
+#pragma region
+
+void UCsGameInstance::ConstructManagerSingleton(){}
+
+#pragma endregion Managers

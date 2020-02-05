@@ -65,15 +65,37 @@ protected:
 
 public:
 
+	/**
+	*
+	*
+	* @param Group
+	*/
 	void Start(const FECsUpdateGroup& Group);
 
 	// Pause
 #pragma region
 public:
 
+	/**
+	*
+	*
+	* @param Group
+	*/
 	void Pause(const FECsUpdateGroup& Group);
+
+	/**
+	*
+	*
+	* @param Group
+	*/
 	void Unpause(const FECsUpdateGroup& Group);
 
+	/**
+	*
+	*
+	* @param Group
+	* return
+	*/
 	FORCEINLINE bool IsPaused(const FECsUpdateGroup& Group)
 	{
 		return UpdateGroups[Group.Value].IsPaused();
@@ -85,18 +107,57 @@ public:
 #pragma region
 public:
 
+	/**
+	*
+	*
+	* @param Group
+	* @param DeltaTime
+	*/
 	void Update(const FECsUpdateGroup& Group, const float& DeltaTime);
+
+	/**
+	*
+	*
+	* @param Group
+	* @param DeltaTime
+	* @param Time
+	* @param RealTime
+	*/
 	void Update(const FECsUpdateGroup& Group, const float& DeltaTime, const float& Time, const float& RealTime);
 
 #pragma endregion Update
 
+	/**
+	*
+	*
+	* @param Group
+	* return 
+	*/
 	FORCEINLINE const FCsTime& GetTime(const FECsUpdateGroup& Group)
 	{
 		return UpdateGroups[Group.Value].GetTime();
 	}
 
+	/**
+	*
+	*
+	* @param Group
+	* return
+	*/
 	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FECsUpdateGroup& Group)
 	{
 		return UpdateGroups[Group.Value].GetScaledDeltaTime();
+	}
+
+	/**
+	*
+	*
+	* @param Group
+	* @param ScaleName
+	* return
+	*/
+	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FECsUpdateGroup& Group, const FName& ScaleName)
+	{
+		return UpdateGroups[Group.Value].GetScaledDeltaTime(ScaleName);
 	}
 };

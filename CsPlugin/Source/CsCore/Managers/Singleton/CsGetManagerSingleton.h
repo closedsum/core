@@ -18,5 +18,5 @@ class ICsGetManagerSingleton
 
 public:
 
-	virtual UCsManager_Singleton* GetManager_Singleton() = 0;
+	virtual UCsManager_Singleton* GetManager_Singleton() const = 0;
 };

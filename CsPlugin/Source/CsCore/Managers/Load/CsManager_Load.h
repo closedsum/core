@@ -178,7 +178,7 @@ public:
 		Handle = nullptr;
 	}
 
-	void OnUpdate(const FCsDeltaTime& DeltaTime);
+	void Update(const FCsDeltaTime& DeltaTime);
 
 	void LoadObjectPaths(UWorld* InWorld, const TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishLoadObjectPaths Delegate);
 

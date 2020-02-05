@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Engine/GameInstance.h"
+#include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "../Core/Public/Containers/Ticker.h"
 // Types
 #include "Types/CsTypes.h"
@@ -101,7 +102,7 @@ class UCsManager_Time;
 class UCsCoroutineScheduler;
 
 UCLASS(config = Game)
-class CSCORE_API UCsGameInstance : public UGameInstance
+class CSCORE_API UCsGameInstance : public UGameInstance, public ICsGetManagerSingleton
 {
 	GENERATED_UCLASS_BODY()
 
@@ -393,8 +394,21 @@ protected:
 	UPROPERTY()
 	UCsManager_Singleton* Manager_Singleton;
 
+	virtual void ConstructManagerSingleton();
+
 	UPROPERTY()
 	UCsManager_Time* Manager_Time;
 
 #pragma endregion Managers
+
+// ICsGetManagerSingleton
+#pragma region
+public:
+
+	FORCEINLINE UCsManager_Singleton* GetManager_Singleton() const
+	{
+		return Manager_Singleton;
+	}
+
+#pragma endregion ICsGetManagerSingleton
 };

@@ -1,13 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 
-#include "Managers/Projectile/CsManager_Projectile.h"
+#include "Managers/Creep/CsTdManager_Creep.h"
 #include "CsCore.h"
 #include "CsCVars.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
-#include "Managers/Projectile/CsGetManagerProjectile.h"
+#include "Managers/Creep/CsTdGetManagerCreep.h"
 
 #include "Library/CsLibrary_Common.h"
 
@@ -20,7 +20,7 @@
 // Internal
 #pragma region
 
-FCsManager_Projectile_Internal::FCsManager_Projectile_Internal() 
+FCsTdManager_Creep_Internal::FCsTdManager_Creep_Internal()
 	: Super()
 {
 }
@@ -28,10 +28,10 @@ FCsManager_Projectile_Internal::FCsManager_Projectile_Internal()
 #pragma endregion Internal
 
 // static initializations
-UCsManager_Projectile* UCsManager_Projectile::s_Instance;
-bool UCsManager_Projectile::s_bShutdown = false;
+UCsTdManager_Creep* UCsTdManager_Creep::s_Instance;
+bool UCsTdManager_Creep::s_bShutdown = false;
 
-UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectInitializer)
+UCsTdManager_Creep::UCsTdManager_Creep(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
@@ -39,11 +39,11 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 // UObject Interface
 #pragma region
 
-void UCsManager_Projectile::BeginDestroy()
+void UCsTdManager_Creep::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	UCsManager_Projectile::Shutdown(this);
+	UCsTdManager_Creep::Shutdown(this);
 }
 
 #pragma endregion UObject Interface
@@ -51,7 +51,7 @@ void UCsManager_Projectile::BeginDestroy()
 // UActorComponent Interface
 #pragma region
 
-void UCsManager_Projectile::OnRegister()
+void UCsTdManager_Creep::OnRegister()
 {
 	Super::OnRegister();
 
@@ -63,17 +63,17 @@ void UCsManager_Projectile::OnRegister()
 // Singleton
 #pragma region
 
-/*static*/ UCsManager_Projectile* UCsManager_Projectile::Get(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsTdManager_Creep* UCsTdManager_Creep::Get(UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
-	return Get_GetManagerProjectile(InRoot)->GetManager_Projectile();
+	return Get_GetManagerCreep(InRoot)->GetManager_Creep();
 #else
 	if (s_bShutdown)
 		return nullptr;
 
 	if (!s_Instance)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::Get: Manager must be attached and registered on a game object in order to call Get()."));
+		UE_LOG(LogCs, Warning, TEXT("UCsTdManager_Creep::Get: Manager must be attached and registered on a game object in order to call Get()."));
 		return nullptr;
 	}
 
@@ -81,27 +81,27 @@ void UCsManager_Projectile::OnRegister()
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_Projectile::Init(UCsManager_Projectile* Manager)
+/*static*/ void UCsTdManager_Creep::Init(UCsTdManager_Creep* Manager)
 {
 	s_bShutdown = false;
 
 	if (s_Instance)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::Init: This is being called before the previous instance of the manager has been Shutdown."));
+		UE_LOG(LogCs, Warning, TEXT("UCsTdManager_Creep::Init: This is being called before the previous instance of the manager has been Shutdown."));
 	}
 	s_Instance = Manager;
 
 	s_Instance->Initialize();
 }
 
-/*static*/ void UCsManager_Projectile::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsTdManager_Creep::Shutdown(UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
-	ICsGetManagerProjectile* GetManagerProjectile = Get_GetManagerProjectile(InRoot);
-	UCsManager_Projectile* Manager_Projectile	  = GetManagerProjectile->GetManager_Projectile();
-	Manager_Projectile->CleanUp();
+	ICsTdGetManagerCreep* GetManagerCreep = Get_GetManagerCreep(InRoot);
+	UCsTdManager_Creep* Manager_Creep	  = GetManagerCreep->GetManager_Creep();
+	Manager_Creep->CleanUp();
 
-	GetManagerProjectile->SetManager_Projectile(nullptr);
+	GetManagerCreep->SetManager_Creep(nullptr);
 #else
 	if (!s_Instance)
 		return;
@@ -114,26 +114,26 @@ void UCsManager_Projectile::OnRegister()
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerProjectile* UCsManager_Projectile::Get_GetManagerProjectile(UObject* InRoot)
+/*static*/ ICsTdGetManagerCreep* UCsTdManager_Creep::Get_GetManagerCreep(UObject* InRoot)
 {
-	checkf(InRoot, TEXT("UCsManager_Projectile::Get_GetManagerProjectile: InRoot is NULL."));
+	checkf(InRoot, TEXT("UCsTdManager_Creep::Get_GetManagerCreep: InRoot is NULL."));
 
 	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
-	checkf(GetManagerSingleton, TEXT("UCsManager_Projectile::Get_GetManagerProjectile: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
+	checkf(GetManagerSingleton, TEXT("UCsTdManager_Creep::Get_GetManagerCreep: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
-	checkf(Manager_Singleton, TEXT("UCsManager_Projectile::Get_GetManagerProjectile: Manager_Singleton is NULL."));
+	checkf(Manager_Singleton, TEXT("UCsTdManager_Creep::Get_GetManagerCreep: Manager_Singleton is NULL."));
 
-	ICsGetManagerProjectile* GetManagerProjectile = Cast<ICsGetManagerProjectile>(Manager_Singleton);
+	ICsTdGetManagerCreep* GetManagerCreep = Cast<ICsTdGetManagerCreep>(Manager_Singleton);
 
-	checkf(GetManagerProjectile, TEXT("UCsManager_Projectile::Get_GetManagerProjectile: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetManagerItem."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
+	checkf(GetManagerCreep, TEXT("UCsTdManager_Creep::Get_GetManagerCreep: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsTdGetManagerCreep."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
 
-	return GetManagerProjectile;
+	return GetManagerCreep;
 }
 
-/*static*/ ICsGetManagerProjectile* UCsManager_Projectile::GetSafe_GetManagerProjectile(UObject* Object)
+/*static*/ ICsTdGetManagerCreep* UCsTdManager_Creep::GetSafe_GetManagerCreep(UObject* Object)
 {
 	if (!Object)
 		return nullptr;
@@ -148,25 +148,25 @@ void UCsManager_Projectile::OnRegister()
 	if (!Manager_Singleton)
 		return nullptr;
 
-	return Cast<ICsGetManagerProjectile>(Manager_Singleton);
+	return Cast<ICsTdGetManagerCreep>(Manager_Singleton);
 }
 
-/*static*/ UCsManager_Projectile* UCsManager_Projectile::GetSafe(UObject* Object)
+/*static*/ UCsTdManager_Creep* UCsTdManager_Creep::GetSafe(UObject* Object)
 {
-	if (ICsGetManagerProjectile* GetManagerProjectile = GetSafe_GetManagerProjectile(Object))
-		return GetManagerProjectile->GetManager_Projectile();
+	if (ICsTdGetManagerCreep* GetManagerCreep = GetSafe_GetManagerCreep(Object))
+		return GetManagerCreep->GetManager_Creep();
 	return nullptr;
 }
 
-/*static*/ UCsManager_Projectile* UCsManager_Projectile::GetFromWorldContextObject(const UObject* WorldContextObject)
+/*static*/ UCsTdManager_Creep* UCsTdManager_Creep::GetFromWorldContextObject(const UObject* WorldContextObject)
 {
 	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
 	{
 		// Game Instance
-		if (UCsManager_Projectile* Manager = GetSafe(World->GetGameInstance()))
+		if (UCsTdManager_Creep* Manager = GetSafe(World->GetGameInstance()))
 			return Manager;
 		// Game State
-		if (UCsManager_Projectile* Manager = GetSafe(World->GetGameState()))
+		if (UCsTdManager_Creep* Manager = GetSafe(World->GetGameState()))
 			return Manager;
 
 		// Player Controller
@@ -179,11 +179,11 @@ void UCsManager_Projectile::OnRegister()
 
 		for (APlayerController* Controller : Controllers)
 		{
-			if (UCsManager_Projectile* Manager = GetSafe(Controller))
+			if (UCsTdManager_Creep* Manager = GetSafe(Controller))
 				return Manager;
 		}
 
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::GetFromWorldContextObject: Failed to Manager Item of type UCsManager_Projectile from GameInstance, GameState, or PlayerController."));
+		UE_LOG(LogCs, Warning, TEXT("UCsTdManager_Creep::GetFromWorldContextObject: Failed to Manager Item of type UCsTdManager_Creep from GameInstance, GameState, or PlayerController."));
 
 		return nullptr;
 	}
@@ -195,12 +195,12 @@ void UCsManager_Projectile::OnRegister()
 
 #endif // #if WITH_EDITOR
 
-void UCsManager_Projectile::Initialize()
+void UCsTdManager_Creep::Initialize()
 {
 	ConstructInternal();
 }
 
-void UCsManager_Projectile::CleanUp()
+void UCsTdManager_Creep::CleanUp()
 {
 	Internal->Shutdown();
 	Pool.Reset();
@@ -212,7 +212,7 @@ void UCsManager_Projectile::CleanUp()
 // Internal
 #pragma region
 
-void UCsManager_Projectile::ConstructInternal()
+void UCsTdManager_Creep::ConstructInternal()
 {
 	Internal = new FCsManager_Projectile_Internal();
 

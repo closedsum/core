@@ -224,6 +224,7 @@ void UCsTdManager_Creep::ConstructInternal()
 	// Bind delegates for a script interface.
 	Internal->Script_GetCache_Impl = Script_GetCache_Impl;
 	Internal->Script_Allocate_Impl = Script_Allocate_Impl;
+	Internal->Script_Update_Impl = Script_Update_Impl;
 	Internal->Script_Deallocate_Impl = Script_Deallocate_Impl;
 }
 
@@ -811,7 +812,7 @@ const FCsTdCreepPooled& UCsTdManager_Creep::FindSafeObject_Internal(const FECsTd
 	// Update
 #pragma region
 
-void UCsTdManager_Creep::Update(const float& DeltaTime)
+void UCsTdManager_Creep::Update(const FCsDeltaTime& DeltaTime)
 {
 	Internal->Update(DeltaTime);
 }

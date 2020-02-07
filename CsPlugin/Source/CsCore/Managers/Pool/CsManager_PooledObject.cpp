@@ -44,9 +44,9 @@ void FCsManager_PooledObject::Init(const FCsManagerPooledObjectParams& Params)
 
 	ConstructParams = Params.ConstructParams;
 
-	FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::OnTick]		  = Name + TEXT("::OnTick");
+	FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update]		  = Name + TEXT("::Update");
 	FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Deallocate]	  = Name + TEXT("::Deallocate");
-	FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::DeallocateAll] = Name + TEXT("::DeallocateAll");
+	FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::DeallocateAll]  = Name + TEXT("::DeallocateAll");
 	FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn]		  = Name + TEXT("::Spawn");
 }
 
@@ -535,7 +535,7 @@ const FCsPooledObject& FCsManager_PooledObject::FindSafeObject(UObject* Object)
 // Update
 #pragma region
 
-void FCsManager_PooledObject::Update(const float& DeltaTime)
+void FCsManager_PooledObject::Update(const FCsDeltaTime& DeltaTime)
 {
 	TLinkedList<FCsPooledObject>* Current = AllocatedHead;
 	TLinkedList<FCsPooledObject>* Next    = Current;
@@ -548,24 +548,41 @@ void FCsManager_PooledObject::Update(const float& DeltaTime)
 		FCsPooledObject& O = **Current;
 		Next			   = Current->GetNextLink();
 
+		if (O.GetCache()->GetUpdateType() == ECsPooledObjectUpdate::Manager)
+		{
+			O.Update(DeltaTime);
+		}
+
+		// Check if PooledObject is queued for Deallocation
+		if (O.GetCache()->ShouldDeallocate())
+		{
+#if !UE_BUILD_SHIPPING
+			LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update], ECsPoolTransaction::Deallocate, O);
+#endif // #if !UE_BUILD_SHIPPING
+			O.Deallocate();
+			RemoveAllocatedLink(Current);
+
+			OnDeallocate_Event.Broadcast(O);
+			continue;
+		}
+
 		// Check if PooledObject was Deallocated NOT in a normal way (i.e. Out of Bounds)
 		if (!O.GetCache()->IsAllocated())
 		{
 #if !UE_BUILD_SHIPPING
 			UE_LOG(LogCs, Warning, TEXT("%s::OnTick: %s: %s at PoolIndex: %d was prematurely deallocated NOT in a normal way."), *Name, *(ConstructParams.ClassName), *(GetObjectName(O)), O.GetCache()->GetIndex());
 
-			LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::OnTick], ECsPoolTransaction::Deallocate, O);
+			LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update], ECsPoolTransaction::Deallocate, O);
 #endif // #if !UE_BUILD_SHIPPING
 			RemoveAllocatedLink(Current);
 			continue;
 		}
 
 		// Check if PooledObject LifeTime has expired.
-		if (O.GetCache()->UseLifeTime() &&
-			GetCurrentTimeSeconds() - O.GetCache()->GetTime() > O.GetCache()->GetLifeTime())
+		if (O.GetCache()->HasLifeTimeExpired())
 		{
 #if !UE_BUILD_SHIPPING
-			LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::OnTick], ECsPoolTransaction::Deallocate, O);
+			LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update], ECsPoolTransaction::Deallocate, O);
 #endif // #if !UE_BUILD_SHIPPING
 			O.Deallocate();
 			RemoveAllocatedLink(Current);

@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Primitive.h"
+#include "Managers/Time/CsTypes_Time.h"
 #include "CsCVars.h"
 
 #include "CsTypes_Pool.generated.h"
@@ -153,6 +153,42 @@ namespace NCsPooledObjectConstruction
 }
 
 #pragma endregion PooledObjectContruction
+
+// PooledObjectUpdate
+#pragma region
+
+UENUM(BlueprintType)
+enum class ECsPooledObjectUpdate : uint8
+{
+	Self						UMETA(DisplayName = "Self"),
+	Manager						UMETA(DisplayName = "Manager"),
+	Owner						UMETA(DisplayName = "Owner"),
+	Instigator					UMETA(DisplayName = "Instigator"),
+	ECsPooledObjectUpdate_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsPooledObjectUpdate final : public TCsEnumMap<ECsPooledObjectUpdate>
+{
+	CS_ENUM_MAP_BODY(EMCsPooledObjectUpdate, ECsPooledObjectUpdate)
+};
+
+namespace NCsPooledObjectUpdate
+{
+	typedef ECsPooledObjectUpdate Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Self;
+		extern CSCORE_API const Type Manager;
+		extern CSCORE_API const Type Owner;
+		extern CSCORE_API const Type Instigator;
+		extern CSCORE_API const Type ECsPooledObjectUpdate_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+}
+
+#pragma endregion PooledObjectUpdate
 
 // FCsPooledObjectCache
 #pragma region
@@ -369,9 +405,9 @@ struct CSCORE_API ICsPooledObjectCache
 
 	virtual const int32& GetIndex() const = 0;
 
-	virtual const bool& IsAllocated() const = 0;
-
 	virtual const ECsPooledObjectState& GetState() const = 0;
+
+	virtual const ECsPooledObjectUpdate& GetUpdateType() const = 0;
 
 	virtual UObject* GetInstigator() const = 0;
 
@@ -381,23 +417,25 @@ struct CSCORE_API ICsPooledObjectCache
 
 	virtual const float& GetWarmUpTime() const = 0;
 
-	virtual const bool& UseLifeTime() const = 0;
-
 	virtual const float& GetLifeTime() const = 0;
 
-	virtual const float& GetTime() const = 0;
-
-	virtual const float& GetRealTime() const = 0;
-
-	virtual const uint64& GetFrame() const = 0;
+	virtual const FCsTime& GetTime() const = 0;
 
 	virtual const float& GetElapsedTime() const = 0;
 
+	virtual bool HasLifeTimeExpired() = 0;
+
 	virtual void Init(const int32& InIndex) = 0;
 
-	virtual void Allocate(ICsPooledObjectPayload* Payload, const float& InTime, const float& InRealTime, const uint64& InFrame) = 0;
+	virtual void Allocate(ICsPooledObjectPayload* Payload, const FCsTime& InTime) = 0;
+
+	virtual const bool& IsAllocated() const = 0;
 
 	virtual void Deallocate() = 0;
+
+	virtual void QueueDeallocate() = 0;
+
+	virtual const bool& ShouldDeallocate() const = 0;
 
 	virtual void Reset() = 0;
 };

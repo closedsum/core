@@ -173,7 +173,7 @@ public:
 #pragma region
 public:
 
-	virtual void Update(const float& DeltaTime) = 0;
+	virtual void Update(const FCsDeltaTime& DeltaTime) = 0;
 
 	virtual FCsManagerPooledObject_OnUpdate_Object& GetOnUpdate_Object_Event() = 0;
 
@@ -230,7 +230,7 @@ public:
 
 enum class ECsManagerPooledObjectFunctionNames : uint8
 {
-	OnTick,
+	Update,
 	Deallocate,
 	DeallocateAll,
 	Spawn,
@@ -656,7 +656,7 @@ public:
 	*
 	* @param DeltaTime
 	*/
-	virtual void Update(const float& DeltaTime);
+	virtual void Update(const FCsDeltaTime& DeltaTime);
 
 	FCsManagerPooledObject_OnUpdate_Object OnUpdate_Object_Event;
 

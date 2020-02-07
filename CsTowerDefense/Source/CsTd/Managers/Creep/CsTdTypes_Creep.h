@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Primitive.h"
+#include "Managers/Pool/CsTypes_Pool.h"
 
 #include "CsTdTypes_Creep.generated.h"
 #pragma once
@@ -23,6 +23,20 @@ struct CSTD_API EMCsTdCreep : public TCsEnumStructMap<FECsTdCreep, uint8>
 };
 
 #pragma endregion Creep
+
+// FCsTdCreepPooledCache
+#pragma region
+
+/*
+struct CSTD_API FCsTdCreepPooledCache : public ICsPooledObjectCache
+{
+	FCsTdCreepPooledCache()
+	{
+	}
+};
+*/
+
+#pragma endregion FCsTdCreepPooledCache
 
 // ICsTdCreepPayload
 #pragma region

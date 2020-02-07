@@ -809,7 +809,7 @@ const FCsProjectile& UCsManager_Projectile::FindSafeObject_Internal(const FECsPr
 	// Update
 #pragma region
 
-void UCsManager_Projectile::Update(const float& DeltaTime)
+void UCsManager_Projectile::Update(const FCsDeltaTime& DeltaTime)
 {
 	Internal->Update(DeltaTime);
 }

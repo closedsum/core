@@ -18,10 +18,30 @@ class CSCORE_API ICsPooledObject
 
 public:
 
+	/**
+	*
+	*
+	* return
+	*/
 	virtual ICsPooledObjectCache* GetCache() const = 0;
 
+	/**
+	*
+	*
+	* @param Payload
+	*/
 	virtual void Allocate(ICsPooledObjectPayload* Payload) = 0;
 
+	/**
+	*
+	*
+	* @param DeltaTime
+	*/
+	virtual void Update(const FCsDeltaTime& DeltaTime) = 0;
+
+	/**
+	*
+	*/
 	virtual void Deallocate() = 0;
 };
 
@@ -69,6 +89,18 @@ public:
 	FScript_Allocate Script_Allocate_Impl;
 
 	/**
+	* Delegate type for updating a Pooled Object.
+	*   The Pooled Object implements a script interface of type: ICsPooledObject.
+	*
+	* @param Object		A Pooled Object of type: ICsPooledObject.
+	* @param DeltaTime
+	*/
+	DECLARE_DELEGATE_TwoParams(FScript_Update, UObject* /*Object*/, const FCsDeltaTime& /*DeltaTime*/);
+
+	/** Delegate for updating a Pooled Object. */
+	FScript_Update Script_Update_Impl;
+
+	/**
 	* Delegate type for deallocating a Pooled Object.
 	*   The Pooled Object implements a script interface of type: ICsPooledObject.
 	*
@@ -87,6 +119,7 @@ public:
 		Super(),
 		Script_GetCache_Impl(),
 		Script_Allocate_Impl(),
+		Script_Update_Impl(),
 		Script_Deallocate_Impl()
 	{
 	}
@@ -103,6 +136,7 @@ public:
 
 		Script_GetCache_Impl.Unbind();
 		Script_Allocate_Impl.Unbind();
+		Script_Update_Impl.Unbind();
 		Script_Deallocate_Impl.Unbind();
 	}
 
@@ -125,6 +159,14 @@ public:
 			Script_Allocate_Impl.Execute(Object, Payload);
 		else
 			Interface->Allocate(Payload);
+	}
+
+	FORCEINLINE void Update(const FCsDeltaTime& DeltaTime)
+	{
+		if (bScript)
+			Script_Update_Impl.Execute(Object, DeltaTime);
+		else
+			Interface->Update(DeltaTime);
 	}
 
 	FORCEINLINE void Deallocate()

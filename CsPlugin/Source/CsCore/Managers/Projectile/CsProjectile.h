@@ -149,6 +149,7 @@ public:
 
 		Script_GetCache_Impl = PooledObject.Script_GetCache_Impl;
 		Script_Allocate_Impl = PooledObject.Script_Allocate_Impl;
+		Script_Update_Impl = PooledObject.Script_Update_Impl;
 		Script_Deallocate_Impl = PooledObject.Script_Deallocate_Impl;
 
 		if (bScript)
@@ -156,11 +157,13 @@ public:
 			UClass* Class = Object->GetClass();
 
 			// GetCache
-			checkf(Script_GetCache_Impl.IsBound(), TEXT("FCsProjectile::SetPooledObject: Object: %s with Class: %s does NOT have Script_GetCache_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
+			checkf(Script_GetCache_Impl.IsBound(), TEXT("FCsProjectile::SetPooledObject: Object: %s with Class: %s does NOT have Script_GetCache_Impl bound to any function."), *(Object->GetName()), *(Class->GetName()));
 			// Allocate
-			checkf(Script_Allocate_Impl.IsBound(), TEXT("FCsProjectile::SetPooledObject: Object: %s with Class: %s does NOT have Script_Allocate_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
+			checkf(Script_Allocate_Impl.IsBound(), TEXT("FCsProjectile::SetPooledObject: Object: %s with Class: %s does NOT have Script_Allocate_Impl bound to any function."), *(Object->GetName()), *(Class->GetName()));
+			// Update
+			checkf(Script_Update_Impl.IsBound(), TEXT("FCsProjectile::SetPooledObject: Object: %s with Class: %s does NOT have Script_Update_Impl bound to any function."), *(Object->GetName()), *(Class->GetName()));
 			// Deallocate
-			checkf(Script_Deallocate_Impl.IsBound(), TEXT("FCsProjectile::SetPooledObject: Object: %s with Class: %s does NOT have Script_Deallocate_Impl Bound to any function."), *(Object->GetName()), *(Class->GetName()));
+			checkf(Script_Deallocate_Impl.IsBound(), TEXT("FCsProjectile::SetPooledObject: Object: %s with Class: %s does NOT have Script_Deallocate_Impl bound to any function."), *(Object->GetName()), *(Class->GetName()));
 		}
 	}
 

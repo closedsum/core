@@ -534,7 +534,7 @@ protected:
 #pragma region
 public:
 
-	virtual void Update(const float& DeltaTime);
+	virtual void Update(const FCsDeltaTime& DeltaTime);
 
 private:
 

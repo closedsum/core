@@ -700,7 +700,7 @@ public:
 #pragma region
 public:
 
-	virtual void Update(const float& DeltaTime)
+	virtual void Update(const FCsDeltaTime& DeltaTime)
 	{
 		for (TPair<KeyType, ICsManager_PooledObject*>& Pair : Pools)
 		{
@@ -937,6 +937,8 @@ public:
 	FCsPooledObject::FScript_GetCache Script_GetCache_Impl;
 
 	FCsPooledObject::FScript_Allocate Script_Allocate_Impl;
+
+	FCsPooledObject::FScript_Update Script_Update_Impl;
 
 	FCsPooledObject::FScript_Deallocate Script_Deallocate_Impl;
 

@@ -522,7 +522,7 @@ protected:
 #pragma region
 public:
 
-	virtual void Update(const float& DeltaTime);
+	virtual void Update(const FCsDeltaTime& DeltaTime);
 
 private:
 
@@ -663,7 +663,11 @@ public:
 		 The Pooled Object implements a script interface of type: ICsPooledObject. */
 	FCsPooledObject::FScript_Allocate Script_Allocate_Impl;
 
-	/** Delegate called after allocating a Pooled Object. 
+	/** Delegate for updating a Pooled Object.
+		The Pooled Object implements a script interface of type: ICsPooledObject. */
+	FCsPooledObject::FScript_Update Script_Update_Impl;
+
+	/** Delegate called after deallocating a Pooled Object. 
 		 The Pooled Object implements a script interface of type: ICsPooledObject.*/
 	FCsPooledObject::FScript_Deallocate Script_Deallocate_Impl;
 

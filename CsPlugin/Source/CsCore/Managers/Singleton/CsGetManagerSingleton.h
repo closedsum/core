@@ -7,12 +7,12 @@
 class UCsManager_Singleton;
 
 UINTERFACE(Blueprintable)
-class UCsGetManagerSingleton : public UInterface
+class CSCORE_API UCsGetManagerSingleton : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class ICsGetManagerSingleton
+class CSCORE_API ICsGetManagerSingleton
 {
 	GENERATED_IINTERFACE_BODY()
 

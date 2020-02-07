@@ -7,12 +7,12 @@
 #include "CsPooledObject.generated.h"
 
 UINTERFACE(Blueprintable)
-class UCsPooledObject : public UInterface
+class CSCORE_API UCsPooledObject : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class ICsPooledObject
+class CSCORE_API ICsPooledObject
 {
 	GENERATED_IINTERFACE_BODY()
 

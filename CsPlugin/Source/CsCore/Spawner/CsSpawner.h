@@ -11,6 +11,7 @@ class UCsSpawner : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
+class ICsSpawner;
 class ICsSpawnedObject;
 
 /**

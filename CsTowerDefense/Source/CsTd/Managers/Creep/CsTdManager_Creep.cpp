@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 
 #include "Managers/Creep/CsTdManager_Creep.h"
-#include "CsCore.h"
+#include "CsTd.h"
 #include "CsCVars.h"
 
 #if WITH_EDITOR
@@ -73,7 +73,7 @@ void UCsTdManager_Creep::OnRegister()
 
 	if (!s_Instance)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsTdManager_Creep::Get: Manager must be attached and registered on a game object in order to call Get()."));
+		UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::Get: Manager must be attached and registered on a game object in order to call Get()."));
 		return nullptr;
 	}
 
@@ -87,7 +87,7 @@ void UCsTdManager_Creep::OnRegister()
 
 	if (s_Instance)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsTdManager_Creep::Init: This is being called before the previous instance of the manager has been Shutdown."));
+		UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::Init: This is being called before the previous instance of the manager has been Shutdown."));
 	}
 	s_Instance = Manager;
 
@@ -183,7 +183,7 @@ void UCsTdManager_Creep::OnRegister()
 				return Manager;
 		}
 
-		UE_LOG(LogCs, Warning, TEXT("UCsTdManager_Creep::GetFromWorldContextObject: Failed to Manager Item of type UCsTdManager_Creep from GameInstance, GameState, or PlayerController."));
+		UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::GetFromWorldContextObject: Failed to Manager Item of type UCsTdManager_Creep from GameInstance, GameState, or PlayerController."));
 
 		return nullptr;
 	}
@@ -214,12 +214,12 @@ void UCsTdManager_Creep::CleanUp()
 
 void UCsTdManager_Creep::ConstructInternal()
 {
-	Internal = new FCsManager_Projectile_Internal();
+	Internal = new FCsTdManager_Creep_Internal();
 
-	Internal->OnCreatePool_AddToPool_Event.AddUObject(this, &UCsManager_Projectile::OnCreatePool_AddToPool);
-	Internal->OnPreUpdate_Pool_Impl.BindUObject(this, &UCsManager_Projectile::OnPreUpdate_Pool);
-	Internal->OnUpdate_Object_Event.AddUObject(this, &UCsManager_Projectile::OnUpdate_Object);
-	Internal->OnPostUpdate_Pool_Impl.BindUObject(this, &UCsManager_Projectile::OnPostUpdate_Pool);
+	Internal->OnCreatePool_AddToPool_Event.AddUObject(this, &UCsTdManager_Creep::OnCreatePool_AddToPool);
+	Internal->OnPreUpdate_Pool_Impl.BindUObject(this, &UCsTdManager_Creep::OnPreUpdate_Pool);
+	Internal->OnUpdate_Object_Event.AddUObject(this, &UCsTdManager_Creep::OnUpdate_Object);
+	Internal->OnPostUpdate_Pool_Impl.BindUObject(this, &UCsTdManager_Creep::OnPostUpdate_Pool);
 
 	// Bind delegates for a script interface.
 	Internal->Script_GetCache_Impl = Script_GetCache_Impl;
@@ -227,12 +227,12 @@ void UCsTdManager_Creep::ConstructInternal()
 	Internal->Script_Deallocate_Impl = Script_Deallocate_Impl;
 }
 
-void UCsManager_Projectile::InitInternal(const TCsManager_Internal::FCsManagerPooledObjectMapParams& Params)
+void UCsTdManager_Creep::InitInternal(const TCsTdManager_Internal::FCsManagerPooledObjectMapParams& Params)
 {
 	Internal->Init(Params);
 }
 
-void UCsManager_Projectile::Clear()
+void UCsTdManager_Creep::Clear()
 {
 	Internal->Clear();
 }
@@ -240,21 +240,21 @@ void UCsManager_Projectile::Clear()
 	// Pool
 #pragma region
 
-void UCsManager_Projectile::CreatePool(const FECsProjectile& Type, const int32& Size)
+void UCsTdManager_Creep::CreatePool(const FECsTdCreep& Type, const int32& Size)
 {
-	checkf(Size > 0, TEXT("UCsManager_Projectile::CreatePool: Size must be GREATER THAN 0."));
+	checkf(Size > 0, TEXT("UCsTdManager_Creep::CreatePool: Size must be GREATER THAN 0."));
 
 	// TODO: Check if the pool has already been created
 
-	TArray<FCsProjectile>& Projectiles = Pools.FindOrAdd(Type);
-	Projectiles.Reserve(Size);
-	TArray<FCsProjectile>& Objects = AllocatedObjects.FindOrAdd(Type);
+	TArray<FCsTdCreepPooled>& Creeps = Pools.FindOrAdd(Type);
+	Creeps.Reserve(Size);
+	TArray<FCsTdCreepPooled>& Objects = AllocatedObjects.FindOrAdd(Type);
 	Objects.Reserve(Size);
 
 	Internal->CreatePool(Type, Size);
 }
 
-void UCsManager_Projectile::OnCreatePool_AddToPool(const FECsProjectile& Type, const FCsPooledObject& Object)
+void UCsTdManager_Creep::OnCreatePool_AddToPool(const FECsTdCreep& Type, const FCsPooledObject& Object)
 {
 	AddToPool_Internal(Type, Object);
 }
@@ -265,22 +265,22 @@ void UCsManager_Projectile::OnCreatePool_AddToPool(const FECsProjectile& Type, c
 			// Pool
 #pragma region
 
-TArray<FCsProjectile>& UCsManager_Projectile::CheckAndAddType_Pools(const FECsProjectile& Type)
+TArray<FCsTdCreepPooled>& UCsTdManager_Creep::CheckAndAddType_Pools(const FECsTdCreep& Type)
 {
-	TArray<FCsProjectile>* ValuePtr = Pools.Find(Type);
+	TArray<FCsTdCreepPooled>* ValuePtr = Pools.Find(Type);
 
 	if (!ValuePtr)
 	{
-		TArray<FCsProjectile>& Value = Pools.Add(Type);
+		TArray<FCsTdCreepPooled>& Value = Pools.Add(Type);
 		AllocatedObjects.Add(Type);
 		return Value;
 	}
 	return *ValuePtr;
 }
 
-const FCsProjectile& UCsManager_Projectile::AddToPool(const FECsProjectile& Type, ICsProjectile* Object)
+const FCsTdCreepPooled& UCsTdManager_Creep::AddToPool(const FECsTdCreep& Type, ICsTdCreep* Object)
 {
-	checkf(Object, TEXT("UCsManager_Projectile::AddToPool: Object is NULL."));
+	checkf(Object, TEXT("UCsTdManager_Creep::AddToPool: Object is NULL."));
 
 	// UObject
 	if (UObject* O = Object->_getUObject())
@@ -307,7 +307,7 @@ const FCsProjectile& UCsManager_Projectile::AddToPool(const FECsProjectile& Type
 			// INVALID
 		else
 		{
-			checkf(false, TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(O->GetName()), *(Class->GetName()));
+			checkf(false, TEXT("UCsTdManager_Creep::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(O->GetName()), *(Class->GetName()));
 		}
 	}
 	else
@@ -318,16 +318,16 @@ const FCsProjectile& UCsManager_Projectile::AddToPool(const FECsProjectile& Type
 		ICsPooledObject* Interface = (ICsPooledObject*)Object;
 #endif // #if !UE_BUILD_SHIPPING
 
-		checkf(Interface, TEXT("UCsManager_Projectile::AddToPool: Interface is NULL or does NOT implement interface: ICsPooledObject."));
+		checkf(Interface, TEXT("UCsTdManager_Creep::AddToPool: Interface is NULL or does NOT implement interface: ICsPooledObject."));
 
 		const FCsPooledObject& PooledObject = Internal->AddToPool(Type, Interface);
 
 		return AddToPool_Internal(Type, PooledObject);
 	}
-	return FCsProjectile::Empty;
+	return FCsTdCreepPooled::Empty;
 }
 
-const FCsProjectile& UCsManager_Projectile::AddToPool(const FECsProjectile& Type, const FCsProjectile& Object)
+const FCsTdCreepPooled& UCsTdManager_Creep::AddToPool(const FECsTdCreep& Type, const FCsTdCreepPooled& Object)
 {
 	if (UObject* O = Object.GetObject())
 	{
@@ -353,7 +353,7 @@ const FCsProjectile& UCsManager_Projectile::AddToPool(const FECsProjectile& Type
 			// INVALID
 		else
 		{
-			checkf(false, TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(O->GetName()), *(Class->GetName()));
+			checkf(false, TEXT("UCsTdManager_Creep::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(O->GetName()), *(Class->GetName()));
 		}
 	}
 	else
@@ -361,18 +361,18 @@ const FCsProjectile& UCsManager_Projectile::AddToPool(const FECsProjectile& Type
 		// Add ICsPooledObject interface
 		ICsPooledObject* Interface = Object.GetInterface();
 
-		checkf(Interface, TEXT("UCsManager_Projectile::AddToPool: Interface is NULL."));
+		checkf(Interface, TEXT("UCsTdManager_Creep::AddToPool: Interface is NULL."));
 
 		const FCsPooledObject& PooledObject = Internal->AddToPool(Type, Interface);
 
 		return AddToPool_Internal(Type, PooledObject);
 	}
-	return FCsProjectile::Empty;
+	return FCsTdCreepPooled::Empty;
 }
 
-const FCsProjectile& UCsManager_Projectile::AddToPool(const FECsProjectile& Type, UObject* Object)
+const FCsTdCreepPooled& UCsTdManager_Creep::AddToPool(const FECsTdCreep& Type, UObject* Object)
 {
-	checkf(Object, TEXT("UCsManager_Projectile::AddToPool: Object is NULL."));
+	checkf(Object, TEXT("UCsTdManager_Creep::AddToPool: Object is NULL."));
 
 	UClass* Class = Object->GetClass();
 
@@ -396,58 +396,60 @@ const FCsProjectile& UCsManager_Projectile::AddToPool(const FECsProjectile& Type
 		// INVALID
 	else
 	{
-		checkf(false, TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(Object->GetName()), *(Class->GetName()));
+		checkf(false, TEXT("UCsTdManager_Creep::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(Object->GetName()), *(Class->GetName()));
 	}
-	return FCsProjectile::Empty;
+	return FCsTdCreepPooled::Empty;
 }
 
-const FCsProjectile& UCsManager_Projectile::AddToPool_Internal(const FECsProjectile& Type, const FCsPooledObject& Object)
+const FCsTdCreepPooled& UCsTdManager_Creep::AddToPool_Internal(const FECsTdCreep& Type, const FCsPooledObject& Object)
 {
-	TArray<FCsProjectile>& Projectiles = CheckAndAddType_Pools(Type);
+	TArray<FCsTdCreepPooled>& Creeps = CheckAndAddType_Pools(Type);
 
-	Projectiles.AddDefaulted();
-	FCsProjectile& P = Projectiles.Last();
+	Creeps.AddDefaulted();
+	FCsTdCreepPooled& C = Creeps.Last();
 
-	const int32 Index = Projectiles.Num() - 1;
+	const int32 Index = Creeps.Num() - 1;
 
-	checkf(Index == Object.GetCache()->GetIndex(), TEXT("UCsManager_Projectile::OnAddToPool: Mismatch between Projectile (%d) and Pooled Object (%s)"), Index, Object.GetCache()->GetIndex());
+	checkf(Index == Object.GetCache()->GetIndex(), TEXT("UCsTdManager_Creep::OnAddToPool: Mismatch between Creep (%d) and Pooled Object (%s)"), Index, Object.GetCache()->GetIndex());
 
-	P.SetPooledObject(Object);
+	C.SetPooledObject(Object);
 
 	// UObject
-	if (UObject* O = P.GetObject())
+	if (UObject* O = C.GetObject())
 	{
 		UClass* Class = O->GetClass();
 
 		// Interface
-		if (ICsProjectile* Projectile = Cast<ICsProjectile>(O))
+		if (ICsTdCreep* Creep = Cast<ICsTdCreep>(O))
 		{
-			P.SetProjectile(Projectile);
+			C.SetCreep(Creep);
 		}
 		// Script Interface
 		else
-		if (Class->ImplementsInterface(UCsProjectile::StaticClass()))
+		if (Class->ImplementsInterface(UCsTdCreep::StaticClass()))
 		{
-			P.SetScriptProjectile();
+			C.SetScriptCreep();
 
 			// Check and bind delegates for the script interface.
 
+			/*
 			// GetOwner
-			if (!P.Script_GetOwner_Impl.IsBound())
-				P.Script_GetOwner_Impl = Script_GetOwner_Impl;
+			if (!C.Script_GetOwner_Impl.IsBound())
+				C.Script_GetOwner_Impl = Script_GetOwner_Impl;
 
-			checkf(P.Script_GetOwner_Impl.IsBound(), TEXT("UCsManager_Projectile::OnAddToPool: Object: %s with Class: %s does NOT have Script_GetOwner_Impl Bound to any function."), *(O->GetName()), *(Class->GetName()));
+			checkf(P.Script_GetOwner_Impl.IsBound(), TEXT("UCsTdManager_Creep::OnAddToPool: Object: %s with Class: %s does NOT have Script_GetOwner_Impl Bound to any function."), *(O->GetName()), *(Class->GetName()));
 
 			// GetInstigator
-			if (!P.Script_GetInstigator_Impl.IsBound())
-				P.Script_GetInstigator_Impl = Script_GetInstigator_Impl;
+			if (!C.Script_GetInstigator_Impl.IsBound())
+				C.Script_GetInstigator_Impl = Script_GetInstigator_Impl;
 
-			checkf(P.Script_GetInstigator_Impl.IsBound(), TEXT("UCsManager_Projectile::OnAddToPool: Object: %s with Class: %s does NOT have Script_GetInstigator_Impl Bound to any function."), *(O->GetName()), *(Class->GetName()));
+			checkf(P.Script_GetInstigator_Impl.IsBound(), TEXT("UCsTdManager_Creep::OnAddToPool: Object: %s with Class: %s does NOT have Script_GetInstigator_Impl Bound to any function."), *(O->GetName()), *(Class->GetName()));
+			*/
 		}
 		// INVALID
 		else
 		{
-			checkf(false, TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsProjectile."), *(O->GetName()), *(Class->GetName()));
+			checkf(false, TEXT("UCsTdManager_Creep::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsTdCreep."), *(O->GetName()), *(Class->GetName()));
 		}
 	}
 	else
@@ -455,16 +457,16 @@ const FCsProjectile& UCsManager_Projectile::AddToPool_Internal(const FECsProject
 		ICsPooledObject* Interface = Object.GetInterface();
 
 #if !UE_BUILD_SHIPPING
-		ICsProjectile* Projectile = dynamic_cast<ICsProjectile*>(Interface);
+		ICsTdCreep* Creep = dynamic_cast<ICsTdCreep*>(Interface);
 #else
-		ICsProjectile* Projectile = (ICsProjectile*)Interface;
+		ICsTdCreep* Creep = (ICsTdCreep*)Interface;
 #endif // #if !UE_BUILD_SHIPPING
 
-		checkf(Projectile, TEXT("UCsManager_Projectile::OnAddToPool: Projectile is NULL or does NOT implement interface: ICsProjectile."));
+		checkf(Creep, TEXT("UCsTdManager_Creep::OnAddToPool: Creep is NULL or does NOT implement interface: ICsTdCreep."));
 
-		P.SetProjectile(Projectile);
+		C.SetCreep(Creep);
 	}
-	return P;
+	return C;
 }
 
 #pragma endregion Pool
@@ -472,24 +474,24 @@ const FCsProjectile& UCsManager_Projectile::AddToPool_Internal(const FECsProject
 			// Allocated Objects
 #pragma region
 
-TArray<FCsProjectile>& UCsManager_Projectile::CheckAndAddType_AllocatedObjects(const FECsProjectile& Type)
+TArray<FCsTdCreepPooled>& UCsTdManager_Creep::CheckAndAddType_AllocatedObjects(const FECsTdCreep& Type)
 {
-	TArray<FCsProjectile>* ValuePtr = AllocatedObjects.Find(Type);
+	TArray<FCsTdCreepPooled>* ValuePtr = AllocatedObjects.Find(Type);
 
 	if (!ValuePtr)
 	{
 		Pools.Add(Type);
-		TArray<FCsProjectile>& Value = AllocatedObjects.Add(Type);
+		TArray<FCsTdCreepPooled>& Value = AllocatedObjects.Add(Type);
 		return Value;
 	}
 	return *ValuePtr;
 }
 
-const FCsProjectile& UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* PooledObject, UObject* Object)
+const FCsTdCreepPooled& UCsTdManager_Creep::AddToAllocatedObjects(const FECsTdCreep& Type, ICsTdCreep* PooledObject, UObject* Object)
 {
-	checkf(PooledObject, TEXT("UCsManager_Projectile::AddToAllocatedObjects: PooledObject is NULL."));
+	checkf(PooledObject, TEXT("UCsTdManager_Creep::AddToAllocatedObjects: PooledObject is NULL."));
 
-	checkf(Object, TEXT("UCsManager_Projectile::AddToAllocatedObjects: Object is NULL."));
+	checkf(Object, TEXT("UCsTdManager_Creep::AddToAllocatedObjects: Object is NULL."));
 
 	UClass* Class = Object->GetClass();
 
@@ -516,18 +518,18 @@ const FCsProjectile& UCsManager_Projectile::AddToAllocatedObjects(const FECsProj
 		ICsPooledObject* InterfaceObject = (ICsPooledObject*)PooledObject;
 #endif // #if !UE_BUILD_SHIPPING
 
-		checkf(InterfaceObject, TEXT("UCsManager_Projectile::AddToAllocatedObjects: InterfaceObject is NULL or does NOT implement interface: ICsPooledObject."));
+		checkf(InterfaceObject, TEXT("UCsTdManager_Creep::AddToAllocatedObjects: InterfaceObject is NULL or does NOT implement interface: ICsPooledObject."));
 
 		const FCsPooledObject& O = Internal->AddToAllocatedObjects(Type, InterfaceObject);
 
 		return AddToAllocatedObjects_Internal(Type, O);
 	}
-	return FCsProjectile::Empty;
+	return FCsTdCreepPooled::Empty;
 }
 
-const FCsProjectile& UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* Object)
+const FCsTdCreepPooled& UCsTdManager_Creep::AddToAllocatedObjects(const FECsTdCreep& Type, ICsTdCreep* Object)
 {
-	checkf(Object, TEXT("UCsManager_Projectile::AddToAllocatedObjects: Object is NULL."));
+	checkf(Object, TEXT("UCsTdManager_Creep::AddToAllocatedObjects: Object is NULL."));
 		
 	if (UObject* O = Object->_getUObject())
 	{
@@ -551,7 +553,7 @@ const FCsProjectile& UCsManager_Projectile::AddToAllocatedObjects(const FECsProj
 		// INVALID
 		else
 		{
-			checkf(false, TEXT("UCsManager_Projectile::AddToAllocatedObjects: Object does NOT implement interface: ICsPooledObject."));
+			checkf(false, TEXT("UCsTdManager_Creep::AddToAllocatedObjects: Object does NOT implement interface: ICsPooledObject."));
 		}
 	}
 	else
@@ -562,18 +564,18 @@ const FCsProjectile& UCsManager_Projectile::AddToAllocatedObjects(const FECsProj
 		ICsPooledObject* InterfaceObject = (ICsPooledObject*)Object;
 #endif // #if !UE_BUILD_SHIPPING
 
-		checkf(InterfaceObject, TEXT("UCsManager_Projectile::AddToAllocatedObjects: InterfaceObject is NULL or does NOT implement interface: ICsPooledObject."));
+		checkf(InterfaceObject, TEXT("UCsTdManager_Creep::AddToAllocatedObjects: InterfaceObject is NULL or does NOT implement interface: ICsPooledObject."));
 
 		const FCsPooledObject& PooledObject = Internal->AddToAllocatedObjects(Type, InterfaceObject);
 
 		return AddToAllocatedObjects_Internal(Type, PooledObject);
 	}
-	return FCsProjectile::Empty;
+	return FCsTdCreepPooled::Empty;
 }
 
-const FCsProjectile& UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, UObject* Object)
+const FCsTdCreepPooled& UCsTdManager_Creep::AddToAllocatedObjects(const FECsTdCreep& Type, UObject* Object)
 {
-	checkf(Object, TEXT("UCsManager_Projectile::AddToAllocatedObjects: Object is NULL."));
+	checkf(Object, TEXT("UCsTdManager_Creep::AddToAllocatedObjects: Object is NULL."));
 
 	UClass* Class = Object->GetClass();
 
@@ -594,17 +596,17 @@ const FCsProjectile& UCsManager_Projectile::AddToAllocatedObjects(const FECsProj
 	}
 	else
 	{
-		checkf(false, TEXT("UCsManager_Projectile::AddToAllocatedObjects: Object does NOT implement interface: ICsPooledObject."));
+		checkf(false, TEXT("UCsTdManager_Creep::AddToAllocatedObjects: Object does NOT implement interface: ICsPooledObject."));
 	}
-	return FCsProjectile::Empty;
+	return FCsTdCreepPooled::Empty;
 }
 
-const FCsProjectile& UCsManager_Projectile::AddToAllocatedObjects_Internal(const FECsProjectile& Type, const FCsPooledObject& Object)
+const FCsTdCreepPooled& UCsTdManager_Creep::AddToAllocatedObjects_Internal(const FECsTdCreep& Type, const FCsPooledObject& Object)
 {
-	TArray<FCsProjectile>& Objects = CheckAndAddType_AllocatedObjects(Type);
+	TArray<FCsTdCreepPooled>& Objects = CheckAndAddType_AllocatedObjects(Type);
 
 	Objects.AddDefaulted();
-	FCsProjectile& O = Objects.Last();
+	FCsTdCreepPooled& O = Objects.Last();
 
 	const int32& Index = Object.GetCache()->GetIndex();
 
@@ -617,27 +619,27 @@ const FCsProjectile& UCsManager_Projectile::AddToAllocatedObjects_Internal(const
 
 #pragma endregion Add
 
-const TArray<FCsProjectile>& UCsManager_Projectile::GetPool(const FECsProjectile& Type)
+const TArray<FCsTdCreepPooled>& UCsTdManager_Creep::GetPool(const FECsTdCreep& Type)
 {
 	return CheckAndAddType_AllocatedObjects(Type);
 }
 
-const TArray<FCsProjectile>& UCsManager_Projectile::GetAllocatedObjects(const FECsProjectile& Type)
+const TArray<FCsTdCreepPooled>& UCsTdManager_Creep::GetAllocatedObjects(const FECsTdCreep& Type)
 {
 	return CheckAndAddType_Pools(Type);
 }
 
-const int32& UCsManager_Projectile::GetPoolSize(const FECsProjectile& Type)
+const int32& UCsTdManager_Creep::GetPoolSize(const FECsTdCreep& Type)
 {
 	return Internal->GetPoolSize(Type);
 }
 
-int32 UCsManager_Projectile::GetAllocatedObjectsSize(const FECsProjectile& Type)
+int32 UCsTdManager_Creep::GetAllocatedObjectsSize(const FECsTdCreep& Type)
 {
 	return Internal->GetAllocatedObjectsSize(Type);
 }
 
-bool UCsManager_Projectile::IsExhausted(const FECsProjectile& Type)
+bool UCsTdManager_Creep::IsExhausted(const FECsTdCreep& Type)
 {
 	return Internal->IsExhausted(Type);
 }
@@ -645,14 +647,14 @@ bool UCsManager_Projectile::IsExhausted(const FECsProjectile& Type)
 	// Find
 #pragma region
 
-const FCsProjectile& UCsManager_Projectile::FindObject(const FECsProjectile& Type, const int32& Index)
+const FCsTdCreepPooled& UCsTdManager_Creep::FindObject(const FECsTdCreep& Type, const int32& Index)
 {
 	const FCsPooledObject& O = Internal->FindObject(Type, Index);
 
 	return CheckAndAddType_Pools(Type)[Index];
 }
 
-const FCsProjectile& UCsManager_Projectile::FindObject(const FECsProjectile& Type, ICsProjectile* Object)
+const FCsTdCreepPooled& UCsTdManager_Creep::FindObject(const FECsTdCreep& Type, ICsTdCreep* Object)
 {
 	if (UObject* U = Object->_getUObject())
 	{
@@ -676,7 +678,7 @@ const FCsProjectile& UCsManager_Projectile::FindObject(const FECsProjectile& Typ
 		// INVALID
 		else
 		{
-			checkf(false, TEXT("UCsManager_Projectile::FindObject: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(U->GetName()), *(Class->GetName()));
+			checkf(false, TEXT("UCsTdManager_Creep::FindObject: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(U->GetName()), *(Class->GetName()));
 		}
 	}
 	else
@@ -687,16 +689,16 @@ const FCsProjectile& UCsManager_Projectile::FindObject(const FECsProjectile& Typ
 		ICsPooledObject* Interface = (ICsPooledObject*)Object;
 #endif // #if !UE_BUILD_SHIPPING
 
-		checkf(Interface, TEXT("UCsManager_Projectile::FindObject: Object does NOT implement interface: ICsPooledObject."));
+		checkf(Interface, TEXT("UCsTdManager_Creep::FindObject: Object does NOT implement interface: ICsPooledObject."));
 
 		const FCsPooledObject& O = Internal->FindObject(Type, Interface);
 
 		return FindObject_Internal(Type, O);
 	}
-	return FCsProjectile::Empty;
+	return FCsTdCreepPooled::Empty;
 }
 
-const FCsProjectile& UCsManager_Projectile::FindObject(const FECsProjectile& Type, UObject* Object)
+const FCsTdCreepPooled& UCsTdManager_Creep::FindObject(const FECsTdCreep& Type, UObject* Object)
 {
 	const FCsPooledObject& O = Internal->FindObject(Type, Object);
 	const int32& Index		 = O.GetCache()->GetIndex();
@@ -704,35 +706,35 @@ const FCsProjectile& UCsManager_Projectile::FindObject(const FECsProjectile& Typ
 	return CheckAndAddType_Pools(Type)[Index];
 }
 
-const FCsProjectile& UCsManager_Projectile::FindObject_Internal(const FECsProjectile& Type, const FCsPooledObject& Object)
+const FCsTdCreepPooled& UCsTdManager_Creep::FindObject_Internal(const FECsTdCreep& Type, const FCsPooledObject& Object)
 {
 	const int32& Index = Object.GetCache()->GetIndex();
 
 	return CheckAndAddType_Pools(Type)[Index];
 }
 
-const FCsProjectile& UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, const int32& Index)
+const FCsTdCreepPooled& UCsTdManager_Creep::FindSafeObject(const FECsTdCreep& Type, const int32& Index)
 {
 	if (Index < 0)
-		return FCsProjectile::Empty;
+		return FCsTdCreepPooled::Empty;
 
 	const FCsPooledObject& O = Internal->FindSafeObject(Type, Index);
 
 	if (!O.IsValid())
-		return FCsProjectile::Empty;
+		return FCsTdCreepPooled::Empty;
 
-	TArray<FCsProjectile>& Projectiles = CheckAndAddType_Pools(Type);
+	TArray<FCsTdCreepPooled>& Creeps = CheckAndAddType_Pools(Type);
 
-	if (Index >= Projectiles.Num())
-		return FCsProjectile::Empty;
+	if (Index >= Creeps.Num())
+		return FCsTdCreepPooled::Empty;
 
-	return Projectiles[Index];
+	return Creeps[Index];
 }
 
-const FCsProjectile& UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, ICsProjectile* Object)
+const FCsTdCreepPooled& UCsTdManager_Creep::FindSafeObject(const FECsTdCreep& Type, ICsTdCreep* Object)
 {
 	if (!Object)
-		return FCsProjectile::Empty;
+		return FCsTdCreepPooled::Empty;
 
 	if (UObject* U = Object->_getUObject())
 	{
@@ -756,7 +758,7 @@ const FCsProjectile& UCsManager_Projectile::FindSafeObject(const FECsProjectile&
 		// INVALID
 		else
 		{
-			return FCsProjectile::Empty;
+			return FCsTdCreepPooled::Empty;
 		}
 	}
 	else
@@ -768,38 +770,38 @@ const FCsProjectile& UCsManager_Projectile::FindSafeObject(const FECsProjectile&
 #endif // #if !UE_BUILD_SHIPPING
 
 		if (!Interface)
-			return FCsProjectile::Empty;
+			return FCsTdCreepPooled::Empty;
 
 		const FCsPooledObject& O = Internal->FindObject(Type, Interface);
 
 		return FindSafeObject_Internal(Type, O);
 	}
-	return FCsProjectile::Empty;
+	return FCsTdCreepPooled::Empty;
 }
 
-const FCsProjectile& UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, UObject* Object)
+const FCsTdCreepPooled& UCsTdManager_Creep::FindSafeObject(const FECsTdCreep& Type, UObject* Object)
 {
 	if (!Object)
-		return FCsProjectile::Empty;
+		return FCsTdCreepPooled::Empty;
 
 	const FCsPooledObject& O = Internal->FindObject(Type, Object);
 
 	return FindSafeObject_Internal(Type, O);
 }
 
-const FCsProjectile& UCsManager_Projectile::FindSafeObject_Internal(const FECsProjectile& Type, const FCsPooledObject& Object)
+const FCsTdCreepPooled& UCsTdManager_Creep::FindSafeObject_Internal(const FECsTdCreep& Type, const FCsPooledObject& Object)
 {
 	if (!Object.IsValid())
-		return FCsProjectile::Empty;
+		return FCsTdCreepPooled::Empty;
 
 	const int32& Index = Object.GetCache()->GetIndex();
 
-	TArray<FCsProjectile>& Projectiles = CheckAndAddType_Pools(Type);
+	TArray<FCsTdCreepPooled>& Creeps = CheckAndAddType_Pools(Type);
 
-	if (Index >= Projectiles.Num())
-		return FCsProjectile::Empty;
+	if (Index >= Creeps.Num())
+		return FCsTdCreepPooled::Empty;
 
-	return Projectiles[Index];
+	return Creeps[Index];
 }
 
 #pragma endregion Find
@@ -809,36 +811,36 @@ const FCsProjectile& UCsManager_Projectile::FindSafeObject_Internal(const FECsPr
 	// Update
 #pragma region
 
-void UCsManager_Projectile::Update(const float& DeltaTime)
+void UCsTdManager_Creep::Update(const float& DeltaTime)
 {
 	Internal->Update(DeltaTime);
 }
 
-void UCsManager_Projectile::OnPreUpdate_Pool(const FECsProjectile& Type)
+void UCsTdManager_Creep::OnPreUpdate_Pool(const FECsTdCreep& Type)
 {
 	CurrentUpdatePoolType = Type;
 	CurrentUpdatePoolObjectIndex = 0;
 }
 
-void UCsManager_Projectile::OnUpdate_Object(const FECsProjectile& Type, const FCsPooledObject& Object)
+void UCsTdManager_Creep::OnUpdate_Object(const FECsTdCreep& Type, const FCsPooledObject& Object)
 {
 	const int32& Index = Object.GetCache()->GetIndex();
 
-	TArray<FCsProjectile>& Projectiles = AllocatedObjects[Type];
+	TArray<FCsTdCreepPooled>& Creeps = AllocatedObjects[Type];
 
-	Projectiles[CurrentUpdatePoolObjectIndex] = Projectiles[Index];
+	Creeps[CurrentUpdatePoolObjectIndex] = Creeps[Index];
 
 	++CurrentUpdatePoolObjectIndex;
 }
 
-void UCsManager_Projectile::OnPostUpdate_Pool(const FECsProjectile& Type)
+void UCsTdManager_Creep::OnPostUpdate_Pool(const FECsTdCreep& Type)
 {
-	TArray<FCsProjectile>& Projectiles = AllocatedObjects[Type];
-	const int32 ProjectilesSize		   = Projectiles.Num();
+	TArray<FCsTdCreepPooled>& Creeps = AllocatedObjects[Type];
+	const int32 CreepSize		     = Creeps.Num();
 
-	for (int32 I = ProjectilesSize - 1; I >= CurrentUpdatePoolObjectIndex; --I)
+	for (int32 I = CreepSize - 1; I >= CurrentUpdatePoolObjectIndex; --I)
 	{
-		Projectiles.RemoveAt(I, 1, false);
+		Creeps.RemoveAt(I, 1, false);
 	}
 }
 
@@ -847,7 +849,7 @@ void UCsManager_Projectile::OnPostUpdate_Pool(const FECsProjectile& Type)
 	// Payload
 #pragma region
 
-void UCsManager_Projectile::ConstructPayloads(const FECsProjectile& Type, const int32& Size)
+void UCsTdManager_Creep::ConstructPayloads(const FECsTdCreep& Type, const int32& Size)
 {
 	Internal->DeconstructPayloads(Type);
 
@@ -855,14 +857,14 @@ void UCsManager_Projectile::ConstructPayloads(const FECsProjectile& Type, const 
 	FCsManager_PooledObject* P		   = (FCsManager_PooledObject*)Interface;
 
 	P->GetConstructPayloads_Impl().Unbind();
-	P->GetConstructPayloads_Impl().BindRaw(P, &FCsManager_PooledObject::ConstructPayloads<FCsProjectilePayload>);
+	P->GetConstructPayloads_Impl().BindRaw(P, &FCsManager_PooledObject::ConstructPayloads<FCsTdCreepPayload>);
 
 	Internal->ConstructPayloads(Type, Size);
 }
 
-FCsProjectilePayload* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)
+FCsTdCreepPayload* UCsTdManager_Creep::AllocatePayload(const FECsTdCreep& Type)
 {
-	return Internal->AllocatePayload<FCsProjectilePayload>(Type);
+	return Internal->AllocatePayload<FCsTdCreepPayload>(Type);
 }
 
 #pragma endregion Payload
@@ -870,28 +872,28 @@ FCsProjectilePayload* UCsManager_Projectile::AllocatePayload(const FECsProjectil
 	// Spawn
 #pragma region
 
-const FCsProjectile& UCsManager_Projectile::Spawn(const FECsProjectile& Type, ICsPooledObjectPayload* Payload)
+const FCsTdCreepPooled& UCsTdManager_Creep::Spawn(const FECsTdCreep& Type, ICsPooledObjectPayload* Payload)
 {
-	checkf(Payload, TEXT("UCsManager_Projectile::Spawn: Payload is NULL."));
+	checkf(Payload, TEXT("UCsTdManager_Creep::Spawn: Payload is NULL."));
 
 	const FCsPooledObject& Object = Internal->Spawn(Type, Payload);
 
 	ICsPooledObject* Interface = Object.GetInterface();
 	const int32& Index		   = Interface->GetCache()->GetIndex();
 
-	TArray<FCsProjectile>& Projectiles = Pools[Type];
-	const FCsProjectile& P			   = Projectiles[Index];
+	TArray<FCsTdCreepPooled>& Creeps = Pools[Type];
+	const FCsTdCreepPooled& C		 = Creeps[Index];
 
-	AllocatedObjects[Type].Add(P);
+	AllocatedObjects[Type].Add(C);
 
-	OnSpawn_Event.Broadcast(Type, P);
+	OnSpawn_Event.Broadcast(Type, C);
 
 	if (OnSpawn_ScriptEvent.IsBound() &&
-		P.IsObject())
+		C.IsObject())
 	{
-		OnSpawn_ScriptEvent.Broadcast(Type, TScriptInterface<ICsProjectile>(P.GetSafeObject()));
+		OnSpawn_ScriptEvent.Broadcast(Type, TScriptInterface<ICsTdCreep>(C.GetSafeObject()));
 	}
-	return P;
+	return C;
 }
 
 #pragma endregion Spawn
@@ -899,32 +901,34 @@ const FCsProjectile& UCsManager_Projectile::Spawn(const FECsProjectile& Type, IC
 	// Destroy
 #pragma region
 
-bool UCsManager_Projectile::Destroy(const FECsProjectile& Type, ICsProjectile* Projectile)
+bool UCsTdManager_Creep::Destroy(const FECsTdCreep& Type, ICsTdCreep* Creep)
 {
-	checkf(EMCsProjectile::Get().IsValidEnum(Type), TEXT("UCsManager_Projectile::Destroy: Type: %s is NOT a valid Enum."), *(Type.Name));
+	checkf(EMCsTdCreep::Get().IsValidEnum(Type), TEXT("UCsTdManager_Creep::Destroy: Type: %s is NOT a valid Enum."), *(Type.Name));
 	
-	checkf(Projectile, TEXT("UCsManager_Projectile::Destroy: Projectile is NULL."));
+	checkf(Creep, TEXT("UCsTdManager_Creep::Destroy: Creep is NULL."));
+
+	// TODO: do _getUObject
 
 #if !UE_BUILD_SHIPPING
-	ICsPooledObject* O = dynamic_cast<ICsPooledObject*>(Projectile);
+	ICsPooledObject* O = dynamic_cast<ICsPooledObject*>(Creep);
 #else
-	ICsPooledObject* O = (ICsPooledObject*)Projectile;
+	ICsPooledObject* O = (ICsPooledObject*)Creep;
 #endif // #if !UE_BUILD_SHIPPING
 
-	checkf(O, TEXT("UCsManager_Projectile::Destroy: Projectile is NULL or does NOT implement interface: ICsPooledObject."));
+	checkf(O, TEXT("UCsTdManager_Creep::Destroy: Creep is NULL or does NOT implement interface: ICsPooledObject."));
 
 	if (Internal->Destroy(Type, O))
 	{
 		// Remove from AllocatedObjects
 
-		TArray<FCsProjectile>& Projectiles = Pools[Type];
+		TArray<FCsTdCreepPooled>& Creeps = Pools[Type];
 
 		const int32& ProjectileIndex = O->GetCache()->GetIndex();
-		const FCsProjectile& P		 = Projectiles[ProjectileIndex];
+		const FCsTdCreepPooled& C	 = Creeps[ProjectileIndex];
 
 		// Rebuild AllocatedObjects from Internal AllocatedObjects
 
-		TArray<FCsProjectile>& Objects = AllocatedObjects[Type];
+		TArray<FCsTdCreepPooled>& Objects = AllocatedObjects[Type];
 
 		const int32 OldSize = Objects.Num();
 
@@ -937,50 +941,50 @@ bool UCsManager_Projectile::Destroy(const FECsProjectile& Type, ICsProjectile* P
 			const FCsPooledObject& Container = Internal_AllocatedObjects[I];
 			const int32& Index				 = Container.GetCache()->GetIndex();
 
-			Objects[I] = Projectiles[Index];
+			Objects[I] = Creeps[Index];
 		}
 
 		for (int32 I = OldSize - 1; I >= NewSize; --I)
 		{
 			Objects.RemoveAt(I, 1, false);
 		}
-		OnDestroy_Event.Broadcast(Type, P);
+		OnDestroy_Event.Broadcast(Type, C);
 		return true;
 	}
 	return false;
 }
 
-bool UCsManager_Projectile::Destroy(ICsProjectile* Projectile)
+bool UCsTdManager_Creep::Destroy(ICsTdCreep* Creep)
 {
-	checkf(Projectile, TEXT("UCsManager_Projectile::Destroy: Projectile is NULL."));
+	checkf(Creep, TEXT("UCsTdManager_Creep::Destroy: Creep is NULL."));
 
 #if !UE_BUILD_SHIPPING
-	ICsPooledObject* O = dynamic_cast<ICsPooledObject*>(Projectile);
+	ICsPooledObject* O = dynamic_cast<ICsPooledObject*>(Creep);
 #else
-	ICsPooledObject* O = (ICsPooledObject*)Projectile;
+	ICsPooledObject* O = (ICsPooledObject*)Creep;
 #endif // #if !UE_BUILD_SHIPPING
 
-	checkf(O, TEXT("UCsManager_Projectile::Destroy: Projectile is NULL or does NOT implement interface: ICsPooledObject."));
+	checkf(O, TEXT("UCsTdManager_Creep::Destroy: Creep is NULL or does NOT implement interface: ICsPooledObject."));
 
 	const int32& Index = O->GetCache()->GetIndex();
 
 	bool TypeFound = false;
 
-	for (TPair<FECsProjectile, TArray<FCsProjectile>>& Pair : Pools)
+	for (TPair<FECsTdCreep, TArray<FCsTdCreepPooled>>& Pair : Pools)
 	{
-		const FECsProjectile& Type		   = Pair.Key;
-		TArray<FCsProjectile>& Projectiles = Pair.Value;
+		const FECsTdCreep& Type			 = Pair.Key;
+		TArray<FCsTdCreepPooled>& Creeps = Pair.Value;
 
-		if (Index >= Projectiles.Num())
+		if (Index >= Creeps.Num())
 			continue;
 
-		for (FCsProjectile& P : Projectiles)
+		for (FCsTdCreepPooled& C : Creeps)
 		{
-			ICsPooledObject* Interface = P.GetInterface();
+			ICsPooledObject* Interface = C.GetInterface();
 			
 			if (Index == Interface->GetCache()->GetIndex())
 			{
-				return Destroy(Type, P.GetProjectile());
+				return Destroy(Type, C.GetCreep());
 			}
 		}
 	}

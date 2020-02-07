@@ -80,7 +80,7 @@ private:
 
 public:
 
-	static const FCsTdCreep Empty;
+	static const FCsTdCreepPooled Empty;
 
 protected:
 

@@ -14,7 +14,9 @@ class UCsTdCreep : public UInterface
 class ICsTdCreep
 {
 	GENERATED_IINTERFACE_BODY()
-		
+
+	virtual void Stub() = 0;
+
 public:
 };
 
@@ -87,8 +89,8 @@ protected:
 	/** Reference to interface of type: ICsTdCreep. */
 	ICsTdCreep* Creep;
 
-	/** Does the Projectile implement a script interface of type: ICsTdCreep. */
-	bool bScriptScript;
+	/** Does the Creep implement a script interface of type: ICsTdCreep. */
+	bool bScriptCreep;
 
 // Script
 #pragma region
@@ -155,12 +157,12 @@ public:
 
 	void SetScriptCreep()
 	{
-		bScriptScript = true;
+		bScriptCreep = true;
 	}
 
 	FORCEINLINE bool GetScriptCreep() const 
 	{
-		return bScriptScript;
+		return bScriptCreep;
 	}
 
 	FORCEINLINE ICsTdCreep* GetCreep() const

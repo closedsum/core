@@ -4,6 +4,7 @@
 #include "UObject/Interface.h"
 #include "Managers/Pool/CsTypes_Pool.h"
 #include "Containers/CsInterfaceObject.h"
+#include "Managers/Time/CsUpdate.h"
 #include "CsPooledObject.generated.h"
 
 UINTERFACE(Blueprintable)
@@ -34,13 +35,6 @@ public:
 
 	/**
 	*
-	*
-	* @param DeltaTime
-	*/
-	virtual void Update(const FCsDeltaTime& DeltaTime) = 0;
-
-	/**
-	*
 	*/
 	virtual void Deallocate() = 0;
 };
@@ -57,6 +51,14 @@ private:
 public:
 
 	static const FCsPooledObject Empty;
+
+protected:
+
+	/** Reference to interface of type: ICsUpdate. */
+	ICsUpdate* _Update;
+
+	/** Does the object implement a script interface of type: ICsUpdate. */
+	bool bScriptUpdate;
 
 // Script
 #pragma region
@@ -89,18 +91,6 @@ public:
 	FScript_Allocate Script_Allocate_Impl;
 
 	/**
-	* Delegate type for updating a Pooled Object.
-	*   The Pooled Object implements a script interface of type: ICsPooledObject.
-	*
-	* @param Object		A Pooled Object of type: ICsPooledObject.
-	* @param DeltaTime
-	*/
-	DECLARE_DELEGATE_TwoParams(FScript_Update, UObject* /*Object*/, const FCsDeltaTime& /*DeltaTime*/);
-
-	/** Delegate for updating a Pooled Object. */
-	FScript_Update Script_Update_Impl;
-
-	/**
 	* Delegate type for deallocating a Pooled Object.
 	*   The Pooled Object implements a script interface of type: ICsPooledObject.
 	*
@@ -111,6 +101,24 @@ public:
 	/** Delegate for deallocating a Pooled Object. */
 	FScript_Deallocate Script_Deallocate_Impl;
 
+	// ICsUpdate
+#pragma region
+public:
+
+	/**
+	* Delegate type for updating an object.
+	*   The object implements a script interface of type: ICsUpdate.
+	*
+	* @param Object		A Pooled Object of type: ICsUpdate.
+	* @param DeltaTime
+	*/
+	DECLARE_DELEGATE_TwoParams(FScript_Update, UObject* /*Object*/, const FCsDeltaTime& /*DeltaTime*/);
+
+	/** Delegate for updating a Pooled Object. */
+	FScript_Update Script_Update_Impl;
+
+#pragma endregion ICsUpdate
+
 #pragma endregion Script
 
 public:
@@ -119,16 +127,36 @@ public:
 		Super(),
 		Script_GetCache_Impl(),
 		Script_Allocate_Impl(),
-		Script_Update_Impl(),
-		Script_Deallocate_Impl()
+		Script_Deallocate_Impl(),
+		Script_Update_Impl()
 	{
 	}
 
 	virtual ~FCsPooledObject() {}
 
+	FORCEINLINE bool operator==(const FCsPooledObject& B) const
+	{
+		return Interface == B.Interface &&
+			   WeakObject == B.WeakObject &&
+			   Object == B.Object &&
+			   bObject == B.bObject &&
+			   bScript == B.bScript &&
+			   _Update == B._Update &&
+			   bScriptUpdate == B.bScriptUpdate;
+	}
+
+	FORCEINLINE bool operator!=(const FCsPooledObject& B) const
+	{
+		return !(*this == B);
+	}
+
 // TCsInterfaceObject
 #pragma region
 public:
+
+	virtual void SetInterface(ICsPooledObject* InInterface) override;
+
+	virtual void SetObject(UObject* InObject) override;
 
 	virtual void Reset() override 
 	{
@@ -136,8 +164,8 @@ public:
 
 		Script_GetCache_Impl.Unbind();
 		Script_Allocate_Impl.Unbind();
-		Script_Update_Impl.Unbind();
 		Script_Deallocate_Impl.Unbind();
+		Script_Update_Impl.Unbind();
 	}
 
 #pragma endregion TCsInterfaceObject
@@ -161,14 +189,6 @@ public:
 			Interface->Allocate(Payload);
 	}
 
-	FORCEINLINE void Update(const FCsDeltaTime& DeltaTime)
-	{
-		if (bScript)
-			Script_Update_Impl.Execute(Object, DeltaTime);
-		else
-			Interface->Update(DeltaTime);
-	}
-
 	FORCEINLINE void Deallocate()
 	{
 		if (bScript)
@@ -176,7 +196,44 @@ public:
 		else
 			Interface->Deallocate();
 	}
+
 #pragma endregion ICsPooledObject
+
+// ICsUpdate
+#pragma region
+public:
+
+	FORCEINLINE void Update(const FCsDeltaTime& DeltaTime)
+	{
+		if (bScriptUpdate)
+			Script_Update_Impl.Execute(Object, DeltaTime);
+		else
+			_Update->Update(DeltaTime);
+	}
+
+#pragma endregion ICsUpdate
+
+public:
+
+	void SetScriptUpdate()
+	{
+		bScriptUpdate = true;
+	}
+
+	FORCEINLINE const bool& IsScriptUpdate() const
+	{
+		return bScriptUpdate;
+	}
+
+	FORCEINLINE void SetUpdate(ICsUpdate* InUpdate)
+	{
+		_Update = InUpdate;
+	}
+
+	FORCEINLINE ICsUpdate* GetUpdate() const 
+	{
+		return _Update;
+	}
 };
 
 #pragma endregion FCsPooledObject

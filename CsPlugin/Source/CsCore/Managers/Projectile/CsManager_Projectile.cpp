@@ -25,6 +25,10 @@ FCsManager_Projectile_Internal::FCsManager_Projectile_Internal()
 {
 }
 
+void FCsManager_Projectile_Internal::OnAddToPool_UpdateScriptDelegates(FCsProjectilePooled* Object)
+{
+}
+
 #pragma endregion Internal
 
 // static initializations
@@ -216,7 +220,6 @@ void UCsManager_Projectile::ConstructInternal()
 {
 	Internal = new FCsManager_Projectile_Internal();
 
-	Internal->OnCreatePool_AddToPool_Event.AddUObject(this, &UCsManager_Projectile::OnCreatePool_AddToPool);
 	Internal->OnPreUpdate_Pool_Impl.BindUObject(this, &UCsManager_Projectile::OnPreUpdate_Pool);
 	Internal->OnUpdate_Object_Event.AddUObject(this, &UCsManager_Projectile::OnUpdate_Object);
 	Internal->OnPostUpdate_Pool_Impl.BindUObject(this, &UCsManager_Projectile::OnPostUpdate_Pool);
@@ -246,17 +249,7 @@ void UCsManager_Projectile::CreatePool(const FECsProjectile& Type, const int32& 
 
 	// TODO: Check if the pool has already been created
 
-	TArray<FCsProjectile>& Projectiles = Pools.FindOrAdd(Type);
-	Projectiles.Reserve(Size);
-	TArray<FCsProjectile>& Objects = AllocatedObjects.FindOrAdd(Type);
-	Objects.Reserve(Size);
-
 	Internal->CreatePool(Type, Size);
-}
-
-void UCsManager_Projectile::OnCreatePool_AddToPool(const FECsProjectile& Type, const FCsPooledObject& Object)
-{
-	AddToPool_Internal(Type, Object);
 }
 
 		// Add
@@ -265,206 +258,27 @@ void UCsManager_Projectile::OnCreatePool_AddToPool(const FECsProjectile& Type, c
 			// Pool
 #pragma region
 
-TArray<FCsProjectile>& UCsManager_Projectile::CheckAndAddType_Pools(const FECsProjectile& Type)
-{
-	TArray<FCsProjectile>* ValuePtr = Pools.Find(Type);
-
-	if (!ValuePtr)
-	{
-		TArray<FCsProjectile>& Value = Pools.Add(Type);
-		AllocatedObjects.Add(Type);
-		return Value;
-	}
-	return *ValuePtr;
-}
-
-const FCsProjectile& UCsManager_Projectile::AddToPool(const FECsProjectile& Type, ICsProjectile* Object)
+const FCsProjectilePooled* UCsManager_Projectile::AddToPool(const FECsProjectile& Type, ICsProjectile* Object)
 {
 	checkf(Object, TEXT("UCsManager_Projectile::AddToPool: Object is NULL."));
 
-	// UObject
-	if (UObject* O = Object->_getUObject())
-	{
-		UClass* Class = O->GetClass();
-
-		// Check ICsPooledObject interface
-
-			// Interface
-		if (ICsPooledObject* Interface = Cast<ICsPooledObject>(O))
-		{
-			const FCsPooledObject& PooledObject =  Internal->AddToPool(Type, Interface, O);
-
-			return AddToPool_Internal(Type, PooledObject);
-		}
-			// Script Interface
-		else
-		if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
-		{
-			const FCsPooledObject& PooledObject = Internal->AddToPool(Type, O);
-
-			return AddToPool_Internal(Type, PooledObject);
-		}
-			// INVALID
-		else
-		{
-			checkf(false, TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(O->GetName()), *(Class->GetName()));
-		}
-	}
-	else
-	{
-#if !UE_BUILD_SHIPPING
-		ICsPooledObject* Interface = dynamic_cast<ICsPooledObject*>(Object);
-#else
-		ICsPooledObject* Interface = (ICsPooledObject*)Object;
-#endif // #if !UE_BUILD_SHIPPING
-
-		checkf(Interface, TEXT("UCsManager_Projectile::AddToPool: Interface is NULL or does NOT implement interface: ICsPooledObject."));
-
-		const FCsPooledObject& PooledObject = Internal->AddToPool(Type, Interface);
-
-		return AddToPool_Internal(Type, PooledObject);
-	}
-	return FCsProjectile::Empty;
+	return Internal->AddToPool(Type, Object);
 }
 
-const FCsProjectile& UCsManager_Projectile::AddToPool(const FECsProjectile& Type, const FCsProjectile& Object)
+const FCsProjectilePooled* UCsManager_Projectile::AddToPool(const FECsProjectile& Type, const FCsProjectilePooled* Object)
 {
-	if (UObject* O = Object.GetObject())
-	{
-		UClass* Class = O->GetClass();
+	UObject* O = Object->GetObject();
 
-		// Add ICsPooledObject interface
+	checkf(O, TEXT("UCsManager_Projectile::AddToPool: O is NULL."));
 
-			// Interface
-		if (ICsPooledObject* Interface = Object.GetInterface())
-		{
-			const FCsPooledObject& PooledObject = Internal->AddToPool(Type, Interface, O);
-
-			return AddToPool_Internal(Type, PooledObject);
-		}
-			// Script Interface
-		else
-		if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
-		{
-			const FCsPooledObject& PooledObject = Internal->AddToPool(Type, O);
-
-			return AddToPool_Internal(Type, PooledObject);
-		}
-			// INVALID
-		else
-		{
-			checkf(false, TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(O->GetName()), *(Class->GetName()));
-		}
-	}
-	else
-	{
-		// Add ICsPooledObject interface
-		ICsPooledObject* Interface = Object.GetInterface();
-
-		checkf(Interface, TEXT("UCsManager_Projectile::AddToPool: Interface is NULL."));
-
-		const FCsPooledObject& PooledObject = Internal->AddToPool(Type, Interface);
-
-		return AddToPool_Internal(Type, PooledObject);
-	}
-	return FCsProjectile::Empty;
+	return Internal->AddToPool(Type, O);
 }
 
-const FCsProjectile& UCsManager_Projectile::AddToPool(const FECsProjectile& Type, UObject* Object)
+const FCsProjectilePooled* UCsManager_Projectile::AddToPool(const FECsProjectile& Type, UObject* Object)
 {
 	checkf(Object, TEXT("UCsManager_Projectile::AddToPool: Object is NULL."));
 
-	UClass* Class = Object->GetClass();
-
-	// Add ICsPooledObject interface
-
-		// Interface
-	if (ICsPooledObject* Interface = Cast<ICsPooledObject>(Object))
-	{
-		const FCsPooledObject& O = Internal->AddToPool(Type, Interface);
-
-		return AddToPool_Internal(Type, O);
-	}
-		// Script Interface
-	else
-	if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
-	{
-		const FCsPooledObject& O = Internal->AddToPool(Type, Object);
-
-		return AddToPool_Internal(Type, O);
-	}
-		// INVALID
-	else
-	{
-		checkf(false, TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(Object->GetName()), *(Class->GetName()));
-	}
-	return FCsProjectile::Empty;
-}
-
-const FCsProjectile& UCsManager_Projectile::AddToPool_Internal(const FECsProjectile& Type, const FCsPooledObject& Object)
-{
-	TArray<FCsProjectile>& Projectiles = CheckAndAddType_Pools(Type);
-
-	Projectiles.AddDefaulted();
-	FCsProjectile& P = Projectiles.Last();
-
-	const int32 Index = Projectiles.Num() - 1;
-
-	checkf(Index == Object.GetCache()->GetIndex(), TEXT("UCsManager_Projectile::OnAddToPool: Mismatch between Projectile (%d) and Pooled Object (%s)"), Index, Object.GetCache()->GetIndex());
-
-	P.SetPooledObject(Object);
-
-	// UObject
-	if (UObject* O = P.GetObject())
-	{
-		UClass* Class = O->GetClass();
-
-		// Interface
-		if (ICsProjectile* Projectile = Cast<ICsProjectile>(O))
-		{
-			P.SetProjectile(Projectile);
-		}
-		// Script Interface
-		else
-		if (Class->ImplementsInterface(UCsProjectile::StaticClass()))
-		{
-			P.SetScriptProjectile();
-
-			// Check and bind delegates for the script interface.
-
-			// GetOwner
-			if (!P.Script_GetOwner_Impl.IsBound())
-				P.Script_GetOwner_Impl = Script_GetOwner_Impl;
-
-			checkf(P.Script_GetOwner_Impl.IsBound(), TEXT("UCsManager_Projectile::OnAddToPool: Object: %s with Class: %s does NOT have Script_GetOwner_Impl Bound to any function."), *(O->GetName()), *(Class->GetName()));
-
-			// GetInstigator
-			if (!P.Script_GetInstigator_Impl.IsBound())
-				P.Script_GetInstigator_Impl = Script_GetInstigator_Impl;
-
-			checkf(P.Script_GetInstigator_Impl.IsBound(), TEXT("UCsManager_Projectile::OnAddToPool: Object: %s with Class: %s does NOT have Script_GetInstigator_Impl Bound to any function."), *(O->GetName()), *(Class->GetName()));
-		}
-		// INVALID
-		else
-		{
-			checkf(false, TEXT("UCsManager_Projectile::AddToPool: Object: %s with Class: %s does NOT implement interface: ICsProjectile."), *(O->GetName()), *(Class->GetName()));
-		}
-	}
-	else
-	{
-		ICsPooledObject* Interface = Object.GetInterface();
-
-#if !UE_BUILD_SHIPPING
-		ICsProjectile* Projectile = dynamic_cast<ICsProjectile*>(Interface);
-#else
-		ICsProjectile* Projectile = (ICsProjectile*)Interface;
-#endif // #if !UE_BUILD_SHIPPING
-
-		checkf(Projectile, TEXT("UCsManager_Projectile::OnAddToPool: Projectile is NULL or does NOT implement interface: ICsProjectile."));
-
-		P.SetProjectile(Projectile);
-	}
-	return P;
+	return Internal->AddToPool(Type, Object);
 }
 
 #pragma endregion Pool
@@ -472,159 +286,41 @@ const FCsProjectile& UCsManager_Projectile::AddToPool_Internal(const FECsProject
 			// Allocated Objects
 #pragma region
 
-TArray<FCsProjectile>& UCsManager_Projectile::CheckAndAddType_AllocatedObjects(const FECsProjectile& Type)
+const FCsProjectilePooled* UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* Projectile, UObject* Object)
 {
-	TArray<FCsProjectile>* ValuePtr = AllocatedObjects.Find(Type);
-
-	if (!ValuePtr)
-	{
-		Pools.Add(Type);
-		TArray<FCsProjectile>& Value = AllocatedObjects.Add(Type);
-		return Value;
-	}
-	return *ValuePtr;
-}
-
-const FCsProjectile& UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* PooledObject, UObject* Object)
-{
-	checkf(PooledObject, TEXT("UCsManager_Projectile::AddToAllocatedObjects: PooledObject is NULL."));
+	checkf(Projectile, TEXT("UCsManager_Projectile::AddToAllocatedObjects: PooledObject is NULL."));
 
 	checkf(Object, TEXT("UCsManager_Projectile::AddToAllocatedObjects: Object is NULL."));
 
-	UClass* Class = Object->GetClass();
-
-	// Interface
-	if (ICsPooledObject* Interface = Cast<ICsPooledObject>(Object))
-	{
-		const FCsPooledObject& O = Internal->AddToAllocatedObjects(Type, Interface, Object);
-
-		return AddToAllocatedObjects_Internal(Type, O);
-	}
-	// Script Interface
-	else
-	if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
-	{
-		const FCsPooledObject& O = Internal->AddToAllocatedObjects(Type, Object);
-
-		return AddToAllocatedObjects_Internal(Type, O);
-	}
-	else
-	{
-#if !UE_BUILD_SHIPPING
-		ICsPooledObject* InterfaceObject = dynamic_cast<ICsPooledObject*>(PooledObject);
-#else
-		ICsPooledObject* InterfaceObject = (ICsPooledObject*)PooledObject;
-#endif // #if !UE_BUILD_SHIPPING
-
-		checkf(InterfaceObject, TEXT("UCsManager_Projectile::AddToAllocatedObjects: InterfaceObject is NULL or does NOT implement interface: ICsPooledObject."));
-
-		const FCsPooledObject& O = Internal->AddToAllocatedObjects(Type, InterfaceObject);
-
-		return AddToAllocatedObjects_Internal(Type, O);
-	}
-	return FCsProjectile::Empty;
+	return Internal->AddToAllocatedObjects(Type, Projectile, Object);
 }
 
-const FCsProjectile& UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* Object)
+const FCsProjectilePooled* UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* Object)
 {
 	checkf(Object, TEXT("UCsManager_Projectile::AddToAllocatedObjects: Object is NULL."));
 		
-	if (UObject* O = Object->_getUObject())
-	{
-		UClass* Class = O->GetClass();
-
-		// Interface
-		if (ICsPooledObject* Interface = Cast<ICsPooledObject>(O))
-		{
-			const FCsPooledObject& PooledObject = Internal->AddToAllocatedObjects(Type, Interface, O);
-
-			return AddToAllocatedObjects_Internal(Type, PooledObject);
-		}
-		// Script Interface
-		else
-		if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
-		{
-			const FCsPooledObject& PooledObject = Internal->AddToAllocatedObjects(Type, O);
-
-			return AddToAllocatedObjects_Internal(Type, PooledObject);
-		}
-		// INVALID
-		else
-		{
-			checkf(false, TEXT("UCsManager_Projectile::AddToAllocatedObjects: Object does NOT implement interface: ICsPooledObject."));
-		}
-	}
-	else
-	{
-#if !UE_BUILD_SHIPPING
-		ICsPooledObject* InterfaceObject = dynamic_cast<ICsPooledObject*>(Object);
-#else
-		ICsPooledObject* InterfaceObject = (ICsPooledObject*)Object;
-#endif // #if !UE_BUILD_SHIPPING
-
-		checkf(InterfaceObject, TEXT("UCsManager_Projectile::AddToAllocatedObjects: InterfaceObject is NULL or does NOT implement interface: ICsPooledObject."));
-
-		const FCsPooledObject& PooledObject = Internal->AddToAllocatedObjects(Type, InterfaceObject);
-
-		return AddToAllocatedObjects_Internal(Type, PooledObject);
-	}
-	return FCsProjectile::Empty;
+	return Internal->AddToAllocatedObjects(Type, Object, Object->_getUObject());
 }
 
-const FCsProjectile& UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, UObject* Object)
+const FCsProjectilePooled* UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, UObject* Object)
 {
 	checkf(Object, TEXT("UCsManager_Projectile::AddToAllocatedObjects: Object is NULL."));
 
-	UClass* Class = Object->GetClass();
-
-	// Interface
-	if (ICsPooledObject* Interface = Cast<ICsPooledObject>(Object))
-	{
-		const FCsPooledObject& O = Internal->AddToAllocatedObjects(Type, Interface, Object);
-
-		return AddToAllocatedObjects_Internal(Type, O);
-	}
-	// Script Interface
-	else
-	if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
-	{
-		const FCsPooledObject& O = Internal->AddToAllocatedObjects(Type, Object);
-
-		return AddToAllocatedObjects_Internal(Type, O);
-	}
-	else
-	{
-		checkf(false, TEXT("UCsManager_Projectile::AddToAllocatedObjects: Object does NOT implement interface: ICsPooledObject."));
-	}
-	return FCsProjectile::Empty;
-}
-
-const FCsProjectile& UCsManager_Projectile::AddToAllocatedObjects_Internal(const FECsProjectile& Type, const FCsPooledObject& Object)
-{
-	TArray<FCsProjectile>& Objects = CheckAndAddType_AllocatedObjects(Type);
-
-	Objects.AddDefaulted();
-	FCsProjectile& O = Objects.Last();
-
-	const int32& Index = Object.GetCache()->GetIndex();
-
-	O = Pools[Type][Index];
-
-	return O;
+	return Internal->AddToAllocatedObjects(Type, Object);
 }
 
 #pragma endregion Allocated Objects
 
 #pragma endregion Add
 
-const TArray<FCsProjectile>& UCsManager_Projectile::GetPool(const FECsProjectile& Type)
+const TArray<FCsProjectilePooled*>& UCsManager_Projectile::GetPool(const FECsProjectile& Type)
 {
-	return CheckAndAddType_AllocatedObjects(Type);
+	return Internal->GetPool(Type);
 }
 
-const TArray<FCsProjectile>& UCsManager_Projectile::GetAllocatedObjects(const FECsProjectile& Type)
+const TArray<FCsProjectilePooled*>& UCsManager_Projectile::GetAllocatedObjects(const FECsProjectile& Type)
 {
-	return CheckAndAddType_Pools(Type);
+	return Internal->GetAllocatedObjects(Type);
 }
 
 const int32& UCsManager_Projectile::GetPoolSize(const FECsProjectile& Type)
@@ -645,161 +341,34 @@ bool UCsManager_Projectile::IsExhausted(const FECsProjectile& Type)
 	// Find
 #pragma region
 
-const FCsProjectile& UCsManager_Projectile::FindObject(const FECsProjectile& Type, const int32& Index)
+const FCsProjectilePooled* UCsManager_Projectile::FindObject(const FECsProjectile& Type, const int32& Index)
 {
-	const FCsPooledObject& O = Internal->FindObject(Type, Index);
-
-	return CheckAndAddType_Pools(Type)[Index];
+	return Internal->FindObject(Type, Index);
 }
 
-const FCsProjectile& UCsManager_Projectile::FindObject(const FECsProjectile& Type, ICsProjectile* Object)
+const FCsProjectilePooled* UCsManager_Projectile::FindObject(const FECsProjectile& Type, ICsProjectile* Object)
 {
-	if (UObject* U = Object->_getUObject())
-	{
-		UClass* Class = U->GetClass();
-
-		// Interface
-		if (ICsPooledObject* Interface = Cast<ICsPooledObject>(U))
-		{
-			const FCsPooledObject& O = Internal->FindObject(Type, Interface);
-
-			return FindObject_Internal(Type, O);
-		}
-		// Script Interface
-		else
-		if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
-		{
-			const FCsPooledObject& O = Internal->FindObject(Type, U);
-
-			return FindObject_Internal(Type, O);
-		}
-		// INVALID
-		else
-		{
-			checkf(false, TEXT("UCsManager_Projectile::FindObject: Object: %s with Class: %s does NOT implement interface: ICsPooledObject."), *(U->GetName()), *(Class->GetName()));
-		}
-	}
-	else
-	{
-#if !UE_BUILD_SHIPPING
-		ICsPooledObject* Interface = dynamic_cast<ICsPooledObject*>(Object);
-#else
-		ICsPooledObject* Interface = (ICsPooledObject*)Object;
-#endif // #if !UE_BUILD_SHIPPING
-
-		checkf(Interface, TEXT("UCsManager_Projectile::FindObject: Object does NOT implement interface: ICsPooledObject."));
-
-		const FCsPooledObject& O = Internal->FindObject(Type, Interface);
-
-		return FindObject_Internal(Type, O);
-	}
-	return FCsProjectile::Empty;
+	return Internal->FindObject(Type, Object);
 }
 
-const FCsProjectile& UCsManager_Projectile::FindObject(const FECsProjectile& Type, UObject* Object)
+const FCsProjectilePooled* UCsManager_Projectile::FindObject(const FECsProjectile& Type, UObject* Object)
 {
-	const FCsPooledObject& O = Internal->FindObject(Type, Object);
-	const int32& Index		 = O.GetCache()->GetIndex();
-
-	return CheckAndAddType_Pools(Type)[Index];
+	return Internal->FindObject(Type, Object);
 }
 
-const FCsProjectile& UCsManager_Projectile::FindObject_Internal(const FECsProjectile& Type, const FCsPooledObject& Object)
+const FCsProjectilePooled* UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, const int32& Index)
 {
-	const int32& Index = Object.GetCache()->GetIndex();
-
-	return CheckAndAddType_Pools(Type)[Index];
+	return Internal->FindSafeObject(Type, Index);
 }
 
-const FCsProjectile& UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, const int32& Index)
+const FCsProjectilePooled* UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, ICsProjectile* Object)
 {
-	if (Index < 0)
-		return FCsProjectile::Empty;
-
-	const FCsPooledObject& O = Internal->FindSafeObject(Type, Index);
-
-	if (!O.IsValid())
-		return FCsProjectile::Empty;
-
-	TArray<FCsProjectile>& Projectiles = CheckAndAddType_Pools(Type);
-
-	if (Index >= Projectiles.Num())
-		return FCsProjectile::Empty;
-
-	return Projectiles[Index];
+	return Internal->FindSafeObject(Type, Object);
 }
 
-const FCsProjectile& UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, ICsProjectile* Object)
+const FCsProjectilePooled* UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, UObject* Object)
 {
-	if (!Object)
-		return FCsProjectile::Empty;
-
-	if (UObject* U = Object->_getUObject())
-	{
-		UClass* Class = U->GetClass();
-
-		// Interface
-		if (ICsPooledObject* Interface = Cast<ICsPooledObject>(U))
-		{
-			const FCsPooledObject& O = Internal->FindObject(Type, Interface);
-
-			return FindSafeObject_Internal(Type, O);
-		}
-		// Script Interface
-		else
-		if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
-		{
-			const FCsPooledObject& O = Internal->FindObject(Type, U);
-
-			return FindSafeObject_Internal(Type, O);
-		}
-		// INVALID
-		else
-		{
-			return FCsProjectile::Empty;
-		}
-	}
-	else
-	{
-#if !UE_BUILD_SHIPPING
-		ICsPooledObject* Interface = dynamic_cast<ICsPooledObject*>(Object);
-#else
-		ICsPooledObject* Interface = (ICsPooledObject*)Object;
-#endif // #if !UE_BUILD_SHIPPING
-
-		if (!Interface)
-			return FCsProjectile::Empty;
-
-		const FCsPooledObject& O = Internal->FindObject(Type, Interface);
-
-		return FindSafeObject_Internal(Type, O);
-	}
-	return FCsProjectile::Empty;
-}
-
-const FCsProjectile& UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, UObject* Object)
-{
-	if (!Object)
-		return FCsProjectile::Empty;
-
-	const FCsPooledObject& O = Internal->FindObject(Type, Object);
-
-	return FindSafeObject_Internal(Type, O);
-}
-
-const FCsProjectile& UCsManager_Projectile::FindSafeObject_Internal(const FECsProjectile& Type, const FCsPooledObject& Object)
-{
-	if (!Object.IsValid())
-		return FCsProjectile::Empty;
-
-	const int32& Index = Object.GetCache()->GetIndex();
-
-	TArray<FCsProjectile>& Projectiles = CheckAndAddType_Pools(Type);
-
-	if (Index >= Projectiles.Num())
-		return FCsProjectile::Empty;
-
-	return Projectiles[Index];
+	return Internal->FindSafeObject(Type, Object);
 }
 
 #pragma endregion Find
@@ -816,30 +385,17 @@ void UCsManager_Projectile::Update(const FCsDeltaTime& DeltaTime)
 
 void UCsManager_Projectile::OnPreUpdate_Pool(const FECsProjectile& Type)
 {
-	CurrentUpdatePoolType = Type;
+	CurrentUpdatePoolType		 = Type;
 	CurrentUpdatePoolObjectIndex = 0;
 }
 
-void UCsManager_Projectile::OnUpdate_Object(const FECsProjectile& Type, const FCsPooledObject& Object)
+void UCsManager_Projectile::OnUpdate_Object(const FECsProjectile& Type, const FCsProjectilePooled* Object)
 {
-	const int32& Index = Object.GetCache()->GetIndex();
-
-	TArray<FCsProjectile>& Projectiles = AllocatedObjects[Type];
-
-	Projectiles[CurrentUpdatePoolObjectIndex] = Projectiles[Index];
-
 	++CurrentUpdatePoolObjectIndex;
 }
 
 void UCsManager_Projectile::OnPostUpdate_Pool(const FECsProjectile& Type)
 {
-	TArray<FCsProjectile>& Projectiles = AllocatedObjects[Type];
-	const int32 ProjectilesSize		   = Projectiles.Num();
-
-	for (int32 I = ProjectilesSize - 1; I >= CurrentUpdatePoolObjectIndex; --I)
-	{
-		Projectiles.RemoveAt(I, 1, false);
-	}
 }
 
 #pragma endregion Update
@@ -847,22 +403,9 @@ void UCsManager_Projectile::OnPostUpdate_Pool(const FECsProjectile& Type)
 	// Payload
 #pragma region
 
-void UCsManager_Projectile::ConstructPayloads(const FECsProjectile& Type, const int32& Size)
-{
-	Internal->DeconstructPayloads(Type);
-
-	ICsManager_PooledObject* Interface = Internal->GetManagerPooledObjects(Type);
-	FCsManager_PooledObject* P		   = (FCsManager_PooledObject*)Interface;
-
-	P->GetConstructPayloads_Impl().Unbind();
-	P->GetConstructPayloads_Impl().BindRaw(P, &FCsManager_PooledObject::ConstructPayloads<FCsProjectilePayload>);
-
-	Internal->ConstructPayloads(Type, Size);
-}
-
 FCsProjectilePayload* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)
 {
-	return Internal->AllocatePayload<FCsProjectilePayload>(Type);
+	return Internal->AllocatePayload(Type);
 }
 
 #pragma endregion Payload
@@ -870,28 +413,11 @@ FCsProjectilePayload* UCsManager_Projectile::AllocatePayload(const FECsProjectil
 	// Spawn
 #pragma region
 
-const FCsProjectile& UCsManager_Projectile::Spawn(const FECsProjectile& Type, ICsPooledObjectPayload* Payload)
+const FCsProjectilePooled* UCsManager_Projectile::Spawn(const FECsProjectile& Type, FCsProjectilePayload* Payload)
 {
 	checkf(Payload, TEXT("UCsManager_Projectile::Spawn: Payload is NULL."));
 
-	const FCsPooledObject& Object = Internal->Spawn(Type, Payload);
-
-	ICsPooledObject* Interface = Object.GetInterface();
-	const int32& Index		   = Interface->GetCache()->GetIndex();
-
-	TArray<FCsProjectile>& Projectiles = Pools[Type];
-	const FCsProjectile& P			   = Projectiles[Index];
-
-	AllocatedObjects[Type].Add(P);
-
-	OnSpawn_Event.Broadcast(Type, P);
-
-	if (OnSpawn_ScriptEvent.IsBound() &&
-		P.IsObject())
-	{
-		OnSpawn_ScriptEvent.Broadcast(Type, TScriptInterface<ICsProjectile>(P.GetSafeObject()));
-	}
-	return P;
+	return Internal->Spawn(Type, Payload);
 }
 
 #pragma endregion Spawn
@@ -905,86 +431,14 @@ bool UCsManager_Projectile::Destroy(const FECsProjectile& Type, ICsProjectile* P
 	
 	checkf(Projectile, TEXT("UCsManager_Projectile::Destroy: Projectile is NULL."));
 
-#if !UE_BUILD_SHIPPING
-	ICsPooledObject* O = dynamic_cast<ICsPooledObject*>(Projectile);
-#else
-	ICsPooledObject* O = (ICsPooledObject*)Projectile;
-#endif // #if !UE_BUILD_SHIPPING
-
-	checkf(O, TEXT("UCsManager_Projectile::Destroy: Projectile is NULL or does NOT implement interface: ICsPooledObject."));
-
-	if (Internal->Destroy(Type, O))
-	{
-		// Remove from AllocatedObjects
-
-		TArray<FCsProjectile>& Projectiles = Pools[Type];
-
-		const int32& ProjectileIndex = O->GetCache()->GetIndex();
-		const FCsProjectile& P		 = Projectiles[ProjectileIndex];
-
-		// Rebuild AllocatedObjects from Internal AllocatedObjects
-
-		TArray<FCsProjectile>& Objects = AllocatedObjects[Type];
-
-		const int32 OldSize = Objects.Num();
-
-		const TArray<FCsPooledObject>& Internal_AllocatedObjects = Internal->GetAllocatedObjects(Type);
-
-		const int32 NewSize = Internal_AllocatedObjects.Num();
-
-		for (int32 I = 0; I <= NewSize; ++I)
-		{
-			const FCsPooledObject& Container = Internal_AllocatedObjects[I];
-			const int32& Index				 = Container.GetCache()->GetIndex();
-
-			Objects[I] = Projectiles[Index];
-		}
-
-		for (int32 I = OldSize - 1; I >= NewSize; --I)
-		{
-			Objects.RemoveAt(I, 1, false);
-		}
-		OnDestroy_Event.Broadcast(Type, P);
-		return true;
-	}
-	return false;
+	return Internal->Destroy(Type, Projectile);
 }
 
 bool UCsManager_Projectile::Destroy(ICsProjectile* Projectile)
 {
 	checkf(Projectile, TEXT("UCsManager_Projectile::Destroy: Projectile is NULL."));
 
-#if !UE_BUILD_SHIPPING
-	ICsPooledObject* O = dynamic_cast<ICsPooledObject*>(Projectile);
-#else
-	ICsPooledObject* O = (ICsPooledObject*)Projectile;
-#endif // #if !UE_BUILD_SHIPPING
-
-	checkf(O, TEXT("UCsManager_Projectile::Destroy: Projectile is NULL or does NOT implement interface: ICsPooledObject."));
-
-	const int32& Index = O->GetCache()->GetIndex();
-
-	bool TypeFound = false;
-
-	for (TPair<FECsProjectile, TArray<FCsProjectile>>& Pair : Pools)
-	{
-		const FECsProjectile& Type		   = Pair.Key;
-		TArray<FCsProjectile>& Projectiles = Pair.Value;
-
-		if (Index >= Projectiles.Num())
-			continue;
-
-		for (FCsProjectile& P : Projectiles)
-		{
-			ICsPooledObject* Interface = P.GetInterface();
-			
-			if (Index == Interface->GetCache()->GetIndex())
-			{
-				return Destroy(Type, P.GetProjectile());
-			}
-		}
-	}
-	return false;
+	return Internal->Destroy(Projectile);
 }
 
 

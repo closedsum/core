@@ -41,7 +41,7 @@ struct CSTD_API FCsTdCreepPooledCache : public ICsPooledObjectCache
 // ICsTdCreepPayload
 #pragma region
 
-struct CSTD_API ICsTdCreepPayload
+struct CSTD_API ICsTdCreepPayload : virtual public ICsGetInterfaceMap
 {
 	virtual ~ICsTdCreepPayload() {}
 };

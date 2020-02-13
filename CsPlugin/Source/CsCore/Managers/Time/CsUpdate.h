@@ -7,14 +7,14 @@
 #include "Containers/CsInterfaceObject.h"
 #include "CsUpdate.generated.h"
 
-UINTERFACE(BlueprintType, MinimalApi, meta = (CannotImplementInterfaceInBlueprint))
-class UCsUpdate : public UInterface
+UINTERFACE(BlueprintType, meta = (CannotImplementInterfaceInBlueprint))
+class CSCORE_API UCsUpdate : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
 
-class ICsUpdate
+class CSCORE_API ICsUpdate
 {
 	GENERATED_IINTERFACE_BODY()
 

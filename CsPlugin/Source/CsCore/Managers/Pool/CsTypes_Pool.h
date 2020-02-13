@@ -2,6 +2,8 @@
 #include "Managers/Time/CsTypes_Time.h"
 #include "CsCVars.h"
 
+#include "Containers/CsInterfaceMap.h"
+
 #include "CsTypes_Pool.generated.h"
 #pragma once
 
@@ -306,10 +308,14 @@ public:
 
 class UObject;
 
-struct CSCORE_API ICsPooledObjectPayload
+struct CSCORE_API ICsPooledObjectPayload : virtual public ICsGetInterfaceMap
 {
 public:
 
+	static const FName Name;
+
+public:
+	
 	virtual ~ICsPooledObjectPayload(){}
 
 	virtual const bool& IsAllocated() const = 0;

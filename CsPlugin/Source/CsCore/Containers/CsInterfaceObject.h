@@ -42,7 +42,7 @@ public:
 		return (InterfaceChildType*)Interface;
 	}
 
-	void SetInterface(InterfaceType* InInterface)
+	virtual void SetInterface(InterfaceType* InInterface)
 	{
 		Interface = InInterface;
 	}
@@ -69,11 +69,11 @@ public:
 		return Cast<T>(GetObject());
 	}
 
-	void SetObject(UObject* InObject)
+	virtual void SetObject(UObject* InObject)
 	{
-		Object = InObject;
+		Object	   = InObject;
 		WeakObject = Object;
-		bObject = Object != nullptr;
+		bObject	   = Object != nullptr;
 	}
 
 	FORCEINLINE const bool& IsObject() const

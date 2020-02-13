@@ -134,11 +134,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerProjectile_OnSpawn, const
 
 class ICsProjectile;
 
-class CSCORE_API FCsManager_Projectile_Internal : public TCsManager_PooledObject_Map<FECsProjectile>
+class CSCORE_API FCsManager_Projectile_Internal : public TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, FCsProjectilePayload, FECsProjectile>
 {
 private:
 
-	typedef TCsManager_PooledObject_Map<FECsProjectile> Super;
+	typedef TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, FCsProjectilePayload, FECsProjectile> Super;
 
 public:
 
@@ -148,6 +148,16 @@ public:
 	{
 		return Type.Name;
 	}
+
+	/** Delegate for getting the Owner of a Projectile.
+		 The Projectile implements a script interface of type: ICsProjectile. */
+	FCsProjectilePooled::FScript_GetOwner Script_GetOwner_Impl;
+
+	/** Delegate for getting the Instigator of a Projectile.
+		 The Projectile implements a script interface of type: ICsProjectile. */
+	FCsProjectilePooled::FScript_GetInstigator Script_GetInstigator_Impl;
+
+	virtual void OnAddToPool_UpdateScriptDelegates(FCsProjectilePooled* Object) override;
 };
 
 #pragma endregion Internal
@@ -239,7 +249,7 @@ public:
 #pragma region
 protected:
 
-	typedef TCsManager_PooledObject_Map<FECsProjectile> TCsManager_Internal;
+	typedef TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, FCsProjectilePayload, FECsProjectile> TCsManager_Internal;
 
 protected:
 	
@@ -273,22 +283,11 @@ public:
 	*/
 	virtual void CreatePool(const FECsProjectile& Type, const int32& Size);
 
-protected:
-
-	void OnCreatePool_AddToPool(const FECsProjectile& Type, const FCsPooledObject& Object);
-
 		// Add
 #pragma region
 
 			// Pool
 #pragma region
-protected:
-
-	/**
-	*
-	* @param Type
-	*/
-	virtual TArray<FCsProjectile>& CheckAndAddType_Pools(const FECsProjectile& Type);
 
 public:
 
@@ -302,7 +301,7 @@ public:
 	* return				Container holding a reference to a pooled object.
 	*						Pooled Object implements the interface: ICsProjectile.
 	*/
-	virtual const FCsProjectile& AddToPool(const FECsProjectile& Type, ICsProjectile* Object);
+	const FCsProjectilePooled* AddToPool(const FECsProjectile& Type, ICsProjectile* Object);
 
 	/**
 	* Adds an Object to the pool for the appropriate Type.
@@ -313,7 +312,7 @@ public:
 	* return			Container holding a reference to a pooled object.
 	*					Pooled Object implements the interface: ICsProjectile.
 	*/
-	virtual const FCsProjectile& AddToPool(const FECsProjectile& Type, const FCsProjectile& Object);
+	const FCsProjectilePooled* AddToPool(const FECsProjectile& Type, const FCsProjectilePooled* Object);
 
 	/**
 	* Adds an Object to the pool for the appropriate Type.
@@ -326,24 +325,12 @@ public:
 	*					Pooled Object or UClass associated with Pooled Object implements
 	*					the interface: ICsProjectile.
 	*/
-	virtual const FCsProjectile& AddToPool(const FECsProjectile& Type, UObject* Object);
-
-protected:
-
-	virtual const FCsProjectile& AddToPool_Internal(const FECsProjectile& Type, const FCsPooledObject& Object);
+	const FCsProjectilePooled* AddToPool(const FECsProjectile& Type, UObject* Object);
 
 #pragma endregion Pool
 
 			// Allocated Objects
 #pragma region
-protected:
-
-	/**
-	*
-	* @param Type
-	*/
-	virtual TArray<FCsProjectile>& CheckAndAddType_AllocatedObjects(const FECsProjectile& Type);
-
 public:
 
 	/**
@@ -357,7 +344,7 @@ public:
 	* return				Container holding a reference to a pooled object.
 	*						Pooled Object implements the interface: ICsProjectile.
 	*/
-	virtual const FCsProjectile& AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* PooledObject, UObject* Object);
+	const FCsProjectilePooled* AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* PooledObject, UObject* Object);
 
 	/**
 	* Adds an Object to the allocated objects for the appropriate Type.
@@ -369,7 +356,7 @@ public:
 	* return			Container holding a reference to a pooled object.
 	*					Pooled Object implements the interface: ICsProjectile.
 	*/
-	virtual const FCsProjectile& AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* Object);
+	const FCsProjectilePooled* AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* Object);
 
 	/**
 	* Adds an Object to the allocated objects for the appropriate Type.
@@ -383,11 +370,7 @@ public:
 	*					Pooled Object or UClass associated with Pooled Object implements
 	*					the interface: ICsProjectile.
 	*/
-	virtual const FCsProjectile& AddToAllocatedObjects(const FECsProjectile& Type, UObject* Object);
-
-protected:
-
-	virtual const FCsProjectile& AddToAllocatedObjects_Internal(const FECsProjectile& Type, const FCsPooledObject& Object);
+	const FCsProjectilePooled* AddToAllocatedObjects(const FECsProjectile& Type, UObject* Object);
 
 #pragma endregion Allocated Objects
 
@@ -403,7 +386,7 @@ public:
 	* @param Type	Type of pool to get.
 	* return		Pool associated with the type.
 	*/
-	const TArray<FCsProjectile>& GetPool(const FECsProjectile& Type);
+	const TArray<FCsProjectilePooled*>& GetPool(const FECsProjectile& Type);
 
 	/**
 	* Get the allocated objects for the appropriate Type.
@@ -413,7 +396,7 @@ public:
 	* @param Type	Type of allocated objects to get.
 	* return		Allocated Objects associated with the Type.
 	*/
-	const TArray<FCsProjectile>& GetAllocatedObjects(const FECsProjectile& Type);
+	const TArray<FCsProjectilePooled*>& GetAllocatedObjects(const FECsProjectile& Type);
 
 	/**
 	* Get the number of elements in the pool for the appropriate Type.
@@ -454,7 +437,7 @@ public:
 	* return		Container holding a reference to a pooled object.
 	*				Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const FCsProjectile& FindObject(const FECsProjectile& Type, const int32& Index);
+	const FCsProjectilePooled* FindObject(const FECsProjectile& Type, const int32& Index);
 
 	/**
 	* Find the container holding a reference to a pooled object in the pool 
@@ -466,7 +449,7 @@ public:
 	* return			Container holding a reference to a pooled object.
 	*					Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const FCsProjectile& FindObject(const FECsProjectile& Type, ICsProjectile* Object);
+	const FCsProjectilePooled* FindObject(const FECsProjectile& Type, ICsProjectile* Object);
 
 	/**
 	* Find the container holding a reference to a pooled object in the pool 
@@ -480,13 +463,7 @@ public:
 	*					Pooled Object or UClass associated with Pooled Object implements
 	*					the interface: ICsPooledObject.
 	*/
-	const FCsProjectile& FindObject(const FECsProjectile& Type, UObject* Object);
-
-protected:
-
-	const FCsProjectile& FindObject_Internal(const FECsProjectile& Type, const FCsPooledObject& Object);
-
-public:
+	const FCsProjectilePooled* FindObject(const FECsProjectile& Type, UObject* Object);
 
 	/**
 	* Safely, via checks, find the container holding a reference to a pooled object in the pool 
@@ -497,7 +474,7 @@ public:
 	* return		Container holding a reference to a pooled object.
 	*				Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const FCsProjectile& FindSafeObject(const FECsProjectile& Type, const int32& Index);
+	const FCsProjectilePooled* FindSafeObject(const FECsProjectile& Type, const int32& Index);
 
 	/**
 	* Safely, via checks, find the container holding a reference to a pooled object in the pool 
@@ -508,7 +485,7 @@ public:
 	* return			Container holding a reference to a pooled object.
 	*					Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const FCsProjectile& FindSafeObject(const FECsProjectile& Type, ICsProjectile* Object);
+	const FCsProjectilePooled* FindSafeObject(const FECsProjectile& Type, ICsProjectile* Object);
 
 	/**
 	* Safely, via checks, find the container holding a reference to a pooled object in the pool 
@@ -520,11 +497,7 @@ public:
 	*					Pooled Object or UClass associated with Pooled Object implements
 	*					the interface: ICsPooledObject.
 	*/
-	const FCsProjectile& FindSafeObject(const FECsProjectile& Type, UObject* Object);
-
-protected:
-
-	const FCsProjectile& FindSafeObject_Internal(const FECsProjectile& Type, const FCsPooledObject& Object);
+	const FCsProjectilePooled* FindSafeObject(const FECsProjectile& Type, UObject* Object);
 
 #pragma endregion Find
 
@@ -546,7 +519,7 @@ protected:
 
 	void OnPreUpdate_Pool(const FECsProjectile& Type);
 
-	void OnUpdate_Object(const FECsProjectile& Type, const FCsPooledObject& Object);
+	void OnUpdate_Object(const FECsProjectile& Type, const FCsProjectilePooled* Object);
 
 	void OnPostUpdate_Pool(const FECsProjectile& Type);
 
@@ -555,15 +528,6 @@ protected:
 	// Payload
 #pragma region
 public:
-
-	/**
-	* Create a number (Size) of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsProjectilePayload.
-	*
-	* @param Type	Type of payload.
-	* @param Size	Number of payload objects to create.
-	*/
-	void ConstructPayloads(const FECsProjectile& Type, const int32& Size);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
@@ -586,7 +550,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	virtual const FCsProjectile& Spawn(const FECsProjectile& Type, ICsPooledObjectPayload* Payload);
+	virtual const FCsProjectilePooled* Spawn(const FECsProjectile& Type, FCsProjectilePayload* Payload);
 
 	/**
 	* Delegate type after a Projectile has been Spawned.
@@ -594,7 +558,7 @@ public:
 	* @param Type
 	* @param Object
 	*/
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSpawn, const FECsProjectile& /*Type*/, const FCsProjectile& /*Object*/);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSpawn, const FECsProjectile& /*Type*/, const FCsProjectilePooled* /*Object*/);
 
 	/** */
 	FOnSpawn OnSpawn_Event;
@@ -624,7 +588,7 @@ public:
 	* @param Type
 	* @param Object
 	*/
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDestroy, const FECsProjectile& /*Type*/, const FCsProjectile& /*Object*/);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDestroy, const FECsProjectile& /*Type*/, const FCsProjectilePooled* /*Object*/);
 
 	FOnDestroy OnDestroy_Event;
 
@@ -636,12 +600,8 @@ public:
 #pragma region
 protected:
 
-	TMap<FECsProjectile, TArray<FCsProjectile>> Pools;
-
 	UPROPERTY()
 	TArray<UObject*> Pool;
-
-	TMap<FECsProjectile, TArray<FCsProjectile>> AllocatedObjects;
 
 #pragma endregion Pool
 
@@ -655,11 +615,11 @@ public:
 
 	/** Delegate for getting the Owner of a Projectile. 
 		 The Projectile implements a script interface of type: ICsProjectile. */
-	FCsProjectile::FScript_GetOwner Script_GetOwner_Impl;
+	FCsProjectilePooled::FScript_GetOwner Script_GetOwner_Impl;
 
 	/** Delegate for getting the Instigator of a Projectile. 
 		 The Projectile implements a script interface of type: ICsProjectile. */
-	FCsProjectile::FScript_GetInstigator Script_GetInstigator_Impl;
+	FCsProjectilePooled::FScript_GetInstigator Script_GetInstigator_Impl;
 
 #pragma endregion ICsProjectile
 
@@ -680,6 +640,12 @@ public:
 	FCsPooledObject::FScript_Deallocate Script_Deallocate_Impl;
 
 #pragma endregion ICsPooledObject
+
+	// ICsUpdate
+#pragma region
+public:
+
+#pragma endregion ICsUpdate
 
 #pragma endregion Script
 };

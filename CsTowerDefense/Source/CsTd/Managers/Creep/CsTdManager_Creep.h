@@ -5,13 +5,12 @@
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
 #include "Managers/Creep/CsTdTypes_Creep.h"
 #include "Managers/Creep/CsTdCreep.h"
-#include "Managers/Resource/CsManager_ResourceValueType.h"
 #include "CsTdManager_Creep.generated.h"
 
 // Structs
 #pragma region
 
-	// CreepPayload
+	// FCsTdCreepPayload
 #pragma region
 
 class UObject;
@@ -28,12 +27,25 @@ public:
 
 	TWeakObjectPtr<UObject> Parent;
 
+	FCsInterfaceMap InterfaceMap;
+
 	FCsTdCreepPayload()
 	{
 		Reset();
 	}
 
 	virtual ~FCsTdCreepPayload(){}
+
+// ICsGetInterfaceMap
+#pragma region
+public:
+
+	FORCEINLINE FCsInterfaceMap* GetInterfaceMap()
+	{
+		return &InterfaceMap;
+	}
+
+#pragma endregion ICsGetInterfaceMap
 
 // ICsProjectilePayload
 #pragma region
@@ -101,7 +113,7 @@ public:
 	}
 };
 
-#pragma endregion ProjectilePayload
+#pragma endregion FCsTdCreepPayload
 
 #pragma endregion Structs
 
@@ -123,11 +135,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsTdManagerCreep_OnSpawn, const FE
 
 class ICsTdCreep;
 
-class CSTD_API FCsTdManager_Creep_Internal : public TCsManager_PooledObject_Map<FECsTdCreep>
+class CSTD_API FCsTdManager_Creep_Internal : public TCsManager_PooledObject_Map<ICsTdCreep, FCsTdCreepPooled, FCsTdCreepPayload, FECsTdCreep>
 {
 private:
 
-	typedef TCsManager_PooledObject_Map<FECsTdCreep> Super;
+	typedef TCsManager_PooledObject_Map<ICsTdCreep, FCsTdCreepPooled, FCsTdCreepPayload, FECsTdCreep> Super;
 
 public:
 
@@ -228,15 +240,15 @@ public:
 #pragma region
 protected:
 
-	typedef TCsManager_PooledObject_Map<FECsTdCreep> TCsTdManager_Internal;
+	typedef TCsManager_PooledObject_Map<ICsTdCreep, FCsTdCreepPooled, FCsTdCreepPayload, FECsTdCreep> TCsTdManager_Internal;
 
 protected:
 	
-	/** Reference to the internal manager for handling the pool of projectiles. */
+	/** Reference to the internal manager for handling the pool of Creep. */
 	TCsTdManager_Internal* Internal;
 	
 	/**
-	* Construct the internal manager for handling the pool of projectiles.
+	* Construct the internal manager for handling the pool of Creeps.
 	*/
 	virtual void ConstructInternal();
 
@@ -262,23 +274,11 @@ public:
 	*/
 	virtual void CreatePool(const FECsTdCreep& Type, const int32& Size);
 
-protected:
-
-	void OnCreatePool_AddToPool(const FECsTdCreep& Type, const FCsPooledObject& Object);
-
 		// Add
 #pragma region
 
 			// Pool
 #pragma region
-protected:
-
-	/**
-	*
-	* @param Type
-	*/
-	virtual TArray<FCsTdCreepPooled>& CheckAndAddType_Pools(const FECsTdCreep& Type);
-
 public:
 
 	/**
@@ -290,7 +290,7 @@ public:
 	* return				Container holding a reference to a pooled object.
 	*						Pooled Object implements the interface: ICsTdCreep.
 	*/
-	virtual const FCsTdCreepPooled& AddToPool(const FECsTdCreep& Type, ICsTdCreep* Object);
+	const FCsTdCreepPooled* AddToPool(const FECsTdCreep& Type, ICsTdCreep* Object);
 
 	/**
 	* Adds an Object to the pool for the appropriate Type.
@@ -301,7 +301,7 @@ public:
 	* return			Container holding a reference to a pooled object.
 	*					Pooled Object implements the interface: ICsTdCreep.
 	*/
-	virtual const FCsTdCreepPooled& AddToPool(const FECsTdCreep& Type, const FCsTdCreepPooled& Object);
+	const FCsTdCreepPooled* AddToPool(const FECsTdCreep& Type, const FCsTdCreepPooled* Object);
 
 	/**
 	* Adds an Object to the pool for the appropriate Type.
@@ -314,24 +314,12 @@ public:
 	*					Pooled Object or UClass associated with Pooled Object implements
 	*					the interface: ICsTdCreep.
 	*/
-	virtual const FCsTdCreepPooled& AddToPool(const FECsTdCreep& Type, UObject* Object);
-
-protected:
-
-	virtual const FCsTdCreepPooled& AddToPool_Internal(const FECsTdCreep& Type, const FCsPooledObject& Object);
+	const FCsTdCreepPooled* AddToPool(const FECsTdCreep& Type, UObject* Object);
 
 #pragma endregion Pool
 
 			// Allocated Objects
 #pragma region
-protected:
-
-	/**
-	*
-	* @param Type
-	*/
-	virtual TArray<FCsTdCreepPooled>& CheckAndAddType_AllocatedObjects(const FECsTdCreep& Type);
-
 public:
 
 	/**
@@ -345,7 +333,7 @@ public:
 	* return				Container holding a reference to a pooled object.
 	*						Pooled Object implements the interface: ICsTdCreep.
 	*/
-	virtual const FCsTdCreepPooled& AddToAllocatedObjects(const FECsTdCreep& Type, ICsTdCreep* PooledObject, UObject* Object);
+	virtual const FCsTdCreepPooled* AddToAllocatedObjects(const FECsTdCreep& Type, ICsTdCreep* PooledObject, UObject* Object);
 
 	/**
 	* Adds an Object to the allocated objects for the appropriate Type.
@@ -357,7 +345,7 @@ public:
 	* return			Container holding a reference to a pooled object.
 	*					Pooled Object implements the interface: ICsTdCreep.
 	*/
-	virtual const FCsTdCreepPooled& AddToAllocatedObjects(const FECsTdCreep& Type, ICsTdCreep* Object);
+	virtual const FCsTdCreepPooled* AddToAllocatedObjects(const FECsTdCreep& Type, ICsTdCreep* Object);
 
 	/**
 	* Adds an Object to the allocated objects for the appropriate Type.
@@ -371,11 +359,7 @@ public:
 	*					Pooled Object or UClass associated with Pooled Object implements
 	*					the interface: ICsTdCreep.
 	*/
-	virtual const FCsTdCreepPooled& AddToAllocatedObjects(const FECsTdCreep& Type, UObject* Object);
-
-protected:
-
-	virtual const FCsTdCreepPooled& AddToAllocatedObjects_Internal(const FECsTdCreep& Type, const FCsPooledObject& Object);
+	virtual const FCsTdCreepPooled* AddToAllocatedObjects(const FECsTdCreep& Type, UObject* Object);
 
 #pragma endregion Allocated Objects
 
@@ -391,7 +375,7 @@ public:
 	* @param Type	Type of pool to get.
 	* return		Pool associated with the type.
 	*/
-	const TArray<FCsTdCreepPooled>& GetPool(const FECsTdCreep& Type);
+	const TArray<FCsTdCreepPooled*>& GetPool(const FECsTdCreep& Type);
 
 	/**
 	* Get the allocated objects for the appropriate Type.
@@ -401,7 +385,7 @@ public:
 	* @param Type	Type of allocated objects to get.
 	* return		Allocated Objects associated with the Type.
 	*/
-	const TArray<FCsTdCreepPooled>& GetAllocatedObjects(const FECsTdCreep& Type);
+	const TArray<FCsTdCreepPooled*>& GetAllocatedObjects(const FECsTdCreep& Type);
 
 	/**
 	* Get the number of elements in the pool for the appropriate Type.
@@ -442,7 +426,7 @@ public:
 	* return		Container holding a reference to a pooled object.
 	*				Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const FCsTdCreepPooled& FindObject(const FECsTdCreep& Type, const int32& Index);
+	const FCsTdCreepPooled* FindObject(const FECsTdCreep& Type, const int32& Index);
 
 	/**
 	* Find the container holding a reference to a pooled object in the pool 
@@ -454,7 +438,7 @@ public:
 	* return			Container holding a reference to a pooled object.
 	*					Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const FCsTdCreepPooled& FindObject(const FECsTdCreep& Type, ICsTdCreep* Object);
+	const FCsTdCreepPooled* FindObject(const FECsTdCreep& Type, ICsTdCreep* Object);
 
 	/**
 	* Find the container holding a reference to a pooled object in the pool 
@@ -468,13 +452,7 @@ public:
 	*					Pooled Object or UClass associated with Pooled Object implements
 	*					the interface: ICsPooledObject.
 	*/
-	const FCsTdCreepPooled& FindObject(const FECsTdCreep& Type, UObject* Object);
-
-protected:
-
-	const FCsTdCreepPooled& FindObject_Internal(const FECsTdCreep& Type, const FCsPooledObject& Object);
-
-public:
+	const FCsTdCreepPooled* FindObject(const FECsTdCreep& Type, UObject* Object);
 
 	/**
 	* Safely, via checks, find the container holding a reference to a pooled object in the pool 
@@ -485,7 +463,7 @@ public:
 	* return		Container holding a reference to a pooled object.
 	*				Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const FCsTdCreepPooled& FindSafeObject(const FECsTdCreep& Type, const int32& Index);
+	const FCsTdCreepPooled* FindSafeObject(const FECsTdCreep& Type, const int32& Index);
 
 	/**
 	* Safely, via checks, find the container holding a reference to a pooled object in the pool 
@@ -496,7 +474,7 @@ public:
 	* return			Container holding a reference to a pooled object.
 	*					Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const FCsTdCreepPooled& FindSafeObject(const FECsTdCreep& Type, ICsTdCreep* Object);
+	const FCsTdCreepPooled* FindSafeObject(const FECsTdCreep& Type, ICsTdCreep* Object);
 
 	/**
 	* Safely, via checks, find the container holding a reference to a pooled object in the pool 
@@ -508,11 +486,8 @@ public:
 	*					Pooled Object or UClass associated with Pooled Object implements
 	*					the interface: ICsPooledObject.
 	*/
-	const FCsTdCreepPooled& FindSafeObject(const FECsTdCreep& Type, UObject* Object);
+	const FCsTdCreepPooled* FindSafeObject(const FECsTdCreep& Type, UObject* Object);
 
-protected:
-
-	const FCsTdCreepPooled& FindSafeObject_Internal(const FECsTdCreep& Type, const FCsPooledObject& Object);
 
 #pragma endregion Find
 
@@ -534,7 +509,7 @@ protected:
 
 	void OnPreUpdate_Pool(const FECsTdCreep& Type);
 
-	void OnUpdate_Object(const FECsTdCreep& Type, const FCsPooledObject& Object);
+	void OnUpdate_Object(const FECsTdCreep& Type, const FCsTdCreepPooled* Object);
 
 	void OnPostUpdate_Pool(const FECsTdCreep& Type);
 
@@ -543,15 +518,6 @@ protected:
 	// Payload
 #pragma region
 public:
-
-	/**
-	* Create a number (Size) of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsTdCreepPayload.
-	*
-	* @param Type	Type of payload.
-	* @param Size	Number of payload objects to create.
-	*/
-	void ConstructPayloads(const FECsTdCreep& Type, const int32& Size);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
@@ -574,7 +540,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	virtual const FCsTdCreepPooled& Spawn(const FECsTdCreep& Type, ICsPooledObjectPayload* Payload);
+	virtual const FCsTdCreepPooled* Spawn(const FECsTdCreep& Type, FCsTdCreepPayload* Payload);
 
 	/**
 	* Delegate type after a Creep has been Spawned.
@@ -582,7 +548,7 @@ public:
 	* @param Type
 	* @param Object
 	*/
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSpawn, const FECsTdCreep& /*Type*/, const FCsTdCreepPooled& /*Object*/);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSpawn, const FECsTdCreep& /*Type*/, const FCsTdCreepPooled* /*Object*/);
 
 	/** */
 	FOnSpawn OnSpawn_Event;
@@ -612,7 +578,7 @@ public:
 	* @param Type
 	* @param Object
 	*/
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDestroy, const FECsTdCreep& /*Type*/, const FCsTdCreepPooled& /*Object*/);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDestroy, const FECsTdCreep& /*Type*/, const FCsTdCreepPooled* /*Object*/);
 
 	FOnDestroy OnDestroy_Event;
 
@@ -624,12 +590,8 @@ public:
 #pragma region
 protected:
 
-	TMap<FECsTdCreep, TArray<FCsTdCreepPooled>> Pools;
-
 	UPROPERTY()
 	TArray<UObject*> Pool;
-
-	TMap<FECsTdCreep, TArray<FCsTdCreepPooled>> AllocatedObjects;
 
 #pragma endregion Pool
 
@@ -663,15 +625,21 @@ public:
 		 The Pooled Object implements a script interface of type: ICsPooledObject. */
 	FCsPooledObject::FScript_Allocate Script_Allocate_Impl;
 
-	/** Delegate for updating a Pooled Object.
-		The Pooled Object implements a script interface of type: ICsPooledObject. */
-	FCsPooledObject::FScript_Update Script_Update_Impl;
-
 	/** Delegate called after deallocating a Pooled Object. 
 		 The Pooled Object implements a script interface of type: ICsPooledObject.*/
 	FCsPooledObject::FScript_Deallocate Script_Deallocate_Impl;
 
 #pragma endregion ICsPooledObject
+
+	// ICsUpdate
+#pragma region
+public:
+
+	/** Delegate for updating a Pooled Object.
+		The Pooled Object implements a script interface of type: ICsPooledObject. */
+	FCsPooledObject::FScript_Update Script_Update_Impl;
+
+#pragma endregion ICsUpdate
 
 #pragma endregion Script
 };

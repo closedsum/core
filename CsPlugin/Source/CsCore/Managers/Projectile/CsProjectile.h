@@ -44,7 +44,7 @@ public:
 // FCsProjectile
 #pragma region
 
-struct CSCORE_API FCsProjectile : public FCsPooledObject
+struct CSCORE_API FCsProjectilePooled : public FCsPooledObject
 {
 private:
 
@@ -52,7 +52,7 @@ private:
 
 public:
 
-	static const FCsProjectile Empty;
+	static const FCsProjectilePooled Empty;
 
 protected:
 
@@ -96,17 +96,21 @@ public:
 
 public:
 
-	FCsProjectile() :
+	FCsProjectilePooled() :
 		Super(),
 		Projectile(nullptr)
 	{
 	}
 
-	virtual ~FCsProjectile() {}
+	virtual ~FCsProjectilePooled() {}
 
 // TCsInterfaceObject
 #pragma region
 public:
+
+	virtual void SetInterface(ICsPooledObject* InInterface) override;
+
+	virtual void SetObject(UObject* InObject) override;
 
 	virtual void Reset() override
 	{
@@ -172,7 +176,7 @@ public:
 		bScriptProjectile = true;
 	}
 
-	FORCEINLINE bool GetScriptProjectile() const 
+	FORCEINLINE const bool& IsScriptProjectile() const 
 	{
 		return bScriptProjectile;
 	}

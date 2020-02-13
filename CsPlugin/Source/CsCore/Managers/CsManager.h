@@ -62,7 +62,7 @@ protected:
 	int32 PoolIndex;
 	TMap<int, ObjectType*> ActiveObjects;
 
-	PayloadType Payloads[PAYLOAD_SIZE];
+	PayloadType* Payloads[PAYLOAD_SIZE];
 	int32 PayloadIndex;
 
 public:
@@ -99,7 +99,7 @@ public:
 
 		for (int32 i = 0; i < PAYLOAD_SIZE; ++i)
 		{
-			Payloads[i].Reset();
+			Payloads[i]->Reset();
 		}
 		OnAddToPool_Event.Clear();
 		OnDeAllocate_Event.Clear();
@@ -342,7 +342,7 @@ public:
 		for (int32 i = 0; i < PAYLOAD_SIZE; ++i)
 		{
 			PayloadIndex		 = (PayloadIndex + 1) % PAYLOAD_SIZE;
-			PayloadType* Payload = &(Payloads[PayloadIndex]);
+			PayloadType* Payload = Payloads[PayloadIndex];
 
 			if (!Payload->bAllocated)
 			{
@@ -410,7 +410,7 @@ protected:
 	TMap<EnumType, int32> PoolIndices;
 	TMap<EnumType, TMap<int32, ObjectType*>> ActiveObjects;
 
-	PayloadType Payloads[PAYLOAD_SIZE];
+	PayloadType* Payloads[PAYLOAD_SIZE];
 	int32 PayloadIndex;
 
 public:
@@ -451,7 +451,7 @@ public:
 
 		for (int32 i = 0; i < PAYLOAD_SIZE; ++i)
 		{
-			Payloads[i].Reset();
+			Payloads[i]->Reset();
 		}
 		OnAddToPool_Event.Clear();
 		OnDeAllocate_Event.Clear();
@@ -801,7 +801,7 @@ public:
 		for (int32 i = 0; i < PAYLOAD_SIZE; ++i)
 		{
 			PayloadIndex		 = (PayloadIndex + 1) % PAYLOAD_SIZE;
-			PayloadType* Payload = &(Payloads[PayloadIndex]);
+			PayloadType* Payload = Payloads[PayloadIndex];
 
 			if (!Payload->bAllocated)
 			{

@@ -18,6 +18,7 @@ public:
 
 	TCsManager_ResourceValueType() :
 		Name(),
+		Name_Internal(),
 		Resources(),
 		Pool(),
 		PoolSize(0),
@@ -28,6 +29,7 @@ public:
 		AllocatedSize(0)
 	{
 		Name = TEXT("TCsManager_ResourceValueType");
+		Name_Internal = FName(*Name);
 	}
 
 	virtual ~TCsManager_ResourceValueType()

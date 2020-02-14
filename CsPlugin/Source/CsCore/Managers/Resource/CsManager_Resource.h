@@ -8,7 +8,13 @@ public:
 
 	virtual ~ICsManager_Resource(){}
 
+	virtual const FString& GetName() const = 0;
+
 	virtual void SetName(const FString& InName) = 0;
+
+	virtual const FName& GetFName() const = 0;
+
+	virtual void SetFName(const FName& InName) = 0;
 
 	virtual void Clear()= 0;
 

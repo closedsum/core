@@ -403,7 +403,7 @@ void UCsManager_Projectile::OnPostUpdate_Pool(const FECsProjectile& Type)
 	// Payload
 #pragma region
 
-FCsProjectilePayload* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)
+ICsProjectilePayload* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)
 {
 	return Internal->AllocatePayload(Type);
 }
@@ -413,10 +413,8 @@ FCsProjectilePayload* UCsManager_Projectile::AllocatePayload(const FECsProjectil
 	// Spawn
 #pragma region
 
-const FCsProjectilePooled* UCsManager_Projectile::Spawn(const FECsProjectile& Type, FCsProjectilePayload* Payload)
+const FCsProjectilePooled* UCsManager_Projectile::Spawn(const FECsProjectile& Type, ICsProjectilePayload* Payload)
 {
-	checkf(Payload, TEXT("UCsManager_Projectile::Spawn: Payload is NULL."));
-
 	return Internal->Spawn(Type, Payload);
 }
 
@@ -427,17 +425,11 @@ const FCsProjectilePooled* UCsManager_Projectile::Spawn(const FECsProjectile& Ty
 
 bool UCsManager_Projectile::Destroy(const FECsProjectile& Type, ICsProjectile* Projectile)
 {
-	checkf(EMCsProjectile::Get().IsValidEnum(Type), TEXT("UCsManager_Projectile::Destroy: Type: %s is NOT a valid Enum."), *(Type.Name));
-	
-	checkf(Projectile, TEXT("UCsManager_Projectile::Destroy: Projectile is NULL."));
-
 	return Internal->Destroy(Type, Projectile);
 }
 
 bool UCsManager_Projectile::Destroy(ICsProjectile* Projectile)
 {
-	checkf(Projectile, TEXT("UCsManager_Projectile::Destroy: Projectile is NULL."));
-
 	return Internal->Destroy(Projectile);
 }
 

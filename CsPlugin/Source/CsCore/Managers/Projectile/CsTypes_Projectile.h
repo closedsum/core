@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/CsTypes_Pool.h"
 #include "Types/CsTypes_Load.h"
+#include "Containers/CsInterfaceMap.h"
 
 #include "CsTypes_Projectile.generated.h"
 #pragma once
@@ -674,13 +675,17 @@ public:
 // ICsProjectilePayload
 #pragma region
 
-struct CSCORE_API ICsProjectilePayload
+struct CSCORE_API ICsProjectilePayload : virtual public ICsGetInterfaceMap
 {
+public:
+
+	static const FName Name;
+
+	virtual ~ICsProjectilePayload(){}
+
 	virtual const FVector& GetDirection() const = 0;
 
 	virtual const FVector& GetLocation() const = 0;
-
-	virtual ~ICsProjectilePayload(){}
 };
 
 #pragma endregion ICsProjectilePayload

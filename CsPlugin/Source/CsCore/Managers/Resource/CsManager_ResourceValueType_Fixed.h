@@ -18,6 +18,7 @@ public:
 
 	TCsManager_ResourceValueType_Fixed() :
 		Name(),
+		Name_Internal(),
 		ResourceContainers(),
 		Resources(),
 		Pool(),
@@ -30,6 +31,7 @@ public:
 		AllocatedSize(0)
 	{
 		Name = TEXT("TCsManager_ResourceValueType_Fixed");
+		Name_Internal = FName(*Name);
 
 		if (BUCKET_SIZE > 0)
 			CreatePool(BUCKET_SIZE);
@@ -42,8 +44,10 @@ public:
 
 private:
 
-	/** Name of the Manager */
+	/** String Name of the Manager */
 	FString Name;
+	/** FName of the Manager */
+	FName Name_Internal;
 
 	/** List of ResourceContainerTypes */
 	TArray<ResourceContainerType> ResourceContainers;
@@ -73,14 +77,47 @@ private:
 public:
 
 	/**
-	* Set the name of the Manager. This is mostly used for debugging.
-	*  Default value is TCsManager_ResourceValueType_Fixed.
+	*
+	*
+	* return
+	*/
+	FORCEINLINE const FString& GetName() const
+	{
+		return  Name;
+	}
+
+	/**
+	* Set the name of the Manager.
+	*  Default value is TCsManager_ResourcePointerType_Fixed.
 	*
 	* @param InName		Name to set for the Manager.
 	*/
 	void SetName(const FString& InName)
 	{
-		Name = InName;
+		Name		  = InName;
+		Name_Internal = FName(*Name);
+	}
+
+	/**
+	*
+	*
+	* return
+	*/
+	FORCEINLINE const FName& GetFName() const 
+	{
+		return Name_Internal;
+	}
+
+	/**
+	* Set the name of the Manager.
+	*  Default value is TCsManager_ResourcePointerType.
+	*
+	* @param InName		Name to set for the Manager.
+	*/
+	void SetFName(const FName& InName)
+	{
+		Name_Internal = InName;
+		Name		  = Name_Internal.ToString();
 	}
 
 	/**

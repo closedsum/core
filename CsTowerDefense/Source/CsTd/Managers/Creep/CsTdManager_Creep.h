@@ -32,6 +32,9 @@ public:
 	FCsTdCreepPayload()
 	{
 		Reset();
+
+		InterfaceMap.Add<ICsTdCreepPayload>(static_cast<ICsTdCreepPayload*>(this));
+		InterfaceMap.Add<ICsPooledObjectPayload>(static_cast<ICsPooledObjectPayload*>(this));
 	}
 
 	virtual ~FCsTdCreepPayload(){}
@@ -135,11 +138,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsTdManagerCreep_OnSpawn, const FE
 
 class ICsTdCreep;
 
-class CSTD_API FCsTdManager_Creep_Internal : public TCsManager_PooledObject_Map<ICsTdCreep, FCsTdCreepPooled, FCsTdCreepPayload, FECsTdCreep>
+class CSTD_API FCsTdManager_Creep_Internal : public TCsManager_PooledObject_Map<ICsTdCreep, FCsTdCreepPooled, ICsTdCreepPayload, FECsTdCreep>
 {
 private:
 
-	typedef TCsManager_PooledObject_Map<ICsTdCreep, FCsTdCreepPooled, FCsTdCreepPayload, FECsTdCreep> Super;
+	typedef TCsManager_PooledObject_Map<ICsTdCreep, FCsTdCreepPooled, ICsTdCreepPayload, FECsTdCreep> Super;
 
 public:
 
@@ -148,6 +151,11 @@ public:
 	FORCEINLINE virtual const FString& KeyTypeToString(const FECsTdCreep& Type) override
 	{
 		return Type.Name;
+	}
+
+	FORCEINLINE virtual bool IsValidKey(const FECsTdCreep& Type) override
+	{
+		return EMCsTdCreep::Get().IsValidEnum(Type);
 	}
 };
 
@@ -240,7 +248,7 @@ public:
 #pragma region
 protected:
 
-	typedef TCsManager_PooledObject_Map<ICsTdCreep, FCsTdCreepPooled, FCsTdCreepPayload, FECsTdCreep> TCsTdManager_Internal;
+	typedef TCsManager_PooledObject_Map<ICsTdCreep, FCsTdCreepPooled, ICsTdCreepPayload, FECsTdCreep> TCsTdManager_Internal;
 
 protected:
 	
@@ -526,7 +534,7 @@ public:
 	* @param Type	Type of payload.
 	* return		Payload that implements the interface: ICsPooledObjectPayload.
 	*/
-	FCsTdCreepPayload* AllocatePayload(const FECsTdCreep& Type);
+	ICsTdCreepPayload* AllocatePayload(const FECsTdCreep& Type);
 
 #pragma endregion Payload
 
@@ -540,7 +548,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	virtual const FCsTdCreepPooled* Spawn(const FECsTdCreep& Type, FCsTdCreepPayload* Payload);
+	virtual const FCsTdCreepPooled* Spawn(const FECsTdCreep& Type, ICsTdCreepPayload* Payload);
 
 	/**
 	* Delegate type after a Creep has been Spawned.

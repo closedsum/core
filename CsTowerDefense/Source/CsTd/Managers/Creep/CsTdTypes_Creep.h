@@ -43,6 +43,10 @@ struct CSTD_API FCsTdCreepPooledCache : public ICsPooledObjectCache
 
 struct CSTD_API ICsTdCreepPayload : virtual public ICsGetInterfaceMap
 {
+public:
+
+	static const FName Name;
+
 	virtual ~ICsTdCreepPayload() {}
 };
 

@@ -32,12 +32,28 @@ public:
 
 	TWeakObjectPtr<UObject> Parent;
 
+	FCsInterfaceMap InterfaceMap;
+
 	FCsProjectilePayload()
 	{
 		Reset();
+
+		InterfaceMap.Add<ICsProjectilePayload>(static_cast<ICsProjectilePayload*>(this));
+		InterfaceMap.Add<ICsPooledObjectPayload>(static_cast<ICsPooledObjectPayload*>(this));
 	}
 
 	virtual ~FCsProjectilePayload(){}
+
+// ICsGetInterfaceMap
+#pragma region
+public:
+
+	FORCEINLINE FCsInterfaceMap* GetInterfaceMap()
+	{
+		return &InterfaceMap;
+	}
+
+#pragma endregion ICsGetInterfaceMap
 
 // ICsProjectilePayload
 #pragma region
@@ -134,11 +150,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerProjectile_OnSpawn, const
 
 class ICsProjectile;
 
-class CSCORE_API FCsManager_Projectile_Internal : public TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, FCsProjectilePayload, FECsProjectile>
+class CSCORE_API FCsManager_Projectile_Internal : public TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, ICsProjectilePayload, FECsProjectile>
 {
 private:
 
-	typedef TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, FCsProjectilePayload, FECsProjectile> Super;
+	typedef TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, ICsProjectilePayload, FECsProjectile> Super;
 
 public:
 
@@ -249,7 +265,7 @@ public:
 #pragma region
 protected:
 
-	typedef TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, FCsProjectilePayload, FECsProjectile> TCsManager_Internal;
+	typedef TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, ICsProjectilePayload, FECsProjectile> TCsManager_Internal;
 
 protected:
 	
@@ -536,7 +552,7 @@ public:
 	* @param Type	Type of payload.
 	* return		Payload that implements the interface: ICsPooledObjectPayload.
 	*/
-	FCsProjectilePayload* AllocatePayload(const FECsProjectile& Type);
+	ICsProjectilePayload* AllocatePayload(const FECsProjectile& Type);
 
 #pragma endregion Payload
 
@@ -550,7 +566,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	virtual const FCsProjectilePooled* Spawn(const FECsProjectile& Type, FCsProjectilePayload* Payload);
+	virtual const FCsProjectilePooled* Spawn(const FECsProjectile& Type, ICsProjectilePayload* Payload);
 
 	/**
 	* Delegate type after a Projectile has been Spawned.

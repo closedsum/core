@@ -39,8 +39,10 @@ public:
 
 private:
 
-	/** Name of the Manager */
+	/** String Name of the Manager */
 	FString Name;
+	/** FName of the Manager */
+	FName Name_Internal;
 
 	/** List of references to ResourceTypes */
 	TArray<ResourceType*> Resources;
@@ -65,7 +67,17 @@ private:
 public:
 
 	/**
-	* Set the name of the Manager. This is mostly used for debugging.
+	*
+	*
+	* return
+	*/
+	FORCEINLINE const FString& GetName() const
+	{
+		return  Name;
+	}
+
+	/**
+	* Set the name of the Manager.
 	*  Default value is TCsManager_ResourceValueType.
 	*
 	* @param InName		Name to set for the Manager.
@@ -73,6 +85,28 @@ public:
 	void SetName(const FString& InName)
 	{
 		Name = InName;
+	}
+
+	/**
+	*
+	*
+	* return
+	*/
+	FORCEINLINE const FName& GetFName() const 
+	{
+		return Name_Internal;
+	}
+
+	/**
+	* Set the name of the Manager.
+	*  Default value is TCsManager_ResourcePointerType.
+	*
+	* @param InName		Name to set for the Manager.
+	*/
+	void SetFName(const FName& InName)
+	{
+		Name_Internal = InName;
+		Name		  = Name_Internal.ToString();
 	}
 
 	/**

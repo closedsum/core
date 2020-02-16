@@ -392,7 +392,7 @@ void UCsTdManager_Creep::OnPostUpdate_Pool(const FECsTdCreep& Type)
 	// Payload
 #pragma region
 
-FCsTdCreepPayload* UCsTdManager_Creep::AllocatePayload(const FECsTdCreep& Type)
+ICsTdCreepPayload* UCsTdManager_Creep::AllocatePayload(const FECsTdCreep& Type)
 {
 	return Internal->AllocatePayload(Type);
 }
@@ -402,12 +402,8 @@ FCsTdCreepPayload* UCsTdManager_Creep::AllocatePayload(const FECsTdCreep& Type)
 	// Spawn
 #pragma region
 
-const FCsTdCreepPooled* UCsTdManager_Creep::Spawn(const FECsTdCreep& Type, FCsTdCreepPayload* Payload)
+const FCsTdCreepPooled* UCsTdManager_Creep::Spawn(const FECsTdCreep& Type, ICsTdCreepPayload* Payload)
 {
-	checkf(EMCsTdCreep::Get().IsValidEnum(Type), TEXT("UCsTdManager_Creep::Destroy: Type: %s is NOT a valid Enum."), *(Type.Name));
-
-	checkf(Payload, TEXT("UCsTdManager_Creep::Spawn: Payload is NULL."));
-
 	return Spawn(Type, Payload);
 }
 
@@ -418,17 +414,11 @@ const FCsTdCreepPooled* UCsTdManager_Creep::Spawn(const FECsTdCreep& Type, FCsTd
 
 bool UCsTdManager_Creep::Destroy(const FECsTdCreep& Type, ICsTdCreep* Creep)
 {
-	checkf(EMCsTdCreep::Get().IsValidEnum(Type), TEXT("UCsTdManager_Creep::Destroy: Type: %s is NOT a valid Enum."), *(Type.Name));
-	
-	checkf(Creep, TEXT("UCsTdManager_Creep::Destroy: Creep is NULL."));
-
 	return Destroy(Type, Creep);
 }
 
 bool UCsTdManager_Creep::Destroy(ICsTdCreep* Creep)
 {
-	checkf(Creep, TEXT("UCsTdManager_Creep::Destroy: Creep is NULL."));
-
 	return Destroy(Creep);
 }
 

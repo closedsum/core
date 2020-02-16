@@ -407,6 +407,8 @@ struct ICsPooledObjectPayload;
 
 struct CSCORE_API ICsPooledObjectCache
 {
+public:
+
 	virtual ~ICsPooledObjectCache(){}
 
 	virtual const int32& GetIndex() const = 0;

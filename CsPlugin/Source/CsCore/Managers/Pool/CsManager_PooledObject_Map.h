@@ -51,15 +51,15 @@ struct ICsPooledObjectPayload;
 template<typename InterfaceType, typename InterfaceContainerType, typename PayloadType, typename KeyType>
 class TCsManager_PooledObject_Map : public ICsManager_PooledObject_Map
 {
-	static_assert(std::is_abstract<InterfaceType>(), "TCsManager_PooledObject_Map: InterafaceType is NOT an abstract class.");
+	static_assert(std::is_abstract<InterfaceType>(), "TCsManager_PooledObject_Map: InterafaceType MUST be abstract.");
 
 	// TODO: Check InterfaceType implements _getUObject
 
 	static_assert(std::is_base_of<FCsPooledObject, InterfaceContainerType>(), "TCsManager_PooledObject_Map: InterfaceContainerType is NOT a child of: FCsPooledObject.");
 
-	//static_assert(std::is_abstract<PayloadType>(), "TCsManager_PooledObject_Map: PayloadType Is NOT an abstract class.");
+	static_assert(std::is_abstract<PayloadType>(), "TCsManager_PooledObject_Map: PayloadType MUST be abstract.");
 
-	static_assert(std::is_base_of<ICsPooledObjectPayload, PayloadType>(), "TCsManager_PooledObject_Map: PayloadType does NOT implement the interface: ICsPooledObjectPayload.");
+	static_assert(std::is_base_of<ICsGetInterfaceMap, PayloadType>(), "TCsManager_PooledObject_Map: PayloadType does NOT implement the interface: ICsGetInterfaceMap.");
 
 private:
 

@@ -20,6 +20,7 @@ public:
 
 	TCsManager_ResourceValueType_Abstract() :
 		Name(),
+		Name_Internal(),
 		Resources(),
 		Pool(),
 		PoolSize(0),
@@ -30,6 +31,7 @@ public:
 		AllocatedSize(0)
 	{
 		Name = TEXT("TCsManager_ResourceValueType_Abstract");
+		Name_Internal = FName(*Name);
 	}
 
 	virtual ~TCsManager_ResourceValueType_Abstract()
@@ -39,8 +41,10 @@ public:
 
 private:
 
-	/** Name of the Manager */
+	/** String Name of the Manager */
 	FString Name;
+	/** FName of the Manager */
+	FName Name_Internal;
 
 	/** List of references to ResourceTypes */
 	TArray<ResourceType*> Resources;
@@ -65,14 +69,47 @@ private:
 public:
 
 	/**
-	* Set the name of the Manager. This is mostly used for debugging.
-	*  Default value is TCsManager_ResourceValueType.
+	*
+	*
+	* return
+	*/
+	FORCEINLINE const FString& GetName() const
+	{
+		return  Name;
+	}
+
+	/**
+	* Set the name of the Manager.
+	*  Default value is TCsManager_ResourcePointerType_Fixed.
 	*
 	* @param InName		Name to set for the Manager.
 	*/
 	void SetName(const FString& InName)
 	{
-		Name = InName;
+		Name		  = InName;
+		Name_Internal = FName(*Name);
+	}
+
+	/**
+	*
+	*
+	* return
+	*/
+	FORCEINLINE const FName& GetFName() const 
+	{
+		return Name_Internal;
+	}
+
+	/**
+	* Set the name of the Manager.
+	*  Default value is TCsManager_ResourcePointerType.
+	*
+	* @param InName		Name to set for the Manager.
+	*/
+	void SetFName(const FName& InName)
+	{
+		Name_Internal = InName;
+		Name		  = Name_Internal.ToString();
 	}
 
 	/**

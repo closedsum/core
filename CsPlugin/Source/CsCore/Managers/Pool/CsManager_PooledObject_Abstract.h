@@ -112,8 +112,6 @@ public:
 
 	virtual void ConstructPayloads(const int32& Size) = 0;
 
-	//virtual FCsManagerPooledObject_ConstructPayloads& GetConstructPayloads_Impl() = 0;
-
 	virtual void DeconstructPayloads() = 0;
 
 #pragma endregion Payload
@@ -165,15 +163,15 @@ class UClass;
 template<typename InterfaceType, typename InterfaceContainerType, typename PayloadType>
 class TCsManager_PooledObject_Abstract
 {
-	static_assert(std::is_abstract<InterfaceType>(), "TCsManager_PooledObject_Abstract: InterfaceType is NOT an abstract class.");
+	static_assert(std::is_abstract<InterfaceType>(), "TCsManager_PooledObject_Abstract: InterfaceType MUST be abstract.");
 
 	// TODO: Check InterfaceType implements _getUObject
  
 	static_assert(std::is_base_of<FCsPooledObject, InterfaceContainerType>(), "TCsManager_PooledObject_Abstract: InterfaceContainerType is NOT a child of: FCsPooledObject.");
 
-	//static_assert(!(std::is_abstract<PayloadType>()), "TCsManager_PooledObject_Abstract: PayloadType IS an abstract class.");
+	static_assert(std::is_abstract<PayloadType>(), "TCsManager_PooledObject_Abstract: PayloadType MUST be abstract.");
 
-	static_assert(std::is_base_of<ICsPooledObjectPayload, PayloadType>(), "TCsManager_PooledObject_Abstract: PayloadType does NOT implement the interface: ICsPooledObjectPayload.");
+	static_assert(std::is_base_of<ICsGetInterfaceMap, PayloadType>(), "TCsManager_PooledObject_Abstract: PayloadType does NOT implement the interface: ICsGetInterfaceMap.");
 
 public:
 	TCsManager_PooledObject_Abstract()
@@ -197,8 +195,6 @@ public:
 		Payloads.Reset();
 		PayloadSize = 0;
 		PayloadIndex = 0;
-
-		ConstructPayloads_Impl.BindRaw(this, &TCsManager_PooledObject_Abstract<InterfaceType, InterfaceContainerType, PayloadType>::ConstructPayloads_Internal);
 
 		OnSpawn_Event.Clear();
 	}
@@ -263,7 +259,7 @@ public:
 		PoolSize = 0;
 		AllocatedObjects.Reset();
 
-		for (PayloadType* P : Payloads)
+		for (ICsPooledObjectPayload* P : PooledObjectPayloads)
 		{
 			P->Reset();
 		}
@@ -301,6 +297,7 @@ public:
 				Payloads[I] = nullptr;
 			}
 			Payloads.Reset();
+			PooledObjectPayloads.Reset();
 		}
 
 		OnUpdate_Object_Event.Clear();
@@ -497,7 +494,6 @@ public:
 	virtual void CreatePool(const int32& Size)
 	{
 		checkf(Size > 0, TEXT("%s::CreatePool: Size must be GREATER THAN 0."), *Name);
-
 
 		PoolSize = Size;
 
@@ -1202,7 +1198,7 @@ protected:
 	{
 		if (IsExhausted())
 		{
-			checkf(0, TEXT("%s::Allocate: Pool is exhausted"), *Name);
+			checkf(0, TEXT("%s::Allocate: Pool is exhausted. Pool Size is %d."), *Name, PoolSize);
 			return nullptr;
 		}
 
@@ -1213,11 +1209,17 @@ protected:
 
 			if (!O->GetCache()->IsAllocated())
 			{
-				O->Allocate(Payload);
+				FCsInterfaceMap* InterfaceMap = Payload->GetInterfaceMap();
+
+				checkf(InterfaceMap, TEXT("%s::Spawn: InterfaceMap is NULL. PayloadType failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."), *Name);
+
+				ICsPooledObjectPayload* P = InterfaceMap->Get<ICsPooledObjectPayload>();
+
+				O->Allocate(P);
 				return O;
 			}
 		}
-		checkf(0, TEXT("%s::Allocate: Pool is exhausted"), *Name);
+		checkf(0, TEXT("%s::Allocate: Pool is exhausted. Pool Size is %d."), *Name, PoolSize);
 		return nullptr;
 	}
 
@@ -1339,6 +1341,8 @@ protected:
 	/** */
 	TArray<PayloadType*> Payloads;
 	/** */
+	TArray<ICsPooledObjectPayload*> PooledObjectPayloads;
+	/** */
 	int32 PayloadSize;
 	/** */
 	int32 PayloadIndex;
@@ -1352,35 +1356,34 @@ public:
 	*/
 	void ConstructPayloads(const int32& Size)
 	{
-		ConstructPayloads_Impl.Execute(Size);
-	}
+		checkf(ConstructPayload_Impl.IsBound(), TEXT("%s::ConstructPaylaods: ConstructPayload_Impl is NOT bound."), *Name);
 
-protected:
-
-	/**
-	*
-	*
-	* @param Size
-	*/
-	void ConstructPayloads_Internal(const int32& Size)
-	{
 		PayloadSize = Size;
 
 		Payloads.Reserve(PayloadSize);
+		PooledObjectPayloads.Reserve(PayloadSize);
 
 		for (int32 I = 0; I < Size; ++I)
 		{
-			//Payloads.Add(new PayloadType());
+			Payloads.Add(ConstructPayload_Impl.Execute());
+
+			checkf(Payloads[I], TEXT("%s::ConstructPayloads: Failed to construct payload of type: PayloadType."), *Name);
+
+			FCsInterfaceMap* InterfaceMap = Payloads[I]->GetInterfaceMap();
+
+			checkf(InterfaceMap, TEXT("%s::ConstructPayloads:InterfaceMap is NULL. PayloadType failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."), *Name);
+
+			ICsPooledObjectPayload* P = InterfaceMap->Get<ICsPooledObjectPayload>();
+
+			PooledObjectPayloads.Add(P);
 		}
 	}
-
-public:
 
 	/**
 	*
 	* @param Size
 	*/
-	TBaseDelegate<void, const int32& /*Size*/> ConstructPayloads_Impl;
+	TBaseDelegate<PayloadType*> ConstructPayload_Impl;
 
 	/**
 	*
@@ -1394,6 +1397,7 @@ public:
 			Payloads[I] = nullptr;
 		}
 		Payloads.Reset(PayloadSize);
+		PooledObjectPayloads.Reset(PayloadSize);
 		PayloadSize = 0;
 	}
 
@@ -1406,16 +1410,17 @@ public:
 	{
 		for (int32 I = 0; I < PayloadSize; ++I)
 		{
-			PayloadIndex		 = (PayloadIndex + 1) % PayloadSize;
-			PayloadType* Payload = Payloads[PayloadIndex];
+			PayloadIndex			  = (PayloadIndex + 1) % PayloadSize;
+			PayloadType* Payload	  = Payloads[PayloadIndex];
+			ICsPooledObjectPayload* P = PooledObjectPayloads[PayloadIndex];
 
-			if (!Payload->IsAllocated())
+			if (!P->IsAllocated())
 			{
-				Payload->Allocate();
+				P->Allocate();
 				return Payload;
 			}
 		}
-		checkf(0, TEXT("%s::AllocatePayload: Pool is exhausted"), *Name);
+		checkf(0, TEXT("%s::AllocatePayload: Pool is exhausted. Pool Size = %d."), *Name, PayloadSize);
 		return nullptr;
 	}
 
@@ -1476,12 +1481,19 @@ public:
 	* @param Payload
 	* return
 	*/
-	virtual const InterfaceContainerType* Spawn(PayloadType* Payload)
+	const InterfaceContainerType* Spawn(PayloadType* Payload)
 	{
 		InterfaceContainerType* O = Allocate(Payload);
 
 		LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn], ECsPoolTransaction::Allocate, O);
-		Payload->Reset();
+
+		FCsInterfaceMap* InterfaceMap = Payload->GetInterfaceMap();
+
+		checkf(InterfaceMap, TEXT("%s::Spawn: InterfaceMap is NULL. PayloadType failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."), *Name);
+
+		ICsPooledObjectPayload* P = InterfaceMap->Get<ICsPooledObjectPayload>();
+		P->Reset();
+
 		AddToAllocatedObjects_Internal(O);
 		OnSpawn_Event.Broadcast(O);
 		return O;

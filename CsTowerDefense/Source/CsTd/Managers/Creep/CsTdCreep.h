@@ -112,6 +112,10 @@ public:
 #pragma region
 public:
 
+	virtual void SetInterface(ICsPooledObject* InInterface) override;
+
+	virtual void SetObject(UObject* InObject) override;
+
 	virtual void Reset() override
 	{
 		Super::Reset();

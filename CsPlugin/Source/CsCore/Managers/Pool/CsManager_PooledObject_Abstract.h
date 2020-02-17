@@ -19,8 +19,6 @@ public:
 
 	UClass* Class;
 
-	FString ClassName;
-
 	ECsPooledObjectConstruction ConstructionType;
 
 	FActorSpawnParameters ConstructionInfo;
@@ -29,7 +27,6 @@ public:
 
 	FCsManagerPooledObjectConstructParams() :
 		Class(nullptr),
-		ClassName(),
 		ConstructionType(ECsPooledObjectConstruction::Object),
 		ConstructionInfo(),
 		bReplicates(false)
@@ -281,7 +278,7 @@ public:
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				TLinkedList<InterfaceContainerType*>* L = Links[I];
+				TCsDoubleLinkedList<InterfaceContainerType*>* L = Links[I];
 				delete L;
 				Links[I] = nullptr;
 			}
@@ -470,7 +467,7 @@ protected:
 	/** */
 	TArray<InterfaceContainerType*> Pool;
 	/** */
-	TArray<TLinkedList<InterfaceContainerType*>*> Links;
+	TArray<TCsDoubleLinkedList<InterfaceContainerType*>*> Links;
 	/** */
 	int32 PoolSize;
 	/** */
@@ -479,9 +476,9 @@ protected:
 	/** */
 	TArray<InterfaceContainerType*> AllocatedObjects;
 	/** */
-	TLinkedList<InterfaceContainerType*>* AllocatedHead;
+	TCsDoubleLinkedList<InterfaceContainerType*>* AllocatedHead;
 	/** */
-	TLinkedList<InterfaceContainerType*>* AllocatedTail;
+	TCsDoubleLinkedList<InterfaceContainerType*>* AllocatedTail;
 	/** */
 	int32 AllocatedObjectsSize;
 
@@ -538,9 +535,9 @@ public:
 			Pool.Add(O);
 
 			// Add Link
-			Links.Add(new TLinkedList<InterfaceContainerType*>());
+			Links.Add(new TCsDoubleLinkedList<InterfaceContainerType*>());
 			// Set Element for Link
-			TLinkedList<InterfaceContainerType*>* Link = Links.Last();
+			TCsDoubleLinkedList<InterfaceContainerType*>* Link = Links.Last();
 			(**Link)								  = O;
 
 			OnAddToPool_Event.Broadcast(O);
@@ -610,9 +607,9 @@ public:
 		O->Deallocate();
 
 		// Add Link
-		Links.Add(new TLinkedList<InterfaceContainerType*>());
+		Links.Add(new TCsDoubleLinkedList<InterfaceContainerType*>());
 		// Set Element for Link
-		TLinkedList<InterfaceContainerType*>* Link = Links.Last();
+		TCsDoubleLinkedList<InterfaceContainerType*>* Link = Links.Last();
 		(**Link) = O;
 
 		++PoolSize;
@@ -810,7 +807,7 @@ protected:
 	{
 		const int32& Index = Object->GetCache()->GetIndex();
 
-		TLinkedList<InterfaceContainerType*>* Link = Links[Index];
+		TCsDoubleLinkedList<InterfaceContainerType*>* Link = Links[Index];
 
 		AddAllocatedLink(Link);
 		AllocatedObjects.Add(Object);
@@ -824,12 +821,12 @@ protected:
 #pragma region
 public:
 
-	FORCEINLINE const TLinkedList<InterfaceContainerType*>* GetAllocatedHead()
+	FORCEINLINE const TCsDoubleLinkedList<InterfaceContainerType*>* GetAllocatedHead()
 	{
 		return AllocatedHead;
 	}
 
-	FORCEINLINE const TLinkedList<InterfaceContainerType*>* GetAllocatedTail()
+	FORCEINLINE const TCsDoubleLinkedList<InterfaceContainerType*>* GetAllocatedTail()
 	{
 		return AllocatedTail;
 	}
@@ -841,7 +838,7 @@ protected:
 	*
 	* @param Link
 	*/
-	void AddAllocatedLink(TLinkedList<InterfaceContainerType*>* Link)
+	void AddAllocatedLink(TCsDoubleLinkedList<InterfaceContainerType*>* Link)
 	{
 		if (AllocatedTail)
 		{
@@ -860,14 +857,14 @@ protected:
 	*
 	* @param Link
 	*/
-	void RemoveAllocatedLink(TLinkedList<InterfaceContainerType*>* Link)
+	void RemoveAllocatedLink(TCsDoubleLinkedList<InterfaceContainerType*>* Link)
 	{
 		// Check to Update HEAD
 		if (Link == AllocatedHead)
 		{
 			if (AllocatedObjectsSize > CS_SINGLETON)
 			{
-				AllocatedHead = Link->GetNextLink();
+				AllocatedHead = Link->Next();
 			}
 			else
 			{
@@ -1107,8 +1104,8 @@ public:
 	*/
 	void Update(const FCsDeltaTime& DeltaTime)
 	{
-		TLinkedList<InterfaceContainerType*>* Current = AllocatedHead;
-		TLinkedList<InterfaceContainerType*>* Next	 = Current;
+		TCsDoubleLinkedList<InterfaceContainerType*>* Current = AllocatedHead;
+		TCsDoubleLinkedList<InterfaceContainerType*>* Next	  = Current;
 
 		int32 NewSize = 0;
 
@@ -1116,7 +1113,7 @@ public:
 		{
 			Current					  = Next;
 			InterfaceContainerType* O = **Current;
-			Next					  = Current->GetNextLink();
+			Next					  = Current->Next();
 
 			if (O->GetCache()->GetUpdateType() == ECsPooledObjectUpdate::Manager)
 			{
@@ -1261,8 +1258,8 @@ public:
 			return false;
 		}
 
-		TLinkedList<InterfaceContainerType*>* Link = Links[Index];
-		InterfaceContainerType* O				   = **Link;
+		TCsDoubleLinkedList<InterfaceContainerType*>* Link = Links[Index];
+		InterfaceContainerType* O						   = **Link;
 
 #if !UE_BUILD_SHIPPING
 		LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Deallocate], ECsPoolTransaction::Deallocate, O);
@@ -1272,8 +1269,8 @@ public:
 		RemoveAllocatedLink(Link);
 
 		// Update AllocatedObjects
-		TLinkedList<InterfaceContainerType*>* Current = AllocatedHead;
-		TLinkedList<InterfaceContainerType*>* Next    = Current;
+		TCsDoubleLinkedList<InterfaceContainerType*>* Current = AllocatedHead;
+		TCsDoubleLinkedList<InterfaceContainerType*>* Next    = Current;
 
 		int32 NewSize = 0;
 
@@ -1281,7 +1278,7 @@ public:
 		{
 			Current = Next;
 			O		= **Current;
-			Next	= Current->GetNextLink();
+			Next	= Current->Next();
 
 			if (NewSize < AllocatedObjectsSize)
 			{
@@ -1323,14 +1320,13 @@ public:
 
 		AllocatedObjects.Reset(PoolSize);
 
-		TLinkedList<InterfaceContainerType>* Current = AllocatedHead;
-		TLinkedList<InterfaceContainerType>* Next	 = Current;
-
+		TCsDoubleLinkedList<InterfaceContainerType>* Current = AllocatedHead;
+		TCsDoubleLinkedList<InterfaceContainerType>* Next	 = Current;
 
 		while (Next)
 		{
 			Current = Next;
-			Next	= Current->GetNextLink();
+			Next	= Current->Next();
 
 			Current->Unlink();
 		}

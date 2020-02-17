@@ -141,6 +141,7 @@ public:
 
 			TManager_PooledObject_Abstract* Pool = ConstructManagerPooledObjects_Impl.Execute(Key);
 			Pool->Init(P);
+			Pool->ConstructPayload_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructPayload_Internal)
 
 			Pools.Add(Key, Pool);
 		}
@@ -798,6 +799,10 @@ private:
 
 // Payload
 #pragma region
+private:
+
+	KeyType CurrentConstructPayloadType;
+
 public:
 
 	/**
@@ -811,8 +816,27 @@ public:
 	{
 		checkf(IsValidKey(Type), TEXT("%s::ConstructPayloads: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
 
+		CurrentConstructPayloadType = Type;
+
 		CheckAndAddType(Type)->ConstructPayloads(Size);
 	}
+
+	/**
+	*
+	*
+	* @param Type
+	* return
+	*/
+	TBaseDelegate<PayloadType*, const KeyType& /*Type*/> ConstructPayload_Impl;
+
+private:
+
+	PayloadType* ConstructPayload_Internal()
+	{
+		return ConstructPayload_Impl.Execute(CurrentConstructPayloadType);
+	}
+
+public:
 
 	/**
 	* Delete all payload objects for the appropriate Type.
@@ -870,7 +894,7 @@ public:
 	* return			Container holding a reference to a pooled object.
 	*					Pooled Object implements the interface: ICsPooledObject.
 	*/
-	virtual const InterfaceContainerType* Spawn(const KeyType& Type, PayloadType* Payload)
+	const InterfaceContainerType* Spawn(const KeyType& Type, PayloadType* Payload)
 	{
 		checkf(IsValidKey(Type), TEXT("%s::Spawn: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
 
@@ -879,6 +903,14 @@ public:
 		OnSpawn_Event.Broadcast(Type, Object);
 		return Object;
 	}
+
+	/*
+	template<template OtherContainerType, template OtherPayloadType>
+	const OtherContainerType* Spawn(const KeyType& Type, OtherPayloadType* Payload)
+	{
+
+	}
+	*/
 
 	/** 
 	*

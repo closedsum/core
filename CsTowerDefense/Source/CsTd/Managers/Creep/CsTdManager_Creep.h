@@ -528,6 +528,14 @@ protected:
 public:
 
 	/**
+	*
+	*
+	* @param Type
+	* return
+	*/
+	ICsTdCreepPayload* ConstructPayload(const FECsTdCreep& Type);
+
+	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
 	*  Payload implements the interface: ICsPooledObjectPayload.
 	*
@@ -548,7 +556,15 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	virtual const FCsTdCreepPooled* Spawn(const FECsTdCreep& Type, ICsTdCreepPayload* Payload);
+	const FCsTdCreepPooled* Spawn(const FECsTdCreep& Type, ICsTdCreepPayload* Payload);
+
+	/*
+	template<typename CreepContainerType, typename PayloadType>
+	const CreepContainerType* Spawn(const FECsTdCreep& Type, PayloadType* Payload)
+	{
+		Internal->
+	}
+	*/
 
 	/**
 	* Delegate type after a Creep has been Spawned.

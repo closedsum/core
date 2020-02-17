@@ -368,7 +368,7 @@ public:
 				GetCurrentWorld()->RemoveNetworkActor(Actor);
 			}
 
-			checkf(Actor, TEXT("%s:ContructObject: Actor did NOT spawn."), *Name);
+			checkf(Actor, TEXT("%s:ContructObject: Actor is NULL. Actor did NOT spawn."), *Name);
 
 			Object = Actor;
 		}
@@ -1499,6 +1499,35 @@ public:
 		return O;
 	}
 
+	template<typename OtherContainerType, typename OtherPayloadType>
+	const OtherContainerType* Spawn(OtherPayloadType* Payload)
+	{
+		static_assert(std::is_base_of<InterfaceContainerType, OtherContainerType>(), "");
+
+		static_assert(std::is_abstract<OtherPayloadType>(), "");
+
+		// Get Interface Map
+		FCsInterfaceMap* InterfaceMap = Payload->GetInterfaceMap();
+
+		// Get PayloadType
+		PayloadType* P = InterfaceMap->Get<PayloadType>();
+
+		checkf(P, TEXT(""));
+
+		InterfaceContainerType* O = Allocate(P);
+
+		LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn], ECsPoolTransaction::Allocate, O)
+
+		checkf(InterfaceMap, TEXT("%s::Spawn: InterfaceMap is NULL. PayloadType failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."), *Name);
+
+		// Get PooledObjectPayload
+		ICsPooledObjectPayload* PooledObjectPayload = InterfaceMap->Get<ICsPooledObjectPayload>();
+		PooledObjectPayload->Reset();
+
+		AddToAllocatedObjects_Internal(O);
+		OnSpawn_Event.Broadcast(O);
+		return static_cast<OtherContainerType*>(O);
+	}
 
 	/**
 	*

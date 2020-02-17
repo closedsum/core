@@ -216,15 +216,21 @@ void UCsTdManager_Creep::ConstructInternal()
 {
 	Internal = new FCsTdManager_Creep_Internal();
 
-	Internal->OnPreUpdate_Pool_Impl.BindUObject(this, &UCsTdManager_Creep::OnPreUpdate_Pool);
-	Internal->OnUpdate_Object_Event.AddUObject(this, &UCsTdManager_Creep::OnUpdate_Object);
-	Internal->OnPostUpdate_Pool_Impl.BindUObject(this, &UCsTdManager_Creep::OnPostUpdate_Pool);
+	// Delegates
+	{
+		// Payload
+		Internal->ConstructPayload_Impl.BindUObject(this, &UCsTdManager_Creep::ConstructPayload);
+		// Update
+		Internal->OnPreUpdate_Pool_Impl.BindUObject(this, &UCsTdManager_Creep::OnPreUpdate_Pool);
+		Internal->OnUpdate_Object_Event.AddUObject(this, &UCsTdManager_Creep::OnUpdate_Object);
+		Internal->OnPostUpdate_Pool_Impl.BindUObject(this, &UCsTdManager_Creep::OnPostUpdate_Pool);
 
-	// Bind delegates for a script interface.
-	Internal->Script_GetCache_Impl = Script_GetCache_Impl;
-	Internal->Script_Allocate_Impl = Script_Allocate_Impl;
-	Internal->Script_Deallocate_Impl = Script_Deallocate_Impl;
-	Internal->Script_Update_Impl = Script_Update_Impl;
+		// Bind delegates for a script interface.
+		Internal->Script_GetCache_Impl = Script_GetCache_Impl;
+		Internal->Script_Allocate_Impl = Script_Allocate_Impl;
+		Internal->Script_Deallocate_Impl = Script_Deallocate_Impl;
+		Internal->Script_Update_Impl = Script_Update_Impl;
+	}
 }
 
 void UCsTdManager_Creep::InitInternal(const TCsTdManager_Internal::FCsManagerPooledObjectMapParams& Params)
@@ -242,13 +248,11 @@ void UCsTdManager_Creep::Clear()
 
 void UCsTdManager_Creep::CreatePool(const FECsTdCreep& Type, const int32& Size)
 {
-	checkf(EMCsTdCreep::Get().IsValidEnum(Type), TEXT("UCsTdManager_Creep::Type: Type: %s is NOT a valid Enum."), *(Type.Name));
-
-	checkf(Size > 0, TEXT("UCsTdManager_Creep::CreatePool: Size must be GREATER THAN 0."));
-
 	// TODO: Check if the pool has already been created
 
 	Internal->CreatePool(Type, Size);
+	// TODO: Expose Payload Size somewhere
+	Internal->ConstructPayloads(Type, 4);
 }
 
 		// Add
@@ -264,13 +268,7 @@ const FCsTdCreepPooled* UCsTdManager_Creep::AddToPool(const FECsTdCreep& Type, I
 
 const FCsTdCreepPooled* UCsTdManager_Creep::AddToPool(const FECsTdCreep& Type, const FCsTdCreepPooled* Object)
 {
-	checkf(EMCsTdCreep::Get().IsValidEnum(Type), TEXT("UCsTdManager_Creep::AddToPool: Type: %s is NOT a valid Enum."), *(Type.Name));
-
-	UObject* O = Object->GetObject();
-
-	checkf(O, TEXT("UCsTdManager_Creep::AddToPool: O is NULL."));
-
-	return Internal->AddToPool(Type, O);
+	return Internal->AddToPool(Type, Object->GetObject());
 }
 
 const FCsTdCreepPooled* UCsTdManager_Creep::AddToPool(const FECsTdCreep& Type, UObject* Object)
@@ -391,6 +389,11 @@ void UCsTdManager_Creep::OnPostUpdate_Pool(const FECsTdCreep& Type)
 
 	// Payload
 #pragma region
+
+ICsTdCreepPayload* UCsTdManager_Creep::ConstructPayload(const FECsTdCreep& Type)
+{
+	return new FCsTdCreepPayload();
+}
 
 ICsTdCreepPayload* UCsTdManager_Creep::AllocatePayload(const FECsTdCreep& Type)
 {

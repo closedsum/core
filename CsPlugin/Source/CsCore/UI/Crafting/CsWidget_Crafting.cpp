@@ -397,9 +397,9 @@ void UCsWidget_Crafting::IncrementCount()
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler						= UCsCoroutineScheduler::Get(GetGameInstance());
-	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(GetGameInstance());
+	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsWidget_Crafting::IncrementCount_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
@@ -524,9 +524,9 @@ void UCsWidget_Crafting::DecrementCount()
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler						= UCsCoroutineScheduler::Get(GetGameInstance());
-	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(GetGameInstance());
+	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsWidget_Crafting::DecrementCount_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
@@ -705,9 +705,9 @@ void UCsWidget_Crafting::UpdateProgress(const uint64 &PayloadId)
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler						= UCsCoroutineScheduler::Get(GetGameInstance());
-	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(GetGameInstance());
+	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsWidget_Crafting::UpdateProgress_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);

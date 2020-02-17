@@ -397,9 +397,9 @@ void UCsGameInstance::OnBoard()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler						= UCsCoroutineScheduler::Get(this);
-	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(this);
+	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsGameInstance::OnBoard_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
@@ -463,9 +463,9 @@ void UCsGameInstance::LoadDataMapping()
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler						= UCsCoroutineScheduler::Get(this);
-	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(this);
+	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsGameInstance::LoadDataMapping_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
@@ -616,9 +616,9 @@ void UCsGameInstance::CreateFullscreenWidget()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler						= UCsCoroutineScheduler::Get(this);
-	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(this);
+	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsGameInstance::CreateFullscreenWidget_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
@@ -685,9 +685,9 @@ void UCsGameInstance::HideMouseCursor()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler						= UCsCoroutineScheduler::Get(this);
-	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(this);
+	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsGameInstance::HideMouseCursor_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
@@ -748,9 +748,9 @@ void UCsGameInstance::PerformLevelTransition(const FString& Level, const FString
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler						= UCsCoroutineScheduler::Get(this);
-	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(this);
+	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&UCsGameInstance::PerformLevelTransition_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);

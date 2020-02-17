@@ -127,8 +127,8 @@ void ACsDamageableActor::Respawn()
 
 	const FECsUpdateGroup Group = NCsUpdateGroup::GameState;
 
-	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
+	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsDamageableActor::Respawn_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);

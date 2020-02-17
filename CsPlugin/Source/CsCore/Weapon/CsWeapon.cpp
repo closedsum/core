@@ -1069,9 +1069,9 @@ void ACsWeapon::PlayAnimation_Reload()
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler						= UCsCoroutineScheduler::Get(GetGameInstance());
-	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(GetGameInstance());
+	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsWeapon::PlayAnimation_Reload_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
@@ -1437,9 +1437,9 @@ void ACsWeapon::StartChargeFire(const FECsWeaponFireMode& FireMode)
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler						= UCsCoroutineScheduler::Get(GetGameInstance());
-	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(GetGameInstance());
+	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsWeapon::StartChargeFire_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
@@ -1648,9 +1648,9 @@ void ACsWeapon::FireWeapon(const FECsWeaponFireMode& FireMode)
 	
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler						= UCsCoroutineScheduler::Get(GetGameInstance());
-	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(GetGameInstance());
+	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsWeapon::FireWeapon_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
@@ -1885,9 +1885,9 @@ void ACsWeapon::DrawFireProjectile(class ACsProjectileBase* Projectile, const FV
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler						= UCsCoroutineScheduler::Get(GetGameInstance());
-	FCsResourceContainer_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload							= PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(GetGameInstance());
+	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
+	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
 	Payload->Coroutine.BindStatic(&ACsWeapon::DrawFireProjectile_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);

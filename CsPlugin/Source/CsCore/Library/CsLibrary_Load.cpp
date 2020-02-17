@@ -116,7 +116,7 @@ ECsLoadFlags UCsLibrary_Load::ViewTypeToLoadFlags(const ECsViewType& ViewType, c
 		return IsLow ? ECsLoadFlags::Game3PLow : ECsLoadFlags::Game3P;
 	if (ViewType == ECsViewType::VR)
 		return ECsLoadFlags::GameVR;
-	return ECsLoadFlags::All;
+	return ECsLoadFlags::Game;
 }
 
 #pragma endregion Enum to Enum Conversion
@@ -964,8 +964,8 @@ void UCsLibrary_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWr
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::VerticalTextAligment))
 				{ WriteMemberEnumAsBytePropertyToJson<EVerticalTextAligment, EMVerticalTextAligment>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
 				// ECsLoadFlags_Editor
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
-				{ WriteMemberEnumAsBytePropertyToJson<ECsLoadFlags_Editor::Type, EMCsLoadFlags_Editor>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
+				//{ WriteMemberEnumAsBytePropertyToJson<ECsLoadFlags_Editor::Type, EMCsLoadFlags_Editor>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
 				// ECsFxPriority
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFxPriority))
 				{ WriteMemberEnumAsBytePropertyToJson<ECsFxPriority::Type, EMCsFxPriority>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
@@ -1735,8 +1735,8 @@ void UCsLibrary_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWr
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::VerticalTextAligment))
 				{ WriteMemberEnumAsBytePropertyToJson<EVerticalTextAligment, EMVerticalTextAligment>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
 				// ECsLoadFlags_Editor
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
-				{ WriteMemberEnumAsBytePropertyToJson<ECsLoadFlags_Editor::Type, EMCsLoadFlags_Editor>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
+				//{ WriteMemberEnumAsBytePropertyToJson<ECsLoadFlags_Editor::Type, EMCsLoadFlags_Editor>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
 				// ECsFxPriority
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFxPriority))
 				{ WriteMemberEnumAsBytePropertyToJson<ECsFxPriority::Type, EMCsFxPriority>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
@@ -2421,8 +2421,8 @@ void UCsLibrary_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWr
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::VerticalTextAligment))
 				{ WriteMemberEnumAsBytePropertyToJson<EVerticalTextAligment, EMVerticalTextAligment>(InJsonWriter, ByteProperty, InObject, MemberName); continue; }
 				// ECsLoadFlags_Editor
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
-				{ WriteMemberEnumAsBytePropertyToJson<ECsLoadFlags_Editor::Type, EMCsLoadFlags_Editor>(InJsonWriter, ByteProperty, InObject, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
+				//{ WriteMemberEnumAsBytePropertyToJson<ECsLoadFlags_Editor::Type, EMCsLoadFlags_Editor>(InJsonWriter, ByteProperty, InObject, MemberName); continue; }
 				// ECsFxPriority
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFxPriority))
 				{ WriteMemberEnumAsBytePropertyToJson<ECsFxPriority::Type, EMCsFxPriority>(InJsonWriter, ByteProperty, InObject, MemberName); continue; }
@@ -3337,8 +3337,8 @@ void UCsLibrary_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, vo
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::VerticalTextAligment))
 				{ WriteToMemberEnumAsBytePropertyFromJson<EHorizTextAligment, EMHorizTextAligment>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
 				// ECsLoadFlags_Editor
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
-				{ WriteToMemberEnumAsBytePropertyFromJson<ECsLoadFlags_Editor::Type, EMCsLoadFlags_Editor>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
+				//{ WriteToMemberEnumAsBytePropertyFromJson<ECsLoadFlags_Editor::Type, EMCsLoadFlags_Editor>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
 				// ECsFxPriority
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFxPriority))
 				{ WriteToMemberEnumAsBytePropertyFromJson<ECsFxPriority::Type, EMCsFxPriority>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
@@ -4109,8 +4109,8 @@ void UCsLibrary_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, vo
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::VerticalTextAligment))
 				{ WriteToMemberEnumAsBytePropertyFromJson<EHorizTextAligment, EMHorizTextAligment>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
 				// ECsLoadFlags_Editor
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
-				{ WriteToMemberEnumAsBytePropertyFromJson<ECsLoadFlags_Editor::Type, EMCsLoadFlags_Editor>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
+				//{ WriteToMemberEnumAsBytePropertyFromJson<ECsLoadFlags_Editor::Type, EMCsLoadFlags_Editor>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
 				// ECsFxPriority
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFxPriority))
 				{ WriteToMemberEnumAsBytePropertyFromJson<ECsFxPriority::Type, EMCsFxPriority>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
@@ -6351,6 +6351,7 @@ void UCsLibrary_Load::GetObjectPaths(const void* StructValue, UStruct* const& St
 
 void UCsLibrary_Load::GetObjectPaths(const void* StructValue, UStruct* const& Struct, TMap<FName, FSoftObjectPath>& OutObjectPathMap)
 {
+	// Iterate through Properties
 	for (TPropertyValueIterator<UProperty> It(Struct, StructValue); It; ++It)
 	{
 		UProperty* Property		  = It.Key();
@@ -6420,6 +6421,25 @@ void UCsLibrary_Load::GetObjectPaths(const void* StructValue, UStruct* const& St
 			// TODO: Look at FScriptArray, FScriptArrayHelper
 			continue;
 		}
+	}
+	// Iterate through Functions
+	for (UFunction* Function : TFieldRange<UFunction>(Struct))
+	{
+		if (Function->GetName().StartsWith(TEXT("ExecuteUbergraph")))
+			continue;
+
+		GetObjectPaths(Function, Function->GetClass(), OutObjectPathMap);
+	}
+}
+
+void UCsLibrary_Load::GetObjectPaths(ULevel* Level, TMap<FName, FSoftObjectPath>& OutObjectPathMap)
+{
+	for (AActor* Actor : Level->Actors)
+	{
+		if (!Actor)
+			continue;
+
+		GetObjectPaths(Actor, Actor->GetClass(), OutObjectPathMap);
 	}
 }
 
@@ -6526,6 +6546,76 @@ void UCsLibrary_Load::GetUniqueObjectPaths(const void* StructValue, UStruct* con
 }
 
 #pragma endregion Asset References
+
+	// DataTable
+#pragma region
+
+void UCsLibrary_Load::GetDataTables(const void* StructValue, UStruct* const& Struct, TMap<FName, UDataTable*>& OutDataTableMap)
+{
+	// Iterate through Properties
+	for (TPropertyValueIterator<UProperty> It(Struct, StructValue); It; ++It)
+	{
+		UProperty* Property		  = It.Key();
+		const void* PropertyValue = It.Value();
+
+		// TSoftObjectPtr
+		if (const USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(Property))
+		{
+			if (const TSoftObjectPtr<UObject>* Ptr = reinterpret_cast<const TSoftObjectPtr<UObject>*>(PropertyValue))
+			{
+				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
+
+				if (Path.IsValid())
+				{
+					UObject* Object = Path.TryLoad();
+
+					if (UDataTable* DataTable = Cast<UDataTable>(Object))
+					{
+						OutDataTableMap.FindOrAdd(DataTable->GetFName()) = DataTable;
+					}
+				}
+			}
+			continue;
+		}
+		// ObjectProperty
+		if (UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
+		{
+			void* Value = const_cast<void*>(PropertyValue);
+
+			if (UObject** Ptr = reinterpret_cast<UObject**>(Value))
+			{
+				if (UDataTable* DataTable = Cast<UDataTable>(*Ptr))
+				{
+					OutDataTableMap.FindOrAdd(DataTable->GetFName()) = DataTable;
+
+					GetDataTables(DataTable, UDataTable::StaticClass(), OutDataTableMap);
+				}
+			}
+			continue;
+		}
+	}
+	// Iterate through Functions
+	for (UFunction* Function : TFieldRange<UFunction>(Struct))
+	{
+		if (Function->GetName().StartsWith(TEXT("ExecuteUbergraph")))
+			continue;
+
+		GetDataTables(Function, Function->GetClass(), OutDataTableMap);
+	}
+}
+
+void UCsLibrary_Load::GetDataTables(ULevel* Level, TMap<FName, UDataTable*>& OutDataTableMap)
+{
+	for (AActor* Actor : Level->Actors)
+	{
+		if (!Actor)
+			continue;
+
+		GetDataTables(Actor, Actor->GetClass(), OutDataTableMap);
+	}
+}
+
+#pragma endregion DataTable
 
 	// Load
 #pragma region
@@ -6813,7 +6903,7 @@ void UCsLibrary_Load::LoadFCsAnimSequence(const FString& MemberName, FCsAnimSequ
 
 void UCsLibrary_Load::LoadFCsAnimSequence(const FString& MemberName, FCsAnimSequence* Anim)
 {
-	LoadFCsAnimSequence(MemberName, Anim, ECsLoadFlags::All);
+	LoadFCsAnimSequence(MemberName, Anim, ECsLoadFlags::Game);
 }
 
 void UCsLibrary_Load::LoadFCsFpvAnimSequence(const FString& MemberName, FCsFpvAnimSequence* Anim, const ECsLoadFlags& LoadFlags)
@@ -6823,7 +6913,7 @@ void UCsLibrary_Load::LoadFCsFpvAnimSequence(const FString& MemberName, FCsFpvAn
 
 void UCsLibrary_Load::LoadFCsFpvAnimSequence(const FString& MemberName, FCsFpvAnimSequence* Anim, const ECsViewType& ViewType)
 {
-	ECsLoadFlags LoadFlags = ECsLoadFlags::All;
+	ECsLoadFlags LoadFlags = ECsLoadFlags::Game;
 
 	if (ViewType == ECsViewType::FirstPerson)
 		LoadFlags = ECsLoadFlags::Game1P;
@@ -6842,7 +6932,7 @@ void UCsLibrary_Load::LoadFCsAnimMontage(const FString& MemberName, FCsAnimMonta
 
 void UCsLibrary_Load::LoadFCsAnimMontage(const FString& MemberName, FCsAnimMontage* Anim)
 {
-	LoadFCsAnimMontage(MemberName, Anim, ECsLoadFlags::All);
+	LoadFCsAnimMontage(MemberName, Anim, ECsLoadFlags::Game);
 }
 
 void UCsLibrary_Load::LoadFCsFpvAnimMontage(const FString& MemberName, FCsFpvAnimMontage* Anim, const ECsLoadFlags& LoadFlags)
@@ -6852,7 +6942,7 @@ void UCsLibrary_Load::LoadFCsFpvAnimMontage(const FString& MemberName, FCsFpvAni
 
 void UCsLibrary_Load::LoadFCsFpvAnimMontage(const FString& MemberName, FCsFpvAnimMontage* Anim, const ECsViewType& ViewType)
 {
-	ECsLoadFlags LoadFlags = ECsLoadFlags::All;
+	ECsLoadFlags LoadFlags = ECsLoadFlags::Game;
 
 	if (ViewType == ECsViewType::FirstPerson)
 		LoadFlags = ECsLoadFlags::Game1P;
@@ -6871,7 +6961,7 @@ void UCsLibrary_Load::LoadFCsBlendSpace1D(const FString& MemberName, FCsBlendSpa
 
 void UCsLibrary_Load::LoadFCsBlendSpace1D(const FString& MemberName, FCsBlendSpace1D* Blend)
 {
-	LoadFCsBlendSpace1D(MemberName, Blend, ECsLoadFlags::All);
+	LoadFCsBlendSpace1D(MemberName, Blend, ECsLoadFlags::Game);
 }
 
 void UCsLibrary_Load::LoadFCsFpvBlendSpace1D(const FString& MemberName, FCsFpvBlendSpace1D* Blend , const ECsLoadFlags& LoadFlags)
@@ -6881,7 +6971,7 @@ void UCsLibrary_Load::LoadFCsFpvBlendSpace1D(const FString& MemberName, FCsFpvBl
 
 void UCsLibrary_Load::LoadFCsFpvBlendSpace1D(const FString& MemberName, FCsFpvBlendSpace1D* Blend, const ECsViewType& ViewType)
 {
-	ECsLoadFlags LoadFlags = ECsLoadFlags::All;
+	ECsLoadFlags LoadFlags = ECsLoadFlags::Game;
 
 	if (ViewType == ECsViewType::FirstPerson)
 		LoadFlags = ECsLoadFlags::Game1P;
@@ -6900,7 +6990,7 @@ void UCsLibrary_Load::LoadFCsBlendSpace(const FString& MemberName, FCsBlendSpace
 
 void UCsLibrary_Load::LoadFCsBlendSpace(const FString& MemberName, FCsBlendSpace* Blend)
 {
-	LoadFCsBlendSpace(MemberName, Blend, ECsLoadFlags::All);
+	LoadFCsBlendSpace(MemberName, Blend, ECsLoadFlags::Game);
 }
 
 void UCsLibrary_Load::LoadFCsFpvBlendSpace(const FString& MemberName, FCsFpvBlendSpace* Blend, const ECsLoadFlags& LoadFlags)
@@ -6910,7 +7000,7 @@ void UCsLibrary_Load::LoadFCsFpvBlendSpace(const FString& MemberName, FCsFpvBlen
 
 void UCsLibrary_Load::LoadFCsFpvBlendSpace(const FString& MemberName, FCsFpvBlendSpace* Blend, const ECsViewType& ViewType)
 {
-	ECsLoadFlags LoadFlags = ECsLoadFlags::All;
+	ECsLoadFlags LoadFlags = ECsLoadFlags::Game;
 
 	if (ViewType == ECsViewType::FirstPerson)
 		LoadFlags = ECsLoadFlags::Game1P;
@@ -6929,7 +7019,7 @@ void UCsLibrary_Load::LoadFCsAimOffset(const FString& MemberName, FCsAimOffset* 
 
 void UCsLibrary_Load::LoadFCsAimOffset(const FString& MemberName, FCsAimOffset* Blend)
 {
-	LoadFCsAimOffset(MemberName, Blend, ECsLoadFlags::All);
+	LoadFCsAimOffset(MemberName, Blend, ECsLoadFlags::Game);
 }
 
 void UCsLibrary_Load::LoadFCsFpvAimOffset(const FString& MemberName, FCsFpvAimOffset* Blend, const ECsLoadFlags& LoadFlags)
@@ -6939,7 +7029,7 @@ void UCsLibrary_Load::LoadFCsFpvAimOffset(const FString& MemberName, FCsFpvAimOf
 
 void UCsLibrary_Load::LoadFCsFpvAimOffset(const FString& MemberName, FCsFpvAimOffset* Blend, const ECsViewType& ViewType)
 {
-	ECsLoadFlags LoadFlags = ECsLoadFlags::All;
+	ECsLoadFlags LoadFlags = ECsLoadFlags::Game;
 
 	if (ViewType == ECsViewType::FirstPerson)
 		LoadFlags = ECsLoadFlags::Game1P;
@@ -6960,20 +7050,20 @@ bool UCsLibrary_Load::CanLoad(void* InObject, UScriptStruct* const &InClass, con
 	{
 		if (int32* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject))
 		{
-			if (LoadFlags == ECsLoadFlags::All)
+			if (LoadFlags == ECsLoadFlags::Game)
 			{
 				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
 					return true;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::All. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
+				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
 				return true;
 			}
-			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, ECsLoadFlags::All))
+			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, ECsLoadFlags::Game))
 			{
 				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
 					return true;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::All. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
+				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
 				return true;
 			}
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
@@ -6992,20 +7082,20 @@ bool UCsLibrary_Load::CanLoad(void* InObject, UClass* const &InClass, const FStr
 	{
 		if (int32* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject))
 		{
-			if (LoadFlags == ECsLoadFlags::All)
+			if (LoadFlags == ECsLoadFlags::Game)
 			{
 				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
 					return true;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::All. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
+				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
 				return true;
 			}
-			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, ECsLoadFlags::All))
+			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, ECsLoadFlags::Game))
 			{
 				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
 					return true;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::All. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
+				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
 				return true;
 			}
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
@@ -7024,20 +7114,20 @@ bool UCsLibrary_Load::CanLoad(void* StructValue, UStruct* const& Struct, const F
 	{
 		if (int32* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(StructValue))
 		{
-			if (LoadFlags == ECsLoadFlags::All)
+			if (LoadFlags == ECsLoadFlags::Game)
 			{
 				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
 					return true;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::All. This should be reserved for debugging. Be explicit with LoadFlags."), *(Struct->GetName()), *MemberName);
+				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(Struct->GetName()), *MemberName);
 				return true;
 			}
-			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, ECsLoadFlags::All))
+			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, ECsLoadFlags::Game))
 			{
 				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
 					return true;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::All. This should be reserved for debugging. Be explicit with LoadFlags."), *(Struct->GetName()), *MemberName);
+				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(Struct->GetName()), *MemberName);
 				return true;
 			}
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
@@ -8131,11 +8221,318 @@ void UCsLibrary_Load::LoadArrayStructProperty(UArrayProperty*& ArrayProperty, vo
 	{
 		uint8* Ptr = Helper.GetRawPtr(I);
 
-		LoadStruct(Ptr, StructProperty->Struct);
+		LoadStruct(Ptr, StructProperty->Struct, NCsLoadFlags::All, NCsLoadCodes::None);
 	}
 }
 
-void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct)
+
+
+
+bool UCsLibrary_Load::CanLoad(void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& LoadFlags, const int32& LoadCodes)
+{
+								// MemberName + TEXT("_LoadFlags")
+	const FString FlagMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;
+
+	if (UIntProperty* IntProperty = FindField<UIntProperty>(Struct, *FlagMemberName))
+	{
+		if (int32* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(StructValue))
+		{
+			if (LoadFlags == NCsLoadFlags::All)
+			{
+				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
+					return true;
+
+				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = 1 (All). This should be reserved for debugging. Be explicit with LoadFlags."), *(Struct->GetName()), *MemberName);
+				return true;
+			}
+			if (*MemberLoadFlags == NCsLoadFlags::All)
+			{
+				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
+					return true;
+
+				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = 1 (All). This should be reserved for debugging. Be explicit with LoadFlags."), *(Struct->GetName()), *MemberName);
+				return true;
+			}
+			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
+				return true;
+		}
+	}
+	return true;
+}
+
+void UCsLibrary_Load::LoadSoftClassProperty(USoftClassProperty*& SoftClassProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& LoadFlags, const int32& LoadCodes)
+{
+	if (FSoftObjectPtr* Member = SoftClassProperty->GetPropertyValuePtr_InContainer(StructValue))
+	{
+		if (!Member->ToSoftObjectPath().IsValid())
+			return;
+
+		if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
+			return;
+
+		// Check if an "Internal" member exists (i.e. MemberName + _Internal)
+
+										// MemberName + TEXT("_Internal")
+		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
+
+		if (UObjectProperty* InternalObjectProperty = FindField<UObjectProperty>(Struct, *InternalMemberName))
+		{
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalObjectProperty->PropertyClass)
+			{
+				if (UObject** Internal = InternalObjectProperty->ContainerPtrToValuePtr<UObject*>(StructValue))
+				{
+					UObject* O	  = Member->LoadSynchronous();
+					UClass* Class = Cast<UClass>(O);
+					*Internal	  = Class->GetDefaultObject();
+				}
+			}
+		}
+
+		// Check if a "Class" member exists (i.e. MemberName + _Class)
+
+										// MemberName + TEXT("_Class")
+		const FString InternalClassName = MemberName + ECsLoadCached::Str::_Class;
+
+		if (UClassProperty* InternalClassProperty = FindField<UClassProperty>(Struct, *InternalClassName))
+		{
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalClassProperty->MetaClass)
+			{
+				if (UObject** Object = InternalClassProperty->GetPropertyValuePtr_InContainer(StructValue))
+				{
+					*Object = Member->LoadSynchronous();
+				}
+			}
+		}
+
+		// Check if a "SubclassOf" member exists (i.e. MemberName + _SubclassOf)
+
+		// MemberName + TEXT("_SubclassOf")
+		const FString InternalSubclassOfName = MemberName + ECsLoadCached::Str::_SubclassOf;
+
+		if (UClassProperty* InternalSubclassOfProperty = FindField<UClassProperty>(Struct, *InternalSubclassOfName))
+		{
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalSubclassOfProperty->MetaClass)
+			{
+				if (UObject** Object = InternalSubclassOfProperty->GetPropertyValuePtr_InContainer(StructValue))
+				{
+					*Object = Member->LoadSynchronous();
+				}
+			}
+		}
+	}
+}
+
+void UCsLibrary_Load::LoadArraySoftClassProperty(UArrayProperty*& ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& LoadFlags, const int32& LoadCodes)
+{
+	if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
+		return;
+
+	// Check if an "Internal" member exists (i.e. MemberName + _Internal)
+
+									// MemberName + TEXT("_Internal")
+	const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
+
+	if (UArrayProperty* InternalArrayProperty = FindField<UArrayProperty>(Struct, *InternalMemberName))
+	{
+		if (USoftObjectProperty* InternalSoftObjectProperty = Cast<USoftObjectProperty>(InternalArrayProperty->Inner))
+		{
+			USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner);
+
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalSoftObjectProperty->PropertyClass)
+			{
+				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+				FScriptArrayHelper_InContainer InternalHelper(InternalArrayProperty, StructValue);
+
+				const int32 Count = Helper.Num();
+
+				InternalHelper.EmptyAndAddUninitializedValues(Helper.Num());
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					TSoftClassPtr<UObject>* Ptr = reinterpret_cast<TSoftClassPtr<UObject>*>(Helper.GetRawPtr(I));
+					UObject** InternalPtr		= reinterpret_cast<UObject**>(InternalHelper.GetRawPtr(I));
+
+					*InternalPtr = nullptr;
+
+					if (Ptr->IsValid())
+					{
+						UObject* O	  = Ptr->LoadSynchronous();
+						UClass* Class = Cast<UClass>(O);
+						*InternalPtr  = Class->GetDefaultObject();
+					}
+				}
+			}
+		}
+	}
+
+	// Check if an "Class" member exists (i.e. MemberName + _Class)
+
+									// MemberName + TEXT("_Class")
+	const FString InternalClassName = MemberName + ECsLoadCached::Str::_Class;
+
+	if (UArrayProperty* InternalArrayProperty = FindField<UArrayProperty>(Struct, *InternalClassName))
+	{
+		if (USoftClassProperty* InternalSoftClassProperty = Cast<USoftClassProperty>(InternalArrayProperty->Inner))
+		{
+			USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner);
+
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalSoftClassProperty->MetaClass)
+			{
+				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+				FScriptArrayHelper_InContainer InternalHelper(InternalArrayProperty, StructValue);
+
+				const int32 Count = Helper.Num();
+
+				InternalHelper.EmptyAndAddUninitializedValues(Helper.Num());
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					TSoftClassPtr<UObject>* Ptr = reinterpret_cast<TSoftClassPtr<UObject>*>(Helper.GetRawPtr(I));
+					UClass** InternalPtr		= reinterpret_cast<UClass**>(InternalHelper.GetRawPtr(I));
+
+					*InternalPtr = nullptr;
+
+					if (Ptr->IsValid())
+					{
+						UObject* O    = Ptr->LoadSynchronous();
+						*InternalPtr  = Cast<UClass>(O);
+					}
+				}
+			}
+		}
+	}
+
+	// TODO: SubclassOf
+}
+
+void UCsLibrary_Load::LoadSoftObjectProperty(USoftObjectProperty*& SoftObjectProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& LoadFlags, const int32& LoadCodes)
+{
+	if (FSoftObjectPtr* Member = SoftObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
+	{
+		if (!Member->ToSoftObjectPath().IsValid())
+			return;
+
+		if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
+			return;
+
+		// Check if an "Internal" member exists (i.e. MemberName + _Internal)
+
+										// MemberName + TEXT("_Internal")
+		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
+
+		if (UObjectProperty* InternalObjectProperty = FindField<UObjectProperty>(Struct, *InternalMemberName))
+		{
+			// Check Member is the same type as the Member_Internal
+			if (SoftObjectProperty->PropertyClass == InternalObjectProperty->PropertyClass)
+			{
+				if (UObject** Internal = InternalObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
+				{
+					*Internal = Member->LoadSynchronous();
+
+					// Recursive Load DataTable
+					if (*Internal	 &&
+						SoftObjectProperty->PropertyClass == UDataTable::StaticClass() &&
+						CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::RecursiveLoadDataTable))
+					{
+						UDataTable* DataTable = Cast<UDataTable>(*Internal);
+
+						LoadDataTable(DataTable, LoadFlags, LoadCodes);
+					}
+				}
+			}
+		}
+	}
+}
+
+void UCsLibrary_Load::LoadArraySoftObjectProperty(UArrayProperty*& ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& LoadFlags, const int32& LoadCodes)
+{
+	if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
+		return;
+
+	// Check if an "Internal" member exists (i.e. MemberName + _Internal)
+
+									// MemberName + TEXT("_Internal")
+	const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
+
+	if (UArrayProperty* InternalArrayProperty = FindField<UArrayProperty>(Struct, *InternalMemberName))
+	{
+		if (USoftObjectProperty* InternalSoftObjectProperty = Cast<USoftObjectProperty>(InternalArrayProperty->Inner))
+		{
+			USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner);
+
+			// Check Member is the same type as the Member_Internal
+			if (SoftObjectProperty->PropertyClass == InternalSoftObjectProperty->PropertyClass)
+			{
+				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+				FScriptArrayHelper_InContainer InternalHelper(InternalArrayProperty, StructValue);
+
+				const int32 Count = Helper.Num();
+
+				InternalHelper.EmptyAndAddUninitializedValues(Helper.Num());
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					TSoftObjectPtr<UObject>* Ptr = reinterpret_cast<TSoftObjectPtr<UObject>*>(Helper.GetRawPtr(I));
+					UObject** InternalPtr		 = reinterpret_cast<UObject**>(InternalHelper.GetRawPtr(I));
+
+					*InternalPtr = nullptr;
+
+					if (Ptr->IsValid())
+						*InternalPtr = Ptr->LoadSynchronous();
+
+					// Recursive Load DataTable
+					if (*InternalPtr &&
+						SoftObjectProperty->PropertyClass == UDataTable::StaticClass() &&
+						CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::RecursiveLoadDataTable))
+					{
+						UDataTable* DataTable = Cast<UDataTable>(*InternalPtr);
+
+						LoadDataTable(DataTable, LoadFlags, LoadCodes);
+					}
+				}
+			}
+		}
+	}
+}
+
+void UCsLibrary_Load::LoadArrayObjectProperty(UArrayProperty*& ArrayProperty, void* StructValue, const int32& LoadFlags, const int32& LoadCodes)
+{
+	FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+
+	const int32 Count = Helper.Num();
+
+	UObjectProperty* ObjectProperty = Cast<UObjectProperty>(ArrayProperty->Inner);
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		uint8* Ptr = Helper.GetRawPtr(I);
+
+		LoadStruct(Ptr, ObjectProperty->PropertyClass, LoadFlags, LoadCodes);
+	}
+}
+
+void UCsLibrary_Load::LoadArrayStructProperty(UArrayProperty*& ArrayProperty, void* StructValue, const int32& LoadFlags, const int32& LoadCodes)
+{
+	FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+
+	const int32 Count = Helper.Num();
+
+	UStructProperty* StructProperty = Cast<UStructProperty>(ArrayProperty->Inner);
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		uint8* Ptr = Helper.GetRawPtr(I);
+
+		LoadStruct(Ptr, StructProperty->Struct, LoadFlags, LoadCodes);
+	}
+}
+
+void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct, const int32& LoadFlags, const int32& LoadCodes)
 {
 	for (TFieldIterator<UProperty> It(Struct); It; ++It)
 	{
@@ -8146,13 +8543,26 @@ void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct)
 		// TSoftClassPtr
 		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
 		{
-			LoadSoftClassProperty(SoftClassProperty, StructValue, Struct, PropertyName, ECsLoadFlags::All);
+			LoadSoftClassProperty(SoftClassProperty, StructValue, Struct, PropertyName, NCsLoadFlags::All, LoadCodes);
 			continue;
 		}
 		// TSoftObjectPtr
 		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(Property))
 		{
-			LoadSoftObjectProperty(SoftObjectProperty, StructValue, Struct, PropertyName, ECsLoadFlags::All);
+			LoadSoftObjectProperty(SoftObjectProperty, StructValue, Struct, PropertyName, NCsLoadFlags::All, LoadCodes);
+			continue;
+		}
+		// Object
+		if (UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
+		{
+			// Recursive Load DataTable
+			if (ObjectProperty->PropertyClass == UDataTable::StaticClass() &&
+				CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::RecursiveLoadDataTable))
+			{
+				UDataTable** DataTable = ObjectProperty->ContainerPtrToValuePtr<UDataTable*>(StructValue);
+
+				LoadDataTable(*DataTable, LoadFlags, LoadCodes);
+			}
 			continue;
 		}
 		// Struct
@@ -8162,7 +8572,7 @@ void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct)
 			{
 				uint8* Value = StructProperty->ContainerPtrToValuePtr<uint8>(StructValue, I);
 
-				LoadStruct(Value, StructProperty->Struct);
+				LoadStruct(Value, StructProperty->Struct, LoadFlags, LoadCodes);
 			}
 			continue;
 		}
@@ -8172,22 +8582,49 @@ void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct)
 			// TSoftClassPtr
 			if (USoftClassProperty* InnerSoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
 			{
-				LoadArraySoftClassProperty(ArrayProperty, StructValue, Struct, PropertyName, ECsLoadFlags::All);
+				LoadArraySoftClassProperty(ArrayProperty, StructValue, Struct, PropertyName, NCsLoadFlags::All, LoadCodes);
 				continue;
 			}
 			// TSoftObjectPtr
 			if (USoftObjectProperty* InnerSoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
 			{
-				LoadArraySoftObjectProperty(ArrayProperty, StructValue, Struct, PropertyName, ECsLoadFlags::All);
+				LoadArraySoftObjectProperty(ArrayProperty, StructValue, Struct, PropertyName, NCsLoadFlags::All, LoadCodes);
+				continue;
+			}
+			// Object
+			if (UObjectProperty* InnerObjectProperty = Cast<UObjectProperty>(ArrayProperty->Inner))
+			{
+				// Recursive Load DataTable
+				if (InnerObjectProperty->PropertyClass == UDataTable::StaticClass() &&
+					CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::RecursiveLoadDataTable))
+				{
+					LoadArrayObjectProperty(ArrayProperty, StructValue, LoadFlags, LoadCodes);
+				}
 				continue;
 			}
 			// Struct
 			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
 			{
-				LoadArrayStructProperty(ArrayProperty, StructValue);
+				LoadArrayStructProperty(ArrayProperty, StructValue, LoadFlags, LoadCodes);
 				continue;
 			}
 		}	
+	}
+}
+
+void UCsLibrary_Load::LoadDataTable(UDataTable* DataTable, const int32& LoadFlags, const int32& LoadCodes)
+{
+	const UScriptStruct* ScriptStruct = DataTable->GetRowStruct();
+	UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
+	UStruct* const Struct			  = Temp;
+
+	TArray<FName> RowNames = DataTable->GetRowNames();
+
+	for (const FName& RowName : RowNames)
+	{
+		uint8* RowPtr = DataTable->FindRowUnchecked(RowName);
+
+		LoadStruct(RowPtr, Struct, LoadFlags, LoadCodes);
 	}
 }
 
@@ -8637,6 +9074,186 @@ void UCsLibrary_Load::UnloadStruct(void* StructValue, UStruct* const& Struct)
 }
 
 #pragma endregion UnLoad
+
+	// References
+#pragma region
+
+		// Hard
+#pragma region
+
+void UCsLibrary_Load::GetReferencesReport_ClassProperty(UClassProperty* ClassProperty, const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport)
+{
+	if (UObject* const* Ptr = ClassProperty->ContainerPtrToValuePtr<UObject*>(StructValue))
+	{
+		FCsLibraryLoad_GetReferencesReport_MemberInfo MemberInfo;
+
+		const FString PropertyName = ClassProperty->GetName();
+		const FString MemberPath   = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
+
+		MemberInfo.Name = PropertyName;
+		MemberInfo.Path = MemberPath;
+		MemberInfo.Type = ClassProperty->MetaClass->GetName();
+		;
+		if (const UObject* Object = *Ptr)
+		{
+			FSoftObjectPath ObjectPath(Object);
+
+			OutReport.Hard.Add(MemberInfo, ObjectPath);
+
+			GetReferencesReport(Object, Object->GetClass(), MemberPath, OutReport);
+		}
+		else
+		{
+			OutReport.Hard.AddUnused(MemberInfo);
+		}
+	}
+}
+
+void UCsLibrary_Load::GetReferencesReport_ObjectProperty(UObjectProperty* ObjectProperty, const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport)
+{
+	if (UObject* const* Ptr = ObjectProperty->ContainerPtrToValuePtr<UObject*>(StructValue))
+	{
+		FCsLibraryLoad_GetReferencesReport_MemberInfo MemberInfo;
+
+		const FString PropertyName = ObjectProperty->GetName();
+		const FString MemberPath   = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
+
+		MemberInfo.Name = PropertyName;
+		MemberInfo.Path = MemberPath;
+		MemberInfo.Type = ObjectProperty->PropertyClass->GetName();
+		
+		if (const UObject* Object = *Ptr)
+		{
+			FSoftObjectPath ObjectPath(Object);
+
+			OutReport.Hard.Add(MemberInfo, ObjectPath);
+
+			GetReferencesReport(Object, Object->GetClass(), MemberPath, OutReport);
+		}
+		else
+		{
+			OutReport.Hard.AddUnused(MemberInfo);
+		}
+	}
+}
+
+void UCsLibrary_Load::GetReferencesReport_SoftClassProperty(USoftClassProperty* SoftClassProperty, const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport)
+{
+	if (const FSoftObjectPtr* Ptr = SoftClassProperty->GetPropertyValuePtr_InContainer(StructValue))
+	{
+		FCsLibraryLoad_GetReferencesReport_MemberInfo MemberInfo;
+
+		const FString PropertyName = SoftClassProperty->GetName();
+		const FString MemberPath   = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
+
+		MemberInfo.Name = PropertyName;
+		MemberInfo.Path = MemberPath;
+		MemberInfo.Type = SoftClassProperty->MetaClass->GetName();
+
+		const FSoftObjectPath ObjectPath = Ptr->ToSoftObjectPath();
+
+		if (ObjectPath.IsValid())
+		{
+			OutReport.Soft.Add(MemberInfo, ObjectPath);
+		}
+		else
+		{
+			OutReport.Soft.AddUnused(MemberInfo);
+		}
+	}
+}
+
+void UCsLibrary_Load::GetReferencesReport_SoftObjectProperty(USoftObjectProperty* SoftObjectProperty, const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport)
+{
+	if (const FSoftObjectPtr* Ptr = SoftObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
+	{
+		FCsLibraryLoad_GetReferencesReport_MemberInfo MemberInfo;
+
+		const FString PropertyName = SoftObjectProperty->GetName();
+		const FString MemberPath   = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
+
+		MemberInfo.Name = PropertyName;
+		MemberInfo.Path = MemberPath;
+		MemberInfo.Type = SoftObjectProperty->PropertyClass->GetName();
+
+		const FSoftObjectPath ObjectPath = Ptr->ToSoftObjectPath();
+
+		if (ObjectPath.IsValid())
+		{
+			OutReport.Soft.Add(MemberInfo, ObjectPath);
+		}
+		else
+		{
+			OutReport.Soft.AddUnused(MemberInfo);
+		}
+	}
+}
+
+void UCsLibrary_Load::GetReferencesReport(const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport)
+{
+	for (TFieldIterator<UProperty> It(Struct); It; ++It)
+	{
+		UProperty* Property = Cast<UProperty>(*It);
+
+		const FString PropertyName = Property->GetName();
+
+		// Class
+		if (UClassProperty* ClassProperty = Cast<UClassProperty>(Property))
+		{
+			GetReferencesReport_ClassProperty(ClassProperty, StructValue, Struct, OuterName, OutReport);
+			continue;
+		}
+		// Object
+		if (UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
+		{
+			GetReferencesReport_ObjectProperty(ObjectProperty, StructValue, Struct, OuterName, OutReport);
+			continue;
+		}
+		// SoftClass
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
+		{
+			GetReferencesReport_SoftClassProperty(SoftClassProperty, StructValue, Struct, OuterName, OutReport);
+			continue;
+		}
+		// SoftObject
+		if (USoftClassProperty* SoftObjectProperty = Cast<USoftClassProperty>(Property))
+		{
+			GetReferencesReport_SoftObjectProperty(SoftObjectProperty, StructValue, Struct, OuterName, OutReport);
+			continue;
+		}
+		// Struct
+		if (UStructProperty* StructProperty = Cast<UStructProperty>(Property))
+		{
+			for (int32 I = 0; I < StructProperty->ArrayDim; ++I)
+			{
+				if (const uint8* Ptr = StructProperty->ContainerPtrToValuePtr<uint8>(StructValue, I))
+				{
+					const FString MemberPath = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
+
+					GetReferencesReport(Ptr, StructProperty->Struct, MemberPath, OutReport);
+				}
+			}
+			continue;
+		}
+	}
+	
+	// Iterate through Functions
+	for (UFunction* Function : TFieldRange<UFunction>(Struct))
+	{
+		const FString FunctionName = Function->GetName();
+
+		if (FunctionName.StartsWith(TEXT("ExecuteUbergraph")))
+			continue;
+
+		const FString Name = FString::Printf(TEXT("%s.%s"), *OuterName, *FunctionName);
+
+		GetReferencesReport(Function, Function->GetClass(), Name, OutReport);
+	}
+}
+
+#pragma endregion Hard
+
+#pragma endregion References
 
 	// IsLoaded
 #pragma region
@@ -9448,8 +10065,8 @@ void UCsLibrary_Load::CheckObjectWithEnum(const FString &ObjectName, void* InObj
 					if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CollisionChannel))
 					{ CheckEnumByteProperty<ECollisionChannel>(ByteProperty, InObject, MemberName, ECollisionChannel::ECC_MAX); continue; }
 					// ECsLoadFlags_Editor
-					if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
-					{ CheckEnumByteProperty<ECsLoadFlags_Editor::Type>(ByteProperty, InObject, MemberName, ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX); continue; }
+					//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
+					//{ CheckEnumByteProperty<ECsLoadFlags_Editor::Type>(ByteProperty, InObject, MemberName, ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX); continue; }
 					// ECsFxPriority
 					if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFxPriority))
 					{ CheckEnumByteProperty<ECsFxPriority::Type>(ByteProperty, InObject, MemberName, ECsFxPriority::ECsFxPriority_MAX); continue; }

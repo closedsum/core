@@ -35,7 +35,7 @@ UCsAnimInstance::UCsAnimInstance(const FObjectInitializer& ObjectInitializer)
 #endif // #if WITH_EDITOR
 
 	CurrentViewType  = ECsViewType::ThirdPerson;
-	DefaultLoadFlags = ECsLoadFlags::All;
+	DefaultLoadFlags = ECsLoadFlags::Game;
 }
 
 void UCsAnimInstance::BeginDestroy()

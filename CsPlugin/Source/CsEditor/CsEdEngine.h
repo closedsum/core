@@ -90,14 +90,6 @@ public:
 
 #pragma endregion Enums
 
-// Types
-#pragma region
-public:
-
-	TCsGetAssetTypeStaticClass GetAssetTypeStaticClass;
-
-#pragma endregion Types
-
 // Stream
 #pragma region
 public:

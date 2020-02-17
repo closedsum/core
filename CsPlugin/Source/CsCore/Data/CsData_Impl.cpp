@@ -65,7 +65,7 @@ void UCsData_Impl::PreSave(const class ITargetPlatform* TargetPlatform)
 void UCsData_Impl::OnPreSave(){}
 #endif WITH_EDITOR
 
-bool UCsData_Impl::IsValid(const ECsLoadFlags& LoadFlags /*=ECsLoadFlags::All*/)
+bool UCsData_Impl::IsValid(const ECsLoadFlags& LoadFlags /*=ECsLoadFlags::Game*/)
 {
 	bool Pass = true;
 	const FString AssetName = GetName();
@@ -87,7 +87,7 @@ bool UCsData_Impl::IsValid(const ECsLoadFlags& LoadFlags /*=ECsLoadFlags::All*/)
 
 void UCsData_Impl::PopulateAssetReferences(const bool& CalculateResourceSizes)
 {
-	const int32 Count = ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX;
+	const int32 Count = (int32)ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX;
 
 	for (int32 I = 0; I < Count; ++I)
 	{
@@ -212,7 +212,7 @@ void UCsData_Impl::VerifyJsonIntegrity()
 
 #endif // #if WITH_EDITOR
 
-void UCsData_Impl::Load(const ECsLoadFlags& LoadFlags /*=ECsLoadFlags::All*/)
+void UCsData_Impl::Load(const ECsLoadFlags& LoadFlags /*=ECsLoadFlags::Game*/)
 {
 	ShortCodeAsString = ShortCode.ToString();
 

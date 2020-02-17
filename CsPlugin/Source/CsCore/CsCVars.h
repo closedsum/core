@@ -380,6 +380,27 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerAchievementTransac
 
 #pragma endregion Managers
 
+// Level
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogLevelPayloadPopulate;
+
+#pragma endregion Level
+
+// Payload
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogPayloadPopulate;
+
+#pragma endregion Payload
+
+// Data
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogDataEntryPopulate;
+
+#pragma endregion Data
+
 struct ICsAutoConsoleVariable
 {
 	virtual void UpdateIsDirty() = 0;
@@ -490,6 +511,7 @@ struct CSCORE_API ICsCVarMap
 	virtual void ResetDirty() = 0;
 };
 
+#define CS_DECLARE_ADD_TO_CVAR_MAP(EnumStruct) const Type __##EnumStruct
 #define CS_ADD_TO_CVAR_MAP(CVarMap, EnumStruct, CVar) const Type __##EnumStruct = CVarMap::Get().Add(EnumStruct, &CVar);
 
 // CVarLog
@@ -599,6 +621,46 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogManagerSaveTransactions;
 		// Achievement
 	extern CSCORE_API const Type LogManagerAchievementTransactions;
+
+	// Level
+	extern CSCORE_API const Type LogLevelPayloadPopulate;
+	// Payload
+	extern CSCORE_API const Type LogPayloadPopulate;
+	// Data
+	extern CSCORE_API const Type LogDataEntryPopulate;
+
+	namespace Map
+	{
+		// Managers
+
+			// Load
+		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerLoad);
+			// Trace
+		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerTraceTransactions);
+			// Task
+		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerTaskTransactions);
+			// Runnable
+		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerRunnableTransactions);
+			// Data
+		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerDataLoad);
+			// Projectile
+		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerProjectileTransactions);
+			// Save
+		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerSaveTransactions);
+			// Achievement
+		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerAchievementTransactions);
+			// Collectible
+		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerCollectibleTransactions);
+			// Level
+		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerLevelTransactions);
+
+		// Level
+		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogLevelPayloadPopulate);
+		// Payload
+		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogPayloadPopulate);
+		// Data
+		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogDataEntryPopulate);
+	}
 }
 
 #pragma endregion CVarLog

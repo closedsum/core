@@ -71,7 +71,7 @@ bool UCsData_Payload::PerformFindEntry(const FName& InShortCode, TArray<FCsPaylo
 	return OutPayloads.Num() > CS_EMPTY;
 }
 
-bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCollectionType& DataCollectionType, const TEnumAsByte<ECsLoadFlags_Editor::Type>& LoadFlags, FString& OutMessage, FString& OutOutput)
+bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCollectionType& DataCollectionType, const ECsLoadFlags_Editor& LoadFlags, FString& OutMessage, FString& OutOutput)
 {
 	// Check for VALID ShortCode
 	if (InShortCode == NAME_None ||
@@ -165,7 +165,7 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCo
 		if (EntryCount == 1)
 		{
 			// Check LoadFlags
-			const ECsLoadFlags Flags = ECsLoadFlags_Editor::ToBaseType(LoadFlags);
+			const ECsLoadFlags Flags = NCsLoadFlags_Editor::ToBaseType(LoadFlags);
 
 			if (!CS_TEST_BLUEPRINT_BITFLAG(OutEntries[CS_FIRST]->Data_LoadFlags, Flags))
 			{

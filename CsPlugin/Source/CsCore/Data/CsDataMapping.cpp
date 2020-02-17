@@ -427,7 +427,7 @@ void UCsDataMapping::PopulateAssetReferences()
 							{
 								Entry.AssetReferences[J].References.Reset();
 
-								if (J != (uint8)ECsLoadFlags::All &&
+								if (J != (uint8)ECsLoadFlags::Game &&
 									!CS_TEST_BLUEPRINT_BITFLAG(LoadFlags, (ECsLoadFlags)J))
 								{
 									continue;
@@ -483,7 +483,7 @@ void UCsDataMapping::PopulateAssetReferences()
 
 ECsLoadFlags UCsDataMapping::GetLoadAssetsFlags(const FECsDataCollectionType& CollectionType)
 {
-	return ECsLoadFlags::All;
+	return ECsLoadFlags::Game;
 }
 
 void UCsDataMapping::GetDataCollectionShortCodes(const FECsDataCollectionType& CollectionType, TArray<FName>& OutShortCodes)
@@ -1198,7 +1198,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 								// Check LoadFlags
 								if (Entry.Data_LoadFlags != LoadFlags)
 								{
-									for (int32 J = 0; J < ECS_LOAD_FLAGS_EDITOR_MAX; J++)
+									for (int32 J = 0; J < NCsLoadFlags_Editor::MAX; J++)
 									{
 										if (CS_TEST_BLUEPRINT_BITFLAG(LoadFlags, J))
 										{
@@ -1290,7 +1290,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 										(*Member)[EntryCount].Data			 = Cast<UBlueprintCore>(Bps[0])->GeneratedClass;
 										(*Member)[EntryCount].Data_LoadFlags = LoadFlags;
 
-										CS_SET_BLUEPRINT_BITFLAG((*Member)[EntryCount].Data_LoadFlags, ECsLoadFlags::All);
+										CS_SET_BLUEPRINT_BITFLAG((*Member)[EntryCount].Data_LoadFlags, ECsLoadFlags::Game);
 
 										OutOutput = DataTypeAsString + TEXT(", ") + FString::FromInt(EntryCount);
 										OutMessage = TEXT("SUCCESS.");
@@ -1539,7 +1539,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 								// Check LoadFlags
 								if (Entry.Data_LoadFlags != LoadFlags)
 								{
-									for (int32 J = 0; J < ECS_LOAD_FLAGS_EDITOR_MAX; J++)
+									for (int32 J = 0; J < NCsLoadFlags_Editor::MAX; J++)
 									{
 										if (CS_TEST_BLUEPRINT_BITFLAG(LoadFlags, J))
 										{
@@ -1590,7 +1590,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 							(*Member)[EntryCount].Data			 = Data;
 							(*Member)[EntryCount].Data_LoadFlags = LoadFlags;
 
-							CS_SET_BLUEPRINT_BITFLAG((*Member)[EntryCount].Data_LoadFlags, ECsLoadFlags::All);
+							CS_SET_BLUEPRINT_BITFLAG((*Member)[EntryCount].Data_LoadFlags, ECsLoadFlags::Game);
 
 							OutOutput = DataTypeAsString + TEXT(", ") + FString::FromInt(EntryCount);
 							OutMessage = TEXT("SUCCESS.");
@@ -1969,7 +1969,7 @@ void UCsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	GenerateMaps();
 }
 
-bool UCsDataMapping::CheckEntryExists(const FName& ShortCode, const FECsDataType& DataType, const TCsLoadFlags_Editor& LoadFlags, FString& OutMessage)
+bool UCsDataMapping::CheckEntryExists(const FName& ShortCode, const FECsDataType& DataType, const ECsLoadFlags_Editor& LoadFlags, FString& OutMessage)
 {
 	UClass* Class = GetClass();
 
@@ -2006,7 +2006,7 @@ bool UCsDataMapping::CheckEntryExists(const FName& ShortCode, const FECsDataType
 									Found = false;
 								}
 								// Check LoadFlags
-								const ECsLoadFlags Flags = ECsLoadFlags_Editor::ToBaseType(LoadFlags);
+								const ECsLoadFlags Flags = NCsLoadFlags_Editor::ToBaseType(LoadFlags);
 
 								if (!CS_TEST_BLUEPRINT_BITFLAG(Entry.Data_LoadFlags, Flags))
 								{

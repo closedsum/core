@@ -143,7 +143,6 @@ struct FCsDataMappingAddEntry
 		Output()
 
 	{
-		CS_SET_BLUEPRINT_BITFLAG(LoadFlags, ECsLoadFlags::All);
 		CS_SET_BLUEPRINT_BITFLAG(LoadFlags, ECsLoadFlags::Game);
 	}
 };
@@ -538,7 +537,7 @@ public:
 
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
 
-	bool CheckEntryExists(const FName& ShortCode, const FECsDataType& DataType, const TCsLoadFlags_Editor& LoadFlags, FString& OutMessage);
+	bool CheckEntryExists(const FName& ShortCode, const FECsDataType& DataType, const ECsLoadFlags_Editor& LoadFlags, FString& OutMessage);
 
 #endif // #if WITH_EDITOR
 

@@ -56,7 +56,7 @@ struct FCsDataAddToPayload
 	FECsDataCollectionType DataCollectionType;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
-	TEnumAsByte<ECsLoadFlags_Editor::Type> LoadFlags;
+	ECsLoadFlags_Editor LoadFlags;
 
 	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
 	FString Message;
@@ -113,7 +113,7 @@ class CSCORE_API UCsData_Impl : public UObject
 	virtual void OnPreSave();
 #endif // #if WITH_EDITOR
 
-	virtual bool IsValid(const ECsLoadFlags& LoadFlags = ECsLoadFlags::All);
+	virtual bool IsValid(const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
 
 	TCsGetAssetReferencesFromObject_Internal GetAssetReferencesFromObject_Internal;
 
@@ -129,7 +129,7 @@ class CSCORE_API UCsData_Impl : public UObject
 	UPROPERTY(VisibleDefaultsOnly, Category = "00 Default")
 	FCsTArrayStringAssetReference AssetReferences[ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX];
 
-	virtual void Load(const ECsLoadFlags& LoadFlags = ECsLoadFlags::All);
+	virtual void Load(const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game);
 
 	TCsLoadObjectWithTSoftObjectPtrs_Internal LoadObjectWithTSoftObjectPtrs_Internal;
 

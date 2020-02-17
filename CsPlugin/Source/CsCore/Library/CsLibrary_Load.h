@@ -9,6 +9,7 @@
 #include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_Load.h"
 #include "Types/CsTypes_View.h"
+#include "Library/Load/CsTypes_Library_Load.h"
 // Library
 #include "Library/CsLibrary_Math.h"
 
@@ -1699,9 +1700,19 @@ template<typename T>
 
 	static void GetObjectPaths(const void* StructValue, UStruct* const& Struct, TArray<FSoftObjectPath>& OutObjectPaths);
 	static void GetObjectPaths(const void* StructValue, UStruct* const& Struct, TMap<FName, FSoftObjectPath>& OutObjectPathMap);
+	static void GetObjectPaths(ULevel* Level, TMap<FName, FSoftObjectPath>& OutObjectPathMap);
 	static void GetUniqueObjectPaths(const void* StructValue, UStruct* const& Struct, TArray<FSoftObjectPath>& OutObjectPaths);
 
 #pragma endregion Asset References
+
+	// DataTable
+#pragma region
+public:
+
+	static void GetDataTables(const void* StructValue, UStruct* const& Struct, TMap<FName, UDataTable*>& OutDataTableMap);
+	static void GetDataTables(ULevel* Level, TMap<FName, UDataTable*>& OutDataTableMap);
+
+#pragma endregion DataTable
 
 	// Load
 #pragma region
@@ -2297,7 +2308,7 @@ template<typename T>
 	template<typename T>
 	static void LoadFCsStruct(const FString& MemberName, T* InStruct)
 	{
-		LoadFCsStruct<T>(MemberName, InStruct, ECsLoadFlags::All);
+		LoadFCsStruct<T>(MemberName, InStruct, ECsLoadFlags::Game);
 	}
 
 	static void LoadFCsAnimSequence(const FString& MemberName, struct FCsAnimSequence* Anim, const ECsLoadFlags& LoadFlags);
@@ -2692,7 +2703,41 @@ template<typename T>
 
 	static void LoadArrayStructProperty(UArrayProperty*& ArrayProperty, void* StructValue);
 
-	static void LoadStruct(void* StructValue, UStruct* const& Struct);
+
+
+
+	static bool CanLoad(void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& LoadFlags, const int32& LoadCodes);
+
+	static void LoadSoftClassProperty(USoftClassProperty*& SoftClassProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& LoadFlags, const int32& LoadCodes);
+
+	static void LoadArraySoftClassProperty(UArrayProperty*& ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& LoadFlags, const int32& LoadCodes);
+
+	static void LoadSoftObjectProperty(USoftObjectProperty*& SoftObjectProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& LoadFlags, const int32& LoadCodes);
+
+	static void LoadArraySoftObjectProperty(UArrayProperty*& ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& LoadFlags, const int32& LoadCodes);
+
+	static void LoadArrayObjectProperty(UArrayProperty*& ArrayProperty, void* StructValue, const int32& LoadFlags, const int32& LoadCodes);
+
+	static void LoadArrayStructProperty(UArrayProperty*& ArrayProperty, void* StructValue, const int32& LoadFlags, const int32& LoadCodes);
+
+	/**
+	*
+	*
+	* @param StructValue
+	* @param Struct
+	* @param LoadFlags
+	* @param LoadCodes
+	*/
+	static void LoadStruct(void* StructValue, UStruct* const& Struct, const int32& LoadFlags, const int32& LoadCodes);
+
+	/**
+	*
+	*
+	* @param DataTable
+	* @param LoadFlags
+	* @param LoadCodes
+	*/
+	static void LoadDataTable(UDataTable* DataTable, const int32& LoadFlags, const int32& LoadCodes);
 
 #pragma endregion Load
 
@@ -2795,6 +2840,25 @@ template<typename T>
 	static void UnloadStruct(void* StructValue, UStruct* const& Struct);
 
 #pragma endregion UnLoad
+
+	// References
+#pragma region
+public:
+
+		// Hard
+#pragma region
+public:
+
+	static void GetReferencesReport_ClassProperty(UClassProperty* ClassProperty, const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport);
+	static void GetReferencesReport_ObjectProperty(UObjectProperty* ObjectProperty, const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport);
+	static void GetReferencesReport_SoftClassProperty(USoftClassProperty* SoftClassProperty, const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport);
+	static void GetReferencesReport_SoftObjectProperty(USoftObjectProperty* SoftObjectProperty, const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport);
+
+	static void GetReferencesReport(const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport);
+
+#pragma endregion Hard
+
+#pragma endregion References
 
 	// IsLoaded
 #pragma region

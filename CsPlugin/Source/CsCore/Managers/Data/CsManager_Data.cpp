@@ -1,9 +1,26 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+
 #include "Managers/Data/CsManager_Data.h"
 #include "CsCore.h"
+#include "CsCVars.h"
 
 // Library
 #include "Library/CsLibrary_Load.h"
+// Settings
+#include "Settings/CsDeveloperSettings.h"
+// Data
+#include "Managers/Data/CsDataRootSet.h"
+
+#if WITH_EDITOR
+#include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Managers/Data/CsGetManagerData.h"
+
+#include "Library/CsLibrary_Common.h"
+
+#include "Classes/Engine/World.h"
+#include "Classes/Engine/Engine.h"
+#endif // #if WITH_EDITOR
 
 // Cached
 #pragma region
@@ -18,14 +35,362 @@ namespace NCsManagerDataCached
 
 #pragma endregion
 
-UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+// static initializations
+UCsManager_Data* UCsManager_Data::s_Instance;
+bool UCsManager_Data::s_bShutdown = false;
+
+UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 }
 
-void UCsManager_Data::GenerateMaps()
+// Singleton
+#pragma region
+
+/*static*/ UCsManager_Data* UCsManager_Data::Get(UObject* InRoot /*=nullptr*/)
+{
+#if WITH_EDITOR
+	return Get_GetManagerData(InRoot)->GetManager_Data();
+#else
+	if (s_bShutdown)
+		return nullptr;
+
+	return s_Instance;
+#endif // #if WITH_EDITOR
+}
+
+/*static*/ void UCsManager_Data::Init(UObject* InRoot)
+{
+#if WITH_EDITOR
+	ICsGetManagerData* GetManagerData = Get_GetManagerData(InRoot);
+
+	UCsManager_Data* Manager_Data = GetManagerData->GetManager_Data();
+
+	if (!Manager_Data)
+	{
+		Manager_Data = NewObject<UCsManager_Data>(InRoot, UCsManager_Data::StaticClass(), TEXT("Manager_Data_Singleton"), RF_Transient | RF_Public);
+
+		GetManagerData->SetManager_Data(Manager_Data);
+
+		Manager_Data->SetMyRoot(InRoot);
+		Manager_Data->Initialize();
+	}
+#else
+	s_bShutdown = false;
+
+	if (!s_Instance)
+	{
+		s_Instance = NewObject<UCsManager_Data>(GetTransientPackage(), UCsManager_Data::StaticClass(), TEXT("Manager_Data_Singleton"), RF_Transient | RF_Public);
+		s_Instance->AddToRoot();
+		s_Instance->SetMyRoot(InRoot);
+		s_Instance->Initialize();
+	}
+#endif // #if WITH_EDITOR
+}
+
+/*static*/ void UCsManager_Data::Shutdown(UObject* InRoot /*=nullptr*/)
+{
+#if WITH_EDITOR
+	ICsGetManagerData* GetManagerData = Get_GetManagerData(InRoot);
+	UCsManager_Data* Manager_Data     = GetManagerData->GetManager_Data();
+	Manager_Data->CleanUp();
+	Manager_Data->SetMyRoot(nullptr);
+
+	GetManagerData->SetManager_Data(nullptr);
+#else
+	if (!s_Instance)
+		return;
+
+	s_Instance->CleanUp();
+	s_Instance->SetMyRoot(nullptr);
+	s_Instance->RemoveFromRoot();
+	s_Instance = nullptr;
+	s_bShutdown = true;
+#endif // #if WITH_EDITOR
+}
+
+#if WITH_EDITOR
+
+/*static*/ ICsGetManagerData* UCsManager_Data::Get_GetManagerData(UObject* InRoot)
+{
+	checkf(InRoot, TEXT("UCsManager_Data::Get_GetManagerData: InRoot is NULL."));
+
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+
+	checkf(GetManagerSingleton, TEXT("UCsManager_Data::Get_GetManagerData: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
+
+	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
+
+	checkf(Manager_Singleton, TEXT("UCsManager_Data::Get_GetManagerData: Manager_Singleton is NULL."));
+
+	ICsGetManagerData* GetManagerData = Cast<ICsGetManagerData>(Manager_Singleton);
+
+	checkf(GetManagerData, TEXT("UCsManager_Data::Get_GetManagerData: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetManagerData."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
+
+	return GetManagerData;
+}
+
+/*static*/ ICsGetManagerData* UCsManager_Data::GetSafe_GetManagerData(UObject* Object)
+{
+	if (!Object)
+		return nullptr;
+
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+
+	if (!GetManagerSingleton)
+		return nullptr;
+
+	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
+
+	if (!Manager_Singleton)
+		return nullptr;
+
+	return Cast<ICsGetManagerData>(Manager_Singleton);
+}
+
+/*static*/ UCsManager_Data* UCsManager_Data::GetSafe(UObject* Object)
+{
+	if (ICsGetManagerData* GetManagerData = GetSafe_GetManagerData(Object))
+		return GetManagerData->GetManager_Data();
+	return nullptr;
+}
+
+/*static*/ UCsManager_Data* UCsManager_Data::GetFromWorldContextObject(const UObject* WorldContextObject)
+{
+	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		// Game Instance
+		if (UCsManager_Data* Manager = GetSafe(World->GetGameInstance()))
+			return Manager;
+
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetFromWorldContextObject: Failed to Manager Data of type UCsManager_Data from GameInstance."));
+
+		return nullptr;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+#endif // #if WITH_EDITOR
+
+void UCsManager_Data::Initialize()
+{
+	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+	DataRootSet				  = Settings->DataRootSet;
+	DataRootSet.Data_Class	  = DataRootSet.Data.LoadSynchronous();
+	DataRootSet.Data_Internal = DataRootSet.Data_Class->GetDefaultObject<UCsDataRootSet>();
+
+	// TODO: Move this to Coroutine and Async
+
+	UCsLibrary_Load::LoadStruct(Settings, UCsDeveloperSettings::StaticClass(), NCsLoadFlags::All, NCsLoadCodes::None);
+
+	GenerateMaps();
+
+	// REMOVE ME: Hack to stop GC from crashing.
+	/*
+	if (!GIsEditor)
+	{
+		if (Settings->DataRootSet.Get())
+			Settings->DataRootSet.Get()->AddToRoot();
+
+		if (Settings->Datas.Get())
+			Settings->Datas.Get()->AddToRoot();
+
+		if (Settings->DataTables.Get())
+			Settings->DataTables.Get()->AddToRoot();
+
+		if (Settings->Payloads.Get())
+			Settings->Payloads.Get()->AddToRoot();
+
+		if (Settings->Weapons.Get())
+			Settings->Weapons.Get()->AddToRoot();
+
+		if (Settings->WeaponAudio.Get())
+			Settings->WeaponAudio.Get()->AddToRoot();
+	}
+	*/
+}
+
+void UCsManager_Data::CleanUp()
+{
+	// REMOVE ME: Hack to stop GC from crashing.
+	/*
+	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+	if (!GIsEditor && Settings)
+	{
+		if (Settings->DataRootSet.Get())
+			Settings->DataRootSet.Get()->RemoveFromRoot();
+
+		if (Settings->Datas.Get())
+			Settings->Datas.Get()->RemoveFromRoot();
+
+		if (Settings->DataTables.Get())
+			Settings->DataTables.Get()->RemoveFromRoot();
+
+		if (Settings->Payloads.Get())
+			Settings->Payloads.Get()->RemoveFromRoot();
+
+		if (Settings->Weapons.Get())
+			Settings->Weapons.Get()->RemoveFromRoot();
+
+		if (Settings->WeaponAudio.Get())
+			Settings->WeaponAudio.Get()->RemoveFromRoot();
+	}
+	*/
+
+#if WITH_EDITOR
+	// Datas
+	{
+		for (TPair<FName, FCsDataEntry_Data*>& Pair : DataEntryMap_Added)
+		{
+			FCsDataEntry_Data* Entry = Pair.Value;
+			delete Entry;
+			Pair.Value = nullptr;
+		}
+		DataEntryMap_Added.Reset();
+	}
+	// DataTables
+	{
+		for (TPair<FName, FCsDataEntry_DataTable*>& Pair : DataTableEntryMap_Added)
+		{
+			FCsDataEntry_DataTable* Entry = Pair.Value;
+			delete Entry;
+			Pair.Value = nullptr;
+		}
+		DataTableEntryMap_Added.Reset();
+	}
+	// Payloads
+	{
+		for (TPair<FName, FCsPayload*>& Pair : PayloadMap_Added)
+		{
+			FCsPayload* Payload = Pair.Value;
+			delete Payload;
+			Pair.Value = nullptr;
+		}
+		PayloadMap_Added.Reset();
+	}
+#endif // #if WITH_EDITOR
+}
+
+	// Root
+#pragma region
+
+void UCsManager_Data::SetMyRoot(UObject* InRoot)
+{
+	MyRoot = InRoot;
+}
+
+#pragma endregion Root
+
+#pragma endregion Singleton
+
+// Maps
+#pragma region
+
+	// DataTable
+#pragma region
+
+void UCsManager_Data::UpdateDataTableRowMap(const FName& TableName, const FName& RowName, uint8* RowPtr)
+{
+	checkf(RowPtr, TEXT("UCsManager_Data::UpdateDataTableRowMap: RowPtr is NULL for DataTable: %s and Row: %s."), *(TableName.ToString()), *(RowName.ToString()));
+
+	FCsDataEntry_DataTable* Entry = DataTableEntryMap[TableName];
+
+	checkf(Entry, TEXT("UCsManager_Data::UpdateDataTableRowMap: Entry has NOT been set for DataTable: %s in DataTableEntryMap."), *(TableName.ToString()));
+
+	const FSoftObjectPath& Path = Entry->DataTable.ToSoftObjectPath();
+
+	// DataTableEntryRowMap_Loaded
+	{
+		TMap<FName, FCsDataEntry_DataTable*>& Map = DataTableEntryRowMap_Loaded.FindOrAdd(TableName);
+
+		Map.Add(RowName, Entry);
+	}
+	// DataTableEntryRowByPathMap_Loaded
+	{
+		TMap<FName, FCsDataEntry_DataTable*>& Map = DataTableEntryRowByPathMap_Loaded.FindOrAdd(Path);
+
+		Map.Add(RowName, Entry);
+	}
+	// DataTableRowMap_Loaded
+	{
+		TMap<FName, uint8*>& Map = DataTableRowMap_Loaded.FindOrAdd(TableName);
+
+		Map.Add(RowName, RowPtr);
+	}
+	// DataTableRowByPathMap_Loaded
+	{
+		TMap<FName, uint8*>& Map = DataTableRowByPathMap_Loaded.FindOrAdd(Path);
+
+		Map.Add(RowName, RowPtr);
+	}
+}
+
+#pragma endregion DataTable
+
+	// Payload
+#pragma region
+
+#if WITH_EDITOR
+
+void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Payload)
+{
+	if (PayloadMap_Added.Find(PayloadName))
+		return;
+
+	FCsPayload* P = new FCsPayload();
+	*P = Payload;
+	PayloadMap_Added.Add(PayloadName, P);
+
+	// Datas
+	for (const FCsPayload_Data& Data : Payload.Datas)
+	{
+		const FName& Name = Data.Name;
+
+		if (!DataEntryMap.Find(Name) &&
+			!DataEntryMap_Added.Find(Name))
+		{
+			FCsDataEntry_Data* Entry = new FCsDataEntry_Data();
+			Entry->Name = Name;
+			Entry->Data = Data.Data;
+			Entry->Paths = Data.Paths;
+
+			DataEntryMap.Add(Name, Entry);
+			DataEntryByPathMap.Add(Data.Data.ToSoftObjectPath(), Entry);
+			DataEntryMap_Added.Add(Name, Entry);
+		}
+	}
+	// DataTables
+	for (const FCsPayload_DataTable& DataTable : Payload.DataTables)
+	{
+		const FName& Name = DataTable.Name;
+
+		if (!DataTableEntryMap.Find(Name) &&
+			!DataTableEntryMap_Added.Find(Name))
+		{
+			FCsDataEntry_DataTable* Entry = new FCsDataEntry_DataTable();
+			Entry->Name = Name;
+			Entry->DataTable = DataTable.DataTable;
+			Entry->Paths = DataTable.Paths;
+
+			DataTableEntryMap.Add(Name, Entry);
+			DataTableEntryByPathMap.Add(DataTable.DataTable.ToSoftObjectPath(), Entry);
+			DataTableEntryMap_Added.Add(Name, Entry);
+		}
+	}
+}
+
+#endif // #if WITH_EDITOR
+
+#pragma endregion Payload
+
+void UCsManager_Data::GenerateMaps() 
 {
 	// Datas
-	if (Datas)
+	if (UDataTable* Datas = DataRootSet.Get()->Datas)
 	{
 		const UScriptStruct* ScriptStruct = Datas->GetRowStruct();
 
@@ -39,11 +404,14 @@ void UCsManager_Data::GenerateMaps()
 		{
 			FCsDataEntry_Data* RowPtr = Datas->FindRow<FCsDataEntry_Data>(RowName, NCsManagerDataCached::Str::GenerateMaps);
 
+			checkf(RowPtr->Data.IsValid(), TEXT("UCsManager_Data::GenerateMaps:: Data at Row: %s for Datas: %s is NOT Valid."), *(RowName.ToString()), *(Datas->GetName()));
+
 			DataEntryMap.Add(RowName, RowPtr);
+			DataEntryByPathMap.Add(RowPtr->Data.ToSoftObjectPath(), RowPtr);
 		}
 	}
 	// DataTables
-	if (DataTables)
+	if (UDataTable* DataTables = DataRootSet.Get()->DataTables)
 	{
 		const UScriptStruct* ScriptStruct = DataTables->GetRowStruct();
 
@@ -58,14 +426,15 @@ void UCsManager_Data::GenerateMaps()
 			FCsDataEntry_DataTable* RowPtr = DataTables->FindRow<FCsDataEntry_DataTable>(RowName, NCsManagerDataCached::Str::GenerateMaps);
 
 			DataTableEntryMap.Add(RowName, RowPtr);
+			DataTableEntryByPathMap.Add(RowPtr->DataTable.ToSoftObjectPath(), RowPtr);
 		}
 	}
 	// Payloads
-	if (Payloads)
+	if (UDataTable* Payloads = DataRootSet.Get()->Payloads)
 	{
 		const UScriptStruct* ScriptStruct = Payloads->GetRowStruct();
 
-		checkf(ScriptStruct == FCsPayload::StaticStruct(), TEXT("UCsManager_Data::GenerateMaps: The Row Struct for Data: %s is of incorrect type: %s. It should be FCsPayload"), *(DataTables->GetName()), *(ScriptStruct->GetName()));
+		checkf(ScriptStruct == FCsPayload::StaticStruct(), TEXT("UCsManager_Data::GenerateMaps: The Row Struct for Data: %s is of incorrect type: %s. It should be FCsPayload"), *(Payloads->GetName()), *(ScriptStruct->GetName()));
 
 		PayloadMap.Reset();
 
@@ -80,15 +449,35 @@ void UCsManager_Data::GenerateMaps()
 	}
 }
 
+#pragma endregion Maps
+
 // Load
 #pragma region
 
 void UCsManager_Data::LoadPayload(const FName& PayloadName)
 {
+	// Check if the Payload has already been loaded
+	if (PayloadMap_Loaded.Find(PayloadName))
+		return;
+
+	FCsPayload* Payload = nullptr;
+
 	if (FCsPayload** PayloadPtr = PayloadMap.Find(PayloadName))
 	{
-		FCsPayload* Payload = *PayloadPtr;
+		Payload = *PayloadPtr;
+	}
+#if WITH_EDITOR
+	else
+	{
+		if (FCsPayload** PayloadAddedPtr = PayloadMap_Added.Find(PayloadName))
+		{
+			Payload = *PayloadAddedPtr;
+		}
+	}
+#endif // #if WITH_EDITOR
 
+	if (Payload)
+	{
 		// Datas
 		for (FCsPayload_Data& Payload_Data : Payload->Datas)
 		{
@@ -98,9 +487,19 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 		// DataTables
 		for (FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
-			const FName& TableName = Payload_DataTable.ShortCode;
+			const FName& TableName = Payload_DataTable.Name;
 
 			UDataTable* DT = LoadDataTable(TableName);
+
+#if WITH_EDITOR
+			if (!DT)
+			{
+				UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadPayload: Failed to load DataTable: %s."), *(TableName.ToString()));
+				continue;
+			}
+#else
+			checkf(DT, TEXT("UCsManager_Data::LoadPayload: Failed to load DataTable: %s."), *(TableName.ToString()));
+#endif // If WITH_EDITOR
 
 			const UScriptStruct* ScriptStruct = DT->GetRowStruct();
 			UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
@@ -124,13 +523,24 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 				if (IsLoadedDataTableRow(TableName, RowName))
 					continue;
 
-				uint8* RowPtr = DT->FindRowUnchecked(RowName);
+				if (uint8* RowPtr = DT->FindRowUnchecked(RowName))
+				{
+					UCsLibrary_Load::LoadStruct(RowPtr, Struct, NCsLoadFlags::All, NCsLoadCodes::None);
 
-				UCsLibrary_Load::LoadStruct(RowPtr, Struct);
+					UpdateDataTableRowMap(TableName, RowName, RowPtr);
+				}
+				else
+				{
+					UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadPayload: Failed to Row: %s for DataTable: %s."), *(RowName.ToString()), *(TableName.ToString()));
+				}
 			}
 		}
 
 		PayloadMap_Loaded.Add(PayloadName, Payload);
+	}
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadPayload: Failed to find Payload: %s."), *(PayloadName.ToString()));
 	}
 }
 
@@ -146,11 +556,35 @@ UDataTable* UCsManager_Data::LoadDataTable(const FName& TableName)
 	{
 		FCsDataEntry_DataTable* Entry = *EntryPtr;
 
-		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_DataTable::StaticStruct());
+		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_DataTable::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
+
+		UDataTable* DataTable = Entry->Get();
+
+#if WITH_EDITOR
+		if (!DataTable)
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadDataTable: Failed to load DataTable: %s."), *(TableName.ToString()));
+			return nullptr;
+		}
+#else
+		checkf(DataTable, TEXT("UCsManager_Data::LoadDataTable: Failed to load DataTable: %s."), *(TableName.ToString()));
+#endif // If WITH_EDITOR
+
+		DataTableMap_Loaded.FindOrAdd(TableName) = DataTable;
+		DataTableByPathMap_Loaded.FindOrAdd(Entry->DataTable.ToSoftObjectPath()) = DataTable;
 
 		return Entry->Get();
 	}
-	// LOG
+#if WITH_EDITOR
+	UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadDataTable: Failed to find DataTable: %s."), *(TableName.ToString()));
+#else
+	checkf(0, TEXT("UCsManager_Data::LoadDataTable: Failed to find DataTable: %s."), *(TableName.ToString()));
+#endif // #if WITH_EDITOR
+	return nullptr;
+}
+
+UDataTable* UCsManager_Data::LoadDataTable(const FSoftObjectPath& Path)
+{
 	return nullptr;
 }
 
@@ -166,9 +600,19 @@ uint8* UCsManager_Data::LoadDataTableRow(const FName& TableName, const FName& Ro
 
 		// If DataTable is NOT loaded, load it
 		if (!Entry->Get())
-			UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_DataTable::StaticStruct());
+			LoadDataTable(TableName);
 
 		UDataTable* DT = Entry->Get();
+
+#if WITH_EDITOR
+		if (!DT)
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadDataTableRow: Failed to find DataTable: %s."), *(TableName.ToString()));
+			return nullptr;
+		}
+#else
+		checkf(DT, TEXT("UCsManager_Data::LoadDataTableRow: Failed to find DataTable: %s."), *(TableName.ToString()));
+#endif // If WITH_EDITOR
 
 		const UScriptStruct* ScriptStruct = DT->GetRowStruct();
 		UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
@@ -176,12 +620,17 @@ uint8* UCsManager_Data::LoadDataTableRow(const FName& TableName, const FName& Ro
 
 		if (uint8* RowPtr = DT->FindRowUnchecked(RowName))
 		{
-			UCsLibrary_Load::LoadStruct(RowPtr, Struct);
+			UCsLibrary_Load::LoadStruct(RowPtr, Struct, NCsLoadFlags::All, NCsLoadCodes::None);
+			UpdateDataTableRowMap(TableName, RowName, RowPtr);
 
 			return RowPtr;
 		}
 	}
-	// LOG
+#if WITH_EDITOR
+	UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadDataTableRow: Failed to load DataTable: %s and Row: %s."), *(TableName.ToString()), *(RowName.ToString()));
+#else
+	checkf(0, TEXT("UCsManager_Data::LoadDataTableRow: Failed to load DataTable: %s and Row: %s."), *(TableName.ToString()), *(RowName.ToString()));
+#endif // #if WITH_EDITOR
 	return nullptr;
 }
 
@@ -199,11 +648,26 @@ bool UCsManager_Data::IsLoadedDataTableRow(const FName& TableName, const FName& 
 // Get
 #pragma region
 
+	// DataTable
+#pragma region
+
 UDataTable* UCsManager_Data::GetDataTable(const FName& TableName)
 {
 	if (UDataTable** TablePtr = DataTableMap_Loaded.Find(TableName))
 		return *TablePtr;
 	return nullptr;
+}
+
+UDataTable* UCsManager_Data::GetDataTable(const FSoftObjectPath& Path)
+{
+	if (UDataTable** TablePtr = DataTableByPathMap_Loaded.Find(Path))
+		return *TablePtr;
+	return nullptr;
+}
+
+UDataTable* UCsManager_Data::GetDataTable(const TSoftObjectPtr<UDataTable>& SoftObject)
+{
+	return GetDataTable(SoftObject.ToSoftObjectPath());
 }
 
 uint8* UCsManager_Data::GetDataTableRow(const FName& TableName, const FName& RowName)
@@ -218,82 +682,18 @@ uint8* UCsManager_Data::GetDataTableRow(const FName& TableName, const FName& Row
 	return nullptr;
 }
 
+uint8* UCsManager_Data::GetDataTableRow(const FSoftObjectPath& Path, const FName& RowName)
+{
+	if (TMap<FName, uint8*>* TablePtr = DataTableRowByPathMap_Loaded.Find(Path))
+	{
+		if (uint8** RowPtr = TablePtr->Find(RowName))
+		{
+			return *RowPtr;
+		}
+	}
+	return nullptr;
+}
+
+#pragma endregion DataTable
+
 #pragma endregion Get
-
-// Editor
-#pragma region
-#if WITH_EDITOR
-
-void UCsManager_Data::PostEditChangeProperty(FPropertyChangedEvent& e)
-{
-	const FName PropertyName	   = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
-	const FName MemberPropertyName = (e.MemberProperty != NULL) ? e.MemberProperty->GetFName() : NAME_None;
-
-	// Datas
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsManager_Data, Datas))
-	{
-		if (Datas)
-		{
-			const UScriptStruct* ScriptStruct = Datas->GetRowStruct();
-
-			if (ScriptStruct != FCsDataEntry_DataTable::StaticStruct())
-			{
-				// LOG
-				Datas = nullptr;
-			}
-		}
-	}
-	// DataTables
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsManager_Data, DataTables))
-	{
-		if (DataTables)
-		{
-			const UScriptStruct* ScriptStruct = DataTables->GetRowStruct();
-
-			if (ScriptStruct != FCsDataEntry_DataTable::StaticStruct())
-			{
-				// LOG
-				DataTables = nullptr;
-			}
-		}
-	}
-	// Payloads
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsManager_Data, Payloads))
-	{
-		if (Payloads)
-		{
-			const UScriptStruct* ScriptStruct = Payloads->GetRowStruct();
-
-			if (ScriptStruct != FCsDataEntry_DataTable::StaticStruct())
-			{
-				// LOG
-				Payloads = nullptr;
-			}
-		}
-	}
-
-	// Payload
-	{
-		// Payload.DataTable
-		/*
-		if (PropertyName == GET_MEMBER_NAME_CHECKED(ACsLevelScriptActor, Payload) &&
-			MemberPropertyName == GET_MEMBER_NAME_CHECKED(FCsPayload, DataTable))
-		{
-
-		}
-		*/
-	}
-
-	Super::PostEditChangeProperty(e);
-}
-
-void UCsManager_Data::PostEditChangeChainProperty(FPropertyChangedChainEvent& e)
-{
-	const FName PropertyName	   = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
-	const FName MemberPropertyName = (e.MemberProperty != NULL) ? e.MemberProperty->GetFName() : NAME_None;
-
-	Super::PostEditChangeChainProperty(e);
-}
-
-#endif // #if WITH_EDITOR
-#pragma endregion Editor

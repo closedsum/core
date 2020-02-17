@@ -430,6 +430,8 @@ public:
 // Skeletal Mesh
 #pragma region
 
+class USkeletalMesh;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsSkeletalMesh
 {
@@ -441,9 +443,8 @@ struct CSCORE_API FCsSkeletalMesh
 	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Mesh_LoadFlags;
 
-private:
 	UPROPERTY(Transient)
-	class USkeletalMesh* Mesh_Internal;
+	USkeletalMesh* Mesh_Internal;
 
 public:
 	FCsSkeletalMesh() :
@@ -451,14 +452,6 @@ public:
 		Mesh_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Mesh_LoadFlags, ECsLoadFlags::Game);
-	}
-
-	FORCEINLINE FCsSkeletalMesh& operator=(const FCsSkeletalMesh& B)
-	{
-		Mesh = B.Mesh;
-		Mesh_LoadFlags = B.Mesh_LoadFlags;
-		Mesh_Internal = B.Mesh_Internal;
-		return *this;
 	}
 
 	FORCEINLINE bool operator==(const FCsSkeletalMesh& B) const

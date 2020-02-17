@@ -318,7 +318,7 @@ FString UCsLibrary_Common::LoadFlagsToString(const int32 &LoadFlags)
 {
 	FString String = TEXT("");
 	bool IsFirst = true;
-
+	/*
 	for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; ++I)
 	{
 		if (CS_TEST_BLUEPRINT_BITFLAG(LoadFlags, (ECsLoadFlags)I))
@@ -331,6 +331,7 @@ FString UCsLibrary_Common::LoadFlagsToString(const int32 &LoadFlags)
 			IsFirst = false;
 		}
 	}
+	*/
 	return String;
 }
 
@@ -367,7 +368,7 @@ ECsLoadFlags UCsLibrary_Common::ViewTypeToLoadFlags(const ECsViewType& ViewType,
 		return IsLow ? ECsLoadFlags::Game3PLow : ECsLoadFlags::Game3P;
 	if (ViewType == ECsViewType::VR)
 		return ECsLoadFlags::GameVR;
-	return ECsLoadFlags::All;
+	return ECsLoadFlags::Game;
 }
 
 #pragma endregion Enum to Enum Conversion

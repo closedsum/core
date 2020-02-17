@@ -854,6 +854,42 @@ TAutoConsoleVariable<int32> CsCVarLogManagerAchievementTransactions(
 
 #pragma endregion Managers
 
+// Level
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogLevelPayloadPopulate(
+	TEXT("log.level.payload.populate"),
+	1,
+	TEXT("Log Level Payload Populate."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Level
+
+// Payload
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogPayloadPopulate(
+	TEXT("log.payload.populate"),
+	1,
+	TEXT("Log Payload Populate."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Payload
+
+// Data
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogDataEntryPopulate(
+	TEXT("log.data.entry.populate"),
+	1,
+	TEXT("Log Data Entry Populate."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Data
+
 // CVarLog
 #pragma region
 
@@ -944,6 +980,40 @@ namespace NCsCVarLog
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerSaveTransactions);
 		// Achievement
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerAchievementTransactions);
+
+	// Level
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogLevelPayloadPopulate);
+	// Payload
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogPayloadPopulate);
+	// Data
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogDataEntryPopulate);
+
+	namespace Map
+	{
+		// Managers
+
+			// Load
+		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerLoad, CsCVarLogManagerLoad);
+			// Data
+		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerDataLoad, CsCVarLogManagerDataLoad);
+			// Projectile
+		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerProjectileTransactions, CsCVarLogManagerProjectileTransactions);
+			// Save
+		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerSaveTransactions, CsCVarLogManagerSaveTransactions);
+			// Achievement
+		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerAchievementTransactions, CsCVarLogManagerAchievementTransactions);
+			// Collectible
+		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerCollectibleTransactions, CsCVarLogManagerCollectibleTransactions);
+			// Level
+		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerLevelTransactions, CsCVarLogManagerLevelTransactions);
+
+		// Level
+		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogLevelPayloadPopulate, CsCVarLogLevelPayloadPopulate);
+		// Payload
+		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogPayloadPopulate, CsCVarLogPayloadPopulate);
+		// Data
+		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogDataEntryPopulate, CsCVarLogDataEntryPopulate);
+	}
 }
 
 #pragma endregion CVarLog

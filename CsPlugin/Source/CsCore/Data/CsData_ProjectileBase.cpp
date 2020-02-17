@@ -11,7 +11,7 @@ UCsData_ProjectileBase::UCsData_ProjectileBase(const FObjectInitializer& ObjectI
 	DefaultCollisionResponseContainer = FCollisionResponseContainer(ECR_Ignore);
 }
 
-void UCsData_ProjectileBase::Load(const ECsLoadFlags& LoadFlags /*=ECsLoadFlags::All*/)
+void UCsData_ProjectileBase::Load(const ECsLoadFlags& LoadFlags /*=ECsLoadFlags::Game*/)
 {
 	Super::Load(LoadFlags);
 	

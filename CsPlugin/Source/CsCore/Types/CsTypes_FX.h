@@ -9,20 +9,24 @@
 
 #define CS_MAX_EMITTER_COUNT 256
 
-USTRUCT()
+// FCsParticleSystem
+#pragma region
+
+class UParticleSystem;
+
+USTRUCT(BlueprintType)
 struct CSCORE_API FCsParticleSystem
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "FX")
-	TSoftObjectPtr<class UParticleSystem> Particle;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftObjectPtr<UParticleSystem> Particle;
 
-	UPROPERTY(EditAnywhere, Category = "FX", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Particle_LoadFlags;
 
-private:
-	UPROPERTY(Transient)
-	class UParticleSystem* Particle_Internal;
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UParticleSystem* Particle_Internal;
 
 public:
 	FCsParticleSystem() :
@@ -37,6 +41,8 @@ public:
 		return Particle_Internal;
 	}
 };
+
+#pragma endregion FCsParticleSystem
 
 // FxPriority
 #pragma region

@@ -38,14 +38,14 @@ public:
 	* @param LoadFlags
 	* return
 	*/
-	virtual bool IsValid(const ECsLoadFlags& LoadFlags = ECsLoadFlags::All) = 0;
+	virtual bool IsValid(const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game) = 0;
 
 	/**
 	*
 	*
 	* @param LoadFlags
 	*/
-	virtual void Load(const ECsLoadFlags& LoadFlags = ECsLoadFlags::All) = 0;
+	virtual void Load(const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game) = 0;
 
 	/**
 	*
@@ -240,7 +240,7 @@ public:
 		return Interface->GetShortCode();
 	}
 
-	FORCEINLINE bool _IsValid(const ECsLoadFlags& LoadFlags = ECsLoadFlags::All)
+	FORCEINLINE bool _IsValid(const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game)
 	{
 		if (bScript)
 			return Script_IsValid_Impl.Execute(Object, LoadFlags);
@@ -248,7 +248,7 @@ public:
 			return Interface->IsValid(LoadFlags);
 	}
 
-	FORCEINLINE void Load(const ECsLoadFlags& LoadFlags = ECsLoadFlags::All)
+	FORCEINLINE void Load(const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game)
 	{
 		if (bScript)
 			Script_Load_Impl.Execute(Object, LoadFlags);

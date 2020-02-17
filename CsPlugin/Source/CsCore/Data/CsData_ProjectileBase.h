@@ -13,7 +13,7 @@ class CSCORE_API UCsData_ProjectileBase : public UCsData_Impl
 {
 	GENERATED_UCLASS_BODY()
 
-	virtual void Load(const ECsLoadFlags& LoadFlags = ECsLoadFlags::All) override;
+	virtual void Load(const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game) override;
 
 	virtual const FECsProjectile& GetProjectileType();
 

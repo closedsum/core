@@ -24,14 +24,8 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "CsCore|Load")
-	FCsDataTable Datas;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "CsCore|Load")
-	FCsDataTable DataTables;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "CsCore|Load")
-	FCsDataTable Payloads;
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "RsCore|Load")
+	FCsDataRootSetContainer DataRootSet;
 
 #pragma endregion Load
 

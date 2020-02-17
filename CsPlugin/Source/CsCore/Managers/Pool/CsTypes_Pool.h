@@ -405,13 +405,29 @@ public:
 class UObject;
 struct ICsPooledObjectPayload;
 
-struct CSCORE_API ICsPooledObjectCache
+struct CSCORE_API ICsPooledObjectCache : virtual public ICsGetInterfaceMap
 {
+public:
+
+	static const FName Name;
+
 public:
 
 	virtual ~ICsPooledObjectCache(){}
 
+	virtual void Init(const int32& InIndex) = 0;
+
 	virtual const int32& GetIndex() const = 0;
+
+	virtual void Allocate(ICsPooledObjectPayload* Payload, const FCsTime& InTime) = 0;
+
+	virtual const bool& IsAllocated() const = 0;
+
+	virtual void Deallocate() = 0;
+
+	virtual void QueueDeallocate() = 0;
+
+	virtual const bool& ShouldDeallocate() const = 0;
 
 	virtual const ECsPooledObjectState& GetState() const = 0;
 
@@ -427,23 +443,11 @@ public:
 
 	virtual const float& GetLifeTime() const = 0;
 
-	virtual const FCsTime& GetTime() const = 0;
+	virtual const FCsTime& GetStartTime() const = 0;
 
-	virtual const float& GetElapsedTime() const = 0;
+	virtual const FCsDeltaTime& GetElapsedTime() const = 0;
 
 	virtual bool HasLifeTimeExpired() = 0;
-
-	virtual void Init(const int32& InIndex) = 0;
-
-	virtual void Allocate(ICsPooledObjectPayload* Payload, const FCsTime& InTime) = 0;
-
-	virtual const bool& IsAllocated() const = 0;
-
-	virtual void Deallocate() = 0;
-
-	virtual void QueueDeallocate() = 0;
-
-	virtual const bool& ShouldDeallocate() const = 0;
 
 	virtual void Reset() = 0;
 };

@@ -140,8 +140,9 @@ public:
 			P.ConstructParams = Pair.Value;
 
 			TManager_PooledObject_Abstract* Pool = ConstructManagerPooledObjects_Impl.Execute(Key);
+			Pool->ConstructContainer_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructContainer_Internal);
 			Pool->Init(P);
-			Pool->ConstructPayload_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructPayload_Internal)
+			Pool->ConstructPayload_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructPayload_Internal);
 
 			Pools.Add(Key, Pool);
 		}
@@ -211,14 +212,39 @@ public:
 
 // Object
 #pragma region
+private:
+
+	KeyType CurrentConstructObjectType;
+
 protected:
 
 	/**
 	* Creates a pooled object of type ICsPooledObject
 	*/
-	virtual InterfaceContainerType* ConstructObject(const KeyType& Type)
+	InterfaceContainerType* ConstructObject(const KeyType& Type)
 	{
+		checkf(IsValidKey(Type), TEXT("%s::ConstructObject: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
+
+		CurrentConstructObjectType = Type;
+
 		return Pools[Type]->ConstructObject();
+	}
+
+public:
+
+	/**
+	*
+	*
+	* @param Type
+	* return
+	*/
+	TBaseDelegate<InterfaceContainerType*, const KeyType& /*Type*/> ConstructContainer_Impl;
+
+private:
+
+	InterfaceContainerType* ConstructContainer_Internal()
+	{
+		return ConstructContainer_Impl.Execute(CurrentConstructObjectType);
 	}
 
 protected:
@@ -238,9 +264,11 @@ protected:
 	* @param O
 	* return 
 	*/
-	virtual FString GetObjectName(const InterfaceContainerType* O)
+	FString GetObjectName(const InterfaceContainerType* O)
 	{
-		return NCsCached::Str::Empty;
+		checkf(O, TEXT("%s::GetObjectName: O is NULL."), *Name);
+
+		return O->GetObject()->GetName();
 	}
 
 #pragma endregion Object
@@ -283,7 +311,17 @@ public:
 	*/
 	TManager_PooledObject_Abstract* GetManagerPooledObjects(const KeyType& Type)
 	{
-		return CheckAndAddType(Type);
+		checkf(IsValidKey(Type), TEXT("%s::GetManagerPooledObjects: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
+
+#if WITH_EDITOR
+		TManager_PooledObject_Abstract** PoolPtr = Pools.Find(Type);
+
+		checkf(PoolPtr, TEXT("%s::GetManagerPooledObjects: No Pool found for Type: %s. Call CreatePool."), *Name, *KeyTypeToString(Type));
+
+		return *PoolPtr;
+#else
+		return Pools[Type];
+#endif // #if WITH_EDITOR
 	}
 
 	/**
@@ -293,7 +331,7 @@ public:
 	* @param Type
 	* @param Size
 	*/
-	virtual void CreatePool(const FCsManagerPooledObjectParams& Params, const KeyType& Type, const int32& Size)
+	void CreatePool(const FCsManagerPooledObjectParams& Params, const KeyType& Type, const int32& Size)
 	{
 		checkf(IsValidKey(Type), TEXT("%s::CreatePool: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
 
@@ -304,7 +342,10 @@ public:
 		{
 			Pool = ConstructManagerPooledObjects_Impl.Execute(Type);
 
+			Pool->ConstructContainer_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructContainer_Internal);
 			Pool->Init(Params);
+			Pool->ConstructPayload_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructPayload_Internal);
+
 			Pools.Add(Type, Pool);
 		}
 		else
@@ -369,48 +410,6 @@ private:
 		OnCreatePool_AddToPool_Event.Broadcast(CurrentCreatePoolType, Object);
 	}
 
-private:
-
-	/**
-	*
-	*
-	* @param Type
-	* return
-	*/
-	TManager_PooledObject_Abstract* CheckAndAddType(const KeyType& Type)
-	{
-		TManager_PooledObject_Abstract** PoolPtr = Pools.Find(Type);
-		TManager_PooledObject_Abstract* Pool     = nullptr;
-
-		if (!PoolPtr)
-		{
-			Pool = new TManager_PooledObject_Abstract();
-
-			FCsManagerPooledObjectParams Params;
-			Params.Name		= Name + TEXT("_") + KeyTypeToString(Type);
-			Params.World	= GetCurrentWorld();
-			Params.LogType	= LogType;
-
-			Pool->Init(Params);
-			Pools.Add(Type, Pool);
-
-			// Bind the appropriate Script delegates.
-			Pool->Script_GetCache_Impl = Script_GetCache_Impl;
-			Pool->Script_Allocate_Impl = Script_Allocate_Impl;
-			Pool->Script_Deallocate_Impl = Script_Deallocate_Impl;
-			Pool->Script_Update_Impl = Script_Update_Impl;
-
-			// Bind to OnUpdate_Pool_Object so the event OnUpdate_Object_Event can properly broadcast events.
-			Pool->OnUpdate_Object_Event.AddRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnUpdate_Pool_Object);
-			Pool->OnAddToPool_UpdateScriptDelegates_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnAddToPool_UpdateScriptDelegates);
-		}
-		else
-		{
-			Pool = *PoolPtr;
-		}
-		return Pool;
-	}
-
 	// Add
 #pragma region
 public:
@@ -431,9 +430,7 @@ public:
 	*/
 	const InterfaceContainerType* AddToPool(const KeyType& Type, InterfaceType* InterfaceObject, UObject* Object)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::AddToPool: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		const InterfaceContainerType* O = CheckAndAddType(Type)->AddToPool(InterfaceObject, Object);
+		const InterfaceContainerType* O = GetManagerPooledObjects(Type)->AddToPool(InterfaceObject, Object);
 
 		OnAddToPool_Event.Broadcast(Type, O);
 		 
@@ -507,11 +504,9 @@ public:
 	*/
 	const InterfaceContainerType* AddToAllocatedObjects(const KeyType& Type, InterfaceType* InterfaceObject, UObject* Object)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::AddToAllocatedObjects: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
 		checkf(Object, TEXT("%s::AddToAllocatedObjects: Object is NULL."), *Name);
 
-		const InterfaceContainerType* O = CheckAndAddType(Type)->AddToAllocatedObjects(InterfaceObject, Object);
+		const InterfaceContainerType* O = GetManagerPooledObjects(Type)->AddToAllocatedObjects(InterfaceObject, Object);
 
 		OnAddToAllocatedObjects_Event.Broadcast(Type, O);
 
@@ -576,9 +571,7 @@ public:
 	*/
 	FORCEINLINE const TArray<InterfaceContainerType*>& GetPool(const KeyType& Type)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::GetPool: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		return CheckAndAddType(Type)->GetPool();
+		return GetManagerPooledObjects(Type)->GetPool();
 	}
 
 	/**
@@ -591,9 +584,7 @@ public:
 	*/
 	FORCEINLINE const TArray<InterfaceContainerType*>& GetAllocatedObjects(const KeyType& Type)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::GetAllocatedObjects: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		return CheckAndAddType(Type)->GetAllocatedObjects();
+		return GetManagerPooledObjects(Type)->GetAllocatedObjects();
 	}
 
 	/**
@@ -605,9 +596,7 @@ public:
 	*/
 	FORCEINLINE const int32& GetPoolSize(const KeyType& Type)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::GetPoolSize: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		return CheckAndAddType(Type)->GetPoolSize();
+		return GetManagerPooledObjects(Type)->GetPoolSize();
 	}
 
 	/**
@@ -618,9 +607,7 @@ public:
 	*/ 
 	FORCEINLINE int32 GetAllocatedObjectsSize(const KeyType& Type)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::GetAllocatedObjectsSize: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		return CheckAndAddType(Type)->GetAllocatedObjectsSize();
+		return GetManagerPooledObjects(Type)->GetAllocatedObjectsSize();
 	}
 
 	/**
@@ -632,9 +619,7 @@ public:
 	*/
 	FORCEINLINE bool IsExhausted(const KeyType& Type)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::IsExhausted: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		return CheckAndAddType(Type)->IsExhausted();
+		return GetManagerPooledObjects(Type)->IsExhausted();
 	}
 
 	// Find
@@ -652,9 +637,7 @@ public:
 	*/
 	FORCEINLINE const InterfaceContainerType* FindObject(const KeyType& Type, const int32& Index)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::FindObject: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		return CheckAndAddType(Type)->FindObject(Index);
+		return GetManagerPooledObjects(Type)->FindObject(Index);
 	}
 
 	/**
@@ -669,9 +652,7 @@ public:
 	*/
 	FORCEINLINE const InterfaceContainerType* FindObject(const KeyType& Type, InterfaceType* Object)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::FindObject: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		return CheckAndAddType(Type)->FindObject(Object);
+		return GetManagerPooledObjects(Type)->FindObject(Object);
 	}
 
 	/**
@@ -688,9 +669,7 @@ public:
 	*/
 	FORCEINLINE const InterfaceContainerType* FindObject(const KeyType& Type, UObject* Object)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::FindObject: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		return CheckAndAddType(Type)->FindObject(Object);
+		return GetManagerPooledObjects(Type)->FindObject(Object);
 	}
 
 	/**
@@ -704,9 +683,7 @@ public:
 	*/
 	FORCEINLINE const InterfaceContainerType* FindSafeObject(const KeyType& Type, const int32& Index)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::FindSafeObject: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		return CheckAndAddType(Type)->FindSafeObject(Index);
+		return GetManagerPooledObjects(Type)->FindSafeObject(Index);
 	}
 
 	/**
@@ -720,9 +697,7 @@ public:
 	*/
 	FORCEINLINE const InterfaceContainerType* FindSafeObject(const KeyType& Type, InterfaceType* Object)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::FindSafeObject: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		return CheckAndAddType(Type)->FindSafeObject(Object);
+		return GetManagerPooledObjects(Type)->FindSafeObject(Object);
 	}
 
 	/**
@@ -737,9 +712,7 @@ public:
 	*/
 	FORCEINLINE const InterfaceContainerType* FindSafeObject(const KeyType& Type, UObject* Object)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::FindSafeObject: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		return CheckAndAddType(Type)->FindObject(Object);
+		return GetManagerPooledObjects(Type)->FindObject(Object);
 	}
 
 #pragma endregion Find
@@ -814,11 +787,9 @@ public:
 	*/
 	void ConstructPayloads(const KeyType& Type, const int32& Size)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::ConstructPayloads: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
 		CurrentConstructPayloadType = Type;
 
-		CheckAndAddType(Type)->ConstructPayloads(Size);
+		GetManagerPooledObjects(Type)->ConstructPayloads(Size);
 	}
 
 	/**
@@ -845,9 +816,7 @@ public:
 	*/
 	void DeconstructPayloads(const KeyType& Type)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::DeconstructPayloads: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		CheckAndAddType(Type)->DeconstructPayloads();
+		GetManagerPooledObjects(Type)->DeconstructPayloads();
 	}
 
 	/**
@@ -859,9 +828,7 @@ public:
 	*/
 	FORCEINLINE PayloadType* AllocatePayload(const KeyType& Type)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::AllocatePayload: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		return CheckAndAddType(Type)->AllocatePayload();
+		return GetManagerPooledObjects(Type)->AllocatePayload();
 	}
 
 #pragma endregion Payload
@@ -896,21 +863,20 @@ public:
 	*/
 	const InterfaceContainerType* Spawn(const KeyType& Type, PayloadType* Payload)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::Spawn: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		const InterfaceContainerType* Object = CheckAndAddType(Type)->Spawn(Payload);
+		const InterfaceContainerType* Object = GetManagerPooledObjects(Type)->Spawn(Payload);
 
 		OnSpawn_Event.Broadcast(Type, Object);
 		return Object;
 	}
 
-	/*
-	template<template OtherContainerType, template OtherPayloadType>
+	template<typename OtherContainerType, typename OtherPayloadType>
 	const OtherContainerType* Spawn(const KeyType& Type, OtherPayloadType* Payload)
 	{
+		const OtherContainerType* Object = GetManagerPooledObjects(Type)->Spawn<OtherContainerType, OtherPayloadType>(Payload);
 
+		OnSpawn_Event.Broadcast(Type, static_cast<const InterfaceContainerType*>(Object));
+		return Object;
 	}
-	*/
 
 	/** 
 	*
@@ -929,17 +895,15 @@ public:
 	/**
 	* Destroy a pooled object with specified Index from a pool for the
 	* appropriate Type.
-	*  NOTE: This process is O(n). Consider queueing the deallocate.
+	*  NOTE: This process is O(n). Consider queue	ing the deallocate.
 	*
 	* @param Type	Type of pool to destroy from.
 	* @param Index	Index of the object in the pool.
 	* return		Whether successfully destroyed the object or not.
 	*/
-	virtual bool Destroy(const KeyType& Type, const int32& Index)
+	bool Destroy(const KeyType& Type, const int32& Index)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::Destroy: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
-		TManager_PooledObject_Abstract* Pool = CheckAndAddType(Type);
+		TManager_PooledObject_Abstract* Pool = GetManagerPooledObjects(Type);
 
 		if (Pool->Destroy(Index))
 		{
@@ -960,7 +924,7 @@ public:
 	* @param Object		Object that implements the interface: ICsPooledObject.
 	* return			Whether successfully destroyed the object or not.
 	*/
-	virtual bool Destroy(const KeyType& Type, InterfaceType* Object)
+	bool Destroy(const KeyType& Type, InterfaceType* Object)
 	{
 		checkf(IsValidKey(Type), TEXT("%s::Destroy: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
 
@@ -977,13 +941,11 @@ public:
 	* @param Object		Object or Object->GetClass() that implements the interface: ICsPooledObject.
 	* return			Whether successfully destroyed the object or not.
 	*/
-	virtual bool Destroy(const KeyType& Type, UObject* Object)
+	bool Destroy(const KeyType& Type, UObject* Object)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::Destroy: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
+		checkf(Object, TEXT("%s::Destroy: Object is NULL."), *Name);
 
-		checkf(Object, TEXT("Object is NULL."));
-
-		TManager_PooledObject_Abstract* Pool = CheckAndAddType(Type);
+		TManager_PooledObject_Abstract* Pool = GetManagerPooledObjects(Type);
 
 		if (Pool->Destroy(Object))
 		{
@@ -1003,9 +965,9 @@ public:
 	* @param Object		Object that implements the interface: ICsPooledObject.
 	* return			Whether successfully destroyed the object or not.
 	*/
-	virtual bool Destroy(InterfaceType* Object)
+	bool Destroy(InterfaceType* Object)
 	{
-		checkf(Object, TEXT("Object is NULL."));
+		checkf(Object, TEXT("%s::Destroy: Object is NULL."), *Name);
 
 		return Destroy(Object->_getUObject());
 	}
@@ -1014,13 +976,14 @@ public:
 	* Destroy an object.
 	*  Object must implement the interface: ICsPooledObject or the UClass
 	*  associated with the Object have ImplementsInterface(UCsPooledObject::StaticClass()) == true.
+	*  NOTE: This process is O(n). Consider queueing the deallocate.
 	*
 	* @param Object		Object or Object->GetClass() that implements the interface: ICsPooledObject.
 	* return			Whether successfully destroyed the object or not.
 	*/
-	virtual bool Destroy(UObject* Object)
+	bool Destroy(UObject* Object)
 	{
-		checkf(Object, TEXT("Object is NULL."));
+		checkf(Object, TEXT("%s::Destroy: Object is NULL."), *Name);
 
 		for (TPair<KeyType, TManager_PooledObject_Abstract*>& Pair : Pools)
 		{

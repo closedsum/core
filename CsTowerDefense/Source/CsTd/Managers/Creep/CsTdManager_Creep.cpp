@@ -197,14 +197,13 @@ void UCsTdManager_Creep::OnRegister()
 
 void UCsTdManager_Creep::Initialize()
 {
-	ConstructInternal();
+	SetupInternal();
 }
 
 void UCsTdManager_Creep::CleanUp()
 {
-	Internal->Shutdown();
+	Internal.Shutdown();
 	Pool.Reset();
-	delete Internal;
 }
 
 #pragma endregion Singleton
@@ -212,35 +211,33 @@ void UCsTdManager_Creep::CleanUp()
 // Internal
 #pragma region
 
-void UCsTdManager_Creep::ConstructInternal()
+void UCsTdManager_Creep::SetupInternal()
 {
-	Internal = new FCsTdManager_Creep_Internal();
-
 	// Delegates
 	{
 		// Payload
-		Internal->ConstructPayload_Impl.BindUObject(this, &UCsTdManager_Creep::ConstructPayload);
+		Internal.ConstructPayload_Impl.BindUObject(this, &UCsTdManager_Creep::ConstructPayload);
 		// Update
-		Internal->OnPreUpdate_Pool_Impl.BindUObject(this, &UCsTdManager_Creep::OnPreUpdate_Pool);
-		Internal->OnUpdate_Object_Event.AddUObject(this, &UCsTdManager_Creep::OnUpdate_Object);
-		Internal->OnPostUpdate_Pool_Impl.BindUObject(this, &UCsTdManager_Creep::OnPostUpdate_Pool);
+		Internal.OnPreUpdate_Pool_Impl.BindUObject(this, &UCsTdManager_Creep::OnPreUpdate_Pool);
+		Internal.OnUpdate_Object_Event.AddUObject(this, &UCsTdManager_Creep::OnUpdate_Object);
+		Internal.OnPostUpdate_Pool_Impl.BindUObject(this, &UCsTdManager_Creep::OnPostUpdate_Pool);
 
 		// Bind delegates for a script interface.
-		Internal->Script_GetCache_Impl = Script_GetCache_Impl;
-		Internal->Script_Allocate_Impl = Script_Allocate_Impl;
-		Internal->Script_Deallocate_Impl = Script_Deallocate_Impl;
-		Internal->Script_Update_Impl = Script_Update_Impl;
+		Internal.Script_GetCache_Impl = Script_GetCache_Impl;
+		Internal.Script_Allocate_Impl = Script_Allocate_Impl;
+		Internal.Script_Deallocate_Impl = Script_Deallocate_Impl;
+		Internal.Script_Update_Impl = Script_Update_Impl;
 	}
 }
 
-void UCsTdManager_Creep::InitInternal(const TCsTdManager_Internal::FCsManagerPooledObjectMapParams& Params)
+void UCsTdManager_Creep::InitInternal(const FCsTdManager_Creep_Internal::FCsManagerPooledObjectMapParams& Params)
 {
-	Internal->Init(Params);
+	Internal.Init(Params);
 }
 
 void UCsTdManager_Creep::Clear()
 {
-	Internal->Clear();
+	Internal.Clear();
 }
 
 	// Pool
@@ -250,9 +247,14 @@ void UCsTdManager_Creep::CreatePool(const FECsTdCreep& Type, const int32& Size)
 {
 	// TODO: Check if the pool has already been created
 
-	Internal->CreatePool(Type, Size);
+	Internal.CreatePool(Type, Size);
 	// TODO: Expose Payload Size somewhere
-	Internal->ConstructPayloads(Type, 4);
+	Internal.ConstructPayloads(Type, 4);
+}
+
+FCsTdCreepPooled* UCsTdManager_Creep::ConstructContainer(const FECsTdCreep& Type)
+{
+	return new FCsTdCreepPooled();
 }
 
 		// Add
@@ -263,17 +265,17 @@ void UCsTdManager_Creep::CreatePool(const FECsTdCreep& Type, const int32& Size)
 
 const FCsTdCreepPooled* UCsTdManager_Creep::AddToPool(const FECsTdCreep& Type, ICsTdCreep* Object)
 {
-	return Internal->AddToPool(Type, Object);
+	return Internal.AddToPool(Type, Object);
 }
 
 const FCsTdCreepPooled* UCsTdManager_Creep::AddToPool(const FECsTdCreep& Type, const FCsTdCreepPooled* Object)
 {
-	return Internal->AddToPool(Type, Object->GetObject());
+	return Internal.AddToPool(Type, Object->GetObject());
 }
 
 const FCsTdCreepPooled* UCsTdManager_Creep::AddToPool(const FECsTdCreep& Type, UObject* Object)
 {
-	return Internal->AddToPool<FCsTdCreepPooled>(Type, Object);
+	return Internal.AddToPool(Type, Object);
 }
 
 #pragma endregion Pool
@@ -283,17 +285,17 @@ const FCsTdCreepPooled* UCsTdManager_Creep::AddToPool(const FECsTdCreep& Type, U
 
 const FCsTdCreepPooled* UCsTdManager_Creep::AddToAllocatedObjects(const FECsTdCreep& Type, ICsTdCreep* Creep, UObject* Object)
 {
-	return Internal->AddToAllocatedObjects(Type, Creep, Object);
+	return Internal.AddToAllocatedObjects(Type, Creep, Object);
 }
 
 const FCsTdCreepPooled* UCsTdManager_Creep::AddToAllocatedObjects(const FECsTdCreep& Type, ICsTdCreep* Object)
 {
-	return Internal->AddToAllocatedObjects(Type, Object);
+	return Internal.AddToAllocatedObjects(Type, Object);
 }
 
 const FCsTdCreepPooled* UCsTdManager_Creep::AddToAllocatedObjects(const FECsTdCreep& Type, UObject* Object)
 {
-	return Internal->AddToAllocatedObjects(Type, Object);
+	return Internal.AddToAllocatedObjects(Type, Object);
 }
 
 #pragma endregion Allocated Objects
@@ -302,27 +304,27 @@ const FCsTdCreepPooled* UCsTdManager_Creep::AddToAllocatedObjects(const FECsTdCr
 
 const TArray<FCsTdCreepPooled*>& UCsTdManager_Creep::GetPool(const FECsTdCreep& Type)
 {
-	return Internal->GetPool(Type);
+	return Internal.GetPool(Type);
 }
 
 const TArray<FCsTdCreepPooled*>& UCsTdManager_Creep::GetAllocatedObjects(const FECsTdCreep& Type)
 {
-	return Internal->GetAllocatedObjects(Type);
+	return Internal.GetAllocatedObjects(Type);
 }
 
 const int32& UCsTdManager_Creep::GetPoolSize(const FECsTdCreep& Type)
 {
-	return Internal->GetPoolSize(Type);
+	return Internal.GetPoolSize(Type);
 }
 
 int32 UCsTdManager_Creep::GetAllocatedObjectsSize(const FECsTdCreep& Type)
 {
-	return Internal->GetAllocatedObjectsSize(Type);
+	return Internal.GetAllocatedObjectsSize(Type);
 }
 
 bool UCsTdManager_Creep::IsExhausted(const FECsTdCreep& Type)
 {
-	return Internal->IsExhausted(Type);
+	return Internal.IsExhausted(Type);
 }
 
 	// Find
@@ -330,32 +332,32 @@ bool UCsTdManager_Creep::IsExhausted(const FECsTdCreep& Type)
 
 const FCsTdCreepPooled* UCsTdManager_Creep::FindObject(const FECsTdCreep& Type, const int32& Index)
 {
-	return Internal->FindObject(Type, Index);
+	return Internal.FindObject(Type, Index);
 }
 
 const FCsTdCreepPooled* UCsTdManager_Creep::FindObject(const FECsTdCreep& Type, ICsTdCreep* Object)
 {
-	return Internal->FindObject(Type, Object);
+	return Internal.FindObject(Type, Object);
 }
 
 const FCsTdCreepPooled* UCsTdManager_Creep::FindObject(const FECsTdCreep& Type, UObject* Object)
 {
-	return Internal->FindObject(Type, Object);
+	return Internal.FindObject(Type, Object);
 }
 
 const FCsTdCreepPooled* UCsTdManager_Creep::FindSafeObject(const FECsTdCreep& Type, const int32& Index)
 {
-	return Internal->FindSafeObject(Type, Index);
+	return Internal.FindSafeObject(Type, Index);
 }
 
 const FCsTdCreepPooled* UCsTdManager_Creep::FindSafeObject(const FECsTdCreep& Type, ICsTdCreep* Object)
 {
-	return Internal->FindSafeObject(Type, Object);
-}
+	return Internal.FindSafeObject(Type, Object);
+} 
 
 const FCsTdCreepPooled* UCsTdManager_Creep::FindSafeObject(const FECsTdCreep& Type, UObject* Object)
 {
-	return Internal->FindSafeObject(Type, Object);
+	return Internal.FindSafeObject(Type, Object);
 }
 
 #pragma endregion Find
@@ -367,7 +369,7 @@ const FCsTdCreepPooled* UCsTdManager_Creep::FindSafeObject(const FECsTdCreep& Ty
 
 void UCsTdManager_Creep::Update(const FCsDeltaTime& DeltaTime)
 {
-	Internal->Update(DeltaTime);
+	Internal.Update(DeltaTime);
 }
 
 void UCsTdManager_Creep::OnPreUpdate_Pool(const FECsTdCreep& Type)
@@ -397,7 +399,7 @@ ICsTdCreepPayload* UCsTdManager_Creep::ConstructPayload(const FECsTdCreep& Type)
 
 ICsTdCreepPayload* UCsTdManager_Creep::AllocatePayload(const FECsTdCreep& Type)
 {
-	return Internal->AllocatePayload(Type);
+	return Internal.AllocatePayload(Type);
 }
 
 #pragma endregion Payload
@@ -407,7 +409,7 @@ ICsTdCreepPayload* UCsTdManager_Creep::AllocatePayload(const FECsTdCreep& Type)
 
 const FCsTdCreepPooled* UCsTdManager_Creep::Spawn(const FECsTdCreep& Type, ICsTdCreepPayload* Payload)
 {
-	return Spawn(Type, Payload);
+	return Internal.Spawn(Type, Payload);
 }
 
 #pragma endregion Spawn
@@ -417,12 +419,12 @@ const FCsTdCreepPooled* UCsTdManager_Creep::Spawn(const FECsTdCreep& Type, ICsTd
 
 bool UCsTdManager_Creep::Destroy(const FECsTdCreep& Type, ICsTdCreep* Creep)
 {
-	return Destroy(Type, Creep);
+	return Internal.Destroy(Type, Creep);
 }
 
 bool UCsTdManager_Creep::Destroy(ICsTdCreep* Creep)
 {
-	return Destroy(Creep);
+	return Internal.Destroy(Creep);
 }
 
 

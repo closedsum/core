@@ -253,6 +253,7 @@ public:
 				O->Deallocate();
 				DeconstructObject(O);
 			}
+			delete O;
 		}
 
 		Pool.Reset();
@@ -1104,7 +1105,7 @@ public:
 	*
 	* @param DeltaTime
 	*/
-	virtual void Update(const FCsDeltaTime& DeltaTime)
+	void Update(const FCsDeltaTime& DeltaTime)
 	{
 		TLinkedList<InterfaceContainerType*>* Current = AllocatedHead;
 		TLinkedList<InterfaceContainerType*>* Next	 = Current;
@@ -1234,6 +1235,12 @@ public:
 	*/
 	bool Deallocate(const int32& Index)
 	{
+		// Check if Index is valid
+		if (Index <= INDEX_NONE)
+		{
+			// 
+			return false;
+		}
 		// Check if Index is valid
 		if (Index >= PoolSize)
 		{
@@ -1509,16 +1516,14 @@ public:
 		// Get Interface Map
 		FCsInterfaceMap* InterfaceMap = Payload->GetInterfaceMap();
 
+		checkf(InterfaceMap, TEXT("%s::Spawn: InterfaceMap is NULL. PayloadType failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."), *Name);
+
 		// Get PayloadType
 		PayloadType* P = InterfaceMap->Get<PayloadType>();
-
-		checkf(P, TEXT(""));
 
 		InterfaceContainerType* O = Allocate(P);
 
 		LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn], ECsPoolTransaction::Allocate, O)
-
-		checkf(InterfaceMap, TEXT("%s::Spawn: InterfaceMap is NULL. PayloadType failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."), *Name);
 
 		// Get PooledObjectPayload
 		ICsPooledObjectPayload* PooledObjectPayload = InterfaceMap->Get<ICsPooledObjectPayload>();

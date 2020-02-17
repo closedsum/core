@@ -35,12 +35,12 @@ public:
 		WeakObject = InObject;
 	}
 
-	FORCEINLINE ObjectType* Get()
+	FORCEINLINE ObjectType* Get() const
 	{
 		return Object;
 	}
 
-	FORCEINLINE ObjectType* GetSafe()
+	FORCEINLINE ObjectType* GetSafe() const
 	{
 		return WeakObject.IsValid() ? WeakObject.Get() : nullptr;
 	}

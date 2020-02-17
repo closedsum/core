@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/CsTypes_Pool.h"
+#include "Containers/CsWeakObjectPtr.h"
 
 #include "CsTdTypes_Creep.generated.h"
 #pragma once
@@ -27,14 +28,161 @@ struct CSTD_API EMCsTdCreep : public TCsEnumStructMap<FECsTdCreep, uint8>
 // FCsTdCreepPooledCache
 #pragma region
 
-/*
 struct CSTD_API FCsTdCreepPooledCache : public ICsPooledObjectCache
 {
-	FCsTdCreepPooledCache()
+public:
+
+	int32 Index;
+
+	bool bAllocated;
+
+	bool bQueueDeallocate;
+
+	ECsPooledObjectState State;
+
+	ECsPooledObjectUpdate UpdateType;
+
+	TCsWeakObjectPtr<UObject> Instigator;
+
+	TCsWeakObjectPtr<UObject> Owner;
+
+	TCsWeakObjectPtr<UObject> Parent;
+
+	float WarmUpTime;
+
+	float LifeTime;
+
+	FCsTime StartTime;
+
+	FCsDeltaTime ElapsedTime;
+
+	FCsInterfaceMap InterfaceMap;
+
+	FCsTdCreepPooledCache() :
+		Index(INDEX_NONE),
+		bAllocated(false),
+		bQueueDeallocate(false),
+		State(ECsPooledObjectState::Inactive),
+		UpdateType(ECsPooledObjectUpdate::Manager),
+		Instigator(),
+		Owner(),
+		Parent(),
+		WarmUpTime(0.0f),
+		LifeTime(0.0f),
+		StartTime(),
+		ElapsedTime(),
+		InterfaceMap()
 	{
+		InterfaceMap.Add<ICsPooledObjectCache>(static_cast<ICsPooledObjectCache*>(this));
 	}
+
+// ICsGetInterfaceMap
+#pragma region
+public:
+
+	FORCEINLINE FCsInterfaceMap* GetInterfaceMap()
+	{
+		return &InterfaceMap;
+	}
+
+#pragma endregion ICsGetInterfaceMap
+
+// ICsPooledObjectCache
+#pragma region
+
+	void Init(const int32& InIndex)
+	{
+		Index = InIndex;
+	}
+
+	FORCEINLINE const int32& GetIndex() const
+	{
+		return Index;
+	}
+
+	void Allocate(ICsPooledObjectPayload* Payload, const FCsTime& InTime)
+	{
+
+	}
+
+	FORCEINLINE const bool& IsAllocated() const 
+	{
+		return bAllocated;
+	}
+
+	void Deallocate()
+	{
+		bAllocated = false;
+		bQueueDeallocate = false;
+	}
+
+	void QueueDeallocate()
+	{
+		bQueueDeallocate = true;
+	}
+
+	FORCEINLINE const bool& ShouldDeallocate() const
+	{
+		return bQueueDeallocate;
+	}
+
+	FORCEINLINE const ECsPooledObjectState& GetState() const
+	{
+		return State;
+	}
+
+	FORCEINLINE const ECsPooledObjectUpdate& GetUpdateType() const
+	{
+		return UpdateType;
+	}
+
+	FORCEINLINE UObject* GetInstigator() const 
+	{
+		return Instigator.Get();
+	}
+
+	FORCEINLINE UObject* GetOwner() const
+	{
+		return Owner.Get();
+	}
+
+	FORCEINLINE UObject* GetParent() const
+	{
+		return Parent.Get();
+	}
+
+	FORCEINLINE const float& GetWarmUpTime() const
+	{
+		return WarmUpTime;
+	}
+
+	FORCEINLINE const float& GetLifeTime() const
+	{
+		return LifeTime;
+	}
+
+	FORCEINLINE const FCsTime& GetStartTime() const
+	{
+		return StartTime;
+	}
+
+	FORCEINLINE const FCsDeltaTime& GetElapsedTime() const
+	{
+		return ElapsedTime;
+	}
+
+	FORCEINLINE bool HasLifeTimeExpired()
+	{
+		return false;
+	}
+
+	void Reset()
+	{
+
+	}
+
+#pragma endregion ICsPooledObjectCache
 };
-*/
 
 #pragma endregion FCsTdCreepPooledCache
 

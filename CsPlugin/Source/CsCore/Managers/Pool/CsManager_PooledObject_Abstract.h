@@ -1492,7 +1492,9 @@ public:
 	{
 		InterfaceContainerType* O = Allocate(Payload);
 
+#if !UE_BUILD_SHIPPING
 		LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn], ECsPoolTransaction::Allocate, O);
+#endif // #if !UE_BUILD_SHIPPING
 
 		FCsInterfaceMap* InterfaceMap = Payload->GetInterfaceMap();
 
@@ -1523,7 +1525,9 @@ public:
 
 		InterfaceContainerType* O = Allocate(P);
 
+#if !UE_BUILD_SHIPPING
 		LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn], ECsPoolTransaction::Allocate, O)
+#endif // #if !UE_BUILD_SHIPPING
 
 		// Get PooledObjectPayload
 		ICsPooledObjectPayload* PooledObjectPayload = InterfaceMap->Get<ICsPooledObjectPayload>();
@@ -1553,7 +1557,7 @@ public:
 	* @param Index
 	* return
 	*/
-	virtual bool Destroy(const int32& Index)
+	bool Destroy(const int32& Index)
 	{
 		return Deallocate(Index);
 	}
@@ -1565,8 +1569,10 @@ public:
 	* @param Object
 	* return
 	*/
-	virtual bool Destroy(InterfaceType* Object)
+	bool Destroy(InterfaceType* Object)
 	{
+		checkf(Object, TEXT("%s::Destroy: Object is NULL."), *Name);
+
 		return Destroy(Object->_getUObject());
 	}
 
@@ -1577,7 +1583,7 @@ public:
 	* @param Object
 	* return
 	*/
-	virtual bool Destroy(UObject* Object)
+	bool Destroy(UObject* Object)
 	{
 		const InterfaceContainerType* O = FindObject(Object);
 		return Destroy(O->GetCache()->GetIndex());

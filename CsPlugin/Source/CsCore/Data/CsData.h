@@ -87,7 +87,7 @@ public:
 	* @param Object		Object->GetClass() that implements the interface: ICsData.
 	* return Cache		The cache associated with the Pooled Object.
 	*/
-	DECLARE_DELEGATE_TwoParams(FScript_GetType, UObject* /*Object*/, FECsDataType& /*OutDatatType*/);
+	DECLARE_DELEGATE_TwoParams(FScript_GetType, UObject* /*Object*/, FECsDataType& /*OutDataType*/);
 
 	/** Delegate for getting the Type associated with a Data.
 		 The Data implements a script interface of type: ICsData. */

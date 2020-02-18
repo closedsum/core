@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/CsTypes_Pool.h"
 #include "Containers/CsWeakObjectPtr.h"
+#include "Engine/DataTable.h"
 
 #include "CsTdTypes_Creep.generated.h"
 #pragma once
@@ -199,3 +200,55 @@ public:
 };
 
 #pragma endregion ICsTdCreepPayload
+
+// FCsTdCreepRefContainer
+#pragma region
+
+class UObject;
+class UClass;
+
+USTRUCT(BlueprintType)
+struct CSTD_API FCsTdCreepRefContainer : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsTdCreep"))
+	TSoftClassPtr<UObject> Creep;
+
+	UPROPERTY()
+	int32 Creep_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UObject* Creep_Internal;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UClass* Creep_Class;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	TSubclassOf<UObject> Creep_SubclassOf;
+
+	FCsTdCreepRefContainer() :
+		Creep(nullptr),
+		Creep_LoadFlags(0),
+		Creep_Internal(nullptr),
+		Creep_Class(nullptr),
+		Creep_SubclassOf(nullptr)
+	{
+	}
+
+	FORCEINLINE UObject* Get() const { return Creep_Internal; }
+	
+	template<typename T>
+	FORCEINLINE T* Get() const { return Cast<T>(Get()); }
+
+	FORCEINLINE UClass* GetClass() const { return Creep_Class; }
+
+	template<typename T>
+	FORCEINLINE T* GetClass() const { return Cast<T>(GetClass()); }
+
+	FORCEINLINE TSubclassOf<UObject> GetSubclassOf() const { return Creep_SubclassOf; }
+};
+
+#pragma endregion FCsTdCreepRefContainer

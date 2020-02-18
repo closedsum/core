@@ -91,7 +91,7 @@ struct CSCORE_API FCsSoundCue
 	{
 	}
 
-	FORCEINLINE USoundCue* Get() { return Sound_Internal; }
+	FORCEINLINE USoundCue* Get() const { return Sound_Internal; }
 };
 
 #pragma endregion FCsSoundCue

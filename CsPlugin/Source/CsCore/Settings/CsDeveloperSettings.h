@@ -24,7 +24,7 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "RsCore|Load")
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "CsCore|Load")
 	FCsDataRootSetContainer DataRootSet;
 
 #pragma endregion Load

@@ -4,12 +4,11 @@
 
 // Enum
 #include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
-
+// Engine
 #include "Engine.h"
-
+// Components
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/PoseableMeshComponent.h"
-
 // Data
 #include "Data/CsDataMapping.h"
 
@@ -77,7 +76,7 @@ UCsEnumStructUserDefinedEnumMap* UCsLibrary_Asset::GetEnumStructUserDefinedEnumM
 
 	if (OutDefaultObjects.Num() > CS_SINGLETON)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Asset::GetEnumStructUserDefinedEnumMap: More than ONE class found of type: UCsEnumStructUserDefinedEnumMap. Choosing the FIRST one. There should only be ONE."));
+		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Asset::GetEnumStructUserDefinedEnumMap: More than ONE class found of type: UCsEnumStructUserDefinedEnumMap. Choosing the FICST one. There should only be ONE."));
 
 		for (const FString& Path : OutPackagePaths)
 		{
@@ -214,3 +213,81 @@ void UCsLibrary_Asset::InitAnimSequence(class UAnimSequence* Anim, class UPoseab
 #endif // #if WITH_EDITOR
 
 #pragma endregion Asset Registry
+
+// Find
+#pragma region
+#if WITH_EDITOR
+
+void UCsLibrary_Asset::FindObjectsByClass(const FName& ClassName, const FName& ObjectName, TArray<UObject*>& OutObjects)
+{
+	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
+	IAssetRegistry& AssetRegistry			  = AssetRegistryModule.Get();
+	TArray<FAssetData> AssetDatas;
+
+	AssetRegistry.GetAssetsByClass(ClassName, AssetDatas);
+
+	for (FAssetData& Data : AssetDatas)
+	{
+		if (Data.AssetName == ObjectName)
+		{
+			OutObjects.Add(Data.GetAsset());
+		}
+	}
+}
+
+UObject* UCsLibrary_Asset::FindObjectByClass(const FName& ClassName, const FName& ObjectName, const ECsFindObjectByClassRule& Rule /*= ECsFindObjectByClassRule::None*/)
+{
+	// None | First
+	if (Rule == ECsFindObjectByClassRule::None ||
+		Rule == ECsFindObjectByClassRule::First)
+	{
+		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
+		IAssetRegistry& AssetRegistry			  = AssetRegistryModule.Get();
+		TArray<FAssetData> AssetDatas;
+
+		AssetRegistry.GetAssetsByClass(ClassName, AssetDatas);
+
+		UObject* Object = nullptr;
+
+		for (FAssetData& Data : AssetDatas)
+		{
+			if (Data.AssetName == ObjectName)
+			{
+				Object = Data.GetAsset();
+			}
+		}
+
+		if (Rule == ECsFindObjectByClassRule::First)
+		{
+			if (!Object)
+			{
+				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Asset::FindObjectByClass: Failed to find %s with name: %s."), *(ClassName.ToString()), *(ObjectName.ToString()));
+			}
+		}
+		return Object;
+	}
+	// Exact
+	if (Rule == ECsFindObjectByClassRule::Exact)
+	{
+		TArray<UObject*> Objects;
+		FindObjectsByClass(ClassName, ObjectName, Objects);
+
+		// Check if NO Objects were found
+		if (Objects.Num() == CS_EMPTY)
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Asset::FindObjectByClass: Failed to find %s with name: %s."), *(ClassName.ToString()), *(ObjectName.ToString()));
+			return nullptr;
+		}
+		// Check if only ONE Object was found
+		if (Objects.Num() != CS_SINGLETON)
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Asset::FindObjectByClass: Found more than one %s with name: %s."), *(ClassName.ToString()), *(ObjectName.ToString()));
+			return nullptr;
+		}
+		return Objects[CS_FIRST];
+	}
+	return nullptr;
+}
+
+#endif // #if WITH_EDITOR
+#pragma endregion Find

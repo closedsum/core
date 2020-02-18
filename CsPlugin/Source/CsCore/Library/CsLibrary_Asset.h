@@ -13,6 +13,22 @@
 
 #include "CsLibrary_Asset.generated.h"
 
+// Enums
+#pragma region
+
+enum class ECsFindObjectByClassRule : uint8
+{
+	/** No logging. */
+	None,
+	/** Find first that matches the input with logging. */
+	First,
+	/** Find an exact match from the input with logging. */
+	Exact,
+	ECsFindObjectByClassRule_MAX
+};
+
+#pragma endregion Enums
+
 class UCsEnumStructUserDefinedEnumMap;
 class UCsDataMapping;
 
@@ -374,4 +390,23 @@ public:
 #endif // #if WITH_EDITOR
 
 #pragma endregion Asset Registry
+
+	// Find
+#pragma region
+#if WITH_EDITOR
+public:
+
+	static void FindObjectsByClass(const FName& ClassName, const FName& ObjectName, TArray<UObject*>& OutObjects);
+
+	static UObject* FindObjectByClass(const FName& ClassName, const FName& ObjectName, const ECsFindObjectByClassRule& Rule = ECsFindObjectByClassRule::None);
+
+	template<typename T>
+	static T* FindObjectByClass(const FName& ClassName, const FName& ObjectName, const ECsFindObjectByClassRule& Rule = ECsFindObjectByClassRule::None)
+	{
+		return Cast<T>(FindObjectByClass(ClassName, ObjectName, Rule));
+	}
+
+#endif // #if WITH_EDITOR
+
+#pragma endregion Find
 };

@@ -6,11 +6,14 @@
 // Type
 #include "Types/CsTypes_Load.h"
 #include "Managers/Input/CsTypes_Input.h"
+#include "Library/Load/CsTypes_Library_Load.h"
 // Enum
 #include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
 // Library
 #include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Asset.h"
+#include "Library/CsLibrary_String.h"
+#include "Library/CsLibrary_Load.h"
 // Asset Registry
 #include "AssetRegistryModule.h"
 #include "Developer/AssetTools/Public/AssetToolsModule.h"
@@ -20,6 +23,9 @@
 // Data
 #include "Data/CsDataMapping.h"
 #include "Data/CsData.h"
+#include "Managers/Data/CsDataRootSet.h"
+// Setting
+#include "Settings/CsDeveloperSettings.h"
 
 #include "Editor/UnrealEd/Public/Editor.h"
 #include "Editor/PropertyEditor/Public/PropertyEditorModule.h"
@@ -83,6 +89,19 @@
 #include "Classes/Engine/UserDefinedEnum.h"
 
 #include "Enum/CsEnumEditorUtils.h"
+
+// Cache
+#pragma region
+
+namespace NCsEdEngineCached
+{
+	namespace Str
+	{
+		const FString OnOPC_DataRootSet_DataTables = TEXT("UCsEdEngine::OnOPC_DataRootSet_DataTables");
+	}
+}
+
+#pragma endregion Cache
 
 // UEngine Interface
 #pragma region
@@ -163,6 +182,7 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 	GEditor->OnBlueprintPreCompile().AddUObject(this, &UCsEdEngine::OnBlueprintPreCompile);
 
 	FEditorDelegates::BeginPIE.AddUObject(this, &UCsEdEngine::OnBeginPIE);
+	FCoreUObjectDelegates::OnObjectSaved.AddUObject(this, &UCsEdEngine::OnObjectSaved);
 }
 
 void UCsEdEngine::PreExit()
@@ -192,6 +212,11 @@ bool UCsEdEngine::Exec(UWorld* InWorld, const TCHAR* Stream, FOutputDevice& Ar)
 	// Data
 	{
 		if (Check_MarkDatasDirty(Stream))
+			return true;
+	}
+	// References
+	{
+		if (Check_PrintBlueprintReferencesReport(Stream))
 			return true;
 	}
 	return true;
@@ -232,6 +257,42 @@ void UCsEdEngine::OnBeginPIE(bool IsSimulating)
 	FCsCVarLogMap::Get().ResetDirty();
 	//FCsCVarToggleMap::Get().ResetDirty();
 }
+
+// Save
+#pragma region
+
+void UCsEdEngine::OnObjectSaved(UObject* Object)
+{
+	if (!Object)
+		return;
+
+	// DataTable
+	if (UDataTable* DataTable = Cast<UDataTable>(Object))
+	{
+		// Settings
+		if (UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>())
+		{
+			FCsDataRootSetContainer& Container = Settings->DataRootSet;
+			UClass* Class					   = Container.Data.LoadSynchronous();
+			UCsDataRootSet* DataRootSet		   = Class ? Class->GetDefaultObject<UCsDataRootSet>() : nullptr;
+
+			// DataRootSet
+			if (DataRootSet)
+			{
+				// DataTables
+				if (UDataTable* DataTables = DataRootSet->DataTables)
+				{
+					if (FCsDataEntry_DataTable::StaticStruct() == DataTables->GetRowStruct())
+					{
+						OnObjectSaved_DataRootSet_DataTables(DataTables);
+					}
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion Save
 
 // Enums
 #pragma region
@@ -375,3 +436,119 @@ void UCsEdEngine::MarkDatasDirty(const FECsAssetType& AssetType)
 }
 
 #pragma endregion Data
+
+// DataRootSet
+#pragma region
+
+void UCsEdEngine::OnObjectSaved_DataRootSet_DataTables(UDataTable* DataTable)
+{
+	TArray<FName> RowNames = DataTable->GetRowNames();
+	
+	for (const FName& RowName : RowNames)
+	{
+		const FString& Context = NCsEdEngineCached::Str::OnOPC_DataRootSet_DataTables;
+
+		FCsDataEntry_DataTable* RowPtr = DataTable->FindRow<FCsDataEntry_DataTable>(RowName, Context);
+
+		if (RowPtr->bPopulateOnSave)
+		{
+			RowPtr->Populate();
+
+			RowPtr->bPopulateOnSave = false;
+		}
+	}
+}
+
+#pragma endregion DataRootSet
+
+// References
+#pragma region
+
+bool UCsEdEngine::Check_PrintBlueprintReferencesReport(const TCHAR* Stream)
+{
+	const FString Command	 = TEXT("PrintReferencesReport");
+	const FString Parameters = TEXT("[assetname]");
+	const FString Format	 = Command + TEXT(" ") + Parameters;
+
+	if (FParse::Command(&Stream, *Command))
+	{
+		const FName AssetName = UCsLibrary_String::Stream_GetName(Stream);
+
+		if (AssetName == NAME_None)
+		{
+			return false;
+		}
+
+		PrintBlueprintReferencesReport(AssetName);
+		return true;
+	}
+	return false;
+}
+
+void UCsEdEngine::PrintBlueprintReferencesReport(const FName& AssetName)
+{
+	UBlueprint* Bp = UCsLibrary_Asset::FindObjectByClass<UBlueprint>(FName("Blueprint"), AssetName, ECsFindObjectByClassRule::Exact);
+
+	const FString AssetNameAsString = AssetName.ToString();
+
+	if (!Bp)
+	{
+		UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::PrintBlueprintReferencesReport: Failed to find Blueprint with name: %s."), *AssetNameAsString);
+		return;
+	}
+
+	const FString Path = Bp->GetPathName();
+
+	UClass* Class = Bp->GeneratedClass.Get();
+	
+	if (!Class)
+	{
+		UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::PrintBlueprintReferencesReport: Failed to find Class for Blueprint: %s @ %s."), *AssetNameAsString, *Path);
+		return;
+	}
+
+	UObject* DOb = Class->GetDefaultObject();
+
+	if (!DOb)
+	{
+		UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::PrintBlueprintReferencesReport: Failed to find Default Object for Blueprint: %s @ %s."), *AssetNameAsString, *Path);
+		return;
+	}
+
+	FCsLibraryLoad_GetReferencesReport Report;
+	Report.Name = AssetNameAsString;
+	Report.Path = Path;
+	
+	// If Actor, Spawn Actor in World
+	if (Class->IsChildOf(AActor::StaticClass()))
+	{
+		if (GEditor)
+		{
+			const TArray<FEditorViewportClient*>& Clients = GEditor->GetAllViewportClients();
+
+			for (FEditorViewportClient* Client : Clients)
+			{
+				UWorld* World = Client->GetWorld();
+
+				if (World &&
+					World->WorldType == EWorldType::Editor)
+				{
+					AActor* A = World->SpawnActor(Class);
+
+					UCsLibrary_Load::GetReferencesReport(A, A->GetClass(), AssetNameAsString, Report);
+					
+					A->Destroy();
+					break;
+				}
+			}
+		}
+	}
+	// Object
+	else
+	{
+		UCsLibrary_Load::GetReferencesReport(DOb, DOb->GetClass(), AssetNameAsString, Report);
+	}
+	Report.Print();
+}
+
+#pragma endregion References

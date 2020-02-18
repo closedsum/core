@@ -43,6 +43,14 @@ public:
 
 #pragma endregion Tick
 
+// Save
+#pragma region
+public:
+
+	void OnObjectSaved(UObject* Object);
+
+#pragma endregion Save
+
 public:
 
 	UCsDataMapping* DataMapping;
@@ -106,4 +114,22 @@ public:
 	void MarkDatasDirty(const FECsAssetType& AssetType);
 
 #pragma endregion Data
+
+// DataRootSet
+#pragma region
+public:
+
+	void OnObjectSaved_DataRootSet_DataTables(UDataTable* DataTable);
+
+#pragma endregion DataRootSet
+
+// References
+#pragma region
+public:
+
+	bool Check_PrintBlueprintReferencesReport(const TCHAR* Stream);
+
+	void PrintBlueprintReferencesReport(const FName& AssetName);
+
+#pragma endregion References
 };

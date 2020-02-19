@@ -185,7 +185,7 @@ void UCsManager_Data::Initialize()
 
 	// TODO: Move this to Coroutine and Async
 
-	UCsLibrary_Load::LoadStruct(Settings, UCsDeveloperSettings::StaticClass(), NCsLoadFlags::All, NCsLoadCodes::None);
+	//UCsLibrary_Load::LoadStruct(Settings, UCsDeveloperSettings::StaticClass(), NCsLoadFlags::All, NCsLoadCodes::None);
 
 	GenerateMaps();
 
@@ -338,6 +338,8 @@ void UCsManager_Data::UpdateDataTableRowMap(const FName& TableName, const FName&
 
 void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Payload)
 {
+	checkf(PayloadName != NAME_None, TEXT("UCsManager_Data::AddPayload: PayloadName is None."));
+
 	if (PayloadMap_Added.Find(PayloadName))
 		return;
 
@@ -404,7 +406,7 @@ void UCsManager_Data::GenerateMaps()
 		{
 			FCsDataEntry_Data* RowPtr = Datas->FindRow<FCsDataEntry_Data>(RowName, NCsManagerDataCached::Str::GenerateMaps);
 
-			checkf(RowPtr->Data.IsValid(), TEXT("UCsManager_Data::GenerateMaps:: Data at Row: %s for Datas: %s is NOT Valid."), *(RowName.ToString()), *(Datas->GetName()));
+			checkf(RowPtr->Data.ToSoftObjectPath().IsValid(), TEXT("UCsManager_Data::GenerateMaps:: Data at Row: %s for Datas: %s is NOT Valid."), *(RowName.ToString()), *(Datas->GetName()));
 
 			DataEntryMap.Add(RowName, RowPtr);
 			DataEntryByPathMap.Add(RowPtr->Data.ToSoftObjectPath(), RowPtr);
@@ -424,6 +426,8 @@ void UCsManager_Data::GenerateMaps()
 		for (const FName& RowName : RowNames)
 		{
 			FCsDataEntry_DataTable* RowPtr = DataTables->FindRow<FCsDataEntry_DataTable>(RowName, NCsManagerDataCached::Str::GenerateMaps);
+
+			checkf(RowPtr->DataTable.ToSoftObjectPath().IsValid(), TEXT("UCsManager_Data::GenerateMaps:: DataTable at Row: %s for DataTables: %s is NOT Valid."), *(RowName.ToString()), *(DataTables->GetName()));
 
 			DataTableEntryMap.Add(RowName, RowPtr);
 			DataTableEntryByPathMap.Add(RowPtr->DataTable.ToSoftObjectPath(), RowPtr);
@@ -456,6 +460,8 @@ void UCsManager_Data::GenerateMaps()
 
 void UCsManager_Data::LoadPayload(const FName& PayloadName)
 {
+	checkf(PayloadName != NAME_None, TEXT("UCsManager_Data::LoadPayload: PayloadName is None."));
+
 	// Check if the Payload has already been loaded
 	if (PayloadMap_Loaded.Find(PayloadName))
 		return;
@@ -549,6 +555,8 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 
 UDataTable* UCsManager_Data::LoadDataTable(const FName& TableName)
 {
+	checkf(TableName != NAME_None, TEXT("UCsManager_Data::LoadDataTable: TableName is None."));
+
 	if (UDataTable* Table = GetDataTable(TableName))
 		return Table;
 
@@ -585,11 +593,17 @@ UDataTable* UCsManager_Data::LoadDataTable(const FName& TableName)
 
 UDataTable* UCsManager_Data::LoadDataTable(const FSoftObjectPath& Path)
 {
+	checkf(Path.IsValid(), TEXT("UCsManager_Data::LoadDataTable: Path is NOT Valid."));
+
 	return nullptr;
 }
 
 uint8* UCsManager_Data::LoadDataTableRow(const FName& TableName, const FName& RowName)
 {
+	checkf(TableName != NAME_None, TEXT("UCsManager_Data::LoadDataTableRow: TableName is None."));
+
+	checkf(RowName != NAME_None, TEXT("UCsManager_Data::LoadDataTableRow:: RowName is None."));
+
 	// Check if DataTable and Row are already loaded
 	if (uint8* RowPtr = GetDataTableRow(TableName, RowName))
 		return RowPtr;
@@ -636,6 +650,20 @@ uint8* UCsManager_Data::LoadDataTableRow(const FName& TableName, const FName& Ro
 
 bool UCsManager_Data::IsLoadedDataTableRow(const FName& TableName, const FName& RowName)
 {
+#if WITH_EDITOR
+	if (TableName == NAME_None)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::IsLoadedDataTableRow: TableName is None."));
+		return false;
+	}
+
+	if (RowName == NAME_None)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::IsLoadedDataTableRow: RowName is None."));
+		return false;
+	}
+#endif // #if WITH_EDITOR
+
 	if (uint8* RowPtr = GetDataTableRow(TableName, RowName))
 		return true;
 	return false;
@@ -653,6 +681,14 @@ bool UCsManager_Data::IsLoadedDataTableRow(const FName& TableName, const FName& 
 
 UDataTable* UCsManager_Data::GetDataTable(const FName& TableName)
 {
+#if WITH_EDITOR
+	if (TableName == NAME_None)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTable: TableName is None."));
+		return false;
+	}
+#endif // #if WITH_EDITOR
+
 	if (UDataTable** TablePtr = DataTableMap_Loaded.Find(TableName))
 		return *TablePtr;
 	return nullptr;
@@ -660,6 +696,14 @@ UDataTable* UCsManager_Data::GetDataTable(const FName& TableName)
 
 UDataTable* UCsManager_Data::GetDataTable(const FSoftObjectPath& Path)
 {
+#if WITH_EDITOR
+	if (!Path.IsValid())
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTable: Path is NOT Valid."));
+		return false;
+	}
+#endif // #if WITH_EDITOR
+
 	if (UDataTable** TablePtr = DataTableByPathMap_Loaded.Find(Path))
 		return *TablePtr;
 	return nullptr;
@@ -672,6 +716,20 @@ UDataTable* UCsManager_Data::GetDataTable(const TSoftObjectPtr<UDataTable>& Soft
 
 uint8* UCsManager_Data::GetDataTableRow(const FName& TableName, const FName& RowName)
 {
+#if WITH_EDITOR
+	if (TableName == NAME_None)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableRow: TableName is None."));
+		return false;
+	}
+
+	if (RowName == NAME_None)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableRow: RowName is None."));
+		return false;
+	}
+#endif // #if WITH_EDITOR
+
 	if (TMap<FName, uint8*>* TablePtr = DataTableRowMap_Loaded.Find(TableName))
 	{
 		if (uint8** RowPtr = TablePtr->Find(RowName))
@@ -684,6 +742,20 @@ uint8* UCsManager_Data::GetDataTableRow(const FName& TableName, const FName& Row
 
 uint8* UCsManager_Data::GetDataTableRow(const FSoftObjectPath& Path, const FName& RowName)
 {
+#if WITH_EDITOR
+	if (!Path.IsValid())
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableRow: Path is NOT Valid."));
+		return false;
+	}
+
+	if (RowName == NAME_None)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableRow: RowName is None."));
+		return false;
+	}
+#endif // #if WITH_EDITOR
+
 	if (TMap<FName, uint8*>* TablePtr = DataTableRowByPathMap_Loaded.Find(Path))
 	{
 		if (uint8** RowPtr = TablePtr->Find(RowName))

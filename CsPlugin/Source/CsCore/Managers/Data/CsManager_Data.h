@@ -9,7 +9,6 @@
 class ICsGetManagerData;
 class UDataTable;
 class ICsData;
-class UScriptStruct;
 
 UCLASS(transient)
 class CSCORE_API UCsManager_Data : public UObject

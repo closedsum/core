@@ -346,7 +346,7 @@ public:
 	*
 	* return
 	*/
-	virtual InterfaceContainerType* ConstructObject()
+	InterfaceContainerType* ConstructObject()
 	{
 		UClass* Class = ConstructParams.Class;
 
@@ -435,7 +435,7 @@ public:
 	*/
 	virtual void DeconstructObject(InterfaceContainerType* Object)
 	{
-		if (UObject* O = Object->GetObject())
+		if (UObject* O = Object->GetSafeObject())
 			O->MarkPendingKill();
 	}
 
@@ -489,7 +489,7 @@ public:
 	*
 	* @param Size
 	*/
-	virtual void CreatePool(const int32& Size)
+	void CreatePool(const int32& Size)
 	{
 		checkf(Size > 0, TEXT("%s::CreatePool: Size must be GREATER THAN 0."), *Name);
 
@@ -538,7 +538,7 @@ public:
 			Links.Add(new TCsDoubleLinkedList<InterfaceContainerType*>());
 			// Set Element for Link
 			TCsDoubleLinkedList<InterfaceContainerType*>* Link = Links.Last();
-			(**Link)								  = O;
+			(**Link)										   = O;
 
 			OnAddToPool_Event.Broadcast(O);
 		}

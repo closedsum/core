@@ -2837,7 +2837,35 @@ public:
 
 	static void UnloadSoftClassProperty(USoftClassProperty*& SoftClassProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const ECsLoadFlags& LoadFlags);
 
-	static void UnloadStruct(void* StructValue, UStruct* const& Struct);
+	static void UnloadSoftClassProperty(USoftClassProperty* SoftClassProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& UnloadCodes);
+
+	static void UnloadArraySoftClassProperty(UArrayProperty* ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& UnloadCodes);
+
+	static void UnloadSoftObjectProperty(USoftObjectProperty* SoftObjectProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& UnloadCodes);
+
+	static void UnloadArraySoftObjectProperty(UArrayProperty* ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& UnloadCodes);
+
+	static void UnloadArrayObjectProperty(UArrayProperty* ArrayProperty, void* StructValue, const int32& UnloadCodes);
+
+	static void UnloadArrayStructProperty(UArrayProperty* ArrayProperty, void* StructValue, const int32& UnloadCodes);
+
+
+	/**
+	*
+	*
+	* @param StructValue
+	* @param Struct
+	* @param UnloadCodes
+	*/
+	static void UnloadStruct(void* StructValue, UStruct* const& Struct, const int32& UnloadCodes);
+
+	/**
+	*
+	*
+	* @param DataTable
+	* @param UnloadCodes
+	*/
+	static void UnloadDataTable(UDataTable* DataTable, const int32& UnloadCodes);
 
 #pragma endregion UnLoad
 
@@ -3266,5 +3294,4 @@ public:
 #pragma endregion Get
 
 #pragma endregion Members
-
 };

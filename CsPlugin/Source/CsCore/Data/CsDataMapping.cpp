@@ -6,7 +6,7 @@
 #include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Asset.h"
-#include "Library/CsLibrary_Load.h"
+#include "Library/Load/CsLibrary_Load.h"
 // Interface
 #include "Data/CsData.h"
 

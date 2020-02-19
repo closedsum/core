@@ -5,7 +5,7 @@
 
 // Library
 #include "Library/CsLibrary_Common.h"
-#include "Library/CsLibrary_Load.h"
+#include "Library/Load/CsLibrary_Load.h"
 
 #include "Managers/Input/CsInput_Base.h"
 // Game

@@ -6,7 +6,7 @@
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Item.h"
 // Library
-#include "Library/CsLibrary_Load.h"
+#include "Library/Load/CsLibrary_Load.h"
 // Data
 #include "Data/CsData_ProjectileWeapon.h"
 #include "CsWeapon.generated.h"

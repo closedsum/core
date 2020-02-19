@@ -4,7 +4,7 @@
 #include "CsCVars.h"
 
 // Library
-#include "Library/CsLibrary_Load.h"
+#include "Library/Load/CsLibrary_Load.h"
 #include "Library/CsLibrary_Math.h"
 
 #include "Sound/SoundCue.h"
@@ -88,6 +88,22 @@ namespace NCsLoadFlags_Editor
 }
 
 #pragma endregion LoadFlags_Editor
+
+// UnloadCodes
+#pragma region
+
+namespace NCsUnloadCodes
+{
+	/*
+	namespace Ref
+	{
+	}
+	*/
+	CSCORE_API const int32 None = 0;
+	CSCORE_API const int32 All = 1;
+}
+
+#pragma endregion UnloadCodes
 
 // LoadAsyncOrder
 #pragma region

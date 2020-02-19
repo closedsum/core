@@ -13,7 +13,7 @@
 #include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Asset.h"
 #include "Library/CsLibrary_String.h"
-#include "Library/CsLibrary_Load.h"
+#include "Library/Load/CsLibrary_Load.h"
 // Asset Registry
 #include "AssetRegistryModule.h"
 #include "Developer/AssetTools/Public/AssetToolsModule.h"

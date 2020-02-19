@@ -66,8 +66,6 @@ namespace NCsLoadCodes
 
 #pragma endregion LoadCode
 
-class UObject;
-
 // LoadFlags
 #pragma region
 
@@ -164,6 +162,35 @@ namespace NCsLoadFlags_Editor
 }
 
 #pragma endregion LoadFlags_Editor
+
+// UnloadCode
+#pragma region
+
+UENUM(BlueprintType, meta = (Bitflags))
+enum class ECsUnloadCode : uint8
+{
+	/** Data implements the interface: ICsData. */
+	RecursiveUnloadData			UMETA(DisplayName = "Recursive Unload Data"),			// 0
+	RecursiveUnloadDataTable	UMETA(DisplayName = "Recursive Unload DataTable", )		// 1
+};
+
+namespace NCsUnloadCodes
+{
+	typedef ECsUnloadCode Type;
+
+	/*
+	namespace Ref
+	{
+		extern CSCORE_API const Type RecursiveUnloadData;
+		extern CSCORE_API const Type RecursiveUnloadDataTable;
+	}
+	*/
+
+	extern CSCORE_API const int32 None;
+	extern CSCORE_API const int32 All;
+}
+
+#pragma endregion UnloadCode
 
 // FCsResourceSize
 #pragma region

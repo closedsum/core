@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Library/CsLibrary_Load.h"
+#include "Library/Load/CsLibrary_Load.h"
 #include "CsCore.h"
 #include "CsCVars.h"
 
@@ -9063,13 +9063,347 @@ void UCsLibrary_Load::UnloadSoftClassProperty(USoftClassProperty*& SoftClassProp
 	}
 }
 
-void UCsLibrary_Load::UnloadStruct(void* StructValue, UStruct* const& Struct)
+void UCsLibrary_Load::UnloadSoftClassProperty(USoftClassProperty* SoftClassProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& UnloadCodes)
+{
+	if (FSoftObjectPtr* Member = SoftClassProperty->GetPropertyValuePtr_InContainer(StructValue))
+	{
+		if (!Member->ToSoftObjectPath().IsValid())
+			return;
+
+		Member->ResetWeakPtr();
+
+		// Check if an "Internal" member exists (i.e. MemberName + _Internal)
+
+										// MemberName + TEXT("_Internal")
+		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
+
+		if (UObjectProperty* InternalObjectProperty = FindField<UObjectProperty>(Struct, *InternalMemberName))
+		{
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalObjectProperty->PropertyClass)
+			{
+				if (UObject** Internal = InternalObjectProperty->ContainerPtrToValuePtr<UObject*>(StructValue))
+				{
+					*Internal = nullptr;
+				}
+			}
+		}
+
+		// Check if a "Class" member exists (i.e. MemberName + _Class)
+
+										// MemberName + TEXT("_Class")
+		const FString InternalClassName = MemberName + ECsLoadCached::Str::_Class;
+
+		if (UClassProperty* InternalClassProperty = FindField<UClassProperty>(Struct, *InternalClassName))
+		{
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalClassProperty->MetaClass)
+			{
+				if (UObject** Object = InternalClassProperty->GetPropertyValuePtr_InContainer(StructValue))
+				{
+					*Object = nullptr;
+				}
+			}
+		}
+
+		// Check if a "SubclassOf" member exists (i.e. MemberName + _SubclassOf)
+
+		// MemberName + TEXT("_SubclassOf")
+		const FString InternalSubclassOfName = MemberName + ECsLoadCached::Str::_SubclassOf;
+
+		if (UClassProperty* InternalSubclassOfProperty = FindField<UClassProperty>(Struct, *InternalSubclassOfName))
+		{
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalSubclassOfProperty->MetaClass)
+			{
+				if (UObject** Object = InternalSubclassOfProperty->GetPropertyValuePtr_InContainer(StructValue))
+				{
+					*Object = nullptr;
+				}
+			}
+		}
+	}
+}
+
+void UCsLibrary_Load::UnloadArraySoftClassProperty(UArrayProperty* ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& UnloadCodes)
+{
+	// Check if an "Internal" member exists (i.e. MemberName + _Internal)
+
+									// MemberName + TEXT("_Internal")
+	const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
+
+	if (UArrayProperty* InternalArrayProperty = FindField<UArrayProperty>(Struct, *InternalMemberName))
+	{
+		if (USoftObjectProperty* InternalSoftObjectProperty = Cast<USoftObjectProperty>(InternalArrayProperty->Inner))
+		{
+			USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner);
+
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalSoftObjectProperty->PropertyClass)
+			{
+				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+				FScriptArrayHelper_InContainer InternalHelper(InternalArrayProperty, StructValue);
+
+				const int32 Count = Helper.Num();
+
+				InternalHelper.EmptyAndAddUninitializedValues(Helper.Num());
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					TSoftClassPtr<UObject>* Ptr = reinterpret_cast<TSoftClassPtr<UObject>*>(Helper.GetRawPtr(I));
+					UObject** InternalPtr		= reinterpret_cast<UObject**>(InternalHelper.GetRawPtr(I));
+
+					Ptr->ResetWeakPtr();
+					*InternalPtr = nullptr;
+				}
+			}
+		}
+	}
+
+	// Check if an "Class" member exists (i.e. MemberName + _Class)
+
+									// MemberName + TEXT("_Class")
+	const FString InternalClassName = MemberName + ECsLoadCached::Str::_Class;
+
+	if (UArrayProperty* InternalArrayProperty = FindField<UArrayProperty>(Struct, *InternalClassName))
+	{
+		if (USoftClassProperty* InternalSoftClassProperty = Cast<USoftClassProperty>(InternalArrayProperty->Inner))
+		{
+			USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner);
+
+			// Check Member is the same type as the Member_Internal
+			if (SoftClassProperty->MetaClass == InternalSoftClassProperty->MetaClass)
+			{
+				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+				FScriptArrayHelper_InContainer InternalHelper(InternalArrayProperty, StructValue);
+
+				const int32 Count = Helper.Num();
+
+				InternalHelper.EmptyAndAddUninitializedValues(Helper.Num());
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					TSoftClassPtr<UObject>* Ptr = reinterpret_cast<TSoftClassPtr<UObject>*>(Helper.GetRawPtr(I));
+					UClass** InternalPtr		= reinterpret_cast<UClass**>(InternalHelper.GetRawPtr(I));
+
+					Ptr->ResetWeakPtr();
+					*InternalPtr = nullptr;
+				}
+			}
+		}
+	}
+
+	// TODO: SubclassOf
+}
+
+void UCsLibrary_Load::UnloadSoftObjectProperty(USoftObjectProperty* SoftObjectProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& UnloadCodes)
+{
+	if (FSoftObjectPtr* Member = SoftObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
+	{
+		if (!Member->ToSoftObjectPath().IsValid())
+			return;
+
+		Member->ResetWeakPtr();
+
+		// Check if an "Internal" member exists (i.e. MemberName + _Internal)
+
+										// MemberName + TEXT("_Internal")
+		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
+
+		if (UObjectProperty* InternalObjectProperty = FindField<UObjectProperty>(Struct, *InternalMemberName))
+		{
+			// Check Member is the same type as the Member_Internal
+			if (SoftObjectProperty->PropertyClass == InternalObjectProperty->PropertyClass)
+			{
+				if (UObject** Internal = InternalObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
+				{
+					// Recursive Unload DataTable
+					if (*Internal	 &&
+						SoftObjectProperty->PropertyClass == UDataTable::StaticClass() &&
+						CS_TEST_BLUEPRINT_BITFLAG(UnloadCodes, ECsUnloadCode::RecursiveUnloadDataTable))
+					{
+						UDataTable* DataTable = Cast<UDataTable>(*Internal);
+
+						UnloadDataTable(DataTable, UnloadCodes);
+					}
+					*Internal = nullptr;
+				}
+			}
+		}
+	}
+}
+
+void UCsLibrary_Load::UnloadArraySoftObjectProperty(UArrayProperty* ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& UnloadCodes)
+{
+	// Check if an "Internal" member exists (i.e. MemberName + _Internal)
+
+									// MemberName + TEXT("_Internal")
+	const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
+
+	if (UArrayProperty* InternalArrayProperty = FindField<UArrayProperty>(Struct, *InternalMemberName))
+	{
+		if (USoftObjectProperty* InternalSoftObjectProperty = Cast<USoftObjectProperty>(InternalArrayProperty->Inner))
+		{
+			USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner);
+
+			// Check Member is the same type as the Member_Internal
+			if (SoftObjectProperty->PropertyClass == InternalSoftObjectProperty->PropertyClass)
+			{
+				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+				FScriptArrayHelper_InContainer InternalHelper(InternalArrayProperty, StructValue);
+
+				const int32 Count = Helper.Num();
+
+				InternalHelper.EmptyAndAddUninitializedValues(Helper.Num());
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					TSoftObjectPtr<UObject>* Ptr = reinterpret_cast<TSoftObjectPtr<UObject>*>(Helper.GetRawPtr(I));
+					UObject** InternalPtr		 = reinterpret_cast<UObject**>(InternalHelper.GetRawPtr(I));
+
+					// Recursive Unload DataTable
+					if (*InternalPtr &&
+						SoftObjectProperty->PropertyClass == UDataTable::StaticClass() &&
+						CS_TEST_BLUEPRINT_BITFLAG(UnloadCodes, ECsUnloadCode::RecursiveUnloadDataTable))
+					{
+						UDataTable* DataTable = Cast<UDataTable>(*InternalPtr);
+
+						UnloadDataTable(DataTable, UnloadCodes);
+					}
+
+					Ptr->ResetWeakPtr();
+					*InternalPtr = nullptr;
+				}
+			}
+		}
+	}
+}
+
+void UCsLibrary_Load::UnloadArrayObjectProperty(UArrayProperty* ArrayProperty, void* StructValue, const int32& UnloadCodes)
+{
+	FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+
+	const int32 Count = Helper.Num();
+
+	UObjectProperty* ObjectProperty = Cast<UObjectProperty>(ArrayProperty->Inner);
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		uint8* Ptr = Helper.GetRawPtr(I);
+
+		UnloadStruct(Ptr, ObjectProperty->PropertyClass, UnloadCodes);
+	}
+}
+
+void UCsLibrary_Load::UnloadArrayStructProperty(UArrayProperty* ArrayProperty, void* StructValue, const int32& UnloadCodes)
+{
+	FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+
+	const int32 Count = Helper.Num();
+
+	UStructProperty* StructProperty = Cast<UStructProperty>(ArrayProperty->Inner);
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		uint8* Ptr = Helper.GetRawPtr(I);
+
+		UnloadStruct(Ptr, StructProperty->Struct, UnloadCodes);
+	}
+}
+
+void UCsLibrary_Load::UnloadStruct(void* StructValue, UStruct* const& Struct, const int32& UnloadCodes)
 {
 	for (TFieldIterator<UProperty> It(Struct); It; ++It)
 	{
 		UProperty* Property = Cast<UProperty>(*It);
 
 		const FString PropertyName = Property->GetName();
+
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
+		{
+			UnloadSoftClassProperty(SoftClassProperty, StructValue, Struct, PropertyName, UnloadCodes);
+			continue;
+		}
+		// TSoftObjectPtr
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(Property))
+		{
+			UnloadSoftObjectProperty(SoftObjectProperty, StructValue, Struct, PropertyName, UnloadCodes);
+			continue;
+		}
+		// Object
+		if (UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
+		{
+			// Recursive Load DataTable
+			if (ObjectProperty->PropertyClass == UDataTable::StaticClass() &&
+				CS_TEST_BLUEPRINT_BITFLAG(UnloadCodes, ECsUnloadCode::RecursiveUnloadDataTable))
+			{
+				UDataTable** DataTable = ObjectProperty->ContainerPtrToValuePtr<UDataTable*>(StructValue);
+
+				UnloadDataTable(*DataTable, UnloadCodes);
+			}
+			continue;
+		}
+		// Struct
+		if (UStructProperty* StructProperty = Cast<UStructProperty>(Property))
+		{
+			for (int32 I = 0; I < StructProperty->ArrayDim; ++I)
+			{
+				uint8* Value = StructProperty->ContainerPtrToValuePtr<uint8>(StructValue, I);
+
+				UnloadStruct(Value, StructProperty->Struct, UnloadCodes);
+			}
+			continue;
+		}
+		// Array
+		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
+		{
+			// TSoftClassPtr
+			if (USoftClassProperty* InnerSoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
+			{
+				UnloadArraySoftClassProperty(ArrayProperty, StructValue, Struct, PropertyName, UnloadCodes);
+				continue;
+			}
+			// TSoftObjectPtr
+			if (USoftObjectProperty* InnerSoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
+			{
+				UnloadArraySoftObjectProperty(ArrayProperty, StructValue, Struct, PropertyName, UnloadCodes);
+				continue;
+			}
+			// Object
+			if (UObjectProperty* InnerObjectProperty = Cast<UObjectProperty>(ArrayProperty->Inner))
+			{
+				// Recursive Load DataTable
+				if (InnerObjectProperty->PropertyClass == UDataTable::StaticClass() &&
+					CS_TEST_BLUEPRINT_BITFLAG(UnloadCodes, ECsUnloadCode::RecursiveUnloadDataTable))
+				{
+					UnloadArrayObjectProperty(ArrayProperty, StructValue, UnloadCodes);
+				}
+				continue;
+			}
+			// Struct
+			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
+			{
+				UnloadArrayStructProperty(ArrayProperty, StructValue, UnloadCodes);
+				continue;
+			}
+		}	
+	}
+}
+
+void UCsLibrary_Load::UnloadDataTable(UDataTable* DataTable, const int32& UnloadCodes)
+{
+	const UScriptStruct* ScriptStruct = DataTable->GetRowStruct();
+	UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
+	UStruct* const Struct			  = Temp;
+
+	TArray<FName> RowNames = DataTable->GetRowNames();
+
+	for (const FName& RowName : RowNames)
+	{
+		uint8* RowPtr = DataTable->FindRowUnchecked(RowName);
+
+		UnloadStruct(RowPtr, Struct, UnloadCodes);
 	}
 }
 

@@ -259,6 +259,34 @@ public:
 	*/
 	uint8* GetDataTableRow(const FSoftObjectPath& Path, const FName& RowName);
 
+	// Entry
+#pragma region
+public:
+
+	/**
+	*
+	*
+	* @param TableName
+	* return
+	*/
+	const FCsDataEntry_DataTable* GetDataTableEntry(const FName& TableName);
+
+#pragma endregion Entry
+
+	// SoftObjectPath
+#pragma region
+public:
+
+	/**
+	*
+	*
+	* @param TableName
+	* @param OutPaths
+	*/
+	void GetDataTableSoftObjectPaths(const FName& TableName, TArray<FSoftObjectPath>& OutPaths);
+
+#pragma endregion SoftObjectPath
+
 #pragma endregion DataTable
 
 #pragma endregion Get

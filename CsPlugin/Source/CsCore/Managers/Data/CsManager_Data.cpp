@@ -766,6 +766,37 @@ uint8* UCsManager_Data::GetDataTableRow(const FSoftObjectPath& Path, const FName
 	return nullptr;
 }
 
+		// Entry
+#pragma region
+
+const FCsDataEntry_DataTable* UCsManager_Data::GetDataTableEntry(const FName& TableName)
+{
+#if WITH_EDITOR
+	if (TableName == NAME_None)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableEntry: TableName is None."));
+		return nullptr;
+	}
+#endif // #if WITH_EDITOR
+
+	if (FCsDataEntry_DataTable** EntryPtr = DataTableEntryMap.Find(TableName))
+		return *EntryPtr;
+	return nullptr;
+}
+
+#pragma endregion Entry
+
+		// SoftObjectPath
+#pragma region
+
+void UCsManager_Data::GetDataTableSoftObjectPaths(const FName& TableName, TArray<FSoftObjectPath>& OutPaths)
+{
+	if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(TableName))
+		OutPaths.Append(Entry->Paths.Internal);
+}
+
+#pragma endregion SoftObjectPath
+
 #pragma endregion DataTable
 
 #pragma endregion Get

@@ -4902,6 +4902,488 @@ void UCsLibrary_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, vo
 
 #pragma endregion Json
 
+// ObjectPath
+#pragma region
+
+	// Soft
+#pragma region
+
+void UCsLibrary_Load::GetSoftObjectPaths(const void* StructValue, UStruct* const& Struct, TArray<FSoftObjectPath>& OutObjectPaths)
+{
+	for (TPropertyValueIterator<UProperty> It(Struct, StructValue); It; ++It)
+	{
+		UProperty* Property		  = It.Key();
+		const void* PropertyValue = It.Value();
+
+		// TSoftClassPtr
+		if (const USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
+		{
+			if (const TSoftClassPtr<UObject>* Ptr = reinterpret_cast<const TSoftClassPtr<UObject>*>(PropertyValue))
+			{
+				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
+
+				if (Path.IsValid())
+				{
+					OutObjectPaths.Add(Path);
+
+					// TODO: Load SoftClassPtr and GetObjectPaths from that. Have an optional enum for recursive look up with load
+				}
+			}
+			continue;
+		}
+		// TSoftObjectPtr
+		if (const USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(Property))
+		{
+			if (const TSoftObjectPtr<UObject>* Ptr = reinterpret_cast<const TSoftObjectPtr<UObject>*>(PropertyValue))
+			{
+				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
+
+				if (Path.IsValid())
+					OutObjectPaths.Add(Path);
+			}
+			continue;
+		}
+		// Struct
+		if (const UStructProperty* StructProperty = Cast<UStructProperty>(Property))
+		{
+			// SoftClassPath
+			if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
+			{
+				if (const FSoftClassPath* Ptr = reinterpret_cast<const FSoftClassPath*>(PropertyValue))
+				{
+					if (Ptr->IsValid())
+						OutObjectPaths.Add(*Ptr);
+				}
+				continue;
+			}
+			// SoftObjectPath
+			if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
+			{
+				if (const FSoftObjectPath* Ptr = reinterpret_cast<const FSoftObjectPath*>(PropertyValue))
+				{
+					if (Ptr->IsValid())
+						OutObjectPaths.Add(*Ptr);
+				}
+				continue;
+			}
+			continue;
+		}
+		// Array
+		if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
+		{
+			// TODO: Look at FScriptArray, FScriptArrayHelper
+			continue;
+		}
+		// Map
+		if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
+		{
+			// TODO: Look at FScriptArray, FScriptArrayHelper
+			continue;
+		}
+	}
+
+	/*
+	for (TFieldIterator<UProperty> It(InClass); It; ++It)
+	{
+		UProperty* Property = Cast<UProperty>(*It);
+
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
+		{
+			continue;
+		}
+		// TSoftObjectPtr
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
+		{
+			// USouncCue
+			if (TryGetObjectPathFromSoftObjectProperty<USoundCue>(SoftObjectProperty, InObject, InClass, OutObjectPaths))
+				continue;
+			// UParticleSystem
+			if (TryGetObjectPathFromSoftObjectProperty<UParticleSystem>(SoftObjectProperty, InObject, InClass, OutObjectPaths))
+				continue;
+			// UDataTable
+			if (TryGetObjectPathFromSoftObjectProperty<UDataTable>(SoftObjectProperty, InObject, InClass, OutObjectPaths))
+				continue;
+			continue;
+		}
+	}
+	*/
+}
+
+void UCsLibrary_Load::GetSoftObjectPaths(const void* StructValue, UStruct* const& Struct, TMap<FName, FSoftObjectPath>& OutObjectPathMap)
+{
+	// Iterate through Properties
+	for (TPropertyValueIterator<UProperty> It(Struct, StructValue); It; ++It)
+	{
+		UProperty* Property		  = It.Key();
+		const void* PropertyValue = It.Value();
+
+		// TSoftClassPtr
+		if (const USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
+		{
+			if (const TSoftClassPtr<UObject>* Ptr = reinterpret_cast<const TSoftClassPtr<UObject>*>(PropertyValue))
+			{
+				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
+
+				if (Path.IsValid())
+				{
+					OutObjectPathMap.FindOrAdd(Path.GetAssetPathName()) = Path;
+					// TODO: Load SoftClassPtr and GetObjectPaths from that. Have an optional enum for recursive look up with load
+				}
+			}
+			continue;
+		}
+		// TSoftObjectPtr
+		if (const USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(Property))
+		{
+			if (const TSoftObjectPtr<UObject>* Ptr = reinterpret_cast<const TSoftObjectPtr<UObject>*>(PropertyValue))
+			{
+				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
+
+				if (Path.IsValid())
+					OutObjectPathMap.FindOrAdd(Path.GetAssetPathName()) = Path;
+			}
+			continue;
+		}
+		// Struct
+		if (const UStructProperty* StructProperty = Cast<UStructProperty>(Property))
+		{
+			// SoftClassPath
+			if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
+			{
+				if (const FSoftClassPath* Ptr = reinterpret_cast<const FSoftClassPath*>(PropertyValue))
+				{
+					if (Ptr->IsValid())
+						OutObjectPathMap.FindOrAdd(Ptr->GetAssetPathName()) = *Ptr;
+				}
+				continue;
+			}
+			// SoftObjectPath
+			if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
+			{
+				if (const FSoftObjectPath* Ptr = reinterpret_cast<const FSoftObjectPath*>(PropertyValue))
+				{
+					if (Ptr->IsValid())
+						OutObjectPathMap.FindOrAdd(Ptr->GetAssetPathName()) = *Ptr;
+				}
+				continue;
+			}
+			continue;
+		}
+		// Array
+		if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
+		{
+			// TODO: Look at FScriptArray, FScriptArrayHelper
+			continue;
+		}
+		// Map
+		if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
+		{
+			// TODO: Look at FScriptArray, FScriptArrayHelper
+			continue;
+		}
+	}
+	// Iterate through Functions
+	for (UFunction* Function : TFieldRange<UFunction>(Struct))
+	{
+		if (Function->GetName().StartsWith(TEXT("ExecuteUbergraph")))
+			continue;
+
+		GetSoftObjectPaths(Function, Function->GetClass(), OutObjectPathMap);
+	}
+}
+
+void UCsLibrary_Load::GetSoftObjectPaths(ULevel* Level, TMap<FName, FSoftObjectPath>& OutObjectPathMap)
+{
+	for (AActor* Actor : Level->Actors)
+	{
+		if (!Actor)
+			continue;
+
+		GetSoftObjectPaths(Actor, Actor->GetClass(), OutObjectPathMap);
+	}
+}
+
+bool UCsLibrary_Load::GetSoftObjectPaths_SoftObjectPath(UProperty* Property, const void* StructValue, const FString& OuterName, FCsLibraryLoad_GetSoftObjectPaths& Result)
+{
+	FSoftObjectPath Path;
+	FString StructName = TEXT("");
+	bool DoRecursion = false;
+
+	// TSoftClassPtr
+	if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
+	{
+		if (const FSoftObjectPtr* Member = SoftClassProperty->GetPropertyValuePtr_InContainer(StructValue))
+		{
+			Path = Member->ToSoftObjectPath();
+		}
+		StructName  = SoftClassProperty->MetaClass->GetName();
+		DoRecursion = CS_TEST_BITFLAG(Result.Code, ECsLibraryLoad_GetSoftObjectPaths_Code::RecursiveGetClass);
+	}
+	// TSoftObjectPtr
+	else
+	if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(Property))
+	{
+		if (const FSoftObjectPtr* Member = SoftObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
+		{
+			Path = Member->ToSoftObjectPath();
+		}
+		StructName = SoftObjectProperty->PropertyClass->GetName();
+		DoRecursion = CS_TEST_BITFLAG(Result.Code, ECsLibraryLoad_GetSoftObjectPaths_Code::RecursiveGetObject);
+	}
+	// Struct
+	else
+	if (UStructProperty* StructProperty = Cast<UStructProperty>(Property))
+	{
+		// SoftClassPath
+		if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
+		{
+			const FSoftClassPath* Ptr = StructProperty->ContainerPtrToValuePtr<FSoftClassPath>(StructValue);
+			Path = *Ptr;
+			DoRecursion = CS_TEST_BITFLAG(Result.Code, ECsLibraryLoad_GetSoftObjectPaths_Code::RecursiveGetClass);
+		}
+		// SoftObjectPath
+		else
+		if (StructProperty->Struct == TBaseStructure<FSoftObjectPath>::Get())
+		{
+			const FSoftObjectPath* Ptr = StructProperty->ContainerPtrToValuePtr<FSoftObjectPath>(StructValue);
+			Path = *Ptr;
+			DoRecursion = CS_TEST_BITFLAG(Result.Code, ECsLibraryLoad_GetSoftObjectPaths_Code::RecursiveGetObject);
+		}
+		StructName = StructProperty->Struct->GetName();
+	}
+
+	if (!Path.IsValid())
+		return false;
+
+	const FString PropertyName = Property->GetName();
+	const FString MemberPath   = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
+
+	FCsLibraryLoad_MemberInfo MemberInfo;
+
+	MemberInfo.SetName(PropertyName);
+	MemberInfo.SetPath(MemberPath);
+	MemberInfo.SetType(StructName);
+
+	Result.Paths.Add(Path);
+	Result.PathByMemberInfoMap.Add(MemberInfo, Path);
+	Result.MemberInfosByPathMap.FindOrAdd(Path).Add(MemberInfo);
+
+	if (DoRecursion)
+	{
+		if (UObject* Object = Path.TryLoad())
+		{
+			GetSoftObjectPaths(Object, Object->GetClass(), PropertyName, Result);
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("GetSoftObjectPaths_SoftObjectPath: Failed to Load Object."));
+			UE_LOG(LogCs, Warning, TEXT("- Asset: %s @ %s"), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
+			UE_LOG(LogCs, Warning, TEXT("- Member: %s"), *(MemberInfo.ToString()));
+		}
+	}
+	return true;
+}
+
+bool UCsLibrary_Load::GetSoftObjectPaths_Array_SoftObjectPath(UArrayProperty* ArrayProperty, const void* StructValue, const FString& OuterName, FCsLibraryLoad_GetSoftObjectPaths& Result)
+{
+	FString StructName = TEXT("");
+	bool DoRecursion = false;
+
+	// TSoftClassPtr
+	if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
+	{
+		StructName  = SoftClassProperty->MetaClass->GetName();
+		DoRecursion = CS_TEST_BITFLAG(Result.Code, ECsLibraryLoad_GetSoftObjectPaths_Code::RecursiveGetClass);
+	}
+	// TSoftObjectPtr
+	else
+	if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
+	{
+		StructName  = SoftObjectProperty->PropertyClass->GetName();
+		DoRecursion = CS_TEST_BITFLAG(Result.Code, ECsLibraryLoad_GetSoftObjectPaths_Code::RecursiveGetObject);
+	}
+	// Struct
+	else
+	if (UStructProperty* StructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
+	{
+		// SoftClassPath
+		if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
+		{
+			StructName  = StructProperty->Struct->GetName();
+			DoRecursion = CS_TEST_BITFLAG(Result.Code, ECsLibraryLoad_GetSoftObjectPaths_Code::RecursiveGetClass);
+		}
+		// SoftObjectPath
+		else
+		if (StructProperty->Struct == TBaseStructure<FSoftObjectPath>::Get())
+		{
+			StructName  = StructProperty->Struct->GetName();
+			DoRecursion = CS_TEST_BITFLAG(Result.Code, ECsLibraryLoad_GetSoftObjectPaths_Code::RecursiveGetObject);
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+
+	const int32 Count = Helper.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		FSoftObjectPath Path;
+
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
+		{
+			TSoftClassPtr<UObject>* Ptr = reinterpret_cast<TSoftClassPtr<UObject>*>(Helper.GetRawPtr(I));
+			Path						= Ptr->ToSoftObjectPath();
+		}
+		// TSoftObjectPtr
+		else
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
+		{
+			TSoftObjectPtr<UObject>* Ptr = reinterpret_cast<TSoftObjectPtr<UObject>*>(Helper.GetRawPtr(I));
+			Path						 = Ptr->ToSoftObjectPath();
+		}
+		// Struct
+		else
+		if (UStructProperty* StructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
+		{
+			// SoftClassPath
+			if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
+			{
+				FSoftClassPath* Ptr = reinterpret_cast<FSoftClassPath*>(Helper.GetRawPtr(I));
+				Path				= *Ptr;
+			}
+			// SoftObjectPath
+			else
+			if (StructProperty->Struct == TBaseStructure<FSoftObjectPath>::Get())
+			{
+				FSoftClassPath* Ptr = reinterpret_cast<FSoftClassPath*>(Helper.GetRawPtr(I));
+				Path				= *Ptr;
+			}
+		}
+
+		if (!Path.IsValid())
+			continue;
+
+		const FString PropertyName = ArrayProperty->GetName();
+		const FString MemberPath   = FString::Printf(TEXT("%s.%s[%d]"), *OuterName, *PropertyName, I);
+
+		FCsLibraryLoad_MemberInfo MemberInfo;
+
+		MemberInfo.SetName(PropertyName);
+		MemberInfo.SetPath(MemberPath);
+		MemberInfo.SetType(StructName);
+
+		Result.Paths.Add(Path);
+		Result.PathByMemberInfoMap.Add(MemberInfo, Path);
+		Result.MemberInfosByPathMap.FindOrAdd(Path).Add(MemberInfo);
+
+		if (DoRecursion)
+		{
+			if (UObject* Object = Path.TryLoad())
+			{
+				GetSoftObjectPaths(Object, Object->GetClass(), PropertyName, Result);
+			}
+		}
+	}
+	return true;
+}
+
+void UCsLibrary_Load::GetSoftObjectPaths(const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetSoftObjectPaths& Result)
+{
+	for (TFieldIterator<UProperty> It(Struct); It; ++It)
+	{
+		UProperty* Property = Cast<UProperty>(*It);
+
+		const FString PropertyName = Property->GetName();
+
+		// TSoftClassPtr | TSoftObjectPtr | FSoftClassPath | FSoftObjectPath
+		if (GetSoftObjectPaths_SoftObjectPath(Property, StructValue, OuterName, Result))
+			continue;
+
+		// Class
+		if (UClassProperty* ClassProperty = Cast<UClassProperty>(Property))
+		{
+			if (CS_TEST_BITFLAG(Result.Code, ECsLibraryLoad_GetSoftObjectPaths_Code::RecursiveGetClass))
+			{
+				UObject* const* Object = ClassProperty->ContainerPtrToValuePtr<UObject*>(StructValue);
+
+				GetSoftObjectPaths(*Object, (*Object)->GetClass(), PropertyName, Result);
+			}
+			continue;
+		}
+		// Object
+		if (UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
+		{
+			if (CS_TEST_BITFLAG(Result.Code, ECsLibraryLoad_GetSoftObjectPaths_Code::RecursiveGetObject))
+			{
+				UObject* const* Object = ObjectProperty->ContainerPtrToValuePtr<UObject*>(StructValue);
+
+				GetSoftObjectPaths(*Object, (*Object)->GetClass(), PropertyName, Result);
+			}
+			continue;
+		}
+		// Struct
+		if (UStructProperty* StructProperty = Cast<UStructProperty>(Property))
+		{
+			if (StructProperty->ArrayDim == CS_SINGLETON)
+			{
+				const uint8* Value = StructProperty->ContainerPtrToValuePtr<uint8>(StructValue);
+
+				const FString MemberPath = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
+
+				GetSoftObjectPaths(Value, StructProperty->Struct, MemberPath, Result);
+			}
+			else
+			{
+				for (int32 I = 0; I < StructProperty->ArrayDim; ++I)
+				{
+					const uint8* Value = StructProperty->ContainerPtrToValuePtr<uint8>(StructValue, I);
+
+					const FString ArrayPropertyPath = FString::Printf(TEXT("%s.%s[%d]"), *OuterName, *PropertyName, I);
+
+					GetSoftObjectPaths(Value, StructProperty->Struct, ArrayPropertyPath, Result);
+				}
+			}
+			continue;
+		}
+		// Array
+		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
+		{
+			// TSoftClassPtr | TSoftObjectPtr | FSoftClassPath | FSoftObjectPath
+			if (GetSoftObjectPaths_Array_SoftObjectPath(ArrayProperty, StructValue, OuterName, Result))
+				continue;
+
+			// Struct
+			if (UStructProperty* StructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
+			{
+				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+
+				const int32 Count = Helper.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					uint8* Ptr = Helper.GetRawPtr(I);
+
+					const FString ArrayPropertyPath = FString::Printf(TEXT("%s.%s[%d]"), *OuterName, *PropertyName, I);
+
+					GetSoftObjectPaths(Ptr, StructProperty->Struct, ArrayPropertyPath, Result);
+				}
+				continue;
+			}
+			continue;
+		}	
+	}
+}
+
+#pragma endregion Soft
+
+#pragma endregion ObjectPath
+
 // Loading
 #pragma region
 
@@ -6245,304 +6727,6 @@ void UCsLibrary_Load::GetAssetReferencesFromObject(void* InObject, UClass* const
 			continue;
 		}
 	}
-}
-
-void UCsLibrary_Load::GetObjectPaths(const void* StructValue, UStruct* const& Struct, TArray<FSoftObjectPath>& OutObjectPaths)
-{
-	for (TPropertyValueIterator<UProperty> It(Struct, StructValue); It; ++It)
-	{
-		UProperty* Property		  = It.Key();
-		const void* PropertyValue = It.Value();
-
-		// TSoftClassPtr
-		if (const USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
-		{
-			if (const TSoftClassPtr<UObject>* Ptr = reinterpret_cast<const TSoftClassPtr<UObject>*>(PropertyValue))
-			{
-				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
-
-				if (Path.IsValid())
-				{
-					OutObjectPaths.Add(Path);
-
-					// TODO: Load SoftClassPtr and GetObjectPaths from that. Have an optional enum for recursive look up with load
-				}
-			}
-			continue;
-		}
-		// TSoftObjectPtr
-		if (const USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(Property))
-		{
-			if (const TSoftObjectPtr<UObject>* Ptr = reinterpret_cast<const TSoftObjectPtr<UObject>*>(PropertyValue))
-			{
-				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
-
-				if (Path.IsValid())
-					OutObjectPaths.Add(Path);
-			}
-			continue;
-		}
-		// Struct
-		if (const UStructProperty* StructProperty = Cast<UStructProperty>(Property))
-		{
-			// SoftClassPath
-			if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
-			{
-				if (const FSoftClassPath* Ptr = reinterpret_cast<const FSoftClassPath*>(PropertyValue))
-				{
-					if (Ptr->IsValid())
-						OutObjectPaths.Add(*Ptr);
-				}
-				continue;
-			}
-			// SoftObjectPath
-			if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
-			{
-				if (const FSoftObjectPath* Ptr = reinterpret_cast<const FSoftObjectPath*>(PropertyValue))
-				{
-					if (Ptr->IsValid())
-						OutObjectPaths.Add(*Ptr);
-				}
-				continue;
-			}
-			continue;
-		}
-		// Array
-		if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
-		{
-			// TODO: Look at FScriptArray, FScriptArrayHelper
-			continue;
-		}
-		// Map
-		if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
-		{
-			// TODO: Look at FScriptArray, FScriptArrayHelper
-			continue;
-		}
-	}
-
-	/*
-	for (TFieldIterator<UProperty> It(InClass); It; ++It)
-	{
-		UProperty* Property = Cast<UProperty>(*It);
-
-		// TSoftClassPtr
-		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
-		{
-			continue;
-		}
-		// TSoftObjectPtr
-		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
-		{
-			// USouncCue
-			if (TryGetObjectPathFromSoftObjectProperty<USoundCue>(SoftObjectProperty, InObject, InClass, OutObjectPaths))
-				continue;
-			// UParticleSystem
-			if (TryGetObjectPathFromSoftObjectProperty<UParticleSystem>(SoftObjectProperty, InObject, InClass, OutObjectPaths))
-				continue;
-			// UDataTable
-			if (TryGetObjectPathFromSoftObjectProperty<UDataTable>(SoftObjectProperty, InObject, InClass, OutObjectPaths))
-				continue;
-			continue;
-		}
-	}
-	*/
-}
-
-void UCsLibrary_Load::GetObjectPaths(const void* StructValue, UStruct* const& Struct, TMap<FName, FSoftObjectPath>& OutObjectPathMap)
-{
-	// Iterate through Properties
-	for (TPropertyValueIterator<UProperty> It(Struct, StructValue); It; ++It)
-	{
-		UProperty* Property		  = It.Key();
-		const void* PropertyValue = It.Value();
-
-		// TSoftClassPtr
-		if (const USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
-		{
-			if (const TSoftClassPtr<UObject>* Ptr = reinterpret_cast<const TSoftClassPtr<UObject>*>(PropertyValue))
-			{
-				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
-
-				if (Path.IsValid())
-				{
-					OutObjectPathMap.FindOrAdd(Path.GetAssetPathName()) = Path;
-					// TODO: Load SoftClassPtr and GetObjectPaths from that. Have an optional enum for recursive look up with load
-				}
-			}
-			continue;
-		}
-		// TSoftObjectPtr
-		if (const USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(Property))
-		{
-			if (const TSoftObjectPtr<UObject>* Ptr = reinterpret_cast<const TSoftObjectPtr<UObject>*>(PropertyValue))
-			{
-				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
-
-				if (Path.IsValid())
-					OutObjectPathMap.FindOrAdd(Path.GetAssetPathName()) = Path;
-			}
-			continue;
-		}
-		// Struct
-		if (const UStructProperty* StructProperty = Cast<UStructProperty>(Property))
-		{
-			// SoftClassPath
-			if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
-			{
-				if (const FSoftClassPath* Ptr = reinterpret_cast<const FSoftClassPath*>(PropertyValue))
-				{
-					if (Ptr->IsValid())
-						OutObjectPathMap.FindOrAdd(Ptr->GetAssetPathName()) = *Ptr;
-				}
-				continue;
-			}
-			// SoftObjectPath
-			if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
-			{
-				if (const FSoftObjectPath* Ptr = reinterpret_cast<const FSoftObjectPath*>(PropertyValue))
-				{
-					if (Ptr->IsValid())
-						OutObjectPathMap.FindOrAdd(Ptr->GetAssetPathName()) = *Ptr;
-				}
-				continue;
-			}
-			continue;
-		}
-		// Array
-		if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
-		{
-			// TODO: Look at FScriptArray, FScriptArrayHelper
-			continue;
-		}
-		// Map
-		if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
-		{
-			// TODO: Look at FScriptArray, FScriptArrayHelper
-			continue;
-		}
-	}
-	// Iterate through Functions
-	for (UFunction* Function : TFieldRange<UFunction>(Struct))
-	{
-		if (Function->GetName().StartsWith(TEXT("ExecuteUbergraph")))
-			continue;
-
-		GetObjectPaths(Function, Function->GetClass(), OutObjectPathMap);
-	}
-}
-
-void UCsLibrary_Load::GetObjectPaths(ULevel* Level, TMap<FName, FSoftObjectPath>& OutObjectPathMap)
-{
-	for (AActor* Actor : Level->Actors)
-	{
-		if (!Actor)
-			continue;
-
-		GetObjectPaths(Actor, Actor->GetClass(), OutObjectPathMap);
-	}
-}
-
-void UCsLibrary_Load::GetUniqueObjectPaths(const void* StructValue, UStruct* const& Struct, TArray<FSoftObjectPath>& OutObjectPaths)
-{
-	for (TPropertyValueIterator<UProperty> It(Struct, StructValue); It; ++It)
-	{
-		UProperty* Property		  = It.Key();
-		const void* PropertyValue = It.Value();
-
-		// TSoftClassPtr
-		if (const USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
-		{
-			if (const TSoftClassPtr<UObject>* Ptr = reinterpret_cast<const TSoftClassPtr<UObject>*>(PropertyValue))
-			{
-				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
-
-				if (Path.IsValid())
-				{
-					OutObjectPaths.AddUnique(Path);
-
-					// TODO: Load SoftClassPtr and GetObjectPaths from that. Have an optional enum for recursive look up with load
-				}
-			}
-			continue;
-		}
-		// TSoftObjectPtr
-		if (const USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(Property))
-		{
-			if (const TSoftObjectPtr<UObject>* Ptr = reinterpret_cast<const TSoftObjectPtr<UObject>*>(PropertyValue))
-			{
-				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
-
-				if (Path.IsValid())
-					OutObjectPaths.AddUnique(Path);
-			}
-			continue;
-		}
-		// Struct
-		if (const UStructProperty* StructProperty = Cast<UStructProperty>(Property))
-		{
-			// SoftClassPath
-			if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
-			{
-				if (const FSoftClassPath* Ptr = reinterpret_cast<const FSoftClassPath*>(PropertyValue))
-				{
-					if (Ptr->IsValid())
-						OutObjectPaths.AddUnique(*Ptr);
-				}
-				continue;
-			}
-			// SoftObjectPath
-			if (StructProperty->Struct == TBaseStructure<FSoftClassPath>::Get())
-			{
-				if (const FSoftObjectPath* Ptr = reinterpret_cast<const FSoftObjectPath*>(PropertyValue))
-				{
-					if (Ptr->IsValid())
-						OutObjectPaths.AddUnique(*Ptr);
-				}
-				continue;
-			}
-			continue;
-		}
-		// Array
-		if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
-		{
-			// TODO: Look at FScriptArray, FScriptArrayHelper
-			continue;
-		}
-		// Map
-		if (const UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
-		{
-			// TODO: Look at FScriptArray, FScriptArrayHelper
-			continue;
-		}
-	}
-
-	/*
-	for (TFieldIterator<UProperty> It(InClass); It; ++It)
-	{
-		UProperty* Property = Cast<UProperty>(*It);
-
-		// TSoftClassPtr
-		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
-		{
-			continue;
-		}
-		// TSoftObjectPtr
-		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
-		{
-			// USouncCue
-			if (TryGetObjectPathFromSoftObjectProperty<USoundCue>(SoftObjectProperty, InObject, InClass, OutObjectPaths))
-				continue;
-			// UParticleSystem
-			if (TryGetObjectPathFromSoftObjectProperty<UParticleSystem>(SoftObjectProperty, InObject, InClass, OutObjectPaths))
-				continue;
-			// UDataTable
-			if (TryGetObjectPathFromSoftObjectProperty<UDataTable>(SoftObjectProperty, InObject, InClass, OutObjectPaths))
-				continue;
-			continue;
-		}
-	}
-	*/
 }
 
 #pragma endregion Asset References
@@ -9419,15 +9603,15 @@ void UCsLibrary_Load::GetReferencesReport_ClassProperty(UClassProperty* ClassPro
 {
 	if (UObject* const* Ptr = ClassProperty->ContainerPtrToValuePtr<UObject*>(StructValue))
 	{
-		FCsLibraryLoad_GetReferencesReport_MemberInfo MemberInfo;
+		FCsLibraryLoad_MemberInfo MemberInfo;
 
 		const FString PropertyName = ClassProperty->GetName();
 		const FString MemberPath   = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
 
-		MemberInfo.Name = PropertyName;
-		MemberInfo.Path = MemberPath;
-		MemberInfo.Type = ClassProperty->MetaClass->GetName();
-		;
+		MemberInfo.SetName(PropertyName);
+		MemberInfo.SetPath(MemberPath);
+		MemberInfo.SetType(ClassProperty->MetaClass->GetName());
+		
 		if (const UObject* Object = *Ptr)
 		{
 			FSoftObjectPath ObjectPath(Object);
@@ -9447,14 +9631,14 @@ void UCsLibrary_Load::GetReferencesReport_ObjectProperty(UObjectProperty* Object
 {
 	if (UObject* const* Ptr = ObjectProperty->ContainerPtrToValuePtr<UObject*>(StructValue))
 	{
-		FCsLibraryLoad_GetReferencesReport_MemberInfo MemberInfo;
+		FCsLibraryLoad_MemberInfo MemberInfo;
 
 		const FString PropertyName = ObjectProperty->GetName();
 		const FString MemberPath   = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
 
-		MemberInfo.Name = PropertyName;
-		MemberInfo.Path = MemberPath;
-		MemberInfo.Type = ObjectProperty->PropertyClass->GetName();
+		MemberInfo.SetName(PropertyName);
+		MemberInfo.SetPath(MemberPath);
+		MemberInfo.SetType(ObjectProperty->PropertyClass->GetName());
 		
 		if (const UObject* Object = *Ptr)
 		{
@@ -9475,14 +9659,14 @@ void UCsLibrary_Load::GetReferencesReport_SoftClassProperty(USoftClassProperty* 
 {
 	if (const FSoftObjectPtr* Ptr = SoftClassProperty->GetPropertyValuePtr_InContainer(StructValue))
 	{
-		FCsLibraryLoad_GetReferencesReport_MemberInfo MemberInfo;
+		FCsLibraryLoad_MemberInfo MemberInfo;
 
 		const FString PropertyName = SoftClassProperty->GetName();
 		const FString MemberPath   = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
 
-		MemberInfo.Name = PropertyName;
-		MemberInfo.Path = MemberPath;
-		MemberInfo.Type = SoftClassProperty->MetaClass->GetName();
+		MemberInfo.SetName(PropertyName);
+		MemberInfo.SetPath(MemberPath);
+		MemberInfo.SetType(SoftClassProperty->MetaClass->GetName());
 
 		const FSoftObjectPath ObjectPath = Ptr->ToSoftObjectPath();
 
@@ -9501,14 +9685,14 @@ void UCsLibrary_Load::GetReferencesReport_SoftObjectProperty(USoftObjectProperty
 {
 	if (const FSoftObjectPtr* Ptr = SoftObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
 	{
-		FCsLibraryLoad_GetReferencesReport_MemberInfo MemberInfo;
+		FCsLibraryLoad_MemberInfo MemberInfo;
 
 		const FString PropertyName = SoftObjectProperty->GetName();
 		const FString MemberPath   = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
 
-		MemberInfo.Name = PropertyName;
-		MemberInfo.Path = MemberPath;
-		MemberInfo.Type = SoftObjectProperty->PropertyClass->GetName();
+		MemberInfo.SetName(PropertyName);
+		MemberInfo.SetPath(MemberPath);
+		MemberInfo.SetType(SoftObjectProperty->PropertyClass->GetName());
 
 		const FSoftObjectPath ObjectPath = Ptr->ToSoftObjectPath();
 

@@ -1007,6 +1007,27 @@ template<typename T>
 
 #pragma endregion Json
 
+// ObjectPath
+#pragma region
+public:
+
+	// Soft
+#pragma region
+public:
+
+	static void GetSoftObjectPaths(const void* StructValue, UStruct* const& Struct, TArray<FSoftObjectPath>& OutObjectPaths);
+	static void GetSoftObjectPaths(const void* StructValue, UStruct* const& Struct, TMap<FName, FSoftObjectPath>& OutObjectPathMap);
+	static void GetSoftObjectPaths(ULevel* Level, TMap<FName, FSoftObjectPath>& OutObjectPathMap);
+
+	static bool GetSoftObjectPaths_SoftObjectPath(UProperty* Property, const void* StructValue, const FString& OuterName, FCsLibraryLoad_GetSoftObjectPaths& Result);
+	static bool GetSoftObjectPaths_Array_SoftObjectPath(UArrayProperty* ArrayProperty, const void* StructValue, const FString& OuterName, FCsLibraryLoad_GetSoftObjectPaths& Result);
+
+	static void GetSoftObjectPaths(const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetSoftObjectPaths& Result);
+
+#pragma endregion Soft
+
+#pragma endregion ObjectPath
+
 // Loading
 #pragma region
 
@@ -1697,11 +1718,6 @@ template<typename T>
 
 	static void GetAssetReferencesFromStruct(void* InStruct, UScriptStruct* const &InScriptStruct, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = nullptr, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 	static void GetAssetReferencesFromObject(void* InObject, UClass* const &InClass, const ECsLoadFlags& LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromObject_Internal Internal = nullptr, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
-
-	static void GetObjectPaths(const void* StructValue, UStruct* const& Struct, TArray<FSoftObjectPath>& OutObjectPaths);
-	static void GetObjectPaths(const void* StructValue, UStruct* const& Struct, TMap<FName, FSoftObjectPath>& OutObjectPathMap);
-	static void GetObjectPaths(ULevel* Level, TMap<FName, FSoftObjectPath>& OutObjectPathMap);
-	static void GetUniqueObjectPaths(const void* StructValue, UStruct* const& Struct, TArray<FSoftObjectPath>& OutObjectPaths);
 
 #pragma endregion Asset References
 

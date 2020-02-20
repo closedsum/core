@@ -163,6 +163,7 @@ void FCsPayload_Data::Populate()
 
 	// Add Data Path
 	{
+		/*
 		FSoftObjectPath ObjectPath = Data.ToSoftObjectPath();
 		const FName AssetPathName  = ObjectPath.GetAssetPathName();
 
@@ -171,35 +172,8 @@ void FCsPayload_Data::Populate()
 		Path.Path  = ObjectPath;
 		int32 Size = Object->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 		Path.Size.SetBytes(Size);
+		*/
 	}
-
-	/*
-	UCsLibrary_Load::GetUniqueObjectPaths(Object, Class, Paths_Internal);
-	// Log Paths (number and name)
-	const int32 Count = Paths_Internal.Num();
-	if (Count > CS_SINGLETON)
-	{
-		UE_LOG(LogCs, Warning, TEXT("FCsPayload_Data::Populate: Populating Paths with %d Paths from %s."), Count, *ClassName);
-		for (int32 I = 1; I < Count; ++I)
-		{
-			const FSoftObjectPath& Path = Paths_Internal[I];
-			UE_LOG(LogCs, Warning, TEXT("-- [%d] [%s] has %s."), I, *ClassName, *(Path.ToString()));
-			Paths.Paths.AddDefaulted();
-			FCsSoftObjectPath& P = Paths.Paths.Last();
-			P.Path = Path;
-			UObject* O = Path.TryLoad();
-			if (!O)
-			{
-				// LOG
-				continue;
-			}
-			int32 Size = O->GetResourceSizeBytes(EResourceSizeMode::Exclusive);
-			P.Size.SetBytes(Size);
-		}
-		Paths.CalculateSize();
-		UE_LOG(LogCs, Warning, TEXT("FCsPayload_Data::Populate: Populated %d Paths from %s [%s]."), Paths_Internal.Num(), *ClassName, *(Paths.Size.ToString()));
-	}
-	*/
 }
 
 #endif // #if WITH_EDITOR
@@ -214,6 +188,7 @@ void FCsPayload_Data::Populate()
 void FCsPayload_DataTable::Populate()
 {
 	Paths.Reset();
+	PathsByRowMap.Reset();
 
 	if (!DataTable.IsValid())
 		return;
@@ -242,18 +217,21 @@ void FCsPayload_DataTable::Populate()
 
 	// Add DataTable Path
 	{
-		FSoftObjectPath ObjectPath = DataTable.ToSoftObjectPath();
-		const FName AssetPathName  = ObjectPath.GetAssetPathName();
+		FSoftObjectPath Path = DataTable.ToSoftObjectPath();
 
-		FCsSoftObjectPath& Path = Paths.Map.FindOrAdd(AssetPathName);
+		FCsSoftObjectPath TempPath;
+		TempPath.Path = Path;
+
+		FSetElementId Id		    = Paths.Set.Add(TempPath);
+		FCsSoftObjectPath& PathAtId = Paths.Set[Id];
 	
-		Path.Path  = ObjectPath;
+		PathAtId.Path  = Path;
 		int32 Size = DT->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
-		Path.Size.SetBytes(Size);
+		PathAtId.Size.SetBytes(Size);
 
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 		{
-			UE_LOG(LogCs, Warning, TEXT("- Adding Path: %s [%s]."), *(ObjectPath.ToString()), *(Path.Size.ToString()));
+			UE_LOG(LogCs, Warning, TEXT("- Adding Path: %s [%s]."), *(Path.ToString()), *(PathAtId.Size.ToString()));
 		}
 	}
 
@@ -271,10 +249,9 @@ void FCsPayload_DataTable::Populate()
 	}
 
 	// Get Paths for appropriate rows
-	TMap<FName, FSoftObjectPath> RowMap;
+	FCsLibraryLoad_GetSoftObjectPaths Result;
 	TArray<FName> Keys;
 	FCsResourceSize Size;
-
 
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 	{
@@ -288,16 +265,17 @@ void FCsPayload_DataTable::Populate()
 	{
 		uint8* RowPtr = DT->FindRowUnchecked(RowName);
 
-		RowMap.Reset();
-		UCsLibrary_Load::GetObjectPaths(RowPtr, Struct, RowMap);
+		const FString RowNameAsString = RowName.ToString();
+		const FString OuterName		  = FString::Printf(TEXT("%s.%s"), *DataTableName, *RowNameAsString);
 
-		const int32 Count = RowMap.Num();
+		Result.Reset();
+		UCsLibrary_Load::GetSoftObjectPaths(RowPtr, Struct, OuterName, Result);
+
+		const int32 Count = Result.Paths.Num();
 
 		if (Count != CS_EMPTY)
 		{
 			// Log Paths (number and name)
-			const FString RowNameAsString = RowName.ToString();
-
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 			{
 				UE_LOG(LogCs, Warning, TEXT("-- Row: %s: Found %d Paths."), *RowNameAsString, Count);
@@ -307,16 +285,10 @@ void FCsPayload_DataTable::Populate()
 
 			int32 I = 0;
 
-			for (const TPair<FName, FSoftObjectPath>& Pair : RowMap)
+			for (const FSoftObjectPath& Path : Result.Paths)
 			{
-				const FSoftObjectPath& ObjectPath = Pair.Value;
-				const FName AssetPathName		  = ObjectPath.GetAssetPathName();
-
-				FCsSoftObjectPath& Path = Paths.Map.FindOrAdd(AssetPathName);
-				
-				Path.Path = ObjectPath;
-
-				UObject* Object	= ObjectPath.TryLoad();
+				// Load Object and get the Resource Size
+				UObject* Object	= Path.TryLoad();
 
 				int32 Bytes = 0;
 
@@ -328,18 +300,45 @@ void FCsPayload_DataTable::Populate()
 				{
 					if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 					{
-						UE_LOG(LogCs, Warning, TEXT("--- Failed to load Path: %s."), *(ObjectPath.ToString()));
+						UE_LOG(LogCs, Warning, TEXT("--- Failed to load Path: %s @ %s."), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
+
+						const TArray<FCsLibraryLoad_MemberInfo>& MemberInfos = Result.MemberInfosByPathMap[Path];
+
+						for (const FCsLibraryLoad_MemberInfo& Info : MemberInfos)
+						{
+							UE_LOG(LogCs, Warning, TEXT("---- Member: %s."), *(Info.ToString()));
+						}
 					}
+					continue;
 				}
 
-				Path.Size.SetBytes(Bytes);
+				// Update the Paths
+				FCsSoftObjectPath TempPath;
+				TempPath.Path = Path;
+
+				// Cumulative
+				FSetElementId Id			= Paths.Set.Add(TempPath);
+				FCsSoftObjectPath& PathAtId = Paths.Set[Id];
+
+				PathAtId.Path = Path;
+
+				PathAtId.Size.SetBytes(Bytes);
+
+				// Row
+				FCsTArraySoftObjectPath& PathArray = PathsByRowMap.FindOrAdd(RowName);
+				FSetElementId IdAtRow			   = PathArray.Set.Add(TempPath);
+				FCsSoftObjectPath& PathByRowAtId   = PathArray.Set[IdAtRow];
+
+				PathByRowAtId.Path = Path;
+
+				PathByRowAtId.Size.SetBytes(Bytes);
 
 				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 				{
-					UE_LOG(LogCs, Warning, TEXT("---- [%d] [%s] @ %s."), I, *(Path.Size.ToString()), *(ObjectPath.ToString()));
+					UE_LOG(LogCs, Warning, TEXT("---- [%d] [%s] %s @ %s."), I, *(PathAtId.Size.ToString()), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
 				}
 
-				Size += Path.Size;
+				Size += PathAtId.Size;
 				++I;
 			}
 
@@ -350,7 +349,13 @@ void FCsPayload_DataTable::Populate()
 		}
 	}
 
-	Paths.BuildFromMap();
+	// Update internal structures for fast search / look up
+	Paths.BuildFromSet();
+
+	for (TPair<FName, FCsTArraySoftObjectPath>& Pair : PathsByRowMap)
+	{
+		Pair.Value.BuildFromSet();
+	}
 
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 	{
@@ -483,18 +488,21 @@ void FCsDataEntry_DataTable::Populate()
 
 	// Add DataTable Path
 	{
-		FSoftObjectPath ObjectPath = DataTable.ToSoftObjectPath();
-		const FName AssetPathName  = ObjectPath.GetAssetPathName();
+		FSoftObjectPath Path = DataTable.ToSoftObjectPath();
 
-		FCsSoftObjectPath& Path = Paths.Map.FindOrAdd(AssetPathName);
+		FCsSoftObjectPath TempPath;
+		TempPath.Path = Path;
+
+		FSetElementId Id		    = Paths.Set.Add(TempPath);
+		FCsSoftObjectPath& PathAtId = Paths.Set[Id];
 	
-		Path.Path  = ObjectPath;
+		PathAtId.Path = Path;
 		int32 Size = DT->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
-		Path.Size.SetBytes(Size);
+		PathAtId.Size.SetBytes(Size);
 
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 		{
-			UE_LOG(LogCs, Warning, TEXT("- Adding Path: %s [%s]."), *(ObjectPath.ToString()), *(Path.Size.ToString()));
+			UE_LOG(LogCs, Warning, TEXT("- Adding Path: %s [%s]."), *(Path.ToString()), *(PathAtId.Size.ToString()));
 		}
 	}
 
@@ -512,10 +520,9 @@ void FCsDataEntry_DataTable::Populate()
 	}
 
 	// Get Paths for appropriate rows
-	TMap<FName, FSoftObjectPath> RowMap;
+	FCsLibraryLoad_GetSoftObjectPaths Result;
 	TArray<FName> Keys;
 	FCsResourceSize Size;
-
 
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 	{
@@ -529,16 +536,17 @@ void FCsDataEntry_DataTable::Populate()
 	{
 		uint8* RowPtr = DT->FindRowUnchecked(RowName);
 
-		RowMap.Reset();
-		UCsLibrary_Load::GetObjectPaths(RowPtr, Struct, RowMap);
+		const FString RowNameAsString = RowName.ToString();
+		const FString OuterName		  = FString::Printf(TEXT("%s.%s"), *DataTableName, *RowNameAsString);
 
-		const int32 Count = RowMap.Num();
+		Result.Reset();
+		UCsLibrary_Load::GetSoftObjectPaths(RowPtr, Struct, OuterName, Result);
+
+		const int32 Count = Result.Paths.Num();
 
 		if (Count != CS_EMPTY)
 		{
 			// Log Paths (number and name)
-			const FString RowNameAsString = RowName.ToString();
-
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 			{
 				UE_LOG(LogCs, Warning, TEXT("-- Row: %s: Found %d Paths."), *RowNameAsString, Count);
@@ -548,16 +556,10 @@ void FCsDataEntry_DataTable::Populate()
 
 			int32 I = 0;
 
-			for (const TPair<FName, FSoftObjectPath>& Pair : RowMap)
+			for (const FSoftObjectPath& Path : Result.Paths)
 			{
-				const FSoftObjectPath& ObjectPath = Pair.Value;
-				const FName AssetPathName		  = ObjectPath.GetAssetPathName();
-
-				FCsSoftObjectPath& Path = Paths.Map.FindOrAdd(AssetPathName);
-				
-				Path.Path = ObjectPath;
-
-				UObject* Object	= ObjectPath.TryLoad();
+				// Load Object and get the Resource Size
+				UObject* Object	= Path.TryLoad();
 
 				int32 Bytes = 0;
 
@@ -569,18 +571,45 @@ void FCsDataEntry_DataTable::Populate()
 				{
 					if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 					{
-						UE_LOG(LogCs, Warning, TEXT("--- Failed to load Path: %s."), *(ObjectPath.ToString()));
-					}
-				}
+						UE_LOG(LogCs, Warning, TEXT("--- Failed to load Path: %s @ %s."), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
 
-				Path.Size.SetBytes(Bytes);
+						const TArray<FCsLibraryLoad_MemberInfo>& MemberInfos = Result.MemberInfosByPathMap[Path];
+
+						for (const FCsLibraryLoad_MemberInfo& Info : MemberInfos)
+						{
+							UE_LOG(LogCs, Warning, TEXT("---- Member: %s."), *(Info.ToString()));
+						}
+					}
+					continue;
+				}
+				
+				// Update the Paths
+				FCsSoftObjectPath TempPath;
+				TempPath.Path = Path;
+				
+				// Cumulative
+				FSetElementId Id			= Paths.Set.Add(TempPath);
+				FCsSoftObjectPath& PathAtId = Paths.Set[Id];
+
+				PathAtId.Path = Path;
+
+				PathAtId.Size.SetBytes(Bytes);
+
+				// Row
+				FCsTArraySoftObjectPath& PathArray = PathsByRowMap.FindOrAdd(RowName);
+				FSetElementId IdAtRow			   = PathArray.Set.Add(TempPath);
+				FCsSoftObjectPath& PathByRowAtId   = PathArray.Set[IdAtRow];
+
+				PathByRowAtId.Path = Path;
+
+				PathByRowAtId.Size.SetBytes(Bytes);
 
 				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 				{
-					UE_LOG(LogCs, Warning, TEXT("---- [%d] [%s] @ %s."), I, *(Path.Size.ToString()), *(ObjectPath.ToString()));
+					UE_LOG(LogCs, Warning, TEXT("---- [%d] [%s] %s @ %s."), I, *(PathAtId.Size.ToString()), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
 				}
 
-				Size += Path.Size;
+				Size += PathAtId.Size;
 				++I;
 			}
 
@@ -591,7 +620,13 @@ void FCsDataEntry_DataTable::Populate()
 		}
 	}
 
-	Paths.BuildFromMap();
+	// Update internal structures for fast search / look up
+	Paths.BuildFromSet();
+
+	for (TPair<FName, FCsTArraySoftObjectPath>& Pair : PathsByRowMap)
+	{
+		Pair.Value.BuildFromSet();
+	}
 
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 	{

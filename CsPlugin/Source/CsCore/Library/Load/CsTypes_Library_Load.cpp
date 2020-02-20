@@ -2,10 +2,26 @@
 #include "Library/Load/CsTypes_Library_Load.h"
 #include "CsCore.h"
 
+// LoadCodes
+#pragma region
+
+namespace NCsLibraryLoad_GetSoftObjectPaths_Code
+{
+	/*
+	namespace Ref
+	{
+	}
+	*/
+	CSCORE_API const int32 None = 0;
+	CSCORE_API const int32 All = 1;
+}
+
+#pragma endregion LoadCodes
+
 // FCsLibraryLoad_GetReferencesReport_Category
 #pragma region
 
-void FCsLibraryLoad_GetReferencesReport_Category::Add(const FCsLibraryLoad_GetReferencesReport_MemberInfo& MemberInfo, const FSoftObjectPath& ObjectPath)
+void FCsLibraryLoad_GetReferencesReport_Category::Add(const FCsLibraryLoad_MemberInfo& MemberInfo, const FSoftObjectPath& ObjectPath)
 {
 	MemberInfos.Add(MemberInfo);
 
@@ -23,19 +39,19 @@ void FCsLibraryLoad_GetReferencesReport_Category::Add(const FCsLibraryLoad_GetRe
 		CountByObjectPath.Add(ObjectPath, 1);
 	}
 
-	if (TArray<FCsLibraryLoad_GetReferencesReport_MemberInfo>* PathsPtr = MemberInfosByObjectPath.Find(ObjectPath))
+	if (TArray<FCsLibraryLoad_MemberInfo>* PathsPtr = MemberInfosByObjectPath.Find(ObjectPath))
 	{
 		PathsPtr->Add(MemberInfo);
 	}
 	else
 	{
-		TArray<FCsLibraryLoad_GetReferencesReport_MemberInfo> Paths;
+		TArray<FCsLibraryLoad_MemberInfo> Paths;
 		Paths.Add(MemberInfo);
 		MemberInfosByObjectPath.Add(ObjectPath, Paths);
 	}
 }
 
-void FCsLibraryLoad_GetReferencesReport_Category::AddUnused(const FCsLibraryLoad_GetReferencesReport_MemberInfo& MemberInfo)
+void FCsLibraryLoad_GetReferencesReport_Category::AddUnused(const FCsLibraryLoad_MemberInfo& MemberInfo)
 {
 	UnusedMemberInfos.Add(MemberInfo);
 }
@@ -52,8 +68,8 @@ void FCsLibraryLoad_GetReferencesReport_Category::Print()
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			const FCsLibraryLoad_GetReferencesReport_MemberInfo& MemberInfo	= MemberInfos[I];
-			const FString Info											    = MemberInfo.ToString();
+			const FCsLibraryLoad_MemberInfo& MemberInfo	= MemberInfos[I];
+			const FString Info							= MemberInfo.ToString();
 
 			const FSoftObjectPath& ObjectPath = ObjectPaths[I];
 			const FString& ObjectName		  = ObjectPath.GetAssetName();
@@ -80,19 +96,19 @@ void FCsLibraryLoad_GetReferencesReport_Category::Print()
 		UE_LOG(LogCs, Warning, TEXT("---"));
 		UE_LOG(LogCs, Warning, TEXT("--- Member: %d Unique Paths"), CountByObjectPath.Num());
 
-		for (TPair<FSoftObjectPath, TArray<FCsLibraryLoad_GetReferencesReport_MemberInfo>>& Pair : MemberInfosByObjectPath)
+		for (TPair<FSoftObjectPath, TArray<FCsLibraryLoad_MemberInfo>>& Pair : MemberInfosByObjectPath)
 		{
 			const FSoftObjectPath& ObjectPath = Pair.Key;
 			const FString& ObjectName		  = ObjectPath.GetAssetName();
 			const FString& Path				  = ObjectPath.GetAssetPathString();
 
-			const TArray<FCsLibraryLoad_GetReferencesReport_MemberInfo>& Infos = Pair.Value;
+			const TArray<FCsLibraryLoad_MemberInfo>& Infos = Pair.Value;
 
 			UE_LOG(LogCs, Warning, TEXT("---- %s @ %s"), *ObjectName, *Path);
 
 			UE_LOG(LogCs, Warning, TEXT("----- %d Members"), Infos.Num());
 
-			for (const FCsLibraryLoad_GetReferencesReport_MemberInfo& Info : Infos)
+			for (const FCsLibraryLoad_MemberInfo& Info : Infos)
 			{
 				UE_LOG(LogCs, Warning, TEXT("------ %s"), *(Info.ToString()));
 			}
@@ -102,7 +118,7 @@ void FCsLibraryLoad_GetReferencesReport_Category::Print()
 	UE_LOG(LogCs, Warning, TEXT("--"));
 	UE_LOG(LogCs, Warning, TEXT("-- Unused: %d Members"), UnusedMemberInfos.Num());
 	{
-		for (const FCsLibraryLoad_GetReferencesReport_MemberInfo& Info : UnusedMemberInfos)
+		for (const FCsLibraryLoad_MemberInfo& Info : UnusedMemberInfos)
 		{
 			UE_LOG(LogCs, Warning, TEXT("--- %s"), *(Info.ToString()));
 		}

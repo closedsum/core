@@ -240,7 +240,6 @@ void UCsManager_Data::CleanUp()
 			Settings->WeaponAudio.Get()->RemoveFromRoot();
 	}
 	*/
-
 #if WITH_EDITOR
 	// Datas
 	{
@@ -374,9 +373,11 @@ void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Pay
 			!DataTableEntryMap_Added.Find(Name))
 		{
 			FCsDataEntry_DataTable* Entry = new FCsDataEntry_DataTable();
-			Entry->Name = Name;
+			Entry->Name		 = Name;
 			Entry->DataTable = DataTable.DataTable;
-			Entry->Paths = DataTable.Paths;
+			Entry->Paths	 = DataTable.Paths;
+
+			Entry->BuildFromPaths();
 
 			DataTableEntryMap.Add(Name, Entry);
 			DataTableEntryByPathMap.Add(DataTable.DataTable.ToSoftObjectPath(), Entry);
@@ -428,6 +429,8 @@ void UCsManager_Data::GenerateMaps()
 			FCsDataEntry_DataTable* RowPtr = DataTables->FindRow<FCsDataEntry_DataTable>(RowName, NCsManagerDataCached::Str::GenerateMaps);
 
 			checkf(RowPtr->DataTable.ToSoftObjectPath().IsValid(), TEXT("UCsManager_Data::GenerateMaps:: DataTable at Row: %s for DataTables: %s is NOT Valid."), *(RowName.ToString()), *(DataTables->GetName()));
+
+			RowPtr->BuildFromPaths();
 
 			DataTableEntryMap.Add(RowName, RowPtr);
 			DataTableEntryByPathMap.Add(RowPtr->DataTable.ToSoftObjectPath(), RowPtr);
@@ -594,7 +597,6 @@ UDataTable* UCsManager_Data::LoadDataTable(const FName& TableName)
 UDataTable* UCsManager_Data::LoadDataTable(const FSoftObjectPath& Path)
 {
 	checkf(Path.IsValid(), TEXT("UCsManager_Data::LoadDataTable: Path is NOT Valid."));
-
 	return nullptr;
 }
 
@@ -602,7 +604,7 @@ uint8* UCsManager_Data::LoadDataTableRow(const FName& TableName, const FName& Ro
 {
 	checkf(TableName != NAME_None, TEXT("UCsManager_Data::LoadDataTableRow: TableName is None."));
 
-	checkf(RowName != NAME_None, TEXT("UCsManager_Data::LoadDataTableRow:: RowName is None."));
+	checkf(RowName != NAME_None, TEXT("UCsManager_Data::LoadDataTableRow: RowName is None."));
 
 	// Check if DataTable and Row are already loaded
 	if (uint8* RowPtr = GetDataTableRow(TableName, RowName))
@@ -795,8 +797,119 @@ void UCsManager_Data::GetDataTableSoftObjectPaths(const FName& TableName, TArray
 		OutPaths.Append(Entry->Paths.Internal);
 }
 
+int32 UCsManager_Data::GetDataTableSoftObjectPathCount(const FName& TableName)
+{
+	if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(TableName))
+		return Entry->Paths.Internal.Num();
+	return INDEX_NONE;
+}
+
+void UCsManager_Data::GetDataTableRowSoftObjectPaths(const FName& TableName, const FName& RowName, TArray<FSoftObjectPath>& OutPaths)
+{
+#if WITH_EDITOR
+	if (RowName == NAME_None)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPaths: RowName is None."));
+		return;
+	}
+#endif // #if WITH_EDITOR
+
+	if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(TableName))
+	{
+		if (const FCsTArraySoftObjectPath* Paths = Entry->PathsByRowMap.Find(RowName))
+		{
+			OutPaths.Append(Paths->Internal);
+		}
+#if WITH_EDITOR
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPaths: DataTable: %s does NOT have Row: %s as an entry."), *(TableName.ToString()), *(RowName.ToString()));
+		}
+#endif // #if WITH_EDITOR
+	}
+}
+
+int32 UCsManager_Data::GetDataTableRowSoftObjectPathCount(const FName& TableName, const FName& RowName)
+{
+#if WITH_EDITOR
+	if (RowName == NAME_None)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPathCount: RowName is None."));
+		return INDEX_NONE;
+	}
+#endif // #if WITH_EDITOR
+
+	if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(TableName))
+	{
+		if (const FCsTArraySoftObjectPath* Paths = Entry->PathsByRowMap.Find(RowName))
+		{
+			return Paths->Internal.Num();
+		}
+#if WITH_EDITOR
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPathCount: DataTable: %s does NOT have Row: %s as an entry."), *(TableName.ToString()), *(RowName.ToString()));
+		}
+#endif // #if WITH_EDITOR
+	}
+	return INDEX_NONE;
+}
+
 #pragma endregion SoftObjectPath
 
 #pragma endregion DataTable
+
+	// Payload
+#pragma region
+
+		// SoftObjectPath
+#pragma region
+
+void UCsManager_Data::GetPayloadSoftObjectPaths(const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths)
+{
+#if WITH_EDITOR
+	if (PayloadName == NAME_None)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetPayloadSoftObjectPaths: PayloadName is None."));
+		return;
+	}
+#endif // #if WITH_EDITOR
+
+	if (FCsPayload** PayloadPtr = PayloadMap.Find(PayloadName))
+	{
+		const FCsPayload* Payload = *PayloadPtr;
+
+		// Datas
+
+		// DataTables
+		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
+		{
+			const FName& TableName = Payload_DataTable.Name;
+
+			// All Rows
+			if (Payload_DataTable.bAllRows)
+			{
+				GetDataTableSoftObjectPaths(TableName, OutPaths);
+			}
+			else
+			{
+				for (const FName& RowName : Payload_DataTable.Rows)
+				{
+					GetDataTableRowSoftObjectPaths(TableName, RowName, OutPaths);
+				}
+			}
+		}
+	}
+#if WITH_EDITOR
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetPayloadSoftObjectPaths: Failed to find Payload: %s."), *(PayloadName.ToString()));
+	}
+#endif // #if WITH_EDITOR
+}
+
+#pragma endregion SoftObjectPath
+
+#pragma endregion Payload
 
 #pragma endregion Get

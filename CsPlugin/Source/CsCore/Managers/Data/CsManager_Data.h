@@ -259,7 +259,7 @@ public:
 	*/
 	uint8* GetDataTableRow(const FSoftObjectPath& Path, const FName& RowName);
 
-	// Entry
+		// Entry
 #pragma region
 public:
 
@@ -273,7 +273,7 @@ public:
 
 #pragma endregion Entry
 
-	// SoftObjectPath
+		// SoftObjectPath
 #pragma region
 public:
 
@@ -285,9 +285,57 @@ public:
 	*/
 	void GetDataTableSoftObjectPaths(const FName& TableName, TArray<FSoftObjectPath>& OutPaths);
 
+	/**
+	*
+	*
+	* @param TableName
+	* return			Number of SoftObjectPaths for the DataTable.
+	*					INDEX_NONE for an invalid TableName
+	*/
+	int32 GetDataTableSoftObjectPathCount(const FName& TableName);
+
+	/**
+	*
+	*
+	* @param TableName
+	* @param RowName
+	* @param OutPaths
+	*/
+	void GetDataTableRowSoftObjectPaths(const FName& TableName, const FName& RowName, TArray<FSoftObjectPath>& OutPaths);
+
+	/**
+	*
+	*
+	* @param TableName
+	* @param RowName
+	* return			Number of SoftObjectPaths for the DataTable.
+	*					INDEX_NONE for an invalid TableName or RowName
+	*/
+	int32 GetDataTableRowSoftObjectPathCount(const FName& TableName, const FName& RowName);
+
 #pragma endregion SoftObjectPath
 
 #pragma endregion DataTable
+
+	// Payload
+#pragma region
+public:
+
+		// SoftObjectPath
+#pragma region
+public:
+
+	/**
+	*
+	*
+	* @param PayloadName
+	* @param OutPaths
+	*/
+	void GetPayloadSoftObjectPaths(const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths);
+
+#pragma endregion SoftObjectPath
+
+#pragma endregion Payload
 
 #pragma endregion Get
 };

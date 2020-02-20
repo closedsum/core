@@ -286,6 +286,11 @@ struct CSCORE_API FCsSoftObjectPath
 	{
 		return FString::Printf(TEXT("[%s] @ %s"), *(Size.ToString()), *(Path.ToString()));
 	}
+
+	FORCEINLINE friend uint32 GetTypeHash(FCsSoftObjectPath const& This)
+	{
+		return GetTypeHash(This.Path);
+	}
 };
 
 #pragma endregion FCsSoftObjectPath
@@ -302,22 +307,22 @@ struct CSCORE_API FCsTArraySoftObjectPath
 	TArray<FCsSoftObjectPath> Paths;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
-	TMap<FName, FCsSoftObjectPath> Map;
+	TSet<FCsSoftObjectPath> Set;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
 	TArray<FSoftObjectPath> Internal;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
-	TMap<FName, FSoftObjectPath> InternalMap;
+	TSet<FSoftObjectPath> InternalSet;
 
 	UPROPERTY(VisibleDefaultsOnly)
 	FCsResourceSize Size;
 
 	FCsTArraySoftObjectPath() :
 		Paths(),
-		Map(),
+		Set(),
 		Internal(),
-		InternalMap(),
+		InternalSet(),
 		Size()
 	{
 	}
@@ -325,9 +330,9 @@ struct CSCORE_API FCsTArraySoftObjectPath
 	void Reset()
 	{
 		Paths.Reset();
-		Map.Reset();
+		Set.Reset();
 		Internal.Reset();
-		InternalMap.Reset();
+		InternalSet.Reset();
 		Size.Reset();
 	}
 
@@ -335,28 +340,16 @@ struct CSCORE_API FCsTArraySoftObjectPath
 	{
 		for (const FCsSoftObjectPath& Path : Paths)
 		{
-			const FName Name = Path.Path.GetAssetPathName();
-
-			// Map
-			{
-				FCsSoftObjectPath& Value = Map.FindOrAdd(Name);
-				Value = Path;
-			}
-			// InternalMap
-			{
-				FSoftObjectPath& Value = InternalMap.FindOrAdd(Name);
-				Value = Path.Path;
-			}
+			Set.Add(Path);
+			InternalSet.Add(Path.Path);
 		}
 		
 		// Reset Paths since there could be duplicates
 		Paths.Reset(Paths.Max());
 		Internal.Reset(Paths.Max());
 
-		for (const TPair<FName, FCsSoftObjectPath>& Pair : Map)
+		for (const FCsSoftObjectPath& Path : Set)
 		{
-			const FCsSoftObjectPath& Path = Pair.Value;
-
 			Paths.Add(Path);
 			Internal.Add(Path.Path);
 		}
@@ -365,22 +358,19 @@ struct CSCORE_API FCsTArraySoftObjectPath
 
 #if WITH_EDITOR
 	
-	void BuildFromMap()
+	void BuildFromSet()
 	{
-		TArray<FName> Keys;
-		const int32 Count = Map.GetKeys(Keys);
+		const int32 Count = Set.Num();
 
 		Paths.Reset(Count);
 		Internal.Reset(Count);
-		InternalMap.Reset();
+		InternalSet.Reset();
 
-		for (const TPair<FName, FCsSoftObjectPath>& Pair : Map)
+		for (const FCsSoftObjectPath& Path : Set)
 		{
-			const FCsSoftObjectPath& Path = Pair.Value;
-
 			Paths.Add(Path);
 			Internal.Add(Path.Path);
-			InternalMap.Add(Pair.Key, Path.Path);
+			InternalSet.Add(Path.Path);
 		}
 		CalculateSize();
 	}
@@ -401,9 +391,9 @@ struct CSCORE_API FCsTArraySoftObjectPath
 
 	void Append(const FCsTArraySoftObjectPath& InPaths)
 	{
-		Map.Append(InPaths.Map);
+		Set.Append(InPaths.Set);
 
-		BuildFromMap();
+		BuildFromSet();
 	}
 
 #endif // #if WITH_EDITOR
@@ -745,12 +735,17 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	FCsTArraySoftObjectPath Paths;
 
+	/** */
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	TMap<FName, FCsTArraySoftObjectPath> PathsByRowMap;
+
 	FCsPayload_DataTable() :
 		Name(NAME_None),
 		DataTable(),
 		bAllRows(false),
 		Rows(),
-		Paths()
+		Paths(),
+		PathsByRowMap()
 	{
 	}
 
@@ -771,6 +766,7 @@ public:
 		bAllRows = false;
 		Rows.Reset();
 		Paths.Reset();
+		PathsByRowMap.Reset();
 	}
 
 #if WITH_EDITOR
@@ -1033,6 +1029,10 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	FCsTArraySoftObjectPath Paths;
 
+	/** */
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	TMap<FName, FCsTArraySoftObjectPath> PathsByRowMap;
+
 	FCsDataEntry_DataTable() :
 		bPopulateOnSave(false),
 		Name(NAME_None),
@@ -1040,7 +1040,8 @@ public:
 		DataTable_Internal(nullptr),
 		bAllRows(false),
 		Rows(),
-		Paths()
+		Paths(),
+		PathsByRowMap()
 	{
 	}
 
@@ -1057,9 +1058,20 @@ public:
 		bAllRows = false;
 		Rows.Reset();
 		Paths.Reset();
+		PathsByRowMap.Reset();
 	}
 
 	FORCEINLINE UDataTable* Get() { return DataTable_Internal; }
+
+	void BuildFromPaths()
+	{
+		Paths.BuildFromPaths();
+
+		for (TPair<FName, FCsTArraySoftObjectPath>& Pair : PathsByRowMap)
+		{
+			Pair.Value.BuildFromPaths();
+		}
+	}
 
 #if WITH_EDITOR
 

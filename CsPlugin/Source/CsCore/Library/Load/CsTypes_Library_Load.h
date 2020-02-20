@@ -3,31 +3,186 @@
 
 #include "UObject/SoftObjectPath.h"
 
-// FCsLibraryLoad_GetReferencesReport_MemberInfo
+// FCsLibraryLoad_MemberInfo
 #pragma region
 
-struct CSCORE_API FCsLibraryLoad_GetReferencesReport_MemberInfo
+struct CSCORE_API FCsLibraryLoad_MemberInfo
 {
+private:
+
+	FName Name;
+	FString NameAsString;
+	FName Path;
+	FString PathAsString;
+	FName Type;
+	FString TypeAsString;
+
 public:
 
-	FString Name;
-	FString Path;
-	FString Type;
-
-	FCsLibraryLoad_GetReferencesReport_MemberInfo() :
-		Name(),
-		Path(),
-		Type()
+	FCsLibraryLoad_MemberInfo() :
+		Name(NAME_None),
+		NameAsString(),
+		Path(NAME_None),
+		PathAsString(),
+		Type(NAME_None),
+		TypeAsString()
 	{
 	}
 
-	FString ToString() const
+	FORCEINLINE bool operator==(const FCsLibraryLoad_MemberInfo& B) const
 	{
-		return FString::Printf(TEXT("%s (%s) @ %s"), *Name, *Type, *Path);
+		return Name == B.Name && Path == B.Path && Type == B.Type;
+	}
+
+	FORCEINLINE bool operator!=(const FCsLibraryLoad_MemberInfo& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE void SetName(const FName& InName)
+	{
+		Name		 = InName;
+		NameAsString = Name.ToString();
+	}
+
+	FORCEINLINE void SetName(const FString& InName)
+	{
+		NameAsString = InName;
+		Name		 = FName(*NameAsString);
+	}
+
+	FORCEINLINE const FName& GetFName() const
+	{
+		return Name;
+	}
+
+	FORCEINLINE const FString& GetName() const
+	{
+		return NameAsString;
+	}
+
+	FORCEINLINE void SetPath(const FName& InPath)
+	{
+		Path		 = InPath;
+		PathAsString = Path.ToString();
+	}
+
+	FORCEINLINE void SetPath(const FString& InPath)
+	{
+		PathAsString = InPath;
+		Path		 = FName(*PathAsString);
+	}
+
+	FORCEINLINE const FName& GetFPath() const
+	{
+		return Path;
+	}
+
+	FORCEINLINE const FString& GetPath() const
+	{
+		return PathAsString;
+	}
+
+	FORCEINLINE void SetType(const FName& InType)
+	{
+		Type		 = InType;
+		TypeAsString = Type.ToString();
+	}
+
+	FORCEINLINE void SetType(const FString& InType)
+	{
+		TypeAsString = InType;
+		Type		 = FName(*TypeAsString);
+	}
+
+	FORCEINLINE const FName& GetFType() const
+	{
+		return Type;
+	}
+
+	FORCEINLINE const FString& GetType() const
+	{
+		return TypeAsString;
+	}
+
+	FORCEINLINE FString ToString() const
+	{
+		return FString::Printf(TEXT("%s (%s) @ %s"), *NameAsString, *TypeAsString, *PathAsString);
+	}
+
+	FORCEINLINE friend uint32 GetTypeHash(FCsLibraryLoad_MemberInfo const& This)
+	{
+		uint32 Hash = 0;
+
+		Hash = HashCombine(Hash, GetTypeHash(This.Name));
+		Hash = HashCombine(Hash, GetTypeHash(This.Path));
+		Hash = HashCombine(Hash, GetTypeHash(This.Type));
+		return Hash;
 	}
 };
 
-#pragma endregion FCsLibraryLoad_GetReferencesReport_MemberInfo
+#pragma endregion FCsLibraryLoad_MemberInfo
+
+// LibraryLoad_GetSoftObjectPaths_Code
+#pragma region
+
+enum class ECsLibraryLoad_GetSoftObjectPaths_Code : uint8
+{
+	/** Recursively get class object paths */
+	RecursiveGetClass = 1 << 0,
+	/** Recursively get object object paths */
+	RecursiveGetObject = 1 << 1
+};
+
+namespace NCsLibraryLoad_GetSoftObjectPaths_Code
+{
+	typedef ECsLibraryLoad_GetSoftObjectPaths_Code Type;
+
+	/*
+	namespace Ref
+	{
+		extern CSCORE_API const Type RecursiveGetClass;
+		extern CSCORE_API const Type RecursiveGetObject;
+	}
+	*/
+
+	extern CSCORE_API const int32 None;
+	extern CSCORE_API const int32 All;
+}
+
+#pragma endregion LibraryLoad_GetSoftObjectPaths_Code
+
+// FCsLibraryLoad_GetSoftObjectPaths
+#pragma region
+
+struct CSCORE_API FCsLibraryLoad_GetSoftObjectPaths
+{
+public:
+
+	int32 Code;
+
+	TSet<FSoftObjectPath> Paths;
+	TMap<FCsLibraryLoad_MemberInfo, FSoftObjectPath> PathByMemberInfoMap;
+	TMap<FSoftObjectPath, TArray<FCsLibraryLoad_MemberInfo>> MemberInfosByPathMap;
+
+	FCsLibraryLoad_GetSoftObjectPaths() :
+		Code(NCsLibraryLoad_GetSoftObjectPaths_Code::None),
+		Paths(),
+		PathByMemberInfoMap(),
+		MemberInfosByPathMap()
+	{
+	}
+
+	void Reset()
+	{
+		Code = NCsLibraryLoad_GetSoftObjectPaths_Code::None;
+		Paths.Reset();
+		PathByMemberInfoMap.Reset();
+		MemberInfosByPathMap.Reset();
+	}
+};
+
+#pragma endregion FCsLibraryLoad_GetSoftObjectPaths
 
 // FCsLibraryLoad_GetReferencesReport_Category
 #pragma region
@@ -38,12 +193,12 @@ public:
 
 	FString Name;
 
-	TArray<FCsLibraryLoad_GetReferencesReport_MemberInfo> MemberInfos;
+	TArray<FCsLibraryLoad_MemberInfo> MemberInfos;
 	TArray<FSoftObjectPath> ObjectPaths;
 	TMap<FSoftObjectPath, int32> CountByObjectPath;
-	TMap<FSoftObjectPath, TArray<FCsLibraryLoad_GetReferencesReport_MemberInfo>> MemberInfosByObjectPath;
+	TMap<FSoftObjectPath, TArray<FCsLibraryLoad_MemberInfo>> MemberInfosByObjectPath;
 
-	TArray<FCsLibraryLoad_GetReferencesReport_MemberInfo> UnusedMemberInfos;
+	TArray<FCsLibraryLoad_MemberInfo> UnusedMemberInfos;
 
 	FCsLibraryLoad_GetReferencesReport_Category() :
 		Name(),
@@ -55,8 +210,8 @@ public:
 	{
 	}
 
-	void Add(const FCsLibraryLoad_GetReferencesReport_MemberInfo& MemberInfo, const FSoftObjectPath& ObjectPath);
-	void AddUnused(const FCsLibraryLoad_GetReferencesReport_MemberInfo& MemberInfo);
+	void Add(const FCsLibraryLoad_MemberInfo& MemberInfo, const FSoftObjectPath& ObjectPath);
+	void AddUnused(const FCsLibraryLoad_MemberInfo& MemberInfo);
 
 	void Print();
 };

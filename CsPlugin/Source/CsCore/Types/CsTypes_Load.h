@@ -729,7 +729,7 @@ public:
 	/** Specific row names of the DataTable to store ObjectPaths 
 		for in Paths. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FName> Rows;
+	TSet<FName> Rows;
 
 	/** All ObjectPaths and Resource Sizes (Memory Size) for DataTable. */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
@@ -794,6 +794,9 @@ struct CSCORE_API FCsPayload : public FTableRowBase
 
 public:
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	bool bUpdateDataRootSetOnSave;
+
 	/** List of all Payload information related to objects that
 	    implement the interface: ICsData. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "Name"))
@@ -814,6 +817,7 @@ public:
 	FCsTArraySoftObjectPath Paths;
 
 	FCsPayload() :
+		bUpdateDataRootSetOnSave(true),
 		Datas(),
 		DataMap(),
 		DataTables(),
@@ -1024,7 +1028,7 @@ public:
 	bool bAllRows;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FName> Rows;
+	TSet<FName> Rows;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	FCsTArraySoftObjectPath Paths;

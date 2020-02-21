@@ -524,7 +524,7 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 			// Specified Rows
 			else
 			{
-				RowNames = Payload_DataTable.Rows;
+				RowNames = Payload_DataTable.Rows.Array();
 			}
 
 			for (const FName& RowName : RowNames)

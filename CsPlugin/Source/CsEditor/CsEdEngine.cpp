@@ -97,7 +97,8 @@ namespace NCsEdEngineCached
 {
 	namespace Str
 	{
-		const FString OnOPC_DataRootSet_DataTables = TEXT("UCsEdEngine::OnOPC_DataRootSet_DataTables");
+		const FString OnObjectSaved_DataRootSet_DataTables = TEXT("UCsEdEngine::OnObjectSaved_DataRootSet_DataTables");
+		const FString OnObjectSaved_DataRootSet_Payloads = TEXT("UCsEdEngine::OnObjectSaved_DataRootSet_Payloads");
 	}
 }
 
@@ -446,7 +447,7 @@ void UCsEdEngine::OnObjectSaved_DataRootSet_DataTables(UDataTable* DataTable)
 	
 	for (const FName& RowName : RowNames)
 	{
-		const FString& Context = NCsEdEngineCached::Str::OnOPC_DataRootSet_DataTables;
+		const FString& Context = NCsEdEngineCached::Str::OnObjectSaved_DataRootSet_DataTables;
 
 		FCsDataEntry_DataTable* RowPtr = DataTable->FindRow<FCsDataEntry_DataTable>(RowName, Context);
 
@@ -459,7 +460,60 @@ void UCsEdEngine::OnObjectSaved_DataRootSet_DataTables(UDataTable* DataTable)
 	}
 }
 
+void UCsEdEngine::OnObjectSaved_DataRootSet_Payloads(UDataTable* DataTable)
+{
+	// Get Settings
+	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+	if (!Settings)
+		return;
+
+	// Get DataRootSet
+	FCsDataRootSetContainer& Container = Settings->DataRootSet;
+	UClass* Class					    = Container.Data.LoadSynchronous();
+	UCsDataRootSet* DataRootSet			= Class ? Class->GetDefaultObject<UCsDataRootSet>() : nullptr;
+
+	if (!DataRootSet)
+		return;
+
+	// See which Payloads to push to Datas | DataTables
+	TArray<FName> RowNames = DataTable->GetRowNames();
+
+	for (const FName& RowName : RowNames)
+	{
+		const FString& Context = NCsEdEngineCached::Str::OnObjectSaved_DataRootSet_Payloads;
+
+		FCsPayload* RowPtr = DataTable->FindRow<FCsPayload>(RowName, Context);
+
+		// Add the Payload to the Datas | DataTables
+		if (RowPtr->bUpdateDataRootSetOnSave)
+		{
+			// DataTables
+			TMap<TSoftObjectPtr<UDataTable>, TSet<FName>> RowNamesByDataTableMap;
+
+			for (FCsPayload_DataTable& Payload_DataTable : RowPtr->DataTables)
+			{
+				TSoftObjectPtr<UDataTable>& DT = Payload_DataTable.DataTable;
+				const FSoftObjectPath& Path	   = DT.ToSoftObjectPath();
+
+				if (!Path.IsValid())
+					continue;
+
+				// Update the Name
+				Payload_DataTable.Name = FName(*Path.GetAssetName());
+
+				RowNamesByDataTableMap.Add(DT, Payload_DataTable.Rows);
+			}
+
+			// Add to Map of DataTables to Add to DataRootSet->DataTables
+			DataRootSet->AddDataTables(RowNamesByDataTableMap);
+		}
+		RowPtr->bUpdateDataRootSetOnSave = false;
+	}
+}
+
 #pragma endregion DataRootSet
+
 
 // References
 #pragma region

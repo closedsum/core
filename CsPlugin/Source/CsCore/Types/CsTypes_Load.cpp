@@ -245,7 +245,7 @@ void FCsPayload_DataTable::Populate()
 	// Specified Rows
 	else
 	{
-		RowNames = Rows;
+		RowNames = Rows.Array();
 	}
 
 	// Get Paths for appropriate rows
@@ -516,7 +516,7 @@ void FCsDataEntry_DataTable::Populate()
 	// Specified Rows
 	else
 	{
-		RowNames = Rows;
+		RowNames = Rows.Array();
 	}
 
 	// Get Paths for appropriate rows

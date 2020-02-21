@@ -120,6 +120,7 @@ public:
 public:
 
 	void OnObjectSaved_DataRootSet_DataTables(UDataTable* DataTable);
+	void OnObjectSaved_DataRootSet_Payloads(UDataTable* DataTable);
 
 #pragma endregion DataRootSet
 

@@ -19,6 +19,27 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Root")
 	UDataTable* DataTables;
 
+#if WITH_EDITOR
+
+	void AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTable);
+	void AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTable, const TSet<FName>& RowNames);
+
+	void AddDataTables(const TSet<TSoftObjectPtr<UDataTable>>& InDataTables);
+	void AddDataTables(const TMap<TSoftObjectPtr<UDataTable>, TSet<FName>>& RowNamesByDataTableMap);
+
+#endif // #if WITH_EDITOR
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Root")
 	UDataTable* Payloads;
+
+	// Editor
+#pragma region
+#if WITH_EDITOR
+public:
+
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& e) override;
+
+#endif // #if WITH_EDITOR
+#pragma endregion Editor
+
 };

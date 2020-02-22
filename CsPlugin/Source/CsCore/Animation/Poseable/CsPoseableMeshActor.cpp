@@ -232,7 +232,7 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 
 bool ACsPoseableMeshActor::IsAssetEditorOpen()
 {
-	if (AnimLevelSequence.Master && FAssetEditorManager::Get().FindEditorForAsset(AnimLevelSequence.Master, false))
+	if (AnimLevelSequence.Master && GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorForAsset(AnimLevelSequence.Master, false))
 		return true;
 
 	const int32 Count = AnimLevelSequence.Shots.Num();
@@ -241,7 +241,7 @@ bool ACsPoseableMeshActor::IsAssetEditorOpen()
 	{
 		FCsAnimLevelSequenceInfo_Shot& Shot = AnimLevelSequence.Shots[I];
 
-		if (Shot.Shot && FAssetEditorManager::Get().FindEditorForAsset(Shot.Shot, false))
+		if (Shot.Shot && GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorForAsset(Shot.Shot, false))
 			return true;
 	}
 	return false;
@@ -251,7 +251,7 @@ FLevelSequenceEditorToolkit* ACsPoseableMeshActor::GetOpenAssetEditor()
 {
 	if (AnimLevelSequence.Master)
 	{
-		if (FLevelSequenceEditorToolkit* Editor = (FLevelSequenceEditorToolkit*)(FAssetEditorManager::Get().FindEditorForAsset(AnimLevelSequence.Master, false)))
+		if (FLevelSequenceEditorToolkit* Editor = (FLevelSequenceEditorToolkit*)(GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorForAsset(AnimLevelSequence.Master, false)))
 			return Editor;
 	}
 
@@ -263,7 +263,7 @@ FLevelSequenceEditorToolkit* ACsPoseableMeshActor::GetOpenAssetEditor()
 
 		if (Shot.Shot)
 		{
-			if (FLevelSequenceEditorToolkit* Editor = (FLevelSequenceEditorToolkit*)(FAssetEditorManager::Get().FindEditorForAsset(Shot.Shot, false)))
+			if (FLevelSequenceEditorToolkit* Editor = (FLevelSequenceEditorToolkit*)(GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorForAsset(Shot.Shot, false)))
 				return Editor;
 		}
 	}
@@ -278,7 +278,7 @@ int32 ACsPoseableMeshActor::GetOpenShotIndexInEditor()
 	{
 		FCsAnimLevelSequenceInfo_Shot& Shot = AnimLevelSequence.Shots[I];
 
-		if (Shot.Shot && FAssetEditorManager::Get().FindEditorForAsset(Shot.Shot, false))
+		if (Shot.Shot && GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorForAsset(Shot.Shot, false))
 			return I;
 	}
 	return INDEX_NONE;
@@ -364,7 +364,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 			return;
 		}
 
-		IAssetEditorInstance* AssetEditor = FAssetEditorManager::Get().FindEditorForAsset(AnimLevelSequence.Master, true);
+		IAssetEditorInstance* AssetEditor = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorForAsset(AnimLevelSequence.Master, true);
 
 		if (!AssetEditor)
 		{
@@ -374,7 +374,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 			return;
 		}
 
-		const bool Success = FAssetEditorManager::Get().OpenEditorForAsset(AnimLevelSequence.Master);
+		const bool Success = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->OpenEditorForAsset(AnimLevelSequence.Master);
 
 		if (!Success)
 		{

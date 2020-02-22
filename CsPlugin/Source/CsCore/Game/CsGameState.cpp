@@ -145,7 +145,7 @@ void ACsGameState::PostActorCreated()
 
 	// LastTickActor
 	LastTickActor = GetWorld()->SpawnActor<ACsLastTickActor>(ACsLastTickActor::StaticClass(), FTransform::Identity, SpawnInfo);
-	LastTickActor->Role = ROLE_None;
+	LastTickActor->SetRole(ROLE_None);;
 	GetWorld()->RemoveNetworkActor(LastTickActor);
 }
 
@@ -661,7 +661,7 @@ void ACsGameState::AddPlayerState(class APlayerState* PlayerState)
 {
 	Super::AddPlayerState(PlayerState);
 
-	if (Role < ROLE_Authority)
+	if (GetLocalRole() < ROLE_Authority)
 		return;
 
 	// Player

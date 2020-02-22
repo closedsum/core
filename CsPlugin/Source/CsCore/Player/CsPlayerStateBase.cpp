@@ -135,10 +135,10 @@ ACsPawn* ACsPlayerStateBase::GetMyPawn()
 {
 	if (LinkedPawn.IsValid() && LinkedPawn.Get())
 		return LinkedPawn.Get();
-
-	for (FConstPawnIterator It = GetWorld()->GetPawnIterator(); It; ++It)
+	
+	for (TActorIterator<APawn> Itr(GetWorld()); Itr; ++Itr)
 	{
-		APawn* Pawn = It->Get();
+		APawn* Pawn = *Itr;
 
 		if (Pawn->GetPlayerState() == this)
 		{

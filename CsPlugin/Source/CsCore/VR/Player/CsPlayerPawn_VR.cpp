@@ -27,13 +27,13 @@ void ACsPlayerPawn_VR::PostInitializeComponents()
 	// LeftHand
 	LeftHand = GetWorld()->SpawnActor<ACsMotionController>(MotionControllerClass, SpawnInfo);
 	LeftHand->SetReplicates(false);
-	LeftHand->Role = ROLE_None;
+	LeftHand->SetRole(ROLE_None);
 	GetWorld()->RemoveNetworkActor(LeftHand);
 	LeftHand->Init(MotionControllerComponent_LeftHand, ECsControllerHand::Left);
 	// RightHand
 	RightHand = GetWorld()->SpawnActor<ACsMotionController>(MotionControllerClass, SpawnInfo);
 	RightHand->SetReplicates(false);
-	RightHand->Role = ROLE_None;
+	RightHand->SetRole(ROLE_None);
 	GetWorld()->RemoveNetworkActor(RightHand);
 	RightHand->Init(MotionControllerComponent_RightHand, ECsControllerHand::Right);
 

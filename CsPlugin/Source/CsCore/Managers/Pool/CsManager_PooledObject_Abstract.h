@@ -362,7 +362,7 @@ public:
 			if (!ConstructParams.bReplicates)
 			{
 				Actor->SetReplicates(false);
-				Actor->Role = ROLE_None;
+				Actor->SetRole(ROLE_None);
 				GetCurrentWorld()->RemoveNetworkActor(Actor);
 			}
 

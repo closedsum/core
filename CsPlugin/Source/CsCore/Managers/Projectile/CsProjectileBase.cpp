@@ -75,7 +75,7 @@ ACsProjectileBase::ACsProjectileBase(const FObjectInitializer& ObjectInitializer
 	PrimaryActorTick.TickGroup			   = TG_PrePhysics;
 	SetRemoteRoleForBackwardsCompat(ROLE_None);
 	bReplicates		   = false;
-	bReplicateMovement = false;
+	SetReplicatingMovement(false);
 
 	InitialLifeSpan = 0.0f;
 }
@@ -387,7 +387,7 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 		const float DistanceSq = UCsLibrary_Common::GetSquaredDistanceToLocalControllerEye(GetWorld(), GetActorLocation());
 		const bool Hide		   = DistanceSq > DrawDistanceSq;
 
-		if (Hide != bHidden)
+		if (Hide != IsHidden())
 			SetActorHiddenInGame(Hide);
 	}
 
@@ -485,7 +485,7 @@ void ACsProjectileBase::OnHitCallback(UPrimitiveComponent* HitComp, AActor* Othe
 	Event->HitInfo = HitResult;
 
 	// Process Damage on SERVER Only
-	if (Role == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		// DamageableActor
 		if (ACsDamageableActor* DamageableActor = Cast<ACsDamageableActor>(HitResult.GetActor()))

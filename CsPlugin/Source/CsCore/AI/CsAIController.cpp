@@ -41,7 +41,7 @@ void ACsAIController::InitPlayerState()
 		{
 			FActorSpawnParameters SpawnInfo;
 			SpawnInfo.Owner = this;
-			SpawnInfo.Instigator = Instigator;
+			SpawnInfo.Instigator = GetInstigator();
 			SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 			SpawnInfo.ObjectFlags |= RF_Transient;	// We never want player states to save into a map
 			PlayerState = World->SpawnActor<APlayerState>(PlayerStateClass, SpawnInfo);

@@ -112,7 +112,7 @@ public:
 	UPROPERTY()
 	int32 Focus;
 
-	UFUNCTION(BlueprintCallable, Category = "UI")
+	//UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void SetFocus(const ECsWidgetFocus &InFocus);
 	virtual void SetFocus(const int32 &InFocus);
 

@@ -21,7 +21,7 @@ ACsManager_Sense_DEPRECATED::ACsManager_Sense_DEPRECATED(const FObjectInitialize
 	PrimaryActorTick.TickGroup = TG_PrePhysics;
 	SetRemoteRoleForBackwardsCompat(ROLE_None);
 	bReplicates = false;
-	bReplicateMovement = false;
+	SetReplicatingMovement(false);
 
 	const int32& Count = EMCsSenseActorType::Get().Num();
 

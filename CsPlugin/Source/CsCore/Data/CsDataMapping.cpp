@@ -113,9 +113,10 @@ void UCsDataMapping::GenerateMaps()
 			Datas_LookUpCodeToShortCode_Map[DataType].Add(I, ShortCode);
 			++I;
 		}
-		Map->KeySort(TLess<FName>());
-		Datas_ShortCodeToLookUpCode_Map[DataType].KeySort(TLess<FName>());
-		Datas_LookUpCodeToShortCode_Map[DataType].KeySort(TLess<uint16>());
+	
+		//Map->KeySort(TLess<FName>());
+		//Datas_ShortCodeToLookUpCode_Map[DataType].KeySort(TLess<FName>());
+		//Datas_LookUpCodeToShortCode_Map[DataType].KeySort(TLess<uint16>());
 	}
 }
 
@@ -271,7 +272,7 @@ bool UCsDataMapping::AddDataAssetReference(const FECsDataType& DataType, const F
 				return true;
 			}
 			Map->Add(ShortCode, Mapping);
-			Map->KeySort(TLess<FName>());
+			//Map->KeySort(TLess<FName>());
 			return true;
 		}
 		else

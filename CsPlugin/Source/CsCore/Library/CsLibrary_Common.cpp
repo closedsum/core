@@ -1333,7 +1333,7 @@ void UCsLibrary_Common::InitComponent(USceneComponent* Component, USceneComponen
 	if (USkeletalMeshComponent* Mesh = Cast<USkeletalMeshComponent>(Component))
 	{
 		Mesh->SetHiddenInGame(true);
-		Mesh->bVisible		= false;
+		Mesh->SetVisibility(false);
 
 		if (ViewType == ECsViewType::FirstPerson)
 		{
@@ -1662,7 +1662,7 @@ void UCsLibrary_Common::ConvertBoneSpaceTransformToComponentSpace(const FTransfo
 			{
 				if (USkeletalMeshComponent* Component = Cast<USkeletalMeshComponent>(Mesh))
 				{
-					const FTransform& BoneTransform = Component->BoneSpaceTransforms[BoneIndex];
+					const FTransform& BoneTransform = Component->GetBoneSpaceTransforms()[BoneIndex];
 					OutTransform				   *= BoneTransform;
 				}
 
@@ -1711,13 +1711,13 @@ void UCsLibrary_Common::ConvertComponentSpaceTransformToBoneSpace(const FTransfo
 		{
 			if (USkeletalMeshComponent* Component = Cast<USkeletalMeshComponent>(Mesh))
 			{
-				const FTransform& BoneTransform = Component->BoneSpaceTransforms[BoneIndex];
+				const FTransform& BoneTransform = Component->GetBoneSpaceTransforms()[BoneIndex];
 				OutTransform.SetToRelativeTransform(BoneTransform);
 			}
 
 			if (UPoseableMeshComponent* Component = Cast<UPoseableMeshComponent>(Mesh))
 			{
-				const FTransform& BoneTransform = Component->BoneSpaceTransforms[BoneIndex];
+				const FTransform& BoneTransform = Component->GetBoneSpaceTransforms()[BoneIndex];
 				OutTransform.SetToRelativeTransform(BoneTransform);
 			}
 		}
@@ -2364,9 +2364,9 @@ bool UCsLibrary_Common::IsDedicatedServer(AActor* InActor)
 
 FString UCsLibrary_Common::GetProxyAsString(AActor* InActor)
 {
-	if (InActor->Role < ROLE_Authority)
+	if (InActor->GetLocalRole() < ROLE_Authority)
 		return NCsCommonCached::Str::Client;
-	if (InActor->Role == ROLE_Authority)
+	if (InActor->GetLocalRole() == ROLE_Authority)
 	{
 		if (IsDedicatedServer(InActor))
 			return NCsCommonCached::Str::Server_Dedicated;

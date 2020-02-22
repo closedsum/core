@@ -80,7 +80,7 @@ FTransform GetBoneTransformByIndexHelper(const int32 &BoneIndex, const EBoneSpac
 	//}
 
 	FA2CSPose CSPose;
-	CSPose.AllocateLocalPoses(RequiredBones, Component->BoneSpaceTransforms);
+	CSPose.AllocateLocalPoses(RequiredBones, Component->GetBoneSpaceTransforms());
 
 	if (BoneSpace == EBoneSpaces::ComponentSpace)
 	{

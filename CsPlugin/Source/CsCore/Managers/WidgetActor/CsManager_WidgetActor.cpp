@@ -111,7 +111,7 @@ ACsWidgetActor* AICsManager_WidgetActor::ConstructObject(const FECsWidgetActorTy
 
 	ACsWidgetActor* Actor = GetWorld()->SpawnActor<ACsWidgetActor>(ClassMap.Find(Type) ? ClassMap[Type] : ACsWidgetActor::StaticClass(), SpawnInfo);
 	Actor->SetReplicates(false);
-	Actor->Role = ROLE_None;
+	Actor->SetRole(ROLE_None);
 	GetWorld()->RemoveNetworkActor(Actor);
 	return Actor;
 }

@@ -648,7 +648,7 @@ void ACsWeapon::SetMyPawn(class ACsPawn* InMyPawn)
 	SetMyOwner(InMyPawn);
 
 	MyPawn	   = InMyPawn;
-	Instigator = InMyPawn;
+	SetInstigator(InMyPawn);
 
 	SetOwner(InMyPawn);
 }
@@ -2169,7 +2169,7 @@ void ACsWeapon::FireHitscan(const FECsWeaponFireMode& FireMode, const FCsProject
 			// Pawn
 			if (HitPawn)
 			{
-				if (HitPawn->Role == ROLE_Authority)
+				if (HitPawn->GetLocalRole() == ROLE_Authority)
 				{
 					// Apply Damage Modifiers
 					float& Damage = Event->Damage;

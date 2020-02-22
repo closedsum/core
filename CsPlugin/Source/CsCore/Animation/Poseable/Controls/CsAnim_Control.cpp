@@ -73,7 +73,7 @@ void ACsAnim_Control::OnTick_Editor(const float &DeltaSeconds)
 		return;
 
 	Location = GetActorLocation();
-	RelativeLocation = GetRootComponent()->RelativeLocation;
+	RelativeLocation = GetRootComponent()->GetRelativeLocation();
 	
 	if (!RecordLocation &&
 		Location.HasChanged())
@@ -85,7 +85,7 @@ void ACsAnim_Control::OnTick_Editor(const float &DeltaSeconds)
 	}
 
 	Rotation = GetActorRotation();
-	RelativeRotation = GetRootComponent()->RelativeRotation;
+	RelativeRotation = GetRootComponent()->GetRelativeRotation();
 
 	if (!RecordRotation &&
 		Rotation.HasChanged())
@@ -97,7 +97,7 @@ void ACsAnim_Control::OnTick_Editor(const float &DeltaSeconds)
 	}
 
 	Scale = GetActorScale3D();
-	RelativeScale = GetRootComponent()->RelativeScale3D;
+	RelativeScale = GetRootComponent()->GetRelativeScale3D();
 
 	if (!RecordScale &&
 		Scale.HasChanged())

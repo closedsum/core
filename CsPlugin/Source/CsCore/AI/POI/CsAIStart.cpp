@@ -39,7 +39,7 @@ ACsAIStart::ACsAIStart(const FObjectInitializer& ObjectInitializer)
 		if (GetGoodSprite())
 		{
 			GetGoodSprite()->Sprite = ConstructorStatics.AIStartTextureObject.Get();
-			GetGoodSprite()->RelativeScale3D = FVector(0.5f, 0.5f, 0.5f);
+			GetGoodSprite()->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
 			GetGoodSprite()->SpriteInfo.Category = ConstructorStatics.ID_AIStart;
 			GetGoodSprite()->SpriteInfo.DisplayName = ConstructorStatics.NAME_AIStart;
 		}

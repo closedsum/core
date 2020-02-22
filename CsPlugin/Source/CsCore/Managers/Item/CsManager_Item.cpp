@@ -452,7 +452,7 @@ bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* InInstigator, AC
 	}
 
 	// TODO: Potentially evaluate having ChangeActiveItemOwnerInfo within AddItem
-	ChangeActiveItemOwnerInfo(Item, Instigator);
+	ChangeActiveItemOwnerInfo(Item, GetInstigator());
 
 	if (Manager_Inventory)
 		Manager_Inventory->AddItem(Item);

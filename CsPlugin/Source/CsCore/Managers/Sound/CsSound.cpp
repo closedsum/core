@@ -23,9 +23,9 @@ ACsSound::ACsSound(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 
 	SetRemoteRoleForBackwardsCompat(ROLE_None);
 	bReplicates		   = false;
-	bReplicateMovement = false;
-	bHidden			   = true;
-	bCanBeDamaged	   = false;
+	SetReplicatingMovement(false);
+	SetHidden(true);
+	SetCanBeDamaged(false);
 }
 
 void ACsSound::Init(const int32 &Index, const FECsSoundType &InType)

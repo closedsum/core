@@ -90,7 +90,7 @@ ACsInteractiveActor* AICsManager_InteractiveActor::ConstructObject(const FECsInt
 
 	ACsInteractiveActor* Actor = GetWorld()->SpawnActor<ACsInteractiveActor>(ClassMap.Find(Type) ? ClassMap[Type] : ACsInteractiveActor::StaticClass(), SpawnInfo);
 	Actor->SetReplicates(false);
-	Actor->Role = ROLE_None;
+	Actor->SetRole(ROLE_None);
 	GetWorld()->RemoveNetworkActor(Actor);
 	return Actor;
 }

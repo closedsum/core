@@ -9,5 +9,5 @@ ACsManager::ACsManager(const FObjectInitializer& ObjectInitializer) : Super(Obje
 	PrimaryActorTick.TickGroup			   = TG_PrePhysics;
 	SetRemoteRoleForBackwardsCompat(ROLE_None);
 	bReplicates		   = false;
-	bReplicateMovement = false;
+	SetReplicatingMovement(false);
 }

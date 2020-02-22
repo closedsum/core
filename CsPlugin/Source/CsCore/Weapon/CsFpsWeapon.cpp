@@ -451,7 +451,7 @@ void ACsFpsWeapon::Show()
 
 	// 3P
 	if (ViewType == ECsViewType::ThirdPerson ||
-		Role == ROLE_Authority)
+		GetLocalRole() == ROLE_Authority)
 	{
 		if (ViewType == ECsViewType::ThirdPerson)
 		{

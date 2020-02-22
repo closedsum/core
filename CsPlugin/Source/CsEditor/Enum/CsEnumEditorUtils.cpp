@@ -73,7 +73,7 @@ void FCsEnumEditorUtils::SyncInputAction()
 		TMap<FName, FText> DisplayNameMap;
 
 		// Add ActionMappings
-		for (const FInputActionKeyMapping& Mapping : InputSettings->ActionMappings)
+		for (const FInputActionKeyMapping& Mapping : InputSettings->GetActionMappings())
 		{
 			const FName& Name = Mapping.ActionName;
 
@@ -90,7 +90,7 @@ void FCsEnumEditorUtils::SyncInputAction()
 			DisplayNameMap.Add(EnumeratorName, FText::FromName(Name));
 		}
 		// Add AxisMappings
-		for (const FInputAxisKeyMapping& Mapping : InputSettings->AxisMappings)
+		for (const FInputAxisKeyMapping& Mapping : InputSettings->GetAxisMappings())
 		{
 			const FName& Name = Mapping.AxisName;
 

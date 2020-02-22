@@ -276,7 +276,7 @@ ACsEmitter* AICsManager_FX::ConstructObject()
 
 	ACsEmitter* Actor = GetWorld()->SpawnActor<ACsEmitter>(ACsEmitter::StaticClass(), SpawnInfo);
 	Actor->SetReplicates(false);
-	Actor->Role = ROLE_None;
+	Actor->SetRole(ROLE_None);
 	GetWorld()->RemoveNetworkActor(Actor);
 	return Actor;
 }

@@ -228,7 +228,7 @@ ACsSound* AICsManager_Sound::ConstructObject()
 
 	ACsSound* Actor = GetWorld()->SpawnActor<ACsSound>(ACsSound::StaticClass(), SpawnInfo);
 	Actor->SetReplicates(false);
-	Actor->Role = ROLE_None;
+	Actor->SetRole(ROLE_None);
 	GetWorld()->RemoveNetworkActor(Actor);
 	return Actor;
 }

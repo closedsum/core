@@ -107,7 +107,7 @@ namespace NCsStringWordRule
 
 
 USTRUCT(BlueprintType)
-struct FCsStringWordInfo
+struct CSCORE_API FCsStringWordInfo
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -211,7 +211,7 @@ struct FCsStringWordInfo
 };
 
 USTRUCT(BlueprintType)
-struct FCsStringWord
+struct CSCORE_API FCsStringWord
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -336,7 +336,7 @@ struct FCsStringWord
 };
 
 USTRUCT(BlueprintType)
-struct FCsStringPhrase
+struct CSCORE_API FCsStringPhrase
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -462,7 +462,7 @@ struct FCsStringPhrase
 };
 
 USTRUCT(BlueprintType)
-struct FCsStringSentence
+struct CSCORE_API FCsStringSentence
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -568,7 +568,7 @@ struct FCsStringSentence
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableDynEvent_CgStringParagraph_CompletedEvent);
 
 USTRUCT(BlueprintType)
-struct FCsStringParagraph
+struct CSCORE_API FCsStringParagraph
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -680,8 +680,8 @@ struct FCsStringParagraph
 
 namespace NCsStringParagraphHelper
 {
-	FCsStringSentence CreateOneWordSentence(const FString &Word, const ECsStringWordRule &Rule);
-	FCsStringParagraph CreateOneWordParagraph(const FString &Word, const ECsStringWordRule &Rule);
+	CSCORE_API FCsStringSentence CreateOneWordSentence(const FString &Word, const ECsStringWordRule &Rule);
+	CSCORE_API FCsStringParagraph CreateOneWordParagraph(const FString &Word, const ECsStringWordRule &Rule);
 }
 
 #pragma endregion Word / Phrase / Sentence / Paragraph

@@ -325,32 +325,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogProcessIO;
 
 #pragma endregion Process
 
-// Blockchain
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarBlockchainRebuild;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIO;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIORunning;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIOConsole;
-//Process
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarShowBlockchainProcessWindow;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainProcessStart;
-// Command
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainCommandCompleted;
-// Account
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainAccountCreated;
-
-	// Ethereum
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainAccountLoad;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainAccountSetup;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainBalance;
-
-#pragma endregion Ethereum
-
-#pragma endregion Blockchain
-
 // Sense
 #pragma region
 
@@ -599,20 +573,6 @@ namespace NCsCVarLog
 	// Process
 	extern CSCORE_API const Type LogManagerProcessTransactions;
 	extern CSCORE_API const Type LogProcessIO;
-	// Blockchain
-	extern CSCORE_API const Type LogBlockchainIO;
-	extern CSCORE_API const Type LogBlockchainIORunning;
-	extern CSCORE_API const Type LogBlockchainIOConsole;
-		// Process
-	extern CSCORE_API const Type LogBlockchainProcessStart;
-		// Command
-	extern CSCORE_API const Type LogBlockchainCommandCompleted;
-		// Account
-	extern CSCORE_API const Type LogBlockchainAccountCreated;
-		// Ethereum
-	extern CSCORE_API const Type LogBlockchainAccountLoad;
-	extern CSCORE_API const Type LogBlockchainAccountSetup;
-	extern CSCORE_API const Type LogBlockchainBalance;
 	// Sense
 	extern CSCORE_API const Type LogManagerSenseSeesActorByDot;
 	// Managers

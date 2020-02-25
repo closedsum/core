@@ -58,10 +58,10 @@
 		// Process
 #include "DetailCustomizations/EnumStruct/ECsProcessCustomization.h"
 		// Blockchain
-#include "DetailCustomizations/EnumStruct/Blockchain/ECsBlockchainCommandCustomization.h"
-#include "DetailCustomizations/EnumStruct/Blockchain/ECsBlockchainContractCustomization.h"
-#include "DetailCustomizations/EnumStruct/Blockchain/ECsBlockchainContractFunctionCustomization.h"
-#include "DetailCustomizations/EnumStruct/Blockchain/ECsEthereumJavascriptCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Blockchain/ECsBlockchainCommandCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Blockchain/ECsBlockchainContractCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Blockchain/ECsBlockchainContractFunctionCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Blockchain/ECsEthereumJavascriptCustomization.h"
 		// Item
 #include "DetailCustomizations/EnumStruct/Item/ECsItemTypeCustomization.h"
 #include "DetailCustomizations/EnumStruct/Item/ECsItemOwnerCustomization.h"
@@ -145,10 +145,10 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 			// Process
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsProcess", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProcessCustomization::MakeInstance));
 			// Blockchain
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainCommand", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainCommandCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainContract", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainContractCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainContractFunction", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainContractFunctionCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsEthereumJavascript", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsEthereumJavascriptCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainCommand", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainCommandCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainContract", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainContractCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainContractFunction", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainContractFunctionCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsEthereumJavascript", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsEthereumJavascriptCustomization::MakeInstance));
 			// Item
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsItemType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsItemTypeCustomization::MakeInstance));
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsItemOwner", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsItemOwnerCustomization::MakeInstance));

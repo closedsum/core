@@ -27,7 +27,7 @@ namespace ECsGraphPinEnumStructCache
 
 #pragma endregion Cache
 
-class SCsGraphPin_EnumStruct : public SGraphPin
+class CSEDITOR_API SCsGraphPin_EnumStruct : public SGraphPin
 {
 public:
 	SLATE_BEGIN_ARGS(SCsGraphPin_EnumStruct) {}

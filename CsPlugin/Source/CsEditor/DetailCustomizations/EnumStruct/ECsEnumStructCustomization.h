@@ -3,6 +3,7 @@
 #include "IPropertyTypeCustomization.h"
 #include "PropertyHandle.h"
 #include "Widgets/Input/SComboBox.h"
+#include "Types/CsTypes_Primitive.h"
 
 class IDetailGroup;
 

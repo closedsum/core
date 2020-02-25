@@ -45,10 +45,10 @@
 #include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponSound.h"
 #include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponState.h"
 	// Blockchain
-#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainCommand.h"
-#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainContract.h"
-#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainContractFunction.h"
-#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsEthereumJavascript.h"
+//#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainCommand.h"
+//#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainContract.h"
+//#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainContractFunction.h"
+//#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsEthereumJavascript.h"
 	// Item
 #include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemType.h"
 #include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemOwner.h"
@@ -74,9 +74,9 @@
 // Managers
 #include "Managers/Process/CsProcess.h"
 // Blockchain
-#include "Blockchain/CsBlockchainCommand.h"
-#include "Blockchain/CsBlockchainContract.h"
-#include "Blockchain/Ethereum/CsEthereum.h"
+//#include "Blockchain/CsBlockchainCommand.h"
+//#include "Blockchain/CsBlockchainContract.h"
+//#include "Blockchain/Ethereum/CsEthereum.h"
 
 TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin* InPin) const
 {
@@ -138,6 +138,7 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	// FECsProcess
 	if (DoesPinUseScriptStruct<FECsProcess>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsProcess, InPin); }
 	// Blockchain
+	/*
 	{
 		// FECsBlockchainCommand
 		if (DoesPinUseScriptStruct<FECsBlockchainCommand>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsBlockchainCommand, InPin); }
@@ -148,6 +149,7 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 		// FECsEthereumJavascript
 		if (DoesPinUseScriptStruct<FECsEthereumJavascript>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsEthereumJavascript, InPin); }
 	}
+	*/
 	// Item
 	{
 		// FECsItemType

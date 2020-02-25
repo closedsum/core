@@ -4,10 +4,6 @@
 
 // Managers
 #include "Managers/Process/CsProcess.h"
-// Blockchain
-#include "Blockchain/CsBlockchainCommand.h"
-#include "Blockchain/CsBlockchainContract.h"
-#include "Blockchain/Ethereum/CsEthereum.h"
 // AI
 #include "Types/CsTypes_AI.h"
 
@@ -26,7 +22,7 @@ public:
 		if (EnumStructMap::Get().IsValidEnum(Name))
 			return EnumStructMap::Get()[Name];
 
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Enum::%s: Enum of type %s and Name: %s does NOT exist."), *FunctionName, *EnumStructName, *Name);
+		//UE_LOG(Log, Warning, TEXT("UCsLibrary_Enum::%s: Enum of type %s and Name: %s does NOT exist."), *FunctionName, *EnumStructName, *Name);
 		return EnumStruct(0, NCsCached::Str::INVALID);
 	}
 
@@ -38,7 +34,7 @@ public:
 		if (Index < Count)
 			return EnumStructMap::Get().GetEnumAt(Index);
 
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Enum::%s: Enum of type %s and Index: %d (%d >= %d) does NOT exist."), *FunctionName, *EnumStructName, Index, Index, Count);
+		//UE_LOG(Log, Warning, TEXT("UCsLibrary_Enum::%s: Enum of type %s and Index: %d (%d >= %d) does NOT exist."), *FunctionName, *EnumStructName, Index, Index, Count);
 		return EnumStruct(0, NCsCached::Str::INVALID);
 	}
 
@@ -104,102 +100,6 @@ public:
 	static void ECsProcess_GetAll(TArray<FECsProcess>& OutTypes);
 
 #pragma endregion Process
-
-// Blockchain
-#pragma region
-public:
-
-	// Command
-#pragma region
-public:
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsBlockchainCommand GetECsBlockchainCommand(const FString& Name);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsBlockchainCommand GetECsBlockchainCommandByIndex(const int32& Index);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FString ECsBlockchainCommandToString(const FECsBlockchainCommand& Enum);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static uint8 GetECsBlockchainCommandCount();
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsBlockchainCommand(TArray<FECsBlockchainCommand>& OutTypes);
-
-#pragma endregion Command
-
-	// Contract
-#pragma region
-public:
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsBlockchainContract GetECsBlockchainContract(const FString& Name);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsBlockchainContract GetECsBlockchainContractByIndex(const int32& Index);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FString ECsBlockchainContractToString(const FECsBlockchainContract& Enum);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static uint8 GetECsBlockchainContractCount();
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsBlockchainContract(TArray<FECsBlockchainContract>& OutTypes);
-
-#pragma endregion Contract
-
-	// Contract Function
-#pragma region
-public:
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsBlockchainContractFunction GetECsBlockchainContractFunction(const FString& Name);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsBlockchainContractFunction GetECsBlockchainContractFunctionByIndex(const int32& Index);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FString ECsBlockchainContractFunctionToString(const FECsBlockchainContractFunction& Enum);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static uint8 GetECsBlockchainContractFunctionCount();
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsBlockchainContractFunction(TArray<FECsBlockchainContractFunction>& OutTypes);
-
-#pragma endregion Contract Function
-
-	// Ethereum
-#pragma region
-public:
-
-		// Javascript
-#pragma region
-public:
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsEthereumJavascript GetECsEthereumJavascript(const FString& Name);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsEthereumJavascript GetECsEthereumJavascriptByIndex(const int32& Index);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FString ECsEthereumJavascriptToString(const FECsEthereumJavascript& Enum);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static uint8 GetECsEthereumJavascriptCount();
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsEthereumJavascript(TArray<FECsEthereumJavascript>& OutTypes);
-
-#pragma endregion Javascript
-
-#pragma endregion Ethereum
-
-#pragma endregion Blockchain
 
 // Item
 #pragma region

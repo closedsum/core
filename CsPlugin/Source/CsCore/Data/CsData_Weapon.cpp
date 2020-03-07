@@ -3,6 +3,7 @@
 #include "CsCore.h"
 
 #include "Runtime/Engine/Classes/Animation/SkeletalMeshActor.h"
+#include "Engine/Classes/Materials/MaterialInstanceConstant.h"
 
 UCsData_Weapon::UCsData_Weapon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

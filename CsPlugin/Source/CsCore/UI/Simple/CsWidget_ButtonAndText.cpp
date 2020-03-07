@@ -4,6 +4,8 @@
 
 // Managers
 #include "Managers/Input/CsManager_Input.h"
+// Material
+#include "Engine/Classes/Materials/MaterialInstanceConstant.h"
 
 // Cache
 #pragma region

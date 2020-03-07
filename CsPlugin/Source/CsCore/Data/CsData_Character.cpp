@@ -3,6 +3,8 @@
 #include "CsCore.h"
 
 #include "Animation/SkeletalMeshActor.h"
+// Animation
+#include "Engine/Classes/Animation/AnimBlueprintGeneratedClass.h"
 
 UCsData_Character::UCsData_Character(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

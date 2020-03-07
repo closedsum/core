@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Time/CsTypes_Time.h"
-#include "CsCVars.h"
+#include "Types/CsTypes_Primitive.h"
 
 #include "Containers/CsInterfaceMap.h"
 

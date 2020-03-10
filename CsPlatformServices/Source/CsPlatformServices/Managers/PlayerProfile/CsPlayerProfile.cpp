@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/PlayerProfile/CsPlayerProfile.h"
-#include "CsCore.h"
+#include "CsPlatformServices.h"
 
 // Managers
 #include "Managers/Save/CsManager_Save.h"

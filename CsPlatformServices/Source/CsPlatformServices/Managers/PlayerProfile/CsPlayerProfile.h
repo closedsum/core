@@ -9,7 +9,7 @@ class UWorld;
 class ULocalPlayer;
 
 UCLASS(transient)
-class CSCORE_API UCsPlayerProfile : public UObject
+class CSPLATFORMSERVICES_API UCsPlayerProfile : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

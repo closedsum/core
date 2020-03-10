@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Achievement/CsLibrary_Manager_Achievement.h"
-#include "CsCore.h"
+#include "CsPlatformServices.h"
 
 // Managers
 #include "Managers/PlayerProfile/CsManager_PlayerProfile.h"
@@ -26,7 +26,7 @@ void UCsLibrary_Manager_Achievement::Complete(const UObject* WorldContextObject,
 	{
 		if (!Manager->IsValid(Achievement))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Achievement::Complete: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), *(Achievement.Name));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::Complete: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), *(Achievement.Name));
 			return;
 		}
 
@@ -34,7 +34,7 @@ void UCsLibrary_Manager_Achievement::Complete(const UObject* WorldContextObject,
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Achievement::Complete: No Manager Achievement of type UCsManager_Achievement was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::Complete: No Manager Achievement of type UCsManager_Achievement was created."));
 	}
 }
 
@@ -54,17 +54,17 @@ void UCsLibrary_Manager_Achievement::BindToEvent_OnComplete(const UObject* World
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_OnComplete: Delegate is already bound."));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_OnComplete: Delegate is already bound."));
 			}
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_OnComplete: No Delegate Bound."));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_OnComplete: No Delegate Bound."));
 		}
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Achievement::BindToEvent_OnComplete: No Manager Achievement of type UCsManager_Achievement was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::BindToEvent_OnComplete: No Manager Achievement of type UCsManager_Achievement was created."));
 	}
 }
 
@@ -80,7 +80,7 @@ bool UCsLibrary_Manager_Achievement::IsCompleted(const UObject* WorldContextObje
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Achievement::IsCompleted: No Manager Achievement of type UCsManager_Achievement was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::IsCompleted: No Manager Achievement of type UCsManager_Achievement was created."));
 	}
 	return false;
 }
@@ -97,7 +97,7 @@ int32 UCsLibrary_Manager_Achievement::GetNumCompleted(const UObject* WorldContex
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Achievement::GetNumCompleted: No Manager Achievement of type UCsManager_Achievement was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::GetNumCompleted: No Manager Achievement of type UCsManager_Achievement was created."));
 	}
 	return 0;
 }
@@ -117,7 +117,7 @@ void UCsLibrary_Manager_Achievement::Reset(const UObject* WorldContextObject, co
 	{
 		if (!Manager->IsValid(Achievement))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Achievement::Reset: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), *(Achievement.Name));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::Reset: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), *(Achievement.Name));
 			return;
 		}
 
@@ -125,7 +125,7 @@ void UCsLibrary_Manager_Achievement::Reset(const UObject* WorldContextObject, co
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Achievement::Reset: No Manager Achievement of type UCsManager_Achievement was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::Reset: No Manager Achievement of type UCsManager_Achievement was created."));
 	}
 }
 
@@ -141,7 +141,7 @@ void UCsLibrary_Manager_Achievement::ResetAll(const UObject* WorldContextObject)
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Achievement::ResetAll: No Manager Achievement of type UCsManager_Achievement was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::ResetAll: No Manager Achievement of type UCsManager_Achievement was created."));
 	}
 }
 
@@ -162,7 +162,7 @@ float UCsLibrary_Manager_Achievement::GetProgress(const UObject* WorldContextObj
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Achievement::GetProgress: No Manager Achievement of type UCsManager_Achievement was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::GetProgress: No Manager Achievement of type UCsManager_Achievement was created."));
 	}
 	return 0.0f;
 }
@@ -179,7 +179,7 @@ float UCsLibrary_Manager_Achievement::GetTotalProgress(const UObject* WorldConte
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Achievement::GetTotalProgress: No Manager Achievement of type UCsManager_Achievement was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::GetTotalProgress: No Manager Achievement of type UCsManager_Achievement was created."));
 	}
 	return 0.0f;
 }

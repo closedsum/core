@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Achievement/CsManager_Achievement.h"
-#include "CsCore.h"
-#include "CsCVars.h"
+#include "CsPlatformServices.h"
+#include "Managers/Achievement/CsCVars_Manager_Achievement.h"
 
 // Player
 #include "Engine/LocalPlayer.h"
@@ -178,7 +178,7 @@ UCsManager_Achievement::UCsManager_Achievement(const FObjectInitializer& ObjectI
 				return Manager;
 		}
 
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::GetFromWorldContextObject: Failed to Manager Achievement of type UCsManager_Achievement from GameInstance, GameState, or PlayerController."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::GetFromWorldContextObject: Failed to Manager Achievement of type UCsManager_Achievement from GameInstance, GameState, or PlayerController."));
 
 		return nullptr;
 	}
@@ -524,7 +524,7 @@ void UCsManager_Achievement::QueryIds()
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::QueryIds: Queueing Query Ids for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::QueryIds: Queueing Query Ids for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -550,7 +550,7 @@ void UCsManager_Achievement::QueryIds_Internal()
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::QueryIds_Internal: Start Querying Achievements Ids for Player: %s at %s."), *(UserId->ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::QueryIds_Internal: Start Querying Achievements Ids for Player: %s at %s."), *(UserId->ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // !UE_BUILD_SHIPPING
 
@@ -577,7 +577,7 @@ void UCsManager_Achievement::QueryDescriptions()
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::QueryDescriptions: Queueing Query Descriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::QueryDescriptions: Queueing Query Descriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -603,7 +603,7 @@ void UCsManager_Achievement::QueryDescriptions_Internal()
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::QueryAchievementDescriptions: Start Querying Achievement Descriptions for Player: %s at %s."), *(UserId->ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::QueryAchievementDescriptions: Start Querying Achievement Descriptions for Player: %s at %s."), *(UserId->ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // !UE_BUILD_SHIPPING
 
@@ -631,7 +631,7 @@ bool UCsManager_Achievement::CheckAndQueueQuery()
 		if (QueryState.IsComplete() &&
 			!QueryState.IsSuccessful())
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::CheckAndQueueQuery: Query Ids and/or Query Descriptions Failed for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CheckAndQueueQuery: Query Ids and/or Query Descriptions Failed for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			return false;
 		}
 
@@ -643,7 +643,7 @@ bool UCsManager_Achievement::CheckAndQueueQuery()
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::CheckAndQueueQuery: Queueing Query Ids for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CheckAndQueueQuery: Queueing Query Ids for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -659,7 +659,7 @@ bool UCsManager_Achievement::CheckAndQueueQuery()
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::CheckAndQueueQuery: Queueing Query Descriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CheckAndQueueQuery: Queueing Query Descriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -703,7 +703,7 @@ void UCsManager_Achievement::UpdateDescriptions()
 
 		if (!CheckAndQueueQuery())
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions: Query Ids and/or Query Descriptions Failed. Aborting UpdateDescriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions: Query Ids and/or Query Descriptions Failed. Aborting UpdateDescriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			return;
 		}
 
@@ -711,7 +711,7 @@ void UCsManager_Achievement::UpdateDescriptions()
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions: Queueing UpdateDescriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions: Queueing UpdateDescriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -739,7 +739,7 @@ void UCsManager_Achievement::UpdateDescriptions_Internal(FCsAchievementActionInf
 #if !UE_BUILD_SHIPPING
 		if (Result == EOnlineCachedResult::NotFound)
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: No Achievements found for Player: %s at %s."), *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: No Achievements found for Player: %s at %s."), *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
 			
 			ActionInfo->Complete();
 			return;
@@ -755,7 +755,7 @@ void UCsManager_Achievement::UpdateDescriptions_Internal(FCsAchievementActionInf
 			
 			if (Result == EOnlineCachedResult::NotFound)
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: Failed to find a description for Achievement: %s at %s."), *Id, *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: Failed to find a description for Achievement: %s at %s."), *Id, *(FDateTime::Now().ToString()));
 				continue;
 			}
 
@@ -764,7 +764,7 @@ void UCsManager_Achievement::UpdateDescriptions_Internal(FCsAchievementActionInf
 
 			if (!AchievementPtr)
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: Failed to find internally Achievement with Id: %s at %s."), *Id, *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: Failed to find internally Achievement with Id: %s at %s."), *Id, *(FDateTime::Now().ToString()));
 				
 				FECsAchievement Enum = EMCsAchievement::Get().Create(Id);
 
@@ -788,13 +788,13 @@ void UCsManager_Achievement::UpdateDescriptions_Internal(FCsAchievementActionInf
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: Achievement: %s description updated at %s."), *Id, *(FDateTime::Now().ToString()));
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: - Progress: %f."), (float)OnlineAchievement.Progress);
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: - Title: %s."), *(Desc.Title.ToString()));
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: - Locked Description: %s."), *(Desc.LockedDesc.ToString()));
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: - Unlocked Description: %s."), *(Desc.UnlockedDesc.ToString()));
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: - IsHIdden: %s."), *(Desc.bIsHidden ? NCsCached::Str::True : NCsCached::Str::False));
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: - Unlock Time: %s."), *(Desc.UnlockTime.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: Achievement: %s description updated at %s."), *Id, *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: - Progress: %f."), (float)OnlineAchievement.Progress);
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: - Title: %s."), *(Desc.Title.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: - Locked Description: %s."), *(Desc.LockedDesc.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: - Unlocked Description: %s."), *(Desc.UnlockedDesc.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: - IsHIdden: %s."), *(Desc.bIsHidden ? NCsCached::Str::True : NCsCached::Str::False));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: - Unlock Time: %s."), *(Desc.UnlockTime.ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -823,7 +823,7 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const flo
 
 		if (!CheckAndQueueQuery())
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Write: Query Ids and/or Query Descriptions Failed. Aborting Write for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Write: Query Ids and/or Query Descriptions Failed. Aborting Write for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			return;
 		}
 
@@ -831,7 +831,7 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const flo
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Write: Queueing Write for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Write: Queueing Write for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -841,7 +841,7 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const flo
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Write: Queueing Query Descriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Write: Queueing Query Descriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -878,7 +878,7 @@ void UCsManager_Achievement::Write_Internal(FCsAchievementActionInfo* ActionInfo
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Write_Internal: Achievement: %s already set to Progress: %f at %s."), *(Achievement.Name), CurrentProgress, *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Write_Internal: Achievement: %s already set to Progress: %f at %s."), *(Achievement.Name), CurrentProgress, *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 			ActionInfo->Complete();
@@ -893,7 +893,7 @@ void UCsManager_Achievement::Write_Internal(FCsAchievementActionInfo* ActionInfo
 			{
 				if (!IA->IsValid())
 				{
-					UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Write_Internal: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), *(Achievement.Name));
+					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Write_Internal: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), *(Achievement.Name));
 
 					ActionInfo->Complete();
 				}
@@ -911,7 +911,7 @@ void UCsManager_Achievement::Write_Internal(FCsAchievementActionInfo* ActionInfo
 #if !UE_BUILD_SHIPPING
 					if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 					{
-						UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Write_Internal: Starting Update Achievement: %s Progress from %f to %f at %s."), *(Achievement.Name), CurrentProgress, NewProgress, *(FDateTime::Now().ToString()));
+						UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Write_Internal: Starting Update Achievement: %s Progress from %f to %f at %s."), *(Achievement.Name), CurrentProgress, NewProgress, *(FDateTime::Now().ToString()));
 					}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -920,7 +920,7 @@ void UCsManager_Achievement::Write_Internal(FCsAchievementActionInfo* ActionInfo
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Write_Internal: Query Ids and/or Query Descriptions Failed. Aborting Write for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Write_Internal: Query Ids and/or Query Descriptions Failed. Aborting Write for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 		}
 		// Queue Write
@@ -929,7 +929,7 @@ void UCsManager_Achievement::Write_Internal(FCsAchievementActionInfo* ActionInfo
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Write_Internal: Queueing Update Achievement: %s Progress from %f to %f at %s."), *(Achievement.Name), CurrentProgress, NewProgress, *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Write_Internal: Queueing Update Achievement: %s Progress from %f to %f at %s."), *(Achievement.Name), CurrentProgress, NewProgress, *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -951,7 +951,7 @@ void UCsManager_Achievement::Write_Internal(FCsAchievementActionInfo* ActionInfo
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::WriteAchievement: Updated Achievement: %s Progress from %f to %f at %s."), *(Achievement.Name), CurrentProgress, NewProgress, *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::WriteAchievement: Updated Achievement: %s Progress from %f to %f at %s."), *(Achievement.Name), CurrentProgress, NewProgress, *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -970,7 +970,7 @@ void UCsManager_Achievement::Write_Internal(FCsAchievementActionInfo* ActionInfo
 	#if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::WriteAchievement: Completed Achievement: %s at %s."), *(Achievement.Name), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::WriteAchievement: Completed Achievement: %s at %s."), *(Achievement.Name), *(FDateTime::Now().ToString()));
 			}
 	#endif // #if !UE_BUILD_SHIPPING
 
@@ -995,7 +995,7 @@ void UCsManager_Achievement::Complete(const FECsAchievement& Achievement)
 
 		if (!CheckAndQueueQuery())
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Complete: Query Ids and/or Query Descriptions Failed. Aborting Complete for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Complete: Query Ids and/or Query Descriptions Failed. Aborting Complete for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			return;
 		}
 
@@ -1003,7 +1003,7 @@ void UCsManager_Achievement::Complete(const FECsAchievement& Achievement)
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Complete: Queueing Complete for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Complete: Queueing Complete for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1013,7 +1013,7 @@ void UCsManager_Achievement::Complete(const FECsAchievement& Achievement)
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Complete: Queueing Query Descriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Complete: Queueing Query Descriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1050,7 +1050,7 @@ void UCsManager_Achievement::Complete_Internal(FCsAchievementActionInfo* ActionI
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Complete_Internal: Achievement: %s already Complete for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Complete_Internal: Achievement: %s already Complete for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 		}
@@ -1064,7 +1064,7 @@ void UCsManager_Achievement::Complete_Internal(FCsAchievementActionInfo* ActionI
 		{
 			if (!Achievements[Achievement.Value]->IsValid())
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Complete_Internal: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), *(Achievement.Name));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Complete_Internal: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), *(Achievement.Name));
 
 				ActionInfo->Complete();
 			}
@@ -1082,7 +1082,7 @@ void UCsManager_Achievement::Complete_Internal(FCsAchievementActionInfo* ActionI
 			{
 				const FUniqueNetId& UserId = GetLocalPlayerIdRef();
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Complete_Internal: Query Ids and/or Query Descriptions Failed. Aborting Reset for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Complete_Internal: Query Ids and/or Query Descriptions Failed. Aborting Reset for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 
 			ActionInfo->Complete();
@@ -1110,7 +1110,7 @@ void UCsManager_Achievement::CompleteAll()
 
 		if (!CheckAndQueueQuery())
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::CompleteAll: Query Ids and/or Query Descriptions Failed. Aborting CompleteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CompleteAll: Query Ids and/or Query Descriptions Failed. Aborting CompleteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			return;
 		}
 
@@ -1118,7 +1118,7 @@ void UCsManager_Achievement::CompleteAll()
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::CompleteAll: Queueing CompleteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CompleteAll: Queueing CompleteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1144,7 +1144,7 @@ void UCsManager_Achievement::CompleteAll_Internal(FCsAchievementActionInfo* Acti
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::CompleteAll_Internal: Starting CompleteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CompleteAll_Internal: Starting CompleteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1173,7 +1173,7 @@ void UCsManager_Achievement::CompleteAll_Internal(FCsAchievementActionInfo* Acti
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::CompleteAll_Internal: Queueing Complete for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CompleteAll_Internal: Queueing Complete for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 		}
@@ -1200,7 +1200,7 @@ void UCsManager_Achievement::CompleteAll_Internal(FCsAchievementActionInfo* Acti
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::CompleteAll_Internal: Queueing QueryDescriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CompleteAll_Internal: Queueing QueryDescriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 	}
@@ -1226,7 +1226,7 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const flo
 
 		if (!CheckAndQueueQuery())
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Reset: Query Ids and/or Query Descriptions Failed. Aborting Reset for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Reset: Query Ids and/or Query Descriptions Failed. Aborting Reset for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			return;
 		}
 
@@ -1234,7 +1234,7 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const flo
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Reset: Queueing Reset for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Reset: Queueing Reset for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1244,7 +1244,7 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const flo
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Reset: Queueing Query Descriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Reset: Queueing Query Descriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1281,7 +1281,7 @@ void UCsManager_Achievement::Reset_Internal(FCsAchievementActionInfo* ActionInfo
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Reset_Internal: Achievement: %s already set to Progress: %f for Player: %s at %s."), *(Achievement.Name), CurrentProgress, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Reset_Internal: Achievement: %s already set to Progress: %f for Player: %s at %s."), *(Achievement.Name), CurrentProgress, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 		}
@@ -1295,7 +1295,7 @@ void UCsManager_Achievement::Reset_Internal(FCsAchievementActionInfo* ActionInfo
 		{
 			if (!Achievements[Achievement.Value]->IsValid())
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Reset: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), *(Achievement.Name));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Reset: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), *(Achievement.Name));
 				
 				ActionInfo->Complete();
 			}
@@ -1313,7 +1313,7 @@ void UCsManager_Achievement::Reset_Internal(FCsAchievementActionInfo* ActionInfo
 			{
 				const FUniqueNetId& UserId = GetLocalPlayerIdRef();
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::Reset: Query Ids and/or Query Descriptions Failed. Aborting Reset for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Reset: Query Ids and/or Query Descriptions Failed. Aborting Reset for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 
 			ActionInfo->Complete();
@@ -1331,7 +1331,7 @@ void UCsManager_Achievement::ResetAll()
 
 		if (!CheckAndQueueQuery())
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::ResetAll: Query Ids and/or Query Descriptions Failed. Aborting ResetAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::ResetAll: Query Ids and/or Query Descriptions Failed. Aborting ResetAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			return;
 		}
 
@@ -1339,7 +1339,7 @@ void UCsManager_Achievement::ResetAll()
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::ResetAll: Queueing ResetAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::ResetAll: Queueing ResetAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1365,7 +1365,7 @@ void UCsManager_Achievement::ResetAll_Internal(FCsAchievementActionInfo* ActionI
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::ResetAll_Internal: Starting ResetAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::ResetAll_Internal: Starting ResetAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1383,7 +1383,6 @@ void UCsManager_Achievement::ResetAll_Internal(FCsAchievementActionInfo* ActionI
 			ResetInfo->Reset();
 
 			const FECsAchievement& Achievement = IA->GetType();
-
 			ResetInfo->Achievement = Achievement;
 			ResetInfo->Action	   = ECsAchievementAction::Reset;
 			ResetInfo->Percent	   = 0.0f;
@@ -1394,7 +1393,7 @@ void UCsManager_Achievement::ResetAll_Internal(FCsAchievementActionInfo* ActionI
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::ResetAll_Internal: Queueing Reset for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::ResetAll_Internal: Queueing Reset for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 		}
@@ -1421,7 +1420,7 @@ void UCsManager_Achievement::ResetAll_Internal(FCsAchievementActionInfo* ActionI
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::ResetAll_Internal: Queueing QueryDescriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::ResetAll_Internal: Queueing QueryDescriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1449,7 +1448,7 @@ void UCsManager_Achievement::SetProgress(const FECsAchievement& Achievement, con
 
 		if (!CheckAndQueueQuery())
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::SetProgress: Query Ids and/or Query Descriptions Failed. Aborting Reset for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::SetProgress: Query Ids and/or Query Descriptions Failed. Aborting Reset for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			return;
 		}
 
@@ -1460,7 +1459,7 @@ void UCsManager_Achievement::SetProgress(const FECsAchievement& Achievement, con
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::SetProgress: Queueing Reset for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::SetProgress: Queueing Reset for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1470,7 +1469,7 @@ void UCsManager_Achievement::SetProgress(const FECsAchievement& Achievement, con
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::SetProgress: Queueing Write for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::SetProgress: Queueing Write for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1483,7 +1482,7 @@ void UCsManager_Achievement::SetProgress(const FECsAchievement& Achievement, con
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::SetProgress: Queueing Write for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::SetProgress: Queueing Write for Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1494,7 +1493,7 @@ void UCsManager_Achievement::SetProgress(const FECsAchievement& Achievement, con
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::SetProgress: Queueing Query Descriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::SetProgress: Queueing Query Descriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1547,26 +1546,26 @@ IOnlineAchievementsPtr UCsManager_Achievement::GetAchievementsInterface()
 					{
 						return OnlineAchievements;
 					}
-					UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::GetAchievementsInterface (%d): No Online Achievements Interface found."), ControllerId);
+					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::GetAchievementsInterface (%d): No Online Achievements Interface found."), ControllerId);
 				}
 				else
 				{
-					UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::GetAchievementsInterface (%d): No UniquePlayerId set for Local Player: %d."), ControllerId, ControllerId);
+					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::GetAchievementsInterface (%d): No UniquePlayerId set for Local Player: %d."), ControllerId, ControllerId);
 				}
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::GetAchievementsInterface (%d): No Online Identity found."), ControllerId);
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::GetAchievementsInterface (%d): No Online Identity found."), ControllerId);
 			}
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::GetAchievementsInterface (%d): No Online Subsystem found."), ControllerId);
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::GetAchievementsInterface (%d): No Online Subsystem found."), ControllerId);
 		}
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::GetAchievementsInterface: No Local Player set."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::GetAchievementsInterface: No Local Player set."));
 	}
 	return nullptr;
 }
@@ -1584,7 +1583,7 @@ void UCsManager_Achievement::OnQueryAchievementsComplete(const FUniqueNetId& Pla
 
 	if (!Success)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::OnQueryAchievementsComplete: Failed to Query Achievements for Player: %s at %s."), *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::OnQueryAchievementsComplete: Failed to Query Achievements for Player: %s at %s."), *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
 		
 		QueryState.Ids.Complete();
 		ActionInfo->Complete();
@@ -1594,7 +1593,7 @@ void UCsManager_Achievement::OnQueryAchievementsComplete(const FUniqueNetId& Pla
 #if !UE_BUILD_SHIPPING
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::OnQueryAchievementsComplete: Completed Query Achievement Ids for Player: %s at %s."), *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::OnQueryAchievementsComplete: Completed Query Achievement Ids for Player: %s at %s."), *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1618,7 +1617,7 @@ void UCsManager_Achievement::OnQueryAchievementDescriptionsComplete(const FUniqu
 
 	if (!Success)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::OnQueryAchievementDescriptionsComplete: Failed to Query Achievement Descriptions for Player: %s at %s."), *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::OnQueryAchievementDescriptionsComplete: Failed to Query Achievement Descriptions for Player: %s at %s."), *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
 		
 		QueryState.Descriptions.Complete();
 		ActionInfo->Complete();
@@ -1628,7 +1627,7 @@ void UCsManager_Achievement::OnQueryAchievementDescriptionsComplete(const FUniqu
 #if !UE_BUILD_SHIPPING
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::OnQueryAchievementDescriptionsComplete: Completed Query Achievement Descriptions for Player: %s at %s."), *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::OnQueryAchievementDescriptionsComplete: Completed Query Achievement Descriptions for Player: %s at %s."), *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1657,7 +1656,7 @@ void UCsManager_Achievement::OnAchievementsWritten(const FUniqueNetId& PlayerId,
 
 	if (!Success)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::OnAchievementsWritten: Achievement: %s not written for Player: %s at %s."), *(Achievement.Name), *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::OnAchievementsWritten: Achievement: %s not written for Player: %s at %s."), *(Achievement.Name), *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
 		
 		// Write
 		if (Action == ECsAchievementAction::Write)
@@ -1725,7 +1724,7 @@ void UCsManager_Achievement::OnAchievementsWritten(const FUniqueNetId& PlayerId,
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::OnAchievementsWritten: Updated Achievement: %s Progress from %f to %f at %s."), *(Achievement.Name), CurrentProgress, Progress, *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::OnAchievementsWritten: Updated Achievement: %s Progress from %f to %f at %s."), *(Achievement.Name), CurrentProgress, Progress, *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1754,7 +1753,7 @@ void UCsManager_Achievement::OnAchievementsWritten(const FUniqueNetId& PlayerId,
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Achievement::OnAchievementsWritten: Completed Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::OnAchievementsWritten: Completed Achievement: %s for Player: %s at %s."), *(Achievement.Name), *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 

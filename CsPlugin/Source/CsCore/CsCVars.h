@@ -338,20 +338,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerSenseSeesActorByDo
 // Managers
 #pragma region
 
-	// Save
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerSaveTransactions;
-
-#pragma endregion Save
-
-	// Achievement
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerAchievementTransactions;
-
-#pragma endregion Save
-
 #pragma endregion Managers
 
 // Level
@@ -577,11 +563,6 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogManagerSenseSeesActorByDot;
 	// Managers
 
-		// Save
-	extern CSCORE_API const Type LogManagerSaveTransactions;
-		// Achievement
-	extern CSCORE_API const Type LogManagerAchievementTransactions;
-
 	// Level
 	extern CSCORE_API const Type LogLevelPayloadPopulate;
 	// Payload
@@ -605,10 +586,7 @@ namespace NCsCVarLog
 		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerDataLoad);
 			// Projectile
 		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerProjectileTransactions);
-			// Save
-		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerSaveTransactions);
-			// Achievement
-		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerAchievementTransactions);
+
 			// Collectible
 		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerCollectibleTransactions);
 			// Level

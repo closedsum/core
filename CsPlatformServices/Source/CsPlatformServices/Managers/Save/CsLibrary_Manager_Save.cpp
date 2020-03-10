@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 
 #include "Managers/Save/CsLibrary_Manager_Save.h"
-#include "CsCore.h"
+#include "CsPlatformServices.h"
 
 // Managers
 #include "Managers/PlayerProfile/CsManager_PlayerProfile.h"
@@ -30,7 +30,7 @@ void UCsLibrary_Manager_Save::SetCurrentSave(const UObject* WorldContextObject, 
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::Enumerate: No Manager Save of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::Enumerate: No Manager Save of type UCsManager_Save was created."));
 	}
 }
 
@@ -51,7 +51,7 @@ void UCsLibrary_Manager_Save::Enumerate(const UObject* WorldContextObject)
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::Enumerate: No Manager Save of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::Enumerate: No Manager Save of type UCsManager_Save was created."));
 	}
 }
 
@@ -71,17 +71,17 @@ void UCsLibrary_Manager_Save::BindToEvent_OnEnumerate(const UObject* WorldContex
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnEnumerate: Delegate is already bound."));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnEnumerate: Delegate is already bound."));
 			}
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnEnumerate: No Delegate Bound."));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnEnumerate: No Delegate Bound."));
 		}
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnEnumerate: No Manager Save of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnEnumerate: No Manager Save of type UCsManager_Save was created."));
 	}
 }
 
@@ -102,7 +102,7 @@ void UCsLibrary_Manager_Save::Read(const UObject* WorldContextObject, const ECsP
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::Read: No Manager Save of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::Read: No Manager Save of type UCsManager_Save was created."));
 	}
 }
 
@@ -122,17 +122,17 @@ void UCsLibrary_Manager_Save::BindToEvent_OnRead(const UObject* WorldContextObje
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnRead: Delegate is already bound."));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnRead: Delegate is already bound."));
 			}
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnRead: No Delegate Bound."));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnRead: No Delegate Bound."));
 		}
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnRead: No Manager Save of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnRead: No Manager Save of type UCsManager_Save was created."));
 	}
 }
 
@@ -148,7 +148,7 @@ void UCsLibrary_Manager_Save::ReadAll(const UObject* WorldContextObject, const E
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::ReadAll: No Manager Save of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::ReadAll: No Manager Save of type UCsManager_Save was created."));
 	}
 }
 
@@ -168,17 +168,17 @@ void UCsLibrary_Manager_Save::BindToEvent_OnReadAll(const UObject* WorldContextO
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnReadAll: Delegate is already bound."));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnReadAll: Delegate is already bound."));
 			}
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnReadAll: No Delegate Bound."));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnReadAll: No Delegate Bound."));
 		}
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnReadAll: No Manager Save of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnReadAll: No Manager Save of type UCsManager_Save was created."));
 	}
 }
 
@@ -199,7 +199,7 @@ void UCsLibrary_Manager_Save::Write(const UObject* WorldContextObject, const ECs
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::Complete: No Manager Save of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::Complete: No Manager Save of type UCsManager_Save was created."));
 	}
 }
 
@@ -219,17 +219,17 @@ void UCsLibrary_Manager_Save::BindToEvent_OnWrite(const UObject* WorldContextObj
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWrite: Delegate is already bound."));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWrite: Delegate is already bound."));
 			}
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWrite: No Delegate Bound."));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWrite: No Delegate Bound."));
 		}
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWrite: No Manager Achievement of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWrite: No Manager Achievement of type UCsManager_Save was created."));
 	}
 }
 
@@ -245,7 +245,7 @@ void UCsLibrary_Manager_Save::WriteAll(const UObject* WorldContextObject, const 
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::WriteAll: No Manager Save of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::WriteAll: No Manager Save of type UCsManager_Save was created."));
 	}
 }
 
@@ -265,17 +265,17 @@ void UCsLibrary_Manager_Save::BindToEvent_OnWriteAll(const UObject* WorldContext
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWriteAll: Delegate is already bound."));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWriteAll: Delegate is already bound."));
 			}
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWriteAll: No Delegate Bound."));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWriteAll: No Delegate Bound."));
 		}
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWriteAll: No Manager Save of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWriteAll: No Manager Save of type UCsManager_Save was created."));
 	}
 }
 
@@ -296,7 +296,7 @@ void UCsLibrary_Manager_Save::Delete(const UObject* WorldContextObject, const EC
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::Delete: No Manager Save of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::Delete: No Manager Save of type UCsManager_Save was created."));
 	}
 }
 
@@ -316,17 +316,17 @@ void UCsLibrary_Manager_Save::BindToEvent_OnDelete(const UObject* WorldContextOb
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDelete: Delegate is already bound."));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDelete: Delegate is already bound."));
 			}
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDelete: No Delegate Bound."));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDelete: No Delegate Bound."));
 		}
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDelete: No Manager Achievement of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDelete: No Manager Achievement of type UCsManager_Save was created."));
 	}
 }
 
@@ -342,7 +342,7 @@ void UCsLibrary_Manager_Save::DeleteAll(const UObject* WorldContextObject, const
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::DeleteAll: No Manager Save of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::DeleteAll: No Manager Save of type UCsManager_Save was created."));
 	}
 }
 
@@ -362,17 +362,17 @@ void UCsLibrary_Manager_Save::BindToEvent_OnDeleteAll(const UObject* WorldContex
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDeleteAll: Delegate is already bound."));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDeleteAll: Delegate is already bound."));
 			}
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDeleteAll: No Delegate Bound."));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDeleteAll: No Delegate Bound."));
 		}
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDeleteAll: No Manager Save of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDeleteAll: No Manager Save of type UCsManager_Save was created."));
 	}
 }
 
@@ -388,7 +388,7 @@ void UCsLibrary_Manager_Save::DeleteAllContent(const UObject* WorldContextObject
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_Save::DeleteAllContent: No Manager Save of type UCsManager_Save was created."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::DeleteAllContent: No Manager Save of type UCsManager_Save was created."));
 	}
 }
 

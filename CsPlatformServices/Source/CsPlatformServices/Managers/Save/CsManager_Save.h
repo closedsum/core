@@ -15,11 +15,11 @@
 	// Memory Resource
 #pragma region
 
-struct CSCORE_API FCsResourceContainer_SaveActionInfo : public TCsResourceContainer<FCsSaveActionInfo>
+struct CSPLATFORMSERVICES_API FCsResourceContainer_SaveActionInfo : public TCsResourceContainer<FCsSaveActionInfo>
 {
 };
 
-struct CSCORE_API FCsManager_SaveActionInfo : public TCsManager_ResourceValueType_Fixed<FCsSaveActionInfo, FCsResourceContainer_SaveActionInfo, 64>
+struct CSPLATFORMSERVICES_API FCsManager_SaveActionInfo : public TCsManager_ResourceValueType_Fixed<FCsSaveActionInfo, FCsResourceContainer_SaveActionInfo, 64>
 {
 };
 
@@ -49,7 +49,7 @@ class ULocalPlayer;
 class ICsGetManagerSave;
 
 UCLASS(transient)
-class CSCORE_API UCsManager_Save : public UObject
+class CSPLATFORMSERVICES_API UCsManager_Save : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

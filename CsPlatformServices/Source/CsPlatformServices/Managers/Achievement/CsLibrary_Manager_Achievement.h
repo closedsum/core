@@ -18,7 +18,7 @@ DECLARE_DYNAMIC_DELEGATE_ThreeParams(FCsLibraryManagerAchievement_OnProgress, bo
 
 
 UCLASS()
-class CSCORE_API UCsLibrary_Manager_Achievement : public UObject
+class CSPLATFORMSERVICES_API UCsLibrary_Manager_Achievement : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

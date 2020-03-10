@@ -8,7 +8,7 @@ class UCsPlayerProfile;
 class ICsGetManagerPlayerProfile;
 
 UCLASS(transient)
-class CSCORE_API UCsManager_PlayerProfile : public UObject
+class CSPLATFORMSERVICES_API UCsManager_PlayerProfile : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

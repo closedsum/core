@@ -19,11 +19,11 @@ class ICsGetManagerAchievement;
 	// Memory Resource
 #pragma region
 
-struct CSCORE_API FCsResourceContainer_AchievementActionInfo : public TCsResourceContainer<FCsAchievementActionInfo>
+struct CSPLATFORMSERVICES_API FCsResourceContainer_AchievementActionInfo : public TCsResourceContainer<FCsAchievementActionInfo>
 {
 };
 
-struct CSCORE_API FCsManager_AchievementActionInfo : public TCsManager_ResourceValueType_Fixed<FCsAchievementActionInfo, FCsResourceContainer_AchievementActionInfo, 256>
+struct CSPLATFORMSERVICES_API FCsManager_AchievementActionInfo : public TCsManager_ResourceValueType_Fixed<FCsAchievementActionInfo, FCsResourceContainer_AchievementActionInfo, 256>
 {
 };
 
@@ -50,7 +50,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerAchievement_OnResetAll);
 #pragma endregion Delegates
 
 UCLASS(transient)
-class CSCORE_API UCsManager_Achievement : public UObject
+class CSPLATFORMSERVICES_API UCsManager_Achievement : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

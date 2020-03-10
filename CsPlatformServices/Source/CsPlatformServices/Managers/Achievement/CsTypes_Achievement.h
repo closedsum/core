@@ -8,7 +8,7 @@
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsAchievement : public FECsEnum_uint8
+struct CSPLATFORMSERVICES_API FECsAchievement : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -17,7 +17,7 @@ struct CSCORE_API FECsAchievement : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsAchievement)
 
-struct CSCORE_API EMCsAchievement : public TCsEnumStructMap<FECsAchievement, uint8>
+struct CSPLATFORMSERVICES_API EMCsAchievement : public TCsEnumStructMap<FECsAchievement, uint8>
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsAchievement, FECsAchievement, uint8)
 };
@@ -41,7 +41,7 @@ enum class ECsAchievementState : uint8
 	ECsAchievementState_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsAchievementState final : public TCsEnumMap<ECsAchievementState>
+struct CSPLATFORMSERVICES_API EMCsAchievementState final : public TCsEnumMap<ECsAchievementState>
 {
 	CS_ENUM_MAP_BODY(EMCsAchievementState, ECsAchievementState)
 };
@@ -52,13 +52,13 @@ namespace NCsAchievementState
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type None;
-		extern CSCORE_API const Type InProgress;
-		extern CSCORE_API const Type Completed;
-		extern CSCORE_API const Type ECsAchievementState_MAX;
+		extern CSPLATFORMSERVICES_API const Type None;
+		extern CSPLATFORMSERVICES_API const Type InProgress;
+		extern CSPLATFORMSERVICES_API const Type Completed;
+		extern CSPLATFORMSERVICES_API const Type ECsAchievementState_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSPLATFORMSERVICES_API const uint8 MAX;
 }
 
 #pragma endregion AchievementState
@@ -82,7 +82,7 @@ enum class ECsAchievementProgress : uint8
 	ECsAchievementProgress_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsAchievementProgress final : public TCsEnumMap<ECsAchievementProgress>
+struct CSPLATFORMSERVICES_API EMCsAchievementProgress final : public TCsEnumMap<ECsAchievementProgress>
 {
 	CS_ENUM_MAP_BODY(EMCsAchievementProgress, ECsAchievementProgress)
 };
@@ -93,15 +93,15 @@ namespace NCsAchievementProgress
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type Normalized;
-		extern CSCORE_API const Type Standard;
-		extern CSCORE_API const Type Binary;
-		extern CSCORE_API const Type Count;
-		extern CSCORE_API const Type Bitfield;
-		extern CSCORE_API const Type ECsAchievementProgress_MAX;
+		extern CSPLATFORMSERVICES_API const Type Normalized;
+		extern CSPLATFORMSERVICES_API const Type Standard;
+		extern CSPLATFORMSERVICES_API const Type Binary;
+		extern CSPLATFORMSERVICES_API const Type Count;
+		extern CSPLATFORMSERVICES_API const Type Bitfield;
+		extern CSPLATFORMSERVICES_API const Type ECsAchievementProgress_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSPLATFORMSERVICES_API const uint8 MAX;
 }
 
 #pragma endregion AchievementProgress
@@ -109,7 +109,7 @@ namespace NCsAchievementProgress
 // ICsAchievement
 #pragma region
 
-struct CSCORE_API ICsAchievement
+struct CSPLATFORMSERVICES_API ICsAchievement
 {
 public:
 
@@ -272,7 +272,7 @@ public:
 // FCsAchievement
 #pragma region
 
-struct CSCORE_API FCsAchievement : public ICsAchievement
+struct CSPLATFORMSERVICES_API FCsAchievement : public ICsAchievement
 {
 public:
 
@@ -541,7 +541,7 @@ enum class ECsAchievementAction : uint8
 	ECsAchievementAction_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsAchievementAction final : public TCsEnumMap<ECsAchievementAction>
+struct CSPLATFORMSERVICES_API EMCsAchievementAction final : public TCsEnumMap<ECsAchievementAction>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsAchievementAction, ECsAchievementAction)
 };
@@ -552,18 +552,18 @@ namespace NCsAchievementAction
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type QueryIds;
-		extern CSCORE_API const Type QueryDescriptions;
-		extern CSCORE_API const Type UpdateDescriptions;
-		extern CSCORE_API const Type Write;
-		extern CSCORE_API const Type Complete;
-		extern CSCORE_API const Type CompleteAll;
-		extern CSCORE_API const Type Reset;
-		extern CSCORE_API const Type ResetAll;
-		extern CSCORE_API const Type ECsAchievementAction_MAX;
+		extern CSPLATFORMSERVICES_API const Type QueryIds;
+		extern CSPLATFORMSERVICES_API const Type QueryDescriptions;
+		extern CSPLATFORMSERVICES_API const Type UpdateDescriptions;
+		extern CSPLATFORMSERVICES_API const Type Write;
+		extern CSPLATFORMSERVICES_API const Type Complete;
+		extern CSPLATFORMSERVICES_API const Type CompleteAll;
+		extern CSPLATFORMSERVICES_API const Type Reset;
+		extern CSPLATFORMSERVICES_API const Type ResetAll;
+		extern CSPLATFORMSERVICES_API const Type ECsAchievementAction_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSPLATFORMSERVICES_API const uint8 MAX;
 }
 
 #pragma endregion AchievementAction
@@ -580,7 +580,7 @@ enum class ECsAchievementActionState : uint8
 	ECsAchievementActionState_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsAchievementActionState final : public TCsEnumMap<ECsAchievementActionState>
+struct CSPLATFORMSERVICES_API EMCsAchievementActionState final : public TCsEnumMap<ECsAchievementActionState>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsAchievementActionState, ECsAchievementActionState)
 };
@@ -591,13 +591,13 @@ namespace NCsAchievementActionState
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type None;
-		extern CSCORE_API const Type InProgress;
-		extern CSCORE_API const Type Complete;
-		extern CSCORE_API const Type ECsAchievementActionState_MAX;
+		extern CSPLATFORMSERVICES_API const Type None;
+		extern CSPLATFORMSERVICES_API const Type InProgress;
+		extern CSPLATFORMSERVICES_API const Type Complete;
+		extern CSPLATFORMSERVICES_API const Type ECsAchievementActionState_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSPLATFORMSERVICES_API const uint8 MAX;
 }
 
 #pragma endregion AchievementActionState
@@ -605,7 +605,7 @@ namespace NCsAchievementActionState
 // FCsAchievementActionInfo
 #pragma region
 
-struct CSCORE_API FCsAchievementActionInfo
+struct CSPLATFORMSERVICES_API FCsAchievementActionInfo
 {
 public:
 
@@ -685,7 +685,10 @@ public:
 
 #pragma endregion FCsAchievementActionInfo
 
-struct CSCORE_API FCsAchievementWriteState
+// FCsAchievementWriteState
+#pragma region
+
+struct CSPLATFORMSERVICES_API FCsAchievementWriteState
 {
 private: 
 
@@ -737,7 +740,12 @@ public:
 	}
 };
 
-struct CSCORE_API FCsAchievementToWrite
+#pragma endregion FCsAchievementWriteState
+
+// FCsAchievementToWrite
+#pragma region
+
+struct CSPLATFORMSERVICES_API FCsAchievementToWrite
 {
 public:
 
@@ -752,72 +760,7 @@ public:
 	}
 };
 
-struct CSCORE_API FCsAchievementResetState
-{
-private:
-
-	bool bLocked;
-	bool bProcessing;
-
-public:
-
-	bool bSuccess;
-
-	FCsAchievementResetState() :
-		bLocked(false),
-		bProcessing(false),
-		bSuccess(false)
-	{
-	}
-
-	bool IsLocked() const
-	{
-		return bLocked;
-	}
-
-	void Unlock()
-	{
-		bLocked = false;
-	}
-
-	bool CanUnlock() const
-	{
-		return bLocked && !bProcessing;
-	}
-
-	void StartProcessing()
-	{
-		bLocked = true;
-		bProcessing = true;
-	}
-
-	void StopProcessing()
-	{
-		bProcessing = false;
-	}
-
-	void Reset()
-	{
-		bLocked = false;
-		bProcessing = false;
-		bSuccess = false;
-	}
-};
-
-struct CSCORE_API FCsAchievementToReset
-{
-public:
-
-	FECsAchievement Achievement;
-
-	float Percent;
-
-	FCsAchievementToReset() :
-		Achievement(),
-		Percent(0.0f)
-	{
-	}
-};
+#pragma endregion FCsAchievementToWrite
 
 // AchievementQueryOrder
 #pragma region
@@ -830,7 +773,7 @@ enum class ECsAchievementQueryOrder : uint8
 	ECsAchievementQueryOrder_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsAchievementQueryOrder final : public TCsEnumMap<ECsAchievementQueryOrder>
+struct CSPLATFORMSERVICES_API EMCsAchievementQueryOrder final : public TCsEnumMap<ECsAchievementQueryOrder>
 {
 	CS_ENUM_MAP_BODY(EMCsAchievementQueryOrder, ECsAchievementQueryOrder)
 };
@@ -841,12 +784,12 @@ namespace NCsAchievementQueryOrder
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type IdsFirst;
-		extern CSCORE_API const Type DescriptionsFirst;
-		extern CSCORE_API const Type ECsAchievementQueryOrder_MAX;
+		extern CSPLATFORMSERVICES_API const Type IdsFirst;
+		extern CSPLATFORMSERVICES_API const Type DescriptionsFirst;
+		extern CSPLATFORMSERVICES_API const Type ECsAchievementQueryOrder_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSPLATFORMSERVICES_API const uint8 MAX;
 }
 
 #pragma endregion AchievementQueryOrder
@@ -854,7 +797,7 @@ namespace NCsAchievementQueryOrder
 // FCsAchievementQueryIdsState
 #pragma region
 
-struct CSCORE_API FCsAchievementQueryIdsState
+struct CSPLATFORMSERVICES_API FCsAchievementQueryIdsState
 {
 private:
 
@@ -930,7 +873,7 @@ public:
 // FCsAchievementQueryDescriptionsState
 #pragma region
 
-struct CSCORE_API FCsAchievementQueryDescriptionsState
+struct CSPLATFORMSERVICES_API FCsAchievementQueryDescriptionsState
 {
 private:
 
@@ -1006,7 +949,7 @@ public:
 // FCsAchievementQueryState
 #pragma region
 
-struct CSCORE_API FCsAchievementQueryState
+struct CSPLATFORMSERVICES_API FCsAchievementQueryState
 {
 public:
 

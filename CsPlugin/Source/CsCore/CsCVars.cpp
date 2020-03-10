@@ -741,30 +741,6 @@ TAutoConsoleVariable<int32> CsCVarLogManagerSenseSeesActorByDot(
 // Managers
 #pragma region
 
-	// Save
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogManagerSaveTransactions(
-	TEXT("log.manager.save.transactions"),
-	0,
-	TEXT("Log Manager Save Transactions."),
-	ECVF_SetByConsole | ECVF_SetByCode
-);
-
-#pragma endregion Save
-
-	// Achievement
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogManagerAchievementTransactions(
-	TEXT("log.manager.achievement.transactions"),
-	0,
-	TEXT("Log Manager Achievement Transactions."),
-	ECVF_SetByConsole | ECVF_SetByCode
-);
-
-#pragma endregion Achievement
-
 #pragma endregion Managers
 
 // Level
@@ -875,11 +851,6 @@ namespace NCsCVarLog
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerSenseSeesActorByDot);
 	// Managers
 
-		// Save
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerSaveTransactions);
-		// Achievement
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerAchievementTransactions);
-
 	// Level
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogLevelPayloadPopulate);
 	// Payload
@@ -897,10 +868,7 @@ namespace NCsCVarLog
 		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerDataLoad, CsCVarLogManagerDataLoad);
 			// Projectile
 		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerProjectileTransactions, CsCVarLogManagerProjectileTransactions);
-			// Save
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerSaveTransactions, CsCVarLogManagerSaveTransactions);
-			// Achievement
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerAchievementTransactions, CsCVarLogManagerAchievementTransactions);
+
 			// Collectible
 		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerCollectibleTransactions, CsCVarLogManagerCollectibleTransactions);
 			// Level

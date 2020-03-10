@@ -25,7 +25,7 @@ DECLARE_DYNAMIC_DELEGATE(FCsLibraryManagerSave_OnDeleteAll);
 
 
 UCLASS()
-class CSCORE_API UCsLibrary_Manager_Save : public UObject
+class CSPLATFORMSERVICES_API UCsLibrary_Manager_Save : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

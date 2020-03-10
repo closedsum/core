@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/PlayerProfile/CsManager_PlayerProfile.h"
-#include "CsCore.h"
+#include "CsPlatformServices.h"
 
 #include "Managers/PlayerProfile/CsPlayerProfile.h"
 
@@ -167,7 +167,7 @@ UCsManager_PlayerProfile::UCsManager_PlayerProfile(const FObjectInitializer& Obj
 				return Manager;
 		}
 
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_PlayerProfile::GetFromWorldContextObject: Failed to Manager Player Profile of type UCsManager_PlayerProfile from GameInstance, GameState, or PlayerController."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_PlayerProfile::GetFromWorldContextObject: Failed to Manager Player Profile of type UCsManager_PlayerProfile from GameInstance, GameState, or PlayerController."));
 
 		return nullptr;
 	}

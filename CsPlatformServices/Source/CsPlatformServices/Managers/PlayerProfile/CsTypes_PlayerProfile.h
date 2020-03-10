@@ -21,7 +21,7 @@ enum class ECsPlayerProfile : uint8
 	ECsPlayerProfile_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsPlayerProfile final : public TCsEnumMap<ECsPlayerProfile>
+struct CSPLATFORMSERVICES_API EMCsPlayerProfile final : public TCsEnumMap<ECsPlayerProfile>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsPlayerProfile, ECsPlayerProfile)
 };
@@ -32,20 +32,20 @@ namespace NCsPlayerProfile
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type Profile1;
-		extern CSCORE_API const Type Profile2;
-		extern CSCORE_API const Type Profile3;
-		extern CSCORE_API const Type Profile4;
-		extern CSCORE_API const Type Profile5;
-		extern CSCORE_API const Type Profile6;
-		extern CSCORE_API const Type Profile7;
-		extern CSCORE_API const Type Profile8;
-		extern CSCORE_API const Type ECsPlayerProfile_MAX;
+		extern CSPLATFORMSERVICES_API const Type Profile1;
+		extern CSPLATFORMSERVICES_API const Type Profile2;
+		extern CSPLATFORMSERVICES_API const Type Profile3;
+		extern CSPLATFORMSERVICES_API const Type Profile4;
+		extern CSPLATFORMSERVICES_API const Type Profile5;
+		extern CSPLATFORMSERVICES_API const Type Profile6;
+		extern CSPLATFORMSERVICES_API const Type Profile7;
+		extern CSPLATFORMSERVICES_API const Type Profile8;
+		extern CSPLATFORMSERVICES_API const Type ECsPlayerProfile_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSPLATFORMSERVICES_API const uint8 MAX;
 
-	extern CSCORE_API const Type AllProfiles;
+	extern CSPLATFORMSERVICES_API const Type AllProfiles;
 }
 
 #pragma endregion PlayerProfile

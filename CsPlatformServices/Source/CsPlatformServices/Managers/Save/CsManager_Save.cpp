@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Save/CsManager_Save.h"
-#include "CsCore.h"
-#include "CsCVars.h"
+#include "CsPlatformServices.h"
+#include "Managers/Save/CsCVars_Manager_Save.h"
 
 // Player
 #include "Engine/LocalPlayer.h"
@@ -242,7 +242,7 @@ UCsManager_Save::UCsManager_Save(const FObjectInitializer& ObjectInitializer)
 				return Manager;
 		}
 
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::GetFromWorldContextObject: Failed to Manager Save of type UCsManager_Save from GameInstance, GameState, or PlayerController."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::GetFromWorldContextObject: Failed to Manager Save of type UCsManager_Save from GameInstance, GameState, or PlayerController."));
 
 		return nullptr;
 	}
@@ -398,7 +398,7 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 				{
 					const FString& ProfileName = ProfileNames[(uint8)Profile];
 
-					UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Update: Completed ReadAll for Profile: %s at %s."), *ProfileName, *(FDateTime::Now().ToString()));
+					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Update: Completed ReadAll for Profile: %s at %s."), *ProfileName, *(FDateTime::Now().ToString()));
 				}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -672,7 +672,7 @@ void UCsManager_Save::Enumerate()
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Enumerate: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Enumerate: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -701,7 +701,7 @@ void UCsManager_Save::Enumerate_Internal()
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Enumerate_Internal: Starting Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Enumerate_Internal: Starting Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -738,7 +738,7 @@ void UCsManager_Save::Read(const ECsPlayerProfile& Profile, const int32& Index)
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Read: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Read: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -752,7 +752,7 @@ void UCsManager_Save::Read(const ECsPlayerProfile& Profile, const int32& Index)
 			const FString& FileNameWithExt = SaveFileInfos[(uint8)Profile][Index].FileNameWithExt;
 			const FString& ProfileName	   = ProfileNames[(uint8)Profile];
 
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Read: Queueing Read for File: %s for Profile: %s for Player: %s at %s."), *FileNameWithExt, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Read: Queueing Read for File: %s for Profile: %s for Player: %s at %s."), *FileNameWithExt, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -780,7 +780,7 @@ void UCsManager_Save::Read_Internal(FCsSaveActionInfo* ActionInfo)
 			{
 				const FString& ProfileName = ProfileNames[(uint8)Profile];
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Read_Internal: Starting Read for File: %s for Profile: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Read_Internal: Starting Read for File: %s for Profile: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -791,12 +791,12 @@ void UCsManager_Save::Read_Internal(FCsSaveActionInfo* ActionInfo)
 			// Enumeration failed
 			if (!EnumerateUserFilesState.bSuccess)
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Read_Internal: File: %s has NOT been enumerated properly for Player: %s."), *(FileInfo.FileNameWithExt), *(UserId.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Read_Internal: File: %s has NOT been enumerated properly for Player: %s."), *(FileInfo.FileNameWithExt), *(UserId.ToString()));
 			}
 			// Not Valid
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Read_Internal: File: %s is NOT Valid (does NOT exist in the Cloud) for Player: %s."), *(FileInfo.FileNameWithExt), *(UserId.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Read_Internal: File: %s is NOT Valid (does NOT exist in the Cloud) for Player: %s."), *(FileInfo.FileNameWithExt), *(UserId.ToString()));
 			}
 			ActionInfo->Complete();
 		}
@@ -822,7 +822,7 @@ void UCsManager_Save::ReadAll(const ECsPlayerProfile& Profile)
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::ReadAll: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::ReadAll: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -836,13 +836,13 @@ void UCsManager_Save::ReadAll(const ECsPlayerProfile& Profile)
 			// All Profiles
 			if (Profile == NCsPlayerProfile::AllProfiles)
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::ReadAll: Queueing ReadAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::ReadAll: Queueing ReadAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 			else
 			{
 				const FString& ProfileName = ProfileNames[(uint8)Profile];
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::ReadAll: Queueing ReadAll for Profile: %s for Player: %s at %s."), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::ReadAll: Queueing ReadAll for Profile: %s for Player: %s at %s."), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 		}
 #endif // #if !UE_BUILD_SHIPPING
@@ -876,7 +876,7 @@ void UCsManager_Save::ReadAll_Internal(FCsSaveActionInfo* ActionInfo)
 			{
 				const FString& ProfileName = ProfileNames[(uint8)Profile];
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::ReadAll_Internal: Starting ReadAll for Profile: %s for Player: %s at %s."), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::ReadAll_Internal: Starting ReadAll for Profile: %s for Player: %s at %s."), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 		}
 #endif // #if !UE_BUILD_SHIPPING
@@ -925,7 +925,7 @@ void UCsManager_Save::ReadAll_Internal(FCsSaveActionInfo* ActionInfo)
 						{
 							const FString& ProfileName = ProfileNames[(uint8)PlayerProfile];
 
-							UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::ReadAll_Internal: Queueing Read for File: %s for Profile: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+							UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::ReadAll_Internal: Queueing Read for File: %s for Profile: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 						}
 		#endif // #if !UE_BUILD_SHIPPING
 					}
@@ -945,7 +945,7 @@ void UCsManager_Save::ReadAll_Internal(FCsSaveActionInfo* ActionInfo)
 		// Abort / Complete
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::ReadAll_Internal: Files have NOT been enumerated properly for Player: %s."), *(UserId.ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::ReadAll_Internal: Files have NOT been enumerated properly for Player: %s."), *(UserId.ToString()));
 
 			ReadAllActionInfo->Complete();
 		}
@@ -981,7 +981,7 @@ void UCsManager_Save::Write(const ECsPlayerProfile& Profile, const int32& Index)
 			const FString& FileNameWithExt = SaveFileInfos[(uint8)Profile][Index].FileNameWithExt;
 			const FString& ProfileName	   = ProfileNames[(uint8)Profile];
 
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Write: Queueing Write for File: %s for Profile: %s for Player: %s at %s."), *FileNameWithExt, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Write: Queueing Write for File: %s for Profile: %s for Player: %s at %s."), *FileNameWithExt, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1018,13 +1018,13 @@ void UCsManager_Save::Write_Internal(FCsSaveActionInfo* ActionInfo)
 		{
 			const FString& ProfileName = ProfileNames[(uint8)Profile];
 
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Write_Internal: Starting Write for File: %s for Profile: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Write_Internal: Starting Write for File: %s for Profile: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Write_Internal: Contents:"));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Write_Internal: Contents:"));
 
-			UE_LOG(LogCs, Warning, TEXT("%s"), *(FileInfo.WriteContents));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s"), *(FileInfo.WriteContents));
 
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Write_Internal: Queueing Enumerate after Write for Profile: %s for Player: %s at %s."), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Write_Internal: Queueing Enumerate after Write for Profile: %s for Player: %s at %s."), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1060,13 +1060,13 @@ void UCsManager_Save::WriteAll(const ECsPlayerProfile& Profile)
 			// All Profiles
 			if (Profile == NCsPlayerProfile::AllProfiles)
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::WriteAll: Queueing WriteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::WriteAll: Queueing WriteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 			else
 			{
 				const FString& ProfileName = ProfileNames[(uint8)Profile];
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::WriteAll: Queueing WriteAll for Profile: %s for Player: %s at %s."), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::WriteAll: Queueing WriteAll for Profile: %s for Player: %s at %s."), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 		}
 #endif // #if !UE_BUILD_SHIPPING
@@ -1098,13 +1098,13 @@ void UCsManager_Save::WriteAll_Internal(FCsSaveActionInfo* ActionInfo)
 			// All Profiles
 			if (Profile == NCsPlayerProfile::AllProfiles)
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::WriteAll_Internal: Starting WriteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::WriteAll_Internal: Starting WriteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 			else
 			{
 				const FString& ProfileName = ProfileNames[(uint8)Profile];
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::WriteAll_Internal: Starting WriteAll for Profile: %s for Player: %s at %s."), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::WriteAll_Internal: Starting WriteAll for Profile: %s for Player: %s at %s."), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 		}
 #endif // #if !UE_BUILD_SHIPPING
@@ -1143,7 +1143,7 @@ void UCsManager_Save::WriteAll_Internal(FCsSaveActionInfo* ActionInfo)
 				{
 					const FString& ProfileName = ProfileNames[(uint8)PlayerProfile];
 
-					UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::WriteAll_Internal: Queueing Write for File: %s for Profile: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::WriteAll_Internal: Queueing Write for File: %s for Profile: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 				}
 	#endif // #if !UE_BUILD_SHIPPING
 			}
@@ -1173,7 +1173,7 @@ void UCsManager_Save::WriteAll_Internal(FCsSaveActionInfo* ActionInfo)
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::WriteAll_Internal: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::WriteAll_Internal: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 	}
@@ -1209,7 +1209,7 @@ void UCsManager_Save::Delete(const ECsPlayerProfile& Profile, const int32& Index
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Delete: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Delete: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1225,14 +1225,14 @@ void UCsManager_Save::Delete(const ECsPlayerProfile& Profile, const int32& Index
 			{
 				const FString& FileNameWithExt = SaveFileInfosAll[Index].FileNameWithExt;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Delete: Queueing Delete for File: %s for Player: %s at %s."), *FileNameWithExt, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Delete: Queueing Delete for File: %s for Player: %s at %s."), *FileNameWithExt, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 			else
 			{
 				const FString& FileNameWithExt = SaveFileInfos[(uint8)Profile][Index].FileNameWithExt;
 				const FString& ProfileName	   = ProfileNames[(uint8)Profile];
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Delete: Queueing Delete for File: %s for Profile: %s for Player: %s at %s."), *FileNameWithExt, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Delete: Queueing Delete for File: %s for Profile: %s for Player: %s at %s."), *FileNameWithExt, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 		}
 #endif // #if !UE_BUILD_SHIPPING
@@ -1295,11 +1295,11 @@ void UCsManager_Save::Delete_Internal(FCsSaveActionInfo* ActionInfo)
 #if !UE_BUILD_SHIPPING
 				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 				{
-					UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Delete_Internal: Starting Delete for File: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Delete_Internal: Starting Delete for File: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 
-					UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Delete_Internal: Queueing Enumerate after Delete for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Delete_Internal: Queueing Enumerate after Delete for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 
-					UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Delete_Internal: Queueing ReadAll after Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Delete_Internal: Queueing ReadAll after Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 				}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1307,7 +1307,7 @@ void UCsManager_Save::Delete_Internal(FCsSaveActionInfo* ActionInfo)
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Delete_Internal: File: %s is NOT Valid (does NOT exist in the Cloud) for Player: %s."), *(FileInfo.FileNameWithExt), *(UserId.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Delete_Internal: File: %s is NOT Valid (does NOT exist in the Cloud) for Player: %s."), *(FileInfo.FileNameWithExt), *(UserId.ToString()));
 
 				ActionInfo->Complete();
 			}
@@ -1315,7 +1315,7 @@ void UCsManager_Save::Delete_Internal(FCsSaveActionInfo* ActionInfo)
 		// Abort / Complete
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Delete_Internal: Files have NOT been enumerated properly for Player: %s."), *(UserId.ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Delete_Internal: Files have NOT been enumerated properly for Player: %s."), *(UserId.ToString()));
 
 			ActionInfo->Complete();
 
@@ -1334,11 +1334,11 @@ void UCsManager_Save::Delete_Internal(FCsSaveActionInfo* ActionInfo)
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Delete_Internal: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Delete_Internal: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Delete_Internal: Queueing ReadAll after Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Delete_Internal: Queueing ReadAll after Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::Delete_Internal: Queueing Delete after Enumerate for File: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Delete_Internal: Queueing Delete after Enumerate for File: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 
 			}
 #endif // #if !UE_BUILD_SHIPPING
@@ -1367,7 +1367,7 @@ void UCsManager_Save::DeleteAll(const ECsPlayerProfile& Profile)
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::DeleteAll: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAll: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1381,13 +1381,13 @@ void UCsManager_Save::DeleteAll(const ECsPlayerProfile& Profile)
 			// All Profiles
 			if (Profile == NCsPlayerProfile::AllProfiles)
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::DeleteAll: Queueing DeleteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAll: Queueing DeleteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 			else
 			{
 				const FString& ProfileName = ProfileNames[(uint8)Profile];
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::DeleteAll: Queueing DeleteAll for Profile: %s for Player: %s at %s."), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAll: Queueing DeleteAll for Profile: %s for Player: %s at %s."), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 		}
 #endif // #if !UE_BUILD_SHIPPING
@@ -1416,7 +1416,7 @@ void UCsManager_Save::DeleteAllContent()
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::DeleteAllContent: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAllContent: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1427,7 +1427,7 @@ void UCsManager_Save::DeleteAllContent()
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::DeleteAllContent: Queueing DeleteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAllContent: Queueing DeleteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1465,13 +1465,13 @@ void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
 			// All Profiles
 			if (ActionInfo->IsAllProfiles())
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::DeleteAll_Internal: Starting DeleteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAll_Internal: Starting DeleteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 			else
 			{
 				const FString& ProfileName = ProfileNames[(uint8)Profile];
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::DeleteAll_Internal: Starting DeleteAll for ProfileName: %s for Player: %s at %s."), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAll_Internal: Starting DeleteAll for ProfileName: %s for Player: %s at %s."), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 		}
 #endif // #if !UE_BUILD_SHIPPING
@@ -1507,7 +1507,7 @@ void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
 	#if !UE_BUILD_SHIPPING
 					if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 					{
-						UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::DeleteAll_Internal: Queueing Delete for File: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+						UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAll_Internal: Queueing Delete for File: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 					}
 	#endif // #if !UE_BUILD_SHIPPING
 				}
@@ -1544,7 +1544,7 @@ void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
 					{
 						const FString& ProfileName = ProfileNames[(uint8)Profile];
 
-						UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::DeleteAll_Internal: Queueing Delete for File: %s for Profile: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+						UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAll_Internal: Queueing Delete for File: %s for Profile: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 					}
 #endif // #if !UE_BUILD_SHIPPING
 				}
@@ -1594,26 +1594,26 @@ IOnlineUserCloudPtr UCsManager_Save::GetUserCloudInterface()
 					{
 						return OnlineUserCloud;
 					}
-					UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::GetUserCloudInterface (%d): No Online User Cloud Interface found."), ControllerId);
+					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::GetUserCloudInterface (%d): No Online User Cloud Interface found."), ControllerId);
 				}
 				else
 				{
-					UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::GetUserCloudInterface (%d): No UniquePlayerId set for Local Player: %d."), ControllerId, ControllerId);
+					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::GetUserCloudInterface (%d): No UniquePlayerId set for Local Player: %d."), ControllerId, ControllerId);
 				}
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::GetUserCloudInterface (%d): No Online Identity found."), ControllerId);
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::GetUserCloudInterface (%d): No Online Identity found."), ControllerId);
 			}
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::GetUserCloudInterface (%d): No Online Subsystem found."), ControllerId);
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::GetUserCloudInterface (%d): No Online Subsystem found."), ControllerId);
 		}
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::GetUserCloudInterface: No Local Player set."));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::GetUserCloudInterface: No Local Player set."));
 	}
 	return nullptr;
 }
@@ -1657,9 +1657,9 @@ void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUn
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: Finished Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: Finished Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: Enumerating %d Files."), Count);
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: Enumerating %d Files."), Count);
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1718,13 +1718,13 @@ void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUn
 						{
 							const FString& ProfileName = ProfileNames[(uint8)Profile];
 
-							UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: %d. Profile: %s. Save: %s. %s."), Index, *ProfileName, *SaveAsString, *(Header.DLName));
+							UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: %d. Profile: %s. Save: %s. %s."), Index, *ProfileName, *SaveAsString, *(Header.DLName));
 						}
 	#endif // #if !UE_BUILD_SHIPPING
 					}
 					else
 					{
-						UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: Save Type: %s is NOT Valid for %s."), *SaveAsString, *(Header.DLName));
+						UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: Save Type: %s is NOT Valid for %s."), *SaveAsString, *(Header.DLName));
 					}
 					continue;
 				}
@@ -1740,7 +1740,7 @@ void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUn
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: %d. %s."), I, *(Header.DLName));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: %d. %s."), I, *(Header.DLName));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 		}
@@ -1749,7 +1749,7 @@ void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUn
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: Failed for Player: %s"), *(UserId.ToString()));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: Failed for Player: %s"), *(UserId.ToString()));
 
 		ActionInfo->Complete();
 	}
@@ -1800,17 +1800,17 @@ void UCsManager_Save::OnReadUserFileComplete(bool WasSuccessful, const FUniqueNe
 
 		if (Contents.IsEmpty())
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnReadUserFileComplete: Failed to read File: %s for Profile: %s for Player: %s at %s."), *FileName, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnReadUserFileComplete: Failed to read File: %s for Profile: %s for Player: %s at %s."), *FileName, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnReadUserFileComplete: Finished Read for File: %s for Profile: %s for Player: %s at %s."), *FileName, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnReadUserFileComplete: Finished Read for File: %s for Profile: %s for Player: %s at %s."), *FileName, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnReadUserFileComplete: Contents:"));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnReadUserFileComplete: Contents:"));
 
-			UE_LOG(LogCs, Warning, TEXT("%s"), *(FileInfo.ReadContents));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s"), *(FileInfo.ReadContents));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1818,7 +1818,7 @@ void UCsManager_Save::OnReadUserFileComplete(bool WasSuccessful, const FUniqueNe
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnReadUserFileComplete: Failed to read File: %s for Profile: %s for Player: %s at %s."), *FileName, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnReadUserFileComplete: Failed to read File: %s for Profile: %s for Player: %s at %s."), *FileName, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		
 		ActionInfo->Complete();
 	}
@@ -1860,7 +1860,7 @@ void UCsManager_Save::OnWriteUserFileComplete(bool WasSuccessful, const FUniqueN
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnWriteUserFileComplete: Finished Write for File: %s for Profile: %s for Player: %s at %s."), *FileName, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnWriteUserFileComplete: Finished Write for File: %s for Profile: %s for Player: %s at %s."), *FileName, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -1868,7 +1868,7 @@ void UCsManager_Save::OnWriteUserFileComplete(bool WasSuccessful, const FUniqueN
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnWriteUserFileComplete: Failed to write File: %s for Profile: %s for Player: %s"), *FileName, *ProfileName, *(UserId.ToString()));
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnWriteUserFileComplete: Failed to write File: %s for Profile: %s for Player: %s"), *FileName, *ProfileName, *(UserId.ToString()));
 
 		ActionInfo->Complete();
 	}
@@ -1914,13 +1914,13 @@ void UCsManager_Save::OnDeleteUserFileComplete(bool WasSuccessful, const FUnique
 		{
 			if (ActionInfo->IsAllProfiles())
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnDeleteUserFileComplete: Finished Delete for File: %s for Player: %s at %s."), *FileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnDeleteUserFileComplete: Finished Delete for File: %s for Player: %s at %s."), *FileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 			else
 			{
 				const FString& ProfileName = ProfileNames[(uint8)Profile];
 
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnDeleteUserFileComplete: Finished Delete for File: %s for Profile: %s for Player: %s at %s."), *FileName, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnDeleteUserFileComplete: Finished Delete for File: %s for Profile: %s for Player: %s at %s."), *FileName, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
 		}
 #endif // #if !UE_BUILD_SHIPPING
@@ -1931,13 +1931,13 @@ void UCsManager_Save::OnDeleteUserFileComplete(bool WasSuccessful, const FUnique
 	{
 		if (ActionInfo->IsAllProfiles())
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnDeleteUserFileComplete: Failed to delete File: %s for Player: %s"), *FileName, *(UserId.ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnDeleteUserFileComplete: Failed to delete File: %s for Player: %s"), *FileName, *(UserId.ToString()));
 		}
 		else
 		{
 			const FString& ProfileName = ProfileNames[(uint8)Profile];
 
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Save::OnDeleteUserFileComplete: Failed to delete File: %s for Profile: %s for Player: %s"), *FileName, *ProfileName, *(UserId.ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnDeleteUserFileComplete: Failed to delete File: %s for Profile: %s for Player: %s"), *FileName, *ProfileName, *(UserId.ToString()));
 		}
 
 		ActionInfo->Complete();

@@ -21,7 +21,7 @@ enum class ECsSave : uint8
 	ECsSave_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsSave final : public TCsEnumMap<ECsSave>
+struct CSPLATFORMSERVICES_API EMCsSave final : public TCsEnumMap<ECsSave>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSave, ECsSave)
 };
@@ -32,23 +32,26 @@ namespace NCsSave
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type Save1;
-		extern CSCORE_API const Type Save2;
-		extern CSCORE_API const Type Save3;
-		extern CSCORE_API const Type Save4;
-		extern CSCORE_API const Type Save5;
-		extern CSCORE_API const Type Save6;
-		extern CSCORE_API const Type Save7;
-		extern CSCORE_API const Type Save8;
-		extern CSCORE_API const Type ECsSave_MAX;
+		extern CSPLATFORMSERVICES_API const Type Save1;
+		extern CSPLATFORMSERVICES_API const Type Save2;
+		extern CSPLATFORMSERVICES_API const Type Save3;
+		extern CSPLATFORMSERVICES_API const Type Save4;
+		extern CSPLATFORMSERVICES_API const Type Save5;
+		extern CSPLATFORMSERVICES_API const Type Save6;
+		extern CSPLATFORMSERVICES_API const Type Save7;
+		extern CSPLATFORMSERVICES_API const Type Save8;
+		extern CSPLATFORMSERVICES_API const Type ECsSave_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSPLATFORMSERVICES_API const uint8 MAX;
 }
 
 #pragma endregion Save
 
-struct CSCORE_API FCsSaveFileInfo
+// FCsSaveFileInfo
+#pragma region
+
+struct CSPLATFORMSERVICES_API FCsSaveFileInfo
 {
 public:
 
@@ -114,7 +117,12 @@ public:
 	}
 };
 
-struct CSCORE_API FCsSaveEnumerateUserFilesState
+#pragma endregion FCsSaveFileInfo
+
+// FCsSaveEnumerateUserFilesState
+#pragma region
+
+struct CSPLATFORMSERVICES_API FCsSaveEnumerateUserFilesState
 {
 private:
 
@@ -165,6 +173,8 @@ public:
 	}
 };
 
+#pragma endregion FCsSaveEnumerateUserFilesState
+
 // SaveAction
 #pragma region
 
@@ -181,7 +191,7 @@ enum class ECsSaveAction : uint8
 	ECsSaveAction_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsSaveAction final : public TCsEnumMap<ECsSaveAction>
+struct CSPLATFORMSERVICES_API EMCsSaveAction final : public TCsEnumMap<ECsSaveAction>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSaveAction, ECsSaveAction)
 };
@@ -192,17 +202,17 @@ namespace NCsSaveAction
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type Enumerate;
-		extern CSCORE_API const Type Read;
-		extern CSCORE_API const Type ReadAll;
-		extern CSCORE_API const Type Write;
-		extern CSCORE_API const Type WriteAll;
-		extern CSCORE_API const Type Delete;
-		extern CSCORE_API const Type DeleteAll;
-		extern CSCORE_API const Type ECsSaveAction_MAX;
+		extern CSPLATFORMSERVICES_API const Type Enumerate;
+		extern CSPLATFORMSERVICES_API const Type Read;
+		extern CSPLATFORMSERVICES_API const Type ReadAll;
+		extern CSPLATFORMSERVICES_API const Type Write;
+		extern CSPLATFORMSERVICES_API const Type WriteAll;
+		extern CSPLATFORMSERVICES_API const Type Delete;
+		extern CSPLATFORMSERVICES_API const Type DeleteAll;
+		extern CSPLATFORMSERVICES_API const Type ECsSaveAction_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSPLATFORMSERVICES_API const uint8 MAX;
 }
 
 #pragma endregion SaveAction
@@ -219,7 +229,7 @@ enum class ECsSaveActionState : uint8
 	ECsSaveActionState_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsSaveActionState final : public TCsEnumMap<ECsSaveActionState>
+struct CSPLATFORMSERVICES_API EMCsSaveActionState final : public TCsEnumMap<ECsSaveActionState>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSaveActionState, ECsSaveActionState)
 };
@@ -230,18 +240,21 @@ namespace NCsSaveActionState
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type None;
-		extern CSCORE_API const Type InProgress;
-		extern CSCORE_API const Type Complete;
-		extern CSCORE_API const Type ECsSaveActionState_MAX;
+		extern CSPLATFORMSERVICES_API const Type None;
+		extern CSPLATFORMSERVICES_API const Type InProgress;
+		extern CSPLATFORMSERVICES_API const Type Complete;
+		extern CSPLATFORMSERVICES_API const Type ECsSaveActionState_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSPLATFORMSERVICES_API const uint8 MAX;
 }
 
 #pragma endregion SaveActionState
 
-struct CSCORE_API FCsSaveActionInfo
+// FCsSaveActionInfo
+#pragma region
+
+struct CSPLATFORMSERVICES_API FCsSaveActionInfo
 {
 public:
 
@@ -329,3 +342,5 @@ public:
 		bSuccess = false;
 	}
 };
+
+#pragma endregion FCsSaveActionInfo

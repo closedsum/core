@@ -4,6 +4,38 @@
 #include "CsTypes_Save.generated.h"
 #pragma once
 
+// SaveStorage
+#pragma region
+
+UENUM(BlueprintType)
+enum class ECsSaveStorage : uint8
+{
+	Local				UMETA(DisplayName = "Local"),
+	Cloud				UMETA(DisplayName = "Cloud"),
+	ECsSaveStorage_MAX	UMETA(Hidden),
+};
+
+struct CSPLATFORMSERVICES_API EMCsSaveStorage final : public TCsEnumMap<ECsSaveStorage>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSaveStorage, ECsSaveStorage)
+};
+
+namespace NCsSaveStorage
+{
+	typedef ECsSaveStorage Type;
+
+	namespace Ref
+	{
+		extern CSPLATFORMSERVICES_API const Type Local;
+		extern CSPLATFORMSERVICES_API const Type Cloud;
+		extern CSPLATFORMSERVICES_API const Type ECsSaveStorage_MAX;
+	}
+
+	extern CSPLATFORMSERVICES_API const uint8 MAX;
+}
+
+#pragma endregion SaveStorage
+
 // Save
 #pragma region
 

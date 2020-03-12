@@ -15,11 +15,11 @@
 	// Memory Resource
 #pragma region
 
-struct CSPLATFORMSERVICES_API FCsResourceContainer_SaveActionInfo : public TCsResourceContainer<FCsSaveActionInfo>
+struct CSPLATFORMSERVICES_API FCsResource_SaveActionInfo : public TCsResourceContainer<FCsSaveActionInfo>
 {
 };
 
-struct CSPLATFORMSERVICES_API FCsManager_SaveActionInfo : public TCsManager_ResourceValueType_Fixed<FCsSaveActionInfo, FCsResourceContainer_SaveActionInfo, 64>
+struct CSPLATFORMSERVICES_API FCsManager_SaveActionInfo : public TCsManager_ResourceValueType_Fixed<FCsSaveActionInfo, FCsResource_SaveActionInfo, 64>
 {
 };
 
@@ -48,6 +48,9 @@ class UClass;
 class ULocalPlayer;
 class ICsGetManagerSave;
 
+/**
+* 
+*/
 UCLASS(transient)
 class CSPLATFORMSERVICES_API UCsManager_Save : public UObject
 {
@@ -104,7 +107,7 @@ protected:
 
 public:
 
-	FORCEINLINE UObject* GetMyRoot() const
+	FORCEINLINE UObject* GetMyRoot()
 	{
 		return MyRoot;
 	}
@@ -116,6 +119,49 @@ public:
 public:
 
 	virtual void Start();
+
+// Storage
+#pragma region
+protected:
+
+	ECsSaveStorage CurrentStorage;
+
+public:
+
+	void SetCurrentStorage(const ECsSaveStorage& Storage);
+
+protected:
+
+	FString SaveFolder;
+
+public:
+
+	void SetSaveFolder(const FString& Folder);
+
+	const FString& GetSaveFolder() const;
+
+protected:
+
+	FString SaveDir;
+	FString SaveDirAbsolute;
+
+public:
+
+	/**
+	*
+	*
+	* return
+	*/
+	const FString& GetSaveDir() const;
+
+	/**
+	*
+	*
+	* return
+	*/
+	const FString& GetSaveDirAbsolute() const;
+
+#pragma endregion Storage
 
 // Player
 #pragma region
@@ -280,14 +326,85 @@ public:
 	void SetSaveDataTest(const ECsPlayerProfile& Profile, const ECsSave& Save, const FString& InData);
 
 protected:
-
+	
+	/**
+	* Called on action: Read or Read All. After Read or for each Read in Read All, update the data for the appropriate Profile
+	* and Save (slot). The details of how this is implemented is left for the child class as 
+	* the structure and / or layout of the data could vary from project to project.
+	* Example: 
+	*  Data stored as a struct vs class.
+	*  De-serializing the raw data, typically a string, to the appropriate data structure (i.e. .json string to struct) 
+	* 
+	* @param Profile	Profile to set data for.
+	* @param Save		Save (slot) to set data for.
+	*/
 	virtual void SetSaveData(const ECsPlayerProfile& Profile, const ECsSave& Save);
+
+	/**
+	* Called on action: Read or Read All. After Read or for each Read in Read All, update the data for the appropriate Profile
+	* and Save (index). The details of how this is implemented is left for the child class as
+	* the structure and / or layout of the data could vary from project to project.
+	* Example:
+	*  Data stored as a struct vs class.
+	*  De-serializing the raw data, typically a string, to the appropriate data structure (i.e. .json to struct)
+	*
+	* @param Profile	Profile to set data for.
+	* @param Index		Index of the save set data for.
+	*/
 	virtual void SetSaveData(const ECsPlayerProfile& Profile, const int32& Index);
 
+	/**
+	* Called on action: Write or Write All. For Write or for each Write in Write All, get the data for the appropriate Profile
+	* and Save (slot) as a string. The details of how this is implemented is left for the child class as
+	* the structure and / or layout of the data could vary from project to project.
+	* Example:
+	*  Data stored as a struct vs class.
+	*  Serializing the data to a string (i.e. struct to .json string).
+	*
+	* @param Profile	Profile to get data for.
+	* @param Save		Save (slot) to get data for.
+	* @param OutData	Data serialized as a string.
+	*/
 	virtual void GetSaveData(const ECsPlayerProfile& Profile, const ECsSave& Save, FString& OutData);
+
+	/**
+	* Called on action: Write or Write All. For Write or for each Write in Write All, get the data for the appropriate Profile
+	* and Save (index) as a string. The details of how this is implemented is left for the child class as
+	* the structure and / or layout of the data could vary from project to project.
+	* Example:
+	*  Data stored as a struct vs class.
+	*  Serializing the data to a string (i.e. struct to .json string).
+	*
+	* @param Profile	Profile to get data for.
+	* @param Index		Index of the save to get data for.
+	* @param OutData	Data serialized as a string.
+	*/
 	virtual void GetSaveData(const ECsPlayerProfile& Profile, const int32& Index, FString& OutData);
 
+	/**
+	* Called on action: Delete or Delete All. For Delete or for each Delete in Delete All, clear the data for the appropriate Profile
+	* and Save (slot). The details of how this is implemented is left for the child class as
+	* the structure and / or layout of the data could vary from project to project.
+	* Example:
+	*  Data stored as a struct or class.
+	*  Empty the contents of the data (i.e. reset the struct to a default state).
+	*
+	* @param Profile	Profile to reset data for.
+	* @param Save		Save (slot) to reset the data for.
+	*/
 	virtual void ClearSaveData(const ECsPlayerProfile& Profile, const ECsSave& Save);
+
+	/**
+	* Called on action: Delete or Delete All. For Delete or for each Delete in Delete All, clear the data for the appropriate Profile
+	* and Save (index). The details of how this is implemented is left for the child class as
+	* the structure and / or layout of the data could vary from project to project.
+	* Example:
+	*  Data stored as a struct or class.
+	*  Empty the contents of the data (i.e. reset the struct to a default state).
+	*
+	* @param Profile	Profile to reset data for.
+	* @param Index		Index of the save to reset data for.
+	*/
 	virtual void ClearSaveData(const ECsPlayerProfile& Profile, const int32& Index);
 
 #pragma endregion Data

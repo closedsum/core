@@ -3,6 +3,23 @@
 
 #pragma once
 
+// SaveStorage
+#pragma region
+
+namespace NCsSaveStorage
+{
+	namespace Ref
+	{
+		CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(EMCsSaveStorage, Local);
+		CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(EMCsSaveStorage, Cloud);
+		CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSaveStorage, ECsSaveStorage_MAX, "MAX");
+	}
+
+	CSPLATFORMSERVICES_API const uint8 MAX = (uint8)Type::ECsSaveStorage_MAX;
+}
+
+#pragma endregion SaveStorage
+
 // Save
 #pragma region
 

@@ -18,189 +18,6 @@
 #include "Classes/Engine/Engine.h"
 #endif // #if WITH_EDITOR
 
-// Structs
-#pragma region
-
-	// FCsManagerLoad_Task_LoadObjects
-#pragma region
-
-void FCsManagerLoad_Task_LoadObjects::Init()
-{
-	// FirstToLast
-	OnFinishLoadObjectPathDelegate = FStreamableDelegate::CreateRaw(this, &FCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath);
-	// None | Bulk
-	OnFinishLoadObjectPathsDelegate = FStreamableDelegate::CreateRaw(this, &FCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPaths);
-}
-
-void FCsManagerLoad_Task_LoadObjects::Update(const FCsDeltaTime& DeltaTime)
-{
-	// If Queue Empty, EXIT
-	if (Paths.Num() == CS_EMPTY)
-		return;
-
-	if (Order == ECsLoadAsyncOrder::Bulk)
-		OnLoadProgressUpdated_Event.ExecuteIfBound(Handle->GetProgress());
-
-	// If Still Loading, EXIT
-	if (Count < Paths.Num())
-		return;
-
-	const float CurrentTime = World ? World->GetTimeSeconds() : UCsLibrary_Common::GetCurrentDateTimeSeconds();
-	const float LoadTime    = CurrentTime - StartTime;
-
-	// All AssetReferences are LOADED
-	if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
-	{
-		// FirstToLast
-		if (Order == ECsLoadAsyncOrder::FirstToLast)
-		{
-			UE_LOG(LogCs, Log, TEXT("FCsManagerLoad_Task_LoadObjects::OnUpdate: Finished Loading %d Assets. %f mb (%f kb, %d bytes) in %f seconds."), Count, SizeLoaded.Megabytes, SizeLoaded.Kilobytes, SizeLoaded.Bytes, LoadTime);
-		}
-		// None | Bulk
-		else
-		{
-			UE_LOG(LogCs, Log, TEXT("FCsManagerLoad_Task_LoadObjects::OnUpdate: Finished Loading %d Assets in %f seconds."), Count, LoadTime);
-		}
-	}
-
-	TArray<UObject*> LoadedObjects = Manager_Load->GetLoadedObjects(Index);
-
-	OnFinishLoadObjectPaths_Event.ExecuteIfBound(LoadedObjects, LoadTime);
-
-	// Assume the Callback holds onto the references for LoadedAssets
-	LoadedObjects.Reset(LoadedObjects.Max());
-
-	Reset();
-}
-
-void FCsManagerLoad_Task_LoadObjects::LoadObjectPaths(UWorld* InWorld, const TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishLoadObjectPaths Delegate)
-{
-	Order = AsyncOrder;
-
-	const int32 Size = ObjectPaths.Num();
-	const int32 Max  = FMath::Max(Paths.Max(), Size);
-
-	Paths.Reserve(Max);
-	Paths.Append(ObjectPaths);
-
-	// Add Callback
-	OnFinishLoadObjectPaths_Event = Delegate;
-
-	World = InWorld;
-
-	// Start Loading - Load All References
-	OnStartLoadObjectPaths_Event.ExecuteIfBound(Size);
-	OnStartLoadProgress_Event.ExecuteIfBound(Size);
-
-	if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
-	{
-		UE_LOG(LogCs, Log, TEXT("FCsManagerLoad_Task_LoadObjects::LoadObjectPaths: Requesting Load of %d Assets."), Size);
-		// None | Bulk
-		if (AsyncOrder == ECsLoadAsyncOrder::None ||
-			AsyncOrder == ECsLoadAsyncOrder::Bulk)
-		{
-			for (const FSoftObjectPath& Path : ObjectPaths)
-			{
-				UE_LOG(LogCs, Log, TEXT("FCsManagerLoad_Task_LoadObjects::LoadObjectPaths: Requesting Load of %s."), *(Path.ToString()));
-			}
-		}
-	}
-	// Start the Async Load
-
-		// FirstToLast
-	if (AsyncOrder == ECsLoadAsyncOrder::FirstToLast)
-	{
-		if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
-		{
-			UE_LOG(LogCs, Log, TEXT("UCsManager_Load::LoadObjectPaths_Internal: Requesting Load of %s."), *(ObjectPaths[CS_FIRST].ToString()));
-		}
-		OnStartLoadObjectPath_Event.ExecuteIfBound(ObjectPaths[CS_FIRST]);
-		Manager_Load->StreamableManager.RequestAsyncLoad(ObjectPaths[CS_FIRST], OnFinishLoadObjectPathDelegate);
-	}
-	// Bulk
-	else
-	{
-		Handle = Manager_Load->StreamableManager.RequestAsyncLoad(ObjectPaths, OnFinishLoadObjectPathsDelegate);
-	}
-
-	StartTime = World ? World->GetTimeSeconds() : UCsLibrary_Common::GetCurrentDateTimeSeconds();
-}
-
-void FCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath()
-{
-	FSoftObjectPath& Path = Paths[Count];
-
-	UObject* Object = Path.ResolveObject();
-	check(Object);
-
-	TArray<UObject*> LoadedObjects = Manager_Load->GetLoadedObjects(Index);
-
-	LoadedObjects.Add(Object);
-
-	const int32 LastCount = Count;
-
-	++Count;
-
-	FSoftObjectPath& NextPath = Paths[Count];
-
-	// Get Memory loaded and the time it took
-	const int32 Bytes	  = Object->GetResourceSizeBytes(EResourceSizeMode::Exclusive);
-	const float Kilobytes = UCsLibrary_Math::BytesToKilobytes(Bytes);
-	const float Megabytes = UCsLibrary_Math::BytesToMegabytes(Bytes);
-
-	SizeLoaded.Bytes	 += Bytes;
-	SizeLoaded.Kilobytes += Kilobytes;
-	SizeLoaded.Megabytes += Megabytes;
-
-	const float CurrentTime = World ? World->GetTimeSeconds() : UCsLibrary_Common::GetCurrentDateTimeSeconds();
-	const float LoadingTime	= CurrentTime - StartTime;
-
-	if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
-	{
-		UE_LOG(LogCs, Log, TEXT("FCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath: Finished Loading %s. %f mb (%f kb, %d bytes) in %f seconds."), *Path.ToString(), Megabytes, Kilobytes, Bytes, LoadingTime);
-	}
-
-	// Broadcast the event to anyone listening
-	Info.Path			 = Path;
-	Info.Count			 = LastCount;
-	Info.Size.Bytes		 = Bytes;
-	Info.Size.Kilobytes  = Kilobytes;
-	Info.Size.Megabytes  = Megabytes;
-	Info.Time			 = LoadingTime;
-
-	OnFinishLoadObjectPath_Event.ExecuteIfBound(Info, Object);
-
-	// FirstToLast, Queue the NEXT Asset for Async Load
-	if (Count < Paths.Num())
-	{
-		if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
-		{
-			UE_LOG(LogCs, Log, TEXT("UCsManager_Load::OnFinishedLoadingAssetReference: Requesting Load of %s."), *(NextPath.ToString()));
-		}
-		OnStartLoadObjectPath_Event.ExecuteIfBound(NextPath);
-		Manager_Load->StreamableManager.RequestAsyncLoad(NextPath, OnFinishLoadObjectPathDelegate);
-	}
-	StartTime = CurrentTime;
-}
-
-void FCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPaths()
-{
-	TArray<UObject*> LoadedObjects = Manager_Load->GetLoadedObjects(Index);
-
-	for (FSoftObjectPath& Path : Paths)
-	{
-		UObject* Object = Path.ResolveObject();
-		check(Object);
-
-		LoadedObjects.Add(Object);
-	}
-	Count = Paths.Num();
-}
-
-#pragma endregion FCsManagerLoad_Task_LoadObjects
-
-#pragma endregion Structs
-
 // static initializations
 UCsManager_Load* UCsManager_Load::s_Instance;
 bool UCsManager_Load::s_bShutdown = false;
@@ -208,6 +25,7 @@ bool UCsManager_Load::s_bShutdown = false;
 UCsManager_Load::UCsManager_Load(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	UpdateGroup = NCsUpdateGroup::GameInstance;
 }
 
 // Singleton
@@ -230,7 +48,7 @@ UCsManager_Load::UCsManager_Load(const FObjectInitializer& ObjectInitializer)
 #if WITH_EDITOR
 	ICsGetManagerLoad* GetManagerLoad = Get_GetManagerLoad(InRoot);
 
-	UCsManager_Load* Manager_Load = NewObject<UCsManager_Load>(GetTransientPackage(), UCsManager_Load::StaticClass(), TEXT("Manager_Load_Singleton"), RF_Transient | RF_Public);
+	UCsManager_Load* Manager_Load = NewObject<UCsManager_Load>(InRoot, UCsManager_Load::StaticClass(), TEXT("Manager_Load_Singleton"), RF_Transient | RF_Public);
 
 	GetManagerLoad->SetManager_Load(Manager_Load);
 
@@ -335,53 +153,52 @@ UCsManager_Load::UCsManager_Load(const FObjectInitializer& ObjectInitializer)
 
 #endif // #if WITH_EDITOR
 
-bool UCsManager_Load::Tick(float DeltaSeconds)
-{
-	TCsDoubleLinkedList<FCsResourceContainer_ManagerLoad_Task_LoadObjects*>* Current = Manager_Tasks.GetAllocatedHead();
-	TCsDoubleLinkedList<FCsResourceContainer_ManagerLoad_Task_LoadObjects*>* Next    = Current;
-
-	while (Next)
-	{
-		Current														 = Next;
-		FCsResourceContainer_ManagerLoad_Task_LoadObjects* Container = **Current;
-		Next														 = Current->GetNextLink();
-
-		FCsManagerLoad_Task_LoadObjects* Task = Container->Get();
-
-		//Task->OnUpdate()
-	}
-
-	return true;
-}
-
 void UCsManager_Load::Initialize()
 {
-	// Register delegate for ticker callback
-	TickDelegate	   = FTickerDelegate::CreateUObject(this, &UCsManager_Load::Tick);
-	TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
-
+	// TODO: Add a config variable to change the pool size
+	static const int32 DEFAULT_POOL_SIZE = 64;
+	Manager_Tasks.CreatePool(DEFAULT_POOL_SIZE);
 	// Init Tasks
 	{
-		const TArray<FCsResourceContainer_ManagerLoad_Task_LoadObjects*>& Pool = Manager_Tasks.GetPool();
+		const TArray<FCsResource_ManagerLoad_Task_LoadObjects*>& Pool = Manager_Tasks.GetPool();
 
-		for (FCsResourceContainer_ManagerLoad_Task_LoadObjects* Container : Pool)
+		for (FCsResource_ManagerLoad_Task_LoadObjects* Container : Pool)
 		{
-			LoadedObjects.AddDefaulted();
-			LoadedObjects.Last().Reset();
+			UCsManagerLoad_Task_LoadObjects* Task = NewObject<UCsManagerLoad_Task_LoadObjects>(this, UCsManagerLoad_Task_LoadObjects::StaticClass());
+			
+			Tasks.Add(Task);
 
-			FCsManagerLoad_Task_LoadObjects* Task = Container->Get();
+			Container->Set(Task);
 
-			Task->Index		   = Container->GetIndex();
-			Task->Manager_Load = this;
+			Task->Index	= Container->GetIndex();
 			Task->Init();
+			Task->UpdateGroup = UpdateGroup;
+			Task->SetStreamableManager(&StreamableManager);
 		}
 	}
 }
 
 void UCsManager_Load::CleanUp()
 {
-	// Unregister ticker delegate
-	FTicker::GetCoreTicker().RemoveTicker(TickDelegateHandle);
+	for (UObject* O : Tasks)
+	{
+		if (O &&
+			!O->IsPendingKill())
+		{
+			O->MarkPendingKill();
+		}
+	}
+
+	Tasks.Reset();
+
+	const TArray<FCsResource_ManagerLoad_Task_LoadObjects*>& Pool = Manager_Tasks.GetPool();
+
+	for (FCsResource_ManagerLoad_Task_LoadObjects* Container : Pool)
+	{
+		UCsManagerLoad_Task_LoadObjects* Task = Container->Get();
+
+		Container->Set(nullptr);
+	}
 
 	Manager_Tasks.Shutdown();
 }
@@ -398,17 +215,29 @@ void UCsManager_Load::SetMyRoot(UObject* InRoot)
 
 #pragma endregion Singleton
 
-TArray<UObject*>& UCsManager_Load::GetLoadedObjects(const int32& Index)
+void UCsManager_Load::Update(const FCsDeltaTime& DeltaTime)
 {
-	return LoadedObjects[Index];
+	TCsDoubleLinkedList<FCsResource_ManagerLoad_Task_LoadObjects*>* Current = Manager_Tasks.GetAllocatedHead();
+	TCsDoubleLinkedList<FCsResource_ManagerLoad_Task_LoadObjects*>* Next	= Current;
+
+	while (Next)
+	{
+		Current												= Next;
+		FCsResource_ManagerLoad_Task_LoadObjects* Container = **Current;
+		Next												= Current->Next();
+
+		UCsManagerLoad_Task_LoadObjects* Task = Container->Get();
+
+		Task->Update(DeltaTime);
+	}
 }
 
-FCsManagerLoad_Task_LoadObjects& UCsManager_Load::LoadObjectPaths(UWorld* CurrentWorld, TArray<FStringAssetReference>& AssetReferences, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishLoadObjectPaths Delegate)
+FCsLoadHandle UCsManager_Load::LoadObjectPaths(UWorld* CurrentWorld, TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, UCsManagerLoad_Task_LoadObjects::FOnFinishLoadObjectPaths Delegate)
 {
-	FCsResourceContainer_ManagerLoad_Task_LoadObjects* Resource = Manager_Tasks.Allocate();
-	FCsManagerLoad_Task_LoadObjects* Task						= Resource->Get();
+	FCsResource_ManagerLoad_Task_LoadObjects* Resource = Manager_Tasks.Allocate();
+	UCsManagerLoad_Task_LoadObjects* Task			   = Resource->Get();
 
-	Task->LoadObjectPaths(CurrentWorld, AssetReferences, AsyncOrder, Delegate);
+	FCsLoadHandle Handle = Task->LoadObjectPaths(CurrentWorld, ObjectPaths, AsyncOrder, Delegate);
 
-	return *Task;
+	return Handle;
 }

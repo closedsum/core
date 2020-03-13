@@ -483,7 +483,7 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(FCsRoutine* R))
 
 	if (gi->bForcePopulateAssetReferences || dataMapping->bForcePopulateAssetReferences)
 	{
-		UCsManager_Load::Get()->LoadObjectPaths(gi->GetWorld(), dataMapping->DataAssetReferences, ECsLoadAsyncOrder::Bulk, FCsManagerLoad_OnFinishLoadObjectPaths::CreateUObject(gi, &UCsGameInstance::OnFinishedLoadingDataObjects));
+		//UCsManager_Load::Get()->LoadObjectPaths(gi->GetWorld(), dataMapping->DataAssetReferences, ECsLoadAsyncOrder::Bulk, FCsManagerLoad_OnFinishLoadObjectPaths::CreateUObject(gi, &UCsGameInstance::OnFinishedLoadingDataObjects));
 
 		// Wait until Data Assets are LOADED
 		CS_COROUTINE_WAIT_UNTIL(R, gi->OnBoardState == ECsGameInstanceOnBoardState::FinishedLoadingDataAssets);

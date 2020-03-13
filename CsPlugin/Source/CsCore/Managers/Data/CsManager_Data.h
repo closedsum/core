@@ -160,13 +160,6 @@ public:
 #pragma region
 public:
 
-	/**
-	* Load a payload by Name.
-	*
-	* @param PayloadName	Name of the payload to load
-	*/
-	void LoadPayload(const FName& PayloadName);
-
 	// DataTable
 #pragma region
 public:
@@ -206,6 +199,40 @@ public:
 	bool IsLoadedDataTableRow(const FName& TableName, const FName& RowName);
 
 #pragma endregion DataTable
+
+	// Payload
+#pragma region
+
+	/**
+	* Load a payload by Name.
+	*
+	* @param PayloadName	Name of the payload to load
+	*/
+	void LoadPayload(const FName& PayloadName);
+
+		/**
+	*  Delegate type
+	*
+	* @param PayloadName
+	*/
+	DECLARE_DELEGATE_TwoParams(FOnAsyncLoadPayloadComplete, bool /*WasSuccessful*/, const FName& /*PayloadName*/);
+
+	FOnAsyncLoadPayloadComplete OnAsyncLoadPayloadCompleted_Event;
+
+	/**
+	*
+	*
+	* @param PayloadName
+	*/
+	void AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate);
+
+private:
+
+	TMap<FCsLoadHandle, FName> InProgressAsyncLoadPayloads;
+
+	void OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHandle& Handle, const TArray<FSoftObjectPath>& LoadedPaths, const TArray<UObject*>& LoadedObjects, const float& LoadTime);
+
+#pragma endregion Payload
 
 #pragma endregion Load
 
@@ -332,6 +359,16 @@ public:
 	* @param OutPaths
 	*/
 	void GetPayloadSoftObjectPaths(const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths);
+
+
+	/**
+	*
+	*
+	* @param PayloadName
+	* return			Number of SoftObjectPaths for the PayloadName.
+	*					INDEX_NONE for an invalid PayloadName.
+	*/
+	int32 GetPayloadSoftObjectPathCount(const FName& PayloadName);
 
 #pragma endregion SoftObjectPath
 

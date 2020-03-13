@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#ifndef __CS_MANAGER_RESOURCE_POINTER_TYPE_FIXED_H__
-#define __CS_MANAGER_RESOURCE_POINTER_TYPE_FIXED_H__
+//#ifndef __CS_MANAGER_RESOURCE_POINTER_TYPE_FIXED_H__
+//#define __CS_MANAGER_RESOURCE_POINTER_TYPE_FIXED_H__
 
 #pragma once
 
@@ -719,4 +719,4 @@ public:
 #pragma endregion Stack
 };
 
-#endif // #ifndef __CS_MANAGER_RESOURCE_POINTER_TYPE_FIXED_H__
+//#endif // #ifndef __CS_MANAGER_RESOURCE_POINTER_TYPE_FIXED_H__

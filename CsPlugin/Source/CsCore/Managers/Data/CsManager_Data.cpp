@@ -2,7 +2,7 @@
 
 #include "Managers/Data/CsManager_Data.h"
 #include "CsCore.h"
-#include "CsCVars.h"
+#include "CsCVars_Manager_Data.h"
 
 // Library
 #include "Library/Load/CsLibrary_Load.h"
@@ -10,6 +10,8 @@
 #include "Settings/CsDeveloperSettings.h"
 // Data
 #include "Managers/Data/CsDataRootSet.h"
+// Managers
+#include "Managers/Load/CsManager_Load.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -461,98 +463,6 @@ void UCsManager_Data::GenerateMaps()
 // Load
 #pragma region
 
-void UCsManager_Data::LoadPayload(const FName& PayloadName)
-{
-	checkf(PayloadName != NAME_None, TEXT("UCsManager_Data::LoadPayload: PayloadName is None."));
-
-	// Check if the Payload has already been loaded
-	if (PayloadMap_Loaded.Find(PayloadName))
-		return;
-
-	FCsPayload* Payload = nullptr;
-
-	if (FCsPayload** PayloadPtr = PayloadMap.Find(PayloadName))
-	{
-		Payload = *PayloadPtr;
-	}
-#if WITH_EDITOR
-	else
-	{
-		if (FCsPayload** PayloadAddedPtr = PayloadMap_Added.Find(PayloadName))
-		{
-			Payload = *PayloadAddedPtr;
-		}
-	}
-#endif // #if WITH_EDITOR
-
-	if (Payload)
-	{
-		// Datas
-		for (FCsPayload_Data& Payload_Data : Payload->Datas)
-		{
-
-		}
-
-		// DataTables
-		for (FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
-		{
-			const FName& TableName = Payload_DataTable.Name;
-
-			UDataTable* DT = LoadDataTable(TableName);
-
-#if WITH_EDITOR
-			if (!DT)
-			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadPayload: Failed to load DataTable: %s."), *(TableName.ToString()));
-				continue;
-			}
-#else
-			checkf(DT, TEXT("UCsManager_Data::LoadPayload: Failed to load DataTable: %s."), *(TableName.ToString()));
-#endif // If WITH_EDITOR
-
-			const UScriptStruct* ScriptStruct = DT->GetRowStruct();
-			UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
-			UStruct* const Struct			  = Temp;
-
-			TArray<FName> RowNames;
-
-			// All Rows
-			if (Payload_DataTable.bAllRows)
-			{
-				RowNames = DT->GetRowNames();
-			}
-			// Specified Rows
-			else
-			{
-				RowNames = Payload_DataTable.Rows.Array();
-			}
-
-			for (const FName& RowName : RowNames)
-			{
-				if (IsLoadedDataTableRow(TableName, RowName))
-					continue;
-
-				if (uint8* RowPtr = DT->FindRowUnchecked(RowName))
-				{
-					UCsLibrary_Load::LoadStruct(RowPtr, Struct, NCsLoadFlags::All, NCsLoadCodes::None);
-
-					UpdateDataTableRowMap(TableName, RowName, RowPtr);
-				}
-				else
-				{
-					UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadPayload: Failed to Row: %s for DataTable: %s."), *(RowName.ToString()), *(TableName.ToString()));
-				}
-			}
-		}
-
-		PayloadMap_Loaded.Add(PayloadName, Payload);
-	}
-	else
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadPayload: Failed to find Payload: %s."), *(PayloadName.ToString()));
-	}
-}
-
 	// DataTable
 #pragma region
 
@@ -672,6 +582,146 @@ bool UCsManager_Data::IsLoadedDataTableRow(const FName& TableName, const FName& 
 }
 
 #pragma endregion DataTable
+
+	// Payload
+#pragma region
+
+void UCsManager_Data::LoadPayload(const FName& PayloadName)
+{
+	checkf(PayloadName != NAME_None, TEXT("UCsManager_Data::LoadPayload: PayloadName is None."));
+
+	// Check if the Payload has already been loaded
+	if (PayloadMap_Loaded.Find(PayloadName))
+		return;
+
+	FCsPayload* Payload = nullptr;
+
+	if (FCsPayload** PayloadPtr = PayloadMap.Find(PayloadName))
+	{
+		Payload = *PayloadPtr;
+	}
+#if WITH_EDITOR
+	else
+	{
+		if (FCsPayload** PayloadAddedPtr = PayloadMap_Added.Find(PayloadName))
+		{
+			Payload = *PayloadAddedPtr;
+		}
+	}
+#endif // #if WITH_EDITOR
+
+	if (Payload)
+	{
+		// Datas
+		for (FCsPayload_Data& Payload_Data : Payload->Datas)
+		{
+
+		}
+
+		// DataTables
+		for (FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
+		{
+			const FName& TableName = Payload_DataTable.Name;
+
+			UDataTable* DT = LoadDataTable(TableName);
+
+#if WITH_EDITOR
+			if (!DT)
+			{
+				UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadPayload: Failed to load DataTable: %s."), *(TableName.ToString()));
+				continue;
+			}
+#else
+			checkf(DT, TEXT("UCsManager_Data::LoadPayload: Failed to load DataTable: %s."), *(TableName.ToString()));
+#endif // If WITH_EDITOR
+
+			const UScriptStruct* ScriptStruct = DT->GetRowStruct();
+			UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
+			UStruct* const Struct			  = Temp;
+
+			TArray<FName> RowNames;
+
+			// All Rows
+			if (Payload_DataTable.bAllRows)
+			{
+				RowNames = DT->GetRowNames();
+			}
+			// Specified Rows
+			else
+			{
+				RowNames = Payload_DataTable.Rows.Array();
+			}
+
+			for (const FName& RowName : RowNames)
+			{
+				if (IsLoadedDataTableRow(TableName, RowName))
+					continue;
+
+				if (uint8* RowPtr = DT->FindRowUnchecked(RowName))
+				{
+					UCsLibrary_Load::LoadStruct(RowPtr, Struct, NCsLoadFlags::All, NCsLoadCodes::None);
+
+					UpdateDataTableRowMap(TableName, RowName, RowPtr);
+				}
+				else
+				{
+					UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadPayload: Failed to Row: %s for DataTable: %s."), *(RowName.ToString()), *(TableName.ToString()));
+				}
+			}
+		}
+
+		PayloadMap_Loaded.Add(PayloadName, Payload);
+	}
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadPayload: Failed to find Payload: %s."), *(PayloadName.ToString()));
+	}
+}
+
+void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate)
+{
+	const int32 Count = GetPayloadSoftObjectPathCount(PayloadName);
+	
+	if (Count <= CS_EMPTY)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::AsyncLoadPayload: No Paths found for Payload: %s."), *(PayloadName.ToString()));
+
+		OnAsyncLoadPayloadCompleted_Event.ExecuteIfBound(false, PayloadName);
+		return;
+	}
+
+	TArray<FSoftObjectPath> Paths;
+	Paths.Reserve(Count);
+
+	GetPayloadSoftObjectPaths(PayloadName, Paths);
+
+	UCsManagerLoad_Task_LoadObjects::FOnFinishLoadObjectPaths OnFinishDelegate = UCsManagerLoad_Task_LoadObjects::FOnFinishLoadObjectPaths::CreateUObject(this, &UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload);
+
+	FCsLoadHandle Handle = UCsManager_Load::Get(MyRoot)->LoadObjectPaths(nullptr,
+																		 Paths,
+																		 EMCsLoadAsyncOrder::Get().GetEnumAt(CsCVarManagerDataLoadAsyncOrder->GetInt()),
+																		 OnFinishDelegate);
+
+	InProgressAsyncLoadPayloads.Add(Handle, PayloadName);
+	
+	OnAsyncLoadPayloadCompleted_Event = Delegate;
+}
+
+void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHandle& Handle, const TArray<FSoftObjectPath>& LoadedPaths, const TArray<UObject*>& LoadedObjects, const float& LoadTime)
+{
+	const FName& PayloadName = InProgressAsyncLoadPayloads[Handle];
+
+	// TODO: Add option to make this Async
+	LoadPayload(PayloadName);
+
+	OnAsyncLoadPayloadCompleted_Event.ExecuteIfBound(true, PayloadName);
+
+	InProgressAsyncLoadPayloads.Remove(Handle);
+
+	OnAsyncLoadPayloadCompleted_Event.Unbind();
+}
+
+#pragma endregion Payload
 
 #pragma endregion Load
 
@@ -907,6 +957,51 @@ void UCsManager_Data::GetPayloadSoftObjectPaths(const FName& PayloadName, TArray
 	}
 #endif // #if WITH_EDITOR
 }
+
+int32 UCsManager_Data::GetPayloadSoftObjectPathCount(const FName& PayloadName)
+{
+#if WITH_EDITOR
+	if (PayloadName == NAME_None)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetPayloadSoftObjectPaths: PayloadName is None."));
+		return INDEX_NONE;
+	}
+#endif // #if WITH_EDITOR
+
+	int32 Count = 0;
+
+	if (FCsPayload** PayloadPtr = PayloadMap.Find(PayloadName))
+	{
+		const FCsPayload* Payload = *PayloadPtr;
+
+		// Datas
+
+		// DataTables
+		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
+		{
+			const FName& TableName = Payload_DataTable.Name;
+
+			++Count;
+
+			// All Rows
+			if (Payload_DataTable.bAllRows)
+			{
+				Count += GetDataTableSoftObjectPathCount(TableName);
+			}
+			// Specified Rows
+			else
+			{
+				for (const FName& RowName : Payload_DataTable.Rows)
+				{
+					Count += GetDataTableRowSoftObjectPathCount(TableName, RowName);
+				}
+			}
+		}
+	}
+
+	return Count;
+}
+
 
 #pragma endregion SoftObjectPath
 

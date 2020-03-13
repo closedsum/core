@@ -497,6 +497,7 @@ void UCsDataMapping::GetLoadStringAssetReferences(const FECsDataCollectionType& 
 {
 }
 
+/*
 void UCsDataMapping::AsyncLoadObjects(UWorld* World, const FECsDataCollectionType& CollectionType, const ECsLoadAsyncOrder& AsyncOrder, FCsManagerLoad_OnFinishLoadObjectPaths& Delegate)
 {
 	TArray<FStringAssetReference> References;
@@ -513,6 +514,7 @@ void UCsDataMapping::AsyncLoadObjects(UWorld* World, const FECsDataCollectionTyp
 	}
 	UCsManager_Load::Get()->LoadObjectPaths(World, References, AsyncOrder, Delegate);
 }
+*/
 
 void UCsDataMapping::OnFinishedAsyncLoadingAssetsSetReferences(const FECsDataCollectionType& CollectionType, const TArray<UObject*>& LoadedAssets)
 {

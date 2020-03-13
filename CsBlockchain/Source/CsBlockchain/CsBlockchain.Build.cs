@@ -8,15 +8,11 @@ public class CsBlockchain : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        if (Target.Type == TargetType.Editor)
-        {
-            PublicDependencyModuleNames.AddRange(
+        PublicDependencyModuleNames.AddRange(
                 new string[] {
                     "Core",
                     "CoreUObject",
                     "Engine",
-                    "OnlineSubsystem",
-                    "OnlineSubsystemUtils",
                     "AssetRegistry",
                     "Json",
                     "JsonUtilities",
@@ -24,10 +20,16 @@ public class CsBlockchain : ModuleRules
                 }
             );
 
+        if (Target.Type == TargetType.Editor)
+        {
+            PublicDependencyModuleNames.AddRange(
+                new string[] {
+                }
+            );
+
             /*
             PrivateDependencyModuleNames.AddRange(
                 new string[] {
-                    "BlueprintGraph",
                 }
             );
             */
@@ -36,13 +38,6 @@ public class CsBlockchain : ModuleRules
         {
             PublicDependencyModuleNames.AddRange(
                 new string[] {
-                    "Core",
-                    "CoreUObject",
-                    "Engine",
-                    "AssetRegistry",
-                    "Json",
-                    "JsonUtilities",
-                    "CsCore",
                 }
             );
         }

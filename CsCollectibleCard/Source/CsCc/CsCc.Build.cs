@@ -28,7 +28,6 @@ public class CsCc : ModuleRules
             /*
             PrivateDependencyModuleNames.AddRange(
                 new string[] {
-                    "BlueprintGraph",
                 }
             );
             */

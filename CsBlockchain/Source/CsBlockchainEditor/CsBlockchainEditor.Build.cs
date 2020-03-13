@@ -19,7 +19,6 @@ public class CsBlockchainEditor : ModuleRules
                     "UnrealEd",
                     "AssetTools",
                     "ContentBrowser",
-                    "BlueprintGraph",
                     "Slate",
                     "PropertyEditor",
                     "GraphEditor",

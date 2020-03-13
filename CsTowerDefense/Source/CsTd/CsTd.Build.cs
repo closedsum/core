@@ -25,7 +25,6 @@ public class CsTd : ModuleRules
             /*
             PrivateDependencyModuleNames.AddRange(
                 new string[] {
-                    "BlueprintGraph",
                 }
             );
             */

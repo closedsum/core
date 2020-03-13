@@ -15,7 +15,6 @@
 #if WITH_EDITOR
 
 // Level Sequence
-#include "../LevelSequence/Public/LevelSequence.h"
 
 #include "../Classes/Factories/AnimSequenceFactory.h"
 
@@ -124,7 +123,7 @@ UObject* UCsLibrary_Asset::CreateAsset(UClass* ClassToSpawn, const FString& Name
 {
 	FAssetToolsModule& AssetToolsModule = FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools");
 	UFactory* Factory					= GetFactory(ClassToSpawn);
-	UObject* NewAsset					= Cast<ULevelSequence>(AssetToolsModule.Get().CreateAsset(Name, PackagePath, ClassToSpawn, Factory));;
+	UObject* NewAsset					= AssetToolsModule.Get().CreateAsset(Name, PackagePath, ClassToSpawn, Factory);
 
 	TArray<UObject*> ObjectsToSync;
 	ObjectsToSync.Add(NewAsset);
@@ -133,11 +132,6 @@ UObject* UCsLibrary_Asset::CreateAsset(UClass* ClassToSpawn, const FString& Name
 	ContentBrowserModule.Get().SyncBrowserToAssets(ObjectsToSync);
 
 	return NewAsset;
-}
-
-ULevelSequence* UCsLibrary_Asset::CreateLevelSequence(const FString &Name, const FString &PackagePath)
-{
-	return Cast<ULevelSequence>(CreateAsset(ULevelSequence::StaticClass(), Name, PackagePath));
 }
 
 UAnimSequence* UCsLibrary_Asset::CreateAnimSequence(USkeletalMesh* Mesh, const FString &Name, const FString &PackagePath)

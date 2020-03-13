@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper.h"
-#include "CsCore.h"
+#include "Poseable/Controls/Helpers/CsAnim_ControlHelper.h"
+#include "CsAnimation.h"
+
+// Library
 #include "Library/CsLibrary_Common.h"
 
 ACsAnim_ControlHelper::ACsAnim_ControlHelper(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)

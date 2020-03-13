@@ -1,11 +1,15 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "Animation/Poseable/Controls/CsAnim_Control.h"
+#include "Poseable/Controls/CsAnim_Control.h"
 #include "CsAnim_Control_TwoBoneIK.generated.h"
 
+class ACsAnim_ControlHelper_EndEffector;
+class ACsAnim_ControlHelper_JointTarget;
+class ACsAnim_Bone;
+
 UCLASS()
-class CSCORE_API ACsAnim_Control_TwoBoneIK : public ACsAnim_Control
+class CSANIMATION_API ACsAnim_Control_TwoBoneIK : public ACsAnim_Control
 {
 	GENERATED_UCLASS_BODY()
 
@@ -17,17 +21,17 @@ class CSCORE_API ACsAnim_Control_TwoBoneIK : public ACsAnim_Control
 #endif // #if WITH_EDITOR
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Control")
-	class ACsAnim_ControlHelper_EndEffector* EndEffector;
+	ACsAnim_ControlHelper_EndEffector* EndEffector;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Control")
-	class ACsAnim_ControlHelper_JointTarget* JointTarget;
+	ACsAnim_ControlHelper_JointTarget* JointTarget;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Control")
-	class ACsAnim_Bone* StartBone;
+	ACsAnim_Bone* StartBone;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Control")
-	class ACsAnim_Bone* MiddleBone;
+	ACsAnim_Bone* MiddleBone;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Control")
-	class ACsAnim_Bone* EndBone;
+	ACsAnim_Bone* EndBone;
 };

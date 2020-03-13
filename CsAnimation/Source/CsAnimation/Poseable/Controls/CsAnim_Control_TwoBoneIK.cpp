@@ -1,9 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Animation/Poseable/Controls/CsAnim_Control_TwoBoneIK.h"
-#include "CsCore.h"
+#include "Poseable/Controls/CsAnim_Control_TwoBoneIK.h"
+#include "CsAnimation.h"
 
-#include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper_EndEffector.h"
-#include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper_JointTarget.h"
+// Control Helpers
+#include "Poseable/Controls/Helpers/CsAnim_ControlHelper_EndEffector.h"
+#include "Poseable/Controls/Helpers/CsAnim_ControlHelper_JointTarget.h"
 
 ACsAnim_Control_TwoBoneIK::ACsAnim_Control_TwoBoneIK(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

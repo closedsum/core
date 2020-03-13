@@ -5,8 +5,11 @@
 #include "Types/CsTypes_Primitive.h"
 #include "CsAnim_Bone.generated.h"
 
+class USceneComponent;
+class UCsStaticMeshComponent;
+
 UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
-class CSCORE_API ACsAnim_Bone : public AActor
+class CSANIMATION_API ACsAnim_Bone : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
@@ -16,10 +19,10 @@ class CSCORE_API ACsAnim_Bone : public AActor
 
 	bool HasTickedInEditor;
 
-	class USceneComponent* DefaultRootComponent;
+	USceneComponent* DefaultRootComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "00 Bone")
-	class UCsStaticMeshComponent* StaticMeshComponent;
+	UCsStaticMeshComponent* StaticMeshComponent;
 
 	/* Bone Name */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "00 Bone")

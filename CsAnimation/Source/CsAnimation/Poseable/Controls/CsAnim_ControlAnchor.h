@@ -4,8 +4,10 @@
 #include "GameFramework/Actor.h"
 #include "CsAnim_ControlAnchor.generated.h"
 
+class ACsAnim_Control;
+
 UCLASS()
-class CSCORE_API ACsAnim_ControlAnchor : public AActor
+class CSANIMATION_API ACsAnim_ControlAnchor : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
@@ -19,5 +21,5 @@ class CSCORE_API ACsAnim_ControlAnchor : public AActor
 
 	/* Reference to Control */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "00 Control")
-	class ACsAnim_Control* Control;
+	ACsAnim_Control* Control;
 };

@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Animation/Poseable/Controls/CsAnim_Control_FK.h"
-#include "CsCore.h"
+#include "Poseable/Controls/CsAnim_Control_FK.h"
+#include "CsAnimation.h"
+
+// Library
 #include "Library/CsLibrary_Common.h"
 
 ACsAnim_Control_FK::ACsAnim_Control_FK(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)

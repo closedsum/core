@@ -1,8 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Animation/Poseable/CsPoseableMeshActor.h"
-#include "CsCore.h"
+#include "Poseable/CsPoseableMeshActor.h"
+#include "CsAnimation.h"
+
+// Library
 #include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Asset.h"
+#include "Library/CsAnimLibrary_Asset.h"
 
 #include "Components/CsPoseableMeshComponent.h"
 
@@ -10,13 +13,13 @@
 #include "../AnimationCore/Public/TwoBoneIK.h"
 #endif // #if WITH_EDITOR
 
-#include "Animation/Poseable/CsAnim_Bone.h"
-#include "Animation/Poseable/Controls/CsAnim_Control.h"
-#include "Animation/Poseable/Controls/CsAnim_ControlAnchor.h"
-#include "Animation/Poseable/Controls/CsAnim_Control_FK.h"
-#include "Animation/Poseable/Controls/CsAnim_Control_TwoBoneIK.h"
-#include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper_EndEffector.h"
-#include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper_JointTarget.h"
+#include "Poseable/CsAnim_Bone.h"
+#include "Poseable/Controls/CsAnim_Control.h"
+#include "Poseable/Controls/CsAnim_ControlAnchor.h"
+#include "Poseable/Controls/CsAnim_Control_FK.h"
+#include "Poseable/Controls/CsAnim_Control_TwoBoneIK.h"
+#include "Poseable/Controls/Helpers/CsAnim_ControlHelper_EndEffector.h"
+#include "Poseable/Controls/Helpers/CsAnim_ControlHelper_JointTarget.h"
 
 // Level Sequence
 //#include "../LevelSequence/Public/LevelSequence.h"
@@ -360,7 +363,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 		{
 			UCsLibrary_Common::DisplayNotificationInfo(TEXT("No Level Sequence created. LevelSequence.Master is NULL."), TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): No Level Sequence created. LevelSequence.Master is NULL."), *GetName());
+			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): No Level Sequence created. LevelSequence.Master is NULL."), *GetName());
 			return;
 		}
 
@@ -370,7 +373,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 		{
 			UCsLibrary_Common::DisplayNotificationInfo(TEXT("Failed to Open Level Sequence Editor."), TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): Failed to Open Level Sequence Editor."), *GetName());
+			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): Failed to Open Level Sequence Editor."), *GetName());
 			return;
 		}
 
@@ -383,7 +386,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 
 			UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
+			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
 			return;
 		}
 		return;
@@ -431,7 +434,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 
 				UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
-				UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
+				UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
 
 				for (int32 I = 0; I < SeqCount; ++I)
 				{
@@ -440,14 +443,14 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 
 					UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
-					UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
+					UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
 				}
 				return;
 			}
 		}
 		else
 		{
-			AnimLevelSequence.Master = UCsLibrary_Asset::CreateLevelSequence(AssetName, PackageName);
+			AnimLevelSequence.Master = UCsAnimLibrary_Asset::CreateLevelSequence(AssetName, PackageName);
 		}
 
 		ULevelSequence* Seq						 = AnimLevelSequence.Master;
@@ -711,7 +714,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_TwoBoneIK(struct FPropert
 	{
 		UCsLibrary_Common::DisplayNotificationInfo(TEXT("SkeletalMesh is NULL."), TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
 
-		UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_TwoBoneIK(%s): SkeletalMesh is NULL. Can NOT update Controls."), *GetName());
+		UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_TwoBoneIK(%s): SkeletalMesh is NULL. Can NOT update Controls."), *GetName());
 		return;
 	}
 
@@ -902,7 +905,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 
 		UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
 
-		UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
+		UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
 		return;
 	}
 
@@ -912,7 +915,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 
 		UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
 
-		UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
+		UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
 		return;
 	}
 	// Check for existing Level Sequence
@@ -1105,7 +1108,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 
 			UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
 
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
+			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
 
 			for (int32 I = 0; I < SeqCount; ++I)
 			{
@@ -1114,7 +1117,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 
 				UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 2.0f);
 
-				UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
+				UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
 			}
 			return;
 		}
@@ -1133,7 +1136,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 			PackageName.RemoveAt(Len - 1);
 		}
 
-		AnimLevelSequence.Shots[Index].Shot = UCsLibrary_Asset::CreateLevelSequence(AssetName, PackageName);
+		AnimLevelSequence.Shots[Index].Shot = UCsAnimLibrary_Asset::CreateLevelSequence(AssetName, PackageName);
 
 		ULevelSequence* Seq     = AnimLevelSequence.Shots[Index].Shot;
 		const float DeltaTime   = 2.0f;
@@ -1277,7 +1280,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Expor
 
 				UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
-				UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Export(%s): %s"), *GetName(), *Message);
+				UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Export(%s): %s"), *GetName(), *Message);
 
 				for (int32 I = 0; I < AnimCount; ++I)
 				{
@@ -1286,7 +1289,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Expor
 
 					UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 2.0f);
 
-					UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Export(%s): %s"), *GetName(), *Message);
+					UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Export(%s): %s"), *GetName(), *Message);
 				}
 				return;
 			}
@@ -1753,19 +1756,19 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 
 		if (BoneArrayIndex == INDEX_NONE)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): Controls_FK[%d].Connections[%d].Bone %s is NOT a Valid Bone."), *GetName(), Index, I, *(BoneName.ToString()));
+			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): Controls_FK[%d].Connections[%d].Bone %s is NOT a Valid Bone."), *GetName(), Index, I, *(BoneName.ToString()));
 			continue;
 		}
 
 		if (Connection.Output.Axes == ECS_AXES_NONE)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): No Axes set for Controls_FK[%d].Connections[%d].Output.Axes = 0."), *GetName(), Index, I);
+			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): No Axes set for Controls_FK[%d].Connections[%d].Output.Axes = 0."), *GetName(), Index, I);
 			continue;
 		}
 
 		if (Connection.Input.Axes == ECS_AXES_NONE)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): No Axes set for Controls_FK[%d].Connections[%d].Input.Axes = 0."), *GetName(), Index, I);
+			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): No Axes set for Controls_FK[%d].Connections[%d].Input.Axes = 0."), *GetName(), Index, I);
 			continue;
 		}
 
@@ -1774,16 +1777,16 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 
 		if (NumOutputAxes > NumInputAxes)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): Number of Output Axes > Input Axes (%d > %d) for Controls_FK[%d].Connections[%d]."), *GetName(), NumOutputAxes, NumInputAxes, Index, I);
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): Valid Number of Output Axes is # Output Axes = # Input Axes OR # Output Axes = 1."), *GetName(), NumOutputAxes, NumInputAxes, Index, I);
+			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): Number of Output Axes > Input Axes (%d > %d) for Controls_FK[%d].Connections[%d]."), *GetName(), NumOutputAxes, NumInputAxes, Index, I);
+			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): Valid Number of Output Axes is # Output Axes = # Input Axes OR # Output Axes = 1."), *GetName(), NumOutputAxes, NumInputAxes, Index, I);
 			continue;
 		}
 
 		if (NumInputAxes > NumOutputAxes &&
 			NumOutputAxes != 1)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): Number of Input Axes > Output Axes (%d > %d) AND # of Output Axes != 1 for Controls_FK[%d].Connections[%d]."), *GetName(), NumOutputAxes, NumInputAxes, Index, I);
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): Valid Number of Output Axes is # Output Axes = # Input Axes OR # Output Axes = 1."), *GetName(), NumOutputAxes, NumInputAxes, Index, I);
+			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): Number of Input Axes > Output Axes (%d > %d) AND # of Output Axes != 1 for Controls_FK[%d].Connections[%d]."), *GetName(), NumOutputAxes, NumInputAxes, Index, I);
+			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): Valid Number of Output Axes is # Output Axes = # Input Axes OR # Output Axes = 1."), *GetName(), NumOutputAxes, NumInputAxes, Index, I);
 			continue;
 		}
 
@@ -2047,7 +2050,7 @@ void ACsPoseableMeshActor::Create_Control_TwoBoneIK(const int32 &Index)
 		{
 			Control->StartBone = nullptr;
 
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::Create_Control_TwoBoneIK(%s): JointTargetBoneName (Start Bone): %s is NOT found in SkeletalMesh: %s"), *GetName(), *(StartBoneName.ToString()), *(PoseableMeshComponent->SkeletalMesh->GetName()));
+			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::Create_Control_TwoBoneIK(%s): JointTargetBoneName (Start Bone): %s is NOT found in SkeletalMesh: %s"), *GetName(), *(StartBoneName.ToString()), *(PoseableMeshComponent->SkeletalMesh->GetName()));
 		}
 	}
 	// Change Middle Bone
@@ -2079,7 +2082,7 @@ void ACsPoseableMeshActor::Create_Control_TwoBoneIK(const int32 &Index)
 		{
 			Control->MiddleBone = nullptr;
 
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::Create_Control_TwoBoneIK(%s): IKBone's Parent Bone (Middle Bone): %s is NOT found in SkeletalMesh: %s"), *GetName(), *(MiddleBoneName.ToString()), *(PoseableMeshComponent->SkeletalMesh->GetName()));
+			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::Create_Control_TwoBoneIK(%s): IKBone's Parent Bone (Middle Bone): %s is NOT found in SkeletalMesh: %s"), *GetName(), *(MiddleBoneName.ToString()), *(PoseableMeshComponent->SkeletalMesh->GetName()));
 		}
 	}
 	// Change EndEffector (End Bone)
@@ -2125,7 +2128,7 @@ void ACsPoseableMeshActor::Create_Control_TwoBoneIK(const int32 &Index)
 		{
 			Control->EndBone = nullptr;
 
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::Create_Control_TwoBoneIK(%s): IKBone (End Bone): %s is NOT found in SkeletalMesh: %s"), *GetName(), *(BoneName.ToString()), *(PoseableMeshComponent->SkeletalMesh->GetName()));
+			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::Create_Control_TwoBoneIK(%s): IKBone (End Bone): %s is NOT found in SkeletalMesh: %s"), *GetName(), *(BoneName.ToString()), *(PoseableMeshComponent->SkeletalMesh->GetName()));
 		}
 	}
 

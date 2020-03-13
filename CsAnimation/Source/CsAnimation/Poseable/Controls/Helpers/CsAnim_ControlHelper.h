@@ -6,7 +6,7 @@
 #include "CsAnim_ControlHelper.generated.h"
 
 UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
-class CSCORE_API ACsAnim_ControlHelper : public AStaticMeshActor
+class CSANIMATION_API ACsAnim_ControlHelper : public AStaticMeshActor
 {
 	GENERATED_UCLASS_BODY()
 

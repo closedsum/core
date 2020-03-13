@@ -8,7 +8,7 @@
 DECLARE_DELEGATE_OneParam(FBindableEvent_CsAnimControl_OnControlNameChanged, const int32&);
 
 UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
-class CSCORE_API ACsAnim_Control : public AStaticMeshActor
+class CSANIMATION_API ACsAnim_Control : public AStaticMeshActor
 {
 	GENERATED_UCLASS_BODY()
 

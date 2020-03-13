@@ -1,11 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "Animation/Poseable/Controls/CsAnim_Control.h"
+#include "Poseable/Controls/CsAnim_Control.h"
 #include "CsAnim_Control_FK.generated.h"
 
 UCLASS()
-class CSCORE_API ACsAnim_Control_FK : public ACsAnim_Control
+class CSANIMATION_API ACsAnim_Control_FK : public ACsAnim_Control
 {
 	GENERATED_UCLASS_BODY()
 

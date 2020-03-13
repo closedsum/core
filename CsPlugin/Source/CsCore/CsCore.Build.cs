@@ -8,48 +8,7 @@ public class CsCore : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        if (Target.Type == TargetType.Editor)
-        {
-            PublicDependencyModuleNames.AddRange(
-                new string[] {
-                    "Core",
-                    "CoreUObject",
-                    "Engine",
-                    "OnlineSubsystem",
-                    "OnlineSubsystemUtils",
-                    "AssetRegistry",
-                    "AIModule",
-                    "GameplayTasks",
-                    "Json",
-                    "JsonUtilities",
-                    "UMG",
-                    "UnrealEd",
-                    "AssetTools",
-                    "ContentBrowser",
-                    "SourceControl",
-                    "Slate",
-                    "EditorStyle",
-                    "HeadMountedDisplay",
-                    "V8",
-                    "AnimationCore",
-                    "Sequencer",
-                    "LevelSequence",
-                    "NavigationSystem",
-                    "MovieScene",
-                    "MovieSceneTracks",
-                }
-            );
-
-            PrivateDependencyModuleNames.AddRange(
-                new string[] {
-                    "BlueprintGraph",
-                    "LevelSequenceEditor",
-                }
-            );
-        }
-        else
-        {
-            PublicDependencyModuleNames.AddRange(
+        PublicDependencyModuleNames.AddRange(
                 new string[] {
                     "Core",
                     "CoreUObject",
@@ -64,11 +23,9 @@ public class CsCore : ModuleRules
                     "UMG",
                     "HeadMountedDisplay",
                     "V8",
-                    "LevelSequence",
                     "NavigationSystem",
                 }
             );
-        }
 
         PrivateDependencyModuleNames.AddRange(
             new string[] {
@@ -78,5 +35,36 @@ public class CsCore : ModuleRules
                 "Json",
             }
         );
+
+        if (Target.Type == TargetType.Editor)
+        {
+            PublicDependencyModuleNames.AddRange(
+                new string[] {
+                    "UnrealEd",
+                    "AssetTools",
+                    "ContentBrowser",
+                    "SourceControl",
+                    "Slate",
+                    "EditorStyle",
+                    //"AnimationCore",
+                    "NavigationSystem",
+                }
+            );
+
+            PrivateDependencyModuleNames.AddRange(
+                new string[] {
+                    "BlueprintGraph",
+                }
+            );
+        }
+        else
+        {
+            PublicDependencyModuleNames.AddRange(
+                new string[] {
+                }
+            );
+        }
+
+        
     }
 }

@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class CsCc : ModuleRules
+public class CsAnimation : ModuleRules
 {
-    public CsCc(ReadOnlyTargetRules Target) : base(Target)
+    public CsAnimation(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -22,21 +22,26 @@ public class CsCc : ModuleRules
         {
             PublicDependencyModuleNames.AddRange(
                 new string[] {
+                    "UnrealEd",
+                    "AnimationCore",
+                    "Sequencer",
+                    "LevelSequence",
+                    "MovieScene",
+                    "MovieSceneTracks",
                 }
             );
 
-            /*
             PrivateDependencyModuleNames.AddRange(
                 new string[] {
-                    "BlueprintGraph",
+                    "LevelSequenceEditor",
                 }
             );
-            */
         }
         else
         {
             PublicDependencyModuleNames.AddRange(
                 new string[] {
+                    "LevelSequence",
                 }
             );
         }

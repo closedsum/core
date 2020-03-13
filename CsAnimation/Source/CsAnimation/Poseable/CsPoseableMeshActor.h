@@ -13,8 +13,13 @@
 // Structs
 #pragma region
 
+	// FCsPoseableMeshFK
+#pragma region
+
+class ACsAnim_Bone;
+
 USTRUCT(BlueprintType)
-struct FCsPoseableMeshFK
+struct CSANIMATION_API FCsPoseableMeshFK
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -25,7 +30,7 @@ struct FCsPoseableMeshFK
 	int32 BoneIndex;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Bone")
-	class ACsAnim_Bone* Actor;
+	ACsAnim_Bone* Actor;
 
 	FCsPoseableMeshFK()
 	{
@@ -35,8 +40,15 @@ struct FCsPoseableMeshFK
 	}
 };
 
+#pragma endregion FCsPoseableMeshFK
+
+	// FCsAnimBoneInfo
+#pragma region
+
+class ACsAnim_Bone;
+
 USTRUCT(BlueprintType)
-struct FCsAnimBoneInfo
+struct CSANIMATION_API FCsAnimBoneInfo
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -53,7 +65,7 @@ struct FCsAnimBoneInfo
 	int32 ParentBoneIndex;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Bone")
-	class ACsAnim_Bone* Actor;
+	ACsAnim_Bone* Actor;
 
 	FCsAnimBoneInfo()
 	{
@@ -65,11 +77,16 @@ struct FCsAnimBoneInfo
 	}
 };
 
+#pragma endregion FCsAnimBoneInfo
+
 	// Controls
 #pragma region
 
+	// FCsAnimControlInfo_FK_ConnectionOutput
+#pragma region
+
 USTRUCT(BlueprintType)
-struct FCsAnimControlInfo_FK_ConnectionOutput
+struct CSANIMATION_API FCsAnimControlInfo_FK_ConnectionOutput
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -114,8 +131,13 @@ struct FCsAnimControlInfo_FK_ConnectionOutput
 	}
 };
 
+#pragma endregion FCsAnimControlInfo_FK_ConnectionOutput
+
+	// FCsAnimControlInfo_FK_ConnectionInput
+#pragma region
+
 USTRUCT(BlueprintType)
-struct FCsAnimControlInfo_FK_ConnectionInput
+struct CSANIMATION_API FCsAnimControlInfo_FK_ConnectionInput
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -160,8 +182,13 @@ struct FCsAnimControlInfo_FK_ConnectionInput
 	}
 };
 
+#pragma endregion FCsAnimControlInfo_FK_ConnectionInput
+
+	// FCsAnimControlInfo_FK_Connection
+#pragma region
+
 USTRUCT(BlueprintType)
-struct FCsAnimControlInfo_FK_Connection
+struct CSANIMATION_API FCsAnimControlInfo_FK_Connection
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -226,8 +253,15 @@ struct FCsAnimControlInfo_FK_Connection
 	}
 };
 
+#pragma endregion FCsAnimControlInfo_FK_Connection
+
+	// FCsAnimControlInfo_FK
+#pragma region
+
+class ACsAnim_Control_FK;
+
 USTRUCT(BlueprintType)
-struct FCsAnimControlInfo_FK
+struct CSANIMATION_API FCsAnimControlInfo_FK
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -235,7 +269,7 @@ struct FCsAnimControlInfo_FK
 	FString Control;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Control")
-	class ACsAnim_Control_FK* Actor;
+	ACsAnim_Control_FK* Actor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
 	TArray<FCsAnimControlInfo_FK_Connection> Connections;
@@ -294,11 +328,16 @@ struct FCsAnimControlInfo_FK
 	}
 };
 
+#pragma endregion FCsAnimControlInfo_FK
+
 		// TwoBoneIK
 #pragma region
 
+	// FCsAnimControlInfo_TwoBoneIK_IK
+#pragma region
+
 USTRUCT(BlueprintType)
-struct FCsAnimControlInfo_TwoBoneIK_IK
+struct CSANIMATION_API FCsAnimControlInfo_TwoBoneIK_IK
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -387,8 +426,13 @@ struct FCsAnimControlInfo_TwoBoneIK_IK
 	}
 };
 
+#pragma endregion FCsAnimControlInfo_TwoBoneIK_IK
+
+	// FCsAnimControlInfo_TwoBoneIK_EndEffector
+#pragma region
+
 USTRUCT(BlueprintType)
-struct FCsAnimControlInfo_TwoBoneIK_EndEffector
+struct CSANIMATION_API FCsAnimControlInfo_TwoBoneIK_EndEffector
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -441,8 +485,13 @@ struct FCsAnimControlInfo_TwoBoneIK_EndEffector
 	}
 };
 
+#pragma endregion FCsAnimControlInfo_TwoBoneIK_EndEffector
+
+	// FCsAnimControlInfo_TwoBoneIK_JoinTargetS
+#pragma region
+
 USTRUCT(BlueprintType)
-struct FCsAnimControlInfo_TwoBoneIK_JoinTarget
+struct CSANIMATION_API FCsAnimControlInfo_TwoBoneIK_JoinTarget
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -494,8 +543,13 @@ struct FCsAnimControlInfo_TwoBoneIK_JoinTarget
 	}
 };
 
+#pragma endregion FCsAnimControlInfo_TwoBoneIK_JoinTarget
+
+	// FCsAnimControlInfo_TwoBoneIK
+#pragma region
+
 USTRUCT(BlueprintType)
-struct FCsAnimControlInfo_TwoBoneIK
+struct CSANIMATION_API FCsAnimControlInfo_TwoBoneIK
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -544,6 +598,8 @@ struct FCsAnimControlInfo_TwoBoneIK
 		return !(*this == B);
 	}
 };
+
+#pragma endregion FCsAnimControlInfo_TwoBoneIK
 
 #pragma endregion TwoBoneIK
 
@@ -695,8 +751,11 @@ namespace ECsSequencerTimeSnapInterval
 #define ECS_SEQUENCER_TIME_SNAP_INTERVAL_MAX (uint8)ECsSequencerTimeSnapInterval::ECsSequencerTimeSnapInterval_MAX
 typedef ECsSequencerTimeSnapInterval::Type TCsSequencerTimeSnapInterval;
 
+	// FCsAnimLevelSequenceInfo_Shot
+#pragma region
+
 USTRUCT(BlueprintType)
-struct FCsAnimLevelSequenceInfo_Shot
+struct CSANIMATION_API FCsAnimLevelSequenceInfo_Shot
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -779,8 +838,13 @@ struct FCsAnimLevelSequenceInfo_Shot
 	}
 };
 
+#pragma endregion FCsAnimLevelSequenceInfo_Shot
+
+	// FCsAnimLevelSequenceInfo_Master
+#pragma region
+
 USTRUCT(BlueprintType)
-struct FCsAnimLevelSequenceInfo_Master
+struct CSANIMATION_API FCsAnimLevelSequenceInfo_Master
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -873,12 +937,19 @@ struct FCsAnimLevelSequenceInfo_Master
 	}
 };
 
+#pragma endregion FCsAnimLevelSequenceInfo_Master
+
 #pragma endregion Level Sequence
 
 #pragma endregion Structs
 
+class UCsPoseableMeshComponent;
+class USkeletalMesh;
+class FLevelSequenceEditorToolkit;
+class ACsAnim_Bone;
+
 UCLASS()
-class CSCORE_API ACsPoseableMeshActor : public AActor
+class CSANIMATION_API ACsPoseableMeshActor : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
@@ -893,10 +964,10 @@ class CSCORE_API ACsPoseableMeshActor : public AActor
 	bool HasTickedInEditor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "00 PoseableMesh")
-	class UCsPoseableMeshComponent* PoseableMeshComponent;
+	UCsPoseableMeshComponent* PoseableMeshComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "00 PoseableMesh")
-	class USkeletalMesh* Last_SkeletalMesh;
+	USkeletalMesh* Last_SkeletalMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "00 PoseableMesh")
 	TArray<FCsAnimBoneInfo> Bones;
@@ -919,8 +990,8 @@ class CSCORE_API ACsPoseableMeshActor : public AActor
 	bool bIsAssetEditorOpen;
 	bool IsAssetEditorOpen();
 
-	class FLevelSequenceEditorToolkit* LevelSequenceEditor;
-	class FLevelSequenceEditorToolkit* GetOpenAssetEditor();
+	FLevelSequenceEditorToolkit* LevelSequenceEditor;
+	FLevelSequenceEditorToolkit* GetOpenAssetEditor();
 
 	int32 OpenShotIndex;
 	int32 GetOpenShotIndexInEditor();
@@ -957,8 +1028,8 @@ class CSCORE_API ACsPoseableMeshActor : public AActor
 	void RecreateBone(const int32 &Index);
 	void ResetBones();
 
-	class ACsAnim_Bone* GetBone(const FName &BoneName);
-	class ACsAnim_Bone* GetBone(const FString &BoneName);
+	ACsAnim_Bone* GetBone(const FName &BoneName);
+	ACsAnim_Bone* GetBone(const FString &BoneName);
 
 #pragma endregion Bones
 

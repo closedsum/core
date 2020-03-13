@@ -381,8 +381,6 @@ public:
 	static class UFactory* GetFactory(UClass* ClassToSpawn);
 	static class UObject* CreateAsset(UClass* ClassToSpawn, const FString &Name, const FString &PackagePath);
 
-	static class ULevelSequence* CreateLevelSequence(const FString &Name, const FString &PackagePath);
-
 	static class UAnimSequence* CreateAnimSequence(class USkeletalMesh* Mesh, const FString &Name, const FString &PackagePath);
 	static void InitAnimSequence(class UAnimSequence* Anim, class USkeletalMeshComponent* Mesh);
 	static void InitAnimSequence(class UAnimSequence* Anim, class UPoseableMeshComponent* Mesh);

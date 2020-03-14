@@ -8,17 +8,31 @@ public class CsTd : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        if (Target.Type == TargetType.Editor)
-        {
-            PublicDependencyModuleNames.AddRange(
+        PublicDependencyModuleNames.AddRange(
                 new string[] {
                     "Core",
                     "CoreUObject",
                     "Engine",
-                    "OnlineSubsystem",
-                    "OnlineSubsystemUtils",
                     "AssetRegistry",
                     "CsCore",
+                }
+            );
+
+        /*
+        PrivateDependencyModuleNames.AddRange(
+            new string[] {
+                "InputCore",
+                "Slate",
+                "SlateCore",
+                "Json",
+            }
+        );
+        */
+
+        if (Target.Type == TargetType.Editor)
+        {
+            PublicDependencyModuleNames.AddRange(
+                new string[] {
                 }
             );
 
@@ -33,24 +47,8 @@ public class CsTd : ModuleRules
         {
             PublicDependencyModuleNames.AddRange(
                 new string[] {
-                    "Core",
-                    "CoreUObject",
-                    "Engine",
-                    "AssetRegistry",
-                    "CsCore",
                 }
             );
         }
-
-        /*
-        PrivateDependencyModuleNames.AddRange(
-            new string[] {
-                "InputCore",
-                "Slate",
-                "SlateCore",
-                "Json",
-            }
-        );
-        */
     }
 }

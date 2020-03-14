@@ -20,6 +20,17 @@ public class CsBlockchain : ModuleRules
                 }
             );
 
+        /*
+        PrivateDependencyModuleNames.AddRange(
+            new string[] {
+                "InputCore",
+                "Slate",
+                "SlateCore",
+                "Json",
+            }
+        );
+        */
+
         if (Target.Type == TargetType.Editor)
         {
             PublicDependencyModuleNames.AddRange(
@@ -41,16 +52,5 @@ public class CsBlockchain : ModuleRules
                 }
             );
         }
-
-        /*
-        PrivateDependencyModuleNames.AddRange(
-            new string[] {
-                "InputCore",
-                "Slate",
-                "SlateCore",
-                "Json",
-            }
-        );
-        */
     }
 }

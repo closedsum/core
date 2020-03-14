@@ -8,9 +8,7 @@ public class CsEditor : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        if (Target.Type == TargetType.Editor)
-        {
-            PublicDependencyModuleNames.AddRange(
+        PublicDependencyModuleNames.AddRange(
                 new string[] {
                     "Core",
                     "CoreUObject",
@@ -23,6 +21,24 @@ public class CsEditor : ModuleRules
                     "Json",
                     "JsonUtilities",
                     "UMG",
+                    "V8",
+                    "CsCore",
+                }
+            );
+
+       PrivateDependencyModuleNames.AddRange(
+            new string[] {
+                "InputCore",
+                "Slate",
+                "SlateCore",
+                "Json",
+            }
+        );
+
+        if (Target.Type == TargetType.Editor)
+        {
+            PublicDependencyModuleNames.AddRange(
+                new string[] {
                     "UnrealEd",
                     "AssetTools",
                     "ContentBrowser",
@@ -33,8 +49,6 @@ public class CsEditor : ModuleRules
                     "EditorStyle",
                     "Kismet",
                     "KismetCompiler",
-                    "V8",
-                    "CsCore",
                 }
             );
         }
@@ -42,30 +56,8 @@ public class CsEditor : ModuleRules
         {
             PublicDependencyModuleNames.AddRange(
                 new string[] {
-                    "Core",
-                    "CoreUObject",
-                    "Engine",
-                    "OnlineSubsystem",
-                    "OnlineSubsystemUtils",
-                    "AssetRegistry",
-                    "AIModule",
-                    "GameplayTasks",
-                    "Json",
-                    "JsonUtilities",
-                    "UMG",
-                    "V8",
-                    "CsCore",
                 }
             );
         }
-
-        PrivateDependencyModuleNames.AddRange(
-            new string[] {
-                "InputCore",
-                "Slate",
-                "SlateCore",
-                "Json",
-            }
-        );
     }
 }

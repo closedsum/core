@@ -2,6 +2,18 @@
 #pragma once
 
 #include "Core/Public/Containers/Map.h"
+#include "Types/Property/Ref/CsProperty_Ref_bool.h"
+#include "Types/Property/Ref/CsProperty_Ref_int32.h"
+#include "Types/Property/Ref/CsProperty_Ref_uint8.h"
+#include "Types/Property/Ref/CsProperty_Ref_Vector.h"
+#include "Types/Property/Ref/Ptr/CsProperty_Ref_Object.h"
+#include "Types/Property/Ref/Ptr/CsProperty_Ref_Actor.h"
+#include "Types/Property/Ref/Ptr/CsProperty_Ref_Pawn.h"
+#include "Types/Property/Ref/Ptr/CsProperty_Ref_ActorComponent.h"
+#include "Types/Property/Ref/Ptr/CsProperty_Ref_SceneComponent.h"
+#include "Types/Property/Ref/Ptr/CsProperty_Ref_PrimitiveComponent.h"
+#include "Types/Property/Ref/Ptr/CsProperty_Ref_StaticMeshComponent.h"
+#include "Types/Property/Ref/Ptr/CsProperty_Ref_SkeletalMeshComponent.h"
 #include "Types/CsTypes_String.h"
 
 class UProperty;

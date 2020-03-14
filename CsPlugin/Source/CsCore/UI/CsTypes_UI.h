@@ -1,4 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+#include "Types/Property/Value/CsProperty_int32.h"
+#include "Types/Property/Value/CsProperty_uint32.h"
+#include "Types/Property/Value/CsProperty_float.h"
+#include "Types/Property/Value/CsProperty_String.h"
+#include "Types/Property/Value/CsProperty_LinearColor.h"
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_Load.h"
 #include "Types/CsTypes_Math.h"

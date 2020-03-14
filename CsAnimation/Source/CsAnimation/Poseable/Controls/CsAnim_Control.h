@@ -2,7 +2,11 @@
 #pragma once
 
 #include "Engine/StaticMeshActor.h"
+// Types
 #include "Types/CsTypes.h"
+#include "Types/Property/Value/CsProperty_String.h"
+#include "Types/Property/Value/CsProperty_Vector.h"
+#include "Types/Property/Value/CsProperty_Rotator.h"
 #include "CsAnim_Control.generated.h"
 
 DECLARE_DELEGATE_OneParam(FBindableEvent_CsAnimControl_OnControlNameChanged, const int32&);

@@ -5,6 +5,8 @@
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Item.h"
+#include "Types/Property/Ref/CsProperty_Ref_bool.h"
+#include "Types/Property/Ref/CsProperty_Ref_int32.h"
 // Library
 #include "Library/Load/CsLibrary_Load.h"
 // Data

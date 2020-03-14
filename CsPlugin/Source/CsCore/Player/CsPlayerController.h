@@ -2,6 +2,8 @@
 #pragma once
 #include "GameFramework/PlayerController.h"
 #include "Types/CsTypes_Primitive.h"
+#include "Types/Property/Value/CsProperty_Rotator.h"
+#include "Types/Property/Value/CsProperty_Vector.h"
 #include "Managers/Input/CsTypes_Input.h"
 #include "CsPlayerController.generated.h"
 

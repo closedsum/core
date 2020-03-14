@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "GameFramework/Actor.h"
+// Types
+#include "Types/Property/Ref/CsProperty_Ref_bool.h"
 #include "Managers/Pool/CsTypes_Pool.h"
 #include "Types/CsTypes_Item.h"
 #include "Types/CsTypes_Load.h"

@@ -1,8 +1,14 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UI/CsUserWidget.h"
+// Type
 #include "Types/CsTypes_Item.h"
+#include "Types/Property/Value/CsProperty_Vector2D.h"
 #include "CsWidget_Inventory.generated.h"
+
+class UCsWidget_Inventory_Grid;
+class UCsWidget_Inventory_Slot;
+class ACsManager_Inventory;
 
 UCLASS()
 class CSCORE_API UCsWidget_Inventory : public UCsUserWidget
@@ -22,18 +28,18 @@ class CSCORE_API UCsWidget_Inventory : public UCsUserWidget
 	UTextBlock* Header_Text;
 
 	UPROPERTY(meta = (BindWidget))
-	class UCsWidget_Inventory_Grid* MyGrid;
+	UCsWidget_Inventory_Grid* MyGrid;
 
 	UPROPERTY()
 	uint8 Bag;
 
 	UPROPERTY(meta = (BindWidget))
-	class UCsWidget_Inventory_Slot* Slot_Draggable;
+	UCsWidget_Inventory_Slot* Slot_Draggable;
 
 	UPROPERTY()
 	bool IsMovingSlot;
 
-	TWeakObjectPtr<class ACsManager_Inventory> MyManager_Inventory;
+	TWeakObjectPtr<ACsManager_Inventory> MyManager_Inventory;
 
 	UFUNCTION()
 	class ACsManager_Inventory* GetMyManager_Inventory();

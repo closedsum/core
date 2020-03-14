@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsPooledActor.h"
+// Types
+#include "Types/Property/Value/CsProperty_Vector2D.h"
+#include "Types/Property/Value/CsProperty_Vector.h"
 #include "Types/CsTypes_Interactive.h"
 #include "Data/CsData_Interactive.h"
 #include "CsInteractiveActor.generated.h"

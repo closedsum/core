@@ -1,8 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UI/CsUserWidget.h"
+// Types
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Managers/Input/CsTypes_Input.h"
+#include "Types/Property/Value/CsProperty_Vector2D.h"
 #include "CsWidget_Crafting.generated.h"
 
 // Enums

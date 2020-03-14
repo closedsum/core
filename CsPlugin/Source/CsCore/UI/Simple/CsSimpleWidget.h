@@ -3,6 +3,7 @@
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "Managers/Pool/CsTypes_Pool.h"
 #include "UI/CsTypes_UI.h"
+#include "Types/Property/Value/CsProperty_Vector2D.h"
 #include "CsSimpleWidget.generated.h"
 
 UCLASS()

@@ -1,12 +1,14 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "GameFramework/Character.h"
+// Types
 #include "Types/CsTypes_Weapon.h"
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Damage.h"
 #include "Managers/Sense/CsTypes_Sense.h"
 #include "Types/CsTypes_Trace.h"
 #include "Types/CsTypes_Character.h"
+#include "Types/Property/Ref/CsProperty_Ref_float.h"
 #include "CsPawn.generated.h"
 
 // Tick

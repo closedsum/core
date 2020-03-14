@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Animation/AnimInstance.h"
+// Types
+#include "Types/Property/Ref/CsProperty_Ref_bool.h"
+#include "Types/Property/Ref/CsProperty_Ref_float.h"
 #include "Types/CsTypes_Anim.h"
 #include "Types/CsTypes_AnimInstance.h"
 #include "Coroutine/CsTypes_Coroutine.h"

@@ -5,7 +5,7 @@
 // Managers
 #include "Managers/Process/CsProcess.h"
 // AI
-#include "Types/CsTypes_AI.h"
+#include "AI/CsTypes_AI.h"
 
 #include "CsLibrary_Enum.generated.h"
 

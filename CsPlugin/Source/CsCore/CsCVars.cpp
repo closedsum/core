@@ -242,39 +242,6 @@ TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsStateChange(
 
 #pragma endregion Interactive AI Pawn
 
-	// Behavior Tree
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogAIBTTasks(
-	TEXT("log.ai.bt.tasks"),
-	0,
-	TEXT("Log A.I. Behavior Tree Tasks (Execute, Succeeded, and Abort)."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarDrawAIBTMoveTo(
-	TEXT("draw.ai.bt.moveto"),
-	0,
-	TEXT("Draw A.I. Behavior Tree MoveTo Task."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarDrawAIBTRotateToFaceBBEntry(
-	TEXT("draw.ai.bt.rotatetofacebbentry"),
-	0,
-	TEXT("Draw A.I. Behavior Tree RotateToFaceBBEntry Task."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarDrawAIBTLookAtRotateToFace(
-	TEXT("draw.ai.bt.lookatandrotatetoface"),
-	0,
-	TEXT("Draw A.I. Behavior Tree LookAtAndRotateToFace Task."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Behavior Tree
-
 #pragma endregion AI
 
 // Script
@@ -814,8 +781,6 @@ namespace NCsCVarLog
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerAITransactions);
 	// Interactive AI Pawn
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInteractiveAIPawnPhysicsStateChange);
-	// Behavior Tree
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogAIBTTasks);
 	// Script
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogOverrideFunctions);
 	// Sound

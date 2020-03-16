@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/EnumStruct/AI/ECsAITypeCustomization.h"
 
-#include "Types/CsTypes_AI.h"
+#include "AI/CsTypes_AI.h"
 
 #define LOCTEXT_NAMESPACE "ECsAITypeCustomization"
 

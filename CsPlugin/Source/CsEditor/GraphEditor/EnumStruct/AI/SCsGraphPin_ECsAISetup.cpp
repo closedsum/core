@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAISetup.h"
 #include "CsEditor.h"
 
-#include "Types/CsTypes_AI.h"
+#include "AI/CsTypes_AI.h"
 
 
 void SCsGraphPin_ECsAISetup::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)

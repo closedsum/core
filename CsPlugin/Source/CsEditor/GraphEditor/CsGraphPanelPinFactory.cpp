@@ -12,7 +12,7 @@
 #include "Types/CsTypes_Damage.h"
 #include "Types/CsTypes_Sound.h"
 #include "Types/CsTypes_Interactive.h"
-#include "Types/CsTypes_AI.h"
+#include "AI/CsTypes_AI.h"
 #include "Managers/Sense/CsTypes_Sense.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
 

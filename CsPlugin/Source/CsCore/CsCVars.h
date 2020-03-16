@@ -112,16 +112,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsS
 
 #pragma endregion Interactive AI Pawn
 
-	// Behavior Tree
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogAIBTTasks;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawAIBTMoveTo;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawAIBTRotateToFaceBBEntry;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawAIBTLookAtAndRotateToFace;
-
-#pragma endregion Behavior Tree
-
 #pragma endregion AI
 
 // Script
@@ -526,8 +516,6 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogManagerAITransactions;
 	// Interactive AI Pawn
 	extern CSCORE_API const Type LogInteractiveAIPawnPhysicsStateChange;
-	// Behavior Tree
-	extern CSCORE_API const Type LogAIBTTasks;
 	// Script
 	extern CSCORE_API const Type LogOverrideFunctions;
 	// Sound

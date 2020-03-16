@@ -1,7 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "GameFramework/Actor.h"
+// Types
 #include "Types/CsTypes_Trace.h"
+#include "Types/Property/Multi/CsProperty_Multi_FString_Enum_ThreeParams.h"
+
 #include "CsManager_Trace.generated.h"
 
 // Enums

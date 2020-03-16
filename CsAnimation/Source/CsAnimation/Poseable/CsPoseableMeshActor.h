@@ -2,7 +2,10 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+// Types
 #include "Types/CsTypes.h"
+#include "Types/Property/Multi/CsProperty_Multi_FString_Enum_ThreeParams.h"
+
 #include "CsPoseableMeshActor.generated.h"
 
 // Enums

@@ -2,7 +2,10 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+// Types
 #include "Types/CsTypes.h"
+#include "Types/Property/Multi/CsProperty_Multi_FString_Enum_ThreeParams.h"
+
 #include "CsPooledActor.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPooledActor_Override_OnTick, const int32&, Index, const float&, DeltaSeconds);

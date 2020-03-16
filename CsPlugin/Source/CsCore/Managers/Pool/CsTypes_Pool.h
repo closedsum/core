@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Time/CsTypes_Time.h"
 #include "Types/CsTypes_Primitive.h"
+#include "Types/Property/Multi/CsProperty_Multi_FString_Enum_ThreeParams.h"
 
 #include "Containers/CsInterfaceMap.h"
 

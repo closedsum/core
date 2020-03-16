@@ -5,8 +5,24 @@
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Item.h"
+	// Property
+		// Ref
 #include "Types/Property/Ref/CsProperty_Ref_bool.h"
 #include "Types/Property/Ref/CsProperty_Ref_int32.h"
+		// Array
+			// Ref
+#include "Types/Property/Array/Ref/CsProperty_TArray_Ref_bool.h"
+#include "Types/Property/Array/Ref/CsIntegralType_TArray_Ref_int32.h"
+#include "Types/Property/Array/Ref/CsIntegralType_TArray_Ref_float.h"
+		// Map
+#include "Types/Property/Map/CsProperty_TMap_bool.h"
+#include "Types/Property/Map/CsIntegralType_TMap_uint8.h"
+#include "Types/Property/Map/CsIntegralType_TMap_float.h"
+			// Ref
+#include "Types/Property/Map/Ref/CsProperty_TMap_Ref_bool.h"
+#include "Types/Property/Map/Ref/CsIntegralType_TMap_Ref_uint8.h"
+#include "Types/Property/Map/Ref/CsIntegralType_TMap_Ref_int32.h"
+#include "Types/Property/Map/Ref/CsIntegralType_TMap_Ref_float.h"
 // Library
 #include "Library/Load/CsLibrary_Load.h"
 // Data
@@ -129,9 +145,9 @@ namespace ECsWeaponRoutine
 #pragma region
 
 // bool
-struct FCsWeapon_Ref_bool : public TCsProperty_TArrayRef_bool
+struct FCsWeapon_Ref_bool : public TCsProperty_TArray_Ref_bool
 {
-	FCsWeapon_Ref_bool() : TCsProperty_TArrayRef_bool(){}
+	FCsWeapon_Ref_bool() : TCsProperty_TArray_Ref_bool(){}
 	~FCsWeapon_Ref_bool() {}
 };
 
@@ -141,9 +157,9 @@ struct FCsWeapon_TMap_bool : public TCsProperty_TMap_bool<FECsWeaponFireMode>
 	~FCsWeapon_TMap_bool() {}
 };
 
-struct FCsWeapon_TMapRef_bool : public TCsProperty_TMapRef_bool<FECsWeaponFireMode>
+struct FCsWeapon_TMapRef_bool : public TCsProperty_TMap_Ref_bool<FECsWeaponFireMode>
 {
-	FCsWeapon_TMapRef_bool() : TCsProperty_TMapRef_bool<FECsWeaponFireMode>(){}
+	FCsWeapon_TMapRef_bool() : TCsProperty_TMap_Ref_bool<FECsWeaponFireMode>(){}
 	~FCsWeapon_TMapRef_bool() {}
 };
 
@@ -154,29 +170,29 @@ struct FCsWeapon_TMap_uint8 : public TCsIntegralType_TMap_uint8<FECsWeaponFireMo
 	~FCsWeapon_TMap_uint8() {}
 };
 
-struct FCsWeapon_TMapRef_uint8 : public TCsIntegralType_TMapRef_uint8<FECsWeaponFireMode>
+struct FCsWeapon_TMapRef_uint8 : public TCsIntegralType_TMap_Ref_uint8<FECsWeaponFireMode>
 {
-	FCsWeapon_TMapRef_uint8() : TCsIntegralType_TMapRef_uint8<FECsWeaponFireMode>(){}
+	FCsWeapon_TMapRef_uint8() : TCsIntegralType_TMap_Ref_uint8<FECsWeaponFireMode>(){}
 	~FCsWeapon_TMapRef_uint8() {}
 };
 
 // int32
-struct FCsWeapon_Ref_int32 : public TCsIntegralType_TArrayRef_int32
+struct FCsWeapon_Ref_int32 : public TCsIntegralType_TArray_Ref_int32
 {
-	FCsWeapon_Ref_int32() : TCsIntegralType_TArrayRef_int32(){}
+	FCsWeapon_Ref_int32() : TCsIntegralType_TArray_Ref_int32(){}
 	~FCsWeapon_Ref_int32() {}
 };
 
-struct FCsWeapon_TMapRef_int32 : public TCsIntegralType_TMapRef_int32<FECsWeaponFireMode>
+struct FCsWeapon_TMapRef_int32 : public TCsIntegralType_TMap_Ref_int32<FECsWeaponFireMode>
 {
-	FCsWeapon_TMapRef_int32() : TCsIntegralType_TMapRef_int32<FECsWeaponFireMode>(){}
+	FCsWeapon_TMapRef_int32() : TCsIntegralType_TMap_Ref_int32<FECsWeaponFireMode>(){}
 	~FCsWeapon_TMapRef_int32() {}
 };
 
 // float
-struct FCsWeapon_Ref_float : public TCsIntegralType_TArrayRef_float
+struct FCsWeapon_Ref_float : public TCsIntegralType_TArray_Ref_float
 {
-	FCsWeapon_Ref_float() : TCsIntegralType_TArrayRef_float(){}
+	FCsWeapon_Ref_float() : TCsIntegralType_TArray_Ref_float(){}
 	~FCsWeapon_Ref_float() {}
 };
 
@@ -186,9 +202,9 @@ struct FCsWeapon_TMap_float : public TCsIntegralType_TMap_float<FECsWeaponFireMo
 	~FCsWeapon_TMap_float() {}
 };
 
-struct FCsWeapon_TMapRef_float : public TCsIntegralType_TMapRef_float<FECsWeaponFireMode>
+struct FCsWeapon_TMapRef_float : public TCsIntegralType_TMap_Ref_float<FECsWeaponFireMode>
 {
-	FCsWeapon_TMapRef_float() : TCsIntegralType_TMapRef_float<FECsWeaponFireMode>(){}
+	FCsWeapon_TMapRef_float() : TCsIntegralType_TMap_Ref_float<FECsWeaponFireMode>(){}
 	~FCsWeapon_TMapRef_float() {}
 };
 
@@ -235,7 +251,7 @@ public:
 	}
 
 	template<typename ValueType>
-	void InitMultiRefValueMember(struct TCsProperty_TMapRef<FECsWeaponFireMode, ValueType> &Member, const ValueType &DefaultValue)
+	void InitMultiRefValueMember(struct TCsProperty_TMap_Ref<FECsWeaponFireMode, ValueType> &Member, const ValueType &DefaultValue)
 	{
 		Member.SetDefaultValue(DefaultValue);
 
@@ -254,7 +270,7 @@ public:
 public:
 
 	template<typename T>
-	void SetMemberRefValue(struct TCsProperty_TArrayRef<T>& Member, const FString& MemberName)
+	void SetMemberRefValue(struct TCsProperty_TArray_Ref<T>& Member, const FString& MemberName)
 	{
 		UCsData_Weapon* Data_Weapon = GetMyData_Weapon();
 
@@ -286,7 +302,7 @@ public:
 	}
 
 	template<typename ValueType>
-	void SetMemberMultiRefValue(struct TCsProperty_TMapRef<FECsWeaponFireMode, ValueType>& Member, const FECsData_Weapon_FireMode &FireModeMember, const FString& MemberName)
+	void SetMemberMultiRefValue(struct TCsProperty_TMap_Ref<FECsWeaponFireMode, ValueType>& Member, const FECsData_Weapon_FireMode &FireModeMember, const FString& MemberName)
 	{
 		UCsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<UCsData_ProjectileWeapon>();
 

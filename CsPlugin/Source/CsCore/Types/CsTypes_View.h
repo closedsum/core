@@ -42,18 +42,21 @@ namespace NCsViewType
 
 #pragma endregion ViewType
 
+	// FCsViewFlags
+#pragma region
+
 USTRUCT(BlueprintType)
 struct FCsViewFlags
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flags")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool Flag1P;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flags")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool Flag3P;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flags")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool FlagVR;
 
 	bool Get(const ECsViewType& ViewType)
@@ -86,9 +89,14 @@ struct FCsViewFlags
 	}
 };
 
+#pragma endregion FCsViewFlags
+
 #pragma endregion View
 
 // Render
+#pragma region
+
+	// Visibility
 #pragma region
 
 UENUM(BlueprintType)
@@ -130,15 +138,20 @@ namespace ECsVisibility
 #define ECS_VISIBILITY_MAX (uint8)ECsVisibility::ECsVisibility_MAX
 typedef ECsVisibility::Type TCsVisibility;
 
+#pragma endregion Visibility
+
+	// FCsDrawDistance
+#pragma region
+
 USTRUCT(BlueprintType)
 struct FCsDrawDistance
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Draw Distance", meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0"))
 	float Distance;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Draw Distance")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	float DistanceSq;
 
 	FCsDrawDistance()
@@ -192,21 +205,26 @@ struct FCsDrawDistance
 	}
 };
 
+#pragma endregion FCsDrawDistance
+
+	// FCsFpvDrawDistance
+#pragma region
+
 USTRUCT(BlueprintType)
 struct FCsFpvDrawDistance
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Draw Distance", meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0"))
 	float Distance1P;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Draw Distance")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	float Distance1PSq;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Draw Distance", meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0"))
 	float Distance3P;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Draw Distance")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	float Distance3PSq;
 
 	FCsFpvDrawDistance()
@@ -281,5 +299,7 @@ struct FCsFpvDrawDistance
 		Square();
 	}
 };
+
+#pragma endregion FCsFpvDrawDistance
 
 #pragma endregion Render

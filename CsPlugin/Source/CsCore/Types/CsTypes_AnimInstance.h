@@ -1,6 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Macro.h"
-#include "Types/CsTypes_Primitive.h"
+#include "Types/Enum/CsTypes_Enum.h"
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_Load.h"
 
@@ -14,7 +13,7 @@
 #include "CsTypes_AnimInstance.generated.h"
 #pragma once
 
-// Anim Instance
+// FCsAnimInstance_AnimSequence
 #pragma region
 
 USTRUCT(BlueprintType)
@@ -22,15 +21,15 @@ struct CSCORE_API FCsAnimInstance_AnimSequence
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<UAnimSequence> Anim;
 
 	TSoftObjectPtr<UAnimSequence> Last_Anim;
 
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = Animation)
+	UPROPERTY(Transient, VisibleDefaultsOnly)
 	TWeakObjectPtr<UAnimSequence> Anim_Internal;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool UseDataValueAsDefault;
 
 public:
@@ -67,20 +66,25 @@ public:
 	FORCEINLINE void Update() { Last_Anim = Anim; }
 };
 
+#pragma endregion FCsAnimInstance_AnimSequence
+
+// FCsAnimInstance_AnimMontage
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnimInstance_AnimMontage
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<UAnimMontage> Anim;
 
 	TSoftObjectPtr<UAnimMontage> Last_Anim;
 
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = Animation)
+	UPROPERTY(Transient, VisibleDefaultsOnly)
 	TWeakObjectPtr<UAnimMontage> Anim_Internal;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool UseDataValueAsDefault;
 
 public:
@@ -117,20 +121,25 @@ public:
 	FORCEINLINE void Update() { Last_Anim = Anim; }
 };
 
+#pragma endregion FCsAnimInstance_AnimMontage
+
+// FCsAnimInstance_BlendSpace1D
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnimInstance_BlendSpace1D
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<UBlendSpace1D> Blend;
 
 	TSoftObjectPtr<UBlendSpace1D> Last_Blend;
 
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = Animation)
+	UPROPERTY(Transient, VisibleDefaultsOnly)
 	TWeakObjectPtr<UBlendSpace1D> Blend_Internal;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool UseDataValueAsDefault;
 
 public:
@@ -168,20 +177,25 @@ public:
 	FORCEINLINE void Update() { Last_Blend = Blend; }
 };
 
+#pragma endregion FCsAnimInstance_BlendSpace1D
+
+// FCsAnimInstance_BlendSpace
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnimInstance_BlendSpace
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<UBlendSpace> Blend;
 
 	TSoftObjectPtr<UBlendSpace> Last_Blend;
 
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = Animation)
+	UPROPERTY(Transient, VisibleDefaultsOnly)
 	TWeakObjectPtr<UBlendSpace> Blend_Internal;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool UseDataValueAsDefault;
 
 public:
@@ -218,6 +232,12 @@ public:
 	FORCEINLINE bool HasChanged() { return Blend != Last_Blend; }
 	FORCEINLINE void Update() { Last_Blend = Blend; }
 };
+
+
+#pragma endregion FCsAnimInstance_BlendSpace
+
+// FCsAnimInstance_AimOffset
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnimInstance_AimOffset
@@ -270,20 +290,28 @@ public:
 	FORCEINLINE void Update() { Last_Blend = Blend; }
 };
 
+#pragma endregion FCsAnimInstance_AimOffset
+
+// FCsAnimInstance_Blueprint
+#pragma region
+
+class UBlueprint;
+class UBlueprintGeneratedClass;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnimInstance_Blueprint
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TSoftObjectPtr<class UBlueprint> Blueprint;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<UBlueprint> Blueprint;
 
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = Animation)
-	class UBlueprintGeneratedClass* Blueprint_Internal;
+	UPROPERTY(Transient, VisibleDefaultsOnly)
+	UBlueprintGeneratedClass* Blueprint_Internal;
 
 public:
 
-	UBlueprintGeneratedClass * Get() const
+	UBlueprintGeneratedClass* Get() const
 	{
 		return Blueprint_Internal;
 	}
@@ -306,264 +334,4 @@ public:
 	}
 };
 
-class UCsData_Character;
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsDataAnimInstance_CharacterPtr
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, Category = "Data")
-	TSoftClassPtr<UCsData_Character> Data;
-
-	TSoftClassPtr<UCsData_Character> Last_Data;
-
-	UPROPERTY(Transient)
-	TWeakObjectPtr<UCsData_Character> Data_Internal;
-
-public:
-	FCsDataAnimInstance_CharacterPtr()
-	{
-	}
-
-	FORCEINLINE FCsDataAnimInstance_CharacterPtr& operator=(const FCsDataAnimInstance_CharacterPtr& B)
-	{
-		Data = B.Data;
-		Data_Internal = B.Data_Internal;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsDataAnimInstance_CharacterPtr& B) const
-	{
-		return Data == B.Data && Data_Internal == B.Data_Internal;
-	}
-
-	FORCEINLINE bool operator!=(const FCsDataAnimInstance_CharacterPtr& B) const
-	{
-		return !(*this == B);
-	}
-
-	FORCEINLINE UCsData_Character* Get() const
-	{
-		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
-	}
-
-	template<typename T>
-	FORCEINLINE T* Get() const
-	{
-		return Cast<T>(Get());
-	}
-	
-	FORCEINLINE bool HasChanged() { return Data != Last_Data; }
-	FORCEINLINE void Update() { Last_Data = Data; }
-};
-
-class UCsData_CharacterMeshSkin;
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsDataAnimInstance_CharacterMeshSkinPtr
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, Category = "Data")
-	TSoftClassPtr<UCsData_CharacterMeshSkin> Data;
-
-	TSoftClassPtr<UCsData_CharacterMeshSkin> Last_Data;
-
-	UPROPERTY(Transient)
-	TWeakObjectPtr<UCsData_CharacterMeshSkin> Data_Internal;
-
-public:
-	FCsDataAnimInstance_CharacterMeshSkinPtr()
-	{
-	}
-
-	FORCEINLINE FCsDataAnimInstance_CharacterMeshSkinPtr& operator=(const FCsDataAnimInstance_CharacterMeshSkinPtr& B)
-	{
-		Data = B.Data;
-		Data_Internal = B.Data_Internal;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsDataAnimInstance_CharacterMeshSkinPtr& B) const
-	{
-		return Data == B.Data && Data_Internal == B.Data_Internal;
-	}
-
-	FORCEINLINE bool operator!=(const FCsDataAnimInstance_CharacterMeshSkinPtr& B) const
-	{
-		return !(*this == B);
-	}
-
-	FORCEINLINE UCsData_CharacterMeshSkin* Get() const
-	{
-		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
-	}
-
-	template<typename T>
-	FORCEINLINE T* Get() const
-	{
-		return Cast<T>(Get());
-	}
-
-	FORCEINLINE bool HasChanged() { return Data != Last_Data; }
-	FORCEINLINE void Update() { Last_Data = Data; }
-};
-
-class UCsData_CharacterMaterialSkin;
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsDataAnimInstance_CharacterMaterialSkinPtr
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, Category = "Data")
-	TSoftClassPtr<UCsData_CharacterMaterialSkin> Data;
-
-	TSoftClassPtr<UCsData_CharacterMaterialSkin> Last_Data;
-
-	UPROPERTY(Transient)
-	TWeakObjectPtr<UCsData_CharacterMaterialSkin> Data_Internal;
-
-public:
-	FCsDataAnimInstance_CharacterMaterialSkinPtr()
-	{
-	}
-
-	FORCEINLINE FCsDataAnimInstance_CharacterMaterialSkinPtr& operator=(const FCsDataAnimInstance_CharacterMaterialSkinPtr& B)
-	{
-		Data = B.Data;
-		Data_Internal = B.Data_Internal;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsDataAnimInstance_CharacterMaterialSkinPtr& B) const
-	{
-		return Data == B.Data && Data_Internal == B.Data_Internal;
-	}
-
-	FORCEINLINE bool operator!=(const FCsDataAnimInstance_CharacterMaterialSkinPtr& B) const
-	{
-		return !(*this == B);
-	}
-
-	FORCEINLINE UCsData_CharacterMaterialSkin* Get() const
-	{
-		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
-	}
-
-	template<typename T>
-	FORCEINLINE T* Get() const
-	{
-		return Cast<T>(Get());
-	}
-
-	FORCEINLINE bool HasChanged() { return Data != Last_Data; }
-	FORCEINLINE void Update() { Last_Data = Data; }
-};
-
-class UCsData_Weapon;
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsDataAnimInstance_WeaponPtr
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, Category = "Data")
-	TSoftClassPtr<UCsData_Weapon> Data;
-
-	TSoftClassPtr<UCsData_Weapon> Last_Data;
-
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Data")
-	TWeakObjectPtr<UCsData_Weapon> Data_Internal;
-
-public:
-	FCsDataAnimInstance_WeaponPtr()
-	{
-	}
-
-	FORCEINLINE FCsDataAnimInstance_WeaponPtr& operator=(const FCsDataAnimInstance_WeaponPtr& B)
-	{
-		Data = B.Data;
-		Data_Internal = B.Data_Internal;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsDataAnimInstance_WeaponPtr& B) const
-	{
-		return Data == B.Data && Data_Internal == B.Data_Internal;
-	}
-
-	FORCEINLINE bool operator!=(const FCsDataAnimInstance_WeaponPtr& B) const
-	{
-		return !(*this == B);
-	}
-
-	FORCEINLINE UCsData_Weapon* Get() const
-	{
-		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
-	}
-
-	template<typename T>
-	FORCEINLINE T* Get() const
-	{
-		return Cast<T>(Get());
-	}
-
-	FORCEINLINE bool HasChanged() { return Data != Last_Data; }
-	FORCEINLINE void Update() { Last_Data = Data; }
-};
-
-class UCsData_WeaponMaterialSkin;
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsDataAnimInstance_WeaponMaterialSkinPtr
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, Category = "Data")
-	TSoftClassPtr<UCsData_WeaponMaterialSkin> Data;
-
-	TSoftClassPtr<UCsData_WeaponMaterialSkin> Last_Data;
-
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Data")
-	TWeakObjectPtr<UCsData_WeaponMaterialSkin> Data_Internal;
-
-public:
-	FCsDataAnimInstance_WeaponMaterialSkinPtr()
-	{
-	}
-
-	FORCEINLINE FCsDataAnimInstance_WeaponMaterialSkinPtr& operator=(const FCsDataAnimInstance_WeaponMaterialSkinPtr& B)
-	{
-		Data = B.Data;
-		Data_Internal = B.Data_Internal;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsDataAnimInstance_WeaponMaterialSkinPtr& B) const
-	{
-		return Data == B.Data && Data_Internal == B.Data_Internal;
-	}
-
-	FORCEINLINE bool operator!=(const FCsDataAnimInstance_WeaponMaterialSkinPtr& B) const
-	{
-		return !(*this == B);
-	}
-
-	FORCEINLINE UCsData_WeaponMaterialSkin* Get() const
-	{
-		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
-	}
-
-	template<typename T>
-	FORCEINLINE T* Get() const
-	{
-		return Cast<T>(Get());
-	}
-
-	FORCEINLINE bool HasChanged() { return Data != Last_Data; }
-	FORCEINLINE void Update() { Last_Data = Data; }
-};
-
-#pragma endregion Anim Instance
+#pragma endregion FCsAnimInstance_Blueprint

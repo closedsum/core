@@ -41,13 +41,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputGameEvent;
 
 #pragma endregion Input
 
-// OnBoard
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogPlayerStateOnBoard;
-
-#pragma endregion OnBoard
-
 // GameState
 #pragma region
 
@@ -95,8 +88,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerWidgetActorTransac
 
 // AI
 #pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerAITransactions;
 
 	// View
 #pragma region
@@ -501,8 +492,6 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogInputRotation;
 
 	extern CSCORE_API const Type LogInputGameEvent;
-	// OnBoard
-	extern CSCORE_API const Type LogPlayerStateOnBoard;
 	// GameState
 	extern CSCORE_API const Type LogGameStateOnBoard;
 	// Json
@@ -514,8 +503,6 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogManagerWidgetActorTransactions;
 	// AI
 	extern CSCORE_API const Type LogManagerAITransactions;
-	// Interactive AI Pawn
-	extern CSCORE_API const Type LogInteractiveAIPawnPhysicsStateChange;
 	// Script
 	extern CSCORE_API const Type LogOverrideFunctions;
 	// Sound

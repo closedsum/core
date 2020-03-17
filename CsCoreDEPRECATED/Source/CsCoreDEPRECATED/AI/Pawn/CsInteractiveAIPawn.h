@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "AI/Pawn/CsAIPawn.h"
+// Types
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Interactive.h"
 #include "CsInteractiveAIPawn.generated.h"
@@ -61,7 +62,7 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsInteractiveAIPawn_OnRemove
 #pragma endregion Enums
 
 UCLASS()
-class CSCORE_API ACsInteractiveAIPawn : public ACsAIPawn
+class CSCOREDEPRECATED_API ACsInteractiveAIPawn : public ACsAIPawn
 {
 	GENERATED_UCLASS_BODY()
 

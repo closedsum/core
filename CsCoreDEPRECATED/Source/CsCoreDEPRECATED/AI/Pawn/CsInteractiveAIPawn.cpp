@@ -1,7 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "AI/Pawn/CsInteractiveAIPawn.h"
-#include "CsCore.h"
-#include "CsCVars.h"
+#include "CsCoreDEPRECATED.h"
+#include "AI/Pawn/CsCVars_AI_Pawn.h"
+
+// Library
 #include "Library/CsLibrary_Common.h"
 
 ACsInteractiveAIPawn::ACsInteractiveAIPawn(const FObjectInitializer& ObjectInitializer)
@@ -77,7 +79,7 @@ void ACsInteractiveAIPawn::RemoveInteractedInfo(const TEnumAsByte<ECsInteractive
 	/*
 	if (!Found)
 	{
-	UE_LOG(LogCs, Warning, TEXT("ACsInteractiveActor::RemoveInstigator(%s - %s): Failed to find Instigator: %s in %s List."), *GetName(), *((*InteractiveTypeToString)(Type)), *(InInstigator->GetName()), *ECsInteractiveState::ToString(InState));
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsInteractiveActor::RemoveInstigator(%s - %s): Failed to find Instigator: %s in %s List."), *GetName(), *((*InteractiveTypeToString)(Type)), *(InInstigator->GetName()), *ECsInteractiveState::ToString(InState));
 	}
 	*/
 }
@@ -275,7 +277,7 @@ void ACsInteractiveAIPawn::SetPhysicsState(const ECsInteractivePhysicsState &Sta
 		const FString LastPhysicsStateAsString = UCsLibrary_Common::InteractivePhysicsStateToString(Last_PhysicsState);
 		const FString PhysicsStateAsString	   = UCsLibrary_Common::InteractivePhysicsStateToString(PhysicsState);
 
-		UE_LOG(LogCs, Log, TEXT("ACsInteractiveAIPawn::SetPhysicsState (%s): Setting PhysicsState: %s. (%s) -> (%s)"), *GetName(), *StateAsString, *LastPhysicsStateAsString, *PhysicsStateAsString);
+		UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsInteractiveAIPawn::SetPhysicsState (%s): Setting PhysicsState: %s. (%s) -> (%s)"), *GetName(), *StateAsString, *LastPhysicsStateAsString, *PhysicsStateAsString);
 	}
 }
 
@@ -291,7 +293,7 @@ void ACsInteractiveAIPawn::ClearPhysicsState(const ECsInteractivePhysicsState &S
 		const FString LastPhysicsStateAsString = UCsLibrary_Common::InteractivePhysicsStateToString(Last_PhysicsState);
 		const FString PhysicsStateAsString	   = UCsLibrary_Common::InteractivePhysicsStateToString(PhysicsState);
 
-		UE_LOG(LogCs, Log, TEXT("ACsInteractiveAIPawn::ClearPhysicsState (%s): Clearing PhysicsState: %s. (%s) -> (%s)"), *GetName(), *StateAsString, *LastPhysicsStateAsString, *PhysicsStateAsString);
+		UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsInteractiveAIPawn::ClearPhysicsState (%s): Clearing PhysicsState: %s. (%s) -> (%s)"), *GetName(), *StateAsString, *LastPhysicsStateAsString, *PhysicsStateAsString);
 	}
 }
 

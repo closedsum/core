@@ -103,18 +103,6 @@ TAutoConsoleVariable<int32> CsCVarLogInputGameEvent(
 
 #pragma endregion Input
 
-// OnBoard
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogPlayerStateOnBoard(
-	TEXT("log.playerstate.onboard"),
-	0,
-	TEXT("Log PlayerState OnBoard"),
-	ECVF_SetByConsole
-);
-
-#pragma endregion OnBoard
-
 // GameState
 #pragma region
 
@@ -766,8 +754,7 @@ namespace NCsCVarLog
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInputRotation);
 
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInputGameEvent);
-	// OnBoard
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogPlayerStateOnBoard);
+
 	// GameState
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogGameStateOnBoard);
 	// Json
@@ -779,8 +766,6 @@ namespace NCsCVarLog
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerWidgetActorTransactions);
 	// AI
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerAITransactions);
-	// Interactive AI Pawn
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInteractiveAIPawnPhysicsStateChange);
 	// Script
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogOverrideFunctions);
 	// Sound

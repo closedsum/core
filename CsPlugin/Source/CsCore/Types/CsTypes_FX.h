@@ -63,17 +63,7 @@ typedef ECsFxPriority::Type TCsFxPriority;
 
 struct CSCORE_API EMCsFxPriority : public TCsEnumMap<ECsFxPriority::Type>
 {
-protected:
-	EMCsFxPriority() {}
-	EMCsFxPriority(const EMCsFxPriority &) = delete;
-	EMCsFxPriority(EMCsFxPriority &&) = delete;
-public:
-	~EMCsFxPriority() {}
-private:
-	static EMCsFxPriority* Instance;
-
-public:
-	static EMCsFxPriority& Get();
+	CS_ENUM_MAP_BODY(EMCsFxPriority, ECsFxPriority::Type)
 };
 
 namespace ECsFxPriority
@@ -88,6 +78,11 @@ namespace ECsFxPriority
 }
 
 #pragma endregion FxPriority
+
+// FCsFxElement
+#pragma region
+
+class UParticleSystem;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsFxElement
@@ -214,6 +209,11 @@ public:
 	}
 };
 
+#pragma endregion FCsFxElement
+
+// FCsFpvFxElement
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsFpvFxElement
 {
@@ -268,6 +268,13 @@ struct CSCORE_API FCsFpvFxElement
 		return NCsCached::Name::None;
 	}
 };
+
+#pragma endregion FCsFpvFxElement
+
+// FCsFxPayload
+#pragma region
+
+class UObject;
 
 struct CSCORE_API FCsFxPayload : public ICsPooledObjectPayload
 {
@@ -377,3 +384,5 @@ public:
 	template<typename T>
 	FORCEINLINE T* GetParticle() { return Cast<T>(GetParticle()); }
 };
+
+#pragma endregion FCsFxPayload

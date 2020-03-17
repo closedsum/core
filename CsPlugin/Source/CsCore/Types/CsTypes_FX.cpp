@@ -2,14 +2,7 @@
 #include "Types/CsTypes_FX.h"
 
 // FxPriority
-EMCsFxPriority* EMCsFxPriority::Instance;
-
-EMCsFxPriority& EMCsFxPriority::Get()
-{
-	if (!Instance)
-		Instance = new EMCsFxPriority();
-	return *Instance;
-}
+#pragma region
 
 namespace ECsFxPriority
 {
@@ -21,3 +14,5 @@ namespace ECsFxPriority
 		CSCORE_API const Type ECsFxPriority_MAX = EMCsFxPriority::Get().Add(Type::ECsFxPriority_MAX, TEXT("ECsFxPriority_MAX"), TEXT("MAX"));
 	}
 }
+
+#pragma endregion FxPriority

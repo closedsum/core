@@ -1,5 +1,7 @@
 #include "Data/CsData_CharacterMaterialSkin.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
+
+// Library
 #include "Library/CsLibrary_Common.h"
 
 #include "../Engine/Classes/Animation/SkeletalMeshActor.h"

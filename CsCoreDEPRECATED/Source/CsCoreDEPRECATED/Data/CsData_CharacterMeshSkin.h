@@ -10,7 +10,7 @@
 */
 
 UCLASS(Abstract)
-class CSCORE_API UCsData_CharacterMeshSkin : public UCsData_Impl
+class CSCOREDEPRECATED_API UCsData_CharacterMeshSkin : public UCsData_Impl
 {
 	GENERATED_UCLASS_BODY()
 

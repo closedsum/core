@@ -1,5 +1,6 @@
 #include "Data/CsData_Impact.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
+
 #include "Managers/FX/CsManager_FX.h"
 #include "Managers/Sound/CsManager_Sound.h"
 
@@ -17,7 +18,7 @@ void UCsData_Impact::PlayImpactFX(UWorld* InWorld, const TEnumAsByte<EPhysicalSu
 
 	if (!FxElement->Get())
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Impact::PlayImpactFX: Attempting to Play a NULL ParticleSystem."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impact::PlayImpactFX: Attempting to Play a NULL ParticleSystem."));
 		return;
 	}
 
@@ -40,7 +41,7 @@ void UCsData_Impact::PlayImpactSound(UWorld* InWorld, const TEnumAsByte<EPhysica
 
 	if (!SoundElement->Get())
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Impact::PlayImpactSound: Attempting to Play a NULL Sound."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impact::PlayImpactSound: Attempting to Play a NULL Sound."));
 		return;
 	}
 

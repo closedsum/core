@@ -1,7 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Pawn/CsPawn.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 #include "CsCVars.h"
+
+// Library
 #include "Library/CsLibrary_Common.h"
 #include "Coroutine/CsCoroutineScheduler.h"
 
@@ -32,8 +34,8 @@ CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsPawnRoutine)
 
 namespace ECsPawnRoutine
 {
-	CSCORE_API const FECsPawnRoutine CheckLinkedToPlayerState_Internal = EMCsPawnRoutine::Get().Create(TEXT("CheckLinkedToPlayerState_Internal"));
-	CSCORE_API const FECsPawnRoutine HandleRespawnTimer_Internal = EMCsPawnRoutine::Get().Create(TEXT("HandleRespawnTimer_Internal"));
+	CSCOREDEPRECATED_API const FECsPawnRoutine CheckLinkedToPlayerState_Internal = EMCsPawnRoutine::Get().Create(TEXT("CheckLinkedToPlayerState_Internal"));
+	CSCOREDEPRECATED_API const FECsPawnRoutine HandleRespawnTimer_Internal = EMCsPawnRoutine::Get().Create(TEXT("HandleRespawnTimer_Internal"));
 }
 
 #pragma endregion Enums

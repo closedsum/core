@@ -8,7 +8,7 @@
 // Player
 #include "Player/CsPlayerState.h"
 // Game
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 
 // static initializations
 TWeakObjectPtr<UObject> AICsManager_AI::MyOwner;
@@ -152,7 +152,7 @@ AICsManager_AI::AICsManager_AI(const FObjectInitializer& ObjectInitializer) : Su
 
 /*static*/ AICsManager_AI* AICsManager_AI::Get(UWorld* InWorld)
 {
-	return InWorld->GetGameState<ACsGameState>()->Manager_AI;
+	return InWorld->GetGameState<ACsGameState_DEPRECATED>()->Manager_AI;
 }
 
 void AICsManager_AI::Clear()

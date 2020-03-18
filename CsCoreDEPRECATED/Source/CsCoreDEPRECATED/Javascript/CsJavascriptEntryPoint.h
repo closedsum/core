@@ -9,7 +9,7 @@
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsJavascriptEntryPointRoutine : public FECsEnum_uint8
+struct CSCOREDEPRECATED_API FECsJavascriptEntryPointRoutine : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -18,20 +18,20 @@ struct CSCORE_API FECsJavascriptEntryPointRoutine : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsJavascriptEntryPointRoutine)
 
-struct CSCORE_API EMCsJavascriptEntryPointRoutine : public TCsEnumStructMap<FECsJavascriptEntryPointRoutine, uint8>
+struct CSCOREDEPRECATED_API EMCsJavascriptEntryPointRoutine : public TCsEnumStructMap<FECsJavascriptEntryPointRoutine, uint8>
 {
 	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsJavascriptEntryPointRoutine)
 };
 
 namespace ECsJavascriptEntryPointRoutine
 {
-	extern CSCORE_API const FECsJavascriptEntryPointRoutine Setup_Internal;
+	extern CSCOREDEPRECATED_API const FECsJavascriptEntryPointRoutine Setup_Internal;
 }
 
 #pragma endregion Enums
 
 UCLASS()
-class CSCORE_API ACsJavascriptEntryPoint : public AActor
+class CSCOREDEPRECATED_API ACsJavascriptEntryPoint : public AActor
 {
 	GENERATED_UCLASS_BODY()
 

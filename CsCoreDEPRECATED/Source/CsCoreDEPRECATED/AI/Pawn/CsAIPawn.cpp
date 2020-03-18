@@ -16,7 +16,7 @@
 #include "Managers/Trace/CsManager_Trace.h"
 #include "Managers/Time/CsManager_Time.h"
 // Game
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 // Player
 #include "AI/CsAIPlayerState.h"
 #include "Player/CsPlayerPawn.h"

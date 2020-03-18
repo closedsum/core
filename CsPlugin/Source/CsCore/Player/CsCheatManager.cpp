@@ -2,7 +2,7 @@
 #include "Player/CsCheatManager.h"
 #include "CsCore.h"
 #include "Library/CsLibrary_Common.h"
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 #include "Javascript/CsJavascriptEntryPoint.h"
 
 UCsCheatManager::UCsCheatManager(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -121,7 +121,7 @@ void UCsCheatManager::LogControllerAddYawInput(const int32 &Value)
 void UCsCheatManager::RunEditorGameJavascriptFile()
 {
 #if WITH_EDITOR
-	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 
 	if (!GameState)
 	{

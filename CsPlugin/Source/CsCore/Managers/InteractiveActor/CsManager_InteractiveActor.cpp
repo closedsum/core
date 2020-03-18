@@ -5,7 +5,7 @@
 #include "Library/CsLibrary_Common.h"
 
 #include "Managers/InteractiveActor/CsInteractiveActor.h"
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 
 // Data
 #include "Data/CsData_Interactive.h"
@@ -60,7 +60,7 @@ void AICsManager_InteractiveActor::PostActorCreated()
 
 /*static*/ AICsManager_InteractiveActor* AICsManager_InteractiveActor::Get(UWorld* InWorld)
 {
-	return InWorld->GetGameState<ACsGameState>()->Manager_InteractiveActor;
+	return InWorld->GetGameState<ACsGameState_DEPRECATED>()->Manager_InteractiveActor;
 }
 
 void AICsManager_InteractiveActor::Clear()

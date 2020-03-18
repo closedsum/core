@@ -24,7 +24,7 @@
 #include "Managers/InteractiveActor/CsDamageableActor.h"
 // Game
 #include "Game/CsGameInstance_DEPRECATED.h"
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 // Player
 #include "Player/CsPlayerStateBase.h"
 #include "Pawn/CsPawn.h"
@@ -1607,7 +1607,7 @@ FCsProjectileFirePayload* ACsWeapon::AllocateProjectileFirePayload(const FECsWea
 			Payload->ChargePercent = GetCurrentChargeFireHeldPercent(FireMode);
 
 			/*
-			ACsGameState* GameState		   = GetWorld()->GetGameState<ACsGameState>();
+			ACsGameState_DEPRECATED* GameState		   = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 			ACsPlayerState* MyPlayerState	   = Cast<ACsPlayerState>(MyPawn->PlayerState);
 			const uint8 MappingId			   = MyPlayerState ? MyPlayerState->PlayerData.AimAssistTargetMappingId : CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID;
 			ACsPlayerState* TargetPlayerState = GameState->GetPlayerState(MappingId);
@@ -1821,7 +1821,7 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode& FireMode, FCsProjectile
 	FireProjectile_Internal(FireMode, FirePayload);
 
 	// Allocate Projectiles
-	ACsGameState* GameState					  = GetWorld()->GetGameState<ACsGameState>();
+	ACsGameState_DEPRECATED* GameState					  = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 	UCsManager_Projectile* Manager_Projectile = GameState->Manager_Projectile;
 	
 	// Real
@@ -2261,7 +2261,7 @@ void ACsWeapon::PlayMuzzleFlash(const FECsWeaponFireMode& FireMode)
 	else
 #endif // #if WITH_EDITOR
 	{
-		ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+		ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 		Manager_FX				 = GameState->Manager_FX;
 	}
 

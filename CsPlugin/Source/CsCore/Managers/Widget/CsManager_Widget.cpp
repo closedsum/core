@@ -48,7 +48,7 @@ UICsManager_Widget::UICsManager_Widget(const FObjectInitializer& ObjectInitializ
 
 ///*static*/ UICsManager_Widget* UICsManager_Widget::Get(UWorld* InWorld)
 //{
-//	return InWorld->GetGameState<ACsGameState>()->Manager_Projectile;
+//	return InWorld->GetGameState<ACsGameState_DEPRECATED>()->Manager_Projectile;
 //}
 
 

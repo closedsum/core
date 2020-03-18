@@ -2,7 +2,7 @@
 #include "Managers/Inventory/CsManager_Inventory.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 
 // Managers
 #include "Managers/Item/CsManager_Item.h"
@@ -85,7 +85,7 @@ void ACsManager_Inventory::PostInitializeComponents()
 
 /*static*/ ACsManager_Inventory* ACsManager_Inventory::Get(UWorld* InWorld)
 {
-	return InWorld->GetGameState<ACsGameState>()->Manager_Inventory;
+	return InWorld->GetGameState<ACsGameState_DEPRECATED>()->Manager_Inventory;
 }
 
 AActor* ACsManager_Inventory::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }

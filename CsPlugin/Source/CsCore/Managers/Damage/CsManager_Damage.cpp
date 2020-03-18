@@ -5,7 +5,7 @@
 #include "Library/CsLibrary_Common.h"
 
 // Game
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 
 // static initializations
 TWeakObjectPtr<UObject> ACsManager_Damage::MyOwner;
@@ -42,7 +42,7 @@ ACsManager_Damage::ACsManager_Damage(const FObjectInitializer& ObjectInitializer
 	else
 #endif // #if WITH_EDITOR
 	{
-		return Cast<ACsGameState>(GetMyOwner())->Manager_Damage;
+		return Cast<ACsGameState_DEPRECATED>(GetMyOwner())->Manager_Damage;
 	}
 	return nullptr;
 }

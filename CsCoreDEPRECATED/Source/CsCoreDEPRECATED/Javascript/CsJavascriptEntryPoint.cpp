@@ -1,13 +1,14 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Javascript/CsJavascriptEntryPoint.h"
-#include "CsCore.h"
-#include "Library/CsLibrary_Common.h"
+#include "CsCoreDEPRECATED.h"
 
+// Library
+#include "Library/CsLibrary_Common.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Game
 #include "Game/CsGameInstance_DEPRECATED.h"
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 // UI
 #include "UI/CsUI.h"
 // Player
@@ -29,7 +30,7 @@ CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsJavascriptEntryPointRoutine)
 
 namespace ECsJavascriptEntryPointRoutine
 {
-	CSCORE_API const FECsJavascriptEntryPointRoutine Setup_Internal = EMCsJavascriptEntryPointRoutine::Get().Create(TEXT("Setup_Internal"));
+	CSCOREDEPRECATED_API const FECsJavascriptEntryPointRoutine Setup_Internal = EMCsJavascriptEntryPointRoutine::Get().Create(TEXT("Setup_Internal"));
 }
 
 #pragma endregion Enums
@@ -91,7 +92,7 @@ PT_THREAD(ACsJavascriptEntryPoint::Setup_Internal(FCsRoutine* r))
 	ACsJavascriptEntryPoint* js = r->GetOwnerAsObject<ACsJavascriptEntryPoint>();
 	UWorld* w					= js->GetWorld();
 	UCsGameInstance_DEPRECATED* gi			= Cast<UCsGameInstance_DEPRECATED>(w->GetGameInstance());
-	ACsGameState* gs			= w->GetGameState<ACsGameState>();
+	ACsGameState_DEPRECATED* gs			= w->GetGameState<ACsGameState_DEPRECATED>();
 	UCsCoroutineScheduler* s	= UCsCoroutineScheduler::Get(gi);
 	ACsPlayerController* pc		= UCsLibrary_Common::GetLocalPlayerController<ACsPlayerController>(w);
 	ACsUI* hud					= pc ? Cast<ACsUI>(pc->MyHUD) : nullptr;

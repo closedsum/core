@@ -355,7 +355,7 @@ void UCsGameInstance_DEPRECATED::GetUserDefinedEnumNames(const FString& EnumName
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsGameInstance_DEPRECATED::GetUserDefinedEnumNames: Failed to find UserDefinedEnum: %s for EnumStruct: %s."), *(EnumType.Name), *EnumName);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsGameInstance_DEPRECATED::GetUserDefinedEnumNames: Failed to find UserDefinedEnum: %s for EnumStruct: %s."), *(EnumType.Name), *EnumName);
 	}
 }
 
@@ -457,7 +457,7 @@ void UCsGameInstance_DEPRECATED::LoadDataMapping()
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsGameInstance_DEPRECATED::Init: Failed to Load DataMapping asset."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsGameInstance_DEPRECATED::Init: Failed to Load DataMapping asset."));
 		return;
 	}
 
@@ -659,7 +659,7 @@ CS_COROUTINE(UCsGameInstance_DEPRECATED, CreateFullscreenWidget_Internal)
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsGameInstance_DEPRECATED::CreateFullscreenWidget_Internal: Failed to Load bp_ui_common (UCsData_UI_Common)."));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsGameInstance_DEPRECATED::CreateFullscreenWidget_Internal: Failed to Load bp_ui_common (UCsData_UI_Common)."));
 		}
 	}
 

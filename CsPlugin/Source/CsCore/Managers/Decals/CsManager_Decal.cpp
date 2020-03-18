@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Decals/CsManager_Decal.h"
 #include "CsCore.h"
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 
 ACsManager_Decal::ACsManager_Decal(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -10,7 +10,7 @@ ACsManager_Decal::ACsManager_Decal(const FObjectInitializer& ObjectInitializer) 
 
 /*static*/ ACsManager_Decal* ACsManager_Decal::Get(UWorld* InWorld)
 {
-	return InWorld->GetGameState<ACsGameState>()->Manager_Decal;
+	return InWorld->GetGameState<ACsGameState_DEPRECATED>()->Manager_Decal;
 }
 
 /*

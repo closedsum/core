@@ -6,7 +6,7 @@
 // Library
 #include "Library/CsLibrary_Common.h"
 // Game
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 
 #include "AI/CsAIController.h"
 #include "AI/Pawn/CsAIPawn.h"
@@ -46,7 +46,7 @@ void ACsAIPlayerState::OnTick_OnBoard()
 	// Waiting for GameState
 	if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForGameState)
 	{
-		if (ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>())
+		if (ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>())
 		{
 			OnBoardState = ECsPlayerStateBaseOnBoardState::WaitingForFinishLoadingCommonData;
 
@@ -59,7 +59,7 @@ void ACsAIPlayerState::OnTick_OnBoard()
 	// Waiting for Finish Loading Common Data
 	if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForFinishLoadingCommonData)
 	{
-		ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+		ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 
 		if (GameState->OnBoardState > ECsGameStateOnBoardState::LoadCommonData)
 		{
@@ -96,7 +96,7 @@ void ACsAIPlayerState::OnTick_OnBoard()
 				OnBoardState = ECsPlayerStateBaseOnBoardState::WaitingForLocalUniqueMappingId;
 
 				// Only Request ONCE from Server
-				ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+				ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 
 				if (!GameState->bServerRequestLocalUniqueMappingId)
 				{
@@ -207,7 +207,7 @@ void ACsAIPlayerState::OnTick_OnBoard()
 		// Waiting for GameState OnBoard to Complete
 		if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForGameStateOnBoardCompleted)
 		{
-			ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+			ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 
 			if (GameState->OnBoardState == ECsGameStateOnBoardState::Completed)
 			{
@@ -254,7 +254,7 @@ void ACsAIPlayerState::ClientRecieveUniqueMappingId_AI_Internal(const uint8 &Map
 {
 	UniqueMappingId = MappingId;
 
-	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+	ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 
 	GameState->AIPlayerStateMappings.Add(MappingId, this);
 

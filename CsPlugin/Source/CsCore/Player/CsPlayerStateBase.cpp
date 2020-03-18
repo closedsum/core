@@ -15,7 +15,7 @@
 #include "Pawn/CsPawn.h"
 
 #include "Game/CsGameInstance_DEPRECATED.h"
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 
 // UI
 #include "UI/CsWidget_Fullscreen.h"
@@ -247,7 +247,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 	// Waiting for GameState
 	if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForGameState)
 	{
-		if (ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>())
+		if (ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>())
 		{
 			OnLinkedPawnSet_Event.AddUObject(GameState, &ACsGameState::OnPlayerStateBaseLinkedToPawn);
 
@@ -262,7 +262,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 	// Waiting for Finish Loading Common Data
 	if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForFinishLoadingCommonData)
 	{
-		ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+		ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 
 		if (GameState->OnBoardState > ECsGameStateOnBoardState::LoadCommonData)
 		{
@@ -299,7 +299,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 				OnBoardState = ECsPlayerStateBaseOnBoardState::WaitingForLocalUniqueMappingId;
 
 				// Only Request ONCE from Server
-				ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+				ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 
 				if (!GameState->bServerRequestLocalUniqueMappingId)
 				{
@@ -410,7 +410,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 		// Waiting for GameState OnBoard to Complete
 		if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForGameStateOnBoardCompleted)
 		{
-			ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+			ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 
 			if (GameState->OnBoardState == ECsGameStateOnBoardState::Completed)
 			{

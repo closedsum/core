@@ -8,7 +8,7 @@
 #include "UI/CsUserWidget.h"
 #include "UI/Simple/CsSimpleWidget.h"
 
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 
 // static initializations
 TWeakObjectPtr<UObject> AICsManager_WidgetActor::MyOwner;
@@ -79,7 +79,7 @@ void AICsManager_WidgetActor::PostActorCreated()
 	else
 #endif // #if WITH_EDITOR
 	{
-		return Cast<ACsGameState>(GetMyOwner())->Manager_WidgetActor;
+		return Cast<ACsGameState_DEPRECATED>(GetMyOwner())->Manager_WidgetActor;
 	}
 	return nullptr;
 }

@@ -3,7 +3,7 @@
 #include "GameFramework/GameState.h"
 #include "Types/CsTypes.h"
 #include "Coroutine/CsTypes_Coroutine.h"
-#include "CsGameState.generated.h"
+#include "CsGameState_DEPRECATED.generated.h"
 
 // Tick
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameState_OnTick, const float&, DeltaSeconds);
@@ -42,7 +42,7 @@ enum class ECsGameStateOnBoardState : uint8
 
 #define ECS_GAME_STATE_ONBOARD_STATE_MAX (uint8)ECsGameStateOnBoardState::ECsGameStateOnBoardState_MAX
 
-struct CSCORE_API EMCsGameStateOnBoardState : public TCsEnumMap<ECsGameStateOnBoardState>
+struct CSCOREDEPRECATED_API EMCsGameStateOnBoardState : public TCsEnumMap<ECsGameStateOnBoardState>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsGameStateOnBoardState, ECsGameStateOnBoardState)
 };
@@ -53,19 +53,19 @@ namespace NCsGameStateOnBoardState
 	{
 		typedef ECsGameStateOnBoardState Type;
 
-		extern CSCORE_API const Type LoadCommonData;
-		extern CSCORE_API const Type SetAssetReferencesCommonData;
-		extern CSCORE_API const Type SetupHUD;
-		extern CSCORE_API const Type LoadGameData;
-		extern CSCORE_API const Type SetAssetReferencesGameData;
-		extern CSCORE_API const Type LoadItems;
-		extern CSCORE_API const Type LoadSceneData;
-		extern CSCORE_API const Type SetAssetReferencesSceneData;
-		extern CSCORE_API const Type SetupScene;
-		extern CSCORE_API const Type SetupLastTickActor;
-		extern CSCORE_API const Type SetupJavascriptEntryPoint;
-		extern CSCORE_API const Type Completed;
-		extern CSCORE_API const Type ECsGameStateOnBoardState_MAX;
+		extern CSCOREDEPRECATED_API const Type LoadCommonData;
+		extern CSCOREDEPRECATED_API const Type SetAssetReferencesCommonData;
+		extern CSCOREDEPRECATED_API const Type SetupHUD;
+		extern CSCOREDEPRECATED_API const Type LoadGameData;
+		extern CSCOREDEPRECATED_API const Type SetAssetReferencesGameData;
+		extern CSCOREDEPRECATED_API const Type LoadItems;
+		extern CSCOREDEPRECATED_API const Type LoadSceneData;
+		extern CSCOREDEPRECATED_API const Type SetAssetReferencesSceneData;
+		extern CSCOREDEPRECATED_API const Type SetupScene;
+		extern CSCOREDEPRECATED_API const Type SetupLastTickActor;
+		extern CSCOREDEPRECATED_API const Type SetupJavascriptEntryPoint;
+		extern CSCOREDEPRECATED_API const Type Completed;
+		extern CSCOREDEPRECATED_API const Type ECsGameStateOnBoardState_MAX;
 	}
 }
 
@@ -75,7 +75,7 @@ namespace NCsGameStateOnBoardState
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsGameStateRoutine : public FECsEnum_uint8
+struct CSCOREDEPRECATED_API FECsGameStateRoutine : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -84,14 +84,14 @@ struct CSCORE_API FECsGameStateRoutine : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsGameStateRoutine)
 
-struct CSCORE_API EMCsGameStateRoutine : public TCsEnumStructMap<FECsGameStateRoutine, uint8>
+struct CSCOREDEPRECATED_API EMCsGameStateRoutine : public TCsEnumStructMap<FECsGameStateRoutine, uint8>
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsGameStateRoutine, FECsGameStateRoutine, uint8)
 };
 
 namespace NCsGameStateRoutine
 {
-	extern CSCORE_API const FECsGameStateRoutine OnBoard_Internal;
+	extern CSCOREDEPRECATED_API const FECsGameStateRoutine OnBoard_Internal;
 }
 
 #pragma endregion GameStateRoutine
@@ -101,7 +101,7 @@ namespace NCsGameStateRoutine
 // Structs
 #pragma region
 
-struct FCsPlayerStateMappingRelationship
+struct CSCOREDEPRECATED_API FCsPlayerStateMappingRelationship
 {
 	uint8 A;
 	uint8 B;
@@ -117,7 +117,7 @@ struct FCsPlayerStateMappingRelationship
 	}
 };
 
-struct FCsAIPlayerStateMappingRelationship
+struct CSCOREDEPRECATED_API FCsAIPlayerStateMappingRelationship
 {
 	// A.I.
 	uint8 A;
@@ -138,7 +138,7 @@ struct FCsAIPlayerStateMappingRelationship
 #pragma endregion Structs
 
 UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick", "LOD", "Cooking"))
-class CSCORE_API ACsGameState : public AGameState
+class CSCOREDEPRECATED_API ACsGameState_DEPRECATED : public AGameState
 {
 	GENERATED_UCLASS_BODY()
 

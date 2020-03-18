@@ -3,7 +3,7 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Library/CsLibrary_Common.h"
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 
 #include "Json.h"
 #include "JsonObjectConverter.h"
@@ -56,7 +56,7 @@ ACsManager_Item::ACsManager_Item(const FObjectInitializer& ObjectInitializer) : 
 
 /*static*/ ACsManager_Item* ACsManager_Item::Get(UWorld* InWorld)
 {
-	return InWorld->GetGameState<ACsGameState>()->Manager_Item;
+	return InWorld->GetGameState<ACsGameState_DEPRECATED>()->Manager_Item;
 }
 
 void ACsManager_Item::Rebuild()

@@ -36,7 +36,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnChange_C
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsPawnRoutine : public FECsEnum_uint8
+struct CSCOREDEPRECATED_API FECsPawnRoutine : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -45,15 +45,15 @@ struct CSCORE_API FECsPawnRoutine : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsPawnRoutine)
 
-struct CSCORE_API EMCsPawnRoutine : public TCsEnumStructMap<FECsPawnRoutine, uint8>
+struct CSCOREDEPRECATED_API EMCsPawnRoutine : public TCsEnumStructMap<FECsPawnRoutine, uint8>
 {
 	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsPawnRoutine)
 };
 
 namespace ECsPawnRoutine
 {
-	extern CSCORE_API const FECsPawnRoutine CheckLinkedToPlayerState_Internal;
-	extern CSCORE_API const FECsPawnRoutine HandleRespawnTimer_Internal;
+	extern CSCOREDEPRECATED_API const FECsPawnRoutine CheckLinkedToPlayerState_Internal;
+	extern CSCOREDEPRECATED_API const FECsPawnRoutine HandleRespawnTimer_Internal;
 }
 
 #pragma endregion Enums
@@ -62,7 +62,7 @@ namespace ECsPawnRoutine
 #pragma region
 
 USTRUCT(BlueprintType)
-struct FCsPawnViewTraceInfo
+struct CSCOREDEPRECATED_API FCsPawnViewTraceInfo
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -108,7 +108,7 @@ struct FCsPawnViewTraceInfo
 };
 
 USTRUCT(BlueprintType)
-struct FCsPawnTraceToGroundWhileJumpingInfo
+struct CSCOREDEPRECATED_API FCsPawnTraceToGroundWhileJumpingInfo
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -131,7 +131,7 @@ struct FCsPawnTraceToGroundWhileJumpingInfo
 };
 
 USTRUCT(BlueprintType)
-struct FCsPawnJumpingFallingInfo
+struct CSCOREDEPRECATED_API FCsPawnJumpingFallingInfo
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -173,7 +173,7 @@ class UCsData_Weapon;
 class UCsData_WeaponMaterialSkin;
 
 UCLASS()
-class CSCORE_API ACsPawn : public ACharacter
+class CSCOREDEPRECATED_API ACsPawn : public ACharacter
 {
 	GENERATED_UCLASS_BODY()
 

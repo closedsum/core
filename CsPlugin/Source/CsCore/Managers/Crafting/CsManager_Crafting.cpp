@@ -3,7 +3,7 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Library/CsLibrary_Common.h"
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 
 #include "Coroutine/CsCoroutineScheduler.h"
 
@@ -40,7 +40,7 @@ ACsManager_Crafting::ACsManager_Crafting(const FObjectInitializer& ObjectInitial
 
 /*static*/ ACsManager_Crafting* ACsManager_Crafting::Get(UWorld* InWorld)
 {
-	return InWorld->GetGameState<ACsGameState>()->Manager_Crafting;
+	return InWorld->GetGameState<ACsGameState_DEPRECATED>()->Manager_Crafting;
 }
 
 // Payload

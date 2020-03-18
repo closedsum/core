@@ -2,7 +2,7 @@
 #include "Player/CsPlayerState.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 
 #include "Player/CsPlayerController.h"
 #include "Player/CsPlayerPawn.h"
@@ -61,7 +61,7 @@ void ACsPlayerState::ClientRecieveLocalUniqueMappingId_Internal(const uint8 &Cli
 {
 	UniqueMappingId = ClientMappingId;
 
-	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+	ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 
 	GameState->PlayerStateMappings.Add(UniqueMappingId, this);
 
@@ -91,7 +91,7 @@ void ACsPlayerState::ServerRequestUniqueMappingId_Internal(const uint8 &ClientMa
 		return;
 	}
 
-	ACsGameState* GameState			  = GetWorld()->GetGameState<ACsGameState>();
+	ACsGameState_DEPRECATED* GameState			  = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 	ACsPlayerState* ClientPlayerState = GameState->GetPlayerState(ClientMappingId);
 
 	// Check VALID ClientPlayerState
@@ -133,7 +133,7 @@ void ACsPlayerState::ClientRecieveUniqueMappingId_Internal(const uint8 &MappingI
 {
 	UniqueMappingId = MappingId;
 
-	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+	ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 
 	GameState->PlayerStateMappings.Add(MappingId, this);
 
@@ -162,7 +162,7 @@ void ACsPlayerState::ServerRequestUniqueMappingId_AI_Internal(const uint8 &Clien
 		return;
 	}
 
-	ACsGameState* GameState			  = GetWorld()->GetGameState<ACsGameState>();
+	ACsGameState_DEPRECATED* GameState			  = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 	ACsPlayerState* ClientPlayerState = GameState->GetPlayerState(ClientMappingId);
 
 	// Check VALID ClientPlayerState
@@ -207,7 +207,7 @@ void ACsPlayerState::ServerRequestUniqueMappingId_AI_Internal(const uint8 &Clien
 
 void ACsPlayerState::ServerSendOnBoardCompleted_Internal(const uint8 &ClientMappingId, const uint8 &MappingId)
 {
-	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+	ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 
 	GameState->SetPlayerStateMappingRelationshipFlag(ClientMappingId, MappingId);
 }

@@ -8,7 +8,7 @@
 #include "Managers/Trace/CsManager_Trace.h"
 // Game
 #include "Game/CsGameInstance_DEPRECATED.h"
-#include "Game/CsGameState.h"
+#include "Game/CsGameState_DEPRECATED.h"
 // Player
 #include "Player/CsPlayerPawn.h"
 // AI

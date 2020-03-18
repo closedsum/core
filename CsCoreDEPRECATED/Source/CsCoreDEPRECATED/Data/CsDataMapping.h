@@ -84,7 +84,7 @@ namespace NCsDataMappingCached
 {
 	namespace Str
 	{
-		extern CSCORE_API const FString LoadData;
+		extern CSCOREDEPRECATED_API const FString LoadData;
 	}
 }
 
@@ -94,7 +94,7 @@ namespace NCsDataMappingCached
 #pragma region
 
 USTRUCT(BlueprintType)
-struct FCsDataMappingFindEntry
+struct CSCOREDEPRECATED_API FCsDataMappingFindEntry
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -112,7 +112,7 @@ struct FCsDataMappingFindEntry
 };
 
 USTRUCT(BlueprintType)
-struct FCsDataMappingAddEntry
+struct CSCOREDEPRECATED_API FCsDataMappingAddEntry
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -148,7 +148,7 @@ struct FCsDataMappingAddEntry
 };
 
 USTRUCT(BlueprintType)
-struct FCsDataMappingRemoveEntry
+struct CSCOREDEPRECATED_API FCsDataMappingRemoveEntry
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -166,7 +166,7 @@ struct FCsDataMappingRemoveEntry
 };
 
 USTRUCT(BlueprintType)
-struct FCsDataMappingValidate
+struct CSCOREDEPRECATED_API FCsDataMappingValidate
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -187,7 +187,7 @@ class UCsData_Payload;
 class UWorld;
 
 UCLASS(Abstract, NotBlueprintable)
-class CSCORE_API UCsDataMapping : public UObject
+class CSCOREDEPRECATED_API UCsDataMapping : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

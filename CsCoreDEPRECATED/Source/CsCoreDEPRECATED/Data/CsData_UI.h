@@ -9,7 +9,7 @@
 */
 
 UCLASS(Abstract)
-class CSCORE_API UCsData_UI : public UCsData_Impl
+class CSCOREDEPRECATED_API UCsData_UI : public UCsData_Impl
 {
 	GENERATED_UCLASS_BODY()
 

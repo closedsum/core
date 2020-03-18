@@ -9,7 +9,7 @@ class ASkeletalMeshActor;
 class USkeletalMeshComponent;
 
 UCLASS(Abstract)
-class CSCORE_API UCsData_ProjectileWeapon : public UCsData_Weapon
+class CSCOREDEPRECATED_API UCsData_ProjectileWeapon : public UCsData_Weapon
 {
 	GENERATED_UCLASS_BODY()
 

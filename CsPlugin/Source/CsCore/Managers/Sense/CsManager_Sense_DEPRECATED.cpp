@@ -7,7 +7,7 @@
 // Managers
 #include "Managers/Trace/CsManager_Trace.h"
 // Game
-#include "Game/CsGameInstance.h"
+#include "Game/CsGameInstance_DEPRECATED.h"
 #include "Game/CsGameState.h"
 // Player
 #include "Player/CsPlayerPawn.h"
@@ -63,7 +63,7 @@ void ACsManager_Sense_DEPRECATED::PostActorCreated()
 	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 		return;
 #endif // #if WITH_EDITOR
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 	UniqueObjectId = GameInstance->GetUniqueObjectId();
 }
 
@@ -71,7 +71,7 @@ void ACsManager_Sense_DEPRECATED::Destroyed()
 {
 	Super::Destroyed();
 
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 	GameInstance->UnregisterUniqueObject(UniqueObjectId);
 }
 
@@ -98,7 +98,7 @@ void ACsManager_Sense_DEPRECATED::Log_bOnSeesActorByDot(const uint64& Observer, 
 	if (CsCVarLogManagerSenseSeesActorByDot->GetInt() == CS_CVAR_SHOW_LOG)
 #endif // #if #if WITH_EDITORONLY_DATA
 	{
-		UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+		UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 		AActor* Actor				  = GameInstance->GetUniqueActorById(Observee);
 		FString Sees				  = Value ? TEXT("First Sees") : TEXT("First UnSees");
 
@@ -142,7 +142,7 @@ FCsSenseInfo_DEPRECATED* ACsManager_Sense_DEPRECATED::Add(AActor* Actor, const T
 
 FCsSenseInfo_DEPRECATED* ACsManager_Sense_DEPRECATED::GetInfo(AActor* Actor)
 {
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 
 	TArray<FECsSenseActorType> TypeKeys;
 	SenseMap.GetKeys(TypeKeys);
@@ -201,7 +201,7 @@ void ACsManager_Sense_DEPRECATED::OnTick(const float &DeltaSeconds)
 	if (ACsPawn* Pawn = Cast<ACsPawn>(Me))
 		OwnerLocation = Pawn->CurrentRootLocation;
 
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 
 	const float CurrentTimeSeconds = GetWorld()->GetTimeSeconds();
 
@@ -428,7 +428,7 @@ void ACsManager_Sense_DEPRECATED::OnTick(const float &DeltaSeconds)
 
 void ACsManager_Sense_DEPRECATED::CheckMeToActorDot(FCsSenseInfo_DEPRECATED& Info)
 {
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 	AActor* Actor				  = GameInstance->GetUniqueActorById(Info.ObserveeId);
 
 	FVector ActorLocation = FVector::ZeroVector;
@@ -546,7 +546,7 @@ void ACsManager_Sense_DEPRECATED::TraceViewToActorBody(FCsSenseInfo_DEPRECATED& 
 	}
 	Request->Start = Start;
 
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 	AActor* Actor				  = GameInstance->GetUniqueActorById(Info.ObserveeId);
 
 	FVector End = FVector::ZeroVector;
@@ -597,7 +597,7 @@ void ACsManager_Sense_DEPRECATED::Async_TraceViewToActorBody_Response(const uint
 	if (!Response->bResult)
 		return;
 
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 	ACsPawn* Pawn				  = nullptr;
 	
 	// Player / AI
@@ -666,7 +666,7 @@ void ACsManager_Sense_DEPRECATED::TraceViewToActorHead(FCsSenseInfo_DEPRECATED& 
 	}
 	Request->Start = Start;
 
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 	AActor* Actor				  = GameInstance->GetUniqueActorById(Info.ObserveeId);
 
 	Request->End	= Actor->GetActorLocation();
@@ -703,7 +703,7 @@ void ACsManager_Sense_DEPRECATED::Async_TraceViewToActorHead_Response(const uint
 	if (!Response->bResult)
 		return;
 
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 	ACsPawn* Pawn				  = nullptr;
 
 	// Player / AI

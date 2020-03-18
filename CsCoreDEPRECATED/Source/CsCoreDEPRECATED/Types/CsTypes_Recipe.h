@@ -7,8 +7,11 @@
 // Recipe
 #pragma region
 
+	// RecipeType
+#pragma region
+
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsRecipeType : public FECsEnum_uint8
+struct CSCOREDEPRECATED_API FECsRecipeType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -17,13 +20,18 @@ struct CSCORE_API FECsRecipeType : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsRecipeType)
 
-struct CSCORE_API EMCsRecipeType : public TCsEnumStructMap<FECsRecipeType, uint8>
+struct CSCOREDEPRECATED_API EMCsRecipeType : public TCsEnumStructMap<FECsRecipeType, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsRecipeType)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsRecipeType, FECsRecipeType, uint8)
 };
 
+#pragma endregion RecipeType
+
+	// FCsRecipeIngredient 
+#pragma region
+
 USTRUCT(BlueprintType)
-struct FCsRecipeIngredient
+struct CSCOREDEPRECATED_API FCsRecipeIngredient
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -72,6 +80,8 @@ struct FCsRecipeIngredient
 	}
 };
 
+#pragma endregion FCsRecipeIngredient
+
 #pragma endregion Recipe
 
 // Crafting
@@ -83,8 +93,11 @@ class UObject;
 class ACsManager_Inventory;
 class UCsData_Recipe;
 
+	// FCsCraftingPayload
+#pragma region
+
 USTRUCT(BlueprintType)
-struct FCsCraftingPayload
+struct CSCOREDEPRECATED_API FCsCraftingPayload
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -164,5 +177,7 @@ struct FCsCraftingPayload
 		}
 	}
 };
+
+#pragma endregion FCsCraftingPayload
 
 #pragma endregion Crafting

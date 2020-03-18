@@ -14,7 +14,7 @@
 
 #include "Pawn/CsPawn.h"
 
-#include "Game/CsGameInstance.h"
+#include "Game/CsGameInstance_DEPRECATED.h"
 #include "Game/CsGameState.h"
 
 // UI
@@ -770,7 +770,7 @@ void ACsPlayerStateBase::MulticastUnSetIsOnBoardCompleted_Implementation()
 
 void ACsPlayerStateBase::ClearFullscreenWidget()
 {
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 	UCsWidget_Fullscreen* Widget  = Cast<UCsWidget_Fullscreen>(GameInstance->FullscreenWidget);
 	Widget->Fullscreen.SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 0.0f));
 }
@@ -780,7 +780,7 @@ void ACsPlayerStateBase::OnBoard_Completed()
 	if (this == UCsLibrary_Common::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld()))
 	{
 		// Clear FullscreenWidget
-		UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+		UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 		UCsWidget_Fullscreen* Widget  = Cast<UCsWidget_Fullscreen>(GameInstance->FullscreenWidget);
 		Widget->Fullscreen.SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 0.0f));
 	}

@@ -8,7 +8,7 @@
 */
 
 UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
-class CSCORE_API UCsData_Level : public UCsData_Impl
+class CSCOREDEPRECATED_API UCsData_Level : public UCsData_Impl
 {
 	GENERATED_UCLASS_BODY()
 

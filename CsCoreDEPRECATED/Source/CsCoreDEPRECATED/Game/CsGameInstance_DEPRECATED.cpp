@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Game/CsGameInstance.h"
-#include "CsCore.h"
+#include "Game/CsGameInstance_DEPRECATED.h"
+#include "CsCoreDEPRECATED.h"
 #include "CsCVars.h"
 
 // Types
@@ -72,27 +72,27 @@ namespace NCsGameInstanceCached
 	namespace Name
 	{
 		// Functions
-		const FName OnBoard_Internal = FName("UCsGameInstance::OnBoard_Internal");
-		const FName LoadDataMapping_Internal = FName("UCsGameInstance::LoadDataMapping_Internal");
-		const FName PerformLevelTransition_Internal = FName("UCsGameInstance::PerformLevelTransition_Internal");
-		const FName CreateFullscreenWidget_Internal = FName("UCsGameInstance::CreateFullscreenWidget_Internal");
-		const FName HideMouseCursor_Internal = FName("UCsGameInstance::HideMouseCursor_Internal");
+		const FName OnBoard_Internal = FName("UCsGameInstance_DEPRECATED::OnBoard_Internal");
+		const FName LoadDataMapping_Internal = FName("UCsGameInstance_DEPRECATED::LoadDataMapping_Internal");
+		const FName PerformLevelTransition_Internal = FName("UCsGameInstance_DEPRECATED::PerformLevelTransition_Internal");
+		const FName CreateFullscreenWidget_Internal = FName("UCsGameInstance_DEPRECATED::CreateFullscreenWidget_Internal");
+		const FName HideMouseCursor_Internal = FName("UCsGameInstance_DEPRECATED::HideMouseCursor_Internal");
 	};
 
 	namespace Str
 	{
 		// Functions
-		const FString OnBoard_Internal = TEXT("UCsGameInstance::OnBoard_Internal");
-		const FString LoadDataMapping_Internal = TEXT("UCsGameInstance::LoadDataMapping_Internal");
-		const FString PerformLevelTransition_Internal = TEXT("UCsGameInstance::PerformLevelTransition_Internal");
-		const FString CreateFullscreenWidget_Internal = TEXT("UCsGameInstance::CreateFullscreenWidget_Internal");
-		const FString HideMouseCursor_Internal = TEXT("UCsGameInstance::HideMouseCursor_Internal");
+		const FString OnBoard_Internal = TEXT("UCsGameInstance_DEPRECATED::OnBoard_Internal");
+		const FString LoadDataMapping_Internal = TEXT("UCsGameInstance_DEPRECATED::LoadDataMapping_Internal");
+		const FString PerformLevelTransition_Internal = TEXT("UCsGameInstance_DEPRECATED::PerformLevelTransition_Internal");
+		const FString CreateFullscreenWidget_Internal = TEXT("UCsGameInstance_DEPRECATED::CreateFullscreenWidget_Internal");
+		const FString HideMouseCursor_Internal = TEXT("UCsGameInstance_DEPRECATED::HideMouseCursor_Internal");
 	};
 }
 
 #pragma endregion Cache
 
-UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
+UCsGameInstance_DEPRECATED::UCsGameInstance_DEPRECATED(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	CurrentGameFrame = 0;
@@ -108,18 +108,18 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 	LevelState   = ECsLevelState::None;
 }
 
-void UCsGameInstance::Init()
+void UCsGameInstance_DEPRECATED::Init()
 {
 	Super::Init();
 
 	// Register delegate for ticker callback
-	TickDelegate	   = FTickerDelegate::CreateUObject(this, &UCsGameInstance::Tick);
+	TickDelegate	   = FTickerDelegate::CreateUObject(this, &UCsGameInstance_DEPRECATED::Tick);
 	TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
 
-	OnPreWorldInitializationHandle	= FWorldDelegates::OnPreWorldInitialization.AddUObject(this, &UCsGameInstance::OnPreWorldInitialization);
-	OnPostWorldInitializationHandle = FWorldDelegates::OnPostWorldInitialization.AddUObject(this, &UCsGameInstance::OnPostWorldInitialization);
-	OnLevelAddedToWorldHandle		= FWorldDelegates::LevelAddedToWorld.AddUObject(this, &UCsGameInstance::OnLevelAddedToWorld);
-	OnLevelRemovedFromWorldHandle	= FWorldDelegates::LevelRemovedFromWorld.AddUObject(this, &UCsGameInstance::OnLevelRemovedFromWorld);
+	OnPreWorldInitializationHandle	= FWorldDelegates::OnPreWorldInitialization.AddUObject(this, &UCsGameInstance_DEPRECATED::OnPreWorldInitialization);
+	OnPostWorldInitializationHandle = FWorldDelegates::OnPostWorldInitialization.AddUObject(this, &UCsGameInstance_DEPRECATED::OnPostWorldInitialization);
+	OnLevelAddedToWorldHandle		= FWorldDelegates::LevelAddedToWorld.AddUObject(this, &UCsGameInstance_DEPRECATED::OnLevelAddedToWorld);
+	OnLevelRemovedFromWorldHandle	= FWorldDelegates::LevelRemovedFromWorld.AddUObject(this, &UCsGameInstance_DEPRECATED::OnLevelRemovedFromWorld);
 	
 	ConstructManagerSingleton();
 
@@ -142,7 +142,7 @@ void UCsGameInstance::Init()
 	//OnBoard();
 }
 
-void UCsGameInstance::Shutdown()
+void UCsGameInstance_DEPRECATED::Shutdown()
 {
 	Super::Shutdown();
 
@@ -172,14 +172,14 @@ void UCsGameInstance::Shutdown()
 #endif // #if WITH_EDITOR
 }
 
-void UCsGameInstance::StartGameInstance()
+void UCsGameInstance_DEPRECATED::StartGameInstance()
 {
 	Super::StartGameInstance();
 }
 
 #if WITH_EDITOR
 
-FGameInstancePIEResult UCsGameInstance::StartPlayInEditorGameInstance(ULocalPlayer* LocalPlayer, const FGameInstancePIEParameters& Params)
+FGameInstancePIEResult UCsGameInstance_DEPRECATED::StartPlayInEditorGameInstance(ULocalPlayer* LocalPlayer, const FGameInstancePIEParameters& Params)
 {
 	// Cache Params
 	GameInstancePIEParametersCache.bSimulateInEditor = Params.bSimulateInEditor;
@@ -196,7 +196,7 @@ FGameInstancePIEResult UCsGameInstance::StartPlayInEditorGameInstance(ULocalPlay
 // Tick
 #pragma region
 
-bool UCsGameInstance::Tick(float DeltaSeconds)
+bool UCsGameInstance_DEPRECATED::Tick(float DeltaSeconds)
 {
 	++CurrentGameFrame;
 
@@ -217,7 +217,7 @@ bool UCsGameInstance::Tick(float DeltaSeconds)
 
 #pragma endregion Tick
 
-bool UCsGameInstance::IsSimulateInEditor()
+bool UCsGameInstance_DEPRECATED::IsSimulateInEditor()
 {
 #if WITH_EDITOR
 	return GameInstancePIEParametersCache.bSimulateInEditor;
@@ -229,12 +229,12 @@ bool UCsGameInstance::IsSimulateInEditor()
 // Routines
 #pragma region
 
-/*static*/ void UCsGameInstance::AddRoutine(UObject* InGameInstance, struct FCsRoutine* Routine, const uint8& Type)
+/*static*/ void UCsGameInstance_DEPRECATED::AddRoutine(UObject* InGameInstance, struct FCsRoutine* Routine, const uint8& Type)
 {
-	Cast<UCsGameInstance>(InGameInstance)->AddRoutine_Internal(Routine, Type);
+	Cast<UCsGameInstance_DEPRECATED>(InGameInstance)->AddRoutine_Internal(Routine, Type);
 }
 
-bool UCsGameInstance::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8& Type)
+bool UCsGameInstance_DEPRECATED::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8& Type)
 {
 	const FECsGameInstanceRoutine RoutineType = EMCsGameInstanceRoutine::Get()[Type];
 
@@ -265,12 +265,12 @@ bool UCsGameInstance::AddRoutine_Internal(struct FCsRoutine* Routine, const uint
 	return false;
 }
 
-/*static*/ void UCsGameInstance::RemoveRoutine(UObject* InGameInstance, struct FCsRoutine* Routine, const uint8& Type)
+/*static*/ void UCsGameInstance_DEPRECATED::RemoveRoutine(UObject* InGameInstance, struct FCsRoutine* Routine, const uint8& Type)
 {
-	Cast<UCsGameInstance>(InGameInstance)->RemoveRoutine_Internal(Routine, Type);
+	Cast<UCsGameInstance_DEPRECATED>(InGameInstance)->RemoveRoutine_Internal(Routine, Type);
 }
 
-bool UCsGameInstance::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8& Type)
+bool UCsGameInstance_DEPRECATED::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8& Type)
 {
 	const FECsGameInstanceRoutine RoutineType = EMCsGameInstanceRoutine::Get()[Type];
 
@@ -310,22 +310,22 @@ bool UCsGameInstance::RemoveRoutine_Internal(struct FCsRoutine* Routine, const u
 // Enums
 #pragma region
 
-void UCsGameInstance::PopulateEnumMapsFromUserDefinedEnums()
+void UCsGameInstance_DEPRECATED::PopulateEnumMapsFromUserDefinedEnums()
 { 
 	// Check AssetReference Path set for EnumStructUserDefinedEnumMapClass
 	FString Path = EnumStructUserDefinedEnumMapClass.ToString();
 
-	checkf(Path != NCsCached::Str::Empty, TEXT("UCsGameInstance::GetUserDefinedEnumNames: No valid Asset Path set for EnumStructUserDefinedEnumMapClass."));
+	checkf(Path != NCsCached::Str::Empty, TEXT("UCsGameInstance_DEPRECATED::GetUserDefinedEnumNames: No valid Asset Path set for EnumStructUserDefinedEnumMapClass."));
 
 	// Check EnumStructUserDefinedEnumMapClass points to a valid cooked object
 	UClass* Class = EnumStructUserDefinedEnumMapClass.LoadSynchronous();
 
-	checkf(Class, TEXT("UCsGameInstance::GetUserDefinedEnumNames: Failed to load EnumStructUserDefinedEnumMapClass at Path: %s."), *Path);
+	checkf(Class, TEXT("UCsGameInstance_DEPRECATED::GetUserDefinedEnumNames: Failed to load EnumStructUserDefinedEnumMapClass at Path: %s."), *Path);
 
 	// Check there is a Default Object for EnumStructUserDefinedEnumMapClass
 	EnumStructUserDefinedEnumMap = Class->GetDefaultObject<UCsEnumStructUserDefinedEnumMap>();
 
-	checkf(EnumStructUserDefinedEnumMap, TEXT("UCsGameInstance::GetUserDefinedEnumNames: Failed to get the Default Object for Class: %s at Path: %s."), *(Class->GetName()), *Path);
+	checkf(EnumStructUserDefinedEnumMap, TEXT("UCsGameInstance_DEPRECATED::GetUserDefinedEnumNames: Failed to get the Default Object for Class: %s at Path: %s."), *(Class->GetName()), *Path);
 
 	// DataType
 	PopulateEnumMapFromUserDefinedEnum<EMCsDataType>(NCsUserDefinedEnum::FECsDataType);
@@ -342,7 +342,7 @@ void UCsGameInstance::PopulateEnumMapsFromUserDefinedEnums()
 	}
 }
 
-void UCsGameInstance::GetUserDefinedEnumNames(const FString& EnumName, const FECsUserDefinedEnum& EnumType, TArray<FString>& OutNames)
+void UCsGameInstance_DEPRECATED::GetUserDefinedEnumNames(const FString& EnumName, const FECsUserDefinedEnum& EnumType, TArray<FString>& OutNames)
 {
 	if (UUserDefinedEnum* Enum = EnumStructUserDefinedEnumMap->GetUserDefinedEnum(EnumType))
 	{
@@ -355,7 +355,7 @@ void UCsGameInstance::GetUserDefinedEnumNames(const FString& EnumName, const FEC
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsGameInstance::GetUserDefinedEnumNames: Failed to find UserDefinedEnum: %s for EnumStruct: %s."), *(EnumType.Name), *EnumName);
+		UE_LOG(LogCs, Warning, TEXT("UCsGameInstance_DEPRECATED::GetUserDefinedEnumNames: Failed to find UserDefinedEnum: %s for EnumStruct: %s."), *(EnumType.Name), *EnumName);
 	}
 }
 
@@ -364,27 +364,27 @@ void UCsGameInstance::GetUserDefinedEnumNames(const FString& EnumName, const FEC
 // Settings
 #pragma region
 
-void UCsGameInstance::InitSettings()
+void UCsGameInstance_DEPRECATED::InitSettings()
 {
 	InitInputSetting();
 }
 
-void UCsGameInstance::InitInputSetting()
+void UCsGameInstance_DEPRECATED::InitInputSetting()
 {
 	// Check AssetReference Path set for InputSettingClass
 	FString Path = InputSettingClass.ToString();
 
-	checkf(Path != NCsCached::Str::Empty, TEXT("UCsGameInstance::InitInputSetting: No valid Asset Path set for InputSettingClass."));
+	checkf(Path != NCsCached::Str::Empty, TEXT("UCsGameInstance_DEPRECATED::InitInputSetting: No valid Asset Path set for InputSettingClass."));
 
 	// Check InputSettingClass points to a valid cooked object
 	UClass* Class = InputSettingClass.LoadSynchronous();
 
-	checkf(Class, TEXT("UCsGameInstance::InitInputSetting: Failed to load InputSettingClass at Path: %s."), *Path);
+	checkf(Class, TEXT("UCsGameInstance_DEPRECATED::InitInputSetting: Failed to load InputSettingClass at Path: %s."), *Path);
 
 	// Check there is a Default Object for InputSettingClass
 	InputSetting = Class->GetDefaultObject<UCsInputSetting>();
 
-	checkf(InputSetting, TEXT("UCsGameInstance::InitInputSetting: Failed to get the Default Object for Class: %s at Path: %s."), *(Class->GetName()), *Path);
+	checkf(InputSetting, TEXT("UCsGameInstance_DEPRECATED::InitInputSetting: Failed to get the Default Object for Class: %s at Path: %s."), *(Class->GetName()), *Path);
 
 }
 
@@ -393,7 +393,7 @@ void UCsGameInstance::InitInputSetting()
 // OnBoard
 #pragma region
 
-void UCsGameInstance::OnBoard()
+void UCsGameInstance_DEPRECATED::OnBoard()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
@@ -401,16 +401,16 @@ void UCsGameInstance::OnBoard()
 	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
-	Payload->Coroutine.BindStatic(&UCsGameInstance::OnBoard_Internal);
+	Payload->Coroutine.BindStatic(&UCsGameInstance_DEPRECATED::OnBoard_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Scheduler->Start(Payload);
 }
 
-CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
+CS_COROUTINE(UCsGameInstance_DEPRECATED, OnBoard_Internal)
 {
-	UCsGameInstance* gi = r->GetOwnerAsObject<UCsGameInstance>();
+	UCsGameInstance_DEPRECATED* gi = r->GetOwnerAsObject<UCsGameInstance_DEPRECATED>();
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -438,7 +438,7 @@ CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
 	// Data Mapping
 #pragma region
 
-void UCsGameInstance::LoadDataMapping()
+void UCsGameInstance_DEPRECATED::LoadDataMapping()
 {
 	const FStringAssetReference AssetRef		  = FStringAssetReference(DataMappingAssetPath);
 	TSoftClassPtr<UCsDataMapping> AssetSubclassOf = TSoftClassPtr<UCsDataMapping>(AssetRef);
@@ -448,7 +448,7 @@ void UCsGameInstance::LoadDataMapping()
 		DataMapping = DataClass->GetDefaultObject<UCsDataMapping>();
 #if WITH_EDITOR
 
-		checkf(DataMapping->IsValid(), TEXT("UCsGameInstance::LoadDataMapping: DataMapping is NOT Valid."));
+		checkf(DataMapping->IsValid(), TEXT("UCsGameInstance_DEPRECATED::LoadDataMapping: DataMapping is NOT Valid."));
 
 		DataMapping->LoadFromJson();
 		DataMapping->ClearLoaded();
@@ -457,7 +457,7 @@ void UCsGameInstance::LoadDataMapping()
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsGameInstance::Init: Failed to Load DataMapping asset."));
+		UE_LOG(LogCs, Warning, TEXT("UCsGameInstance_DEPRECATED::Init: Failed to Load DataMapping asset."));
 		return;
 	}
 
@@ -467,23 +467,23 @@ void UCsGameInstance::LoadDataMapping()
 	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
-	Payload->Coroutine.BindStatic(&UCsGameInstance::LoadDataMapping_Internal);
+	Payload->Coroutine.BindStatic(&UCsGameInstance_DEPRECATED::LoadDataMapping_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Scheduler->Start(Payload);
 }
 
-PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(FCsRoutine* R))
+PT_THREAD(UCsGameInstance_DEPRECATED::LoadDataMapping_Internal(FCsRoutine* R))
 {
-	UCsGameInstance* gi			= R->GetOwnerAsObject<UCsGameInstance>();
+	UCsGameInstance_DEPRECATED* gi			= R->GetOwnerAsObject<UCsGameInstance_DEPRECATED>();
 	UCsDataMapping* dataMapping = gi->DataMapping;
 
 	CS_COROUTINE_BEGIN(R);
 
 	if (gi->bForcePopulateAssetReferences || dataMapping->bForcePopulateAssetReferences)
 	{
-		//UCsManager_Load::Get()->LoadObjectPaths(gi->GetWorld(), dataMapping->DataAssetReferences, ECsLoadAsyncOrder::Bulk, FCsManagerLoad_OnFinishLoadObjectPaths::CreateUObject(gi, &UCsGameInstance::OnFinishedLoadingDataObjects));
+		//UCsManager_Load::Get()->LoadObjectPaths(gi->GetWorld(), dataMapping->DataAssetReferences, ECsLoadAsyncOrder::Bulk, FCsManagerLoad_OnFinishLoadObjectPaths::CreateUObject(gi, &UCsGameInstance_DEPRECATED::OnFinishedLoadingDataObjects));
 
 		// Wait until Data Assets are LOADED
 		CS_COROUTINE_WAIT_UNTIL(R, gi->OnBoardState == ECsGameInstanceOnBoardState::FinishedLoadingDataAssets);
@@ -508,7 +508,7 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(FCsRoutine* R))
 	{
 		UCsData_Payload* Payload = dataMapping->GetPayload();
 
-		checkf(Payload->Editor_IsValid(dataMapping), TEXT("UCsGameInstance::LoadDataMapping_Internal: Payload is NOT Valid."));
+		checkf(Payload->Editor_IsValid(dataMapping), TEXT("UCsGameInstance_DEPRECATED::LoadDataMapping_Internal: Payload is NOT Valid."));
 	}
 #endif // #if WITH_EDITOR
 
@@ -524,7 +524,7 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(FCsRoutine* R))
 	CS_COROUTINE_END(R);
 }
 
-void UCsGameInstance::OnFinishedLoadingDataObjects(const TArray<UObject*>& LoadedObjects, const float& LoadingTime)
+void UCsGameInstance_DEPRECATED::OnFinishedLoadingDataObjects(const TArray<UObject*>& LoadedObjects, const float& LoadingTime)
 {
 	for (UObject* Object : LoadedObjects)
 	{
@@ -533,7 +533,7 @@ void UCsGameInstance::OnFinishedLoadingDataObjects(const TArray<UObject*>& Loade
 	OnBoardState = ECsGameInstanceOnBoardState::FinishedLoadingDataAssets;
 }
 
-void UCsGameInstance::PopulateAssetReferences()
+void UCsGameInstance_DEPRECATED::PopulateAssetReferences()
 {
 	// TODO: Maybe time slice this for built game 
 	const int32 Count = LoadedDataObjects.Num();
@@ -552,7 +552,7 @@ void UCsGameInstance::PopulateAssetReferences()
 	OnBoardState = ECsGameInstanceOnBoardState::FinishedPopulatingAssetReferences;
 }
 
-void UCsGameInstance::AsyncPopulateAssetReferences()
+void UCsGameInstance_DEPRECATED::AsyncPopulateAssetReferences()
 {
 #if WITH_EDITOR
 	DataMapping->AsyncTaskMutex.Lock();
@@ -565,12 +565,12 @@ void UCsGameInstance::AsyncPopulateAssetReferences()
 	Payload->ThreadPriority		= EThreadPriority::TPri_Normal;
 
 	FCsRunnable_Delegate* Runnable = Manager_Runnable->Prep(Payload);
-	Runnable->Delegate.AddUObject(this, &UCsGameInstance::PopulateAssetReferences);
+	Runnable->Delegate.AddUObject(this, &UCsGameInstance_DEPRECATED::PopulateAssetReferences);
 	Runnable->Start();
 }
 
 /*
-void UCsGameInstance::AsyncPopulateAssetReferences()
+void UCsGameInstance_DEPRECATED::AsyncPopulateAssetReferences()
 {
 	class FAsyncPopulateAssetReferencesWorker : public FNonAbandonableTask
 	{
@@ -578,9 +578,9 @@ void UCsGameInstance::AsyncPopulateAssetReferences()
 
 		friend class FAutoDeleteAsyncTask<FAsyncPopulateAssetReferencesWorker>;
 
-		UCsGameInstance* GameInstance;
+		UCsGameInstance_DEPRECATED* GameInstance;
 
-		FAsyncPopulateAssetReferencesWorker(UCsGameInstance* InGameInstance)
+		FAsyncPopulateAssetReferencesWorker(UCsGameInstance_DEPRECATED* InGameInstance)
 		{
 			GameInstance = InGameInstance;
 		}
@@ -604,15 +604,15 @@ void UCsGameInstance::AsyncPopulateAssetReferences()
 	// Load StartUp Data
 #pragma region
 
-void UCsGameInstance::LoadStartUpData(){ OnBoardState = ECsGameInstanceOnBoardState::LoadScreen; }
-void UCsGameInstance::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*>& LoadedAssets, const float& LoadingTime){}
+void UCsGameInstance_DEPRECATED::LoadStartUpData(){ OnBoardState = ECsGameInstanceOnBoardState::LoadScreen; }
+void UCsGameInstance_DEPRECATED::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*>& LoadedAssets, const float& LoadingTime){}
 
 #pragma endregion Load StartUp Data
 
 	// Fullscreen Widget
 #pragma region
 
-void UCsGameInstance::CreateFullscreenWidget()
+void UCsGameInstance_DEPRECATED::CreateFullscreenWidget()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
@@ -620,7 +620,7 @@ void UCsGameInstance::CreateFullscreenWidget()
 	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
-	Payload->Coroutine.BindStatic(&UCsGameInstance::CreateFullscreenWidget_Internal);
+	Payload->Coroutine.BindStatic(&UCsGameInstance_DEPRECATED::CreateFullscreenWidget_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
@@ -630,9 +630,9 @@ void UCsGameInstance::CreateFullscreenWidget()
 	Scheduler->Start(Payload);
 }
 
-CS_COROUTINE(UCsGameInstance, CreateFullscreenWidget_Internal)
+CS_COROUTINE(UCsGameInstance_DEPRECATED, CreateFullscreenWidget_Internal)
 {
-	UCsGameInstance* gi = r->GetOwnerAsObject<UCsGameInstance>();
+	UCsGameInstance_DEPRECATED* gi = r->GetOwnerAsObject<UCsGameInstance_DEPRECATED>();
 	UWorld* w			= gi->GetWorld();
 
 	CS_COROUTINE_BEGIN(r);
@@ -659,14 +659,14 @@ CS_COROUTINE(UCsGameInstance, CreateFullscreenWidget_Internal)
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsGameInstance::CreateFullscreenWidget_Internal: Failed to Load bp_ui_common (UCsData_UI_Common)."));
+			UE_LOG(LogCs, Warning, TEXT("UCsGameInstance_DEPRECATED::CreateFullscreenWidget_Internal: Failed to Load bp_ui_common (UCsData_UI_Common)."));
 		}
 	}
 
 	CS_COROUTINE_END(r);
 }
 
-void UCsGameInstance::CheckFullscreenWidget()
+void UCsGameInstance_DEPRECATED::CheckFullscreenWidget()
 {
 	// Make sure FullscreenWidget is attached to Viewport
 	if (FullscreenWidget)
@@ -681,7 +681,7 @@ void UCsGameInstance::CheckFullscreenWidget()
 
 #pragma endregion Fullscreen Widget
 
-void UCsGameInstance::HideMouseCursor()
+void UCsGameInstance_DEPRECATED::HideMouseCursor()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
@@ -689,7 +689,7 @@ void UCsGameInstance::HideMouseCursor()
 	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
-	Payload->Coroutine.BindStatic(&UCsGameInstance::HideMouseCursor_Internal);
+	Payload->Coroutine.BindStatic(&UCsGameInstance_DEPRECATED::HideMouseCursor_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
@@ -699,9 +699,9 @@ void UCsGameInstance::HideMouseCursor()
 	Scheduler->Start(Payload);
 }
 
-CS_COROUTINE(UCsGameInstance, HideMouseCursor_Internal)
+CS_COROUTINE(UCsGameInstance_DEPRECATED, HideMouseCursor_Internal)
 {
-	UCsGameInstance* gi = r->GetOwnerAsObject<UCsGameInstance>();
+	UCsGameInstance_DEPRECATED* gi = r->GetOwnerAsObject<UCsGameInstance_DEPRECATED>();
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -722,27 +722,27 @@ CS_COROUTINE(UCsGameInstance, HideMouseCursor_Internal)
 // Level
 #pragma region
 
-void UCsGameInstance::OnPreWorldInitialization(UWorld* InWorld, const UWorld::InitializationValues)
+void UCsGameInstance_DEPRECATED::OnPreWorldInitialization(UWorld* InWorld, const UWorld::InitializationValues)
 {
 	CreateFullscreenWidget();
 }
 
-void UCsGameInstance::OnPostWorldInitialization(UWorld* InWorld, const UWorld::InitializationValues)
+void UCsGameInstance_DEPRECATED::OnPostWorldInitialization(UWorld* InWorld, const UWorld::InitializationValues)
 {
 	//CreateFullscreenWidget();
 }
 
-void UCsGameInstance::OnLevelAddedToWorld(ULevel* InLevel, UWorld* InWorld)
+void UCsGameInstance_DEPRECATED::OnLevelAddedToWorld(ULevel* InLevel, UWorld* InWorld)
 {
 	CheckFullscreenWidget();
 }
 
-void UCsGameInstance::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
+void UCsGameInstance_DEPRECATED::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
 {
 	CheckFullscreenWidget();
 }
 
-void UCsGameInstance::PerformLevelTransition(const FString& Level, const FString& GameMode)
+void UCsGameInstance_DEPRECATED::PerformLevelTransition(const FString& Level, const FString& GameMode)
 {
 	LevelState = ECsLevelState::BeginTransition;
 
@@ -752,7 +752,7 @@ void UCsGameInstance::PerformLevelTransition(const FString& Level, const FString
 	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
-	Payload->Coroutine.BindStatic(&UCsGameInstance::PerformLevelTransition_Internal);
+	Payload->Coroutine.BindStatic(&UCsGameInstance_DEPRECATED::PerformLevelTransition_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
@@ -766,9 +766,9 @@ void UCsGameInstance::PerformLevelTransition(const FString& Level, const FString
 	Scheduler->Start(Payload);
 }
 
-CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
+CS_COROUTINE(UCsGameInstance_DEPRECATED, PerformLevelTransition_Internal)
 {
-	UCsGameInstance* gi = r->GetOwnerAsObject<UCsGameInstance>();
+	UCsGameInstance_DEPRECATED* gi = r->GetOwnerAsObject<UCsGameInstance_DEPRECATED>();
 	UWorld* w			= gi->GetWorld();
 
 	UCsWidget_Fullscreen* Widget = Cast<UCsWidget_Fullscreen>(gi->FullscreenWidget);
@@ -806,7 +806,7 @@ CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
 
 #pragma endregion Level
 
-void UCsGameInstance::ExitGame()
+void UCsGameInstance_DEPRECATED::ExitGame()
 {
 #if WITH_EDITOR
 	GEditor->RequestEndPlayMap();
@@ -818,13 +818,13 @@ void UCsGameInstance::ExitGame()
 // Object
 #pragma region
 
-uint64 UCsGameInstance::GetUniqueObjectId()
+uint64 UCsGameInstance_DEPRECATED::GetUniqueObjectId()
 {
 	++UniqueObjectIdIndex;
 	return UniqueObjectIdIndex;
 }
 
-uint64 UCsGameInstance::RegisterUniqueObject(UObject* InObject)
+uint64 UCsGameInstance_DEPRECATED::RegisterUniqueObject(UObject* InObject)
 {
 	const uint64 Id = GetUniqueObjectId();
 
@@ -835,30 +835,30 @@ uint64 UCsGameInstance::RegisterUniqueObject(UObject* InObject)
 	return Id;
 }
 
-void UCsGameInstance::UnregisterUniqueObject(const uint64& Id)
+void UCsGameInstance_DEPRECATED::UnregisterUniqueObject(const uint64& Id)
 {
 	ObjectMap.Remove(Id);
 	ActorMap.Remove(Id);
 }
 
-UObject* UCsGameInstance::GetUniqueObjectById(const uint64& Id)
+UObject* UCsGameInstance_DEPRECATED::GetUniqueObjectById(const uint64& Id)
 {
 	return ObjectMap[Id].IsValid() ? ObjectMap[Id].Get() : nullptr;
 }
 
-UObject* UCsGameInstance::GetSafeUniqueObjectById(const uint64& Id)
+UObject* UCsGameInstance_DEPRECATED::GetSafeUniqueObjectById(const uint64& Id)
 {
 	if (!ObjectMap.Find(Id))
 		return nullptr;
 	return GetUniqueObjectById(Id);
 }
 
-AActor* UCsGameInstance::GetUniqueActorById(const uint64& Id)
+AActor* UCsGameInstance_DEPRECATED::GetUniqueActorById(const uint64& Id)
 {
 	return ActorMap[Id].IsValid() ? ActorMap[Id].Get() : nullptr;
 }
 
-AActor* UCsGameInstance::GetSafeUniqueActorById(const uint64& Id)
+AActor* UCsGameInstance_DEPRECATED::GetSafeUniqueActorById(const uint64& Id)
 {
 	if (!ActorMap.Find(Id))
 		return nullptr;
@@ -870,6 +870,6 @@ AActor* UCsGameInstance::GetSafeUniqueActorById(const uint64& Id)
 // Managers
 #pragma region
 
-void UCsGameInstance::ConstructManagerSingleton(){}
+void UCsGameInstance_DEPRECATED::ConstructManagerSingleton(){}
 
 #pragma endregion Managers

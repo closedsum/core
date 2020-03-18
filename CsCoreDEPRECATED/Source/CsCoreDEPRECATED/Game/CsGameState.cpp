@@ -6,7 +6,7 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 #include "CsLastTickActor.h"
 
-#include "Game/CsGameInstance.h"
+#include "Game/CsGameInstance_DEPRECATED.h"
 
 // Library
 #include "Library/CsLibrary_Common.h"
@@ -132,7 +132,7 @@ void ACsGameState::PostActorCreated()
 	OnPrePIEEndedDelegateHandle = FEditorDelegates::PrePIEEnded.AddUObject(this, &ACsGameState::OnPrePIEEnded);
 #endif // #if WITH_EDITOR
 
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 	GameInstance->LevelState	  = ECsLevelState::Loaded;
 	GameInstance->CurrentGameFrame = 0;
 
@@ -328,7 +328,7 @@ void ACsGameState::OnBoard()
 CS_COROUTINE(ACsGameState, OnBoard_Internal)
 {
 	ACsGameState* gs		 = r->GetOwnerAsObject<ACsGameState>();
-	UCsGameInstance* gi		 = Cast<UCsGameInstance>(gs->GetGameInstance());
+	UCsGameInstance_DEPRECATED* gi		 = Cast<UCsGameInstance_DEPRECATED>(gs->GetGameInstance());
 	UWorld* w				 = gs->GetWorld();
 	
 	ACsPlayerController* pc = UCsLibrary_Common::GetLocalPlayerController<ACsPlayerController>(w);
@@ -1099,7 +1099,7 @@ void ACsGameState::SetAIPlayerStateMappingRelationshipFlag(const uint8 &ClientMa
 void ACsGameState::StartLevelTransition()
 {
 	ACsPlayerController* MyController = UCsLibrary_Common::GetLocalPlayerController<ACsPlayerController>(GetWorld());
-	UCsGameInstance* GameInstance	 = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance	 = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 
 	GameInstance->FullscreenWidget->SetUserFocus(MyController);
 
@@ -1112,7 +1112,7 @@ void ACsGameState::StartLevelTransition()
 
 void ACsGameState::ExitGame()
 {
-	Cast<UCsGameInstance>(GetGameInstance())->ExitGame();
+	Cast<UCsGameInstance_DEPRECATED>(GetGameInstance())->ExitGame();
 }
 
 #if WITH_EDITOR

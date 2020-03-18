@@ -7,7 +7,7 @@
 #include "CsData_Pickup.generated.h"
 
 UCLASS(Abstract)
-class CSCORE_API UCsData_Pickup : public UCsData_Interactive
+class CSCOREDEPRECATED_API UCsData_Pickup : public UCsData_Interactive
 {
 	GENERATED_UCLASS_BODY()
 

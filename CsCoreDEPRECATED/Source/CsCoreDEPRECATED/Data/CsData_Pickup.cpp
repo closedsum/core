@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/CsData_Pickup.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 // Managers
 #include "Managers/Sound/CsManager_Sound.h"

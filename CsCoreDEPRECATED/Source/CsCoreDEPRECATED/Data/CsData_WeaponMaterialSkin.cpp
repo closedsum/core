@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/CsData_WeaponMaterialSkin.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 // Librarys
 #include "Library/CsLibrary_Common.h"

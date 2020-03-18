@@ -18,7 +18,7 @@
 // UI
 #include "UI/State/CsHealthBarComponent.h"
 // Game
-#include "Game/CsGameInstance.h"
+#include "Game/CsGameInstance_DEPRECATED.h"
 // Player
 #include "Player/CsPlayerStateBase.h"
 // Weapon
@@ -126,7 +126,7 @@ void ACsPawn::Destroyed()
 		return;
 #endif // #if WITH_EDITOR
 
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 	GameInstance->UnregisterUniqueObject(UniqueObjectId);
 
 	for (int32 I = 0; I < MaxWeaponCount; I++)
@@ -154,7 +154,7 @@ void ACsPawn::PostInitializeComponents()
 		bPlacedInWorld = GetWorld()->bStartup;
 	}
 
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 	UniqueObjectId				  = GameInstance->RegisterUniqueObject(this);
 
 	// Spawn Weapons

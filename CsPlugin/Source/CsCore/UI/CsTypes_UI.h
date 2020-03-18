@@ -52,7 +52,7 @@ enum class ECsWidgetFocus : uint8
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsWidgetActorType : public FECsEnum_uint8
+struct CSCOREDEPRECATED_API FECsWidgetActorType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -61,7 +61,7 @@ struct CSCORE_API FECsWidgetActorType : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWidgetActorType)
 
-struct CSCORE_API EMCsWidgetActorType : public TCsEnumStructMap<FECsWidgetActorType, uint8>
+struct CSCOREDEPRECATED_API EMCsWidgetActorType : public TCsEnumStructMap<FECsWidgetActorType, uint8>
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsWidgetActorType, FECsWidgetActorType, uint8)
 };
@@ -72,7 +72,7 @@ struct CSCORE_API EMCsWidgetActorType : public TCsEnumStructMap<FECsWidgetActorT
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsWidgetType : public FECsEnum_uint8
+struct CSCOREDEPRECATED_API FECsWidgetType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -81,7 +81,7 @@ struct CSCORE_API FECsWidgetType : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWidgetType)
 
-struct CSCORE_API EMCsWidgetType : public TCsEnumStructMap<FECsWidgetType, uint8>
+struct CSCOREDEPRECATED_API EMCsWidgetType : public TCsEnumStructMap<FECsWidgetType, uint8>
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsWidgetType, FECsWidgetType, uint8)
 };
@@ -101,7 +101,7 @@ enum class ECsSimpleWidgetType : uint8
 	ECsSimpleWidgetType_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsSimpleWidgetType : public TCsEnumMap<ECsSimpleWidgetType>
+struct CSCOREDEPRECATED_API EMCsSimpleWidgetType : public TCsEnumMap<ECsSimpleWidgetType>
 {
 	CS_ENUM_MAP_BODY(EMCsSimpleWidgetType, ECsSimpleWidgetType)
 };
@@ -112,23 +112,28 @@ namespace NCsSimpleWidgetType
 	{
 		typedef ECsSimpleWidgetType Type;
 
-		extern CSCORE_API const Type Text;
-		extern CSCORE_API const Type Float;
-		extern CSCORE_API const Type Button;
-		extern CSCORE_API const Type Bar;
-		extern CSCORE_API const Type ECsSimpleWidgetType_MAX;
+		extern CSCOREDEPRECATED_API const Type Text;
+		extern CSCOREDEPRECATED_API const Type Float;
+		extern CSCOREDEPRECATED_API const Type Button;
+		extern CSCOREDEPRECATED_API const Type Bar;
+		extern CSCOREDEPRECATED_API const Type ECsSimpleWidgetType_MAX;
 	}
 }
 
 #pragma endregion SimpleWidgetType
 
+	// FCsWidgetActorInfo
+#pragma region 
+
+class UBlueprint;
+
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsWidgetActorInfo
+struct CSCOREDEPRECATED_API FCsWidgetActorInfo
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint")
-	TSoftObjectPtr<class UBlueprint> Blueprint;
+	TSoftObjectPtr<UBlueprint> Blueprint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;
@@ -257,13 +262,20 @@ public:
 																		} \
 																	}
 
+#pragma endregion FCsWidgetActorInfo
+
+	// FCsWidgetComponentInfo
+#pragma region
+
+class UBlueprint;
+
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsWidgetComponentInfo
+struct CSCOREDEPRECATED_API FCsWidgetComponentInfo
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint")
-	TSoftObjectPtr<class UBlueprint> Blueprint;
+	TSoftObjectPtr<UBlueprint> Blueprint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;
@@ -380,10 +392,12 @@ public:
 																			} \
 																		}
 
+#pragma endregion FCsWidgetComponentInfo
+
 	// HorizTextAligment
 #pragma region
 
-struct CSCORE_API EMHorizTextAligment : public TCsEnumMap<EHorizTextAligment>
+struct CSCOREDEPRECATED_API EMHorizTextAligment : public TCsEnumMap<EHorizTextAligment>
 {
 	CS_ENUM_MAP_BODY(EMHorizTextAligment, EHorizTextAligment)
 };
@@ -394,9 +408,9 @@ namespace ECsHorizTextAligment
 	{
 		typedef EHorizTextAligment Type;
 
-		extern CSCORE_API const Type EHTA_Left;
-		extern CSCORE_API const Type EHTA_Center;
-		extern CSCORE_API const Type EHTA_Right;
+		extern CSCOREDEPRECATED_API const Type EHTA_Left;
+		extern CSCOREDEPRECATED_API const Type EHTA_Center;
+		extern CSCOREDEPRECATED_API const Type EHTA_Right;
 	}
 }
 
@@ -405,7 +419,7 @@ namespace ECsHorizTextAligment
 	// VerticalTextAligment
 #pragma region
 
-struct CSCORE_API EMVerticalTextAligment : public TCsEnumMap<EVerticalTextAligment>
+struct CSCOREDEPRECATED_API EMVerticalTextAligment : public TCsEnumMap<EVerticalTextAligment>
 {
 	CS_ENUM_MAP_BODY(EMVerticalTextAligment, EVerticalTextAligment)
 };
@@ -416,10 +430,10 @@ namespace ECsVerticalTextAligment
 	{
 		typedef EVerticalTextAligment Type;
 
-		extern CSCORE_API const Type EVRTA_TextTop;
-		extern CSCORE_API const Type EVRTA_TextCenter;
-		extern CSCORE_API const Type EVRTA_TextBottom;
-		extern CSCORE_API const Type EVRTA_QuadTop;
+		extern CSCOREDEPRECATED_API const Type EVRTA_TextTop;
+		extern CSCOREDEPRECATED_API const Type EVRTA_TextCenter;
+		extern CSCOREDEPRECATED_API const Type EVRTA_TextBottom;
+		extern CSCOREDEPRECATED_API const Type EVRTA_QuadTop;
 	}
 }
 
@@ -441,7 +455,7 @@ enum class ECsButtonState : uint8
 	ECsButtonState_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsButtonState : public TCsEnumMap<ECsButtonState>
+struct CSCOREDEPRECATED_API EMCsButtonState : public TCsEnumMap<ECsButtonState>
 {
 	CS_ENUM_MAP_BODY(EMCsButtonState, ECsButtonState)
 };
@@ -452,14 +466,14 @@ namespace NCsButtonState
 	{
 		typedef ECsButtonState Type;
 
-		extern CSCORE_API const Type None;
-		extern CSCORE_API const Type FirstHover;
-		extern CSCORE_API const Type Hover;
-		extern CSCORE_API const Type FirstUnHover;
-		extern CSCORE_API const Type FirstPressed;
-		extern CSCORE_API const Type Pressed;
-		extern CSCORE_API const Type FirstReleased;
-		extern CSCORE_API const Type ECsButtonState_MAX;
+		extern CSCOREDEPRECATED_API const Type None;
+		extern CSCOREDEPRECATED_API const Type FirstHover;
+		extern CSCOREDEPRECATED_API const Type Hover;
+		extern CSCOREDEPRECATED_API const Type FirstUnHover;
+		extern CSCOREDEPRECATED_API const Type FirstPressed;
+		extern CSCOREDEPRECATED_API const Type Pressed;
+		extern CSCOREDEPRECATED_API const Type FirstReleased;
+		extern CSCOREDEPRECATED_API const Type ECsButtonState_MAX;
 	}
 }
 
@@ -469,10 +483,13 @@ namespace NCsButtonState
 
 #pragma endregion UI
 
-// PrimitiveType
+// Property
 #pragma region
 
-struct CSCORE_API TCsProperty_ESlateVisibility : public TCsProperty<ESlateVisibility>
+	// SlateVisibility
+#pragma region
+
+struct CSCOREDEPRECATED_API TCsProperty_ESlateVisibility : public TCsProperty<ESlateVisibility>
 {
 public:
 
@@ -512,7 +529,12 @@ public:
 
 typedef TCsProperty_ESlateVisibility TCsESlateVisibility;
 
-struct CSCORE_API TCsProperty_FSlateColor : public TCsProperty<FSlateColor>
+#pragma endregion SlateVisibility
+
+	// SlateColor
+#pragma region
+
+struct CSCOREDEPRECATED_API TCsProperty_FSlateColor : public TCsProperty<FSlateColor>
 {
 public:
 
@@ -552,7 +574,12 @@ public:
 
 typedef TCsProperty_FSlateColor TCsFSlateColor;
 
-struct CSCORE_API TCsProperty_ECheckBoxState : public TCsProperty<ECheckBoxState>
+#pragma endregion SlateColor
+
+	// CheckBoxState
+#pragma region
+
+struct CSCOREDEPRECATED_API TCsProperty_ECheckBoxState : public TCsProperty<ECheckBoxState>
 {
 public:
 
@@ -592,12 +619,17 @@ public:
 
 typedef TCsProperty_ECheckBoxState TCsECheckBoxState;
 
-#pragma endregion PrimitiveType
+#pragma endregion CheckBoxState
+
+#pragma endregion Property
 
 // Structs
 #pragma region
 
-struct CSCORE_API FCsWidget
+	// FCsWidget
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget
 {
 public:
 	FString Name;
@@ -628,7 +660,12 @@ public:
 	}
 };
 
-struct CSCORE_API FCsWidget_Bar : public FCsWidget
+#pragma endregion FCsWidget
+
+	// FCsWidget_Bar
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_Bar : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UProgressBar> Bar;
@@ -699,7 +736,12 @@ public:
 	FORCEINLINE UProgressBar* Get() { return Bar.IsValid() ? Bar.Get() : nullptr; }
 };
 
-struct CSCORE_API FCsWidget_Text : public FCsWidget
+#pragma endregion FCsWidget_Bar
+
+	// FCsWidget_Text
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_Text : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UTextBlock> Text;
@@ -773,7 +815,12 @@ public:
 	FORCEINLINE UTextBlock* Get() { return Text.IsValid() ? Text.Get() : nullptr; }
 };
 
-struct CSCORE_API FCsWidget_Float : public FCsWidget_Text
+#pragma endregion FCsWidget_Text
+
+	// FCsWidget_Float
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_Float : public FCsWidget_Text
 {
 	TCsFloat Value;
 
@@ -842,7 +889,12 @@ struct CSCORE_API FCsWidget_Float : public FCsWidget_Text
 	}
 };
 
-struct CSCORE_API FCsWidget_Int32 : public FCsWidget_Text
+#pragma endregion FCsWidget_Float
+
+	// FCsWidget_Int32
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_Int32 : public FCsWidget_Text
 {
 	TCsInt32 Value;
 
@@ -911,7 +963,12 @@ struct CSCORE_API FCsWidget_Int32 : public FCsWidget_Text
 	}
 };
 
-struct CSCORE_API FCsWidget_Image : public FCsWidget
+#pragma endregion FCsWidget_Int32
+
+	// FCsWidget_Image
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_Image : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UImage> Image;
@@ -988,7 +1045,12 @@ public:
 	FORCEINLINE UImage* Get() { return Image.IsValid() ? Image.Get() : nullptr; }
 };
 
-struct CSCORE_API FCsWidget_Button : public FCsWidget
+#pragma endregion FCsWidget_Image
+
+	// FCsWidget_Button
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_Button : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UButton> Button;
@@ -1043,7 +1105,12 @@ public:
 	FORCEINLINE UButton* Get() { return Button.IsValid() ? Button.Get() : nullptr; }
 };
 
-struct CSCORE_API FCsWidget_CheckBox : public FCsWidget
+#pragma endregion FCsWidget_Button
+
+	// FCsWidget_CheckBox
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_CheckBox : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UCheckBox> CheckBox;
@@ -1094,7 +1161,12 @@ public:
 	FORCEINLINE UCheckBox* Get() { return CheckBox.IsValid() ? CheckBox.Get() : nullptr; }
 };
 
-struct CSCORE_API FCsWidget_LabelAndCheckBox : public FCsWidget
+#pragma endregion FCsWidget_CheckBox
+
+	// FCsWidget_LabelAndCheckBox
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_LabelAndCheckBox : public FCsWidget
 {
 	FCsWidget_Text Label;
 	FCsWidget_CheckBox CheckBox;
@@ -1128,7 +1200,12 @@ struct CSCORE_API FCsWidget_LabelAndCheckBox : public FCsWidget
 	}
 };
 
-struct CSCORE_API FCsWidget_Slider : public FCsWidget
+#pragma endregion FCsWidget_LabelAndCheckBox
+
+	// FCsWidget_Slider
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_Slider : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class USlider> Slider;
@@ -1194,7 +1271,12 @@ public:
 	FORCEINLINE USlider* Get() { return Slider.IsValid() ? Slider.Get() : nullptr; }
 };
 
-struct CSCORE_API FCsWidget_EditableTextBox : public FCsWidget
+#pragma endregion FCsWidget_Slider
+
+	// FCsWidget_EditableTextBox
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_EditableTextBox : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UEditableTextBox> TextBox;
@@ -1260,7 +1342,12 @@ public:
 	FORCEINLINE UEditableTextBox* Get() { return TextBox.IsValid() ? TextBox.Get() : nullptr; }
 };
 
-struct CSCORE_API FCsWidget_EditableFloatBox : public FCsWidget_EditableTextBox
+#pragma endregion FCsWidget_EditableTextBox
+
+	// FCsWidget_EditableFloatBox
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_EditableFloatBox : public FCsWidget_EditableTextBox
 {
 public:
 	TCsFloat Value;
@@ -1449,7 +1536,12 @@ public:
 	}
 };
 
-struct CSCORE_API FCsWidget_SliderAndEditableFloatBox : public FCsWidget
+#pragma endregion FCsWidget_EditableFloatBox
+
+	// FCsWidget_SliderAndEditableFloatBox
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_SliderAndEditableFloatBox : public FCsWidget
 {
 	FCsWidget_Slider Slider;
 	FCsWidget_EditableFloatBox FloatBox;
@@ -1484,7 +1576,12 @@ struct CSCORE_API FCsWidget_SliderAndEditableFloatBox : public FCsWidget
 	}
 };
 
-struct CSCORE_API FCsWidget_LabelAndSliderAndEditableFloatBox : public FCsWidget
+#pragma endregion FCsWidget_SliderAndEditableFloatBox
+
+	// FCsWidget_LabelAndSliderAndEditableFloatBox
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_LabelAndSliderAndEditableFloatBox : public FCsWidget
 {
 	FCsWidget_Text Label;
 	FCsWidget_Slider Slider;
@@ -1528,7 +1625,12 @@ struct CSCORE_API FCsWidget_LabelAndSliderAndEditableFloatBox : public FCsWidget
 	}
 };
 
-struct CSCORE_API FCsWidget_SpinBox : public FCsWidget
+#pragma endregion FCsWidget_LabelAndSliderAndEditableFloatBox
+
+	// FCsWidget_SpinBox
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_SpinBox : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class USpinBox> SpinBox;
@@ -1615,7 +1717,12 @@ public:
 	FORCEINLINE USpinBox* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
 };
 
-struct CSCORE_API FCsWidget_SpinBox_int32 : public FCsWidget
+#pragma endregion FCsWidget_SpinBox
+
+	// FCsWidget_SpinBox_int32
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_SpinBox_int32 : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UCsSpinBox_Int32> SpinBox;
@@ -1714,7 +1821,12 @@ public:
 	FORCEINLINE UCsSpinBox_Int32* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
 };
 
-struct CSCORE_API FCsWidget_SpinBox_uint32 : public FCsWidget
+#pragma endregion FCsWidget_SpinBox_int32
+
+	// FCsWidget_SpinBox_uint32
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_SpinBox_uint32 : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UCsSpinBox_Int32> SpinBox;
@@ -1815,7 +1927,12 @@ public:
 	FORCEINLINE UCsSpinBox_Int32* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
 };
 
-struct CSCORE_API FCsWidget_ButtonAndText : public FCsWidget
+#pragma endregion FCsWidget_SpinBox_uint32
+
+	// FCsWidget_ButtonAndText
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_ButtonAndText : public FCsWidget
 {
 	FCsWidget_Button Button;
 	FCsWidget_Text Text;
@@ -1844,7 +1961,12 @@ struct CSCORE_API FCsWidget_ButtonAndText : public FCsWidget
 	}
 };
 
-struct CSCORE_API FCsWidget_LabelAndButtonAndText : public FCsWidget
+#pragma endregion FCsWidget_ButtonAndText
+
+	// FCsWidget_LabelAndButtonAndText
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_LabelAndButtonAndText : public FCsWidget
 {
 	FCsWidget_Text Label;
 	FCsWidget_Button Button;
@@ -1876,7 +1998,12 @@ struct CSCORE_API FCsWidget_LabelAndButtonAndText : public FCsWidget
 	}
 };
 
-struct CSCORE_API FCsWidget_Loading
+#pragma endregion FCsWidget_LabelAndButtonAndText
+
+	// FCsWidget_Loading
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidget_Loading
 {
 public:
 	FCsWidget_Text Loading;
@@ -2181,9 +2308,14 @@ public:
 	}
 };
 
+#pragma endregion FCsWidget_Loading
+
 #pragma endregion Structs
 
-struct CSCORE_API FCsWidgetPayload : public ICsPooledObjectPayload
+	// FCsWidgetPayload
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidgetPayload : public ICsPooledObjectPayload
 {
 public:
 
@@ -2256,8 +2388,12 @@ public:
 #pragma endregion ICsPooledObjectPayload
 };
 
+#pragma endregion FCsWidgetPayload
 
-struct CSCORE_API FCsWidgetActorPayload : public ICsPooledObjectPayload
+	// FCsWidgetActorPayload
+#pragma region
+
+struct CSCOREDEPRECATED_API FCsWidgetActorPayload : public ICsPooledObjectPayload
 {
 public:
 
@@ -2369,3 +2505,5 @@ public:
 	template<typename T>
 	FORCEINLINE T* GetWidget() { return Cast<T>(GetWidget()); }
 };
+
+#pragma endregion FCsWidgetActorPayload

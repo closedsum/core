@@ -1,7 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/CsData_Level.h"
-#include "CsCore.h"
-#include "Types/CsTypes.h"
+#include "CsCoreDEPRECATED.h"
+
+#include "Types/CsCached.h"
 
 UCsData_Level::UCsData_Level(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

@@ -7,7 +7,7 @@
 // Types
 #include "Types/CsTypes.h"
 #include "Coroutine/CsTypes_Coroutine.h"
-#include "CsGameInstance.generated.h"
+#include "CsGameInstance_DEPRECATED.generated.h"
 
 // OnTick
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsGameInstance_OnTick, const float&, DeltaSeconds);
@@ -22,7 +22,7 @@ DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsGameInstance_OnServerTravel);
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsGameInstanceRoutine : public FECsEnum_uint8
+struct CSCOREDEPRECATED_API FECsGameInstanceRoutine : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -31,7 +31,7 @@ struct CSCORE_API FECsGameInstanceRoutine : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsGameInstanceRoutine)
 
-struct CSCORE_API EMCsGameInstanceRoutine : public TCsEnumStructMap<FECsGameInstanceRoutine, uint8>
+struct CSCOREDEPRECATED_API EMCsGameInstanceRoutine : public TCsEnumStructMap<FECsGameInstanceRoutine, uint8>
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsGameInstanceRoutine, FECsGameInstanceRoutine, uint8)
 };
@@ -40,11 +40,11 @@ namespace ECsGameInstanceRoutine
 {
 	typedef FECsGameInstanceRoutine Type;
 
-	extern CSCORE_API const Type OnBoard_Internal;
-	extern CSCORE_API const Type LoadDataMapping_Internal;
-	extern CSCORE_API const Type PerformLevelTransition_Internal;
-	extern CSCORE_API const Type CreateFullscreenWidget_Internal;
-	extern CSCORE_API const Type HideMouseCursor_Internal;
+	extern CSCOREDEPRECATED_API const Type OnBoard_Internal;
+	extern CSCOREDEPRECATED_API const Type LoadDataMapping_Internal;
+	extern CSCOREDEPRECATED_API const Type PerformLevelTransition_Internal;
+	extern CSCOREDEPRECATED_API const Type CreateFullscreenWidget_Internal;
+	extern CSCOREDEPRECATED_API const Type HideMouseCursor_Internal;
 }
 
 #pragma endregion GameInstanceRoutine
@@ -63,7 +63,7 @@ enum class ECsGameInstanceOnBoardState : uint8
 	ECsGameInstanceOnBoardState_MAX,
 };
 
-struct CSCORE_API EMCsGameInstanceOnBoardState : public TCsEnumMap<ECsGameInstanceOnBoardState>
+struct CSCOREDEPRECATED_API EMCsGameInstanceOnBoardState : public TCsEnumMap<ECsGameInstanceOnBoardState>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsGameInstanceOnBoardState, ECsGameInstanceOnBoardState)
 };
@@ -74,16 +74,16 @@ namespace NCsGameInstanceOnBoardState
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type LoadDataMapping;
-		extern CSCORE_API const Type FinishedLoadingDataAssets;
-		extern CSCORE_API const Type FinishedPopulatingAssetReferences;
-		extern CSCORE_API const Type LoadStartUpData;
-		extern CSCORE_API const Type LoadScreen;
-		extern CSCORE_API const Type Completed;
-		extern CSCORE_API const Type ECsGameInstanceOnBoardState_MAX;
+		extern CSCOREDEPRECATED_API const Type LoadDataMapping;
+		extern CSCOREDEPRECATED_API const Type FinishedLoadingDataAssets;
+		extern CSCOREDEPRECATED_API const Type FinishedPopulatingAssetReferences;
+		extern CSCOREDEPRECATED_API const Type LoadStartUpData;
+		extern CSCOREDEPRECATED_API const Type LoadScreen;
+		extern CSCOREDEPRECATED_API const Type Completed;
+		extern CSCOREDEPRECATED_API const Type ECsGameInstanceOnBoardState_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSCOREDEPRECATED_API const uint8 MAX;
 }
 
 #define ECS_GAME_INSTANCE_ONBOARD_STATE_MAX NCsGameInstanceOnBoardState::MAX
@@ -102,7 +102,7 @@ class UCsManager_Time;
 class UCsCoroutineScheduler;
 
 UCLASS(config = Game)
-class CSCORE_API UCsGameInstance : public UGameInstance, public ICsGetManagerSingleton
+class CSCOREDEPRECATED_API UCsGameInstance_DEPRECATED : public UGameInstance, public ICsGetManagerSingleton
 {
 	GENERATED_UCLASS_BODY()
 

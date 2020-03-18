@@ -23,7 +23,7 @@
 #include "Managers/Inventory/CsManager_Inventory.h"
 #include "Managers/InteractiveActor/CsDamageableActor.h"
 // Game
-#include "Game/CsGameInstance.h"
+#include "Game/CsGameInstance_DEPRECATED.h"
 #include "Game/CsGameState.h"
 // Player
 #include "Player/CsPlayerStateBase.h"
@@ -176,7 +176,7 @@ void ACsWeapon::PostActorCreated()
 	if (UCsLibrary_Common::IsPlayInEditor(GetWorld()) || UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 		return;
 
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 	UniqueObjectId				  = GameInstance->GetUniqueObjectId();
 }
 
@@ -187,7 +187,7 @@ void ACsWeapon::Destroyed()
 	if (UCsLibrary_Common::IsPlayInEditor(GetWorld()) || UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
 		return;
 
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(GetGameInstance());
 	GameInstance->UnregisterUniqueObject(UniqueObjectId);
 }
 

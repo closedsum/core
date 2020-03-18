@@ -1,5 +1,7 @@
 #include "Data/CsData_Payload.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
+
+// Library
 #include "Library/CsLibrary_Common.h"
 
 #if WITH_EDITOR

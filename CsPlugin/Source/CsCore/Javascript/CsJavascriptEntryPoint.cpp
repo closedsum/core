@@ -6,7 +6,7 @@
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Game
-#include "Game/CsGameInstance.h"
+#include "Game/CsGameInstance_DEPRECATED.h"
 #include "Game/CsGameState.h"
 // UI
 #include "UI/CsUI.h"
@@ -90,7 +90,7 @@ PT_THREAD(ACsJavascriptEntryPoint::Setup_Internal(FCsRoutine* r))
 {
 	ACsJavascriptEntryPoint* js = r->GetOwnerAsObject<ACsJavascriptEntryPoint>();
 	UWorld* w					= js->GetWorld();
-	UCsGameInstance* gi			= Cast<UCsGameInstance>(w->GetGameInstance());
+	UCsGameInstance_DEPRECATED* gi			= Cast<UCsGameInstance_DEPRECATED>(w->GetGameInstance());
 	ACsGameState* gs			= w->GetGameState<ACsGameState>();
 	UCsCoroutineScheduler* s	= UCsCoroutineScheduler::Get(gi);
 	ACsPlayerController* pc		= UCsLibrary_Common::GetLocalPlayerController<ACsPlayerController>(w);

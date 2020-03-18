@@ -9,7 +9,7 @@
 
 #include "Managers/Input/CsInput_Base.h"
 // Game
-#include "Game/CsGameInstance.h"
+#include "Game/CsGameInstance_DEPRECATED.h"
 // Player
 #include "GameFramework/PlayerController.h"
 #include "Player/CsPlayerController.h"
@@ -54,7 +54,7 @@ void UCsManager_Input::Init()
 	SetupGameEventDefinitions();
 
 	// Initialize CurrentGameEventInfos
-	UCsGameInstance* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance>();
+	UCsGameInstance_DEPRECATED* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance_DEPRECATED>();
 	UCsInputSetting* InputSetting = GameInstance->InputSetting;
 
 	const int32 EventCount = InputSetting->GameEventPriorityList.Num();
@@ -802,7 +802,7 @@ void UCsManager_Input::SetupInputActionEventInfos()
 
 void UCsManager_Input::SetupInputActionMapping()
 {
-	UCsGameInstance* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance>();
+	UCsGameInstance_DEPRECATED* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance_DEPRECATED>();
 	UCsInputSetting* InputSetting = GameInstance->InputSetting;
 
 	const TMap<FECsInputActionMap, FCsInputActionSet>& InputActionMappings = InputSetting->InputActionMappings;
@@ -893,7 +893,7 @@ FCsInput* UCsManager_Input::GetPreviousPreviousInputAction(const FECsInputAction
 
 void UCsManager_Input::SetupGameEventDefinitions()
 {
-	UCsGameInstance* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance>();
+	UCsGameInstance_DEPRECATED* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance_DEPRECATED>();
 	UCsInputSetting* InputSetting = GameInstance->InputSetting;
 
 	for (const FCsGameEventDefinition& Def : InputSetting->GameEventDefinitions)

@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/CsData_UI_Common.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 UCsData_UI_Common::UCsData_UI_Common(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

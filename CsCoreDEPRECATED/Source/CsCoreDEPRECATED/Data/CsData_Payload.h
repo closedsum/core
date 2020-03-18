@@ -7,7 +7,7 @@
 #pragma region
 
 USTRUCT(BlueprintType)
-struct FCsPayloadFindEntry
+struct CSCOREDEPRECATED_API FCsPayloadFindEntry
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -25,7 +25,7 @@ struct FCsPayloadFindEntry
 };
 
 USTRUCT(BlueprintType)
-struct FCsPayloadAddEntry
+struct CSCOREDEPRECATED_API FCsPayloadAddEntry
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -49,7 +49,7 @@ struct FCsPayloadAddEntry
 };
 
 USTRUCT(BlueprintType)
-struct FCsPayloadRemoveEntry
+struct CSCOREDEPRECATED_API FCsPayloadRemoveEntry
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -70,7 +70,7 @@ struct FCsPayloadRemoveEntry
 };
 
 USTRUCT(BlueprintType)
-struct FCsPayloadValidate
+struct CSCOREDEPRECATED_API FCsPayloadValidate
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -89,7 +89,7 @@ struct FCsPayloadValidate
 class UCsDataMapping;
 
 UCLASS(Abstract)
-class CSCORE_API UCsData_Payload : public UCsData_Impl
+class CSCOREDEPRECATED_API UCsData_Payload : public UCsData_Impl
 {
 	GENERATED_UCLASS_BODY()
 

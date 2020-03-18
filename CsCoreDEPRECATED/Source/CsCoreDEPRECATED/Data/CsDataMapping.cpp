@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/CsDataMapping.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 // Library
 #include "Library/CsLibrary_Common.h"
@@ -17,7 +17,7 @@ namespace NCsDataMappingCached
 {
 	namespace Str
 	{
-		CSCORE_API const FString LoadData = TEXT("UCsDataMapping::LoadData");
+		CSCOREDEPRECATED_API const FString LoadData = TEXT("UCsDataMapping::LoadData");
 	}
 }
 
@@ -53,7 +53,7 @@ FCsDataMappingEntry* UCsDataMapping::GetDataMappingEntry(const FECsDataType& Dat
 		if (FCsDataMappingEntry* Entry = Map->Find(ShortCode))
 			return Entry;
 
-		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::GetDataMappingEntry: No Entry found for DataType: %s with ShortCode: %s"), *(DataType.Name), *ShortCode.ToString());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::GetDataMappingEntry: No Entry found for DataType: %s with ShortCode: %s"), *(DataType.Name), *ShortCode.ToString());
 	}
 	return nullptr;
 }
@@ -79,7 +79,7 @@ void UCsDataMapping::GenerateMaps()
 
 		if (!MappingPtr)
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::GenerateMaps: Warning. No DataMapping found for DataType: %s"), *(DataType.Name));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::GenerateMaps: Warning. No DataMapping found for DataType: %s"), *(DataType.Name));
 			return;
 		}
 
@@ -87,7 +87,7 @@ void UCsDataMapping::GenerateMaps()
 
 		if (!Map)
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::GenerateMaps: Warning. No DataMapping_Map found for DataType: %s"), *(DataType.Name));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::GenerateMaps: Warning. No DataMapping_Map found for DataType: %s"), *(DataType.Name));
 			return;
 		}
 
@@ -140,7 +140,7 @@ const FECsDataType& UCsDataMapping::GetDataType(const FName& ShortCode)
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::GetDataType: No Data set for DataType: %s with ShortCode: %s"), *(DataType.Name), *ShortCode.ToString());
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::GetDataType: No Data set for DataType: %s with ShortCode: %s"), *(DataType.Name), *ShortCode.ToString());
 			}
 		}
 	}
@@ -208,7 +208,7 @@ bool UCsDataMapping::DoesDataAssetReferenceExist(const FECsDataType& DataType, c
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::DoesDataAssetReferenceExist: No Data set for DataType: %s with ShortCode: %s"), *(DataType.Name), *ShortCode.ToString());
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::DoesDataAssetReferenceExist: No Data set for DataType: %s with ShortCode: %s"), *(DataType.Name), *ShortCode.ToString());
 			}
 		}
 	}
@@ -227,7 +227,7 @@ bool UCsDataMapping::DoesDataAssetReferenceExist(const FECsDataType& DataType, c
 				}
 				else
 				{
-					UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::DoesDataAssetReferenceExist: No Data set for DataType: %s with ShortCode: %s"), *(DataType.Name), *ShortCode.ToString());
+					UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::DoesDataAssetReferenceExist: No Data set for DataType: %s with ShortCode: %s"), *(DataType.Name), *ShortCode.ToString());
 				}
 			}
 		}
@@ -250,7 +250,7 @@ bool UCsDataMapping::AddDataAssetReference(const FECsDataType& DataType, const F
 {
 	if (DataType == EMCsDataType::Get().GetMAX())
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::AddDataAssetReference: Warning. Using INVALID DataType: ECsDataType_MAX when adding ShortCode: %s"), *ShortCode.ToString());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::AddDataAssetReference: Warning. Using INVALID DataType: ECsDataType_MAX when adding ShortCode: %s"), *ShortCode.ToString());
 		return false;
 	}
 
@@ -268,7 +268,7 @@ bool UCsDataMapping::AddDataAssetReference(const FECsDataType& DataType, const F
 
 			if (!Map)
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::AddDataAssetReference: Warning. No DataMapping_Map found for DataType: %s"), *(DataType.Name));
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::AddDataAssetReference: Warning. No DataMapping_Map found for DataType: %s"), *(DataType.Name));
 				return true;
 			}
 			Map->Add(ShortCode, Mapping);
@@ -277,11 +277,11 @@ bool UCsDataMapping::AddDataAssetReference(const FECsDataType& DataType, const F
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::AddDataAssetReference: Warning. Mapping DataType: %s and ShortCode: %s have ALREADY been ADDED."), *(DataType.Name), *ShortCode.ToString());
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::AddDataAssetReference: Warning. Mapping DataType: %s and ShortCode: %s have ALREADY been ADDED."), *(DataType.Name), *ShortCode.ToString());
 			return false;
 		}
 	}
-	UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::AddDataAssetReference: Warning. Using DataType: %s does NOT exist."), *(DataType.Name));
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::AddDataAssetReference: Warning. Using DataType: %s does NOT exist."), *(DataType.Name));
 	return false;
 }
 
@@ -356,7 +356,7 @@ void UCsDataMapping::PopulateDataAssetReferences()
 
 							if (Asset == TEXT(""))
 							{
-								UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::PopulateAssetReferences: No data set for DataType: %s using Short Code: %s"), *(DataType.Name), *(Entry.ShortCode.ToString()));
+								UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::PopulateAssetReferences: No data set for DataType: %s using Short Code: %s"), *(DataType.Name), *(Entry.ShortCode.ToString()));
 								continue;
 							}
 							DataAssetReferences.Add(AssetRef);
@@ -415,7 +415,7 @@ void UCsDataMapping::PopulateAssetReferences()
 
 							if (!OutAsset)
 							{
-								UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::PopulateAssetReferences: No data set for DataType: %s using Short Code: %s"), *(DataType.Name), *(Entry.ShortCode.ToString()));
+								UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::PopulateAssetReferences: No data set for DataType: %s using Short Code: %s"), *(DataType.Name), *(Entry.ShortCode.ToString()));
 								continue;
 							}
 
@@ -506,7 +506,7 @@ void UCsDataMapping::AsyncLoadObjects(UWorld* World, const FECsDataCollectionTyp
 
 	if (References.Num() == CS_EMPTY)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::AsyncLoadObjects: Trying to load 0 assets."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::AsyncLoadObjects: Trying to load 0 assets."));
 
 		TArray<UObject*> LoadedObjects;
 		Delegate.Execute(LoadedObjects, 0.0f);
@@ -562,7 +562,7 @@ const FCsData& UCsDataMapping::LoadData(const FString& FunctionName, const FECsD
 			}
 		}
 	}
-	UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::LoadData: Could NOT find Data with ShortCode: %s"), *ShortCode.ToString());
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::LoadData: Could NOT find Data with ShortCode: %s"), *ShortCode.ToString());
 	return FCsData::Empty;
 }
 
@@ -622,7 +622,7 @@ const FCsData& UCsDataMapping::LoadData(const FName& ShortCode, const ECsLoadFla
 			}
 		}
 	}
-	UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::LoadData: Could NOT find Data with ShortCode: %s"), *ShortCode.ToString());
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::LoadData: Could NOT find Data with ShortCode: %s"), *ShortCode.ToString());
 	return FCsData::Empty;
 }
 
@@ -686,7 +686,7 @@ const FCsData& UCsDataMapping::LoadData_Internal(const FString& FunctionName, co
 		const FString ShortCode		   = Mapping.ShortCode.ToString();
 		const FString AssetDescription = UCsLibrary_Load::GetAssetDescription(Mapping.Data);
 
-		UE_LOG(LogCs, Warning, TEXT("%s: Failed to load data using Short Code: %s with Path Location: %s."), *FunctionName, *ShortCode, *AssetDescription);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s: Failed to load data using Short Code: %s with Path Location: %s."), *FunctionName, *ShortCode, *AssetDescription);
 		return FCsData::Empty;
 	}
 
@@ -896,7 +896,7 @@ bool UCsDataMapping::CheckDataIsValid(const FString& FunctionName, const FECsDat
 		const FString ShortCode		   = Mapping.ShortCode.ToString();
 		const FString AssetDescription = UCsLibrary_Load::GetAssetDescription(Mapping.Data);
 
-		UE_LOG(LogCs, Warning, TEXT("%s: Failed to load data using Short Code: %s with Path Location: %s"), *FunctionName, *ShortCode, *AssetDescription);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s: Failed to load data using Short Code: %s with Path Location: %s"), *FunctionName, *ShortCode, *AssetDescription);
 		return true;
 	}
 
@@ -926,7 +926,7 @@ FName UCsDataMapping::GetShortCode(const FECsDataType& DataType, const uint16& L
 {
 	if (LookUpCode == CS_INVALID_LOOK_UP_CODE)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::GetShortCode: Failed find ShortCode using INVALID LookUpCode."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::GetShortCode: Failed find ShortCode using INVALID LookUpCode."));
 		return CS_INVALID_SHORT_CODE;
 	}
 
@@ -936,7 +936,7 @@ FName UCsDataMapping::GetShortCode(const FECsDataType& DataType, const uint16& L
 
 	if (LookUpCode >= Count)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::GetShortCode: LookUpCode: %d is Out of Bounds (%d)."), LookUpCode, Count);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::GetShortCode: LookUpCode: %d is Out of Bounds (%d)."), LookUpCode, Count);
 		return CS_INVALID_SHORT_CODE;
 	}
 	return (*Mapping)[LookUpCode].ShortCode;
@@ -946,7 +946,7 @@ uint16 UCsDataMapping::GetLookUpCode(const FECsDataType& DataType, const FName& 
 {
 	if (ShortCode == CS_INVALID_SHORT_CODE)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::GetLookUpCode: Failed to find LookUpCode using INVALID ShortCode."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::GetLookUpCode: Failed to find LookUpCode using INVALID ShortCode."));
 		return CS_INVALID_LOOK_UP_CODE;
 	}
 
@@ -955,7 +955,7 @@ uint16 UCsDataMapping::GetLookUpCode(const FECsDataType& DataType, const FName& 
 
 	if (!Entry)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::GetLookUpCode: Failed to find LookUpCode using ShortCode: %s."), *ShortCode.ToString());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::GetLookUpCode: Failed to find LookUpCode using ShortCode: %s."), *ShortCode.ToString());
 		return CS_INVALID_LOOK_UP_CODE;
 	}
 	return Entry->LookUpCode;
@@ -1035,20 +1035,20 @@ void UCsDataMapping::LoadFromJson()
 		{
 			if (CategoryMemberAssociations.Num() == 0)
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::LoadFromJson (%s): Data needs to be saved at least ONCE to generate CategoryMemberAssociations"), *AssetName);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::LoadFromJson (%s): Data needs to be saved at least ONCE to generate CategoryMemberAssociations"), *AssetName);
 				return;
 			}
 			UCsLibrary_Load::ReadObjectFromJson(JsonParsed, this, GetClass(), CategoryMemberAssociations, ReadObjectFromJson_Internal);
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::LoadFromJson (%s): %s is NOT Valid"), *AssetName, *Filename);
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::LoadFromJson (%s): %s is NOT Valid"), *AssetName, *Filename);
 			return;
 		}
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::LoadFromJson (%s): %s NOT found"), *AssetName, *Filename);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::LoadFromJson (%s): %s NOT found"), *AssetName, *Filename);
 		return;
 	}
 
@@ -1196,7 +1196,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 									if (UCsLibrary_Common::IsDefaultObject(this))
 										UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
 
-									UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+									UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 								}
 								// Check LoadFlags
 								if (Entry.Data_LoadFlags != LoadFlags)
@@ -1219,7 +1219,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 												if (UCsLibrary_Common::IsDefaultObject(this))
 													UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
 
-												UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+												UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 											}
 										}
 									}
@@ -1256,13 +1256,13 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 							// Multiple Assets with the same name.
 							if (Bps.Num() > 1)
 							{
-								UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::PerformAddEntry: FAILED. Multiple Assets with the same ShortCode name."));
+								UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::PerformAddEntry: FAILED. Multiple Assets with the same ShortCode name."));
 
 								const int32 BpCount = Bps.Num();
 
 								for (int32 I = 0; I < BpCount; ++I)
 								{
-									UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::PerformAddEntry: %s at %s"), *DataTypeAsString, *(Bps[I]->GetPathName()));
+									UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::PerformAddEntry: %s at %s"), *DataTypeAsString, *(Bps[I]->GetPathName()));
 								}
 
 								OutOutput = TEXT("ERROR");
@@ -1326,7 +1326,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 								// Data NOT the correct Class type
 								else
 								{
-									UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::PerformAddEntry: FAILED. %s at %s is NOT of type IsCsData."), *DataTypeAsString, *(Bps[0]->GetPathName()));
+									UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::PerformAddEntry: FAILED. %s at %s is NOT of type IsCsData."), *DataTypeAsString, *(Bps[0]->GetPathName()));
 
 									OutOutput = TEXT("Asset is NOT of type ICsData. Check LOG.");
 									OutMessage = TEXT("FAILED.");
@@ -1397,7 +1397,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 		if (UCsLibrary_Common::IsDefaultObject(this))
 			UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
 
-		UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 
 		for (int32 I = 0; I < BpCount; ++I)
 		{
@@ -1406,7 +1406,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 			if (UCsLibrary_Common::IsDefaultObject(this))
 				UCsLibrary_Common::DisplayNotificationInfo(AdditionalOutput, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
 
-			UE_LOG(LogCs, Warning, TEXT("%s"), *AdditionalOutput);
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *AdditionalOutput);
 		}
 
 		OutOutput = TEXT("ERROR");
@@ -1455,7 +1455,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 		// Data NOT the correct Class type
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::PerformAddEntry: FAILED. %s is NOT of type ICsData."), *(Bps[0]->GetPathName()));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::PerformAddEntry: FAILED. %s is NOT of type ICsData."), *(Bps[0]->GetPathName()));
 
 			OutOutput = TEXT("Asset is NOT of type ICsData. Check LOG.");
 			OutMessage = TEXT("FAILED.");
@@ -1537,7 +1537,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 									if (UCsLibrary_Common::IsDefaultObject(this))
 										UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
 
-									UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+									UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 								}
 								// Check LoadFlags
 								if (Entry.Data_LoadFlags != LoadFlags)
@@ -1560,7 +1560,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 												if (UCsLibrary_Common::IsDefaultObject(this))
 													UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
 
-												UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+												UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 											}
 										}
 									}
@@ -1619,7 +1619,7 @@ bool UCsDataMapping::IsValid()
 	// Check Payload is SET
 	if (!Payload.Get())
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::PerformValidate: No Payload set."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::PerformValidate: No Payload set."));
 		return false;
 	}
 	// Check Payload is VALID
@@ -1627,7 +1627,7 @@ bool UCsDataMapping::IsValid()
 
 	if (!PayloadDOb->IsValid())
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::PerformValidate: Payload is NOT Valid."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::PerformValidate: Payload is NOT Valid."));
 		return false;
 	}
 	return true;
@@ -1649,7 +1649,7 @@ bool UCsDataMapping::PerformValidate(FString& OutMessage, FString& OutOutput)
 			UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformValidateMessage"), 5.0f);
 		}
 
-		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::PerformValidate: No Payload set."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::PerformValidate: No Payload set."));
 		return false;
 	}
 	// Check Payload is VALID
@@ -1666,7 +1666,7 @@ bool UCsDataMapping::PerformValidate(FString& OutMessage, FString& OutOutput)
 			UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformValidateMessage"), 5.0f);
 		}
 
-		UE_LOG(LogCs, Warning, TEXT("UCsDataMapping::PerformValidate: Payload is NOT Valid."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::PerformValidate: Payload is NOT Valid."));
 		return false;
 	}
 
@@ -1716,7 +1716,7 @@ bool UCsDataMapping::PerformValidate(FString& OutMessage, FString& OutOutput)
 								if (UCsLibrary_Common::IsDefaultObject(this))
 									UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
 
-								UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+								UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 								Pass &= false;
 								continue;
 							}
@@ -1728,7 +1728,7 @@ bool UCsDataMapping::PerformValidate(FString& OutMessage, FString& OutOutput)
 								if (UCsLibrary_Common::IsDefaultObject(this))
 									UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
 
-								UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+								UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 
 								for (int32 J = 0; J < BpCount; J++)
 								{
@@ -1737,7 +1737,7 @@ bool UCsDataMapping::PerformValidate(FString& OutMessage, FString& OutOutput)
 									if (UCsLibrary_Common::IsDefaultObject(this))
 										UCsLibrary_Common::DisplayNotificationInfo(AdditionalOutput, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
 
-									UE_LOG(LogCs, Warning, TEXT("%s"), *AdditionalOutput);
+									UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *AdditionalOutput);
 								}
 								Pass &= false;
 								continue;
@@ -1753,7 +1753,7 @@ bool UCsDataMapping::PerformValidate(FString& OutMessage, FString& OutOutput)
 								if (UCsLibrary_Common::IsDefaultObject(this))
 									UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
 
-								UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+								UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 								Pass &= false;
 								continue;
 							}

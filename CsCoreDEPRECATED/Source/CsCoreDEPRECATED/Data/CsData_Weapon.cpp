@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/CsData_Weapon.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 #include "Runtime/Engine/Classes/Animation/SkeletalMeshActor.h"
 #include "Engine/Classes/Materials/MaterialInstanceConstant.h"

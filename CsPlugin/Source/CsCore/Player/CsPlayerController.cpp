@@ -6,7 +6,7 @@
 // Managers
 #include "Managers/Input/CsManager_Input.h"
 // Game
-#include "Game/CsGameInstance.h"
+#include "Game/CsGameInstance_DEPRECATED.h"
 
 ACsPlayerController::ACsPlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -96,7 +96,7 @@ void ACsPlayerController::InitInputSystem()
 
 		Manager_Input->LoadInputProfile();
 
-		Cast<UCsGameInstance>(GetGameInstance())->OnServerTravel_Event.AddUObject(Manager_Input, &UCsManager_Input::OnServerTravel);
+		Cast<UCsGameInstance_DEPRECATED>(GetGameInstance())->OnServerTravel_Event.AddUObject(Manager_Input, &UCsManager_Input::OnServerTravel);
 		*/
 	}
 }

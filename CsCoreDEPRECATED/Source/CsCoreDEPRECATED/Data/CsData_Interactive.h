@@ -11,7 +11,7 @@ class USkeletalMeshComponent;
 class UMaterialInstanceConstant;
 
 UCLASS(Abstract)
-class CSCORE_API UCsData_Interactive : public UCsData_Impl
+class CSCOREDEPRECATED_API UCsData_Interactive : public UCsData_Impl
 {
 	GENERATED_UCLASS_BODY()
 

@@ -10,7 +10,7 @@
 // Game
 #include "GameFramework/GameState.h"
 #include "GameFramework/GameMode.h"
-#include "Game/CsGameInstance.h"
+#include "Game/CsGameInstance_DEPRECATED.h"
 // VR
 #include "IHeadMountedDisplay.h"
 #include "MotionControllerComponent.h"
@@ -457,7 +457,7 @@ ECsViewType UCsLibrary_Common::Stream_GetViewType(const TCHAR*& Str)
 
 UCsDataMapping* UCsLibrary_Common::GetDataMapping(UWorld* InWorld)
 {
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(InWorld->GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(InWorld->GetGameInstance());
 	return GameInstance->DataMapping;
 }
 
@@ -2452,7 +2452,7 @@ uint64 UCsLibrary_Common::GetCurrentFrame(UWorld* InWorld)
 	if (IsPlayInEditorPreview(InWorld))
 		return 0;
 #endif // #if WITH_EDITOR
-	return InWorld->GetGameInstance<UCsGameInstance>()->CurrentGameFrame; 
+	return InWorld->GetGameInstance<UCsGameInstance_DEPRECATED>()->CurrentGameFrame;
 }
 
 #pragma endregion Time
@@ -2607,7 +2607,7 @@ void UCsLibrary_Common::SetCollisionFromTemplate(const FName &TemplateName, UPri
 
 void UCsLibrary_Common::TransitionToLevel(UWorld* InWorld, const FString &Level, const FString &GameMode)
 {
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(InWorld->GetGameInstance());
+	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(InWorld->GetGameInstance());
 	GameInstance->PerformLevelTransition(Level, GameMode);
 }
 

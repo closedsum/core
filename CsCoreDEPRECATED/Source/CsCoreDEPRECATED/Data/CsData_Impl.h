@@ -18,7 +18,7 @@
 #pragma region
 
 USTRUCT(BlueprintType)
-struct FCsDataAddToDataMapping
+struct CSCOREDEPRECATED_API FCsDataAddToDataMapping
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -45,7 +45,7 @@ struct FCsDataAddToDataMapping
 };
 
 USTRUCT(BlueprintType)
-struct FCsDataAddToPayload
+struct CSCOREDEPRECATED_API FCsDataAddToPayload
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -66,7 +66,7 @@ struct FCsDataAddToPayload
 };
 
 USTRUCT(BlueprintType)
-struct FCsDataLoadFromJson
+struct CSCOREDEPRECATED_API FCsDataLoadFromJson
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -81,7 +81,7 @@ class UCsDataMapping;
 class UCsData_Payload;
 
 UCLASS(Abstract, NotBlueprintable)
-class CSCORE_API UCsData_Impl : public UObject
+class CSCOREDEPRECATED_API UCsData_Impl : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

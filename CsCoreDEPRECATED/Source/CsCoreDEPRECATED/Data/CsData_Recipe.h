@@ -5,7 +5,7 @@
 #include "CsData_Recipe.generated.h"
 
 UCLASS(Abstract)
-class CSCORE_API UCsData_Recipe : public UCsData_Impl
+class CSCOREDEPRECATED_API UCsData_Recipe : public UCsData_Impl
 {
 	GENERATED_UCLASS_BODY()
 

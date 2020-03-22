@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/AI/Sense/CsManager_AI_Sense.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 // static initializations
 UCsManager_AI_Sense* UCsManager_AI_Sense::s_Instance;
@@ -45,7 +45,7 @@ void UCsManager_AI_Sense::OnRegister()
 
 	if (!s_Instance)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_AI_Sense::Get: Manager must be attached and registered on a game object in order to call Get()."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsManager_AI_Sense::Get: Manager must be attached and registered on a game object in order to call Get()."));
 		return nullptr;
 	}
 
@@ -58,7 +58,7 @@ void UCsManager_AI_Sense::OnRegister()
 
 	if (s_Instance)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_AI_Sense::Init: This is being called before the previous instance of the manager has been Shutdown."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsManager_AI_Sense::Init: This is being called before the previous instance of the manager has been Shutdown."));
 	}
 	s_Instance = Manager;
 }

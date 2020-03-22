@@ -10,6 +10,9 @@
 // Project Point
 #pragma region
 
+	// FCsAINavProjectPointRequest
+#pragma region
+
 class UObject;
 class APawn;
 class AAIController;
@@ -17,7 +20,7 @@ class AAIController;
 #define CS_INVALID_AI_NAV_PROJECT_POINT_REQUEST_ID UINT8_MAX
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsAINavProjectPointRequest
+struct CSCOREDEPRECATED_API FCsAINavProjectPointRequest
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -74,8 +77,13 @@ struct CSCORE_API FCsAINavProjectPointRequest
 	T* GetController() const { return Cast<T>(GetController()); }
 };
 
+#pragma endregion FCsAINavProjectPointRequest
+
+	// FCsAINavProjectPointResponse
+#pragma region
+
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsAINavProjectPointResponse
+struct CSCOREDEPRECATED_API FCsAINavProjectPointResponse
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -97,9 +105,14 @@ struct CSCORE_API FCsAINavProjectPointResponse
 	}
 };
 
+#pragma endregion FCsAINavProjectPointResponse
+
 #pragma endregion Project Point
 
 // Find Path
+#pragma region
+
+	// FCsAINavFindPathRequest
 #pragma region
 
 class UObject;
@@ -110,7 +123,7 @@ class ANavigationData;
 #define CS_INVALID_AI_NAV_FIND_PATH_REQUEST_ID UINT8_MAX
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsAINavFindPathRequest
+struct CSCOREDEPRECATED_API FCsAINavFindPathRequest
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -218,8 +231,13 @@ struct CSCORE_API FCsAINavFindPathRequest
 	T* GetController() const { return Cast<T>(GetController()); }
 };
 
+#pragma endregion FCsAINavFindPathRequest
+
+	// FCsAINavFindPathResponse
+#pragma region
+
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsAINavFindPathResponse
+struct CSCOREDEPRECATED_API FCsAINavFindPathResponse
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -236,5 +254,7 @@ struct CSCORE_API FCsAINavFindPathResponse
 		Result.Result = ENavigationQueryResult::Invalid;
 	}
 };
+
+#pragma endregion FCsAINavFindPathResponse
 
 #pragma endregion Find Path

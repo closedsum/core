@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/AI/Sense/CsLibrary_Manager_AI_Sense.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 #include "Managers/AI/Sense/CsManager_AI_Sense.h"
 
@@ -20,6 +20,6 @@ void UCsLibrary_Manager_AI_Sense::ReportNoiseEvent(const UObject* WorldContextOb
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_AI_Sense::ReportNoiseEvent: No Manager AI Sense of type UCsManager_AI_Sense was created."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsLibrary_Manager_AI_Sense::ReportNoiseEvent: No Manager AI Sense of type UCsManager_AI_Sense was created."));
 	}
 }

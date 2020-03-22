@@ -199,13 +199,6 @@ TAutoConsoleVariable<int32> CsCVarLogManagerWidgetActorTransactions(
 // AI
 #pragma region
 
-TAutoConsoleVariable<int32> CsCVarLogManagerAITransactions(
-	TEXT("log.manager.ai.transactions"),
-	0,
-	TEXT("Log Manager A.I. Allocation and DeAllocation."),
-	ECVF_SetByConsole
-);
-
 	// View
 #pragma region
 
@@ -592,18 +585,6 @@ TAutoConsoleVariable<int32> CsCVarLogManagerInventoryTransactions(
 
 #pragma endregion Inventory
 
-// Crafting
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogManagerCraftingTransactions(
-	TEXT("log.manager.crafting.transactions"),
-	0,
-	TEXT("Log Manager Crafting Begin, Craft, and Finish."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Crafting
-
 // Collision
 #pragma region
 
@@ -786,8 +767,6 @@ namespace NCsCVarLog
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerItemActionGetFail);
 	// Inventory
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerInventoryTransactions);
-	// Crafting
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerCraftingTransactions);
 	// Collision
 
 		// Trace

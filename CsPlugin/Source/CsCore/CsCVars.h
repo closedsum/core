@@ -270,13 +270,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerInventoryTransacti
 
 #pragma endregion Inventory
 
-// Crafting
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerCraftingTransactions;
-
-#pragma endregion Crafting
-
 // Collision
 #pragma region
 
@@ -523,8 +516,6 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogManagerItemActionGetFail;
 	// Inventory
 	extern CSCORE_API const Type LogManagerInventoryTransactions;
-	// Crafting
-	extern CSCORE_API const Type LogManagerCraftingTransactions;
 	// Collision
 
 		// Trace

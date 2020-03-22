@@ -8,7 +8,7 @@
 class AActor;
 
 UCLASS()
-class CSCORE_API UCsManager_AI_Sense : public UActorComponent
+class CSCOREDEPRECATED_API UCsManager_AI_Sense : public UActorComponent
 {
 	GENERATED_UCLASS_BODY()
 

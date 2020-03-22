@@ -1,7 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/AI/CsManager_AI.h"
-#include "CsCore.h"
-#include "CsCVars.h"
+#include "CsCoreDEPRECATED.h"
+#include "Managers/AI/CsCVars_Manager_AI.h"
+
+// Library
 #include "Library/CsLibrary_Common.h"
 
 #include "AI/CsAIController.h"
@@ -130,7 +132,7 @@ void FCsManager_AI::LogTransaction(const FString& functionName, const ECsPoolTra
 
 void FCsManager_AI::Log(const FString& log)
 {
-	UE_LOG(LogCs, Warning, TEXT("%s"), *log);
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *log);
 }
 
 #pragma endregion // Internal

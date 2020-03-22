@@ -1,12 +1,14 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Crafting/CsManager_Crafting.h"
-#include "CsCore.h"
-#include "CsCVars.h"
-#include "Library/CsLibrary_Common.h"
-#include "Game/CsGameState_DEPRECATED.h"
+#include "CsCoreDEPRECATED.h"
+#include "Managers/Crafting/CsCVars_Manager_Crafting.h"
 
+// Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
-
+// Library
+#include "Library/CsLibrary_Common.h"
+// Game
+#include "Game/CsGameState_DEPRECATED.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 #include "Managers/Item/CsManager_Item.h"
@@ -112,7 +114,7 @@ void ACsManager_Crafting::CraftItems(FCsCraftingPayload* Payload)
 		UCsData_Recipe* Recipe   = Payload->GetRecipe();
 		const FString RecipeName = Recipe->ShortCode.ToString();
 
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CraftItems: Attemping to craft Recipe: %s 0 times. Count must be > 0."), *RecipeName);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Crafting::CraftItems: Attemping to craft Recipe: %s 0 times. Count must be > 0."), *RecipeName);
 		return;
 	}
 
@@ -180,7 +182,7 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 		const FString RecipeName = Recipe->ShortCode.ToString();
 		const FString ItemName   = Recipe->GetCreatedItem().ToString();
 
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CraftItems_Internal: Beginning crafting (Process: %d, Payload: %d) for Recipe: %s to create Item: %s."), Process->Id, Payload->Id, *RecipeName, *ItemName);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Crafting::CraftItems_Internal: Beginning crafting (Process: %d, Payload: %d) for Recipe: %s to create Item: %s."), Process->Id, Payload->Id, *RecipeName, *ItemName);
 	}
 
 	c->OnBeginCraftingProcess_Event.Broadcast(Process->Id, Payload->Id);
@@ -239,7 +241,7 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 					const FString ItemName   = Recipe->GetCreatedItem().ToString();
 					const FString RecipeName = Recipe->ShortCode.ToString();
 
-					UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CraftItems_Internal: Crafted (Process: %d, Payload: %d) Item: %s for Recipe: %s."), Process->Id, Payload->Id, *ItemName, *RecipeName);
+					UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Crafting::CraftItems_Internal: Crafted (Process: %d, Payload: %d) Item: %s for Recipe: %s."), Process->Id, Payload->Id, *ItemName, *RecipeName);
 				}
 
 				Process->OnCraftItem_Event.Broadcast(Process->Id, Payload->Id);
@@ -259,7 +261,7 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 		const FString ItemName   = Recipe->GetCreatedItem().ToString();
 		const int32 ItemCount	 = Payload->OutItems.Num();
 
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CraftItems_Internal: Finishing crafting (Process: %d, Payload: %d) for Recipe: %s to create %d Items: %s."), Process->Id, Payload->Id, *RecipeName, ItemCount, *ItemName);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Crafting::CraftItems_Internal: Finishing crafting (Process: %d, Payload: %d) for Recipe: %s to create %d Items: %s."), Process->Id, Payload->Id, *RecipeName, ItemCount, *ItemName);
 	}
 
 	Process->OnFinishCraftingProcess_Event.Broadcast(Process->Id, Payload->Id);
@@ -280,7 +282,7 @@ void ACsManager_Crafting::CancelCraftingProcess(const uint64& Id)
 
 	if (!ProcessPtr)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CancelCraftingProcess: Attemping to cancel Crafting Process: %d, but it does NOT exist."), Id);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Crafting::CancelCraftingProcess: Attemping to cancel Crafting Process: %d, but it does NOT exist."), Id);
 		return;
 	}
 
@@ -295,7 +297,7 @@ void ACsManager_Crafting::CancelCraftingProcess(const uint64& Id)
 		UObject* TheInstigator		 = Process->GetInstigator();
 		const FString InstigatorName = TheInstigator->GetName();
 
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CancelCraftingProcess: Canceling crafting (Process: %d, Payload: %d) for Recipe: %s to create Item: %s started by %s."), Process->Id, Payload->Id, *RecipeName, *ItemName, *InstigatorName);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Crafting::CancelCraftingProcess: Canceling crafting (Process: %d, Payload: %d) for Recipe: %s to create Item: %s started by %s."), Process->Id, Payload->Id, *RecipeName, *ItemName, *InstigatorName);
 	}
 
 	// Free the Payload
@@ -331,7 +333,7 @@ void ACsManager_Crafting::CancelCraftingProcesses(UObject* InInstigator)
 				const FString ItemName   = Recipe->GetCreatedItem().ToString();
 				const FString InstigatorName = InInstigator->GetName();
 
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CancelCraftingProcesses: Canceling crafting (Process: %d, Payload: %d) for Recipe: %s to create Item: %s started by %s."), Process->Id, Payload->Id, *RecipeName, *ItemName, *InstigatorName);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Crafting::CancelCraftingProcesses: Canceling crafting (Process: %d, Payload: %d) for Recipe: %s to create Item: %s started by %s."), Process->Id, Payload->Id, *RecipeName, *ItemName, *InstigatorName);
 			}
 
 			// Free the Payload

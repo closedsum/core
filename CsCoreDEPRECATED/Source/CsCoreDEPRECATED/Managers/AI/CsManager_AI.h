@@ -6,7 +6,7 @@
 
 #define CS_AI_PAWN_PAYLOAD_SIZE 256
 
-class FCsManager_AI : public TCsManager_PooledObjects_TMap<FECsAIType, ACsAIPawn, FCsAIPawnPayload, CS_AI_PAWN_PAYLOAD_SIZE>
+class CSCOREDEPRECATED_API FCsManager_AI : public TCsManager_PooledObjects_TMap<FECsAIType, ACsAIPawn, FCsAIPawnPayload, CS_AI_PAWN_PAYLOAD_SIZE>
 {
 private:
 	typedef TCsManager_PooledObjects_TMap<FECsAIType, ACsAIPawn, FCsAIPawnPayload, CS_AI_PAWN_PAYLOAD_SIZE> Super;
@@ -36,13 +36,13 @@ public:
 };
 
 UCLASS()
-class CSCORE_API AICsManager_AI : public AActor
+class CSCOREDEPRECATED_API AICsManager_AI : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
 protected:
 
-	FCsManager_AI * Internal;
+	FCsManager_AI* Internal;
 
 	static TWeakObjectPtr<UObject> MyOwner;
 

@@ -5,25 +5,23 @@
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "CsManager_Crafting.generated.h"
 
-// OnBegin
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerCrafting_OnBeginCraftingProcess, const uint64&, const uint64&);
-// OnCraft
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerCrafting_OnCraftItem, const uint64&, const uint64&);
-// OnFinish
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerCrafting_OnFinishCraftingProcess, const uint64&, const uint64&);
-
 // Structs
 #pragma region
 
-struct FCsCraftingProcess
+struct CSCOREDEPRECATED_API FCsCraftingProcess
 {
 	bool bAllocated;
 	uint64 Id;
 	FCsRoutine* R;
 	TWeakObjectPtr<UObject> Instigator;
 
-	FBindableEvent_CsManagerCrafting_OnCraftItem OnCraftItem_Event;
-	FBindableEvent_CsManagerCrafting_OnFinishCraftingProcess OnFinishCraftingProcess_Event;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCraftItem, const uint64&, const uint64&);
+
+	FOnCraftItem OnCraftItem_Event;
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnFinishCraftingProcess, const uint64&, const uint64&);
+
+	FOnFinishCraftingProcess OnFinishCraftingProcess_Event;
 
 	FCsCraftingProcess()
 	{
@@ -51,7 +49,7 @@ struct FCsCraftingProcess
 #define CS_CRAFTING_PAYLOAD_SIZE 256
 
 UCLASS()
-class CSCORE_API ACsManager_Crafting : public AActor
+class CSCOREDEPRECATED_API ACsManager_Crafting : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
@@ -101,7 +99,9 @@ public:
 	virtual void CraftItems(FCsCraftingPayload* Payload);
 	static char CraftItems_Internal(struct FCsRoutine* r);
 
-	FBindableEvent_CsManagerCrafting_OnBeginCraftingProcess OnBeginCraftingProcess_Event;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBeginCraftingProcess, const uint64&, const uint64&);
+
+	FOnBeginCraftingProcess OnBeginCraftingProcess_Event;
 
 	void CancelCraftingProcess(const uint64& Id);
 	void CancelCraftingProcesses(UObject* Instigator);

@@ -165,37 +165,6 @@ TAutoConsoleVariable<int32> CsCVarDrawPooledActorRootLocation(
 
 #pragma endregion Pooled Actor
 
-// Interactive Actor
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogInteractiveActorPhysicsStateChange(
-	TEXT("log.interactive.actor.physicsstatechange"),
-	0,
-	TEXT("Log Interactive Actor Physics State changes (Set and Clear)."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarLogManagerInteractiveActorTransactions(
-	TEXT("log.manager.interactive.actor.transactions"),
-	0,
-	TEXT("Log Manager Interactive Actor Allocation and DeAllocation."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Interactive Actor
-
-// Widget Actor
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogManagerWidgetActorTransactions(
-	TEXT("log.manager.widget.actor.transactions"),
-	0,
-	TEXT("Log Manager Widget Actor Allocation and DeAllocation."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Widget Actor
-
 // AI
 #pragma region
 
@@ -347,119 +316,6 @@ TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness(
 );
 
 #pragma endregion Projectile
-
-// Player
-#pragma region
-
-	// View
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarDrawPlayerViewForward(
-	TEXT("draw.player.view.forward"),
-	0,
-	TEXT("Draw the Forward vector from the center of the Player capsule."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<float> CsCVarDrawPlayerViewForwardLength(
-	TEXT("draw.player.view.forwardlength"),
-	CS_CVAR_DRAW_PLAYER_VIEW_FORWARD_LENGTH,
-	TEXT("Length of the forward vector to be drawn from the Player view."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<float> CsCVarDrawPlayerViewForwardThickness(
-	TEXT("draw.player.view.forwardthickness"),
-	CS_CVAR_DRAW_PLAYER_VIEW_FORWARD_THICKNESS,
-	TEXT("Thickness of the forward vector to be drawn from the Player view."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarDrawPlayerViewRight(
-	TEXT("draw.player.view.right"),
-	0,
-	TEXT("Draw the Right vector from the Player view."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<float> CsCVarDrawPlayerViewRightLength(
-	TEXT("draw.player.view.rightlength"),
-	CS_CVAR_DRAW_PLAYER_VIEW_RIGHT_LENGTH,
-	TEXT("Length of the right vector to be drawn from the Player view."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<float> CsCVarDrawPlayerViewRightThickness(
-	TEXT("draw.player.view.rightthickness"),
-	CS_CVAR_DRAW_PLAYER_VIEW_RIGHT_THICKNESS,
-	TEXT("Thickness of the right vector to be drawn from the Player view."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion View
-
-	// Pawn
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarDrawPlayerPawnForward(
-	TEXT("draw.player.pawn.forward"),
-	0,
-	TEXT("Draw the Forward vector from the center of the Player capsule."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<float> CsCVarDrawPlayerPawnForwardLength(
-	TEXT("draw.player.pawn.forwardlength"),
-	CS_CVAR_DRAW_PLAYER_PAWN_FORWARD_LENGTH,
-	TEXT("Length of the forward vector to be drawn from the center of the Player capsule."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<float> CsCVarDrawPlayerPawnForwardThickness(
-	TEXT("draw.player.pawn.forwardthickness"),
-	CS_CVAR_DRAW_PLAYER_PAWN_FORWARD_THICKNESS,
-	TEXT("Thickness of the forward vector to be drawn from the center of the Player capsule."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarDrawPlayerPawnRight(
-	TEXT("draw.player.pawn.right"),
-	0,
-	TEXT("Draw the Right vector from the center of the Player capsule."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightLength(
-	TEXT("draw.player.pawn.rightlength"),
-	CS_CVAR_DRAW_PLAYER_PAWN_RIGHT_LENGTH,
-	TEXT("Length of the right vector to be drawn from the center of the Player capsule."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightThickness(
-	TEXT("draw.player.pawn.rightthickness"),
-	CS_CVAR_DRAW_PLAYER_PAWN_RIGHT_THICKNESS,
-	TEXT("Thickness of the right vector to be drawn from the center of the Player capsule."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Pawn
-
-TAutoConsoleVariable<int32> CsCVarDrawPlayerViewTraceHitLocation(
-	TEXT("draw.player.view.tracehitlocation"),
-	0,
-	TEXT("Draw the Location traced out from the Player's Camera Location."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarPlayerSaveRebuild(
-	TEXT("player.save.rebuild"),
-	0,
-	TEXT("Player Save Rebuild."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Player
 
 // Local Player
 #pragma region
@@ -740,11 +596,6 @@ namespace NCsCVarLog
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogGameStateOnBoard);
 	// Json
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogJsonDataFilenames);
-	// Interactive Actor
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInteractiveActorPhysicsStateChange);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerInteractiveActorTransactions);
-	// Widget Actor
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerWidgetActorTransactions);
 	// AI
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerAITransactions);
 	// Script
@@ -758,15 +609,6 @@ namespace NCsCVarLog
 	// Coroutine
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogCoroutineTransactions);
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogCoroutineRunning);
-	// UI
-
-		// Widget
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerWidgetTransactions);
-	// Item
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerItemTransactions);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerItemActionGetFail);
-	// Inventory
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerInventoryTransactions);
 	// Collision
 
 		// Trace

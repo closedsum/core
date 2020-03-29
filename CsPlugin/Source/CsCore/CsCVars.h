@@ -71,21 +71,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPooledActorRootLocation;
 
 #pragma endregion Pooled Actor
 
-// Interactive Actor
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInteractiveActorPhysicsStateChange;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerInteractiveActorTransactions;
-
-#pragma endregion Interactive Actor
-
-// Widget Actor
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerWidgetActorTransactions;
-
-#pragma endregion Widget Actor
-
 // AI
 #pragma region
 
@@ -159,54 +144,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawProjectilePathSegmentsPe
 extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness;
 
 #pragma endregion Projectile
-
-// Player
-#pragma region
-
-	// View
-#pragma region
-
-#define CS_CVAR_DRAW_PLAYER_VIEW_FORWARD_LENGTH 100.0f
-#define CS_CVAR_DRAW_PLAYER_VIEW_FORWARD_THICKNESS 2.0f
-#define CS_CVAR_DRAW_PLAYER_VIEW_RIGHT_LENGTH 100.0f
-#define CS_CVAR_DRAW_PLAYER_VIEW_RIGHT_THICKNESS 2.0f
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerViewForward;
-extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerViewForwardLength;
-extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerViewForwardThickness;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerViewRight;
-extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerViewRightLength;
-extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerViewRightThickness;
-
-#pragma endregion View
-
-	// Pawn
-#pragma region
-
-#define CS_CVAR_DRAW_PLAYER_PAWN_FORWARD_LENGTH 100.0f
-#define CS_CVAR_DRAW_PLAYER_PAWN_FORWARD_THICKNESS 2.0f
-#define CS_CVAR_DRAW_PLAYER_PAWN_RIGHT_LENGTH 100.0f
-#define CS_CVAR_DRAW_PLAYER_PAWN_RIGHT_THICKNESS 2.0f
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerPawnForward;
-extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnForwardLength;
-extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnForwardThickness;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerPawnRight;
-extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightLength;
-extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightThickness;
-
-#pragma endregion Pawn
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerViewTraceHitLocation;
-
-	// Save
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarPlayerSaveRebuild;
-
-#pragma endregion Save
-
-#pragma endregion Player
 
 // Local Player
 #pragma region
@@ -489,11 +426,6 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogGameStateOnBoard;
 	// Json
 	extern CSCORE_API const Type LogJsonDataFilenames;
-	// Interactive Actor
-	extern CSCORE_API const Type LogInteractiveActorPhysicsStateChange;
-	extern CSCORE_API const Type LogManagerInteractiveActorTransactions;
-	// Widget Actor
-	extern CSCORE_API const Type LogManagerWidgetActorTransactions;
 	// AI
 	extern CSCORE_API const Type LogManagerAITransactions;
 	// Script
@@ -507,15 +439,6 @@ namespace NCsCVarLog
 	// Coroutine
 	extern CSCORE_API const Type LogCoroutineTransactions;
 	extern CSCORE_API const Type LogCoroutineRunning;
-	// UI
-
-		// Widget
-	extern CSCORE_API const Type LogManagerWidgetTransactions;
-	// Item
-	extern CSCORE_API const Type LogManagerItemTransactions;
-	extern CSCORE_API const Type LogManagerItemActionGetFail;
-	// Inventory
-	extern CSCORE_API const Type LogManagerInventoryTransactions;
 	// Collision
 
 		// Trace

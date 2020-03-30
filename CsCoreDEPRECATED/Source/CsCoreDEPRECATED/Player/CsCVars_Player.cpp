@@ -126,12 +126,62 @@ TAutoConsoleVariable<int32> CsCVarPlayerSaveRebuild(
 
 #pragma endregion Save
 
+// Local Player
+#pragma region
+
+	// Weapon
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarDrawLocalPlayerWeaponFireProjectile(
+	TEXT("draw.localplayer.weapon.fireprojectile"),
+	0,
+	TEXT("Draw Projectile destinations from Weapon owned by the Local Player."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Weapon
+
+	// Projectile
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarDrawLocalPlayerProjectilePath(
+	TEXT("draw.localplayer.projectile.path"),
+	0,
+	TEXT("Draw the Path for a Projectile instigated by the Local Player."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<float> CsCVarDrawLocalPlayerProjectilePathInterval(
+	TEXT("draw.localplayer.projectile.pathinterval"),
+	CS_CVAR_DRAW_LOCAL_PLAYER_PROJECTILE_PATH_INTERVAL,
+	TEXT("The interval at which segments are drawn for the Path of a Projectile instigated by the Local Player."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarDrawLocalPlayerProjectilePathSegmentsPerInterval(
+	TEXT("draw.localplayer.projectile.pathsegmentsperinterval"),
+	CS_CVAR_DRAW_LOCAL_PLAYER_PROJECTILE_PATH_SEGMENTS_PER_INTERVAL,
+	TEXT("Number of segments used to draw the Path for a Projectile instigated by the Local Player."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<float> CsCVarDrawLocalPlayerProjectilePathThickness(
+	TEXT("draw.localplayer.projectile.paththickness"),
+	CS_CVAR_DRAW_LOCAL_PLAYER_PROJECTILE_PATH_THICKNESS,
+	TEXT("Thickness of the Path to be drawn for a Projectile instigated by the Local Player."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Projectile
+
+#pragma endregion Local Player
+
 // CVarLog
 #pragma region
 
 namespace NCsCVarLog
 {
-	// AI
+	// Player
 
 		// OnBoard
 	CSCOREDEPRECATED_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogPlayerStateOnBoard);

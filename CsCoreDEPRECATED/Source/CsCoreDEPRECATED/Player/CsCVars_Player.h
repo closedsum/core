@@ -52,6 +52,32 @@ extern CSCOREDEPRECATED_API TAutoConsoleVariable<int32> CsCVarPlayerSaveRebuild;
 
 #pragma endregion Save
 
+// Local Player
+#pragma region
+
+	// Weapon
+#pragma region
+
+extern CSCOREDEPRECATED_API TAutoConsoleVariable<int32> CsCVarDrawLocalPlayerWeaponFireProjectile;
+
+#pragma endregion Weapon
+
+	// Projectile
+#pragma region
+
+#define CS_CVAR_DRAW_LOCAL_PLAYER_PROJECTILE_PATH_INTERVAL 0.5f
+#define CS_CVAR_DRAW_LOCAL_PLAYER_PROJECTILE_PATH_SEGMENTS_PER_INTERVAL 16
+#define CS_CVAR_DRAW_LOCAL_PLAYER_PROJECTILE_PATH_THICKNESS 1.0f
+
+extern CSCOREDEPRECATED_API TAutoConsoleVariable<int32> CsCVarDrawLocalPlayerProjectilePath;
+extern CSCOREDEPRECATED_API TAutoConsoleVariable<float> CsCVarDrawLocalPlayerProjectilePathInterval;
+extern CSCOREDEPRECATED_API TAutoConsoleVariable<int32> CsCVarDrawLocalPlayerProjectilePathSegmentsPerInterval;
+extern CSCOREDEPRECATED_API TAutoConsoleVariable<float> CsCVarDrawLocalPlayerProjectilePathThickness;
+
+#pragma endregion Projectile
+
+#pragma endregion Local Player
+
 // CVarLog
 #pragma region
 

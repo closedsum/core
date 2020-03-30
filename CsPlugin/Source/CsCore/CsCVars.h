@@ -111,13 +111,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerFxTransactions;
 
 #pragma endregion FX
 
-// Weapon
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawWeaponFireProjectile;
-
-#pragma endregion Weapon
-
 // Projectile
 #pragma region
 
@@ -144,32 +137,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawProjectilePathSegmentsPe
 extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness;
 
 #pragma endregion Projectile
-
-// Local Player
-#pragma region
-
-	// Weapon
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawLocalPlayerWeaponFireProjectile;
-
-#pragma endregion Weapon
-
-	// Projectile
-#pragma region
-
-#define CS_CVAR_DRAW_LOCAL_PLAYER_PROJECTILE_PATH_INTERVAL 0.5f
-#define CS_CVAR_DRAW_LOCAL_PLAYER_PROJECTILE_PATH_SEGMENTS_PER_INTERVAL 16
-#define CS_CVAR_DRAW_LOCAL_PLAYER_PROJECTILE_PATH_THICKNESS 1.0f
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawLocalPlayerProjectilePath;
-extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawLocalPlayerProjectilePathInterval;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawLocalPlayerProjectilePathSegmentsPerInterval;
-extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawLocalPlayerProjectilePathThickness;
-
-#pragma endregion Projectile
-
-#pragma endregion Local Player
 
 // Coroutine
 #pragma region

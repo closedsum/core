@@ -29,7 +29,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsButtonComponent
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsButtonComponent_StaticMesh_OnFirstReleased, const uint16&, UObject*);
 
 UCLASS(meta = (BlueprintSpawnableComponent))
-class CSCORE_API UCsButtonComponent_StaticMesh : public UCsStaticMeshComponent
+class CSCOREDEPRECATED_API UCsButtonComponent_StaticMesh : public UCsStaticMeshComponent
 {
 	GENERATED_UCLASS_BODY()
 

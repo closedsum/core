@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "VR/Player/CsPlayerPawn_VR.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
+
 #include "MotionControllerComponent.h"
 #include "../InputCore/Classes/InputCoreTypes.h"
 #include "MotionController/CsMotionController.h"

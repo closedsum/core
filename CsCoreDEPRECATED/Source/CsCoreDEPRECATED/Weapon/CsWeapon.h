@@ -55,7 +55,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnUnEquip
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsWeaponMultiValueMember : public FECsEnum_uint8
+struct CSCOREDEPRECATED_API FECsWeaponMultiValueMember : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -64,7 +64,7 @@ struct CSCORE_API FECsWeaponMultiValueMember : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponMultiValueMember)
 
-struct CSCORE_API EMCsWeaponMultiValueMember : public TCsEnumStructMap<FECsWeaponMultiValueMember, uint8>
+struct CSCOREDEPRECATED_API EMCsWeaponMultiValueMember : public TCsEnumStructMap<FECsWeaponMultiValueMember, uint8>
 {
 	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWeaponMultiValueMember)
 };
@@ -72,53 +72,53 @@ struct CSCORE_API EMCsWeaponMultiValueMember : public TCsEnumStructMap<FECsWeapo
 namespace ECsWeaponMultiValueMember
 {
 	// Scope
-	extern CSCORE_API const FECsWeaponMultiValueMember MaxAmmo;
-	extern CSCORE_API const FECsWeaponMultiValueMember ProjectilesPerShot;
-	extern CSCORE_API const FECsWeaponMultiValueMember CurrentProjectilePerShotIndex;
-	extern CSCORE_API const FECsWeaponMultiValueMember DoFireOnRelease;
-	extern CSCORE_API const FECsWeaponMultiValueMember IsFullAuto;
-	extern CSCORE_API const FECsWeaponMultiValueMember TimeBetweenProjectilesPerShot;
-	extern CSCORE_API const FECsWeaponMultiValueMember TimeBetweenShots;
-	extern CSCORE_API const FECsWeaponMultiValueMember TimeBetweenAutoShots;
-	extern CSCORE_API const FECsWeaponMultiValueMember IsFirePressed;
-	extern CSCORE_API const FECsWeaponMultiValueMember Last_IsFirePressed;
-	extern CSCORE_API const FECsWeaponMultiValueMember IsFirePressed_StartTime;
-	extern CSCORE_API const FECsWeaponMultiValueMember IsFireReleased_StartTime;
-	extern CSCORE_API const FECsWeaponMultiValueMember Fire_StartTime;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember MaxAmmo;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember ProjectilesPerShot;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember CurrentProjectilePerShotIndex;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoFireOnRelease;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember IsFullAuto;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember TimeBetweenProjectilesPerShot;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember TimeBetweenShots;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember TimeBetweenAutoShots;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember IsFirePressed;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember Last_IsFirePressed;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember IsFirePressed_StartTime;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember IsFireReleased_StartTime;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember Fire_StartTime;
 	// Charge
-	extern CSCORE_API const FECsWeaponMultiValueMember AllowChargeFire;
-	extern CSCORE_API const FECsWeaponMultiValueMember MaxChargeFireTime;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember AllowChargeFire;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember MaxChargeFireTime;
 	// Spread
-	extern CSCORE_API const FECsWeaponMultiValueMember DoSpread;
-	extern CSCORE_API const FECsWeaponMultiValueMember MinSpread;
-	extern CSCORE_API const FECsWeaponMultiValueMember MaxSpread;
-	extern CSCORE_API const FECsWeaponMultiValueMember SpreadAddedPerShot;
-	extern CSCORE_API const FECsWeaponMultiValueMember SpreadRecoveryRate;
-	extern CSCORE_API const FECsWeaponMultiValueMember FiringSpreadRecoveryDelay;
-	extern CSCORE_API const FECsWeaponMultiValueMember CurrentBaseSpread;
-	extern CSCORE_API const FECsWeaponMultiValueMember CurrentSpread;
-	extern CSCORE_API const FECsWeaponMultiValueMember LastSpreadFireTime;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoSpread;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember MinSpread;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember MaxSpread;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember SpreadAddedPerShot;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember SpreadRecoveryRate;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember FiringSpreadRecoveryDelay;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember CurrentBaseSpread;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember CurrentSpread;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember LastSpreadFireTime;
 	// Anim
-	extern CSCORE_API const FECsWeaponMultiValueMember LoopFireAnim;
-	extern CSCORE_API const FECsWeaponMultiValueMember DoScaleFireAnim;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember LoopFireAnim;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoScaleFireAnim;
 	// Sound
-	extern CSCORE_API const FECsWeaponMultiValueMember LoopFireSound;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember LoopFireSound;
 	// Hitscan
-	extern CSCORE_API const FECsWeaponMultiValueMember IsHitscan;
-	extern CSCORE_API const FECsWeaponMultiValueMember DoesHitscanUseRadius;
-	extern CSCORE_API const FECsWeaponMultiValueMember DoesHitscanSimulateProjectileDuration;
-	extern CSCORE_API const FECsWeaponMultiValueMember ObstaclePenetrations;
-	extern CSCORE_API const FECsWeaponMultiValueMember PawnPenetrations;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember IsHitscan;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoesHitscanUseRadius;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoesHitscanSimulateProjectileDuration;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember ObstaclePenetrations;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember PawnPenetrations;
 	// Reload
-	extern CSCORE_API const FECsWeaponMultiValueMember ReloadTime;
-	extern CSCORE_API const FECsWeaponMultiValueMember AllowRechargeAmmo;
-	extern CSCORE_API const FECsWeaponMultiValueMember AllowRechargeAmmoDuringFire;
-	extern CSCORE_API const FECsWeaponMultiValueMember RechargeSecondsPerAmmo;
-	extern CSCORE_API const FECsWeaponMultiValueMember RechargeStartupDelay;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember ReloadTime;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember AllowRechargeAmmo;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember AllowRechargeAmmoDuringFire;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember RechargeSecondsPerAmmo;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember RechargeStartupDelay;
 }
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsWeaponRoutine : public FECsEnum_uint8
+struct CSCOREDEPRECATED_API FECsWeaponRoutine : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -127,16 +127,16 @@ struct CSCORE_API FECsWeaponRoutine : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponRoutine)
 
-struct CSCORE_API EMCsWeaponRoutine : public TCsEnumStructMap<FECsWeaponRoutine, uint8>
+struct CSCOREDEPRECATED_API EMCsWeaponRoutine : public TCsEnumStructMap<FECsWeaponRoutine, uint8>
 {
 	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWeaponRoutine)
 };
 
 namespace ECsWeaponRoutine
 {
-	extern CSCORE_API const FECsWeaponRoutine PlayAnimation_Reload_Internal;
-	extern CSCORE_API const FECsWeaponRoutine StartChargeFire_Internal;
-	extern CSCORE_API const FECsWeaponRoutine FireWeapon_Internal;
+	extern CSCOREDEPRECATED_API const FECsWeaponRoutine PlayAnimation_Reload_Internal;
+	extern CSCOREDEPRECATED_API const FECsWeaponRoutine StartChargeFire_Internal;
+	extern CSCOREDEPRECATED_API const FECsWeaponRoutine FireWeapon_Internal;
 }
 
 #pragma endregion Enums
@@ -217,7 +217,7 @@ struct FCsWeapon_TMapRef_float : public TCsIntegralType_TMap_Ref_float<FECsWeapo
 class UCsData_Weapon;
 
 UCLASS()
-class CSCORE_API ACsWeapon : public AActor
+class CSCOREDEPRECATED_API ACsWeapon : public AActor
 {
 	GENERATED_UCLASS_BODY()
 

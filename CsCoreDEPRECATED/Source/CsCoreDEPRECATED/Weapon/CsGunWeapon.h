@@ -14,7 +14,7 @@ class UCsData_Weapon;
 class UCsData_WeaponMaterialSkin;
 
 UCLASS()
-class CSCORE_API ACsGunWeapon : public ACsWeapon
+class CSCOREDEPRECATED_API ACsGunWeapon : public ACsWeapon
 {
 	GENERATED_UCLASS_BODY()
 

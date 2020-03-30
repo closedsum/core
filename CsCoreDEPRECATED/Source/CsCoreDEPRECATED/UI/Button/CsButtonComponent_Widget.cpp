@@ -1,44 +1,17 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "UI/Button/CsButtonComponent.h"
-#include "CsCore.h"
-#include "Components/CsWidgetComponent.h"
-#include "Components/CsSkeletalMeshComponent.h"
-#include "Components/CsStaticMeshComponent.h"
+#include "UI/Button/CsButtonComponent_Widget.h"
+#include "CsCoreDEPRECATED.h"
 
-UCsButtonComponent::UCsButtonComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsButtonComponent_Widget::UCsButtonComponent_Widget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-
 }
 
-void UCsButtonComponent::OnConstructor(const FObjectInitializer& ObjectInitializer)
-{
-	// Widget
-	if (UseWidget)
-	{
-		WidgetComponent = ObjectInitializer.CreateDefaultSubobject<UCsWidgetComponent>(this, TEXT("WidgetComponent"));
-		WidgetComponent->SetupAttachment(this);
-		VisualComponent = WidgetComponent;
-	}
-	// Skeletal Mesh
-	if (UseSkeletalMesh)
-	{
-		SkeletalMeshComponent = ObjectInitializer.CreateDefaultSubobject<UCsSkeletalMeshComponent>(this, TEXT("SkeletalMeshComponent"));
-		SkeletalMeshComponent->SetupAttachment(this);
-		VisualComponent = SkeletalMeshComponent;
-	}
-	// Static Mesh
-	if (UseStaticMesh)
-	{
-		StaticMeshComponent = ObjectInitializer.CreateDefaultSubobject<UCsStaticMeshComponent>(this, TEXT("StaticMeshComponent"));
-		StaticMeshComponent->SetupAttachment(this);
-		VisualComponent = StaticMeshComponent;
-	}
-}
+void UCsButtonComponent_Widget::OnConstructor(const FObjectInitializer& ObjectInitializer){}
 
 // State
 #pragma region
 
-void UCsButtonComponent::AddInstigator(const ECsButtonState &InState, UObject* InInstigator)
+void UCsButtonComponent_Widget::AddInstigator(const ECsButtonState &InState, UObject* InInstigator)
 {
 	TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find(InState);
 
@@ -63,7 +36,7 @@ void UCsButtonComponent::AddInstigator(const ECsButtonState &InState, UObject* I
 	Objects->Add(InInstigator);
 }
 
-void UCsButtonComponent::RemoveInstigator(const ECsButtonState &InState, UObject* InInstigator)
+void UCsButtonComponent_Widget::RemoveInstigator(const ECsButtonState &InState, UObject* InInstigator)
 {
 	TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find(InState);
 
@@ -90,12 +63,12 @@ void UCsButtonComponent::RemoveInstigator(const ECsButtonState &InState, UObject
 	/*
 	if (!Found)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsButtonComponent::RemoveInstigator(%s - %s): Failed to find Instigator: %s in %s List."), *GetName(), *((*InteractiveTypeToString)(Type)), *(InInstigator->GetName()), *ECsInteractiveState::ToString(InState));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsButtonComponent_Widget::RemoveInstigator(%s - %s): Failed to find Instigator: %s in %s List."), *GetName(), *((*InteractiveTypeToString)(Type)), *(InInstigator->GetName()), *ECsInteractiveState::ToString(InState));
 	}
 	*/
 }
 
-void UCsButtonComponent::ClearInstigators()
+void UCsButtonComponent_Widget::ClearInstigators()
 {
 	for (const ECsButtonState& Enum : EMCsButtonState::Get())
 	{
@@ -108,12 +81,12 @@ void UCsButtonComponent::ClearInstigators()
 	}
 }
 
-TArray<TWeakObjectPtr<UObject>>* UCsButtonComponent::GetInstigators(const ECsButtonState &InState)
+TArray<TWeakObjectPtr<UObject>>* UCsButtonComponent_Widget::GetInstigators(const ECsButtonState &InState)
 {
 	return Instigators.Find(InState);
 }
 
-void UCsButtonComponent::GetInstigators_Script(const ECsButtonState &InState, TArray<UObject*> OutInstigators)
+void UCsButtonComponent_Widget::GetInstigators_Script(const ECsButtonState &InState, TArray<UObject*> OutInstigators)
 {
 	TArray<TWeakObjectPtr<UObject>>* Objects = GetInstigators(InState);
 
@@ -131,7 +104,7 @@ void UCsButtonComponent::GetInstigators_Script(const ECsButtonState &InState, TA
 	}
 }
 
-void UCsButtonComponent::OnInteraction_Script(const ECsButtonState &InState, UObject* InInstigator)
+void UCsButtonComponent_Widget::OnInteraction_Script(const ECsButtonState &InState, UObject* InInstigator)
 {
 	if (InState == ECsButtonState::FirstHover) { OnFirstHover(InInstigator); return; }
 	if (InState == ECsButtonState::Hover) { OnHover(InInstigator); return; }
@@ -141,51 +114,51 @@ void UCsButtonComponent::OnInteraction_Script(const ECsButtonState &InState, UOb
 	if (InState == ECsButtonState::FirstReleased) { OnFirstReleased(InInstigator); return; }
 }
 
-void UCsButtonComponent::OnInteraction(UObject* InInstigator)
+void UCsButtonComponent_Widget::OnInteraction(UObject* InInstigator)
 {
 }
 
-void UCsButtonComponent::OnFirstHover(UObject* InInstigator)
+void UCsButtonComponent_Widget::OnFirstHover(UObject* InInstigator)
 {
 	AddInstigator(ECsButtonState::FirstHover, InInstigator);
 	State = ECsButtonState::FirstHover;
 }
 
-void UCsButtonComponent::OnHover(UObject* InInstigator)
+void UCsButtonComponent_Widget::OnHover(UObject* InInstigator)
 {
 	State = ECsButtonState::Hover;
 }
 
-void UCsButtonComponent::OnFirstUnHover(UObject* InInstigator)
+void UCsButtonComponent_Widget::OnFirstUnHover(UObject* InInstigator)
 {
 	RemoveInstigator(ECsButtonState::FirstHover, InInstigator);
 	RemoveInstigator(ECsButtonState::Hover, InInstigator);
 	State = ECsButtonState::FirstUnHover;
 }
 
-void UCsButtonComponent::OnFirstPressed(UObject* InInstigator)
+void UCsButtonComponent_Widget::OnFirstPressed(UObject* InInstigator)
 {
 	AddInstigator(ECsButtonState::FirstPressed, InInstigator);
 	State = ECsButtonState::FirstPressed;
 }
 
-void UCsButtonComponent::OnPressed(UObject* InInstigator)
+void UCsButtonComponent_Widget::OnPressed(UObject* InInstigator)
 {
 	State = ECsButtonState::Pressed;
 }
 
-void UCsButtonComponent::OnFirstReleased(UObject* InInstigator)
+void UCsButtonComponent_Widget::OnFirstReleased(UObject* InInstigator)
 {
 	RemoveInstigator(ECsButtonState::FirstReleased, InInstigator);
 	State = ECsButtonState::FirstReleased;
 }
 
-bool UCsButtonComponent::CanChangeState(const ECsButtonState &FromState, const ECsButtonState &ToState)
+bool UCsButtonComponent_Widget::CanChangeState(const ECsButtonState &FromState, const ECsButtonState &ToState)
 {
 	return true;
 }
 
-bool UCsButtonComponent::CanChangeFromAnyState(const TArray<ECsButtonState> &FromStates, const ECsButtonState &ToState)
+bool UCsButtonComponent_Widget::CanChangeFromAnyState(const TArray<ECsButtonState> &FromStates, const ECsButtonState &ToState)
 {
 	const int32 Count = FromStates.Num();
 
@@ -199,30 +172,16 @@ bool UCsButtonComponent::CanChangeFromAnyState(const TArray<ECsButtonState> &Fro
 
 #pragma endregion State
 
-void UCsButtonComponent::Show()
+void UCsButtonComponent_Widget::Show()
 {
 	SetVisibility(true);
 	SetHiddenInGame(false);
-
-	if (VisualComponent)
-	{
-		VisualComponent->SetVisibility(true);
-		VisualComponent->SetHiddenInGame(false);
-		VisualComponent->SetComponentTickEnabled(true);
-	}
 	SetComponentTickEnabled(true);
 }
 
-void UCsButtonComponent::Hide()
+void UCsButtonComponent_Widget::Hide()
 {
 	SetVisibility(false);
 	SetHiddenInGame(true);
-
-	if (VisualComponent)
-	{
-		VisualComponent->SetVisibility(false);
-		VisualComponent->SetHiddenInGame(true);
-		VisualComponent->SetComponentTickEnabled(false);
-	}
 	SetComponentTickEnabled(false);
 }

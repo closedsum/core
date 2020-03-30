@@ -1,13 +1,15 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Weapon/CsTpsWeapon.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 #include "CsCVars.h"
-#include "Library/CsLibrary_Common.h"
 
+// Library
+#include "Library/CsLibrary_Common.h"
+// Pawn
 #include "Pawn/CsPawn.h"
+// Anim
 #include "Animation/CsAnimInstance_Character.h"
 #include "Animation/CsAnimInstance_Weapon.h"
-
 // Data
 #include "Data/CsData_ProjectileWeapon.h"
 #include "Data/CsData_Character.h"

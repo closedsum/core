@@ -28,7 +28,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsButtonComponent
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsButtonComponent_Widget_OnFirstReleased, const uint16&, UObject*);
 
 UCLASS(meta = (BlueprintSpawnableComponent))
-class CSCORE_API UCsButtonComponent_Widget : public UCsWidgetComponent
+class CSCOREDEPRECATED_API UCsButtonComponent_Widget : public UCsWidgetComponent
 {
 	GENERATED_UCLASS_BODY()
 

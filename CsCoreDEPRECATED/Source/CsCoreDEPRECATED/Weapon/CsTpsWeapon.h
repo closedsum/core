@@ -3,8 +3,10 @@
 #include "Weapon/CsGunWeapon.h"
 #include "CsTpsWeapon.generated.h"
 
+class UMaterialInstanceDynamic;
+
 UCLASS()
-class CSCORE_API ACsTpsWeapon : public ACsGunWeapon
+class CSCOREDEPRECATED_API ACsTpsWeapon : public ACsGunWeapon
 {
 	GENERATED_UCLASS_BODY()
 
@@ -44,7 +46,7 @@ public:
 
 protected:
 
-	TArray<class UMaterialInstanceDynamic*> MeshMIDs;
+	TArray<UMaterialInstanceDynamic*> MeshMIDs;
 
 #pragma endregion Mesh
 

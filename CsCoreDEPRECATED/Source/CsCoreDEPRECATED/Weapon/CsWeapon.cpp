@@ -1,7 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Weapon/CsWeapon.h"
-#include "CsCore.h"
-#include "CsCVars.h"
+#include "CsCoreDEPRECATED.h"
+#include "Weapon/CsCVars_Weapon.h"
+#include "Player/CsCVars_Player.h"
 
 // Library
 #include "Library/CsLibrary_Common.h"
@@ -71,49 +72,49 @@ CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsWeaponMultiValueMember)
 namespace ECsWeaponMultiValueMember
 {
 	// Scope
-	CSCORE_API const FECsWeaponMultiValueMember MaxAmmo = EMCsWeaponMultiValueMember::Get().Create(TEXT("MaxAmmo"));
-	CSCORE_API const FECsWeaponMultiValueMember ProjectilesPerShot = EMCsWeaponMultiValueMember::Get().Create(TEXT("ProjectilesPerShot"));
-	CSCORE_API const FECsWeaponMultiValueMember CurrentProjectilePerShotIndex = EMCsWeaponMultiValueMember::Get().Create(TEXT("CurrentProjectilePerShotIndex"));
-	CSCORE_API const FECsWeaponMultiValueMember DoFireOnRelease = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoFireOnRelease"));
-	CSCORE_API const FECsWeaponMultiValueMember IsFullAuto = EMCsWeaponMultiValueMember::Get().Create(TEXT("IsFullAuto"));
-	CSCORE_API const FECsWeaponMultiValueMember TimeBetweenProjectilesPerShot = EMCsWeaponMultiValueMember::Get().Create(TEXT("TimeBetweenProjectilesPerShot"));
-	CSCORE_API const FECsWeaponMultiValueMember TimeBetweenShots = EMCsWeaponMultiValueMember::Get().Create(TEXT("TimeBetweenShots"));
-	CSCORE_API const FECsWeaponMultiValueMember TimeBetweenAutoShots = EMCsWeaponMultiValueMember::Get().Create(TEXT("TimeBetweenAutoShots"));
-	CSCORE_API const FECsWeaponMultiValueMember IsFirePressed = EMCsWeaponMultiValueMember::Get().Create(TEXT("IsFirePressed"));
-	CSCORE_API const FECsWeaponMultiValueMember Last_IsFirePressed = EMCsWeaponMultiValueMember::Get().Create(TEXT("Last_IsFirePressed"));
-	CSCORE_API const FECsWeaponMultiValueMember IsFirePressed_StartTime = EMCsWeaponMultiValueMember::Get().Create(TEXT("IsFirePressed_StartTime"));
-	CSCORE_API const FECsWeaponMultiValueMember IsFireReleased_StartTime = EMCsWeaponMultiValueMember::Get().Create(TEXT("IsFireReleased_StartTime"));
-	CSCORE_API const FECsWeaponMultiValueMember Fire_StartTime = EMCsWeaponMultiValueMember::Get().Create(TEXT("Fire_StartTime"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember MaxAmmo = EMCsWeaponMultiValueMember::Get().Create(TEXT("MaxAmmo"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember ProjectilesPerShot = EMCsWeaponMultiValueMember::Get().Create(TEXT("ProjectilesPerShot"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember CurrentProjectilePerShotIndex = EMCsWeaponMultiValueMember::Get().Create(TEXT("CurrentProjectilePerShotIndex"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoFireOnRelease = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoFireOnRelease"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember IsFullAuto = EMCsWeaponMultiValueMember::Get().Create(TEXT("IsFullAuto"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember TimeBetweenProjectilesPerShot = EMCsWeaponMultiValueMember::Get().Create(TEXT("TimeBetweenProjectilesPerShot"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember TimeBetweenShots = EMCsWeaponMultiValueMember::Get().Create(TEXT("TimeBetweenShots"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember TimeBetweenAutoShots = EMCsWeaponMultiValueMember::Get().Create(TEXT("TimeBetweenAutoShots"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember IsFirePressed = EMCsWeaponMultiValueMember::Get().Create(TEXT("IsFirePressed"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember Last_IsFirePressed = EMCsWeaponMultiValueMember::Get().Create(TEXT("Last_IsFirePressed"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember IsFirePressed_StartTime = EMCsWeaponMultiValueMember::Get().Create(TEXT("IsFirePressed_StartTime"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember IsFireReleased_StartTime = EMCsWeaponMultiValueMember::Get().Create(TEXT("IsFireReleased_StartTime"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember Fire_StartTime = EMCsWeaponMultiValueMember::Get().Create(TEXT("Fire_StartTime"));
 	// Charge
-	CSCORE_API const FECsWeaponMultiValueMember AllowChargeFire = EMCsWeaponMultiValueMember::Get().Create(TEXT("AllowChargeFire"));
-	CSCORE_API const FECsWeaponMultiValueMember MaxChargeFireTime = EMCsWeaponMultiValueMember::Get().Create(TEXT("MaxChargeFireTime"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember AllowChargeFire = EMCsWeaponMultiValueMember::Get().Create(TEXT("AllowChargeFire"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember MaxChargeFireTime = EMCsWeaponMultiValueMember::Get().Create(TEXT("MaxChargeFireTime"));
 	// Spread
-	CSCORE_API const FECsWeaponMultiValueMember DoSpread = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoSpread"));
-	CSCORE_API const FECsWeaponMultiValueMember MinSpread = EMCsWeaponMultiValueMember::Get().Create(TEXT("MinSpread"));
-	CSCORE_API const FECsWeaponMultiValueMember MaxSpread = EMCsWeaponMultiValueMember::Get().Create(TEXT("MaxSpread"));
-	CSCORE_API const FECsWeaponMultiValueMember SpreadAddedPerShot = EMCsWeaponMultiValueMember::Get().Create(TEXT("SpreadAddedPerShot"));
-	CSCORE_API const FECsWeaponMultiValueMember SpreadRecoveryRate = EMCsWeaponMultiValueMember::Get().Create(TEXT("SpreadRecoveryRate"));
-	CSCORE_API const FECsWeaponMultiValueMember FiringSpreadRecoveryDelay = EMCsWeaponMultiValueMember::Get().Create(TEXT("FiringSpreadRecoveryDelay"));
-	CSCORE_API const FECsWeaponMultiValueMember CurrentBaseSpread = EMCsWeaponMultiValueMember::Get().Create(TEXT("CurrentBaseSpread"));
-	CSCORE_API const FECsWeaponMultiValueMember CurrentSpread = EMCsWeaponMultiValueMember::Get().Create(TEXT("CurrentSpread"));
-	CSCORE_API const FECsWeaponMultiValueMember LastSpreadFireTime = EMCsWeaponMultiValueMember::Get().Create(TEXT("LastSpreadFireTime"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoSpread = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoSpread"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember MinSpread = EMCsWeaponMultiValueMember::Get().Create(TEXT("MinSpread"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember MaxSpread = EMCsWeaponMultiValueMember::Get().Create(TEXT("MaxSpread"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember SpreadAddedPerShot = EMCsWeaponMultiValueMember::Get().Create(TEXT("SpreadAddedPerShot"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember SpreadRecoveryRate = EMCsWeaponMultiValueMember::Get().Create(TEXT("SpreadRecoveryRate"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember FiringSpreadRecoveryDelay = EMCsWeaponMultiValueMember::Get().Create(TEXT("FiringSpreadRecoveryDelay"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember CurrentBaseSpread = EMCsWeaponMultiValueMember::Get().Create(TEXT("CurrentBaseSpread"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember CurrentSpread = EMCsWeaponMultiValueMember::Get().Create(TEXT("CurrentSpread"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember LastSpreadFireTime = EMCsWeaponMultiValueMember::Get().Create(TEXT("LastSpreadFireTime"));
 	// Anim
-	CSCORE_API const FECsWeaponMultiValueMember LoopFireAnim = EMCsWeaponMultiValueMember::Get().Create(TEXT("LoopFireAnim"));
-	CSCORE_API const FECsWeaponMultiValueMember DoScaleFireAnim = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoScaleFireAnim"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember LoopFireAnim = EMCsWeaponMultiValueMember::Get().Create(TEXT("LoopFireAnim"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoScaleFireAnim = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoScaleFireAnim"));
 	// Sound
-	CSCORE_API const FECsWeaponMultiValueMember LoopFireSound = EMCsWeaponMultiValueMember::Get().Create(TEXT("LoopFireSound"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember LoopFireSound = EMCsWeaponMultiValueMember::Get().Create(TEXT("LoopFireSound"));
 	// Hitscan
-	CSCORE_API const FECsWeaponMultiValueMember IsHitscan = EMCsWeaponMultiValueMember::Get().Create(TEXT("IsHitscan"));
-	CSCORE_API const FECsWeaponMultiValueMember DoesHitscanUseRadius = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoesHitscanUseRadius"));
-	CSCORE_API const FECsWeaponMultiValueMember DoesHitscanSimulateProjectileDuration = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoesHitscanSimulateProjectileDuration"));
-	CSCORE_API const FECsWeaponMultiValueMember ObstaclePenetrations = EMCsWeaponMultiValueMember::Get().Create(TEXT("ObstaclePenetrations"));
-	CSCORE_API const FECsWeaponMultiValueMember PawnPenetrations = EMCsWeaponMultiValueMember::Get().Create(TEXT("PawnPenetrations"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember IsHitscan = EMCsWeaponMultiValueMember::Get().Create(TEXT("IsHitscan"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoesHitscanUseRadius = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoesHitscanUseRadius"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoesHitscanSimulateProjectileDuration = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoesHitscanSimulateProjectileDuration"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember ObstaclePenetrations = EMCsWeaponMultiValueMember::Get().Create(TEXT("ObstaclePenetrations"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember PawnPenetrations = EMCsWeaponMultiValueMember::Get().Create(TEXT("PawnPenetrations"));
 	// Reload
-	CSCORE_API const FECsWeaponMultiValueMember ReloadTime = EMCsWeaponMultiValueMember::Get().Create(TEXT("ReloadTime"));
-	CSCORE_API const FECsWeaponMultiValueMember AllowRechargeAmmo = EMCsWeaponMultiValueMember::Get().Create(TEXT("AllowRechargeAmmo"));
-	CSCORE_API const FECsWeaponMultiValueMember AllowRechargeAmmoDuringFire = EMCsWeaponMultiValueMember::Get().Create(TEXT("AllowRechargeAmmoDuringFire"));
-	CSCORE_API const FECsWeaponMultiValueMember RechargeSecondsPerAmmo = EMCsWeaponMultiValueMember::Get().Create(TEXT("RechargeSecondsPerAmmo"));
-	CSCORE_API const FECsWeaponMultiValueMember RechargeStartupDelay = EMCsWeaponMultiValueMember::Get().Create(TEXT("RechargeStartupDelay"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember ReloadTime = EMCsWeaponMultiValueMember::Get().Create(TEXT("ReloadTime"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember AllowRechargeAmmo = EMCsWeaponMultiValueMember::Get().Create(TEXT("AllowRechargeAmmo"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember AllowRechargeAmmoDuringFire = EMCsWeaponMultiValueMember::Get().Create(TEXT("AllowRechargeAmmoDuringFire"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember RechargeSecondsPerAmmo = EMCsWeaponMultiValueMember::Get().Create(TEXT("RechargeSecondsPerAmmo"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember RechargeStartupDelay = EMCsWeaponMultiValueMember::Get().Create(TEXT("RechargeStartupDelay"));
 }
 
 	// WeaponRoutine
@@ -121,9 +122,9 @@ CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsWeaponRoutine)
 
 namespace ECsWeaponRoutine
 {
-	CSCORE_API const FECsWeaponRoutine PlayAnimation_Reload_Internal = EMCsWeaponRoutine::Get().Create(TEXT("PlayAnimation_Reload_Internal"));
-	CSCORE_API const FECsWeaponRoutine StartChargeFire_Internal = EMCsWeaponRoutine::Get().Create(TEXT("StartChargeFire_Internal"));
-	CSCORE_API const FECsWeaponRoutine FireWeapon_Internal = EMCsWeaponRoutine::Get().Create(TEXT("FireWeapon_Internal"));
+	CSCOREDEPRECATED_API const FECsWeaponRoutine PlayAnimation_Reload_Internal = EMCsWeaponRoutine::Get().Create(TEXT("PlayAnimation_Reload_Internal"));
+	CSCOREDEPRECATED_API const FECsWeaponRoutine StartChargeFire_Internal = EMCsWeaponRoutine::Get().Create(TEXT("StartChargeFire_Internal"));
+	CSCOREDEPRECATED_API const FECsWeaponRoutine FireWeapon_Internal = EMCsWeaponRoutine::Get().Create(TEXT("FireWeapon_Internal"));
 }
 
 #pragma endregion Enums

@@ -9,21 +9,21 @@
 namespace ECsFpsWeaponMultiValueMember
 {
 	// Spread
-	extern CSCORE_API const FECsWeaponMultiValueMember MovingSpreadBonus;
-	extern CSCORE_API const FECsWeaponMultiValueMember JumpSpreadImpulse;
-	extern CSCORE_API const FECsWeaponMultiValueMember ScopeAccuracyBonus;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember MovingSpreadBonus;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember JumpSpreadImpulse;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember ScopeAccuracyBonus;
 	// Scope
-	extern CSCORE_API const FECsWeaponMultiValueMember DoScopePower;
-	extern CSCORE_API const FECsWeaponMultiValueMember MaxScopePower;
-	extern CSCORE_API const FECsWeaponMultiValueMember ScopePowerGrowthRate;
-	extern CSCORE_API const FECsWeaponMultiValueMember CurrentScopePower;
-	extern CSCORE_API const FECsWeaponMultiValueMember LastScopePower;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoScopePower;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember MaxScopePower;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember ScopePowerGrowthRate;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember CurrentScopePower;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember LastScopePower;
 	// Movement
-	extern CSCORE_API const FECsWeaponMultiValueMember DoSlowWhileFiring;
-	extern CSCORE_API const FECsWeaponMultiValueMember SlowWhileFiringRate;
-	extern CSCORE_API const FECsWeaponMultiValueMember DoKickback;
-	extern CSCORE_API const FECsWeaponMultiValueMember DoKickbackOnGround;
-	extern CSCORE_API const FECsWeaponMultiValueMember KickbackStrength;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoSlowWhileFiring;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember SlowWhileFiringRate;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoKickback;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoKickbackOnGround;
+	extern CSCOREDEPRECATED_API const FECsWeaponMultiValueMember KickbackStrength;
 }
 
 #pragma endregion Enums
@@ -31,7 +31,7 @@ namespace ECsFpsWeaponMultiValueMember
 class USkeletalMeshComponent;
 
 UCLASS()
-class CSCORE_API ACsFpsWeapon : public ACsGunWeapon
+class CSCOREDEPRECATED_API ACsFpsWeapon : public ACsGunWeapon
 {
 	GENERATED_UCLASS_BODY()
 

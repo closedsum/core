@@ -1,13 +1,15 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Weapon/CsFpsWeapon.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 #include "CsCVars.h"
-#include "Library/CsLibrary_Common.h"
 
+// Library
+#include "Library/CsLibrary_Common.h"
+// Pawn
 #include "Player/CsFpsPawn.h"
+// Anim
 #include "Animation/CsAnimInstance_Character.h"
 #include "Animation/CsAnimInstance_Weapon.h"
-
 // Data
 #include "Data/CsData_ProjectileWeapon.h"
 #include "Data/CsData_Character.h"
@@ -21,21 +23,21 @@
 namespace ECsFpsWeaponMultiValueMember
 {
 	// Spread
-	CSCORE_API const FECsWeaponMultiValueMember MovingSpreadBonus = EMCsWeaponMultiValueMember::Get().Create(TEXT("MovingSpreadBonus"));
-	CSCORE_API const FECsWeaponMultiValueMember JumpSpreadImpulse = EMCsWeaponMultiValueMember::Get().Create(TEXT("JumpSpreadImpulse"));
-	CSCORE_API const FECsWeaponMultiValueMember ScopeAccuracyBonus = EMCsWeaponMultiValueMember::Get().Create(TEXT("ScopeAccuracyBonus"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember MovingSpreadBonus = EMCsWeaponMultiValueMember::Get().Create(TEXT("MovingSpreadBonus"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember JumpSpreadImpulse = EMCsWeaponMultiValueMember::Get().Create(TEXT("JumpSpreadImpulse"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember ScopeAccuracyBonus = EMCsWeaponMultiValueMember::Get().Create(TEXT("ScopeAccuracyBonus"));
 	// Scope
-	CSCORE_API const FECsWeaponMultiValueMember DoScopePower = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoScopePower"));
-	CSCORE_API const FECsWeaponMultiValueMember MaxScopePower = EMCsWeaponMultiValueMember::Get().Create(TEXT("MaxScopePower"));
-	CSCORE_API const FECsWeaponMultiValueMember ScopePowerGrowthRate = EMCsWeaponMultiValueMember::Get().Create(TEXT("ScopePowerGrowthRate"));
-	CSCORE_API const FECsWeaponMultiValueMember CurrentScopePower = EMCsWeaponMultiValueMember::Get().Create(TEXT("CurrentScopePower"));
-	CSCORE_API const FECsWeaponMultiValueMember LastScopePower = EMCsWeaponMultiValueMember::Get().Create(TEXT("LastScopePower"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoScopePower = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoScopePower"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember MaxScopePower = EMCsWeaponMultiValueMember::Get().Create(TEXT("MaxScopePower"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember ScopePowerGrowthRate = EMCsWeaponMultiValueMember::Get().Create(TEXT("ScopePowerGrowthRate"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember CurrentScopePower = EMCsWeaponMultiValueMember::Get().Create(TEXT("CurrentScopePower"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember LastScopePower = EMCsWeaponMultiValueMember::Get().Create(TEXT("LastScopePower"));
 	// Movement
-	CSCORE_API const FECsWeaponMultiValueMember DoSlowWhileFiring = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoSlowWhileFiring"));
-	CSCORE_API const FECsWeaponMultiValueMember SlowWhileFiringRate = EMCsWeaponMultiValueMember::Get().Create(TEXT("SlowWhileFiringRate"));
-	CSCORE_API const FECsWeaponMultiValueMember DoKickback = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoKickback"));
-	CSCORE_API const FECsWeaponMultiValueMember DoKickbackOnGround = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoKickbackOnGround"));
-	CSCORE_API const FECsWeaponMultiValueMember KickbackStrength = EMCsWeaponMultiValueMember::Get().Create(TEXT("KickbackStrength"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoSlowWhileFiring = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoSlowWhileFiring"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember SlowWhileFiringRate = EMCsWeaponMultiValueMember::Get().Create(TEXT("SlowWhileFiringRate"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoKickback = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoKickback"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember DoKickbackOnGround = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoKickbackOnGround"));
+	CSCOREDEPRECATED_API const FECsWeaponMultiValueMember KickbackStrength = EMCsWeaponMultiValueMember::Get().Create(TEXT("KickbackStrength"));
 }
 
 #pragma endregion Enums

@@ -28,8 +28,13 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsButtonComponent_OnPressed,
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsButtonComponent_Override_OnFirstReleased, const int32&, Index, UObject*, Instigator);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsButtonComponent_OnFirstReleased, const uint16&, UObject*);
 
+class UPrimitiveComponent;
+class UCsWidgetComponent;
+class UCsSkeletalMeshComponent;
+class UCsStaticMeshComponent;
+
 UCLASS()
-class CSCORE_API UCsButtonComponent : public USceneComponent
+class CSCOREDEPRECATED_API UCsButtonComponent : public USceneComponent
 {
 	GENERATED_UCLASS_BODY()
 
@@ -37,23 +42,23 @@ class CSCORE_API UCsButtonComponent : public USceneComponent
 
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "Button")
-	class UPrimitiveComponent* VisualComponent;
+	UPrimitiveComponent* VisualComponent;
 
 protected:
 	bool UseWidget;
 public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Button")
-	class UCsWidgetComponent* WidgetComponent;
+	UCsWidgetComponent* WidgetComponent;
 protected:
 	bool UseSkeletalMesh;
 public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Button")
-	class UCsSkeletalMeshComponent* SkeletalMeshComponent;
+	UCsSkeletalMeshComponent* SkeletalMeshComponent;
 protected:
 	bool UseStaticMesh;
 public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Button")
-	class UCsStaticMeshComponent* StaticMeshComponent;
+	UCsStaticMeshComponent* StaticMeshComponent;
 
 // State
 #pragma region

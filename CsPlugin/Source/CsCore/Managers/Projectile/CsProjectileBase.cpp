@@ -119,8 +119,8 @@ void ACsProjectileBase::OnTick_HandleCVars(const float &DeltaSeconds)
 
 void ACsProjectileBase::OnTick_HandleMovementFunction(const float &DeltaSeconds)
 {
-	UCsData_ProjectileBase* Data			 = Cache.GetData();
-	const ECsProjectileMovement MovementType = Data->GetMovementType();
+	//UCsData_ProjectileBase* Data			 = Cache.GetData();
+	const ECsProjectileMovement MovementType = ECsProjectileMovement::Simulated;//Data->GetMovementType();
 
 	if (MovementType != ECsProjectileMovement::Function)
 		return;
@@ -184,7 +184,7 @@ void ACsProjectileBase::DrawPath_Internal(const float &DeltaSeconds, const float
 
 FVector ACsProjectileBase::EvaluateMovementFunction(const float &Time)
 {
-	return Cache.GetData()->EvaluateMovementFunction(Time, Cache.Location, Cache.Transform);
+	return FVector::ZeroVector;// Cache.GetData()->EvaluateMovementFunction(Time, Cache.Location, Cache.Transform);
 }
 
 void ACsProjectileBase::Init(const int32& Index, const FECsProjectile& InType)
@@ -223,14 +223,14 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 
 	ACsWeapon* OwnerWeapon					= Cast<ACsWeapon>(Cache.GetOwner());
 	UCsData_Weapon* Data_Weapon				= OwnerWeapon ? OwnerWeapon->GetMyData_Weapon() : nullptr;
-	UCsData_ProjectileBase* Data_Projectile = Cache.GetData();
+	//UCsData_ProjectileBase* Data_Projectile = Cache.GetData();
 
 	const ECsProjectileRelevance& Relevance = Cache.Relevance;
 
 	SetActorHiddenInGame(false);
 
 	// Move
-	MovementComponent->MovementType = Data_Projectile->GetMovementType();
+	//MovementComponent->MovementType = Data_Projectile->GetMovementType();
 
 	// Real Invisible
 	if (Relevance == ECsProjectileRelevance::RealInvisible)
@@ -271,14 +271,15 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 		Relevance == ECsProjectileRelevance::Fake)
 	{
 		// Mesh
-		MeshComponent->SetStaticMesh(Data_Projectile->GetMesh(ViewType));
-		MeshComponent->SetRelativeTransform(Data_Projectile->GetMyTransform());
+		//MeshComponent->SetStaticMesh(Data_Projectile->GetMesh(ViewType));
+		//MeshComponent->SetRelativeTransform(Data_Projectile->GetMyTransform());
 		MeshComponent->Activate();
 		MeshComponent->SetVisibility(true);
 		MeshComponent->SetHiddenInGame(false);
 		MeshComponent->SetComponentTickEnabled(true);
 
 		// Trail
+		/*
 		if (Data_Projectile->GetUseTrailFX())
 		{
 			AICsManager_FX* Manager_FX = AICsManager_FX::Get(GetWorld());
@@ -293,6 +294,7 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 			ACsEmitter* TrailFX		  = Manager_FX->Play(FxPayload);
 			TrailFX->Cache.LifeTime   = Data_Projectile->GetLifeTime();
 		}
+		*/
 	}
 
 	// Collision
@@ -325,10 +327,11 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 		//CapsuleResponseContainer.SetResponse(ECC_Pawn, ECR_Block);
 		//CapsuleResponseContainer.SetResponse(MBO_COLLISION_PROJECTILE, ECR_Ignore);
 
-		CollisionComponent->SetCollisionObjectType(Data_Projectile->GetCollisionObjectType());
-		CollisionComponent->SetCollisionResponseToChannels(Data_Projectile->GetCollisionResponseContainer());
-		CollisionComponent->SetSphereRadius(Data_Projectile->GetSphereRadius());
-		CollisionComponent->SetCollisionEnabled(Data_Projectile->GetCollisionEnabled());
+
+		//CollisionComponent->SetCollisionObjectType(Data_Projectile->GetCollisionObjectType());
+		//CollisionComponent->SetCollisionResponseToChannels(Data_Projectile->GetCollisionResponseContainer());
+		//CollisionComponent->SetSphereRadius(Data_Projectile->GetSphereRadius());
+		//CollisionComponent->SetCollisionEnabled(Data_Projectile->GetCollisionEnabled());
 		CollisionComponent->SetNotifyRigidBodyCollision(true);
 
 		CollisionComponent->SetComponentTickEnabled(true);
@@ -337,7 +340,7 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 	if (Relevance == ECsProjectileRelevance::Fake)
 	{
 		CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		CollisionComponent->SetCollisionObjectType(Data_Projectile->GetCollisionObjectType());
+		//CollisionComponent->SetCollisionObjectType(Data_Projectile->GetCollisionObjectType());
 		CollisionComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
 		CollisionComponent->SetNotifyRigidBodyCollision(false);
 	}
@@ -477,7 +480,7 @@ void ACsProjectileBase::OnHitCallback(UPrimitiveComponent* HitComp, AActor* Othe
 	ACsManager_Damage* Manager_Damage = ACsManager_Damage::Get(GetWorld());
 	FCsDamageEvent* Event			  = Manager_Damage->AllocateEvent();
 
-	Event->Damage	  = Cache.GetData()->GetDamage();
+	Event->Damage = 0.0f;// Cache.GetData()->GetDamage();
 	Event->Instigator = Cache.GetInstigator();
 	Event->Causer	  = Cache.GetOwner();
 	//Event->SetDamageType();
@@ -517,9 +520,9 @@ void ACsProjectileBase::OnHitCallback(UPrimitiveComponent* HitComp, AActor* Othe
 	if (PhysicalMaterial)
 	{
 		// FX
-		Cache.GetData()->GetData_Impact()->PlayImpactFX(GetWorld(), PhysicalMaterial->SurfaceType, Cache.GetOwner(), HitResult.Location, HitResult.ImpactNormal);
+		//Cache.GetData()->GetData_Impact()->PlayImpactFX(GetWorld(), PhysicalMaterial->SurfaceType, Cache.GetOwner(), HitResult.Location, HitResult.ImpactNormal);
 		// Sound
-		Cache.GetData()->GetData_Impact()->PlayImpactSound(GetWorld(), PhysicalMaterial->SurfaceType, Cache.GetOwner(), HitResult.Location);
+		//Cache.GetData()->GetData_Impact()->PlayImpactSound(GetWorld(), PhysicalMaterial->SurfaceType, Cache.GetOwner(), HitResult.Location);
 	}
 
 	Event->Reset();
@@ -534,6 +537,6 @@ void ACsProjectileBase::OnHitCallback(UPrimitiveComponent* HitComp, AActor* Othe
 UObject* ACsProjectileBase::Cache_GetOwner() { return Cache.GetOwner(); }
 UObject* ACsProjectileBase::Cache_GetInstigator() { return Cache.GetInstigator(); }
 ACsProjectileBase* ACsProjectileBase::Cache_GetProjectile() { return Cache.GetProjectile(); }
-UCsData_ProjectileBase* ACsProjectileBase::Cache_GetData() { return Cache.GetData(); }
+//UCsData_ProjectileBase* ACsProjectileBase::Cache_GetData() { return Cache.GetData(); }
 
 #pragma endregion Script

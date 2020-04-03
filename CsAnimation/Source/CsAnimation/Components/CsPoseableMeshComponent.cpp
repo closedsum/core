@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Components/CsPoseableMeshComponent.h"
-#include "CsCoreDEPRECATED.h"
+#include "CsAnimation.h"
 
 #include "Animation/AnimInstance.h"
 

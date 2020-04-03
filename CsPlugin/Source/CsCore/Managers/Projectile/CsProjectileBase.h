@@ -2,7 +2,7 @@
 #pragma once
 #include "Managers/CsPooledActor.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
-#include "Data/CsData_ProjectileBase.h"
+//#include "Data/CsData_ProjectileBase.h"
 #include "CsProjectileBase.generated.h"
 
 // Allocate
@@ -18,8 +18,8 @@ struct FCsProjectileBaseCache : public FCsPooledObjectCache
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<ACsProjectileBase> Projectile;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	TWeakObjectPtr<UCsData_ProjectileBase> Data;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	//TWeakObjectPtr<UCsData_ProjectileBase> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FECsProjectile Type;
@@ -66,13 +66,13 @@ struct FCsProjectileBaseCache : public FCsPooledObjectCache
 
 		Instigator = Payload->Instigator;
 		Owner	   = Payload->Owner;
-		Data	   = Payload->Data;
+		//Data	   = Payload->Data;
 
-		Type = Data->GetProjectileType();
+		//Type = Data->GetProjectileType();
 
 		Parent = Payload->Parent;
 
-		SetLifeTime(Data->GetLifeTime());
+		//SetLifeTime(Data->GetLifeTime());
 
 		Time	   = InTime;
 		RealTime   = InRealTime;
@@ -85,15 +85,15 @@ struct FCsProjectileBaseCache : public FCsPooledObjectCache
 		Transform.SetRotation(Rotation.Quaternion());
 
 		ChargePercent = Payload->ChargePercent;
-		Speed		  = Data->GetInitialSpeed() + Payload->AdditionalSpeed;
+		//Speed		  = Data->GetInitialSpeed() + Payload->AdditionalSpeed;
 	}
 
 	void Reset()
 	{
 		FCsPooledObjectCache::Reset();
 
-		Data.Reset();
-		Data  = nullptr;
+		//Data.Reset();
+		//Data  = nullptr;
 		Relevance = ECsProjectileRelevance::ECsProjectileRelevance_MAX;
 		Movement = ECsProjectileMovement::ECsProjectileMovement_MAX;
 		ElapsedTime = 0.0f;
@@ -110,9 +110,9 @@ struct FCsProjectileBaseCache : public FCsPooledObjectCache
 	template<typename T>
 	FORCEINLINE T* GetProjectile() { return Cast<T>(GetProjectile()); }
 
-	FORCEINLINE UCsData_ProjectileBase* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetData() { return Cast<T>(GetData()); }
+	//FORCEINLINE UCsData_ProjectileBase* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	//template<typename T>
+	//FORCEINLINE T* GetData() { return Cast<T>(GetData()); }
 };
 
 UCLASS()
@@ -189,8 +189,8 @@ public:
 	UObject* Cache_GetInstigator();
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	ACsProjectileBase* Cache_GetProjectile();
-	UFUNCTION(BlueprintCallable, Category = "Projectile")
-	UCsData_ProjectileBase* Cache_GetData();
+	//UFUNCTION(BlueprintCallable, Category = "Projectile")
+	//UCsData_ProjectileBase* Cache_GetData();
 
 #pragma endregion Script
 };

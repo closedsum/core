@@ -3,6 +3,7 @@
 // Types
 #include "Types/CsTypes_Character.h"
 #include "Animation/CsTypes_AnimInstance_Character.h"
+#include "Animation/CsTypes_AnimInstance_Weapon.h"
 #include "CsAnimInstance_Character.generated.h"
 
 class UAnimMontage;

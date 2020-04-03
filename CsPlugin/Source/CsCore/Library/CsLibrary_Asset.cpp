@@ -9,8 +9,6 @@
 // Components
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/PoseableMeshComponent.h"
-// Data
-#include "Data/CsDataMapping.h"
 
 #if WITH_EDITOR
 
@@ -22,19 +20,6 @@
 #include "Editor/ContentBrowser/Public/IContentBrowserSingleton.h"
 
 #endif // #if WITH_EDITOR
-
-// Cache
-#pragma region
-
-namespace NCsCommonAssetCached
-{
-	namespace Str
-	{
-		const FString bp_data_mapping = TEXT("bp_data_mapping");
-	}
-}
-
-#pragma endregion // Cache
 
 UCsLibrary_Asset::UCsLibrary_Asset(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -50,11 +35,6 @@ IAssetRegistry& UCsLibrary_Asset::GetAssetRegistry()
 {
 	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
 	return AssetRegistryModule.Get();
-}
-
-UCsDataMapping* UCsLibrary_Asset::GetDataMapping()
-{
-	return GetBlueprintDefaultObject<UCsDataMapping>(NCsCommonAssetCached::Str::bp_data_mapping, ECsStringCompare::Equals, UCsDataMapping::StaticClass());
 }
 
 UCsEnumStructUserDefinedEnumMap* UCsLibrary_Asset::GetEnumStructUserDefinedEnumMap()

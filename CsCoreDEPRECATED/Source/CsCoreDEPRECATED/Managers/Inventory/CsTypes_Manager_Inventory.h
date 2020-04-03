@@ -94,7 +94,7 @@ namespace NCsInventoryGetRequest
 
 #define ECS_INVENTORY_GET_REQUEST_MAX NCsInventoryGetRequest::MAX
 
-#pragma endregion InventoryG`etRequest
+#pragma endregion InventoryGetRequest
 
 // FCsItemBagSlot
 #pragma region

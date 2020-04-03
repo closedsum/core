@@ -5,6 +5,7 @@
 #include "Managers/Projectile/CsTypes_Projectile.h"
 #include "Types/CsTypes_FX.h"
 #include "Types/CsTypes_Anim.h"
+#include "Data/CsTypes_Data_ProjectileBase.h"
 
 #include "CsTypes_Weapon.generated.h"
 #pragma once
@@ -230,7 +231,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponOwner)
 
 struct CSCOREDEPRECATED_API EMCsWeaponOwner : public TCsEnumStructMap<FECsWeaponOwner, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWeaponOwner, FECsWeaponOwner, uint8)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsWeaponOwner, FECsWeaponOwner, uint8)
 };
 
 #pragma endregion WeaponOwner

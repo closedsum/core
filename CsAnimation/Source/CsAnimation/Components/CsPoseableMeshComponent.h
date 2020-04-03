@@ -4,7 +4,7 @@
 #include "CsPoseableMeshComponent.generated.h"
 
 UCLASS(meta = (BlueprintSpawnableComponent))
-class CSCOREDEPRECATED_API UCsPoseableMeshComponent : public UPoseableMeshComponent
+class CSANIMATION_API UCsPoseableMeshComponent : public UPoseableMeshComponent
 {
 	GENERATED_UCLASS_BODY()
 

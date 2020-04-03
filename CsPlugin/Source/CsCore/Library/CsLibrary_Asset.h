@@ -359,14 +359,6 @@ public:
 		}
 	}
 
-	static UCsDataMapping* GetDataMapping();
-
-	template<typename T>
-	static T* GetDataMapping()
-	{
-		return Cast<T>(GetDataMapping());
-	}
-
 	static UCsEnumStructUserDefinedEnumMap* GetEnumStructUserDefinedEnumMap();
 
 	template<typename T>

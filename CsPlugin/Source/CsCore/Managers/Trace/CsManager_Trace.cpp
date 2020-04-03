@@ -2,8 +2,11 @@
 #include "Managers/Trace/CsManager_Trace.h"
 #include "CsCore.h"
 #include "CsCVars.h"
+
+// Library
 #include "Library/CsLibrary_Common.h"
-#include "Game/CsGameState_DEPRECATED.h"
+
+//#include "Game/CsGameState_DEPRECATED.h"
 
 // Cache
 #pragma region
@@ -135,7 +138,7 @@ void ACsManager_Trace::BeginDestroy()
 
 /*static*/ ACsManager_Trace* ACsManager_Trace::Get(UWorld* InWorld)
 {
-	return InWorld->GetGameState<ACsGameState_DEPRECATED>()->Manager_Trace;
+	return nullptr;// InWorld->GetGameState<ACsGameState_DEPRECATED>()->Manager_Trace;
 }
 
 void ACsManager_Trace::OnTick(const float &DeltaSeconds)

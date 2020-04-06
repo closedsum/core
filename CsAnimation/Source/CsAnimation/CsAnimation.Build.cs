@@ -15,6 +15,7 @@ public class CsAnimation : ModuleRules
                     "Engine",
                     "AssetRegistry",
                     "CsCore",
+                    "CsCoreDEPRECATED"
                 }
             );
 

@@ -4,8 +4,6 @@
 
 // Managers
 #include "Managers/Process/CsProcess.h"
-// AI
-#include "AI/CsTypes_AI.h"
 
 #include "CsLibrary_Enum.generated.h"
 
@@ -49,7 +47,7 @@ public:
 		}
 	}
 
-// Asset
+	// Asset
 #pragma region
 
 #pragma endregion Asset
@@ -84,24 +82,24 @@ public:
 #pragma region
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "Library Enum", meta = (DisplayName="ECsProcess - Get", AutoCreateRefTerm="Name"))
-	static FECsProcess ECsProcess_Get(const FString& Name);
+	UFUNCTION(BlueprintCallable, Category = "Library Enum", meta = (DisplayName = "ECsProcess - Get", AutoCreateRefTerm = "Name"))
+		static FECsProcess ECsProcess_Get(const FString& Name);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum", meta = (DisplayName = "ECsProcess - Get by Index", AutoCreateRefTerm = "Index"))
-	static FECsProcess ECsProcess_GetByIndex(const int32& Index);
+		static FECsProcess ECsProcess_GetByIndex(const int32& Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum", meta = (DisplayName = "ECsProcess - To String", AutoCreateRefTerm = "Enum"))
-	static FString ECsProcess_ToString(const FECsProcess& Enum);
+		static FString ECsProcess_ToString(const FECsProcess& Enum);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum", meta = (DisplayName = "ECsProcess - Get Count"))
-	static uint8 ECsProcess_GetCount();
+		static uint8 ECsProcess_GetCount();
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum", meta = (DisplayName = "ECsProcess - Get All"))
-	static void ECsProcess_GetAll(TArray<FECsProcess>& OutTypes);
+		static void ECsProcess_GetAll(TArray<FECsProcess>& OutTypes);
 
 #pragma endregion Process
 
-// Item
+	// Item
 #pragma region
 
 #pragma endregion Item
@@ -125,73 +123,4 @@ public:
 #pragma region
 
 #pragma endregion Sound
-
-// AI
-#pragma region
-public:
-
-	// Type
-#pragma region
-public:
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsAIType GetECsAIType(const FString& Name);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsAIType GetECsAITypeByIndex(const int32& Index);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FString ECsAITypeToString(const FECsAIType& Enum);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static uint8 GetECsAITypeCount();
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsAIType(TArray<FECsAIType>& OutTypes);
-
-#pragma endregion Type
-
-	// State
-#pragma region
-public:
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsAIState GetECsAIState(const FString& Name);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsAIState GetECsAIStateByIndex(const int32& Index);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FString ECsAIStateToString(const FECsAIState& Enum);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static uint8 GetECsAIStateCount();
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsAIState(TArray<FECsAIState>& OutTypes);
-
-#pragma endregion State
-
-	// Setup
-#pragma region
-public:
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsAISetup GetECsAISetup(const FString& Name);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FECsAISetup GetECsAISetupByIndex(const int32& Index);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static FString ECsAISetupToString(const FECsAISetup& Enum);
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static uint8 GetECsAISetupCount();
-
-	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsAISetup(TArray<FECsAISetup>& OutTypes);
-
-#pragma endregion Setup
-
-#pragma endregion AI
 };

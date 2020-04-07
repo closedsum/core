@@ -123,8 +123,8 @@ bool FCsItemBag::Add(FCsItem* Item)
 	uint8& Column = Item->InventoryProperties.Position.Column;
 
 	// If the Row and Column are NOT set, Find the appropriate Slot
-	if (Row == CS_INVALID_INVENTORY_ITEM_ROW ||
-		Column == CS_INVALID_INVENTORY_ITEM_COLUMN)
+	if (Row == CS_INVALID_MANAGER_INVENTORY_ITEM_ROW ||
+		Column == CS_INVALID_MANAGER_INVENTORY_ITEM_COLUMN)
 	{
 		int32 AvailableSlot		= INDEX_NONE;
 		bool FilledSlot			= false;

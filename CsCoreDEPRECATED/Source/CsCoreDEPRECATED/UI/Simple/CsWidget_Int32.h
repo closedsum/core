@@ -4,7 +4,7 @@
 #include "CsWidget_Int32.generated.h"
 
 UCLASS()
-class CSCORE_API UCsWidget_Int32 : public UCsSimpleWidget
+class CSCOREDEPRECATED_API UCsWidget_Int32 : public UCsSimpleWidget
 {
 	GENERATED_UCLASS_BODY()
 

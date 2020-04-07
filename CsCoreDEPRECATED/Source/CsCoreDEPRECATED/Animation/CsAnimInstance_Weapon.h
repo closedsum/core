@@ -12,7 +12,7 @@ class UAnimSequence;
 class UBlendSpace;
 
 UCLASS()
-class CSCORE_API UCsAnimInstance_Weapon : public UCsAnimInstance
+class CSCOREDEPRECATED_API UCsAnimInstance_Weapon : public UCsAnimInstance
 {
 	GENERATED_UCLASS_BODY()
 

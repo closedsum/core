@@ -28,10 +28,10 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsSurfaceType.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsGestureType.h"
 	// Character
-#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterAnim.h"
-#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterAnimVariation.h"
-#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterAnimBlueprint.h"
-#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterBlendSpace.h"
+//#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterAnim.h"
+//#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterAnimVariation.h"
+//#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterAnimBlueprint.h"
+//#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterBlendSpace.h"
 	// Process
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsProcess.h"
 	// Weapon
@@ -63,9 +63,9 @@
 	// Sound
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsSoundType.h"
 	// AI
-#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAIType.h"
-#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAIState.h"
-#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAISetup.h"
+//#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAIType.h"
+//#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAIState.h"
+//#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAISetup.h"
 	// Sense
 #include "GraphEditor/EnumStruct/Sense/SCsGraphPin_ECsSenseActorType.h"
 	// Projectile
@@ -106,13 +106,13 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	// Character
 	{
 		// FECsCharacterAnim
-		if (DoesPinUseScriptStruct<FECsCharacterAnim>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCharacterAnim, InPin); }
+		//if (DoesPinUseScriptStruct<FECsCharacterAnim>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCharacterAnim, InPin); }
 		// FECsCharacterAnimVariation
-		if (DoesPinUseScriptStruct<FECsCharacterAnimVariation>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCharacterAnimVariation, InPin); }
+		//if (DoesPinUseScriptStruct<FECsCharacterAnimVariation>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCharacterAnimVariation, InPin); }
 		// FECsCharacterAnimBlueprint
-		if (DoesPinUseScriptStruct<FECsCharacterAnimBlueprint>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCharacterAnimBlueprint, InPin); }
+		//if (DoesPinUseScriptStruct<FECsCharacterAnimBlueprint>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCharacterAnimBlueprint, InPin); }
 		// FECsCharacterBlendSpace
-		if (DoesPinUseScriptStruct<FECsCharacterBlendSpace>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCharacterBlendSpace, InPin); }
+		//if (DoesPinUseScriptStruct<FECsCharacterBlendSpace>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCharacterBlendSpace, InPin); }
 	}
 	// Weapon
 	{
@@ -181,11 +181,11 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	// AI
 	{
 		// FECsAIType
-		if (DoesPinUseScriptStruct<FECsAIType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsAIType, InPin); }
+		//if (DoesPinUseScriptStruct<FECsAIType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsAIType, InPin); }
 		// FECsAIState
-		if (DoesPinUseScriptStruct<FECsAIState>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsAIState, InPin); }
+		//if (DoesPinUseScriptStruct<FECsAIState>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsAIState, InPin); }
 		// FECsAISetup
-		if (DoesPinUseScriptStruct<FECsAISetup>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsAISetup, InPin); }
+		//if (DoesPinUseScriptStruct<FECsAISetup>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsAISetup, InPin); }
 	}
 	// Sense
 	{

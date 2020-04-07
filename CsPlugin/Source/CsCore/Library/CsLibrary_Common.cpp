@@ -10,28 +10,28 @@
 // Game
 #include "GameFramework/GameState.h"
 #include "GameFramework/GameMode.h"
-#include "Game/CsGameInstance_DEPRECATED.h"
+//#include "Game/CsGameInstance_DEPRECATED.h"
 // VR
 #include "IHeadMountedDisplay.h"
 #include "MotionControllerComponent.h"
-#include "MotionController/CsMotionController.h"
+//#include "MotionController/CsMotionController.h"
 // Components
-#include "Components/CsStaticMeshComponent.h"
-#include "Components/CsSkeletalMeshComponent.h"
-#include "Components/CsPoseableMeshComponent.h"
-#include "Components/CsBoxComponent.h"
-#include "Components/CsSphereComponent.h"
+//#include "Components/CsStaticMeshComponent.h"
+//#include "Components/CsSkeletalMeshComponent.h"
+//#include "Components/CsPoseableMeshComponent.h"
+//#include "Components/CsBoxComponent.h"
+//#include "Components/CsSphereComponent.h"
 // Player
-#include "Player/CsPlayerState.h"
-#include "Player/CsPlayerPawn.h"
-#include "VR/Player/CsPlayerPawn_VR.h"
+//#include "Player/CsPlayerState.h"
+//#include "Player/CsPlayerPawn.h"
+//#include "VR/Player/CsPlayerPawn_VR.h"
 #include "../Engine/Classes/GameFramework/PlayerInput.h"
 // Physics
 #include "Engine/CollisionProfile.h"
 // Data
-#include "Data/CsData.h"
+//#include "Data/CsData.h"
 // Managers
-#include "Managers/Inventory/CsManager_Inventory.h"
+//#include "Managers/Inventory/CsManager_Inventory.h"
 #include "Managers/Time/CsManager_Time.h"
 
 #if WITH_EDITOR
@@ -190,7 +190,7 @@ float UCsLibrary_Common::GetSquaredDistanceToLocalControllerEye(UWorld *InWorld,
 
 	return FVector::DistSquared(ViewLocation, Location);
 }
-
+/*
 ACsMotionController* UCsLibrary_Common::GetLocalHand(UWorld *InWorld, const ECsControllerHand &Hand)
 {
 	ACsPlayerPawn_VR* Pawn = GetLocalPawn<ACsPlayerPawn_VR>(InWorld);
@@ -204,14 +204,15 @@ ACsMotionController* UCsLibrary_Common::GetLocalHand(UWorld *InWorld, const ECsC
 		return Pawn->RightHand;
 	return nullptr;
 }
-
+*/
+/*
 ACsManager_Inventory* UCsLibrary_Common::GetLocalManager_Inventory(UWorld *InWorld)
 {
 	ACsPlayerState* PlayerState = GetLocalPlayerState<ACsPlayerState>(InWorld);
 
 	return PlayerState ? PlayerState->Manager_Inventory : nullptr;
 }
-
+*/
 #pragma endregion Local Client
 
 // VR
@@ -291,7 +292,7 @@ void UCsLibrary_Common::GetHMDWorldViewPoint(UWorld* InWorld, FVector &OutLocati
 		OutLocation += hmdWorldOffset;
 	}
 }
-
+/*
 ACsMotionController* UCsLibrary_Common::GetMotionController(UWorld* InWorld, const ECsControllerHand &Hand)
 {
 	ACsPlayerPawn_VR* Pawn = GetLocalPawn<ACsPlayerPawn_VR>(InWorld);
@@ -301,7 +302,7 @@ ACsMotionController* UCsLibrary_Common::GetMotionController(UWorld* InWorld, con
 
 	return Hand == ECsControllerHand::Right ? Pawn->RightHand : Pawn->LeftHand;
 }
-
+*/
 // version of GEngine->IsStereoscopic3D() that is valid even during toggle frame. 
 bool UCsLibrary_Common::IsStereoscopic3D()
 {
@@ -334,7 +335,7 @@ FString UCsLibrary_Common::LoadFlagsToString(const int32 &LoadFlags)
 	*/
 	return String;
 }
-
+/*
 FString UCsLibrary_Common::InteractivePhysicsStateToString(const int32 &PhysicsState)
 {
 	FString String = TEXT("");
@@ -354,7 +355,7 @@ FString UCsLibrary_Common::InteractivePhysicsStateToString(const int32 &PhysicsS
 	}
 	return String;
 }
-
+*/
 #pragma endregion Enum to String Conversion
 
 // Enum to Enum Conversion
@@ -454,13 +455,13 @@ ECsViewType UCsLibrary_Common::Stream_GetViewType(const TCHAR*& Str)
 
 // Data
 #pragma region
-
+/*
 UCsDataMapping* UCsLibrary_Common::GetDataMapping(UWorld* InWorld)
 {
-	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(InWorld->GetGameInstance());
-	return GameInstance->DataMapping;
+	//UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(InWorld->GetGameInstance());
+	return nullptr;// GameInstance->DataMapping;
 }
-
+*/
 #pragma endregion Data
 
 // Materials
@@ -848,23 +849,27 @@ int32 UCsLibrary_Common::Mod(const int32 &A, const int32 &B)
 
 FVector UCsLibrary_Common::BuildUniformVector(const FVector &V, const int32 &Axes)
 {
+	/*
 	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X))
 		return FVector(V.X);
 	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Y))
 		return FVector(V.Y);
 	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Z))
 		return FVector(V.Z);
+		*/
 	return FVector::ZeroVector;
 }
 
 FRotator UCsLibrary_Common::BuildUniformRotator(const FRotator &R, const int32 &Axes)
 {
+	/*
 	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_ROLL))
 		return FRotator(R.Roll);
 	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_PITCH))
 		return FRotator(R.Pitch);
 	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_YAW))
 		return FRotator(R.Yaw);
+		*/
 	return FRotator::ZeroRotator;
 }
 
@@ -2420,13 +2425,14 @@ bool UCsLibrary_Common::IsDefaultObject(UObject* InObject)
 	return InObject->GetName().StartsWith(TEXT("Default__"));
 }
 
+/*
 const uint64& UCsLibrary_Common::GetUniqueObjectId(AActor* Actor)
 {
 	if (ACsPawn* Pawn = Cast<ACsPawn>(Actor))
 		return Pawn->UniqueObjectId;
 	return CS_INVALID_UNIQUE_OBJECT_ID;
 }
-
+*/
 // Time
 #pragma region
 
@@ -2452,7 +2458,7 @@ uint64 UCsLibrary_Common::GetCurrentFrame(UWorld* InWorld)
 	if (IsPlayInEditorPreview(InWorld))
 		return 0;
 #endif // #if WITH_EDITOR
-	return InWorld->GetGameInstance<UCsGameInstance_DEPRECATED>()->CurrentGameFrame;
+	return 0ull;// InWorld->GetGameInstance<UCsGameInstance_DEPRECATED>()->CurrentGameFrame;
 }
 
 #pragma endregion Time
@@ -2607,8 +2613,8 @@ void UCsLibrary_Common::SetCollisionFromTemplate(const FName &TemplateName, UPri
 
 void UCsLibrary_Common::TransitionToLevel(UWorld* InWorld, const FString &Level, const FString &GameMode)
 {
-	UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(InWorld->GetGameInstance());
-	GameInstance->PerformLevelTransition(Level, GameMode);
+	//UCsGameInstance_DEPRECATED* GameInstance = Cast<UCsGameInstance_DEPRECATED>(InWorld->GetGameInstance());
+	//GameInstance->PerformLevelTransition(Level, GameMode);
 }
 
 void UCsLibrary_Common::RequestEndPlayMap() 

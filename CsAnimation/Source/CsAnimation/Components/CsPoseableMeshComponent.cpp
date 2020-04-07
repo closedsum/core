@@ -17,7 +17,7 @@ void UCsPoseableMeshComponent::SetBoneTransformByIndex(const int32& BoneIndex, c
 
 	check(!MasterPoseComponent.IsValid()); //Shouldn't call set bone functions when we are using MasterPoseComponent
 
-	if (BoneIndex >= 0& & BoneIndex < BoneSpaceTransforms.Num())
+	if (BoneIndex >= 0 && BoneIndex < BoneSpaceTransforms.Num())
 	{
 		BoneSpaceTransforms[BoneIndex] = InTransform;
 

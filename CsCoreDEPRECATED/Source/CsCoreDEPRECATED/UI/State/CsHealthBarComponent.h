@@ -4,7 +4,7 @@
 #include "CsHealthBarComponent.generated.h"
 
 UCLASS(meta = (BlueprintSpawnableComponent))
-class CSCORE_API UCsHealthBarComponent : public UCsWidgetComponent
+class CSCOREDEPRECATED_API UCsHealthBarComponent : public UCsWidgetComponent
 {
 	GENERATED_UCLASS_BODY()
 

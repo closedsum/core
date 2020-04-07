@@ -143,87 +143,15 @@ struct CSCOREDEPRECATED_API FCsItemBag
 	FCsItemBag() {}
 	~FCsItemBag() {}
 
-	void Init(const FCsUint8MatrixDimension &InSize)
-	{
-		Size = InSize;
+	void Init(const FCsUint8MatrixDimension &InSize);
 
-		const int32 Count = Size.RowSpan * Size.ColumnSpan;
+	TArray<FCsItem*>* Get(const uint8 &Row, const uint8 &Column);
 
-		for (int32 I = 0; I < Count; ++I)
-		{
-			Slots.AddDefaulted();
-			Slots[I].Position.Row    = Size.GetRow(I);
-			Slots[I].Position.Column = Size.GetColumn(I);
-		}
-	}
+	int32 GetSlotCount(const uint8 &Row, const uint8 &Column);
 
-	TArray<FCsItem*>* Get(const uint8 &Row, const uint8 &Column)
-	{
-		const uint16 Index = Row * Size.ColumnSpan + Column;
+	bool Add(FCsItem* Item);
 
-		return &(Slots[Index].Items);
-	}
-
-	int32 GetSlotCount(const uint8 &Row, const uint8 &Column)
-	{
-		TArray<FCsItem*>* Items = Get(Row, Column);
-
-		return Items->Num();
-	}
-
-	bool Add(FCsItem* Item)
-	{
-		uint8& Row	  = Item->InventoryProperties.Position.Row;
-		uint8& Column = Item->InventoryProperties.Position.Column;
-
-		// If the Row and Column are NOT set, Find the appropriate Slot
-		if (Row == CS_INVALID_MANAGER_INVENTORY_ITEM_ROW ||
-			Column == CS_INVALID_MANAGER_INVENTORY_ITEM_COLUMN)
-		{
-			int32 AvailableSlot		= INDEX_NONE;
-			bool FilledSlot			= false;
-			const uint8 SlotCount = Slots.Num();
-
-			for (uint8 I = 0; I < SlotCount; ++I)
-			{
-				if (Slots[I].Items.Num() == CS_EMPTY)
-				{
-					AvailableSlot = I;
-					break;
-				}
-			
-				FCsItem* FirstItem = Slots[I].Items[CS_FIRST];
-
-				if (Item->ShortCode == FirstItem->ShortCode)
-				{
-					return Slots[I].Add(Item);
-				}
-			}
-
-			if (!FilledSlot)
-			{
-				if (AvailableSlot == INDEX_NONE)
-					return false;
-				return Slots[AvailableSlot].Add(Item);
-			}
-		}
-		else
-		{
-			const uint16 Index = Row * Size.ColumnSpan + Column;
-
-			return Slots[Index].Add(Item);
-		}
-		return false;
-	}
-
-	void Remove(FCsItem* Item)
-	{
-		const uint8& Row    = Item->InventoryProperties.Position.Row;
-		const uint8& Column = Item->InventoryProperties.Position.Column;
-		const uint16 Index  = Row * Size.ColumnSpan + Column;
-
-		Slots[Index].Remove(Item);
-	}
+	void Remove(FCsItem* Item);
 };
 
 #pragma endregion FCsItemBag

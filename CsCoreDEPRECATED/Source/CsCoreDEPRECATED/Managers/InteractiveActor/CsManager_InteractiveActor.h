@@ -6,7 +6,7 @@
 
 #define CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE 255
 
-class FCsManager_InteractiveActor : public TCsManager_PooledObjects_TMap<FECsInteractiveType, ACsInteractiveActor, FCsInteractiveActorPayload, CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE>
+class CSCOREDEPRECATED_API FCsManager_InteractiveActor : public TCsManager_PooledObjects_TMap<FECsInteractiveType, ACsInteractiveActor, FCsInteractiveActorPayload, CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE>
 {
 private:
 	typedef TCsManager_PooledObjects_TMap<FECsInteractiveType, ACsInteractiveActor, FCsInteractiveActorPayload, CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE> Super;
@@ -22,7 +22,7 @@ public:
 };
 
 UCLASS()
-class CSCORE_API AICsManager_InteractiveActor : public AActor
+class CSCOREDEPRECATED_API AICsManager_InteractiveActor : public AActor
 {
 	GENERATED_UCLASS_BODY()
 

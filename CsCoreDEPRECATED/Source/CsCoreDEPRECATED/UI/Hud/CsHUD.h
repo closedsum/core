@@ -6,7 +6,7 @@
 #include "CsHUD.generated.h"
 
 UCLASS()
-class CSCORE_API ACsHUD : public ACsUI
+class CSCOREDEPRECATED_API ACsHUD : public ACsUI
 {
 	GENERATED_UCLASS_BODY()
 };

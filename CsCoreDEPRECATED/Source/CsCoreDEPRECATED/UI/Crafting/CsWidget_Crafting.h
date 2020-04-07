@@ -95,7 +95,7 @@ typedef ECsWidgetCraftingProcessState::Type TCsWidgetCraftingProcessState;
 #pragma endregion Enums
 
 UCLASS()
-class CSCORE_API UCsWidget_Crafting : public UCsUserWidget
+class CSCOREDEPRECATED_API UCsWidget_Crafting : public UCsUserWidget
 {
 	GENERATED_UCLASS_BODY()
 

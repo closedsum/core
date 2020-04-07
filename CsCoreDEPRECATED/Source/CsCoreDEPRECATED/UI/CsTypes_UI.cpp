@@ -8,11 +8,11 @@ namespace NCsSimpleWidgetType
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSimpleWidgetType, Text);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSimpleWidgetType, Float);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSimpleWidgetType, Button);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSimpleWidgetType, Bar);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSimpleWidgetType, ECsSimpleWidgetType_MAX, "MAX");
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP(EMCsSimpleWidgetType, Text);
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP(EMCsSimpleWidgetType, Float);
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP(EMCsSimpleWidgetType, Button);
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP(EMCsSimpleWidgetType, Bar);
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSimpleWidgetType, ECsSimpleWidgetType_MAX, "MAX");
 	}
 }
 
@@ -25,9 +25,9 @@ namespace ECsHorizTextAligment
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMHorizTextAligment, EHTA_Left, "Left");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMHorizTextAligment, EHTA_Center, "Center");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMHorizTextAligment, EHTA_Right, "Right");
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMHorizTextAligment, EHTA_Left, "Left");
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMHorizTextAligment, EHTA_Center, "Center");
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMHorizTextAligment, EHTA_Right, "Right");
 	}
 }
 
@@ -40,10 +40,10 @@ namespace ECsVerticalTextAligment
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMVerticalTextAligment, EVRTA_TextTop, "Text Top");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMVerticalTextAligment, EVRTA_TextCenter, "Text Center");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMVerticalTextAligment, EVRTA_TextBottom, "Text Bottom");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMVerticalTextAligment, EVRTA_QuadTop, "Quad Top");
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMVerticalTextAligment, EVRTA_TextTop, "Text Top");
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMVerticalTextAligment, EVRTA_TextCenter, "Text Center");
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMVerticalTextAligment, EVRTA_TextBottom, "Text Bottom");
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMVerticalTextAligment, EVRTA_QuadTop, "Quad Top");
 	}
 }
 
@@ -56,14 +56,14 @@ namespace NCsButtonState
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsButtonState, None);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsButtonState, FirstHover, "First Hover");
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsButtonState, Hover);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsButtonState, FirstUnHover, "First UnHover");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsButtonState, FirstPressed, "First Pressed");
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsButtonState, Pressed);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsButtonState, FirstReleased, "First Released");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsButtonState, ECsButtonState_MAX, "MAX");
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP(EMCsButtonState, None);
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsButtonState, FirstHover, "First Hover");
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP(EMCsButtonState, Hover);
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsButtonState, FirstUnHover, "First UnHover");
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsButtonState, FirstPressed, "First Pressed");
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP(EMCsButtonState, Pressed);
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsButtonState, FirstReleased, "First Released");
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsButtonState, ECsButtonState_MAX, "MAX");
 	}
 }
 

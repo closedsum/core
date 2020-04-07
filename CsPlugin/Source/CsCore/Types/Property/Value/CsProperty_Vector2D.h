@@ -3,7 +3,7 @@
 
 #pragma once
 
-struct CSCORE_API FCsProperty_FVector2D : public TCsProperty<FVector2D>
+struct FCsProperty_FVector2D : public TCsProperty<FVector2D>
 {
 private:
 	typedef TCsProperty<FVector2D> Super;

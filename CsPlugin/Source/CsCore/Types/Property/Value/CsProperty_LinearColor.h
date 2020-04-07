@@ -3,7 +3,7 @@
 
 #pragma once
 
-struct CSCORE_API FCsProperty_FLinearColor : public TCsProperty<FLinearColor>
+struct FCsProperty_FLinearColor : public TCsProperty<FLinearColor>
 {
 private:
 	typedef TCsProperty<FLinearColor> Super;

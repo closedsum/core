@@ -39,7 +39,7 @@ typedef ECsWidgetHUDRoutine::Type TCsWidgetHUDRoutine;
 #pragma endregion Enums
 
 UCLASS()
-class CSCORE_API UCsWidget_HUD : public UCsUserWidget
+class CSCOREDEPRECATED_API UCsWidget_HUD : public UCsUserWidget
 {
 	GENERATED_UCLASS_BODY()
 };

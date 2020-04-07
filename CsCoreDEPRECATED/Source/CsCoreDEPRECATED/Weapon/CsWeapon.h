@@ -24,7 +24,7 @@
 #include "Types/Property/Map/Ref/CsIntegralType_TMap_Ref_int32.h"
 #include "Types/Property/Map/Ref/CsIntegralType_TMap_Ref_float.h"
 // Library
-#include "Library/Load/CsLibrary_Load.h"
+#include "Library/Load/CsLibrary_Load_DEPRECATED.h"
 // Data
 #include "Data/CsData_ProjectileWeapon.h"
 #include "CsWeapon.generated.h"
@@ -278,7 +278,7 @@ public:
 
 		for (uint8 I = 0; I < Member.Num(); ++I)
 		{
-			T* DataMember = UCsLibrary_Load::GetObjectMember<T>(Data_Weapon, Data_Weapon->GetClass(), MemberName, GetObjectMember_Internal);
+			T* DataMember = UCsLibrary_Load_DEPRECATED::GetObjectMember<T>(Data_Weapon, Data_Weapon->GetClass(), MemberName, GetObjectMember_Internal);
 
 			if (I == 0)
 				Member.Set(*DataMember);
@@ -316,9 +316,9 @@ public:
 		{
 			const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(I);
 
-			void* Struct				= UCsLibrary_Load::GetStructMember<void>(Data_Weapon->GetFireModeStruct(FireMode), Data_Weapon->GetFireModeScriptStruct(), StructName, GetStructMember_Internal);
-			UScriptStruct* ScriptStruct = UCsLibrary_Load::GetScriptStructMember(Data_Weapon->GetFireModeStruct(FireMode), Data_Weapon->GetFireModeScriptStruct(), StructName, GetScriptStructMember_Internal);
-			ValueType* StructMember		= UCsLibrary_Load::GetStructMember<ValueType>(Struct, ScriptStruct, MemberName, GetStructMember_Internal);
+			void* Struct				= UCsLibrary_Load_DEPRECATED::GetStructMember<void>(Data_Weapon->GetFireModeStruct(FireMode), Data_Weapon->GetFireModeScriptStruct(), StructName, GetStructMember_Internal);
+			UScriptStruct* ScriptStruct = UCsLibrary_Load_DEPRECATED::GetScriptStructMember(Data_Weapon->GetFireModeStruct(FireMode), Data_Weapon->GetFireModeScriptStruct(), StructName, GetScriptStructMember_Internal);
+			ValueType* StructMember		= UCsLibrary_Load_DEPRECATED::GetStructMember<ValueType>(Struct, ScriptStruct, MemberName, GetStructMember_Internal);
 
 			if (I == 0)
 				Member.Set(*StructMember);

@@ -113,7 +113,7 @@ void ACsDamageableActor::Respawn()
 	{
 		if (CsCVarLogOverrideFunctions->GetInt() == CS_CVAR_DISPLAY)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsDamageableActor::Respawn (%s): Using Override Function."), *GetName());
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsDamageableActor::Respawn (%s): Using Override Function."), *GetName());
 		}
 		Override_Respawn_ScriptEvent.Broadcast(Cache.Index);
 		return;

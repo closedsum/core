@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "UI/CsWidget_Fullscreen.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 #include "Library/CsLibrary_Common.h"
 // Coroutine

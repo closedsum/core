@@ -26,7 +26,7 @@ namespace NCsCVarLog
 	// Managers
 
 		// AI
-	CSCOREDEPRECATED_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagersAITransactions);
+	CSCOREDEPRECATED_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerAITransactions);
 
 	namespace Map
 	{

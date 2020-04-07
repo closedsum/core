@@ -4,7 +4,7 @@
 #pragma once
 
 
-struct CSCORE_API FCsProperty_FRotator : public TCsProperty<FRotator>
+struct FCsProperty_FRotator : public TCsProperty<FRotator>
 {
 private:
 	typedef TCsProperty<FRotator> Super;

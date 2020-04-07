@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "UI/CsUiWidget_Loading.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 UCsUiWidget_Loading::UCsUiWidget_Loading(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

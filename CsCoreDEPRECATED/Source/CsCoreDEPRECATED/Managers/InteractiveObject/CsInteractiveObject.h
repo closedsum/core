@@ -17,14 +17,14 @@ class CSCOREDEPRECATED_API ICsInteractiveObject
 
 public:
 
-	virtual void Freeze();
-	virtual void UnFreeze();
-	virtual void Hold();
-	virtual void Release();
-	virtual void Touch();
-	virtual void Hover();
-	virtual void UnHover();
-	virtual void Collide();
-	virtual void UnCollide();
-	virtual void Remove();
+	virtual void Freeze() = 0;
+	virtual void UnFreeze() = 0;
+	virtual void Hold() = 0;
+	virtual void Release() = 0;
+	virtual void Touch() = 0;
+	virtual void Hover() = 0;
+	virtual void UnHover() = 0;
+	virtual void Collide() = 0;
+	virtual void UnCollide() = 0;
+	virtual void Remove() = 0;
 };

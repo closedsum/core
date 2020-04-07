@@ -4,7 +4,7 @@
 #include "CsCVars.h"
 #include "Library/CsLibrary_Common.h"
 
-#include "Game/CsGameState_DEPRECATED.h"
+//#include "Game/CsGameState_DEPRECATED.h"
 
 #if WITH_EDITOR
 #include "Animation/CsAnimInstance.h"
@@ -244,7 +244,7 @@ void AICsManager_FX::PostActorCreated()
 	else
 #endif // #if WITH_EDITOR
 	{
-		return Cast<ACsGameState_DEPRECATED>(GetMyOwner())->Manager_FX;
+		//return Cast<ACsGameState_DEPRECATED>(GetMyOwner())->Manager_FX;
 	}
 	return nullptr;
 }

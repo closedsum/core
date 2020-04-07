@@ -7,12 +7,12 @@
 #include "CsData.generated.h"
 
 UINTERFACE(Blueprintable)
-class UCsData : public UInterface
+class CSCORE_API UCsData : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class ICsData
+class CSCORE_API ICsData
 {
 	GENERATED_IINTERFACE_BODY()
 

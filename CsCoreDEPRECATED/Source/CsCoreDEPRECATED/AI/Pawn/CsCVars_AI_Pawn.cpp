@@ -4,13 +4,6 @@
 // AI
 #pragma region
 
-TAutoConsoleVariable<int32> CsCVarLogManagerAITransactions(
-	TEXT("log.manager.ai.transactions"),
-	0,
-	TEXT("Log Manager A.I. Allocation and DeAllocation."),
-	ECVF_SetByConsole
-);
-
 #pragma endregion AI
 
 // CVarLog

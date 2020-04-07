@@ -1,7 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Game/CsGameState_DEPRECATED.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
+
+// CVars
 #include "CsCVars.h"
+#include "Player/CsCVars_Player.h"
 
 #include "Coroutine/CsCoroutineScheduler.h"
 #include "CsLastTickActor.h"
@@ -334,7 +337,7 @@ CS_COROUTINE(ACsGameState_DEPRECATED, OnBoard_Internal)
 	ACsPlayerController* pc = UCsLibrary_Common::GetLocalPlayerController<ACsPlayerController>(w);
 	ACsUI* hud				= pc ? Cast<ACsUI>(pc->MyHUD) : nullptr;
 
-	UCsDataMapping* dataMapping = UCsLibrary_Common::GetDataMapping(w);
+	UCsDataMapping* dataMapping = nullptr;// UCsLibrary_Common::GetDataMapping(w);
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -434,7 +437,7 @@ void ACsGameState_DEPRECATED::StartSetAssetReferencesCommonData()
 void ACsGameState_DEPRECATED::AsyncSetAssetReferencesCommonData()
 {
 #if WITH_EDITOR
-	UCsLibrary_Common::GetDataMapping(GetWorld())->AsyncTaskMutex.Lock();
+	//UCsLibrary_Common::GetDataMapping(GetWorld())->AsyncTaskMutex.Lock();
 #endif // #if WITH_EDITOR
 
 	UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
@@ -474,7 +477,7 @@ void ACsGameState_DEPRECATED::StartSetAssetReferencesGameData()
 void ACsGameState_DEPRECATED::AsyncSetAssetReferencesGameData()
 {
 #if WITH_EDITOR
-	UCsLibrary_Common::GetDataMapping(GetWorld())->AsyncTaskMutex.Lock();
+	//UCsLibrary_Common::GetDataMapping(GetWorld())->AsyncTaskMutex.Lock();
 #endif // #if WITH_EDITOR
 
 	UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
@@ -514,7 +517,7 @@ void ACsGameState_DEPRECATED::StartSetAssetReferencesSceneData()
 void ACsGameState_DEPRECATED::AsyncSetAssetReferencesSceneData()
 {
 #if WITH_EDITOR
-	UCsLibrary_Common::GetDataMapping(GetWorld())->AsyncTaskMutex.Lock();
+	//UCsLibrary_Common::GetDataMapping(GetWorld())->AsyncTaskMutex.Lock();
 #endif // #if WITH_EDITOR
 
 	UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
@@ -567,7 +570,7 @@ void ACsGameState_DEPRECATED::ClearTransientLoadedAssets()
 	TransientLoadedAssets.Reset();
 	TransientShortCodes.Reset();
 #if WITH_EDITOR
-	UCsLibrary_Common::GetDataMapping(GetWorld())->AsyncTaskMutex.Unlock();
+	//UCsLibrary_Common::GetDataMapping(GetWorld())->AsyncTaskMutex.Unlock();
 #endif // #if WITH_EDITOR
 }
 

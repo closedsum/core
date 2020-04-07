@@ -7,7 +7,7 @@
 class ICsButton;
 
 UCLASS()
-class CSCORE_API UCsLibrary_Button : public UObject
+class CSCOREDEPRECATED_API UCsLibrary_Button : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

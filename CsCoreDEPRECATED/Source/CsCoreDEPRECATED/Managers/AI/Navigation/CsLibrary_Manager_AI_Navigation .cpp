@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/AI/Navigation/CsLibrary_Manager_AI_Navigation.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 #include "Managers/AI/Navigation/CsManager_AI_Navigation.h"
 

@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "UI/CsUserWidget.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
@@ -137,7 +137,7 @@ void UCsUserWidget::SetChildFocus(const FECsWidgetType &WidgetType, const int32 
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsUserWidget::SetChildFocus(%s): Widget: %s is NOT Active."), *GetName(), *(WidgetType.Name));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsUserWidget::SetChildFocus(%s): Widget: %s is NOT Active."), *GetName(), *(WidgetType.Name));
 	}
 }
 
@@ -151,7 +151,7 @@ bool UCsUserWidget::OpenChild(const FECsWidgetType &WidgetType)
 {
 	if (UCsUserWidget* Widget = GetActiveChildWidget(WidgetType))
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsUserWidget::OpenChild: Attempting to open widget: %s but it is already open."), *(WidgetType.Name));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsUserWidget::OpenChild: Attempting to open widget: %s but it is already open."), *(WidgetType.Name));
 		return false;
 	}
 
@@ -214,7 +214,7 @@ bool UCsUserWidget::CloseChild(const FECsWidgetType &WidgetType)
 
 	if (!Widget)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsUserWidget::CloseChild: Attempting to close menu: %s but it is NOT open."), *(WidgetType.Name));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsUserWidget::CloseChild: Attempting to close menu: %s but it is NOT open."), *(WidgetType.Name));
 		return false;
 	}
 

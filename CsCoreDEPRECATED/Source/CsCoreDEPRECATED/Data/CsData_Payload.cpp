@@ -101,7 +101,7 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCo
 			UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
 		}
 
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::PerformAddEntry: Valid LoadAssetsTypes are:"));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Payload::PerformAddEntry: Valid LoadAssetsTypes are:"));
 
 		const int32& Count = EMCsDataCollectionType::Get().Num();
 
@@ -109,7 +109,7 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCo
 		{
 			const FECsDataCollectionType& Enum = EMCsDataCollectionType::Get().GetEnumAt(I);
 
-			UE_LOG(LogCs, Warning, TEXT("DataCollectionType: %s"), *(Enum.Name));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("DataCollectionType: %s"), *(Enum.Name));
 		}
 		return false;
 	}
@@ -181,7 +181,7 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCo
 				if (UCsLibrary_Common::IsDefaultObject(this))
 					UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("PerformAddEntryLoadFlags"), 1.5f);
 
-				UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 			}
 
 			UClass* Class = GetClass();
@@ -386,13 +386,13 @@ bool UCsData_Payload::Editor_IsValid(UCsDataMapping* DataMapping)
 
 									if (EntryCount > 1)
 									{
-										UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::Editor_IsValid: [%s, %s, %d] Multiple entries found for ShortCode: %s in DataMapping. Fix DataMapping."), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *_ShortCodeAsString);
+										UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Payload::Editor_IsValid: [%s, %s, %d] Multiple entries found for ShortCode: %s in DataMapping. Fix DataMapping."), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *_ShortCodeAsString);
 
 										for (int32 K = 0; K < EntryCount; K++)
 										{
 											const FString& OutDataTypeAsString = OutDataTypes[K].Name;
 
-											UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::Editor_IsValid: In DataMapping, ShortCode: %s at [%s, %d]."), *_ShortCodeAsString, *OutDataTypeAsString, K);
+											UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Payload::Editor_IsValid: In DataMapping, ShortCode: %s at [%s, %d]."), *_ShortCodeAsString, *OutDataTypeAsString, K);
 										}
 									}
 									else
@@ -402,7 +402,7 @@ bool UCsData_Payload::Editor_IsValid(UCsDataMapping* DataMapping)
 
 										if (DataTypeAsString != OutDataTypeAsString)
 										{
-											UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::Editor_IsValid: [%s, %s, %d] DataType Mismatch for ShortCode: %s. %s != %s"), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *_ShortCodeAsString, *DataTypeAsString, *OutDataTypeAsString);
+											UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Payload::Editor_IsValid: [%s, %s, %d] DataType Mismatch for ShortCode: %s. %s != %s"), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *_ShortCodeAsString, *DataTypeAsString, *OutDataTypeAsString);
 											Pass &= false;
 										}
 										// Check for LoadFlags
@@ -411,14 +411,14 @@ bool UCsData_Payload::Editor_IsValid(UCsDataMapping* DataMapping)
 											const FString DataLoadFlagsAsString    = EMCsLoadFlags::Get().MaskToString(OutEntries[CS_FIRST]->Data_LoadFlags);
 											const FString& PayloadLoadFlagsAsString = EMCsLoadFlags_Editor::Get().ToString(Array[J].LoadFlags);
 
-											UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::Editor_IsValid: [%s, %s, %d] LoadFlags NOT present in DataMapping Entry [%s, %d]. (%s) does NOT containt %s"), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *OutDataTypeAsString, OutIndices[CS_FIRST], *DataLoadFlagsAsString, *PayloadLoadFlagsAsString);
+											UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Payload::Editor_IsValid: [%s, %s, %d] LoadFlags NOT present in DataMapping Entry [%s, %d]. (%s) does NOT containt %s"), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *OutDataTypeAsString, OutIndices[CS_FIRST], *DataLoadFlagsAsString, *PayloadLoadFlagsAsString);
 											Pass &= false;
 										}
 									}
 								}
 								else
 								{
-									UE_LOG(LogCs, Warning, TEXT("UCsData_Payload::Editor_IsValid: [%s, %s, %d] ShortCode: %s NOT Found in DataMapping."), *LoadAssetsTypeAsString, *ShortCodeAsString, J, *ShortCodeAsString);
+									UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Payload::Editor_IsValid: [%s, %s, %d] ShortCode: %s NOT Found in DataMapping."), *LoadAssetsTypeAsString, *ShortCodeAsString, J, *ShortCodeAsString);
 									Pass &= false;
 								}
 							}
@@ -560,7 +560,7 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			if (UCsLibrary_Common::IsDefaultObject(this))
 				UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("RemoveEntryAdditionalOutput"), 1.5f);
 
-			UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 
 			const int32& Count = EMCsDataCollectionType::Get().Num();
 
@@ -575,7 +575,7 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 					UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("Payload"), AdditionalOutput, 1.5f);
 				}
-				UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 			}
 
 			Super::PostEditChangeProperty(e);

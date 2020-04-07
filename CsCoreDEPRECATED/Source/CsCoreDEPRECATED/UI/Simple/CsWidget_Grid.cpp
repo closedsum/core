@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "UI/Simple/CsWidget_Grid.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 UCsWidget_Grid::UCsWidget_Grid(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

@@ -9,11 +9,11 @@
 
 #include "Managers/Input/CsInput_Base.h"
 // Game
-#include "Game/CsGameInstance_DEPRECATED.h"
+//#include "Game/CsGameInstance_DEPRECATED.h"
 // Player
 #include "GameFramework/PlayerController.h"
-#include "Player/CsPlayerController.h"
-#include "Player/CsCheatManager.h"
+//#include "Player/CsPlayerController.h"
+//#include "Player/CsCheatManager.h"
 #include "../Engine/Classes/Engine/LocalPlayer.h"
 // Input
 #include "Managers/Input/CsInputSetting.h"
@@ -54,8 +54,8 @@ void UCsManager_Input::Init()
 	SetupGameEventDefinitions();
 
 	// Initialize CurrentGameEventInfos
-	UCsGameInstance_DEPRECATED* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance_DEPRECATED>();
-	UCsInputSetting* InputSetting = GameInstance->InputSetting;
+	//UCsGameInstance_DEPRECATED* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance_DEPRECATED>();
+	UCsInputSetting* InputSetting = nullptr;// GameInstance->InputSetting;
 
 	const int32 EventCount = InputSetting->GameEventPriorityList.Num();
 
@@ -89,7 +89,7 @@ void UCsManager_Input::Init()
 /*static*/ UCsManager_Input* UCsManager_Input::Get(UWorld* World, const int32& Index /*= INDEX_NONE*/)
 {
 	// TODO: Fix
-	return UCsLibrary_Common::GetLocalPlayerController<ACsPlayerController>(World)->Manager_Input;
+	return nullptr;// UCsLibrary_Common::GetLocalPlayerController<ACsPlayerController>(World)->Manager_Input;
 }
 
 // UActorComponent Interface
@@ -802,8 +802,8 @@ void UCsManager_Input::SetupInputActionEventInfos()
 
 void UCsManager_Input::SetupInputActionMapping()
 {
-	UCsGameInstance_DEPRECATED* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance_DEPRECATED>();
-	UCsInputSetting* InputSetting = GameInstance->InputSetting;
+	//UCsGameInstance_DEPRECATED* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance_DEPRECATED>();
+	UCsInputSetting* InputSetting = nullptr;// GameInstance->InputSetting;
 
 	const TMap<FECsInputActionMap, FCsInputActionSet>& InputActionMappings = InputSetting->InputActionMappings;
 
@@ -893,8 +893,8 @@ FCsInput* UCsManager_Input::GetPreviousPreviousInputAction(const FECsInputAction
 
 void UCsManager_Input::SetupGameEventDefinitions()
 {
-	UCsGameInstance_DEPRECATED* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance_DEPRECATED>();
-	UCsInputSetting* InputSetting = GameInstance->InputSetting;
+	//UCsGameInstance_DEPRECATED* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance_DEPRECATED>();
+	UCsInputSetting* InputSetting = nullptr;// GameInstance->InputSetting;
 
 	for (const FCsGameEventDefinition& Def : InputSetting->GameEventDefinitions)
 	{
@@ -1091,7 +1091,7 @@ void UCsManager_Input::SaveInputProfile()
 
 	JsonWriter->WriteObjectStart();
 
-	UCsLibrary_Load::WriteStructToJson(JsonWriter, (void*)(&InputProfile), FCsInputProfile::StaticStruct(), nullptr);
+	//UCsLibrary_Load::WriteStructToJson(JsonWriter, (void*)(&InputProfile), FCsInputProfile::StaticStruct(), nullptr);
 
 	JsonWriter->WriteObjectEnd();
 
@@ -1178,7 +1178,8 @@ void UCsManager_Input::LoadInputProfile()
 
 		if (FJsonSerializer::Deserialize(JsonReader, JsonParsed) && JsonParsed.IsValid())
 		{
-			UCsLibrary_Load::ReadStructFromJson(JsonParsed, &InputProfile, FCsInputProfile::StaticStruct(), nullptr);
+			//UCsLibrary_Load::ReadStructFromJson(JsonParsed, &InputProfile, FCsInputProfile::StaticStruct(), nullptr);
+
 			// Update Action and Key members
 
 			for (FCsInputActionMappings& DeviceMapping : InputProfile.DeviceMappings)

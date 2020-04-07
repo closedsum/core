@@ -146,27 +146,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogCoroutineRunning;
 
 #pragma endregion Coroutine
 
-// UI
-#pragma region
-
-	// Widget
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerWidgetTransactions;
-
-#pragma endregion Widget
-
-#pragma endregion UI
-
-// Item
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarManagerItemRebuild;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerItemTransactions;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerItemActionGetFail;
-
-#pragma endregion Item
-
 // Inventory
 #pragma region
 
@@ -393,8 +372,6 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogGameStateOnBoard;
 	// Json
 	extern CSCORE_API const Type LogJsonDataFilenames;
-	// AI
-	extern CSCORE_API const Type LogManagerAITransactions;
 	// Script
 	extern CSCORE_API const Type LogOverrideFunctions;
 	// Sound

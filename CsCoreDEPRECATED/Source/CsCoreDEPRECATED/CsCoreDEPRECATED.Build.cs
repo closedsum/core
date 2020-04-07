@@ -14,11 +14,19 @@ public class CsCoreDEPRECATED : ModuleRules
                     "CoreUObject",
                     "Engine",
                     "AssetRegistry",
+                    "AIModule",
+                    "GameplayTasks",
+                    "Json",
+                    "JsonUtilities",
+                    "UMG",
+                    "HeadMountedDisplay",
+                    "V8",
+                    "NavigationSystem",
+                    "GameplayTasks",
                     "CsCore",
                 }
             );
 
-        /*
         PrivateDependencyModuleNames.AddRange(
             new string[] {
                 "InputCore",
@@ -27,12 +35,13 @@ public class CsCoreDEPRECATED : ModuleRules
                 "Json",
             }
         );
-        */
 
         if (Target.Type == TargetType.Editor)
         {
             PublicDependencyModuleNames.AddRange(
                 new string[] {
+                    "UnrealEd",
+                    "SourceControl",
                 }
             );
 

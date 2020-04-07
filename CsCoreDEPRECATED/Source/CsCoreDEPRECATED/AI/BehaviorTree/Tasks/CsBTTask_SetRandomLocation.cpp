@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "AI/BehaviorTree/Tasks/CsBTTask_SetRandomLocation.h"
 #include "CsCoreDEPRECATED.h"
-#include "AI/BehaviorTree/CsCVars_AI_BT.h"
+#include "AI/BehaviorTree/Tasks/CsCVars_AI_BT_Task.h"
 
 // BehaviorTree
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"

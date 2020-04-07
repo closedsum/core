@@ -7,7 +7,7 @@
 #include "CsSimpleWidget.generated.h"
 
 UCLASS()
-class CSCORE_API UCsSimpleWidget : public UUserWidget
+class CSCOREDEPRECATED_API UCsSimpleWidget : public UUserWidget
 {
 	GENERATED_UCLASS_BODY()
 

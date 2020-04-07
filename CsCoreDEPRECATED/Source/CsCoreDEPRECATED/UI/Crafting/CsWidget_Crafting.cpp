@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "UI/Crafting/CsWidget_Crafting.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
@@ -230,7 +230,7 @@ bool UCsWidget_Crafting::ProcessGameEventInfo(const FCsGameEventInfo &Info)
 
 void UCsWidget_Crafting::PopulateRecipes()
 {
-	UCsDataMapping* DataMapping = UCsLibrary_Common::GetDataMapping(GetWorld());
+	UCsDataMapping* DataMapping = nullptr;// UCsLibrary_Common::GetDataMapping(GetWorld());
 
 	TArray<FCsData> Datas;
 	DataMapping->GetLoadedDatas(RecipeDataType, Datas);
@@ -261,7 +261,7 @@ void UCsWidget_Crafting::PopulateRecipes()
 void UCsWidget_Crafting::SetRecipe(const FName& InShortCode)
 {
 	// Get Data for selected Recipe
-	UCsDataMapping* DataMapping = UCsLibrary_Common::GetDataMapping(GetWorld());
+	UCsDataMapping* DataMapping = nullptr;// UCsLibrary_Common::GetDataMapping(GetWorld());
 	const FCsData& IData		= DataMapping->GetLoadedData(RecipeDataType, InShortCode);
 	UCsData_Recipe* Recipe		= IData.GetObject<UCsData_Recipe>();
 	// Update Grid with the Ingredients (Items)
@@ -277,7 +277,7 @@ void UCsWidget_Crafting::SetRecipe(const FName& InShortCode)
 
 	if (IngredientCount > GridSize)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsWidget_Crafting::SetRecipe: Recipe: %s has MORE Ingredients than what the Crafting Grid supports (%d > %d)."), *(InShortCode.ToString()), IngredientCount, GridSize);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsWidget_Crafting::SetRecipe: Recipe: %s has MORE Ingredients than what the Crafting Grid supports (%d > %d)."), *(InShortCode.ToString()), IngredientCount, GridSize);
 	}
 
 	const int32 Count = FMath::Min(GridSize, IngredientCount);
@@ -334,7 +334,7 @@ bool UCsWidget_Crafting::CanCompleteRecipe(const uint32& Count)
 	// TODO: Need to check there is space in the CurrentBag for created Items
 
 	const FName& SelectedShortCode	= SelectedOptionShortCodes[CurrentSelectedOptionIndex];
-	UCsDataMapping* DataMapping		= UCsLibrary_Common::GetDataMapping(GetWorld());
+	UCsDataMapping* DataMapping = nullptr;// UCsLibrary_Common::GetDataMapping(GetWorld());
 	const FCsData& IData			= DataMapping->GetLoadedData(RecipeDataType, SelectedShortCode);
 	UCsData_Recipe* Recipe			= IData.GetObject<UCsData_Recipe>();
 
@@ -614,7 +614,7 @@ void UCsWidget_Crafting::CraftItems()
 	CancelCurrentCraftingProcess();
 
 	// Get Data for selected Recipe
-	UCsDataMapping* DataMapping		= UCsLibrary_Common::GetDataMapping(GetWorld());
+	UCsDataMapping* DataMapping = nullptr;// UCsLibrary_Common::GetDataMapping(GetWorld());
 	const FName& SelectedShortCode	= SelectedOptionShortCodes[CurrentSelectedOptionIndex];
 	const FCsData& IData			= DataMapping->GetLoadedData(RecipeDataType, SelectedShortCode);
 	UCsData_Recipe* Recipe			= IData.GetObject<UCsData_Recipe>();

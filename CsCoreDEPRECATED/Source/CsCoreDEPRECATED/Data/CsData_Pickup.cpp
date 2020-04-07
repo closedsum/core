@@ -38,7 +38,7 @@ void UCsData_Pickup::PlaySound(UWorld* InWorld, const FECsPickupSound& SoundType
 
 	if (!SoundElement->Get())
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Pickup::PlaySound: Attempting to Play a NULL Sound."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Pickup::PlaySound: Attempting to Play a NULL Sound."));
 		return;
 	}
 

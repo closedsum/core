@@ -368,7 +368,7 @@ void ACsFpsWeapon::OnTick(const float &DeltaSeconds)
 	{
 		if (CsCVarLogOverrideFunctions->GetInt() == CS_CVAR_DISPLAY)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsFpsWeapon::OnTick (%s): Using Override Function."), *GetName());
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsFpsWeapon::OnTick (%s): Using Override Function."), *GetName());
 		}
 		Override_OnTick_ScriptEvent.Broadcast(WeaponSlot, DeltaSeconds);
 		return;

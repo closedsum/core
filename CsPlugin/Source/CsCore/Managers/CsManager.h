@@ -301,7 +301,7 @@ public:
 		if (ActiveObjects.Num() == CS_EMPTY ||
 			!ActiveObjects.Find(index))
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s at PoolIndex: %d is already deallocated."), *Name, *ObjectClassName, index);
+			//UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s::DeAllocate: %s at PoolIndex: %d is already deallocated."), *Name, *ObjectClassName, index);
 			return false;
 		}
 
@@ -752,7 +752,7 @@ public:
 		if (!objectsPtr ||
 			!objectsPtr->Find(index))
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s of Type: %s at PoolIndex: %d is already deallocated."), *Name, *ObjectClassName, *EnumTypeToString(e), index);
+			//UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s::DeAllocate: %s of Type: %s at PoolIndex: %d is already deallocated."), *Name, *ObjectClassName, *EnumTypeToString(e), index);
 			return false;
 		}
 

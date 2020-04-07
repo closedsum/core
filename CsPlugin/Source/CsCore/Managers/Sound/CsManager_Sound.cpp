@@ -6,7 +6,7 @@
 
 #include "Managers/Sound/CsSound.h"
 
-#include "Game/CsGameState_DEPRECATED.h"
+//#include "Game/CsGameState_DEPRECATED.h"
 
 #if WITH_EDITOR
 #include "Animation/CsAnimInstance.h"
@@ -196,7 +196,7 @@ void AICsManager_Sound::PostActorCreated()
 	else
 #endif // #if WITH_EDITOR
 	{
-		return Cast<ACsGameState_DEPRECATED>(GetMyOwner())->Manager_Sound;
+		//return Cast<ACsGameState_DEPRECATED>(GetMyOwner())->Manager_Sound;
 	}
 	return nullptr;
 }

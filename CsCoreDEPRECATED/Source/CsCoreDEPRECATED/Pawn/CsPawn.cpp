@@ -735,7 +735,7 @@ void ACsPawn::Async_TraceToGroundWhileJumping_Response(const uint8 &RequestId, F
 
 UCsDataMapping* ACsPawn::GetDataMapping()
 {
-	return UCsLibrary_Common::GetDataMapping(GetWorld());
+	return nullptr;// UCsLibrary_Common::GetDataMapping(GetWorld());
 }
 
 UCsData_Character* ACsPawn::GetMyData_Character()

@@ -268,7 +268,7 @@ void ACsAIPlayerState::ClientRecieveUniqueMappingId_AI_Internal(const uint8 &Map
 
 void ACsAIPlayerState::ServerSendOnBoardCompleted_AI_Internal(const uint8 &ClientMappingId, const uint8 &MappingId)
 {
-	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+	ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 
 	GameState->SetAIPlayerStateMappingRelationshipFlag(ClientMappingId, MappingId);
 }

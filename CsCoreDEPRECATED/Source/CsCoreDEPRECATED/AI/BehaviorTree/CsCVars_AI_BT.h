@@ -8,7 +8,6 @@
 	// Behavior Tree
 #pragma region
 
-extern CSCOREDEPRECATED_API TAutoConsoleVariable<int32> CsCVarLogAIBTTasks;
 extern CSCOREDEPRECATED_API TAutoConsoleVariable<int32> CsCVarDrawAIBTMoveTo;
 extern CSCOREDEPRECATED_API TAutoConsoleVariable<int32> CsCVarDrawAIBTRotateToFaceBBEntry;
 extern CSCOREDEPRECATED_API TAutoConsoleVariable<int32> CsCVarDrawAIBTLookAtAndRotateToFace;
@@ -25,7 +24,6 @@ namespace NCsCVarLog
 	// AI
 
 		// Behavior Tree
-	extern CSCOREDEPRECATED_API const Type LogAIBTTasks;
 
 	namespace Map
 	{

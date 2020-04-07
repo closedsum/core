@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Library/Load/CsLibrary_Load.h"
+#include "Library/Load/CsLibrary_Load_DEPRECATED.h"
 #include "CsCoreDEPRECATED.h"
 #include "CsCVars.h"
 
@@ -23,6 +23,7 @@
 #include "Data/CsData.h"
 #include "Data/CsData_ProjectileBase.h"
 #include "Data/CsData_ProjectileImpact.h"
+#include "Data/CsTypes_Data_ProjectileImpact.h"
 
 // Cache
 #pragma region
@@ -451,10 +452,10 @@ void UCsLibrary_Load_DEPRECATED::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>
 			{ WriteMemberStructPropertyToJson_Transform(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 			// FInt32Interval
 			if (StructProperty->Struct == TBaseStructure<FInt32Interval>::Get())
-			{ WriteMemberStructPropertyToJson_BaseStructure<FInt32Interval>(InJsonWriter, StructProperty, InStruct, MemberName, &UCsLibrary_Load::ToString_FInt32Interval); continue; }
+			{ WriteMemberStructPropertyToJson_BaseStructure<FInt32Interval>(InJsonWriter, StructProperty, InStruct, MemberName, &UCsLibrary_Load_DEPRECATED::ToString_FInt32Interval); continue; }
 			// FFloatInterval
 			if (StructProperty->Struct == TBaseStructure<FFloatInterval>::Get())
-			{ WriteMemberStructPropertyToJson_BaseStructure<FFloatInterval>(InJsonWriter, StructProperty, InStruct, MemberName, &UCsLibrary_Load::ToString_FFloatInterval); continue; }
+			{ WriteMemberStructPropertyToJson_BaseStructure<FFloatInterval>(InJsonWriter, StructProperty, InStruct, MemberName, &UCsLibrary_Load_DEPRECATED::ToString_FFloatInterval); continue; }
 			// FCsUint8Point
 			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
 			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8Point>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsUint8Point::ToString); continue; }
@@ -1219,10 +1220,10 @@ void UCsLibrary_Load_DEPRECATED::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>
 			{ WriteMemberStructPropertyToJson_Transform(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 			// FInt32Interval
 			if (StructProperty->Struct == TBaseStructure<FInt32Interval>::Get())
-			{ WriteMemberStructPropertyToJson_BaseStructure<FInt32Interval>(InJsonWriter, StructProperty, InStruct, MemberName, &UCsLibrary_Load::ToString_FInt32Interval); continue; }
+			{ WriteMemberStructPropertyToJson_BaseStructure<FInt32Interval>(InJsonWriter, StructProperty, InStruct, MemberName, &UCsLibrary_Load_DEPRECATED::ToString_FInt32Interval); continue; }
 			// FFloatInterval
 			if (StructProperty->Struct == TBaseStructure<FFloatInterval>::Get())
-			{ WriteMemberStructPropertyToJson_BaseStructure<FFloatInterval>(InJsonWriter, StructProperty, InStruct, MemberName, &UCsLibrary_Load::ToString_FFloatInterval); continue; }
+			{ WriteMemberStructPropertyToJson_BaseStructure<FFloatInterval>(InJsonWriter, StructProperty, InStruct, MemberName, &UCsLibrary_Load_DEPRECATED::ToString_FFloatInterval); continue; }
 			// FCsUint8Point
 			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
 			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8Point>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsUint8Point::ToString); continue; }
@@ -1963,10 +1964,10 @@ void UCsLibrary_Load_DEPRECATED::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>
 			{ WriteMemberStructPropertyToJson_Transform(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			// FInt32Interval
 			if (StructProperty->Struct == TBaseStructure<FInt32Interval>::Get())
-			{ WriteMemberStructPropertyToJson_BaseStructure<FInt32Interval>(InJsonWriter, StructProperty, InObject, MemberName, &UCsLibrary_Load::ToString_FInt32Interval); continue; }
+			{ WriteMemberStructPropertyToJson_BaseStructure<FInt32Interval>(InJsonWriter, StructProperty, InObject, MemberName, &UCsLibrary_Load_DEPRECATED::ToString_FInt32Interval); continue; }
 			// FFloatInterval
 			if (StructProperty->Struct == TBaseStructure<FFloatInterval>::Get())
-			{ WriteMemberStructPropertyToJson_BaseStructure<FFloatInterval>(InJsonWriter, StructProperty, InObject, MemberName, &UCsLibrary_Load::ToString_FFloatInterval); continue; }
+			{ WriteMemberStructPropertyToJson_BaseStructure<FFloatInterval>(InJsonWriter, StructProperty, InObject, MemberName, &UCsLibrary_Load_DEPRECATED::ToString_FFloatInterval); continue; }
 			// FCsUint8Point
 			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
 			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8Point>(InJsonWriter, StructProperty, InObject, MemberName, &FCsUint8Point::ToString); continue; }
@@ -2824,10 +2825,10 @@ void UCsLibrary_Load_DEPRECATED::ReadStructFromJson(TSharedPtr<FJsonObject> &Jso
 			{ WriteToMemberStructPropertyFromJson_Transform(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FInt32Interval
 			if (StructProperty->Struct == TBaseStructure<FInt32Interval>::Get())
-			{ WriteToMemberStructPropertyFromJson_BaseStructure<FInt32Interval>(JsonObject, StructProperty, InStruct, MemberName, &UCsLibrary_Load::InitFromString_FInt32Interval); continue; }
+			{ WriteToMemberStructPropertyFromJson_BaseStructure<FInt32Interval>(JsonObject, StructProperty, InStruct, MemberName, &UCsLibrary_Load_DEPRECATED::InitFromString_FInt32Interval); continue; }
 			// FFloatInterval
 			if (StructProperty->Struct == TBaseStructure<FFloatInterval>::Get())
-			{ WriteToMemberStructPropertyFromJson_BaseStructure<FFloatInterval>(JsonObject, StructProperty, InStruct, MemberName, &UCsLibrary_Load::InitFromString_FFloatInterval); continue; }
+			{ WriteToMemberStructPropertyFromJson_BaseStructure<FFloatInterval>(JsonObject, StructProperty, InStruct, MemberName, &UCsLibrary_Load_DEPRECATED::InitFromString_FFloatInterval); continue; }
 			// FCsUint8Point
 			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8Point>(JsonObject, StructProperty, InStruct, MemberName, &FCsUint8Point::InitFromString); continue; }
@@ -3593,10 +3594,10 @@ void UCsLibrary_Load_DEPRECATED::ReadStructFromJson(TSharedPtr<FJsonObject> &Jso
 			{ WriteToMemberStructPropertyFromJson_Transform(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FInt32Interval
 			if (StructProperty->Struct == TBaseStructure<FInt32Interval>::Get())
-			{ WriteToMemberStructPropertyFromJson_BaseStructure<FInt32Interval>(JsonObject, StructProperty, InStruct, MemberName, &UCsLibrary_Load::InitFromString_FInt32Interval); continue; }
+			{ WriteToMemberStructPropertyFromJson_BaseStructure<FInt32Interval>(JsonObject, StructProperty, InStruct, MemberName, &UCsLibrary_Load_DEPRECATED::InitFromString_FInt32Interval); continue; }
 			// FFloatInterval
 			if (StructProperty->Struct == TBaseStructure<FFloatInterval>::Get())
-			{ WriteToMemberStructPropertyFromJson_BaseStructure<FFloatInterval>(JsonObject, StructProperty, InStruct, MemberName, &UCsLibrary_Load::InitFromString_FFloatInterval); continue; }
+			{ WriteToMemberStructPropertyFromJson_BaseStructure<FFloatInterval>(JsonObject, StructProperty, InStruct, MemberName, &UCsLibrary_Load_DEPRECATED::InitFromString_FFloatInterval); continue; }
 			// FCsUint8Point
 			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8Point>(JsonObject, StructProperty, InStruct, MemberName, &FCsUint8Point::InitFromString); continue; }
@@ -4351,10 +4352,10 @@ void UCsLibrary_Load_DEPRECATED::ReadObjectFromJson(TSharedPtr<FJsonObject> &Jso
 			{ WriteToMemberStructPropertyFromJson_Transform(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FInt32Interval
 			if (StructProperty->Struct == TBaseStructure<FInt32Interval>::Get())
-			{ WriteToMemberStructPropertyFromJson_BaseStructure<FInt32Interval>(JsonObject, StructProperty, InObject, MemberName, &UCsLibrary_Load::InitFromString_FInt32Interval); continue; }
+			{ WriteToMemberStructPropertyFromJson_BaseStructure<FInt32Interval>(JsonObject, StructProperty, InObject, MemberName, &UCsLibrary_Load_DEPRECATED::InitFromString_FInt32Interval); continue; }
 			// FFloatInterval
 			if (StructProperty->Struct == TBaseStructure<FFloatInterval>::Get())
-			{ WriteToMemberStructPropertyFromJson_BaseStructure<FFloatInterval>(JsonObject, StructProperty, InObject, MemberName, &UCsLibrary_Load::InitFromString_FFloatInterval); continue; }
+			{ WriteToMemberStructPropertyFromJson_BaseStructure<FFloatInterval>(JsonObject, StructProperty, InObject, MemberName, &UCsLibrary_Load_DEPRECATED::InitFromString_FFloatInterval); continue; }
 			// FCsUint8Point
 			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8Point>(JsonObject, StructProperty, InObject, MemberName, &FCsUint8Point::InitFromString); continue; }
@@ -5177,9 +5178,9 @@ bool UCsLibrary_Load_DEPRECATED::GetSoftObjectPaths_SoftObjectPath(UProperty* Pr
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("GetSoftObjectPaths_SoftObjectPath: Failed to Load Object."));
-			UE_LOG(LogCs, Warning, TEXT("- Asset: %s @ %s"), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
-			UE_LOG(LogCs, Warning, TEXT("- Member: %s"), *(MemberInfo.ToString()));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("GetSoftObjectPaths_SoftObjectPath: Failed to Load Object."));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("- Asset: %s @ %s"), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("- Member: %s"), *(MemberInfo.ToString()));
 		}
 	}
 	return true;
@@ -5957,7 +5958,7 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromArraySoftObjectProperty_Ma
 
 				if (!Asset)
 				{
-					UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::GetAssetReferenceFromArraySoftObjectProperty_MaterialInstanceConstant: Failed to Load %s[%d]"), *MemberName, I);
+					UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsLibrary_Load::GetAssetReferenceFromArraySoftObjectProperty_MaterialInstanceConstant: Failed to Load %s[%d]"), *MemberName, I);
 					continue;
 				}
 
@@ -6994,7 +6995,7 @@ void UCsLibrary_Load_DEPRECATED::LoadTArrayTSoftObjectPtr_Blueprint(const FStrin
 		//UE_LOG(LogLoad, Warning, TEXT("UCsLibrary_Load::LoadTArrayTSoftObjectPtr_Blueprint (%s): Possibly trying to load Blueprint and it is already loaded"), *MemberName);
 	}
 
-	UCsLibrary_Load::NullAndEmptyTArray<UBlueprintGeneratedClass>(ArrayInternal);
+	NullAndEmptyTArray<UBlueprintGeneratedClass>(ArrayInternal);
 
 	const int32 Count = ArrayAssetPtr.Num();
 
@@ -7041,7 +7042,7 @@ void UCsLibrary_Load_DEPRECATED::LoadTArrayTSoftObjectPtr_Blueprint(const FStrin
 		//UE_LOG(LogLoad, Warning, TEXT("UCsLibrary_Load::LoadTArrayTSoftObjectPtr_Blueprint (%s): Possibly trying to load Blueprint and it is already loaded"), *MemberName);
 	}
 
-	UCsLibrary_Load::NullAndEmptyTArray<UBlueprintGeneratedClass>(ArrayInternal);
+	NullAndEmptyTArray<UBlueprintGeneratedClass>(ArrayInternal);
 
 	const int32 Count = ArrayAssetPtr->Num();
 
@@ -7239,7 +7240,7 @@ bool UCsLibrary_Load_DEPRECATED::CanLoad(void* InObject, UScriptStruct* const &I
 				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
 					return true;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
 				return true;
 			}
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, ECsLoadFlags::Game))
@@ -7247,7 +7248,7 @@ bool UCsLibrary_Load_DEPRECATED::CanLoad(void* InObject, UScriptStruct* const &I
 				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
 					return true;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
 				return true;
 			}
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
@@ -7271,7 +7272,7 @@ bool UCsLibrary_Load_DEPRECATED::CanLoad(void* InObject, UClass* const &InClass,
 				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
 					return true;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
 				return true;
 			}
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, ECsLoadFlags::Game))
@@ -7279,7 +7280,7 @@ bool UCsLibrary_Load_DEPRECATED::CanLoad(void* InObject, UClass* const &InClass,
 				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
 					return true;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
 				return true;
 			}
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
@@ -7303,7 +7304,7 @@ bool UCsLibrary_Load_DEPRECATED::CanLoad(void* StructValue, UStruct* const& Stru
 				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
 					return true;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(Struct->GetName()), *MemberName);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(Struct->GetName()), *MemberName);
 				return true;
 			}
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, ECsLoadFlags::Game))
@@ -7311,7 +7312,7 @@ bool UCsLibrary_Load_DEPRECATED::CanLoad(void* StructValue, UStruct* const& Stru
 				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
 					return true;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(Struct->GetName()), *MemberName);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::Game. This should be reserved for debugging. Be explicit with LoadFlags."), *(Struct->GetName()), *MemberName);
 				return true;
 			}
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
@@ -8423,7 +8424,7 @@ bool UCsLibrary_Load_DEPRECATED::CanLoad(void* StructValue, UStruct* const& Stru
 				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
 					return true;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = 1 (All). This should be reserved for debugging. Be explicit with LoadFlags."), *(Struct->GetName()), *MemberName);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = 1 (All). This should be reserved for debugging. Be explicit with LoadFlags."), *(Struct->GetName()), *MemberName);
 				return true;
 			}
 			if (*MemberLoadFlags == NCsLoadFlags::All)
@@ -8431,7 +8432,7 @@ bool UCsLibrary_Load_DEPRECATED::CanLoad(void* StructValue, UStruct* const& Stru
 				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning))
 					return true;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = 1 (All). This should be reserved for debugging. Be explicit with LoadFlags."), *(Struct->GetName()), *MemberName);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsLibrary_Load::CanLoad (%s @ %s): Using LoadFlags = 1 (All). This should be reserved for debugging. Be explicit with LoadFlags."), *(Struct->GetName()), *MemberName);
 				return true;
 			}
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
@@ -10211,7 +10212,7 @@ void UCsLibrary_Load_DEPRECATED::CheckEnumLoadFlags(int32* LoadFlags, const FStr
 
 		const FString LoadFlagsAsString = EMCsLoadFlags::Get().MaskToString(*LoadFlags);
 
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::CheckEnumLoadFlags: %s was 0. Setting %s to %s."), *ObjectName, *MemberName, *LoadFlagsAsString);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsLibrary_Load::CheckEnumLoadFlags: %s was 0. Setting %s to %s."), *ObjectName, *MemberName, *LoadFlagsAsString);
 	}
 }
 

@@ -5,8 +5,6 @@
 // AI
 #pragma region
 
-extern CSCOREDEPRECATED_API TAutoConsoleVariable<int32> CsCVarLogManagerAITransactions;
-
 #pragma endregion AI
 
 // CVarLog

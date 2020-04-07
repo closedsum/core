@@ -333,7 +333,7 @@ void UCsData_Character::PlayAnimation(USkeletalMeshComponent* InMesh, const ECsV
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::PlayAnimation (%s): Warning. Attempting to play: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Mon->GetName(), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::PlayAnimation (%s): Warning. Attempting to play: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Mon->GetName(), *InMesh->GetName());
 	}
 }
 
@@ -359,7 +359,7 @@ void UCsData_Character::PlayAnimation(USkeletalMeshComponent* InMesh, const FECs
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::PlayAnimation (%s): Warning. Attempting to play: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Mon->GetName(), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::PlayAnimation (%s): Warning. Attempting to play: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Mon->GetName(), *InMesh->GetName());
 	}
 }
 
@@ -385,7 +385,7 @@ void UCsData_Character::PlayAnimation(USkeletalMeshComponent* InMesh, const ECsV
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::PlayAnimation (%s): Warning. Attempting to play: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Mon->GetName(), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::PlayAnimation (%s): Warning. Attempting to play: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Mon->GetName(), *InMesh->GetName());
 	}
 }
 
@@ -411,7 +411,7 @@ void UCsData_Character::PlayAnimation(USkeletalMeshComponent* InMesh, const FECs
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::PlayAnimation (%s): Warning. Attempting to play: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Mon->GetName(), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::PlayAnimation (%s): Warning. Attempting to play: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Mon->GetName(), *InMesh->GetName());
 	}
 }
 
@@ -486,7 +486,7 @@ void UCsData_Character::Montage_JumpToSection(USkeletalMeshComponent* InMesh, co
 
 	if (!Anim)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Anim %s NOT found for %s."), *ShortCode.ToString(), *(AnimType.Name), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Anim %s NOT found for %s."), *ShortCode.ToString(), *(AnimType.Name), *InMesh->GetName());
 		return;
 	}
 
@@ -496,7 +496,7 @@ void UCsData_Character::Montage_JumpToSection(USkeletalMeshComponent* InMesh, co
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Attemping to Montage_JumpToSection for %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Attemping to Montage_JumpToSection for %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
 	}
 }
 
@@ -506,7 +506,7 @@ void UCsData_Character::Montage_JumpToSection(USkeletalMeshComponent* InMesh, co
 
 	if (!Anim)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Anim %s NOT found for %s."), *ShortCode.ToString(), *(AnimType.Name), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Anim %s NOT found for %s."), *ShortCode.ToString(), *(AnimType.Name), *InMesh->GetName());
 		return;
 	}
 
@@ -516,7 +516,7 @@ void UCsData_Character::Montage_JumpToSection(USkeletalMeshComponent* InMesh, co
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Attemping to Montage_JumpToSection for %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Attemping to Montage_JumpToSection for %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
 	}
 }
 
@@ -526,7 +526,7 @@ void UCsData_Character::Montage_JumpToSection(USkeletalMeshComponent* InMesh, co
 
 	if (!Anim)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Anim %s NOT found for %s."), *ShortCode.ToString(), *(AnimType.Name), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Anim %s NOT found for %s."), *ShortCode.ToString(), *(AnimType.Name), *InMesh->GetName());
 		return;
 	}
 
@@ -536,7 +536,7 @@ void UCsData_Character::Montage_JumpToSection(USkeletalMeshComponent* InMesh, co
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Attemping to Montage_JumpToSection for %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Attemping to Montage_JumpToSection for %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
 	}
 }
 
@@ -546,7 +546,7 @@ void UCsData_Character::Montage_JumpToSection(USkeletalMeshComponent* InMesh, co
 
 	if (!Anim)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Anim %s NOT found for %s."), *ShortCode.ToString(), *(AnimType.Name), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Anim %s NOT found for %s."), *ShortCode.ToString(), *(AnimType.Name), *InMesh->GetName());
 		return;
 	}
 
@@ -556,7 +556,7 @@ void UCsData_Character::Montage_JumpToSection(USkeletalMeshComponent* InMesh, co
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Attemping to Montage_JumpToSection for %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::Montage_JumpToSection (%s): Warning. Attemping to Montage_JumpToSection for %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
 	}
 }
 
@@ -639,7 +639,7 @@ void UCsData_Character::StopAnimation(USkeletalMeshComponent* InMesh, const ECsV
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::StopAnimation (%s): Warning. Attemping to stop: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::StopAnimation (%s): Warning. Attemping to stop: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
 	}
 }
 
@@ -657,7 +657,7 @@ void UCsData_Character::StopAnimation(USkeletalMeshComponent* InMesh, const FECs
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::StopAnimation (%s): Warning. Attemping to stop: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::StopAnimation (%s): Warning. Attemping to stop: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
 	}
 }
 
@@ -675,7 +675,7 @@ void UCsData_Character::StopAnimation(USkeletalMeshComponent* InMesh, const ECsV
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::StopAnimation (%s): Warning. Attemping to stop: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::StopAnimation (%s): Warning. Attemping to stop: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
 	}
 }
 
@@ -693,7 +693,7 @@ void UCsData_Character::StopAnimation(USkeletalMeshComponent* InMesh, const FECs
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Character::StopAnimation (%s): Warning. Attemping to stop: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Character::StopAnimation (%s): Warning. Attemping to stop: %s. No AnimInstance for %s."), *ShortCode.ToString(), *Anim->GetName(), *InMesh->GetName());
 	}
 }
 

@@ -21,8 +21,8 @@
 
 #include "Classes/Factories/BlueprintFactory.h"
 // Data
-#include "Data/CsDataMapping.h"
-#include "Data/CsData.h"
+//#include "Data/CsDataMapping.h"
+//#include "Data/CsData.h"
 #include "Managers/Data/CsDataRootSet.h"
 // Setting
 #include "Settings/CsDeveloperSettings.h"
@@ -41,10 +41,10 @@
 #include "DetailCustomizations/EnumStruct/ECsSurfaceTypeCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsGestureTypeCustomization.h"
 		// Character
-#include "DetailCustomizations/EnumStruct/Character/ECsCharacterAnimCustomization.h"
-#include "DetailCustomizations/EnumStruct/Character/ECsCharacterAnimVariationCustomization.h"
-#include "DetailCustomizations/EnumStruct/Character/ECsCharacterAnimBlueprintCustomization.h"
-#include "DetailCustomizations/EnumStruct/Character/ECsCharacterBlendSpaceCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Character/ECsCharacterAnimCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Character/ECsCharacterAnimVariationCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Character/ECsCharacterAnimBlueprintCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Character/ECsCharacterBlendSpaceCustomization.h"
 		// Weapon
 #include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponStateCustomization.h"
 #include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponSlotCustomization.h"
@@ -76,9 +76,9 @@
 		// Sound
 #include "DetailCustomizations/EnumStruct/ECsSoundTypeCustomization.h"
 		// AI
-#include "DetailCustomizations/EnumStruct/AI/ECsAITypeCustomization.h"
-#include "DetailCustomizations/EnumStruct/AI/ECsAIStateCustomization.h"
-#include "DetailCustomizations/EnumStruct/AI/ECsAISetupCustomization.h"
+//#include "DetailCustomizations/EnumStruct/AI/ECsAITypeCustomization.h"
+//#include "DetailCustomizations/EnumStruct/AI/ECsAIStateCustomization.h"
+//#include "DetailCustomizations/EnumStruct/AI/ECsAISetupCustomization.h"
 		// Sense
 #include "DetailCustomizations/EnumStruct/Sense/ECsSenseActorTypeCustomization.h"
 		// Projectile
@@ -128,10 +128,10 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 			// GestureType
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsGestureType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGestureTypeCustomization::MakeInstance));
 			// Character
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterAnim", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterAnimCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterAnimVariation", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterAnimVariationCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterAnimBlueprint", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterAnimBlueprintCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterBlendSpace", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterBlendSpaceCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterAnim", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterAnimCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterAnimVariation", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterAnimVariationCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterAnimBlueprint", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterAnimBlueprintCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterBlendSpace", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterBlendSpaceCustomization::MakeInstance));
 			// Weapon
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponState", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponStateCustomization::MakeInstance));
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponSlot", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponSlotCustomization::MakeInstance));
@@ -163,9 +163,9 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 			// Sound
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsSoundType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSoundTypeCustomization::MakeInstance));
 			// AI
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsAIType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsAITypeCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsAIState", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsAIStateCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsAISetup", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsAISetupCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsAIType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsAITypeCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsAIState", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsAIStateCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsAISetup", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsAISetupCustomization::MakeInstance));
 			// Sense
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsSenseActorType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSenseActorTypeCustomization::MakeInstance));
 			// Projectile

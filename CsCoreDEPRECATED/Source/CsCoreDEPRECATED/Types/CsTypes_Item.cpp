@@ -41,7 +41,7 @@ namespace NCsInventoryItemState_Editor
 	{
 		CSCOREDEPRECATED_API const Type Visible = EMCsInventoryItemState_Editor::Get().Add(Type::Visible, TEXT("Visible"));
 		CSCOREDEPRECATED_API const Type Ingredient = EMCsInventoryItemState_Editor::Get().Add(Type::Ingredient, TEXT("Ingredient"));
-		CSCORCSCOREDEPRECATED_APIE_API const Type ECsInventoryItemState_Editor_MAX = EMCsInventoryItemState_Editor::Get().Add(Type::ECsInventoryItemState_Editor_MAX, TEXT("ECsInventoryItemState_Editor_MAX"), TEXT("MAX"));
+		CSCOREDEPRECATED_API const Type ECsInventoryItemState_Editor_MAX = EMCsInventoryItemState_Editor::Get().Add(Type::ECsInventoryItemState_Editor_MAX, TEXT("ECsInventoryItemState_Editor_MAX"), TEXT("MAX"));
 	};
 
 	CSCOREDEPRECATED_API const uint8 MAX = (uint8)Type::ECsInventoryItemState_Editor_MAX;

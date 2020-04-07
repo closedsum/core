@@ -4,7 +4,7 @@
 #include "CsWidget_Inventory_Grid.generated.h"
 
 UCLASS()
-class CSCORE_API UCsWidget_Inventory_Grid : public UCsWidget_Grid
+class CSCOREDEPRECATED_API UCsWidget_Inventory_Grid : public UCsWidget_Grid
 {
 	GENERATED_UCLASS_BODY()
 

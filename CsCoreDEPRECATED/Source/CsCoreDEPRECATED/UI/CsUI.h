@@ -25,7 +25,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUI_OnClose, const FECsWidge
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_Override_ProcessGameEventInfo, const FCsGameEventInfo&, Info);
 
 UCLASS()
-class CSCORE_API ACsUI : public AHUD
+class CSCOREDEPRECATED_API ACsUI : public AHUD
 {
 	GENERATED_UCLASS_BODY()
 

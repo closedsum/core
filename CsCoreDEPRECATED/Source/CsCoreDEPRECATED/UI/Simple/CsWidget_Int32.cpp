@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "UI/Simple/CsWidget_Int32.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 // Cache
 #pragma region

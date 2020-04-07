@@ -91,7 +91,7 @@ FCsItem* ACsManager_Inventory::GetItem(const TCsItemId& Id)
 	if (FCsItem** ItemPtr = Items.Find(Id))
 		return *ItemPtr;
 
-	UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItem: Failed to find an Item with Id: %s"), *(Id.ToString()));
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Inventory::GetItem: Failed to find an Item with Id: %s"), *(Id.ToString()));
 	return nullptr;
 }
 
@@ -101,13 +101,13 @@ FCsItem* ACsManager_Inventory::GetFirstItem(const FName& ShortCode)
 
 	if (!ItemsPtr)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetFirstItem: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Inventory::GetFirstItem: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
 		return nullptr;
 	}
 	
 	if (ItemsPtr->Num() == CS_EMPTY)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetFirstItem: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Inventory::GetFirstItem: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
 		return nullptr;
 	}
 	return (*ItemsPtr)[CS_FIRST];
@@ -119,7 +119,7 @@ void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, 
 
 	if (!ItemsPtr)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Inventory::GetItems: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
 		return;
 	}
 
@@ -128,7 +128,7 @@ void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, 
 	if (Request == ECsInventoryGetRequest::FillOrKill &&
 		Count > ItemCount)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are only %d ( < %d requested ) Items with ShortCode: %s "), ItemCount, Count, *(ShortCode.ToString()));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Inventory::GetItems: There are only %d ( < %d requested ) Items with ShortCode: %s "), ItemCount, Count, *(ShortCode.ToString()));
 		return;
 	}
 
@@ -154,7 +154,7 @@ void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, 
 
 	if (!ItemsPtr)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Inventory::GetItems: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
 		return;
 	}
 
@@ -163,7 +163,7 @@ void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, 
 	if (Request == ECsInventoryGetRequest::FillOrKill &&
 		Count > ItemCount)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are only %d ( < %d requested ) Items with ShortCode: %s "), ItemCount, Count, *(ShortCode.ToString()));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Inventory::GetItems: There are only %d ( < %d requested ) Items with ShortCode: %s "), ItemCount, Count, *(ShortCode.ToString()));
 		return;
 	}
 
@@ -198,7 +198,7 @@ void ACsManager_Inventory::GetItems(const TArray<TCsItemId>& Ids, TArray<FCsItem
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: Failed to find an Item with Id: %s"), *(Ids[I].ToString()));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Inventory::GetItems: Failed to find an Item with Id: %s"), *(Ids[I].ToString()));
 		}
 	}
 }
@@ -216,7 +216,7 @@ int32 ACsManager_Inventory::GetItemCount(const FName& ShortCode, const int32& St
 
 	if (!ItemsPtr)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Inventory::GetItems: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
 		return 0;
 	}
 
@@ -272,11 +272,11 @@ void ACsManager_Inventory::LogTransaction(const FString& FunctionName, const ECs
 
 		if (Data_Actor)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with Data: %s and with Data_Actor: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *DataName, *DataActorName, CurrentTime);
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s: %s Item: %s with Data: %s and with Data_Actor: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *DataName, *DataActorName, CurrentTime);
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with Data: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *DataName, CurrentTime);
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s: %s Item: %s with Data: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *DataName, CurrentTime);
 		}
 	}
 }
@@ -301,7 +301,7 @@ void ACsManager_Inventory::AddItem(FCsItem* Item)
 			const FString ItemName = Item->ShortCode.ToString();
 			const FString Id	   = Item->Id.ToString();
 
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::AddItem: Failed to Add Item: %s with ID: %s. All Slots for Bag: %d are FULL."), *ItemName, *Id, Item->InventoryProperties.Bag);
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Inventory::AddItem: Failed to Add Item: %s with ID: %s. All Slots for Bag: %d are FULL."), *ItemName, *Id, Item->InventoryProperties.Bag);
 			return;
 		}
 	}
@@ -349,7 +349,7 @@ void ACsManager_Inventory::RemoveItem(const TCsItemId& Id, const FString& Functi
 
 	if (!ItemPtr)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::RemoveItem: Failed to remove item with UniqueId: %s"), *(Id.ToString()));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Inventory::RemoveItem: Failed to remove item with UniqueId: %s"), *(Id.ToString()));
 		return;
 	}
 
@@ -481,7 +481,7 @@ void ACsManager_Inventory::ConsumeFirstItem(const FName& ShortCode, TArray<FCsIt
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::ConsumeFirstItem: There are NO Items with ShortCode: %s to Consume."), *(ShortCode.ToString()));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Inventory::ConsumeFirstItem: There are NO Items with ShortCode: %s to Consume."), *(ShortCode.ToString()));
 	}
 }
 

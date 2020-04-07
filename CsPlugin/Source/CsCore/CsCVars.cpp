@@ -324,49 +324,6 @@ TAutoConsoleVariable<int32> CsCVarLogCoroutineRunning(
 
 #pragma endregion Coroutine
 
-// UI
-#pragma region
-
-	// Widget
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogManagerWidgetTransactions(
-	TEXT("log.manager.widget.transactions"),
-	0,
-	TEXT("Log Manager Widget Allocation and DeAllocation."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Widget
-
-#pragma endregion UI
-
-// Item
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarManagerItemRebuild(
-	TEXT("manager.item.rebuild"),
-	0,
-	TEXT("Manager Item Rebuild."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarLogManagerItemTransactions(
-	TEXT("log.manager.item.transactions"),
-	0,
-	TEXT("Log Manager Item Allocate and DeAllocate."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarLogManagerItemActionGetFail(
-	TEXT("log.manager.item.action.get.fail"),
-	0,
-	TEXT("Log Manager Item GetItem(s) failed retrieval of item."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Item
-
 // Inventory
 #pragma region
 
@@ -534,8 +491,6 @@ namespace NCsCVarLog
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogGameStateOnBoard);
 	// Json
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogJsonDataFilenames);
-	// AI
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerAITransactions);
 	// Script
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogOverrideFunctions);
 	// Sound

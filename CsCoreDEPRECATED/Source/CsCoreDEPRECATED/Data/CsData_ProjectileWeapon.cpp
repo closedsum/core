@@ -87,7 +87,7 @@ void UCsData_ProjectileWeapon::PlayAnimation(USkeletalMeshComponent* InMesh, con
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_ProjectileWeapon::PlayAnimation (%s): Warning. No AnimInstance for %s."), *Mon->GetName(), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_ProjectileWeapon::PlayAnimation (%s): Warning. No AnimInstance for %s."), *Mon->GetName(), *InMesh->GetName());
 	}
 }
 
@@ -113,7 +113,7 @@ void UCsData_ProjectileWeapon::PlayAnimation(USkeletalMeshComponent* InMesh, con
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_ProjectileWeapon::PlayAnimation (%s): Warning. No AnimInstance for %s."), *Mon->GetName(), *InMesh->GetName());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_ProjectileWeapon::PlayAnimation (%s): Warning. No AnimInstance for %s."), *Mon->GetName(), *InMesh->GetName());
 	}
 }
 
@@ -133,7 +133,7 @@ void UCsData_ProjectileWeapon::StopAnimation(USkeletalMeshComponent* InMesh, con
 
 	if (!Anim)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_ProjectileWeapon::StopAnimation (%s): No Animation found for AnimType: %s and ViewType: %s."), *ShortCode.ToString(), *(AnimType.Name), EMCsViewType::Get().ToChar(ViewType));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_ProjectileWeapon::StopAnimation (%s): No Animation found for AnimType: %s and ViewType: %s."), *ShortCode.ToString(), *(AnimType.Name), EMCsViewType::Get().ToChar(ViewType));
 		return;
 	}
 
@@ -141,7 +141,7 @@ void UCsData_ProjectileWeapon::StopAnimation(USkeletalMeshComponent* InMesh, con
 
 	if (!AnimInstance)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_ProjectileWeapon::StopAnimation (%s): No AnimInstance."), *ShortCode.ToString());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_ProjectileWeapon::StopAnimation (%s): No AnimInstance."), *ShortCode.ToString());
 		return;
 	}
 
@@ -155,7 +155,7 @@ void UCsData_ProjectileWeapon::StopAnimation(USkeletalMeshComponent* InMesh, con
 
 	if (!Anim)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_ProjectileWeapon::StopAnimation (%s): No Animation found for AnimType: %s."), *ShortCode.ToString(), *(AnimType.Name));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_ProjectileWeapon::StopAnimation (%s): No Animation found for AnimType: %s."), *ShortCode.ToString(), *(AnimType.Name));
 		return;
 	}
 
@@ -163,7 +163,7 @@ void UCsData_ProjectileWeapon::StopAnimation(USkeletalMeshComponent* InMesh, con
 
 	if (!AnimInstance)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_ProjectileWeapon::StopAnimation (%s): No AnimInstance."), *ShortCode.ToString());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_ProjectileWeapon::StopAnimation (%s): No AnimInstance."), *ShortCode.ToString());
 		return;
 	}
 
@@ -208,7 +208,7 @@ void UCsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const ECsViewType& Vie
 
 	if (!SoundElement->Get())
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_ProjectileWeapon::PlaySound: Attempting to Play a NULL Sound."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_ProjectileWeapon::PlaySound: Attempting to Play a NULL Sound."));
 		return;
 	}
 
@@ -228,7 +228,7 @@ void UCsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const FECsWeaponFireMo
 
 	if (!SoundElement->Get())
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_ProjectileWeapon::PlaySound: Attempting to Play a NULL Sound."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_ProjectileWeapon::PlaySound: Attempting to Play a NULL Sound."));
 		return;
 	}
 
@@ -248,7 +248,7 @@ void UCsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const ECsViewType& Vie
 
 	if (!SoundElement->Get())
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_ProjectileWeapon::PlaySound: Attempting to Play a NULL Sound."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_ProjectileWeapon::PlaySound: Attempting to Play a NULL Sound."));
 		return;
 	}
 
@@ -268,7 +268,7 @@ void UCsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const FECsWeaponFireMo
 	
 	if (!SoundElement->Get())
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_ProjectileWeapon::PlaySound: Attempting to Play a NULL Sound."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_ProjectileWeapon::PlaySound: Attempting to Play a NULL Sound."));
 		return;
 	}
 

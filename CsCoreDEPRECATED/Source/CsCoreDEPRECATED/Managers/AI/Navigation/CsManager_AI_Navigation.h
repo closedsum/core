@@ -8,7 +8,7 @@
 #define CS_AI_NAV_MAX_REQUESTS_PROCESSED_PER_TICK 128
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsManagerAINavProjectPointTaskInfo
+struct CSCOREDEPRECATED_API FCsManagerAINavProjectPointTaskInfo
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -33,7 +33,7 @@ struct CSCORE_API FCsManagerAINavProjectPointTaskInfo
 };
 
 UCLASS()
-class CSCORE_API UCsManager_AI_Navigation : public UActorComponent
+class CSCOREDEPRECATED_API UCsManager_AI_Navigation : public UActorComponent
 {
 	GENERATED_UCLASS_BODY()
 

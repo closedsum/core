@@ -274,8 +274,8 @@ void ACsInteractiveAIPawn::SetPhysicsState(const ECsInteractivePhysicsState &Sta
 	if (CsCVarLogInteractiveAIPawnPhysicsStateChange->GetInt() == CS_CVAR_SHOW_LOG)
 	{
 		const FString& StateAsString		   = ECsInteractivePhysicsState_Editor::ToString(StateType);
-		const FString LastPhysicsStateAsString = UCsLibrary_Common::InteractivePhysicsStateToString(Last_PhysicsState);
-		const FString PhysicsStateAsString	   = UCsLibrary_Common::InteractivePhysicsStateToString(PhysicsState);
+		const FString LastPhysicsStateAsString = TEXT("");// UCsLibrary_Common::InteractivePhysicsStateToString(Last_PhysicsState);
+		const FString PhysicsStateAsString = TEXT(""); //UCsLibrary_Common::InteractivePhysicsStateToString(PhysicsState);
 
 		UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsInteractiveAIPawn::SetPhysicsState (%s): Setting PhysicsState: %s. (%s) -> (%s)"), *GetName(), *StateAsString, *LastPhysicsStateAsString, *PhysicsStateAsString);
 	}
@@ -290,8 +290,8 @@ void ACsInteractiveAIPawn::ClearPhysicsState(const ECsInteractivePhysicsState &S
 	if (CsCVarLogInteractiveAIPawnPhysicsStateChange->GetInt() == CS_CVAR_SHOW_LOG)
 	{
 		const FString& StateAsString		   = ECsInteractivePhysicsState_Editor::ToString(StateType);
-		const FString LastPhysicsStateAsString = UCsLibrary_Common::InteractivePhysicsStateToString(Last_PhysicsState);
-		const FString PhysicsStateAsString	   = UCsLibrary_Common::InteractivePhysicsStateToString(PhysicsState);
+		const FString LastPhysicsStateAsString = TEXT("");// UCsLibrary_Common::InteractivePhysicsStateToString(Last_PhysicsState);
+		const FString PhysicsStateAsString = TEXT("");// UCsLibrary_Common::InteractivePhysicsStateToString(PhysicsState);
 
 		UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsInteractiveAIPawn::ClearPhysicsState (%s): Clearing PhysicsState: %s. (%s) -> (%s)"), *GetName(), *StateAsString, *LastPhysicsStateAsString, *PhysicsStateAsString);
 	}

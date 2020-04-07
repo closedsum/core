@@ -38,11 +38,11 @@
 	// GameInstanceRoutine
 namespace ECsGameInstanceRoutine
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameInstanceRoutine, OnBoard_Internal);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameInstanceRoutine, LoadDataMapping_Internal);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameInstanceRoutine, PerformLevelTransition_Internal);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameInstanceRoutine, CreateFullscreenWidget_Internal);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameInstanceRoutine, HideMouseCursor_Internal);
+	CSCOREDEPRECATED_API CS_CREATE_ENUM_STRUCT(EMCsGameInstanceRoutine, OnBoard_Internal);
+	CSCOREDEPRECATED_API CS_CREATE_ENUM_STRUCT(EMCsGameInstanceRoutine, LoadDataMapping_Internal);
+	CSCOREDEPRECATED_API CS_CREATE_ENUM_STRUCT(EMCsGameInstanceRoutine, PerformLevelTransition_Internal);
+	CSCOREDEPRECATED_API CS_CREATE_ENUM_STRUCT(EMCsGameInstanceRoutine, CreateFullscreenWidget_Internal);
+	CSCOREDEPRECATED_API CS_CREATE_ENUM_STRUCT(EMCsGameInstanceRoutine, HideMouseCursor_Internal);
 }
 
 	// GameInstanceOnBoardState
@@ -50,16 +50,16 @@ namespace NCsGameInstanceOnBoardState
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, LoadDataMapping);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, FinishedLoadingDataAssets);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, FinishedPopulatingAssetReferences);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, LoadStartUpData);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, LoadScreen);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, Completed);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsGameInstanceOnBoardState, ECsGameInstanceOnBoardState_MAX, "MAX");
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, LoadDataMapping);
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, FinishedLoadingDataAssets);
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, FinishedPopulatingAssetReferences);
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, LoadStartUpData);
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, LoadScreen);
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP(EMCsGameInstanceOnBoardState, Completed);
+		CSCOREDEPRECATED_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsGameInstanceOnBoardState, ECsGameInstanceOnBoardState_MAX, "MAX");
 	}
 
-	CSCORE_API const uint8 MAX = (uint8)Type::ECsGameInstanceOnBoardState_MAX;
+	CSCOREDEPRECATED_API const uint8 MAX = (uint8)Type::ECsGameInstanceOnBoardState_MAX;
 }
 
 #pragma endregion

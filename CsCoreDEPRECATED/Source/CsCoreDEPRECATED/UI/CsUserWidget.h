@@ -51,7 +51,7 @@ typedef ECsUserWidgetRoutine::Type TCsUserWidgetRoutine;
 #pragma endregion Enums
 
 UCLASS()
-class CSCORE_API UCsUserWidget : public UUserWidget
+class CSCOREDEPRECATED_API UCsUserWidget : public UUserWidget
 {
 	GENERATED_UCLASS_BODY()
 

@@ -250,13 +250,13 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 	{
 		if (ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>())
 		{
-			OnLinkedPawnSet_Event.AddUObject(GameState, &ACsGameState::OnPlayerStateBaseLinkedToPawn);
+			OnLinkedPawnSet_Event.AddUObject(GameState, &ACsGameState_DEPRECATED::OnPlayerStateBaseLinkedToPawn);
 
 			OnBoardState = ECsPlayerStateBaseOnBoardState::WaitingForFinishLoadingCommonData;
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_OnBoard: State Change: WaitingForGameState -> WaitingForFinishLoadingCommonData"));
+				UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_OnBoard: State Change: WaitingForGameState -> WaitingForFinishLoadingCommonData"));
 			}
 		}
 	}
@@ -271,7 +271,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: WaitingForFinishLoadingCommonData -> WaitingForLocalPlayerState"));
+				UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: WaitingForFinishLoadingCommonData -> WaitingForLocalPlayerState"));
 			}
 		}
 	}
@@ -286,7 +286,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 				if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 				{
-					UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: WaitingForLocalPlayerState -> RequestUniqueMappingId"));
+					UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: WaitingForLocalPlayerState -> RequestUniqueMappingId"));
 				}
 			}
 		}
@@ -308,7 +308,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 					if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 					{
-						UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: RequestLocalUniqueMappingId -> WaitingForLocalUniqueMappingId"));
+						UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: RequestLocalUniqueMappingId -> WaitingForLocalUniqueMappingId"));
 					}
 					LocalPlayerState->ServerRequestLocalUniqueMappingId(LocalPlayerState, this);
 				}
@@ -319,7 +319,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 				if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 				{
-					UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: RequestLocalUniqueMappingId -> RequestUniqueMappingId"));
+					UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: RequestLocalUniqueMappingId -> RequestUniqueMappingId"));
 				}
 			}
 		}
@@ -334,7 +334,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 				if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 				{
-					UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: RequestLocalUniqueMappingId -> RequestUniqueMappingId"));
+					UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: RequestLocalUniqueMappingId -> RequestUniqueMappingId"));
 				}
 			}
 		}
@@ -345,7 +345,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: RecievedLocalUniqueMappingId -> RequestUniqueMappingId"));
+				UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: RecievedLocalUniqueMappingId -> RequestUniqueMappingId"));
 			}
 		}
 	}
@@ -358,7 +358,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: RequestUniqueMappingId -> WaitingForUniqueMappingId"));
+				UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: RequestUniqueMappingId -> WaitingForUniqueMappingId"));
 			}
 			ACsPlayerStateBase* LocalPlayerState = UCsLibrary_Common::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
 
@@ -375,7 +375,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: RecievedUniqueMappingId -> RequestPlayerData"));
+				UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: RecievedUniqueMappingId -> RequestPlayerData"));
 			}
 		}
 		// Request PlayerData
@@ -385,7 +385,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: RequestPlayerData -> WaitingForPlayerData"));
+				UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: RequestPlayerData -> WaitingForPlayerData"));
 			}
 			ACsPlayerStateBase* LocalPlayerState = UCsLibrary_Common::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
 
@@ -402,7 +402,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: ReceivedPlayerData -> WaitingForGameStateOnBoardCompleted"));
+				UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: ReceivedPlayerData -> WaitingForGameStateOnBoardCompleted"));
 			}
 		}
 	}
@@ -419,7 +419,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 				if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 				{
-					UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: WaitingForGameStateOnBoardCompleted -> BeginLoadingPlayerData"));
+					UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: WaitingForGameStateOnBoardCompleted -> BeginLoadingPlayerData"));
 				}
 			}
 		}
@@ -430,7 +430,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: BeginLoadingPlayerData -> WaitingForFinishLoadingPlayerData"));
+				UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: BeginLoadingPlayerData -> WaitingForFinishLoadingPlayerData"));
 			}
 			LoadPlayerData();
 		}
@@ -445,19 +445,19 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: FinishedLoadingPlayerData -> SetAssetReferencesPlayerData"));
+				UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: FinishedLoadingPlayerData -> SetAssetReferencesPlayerData"));
 			}
 		}
 		// Set Asset References PlayerData
 		if (OnBoardState == ECsPlayerStateBaseOnBoardState::SetAssetReferencesPlayerData)
 		{
-			if (!UCsLibrary_Common::GetDataMapping(GetWorld())->AsyncTaskMutex.IsLocked())
+			//if (!UCsLibrary_Common::GetDataMapping(GetWorld())->AsyncTaskMutex.IsLocked())
 			{
 				OnBoardState = ECsPlayerStateBaseOnBoardState::WaitingForSetAssetReferencesPlayerData;
 
 				if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 				{
-					UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: SetAssetReferencesPlayerData -> WaitingForSetAssetReferencesPlayerData"));
+					UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: SetAssetReferencesPlayerData -> WaitingForSetAssetReferencesPlayerData"));
 				}
 				StartSetAssetReferencesPlayerData();
 			}
@@ -473,7 +473,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: FinishedSetAssetReferencesPlayerData -> BeginApplyingPlayerData"));
+				UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: FinishedSetAssetReferencesPlayerData -> BeginApplyingPlayerData"));
 			}
 		}
 	}
@@ -486,7 +486,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: BeginApplyingPlayerData -> WaitingForFinishApplyingPlayerData"));
+				UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: BeginApplyingPlayerData -> WaitingForFinishApplyingPlayerData"));
 			}
 			SetupPlayerData();
 		}
@@ -501,7 +501,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: FinishedApplyingPlayerData -> SendOnBoardCompleted"));
+				UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: FinishedApplyingPlayerData -> SendOnBoardCompleted"));
 			}
 		}
 	}
@@ -514,7 +514,7 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: SendOnBoardCompleted -> WaitingForOnBoardCompleted"));
+				UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: SendOnBoardCompleted -> WaitingForOnBoardCompleted"));
 			}
 			ACsPlayerStateBase* LocalPlayerState = UCsLibrary_Common::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
 
@@ -547,7 +547,7 @@ void ACsPlayerStateBase::ServerRequestLocalUniqueMappingId_Implementation(ACsPla
 	{
 		if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsPlayerStateBase::ServerRequestLocalUniqueMappingId: Client PlayerState is nullptr."));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsPlayerStateBase::ServerRequestLocalUniqueMappingId: Client PlayerState is nullptr."));
 		}
 		return;
 	}
@@ -556,13 +556,13 @@ void ACsPlayerStateBase::ServerRequestLocalUniqueMappingId_Implementation(ACsPla
 	{
 		if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsPlayerStateBase::ServerRequestLocalUniqueMappingId: %s's UniqueMappingId is INVALID."), *ClientPlayerState->GetPlayerName());
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsPlayerStateBase::ServerRequestLocalUniqueMappingId: %s's UniqueMappingId is INVALID."), *ClientPlayerState->GetPlayerName());
 		}
 		return;
 	}
 	if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::ServerRequestLocalUniqueMappingId: %s is requesting UniqueMappingId: %d"), *ClientPlayerState->GetPlayerName(), ClientPlayerState->UniqueMappingId);
+		UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsPlayerStateBase::ServerRequestLocalUniqueMappingId: %s is requesting UniqueMappingId: %d"), *ClientPlayerState->GetPlayerName(), ClientPlayerState->UniqueMappingId);
 	}
 	ClientPlayerState->ClientRecieveLocalUniqueMappingId(ClientPlayerState->UniqueMappingId, RequestingPlayerState);
 }
@@ -712,7 +712,7 @@ void ACsPlayerStateBase::StartSetAssetReferencesPlayerData()
 
 void ACsPlayerStateBase::AsyncSetAssetReferencesPlayerData() 
 {
-	UCsLibrary_Common::GetDataMapping(GetWorld())->AsyncTaskMutex.Lock();
+	//UCsLibrary_Common::GetDataMapping(GetWorld())->AsyncTaskMutex.Lock();
 
 	UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
 
@@ -816,7 +816,7 @@ void ACsPlayerStateBase::SetTransientLoadedAssets(const TArray<UObject*> &Loaded
 void ACsPlayerStateBase::ClearTransientLoadedAssets()
 {
 	TransientLoadedAssets.Reset();
-	UCsLibrary_Common::GetDataMapping(GetWorld())->AsyncTaskMutex.Unlock();
+	//UCsLibrary_Common::GetDataMapping(GetWorld())->AsyncTaskMutex.Unlock();
 }
 
 #pragma endregion OnBoard

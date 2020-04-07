@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "UI/Simple/CsWidget_ButtonAndText.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 // Managers
 #include "Managers/Input/CsManager_Input.h"

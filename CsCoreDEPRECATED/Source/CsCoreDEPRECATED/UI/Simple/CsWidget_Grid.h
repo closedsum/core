@@ -4,7 +4,7 @@
 #include "CsWidget_Grid.generated.h"
 
 UCLASS()
-class CSCORE_API UCsWidget_Grid : public UCsSimpleWidget
+class CSCOREDEPRECATED_API UCsWidget_Grid : public UCsSimpleWidget
 {
 	GENERATED_UCLASS_BODY()
 

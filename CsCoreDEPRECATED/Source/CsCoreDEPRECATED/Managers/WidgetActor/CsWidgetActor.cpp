@@ -132,7 +132,7 @@ void ACsWidgetActor::OnCalcCamera(const uint8 &MappingId, const float &DeltaTime
 	{
 		if (CsCVarLogOverrideFunctions->GetInt() == CS_CVAR_DISPLAY)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsWidgetActor::OnCalcCamera (%s): Using Override Function."), *GetName());
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsWidgetActor::OnCalcCamera (%s): Using Override Function."), *GetName());
 		}
 		Override_OnCalcCamera_ScriptEvent.Broadcast(PoolIndex, MappingId, DeltaTime, OutResult);
 		return;

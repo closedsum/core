@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/WidgetActor/CsCVars_Manager_Widget.h"
+#include "Managers/WidgetActor/CsCVars_Manager_WidgetActor.h"
 
 // Widget Actor
 #pragma region

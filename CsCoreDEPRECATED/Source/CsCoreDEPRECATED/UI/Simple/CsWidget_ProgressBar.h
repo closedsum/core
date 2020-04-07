@@ -4,7 +4,7 @@
 #include "CsWidget_ProgressBar.generated.h"
 
 UCLASS()
-class CSCORE_API UCsWidget_ProgressBar : public UCsSimpleWidget
+class CSCOREDEPRECATED_API UCsWidget_ProgressBar : public UCsSimpleWidget
 {
 	GENERATED_UCLASS_BODY()
 

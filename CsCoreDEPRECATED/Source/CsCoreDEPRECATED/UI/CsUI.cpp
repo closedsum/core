@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "UI/CsUI.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
+
 #include "UI/CsUserWidget.h"
 
 ACsUI::ACsUI(const FObjectInitializer& ObjectInitializer)
@@ -78,7 +79,7 @@ void ACsUI::SetFocus(const FECsWidgetType &WidgetType, const int32& Focus)
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsUI::SetFocus(%s): Widget: %s is NOT Active."), *GetName(), *(WidgetType.Name));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsUI::SetFocus(%s): Widget: %s is NOT Active."), *GetName(), *(WidgetType.Name));
 	}
 }
 
@@ -90,7 +91,7 @@ void ACsUI::SetFocus(const FECsWidgetType &WidgetType, const ECsWidgetFocus& Foc
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsUI::SetFocus(%s): Widget: %s is NOT Active."), *GetName(), *(WidgetType.Name));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsUI::SetFocus(%s): Widget: %s is NOT Active."), *GetName(), *(WidgetType.Name));
 	}
 }
 
@@ -104,7 +105,7 @@ void ACsUI::Open(const FECsWidgetType &WidgetType)
 {
 	if (UCsUserWidget* Widget = GetActiveWidget(WidgetType))
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsUI::Open: Attempting to open menu: %s but it is already open."), *(WidgetType.Name));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsUI::Open: Attempting to open menu: %s but it is already open."), *(WidgetType.Name));
 		return;
 	}
 
@@ -177,7 +178,7 @@ void ACsUI::Close(const FECsWidgetType &WidgetType)
 
 	if (!Widget)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsUI::Close: Attempting to close menu: %s but it is NOT open."), *(WidgetType.Name));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsUI::Close: Attempting to close menu: %s but it is NOT open."), *(WidgetType.Name));
 		return;
 	}
 

@@ -11,7 +11,7 @@ class UCsWidget_Inventory_Slot;
 class ACsManager_Inventory;
 
 UCLASS()
-class CSCORE_API UCsWidget_Inventory : public UCsUserWidget
+class CSCOREDEPRECATED_API UCsWidget_Inventory : public UCsUserWidget
 {
 	GENERATED_UCLASS_BODY()
 

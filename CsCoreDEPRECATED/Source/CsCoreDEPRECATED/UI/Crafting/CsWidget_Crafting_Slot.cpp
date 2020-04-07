@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "UI/Crafting/CsWidget_Crafting_Slot.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 // Cache
 #pragma region

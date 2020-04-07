@@ -258,7 +258,7 @@ void ACsInteractiveActor::RemoveInteractedInfo(const TEnumAsByte<ECsInteractiveS
 	/*
 	if (!Found)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsInteractiveActor::RemoveInstigator(%s - %s): Failed to find Instigator: %s in %s List."), *GetName(), *((*InteractiveTypeToString)(Type)), *(InInstigator->GetName()), *ECsInteractiveState::ToString(InState));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsInteractiveActor::RemoveInstigator(%s - %s): Failed to find Instigator: %s in %s List."), *GetName(), *((*InteractiveTypeToString)(Type)), *(InInstigator->GetName()), *ECsInteractiveState::ToString(InState));
 	}
 	*/
 }
@@ -601,10 +601,10 @@ void ACsInteractiveActor::SetPhysicsState(const ECsInteractivePhysicsState &Stat
 	if (CsCVarLogInteractiveActorPhysicsStateChange->GetInt() == CS_CVAR_SHOW_LOG)
 	{
 		const FString& StateAsString		   = ECsInteractivePhysicsState_Editor::ToString(StateType);
-		const FString LastPhysicsStateAsString = UCsLibrary_Common::InteractivePhysicsStateToString(Last_PhysicsState);
-		const FString PhysicsStateAsString	   = UCsLibrary_Common::InteractivePhysicsStateToString(PhysicsState);
+		const FString LastPhysicsStateAsString = TEXT("");//UCsLibrary_Common::InteractivePhysicsStateToString(Last_PhysicsState);
+		const FString PhysicsStateAsString = TEXT("");//UCsLibrary_Common::InteractivePhysicsStateToString(PhysicsState);
 
-		UE_LOG(LogCs, Log, TEXT("ACsInteractiveActor::SetPhysicsState (%s): Setting PhysicsState: %s. (%s) -> (%s)"), *GetName(), *StateAsString, *LastPhysicsStateAsString, *PhysicsStateAsString);
+		UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsInteractiveActor::SetPhysicsState (%s): Setting PhysicsState: %s. (%s) -> (%s)"), *GetName(), *StateAsString, *LastPhysicsStateAsString, *PhysicsStateAsString);
 	}
 }
 
@@ -617,10 +617,10 @@ void ACsInteractiveActor::ClearPhysicsState(const ECsInteractivePhysicsState &St
 	if (CsCVarLogInteractiveActorPhysicsStateChange->GetInt() == CS_CVAR_SHOW_LOG)
 	{
 		const FString& StateAsString		   = ECsInteractivePhysicsState_Editor::ToString(StateType);
-		const FString LastPhysicsStateAsString = UCsLibrary_Common::InteractivePhysicsStateToString(Last_PhysicsState);
-		const FString PhysicsStateAsString	   = UCsLibrary_Common::InteractivePhysicsStateToString(PhysicsState);
+		const FString LastPhysicsStateAsString = TEXT("");// UCsLibrary_Common::InteractivePhysicsStateToString(Last_PhysicsState);
+		const FString PhysicsStateAsString = TEXT("");// UCsLibrary_Common::InteractivePhysicsStateToString(PhysicsState);
 
-		UE_LOG(LogCs, Log, TEXT("ACsInteractiveActor::ClearPhysicsState (%s): Clearing PhysicsState: %s. (%s) -> (%s)"), *GetName(), *StateAsString, *LastPhysicsStateAsString, *PhysicsStateAsString);
+		UE_LOG(LogCsCoreDEPRECATED, Log, TEXT("ACsInteractiveActor::ClearPhysicsState (%s): Clearing PhysicsState: %s. (%s) -> (%s)"), *GetName(), *StateAsString, *LastPhysicsStateAsString, *PhysicsStateAsString);
 	}
 }
 

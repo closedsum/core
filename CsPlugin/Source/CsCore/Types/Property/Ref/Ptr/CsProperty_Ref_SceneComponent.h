@@ -5,7 +5,7 @@
 
 class USceneComponent;
 
-struct CSCORE_API FCsProperty_Ref_SceneComponent : public TCsProperty_Ref_Ptr<USceneComponent>
+struct FCsProperty_Ref_SceneComponent : public TCsProperty_Ref_Ptr<USceneComponent>
 {
 private:
 	typedef TCsProperty_Ref_Ptr<USceneComponent> Super;

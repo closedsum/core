@@ -5,7 +5,7 @@
 
 class APawn;
 
-struct CSCORE_API FCsProperty_Ref_Pawn : public TCsProperty_Ref_Ptr<APawn>
+struct FCsProperty_Ref_Pawn : public TCsProperty_Ref_Ptr<APawn>
 {
 private:
 	typedef TCsProperty_Ref_Ptr<APawn> Super;

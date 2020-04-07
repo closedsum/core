@@ -48,7 +48,7 @@ typedef ECsWidgetFullscreenRoutine::Type TCsWidgetFullscreenRoutine;
 #pragma endregion Enums
 
 UCLASS()
-class CSCORE_API UCsWidget_Fullscreen : public UCsUserWidget
+class CSCOREDEPRECATED_API UCsWidget_Fullscreen : public UCsUserWidget
 {
 	GENERATED_UCLASS_BODY()
 

@@ -1,23 +1,26 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Projectile/CsProjectileBase.h"
 #include "CsCore.h"
+
+// CVar
 #include "CsCVars.h"
+// Library
 #include "Library/CsLibrary_Common.h"
 #include "Managers/Projectile/CsProjectileMovementComponent.h"
 
 // Data
-#include "Data/CsData_Weapon.h"
-#include "Data/CsData_ProjectileBase.h"
-#include "Data/CsData_ProjectileImpact.h"
+//#include "Data/CsData_Weapon.h"
+//#include "Data/CsData_ProjectileBase.h"
+//#include "Data/CsData_ProjectileImpact.h"
 
 // Managers
 #include "Managers/FX/CsManager_FX.h"
 #include "Managers/FX/CsEmitter.h"
 #include "Managers/Damage/CsManager_Damage.h"
-#include "Managers/InteractiveActor/CsDamageableActor.h"
+//#include "Managers/InteractiveActor/CsDamageableActor.h"
 
-#include "Pawn/CsPawn.h"
-#include "Weapon/CsWeapon.h"
+//#include "Pawn/CsPawn.h"
+//#include "Weapon/CsWeapon.h"
 
 #define CS_COLLISION_PROJECTILE	ECC_GameTraceChannel2
 
@@ -137,6 +140,7 @@ void ACsProjectileBase::OnTick_HandleMovementFunction(const float &DeltaSeconds)
 void ACsProjectileBase::DrawPath(const float &DeltaSeconds)
 {
 	// Local Player
+	/*
 	if (CsCVarDrawLocalPlayerProjectilePath->GetInt() == CS_CVAR_DRAW)
 	{
 		APawn* Pawn					 = Cast<APawn>(Cache.GetInstigator());
@@ -152,6 +156,7 @@ void ACsProjectileBase::DrawPath(const float &DeltaSeconds)
 			return;
 		}
 	}
+	*/
 	// Any Instigator
 	if (CsCVarDrawProjectilePath->GetInt() == CS_CVAR_DRAW)
 	{
@@ -217,12 +222,12 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 	}
 #endif // #if WITH_EDITOR
 
-	ACsPawn* InstigatingPawn   = Cast<ACsPawn>(Cache.GetInstigator());
-	const bool IsLocalClient   = UCsLibrary_Common::IsLocalPawn(GetWorld(), InstigatingPawn);
+	//ACsPawn* InstigatingPawn   = Cast<ACsPawn>(Cache.GetInstigator());
+	const bool IsLocalClient = true;// UCsLibrary_Common::IsLocalPawn(GetWorld(), InstigatingPawn);
 	const ECsViewType& ViewType = IsLocalClient ? ECsViewType::FirstPerson : ECsViewType::ThirdPerson;
 
-	ACsWeapon* OwnerWeapon					= Cast<ACsWeapon>(Cache.GetOwner());
-	UCsData_Weapon* Data_Weapon				= OwnerWeapon ? OwnerWeapon->GetMyData_Weapon() : nullptr;
+	//ACsWeapon* OwnerWeapon					= Cast<ACsWeapon>(Cache.GetOwner());
+	//UCsData_Weapon* Data_Weapon				= OwnerWeapon ? OwnerWeapon->GetMyData_Weapon() : nullptr;
 	//UCsData_ProjectileBase* Data_Projectile = Cache.GetData();
 
 	const ECsProjectileRelevance& Relevance = Cache.Relevance;
@@ -308,8 +313,8 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 		if (AActor* MyInstigator = Cast<AActor>(Cache.GetInstigator()))
 			IgnoreActors.Add(MyInstigator);
 
-		if (OwnerWeapon)
-			IgnoreActors.Add(OwnerWeapon);
+		//if (OwnerWeapon)
+		//	IgnoreActors.Add(OwnerWeapon);
 
 		const int32 Count = IgnoreActors.Num();
 
@@ -358,7 +363,7 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 	
 	SetActorTickEnabled(true);
 
-	const ECsProjectileMovement MovementType = Data_Projectile->GetMovementType();
+	const ECsProjectileMovement MovementType = ECsProjectileMovement::Simulated;// Data_Projectile->GetMovementType();
 
 	// Simulated
 	if (MovementType == ECsProjectileMovement::Simulated)
@@ -366,7 +371,7 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 		if (Relevance == ECsProjectileRelevance::Fake)
 		{
 			FRotationMatrix Matrix = FRotationMatrix(Cache.Rotation);
-			const FVector Down	   = Data_Projectile->GetSphereRadius() * -Matrix.GetScaledAxis(EAxis::Z);
+			const FVector Down = FVector::ZeroVector;// ->GetSphereRadius() * -Matrix.GetScaledAxis(EAxis::Z);
 
 			TeleportTo(Cache.Location + Down, Cache.Rotation, false, true);
 		}
@@ -382,7 +387,7 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 		TeleportTo(EvaluateMovementFunction(0.0f), Cache.Rotation, false, true);
 	}
 
-	const float DrawDistanceSq = Data_Projectile->GetDrawDistanceSq(ViewType);
+	const float DrawDistanceSq = 0.0f;// Data_Projectile->GetDrawDistanceSq(ViewType);
 	Cache.DrawDistanceSq	   = DrawDistanceSq;
 
 	if (DrawDistanceSq > 0)
@@ -398,9 +403,9 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 	if (MovementType == ECsProjectileMovement::Simulated)
 	{
 		MovementComponent->InitialSpeed			  = Cache.Speed;
-		MovementComponent->MaxSpeed				  = Data_Projectile->GetMaxSpeed();
+		MovementComponent->MaxSpeed = 0.0f;// Data_Projectile->GetMaxSpeed();
 		MovementComponent->Velocity				  = MovementComponent->InitialSpeed * Cache.Direction;
-		MovementComponent->ProjectileGravityScale = Data_Projectile->GetGravityMultiplier();
+		MovementComponent->ProjectileGravityScale = 1.0f;// Data_Projectile->GetGravityMultiplier();
 	}
 }
 
@@ -491,15 +496,19 @@ void ACsProjectileBase::OnHitCallback(UPrimitiveComponent* HitComp, AActor* Othe
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		// DamageableActor
+		/*
 		if (ACsDamageableActor* DamageableActor = Cast<ACsDamageableActor>(HitResult.GetActor()))
 		{
 			DamageableActor->ApplyDamage(Event);
 		}
+		*/
 		// Pawn
+		/*
 		if (ACsPawn* Pawn = Cast<ACsPawn>(HitResult.GetActor()))
 		{
 			Pawn->ApplyDamage(Event);
 		}
+		*/
 	}
 
 	// Impact Normal

@@ -2,7 +2,7 @@
 
 #include "AI/BehaviorTree/Tasks/CsBTTask_LookAt.h"
 #include "CsCoreDEPRECATED.h"
-#include "AI/BehaviorTree/CsCVars_AI_BT.h"
+#include "AI/BehaviorTree/Tasks/CsCVars_AI_BT_Task.h"
 
 // Library
 #include "Library/CsLibrary_Common.h"

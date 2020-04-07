@@ -3,7 +3,7 @@
 
 #pragma once
 
-struct CSCORE_API FCsProperty_FString : public TCsProperty<FString>
+struct FCsProperty_FString : public TCsProperty<FString>
 {
 private:
 	typedef TCsProperty<FString> Super;

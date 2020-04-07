@@ -7,7 +7,7 @@
 class UCsData_Item;
 
 UCLASS()
-class CSCORE_API UCsWidget_Inventory_Slot : public UCsWidget_ButtonAndText
+class CSCOREDEPRECATED_API UCsWidget_Inventory_Slot : public UCsWidget_ButtonAndText
 {
 	GENERATED_UCLASS_BODY()
 

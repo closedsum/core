@@ -2,8 +2,10 @@
 
 #include "AI/BehaviorTree/Tasks/CsBTTask_CustomWait.h"
 #include "CsCoreDEPRECATED.h"
-#include "AI/BehaviorTree/CsCVars_AI_BT.h"
+#include "AI/BehaviorTree/Tasks/CsCVars_AI_BT_Task.h"
 
+// Types
+#include "AI/BehaviorTree/CsTypes_BehaviorTree.h"
 // Behavior Tree
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
@@ -183,7 +185,7 @@ void UCsBTTask_CustomWait::DescribeRuntimeValues(const UBehaviorTreeComponent& O
 
 	// WARNING: Results might be off by 1 frame. If so, update FCsBTTask_KeyValue_Compare::GetStaticDescription to NOT include the Results
 	const UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
-	const FString OperationAsString			 = TEXT(" ") + ECsBTTask_LogicalOperator::ToSymbol(Operation) + TEXT(" ");
+	const FString OperationAsString			 = TEXT(" ") + NCsBTTask_LogicalOperator::ToSymbol(Operation) + TEXT(" ");
 
 	const int32 Count = Keys.Num();
 
@@ -209,7 +211,7 @@ FString UCsBTTask_CustomWait::GetStaticDescription() const
 		Description += FString::Printf(TEXT("Time: %f"), Time);
 	}
 
-	const FString OperationAsString = TEXT(" ") + ECsBTTask_LogicalOperator::ToSymbol(Operation) + TEXT(" ");
+	const FString OperationAsString = TEXT(" ") + NCsBTTask_LogicalOperator::ToSymbol(Operation) + TEXT(" ");
 
 	const int32 Count = Keys.Num();
 

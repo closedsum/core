@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "UI/Inventory/CsWidget_Inventory_Grid.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 #include "UI/CsTypes_UI.h"
 

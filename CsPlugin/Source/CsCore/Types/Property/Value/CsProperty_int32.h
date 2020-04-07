@@ -3,7 +3,7 @@
 
 #pragma once
 
-struct CSCORE_API FCsProperty_int32 : public TCsProperty<int32>
+struct FCsProperty_int32 : public TCsProperty<int32>
 {
 private:
 	typedef TCsProperty<int32> Super;

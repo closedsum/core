@@ -4,7 +4,7 @@
 #include "CsWidget_TextBlock.generated.h"
 
 UCLASS()
-class CSCORE_API UCsWidget_TextBlock : public UCsSimpleWidget
+class CSCOREDEPRECATED_API UCsWidget_TextBlock : public UCsSimpleWidget
 {
 	GENERATED_UCLASS_BODY()
 

@@ -4,7 +4,7 @@
 #include "CsWidget_Menu.generated.h"
 
 UCLASS()
-class CSCORE_API UCsWidget_Menu : public UCsUserWidget
+class CSCOREDEPRECATED_API UCsWidget_Menu : public UCsUserWidget
 {
 	GENERATED_UCLASS_BODY()
 };

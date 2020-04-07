@@ -66,7 +66,7 @@ public:
 class UCsData_CharacterMeshSkin;
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsDataAnimInstance_CharacterMeshSkinPtr
+struct CSCOREDEPRECATED_API FCsDataAnimInstance_CharacterMeshSkinPtr
 {
 	GENERATED_USTRUCT_BODY()
 

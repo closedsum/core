@@ -4,7 +4,7 @@
 #include "CsCVars.h"
 
 // Library
-#include "Library/Load/CsLibrary_Load.h"
+#include "Library/Load/CsLibrary_Load_DEPRECATED.h"
 #include "Library/CsLibrary_Asset.h"
 #include "Library/CsLibrary_Common.h"
 
@@ -56,7 +56,7 @@ void UCsData_Impl::PreSave(const class ITargetPlatform* TargetPlatform)
 #if WITH_EDITOR
 	OnPreSave();
 	PopulateAssetReferences(true);
-	UCsLibrary_Load::GetCategoryMemberAssociations(this, GetClass(), CategoryMemberAssociations);
+	UCsLibrary_Load_DEPRECATED::GetCategoryMemberAssociations(this, GetClass(), CategoryMemberAssociations);
 	SaveToJson();
 #endif WITH_EDITOR
 }
@@ -72,7 +72,7 @@ bool UCsData_Impl::IsValid(const ECsLoadFlags& LoadFlags /*=ECsLoadFlags::Game*/
 
 	if (ShortCode == CS_INVALID_SHORT_CODE || ShortCode == NAME_None)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::IsValid (%s): No ShortCode was set"), *AssetName);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::IsValid (%s): No ShortCode was set"), *AssetName);
 		Pass = false;
 	}
 
@@ -80,7 +80,7 @@ bool UCsData_Impl::IsValid(const ECsLoadFlags& LoadFlags /*=ECsLoadFlags::Game*/
 
 	if (Name == CS_INVALID_SHORT_CODE || Name == NAME_None)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::IsValid (%s): No Name was set"), *AssetName);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::IsValid (%s): No Name was set"), *AssetName);
 	}
 	return Pass;
 }
@@ -100,7 +100,7 @@ void UCsData_Impl::PopulateAssetReferences(const bool& CalculateResourceSizes)
 		if (I == Count - 1)
 			CS_SET_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning);
 
-		UCsLibrary_Load::GetAssetReferencesFromObject(this, GetClass(), (ECsLoadFlags)I, AssetReferences[I].References, GetAssetReferencesFromObject_Internal, LoadCodes);
+		UCsLibrary_Load_DEPRECATED::GetAssetReferencesFromObject(this, GetClass(), (ECsLoadFlags)I, AssetReferences[I].References, GetAssetReferencesFromObject_Internal, LoadCodes);
 		
 		AssetReferences[I].CalculateSize();
 	}
@@ -115,7 +115,7 @@ void UCsData_Impl::VerifyJsonIntegrity()
 	// Get Latest CategoryMemberAssociations. Check for changes do to Code updates
 	TArray<FCsCategoryMemberAssociation> LatestCategoryMemberAssociations;
 
-	UCsLibrary_Load::GetCategoryMemberAssociations(this, GetClass(), LatestCategoryMemberAssociations);
+	UCsLibrary_Load_DEPRECATED::GetCategoryMemberAssociations(this, GetClass(), LatestCategoryMemberAssociations);
 
 	// Check for change in number of categories
 	const int32 LatestCount  = LatestCategoryMemberAssociations.Num();
@@ -123,7 +123,7 @@ void UCsData_Impl::VerifyJsonIntegrity()
 
 	if (LatestCount != CurrentCount)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::VerifyJsonIntegrity (%s): Change in category count %d -> %d. Regenerating Json."), *AssetName, CurrentCount, LatestCount);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::VerifyJsonIntegrity (%s): Change in category count %d -> %d. Regenerating Json."), *AssetName, CurrentCount, LatestCount);
 
 		CategoryMemberAssociations.Reset();
 
@@ -158,7 +158,7 @@ void UCsData_Impl::VerifyJsonIntegrity()
 		{
 			RegenerateJson |= true;
 
-			UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::VerifyJsonIntegrity (%s): Change in category name %s -> %s. Regenerating Json."), *AssetName, *CurrentCategory, *LatestCategory);
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::VerifyJsonIntegrity (%s): Change in category name %s -> %s. Regenerating Json."), *AssetName, *CurrentCategory, *LatestCategory);
 			continue;
 		}
 
@@ -169,7 +169,7 @@ void UCsData_Impl::VerifyJsonIntegrity()
 		{
 			RegenerateJson |= true;
 
-			UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::VerifyJsonIntegrity (%s): Change in category (%s) member count %d -> %d. Regenerating Json."), *AssetName, *CurrentCategory, CurrentMemberCount, LatestMemberCount);
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::VerifyJsonIntegrity (%s): Change in category (%s) member count %d -> %d. Regenerating Json."), *AssetName, *CurrentCategory, CurrentMemberCount, LatestMemberCount);
 			continue;
 		}
 		
@@ -183,7 +183,7 @@ void UCsData_Impl::VerifyJsonIntegrity()
 			{
 				RegenerateJson |= true;
 
-				UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::VerifyJsonIntegrity (%s): Change in category (%s) member name %s -> %s. Regenerating Json."), *AssetName, *CurrentCategory, *CurrentMember, *LatestMember);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::VerifyJsonIntegrity (%s): Change in category (%s) member name %s -> %s. Regenerating Json."), *AssetName, *CurrentCategory, *CurrentMember, *LatestMember);
 			}
 		}
 	}
@@ -219,19 +219,19 @@ void UCsData_Impl::Load(const ECsLoadFlags& LoadFlags /*=ECsLoadFlags::Game*/)
 	if (!HasLoadedFromJson)
 		LoadFromJson();
 
-	UCsLibrary_Load::LoadObjectWithTSoftObjectPtrs(ShortCodeAsString, (void*)this, GetClass(), LoadFlags, LoadObjectWithTSoftObjectPtrs_Internal);
+	UCsLibrary_Load_DEPRECATED::LoadObjectWithTSoftObjectPtrs(ShortCodeAsString, (void*)this, GetClass(), LoadFlags, LoadObjectWithTSoftObjectPtrs_Internal);
 }
 
 void UCsData_Impl::UnLoad()
 {
-	UCsLibrary_Load::UnLoadObjectWithTSoftObjectPtrs((void*)this, GetClass());
+	UCsLibrary_Load_DEPRECATED::UnLoadObjectWithTSoftObjectPtrs((void*)this, GetClass());
 }
 
 bool UCsData_Impl::IsLoaded()
 {
 	const FString DataName = ShortCode.ToString();
 
-	return UCsLibrary_Load::IsLoadedObjectWithTSoftObjectPtrs(DataName, (void*)this, GetClass());
+	return UCsLibrary_Load_DEPRECATED::IsLoadedObjectWithTSoftObjectPtrs(DataName, (void*)this, GetClass());
 }
 
 FString UCsData_Impl::GetAbsolutePath()
@@ -256,7 +256,7 @@ void UCsData_Impl::SaveToJson()
 
 	JsonWriter->WriteObjectStart();
 
-	UCsLibrary_Load::WriteObjectToJson(JsonWriter, (void*)this, GetClass(), CategoryMemberAssociations, WriteObjectToJson_Internal);
+	UCsLibrary_Load_DEPRECATED::WriteObjectToJson(JsonWriter, (void*)this, GetClass(), CategoryMemberAssociations, WriteObjectToJson_Internal);
 	
 	JsonWriter->WriteObjectEnd();
 
@@ -279,7 +279,7 @@ void UCsData_Impl::LoadFromJson()
 	const FString Filename  = GetAbsolutePath() + ShortCode.ToString() + TEXT(".json");
 
 	if (CsCVarLogJsonDataFilenames->GetInt() == CS_CVAR_SHOW_LOG)
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::LoadFromJson (%s): Filename: %s"), *AssetName, *Filename);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::LoadFromJson (%s): Filename: %s"), *AssetName, *Filename);
 
 	FString DataJson;
 
@@ -293,23 +293,23 @@ void UCsData_Impl::LoadFromJson()
 		{
 			if (CategoryMemberAssociations.Num() == 0)
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::LoadFromJson (%s): Data needs to be saved at least ONCE to generate CategoryMemberAssociations"), *AssetName);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::LoadFromJson (%s): Data needs to be saved at least ONCE to generate CategoryMemberAssociations"), *AssetName);
 				return;
 			}
 #if WITH_EDITOR
 			VerifyJsonIntegrity();
 #endif // #if WITH_EDITOR
-			UCsLibrary_Load::ReadObjectFromJson(JsonParsed, this, GetClass(), CategoryMemberAssociations, ReadObjectFromJson_Internal);
+			UCsLibrary_Load_DEPRECATED::ReadObjectFromJson(JsonParsed, this, GetClass(), CategoryMemberAssociations, ReadObjectFromJson_Internal);
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::LoadFromJson (%s): %s is NOT Valid"), *AssetName, *Filename);
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::LoadFromJson (%s): %s is NOT Valid"), *AssetName, *Filename);
 			return;
 		}
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::LoadFromJson (%s): %s NOT found"), *AssetName, *Filename);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::LoadFromJson (%s): %s NOT found"), *AssetName, *Filename);
 		return;
 	}
 	HasLoadedFromJson = true;
@@ -348,18 +348,18 @@ UCsDataMapping* UCsData_Impl::GetDataMapping()
 
 	if (Count > 1)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::GetDataMapping (%s): More than one asset named %s"), *(ShortCode.ToString()), *DataMappingName);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::GetDataMapping (%s): More than one asset named %s"), *(ShortCode.ToString()), *DataMappingName);
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::GetDataMapping (%s): Asset at %s"), *(ShortCode.ToString()), *(Bps[I]->GetPathName()));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::GetDataMapping (%s): Asset at %s"), *(ShortCode.ToString()), *(Bps[I]->GetPathName()));
 		}
 		return nullptr;
 	}
 
 	if (Count == CS_EMPTY)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::GetDataMapping (%s): Failed to find Data Mapping named %s"), *(ShortCode.ToString()), *DataMappingName);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::GetDataMapping (%s): Failed to find Data Mapping named %s"), *(ShortCode.ToString()), *DataMappingName);
 		return nullptr;
 	}
 
@@ -368,7 +368,7 @@ UCsDataMapping* UCsData_Impl::GetDataMapping()
 		return DataMapping;
 	}
 
-	UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::GetDataMapping (%s): Asset: %s is NOT of type CsDataMapping."), *(ShortCode.ToString()), *DataMappingName);
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::GetDataMapping (%s): Asset: %s is NOT of type CsDataMapping."), *(ShortCode.ToString()), *DataMappingName);
 	return nullptr;
 }
 
@@ -382,17 +382,17 @@ UCsData_Payload* UCsData_Impl::GetPayload()
 
 	if (Count > 1)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::GetPayload (%s): More than one asset named %s"), *(ShortCode.ToString()), *PayloadName);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::GetPayload (%s): More than one asset named %s"), *(ShortCode.ToString()), *PayloadName);
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::GetPayload (%s): Asset at %s"), *(ShortCode.ToString()), *(Bps[I]->GetPathName()));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::GetPayload (%s): Asset at %s"), *(ShortCode.ToString()), *(Bps[I]->GetPathName()));
 		}
 	}
 
 	if (Count == CS_EMPTY)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::GetPayload (%s): Failed to find Payload named %s"), *(ShortCode.ToString()), *PayloadName);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::GetPayload (%s): Failed to find Payload named %s"), *(ShortCode.ToString()), *PayloadName);
 		return nullptr;
 	}
 
@@ -401,7 +401,7 @@ UCsData_Payload* UCsData_Impl::GetPayload()
 		return Payload;
 	}
 
-	UE_LOG(LogCs, Warning, TEXT("UCsData_Impl::GetPayload (%s): Asset: %s is NOT of type CsData_Payload."), *(ShortCode.ToString()), *PayloadName);
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Impl::GetPayload (%s): Asset: %s is NOT of type CsData_Payload."), *(ShortCode.ToString()), *PayloadName);
 	return nullptr;
 }
 

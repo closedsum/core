@@ -7,7 +7,7 @@
 class ICsMenu;
 
 UCLASS()
-class CSCORE_API UCsLibrary_Menu : public UObject
+class CSCOREDEPRECATED_API UCsLibrary_Menu : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

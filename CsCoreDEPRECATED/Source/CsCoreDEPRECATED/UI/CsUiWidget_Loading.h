@@ -14,7 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUiWidgetLoading_
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUiWidgetLoading_Bulk_OnFinishedLoadingAssetReferences, const TArray<UObject*>&, LoadedAssets, const float&, LoadingTime);
 
 UCLASS()
-class CSCORE_API UCsUiWidget_Loading : public UCsUserWidget
+class CSCOREDEPRECATED_API UCsUiWidget_Loading : public UCsUserWidget
 {
 	GENERATED_UCLASS_BODY()
 

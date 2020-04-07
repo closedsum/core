@@ -96,9 +96,9 @@ class CSCORE_API UCsLibrary_Common : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "Common")
 	static float GetSquaredDistanceToLocalControllerEye(UWorld *InWorld, const FVector& Location);
 
-	static class ACsMotionController* GetLocalHand(UWorld *InWorld, const ECsControllerHand &Hand);
+	//static class ACsMotionController* GetLocalHand(UWorld *InWorld, const ECsControllerHand &Hand);
 
-	static class ACsManager_Inventory* GetLocalManager_Inventory(UWorld *InWorld);
+	//static class ACsManager_Inventory* GetLocalManager_Inventory(UWorld *InWorld);
 
 #pragma endregion Local Client
 
@@ -118,8 +118,8 @@ class CSCORE_API UCsLibrary_Common : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "Common")
 	static void GetHMDWorldViewPoint(UWorld* InWorld, FVector &OutLocation, FRotator& OutRotation);
 
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static class ACsMotionController* GetMotionController(UWorld* InWorld, const ECsControllerHand &Hand);
+	//UFUNCTION(BlueprintCallable, Category = "Commmon")
+	//static class ACsMotionController* GetMotionController(UWorld* InWorld, const ECsControllerHand &Hand);
 
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static bool IsStereoscopic3D();
@@ -136,7 +136,7 @@ class CSCORE_API UCsLibrary_Common : public UBlueprintFunctionLibrary
 
 	static FString LoadFlagsToString(const int32 &LoadFlags);
 
-	static FString InteractivePhysicsStateToString(const int32 &PhysicsState);
+	//static FString InteractivePhysicsStateToString(const int32 &PhysicsState);
 
 #pragma endregion Enum to String Conversion
 
@@ -164,7 +164,7 @@ class CSCORE_API UCsLibrary_Common : public UBlueprintFunctionLibrary
 
 // Data
 #pragma region
-
+	/*
 	static class UCsDataMapping* GetDataMapping(UWorld* InWorld);
 
 	template<typename T>
@@ -172,7 +172,7 @@ class CSCORE_API UCsLibrary_Common : public UBlueprintFunctionLibrary
 	{
 		return Cast<T>(GetDataMapping(InWorld));
 	}
-
+	*/
 #pragma endregion 
 
 // Materials
@@ -779,7 +779,7 @@ class CSCORE_API UCsLibrary_Common : public UBlueprintFunctionLibrary
 
 	static bool IsDefaultObject(UObject* InObject);
 
-	static const uint64& GetUniqueObjectId(AActor* Actor);
+	//static const uint64& GetUniqueObjectId(AActor* Actor);
 
 #pragma endregion Object / Actor
 

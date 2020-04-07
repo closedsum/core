@@ -3,7 +3,7 @@
 
 #pragma once
 
-struct CSCORE_API FCsProperty_Ref_bool : public TCsProperty_Ref<bool>
+struct FCsProperty_Ref_bool : public TCsProperty_Ref<bool>
 {
 private:
 	typedef TCsProperty_Ref<bool> Super;

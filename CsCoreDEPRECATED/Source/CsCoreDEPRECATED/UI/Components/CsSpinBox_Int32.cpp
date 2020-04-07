@@ -1,6 +1,8 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "UI/Components/CsSpinBox_Int32.h"
+#include "CsCoreDEPRECATED.h"
+
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/Font.h"
 

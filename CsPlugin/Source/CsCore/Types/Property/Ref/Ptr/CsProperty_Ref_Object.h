@@ -5,7 +5,7 @@
 
 class UObject;
 
-struct CSCORE_API FCsProperty_Ref_Object : public TCsProperty_Ref_Ptr<UObject>
+struct FCsProperty_Ref_Object : public TCsProperty_Ref_Ptr<UObject>
 {
 private:
 	typedef TCsProperty_Ref_Ptr<UObject> Super;

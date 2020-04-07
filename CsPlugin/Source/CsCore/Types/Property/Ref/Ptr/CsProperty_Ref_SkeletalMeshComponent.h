@@ -5,7 +5,7 @@
 
 class USkeletalMeshComponent;
 
-struct CSCORE_API FCsProperty_Ref_SkeletalMeshComponent : public TCsProperty_Ref_Ptr<USkeletalMeshComponent>
+struct FCsProperty_Ref_SkeletalMeshComponent : public TCsProperty_Ref_Ptr<USkeletalMeshComponent>
 {
 private:
 	typedef TCsProperty_Ref_Ptr<USkeletalMeshComponent> Super;

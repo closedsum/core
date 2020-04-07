@@ -1,7 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/InteractiveActor/CsManager_InteractiveActor.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 #include "CsCVars.h"
+
+// Library
 #include "Library/CsLibrary_Common.h"
 
 #include "Managers/InteractiveActor/CsInteractiveActor.h"
@@ -38,7 +40,7 @@ const FString& FCsManager_InteractiveActor::EnumTypeToString(const int32 &index)
 
 void FCsManager_InteractiveActor::Log(const FString& log)
 {
-	UE_LOG(LogCs, Warning, TEXT("%s"), *log);
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *log);
 }
 
 #pragma endregion // Internal

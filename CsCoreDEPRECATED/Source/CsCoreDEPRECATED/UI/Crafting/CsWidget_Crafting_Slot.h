@@ -5,7 +5,7 @@
 #include "CsWidget_Crafting_Slot.generated.h"
 
 UCLASS()
-class CSCORE_API UCsWidget_Crafting_Slot : public UCsWidget_ButtonAndText
+class CSCOREDEPRECATED_API UCsWidget_Crafting_Slot : public UCsWidget_ButtonAndText
 {
 	GENERATED_UCLASS_BODY()
 

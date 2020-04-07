@@ -7,7 +7,7 @@
 class ICsUIObject;
 
 UCLASS()
-class CSCORE_API UCsLibrary_UIObject : public UObject
+class CSCOREDEPRECATED_API UCsLibrary_UIObject : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

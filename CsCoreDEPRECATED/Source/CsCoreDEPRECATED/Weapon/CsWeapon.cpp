@@ -12,6 +12,7 @@
 // Anim
 #include "Animation/CsAnimInstance.h"
 // Data
+#include "Data/CsData_ProjectileBase.h"
 #include "Data/CsData_ProjectileImpact.h"
 #include "Data/CsData_Character.h"
 // Managers
@@ -690,7 +691,7 @@ void ACsWeapon::OnTick(const float &DeltaSeconds)
 	{
 		if (CsCVarLogOverrideFunctions->GetInt() == CS_CVAR_DISPLAY)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::OnTick (%s): Using Override Function."), *GetName());
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsWeapon::OnTick (%s): Using Override Function."), *GetName());
 		}
 		Override_OnTick_ScriptEvent.Broadcast(WeaponSlot, DeltaSeconds);
 		return;
@@ -873,7 +874,7 @@ void ACsWeapon::CheckState_Idle()
 	{
 		if (CsCVarLogOverrideFunctions->GetInt() == CS_CVAR_DISPLAY)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::CheckState_Idle (%s): Using Override Function."), *GetName());
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsWeapon::CheckState_Idle (%s): Using Override Function."), *GetName());
 		}
 		Override_CheckState_Idle_ScriptEvent.Broadcast(WeaponSlot);
 		return;
@@ -1224,7 +1225,7 @@ void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 		{
 			UCsData_ProjectileBase* Data_Projectile = GetMyData_Projectile(PrimaryFireMode, false);
 
-			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::IncrementCurrentAmmo: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsWeapon::IncrementCurrentAmmo: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
 			check(0);
 		}
 
@@ -1266,7 +1267,7 @@ void ACsWeapon::ResetCurrentAmmo(const int32 &Index)
 		{
 			UCsData_ProjectileBase* Data_Projectile = GetMyData_Projectile(PrimaryFireMode, false);
 
-			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::ResetCurrentAmmo: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsWeapon::ResetCurrentAmmo: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
 			check(0);
 		}
 
@@ -1306,7 +1307,7 @@ int32 ACsWeapon::GetAmmoReserve(const int32 &Index, const FECsWeaponFireMode& Fi
 		{
 			UCsData_ProjectileBase* Data_Projectile = GetMyData_Projectile(FireMode, IsCharged);
 
-			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::GetAmmoReserve: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsWeapon::GetAmmoReserve: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
 			check(0);
 		}
 		return Manager_Inventory->GetItemCount(ShortCode);
@@ -1346,7 +1347,7 @@ void ACsWeapon::ConsumeAmmoItem(const FECsWeaponFireMode& FireMode, const bool &
 
 		if (ShortCode == NAME_None)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::ConsumeAmmoItem: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsWeapon::ConsumeAmmoItem: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
 			check(0);
 		}
 
@@ -1626,7 +1627,7 @@ FCsProjectileFirePayload* ACsWeapon::AllocateProjectileFirePayload(const FECsWea
 		ProjectileFirePayloadPoolIndex = (ProjectileFirePayloadPoolIndex + I) % Count;
 	}
 
-	UE_LOG(LogCs, Warning, TEXT("ACsWeapon::AllocateProjectileFirePayload: Warning. Pool is exhausted. Using Oldest Active Projectile Fire Payload."));
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsWeapon::AllocateProjectileFirePayload: Warning. Pool is exhausted. Using Oldest Active Projectile Fire Payload."));
 	return nullptr;
 }
 
@@ -1637,7 +1638,7 @@ void ACsWeapon::FireWeapon(const FECsWeaponFireMode& FireMode)
 	{
 		if (CsCVarLogOverrideFunctions->GetInt() == CS_CVAR_DISPLAY)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::FireWeapon (%s): Using Override Function."), *GetName());
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsWeapon::FireWeapon (%s): Using Override Function."), *GetName());
 		}
 		Override_FireWeapon_ScriptEvent.Broadcast(WeaponSlot, FireMode);
 		return;
@@ -2272,7 +2273,7 @@ void ACsWeapon::PlayMuzzleFlash(const FECsWeaponFireMode& FireMode)
 
 	if (!FX->Get())
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsWeapon::PlayMuzzleFlash: Attempting to Play a NULL ParticleSystem."));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsWeapon::PlayMuzzleFlash: Attempting to Play a NULL ParticleSystem."));
 		return;
 	}
 

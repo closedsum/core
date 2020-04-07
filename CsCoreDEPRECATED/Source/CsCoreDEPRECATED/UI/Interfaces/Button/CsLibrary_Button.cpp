@@ -1,7 +1,7 @@
 // Copyright 2019, RCT Studios and The Rogue Initiative. All Rights Reserved.
 
 #include "UI/Interfaces/Button/CsLibrary_Button.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 #include "UI/Interfaces/Button/CsButton.h"
 

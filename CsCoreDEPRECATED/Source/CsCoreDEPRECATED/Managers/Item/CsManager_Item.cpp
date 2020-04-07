@@ -121,11 +121,11 @@ void ACsManager_Item::LogTransaction(const FString& FunctionName, const ECsPoolT
 
 		if (Data_Actor)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with UniqueId: %s, Data: %s, and with Data_Actor: %s at %f."), *FunctionName, *TransactionAsString, *ItemName,*Id, *DataName, *DataActorName, CurrentTime);
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s: %s Item: %s with UniqueId: %s, Data: %s, and with Data_Actor: %s at %f."), *FunctionName, *TransactionAsString, *ItemName,*Id, *DataName, *DataActorName, CurrentTime);
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with UniqueId: % and Data: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *Id, *DataName, CurrentTime);
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s: %s Item: %s with UniqueId: % and Data: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *Id, *DataName, CurrentTime);
 		}
 	}
 }
@@ -168,7 +168,7 @@ FCsItem* ACsManager_Item::Allocate(const FName& ShortCode)
 {
 	FCsItem* Item = Allocate();
 
-	UCsDataMapping* DataMapping = UCsLibrary_Common::GetDataMapping(GetWorld());
+	UCsDataMapping* DataMapping = nullptr;// UCsLibrary_Common::GetDataMapping(GetWorld());
 	const FCsData& IData		= DataMapping->GetLoadedData(ItemDataType, ShortCode);
 	UCsData_Item* Data			= IData.GetObject<UCsData_Item>();
 	const FECsItemType& ItemType = Data->GetItemType();
@@ -253,7 +253,7 @@ void ACsManager_Item::ChangeActiveItemOwnerInfo(FCsItem* Item, UObject* ItemOwne
 
 void ACsManager_Item::SetActiveItemData(FCsItem* Item)
 {
-	UCsDataMapping* DataMapping = UCsLibrary_Common::GetDataMapping(GetWorld());
+	UCsDataMapping* DataMapping = nullptr;// UCsLibrary_Common::GetDataMapping(GetWorld());
 	const FCsData& IData		= DataMapping->GetLoadedData(ItemDataType, Item->ShortCode);
 	UCsData_Item* Data			= IData.GetObject<UCsData_Item>();
 	Item->Data					= Data;
@@ -280,7 +280,7 @@ FCsItem* ACsManager_Item::GetItem(const TCsItemId& Id)
 
 	if (CsCVarLogManagerItemActionGetFail->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItem: Failed to find an Item with Id: %s"), *(Id.ToString()));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Item::GetItem: Failed to find an Item with Id: %s"), *(Id.ToString()));
 	}
 	return nullptr;
 }
@@ -311,7 +311,7 @@ void ACsManager_Item::GetItemsByOwnerId(const TCsItemOwnerId& OwnerId, TArray<FC
 	{
 		if (CsCVarLogManagerItemActionGetFail->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItemsByOwnerId: Failed to find any ActiveItems with OwnerId: %s"), *(OwnerId.ToString()));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Item::GetItemsByOwnerId: Failed to find any ActiveItems with OwnerId: %s"), *(OwnerId.ToString()));
 		}
 		OutItems.Reset();
 		return;
@@ -337,7 +337,7 @@ void ACsManager_Item::GetItems(const TArray<TCsItemId>& Ids, TArray<FCsItem*>& O
 		{
 			if (CsCVarLogManagerItemActionGetFail->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItems: Failed to find an Item with Id: %d"), *(Id.ToString()));
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Item::GetItems: Failed to find an Item with Id: %d"), *(Id.ToString()));
 			}
 		}
 	}
@@ -354,7 +354,7 @@ void ACsManager_Item::DeAllocate(const FGuid& Id)
 
 	if (!Item)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::DeAllocate: Attempting to deallocate an Item with Id: %s, but it is already deallocated."), *(Id.ToString()));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Item::DeAllocate: Attempting to deallocate an Item with Id: %s, but it is already deallocated."), *(Id.ToString()));
 		return;
 	}
 
@@ -443,7 +443,7 @@ bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* InInstigator, AC
 			const FString OwnerName = InInstigator->GetName();
 			const FString& Type		= Item->Type.Name;
 
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer_Internal: %s's Inventory is FULL. DeAllocating %s with Id: %s"), *OwnerName, *Type, *(Item->Id.ToString()));
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Item::Transfer_Internal: %s's Inventory is FULL. DeAllocating %s with Id: %s"), *OwnerName, *Type, *(Item->Id.ToString()));
 			DeAllocate(Item);
 			return false;
 		}
@@ -500,7 +500,7 @@ bool ACsManager_Item::Transfer(FCsItem* Item, UObject* InInstigator)
 	if (Transfer_Internal(Item, InInstigator, Manager_Inventory))
 		return true;
 
-	UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Item: %s with Id: %d"), *(Item->Type.Name), *(Item->Id.ToString()));
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Item: %s with Id: %d"), *(Item->Type.Name), *(Item->Id.ToString()));
 	return false;
 }
 
@@ -558,7 +558,7 @@ bool ACsManager_Item::Transfer(TArray<FCsItem*>& Items, UObject* InInstigator, c
 			return Success;
 		}
 	}
-	UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Items."));
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Items."));
 	return false;
 }
 
@@ -936,7 +936,7 @@ void ACsManager_Item::PopulateExistingItems()
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: %s is NOT Valid."), *Filename);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Item::PopulateExistingItems: %s is NOT Valid."), *Filename);
 			}
 		}
 	}
@@ -975,7 +975,7 @@ void ACsManager_Item::PopulateExistingItems()
 								const FString ItemName		= Item->ShortCode.ToString();
 								const FString OtherItemName = OtherItem->ShortCode.ToString();
 
-								UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: Item: %s with Id: %s and Item: %s with Id: %s share Content with UniqueId: %d."), *ItemName, *(Item->Id.ToString()), *OtherItemName, *(OtherItem->Id.ToString()), *(Item->Contents[M].ToString()));
+								UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Item::PopulateExistingItems: Item: %s with Id: %s and Item: %s with Id: %s share Content with UniqueId: %d."), *ItemName, *(Item->Id.ToString()), *OtherItemName, *(OtherItem->Id.ToString()), *(Item->Contents[M].ToString()));
 
 								ContentMismatch = true;
 							}
@@ -988,7 +988,7 @@ void ACsManager_Item::PopulateExistingItems()
 			{
 				const FString ItemName = Item->ShortCode.ToString();
 
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: DeAllocating Item: %s with Id: %s because it shares some Content with other Items."), *ItemName, *(Item->Id.ToString()));
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Item::PopulateExistingItems: DeAllocating Item: %s with Id: %s because it shares some Content with other Items."), *ItemName, *(Item->Id.ToString()));
 
 				DeAllocate(Item);
 			}
@@ -1123,12 +1123,12 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject>& JsonObject, FCs
 				}
 				else
 				{
-					UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::LoadHistory: INVALID ItemMemberValue Type: %s."), *(EMCsItemMemberValueType::Get().ToString(Type)));
+					UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Item::LoadHistory: INVALID ItemMemberValue Type: %s."), *(EMCsItemMemberValueType::Get().ToString(Type)));
 				}
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::LoadHistory: Change in Member Count from %d -> %d. Using default value for Member: %s."), KeyCount, MemberCount, *MemberNameAsString);
+				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsManager_Item::LoadHistory: Change in Member Count from %d -> %d. Using default value for Member: %s."), KeyCount, MemberCount, *MemberNameAsString);
 			}
 			ItemHistory->Members.Add(MemberName, Value);
 		}

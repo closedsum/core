@@ -5,7 +5,7 @@
 
 class UStaticMeshComponent;
 
-struct CSCORE_API FCsProperty_Ref_StaticMeshComponent : public TCsProperty_Ref_Ptr<UStaticMeshComponent>
+struct FCsProperty_Ref_StaticMeshComponent : public TCsProperty_Ref_Ptr<UStaticMeshComponent>
 {
 private:
 	typedef TCsProperty_Ref_Ptr<UStaticMeshComponent> Super;

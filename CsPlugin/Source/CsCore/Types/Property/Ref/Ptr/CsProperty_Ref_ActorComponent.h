@@ -5,7 +5,7 @@
 
 class UActorComponent;
 
-struct CSCORE_API FCsProperty_Ref_ActorComponent : public TCsProperty_Ref_Ptr<UActorComponent>
+struct FCsProperty_Ref_ActorComponent : public TCsProperty_Ref_Ptr<UActorComponent>
 {
 private:
 	typedef TCsProperty_Ref_Ptr<UActorComponent> Super;

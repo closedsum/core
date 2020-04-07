@@ -6,7 +6,7 @@
 #include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Asset.h"
-#include "Library/Load/CsLibrary_Load.h"
+#include "Library/Load/CsLibrary_Load_DEPRECATED.h"
 // Interface
 #include "Data/CsData.h"
 
@@ -190,7 +190,7 @@ void UCsDataMapping::PreSave(const class ITargetPlatform* TargetPlatform)
 	Super::PreSave(TargetPlatform);
 #if WITH_EDITOR
 	PopulateAssetReferences();
-	//UCsLibrary_Load::GetCategoryMemberAssociations(this, GetClass(), CategoryMemberAssociations);
+	//UCsLibrary_Load_DEPRECATED::GetCategoryMemberAssociations(this, GetClass(), CategoryMemberAssociations);
 	SaveToJson();
 #endif // #if WITH_EDITOR
 }
@@ -411,7 +411,7 @@ void UCsDataMapping::PopulateAssetReferences()
 						{
 							UObject* OutAsset = nullptr;
 
-							//UCsLibrary_Load::LoadTSoftClassPtr<UObject>((*Member)[I].Data, OutAsset, TEXT("Object"));
+							//UCsLibrary_Load_DEPRECATED::LoadTSoftClassPtr<UObject>((*Member)[I].Data, OutAsset, TEXT("Object"));
 
 							if (!OutAsset)
 							{
@@ -677,14 +677,14 @@ const FCsData& UCsDataMapping::LoadData_Internal(const FString& FunctionName, co
 	UObject* Object = nullptr;
 	ICsData* Data = nullptr;
 
-	UCsLibrary_Load::LoadTSoftClassPtr(Mapping.Data, Object);
+	UCsLibrary_Load_DEPRECATED::LoadTSoftClassPtr(Mapping.Data, Object);
 
 	Data = Cast<ICsData>(Object);
 
 	if (!Data)
 	{
 		const FString ShortCode		   = Mapping.ShortCode.ToString();
-		const FString AssetDescription = UCsLibrary_Load::GetAssetDescription(Mapping.Data);
+		const FString AssetDescription = UCsLibrary_Load_DEPRECATED::GetAssetDescription(Mapping.Data);
 
 		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s: Failed to load data using Short Code: %s with Path Location: %s."), *FunctionName, *ShortCode, *AssetDescription);
 		return FCsData::Empty;
@@ -887,14 +887,14 @@ bool UCsDataMapping::CheckDataIsValid(const FString& FunctionName, const FECsDat
 	// Load the Data
 	UObject* Object = nullptr;
 
-	UCsLibrary_Load::LoadTSoftClassPtr(Mapping.Data, Object);
+	UCsLibrary_Load_DEPRECATED::LoadTSoftClassPtr(Mapping.Data, Object);
 
 	ICsData* Data = Cast<ICsData>(Object);
 
 	if (!Data)
 	{
 		const FString ShortCode		   = Mapping.ShortCode.ToString();
-		const FString AssetDescription = UCsLibrary_Load::GetAssetDescription(Mapping.Data);
+		const FString AssetDescription = UCsLibrary_Load_DEPRECATED::GetAssetDescription(Mapping.Data);
 
 		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s: Failed to load data using Short Code: %s with Path Location: %s"), *FunctionName, *ShortCode, *AssetDescription);
 		return true;
@@ -996,7 +996,7 @@ void UCsDataMapping::SaveToJson()
 
 	JsonWriter->WriteObjectStart();
 
-	UCsLibrary_Load::WriteObjectToJson(JsonWriter, (void*)this, GetClass(), CategoryMemberAssociations, WriteObjectToJson_Internal);
+	UCsLibrary_Load_DEPRECATED::WriteObjectToJson(JsonWriter, (void*)this, GetClass(), CategoryMemberAssociations, WriteObjectToJson_Internal);
 
 	JsonWriter->WriteObjectEnd();
 
@@ -1038,7 +1038,7 @@ void UCsDataMapping::LoadFromJson()
 				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::LoadFromJson (%s): Data needs to be saved at least ONCE to generate CategoryMemberAssociations"), *AssetName);
 				return;
 			}
-			UCsLibrary_Load::ReadObjectFromJson(JsonParsed, this, GetClass(), CategoryMemberAssociations, ReadObjectFromJson_Internal);
+			UCsLibrary_Load_DEPRECATED::ReadObjectFromJson(JsonParsed, this, GetClass(), CategoryMemberAssociations, ReadObjectFromJson_Internal);
 		}
 		else
 		{

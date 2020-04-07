@@ -3,7 +3,7 @@
 
 #pragma once
 
-struct CSCORE_API FCsProperty_Ref_int64 : public TCsProperty_Ref<int64>
+struct FCsProperty_Ref_int64 : public TCsProperty_Ref<int64>
 {
 private:
 	typedef TCsProperty_Ref<int64> Super;

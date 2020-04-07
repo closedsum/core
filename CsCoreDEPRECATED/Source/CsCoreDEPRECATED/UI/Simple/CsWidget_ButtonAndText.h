@@ -5,7 +5,7 @@
 #include "CsWidget_ButtonAndText.generated.h"
 
 UCLASS()
-class CSCORE_API UCsWidget_ButtonAndText : public UCsSimpleWidget
+class CSCOREDEPRECATED_API UCsWidget_ButtonAndText : public UCsSimpleWidget
 {
 	GENERATED_UCLASS_BODY()
 

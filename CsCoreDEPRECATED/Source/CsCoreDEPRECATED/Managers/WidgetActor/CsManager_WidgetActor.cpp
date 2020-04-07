@@ -42,7 +42,7 @@ const FString& FCsManager_WidgetActor::EnumTypeToString(const int32 &index)
 
 void FCsManager_WidgetActor::Log(const FString& log)
 {
-	UE_LOG(LogCs, Warning, TEXT("%s"), *log);
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *log);
 }
 
 #pragma endregion // Internal

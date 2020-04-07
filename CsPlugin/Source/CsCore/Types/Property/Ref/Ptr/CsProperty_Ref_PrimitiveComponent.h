@@ -5,7 +5,7 @@
 
 class UPrimitiveComponent;
 
-struct CSCORE_API FCsProperty_Ref_PrimitiveComponent : public TCsProperty_Ref_Ptr<UPrimitiveComponent>
+struct FCsProperty_Ref_PrimitiveComponent : public TCsProperty_Ref_Ptr<UPrimitiveComponent>
 {
 private:
 	typedef TCsProperty_Ref_Ptr<UPrimitiveComponent> Super;

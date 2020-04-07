@@ -71,8 +71,8 @@ bool UCsCheatManager::Stream_GetString(const TCHAR*& Str, const FString &StringN
 
 	if (OutString == TEXT(""))
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: No %s set."), *Cheat, *StringName);
-		UE_LOG(LogCs, Warning, TEXT("%s: The correct format is %s %s"), *Cheat, *Cheat, *Format);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s: No %s set."), *Cheat, *StringName);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s: The correct format is %s %s"), *Cheat, *Cheat, *Format);
 		return false;
 	}
 	return true;
@@ -84,8 +84,8 @@ bool UCsCheatManager::Stream_GetName(const TCHAR*& Str, const FString &StringNam
 
 	if (OutName == NAME_None)
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: No %s set."), *Cheat, *StringName);
-		UE_LOG(LogCs, Warning, TEXT("%s: The correct format is %s %s"), *Cheat, *Cheat, *Format);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s: No %s set."), *Cheat, *StringName);
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s: The correct format is %s %s"), *Cheat, *Cheat, *Format);
 		return false;
 	}
 	return true;
@@ -125,11 +125,11 @@ void UCsCheatManager::LogControllerAddYawInput(const int32 &Value)
 void UCsCheatManager::RunEditorGameJavascriptFile()
 {
 #if WITH_EDITOR
-	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
+	ACsGameState_DEPRECATED* GameState = GetWorld()->GetGameState<ACsGameState_DEPRECATED>();
 
 	if (!GameState)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsCheatManager::RunEditorGameJavascriptFile: GameState is NOT Valid"));
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsCheatManager::RunEditorGameJavascriptFile: GameState is NOT Valid"));
 		return;
 	}
 	GameState->JavascriptEntryPoint->Run();

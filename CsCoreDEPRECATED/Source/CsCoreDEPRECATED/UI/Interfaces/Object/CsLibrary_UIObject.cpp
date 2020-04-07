@@ -1,7 +1,7 @@
 // Copyright 2019, RCT Studios and The Rogue Initiative. All Rights Reserved.
 
 #include "UI/Interfaces/Object/CsLibrary_UIObject.h"
-#include "CsCore.h"
+#include "CsCoreDEPRECATED.h"
 
 #include "UI/Interfaces/Object/CsUIObject.h"
 

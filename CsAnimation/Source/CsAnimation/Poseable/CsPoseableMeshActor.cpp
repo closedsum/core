@@ -4,6 +4,7 @@
 
 // Library
 #include "Library/CsLibrary_Common.h"
+#include "Library/CsLibrary_Common_DEPRECATED.h"
 #include "Library/CsLibrary_Asset.h"
 #include "Library/CsAnimLibrary_Asset.h"
 
@@ -361,7 +362,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 
 		if (!AnimLevelSequence.Master)
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(TEXT("No Level Sequence created. LevelSequence.Master is NULL."), TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(TEXT("No Level Sequence created. LevelSequence.Master is NULL."), TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
 			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): No Level Sequence created. LevelSequence.Master is NULL."), *GetName());
 			return;
@@ -371,7 +372,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 
 		if (!AssetEditor)
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(TEXT("Failed to Open Level Sequence Editor."), TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(TEXT("Failed to Open Level Sequence Editor."), TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
 			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): Failed to Open Level Sequence Editor."), *GetName());
 			return;
@@ -384,7 +385,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 			const FString AssetName = AnimLevelSequence.Master->GetName();
 			const FString Message   = TEXT("Failed to Open Level Sequence: ") + AssetName + TEXT(".");
 
-			UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
 			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
 			return;
@@ -432,7 +433,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 			{
 				FString Message = TEXT("Multiple Level Sequences found with the Name: ") + AssetName;
 
-				UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
 				UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
 
@@ -441,7 +442,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 					const FString FullPathName = PackagePaths[I] + TEXT("/") + AssetName;
 					Message						= TEXT("Level Sequence already exists at ") + FullPathName;
 
-					UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+					UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
 					UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
 				}
@@ -712,7 +713,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_TwoBoneIK(struct FPropert
 	// SkeletalMesh is NULL
 	if (!PoseableMeshComponent->SkeletalMesh)
 	{
-		UCsLibrary_Common::DisplayNotificationInfo(TEXT("SkeletalMesh is NULL."), TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
+		UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(TEXT("SkeletalMesh is NULL."), TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
 
 		UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_TwoBoneIK(%s): SkeletalMesh is NULL. Can NOT update Controls."), *GetName());
 		return;
@@ -903,7 +904,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 	{
 		const FString Message = TEXT("SkeletalMesh is NULL.");
 
-		UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
+		UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
 
 		UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
 		return;
@@ -913,7 +914,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 	{
 		const FString Message = TEXT("No Name set for AnimLevelSequence.Shots[") + FString::FromInt(Index) + TEXT("].Name.");
 
-		UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
+		UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
 
 		UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
 		return;
@@ -1106,7 +1107,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 		{
 			FString Message = TEXT("Multiple Level Sequences with the AnimLevelSequence.Shots[") + FString::FromInt(Index) + TEXT("].Name: ") + AssetName + TEXT(".");
 
-			UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
 
 			UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
 
@@ -1115,7 +1116,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 				const FString FullPathName = PackagePaths[I] + TEXT("/") + AssetName;
 				Message = TEXT("Level Sequence already exists at ") + FullPathName;
 
-				UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 2.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 2.0f);
 
 				UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
 			}
@@ -1278,7 +1279,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Expor
 			{
 				FString Message = TEXT("Multiple Anim Sequences found with the Name: ") + AnimName;
 
-				UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
 
 				UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Export(%s): %s"), *GetName(), *Message);
 
@@ -1287,7 +1288,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Expor
 					const FString FullPathName = PackagePaths[I] + TEXT("/") + AnimName;
 					Message = TEXT("Anim Sequence already exists at ") + FullPathName;
 
-					UCsLibrary_Common::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 2.0f);
+					UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 2.0f);
 
 					UE_LOG(LogCsAnimation, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Export(%s): %s"), *GetName(), *Message);
 				}

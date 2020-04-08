@@ -16,6 +16,7 @@
 #include "MotionControllerComponent.h"
 //#include "MotionController/CsMotionController.h"
 // Components
+#include "Components/PoseableMeshComponent.h"
 //#include "Components/CsStaticMeshComponent.h"
 //#include "Components/CsSkeletalMeshComponent.h"
 //#include "Components/CsPoseableMeshComponent.h"

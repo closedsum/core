@@ -13,17 +13,11 @@ public class CsCore : ModuleRules
                     "Core",
                     "CoreUObject",
                     "Engine",
-                    "OnlineSubsystem",
-                    "OnlineSubsystemUtils",
                     "AssetRegistry",
-                    "AIModule",
-                    "GameplayTasks",
                     "Json",
                     "JsonUtilities",
-                    "UMG",
                     "HeadMountedDisplay",
                     "V8",
-                    "NavigationSystem",
                 }
             );
 
@@ -32,7 +26,6 @@ public class CsCore : ModuleRules
                 "InputCore",
                 "Slate",
                 "SlateCore",
-                "Json",
             }
         );
 
@@ -41,30 +34,14 @@ public class CsCore : ModuleRules
             PublicDependencyModuleNames.AddRange(
                 new string[] {
                     "UnrealEd",
-                    "AssetTools",
-                    "ContentBrowser",
-                    "SourceControl",
-                    "Slate",
                     "EditorStyle",
-                    //"AnimationCore",
-                    "NavigationSystem",
                 }
             );
 
             PrivateDependencyModuleNames.AddRange(
                 new string[] {
-                    "BlueprintGraph",
                 }
             );
         }
-        else
-        {
-            PublicDependencyModuleNames.AddRange(
-                new string[] {
-                }
-            );
-        }
-
-        
     }
 }

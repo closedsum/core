@@ -13,15 +13,7 @@ public class CsEditor : ModuleRules
                     "Core",
                     "CoreUObject",
                     "Engine",
-                    "OnlineSubsystem",
-                    "OnlineSubsystemUtils",
                     "AssetRegistry",
-                    "AIModule",
-                    "GameplayTasks",
-                    "Json",
-                    "JsonUtilities",
-                    "UMG",
-                    "V8",
                     "CsCore",
                 }
             );
@@ -31,7 +23,6 @@ public class CsEditor : ModuleRules
                 "InputCore",
                 "Slate",
                 "SlateCore",
-                "Json",
             }
         );
 
@@ -47,8 +38,6 @@ public class CsEditor : ModuleRules
                     "PropertyEditor",
                     "GraphEditor",
                     "EditorStyle",
-                    "Kismet",
-                    "KismetCompiler",
                 }
             );
         }

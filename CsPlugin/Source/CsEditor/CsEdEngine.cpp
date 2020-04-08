@@ -46,15 +46,15 @@
 //#include "DetailCustomizations/EnumStruct/Character/ECsCharacterAnimBlueprintCustomization.h"
 //#include "DetailCustomizations/EnumStruct/Character/ECsCharacterBlendSpaceCustomization.h"
 		// Weapon
-#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponStateCustomization.h"
-#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponSlotCustomization.h"
-#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponFireModeCustomization.h"
-#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponGripCustomization.h"
-#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponAnimCustomization.h"
-#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponBlendSpaceCustomization.h"
-#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponAnimBlueprintCustomization.h"
-#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponSoundCustomization.h"
-#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponOwnerCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponStateCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponSlotCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponFireModeCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponGripCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponAnimCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponBlendSpaceCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponAnimBlueprintCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponSoundCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponOwnerCustomization.h"
 		// Process
 #include "DetailCustomizations/EnumStruct/ECsProcessCustomization.h"
 		// Blockchain
@@ -63,16 +63,16 @@
 //#include "DetailCustomizations/EnumStruct/Blockchain/ECsBlockchainContractFunctionCustomization.h"
 //#include "DetailCustomizations/EnumStruct/Blockchain/ECsEthereumJavascriptCustomization.h"
 		// Item
-#include "DetailCustomizations/EnumStruct/Item/ECsItemTypeCustomization.h"
-#include "DetailCustomizations/EnumStruct/Item/ECsItemOwnerCustomization.h"
-#include "DetailCustomizations/EnumStruct/Item/ECsItemInteractionCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Item/ECsItemTypeCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Item/ECsItemOwnerCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Item/ECsItemInteractionCustomization.h"
 		// Crafting
-#include "DetailCustomizations/EnumStruct/Crafting/ECsRecipeTypeCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Crafting/ECsRecipeTypeCustomization.h"
 		// Damage
 #include "DetailCustomizations/EnumStruct/Damage/ECsDamageTypeCustomization.h"
 #include "DetailCustomizations/EnumStruct/Damage/ECsHitTypeCustomization.h"
 		// Interactive
-#include "DetailCustomizations/EnumStruct/Interactive/ECsInteractiveTypeCustomization.h"
+//#include "DetailCustomizations/EnumStruct/Interactive/ECsInteractiveTypeCustomization.h"
 		// Sound
 #include "DetailCustomizations/EnumStruct/ECsSoundTypeCustomization.h"
 		// AI
@@ -84,7 +84,7 @@
 		// Projectile
 #include "DetailCustomizations/EnumStruct/Projectile/ECsProjectileCustomization.h"
 	// ShortCode
-#include "DetailCustomizations/ShortCode/CsDataShortCodeCustomization.h"
+//#include "DetailCustomizations/ShortCode/CsDataShortCodeCustomization.h"
 
 #include "Classes/Engine/UserDefinedEnum.h"
 
@@ -133,15 +133,15 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterAnimBlueprint", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterAnimBlueprintCustomization::MakeInstance));
 			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterBlendSpace", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterBlendSpaceCustomization::MakeInstance));
 			// Weapon
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponState", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponStateCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponSlot", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponSlotCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponFireMode", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponFireModeCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponGrip", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponGripCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponAnim", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponAnimCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponBlendSpace", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponBlendSpaceCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponAnimBlueprint", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponAnimBlueprintCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponSound", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponSoundCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponOwner", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponOwnerCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponState", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponStateCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponSlot", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponSlotCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponFireMode", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponFireModeCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponGrip", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponGripCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponAnim", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponAnimCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponBlendSpace", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponBlendSpaceCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponAnimBlueprint", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponAnimBlueprintCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponSound", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponSoundCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponOwner", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponOwnerCustomization::MakeInstance));
 			// Process
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsProcess", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProcessCustomization::MakeInstance));
 			// Blockchain
@@ -150,16 +150,16 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainContractFunction", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainContractFunctionCustomization::MakeInstance));
 			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsEthereumJavascript", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsEthereumJavascriptCustomization::MakeInstance));
 			// Item
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsItemType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsItemTypeCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsItemOwner", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsItemOwnerCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsItemInteraction", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsItemInteractionCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsItemType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsItemTypeCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsItemOwner", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsItemOwnerCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsItemInteraction", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsItemInteractionCustomization::MakeInstance));
 			// Crafting
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsRecipeType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsRecipeTypeCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsRecipeType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsRecipeTypeCustomization::MakeInstance));
 			// Damage
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsDamageType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsDamageTypeCustomization::MakeInstance));
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsHitType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsHitTypeCustomization::MakeInstance));
 			// Interactive
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsInteractiveType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsInteractiveTypeCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("ECsInteractiveType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsInteractiveTypeCustomization::MakeInstance));
 			// Sound
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsSoundType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSoundTypeCustomization::MakeInstance));
 			// AI
@@ -173,7 +173,7 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 		}
 		// ShortCode
 		{
-			PropertyModule.RegisterCustomPropertyTypeLayout("CsData_ShortCode", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FCsDataShortCodeCustomization::MakeInstance));
+			//PropertyModule.RegisterCustomPropertyTypeLayout("CsData_ShortCode", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FCsDataShortCodeCustomization::MakeInstance));
 		}
 	}
 	

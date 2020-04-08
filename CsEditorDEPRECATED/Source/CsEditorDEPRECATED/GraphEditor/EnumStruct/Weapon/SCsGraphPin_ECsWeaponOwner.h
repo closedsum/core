@@ -2,10 +2,10 @@
 #pragma once
 #include "GraphEditor/EnumStruct/SCsGraphPin_EnumStruct.h"
 
-class CSEDITOR_API SCsGraphPin_ECsDamageType : public SCsGraphPin_EnumStruct
+class CSEDITORDEPRECATED_API SCsGraphPin_ECsWeaponOwner : public SCsGraphPin_EnumStruct
 {
 public:
-	SLATE_BEGIN_ARGS(SCsGraphPin_ECsDamageType) {}
+	SLATE_BEGIN_ARGS(SCsGraphPin_ECsWeaponOwner) {}
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj);

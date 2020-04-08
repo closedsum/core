@@ -42,6 +42,8 @@ public class CsCoreDEPRECATED : ModuleRules
                 new string[] {
                     "UnrealEd",
                     "SourceControl",
+                    "Slate",
+                    "EditorStyle",
                 }
             );
 
@@ -51,13 +53,6 @@ public class CsCoreDEPRECATED : ModuleRules
                 }
             );
             */
-        }
-        else
-        {
-            PublicDependencyModuleNames.AddRange(
-                new string[] {
-                }
-            );
         }
     }
 }

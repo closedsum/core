@@ -2,7 +2,7 @@
 #pragma once
 #include "GraphEditor/EnumStruct/SCsGraphPin_EnumStruct.h"
 
-class SCsGraphPin_ECsHitType : public SCsGraphPin_EnumStruct
+class CSEDITOR_API SCsGraphPin_ECsHitType : public SCsGraphPin_EnumStruct
 {
 public:
 	SLATE_BEGIN_ARGS(SCsGraphPin_ECsHitType) {}

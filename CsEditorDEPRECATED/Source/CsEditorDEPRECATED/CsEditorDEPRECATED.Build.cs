@@ -19,7 +19,6 @@ public class CsEditorDEPRECATED : ModuleRules
                 }
             );
 
-        /*
         PrivateDependencyModuleNames.AddRange(
             new string[] {
                 "InputCore",
@@ -28,7 +27,6 @@ public class CsEditorDEPRECATED : ModuleRules
                 "Json",
             }
         );
-        */
 
         if (Target.Type == TargetType.Editor)
         {
@@ -54,13 +52,6 @@ public class CsEditorDEPRECATED : ModuleRules
                 }
             );
             */
-        }
-        else
-        {
-            PublicDependencyModuleNames.AddRange(
-                new string[] {
-                }
-            );
         }
     }
 }

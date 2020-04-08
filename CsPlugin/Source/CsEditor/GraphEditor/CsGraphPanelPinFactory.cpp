@@ -5,14 +5,14 @@
 // Types
 #include "Types/CsTypes.h"
 #include "Managers/Input/CsTypes_Input.h"
-#include "Types/CsTypes_Character.h"
-#include "Types/CsTypes_Weapon.h"
-#include "Types/CsTypes_Item.h"
-#include "Types/CsTypes_Recipe.h"
+//#include "Types/CsTypes_Character.h"
+//#include "Types/CsTypes_Weapon.h"
+//#include "Types/CsTypes_Item.h"
+//#include "Types/CsTypes_Recipe.h"
 #include "Types/CsTypes_Damage.h"
 #include "Types/CsTypes_Sound.h"
-#include "Types/CsTypes_Interactive.h"
-#include "AI/CsTypes_AI.h"
+//#include "Types/CsTypes_Interactive.h"
+//#include "AI/CsTypes_AI.h"
 #include "Managers/Sense/CsTypes_Sense.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
 
@@ -35,31 +35,31 @@
 	// Process
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsProcess.h"
 	// Weapon
-#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponAnim.h"
-#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponAnimBlueprint.h"
-#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponBlendSpace.h"
-#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponFireMode.h"
-#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponGrip.h"
-#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponOwner.h"
-#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponSlot.h"
-#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponSound.h"
-#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponState.h"
+//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponAnim.h"
+//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponAnimBlueprint.h"
+//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponBlendSpace.h"
+//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponFireMode.h"
+//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponGrip.h"
+//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponOwner.h"
+//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponSlot.h"
+//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponSound.h"
+//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponState.h"
 	// Blockchain
 //#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainCommand.h"
 //#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainContract.h"
 //#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainContractFunction.h"
 //#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsEthereumJavascript.h"
 	// Item
-#include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemType.h"
-#include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemOwner.h"
-#include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemInteraction.h"
+//#include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemType.h"
+//#include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemOwner.h"
+//#include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemInteraction.h"
 	// Crafting
-#include "GraphEditor/EnumStruct/Crafting/SCsGraphPin_ECsRecipeType.h"
+//#include "GraphEditor/EnumStruct/Crafting/SCsGraphPin_ECsRecipeType.h"
 	// Damage
 #include "GraphEditor/EnumStruct/Damage/SCsGraphPin_ECsDamageType.h"
 #include "GraphEditor/EnumStruct/Damage/SCsGraphPin_ECsHitType.h"
 	// Interactive
-#include "GraphEditor/EnumStruct/Interactive/SCsGraphPin_ECsInteractiveType.h"
+//#include "GraphEditor/EnumStruct/Interactive/SCsGraphPin_ECsInteractiveType.h"
 	// Sound
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsSoundType.h"
 	// AI
@@ -117,23 +117,23 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	// Weapon
 	{
 		// FECsWeaponAnim
-		if (DoesPinUseScriptStruct<FECsWeaponAnim>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponAnim, InPin); }
+		//if (DoesPinUseScriptStruct<FECsWeaponAnim>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponAnim, InPin); }
 		// FECsWeaponAnimBlueprint
-		if (DoesPinUseScriptStruct<FECsWeaponAnimBlueprint>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponAnimBlueprint, InPin); }
+		//if (DoesPinUseScriptStruct<FECsWeaponAnimBlueprint>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponAnimBlueprint, InPin); }
 		// FECsWeaponBlendSpace
-		if (DoesPinUseScriptStruct<FECsWeaponBlendSpace>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponBlendSpace, InPin); }
+		//if (DoesPinUseScriptStruct<FECsWeaponBlendSpace>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponBlendSpace, InPin); }
 		// FECsWeaponFireMode
-		if (DoesPinUseScriptStruct<FECsWeaponFireMode>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponFireMode, InPin); }
+		//if (DoesPinUseScriptStruct<FECsWeaponFireMode>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponFireMode, InPin); }
 		// FECsWeaponGrip
-		if (DoesPinUseScriptStruct<FECsWeaponGrip>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponGrip, InPin); }
+		//if (DoesPinUseScriptStruct<FECsWeaponGrip>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponGrip, InPin); }
 		// FECsWeaponOwner
-		if (DoesPinUseScriptStruct<FECsWeaponOwner>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponOwner, InPin); }
+		//if (DoesPinUseScriptStruct<FECsWeaponOwner>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponOwner, InPin); }
 		// FECsWeaponSlot
-		if (DoesPinUseScriptStruct<FECsWeaponSlot>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponSlot, InPin); }
+		//if (DoesPinUseScriptStruct<FECsWeaponSlot>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponSlot, InPin); }
 		// FECsWeaponSound
-		if (DoesPinUseScriptStruct<FECsWeaponSound>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponSound, InPin); }
+		//if (DoesPinUseScriptStruct<FECsWeaponSound>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponSound, InPin); }
 		// FECsWeaponState
-		if (DoesPinUseScriptStruct<FECsWeaponState>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponState, InPin); }
+		//if (DoesPinUseScriptStruct<FECsWeaponState>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponState, InPin); }
 	}
 	// FECsProcess
 	if (DoesPinUseScriptStruct<FECsProcess>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsProcess, InPin); }
@@ -153,16 +153,16 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	// Item
 	{
 		// FECsItemType
-		if (DoesPinUseScriptStruct<FECsItemType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsItemType, InPin); }
+		//if (DoesPinUseScriptStruct<FECsItemType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsItemType, InPin); }
 		// FECsItemOwner
-		if (DoesPinUseScriptStruct<FECsItemOwner>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsItemOwner, InPin); }
+		//if (DoesPinUseScriptStruct<FECsItemOwner>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsItemOwner, InPin); }
 		// FECsItemInteraction
-		if (DoesPinUseScriptStruct<FECsItemInteraction>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsItemInteraction, InPin); }
+		//if (DoesPinUseScriptStruct<FECsItemInteraction>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsItemInteraction, InPin); }
 	}
 	// Crafting
 	{
 		// FECsRecipeType
-		if (DoesPinUseScriptStruct<FECsRecipeType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsRecipeType, InPin); }
+		//if (DoesPinUseScriptStruct<FECsRecipeType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsRecipeType, InPin); }
 	}
 	// Damage
 	{
@@ -174,7 +174,7 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	// Interactive
 	{
 		// FECsInteractiveType
-		if (DoesPinUseScriptStruct<FECsInteractiveType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsInteractiveType, InPin); }
+		//if (DoesPinUseScriptStruct<FECsInteractiveType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsInteractiveType, InPin); }
 	}
 	// FECsSoundType
 	if (DoesPinUseScriptStruct<FECsSoundType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsSoundType, InPin); }

@@ -6,8 +6,6 @@
 #include "DetailWidgetRow.h"
 #include "IDetailGroup.h"
 #include "DetailLayoutBuilder.h"
-// Type
-#include "Types/CsTypes_Primitive.h"
 // AssetRegistry
 #include "AssetRegistryModule.h"
 #include "Developer/AssetTools/Public/AssetToolsModule.h"

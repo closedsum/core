@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Engine.h"
-#include "Types/CsTypes_Primitive.h"
+#include "Types/Enum/CsTypes_Enum.h"
 #include "CsCVars.generated.h"
 
 #define CS_CVAR_SHOW_LOG 1

@@ -3,7 +3,7 @@
 
 #include "GameFramework/Actor.h"
 // Types
-#include "Types/CsTypes_Primitive.h"
+#include "Types/CsTypes_Macro.h"
 #include "Types/Property/Value/CsProperty_Vector.h"
 #include "Types/Property/Value/CsProperty_Rotator.h"
 #include "CsAnim_Bone.generated.h"

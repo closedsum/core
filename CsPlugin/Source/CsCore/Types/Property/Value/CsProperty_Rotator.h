@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/Property/Value/CsProperty_Value.h"
+#include "Types/CsTypes_Macro.h"
 
 #pragma once
 

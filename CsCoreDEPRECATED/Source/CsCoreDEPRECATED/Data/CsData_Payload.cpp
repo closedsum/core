@@ -3,6 +3,7 @@
 
 // Library
 #include "Library/CsLibrary_Common.h"
+#include "Library/CsLibrary_Common_DEPRECATED.h"
 
 #if WITH_EDITOR
 #include "Data/CsDataMapping.h"
@@ -84,8 +85,8 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCo
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
 		}
 		return false;
 	}
@@ -97,8 +98,8 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCo
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
 		}
 
 		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsData_Payload::PerformAddEntry: Valid LoadAssetsTypes are:"));
@@ -141,8 +142,8 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCo
 
 			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
-				UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
 			}
 			return false;
 		}
@@ -179,7 +180,7 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCo
 				const FString Output = TEXT("UCsData_Payload::PostEditChangeProperty: Missing LoadFlags: ") + LoadFlagsAsString + TEXT(" in DataMapping: [") + DataTypeAsString + TEXT(",") + InShortCode.ToString() + TEXT(",") + FString::FromInt(OutIndices[CS_FIRST]) + TEXT("]. Manually adding LoadFlag: ") + LoadFlagsAsString + TEXT(".");
 					
 				if (UCsLibrary_Common::IsDefaultObject(this))
-					UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("PerformAddEntryLoadFlags"), 1.5f);
+					UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("PerformAddEntryLoadFlags"), 1.5f);
 
 				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 			}
@@ -225,8 +226,8 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCo
 
 								if (UCsLibrary_Common::IsDefaultObject(this))
 								{
-									UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
-									UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+									UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+									UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
 								}
 								MarkPackageDirty();
 							}
@@ -259,8 +260,8 @@ bool UCsData_Payload::PerformAddEntry(const FName& InShortCode, const FECsDataCo
 
 			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
-				UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
 			}
 			return false;
 		}
@@ -457,8 +458,8 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsLibrary_Common::DisplayNotificationInfo(FindEntry.Output, TEXT("Payload"), TEXT("FindEntryOutput"), 5.0f);
-				UCsLibrary_Common::DisplayNotificationInfo(FindEntry.Message, TEXT("Payload"), TEXT("FindEntryMessage"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(FindEntry.Output, TEXT("Payload"), TEXT("FindEntryOutput"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(FindEntry.Message, TEXT("Payload"), TEXT("FindEntryMessage"), 5.0f);
 			}
 			Super::PostEditChangeProperty(e);
 			return;
@@ -490,8 +491,8 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(FindEntry.Output, TEXT("Payload"), TEXT("FindEntryOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(FindEntry.Message, TEXT("Payload"), TEXT("FindEntryMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(FindEntry.Output, TEXT("Payload"), TEXT("FindEntryOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(FindEntry.Message, TEXT("Payload"), TEXT("FindEntryMessage"), 5.0f);
 		}
 		FindEntry.Find = false;
 	}
@@ -534,8 +535,8 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Output, TEXT("Payload"), TEXT("RemoveEntryOutput"), 5.0f);
-				UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(RemoveEntry.Output, TEXT("Payload"), TEXT("RemoveEntryOutput"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
 			}
 			Super::PostEditChangeProperty(e);
 			return;
@@ -551,14 +552,14 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Output, TEXT("Payload"), TEXT("RemoveEntryOutput"), 5.0f);
-				UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(RemoveEntry.Output, TEXT("Payload"), TEXT("RemoveEntryOutput"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
 			}
 
 			FString Output = TEXT("UCsData_Payload::PostEditChangeProperty: Valid LoadAssetsTypes are:");
 
 			if (UCsLibrary_Common::IsDefaultObject(this))
-				UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("RemoveEntryAdditionalOutput"), 1.5f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("RemoveEntryAdditionalOutput"), 1.5f);
 
 			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 
@@ -573,7 +574,7 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 				{
 					const FString AdditionalOutput = TEXT("RemoveEntryAdditionalOutput") + FString::FromInt(I);
 
-					UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("Payload"), AdditionalOutput, 1.5f);
+					UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Output, TEXT("Payload"), AdditionalOutput, 1.5f);
 				}
 				UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 			}
@@ -652,8 +653,8 @@ void UCsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Output, TEXT("Payload"), TEXT("RemoveEntryOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(RemoveEntry.Output, TEXT("Payload"), TEXT("RemoveEntryOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
 		}
 		RemoveEntry.Remove = false;
 	}

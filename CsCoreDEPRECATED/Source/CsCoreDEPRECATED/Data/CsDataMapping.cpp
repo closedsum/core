@@ -4,6 +4,7 @@
 
 // Library
 #include "Library/CsLibrary_Common.h"
+#include "Library/CsLibrary_Common_DEPRECATED.h"
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Asset.h"
 #include "Library/Load/CsLibrary_Load_DEPRECATED.h"
@@ -1124,8 +1125,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
 		}
 		return false;
 	}
@@ -1138,8 +1139,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
 		}
 		return false;
 	}
@@ -1194,7 +1195,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 									const FString Output = TEXT("UCsDataMapping::PerformAddEntry: Warning. No Data set for [") + DataTypeAsString + TEXT(", ") + ShortCode.ToString() + TEXT(", ") + FString::FromInt(I) + TEXT("].");
 
 									if (UCsLibrary_Common::IsDefaultObject(this))
-										UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+										UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
 
 									UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 								}
@@ -1217,7 +1218,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 												const FString Output = TEXT("UCsDataMapping::PerformAddEntry: [") + DataTypeAsString + TEXT(", ") + ShortCode.ToString() + TEXT(", ") + FString::FromInt(I) + TEXT("] Adding LoadFlags ") + PreviousDataLoadFlagsAsString + TEXT(" + ") + LoadFlagsAsString + TEXT(" = ") + DataLoadFlagsAsString + TEXT(".");
 
 												if (UCsLibrary_Common::IsDefaultObject(this))
-													UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+													UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
 
 												UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 											}
@@ -1241,8 +1242,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 
 							if (UCsLibrary_Common::IsDefaultObject(this))
 							{
-								UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
-								UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+								UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+								UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
 							}
 							return false;
 						}
@@ -1270,8 +1271,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 
 								if (UCsLibrary_Common::IsDefaultObject(this))
 								{
-									UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
-									UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+									UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+									UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
 								}
 								return false;
 							}
@@ -1300,8 +1301,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 
 										if (UCsLibrary_Common::IsDefaultObject(this))
 										{
-											UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
-											UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+											UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+											UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
 										}
 										MarkPackageDirty();
 										return true;
@@ -1317,8 +1318,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 
 										if (UCsLibrary_Common::IsDefaultObject(this))
 										{
-											UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
-											UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+											UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+											UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
 										}
 										return false;
 									}
@@ -1333,8 +1334,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 
 									if (UCsLibrary_Common::IsDefaultObject(this))
 									{
-										UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
-										UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+										UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+										UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
 									}
 									return false;
 								}
@@ -1347,8 +1348,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 
 								if (UCsLibrary_Common::IsDefaultObject(this))
 								{
-									UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
-									UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+									UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+									UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
 								}
 								return false;
 							}
@@ -1372,8 +1373,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
 		}
 		return false;
 	}
@@ -1395,7 +1396,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 		const FString Output = TEXT("UCsDataMapping::PerformAddEntry: FAILED. Multiple Assets with the same ShortCode name.");
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
-			UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
 
 		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 
@@ -1404,7 +1405,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 			const FString AdditionalOutput = TEXT("UCsDataMapping::PerformAddEntry: ") + Bps[I]->GetPathName();
 
 			if (UCsLibrary_Common::IsDefaultObject(this))
-				UCsLibrary_Common::DisplayNotificationInfo(AdditionalOutput, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(AdditionalOutput, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
 
 			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *AdditionalOutput);
 		}
@@ -1414,8 +1415,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
 		}
 		return false;
 	}
@@ -1446,8 +1447,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 
 				if (UCsLibrary_Common::IsDefaultObject(this))
 				{
-					UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
-					UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+					UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+					UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
 				}
 				return false;
 			}
@@ -1462,8 +1463,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 
 			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
-				UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
 			}
 			return false;
 		}
@@ -1476,8 +1477,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
 		}
 		return false;
 	}
@@ -1535,7 +1536,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 									const FString Output = TEXT("UCsDataMapping::PerformAddEntry: Warning. No Data was set for [") + DataTypeAsString + TEXT(", ") + ShortCode.ToString() + TEXT(", ") + FString::FromInt(I) + TEXT("]. Manually setting it to ") + DataDOb->GetPathName() + TEXT(".");
 
 									if (UCsLibrary_Common::IsDefaultObject(this))
-										UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+										UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
 
 									UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 								}
@@ -1558,7 +1559,7 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 												const FString Output = TEXT("UCsDataMapping::PerformAddEntry: [") + DataTypeAsString + TEXT(", ") + ShortCode.ToString() + TEXT(", ") + FString::FromInt(I) + TEXT("] Adding LoadFlags ") + PreviousDataLoadFlagsAsString + TEXT(" + ") + LoadFlagsAsString + TEXT(" = ") + DataLoadFlagsAsString + TEXT(".");
 
 												if (UCsLibrary_Common::IsDefaultObject(this))
-													UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+													UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
 
 												UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 											}
@@ -1581,8 +1582,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 
 							if (UCsLibrary_Common::IsDefaultObject(this))
 							{
-								UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
-								UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+								UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+								UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
 							}
 							return false;
 						}
@@ -1600,8 +1601,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 
 							if (UCsLibrary_Common::IsDefaultObject(this))
 							{
-								UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
-								UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+								UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+								UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
 							}
 							MarkPackageDirty();
 							return true;
@@ -1645,8 +1646,8 @@ bool UCsDataMapping::PerformValidate(FString& OutMessage, FString& OutOutput)
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformValidateOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformValidateMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformValidateOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformValidateMessage"), 5.0f);
 		}
 
 		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::PerformValidate: No Payload set."));
@@ -1662,8 +1663,8 @@ bool UCsDataMapping::PerformValidate(FString& OutMessage, FString& OutOutput)
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformValidateOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformValidateMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformValidateOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformValidateMessage"), 5.0f);
 		}
 
 		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("UCsDataMapping::PerformValidate: Payload is NOT Valid."));
@@ -1714,7 +1715,7 @@ bool UCsDataMapping::PerformValidate(FString& OutMessage, FString& OutOutput)
 								const FString Output = TEXT("UCsDataMapping::PerformValidate: Data with ShortCode: ") + Entry.ShortCode.ToString() + TEXT("is NOT found.");
 
 								if (UCsLibrary_Common::IsDefaultObject(this))
-									UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
+									UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
 
 								UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 								Pass &= false;
@@ -1726,7 +1727,7 @@ bool UCsDataMapping::PerformValidate(FString& OutMessage, FString& OutOutput)
 								const FString Output = TEXT("UCsDataMapping::PerformValidate: Multiple Data with ShortCode: ") + Entry.ShortCode.ToString();
 
 								if (UCsLibrary_Common::IsDefaultObject(this))
-									UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
+									UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
 
 								UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 
@@ -1735,7 +1736,7 @@ bool UCsDataMapping::PerformValidate(FString& OutMessage, FString& OutOutput)
 									const FString AdditionalOutput = TEXT("UCsDataMapping::PerformValidate: ShortCode: ") + Entry.ShortCode.ToString() + TEXT(" at ") + PackagePaths[J].ToString();
 
 									if (UCsLibrary_Common::IsDefaultObject(this))
-										UCsLibrary_Common::DisplayNotificationInfo(AdditionalOutput, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
+										UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(AdditionalOutput, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
 
 									UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *AdditionalOutput);
 								}
@@ -1751,7 +1752,7 @@ bool UCsDataMapping::PerformValidate(FString& OutMessage, FString& OutOutput)
 								const FString Output = TEXT("UCsDataMapping::PerformValidate: Data with ShortCode: ") + Entry.ShortCode.ToString() + TEXT(" is NOT of type ICsData.");
 
 								if (UCsLibrary_Common::IsDefaultObject(this))
-									UCsLibrary_Common::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
+									UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
 
 								UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("%s"), *Output);
 								Pass &= false;
@@ -1803,8 +1804,8 @@ void UCsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsLibrary_Common::DisplayNotificationInfo(FindEntry.Output, TEXT("DataMapping"), TEXT("FindEntryOutput"), 5.0f);
-				UCsLibrary_Common::DisplayNotificationInfo(FindEntry.Message, TEXT("DataMapping"), TEXT("FindEntryMessage"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(FindEntry.Output, TEXT("DataMapping"), TEXT("FindEntryOutput"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(FindEntry.Message, TEXT("DataMapping"), TEXT("FindEntryMessage"), 5.0f);
 			}
 			Super::PostEditChangeProperty(e);
 			return;
@@ -1834,8 +1835,8 @@ void UCsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(FindEntry.Output, TEXT("DataMapping"), TEXT("FindEntryOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(FindEntry.Message, TEXT("DataMapping"), TEXT("FindEntryMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(FindEntry.Output, TEXT("DataMapping"), TEXT("FindEntryOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(FindEntry.Message, TEXT("DataMapping"), TEXT("FindEntryMessage"), 5.0f);
 		}
 		FindEntry.Find= false;
 	}
@@ -1876,8 +1877,8 @@ void UCsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Output, TEXT("DataMapping"), TEXT("RemoveEntryOutput"), 5.0f);
-				UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Message, TEXT("DataMapping"), TEXT("RemoveEntryMessage"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(RemoveEntry.Output, TEXT("DataMapping"), TEXT("RemoveEntryOutput"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(RemoveEntry.Message, TEXT("DataMapping"), TEXT("RemoveEntryMessage"), 5.0f);
 			}
 			Super::PostEditChangeProperty(e);
 			return;
@@ -1941,8 +1942,8 @@ void UCsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Output, TEXT("DataMapping"), TEXT("RemoveEntryOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(RemoveEntry.Message, TEXT("DataMapping"), TEXT("RemoveEntryMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(RemoveEntry.Output, TEXT("DataMapping"), TEXT("RemoveEntryOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(RemoveEntry.Message, TEXT("DataMapping"), TEXT("RemoveEntryMessage"), 5.0f);
 		}
 		RemoveEntry.Remove = false;
 	}
@@ -1962,8 +1963,8 @@ void UCsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(Validate.Output, TEXT("DataMapping"), TEXT("ValidateOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(Validate.Message, TEXT("DataMapping"), TEXT("ValidateMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Validate.Output, TEXT("DataMapping"), TEXT("ValidateOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(Validate.Message, TEXT("DataMapping"), TEXT("ValidateMessage"), 5.0f);
 		}
 		Validate.Validate = false;
 	}

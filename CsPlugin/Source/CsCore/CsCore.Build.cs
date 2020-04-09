@@ -24,8 +24,6 @@ public class CsCore : ModuleRules
         PrivateDependencyModuleNames.AddRange(
             new string[] {
                 "InputCore",
-                "Slate",
-                "SlateCore",
             }
         );
 
@@ -34,7 +32,6 @@ public class CsCore : ModuleRules
             PublicDependencyModuleNames.AddRange(
                 new string[] {
                     "UnrealEd",
-                    "EditorStyle",
                 }
             );
 

@@ -7,6 +7,7 @@
 #include "Library/Load/CsLibrary_Load_DEPRECATED.h"
 #include "Library/CsLibrary_Asset.h"
 #include "Library/CsLibrary_Common.h"
+#include "Library/CsLibrary_Common_DEPRECATED.h"
 
 #if WITH_EDITOR
 #include "Data/CsDataMapping.h"
@@ -428,8 +429,8 @@ void UCsData_Impl::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsLibrary_Common::DisplayNotificationInfo(AddToDataMapping.Output, TEXT("Data"), TEXT("AddToDataMappingOutput"), 5.0f);
-				UCsLibrary_Common::DisplayNotificationInfo(AddToDataMapping.Message, TEXT("DataMapping"), TEXT("AddToDataMappingMessage"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(AddToDataMapping.Output, TEXT("Data"), TEXT("AddToDataMappingOutput"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(AddToDataMapping.Message, TEXT("DataMapping"), TEXT("AddToDataMappingMessage"), 5.0f);
 			}
 
 			AddToDataMapping.AddToDataMapping = false;
@@ -444,8 +445,8 @@ void UCsData_Impl::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(AddToDataMapping.Output, TEXT("Data"), TEXT("AddToDataMappingOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(AddToDataMapping.Message, TEXT("Data"), TEXT("AddToDataMappingMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(AddToDataMapping.Output, TEXT("Data"), TEXT("AddToDataMappingOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(AddToDataMapping.Message, TEXT("Data"), TEXT("AddToDataMappingMessage"), 5.0f);
 		}
 		AddToDataMapping.AddToDataMapping = false;
 	}
@@ -468,8 +469,8 @@ void UCsData_Impl::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 			if (UCsLibrary_Common::IsDefaultObject(this))
 			{
-				UCsLibrary_Common::DisplayNotificationInfo(AddToPayload.Output, TEXT("Data"), TEXT("AddToPayloadOutput"), 5.0f);
-				UCsLibrary_Common::DisplayNotificationInfo(AddToPayload.Message, TEXT("Data"), TEXT("AddToPayloadMessage"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(AddToPayload.Output, TEXT("Data"), TEXT("AddToPayloadOutput"), 5.0f);
+				UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(AddToPayload.Message, TEXT("Data"), TEXT("AddToPayloadMessage"), 5.0f);
 			}
 
 			AddToPayload.AddToPayload = false;
@@ -483,8 +484,8 @@ void UCsData_Impl::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
-			UCsLibrary_Common::DisplayNotificationInfo(AddToPayload.Output, TEXT("Data"), TEXT("AddToPayloadOutput"), 5.0f);
-			UCsLibrary_Common::DisplayNotificationInfo(AddToPayload.Message, TEXT("Data"), TEXT("AddToPayloadMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(AddToPayload.Output, TEXT("Data"), TEXT("AddToPayloadOutput"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(AddToPayload.Message, TEXT("Data"), TEXT("AddToPayloadMessage"), 5.0f);
 		}
 		AddToPayload.AddToPayload = false;
 	}
@@ -500,7 +501,7 @@ void UCsData_Impl::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		if (UCsLibrary_Common::IsDefaultObject(this))
 		{
 			LoadFromJson();
-			UCsLibrary_Common::DisplayNotificationInfo(TEXT("COMPLETE"), TEXT("Data"), TEXT("LoadFromJsonMessage"), 5.0f);
+			UCsLibrary_Common_DEPRECATED::DisplayNotificationInfo(TEXT("COMPLETE"), TEXT("Data"), TEXT("LoadFromJsonMessage"), 5.0f);
 		}
 
 		PerformLoadFromJson.Load = false;

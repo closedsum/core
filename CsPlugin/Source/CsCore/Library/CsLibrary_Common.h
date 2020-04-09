@@ -825,16 +825,5 @@ class CSCORE_API UCsLibrary_Common : public UBlueprintFunctionLibrary
 
 #pragma endregion Level
 
-// Editor Message
-#pragma region
-
-#if WITH_EDITOR
-
-	static void DisplayNotificationInfo(const FString &InTextLiteral, const FString &InNamespace, const FString &InKey, const float &Duration);
-
-#endif // #if WITH_EDITOR
-	
-#pragma endregion Editor Message
-
 	static bool CanAsyncTask();
 };

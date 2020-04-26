@@ -3,6 +3,8 @@
 #include "CsCoreDEPRECATED.h"
 #include "CsCVars.h"
 
+// Types
+#include "Types/CsTypes_String.h"
 // Library
 #include "Library/Load/CsLibrary_Load_DEPRECATED.h"
 #include "Library/CsLibrary_Asset.h"

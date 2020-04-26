@@ -15,6 +15,7 @@
 #include "Types/Property/Ref/Ptr/CsProperty_Ref_StaticMeshComponent.h"
 #include "Types/Property/Ref/Ptr/CsProperty_Ref_SkeletalMeshComponent.h"
 #include "Types/CsTypes_String.h"
+#include "Types/CsTypes_Primitive.h"
 
 class UProperty;
 class UByteProperty;

@@ -29,21 +29,3 @@ namespace NCsMemberType
 }
 
 #pragma endregion MemberType
-
-// StringCompare
-#pragma region
-
-namespace NCsStringCompare
-{
-	namespace Ref
-	{
-		CSCORE_API const Type Equals = EMCsStringCompare::Get().Add(Type::Equals, TEXT("Equals"));
-		CSCORE_API const Type StartsWith = EMCsStringCompare::Get().Add(Type::StartsWith, TEXT("Starts With"));
-		CSCORE_API const Type EndsWith = EMCsStringCompare::Get().Add(Type::EndsWith, TEXT("Ends With"));
-		CSCORE_API const Type Contains = EMCsStringCompare::Get().Add(Type::Contains, TEXT("Contains"));
-		CSCORE_API const Type ECsStringCompare_MAX = EMCsStringCompare::Get().Add(Type::ECsStringCompare_MAX, TEXT("ECsStringCompare_MAX"), TEXT("MAX"));
-	}
-
-	CSCORE_API const uint8 MAX = (uint8)Type::ECsStringCompare_MAX;
-}
-#pragma endregion StringCompare

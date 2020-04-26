@@ -2,6 +2,8 @@
 #include "Data/CsDataMapping.h"
 #include "CsCoreDEPRECATED.h"
 
+// Types
+#include "Types/CsTypes_String.h"
 // Library
 #include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Common_DEPRECATED.h"

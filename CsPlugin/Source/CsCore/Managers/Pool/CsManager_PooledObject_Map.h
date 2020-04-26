@@ -1,4 +1,4 @@
-// Copyright 2017 Respawn Entertainment, Inc. All rights reserved.
+// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 
 #pragma once
 #include "Managers/Pool/CsManager_PooledObject_Abstract.h"

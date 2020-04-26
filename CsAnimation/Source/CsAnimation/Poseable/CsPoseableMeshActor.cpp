@@ -2,6 +2,8 @@
 #include "Poseable/CsPoseableMeshActor.h"
 #include "CsAnimation.h"
 
+// Types
+#include "Types/CsTypes_String.h"
 // Library
 #include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Common_DEPRECATED.h"

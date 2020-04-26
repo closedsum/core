@@ -857,60 +857,6 @@ struct CSCORE_API FCsOptionalRotatorInterval
 
 #pragma endregion Vector Types
 
-// String
-#pragma region
-
-enum class ECsStringCompare : uint8
-{
-	Equals					UMETA(DisplayName = "Equals"),
-	StartsWith				UMETA(DisplayName = "Starts With"),
-	EndsWith				UMETA(DisplayName = "Ends With"),
-	Contains				UMETA(DisplayName = "Contains"),
-	ECsStringCompare_MAX	UMETA(Hidden),
-};
-
-struct CSCORE_API EMCsStringCompare : public TCsEnumMap<ECsStringCompare>
-{
-	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsStringCompare, ECsStringCompare)
-};
-
-namespace NCsStringCompare
-{
-	typedef ECsStringCompare Type;
-
-	namespace Ref
-	{
-		extern CSCORE_API const Type Equals;
-		extern CSCORE_API const Type StartsWith;
-		extern CSCORE_API const Type EndsWith;
-		extern CSCORE_API const Type Contains;
-		extern CSCORE_API const Type ECsStringCompare_MAX;
-	}
-
-	extern CSCORE_API const uint8 MAX;
-
-	FORCEINLINE const FString& ToString(const Type& EType)
-	{
-		return EMCsStringCompare::Get().ToString(EType);
-	}
-
-	FORCEINLINE const Type& ToType(const FString& String)
-	{
-		return EMCsStringCompare::Get().ToType(String);
-	}
-
-	FORCEINLINE bool Compare(const FString& Source, const FString& String, const Type& EType)
-	{
-		if (EType == Type::Equals) { return Source == String; }
-		if (EType == Type::StartsWith) { return Source.StartsWith(String); }
-		if (EType == Type::EndsWith) { return Source.EndsWith(String); }
-		if (EType == Type::Contains) { return Source.Contains(String); }
-		return false;
-	}
-}
-
-#pragma endregion String
-
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsData_ShortCode
 {

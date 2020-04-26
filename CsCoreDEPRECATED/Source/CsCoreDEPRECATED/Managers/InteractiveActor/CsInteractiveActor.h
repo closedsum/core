@@ -369,9 +369,9 @@ public:
 	virtual bool CanChangeFromAnyState(const TArray<TEnumAsByte<ECsInteractiveState::Type>> &FromStates, const TEnumAsByte<ECsInteractiveState::Type> &ToState);
 
 	UFUNCTION(BlueprintCallable, Category = "State")
-	class ACsMotionController* GetDominantHand_HoldingMe();
+	class ACsMotionController_DEPRECATED* GetDominantHand_HoldingMe();
 	UFUNCTION(BlueprintCallable, Category = "State")
-	class ACsMotionController* GetLastHand_HoveringOverMe();
+	class ACsMotionController_DEPRECATED* GetLastHand_HoveringOverMe();
 
 #pragma endregion State
 

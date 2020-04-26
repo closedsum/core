@@ -4,7 +4,7 @@
 #include "Types/CsTypes.h"
 #include "CsPlayerPawn_VR.generated.h"
 
-class ACsMotionController;
+class ACsMotionController_DEPRECATED;
 class UMotionControllerComponent;
 
 UCLASS(config = Game)
@@ -30,19 +30,19 @@ public:
 #pragma region
 public:
 
-	TSubclassOf<ACsMotionController> MotionControllerClass;
+	TSubclassOf<ACsMotionController_DEPRECATED> MotionControllerClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hands")
 	UMotionControllerComponent* MotionControllerComponent_LeftHand;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hands")
-	ACsMotionController* LeftHand;
+	ACsMotionController_DEPRECATED* LeftHand;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hands")
 	UMotionControllerComponent* MotionControllerComponent_RightHand;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hands")
-	ACsMotionController* RightHand;
+	ACsMotionController_DEPRECATED* RightHand;
 
 	void ShowHand(const ECsControllerHand &Hand);
 	void ShowHands();

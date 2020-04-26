@@ -5,7 +5,7 @@
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Interactive.h"
 #include "UI/CsTypes_UI.h"
-#include "CsMotionController.generated.h"
+#include "CsMotionController_DEPRECATED.generated.h"
 
 // Delegates
 #pragma region
@@ -142,7 +142,7 @@ typedef ECsRoutineMotionController::Type TCsRoutineMotionController;
 #define CS_MOTION_CONTROLLER_INFINITE_TRACE_COUNT -1
 
 UCLASS()
-class CSCOREDEPRECATED_API ACsMotionController : public AActor
+class CSCOREDEPRECATED_API ACsMotionController_DEPRECATED : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
@@ -181,10 +181,10 @@ class CSCOREDEPRECATED_API ACsMotionController : public AActor
 	ECsControllerHand Hand;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Motion")
-	TWeakObjectPtr<class ACsMotionController> OtherHand;
+	TWeakObjectPtr<class ACsMotionController_DEPRECATED> OtherHand;
 
 	UFUNCTION(BlueprintCallable, Category = "Motion")
-	class ACsMotionController* GetOtherHand();
+	class ACsMotionController_DEPRECATED* GetOtherHand();
 
 	virtual void OnTick(const float &DeltaSeconds);
 	virtual void OnTick_HandleCVars(const float &DeltaSeconds);

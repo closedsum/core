@@ -4,12 +4,12 @@
 
 #include "MotionControllerComponent.h"
 #include "../InputCore/Classes/InputCoreTypes.h"
-#include "MotionController/CsMotionController.h"
+#include "MotionController/CsMotionController_DEPRECATED.h"
 
 ACsPlayerPawn_VR::ACsPlayerPawn_VR(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	MotionControllerClass = ACsMotionController::StaticClass();
+	MotionControllerClass = ACsMotionController_DEPRECATED::StaticClass();
 
 	MotionControllerComponent_LeftHand = ObjectInitializer.CreateDefaultSubobject<UMotionControllerComponent>(this, TEXT("MotionControllerComponent_LeftHand"));
 	MotionControllerComponent_LeftHand->MotionSource = EMCsControllerHand::Get().ToName(ECsControllerHand::Left);
@@ -26,13 +26,13 @@ void ACsPlayerPawn_VR::PostInitializeComponents()
 	SpawnInfo.ObjectFlags					|= RF_Transient;
 
 	// LeftHand
-	LeftHand = GetWorld()->SpawnActor<ACsMotionController>(MotionControllerClass, SpawnInfo);
+	LeftHand = GetWorld()->SpawnActor<ACsMotionController_DEPRECATED>(MotionControllerClass, SpawnInfo);
 	LeftHand->SetReplicates(false);
 	LeftHand->SetRole(ROLE_None);
 	GetWorld()->RemoveNetworkActor(LeftHand);
 	LeftHand->Init(MotionControllerComponent_LeftHand, ECsControllerHand::Left);
 	// RightHand
-	RightHand = GetWorld()->SpawnActor<ACsMotionController>(MotionControllerClass, SpawnInfo);
+	RightHand = GetWorld()->SpawnActor<ACsMotionController_DEPRECATED>(MotionControllerClass, SpawnInfo);
 	RightHand->SetReplicates(false);
 	RightHand->SetRole(ROLE_None);
 	GetWorld()->RemoveNetworkActor(RightHand);

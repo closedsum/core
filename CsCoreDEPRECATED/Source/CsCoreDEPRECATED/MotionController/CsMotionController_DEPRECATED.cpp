@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "MotionController/CsMotionController.h"
+#include "MotionController/CsMotionController_DEPRECATED.h"
 #include "CsCoreDEPRECATED.h"
 #include "CsCVars.h"
 
@@ -19,7 +19,7 @@
 // UI
 #include "UI/Button/CsButtonComponent.h"
 
-ACsMotionController::ACsMotionController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+ACsMotionController_DEPRECATED::ACsMotionController_DEPRECATED(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick		   = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
@@ -45,7 +45,7 @@ ACsMotionController::ACsMotionController(const FObjectInitializer& ObjectInitial
 	State = ECsInteractiveState::None;
 }
 
-void ACsMotionController::PostInitializeComponents()
+void ACsMotionController_DEPRECATED::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	
@@ -68,39 +68,39 @@ void ACsMotionController::PostInitializeComponents()
 	}
 }
 
-void ACsMotionController::PostActorCreated()
+void ACsMotionController_DEPRECATED::PostActorCreated()
 {
 	Super::PostActorCreated();
 
 	Setup_OnCalcCamera();
 }
 
-UMotionControllerComponent* ACsMotionController::GetMotionControllerComponent()
+UMotionControllerComponent* ACsMotionController_DEPRECATED::GetMotionControllerComponent()
 {
 	return MotionControllerComponent.IsValid() ? MotionControllerComponent.Get() : nullptr;
 }
 
-FVector ACsMotionController::GetLocation()
+FVector ACsMotionController_DEPRECATED::GetLocation()
 {
 	return GetMotionControllerComponent()->GetComponentLocation();
 }
 
-void ACsMotionController::FellOutOfWorld(const class UDamageType& dmgType)
+void ACsMotionController_DEPRECATED::FellOutOfWorld(const class UDamageType& dmgType)
 {
-	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsMotionController::FellOutOfWorld: Warning. Motion Controller fell out of world"));
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsMotionController_DEPRECATED::FellOutOfWorld: Warning. Motion Controller fell out of world"));
 }
 
-void ACsMotionController::OutsideWorldBounds()
+void ACsMotionController_DEPRECATED::OutsideWorldBounds()
 {
-	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsMotionController::OutsideWorldBounds: Warning. Motion Controller outside world bounds."));
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsMotionController_DEPRECATED::OutsideWorldBounds: Warning. Motion Controller outside world bounds."));
 }
 
-class ACsMotionController* ACsMotionController::GetOtherHand()
+class ACsMotionController_DEPRECATED* ACsMotionController_DEPRECATED::GetOtherHand()
 {
 	return OtherHand.IsValid() ? OtherHand.Get() : nullptr;
 }
 
-void ACsMotionController::OnTick(const float &DeltaSeconds)
+void ACsMotionController_DEPRECATED::OnTick(const float &DeltaSeconds)
 {
 	OnTick_HandleCVars(DeltaSeconds);
 
@@ -112,7 +112,7 @@ void ACsMotionController::OnTick(const float &DeltaSeconds)
 	OnTick_Handle_FirstHoldAndHold(DeltaSeconds);
 }
 
-void ACsMotionController::OnTick_HandleCVars(const float &DeltaSeconds)
+void ACsMotionController_DEPRECATED::OnTick_HandleCVars(const float &DeltaSeconds)
 {
 	if (CsCVarDrawMotionControllerMaxTouchSenseRange->GetInt() == CS_CVAR_DRAW)
 	{
@@ -120,9 +120,9 @@ void ACsMotionController::OnTick_HandleCVars(const float &DeltaSeconds)
 	}
 }
 
-void ACsMotionController::OnTick_Check_FirstTouch(const float &DeltaSeconds){}
+void ACsMotionController_DEPRECATED::OnTick_Check_FirstTouch(const float &DeltaSeconds){}
 
-void ACsMotionController::OnTick_Handle_FirstHoldAndHold(const float &DeltaSeconds)
+void ACsMotionController_DEPRECATED::OnTick_Handle_FirstHoldAndHold(const float &DeltaSeconds)
 {
 	if (State != ECsInteractiveState::FirstHold &&
 		State != ECsInteractiveState::Hold)
@@ -258,7 +258,7 @@ void ACsMotionController::OnTick_Handle_FirstHoldAndHold(const float &DeltaSecon
 	OnFirstUnCollide(OnFirstUnCollideInfos);
 }
 
-void ACsMotionController::Init(class UMotionControllerComponent* InComponent, const ECsControllerHand &InHand)
+void ACsMotionController_DEPRECATED::Init(class UMotionControllerComponent* InComponent, const ECsControllerHand &InHand)
 {
 	Hand					  = InHand;
 	MotionControllerComponent = InComponent;
@@ -274,7 +274,7 @@ void ACsMotionController::Init(class UMotionControllerComponent* InComponent, co
 // Touch
 #pragma region
 
-FVector ACsMotionController::GetTouchSenseLocation()
+FVector ACsMotionController_DEPRECATED::GetTouchSenseLocation()
 {
 	const FVector Location = GetLocation();
 	const FVector Forward  = GetMotionControllerComponent()->GetForwardVector();
@@ -286,7 +286,7 @@ FVector ACsMotionController::GetTouchSenseLocation()
 // Collision
 #pragma region
 
-void ACsMotionController::SetCollisionType(const TCsInteractiveCollision &InCollisionType, const FCsCollisionPreset &InPreset)
+void ACsMotionController_DEPRECATED::SetCollisionType(const TCsInteractiveCollision &InCollisionType, const FCsCollisionPreset &InPreset)
 {
 	CollisionType   = InCollisionType;
 	CollisionPreset = InPreset;
@@ -307,11 +307,11 @@ void ACsMotionController::SetCollisionType(const TCsInteractiveCollision &InColl
 
 		InteractiveCollisionComponent->SetCollisionObjectType(CollisionPreset.ObjectType);
 		InteractiveCollisionComponent->SetCollisionResponseToChannels(CollisionPreset.CollisionResponses);
-		InteractiveCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ACsMotionController::OnBeginOverlap);
+		InteractiveCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ACsMotionController_DEPRECATED::OnBeginOverlap);
 	}
 }
 
-void ACsMotionController::SetCollisionType(const TCsInteractiveCollision &InCollisionType, const FCsCollisionPreset &InPreset, const FVector &BoxExtent)
+void ACsMotionController_DEPRECATED::SetCollisionType(const TCsInteractiveCollision &InCollisionType, const FCsCollisionPreset &InPreset, const FVector &BoxExtent)
 {
 	UBoxComponent* Box			  = NewObject<UBoxComponent>(this, TEXT("InteractiveCollisionComponent"));
 	InteractiveCollisionComponent = Box;
@@ -324,10 +324,10 @@ void ACsMotionController::SetCollisionType(const TCsInteractiveCollision &InColl
 	Box->SetBoxExtent(BoxExtent);
 
 	InteractiveCollisionComponent->SetCollisionResponseToChannels(CollisionPreset.CollisionResponses);
-	InteractiveCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ACsMotionController::OnBeginOverlap);
+	InteractiveCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ACsMotionController_DEPRECATED::OnBeginOverlap);
 }
 
-void ACsMotionController::SetCollisionType(const TCsInteractiveCollision &InCollisionType, const FCsCollisionPreset &InPreset, const float &SphereRadius)
+void ACsMotionController_DEPRECATED::SetCollisionType(const TCsInteractiveCollision &InCollisionType, const FCsCollisionPreset &InPreset, const float &SphereRadius)
 {
 	USphereComponent* Sphere	  = NewObject<USphereComponent>(this, TEXT("InteractiveCollisionComponent"));
 	InteractiveCollisionComponent = Sphere;
@@ -340,26 +340,26 @@ void ACsMotionController::SetCollisionType(const TCsInteractiveCollision &InColl
 	Sphere->SetSphereRadius(SphereRadius);
 
 	InteractiveCollisionComponent->SetCollisionResponseToChannels(CollisionPreset.CollisionResponses);
-	InteractiveCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ACsMotionController::OnBeginOverlap);
+	InteractiveCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ACsMotionController_DEPRECATED::OnBeginOverlap);
 }
 
-void ACsMotionController::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
+void ACsMotionController_DEPRECATED::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
 }
 
 #pragma endregion Collision
 
-void ACsMotionController::UpdateLocation(const FVector &Location)
+void ACsMotionController_DEPRECATED::UpdateLocation(const FVector &Location)
 {
 	//SetActorLocation(Location);
 }
 
-void ACsMotionController::UpdateRotation(const FRotator &Rotation)
+void ACsMotionController_DEPRECATED::UpdateRotation(const FRotator &Rotation)
 {
 	//SetActorRotation(Rotation);
 }
 
-void ACsMotionController::UpdateLocationAndRotation(const FVector &Location, const FRotator &Rotation)
+void ACsMotionController_DEPRECATED::UpdateLocationAndRotation(const FVector &Location, const FRotator &Rotation)
 {
 	//SetActorLocationAndRotation(Location, Rotation);
 }
@@ -367,12 +367,12 @@ void ACsMotionController::UpdateLocationAndRotation(const FVector &Location, con
 // Routines
 #pragma region
 
-/*static*/ void ACsMotionController::AddRoutine(UObject* InMotionController, struct FCsRoutine* Routine, const uint8 &Type)
+/*static*/ void ACsMotionController_DEPRECATED::AddRoutine(UObject* InMotionController, struct FCsRoutine* Routine, const uint8 &Type)
 {
-	Cast<ACsMotionController>(InMotionController)->AddRoutine_Internal(Routine, (TCsRoutineMotionController)Type);
+	Cast<ACsMotionController_DEPRECATED>(InMotionController)->AddRoutine_Internal(Routine, (TCsRoutineMotionController)Type);
 }
 
-void ACsMotionController::AddRoutine_Internal(struct FCsRoutine* Routine, const TCsRoutineMotionController &Type)
+void ACsMotionController_DEPRECATED::AddRoutine_Internal(struct FCsRoutine* Routine, const TCsRoutineMotionController &Type)
 {
 	// Setup_OnCalcCamera_Internal
 	if (Type == ECsRoutineMotionController::Setup_OnCalcCamera_Internal)
@@ -380,15 +380,15 @@ void ACsMotionController::AddRoutine_Internal(struct FCsRoutine* Routine, const 
 		Setup_OnCalcCamera_Internal_Routine = Routine;
 		return;
 	}
-	checkf(0, TEXT("ACsMotionController::Setup_OnCalcCamera_Internal: Adding a Routine of unknown Type"));
+	checkf(0, TEXT("ACsMotionController_DEPRECATED::Setup_OnCalcCamera_Internal: Adding a Routine of unknown Type"));
 }
 
-/*static*/ void ACsMotionController::RemoveRoutine(UObject* InMotionController, struct FCsRoutine* Routine, const uint8 &Type)
+/*static*/ void ACsMotionController_DEPRECATED::RemoveRoutine(UObject* InMotionController, struct FCsRoutine* Routine, const uint8 &Type)
 {
-	Cast<ACsMotionController>(InMotionController)->RemoveRoutine_Internal(Routine, (TCsRoutineMotionController)Type);
+	Cast<ACsMotionController_DEPRECATED>(InMotionController)->RemoveRoutine_Internal(Routine, (TCsRoutineMotionController)Type);
 }
 
-void ACsMotionController::RemoveRoutine_Internal(struct FCsRoutine* Routine, const TCsRoutineMotionController &Type)
+void ACsMotionController_DEPRECATED::RemoveRoutine_Internal(struct FCsRoutine* Routine, const TCsRoutineMotionController &Type)
 {
 	// Setup_OnCalcCamera_Internal
 	if (Type == ECsRoutineMotionController::Setup_OnCalcCamera_Internal)
@@ -397,7 +397,7 @@ void ACsMotionController::RemoveRoutine_Internal(struct FCsRoutine* Routine, con
 		Setup_OnCalcCamera_Internal_Routine = nullptr;
 		return;
 	}
-	checkf(0, TEXT("ACsMotionController::Setup_OnCalcCamera_Internal: Removing a Routine of unknown Type"));
+	checkf(0, TEXT("ACsMotionController_DEPRECATED::Setup_OnCalcCamera_Internal: Removing a Routine of unknown Type"));
 }
 
 #pragma endregion Routines
@@ -405,7 +405,7 @@ void ACsMotionController::RemoveRoutine_Internal(struct FCsRoutine* Routine, con
 // Camera
 #pragma region
 
-void ACsMotionController::Setup_OnCalcCamera()
+void ACsMotionController_DEPRECATED::Setup_OnCalcCamera()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
@@ -413,16 +413,16 @@ void ACsMotionController::Setup_OnCalcCamera()
 	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
 	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
-	Payload->Coroutine.BindStatic(&ACsMotionController::Setup_OnCalcCamera_Internal);
+	Payload->Coroutine.BindStatic(&ACsMotionController_DEPRECATED::Setup_OnCalcCamera_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
 	Scheduler->Start(Payload);
 }
 
-PT_THREAD(ACsMotionController::Setup_OnCalcCamera_Internal(FCsRoutine* R))
+PT_THREAD(ACsMotionController_DEPRECATED::Setup_OnCalcCamera_Internal(FCsRoutine* R))
 {
-	ACsMotionController* MC  = R->GetOwnerAsObject<ACsMotionController>();
+	ACsMotionController_DEPRECATED* MC  = R->GetOwnerAsObject<ACsMotionController_DEPRECATED>();
 	UWorld* W				 = MC->GetWorld();
 	ACsPlayerController* PC  = UCsLibrary_Common::GetLocalPlayerController<ACsPlayerController>(W);
 
@@ -436,20 +436,20 @@ PT_THREAD(ACsMotionController::Setup_OnCalcCamera_Internal(FCsRoutine* R))
 
 	if (MC->CollisionType = ECsInteractiveCollision::Trace)
 	{
-		PC->OnCalcCamera_Event.AddUObject(MC, &ACsMotionController::OnCalcCamera);
+		PC->OnCalcCamera_Event.AddUObject(MC, &ACsMotionController_DEPRECATED::OnCalcCamera);
 	}
 
 	CS_COROUTINE_END(R);
 }
 
-void ACsMotionController::OnCalcCamera(const uint8 &MappingId, const float &DeltaTime, const struct FMinimalViewInfo &ViewInfo)
+void ACsMotionController_DEPRECATED::OnCalcCamera(const uint8 &MappingId, const float &DeltaTime, const struct FMinimalViewInfo &ViewInfo)
 {
 #if WITH_EDITOR
 	if (Override_OnCalcCamera_ScriptEvent.IsBound())
 	{
 		if (CsCVarLogOverrideFunctions->GetInt() == CS_CVAR_DISPLAY)
 		{
-			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsMotionController::OnCalcCamera (%s): Using Override Function."), *GetName());
+			UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsMotionController_DEPRECATED::OnCalcCamera (%s): Using Override Function."), *GetName());
 		}
 		Override_OnCalcCamera_ScriptEvent.Broadcast(MappingId, Hand, DeltaTime, ViewInfo);
 	}
@@ -458,7 +458,7 @@ void ACsMotionController::OnCalcCamera(const uint8 &MappingId, const float &Delt
 	OnCalcCamera_Trace(MappingId, DeltaTime, ViewInfo);
 }
 
-void ACsMotionController::OnCalcCamera_Trace(const uint8 &MappingId, const float &DeltaTime, const struct FMinimalViewInfo &ViewInfo)
+void ACsMotionController_DEPRECATED::OnCalcCamera_Trace(const uint8 &MappingId, const float &DeltaTime, const struct FMinimalViewInfo &ViewInfo)
 {
 	if (State == ECsInteractiveState::FirstHold ||
 		State == ECsInteractiveState::Hold ||
@@ -483,7 +483,7 @@ void ACsMotionController::OnCalcCamera_Trace(const uint8 &MappingId, const float
 
 	TArray<FHitResult> OutHits;
 
-	static FName OnCalcCamera_Trace_Name(TEXT("ACsMotionController::OnCalcCamera_Trace"));
+	static FName OnCalcCamera_Trace_Name(TEXT("ACsMotionController_DEPRECATED::OnCalcCamera_Trace"));
 	FCollisionQueryParams Params(OnCalcCamera_Trace_Name, false);
 	//Params.bTraceAsyncScene = true;
 
@@ -595,7 +595,7 @@ void ACsMotionController::OnCalcCamera_Trace(const uint8 &MappingId, const float
 	OnInteraction(Infos);
 }
 
-void ACsMotionController::OnCalcCamera_Trace_UpdateComponents()
+void ACsMotionController_DEPRECATED::OnCalcCamera_Trace_UpdateComponents()
 {
 }
 
@@ -604,21 +604,21 @@ void ACsMotionController::OnCalcCamera_Trace_UpdateComponents()
 // State
 #pragma region
 
-int32 ACsMotionController::GetCurrentInteractedActorInfosSize()
+int32 ACsMotionController_DEPRECATED::GetCurrentInteractedActorInfosSize()
 {
 	return CurrentInteractedActorInfos.Num();
 }
 
-AActor* ACsMotionController::GetCurrentInteractedActor(const int32 &Index)
+AActor* ACsMotionController_DEPRECATED::GetCurrentInteractedActor(const int32 &Index)
 {
 	if (Index < CurrentInteractedActorInfos.Num())
 		return  CurrentInteractedActorInfos[Index].GetActor();
 
-	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsMotionController::GetCurrentInteractiveActor: Index: %d is out of bounds. CurrentInteractedActorInfos.Num() = %d"), Index, CurrentInteractedActorInfos.Num());
+	UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsMotionController_DEPRECATED::GetCurrentInteractiveActor: Index: %d is out of bounds. CurrentInteractedActorInfos.Num() = %d"), Index, CurrentInteractedActorInfos.Num());
 	return nullptr;
 }
 
-void ACsMotionController::AddCurrentInteractedActor(AActor* Actor)
+void ACsMotionController_DEPRECATED::AddCurrentInteractedActor(AActor* Actor)
 {
 	CurrentInteractedActorInfos.AddDefaulted();
 	const int32 Pos = CurrentInteractedActorInfos.Num() - 1;
@@ -627,7 +627,7 @@ void ACsMotionController::AddCurrentInteractedActor(AActor* Actor)
 	CurrentInteractedActorInfos[Pos].Component = Actor->GetRootComponent();
 }
 
-void ACsMotionController::RemoveCurrentInteractedActorInfo(const int32 &Index)
+void ACsMotionController_DEPRECATED::RemoveCurrentInteractedActorInfo(const int32 &Index)
 {
 	if (Index < CurrentInteractedActorInfos.Num())
 	{
@@ -635,16 +635,16 @@ void ACsMotionController::RemoveCurrentInteractedActorInfo(const int32 &Index)
 	}
 	else
 	{
-		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsMotionController::RemoveCurrentInteractiveActor: Index: %d is out of bounds. CurrentInteractedActorInfos.Num() = %d"), Index, CurrentInteractedActorInfos.Num());
+		UE_LOG(LogCsCoreDEPRECATED, Warning, TEXT("ACsMotionController_DEPRECATED::RemoveCurrentInteractiveActor: Index: %d is out of bounds. CurrentInteractedActorInfos.Num() = %d"), Index, CurrentInteractedActorInfos.Num());
 	}
 }
 
-void ACsMotionController::ResetCurrentInteractedActorInfos()
+void ACsMotionController_DEPRECATED::ResetCurrentInteractedActorInfos()
 {
 	CurrentInteractedActorInfos.Reset();
 }
 
-void ACsMotionController::GetCurrentInteractiveActors(const TEnumAsByte<ECsInteractiveState::Type> &StateType, TArray<AActor*> &OutActors)
+void ACsMotionController_DEPRECATED::GetCurrentInteractiveActors(const TEnumAsByte<ECsInteractiveState::Type> &StateType, TArray<AActor*> &OutActors)
 {
 	const int32 Count = CurrentInteractiveActors.Num();
 
@@ -658,7 +658,7 @@ void ACsMotionController::GetCurrentInteractiveActors(const TEnumAsByte<ECsInter
 	}
 }
 
-void ACsMotionController::OnInteraction_Script(const TEnumAsByte<ECsInteractiveState::Type> &InState, const TArray<FCsInteractedActorInfo> &Infos)
+void ACsMotionController_DEPRECATED::OnInteraction_Script(const TEnumAsByte<ECsInteractiveState::Type> &InState, const TArray<FCsInteractedActorInfo> &Infos)
 {
 	if (InState == ECsInteractiveState::FirstFreeze) { OnFirstFreeze(Infos); return; }
 	if (InState == ECsInteractiveState::Freeze) { OnFreeze(Infos); return; }
@@ -677,7 +677,7 @@ void ACsMotionController::OnInteraction_Script(const TEnumAsByte<ECsInteractiveS
 	if (InState == ECsInteractiveState::Remove) { OnRemove(Infos); return; }
 }
 
-void ACsMotionController::OnInteraction(const TArray<FCsInteractedActorInfo> &Infos)
+void ACsMotionController_DEPRECATED::OnInteraction(const TArray<FCsInteractedActorInfo> &Infos)
 {
 	if (CurrentInteractedActorInfos.Num() == CS_EMPTY &&
 		Infos.Num() == CS_EMPTY)
@@ -935,11 +935,11 @@ void ACsMotionController::OnInteraction(const TArray<FCsInteractedActorInfo> &In
 	}
 }
 
-void ACsMotionController::OnFirstFreeze(const TArray<FCsInteractedActorInfo> &Infos){}
-void ACsMotionController::OnFreeze(const TArray<FCsInteractedActorInfo> &Infos){}
-void ACsMotionController::OnFirstUnFreeze(const TArray<FCsInteractedActorInfo> &Infos){}
+void ACsMotionController_DEPRECATED::OnFirstFreeze(const TArray<FCsInteractedActorInfo> &Infos){}
+void ACsMotionController_DEPRECATED::OnFreeze(const TArray<FCsInteractedActorInfo> &Infos){}
+void ACsMotionController_DEPRECATED::OnFirstUnFreeze(const TArray<FCsInteractedActorInfo> &Infos){}
 
-void ACsMotionController::OnFirstHold(const TArray<FCsInteractedActorInfo> &Infos)
+void ACsMotionController_DEPRECATED::OnFirstHold(const TArray<FCsInteractedActorInfo> &Infos)
 {
 	const int32 Count = Infos.Num();
 
@@ -955,7 +955,7 @@ void ACsMotionController::OnFirstHold(const TArray<FCsInteractedActorInfo> &Info
 	}
 }
 
-void ACsMotionController::OnHold(const TArray<FCsInteractedActorInfo> &Infos)
+void ACsMotionController_DEPRECATED::OnHold(const TArray<FCsInteractedActorInfo> &Infos)
 {
 	const int32 Count = Infos.Num();
 
@@ -971,7 +971,7 @@ void ACsMotionController::OnHold(const TArray<FCsInteractedActorInfo> &Infos)
 	}
 }
 
-void ACsMotionController::OnRelease(const TArray<FCsInteractedActorInfo> &Infos)
+void ACsMotionController_DEPRECATED::OnRelease(const TArray<FCsInteractedActorInfo> &Infos)
 {
 	const int32 Count = Infos.Num();
 
@@ -987,7 +987,7 @@ void ACsMotionController::OnRelease(const TArray<FCsInteractedActorInfo> &Infos)
 	}
 }
 
-void ACsMotionController::OnFirstTouch(const TArray<FCsInteractedActorInfo> &Infos)
+void ACsMotionController_DEPRECATED::OnFirstTouch(const TArray<FCsInteractedActorInfo> &Infos)
 {
 	const int32 Count = Infos.Num();
 
@@ -1003,7 +1003,7 @@ void ACsMotionController::OnFirstTouch(const TArray<FCsInteractedActorInfo> &Inf
 	}
 }
 
-void ACsMotionController::OnTouch(const TArray<FCsInteractedActorInfo> &Infos)
+void ACsMotionController_DEPRECATED::OnTouch(const TArray<FCsInteractedActorInfo> &Infos)
 {
 	const int32 Count = Infos.Num();
 
@@ -1019,7 +1019,7 @@ void ACsMotionController::OnTouch(const TArray<FCsInteractedActorInfo> &Infos)
 	}
 }
 
-void ACsMotionController::OnFirstHover(const TArray<FCsInteractedActorInfo> &Infos)
+void ACsMotionController_DEPRECATED::OnFirstHover(const TArray<FCsInteractedActorInfo> &Infos)
 {
 	const int32 Count = Infos.Num();
 
@@ -1035,9 +1035,9 @@ void ACsMotionController::OnFirstHover(const TArray<FCsInteractedActorInfo> &Inf
 	}
 }
 
-void ACsMotionController::OnHover(const TArray<FCsInteractedActorInfo> &Infos){}
+void ACsMotionController_DEPRECATED::OnHover(const TArray<FCsInteractedActorInfo> &Infos){}
 
-void ACsMotionController::OnFirstUnHover(const TArray<FCsInteractedActorInfo> &Infos)
+void ACsMotionController_DEPRECATED::OnFirstUnHover(const TArray<FCsInteractedActorInfo> &Infos)
 {
 	const int32 Count = Infos.Num();
 
@@ -1053,7 +1053,7 @@ void ACsMotionController::OnFirstUnHover(const TArray<FCsInteractedActorInfo> &I
 	}
 }
 
-void ACsMotionController::OnFirstCollide(const TArray<FCsInteractedActorInfo> &Infos)
+void ACsMotionController_DEPRECATED::OnFirstCollide(const TArray<FCsInteractedActorInfo> &Infos)
 {
 	const int32 Count = Infos.Num();
 
@@ -1069,11 +1069,11 @@ void ACsMotionController::OnFirstCollide(const TArray<FCsInteractedActorInfo> &I
 	}
 }
 
-void ACsMotionController::OnCollide(const TArray<FCsInteractedActorInfo> &Infos){}
-void ACsMotionController::OnFirstUnCollide(const TArray<FCsInteractedActorInfo> &Infos){}
-void ACsMotionController::OnRemove(const TArray<FCsInteractedActorInfo> &Infos){}
+void ACsMotionController_DEPRECATED::OnCollide(const TArray<FCsInteractedActorInfo> &Infos){}
+void ACsMotionController_DEPRECATED::OnFirstUnCollide(const TArray<FCsInteractedActorInfo> &Infos){}
+void ACsMotionController_DEPRECATED::OnRemove(const TArray<FCsInteractedActorInfo> &Infos){}
 
-bool ACsMotionController::IsInteractingWith(const TEnumAsByte<ECsInteractiveState::Type> &InState, AActor* InActor)
+bool ACsMotionController_DEPRECATED::IsInteractingWith(const TEnumAsByte<ECsInteractiveState::Type> &InState, AActor* InActor)
 {
 	AActor* FoundActor = nullptr;
 	const int32 Count  = CurrentInteractedActorInfos.Num();
@@ -1097,7 +1097,7 @@ bool ACsMotionController::IsInteractingWith(const TEnumAsByte<ECsInteractiveStat
 	return true;
 }
 
-bool ACsMotionController::IsInteractingWithAny(const TEnumAsByte<ECsInteractiveState::Type> &InState)
+bool ACsMotionController_DEPRECATED::IsInteractingWithAny(const TEnumAsByte<ECsInteractiveState::Type> &InState)
 {
 	TArray<AActor*> Actors;
 
@@ -1125,22 +1125,22 @@ bool ACsMotionController::IsInteractingWithAny(const TEnumAsByte<ECsInteractiveS
 	return true;
 }
 
-bool ACsMotionController::IsHolding(AActor* InActor)
+bool ACsMotionController_DEPRECATED::IsHolding(AActor* InActor)
 { 
 	return IsInteractingWith(ECsInteractiveState::FirstHold, InActor) || IsInteractingWith(ECsInteractiveState::Hold, InActor);
 }
 
-bool ACsMotionController::IsHoldingAny()
+bool ACsMotionController_DEPRECATED::IsHoldingAny()
 {
 	return IsInteractingWithAny(ECsInteractiveState::FirstHold) || IsInteractingWithAny(ECsInteractiveState::Hold);
 }
 
-bool ACsMotionController::IsHoveringOver(AActor* InActor)
+bool ACsMotionController_DEPRECATED::IsHoveringOver(AActor* InActor)
 {
 	return IsInteractingWith(ECsInteractiveState::FirstHover, InActor) || IsInteractingWith(ECsInteractiveState::Hover, InActor);
 }
 
-bool ACsMotionController::IsHoveringOverAny()
+bool ACsMotionController_DEPRECATED::IsHoveringOverAny()
 {
 	return IsInteractingWithAny(ECsInteractiveState::FirstHover) || IsInteractingWithAny(ECsInteractiveState::Hover);
 }
@@ -1150,7 +1150,7 @@ bool ACsMotionController::IsHoveringOverAny()
 // Button State
 #pragma region
 
-void ACsMotionController::GetCurrentButtons(const ECsButtonState &StateType, TArray<USceneComponent*> &OutButtons)
+void ACsMotionController_DEPRECATED::GetCurrentButtons(const ECsButtonState &StateType, TArray<USceneComponent*> &OutButtons)
 {
 	const int32 Count = CurrentButtons.Num();
 
@@ -1166,7 +1166,7 @@ void ACsMotionController::GetCurrentButtons(const ECsButtonState &StateType, TAr
 	}
 }
 
-void ACsMotionController::OnButtonInteraction_Script(const ECsButtonState &InState, const TArray<USceneComponent*> Buttons)
+void ACsMotionController_DEPRECATED::OnButtonInteraction_Script(const ECsButtonState &InState, const TArray<USceneComponent*> Buttons)
 {
 	if (InState == ECsButtonState::FirstHover) { OnButtonFirstHover(Buttons); return; }
 	if (InState == ECsButtonState::Hover) { OnButtonHover(Buttons); return; }
@@ -1176,7 +1176,7 @@ void ACsMotionController::OnButtonInteraction_Script(const ECsButtonState &InSta
 	if (InState == ECsButtonState::FirstReleased) { OnButtonFirstReleased(Buttons); return; }
 }
 
-void ACsMotionController::OnButtonInteraction(const TArray<USceneComponent*> &Buttons)
+void ACsMotionController_DEPRECATED::OnButtonInteraction(const TArray<USceneComponent*> &Buttons)
 {
 	if (CurrentButtons.Num() == CS_EMPTY &&
 		Buttons.Num() == CS_EMPTY)
@@ -1325,7 +1325,7 @@ void ACsMotionController::OnButtonInteraction(const TArray<USceneComponent*> &Bu
 	}
 }
 
-void ACsMotionController::OnButtonFirstHover(const TArray<USceneComponent*> &Buttons)
+void ACsMotionController_DEPRECATED::OnButtonFirstHover(const TArray<USceneComponent*> &Buttons)
 {
 	const int32 Count = Buttons.Num();
 
@@ -1336,11 +1336,11 @@ void ACsMotionController::OnButtonFirstHover(const TArray<USceneComponent*> &But
 	}
 }
 
-void ACsMotionController::OnButtonHover(const TArray<USceneComponent*> &Buttons)
+void ACsMotionController_DEPRECATED::OnButtonHover(const TArray<USceneComponent*> &Buttons)
 {
 }
 
-void ACsMotionController::OnButtonFirstUnHover(const TArray<USceneComponent*> &Buttons)
+void ACsMotionController_DEPRECATED::OnButtonFirstUnHover(const TArray<USceneComponent*> &Buttons)
 {
 	const int32 Count = Buttons.Num();
 
@@ -1351,7 +1351,7 @@ void ACsMotionController::OnButtonFirstUnHover(const TArray<USceneComponent*> &B
 	}
 }
 
-void ACsMotionController::OnButtonFirstPressed(const TArray<USceneComponent*> &Buttons)
+void ACsMotionController_DEPRECATED::OnButtonFirstPressed(const TArray<USceneComponent*> &Buttons)
 {
 	const int32 Count = Buttons.Num();
 
@@ -1362,16 +1362,16 @@ void ACsMotionController::OnButtonFirstPressed(const TArray<USceneComponent*> &B
 	}
 }
 
-void ACsMotionController::OnButtonPressed(const TArray<USceneComponent*> &Buttons)
+void ACsMotionController_DEPRECATED::OnButtonPressed(const TArray<USceneComponent*> &Buttons)
 {
 }
 
-void ACsMotionController::OnButtonFirstReleased(const TArray<USceneComponent*> &Buttons)
+void ACsMotionController_DEPRECATED::OnButtonFirstReleased(const TArray<USceneComponent*> &Buttons)
 {
 }
 
 
-bool ACsMotionController::IsInteractingWithButton(const ECsButtonState &InState, USceneComponent* InButton)
+bool ACsMotionController_DEPRECATED::IsInteractingWithButton(const ECsButtonState &InState, USceneComponent* InButton)
 {
 	USceneComponent* FoundButton = nullptr;
 	const int32 Count			 = CurrentButtons.Num();
@@ -1395,7 +1395,7 @@ bool ACsMotionController::IsInteractingWithButton(const ECsButtonState &InState,
 	return true;
 }
 
-bool ACsMotionController::IsInteractingWithAnyButton(const ECsButtonState &InState)
+bool ACsMotionController_DEPRECATED::IsInteractingWithAnyButton(const ECsButtonState &InState)
 {
 	TArray<USceneComponent*> Components;
 
@@ -1423,19 +1423,19 @@ bool ACsMotionController::IsInteractingWithAnyButton(const ECsButtonState &InSta
 	return true;
 }
 
-bool ACsMotionController::IsHoveringOverButton(USceneComponent* InButton)
+bool ACsMotionController_DEPRECATED::IsHoveringOverButton(USceneComponent* InButton)
 {
 	return IsInteractingWithButton(ECsButtonState::FirstHover, InButton) || IsInteractingWithButton(ECsButtonState::Hover, InButton);
 }
 
-bool ACsMotionController::IsHoveringOverAnyButton()
+bool ACsMotionController_DEPRECATED::IsHoveringOverAnyButton()
 {
 	return IsInteractingWithAnyButton(ECsButtonState::FirstHover) || IsInteractingWithAnyButton(ECsButtonState::Hover);
 }
 
 #pragma endregion Button State
 
-void ACsMotionController::Show()
+void ACsMotionController_DEPRECATED::Show()
 {
 	SetActorHiddenInGame(false);
 
@@ -1461,7 +1461,7 @@ void ACsMotionController::Show()
 	UpdateComponentTransforms();
 }
 
-void ACsMotionController::Hide()
+void ACsMotionController_DEPRECATED::Hide()
 {
 	USceneComponent* Component = GetRootComponent();
 

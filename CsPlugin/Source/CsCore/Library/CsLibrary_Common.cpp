@@ -14,7 +14,7 @@
 // VR
 #include "IHeadMountedDisplay.h"
 #include "MotionControllerComponent.h"
-//#include "MotionController/CsMotionController.h"
+//#include "MotionController/CsMotionController_DEPRECATED.h"
 // Components
 #include "Components/PoseableMeshComponent.h"
 //#include "Components/CsStaticMeshComponent.h"
@@ -185,7 +185,7 @@ float UCsLibrary_Common::GetSquaredDistanceToLocalControllerEye(UWorld *InWorld,
 	return FVector::DistSquared(ViewLocation, Location);
 }
 /*
-ACsMotionController* UCsLibrary_Common::GetLocalHand(UWorld *InWorld, const ECsControllerHand &Hand)
+ACsMotionController_DEPRECATED* UCsLibrary_Common::GetLocalHand(UWorld *InWorld, const ECsControllerHand &Hand)
 {
 	ACsPlayerPawn_VR* Pawn = GetLocalPawn<ACsPlayerPawn_VR>(InWorld);
 
@@ -287,7 +287,7 @@ void UCsLibrary_Common::GetHMDWorldViewPoint(UWorld* InWorld, FVector &OutLocati
 	}
 }
 /*
-ACsMotionController* UCsLibrary_Common::GetMotionController(UWorld* InWorld, const ECsControllerHand &Hand)
+ACsMotionController_DEPRECATED* UCsLibrary_Common::GetMotionController(UWorld* InWorld, const ECsControllerHand &Hand)
 {
 	ACsPlayerPawn_VR* Pawn = GetLocalPawn<ACsPlayerPawn_VR>(InWorld);
 

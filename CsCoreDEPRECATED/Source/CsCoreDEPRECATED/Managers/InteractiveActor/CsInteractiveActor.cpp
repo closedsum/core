@@ -11,7 +11,7 @@
 #include "Components/CsBoxComponent.h"
 #include "Components/CsSphereComponent.h"
 
-#include "MotionController/CsMotionController.h"
+#include "MotionController/CsMotionController_DEPRECATED.h"
 // Player
 #include "Player/CsPlayerController.h"
 
@@ -431,7 +431,7 @@ bool ACsInteractiveActor::CanChangeFromAnyState(const TArray<TEnumAsByte<ECsInte
 	return false;
 }
 
-ACsMotionController* ACsInteractiveActor::GetDominantHand_HoldingMe()
+ACsMotionController_DEPRECATED* ACsInteractiveActor::GetDominantHand_HoldingMe()
 {
 	TArray<TEnumAsByte<ECsInteractiveState::Type>> States;
 	States.Add(ECsInteractiveState::FirstHold);
@@ -451,31 +451,31 @@ ACsMotionController* ACsInteractiveActor::GetDominantHand_HoldingMe()
 		for (int32 J = 0; J < Count; J++)
 		{
 			UObject* Object			  = (*Infos)[I].GetInstigator();
-			ACsMotionController* Hand = Cast<ACsMotionController>(Object);
+			ACsMotionController_DEPRECATED* Hand = Cast<ACsMotionController_DEPRECATED>(Object);
 
 			if (!Hand)
 				continue;
 
-			if (Hand == Cast<ACsMotionController>(GetAttachParentActor()))
+			if (Hand == Cast<ACsMotionController_DEPRECATED>(GetAttachParentActor()))
 				return Hand;
 		}
 	}
 	return nullptr;
 }
 
-ACsMotionController* ACsInteractiveActor::GetLastHand_HoveringOverMe()
+ACsMotionController_DEPRECATED* ACsInteractiveActor::GetLastHand_HoveringOverMe()
 {
 	// FirstHover
 	if (TArray<FCsInteractedActorInfo>* Infos = InteractedInfos.Find(ECsInteractiveState::FirstHover))
 	{
-		TArray<ACsMotionController*> FirstHoverHands;
+		TArray<ACsMotionController_DEPRECATED*> FirstHoverHands;
 
 		const int32 Count = Infos->Num();
 
 		for (int32 J = 0; J < Count; J++)
 		{
 			UObject* Object			  = (*Infos)[J].GetInstigator();
-			ACsMotionController* Hand = Cast<ACsMotionController>(Object);
+			ACsMotionController_DEPRECATED* Hand = Cast<ACsMotionController_DEPRECATED>(Object);
 
 			if (Hand)
 				FirstHoverHands.Add(Hand);
@@ -489,14 +489,14 @@ ACsMotionController* ACsInteractiveActor::GetLastHand_HoveringOverMe()
 	// Hover
 	if (TArray<FCsInteractedActorInfo>* Infos = InteractedInfos.Find(ECsInteractiveState::Hover))
 	{
-		TArray<ACsMotionController*> HoverHands;
+		TArray<ACsMotionController_DEPRECATED*> HoverHands;
 
 		const int32 Count = Infos->Num();
 
 		for (int32 J = 0; J < Count; J++)
 		{
 			UObject* Object			  = (*Infos)[J].GetInstigator();
-			ACsMotionController* Hand = Cast<ACsMotionController>(Object);
+			ACsMotionController_DEPRECATED* Hand = Cast<ACsMotionController_DEPRECATED>(Object);
 
 			if (Hand)
 				HoverHands.Add(Hand);

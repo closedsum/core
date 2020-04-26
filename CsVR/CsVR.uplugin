@@ -1,0 +1,29 @@
+{
+	"FileVersion": 3,
+	"Version": 2,
+	"VersionName": "0.0.1",
+	"FriendlyName": "Closed Sum Games VR",
+	"Description": "Closed Sum Games VR",
+	"Category": "Programming",
+	"CreatedBy": "Closed Sum Games LLC",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"EngineVersion": "4.24.0",
+	"CanContainContent": true,
+	"Installed": true,
+  "Modules": [
+    {
+      "Name": "CsVR",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "CsPlugin",
+      "Enabled": true
+    }
+  ]
+}

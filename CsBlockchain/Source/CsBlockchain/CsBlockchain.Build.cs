@@ -19,38 +19,5 @@ public class CsBlockchain : ModuleRules
                     "CsCore",
                 }
             );
-
-        /*
-        PrivateDependencyModuleNames.AddRange(
-            new string[] {
-                "InputCore",
-                "Slate",
-                "SlateCore",
-                "Json",
-            }
-        );
-        */
-
-        if (Target.Type == TargetType.Editor)
-        {
-            PublicDependencyModuleNames.AddRange(
-                new string[] {
-                }
-            );
-
-            /*
-            PrivateDependencyModuleNames.AddRange(
-                new string[] {
-                }
-            );
-            */
-        }
-        else
-        {
-            PublicDependencyModuleNames.AddRange(
-                new string[] {
-                }
-            );
-        }
     }
 }

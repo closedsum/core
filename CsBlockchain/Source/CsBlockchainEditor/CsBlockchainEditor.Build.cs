@@ -8,28 +8,12 @@ public class CsBlockchainEditor : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicDependencyModuleNames.AddRange(
-                new string[] {
-                    "Core",
-                    "CoreUObject",
-                    "Engine",
-                    "AssetRegistry",
-                    "CsEditor",
-                    "CsBlockchain",
-                }
-            );
-
-        PrivateDependencyModuleNames.AddRange(
-            new string[] {
-                "Slate",
-                "SlateCore",
-            }
-        );
-
         if (Target.Type == TargetType.Editor)
         {
             PublicDependencyModuleNames.AddRange(
                 new string[] {
+                    "Core",
+                    "Engine",
                     "UnrealEd",
                     "AssetTools",
                     "ContentBrowser",
@@ -37,13 +21,15 @@ public class CsBlockchainEditor : ModuleRules
                     "PropertyEditor",
                     "GraphEditor",
                     "EditorStyle",
+                    "CsEditor",
+                    "CsBlockchain",
                 }
             );
-        }
-        else
-        {
-            PublicDependencyModuleNames.AddRange(
+
+            PrivateDependencyModuleNames.AddRange(
                 new string[] {
+                    "Slate",
+                    "SlateCore",
                 }
             );
         }

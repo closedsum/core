@@ -46,7 +46,7 @@ protected:
 #pragma region
 public:
 
-	virtual void ExitGame();
+	void ExitGame();
 
 #pragma endregion Exit
 

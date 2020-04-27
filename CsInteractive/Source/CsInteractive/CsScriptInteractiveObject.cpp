@@ -22,9 +22,9 @@ void ICsScriptInteractiveObject::UnFreeze()
 	ICsScriptInteractiveObject::Execute_Script_UnFreeze(_getUObject());
 }
 
-void ICsScriptInteractiveObject::Hold()
+void ICsScriptInteractiveObject::Hold(ICsInteractiveObjectHoldParams* Params)
 {
-	ICsScriptInteractiveObject::Execute_Script_Hold(_getUObject());
+	ICsScriptInteractiveObject::Execute_Script_Hold(_getUObject(), FCsScriptInteractiveObjectHoldParams());
 }
 
 void ICsScriptInteractiveObject::Release()

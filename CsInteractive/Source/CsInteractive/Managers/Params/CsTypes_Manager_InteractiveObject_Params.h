@@ -1,0 +1,22 @@
+// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+
+#pragma once
+
+class UObject;
+
+struct FCsScopedInteractiveObjectHoldParams
+{
+	FCsScopedInteractiveObjectHoldParams()
+	{
+
+	}
+
+	FCsScopedInteractiveObjectHoldParams(UObject* InRoot)
+	{
+
+	}
+
+	void Get(){}
+
+	void GetRef(){}
+};

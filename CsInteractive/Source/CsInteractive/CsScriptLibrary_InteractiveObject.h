@@ -2,12 +2,14 @@
 #pragma once
 
 #include "UObject/Object.h"
-#include "CsLibrary_InteractiveObject.generated.h"
+// Types
+#include "CsTypes_InteractiveObject.h"
+#include "CsScriptLibrary_InteractiveObject.generated.h"
 
 class ICsInteractiveObject;
 
 UCLASS()
-class CSINTERACTIVE_API UCsLibrary_InteractiveObject : public UObject
+class CSINTERACTIVE_API UCsScriptLibrary_InteractiveObject : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
@@ -19,8 +21,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Library|ICsInteractiveObject")
 	static void UnFreeze(UPARAM(ref) TScriptInterface<ICsInteractiveObject>& Target);
 
-	UFUNCTION(BlueprintCallable, Category = "Library|ICsInteractiveObject")
-	static void Hold(UPARAM(ref) TScriptInterface<ICsInteractiveObject>& Target);
+	/**
+	*
+	*
+	* @param Target
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Library|ICsInteractiveObject", meta = (AutoCreateRefTerm = "Target,Params"))
+	static void Hold(UPARAM(ref) TScriptInterface<ICsInteractiveObject>& Target, const FCsScriptInteractiveObjectHoldParams& Params);
 
 	UFUNCTION(BlueprintCallable, Category = "Library|ICsInteractiveObject")
 	static void Release(UPARAM(ref) TScriptInterface<ICsInteractiveObject>& Target);

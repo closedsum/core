@@ -21,7 +21,9 @@ public:
 
 	void Freeze();
 	void UnFreeze();
-	void Hold();
+
+	void Hold(ICsInteractiveObjectHoldParams* Params);
+
 	void Release();
 	void Touch();
 	void Hover();
@@ -41,7 +43,7 @@ public:
 	void Script_UnFreeze();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "ICsInteractiveObject", meta = (DisplayName = "Hold"))
-	void Script_Hold();
+	void Script_Hold(const FCsScriptInteractiveObjectHoldParams& Params);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "ICsInteractiveObject", meta = (DisplayName = "Release"))
 	void Script_Release();

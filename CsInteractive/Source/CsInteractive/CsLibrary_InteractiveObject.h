@@ -1,13 +1,13 @@
 // Copyright 2019, RCT Studios and The Rogue Initiative. All Rights Reserved.
 #pragma once
 
-#include "Runtime/CoreUObject/Public/UObject/Object.h"
+#include "UObject/Object.h"
 #include "CsLibrary_InteractiveObject.generated.h"
 
 class ICsInteractiveObject;
 
 UCLASS()
-class CSCOREDEPRECATED_API UCsLibrary_InteractiveObject : public UObject
+class CSINTERACTIVE_API UCsLibrary_InteractiveObject : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

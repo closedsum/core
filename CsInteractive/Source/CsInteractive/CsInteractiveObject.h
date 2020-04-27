@@ -5,13 +5,13 @@
 #include "CsInteractiveObject.generated.h"
 
 UINTERFACE(BlueprintType, meta = (CannotImplementInterfaceInBlueprint))
-class CSCOREDEPRECATED_API UCsInteractiveObject : public UInterface
+class CSINTERACTIVE_API UCsInteractiveObject : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
 
-class CSCOREDEPRECATED_API ICsInteractiveObject
+class CSINTERACTIVE_API ICsInteractiveObject
 {
 	GENERATED_IINTERFACE_BODY()
 

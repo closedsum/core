@@ -4,7 +4,7 @@
 
 class UObject;
 
-struct CSCOREDEPRECATED_API ICsInteractiveObjectInfo
+struct CSINTERACTIVE_API ICsInteractiveObjectInfo
 {
 	virtual UObject* GetInstigator() = 0;
 
@@ -12,7 +12,7 @@ struct CSCOREDEPRECATED_API ICsInteractiveObjectInfo
 };
 
 USTRUCT(BlueprintType)
-struct CSCOREDEPRECATED_API FCsScriptInteractiveObjectInfo
+struct CSINTERACTIVE_API FCsScriptInteractiveObjectInfo
 {
 	GENERATED_USTRUCT_BODY()
 

@@ -1,9 +1,9 @@
 // Copyright 2019, RCT Studios and The Rogue Initiative. All Rights Reserved.
 
-#include "Managers/InteractiveObject/CsLibrary_InteractiveObject.h"
-#include "CsCoreDEPRECATED.h"
+#include "CsLibrary_InteractiveObject.h"
+#include "CsInteractive.h"
 
-#include "Managers/InteractiveObject/CsInteractiveObject.h"
+#include "CsInteractiveObject.h"
 
 UCsLibrary_InteractiveObject::UCsLibrary_InteractiveObject(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

@@ -1,17 +1,17 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "UI/Interfaces/Button/CsButton.h"
+#include "CsInteractiveObject.h"
 #include "CsScriptInteractiveObject.generated.h"
 
 UINTERFACE(Blueprintable)
-class CSCOREDEPRECATED_API UCsScriptInteractiveObject : public UCsButton
+class CSINTERACTIVE_API UCsScriptInteractiveObject : public UCsInteractiveObject
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
 
-class CSCOREDEPRECATED_API ICsScriptInteractiveObject : public ICsButton
+class CSINTERACTIVE_API ICsScriptInteractiveObject : public ICsInteractiveObject
 {
 	GENERATED_IINTERFACE_BODY()
 

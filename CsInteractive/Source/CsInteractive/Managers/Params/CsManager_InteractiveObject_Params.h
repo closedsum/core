@@ -1,26 +1,25 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UObject/Object.h"
-#include "CsTypes_InteractiveObject.h"
-#include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
+//#include "CsTypes_InteractiveObject.h"
+#include "Managers/Resource/CsManager_ResourceValueType_Abstract_Fixed.h"
 #include "CsManager_InteractiveObject_Params.generated.h"
 
 // Structs
 #pragma region
 
-/*
-struct CSINTERACTIVE_API FCsResource_InteractiveObjectHoldParams : public TCsResourceContainer<FCsInteractiveObjectHoldParams>
+struct CSINTERACTIVE_API FCsResource_InteractiveObjectHoldParams : public TCsResourceContainer<ICsInteractiveObjectHoldParams>
 {
 };
 
-struct CSINTERACTIVE_API FCsManager_InteractiveObjectHoldParams : public TCsManager_ResourceValueType_Fixed<FCsInteractiveObjectHoldParams, FCsResource_InteractiveObjectHoldParams, 4>
+struct CSINTERACTIVE_API FCsManager_InteractiveObjectHoldParams : public TCsManager_ResourceValueType_Abstract_Fixed<ICsInteractiveObjectHoldParams, FCsResource_InteractiveObjectHoldParams, 0>
 {
 };
-*/
 
 #pragma endregion Structs
 
 class ICsGetManagerInteractiveObjectParams;
+struct ICsInteractiveObjectHoldParams;
 
 UCLASS()
 class CSINTERACTIVE_API UCsManager_InteractiveObject_Params : public UObject
@@ -73,4 +72,14 @@ public:
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+protected:
+
+	FCsManager_InteractiveObjectHoldParams Manager_HoldParams;
+
+	ICsInteractiveObjectHoldParams* ConstructHoldParams();
+
+public:
+
+	FCsResource_InteractiveObjectHoldParams* AllocateHoldParams();
 };

@@ -10,13 +10,15 @@
 #include "Containers/CsDoubleLinkedList.h"
 
 template<typename ResourceType, typename ResourceContainerType = TCsResourceContainer<ResourceType>, uint32 BUCKET_SIZE = 128>
-class TCsManager_ResourcePointerType_Fixed : public ICsManager_Resource
+class TCsManager_ResourceValueType_Abstract_Fixed : public ICsManager_Resource
 {
-	static_assert(std::is_base_of<TCsResourceContainer<ResourceType>, ResourceContainerType>(), "TCsManager_ResourcePointerType_Fixed: ResourceContainerType does NOT implement interface: ICsResourceContainer.");
+	static_assert(std::is_base_of<TCsResourceContainer<ResourceType>, ResourceContainerType>(), "TCsManager_ResourceValueType_Abstract_Fixed: ResourceContainerType does NOT implement interface: ICsResourceContainer.");
 
+	static_assert(std::is_abstract<ResourceType>(), "TCsManager_ResourceValueType_Abstract_Fixed: ResourceType must be Abstract.");
+	
 public:
 
-	TCsManager_ResourcePointerType_Fixed() :
+	TCsManager_ResourceValueType_Abstract_Fixed() :
 		Name(),
 		Name_Internal(),
 		ResourceContainers(),
@@ -28,16 +30,17 @@ public:
 		Links(),
 		AllocatedHead(nullptr),
 		AllocatedTail(nullptr),
-		AllocatedSize(0)
+		AllocatedSize(0),
+		ConstructResourceType_Impl()
 	{
-		Name		  = TEXT("TCsManager_ResourcePointerType_Fixed");
+		Name		  = TEXT("TCsManager_ResourceValueType_Abstract_Fixed");
 		Name_Internal = FName(*Name);
 
 		if (BUCKET_SIZE > 0)
 			CreatePool(BUCKET_SIZE);
 	}
 
-	virtual ~TCsManager_ResourcePointerType_Fixed()
+	virtual ~TCsManager_ResourceValueType_Abstract_Fixed()
 	{
 		Shutdown();
 	}
@@ -88,7 +91,7 @@ public:
 
 	/**
 	* Set the name of the Manager.
-	*  Default value is TCsManager_ResourcePointerType_Fixed.
+	*  Default value is TCsManager_ResourceValueType_Abstract_Fixed.
 	*
 	* @param InName		Name to set for the Manager.
 	*/
@@ -110,7 +113,7 @@ public:
 
 	/**
 	* Set the name of the Manager.
-	*  Default value is TCsManager_ResourcePointerType_Fixed.
+	*  Default value is TCsManager_ResourceValueType_Abstract_Fixed.
 	*
 	* @param InName		Name to set for the Manager.
 	*/
@@ -142,12 +145,16 @@ public:
 			}
 			Pool.Reset();
 		}
-		PoolSize = 0;
-		PoolSizeMinusOne = 0;
-		PoolIndex = 0;
-
-		Resources.Reset();
-
+		// Resources
+		{
+			for (int32 I = 0; I < PoolSize; ++I)
+			{
+				ResourceType* R = Resources[I];
+				delete R;
+				Resources[I] = nullptr;
+			}
+			Resources.Reset();
+		}
 		// Links
 		{
 			for (TCsDoubleLinkedList<ResourceContainerType*>& Link : Links)
@@ -156,6 +163,11 @@ public:
 			}
 			Links.Reset();
 		}
+
+		PoolSize = 0;
+		PoolSizeMinusOne = 0;
+		PoolIndex = 0;
+
 		AllocatedHead = nullptr;
 		AllocatedTail = nullptr;
 		AllocatedSize = 0;
@@ -166,6 +178,13 @@ public:
 // Pool
 #pragma region
 public:
+
+	/**
+	*
+	*
+	* return Resource
+	*/
+	TBaseDelegate<ResourceType* /*Resource*/> ConstructResourceType_Impl;
 
 	/**
 	* Creates a pool of resource containers and resources of size PoolSize.
@@ -202,27 +221,21 @@ public:
 		{
 			ResourceContainerType* M = &(ResourceContainers[I]);
 			M->SetIndex(I);
+
+			checkf(ConstructResourceType_Impl.IsBound(), TEXT("%s::CreatePool: ConstructResourceType_Impl is NOT Bound."), *Name);
+
+			ResourceType* R = ConstructResourceType_Impl.Execute();
+
+			checkf(R, TEXT("%s::CreatePool: Failed to Construct ResourceType."), *Name);
+
+			M->Set(R);
 			Pool.Add(M);
+			Resources.Add(R);
 
 			// Set Element for Link
 			TCsDoubleLinkedList<ResourceContainerType*>& Link = Links[I];
 			(*Link) = M;
 		}
-	}
-
-	/**
-	*
-	*
-	* @param Resource
-	*/
-	void Add(ResourceType* Resource)
-	{
-		checkf(Resources.Num() < PoolSize, TEXT("%s::Add: Resources is at MAX capacity (%d)."), *Name, PoolSize);
-
-		const int32 Index = Resources.Num();
-
-		Resources.Add(Resource);
-		ResourceContainers[Index].Set(Resource);
 	}
 
 	/**

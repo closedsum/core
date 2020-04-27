@@ -2,6 +2,9 @@
 #include "Managers/Params/CsManager_InteractiveObject_Params.h"
 #include "CsInteractive.h"
 
+// Types
+#include "CsTypes_InteractiveObject.h"
+
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
@@ -100,6 +103,10 @@ UCsManager_InteractiveObject_Params::UCsManager_InteractiveObject_Params(const F
 
 void UCsManager_InteractiveObject_Params::Initialize()
 {
+	const int32 PoolSize = 4;
+
+	Manager_HoldParams.ConstructResourceType_Impl.BindUObject(this, &UCsManager_InteractiveObject_Params::ConstructHoldParams);
+	Manager_HoldParams.CreatePool(PoolSize);
 }
 
 void UCsManager_InteractiveObject_Params::CleanUp()
@@ -107,3 +114,13 @@ void UCsManager_InteractiveObject_Params::CleanUp()
 }
 
 #pragma endregion Singleton
+
+ICsInteractiveObjectHoldParams* UCsManager_InteractiveObject_Params::ConstructHoldParams()
+{
+	return new FCsInteractiveObjectHoldParams();
+}
+
+FCsResource_InteractiveObjectHoldParams* UCsManager_InteractiveObject_Params::AllocateHoldParams()
+{
+	return Manager_HoldParams.Allocate();
+}

@@ -32,42 +32,42 @@ public:
 
 	virtual ~TCsResourceContainer() {}
 
-	const int32& GetIndex() const
+	FORCEINLINE const int32& GetIndex() const
 	{
 		return Index;
 	}
 
-	void SetIndex(const int32& InIndex)
+	FORCEINLINE void SetIndex(const int32& InIndex)
 	{
 		Index = InIndex;
 	}
 
-	const bool& IsAllocated() const
+	FORCEINLINE const bool& IsAllocated() const
 	{
 		return bAllocated;
 	}
 
-	void Allocate()
+	FORCEINLINE void Allocate()
 	{
 		bAllocated = true;
 	}
 
-	void Deallocate()
+	FORCEINLINE void Deallocate()
 	{
 		bAllocated = false;
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		Deallocate();
 	}
 
-	ResourceType* Get()
+	FORCEINLINE ResourceType* Get()
 	{
 		return Resource;
 	}
 
-	void Set(ResourceType* InResource)
+	FORCEINLINE void Set(ResourceType* InResource)
 	{
 		Resource = InResource;
 	}

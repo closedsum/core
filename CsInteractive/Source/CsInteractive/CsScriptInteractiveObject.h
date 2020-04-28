@@ -24,7 +24,10 @@ public:
 
 	void Hold(ICsInteractiveObjectHoldParams* Params);
 
-	void Release();
+	FCsInteractiveObject_OnHold& GetOnHold_Event() const;
+
+	void Release(ICsInteractiveObjectReleaseParams* Params);
+
 	void Touch();
 	void Hover();
 	void UnHover();
@@ -42,11 +45,23 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "ICsInteractiveObject", meta = (DisplayName = "UnFreeze"))
 	void Script_UnFreeze();
 
+	/**
+	*
+	*
+	* @param Params
+	*/
 	UFUNCTION(BlueprintImplementableEvent, Category = "ICsInteractiveObject", meta = (DisplayName = "Hold"))
 	void Script_Hold(const FCsScriptInteractiveObjectHoldParams& Params);
 
+	//void BindToEvent_OnHold()
+
+	/**
+	*
+	*
+	* @param Params
+	*/
 	UFUNCTION(BlueprintImplementableEvent, Category = "ICsInteractiveObject", meta = (DisplayName = "Release"))
-	void Script_Release();
+	void Script_Release(const FCsScriptInteractiveObjectReleaseParams& Params);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "ICsInteractiveObject", meta = (DisplayName = "Touch"))
 	void Script_Touch();

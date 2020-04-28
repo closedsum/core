@@ -2,9 +2,6 @@
 #include "Managers/Params/CsManager_InteractiveObject_Params.h"
 #include "CsInteractive.h"
 
-// Types
-#include "CsTypes_InteractiveObject.h"
-
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
@@ -40,7 +37,7 @@ UCsManager_InteractiveObject_Params::UCsManager_InteractiveObject_Params(const F
 #if WITH_EDITOR
 	ICsGetManagerInteractiveObjectParams* GetManagerInteractiveObjectParams = Get_GetManagerInteractiveObjectParams(InRoot);
 
-	UCsManager_InteractiveObject_Params* Manager_InteractiveObject_Params = NewObject<UCsManager_InteractiveObject_Params>(InRoot, UCsManager_InteractiveObject_Params::StaticClass(), TEXT("Manager_Time_Singleton"), RF_Transient | RF_Public);
+	UCsManager_InteractiveObject_Params* Manager_InteractiveObject_Params = NewObject<UCsManager_InteractiveObject_Params>(InRoot, UCsManager_InteractiveObject_Params::StaticClass(), TEXT("Manager_InteractiveObject_Params_Singleton"), RF_Transient | RF_Public);
 
 	GetManagerInteractiveObjectParams->SetManager_InteractiveObject_Params(Manager_InteractiveObject_Params);
 
@@ -123,4 +120,9 @@ ICsInteractiveObjectHoldParams* UCsManager_InteractiveObject_Params::ConstructHo
 FCsResource_InteractiveObjectHoldParams* UCsManager_InteractiveObject_Params::AllocateHoldParams()
 {
 	return Manager_HoldParams.Allocate();
+}
+
+void UCsManager_InteractiveObject_Params::DeallocateHoldParams(FCsResource_InteractiveObjectHoldParams* Params)
+{
+	Manager_HoldParams.Deallocate(Params);
 }

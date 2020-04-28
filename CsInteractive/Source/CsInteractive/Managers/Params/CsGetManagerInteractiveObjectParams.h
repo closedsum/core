@@ -6,13 +6,13 @@
 
 class UCsManager_InteractiveObject_Params;
 
-UINTERFACE(Blueprintable)
-class UCsGetManagerInteractiveObjectParams : public UInterface
+UINTERFACE()
+class CSINTERACTIVE_API UCsGetManagerInteractiveObjectParams : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class ICsGetManagerInteractiveObjectParams
+class CSINTERACTIVE_API ICsGetManagerInteractiveObjectParams
 {
 	GENERATED_IINTERFACE_BODY()
 

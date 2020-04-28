@@ -12,6 +12,11 @@ class CSINTERACTIVE_API UCsInteractiveObject : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
+/**
+* OnHold
+*
+*/
+DECLARE_MULTICAST_DELEGATE(FCsInteractiveObject_OnHold);
 
 class CSINTERACTIVE_API ICsInteractiveObject
 {
@@ -23,9 +28,21 @@ public:
 
 	virtual void UnFreeze() = 0;
 
+	/**
+	*
+	*
+	* @param Params
+	*/
 	virtual void Hold(ICsInteractiveObjectHoldParams* Params) = 0;
 
-	virtual void Release() = 0;
+	virtual FCsInteractiveObject_OnHold& GetOnHold_Event() const  = 0;
+
+	/**
+	*
+	*
+	* @param Params
+	*/
+	virtual void Release(ICsInteractiveObjectReleaseParams* Params) = 0;
 
 	virtual void Touch() = 0;
 

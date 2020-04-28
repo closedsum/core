@@ -3,8 +3,28 @@
 #include "CsScriptLibrary_InteractiveObject.h"
 #include "CsInteractive.h"
 
+// Types
+#include "Managers/Params/CsTypes_Manager_InteractiveObject_Params.h"
+// Library
+#include "Library/Script/CsScriptLibrary_Common.h"
+// Interactive
 #include "CsInteractiveObject.h"
 #include "CsScriptInteractiveObject.h"
+// Game
+#include "Engine/GameInstance.h"
+
+// Cached
+#pragma region
+
+namespace NCsScriptLibraryInteractiveObject
+{
+	namespace Str
+	{
+		const FString Hold = TEXT("UCsScriptLibrary_InteractiveObject::Hold");
+	}
+}
+
+#pragma endregion Cached
 
 UCsScriptLibrary_InteractiveObject::UCsScriptLibrary_InteractiveObject(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -28,22 +48,24 @@ void UCsScriptLibrary_InteractiveObject::UnFreeze(TScriptInterface<ICsInteractiv
 	}
 }
 
-void UCsScriptLibrary_InteractiveObject::Hold(TScriptInterface<ICsInteractiveObject>& Target, const FCsScriptInteractiveObjectHoldParams& Params)
+void UCsScriptLibrary_InteractiveObject::Hold(UObject* Target, const FCsScriptInteractiveObjectHoldParams& Params)
 {
-	if (UObject* O = Target.GetObject())
+	if (Target)
 	{
-		UClass* Class = O->GetClass();
+		UClass* Class = Target->GetClass();
 
 		// Interface
-		if (ICsInteractiveObject* Interface = Cast<ICsInteractiveObject>(O))
+		if (ICsInteractiveObject* Interface = Cast<ICsInteractiveObject>(Target))
 		{
-			// TODO: Need Manager for this
-			FCsInteractiveObjectHoldParams* Ptr = new FCsInteractiveObjectHoldParams();
-			*Ptr = Params.ConvertToNonScriptContainer();
+			if (UGameInstance* GameInstance = UCsScriptLibrary_Common::GetGameInstanceFromContext(NCsScriptLibraryInteractiveObject::Str::Hold, Target))
+			{
+				FCsScopedInteractiveObjectHoldParams ScopedParams(GameInstance);
+				FCsInteractiveObjectHoldParams* Ptr = ScopedParams.Get<FCsInteractiveObjectHoldParams>();
 
-			Interface->Hold(Ptr);
+				Params.CopyToNonScriptContainer(*Ptr);
 
-			delete Ptr;
+				Interface->Hold(Ptr);
+			}
 		}
 		// Script Interface
 		else
@@ -51,13 +73,14 @@ void UCsScriptLibrary_InteractiveObject::Hold(TScriptInterface<ICsInteractiveObj
 		{
 			if (Class->ImplementsInterface(UCsScriptInteractiveObject::StaticClass()))
 			{
-				ICsScriptInteractiveObject::Execute_Script_Hold(O, Params);
+				ICsScriptInteractiveObject::Execute_Script_Hold(Target, Params);
 			}
 			else
 			{
-				// Log Warning
+				UE_LOG(LogCsInteractive, Warning, TEXT("UCsScriptLibrary_InteractiveObject::Hold: Target implements an unsupported Interface deriving from: ICsInterfaceObject."));
 			}
 		}
+		// Emulate Interface
 	}
 	else
 	{
@@ -65,12 +88,8 @@ void UCsScriptLibrary_InteractiveObject::Hold(TScriptInterface<ICsInteractiveObj
 	}
 }
 
-void UCsScriptLibrary_InteractiveObject::Release(TScriptInterface<ICsInteractiveObject>& Target)
+void UCsScriptLibrary_InteractiveObject::Release(UObject* Target)
 {
-	if (UObject* O = Target.GetObject())
-	{
-		Target->Release();
-	}
 }
 
 void UCsScriptLibrary_InteractiveObject::Touch(TScriptInterface<ICsInteractiveObject>& Target)

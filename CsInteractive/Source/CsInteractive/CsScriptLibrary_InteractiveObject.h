@@ -25,12 +25,18 @@ public:
 	*
 	*
 	* @param Target
+	* @param Params
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Library|ICsInteractiveObject", meta = (AutoCreateRefTerm = "Target,Params"))
-	static void Hold(UPARAM(ref) TScriptInterface<ICsInteractiveObject>& Target, const FCsScriptInteractiveObjectHoldParams& Params);
+	UFUNCTION(BlueprintCallable, Category = "Library|ICsInteractiveObject", meta = (AutoCreateRefTerm = "Params"))
+	static void Hold(UObject* Target, const FCsScriptInteractiveObjectHoldParams& Params);
 
+	/**
+	*
+	*
+	* @param Target
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Library|ICsInteractiveObject")
-	static void Release(UPARAM(ref) TScriptInterface<ICsInteractiveObject>& Target);
+	static void Release(UObject* Target);
 
 	UFUNCTION(BlueprintCallable, Category = "Library|ICsInteractiveObject")
 	static void Touch(UPARAM(ref) TScriptInterface<ICsInteractiveObject>& Target);

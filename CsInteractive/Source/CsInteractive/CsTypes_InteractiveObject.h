@@ -39,11 +39,13 @@ struct CSINTERACTIVE_API FCsScriptInteractiveObjectInfo
 	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
 };
 
-// ICsInteractiveObjectHoldParams
+// Hold
+#pragma region
+
+	// ICsInteractiveObjectHoldParams
 #pragma region
 
 class UObject;
-class USceneComponent;
 
 struct CSINTERACTIVE_API ICsInteractiveObjectHoldParams
 {
@@ -60,7 +62,7 @@ public:
 
 #pragma endregion ICsInteractiveObjectHoldParams
 
-// FCsInteractiveObjectHoldParams
+	// FCsInteractiveObjectHoldParams
 #pragma region
 
 class UObject;
@@ -83,7 +85,7 @@ public:
 	{
 	}
 
-// ICsInteractiveObjectHoldParams
+	// ICsInteractiveObjectHoldParams
 #pragma region
 
 	FORCEINLINE UObject* GetInstigator() const
@@ -106,7 +108,7 @@ public:
 
 #pragma endregion FCsInteractiveObjectHoldParams
 
-// FCsScriptInteractiveObjectHoldParams
+	// FCsScriptInteractiveObjectHoldParams
 #pragma region
 
 class UObject;
@@ -137,7 +139,15 @@ struct CSINTERACTIVE_API FCsScriptInteractiveObjectHoldParams
 	{
 	}
 
-	FCsInteractiveObjectHoldParams ConvertToNonScriptContainer() const
+	FCsScriptInteractiveObjectHoldParams(ICsInteractiveObjectHoldParams* Params)
+	{
+		FCsInteractiveObjectHoldParams* P = (FCsInteractiveObjectHoldParams*)Params;
+		Instigator = P->Instigator;
+		HoldingObject = P->HoldingObject;
+		HitResult = P->HitResult;
+	}
+
+	FCsInteractiveObjectHoldParams CreateNonScriptContainer() const
 	{
 		FCsInteractiveObjectHoldParams Params;
 		Params.Instigator = Instigator;
@@ -145,6 +155,106 @@ struct CSINTERACTIVE_API FCsScriptInteractiveObjectHoldParams
 		Params.HitResult = HitResult;
 		return Params;
 	}
+
+	void CopyToNonScriptContainer(FCsInteractiveObjectHoldParams& Params) const
+	{
+		Params.Instigator = Instigator;
+		Params.HoldingObject = HoldingObject;
+		Params.HitResult = HitResult;
+	}
 };
 
 #pragma endregion FCsScriptInteractiveObjectHoldParams
+
+#pragma endregion Hold
+
+// Release
+#pragma region
+
+	// ICsInteractiveObjectReleaseParams
+#pragma region
+
+class UObject;
+
+struct CSINTERACTIVE_API ICsInteractiveObjectReleaseParams
+{
+public:
+
+	virtual ~ICsInteractiveObjectReleaseParams() {}
+
+	virtual UObject* GetInstigator() const = 0;
+};
+
+#pragma endregion ICsInteractiveObjectReleaseParams
+
+	// FCsInteractiveObjectReleaseParams
+#pragma region
+
+class UObject;
+class USceneComponent;
+
+struct CSINTERACTIVE_API FCsInteractiveObjectReleaseParams : public ICsInteractiveObjectReleaseParams
+{
+public:
+
+	UObject* Instigator;
+
+	FCsInteractiveObjectReleaseParams() :
+		Instigator(nullptr)
+	{
+	}
+
+	// ICsInteractiveObjectReleaseParams
+#pragma region
+
+	FORCEINLINE UObject* GetInstigator() const
+	{
+		return Instigator;
+	}
+	
+#pragma endregion ICsInteractiveObjectReleaseParams
+};
+
+#pragma endregion FCsInteractiveObjectReleaseParams
+
+	// FCsScriptInteractiveObjectReleaseParams
+#pragma region
+
+class UObject;
+
+USTRUCT(BlueprintType)
+struct CSINTERACTIVE_API FCsScriptInteractiveObjectReleaseParams
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Object that is initiating the Hold interaction. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* Instigator;
+
+	FCsScriptInteractiveObjectReleaseParams() :
+		Instigator(nullptr)
+	{
+	}
+
+	FCsScriptInteractiveObjectReleaseParams(ICsInteractiveObjectReleaseParams* Params)
+	{
+		FCsInteractiveObjectReleaseParams* P = (FCsInteractiveObjectReleaseParams*)Params;
+		Instigator = P->Instigator;
+	}
+
+	FCsInteractiveObjectReleaseParams CreateNonScriptContainer() const
+	{
+		FCsInteractiveObjectReleaseParams Params;
+		Params.Instigator = Instigator;
+		return Params;
+	}
+
+	void CopyToNonScriptContainer(FCsInteractiveObjectReleaseParams& Params) const
+	{
+		Params.Instigator = Instigator;
+	}
+};
+
+#pragma endregion FCsScriptInteractiveObjectHoldParams
+
+#pragma endregion Release

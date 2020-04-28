@@ -24,12 +24,19 @@ void ICsScriptInteractiveObject::UnFreeze()
 
 void ICsScriptInteractiveObject::Hold(ICsInteractiveObjectHoldParams* Params)
 {
-	ICsScriptInteractiveObject::Execute_Script_Hold(_getUObject(), FCsScriptInteractiveObjectHoldParams());
+	ICsScriptInteractiveObject::Execute_Script_Hold(_getUObject(), FCsScriptInteractiveObjectHoldParams(Params));
 }
 
-void ICsScriptInteractiveObject::Release()
+FCsInteractiveObject_OnHold& ICsScriptInteractiveObject::GetOnHold_Event() const
 {
-	ICsScriptInteractiveObject::Execute_Script_Release(_getUObject());
+	checkf(0, TEXT("ICsScriptInteractiveObject::GetOnHold_Event: Script Interface can NOT call Interface functions."));
+	static FCsInteractiveObject_OnHold Temp;
+	return Temp;
+}
+
+void ICsScriptInteractiveObject::Release(ICsInteractiveObjectReleaseParams* Params)
+{
+	ICsScriptInteractiveObject::Execute_Script_Release(_getUObject(), FCsScriptInteractiveObjectReleaseParams(Params));
 }
 
 void ICsScriptInteractiveObject::Touch()

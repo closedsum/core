@@ -72,3 +72,20 @@ namespace NCsInputValue
 }
 
 #pragma endregion InputValue
+
+// ControllerHand
+#pragma region
+
+namespace NCsControllerHand
+{
+	namespace Ref
+	{
+		CSCORE_API const Type Left = EMCsControllerHand::Get().Add(Type::Left, TEXT("Left"));
+		CSCORE_API const Type Right = EMCsControllerHand::Get().Add(Type::Right, TEXT("Right"));
+		CSCORE_API const Type ECsControllerHand_MAX = EMCsControllerHand::Get().Add(Type::ECsControllerHand_MAX, TEXT("ECsControllerHand_MAX"), TEXT("MAX"));
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsControllerHand_MAX;
+}
+
+#pragma endregion ControllerHand

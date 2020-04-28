@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Primitive.h"
 // Types
-#include "Runtime/InputCore/Classes/InputCoreTypes.h"
+#include "InputCoreTypes.h"
 
 #include "CsTypes_Input.generated.h"
 #pragma once
@@ -180,6 +180,9 @@ struct CSCORE_API EMCsInputActionMap : public TCsEnumStructMaskMap<FECsInputActi
 
 #pragma endregion InputActionMap
 
+	// FCsInputActionMapRule
+#pragma region
+
 struct CSCORE_API FCsInputActionMapRule
 {
 	int32 Clear;
@@ -205,6 +208,8 @@ struct CSCORE_API FCsInputActionMapRule
 	~FCsInputActionMapRule(){}
 };
 
+#pragma endregion FCsInputActionMapRule
+
 	// InputAction
 #pragma region
 
@@ -225,6 +230,9 @@ struct CSCORE_API EMCsInputAction : public TCsEnumStructMap<FECsInputAction, uin
 
 #pragma endregion InputAction
 
+	// FCsInputActionSet
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInputActionSet
 {
@@ -240,7 +248,12 @@ struct CSCORE_API FCsInputActionSet
 	}
 };
 
+#pragma endregion FCsInputActionSet
+
 #define CS_INVALID_INPUT_POOL_INDEX 65535
+
+	// FCsInputInfo
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInputInfo
@@ -364,6 +377,11 @@ public:
 	}
 };
 
+#pragma endregion FCsInputInfo
+
+	// FRep_CsInput
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FRep_CsInput
 {
@@ -404,6 +422,11 @@ struct CSCORE_API FRep_CsInput
 		Event  = ECsInputEvent::ECsInputEvent_MAX;
 	}
 };
+
+#pragma endregion FRep_CsInput
+
+	// FCsInput
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInput
@@ -540,6 +563,11 @@ struct CSCORE_API FCsInput
 	}
 };
 
+#pragma endregion FCsInput
+
+	// FCsInputFrame
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInputFrame
 {
@@ -611,6 +639,11 @@ struct CSCORE_API FCsInputFrame
 		return nullptr;
 	}
 };
+
+#pragma endregion FCsInputFrame
+
+	// FCsInputWord
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInputWord
@@ -831,6 +864,11 @@ struct CSCORE_API FCsInputWord
 	}
 };
 
+#pragma endregion FCsInputWord
+
+	// FCsInputPhrase
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInputPhrase
 {
@@ -1022,6 +1060,11 @@ struct CSCORE_API FCsInputPhrase
 	}
 };
 
+#pragma endregion FCsInputPhrase
+
+	// FCsInputSentence
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInputSentence
 {
@@ -1207,6 +1250,11 @@ struct CSCORE_API FCsInputSentence
 	}
 };
 
+#pragma endregion FCsInputSentence
+
+	// FCsInputActionMapping
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInputActionMapping
 {
@@ -1252,6 +1300,11 @@ struct CSCORE_API FCsInputActionMapping
 	}
 };
 
+#pragma endregion FCsInputActionMapping
+
+	// FCsInputActionMappings
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInputActionMappings
 {
@@ -1293,6 +1346,11 @@ struct CSCORE_API FCsInputActionMappings
 		return !(*this == B);
 	}
 };
+
+#pragma endregion FCsInputActionMappings
+
+	// FCsInputProfile
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInputProfile
@@ -1374,7 +1432,41 @@ struct CSCORE_API FCsInputProfile
 	}
 };
 
+#pragma endregion FCsInputProfile
+
 #pragma endregion Input
+
+// ControllerHand
+#pragma region
+
+UENUM(BlueprintType)
+enum class ECsControllerHand : uint8
+{
+	Left					UMETA(DisplayName = "Left"),
+	Right					UMETA(DisplayName = "Right"),
+	ECsControllerHand_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsControllerHand : public TCsEnumMap<ECsControllerHand>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsControllerHand, ECsControllerHand)
+};
+
+namespace NCsControllerHand
+{
+	typedef ECsControllerHand Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Left;
+		extern CSCORE_API const Type Right;
+		extern CSCORE_API const Type ECsControllerHand_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+}
+
+#pragma endregion ControllerHand
 
 // Game
 #pragma region
@@ -1399,6 +1491,9 @@ struct CSCORE_API EMCsGameEvent : public TCsEnumStructMap<FECsGameEvent, uint8>
 
 #pragma endregion GameEvent
 
+	// Rep_GameEvent
+#pragma region
+
 namespace ECsRep_GameEvent
 {
 	enum BitMask : int32;
@@ -1406,6 +1501,11 @@ namespace ECsRep_GameEvent
 
 #define CS_MAX_REP_GAME_EVENTS 32
 typedef ECsRep_GameEvent::BitMask TCsRep_GameEvent;
+
+#pragma endregion Rep_GameEvent
+
+	// FCsGameEventInfo
+#pragma region
 
 USTRUCT(BlueprintType)
 struct FCsGameEventInfo
@@ -1446,6 +1546,11 @@ struct FCsGameEventInfo
 	}
 };
 
+#pragma endregion FCsGameEventInfo
+
+	// FCsGameEventDefinitionSimpleInfo
+#pragma region
+
 USTRUCT(BlueprintType)
 struct FCsGameEventDefinitionSimpleInfo
 {
@@ -1468,6 +1573,11 @@ struct FCsGameEventDefinitionSimpleInfo
 		return Action != EMCsInputAction::Get().GetMAX() && Event != ECsInputEvent::ECsInputEvent_MAX;
 	}
 };
+
+#pragma endregion FCsGameEventDefinitionSimpleInfo
+
+	// FCsGameEventDefinitionSimple
+#pragma region
 
 USTRUCT(BlueprintType)
 struct FCsGameEventDefinitionSimple
@@ -1506,6 +1616,11 @@ FORCEINLINE uint32 GetTypeHash(const FCsGameEventDefinitionSimple& b)
 	return GetTypeHash(b.GameEvent);
 }
 
+#pragma endregion FCsGameEventDefinitionSimple
+
+	// FCsGameEventDefinition
+#pragma region
+
 USTRUCT(BlueprintType)
 struct FCsGameEventDefinition
 {
@@ -1537,6 +1652,8 @@ FORCEINLINE uint32 GetTypeHash(const FCsGameEventDefinition& b)
 {
 	return GetTypeHash(b.Event);
 }
+
+#pragma endregion FCsGameEventDefinition
 
 #define CS_GAME_EVENT_DEFINITION_START(Definitions, EVENT)	{ \
 																Definitions.AddDefaulted(); \

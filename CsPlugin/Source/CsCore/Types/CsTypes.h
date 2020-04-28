@@ -1672,38 +1672,6 @@ struct CSCORE_API EMCsGestureType : public TCsEnumStructMap<FECsGestureType, uin
 // Motion Controller
 #pragma region
 
-	// ControllerHand
-#pragma region
-
-UENUM(BlueprintType)
-enum class ECsControllerHand : uint8
-{
-	Left					UMETA(DisplayName = "Left"),
-	Right					UMETA(DisplayName = "Right"),
-	ECsControllerHand_MAX	UMETA(Hidden),
-};
-
-struct CSCORE_API EMCsControllerHand : public TCsEnumMap<ECsControllerHand>
-{
-	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsControllerHand, ECsControllerHand)
-};
-
-namespace NCsControllerHand
-{
-	typedef ECsControllerHand Type;
-
-	namespace Ref
-	{
-		extern CSCORE_API const Type Left;
-		extern CSCORE_API const Type Right;
-		extern CSCORE_API const Type ECsControllerHand_MAX;
-	}
-
-	extern CSCORE_API const uint8 MAX;
-}
-
-#pragma endregion ControllerHand
-
 #pragma endregion Motion Controller
 
 // Collision

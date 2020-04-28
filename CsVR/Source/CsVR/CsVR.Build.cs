@@ -15,6 +15,7 @@ public class CsVR : ModuleRules
                     "Engine",
                     "AssetRegistry",
                     "CsCore",
+                    "HeadMountedDisplay",
                 }
             );
     }

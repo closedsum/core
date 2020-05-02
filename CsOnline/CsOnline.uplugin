@@ -1,0 +1,29 @@
+{
+	"FileVersion": 3,
+	"Version": 2,
+	"VersionName": "0.0.1",
+	"FriendlyName": "Online",
+	"Description": "Closed Sum Games Online",
+	"Category": "Programming",
+	"CreatedBy": "Closed Sum Games LLC",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"EngineVersion": "4.24.0",
+	"CanContainContent": true,
+	"Installed": true,
+  "Modules": [
+    {
+      "Name": "CsOnline",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "CsPlugin",
+      "Enabled": true
+    }
+  ]
+}

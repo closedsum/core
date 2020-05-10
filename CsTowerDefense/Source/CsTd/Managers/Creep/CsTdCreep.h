@@ -2,6 +2,7 @@
 #pragma once
 
 #include "UObject/Interface.h"
+#include "Managers/Creep/CsTdTypes_Creep.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "CsTdCreep.generated.h"
 

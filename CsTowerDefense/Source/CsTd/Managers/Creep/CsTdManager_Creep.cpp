@@ -206,6 +206,8 @@ void UCsTdManager_Creep::SetupInternal()
 {
 	// Delegates
 	{
+		// Container
+		Internal.ConstructContainer_Impl.BindUObject(this, &UCsTdManager_Creep::ConstructContainer);
 		// Payload
 		Internal.ConstructPayload_Impl.BindUObject(this, &UCsTdManager_Creep::ConstructPayload);
 		// Update

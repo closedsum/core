@@ -262,7 +262,7 @@ public:
 	*/
 	void CreatePool(const FECsTdCreep& Type, const int32& Size);
 
-	FCsTdCreepPooled* ConstructContainer(const FECsTdCreep& Type);
+	virtual FCsTdCreepPooled* ConstructContainer(const FECsTdCreep& Type);
 
 		// Add
 #pragma region
@@ -515,7 +515,7 @@ public:
 	* @param Type
 	* return
 	*/
-	ICsTdCreepPayload* ConstructPayload(const FECsTdCreep& Type);
+	virtual ICsTdCreepPayload* ConstructPayload(const FECsTdCreep& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.

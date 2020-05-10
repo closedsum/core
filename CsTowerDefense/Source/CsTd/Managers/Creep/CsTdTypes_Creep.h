@@ -24,6 +24,11 @@ struct CSTD_API EMCsTdCreep : public TCsEnumStructMap<FECsTdCreep, uint8>
 	CS_ENUM_STRUCT_MAP_BODY(EMCsTdCreep, FECsTdCreep, uint8)
 };
 
+namespace NCsTdCreep
+{
+	typedef FECsTdCreep Type;
+}
+
 #pragma endregion Creep
 
 // FCsTdCreepPooledCache

@@ -14,7 +14,7 @@ class CSTD_API ICsTdSpawner_Creep
 {
 	GENERATED_IINTERFACE_BODY()
 
-	virtual void Stub() = 0;
+	//virtual void Stub() = 0;
 
 public:
 };

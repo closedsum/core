@@ -16,6 +16,8 @@ const FCsUpdate FCsUpdate::Empty;
 
 void FCsUpdate::SetObject(UObject* InObject)
 {
+	Super::SetObject(InObject);
+
 	if (Object)
 	{
 		UClass* Class = Object->GetClass();

@@ -36,30 +36,6 @@ UCsTdManager_Creep::UCsTdManager_Creep(const FObjectInitializer& ObjectInitializ
 {
 }
 
-// UObject Interface
-#pragma region
-
-void UCsTdManager_Creep::BeginDestroy()
-{
-	Super::BeginDestroy();
-
-	UCsTdManager_Creep::Shutdown(this);
-}
-
-#pragma endregion UObject Interface
-
-// UActorComponent Interface
-#pragma region
-
-void UCsTdManager_Creep::OnRegister()
-{
-	Super::OnRegister();
-
-	Init(this);
-}
-
-#pragma endregion UActorComponent Interface
-
 // Singleton
 #pragma region
 
@@ -71,27 +47,37 @@ void UCsTdManager_Creep::OnRegister()
 	if (s_bShutdown)
 		return nullptr;
 
-	if (!s_Instance)
-	{
-		UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::Get: Manager must be attached and registered on a game object in order to call Get()."));
-		return nullptr;
-	}
-
 	return s_Instance;
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsTdManager_Creep::Init(UCsTdManager_Creep* Manager)
+/*static*/ void UCsTdManager_Creep::Init(UObject* InRoot, TSubclassOf<UCsTdManager_Creep> ManagerCreepClass, UObject* InOuter)
 {
+#if WITH_EDITOR
+	ICsTdGetManagerCreep* GetManagerCreep = Get_GetManagerCreep(InRoot);
+
+	UCsTdManager_Creep* Manager_Creep = GetManagerCreep->GetManager_Creep();
+
+	if (!Manager_Creep)
+	{
+		Manager_Creep = NewObject<UCsTdManager_Creep>(InOuter, ManagerCreepClass, TEXT("Manager_Creep_Singleton"), RF_Transient | RF_Public);
+
+		GetManagerCreep->SetManager_Creep(Manager_Creep);
+
+		Manager_Creep->SetMyRoot(InRoot);
+		Manager_Creep->Initialize();
+	}
+#else
 	s_bShutdown = false;
 
-	if (s_Instance)
+	if (!s_Instance)
 	{
-		UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::Init: This is being called before the previous instance of the manager has been Shutdown."));
+		s_Instance = NewObject<UCsTdManager_Creep>(GetTransientPackage(), ManagerCreepClass, TEXT("Manager_Creep_Singleton"), RF_Transient | RF_Public);
+		s_Instance->AddToRoot();
+		s_Instance->SetMyRoot(InRoot);
+		s_Instance->Initialize();
 	}
-	s_Instance = Manager;
-
-	s_Instance->Initialize();
+#endif // #if WITH_EDITOR
 }
 
 /*static*/ void UCsTdManager_Creep::Shutdown(UObject* InRoot /*=nullptr*/)
@@ -142,7 +128,7 @@ void UCsTdManager_Creep::OnRegister()
 
 	if (!GetManagerSingleton)
 		return nullptr;
-
+	
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
 	if (!Manager_Singleton)
@@ -165,25 +151,8 @@ void UCsTdManager_Creep::OnRegister()
 		// Game Instance
 		if (UCsTdManager_Creep* Manager = GetSafe(World->GetGameInstance()))
 			return Manager;
-		// Game State
-		if (UCsTdManager_Creep* Manager = GetSafe(World->GetGameState()))
-			return Manager;
 
-		// Player Controller
-		TArray<APlayerController*> Controllers;
-
-		//UCsLibrary_Common::GetAllLocalPlayerControllers(World, Controllers);
-
-		if (Controllers.Num() == CS_EMPTY)
-			return nullptr;
-
-		for (APlayerController* Controller : Controllers)
-		{
-			if (UCsTdManager_Creep* Manager = GetSafe(Controller))
-				return Manager;
-		}
-
-		UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::GetFromWorldContextObject: Failed to Manager Item of type UCsTdManager_Creep from GameInstance, GameState, or PlayerController."));
+		UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::GetFromWorldContextObject: Failed to Manager Item of type UCsTdManager_Creep from GameInstance."));
 
 		return nullptr;
 	}
@@ -205,6 +174,16 @@ void UCsTdManager_Creep::CleanUp()
 	Internal.Shutdown();
 	Pool.Reset();
 }
+
+	// Root
+#pragma region
+
+void UCsTdManager_Creep::SetMyRoot(UObject* InRoot)
+{
+	MyRoot = InRoot;
+}
+
+#pragma endregion Root
 
 #pragma endregion Singleton
 

@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "Components/ActorComponent.h"
+#include "UObject/Object.h"
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
 #include "Managers/Creep/CsTdTypes_Creep.h"
 #include "Managers/Creep/CsTdCreep.h"
@@ -164,27 +164,11 @@ public:
 class ICsTdGetManagerCreep;
 
 UCLASS()
-class CSTD_API UCsTdManager_Creep : public UActorComponent
+class CSTD_API UCsTdManager_Creep : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
 public:	
-
-// UObject Interface
-#pragma region
-public:
-
-	virtual void BeginDestroy() override;
-
-#pragma endregion UObject Interface
-
-// UActorComponent Interface
-#pragma region
-protected:
-
-	virtual void OnRegister() override;
-
-#pragma endregion UActorComponent Interface
 
 // Singleton
 #pragma region
@@ -198,7 +182,7 @@ public:
 		return Cast<T>(Get(InRoot));
 	}
 
-	static void Init(UCsTdManager_Creep* Manager);
+	static void Init(UObject* InRoot, TSubclassOf<UCsTdManager_Creep> ManagerCreepClass, UObject* InOuter);
 	static void Shutdown(UObject* InRoot = nullptr);
 
 #if WITH_EDITOR

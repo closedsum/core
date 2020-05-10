@@ -182,7 +182,7 @@ public:
 		return Cast<T>(Get(InRoot));
 	}
 
-	static void Init(UObject* InRoot, TSubclassOf<UCsTdManager_Creep> ManagerCreepClass, UObject* InOuter);
+	static void Init(UObject* InRoot, TSubclassOf<UCsTdManager_Creep> ManagerCreepClass, UObject* InOuter = nullptr);
 	static void Shutdown(UObject* InRoot = nullptr);
 
 #if WITH_EDITOR

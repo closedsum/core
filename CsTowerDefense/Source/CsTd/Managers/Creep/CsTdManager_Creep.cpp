@@ -51,7 +51,7 @@ UCsTdManager_Creep::UCsTdManager_Creep(const FObjectInitializer& ObjectInitializ
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsTdManager_Creep::Init(UObject* InRoot, TSubclassOf<UCsTdManager_Creep> ManagerCreepClass, UObject* InOuter)
+/*static*/ void UCsTdManager_Creep::Init(UObject* InRoot, TSubclassOf<UCsTdManager_Creep> ManagerCreepClass, UObject* InOuter /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsTdGetManagerCreep* GetManagerCreep = Get_GetManagerCreep(InRoot);
@@ -60,12 +60,16 @@ UCsTdManager_Creep::UCsTdManager_Creep(const FObjectInitializer& ObjectInitializ
 
 	if (!Manager_Creep)
 	{
-		Manager_Creep = NewObject<UCsTdManager_Creep>(InOuter, ManagerCreepClass, TEXT("Manager_Creep_Singleton"), RF_Transient | RF_Public);
+		Manager_Creep = NewObject<UCsTdManager_Creep>(InOuter ? InOuter : InRoot, ManagerCreepClass, TEXT("Manager_Creep_Singleton"), RF_Transient | RF_Public);
 
 		GetManagerCreep->SetManager_Creep(Manager_Creep);
 
 		Manager_Creep->SetMyRoot(InRoot);
 		Manager_Creep->Initialize();
+	}
+	else
+	{
+		UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::Init: Init has already been called."));
 	}
 #else
 	s_bShutdown = false;
@@ -76,6 +80,10 @@ UCsTdManager_Creep::UCsTdManager_Creep(const FObjectInitializer& ObjectInitializ
 		s_Instance->AddToRoot();
 		s_Instance->SetMyRoot(InRoot);
 		s_Instance->Initialize();
+	}
+	else
+	{
+		UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::Init: Init has already been called."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -90,9 +98,13 @@ UCsTdManager_Creep::UCsTdManager_Creep(const FObjectInitializer& ObjectInitializ
 	GetManagerCreep->SetManager_Creep(nullptr);
 #else
 	if (!s_Instance)
+	{
+		UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::Shutdown: Manager has already been shutdown."));
 		return;
+	}
 
 	s_Instance->CleanUp();
+	s_Instance->RemoveFromRoot();
 	s_Instance = nullptr;
 	s_bShutdown = true;
 #endif // #if WITH_EDITOR

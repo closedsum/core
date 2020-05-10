@@ -20,12 +20,12 @@ class CSCORE_API ICsScriptSpawner : public ICsSpawner
 #pragma region
 public:
 
-	ICsSpawnedObject* Spawn();
+	UObject* Spawn();
 
 #pragma endregion ICsSpawner
 
 public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "ICsScriptSpawner", meta = (DisplayName = "Spawn"))
-	TScriptInterface<ICsSpawnedObject> Script_Spawn();
+	UObject* Script_Spawn();
 };

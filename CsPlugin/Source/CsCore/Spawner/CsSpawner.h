@@ -12,7 +12,6 @@ class UCsSpawner : public UInterface
 };
 
 class ICsSpawner;
-class ICsSpawnedObject;
 
 /**
 *
@@ -20,7 +19,7 @@ class ICsSpawnedObject;
 * @param Spawner
 * @param SpawnedObject
 */
-DECLARE_DELEGATE_TwoParams(FCsSpawner_OnSpawn, ICsSpawner* /*Spawner*/, ICsSpawnedObject* /*SpawnedObject*/);
+DECLARE_DELEGATE_TwoParams(FCsSpawner_OnSpawn, ICsSpawner* /*Spawner*/, UObject* /*SpawnedObject*/);
 
 class CSCORE_API ICsSpawner
 {
@@ -33,7 +32,7 @@ public:
 	*
 	* return
 	*/
-	virtual ICsSpawnedObject* Spawn() = 0;
+	virtual UObject* Spawn() = 0;
 
 	/**
 	*
@@ -46,7 +45,7 @@ public:
 // FCsSpawner
 #pragma region
 
-class ICsSpawnedObject;
+class UObject;
 
 struct CSCORE_API FCsSpawner : public TCsInterfaceObject<ICsSpawner>
 {
@@ -67,9 +66,9 @@ public:
 	*  The object implements a script interface of type: ICsSpawner.
 	*
 	* @param Object		An object of type: ICsSpawner.
-	* return			Object that implements the interface: ICsSpawnedObject.
+	* return			Object.
 	*/
-	DECLARE_DELEGATE_RetVal_OneParam(ICsSpawnedObject* /*SpawnedObject*/, FScript_Spawn, UObject* /*Object*/);
+	DECLARE_DELEGATE_RetVal_OneParam(UObject* /*SpawnedObject*/, FScript_Spawn, UObject* /*Object*/);
 
 	/** Delegate type for spawning an object that implements the interface of type: ICsSpawnedObject.
 		  The object implements a script interface of type: ICsSpline. */
@@ -105,7 +104,7 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE ICsSpawnedObject* Spawn()
+	FORCEINLINE UObject* Spawn()
 	{
 		if (bScript)
 			return Script_Spawn_Impl.Execute(Object);

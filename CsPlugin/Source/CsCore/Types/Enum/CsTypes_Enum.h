@@ -1028,6 +1028,7 @@ protected:
 		Count = 0;
 		MAX.Value = (EnumType)0;
 		MAX.Name = TEXT("MAX");
+		MAX.Name_Internal = FName("MAX");
 		MAX.DisplayName = TEXT("MAX");
 		bExplicitMAX = false;
 		EndPosition = 0;
@@ -1605,6 +1606,7 @@ protected:
 		NONE.Value = 0;
 		NONE.Mask = 0;
 		NONE.Name = TEXT("NONE");
+		NONE.Name_Internal = FName("MAX");
 		NONE.DisplayName = TEXT("NONE");
 		EndPosition = 0;
 	}

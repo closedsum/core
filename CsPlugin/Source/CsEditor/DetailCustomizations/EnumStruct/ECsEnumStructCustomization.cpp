@@ -26,49 +26,8 @@ FECsEnumStructCustomization::FECsEnumStructCustomization()
 
 void FECsEnumStructCustomization::CustomPopulateEnumMap(){}
 
-void FECsEnumStructCustomization::PopulateEnumMapFromUserDefinedEnum()
+void FECsEnumStructCustomization::PopulateEnumMapFromSettings()
 {
-	if (!bPopulateEnumMapFromUserDefinedEnum)
-		return;
-
-	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
-	IAssetRegistry& AssetRegistry			  = AssetRegistryModule.Get();
-
-	const FName ClassName = UCsEnumStructUserDefinedEnumMap::StaticClass()->GetFName();
-
-	TArray<FAssetData> OutAssetData;
-
-	if (AssetRegistry.GetAssetsByClass(ClassName, OutAssetData))
-	{
-		if (OutAssetData.Num() > CS_SINGLETON)
-		{
-			UE_LOG(LogCsEditor, Warning, TEXT("FER6EnumStructCustomization::PopulateEnumMapFromUserDefinedEnum (%s): More than ONE class found of type: UCsEnumStructUserDefinedEnumMap. Choosing the FIRST one. There should only be ONE."), *GetEnumStructName());
-		}
-
-		FAssetData& Asset = OutAssetData[CS_FIRST];
-
-		UCsEnumStructUserDefinedEnumMap* Map = Cast<UCsEnumStructUserDefinedEnumMap>(Asset.GetAsset());
-
-		if (UUserDefinedEnum* Enum = Map->GetUserDefinedEnum(GetUserDefinedEnumType()))
-		{
-			const int32 Count = Enum->NumEnums() - 1;
-
-			for (int32 I = 0; I < Count; ++I)
-			{
-				const FString Name = Enum->GetDisplayNameTextByIndex(I).ToString();
-
-				AddEnumToMap(Name);
-			}
-		}
-		else
-		{
-			UE_LOG(LogCsEditor, Warning, TEXT("FER6EnumStructCustomization::PopulateEnumMapFromUserDefinedEnum (%s): Failed to find a UserDefinedEnum associated with EnumStruct: %s."), *GetEnumStructName(), *(GetUserDefinedEnumType().Name));
-		}
-	}
-	else
-	{
-		UE_LOG(LogCsEditor, Warning, TEXT("FER6EnumStructCustomization::PopulateEnumMapFromUserDefinedEnum (%s): No class found of type: UCsEnumStructUserDefinedEnumMap."), *GetEnumStructName());
-	}
 }
 
 void FECsEnumStructCustomization::AddEnumToMap(const FString& Name)

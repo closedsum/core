@@ -23,9 +23,7 @@ protected:
 
 	virtual void CustomPopulateEnumMap();
 
-	bool bPopulateEnumMapFromUserDefinedEnum;
-
-	void PopulateEnumMapFromUserDefinedEnum();
+	virtual void PopulateEnumMapFromSettings();
 
 	virtual void AddEnumToMap(const FString& Name);
 
@@ -40,7 +38,7 @@ protected:
 		EnumMap::Get().ClearUserDefinedEnums();
 
 		CustomPopulateEnumMap();
-		PopulateEnumMapFromUserDefinedEnum();
+		PopulateEnumMapFromSettings();
 		
 		PerformDropDownCheck = true;
 

@@ -8,8 +8,6 @@
 
 FECsInputActionCustomization::FECsInputActionCustomization()
 {
-	bPopulateEnumMapFromUserDefinedEnum 	= true;
-	
 	Init<FECsInputAction, EMCsInputAction>();
 }
 

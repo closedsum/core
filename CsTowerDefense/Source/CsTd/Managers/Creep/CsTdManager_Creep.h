@@ -3,7 +3,7 @@
 
 #include "UObject/Object.h"
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
-#include "Managers/Creep/CsTdTypes_Creep.h"
+#include "Managers/Creep/CsTdSettings_Manager_Creep.h"
 #include "Managers/Creep/CsTdCreep.h"
 #include "CsTdManager_Creep.generated.h"
 
@@ -163,7 +163,7 @@ public:
 
 class ICsTdGetManagerCreep;
 
-UCLASS()
+UCLASS(config=Game, defaultconfig)
 class CSTD_API UCsTdManager_Creep : public UObject
 {
 	GENERATED_UCLASS_BODY()
@@ -227,6 +227,10 @@ public:
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+protected:
+
+	FCsTdSettings_Manager_Creep Settings;
 
 // Internal
 #pragma region

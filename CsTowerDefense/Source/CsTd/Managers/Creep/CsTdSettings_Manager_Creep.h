@@ -1,0 +1,56 @@
+// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+#include "Managers/Creep/CsTdTypes_Creep.h"
+#include "CsTdSettings_Manager_Creep.generated.h"
+#pragma once
+
+// FCsTdSettings_Manager_Creep_PoolParams
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSTD_API FCsTdSettings_Manager_Creep_PoolParams
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<AActor> Class; 
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
+	int32 PoolSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
+	int32 PayloadSize;
+
+	FCsTdSettings_Manager_Creep_PoolParams() :
+		PoolSize(0),
+		PayloadSize(4)
+	{
+	}
+};
+
+#pragma endregion FCsTdSettings_Manager_Creep_PoolParams
+
+// FCsTdSettings_Manager_Creep
+#pragma region
+
+class UObject;
+class UClass;
+
+USTRUCT(BlueprintType)
+struct CSTD_API FCsTdSettings_Manager_Creep
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TMap<FECsTdCreep, FCsTdSettings_Manager_Creep_PoolParams> PoolParams;
+
+	FCsTdSettings_Manager_Creep() :
+		PoolParams()
+	{
+	}
+};
+
+#pragma endregion FCsTdSettings_Manager_Creep

@@ -18,6 +18,11 @@
       "Name": "CsTd",
       "Type": "Runtime",
       "LoadingPhase": "Default"
+    },
+    {
+      "Name": "CsTdEditor",
+      "Type": "Editor",
+      "LoadingPhase": "Default"
     }
   ],
   "Plugins": [

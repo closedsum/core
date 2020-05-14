@@ -2,7 +2,10 @@
 
 #include "Managers/Creep/CsTdManager_Creep.h"
 #include "CsTd.h"
-#include "CsCVars.h"
+//#include "CsCVars.h"
+
+// Settings
+#include "Settings/CsTdSettings.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"

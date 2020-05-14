@@ -9,7 +9,7 @@ class SGraphPin;
 class UEdGraphPin;
 class UEdGraphSchema_K2;
 
-class FCsTdPanelGraphPinFactory : public FGraphPanelPinFactory
+class CSTDEDITOR_API FCsTdPanelGraphPinFactory : public FGraphPanelPinFactory
 {
 	virtual TSharedPtr<SGraphPin> CreatePin(UEdGraphPin* InPin) const override;
 

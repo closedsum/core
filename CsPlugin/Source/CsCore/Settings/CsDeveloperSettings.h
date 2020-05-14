@@ -4,9 +4,10 @@
 #include "Engine/DeveloperSettings.h"
 // Types
 #include "Types/CsTypes_Load.h"
+#include "Settings/CsTypes_Settings.h"
 #include "CsDeveloperSettings.generated.h"
 
-UCLASS(config = Game, defaultconfig, meta = (DisplayName = "Custom Settings"))
+UCLASS(config = Game, defaultconfig, meta = (DisplayName = "CsCore Settings"))
 class CSCORE_API UCsDeveloperSettings : public UDeveloperSettings
 {
 	GENERATED_UCLASS_BODY()
@@ -15,7 +16,7 @@ class CSCORE_API UCsDeveloperSettings : public UDeveloperSettings
 #pragma region
 public:
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "CsCore|Enum")
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum")
 	FCsUserDefinedEnum InputAction;
 
 #pragma endregion Enum
@@ -24,19 +25,8 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "CsCore|Load")
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Load")
 	FCsDataRootSetContainer DataRootSet;
 
 #pragma endregion Load
-
-	// Editor
-#pragma region
-#if WITH_EDITOR
-public:
-
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& e) override;
-	virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& e) override;
-
-#endif // #if WITH_EDITOR
-#pragma endregion Editor
 };

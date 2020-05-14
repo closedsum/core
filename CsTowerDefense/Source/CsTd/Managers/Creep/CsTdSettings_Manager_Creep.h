@@ -13,7 +13,7 @@ struct CSTD_API FCsTdSettings_Manager_Creep_PoolParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement ="CsTdCreep"))
 	TSoftClassPtr<AActor> Class; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))

@@ -61,7 +61,7 @@ void FECsEnumStructCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> St
 	SetPropertyHandles(StructPropertyHandle);
 	
 	// Alter DisplayNameList for Properties that are visible and should NOT be edited
-	if (PerformDropDownCheck)
+	if (bPerformDropDownCheck)
 	{
 		UProperty* Property	= StructPropertyHandle->GetProperty();
 

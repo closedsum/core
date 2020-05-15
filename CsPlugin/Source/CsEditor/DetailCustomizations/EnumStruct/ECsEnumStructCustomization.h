@@ -86,7 +86,7 @@ protected:
 		CustomPopulateEnumMap();
 		PopulateEnumMapFromSettings();
 		
-		PerformDropDownCheck = true;
+		bPerformDropDownCheck = true;
 
 		const int32& Count = EnumMap::Get().Num();
 
@@ -102,7 +102,7 @@ public:
 
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
 
-	bool PerformDropDownCheck;
+	bool bPerformDropDownCheck;
 
 	/** IPropertyTypeCustomization interface */
 	virtual void CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils) override;

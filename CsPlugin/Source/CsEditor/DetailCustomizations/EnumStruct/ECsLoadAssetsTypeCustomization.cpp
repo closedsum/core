@@ -14,7 +14,7 @@ FECsLoadAssetsTypeCustomization::FECsLoadAssetsTypeCustomization()
 {
 	Init<FECsLoadAssetsType, EMCsLoadAssetsType>();
 
-	PerformDropDownCheck = false;
+	bPerformDropDownCheck = false;
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsLoadAssetsTypeCustomization::MakeInstance()

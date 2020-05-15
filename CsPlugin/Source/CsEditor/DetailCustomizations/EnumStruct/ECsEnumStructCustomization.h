@@ -21,9 +21,55 @@ public:
 
 protected:
 
+	void Log(const FString& Str);
+
 	virtual void CustomPopulateEnumMap();
 
 	virtual void PopulateEnumMapFromSettings();
+
+	template<typename SettingsType, typename EnumMap, typename EnumStruct>
+	void PopulateEnumMapFromSettings_Internal(const FString& Context)
+	{
+		if (SettingsType* Settings = GetMutableDefault<SettingsType>())
+		{
+			const TArray<FCsSettings_Enum>& Enums = Settings->GetSettingsEnum<EnumStruct>();
+
+			if (Enums.Num() > CS_EMPTY)
+			{
+				const FString EnumSettingsPath = Settings->GetSettingsEnumPath<EnumStruct>();
+
+				EnumMap::Get().ClearUserDefinedEnums();
+
+				for (const FCsSettings_Enum& Enum : Enums)
+				{
+					if (Enum.Name.IsEmpty())
+					{
+						Log(FString::Printf(TEXT("%s: Empty Enum listed in %s."), *Context, *EnumSettingsPath));
+						continue;
+					}
+
+					if (Enum.DisplayName.IsEmpty())
+					{
+						if (!EnumMap::Get().CreateSafe(Enum.Name, true))
+						{
+							Log(FString::Printf(TEXT("%s: Enum: %s listed in %s already exists."), *Context, *EnumSettingsPath, *(Enum.Name)));
+						}
+					}
+					else
+					{
+						if (!EnumMap::Get().CreateSafe(Enum.Name, Enum.DisplayName, true))
+						{
+							Log(FString::Printf(TEXT("%s: Enum: %s listed in %s already exists."), *Context, *EnumSettingsPath, *(Enum.Name)));
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			Log(FString::Printf(TEXT("%s: Failed to find settings.")));
+		}
+	}
 
 	virtual void AddEnumToMap(const FString& Name);
 

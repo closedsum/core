@@ -24,7 +24,14 @@ FECsEnumStructCustomization::FECsEnumStructCustomization()
 {
 }
 
-void FECsEnumStructCustomization::CustomPopulateEnumMap(){}
+void FECsEnumStructCustomization::Log(const FString& Str)
+{
+	UE_LOG(LogCsEditor, Warning, TEXT("%s"), *Str);
+}
+
+void FECsEnumStructCustomization::CustomPopulateEnumMap()
+{
+}
 
 void FECsEnumStructCustomization::PopulateEnumMapFromSettings()
 {
@@ -32,7 +39,6 @@ void FECsEnumStructCustomization::PopulateEnumMapFromSettings()
 
 void FECsEnumStructCustomization::AddEnumToMap(const FString& Name)
 {
-
 }
 
 const FString& FECsEnumStructCustomization::GetEnumStructName()

@@ -208,6 +208,8 @@ public:
 
 	static const FName Name;
 
+public:
+
 	virtual ~ICsTdCreepPayload() {}
 };
 

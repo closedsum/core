@@ -589,6 +589,8 @@ public:
 
 	static const FName Name;
 
+public:
+
 	virtual ~ICsProjectilePayload(){}
 
 	virtual const FVector& GetDirection() const = 0;

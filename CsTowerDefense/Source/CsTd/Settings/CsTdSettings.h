@@ -21,6 +21,28 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum")
 	TArray<FCsSettings_Enum> ECsTdCreep;
 
+#if WITH_EDITOR
+
+	template<typename EnumType>
+	const TArray<FCsSettings_Enum>& GetSettingsEnum() const;
+
+	template<>
+	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsTdCreep>() const
+	{
+		return ECsTdCreep;
+	}
+
+	template<typename EnumType>
+	FString GetSettingsEnumPath() const;
+
+	template<>
+	FString GetSettingsEnumPath<FECsTdCreep>() const
+	{
+		return TEXT("UCsTdSettings.ECsTdCreep");
+	}
+
+#endif // #if WITH_EDITOR
+
 #pragma endregion Enum
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")

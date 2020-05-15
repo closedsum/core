@@ -1111,14 +1111,14 @@ public:
 	
 #if WITH_EDITOR
 
-	FORCEINLINE void CreateSafe(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum = false)
+	FORCEINLINE bool CreateSafe(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum = false)
 	{
 		// Check Name already exists
 		if (NameMap.Find(Name) != nullptr)
-			return;
+			return false;
 		// Check DisplayName already exists
 		if (DisplayNameMap.Find(DisplayName) != nullptr)
-			return;
+			return false;
 
 		EnumType Index = (EnumType)Enums.Num();
 		EnumStruct E(Index, Name, DisplayName);
@@ -1135,11 +1135,12 @@ public:
 		NameInternalMap.Add(E.Name_Internal, E);
 		TypeMap.Add(Index, E);
 		MAX.Value = (EnumType)Count;
+		return true;
 	}
 
-	FORCEINLINE void CreateSafe(const FString& Name, const bool& UserDefinedEnum = false)
+	FORCEINLINE bool CreateSafe(const FString& Name, const bool& UserDefinedEnum = false)
 	{
-		CreateSafe(Name, Name, UserDefinedEnum);
+		return CreateSafe(Name, Name, UserDefinedEnum);
 	}
 
 #endif // #if WITH_EDITOR

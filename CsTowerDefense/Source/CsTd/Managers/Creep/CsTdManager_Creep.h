@@ -27,25 +27,33 @@ public:
 
 	TWeakObjectPtr<UObject> Parent;
 
-	FCsInterfaceMap InterfaceMap;
+	FCsInterfaceMap* InterfaceMap;
 
-	FCsTdCreepPayload()
+	FCsTdCreepPayload() :
+		bAllocated(false),
+		Instigator(nullptr),
+		Owner(nullptr),
+		Parent(nullptr),
+		InterfaceMap(nullptr)
 	{
-		Reset();
+		InterfaceMap = new FCsInterfaceMap();
 
-		InterfaceMap.Add<ICsTdCreepPayload>(static_cast<ICsTdCreepPayload*>(this));
-		InterfaceMap.Add<ICsPooledObjectPayload>(static_cast<ICsPooledObjectPayload*>(this));
+		InterfaceMap->Add<ICsTdCreepPayload>(static_cast<ICsTdCreepPayload*>(this));
+		InterfaceMap->Add<ICsPooledObjectPayload>(static_cast<ICsPooledObjectPayload*>(this));
 	}
 
-	virtual ~FCsTdCreepPayload(){}
+	virtual ~FCsTdCreepPayload()
+	{
+		delete InterfaceMap;
+	}
 
 // ICsGetInterfaceMap
 #pragma region
 public:
 
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap()
+	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
 	{
-		return &InterfaceMap;
+		return InterfaceMap;
 	}
 
 #pragma endregion ICsGetInterfaceMap
@@ -265,6 +273,10 @@ public:
 	* @param Size
 	*/
 	void CreatePool(const FECsTdCreep& Type, const int32& Size);
+
+	/**
+	*/
+	TBaseDelegate<FCsTdCreepPooled*, const FECsTdCreep&>& GetConstructContainer_Impl();
 
 	virtual FCsTdCreepPooled* ConstructContainer(const FECsTdCreep& Type);
 
@@ -512,6 +524,13 @@ protected:
 	// Payload
 #pragma region
 public:
+
+	/**
+	*
+	*
+	* @param Size
+	*/
+	void ConstructPayloads(const FECsTdCreep& Type, const int32& Size);
 
 	/**
 	*

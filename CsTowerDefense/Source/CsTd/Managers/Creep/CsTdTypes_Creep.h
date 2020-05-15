@@ -62,7 +62,7 @@ public:
 
 	FCsDeltaTime ElapsedTime;
 
-	FCsInterfaceMap InterfaceMap;
+	FCsInterfaceMap* InterfaceMap;
 
 	FCsTdCreepPooledCache() :
 		Index(INDEX_NONE),
@@ -77,18 +77,25 @@ public:
 		LifeTime(0.0f),
 		StartTime(),
 		ElapsedTime(),
-		InterfaceMap()
+		InterfaceMap(nullptr)
 	{
-		InterfaceMap.Add<ICsPooledObjectCache>(static_cast<ICsPooledObjectCache*>(this));
+		InterfaceMap = new FCsInterfaceMap();
+
+		InterfaceMap->Add<ICsPooledObjectCache>(static_cast<ICsPooledObjectCache*>(this));
+	}
+
+	virtual ~FCsTdCreepPooledCache() 
+	{
+		delete InterfaceMap;
 	}
 
 // ICsGetInterfaceMap
 #pragma region
 public:
 
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap()
+	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
 	{
-		return &InterfaceMap;
+		return InterfaceMap;
 	}
 
 #pragma endregion ICsGetInterfaceMap

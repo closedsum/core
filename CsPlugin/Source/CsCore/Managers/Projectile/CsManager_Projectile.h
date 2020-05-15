@@ -32,25 +32,35 @@ public:
 
 	TWeakObjectPtr<UObject> Parent;
 
-	FCsInterfaceMap InterfaceMap;
+	FCsInterfaceMap* InterfaceMap;
 
-	FCsProjectilePayload()
+	FCsProjectilePayload() :
+		Direction(0.0f),
+		Location(0.0f),
+		bAllocated(false),
+		Instigator(nullptr),
+		Owner(nullptr),
+		Parent(nullptr),
+		InterfaceMap(nullptr)
 	{
-		Reset();
+		InterfaceMap = new FCsInterfaceMap();
 
-		InterfaceMap.Add<ICsProjectilePayload>(static_cast<ICsProjectilePayload*>(this));
-		InterfaceMap.Add<ICsPooledObjectPayload>(static_cast<ICsPooledObjectPayload*>(this));
+		InterfaceMap->Add<ICsProjectilePayload>(static_cast<ICsProjectilePayload*>(this));
+		InterfaceMap->Add<ICsPooledObjectPayload>(static_cast<ICsPooledObjectPayload*>(this));
 	}
 
-	virtual ~FCsProjectilePayload(){}
+	virtual ~FCsProjectilePayload()
+	{
+		delete InterfaceMap;
+	}
 
 // ICsGetInterfaceMap
 #pragma region
 public:
 
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap()
+	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
 	{
-		return &InterfaceMap;
+		return InterfaceMap;
 	}
 
 #pragma endregion ICsGetInterfaceMap

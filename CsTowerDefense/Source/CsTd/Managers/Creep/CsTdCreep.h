@@ -16,7 +16,7 @@ class CSTD_API ICsTdCreep
 {
 	GENERATED_IINTERFACE_BODY()
 
-	virtual void Stub() = 0;
+	virtual const FECsTdCreep& GetType() const = 0;
 
 public:
 };
@@ -103,7 +103,8 @@ public:
 
 	FCsTdCreepPooled() :
 		Super(),
-		Creep(nullptr)
+		Creep(nullptr),
+		bScriptCreep(false)
 	{
 	}
 
@@ -122,6 +123,7 @@ public:
 		Super::Reset();
 
 		Creep = nullptr;
+		bScriptCreep = false;
 	}
 
 #pragma endregion TCsInterfaceObject

@@ -19,62 +19,35 @@ const FCsTdCreepPooled FCsTdCreepPooled::Empty;
 void FCsTdCreepPooled::SetInterface(ICsPooledObject* InInterface)
 {
 	Super::SetInterface(InInterface);
-
-	/*
-	if (!Object)
-	{
-#if UE_BUILD_SHIPPING
-		SetUpdate((ICsUpdate*)InInterface);
-#else
-		SetUpdate(dynamic_cast<ICsUpdate*>(InInterface));
-#endif // #if UE_BUILD_SHIPPING
-	}
-	*/
 }
 
 void FCsTdCreepPooled::SetObject(UObject* InObject)
 {
 	Super::SetObject(InObject);
 
-	/*
 	if (Object)
 	{
 		UClass* Class = Object->GetClass();
 
-		// ICsPooledObject
+		// ICsTdCreep
 		{
 			// Interface
-			if (ICsPooledObject* O = Cast<ICsPooledObject>(Object))
+			if (ICsTdCreep* O = Cast<ICsTdCreep>(Object))
 			{
-				SetInterface(O);
+				SetCreep(O);
 			}
 			// Script Interface
 			else
 			if (Class->ImplementsInterface(UCsPooledObject::StaticClass()))
 			{
-				SetScript();
+				SetScriptCreep();
 			}
 			else
 			{
-				checkf(false, TEXT("FCsPooledObject:SetObject: Object: %s with Class; %s does NOT implement the interface: ICsPooledObject."), *(Object->GetName()));
-			}
-		}
-		// ICsUpdate
-		{
-			// Interface
-			if (ICsUpdate* U = Cast<ICsUpdate>(Object))
-			{
-				SetUpdate(U);
-			}
-			// Script Interface
-			else
-			if (Class->ImplementsInterface(UCsUpdate::StaticClass()))
-			{
-				SetScriptUpdate();
+				checkf(false, TEXT("FCsTdCreepPooled:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsTdCreep."), *(Object->GetName()));
 			}
 		}
 	}
-	*/
 }
 	
 #pragma endregion TCsInterfaceObject

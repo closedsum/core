@@ -48,5 +48,5 @@ struct CSCORE_API ICsGetInterfaceMap
 {
 	virtual ~ICsGetInterfaceMap() {}
 
-	virtual FCsInterfaceMap* GetInterfaceMap() = 0;
+	virtual FCsInterfaceMap* GetInterfaceMap() const = 0;
 };

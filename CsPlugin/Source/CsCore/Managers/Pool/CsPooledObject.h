@@ -125,6 +125,8 @@ public:
 
 	FCsPooledObject() :
 		Super(),
+		_Update(nullptr),
+		bScriptUpdate(false),
 		Script_GetCache_Impl(),
 		Script_Allocate_Impl(),
 		Script_Deallocate_Impl(),
@@ -161,6 +163,9 @@ public:
 	virtual void Reset() override 
 	{
 		Super::Reset();
+
+		_Update = nullptr;
+		bScriptUpdate = false;
 
 		Script_GetCache_Impl.Unbind();
 		Script_Allocate_Impl.Unbind();

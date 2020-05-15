@@ -40,19 +40,39 @@ struct CSCORE_API FCsManagerPooledObjectParams
 {
 public:
 
+	/** */
 	FString Name;
 
+	/** */
 	UWorld* World;
 
+	/** */
 	FECsCVarLog LogType;
 
+	/** */
 	FCsManagerPooledObjectConstructParams ConstructParams;
+
+	/** */
+	bool bConstructPayloads;
+
+	/** */
+	int32 PayloadSize;
+
+	/** */
+	bool bCreatePool;
+
+	/** */
+	int32 PoolSize;
 
 	FCsManagerPooledObjectParams() :
 		Name(),
 		World(nullptr),
 		LogType(),
-		ConstructParams()
+		ConstructParams(),
+		bConstructPayloads(false),
+		PayloadSize(0),
+		bCreatePool(false),
+		PoolSize(0)
 	{
 	}
 
@@ -71,7 +91,7 @@ public:
 
 	virtual ~ICsManager_PooledObject() {}
 
-	virtual void Init(const FCsManagerPooledObjectParams& Params)  = 0;
+	virtual void Init(const FCsManagerPooledObjectParams& Params) = 0;
 
 	virtual void Clear() = 0;
 	virtual void Shutdown() = 0;
@@ -225,6 +245,20 @@ public:
 		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Deallocate]	 = Name + TEXT("::Deallocate");
 		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::DeallocateAll] = Name + TEXT("::DeallocateAll");
 		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn]		 = Name + TEXT("::Spawn");
+
+		if (Params.bConstructPayloads)
+		{
+			checkf(Params.PayloadSize > 0, TEXT("%s::Init: PayloadSize must be GREATER THAN 0."), *Name);
+
+			ConstructPayloads(Params.PayloadSize);
+		}
+
+		if (Params.bCreatePool)
+		{
+			checkf(Params.PoolSize > 0, TEXT("%s::Init: PoolSize must be GREATER THAN 0."), *Name);
+
+			CreatePool(Params.PoolSize);
+		}
 	}
 
 	/**
@@ -1359,6 +1393,8 @@ public:
 	*/
 	void ConstructPayloads(const int32& Size)
 	{
+		checkf(Size > 0, TEXT("%s::ConstructPayloads: Size must be GREATER THAN 0."), *Name);
+
 		checkf(ConstructPayload_Impl.IsBound(), TEXT("%s::ConstructPaylaods: ConstructPayload_Impl is NOT bound."), *Name);
 
 		PayloadSize = Size;
@@ -1425,6 +1461,16 @@ public:
 		}
 		checkf(0, TEXT("%s::AllocatePayload: Pool is exhausted. Pool Size = %d."), *Name, PayloadSize);
 		return nullptr;
+	}
+
+	/**
+	*
+	*
+	* return
+	*/
+	FORCEINLINE const int32& GetPayloadSize()
+	{
+		return PayloadSize;
 	}
 
 #pragma endregion Payload

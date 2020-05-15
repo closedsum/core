@@ -224,6 +224,54 @@ void UCsTdManager_Creep::SetupInternal()
 		Internal.Script_Deallocate_Impl = Script_Deallocate_Impl;
 		Internal.Script_Update_Impl = Script_Update_Impl;
 	}
+
+	// If any settings have been set for Manager_Creep, apply them
+	UCsTdSettings* ModuleSettings = GetMutableDefault<UCsTdSettings>();
+
+	checkf(ModuleSettings, TEXT("UCsTdManager_Creep::SetupInternal: Failed to get settings of type: UCsTdSettings."));
+
+	Settings = ModuleSettings->ManagerCreep;
+
+	if (Settings.PoolParams.Num() > CS_EMPTY)
+	{
+		FCsTdManager_Creep_Internal::FCsManagerPooledObjectMapParams Params;
+
+		Params.Name  = TEXT("UCsTdManager_Creep::FCsTdManager_Creep_Internal");
+		Params.World = MyRoot->GetWorld();
+		
+		for (const TPair<FECsTdCreep, FCsTdSettings_Manager_Creep_PoolParams>& Pair : Settings.PoolParams)
+		{
+			const FECsTdCreep& Type = Pair.Key;
+			const FCsTdSettings_Manager_Creep_PoolParams& PoolParams = Pair.Value;
+
+			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
+
+			checkf(PoolParams.Class.ToSoftObjectPath().IsValid(), TEXT("UCsTdManager_Creep::SetupInternal: Class for Type: %s is NOT a Valid Path."), *(Type.Name));
+
+#if !UE_BUILD_SHIPPING
+			if (!PoolParams.Class.Get())
+			{
+				UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::SetupInternal: Class @ for Type: %s is NOT already loaded in memory."), *(PoolParams.Class.ToString()), *(Type.Name));
+			}
+#endif // #if !UE_BUILD_SHIPPING
+
+			UClass* Class = PoolParams.Class.LoadSynchronous();
+
+			checkf(Class, TEXT("UCsTdManager_Creep::SetupInternal: Failed to load Class @ for Type: %s."), *(PoolParams.Class.ToString()), *(Type.Name));
+
+			ObjectParams.Name = Params.Name + TEXT("_") + Type.Name;
+			ObjectParams.World = Params.World;
+			//ObjectParams.LogType
+			ObjectParams.ConstructParams.Class			  = Class;
+			ObjectParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
+			ObjectParams.bConstructPayloads = true;
+			ObjectParams.PayloadSize		= PoolParams.PayloadSize;
+			ObjectParams.bCreatePool		= true;
+			ObjectParams.PoolSize			= PoolParams.PoolSize;			
+		}
+
+		InitInternal(Params);
+	}
 }
 
 void UCsTdManager_Creep::InitInternal(const FCsTdManager_Creep_Internal::FCsManagerPooledObjectMapParams& Params)
@@ -241,11 +289,19 @@ void UCsTdManager_Creep::Clear()
 
 void UCsTdManager_Creep::CreatePool(const FECsTdCreep& Type, const int32& Size)
 {
-	// TODO: Check if the pool has already been created
+	const int32& PoolSize = Internal.GetPoolSize(Type);
+
+	if (PoolSize > CS_EMPTY)
+	{
+		UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::CreatePool: Pool for Creep: %s has already been created with Size: %d."), *(Type.Name), PoolSize);
+	}
 
 	Internal.CreatePool(Type, Size);
-	// TODO: Expose Payload Size somewhere
-	Internal.ConstructPayloads(Type, 4);
+}
+
+TBaseDelegate<FCsTdCreepPooled*, const FECsTdCreep&>& UCsTdManager_Creep::GetConstructContainer_Impl()
+{
+	return Internal.ConstructContainer_Impl;
 }
 
 FCsTdCreepPooled* UCsTdManager_Creep::ConstructContainer(const FECsTdCreep& Type)
@@ -387,6 +443,11 @@ void UCsTdManager_Creep::OnPostUpdate_Pool(const FECsTdCreep& Type)
 
 	// Payload
 #pragma region
+
+void UCsTdManager_Creep::ConstructPayloads(const FECsTdCreep& Type, const int32& Size)
+{
+	Internal.ConstructPayloads(Type, Size);
+}
 
 ICsTdCreepPayload* UCsTdManager_Creep::ConstructPayload(const FECsTdCreep& Type)
 {

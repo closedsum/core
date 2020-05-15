@@ -79,13 +79,13 @@ public:
 
 		FECsCVarLog LogType;
 
-		TMap<KeyType, FCsManagerPooledObjectConstructParams> ConstructParams;
+		TMap<KeyType, FCsManagerPooledObjectParams> ObjectParams;
 
 		FCsManagerPooledObjectMapParams() :
 			Name(),
 			World(nullptr),
 			LogType(),
-			ConstructParams()
+			ObjectParams()
 		{
 		}
 	};
@@ -97,8 +97,6 @@ public:
 	{
 		Name = NCsCached::Str::Empty;
 		CurrentWorld = nullptr;
-
-		ConstructParams.Reset();
 
 		ConstructManagerPooledObjects_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructManagerPooledObjects);
 
@@ -127,22 +125,15 @@ public:
 		CurrentWorld	= Params.World;
 		LogType			= Params.LogType;
 
-		ConstructParams = Params.ConstructParams;
-
-		for (TPair<KeyType, FCsManagerPooledObjectConstructParams>& Pair : ConstructParams)
+		for (const TPair<KeyType, FCsManagerPooledObjectParams>& Pair : Params.ObjectParams)
 		{
-			const KeyType& Key = Pair.Key;
-
-			FCsManagerPooledObjectParams P;
-			P.Name			  = Name + TEXT("_") + KeyTypeToString(Key);
-			P.World			  = Params.World;
-			P.LogType		  = LogType;
-			P.ConstructParams = Pair.Value;
+			const KeyType& Key								= Pair.Key;
+			const FCsManagerPooledObjectParams& ObjectParam = Pair.Value;
 
 			TManager_PooledObject_Abstract* Pool = ConstructManagerPooledObjects_Impl.Execute(Key);
 			Pool->ConstructContainer_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructContainer_Internal);
-			Pool->Init(P);
 			Pool->ConstructPayload_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructPayload_Internal);
+			Pool->Init(ObjectParam);
 
 			Pools.Add(Key, Pool);
 		}
@@ -278,8 +269,6 @@ protected:
 protected:
 
 	FString FunctionNames[(uint8)ECsManagerPooledObjectMapFunctionNames::ECsManagerPooledObjectMapFunctionNames_MAX];
-
-	TMap<KeyType, FCsManagerPooledObjectConstructParams> ConstructParams;
 
 	TMap<KeyType, TManager_PooledObject_Abstract*> Pools;
 
@@ -829,6 +818,17 @@ public:
 	FORCEINLINE PayloadType* AllocatePayload(const KeyType& Type)
 	{
 		return GetManagerPooledObjects(Type)->AllocatePayload();
+	}
+
+	/**
+	*
+	*
+	* @param Type
+	* return
+	*/
+	FORCEINLINE const int32& GetPayloadSize(const KeyType& Type)
+	{
+		return GetManagerPooledObjects(Type)->GetPayloadSize();
 	}
 
 #pragma endregion Payload

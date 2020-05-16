@@ -9,7 +9,7 @@
 #include "Managers/Time/CsManager_Time.h"
 
 #include "Managers/UnitTest/CsGetManagerUnitTest.h"
-#include "Managers/UnitTest/CsUnitTestSuite.h"
+#include "Managers/UnitTest/CsUnitTestPlan.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -63,12 +63,12 @@ bool UCsManager_UnitTest::ProcessConsoleExec(const TCHAR* Cmd, FOutputDevice& Ar
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_UnitTest::Init(UObject* InRoot)
+/*static*/ void UCsManager_UnitTest::Init(UObject* InRoot, UObject* InOuter /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetManagerUnitTest* GetManagerUnitTest = Get_GetManagerUnitTest(InRoot);
 
-	UCsManager_UnitTest* Manager_UnitTest = NewObject<UCsManager_UnitTest>(InRoot, UCsManager_UnitTest::StaticClass(), TEXT("Manager_UnitTest_Singleton"), RF_Transient | RF_Public);
+	UCsManager_UnitTest* Manager_UnitTest = NewObject<UCsManager_UnitTest>(InOuter ? InOuter : InRoot, UCsManager_UnitTest::StaticClass(), TEXT("Manager_UnitTest_Singleton"), RF_Transient | RF_Public);
 
 	GetManagerUnitTest->SetManager_UnitTest(Manager_UnitTest);
 
@@ -135,48 +135,48 @@ void UCsManager_UnitTest::Initialize()
 
 void UCsManager_UnitTest::CleanUp()
 {
-	for (TPair<FName, ICsUnitTestSuite*>& Pair : SuiteMap)
+	for (TPair<FName, ICsUnitTestPlan*>& Pair : PlanMap)
 	{
 		Pair.Value = nullptr;
 	}
-	SuiteMap.Reset();
+	PlanMap.Reset();
 
-	const int32 Count = Suites.Num();
+	const int32 Count = Plans.Num();
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		ICsUnitTestSuite* Suite = Suites[I];
-		delete Suite;
-		Suites[I] = nullptr;
+		ICsUnitTestPlan* Plan = Plans[I];
+		delete Plan;
+		Plans[I] = nullptr;
 	}
-	Suites.Reset();
+	Plans.Reset();
 	
 }
 
 #pragma endregion Singleton
 
-void UCsManager_UnitTest::Add(ICsUnitTestSuite* Suite)
+void UCsManager_UnitTest::Add(ICsUnitTestPlan* Plan)
 {
-	checkf(Suite, TEXT("UCsManager_UnitTest::Add: Suite is NULL."));
+	checkf(Plan, TEXT("UCsManager_UnitTest::Add: Plan is NULL."));
 
-	const FName& Name = Suite->GetFName();
+	const FName& Name = Plan->GetFName();
 
-	Suite->SetMyRoot(MyRoot);
+	Plan->SetMyRoot(MyRoot);
 
-	ICsUnitTestSuite** SuitePtr = SuiteMap.Find(Name);
+	ICsUnitTestPlan** PlanPtr = PlanMap.Find(Name);
 
-	checkf(!SuitePtr, TEXT("UCsManager_UnitTest::Add: Suite: %s has already been added."), *(Suite->GetName()));
+	checkf(!PlanPtr, TEXT("UCsManager_UnitTest::Add: Plan: %s has already been added."), *(Plan->GetName()));
 
-	SuiteMap.Add(Name, Suite);
-	Suites.Add(Suite);
+	PlanMap.Add(Name, Plan);
+	Plans.Add(Plan);
 }
 
 void UCsManager_UnitTest::Start()
 {
 	/*
-	ICsUnitTestSuite** SuitePtr = SuiteMap.Find(Name);
+	ICsUnitTestPlan** PlanPtr = PlanMap.Find(Name);
 
-	if (!SuitePtr)
+	if (!PlanPtr)
 	{
 		return;
 	}
@@ -195,16 +195,16 @@ void UCsManager_UnitTest::Start()
 	Payload->SetName(NCsManagerUnitTestCached::Name::Start_Internal);
 	Payload->SetNameAsString(NCsManagerUnitTestCached::Str::Start_Internal);
 
-	UE_LOG(LogCs, Warning, TEXT("UCsManager_UnitTest::Start: Starting Unit Test Suites."));
-	UE_LOG(LogCs, Warning, TEXT("UCsManager_UnitTest::Start: - Processing %d Suites."), Suites.Num());
+	UE_LOG(LogCs, Log, TEXT("Starting Unit Test Plans."));
+	UE_LOG(LogCs, Log, TEXT("- Processing %d Plans."), Plans.Num());
 
 	Scheduler->Start(Payload);
 }
 
 char UCsManager_UnitTest::Start_Internal(FCsRoutine* R)
 {
-	int32& SuiteIndex		= R->GetValue_Indexer(CS_FIRST);
-	ICsUnitTestSuite* Suite = Suites[SuiteIndex];
+	int32& PlanIndex	  = R->GetValue_Indexer(CS_FIRST);
+	ICsUnitTestPlan* Plan = Plans[PlanIndex];
 
 	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(R->Group);
 	FCsTime& StartTime		   = R->GetValue_Timer(CS_FIRST);
@@ -217,16 +217,17 @@ char UCsManager_UnitTest::Start_Internal(FCsRoutine* R)
 
 	do
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_UnitTest::Start: Starting Suite[%d/%d]: %s."), SuiteIndex + 1, Suites.Num(), *(Suite->GetName()));
+		UE_LOG(LogCs, Log, TEXT(""));
+		UE_LOG(LogCs, Log, TEXT("Starting Plan[%d/%d]: %s."), PlanIndex + 1, Plans.Num(), *(Plan->GetName()));
 
-		Suite->Start();
+		Plan->Start();
 
-		CS_COROUTINE_WAIT_UNTIL(R, Suite->IsComplete());
+		CS_COROUTINE_WAIT_UNTIL(R, Plan->IsComplete());
 
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_UnitTest::Start: Completed Suite[%d/%d]: %s in %f seconds."), SuiteIndex + 1, Suites.Num(), *(Suite->GetName()), (float)ElapsedTime.Timespan.GetTotalSeconds());
+		UE_LOG(LogCs, Log, TEXT("Completed Plan[%d/%d]: %s in %f seconds."), PlanIndex + 1, Plans.Num(), *(Plan->GetName()), (float)ElapsedTime.Timespan.GetTotalSeconds());
 
-		++SuiteIndex;
-	} while (SuiteIndex < Suites.Num());
+		++PlanIndex;
+	} while (PlanIndex < Plans.Num());
 
 	CS_COROUTINE_END(R);
 }
@@ -234,7 +235,7 @@ char UCsManager_UnitTest::Start_Internal(FCsRoutine* R)
 // Exec
 #pragma region
 
-void UCsManager_UnitTest::StartUnitTestSuites()
+void UCsManager_UnitTest::StartUnitTestPlans()
 {
 	Start();
 }

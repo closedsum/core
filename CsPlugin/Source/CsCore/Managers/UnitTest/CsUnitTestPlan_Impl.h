@@ -1,19 +1,19 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Managers/UnitTest/CsUnitTestSuite.h"
+#include "Managers/UnitTest/CsUnitTestPlan.h"
 
 class ICsUnitTest;
 class UObject;
 struct FCsRoutine;
 
-class CSCORE_API FCsUnitTestSuite_Impl : public ICsUnitTestSuite
+class CSCORE_API FCsUnitTestPlan_Impl : public ICsUnitTestPlan
 {
 public:
 
-	FCsUnitTestSuite_Impl();
-	virtual ~FCsUnitTestSuite_Impl();
+	FCsUnitTestPlan_Impl();
+	virtual ~FCsUnitTestPlan_Impl();
 
-// ICsUnitTestSuite
+// ICsUnitTestPlan
 #pragma region
 public:
 
@@ -47,7 +47,7 @@ public:
 		return bComplete;
 	}
 
-#pragma endregion ICsUnitTestSuite
+#pragma endregion ICsUnitTestPlan
 
 protected:
 
@@ -64,7 +64,7 @@ public:
 	template<typename UnitTestType>
 	void Add()
 	{
-		static_assert(std::is_base_of<ICsUnitTest, UnitTestType>(), "FCsUnitTestSuite_Impl::Add: UnitTestType does NOT implement interface: ICsUnitTest.");
+		static_assert(std::is_base_of<ICsUnitTest, UnitTestType>(), "FCsUnitTestPlan_Impl::Add: UnitTestType does NOT implement interface: ICsUnitTest.");
 
 		UnitTestType* Test = new UnitTestType();
 

@@ -2,23 +2,23 @@
 #pragma once
 class ICsUnitTest;
 
-class CSCORE_API ICsUnitTestSuite
+class CSCORE_API ICsUnitTestPlan
 {
 public:
 
-	virtual ~ICsUnitTestSuite() {}
+	virtual ~ICsUnitTestPlan() {}
 
 	/**
-	* Get the Name of the Suite as a FName.
+	* Get the Name of the Plan as a FName.
 	*
-	* return Name as a FName for the Suite.
+	* return Name as a FName for the Plan.
 	*/
 	virtual const FName& GetFName() const = 0;
 
 	/**
-	* Get the Name of the Suite as a FString.
+	* Get the Name of the Plan as a FString.
 	*
-	* return Name as a FString for the Suite.
+	* return Name as a FString for the Plan.
 	*/
 	virtual const FString& GetName() const = 0;
 
@@ -39,23 +39,23 @@ public:
 protected:
 
 	/**
-	* Add a Test to the list of tests for the Suite.
+	* Add a Test to the list of tests for the Plan.
 	*
-	* @param Test	Test to add to the Suite.
+	* @param Test	Test to add to the Plan.
 	*/
 	virtual void Add(ICsUnitTest* Test) = 0;
 
 public:
 
 	/**
-	* Start the Suite.
+	* Start the Plan.
 	*/
 	virtual void Start() = 0;
 
 	/**
-	* Check whether the Suite is complete or not.
+	* Check whether the Plan is complete or not.
 	*
-	* return true if the Suite is complete, false otherwise.
+	* return true if the Plan is complete, false otherwise.
 	*/
 	virtual bool IsComplete() const = 0;
 };

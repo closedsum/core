@@ -4,7 +4,7 @@
 #include "CsManager_UnitTest.generated.h"
 
 class ICsGetManagerUnitTest;
-class ICsUnitTestSuite;
+class ICsUnitTestPlan;
 
 UCLASS(transient)
 class CSCORE_API UCsManager_UnitTest : public UObject
@@ -25,7 +25,7 @@ public:
 
 	static UCsManager_UnitTest* Get(UObject* InRoot = nullptr);
 
-	static void Init(UObject* InRoot);
+	static void Init(UObject* InRoot, UObject* InOuter = nullptr);
 	static void Shutdown(UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
@@ -69,24 +69,24 @@ public:
 
 protected:
 
-	TMap<FName, ICsUnitTestSuite*> SuiteMap;
-	TArray<ICsUnitTestSuite*> Suites;
+	TMap<FName, ICsUnitTestPlan*> PlanMap;
+	TArray<ICsUnitTestPlan*> Plans;
 
 public:
 
-	template<typename UnitTestSuiteType>
+	template<typename UnitTestPlanType>
 	void Add()
 	{
-		static_assert(std::is_base_of<ICsUnitTestSuite, UnitTestSuiteType>(), "UCsManager_UnitTest::Add: UnitTestSuiteType does NOT implement interface: ICsUnitTestSuite.");
+		static_assert(std::is_base_of<ICsUnitTestPlan, UnitTestPlanType>(), "UCsManager_UnitTest::Add: UnitTestPlayType does NOT implement interface: ICsUnitTestPlan.");
 
-		UnitTestSuiteType* Suite = new UnitTestSuiteType();
+		UnitTestPlanType* Suite = new UnitTestPlanType();
 
 		Add(Suite);
 	}
 
 protected:
 
-	void Add(ICsUnitTestSuite* Suite);
+	void Add(ICsUnitTestPlan* Plan);
 	
 public:
 
@@ -102,7 +102,7 @@ protected:
 public:
 
 	UFUNCTION(Exec)
-	void StartUnitTestSuites();
+	void StartUnitTestPlans();
 
 #pragma endregion Exec
 };

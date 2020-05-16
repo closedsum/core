@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/UnitTest/CsUnitTestSuite_Impl.h"
+#include "Managers/UnitTest/CsUnitTestPlan_Impl.h"
 #include "CsCore.h"
 #include "CsCVars.h"
 
@@ -10,9 +10,9 @@
 // UnitTest
 #include "Managers/UnitTest/CsUnitTest.h"
 
-FCsUnitTestSuite_Impl::FCsUnitTestSuite_Impl()
+FCsUnitTestPlan_Impl::FCsUnitTestPlan_Impl()
 {
-	NameAsString = TEXT("FCsUnitTestSuite_Impl");
+	NameAsString = TEXT("FCsUnitTestPlan_Impl");
 	Name		 = FName(*NameAsString);
 
 	Start_Internal_NameAsString = NameAsString + TEXT("::Start_Internal");
@@ -21,7 +21,7 @@ FCsUnitTestSuite_Impl::FCsUnitTestSuite_Impl()
 	bComplete = false;
 }
 
-FCsUnitTestSuite_Impl::~FCsUnitTestSuite_Impl()
+FCsUnitTestPlan_Impl::~FCsUnitTestPlan_Impl()
 {
 	for (TPair<FName, ICsUnitTest*>& Pair : TestMap)
 	{
@@ -40,15 +40,15 @@ FCsUnitTestSuite_Impl::~FCsUnitTestSuite_Impl()
 	Tests.Reset();
 }
 
-// ICsUnitTestSuite
+// ICsUnitTestPlan
 #pragma region
 
-void FCsUnitTestSuite_Impl::SetMyRoot(UObject* InRoot)
+void FCsUnitTestPlan_Impl::SetMyRoot(UObject* InRoot)
 {
 	MyRoot = InRoot;
 }
 
-void FCsUnitTestSuite_Impl::Add(ICsUnitTest* Test)
+void FCsUnitTestPlan_Impl::Add(ICsUnitTest* Test)
 {
 	checkf(Test, TEXT("%s::Add: Test is NULL."), *NameAsString);
 
@@ -64,7 +64,7 @@ void FCsUnitTestSuite_Impl::Add(ICsUnitTest* Test)
 	Tests.Add(Test);
 }
 
-void FCsUnitTestSuite_Impl::Start()
+void FCsUnitTestPlan_Impl::Start()
 {
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
@@ -72,7 +72,7 @@ void FCsUnitTestSuite_Impl::Start()
 	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(UpdateGroup);
 	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
 
-	Payload->Coroutine.BindRaw(this, &FCsUnitTestSuite_Impl::Start_Internal);
+	Payload->Coroutine.BindRaw(this, &FCsUnitTestPlan_Impl::Start_Internal);
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
 	Payload->Owner.SetOwner(this);
 
@@ -85,9 +85,9 @@ void FCsUnitTestSuite_Impl::Start()
 	Scheduler->Start(Payload);
 }
 
-#pragma endregion ICsUnitTestSuite
+#pragma endregion ICsUnitTestPlan
 
-char FCsUnitTestSuite_Impl::Start_Internal(FCsRoutine* R)
+char FCsUnitTestPlan_Impl::Start_Internal(FCsRoutine* R)
 {
 	int32& TestIndex  = R->GetValue_Indexer(CS_FIRST);
 	ICsUnitTest* Test = Tests[TestIndex];

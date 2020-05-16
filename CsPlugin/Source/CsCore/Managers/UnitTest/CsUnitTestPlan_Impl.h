@@ -40,6 +40,11 @@ protected:
 
 public:
 
+	FORCEINLINE const ICsUnitTest* GetCurrentTest() const
+	{
+		return CurrentTest;
+	}
+
 	void Start();
 
 	FORCEINLINE bool IsComplete() const
@@ -58,6 +63,8 @@ protected:
 
 	TMap<FName, ICsUnitTest*> TestMap;
 	TArray<ICsUnitTest*> Tests;
+
+	ICsUnitTest* CurrentTest;
 
 public:
 

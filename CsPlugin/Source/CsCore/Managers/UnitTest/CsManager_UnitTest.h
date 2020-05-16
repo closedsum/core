@@ -72,6 +72,8 @@ protected:
 	TMap<FName, ICsUnitTestPlan*> PlanMap;
 	TArray<ICsUnitTestPlan*> Plans;
 
+// Add
+#pragma region
 public:
 
 	template<typename UnitTestPlanType>
@@ -88,7 +90,22 @@ protected:
 
 	void Add(ICsUnitTestPlan* Plan);
 	
+#pragma endregion Add
+
+// Get
+#pragma region
+protected:
+
+	ICsUnitTestPlan* CurrentPlan;
+
 public:
+
+	FORCEINLINE const ICsUnitTestPlan* GetCurrentPlan() const
+	{
+		return CurrentPlan;
+	}
+
+#pragma endregion Get
 
 	void Start();
 	//void Start(const FName& Name);

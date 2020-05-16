@@ -48,6 +48,13 @@ protected:
 public:
 
 	/**
+	*
+	*
+	* return Current Test
+	*/
+	virtual const ICsUnitTest* GetCurrentTest() const = 0;
+
+	/**
 	* Start the Plan.
 	*/
 	virtual void Start() = 0;

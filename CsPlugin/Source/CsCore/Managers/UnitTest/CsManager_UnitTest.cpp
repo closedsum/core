@@ -36,6 +36,12 @@ namespace NCsManagerUnitTestCached
 
 UCsManager_UnitTest::UCsManager_UnitTest(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	MyRoot = nullptr;
+
+	PlanMap.Reset();
+	Plans.Reset();
+
+	CurrentPlan = nullptr;
 }
 
 // UObject Interface
@@ -151,6 +157,7 @@ void UCsManager_UnitTest::CleanUp()
 	}
 	Plans.Reset();
 	
+	CurrentPlan = nullptr;
 }
 
 #pragma endregion Singleton
@@ -219,15 +226,21 @@ char UCsManager_UnitTest::Start_Internal(FCsRoutine* R)
 	{
 		UE_LOG(LogCs, Log, TEXT(""));
 		UE_LOG(LogCs, Log, TEXT("Starting Plan[%d/%d]: %s."), PlanIndex + 1, Plans.Num(), *(Plan->GetName()));
+		UE_LOG(LogCs, Log, TEXT(""));
+
+		CurrentPlan = Plan;
 
 		Plan->Start();
 
 		CS_COROUTINE_WAIT_UNTIL(R, Plan->IsComplete());
 
+		UE_LOG(LogCs, Log, TEXT(""));
 		UE_LOG(LogCs, Log, TEXT("Completed Plan[%d/%d]: %s in %f seconds."), PlanIndex + 1, Plans.Num(), *(Plan->GetName()), (float)ElapsedTime.Timespan.GetTotalSeconds());
 
 		++PlanIndex;
 	} while (PlanIndex < Plans.Num());
+
+	CurrentPlan = nullptr;
 
 	CS_COROUTINE_END(R);
 }

@@ -79,8 +79,9 @@ void FCsUnitTestPlan_Impl::Start()
 	Payload->SetName(Start_Internal_Name);
 	Payload->SetNameAsString(Start_Internal_NameAsString);
 
-	UE_LOG(LogCs, Warning, TEXT("%s::Start: Starting Unit Tests."), *NameAsString);
-	UE_LOG(LogCs, Warning, TEXT("%s::Start: - Processing %d Tests."), *NameAsString, Tests.Num());
+	UE_LOG(LogCs, Warning, TEXT("%s: Starting Unit Tests."), *NameAsString);
+	UE_LOG(LogCs, Warning, TEXT("- Processing %d Tests."), Tests.Num());
+	UE_LOG(LogCs, Warning, TEXT(""));
 
 	Scheduler->Start(Payload);
 }
@@ -103,17 +104,23 @@ char FCsUnitTestPlan_Impl::Start_Internal(FCsRoutine* R)
 
 	do
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s::Start: Starting Test[%d/%d]: %s."), *NameAsString, TestIndex + 1, Tests.Num(), *(Test->GetName()));
+		UE_LOG(LogCs, Warning, TEXT(""));
+		UE_LOG(LogCs, Warning, TEXT("Starting Test[%d/%d]: %s."), TestIndex + 1, Tests.Num(), *(Test->GetName()));
+		UE_LOG(LogCs, Warning, TEXT(""));
+
+		CurrentTest = Test;
 
 		Test->Start();
 
 		CS_COROUTINE_WAIT_UNTIL(R, Test->IsComplete());
 
-		UE_LOG(LogCs, Warning, TEXT("%s::Start: Completed Test[%d/%d]: %s in %f seconds."), *NameAsString, TestIndex + 1, Tests.Num(), *(Test->GetName()), (float)ElapsedTime.Timespan.GetTotalSeconds());
+		UE_LOG(LogCs, Warning, TEXT(""));
+		UE_LOG(LogCs, Warning, TEXT("Completed Test[%d/%d]: %s in %f seconds."), *NameAsString, TestIndex + 1, Tests.Num(), *(Test->GetName()), (float)ElapsedTime.Timespan.GetTotalSeconds());
 
 		++TestIndex;
 	} while (TestIndex < Tests.Num());
 
+	CurrentTest = nullptr;
 	bComplete = true;
 
 	CS_COROUTINE_END(R);

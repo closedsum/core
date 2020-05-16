@@ -190,8 +190,12 @@ public:
 		return Cast<T>(Get(InRoot));
 	}
 
+	static bool IsValid(UObject* InRoot = nullptr);
+
 	static void Init(UObject* InRoot, TSubclassOf<UCsTdManager_Creep> ManagerCreepClass, UObject* InOuter = nullptr);
+
 	static void Shutdown(UObject* InRoot = nullptr);
+	static bool HasShutdown(UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
 protected:
@@ -236,9 +240,13 @@ public:
 
 #pragma endregion Singleton
 
+// Settings
+#pragma region
 protected:
 
 	FCsTdSettings_Manager_Creep Settings;
+
+#pragma endregion Settings
 
 // Internal
 #pragma region
@@ -253,6 +261,11 @@ protected:
 	virtual void SetupInternal();
 
 public:
+
+	/**
+	*
+	*/
+	void InitInternalFromSettings();
 
 	/**
 	*

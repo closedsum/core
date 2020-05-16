@@ -2,7 +2,7 @@
 
 #include "Managers/Creep/CsTdManager_Creep.h"
 #include "CsTd.h"
-//#include "CsCVars.h"
+#include "Managers/Creep/CsTdCVars_Manager_Creep.h"
 
 // Settings
 #include "Settings/CsTdSettings.h"
@@ -53,6 +53,16 @@ UCsTdManager_Creep::UCsTdManager_Creep(const FObjectInitializer& ObjectInitializ
 	return s_Instance;
 #endif // #if WITH_EDITOR
 }
+
+/*static*/ bool UCsTdManager_Creep::IsValid(UObject* InRoot /*=nullptr*/)
+{
+#if WITH_EDITOR
+	return Get_GetManagerCreep(InRoot)->GetManager_Creep() != nullptr;
+#else
+	return s_Instance != nullptr;
+#endif // #if WITH_EDITOR
+}
+
 
 /*static*/ void UCsTdManager_Creep::Init(UObject* InRoot, TSubclassOf<UCsTdManager_Creep> ManagerCreepClass, UObject* InOuter /*=nullptr*/)
 {
@@ -113,6 +123,15 @@ UCsTdManager_Creep::UCsTdManager_Creep(const FObjectInitializer& ObjectInitializ
 #endif // #if WITH_EDITOR
 }
 
+/*static*/ bool UCsTdManager_Creep::HasShutdown(UObject* InRoot /*=nullptr*/)
+{
+#if WITH_EDITOR
+	return Get_GetManagerCreep(InRoot)->GetManager_Creep() == nullptr;
+#else
+	return s_bShutdown;
+#endif // #if WITH_EDITOR
+}
+
 #if WITH_EDITOR
 
 /*static*/ ICsTdGetManagerCreep* UCsTdManager_Creep::Get_GetManagerCreep(UObject* InRoot)
@@ -137,17 +156,26 @@ UCsTdManager_Creep::UCsTdManager_Creep(const FObjectInitializer& ObjectInitializ
 /*static*/ ICsTdGetManagerCreep* UCsTdManager_Creep::GetSafe_GetManagerCreep(UObject* Object)
 {
 	if (!Object)
+	{
+		UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::GetSafe_GetManagerCreep: Object is NULL."));
 		return nullptr;
+	}
 
 	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
 
 	if (!GetManagerSingleton)
+	{
+		UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::GetSafe_GetManagerCreep: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
 		return nullptr;
+	}
 	
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
 	if (!Manager_Singleton)
+	{
+		UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::GetSafe_GetManagerCreep: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
 		return nullptr;
+	}
 
 	return Cast<ICsTdGetManagerCreep>(Manager_Singleton);
 }
@@ -232,6 +260,11 @@ void UCsTdManager_Creep::SetupInternal()
 
 	Settings = ModuleSettings->ManagerCreep;
 
+	InitInternalFromSettings();
+}
+
+void UCsTdManager_Creep::InitInternalFromSettings()
+{
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
 		FCsTdManager_Creep_Internal::FCsManagerPooledObjectMapParams Params;
@@ -246,18 +279,18 @@ void UCsTdManager_Creep::SetupInternal()
 
 			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
 
-			checkf(PoolParams.Class.ToSoftObjectPath().IsValid(), TEXT("UCsTdManager_Creep::SetupInternal: Class for Type: %s is NOT a Valid Path."), *(Type.Name));
+			checkf(PoolParams.Class.ToSoftObjectPath().IsValid(), TEXT("UCsTdManager_Creep::InitInternalFromSettings: Class for Type: %s is NOT a Valid Path."), *(Type.Name));
 
 #if !UE_BUILD_SHIPPING
 			if (!PoolParams.Class.Get())
 			{
-				UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::SetupInternal: Class @ for Type: %s is NOT already loaded in memory."), *(PoolParams.Class.ToString()), *(Type.Name));
+				UE_LOG(LogCsTd, Warning, TEXT("UCsTdManager_Creep::InitInternalFromSettings: Class @ for Type: %s is NOT already loaded in memory."), *(PoolParams.Class.ToString()), *(Type.Name));
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
 			UClass* Class = PoolParams.Class.LoadSynchronous();
 
-			checkf(Class, TEXT("UCsTdManager_Creep::SetupInternal: Failed to load Class @ for Type: %s."), *(PoolParams.Class.ToString()), *(Type.Name));
+			checkf(Class, TEXT("UCsTdManager_Creep::InitInternalFromSettings: Failed to load Class @ for Type: %s."), *(PoolParams.Class.ToString()), *(Type.Name));
 
 			ObjectParams.Name = Params.Name + TEXT("_") + Type.Name;
 			ObjectParams.World = Params.World;

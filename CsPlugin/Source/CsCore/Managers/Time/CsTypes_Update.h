@@ -26,6 +26,7 @@ namespace NCsUpdateGroup
 {
 	typedef FECsUpdateGroup Type;
 
+	extern CSCORE_API const Type EditorEngine;
 	extern CSCORE_API const Type GameInstance;
 	extern CSCORE_API const Type GameState;
 	extern CSCORE_API const Type Menu;

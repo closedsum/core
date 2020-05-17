@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/Enum/CsTypes_Enum.h"
+#include "Types/Enum/CsEnum_uint8.h"
+#include "Types/Enum/CsEnumStructMap.h"
 #include "Types/CsTypes_Curve.h"
 #include "Types/CsTypes_Sound.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"

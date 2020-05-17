@@ -7,6 +7,7 @@
 // Types
 #include "Types/CsTypes.h"
 #include "Coroutine/CsTypes_Coroutine.h"
+#include "Types/Enum/CsUserDefinedEnum.h"
 #include "CsGameInstance_DEPRECATED.generated.h"
 
 // OnTick

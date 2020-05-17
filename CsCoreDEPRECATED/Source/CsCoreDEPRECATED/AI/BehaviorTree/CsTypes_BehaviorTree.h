@@ -1,5 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/Enum/CsTypes_Enum.h"
+#include "Types/Enum/CsEnum_uint8.h"
+#include "Types/Enum/CsEnumStructMap.h"
+#include "Types/Enum/CsEnumMap.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/BehaviorTreeTypes.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/Blackboard/BlackboardKeyType.h"
 

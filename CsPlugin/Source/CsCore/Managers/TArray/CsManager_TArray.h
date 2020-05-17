@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
-#include "Types/Enum/CsTypes_Enum.h"
+#include "Types/Enum/CsEnumMap.h"
 #include <typeinfo>
 
 // Enums

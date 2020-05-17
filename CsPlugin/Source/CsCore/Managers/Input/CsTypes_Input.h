@@ -1,5 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Primitive.h"
+#include "Types/Enum/CsEnumMap.h"
+#include "Types/Enum/CsEnumMask_int32.h"
+#include "Types/Enum/CsEnumStructMaskMap.h"
 // Types
 #include "InputCoreTypes.h"
 

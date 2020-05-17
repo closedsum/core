@@ -1,5 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/CsTypes_Pool.h"
+#include "Types/Enum/CsEnum_uint8.h"
+#include "Types/Enum/CsEnumStructMap.h"
 #include "Containers/CsWeakObjectPtr.h"
 #include "Engine/DataTable.h"
 

@@ -2,7 +2,7 @@
 #pragma once
 
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "Types/Enum/CsTypes_Enum.h"
+#include "Types/Enum/CsEnumMap.h"
 #include "CsBTTask_LookAt.generated.h"
 
 // Enums

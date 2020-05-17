@@ -4,6 +4,7 @@
 #include "Engine/DeveloperSettings.h"
 // Types
 #include "Types/CsTypes_Load.h"
+#include "Types/Enum/CsUserDefinedEnum.h"
 #include "Settings/CsTypes_Settings.h"
 #include "CsDeveloperSettings.generated.h"
 

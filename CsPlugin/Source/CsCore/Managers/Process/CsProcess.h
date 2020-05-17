@@ -4,6 +4,8 @@
 #include "Managers/CsPooledObjectOld.h"
 #include "Managers/Pool/CsTypes_Pool.h"
 #include "Types/CsTypes_String.h"
+#include "Types/Enum/CsEnum_uint8.h"
+#include "Types/Enum/CsEnumStructMap.h"
 #include "CsProcess.generated.h"
 
 // Enums

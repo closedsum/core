@@ -3,7 +3,7 @@
 #include "IPropertyTypeCustomization.h"
 #include "PropertyHandle.h"
 #include "Widgets/Input/SComboBox.h"
-#include "Types/Enum/CsTypes_Enum.h"
+#include "Types/Enum/CsUserDefinedEnum.h"
 
 class IDetailGroup;
 

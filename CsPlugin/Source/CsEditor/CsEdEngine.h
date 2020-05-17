@@ -5,6 +5,7 @@
 #include "Types/Property/Ref/CsProperty_Ref_bool.h"
 #include "Types/CsTypes_Load.h"
 #include "Types/CsTypes_Async.h"
+#include "Types/Enum/CsUserDefinedEnum.h"
 #include "CsEdEngine.generated.h"
 
 class UCsDataMapping;

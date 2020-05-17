@@ -823,13 +823,13 @@ struct CSCORE_API FECsEnum
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enum")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString Name;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enum")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString DisplayName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enum")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName Name_Internal;
 
 	FECsEnum() :
@@ -899,7 +899,7 @@ struct CSCORE_API FECsEnum_uint8 : public FECsEnum
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enum_uint8")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	uint8 Value;
 
 	FECsEnum_uint8() :
@@ -964,6 +964,11 @@ public:
 	FORCEINLINE friend bool operator!=(const FECsEnum_uint8& Lhs, const uint8& Rhs)
 	{
 		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE const uint8& GetValue() const
+	{
+		return Value;
 	}
 
 	FORCEINLINE virtual FString ToString() const override
@@ -1080,7 +1085,7 @@ public:
 		return EnumFName;
 	}
 
-	FORCEINLINE EnumStruct Create(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum = false)
+	EnumStruct Create(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum = false)
 	{
 		EnumType Index = (EnumType)Enums.Num();
 		EnumStruct E(Index, Name, DisplayName);
@@ -1111,7 +1116,7 @@ public:
 	
 #if WITH_EDITOR
 
-	FORCEINLINE bool CreateSafe(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum = false)
+	bool CreateSafe(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum = false)
 	{
 		// Check Name already exists
 		if (NameMap.Find(Name) != nullptr)
@@ -1145,6 +1150,21 @@ public:
 
 #endif // #if WITH_EDITOR
 	
+	bool Remove(const EnumStruct& E)
+	{
+		bool Success = Enums.Remove(E) > 0;
+		UserDefinedEnums.Remove(E);
+		UserDefinedNameMap.Remove(E.GetName());
+		NameMap.Remove(E.GetName());
+		DisplayNameMap.Remove(E.GetDisplayName());
+		NameInternalMap.Remove(E.GetFName());
+		TypeMap.Remove(E.GetValue());
+
+		MAX.Value = (EnumType)Enums.Num();
+
+		return Success;
+	}
+
 	FORCEINLINE const EnumStruct& operator[](const EnumType &Type)
 	{
 		return TypeMap[Type];
@@ -1338,10 +1358,10 @@ struct CSCORE_API FECsEnumMask_int32 : public FECsEnum
 
 public:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EnumMask_uint32")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	uint8 Value;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EnumMask_uint32")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 Mask;
 
 	FECsEnumMask_int32() :
@@ -1434,6 +1454,16 @@ public:
 		return Lhs | Rhs.Mask;
 	}
 
+	FORCEINLINE const uint8& GetValue() const 
+	{
+		return Value;
+	}
+
+	FORCEINLINE const int32& GetMask() const
+	{
+		return Mask;
+	}
+
 	FORCEINLINE virtual FString ToString() const override
 	{
 		return TEXT("Name: ") + Name + TEXT(" Value: ") + FString::FromInt(Value) + TEXT(" Mask: ") + FString::FromInt(Mask);
@@ -1466,7 +1496,7 @@ struct CSCORE_API FECsEnumMask_uint32 : public FECsEnum
 
 public:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EnumMask_uint32")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	uint8 Value;
 	
 	UPROPERTY()
@@ -1570,6 +1600,16 @@ public:
 	FORCEINLINE friend uint32 operator|(const uint32& Lhs, const FECsEnumMask_uint32& Rhs)
 	{
 		return Lhs | Rhs.Mask;
+	}
+
+	FORCEINLINE const uint8& GetValue() const
+	{
+		return Value;
+	}
+
+	FORCEINLINE const uint32& GetMask() const
+	{
+		return Mask;
 	}
 
 	FORCEINLINE virtual FString ToString() const override

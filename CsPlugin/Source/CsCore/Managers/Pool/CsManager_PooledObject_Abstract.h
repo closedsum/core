@@ -457,7 +457,6 @@ public:
 	/**
 	*
 	*
-	*
 	* @param Object
 	*/
 	TMulticastDelegate<void, const InterfaceContainerType* /*Object*/> OnConstructObject_Event;

@@ -210,7 +210,10 @@ private:
 protected:
 
 	/**
-	* Creates a pooled object of type ICsPooledObject
+	* Creates a pooled object of type: ICsPooledObject
+	*
+	* @param Type
+	* return		
 	*/
 	InterfaceContainerType* ConstructObject(const KeyType& Type)
 	{
@@ -219,6 +222,21 @@ protected:
 		CurrentConstructObjectType = Type;
 
 		return Pools[Type]->ConstructObject();
+	}
+
+public:
+
+	/**
+	*
+	*
+	* @param Type
+	* return		Event for OnConstructObject for Type.
+	*/
+	FORCEINLINE TMulticastDelegate<void, const InterfaceContainerType*>& GetOnConstructObject_Event(const KeyType& Type)
+	{
+		checkf(IsValidKey(Type), TEXT("%s::GetOnConstructObject_Event: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
+
+		return Pools[Type]->OnConstructObject_Event;
 	}
 
 public:
@@ -255,7 +273,7 @@ protected:
 	* @param O
 	* return 
 	*/
-	FString GetObjectName(const InterfaceContainerType* O)
+	FORCEINLINE FString GetObjectName(const InterfaceContainerType* O)
 	{
 		checkf(O, TEXT("%s::GetObjectName: O is NULL."), *Name);
 
@@ -332,9 +350,9 @@ public:
 			Pool = ConstructManagerPooledObjects_Impl.Execute(Type);
 
 			Pool->ConstructContainer_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructContainer_Internal);
-			Pool->Init(Params);
 			Pool->ConstructPayload_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructPayload_Internal);
-
+			Pool->Init(Params);
+		
 			Pools.Add(Type, Pool);
 		}
 		else

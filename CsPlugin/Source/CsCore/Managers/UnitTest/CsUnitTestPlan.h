@@ -9,18 +9,32 @@ public:
 	virtual ~ICsUnitTestPlan() {}
 
 	/**
-	* Get the Name of the Plan as a FName.
+	* Get the Class Name of the Plan as a FName.
 	*
-	* return Name as a FName for the Plan.
+	* return Class Name as a FName for the Plan.
 	*/
 	virtual const FName& GetFName() const = 0;
 
 	/**
-	* Get the Name of the Plan as a FString.
+	* Get the Class Name of the Plan as a FString.
 	*
-	* return Name as a FString for the Plan.
+	* return Class Name as a FString for the Plan.
 	*/
 	virtual const FString& GetName() const = 0;
+
+	/**
+	* Get the Display Name of the Plan as a FName.
+	*
+	* return Display Name as a FName for the Plan.
+	*/
+	virtual const FName& GetDisplayFName() const = 0;
+
+	/**
+	* Get the Class Name of the Plan as a FString.
+	*
+	* return Class Name as a FString for the Plan.
+	*/
+	virtual const FString& GetDisplayName() const = 0;
 
 	/**
 	*

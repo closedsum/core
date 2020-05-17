@@ -24,6 +24,20 @@ public:
 	virtual const FString& GetName() const = 0;
 
 	/**
+	* Get the Display Name of the Test as a FName.
+	*
+	* return Display Name as a FName for the Test.
+	*/
+	virtual const FName& GetDisplayFName() const = 0;
+
+	/**
+	* Get the Class Name of the Test as a FString.
+	*
+	* return Class Name as a FString for the Test.
+	*/
+	virtual const FString& GetDisplayName() const = 0;
+
+	/**
 	*
 	*
 	* @param InRoot

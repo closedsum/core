@@ -9,6 +9,17 @@
 
 #include "UObject/Object.h"
 
+ICsUnitTest_Impl::ICsUnitTest_Impl()
+{
+	NameAsString = TEXT("ICsUnitTest_Impl");
+	Name		 = FName(*NameAsString);
+
+	DisplayNameAsString = TEXT("Unit Test Impl");
+	DisplayName		    = FName(*DisplayNameAsString);
+
+	bComplete = false;
+}
+
 // ICsUnitTest
 #pragma region
 
@@ -31,6 +42,8 @@ void ICsUnitTest_Impl::Start()
 
 	Payload->SetName(Start_Internal_Name);
 	Payload->SetNameAsString(Start_Internal_NameAsString);
+
+	bComplete = false;
 
 	UE_LOG(LogCs, Warning, TEXT("%s::Start: Starting Unit Test."), *NameAsString);
 

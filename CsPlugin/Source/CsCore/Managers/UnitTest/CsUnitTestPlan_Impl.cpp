@@ -15,6 +15,9 @@ FCsUnitTestPlan_Impl::FCsUnitTestPlan_Impl()
 	NameAsString = TEXT("FCsUnitTestPlan_Impl");
 	Name		 = FName(*NameAsString);
 
+	DisplayNameAsString = TEXT("Test Plan Impl");
+	DisplayName			= FName(*DisplayNameAsString);
+
 	Start_Internal_NameAsString = NameAsString + TEXT("::Start_Internal");
 	Start_Internal_Name			= FName(*Start_Internal_NameAsString);
 
@@ -105,7 +108,7 @@ char FCsUnitTestPlan_Impl::Start_Internal(FCsRoutine* R)
 	do
 	{
 		UE_LOG(LogCs, Warning, TEXT(""));
-		UE_LOG(LogCs, Warning, TEXT("Starting Test[%d/%d]: %s."), TestIndex + 1, Tests.Num(), *(Test->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("Starting Test[%d/%d]: %s."), TestIndex + 1, Tests.Num(), *(Test->GetDisplayName()));
 		UE_LOG(LogCs, Warning, TEXT(""));
 
 		CurrentTest = Test;
@@ -115,7 +118,7 @@ char FCsUnitTestPlan_Impl::Start_Internal(FCsRoutine* R)
 		CS_COROUTINE_WAIT_UNTIL(R, Test->IsComplete());
 
 		UE_LOG(LogCs, Warning, TEXT(""));
-		UE_LOG(LogCs, Warning, TEXT("Completed Test[%d/%d]: %s in %f seconds."), *NameAsString, TestIndex + 1, Tests.Num(), *(Test->GetName()), (float)ElapsedTime.Timespan.GetTotalSeconds());
+		UE_LOG(LogCs, Warning, TEXT("Completed Test[%d/%d]: %s in %f seconds."), *NameAsString, TestIndex + 1, Tests.Num(), *(Test->GetDisplayName()), (float)ElapsedTime.Timespan.GetTotalSeconds());
 
 		++TestIndex;
 	} while (TestIndex < Tests.Num());

@@ -27,6 +27,16 @@ public:
 		return NameAsString;
 	}
 
+	FORCEINLINE const FName& GetDisplayFName() const
+	{
+		return DisplayName;
+	}
+
+	FORCEINLINE const FString& GetDisplayName() const
+	{
+		return DisplayNameAsString;
+	}
+
 	void SetMyRoot(UObject* InRoot);
 
 	FORCEINLINE UObject* GetMyRoot() const
@@ -58,6 +68,9 @@ protected:
 
 	FName Name;
 	FString NameAsString;
+
+	FName DisplayName;
+	FString DisplayNameAsString;
 
 	UObject* MyRoot;
 

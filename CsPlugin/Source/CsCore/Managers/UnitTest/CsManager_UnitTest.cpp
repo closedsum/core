@@ -225,7 +225,7 @@ char UCsManager_UnitTest::Start_Internal(FCsRoutine* R)
 	do
 	{
 		UE_LOG(LogCs, Log, TEXT(""));
-		UE_LOG(LogCs, Log, TEXT("Starting Plan[%d/%d]: %s."), PlanIndex + 1, Plans.Num(), *(Plan->GetName()));
+		UE_LOG(LogCs, Log, TEXT("Starting Plan[%d/%d]: %s."), PlanIndex + 1, Plans.Num(), *(Plan->GetDisplayName()));
 		UE_LOG(LogCs, Log, TEXT(""));
 
 		CurrentPlan = Plan;
@@ -235,7 +235,7 @@ char UCsManager_UnitTest::Start_Internal(FCsRoutine* R)
 		CS_COROUTINE_WAIT_UNTIL(R, Plan->IsComplete());
 
 		UE_LOG(LogCs, Log, TEXT(""));
-		UE_LOG(LogCs, Log, TEXT("Completed Plan[%d/%d]: %s in %f seconds."), PlanIndex + 1, Plans.Num(), *(Plan->GetName()), (float)ElapsedTime.Timespan.GetTotalSeconds());
+		UE_LOG(LogCs, Log, TEXT("Completed Plan[%d/%d]: %s in %f seconds."), PlanIndex + 1, Plans.Num(), *(Plan->GetDisplayName()), (float)ElapsedTime.Timespan.GetTotalSeconds());
 
 		++PlanIndex;
 	} while (PlanIndex < Plans.Num());

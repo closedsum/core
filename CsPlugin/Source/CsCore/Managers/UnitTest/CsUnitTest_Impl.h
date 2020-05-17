@@ -9,6 +9,7 @@ class CSCORE_API ICsUnitTest_Impl : public ICsUnitTest
 {
 public:
 
+	ICsUnitTest_Impl();
 	virtual ~ICsUnitTest_Impl(){}
 
 // ICsUnitTest
@@ -23,6 +24,16 @@ public:
 	FORCEINLINE const FString& GetName() const
 	{
 		return NameAsString;
+	}
+
+	FORCEINLINE const FName& GetDisplayFName() const
+	{
+		return DisplayName;
+	}
+
+	FORCEINLINE const FString& GetDisplayName() const
+	{
+		return DisplayNameAsString;
 	}
 
 	void SetMyRoot(UObject* InRoot);
@@ -45,6 +56,9 @@ protected:
 
 	FName Name;
 	FString NameAsString;
+
+	FName DisplayName;
+	FString DisplayNameAsString;
 
 	UObject* MyRoot;
 

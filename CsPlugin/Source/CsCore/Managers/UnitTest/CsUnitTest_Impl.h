@@ -5,7 +5,7 @@
 class UObject;
 struct FCsRoutine;
 
-class ICsUnitTest_Impl : public ICsUnitTest
+class CSCORE_API ICsUnitTest_Impl : public ICsUnitTest
 {
 public:
 

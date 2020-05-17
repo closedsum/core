@@ -45,7 +45,7 @@ void ICsUnitTest_Impl::Start()
 
 	bComplete = false;
 
-	UE_LOG(LogCs, Warning, TEXT("%s::Start: Starting Unit Test."), *NameAsString);
+	UE_LOG(LogCs, Warning, TEXT("%s: Starting Unit Test."), *DisplayNameAsString);
 
 	Scheduler->Start(Payload);
 }

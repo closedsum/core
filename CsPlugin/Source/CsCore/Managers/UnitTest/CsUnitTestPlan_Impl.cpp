@@ -82,7 +82,7 @@ void FCsUnitTestPlan_Impl::Start()
 	Payload->SetName(Start_Internal_Name);
 	Payload->SetNameAsString(Start_Internal_NameAsString);
 
-	UE_LOG(LogCs, Warning, TEXT("%s: Starting Unit Tests."), *NameAsString);
+	UE_LOG(LogCs, Warning, TEXT("%s: Starting Unit Tests."), *DisplayNameAsString);
 	UE_LOG(LogCs, Warning, TEXT("- Processing %d Tests."), Tests.Num());
 	UE_LOG(LogCs, Warning, TEXT(""));
 

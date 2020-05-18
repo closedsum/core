@@ -5,6 +5,7 @@
 // CoroutineScheduler
 #include "Coroutine/CsCoroutineScheduler.h"
 // Managers
+#include "Managers/UnitTest/CsManager_UnitTest.h"
 #include "Managers/Load/CsManager_Load.h"
 #include "Managers/Runnable/CsManager_Runnable.h"
 #include "Managers/Time/CsManager_Time.h"
@@ -29,6 +30,7 @@ void UCsGameInstance::Init()
 
 	ConstructManagerSingleton();
 
+	UCsManager_UnitTest::Init(this);
 	UCsManager_Time::Init(this);
 	UCsCoroutineScheduler::Init(this);
 	UCsManager_Load::Init(this);
@@ -42,6 +44,7 @@ void UCsGameInstance::Shutdown()
 	// Unregister ticker delegate
 	FTicker::GetCoreTicker().RemoveTicker(TickDelegateHandle);
 
+	UCsManager_UnitTest::Shutdown(this);
 	UCsManager_Time::Shutdown(this);
 	UCsCoroutineScheduler::Shutdown(this);
 	UCsManager_Load::Shutdown(this);

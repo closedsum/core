@@ -664,6 +664,6 @@ public:
 #define CS_COROUTINE_BEGIN(r)   { char PT_YIELD_FLAG = 1; LC_RESUME((&((r)->pt))->lc)
 #define CS_COROUTINE_END(r)	(r)->State = ECsCoroutineState::End; LC_END((&((r)->pt))->lc); PT_YIELD_FLAG = 0; \
 							PT_INIT(&((r)->pt)); return PT_ENDED; }			
-#define CS_COROUTINE_EXIT(r)	PT_EXIT(&((r)->pt))
+#define CS_COROUTINE_EXIT(r)	(r)->State = ECsCoroutineState::End; PT_EXIT(&((r)->pt))
 #define CS_COROUTINE_YIELD(r)	PT_YIELD(&((r)->pt));
 #define CS_COROUTINE_WAIT_UNTIL(r, condition) PT_WAIT_UNTIL(&((r)->pt), condition);

@@ -220,10 +220,10 @@ char UCsManager_UnitTest::Start_Internal(FCsRoutine* R)
 
 	CS_COROUTINE_BEGIN(R);
 
-	StartTime = CurrentTime;
-
 	do
 	{
+		StartTime = CurrentTime;
+
 		UE_LOG(LogTemp, Log, TEXT(" "));
 		UE_LOG(LogTemp, Log, TEXT("Starting Plan[%d/%d]: %s."), PlanIndex + 1, Plans.Num(), *(Plan->GetDisplayName()));
 		UE_LOG(LogTemp, Log, TEXT(" "));
@@ -239,6 +239,9 @@ char UCsManager_UnitTest::Start_Internal(FCsRoutine* R)
 
 		++PlanIndex;
 	} while (PlanIndex < Plans.Num());
+
+	UE_LOG(LogTemp, Log, TEXT(" "));
+	UE_LOG(LogTemp, Log, TEXT("Finished %d Plans in %f seconds."), Plans.Num(), (float)R->ElapsedTime.Timespan.GetTotalSeconds());
 
 	CurrentPlan = nullptr;
 

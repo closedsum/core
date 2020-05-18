@@ -115,10 +115,10 @@ char FCsUnitTestPlan_Impl::Start_Internal(FCsRoutine* R)
 
 	CS_COROUTINE_BEGIN(R);
 
-	StartTime = CurrentTime;
-
 	do
 	{
+		StartTime = CurrentTime;
+
 		UE_LOG(LogTemp, Log, TEXT(" "));
 		UE_LOG(LogTemp, Log, TEXT("Starting Test[%d/%d]: %s."), TestIndex + 1, Tests.Num(), *(Test->GetDisplayName()));
 		UE_LOG(LogTemp, Log, TEXT(" "));

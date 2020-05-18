@@ -202,8 +202,8 @@ void UCsManager_UnitTest::Start()
 	Payload->SetName(NCsManagerUnitTestCached::Name::Start_Internal);
 	Payload->SetNameAsString(NCsManagerUnitTestCached::Str::Start_Internal);
 
-	UE_LOG(LogCs, Log, TEXT("Starting Unit Test Plans."));
-	UE_LOG(LogCs, Log, TEXT("- Processing %d Plans."), Plans.Num());
+	UE_LOG(LogTemp, Log, TEXT("Starting Unit Test Plans."));
+	UE_LOG(LogTemp, Log, TEXT("- Processing %d Plans."), Plans.Num());
 
 	Scheduler->Start(Payload);
 }
@@ -224,9 +224,9 @@ char UCsManager_UnitTest::Start_Internal(FCsRoutine* R)
 
 	do
 	{
-		UE_LOG(LogCs, Log, TEXT(""));
-		UE_LOG(LogCs, Log, TEXT("Starting Plan[%d/%d]: %s."), PlanIndex + 1, Plans.Num(), *(Plan->GetDisplayName()));
-		UE_LOG(LogCs, Log, TEXT(""));
+		UE_LOG(LogTemp, Log, TEXT(" "));
+		UE_LOG(LogTemp, Log, TEXT("Starting Plan[%d/%d]: %s."), PlanIndex + 1, Plans.Num(), *(Plan->GetDisplayName()));
+		UE_LOG(LogTemp, Log, TEXT(" "));
 
 		CurrentPlan = Plan;
 
@@ -234,8 +234,8 @@ char UCsManager_UnitTest::Start_Internal(FCsRoutine* R)
 
 		CS_COROUTINE_WAIT_UNTIL(R, Plan->IsComplete());
 
-		UE_LOG(LogCs, Log, TEXT(""));
-		UE_LOG(LogCs, Log, TEXT("Completed Plan[%d/%d]: %s in %f seconds."), PlanIndex + 1, Plans.Num(), *(Plan->GetDisplayName()), (float)ElapsedTime.Timespan.GetTotalSeconds());
+		UE_LOG(LogTemp, Log, TEXT(" "));
+		UE_LOG(LogTemp, Log, TEXT("Completed Plan[%d/%d]: %s in %f seconds."), PlanIndex + 1, Plans.Num(), *(Plan->GetDisplayName()), (float)ElapsedTime.Timespan.GetTotalSeconds());
 
 		++PlanIndex;
 	} while (PlanIndex < Plans.Num());

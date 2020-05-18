@@ -18,6 +18,8 @@ FCsUnitTestPlan_Impl::FCsUnitTestPlan_Impl()
 	DisplayNameAsString = TEXT("Test Plan Impl");
 	DisplayName			= FName(*DisplayNameAsString);
 
+	MyRoot = nullptr;
+
 	Start_Internal_NameAsString = NameAsString + TEXT("::Start_Internal");
 	Start_Internal_Name			= FName(*Start_Internal_NameAsString);
 
@@ -48,7 +50,14 @@ FCsUnitTestPlan_Impl::~FCsUnitTestPlan_Impl()
 
 void FCsUnitTestPlan_Impl::SetMyRoot(UObject* InRoot)
 {
+	checkf(InRoot, TEXT("%s::SetMyRoot: InRoot is NULL."));
+
 	MyRoot = InRoot;
+
+	for (ICsUnitTest* Test : Tests)
+	{
+		Test->SetMyRoot(MyRoot);
+	}
 }
 
 void FCsUnitTestPlan_Impl::Add(ICsUnitTest* Test)
@@ -57,7 +66,8 @@ void FCsUnitTestPlan_Impl::Add(ICsUnitTest* Test)
 
 	const FName& TestName = Test->GetFName();
 
-	Test->SetMyRoot(MyRoot);
+	if (MyRoot)
+		Test->SetMyRoot(MyRoot);
 
 	ICsUnitTest** TestPtr = TestMap.Find(TestName);
 
@@ -69,6 +79,9 @@ void FCsUnitTestPlan_Impl::Add(ICsUnitTest* Test)
 
 void FCsUnitTestPlan_Impl::Start()
 {
+	CurrentTest = nullptr;
+	bComplete   = false;
+
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
 	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(MyRoot);
@@ -82,9 +95,8 @@ void FCsUnitTestPlan_Impl::Start()
 	Payload->SetName(Start_Internal_Name);
 	Payload->SetNameAsString(Start_Internal_NameAsString);
 
-	UE_LOG(LogCs, Warning, TEXT("%s: Starting Unit Tests."), *DisplayNameAsString);
-	UE_LOG(LogCs, Warning, TEXT("- Processing %d Tests."), Tests.Num());
-	UE_LOG(LogCs, Warning, TEXT(""));
+	UE_LOG(LogTemp, Log, TEXT("%s: Starting Unit Tests."), *DisplayNameAsString);
+	UE_LOG(LogTemp, Log, TEXT("- Processing %d Tests."), Tests.Num());
 
 	Scheduler->Start(Payload);
 }
@@ -96,7 +108,7 @@ char FCsUnitTestPlan_Impl::Start_Internal(FCsRoutine* R)
 	int32& TestIndex  = R->GetValue_Indexer(CS_FIRST);
 	ICsUnitTest* Test = Tests[TestIndex];
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(Test->GetMyRoot())->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(R->Group);
 	FCsTime& StartTime		   = R->GetValue_Timer(CS_FIRST);
 
 	FCsDeltaTime ElapsedTime = FCsDeltaTime::GetDeltaTime(CurrentTime, StartTime);
@@ -107,9 +119,9 @@ char FCsUnitTestPlan_Impl::Start_Internal(FCsRoutine* R)
 
 	do
 	{
-		UE_LOG(LogCs, Warning, TEXT(""));
-		UE_LOG(LogCs, Warning, TEXT("Starting Test[%d/%d]: %s."), TestIndex + 1, Tests.Num(), *(Test->GetDisplayName()));
-		UE_LOG(LogCs, Warning, TEXT(""));
+		UE_LOG(LogTemp, Log, TEXT(" "));
+		UE_LOG(LogTemp, Log, TEXT("Starting Test[%d/%d]: %s."), TestIndex + 1, Tests.Num(), *(Test->GetDisplayName()));
+		UE_LOG(LogTemp, Log, TEXT(" "));
 
 		CurrentTest = Test;
 
@@ -117,8 +129,8 @@ char FCsUnitTestPlan_Impl::Start_Internal(FCsRoutine* R)
 
 		CS_COROUTINE_WAIT_UNTIL(R, Test->IsComplete());
 
-		UE_LOG(LogCs, Warning, TEXT(""));
-		UE_LOG(LogCs, Warning, TEXT("Completed Test[%d/%d]: %s in %f seconds."), *NameAsString, TestIndex + 1, Tests.Num(), *(Test->GetDisplayName()), (float)ElapsedTime.Timespan.GetTotalSeconds());
+		UE_LOG(LogTemp, Log, TEXT(" "));
+		UE_LOG(LogTemp, Log, TEXT("Completed Test[%d/%d]: %s in %f seconds."), TestIndex + 1, Tests.Num(), *(Test->GetDisplayName()), (float)ElapsedTime.Timespan.GetTotalSeconds());
 
 		++TestIndex;
 	} while (TestIndex < Tests.Num());

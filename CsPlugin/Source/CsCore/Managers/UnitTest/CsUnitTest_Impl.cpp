@@ -17,6 +17,8 @@ ICsUnitTest_Impl::ICsUnitTest_Impl()
 	DisplayNameAsString = TEXT("Unit Test Impl");
 	DisplayName		    = FName(*DisplayNameAsString);
 
+	MyRoot = nullptr;
+
 	bComplete = false;
 }
 
@@ -30,6 +32,8 @@ void ICsUnitTest_Impl::SetMyRoot(UObject* InRoot)
 
 void ICsUnitTest_Impl::Start()
 {
+	bComplete = false;
+
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
 	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(MyRoot);
@@ -43,9 +47,7 @@ void ICsUnitTest_Impl::Start()
 	Payload->SetName(Start_Internal_Name);
 	Payload->SetNameAsString(Start_Internal_NameAsString);
 
-	bComplete = false;
-
-	UE_LOG(LogCs, Warning, TEXT("%s: Starting Unit Test."), *DisplayNameAsString);
+	UE_LOG(LogTemp, Log, TEXT("%s: Starting Unit Test."), *DisplayNameAsString);
 
 	Scheduler->Start(Payload);
 }

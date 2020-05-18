@@ -47,4 +47,13 @@ public:
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	FCsTdSettings_Manager_Creep ManagerCreep;
+
+// Unit Test
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Unit Test", meta = (DisplayName = "Unit Test Plan: Manager Creep"))
+	FCsTdSettings_UnitTestPlan_Manager_Creep UnitTestPlan_ManagerCreep;
+
+#pragma endregion Unit Test
 };

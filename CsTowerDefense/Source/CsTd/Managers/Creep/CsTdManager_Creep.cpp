@@ -253,14 +253,23 @@ void UCsTdManager_Creep::SetupInternal()
 		Internal.Script_Update_Impl = Script_Update_Impl;
 	}
 
+#if !UE_BUILD_SHIPPING
+	if (FCsCVarToggleMap::Get().IsEnabled(NCsCVarToggle::EnableManagerCreepUnitTest))
+	{
+		// Do Nothing
+	}
+	else
+#endif // #if !UE_BUILD_SHIPPING
 	// If any settings have been set for Manager_Creep, apply them
-	UCsTdSettings* ModuleSettings = GetMutableDefault<UCsTdSettings>();
+	{
+		UCsTdSettings* ModuleSettings = GetMutableDefault<UCsTdSettings>();
 
-	checkf(ModuleSettings, TEXT("UCsTdManager_Creep::SetupInternal: Failed to get settings of type: UCsTdSettings."));
+		checkf(ModuleSettings, TEXT("UCsTdManager_Creep::SetupInternal: Failed to get settings of type: UCsTdSettings."));
 
-	Settings = ModuleSettings->ManagerCreep;
-
-	InitInternalFromSettings();
+		Settings = ModuleSettings->ManagerCreep;
+		
+		InitInternalFromSettings();
+	}
 }
 
 void UCsTdManager_Creep::InitInternalFromSettings()
@@ -274,7 +283,7 @@ void UCsTdManager_Creep::InitInternalFromSettings()
 		
 		for (const TPair<FECsTdCreep, FCsTdSettings_Manager_Creep_PoolParams>& Pair : Settings.PoolParams)
 		{
-			const FECsTdCreep& Type = Pair.Key;
+			const FECsTdCreep& Type									 = Pair.Key;
 			const FCsTdSettings_Manager_Creep_PoolParams& PoolParams = Pair.Value;
 
 			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
@@ -340,6 +349,11 @@ TBaseDelegate<FCsTdCreepPooled*, const FECsTdCreep&>& UCsTdManager_Creep::GetCon
 FCsTdCreepPooled* UCsTdManager_Creep::ConstructContainer(const FECsTdCreep& Type)
 {
 	return new FCsTdCreepPooled();
+}
+
+TMulticastDelegate<void, const FCsTdCreepPooled*>& UCsTdManager_Creep::GetOnConstructObject_Event(const FECsTdCreep& Type)
+{
+	return Internal.GetOnConstructObject_Event(Type);
 }
 
 		// Add

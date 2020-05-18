@@ -246,6 +246,13 @@ protected:
 
 	FCsTdSettings_Manager_Creep Settings;
 
+public:
+
+	FORCEINLINE void SetSettings(const FCsTdSettings_Manager_Creep& InSettings)
+	{
+		Settings = InSettings;
+	}
+
 #pragma endregion Settings
 
 // Internal
@@ -288,10 +295,26 @@ public:
 	void CreatePool(const FECsTdCreep& Type, const int32& Size);
 
 	/**
+	*
+	*
+	* return
 	*/
 	TBaseDelegate<FCsTdCreepPooled*, const FECsTdCreep&>& GetConstructContainer_Impl();
 
+	/**
+	*
+	* @param Type
+	* return
+	*/
 	virtual FCsTdCreepPooled* ConstructContainer(const FECsTdCreep& Type);
+
+	/**
+	*
+	*
+	* @param Type
+	* return
+	*/
+	TMulticastDelegate<void, const FCsTdCreepPooled*>& GetOnConstructObject_Event(const FECsTdCreep& Type);
 
 		// Add
 #pragma region

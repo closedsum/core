@@ -5,10 +5,12 @@
 // Singleton
 #include "Managers/Creep/UnitTest/CsTdManager_Singleton_GameState_UnitTest_Manager_Creep.h"
 // Managers
-#include "Managers/Time/CsManager_Time.h"
+#include "Managers/UnitTest/CsManager_UnitTest.h"
 #include "Managers/Creep/CsTdManager_Creep.h"
 // Game
 #include "Engine/GameInstance.h"
+// Unit Test
+#include "Managers/Creep/UnitTest/CsTdUnitTestPlan_Manager_Creep.h"
 
 
 ACsTdGameState_UnitTest_Manager_Creep::ACsTdGameState_UnitTest_Manager_Creep(const FObjectInitializer& ObjectInitializer)
@@ -54,16 +56,26 @@ void ACsTdGameState_UnitTest_Manager_Creep::OnBeginPlay_SetupSingletons()
 {
 	ConstructManagerSingleton();
 
-	UCsTdManager_Creep::Init(this, UCsTdManager_Creep::StaticClass(), GetGameInstance());
+	// TODO: Add checks for: UCsManager_UnitTest, UCsCoroutineScheduler, UCsManager_Time
+
+	//UCsTdManager_Creep::Init(this, UCsTdManager_Creep::StaticClass(), GetGameInstance());
+	//UCsManager_UnitTest::Init(this, GetGameInstance());
+
+	// Setup
+	{
+		UCsManager_UnitTest::Get(GetGameInstance())->Add<FCsTdUnitTestPlan_Manager_Creep>();
+	}
+
+	UCsManager_UnitTest::Get(GetGameInstance())->Start();
 }
 
 void ACsTdGameState_UnitTest_Manager_Creep::OnBeginDestroy_ShutdownSingletons()
 {
 	if (Manager_Singleton)
 	{
-		UCsTdManager_Creep::Shutdown(this);
+		if (UCsTdManager_Creep::IsValid(this))
+			UCsTdManager_Creep::Shutdown(this);
 
-		Manager_Singleton->MarkPendingKill();
 		Manager_Singleton = nullptr;
 	}
 }

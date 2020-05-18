@@ -144,6 +144,14 @@ public:
 	* @param Group
 	* return
 	*/
+	FCsTime GetTimeNow(const FECsUpdateGroup& Group);
+
+	/**
+	*
+	*
+	* @param Group
+	* return
+	*/
 	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FECsUpdateGroup& Group)
 	{
 		return UpdateGroups[Group.Value].GetScaledDeltaTime();

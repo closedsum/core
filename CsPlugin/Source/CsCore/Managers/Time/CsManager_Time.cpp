@@ -153,3 +153,12 @@ void UCsManager_Time::Update(const FECsUpdateGroup& Group, const float& DeltaTim
 }
 
 #pragma endregion Update
+
+FCsTime UCsManager_Time::GetTimeNow(const FECsUpdateGroup& Group)
+{
+	FCsTime Time = GetTime(Group);
+
+	Time.DateTime = FDateTime::Now();
+
+	return Time;
+}

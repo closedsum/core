@@ -93,12 +93,24 @@ FCsRoutine::FCsRoutine()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	Floats.AddDefaulted(CS_ROUTINE_FLOAT_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Int].AddDefaulted(Ints.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Int].AddDefaulted(Floats.Max());
 	
 	for (float& Float : Floats)
 	{
 		Float = 0.0f;
 		Registers[(uint8)ECsRoutineRegisterValueType::Float].Add(&Float);
+	}
+
+		// Double
+	Registers.AddDefaulted();
+	RegisterFlags.AddDefaulted();
+	Doubles.AddDefaulted(CS_ROUTINE_DOUBLE_SIZE);
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Double].AddDefaulted(Doubles.Max());
+	
+	for (double& Double : Doubles)
+	{
+		Double = 0.0;
+		Registers[(uint8)ECsRoutineRegisterValueType::Double].Add(&Double);
 	}
 
 		// Vector

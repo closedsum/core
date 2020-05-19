@@ -100,6 +100,7 @@ namespace NCsRoutineRegisterValueType
 		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, DeltaTime);
 		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Int);
 		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Float);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Double);
 		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Vector);
 		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Rotator);
 		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Color);
@@ -264,6 +265,12 @@ namespace NCsRoutineRegisterValueType
 		{
 			SetValue_Internal<float>(From, To);
 		}
+		// Double
+		else
+		if (ValueType == Type::Double)
+		{
+			SetValue_Internal<double>(From, To);
+		}
 		// Vector
 		else
 		if (ValueType == Type::Vector)
@@ -414,6 +421,18 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	{
 		Float = 0.0f;
 		Registers[(uint8)ECsRoutineRegisterValueType::Float].Add(&Float);
+	}
+
+		// Double
+	Registers.AddDefaulted();
+	RegisterFlags.AddDefaulted();
+	Doubles.AddDefaulted(CS_ROUTINE_DOUBLE_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::Double].AddDefaulted(Doubles.Max());
+
+	for (double& Double : Doubles)
+	{
+		Double = 0.0;
+		Registers[(uint8)ECsRoutineRegisterValueType::Double].Add(&Double);
 	}
 
 		// Vector

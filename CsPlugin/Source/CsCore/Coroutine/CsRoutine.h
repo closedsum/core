@@ -210,6 +210,7 @@ protected:
 	TArray<FCsDeltaTime, TFixedAllocator<CS_ROUTINE_DELTA_TIME_SIZE>> DeltaTimes;
 	TArray<int32, TFixedAllocator<CS_ROUTINE_INT_SIZE>> Ints;
 	TArray<float, TFixedAllocator<CS_ROUTINE_FLOAT_SIZE>> Floats;
+	TArray<double, TFixedAllocator<CS_ROUTINE_FLOAT_SIZE>> Doubles;
 	TArray<FVector, TFixedAllocator<CS_ROUTINE_VECTOR_SIZE>> Vectors;
 	TArray<FRotator, TFixedAllocator<CS_ROUTINE_ROTATOR_SIZE>> Rotators;
 	TArray<FLinearColor, TFixedAllocator<CS_ROUTINE_COLOR_SIZE>> Colors;
@@ -276,6 +277,12 @@ public:
 	{
 		SetRegisterFlag(ECsRoutineRegisterValueType::Float, InIndex);
 		Floats[InIndex] = Value;
+	}
+
+	FORCEINLINE void SetValue_Double(const int32& InIndex, const double& Value)
+	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Double, InIndex);
+		Doubles[InIndex] = Value;
 	}
 
 	FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector& Value)
@@ -365,6 +372,11 @@ public:
 	FORCEINLINE float& GetValue_Float(const int32& InIndex)
 	{
 		return Floats[InIndex];
+	}
+
+	FORCEINLINE double& GetValue_Double(const int32& InIndex)
+	{
+		return Doubles[InIndex];
 	}
 
 	FORCEINLINE FVector& GetValue_Vector(const int32& InIndex)

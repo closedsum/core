@@ -192,6 +192,9 @@ namespace NCsCoroutineTransaction
 
 #pragma endregion CoroutineTransaction
 
+// FCsRoutineHandle
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsRoutineHandle
 {
@@ -235,6 +238,11 @@ public:
 		Handle.Invalidate();
 	}
 };
+
+#pragma endregion FCsRoutineHandle
+
+// FCsRoutineOwner
+#pragma region
 
 class UObject;
 class AActor;
@@ -326,6 +334,8 @@ public:
 	}
 };
 
+#pragma endregion FCsRoutineOwner
+
 // RoutineRegisterValue
 #pragma region
 
@@ -339,6 +349,7 @@ enum class ECsRoutineRegisterValueType : uint8
 	DeltaTime						UMETA(DisplayName = "Delta Time"),
 	Int								UMETA(DisplayName = "Int"),
 	Float							UMETA(DisplayName = "Float"),
+	Double							UMETA(DisplayName = "Double"),
 	Vector							UMETA(DisplayName = "Vector"),
 	Rotator							UMETA(DisplayName = "Rotator"),
 	Color							UMETA(DisplayName = "Color"),
@@ -368,6 +379,7 @@ namespace NCsRoutineRegisterValueType
 		extern CSCORE_API const Type DeltaTime;
 		extern CSCORE_API const Type Int;
 		extern CSCORE_API const Type Float;
+		extern CSCORE_API const Type Double;
 		extern CSCORE_API const Type Vector;
 		extern CSCORE_API const Type Rotator;
 		extern CSCORE_API const Type Color;
@@ -395,6 +407,9 @@ namespace NCsRoutineRegisterValueType
 
 #pragma endregion RoutineRegisterValue
 
+// FCsRoutineRegisterInfo
+#pragma region
+
 struct CSCORE_API FCsRoutineRegisterInfo
 {
 public:
@@ -414,6 +429,8 @@ public:
 	}
 };
 
+#pragma endregion FCsRoutineRegisterInfo
+
 struct FCsRoutine;
 
 // Run
@@ -430,6 +447,7 @@ DECLARE_DELEGATE_OneParam(FCsOnCoroutineAbort, FCsRoutine*);
 #define CS_ROUTINE_DELTA_TIME_SIZE 4
 #define CS_ROUTINE_INT_SIZE 4
 #define CS_ROUTINE_FLOAT_SIZE 4
+#define CS_ROUTINE_DOUBLE_SIZE 4
 #define CS_ROUTINE_VECTOR_SIZE 4
 #define CS_ROUTINE_ROTATOR_SIZE 4
 #define CS_ROUTINE_COLOR_SIZE 4
@@ -440,6 +458,9 @@ DECLARE_DELEGATE_OneParam(FCsOnCoroutineAbort, FCsRoutine*);
 #define CS_ROUTINE_VOID_POINTER_SIZE 4
 #define CS_ROUTINE_END -1
 #define CS_ROUTINE_FREE -2
+
+// FCsCoroutinePayload
+#pragma region
 
 struct CSCORE_API FCsCoroutinePayload
 {
@@ -502,6 +523,7 @@ protected:
 	TArray<FCsDeltaTime, TFixedAllocator<CS_ROUTINE_DELTA_TIME_SIZE>> DeltaTimes;
 	TArray<int32, TFixedAllocator<CS_ROUTINE_INT_SIZE>> Ints;
 	TArray<float, TFixedAllocator<CS_ROUTINE_FLOAT_SIZE>> Floats;
+	TArray<double, TFixedAllocator<CS_ROUTINE_DOUBLE_SIZE>> Doubles;
 	TArray<FVector, TFixedAllocator<CS_ROUTINE_VECTOR_SIZE>> Vectors;
 	TArray<FRotator, TFixedAllocator<CS_ROUTINE_ROTATOR_SIZE>> Rotators;
 	TArray<FLinearColor, TFixedAllocator<CS_ROUTINE_COLOR_SIZE>> Colors;
@@ -568,6 +590,12 @@ public:
 	{
 		SetRegisterFlag(ECsRoutineRegisterValueType::Float, InIndex);
 		Floats[InIndex] = Value;
+	}
+
+	FORCEINLINE void SetValue_Double(const int32& InIndex, const float& Value)
+	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Double, InIndex);
+		Doubles[InIndex] = Value;
 	}
 
 	FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector& Value)
@@ -655,6 +683,8 @@ public:
 #pragma endregion Name
 };
 
+#pragma endregion FCsCoroutinePayload
+
 #define CS_COROUTINE_DECLARE(Func)	virtual void Func(); \
 									static char Func##_Internal(struct FCsRoutine* r); \
 									struct FCsRoutine* Func##_Internal_Routine;
@@ -667,3 +697,14 @@ public:
 #define CS_COROUTINE_EXIT(r)	(r)->State = ECsCoroutineState::End; PT_EXIT(&((r)->pt))
 #define CS_COROUTINE_YIELD(r)	PT_YIELD(&((r)->pt));
 #define CS_COROUTINE_WAIT_UNTIL(r, condition) PT_WAIT_UNTIL(&((r)->pt), condition);
+
+/*
+struct FCsScopedCoroutineTimer
+{
+public:
+
+	FCsScopedCoroutineTimer();
+
+	~FCsScopedCoroutineTimer();
+};
+*/

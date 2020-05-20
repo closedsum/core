@@ -1873,7 +1873,7 @@ char UCsLibrary_Common::ScaleActorOverTime_Internal(FCsRoutine* R)
 {
 	AActor* A = R->GetOwnerAsActor();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(A->GetGameInstance())->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(A->GetGameInstance())->GetTime(R->GetGroup());
 
 	const FCsTime& StartTime = R->GetValue_Timer(CS_FIRST);
 
@@ -1988,7 +1988,7 @@ char UCsLibrary_Common::ScaleActorOverTime_AsCurve_Internal(FCsRoutine* R)
 {
 	AActor* A= R->GetOwnerAsActor();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(A->GetGameInstance())->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(A->GetGameInstance())->GetTime(R->GetGroup());
 	const FCsTime& StartTime   = R->StartTime;
 
 	static const int32 MAX_TIME_INDEX = 2;
@@ -2097,7 +2097,7 @@ char UCsLibrary_Common::MoveActorOverTime_Internal(FCsRoutine* R)
 {
 	AActor* A = R->GetOwnerAsActor();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(A->GetGameInstance())->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(A->GetGameInstance())->GetTime(R->GetGroup());
 	const FCsTime& StartTime   = R->StartTime;
 
 	const float& MaxTime = R->GetValue_Float(CS_FIRST);
@@ -2161,7 +2161,7 @@ char UCsLibrary_Common::DestroyMaterialInstanceDynamic_Internal(FCsRoutine* R)
 {
 	UMaterialInstanceDynamic* M = R->GetOwnerAsObject<UMaterialInstanceDynamic>();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get()->GetTime(R->GetGroup());
 	const FCsTime& StartTime   = R->StartTime;
 
 	CS_COROUTINE_BEGIN(R);
@@ -2242,7 +2242,7 @@ char UCsLibrary_Common::FadeCameraOverTime_Internal(FCsRoutine* R)
 {
 	APlayerController* PC = R->GetOwnerAsObject<APlayerController>();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(PC->GetGameInstance())->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(PC->GetGameInstance())->GetTime(R->GetGroup());
 	const FCsTime& StartTime   = R->StartTime;
 
 	static const int32 MAX_TIME_INDEX = 2;

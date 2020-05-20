@@ -1575,7 +1575,7 @@ CS_COROUTINE(UCsEthereum, BringBalanceToThreshold_Internal)
 
 	float& Balance = r->GetValue_Float(CS_FIRST);
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(eth->GetMyRoot())->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(eth->GetMyRoot())->GetTime(r->GetGroup());
 	FCsDeltaTime& ElapsedTime  = r->GetValue_DeltaTime(CS_FIRST);
 
 	ElapsedTime += r->DeltaTime;
@@ -2217,7 +2217,7 @@ CS_COROUTINE(UCsEthereum, CheckTransactionHasBeenMined_Internal)
 	bool& Success				= r->GetValue_Flag(CS_FIRST);
 	static const float INTERVAL = 0.1f;
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(eth->GetMyRoot())->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(eth->GetMyRoot())->GetTime(r->GetGroup());
 	FCsDeltaTime& ElapsedTime  = r->GetValue_DeltaTime(CS_FIRST);
 
 	ElapsedTime += r->DeltaTime;

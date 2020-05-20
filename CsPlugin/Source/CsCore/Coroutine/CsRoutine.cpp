@@ -220,6 +220,17 @@ FCsRoutine::~FCsRoutine()
 {
 }
 
+// Time
+#pragma region
+
+void FCsRoutine::SetGroup(const FECsUpdateGroup& InGroup)
+{
+	Group	  = InGroup;
+	ScopeName = FString::Printf(TEXT("Routine_%d_%s"), Index, *(Group.GetName()));
+}
+
+#pragma endregion Time
+
 // Index
 #pragma region
 

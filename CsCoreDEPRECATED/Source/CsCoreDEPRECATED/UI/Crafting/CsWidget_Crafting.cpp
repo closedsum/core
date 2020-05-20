@@ -416,7 +416,7 @@ CS_COROUTINE(UCsWidget_Crafting, IncrementCount_Internal)
 	UCsWidget_Crafting* c = r->GetOwnerAsObject<UCsWidget_Crafting>();
 	UWorld* w			  = c->GetWorld();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(c->GetGameInstance())->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(c->GetGameInstance())->GetTime(r->GetGroup());
 	const FCsTime& StartTime   = r->StartTime;
 
 	FCsTime& Time = r->GetValue_Timer(CS_FIRST);
@@ -543,7 +543,7 @@ CS_COROUTINE(UCsWidget_Crafting, DecrementCount_Internal)
 	UCsWidget_Crafting* c	 = r->GetOwnerAsObject<UCsWidget_Crafting>();
 	UWorld* w				 = c->GetWorld();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(c->GetGameInstance())->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(c->GetGameInstance())->GetTime(r->GetGroup());
 	const FCsTime& StartTime   = r->StartTime;
 
 	FCsTime& Time = r->GetValue_Timer(CS_FIRST);
@@ -728,7 +728,7 @@ CS_COROUTINE(UCsWidget_Crafting, UpdateProgress_Internal)
 {
 	UCsWidget_Crafting* c = r->GetOwnerAsObject<UCsWidget_Crafting>();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(c->GetGameInstance())->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(c->GetGameInstance())->GetTime(r->GetGroup());
 	const FCsTime& StartTime   = r->StartTime;
 
 	const float& Time		= r->GetValue_Float(CS_FIRST);

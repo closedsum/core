@@ -1459,7 +1459,7 @@ CS_COROUTINE(ACsWeapon, StartChargeFire_Internal)
 {
 	ACsWeapon* mw = r->GetOwnerAsObject<ACsWeapon>();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(mw->GetGameInstance())->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(mw->GetGameInstance())->GetTime(r->GetGroup());
 	
 	FCsTime& StartTime		= r->GetValue_Timer(CS_FIRST);
 	const float ElapsedTime = CurrentTime.Time - StartTime.Time;
@@ -1672,7 +1672,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 
 	const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(r->GetValue_Int(CS_FIRST));
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(mw->GetGameInstance())->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(mw->GetGameInstance())->GetTime(r->GetGroup());
 	FCsDeltaTime& ElapsedTime	   = r->GetValue_DeltaTime(CS_FIRST);
 
 	ElapsedTime += r->DeltaTime;

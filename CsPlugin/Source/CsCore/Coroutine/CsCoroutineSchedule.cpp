@@ -51,7 +51,7 @@ void FCsCoroutineSchedule::SetGroup(const FECsUpdateGroup& InGroup)
 		for (FCsResource_Routine* Container : Pool)
 		{
 			FCsRoutine* R = Container->Get();
-			R->Group	  = Group;
+			R->SetGroup(Group);
 		}
 	}
 	// Payload

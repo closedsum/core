@@ -773,7 +773,7 @@ CS_COROUTINE(UCsGameInstance_DEPRECATED, PerformLevelTransition_Internal)
 
 	UCsWidget_Fullscreen* Widget = Cast<UCsWidget_Fullscreen>(gi->FullscreenWidget);
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(gi)->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(gi)->GetTime(r->GetGroup());
 	const FCsTime& StartTime   = r->StartTime;
 
 	const float Delay = 1.0f;

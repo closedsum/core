@@ -108,7 +108,7 @@ char FCsUnitTestPlan_Impl::Start_Internal(FCsRoutine* R)
 	int32& TestIndex  = R->GetValue_Indexer(CS_FIRST);
 	ICsUnitTest* Test = Tests[TestIndex];
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(R->GetGroup());
 	FCsTime& StartTime		   = R->GetValue_Timer(CS_FIRST);
 
 	FCsDeltaTime ElapsedTime = FCsDeltaTime::GetDeltaTime(CurrentTime, StartTime);

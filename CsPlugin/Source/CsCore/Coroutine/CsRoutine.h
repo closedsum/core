@@ -26,13 +26,33 @@ public:
 
 	struct pt pt;
 
-	FECsUpdateGroup Group;
-
 	FCsCoroutine Coroutine;
 
 	// Time
 #pragma region
+private:
+
+	FECsUpdateGroup Group;
+
 public:
+
+	void SetGroup(const FECsUpdateGroup& InGroup);
+
+	FORCEINLINE const FECsUpdateGroup& GetGroup() const 
+	{
+		return Group;
+	}
+
+protected:
+
+	FString ScopeName;
+
+public:
+
+	FORCEINLINE const FString& GetScopeName() const
+	{
+		return ScopeName;
+	}
 
 	FCsTime StartTime;
 	FCsDeltaTime ElapsedTime;

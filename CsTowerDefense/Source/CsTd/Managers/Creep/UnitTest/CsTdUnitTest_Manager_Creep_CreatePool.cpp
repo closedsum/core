@@ -68,7 +68,7 @@ void FCsTdUnitTest_Manager_Creep_CreatePool::Start()
 
 char FCsTdUnitTest_Manager_Creep_CreatePool::Start_Internal(FCsRoutine* R)
 {
-	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(R->GetGroup());
 	FCsTime& StartTime		   = R->GetValue_Timer(CS_FIRST);
 
 	FCsDeltaTime ElapsedTime = FCsDeltaTime::GetDeltaTime(CurrentTime, StartTime);

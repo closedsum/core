@@ -141,7 +141,7 @@ CS_COROUTINE(UCsWidget_Fullscreen, Fade_Internal)
 	UCsWidget_Fullscreen* wd = r->GetOwnerAsObject<UCsWidget_Fullscreen>();
 	UWorld* w				 = wd->GetWorld();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(wd->GetGameInstance())->GetTime(r->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(wd->GetGameInstance())->GetTime(r->GetGroup());
 	const FCsTime& StartTime   = r->StartTime;
 
 	static const int32 MAX_TIME_INDEX = 2;

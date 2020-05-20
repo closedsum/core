@@ -213,7 +213,7 @@ char UCsManager_UnitTest::Start_Internal(FCsRoutine* R)
 	int32& PlanIndex	  = R->GetValue_Indexer(CS_FIRST);
 	ICsUnitTestPlan* Plan = Plans[PlanIndex];
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(R->Group);
+	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(R->GetGroup());
 	FCsTime& StartTime		   = R->GetValue_Timer(CS_FIRST);
 
 	FCsDeltaTime ElapsedTime = FCsDeltaTime::GetDeltaTime(CurrentTime, StartTime);

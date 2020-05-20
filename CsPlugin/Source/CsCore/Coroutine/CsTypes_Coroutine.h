@@ -223,17 +223,17 @@ public:
 		return GetTypeHash(InHandle.Handle);
 	}
 
-	bool IsValid() const
+	FORCEINLINE bool IsValid() const
 	{
 		return Index > INDEX_NONE && Handle.IsValid();
 	}
 
-	void New()
+	FORCEINLINE void New()
 	{
 		Handle.NewGuid();
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		Handle.Invalidate();
 	}

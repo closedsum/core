@@ -222,8 +222,8 @@ const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->SetName(NCsPlayerStateBaseCached::Name::OnBoard_Internal);
-	Payload->SetNameAsString(NCsPlayerStateBaseCached::Str::OnBoard_Internal);
+	Payload->SetName(NCsPlayerStateBaseCached::Str::OnBoard_Internal);
+	Payload->SetFName(NCsPlayerStateBaseCached::Name::OnBoard_Internal);
 
 	Scheduler->Start(Payload);
 }
@@ -640,8 +640,8 @@ void ACsPlayerStateBase::RequestUniqueMappingId_AI(ACsPlayerStateBase* Requestin
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->SetName(NCsPlayerStateBaseCached::Name::RequestUniqueMappingId_AI_Internal);
-	Payload->SetNameAsString(NCsPlayerStateBaseCached::Str::RequestUniqueMappingId_AI_Internal);
+	Payload->SetName(NCsPlayerStateBaseCached::Str::RequestUniqueMappingId_AI_Internal);
+	Payload->SetFName(NCsPlayerStateBaseCached::Name::RequestUniqueMappingId_AI_Internal);
 
 	static const int32 CLIENT_INDEX = 0;
 	Payload->SetValue_Object(CLIENT_INDEX, this);

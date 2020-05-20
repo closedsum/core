@@ -2,6 +2,7 @@
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Coroutine/pt.h"
 #include "Managers/Time/CsTypes_Update.h"
+#include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 
 #pragma once
 
@@ -41,6 +42,9 @@ public:
 
 	float Delay;
 
+	FCsScopedTimerHandle RoutineScopedTimerHandle;
+	FCsScopedTimerHandle CoroutineScopedTimerHandle;
+
 #pragma endregion Time
 
 public:
@@ -74,30 +78,30 @@ public:
 #pragma region
 private:
 
-	FName Name;
+	FString* Name;
 
-	FString* NameAsString;
+	FName Name_Internal;
 
 public:
 
-	FORCEINLINE void SetName(const FName& InName)
+	FORCEINLINE void SetName(const FString* InName)
 	{
-		Name = InName;
+		Name = const_cast<FString*>(InName);
 	}
 
-	FORCEINLINE void SetNameAsString(const FString* InNameAsString)
+	FORCEINLINE void SetFName(const FName& InName)
 	{
-		NameAsString = const_cast<FString*>(InNameAsString);
+		Name_Internal = InName;
 	}
 
-	FORCEINLINE const FName& GetName()
+	FORCEINLINE const FString* GetName()
 	{
 		return Name;
 	}
 
-	FORCEINLINE const FString* GetNameAsString()
+	FORCEINLINE const FName& GetFName()
 	{
-		return NameAsString;
+		return Name_Internal;
 	}
 
 #pragma endregion Name

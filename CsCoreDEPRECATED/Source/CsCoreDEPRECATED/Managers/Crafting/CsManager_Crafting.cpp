@@ -128,8 +128,8 @@ void ACsManager_Crafting::CraftItems(FCsCraftingPayload* Payload)
 	CoroutinePayload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	CoroutinePayload->Owner.SetObject(this);
 
-	CoroutinePayload->SetName(NCsManagerCraftingCached::Name::CraftItems_Internal);
-	CoroutinePayload->SetNameAsString(NCsManagerCraftingCached::Str::CraftItems_Internal);
+	CoroutinePayload->SetName(NCsManagerCraftingCached::Str::CraftItems_Internal);
+	CoroutinePayload->SetFName(NCsManagerCraftingCached::Name::CraftItems_Internal);
 
 	CoroutinePayload->SetValue_Float(CS_FIRST, GetWorld()->GetTimeSeconds());
 

@@ -1,6 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Coroutine/CsRoutine.h"
 
+// CVar
+#include "Coroutine/CsCVars_Coroutine.h"
+// Managers
+#include "Managers/ScopedTimer/CsManager_ScopedTimer.h"
+
 FCsRoutine::FCsRoutine()
 {
 	Parent = nullptr;
@@ -246,8 +251,8 @@ void FCsRoutine::Init(FCsCoroutinePayload* Payload)
 		Last = Abort;
 	}
 
-	Name		 = Payload->GetName();
-	NameAsString = const_cast<FString*>(Payload->GetNameAsString());
+	Name_Internal	= Payload->GetFName();
+	Name			= const_cast<FString*>(Payload->GetName());
 
 	// Copy Register values over
 	for (const FCsRoutineRegisterInfo& Info : Payload->RegisterInfos)
@@ -261,6 +266,8 @@ void FCsRoutine::Init(FCsCoroutinePayload* Payload)
 		NCsRoutineRegisterValueType::SetValue(ValueType, From, To);
 	}
 	Handle.New();
+
+	CoroutineScopedTimerHandle = FCsManager_ScopedTimer::Get().GetHandle(Name, NCsCVarLog::LogCoroutineScopedTimer);
 }
 
 // Update
@@ -337,7 +344,11 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 
 	++TickCount;
 
-	Coroutine.Execute(this);
+	{
+		CS_SCOPED_TIMER(CoroutineScopedTimerHandle);
+
+		Coroutine.Execute(this);
+	}
 
 	if (State == ECsCoroutineState::End)
 		End(ECsCoroutineEndReason::EndOfExecution);
@@ -353,6 +364,8 @@ void FCsRoutine::End(const ECsCoroutineEndReason& InEndReason)
 	EndChildren();
 	State = ECsCoroutineState::End;
 	EndReason = InEndReason;
+
+	FCsManager_ScopedTimer::Get().ClearHandle(CoroutineScopedTimerHandle);
 }
 
 #pragma endregion End
@@ -377,12 +390,15 @@ void FCsRoutine::Reset()
 	TickCount = 0;
 	Delay = 0.0f;
 
+	RoutineScopedTimerHandle.Reset();
+	CoroutineScopedTimerHandle.Reset();
+
 	Handle.Reset();
 	Aborts.Reset(Aborts.Max());
 	OnAborts.Reset(OnAborts.Max());
 	State = ECsCoroutineState::Free;
-	Name = NAME_None;
-	NameAsString = nullptr;
+	Name = nullptr;
+	Name_Internal = NAME_None;
 
 	EndReason = ECsCoroutineEndReason::ECsCoroutineEndReason_MAX;
 

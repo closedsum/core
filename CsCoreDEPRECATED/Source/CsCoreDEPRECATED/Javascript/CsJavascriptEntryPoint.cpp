@@ -81,8 +81,8 @@ void ACsJavascriptEntryPoint::Setup()
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
 
-	Payload->SetName(NCsJavascriptEntryPointCached::Name::Setup_Internal);
-	Payload->SetNameAsString(NCsJavascriptEntryPointCached::Str::Setup_Internal);
+	Payload->SetName(NCsJavascriptEntryPointCached::Str::Setup_Internal);
+	Payload->SetFName(NCsJavascriptEntryPointCached::Name::Setup_Internal);
 
 	Scheduler->Start(Payload);
 }

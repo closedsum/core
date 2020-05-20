@@ -322,8 +322,8 @@ void ACsGameState_DEPRECATED::OnBoard()
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->SetName(NCsGameStateCached::Name::OnBoard_Internal);
-	Payload->SetNameAsString(NCsGameStateCached::Str::OnBoard_Internal);
+	Payload->SetName(NCsGameStateCached::Str::OnBoard_Internal);
+	Payload->SetFName(NCsGameStateCached::Name::OnBoard_Internal);
 
 	Scheduler->Start(Payload);
 }

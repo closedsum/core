@@ -550,8 +550,9 @@ void FCsCoroutinePayload::Reset()
 	ParentHandle.Reset();
 	bDoInit = true;
 	bPerformFirstUpdate = false;
-	Name = NAME_None;
-	NameAsString = nullptr;
+	Name = nullptr;
+	Name_Internal = NAME_None;
+
 	AbortMessages.Reset(AbortMessages.Max());
 
 	// Registers

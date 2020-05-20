@@ -12,16 +12,16 @@
 
 FCsUnitTestPlan_Impl::FCsUnitTestPlan_Impl()
 {
-	NameAsString = TEXT("FCsUnitTestPlan_Impl");
-	Name		 = FName(*NameAsString);
+	Name		  = TEXT("FCsUnitTestPlan_Impl");
+	Name_Internal = FName(*Name);
 
-	DisplayNameAsString = TEXT("Test Plan Impl");
-	DisplayName			= FName(*DisplayNameAsString);
+	DisplayName  = TEXT("Test Plan Impl");
+	DisplayFName = FName(*DisplayName);
 
 	MyRoot = nullptr;
 
-	Start_Internal_NameAsString = NameAsString + TEXT("::Start_Internal");
-	Start_Internal_Name			= FName(*Start_Internal_NameAsString);
+	Start_Internal_Name  = Name + TEXT("::Start_Internal");
+	Start_Internal_FName = FName(*Start_Internal_Name);
 
 	bComplete = false;
 }
@@ -62,7 +62,7 @@ void FCsUnitTestPlan_Impl::SetMyRoot(UObject* InRoot)
 
 void FCsUnitTestPlan_Impl::Add(ICsUnitTest* Test)
 {
-	checkf(Test, TEXT("%s::Add: Test is NULL."), *NameAsString);
+	checkf(Test, TEXT("%s::Add: Test is NULL."), *Name);
 
 	const FName& TestName = Test->GetFName();
 
@@ -71,7 +71,7 @@ void FCsUnitTestPlan_Impl::Add(ICsUnitTest* Test)
 
 	ICsUnitTest** TestPtr = TestMap.Find(TestName);
 
-	checkf(!TestPtr, TEXT("%s::Add: Test: %s has already been added."), *NameAsString, *(Test->GetName()));
+	checkf(!TestPtr, TEXT("%s::Add: Test: %s has already been added."), *Name, *(Test->GetName()));
 
 	TestMap.Add(TestName, Test);
 	Tests.Add(Test);
@@ -93,9 +93,9 @@ void FCsUnitTestPlan_Impl::Start()
 	Payload->Owner.SetOwner(this);
 
 	Payload->SetName(Start_Internal_Name);
-	Payload->SetNameAsString(Start_Internal_NameAsString);
+	Payload->SetFName(Start_Internal_FName);
 
-	UE_LOG(LogTemp, Log, TEXT("%s: Starting Unit Tests."), *DisplayNameAsString);
+	UE_LOG(LogTemp, Log, TEXT("%s: Starting Unit Tests."), *DisplayName);
 	UE_LOG(LogTemp, Log, TEXT("- Processing %d Tests."), Tests.Num());
 
 	Scheduler->Start(Payload);

@@ -134,8 +134,8 @@ void ACsDamageableActor::Respawn()
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->SetName(NCsDamageableActorCached::Name::Respawn_Internal);
-	Payload->SetNameAsString(NCsDamageableActorCached::Str::Respawn_Internal);
+	Payload->SetName(NCsDamageableActorCached::Str::Respawn_Internal);
+	Payload->SetFName(NCsDamageableActorCached::Name::Respawn_Internal);
 
 	Scheduler->Start(Payload);
 }

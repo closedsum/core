@@ -654,30 +654,30 @@ public:
 #pragma region
 protected:
 
-	FName Name;
+	FString* Name;
 
-	FString* NameAsString;
+	FName Name_Internal;
 
 public:
 
-	FORCEINLINE void SetName(const FName& InName)
+	FORCEINLINE void SetName(const FString& InName)
 	{
-		Name = InName;
+		Name = const_cast<FString*>(&InName);
 	}
 
-	FORCEINLINE void SetNameAsString(const FString& InNameAsString)
+	FORCEINLINE void SetFName(const FName& InName)
 	{
-		NameAsString = const_cast<FString*>(&InNameAsString);
+		Name_Internal = InName;
 	}
 
-	FORCEINLINE const FName& GetName()
+	FORCEINLINE const FString* GetName()
 	{
 		return Name;
 	}
 
-	FORCEINLINE const FString* GetNameAsString()
+	FORCEINLINE const FName& GetFName()
 	{
-		return NameAsString;
+		return Name_Internal;
 	}
 
 #pragma endregion Name
@@ -697,14 +697,3 @@ public:
 #define CS_COROUTINE_EXIT(r)	(r)->State = ECsCoroutineState::End; PT_EXIT(&((r)->pt))
 #define CS_COROUTINE_YIELD(r)	PT_YIELD(&((r)->pt));
 #define CS_COROUTINE_WAIT_UNTIL(r, condition) PT_WAIT_UNTIL(&((r)->pt), condition);
-
-/*
-struct FCsScopedCoroutineTimer
-{
-public:
-
-	FCsScopedCoroutineTimer();
-
-	~FCsScopedCoroutineTimer();
-};
-*/

@@ -5,6 +5,7 @@
 // CoroutineScheduler
 #include "Coroutine/CsCoroutineScheduler.h"
 // Managers
+#include "Managers/ScopedTimer//CsManager_ScopedTimer.h"
 #include "Managers/UnitTest/CsManager_UnitTest.h"
 #include "Managers/Load/CsManager_Load.h"
 #include "Managers/Runnable/CsManager_Runnable.h"
@@ -78,6 +79,7 @@ bool UCsGameInstance::Tick(float DeltaSeconds)
 
 	const FCsDeltaTime& DeltaTime = UCsManager_Time::Get(this)->GetScaledDeltaTime(Group);
 
+	FCsManager_ScopedTimer::Get().Update(DeltaTime);
 	UCsCoroutineScheduler::Get(this)->Update(Group, DeltaTime);
 	return true;
 }

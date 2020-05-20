@@ -31,14 +31,14 @@ namespace NCsTdUnitTestManagerCreepCreatePoolCached
 FCsTdUnitTest_Manager_Creep_CreatePool::FCsTdUnitTest_Manager_Creep_CreatePool() 
 	: Super()
 {
-	NameAsString = TEXT("FCsTdUnitTest_Manager_Creep_CreatePool");
-	Name		 = FName(*NameAsString);
+	Name		  = TEXT("FCsTdUnitTest_Manager_Creep_CreatePool");
+	Name_Internal = FName(*Name);
 
-	DisplayNameAsString = TEXT("Create Pool");
-	DisplayName			= FName(*DisplayNameAsString);
+	DisplayName  = TEXT("Create Pool");
+	DisplayFName = FName(*DisplayName);
 
-	Start_Internal_NameAsString = NameAsString + TEXT("::Start_Internal");
-	Start_Internal_Name			= FName(*Start_Internal_NameAsString);
+	Start_Internal_Name  = Name + TEXT("::Start_Internal");
+	Start_Internal_FName = FName(*Start_Internal_Name);
 
 	bComplete = false;
 
@@ -173,14 +173,11 @@ char FCsTdUnitTest_Manager_Creep_CreatePool::Start_Internal(FCsRoutine* R)
 		{
 			UE_LOG(LogTemp, Log, TEXT("--- Start InitInternal."));
 
-			FDateTime BeginTime = FDateTime::Now();
+			const double BeginTime = FPlatformTime::Seconds();
 
 			UCsTdManager_Creep::Get(GameState)->InitInternal(Params);
 
-			FDateTime EndTime   = FDateTime::Now();
-			FTimespan DeltaTime = EndTime - BeginTime;
-
-			UE_LOG(LogTemp, Log, TEXT("--- Finshed InitInternal in %f seconds."), (float)DeltaTime.GetTotalSeconds());
+			UE_LOG(LogTemp, Log, TEXT("--- Finshed InitInternal in %f seconds."), (float)(FPlatformTime::Seconds() - BeginTime));
 		}
 		/*
 		UE_LOG(LogTemp, Log, TEXT("--- InitInternal."));

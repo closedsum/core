@@ -624,8 +624,8 @@ void UCsGameInstance_DEPRECATED::CreateFullscreenWidget()
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->SetName(NCsGameInstanceCached::Name::CreateFullscreenWidget_Internal);
-	Payload->SetNameAsString(NCsGameInstanceCached::Str::CreateFullscreenWidget_Internal);
+	Payload->SetName(NCsGameInstanceCached::Str::CreateFullscreenWidget_Internal);
+	Payload->SetFName(NCsGameInstanceCached::Name::CreateFullscreenWidget_Internal);
 
 	Scheduler->Start(Payload);
 }
@@ -693,8 +693,8 @@ void UCsGameInstance_DEPRECATED::HideMouseCursor()
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->SetName(NCsGameInstanceCached::Name::HideMouseCursor_Internal);
-	Payload->SetNameAsString(NCsGameInstanceCached::Str::HideMouseCursor_Internal);
+	Payload->SetName(NCsGameInstanceCached::Str::HideMouseCursor_Internal);
+	Payload->SetFName(NCsGameInstanceCached::Name::HideMouseCursor_Internal);
 
 	Scheduler->Start(Payload);
 }

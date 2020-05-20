@@ -19,22 +19,22 @@ public:
 
 	FORCEINLINE const FName& GetFName() const
 	{
-		return Name;
+		return Name_Internal;
 	}
 
 	FORCEINLINE const FString& GetName() const
 	{
-		return NameAsString;
+		return Name;
 	}
 
 	FORCEINLINE const FName& GetDisplayFName() const
 	{
-		return DisplayName;
+		return DisplayFName;
 	}
 
 	FORCEINLINE const FString& GetDisplayName() const
 	{
-		return DisplayNameAsString;
+		return DisplayName;
 	}
 
 	void SetMyRoot(UObject* InRoot);
@@ -66,11 +66,11 @@ public:
 
 protected:
 
-	FName Name;
-	FString NameAsString;
+	FName Name_Internal;
+	FString Name;
 
-	FName DisplayName;
-	FString DisplayNameAsString;
+	FName DisplayFName;
+	FString DisplayName;
 
 	UObject* MyRoot;
 
@@ -93,8 +93,8 @@ public:
 
 protected:
 
-	FName Start_Internal_Name;
-	FString Start_Internal_NameAsString;
+	FName Start_Internal_FName;
+	FString Start_Internal_Name;
 
 	char Start_Internal(FCsRoutine* R);
 

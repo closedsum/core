@@ -7,14 +7,14 @@
 
 FCsTdUnitTestPlan_Manager_Creep::FCsTdUnitTestPlan_Manager_Creep()
 {
-	NameAsString = TEXT("FCsUnitTestPlan_Manager_Creep");
-	Name		 = FName(*NameAsString);
+	Name		  = TEXT("FCsUnitTestPlan_Manager_Creep");
+	Name_Internal = FName(*Name);
 
-	DisplayNameAsString = TEXT("Manager Creep");
-	DisplayName			= FName(*DisplayNameAsString);
+	DisplayName  = TEXT("Manager Creep");
+	DisplayFName = FName(*DisplayName);
 
-	Start_Internal_NameAsString = NameAsString + TEXT("::Start_Internal");
-	Start_Internal_Name			= FName(*Start_Internal_NameAsString);
+	Start_Internal_Name  = Name + TEXT("::Start_Internal");
+	Start_Internal_FName = FName(*Start_Internal_Name);
 
 	Add<FCsTdUnitTest_Manager_Creep_CreatePool>();
 }

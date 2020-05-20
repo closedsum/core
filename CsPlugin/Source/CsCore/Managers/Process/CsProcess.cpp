@@ -246,8 +246,8 @@ void UCsProcess::StartRead()
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->SetName(NCsProcessCached::Name::StartRead_Internal);
-	Payload->SetNameAsString(NCsProcessCached::Str::StartRead_Internal);
+	Payload->SetName(NCsProcessCached::Str::StartRead_Internal);
+	Payload->SetFName(NCsProcessCached::Name::StartRead_Internal);
 
 	Scheduler->Start(Payload);
 }

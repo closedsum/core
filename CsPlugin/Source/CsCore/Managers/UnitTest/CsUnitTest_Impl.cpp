@@ -11,11 +11,11 @@
 
 ICsUnitTest_Impl::ICsUnitTest_Impl()
 {
-	NameAsString = TEXT("ICsUnitTest_Impl");
-	Name		 = FName(*NameAsString);
+	Name		  = TEXT("ICsUnitTest_Impl");
+	Name_Internal = FName(*Name);
 
-	DisplayNameAsString = TEXT("Unit Test Impl");
-	DisplayName		    = FName(*DisplayNameAsString);
+	DisplayName  = TEXT("Unit Test Impl");
+	DisplayFName = FName(*DisplayName);
 
 	MyRoot = nullptr;
 
@@ -45,9 +45,9 @@ void ICsUnitTest_Impl::Start()
 	Payload->Owner.SetOwner(this);
 
 	Payload->SetName(Start_Internal_Name);
-	Payload->SetNameAsString(Start_Internal_NameAsString);
+	Payload->SetFName(Start_Internal_FName);
 
-	UE_LOG(LogTemp, Log, TEXT("%s: Starting Unit Test."), *DisplayNameAsString);
+	UE_LOG(LogTemp, Log, TEXT("%s: Starting Unit Test."), *DisplayName);
 
 	Scheduler->Start(Payload);
 }

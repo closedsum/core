@@ -213,8 +213,8 @@ void ACsPawn::CheckLinkedToPlayerState()
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->SetName(NCsPawnCached::Name::CheckLinkedToPlayerState_Internal);
-	Payload->SetNameAsString(NCsPawnCached::Str::CheckLinkedToPlayerState_Internal);
+	Payload->SetName(NCsPawnCached::Str::CheckLinkedToPlayerState_Internal);
+	Payload->SetFName(NCsPawnCached::Name::CheckLinkedToPlayerState_Internal);
 
 	Scheduler->Start(Payload);
 }
@@ -267,8 +267,8 @@ void ACsPawn::HandleRespawnTimer()
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->SetName(NCsPawnCached::Name::HandleRespawnTimer_Internal);
-	Payload->SetNameAsString(NCsPawnCached::Str::HandleRespawnTimer_Internal);
+	Payload->SetName(NCsPawnCached::Str::HandleRespawnTimer_Internal);
+	Payload->SetFName(NCsPawnCached::Name::HandleRespawnTimer_Internal);
 
 	Scheduler->Start(Payload);
 }

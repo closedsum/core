@@ -1079,8 +1079,8 @@ void ACsWeapon::PlayAnimation_Reload()
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->SetName(NCsWeaponCached::Name::PlayAnimation_Reload_Internal);
-	Payload->SetNameAsString(NCsWeaponCached::Str::PlayAnimation_Reload_Internal);
+	Payload->SetName(NCsWeaponCached::Str::PlayAnimation_Reload_Internal);
+	Payload->SetFName(NCsWeaponCached::Name::PlayAnimation_Reload_Internal);
 	
 	Payload->SetValue_Float(CS_FIRST, GetAnimationLength(EMCsWeaponFireMode::Get().GetMAX(), ReloadAnim));
 
@@ -1447,8 +1447,8 @@ void ACsWeapon::StartChargeFire(const FECsWeaponFireMode& FireMode)
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
-	Payload->SetName(NCsWeaponCached::Name::StartChargeFire_Internal);
-	Payload->SetNameAsString(NCsWeaponCached::Str::StartChargeFire_Internal);
+	Payload->SetName(NCsWeaponCached::Str::StartChargeFire_Internal);
+	Payload->SetFName(NCsWeaponCached::Name::StartChargeFire_Internal);
 
 	Payload->SetValue_Int(CS_FIRST,	FireMode.Value);
 
@@ -1657,8 +1657,8 @@ void ACsWeapon::FireWeapon(const FECsWeaponFireMode& FireMode)
 	Payload->Coroutine.BindStatic(&ACsWeapon::FireWeapon_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
-	Payload->SetName(NCsWeaponCached::Name::FireWeapon_Internal);
-	Payload->SetNameAsString(NCsWeaponCached::Str::FireWeapon_Internal);
+	Payload->SetName(NCsWeaponCached::Str::FireWeapon_Internal);
+	Payload->SetFName(NCsWeaponCached::Name::FireWeapon_Internal);
 
 	Payload->SetValue_Int(CS_FIRST, FireMode.Value);
 
@@ -1894,8 +1894,8 @@ void ACsWeapon::DrawFireProjectile(class ACsProjectileBase* Projectile, const FV
 	Payload->Coroutine.BindStatic(&ACsWeapon::DrawFireProjectile_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
-	Payload->SetName(NCsWeaponCached::Name::DrawFireProjectile_Internal);
-	Payload->SetNameAsString(NCsWeaponCached::Str::DrawFireProjectile_Internal);
+	Payload->SetName(NCsWeaponCached::Str::DrawFireProjectile_Internal);
+	Payload->SetFName(NCsWeaponCached::Name::DrawFireProjectile_Internal);
 
 	static const int32 START_INDEX = 0;
 	Payload->SetValue_Vector(START_INDEX, Start);

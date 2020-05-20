@@ -1812,8 +1812,8 @@ const FCsRoutineHandle& UCsLibrary_Common::ScaleActorOverTime(const FECsUpdateGr
 	Payload->StartTime = UCsManager_Time::Get(InActor->GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(InActor);
 
-	Payload->SetName(NCsCommonCached::Name::ScaleActorOverTime_Internal);
-	Payload->SetNameAsString(NCsCommonCached::Str::ScaleActorOverTime_Internal);
+	Payload->SetName(NCsCommonCached::Str::ScaleActorOverTime_Internal);
+	Payload->SetFName(NCsCommonCached::Name::ScaleActorOverTime_Internal);
 
 	static const int32 START_SCALE_INDEX = 0;
 	Payload->SetValue_Vector(START_SCALE_INDEX, StartScale);
@@ -1851,8 +1851,8 @@ const FCsRoutineHandle& UCsLibrary_Common::ScaleActorOverTime(const FECsUpdateGr
 	Payload->StartTime = UCsManager_Time::Get(InActor->GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(InActor);
 
-	Payload->SetName(NCsCommonCached::Name::ScaleActorOverTime_Internal);
-	Payload->SetNameAsString(NCsCommonCached::Str::ScaleActorOverTime_Internal);
+	Payload->SetName(NCsCommonCached::Str::ScaleActorOverTime_Internal);
+	Payload->SetFName(NCsCommonCached::Name::ScaleActorOverTime_Internal);
 
 	static const int32 START_SCALE_INDEX = 0;
 	Payload->SetValue_Vector(START_SCALE_INDEX, StartScale);
@@ -1957,8 +1957,8 @@ const FCsRoutineHandle& UCsLibrary_Common::ScaleActorOverTime_AsCurve(const FECs
 	Payload->StartTime = UCsManager_Time::Get(InActor->GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(InActor);
 
-	Payload->SetName(NCsCommonCached::Name::ScaleActorOverTime_AsCurve_Internal);
-	Payload->SetNameAsString(NCsCommonCached::Str::ScaleActorOverTime_AsCurve_Internal);
+	Payload->SetName(NCsCommonCached::Str::ScaleActorOverTime_AsCurve_Internal);
+	Payload->SetFName(NCsCommonCached::Name::ScaleActorOverTime_AsCurve_Internal);
 
 	// TODO: Add Delay to Payload
 	float MinTime = 0.0f;
@@ -2077,8 +2077,8 @@ const FCsRoutineHandle& UCsLibrary_Common::MoveActorOverTime(const FECsUpdateGro
 	Payload->StartTime = UCsManager_Time::Get(InActor->GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(InActor);
 
-	Payload->SetName(NCsCommonCached::Name::MoveActorOverTime_Internal);
-	Payload->SetNameAsString(NCsCommonCached::Str::MoveActorOverTime_Internal);
+	Payload->SetName(NCsCommonCached::Str::MoveActorOverTime_Internal);
+	Payload->SetFName(NCsCommonCached::Name::MoveActorOverTime_Internal);
 
 	static const int32 START_LOCATION_INDEX = 0;
 	Payload->SetValue_Vector(START_LOCATION_INDEX, StartLocation);
@@ -2149,8 +2149,8 @@ const FCsRoutineHandle& UCsLibrary_Common::DestroyMaterialInstanceDynamic(const 
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(InMID);
 
-	Payload->SetName(NCsCommonCached::Name::DestroyMaterialInstanceDynamic_Internal);
-	Payload->SetNameAsString(NCsCommonCached::Str::DestroyMaterialInstanceDynamic_Internal);
+	Payload->SetName(NCsCommonCached::Str::DestroyMaterialInstanceDynamic_Internal);
+	Payload->SetFName(NCsCommonCached::Name::DestroyMaterialInstanceDynamic_Internal);
 
 	//R->delay	 = Delay;
 
@@ -2219,8 +2219,8 @@ const FCsRoutineHandle& UCsLibrary_Common::FadeCameraOverTime(const FECsUpdateGr
 	Payload->StartTime = UCsManager_Time::Get(Controller->GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(Controller);
 
-	Payload->SetName(NCsCommonCached::Name::FadeCameraOverTime_Internal);
-	Payload->SetNameAsString(NCsCommonCached::Str::FadeCameraOverTime_Internal);
+	Payload->SetName(NCsCommonCached::Str::FadeCameraOverTime_Internal);
+	Payload->SetFName(NCsCommonCached::Name::FadeCameraOverTime_Internal);
 
 	Payload->SetValue_Int(CS_FIRST, (int32)EasingType);
 

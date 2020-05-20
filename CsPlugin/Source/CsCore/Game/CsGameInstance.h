@@ -70,5 +70,5 @@ public:
 		return Manager_Singleton;
 	}
 
-#pragma endregion ICsGetManagerSingleton
+#pragma endregion ICsGetManagerSingleton	
 };

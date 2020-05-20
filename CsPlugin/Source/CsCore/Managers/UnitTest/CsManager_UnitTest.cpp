@@ -199,8 +199,8 @@ void UCsManager_UnitTest::Start()
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
 
-	Payload->SetName(NCsManagerUnitTestCached::Name::Start_Internal);
-	Payload->SetNameAsString(NCsManagerUnitTestCached::Str::Start_Internal);
+	Payload->SetName(NCsManagerUnitTestCached::Str::Start_Internal);
+	Payload->SetFName(NCsManagerUnitTestCached::Name::Start_Internal);
 
 	UE_LOG(LogTemp, Log, TEXT("Starting Unit Test Plans."));
 	UE_LOG(LogTemp, Log, TEXT("- Processing %d Plans."), Plans.Num());

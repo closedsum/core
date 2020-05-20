@@ -258,6 +258,19 @@ public:
 
 	/**
 	*
+	*
+	* @param Index
+	* return ResourceType
+	*/
+	FORCEINLINE ResourceType* GetResourceAt(const int32& Index) const
+	{
+		checkf(Index > INDEX_NONE && Index < PoolSize, TEXT("%s::GetResourceAt: Index is >= 0 and < PoolSize: %d"), *Name, PoolSize);
+
+		return Pool[Index]->Get();
+	}
+
+	/**
+	*
 	* @param Resource	Resource to find the associated container for.
 	* return Resource Container associated with the Resource
 	*/
@@ -613,6 +626,30 @@ public:
 		ResourceContainerType* ResourceContainer = GetContainer(Resource);
 
 		return Deallocate(ResourceContainer);
+	}
+
+	/**
+	* Deallocate a ResourceType and remove the corresponding linked list element from the
+	*  allocated linked list.
+	*
+	* @param Index		Index of the ResourceType to deallocate
+	* return Success
+	*/
+	bool DeallocateAt(const int32& Index)
+	{
+		checkf(Index >= 0 && Index < PoolSize, TEXT("%s::DeallocateAt: Index: %d (< 0 or >= %d) is NOT Valid."), *Name, Index, PoolSize);
+
+		ResourceContainerType* M = Pool[Index];
+
+		if (!M->IsAllocated())
+			return false;
+
+		checkf(M->Get(), TEXT("%s::DeallocateAt: Resource is NULL."), *Name);
+
+		M->Deallocate();
+		RemoveActiveLink(&(Links[Index]));
+		--AllocatedSize;
+		return true;
 	}
 
 	/**

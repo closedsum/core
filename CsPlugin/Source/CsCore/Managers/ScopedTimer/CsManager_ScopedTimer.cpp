@@ -43,6 +43,8 @@ const FCsScopedTimerHandle& FCsManager_ScopedTimer::GetHandle(const FString* Nam
 {
 	checkf(Name, TEXT("FCsManager_ScopedTimer::GetHandle: Name is NULL."));
 
+	checkf(!Name->IsEmpty(), TEXT("FCsManager_ScopedTimer::GetHandle: Name is Empty."));
+
 	FCsScopedTimer* ScopedTimer = Internal.AllocateResource();
 
 	ScopedTimer->Init(Name, CVar);

@@ -2,7 +2,7 @@
 #ifndef __CSCOREDEPRECATED_H__
 #define __CSCOREDEPRECATED_H__
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCsCoreDEPRECATED, Log, All);
 

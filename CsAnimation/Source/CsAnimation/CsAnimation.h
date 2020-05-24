@@ -2,7 +2,7 @@
 #ifndef __CSANIMATION_H__
 #define __CSANIMATION_H__
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCsAnimation, Log, All);
 

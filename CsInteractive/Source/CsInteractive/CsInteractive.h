@@ -2,7 +2,7 @@
 #ifndef __CSINTERACTIVE_H__
 #define __CSINTERACTIVE_H__
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCsInteractive, Log, All);
 

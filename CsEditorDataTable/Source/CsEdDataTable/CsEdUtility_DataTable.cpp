@@ -23,6 +23,8 @@
 // Data
 #include "Engine/DataTable.h"
 
+#include "Misc/FileHelper.h"
+
 // Cached
 #pragma region
 

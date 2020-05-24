@@ -2,7 +2,7 @@
 #ifndef __CSCC_H__
 #define __CSCC_H__
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCsCc, Log, All);
 

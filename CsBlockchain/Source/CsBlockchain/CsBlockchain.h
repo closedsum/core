@@ -2,7 +2,7 @@
 #ifndef __CSBLOCKCHAIN_H__
 #define __CSBLOCKCHAIN_H__
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCsBlockchain, Log, All);
 

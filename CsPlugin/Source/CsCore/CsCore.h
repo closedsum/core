@@ -2,7 +2,7 @@
 #ifndef __CSCORE_H__
 #define __CSCORE_H__
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCs, Log, All);
 

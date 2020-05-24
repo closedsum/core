@@ -2,7 +2,7 @@
 #ifndef __CSPLATFORMSERVICES_H__
 #define __CSPLATFORMSERVICES_H__
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCsPlatformServices, Log, All);
 

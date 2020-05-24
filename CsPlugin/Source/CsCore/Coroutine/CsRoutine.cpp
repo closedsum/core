@@ -278,6 +278,7 @@ void FCsRoutine::Init(FCsCoroutinePayload* Payload)
 	}
 	Handle.New();
 
+	RoutineScopedTimerHandle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, NCsCVarLog::LogRoutineScopedTimer);
 	CoroutineScopedTimerHandle = FCsManager_ScopedTimer::Get().GetHandle(Name, NCsCVarLog::LogCoroutineScopedTimer);
 }
 
@@ -286,6 +287,8 @@ void FCsRoutine::Init(FCsCoroutinePayload* Payload)
 
 void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 {
+	CS_SCOPED_TIMER(RoutineScopedTimerHandle);
+
 	const int32 AbortIndex = (int32)ECsCoroutineMessage::Abort;
 
 	TSet<FName>& AbortMessages		    = Messages[AbortIndex];

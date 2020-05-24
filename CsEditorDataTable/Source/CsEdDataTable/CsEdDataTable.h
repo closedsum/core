@@ -2,7 +2,7 @@
 #ifndef __CSEDDATATABLE_H__
 #define __CSEDDATATABLE_H__
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCsEdDataTable, Log, All);
 

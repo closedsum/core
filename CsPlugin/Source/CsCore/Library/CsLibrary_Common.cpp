@@ -37,10 +37,6 @@
 
 #if WITH_EDITOR
 
-// Javascript
-#include "JavascriptIsolate.h"
-#include "JavascriptContext.h"
-
 #include "../Source/Editor/UnrealEd/Public/Editor.h"
 
 #endif // #if WITH_EDITOR
@@ -2313,48 +2309,6 @@ PT_THREAD(UCsLibrary_Common::AllocateAndActivateEmitter_Internal(struct FCsRouti
 */
 
 #pragma endregion Coroutine
-
-// Javascript
-#pragma region
-
-#if WITH_EDITOR
-
-void UCsLibrary_Common::SetupJavascript(UObject* InOwner, UWorld* InWorld, UObject* &JavascriptIsolate, UObject* &JavascriptContext, const FString &EditorJavascriptFile)
-{
-	auto Isolate = NewObject<UJavascriptIsolate>();
-	// TODO: bIsEditor. Probably need to set to true if we want to interact with AnimInstance in Editor.
-	Isolate->Init(false);
-	auto Context = Isolate->CreateContext();
-
-	JavascriptIsolate = Isolate;
-	JavascriptContext = Context;
-
-	Context->Expose("Root", InOwner);
-	Context->Expose("GWorld", InWorld);
-	Context->Expose("GEngine", GEngine);
-
-	if (EditorJavascriptFile != TEXT(""))
-		Context->RunFile(*EditorJavascriptFile);
-}
-
-void UCsLibrary_Common::SetupJavascript(UObject* InOwner, UWorld* InWorld, UObject* &JavascriptIsolate, UObject* &JavascriptContext)
-{
-	SetupJavascript(InOwner, InWorld, JavascriptIsolate, JavascriptContext, TEXT(""));
-}
-
-void UCsLibrary_Common::Javascript_ExposeObject(UObject* &JavascriptContext, const FString &Name, UObject* InObject)
-{
-	Cast<UJavascriptContext>(JavascriptContext)->Expose(Name, InObject);
-}
-
-void UCsLibrary_Common::Javascript_RunFile(UObject* &JavascriptContext, const FString &EditorJavascriptFile)
-{
-	Cast<UJavascriptContext>(JavascriptContext)->RunFile(*EditorJavascriptFile);
-}
-
-#endif // #if WITH_EDITOR
-
-#pragma endregion Javascript
 
 bool UCsLibrary_Common::IsDedicatedServer(AActor* InActor)
 {

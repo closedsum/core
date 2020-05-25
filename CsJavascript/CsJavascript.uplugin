@@ -2,8 +2,8 @@
 	"FileVersion": 3,
 	"Version": 2,
 	"VersionName": "0.0.1",
-	"FriendlyName": "Closed Sum Games Core",
-	"Description": "Closed Sum Games Core",
+	"FriendlyName": "Closed Sum Games Javascript",
+	"Description": "Closed Sum Games Javascript",
 	"Category": "Programming",
 	"CreatedBy": "Closed Sum Games LLC",
 	"CreatedByURL": "",
@@ -15,28 +15,20 @@
 	"Installed": true,
   "Modules": [
     {
-      "Name": "CsCore",
+      "Name": "CsJs",
       "Type": "Runtime",
-      "LoadingPhase": "Default"
-    },
-    {
-      "Name": "CsEditor",
-      "Type": "Editor",
       "LoadingPhase": "Default"
     }
   ],
   "Plugins": [
     {
-      "Name": "OnlineSubsystemUtils",
+      "Name": "CsPlugin",
       "Enabled": true
     },
     {
-      "Name": "OnlineSubsystemUtils",
-      "Enabled": true
-    },
-    {
-      "Name": "LevelSequenceEditor",
-      "Enabled": true
+      "Name": "UnrealJS",
+      "Enabled": true,
+      "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/be751eedc4a14cc09e39945bc5a531c4"
     }
   ]
 }

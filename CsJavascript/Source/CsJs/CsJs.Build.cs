@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class CsCore : ModuleRules
+public class CsJs : ModuleRules
 {
-    public CsCore(ReadOnlyTargetRules Target) : base(Target)
+    public CsJs(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -14,27 +14,39 @@ public class CsCore : ModuleRules
                     "CoreUObject",
                     "Engine",
                     "AssetRegistry",
-                    "Json",
-                    "JsonUtilities",
-                    "HeadMountedDisplay",
+                    "CsCore",
+                    "V8",
                 }
             );
 
+        /*
         PrivateDependencyModuleNames.AddRange(
             new string[] {
                 "InputCore",
+                "Slate",
+                "SlateCore",
+                "Json",
             }
         );
+        */
 
         if (Target.Type == TargetType.Editor)
         {
             PublicDependencyModuleNames.AddRange(
                 new string[] {
-                    "UnrealEd",
                 }
             );
 
+            /*
             PrivateDependencyModuleNames.AddRange(
+                new string[] {
+                }
+            );
+            */
+        }
+        else
+        {
+            PublicDependencyModuleNames.AddRange(
                 new string[] {
                 }
             );

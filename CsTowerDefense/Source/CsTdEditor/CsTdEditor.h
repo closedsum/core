@@ -2,7 +2,7 @@
 #ifndef __CSTDEDITOR_H__
 #define __CSTDEDITOR_H__
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCsTdEditor, Log, All);
 

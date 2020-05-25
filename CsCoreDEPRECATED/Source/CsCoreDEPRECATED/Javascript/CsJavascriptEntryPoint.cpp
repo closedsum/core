@@ -3,7 +3,7 @@
 #include "CsCoreDEPRECATED.h"
 
 // Library
-#include "Library/CsLibrary_Common.h"
+#include "Library/CsLibrary_Common_DEPRECATED.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Game
@@ -101,53 +101,53 @@ PT_THREAD(ACsJavascriptEntryPoint::Setup_Internal(FCsRoutine* r))
 	CS_COROUTINE_BEGIN(r);
 
 	// Create Javascript hooks
-	UCsLibrary_Common::SetupJavascript(js, w, js->Isolate, js->Context);
+	UCsLibrary_Common_DEPRECATED::SetupJavascript(js, w, js->Isolate, js->Context);
 
 	// Root
-	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("Root"), js);
+	UCsLibrary_Common_DEPRECATED::Javascript_ExposeObject(js->Context, TEXT("Root"), js);
 
 	// GameInstance
-	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("GameInstance"), gi);
+	UCsLibrary_Common_DEPRECATED::Javascript_ExposeObject(js->Context, TEXT("GameInstance"), gi);
 
 	// DataMapping
-	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("DataMapping"), gi->DataMapping);
+	UCsLibrary_Common_DEPRECATED::Javascript_ExposeObject(js->Context, TEXT("DataMapping"), gi->DataMapping);
 
 	// World
-	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("MyWorld"), w);
+	UCsLibrary_Common_DEPRECATED::Javascript_ExposeObject(js->Context, TEXT("MyWorld"), w);
 
 	// Game State
-	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("MyGameState"), gs);
+	UCsLibrary_Common_DEPRECATED::Javascript_ExposeObject(js->Context, TEXT("MyGameState"), gs);
 
 	// Local Player Controller
 	CS_COROUTINE_WAIT_UNTIL(r, pc);
 
-	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("MyPC"), pc);
+	UCsLibrary_Common_DEPRECATED::Javascript_ExposeObject(js->Context, TEXT("MyPC"), pc);
 
 	// HUD
 	CS_COROUTINE_WAIT_UNTIL(r, hud);
 
-	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("MyHUD"), hud);
+	UCsLibrary_Common_DEPRECATED::Javascript_ExposeObject(js->Context, TEXT("MyHUD"), hud);
 
 	// Local Player State
 	CS_COROUTINE_WAIT_UNTIL(r, ps);
 
-	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("MyPS"), ps);
+	UCsLibrary_Common_DEPRECATED::Javascript_ExposeObject(js->Context, TEXT("MyPS"), ps);
 
 	// Local Character
 	CS_COROUTINE_WAIT_UNTIL(r, pc->GetPawn());
 
-	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("MyPawn"), pc->GetPawn());
+	UCsLibrary_Common_DEPRECATED::Javascript_ExposeObject(js->Context, TEXT("MyPawn"), pc->GetPawn());
 
 	// Manager Input
 	CS_COROUTINE_WAIT_UNTIL(r, pc->Manager_Input);
 
-	UCsLibrary_Common::Javascript_ExposeObject(js->Context, TEXT("Manager_Input"), pc->Manager_Input);
+	UCsLibrary_Common_DEPRECATED::Javascript_ExposeObject(js->Context, TEXT("Manager_Input"), pc->Manager_Input);
 
 	// Additional Setup
 	CS_COROUTINE_WAIT_UNTIL(r, js->HasCompletedAdditionalSetup());
 
 	// Run Javascript
-	UCsLibrary_Common::Javascript_RunFile(js->Context, js->EditorFile);
+	UCsLibrary_Common_DEPRECATED::Javascript_RunFile(js->Context, js->EditorFile);
 
 	js->HasCompletedSetup = true;
 
@@ -222,6 +222,6 @@ void ACsJavascriptEntryPoint::Run()
 
 	DoPerformCleanUpOnEditorFile = true;
 
-	UCsLibrary_Common::Javascript_RunFile(Context, EditorFile);
+	UCsLibrary_Common_DEPRECATED::Javascript_RunFile(Context, EditorFile);
 #endif // #if WITH_EDITOR
 }

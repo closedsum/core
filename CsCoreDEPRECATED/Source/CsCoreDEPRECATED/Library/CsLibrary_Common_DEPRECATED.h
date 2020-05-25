@@ -10,6 +10,21 @@ class CSCOREDEPRECATED_API UCsLibrary_Common_DEPRECATED : public UBlueprintFunct
 {
 	GENERATED_UCLASS_BODY()
 
+// Javascript
+#pragma region
+
+#if WITH_EDITOR
+
+	static void SetupJavascript(UObject* InOwner, UWorld* InWorld, UObject* &JavascriptIsolate, UObject* &JavascriptContext, const FString &EditorJavascriptFile);
+	static void SetupJavascript(UObject* InOwner, UWorld* InWorld, UObject* &JavascriptIsolate, UObject* &JavascriptContext);
+
+	static void Javascript_ExposeObject(UObject* &JavascriptContext, const FString &Name, UObject* InObject);
+	static void Javascript_RunFile(UObject* &JavascriptContext, const FString &EditorJavascriptFile);
+
+#endif // #if WITH_EDITOR
+
+#pragma endregion Javascript
+
 // Editor Message
 #pragma region
 

@@ -13,6 +13,7 @@ class CSCORE_API UCsGameInstance : public UGameInstance, public ICsGetManagerSin
 {
 	GENERATED_UCLASS_BODY()
 
+// UGameInstance Interface
 public:
 
 	virtual void Init() override;
@@ -25,6 +26,8 @@ public:
 #if WITH_EDITOR
 	FGameInstancePIEParameters GameInstancePIEParametersCache;
 #endif // #if WITH_EDITOR
+
+#pragma endregion UGameInstance Interface
 
 // Tick
 #pragma region

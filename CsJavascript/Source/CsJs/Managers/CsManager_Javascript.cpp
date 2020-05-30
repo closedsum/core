@@ -128,6 +128,8 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 #if WITH_EDITOR
 	ICsGetManagerJavascript* GetManagerJavascript = Get_GetManagerJavascript(InRoot);
 	UCsManager_Javascript* Manager_Javascript	  = GetManagerJavascript->GetManager_Javascript();
+
+	Manager_Javascript->OnShutdown_ScriptEvent.Broadcast();
 	Manager_Javascript->CleanUp();
 
 	GetManagerJavascript->SetManager_Javascript(nullptr);
@@ -138,6 +140,7 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 		return;
 	}
 
+	s_Instance->OnShutdown_ScriptEvent.Broadcast();
 	s_Instance->CleanUp();
 	s_Instance->RemoveFromRoot();
 	s_Instance = nullptr;

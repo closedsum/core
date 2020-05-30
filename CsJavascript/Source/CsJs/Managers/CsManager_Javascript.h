@@ -4,6 +4,13 @@
 #include "CsTypes_Javascript.h"
 #include "CsManager_Javascript.generated.h"
 
+// Delegates
+#pragma region
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerJavascript_OnShutdown);
+
+#pragma endregion Delegates
+
 class ICsGetManagerJavascript;
 struct FCsRoutine;
 
@@ -30,6 +37,9 @@ public:
 
 	static void Shutdown(UObject* InRoot = nullptr);
 	static bool HasShutdown(UObject* InRoot = nullptr);
+
+	UPROPERTY(BlueprintAssignable)
+	FCsManagerJavascript_OnShutdown OnShutdown_ScriptEvent;
 
 #if WITH_EDITOR
 protected:

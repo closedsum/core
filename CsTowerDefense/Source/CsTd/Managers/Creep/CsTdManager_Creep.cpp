@@ -48,7 +48,10 @@ UCsTdManager_Creep::UCsTdManager_Creep(const FObjectInitializer& ObjectInitializ
 	return Get_GetManagerCreep(InRoot)->GetManager_Creep();
 #else
 	if (s_bShutdown)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsTdManager_Creep::Get: Manager has already shutdown."));
 		return nullptr;
+	}
 
 	return s_Instance;
 #endif // #if WITH_EDITOR
@@ -62,7 +65,6 @@ UCsTdManager_Creep::UCsTdManager_Creep(const FObjectInitializer& ObjectInitializ
 	return s_Instance != nullptr;
 #endif // #if WITH_EDITOR
 }
-
 
 /*static*/ void UCsTdManager_Creep::Init(UObject* InRoot, TSubclassOf<UCsTdManager_Creep> ManagerCreepClass, UObject* InOuter /*=nullptr*/)
 {
@@ -530,7 +532,6 @@ bool UCsTdManager_Creep::Destroy(ICsTdCreep* Creep)
 {
 	return Internal.Destroy(Creep);
 }
-
 
 #pragma endregion Destroy
 

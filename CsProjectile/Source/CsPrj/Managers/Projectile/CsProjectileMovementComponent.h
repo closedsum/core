@@ -5,7 +5,7 @@
 #include "CsProjectileMovementComponent.generated.h"
 
 UCLASS()
-class CSCORE_API UCsProjectileMovementComponent : public UProjectileMovementComponent
+class CSPRJ_API UCsProjectileMovementComponent : public UProjectileMovementComponent
 {
 	GENERATED_UCLASS_BODY()
 

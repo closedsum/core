@@ -116,7 +116,7 @@ struct FCsProjectileBaseCache : public FCsPooledObjectCache
 };
 
 UCLASS()
-class CSCORE_API ACsProjectileBase : public ACsPooledActor
+class CSPRJ_API ACsProjectileBase : public ACsPooledActor
 {
 	GENERATED_UCLASS_BODY()
 

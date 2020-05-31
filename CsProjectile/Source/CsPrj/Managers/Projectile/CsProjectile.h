@@ -6,14 +6,14 @@
 #include "CsProjectile.generated.h"
 
 UINTERFACE(Blueprintable)
-class UCsProjectile : public UInterface
+class CSPRJ_API UCsProjectile : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
 //class ICsData_Projectile;
 
-class ICsProjectile
+class CSPRJ_API ICsProjectile
 {
 	GENERATED_IINTERFACE_BODY()
 
@@ -44,7 +44,7 @@ public:
 // FCsProjectile
 #pragma region
 
-struct CSCORE_API FCsProjectilePooled : public FCsPooledObject
+struct CSPRJ_API FCsProjectilePooled : public FCsPooledObject
 {
 private:
 

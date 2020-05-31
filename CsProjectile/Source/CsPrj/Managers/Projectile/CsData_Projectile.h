@@ -5,12 +5,12 @@
 #include "CsData_Projectile.generated.h"
 
 UINTERFACE(Blueprintable)
-class UCsData_Projectile : public UInterface
+class CSPRJ_API UCsData_Projectile : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class ICsData_Projectile
+class CSPRJ_API ICsData_Projectile
 {
 	GENERATED_IINTERFACE_BODY()
 

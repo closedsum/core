@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class CsTdEditor : ModuleRules
+public class CsPrjEditor : ModuleRules
 {
-    public CsTdEditor(ReadOnlyTargetRules Target) : base(Target)
+    public CsPrjEditor(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -36,7 +36,7 @@ public class CsTdEditor : ModuleRules
                     "EditorStyle",
                     "CsCore",
                     "CsEditor",
-                    "CsTd",
+                    "CsPrj",
                 }
             );
 

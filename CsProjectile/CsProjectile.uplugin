@@ -2,21 +2,26 @@
 	"FileVersion": 3,
 	"Version": 2,
 	"VersionName": "0.0.1",
-	"FriendlyName": "CsCore DEPRECATED",
-	"Description": "Closed Sum Games Core DEPRECATED",
+	"FriendlyName": "Closed Sum Games Projectile",
+	"Description": "Closed Sum Games Projectile",
 	"Category": "Programming",
 	"CreatedBy": "Closed Sum Games LLC",
 	"CreatedByURL": "",
 	"DocsURL": "",
 	"MarketplaceURL": "",
 	"SupportURL": "",
-	"EngineVersion": "4.22.0",
+	"EngineVersion": "4.24.0",
 	"CanContainContent": true,
 	"Installed": true,
   "Modules": [
     {
-      "Name": "CsCoreDEPRECATED",
+      "Name": "CsPrj",
       "Type": "Runtime",
+      "LoadingPhase": "PostEngineInit"
+    },
+    {
+      "Name": "CsPrjEditor",
+      "Type": "Editor",
       "LoadingPhase": "Default"
     }
   ],
@@ -24,15 +29,6 @@
     {
       "Name": "CsPlugin",
       "Enabled": true
-    },
-    {
-      "Name": "CsProjectile",
-      "Enabled": true
-    },
-    {
-      "Name": "UnrealJS",
-      "Enabled": true,
-      "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/be751eedc4a14cc09e39945bc5a531c4"
     }
   ]
 }

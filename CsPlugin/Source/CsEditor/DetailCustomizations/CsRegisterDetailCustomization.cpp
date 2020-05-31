@@ -24,8 +24,6 @@
 #include "DetailCustomizations/EnumStruct/ECsSoundTypeCustomization.h"
 		// Sense
 #include "DetailCustomizations/EnumStruct/Sense/ECsSenseActorTypeCustomization.h"
-		// Projectile
-#include "DetailCustomizations/EnumStruct/Projectile/ECsProjectileCustomization.h"
 
 void FCsRegisterDetailCustomization::Register()
 {
@@ -52,7 +50,5 @@ void FCsRegisterDetailCustomization::Register()
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsSoundType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSoundTypeCustomization::MakeInstance));
 		// Sense
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsSenseActorType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSenseActorTypeCustomization::MakeInstance));
-		// Projectile
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProjectile", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProjectileCustomization::MakeInstance));
 	}
 }

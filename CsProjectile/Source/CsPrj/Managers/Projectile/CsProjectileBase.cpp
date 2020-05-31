@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Projectile/CsProjectileBase.h"
-#include "CsCore.h"
+#include "CsPrj.h"
 
 // CVar
 #include "CsCVars.h"
@@ -215,7 +215,7 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 	{
 		if (CsCVarLogOverrideFunctions->GetInt() == CS_CVAR_DISPLAY)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsProjectileBase::Allocate_Internal (%s): Using Override Function."), *GetName());
+			UE_LOG(LogCsPrj, Warning, TEXT("ACsProjectileBase::Allocate_Internal (%s): Using Override Function."), *GetName());
 		}
 		Override_Allocate_Internal_ScriptEvent.Broadcast(PoolIndex);
 		return;

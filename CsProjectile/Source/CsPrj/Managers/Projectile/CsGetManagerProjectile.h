@@ -7,12 +7,12 @@
 class UCsManager_Projectile;
 
 UINTERFACE(Blueprintable)
-class UCsGetManagerProjectile : public UInterface
+class CSPRJ_API UCsGetManagerProjectile : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class ICsGetManagerProjectile
+class CSPRJ_API ICsGetManagerProjectile
 {
 	GENERATED_IINTERFACE_BODY()
 

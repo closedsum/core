@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "DetailCustomizations/EnumStruct/Projectile/ECsProjectileCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsProjectileCustomization.h"
 
 #include "Managers/Projectile/CsTypes_Projectile.h"
 

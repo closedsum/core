@@ -2,90 +2,15 @@
 #pragma once
 
 #include "Managers/Pool/CsPooledObject.h"
-#include "CsCVars.h"
+#include "Managers/Pool/CsTypes_Manager_PooledObject.h"
 #include "Containers/CsDoubleLinkedList.h"
 #include "GameFramework/Actor.h"
-
-// Structs
-#pragma region
-
-class UWorld;
-class UObject;
-class UClass;
-
-struct CSCORE_API FCsManagerPooledObjectConstructParams
-{
-public:
-
-	UClass* Class;
-
-	ECsPooledObjectConstruction ConstructionType;
-
-	FActorSpawnParameters ConstructionInfo;
-
-	bool bReplicates;
-
-	FCsManagerPooledObjectConstructParams() :
-		Class(nullptr),
-		ConstructionType(ECsPooledObjectConstruction::Object),
-		ConstructionInfo(),
-		bReplicates(false)
-	{
-	}
-
-	virtual ~FCsManagerPooledObjectConstructParams() {}
-};
-
-struct CSCORE_API FCsManagerPooledObjectParams
-{
-public:
-
-	/** */
-	FString Name;
-
-	/** */
-	UWorld* World;
-
-	/** */
-	FECsCVarLog LogType;
-
-	/** */
-	FCsManagerPooledObjectConstructParams ConstructParams;
-
-	/** */
-	bool bConstructPayloads;
-
-	/** */
-	int32 PayloadSize;
-
-	/** */
-	bool bCreatePool;
-
-	/** */
-	int32 PoolSize;
-
-	FCsManagerPooledObjectParams() :
-		Name(),
-		World(nullptr),
-		LogType(),
-		ConstructParams(),
-		bConstructPayloads(false),
-		PayloadSize(0),
-		bCreatePool(false),
-		PoolSize(0)
-	{
-	}
-
-	virtual ~FCsManagerPooledObjectParams() {}
-};
-
-#pragma endregion Structs
 
 // ICsManager_PooledObject
 #pragma region
 
 
-class CSCORE_API ICsManager_PooledObject
+class ICsManager_PooledObject
 {
 public:
 

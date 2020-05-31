@@ -8,7 +8,7 @@
 // ICsManager_PooledObject_Map
 #pragma region
 
-class CSCORE_API ICsManager_PooledObject_Map
+class ICsManager_PooledObject_Map
 {
 public:
 

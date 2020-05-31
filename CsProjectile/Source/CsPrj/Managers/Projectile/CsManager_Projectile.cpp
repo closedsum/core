@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 
 #include "Managers/Projectile/CsManager_Projectile.h"
-#include "CsCore.h"
+#include "CsPrj.h"
 #include "CsCVars.h"
 
 #if WITH_EDITOR
@@ -50,7 +50,7 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 #else
 	if (s_bShutdown)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::Get: Manager has already shutdown."));
+		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::Get: Manager has already shutdown."));
 		return nullptr;
 	}
 	return s_Instance;
@@ -84,7 +84,7 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::Init: Init has already been called."));
+		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::Init: Init has already been called."));
 	}
 #else
 	s_bShutdown = false;
@@ -98,7 +98,7 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::Init: Init has already been called."));
+		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::Init: Init has already been called."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -114,7 +114,7 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 #else
 	if (!s_Instance)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::Shutdown: Manager has already been shutdown."));
+		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::Shutdown: Manager has already been shutdown."));
 		return;
 	}
 
@@ -159,7 +159,7 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 {
 	if (!Object)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::GetSafe_GetManagerProjectile: Object is NULL."));
+		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::GetSafe_GetManagerProjectile: Object is NULL."));
 		return nullptr;
 	}
 
@@ -167,7 +167,7 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 
 	if (!GetManagerSingleton)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::GetSafe_GetManagerProjectile: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
+		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::GetSafe_GetManagerProjectile: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
 		return nullptr;
 	}
 
@@ -175,7 +175,7 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 
 	if (!Manager_Singleton)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::GetSafe_GetManagerProjectile: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
+		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::GetSafe_GetManagerProjectile: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
 		return nullptr;
 	}
 
@@ -197,7 +197,7 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 		if (UCsManager_Projectile* Manager = GetSafe(World->GetGameState()))
 			return Manager;
 
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::GetFromWorldContextObject: Failed to Manager Item of type UCsManager_Projectile from GameState."));
+		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::GetFromWorldContextObject: Failed to Manager Item of type UCsManager_Projectile from GameState."));
 
 		return nullptr;
 	}
@@ -256,7 +256,7 @@ void UCsManager_Projectile::SetupInternal()
 	}
 }
 
-void UCsManager_Projectile::InitInternal(const TCsManager_Internal::FCsManagerPooledObjectMapParams& Params)
+void UCsManager_Projectile::InitInternal(const FCsManager_Projectile_Internal::FCsManagerPooledObjectMapParams& Params)
 {
 	Internal.Init(Params);
 }
@@ -275,7 +275,7 @@ void UCsManager_Projectile::CreatePool(const FECsProjectile& Type, const int32& 
 
 	if (PoolSize > CS_EMPTY)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::CreatePool: Pool for Creep: %s has already been created with Size: %d."), *(Type.Name), PoolSize);
+		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::CreatePool: Pool for Creep: %s has already been created with Size: %d."), *(Type.Name), PoolSize);
 	}
 
 	Internal.CreatePool(Type, Size);

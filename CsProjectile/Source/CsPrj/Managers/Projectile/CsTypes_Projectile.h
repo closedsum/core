@@ -18,7 +18,7 @@ enum class ECsProjectileRelevance : uint8
 	ECsProjectileRelevance_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsProjectileRelevance : public TCsEnumMap<ECsProjectileRelevance>
+struct CSPRJ_API EMCsProjectileRelevance : public TCsEnumMap<ECsProjectileRelevance>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProjectileRelevance, ECsProjectileRelevance)
 };
@@ -29,13 +29,13 @@ namespace NCsProjectileRelevance
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type RealVisible;
-		extern CSCORE_API const Type RealInvisible;
-		extern CSCORE_API const Type Fake;
-		extern CSCORE_API const Type ECsProjectileRelevance_MAX;
+		extern CSPRJ_API const Type RealVisible;
+		extern CSPRJ_API const Type RealInvisible;
+		extern CSPRJ_API const Type Fake;
+		extern CSPRJ_API const Type ECsProjectileRelevance_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSPRJ_API const uint8 MAX;
 }
 
 #pragma endregion ProjectileRelevance
@@ -44,7 +44,7 @@ namespace NCsProjectileRelevance
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsProjectile : public FECsEnum_uint8
+struct CSPRJ_API FECsProjectile : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -53,7 +53,7 @@ struct CSCORE_API FECsProjectile : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsProjectile)
 
-struct CSCORE_API EMCsProjectile : public TCsEnumStructMap<FECsProjectile, uint8>
+struct CSPRJ_API EMCsProjectile : public TCsEnumStructMap<FECsProjectile, uint8>
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsProjectile, FECsProjectile, uint8)
 };
@@ -72,7 +72,7 @@ enum class ECsProjectileState : uint8
 	ECsProjectileState_MAX UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsProjectileState : public TCsEnumMap<ECsProjectileState>
+struct CSPRJ_API EMCsProjectileState : public TCsEnumMap<ECsProjectileState>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProjectileState, ECsProjectileState)
 };
@@ -83,13 +83,13 @@ namespace NCsProjectileState
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type Active;
-		extern CSCORE_API const Type DeActivating;
-		extern CSCORE_API const Type InActive;
-		extern CSCORE_API const Type ECsProjectileState_MAX;
+		extern CSPRJ_API const Type Active;
+		extern CSPRJ_API const Type DeActivating;
+		extern CSPRJ_API const Type InActive;
+		extern CSPRJ_API const Type ECsProjectileState_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSPRJ_API const uint8 MAX;
 }
 
 #pragma endregion ProjectileState
@@ -106,7 +106,7 @@ enum class ECsProjectileDeActivate : uint8
 	ECsProjectileDeActivate_MAX UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsProjectileDeActivate : public TCsEnumMap<ECsProjectileDeActivate>
+struct CSPRJ_API EMCsProjectileDeActivate : public TCsEnumMap<ECsProjectileDeActivate>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProjectileDeActivate, ECsProjectileDeActivate)
 };
@@ -117,13 +117,13 @@ namespace NCsProjectileDeActivate
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type Collision;
-		extern CSCORE_API const Type Movement;
-		extern CSCORE_API const Type Mesh;
-		extern CSCORE_API const Type ECsProjectileDeActivate_MAX;
+		extern CSPRJ_API const Type Collision;
+		extern CSPRJ_API const Type Movement;
+		extern CSPRJ_API const Type Mesh;
+		extern CSPRJ_API const Type ECsProjectileDeActivate_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSPRJ_API const uint8 MAX;
 }
 
 #pragma endregion ProjectileDeActivate
@@ -139,7 +139,7 @@ enum class ECsProjectileMovement : uint8
 	ECsProjectileMovement_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsProjectileMovement : public TCsEnumMap<ECsProjectileMovement>
+struct CSPRJ_API EMCsProjectileMovement : public TCsEnumMap<ECsProjectileMovement>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProjectileMovement, ECsProjectileMovement)
 };
@@ -150,12 +150,12 @@ namespace NCsProjectileMovement
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type Simulated;
-		extern CSCORE_API const Type Function;
-		extern CSCORE_API const Type ECsProjectileMovement_MAX;
+		extern CSPRJ_API const Type Simulated;
+		extern CSPRJ_API const Type Function;
+		extern CSPRJ_API const Type ECsProjectileMovement_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSPRJ_API const uint8 MAX;
 }
 
 #pragma endregion ProjectileMovement
@@ -171,7 +171,7 @@ enum class ECsProjectileMovementFunctionType : uint8
 	ECsProjectileMovementFunctionType_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsProjectileMovementFunctionType : public TCsEnumMap<ECsProjectileMovementFunctionType>
+struct CSPRJ_API EMCsProjectileMovementFunctionType : public TCsEnumMap<ECsProjectileMovementFunctionType>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProjectileMovementFunctionType, ECsProjectileMovementFunctionType)
 };
@@ -182,12 +182,12 @@ namespace NCsProjectileMovementFunctionType
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type Linear;
-		extern CSCORE_API const Type Sine;
-		extern CSCORE_API const Type ECsProjectileMovementFunctionType_MAX;
+		extern CSPRJ_API const Type Linear;
+		extern CSPRJ_API const Type Sine;
+		extern CSPRJ_API const Type ECsProjectileMovementFunctionType_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSPRJ_API const uint8 MAX;
 }
 
 #pragma endregion ProjectileMovementFunctionType
@@ -196,7 +196,7 @@ namespace NCsProjectileMovementFunctionType
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsProjectileMovementFunctionAxis
+struct CSPRJ_API FCsProjectileMovementFunctionAxis
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -266,7 +266,7 @@ struct CSCORE_API FCsProjectileMovementFunctionAxis
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsProjectileMovementFunction
+struct CSPRJ_API FCsProjectileMovementFunction
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -332,7 +332,7 @@ struct CSCORE_API FCsProjectileMovementFunction
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsProjectileFirePayload
+struct CSPRJ_API FCsProjectileFirePayload
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -446,7 +446,7 @@ struct CSCORE_API FCsProjectileFirePayload
 
 class UCsData_ProjectileBase;
 
-struct CSCORE_API FCsProjectileBasePayload : public ICsPooledObjectPayload
+struct CSPRJ_API FCsProjectileBasePayload : public ICsPooledObjectPayload
 {
 public:
 
@@ -583,7 +583,7 @@ public:
 // ICsProjectilePayload
 #pragma region
 
-struct CSCORE_API ICsProjectilePayload : virtual public ICsGetInterfaceMap
+struct CSPRJ_API ICsProjectilePayload : virtual public ICsGetInterfaceMap
 {
 public:
 
@@ -606,7 +606,7 @@ public:
 class UObject;
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsScriptProjectilePayload
+struct CSPRJ_API FCsScriptProjectilePayload
 {
 	GENERATED_USTRUCT_BODY()
 

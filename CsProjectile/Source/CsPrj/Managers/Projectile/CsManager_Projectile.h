@@ -16,7 +16,7 @@
 
 class UObject;
 
-struct CSCORE_API FCsProjectilePayload : public ICsProjectilePayload, public ICsPooledObjectPayload
+struct CSPRJ_API FCsProjectilePayload : public ICsProjectilePayload, public ICsPooledObjectPayload
 {
 public:
 
@@ -160,7 +160,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerProjectile_OnSpawn, const
 
 class ICsProjectile;
 
-class CSCORE_API FCsManager_Projectile_Internal : public TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, ICsProjectilePayload, FECsProjectile>
+class CSPRJ_API FCsManager_Projectile_Internal : public TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, ICsProjectilePayload, FECsProjectile>
 {
 private:
 
@@ -191,7 +191,7 @@ public:
 class ICsGetManagerProjectile;
 
 UCLASS()
-class CSCORE_API UCsManager_Projectile : public UObject
+class CSPRJ_API UCsManager_Projectile : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
@@ -262,13 +262,9 @@ public:
 // Internal
 #pragma region
 protected:
-
-	typedef TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, ICsProjectilePayload, FECsProjectile> TCsManager_Internal;
-
-protected:
 	
 	/** Reference to the internal manager for handling the pool of projectiles. */
-	TCsManager_Internal Internal;
+	FCsManager_Projectile_Internal Internal;
 	
 	/**
 	* Setup the internal manager for handling the pool of projectiles.
@@ -282,7 +278,7 @@ public:
 	*
 	* @param Params
 	*/
-	void InitInternal(const TCsManager_Internal::FCsManagerPooledObjectMapParams& Params);
+	void InitInternal(const FCsManager_Projectile_Internal::FCsManagerPooledObjectMapParams& Params);
 
 	virtual void Clear();
 

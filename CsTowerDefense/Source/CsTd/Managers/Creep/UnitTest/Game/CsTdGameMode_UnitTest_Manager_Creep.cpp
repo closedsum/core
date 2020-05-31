@@ -1,9 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Creep/UnitTest/CsTdGameMode_UnitTest_Manager_Creep.h"
+#include "Managers/Creep/UnitTest/Game/CsTdGameMode_UnitTest_Manager_Creep.h"
 #include "CsTd.h"
 
 // Game
-#include "Managers/Creep/UnitTest/CsTdGameState_UnitTest_Manager_Creep.h"
+#include "Managers/Creep/UnitTest/Game/CsTdGameState_UnitTest_Manager_Creep.h"
 
 ACsTdGameMode_UnitTest_Manager_Creep::ACsTdGameMode_UnitTest_Manager_Creep(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

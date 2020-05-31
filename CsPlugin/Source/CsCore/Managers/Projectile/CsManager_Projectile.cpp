@@ -40,30 +40,6 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 {
 }
 
-// UObject Interface
-#pragma region
-
-void UCsManager_Projectile::BeginDestroy()
-{
-	Super::BeginDestroy();
-
-	UCsManager_Projectile::Shutdown(this);
-}
-
-#pragma endregion UObject Interface
-
-// UActorComponent Interface
-#pragma region
-
-void UCsManager_Projectile::OnRegister()
-{
-	Super::OnRegister();
-
-	Init(this);
-}
-
-#pragma endregion UActorComponent Interface
-
 // Singleton
 #pragma region
 
@@ -73,29 +49,58 @@ void UCsManager_Projectile::OnRegister()
 	return Get_GetManagerProjectile(InRoot)->GetManager_Projectile();
 #else
 	if (s_bShutdown)
-		return nullptr;
-
-	if (!s_Instance)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::Get: Manager must be attached and registered on a game object in order to call Get()."));
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::Get: Manager has already shutdown."));
 		return nullptr;
 	}
-
 	return s_Instance;
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_Projectile::Init(UCsManager_Projectile* Manager)
+/*static*/ bool UCsManager_Projectile::IsValid(UObject* InRoot /*=nullptr*/)
 {
+#if WITH_EDITOR
+	return Get_GetManagerProjectile(InRoot)->GetManager_Projectile() != nullptr;
+#else
+	return s_Instance != nullptr;
+#endif // #if WITH_EDITOR
+}
+
+/*static*/ void UCsManager_Projectile::Init(UObject* InRoot, TSubclassOf<UCsManager_Projectile> ManagerProjectileClass, UObject* InOuter /*=nullptr*/)
+{
+#if WITH_EDITOR
+	ICsGetManagerProjectile* GetManagerProjectile = Get_GetManagerProjectile(InRoot);
+
+	UCsManager_Projectile* Manager_Projectile = GetManagerProjectile->GetManager_Projectile();
+
+	if (!Manager_Projectile)
+	{
+		Manager_Projectile = NewObject<UCsManager_Projectile>(InOuter ? InOuter : InRoot, ManagerProjectileClass, TEXT("Manager_Projectile_Singleton"), RF_Transient | RF_Public);
+
+		GetManagerProjectile->SetManager_Projectile(Manager_Projectile);
+
+		Manager_Projectile->SetMyRoot(InRoot);
+		Manager_Projectile->Initialize();
+	}
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::Init: Init has already been called."));
+	}
+#else
 	s_bShutdown = false;
 
-	if (s_Instance)
+	if (!s_Instance)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::Init: This is being called before the previous instance of the manager has been Shutdown."));
+		s_Instance = NewObject<UCsManager_Projectile>(GetTransientPackage(), ManagerProjectileClass, TEXT("Manager_Projectile_Singleton"), RF_Transient | RF_Public);
+		s_Instance->AddToRoot();
+		s_Instance->SetMyRoot(InRoot);
+		s_Instance->Initialize();
 	}
-	s_Instance = Manager;
-
-	s_Instance->Initialize();
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::Init: Init has already been called."));
+	}
+#endif // #if WITH_EDITOR
 }
 
 /*static*/ void UCsManager_Projectile::Shutdown(UObject* InRoot /*=nullptr*/)
@@ -108,11 +113,24 @@ void UCsManager_Projectile::OnRegister()
 	GetManagerProjectile->SetManager_Projectile(nullptr);
 #else
 	if (!s_Instance)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::Shutdown: Manager has already been shutdown."));
 		return;
+	}
 
 	s_Instance->CleanUp();
+	s_Instance->RemoveFromRoot();
 	s_Instance = nullptr;
 	s_bShutdown = true;
+#endif // #if WITH_EDITOR
+}
+
+/*static*/ bool UCsManager_Projectile::HasShutdown(UObject* InRoot /*=nullptr*/)
+{
+#if WITH_EDITOR
+	return Get_GetManagerProjectile(InRoot)->GetManager_Projectile() == nullptr;
+#else
+	return s_bShutdown;
 #endif // #if WITH_EDITOR
 }
 
@@ -140,17 +158,26 @@ void UCsManager_Projectile::OnRegister()
 /*static*/ ICsGetManagerProjectile* UCsManager_Projectile::GetSafe_GetManagerProjectile(UObject* Object)
 {
 	if (!Object)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::GetSafe_GetManagerProjectile: Object is NULL."));
 		return nullptr;
+	}
 
 	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
 
 	if (!GetManagerSingleton)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::GetSafe_GetManagerProjectile: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
 		return nullptr;
+	}
 
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
 	if (!Manager_Singleton)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::GetSafe_GetManagerProjectile: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
 		return nullptr;
+	}
 
 	return Cast<ICsGetManagerProjectile>(Manager_Singleton);
 }
@@ -166,28 +193,11 @@ void UCsManager_Projectile::OnRegister()
 {
 	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
 	{
-		// Game Instance
-		if (UCsManager_Projectile* Manager = GetSafe(World->GetGameInstance()))
-			return Manager;
 		// Game State
 		if (UCsManager_Projectile* Manager = GetSafe(World->GetGameState()))
 			return Manager;
 
-		// Player Controller
-		TArray<APlayerController*> Controllers;
-
-		//UCsLibrary_Common::GetAllLocalPlayerControllers(World, Controllers);
-
-		if (Controllers.Num() == CS_EMPTY)
-			return nullptr;
-
-		for (APlayerController* Controller : Controllers)
-		{
-			if (UCsManager_Projectile* Manager = GetSafe(Controller))
-				return Manager;
-		}
-
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::GetFromWorldContextObject: Failed to Manager Item of type UCsManager_Projectile from GameInstance, GameState, or PlayerController."));
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::GetFromWorldContextObject: Failed to Manager Item of type UCsManager_Projectile from GameState."));
 
 		return nullptr;
 	}
@@ -201,43 +211,59 @@ void UCsManager_Projectile::OnRegister()
 
 void UCsManager_Projectile::Initialize()
 {
-	ConstructInternal();
+	SetupInternal();
 }
 
 void UCsManager_Projectile::CleanUp()
 {
-	Internal->Shutdown();
+	Internal.Shutdown();
 	Pool.Reset();
-	delete Internal;
 }
+
+	// Root
+#pragma region
+
+void UCsManager_Projectile::SetMyRoot(UObject* InRoot)
+{
+	MyRoot = InRoot;
+}
+
+#pragma endregion Root
 
 #pragma endregion Singleton
 
 // Internal
 #pragma region
 
-void UCsManager_Projectile::ConstructInternal()
+void UCsManager_Projectile::SetupInternal()
 {
-	Internal = new FCsManager_Projectile_Internal();
+	// Delegates
+	{
+		// Container
+		Internal.ConstructContainer_Impl.BindUObject(this, &UCsManager_Projectile::ConstructContainer);
+		// Payload
+		Internal.ConstructPayload_Impl.BindUObject(this, &UCsManager_Projectile::ConstructPayload);
+		// Update
+		Internal.OnPreUpdate_Pool_Impl.BindUObject(this, &UCsManager_Projectile::OnPreUpdate_Pool);
+		Internal.OnUpdate_Object_Event.AddUObject(this, &UCsManager_Projectile::OnUpdate_Object);
+		Internal.OnPostUpdate_Pool_Impl.BindUObject(this, &UCsManager_Projectile::OnPostUpdate_Pool);
 
-	Internal->OnPreUpdate_Pool_Impl.BindUObject(this, &UCsManager_Projectile::OnPreUpdate_Pool);
-	Internal->OnUpdate_Object_Event.AddUObject(this, &UCsManager_Projectile::OnUpdate_Object);
-	Internal->OnPostUpdate_Pool_Impl.BindUObject(this, &UCsManager_Projectile::OnPostUpdate_Pool);
-
-	// Bind delegates for a script interface.
-	Internal->Script_GetCache_Impl = Script_GetCache_Impl;
-	Internal->Script_Allocate_Impl = Script_Allocate_Impl;
-	Internal->Script_Deallocate_Impl = Script_Deallocate_Impl;
+		// Bind delegates for a script interface.
+		Internal.Script_GetCache_Impl = Script_GetCache_Impl;
+		Internal.Script_Allocate_Impl = Script_Allocate_Impl;
+		Internal.Script_Deallocate_Impl = Script_Deallocate_Impl;
+		Internal.Script_Update_Impl = Script_Update_Impl;
+	}
 }
 
 void UCsManager_Projectile::InitInternal(const TCsManager_Internal::FCsManagerPooledObjectMapParams& Params)
 {
-	Internal->Init(Params);
+	Internal.Init(Params);
 }
 
 void UCsManager_Projectile::Clear()
 {
-	Internal->Clear();
+	Internal.Clear();
 }
 
 	// Pool
@@ -245,11 +271,29 @@ void UCsManager_Projectile::Clear()
 
 void UCsManager_Projectile::CreatePool(const FECsProjectile& Type, const int32& Size)
 {
-	checkf(Size > 0, TEXT("UCsManager_Projectile::CreatePool: Size must be GREATER THAN 0."));
+	const int32& PoolSize = Internal.GetPoolSize(Type);
 
-	// TODO: Check if the pool has already been created
+	if (PoolSize > CS_EMPTY)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::CreatePool: Pool for Creep: %s has already been created with Size: %d."), *(Type.Name), PoolSize);
+	}
 
-	Internal->CreatePool(Type, Size);
+	Internal.CreatePool(Type, Size);
+}
+
+TBaseDelegate<FCsProjectilePooled*, const FECsProjectile&>& UCsManager_Projectile::GetConstructContainer_Impl()
+{
+	return Internal.ConstructContainer_Impl;
+}
+
+FCsProjectilePooled* UCsManager_Projectile::ConstructContainer(const FECsProjectile& Type)
+{
+	return new FCsProjectilePooled();
+}
+
+TMulticastDelegate<void, const FCsProjectilePooled*>& UCsManager_Projectile::GetOnConstructObject_Event(const FECsProjectile& Type)
+{
+	return Internal.GetOnConstructObject_Event(Type);
 }
 
 		// Add
@@ -260,25 +304,17 @@ void UCsManager_Projectile::CreatePool(const FECsProjectile& Type, const int32& 
 
 const FCsProjectilePooled* UCsManager_Projectile::AddToPool(const FECsProjectile& Type, ICsProjectile* Object)
 {
-	checkf(Object, TEXT("UCsManager_Projectile::AddToPool: Object is NULL."));
-
-	return Internal->AddToPool(Type, Object);
+	return Internal.AddToPool(Type, Object);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::AddToPool(const FECsProjectile& Type, const FCsProjectilePooled* Object)
 {
-	UObject* O = Object->GetObject();
-
-	checkf(O, TEXT("UCsManager_Projectile::AddToPool: O is NULL."));
-
-	return Internal->AddToPool(Type, O);
+	return Internal.AddToPool(Type, Object->GetObject());
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::AddToPool(const FECsProjectile& Type, UObject* Object)
 {
-	checkf(Object, TEXT("UCsManager_Projectile::AddToPool: Object is NULL."));
-
-	return Internal->AddToPool(Type, Object);
+	return Internal.AddToPool(Type, Object);
 }
 
 #pragma endregion Pool
@@ -288,25 +324,17 @@ const FCsProjectilePooled* UCsManager_Projectile::AddToPool(const FECsProjectile
 
 const FCsProjectilePooled* UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* Projectile, UObject* Object)
 {
-	checkf(Projectile, TEXT("UCsManager_Projectile::AddToAllocatedObjects: PooledObject is NULL."));
-
-	checkf(Object, TEXT("UCsManager_Projectile::AddToAllocatedObjects: Object is NULL."));
-
-	return Internal->AddToAllocatedObjects(Type, Projectile, Object);
+	return Internal.AddToAllocatedObjects(Type, Projectile, Object);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* Object)
 {
-	checkf(Object, TEXT("UCsManager_Projectile::AddToAllocatedObjects: Object is NULL."));
-		
-	return Internal->AddToAllocatedObjects(Type, Object, Object->_getUObject());
+	return Internal.AddToAllocatedObjects(Type, Object);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, UObject* Object)
 {
-	checkf(Object, TEXT("UCsManager_Projectile::AddToAllocatedObjects: Object is NULL."));
-
-	return Internal->AddToAllocatedObjects(Type, Object);
+	return Internal.AddToAllocatedObjects(Type, Object);
 }
 
 #pragma endregion Allocated Objects
@@ -315,27 +343,27 @@ const FCsProjectilePooled* UCsManager_Projectile::AddToAllocatedObjects(const FE
 
 const TArray<FCsProjectilePooled*>& UCsManager_Projectile::GetPool(const FECsProjectile& Type)
 {
-	return Internal->GetPool(Type);
+	return Internal.GetPool(Type);
 }
 
 const TArray<FCsProjectilePooled*>& UCsManager_Projectile::GetAllocatedObjects(const FECsProjectile& Type)
 {
-	return Internal->GetAllocatedObjects(Type);
+	return Internal.GetAllocatedObjects(Type);
 }
 
 const int32& UCsManager_Projectile::GetPoolSize(const FECsProjectile& Type)
 {
-	return Internal->GetPoolSize(Type);
+	return Internal.GetPoolSize(Type);
 }
 
 int32 UCsManager_Projectile::GetAllocatedObjectsSize(const FECsProjectile& Type)
 {
-	return Internal->GetAllocatedObjectsSize(Type);
+	return Internal.GetAllocatedObjectsSize(Type);
 }
 
 bool UCsManager_Projectile::IsExhausted(const FECsProjectile& Type)
 {
-	return Internal->IsExhausted(Type);
+	return Internal.IsExhausted(Type);
 }
 
 	// Find
@@ -343,32 +371,32 @@ bool UCsManager_Projectile::IsExhausted(const FECsProjectile& Type)
 
 const FCsProjectilePooled* UCsManager_Projectile::FindObject(const FECsProjectile& Type, const int32& Index)
 {
-	return Internal->FindObject(Type, Index);
+	return Internal.FindObject(Type, Index);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::FindObject(const FECsProjectile& Type, ICsProjectile* Object)
 {
-	return Internal->FindObject(Type, Object);
+	return Internal.FindObject(Type, Object);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::FindObject(const FECsProjectile& Type, UObject* Object)
 {
-	return Internal->FindObject(Type, Object);
+	return Internal.FindObject(Type, Object);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, const int32& Index)
 {
-	return Internal->FindSafeObject(Type, Index);
+	return Internal.FindSafeObject(Type, Index);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, ICsProjectile* Object)
 {
-	return Internal->FindSafeObject(Type, Object);
+	return Internal.FindSafeObject(Type, Object);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, UObject* Object)
 {
-	return Internal->FindSafeObject(Type, Object);
+	return Internal.FindSafeObject(Type, Object);
 }
 
 #pragma endregion Find
@@ -380,7 +408,7 @@ const FCsProjectilePooled* UCsManager_Projectile::FindSafeObject(const FECsProje
 
 void UCsManager_Projectile::Update(const FCsDeltaTime& DeltaTime)
 {
-	Internal->Update(DeltaTime);
+	Internal.Update(DeltaTime);
 }
 
 void UCsManager_Projectile::OnPreUpdate_Pool(const FECsProjectile& Type)
@@ -403,9 +431,19 @@ void UCsManager_Projectile::OnPostUpdate_Pool(const FECsProjectile& Type)
 	// Payload
 #pragma region
 
+void UCsManager_Projectile::ConstructPayloads(const FECsProjectile& Type, const int32& Size)
+{
+	Internal.ConstructPayloads(Type, Size);
+}
+
+ICsProjectilePayload* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
+{
+	return new FCsProjectilePayload();
+}
+
 ICsProjectilePayload* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)
 {
-	return Internal->AllocatePayload(Type);
+	return Internal.AllocatePayload(Type);
 }
 
 #pragma endregion Payload
@@ -415,7 +453,7 @@ ICsProjectilePayload* UCsManager_Projectile::AllocatePayload(const FECsProjectil
 
 const FCsProjectilePooled* UCsManager_Projectile::Spawn(const FECsProjectile& Type, ICsProjectilePayload* Payload)
 {
-	return Internal->Spawn(Type, Payload);
+	return Internal.Spawn(Type, Payload);
 }
 
 #pragma endregion Spawn
@@ -425,12 +463,12 @@ const FCsProjectilePooled* UCsManager_Projectile::Spawn(const FECsProjectile& Ty
 
 bool UCsManager_Projectile::Destroy(const FECsProjectile& Type, ICsProjectile* Projectile)
 {
-	return Internal->Destroy(Type, Projectile);
+	return Internal.Destroy(Type, Projectile);
 }
 
 bool UCsManager_Projectile::Destroy(ICsProjectile* Projectile)
 {
-	return Internal->Destroy(Projectile);
+	return Internal.Destroy(Projectile);
 }
 
 

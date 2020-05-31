@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "Components/ActorComponent.h"
+#include "UObject/Object.h"
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
 #include "Managers/Projectile/CsProjectile.h"
@@ -191,27 +191,11 @@ public:
 class ICsGetManagerProjectile;
 
 UCLASS()
-class CSCORE_API UCsManager_Projectile : public UActorComponent
+class CSCORE_API UCsManager_Projectile : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
 public:	
-
-// UObject Interface
-#pragma region
-public:
-
-	virtual void BeginDestroy() override;
-
-#pragma endregion UObject Interface
-
-// UActorComponent Interface
-#pragma region
-protected:
-
-	virtual void OnRegister() override;
-
-#pragma endregion UActorComponent Interface
 
 // Singleton
 #pragma region
@@ -225,8 +209,12 @@ public:
 		return Cast<T>(Get(InRoot));
 	}
 
-	static void Init(UCsManager_Projectile* Manager);
+	static bool IsValid(UObject* InRoot = nullptr);
+
+	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Projectile> ManagerProjectileClass, UObject* InOuter = nullptr);
+	
 	static void Shutdown(UObject* InRoot = nullptr);
+	static bool HasShutdown(UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
 protected:
@@ -280,12 +268,12 @@ protected:
 protected:
 	
 	/** Reference to the internal manager for handling the pool of projectiles. */
-	TCsManager_Internal* Internal;
+	TCsManager_Internal Internal;
 	
 	/**
-	* Construct the internal manager for handling the pool of projectiles.
+	* Setup the internal manager for handling the pool of projectiles.
 	*/
-	virtual void ConstructInternal();
+	virtual void SetupInternal();
 
 public:
 
@@ -308,6 +296,28 @@ public:
 	* @param Size
 	*/
 	virtual void CreatePool(const FECsProjectile& Type, const int32& Size);
+
+	/**
+	*
+	*
+	* return
+	*/
+	TBaseDelegate<FCsProjectilePooled*, const FECsProjectile&>& GetConstructContainer_Impl();
+
+	/**
+	*
+	* @param Type
+	* return
+	*/
+	virtual FCsProjectilePooled* ConstructContainer(const FECsProjectile& Type);
+
+	/**
+	*
+	*
+	* @param Type
+	* return
+	*/
+	TMulticastDelegate<void, const FCsProjectilePooled*>& GetOnConstructObject_Event(const FECsProjectile& Type);
 
 		// Add
 #pragma region
@@ -556,6 +566,21 @@ protected:
 public:
 
 	/**
+	*
+	*
+	* @param Size
+	*/
+	void ConstructPayloads(const FECsProjectile& Type, const int32& Size);
+
+	/**
+	*
+	*
+	* @param Type
+	* return
+	*/
+	virtual ICsProjectilePayload* ConstructPayload(const FECsProjectile& Type);
+
+	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
 	*  Payload implements the interface: ICsPooledObjectPayload.
 	*
@@ -670,6 +695,10 @@ public:
 	// ICsUpdate
 #pragma region
 public:
+
+	/** Delegate for updating a Pooled Object.
+		The Pooled Object implements a script interface of type: ICsPooledObject. */
+	FCsPooledObject::FScript_Update Script_Update_Impl;
 
 #pragma endregion ICsUpdate
 

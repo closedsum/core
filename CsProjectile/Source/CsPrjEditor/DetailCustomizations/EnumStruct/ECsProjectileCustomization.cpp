@@ -9,9 +9,10 @@
 #define LOCTEXT_NAMESPACE "ECsProjectileCustomization"
 
 
-FECsProjectileCustomization::FECsProjectileCustomization()
+FECsProjectileCustomization::FECsProjectileCustomization() :
+	Super()
 {
-	Init<FECsProjectile, EMCsProjectile>();
+	Init<EMCsProjectile, FECsProjectile>();
 }
 
 void FECsProjectileCustomization::PopulateEnumMapFromSettings()
@@ -31,7 +32,7 @@ void FECsProjectileCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle>
 
 void FECsProjectileCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsProjectile, EMCsProjectile>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsProjectile, FECsProjectile>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

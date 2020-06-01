@@ -6,9 +6,10 @@
 #define LOCTEXT_NAMESPACE "ECsSurfaceTypeCustomization"
 
 
-FECsSoundTypeCustomization::FECsSoundTypeCustomization()
+FECsSoundTypeCustomization::FECsSoundTypeCustomization() :
+	Super()
 {
-	Init<FECsSoundType, EMCsSoundType>();
+	Init<EMCsSoundType, FECsSoundType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsSoundTypeCustomization::MakeInstance()
@@ -23,7 +24,7 @@ void FECsSoundTypeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> 
 
 void FECsSoundTypeCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsSoundType, EMCsSoundType>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsSoundType, FECsSoundType>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -6,9 +6,10 @@
 #define LOCTEXT_NAMESPACE "ECsInputActionCustomization"
 
 
-FECsInputActionCustomization::FECsInputActionCustomization()
+FECsInputActionCustomization::FECsInputActionCustomization() :
+	Super()
 {
-	Init<FECsInputAction, EMCsInputAction>();
+	Init<EMCsInputAction, FECsInputAction>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsInputActionCustomization::MakeInstance()
@@ -48,7 +49,7 @@ void FECsInputActionCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle
 
 void FECsInputActionCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsInputAction, EMCsInputAction>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsInputAction, FECsInputAction>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

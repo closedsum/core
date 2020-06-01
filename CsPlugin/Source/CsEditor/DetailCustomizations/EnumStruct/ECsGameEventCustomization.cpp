@@ -6,9 +6,10 @@
 #define LOCTEXT_NAMESPACE "ECsGameEventCustomization"
 
 
-FECsGameEventCustomization::FECsGameEventCustomization()
+FECsGameEventCustomization::FECsGameEventCustomization() :
+	Super()
 {
-	Init<FECsGameEvent, EMCsGameEvent>();
+	Init<EMCsGameEvent, FECsGameEvent>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsGameEventCustomization::MakeInstance()
@@ -23,7 +24,7 @@ void FECsGameEventCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> 
 
 void FECsGameEventCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsGameEvent, EMCsGameEvent>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsGameEvent, FECsGameEvent>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

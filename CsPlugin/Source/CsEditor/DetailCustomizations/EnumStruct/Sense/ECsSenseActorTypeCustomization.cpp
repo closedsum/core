@@ -6,9 +6,10 @@
 #define LOCTEXT_NAMESPACE "ECsAssetTypeCustomization"
 
 
-FECsSenseActorTypeCustomization::FECsSenseActorTypeCustomization()
+FECsSenseActorTypeCustomization::FECsSenseActorTypeCustomization() :
+	Super()
 {
-	Init<FECsSenseActorType, EMCsSenseActorType>();
+	Init<EMCsSenseActorType, FECsSenseActorType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsSenseActorTypeCustomization::MakeInstance()
@@ -23,7 +24,7 @@ void FECsSenseActorTypeCustomization::SetPropertyHandles(TSharedRef<IPropertyHan
 
 void FECsSenseActorTypeCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsSenseActorType, EMCsSenseActorType>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsSenseActorType, FECsSenseActorType>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

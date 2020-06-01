@@ -10,9 +10,10 @@
 #define LOCTEXT_NAMESPACE "ECsLoadAssetsTypeCustomization"
 
 
-FECsLoadAssetsTypeCustomization::FECsLoadAssetsTypeCustomization()
+FECsLoadAssetsTypeCustomization::FECsLoadAssetsTypeCustomization() : 
+	Super()
 {
-	Init<FECsLoadAssetsType, EMCsLoadAssetsType>();
+	Init<EMCsLoadAssetsType, FECsLoadAssetsType>();
 
 	bPerformDropDownCheck = false;
 }
@@ -29,7 +30,7 @@ void FECsLoadAssetsTypeCustomization::SetPropertyHandles(TSharedRef<IPropertyHan
 
 void FECsLoadAssetsTypeCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsLoadAssetsType, EMCsLoadAssetsType>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsLoadAssetsType, FECsLoadAssetsType>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

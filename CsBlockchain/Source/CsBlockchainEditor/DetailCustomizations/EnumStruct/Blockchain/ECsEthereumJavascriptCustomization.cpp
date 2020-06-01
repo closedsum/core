@@ -6,9 +6,10 @@
 #define LOCTEXT_NAMESPACE "ECsEthereumJavascriptCustomization"
 
 
-FECsEthereumJavascriptCustomization::FECsEthereumJavascriptCustomization()
+FECsEthereumJavascriptCustomization::FECsEthereumJavascriptCustomization() :
+	Super()
 {
-	Init<FECsEthereumJavascript, EMCsEthereumJavascript>();
+	Init<EMCsEthereumJavascript, FECsEthereumJavascript>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsEthereumJavascriptCustomization::MakeInstance()
@@ -23,7 +24,7 @@ void FECsEthereumJavascriptCustomization::SetPropertyHandles(TSharedRef<IPropert
 
 void FECsEthereumJavascriptCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsEthereumJavascript, EMCsEthereumJavascript>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsEthereumJavascript, FECsEthereumJavascript>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

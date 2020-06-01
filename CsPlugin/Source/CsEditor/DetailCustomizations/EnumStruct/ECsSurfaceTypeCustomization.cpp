@@ -6,9 +6,10 @@
 #define LOCTEXT_NAMESPACE "ECsSurfaceTypeCustomization"
 
 
-FECsSurfaceTypeCustomization::FECsSurfaceTypeCustomization()
+FECsSurfaceTypeCustomization::FECsSurfaceTypeCustomization() :
+	Super()
 {
-	Init<FECsSurfaceType, EMCsSurfaceType>();
+	Init<EMCsSurfaceType, FECsSurfaceType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsSurfaceTypeCustomization::MakeInstance()
@@ -23,7 +24,7 @@ void FECsSurfaceTypeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle
 
 void FECsSurfaceTypeCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsSurfaceType, EMCsSurfaceType>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsSurfaceType, FECsSurfaceType>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

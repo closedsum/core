@@ -6,9 +6,10 @@
 #define LOCTEXT_NAMESPACE "ECsGestureTypeCustomization"
 
 
-FECsGestureTypeCustomization::FECsGestureTypeCustomization()
+FECsGestureTypeCustomization::FECsGestureTypeCustomization() :
+	Super()
 {
-	Init<FECsGestureType, EMCsGestureType>();
+	Init<EMCsGestureType, FECsGestureType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsGestureTypeCustomization::MakeInstance()
@@ -23,7 +24,7 @@ void FECsGestureTypeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle
 
 void FECsGestureTypeCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsGestureType, EMCsGestureType>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsGestureType, FECsGestureType>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

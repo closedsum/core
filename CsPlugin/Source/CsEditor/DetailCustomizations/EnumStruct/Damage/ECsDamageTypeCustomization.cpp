@@ -6,9 +6,10 @@
 #define LOCTEXT_NAMESPACE "ECsDamageTypeCustomization"
 
 
-FECsDamageTypeCustomization::FECsDamageTypeCustomization()
+FECsDamageTypeCustomization::FECsDamageTypeCustomization() :
+	Super()
 {
-	Init<FECsDamageType, EMCsDamageType>();
+	Init<EMCsDamageType, FECsDamageType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsDamageTypeCustomization::MakeInstance()
@@ -23,7 +24,7 @@ void FECsDamageTypeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle>
 
 void FECsDamageTypeCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsDamageType, EMCsDamageType>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsDamageType, FECsDamageType>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -22,6 +22,7 @@
 
 FECsEnumStructCustomization::FECsEnumStructCustomization()
 {
+	bPerformDropDownCheck = true;
 }
 
 void FECsEnumStructCustomization::Log(const FString& Str)

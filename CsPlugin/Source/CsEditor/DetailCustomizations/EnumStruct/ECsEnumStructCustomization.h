@@ -78,7 +78,7 @@ protected:
 	
 	virtual const FECsUserDefinedEnum& GetUserDefinedEnumType();
 
-	template<typename EnumStruct, typename EnumMap>
+	template<typename EnumMap, typename EnumStruct>
 	void Init()
 	{
 		EnumMap::Get().ClearUserDefinedEnums();
@@ -134,7 +134,7 @@ protected:
 
 	virtual void SetEnumWithDisplayName(const FString& DisplayName);
 
-	template<typename EnumStruct, typename EnumMap>
+	template<typename EnumMap, typename EnumStruct>
 	void SetEnumWithDisplayName_Internal(const FString& DisplayName)
 	{
 		check(DisplayNameHandle.IsValid());

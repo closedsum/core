@@ -5,7 +5,7 @@
 // Types
 #include "Settings/CsTypes_Settings.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
-//#include "Managers/Creep/CsTdSettings_Manager_Creep.h"
+#include "Managers/Projectile/CsSettings_Manager_Projectile.h"
 #include "CsProjectileSettings.generated.h"
 
 UCLASS(config = Game, defaultconfig, meta = (DisplayName = "Cs Projectile Settings"))
@@ -46,8 +46,8 @@ public:
 
 #pragma endregion Enum
 
-	//UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	//FCsTdSettings_Manager_Creep ManagerCreep;
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	FCsSettings_Manager_Projectile ManagerProjectile;
 
 // Unit Test
 #pragma region

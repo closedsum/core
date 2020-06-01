@@ -6,9 +6,10 @@
 #define LOCTEXT_NAMESPACE "ECsBlockchainContractFunctionCustomization"
 
 
-FECsBlockchainContractFunctionCustomization::FECsBlockchainContractFunctionCustomization()
+FECsBlockchainContractFunctionCustomization::FECsBlockchainContractFunctionCustomization() :
+	Super()
 {
-	Init<FECsBlockchainContractFunction, EMCsBlockchainContractFunction>();
+	Init<EMCsBlockchainContractFunction, FECsBlockchainContractFunction>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsBlockchainContractFunctionCustomization::MakeInstance()
@@ -23,7 +24,7 @@ void FECsBlockchainContractFunctionCustomization::SetPropertyHandles(TSharedRef<
 
 void FECsBlockchainContractFunctionCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsBlockchainContractFunction, EMCsBlockchainContractFunction>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsBlockchainContractFunction, FECsBlockchainContractFunction>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

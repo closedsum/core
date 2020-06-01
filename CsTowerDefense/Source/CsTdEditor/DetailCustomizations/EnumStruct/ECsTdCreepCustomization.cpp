@@ -9,9 +9,10 @@
 
 #define LOCTEXT_NAMESPACE "ECsTdCreepCustomization"
 
-FECsTdCreepCustomization::FECsTdCreepCustomization()
+FECsTdCreepCustomization::FECsTdCreepCustomization() :
+	Super()
 {
-	Init<FECsTdCreep, EMCsTdCreep>();
+	Init<EMCsTdCreep, FECsTdCreep>();
 }
 
 void FECsTdCreepCustomization::PopulateEnumMapFromSettings()
@@ -31,7 +32,7 @@ void FECsTdCreepCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> St
 
 void FECsTdCreepCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsTdCreep, EMCsTdCreep>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsTdCreep, FECsTdCreep>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -6,9 +6,10 @@
 #define LOCTEXT_NAMESPACE "ECsProcessCustomization"
 
 
-FECsProcessCustomization::FECsProcessCustomization()
+FECsProcessCustomization::FECsProcessCustomization() :
+	Super()
 {
-	Init<FECsProcess, EMCsProcess>();
+	Init<EMCsProcess, FECsProcess>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsProcessCustomization::MakeInstance()
@@ -23,7 +24,7 @@ void FECsProcessCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> St
 
 void FECsProcessCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsProcess, EMCsProcess>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsProcess, FECsProcess>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

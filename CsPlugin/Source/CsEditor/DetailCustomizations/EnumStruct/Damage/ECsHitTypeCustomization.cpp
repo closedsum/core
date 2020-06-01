@@ -6,9 +6,10 @@
 #define LOCTEXT_NAMESPACE "ECsHitTypeCustomization"
 
 
-FECsHitTypeCustomization::FECsHitTypeCustomization()
+FECsHitTypeCustomization::FECsHitTypeCustomization() :
+	Super()
 {
-	Init<FECsHitType, EMCsHitType>();
+	Init<EMCsHitType, FECsHitType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsHitTypeCustomization::MakeInstance()
@@ -23,7 +24,7 @@ void FECsHitTypeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> St
 
 void FECsHitTypeCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsHitType, EMCsHitType>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsHitType, FECsHitType>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -69,4 +69,14 @@ struct CSCORE_API FECsEnum
 	{
 		return DisplayName;
 	}
+
+	FORCEINLINE const TCHAR* ToChar() const
+	{
+		return *Name;
+	}
+
+	FORCEINLINE const TCHAR* DisplayNameToChar() const
+	{
+		return *DisplayName;
+	}
 };

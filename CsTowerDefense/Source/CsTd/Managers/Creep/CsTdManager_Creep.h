@@ -15,9 +15,12 @@
 
 class UObject;
 
-struct CSTD_API FCsTdCreepPayload : public ICsTdCreepPayload, public ICsPooledObjectPayload
+struct CSTD_API FCsTdCreepPayload : public ICsPooledObjectPayload, 
+									public ICsTdCreepPayload
 {
 public:
+
+	FCsInterfaceMap* InterfaceMap;
 
 	bool bAllocated;
 
@@ -27,19 +30,17 @@ public:
 
 	TWeakObjectPtr<UObject> Parent;
 
-	FCsInterfaceMap* InterfaceMap;
-
 	FCsTdCreepPayload() :
+		InterfaceMap(nullptr),
 		bAllocated(false),
 		Instigator(nullptr),
 		Owner(nullptr),
-		Parent(nullptr),
-		InterfaceMap(nullptr)
+		Parent(nullptr)
 	{
 		InterfaceMap = new FCsInterfaceMap();
 
-		InterfaceMap->Add<ICsTdCreepPayload>(static_cast<ICsTdCreepPayload*>(this));
 		InterfaceMap->Add<ICsPooledObjectPayload>(static_cast<ICsPooledObjectPayload*>(this));
+		InterfaceMap->Add<ICsTdCreepPayload>(static_cast<ICsTdCreepPayload*>(this));
 	}
 
 	virtual ~FCsTdCreepPayload()
@@ -57,12 +58,6 @@ public:
 	}
 
 #pragma endregion ICsGetInterfaceMap
-
-// ICsProjectilePayload
-#pragma region
-public:
-
-#pragma endregion ICsProjectilePayload
 
 // ICsPooledObjectPayload
 #pragma region
@@ -122,9 +117,13 @@ public:
 	{
 		return Cast<T>(GetParent());
 	}
-};
+
+// FCsTdCreepPayload
+#pragma region
+public:
 
 #pragma endregion FCsTdCreepPayload
+};
 
 #pragma endregion Structs
 

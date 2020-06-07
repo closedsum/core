@@ -82,7 +82,7 @@ public:
 		return EnumFName;
 	}
 
-	EnumStruct Create(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum = false)
+	const EnumStruct& Create(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum = false)
 	{
 		EnumType Index = (EnumType)Enums.Num();
 		EnumStruct E(Index, Name, DisplayName);
@@ -103,10 +103,10 @@ public:
 			MAX = E;
 		else
 			MAX.Value = (EnumType)Count;
-		return E;
+		return Enums.Last();
 	}
 
-	FORCEINLINE EnumStruct Create(const FString& Name, const bool& UserDefinedEnum = false)
+	FORCEINLINE const EnumStruct& Create(const FString& Name, const bool& UserDefinedEnum = false)
 	{
 		return Create(Name, Name, UserDefinedEnum);
 	}

@@ -163,16 +163,20 @@ namespace NCsPooledObjectConstruction
 UENUM(BlueprintType)
 enum class ECsPooledObjectUpdate : uint8
 {
+	/** */
 	Self						UMETA(DisplayName = "Self"),
+	/** */
 	Manager						UMETA(DisplayName = "Manager"),
+	/** */
 	Owner						UMETA(DisplayName = "Owner"),
+	/** */
 	Instigator					UMETA(DisplayName = "Instigator"),
 	ECsPooledObjectUpdate_MAX	UMETA(Hidden),
 };
 
 struct CSCORE_API EMCsPooledObjectUpdate final : public TCsEnumMap<ECsPooledObjectUpdate>
 {
-	CS_ENUM_MAP_BODY(EMCsPooledObjectUpdate, ECsPooledObjectUpdate)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsPooledObjectUpdate, ECsPooledObjectUpdate)
 };
 
 namespace NCsPooledObjectUpdate
@@ -309,6 +313,8 @@ public:
 
 class UObject;
 
+/**
+*/
 struct CSCORE_API ICsPooledObjectPayload : virtual public ICsGetInterfaceMap
 {
 public:
@@ -319,16 +325,42 @@ public:
 	
 	virtual ~ICsPooledObjectPayload(){}
 
+	/**
+	* Whether the payload has been marked to be used (allocated).
+	*
+	* return Whether or not the payload has been marked to be used.
+	*/
 	virtual const bool& IsAllocated() const = 0;
 
+	/**
+	* The object "instigating" or starting the process.
+	*
+	* return Instigator.
+	*/
 	virtual UObject* GetInstigator() const = 0;
 
+	/**
+	* The owner of the object.
+	*
+	* return Owner.
+	*/
 	virtual UObject* GetOwner() const = 0;
 
+	/**
+	* The parent of the object.
+	*
+	* return Parent.
+	*/
 	virtual UObject* GetParent() const = 0;
 
+	/**
+	* Mark the payload as being used (allocated).
+	*/
 	virtual void Allocate() = 0;
 
+	/**
+	* Reset the contents of the payload to the default values.
+	*/
 	virtual void Reset() = 0;
 };
 
@@ -406,6 +438,8 @@ public:
 class UObject;
 struct ICsPooledObjectPayload;
 
+/**
+*/
 struct CSCORE_API ICsPooledObjectCache : virtual public ICsGetInterfaceMap
 {
 public:
@@ -416,40 +450,125 @@ public:
 
 	virtual ~ICsPooledObjectCache(){}
 
+	/**
+	*
+	*
+	* @param InIndex
+	*/
 	virtual void Init(const int32& InIndex) = 0;
 
+	/**
+	*
+	*
+	* return
+	*/
 	virtual const int32& GetIndex() const = 0;
-
+	
+	/*
+	*
+	*
+	* @param Payload
+	* @param InTime
+	*/
 	virtual void Allocate(ICsPooledObjectPayload* Payload, const FCsTime& InTime) = 0;
 
+	/**
+	*
+	*
+	* return
+	*/
 	virtual const bool& IsAllocated() const = 0;
 
+	/**
+	*
+	*/
 	virtual void Deallocate() = 0;
 
+	/**
+	*
+	*/
 	virtual void QueueDeallocate() = 0;
 
+	/**
+	*
+	*
+	* return
+	*/
 	virtual const bool& ShouldDeallocate() const = 0;
 
+	/**
+	*
+	*
+	* return
+	*/
 	virtual const ECsPooledObjectState& GetState() const = 0;
 
+	/**
+	*
+	*
+	* return
+	*/
 	virtual const ECsPooledObjectUpdate& GetUpdateType() const = 0;
 
+	/**
+	*
+	*
+	* return
+	*/
 	virtual UObject* GetInstigator() const = 0;
 
+	/**
+	*
+	*
+	* return
+	*/
 	virtual UObject* GetOwner() const = 0;
 
+	/**
+	*
+	*
+	* return
+	*/
 	virtual UObject* GetParent() const = 0;
 
+	/**
+	*
+	*
+	* return
+	*/
 	virtual const float& GetWarmUpTime() const = 0;
 
+	/**
+	*
+	*
+	* return
+	*/
 	virtual const float& GetLifeTime() const = 0;
 
+	/**
+	*
+	*
+	* return
+	*/
 	virtual const FCsTime& GetStartTime() const = 0;
 
+	/**
+	*
+	*
+	* return
+	*/
 	virtual const FCsDeltaTime& GetElapsedTime() const = 0;
 
+	/**
+	*
+	*
+	* return
+	*/
 	virtual bool HasLifeTimeExpired() = 0;
 
+	/**
+	*
+	*/
 	virtual void Reset() = 0;
 };
 

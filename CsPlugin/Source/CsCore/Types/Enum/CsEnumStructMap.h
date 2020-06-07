@@ -179,7 +179,7 @@ public:
 
 	FORCEINLINE bool IsValidEnum(const EnumStruct& E)
 	{
-		return Enums.Find(E) > INDEX_NONE;
+		return E.GetValue() < Count && Enums.Find(E) > INDEX_NONE;
 	}
 
 	FORCEINLINE bool IsValidEnum(const FString& Name)
@@ -190,6 +190,11 @@ public:
 	FORCEINLINE bool IsValidEnum(const FName& Name)
 	{
 		return NameInternalMap.Find(Name) != nullptr;
+	}
+
+	FORCEINLINE bool IsValidEnumByDisplayName(const FString& Name)
+	{
+		return DisplayNameMap.Find(Name) != nullptr;
 	}
 
 	FORCEINLINE const EnumStruct& GetEnumAt(const int32& Index)

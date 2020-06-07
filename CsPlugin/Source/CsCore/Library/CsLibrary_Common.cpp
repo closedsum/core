@@ -470,7 +470,7 @@ void UCsLibrary_Common::SetMaterials(UStaticMeshComponent* InMesh, const TArray<
 
 	ClearOverrideMaterials(InMesh);
 
-	for (int32 Index = 0; Index < Count; Index++)
+	for (int32 Index = 0; Index < Count; ++Index)
 	{
 		InMesh->SetMaterial(Index, Materials[Index]);
 	}
@@ -489,7 +489,7 @@ void UCsLibrary_Common::SetMaterials(USkeletalMeshComponent* InMesh, const TArra
 
 	ClearOverrideMaterials(InMesh);
 
-	for (int32 Index = 0; Index < Count; Index++)
+	for (int32 Index = 0; Index < Count; ++Index)
 	{
 		InMesh->SetMaterial(Index, Materials[Index]);
 	}
@@ -499,7 +499,7 @@ void UCsLibrary_Common::ClearOverrideMaterials(UStaticMeshComponent* InMesh)
 {
 	int32 Count = InMesh->OverrideMaterials.Num();
 
-	for (int32 Index = 0; Index < Count; Index++)
+	for (int32 Index = 0; Index < Count; ++Index)
 	{
 		if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(InMesh->OverrideMaterials[Index]))
 		{
@@ -516,7 +516,7 @@ void UCsLibrary_Common::ClearOverrideMaterials(USkeletalMeshComponent* InMesh)
 {
 	int32 Count = InMesh->OverrideMaterials.Num();
 
-	for (int32 Index = 0; Index < Count; Index++)
+	for (int32 Index = 0; Index < Count; ++Index)
 	{
 		if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(InMesh->OverrideMaterials[Index]))
 		{
@@ -531,14 +531,12 @@ void UCsLibrary_Common::ClearOverrideMaterials(USkeletalMeshComponent* InMesh)
 
 void UCsLibrary_Common::DestroyMIDs(TArray<UMaterialInstanceDynamic*>& MIDs)
 {
-	int32 Count = MIDs.Num();
-
-	for (int32 Index = 0; Index < Count; Index++)
+	for (UMaterialInstanceDynamic* MID : MIDs)
 	{
-		if (MIDs[Index] &&
-			!MIDs[Index]->IsPendingKill())
+		if (MID &&
+			!MID->IsPendingKill())
 		{
-			MIDs[Index]->MarkPendingKill();
+			MID->MarkPendingKill();
 		}
 	}
 	MIDs.SetNum(0, true);
@@ -551,7 +549,7 @@ void UCsLibrary_Common::SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterial
 
 	const int32 Count = Materials.Num();
 
-	for (int32 Index = 0; Index < Count; Index++)
+	for (int32 Index = 0; Index < Count; ++Index)
 	{
 		MIDs.Add(InMesh->CreateDynamicMaterialInstance(Index, Materials[Index].MaterialInterface));
 	}
@@ -564,7 +562,7 @@ void UCsLibrary_Common::SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterial
 
 	const int32 Count = Materials.Num();
 
-	for (int32 Index = 0; Index < Count; Index++)
+	for (int32 Index = 0; Index < Count; ++Index)
 	{
 		MIDs.Add(InMesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
 	}
@@ -577,7 +575,7 @@ void UCsLibrary_Common::SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterial
 
 	const int32 Count = Materials.Num();
 
-	for (int32 Index = 0; Index < Count; Index++)
+	for (int32 Index = 0; Index < Count; ++Index)
 	{
 		MIDs.Add(InMesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
 	}
@@ -585,27 +583,23 @@ void UCsLibrary_Common::SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterial
 
 void UCsLibrary_Common::MIDs_SetScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float &Value)
 {
-	const int32 Count = MIDs.Num();
-
-	for (int32 Index = 0; Index < Count; Index++)
+	for (UMaterialInstanceDynamic* MID : MIDs)
 	{
-		check(MIDs[Index]);
+		check(MID);
 
-		if (MIDs[Index])
-			MIDs[Index]->SetScalarParameterValue(ParamName, Value);
+		if (MID)
+			MID->SetScalarParameterValue(ParamName, Value);
 	}
 }
 
 void UCsLibrary_Common::MIDs_SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector &Value)
 {
-	const int32 Count = MIDs.Num();
-
-	for (int32 Index = 0; Index < Count; Index++)
+	for (UMaterialInstanceDynamic* MID : MIDs)
 	{
-		check(MIDs[Index]);
+		check(MID);
 
-		if (MIDs[Index])
-			MIDs[Index]->SetVectorParameterValue(ParamName, Value);
+		if (MID)
+			MID->SetVectorParameterValue(ParamName, Value);
 	}
 }
 
@@ -613,12 +607,12 @@ void UCsLibrary_Common::MIDs_SetVectorParameterValue(TArray<UMaterialInstanceDyn
 {
 	const int32 Count = MIDs.Num();
 
-	for (int32 Index = 0; Index < Count; Index++)
+	for (UMaterialInstanceDynamic* MID : MIDs)
 	{
-		check(MIDs[Index]);
+		check(MID);
 
-		if (MIDs[Index])
-			MIDs[Index]->SetVectorParameterValue(ParamName, Value);
+		if (MID)
+			MID->SetVectorParameterValue(ParamName, Value);
 	}
 }
 

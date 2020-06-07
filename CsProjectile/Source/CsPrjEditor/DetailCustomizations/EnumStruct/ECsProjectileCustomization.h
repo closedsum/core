@@ -16,7 +16,7 @@ public:
 
 protected:
 
-	virtual void PopulateEnumMapFromSettings() override;
+	virtual void CustomPopulateEnumMap() override;
 
 public:
 

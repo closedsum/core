@@ -8,6 +8,13 @@
 #include "Managers/Projectile/CsSettings_Manager_Projectile.h"
 #include "CsProjectileSettings.generated.h"
 
+// Cached
+#pragma region
+
+#pragma endregion Cached
+
+class UDataTable;
+
 UCLASS(config = Game, defaultconfig, meta = (DisplayName = "Cs Projectile Settings"))
 class CSPRJ_API UCsProjectileSettings : public UDeveloperSettings
 {
@@ -21,8 +28,6 @@ public:
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum")
 	TArray<FCsSettings_Enum> ECsProjectile;
-
-#if WITH_EDITOR
 
 	template<typename EnumType>
 	const TArray<FCsSettings_Enum>& GetSettingsEnum() const;
@@ -42,9 +47,10 @@ public:
 		return TEXT("UCsProjectileSettings.ECsProjectile");
 	}
 
-#endif // #if WITH_EDITOR
-
 #pragma endregion Enum
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	TSoftObjectPtr<UDataTable> Projectiles;
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	FCsSettings_Manager_Projectile ManagerProjectile;

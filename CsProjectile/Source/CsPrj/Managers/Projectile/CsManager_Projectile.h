@@ -8,146 +8,6 @@
 #include "Managers/Resource/CsManager_ResourceValueType.h"
 #include "CsManager_Projectile.generated.h"
 
-// Structs
-#pragma region
-
-	// ProjectilePayload
-#pragma region
-
-class UObject;
-
-struct CSPRJ_API FCsProjectilePayload : public ICsProjectilePayload, public ICsPooledObjectPayload
-{
-public:
-
-	FVector Direction;
-
-	FVector Location;
-
-	bool bAllocated;
-
-	TWeakObjectPtr<UObject> Instigator;
-
-	TWeakObjectPtr<UObject> Owner;
-
-	TWeakObjectPtr<UObject> Parent;
-
-	FCsInterfaceMap* InterfaceMap;
-
-	FCsProjectilePayload() :
-		Direction(0.0f),
-		Location(0.0f),
-		bAllocated(false),
-		Instigator(nullptr),
-		Owner(nullptr),
-		Parent(nullptr),
-		InterfaceMap(nullptr)
-	{
-		InterfaceMap = new FCsInterfaceMap();
-
-		InterfaceMap->Add<ICsProjectilePayload>(static_cast<ICsProjectilePayload*>(this));
-		InterfaceMap->Add<ICsPooledObjectPayload>(static_cast<ICsPooledObjectPayload*>(this));
-	}
-
-	virtual ~FCsProjectilePayload()
-	{
-		delete InterfaceMap;
-	}
-
-// ICsGetInterfaceMap
-#pragma region
-public:
-
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-	{
-		return InterfaceMap;
-	}
-
-#pragma endregion ICsGetInterfaceMap
-
-// ICsProjectilePayload
-#pragma region
-public:
-
-	FORCEINLINE const FVector& GetDirection() const
-	{
-		return Direction;
-	}
-
-	FORCEINLINE const FVector& GetLocation() const
-	{
-		return Location;
-	}
-
-#pragma endregion ICsProjectilePayload
-
-// ICsPooledObjectPayload
-#pragma region
-public:
-
-	FORCEINLINE const bool& IsAllocated() const
-	{
-		return bAllocated;
-	}
-
-	FORCEINLINE UObject* GetInstigator() const
-	{
-		return Instigator.IsValid() ? Instigator.Get() : nullptr;
-	}
-
-	FORCEINLINE UObject* GetOwner() const
-	{
-		return Owner.IsValid() ? Owner.Get() : nullptr;
-	}
-
-	FORCEINLINE UObject* GetParent() const
-	{
-		return Parent.IsValid() ? Parent.Get() : nullptr;
-	}
-
-	FORCEINLINE void Allocate()
-	{
-		bAllocated = true;
-	}
-
-	void Reset()
-	{
-		Direction = FVector::ZeroVector;
-		Location = FVector::ZeroVector;
-
-		bAllocated = false;
-		Instigator = nullptr;
-		Owner = nullptr;
-		Parent = nullptr;
-	}
-
-#pragma endregion ICsPooledObjectPayload
-
-public:
-
-	template<typename T>
-	FORCEINLINE T* GetInstigator() const
-	{
-		return Cast<T>(GetInstigator());
-	}
-
-	template<typename T>
-	FORCEINLINE T* GetOwner() const
-	{
-		return Cast<T>(GetOwner());
-	}
-
-	template<typename T>
-	FORCEINLINE T* GetParent() const
-	{
-		return Cast<T>(GetParent());
-	}
-};
-
-#pragma endregion ProjectilePayload
-
-#pragma endregion Structs
-
 // Delegates
 #pragma region
 
@@ -172,7 +32,7 @@ public:
 
 	FORCEINLINE virtual const FString& KeyTypeToString(const FECsProjectile& Type) override
 	{
-		return Type.Name;
+		return Type.GetName();
 	}
 
 	/** Delegate for getting the Owner of a Projectile.
@@ -585,6 +445,8 @@ public:
 	*/
 	ICsProjectilePayload* AllocatePayload(const FECsProjectile& Type);
 
+	virtual ICsProjectilePayload* ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload);
+
 #pragma endregion Payload
 
 	// Spawn
@@ -597,7 +459,12 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	virtual const FCsProjectilePooled* Spawn(const FECsProjectile& Type, ICsProjectilePayload* Payload);
+	const FCsProjectilePooled* Spawn(const FECsProjectile& Type, ICsProjectilePayload* Payload);
+
+	/**
+	*
+	*/
+	virtual const FCsProjectilePooled* ScriptSpawn(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload);
 
 	/**
 	* Delegate type after a Projectile has been Spawned.

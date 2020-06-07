@@ -2,6 +2,8 @@
 #include "Managers/Pool/CsTypes_Pool.h"
 #include "Types/CsTypes_Load.h"
 #include "Containers/CsInterfaceMap.h"
+#include "Containers/CsWeakObjectPtr.h"
+#include "Engine/DataTable.h"
 
 #include "CsTypes_Projectile.generated.h"
 #pragma once
@@ -57,6 +59,13 @@ struct CSPRJ_API EMCsProjectile : public TCsEnumStructMap<FECsProjectile, uint8>
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsProjectile, FECsProjectile, uint8)
 };
+
+namespace NCsProjectile
+{
+	typedef FECsProjectile Type;
+
+	CSPRJ_API void PopulateEnumMapFromSettings(const FString& Context);
+}
 
 #pragma endregion Projectile
 
@@ -441,7 +450,7 @@ struct CSPRJ_API FCsProjectileFirePayload
 
 #pragma endregion FCsProjectileFirePayload
 
-// FCsProjectilePayload
+// FCsProjectileBasePayload
 #pragma region
 
 class UCsData_ProjectileBase;
@@ -578,7 +587,7 @@ public:
 	}
 };
 
-#pragma endregion FCsProjectilePayload
+#pragma endregion FCsProjectileBasePayload
 
 // ICsProjectilePayload
 #pragma region
@@ -599,6 +608,146 @@ public:
 };
 
 #pragma endregion ICsProjectilePayload
+
+// FCsProjectilePayload
+#pragma region
+
+class UObject;
+
+struct CSPRJ_API FCsProjectilePayload : public ICsPooledObjectPayload,
+										public ICsProjectilePayload
+{
+private:
+
+	FCsInterfaceMap* InterfaceMap;
+
+	bool bAllocated;
+
+public:
+
+	UObject* Instigator;
+
+	UObject* Owner;
+
+	UObject* Parent;
+	
+	FVector Direction;
+
+	FVector Location;
+
+public:
+
+	FCsProjectilePayload() :
+		InterfaceMap(nullptr),
+		bAllocated(false),
+		Instigator(nullptr),
+		Owner(nullptr),
+		Parent(nullptr),
+		Direction(0.0f),
+		Location(0.0f)
+	{
+		InterfaceMap = new FCsInterfaceMap();
+
+		InterfaceMap->Add<ICsPooledObjectPayload>(static_cast<ICsPooledObjectPayload*>(this));
+		InterfaceMap->Add<ICsProjectilePayload>(static_cast<ICsProjectilePayload*>(this));
+	}
+
+	~FCsProjectilePayload()
+	{
+		delete InterfaceMap;
+	}
+
+// ICsGetInterfaceMap
+#pragma region
+public:
+
+	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+	{
+		return InterfaceMap;
+	}
+
+#pragma endregion ICsGetInterfaceMap
+
+// ICsPooledObjectPayload
+#pragma region
+public:
+
+	FORCEINLINE const bool& IsAllocated() const
+	{
+		return bAllocated;
+	}
+
+	FORCEINLINE UObject* GetInstigator() const
+	{
+		return Instigator;
+	}
+
+	FORCEINLINE UObject* GetOwner() const
+	{
+		return Owner;
+	}
+
+	FORCEINLINE UObject* GetParent() const
+	{
+		return Parent;
+	}
+
+	FORCEINLINE void Allocate()
+	{
+		bAllocated = true;
+	}
+
+	void Reset()
+	{
+		bAllocated = false;
+		Instigator = nullptr;
+		Owner = nullptr;
+		Parent = nullptr;
+
+		Direction = FVector::ZeroVector;
+		Location = FVector::ZeroVector;
+	}
+
+#pragma endregion ICsPooledObjectPayload
+
+public:
+
+	template<typename T>
+	FORCEINLINE T* GetInstigator() const
+	{
+		return Cast<T>(GetInstigator());
+	}
+
+	template<typename T>
+	FORCEINLINE T* GetOwner() const
+	{
+		return Cast<T>(GetOwner());
+	}
+
+	template<typename T>
+	FORCEINLINE T* GetParent() const
+	{
+		return Cast<T>(GetParent());
+	}
+
+// ICsProjectilePayload
+#pragma region
+public:
+
+	FORCEINLINE const FVector& GetDirection() const
+	{
+		return Direction;
+	}
+
+	FORCEINLINE const FVector& GetLocation() const
+	{
+		return Location;
+	}
+
+#pragma endregion ICsProjectilePayload
+};
+
+#pragma endregion FCsProjectilePayload
 
 // FCsScriptProjectilePayload
 #pragma region
@@ -639,3 +788,222 @@ public:
 };
 
 #pragma endregion FCsScriptProjectilePayload
+
+// ICsProjectileCache
+#pragma region
+
+struct CSPRJ_API ICsProjectileCache : virtual public ICsGetInterfaceMap
+{
+public:
+
+	static const FName Name;
+
+public:
+
+	virtual ~ICsProjectileCache(){}
+};
+
+#pragma endregion ICsProjectileCache
+
+// FCsProjectileCache
+#pragma region
+
+class UObject;
+
+struct CSPRJ_API FCsProjectileCache : public ICsPooledObjectCache,
+									  public ICsProjectileCache
+{
+private:
+
+	FCsInterfaceMap* InterfaceMap;
+
+	int32 Index;
+
+	bool bAllocated;
+
+	bool bQueueDeallocate;
+
+	ECsPooledObjectState State;
+
+	ECsPooledObjectUpdate UpdateType;
+
+	TCsWeakObjectPtr<UObject> Instigator;
+
+	TCsWeakObjectPtr<UObject> Owner;
+
+	TCsWeakObjectPtr<UObject> Parent;
+
+	float WarmUpTime;
+
+	float LifeTime;
+
+	FCsTime StartTime;
+
+	FCsDeltaTime ElapsedTime;
+
+public:
+
+	FCsProjectileCache() : 
+		InterfaceMap(nullptr),
+		Index(INDEX_NONE),
+		bAllocated(false),
+		bQueueDeallocate(false),
+		State(ECsPooledObjectState::Inactive),
+		UpdateType(ECsPooledObjectUpdate::Manager),
+		Instigator(),
+		Owner(),
+		Parent(),
+		WarmUpTime(0.0f),
+		LifeTime(0.0f),
+		StartTime(),
+		ElapsedTime()
+	{
+		InterfaceMap = new FCsInterfaceMap();
+
+		InterfaceMap->Add<ICsPooledObjectCache>(static_cast<ICsPooledObjectCache*>(this));
+	}
+
+	~FCsProjectileCache()
+	{
+		delete InterfaceMap;
+	}
+
+// ICsGetInterfaceMap
+#pragma region
+public:
+
+	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+	{
+		return InterfaceMap;
+	}
+
+#pragma endregion ICsGetInterfaceMap
+
+// ICsPooledObjectCache
+#pragma region
+public:
+
+	void Init(const int32& InIndex)
+	{
+		Index = InIndex;
+	}
+
+	FORCEINLINE const int32& GetIndex() const
+	{
+		return Index;
+	}
+
+	void Allocate(ICsPooledObjectPayload* Payload, const FCsTime& InTime)
+	{
+
+	}
+
+	FORCEINLINE const bool& IsAllocated() const
+	{
+		return bAllocated;
+	}
+
+	void Deallocate()
+	{
+		bAllocated = false;
+		bQueueDeallocate = false;
+	}
+
+	FORCEINLINE void QueueDeallocate()
+	{
+		bQueueDeallocate = true;
+	}
+
+	FORCEINLINE const bool& ShouldDeallocate() const
+	{
+		return bQueueDeallocate;
+	}
+
+	FORCEINLINE const ECsPooledObjectState& GetState() const
+	{
+		return State;
+	}
+
+	FORCEINLINE const ECsPooledObjectUpdate& GetUpdateType() const
+	{
+		return UpdateType;
+	}
+
+	FORCEINLINE UObject* GetInstigator() const
+	{
+		return Instigator.Get();
+	}
+
+	FORCEINLINE UObject* GetOwner() const
+	{
+		return Owner.Get();
+	}
+
+	FORCEINLINE UObject* GetParent() const
+	{
+		return Parent.Get();
+	}
+
+	FORCEINLINE const float& GetWarmUpTime() const
+	{
+		return WarmUpTime;
+	}
+
+	FORCEINLINE const float& GetLifeTime() const
+	{
+		return LifeTime;
+	}
+
+	FORCEINLINE const FCsTime& GetStartTime() const
+	{
+		return StartTime;
+	}
+
+	FORCEINLINE const FCsDeltaTime& GetElapsedTime() const
+	{
+		return ElapsedTime;
+	}
+
+	FORCEINLINE bool HasLifeTimeExpired()
+	{
+		return false;
+	}
+
+	void Reset()
+	{
+
+	}
+
+#pragma endregion ICsPooledObjectCache
+
+// ICsProjectileCache
+#pragma region
+public:
+
+#pragma endregion ICsProjectileCache
+};
+
+#pragma endregion FCsProjectileCache
+
+// FCsProjectileEntry
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSPRJ_API FCsProjectileEntry : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString DisplayName;
+
+	FCsProjectileEntry() :
+		Name(),
+		DisplayName()
+	{
+	}
+};
+
+#pragma endregion FCsProjectileEntry

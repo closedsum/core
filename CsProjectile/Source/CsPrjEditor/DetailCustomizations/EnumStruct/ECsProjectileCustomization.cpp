@@ -8,6 +8,18 @@
 
 #define LOCTEXT_NAMESPACE "ECsProjectileCustomization"
 
+// Cached
+#pragma region
+
+namespace NCsProjectileCustomization
+{
+	namespace Str
+	{
+		const FString CustomPopulateEnumMap = TEXT("FECsProjectileCustomization::CustomPopulateEnumMap");
+	}
+}
+
+#pragma endregion Cached
 
 FECsProjectileCustomization::FECsProjectileCustomization() :
 	Super()
@@ -15,9 +27,11 @@ FECsProjectileCustomization::FECsProjectileCustomization() :
 	Init<EMCsProjectile, FECsProjectile>();
 }
 
-void FECsProjectileCustomization::PopulateEnumMapFromSettings()
+void FECsProjectileCustomization::CustomPopulateEnumMap()
 {
-	PopulateEnumMapFromSettings_Internal<UCsProjectileSettings, EMCsProjectile, FECsProjectile>(TEXT("FECsProjectileCustomization::PopulateEnumMapFromSettings"));
+	using namespace NCsProjectileCustomization;
+
+	NCsProjectile::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap);
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsProjectileCustomization::MakeInstance()

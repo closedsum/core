@@ -446,6 +446,20 @@ ICsProjectilePayload* UCsManager_Projectile::AllocatePayload(const FECsProjectil
 	return Internal.AllocatePayload(Type);
 }
 
+ICsProjectilePayload* UCsManager_Projectile::ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
+{
+	ICsProjectilePayload* IP	   = Internal.AllocatePayload(Type);
+	FCsProjectilePayload* Payload = static_cast<FCsProjectilePayload*>(IP);
+
+	Payload->Instigator = ScriptPayload.Instigator;
+	Payload->Owner		= ScriptPayload.Owner;
+	Payload->Parent		= ScriptPayload.Parent;
+	Payload->Direction	= ScriptPayload.Direction;
+	Payload->Location	= ScriptPayload.Location;
+
+	return IP;
+}
+
 #pragma endregion Payload
 
 	// Spawn
@@ -453,6 +467,13 @@ ICsProjectilePayload* UCsManager_Projectile::AllocatePayload(const FECsProjectil
 
 const FCsProjectilePooled* UCsManager_Projectile::Spawn(const FECsProjectile& Type, ICsProjectilePayload* Payload)
 {
+	return Internal.Spawn(Type, Payload);
+}
+
+const FCsProjectilePooled* UCsManager_Projectile::ScriptSpawn(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
+{
+	ICsProjectilePayload* Payload = ScriptAllocatePayload(Type, ScriptPayload);
+
 	return Internal.Spawn(Type, Payload);
 }
 

@@ -1,5 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Projectile/CsTypes_Projectile.h"
+#include "CsPrj.h"
+
+// Managers
+#include "Managers/Projectile/CsManager_Projectile.h"
+// Settings
+#include "Settings/CsProjectileSettings.h"
 
 // ProjectileRelevance
 #pragma region
@@ -18,6 +24,143 @@ namespace NCsProjectileRelevance
 }
 
 #pragma endregion ProjectileRelevance
+
+// Projectile
+#pragma region
+
+namespace NCsProjectile
+{
+	void PopulateEnumMapFromSettings(const FString& Context)
+	{
+		if (UCsProjectileSettings* Settings = GetMutableDefault<UCsProjectileSettings>())
+		{
+			bool PopulatedEnumMap = false;
+			 
+			// Check DataTable of Projectiles
+			if (UDataTable* DataTable = Settings->Projectiles.LoadSynchronous())
+			{
+				const UScriptStruct* RowStruct = DataTable->GetRowStruct();
+
+				const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+
+				// See if the Row Struct derives from FCsProjectileEntry
+				if (RowStruct->IsChildOf(FCsProjectileEntry::StaticStruct()))
+				{
+#if WITH_EDITOR
+					EMCsProjectile::Get().ClearUserDefinedEnums();
+#endif // #if WITH_EDITOR
+
+					for (const TPair<FName, uint8*>& Pair : RowMap)
+					{
+						const FName& Name				= Pair.Key;
+						const FCsProjectileEntry* Entry = reinterpret_cast<const FCsProjectileEntry*>(Pair.Value);
+
+						checkf(Entry->Name.Compare(Name.ToString(), ESearchCase::IgnoreCase) == 0, TEXT("%s: Row Name != Projectile Name (%s != %s)."), *Context, *(Entry->Name), *(Name.ToString()));
+
+						checkf(!EMCsProjectile::Get().IsValidEnum(Entry->Name), TEXT("%s: Projectile (Name): %s already exists (declared in native)."), *Context, *(Entry->Name));
+
+						if (!Entry->DisplayName.IsEmpty())
+						{
+							checkf(!EMCsProjectile::Get().IsValidEnumByDisplayName(Entry->DisplayName), TEXT("%s: Projectile (DisplayName): %s already exists (declared in native)."), *Context, *(Entry->DisplayName));
+
+							EMCsProjectile::Get().Create(Entry->Name, Entry->DisplayName, true);
+						}
+						else
+						{
+							EMCsProjectile::Get().Create(Entry->Name, true);
+						}
+					}
+					PopulatedEnumMap = true;
+				}
+				// Set if the Row Struct has the properties Name and DisplayName
+				else
+				{
+					UStrProperty* NameProperty		  = Cast<UStrProperty>(RowStruct->CustomFindProperty(FName("Name")));
+					UStrProperty* DisplayNameProperty = Cast<UStrProperty>(RowStruct->CustomFindProperty(FName("DisplayName")));
+
+					if (NameProperty &&
+						DisplayNameProperty)
+					{
+#if WITH_EDITOR
+						EMCsProjectile::Get().ClearUserDefinedEnums();
+#endif // #if WITH_EDITOR
+
+						for (const TPair<FName, uint8*>& Pair : RowMap)
+						{
+							const FName& RowName = Pair.Key;
+							const uint8* RowPtr  = Pair.Value;
+
+							const FString& Name		   = NameProperty->GetPropertyValue_InContainer(RowPtr);
+							const FString& DisplayName = DisplayNameProperty->GetPropertyValue_InContainer(RowPtr);
+
+							checkf(Name.Compare(RowName.ToString(), ESearchCase::IgnoreCase) == 0, TEXT("%s: Row Name != Projectile Name (%s != %s)."), *Context, *(RowName.ToString()), *Name);
+
+							checkf(!EMCsProjectile::Get().IsValidEnum(Name), TEXT("%s: Projectile (Name): %s already exists (declared in native)."), *Context, *Name);
+
+							if (!DisplayName.IsEmpty())
+							{
+								checkf(!EMCsProjectile::Get().IsValidEnumByDisplayName(DisplayName), TEXT("%s: Projectile (DisplayName): %s already exists (declared in native)."), *Context, *DisplayName);
+
+								EMCsProjectile::Get().Create(Name, DisplayName, true);
+							}
+							else
+							{
+								EMCsProjectile::Get().Create(Name, true);
+							}
+						}
+						PopulatedEnumMap = true;
+					}
+				}
+
+				if (!PopulatedEnumMap)
+				{
+					checkf(0, TEXT("%s: DataTable: %s with Row Struct: %s does NOT derive from FRsProjectileEntry nor has the FString properties: Name and DisplayName."), *Context, *(DataTable->GetName()), *(RowStruct->GetName()));
+				}
+			}
+
+			if (!PopulatedEnumMap)
+			{
+				const TArray<FCsSettings_Enum>& Enums = Settings->GetSettingsEnum<FECsProjectile>();
+
+				if (Enums.Num() > CS_EMPTY)
+				{
+					const FString EnumSettingsPath = Settings->GetSettingsEnumPath<FECsProjectile>();
+
+#if WITH_EDITOR
+					EMCsProjectile::Get().ClearUserDefinedEnums();
+#endif // #if WITH_EDITOR
+
+					for (const FCsSettings_Enum& Enum : Enums)
+					{
+						const FString& Name		   = Enum.Name;
+						const FString& DisplayName = Enum.DisplayName;
+
+						if (Name.IsEmpty())
+						{
+							UE_LOG(LogCsPrj, Warning, TEXT("%s: Empty Enum listed in %s."), *Context, *EnumSettingsPath);
+							return;
+						}
+
+						checkf(!EMCsProjectile::Get().IsValidEnum(Name), TEXT("%s: Projectile (Name): %s already exists (declared in native)."), *Context, *Name);
+
+						if (!Enum.DisplayName.IsEmpty())
+						{
+							checkf(!EMCsProjectile::Get().IsValidEnumByDisplayName(DisplayName), TEXT("%s: Projectile (DisplayName): %s already exists (declared in native)."), *Context, *DisplayName);
+
+							EMCsProjectile::Get().Create(Name, DisplayName, true);
+						}
+						else
+						{
+							EMCsProjectile::Get().Create(Name, true);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion Projectile
 
 // ProjectileState
 #pragma region
@@ -95,3 +238,10 @@ namespace NCsProjectileMovementFunctionType
 const FName ICsProjectilePayload::Name = FName("ICsProjectilePayload");
 
 #pragma endregion ICsProjectilePayload
+
+// ICsProjectileCache
+#pragma region
+
+const FName ICsProjectileCache::Name = FName("ICsProjectileCache");
+
+#pragma endregion ICsProjectileCache

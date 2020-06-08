@@ -12,7 +12,7 @@
 
 #pragma region
 
-namespace ECsGraphPinEnumStructCache
+namespace NCsGraphPinEnumStructCached
 {
 	namespace Str
 	{
@@ -37,9 +37,13 @@ public:
 
 protected:
 
+	virtual void CustomPopulateEnumMap();
+
 	template<typename EnumStruct, typename EnumMap>
 	void Construct_Internal()
 	{
+		CustomPopulateEnumMap();
+
 		FString CurrentDefaultValue = GraphPinObj->GetDefaultAsString();
 
 		if (CurrentDefaultValue.IsEmpty())
@@ -105,7 +109,7 @@ protected:
 				return Enum.DisplayName;
 			}
 		}
-		return ECsGraphPinEnumStructCache::Str::INVALID;
+		return NCsGraphPinEnumStructCached::Str::INVALID;
 	}
 
 	/**

@@ -10,7 +10,7 @@
 // Cache
 #pragma region
 
-namespace ECsGraphPinEnumStructCache
+namespace NCsGraphPinEnumStructCached
 {
 	namespace Str
 	{
@@ -29,6 +29,8 @@ void SCsGraphPin_EnumStruct::Construct(const FArguments& InArgs, UEdGraphPin* In
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 }
+
+void SCsGraphPin_EnumStruct::CustomPopulateEnumMap(){}
 
 TSharedRef<SWidget>	SCsGraphPin_EnumStruct::GetDefaultValueWidget()
 {
@@ -50,18 +52,18 @@ void SCsGraphPin_EnumStruct::GenerateComboBoxIndexes(TArray< TSharedPtr<int32> >
 
 FString SCsGraphPin_EnumStruct::OnGetText() const
 {
-	return ECsGraphPinEnumStructCache::Str::INVALID;
+	return NCsGraphPinEnumStructCached::Str::INVALID;
 }
 
 void SCsGraphPin_EnumStruct::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo){}
 
 FText SCsGraphPin_EnumStruct::OnGetFriendlyName(int32 EnumIndex)
 {
-	return ECsGraphPinEnumStructCache::Txt::INVALID;
+	return NCsGraphPinEnumStructCached::Txt::INVALID;
 }
 
 FText SCsGraphPin_EnumStruct::OnGetTooltip(int32 EnumIndex)
 {
-	return ECsGraphPinEnumStructCache::Txt::INVALID;
+	return NCsGraphPinEnumStructCached::Txt::INVALID;
 }
 

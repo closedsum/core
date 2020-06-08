@@ -4,12 +4,31 @@
 
 #include "Managers/Projectile/CsTypes_Projectile.h"
 
+// Cached
+#pragma region
+
+namespace NCsGraphPinProjectileCached
+{
+	namespace Str
+	{
+		const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsProjectile::CustomPopulateEnumMap");
+	}
+}
+
+#pragma endregion Cached
 
 void SCsGraphPin_ECsProjectile::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
 	Construct_Internal<EMCsProjectile, FECsProjectile>();
+}
+
+void SCsGraphPin_ECsProjectile::CustomPopulateEnumMap()
+{
+	using namespace NCsGraphPinProjectileCached;
+
+	NCsProjectile::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap);
 }
 
 void SCsGraphPin_ECsProjectile::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)

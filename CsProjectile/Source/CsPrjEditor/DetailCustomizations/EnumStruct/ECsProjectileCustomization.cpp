@@ -11,7 +11,7 @@
 // Cached
 #pragma region
 
-namespace NCsProjectileCustomization
+namespace NCsProjectileCustomizationCached
 {
 	namespace Str
 	{
@@ -29,7 +29,7 @@ FECsProjectileCustomization::FECsProjectileCustomization() :
 
 void FECsProjectileCustomization::CustomPopulateEnumMap()
 {
-	using namespace NCsProjectileCustomization;
+	using namespace NCsProjectileCustomizationCached;
 
 	NCsProjectile::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap);
 }

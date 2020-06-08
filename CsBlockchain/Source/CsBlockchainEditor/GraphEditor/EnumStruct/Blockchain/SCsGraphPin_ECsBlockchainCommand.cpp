@@ -9,7 +9,7 @@ void SCsGraphPin_ECsBlockchainCommand::Construct(const FArguments& InArgs, UEdGr
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<FECsBlockchainCommand, EMCsBlockchainCommand>();
+	Construct_Internal<EMCsBlockchainCommand, FECsBlockchainCommand>();
 }
 
 void SCsGraphPin_ECsBlockchainCommand::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
@@ -19,12 +19,12 @@ void SCsGraphPin_ECsBlockchainCommand::GenerateComboBoxIndexes(TArray<TSharedPtr
 
 FString SCsGraphPin_ECsBlockchainCommand::OnGetText() const
 {
-	return OnGetText_Internal<FECsBlockchainCommand, EMCsBlockchainCommand>();
+	return OnGetText_Internal<EMCsBlockchainCommand, FECsBlockchainCommand>();
 }
 
 void SCsGraphPin_ECsBlockchainCommand::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<FECsBlockchainCommand, EMCsBlockchainCommand>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EMCsBlockchainCommand, FECsBlockchainCommand>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsBlockchainCommand::OnGetFriendlyName(int32 EnumIndex)

@@ -39,7 +39,7 @@ protected:
 
 	virtual void CustomPopulateEnumMap();
 
-	template<typename EnumStruct, typename EnumMap>
+	template<typename EnumMap, typename EnumStruct>
 	void Construct_Internal()
 	{
 		CustomPopulateEnumMap();
@@ -91,7 +91,7 @@ protected:
 	*/
 	virtual FString OnGetText() const;
 
-	template<typename EnumStruct, typename EnumMap>
+	template<typename EnumMap, typename EnumStruct>
 	FString OnGetText_Internal() const
 	{
 		FString SelectedString = GraphPinObj->GetDefaultAsString();
@@ -120,7 +120,7 @@ protected:
 	*/
 	virtual void ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo);
 
-	template<typename EnumStruct, typename EnumMap>
+	template<typename EnumMap, typename EnumStruct>
 	void ComboBoxSelectionChanged_Internal(TSharedPtr<int32> NewSelection, const ESelectInfo::Type& SelectInfo)
 	{
 		FString EnumSelectionString;

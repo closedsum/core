@@ -9,7 +9,7 @@ void SCsGraphPin_ECsSurfaceType::Construct(const FArguments& InArgs, UEdGraphPin
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<FECsSurfaceType, EMCsSurfaceType>();
+	Construct_Internal<EMCsSurfaceType, FECsSurfaceType>();
 }
 
 void SCsGraphPin_ECsSurfaceType::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
@@ -19,12 +19,12 @@ void SCsGraphPin_ECsSurfaceType::GenerateComboBoxIndexes(TArray<TSharedPtr<int32
 
 FString SCsGraphPin_ECsSurfaceType::OnGetText() const
 {
-	return OnGetText_Internal<FECsSurfaceType, EMCsSurfaceType>();
+	return OnGetText_Internal<EMCsSurfaceType, FECsSurfaceType>();
 }
 
 void SCsGraphPin_ECsSurfaceType::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<FECsSurfaceType, EMCsSurfaceType>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EMCsSurfaceType, FECsSurfaceType>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsSurfaceType::OnGetFriendlyName(int32 EnumIndex)

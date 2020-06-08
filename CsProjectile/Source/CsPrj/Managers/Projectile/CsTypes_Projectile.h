@@ -755,31 +755,20 @@ public:
 class UObject;
 
 USTRUCT(BlueprintType)
-struct CSPRJ_API FCsScriptProjectilePayload
+struct CSPRJ_API FCsScriptProjectilePayload : public FCsScriptPooledObjectPayload
 {
 	GENERATED_USTRUCT_BODY()
 
 public:
 
-	UPROPERTY(BlueprintReadWrite, Category = "Payload")
-	UObject* Instigator;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Payload")
-	UObject* Owner;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Payload")
-	UObject* Parent;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Payload")
+	UPROPERTY(BlueprintReadWrite)
 	FVector Location;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Payload")
+	UPROPERTY(BlueprintReadWrite)
 	FVector Direction;
 
 	FCsScriptProjectilePayload() :
-		Instigator(nullptr),
-		Owner(nullptr),
-		Parent(nullptr),
+		Super(),
 		Location(0.0f),
 		Direction(0.0f)
 	{

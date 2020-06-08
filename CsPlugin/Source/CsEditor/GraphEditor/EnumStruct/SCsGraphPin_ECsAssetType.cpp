@@ -9,7 +9,7 @@ void SCsGraphPin_ECsAssetType::Construct(const FArguments& InArgs, UEdGraphPin* 
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<FECsAssetType, EMCsAssetType>();
+	Construct_Internal<EMCsAssetType, FECsAssetType>();
 }
 
 void SCsGraphPin_ECsAssetType::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
@@ -19,12 +19,12 @@ void SCsGraphPin_ECsAssetType::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>
 
 FString SCsGraphPin_ECsAssetType::OnGetText() const
 {
-	return OnGetText_Internal<FECsAssetType, EMCsAssetType>();
+	return OnGetText_Internal<EMCsAssetType, FECsAssetType>();
 }
 
 void SCsGraphPin_ECsAssetType::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<FECsAssetType, EMCsAssetType>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EMCsAssetType, FECsAssetType>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsAssetType::OnGetFriendlyName(int32 EnumIndex)

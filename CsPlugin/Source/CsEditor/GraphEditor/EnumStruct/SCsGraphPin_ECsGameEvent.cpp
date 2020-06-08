@@ -9,7 +9,7 @@ void SCsGraphPin_ECsGameEvent::Construct(const FArguments& InArgs, UEdGraphPin* 
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<FECsGameEvent, EMCsGameEvent>();
+	Construct_Internal<EMCsGameEvent, FECsGameEvent>();
 }
 
 void SCsGraphPin_ECsGameEvent::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
@@ -19,12 +19,12 @@ void SCsGraphPin_ECsGameEvent::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>
 
 FString SCsGraphPin_ECsGameEvent::OnGetText() const
 {
-	return OnGetText_Internal<FECsGameEvent, EMCsGameEvent>();
+	return OnGetText_Internal<EMCsGameEvent, FECsGameEvent>();
 }
 
 void SCsGraphPin_ECsGameEvent::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<FECsGameEvent, EMCsGameEvent>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EMCsGameEvent, FECsGameEvent>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsGameEvent::OnGetFriendlyName(int32 EnumIndex)

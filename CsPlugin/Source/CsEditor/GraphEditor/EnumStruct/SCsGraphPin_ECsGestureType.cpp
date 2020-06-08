@@ -9,7 +9,7 @@ void SCsGraphPin_ECsGestureType::Construct(const FArguments& InArgs, UEdGraphPin
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<FECsGestureType, EMCsGestureType>();
+	Construct_Internal<EMCsGestureType, FECsGestureType>();
 }
 
 void SCsGraphPin_ECsGestureType::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
@@ -19,12 +19,12 @@ void SCsGraphPin_ECsGestureType::GenerateComboBoxIndexes(TArray<TSharedPtr<int32
 
 FString SCsGraphPin_ECsGestureType::OnGetText() const
 {
-	return OnGetText_Internal<FECsGestureType, EMCsGestureType>();
+	return OnGetText_Internal<EMCsGestureType, FECsGestureType>();
 }
 
 void SCsGraphPin_ECsGestureType::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<FECsGestureType, EMCsGestureType>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EMCsGestureType, FECsGestureType>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsGestureType::OnGetFriendlyName(int32 EnumIndex)

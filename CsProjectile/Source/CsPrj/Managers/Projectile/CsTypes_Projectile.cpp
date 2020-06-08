@@ -37,7 +37,9 @@ namespace NCsProjectile
 			bool PopulatedEnumMap = false;
 			 
 			// Check DataTable of Projectiles
-			if (UDataTable* DataTable = Settings->Projectiles.LoadSynchronous())
+			TSoftObjectPtr<UDataTable> Projectiles = Settings->Projectiles;
+
+			if (UDataTable* DataTable = Projectiles.LoadSynchronous())
 			{
 				const UScriptStruct* RowStruct = DataTable->GetRowStruct();
 

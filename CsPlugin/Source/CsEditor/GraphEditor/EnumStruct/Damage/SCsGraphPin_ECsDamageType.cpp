@@ -9,7 +9,7 @@ void SCsGraphPin_ECsDamageType::Construct(const FArguments& InArgs, UEdGraphPin*
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<FECsDamageType, EMCsDamageType>();
+	Construct_Internal<EMCsDamageType, FECsDamageType>();
 }
 
 void SCsGraphPin_ECsDamageType::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
@@ -19,12 +19,12 @@ void SCsGraphPin_ECsDamageType::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>
 
 FString SCsGraphPin_ECsDamageType::OnGetText() const
 {
-	return OnGetText_Internal<FECsDamageType, EMCsDamageType>();
+	return OnGetText_Internal<EMCsDamageType, FECsDamageType>();
 }
 
 void SCsGraphPin_ECsDamageType::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<FECsDamageType, EMCsDamageType>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EMCsDamageType, FECsDamageType>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsDamageType::OnGetFriendlyName(int32 EnumIndex)

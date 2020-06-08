@@ -9,7 +9,7 @@ void SCsGraphPin_ECsProjectile::Construct(const FArguments& InArgs, UEdGraphPin*
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<FECsProjectile, EMCsProjectile>();
+	Construct_Internal<EMCsProjectile, FECsProjectile>();
 }
 
 void SCsGraphPin_ECsProjectile::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
@@ -19,12 +19,12 @@ void SCsGraphPin_ECsProjectile::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>
 
 FString SCsGraphPin_ECsProjectile::OnGetText() const
 {
-	return OnGetText_Internal<FECsProjectile, EMCsProjectile>();
+	return OnGetText_Internal<EMCsProjectile, FECsProjectile>();
 }
 
 void SCsGraphPin_ECsProjectile::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<FECsProjectile, EMCsProjectile>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EMCsProjectile, FECsProjectile>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsProjectile::OnGetFriendlyName(int32 EnumIndex)

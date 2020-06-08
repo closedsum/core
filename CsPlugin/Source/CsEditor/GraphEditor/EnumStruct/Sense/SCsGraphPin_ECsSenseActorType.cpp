@@ -9,7 +9,7 @@ void SCsGraphPin_ECsSenseActorType::Construct(const FArguments& InArgs, UEdGraph
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<FECsSenseActorType, EMCsSenseActorType>();
+	Construct_Internal<EMCsSenseActorType, FECsSenseActorType>();
 }
 
 void SCsGraphPin_ECsSenseActorType::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
@@ -19,12 +19,12 @@ void SCsGraphPin_ECsSenseActorType::GenerateComboBoxIndexes(TArray<TSharedPtr<in
 
 FString SCsGraphPin_ECsSenseActorType::OnGetText() const
 {
-	return OnGetText_Internal<FECsSenseActorType, EMCsSenseActorType>();
+	return OnGetText_Internal<EMCsSenseActorType, FECsSenseActorType>();
 }
 
 void SCsGraphPin_ECsSenseActorType::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<FECsSenseActorType, EMCsSenseActorType>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EMCsSenseActorType, FECsSenseActorType>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsSenseActorType::OnGetFriendlyName(int32 EnumIndex)

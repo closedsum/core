@@ -9,7 +9,7 @@ void SCsGraphPin_ECsEthereumJavascript::Construct(const FArguments& InArgs, UEdG
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<FECsEthereumJavascript, EMCsEthereumJavascript>();
+	Construct_Internal<EMCsEthereumJavascript, FECsEthereumJavascript>();
 }
 
 void SCsGraphPin_ECsEthereumJavascript::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
@@ -19,12 +19,12 @@ void SCsGraphPin_ECsEthereumJavascript::GenerateComboBoxIndexes(TArray<TSharedPt
 
 FString SCsGraphPin_ECsEthereumJavascript::OnGetText() const
 {
-	return OnGetText_Internal<FECsEthereumJavascript, EMCsEthereumJavascript>();
+	return OnGetText_Internal<EMCsEthereumJavascript, FECsEthereumJavascript>();
 }
 
 void SCsGraphPin_ECsEthereumJavascript::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<FECsEthereumJavascript, EMCsEthereumJavascript>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EMCsEthereumJavascript, FECsEthereumJavascript>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsEthereumJavascript::OnGetFriendlyName(int32 EnumIndex)

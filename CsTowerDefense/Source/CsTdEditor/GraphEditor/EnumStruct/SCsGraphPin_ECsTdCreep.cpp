@@ -10,7 +10,7 @@ void SCsGraphPin_ECsTdCreep::Construct(const FArguments& InArgs, UEdGraphPin* In
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<FECsTdCreep, EMCsTdCreep>();
+	Construct_Internal<EMCsTdCreep, FECsTdCreep>();
 }
 
 void SCsGraphPin_ECsTdCreep::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
@@ -20,12 +20,12 @@ void SCsGraphPin_ECsTdCreep::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& 
 
 FString SCsGraphPin_ECsTdCreep::OnGetText() const
 {
-	return OnGetText_Internal<FECsTdCreep, EMCsTdCreep>();
+	return OnGetText_Internal<EMCsTdCreep, FECsTdCreep>();
 }
 
 void SCsGraphPin_ECsTdCreep::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<FECsTdCreep, EMCsTdCreep>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EMCsTdCreep, FECsTdCreep>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsTdCreep::OnGetFriendlyName(int32 EnumIndex)

@@ -9,7 +9,7 @@ void SCsGraphPin_ECsSoundType::Construct(const FArguments& InArgs, UEdGraphPin* 
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<FECsSoundType, EMCsSoundType>();
+	Construct_Internal<EMCsSoundType, FECsSoundType>();
 }
 
 void SCsGraphPin_ECsSoundType::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
@@ -19,12 +19,12 @@ void SCsGraphPin_ECsSoundType::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>
 
 FString SCsGraphPin_ECsSoundType::OnGetText() const
 {
-	return OnGetText_Internal<FECsSoundType, EMCsSoundType>();
+	return OnGetText_Internal<EMCsSoundType, FECsSoundType>();
 }
 
 void SCsGraphPin_ECsSoundType::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<FECsSoundType, EMCsSoundType>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EMCsSoundType, FECsSoundType>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsSoundType::OnGetFriendlyName(int32 EnumIndex)

@@ -49,6 +49,12 @@ public:
 		return !(*this == B);
 	}
 
+	FORCEINLINE void Init(ValueType* InValue)
+	{
+		Value	   = InValue;
+		Last_Value = *Value;
+	}
+
 	FORCEINLINE void Set(ValueType* inValue)
 	{
 		Value = inValue;
@@ -61,7 +67,7 @@ public:
 		UpdateIsDirty();
 	}
 
-	FORCEINLINE const ValueType& Get() { return *Value; }
+	FORCEINLINE const ValueType& Get() const { return *Value; }
 
 	FORCEINLINE void Clear()
 	{

@@ -139,14 +139,6 @@ extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness;
 
 #pragma endregion Projectile
 
-// Coroutine
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogCoroutineTransactions;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogCoroutineRunning;
-
-#pragma endregion Coroutine
-
 // Inventory
 #pragma region
 
@@ -381,9 +373,6 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogManagerFxTransactions;
 	// Projectile
 	extern CSCORE_API const Type LogManagerProjectileTransactions;
-	// Coroutine
-	extern CSCORE_API const Type LogCoroutineTransactions;
-	extern CSCORE_API const Type LogCoroutineRunning;
 	// Collision
 
 		// Trace

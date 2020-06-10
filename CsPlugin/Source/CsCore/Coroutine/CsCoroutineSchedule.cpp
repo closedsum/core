@@ -1,7 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Coroutine/CsCoroutineSchedule.h"
 #include "CsCore.h"
-#include "CsCVars.h"
+
+// CVars
+#include "Coroutine/CsCVars_Coroutine.h"
 
 FCsCoroutineSchedule::FCsCoroutineSchedule()
 {

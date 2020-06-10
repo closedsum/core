@@ -1,7 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Coroutine/CsCoroutineScheduler.h"
 #include "CsCore.h"
-#include "CsCVars.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"

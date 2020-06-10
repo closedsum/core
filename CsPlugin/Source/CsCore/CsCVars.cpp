@@ -305,25 +305,6 @@ TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness(
 
 #pragma endregion Projectile
 
-// Coroutine
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogCoroutineTransactions(
-	TEXT("log.coroutine.transactions"),
-	0,
-	TEXT("Log Coroutine Scheduler Allocation and DeAllocation."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarLogCoroutineRunning(
-	TEXT("log.coroutine.running"),
-	0,
-	TEXT("Log Coroutines currently running."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Coroutine
-
 // Inventory
 #pragma region
 
@@ -499,9 +480,6 @@ namespace NCsCVarLog
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerFxTransactions);
 	// Projectile
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerProjectileTransactions);
-	// Coroutine
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogCoroutineTransactions);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogCoroutineRunning);
 	// Collision
 
 		// Trace

@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 
 #include "UObject/NameTypes.h"
-
+#include "CsInterfaceMap.generated.h"
 #pragma once
 
 struct CSCORE_API FCsInterfaceMap
@@ -48,9 +48,24 @@ public:
 	}
 };
 
+/*
 struct CSCORE_API ICsGetInterfaceMap
 {
 	virtual ~ICsGetInterfaceMap() {}
+
+	virtual FCsInterfaceMap* GetInterfaceMap() const = 0;
+};
+*/
+
+UINTERFACE()
+class CSCORE_API UCsGetInterfaceMap : public UInterface
+{
+	GENERATED_UINTERFACE_BODY()
+};
+
+class CSCORE_API ICsGetInterfaceMap
+{
+	GENERATED_IINTERFACE_BODY()
 
 	virtual FCsInterfaceMap* GetInterfaceMap() const = 0;
 };

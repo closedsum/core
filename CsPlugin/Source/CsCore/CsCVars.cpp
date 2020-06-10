@@ -230,81 +230,6 @@ TAutoConsoleVariable<int32> CsCVarLogManagerFxTransactions(
 
 #pragma endregion FX
 
-// Projectile
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogManagerProjectileTransactions(
-	TEXT("log.manager.projectile.transactions"),
-	0,
-	TEXT("Log Manager Projectile Allocation and DeAllocation."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarDrawProjectileImpactNormal(
-	TEXT("draw.projectile.impactnormal"),
-	0,
-	TEXT("Draw the Impact Normal for a Projectile hitting a surface."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalLength(
-	TEXT("draw.projectile.impactnormallength"),
-	CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_LENGTH,
-	TEXT("Length of the Impact Normal to be drawn from the surface hit by a Projectile."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalThickness(
-	TEXT("draw.projectile.impactnormalthickness"),
-	CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_THICKNESS,
-	TEXT("Thickness of the Impact Normal to be drawn from the surface hit by a Projectile."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalDuration(
-	TEXT("draw.projectile.impactnormalduration"),
-	CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_THICKNESS,
-	TEXT("Duration of the Impact Normal to be drawn from the surface hit by a Projectile."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarDrawProjectileCollision(
-	TEXT("draw.projectile.collision"),
-	0,
-	TEXT("Draw the Collision for a Projectile."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarDrawProjectilePath(
-	TEXT("draw.projectile.path"),
-	0,
-	TEXT("Draw the Path for a Projectile."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<float> CsCVarDrawProjectilePathInterval(
-	TEXT("draw.projectile.pathinterval"),
-	CS_CVAR_DRAW_PROJECTILE_PATH_INTERVAL,
-	TEXT("The interval at which segments are drawn for the Path of a Projectile."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarDrawProjectilePathSegmentsPerInterval(
-	TEXT("draw.projectile.pathsegmentsperinterval"),
-	CS_CVAR_DRAW_PROJECTILE_PATH_SEGMENTS_PER_INTERVAL,
-	TEXT("Number of segments used to draw the Path for a Projectile."),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness(
-	TEXT("draw.projectile.paththickness"),
-	CS_CVAR_DRAW_PROJECTILE_PATH_THICKNESS,
-	TEXT("Thickness of the Path to be drawn for a Projectile."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Projectile
-
 // Inventory
 #pragma region
 
@@ -478,8 +403,6 @@ namespace NCsCVarLog
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerSoundTransactions);
 	// FX
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerFxTransactions);
-	// Projectile
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerProjectileTransactions);
 	// Collision
 
 		// Trace

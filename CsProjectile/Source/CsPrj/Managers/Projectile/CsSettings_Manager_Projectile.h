@@ -46,9 +46,13 @@ struct CSPRJ_API FCsSettings_Manager_Projectile
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName Payload;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsProjectile, FCsSettings_Manager_Projectile_PoolParams> PoolParams;
 
 	FCsSettings_Manager_Projectile() :
+		Payload(NAME_None),
 		PoolParams()
 	{
 	}

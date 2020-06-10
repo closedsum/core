@@ -2,7 +2,13 @@
 
 #include "Managers/Projectile/CsManager_Projectile.h"
 #include "CsPrj.h"
-#include "CsCVars.h"
+
+// CVars
+#include "Managers/Projectile/CsCVars_Manager_Projectile.h"
+// Settings
+#include "Settings/CsProjectileSettings.h"
+// Data
+#include "Data/CsData_Projectile.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -496,3 +502,77 @@ bool UCsManager_Projectile::Destroy(ICsProjectile* Projectile)
 #pragma endregion Destroy
 
 #pragma endregion Internal
+
+// Data
+#pragma region
+
+void UCsManager_Projectile::PopulateDataMapFromSettings()
+{
+	if (UCsProjectileSettings* Settings = GetMutableDefault<UCsProjectileSettings>())
+	{
+		if (Settings->bProjectilesEmulateDataInterfaces)
+		{
+			// Check DataTable of Projectiles
+			TSoftObjectPtr<UDataTable> Projectiles = Settings->Projectiles;
+
+			if (UDataTable* DataTable = Projectiles.LoadSynchronous())
+			{
+				const UScriptStruct* RowStruct    = DataTable->GetRowStruct();
+				const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+
+				for (const TPair<FName, uint8*>& Pair : RowMap)
+				{
+					const FName& Name = Pair.Key;
+					uint8* RowPtr	  = const_cast<uint8*>(Pair.Value);
+
+					FCsData_ProjectileImpl* Data = new FCsData_ProjectileImpl();
+					
+					DataMap.Add(Name, Data);
+
+					// ICsData_Projectile
+					{
+						// InitialSpeed
+						{
+							UFloatProperty* FloatProperty = Cast<UFloatProperty>(RowStruct->CustomFindProperty(FName("InitialSpeed")));
+
+							checkf(FloatProperty, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to find Propery: InitialSpeed when emulating interface: ICsData_Projectile."));
+							 
+							float* InitialSpeed = FloatProperty->ContainerPtrToValuePtr<float>(RowPtr);
+
+							checkf(InitialSpeed, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: InitialSpeed."));
+
+							Data->SetInitialSpeed(InitialSpeed);
+						}
+						// MaxSpeed
+						{
+							UFloatProperty* FloatProperty = Cast<UFloatProperty>(RowStruct->CustomFindProperty(FName("MaxSpeed")));
+
+							checkf(FloatProperty, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to find Propery: MaxSpeed when emulating interface: ICsData_Projectile."));
+
+							float* MaxSpeed = FloatProperty->ContainerPtrToValuePtr<float>(RowPtr);
+
+							checkf(MaxSpeed, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: MaxSpeed."));
+
+							Data->SetMaxSpeed(MaxSpeed);
+						}
+						// GravityScale
+						{
+							UFloatProperty* FloatProperty = Cast<UFloatProperty>(RowStruct->CustomFindProperty(FName("GravityScale")));
+
+							checkf(FloatProperty, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to find Propery: GravityScale when emulating interface: ICsData_Projectile."));
+
+							float* GravityScale = FloatProperty->ContainerPtrToValuePtr<float>(RowPtr);
+
+							checkf(GravityScale, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: GravityScale."));
+
+							Data->SetGravityScale(GravityScale);
+						}
+					}
+				}
+
+			}
+		}
+	}
+}
+
+#pragma endregion Data

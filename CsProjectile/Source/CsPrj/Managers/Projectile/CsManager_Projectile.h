@@ -49,6 +49,7 @@ public:
 #pragma endregion Internal
 
 class ICsGetManagerProjectile;
+class ICsData_Projectile;
 
 UCLASS()
 class CSPRJ_API UCsManager_Projectile : public UObject
@@ -566,4 +567,14 @@ public:
 #pragma endregion ICsUpdate
 
 #pragma endregion Script
+
+// Data
+#pragma region
+public:
+
+	TMap<FName, ICsData_Projectile*> DataMap;
+
+	virtual void PopulateDataMapFromSettings();
+
+#pragma endregion Data
 };

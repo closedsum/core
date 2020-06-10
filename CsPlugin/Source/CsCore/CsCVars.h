@@ -112,33 +112,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerFxTransactions;
 
 #pragma endregion FX
 
-// Projectile
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerProjectileTransactions;
-
-#define CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_LENGTH 100.0f
-#define CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_THICKNESS 2.0f
-#define CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_DURATION 0.25f
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawProjectileImpactNormal;
-extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalLength;
-extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalThickness;
-extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalDuration;
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawProjectileCollision;
-
-#define CS_CVAR_DRAW_PROJECTILE_PATH_INTERVAL 0.5f
-#define CS_CVAR_DRAW_PROJECTILE_PATH_SEGMENTS_PER_INTERVAL 16
-#define CS_CVAR_DRAW_PROJECTILE_PATH_THICKNESS 1.0f
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawProjectilePath;
-extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectilePathInterval;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawProjectilePathSegmentsPerInterval;
-extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness;
-
-#pragma endregion Projectile
-
 // Inventory
 #pragma region
 
@@ -184,11 +157,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawManagerSenseAngle;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerSenseSeesActorByDot;
 
 #pragma endregion Sense
-
-// Managers
-#pragma region
-
-#pragma endregion Managers
 
 // Level
 #pragma region
@@ -371,8 +339,6 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogManagerSoundTransactions;
 	// FX
 	extern CSCORE_API const Type LogManagerFxTransactions;
-	// Projectile
-	extern CSCORE_API const Type LogManagerProjectileTransactions;
 	// Collision
 
 		// Trace

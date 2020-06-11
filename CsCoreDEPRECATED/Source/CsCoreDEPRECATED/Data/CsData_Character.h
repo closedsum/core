@@ -3,7 +3,7 @@
 #include "Data/CsData_Impl.h"
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_Character.h"
-#include "Types/CsTypes_Weapon.h"
+#include "CsTypes_Weapon.h"
 #include "Types/CsTypes_Anim.h"
 #include "Types/CsTypes_Item.h"
 #include "Managers/Sense/CsTypes_Sense.h"

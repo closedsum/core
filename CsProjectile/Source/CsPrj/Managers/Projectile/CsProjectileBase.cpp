@@ -9,7 +9,7 @@
 #include "Managers/Projectile/CsProjectileMovementComponent.h"
 
 // Data
-//#include "Data/CsData_Weapon.h"
+//#include "Data/CsData_Weapon_DEPRECATED.h"
 //#include "Data/CsData_ProjectileBase.h"
 //#include "Data/CsData_ProjectileImpact.h"
 
@@ -227,7 +227,7 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 	const ECsViewType& ViewType = IsLocalClient ? ECsViewType::FirstPerson : ECsViewType::ThirdPerson;
 
 	//ACsWeapon_DEPRECATED* OwnerWeapon					= Cast<ACsWeapon_DEPRECATED>(Cache.GetOwner());
-	//UCsData_Weapon* Data_Weapon				= OwnerWeapon ? OwnerWeapon->GetMyData_Weapon() : nullptr;
+	//UCsData_Weapon_DEPRECATED* Data_Weapon				= OwnerWeapon ? OwnerWeapon->GetMyData_Weapon() : nullptr;
 	//UCsData_ProjectileBase* Data_Projectile = Cache.GetData();
 
 	const ECsProjectileRelevance& Relevance = Cache.Relevance;

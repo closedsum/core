@@ -7,7 +7,7 @@
 #include "Library/CsLibrary_Common.h"
 #include "Library/Load/CsLibrary_Load.h"
 // Data
-#include "Data/CsData_Weapon.h"
+#include "Data/CsData_Weapon_DEPRECATED.h"
 #include "Data/CsData_WeaponMaterialSkin.h"
 
 #include "Weapon/CsGunWeapon_DEPRECATED.h"
@@ -31,7 +31,7 @@ void UCsAnimInstance_Weapon::NativeInitializeAnimation()
 		return;
 
 	// Data_Weapon
-	Data_Weapon.Data		  = TSoftClassPtr<UCsData_Weapon>(MyWeapon->GetMyData_Weapon());
+	Data_Weapon.Data		  = TSoftClassPtr<UCsData_Weapon_DEPRECATED>(MyWeapon->GetMyData_Weapon());
 	Data_Weapon.Data_Internal = MyWeapon->GetMyData_Weapon();
 
 	if (ACsGunWeapon_DEPRECATED* MyGunWeapon = Cast<ACsGunWeapon_DEPRECATED>(MyWeapon))
@@ -79,7 +79,7 @@ void UCsAnimInstance_Weapon::SetupInGameSimulation()
 
 	UCsLibrary_Load::LoadTSoftClassPtr(TEXT("Data_Weapon"), Data_Weapon.Data, Data_Weapon.Data_Internal, TEXT("MboData_Weapon"));
 
-	if (UCsData_Weapon* MyData_Weapon = GetData_Weapon())
+	if (UCsData_Weapon_DEPRECATED* MyData_Weapon = GetData_Weapon())
 		MyData_Weapon->Load(UCsLibrary_Common::ViewTypeToLoadFlags(CurrentViewType));
 
 	UCsLibrary_Load::LoadTSoftClassPtr(TEXT("Data_WeaponMaterialSkin"), Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, TEXT("CsData_WeaponMaterialSkin"));
@@ -121,7 +121,7 @@ void UCsAnimInstance_Weapon::NativeUpdateAnimation(float DeltaTimeX)
 // Data
 #pragma region
 
-UCsData_Weapon* UCsAnimInstance_Weapon::GetData_Weapon()
+UCsData_Weapon_DEPRECATED* UCsAnimInstance_Weapon::GetData_Weapon()
 {
 	return Data_Weapon.Get();
 }

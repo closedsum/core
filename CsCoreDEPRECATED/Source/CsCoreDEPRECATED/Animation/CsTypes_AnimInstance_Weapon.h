@@ -6,7 +6,7 @@
 // FCsDataAnimInstance_WeaponPtr
 #pragma region
 
-class UCsData_Weapon;
+class UCsData_Weapon_DEPRECATED;
 
 USTRUCT(BlueprintType)
 struct CSCOREDEPRECATED_API FCsDataAnimInstance_WeaponPtr
@@ -14,12 +14,12 @@ struct CSCOREDEPRECATED_API FCsDataAnimInstance_WeaponPtr
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere)
-	TSoftClassPtr<UCsData_Weapon> Data;
+	TSoftClassPtr<UCsData_Weapon_DEPRECATED> Data;
 
-	TSoftClassPtr<UCsData_Weapon> Last_Data;
+	TSoftClassPtr<UCsData_Weapon_DEPRECATED> Last_Data;
 
 	UPROPERTY(Transient, VisibleDefaultsOnly)
-	TWeakObjectPtr<UCsData_Weapon> Data_Internal;
+	TWeakObjectPtr<UCsData_Weapon_DEPRECATED> Data_Internal;
 
 public:
 	FCsDataAnimInstance_WeaponPtr()
@@ -43,7 +43,7 @@ public:
 		return !(*this == B);
 	}
 
-	FORCEINLINE UCsData_Weapon* Get() const
+	FORCEINLINE UCsData_Weapon_DEPRECATED* Get() const
 	{
 		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
 	}

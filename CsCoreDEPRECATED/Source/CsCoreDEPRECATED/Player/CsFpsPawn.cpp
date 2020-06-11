@@ -6,7 +6,7 @@
 // Component
 #include "Components/CsSkeletalMeshComponent.h"
 // Data
-#include "Data/CsData_Weapon.h"
+#include "Data/CsData_Weapon_DEPRECATED.h"
 #include "Data/CsData_WeaponMaterialSkin.h"
 // Player
 #include "Player/CsPlayerState.h"
@@ -173,7 +173,7 @@ void ACsFpsPawn::ApplyData_Weapon()
 
 		const FECsWeaponSlot& Slot = EMCsWeaponSlot::Get().GetEnumAt(I);
 
-		UCsData_Weapon* Data_Weapon							= GetData_Weapon(Slot);
+		UCsData_Weapon_DEPRECATED* Data_Weapon				= GetData_Weapon(Slot);
 		UCsData_WeaponMaterialSkin* Data_WeaponMaterialSkin = GetData_WeaponMaterialSkin(Slot);
 
 		Weapon->ApplyData_Weapon(Slot, Data_Weapon, Data_WeaponMaterialSkin, CurrentWeaponIndex == I);

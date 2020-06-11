@@ -144,7 +144,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_WeaponPtr Data_Weapon;
 
-	class UCsData_Weapon* GetData_Weapon();
+	class UCsData_Weapon_DEPRECATED* GetData_Weapon();
 
 	template<typename T>
 	T* GetData_Weapon()

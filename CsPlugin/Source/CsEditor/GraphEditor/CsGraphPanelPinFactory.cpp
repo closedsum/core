@@ -6,7 +6,6 @@
 #include "Types/CsTypes.h"
 #include "Managers/Input/CsTypes_Input.h"
 //#include "Types/CsTypes_Character.h"
-//#include "Types/CsTypes_Weapon.h"
 //#include "Types/CsTypes_Item.h"
 //#include "Types/CsTypes_Recipe.h"
 #include "Types/CsTypes_Damage.h"
@@ -33,16 +32,6 @@
 //#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterBlendSpace.h"
 	// Process
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsProcess.h"
-	// Weapon
-//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponAnim.h"
-//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponAnimBlueprint.h"
-//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponBlendSpace.h"
-//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponFireMode.h"
-//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponGrip.h"
-//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponOwner.h"
-//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponSlot.h"
-//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponSound.h"
-//#include "GraphEditor/EnumStruct/Weapon/SCsGraphPin_ECsWeaponState.h"
 	// Blockchain
 //#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainCommand.h"
 //#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainContract.h"
@@ -110,27 +99,6 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 		//if (DoesPinUseScriptStruct<FECsCharacterAnimBlueprint>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCharacterAnimBlueprint, InPin); }
 		// FECsCharacterBlendSpace
 		//if (DoesPinUseScriptStruct<FECsCharacterBlendSpace>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCharacterBlendSpace, InPin); }
-	}
-	// Weapon
-	{
-		// FECsWeaponAnim
-		//if (DoesPinUseScriptStruct<FECsWeaponAnim>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponAnim, InPin); }
-		// FECsWeaponAnimBlueprint
-		//if (DoesPinUseScriptStruct<FECsWeaponAnimBlueprint>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponAnimBlueprint, InPin); }
-		// FECsWeaponBlendSpace
-		//if (DoesPinUseScriptStruct<FECsWeaponBlendSpace>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponBlendSpace, InPin); }
-		// FECsWeaponFireMode
-		//if (DoesPinUseScriptStruct<FECsWeaponFireMode>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponFireMode, InPin); }
-		// FECsWeaponGrip
-		//if (DoesPinUseScriptStruct<FECsWeaponGrip>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponGrip, InPin); }
-		// FECsWeaponOwner
-		//if (DoesPinUseScriptStruct<FECsWeaponOwner>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponOwner, InPin); }
-		// FECsWeaponSlot
-		//if (DoesPinUseScriptStruct<FECsWeaponSlot>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponSlot, InPin); }
-		// FECsWeaponSound
-		//if (DoesPinUseScriptStruct<FECsWeaponSound>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponSound, InPin); }
-		// FECsWeaponState
-		//if (DoesPinUseScriptStruct<FECsWeaponState>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponState, InPin); }
 	}
 	// FECsProcess
 	if (DoesPinUseScriptStruct<FECsProcess>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsProcess, InPin); }

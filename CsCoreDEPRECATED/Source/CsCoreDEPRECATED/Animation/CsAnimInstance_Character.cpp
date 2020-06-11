@@ -10,7 +10,7 @@
 #include "Data/CsData_Character.h"
 #include "Data/CsData_CharacterMeshSkin.h"
 #include "Data/CsData_CharacterMaterialSkin.h"
-#include "Data/CsData_Weapon.h"
+#include "Data/CsData_Weapon_DEPRECATED.h"
 #include "Data/CsData_WeaponMaterialSkin.h"
 // Managers
 #include "Managers/FX/CsManager_FX.h"
@@ -89,7 +89,7 @@ void UCsAnimInstance_Character::NativeInitializeAnimation()
 	Data_CharacterMaterialSkin.Data = TSoftClassPtr<UCsData_CharacterMaterialSkin>(MyPawn->GetMyData_CharacterMaterialSkin());
 	Data_CharacterMaterialSkin.Data_Internal = MyPawn->GetMyData_CharacterMaterialSkin();
 	// Data_Weapon
-	Data_Weapon.Data = TSoftClassPtr<UCsData_Weapon>(MyPawn->GetCurrentData_Weapon());
+	Data_Weapon.Data = TSoftClassPtr<UCsData_Weapon_DEPRECATED>(MyPawn->GetCurrentData_Weapon());
 	Data_Weapon.Data_Internal = MyPawn->GetCurrentData_Weapon();
 	// Data_WeaponMaterialSkin
 	Data_WeaponMaterialSkin.Data = TSoftClassPtr<UCsData_WeaponMaterialSkin>(MyPawn->GetCurrentData_WeaponMaterialSkin());
@@ -297,7 +297,7 @@ void UCsAnimInstance_Character::OnTick_Handle_Data_CharacterMaterialSkin()
 	// Weapon
 #pragma region
 
-UCsData_Weapon* UCsAnimInstance_Character::GetData_Weapon()
+UCsData_Weapon_DEPRECATED* UCsAnimInstance_Character::GetData_Weapon()
 {
 	return Data_Weapon.Get();
 }
@@ -309,7 +309,7 @@ void UCsAnimInstance_Character::LoadData_Weapon()
 
 	UCsLibrary_Load::LoadTSoftClassPtr(DataString, Data_Weapon.Data, Data_Weapon.Data_Internal, CsDataString);
 
-	if (UCsData_Weapon* MyData_Weapon = GetData_Weapon())
+	if (UCsData_Weapon_DEPRECATED* MyData_Weapon = GetData_Weapon())
 		MyData_Weapon->Load(UCsLibrary_Common::ViewTypeToLoadFlags(CurrentViewType));
 }
 

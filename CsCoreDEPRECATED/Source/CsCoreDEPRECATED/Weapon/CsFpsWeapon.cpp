@@ -505,7 +505,7 @@ void ACsFpsWeapon::SetMesh1P()
 {
 	Mesh1P->SetAnimInstanceClass(nullptr);
 
-	UCsData_Weapon* Data_Weapon = GetMyData_Weapon();
+	UCsData_Weapon_DEPRECATED* Data_Weapon = GetMyData_Weapon();
 
 #if WITH_EDITOR
 	// In Editor Preview Window
@@ -568,7 +568,7 @@ void ACsFpsWeapon::SetMesh3P()
 {
 	Mesh3P->SetAnimInstanceClass(nullptr);
 
-	UCsData_Weapon* Data_Weapon = GetMyData_Weapon();
+	UCsData_Weapon_DEPRECATED* Data_Weapon = GetMyData_Weapon();
 
 #if WITH_EDITOR
 	// In Editor Preview Window

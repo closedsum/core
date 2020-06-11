@@ -2,7 +2,8 @@
 #pragma once
 #include "GameFramework/Character.h"
 // Types
-#include "Types/CsTypes_Weapon.h"
+#include "CsTypes_Weapon.h"
+#include "Types/CsTypes_View.h"
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Damage.h"
 #include "Managers/Sense/CsTypes_Sense.h"
@@ -169,7 +170,7 @@ class UCsDataMapping;
 class UCsData_Character;
 class UCsData_CharacterMeshSkin;
 class UCsData_CharacterMaterialSkin;
-class UCsData_Weapon;
+class UCsData_Weapon_DEPRECATED;
 class UCsData_WeaponMaterialSkin;
 
 UCLASS()
@@ -630,10 +631,10 @@ public:
 	}
 
 	UPROPERTY(Transient)
-	TArray<TWeakObjectPtr<UCsData_Weapon>> Data_Weapons;
+	TArray<TWeakObjectPtr<UCsData_Weapon_DEPRECATED>> Data_Weapons;
 
 	UFUNCTION(BlueprintCallable, Category = "Weapons")
-	UCsData_Weapon* GetData_Weapon(const FECsWeaponSlot &Slot);
+	UCsData_Weapon_DEPRECATED* GetData_Weapon(const FECsWeaponSlot &Slot);
 	
 	template<typename T>
 	T* GetData_Weapon(const FECsWeaponSlot &Slot)
@@ -642,7 +643,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "Weapons")
-	UCsData_Weapon* GetCurrentData_Weapon();
+	UCsData_Weapon_DEPRECATED* GetCurrentData_Weapon();
 
 	template<typename T>
 	T* GetCurrentData_Weapon()

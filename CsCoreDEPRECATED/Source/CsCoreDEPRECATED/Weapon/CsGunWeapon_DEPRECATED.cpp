@@ -20,7 +20,7 @@ ACsGunWeapon_DEPRECATED::ACsGunWeapon_DEPRECATED(const FObjectInitializer& Objec
 // Data
 #pragma region
 
-void ACsGunWeapon_DEPRECATED::ApplyData_Weapon(const FECsWeaponSlot &Slot, UCsData_Weapon* InData, UCsData_WeaponMaterialSkin* InSkin, const bool &Equipped)
+void ACsGunWeapon_DEPRECATED::ApplyData_Weapon(const FECsWeaponSlot &Slot, UCsData_Weapon_DEPRECATED* InData, UCsData_WeaponMaterialSkin* InSkin, const bool &Equipped)
 {
 	Reset();
 

@@ -25,6 +25,7 @@ public class CsCoreDEPRECATED : ModuleRules
                     "GameplayTasks",
                     "CsCore",
                     "CsPrj",
+                    "CsWp",
                 }
             );
 

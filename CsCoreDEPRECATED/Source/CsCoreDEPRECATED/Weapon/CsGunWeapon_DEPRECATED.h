@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Weapon/CsWeapon_DEPRECATED.h"
-#include "Types/CsTypes_Weapon.h"
+#include "CsTypes_Weapon.h"
 #include "Types/CsTypes_Character.h"
 #include "CsGunWeapon_DEPRECATED.generated.h"
 
@@ -10,7 +10,7 @@
 
 #pragma endregion Enums
 
-class UCsData_Weapon;
+class UCsData_Weapon_DEPRECATED;
 class UCsData_WeaponMaterialSkin;
 
 UCLASS()
@@ -22,7 +22,7 @@ class CSCOREDEPRECATED_API ACsGunWeapon_DEPRECATED : public ACsWeapon_DEPRECATED
 #pragma region
 public:
 
-	virtual void ApplyData_Weapon(const FECsWeaponSlot &Slot, UCsData_Weapon* InData, UCsData_WeaponMaterialSkin* InSkin, const bool &Equipped = true);
+	virtual void ApplyData_Weapon(const FECsWeaponSlot &Slot, UCsData_Weapon_DEPRECATED* InData, UCsData_WeaponMaterialSkin* InSkin, const bool &Equipped = true);
 
 	TWeakObjectPtr<UCsData_WeaponMaterialSkin> MyData_WeaponMaterialSkin;
 

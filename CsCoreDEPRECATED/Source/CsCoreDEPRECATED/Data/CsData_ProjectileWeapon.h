@@ -1,7 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Data/CsData_Weapon.h"
-#include "Types/CsTypes_Weapon.h"
+#include "Data/CsData_Weapon_DEPRECATED.h"
+#include "CsTypes_Weapon.h"
+#include "Types/CsTypes_Weapon_DEPRECATED.h"
 #include "CsData_ProjectileWeapon.generated.h"
 
 class UCsData_ProjectileBase;
@@ -9,7 +10,7 @@ class ASkeletalMeshActor;
 class USkeletalMeshComponent;
 
 UCLASS(Abstract)
-class CSCOREDEPRECATED_API UCsData_ProjectileWeapon : public UCsData_Weapon
+class CSCOREDEPRECATED_API UCsData_ProjectileWeapon : public UCsData_Weapon_DEPRECATED
 {
 	GENERATED_UCLASS_BODY()
 

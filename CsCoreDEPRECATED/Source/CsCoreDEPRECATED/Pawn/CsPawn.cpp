@@ -782,12 +782,12 @@ ACsWeapon_DEPRECATED* ACsPawn::GetCurrentWeapon()
 	return GetWeapon(CurrentWeaponSlot);
 }
 
-UCsData_Weapon* ACsPawn::GetData_Weapon(const FECsWeaponSlot &Slot)
+UCsData_Weapon_DEPRECATED* ACsPawn::GetData_Weapon(const FECsWeaponSlot &Slot)
 {
 	return Data_Weapons[Slot.Value].IsValid() ? Data_Weapons[Slot.Value].Get() : nullptr;
 }
 
-UCsData_Weapon* ACsPawn::GetCurrentData_Weapon()
+UCsData_Weapon_DEPRECATED* ACsPawn::GetCurrentData_Weapon()
 {
 	return GetData_Weapon(CurrentWeaponSlot);
 }

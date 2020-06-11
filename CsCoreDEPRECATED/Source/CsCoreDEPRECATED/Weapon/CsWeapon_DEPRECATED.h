@@ -3,7 +3,8 @@
 #include "GameFramework/Actor.h"
 // Types
 #include "Types/CsTypes.h"
-#include "Types/CsTypes_Weapon.h"
+#include "CsTypes_Weapon.h"
+#include "Types/CsTypes_Weapon_DEPRECATED.h"
 #include "Types/CsTypes_Item.h"
 	// Property
 		// Ref
@@ -214,7 +215,7 @@ struct FCsWeapon_TMapRef_float : public TCsIntegralType_TMap_Ref_float<FECsWeapo
 #define CS_WEAPON_CUSTOM_VALUE -1
 #define CS_PROJECTILE_FIRE_PAYLOAD_POOL_SIZE 64
 
-class UCsData_Weapon;
+class UCsData_Weapon_DEPRECATED;
 
 UCLASS()
 class CSCOREDEPRECATED_API ACsWeapon_DEPRECATED : public AActor
@@ -272,7 +273,7 @@ public:
 	template<typename T>
 	void SetMemberRefValue(struct TCsProperty_TArray_Ref<T>& Member, const FString& MemberName)
 	{
-		UCsData_Weapon* Data_Weapon = GetMyData_Weapon();
+		UCsData_Weapon_DEPRECATED* Data_Weapon = GetMyData_Weapon();
 
 		Member.ResetValues();
 
@@ -369,10 +370,10 @@ public:
 #pragma region
 public:
 
-	TWeakObjectPtr<UCsData_Weapon> MyData_Weapon;
+	TWeakObjectPtr<UCsData_Weapon_DEPRECATED> MyData_Weapon;
 
 	UFUNCTION(BlueprintCallable, Category = "Data")
-	UCsData_Weapon* GetMyData_Weapon();
+	UCsData_Weapon_DEPRECATED* GetMyData_Weapon();
 
 	template<typename T>
 	T* GetMyData_Weapon()

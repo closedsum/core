@@ -537,7 +537,7 @@ ACsManager_Inventory* ACsWeapon_DEPRECATED::GetMyManager_Inventory()
 // Data
 #pragma region
 
-UCsData_Weapon* ACsWeapon_DEPRECATED::GetMyData_Weapon()
+UCsData_Weapon_DEPRECATED* ACsWeapon_DEPRECATED::GetMyData_Weapon()
 {
 	return MyData_Weapon.IsValid() ? MyData_Weapon.Get() : nullptr;
 }
@@ -738,7 +738,7 @@ void ACsWeapon_DEPRECATED::OnTick(const float &DeltaSeconds)
 
 void ACsWeapon_DEPRECATED::OnTick_HandleStates()
 {
-	UCsData_Weapon* Data_Weapon = GetMyData_Weapon();
+	UCsData_Weapon_DEPRECATED* Data_Weapon = GetMyData_Weapon();
 	const int32 maxAmmo			= MaxAmmo.GetEX(CS_WEAPON_DATA_VALUE);
 
 	const float TimeSeconds = GetWorld()->GetTimeSeconds();

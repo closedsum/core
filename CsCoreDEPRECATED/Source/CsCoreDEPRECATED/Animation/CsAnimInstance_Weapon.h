@@ -1,11 +1,11 @@
 #pragma once
 #include "Animation/CsAnimInstance.h"
 #include "Animation/CsTypes_AnimInstance_Weapon.h"
-#include "Types/CsTypes_Weapon.h"
+#include "CsTypes_Weapon.h"
 #include "CsAnimInstance_Weapon.generated.h"
 
 class ACsWeapon_DEPRECATED;
-class UCsData_Weapon;
+class UCsData_Weapon_DEPRECATED;
 class UCsData_WeaponMaterialSkin;
 class UAnimMontage;
 class UAnimSequence;
@@ -59,7 +59,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_WeaponPtr Data_Weapon;
 
-	UCsData_Weapon* GetData_Weapon();
+	UCsData_Weapon_DEPRECATED* GetData_Weapon();
 
 	template<typename T>
 	T* GetData_Weapon()

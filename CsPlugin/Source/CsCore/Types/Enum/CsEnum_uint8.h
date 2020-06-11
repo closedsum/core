@@ -90,7 +90,7 @@ public:
 
 	FORCEINLINE FString ToGraphPinString() const
 	{
-		return TEXT("(Name=\"") + Name + TEXT("\",DisplayName=\"") + DisplayName + TEXT("\",Name_Internal=\"") + Name_Internal.ToString() + TEXT("\",Value=") + FString::FromInt(Value) + TEXT(")");
+		return TEXT("(Value=") + FString::FromInt(Value) + TEXT(",Name=\"") + Name + TEXT("\",DisplayName=\"") + DisplayName + TEXT("\",Name_Internal=\"") + Name_Internal.ToString() + TEXT("\")");
 	}
 };
 

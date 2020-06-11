@@ -132,7 +132,7 @@ protected:
 		}
 		else
 		{
-			EnumSelectionString = TEXT("(Name=\"\",DisplayName=\"\",Name_Internal=\"None\",Value=0)");;
+			EnumSelectionString = TEXT("(Value=0,Name=\"\",DisplayName=\"\",Name_Internal=\"None\")");;
 		}
 
 		if (GraphPinObj->GetDefaultAsString() != EnumSelectionString)

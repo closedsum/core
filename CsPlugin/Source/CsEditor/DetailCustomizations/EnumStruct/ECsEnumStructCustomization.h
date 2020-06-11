@@ -86,8 +86,6 @@ protected:
 		CustomPopulateEnumMap();
 		PopulateEnumMapFromSettings();
 		
-		bPerformDropDownCheck = true;
-
 		const int32& Count = EnumMap::Get().Num();
 
 		for (int32 I = 0; I < Count; ++I)

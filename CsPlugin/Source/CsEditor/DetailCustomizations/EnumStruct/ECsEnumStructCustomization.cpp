@@ -65,8 +65,13 @@ void FECsEnumStructCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> St
 	if (bPerformDropDownCheck)
 	{
 		UProperty* Property	= StructPropertyHandle->GetProperty();
+		UPackage* Package   = Cast<UPackage>(Property->GetOutermost());
 
-		if (Property->HasAnyPropertyFlags(CPF_DisableEditOnTemplate | CPF_DisableEditOnInstance | CPF_EditConst))
+		bool EditingTemplate = Package && Package->GetName().StartsWith(TEXT("/Script"));
+
+		if (Property->HasAnyPropertyFlags(CPF_EditConst) ||					// NOT Editable in Editor
+			(EditingTemplate &&												// EditDefaultsOnly
+			 Property->HasAnyPropertyFlags(CPF_DisableEditOnTemplate)))
 		{
 			const int32 Count = DisplayNameList.Num();
 

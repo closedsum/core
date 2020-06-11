@@ -2,21 +2,19 @@
 #pragma once
 
 #include "UObject/Interface.h"
-#include "CsWeapon.generated.h"
+#include "CsProjectileWeapon.generated.h"
 
 UINTERFACE(Blueprintable)
-class CSWP_API UCsWeapon : public UInterface
+class CSWP_API UCsProjectileWeapon : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class ICsData_Weapon;
-
-class CSWP_API ICsWeapon
+class CSWP_API ICsProjectileWeapon
 {
 	GENERATED_IINTERFACE_BODY()
 
 public:
 
-	virtual ICsData_Weapon* GetData() const = 0;
+	virtual void Fire() = 0;
 };

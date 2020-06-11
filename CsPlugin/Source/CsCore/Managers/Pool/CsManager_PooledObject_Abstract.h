@@ -116,18 +116,43 @@ class TCsManager_PooledObject_Abstract
 	static_assert(std::is_base_of<ICsGetInterfaceMap, PayloadType>(), "TCsManager_PooledObject_Abstract: PayloadType does NOT implement the interface: ICsGetInterfaceMap.");
 
 public:
-	TCsManager_PooledObject_Abstract()
+	TCsManager_PooledObject_Abstract() :
+		Name(),
+		CurrentWorld(nullptr),
+		ConstructContainer_Impl(),
+		ConstructObject_Impl(),
+		OnConstructObject_Event(),
+		ConstructParams(),
+		Pool(),
+		Links(),
+		PoolSize(0),
+		PoolIndex(0),
+		AllocatedObjects(),
+		AllocatedHead(nullptr),
+		AllocatedTail(nullptr),
+		AllocatedObjectsSize(0),
+		OnAddToPool_Event(),
+		OnAddToPool_UpdateScriptDelegates_Impl(),
+		OnUpdate_Object_Event(),
+		OnDeallocate_Event(),
+		Payloads(),
+		PooledObjectPayloads(),
+		PayloadSize(0),
+		PayloadIndex(0),
+		ConstructPayload_Impl(),
+		LogType(),
+		OnSpawn_Event(),
+		Script_GetCache_Impl(),
+		Script_Allocate_Impl(),
+		Script_Deallocate_Impl(),
+		Script_Update_Impl()
 	{
 		Name = TEXT("TCsManager_PooledObject_Abstract");
-
-		CurrentWorld = nullptr;
 
 		OnAddToPool_Event.Clear();
 		OnDeallocate_Event.Clear();
 
 		Pool.Reset();
-		PoolSize = 0;
-		PoolIndex = 0;
 
 		ConstructContainer_Impl.BindRaw(this, &TCsManager_PooledObject_Abstract<InterfaceType, InterfaceContainerType, PayloadType>::ConstructContainer);
 		ConstructObject_Impl.BindRaw(this, &TCsManager_PooledObject_Abstract<InterfaceType, InterfaceContainerType, PayloadType>::ConstructObject);
@@ -135,8 +160,6 @@ public:
 		AllocatedObjects.Reset();
 
 		Payloads.Reset();
-		PayloadSize = 0;
-		PayloadIndex = 0;
 
 		OnSpawn_Event.Clear();
 	}
@@ -460,7 +483,10 @@ public:
 		for (int32 I = 0; I < Size; ++I)
 		{
 			InterfaceContainerType* O = ConstructObject_Impl.Execute();
-			UObject* Object			  = O->GetObject();
+
+			checkf(O, TEXT("%s::CreatePool: Failed to ConstructObject of type: InterfaceContainerType."), *Name);
+
+			UObject* Object	= O->GetObject();
 
 #if WITH_EDITOR
 			// ICsPooledObject Script Interface
@@ -487,7 +513,11 @@ public:
 			}
 #endif // #if WTIH_EDITOR
 
-			O->GetCache()->Init(I);
+			ICsPooledObjectCache* Cache = O->GetCache();
+
+			checkf(Cache, TEXT("%s::CreatePool: Failed to get Cache of type: ICsPooledObjectCache."), *Name);
+
+			Cache->Init(I);
 			O->Deallocate();
 
 			Pool.Add(O);
@@ -523,6 +553,9 @@ public:
 		checkf(Object, TEXT("%s::AddToPool: Object is NULL."), *Name);
 
 		InterfaceContainerType* O = ConstructContainer_Impl.Execute();
+
+		checkf(O, TEXT("%s::AddToPool: Failed to Construct Container of type: InterfaceContainerType."), *Name);
+
 		Pool.Add(O);
 
 		O->SetObject(Object);
@@ -532,7 +565,11 @@ public:
 		O->Script_Deallocate_Impl = Script_Deallocate_Impl;
 		O->Script_Update_Impl	 = Script_Update_Impl;
 
-		const int32& Index = O->GetCache()->GetIndex();
+		ICsPooledObjectCache* Cache = O->GetCache();
+
+		checkf(Cache, TEXT("%s::AddToPool: Cache is NULL."), *Name);
+
+		const int32& Index = Cache->GetIndex();
 
 		checkf(Index == INDEX_NONE, TEXT("%s::AddToPool: PooledObject is already a part of an existing pool."), *Name);
 
@@ -561,7 +598,7 @@ public:
 		}
 #endif // #if WITH_EDITOR
 
-		O->GetCache()->Init(PoolSize);
+		Cache->Init(PoolSize);
 		O->Deallocate();
 
 		// Add Link
@@ -679,7 +716,11 @@ public:
 		// Interface
 		if (ICsPooledObject* P = Cast<ICsPooledObject>(Object))
 		{
-			Index = P->GetCache()->GetIndex();
+			ICsPooledObjectCache* Cache = P->GetCache();
+
+			checkf(Cache, TEXT("%s::AddToAllocatedObjects: Cache is NULL."), *Name);
+
+			Index = Cache->GetIndex();
 		}
 		// Script Interface
 		else
@@ -712,7 +753,11 @@ public:
 
 			InterfaceContainerType* O = Pool[Index];
 
-			if (O->GetCache()->IsAllocated())
+			ICsPooledObjectCache* Cache = O->GetCache();
+
+			checkf(Cache, TEXT("%s::AddToAllocatedObjects: Cache is NULL."), *Name);
+
+			if (Cache->IsAllocated())
 				return O;
 
 			AddToAllocatedObjects_Internal(O);
@@ -944,7 +989,11 @@ public:
 		// Interface
 		if (ICsPooledObject* Interface = Cast<ICsPooledObject>(Object))
 		{
-			Index = Interface->GetCache()->GetIndex();
+			ICsPooledObjectCache* Cache = Interface->GetCache();
+
+			checkf(Cache, TEXT("%s::FindObject: Cache is NULL."), *Name);
+
+			Index = Cache->GetIndex();
 		}
 		// Script Interface
 		else
@@ -1019,7 +1068,11 @@ public:
 		// Interface
 		if (ICsPooledObject* Interface = Cast<ICsPooledObject>(Object))
 		{
-			Index = Interface->GetCache()->GetIndex();
+			ICsPooledObjectCache* Cache = Interface->GetCache();
+
+			checkf(Cache, TEXT("%s::FindSafeObject: Cache is NULL."), *Name);
+
+			Index = Cache->GetIndex();
 		}
 		// Script Interface
 		else
@@ -1073,13 +1126,17 @@ public:
 			InterfaceContainerType* O = **Current;
 			Next					  = Current->Next();
 
-			if (O->GetCache()->GetUpdateType() == ECsPooledObjectUpdate::Manager)
+			ICsPooledObjectCache* Cache = O->GetCache();
+
+			checkf(Cache, TEXT("%s::Update: Cache is NULL."), *Name);
+
+			if (Cache->GetUpdateType() == ECsPooledObjectUpdate::Manager)
 			{
 				O->Update(DeltaTime);
 			}
 
 			// Check if PooledObject is queued for Deallocation
-			if (O->GetCache()->ShouldDeallocate())
+			if (Cache->ShouldDeallocate())
 			{
 #if !UE_BUILD_SHIPPING
 				//LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update], ECsPoolTransaction::Deallocate, O);
@@ -1092,7 +1149,7 @@ public:
 			}
 
 			// Check if PooledObject was Deallocated NOT in a normal way (i.e. Out of Bounds)
-			if (!O->GetCache()->IsAllocated())
+			if (!Cache->IsAllocated())
 			{
 #if !UE_BUILD_SHIPPING
 				//UE_LOG(LogCs, Warning, TEXT("%s::OnTick: %s: %s at PoolIndex: %d was prematurely deallocated NOT in a normal way."), *Name, *(ConstructParams.ClassName), *(GetObjectName(O)), O.GetCache()->GetIndex());
@@ -1104,7 +1161,7 @@ public:
 			}
 
 			// Check if PooledObject LifeTime has expired.
-			if (O->GetCache()->HasLifeTimeExpired())
+			if (Cache->HasLifeTimeExpired())
 			{
 #if !UE_BUILD_SHIPPING
 				//LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update], ECsPoolTransaction::Deallocate, O);
@@ -1163,7 +1220,11 @@ protected:
 			PoolIndex				  = (PoolIndex + 1) % PoolSize;
 			InterfaceContainerType* O = Pool[PoolIndex];
 
-			if (!O->GetCache()->IsAllocated())
+			ICsPooledObjectCache* Cache = O->GetCache();
+
+			checkf(Cache, TEXT("%s::Allocate: Cache is NULL."), *Name);
+
+			if (!Cache->IsAllocated())
 			{
 				FCsInterfaceMap* InterfaceMap = Payload->GetInterfaceMap();
 
@@ -1407,7 +1468,7 @@ protected:
 
 	virtual void LogTransaction(const FString& FunctionName, const ECsPoolTransaction& Transaction, const InterfaceContainerType* Object)
 	{
-		if (FCsCVarLogMap::Get().IsShowing(LogType))
+		//if (FCsCVarLogMap::Get().IsShowing(LogType))
 		{
 			/*
 			const FString& TransactionAsString = NCsPoolTransaction::ToActionString(Transaction);

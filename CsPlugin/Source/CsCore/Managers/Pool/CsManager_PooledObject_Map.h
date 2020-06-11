@@ -93,11 +93,30 @@ public:
 #pragma endregion Structs
 
 public:
-	TCsManager_PooledObject_Map()
+	TCsManager_PooledObject_Map() :
+		Name(),
+		CurrentWorld(nullptr),
+		CurrentConstructObjectType(),
+		ConstructContainer_Impl(),
+		Pools(),
+		ConstructManagerPooledObjects_Impl(),
+		OnCreatePool_AddToPool_Event(),
+		CurrentCreatePoolType(),
+		OnAddToPool_Event(),
+		OnAddToAllocatedObjects_Event(),
+		OnPreUpdate_Pool_Impl(),
+		OnUpdate_Object_Event(),
+		OnPostUpdate_Pool_Impl(),
+		CurrentUpdatePoolType(),
+		CurrentConstructPayloadType(),
+		ConstructPayload_Impl(),
+		LogType(),
+		OnSpawn_Event(),
+		Script_GetCache_Impl(),
+		Script_Allocate_Impl(),
+		Script_Deallocate_Impl(),
+		Script_Update_Impl()
 	{
-		Name = NCsCached::Str::Empty;
-		CurrentWorld = nullptr;
-
 		ConstructManagerPooledObjects_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructManagerPooledObjects);
 
 		OnAddToPool_Event.Clear();

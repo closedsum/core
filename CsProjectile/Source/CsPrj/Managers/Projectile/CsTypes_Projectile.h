@@ -850,6 +850,7 @@ public:
 		InterfaceMap = new FCsInterfaceMap();
 
 		InterfaceMap->Add<ICsPooledObjectCache>(static_cast<ICsPooledObjectCache*>(this));
+		InterfaceMap->Add<ICsProjectileCache>(static_cast<ICsProjectileCache*>(this));
 	}
 
 	~FCsProjectileCache()

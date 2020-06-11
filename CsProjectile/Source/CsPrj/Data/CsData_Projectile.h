@@ -62,6 +62,8 @@ public:
 	{
 	}
 
+	~FCsData_ProjectileImpl(){}
+
 	FORCEINLINE void SetInitialSpeed(float* Value)
 	{
 		InitialSpeed = Value;

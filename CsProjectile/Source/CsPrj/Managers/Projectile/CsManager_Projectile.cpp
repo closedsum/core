@@ -23,6 +23,21 @@
 #include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
+// Cached
+#pragma region
+
+namespace NCsManagerProjectile
+{
+	namespace Name
+	{
+		const FName InitialSpeed = FName("InitialSpeed");
+		const FName MaxSpeed = FName("MaxSpeed");
+		const FName GravityScale = FName("GravityScale");
+	}
+}
+
+#pragma endregion Cached
+
 // Internal
 #pragma region
 
@@ -224,6 +239,14 @@ void UCsManager_Projectile::CleanUp()
 {
 	Internal.Shutdown();
 	Pool.Reset();
+
+	for (TPair<FName, ICsData_Projectile*>& Pair : DataMap)
+	{
+		ICsData_Projectile* Data = Pair.Value;
+		DeconstructData(Data);
+		Pair.Value = nullptr;
+	}
+	DataMap.Reset();
 }
 
 	// Root
@@ -259,6 +282,80 @@ void UCsManager_Projectile::SetupInternal()
 		Internal.Script_Allocate_Impl = Script_Allocate_Impl;
 		Internal.Script_Deallocate_Impl = Script_Deallocate_Impl;
 		Internal.Script_Update_Impl = Script_Update_Impl;
+	}
+#if !UE_BUILD_SHIPPING
+	//if (FCsCVarToggleMap::Get().IsEnabled(NCsCVarToggle::EnableManagerProjectileUnitTest))
+	//{
+		// Do Nothing
+	//}
+	//else
+#endif // #if !UE_BUILD_SHIPPING
+		// If any settings have been set for Manager_Creep, apply them
+	{
+		UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>();
+
+		checkf(ModuleSettings, TEXT("UCsManager_Projectile::SetupInternal: Failed to get settings of type: UCsTdSettings."));
+
+		Settings = ModuleSettings->ManagerProjectile;
+
+		InitInternalFromSettings();
+	}
+}
+
+void UCsManager_Projectile::InitInternalFromSettings()
+{
+#if WITH_EDITOR
+	if (Settings.Payload == NAME_None)
+	{
+		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::InitInternalFromSettings: No Payload specified in settings. Storing hard references on manager."));
+	}
+#else
+	checkf(Settings.Payload != NAME_None, TEXT("UCsManager_Projectile::InitInternalFromSettings: No Payload specified in settings."));
+#endif // #if WITH_EDITOR
+
+	PopulateDataMapFromSettings();
+
+	if (Settings.PoolParams.Num() > CS_EMPTY)
+	{
+		FCsManager_Projectile_Internal::FCsManagerPooledObjectMapParams Params;
+
+		Params.Name  = TEXT("UCsManager_Projectile::FCsManager_Projectile_Internal");
+		Params.World = MyRoot->GetWorld();
+
+		for (const TPair<FECsProjectile, FCsSettings_Manager_Projectile_PoolParams>& Pair : Settings.PoolParams)
+		{
+			const FECsProjectile& Type									= Pair.Key;
+			const FCsSettings_Manager_Projectile_PoolParams& PoolParams = Pair.Value;
+
+			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
+
+			checkf(PoolParams.Class.ToSoftObjectPath().IsValid(), TEXT("UCsManager_Projectile::InitInternalFromSettings: Class for Type: %s is NOT a Valid Path."), *(Type.Name));
+
+#if !UE_BUILD_SHIPPING
+			if (!PoolParams.Class.Get())
+			{
+				UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::InitInternalFromSettings: Class @ for Type: %s is NOT already loaded in memory."), *(PoolParams.Class.ToString()), *(Type.Name));
+			}
+#endif // #if !UE_BUILD_SHIPPING
+
+			UClass* Class = PoolParams.Class.LoadSynchronous();
+
+			checkf(Class, TEXT("UCsManager_Projectile::InitInternalFromSettings: Failed to load Class @ for Type: %s."), *(PoolParams.Class.ToString()), *(Type.Name));
+
+			ClassMap.Add(Type, Class);
+
+			ObjectParams.Name  = Params.Name + TEXT("_") + Type.Name;
+			ObjectParams.World = Params.World;
+			//ObjectParams.LogType
+			ObjectParams.ConstructParams.Class			  = Class;
+			ObjectParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
+			ObjectParams.bConstructPayloads				  = true;
+			ObjectParams.PayloadSize					  = PoolParams.PayloadSize;
+			ObjectParams.bCreatePool					  = true;
+			ObjectParams.PoolSize						  = PoolParams.PoolSize;
+		}
+
+		InitInternal(Params);
 	}
 }
 
@@ -480,7 +577,7 @@ const FCsProjectilePooled* UCsManager_Projectile::ScriptSpawn(const FECsProjecti
 {
 	ICsProjectilePayload* Payload = ScriptAllocatePayload(Type, ScriptPayload);
 
-	return Internal.Spawn(Type, Payload);
+	return Spawn(Type, Payload);
 }
 
 #pragma endregion Spawn
@@ -508,17 +605,23 @@ bool UCsManager_Projectile::Destroy(ICsProjectile* Projectile)
 
 void UCsManager_Projectile::PopulateDataMapFromSettings()
 {
-	if (UCsProjectileSettings* Settings = GetMutableDefault<UCsProjectileSettings>())
-	{
-		if (Settings->bProjectilesEmulateDataInterfaces)
-		{
-			// Check DataTable of Projectiles
-			TSoftObjectPtr<UDataTable> Projectiles = Settings->Projectiles;
+	using namespace NCsManagerProjectile;
 
-			if (UDataTable* DataTable = Projectiles.LoadSynchronous())
+	if (UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>())
+	{
+		// Check if the DataTable entries should emulate any interfaces (i.e. ICsData_Projectile, ... etc)
+		if (ModuleSettings->bProjectilesEmulateDataInterfaces)
+		{
+			// TODO: Get DataTable from Manager_Data
+			// TODO: Add check for ModuleSettings->ManagerProjectile.Payload
+
+			// Check DataTable of Projectiles
+			TSoftObjectPtr<UDataTable> Projectiles = ModuleSettings->Projectiles;
+
+			if (UDataTable* DT = Projectiles.LoadSynchronous())
 			{
-				const UScriptStruct* RowStruct    = DataTable->GetRowStruct();
-				const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+				const UScriptStruct* RowStruct    = DT->GetRowStruct();
+				const TMap<FName, uint8*>& RowMap = DT->GetRowMap();
 
 				for (const TPair<FName, uint8*>& Pair : RowMap)
 				{
@@ -533,7 +636,8 @@ void UCsManager_Projectile::PopulateDataMapFromSettings()
 					{
 						// InitialSpeed
 						{
-							UFloatProperty* FloatProperty = Cast<UFloatProperty>(RowStruct->CustomFindProperty(FName("InitialSpeed")));
+							UFloatProperty* FloatProperty = Cast<UFloatProperty>(RowStruct->FindPropertyByName(Name::InitialSpeed));
+							FloatProperty				  = FloatProperty ? FloatProperty : Cast<UFloatProperty>(RowStruct->CustomFindProperty(Name::InitialSpeed));
 
 							checkf(FloatProperty, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to find Propery: InitialSpeed when emulating interface: ICsData_Projectile."));
 							 
@@ -545,7 +649,8 @@ void UCsManager_Projectile::PopulateDataMapFromSettings()
 						}
 						// MaxSpeed
 						{
-							UFloatProperty* FloatProperty = Cast<UFloatProperty>(RowStruct->CustomFindProperty(FName("MaxSpeed")));
+							UFloatProperty* FloatProperty = Cast<UFloatProperty>(RowStruct->FindPropertyByName(Name::MaxSpeed));
+							FloatProperty				  = FloatProperty ? FloatProperty : Cast<UFloatProperty>(RowStruct->CustomFindProperty(Name::MaxSpeed));
 
 							checkf(FloatProperty, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to find Propery: MaxSpeed when emulating interface: ICsData_Projectile."));
 
@@ -557,7 +662,8 @@ void UCsManager_Projectile::PopulateDataMapFromSettings()
 						}
 						// GravityScale
 						{
-							UFloatProperty* FloatProperty = Cast<UFloatProperty>(RowStruct->CustomFindProperty(FName("GravityScale")));
+							UFloatProperty* FloatProperty = Cast<UFloatProperty>(RowStruct->FindPropertyByName(Name::GravityScale));
+							FloatProperty				  = FloatProperty ? FloatProperty : Cast<UFloatProperty>(RowStruct->CustomFindProperty(Name::GravityScale));
 
 							checkf(FloatProperty, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to find Propery: GravityScale when emulating interface: ICsData_Projectile."));
 
@@ -569,10 +675,25 @@ void UCsManager_Projectile::PopulateDataMapFromSettings()
 						}
 					}
 				}
-
 			}
 		}
 	}
+}
+
+void UCsManager_Projectile::DeconstructData(ICsData_Projectile* Data)
+{
+	delete static_cast<FCsData_ProjectileImpl*>(Data);
+}
+
+ICsData_Projectile* UCsManager_Projectile::GetData(const FName& Name)
+{
+	checkf(Name != NAME_None, TEXT("UCsManager_Projectile::GetData: Name = None is NOT Valid."));
+
+	ICsData_Projectile** DataPtr = DataMap.Find(Name);
+
+	checkf(DataPtr, TEXT("UCsManager_Projectile::GetData: Failed to find Data for Name: %s."), *(Name.ToString()));
+
+	return *DataPtr;
 }
 
 #pragma endregion Data

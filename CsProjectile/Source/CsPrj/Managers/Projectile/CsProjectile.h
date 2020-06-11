@@ -11,7 +11,7 @@ class CSPRJ_API UCsProjectile : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
-//class ICsData_Projectile;
+class ICsData_Projectile;
 
 class CSPRJ_API ICsProjectile
 {
@@ -24,7 +24,7 @@ public:
 	*
 	* return Data that implements the interface: ICsData_Projectile.
 	*/
-	//virtual ICsData_Projectile* GetData()  = 0;
+	virtual ICsData_Projectile* GetData() const = 0;
 
 	/**
 	*
@@ -98,7 +98,10 @@ public:
 
 	FCsProjectilePooled() :
 		Super(),
-		Projectile(nullptr)
+		Projectile(nullptr),
+		bScriptProjectile(false),
+		Script_GetOwner_Impl(),
+		Script_GetInstigator_Impl()
 	{
 	}
 

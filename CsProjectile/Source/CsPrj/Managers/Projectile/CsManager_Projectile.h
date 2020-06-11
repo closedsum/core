@@ -3,9 +3,10 @@
 
 #include "UObject/Object.h"
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
+#include "Managers/Resource/CsManager_ResourceValueType.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
 #include "Managers/Projectile/CsProjectile.h"
-#include "Managers/Resource/CsManager_ResourceValueType.h"
+#include "Managers/Projectile/CsSettings_Manager_Projectile.h"
 #include "CsManager_Projectile.generated.h"
 
 // Delegates
@@ -50,6 +51,7 @@ public:
 
 class ICsGetManagerProjectile;
 class ICsData_Projectile;
+class UDataTable;
 
 UCLASS()
 class CSPRJ_API UCsManager_Projectile : public UObject
@@ -120,6 +122,21 @@ public:
 
 #pragma endregion Singleton
 
+// Settings
+#pragma region
+protected:
+
+	FCsSettings_Manager_Projectile Settings;
+
+public:
+
+	FORCEINLINE void SetSettings(const FCsSettings_Manager_Projectile& InSettings)
+	{
+		Settings = InSettings;
+	}
+
+#pragma endregion Settings
+
 // Internal
 #pragma region
 protected:
@@ -133,6 +150,11 @@ protected:
 	virtual void SetupInternal();
 
 public:
+
+	/**
+	*
+	*/
+	void InitInternalFromSettings();
 
 	/**
 	*
@@ -570,11 +592,25 @@ public:
 
 // Data
 #pragma region
-public:
+protected:
 
 	TMap<FName, ICsData_Projectile*> DataMap;
 
+public:
+
 	virtual void PopulateDataMapFromSettings();
+
+	virtual void DeconstructData(ICsData_Projectile* Data);
+
+	ICsData_Projectile* GetData(const FName& Name);
+
+private:
+
+	UPROPERTY()
+	TMap<FECsProjectile, UClass*> ClassMap;
+
+	UPROPERTY()
+	UDataTable* DataTable;
 
 #pragma endregion Data
 };

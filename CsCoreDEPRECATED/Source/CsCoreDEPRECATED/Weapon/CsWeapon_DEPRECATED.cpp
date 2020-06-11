@@ -308,7 +308,7 @@ void ACsWeapon_DEPRECATED::SetMemberValue_float(const FECsWeaponMultiValueMember
 
 void ACsWeapon_DEPRECATED::SetMultiValueMembers()
 {
-	UCsData_ProjectileWeapon* Data = GetMyData_Weapon<UCsData_ProjectileWeapon>();
+	UCsData_ProjectileWeapon_DEPRECATED* Data = GetMyData_Weapon<UCsData_ProjectileWeapon_DEPRECATED>();
 
 	// MaxAmmo
 	MaxAmmo.ResetValues();
@@ -544,7 +544,7 @@ UCsData_Weapon_DEPRECATED* ACsWeapon_DEPRECATED::GetMyData_Weapon()
 
 UCsData_ProjectileBase* ACsWeapon_DEPRECATED::GetMyData_Projectile(const FECsWeaponFireMode& FireMode, const bool &IsCharged)
 {
-	return GetMyData_Weapon<UCsData_ProjectileWeapon>()->GetData_Projectile(FireMode, IsCharged);
+	return GetMyData_Weapon<UCsData_ProjectileWeapon_DEPRECATED>()->GetData_Projectile(FireMode, IsCharged);
 }
 
 #pragma endregion Data
@@ -1128,7 +1128,7 @@ ACsSound* ACsWeapon_DEPRECATED::GetSound(const FECsWeaponSound &SoundType){ retu
 
 void ACsWeapon_DEPRECATED::PlaySound(const FECsWeaponFireMode& FireMode, const FECsWeaponSound &SoundType)
 {
-	UCsData_ProjectileWeapon* Data	= GetMyData_Weapon<UCsData_ProjectileWeapon>();
+	UCsData_ProjectileWeapon_DEPRECATED* Data	= GetMyData_Weapon<UCsData_ProjectileWeapon_DEPRECATED>();
 	const ECsViewType ViewType		= GetCurrentViewType();
 
 	Data->PlaySound(GetWorld(), ViewType, FireMode, SoundType, GetMyOwner(), GetSoundParent());
@@ -1136,7 +1136,7 @@ void ACsWeapon_DEPRECATED::PlaySound(const FECsWeaponFireMode& FireMode, const F
 
 void ACsWeapon_DEPRECATED::StopSound(const FECsWeaponFireMode& FireMode, const FECsWeaponSound &SoundType)
 {
-	UCsData_ProjectileWeapon* Data  = GetMyData_Weapon<UCsData_ProjectileWeapon>();
+	UCsData_ProjectileWeapon_DEPRECATED* Data  = GetMyData_Weapon<UCsData_ProjectileWeapon_DEPRECATED>();
 	const ECsViewType ViewType		= GetCurrentViewType();
 
 	Data->StopSound(GetWorld(), ViewType, FireMode, SoundType, GetMyOwner(), GetSoundParent());
@@ -1777,7 +1777,7 @@ void ACsWeapon_DEPRECATED::FireProjectile(const FECsWeaponFireMode& FireMode, FC
 	const FVector& RealStart  = FirePayload->Location;
 	FVector RealDir			  = FirePayload->Direction;
 
-	UCsData_ProjectileWeapon* Data_Weapon	= GetMyData_Weapon<UCsData_ProjectileWeapon>();
+	UCsData_ProjectileWeapon_DEPRECATED* Data_Weapon	= GetMyData_Weapon<UCsData_ProjectileWeapon_DEPRECATED>();
 	UCsData_ProjectileBase* Data_Projectile	= Data_Weapon->GetData_Projectile(FireMode, FirePayload->ChargePercent > 0.0f);
 	const bool UseFakeProjectile			= Data_Weapon->UseFakeProjectile(FireMode);
 
@@ -1954,7 +1954,7 @@ void ACsWeapon_DEPRECATED::FireHitscan(const FECsWeaponFireMode& FireMode, const
 {
 	//ACsPawn* Pawn					 = GetMyPawn();
 	//ACsPlayerState* MyPlayerState	 = Cast<ACsPlayerState>(Pawn->PlayerState);
-	UCsData_ProjectileWeapon* Data_Weapon	= GetMyData_Weapon<UCsData_ProjectileWeapon>();
+	UCsData_ProjectileWeapon_DEPRECATED* Data_Weapon	= GetMyData_Weapon<UCsData_ProjectileWeapon_DEPRECATED>();
 	UCsData_ProjectileBase* Data_Projectile	= Data_Weapon->GetData_Projectile(FireMode, Payload->ChargePercent > 0.0f);
 	ACsManager_Trace* Manager_Trace			= ACsManager_Trace::Get(GetWorld());
 
@@ -2267,7 +2267,7 @@ void ACsWeapon_DEPRECATED::PlayMuzzleFlash(const FECsWeaponFireMode& FireMode)
 		Manager_FX				 = GameState->Manager_FX;
 	}
 
-	UCsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<UCsData_ProjectileWeapon>();
+	UCsData_ProjectileWeapon_DEPRECATED* Data_Weapon = GetMyData_Weapon<UCsData_ProjectileWeapon_DEPRECATED>();
 	const ECsViewType ViewType			  = GetCurrentViewType();
 	FCsFxElement* FX					  = Data_Weapon->GetMuzzleFX(ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
 

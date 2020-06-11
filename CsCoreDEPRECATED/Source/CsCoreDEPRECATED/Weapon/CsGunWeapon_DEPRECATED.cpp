@@ -29,7 +29,7 @@ void ACsGunWeapon_DEPRECATED::ApplyData_Weapon(const FECsWeaponSlot &Slot, UCsDa
 
 	MyData_Weapon = InData;
 
-	UCsData_ProjectileWeapon* Data_Weapon = Cast<UCsData_ProjectileWeapon>(InData);
+	UCsData_ProjectileWeapon_DEPRECATED* Data_Weapon = Cast<UCsData_ProjectileWeapon_DEPRECATED>(InData);
 	GripType = Data_Weapon->GetGripType();
 
 	MyData_WeaponMaterialSkin = InSkin;

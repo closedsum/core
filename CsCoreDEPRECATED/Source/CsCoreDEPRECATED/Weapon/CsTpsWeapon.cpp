@@ -11,7 +11,7 @@
 #include "Animation/CsAnimInstance_Character.h"
 #include "Animation/CsAnimInstance_Weapon.h"
 // Data
-#include "Data/CsData_ProjectileWeapon.h"
+#include "Data/CsData_ProjectileWeapon_DEPRECATED.h"
 #include "Data/CsData_Character.h"
 #include "Data/CsData_WeaponMaterialSkin.h"
 
@@ -180,7 +180,7 @@ void ACsTpsWeapon::SetMesh()
 {
 	Mesh->SetAnimInstanceClass(nullptr);
 
-	UCsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<UCsData_ProjectileWeapon>();
+	UCsData_ProjectileWeapon_DEPRECATED* Data_Weapon = GetMyData_Weapon<UCsData_ProjectileWeapon_DEPRECATED>();
 
 	if (!Data_Weapon->UseMesh())
 		return;
@@ -269,7 +269,7 @@ USkeletalMeshComponent* ACsTpsWeapon::GetMesh()
 
 FVector ACsTpsWeapon::GetMuzzleLocation(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode)
 {
-	return GetMyData_Weapon<UCsData_ProjectileWeapon>()->GetMuzzleLocation(GetMesh(), FireMode, CurrentProjectilePerShotIndex[FireMode]);
+	return GetMyData_Weapon<UCsData_ProjectileWeapon_DEPRECATED>()->GetMuzzleLocation(GetMesh(), FireMode, CurrentProjectilePerShotIndex[FireMode]);
 }
 
 #pragma endregion Firing

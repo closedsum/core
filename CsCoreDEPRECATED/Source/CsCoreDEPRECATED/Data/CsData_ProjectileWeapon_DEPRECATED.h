@@ -3,14 +3,14 @@
 #include "Data/CsData_Weapon_DEPRECATED.h"
 #include "CsTypes_Weapon.h"
 #include "Types/CsTypes_Weapon_DEPRECATED.h"
-#include "CsData_ProjectileWeapon.generated.h"
+#include "CsData_ProjectileWeapon_DEPRECATED.generated.h"
 
 class UCsData_ProjectileBase;
 class ASkeletalMeshActor;
 class USkeletalMeshComponent;
 
 UCLASS(Abstract)
-class CSCOREDEPRECATED_API UCsData_ProjectileWeapon : public UCsData_Weapon_DEPRECATED
+class CSCOREDEPRECATED_API UCsData_ProjectileWeapon_DEPRECATED : public UCsData_Weapon_DEPRECATED
 {
 	GENERATED_UCLASS_BODY()
 

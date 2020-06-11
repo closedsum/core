@@ -27,7 +27,7 @@
 // Library
 #include "Library/Load/CsLibrary_Load_DEPRECATED.h"
 // Data
-#include "Data/CsData_ProjectileWeapon.h"
+#include "Data/CsData_ProjectileWeapon_DEPRECATED.h"
 #include "CsWeapon_DEPRECATED.generated.h"
 
 // Data
@@ -305,7 +305,7 @@ public:
 	template<typename ValueType>
 	void SetMemberMultiRefValue(struct TCsProperty_TMap_Ref<FECsWeaponFireMode, ValueType>& Member, const FECsData_Weapon_FireMode &FireModeMember, const FString& MemberName)
 	{
-		UCsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<UCsData_ProjectileWeapon>();
+		UCsData_ProjectileWeapon_DEPRECATED* Data_Weapon = GetMyData_Weapon<UCsData_ProjectileWeapon_DEPRECATED>();
 
 		Member.ResetValues();
 

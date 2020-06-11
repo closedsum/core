@@ -14,7 +14,7 @@
 #include "AI/Pawn/CsAIPawn.h"
 #include "AI/CsAIPlayerState.h"
 // Weapon
-#include "Weapon/CsWeapon.h"
+#include "Weapon/CsWeapon_DEPRECATED.h"
 
 UCsBTTask_Shoot::UCsBTTask_Shoot(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -84,7 +84,7 @@ EBTNodeResult::Type UCsBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 
 	MyMemory->Shots = FMath::RandRange(Shots.Min, Shots.Max);
 
-	ACsWeapon* Weapon = Pawn->GetCurrentWeapon();
+	ACsWeapon_DEPRECATED* Weapon = Pawn->GetCurrentWeapon();
 
 	MyMemory->StartCount = Weapon->FireCount;
 
@@ -175,7 +175,7 @@ void UCsBTTask_Shoot::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 			return;
 
 		// Check finished Shooting (Duration or Shots)
-		ACsWeapon* Weapon = Pawn->GetCurrentWeapon();
+		ACsWeapon_DEPRECATED* Weapon = Pawn->GetCurrentWeapon();
 
 		if (!MyMemory->Completed)
 		{

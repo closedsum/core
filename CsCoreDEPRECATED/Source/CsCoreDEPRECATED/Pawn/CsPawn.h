@@ -606,13 +606,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
 	uint8 MaxWeaponCount;
 
-	TSubclassOf<class ACsWeapon> WeaponClass;
+	TSubclassOf<class ACsWeapon_DEPRECATED> WeaponClass;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Weapons")
-	TArray<class ACsWeapon*> Weapons;
+	TArray<class ACsWeapon_DEPRECATED*> Weapons;
 
 	UFUNCTION(BlueprintCallable, Category = "Weapons")
-	class ACsWeapon* GetWeapon(const FECsWeaponSlot &Slot);
+	class ACsWeapon_DEPRECATED* GetWeapon(const FECsWeaponSlot &Slot);
 
 	template<typename T>
 	T* GetWeapon(const FECsWeaponSlot &Slot)
@@ -621,7 +621,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "Weapons")
-	class ACsWeapon* GetCurrentWeapon();
+	class ACsWeapon_DEPRECATED* GetCurrentWeapon();
 
 	template<typename T>
 	T* GetCurrentWeapon()

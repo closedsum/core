@@ -16,7 +16,7 @@
 #include "AI/Pawn/CsAIPawn.h"
 #include "AI/CsAIPlayerState.h"
 // Weapon
-#include "Weapon/CsWeapon.h"
+#include "Weapon/CsWeapon_DEPRECATED.h"
  
 // Cache
 #pragma region

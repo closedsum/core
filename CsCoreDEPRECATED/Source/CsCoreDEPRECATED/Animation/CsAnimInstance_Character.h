@@ -33,9 +33,9 @@ public:
 
 	// Weapon
 
-	TWeakObjectPtr<class ACsWeapon> Weapon;
+	TWeakObjectPtr<class ACsWeapon_DEPRECATED> Weapon;
 
-	class ACsWeapon* GetWeapon();
+	class ACsWeapon_DEPRECATED* GetWeapon();
 
 	template<typename T>
 	T* GetWeapon()
@@ -43,7 +43,7 @@ public:
 		return Cast<T>(GetWeapon());
 	}
 
-	TSubclassOf<class ACsWeapon> WeaponClass;
+	TSubclassOf<class ACsWeapon_DEPRECATED> WeaponClass;
 
 	virtual void Spawn_Weapon();
 	virtual void ApplyData_Weapon();

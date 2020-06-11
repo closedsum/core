@@ -20,7 +20,7 @@
 //#include "Managers/InteractiveActor/CsDamageableActor.h"
 
 //#include "Pawn/CsPawn.h"
-//#include "Weapon/CsWeapon.h"
+//#include "Weapon/CsWeapon_DEPRECATED.h"
 
 #define CS_COLLISION_PROJECTILE	ECC_GameTraceChannel2
 
@@ -226,7 +226,7 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 	const bool IsLocalClient = true;// UCsLibrary_Common::IsLocalPawn(GetWorld(), InstigatingPawn);
 	const ECsViewType& ViewType = IsLocalClient ? ECsViewType::FirstPerson : ECsViewType::ThirdPerson;
 
-	//ACsWeapon* OwnerWeapon					= Cast<ACsWeapon>(Cache.GetOwner());
+	//ACsWeapon_DEPRECATED* OwnerWeapon					= Cast<ACsWeapon_DEPRECATED>(Cache.GetOwner());
 	//UCsData_Weapon* Data_Weapon				= OwnerWeapon ? OwnerWeapon->GetMyData_Weapon() : nullptr;
 	//UCsData_ProjectileBase* Data_Projectile = Cache.GetData();
 

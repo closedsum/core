@@ -4,7 +4,7 @@
 #include "Types/CsTypes_Weapon.h"
 #include "CsAnimInstance_Weapon.generated.h"
 
-class ACsWeapon;
+class ACsWeapon_DEPRECATED;
 class UCsData_Weapon;
 class UCsData_WeaponMaterialSkin;
 class UAnimMontage;
@@ -30,9 +30,9 @@ public:
 
 	virtual void SetupInGameSimulation() override;
 
-	TWeakObjectPtr<ACsWeapon> Weapon;
+	TWeakObjectPtr<ACsWeapon_DEPRECATED> Weapon;
 
-	ACsWeapon* GetWeapon();
+	ACsWeapon_DEPRECATED* GetWeapon();
 
 	template<typename T>
 	T* GetWeapon()
@@ -40,7 +40,7 @@ public:
 		return Cast<T>(GetWeapon());
 	}
 
-	TSubclassOf<ACsWeapon> WeaponClass;
+	TSubclassOf<ACsWeapon_DEPRECATED> WeaponClass;
 
 	virtual void ApplyData_Weapon();
 

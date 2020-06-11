@@ -21,7 +21,7 @@
 #include "AI/CsAIPlayerState.h"
 #include "Player/CsPlayerPawn.h"
 // Weapon
-#include "Weapon/CsWeapon.h"
+#include "Weapon/CsWeapon_DEPRECATED.h"
 // UI
 //#include "Components/CsWidgetComponent.h"
 //#include "UI/Simple/CsWidget_ProgressBar.h"
@@ -426,7 +426,7 @@ void ACsAIPawn::StartShootForCount(const int32 &Count)
 	Payload->SetName(NCsAIPawnCached::Str::StartShootForCount_Internal);
 	Payload->SetFName(NCsAIPawnCached::Name::StartShootForCount_Internal);
 
-	ACsWeapon* CurrentWeapon = GetCurrentWeapon();
+	ACsWeapon_DEPRECATED* CurrentWeapon = GetCurrentWeapon();
 
 	static const int32 COUNT_INDEX = 0;
 	Payload->SetValue_Counter(COUNT_INDEX, Count);
@@ -447,7 +447,7 @@ CS_COROUTINE(ACsAIPawn, StartShootForCount_Internal)
 	static const int32 START_COUNT_INDEX = 1;
 	const int32& StartCount = r->GetValue_Counter(START_COUNT_INDEX);
 
-	ACsWeapon* CurrentWeapon = p->GetCurrentWeapon();
+	ACsWeapon_DEPRECATED* CurrentWeapon = p->GetCurrentWeapon();
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -520,7 +520,7 @@ void ACsAIPawn::StopShoot()
 
 bool ACsAIPawn::IsShooting()
 {
-	ACsWeapon* CurrentWeapon = GetCurrentWeapon();
+	ACsWeapon_DEPRECATED* CurrentWeapon = GetCurrentWeapon();
 
 	const int32& Count = EMCsWeaponFireMode::Get().Num();
 

@@ -18,7 +18,7 @@
 
 #include "Pawn/CsPawn.h"
 
-#include "Weapon/CsWeapon.h"
+#include "Weapon/CsWeapon_DEPRECATED.h"
 
 // Cache
 #pragma region
@@ -46,7 +46,7 @@ UCsAnimInstance_Character::UCsAnimInstance_Character(const FObjectInitializer& O
 	: Super(ObjectInitializer)
 {
 #if WITH_EDITOR
-	WeaponClass = ACsWeapon::StaticClass();
+	WeaponClass = ACsWeapon_DEPRECATED::StaticClass();
 #endif // #if WITH_EDITOR
 }
 
@@ -124,7 +124,7 @@ void UCsAnimInstance_Character::SetupInGameSimulation()
 	ApplyData_Weapon();
 }
 
-ACsWeapon* UCsAnimInstance_Character::GetWeapon()
+ACsWeapon_DEPRECATED* UCsAnimInstance_Character::GetWeapon()
 {
 	return Weapon.IsValid() ? Weapon.Get() : nullptr;
 }
@@ -133,7 +133,7 @@ void UCsAnimInstance_Character::Spawn_Weapon()
 {
 	// Check if Weapon was already created. This may be the case when Refreshing Nodes for the AnimInstance
 
-	for (TActorIterator<ACsWeapon> Itr(GetWorld()); Itr; ++Itr)
+	for (TActorIterator<ACsWeapon_DEPRECATED> Itr(GetWorld()); Itr; ++Itr)
 	{
 		if (Itr &&
 			Itr->GetMyOwner() == this)
@@ -149,7 +149,7 @@ void UCsAnimInstance_Character::Spawn_Weapon()
 		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		SpawnInfo.ObjectFlags |= RF_Transient;
 
-		Weapon = GetWorld()->SpawnActor<ACsWeapon>(WeaponClass, SpawnInfo);
+		Weapon = GetWorld()->SpawnActor<ACsWeapon_DEPRECATED>(WeaponClass, SpawnInfo);
 		Weapon->SetMyOwner(this);
 	}
 }
@@ -183,7 +183,7 @@ void UCsAnimInstance_Character::NativeUpdateAnimation(float DeltaTimeX)
 
 void UCsAnimInstance_Character::OnTick_Handle_Weapon(const float &DeltaTimeX)
 {
-	if (ACsWeapon* MyWeapon = GetWeapon())
+	if (ACsWeapon_DEPRECATED* MyWeapon = GetWeapon())
 		MyWeapon->OnTick(DeltaTimeX);
 }
 

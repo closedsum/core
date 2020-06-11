@@ -24,7 +24,7 @@
 // Player
 #include "Player/CsPlayerStateBase.h"
 // Weapon
-#include "Weapon/CsWeapon.h"
+#include "Weapon/CsWeapon_DEPRECATED.h"
 
 // Enums
 #pragma region
@@ -67,7 +67,7 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 {
 	CurrentViewType = ECsViewType::ThirdPerson;
 
-	WeaponClass = ACsWeapon::StaticClass();
+	WeaponClass = ACsWeapon_DEPRECATED::StaticClass();
 
 	// State
 	HealthHandle.Set(&Health);
@@ -166,7 +166,7 @@ void ACsPawn::PostInitializeComponents()
 
 	for (int32 I = 0; I < MaxWeaponCount; I++)
 	{
-		Weapons[I] = GetWorld()->SpawnActor<ACsWeapon>(WeaponClass, SpawnInfo);
+		Weapons[I] = GetWorld()->SpawnActor<ACsWeapon_DEPRECATED>(WeaponClass, SpawnInfo);
 		Weapons[I]->SetMyPawn(this);
 	}
 
@@ -772,12 +772,12 @@ void ACsPawn::OnChange_CurrentWeaponSlot(const FECsWeaponSlot &Slot)
 #endif // #if WITH_EDITOR
 }
 
-ACsWeapon* ACsPawn::GetWeapon(const FECsWeaponSlot &Slot)
+ACsWeapon_DEPRECATED* ACsPawn::GetWeapon(const FECsWeaponSlot &Slot)
 {
 	return Weapons[Slot.Value];
 }
 
-ACsWeapon* ACsPawn::GetCurrentWeapon()
+ACsWeapon_DEPRECATED* ACsPawn::GetCurrentWeapon()
 {
 	return GetWeapon(CurrentWeaponSlot);
 }

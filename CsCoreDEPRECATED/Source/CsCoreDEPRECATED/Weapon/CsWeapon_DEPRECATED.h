@@ -27,7 +27,7 @@
 #include "Library/Load/CsLibrary_Load_DEPRECATED.h"
 // Data
 #include "Data/CsData_ProjectileWeapon.h"
-#include "CsWeapon.generated.h"
+#include "CsWeapon_DEPRECATED.generated.h"
 
 // Data
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnApplyDataWeapon, const FECsWeaponSlot&, WeaponSlot);
@@ -217,7 +217,7 @@ struct FCsWeapon_TMapRef_float : public TCsIntegralType_TMap_Ref_float<FECsWeapo
 class UCsData_Weapon;
 
 UCLASS()
-class CSCOREDEPRECATED_API ACsWeapon : public AActor
+class CSCOREDEPRECATED_API ACsWeapon_DEPRECATED : public AActor
 {
 	GENERATED_UCLASS_BODY()
 

@@ -11,7 +11,7 @@
 // Player
 #include "Player/CsPlayerState.h"
 // Weapon
-#include "Weapon/CsGunWeapon.h"
+#include "Weapon/CsGunWeapon_DEPRECATED.h"
 
 ACsFpsPawn::ACsFpsPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -169,7 +169,7 @@ void ACsFpsPawn::ApplyData_Weapon()
 {
 	for (int32 I = 0; I < CurrentWeaponCount; I++)
 	{
-		ACsGunWeapon* Weapon = Cast<ACsGunWeapon>(Weapons[I]);
+		ACsGunWeapon_DEPRECATED* Weapon = Cast<ACsGunWeapon_DEPRECATED>(Weapons[I]);
 
 		const FECsWeaponSlot& Slot = EMCsWeaponSlot::Get().GetEnumAt(I);
 

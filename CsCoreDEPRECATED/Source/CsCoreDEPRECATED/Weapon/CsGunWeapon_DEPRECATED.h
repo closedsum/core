@@ -3,7 +3,7 @@
 #include "Weapon/CsWeapon_DEPRECATED.h"
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Character.h"
-#include "CsGunWeapon.generated.h"
+#include "CsGunWeapon_DEPRECATED.generated.h"
 
 // Enums
 #pragma region
@@ -14,7 +14,7 @@ class UCsData_Weapon;
 class UCsData_WeaponMaterialSkin;
 
 UCLASS()
-class CSCOREDEPRECATED_API ACsGunWeapon : public ACsWeapon_DEPRECATED
+class CSCOREDEPRECATED_API ACsGunWeapon_DEPRECATED : public ACsWeapon_DEPRECATED
 {
 	GENERATED_UCLASS_BODY()
 

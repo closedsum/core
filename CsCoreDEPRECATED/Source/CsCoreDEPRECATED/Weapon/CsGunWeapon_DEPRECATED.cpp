@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Weapon/CsGunWeapon.h"
+#include "Weapon/CsGunWeapon_DEPRECATED.h"
 #include "CsCoreDEPRECATED.h"
 
 // Library
@@ -12,7 +12,7 @@
 #include "Data/CsData_Character.h"
 #include "Data/CsData_WeaponMaterialSkin.h"
 
-ACsGunWeapon::ACsGunWeapon(const FObjectInitializer& ObjectInitializer)
+ACsGunWeapon_DEPRECATED::ACsGunWeapon_DEPRECATED(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
@@ -20,7 +20,7 @@ ACsGunWeapon::ACsGunWeapon(const FObjectInitializer& ObjectInitializer)
 // Data
 #pragma region
 
-void ACsGunWeapon::ApplyData_Weapon(const FECsWeaponSlot &Slot, UCsData_Weapon* InData, UCsData_WeaponMaterialSkin* InSkin, const bool &Equipped)
+void ACsGunWeapon_DEPRECATED::ApplyData_Weapon(const FECsWeaponSlot &Slot, UCsData_Weapon* InData, UCsData_WeaponMaterialSkin* InSkin, const bool &Equipped)
 {
 	Reset();
 
@@ -61,12 +61,12 @@ void ACsGunWeapon::ApplyData_Weapon(const FECsWeaponSlot &Slot, UCsData_Weapon* 
 #endif // #if WITH_EDITOR
 }
 
-UCsData_WeaponMaterialSkin* ACsGunWeapon::GetMyData_WeaponMaterialSkin()
+UCsData_WeaponMaterialSkin* ACsGunWeapon_DEPRECATED::GetMyData_WeaponMaterialSkin()
 {
 	return MyData_WeaponMaterialSkin.IsValid() ? MyData_WeaponMaterialSkin.Get() : nullptr;
 }
 
-UCsData_Character* ACsGunWeapon::GetMyData_Character()
+UCsData_Character* ACsGunWeapon_DEPRECATED::GetMyData_Character()
 {
 #if WITH_EDITOR 
 	// In Editor Preview Window
@@ -91,14 +91,14 @@ UCsData_Character* ACsGunWeapon::GetMyData_Character()
 // Owner
 #pragma region
 
-void ACsGunWeapon::AttachMeshToPawn() {}
+void ACsGunWeapon_DEPRECATED::AttachMeshToPawn() {}
 
 #pragma endregion Owner
 
 // State
 #pragma region
 
-void ACsGunWeapon::OnPawnDeActivate()
+void ACsGunWeapon_DEPRECATED::OnPawnDeActivate()
 {
 	Hide();
 	Disable();
@@ -112,13 +112,13 @@ void ACsGunWeapon::OnPawnDeActivate()
 // Mesh
 #pragma region
 
-void ACsGunWeapon::SetMesh() {}
+void ACsGunWeapon_DEPRECATED::SetMesh() {}
 
 #pragma endregion Mesh
 
 // Animation
 #pragma region
 
-const FECsCharacterAnim& ACsGunWeapon::GetCharacterAnimType(const FECsWeaponAnim &AnimType) { return EMCsCharacterAnim::Get().GetMAX(); }
+const FECsCharacterAnim& ACsGunWeapon_DEPRECATED::GetCharacterAnimType(const FECsWeaponAnim &AnimType) { return EMCsCharacterAnim::Get().GetMAX(); }
 
 #pragma endregion Animation

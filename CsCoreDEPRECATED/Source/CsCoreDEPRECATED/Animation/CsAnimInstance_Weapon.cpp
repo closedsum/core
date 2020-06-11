@@ -10,7 +10,7 @@
 #include "Data/CsData_Weapon.h"
 #include "Data/CsData_WeaponMaterialSkin.h"
 
-#include "Weapon/CsGunWeapon.h"
+#include "Weapon/CsGunWeapon_DEPRECATED.h"
 
 UCsAnimInstance_Weapon::UCsAnimInstance_Weapon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -34,7 +34,7 @@ void UCsAnimInstance_Weapon::NativeInitializeAnimation()
 	Data_Weapon.Data		  = TSoftClassPtr<UCsData_Weapon>(MyWeapon->GetMyData_Weapon());
 	Data_Weapon.Data_Internal = MyWeapon->GetMyData_Weapon();
 
-	if (ACsGunWeapon* MyGunWeapon = Cast<ACsGunWeapon>(MyWeapon))
+	if (ACsGunWeapon_DEPRECATED* MyGunWeapon = Cast<ACsGunWeapon_DEPRECATED>(MyWeapon))
 	{
 		// Data_WeaponMaterialSkin
 		Data_WeaponMaterialSkin.Data		  = TSoftClassPtr<UCsData_WeaponMaterialSkin>(MyGunWeapon->GetMyData_WeaponMaterialSkin());

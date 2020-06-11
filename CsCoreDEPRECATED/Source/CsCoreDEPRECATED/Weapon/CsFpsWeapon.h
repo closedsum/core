@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Weapon/CsGunWeapon.h"
+#include "Weapon/CsGunWeapon_DEPRECATED.h"
 #include "CsFpsWeapon.generated.h"
 
 // Enums
@@ -31,7 +31,7 @@ namespace ECsFpsWeaponMultiValueMember
 class USkeletalMeshComponent;
 
 UCLASS()
-class CSCOREDEPRECATED_API ACsFpsWeapon : public ACsGunWeapon
+class CSCOREDEPRECATED_API ACsFpsWeapon : public ACsGunWeapon_DEPRECATED
 {
 	GENERATED_UCLASS_BODY()
 

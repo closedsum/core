@@ -1,12 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Weapon/CsGunWeapon.h"
+#include "Weapon/CsGunWeapon_DEPRECATED.h"
 #include "CsTpsWeapon.generated.h"
 
 class UMaterialInstanceDynamic;
 
 UCLASS()
-class CSCOREDEPRECATED_API ACsTpsWeapon : public ACsGunWeapon
+class CSCOREDEPRECATED_API ACsTpsWeapon : public ACsGunWeapon_DEPRECATED
 {
 	GENERATED_UCLASS_BODY()
 

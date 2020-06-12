@@ -2,6 +2,7 @@
 #pragma once
 
 #include "UObject/Interface.h"
+#include "Containers/CsGetInterfaceMap.h"
 #include "Containers/CsInterfaceMap.h"
 #include "Types/Property/Ref/CsProperty_Ref_float.h"
 #include "CsData_Projectile.generated.h"

@@ -2,7 +2,7 @@
 #pragma once
 
 #include "UObject/Interface.h"
-#include "Containers/CsInterfaceMap.h"
+#include "Containers/CsGetInterfaceMap.h"
 #include "CsData_ProjectileWeapon.generated.h"
 
 UINTERFACE(BlueprintType)

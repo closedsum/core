@@ -1,9 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#pragma once
-
 #include "Containers/CsGetInterfaceMap.h"
 
-struct CSCORE_API ICsSpawnerParams : public ICsGetInterfaceMap
+#pragma once
+
+struct CSPRJ_API ICsProjectileCache : virtual public ICsGetInterfaceMap
 {
 public:
 
@@ -11,5 +11,5 @@ public:
 
 public:
 
-	virtual ~ICsSpawnerParams() {}
+	virtual ~ICsProjectileCache() {}
 };

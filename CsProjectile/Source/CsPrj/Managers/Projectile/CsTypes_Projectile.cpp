@@ -240,10 +240,3 @@ namespace NCsProjectileMovementFunctionType
 const FName ICsProjectilePayload::Name = FName("ICsProjectilePayload");
 
 #pragma endregion ICsProjectilePayload
-
-// ICsProjectileCache
-#pragma region
-
-const FName ICsProjectileCache::Name = FName("ICsProjectileCache");
-
-#pragma endregion ICsProjectileCache

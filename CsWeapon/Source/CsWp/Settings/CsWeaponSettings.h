@@ -5,6 +5,8 @@
 // Types
 #include "CsWeaponSettings.generated.h"
 
+class UDataTable;
+
 UCLASS(config = Game, defaultconfig, meta = (DisplayName = "Cs Weapon Settings"))
 class CSWP_API UCsWeaponSettings : public UDeveloperSettings
 {
@@ -41,13 +43,12 @@ public:
 
 #pragma endregion Enum
 
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	TSoftObjectPtr<UDataTable> Weapons;
+	
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	bool bWeaponsEmulateDataInterfaces;
 	/*
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	TSoftObjectPtr<UDataTable> Projectiles;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	bool bProjectilesEmulateDataInterfaces;
-
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	FCsSettings_Manager_Projectile ManagerProjectile;
 	*/

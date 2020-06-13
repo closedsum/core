@@ -47,8 +47,25 @@ public:
 	{
 		Value = B.Value;
 		Mask = B.Mask;
-		Name = B.Name;
-		DisplayName = B.DisplayName;
+
+		// Name
+		{
+			const int32 Len = FMath::Max(Name.Len(), B.Name.Len());
+
+			checkf(Len < CS_ENUM_MAX_NAME_LENGTH, TEXT("FECsEnumMask_uint32::=: Name Length: %d exceeds Max Length: %d"), Len, CS_ENUM_MAX_NAME_LENGTH);
+
+			Name.Reset(Len);
+			Name += B.Name;
+		}
+		// Display Name
+		{
+			const int32 Len = FMath::Max(DisplayName.Len(), B.DisplayName.Len());
+
+			checkf(Len < CS_ENUM_MAX_NAME_LENGTH, TEXT("FECsEnumMask_uint32::=: DisplayName Length: %d exceeds Max Length: %d"), Len, CS_ENUM_MAX_NAME_LENGTH);
+
+			DisplayName.Reset(Len);
+			DisplayName += B.DisplayName;
+		}
 		return *this;
 	}
 

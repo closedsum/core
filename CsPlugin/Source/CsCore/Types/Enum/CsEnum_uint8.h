@@ -42,8 +42,25 @@ public:
 	FORCEINLINE FECsEnum_uint8& operator=(const FECsEnum_uint8& B)
 	{
 		Value = B.Value;
-		Name = B.Name;
-		DisplayName = B.DisplayName;
+
+		// Name
+		{
+			const int32 Len = FMath::Max(Name.Len(), B.Name.Len());
+
+			checkf(Len < CS_ENUM_MAX_NAME_LENGTH, TEXT("FECsEnum_uint8::=: Name Length: %d exceeds Max Length: %d"), Len, CS_ENUM_MAX_NAME_LENGTH);
+
+			Name.Reset(Len);
+			Name += B.Name;
+		}
+		// Display Name
+		{
+			const int32 Len = FMath::Max(DisplayName.Len(), B.DisplayName.Len());
+
+			checkf(Len < CS_ENUM_MAX_NAME_LENGTH, TEXT("FECsEnum_uint8::=: DisplayName Length: %d exceeds Max Length: %d"), Len, CS_ENUM_MAX_NAME_LENGTH);
+
+			DisplayName.Reset(Len);
+			DisplayName += B.DisplayName;
+		}
 		Name_Internal = B.Name_Internal;
 		return *this;
 	}

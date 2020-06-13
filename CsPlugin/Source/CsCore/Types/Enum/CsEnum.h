@@ -2,6 +2,9 @@
 #include "CsEnum.generated.h"
 #pragma once
 
+#define CS_ENUM_MAX_NAME_LENGTH 1024
+#define CS_ENUM_MAX_DISPLAY_NAME_LENGTH 1024
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsEnum
 {

@@ -5,6 +5,7 @@
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
 #include "Managers/Resource/CsManager_ResourceValueType.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
+#include "Payload/CsProjectilePayload.h"
 #include "Managers/Projectile/CsProjectile.h"
 #include "Managers/Projectile/CsSettings_Manager_Projectile.h"
 #include "CsManager_Projectile.generated.h"

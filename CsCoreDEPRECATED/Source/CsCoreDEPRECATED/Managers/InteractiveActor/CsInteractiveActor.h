@@ -2,6 +2,7 @@
 #pragma once
 #include "Managers/CsPooledActor.h"
 // Types
+#include "Managers/Pool/CsTypes_Pool.h"
 #include "Types/Property/Value/CsProperty_Vector2D.h"
 #include "Types/Property/Value/CsProperty_Vector.h"
 #include "Types/CsTypes_Interactive.h"

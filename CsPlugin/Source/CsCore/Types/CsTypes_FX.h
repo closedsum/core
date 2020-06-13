@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_Load.h"
-#include "Managers/Pool/CsTypes_Pool.h"
+#include "Managers/Pool/CsPooledObjectPayload.h"
 #include "Runtime/Engine/Classes/Particles/ParticleSystem.h"
 
 #include "CsTypes_FX.generated.h"

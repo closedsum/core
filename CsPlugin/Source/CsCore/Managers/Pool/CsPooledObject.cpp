@@ -2,6 +2,8 @@
 #include "Managers/Pool/CsPooledObject.h"
 #include "CsCore.h"
 
+#include "Managers/Time/CsUpdate.h"
+
 UCsPooledObject::UCsPooledObject(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
@@ -70,7 +72,33 @@ void FCsPooledObject::SetObject(UObject* InObject)
 		}
 	}
 }
-	
+
+void FCsPooledObject::Reset()
+{
+	Super::Reset();
+
+	_Update = nullptr;
+	bScriptUpdate = false;
+
+	Script_GetCache_Impl.Unbind();
+	Script_Allocate_Impl.Unbind();
+	Script_Deallocate_Impl.Unbind();
+	Script_Update_Impl.Unbind();
+}
+
 #pragma endregion TCsInterfaceObject
+
+// ICsUpdate
+#pragma region
+
+void FCsPooledObject::Update(const FCsDeltaTime& DeltaTime)
+{
+	if (bScriptUpdate)
+		Script_Update_Impl.Execute(Object, DeltaTime);
+	else
+		_Update->Update(DeltaTime);
+}
+
+#pragma endregion ICsUpdate
 
 #pragma endregion FCsPooledObject

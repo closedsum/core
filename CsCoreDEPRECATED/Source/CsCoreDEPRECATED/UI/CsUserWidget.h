@@ -4,6 +4,7 @@
 #include "Types/CsTypes.h"
 #include "UI/CsTypes_UI.h"
 #include "Managers/Input/CsTypes_Input.h"
+#include "Types/Property/Multi/CsProperty_Multi_FString_Enum_ThreeParams.h"
 #include "CsUserWidget.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUserWidget_OnNativeTick, const FGeometry&, MyGeometry, const float&, InDeltaTime);

@@ -2,9 +2,8 @@
 #pragma once
 
 #include "UObject/Interface.h"
-#include "Managers/Pool/CsTypes_Pool.h"
 #include "Containers/CsInterfaceObject.h"
-#include "Managers/Time/CsUpdate.h"
+#include "Managers/Time/CsTypes_Time.h"
 #include "CsPooledObject.generated.h"
 
 UINTERFACE(Blueprintable)
@@ -12,6 +11,9 @@ class CSCORE_API UCsPooledObject : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
+
+struct ICsPooledObjectCache;
+struct ICsPooledObjectPayload;
 
 class CSCORE_API ICsPooledObject
 {
@@ -41,6 +43,8 @@ public:
 
 // FCsPooledObject
 #pragma region
+
+class ICsUpdate;
 
 struct CSCORE_API FCsPooledObject : public TCsInterfaceObject<ICsPooledObject>
 {
@@ -160,18 +164,7 @@ public:
 
 	virtual void SetObject(UObject* InObject) override;
 
-	virtual void Reset() override 
-	{
-		Super::Reset();
-
-		_Update = nullptr;
-		bScriptUpdate = false;
-
-		Script_GetCache_Impl.Unbind();
-		Script_Allocate_Impl.Unbind();
-		Script_Deallocate_Impl.Unbind();
-		Script_Update_Impl.Unbind();
-	}
+	virtual void Reset() override;
 
 #pragma endregion TCsInterfaceObject
 
@@ -208,19 +201,13 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE void Update(const FCsDeltaTime& DeltaTime)
-	{
-		if (bScriptUpdate)
-			Script_Update_Impl.Execute(Object, DeltaTime);
-		else
-			_Update->Update(DeltaTime);
-	}
+	void Update(const FCsDeltaTime& DeltaTime);
 
 #pragma endregion ICsUpdate
 
 public:
 
-	void SetScriptUpdate()
+	FORCEINLINE void SetScriptUpdate()
 	{
 		bScriptUpdate = true;
 	}

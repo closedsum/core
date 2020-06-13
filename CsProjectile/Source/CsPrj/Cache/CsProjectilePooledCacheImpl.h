@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/CsTypes_Pool.h"
-#include "CsProjectileCache.h"
+#include "Managers/Pool/CsPooledObjectCache.h"
+#include "Cache/CsProjectileCache.h"
 #include "Containers/CsWeakObjectPtr.h"
 
 #pragma once
@@ -10,7 +10,7 @@ struct FCsInterfaceMap;
 struct ICsPooledObjectPayload;
 
 struct CSPRJ_API FCsProjectilePooledCacheImpl : public ICsPooledObjectCache,
-										  public ICsProjectileCache
+												public ICsProjectileCache
 {
 private:
 

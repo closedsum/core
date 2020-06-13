@@ -2,6 +2,9 @@
 #include "Managers/Creep/UnitTest/CsTdCreep_UnitTest_A.h"
 #include "CsTd.h"
 
+// Pool
+#include "Managers/Pool/CsPooledObjectCache.h"
+#include "Managers/Pool/CsPooledObjectPayload.h"
 // Components
 #include "Components/StaticMeshComponent.h"
 

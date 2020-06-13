@@ -95,20 +95,6 @@ namespace NCsPooledObjectUpdate
 
 #pragma endregion PooledObjectConstruction
 
-// ICsPooledObjectPayload
-#pragma region
-
-const FName ICsPooledObjectPayload::Name = FName("ICsPooledObjectPayload");
-
-#pragma endregion ICsPooledObjectPayload
-
-// ICsPooledObjectCache
-#pragma region
-
-const FName ICsPooledObjectCache::Name = FName("ICsPooledObjectCache");
-
-#pragma endregion ICsPooledObjectCache
-
 // ManagerPooledObject
 #pragma region
 

@@ -9,6 +9,8 @@
 #include "Settings/CsProjectileSettings.h"
 // Data
 #include "Data/CsData_Projectile.h"
+// Projectile
+#include "Payload/CsProjectilePooledPayloadImpl.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -541,7 +543,7 @@ void UCsManager_Projectile::ConstructPayloads(const FECsProjectile& Type, const 
 
 ICsProjectilePayload* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 {
-	return new FCsProjectilePayload();
+	return new FCsProjectilePooledPayloadImpl();
 }
 
 ICsProjectilePayload* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)
@@ -551,8 +553,8 @@ ICsProjectilePayload* UCsManager_Projectile::AllocatePayload(const FECsProjectil
 
 ICsProjectilePayload* UCsManager_Projectile::ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
 {
-	ICsProjectilePayload* IP	   = Internal.AllocatePayload(Type);
-	FCsProjectilePayload* Payload = static_cast<FCsProjectilePayload*>(IP);
+	ICsProjectilePayload* IP				= Internal.AllocatePayload(Type);
+	FCsProjectilePooledPayloadImpl* Payload = static_cast<FCsProjectilePooledPayloadImpl*>(IP);
 
 	Payload->Instigator = ScriptPayload.Instigator;
 	Payload->Owner		= ScriptPayload.Owner;

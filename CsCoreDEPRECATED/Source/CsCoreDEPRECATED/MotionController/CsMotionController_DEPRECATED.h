@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Interactive.h"
+#include "Types/Property/Multi/CsProperty_Multi_FString_Enum_ThreeParams.h"
 #include "UI/CsTypes_UI.h"
 #include "CsMotionController_DEPRECATED.generated.h"
 

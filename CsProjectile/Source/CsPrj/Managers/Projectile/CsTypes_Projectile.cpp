@@ -233,10 +233,3 @@ namespace NCsProjectileMovementFunctionType
 }
 
 #pragma endregion ProjectileMovementFunctionType
-
-// ICsProjectilePayload
-#pragma region
-
-const FName ICsProjectilePayload::Name = FName("ICsProjectilePayload");
-
-#pragma endregion ICsProjectilePayload

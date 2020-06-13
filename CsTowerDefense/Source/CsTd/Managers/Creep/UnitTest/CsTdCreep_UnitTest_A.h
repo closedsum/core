@@ -8,6 +8,8 @@
 #include "CsTdCreep_UnitTest_A.generated.h"
 
 class UStaticMeshComponent;
+struct ICsPooledObjectCache;
+struct ICsPooledObjectPayload;
 
 UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick", "LOD", "Cooking"))
 class CSTD_API ACsTdCreep_UnitTest_A : public AActor,

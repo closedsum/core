@@ -2,6 +2,8 @@
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 
+#include "Engine/DataTable.h"
+
 #include "CsTypes_Weapon.generated.h"
 #pragma once
 
@@ -23,6 +25,11 @@ struct CSWP_API EMCsWeaponState : public TCsEnumStructMap<FECsWeaponState, uint8
 	CS_ENUM_STRUCT_MAP_BODY(EMCsWeaponState, FECsWeaponState, uint8)
 };
 
+namespace NCsWeaponState
+{
+	typedef FECsWeaponState Type;
+}
+
 #pragma endregion WeaponState
 
 // WeaponSlot
@@ -42,6 +49,11 @@ struct CSWP_API EMCsWeaponSlot : public TCsEnumStructMap<FECsWeaponSlot, uint8>
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsWeaponSlot, FECsWeaponSlot, uint8)
 };
+
+namespace NCsWeaponSlot
+{
+	typedef FECsWeaponSlot Type;
+}
 
 #pragma endregion WeaponSlot
 
@@ -63,6 +75,11 @@ struct CSWP_API EMCsWeaponFireMode : public TCsEnumStructMap<FECsWeaponFireMode,
 	CS_ENUM_STRUCT_MAP_BODY(EMCsWeaponFireMode, FECsWeaponFireMode, uint8)
 };
 
+namespace NCsWeaponFireMode 
+{
+	typedef FECsWeaponFireMode Type;
+}
+
 #pragma endregion WeaponFireMode
 
 // WeaponGrip
@@ -82,6 +99,11 @@ struct CSWP_API EMCsWeaponGrip : public TCsEnumStructMap<FECsWeaponGrip, uint8>
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsWeaponGrip, FECsWeaponGrip, uint8)
 };
+
+namespace NCsWeaponGrip
+{
+	typedef FECsWeaponGrip Type;
+}
 
 #pragma endregion WeaponGrip
 
@@ -103,6 +125,11 @@ struct CSWP_API EMCsWeaponAnim : public TCsEnumStructMap<FECsWeaponAnim, uint8>
 	CS_ENUM_STRUCT_MAP_BODY(EMCsWeaponAnim, FECsWeaponAnim, uint8)
 };
 
+namespace NCsWeaponAnim
+{
+	typedef FECsWeaponAnim Type;
+}
+
 #pragma endregion WeaponAnim
 
 // WeaponBlendSpace
@@ -122,6 +149,11 @@ struct CSWP_API EMCsWeaponBlendSpace : public TCsEnumStructMap<FECsWeaponBlendSp
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsWeaponBlendSpace, FECsWeaponBlendSpace, uint8)
 };
+
+namespace NCsWeaponBlendSpace
+{
+	typedef FECsWeaponBlendSpace Type;
+}
 
 #pragma endregion WeaponBlendSpace
 
@@ -143,6 +175,11 @@ struct CSWP_API EMCsWeaponAnimBlueprint : public TCsEnumStructMap<FECsWeaponAnim
 	CS_ENUM_STRUCT_MAP_BODY(EMCsWeaponAnimBlueprint, FECsWeaponAnimBlueprint, uint8)
 };
 
+namespace NCsWeaponAnimBlueprint
+{
+	typedef FECsWeaponSound Type;
+}
+
 #pragma endregion WeaponAnimBlueprint
 
 // WeaponSound
@@ -162,6 +199,11 @@ struct CSWP_API EMCsWeaponSound : public TCsEnumStructMap<FECsWeaponSound, uint8
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsWeaponSound, FECsWeaponSound, uint8)
 };
+
+namespace NCsWeaponSound
+{
+	typedef FECsWeaponSound Type;
+}
 
 #pragma endregion WeaponSound
 
@@ -183,4 +225,69 @@ struct CSWP_API EMCsWeaponOwner : public TCsEnumStructMap<FECsWeaponOwner, uint8
 	CS_ENUM_STRUCT_MAP_BODY(EMCsWeaponOwner, FECsWeaponOwner, uint8)
 };
 
+namespace NCsWeaponOwner
+{
+	typedef FECsWeaponOwner Type;
+}
+
 #pragma endregion WeaponOwner
+
+// FCsWeaponPtr
+#pragma region
+
+class UObject;
+
+USTRUCT(BlueprintType)
+struct CSWP_API FCsWeaponPtr
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsWeapon"))
+	TSoftObjectPtr<UObject> Weapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 Load_Flags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UObject* Weapon_Internal;
+
+	FCsWeaponPtr() :
+		Weapon(nullptr),
+		Load_Flags(0),
+		Weapon_Internal(nullptr)
+	{
+	}
+
+	FORCEINLINE UObject* Get() const { return Weapon_Internal; }
+};
+
+#pragma endregion FCsWeaponPtr
+
+// FCsWeaponEntry
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSWP_API FCsWeaponEntry : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString DisplayName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCsWeaponPtr Weapon;
+
+	FCsWeaponEntry() :
+		Name(),
+		DisplayName(),
+		Weapon()
+	{
+	}
+};
+
+#pragma endregion FCsWeaponEntry

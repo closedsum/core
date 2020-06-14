@@ -44,10 +44,16 @@ public:
 #pragma region
 protected:
 
+	/** */
 	FECsUpdateGroup Group;
 
 public:
 
+	/**
+	*
+	*
+	* @param InGroup
+	*/
 	void SetGroup(const FECsUpdateGroup& InGroup);
 
 #pragma endregion Schedule
@@ -56,11 +62,25 @@ public:
 #pragma region
 protected:
 
+	/** */
 	FCsManager_Routine Manager_Routine;
 
 public:
 
+	/**
+	*
+	*
+	* @param Handle
+	* return
+	*/
 	FCsResource_Routine* GetRoutineContainer(const FCsRoutineHandle& Handle);
+
+	/**
+	*
+	*
+	* @param Handle
+	* return
+	*/
 	FCsRoutine* GetRoutine(const FCsRoutineHandle& Handle);
 
 #pragma endregion Routine
@@ -69,10 +89,36 @@ public:
 #pragma region
 public:
 
+	/**
+	*
+	*
+	* @param PayloadContainer
+	* return
+	*/
 	const FCsRoutineHandle& Start(FCsResource_CoroutinePayload* PayloadContainer);
+
+	/**
+	*
+	*
+	* @param Payload
+	* return
+	*/
 	const FCsRoutineHandle& Start(FCsCoroutinePayload* Payload);
 
+	/**
+	*
+	*
+	* @param PayloadContainer
+	* return
+	*/
 	const FCsRoutineHandle& StartChild(FCsResource_CoroutinePayload* PayloadContainer);
+
+	/**
+	*
+	*
+	* @param Payload
+	* return
+	*/
 	const FCsRoutineHandle& StartChild(FCsCoroutinePayload* Payload);
 
 #pragma endregion Start
@@ -81,7 +127,16 @@ public:
 #pragma region
 public:
 
+	/**
+	*
+	*/
 	void End();
+
+	/**
+	*
+	*
+	* @param Handle
+	*/
 	void End(const FCsRoutineHandle& Handle);
 
 #pragma endregion End
@@ -90,6 +145,11 @@ public:
 #pragma region
 public:
 
+	/**
+	*
+	*
+	* @param DeltaTime
+	*/
 	void Update(const FCsDeltaTime& DeltaTime);
 
 #pragma endregion Update
@@ -98,15 +158,26 @@ public:
 #pragma region
 protected:
 
+	/** */
 	FCsManager_CoroutinePayload Manager_Payload;
 
 public:
 
+	/**
+	*
+	*
+	* return
+	*/
 	FORCEINLINE FCsResource_CoroutinePayload* AllocatePayloadContainer()
 	{
 		return Manager_Payload.Allocate();
 	}
 
+	/**
+	*
+	*
+	* return
+	*/
 	FORCEINLINE FCsCoroutinePayload* AllocatePayload()
 	{
 		return Manager_Payload.AllocateResource();
@@ -114,6 +185,12 @@ public:
 
 protected:
 
+	/**
+	*
+	*
+	* @param Payload
+	* return
+	*/
 	FCsResource_CoroutinePayload* GetPayloadContainer(FCsCoroutinePayload* Payload);
 
 #pragma endregion Payload
@@ -122,6 +199,13 @@ protected:
 #pragma region
 public:
 
+	/**
+	*
+	*
+	* @param MessageType
+	* @param Message
+	* @param Owner
+	*/
 	void BroadcastMessage(const ECsCoroutineMessage& MessageType, const FName& Message, void* Owner = nullptr);
 
 #pragma endregion Message
@@ -130,8 +214,18 @@ public:
 #pragma region
 public:
 
+	/**
+	*
+	*
+	* @param FunctionName
+	* @param Transaction
+	* @param R
+	*/
 	void LogTransaction(const FString& FunctionName, const ECsCoroutineTransaction& Transaction, FCsRoutine* R);
 
+	/**
+	*
+	*/
 	void LogRunning();
 
 #pragma endregion Log

@@ -91,16 +91,43 @@ public:
 
 protected:
 
+	/** */
 	TArray<FCsCoroutineSchedule> Schedules;
 
 // Start
 #pragma region
 public:
 
+	/**
+	*
+	*
+	* @param PayloadContainer
+	* return
+	*/
 	const FCsRoutineHandle& Start(FCsResource_CoroutinePayload* PayloadContainer);
+
+	/**
+	*
+	*
+	* @param Payload
+	* return
+	*/
 	const FCsRoutineHandle& Start(FCsCoroutinePayload* Payload);
 
+	/**
+	*
+	*
+	* @param PayloadContainer
+	* return
+	*/
 	const FCsRoutineHandle& StartChild(FCsResource_CoroutinePayload* PayloadContainer);
+
+	/**
+	*
+	*
+	* @param Payload
+	* return
+	*/
 	const FCsRoutineHandle& StartChild(FCsCoroutinePayload* Payload);
 
 #pragma endregion Start
@@ -109,6 +136,12 @@ public:
 #pragma region
 public:
 
+	/**
+	*
+	*
+	* @param Group
+	* @param DeltaTime
+	*/
 	void Update(const FECsUpdateGroup& Group, const FCsDeltaTime& DeltaTime);
 
 #pragma endregion Update
@@ -117,7 +150,16 @@ public:
 #pragma region
 public:
 
+	/**
+	*
+	*
+	* @param Group
+	*/
 	void End(const FECsUpdateGroup& Group);
+
+	/**
+	*
+	*/
 	void EndAll();
 
 #pragma endregion End

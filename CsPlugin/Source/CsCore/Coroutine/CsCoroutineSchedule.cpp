@@ -86,7 +86,12 @@ FCsResource_Routine* FCsCoroutineSchedule::GetRoutineContainer(const FCsRoutineH
 		return nullptr;
 	}
 
-	return Manager_Routine.GetAt(Handle.GetIndex());
+	FCsResource_Routine* Container = Manager_Routine.GetAt(Handle.GetIndex());
+	FCsRoutine* R				   = Container->Get();
+
+	if (R->GetHandle() == Handle)
+		return Container;
+	return nullptr;
 }
 
 FCsRoutine* FCsCoroutineSchedule::GetRoutine(const FCsRoutineHandle& Handle)
@@ -109,8 +114,7 @@ const FCsRoutineHandle& FCsCoroutineSchedule::Start(FCsResource_CoroutinePayload
 
 	checkf(Group == Payload->Group, TEXT("FCsCoroutineSchedule::Start: Mismatch between Payload->Group: %s and Group: %s"), *(Payload->Group.Name), *(Group.Name));
 
-	FCsResource_Routine* RoutineContainer = Manager_Routine.Allocate();
-	FCsRoutine* R						  = RoutineContainer->Get();
+	FCsRoutine* R = Manager_Routine.AllocateResource();
 
 	R->Init(Payload);
 
@@ -218,7 +222,6 @@ void FCsCoroutineSchedule::End(const FCsRoutineHandle& Handle)
 	if (FCsResource_Routine* Container = GetRoutineContainer(Handle))
 	{
 		FCsRoutine* R = Container->Get();
-
 
 		R->End(ECsCoroutineEndReason::Manual);
 

@@ -107,7 +107,9 @@ public:
 #pragma endregion FCsScopedTimerInternal
 
 #if !UE_BUILD_SHIPPING
+#define CS_GET_SCOPED_TIMER_HANDLE(Handle, Name, CVar) Handle = FCsManager_ScopedTimer::Get().GetHandle((Name), CVar)
 #define CS_SCOPED_TIMER(Handle) FCsScopedTimerInternal __Temp_ScopedTimerInternal__(Handle)
 #else
+#define CS_GET_SCOPED_TIMER_HANDLE(Handle, Name, CVar)
 #define CS_SCOPED_TIMER(Handle)
 #endif // #if !UE_BUILD_SHIPPING

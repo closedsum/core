@@ -278,8 +278,8 @@ void FCsRoutine::Init(FCsCoroutinePayload* Payload)
 	}
 	Handle.New();
 
-	RoutineScopedTimerHandle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, NCsCVarLog::LogRoutineScopedTimer);
-	CoroutineScopedTimerHandle = FCsManager_ScopedTimer::Get().GetHandle(Name, NCsCVarLog::LogCoroutineScopedTimer);
+	CS_GET_SCOPED_TIMER_HANDLE(RoutineScopedTimerHandle, &ScopeName, NCsCVarLog::LogRoutineScopedTimer);
+	CS_GET_SCOPED_TIMER_HANDLE(CoroutineScopedTimerHandle, Name, NCsCVarLog::LogCoroutineScopedTimer);
 }
 
 // Update

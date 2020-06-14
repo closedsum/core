@@ -2,6 +2,8 @@
 #pragma once
 
 #include "UObject/Interface.h"
+// Types
+#include "CsTypes_Weapon.h"
 #include "CsWeapon.generated.h"
 
 UINTERFACE(Blueprintable)
@@ -18,5 +20,17 @@ class CSWP_API ICsWeapon
 
 public:
 
+	/**
+	*
+	*
+	* return
+	*/
 	virtual ICsData_Weapon* GetData() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const FECsWeaponState& GetCurrentState() const = 0;
 };

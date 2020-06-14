@@ -618,6 +618,45 @@ public:
 
 #pragma endregion FCsScriptProjectilePayload
 
+// FCsProjectiletr
+#pragma region
+
+class UObject;
+
+USTRUCT(BlueprintType)
+struct CSPRJ_API FCsProjectiletr
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsProjectile"))
+	TSoftClassPtr<UObject> Projectile;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 Load_Flags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UObject* Projectile_Internal;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UClass* Projectile_Class;
+
+	FCsProjectiletr() :
+		Projectile(nullptr),
+		Load_Flags(0),
+		Projectile_Internal(nullptr),
+		Projectile_Class(nullptr)
+	{
+	}
+
+	FORCEINLINE UObject* Get() const { return Projectile_Internal; }
+
+	FORCEINLINE UClass* GetClass() const { return Projectile_Class; }
+};
+
+#pragma endregion FCsProjectiletr
+
 // FCsProjectileEntry
 #pragma region
 
@@ -632,9 +671,13 @@ struct CSPRJ_API FCsProjectileEntry : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString DisplayName;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCsProjectiletr Projectile;
+
 	FCsProjectileEntry() :
 		Name(),
-		DisplayName()
+		DisplayName(), 
+		Projectile()
 	{
 	}
 };

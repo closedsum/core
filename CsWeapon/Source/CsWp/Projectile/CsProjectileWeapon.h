@@ -12,18 +12,26 @@ class CSWP_API UCsProjectileWeapon : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
+/**
+*/
 class CSWP_API ICsProjectileWeapon
 {
 	GENERATED_IINTERFACE_BODY()
 
 public:
 
+	/**
+	*
+	*/
 	virtual void StartFire() = 0;
 	
+	/** 
+	*
+	*/
 	virtual void StopFire() = 0;
 };
 
-// FCsPooledObject
+// FCsProjectileWeapon
 #pragma region
 
 class ICsWeapon;
@@ -223,4 +231,4 @@ public:
 	}
 };
 
-#pragma endregion FCsPooledObject
+#pragma endregion FCsProjectileWeapon

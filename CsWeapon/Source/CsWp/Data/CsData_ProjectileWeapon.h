@@ -16,4 +16,48 @@ class CSWP_API ICsData_ProjectileWeapon : public ICsGetInterfaceMap
 	GENERATED_IINTERFACE_BODY()
 
 public:
+
+	static const FName Name;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const bool& DoFireOnRelease() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const bool& IsFullAuto() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const int32& GetMaxAmmo() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const float& GetProjectilesPerShot() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const float& GetTimeBetweenShots() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const float& GetTimeBetweenAutoShots() const = 0;
 };

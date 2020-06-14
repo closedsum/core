@@ -11,6 +11,7 @@
 #include "Data/CsData_Projectile.h"
 // Projectile
 #include "Payload/CsProjectilePooledPayloadImpl.h"
+#include "Data/CsData_ProjectileImpl.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"

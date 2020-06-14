@@ -242,7 +242,12 @@ void UCsCoroutineScheduler::UCsCoroutineScheduler::EndAll()
 // Payload
 #pragma region
 
-FCsResource_CoroutinePayload* UCsCoroutineScheduler::AllocatePayload(const FECsUpdateGroup& Group)
+FCsResource_CoroutinePayload* UCsCoroutineScheduler::AllocatePayloadContainer(const FECsUpdateGroup& Group)
+{
+	return Schedules[Group.Value].AllocatePayloadContainer();
+}
+
+FCsCoroutinePayload* UCsCoroutineScheduler::AllocatePayload(const FECsUpdateGroup& Group)
 {
 	return Schedules[Group.Value].AllocatePayload();
 }

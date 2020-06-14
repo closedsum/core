@@ -397,9 +397,8 @@ void UCsGameInstance_DEPRECATED::OnBoard()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(this);
-	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this);
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
 	Payload->Coroutine.BindStatic(&UCsGameInstance_DEPRECATED::OnBoard_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
@@ -463,9 +462,8 @@ void UCsGameInstance_DEPRECATED::LoadDataMapping()
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(this);
-	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this);
+	FCsCoroutinePayload* Payload     = Scheduler->AllocatePayload(Group);
 
 	Payload->Coroutine.BindStatic(&UCsGameInstance_DEPRECATED::LoadDataMapping_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
@@ -616,9 +614,8 @@ void UCsGameInstance_DEPRECATED::CreateFullscreenWidget()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(this);
-	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this);
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
 	Payload->Coroutine.BindStatic(&UCsGameInstance_DEPRECATED::CreateFullscreenWidget_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
@@ -685,9 +682,8 @@ void UCsGameInstance_DEPRECATED::HideMouseCursor()
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(this);
-	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this);
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
 	Payload->Coroutine.BindStatic(&UCsGameInstance_DEPRECATED::HideMouseCursor_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
@@ -748,9 +744,8 @@ void UCsGameInstance_DEPRECATED::PerformLevelTransition(const FString& Level, co
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(this);
-	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this);
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
 	Payload->Coroutine.BindStatic(&UCsGameInstance_DEPRECATED::PerformLevelTransition_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);

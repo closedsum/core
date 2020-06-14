@@ -126,7 +126,21 @@ public:
 #pragma region
 public:
 
-	FCsResource_CoroutinePayload* AllocatePayload(const FECsUpdateGroup& Group);
+	/**
+	*
+	*
+	* @param Group
+	* return
+	*/
+	FCsResource_CoroutinePayload* AllocatePayloadContainer(const FECsUpdateGroup& Group);
+
+	/**
+	*
+	*
+	* @param Group
+	* return
+	*/
+	FCsCoroutinePayload* AllocatePayload(const FECsUpdateGroup& Group);
 
 #pragma endregion Payload
 

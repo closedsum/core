@@ -84,9 +84,8 @@ void UCsWidget_Fullscreen::FadeOut(const ECsEasingType &EasingType, const float 
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(GetGameInstance());
-	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
 	Payload->Coroutine.BindStatic(&UCsWidget_Fullscreen::Fade_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
@@ -112,9 +111,8 @@ void UCsWidget_Fullscreen::FadeIn(const ECsEasingType &EasingType, const float &
 {
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(GetGameInstance());
-	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
 	Payload->Coroutine.BindStatic(&UCsWidget_Fullscreen::Fade_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);

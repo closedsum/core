@@ -80,10 +80,20 @@ FCsResource_Routine* FCsCoroutineSchedule::GetRoutineContainer(const FCsRoutineH
 
 	const int32& PoolSize = Manager_Routine.GetPoolSize();
 
-	if (Handle.Index >= PoolSize)
+	if (Handle.GetIndex() >= PoolSize)
+	{
+		UE_LOG(LogCs, Warning, TEXT("FCsCoroutineSchedule::GetRoutineContainer: Handle's Index: %d is not associated with any Routine with Group: %s."), Handle.GetIndex(), Group.ToChar())
 		return nullptr;
+	}
 
-	return Manager_Routine.GetAt(Handle.Index);
+	return Manager_Routine.GetAt(Handle.GetIndex());
+}
+
+FCsRoutine* FCsCoroutineSchedule::GetRoutine(const FCsRoutineHandle& Handle)
+{
+	FCsResource_Routine* Container = GetRoutineContainer(Handle);
+
+	return Container ? Container->Get() : nullptr;
 }
 
 #pragma endregion Routine
@@ -116,7 +126,7 @@ const FCsRoutineHandle& FCsCoroutineSchedule::Start(FCsResource_CoroutinePayload
 
 	Payload->Reset();
 	Manager_Payload.Deallocate(PayloadContainer);
-	return R->Handle;
+	return R->GetHandle();
 }
 
 const FCsRoutineHandle& FCsCoroutineSchedule::Start(FCsCoroutinePayload* Payload)
@@ -168,7 +178,7 @@ const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(FCsResource_CoroutinePa
 
 	Payload->Reset();
 	//UE_LOG(LogCs, Warning, TEXT("UCsCoroutineScheduler::StartChild: No free Routines. Look for Runaway Coroutines or consider raising the pool size."));
-	return R->Handle;
+	return R->GetHandle();
 }
 
 const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(FCsCoroutinePayload* Payload)
@@ -200,6 +210,22 @@ void FCsCoroutineSchedule::End()
 
 		R->Reset();
 		Manager_Routine.Deallocate(RoutineContainer);
+	}
+}
+
+void FCsCoroutineSchedule::End(const FCsRoutineHandle& Handle)
+{
+	if (FCsResource_Routine* Container = GetRoutineContainer(Handle))
+	{
+		FCsRoutine* R = Container->Get();
+
+
+		R->End(ECsCoroutineEndReason::Manual);
+
+		//LogTransaction(NCsCoroutineCached::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
+
+		R->Reset();
+		Manager_Routine.Deallocate(Container);
 	}
 }
 

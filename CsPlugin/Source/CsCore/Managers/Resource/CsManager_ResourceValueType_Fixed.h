@@ -457,9 +457,10 @@ public:
 	}
 
 	/**
+	* Allocate a ResourceType and add the corresponding linked list element to the
+	*  end of the list
 	*
-	*
-	* return
+	* return ResourceType	Allocated ResourceType
 	*/
 	ResourceType* AllocateResource()
 	{

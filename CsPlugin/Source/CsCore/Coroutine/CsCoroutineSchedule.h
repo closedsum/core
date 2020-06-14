@@ -61,6 +61,7 @@ protected:
 public:
 
 	FCsResource_Routine* GetRoutineContainer(const FCsRoutineHandle& Handle);
+	FCsRoutine* GetRoutine(const FCsRoutineHandle& Handle);
 
 #pragma endregion Routine
 
@@ -81,6 +82,7 @@ public:
 public:
 
 	void End();
+	void End(const FCsRoutineHandle& Handle);
 
 #pragma endregion End
 
@@ -100,9 +102,14 @@ protected:
 
 public:
 
-	FORCEINLINE FCsResource_CoroutinePayload* AllocatePayload()
+	FORCEINLINE FCsResource_CoroutinePayload* AllocatePayloadContainer()
 	{
 		return Manager_Payload.Allocate();
+	}
+
+	FORCEINLINE FCsCoroutinePayload* AllocatePayload()
+	{
+		return Manager_Payload.AllocateResource();
 	}
 
 protected:

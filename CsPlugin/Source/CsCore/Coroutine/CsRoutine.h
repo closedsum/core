@@ -67,9 +67,13 @@ public:
 
 #pragma endregion Time
 
-public:
+protected:
 
 	FCsRoutineHandle Handle;
+
+public:
+
+	FORCEINLINE const FCsRoutineHandle& GetHandle() const { return Handle; }
 
 	TArray<FCsCoroutineAbortCondition> Aborts;
 

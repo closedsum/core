@@ -226,9 +226,8 @@ void ACsAIPawn::SyncCurrentViewFromBone(const FName &Bone)
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(GetGameInstance());
-	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 	
 	Payload->Coroutine.BindStatic(&ACsAIPawn::SyncCurrentViewFromBone_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
@@ -415,9 +414,8 @@ void ACsAIPawn::StartShootForCount(const int32 &Count)
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(GetGameInstance());
-	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
 	Payload->Coroutine.BindStatic(&ACsAIPawn::StartShootForCount_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
@@ -472,9 +470,8 @@ void ACsAIPawn::StartShootForDuration(const float &Duration)
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 
-	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(GetGameInstance());
-	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
 	Payload->Coroutine.BindStatic(&ACsAIPawn::StartShootForDuration_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);

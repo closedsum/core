@@ -218,6 +218,18 @@ public:
 	{
 	}
 
+	FORCEINLINE bool operator==(const FCsRoutineHandle& B) const
+	{
+		return Index == B.Index && Handle == B.Handle;
+	}
+
+	FORCEINLINE bool operator!=(const FCsRoutineHandle& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE const int32& GetIndex() const { return Index; }
+
 	friend uint32 GetTypeHash(const FCsRoutineHandle& InHandle)
 	{
 		return GetTypeHash(InHandle.Handle);

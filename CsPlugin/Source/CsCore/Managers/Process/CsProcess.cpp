@@ -238,9 +238,8 @@ void UCsProcess::StartRead()
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
 	
-	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get();
-	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(Group);
-	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
 	Payload->Coroutine.BindStatic(&UCsProcess::StartRead_Internal);
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);

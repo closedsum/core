@@ -189,24 +189,24 @@ const FCsRoutineHandle& UCsCoroutineScheduler::Start(FCsResource_CoroutinePayloa
 {
 	FCsCoroutinePayload* Payload = PayloadContainer->Get();
 
-	return Schedules[Payload->Group.Value].Start(PayloadContainer);
+	return Schedules[Payload->Group.GetValue()].Start(PayloadContainer);
 }
 
 const FCsRoutineHandle& UCsCoroutineScheduler::Start(FCsCoroutinePayload* Payload)
 {
-	return Schedules[Payload->Group.Value].Start(Payload);
+	return Schedules[Payload->Group.GetValue()].Start(Payload);
 }
 
 const FCsRoutineHandle& UCsCoroutineScheduler::StartChild(FCsResource_CoroutinePayload* PayloadContainer)
 {
 	FCsCoroutinePayload* Payload = PayloadContainer->Get();
 
-	return Schedules[Payload->Group.Value].StartChild(PayloadContainer);
+	return Schedules[Payload->Group.GetValue()].StartChild(PayloadContainer);
 }
 
 const FCsRoutineHandle& UCsCoroutineScheduler::StartChild(FCsCoroutinePayload* Payload)
 {
-	return Schedules[Payload->Group.Value].StartChild(Payload);
+	return Schedules[Payload->Group.GetValue()].StartChild(Payload);
 }
 
 #pragma endregion Start
@@ -216,7 +216,7 @@ const FCsRoutineHandle& UCsCoroutineScheduler::StartChild(FCsCoroutinePayload* P
 
 void UCsCoroutineScheduler::Update(const FECsUpdateGroup& Group, const FCsDeltaTime& DeltaTime)
 {
-	Schedules[Group.Value].Update(DeltaTime);
+	Schedules[Group.GetValue()].Update(DeltaTime);
 }
 
 #pragma endregion Update
@@ -226,7 +226,12 @@ void UCsCoroutineScheduler::Update(const FECsUpdateGroup& Group, const FCsDeltaT
 
 void UCsCoroutineScheduler::End(const FECsUpdateGroup& Group)
 {
-	Schedules[Group.Value].End();
+	Schedules[Group.GetValue()].End();
+}
+
+void UCsCoroutineScheduler::End(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
+{
+	Schedules[Group.GetValue()].End(Handle);
 }
 
 void UCsCoroutineScheduler::UCsCoroutineScheduler::EndAll()
@@ -244,12 +249,12 @@ void UCsCoroutineScheduler::UCsCoroutineScheduler::EndAll()
 
 FCsResource_CoroutinePayload* UCsCoroutineScheduler::AllocatePayloadContainer(const FECsUpdateGroup& Group)
 {
-	return Schedules[Group.Value].AllocatePayloadContainer();
+	return Schedules[Group.GetValue()].AllocatePayloadContainer();
 }
 
 FCsCoroutinePayload* UCsCoroutineScheduler::AllocatePayload(const FECsUpdateGroup& Group)
 {
-	return Schedules[Group.Value].AllocatePayload();
+	return Schedules[Group.GetValue()].AllocatePayload();
 }
 
 #pragma endregion Payload

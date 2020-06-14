@@ -275,6 +275,8 @@ void FCsRoutine::Init(FCsCoroutinePayload* Payload)
 		void* To   = Payload->Registers[(uint8)ValueType][I];
 
 		NCsRoutineRegisterValueType::SetValue(ValueType, From, To);
+
+		SetRegisterFlag(ValueType, I);
 	}
 	Handle.New();
 
@@ -379,7 +381,8 @@ void FCsRoutine::End(const ECsCoroutineEndReason& InEndReason)
 	State = ECsCoroutineState::End;
 	EndReason = InEndReason;
 
-	FCsManager_ScopedTimer::Get().ClearHandle(CoroutineScopedTimerHandle);
+	CS_CLEAR_SCOPED_TIMER_HANDLE(RoutineScopedTimerHandle);
+	CS_CLEAR_SCOPED_TIMER_HANDLE(CoroutineScopedTimerHandle);
 }
 
 #pragma endregion End

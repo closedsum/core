@@ -60,13 +60,13 @@ void FCsManager_ScopedTimer::ClearHandle(const FCsScopedTimerHandle& Handle)
 		return;
 	}
 
-	if (Handle.Index >= Internal.GetPoolSize())
+	if (Handle.GetIndex() >= Internal.GetPoolSize())
 	{
-		UE_LOG(LogCs, Warning, TEXT("FCsManager_ScopedTimer::ClearHandle: Handle's Index >= Internal.GetPoolSize() (%d >= %d)."), Handle.Index, Internal.GetPoolSize());
+		UE_LOG(LogCs, Warning, TEXT("FCsManager_ScopedTimer::ClearHandle: Handle's Index >= Internal.GetPoolSize() (%d >= %d)."), Handle.GetIndex(), Internal.GetPoolSize());
 		return;
 	}
 
-	FCsResource_ScopedTimer* Resource = Internal.GetAt(Handle.Index);
+	FCsResource_ScopedTimer* Resource = Internal.GetAt(Handle.GetIndex());
 
 	checkf(Resource, TEXT("FCsManager_ScopedTimer::ClearHandle: Resource is NULL."));
 
@@ -87,7 +87,7 @@ void FCsManager_ScopedTimer::UpdateHandle(FCsScopedTimerHandle& Handle, double T
 {
 	checkf(Handle.IsValid(), TEXT("FCsManager_ScopedTimer::UpdateHandle: Handle is NOT Valid."));
 
-	FCsScopedTimer* ScopedTimer = Internal.GetResourceAt(Handle.Index);
+	FCsScopedTimer* ScopedTimer = Internal.GetResourceAt(Handle.GetIndex());
 
 	checkf(ScopedTimer, TEXT("FCsManager_ScopedTimer::UpdateHandle: ScopedTimer is NULL."));
 

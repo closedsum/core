@@ -33,6 +33,8 @@ public:
 		return !(*this == B);
 	}
 
+	FORCEINLINE const int32& GetIndex() const { return Index; }
+
 	friend uint32 GetTypeHash(const FCsScopedTimerHandle& InHandle)
 	{
 		return GetTypeHash(InHandle.Handle);
@@ -108,8 +110,10 @@ public:
 
 #if !UE_BUILD_SHIPPING
 #define CS_GET_SCOPED_TIMER_HANDLE(Handle, Name, CVar) Handle = FCsManager_ScopedTimer::Get().GetHandle((Name), CVar)
+#define CS_CLEAR_SCOPED_TIMER_HANDLE(Handle) FCsManager_ScopedTimer::Get().ClearHandle(Handle)
 #define CS_SCOPED_TIMER(Handle) FCsScopedTimerInternal __Temp_ScopedTimerInternal__(Handle)
 #else
 #define CS_GET_SCOPED_TIMER_HANDLE(Handle, Name, CVar)
+#define CS_CLEAR_SCOPED_TIMER_HANDLE(Handle)
 #define CS_SCOPED_TIMER(Handle)
 #endif // #if !UE_BUILD_SHIPPING

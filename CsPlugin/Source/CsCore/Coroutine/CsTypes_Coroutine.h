@@ -557,6 +557,8 @@ protected:
 			FCsRoutineRegisterInfo& Info = RegisterInfos.Last();
 			Info.ValueType				 = ValueType;
 			Info.Index					 = InIndex;
+
+			RegisterFlags[(uint8)ValueType][InIndex] = true;
 		}
 	}
 

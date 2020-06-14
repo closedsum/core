@@ -260,6 +260,8 @@ protected:
 			FCsRoutineRegisterInfo& Info = RegisterInfos.Last();
 			Info.ValueType				 = ValueType;
 			Info.Index					 = InIndex;
+
+			RegisterFlags[(uint8)ValueType][InIndex] = true;
 		}
 	}
 
@@ -369,87 +371,104 @@ public:
 
 	FORCEINLINE int32& GetValue_Indexer(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Indexer, InIndex);
 		return Indexers[InIndex];
 	}
 	
 	FORCEINLINE int32& GetValue_Counter(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Counter, InIndex);
 		return Counters[InIndex];
 	}
 	
 	FORCEINLINE bool& GetValue_Flag(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Flag, InIndex);
 		return Flags[InIndex];
 	}
 
 	FORCEINLINE FCsTime& GetValue_Timer(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Timer, InIndex);
 		return Timers[InIndex];
 	}
 
 	FORCEINLINE FCsDeltaTime& GetValue_DeltaTime(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::DeltaTime, InIndex);
 		return DeltaTimes[InIndex];
 	}
 
 	FORCEINLINE int32& GetValue_Int(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Int, InIndex);
 		return Ints[InIndex];
 	}
 
 	FORCEINLINE float& GetValue_Float(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Float, InIndex);
 		return Floats[InIndex];
 	}
 
 	FORCEINLINE double& GetValue_Double(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Double, InIndex);
 		return Doubles[InIndex];
 	}
 
 	FORCEINLINE FVector& GetValue_Vector(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Vector, InIndex);
 		return Vectors[InIndex];
 	}
 
 	FORCEINLINE FRotator& GetValue_Rotator(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Rotator, InIndex);
 		return Rotators[InIndex];
 	}
 
 	FORCEINLINE FLinearColor& GetValue_Color(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Color, InIndex);
 		return Colors[InIndex];
 	}
 
 	FORCEINLINE FName& GetValue_Name(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Name, InIndex);
 		return Names[InIndex];
 	}
 
 	FORCEINLINE FString& GetValue_String(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::String, InIndex);
 		return Strings[InIndex];
 	}
 
 	FORCEINLINE FString* GetValue_StringPtr(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::StringPtr, InIndex);
 		return StringPointers[InIndex];
 	}
 
 	FORCEINLINE TCsWeakObjectPtr<UObject>& GetValue_Object(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Object, InIndex);
 		return Objects[InIndex];
 	}
 
 	FORCEINLINE void* GetValue_Void(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Void, InIndex);
 		return VoidPointers[InIndex];
 	}
 
 	template<typename T>
 	FORCEINLINE T* GetValue_Void(const int32& InIndex)
 	{
+		SetRegisterFlag(ECsRoutineRegisterValueType::Void, InIndex);
 		return (T*)VoidPointers[InIndex];
 	}
 

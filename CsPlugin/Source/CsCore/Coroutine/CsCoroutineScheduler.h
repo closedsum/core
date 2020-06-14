@@ -159,6 +159,14 @@ public:
 
 	/**
 	*
+	*
+	* @param Group
+	* @param Handle
+	*/
+	void End(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle);
+
+	/**
+	*
 	*/
 	void EndAll();
 

@@ -412,7 +412,7 @@ void ACsMotionController_DEPRECATED::Setup_OnCalcCamera()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&ACsMotionController_DEPRECATED::Setup_OnCalcCamera_Internal);
+	Payload->CoroutineImpl.BindStatic(&ACsMotionController_DEPRECATED::Setup_OnCalcCamera_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 

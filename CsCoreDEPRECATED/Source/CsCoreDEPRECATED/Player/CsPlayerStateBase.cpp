@@ -217,7 +217,7 @@ const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&ACsPlayerStateBase::OnBoard_Internal);
+	Payload->CoroutineImpl.BindStatic(&ACsPlayerStateBase::OnBoard_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
@@ -634,7 +634,7 @@ void ACsPlayerStateBase::RequestUniqueMappingId_AI(ACsPlayerStateBase* Requestin
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&ACsPlayerStateBase::RequestUniqueMappingId_AI_Internal);
+	Payload->CoroutineImpl.BindStatic(&ACsPlayerStateBase::RequestUniqueMappingId_AI_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 

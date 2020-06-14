@@ -446,9 +446,9 @@ public:
 struct FCsRoutine;
 
 // Run
-DECLARE_DELEGATE_RetVal_OneParam(char, FCsCoroutine, FCsRoutine*);
+DECLARE_DELEGATE_RetVal_OneParam(char, FCsCoroutineImpl, FCsRoutine*);
 // Abort Condition
-DECLARE_DELEGATE_RetVal_OneParam(bool, FCsCoroutineAbortCondition, FCsRoutine*);
+DECLARE_DELEGATE_RetVal_OneParam(bool, FCsCoroutineAbortConditionImpl, FCsRoutine*);
 DECLARE_DELEGATE_OneParam(FCsOnCoroutineAbort, FCsRoutine*);
 
 #define CS_ROUTINE_MAX_TYPE 255
@@ -484,13 +484,13 @@ public:
 
 	FECsUpdateGroup Group;
 
-	FCsCoroutine Coroutine;
+	FCsCoroutineImpl CoroutineImpl;
 
 	FCsTime StartTime;
 
 	FCsRoutineOwner Owner;
 
-	TArray<FCsCoroutineAbortCondition> Aborts;
+	TArray<FCsCoroutineAbortConditionImpl> AbortImpls;
 
 	TArray<FCsOnCoroutineAbort> OnAborts;
 

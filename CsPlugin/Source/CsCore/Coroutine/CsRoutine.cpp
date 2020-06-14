@@ -246,7 +246,7 @@ void FCsRoutine::Init(FCsCoroutinePayload* Payload)
 {
 	State = ECsCoroutineState::Init;
 
-	Coroutine = Payload->Coroutine;
+	CoroutineImpl = Payload->CoroutineImpl;
 	StartTime = Payload->StartTime;
 	Owner	  = Payload->Owner;
 	
@@ -255,11 +255,11 @@ void FCsRoutine::Init(FCsCoroutinePayload* Payload)
 		Messages[(uint8)ECsCoroutineMessage::Abort].Add(Message);
 	}
 
-	for (const FCsCoroutineAbortCondition& Abort : Payload->Aborts)
+	for (const FCsCoroutineAbortConditionImpl& AbortImpl : Payload->AbortImpls)
 	{
-		Aborts.AddDefaulted();
-		FCsCoroutineAbortCondition& Last = Aborts.Last();
-		Last = Abort;
+		AbortImpls.AddDefaulted();
+		FCsCoroutineAbortConditionImpl& Last = AbortImpls.Last();
+		Last = AbortImpl;
 	}
 
 	Name_Internal	= Payload->GetFName();
@@ -332,9 +332,9 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 		}
 	}
 
-	for (FCsCoroutineAbortCondition& Abort : Aborts)
+	for (FCsCoroutineAbortConditionImpl& AbortImpl : AbortImpls)
 	{
-		if (Abort.Execute(this))
+		if (AbortImpl.Execute(this))
 		{
 			for (FCsOnCoroutineAbort& OnAbort : OnAborts)
 			{
@@ -361,7 +361,7 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 	{
 		CS_SCOPED_TIMER(CoroutineScopedTimerHandle);
 
-		Coroutine.Execute(this);
+		CoroutineImpl.Execute(this);
 	}
 
 	if (State == ECsCoroutineState::End)
@@ -395,7 +395,7 @@ void FCsRoutine::Reset()
 
 	EndChildren();
 
-	Coroutine.Unbind();
+	CoroutineImpl.Unbind();
 
 	// Time
 	StartTime.Reset();
@@ -408,7 +408,7 @@ void FCsRoutine::Reset()
 	CoroutineScopedTimerHandle.Reset();
 
 	Handle.Reset();
-	Aborts.Reset(Aborts.Max());
+	AbortImpls.Reset(AbortImpls.Max());
 	OnAborts.Reset(OnAborts.Max());
 	State = ECsCoroutineState::Free;
 	Name = nullptr;

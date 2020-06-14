@@ -542,10 +542,10 @@ void FCsCoroutinePayload::SetIndex(const int32& InIndex)
 void FCsCoroutinePayload::Reset()
 {
 	Group = EMCsUpdateGroup::Get().GetMAX();
-	Coroutine.Unbind();
+	CoroutineImpl.Unbind();
 	StartTime.Reset();
 	Owner.Reset();
-	Aborts.Reset(Aborts.Max());
+	AbortImpls.Reset(AbortImpls.Max());
 	OnAborts.Reset(OnAborts.Max());
 	ParentHandle.Reset();
 	bDoInit = true;

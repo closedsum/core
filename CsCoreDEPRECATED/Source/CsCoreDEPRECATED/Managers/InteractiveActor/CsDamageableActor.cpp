@@ -128,7 +128,7 @@ void ACsDamageableActor::Respawn()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&ACsDamageableActor::Respawn_Internal);
+	Payload->CoroutineImpl.BindStatic(&ACsDamageableActor::Respawn_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 

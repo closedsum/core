@@ -266,7 +266,7 @@ void UCsManager_Javascript::SetupAndRunGameInstanceEntryPoint()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(UpdateGroup);
 
-	Payload->Coroutine.BindUObject(this, &UCsManager_Javascript::SetupAndRunGameInstanceEntryPoint_Internal);
+	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Javascript::SetupAndRunGameInstanceEntryPoint_Internal);
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
 
@@ -328,7 +328,7 @@ void UCsManager_Javascript::SetupAndRunGameStateEntryPoint()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(UpdateGroup);
 
-	Payload->Coroutine.BindUObject(this, &UCsManager_Javascript::SetupAndRunGameStateEntryPoint_Internal);
+	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Javascript::SetupAndRunGameStateEntryPoint_Internal);
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
 

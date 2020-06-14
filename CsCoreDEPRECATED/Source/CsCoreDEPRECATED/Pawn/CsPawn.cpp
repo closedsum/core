@@ -208,7 +208,7 @@ void ACsPawn::CheckLinkedToPlayerState()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&ACsPawn::CheckLinkedToPlayerState_Internal);
+	Payload->CoroutineImpl.BindStatic(&ACsPawn::CheckLinkedToPlayerState_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
@@ -261,7 +261,7 @@ void ACsPawn::HandleRespawnTimer()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&ACsPawn::HandleRespawnTimer_Internal);
+	Payload->CoroutineImpl.BindStatic(&ACsPawn::HandleRespawnTimer_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 

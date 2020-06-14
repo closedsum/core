@@ -241,7 +241,7 @@ void UCsProcess::StartRead()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&UCsProcess::StartRead_Internal);
+	Payload->CoroutineImpl.BindStatic(&UCsProcess::StartRead_Internal);
 	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
 	Payload->Owner.SetObject(this);
 

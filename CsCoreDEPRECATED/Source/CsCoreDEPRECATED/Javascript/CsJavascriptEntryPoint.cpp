@@ -76,7 +76,7 @@ void ACsJavascriptEntryPoint::Setup()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(UpdateGroup);
 
-	Payload->Coroutine.BindStatic(&ACsJavascriptEntryPoint::Setup_Internal);
+	Payload->CoroutineImpl.BindStatic(&ACsJavascriptEntryPoint::Setup_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
 

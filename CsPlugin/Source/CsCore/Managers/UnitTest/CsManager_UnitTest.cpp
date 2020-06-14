@@ -194,7 +194,7 @@ void UCsManager_UnitTest::Start()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(UpdateGroup);
 
-	Payload->Coroutine.BindUObject(this, &UCsManager_UnitTest::Start_Internal);
+	Payload->CoroutineImpl.BindUObject(this, &UCsManager_UnitTest::Start_Internal);
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
 

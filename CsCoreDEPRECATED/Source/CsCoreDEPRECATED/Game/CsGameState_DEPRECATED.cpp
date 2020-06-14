@@ -317,7 +317,7 @@ void ACsGameState_DEPRECATED::OnBoard()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&ACsGameState_DEPRECATED::OnBoard_Internal);
+	Payload->CoroutineImpl.BindStatic(&ACsGameState_DEPRECATED::OnBoard_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 

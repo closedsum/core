@@ -1074,7 +1074,7 @@ void ACsWeapon_DEPRECATED::PlayAnimation_Reload()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&ACsWeapon_DEPRECATED::PlayAnimation_Reload_Internal);
+	Payload->CoroutineImpl.BindStatic(&ACsWeapon_DEPRECATED::PlayAnimation_Reload_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
@@ -1441,7 +1441,7 @@ void ACsWeapon_DEPRECATED::StartChargeFire(const FECsWeaponFireMode& FireMode)
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&ACsWeapon_DEPRECATED::StartChargeFire_Internal);
+	Payload->CoroutineImpl.BindStatic(&ACsWeapon_DEPRECATED::StartChargeFire_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
@@ -1651,7 +1651,7 @@ void ACsWeapon_DEPRECATED::FireWeapon(const FECsWeaponFireMode& FireMode)
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&ACsWeapon_DEPRECATED::FireWeapon_Internal);
+	Payload->CoroutineImpl.BindStatic(&ACsWeapon_DEPRECATED::FireWeapon_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(NCsWeaponCached::Str::FireWeapon_Internal);
@@ -1887,7 +1887,7 @@ void ACsWeapon_DEPRECATED::DrawFireProjectile(class ACsProjectileBase* Projectil
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&ACsWeapon_DEPRECATED::DrawFireProjectile_Internal);
+	Payload->CoroutineImpl.BindStatic(&ACsWeapon_DEPRECATED::DrawFireProjectile_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(Group);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(NCsWeaponCached::Str::DrawFireProjectile_Internal);

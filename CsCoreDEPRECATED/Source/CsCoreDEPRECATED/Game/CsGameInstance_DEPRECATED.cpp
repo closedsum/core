@@ -400,7 +400,7 @@ void UCsGameInstance_DEPRECATED::OnBoard()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this);
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&UCsGameInstance_DEPRECATED::OnBoard_Internal);
+	Payload->CoroutineImpl.BindStatic(&UCsGameInstance_DEPRECATED::OnBoard_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
@@ -465,7 +465,7 @@ void UCsGameInstance_DEPRECATED::LoadDataMapping()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this);
 	FCsCoroutinePayload* Payload     = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&UCsGameInstance_DEPRECATED::LoadDataMapping_Internal);
+	Payload->CoroutineImpl.BindStatic(&UCsGameInstance_DEPRECATED::LoadDataMapping_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
@@ -617,7 +617,7 @@ void UCsGameInstance_DEPRECATED::CreateFullscreenWidget()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this);
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&UCsGameInstance_DEPRECATED::CreateFullscreenWidget_Internal);
+	Payload->CoroutineImpl.BindStatic(&UCsGameInstance_DEPRECATED::CreateFullscreenWidget_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
@@ -685,7 +685,7 @@ void UCsGameInstance_DEPRECATED::HideMouseCursor()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this);
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&UCsGameInstance_DEPRECATED::HideMouseCursor_Internal);
+	Payload->CoroutineImpl.BindStatic(&UCsGameInstance_DEPRECATED::HideMouseCursor_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 
@@ -747,7 +747,7 @@ void UCsGameInstance_DEPRECATED::PerformLevelTransition(const FString& Level, co
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this);
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(Group);
 
-	Payload->Coroutine.BindStatic(&UCsGameInstance_DEPRECATED::PerformLevelTransition_Internal);
+	Payload->CoroutineImpl.BindStatic(&UCsGameInstance_DEPRECATED::PerformLevelTransition_Internal);
 	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(Group);
 	Payload->Owner.SetObject(this);
 

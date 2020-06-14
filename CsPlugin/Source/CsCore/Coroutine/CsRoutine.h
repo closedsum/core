@@ -26,7 +26,7 @@ public:
 
 	struct pt pt;
 
-	FCsCoroutine Coroutine;
+	FCsCoroutineImpl CoroutineImpl;
 
 	// Time
 #pragma region
@@ -75,7 +75,7 @@ public:
 
 	FORCEINLINE const FCsRoutineHandle& GetHandle() const { return Handle; }
 
-	TArray<FCsCoroutineAbortCondition> Aborts;
+	TArray<FCsCoroutineAbortConditionImpl> AbortImpls;
 
 	TArray<FCsOnCoroutineAbort> OnAborts;
 

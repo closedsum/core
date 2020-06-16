@@ -45,7 +45,7 @@ public:
 	*
 	* return
 	*/
-	virtual const float& GetProjectilesPerShot() const = 0;
+	virtual const int32& GetProjectilesPerShot() const = 0;
 
 	/**
 	*
@@ -60,4 +60,11 @@ public:
 	* return
 	*/
 	virtual const float& GetTimeBetweenAutoShots() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const float& GetTimeBetweenProjectilesPerShot() const = 0;
 };

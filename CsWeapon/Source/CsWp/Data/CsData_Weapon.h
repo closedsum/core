@@ -16,4 +16,6 @@ class CSWP_API ICsData_Weapon : public ICsGetInterfaceMap
 	GENERATED_IINTERFACE_BODY()
 
 public:
+
+	static const FName Name;
 };

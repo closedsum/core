@@ -41,7 +41,7 @@ public:
 	virtual UObject* GetInstigator() const = 0;
 };
 
-// FCsProjectile
+// FCsProjectilePooled
 #pragma region
 
 struct CSPRJ_API FCsProjectilePooled : public FCsPooledObject
@@ -195,4 +195,4 @@ public:
 	}
 };
 
-#pragma endregion FCsProjectile
+#pragma endregion FCsProjectilePooled

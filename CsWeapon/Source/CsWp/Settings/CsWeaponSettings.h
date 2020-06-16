@@ -3,6 +3,8 @@
 
 #include "Engine/DeveloperSettings.h"
 // Types
+#include "Settings/CsTypes_WeaponSettings.h"
+#include "Managers/Weapon/CsSettings_Manager_Weapon.h"
 #include "CsWeaponSettings.generated.h"
 
 class UDataTable;
@@ -44,21 +46,17 @@ public:
 #pragma endregion Enum
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	TSoftObjectPtr<UDataTable> Weapons;
+	TArray<FCsWeaponSettings_DataTable_Weapons> Weapons;
 	
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	bool bWeaponsEmulateDataInterfaces;
-	/*
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	FCsSettings_Manager_Projectile ManagerProjectile;
-	*/
-
+	FCsSettings_Manager_Weapon ManagerWeapon;
+	
 // Unit Test
 #pragma region
 public:
 
-	//UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Unit Test", meta = (DisplayName = "Unit Test Plan: Manager Creep"))
-	//FCsTdSettings_UnitTestPlan_Manager_Creep UnitTestPlan_ManagerCreep;
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Unit Test", meta = (DisplayName = "Unit Test: Manager Weapon"))
+	FCsSettings_Manager_Weapon_UnitTest UnitTest_ManagerWeapon;
 
 #pragma endregion Unit Test
 

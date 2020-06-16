@@ -7,6 +7,31 @@
 #include "CsTypes_Weapon.generated.h"
 #pragma once
 
+// Weapon
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSWP_API FECsWeapon : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsWeapon)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeapon)
+
+struct CSWP_API EMCsWeapon : public TCsEnumStructMap<FECsWeapon, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsWeapon, FECsWeapon, uint8)
+};
+
+namespace NCsWeapon
+{
+	typedef FECsWeapon Type;
+}
+
+#pragma endregion WeaponState
+
 // WeaponState
 #pragma region
 
@@ -231,6 +256,34 @@ namespace NCsWeaponOwner
 }
 
 #pragma endregion WeaponOwner
+
+// WeaponData
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSWP_API FECsWeaponData : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsWeaponData)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponData)
+
+struct CSWP_API EMCsWeaponData : public TCsEnumStructMap<FECsWeaponData, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsWeaponData, FECsWeaponData, uint8)
+};
+
+namespace NCsWeaponData
+{
+	typedef FECsWeaponData Type;
+
+	extern CSWP_API const Type Weapon;
+	extern CSWP_API const Type ProjectileWeapon;
+}
+
+#pragma endregion WeaponData
 
 // FCsWeaponPtr
 #pragma region

@@ -14,6 +14,12 @@ public:
 
 	FECsWeaponCustomization();
 
+protected:
+
+	virtual void CustomPopulateEnumMap() override;
+
+public:
+
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
 
 protected:

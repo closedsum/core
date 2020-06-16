@@ -5,6 +5,7 @@
 
 // Managers
 #include "Managers/Projectile/CsManager_Projectile.h"
+#include "Managers/Projectile/CsProjectilePooled.h"
 // Projectile
 #include "Managers/Projectile/CsProjectile.h"
 

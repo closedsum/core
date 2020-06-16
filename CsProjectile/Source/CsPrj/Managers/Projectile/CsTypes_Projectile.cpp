@@ -2,8 +2,6 @@
 #include "Managers/Projectile/CsTypes_Projectile.h"
 #include "CsPrj.h"
 
-// Managers
-#include "Managers/Projectile/CsManager_Projectile.h"
 // Settings
 #include "Settings/CsProjectileSettings.h"
 

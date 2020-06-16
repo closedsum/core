@@ -3,6 +3,7 @@
 
 #include "Engine/DeveloperSettings.h"
 // Types
+#include "Settings/CsTypes_Settings.h"
 #include "Settings/CsTypes_WeaponSettings.h"
 #include "Managers/Weapon/CsSettings_Manager_Weapon.h"
 #include "CsWeaponSettings.generated.h"
@@ -20,28 +21,29 @@ public:
 #pragma region
 public:
 
-	/*
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum")
-	TArray<FCsSettings_Enum> ECsProjectile;
+	ECsPopulateEnumMapMethod ECsWeapon_PopulateEnumMapMethod;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum")
+	TArray<FCsSettings_Enum> ECsWeapon;
 
 	template<typename EnumType>
 	const TArray<FCsSettings_Enum>& GetSettingsEnum() const;
 
 	template<>
-	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsProjectile>() const
+	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsWeapon>() const
 	{
-		return ECsProjectile;
+		return ECsWeapon;
 	}
 
 	template<typename EnumType>
 	FString GetSettingsEnumPath() const;
 
 	template<>
-	FString GetSettingsEnumPath<FECsProjectile>() const
+	FString GetSettingsEnumPath<FECsWeapon>() const
 	{
-		return TEXT("UCsProjectileSettings.ECsProjectile");
+		return TEXT("UCsWeaponSettings.ECsWeapon");
 	}
-	*/
 
 #pragma endregion Enum
 

@@ -25,12 +25,16 @@ struct CSWP_API EMCsWeapon : public TCsEnumStructMap<FECsWeapon, uint8>
 	CS_ENUM_STRUCT_MAP_BODY(EMCsWeapon, FECsWeapon, uint8)
 };
 
+class UObject;
+
 namespace NCsWeapon
 {
 	typedef FECsWeapon Type;
+
+	CSWP_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
 
-#pragma endregion WeaponState
+#pragma endregion Weapon
 
 // WeaponState
 #pragma region

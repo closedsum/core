@@ -6,6 +6,7 @@
 #include "CsTypes_Weapon.h"
 
 // EnumStructs
+#include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeapon.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponAnim.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponAnimBlueprint.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponBlendSpace.h"
@@ -15,6 +16,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponSlot.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponSound.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponState.h"
+#include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponData.h"
 
 TSharedPtr<SGraphPin> FCsWeaponPanelGraphPinFactory::CreatePin(UEdGraphPin* InPin) const
 {
@@ -23,6 +25,8 @@ TSharedPtr<SGraphPin> FCsWeaponPanelGraphPinFactory::CreatePin(UEdGraphPin* InPi
 	Check if pin is struct, and then check if that pin is of struct type we want customize
 	*/
 
+	// FECsWeapon
+	if (DoesPinUseScriptStruct<FECsWeapon>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeapon, InPin); }
 	// FECsWeaponAnim
 	if (DoesPinUseScriptStruct<FECsWeaponAnim>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponAnim, InPin); }
 	// FECsWeaponAnimBlueprint
@@ -41,6 +45,8 @@ TSharedPtr<SGraphPin> FCsWeaponPanelGraphPinFactory::CreatePin(UEdGraphPin* InPi
 	if (DoesPinUseScriptStruct<FECsWeaponSound>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponSound, InPin); }
 	// FECsWeaponState
 	if (DoesPinUseScriptStruct<FECsWeaponState>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponState, InPin); }
+	// FECsWeaponData
+	if (DoesPinUseScriptStruct<FECsWeaponData>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponData, InPin); }
 	return nullptr;
 }
 

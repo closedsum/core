@@ -7,6 +7,7 @@
 
 // DetailCustomizations
 	// EnumStruct
+#include "DetailCustomizations/EnumStruct/ECsWeaponCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsWeaponAnimCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsWeaponAnimBlueprintCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsWeaponBlendSpaceCustomization.h"
@@ -16,6 +17,7 @@
 #include "DetailCustomizations/EnumStruct/ECsWeaponSlotCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsWeaponSoundCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsWeaponStateCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsWeaponDataCustomization.h"
 
 void FCsWeaponRegisterDetailCustomization::Register()
 {
@@ -25,6 +27,8 @@ void FCsWeaponRegisterDetailCustomization::Register()
 	{
 		// FECsWeaponAnim
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponAnim", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponAnimCustomization::MakeInstance));
+		// FECsWeapon
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeapon", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponCustomization::MakeInstance));
 		// FECsWeaponAnimBlueprint
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponAnimBlueprint", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponAnimBlueprintCustomization::MakeInstance));
 		// FECsWeaponBlendSpace
@@ -41,5 +45,7 @@ void FCsWeaponRegisterDetailCustomization::Register()
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponSound", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponSoundCustomization::MakeInstance));
 		// FECsWeaponState
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponState", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponStateCustomization::MakeInstance));
+		// FECsWeaponData
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponData", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponDataCustomization::MakeInstance));
 	}
 }

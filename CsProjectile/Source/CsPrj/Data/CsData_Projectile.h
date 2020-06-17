@@ -25,6 +25,13 @@ public:
 	*
 	* return
 	*/
+	virtual const float& GetLifeTime() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
 	virtual const float& GetInitialSpeed() const = 0;
 
 	/**

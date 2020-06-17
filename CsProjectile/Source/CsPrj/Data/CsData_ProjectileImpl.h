@@ -11,6 +11,8 @@ private:
 
 	FCsInterfaceMap* InterfaceMap;
 
+	float* LifeTime;
+
 	float* InitialSpeed;
 
 	float* MaxSpeed;
@@ -21,6 +23,11 @@ public:
 
 	FCsData_ProjectileImpl();
 	~FCsData_ProjectileImpl();
+
+	FORCEINLINE void SetLifeTime(float* Value)
+	{
+		LifeTime = Value;
+	}
 
 	FORCEINLINE void SetInitialSpeed(float* Value)
 	{
@@ -53,6 +60,11 @@ public:
 // ICsData_Projectile
 #pragma region
 public:
+
+	FORCEINLINE const float& GetLifeTime() const
+	{
+		return *LifeTime;
+	}
 
 	FORCEINLINE const float& GetInitialSpeed() const
 	{

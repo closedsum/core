@@ -231,3 +231,13 @@ namespace NCsProjectileMovementFunctionType
 }
 
 #pragma endregion ProjectileMovementFunctionType
+
+// ProjectileData
+#pragma region
+
+namespace NCsProjectileData
+{
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsProjectileData, Projectile, "ICsData_Projectile");
+}
+
+#pragma endregion ProjectileData

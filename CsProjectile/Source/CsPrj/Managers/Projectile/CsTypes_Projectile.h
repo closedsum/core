@@ -201,6 +201,33 @@ namespace NCsProjectileMovementFunctionType
 
 #pragma endregion ProjectileMovementFunctionType
 
+// ProjectileData
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSPRJ_API FECsProjectileData : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+		CS_ENUM_UINT8_BODY(FECsProjectileData)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsProjectileData)
+
+struct CSPRJ_API EMCsProjectileData : public TCsEnumStructMap<FECsProjectileData, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsProjectileData, FECsProjectileData, uint8)
+};
+
+namespace NCsProjectileData
+{
+	typedef FECsProjectileData Type;
+
+	extern CSPRJ_API const Type Projectile;
+}
+
+#pragma endregion ProjectileData
+
 // FCsProjectileMovementFunctionAxis
 #pragma region
 

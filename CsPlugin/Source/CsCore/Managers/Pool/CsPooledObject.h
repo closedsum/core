@@ -68,6 +68,10 @@ protected:
 #pragma region
 public:
 
+	// ICsPooledObject
+#pragma region
+public:
+
 	/**
 	* Delegate type for getting the Cache associated with a Pooled Object.
 	*  The Pooled Object implements a script interface of type: ICsPooledObject.
@@ -105,6 +109,8 @@ public:
 	/** Delegate for deallocating a Pooled Object. */
 	FScript_Deallocate Script_Deallocate_Impl;
 
+#pragma endregion ICsPooledObject;
+
 	// ICsUpdate
 #pragma region
 public:
@@ -127,16 +133,7 @@ public:
 
 public:
 
-	FCsPooledObject() :
-		Super(),
-		_Update(nullptr),
-		bScriptUpdate(false),
-		Script_GetCache_Impl(),
-		Script_Allocate_Impl(),
-		Script_Deallocate_Impl(),
-		Script_Update_Impl()
-	{
-	}
+	FCsPooledObject();
 
 	virtual ~FCsPooledObject() {}
 

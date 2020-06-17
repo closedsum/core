@@ -13,6 +13,17 @@ UCsPooledObject::UCsPooledObject(const FObjectInitializer& ObjectInitializer) : 
 
 const FCsPooledObject FCsPooledObject::Empty;
 
+FCsPooledObject::FCsPooledObject() :
+	Super(),
+	_Update(nullptr),
+	bScriptUpdate(false),
+	Script_GetCache_Impl(),
+	Script_Allocate_Impl(),
+	Script_Deallocate_Impl(),
+	Script_Update_Impl()
+{
+}
+
 // TCsInterfaceObject
 #pragma region
 

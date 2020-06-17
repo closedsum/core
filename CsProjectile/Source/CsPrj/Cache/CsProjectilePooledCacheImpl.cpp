@@ -3,6 +3,8 @@
 
 #include "Managers/Pool/CsPooledObjectPayload.h"
 #include "Containers/CsInterfaceMap.h"
+// Data
+#include "Data/CsData_Projectile.h"
 
 FCsProjectilePooledCacheImpl::FCsProjectilePooledCacheImpl() :
 	InterfaceMap(nullptr),
@@ -17,7 +19,8 @@ FCsProjectilePooledCacheImpl::FCsProjectilePooledCacheImpl() :
 	WarmUpTime(0.0f),
 	LifeTime(0.0f),
 	StartTime(),
-	ElapsedTime()
+	ElapsedTime(),
+	Data(nullptr)
 {
 	InterfaceMap = new FCsInterfaceMap();
 
@@ -36,6 +39,15 @@ FCsProjectilePooledCacheImpl::~FCsProjectilePooledCacheImpl()
 void FCsProjectilePooledCacheImpl::Allocate(ICsPooledObjectPayload* Payload, const FCsTime& InTime)
 {
 
+}
+
+bool FCsProjectilePooledCacheImpl::HasLifeTimeExpired()
+{
+	if (Data->GetLifeTime() > 0.0f)
+	{
+		return ElapsedTime.Time > Data->GetLifeTime();
+	}
+	return false;
 }
 
 void FCsProjectilePooledCacheImpl::Reset()

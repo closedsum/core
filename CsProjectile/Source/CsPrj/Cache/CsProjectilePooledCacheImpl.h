@@ -8,6 +8,7 @@
 class UObject;
 struct FCsInterfaceMap;
 struct ICsPooledObjectPayload;
+class ICsData_Projectile;
 
 struct CSPRJ_API FCsProjectilePooledCacheImpl : public ICsPooledObjectCache,
 												public ICsProjectileCache
@@ -39,6 +40,8 @@ private:
 	FCsTime StartTime;
 
 	FCsDeltaTime ElapsedTime;
+
+	ICsData_Projectile* Data;
 
 public:
 
@@ -139,10 +142,7 @@ public:
 		return ElapsedTime;
 	}
 
-	FORCEINLINE bool HasLifeTimeExpired()
-	{
-		return false;
-	}
+	bool HasLifeTimeExpired();
 
 	void Reset();
 

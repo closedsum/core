@@ -330,12 +330,15 @@ struct CSWP_API FCsWeaponEntry : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** The enum (FECsWeapon) name for the weapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString Name;
 
+	/** The enum (FECsWeapon) display name for the weapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString DisplayName;
 
+	/** Soft Reference to a weapon of type: ICsWeapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FCsWeaponPtr Weapon;
 

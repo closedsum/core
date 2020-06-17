@@ -21,10 +21,10 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum")
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (DisplayName = "ECsWeapon - Populate Enum Map Method"))
 	ECsPopulateEnumMapMethod ECsWeapon_PopulateEnumMapMethod;
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum")
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (DisplayName = "ECsWeapon"))
 	TArray<FCsSettings_Enum> ECsWeapon;
 
 	template<typename EnumType>

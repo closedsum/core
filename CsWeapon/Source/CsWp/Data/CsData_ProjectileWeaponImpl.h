@@ -8,6 +8,10 @@ struct FCsInterfaceMap;
 struct CSWP_API FCsData_ProjectileWeaponImpl : public ICsData_Weapon,
 											   public ICsData_ProjectileWeapon
 {
+public:
+
+	static const FName Name;
+
 private:
 
 	FCsInterfaceMap* InterfaceMap;

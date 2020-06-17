@@ -6,7 +6,7 @@
 #include "Managers/Time/CsTypes_Time.h"
 #include "CsProjectileWeapon.generated.h"
 
-UINTERFACE(Blueprintable)
+UINTERFACE(BlueprintType)
 class CSWP_API UCsProjectileWeapon : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()

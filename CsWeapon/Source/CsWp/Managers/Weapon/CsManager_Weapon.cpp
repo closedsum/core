@@ -351,6 +351,10 @@ void UCsManager_Weapon::InitInternalFromSettings()
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
+			// TODO: Get DataTable from Manager_Data
+
+			// TODO: Add check for ModuleSettings->ManagerWeapon.Payload
+
 			UClass* Class = PoolParams.Class.LoadSynchronous();
 
 			checkf(Class, TEXT("UCsManager_Weapon::InitInternalFromSettings: Failed to load Class @ for Type: %s."), *(PoolParams.Class.ToString()), *(Type.Name));
@@ -634,25 +638,27 @@ void UCsManager_Weapon::PopulateDataMapFromSettings()
 				{
 
 				}
-				// ICsData_ProjectileWeapon
+				// ICsData_Weapon, ICsData_ProjectileWeapon
 				else
 				if (EmulatedDataInterfaces.Num() == 2 &&
 					EmulatedDataInterfaces.Find(NCsWeaponData::Weapon) &&
 					EmulatedDataInterfaces.Find(NCsWeaponData::ProjectileWeapon))
 				{
-					// bDoFireOnRelease
+					// ICsData_ProjectileWeapon
+
+						// bDoFireOnRelease
 					UBoolProperty* bDoFireOnReleaseProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UBoolProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::bDoFireOnRelease, NCsWeaponData::ProjectileWeapon.GetDisplayName());
-					// bFullAuto
+						// bFullAuto
 					UBoolProperty* bFullAutoProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UBoolProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::bFullAuto, NCsWeaponData::ProjectileWeapon.GetDisplayName());
-					// MaxAmmo
+						// MaxAmmo
 					UIntProperty* MaxAmmoProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UIntProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::MaxAmmo, NCsWeaponData::ProjectileWeapon.GetDisplayName());
-					// ProjectilesPerShot
+						// ProjectilesPerShot
 					UIntProperty* ProjectilesPerShotProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UIntProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::ProjectilesPerShot, NCsWeaponData::ProjectileWeapon.GetDisplayName());
-					// TimeBetweenShots
+						// TimeBetweenShots
 					UFloatProperty* TimeBetweenShotsProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::TimeBetweenShots, NCsWeaponData::ProjectileWeapon.GetDisplayName());
-					// TimeBetweenAutoShots
+						// TimeBetweenAutoShots
 					UFloatProperty* TimeBetweenAutoShotsProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::TimeBetweenAutoShots, NCsWeaponData::ProjectileWeapon.GetDisplayName());
-					// TimeBetweenProjectilesPerShot
+						// TimeBetweenProjectilesPerShot
 					UFloatProperty* TimeBetweenProjectilesPerShotProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::TimeBetweenProjectilesPerShot, NCsWeaponData::ProjectileWeapon.GetDisplayName());
 
 					const TMap<FName, uint8*>& RowMap = DT->GetRowMap();
@@ -664,6 +670,7 @@ void UCsManager_Weapon::PopulateDataMapFromSettings()
 
 						FCsData_ProjectileWeaponImpl* Data = new FCsData_ProjectileWeaponImpl();
 
+						// NOTE: If Payload is cleared, this map should be cleared
 						DataMap.Add(Name, Data);
 
 						// bDoFireOnRelease
@@ -731,7 +738,25 @@ void UCsManager_Weapon::PopulateDataMapFromSettings()
 
 void UCsManager_Weapon::DeconstructData(ICsData_Weapon* Data)
 {
-	delete static_cast<FCsData_WeaponImpl*>(Data);
+	FCsInterfaceMap* InterfaceMap = Data->GetInterfaceMap();
+
+	checkf(InterfaceMap, TEXT("UCsManager_Weapon::DeconstructData: Data failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
+	
+	// FCsData_WeaponImpl
+	if (InterfaceMap->GetRootName() == FCsData_WeaponImpl::Name)
+	{
+		delete static_cast<FCsData_WeaponImpl*>(Data);
+	}
+	// FCsData_ProjectileWeaponImpl
+	else
+	if (InterfaceMap->GetRootName() == FCsData_ProjectileWeaponImpl::Name)
+	{
+		delete static_cast<FCsData_ProjectileWeaponImpl*>(Data);
+	}
+	else
+	{
+		checkf(0, TEXT("UCsManager_Weapon::DeconstructData: Failed to delete Data."));
+	}
 }
 
 ICsData_Weapon* UCsManager_Weapon::GetData(const FName& Name)

@@ -55,6 +55,3 @@ FText SCsGraphPin_ECsWeapon::OnGetTooltip(int32 EnumIndex)
 {
 	return OnGetTooltip_Internal<EMCsWeapon>(EnumIndex);
 }
-
-
-

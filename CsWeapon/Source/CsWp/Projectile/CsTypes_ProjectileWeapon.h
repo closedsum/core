@@ -17,7 +17,7 @@ struct CSWP_API FCsProjectileWeaponPtr
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsProjectileWeapon"))
-	TSoftObjectPtr<UObject> Weapon;
+	TSoftClassPtr<UObject> Weapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 Load_Flags;
@@ -51,19 +51,58 @@ struct CSWP_API FCsProjectileWeaponEntry : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** The enum (FECsWeapon) name for the weapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString Name;
 
+	/** The enum (FECsWeapon) display name for the weapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString DisplayName;
 
+	/** Soft Reference to a weapon of type: ICsProjectileWeapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FCsProjectileWeaponPtr Weapon;
+
+	/** Whether to perform a Fire action on input pressed or released. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bDoFireOnRelease;
+
+	/** Whether the Fire action continues to execute when the Fire action is
+	    active. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bFullAuto;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 MaxAmmo;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 ProjectilesPerShot;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float TimeBetweenShots;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float TimeBetweenAutoShots;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float TimeBetweenProjectilesPerShot;
 
 	FCsProjectileWeaponEntry() :
 		Name(),
 		DisplayName(),
-		Weapon()
+		Weapon(),
+		bDoFireOnRelease(false),
+		bFullAuto(false),
+		MaxAmmo(0),
+		ProjectilesPerShot(0),
+		TimeBetweenShots(0.0f),
+		TimeBetweenAutoShots(0.0f),
+		TimeBetweenProjectilesPerShot(0.0f)
 	{
 	}
 };

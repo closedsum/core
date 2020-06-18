@@ -8,6 +8,29 @@ class CSCORE_API FCsLibrary_Property
 public:
 
 	/**
+	*
+	*
+	* @param Struct
+	* @param PropertyName
+	* return
+	*/
+	template<typename T>
+	static T* FindPropertyByName(const UStruct* Struct, const FName& PropertyName)
+	{
+		T* Property = Cast<T>(Struct->FindPropertyByName(PropertyName));
+		Property	= Property ? Property : Cast<T>(Struct->CustomFindProperty(PropertyName));
+
+		return Property;
+	}
+
+	/**
+	*
+	*
+	* @param Context
+	* @param Struct
+	* @param PropertyName
+	* @param InterfaceName
+	* return
 	*/
 	template<typename T>
 	static T* FindPropertyByNameForInterfaceChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName, const FString& InterfaceName)

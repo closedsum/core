@@ -31,7 +31,7 @@ void FECsProjectileCustomization::CustomPopulateEnumMap()
 {
 	using namespace NCsProjectileCustomizationCached;
 
-	NCsProjectile::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap);
+	NCsProjectile::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsProjectileCustomization::MakeInstance()

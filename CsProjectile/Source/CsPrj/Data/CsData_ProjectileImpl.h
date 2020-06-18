@@ -7,6 +7,10 @@ struct FCsInterfaceMap;
 
 struct CSPRJ_API FCsData_ProjectileImpl : public ICsData_Projectile
 {
+public:
+
+	static const FName Name;
+
 private:
 
 	FCsInterfaceMap* InterfaceMap;

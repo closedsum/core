@@ -612,7 +612,7 @@ private:
 	TMap<FECsProjectile, UClass*> ClassMap;
 
 	UPROPERTY()
-	UDataTable* DataTable;
+	TArray<UDataTable*> DataTables;
 
 #pragma endregion Data
 };

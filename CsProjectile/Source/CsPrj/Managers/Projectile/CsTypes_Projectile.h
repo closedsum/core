@@ -64,7 +64,7 @@ namespace NCsProjectile
 {
 	typedef FECsProjectile Type;
 
-	CSPRJ_API void PopulateEnumMapFromSettings(const FString& Context);
+	CSPRJ_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
 
 #pragma endregion Projectile
@@ -692,19 +692,42 @@ struct CSPRJ_API FCsProjectileEntry : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** The enum (FECsProjectile) name for the weapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString Name;
 
+	/** The enum (FECsProjectile) display name for the weapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString DisplayName;
 
+	/** Soft Reference to a weapon of type: ICsProjectile. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FCsProjectiletr Projectile;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float LifeTime;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float InitialSpeed;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MaxSpeed;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float GravityScale;
 
 	FCsProjectileEntry() :
 		Name(),
 		DisplayName(), 
-		Projectile()
+		Projectile(),
+		LifeTime(0.0f),
+		InitialSpeed(0.0f),
+		MaxSpeed(0.0f),
+		GravityScale(0.0f)
 	{
 	}
 };

@@ -28,111 +28,26 @@ namespace NCsProjectileRelevance
 
 namespace NCsProjectile
 {
-	void PopulateEnumMapFromSettings(const FString& Context)
+	// TODO: Need to Pass in Root so we can get DataTable from Manager_Data and NOT do a LoadSynchronous
+	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
 		if (UCsProjectileSettings* Settings = GetMutableDefault<UCsProjectileSettings>())
 		{
-			bool PopulatedEnumMap = false;
-			 
-			// Check DataTable of Projectiles
-			TSoftObjectPtr<UDataTable> Projectiles = Settings->Projectiles;
-
-			if (UDataTable* DataTable = Projectiles.LoadSynchronous())
-			{
-				const UScriptStruct* RowStruct = DataTable->GetRowStruct();
-
-				const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
-
-				// See if the Row Struct derives from FCsProjectileEntry
-				if (RowStruct->IsChildOf(FCsProjectileEntry::StaticStruct()))
-				{
 #if WITH_EDITOR
-					EMCsProjectile::Get().ClearUserDefinedEnums();
+			EMCsProjectile::Get().ClearUserDefinedEnums();
 #endif // #if WITH_EDITOR
 
-					for (const TPair<FName, uint8*>& Pair : RowMap)
-					{
-						const FName& Name				= Pair.Key;
-						const FCsProjectileEntry* Entry = reinterpret_cast<const FCsProjectileEntry*>(Pair.Value);
-
-						checkf(Entry->Name.Compare(Name.ToString(), ESearchCase::IgnoreCase) == 0, TEXT("%s: Row Name != Projectile Name (%s != %s)."), *Context, *(Entry->Name), *(Name.ToString()));
-
-						checkf(!EMCsProjectile::Get().IsValidEnum(Entry->Name), TEXT("%s: Projectile (Name): %s already exists (declared in native)."), *Context, *(Entry->Name));
-
-						if (!Entry->DisplayName.IsEmpty())
-						{
-							checkf(!EMCsProjectile::Get().IsValidEnumByDisplayName(Entry->DisplayName), TEXT("%s: Projectile (DisplayName): %s already exists (declared in native)."), *Context, *(Entry->DisplayName));
-
-							EMCsProjectile::Get().Create(Entry->Name, Entry->DisplayName, true);
-						}
-						else
-						{
-							EMCsProjectile::Get().Create(Entry->Name, true);
-						}
-					}
-					PopulatedEnumMap = true;
-				}
-				// Set if the Row Struct has the properties Name and DisplayName
-				else
-				{
-					UStrProperty* NameProperty		  = Cast<UStrProperty>(RowStruct->CustomFindProperty(FName("Name")));
-					UStrProperty* DisplayNameProperty = Cast<UStrProperty>(RowStruct->CustomFindProperty(FName("DisplayName")));
-
-					if (NameProperty &&
-						DisplayNameProperty)
-					{
-#if WITH_EDITOR
-						EMCsProjectile::Get().ClearUserDefinedEnums();
-#endif // #if WITH_EDITOR
-
-						for (const TPair<FName, uint8*>& Pair : RowMap)
-						{
-							const FName& RowName = Pair.Key;
-							const uint8* RowPtr  = Pair.Value;
-
-							const FString& Name		   = NameProperty->GetPropertyValue_InContainer(RowPtr);
-							const FString& DisplayName = DisplayNameProperty->GetPropertyValue_InContainer(RowPtr);
-
-							checkf(Name.Compare(RowName.ToString(), ESearchCase::IgnoreCase) == 0, TEXT("%s: Row Name != Projectile Name (%s != %s)."), *Context, *(RowName.ToString()), *Name);
-
-							checkf(!EMCsProjectile::Get().IsValidEnum(Name), TEXT("%s: Projectile (Name): %s already exists (declared in native)."), *Context, *Name);
-
-							if (!DisplayName.IsEmpty())
-							{
-								checkf(!EMCsProjectile::Get().IsValidEnumByDisplayName(DisplayName), TEXT("%s: Projectile (DisplayName): %s already exists (declared in native)."), *Context, *DisplayName);
-
-								EMCsProjectile::Get().Create(Name, DisplayName, true);
-							}
-							else
-							{
-								EMCsProjectile::Get().Create(Name, true);
-							}
-						}
-						PopulatedEnumMap = true;
-					}
-				}
-
-				if (!PopulatedEnumMap)
-				{
-					checkf(0, TEXT("%s: DataTable: %s with Row Struct: %s does NOT derive from FRsProjectileEntry nor has the FString properties: Name and DisplayName."), *Context, *(DataTable->GetName()), *(RowStruct->GetName()));
-				}
-			}
-
-			if (!PopulatedEnumMap)
+			// Enum Settings
+			if (Settings->ECsProjectile_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
 			{
 				const TArray<FCsSettings_Enum>& Enums = Settings->GetSettingsEnum<FECsProjectile>();
+				const FString EnumSettingsPath		  = Settings->GetSettingsEnumPath<FECsProjectile>();
 
 				if (Enums.Num() > CS_EMPTY)
 				{
-					const FString EnumSettingsPath = Settings->GetSettingsEnumPath<FECsProjectile>();
-
-#if WITH_EDITOR
-					EMCsProjectile::Get().ClearUserDefinedEnums();
-#endif // #if WITH_EDITOR
-
 					for (const FCsSettings_Enum& Enum : Enums)
 					{
-						const FString& Name		   = Enum.Name;
+						const FString& Name = Enum.Name;
 						const FString& DisplayName = Enum.DisplayName;
 
 						if (Name.IsEmpty())
@@ -153,6 +68,70 @@ namespace NCsProjectile
 						{
 							EMCsProjectile::Get().Create(Name, true);
 						}
+					}
+				}
+				else
+				{
+					UE_LOG(LogCsPrj, Warning, TEXT("%s: Enum Setting @ %s is empty."), *Context, *EnumSettingsPath);
+				}
+			}
+
+			// DataTable
+			if (Settings->ECsProjectile_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::DataTable)
+			{
+				for (FCsProjectileSettings_DataTable_Projectiles& Projectiles : Settings->Projectiles)
+				{
+					// Check DataTable of Projectiles
+					TSoftObjectPtr<UDataTable> DT_SoftObject = Projectiles.Projectiles;
+
+					if (UDataTable* DT = DT_SoftObject.LoadSynchronous())
+					{
+						const UScriptStruct* RowStruct	  = DT->GetRowStruct();
+						const TMap<FName, uint8*>& RowMap = DT->GetRowMap();
+						{
+							// Set if the Row Struct has the properties Name and DisplayName
+	
+							UStrProperty* NameProperty		  = Cast<UStrProperty>(RowStruct->FindPropertyByName(FName("Name")));
+							NameProperty					  = NameProperty ? NameProperty : Cast<UStrProperty>(RowStruct->CustomFindProperty(FName("Name")));
+							UStrProperty* DisplayNameProperty = Cast<UStrProperty>(RowStruct->FindPropertyByName(FName("DisplayName"))); 
+							DisplayNameProperty				  = DisplayNameProperty ? DisplayNameProperty: Cast<UStrProperty>(RowStruct->CustomFindProperty(FName("DisplayName")));
+
+							if (NameProperty &&
+								DisplayNameProperty)
+							{
+								for (const TPair<FName, uint8*>& Pair : RowMap)
+								{
+									const FName& RowName = Pair.Key;
+									const uint8* RowPtr = Pair.Value;
+
+									const FString& Name		   = NameProperty->GetPropertyValue_InContainer(RowPtr);
+									const FString& DisplayName = DisplayNameProperty->GetPropertyValue_InContainer(RowPtr);
+
+									checkf(Name.Compare(RowName.ToString(), ESearchCase::IgnoreCase) == 0, TEXT("%s: Row Name != Projectile Name (%s != %s)."), *Context, *(RowName.ToString()), *Name);
+
+									checkf(!EMCsProjectile::Get().IsValidEnum(Name), TEXT("%s: Projectile (Name): %s already exists (declared in native)."), *Context, *Name);
+
+									if (!DisplayName.IsEmpty())
+									{
+										checkf(!EMCsProjectile::Get().IsValidEnumByDisplayName(DisplayName), TEXT("%s: Projectile (DisplayName): %s already exists (declared in native)."), *Context, *DisplayName);
+
+										EMCsProjectile::Get().Create(Name, DisplayName, true);
+									}
+									else
+									{
+										EMCsProjectile::Get().Create(Name, true);
+									}
+								}
+							}
+							else
+							{
+								UE_LOG(LogCsPrj, Warning, TEXT("%s: Failed to find properties with name: Name and Display for struct: %s."), *Context, *(RowStruct->GetName()));
+							}
+						}
+					}
+					else
+					{
+						UE_LOG(LogCsPrj, Warning, TEXT("%s: Failed to Load DataTable @ %s."), *Context, *(DT_SoftObject.ToSoftObjectPath().ToString()));
 					}
 				}
 			}

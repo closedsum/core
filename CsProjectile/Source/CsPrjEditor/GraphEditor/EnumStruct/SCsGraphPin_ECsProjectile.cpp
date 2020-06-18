@@ -28,7 +28,7 @@ void SCsGraphPin_ECsProjectile::CustomPopulateEnumMap()
 {
 	using namespace NCsGraphPinProjectileCached;
 
-	NCsProjectile::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap);
+	NCsProjectile::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
 void SCsGraphPin_ECsProjectile::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)

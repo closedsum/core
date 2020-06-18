@@ -4,7 +4,7 @@
 #include "Engine/DeveloperSettings.h"
 // Types
 #include "Settings/CsTypes_Settings.h"
-#include "Managers/Projectile/CsTypes_Projectile.h"
+#include "Settings/CsTypes_ProjectileSettings.h"
 #include "Managers/Projectile/CsSettings_Manager_Projectile.h"
 #include "CsProjectileSettings.generated.h"
 
@@ -27,7 +27,10 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum")
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (DisplayName = "ECsProjectile - Populate Enum Map Method"))
+	ECsPopulateEnumMapMethod ECsProjectile_PopulateEnumMapMethod;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (DisplayName = "ECsProjectile"))
 	TArray<FCsSettings_Enum> ECsProjectile;
 
 	template<typename EnumType>
@@ -51,10 +54,7 @@ public:
 #pragma endregion Enum
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	TSoftObjectPtr<UDataTable> Projectiles;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	bool bProjectilesEmulateDataInterfaces;
+	TArray<FCsProjectileSettings_DataTable_Projectiles> Projectiles;
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	FCsSettings_Manager_Projectile ManagerProjectile;

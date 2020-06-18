@@ -5,6 +5,8 @@
 
 // CVars
 #include "Managers/Projectile/CsCVars_Manager_Projectile.h"
+// Library
+#include "Library/CsLibrary_Property.h"
 // Settings
 #include "Settings/CsProjectileSettings.h"
 // Data
@@ -31,8 +33,14 @@
 
 namespace NCsManagerProjectile
 {
+	namespace Str
+	{
+		const FString PopulateDataMapFromSettings = TEXT("UCsManager_Projectile::PopulateDataMapFromSettings");
+	}
+
 	namespace Name
 	{
+		const FName LifeTime = FName("LifeTime");
 		const FName InitialSpeed = FName("InitialSpeed");
 		const FName MaxSpeed = FName("MaxSpeed");
 		const FName GravityScale = FName("GravityScale");
@@ -612,19 +620,42 @@ void UCsManager_Projectile::PopulateDataMapFromSettings()
 
 	if (UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>())
 	{
-		// Check if the DataTable entries should emulate any interfaces (i.e. ICsData_Projectile, ... etc)
-		if (ModuleSettings->bProjectilesEmulateDataInterfaces)
+		for (FCsProjectileSettings_DataTable_Projectiles& Projectiles : ModuleSettings->Projectiles)
 		{
 			// TODO: Get DataTable from Manager_Data
+
 			// TODO: Add check for ModuleSettings->ManagerProjectile.Payload
 
-			// Check DataTable of Projectiles
-			TSoftObjectPtr<UDataTable> Projectiles = ModuleSettings->Projectiles;
+			bool LoadedFromManagerData = false;
 
-			if (UDataTable* DT = Projectiles.LoadSynchronous())
+			if (!LoadedFromManagerData)
 			{
+				// LOG Warning
+			}
+
+			// Check DataTable of Projectiles
+			TSoftObjectPtr<UDataTable> DT_SoftObject = Projectiles.Projectiles;
+
+			if (UDataTable* DT = DT_SoftObject.LoadSynchronous())
+			{
+				if (!LoadedFromManagerData)
+				{
+					DataTables.Add(DT);
+				}
+
 				const UScriptStruct* RowStruct    = DT->GetRowStruct();
 				const TMap<FName, uint8*>& RowMap = DT->GetRowMap();
+
+				// ICsData_Projectile
+
+				// LifeTime
+				UFloatProperty* LifeTimeProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::LifeTime, NCsProjectileData::Projectile.GetDisplayName());
+				// InitialSpeed
+				UFloatProperty* InitialSpeedProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::InitialSpeed, NCsProjectileData::Projectile.GetDisplayName());
+				// MaxSpeed
+				UFloatProperty* MaxSpeedProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::MaxSpeed, NCsProjectileData::Projectile.GetDisplayName());
+				// GravityScale
+				UFloatProperty* GravityScaleProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::GravityScale, NCsProjectileData::Projectile.GetDisplayName());
 
 				for (const TPair<FName, uint8*>& Pair : RowMap)
 				{
@@ -637,44 +668,37 @@ void UCsManager_Projectile::PopulateDataMapFromSettings()
 
 					// ICsData_Projectile
 					{
+						// LifeTime
+						{
+							float* Value = LifeTimeProperty->ContainerPtrToValuePtr<float>(RowPtr);
+
+							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: LifeTime."));
+
+							Data->SetLifeTime(Value);
+						}
 						// InitialSpeed
 						{
-							UFloatProperty* FloatProperty = Cast<UFloatProperty>(RowStruct->FindPropertyByName(Name::InitialSpeed));
-							FloatProperty				  = FloatProperty ? FloatProperty : Cast<UFloatProperty>(RowStruct->CustomFindProperty(Name::InitialSpeed));
+							float* Value = InitialSpeedProperty->ContainerPtrToValuePtr<float>(RowPtr);
 
-							checkf(FloatProperty, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to find Propery: InitialSpeed when emulating interface: ICsData_Projectile."));
-							 
-							float* InitialSpeed = FloatProperty->ContainerPtrToValuePtr<float>(RowPtr);
+							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: InitialSpeed."));
 
-							checkf(InitialSpeed, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: InitialSpeed."));
-
-							Data->SetInitialSpeed(InitialSpeed);
+							Data->SetInitialSpeed(Value);
 						}
 						// MaxSpeed
 						{
-							UFloatProperty* FloatProperty = Cast<UFloatProperty>(RowStruct->FindPropertyByName(Name::MaxSpeed));
-							FloatProperty				  = FloatProperty ? FloatProperty : Cast<UFloatProperty>(RowStruct->CustomFindProperty(Name::MaxSpeed));
+							float* Value = MaxSpeedProperty->ContainerPtrToValuePtr<float>(RowPtr);
 
-							checkf(FloatProperty, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to find Propery: MaxSpeed when emulating interface: ICsData_Projectile."));
+							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: MaxSpeed."));
 
-							float* MaxSpeed = FloatProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-							checkf(MaxSpeed, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: MaxSpeed."));
-
-							Data->SetMaxSpeed(MaxSpeed);
+							Data->SetMaxSpeed(Value);
 						}
 						// GravityScale
 						{
-							UFloatProperty* FloatProperty = Cast<UFloatProperty>(RowStruct->FindPropertyByName(Name::GravityScale));
-							FloatProperty				  = FloatProperty ? FloatProperty : Cast<UFloatProperty>(RowStruct->CustomFindProperty(Name::GravityScale));
+							float* Value = GravityScaleProperty->ContainerPtrToValuePtr<float>(RowPtr);
 
-							checkf(FloatProperty, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to find Propery: GravityScale when emulating interface: ICsData_Projectile."));
+							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: GravityScale."));
 
-							float* GravityScale = FloatProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-							checkf(GravityScale, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: GravityScale."));
-
-							Data->SetGravityScale(GravityScale);
+							Data->SetGravityScale(Value);
 						}
 					}
 				}
@@ -685,7 +709,19 @@ void UCsManager_Projectile::PopulateDataMapFromSettings()
 
 void UCsManager_Projectile::DeconstructData(ICsData_Projectile* Data)
 {
-	delete static_cast<FCsData_ProjectileImpl*>(Data);
+	FCsInterfaceMap* InterfaceMap = Data->GetInterfaceMap();
+
+	checkf(InterfaceMap, TEXT("UCsManager_Projectile::DeconstructData: Data failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
+	
+	// FCsData_ProjectileImpl
+	if (InterfaceMap->GetRootName() == FCsData_ProjectileImpl::Name)
+	{
+		delete static_cast<FCsData_ProjectileImpl*>(Data);
+	}
+	else
+	{
+		checkf(0, TEXT("UCsManager_Projectile::DeconstructData: Failed to delete Data."));
+	}
 }
 
 ICsData_Projectile* UCsManager_Projectile::GetData(const FName& Name)

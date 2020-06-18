@@ -107,7 +107,7 @@ FCsRoutine* FCsCoroutineSchedule::GetRoutine(const FCsRoutineHandle& Handle)
 #pragma region
 
 const FCsRoutineHandle& FCsCoroutineSchedule::Start(FCsResource_CoroutinePayload* PayloadContainer)
-{
+ {
 	FCsCoroutinePayload* Payload = PayloadContainer->Get();
 
 	checkf(Payload, TEXT("FCsCoroutineSchedule::Start: PayloadContainer does NOT contain a reference to a Payload."));

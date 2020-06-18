@@ -549,7 +549,7 @@ void FCsCoroutinePayload::Reset()
 	OnAborts.Reset(OnAborts.Max());
 	ParentHandle.Reset();
 	bDoInit = true;
-	bPerformFirstUpdate = false;
+	bPerformFirstUpdate = true;
 	Name = nullptr;
 	Name_Internal = NAME_None;
 

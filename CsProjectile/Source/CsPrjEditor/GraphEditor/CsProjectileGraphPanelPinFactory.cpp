@@ -5,11 +5,10 @@
 // Types
 #include "Managers/Projectile/CsTypes_Projectile.h"
 
-//#include "SlateBasics.h"
-
 // EnumStructs
 	// Projectile
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsProjectile.h"
+#include "GraphEditor/EnumStruct/SCsGraphPin_ECsProjectileData.h"
 
 TSharedPtr<SGraphPin> FCsProjectilePanelGraphPinFactory::CreatePin(UEdGraphPin* InPin) const
 {
@@ -18,10 +17,12 @@ TSharedPtr<SGraphPin> FCsProjectilePanelGraphPinFactory::CreatePin(UEdGraphPin* 
 	Check if pin is struct, and then check if that pin is of struct type we want customize
 	*/
 
-	// Creep
+	// Projectile
 	{
-		// FECsTdCreep
+		// FECsProjectile
 		if (DoesPinUseScriptStruct<FECsProjectile>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsProjectile, InPin); }
+		// FECsProjectileData
+		if (DoesPinUseScriptStruct<FECsProjectileData>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsProjectileData, InPin); }
 	}
 	return nullptr;
 }

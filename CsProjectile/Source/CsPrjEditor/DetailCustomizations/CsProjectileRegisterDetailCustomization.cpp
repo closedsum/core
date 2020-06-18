@@ -9,6 +9,7 @@
 	// EnumStruct
 		// Projectile
 #include "DetailCustomizations/EnumStruct/ECsProjectileCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsProjectileDataCustomization.h"
 
 void FCsProjectileRegisterDetailCustomization::Register()
 {
@@ -16,7 +17,9 @@ void FCsProjectileRegisterDetailCustomization::Register()
 
 	// EnumStruct
 	{
-		// Projectile
+		// ECsProjectile
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProjectile", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProjectileCustomization::MakeInstance));
+		// ECsProjectileData
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProjectileData", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProjectileDataCustomization::MakeInstance));
 	}
 }

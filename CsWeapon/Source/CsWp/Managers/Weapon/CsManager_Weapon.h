@@ -43,6 +43,8 @@ public:
 class ICsGetManagerWeapon;
 class ICsData_Weapon;
 class UDataTable;
+struct FCsWeaponPtr;
+struct FCsProjectileWeaponPtr;
 
 UCLASS()
 class CSWP_API UCsManager_Weapon : public UObject
@@ -596,6 +598,20 @@ private:
 
 	UPROPERTY()
 	TArray<UDataTable*> DataTables;
+
+	TMap<FECsWeapon, FCsWeaponPtr*> WeaponMap;
+
+public:
+
+	FCsWeaponPtr* GetWeaponPtr(const FECsWeapon& Weapon);
+
+private:
+
+	TMap<FECsWeapon, FCsProjectileWeaponPtr*> ProjectileWeaponMap;
+
+public:
+
+	FCsProjectileWeaponPtr* GetProjectileWeaponPtr(const FECsWeapon& Weapon);
 
 #pragma endregion Data
 };

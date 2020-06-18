@@ -5,8 +5,11 @@
 
 // CVars
 //#include "Managers/Projectile/CsCVars_Manager_Projectile.h"
+// Types
+#include "Projectile/CsTypes_ProjectileWeapon.h"
 // Library
 #include "Library/CsLibrary_Property.h"
+#include "Library/Load/CsLibrary_Load.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Data
@@ -41,6 +44,8 @@ namespace NCsManagerWeapon
 
 	namespace Name
 	{
+		const FName Weapon = FName("Weapon");
+
 		// ICsData_ProjectileWeapon
 
 		const FName bDoFireOnRelease = FName("bDoFireOnRelease");
@@ -625,6 +630,8 @@ void UCsManager_Weapon::PopulateDataMapFromSettings()
 			{
 				if (!LoadedFromManagerData)
 				{
+					UCsLibrary_Load::LoadDataTable(DT, NCsLoadFlags::None, NCsLoadCodes::None);
+
 					DataTables.Add(DT);
 				}
 
@@ -644,6 +651,14 @@ void UCsManager_Weapon::PopulateDataMapFromSettings()
 					EmulatedDataInterfaces.Find(NCsWeaponData::Weapon) &&
 					EmulatedDataInterfaces.Find(NCsWeaponData::ProjectileWeapon))
 				{
+					// Weapon
+					UStructProperty* WeaponProperty = FCsLibrary_Property::FindPropertyByName<UStructProperty>(RowStruct, Name::Weapon);
+
+					if (!WeaponProperty)
+					{
+						UE_LOG(LogCsWp, Warning, TEXT("UCsManager_Weapon::PopulateDataMapFromSettings: Failed to find StructProperty: Weapon in Struct: %s"), *(RowStruct->GetName()));
+					}
+
 					// ICsData_ProjectileWeapon
 
 						// bDoFireOnRelease
@@ -668,6 +683,31 @@ void UCsManager_Weapon::PopulateDataMapFromSettings()
 						const FName& Name = Pair.Key;
 						uint8* RowPtr	  = const_cast<uint8*>(Pair.Value);
 
+						if (WeaponProperty)
+						{
+							const FECsWeapon& Type = EMCsWeapon::Get().GetEnum(Name);
+
+							// FCsWeaponPtr
+							if (WeaponProperty->Struct == FCsWeaponPtr::StaticStruct())
+							{
+								FCsWeaponPtr* WeaponPtr = WeaponProperty->ContainerPtrToValuePtr<FCsWeaponPtr>(RowPtr);
+
+								checkf(WeaponPtr, TEXT("UCsManager_Weapon::PopulateDataMapFromSettings: Failed to get FCsWeaponPtr ptr from StructProperty: Weapon."));
+
+								WeaponMap.Add(Type, WeaponPtr);
+							}
+							// FCsProjectileWeaponPtr
+							else
+							if (WeaponProperty->Struct == FCsProjectileWeaponPtr::StaticStruct())
+							{
+								FCsProjectileWeaponPtr* WeaponPtr = WeaponProperty->ContainerPtrToValuePtr<FCsProjectileWeaponPtr>(RowPtr);
+			
+								checkf(WeaponPtr, TEXT("UCsManager_Weapon::PopulateDataMapFromSettings: Failed to get FCsProjectileWeaponPtr ptr from StructProperty: Weapon."));
+
+								ProjectileWeaponMap.Add(Type, WeaponPtr);
+							}
+						}
+
 						FCsData_ProjectileWeaponImpl* Data = new FCsData_ProjectileWeaponImpl();
 
 						// NOTE: If Payload is cleared, this map should be cleared
@@ -677,7 +717,7 @@ void UCsManager_Weapon::PopulateDataMapFromSettings()
 						{
 							bool* Value = bDoFireOnReleaseProperty->ContainerPtrToValuePtr<bool>(RowPtr);
 
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to bool ptr from BoolProperty: bDoFireOnRelease."));
+							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to get bool ptr from BoolProperty: bDoFireOnRelease."));
 
 							Data->SetDoFireOnRelease(Value);
 						}
@@ -685,7 +725,7 @@ void UCsManager_Weapon::PopulateDataMapFromSettings()
 						{
 							bool* Value = bFullAutoProperty->ContainerPtrToValuePtr<bool>(RowPtr);
 
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to bool ptr from BoolProperty: bFullAuto."));
+							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to get bool ptr from BoolProperty: bFullAuto."));
 
 							Data->SetFullAuto(Value);
 						}
@@ -693,7 +733,7 @@ void UCsManager_Weapon::PopulateDataMapFromSettings()
 						{
 							int32* Value = MaxAmmoProperty->ContainerPtrToValuePtr<int32>(RowPtr);
 
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to int32 ptr from IntProperty: MaxAmmo."));
+							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to get int32 ptr from IntProperty: MaxAmmo."));
 
 							Data->SetMaxAmmo(Value);
 						}
@@ -701,7 +741,7 @@ void UCsManager_Weapon::PopulateDataMapFromSettings()
 						{
 							int32* Value = ProjectilesPerShotProperty->ContainerPtrToValuePtr<int32>(RowPtr);
 
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to int32 ptr from IntProperty: ProjectilesPerShot."));
+							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to get int32 ptr from IntProperty: ProjectilesPerShot."));
 
 							Data->SetProjectilesPerShot(Value);
 						}
@@ -768,6 +808,20 @@ ICsData_Weapon* UCsManager_Weapon::GetData(const FName& Name)
 	checkf(DataPtr, TEXT("UCsManager_Weapon::GetData: Failed to find Data for Name: %s."), *(Name.ToString()));
 
 	return *DataPtr;
+}
+
+FCsWeaponPtr* UCsManager_Weapon::GetWeaponPtr(const FECsWeapon& Weapon)
+{
+	FCsWeaponPtr** Ptr = WeaponMap.Find(Weapon);
+
+	return Ptr ? *Ptr : nullptr;
+}
+
+FCsProjectileWeaponPtr* UCsManager_Weapon::GetProjectileWeaponPtr(const FECsWeapon& Weapon)
+{
+	FCsProjectileWeaponPtr** Ptr = ProjectileWeaponMap.Find(Weapon);
+
+	return Ptr ? *Ptr : nullptr;
 }
 
 #pragma endregion Data

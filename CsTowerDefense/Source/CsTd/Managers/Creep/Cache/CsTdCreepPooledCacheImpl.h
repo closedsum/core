@@ -1,21 +1,19 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+#include "Managers/Pool/CsTypes_Pool.h"
 #include "Managers/Pool/CsPooledObjectCache.h"
-#include "Cache/CsProjectileCache.h"
 #include "Containers/CsWeakObjectPtr.h"
-
 #pragma once
 
 class UObject;
 struct FCsInterfaceMap;
-struct ICsPooledObjectPayload;
-class ICsData_Projectile;
 
-struct CSPRJ_API FCsProjectilePooledCacheImpl : public ICsPooledObjectCache,
-												public ICsProjectileCache
+struct CSTD_API FCsTdCreepPooledCacheImpl : public ICsPooledObjectCache
 {
-private:
+public:
 
-	FCsInterfaceMap* InterfaceMap;
+	static const FName Name;
+
+public:
 
 	int32 Index;
 
@@ -41,13 +39,11 @@ private:
 
 	FCsDeltaTime ElapsedTime;
 
-	ICsData_Projectile* Data;
+	FCsInterfaceMap* InterfaceMap;
 
-public:
+	FCsTdCreepPooledCacheImpl();
 
-	FCsProjectilePooledCacheImpl();
-
-	~FCsProjectilePooledCacheImpl();
+	~FCsTdCreepPooledCacheImpl();
 
 // ICsGetInterfaceMap
 #pragma region
@@ -76,7 +72,7 @@ public:
 
 	void Allocate(ICsPooledObjectPayload* Payload);
 
-	FORCEINLINE const bool& IsAllocated() const
+	FORCEINLINE const bool& IsAllocated() const 
 	{
 		return bAllocated;
 	}
@@ -103,7 +99,7 @@ public:
 		return UpdateType;
 	}
 
-	FORCEINLINE UObject* GetInstigator() const
+	FORCEINLINE UObject* GetInstigator() const 
 	{
 		return Instigator.Get();
 	}
@@ -138,21 +134,12 @@ public:
 		return ElapsedTime;
 	}
 
-	bool HasLifeTimeExpired();
+	FORCEINLINE bool HasLifeTimeExpired()
+	{
+		return false;
+	}
 
 	void Reset();
 
 #pragma endregion ICsPooledObjectCache
-
-// ICsProjectileCache
-#pragma region
-public:
-
-#pragma endregion ICsProjectileCache
-
-public:
-
-	void Update(const FCsDeltaTime& DeltaTime);
-
-	void SetData(ICsData_Projectile* InData);
 };

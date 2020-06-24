@@ -8,7 +8,7 @@
 #include "CsTdCreep_UnitTest_A.generated.h"
 
 class UStaticMeshComponent;
-struct ICsPooledObjectCache;
+struct FCsTdCreepPooledCacheImpl;
 struct ICsPooledObjectPayload;
 
 UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick", "LOD", "Cooking"))
@@ -47,7 +47,7 @@ public:
 #pragma region
 protected:
 
-	FCsTdCreepPooledCache* Cache;
+	FCsTdCreepPooledCacheImpl* Cache;
 
 public:
 

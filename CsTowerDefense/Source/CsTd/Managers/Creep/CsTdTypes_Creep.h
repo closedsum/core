@@ -116,9 +116,8 @@ public:
 		return Index;
 	}
 
-	void Allocate(ICsPooledObjectPayload* Payload, const FCsTime& InTime)
+	void Allocate(ICsPooledObjectPayload* Payload)
 	{
-
 	}
 
 	FORCEINLINE const bool& IsAllocated() const 
@@ -201,22 +200,6 @@ public:
 };
 
 #pragma endregion FCsTdCreepPooledCache
-
-// ICsTdCreepPayload
-#pragma region
-
-struct CSTD_API ICsTdCreepPayload : virtual public ICsGetInterfaceMap
-{
-public:
-
-	static const FName Name;
-
-public:
-
-	virtual ~ICsTdCreepPayload() {}
-};
-
-#pragma endregion ICsTdCreepPayload
 
 // FCsTdCreepRefContainer
 #pragma region

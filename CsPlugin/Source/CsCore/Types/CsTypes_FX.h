@@ -288,6 +288,8 @@ public:
 
 	UObject* Parent;
 
+	FCsTime Time;
+
 	TWeakObjectPtr<UParticleSystem> Particle;
 
 	TEnumAsByte<ECsFxPriority::Type> Priority;
@@ -334,6 +336,11 @@ public:
 	UObject* GetParent() const
 	{
 		return Parent;
+	}
+
+	FORCEINLINE const FCsTime& GetTime() const 
+	{
+		return Time;
 	}
 
 	void Allocate()

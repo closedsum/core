@@ -27,6 +27,8 @@ void FCsPooledObjectPayload::Reset()
 	Instigator = nullptr;
 	Owner = nullptr;
 	Parent = nullptr;
+
+	Time.Reset();
 }
 
 #pragma endregion ICsPooledObjectPayload

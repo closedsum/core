@@ -73,7 +73,7 @@ public:
 	* Delegate type for getting the Data associated with a Weapon.
 	*  The Weapon implements a script interface of type: ICsWeapon.
 	*
-	* @param Object		A Pooled Object of type: ICsWeapon.
+	* @param Object		An object of type: ICsWeapon.
 	* return Data		The cache associated with the Pooled Object.
 	*/
 	DECLARE_DELEGATE_RetVal_OneParam(ICsData_Weapon* /*Data*/, FScript_GetData, UObject* /*Object*/);
@@ -89,16 +89,28 @@ public:
 public:
 
 	/**
-	* Delegate type for firing a Weapon.
+	* Delegate type for start firing a Weapon.
 	*  The Weapon implements a script interface of type: ICsProjectileWeapon.
 	*
-	* @param Object		A Pooled Object of type: ICsProjectileWeapon.
+	* @param Object		An object of type: ICsProjectileWeapon.
 	*/
-	DECLARE_DELEGATE_OneParam(FScript_Fire, UObject* /*Object*/);
+	DECLARE_DELEGATE_OneParam(FScript_StartFire, UObject* /*Object*/);
 
-	/** Delegate for firing a Weapon.
+	/** Delegate for start firing a Weapon.
 		 The Weapon implements a script interface of type: ICsProjectileWeapon. */
-	FScript_Fire Script_Fire_Impl;
+	FScript_StartFire Script_StartFire_Impl;
+
+	/**
+	* Delegate type for stop firing a Weapon.
+	*  The Weapon implements a script interface of type: ICsProjectileWeapon.
+	*
+	* @param Object		An object of type: ICsProjectileWeapon.
+	*/
+	DECLARE_DELEGATE_OneParam(FScript_StopFire, UObject* /*Object*/);
+
+	/** Delegate for start firing a Weapon.
+		 The Weapon implements a script interface of type: ICsProjectileWeapon. */
+	FScript_StopFire Script_StopFire_Impl;
 
 #pragma endregion ICsProjectileWeapon
 
@@ -131,7 +143,8 @@ public:
 		_Update(nullptr),
 		bScriptUpdate(false),
 		Script_GetData_Impl(),
-		Script_Fire_Impl(),
+		Script_StartFire_Impl(),
+		Script_StopFire_Impl(),
 		Script_Update_Impl()
 	{
 	}
@@ -197,6 +210,22 @@ public:
 
 // ICsProjectileWeapon
 #pragma region
+
+	FORCEINLINE void StartFire()
+	{
+		if (bScript)
+			Script_StartFire_Impl.Execute(Object);
+		else
+			Interface->StartFire();
+	}
+
+	FORCEINLINE void StopFire()
+	{
+		if (bScript)
+			Script_StopFire_Impl.Execute(Object);
+		else
+			Interface->StopFire();
+	}
 
 #pragma endregion ICsProjectileWeapon
 

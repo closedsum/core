@@ -22,7 +22,7 @@ public:
 	{
 	}
 
-	FORCEINLINE TCsWeakObjectPtr<ObjectType>& operator=(const ObjectType* InObject)
+	FORCEINLINE TCsWeakObjectPtr<ObjectType>& operator=(ObjectType* InObject)
 	{
 		Object = InObject;
 		WeakObject = InObject;

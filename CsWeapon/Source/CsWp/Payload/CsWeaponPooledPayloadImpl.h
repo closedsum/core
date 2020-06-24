@@ -24,6 +24,8 @@ public:
 
 	UObject* Parent;
 
+	FCsTime Time;
+
 public:
 
 	FCsWeaponPooledPayloadImpl();
@@ -62,6 +64,11 @@ public:
 	FORCEINLINE UObject* GetParent() const
 	{
 		return Parent;
+	}
+
+	FORCEINLINE const FCsTime& GetTime() const
+	{
+		return Time;
 	}
 
 	FORCEINLINE void Allocate()

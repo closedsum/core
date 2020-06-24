@@ -7,6 +7,8 @@
 #include "Managers/Pool/CsPooledObjectPayload.h"
 // Components
 #include "Components/StaticMeshComponent.h"
+// Creep
+#include "Managers/Creep/Cache/CsTdCreepPooledCacheImpl.h"
 
 ACsTdCreep_UnitTest_A::ACsTdCreep_UnitTest_A(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -37,7 +39,7 @@ void ACsTdCreep_UnitTest_A::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Cache = new FCsTdCreepPooledCache();
+	Cache = new FCsTdCreepPooledCacheImpl();
 }
 
 #pragma endregion AActor Interface

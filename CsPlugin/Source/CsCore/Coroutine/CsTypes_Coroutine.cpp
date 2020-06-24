@@ -343,7 +343,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	Indexers.AddDefaulted(CS_ROUTINE_INDEXER_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::Indexer].AddDefaulted(Indexers.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Indexer].AddDefaulted(Indexers.Max());
 
 	for (int32& I : Indexers)
 	{
@@ -355,7 +355,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	Counters.AddDefaulted(CS_ROUTINE_COUNTER_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::Counter].AddDefaulted(Counters.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Counter].AddDefaulted(Counters.Max());
 
 	for (int32& I : Counters)
 	{
@@ -367,7 +367,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	Flags.AddDefaulted(CS_ROUTINE_FLAG_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::Flag].AddDefaulted(Flags.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Flag].AddDefaulted(Flags.Max());
 
 	for (bool& Flag : Flags)
 	{
@@ -379,7 +379,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	Timers.AddDefaulted(CS_ROUTINE_TIMER_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::Timer].AddDefaulted(Timers.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Timer].AddDefaulted(Timers.Max());
 
 	for (FCsTime& Timer : Timers)
 	{
@@ -391,7 +391,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	DeltaTimes.AddDefaulted(CS_ROUTINE_DELTA_TIME_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::DeltaTime].AddDefaulted(DeltaTimes.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::DeltaTime].AddDefaulted(DeltaTimes.Max());
 
 	for (FCsDeltaTime& DT : DeltaTimes)
 	{
@@ -403,7 +403,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	Ints.AddDefaulted(CS_ROUTINE_INT_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::Int].AddDefaulted(Ints.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Int].AddDefaulted(Ints.Max());
 
 	for (int32& I : Ints)
 	{
@@ -415,7 +415,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	Floats.AddDefaulted(CS_ROUTINE_FLOAT_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::Float].AddDefaulted(Floats.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Float].AddDefaulted(Floats.Max());
 
 	for (float& Float : Floats)
 	{
@@ -427,7 +427,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	Doubles.AddDefaulted(CS_ROUTINE_DOUBLE_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::Double].AddDefaulted(Doubles.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Double].AddDefaulted(Doubles.Max());
 
 	for (double& Double : Doubles)
 	{
@@ -439,7 +439,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	Vectors.AddDefaulted(CS_ROUTINE_VECTOR_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::Vector].AddDefaulted(Vectors.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Vector].AddDefaulted(Vectors.Max());
 
 	for (FVector& V : Vectors)
 	{
@@ -451,7 +451,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	Rotators.AddDefaulted(CS_ROUTINE_ROTATOR_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::Rotator].AddDefaulted(Rotators.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Rotator].AddDefaulted(Rotators.Max());
 
 	for (FRotator& R : Rotators)
 	{
@@ -463,7 +463,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	Colors.AddDefaulted(CS_ROUTINE_COLOR_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::Color].AddDefaulted(Colors.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Color].AddDefaulted(Colors.Max());
 
 	for (FLinearColor& C : Colors)
 	{
@@ -475,7 +475,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	Names.AddDefaulted(CS_ROUTINE_NAME_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::Name].AddDefaulted(Names.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Name].AddDefaulted(Names.Max());
 
 	for (FName& N : Names)
 	{
@@ -487,7 +487,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	Strings.AddDefaulted(CS_ROUTINE_STRING_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::String].AddDefaulted(Strings.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::String].AddDefaulted(Strings.Max());
 
 	for (FString& S : Strings)
 	{
@@ -499,7 +499,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	StringPointers.AddDefaulted(CS_ROUTINE_STRING_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::StringPtr].AddDefaulted(StringPointers.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::StringPtr].AddDefaulted(StringPointers.Max());
 
 	for (FString*& S : StringPointers)
 	{
@@ -511,7 +511,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	Objects.AddDefaulted(CS_ROUTINE_OBJECT_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::Object].AddDefaulted(Objects.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Object].AddDefaulted(Objects.Max());
 
 	for (TCsWeakObjectPtr<UObject>& Object : Objects)
 	{
@@ -523,7 +523,7 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	VoidPointers.AddDefaulted(CS_ROUTINE_VOID_POINTER_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::Void].AddDefaulted(VoidPointers.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Void].AddDefaulted(VoidPointers.Max());
 
 	for (void*& V : VoidPointers)
 	{

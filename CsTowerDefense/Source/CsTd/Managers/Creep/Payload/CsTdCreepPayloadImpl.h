@@ -1,45 +1,38 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/CsPooledObjectPayload.h"
-#include "Payload/CsProjectilePayload.h"
-
 #pragma once
 
-class UObject;
-struct FCsInterfaceMap;
+#include "Managers/Pool/CsPooledObjectPayload.h"
+#include "Managers/Creep/Payload/CsTdCreepPayload.h"
 
-struct CSPRJ_API FCsProjectilePooledPayloadImpl : public ICsPooledObjectPayload,
-												  public ICsProjectilePayload
+struct FCsInterfaceMap;
+class UObject;
+
+struct CSTD_API FCsTdCreepPayloadImpl : public ICsPooledObjectPayload,
+									public ICsTdCreepPayload
 {
 public:
 
 	static const FName Name;
 
-private:
+public:
 
 	FCsInterfaceMap* InterfaceMap;
 
 	bool bAllocated;
 
-public:
+	TWeakObjectPtr<UObject> Instigator;
 
-	UObject* Instigator;
+	TWeakObjectPtr<UObject> Owner;
 
-	UObject* Owner;
+	TWeakObjectPtr<UObject> Parent;
 
-	UObject* Parent;
-	
 	FCsTime Time;
 
-	FVector Direction;
+	FCsTdCreepPayloadImpl();
 
-	FVector Location;
+	~FCsTdCreepPayloadImpl();
 
-public:
-
-	FCsProjectilePooledPayloadImpl();
-	~FCsProjectilePooledPayloadImpl();
-
-// ICsGetInterfaceMap
+	// ICsGetInterfaceMap
 #pragma region
 public:
 
@@ -50,7 +43,7 @@ public:
 
 #pragma endregion ICsGetInterfaceMap
 
-// ICsPooledObjectPayload
+	// ICsPooledObjectPayload
 #pragma region
 public:
 
@@ -61,17 +54,17 @@ public:
 
 	FORCEINLINE UObject* GetInstigator() const
 	{
-		return Instigator;
+		return Instigator.IsValid() ? Instigator.Get() : nullptr;
 	}
 
 	FORCEINLINE UObject* GetOwner() const
 	{
-		return Owner;
+		return Owner.IsValid() ? Owner.Get() : nullptr;
 	}
 
 	FORCEINLINE UObject* GetParent() const
 	{
-		return Parent;
+		return Parent.IsValid() ? Parent.Get() : nullptr;
 	}
 
 	FORCEINLINE const FCsTime& GetTime() const
@@ -108,19 +101,9 @@ public:
 		return Cast<T>(GetParent());
 	}
 
-// ICsProjectilePayload
+	// FCsTdCreepPayload
 #pragma region
 public:
 
-	FORCEINLINE const FVector& GetDirection() const
-	{
-		return Direction;
-	}
-
-	FORCEINLINE const FVector& GetLocation() const
-	{
-		return Location;
-	}
-
-#pragma endregion ICsProjectilePayload
+#pragma endregion FCsTdCreepPayload
 };

@@ -1,9 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Payload/CsWeaponPooledPayloadImpl.h"
+#include "Managers/Creep/Payload/CsTdCreepPayloadImpl.h"
 
 #include "Containers/CsInterfaceMap.h"
 
-FCsWeaponPooledPayloadImpl::FCsWeaponPooledPayloadImpl() :
+const FName FCsTdCreepPayloadImpl::Name = FName("FCsTdCreepPayloadImpl");
+
+FCsTdCreepPayloadImpl::FCsTdCreepPayloadImpl() :
 	InterfaceMap(nullptr),
 	bAllocated(false),
 	Instigator(nullptr),
@@ -14,10 +16,10 @@ FCsWeaponPooledPayloadImpl::FCsWeaponPooledPayloadImpl() :
 	InterfaceMap = new FCsInterfaceMap();
 
 	InterfaceMap->Add<ICsPooledObjectPayload>(static_cast<ICsPooledObjectPayload*>(this));
-	InterfaceMap->Add<ICsWeaponPayload>(static_cast<ICsWeaponPayload*>(this));
+	InterfaceMap->Add<ICsTdCreepPayload>(static_cast<ICsTdCreepPayload*>(this));
 }
 
-FCsWeaponPooledPayloadImpl::~FCsWeaponPooledPayloadImpl()
+FCsTdCreepPayloadImpl::~FCsTdCreepPayloadImpl()
 {
 	delete InterfaceMap;
 }
@@ -25,14 +27,12 @@ FCsWeaponPooledPayloadImpl::~FCsWeaponPooledPayloadImpl()
 // ICsPooledObjectPayload
 #pragma region
 
-void FCsWeaponPooledPayloadImpl::Reset()
+void FCsTdCreepPayloadImpl::Reset()
 {
 	bAllocated = false;
 	Instigator = nullptr;
 	Owner = nullptr;
 	Parent = nullptr;
-
-	Time.Reset();
 }
 
 #pragma endregion ICsPooledObjectPayload

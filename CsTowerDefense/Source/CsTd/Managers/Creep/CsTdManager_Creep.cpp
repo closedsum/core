@@ -6,6 +6,8 @@
 
 // Settings
 #include "Settings/CsTdSettings.h"
+// Creep
+#include "Managers/Creep/Payload/CsTdCreepPayloadImpl.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -500,7 +502,7 @@ void UCsTdManager_Creep::ConstructPayloads(const FECsTdCreep& Type, const int32&
 
 ICsTdCreepPayload* UCsTdManager_Creep::ConstructPayload(const FECsTdCreep& Type)
 {
-	return new FCsTdCreepPayload();
+	return new FCsTdCreepPayloadImpl();
 }
 
 ICsTdCreepPayload* UCsTdManager_Creep::AllocatePayload(const FECsTdCreep& Type)

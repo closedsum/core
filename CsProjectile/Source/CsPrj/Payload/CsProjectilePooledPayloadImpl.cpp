@@ -3,16 +3,21 @@
 
 #include "Containers/CsInterfaceMap.h"
 
+const FName FCsProjectilePooledPayloadImpl::Name = FName("FCsProjectilePooledPayloadImpl");;
+
 FCsProjectilePooledPayloadImpl::FCsProjectilePooledPayloadImpl() :
 	InterfaceMap(nullptr),
 	bAllocated(false),
 	Instigator(nullptr),
 	Owner(nullptr),
 	Parent(nullptr),
+	Time(),
 	Direction(0.0f),
 	Location(0.0f)
 {
 	InterfaceMap = new FCsInterfaceMap();
+
+	InterfaceMap->SetRootName(FCsProjectilePooledPayloadImpl::Name);
 
 	InterfaceMap->Add<ICsPooledObjectPayload>(static_cast<ICsPooledObjectPayload*>(this));
 	InterfaceMap->Add<ICsProjectilePayload>(static_cast<ICsProjectilePayload*>(this));
@@ -32,6 +37,8 @@ void FCsProjectilePooledPayloadImpl::Reset()
 	Instigator = nullptr;
 	Owner = nullptr;
 	Parent = nullptr;
+
+	Time.Reset();
 
 	Direction = FVector::ZeroVector;
 	Location = FVector::ZeroVector;

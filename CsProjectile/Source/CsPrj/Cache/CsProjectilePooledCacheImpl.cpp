@@ -36,9 +36,19 @@ FCsProjectilePooledCacheImpl::~FCsProjectilePooledCacheImpl()
 // ICsPooledObjectCache
 #pragma region
 
-void FCsProjectilePooledCacheImpl::Allocate(ICsPooledObjectPayload* Payload, const FCsTime& InTime)
+void FCsProjectilePooledCacheImpl::Allocate(ICsPooledObjectPayload* Payload)
 {
+	bAllocated = true;
+	State	   = ECsPooledObjectState::Active;
+	Instigator = Payload->GetInstigator();
+	Owner	   = Payload->GetOwner();
+	Parent	   = Payload->GetParent();
+	StartTime  = Payload->GetTime();
+}
 
+void FCsProjectilePooledCacheImpl::Deallocate()
+{
+	Reset();
 }
 
 bool FCsProjectilePooledCacheImpl::HasLifeTimeExpired()
@@ -52,7 +62,26 @@ bool FCsProjectilePooledCacheImpl::HasLifeTimeExpired()
 
 void FCsProjectilePooledCacheImpl::Reset()
 {
-
+	bAllocated = false;
+	bQueueDeallocate = false;
+	State = ECsPooledObjectState::Inactive;
+	Instigator.Reset();
+	Owner.Reset();
+	Parent.Reset();
+	WarmUpTime = 0.0f;
+	LifeTime = 0.0f;
+	StartTime.Reset();
+	ElapsedTime.Reset();
 }
 
 #pragma endregion ICsPooledObjectCache
+
+void FCsProjectilePooledCacheImpl::Update(const FCsDeltaTime& DeltaTime)
+{
+	ElapsedTime += DeltaTime;
+}
+
+void FCsProjectilePooledCacheImpl::SetData(ICsData_Projectile* InData)
+{
+	Data = InData;
+}

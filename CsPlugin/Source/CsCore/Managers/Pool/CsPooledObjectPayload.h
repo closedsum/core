@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Containers/CsGetInterfaceMap.h"
+#include "Managers/Time/CsTypes_Time.h"
 
 #pragma once
 
@@ -44,6 +45,13 @@ public:
 	* return Parent.
 	*/
 	virtual UObject* GetParent() const = 0;
+
+	/**
+	* The current time.
+	*
+	* return time
+	*/
+	virtual const FCsTime& GetTime() const = 0;
 
 	/**
 	* Mark the payload as being used (allocated).

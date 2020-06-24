@@ -269,6 +269,8 @@ struct FCsProcessPayload : public ICsPooledObjectPayload
 
 	UObject* Parent;
 
+	FCsTime Time;
+
 	FString Name;
 
 	/** executable name */
@@ -324,6 +326,11 @@ public:
 		return Parent;
 	}
 
+	FORCEINLINE const FCsTime& GetTime() const 
+	{
+		return Time;
+	}
+
 	void Allocate()
 	{
 		bAllocated = true;
@@ -336,6 +343,8 @@ public:
 		Instigator = nullptr;
 		Owner = nullptr;
 		Parent = nullptr;
+
+		Time.Reset();
 
 		Name = NCsCached::Str::Empty;
 		URL = NCsCached::Str::Empty;

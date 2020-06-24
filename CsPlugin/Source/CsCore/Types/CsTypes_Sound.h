@@ -270,6 +270,8 @@ public:
 
 	UObject* Parent;
 
+	FCsTime Time;
+
 	TWeakObjectPtr<class USoundCue> Sound;
 
 	TEnumAsByte<ECsSoundPriority::Type> Priority;
@@ -318,6 +320,11 @@ public:
 		return Parent;
 	}
 
+	FORCEINLINE const FCsTime& GetTime() const 
+	{
+		return Time;
+	}
+
 	void Allocate()
 	{
 		bAllocated = true;
@@ -330,6 +337,8 @@ public:
 		Instigator = nullptr;
 		Owner = nullptr;
 		Parent = nullptr;
+
+		Time.Reset();
 
 		Sound = nullptr;
 		Priority = ECsSoundPriority::Medium;

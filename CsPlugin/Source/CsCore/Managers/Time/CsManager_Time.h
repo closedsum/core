@@ -98,7 +98,7 @@ public:
 	*/
 	FORCEINLINE bool IsPaused(const FECsUpdateGroup& Group)
 	{
-		return UpdateGroups[Group.Value].IsPaused();
+		return UpdateGroups[Group.GetValue()].IsPaused();
 	}
 
 #pragma endregion Pause
@@ -135,7 +135,7 @@ public:
 	*/
 	FORCEINLINE const FCsTime& GetTime(const FECsUpdateGroup& Group)
 	{
-		return UpdateGroups[Group.Value].GetTime();
+		return UpdateGroups[Group.GetValue()].GetTime();
 	}
 
 	/**
@@ -154,7 +154,7 @@ public:
 	*/
 	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FECsUpdateGroup& Group)
 	{
-		return UpdateGroups[Group.Value].GetScaledDeltaTime();
+		return UpdateGroups[Group.GetValue()].GetScaledDeltaTime();
 	}
 
 	/**
@@ -166,6 +166,6 @@ public:
 	*/
 	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FECsUpdateGroup& Group, const FName& ScaleName)
 	{
-		return UpdateGroups[Group.Value].GetScaledDeltaTime(ScaleName);
+		return UpdateGroups[Group.GetValue()].GetScaledDeltaTime(ScaleName);
 	}
 };

@@ -105,7 +105,8 @@ void FCsProjectileWeapon::Reset()
 	bScriptUpdate = false;
 
 	Script_GetData_Impl.Unbind();
-	Script_Fire_Impl.Unbind();
+	Script_StartFire_Impl.Unbind();
+	Script_StopFire_Impl.Unbind();
 	Script_Update_Impl.Unbind();
 }
 

@@ -494,6 +494,8 @@ public:
 
 	UObject* Parent;
 
+	FCsTime Time;
+
 	ECsProjectileRelevance Relevance;
 
 	TWeakObjectPtr<UCsData_ProjectileBase> Data;
@@ -561,6 +563,11 @@ public:
 		return Parent;
 	}
 
+	FORCEINLINE const FCsTime& GetTime() const 
+	{
+		return Time;
+	}
+
 	void Allocate()
 	{
 		bAllocated = true;
@@ -573,6 +580,8 @@ public:
 		Instigator = nullptr;
 		Owner = nullptr;
 		Parent = nullptr;
+
+		Time.Reset();
 
 		Relevance = ECsProjectileRelevance::ECsProjectileRelevance_MAX;
 		ChargePercent = 0.0f;

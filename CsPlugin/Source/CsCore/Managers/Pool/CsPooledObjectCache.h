@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/CsTypes_Pool.h"
+#include "Managers/Time/CsTypes_Time.h"
 #include "Containers/CsGetInterfaceMap.h"
 
 #pragma once
@@ -39,7 +40,7 @@ public:
 	* @param Payload
 	* @param InTime
 	*/
-	virtual void Allocate(ICsPooledObjectPayload* Payload, const FCsTime& InTime) = 0;
+	virtual void Allocate(ICsPooledObjectPayload* Payload) = 0;
 
 	/**
 	*

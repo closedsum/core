@@ -17,6 +17,7 @@ public class CsCore : ModuleRules
                     "Json",
                     "JsonUtilities",
                     "HeadMountedDisplay",
+                    "Niagara",
                 }
             );
 

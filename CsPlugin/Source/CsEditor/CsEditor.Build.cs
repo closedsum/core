@@ -14,6 +14,7 @@ public class CsEditor : ModuleRules
                     "CoreUObject",
                     "Engine",
                     "AssetRegistry",
+                    "Niagara",
                     "CsCore",
                 }
             );

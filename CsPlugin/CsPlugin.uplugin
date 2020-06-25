@@ -27,15 +27,11 @@
   ],
   "Plugins": [
     {
-      "Name": "OnlineSubsystemUtils",
-      "Enabled": true
-    },
-    {
-      "Name": "OnlineSubsystemUtils",
-      "Enabled": true
-    },
-    {
       "Name": "LevelSequenceEditor",
+      "Enabled": true
+    },
+    {
+      "Name": "Niagara",
       "Enabled": true
     }
   ]

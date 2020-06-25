@@ -283,6 +283,8 @@ void UCsManager_Projectile::SetupInternal()
 		Internal.ConstructContainer_Impl.BindUObject(this, &UCsManager_Projectile::ConstructContainer);
 		// Payload
 		Internal.ConstructPayload_Impl.BindUObject(this, &UCsManager_Projectile::ConstructPayload);
+		// Pool
+		Internal.OnCreatePool_AddToPool_Event.AddUObject(this, &UCsManager_Projectile::OnCreatePool_AddToPool);
 		// Update
 		Internal.OnPreUpdate_Pool_Impl.BindUObject(this, &UCsManager_Projectile::OnPreUpdate_Pool);
 		Internal.OnUpdate_Object_Event.AddUObject(this, &UCsManager_Projectile::OnUpdate_Object);
@@ -408,6 +410,11 @@ FCsProjectilePooled* UCsManager_Projectile::ConstructContainer(const FECsProject
 TMulticastDelegate<void, const FCsProjectilePooled*>& UCsManager_Projectile::GetOnConstructObject_Event(const FECsProjectile& Type)
 {
 	return Internal.GetOnConstructObject_Event(Type);
+}
+
+void UCsManager_Projectile::OnCreatePool_AddToPool(const FECsProjectile& Type, const FCsProjectilePooled* Object)
+{
+	Pool.Add(Object->GetObject());
 }
 
 		// Add

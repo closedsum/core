@@ -200,6 +200,14 @@ public:
 	*/
 	TMulticastDelegate<void, const FCsProjectilePooled*>& GetOnConstructObject_Event(const FECsProjectile& Type);
 
+	/**
+	*
+	*
+	* @param Type
+	* @param Object
+	*/
+	void OnCreatePool_AddToPool(const FECsProjectile& Type, const FCsProjectilePooled* Object);
+
 		// Add
 #pragma region
 

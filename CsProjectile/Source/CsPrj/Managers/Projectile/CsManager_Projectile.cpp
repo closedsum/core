@@ -57,10 +57,6 @@ FCsManager_Projectile_Internal::FCsManager_Projectile_Internal()
 {
 }
 
-void FCsManager_Projectile_Internal::OnAddToPool_UpdateScriptDelegates(FCsProjectilePooled* Object)
-{
-}
-
 #pragma endregion Internal
 
 // static initializations
@@ -284,7 +280,7 @@ void UCsManager_Projectile::SetupInternal()
 		// Payload
 		Internal.ConstructPayload_Impl.BindUObject(this, &UCsManager_Projectile::ConstructPayload);
 		// Pool
-		Internal.OnCreatePool_AddToPool_Event.AddUObject(this, &UCsManager_Projectile::OnCreatePool_AddToPool);
+		Internal.OnAddToPool_Event.AddUObject(this, &UCsManager_Projectile::OnAddToPool);
 		// Update
 		Internal.OnPreUpdate_Pool_Impl.BindUObject(this, &UCsManager_Projectile::OnPreUpdate_Pool);
 		Internal.OnUpdate_Object_Event.AddUObject(this, &UCsManager_Projectile::OnUpdate_Object);
@@ -412,11 +408,6 @@ TMulticastDelegate<void, const FCsProjectilePooled*>& UCsManager_Projectile::Get
 	return Internal.GetOnConstructObject_Event(Type);
 }
 
-void UCsManager_Projectile::OnCreatePool_AddToPool(const FECsProjectile& Type, const FCsProjectilePooled* Object)
-{
-	Pool.Add(Object->GetObject());
-}
-
 		// Add
 #pragma region
 
@@ -436,6 +427,17 @@ const FCsProjectilePooled* UCsManager_Projectile::AddToPool(const FECsProjectile
 const FCsProjectilePooled* UCsManager_Projectile::AddToPool(const FECsProjectile& Type, UObject* Object)
 {
 	return Internal.AddToPool(Type, Object);
+}
+
+void UCsManager_Projectile::OnAddToPool(const FECsProjectile& Type, const FCsProjectilePooled* Object)
+{
+	Pool.Add(Object->GetObject());
+
+	// Apply delegates for a script interface
+	FCsProjectilePooled* O = const_cast<FCsProjectilePooled*>(Object);
+
+	O->Script_GetInstigator_Impl = Script_GetInstigator_Impl;
+	O->Script_GetOwner_Impl = Script_GetOwner_Impl;
 }
 
 #pragma endregion Pool

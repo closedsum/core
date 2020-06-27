@@ -2,6 +2,7 @@
 #include "Managers/Pool/CsTypes_Manager_PooledObject.h"
 
 FCsManagerPooledObjectConstructParams::FCsManagerPooledObjectConstructParams() :
+	Outer(nullptr),
 	Class(nullptr),
 	ConstructionType(ECsPooledObjectConstruction::Object),
 	ConstructionInfo(),

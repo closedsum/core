@@ -45,6 +45,7 @@ public:
 #pragma region
 
 class ICsUpdate;
+class ICsOnConstructObject;
 
 struct CSCORE_API FCsPooledObject : public TCsInterfaceObject<ICsPooledObject>
 {
@@ -63,6 +64,12 @@ protected:
 
 	/** Does the object implement a script interface of type: ICsUpdate. */
 	bool bScriptUpdate;
+
+	/** Reference to interface of type: ICsOnConstructObject. */
+	ICsOnConstructObject* _OnConstructObject;
+
+	/** Does the FX Actor implement a script interface of type: ICsOnConstructObject. */
+	bool bScriptOnConstructObject;
 
 // Script
 #pragma region
@@ -128,6 +135,25 @@ public:
 	FScript_Update Script_Update_Impl;
 
 #pragma endregion ICsUpdate
+
+	
+	// ICsOnConstructObject
+#pragma region
+public:
+
+	/**
+	* Delegate type to execute after an object has been constructed.
+	*  The object implements a script interface of type: ICsOnConstructObject.
+	*
+	* @param Object		An object of type: ICsOnConstructObject.
+	*/
+	DECLARE_DELEGATE_OneParam(FScript_OnConstructObject, UObject* /*Object*/);
+
+	/** Delegate to execute after an object has been constructed.
+		 The object implements a script interface of type: ICsOnConstructObject. */
+	FScript_OnConstructObject Script_OnConstructObject_Impl;
+
+#pragma endregion ICsOnConstructObject
 
 #pragma endregion Script
 
@@ -222,6 +248,41 @@ public:
 	FORCEINLINE ICsUpdate* GetUpdate() const 
 	{
 		return _Update;
+	}
+
+// ICsOnConstructObject
+#pragma region
+public:
+
+	void OnConstructObject();
+
+#pragma endregion ICsOnConstructObject
+
+public:
+
+	FORCEINLINE bool Implements_ICsOnConstructObject() const
+	{
+		return _OnConstructObject != nullptr || bScriptOnConstructObject;
+	}
+
+	FORCEINLINE void SetScriptOnConstructObject()
+	{
+		bScriptOnConstructObject = true;
+	}
+
+	FORCEINLINE const bool& IsScriptOnConstructObject() const
+	{
+		return bScriptOnConstructObject;
+	}
+
+	FORCEINLINE ICsOnConstructObject* GetOnConstructObject() const
+	{
+		return _OnConstructObject;
+	}
+
+	FORCEINLINE void SetOnConstructObject(ICsOnConstructObject* O)
+	{
+		_OnConstructObject = O;
 	}
 };
 

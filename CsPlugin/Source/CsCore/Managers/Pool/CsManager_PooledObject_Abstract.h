@@ -81,6 +81,8 @@ public:
 
 	virtual FCsPooledObject::FScript_Update& GetScript_Update_Impl() = 0;
 
+	virtual FCsPooledObject::FScript_OnConstructObject& GetScript_OnConstructObject_Impl() = 0;
+
 #pragma endregion Script
 };
 
@@ -147,7 +149,8 @@ public:
 		Script_GetCache_Impl(),
 		Script_Allocate_Impl(),
 		Script_Deallocate_Impl(),
-		Script_Update_Impl()
+		Script_Update_Impl(),
+		Script_OnConstructObject_Impl()
 	{
 		Name = TEXT("TCsManager_PooledObject_Abstract");
 
@@ -350,9 +353,17 @@ public:
 				GetCurrentWorld()->RemoveNetworkActor(Actor);
 			}
 
-			checkf(Actor, TEXT("%s:ContructObject: Actor is NULL. Actor did NOT spawn."), *Name);
+			checkf(Actor, TEXT("%s:ContructObject: Actor is NULL. Class: %s. Actor did NOT spawn."), *Name, *(Class->GetName()));
 
 			Object = Actor;
+		}
+		// Object
+		else
+		if (ConstructParams.ConstructionType == ECsPooledObjectConstruction::Object)
+		{
+			Object = NewObject<UObject>(ConstructParams.Outer, Class);
+
+			checkf(Object, TEXT("%s:ContructObject: Object is NULL. Class: %s. Object did NOT get constructed."), *Name, *(Class->GetName()));
 		}
 
 		if (Object)
@@ -365,14 +376,16 @@ public:
 			O->Script_Allocate_Impl   = Script_Allocate_Impl;
 			O->Script_Deallocate_Impl = Script_Deallocate_Impl;
 			O->Script_Update_Impl	 = Script_Update_Impl;
+			O->Script_OnConstructObject_Impl = Script_OnConstructObject_Impl;
 
 #if WITH_EDITOR
+
+			const FString ObjectName = Object->GetName();
+			const FString ClassName  = Class->GetName();
+
 			// ICsPooledObject Script Interface
 			if (O->IsScript())
 			{
-				const FString ObjectName = Object->GetName();
-				const FString ClassName = Class->GetName();
-
 				checkf(O->Script_GetCache_Impl.IsBound(), TEXT("%s::ConstructObject: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Update_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 
 				checkf(O->Script_Allocate_Impl.IsBound(), TEXT("%s:ConstructObject: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Allocate_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
@@ -382,13 +395,19 @@ public:
 			// ICsUpdate Script Interface
 			if (O->IsScriptUpdate())
 			{
-				const FString ObjectName = Object->GetName();
-				const FString ClassName  = Class->GetName();
-
 				checkf(O->Script_Update_Impl.IsBound(), TEXT("%s:ConstructObject: Object: %s with Class: %s implements a script interface of type: ICsUpdate. Script_Update_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
+			}
+			// ICsOnConstructObject Script Interface
+			if (O->IsScriptOnConstructObject())
+			{
+				checkf(O->Script_OnConstructObject_Impl.IsBound(), TEXT("%s:ConstructObject: Object: %s with Class: %s implements a script interface of type: ICsOnConstructObject. Script_OnConstructObject_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 			}
 #endif // #if WITH_EDITOR
 
+			if (O->Implements_ICsOnConstructObject())
+			{
+				O->OnConstructObject();
+			}
 			OnConstructObject_Event.Broadcast(O);
 
 			return O;
@@ -491,13 +510,13 @@ public:
 			UObject* Object	= O->GetObject();
 
 #if WITH_EDITOR
+			const FString ObjectName = Object->GetName();
+			UClass* Class			 = Object->GetClass();
+			const FString ClassName  = Class->GetName();
+
 			// ICsPooledObject Script Interface
 			if (O->IsScript())
 			{
-				const FString ObjectName = Object->GetName();
-				UClass* Class			 = Object->GetClass();
-				const FString ClassName  = Class->GetName();
-
 				checkf(O->Script_GetCache_Impl.IsBound(), TEXT("%s:CreatePool: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_GetCache_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 
 				checkf(O->Script_Allocate_Impl.IsBound(), TEXT("%s:CreatePool: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Allocate_Impl is NOT bound to any function."), *Name, *ClassName);
@@ -507,11 +526,12 @@ public:
 			// ICsUpdate Script Interface
 			if (O->IsScriptUpdate())
 			{
-				const FString ObjectName = Object->GetName();
-				UClass* Class			 = Object->GetClass();
-				const FString ClassName  = Class->GetName();
-
 				checkf(O->Script_Update_Impl.IsBound(), TEXT("%s:CreatePool: Object: %s with Class: %s implements a script interface of type: ICsUpdate. Script_Update_Impl is NOT bound to any function."), *Name, *ClassName);
+			}
+			// ICsOnConstructObject Script Interface
+			if (O->IsScriptOnConstructObject())
+			{
+				checkf(O->Script_OnConstructObject_Impl.IsBound(), TEXT("%s:CreatePool: Object: %s with Class: %s implements a script interface of type: ICsOnConstructObject. Script_OnConstructObject_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 			}
 #endif // #if WTIH_EDITOR
 
@@ -576,13 +596,13 @@ public:
 		checkf(Index == INDEX_NONE, TEXT("%s::AddToPool: PooledObject is already a part of an existing pool."), *Name);
 
 #if WITH_EDITOR
+		const FString ObjectName = Object->GetName();
+		UClass* Class			 = Object->GetClass();
+		const FString ClassName  = Class->GetName();
+
 		// ICsPooledObject Script Interface
 		if (O->IsScript())
 		{
-			const FString ObjectName = Object->GetName();
-			UClass* Class			 = Object->GetClass();
-			const FString ClassName  = Class->GetName();
-
 			checkf(O->Script_GetCache_Impl.IsBound(), TEXT("%s:AddToPool: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_GetCache_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 
 			checkf(O->Script_Allocate_Impl.IsBound(), TEXT("%s:AddToPool: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Allocate_Impl is NOT bound to any function."), *Name, *ClassName);
@@ -592,11 +612,12 @@ public:
 		// ICsUpdate Script Interface
 		if (O->IsScriptUpdate())
 		{
-			const FString ObjectName = Object->GetName();
-			UClass* Class			 = Object->GetClass();
-			const FString ClassName  = Class->GetName();
-
 			checkf(O->Script_Update_Impl.IsBound(), TEXT("%s:AddToPool: Object: %s with Class: %s implements a script interface of type: ICsUpdate. Script_Update_Impl is NOT bound to any function."), *Name, *ClassName);
+		}
+		// ICsOnConstructObject Script Interface
+		if (O->IsScriptOnConstructObject())
+		{
+			checkf(O->Script_OnConstructObject_Impl.IsBound(), TEXT("%s:AddToPool: Object: %s with Class: %s implements a script interface of type: ICsOnConstructObject. Script_OnConstructObject_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 		}
 #endif // #if WITH_EDITOR
 
@@ -1581,7 +1602,7 @@ public:
 
 	/**
 	*
-	*  NOTE: This process is O(n). Consider queueing the deallocate.
+	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Index
 	* return
@@ -1593,7 +1614,7 @@ public:
 
 	/**
 	*
-	*  NOTE: This process is O(n). Consider queueing the deallocate.
+	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Object
 	* return
@@ -1607,7 +1628,7 @@ public:
 
 	/**
 	*
-	*  NOTE: This process is O(n). Consider queueing the deallocate.
+	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Object
 	* return
@@ -1624,13 +1645,21 @@ public:
 #pragma region
 public:
 
+	// ICsPooledObject
+
 	FCsPooledObject::FScript_GetCache Script_GetCache_Impl;
 
 	FCsPooledObject::FScript_Allocate Script_Allocate_Impl;
 
 	FCsPooledObject::FScript_Deallocate Script_Deallocate_Impl;
 
+	// ICsUpdate
+
 	FCsPooledObject::FScript_Update Script_Update_Impl;
+
+	// ICsOnConstructObject
+
+	FCsPooledObject::FScript_OnConstructObject Script_OnConstructObject_Impl;
 
 #pragma endregion Script
 };

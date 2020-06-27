@@ -115,7 +115,8 @@ public:
 		Script_GetCache_Impl(),
 		Script_Allocate_Impl(),
 		Script_Deallocate_Impl(),
-		Script_Update_Impl()
+		Script_Update_Impl(),
+		Script_OnConstructObject_Impl()
 	{
 		ConstructManagerPooledObjects_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructManagerPooledObjects);
 
@@ -350,6 +351,22 @@ public:
 #endif // #if WITH_EDITOR
 	}
 
+	/** Event called after constructing an Object of specified Type when creating a pool. 
+	*
+	* @param Type
+	* @param Object
+	*/
+	TMulticastDelegate<void, const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/> OnConstructObject_Event;
+
+protected:
+
+	void OnConstructObject(const InterfaceContainerType* Object)
+	{
+		OnConstructObject_Event.Broadcast(CurrentCreatePoolType, Object);
+	}
+
+public:
+
 	/**
 	*
 	*
@@ -384,18 +401,23 @@ public:
 		}
 
 		// Bind the appropriate Script delegates.
-		Pool->Script_GetCache_Impl   = Script_GetCache_Impl;
-		Pool->Script_Allocate_Impl   = Script_Allocate_Impl;
-		Pool->Script_Deallocate_Impl = Script_Deallocate_Impl;
-		Pool->Script_Update_Impl     = Script_Update_Impl;
+		Pool->Script_GetCache_Impl			= Script_GetCache_Impl;
+		Pool->Script_Allocate_Impl			= Script_Allocate_Impl;
+		Pool->Script_Deallocate_Impl		= Script_Deallocate_Impl;
+		Pool->Script_Update_Impl			= Script_Update_Impl;
+		Pool->Script_OnConstructObject_Impl = Script_OnConstructObject_Impl;
 
-		// Bind to OnAddToPool so the event OnAddToPool_Event can properly broadcast events.
 		CurrentCreatePoolType = Type;
-		FDelegateHandle Handle = Pool->OnAddToPool_Event.AddRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnCreatePool_AddToPool);
+
+		// Bind to OnConstructObject so the event OnConstructObject_Event can properly broadcast events.
+		FDelegateHandle OnConstructObjectHandle = Pool->OnConstructObject_Event.AddRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnConstructObject);
+		// Bind to OnAddToPool so the event OnAddToPool_Event can properly broadcast events.
+		FDelegateHandle OnAddToPoolHandle = Pool->OnAddToPool_Event.AddRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnCreatePool_AddToPool);
 
 		Pool->CreatePool(Size);
 
-		Pool->OnAddToPool_Event.Remove(Handle);
+		Pool->OnConstructObject_Event.Remove(OnConstructObjectHandle);
+		Pool->OnAddToPool_Event.Remove(OnAddToPoolHandle);
 
 		// Bind to OnUpdate_Pool_Object so the event OnUpdate_Object_Event can properly broadcast events.
 		Pool->OnUpdate_Object_Event.AddRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnUpdate_Pool_Object);
@@ -434,6 +456,7 @@ private:
 	void OnCreatePool_AddToPool(const InterfaceContainerType* Object)
 	{
 		OnCreatePool_AddToPool_Event.Broadcast(CurrentCreatePoolType, Object);
+		OnAddToPool_Event.Broadcast(CurrentCreatePoolType, Object);
 	}
 
 	// Add
@@ -508,8 +531,6 @@ public:
 	* @param Object
 	*/
 	TMulticastDelegate<void, const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/> OnAddToPool_Event;
-
-	virtual void OnAddToPool_UpdateScriptDelegates(InterfaceContainerType* Object){}
 
 #pragma endregion Pool
 
@@ -1057,13 +1078,21 @@ public:
 #pragma region
 public:
 
+	// ICsPooledObject
+
 	FCsPooledObject::FScript_GetCache Script_GetCache_Impl;
 
 	FCsPooledObject::FScript_Allocate Script_Allocate_Impl;
 
 	FCsPooledObject::FScript_Deallocate Script_Deallocate_Impl;
 
+	// ICsUpdate
+
 	FCsPooledObject::FScript_Update Script_Update_Impl;
+
+	// ICsOnConstructObject
+
+	FCsPooledObject::FScript_OnConstructObject Script_OnConstructObject_Impl;
 
 #pragma endregion Script
 };

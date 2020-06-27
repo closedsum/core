@@ -9,6 +9,33 @@
 
 #define CS_MAX_EMITTER_COUNT 256
 
+// FX
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsFX : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsFX)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsFX)
+
+struct CSCORE_API EMCsFX : public TCsEnumStructMap<FECsFX, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsFX, FECsFX, uint8)
+};
+
+namespace NCsFX
+{
+	typedef FECsFX Type;
+
+	//CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
+}
+
+#pragma endregion FX
+
 // FCsParticleSystem
 #pragma region
 

@@ -6,7 +6,7 @@
 #include "CoreMinimal.h"
 #include "UObject/ObjectMacros.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
-#include "Types/CsTypes_FX.h"
+#include "Managers/FX/CsTypes_FX.h"
 #include "CsAnimNotify_PlayParticleEffect.generated.h"
 
 USTRUCT()

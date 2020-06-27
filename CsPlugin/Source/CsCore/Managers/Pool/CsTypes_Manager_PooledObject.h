@@ -14,6 +14,8 @@ struct CSCORE_API FCsManagerPooledObjectConstructParams
 {
 public:
 
+	UObject* Outer;
+
 	UClass* Class;
 
 	ECsPooledObjectConstruction ConstructionType;

@@ -3,6 +3,7 @@
 #include "CsCore.h"
 
 #include "Managers/Time/CsUpdate.h"
+#include "Managers/Pool/CsOnConstructObject.h"
 
 UCsPooledObject::UCsPooledObject(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -17,10 +18,13 @@ FCsPooledObject::FCsPooledObject() :
 	Super(),
 	_Update(nullptr),
 	bScriptUpdate(false),
+	_OnConstructObject(nullptr),
+	bScriptOnConstructObject(false),
 	Script_GetCache_Impl(),
 	Script_Allocate_Impl(),
 	Script_Deallocate_Impl(),
-	Script_Update_Impl()
+	Script_Update_Impl(),
+	Script_OnConstructObject_Impl()
 {
 }
 
@@ -81,6 +85,20 @@ void FCsPooledObject::SetObject(UObject* InObject)
 				SetScriptUpdate();
 			}
 		}
+		// ICsOnConstructObject
+		{
+			// Interface
+			if (ICsOnConstructObject* O = Cast<ICsOnConstructObject>(Object))
+			{
+				SetOnConstructObject(O);
+			}
+			// Script Interface
+			else
+			if (Class->ImplementsInterface(UCsOnConstructObject::StaticClass()))
+			{
+				SetScriptOnConstructObject();
+			}
+		}
 	}
 }
 
@@ -90,11 +108,14 @@ void FCsPooledObject::Reset()
 
 	_Update = nullptr;
 	bScriptUpdate = false;
+	_OnConstructObject = nullptr;
+	bScriptOnConstructObject = false;
 
 	Script_GetCache_Impl.Unbind();
 	Script_Allocate_Impl.Unbind();
 	Script_Deallocate_Impl.Unbind();
 	Script_Update_Impl.Unbind();
+	Script_OnConstructObject_Impl.Unbind();
 }
 
 #pragma endregion TCsInterfaceObject
@@ -111,5 +132,18 @@ void FCsPooledObject::Update(const FCsDeltaTime& DeltaTime)
 }
 
 #pragma endregion ICsUpdate
+
+// ICsOnConstructObject
+#pragma region
+
+void FCsPooledObject::OnConstructObject()
+{
+	if (bScriptOnConstructObject)
+		Script_OnConstructObject_Impl.Execute(Object);
+	else
+		_OnConstructObject->OnConstructObject();
+}
+
+#pragma endregion ICsOnConstructObject
 
 #pragma endregion FCsPooledObject

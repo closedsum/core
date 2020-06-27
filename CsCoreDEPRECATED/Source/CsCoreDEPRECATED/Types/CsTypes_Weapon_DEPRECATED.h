@@ -4,7 +4,7 @@
 #include "Types/CsTypes_Curve.h"
 #include "Types/CsTypes_Sound.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
-#include "Types/CsTypes_FX.h"
+#include "Managers/FX/CsTypes_FX.h"
 #include "Types/CsTypes_Anim.h"
 #include "Data/CsTypes_Data_ProjectileBase.h"
 

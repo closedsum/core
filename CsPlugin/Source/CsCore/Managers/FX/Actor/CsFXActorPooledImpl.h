@@ -50,7 +50,7 @@ public:
 public:
 
 	ICsPooledObjectCache* GetCache() const;
-	FAttachmentTransformRules
+	
 	void Allocate(ICsPooledObjectPayload* Payload);
 
 	void Deallocate();

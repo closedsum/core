@@ -61,15 +61,11 @@ public:
 
 		checkf(InterfaceType::Name != NAME_None, TEXT("FCsInterfaceMap::Get: InterfaceType::Name None is NOT Valid."));
 
-#if WITH_EDITOR
 		void** Ptr = Interfaces.Find(InterfaceType::Name);
 
 		checkf(Ptr, TEXT("FCsInterfaceMap::Get: Failed to find InterfaceType with InterfaceType::Name: %s."), *(InterfaceType::Name.ToString()));
 
 		return (InterfaceType*)(*Ptr);
-#else
-		return (InterfaceType*)Interfaces[InterfaceType::Name];
-#endif // #if WITH_EDITOR
 	}
 
 	/**

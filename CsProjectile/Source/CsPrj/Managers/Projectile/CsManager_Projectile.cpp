@@ -7,6 +7,7 @@
 #include "Managers/Projectile/CsCVars_Manager_Projectile.h"
 // Library
 #include "Library/CsLibrary_Property.h"
+#include "Library/Load/CsLibrary_Load.h" // TEMP
 // Settings
 #include "Settings/CsProjectileSettings.h"
 // Data
@@ -36,10 +37,13 @@ namespace NCsManagerProjectile
 	namespace Str
 	{
 		const FString PopulateDataMapFromSettings = TEXT("UCsManager_Projectile::PopulateDataMapFromSettings");
+		const FString CreateEmulatedDataFromDataTable = TEXT("UCsManager_Projectile::CreateEmulatedDataFromDataTable");
 	}
 
 	namespace Name
 	{
+		const FName Data = FName("Data");
+
 		const FName LifeTime = FName("LifeTime");
 		const FName InitialSpeed = FName("InitialSpeed");
 		const FName MaxSpeed = FName("MaxSpeed");
@@ -247,13 +251,21 @@ void UCsManager_Projectile::CleanUp()
 	Internal.Shutdown();
 	Pool.Reset();
 
-	for (TPair<FName, ICsData_Projectile*>& Pair : DataMap)
+	for (TPair<FName, TArray<FCsInterfaceMap*>>& Pair : EmulatedDataInterfaceMap)
 	{
-		ICsData_Projectile* Data = Pair.Value;
-		DeconstructData(Data);
-		Pair.Value = nullptr;
+		TArray<FCsInterfaceMap*>& InterfaceMaps = Pair.Value;
+
+		for (FCsInterfaceMap* InterfaceMap : InterfaceMaps)
+		{
+			DeconstructEmulatedData(InterfaceMap);
+		}
+		InterfaceMaps.Reset();
 	}
+	EmulatedDataMap.Reset();
+	EmulatedDataInterfaceMap.Reset();
 	DataMap.Reset();
+	ClassMap.Reset();
+	DataTables.Reset();
 }
 
 	// Root
@@ -292,6 +304,7 @@ void UCsManager_Projectile::SetupInternal()
 		Internal.Script_Deallocate_Impl = Script_Deallocate_Impl;
 		Internal.Script_Update_Impl = Script_Update_Impl;
 	}
+
 #if !UE_BUILD_SHIPPING
 	//if (FCsCVarToggleMap::Get().IsEnabled(NCsCVarToggle::EnableManagerProjectileUnitTest))
 	//{
@@ -305,8 +318,9 @@ void UCsManager_Projectile::SetupInternal()
 
 		checkf(ModuleSettings, TEXT("UCsManager_Projectile::SetupInternal: Failed to get settings of type: UCsTdSettings."));
 
-		Settings = ModuleSettings->ManagerProjectile;
+		Settings = ModuleSettings->Manager_Projectile;
 
+		// TODO: Need to Load Payload from Manager_Data
 		InitInternalFromSettings();
 	}
 }
@@ -321,6 +335,23 @@ void UCsManager_Projectile::InitInternalFromSettings()
 #else
 	checkf(Settings.Payload != NAME_None, TEXT("UCsManager_Projectile::InitInternalFromSettings: No Payload specified in settings."));
 #endif // #if WITH_EDITOR
+	
+	// Populate TypeMapArray
+	{
+		const int32& Count = EMCsProjectile::Get().Num();
+
+		TypeMapArray.Reserve(Count);
+
+		for (const FECsProjectile& Type : EMCsProjectile::Get())
+		{
+			TypeMapArray.Add(Type);
+		}
+
+		for (const TPair<FECsProjectile, FECsProjectile>& Pair : Settings.TypeMap)
+		{
+			TypeMapArray[Pair.Key.GetValue()] = Pair.Value;
+		}
+	}
 
 	PopulateDataMapFromSettings();
 
@@ -416,17 +447,17 @@ TMulticastDelegate<void, const FCsProjectilePooled*>& UCsManager_Projectile::Get
 
 const FCsProjectilePooled* UCsManager_Projectile::AddToPool(const FECsProjectile& Type, ICsProjectile* Object)
 {
-	return Internal.AddToPool(Type, Object);
+	return Internal.AddToPool(GetTypeFromTypeMap(Type), Object);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::AddToPool(const FECsProjectile& Type, const FCsProjectilePooled* Object)
 {
-	return Internal.AddToPool(Type, Object->GetObject());
+	return Internal.AddToPool(GetTypeFromTypeMap(Type), Object->GetObject());
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::AddToPool(const FECsProjectile& Type, UObject* Object)
 {
-	return Internal.AddToPool(Type, Object);
+	return Internal.AddToPool(GetTypeFromTypeMap(Type), Object);
 }
 
 void UCsManager_Projectile::OnAddToPool(const FECsProjectile& Type, const FCsProjectilePooled* Object)
@@ -447,17 +478,17 @@ void UCsManager_Projectile::OnAddToPool(const FECsProjectile& Type, const FCsPro
 
 const FCsProjectilePooled* UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* Projectile, UObject* Object)
 {
-	return Internal.AddToAllocatedObjects(Type, Projectile, Object);
+	return Internal.AddToAllocatedObjects(GetTypeFromTypeMap(Type), Projectile, Object);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, ICsProjectile* Object)
 {
-	return Internal.AddToAllocatedObjects(Type, Object);
+	return Internal.AddToAllocatedObjects(GetTypeFromTypeMap(Type), Object);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::AddToAllocatedObjects(const FECsProjectile& Type, UObject* Object)
 {
-	return Internal.AddToAllocatedObjects(Type, Object);
+	return Internal.AddToAllocatedObjects(GetTypeFromTypeMap(Type), Object);
 }
 
 #pragma endregion Allocated Objects
@@ -466,27 +497,27 @@ const FCsProjectilePooled* UCsManager_Projectile::AddToAllocatedObjects(const FE
 
 const TArray<FCsProjectilePooled*>& UCsManager_Projectile::GetPool(const FECsProjectile& Type)
 {
-	return Internal.GetPool(Type);
+	return Internal.GetPool(GetTypeFromTypeMap(Type));
 }
 
 const TArray<FCsProjectilePooled*>& UCsManager_Projectile::GetAllocatedObjects(const FECsProjectile& Type)
 {
-	return Internal.GetAllocatedObjects(Type);
+	return Internal.GetAllocatedObjects(GetTypeFromTypeMap(Type));
 }
 
 const int32& UCsManager_Projectile::GetPoolSize(const FECsProjectile& Type)
 {
-	return Internal.GetPoolSize(Type);
+	return Internal.GetPoolSize(GetTypeFromTypeMap(Type));
 }
 
 int32 UCsManager_Projectile::GetAllocatedObjectsSize(const FECsProjectile& Type)
 {
-	return Internal.GetAllocatedObjectsSize(Type);
+	return Internal.GetAllocatedObjectsSize(GetTypeFromTypeMap(Type));
 }
 
 bool UCsManager_Projectile::IsExhausted(const FECsProjectile& Type)
 {
-	return Internal.IsExhausted(Type);
+	return Internal.IsExhausted(GetTypeFromTypeMap(Type));
 }
 
 	// Find
@@ -494,32 +525,32 @@ bool UCsManager_Projectile::IsExhausted(const FECsProjectile& Type)
 
 const FCsProjectilePooled* UCsManager_Projectile::FindObject(const FECsProjectile& Type, const int32& Index)
 {
-	return Internal.FindObject(Type, Index);
+	return Internal.FindObject(GetTypeFromTypeMap(Type), Index);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::FindObject(const FECsProjectile& Type, ICsProjectile* Object)
 {
-	return Internal.FindObject(Type, Object);
+	return Internal.FindObject(GetTypeFromTypeMap(Type), Object);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::FindObject(const FECsProjectile& Type, UObject* Object)
 {
-	return Internal.FindObject(Type, Object);
+	return Internal.FindObject(GetTypeFromTypeMap(Type), Object);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, const int32& Index)
 {
-	return Internal.FindSafeObject(Type, Index);
+	return Internal.FindSafeObject(GetTypeFromTypeMap(Type), Index);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, ICsProjectile* Object)
 {
-	return Internal.FindSafeObject(Type, Object);
+	return Internal.FindSafeObject(GetTypeFromTypeMap(Type), Object);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::FindSafeObject(const FECsProjectile& Type, UObject* Object)
 {
-	return Internal.FindSafeObject(Type, Object);
+	return Internal.FindSafeObject(GetTypeFromTypeMap(Type), Object);
 }
 
 #pragma endregion Find
@@ -556,7 +587,7 @@ void UCsManager_Projectile::OnPostUpdate_Pool(const FECsProjectile& Type)
 
 void UCsManager_Projectile::ConstructPayloads(const FECsProjectile& Type, const int32& Size)
 {
-	Internal.ConstructPayloads(Type, Size);
+	Internal.ConstructPayloads(GetTypeFromTypeMap(Type), Size);
 }
 
 ICsProjectilePayload* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
@@ -566,12 +597,12 @@ ICsProjectilePayload* UCsManager_Projectile::ConstructPayload(const FECsProjecti
 
 ICsProjectilePayload* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)
 {
-	return Internal.AllocatePayload(Type);
+	return Internal.AllocatePayload(GetTypeFromTypeMap(Type));
 }
 
 ICsProjectilePayload* UCsManager_Projectile::ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
 {
-	ICsProjectilePayload* IP				= Internal.AllocatePayload(Type);
+	ICsProjectilePayload* IP				= Internal.AllocatePayload(GetTypeFromTypeMap(Type));
 	FCsProjectilePooledPayloadImpl* Payload = static_cast<FCsProjectilePooledPayloadImpl*>(IP);
 
 	Payload->Instigator = ScriptPayload.Instigator;
@@ -590,12 +621,12 @@ ICsProjectilePayload* UCsManager_Projectile::ScriptAllocatePayload(const FECsPro
 
 const FCsProjectilePooled* UCsManager_Projectile::Spawn(const FECsProjectile& Type, ICsProjectilePayload* Payload)
 {
-	return Internal.Spawn(Type, Payload);
+	return Internal.Spawn(GetTypeFromTypeMap(Type), Payload);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::ScriptSpawn(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
 {
-	ICsProjectilePayload* Payload = ScriptAllocatePayload(Type, ScriptPayload);
+	ICsProjectilePayload* Payload = ScriptAllocatePayload(GetTypeFromTypeMap(Type), ScriptPayload);
 
 	return Spawn(Type, Payload);
 }
@@ -607,7 +638,7 @@ const FCsProjectilePooled* UCsManager_Projectile::ScriptSpawn(const FECsProjecti
 
 bool UCsManager_Projectile::Destroy(const FECsProjectile& Type, ICsProjectile* Projectile)
 {
-	return Internal.Destroy(Type, Projectile);
+	return Internal.Destroy(GetTypeFromTypeMap(Type), Projectile);
 }
 
 bool UCsManager_Projectile::Destroy(ICsProjectile* Projectile)
@@ -633,7 +664,7 @@ void UCsManager_Projectile::PopulateDataMapFromSettings()
 		{
 			// TODO: Get DataTable from Manager_Data
 
-			// TODO: Add check for ModuleSettings->ManagerProjectile.Payload
+			// TODO: Add check for ModuleSettings->Manager_Projectile.Payload
 
 			bool LoadedFromManagerData = false;
 
@@ -647,101 +678,196 @@ void UCsManager_Projectile::PopulateDataMapFromSettings()
 
 			if (UDataTable* DT = DT_SoftObject.LoadSynchronous())
 			{
+				UCsLibrary_Load::LoadDataTable(DT, NCsLoadFlags::All, NCsLoadCodes::All);
+
 				if (!LoadedFromManagerData)
 				{
 					DataTables.Add(DT);
 				}
 
-				const UScriptStruct* RowStruct    = DT->GetRowStruct();
-				const TMap<FName, uint8*>& RowMap = DT->GetRowMap();
+				const TSet<FECsProjectileData>& EmulatedDataInterfaces = Projectiles.EmulatedDataInterfaces;
 
-				// ICsData_Projectile
-
-				// LifeTime
-				UFloatProperty* LifeTimeProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::LifeTime, NCsProjectileData::Projectile.GetDisplayName());
-				// InitialSpeed
-				UFloatProperty* InitialSpeedProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::InitialSpeed, NCsProjectileData::Projectile.GetDisplayName());
-				// MaxSpeed
-				UFloatProperty* MaxSpeedProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::MaxSpeed, NCsProjectileData::Projectile.GetDisplayName());
-				// GravityScale
-				UFloatProperty* GravityScaleProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::GravityScale, NCsProjectileData::Projectile.GetDisplayName());
-
-				for (const TPair<FName, uint8*>& Pair : RowMap)
+				if (EmulatedDataInterfaces.Num() > CS_EMPTY)
 				{
-					const FName& Name = Pair.Key;
-					uint8* RowPtr	  = const_cast<uint8*>(Pair.Value);
-
-					FCsData_ProjectileImpl* Data = new FCsData_ProjectileImpl();
-					
-					DataMap.Add(Name, Data);
-
-					// ICsData_Projectile
-					{
-						// LifeTime
-						{
-							float* Value = LifeTimeProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: LifeTime."));
-
-							Data->SetLifeTime(Value);
-						}
-						// InitialSpeed
-						{
-							float* Value = InitialSpeedProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: InitialSpeed."));
-
-							Data->SetInitialSpeed(Value);
-						}
-						// MaxSpeed
-						{
-							float* Value = MaxSpeedProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: MaxSpeed."));
-
-							Data->SetMaxSpeed(Value);
-						}
-						// GravityScale
-						{
-							float* Value = GravityScaleProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: GravityScale."));
-
-							Data->SetGravityScale(Value);
-						}
-					}
+					CreateEmulatedDataFromDataTable(DT, EmulatedDataInterfaces);
+				}
+				else
+				{
+					PopulateDataMapFromDataTable(DT);
 				}
 			}
 		}
 	}
 }
 
-void UCsManager_Projectile::DeconstructData(ICsData_Projectile* Data)
+void UCsManager_Projectile::CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSet<FECsProjectileData>& EmulatedDataInterfaces)
 {
-	FCsInterfaceMap* InterfaceMap = Data->GetInterfaceMap();
+	using namespace NCsManagerProjectile;
 
-	checkf(InterfaceMap, TEXT("UCsManager_Projectile::DeconstructData: Data failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
+	const FString& Context = Str::CreateEmulatedDataFromDataTable;
+
+	const UScriptStruct* RowStruct = DataTable->GetRowStruct();
+
+	checkf(EmulatedDataInterfaces.Find(NCsProjectileData::Projectile), TEXT("%s: Emulated Data Interfaces must include ICsData_Projecitle."), *Context);
+
+	// ICsData_Projectile
+	bool Emulates_ICsDataProjectile = true;
+		// LifeTime
+	UFloatProperty* LifeTimeProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Context, RowStruct, Name::LifeTime, NCsProjectileData::Projectile.GetDisplayName());
+		// InitialSpeed
+	UFloatProperty* InitialSpeedProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Context, RowStruct, Name::InitialSpeed, NCsProjectileData::Projectile.GetDisplayName());
+		// MaxSpeed
+	UFloatProperty* MaxSpeedProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Context, RowStruct, Name::MaxSpeed, NCsProjectileData::Projectile.GetDisplayName());
+		// GravityScale
+	UFloatProperty* GravityScaleProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Context, RowStruct, Name::GravityScale, NCsProjectileData::Projectile.GetDisplayName());
+
+	// ICsData_ProjectileVisual
+	bool Emulates_ICsData_ProjectileVisual = false;
+		// StaticMesh
+	//UStaticMesh** StaticMesh;
+		// SkeletalMesh
+	//USkeletalMesh** SkeletalMesh;
+		// TrailFX
+	//FCsFX* TrailFX;
+
+	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+
+	for (const TPair<FName, uint8*>& Pair : RowMap)
+	{
+		const FName& Name = Pair.Key;
+		uint8* RowPtr	  = const_cast<uint8*>(Pair.Value);
+
+		// ICsData_Projectile
+		if (Emulates_ICsDataProjectile)
+		{
+			FCsData_ProjectileImpl* Data = new FCsData_ProjectileImpl();
+
+			checkf(EmulatedDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s"), *Context, *(Name.ToString()));
+
+			EmulatedDataMap.Add(Name, Data);
+
+			FCsInterfaceMap* InterfaceMap = Data->GetInterfaceMap();
+
+			checkf(InterfaceMap, TEXT("%s: Data failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."), *Context);
+
+			TArray<FCsInterfaceMap*>& InterfaceMaps = EmulatedDataInterfaceMap.FindOrAdd(Name);
+			InterfaceMaps.Add(InterfaceMap);
+
+			// LifeTime
+			{
+				float* Value = LifeTimeProperty->ContainerPtrToValuePtr<float>(RowPtr);
+
+				checkf(Value, TEXT("%s: Failed to float ptr from FloatProperty: LifeTime."), *Context);
+
+				Data->SetLifeTime(Value);
+			}
+			// InitialSpeed
+			{
+				float* Value = InitialSpeedProperty->ContainerPtrToValuePtr<float>(RowPtr);
+
+				checkf(Value, TEXT("%s: Failed to float ptr from FloatProperty: InitialSpeed."), *Context);
+
+				Data->SetInitialSpeed(Value);
+			}
+			// MaxSpeed
+			{
+				float* Value = MaxSpeedProperty->ContainerPtrToValuePtr<float>(RowPtr);
+
+				checkf(Value, TEXT("%s: Failed to float ptr from FloatProperty: MaxSpeed."), *Context);
+
+				Data->SetMaxSpeed(Value);
+			}
+			// GravityScale
+			{
+				float* Value = GravityScaleProperty->ContainerPtrToValuePtr<float>(RowPtr);
+
+				checkf(Value, TEXT(": Failed to float ptr from FloatProperty: GravityScale."), *Context);
+
+				Data->SetGravityScale(Value);
+			}
+		}
+	}
+}
+
+void UCsManager_Projectile::DeconstructEmulatedData(FCsInterfaceMap* InterfaceMap)
+{
+	checkf(InterfaceMap, TEXT("UCsManager_Projectile::DeconstructEmulatedData: InterfaceMap is NULL. Data failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
 	
 	// FCsData_ProjectileImpl
 	if (InterfaceMap->GetRootName() == FCsData_ProjectileImpl::Name)
 	{
+		ICsData_Projectile* Data = InterfaceMap->Get<ICsData_Projectile>();
+
 		delete static_cast<FCsData_ProjectileImpl*>(Data);
 	}
 	else
 	{
-		checkf(0, TEXT("UCsManager_Projectile::DeconstructData: Failed to delete Data."));
+		checkf(0, TEXT("UCsManager_Projectile::DeconstructEmulatedData: Failed to delete InterfaceMap."));
+	}
+}
+
+ICsData_Projectile* UCsManager_Projectile::GetEmulatedData(const FName& Name)
+{
+	checkf(Name != NAME_None, TEXT("UCsManager_Projectile::GetEmulatedData: Name = None is NOT Valid."));
+
+	ICsData_Projectile** DataPtr = EmulatedDataMap.Find(Name);
+
+	checkf(DataPtr, TEXT("UCsManager_Projectile::GetEmulatedData: Failed to find Data for Name: %s."), *(Name.ToString()));
+
+	return *DataPtr;
+}
+
+void UCsManager_Projectile::PopulateDataMapFromDataTable(UDataTable* DataTable)
+{
+	using namespace NCsManagerProjectile;
+
+	const UScriptStruct* RowStruct = DataTable->GetRowStruct();
+
+	// Data
+	UStructProperty* DataProperty = FCsLibrary_Property::FindPropertyByName<UStructProperty>(RowStruct, Name::Data);
+
+	if (DataProperty &&
+		DataProperty->Struct == FCsDataProjectilePtr::StaticStruct())
+	{
+		const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+
+		for (const TPair<FName, uint8*>& Pair : RowMap)
+		{
+			const FName& Name = Pair.Key;
+			uint8* RowPtr     = const_cast<uint8*>(Pair.Value);
+
+			FCsDataProjectilePtr* DataPtr = DataProperty->ContainerPtrToValuePtr<FCsDataProjectilePtr>(RowPtr);
+
+			if (ICsData_Projectile* Data = DataPtr->Get<ICsData_Projectile>())
+			{
+				DataMap.Add(Name, Data);
+			}
+		}
 	}
 }
 
 ICsData_Projectile* UCsManager_Projectile::GetData(const FName& Name)
 {
-	checkf(Name != NAME_None, TEXT("UCsManager_Projectile::GetData: Name = None is NOT Valid."));
+	checkf(Name != NAME_None, TEXT("UCsManager_Projectile::GetData: Name: None is NOT Valid."));
+
+	// TODO: Get the Data from Manager_Data or have a callback whenever Payload is unloaded
 
 	ICsData_Projectile** DataPtr = DataMap.Find(Name);
 
 	checkf(DataPtr, TEXT("UCsManager_Projectile::GetData: Failed to find Data for Name: %s."), *(Name.ToString()));
 
 	return *DataPtr;
+}
+
+ICsData_Projectile* UCsManager_Projectile::GetData(const FECsProjectile& Type)
+{
+	checkf(EMCsProjectile::Get().IsValidEnum(Type), TEXT("UCsManager_Projectile::GetData: Type: %s is NOT Valid."), Type.ToChar());
+
+	return GetData(Type.GetFName());
+}
+
+void UCsManager_Projectile::OnPayloadUnloaded(const FName& Payload)
+{
 }
 
 #pragma endregion Data

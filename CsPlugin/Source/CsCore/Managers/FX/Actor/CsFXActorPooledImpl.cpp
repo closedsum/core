@@ -2,8 +2,13 @@
 #include "Managers/FX/Actor/CsFXActorPooledImpl.h"
 #include "CsCore.h"
 
+// Managers
+#include "Managers/FX/Actor/CsManager_FX_Actor.h"
+// Pooled Object
+#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
 // FX
 #include "Managers/FX/Cache/CsFXPooledCacheImpl.h"
+#include "Managers/FX/Payload/CsFXPooledPayload.h"
 #include "NiagaraActor.h"
 #include "NiagaraComponent.h"
 
@@ -32,6 +37,14 @@ void UCsFXActorPooledImpl::BeginDestroy()
 void UCsFXActorPooledImpl::OnConstructObject()
 {
 	ConstructCache();
+
+	UObject* MyOuter = GetOuter();
+
+	checkf(MyOuter, TEXT("UCsFXActorPooledImpl::OnConstructObject: Outer is NULL. No Outer set for %s."), *(GetName()));
+
+	UCsManager_FX_Actor* Manager_FX_Actor = Cast<UCsManager_FX_Actor>(MyOuter);
+
+	checkf(Manager_FX_Actor, TEXT(""));
 }
 
 #pragma endregion ICsOnConstructObject
@@ -56,7 +69,11 @@ ICsPooledObjectCache* UCsFXActorPooledImpl::GetCache() const
 
 void UCsFXActorPooledImpl::Allocate(ICsPooledObjectPayload* Payload)
 {
+	FCsInterfaceMap* InterfaceMap = Payload->GetInterfaceMap();
 
+	checkf(InterfaceMap, TEXT("UCsFXActorPooledImpl::Allocate: InterfaceMap is NULL. Payload failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
+
+	ICsFXPooledPayload* FXPayload = InterfaceMap->Get<ICsFXPooledPayload>();
 }
 
 void UCsFXActorPooledImpl::Deallocate()

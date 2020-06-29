@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/FX/Cache/CsFXPooledCacheImpl.h"
 
-#include "Managers/Pool/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
 #include "Containers/CsInterfaceMap.h"
 // Data
 //#include "Data/CsData_Projectile.h"

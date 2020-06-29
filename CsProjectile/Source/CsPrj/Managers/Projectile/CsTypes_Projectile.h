@@ -3,7 +3,7 @@
 #include "Types/CsTypes_Load.h"
 #include "Engine/DataTable.h"
 
-#include "Managers/Pool/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
 
 #include "CsTypes_Projectile.generated.h"
 #pragma once
@@ -224,6 +224,7 @@ namespace NCsProjectileData
 	typedef FECsProjectileData Type;
 
 	extern CSPRJ_API const Type Projectile;
+	extern CSPRJ_API const Type ProjectileVisual;
 }
 
 #pragma endregion ProjectileData
@@ -654,13 +655,13 @@ public:
 
 #pragma endregion FCsScriptProjectilePayload
 
-// FCsProjectiletr
+// FCsProjectilePtr
 #pragma region
 
 class UObject;
 
 USTRUCT(BlueprintType)
-struct CSPRJ_API FCsProjectiletr
+struct CSPRJ_API FCsProjectilePtr
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -678,7 +679,7 @@ public:
 	UPROPERTY(Transient, BlueprintReadOnly)
 	UClass* Projectile_Class;
 
-	FCsProjectiletr() :
+	FCsProjectilePtr() :
 		Projectile(nullptr),
 		Load_Flags(0),
 		Projectile_Internal(nullptr),
@@ -691,7 +692,49 @@ public:
 	FORCEINLINE UClass* GetClass() const { return Projectile_Class; }
 };
 
-#pragma endregion FCsProjectiletr
+#pragma endregion FCsProjectilePtr
+
+// FCsDataProjectilePtr
+#pragma region
+
+class UObject;
+
+USTRUCT(BlueprintType)
+struct CSPRJ_API FCsDataProjectilePtr
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsData_Projectile"))
+	TSoftClassPtr<UObject> Data;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 Load_Flags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UObject* Data_Internal;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UClass* Data_Class;
+
+	FCsDataProjectilePtr() :
+		Data(nullptr),
+		Load_Flags(0),
+		Data_Internal(nullptr),
+		Data_Class(nullptr)
+	{
+	}
+
+	FORCEINLINE UObject* Get() const { return Data_Internal; }
+
+	template<typename T>
+	FORCEINLINE T* Get() const { return Cast<T>(Get()); }
+
+	FORCEINLINE UClass* GetClass() const { return Data_Class; }
+};
+
+#pragma endregion FCsDataProjectiletr
 
 // FCsProjectileEntry
 #pragma region
@@ -709,34 +752,19 @@ struct CSPRJ_API FCsProjectileEntry : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString DisplayName;
 
-	/** Soft Reference to a weapon of type: ICsProjectile. */
+	/** Soft Reference to a projectile of type: ICsProjectile. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FCsProjectiletr Projectile;
+	FCsProjectilePtr Projectile;
 
-	/** */
+	/** Soft Reference to a data of type: ICsData_Projectile. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float LifeTime;
-
-	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float InitialSpeed;
-
-	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float MaxSpeed;
-
-	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float GravityScale;
+	FCsDataProjectilePtr Data;
 
 	FCsProjectileEntry() :
 		Name(),
 		DisplayName(), 
 		Projectile(),
-		LifeTime(0.0f),
-		InitialSpeed(0.0f),
-		MaxSpeed(0.0f),
-		GravityScale(0.0f)
+		Data()
 	{
 	}
 };

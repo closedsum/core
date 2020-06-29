@@ -1,10 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Cache/CsProjectilePooledCacheImpl.h"
 
-#include "Managers/Pool/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
 #include "Containers/CsInterfaceMap.h"
 // Data
 #include "Data/CsData_Projectile.h"
+
+const FName FCsProjectilePooledCacheImpl::Name = FName("FCsProjectilePooledCacheImpl");
 
 FCsProjectilePooledCacheImpl::FCsProjectilePooledCacheImpl() :
 	InterfaceMap(nullptr),
@@ -23,6 +25,8 @@ FCsProjectilePooledCacheImpl::FCsProjectilePooledCacheImpl() :
 	Data(nullptr)
 {
 	InterfaceMap = new FCsInterfaceMap();
+
+	InterfaceMap->SetRootName(FCsProjectilePooledCacheImpl::Name);
 
 	InterfaceMap->Add<ICsPooledObjectCache>(static_cast<ICsPooledObjectCache*>(this));
 	InterfaceMap->Add<ICsProjectileCache>(static_cast<ICsProjectileCache*>(this));

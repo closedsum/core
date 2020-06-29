@@ -190,52 +190,6 @@ namespace NCsTransformMember
 class UStaticMesh;
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsStaticMesh
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TSoftObjectPtr<UStaticMesh> Mesh;
-
-	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
-	int32 Mesh_LoadFlags;
-
-	UPROPERTY(Transient)
-	UStaticMesh* Mesh_Internal;
-
-public:
-	FCsStaticMesh() :
-		Mesh_LoadFlags(0),
-		Mesh_Internal(nullptr)
-	{
-		CS_SET_BLUEPRINT_BITFLAG(Mesh_LoadFlags, ECsLoadFlags::Game);
-	}
-
-	FORCEINLINE UStaticMesh* Get() const
-	{
-		return Mesh_Internal;
-	}
-
-	FORCEINLINE FCsStaticMesh& operator=(const FCsStaticMesh& B)
-	{
-		Mesh = B.Mesh;
-		Mesh_LoadFlags = B.Mesh_LoadFlags;
-		Mesh_Internal = B.Mesh_Internal;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsStaticMesh& B) const
-	{
-		return Mesh == B.Mesh && Mesh_LoadFlags == B.Mesh_LoadFlags && Mesh_Internal == B.Mesh_Internal;
-	}
-
-	FORCEINLINE bool operator!=(const FCsStaticMesh& B) const
-	{
-		return !(*this == B);
-	}
-};
-
-USTRUCT(BlueprintType)
 struct CSCORE_API FCsFpvStaticMesh
 {
 	GENERATED_USTRUCT_BODY()
@@ -429,46 +383,6 @@ public:
 
 // Skeletal Mesh
 #pragma region
-
-class USkeletalMesh;
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsSkeletalMesh
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TSoftObjectPtr<USkeletalMesh> Mesh;
-
-	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
-	int32 Mesh_LoadFlags;
-
-	UPROPERTY(Transient)
-	USkeletalMesh* Mesh_Internal;
-
-public:
-	FCsSkeletalMesh() :
-		Mesh_LoadFlags(0),
-		Mesh_Internal(nullptr)
-	{
-		CS_SET_BLUEPRINT_BITFLAG(Mesh_LoadFlags, ECsLoadFlags::Game);
-	}
-
-	FORCEINLINE bool operator==(const FCsSkeletalMesh& B) const
-	{
-		return Mesh == B.Mesh && Mesh_LoadFlags == B.Mesh_LoadFlags && Mesh_Internal == B.Mesh_Internal;
-	}
-
-	FORCEINLINE bool operator!=(const FCsSkeletalMesh& B) const
-	{
-		return !(*this == B);
-	}
-
-	FORCEINLINE USkeletalMesh* Get() const
-	{
-		return Mesh_Internal;
-	}
-};
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsFpsSkeletalMesh

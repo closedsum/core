@@ -57,7 +57,7 @@ public:
 	TArray<FCsProjectileSettings_DataTable_Projectiles> Projectiles;
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	FCsSettings_Manager_Projectile ManagerProjectile;
+	FCsSettings_Manager_Projectile Manager_Projectile;
 
 // Unit Test
 #pragma region

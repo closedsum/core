@@ -13,6 +13,10 @@ class ICsData_Projectile;
 struct CSPRJ_API FCsProjectilePooledCacheImpl : public ICsPooledObjectCache,
 												public ICsProjectileCache
 {
+public:
+
+	static const FName Name;
+
 private:
 
 	FCsInterfaceMap* InterfaceMap;

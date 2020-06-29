@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
 #include "Managers/FX/Payload/CsFXPooledPayload.h"
 
 #pragma once
@@ -30,9 +30,12 @@ public:
 	
 	FCsTime Time;
 
-	FVector Direction;
 
 	FVector Location;
+
+	FVector Rotation;
+
+	FVector Scale;
 
 public:
 

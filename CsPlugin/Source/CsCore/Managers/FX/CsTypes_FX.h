@@ -1,8 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_Load.h"
-#include "Managers/Pool/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
 #include "Runtime/Engine/Classes/Particles/ParticleSystem.h"
+#include "Types/CsTypes_AttachDetach.h"
 
 #include "CsTypes_FX.generated.h"
 #pragma once
@@ -420,3 +421,55 @@ public:
 };
 
 #pragma endregion FCsFxPayload
+
+// FCsFX
+#pragma region
+
+class UNiagaraSystem;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsFX
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftObjectPtr<UNiagaraSystem> FX;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 FX_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UNiagaraSystem* FX_Internal;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float LifeTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ECsAttachmentTransformRules AttachmentTransformRules;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName Bone;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FTransform Transform;
+public:
+
+	FCsFX() :
+		FX(nullptr),
+		FX_LoadFlags(0),
+		FX_Internal(nullptr),
+		LifeTime(0.0f),
+		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+		Bone(NAME_None),
+		Transform(FTransform::Identity)
+	{
+		//CS_SET_BLUEPRINT_BITFLAG(Particle_LoadFlags, ECsLoadFlags::Game);
+	}
+	
+	FORCEINLINE UNiagaraSystem* Get() const
+	{
+		return FX_Internal;
+	}
+};
+
+#pragma endregion FCsFX

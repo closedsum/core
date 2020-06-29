@@ -628,7 +628,7 @@ void UCsManager_FX_Actor::PopulateDataMapFromSettings()
 		{
 			// TODO: Get DataTable from Manager_Data
 
-			// TODO: Add check for ModuleSettings->ManagerProjectile.Payload
+			// TODO: Add check for ModuleSettings->Manager_Projectile.Payload
 
 			bool LoadedFromManagerData = false;
 

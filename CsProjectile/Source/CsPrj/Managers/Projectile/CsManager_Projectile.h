@@ -44,6 +44,7 @@ public:
 class ICsGetManagerProjectile;
 class ICsData_Projectile;
 class UDataTable;
+struct FCsInterfaceMap;
 
 UCLASS()
 class CSPRJ_API UCsManager_Projectile : public UObject
@@ -118,13 +119,38 @@ public:
 #pragma region
 protected:
 
+	/** */
 	FCsSettings_Manager_Projectile Settings;
+
+	/** */
+	TArray<FECsProjectile> TypeMapArray;
 
 public:
 
+	/**
+	*
+	*
+	* @param InSettings
+	*/ 
 	FORCEINLINE void SetSettings(const FCsSettings_Manager_Projectile& InSettings)
 	{
 		Settings = InSettings;
+	}
+
+	/**
+	* If SET,
+	* - Get the type this Projectile has been mapped to for pooling.
+	*   i.e. If the projectile is completely data driven, then many projectiles could share
+	*   the same class.
+	* If NOT set,
+	* - Return the same type.
+	*
+	* @param Type
+	* return Projectile Type 
+	*/
+	FORCEINLINE const FECsProjectile& GetTypeFromTypeMap(const FECsProjectile& Type)
+	{
+		return TypeMapArray[Type.GetValue()];
 	}
 
 #pragma endregion Settings
@@ -592,17 +618,46 @@ public:
 
 // Data
 #pragma region
-protected:
-
-	TMap<FName, ICsData_Projectile*> DataMap;
-
 public:
 
 	virtual void PopulateDataMapFromSettings();
 
-	virtual void DeconstructData(ICsData_Projectile* Data);
+protected:
 
+	TMap<FName, ICsData_Projectile*> EmulatedDataMap;
+	TMap<FName, TArray<FCsInterfaceMap*>> EmulatedDataInterfaceMap;
+
+	virtual void CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSet<FECsProjectileData>& EmulatedDataInterfaces);
+
+public:
+
+	virtual void DeconstructEmulatedData(FCsInterfaceMap* InterfaceMap);
+
+	ICsData_Projectile* GetEmulatedData(const FName& Name);
+
+protected:
+
+	TMap<FName, ICsData_Projectile*> DataMap;
+
+	void PopulateDataMapFromDataTable(UDataTable* DataTable);
+
+public:
+
+	/**
+	*
+	*
+	* @param Name
+	* return
+	*/
 	ICsData_Projectile* GetData(const FName& Name);
+
+	/**
+	*
+	*
+	* @param Type
+	* return
+	*/
+	ICsData_Projectile* GetData(const FECsProjectile& Type);
 
 private:
 
@@ -611,6 +666,8 @@ private:
 
 	UPROPERTY()
 	TArray<UDataTable*> DataTables;
+
+	void OnPayloadUnloaded(const FName& Payload);
 
 #pragma endregion Data
 };

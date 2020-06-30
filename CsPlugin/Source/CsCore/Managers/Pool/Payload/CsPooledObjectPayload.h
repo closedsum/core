@@ -7,6 +7,9 @@
 class UObject;
 
 /**
+* Interface for delivering a "payload" or blob of data when Allocating an
+* object that implements the interface: ICsPooledObject. Usually this payload
+* is passed through a Manager handling the pooled objects.
 */
 struct CSCORE_API ICsPooledObjectPayload : virtual public ICsGetInterfaceMap
 {

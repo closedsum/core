@@ -141,10 +141,3 @@ public:
 	*/
 	virtual void Reset() = 0;
 };
-
-struct FCsInterfaceMap;
-
-namespace NCsPooledObjectCache
-{
-	CSCORE_API FCsInterfaceMap* GetInterfaceMapChecked(const FString& Context, ICsPooledObjectCache* Cache);
-}

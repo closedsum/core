@@ -626,6 +626,11 @@ void UCsLibrary_Load::LoadSoftClassProperty(USoftClassProperty* SoftClassPropert
 					UObject* O	  = Member->LoadSynchronous();
 					UClass* Class = Cast<UClass>(O);
 					*Internal	  = Class->GetDefaultObject();
+
+					if (*Internal)
+					{
+						LoadStruct(*Internal, Class, LoadFlags, LoadCodes);
+					}
 				}
 			}
 		}
@@ -700,6 +705,11 @@ void UCsLibrary_Load::LoadArraySoftClassProperty(UArrayProperty* ArrayProperty, 
 						UObject* O	  = Ptr->LoadSynchronous();
 						UClass* Class = Cast<UClass>(O);
 						*InternalPtr  = Class->GetDefaultObject();
+
+						if (!InternalPtr)
+						{
+							LoadStruct(*InternalPtr, Class, LoadFlags, LoadCodes);
+						}
 					}
 				}
 			}
@@ -767,14 +777,20 @@ void UCsLibrary_Load::LoadSoftObjectProperty(USoftObjectProperty* SoftObjectProp
 				{
 					*Internal = Member->LoadSynchronous();
 
-					// Recursive Load DataTable
-					if (*Internal	 &&
-						SoftObjectProperty->PropertyClass == UDataTable::StaticClass() &&
-						CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::RecursiveLoadDataTable))
+					if (*Internal)
 					{
-						UDataTable* DataTable = Cast<UDataTable>(*Internal);
+						// Recursive Load DataTable
+						if (SoftObjectProperty->PropertyClass == UDataTable::StaticClass() &&
+							CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::RecursiveLoadDataTable))
+						{
+							UDataTable* DataTable = Cast<UDataTable>(*Internal);
 
-						LoadDataTable(DataTable, LoadFlags, LoadCodes);
+							LoadDataTable(DataTable, LoadFlags, LoadCodes);
+						}
+						else
+						{
+							LoadStruct(*Internal, (*Internal)->GetClass(), LoadFlags, LoadCodes);
+						}
 					}
 				}
 			}
@@ -818,14 +834,20 @@ void UCsLibrary_Load::LoadArraySoftObjectProperty(UArrayProperty* ArrayProperty,
 					if (Ptr->IsValid())
 						*InternalPtr = Ptr->LoadSynchronous();
 
-					// Recursive Load DataTable
-					if (*InternalPtr &&
-						SoftObjectProperty->PropertyClass == UDataTable::StaticClass() &&
-						CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::RecursiveLoadDataTable))
+					if (*InternalPtr)
 					{
-						UDataTable* DataTable = Cast<UDataTable>(*InternalPtr);
+						// Recursive Load DataTable
+						if (SoftObjectProperty->PropertyClass == UDataTable::StaticClass() &&
+							CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::RecursiveLoadDataTable))
+						{
+							UDataTable* DataTable = Cast<UDataTable>(*InternalPtr);
 
-						LoadDataTable(DataTable, LoadFlags, LoadCodes);
+							LoadDataTable(DataTable, LoadFlags, LoadCodes);
+						}
+						else
+						{
+							LoadStruct(*InternalPtr, (*InternalPtr)->GetClass(), LoadFlags, LoadCodes);
+						}
 					}
 				}
 			}

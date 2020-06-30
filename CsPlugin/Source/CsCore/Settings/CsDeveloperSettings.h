@@ -64,6 +64,8 @@ public:
 		return TEXT("UCsDeveloperSettings.ECsFX");
 	}
 
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|FX")
+	TArray<TSoftObjectPtr<UDataTable>> FXs;
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|FX", meta = (DisplayName = "Manager FX Actor"))
 	FCsSettings_Manager_FX_Actor Manager_FX_Actor;

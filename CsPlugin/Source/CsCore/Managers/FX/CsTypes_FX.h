@@ -32,7 +32,7 @@ namespace NCsFX
 {
 	typedef FECsFX Type;
 
-	//CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
+	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
 
 #pragma endregion FX

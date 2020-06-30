@@ -17,6 +17,8 @@
 #include "DetailCustomizations/EnumStruct/ECsGestureTypeCustomization.h"
 		// Process
 #include "DetailCustomizations/EnumStruct/ECsProcessCustomization.h"
+		// FX
+#include "DetailCustomizations/EnumStruct/FX/ECsFXCustomization.h"
 		// Damage
 #include "DetailCustomizations/EnumStruct/Damage/ECsDamageTypeCustomization.h"
 #include "DetailCustomizations/EnumStruct/Damage/ECsHitTypeCustomization.h"
@@ -43,6 +45,8 @@ void FCsRegisterDetailCustomization::Register()
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsGestureType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGestureTypeCustomization::MakeInstance));
 		// Process
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProcess", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProcessCustomization::MakeInstance));
+		// FX
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsFX", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsFXCustomization::MakeInstance));
 		// Damage
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsDamageType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsDamageTypeCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsHitType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsHitTypeCustomization::MakeInstance));

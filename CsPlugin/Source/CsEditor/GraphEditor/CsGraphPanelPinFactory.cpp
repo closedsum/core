@@ -5,6 +5,7 @@
 // Types
 #include "Types/CsTypes.h"
 #include "Managers/Input/CsTypes_Input.h"
+#include "Managers/FX/CsTypes_FX.h"
 //#include "Types/CsTypes_Character.h"
 //#include "Types/CsTypes_Item.h"
 //#include "Types/CsTypes_Recipe.h"
@@ -25,6 +26,8 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsGameEvent.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsSurfaceType.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsGestureType.h"
+	// FX
+#include "GraphEditor/EnumStruct/FX/SCsGraphPin_ECsFX.h"
 	// Character
 //#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterAnim.h"
 //#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterAnimVariation.h"
@@ -32,11 +35,6 @@
 //#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterBlendSpace.h"
 	// Process
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsProcess.h"
-	// Blockchain
-//#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainCommand.h"
-//#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainContract.h"
-//#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainContractFunction.h"
-//#include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsEthereumJavascript.h"
 	// Item
 //#include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemType.h"
 //#include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemOwner.h"
@@ -59,10 +57,6 @@
 
 // Managers
 #include "Managers/Process/CsProcess.h"
-// Blockchain
-//#include "Blockchain/CsBlockchainCommand.h"
-//#include "Blockchain/CsBlockchainContract.h"
-//#include "Blockchain/Ethereum/CsEthereum.h"
 
 TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin* InPin) const
 {
@@ -89,6 +83,11 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	if (DoesPinUseScriptStruct<FECsSurfaceType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsSurfaceType, InPin); }
 	// FECsGestureType
 	if (DoesPinUseScriptStruct<FECsGestureType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsGestureType, InPin); }
+	// FX
+	{
+		// FECsFX
+		if (DoesPinUseScriptStruct<FECsFX>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsFX, InPin); }
+	}
 	// Character
 	{
 		// FECsCharacterAnim
@@ -102,19 +101,6 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	}
 	// FECsProcess
 	if (DoesPinUseScriptStruct<FECsProcess>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsProcess, InPin); }
-	// Blockchain
-	/*
-	{
-		// FECsBlockchainCommand
-		if (DoesPinUseScriptStruct<FECsBlockchainCommand>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsBlockchainCommand, InPin); }
-		// FECsBlockchainContract
-		if (DoesPinUseScriptStruct<FECsBlockchainContract>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsBlockchainContract, InPin); }
-		// FECsBlockchainContractFunction
-		if (DoesPinUseScriptStruct<FECsBlockchainContractFunction>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsBlockchainContractFunction, InPin); }
-		// FECsEthereumJavascript
-		if (DoesPinUseScriptStruct<FECsEthereumJavascript>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsEthereumJavascript, InPin); }
-	}
-	*/
 	// Item
 	{
 		// FECsItemType

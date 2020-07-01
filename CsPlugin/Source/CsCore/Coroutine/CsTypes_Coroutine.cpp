@@ -335,6 +335,8 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 {
 	Index = INDEX_NONE;
 
+	Group = EMCsUpdateGroup::Get().GetMAX();
+
 	// Registers
 	Registers.Reserve(NCsRoutineRegisterValueType::MAX);
 	RegisterFlags.Reserve(NCsRoutineRegisterValueType::MAX);
@@ -541,7 +543,6 @@ void FCsCoroutinePayload::SetIndex(const int32& InIndex)
 
 void FCsCoroutinePayload::Reset()
 {
-	Group = EMCsUpdateGroup::Get().GetMAX();
 	CoroutineImpl.Unbind();
 	StartTime.Reset();
 	Owner.Reset();

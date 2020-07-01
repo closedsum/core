@@ -2,22 +2,19 @@
 #include "Types/CsTypes_Math.h"
 
 // ParametricFunctionType
-EMCsParametricFunctionType* EMCsParametricFunctionType::Instance;
+#pragma region
 
-EMCsParametricFunctionType& EMCsParametricFunctionType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsParametricFunctionType();
-	return *Instance;
-}
-
-namespace ECsParametricFunctionType
+namespace NCsParametricFunctionType
 {
 	namespace Ref
 	{
-		CSCORE_API const Type Linear = EMCsParametricFunctionType::Get().Add(Type::Linear, TEXT("Linear"));
-		CSCORE_API const Type Quadratic = EMCsParametricFunctionType::Get().Add(Type::Quadratic, TEXT("Quadratic"));
-		CSCORE_API const Type Sine = EMCsParametricFunctionType::Get().Add(Type::Sine, TEXT("Sine"));
-		CSCORE_API const Type ECsParametricFunctionType_MAX = EMCsParametricFunctionType::Get().Add(Type::ECsParametricFunctionType_MAX, TEXT("ECsParametricFunctionType_MAX"), TEXT("MAX"));
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsParametricFunctionType, Linear);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsParametricFunctionType, Quadratic);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsParametricFunctionType, Sine);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsParametricFunctionType, ECsParametricFunctionType_MAX, "MAX");
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsParametricFunctionType_MAX;
 }
+
+#pragma endregion ParametricFunctionType

@@ -4,6 +4,9 @@
 #include "CsTypes_Math.generated.h"
 #pragma once
 
+// FCsRadius
+#pragma region
+
 USTRUCT(BlueprintType)
 struct FCsRadius
 {
@@ -72,54 +75,46 @@ struct FCsRadius
 															MemberName.Square(); \
 														}
 
+#pragma endregion FCsRadius
+
 // ParametricFunctionType
 #pragma region
 
+/**
+*/
 UENUM(BlueprintType)
-namespace ECsParametricFunctionType
+enum class ECsParametricFunctionType : uint8
 {
-	enum Type
-	{
-		Linear							UMETA(DisplayName = "Polynomial Degree 1"),
-		Quadratic						UMETA(DisplayName = "Polynomial Degree 2"),
-		Sine							UMETA(DisplayName = "Sine"),
-		ECsParametricFunctionType_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsParametricFunctionType::Type TCsParametricFunctionType;
-
-struct CSCORE_API EMCsParametricFunctionType : public TCsEnumMap<ECsParametricFunctionType::Type>
-{
-protected:
-	EMCsParametricFunctionType() {}
-	EMCsParametricFunctionType(const EMCsParametricFunctionType &) = delete;
-	EMCsParametricFunctionType(EMCsParametricFunctionType &&) = delete;
-public:
-	~EMCsParametricFunctionType() {}
-private:
-	static EMCsParametricFunctionType* Instance;
-
-public:
-	static EMCsParametricFunctionType& Get();
+	Linear							UMETA(DisplayName = "Polynomial Degree 1"),
+	Quadratic						UMETA(DisplayName = "Polynomial Degree 2"),
+	Sine							UMETA(DisplayName = "Sine"),
+	ECsParametricFunctionType_MAX	UMETA(Hidden),
 };
 
-namespace ECsParametricFunctionType
+struct CSCORE_API EMCsParametricFunctionType final : public TCsEnumMap<ECsParametricFunctionType>
 {
-	namespace Str
-	{
-		typedef ECsParametricFunctionType::Type Type;
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsParametricFunctionType, ECsParametricFunctionType)
+};
 
+namespace NCsParametricFunctionType
+{
+	typedef ECsParametricFunctionType Type;
+
+	namespace Ref
+	{
 		extern CSCORE_API const Type Linear;
 		extern CSCORE_API const Type Quadratic;
 		extern CSCORE_API const Type Sine;
 		extern CSCORE_API const Type ECsParametricFunctionType_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
 
-#define ECS_PARAMETRIC_FUNCTION_TYPE_MAX (uint8)ECsParametricFunctionType::ECsParametricFunctionType_MAX
-
 #pragma endregion ParametricFunctionType
+
+// FCsParametricFunctionAxis
+#pragma region
 
 USTRUCT(BlueprintType)
 struct FCsParametricFunctionAxis
@@ -128,7 +123,7 @@ struct FCsParametricFunctionAxis
 
 	/** Types are Polynomial Degree 1 (Linear), Polynomial Degree 2 (Quadratic), Sine, ... etc */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
-	TEnumAsByte<ECsParametricFunctionType::Type> Function;
+	ECsParametricFunctionType Function;
 
 	/** "Axis" F(T) = A * T + B
 	 *  "Axis" F(T) = A * T^2 + B * T + C
@@ -256,6 +251,11 @@ struct FCsParametricFunctionAxis
 	}
 };
 
+#pragma endregion FCsParametricFunctionAxis
+
+// FCsParametricFunction
+#pragma region
+
 USTRUCT(BlueprintType)
 struct FCsParametricFunction
 {
@@ -351,3 +351,5 @@ struct FCsParametricFunction
 		return WorldTransform.GetTranslation();
 	}
 };
+
+#pragma endregion FCsParametricFunction

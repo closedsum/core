@@ -450,6 +450,51 @@ namespace NCsFXDeallocateMethod
 
 #pragma endregion FXDeallocateMethod
 
+// FCsNiagaraSystem
+#pragma region
+
+class UNiagaraSystem;
+
+/**
+* Container for holding a soft and hard reference to an FX System.
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsNiagaraSystem
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Soft reference to an FX System. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftObjectPtr<UNiagaraSystem> FX;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 FX_LoadFlags;
+
+	/** Hard reference to an FX System. */
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UNiagaraSystem* FX_Internal;
+
+	FCsNiagaraSystem() :
+		FX(nullptr),
+		FX_LoadFlags(0),
+		FX_Internal(nullptr)
+	{
+	}
+
+	/**
+	* Get the Hard reference to the FX System.
+	*
+	* return FX System
+	*/
+	FORCEINLINE UNiagaraSystem* Get() const
+	{
+		return FX_Internal;
+	}
+};
+
+#pragma endregion FCsNiagaraSystem
+
 // FCsFX
 #pragma region
 
@@ -511,7 +556,7 @@ struct CSCORE_API FCsFX
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the FX. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
 	int32 TransformRules;
 
 	/** The Transform to apply to the FX.

@@ -463,6 +463,8 @@ struct CSCORE_API FCsNiagaraSystem
 {
 	GENERATED_USTRUCT_BODY()
 
+public:
+
 	/** Soft reference to an FX System. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftObjectPtr<UNiagaraSystem> FX;

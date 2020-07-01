@@ -389,3 +389,209 @@ namespace NCsTransformRules
 #define CS_TRANSFORM_FLAGS_NONE 0
 
 #pragma endregion TransformRules
+
+// FCsOptionalVectorInterval
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsOptionalVectorInterval
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector")
+	FVector Vector; // 3 x 64 bits
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector", meta = (InlineEditConditionToggle))
+	bool bIntervalX; // 1 bit
+
+	UPROPERTY(EditAnywhere, Category = "Vector", meta = (editcondition = "bIntervalX"))
+	FFloatInterval IntervalX; // 2 x 16 bits
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector", meta = (InlineEditConditionToggle))
+	bool bIntervalY; // 1 bit
+
+	UPROPERTY(EditAnywhere, Category = "Vector", meta = (editcondition = "bIntervalX"))
+	FFloatInterval IntervalY; // 2 x 16 bits
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector", meta = (InlineEditConditionToggle))
+	bool bIntervalZ;
+
+	UPROPERTY(EditAnywhere, Category = "Vector", meta = (editcondition = "bIntervalX"))
+	FFloatInterval IntervalZ;
+
+	FCsOptionalVectorInterval()
+	{
+		Reset();
+	}
+
+	FORCEINLINE bool operator==(const FCsOptionalVectorInterval& B) const
+	{
+		return	Vector == B.Vector && 
+				bIntervalX == B.bIntervalX && 
+				IntervalX.Min == B.IntervalX.Min &&
+				IntervalX.Max == B.IntervalX.Max &&
+				bIntervalY == B.bIntervalY &&
+				IntervalY.Min == B.IntervalY.Min &&
+				IntervalY.Max == B.IntervalY.Max &&
+				bIntervalZ == B.bIntervalZ &&
+				IntervalZ.Min == B.IntervalZ.Min &&
+				IntervalZ.Max == B.IntervalZ.Max;
+	}
+
+	FORCEINLINE bool operator!=(const FCsOptionalVectorInterval& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE void Reset()
+	{
+		Vector = FVector::ZeroVector;
+		// X
+		bIntervalX = false;
+		IntervalX.Min = 0.0f;
+		IntervalX.Max = 0.0f;
+		// Y
+		bIntervalY = false;
+		IntervalY.Min = 0.0f;
+		IntervalY.Max = 0.0f;
+		// Z
+		bIntervalZ = false;
+		IntervalZ.Min = 0.0f;
+		IntervalZ.Max = 0.0f;
+	}
+
+	FORCEINLINE uint32 GetBits() const
+	{
+		return  (3 * 64) // Vector
+			   + 1 // bIntervalX
+			   + (2 * 64) // IntervalX
+			   + 1 // bIntervalY
+			   + (2 * 64) // IntervalY
+			   + 1 // bIntervalZ
+			   + (2 * 64); // IntervalZ
+	}
+
+	FORCEINLINE float GetBytes() const
+	{
+		return (float)GetBits() / 8.0f;
+	}
+
+	void Seed()
+	{
+		Vector.X = bIntervalX ? FMath::RandRange(IntervalX.Min, IntervalX.Max) : Vector.X;
+		Vector.Y = bIntervalY ? FMath::RandRange(IntervalY.Min, IntervalY.Max) : Vector.Y;
+		Vector.Z = bIntervalZ ? FMath::RandRange(IntervalZ.Min, IntervalZ.Max) : Vector.Z;
+	}
+
+	FORCEINLINE const FVector& Get()
+	{
+		return Vector;
+	}
+};
+
+#pragma endregion FCsOptionalVectorInterval
+
+// FCsOptionalRotatorInterval
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsOptionalRotatorInterval
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator")
+	FRotator Rotator; // 3 x 64 bits
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator", meta = (InlineEditConditionToggle))
+	bool bIntervalRoll; // 1 bit
+
+	UPROPERTY(EditAnywhere, Category = "Rotator", meta = (editcondition = "bIntervalRoll"))
+	FFloatInterval IntervalRoll; // 2 x 16 bits
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator", meta = (InlineEditConditionToggle))
+	bool bIntervalPitch; // 1 bit
+
+	UPROPERTY(EditAnywhere, Category = "Rotator", meta = (editcondition = "bIntervalPitch"))
+	FFloatInterval IntervalPitch; // 2 x 16 bits
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator", meta = (InlineEditConditionToggle))
+	bool bIntervalYaw;
+
+	UPROPERTY(EditAnywhere, Category = "Rotator", meta = (editcondition = "bIntervalYaw"))
+	FFloatInterval IntervalYaw;
+
+	FCsOptionalRotatorInterval()
+	{
+		Reset();
+	}
+
+	FORCEINLINE bool operator==(const FCsOptionalRotatorInterval& B) const
+	{
+		return	Rotator == B.Rotator &&
+				bIntervalRoll == B.bIntervalRoll &&
+				IntervalRoll.Min == B.IntervalRoll.Min &&
+				IntervalRoll.Max == B.IntervalRoll.Max &&
+				bIntervalPitch == B.bIntervalPitch &&
+				IntervalPitch.Min == B.IntervalPitch.Min &&
+				IntervalPitch.Max == B.IntervalPitch.Max &&
+				bIntervalYaw == B.bIntervalYaw &&
+				IntervalYaw.Min == B.IntervalYaw.Min &&
+				IntervalYaw.Max == B.IntervalYaw.Max;
+	}
+
+	FORCEINLINE bool operator!=(const FCsOptionalRotatorInterval& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE void Reset()
+	{
+		Rotator = FRotator::ZeroRotator;
+		// Roll
+		bIntervalRoll = false;
+		IntervalRoll.Min = 0.0f;
+		IntervalRoll.Max = 0.0f;
+		// Pitch
+		bIntervalPitch = false;
+		IntervalPitch.Min = 0.0f;
+		IntervalPitch.Max = 0.0f;
+		// Yaw
+		bIntervalYaw = false;
+		IntervalYaw.Min = 0.0f;
+		IntervalYaw.Max = 0.0f;
+	}
+
+	FORCEINLINE uint32 GetBits() const
+	{
+		return  (3 * 64) // Rotator
+				+ 1 // bIntervalRoll
+				+ (2 * 64) // IntervalRoll
+				+ 1 // bIntervalPitch
+				+ (2 * 64) // IntervalPitch
+				+ 1 // bIntervalYaw
+				+ (2 * 64); // IntervalYaw
+	}
+
+	FORCEINLINE float GetBytes() const
+	{
+		return (float)GetBits() / 8.0f;
+	}
+
+	void Seed()
+	{
+		Rotator.Roll = bIntervalRoll ? FMath::RandRange(IntervalRoll.Min, IntervalRoll.Max) : Rotator.Roll;
+		Rotator.Pitch = bIntervalPitch ? FMath::RandRange(IntervalPitch.Min, IntervalPitch.Max) : Rotator.Pitch;
+		Rotator.Yaw = bIntervalYaw ? FMath::RandRange(IntervalYaw.Min, IntervalYaw.Max) : Rotator.Yaw;
+	}
+
+	FORCEINLINE const FRotator& Get()
+	{
+		return Rotator;
+	}
+};
+
+#pragma endregion FCsOptionalRotatorInterval

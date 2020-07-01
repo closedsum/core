@@ -7,7 +7,9 @@ struct TCsEnumFlagMap
 {
 protected:
 	FString MapName;
+	FName MapFName;
 	FString EnumName;
+	FName EnumFName;
 private:
 	TArray<EnumType> Enums;
 	int32 Count;
@@ -25,6 +27,7 @@ protected:
 	{
 		Count = 0;
 		First = (EnumType)0;
+		EndPosition = 0;
 	}
 public:
 	virtual ~TCsEnumFlagMap() {}
@@ -266,7 +269,9 @@ public:
 		EnumMap() : Super() \
 		{ \
 			MapName = #EnumMap; \
+			MapFName = FName(#EnumMap); \
 			EnumName = #EnumType; \
+			EnumFName = FName(#EnumType); \
 		} \
 		EnumMap(const EnumMap &) = delete; \
 		EnumMap(EnumMap &&) = delete; \
@@ -278,3 +283,6 @@ public:
 			static EnumMap Instance; \
 			return Instance; \
 		}
+
+#define CS_ADD_TO_ENUM_FLAG_MAP(EnumMap, EnumElementName) const Type EnumElementName = EnumMap::Get().Add(Type::EnumElementName, #EnumElementName)
+#define CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(EnumMap, EnumElementName, DisplayName) const Type EnumElementName = EnumMap::Get().Add(Type::EnumElementName, #EnumElementName, TEXT(DisplayName))

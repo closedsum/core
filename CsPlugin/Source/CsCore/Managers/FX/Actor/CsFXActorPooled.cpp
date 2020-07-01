@@ -56,9 +56,11 @@ void FCsFXActorPooled::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsFXActorPooled:SetObject: Object: %s with Class; %s does NOT implement the interface: ICsFXActorPooled."), *(Object->GetName()));
+				checkf(false, TEXT("FCsFXActorPooled:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsFXActorPooled."), *(Object->GetName()), *(Class->GetName()));
 			}
 		}
+
+		checkf(Implements_ICsOnConstructObject(), TEXT("FCsFXActorPooled:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsOnConstructObject."), *(Object->GetName()), *(Class->GetName()));
 	}
 }
 

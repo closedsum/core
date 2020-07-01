@@ -467,6 +467,19 @@ public:
 	*/
 	ICsFXPooledPayload* AllocatePayload(const FECsFX& Type);
 
+	/**
+	* Get a payload object from a pool of payload objects for the appropriate Type.
+	*  Payload implements the interface: ICsPooledObjectPayload.
+	*
+	* @param Type	Type of payload.
+	* return		Payload that implements the interface: ICsFXPooledPayload.
+	*/
+	template<typename PayloadTypeImpl>
+	FORCEINLINE PayloadTypeImpl* AllocatePayload(const FECsFX& Type)
+	{
+		return Internal.AllocatePayload<PayloadTypeImpl>(Type);
+	}
+
 	//virtual ICsFXPooledPayload* ScriptAllocatePayload(const FECsFX& Type, const FCsScriptProjectilePayload& ScriptPayload);
 
 #pragma endregion Payload

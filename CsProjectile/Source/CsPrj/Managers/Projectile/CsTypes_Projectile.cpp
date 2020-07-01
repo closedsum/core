@@ -28,7 +28,6 @@ namespace NCsProjectileRelevance
 
 namespace NCsProjectile
 {
-	// TODO: Need to Pass in Root so we can get DataTable from Manager_Data and NOT do a LoadSynchronous
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
 		if (UCsProjectileSettings* Settings = GetMutableDefault<UCsProjectileSettings>())

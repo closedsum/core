@@ -197,9 +197,11 @@ namespace NCsInterfaceMap
 	}
 	
 	/**
+	* Get another interface from Interface with checks.
+	* Interface should implement the interface: ICsGetInterfaceMap
+	* in order to get the appropriate memory offset (slice).
 	*
-	*
-	* @param Context
+	* @param Context	The call context
 	* @param Interface
 	* return
 	*/

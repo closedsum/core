@@ -1,12 +1,30 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/FX/Cache/CsFXPooledCacheImpl.h"
 
+// Library
+#include "Managers/Pool/Payload/CsLibrary_PooledObjectPayload.h"
+// Pool
 #include "Managers/Pool/Payload/CsPooledObjectPayload.h"
-#include "Containers/CsInterfaceMap.h"
-// Data
-//#include "Data/CsData_Projectile.h"
+// FX
+#include "Managers/FX/Payload/CsFXPooledPayload.h"
+#include "NiagaraComponent.h"
+// Component
+#include "Components/SceneComponent.h"
 
 const FName FCsFXPooledCacheImpl::Name = FName("FCsFXPooledCacheImpl");
+
+// Cached
+#pragma region
+
+namespace NCsFXPooledCacheImplCached
+{
+	namespace Str
+	{
+		const FString Allocate = TEXT("FCsFXPooledCacheImpl::Allocate");
+	}
+}
+
+#pragma endregion Cached
 
 FCsFXPooledCacheImpl::FCsFXPooledCacheImpl() :
 	InterfaceMap(nullptr),
@@ -21,8 +39,10 @@ FCsFXPooledCacheImpl::FCsFXPooledCacheImpl() :
 	WarmUpTime(0.0f),
 	LifeTime(0.0f),
 	StartTime(),
-	ElapsedTime()
-	//Data(nullptr)
+	ElapsedTime(),
+	FXComponent(nullptr),
+	DeallocateMethod(ECsFXDeallocateMethod::Complete),
+	QueuedLifeTime(0.0f)
 {
 	InterfaceMap = new FCsInterfaceMap();
 
@@ -42,12 +62,21 @@ FCsFXPooledCacheImpl::~FCsFXPooledCacheImpl()
 
 void FCsFXPooledCacheImpl::Allocate(ICsPooledObjectPayload* Payload)
 {
+	using namespace NCsFXPooledCacheImplCached;
+
+	// ICsPooledObjectCache
 	bAllocated = true;
 	State	   = ECsPooledObjectState::Active;
 	Instigator = Payload->GetInstigator();
 	Owner	   = Payload->GetOwner();
 	Parent	   = Payload->GetParent();
 	StartTime  = Payload->GetTime();
+
+	// ICsFXPooledCache
+	ICsFXPooledPayload* FXPayload = FCsLibrary_PooledObjectPayload::GetInterfaceChecked<ICsFXPooledPayload>(Str::Allocate, Payload);
+
+	DeallocateMethod = FXPayload->GetDeallocateMethod();
+	QueuedLifeTime   = FXPayload->GetLifeTime();
 }
 
 void FCsFXPooledCacheImpl::Deallocate()
@@ -55,13 +84,60 @@ void FCsFXPooledCacheImpl::Deallocate()
 	Reset();
 }
 
+void FCsFXPooledCacheImpl::QueueDeallocate()
+{
+	bQueueDeallocate = true;
+	// Deactivate FX Component
+	checkf(FXComponent, TEXT("FCsFXPooledCacheImpl::QueueDeallocate: FXComponent is NULL."));
+
+	FXComponent->Deactivate();
+
+	// LifeTime
+	if (DeallocateMethod == ECsFXDeallocateMethod::LifeTime)
+	{
+		// Reset ElapsedTime
+		ElapsedTime.Reset();
+		// Set LifeTime
+		LifeTime = QueuedLifeTime;
+	}
+}
+
+bool FCsFXPooledCacheImpl::ShouldDeallocate() const
+{
+	if (bQueueDeallocate)
+	{
+		// LifeTime, let HasLifeTimeExpired handle deallocation
+		if (DeallocateMethod == ECsFXDeallocateMethod::LifeTime)
+		{
+			return false;
+		}
+		// Complete
+		if (DeallocateMethod == ECsFXDeallocateMethod::Complete)
+		{ 
+			checkf(FXComponent, TEXT("FCsFXPooledCacheImpl::ShouldDeallocate: FXComponent is NULL."));
+
+			FNiagaraSystemInstance* SystemInstance = FXComponent->GetSystemInstance();
+
+			checkf(SystemInstance, TEXT("FCsFXPooledCacheImpl::ShouldDeallocate: SystemInstance is NULL on FXComponent: %s."), *(FXComponent->GetName()));
+
+			const ENiagaraExecutionState ExecutionState = SystemInstance->GetActualExecutionState();
+
+			return ExecutionState == ENiagaraExecutionState::Inactive ||
+				   ExecutionState == ENiagaraExecutionState::Complete ||
+				   ExecutionState == ENiagaraExecutionState::Disabled;
+		}
+	}
+	return false;
+}
+
 bool FCsFXPooledCacheImpl::HasLifeTimeExpired()
 {
-	return false;
+	return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
 }
 
 void FCsFXPooledCacheImpl::Reset()
 {
+	// ICsPooledObjectCache
 	bAllocated = false;
 	bQueueDeallocate = false;
 	State = ECsPooledObjectState::Inactive;
@@ -72,6 +148,8 @@ void FCsFXPooledCacheImpl::Reset()
 	LifeTime = 0.0f;
 	StartTime.Reset();
 	ElapsedTime.Reset();
+	// ICsFXPooledCache
+	FXComponent = nullptr;
 }
 
 #pragma endregion ICsPooledObjectCache
@@ -80,10 +158,3 @@ void FCsFXPooledCacheImpl::Update(const FCsDeltaTime& DeltaTime)
 {
 	ElapsedTime += DeltaTime;
 }
-
-/*
-void FCsFXPooledCacheImpl::SetData(ICsData_Projectile* InData)
-{
-	Data = InData;
-}
-*/

@@ -13,6 +13,9 @@
 // FX
 #pragma region
 
+/**
+* Enum for FX types
+*/
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsFX : public FECsEnum_uint8
 {
@@ -23,7 +26,7 @@ struct CSCORE_API FECsFX : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsFX)
 
-struct CSCORE_API EMCsFX : public TCsEnumStructMap<FECsFX, uint8>
+struct CSCORE_API EMCsFX final : public TCsEnumStructMap<FECsFX, uint8>
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsFX, FECsFX, uint8)
 };
@@ -42,6 +45,8 @@ namespace NCsFX
 
 class UParticleSystem;
 
+/**
+*/
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsParticleSystem
 {
@@ -75,34 +80,35 @@ public:
 // FxPriority
 #pragma region
 
+/**
+*/
 UENUM(BlueprintType)
-namespace ECsFxPriority
+enum class ECsFXPriority : uint8
 {
-	enum Type
-	{
-		Low				  UMETA(DisplayName = "Low"),
-		Medium			  UMETA(DisplayName = "Medium"),
-		High			  UMETA(DisplayName = "High"),
-		ECsFxPriority_MAX UMETA(Hidden),
-	};
-}
-
-typedef ECsFxPriority::Type TCsFxPriority;
-
-struct CSCORE_API EMCsFxPriority : public TCsEnumMap<ECsFxPriority::Type>
-{
-	CS_ENUM_MAP_BODY(EMCsFxPriority, ECsFxPriority::Type)
+	Low				  UMETA(DisplayName = "Low"),
+	Medium			  UMETA(DisplayName = "Medium"),
+	High			  UMETA(DisplayName = "High"),
+	ECsFXPriority_MAX UMETA(Hidden),
 };
 
-namespace ECsFxPriority
+struct CSCORE_API EMCsFXPriority final : public TCsEnumMap<ECsFXPriority>
 {
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsFXPriority, ECsFXPriority)
+};
+
+namespace NCsFXPriority
+{
+	typedef ECsFXPriority Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type Low;
 		extern CSCORE_API const Type Medium;
 		extern CSCORE_API const Type High;
-		extern CSCORE_API const Type ECsFxPriority_MAX;
+		extern CSCORE_API const Type ECsFXPriority_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
 
 #pragma endregion FxPriority
@@ -124,7 +130,7 @@ struct CSCORE_API FCsFxElement
 	int32 Particle_LoadFlags;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
-	TEnumAsByte<ECsFxPriority::Type> Priority;
+	ECsFXPriority Priority;
 
 	UPROPERTY(EditAnywhere, Category = "FX", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
@@ -168,23 +174,7 @@ public:
 
 		DeathTime = 1.0f;
 		Scale = 1.0f;
-		Priority = ECsFxPriority::Medium;
-	}
-
-	FORCEINLINE FCsFxElement& operator=(const FCsFxElement& B)
-	{
-		Particle = B.Particle;
-		Particle_LoadFlags = B.Particle_LoadFlags;
-		LifeTime = B.LifeTime;
-		DeathTime = B.DeathTime;
-		Scale = B.Scale;
-		DrawDistances = B.DrawDistances;
-		Bone = B.Bone;
-		Location = B.Location;
-		Rotation = B.Rotation;
-
-		Particle_Internal = B.Particle_Internal;
-		return *this;
+		Priority = ECsFXPriority::Medium;
 	}
 
 	FORCEINLINE bool operator==(const FCsFxElement& B) const
@@ -206,7 +196,7 @@ public:
 		return !(*this == B);
 	}
 	
-	FORCEINLINE void Set(class UParticleSystem* InParticle)
+	FORCEINLINE void Set(UParticleSystem* InParticle)
 	{
 		//Particle		  = TSoftObjectPtr<UParticleSystem>(InParticle);
 		Particle_Internal = InParticle;
@@ -227,7 +217,7 @@ public:
 		LifeTime = 0.0f;
 		DeathTime = 1.0f;
 		Scale = 1.0f;
-		Priority = ECsFxPriority::Medium;
+		Priority = ECsFXPriority::Medium;
 		DrawDistances.Reset();
 		Bone = NAME_None;
 		Location = FVector::ZeroVector;
@@ -268,13 +258,6 @@ struct CSCORE_API FCsFpvFxElement
 		if (ViewType == ECsViewType::VR)
 			return &Effect1P;
 		return &Effect3P;
-	}
-
-	FORCEINLINE FCsFpvFxElement& operator=(const FCsFpvFxElement& B)
-	{
-		Effect1P = B.Effect1P;
-		Effect3P = B.Effect3P;
-		return *this;
 	}
 
 	FORCEINLINE bool operator==(const FCsFpvFxElement& B) const
@@ -320,7 +303,7 @@ public:
 
 	TWeakObjectPtr<UParticleSystem> Particle;
 
-	TEnumAsByte<ECsFxPriority::Type> Priority;
+	ECsFXPriority Priority;
 
 	float LifeTime;
 
@@ -385,7 +368,7 @@ public:
 		Parent = nullptr;
 
 		Particle = nullptr;
-		Priority = ECsFxPriority::Medium;
+		Priority = ECsFXPriority::Medium;
 		LifeTime = 0.0f;
 		DeathTime = 0.0f;
 		Scale = 1.0f;
@@ -422,42 +405,125 @@ public:
 
 #pragma endregion FCsFxPayload
 
+// FXDeallocateMethod
+#pragma region
+
+/**
+*/
+UENUM(BlueprintType)
+enum class ECsFXDeallocateMethod : uint8
+{
+	/** If an FX is attached to a parent object,
+		  LifeTime == 0.of means the FX object will be deallocated immediately
+		   when the parent has been destroyed / deallocated.
+		  LifeTime > 0.0f will be the time after the parent object has been
+		   destroyed / deallocated to deallocate the FX object.
+		If an FX is NOT attached to a parent object,
+		  LifeTime == 0.0f means the FX object will stay active forever.
+		  LifeTime > 0.0f means the FX will be deallocated after LifeTime amount of time after
+		   the FX object has been allocated. */
+	LifeTime				  UMETA(DisplayName = "LifeTime"),
+	/** */
+	Complete				  UMETA(DisplayName = "Complete"),
+	ECsFXDeallocateMethod_MAX UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsFXDeallocateMethod final : public TCsEnumMap<ECsFXDeallocateMethod>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsFXDeallocateMethod, ECsFXDeallocateMethod)
+};
+
+namespace NCsFXDeallocateMethod
+{
+	typedef ECsFXDeallocateMethod Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type LifeTime;
+		extern CSCORE_API const Type Complete;
+		extern CSCORE_API const Type ECsFXDeallocateMethod_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+}
+
+#pragma endregion FXDeallocateMethod
+
 // FCsFX
 #pragma region
 
 class UNiagaraSystem;
 
+/**
+* Container holding general information for an FX System.
+*  This is mostly used by object pooled by a Manager
+*/
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsFX
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** Soft reference to an FX System. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftObjectPtr<UNiagaraSystem> FX;
 
+	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 FX_LoadFlags;
 
+	/** Hard reference to an FX System. */
 	UPROPERTY(Transient, BlueprintReadOnly)
 	UNiagaraSystem* FX_Internal;
 
+	/** The FX Type. This is used to group FX into different categories 
+	    and can be used by a Manager pooling FX objects to Spawn the correct
+		FX object. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FECsFX Type;
+
+	/** Condition to determine when to deallocate the FX object. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ECsFXDeallocateMethod DeallocateMethod;
+
+	/** Valid if the DeallocateMethod == ECsFXDeallocateMethod::LifeTime.
+		- If an FX IS attached to a Parent object, 
+		   LifeTime == 0.of means the FX object will be deallocated immediately
+	        when the Parent object has been destroyed / deallocated.
+		   LifeTime > 0.0f will be the time after the Parent object has been 
+		    destroyed / deallocated to deallocate the FX object.
+	    - If an FX is NOT attached to a Parent object,
+		   LifeTime == 0.0f means the FX object will stay active forever.
+		   LifeTime > 0.0f means the FX will be deallocated after LifeTime amount of time after
+	        the FX object has been allocated. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
+	/** Valid if the FX is attached to a Parent object or when an FX object is
+		allocated, the Parent field of the payload is set.If the Parent object is NULL,
+		the FX will NOT be attached. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsAttachmentTransformRules AttachmentTransformRules;
 
+	/** Valid only when the FX is attached to a Parent object. 
+	    Bone or Socket to attach to. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName Bone;
 
+	/** The Transform to apply to the FX.
+		If the FX is attached to a parent object, the Transform is applied as a Relative Transform
+		after the attachment.
+	    Else, the Transform is applied as a World Transform. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FTransform Transform;
+
 public:
 
 	FCsFX() :
 		FX(nullptr),
 		FX_LoadFlags(0),
 		FX_Internal(nullptr),
+		Type(),
+		DeallocateMethod(ECsFXDeallocateMethod::Complete),
 		LifeTime(0.0f),
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
@@ -466,6 +532,11 @@ public:
 		//CS_SET_BLUEPRINT_BITFLAG(Particle_LoadFlags, ECsLoadFlags::Game);
 	}
 	
+	/**
+	* Get the Hard reference to the FX System.
+	*
+	* return FX System
+	*/
 	FORCEINLINE UNiagaraSystem* Get() const
 	{
 		return FX_Internal;

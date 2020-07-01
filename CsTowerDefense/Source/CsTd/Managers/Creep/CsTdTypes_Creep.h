@@ -37,9 +37,11 @@ namespace NCsTdCreep
 // FCsTdCreepPooledCache
 #pragma region
 
-struct CSTD_API FCsTdCreepPooledCache : public ICsPooledObjectCache
+struct CSTD_API FCsTdCreepPooledCache final : public ICsPooledObjectCache
 {
 public:
+
+	// ICsPooledObjectCache
 
 	int32 Index;
 
@@ -136,7 +138,7 @@ public:
 		bQueueDeallocate = true;
 	}
 
-	FORCEINLINE const bool& ShouldDeallocate() const
+	FORCEINLINE bool ShouldDeallocate() const
 	{
 		return bQueueDeallocate;
 	}

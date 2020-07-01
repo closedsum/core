@@ -64,7 +64,7 @@ public:
 	*
 	* return
 	*/
-	virtual const bool& ShouldDeallocate() const = 0;
+	virtual bool ShouldDeallocate() const = 0;
 
 	/**
 	*

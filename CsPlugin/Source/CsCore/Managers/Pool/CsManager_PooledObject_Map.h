@@ -153,7 +153,39 @@ public:
 			TManager_PooledObject_Abstract* Pool = ConstructManagerPooledObjects_Impl.Execute(Key);
 			Pool->ConstructContainer_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructContainer_Internal);
 			Pool->ConstructPayload_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructPayload_Internal);
-			Pool->Init(ObjectParam);
+			
+			// Bind the appropriate Script delegates.
+			Pool->Script_GetCache_Impl			= Script_GetCache_Impl;
+			Pool->Script_Allocate_Impl			= Script_Allocate_Impl;
+			Pool->Script_Deallocate_Impl		= Script_Deallocate_Impl;
+			Pool->Script_Update_Impl			= Script_Update_Impl;
+			Pool->Script_OnConstructObject_Impl = Script_OnConstructObject_Impl;
+
+			// Create pool
+			if (ObjectParam.bCreatePool)
+			{
+				CurrentCreatePoolType = Key;
+
+				// Add delegates to capture events when calling CreatePool
+
+					// Bind to OnConstructObject so the event OnConstructObject_Event can properly broadcast events.
+				FDelegateHandle OnConstructObjectHandle = Pool->OnConstructObject_Event.AddRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnConstructObject);
+					// Bind to OnAddToPool so the event OnAddToPool_Event can properly broadcast events.
+				FDelegateHandle OnAddToPoolHandle = Pool->OnAddToPool_Event.AddRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnCreatePool_AddToPool);
+
+				Pool->Init(ObjectParam);
+
+				// Remove any delegates used to capture events when calling CreatePool
+				Pool->OnConstructObject_Event.Remove(OnConstructObjectHandle);
+				Pool->OnAddToPool_Event.Remove(OnAddToPoolHandle);
+			}
+			else
+			{
+				Pool->Init(ObjectParam);
+			}
+
+			// Bind to OnUpdate_Pool_Object so the event OnUpdate_Object_Event can properly broadcast events.
+			Pool->OnUpdate_Object_Event.AddRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnUpdate_Pool_Object);
 
 			Pools.Add(Key, Pool);
 		}
@@ -381,14 +413,47 @@ public:
 		TManager_PooledObject_Abstract** PoolPtr = Pools.Find(Type);
 		TManager_PooledObject_Abstract* Pool	 = nullptr;
 
+		bool PoolCreated = false;
+
 		if (!PoolPtr)
 		{
 			Pool = ConstructManagerPooledObjects_Impl.Execute(Type);
 
 			Pool->ConstructContainer_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructContainer_Internal);
 			Pool->ConstructPayload_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructPayload_Internal);
-			Pool->Init(Params);
-		
+			
+			// Bind the appropriate Script delegates.
+			Pool->Script_GetCache_Impl			= Script_GetCache_Impl;
+			Pool->Script_Allocate_Impl			= Script_Allocate_Impl;
+			Pool->Script_Deallocate_Impl		= Script_Deallocate_Impl;
+			Pool->Script_Update_Impl			= Script_Update_Impl;
+			Pool->Script_OnConstructObject_Impl = Script_OnConstructObject_Impl;
+
+			// Create pool
+			if (Params.bCreatePool)
+			{
+				CurrentCreatePoolType = Type;
+
+				// Add delegates to capture events when calling CreatePool
+
+					// Bind to OnConstructObject so the event OnConstructObject_Event can properly broadcast events.
+				FDelegateHandle OnConstructObjectHandle = Pool->OnConstructObject_Event.AddRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnConstructObject);
+					// Bind to OnAddToPool so the event OnAddToPool_Event can properly broadcast events.
+				FDelegateHandle OnAddToPoolHandle = Pool->OnAddToPool_Event.AddRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnCreatePool_AddToPool);
+
+				Pool->Init(Params);
+
+				// Remove any delegates used to capture events when calling CreatePool
+				Pool->OnConstructObject_Event.Remove(OnConstructObjectHandle);
+				Pool->OnAddToPool_Event.Remove(OnAddToPoolHandle);
+			}
+			else
+			{
+				Pool->Init(Params);
+			}
+
+			PoolCreated = Params.bCreatePool;
+
 			Pools.Add(Type, Pool);
 		}
 		else
@@ -400,24 +465,28 @@ public:
 			// Log Warning
 		}
 
-		// Bind the appropriate Script delegates.
-		Pool->Script_GetCache_Impl			= Script_GetCache_Impl;
-		Pool->Script_Allocate_Impl			= Script_Allocate_Impl;
-		Pool->Script_Deallocate_Impl		= Script_Deallocate_Impl;
-		Pool->Script_Update_Impl			= Script_Update_Impl;
-		Pool->Script_OnConstructObject_Impl = Script_OnConstructObject_Impl;
+		// If CreatePool was NOT called via Init
+		if (!PoolCreated)
+		{
+			CurrentCreatePoolType = Type;
 
-		CurrentCreatePoolType = Type;
+			// Add delegates to capture events when calling CreatePool
 
-		// Bind to OnConstructObject so the event OnConstructObject_Event can properly broadcast events.
-		FDelegateHandle OnConstructObjectHandle = Pool->OnConstructObject_Event.AddRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnConstructObject);
-		// Bind to OnAddToPool so the event OnAddToPool_Event can properly broadcast events.
-		FDelegateHandle OnAddToPoolHandle = Pool->OnAddToPool_Event.AddRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnCreatePool_AddToPool);
+				// Bind to OnConstructObject so the event OnConstructObject_Event can properly broadcast events.
+			FDelegateHandle OnConstructObjectHandle = Pool->OnConstructObject_Event.AddRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnConstructObject);
+				// Bind to OnAddToPool so the event OnAddToPool_Event can properly broadcast events.
+			FDelegateHandle OnAddToPoolHandle = Pool->OnAddToPool_Event.AddRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnCreatePool_AddToPool);
 
-		Pool->CreatePool(Size);
+			Pool->CreatePool(Size);
 
-		Pool->OnConstructObject_Event.Remove(OnConstructObjectHandle);
-		Pool->OnAddToPool_Event.Remove(OnAddToPoolHandle);
+			// Remove any delegates used to capture events when calling CreatePool
+			Pool->OnConstructObject_Event.Remove(OnConstructObjectHandle);
+			Pool->OnAddToPool_Event.Remove(OnAddToPoolHandle);
+		}
+		else
+		{
+			Pool->CreatePool(Size);
+		}
 
 		// Bind to OnUpdate_Pool_Object so the event OnUpdate_Object_Event can properly broadcast events.
 		Pool->OnUpdate_Object_Event.AddRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnUpdate_Pool_Object);
@@ -868,14 +937,29 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPooledObjectPayload.
+	*  Payload implements the interface: ICsPooledObjectPayload and PayloadType.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsPooledObjectPayload.
+	* return		Payload that implements the interface: ICsPooledObjectPayload
+					and PayloadType.
 	*/
 	FORCEINLINE PayloadType* AllocatePayload(const KeyType& Type)
 	{
 		return GetManagerPooledObjects(Type)->AllocatePayload();
+	}
+
+	/**
+	* Get a payload object from a pool of payload objects for the appropriate Type.
+	*  Payload implements the interface: ICsPooledObjectPayload and PayloadType
+	*
+	* @param Type	Type of payload.
+	* return		Payload that implements the interface: ICsPooledObjectPayload
+	*				and PayloadType.
+	*/
+	template<typename PayloadTypeImpl>
+	FORCEINLINE PayloadTypeImpl* AllocatePayload(const KeyType& Type)
+	{
+		return GetManagerPooledObjects(Type)->AllocatePayload<PayloadTypeImpl>();
 	}
 
 	/**
@@ -953,7 +1037,7 @@ public:
 	/**
 	* Destroy a pooled object with specified Index from a pool for the
 	* appropriate Type.
-	*  NOTE: This process is O(n). Consider queue	ing the deallocate.
+	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Type	Type of pool to destroy from.
 	* @param Index	Index of the object in the pool.
@@ -976,7 +1060,7 @@ public:
 	/**
 	* Destroy an object from a pool for the appropriate Type.
 	*  Object must implement the interface: ICsPooledObject.
-	*  NOTE: This process is O(n). Consider queueing the deallocate.
+	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Type		Type of pool to destroy from.
 	* @param Object		Object that implements the interface: ICsPooledObject.
@@ -993,7 +1077,7 @@ public:
 	* Destroy an object from a pool for the appropriate Type.
 	*  Object must implement the interface: ICsPooledObject or the UClass
 	*  associated with the Object have ImplementsInterface(UCsPooledObject::StaticClass()) == true.
-	*  NOTE: This process is O(n). Consider queueing the deallocate.
+	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Type		Type of pool to destroy from.
 	* @param Object		Object or Object->GetClass() that implements the interface: ICsPooledObject.

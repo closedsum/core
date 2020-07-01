@@ -353,6 +353,7 @@ void UCsManager_FX_Actor::InitInternalFromSettings()
 			ObjectParams.Name  = Params.Name + TEXT("_") + Type.Name;
 			ObjectParams.World = Params.World;
 			//ObjectParams.LogType
+			ObjectParams.ConstructParams.Outer			  = this;
 			ObjectParams.ConstructParams.Class			  = Class;
 			ObjectParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Object;
 			ObjectParams.bConstructPayloads				  = true;

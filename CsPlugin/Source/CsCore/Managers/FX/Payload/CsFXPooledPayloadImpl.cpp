@@ -11,7 +11,12 @@ FCsFXPooledPayloadImpl::FCsFXPooledPayloadImpl() :
 	Instigator(nullptr),
 	Owner(nullptr),
 	Parent(nullptr),
-	Time()
+	Time(),
+	FXSystem(nullptr),
+	DeallocateMethod(ECsFXDeallocateMethod::Complete),
+	LifeTime(0.0f),
+	AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+	Transform(FTransform::Identity)
 {
 	InterfaceMap = new FCsInterfaceMap();
 
@@ -31,12 +36,20 @@ FCsFXPooledPayloadImpl::~FCsFXPooledPayloadImpl()
 
 void FCsFXPooledPayloadImpl::Reset()
 {
+	// ICsPooledObjectPayload
 	bAllocated = false;
 	Instigator = nullptr;
 	Owner = nullptr;
 	Parent = nullptr;
 
 	Time.Reset();
+
+	// ICsFXPooledPayload
+	FXSystem = nullptr;
+	DeallocateMethod = ECsFXDeallocateMethod::Complete;
+	LifeTime = 0.0f;
+	AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+	Transform = FTransform::Identity;
 }
 
 #pragma endregion ICsPooledObjectPayload

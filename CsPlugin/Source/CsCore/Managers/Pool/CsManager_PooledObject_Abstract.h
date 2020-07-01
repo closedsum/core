@@ -96,6 +96,7 @@ enum class ECsManagerPooledObjectFunctionNames : uint8
 	Update,
 	Deallocate,
 	DeallocateAll,
+	AllocatePayload,
 	Spawn,
 	ECsManagerPooledObjectFunctionNames_MAX,
 };
@@ -194,10 +195,11 @@ public:
 
 		ConstructParams = Params.ConstructParams;
 
-		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update]		 = Name + TEXT("::Update");
-		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Deallocate]	 = Name + TEXT("::Deallocate");
-		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::DeallocateAll] = Name + TEXT("::DeallocateAll");
-		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn]		 = Name + TEXT("::Spawn");
+		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update]		   = Name + TEXT("::Update");
+		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Deallocate]	   = Name + TEXT("::Deallocate");
+		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::DeallocateAll]   = Name + TEXT("::DeallocateAll");
+		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::AllocatePayload] = Name + TEXT("::AllocatePayload");
+		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn]		   = Name + TEXT("::Spawn");
 
 		if (Params.bConstructPayloads)
 		{
@@ -372,10 +374,11 @@ public:
 
 			O->SetObject(Object);
 
-			O->Script_GetCache_Impl	 = Script_GetCache_Impl;
-			O->Script_Allocate_Impl   = Script_Allocate_Impl;
-			O->Script_Deallocate_Impl = Script_Deallocate_Impl;
-			O->Script_Update_Impl	 = Script_Update_Impl;
+			// Bind the appropriate Script delegates.
+			O->Script_GetCache_Impl			 = Script_GetCache_Impl;
+			O->Script_Allocate_Impl			 = Script_Allocate_Impl;
+			O->Script_Deallocate_Impl		 = Script_Deallocate_Impl;
+			O->Script_Update_Impl			 = Script_Update_Impl;
 			O->Script_OnConstructObject_Impl = Script_OnConstructObject_Impl;
 
 #if WITH_EDITOR
@@ -837,6 +840,8 @@ protected:
 
 		AddAllocatedLink(Link);
 		AllocatedObjects.Add(Object);
+
+		AllocatedObjectsSize = AllocatedObjects.Num();
 	}
 
 #pragma endregion Allocated Objects
@@ -1220,7 +1225,7 @@ public:
 
 #pragma endregion Update
 
-// Allocate / DeAllocate
+// Allocate / Deallocate
 #pragma region
 protected:
 
@@ -1377,7 +1382,7 @@ public:
 		AllocatedTail = nullptr;
 	}
 
-#pragma endregion Allocate / DeAllocate
+#pragma endregion Allocate / Deallocate
 
 // Payload
 #pragma region
@@ -1469,6 +1474,19 @@ public:
 		}
 		checkf(0, TEXT("%s::AllocatePayload: Pool is exhausted. Pool Size = %d."), *Name, PayloadSize);
 		return nullptr;
+	}
+
+	/**
+	*
+	*
+	* return
+	*/
+	template<typename PayloadTypeImpl>
+	PayloadTypeImpl* AllocatePayload()
+	{
+		const FString& Context = FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::AllocatePayload];
+
+		return NCsInterfaceMap::StaticCastChecked<PayloadTypeImpl, PayloadType>(Context, AllocatePayload());
 	}
 
 	/**

@@ -2,6 +2,8 @@
 #include "Managers/Pool/Payload/CsPooledObjectPayload.h"
 #include "Containers/CsInterfaceMap.h"
 
+#pragma once
+
 struct CSCORE_API FCsLibrary_PooledObjectPayload
 {
 	FORCEINLINE static FCsInterfaceMap* GetInterfaceMapChecked(const FString& Context, ICsPooledObjectPayload* Payload)

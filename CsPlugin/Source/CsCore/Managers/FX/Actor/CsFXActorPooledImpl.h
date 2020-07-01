@@ -3,6 +3,7 @@
 
 #include "UObject/Object.h"
 // Interfaces
+#include "Managers/Pool/CsOnConstructObject.h"
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/FX/Actor/CsFXActorPooled.h"
@@ -15,6 +16,7 @@ class ANiagaraActor;
 
 UCLASS()
 class CSCORE_API UCsFXActorPooledImpl : public UObject,
+										public ICsOnConstructObject,
 										public ICsUpdate,
 										public ICsPooledObject,
 										public ICsFXActorPooled

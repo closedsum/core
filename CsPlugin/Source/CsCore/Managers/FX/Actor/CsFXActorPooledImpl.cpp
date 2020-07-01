@@ -2,6 +2,9 @@
 #include "Managers/FX/Actor/CsFXActorPooledImpl.h"
 #include "CsCore.h"
 
+// Library
+#include "Managers/Pool/Cache/CsLibrary_PooledObjectCache.h"
+#include "Managers/Pool/Payload/CsLibrary_PooledObjectPayload.h"
 // Managers
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
 // Pooled Object
@@ -11,6 +14,19 @@
 #include "Managers/FX/Payload/CsFXPooledPayload.h"
 #include "NiagaraActor.h"
 #include "NiagaraComponent.h"
+
+// Cached
+#pragma region
+
+namespace NCsFXActorPooledImplCached
+{
+	namespace Str
+	{
+		const FString Allocate = TEXT("UCsFXActorPooledImpl::Allocate");
+	}
+}
+
+#pragma endregion Cached
 
 UCsFXActorPooledImpl::UCsFXActorPooledImpl(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -44,7 +60,17 @@ void UCsFXActorPooledImpl::OnConstructObject()
 
 	UCsManager_FX_Actor* Manager_FX_Actor = Cast<UCsManager_FX_Actor>(MyOuter);
 
-	checkf(Manager_FX_Actor, TEXT(""));
+	checkf(Manager_FX_Actor, TEXT("UCsFXActorPooledImpl::OnConstructObject: Outer for %s is NOT of type: UCsManager_FX_Actor."), *(GetName()));
+
+	UWorld* World = Manager_FX_Actor->GetWorld();
+
+	checkf(World, TEXT("UCsFXActorPooledImpl::OnConstructObject: World is NULL. No World associated with Manager_FX_Actor."));
+
+	FActorSpawnParameters Params;
+
+	FX = World->SpawnActor<ANiagaraActor>(ANiagaraActor::StaticClass(), Params);
+
+	checkf(FX, TEXT("UCsFXActorPooledImpl::OnConstructObject: Failed to spawn FX of type: ANiagaraActor."));
 }
 
 #pragma endregion ICsOnConstructObject
@@ -69,16 +95,41 @@ ICsPooledObjectCache* UCsFXActorPooledImpl::GetCache() const
 
 void UCsFXActorPooledImpl::Allocate(ICsPooledObjectPayload* Payload)
 {
-	FCsInterfaceMap* InterfaceMap = Payload->GetInterfaceMap();
+	using namespace NCsFXActorPooledImplCached;
 
-	checkf(InterfaceMap, TEXT("UCsFXActorPooledImpl::Allocate: InterfaceMap is NULL. Payload failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
+	FCsFXPooledCacheImpl* CacheImpl = FCsLibrary_PooledObjectCache::StaticCastChecked<FCsFXPooledCacheImpl>(Str::Allocate, Cache);
 
-	ICsFXPooledPayload* FXPayload = InterfaceMap->Get<ICsFXPooledPayload>();
+	CacheImpl->Allocate(Payload);
+
+	UNiagaraComponent* FXComponent = FX->GetNiagaraComponent();
+
+	checkf(FXComponent, TEXT("%s: NiagaraComponent is NULL for FX Actor: %s."), *(Str::Allocate), *(FX->GetName()));
+
+	CacheImpl->SetFXComponent(FXComponent);
+
+	ICsFXPooledPayload* FXPayload = FCsLibrary_PooledObjectPayload::GetInterfaceChecked<ICsFXPooledPayload>(Str::Allocate, Payload);
+
+	USceneComponent* Parent = Cast<USceneComponent>(Payload->GetParent());
+
+	FX->SetActorTickEnabled(true);
+	FX->SetActorHiddenInGame(false);
+
+	//NCsAttachmentTransformRules::ToRule()
+
+	FX->AttachToComponent(Parent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
+	FXComponent->SetAsset(FXPayload->GetFXSystem());
+	FXComponent->Activate();
 }
 
 void UCsFXActorPooledImpl::Deallocate()
 {
+	FX->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
+	FX->SetActorTickEnabled(false);
+	FX->SetActorHiddenInGame(true);
+
+	FX->GetNiagaraComponent()->SetAsset(nullptr);
 }
 
 #pragma endregion ICsPooledObject

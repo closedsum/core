@@ -18,7 +18,7 @@ struct FCsAnimNotifyFX
 	class UParticleSystem* Particle;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
-	TEnumAsByte<ECsFxPriority::Type> Priority;
+	ECsFXPriority Priority;
 
 	UPROPERTY(EditAnywhere, Category = "FX", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
@@ -45,7 +45,7 @@ struct FCsAnimNotifyFX
 
 	FCsAnimNotifyFX() :
 		Particle(nullptr),
-		Priority(ECsFxPriority::Medium),
+		Priority(ECsFXPriority::Medium),
 		LifeTime(0.0f),
 		DeathTime(1.0f),
 		Scale(1.0f),

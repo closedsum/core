@@ -16,7 +16,7 @@ struct FCsFxCache : public FCsPooledObjectCache
 	TWeakObjectPtr<class UParticleSystem> Particle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	TEnumAsByte<ECsFxPriority::Type> Priority;
+	ECsFXPriority Priority;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float DeathTime;
@@ -82,7 +82,7 @@ struct FCsFxCache : public FCsPooledObjectCache
 
 		Particle.Reset();
 		Particle = nullptr;
-		Priority = ECsFxPriority::Low;
+		Priority = ECsFXPriority::Low;
 		DeathTime = 0.0f;
 		DeathStartTime = 0.0f;
 		IsDying = false;

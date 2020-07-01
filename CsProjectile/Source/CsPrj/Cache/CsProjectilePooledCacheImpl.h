@@ -10,8 +10,8 @@ struct FCsInterfaceMap;
 struct ICsPooledObjectPayload;
 class ICsData_Projectile;
 
-struct CSPRJ_API FCsProjectilePooledCacheImpl : public ICsPooledObjectCache,
-												public ICsProjectileCache
+struct CSPRJ_API FCsProjectilePooledCacheImpl final : public ICsPooledObjectCache,
+													  public ICsProjectileCache
 {
 public:
 
@@ -92,7 +92,7 @@ public:
 		bQueueDeallocate = true;
 	}
 
-	FORCEINLINE const bool& ShouldDeallocate() const
+	FORCEINLINE bool ShouldDeallocate() const
 	{
 		return bQueueDeallocate;
 	}

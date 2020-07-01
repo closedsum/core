@@ -122,18 +122,37 @@ namespace NCsFX
 
 #pragma endregion FX
 
-// FxPriority
+// FXPriority
 #pragma region
 
-namespace ECsFxPriority
+namespace NCsFXPriority
 {
 	namespace Ref
 	{
-		CSCORE_API const Type Low = EMCsFxPriority::Get().Add(Type::Low, TEXT("Low"));
-		CSCORE_API const Type Medium = EMCsFxPriority::Get().Add(Type::Medium, TEXT("Medium"));
-		CSCORE_API const Type High = EMCsFxPriority::Get().Add(Type::High, TEXT("High"));
-		CSCORE_API const Type ECsFxPriority_MAX = EMCsFxPriority::Get().Add(Type::ECsFxPriority_MAX, TEXT("ECsFxPriority_MAX"), TEXT("MAX"));
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsFXPriority, Low);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsFXPriority, Medium);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsFXPriority, High);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsFXPriority, ECsFXPriority_MAX, "MAX");
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsFXPriority_MAX;
 }
 
-#pragma endregion FxPriority
+#pragma endregion FXPriority
+
+// FXDeallocateMethod
+#pragma region
+
+namespace NCsFXDeallocateMethod
+{
+	namespace Ref
+	{
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsFXDeallocateMethod, LifeTime);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsFXDeallocateMethod, Complete);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsFXDeallocateMethod, ECsFXDeallocateMethod_MAX, "MAX");
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsFXDeallocateMethod_MAX;
+}
+
+#pragma endregion FXDeallocateMethod

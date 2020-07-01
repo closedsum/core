@@ -8,10 +8,15 @@
 class UObject;
 struct FCsInterfaceMap;
 struct ICsPooledObjectPayload;
-//class ICsData_Projectile;
 
-struct CSCORE_API FCsFXPooledCacheImpl : public ICsPooledObjectCache,
-										 public ICsFXPooledCache
+/**
+* Basic implementation for Cache implementing the interfaces:
+* ICsPooledObjectCache and ICsFXPooledCache. This only supports 
+* a bare minimum functionality. For custom functionality create
+* another implementation
+*/
+struct CSCORE_API FCsFXPooledCacheImpl final : public ICsPooledObjectCache,
+											   public ICsFXPooledCache
 {
 public:
 
@@ -19,7 +24,11 @@ public:
 
 private:
 
+	// ICsGetInterfaceMap
+
 	FCsInterfaceMap* InterfaceMap;
+
+	// ICsPooledObjectCache
 
 	int32 Index;
 
@@ -45,7 +54,13 @@ private:
 
 	FCsDeltaTime ElapsedTime;
 
-	//ICsData_Projectile* Data;
+	// ICsProjectileCache
+
+	UNiagaraComponent* FXComponent;
+
+	ECsFXDeallocateMethod DeallocateMethod;
+
+	float QueuedLifeTime;
 
 public:
 
@@ -87,15 +102,9 @@ public:
 
 	void Deallocate();
 
-	FORCEINLINE void QueueDeallocate()
-	{
-		bQueueDeallocate = true;
-	}
+	void QueueDeallocate();
 
-	FORCEINLINE const bool& ShouldDeallocate() const
-	{
-		return bQueueDeallocate;
-	}
+	bool ShouldDeallocate() const;
 
 	FORCEINLINE const ECsPooledObjectState& GetState() const
 	{
@@ -148,11 +157,30 @@ public:
 
 #pragma endregion ICsPooledObjectCache
 
+public:
+
+	FORCEINLINE void SetLifeTime(const float& InLifeTime)
+	{
+		LifeTime = InLifeTime;
+	}
+
 // ICsProjectileCache
 #pragma region
 public:
 
+	FORCEINLINE UNiagaraComponent* GetFXComponent() const
+	{
+		return FXComponent;
+	}
+
 #pragma endregion ICsProjectileCache
+
+public:
+
+	FORCEINLINE void SetFXComponent(UNiagaraComponent* InFXComponent)
+	{
+		FXComponent = InFXComponent;
+	}
 
 public:
 

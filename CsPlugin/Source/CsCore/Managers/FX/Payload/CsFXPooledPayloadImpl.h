@@ -6,9 +6,10 @@
 
 class UObject;
 struct FCsInterfaceMap;
+class UNiagaraSystem;
 
-struct CSCORE_API FCsFXPooledPayloadImpl : public ICsPooledObjectPayload,
-										   public ICsFXPooledPayload
+struct CSCORE_API FCsFXPooledPayloadImpl final : public ICsPooledObjectPayload,
+												 public ICsFXPooledPayload
 {
 public:
 
@@ -22,6 +23,8 @@ private:
 
 public:
 
+	// ICsPooledObjectPayload
+
 	UObject* Instigator;
 
 	UObject* Owner;
@@ -30,12 +33,17 @@ public:
 	
 	FCsTime Time;
 
+	// ICsFXPooledPayload
 
-	FVector Location;
+	UNiagaraSystem* FXSystem;
 
-	FVector Rotation;
+	ECsFXDeallocateMethod DeallocateMethod;
 
-	FVector Scale;
+	float LifeTime;
+	
+	ECsAttachmentTransformRules AttachmentTransformRules;
+
+	FTransform Transform;
 
 public:
 
@@ -114,6 +122,31 @@ public:
 // ICsFXPooledPayload
 #pragma region
 public:
+
+	FORCEINLINE UNiagaraSystem* GetFXSystem() const 
+	{
+		return FXSystem;
+	}
+
+	FORCEINLINE const ECsFXDeallocateMethod& GetDeallocateMethod() const
+	{
+		return DeallocateMethod;
+	}
+
+	FORCEINLINE const float& GetLifeTime() const
+	{
+		return LifeTime;
+	}
+
+	FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const
+	{
+		return AttachmentTransformRules;
+	}
+
+	FORCEINLINE const FTransform& GetTransform() const
+	{
+		return Transform;
+	}
 
 #pragma endregion ICsFXPooledPayload
 };

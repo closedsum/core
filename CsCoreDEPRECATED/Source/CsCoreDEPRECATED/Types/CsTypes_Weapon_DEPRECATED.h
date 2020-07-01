@@ -403,12 +403,12 @@ struct CSCOREDEPRECATED_API FCsData_Weapon_FireMode_FXs
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects")
-	TArray<FCsFxElement> MuzzleFXs;
+	TArray<FCsFxElement_DEPRECATED> MuzzleFXs;
 
 	FCsData_Weapon_FireMode_FXs() {}
 	virtual ~FCsData_Weapon_FireMode_FXs() {}
 
-	FCsFxElement* GetMuzzleFX(const int32 Index = 0)
+	FCsFxElement_DEPRECATED* GetMuzzleFX(const int32 Index = 0)
 	{
 		const int32 Count = MuzzleFXs.Num();
 
@@ -439,7 +439,7 @@ struct CSCOREDEPRECATED_API FCsData_FpsWeapon_FireMode_FXs
 	FCsData_FpsWeapon_FireMode_FXs() {}
 	virtual ~FCsData_FpsWeapon_FireMode_FXs() {}
 
-	FCsFxElement* GetMuzzleFX(const ECsViewType& ViewType, const int32 Index = 0)
+	FCsFxElement_DEPRECATED* GetMuzzleFX(const ECsViewType& ViewType, const int32 Index = 0)
 	{
 		const int32 Count = MuzzleFXs.Num();
 

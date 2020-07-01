@@ -413,7 +413,7 @@ class CSCORE_API UCsLibrary_Common : public UBlueprintFunctionLibrary
 	static const FCsRoutineHandle& FadeCameraOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, APlayerController* Controller, const float& Start, const float& End, const float& Time, const FLinearColor& Color);
 	static char FadeCameraOverTime_Internal(FCsRoutine* R);
 	/*
-	static FCsRoutine* AllocateAndActivateEmitter(ECsCoroutineSchedule CoroutineSchedule, FCsFxElement* InEffectsElement, FVector Location, float Delay);
+	static FCsRoutine* AllocateAndActivateEmitter(ECsCoroutineSchedule CoroutineSchedule, FCsFxElement_DEPRECATED* InEffectsElement, FVector Location, float Delay);
 	static char AllocateAndActivateEmitter_Internal(struct FCsRoutine* r);
 	*/
 

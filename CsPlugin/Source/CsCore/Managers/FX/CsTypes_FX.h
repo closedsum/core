@@ -113,13 +113,13 @@ namespace NCsFXPriority
 
 #pragma endregion FxPriority
 
-// FCsFxElement
+// FCsFxElement_DEPRECATED
 #pragma region
 
 class UParticleSystem;
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsFxElement
+struct CSCORE_API FCsFxElement_DEPRECATED
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -160,7 +160,7 @@ private:
 
 public:
 
-	FCsFxElement() :
+	FCsFxElement_DEPRECATED() :
 		Particle_LoadFlags(0),
 		LifeTime(0.0f),
 		DeathTime(0.0f),
@@ -177,7 +177,7 @@ public:
 		Priority = ECsFXPriority::Medium;
 	}
 
-	FORCEINLINE bool operator==(const FCsFxElement& B) const
+	FORCEINLINE bool operator==(const FCsFxElement_DEPRECATED& B) const
 	{
 		return (Particle == B.Particle &&
 				Particle_LoadFlags == B.Particle_LoadFlags &&
@@ -191,7 +191,7 @@ public:
 				Particle_Internal == B.Particle_Internal);
 	}
 
-	FORCEINLINE bool operator!=(const FCsFxElement& B) const
+	FORCEINLINE bool operator!=(const FCsFxElement_DEPRECATED& B) const
 	{
 		return !(*this == B);
 	}
@@ -227,7 +227,7 @@ public:
 	}
 };
 
-#pragma endregion FCsFxElement
+#pragma endregion FCsFxElement_DEPRECATED
 
 // FCsFpvFxElement
 #pragma region
@@ -238,10 +238,10 @@ struct CSCORE_API FCsFpvFxElement
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "FX")
-	FCsFxElement Effect1P;
+	FCsFxElement_DEPRECATED Effect1P;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
-	FCsFxElement Effect3P;
+	FCsFxElement_DEPRECATED Effect3P;
 
 	FCsFpvFxElement()
 	{
@@ -249,7 +249,7 @@ struct CSCORE_API FCsFpvFxElement
 		CS_SET_BLUEPRINT_BITFLAG(Effect3P.Particle_LoadFlags, ECsLoadFlags::Game3P);
 	}
 
-	FORCEINLINE FCsFxElement* Get(const ECsViewType& ViewType)
+	FORCEINLINE FCsFxElement_DEPRECATED* Get(const ECsViewType& ViewType)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return &Effect1P;
@@ -380,7 +380,7 @@ public:
 
 #pragma endregion ICsPooledObjectPayload
 
-	FORCEINLINE void Set(FCsFxElement* Element)
+	FORCEINLINE void Set(FCsFxElement_DEPRECATED* Element)
 	{
 		Particle = Element->Get();
 		Priority = Element->Priority;
@@ -393,7 +393,7 @@ public:
 		Rotation = Element->Rotation;
 	}
 
-	FORCEINLINE void Set(FCsFxElement& Element)
+	FORCEINLINE void Set(FCsFxElement_DEPRECATED& Element)
 	{
 		Set(&Element);
 	}
@@ -409,6 +409,7 @@ public:
 #pragma region
 
 /**
+* Type for different ways to deallocate an FX.
 */
 UENUM(BlueprintType)
 enum class ECsFXDeallocateMethod : uint8
@@ -509,6 +510,10 @@ struct CSCORE_API FCsFX
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName Bone;
 
+	/** Which of the components of Transform to apply to the FX. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 TransformRules;
+
 	/** The Transform to apply to the FX.
 		If the FX is attached to a parent object, the Transform is applied as a Relative Transform
 		after the attachment.
@@ -527,6 +532,7 @@ public:
 		LifeTime(0.0f),
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
+		TransformRules(1), // NCsTransformRules::All
 		Transform(FTransform::Identity)
 	{
 		//CS_SET_BLUEPRINT_BITFLAG(Particle_LoadFlags, ECsLoadFlags::Game);

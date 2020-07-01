@@ -288,7 +288,7 @@ void ACsProjectileBase::Allocate_Internal(FCsProjectileBasePayload* Payload)
 		if (Data_Projectile->GetUseTrailFX())
 		{
 			AICsManager_FX* Manager_FX = AICsManager_FX::Get(GetWorld());
-			FCsFxElement* FX		   = Data_Projectile->GetTrailFX(ViewType);
+			FCsFxElement_DEPRECATED* FX		   = Data_Projectile->GetTrailFX(ViewType);
 
 			FCsFxPayload* FxPayload = Manager_FX->AllocatePayload();
 			FxPayload->Set(FX);

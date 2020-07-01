@@ -28,6 +28,6 @@ public:
 	virtual UStaticMesh* GetStaticMesh() const = 0;
 
 	virtual USkeletalMesh* GetSkeletalMesh() const = 0;
-
+	
 	virtual const FCsFX& GetTrailFX() const = 0;
 };

@@ -115,5 +115,5 @@ public:
 	UPROPERTY(EditAnywhere, Category = "AnimNotify")
 	FCsAnimNotifyFX FX;
 
-	FCsFxElement FxElement;
+	FCsFxElement_DEPRECATED FxElement;
 };

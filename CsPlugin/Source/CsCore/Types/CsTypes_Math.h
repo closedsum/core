@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/Enum/CsEnumMap.h"
+#include "Types/Enum/CsEnumFlagMap.h"
 
 #include "CsTypes_Math.generated.h"
 #pragma once
@@ -353,3 +354,38 @@ struct FCsParametricFunction
 };
 
 #pragma endregion FCsParametricFunction
+
+// TransformRules
+#pragma region
+
+UENUM(BlueprintType, meta = (Bitflags))
+enum class ECsTransformRules : uint8
+{
+	Location	UMETA(DisplayName = "Location"),	// 0
+	Rotation	UMETA(DisplayName = "Rotation"),	// 1
+	Scale		UMETA(DisplayName = "Sacle"),		// 2
+};
+
+struct CSCORE_API EMCsTransformRules : public TCsEnumFlagMap<ECsTransformRules>
+{
+	CS_ENUM_FLAG_MAP_BODY(EMCsTransformRules, ECsTransformRules)
+};
+
+namespace NCsTransformRules
+{
+	typedef ECsTransformRules Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Location;
+		extern CSCORE_API const Type Rotation;
+		extern CSCORE_API const Type Scale;
+	}
+
+	extern CSCORE_API const int32 None;
+	extern CSCORE_API const int32 All;
+}
+
+#define CS_TRANSFORM_FLAGS_NONE 0
+
+#pragma endregion TransformRules

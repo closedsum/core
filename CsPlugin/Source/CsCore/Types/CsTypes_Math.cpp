@@ -18,3 +18,21 @@ namespace NCsParametricFunctionType
 }
 
 #pragma endregion ParametricFunctionType
+
+// TransformRules
+#pragma region
+
+namespace NCsTransformRules
+{
+	namespace Ref
+	{
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(EMCsTransformRules, Location);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(EMCsTransformRules, Rotation);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(EMCsTransformRules, Scale);
+	}
+
+	CSCORE_API const int32 None = 0;
+	CSCORE_API const int32 All = 1;
+}
+
+#pragma endregion TransformRules

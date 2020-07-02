@@ -815,7 +815,7 @@ void UCsManager_Projectile::DeconstructEmulatedData(const FName& InterfaceImplNa
 	// FCsData_ProjectileImpl
 	if (InterfaceImplName == FCsData_ProjectileImpl::Name)
 	{
-		delete reinterpret_cast<FCsData_ProjectileImpl*>(Data);
+		delete static_cast<FCsData_ProjectileImpl*>(Data);
 	}
 	else
 	{

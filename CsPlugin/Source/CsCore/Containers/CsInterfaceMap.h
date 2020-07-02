@@ -56,6 +56,13 @@ public:
 		return RootName;
 	}
 
+	FORCEINLINE void SetEmulated()
+	{
+		bEmulated = true;
+	}
+
+	/**
+	*/
 	FORCEINLINE bool EmulatesRootName(const FName& Name)
 	{
 		checkf(Name != NAME_None, TEXT("FCsInterfaceMap::EmulatesRootName: Name: None is NOT Valid."));
@@ -249,6 +256,54 @@ public:
 			DerivedType* DerivedPtr  = static_cast<DerivedType*>(Interface);
 
 			checkf(DerivedPtr->GetInterfaceMap() == this, TEXT("%s: InterfaceMap for static_cast<DerivedType*>(Interface) does NOT point to this."), *Context);
+
+			return DerivedPtr;
+		}
+	}
+
+	/**
+	* Perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks.
+	*
+	* return			Interface casted to DerivedType
+	*					(static_cast<DerivedType*>("Interface associated with InterfaceType")).
+	*/
+	template<typename DerivedType, typename InterfaceType>
+	DerivedType* StaticCastChecked()
+	{
+		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::StaticCastChecked: DerivedType IS abstract.");
+
+		static_assert(std::is_base_of<InterfaceType, DerivedType>(), "NCsInterfaceMap::StaticCastChecked: DerivedType is NOT a child of: InterfaceType.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, DerivedType>(), "NCsInterfaceMap::StaticCastChecked: DerivedType is NOT a child of: ICsGetInterfaceMap.");
+
+		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::StaticCastChecked: InterfaceType is NOT abstract.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "FCsInterfaceMap::StaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
+
+		if (bEmulated)
+		{
+			void** Ptr = InterfacesByEmulatedRootName.Find(DerivedType::Name);
+
+			checkf(Ptr, TEXT("FCsInterfaceMap::StaticCastChecked: Failed to find Interface with Root Name: %s."), *(DerivedType::Name.ToString()));
+
+			InterfaceType* Interface = (InterfaceType*)(*Ptr);
+
+			checkf(Interface->GetInterfaceMap() == this, TEXT("FCsInterfaceMap::StaticCastChecked: InterfaceMap for Inteface does NOT point to this."));
+
+			DerivedType* DerivedPtr = static_cast<DerivedType*>(Interface);
+
+			checkf(DerivedPtr->GetInterfaceMap() == this, TEXT("FCsInterfaceMap::StaticCastChecked: InterfaceMap for static_cast<DerivedType*>(Interface) does NOT point to this."));
+
+			return DerivedPtr;
+		}
+		else
+		{
+			checkf(DerivedType::Name == RootName, TEXT("FCsInterfaceMap::StaticCastChecked: this does NOT route to DerivedType (%s != %s)."), *(DerivedType::Name.ToString()), *(RootName.ToString()));
+
+			InterfaceType* Interface = Get<InterfaceType>();
+			DerivedType* DerivedPtr = static_cast<DerivedType*>(Interface);
+
+			checkf(DerivedPtr->GetInterfaceMap() == this, TEXT("FCsInterfaceMap::StaticCastChecked: InterfaceMap for static_cast<DerivedType*>(Interface) does NOT point to this."));
 
 			return DerivedPtr;
 		}

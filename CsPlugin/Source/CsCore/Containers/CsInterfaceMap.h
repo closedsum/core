@@ -162,16 +162,16 @@ namespace NCsInterfaceMap
 	*
 	* @param Context	The calling context
 	* @param Interface
-	* return			Interface casted to T (static_cast<T*>(Interface))
+	* return			Interface casted to DerivedType (static_cast<DerivedType*>(Interface))
 	*/
-	template<typename T, typename InterfaceType>
-	T* StaticCastChecked(const FString& Context, InterfaceType* Interface)
+	template<typename DerivedType, typename InterfaceType>
+	DerivedType* StaticCastChecked(const FString& Context, InterfaceType* Interface)
 	{
-		static_assert(!std::is_abstract<T>(), "NCsInterfaceMap::StaticCastChecked: T IS abstract.");
+		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::StaticCastChecked: DerivedType IS abstract.");
 
-		static_assert(std::is_base_of<InterfaceType, T>(), "NCsInterfaceMap::StaticCastChecked: T is NOT a child of: InterfaceType.");
+		static_assert(std::is_base_of<InterfaceType, DerivedType>(), "NCsInterfaceMap::StaticCastChecked: DerivedType is NOT a child of: InterfaceType.");
 
-		static_assert(std::is_base_of<ICsGetInterfaceMap, T>(), "NCsInterfaceMap::StaticCastChecked: T is NOT a child of: ICsGetInterfaceMap.");
+		static_assert(std::is_base_of<ICsGetInterfaceMap, DerivedType>(), "NCsInterfaceMap::StaticCastChecked: DerivedType is NOT a child of: ICsGetInterfaceMap.");
 
 		static_assert(std::is_abstract<InterfaceType>(), "NCsInterfaceMap::StaticCastChecked: InterfaceType is NOT abstarct.");
 
@@ -179,18 +179,18 @@ namespace NCsInterfaceMap
 
 		checkf(Interface, TEXT("%: Interface is NULL."), *Context);
 
-		T* Ptr = static_cast<T*>(Interface);
+		DerivedType* Ptr = static_cast<DerivedType*>(Interface);
 
 #if !UE_BUILD_SHIPPING
 		FCsInterfaceMap* InterfaceMap1 = GetInterfaceMapChecked<InterfaceType>(Context, Interface);
-		FCsInterfaceMap* InterfaceMap2 = GetInterfaceMapChecked<T, InterfaceType>(Context, Ptr);
+		FCsInterfaceMap* InterfaceMap2 = GetInterfaceMapChecked<DerivedType, InterfaceType>(Context, Ptr);
 
-		checkf(InterfaceMap1->GetRootName() == T::Name, TEXT("%s: InterfaceMap for Interface does NOT route to T."), *Context);
-		checkf(InterfaceMap2->GetRootName() == T::Name, TEXT("%s: InterfaceMap for static_cast<T*>(Interface) does NOT route to T."), *Context);
+		checkf(InterfaceMap1->GetRootName() == DerivedType::Name, TEXT("%s: InterfaceMap for Interface does NOT route to DerivedType."), *Context);
+		checkf(InterfaceMap2->GetRootName() == DerivedType::Name, TEXT("%s: InterfaceMap for static_cast<DerivedType*>(Interface) does NOT route to DerivedType."), *Context);
 
-		checkf(InterfaceMap1 == InterfaceMap2, TEXT("%s: InterfaceMaps do NOT match between Interface and the result of static_cast<T*>(Interface)."), *Context);
+		checkf(InterfaceMap1 == InterfaceMap2, TEXT("%s: InterfaceMaps do NOT match between Interface and the result of static_cast<DerivedType*>(Interface)."), *Context);
 
-		checkf(Interface == InterfaceMap2->Get<InterfaceType>(), TEXT("%s: InterfaceMap from static_cast<T*>(Interface) does NOT reference Interface."), *Context);
+		checkf(Interface == InterfaceMap2->Get<InterfaceType>(), TEXT("%s: InterfaceMap from static_cast<DerivedType*>(Interface) does NOT reference Interface."), *Context);
 #endif // #if !UE_BUILD_SHIPPING
 
 		return Ptr;

@@ -225,6 +225,7 @@ namespace NCsProjectileData
 
 	extern CSPRJ_API const Type Projectile;
 	extern CSPRJ_API const Type ProjectileVisual;
+	extern CSPRJ_API const Type ProjectileCollision;
 }
 
 #pragma endregion ProjectileData

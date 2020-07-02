@@ -137,12 +137,12 @@ namespace NCsInterfaceMap
 	* @param Object		The object to get the interface map from
 	* return			Interface Map
 	*/
-	template<typename T, typename InterfaceType>
-	FCsInterfaceMap* GetInterfaceMapChecked(const FString& Context, T* Object)
+	template<typename DerivedType, typename InterfaceType>
+	FCsInterfaceMap* GetInterfaceMapChecked(const FString& Context, DerivedType* Object)
 	{
-		static_assert(!std::is_abstract<T>(), "NCsInterfaceMap::GetInterfaceMapChecked: T IS abstract.");
+		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::GetInterfaceMapChecked: DerivedType IS abstract.");
 
-		static_assert(std::is_base_of<ICsGetInterfaceMap, T>(), "NCsInterfaceMap::GetInterfaceMapChecked: T is NOT a child of: ICsGetInterfaceMap.");
+		static_assert(std::is_base_of<ICsGetInterfaceMap, DerivedType>(), "NCsInterfaceMap::GetInterfaceMapChecked: DerivedType is NOT a child of: ICsGetInterfaceMap.");
 
 		static_assert(std::is_abstract<InterfaceType>(), "NCsInterfaceMap::GetInterfaceMapChecked: InterfaceType is NOT abstract.");
 

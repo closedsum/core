@@ -12,6 +12,12 @@ struct CSPRJ_API FCsLibrary_Data_Projectile
 		return NCsInterfaceMap::GetInterfaceMapChecked<ICsData_Projectile>(Context, Data);
 	}
 
+	template<typename DerivedType>
+	FORCEINLINE static DerivedType* StaticCastChecked(const FString& Context, ICsData_Projectile* Data)
+	{
+		return NCsInterfaceMap::StaticCastChecked<DerivedType, ICsData_Projectile>(Context, Data);
+	}
+
 	template<typename OtherInterfaceType>
 	FORCEINLINE static OtherInterfaceType* GetInterfaceChecked(const FString& Context, ICsData_Projectile* Data)
 	{

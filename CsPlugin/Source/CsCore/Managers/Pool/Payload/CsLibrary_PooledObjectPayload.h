@@ -11,15 +11,15 @@ struct CSCORE_API FCsLibrary_PooledObjectPayload
 		return NCsInterfaceMap::GetInterfaceMapChecked<ICsPooledObjectPayload>(Context, Payload);
 	}
 	
-	template<typename T>
-	FORCEINLINE static T* StaticCastChecked(const FString& Context, ICsPooledObjectPayload* Payload)
+	template<typename DerivedType>
+	FORCEINLINE static DerivedType* StaticCastChecked(const FString& Context, ICsPooledObjectPayload* Payload)
 	{
-		return NCsInterfaceMap::StaticCastChecked<T, ICsPooledObjectPayload>(Context, Payload);
+		return NCsInterfaceMap::StaticCastChecked<DerivedType, ICsPooledObjectPayload>(Context, Payload);
 	}
 
-	template<typename T>
-	FORCEINLINE static T* GetInterfaceChecked(const FString& Context, ICsPooledObjectPayload* Payload)
+	template<typename OtherInterfaceType>
+	FORCEINLINE static OtherInterfaceType* GetInterfaceChecked(const FString& Context, ICsPooledObjectPayload* Payload)
 	{
-		return NCsInterfaceMap::GetInterfaceChecked<T, ICsPooledObjectPayload>(Context, Payload);
+		return NCsInterfaceMap::GetInterfaceChecked<OtherInterfaceType, ICsPooledObjectPayload>(Context, Payload);
 	}
 };

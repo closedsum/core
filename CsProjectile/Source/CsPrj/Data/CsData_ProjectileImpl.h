@@ -7,7 +7,7 @@ struct FCsInterfaceMap;
 
 /**
 */
-struct CSPRJ_API FCsData_ProjectileImpl : public ICsData_Projectile
+struct CSPRJ_API FCsData_ProjectileImpl final : public ICsData_Projectile
 {
 public:
 

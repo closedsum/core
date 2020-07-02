@@ -9,7 +9,7 @@ class USkeletalMesh;
 
 /**
 */
-struct CSPRJ_API FCsData_ProjectileVisualImpl : public ICsData_ProjectileVisual
+struct CSPRJ_API FCsData_ProjectileVisualImpl final : public ICsData_ProjectileVisual
 {
 public:
 

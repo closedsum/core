@@ -624,16 +624,63 @@ public:
 
 protected:
 
+	/** <DataName, InterfacePtr> */
 	TMap<FName, ICsData_Projectile*> EmulatedDataMap;
-	TMap<FName, TArray<FCsInterfaceMap*>> EmulatedDataInterfaceMap;
+
+	/** <DataName, <InterfaceName, InterfacePtr>> */
+	TMap<FName, TMap<FName, void*>> EmulatedDataInterfaceMap;
+
+	/** <DataName, <InterfaceImplName, InterfaceImplPtr>> */
+	TMap<FName, TMap<FName, void*>> EmulatedDataInterfaceImplMap;
+
 
 	virtual void CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSet<FECsProjectileData>& EmulatedDataInterfaces);
 
+protected:
+
+	virtual void DeconstructEmulatedData(const FName& InterfaceImplName, void* Data);
+
 public:
 
-	virtual void DeconstructEmulatedData(FCsInterfaceMap* InterfaceMap);
+	/**
+	*/
+	template<typename InterfaceType>
+	InterfaceType* GetEmulatedData(const FName& Name)
+	{
+		static_assert(std::is_abstract<InterfaceType>(), "UCsManager_Projectile::GetEmulatedData InterfaceType is NOT abstract.");
+		
+		checkf(Name != NAME_None, TEXT("UCsManager_Projectile::GetEmulatedData: Name = None is NOT Valid."));
 
-	ICsData_Projectile* GetEmulatedData(const FName& Name);
+		TMap<FName, void*>* InterfaceMapPtr = EmulatedDataInterfaceMap.Find(Name);
+
+		checkf(InterfaceMapPtr, TEXT("UCsManager_Projectile::GetEmulatedData: Failed to find any Interface for Data: %s."), *(Name.ToString()));
+
+		void** DataPtr = InterfaceMapPtr->Find(InterfaceType::Name);
+
+		checkf(DataPtr, TEXT("UCsManager_Projectile::GetEmulatedData: Failed to find Interface: %s for Data: %s."), *(InterfaceType::Name.ToString()), *(Name.ToString()));
+
+		return reinterpret_cast<InterfaceType*>(*DataPtr);
+	}
+
+	/**
+	*/
+	template<typename InterfaceImplType>
+	InterfaceImplType* GetEmulatedDataImpl(const FName& Name)
+	{
+		static_assert(!std::is_abstract<InterfaceImplType>(), "UCsManager_Projectile::GetEmulatedDataImpl InterfaceImplType is NOT abstract.");
+
+		checkf(Name != NAME_None, TEXT("UCsManager_Projectile::GetEmulatedDataImpl: Name = None is NOT Valid."));
+
+		TMap<FName, void*>* InterfaceMapPtr = EmulatedDataInterfaceMap.Find(Name);
+
+		checkf(InterfaceMapPtr, TEXT("UCsManager_Projectile::GetEmulatedDataImpl: Failed to find any Interface for Data: %s."), *(Name.ToString()));
+
+		void** DataPtr = InterfaceMapPtr->Find(InterfaceImplType::Name);
+
+		checkf(DataPtr, TEXT("UCsManager_Projectile::GetEmulatedDataImpl: Failed to find Interface: %s for Data: %s."), *(InterfaceType::Name.ToString()), *(Name.ToString()));
+
+		return reinterpret_cast<InterfaceImplType*>(*DataPtr);
+	}
 
 protected:
 

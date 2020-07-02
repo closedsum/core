@@ -5,9 +5,12 @@
 
 // CVars
 #include "Managers/Projectile/CsCVars_Manager_Projectile.h"
+// Types
+#include "Types/CsTypes_Collision.h"
 // Library
 #include "Library/CsLibrary_Property.h"
 #include "Library/Load/CsLibrary_Load.h" // TEMP
+#include "Data/CsLibrary_Data_Projectile.h"
 // Settings
 #include "Settings/CsProjectileSettings.h"
 // Data
@@ -38,6 +41,7 @@ namespace NCsManagerProjectile
 	{
 		const FString PopulateDataMapFromSettings = TEXT("UCsManager_Projectile::PopulateDataMapFromSettings");
 		const FString CreateEmulatedDataFromDataTable = TEXT("UCsManager_Projectile::CreateEmulatedDataFromDataTable");
+		const FString DeconstructEmulatedData = TEXT("UCsManager_Projectile::DeconstructEmulatedData");
 	}
 
 	namespace Name
@@ -251,18 +255,19 @@ void UCsManager_Projectile::CleanUp()
 	Internal.Shutdown();
 	Pool.Reset();
 
-	for (TPair<FName, TArray<FCsInterfaceMap*>>& Pair : EmulatedDataInterfaceMap)
+	for (TPair<FName, TMap<FName, void*>>& DataPair : EmulatedDataInterfaceImplMap)
 	{
-		TArray<FCsInterfaceMap*>& InterfaceMaps = Pair.Value;
+		TMap<FName, void*> InterfaceImplMap = DataPair.Value;
 
-		for (FCsInterfaceMap* InterfaceMap : InterfaceMaps)
+		for (TPair<FName, void*>& ImplPair : InterfaceImplMap)
 		{
-			DeconstructEmulatedData(InterfaceMap);
+			DeconstructEmulatedData(ImplPair.Key, ImplPair.Value);
+
+			ImplPair.Value = nullptr;
 		}
-		InterfaceMaps.Reset();
 	}
 	EmulatedDataMap.Reset();
-	EmulatedDataInterfaceMap.Reset();
+	EmulatedDataInterfaceImplMap.Reset();
 	DataMap.Reset();
 	ClassMap.Reset();
 	DataTables.Reset();
@@ -730,6 +735,21 @@ void UCsManager_Projectile::CreateEmulatedDataFromDataTable(UDataTable* DataTabl
 		// TrailFX
 	//FCsFX* TrailFX;
 
+	if (EmulatedDataInterfaces.Find(NCsProjectileData::ProjectileVisual))
+	{
+	}
+
+	// ICsData_ProjectileCollision
+	bool Emulates_ICsData_ProjectileCollision = false;
+
+		// CollisionPreset
+	UStructProperty* CollisionPresetProperty = nullptr;
+
+	if (EmulatedDataInterfaces.Find(NCsProjectileData::ProjectileCollision))
+	{
+		CollisionPresetProperty = FCsLibrary_Property::FindStructPropertyByNameForInterfaceChecked<FCsCollisionPreset>(Context, RowStruct, Name::GravityScale, NCsProjectileData::ProjectileCollision.GetDisplayName());
+	}
+
 	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
 	for (const TPair<FName, uint8*>& Pair : RowMap)
@@ -746,75 +766,61 @@ void UCsManager_Projectile::CreateEmulatedDataFromDataTable(UDataTable* DataTabl
 
 			EmulatedDataMap.Add(Name, Data);
 
-			FCsInterfaceMap* InterfaceMap = Data->GetInterfaceMap();
+			TMap<FName, void*>& InterfaceMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
+			InterfaceMap.Add(ICsData_Projectile::Name, static_cast<ICsData_Projectile*>(Data));
 
-			checkf(InterfaceMap, TEXT("%s: Data failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."), *Context);
-
-			TArray<FCsInterfaceMap*>& InterfaceMaps = EmulatedDataInterfaceMap.FindOrAdd(Name);
-			InterfaceMaps.Add(InterfaceMap);
+			TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
+			InterfaceImplMap.Add(FCsData_ProjectileImpl::Name, Data);
 
 			// LifeTime
 			{
-				float* Value = LifeTimeProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-				checkf(Value, TEXT("%s: Failed to float ptr from FloatProperty: LifeTime."), *Context);
+				float* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<float>(Context, LifeTimeProperty, RowPtr);
 
 				Data->SetLifeTime(Value);
 			}
 			// InitialSpeed
 			{
-				float* Value = InitialSpeedProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-				checkf(Value, TEXT("%s: Failed to float ptr from FloatProperty: InitialSpeed."), *Context);
+				float* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<float>(Context, InitialSpeedProperty, RowPtr);
 
 				Data->SetInitialSpeed(Value);
 			}
 			// MaxSpeed
 			{
-				float* Value = MaxSpeedProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-				checkf(Value, TEXT("%s: Failed to float ptr from FloatProperty: MaxSpeed."), *Context);
+				float* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<float>(Context, MaxSpeedProperty, RowPtr);
 
 				Data->SetMaxSpeed(Value);
 			}
 			// GravityScale
 			{
-				float* Value = GravityScaleProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-				checkf(Value, TEXT(": Failed to float ptr from FloatProperty: GravityScale."), *Context);
+				float* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<float>(Context, GravityScaleProperty, RowPtr);
 
 				Data->SetGravityScale(Value);
 			}
 		}
+		// ICsData_ProjectileVisual
+		if (Emulates_ICsData_ProjectileVisual)
+		{
+
+		}
+		// ICsData_ProjectileCollision
+		if (Emulates_ICsData_ProjectileCollision)
+		{
+
+		}
 	}
 }
 
-void UCsManager_Projectile::DeconstructEmulatedData(FCsInterfaceMap* InterfaceMap)
+void UCsManager_Projectile::DeconstructEmulatedData(const FName& InterfaceImplName, void* Data)
 {
-	checkf(InterfaceMap, TEXT("UCsManager_Projectile::DeconstructEmulatedData: InterfaceMap is NULL. Data failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
-	
 	// FCsData_ProjectileImpl
-	if (InterfaceMap->GetRootName() == FCsData_ProjectileImpl::Name)
+	if (InterfaceImplName == FCsData_ProjectileImpl::Name)
 	{
-		ICsData_Projectile* Data = InterfaceMap->Get<ICsData_Projectile>();
-
-		delete static_cast<FCsData_ProjectileImpl*>(Data);
+		delete reinterpret_cast<FCsData_ProjectileImpl*>(Data);
 	}
 	else
 	{
 		checkf(0, TEXT("UCsManager_Projectile::DeconstructEmulatedData: Failed to delete InterfaceMap."));
 	}
-}
-
-ICsData_Projectile* UCsManager_Projectile::GetEmulatedData(const FName& Name)
-{
-	checkf(Name != NAME_None, TEXT("UCsManager_Projectile::GetEmulatedData: Name = None is NOT Valid."));
-
-	ICsData_Projectile** DataPtr = EmulatedDataMap.Find(Name);
-
-	checkf(DataPtr, TEXT("UCsManager_Projectile::GetEmulatedData: Failed to find Data for Name: %s."), *(Name.ToString()));
-
-	return *DataPtr;
 }
 
 void UCsManager_Projectile::PopulateDataMapFromDataTable(UDataTable* DataTable)

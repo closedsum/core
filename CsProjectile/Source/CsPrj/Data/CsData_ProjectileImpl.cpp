@@ -11,14 +11,8 @@ FCsData_ProjectileImpl::FCsData_ProjectileImpl() :
 		MaxSpeed(nullptr),
 		GravityScale(nullptr)
 {
-	InterfaceMap = new FCsInterfaceMap();
-
-	InterfaceMap->SetRootName(FCsData_ProjectileImpl::Name);
-
-	InterfaceMap->Add<ICsData_Projectile>(static_cast<ICsData_Projectile*>(this));
 }
 
 FCsData_ProjectileImpl::~FCsData_ProjectileImpl()
 {
-	delete InterfaceMap;
 }

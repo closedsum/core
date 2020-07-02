@@ -11,14 +11,8 @@ FCsData_ProjectileVisualImpl::FCsData_ProjectileVisualImpl() :
 		SkeletalMesh(nullptr),
 		TrailFX(nullptr)
 {
-	InterfaceMap = new FCsInterfaceMap();
-
-	InterfaceMap->SetRootName(FCsData_ProjectileVisualImpl::Name);
-
-	InterfaceMap->Add<ICsData_ProjectileVisual>(static_cast<ICsData_ProjectileVisual*>(this));
 }
 
 FCsData_ProjectileVisualImpl::~FCsData_ProjectileVisualImpl()
 {
-	delete InterfaceMap;
 }

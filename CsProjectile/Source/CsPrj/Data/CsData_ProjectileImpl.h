@@ -63,6 +63,13 @@ public:
 
 #pragma endregion ICsGetInterfaceMap
 
+public:
+
+	FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map)
+	{
+		InterfaceMap = Map;
+	}
+
 // ICsData_Projectile
 #pragma region
 public:

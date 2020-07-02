@@ -268,6 +268,15 @@ void UCsManager_Projectile::CleanUp()
 	}
 	EmulatedDataMap.Reset();
 	EmulatedDataInterfaceImplMap.Reset();
+
+	for (TPair<FName, FCsData_ProjectileInterfaceMap*>& Pair : EmulatedDataInterfaceMap)
+	{
+		FCsData_ProjectileInterfaceMap* Ptr = Pair.Value;
+		delete Ptr;
+		Pair.Value = nullptr;
+	}
+	EmulatedDataInterfaceMap.Reset();
+
 	DataMap.Reset();
 	ClassMap.Reset();
 	DataTables.Reset();
@@ -762,12 +771,21 @@ void UCsManager_Projectile::CreateEmulatedDataFromDataTable(UDataTable* DataTabl
 		{
 			FCsData_ProjectileImpl* Data = new FCsData_ProjectileImpl();
 
-			checkf(EmulatedDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s"), *Context, *(Name.ToString()));
+			checkf(EmulatedDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s."), *Context, *(Name.ToString()));
 
 			EmulatedDataMap.Add(Name, Data);
 
-			TMap<FName, void*>& InterfaceMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
-			InterfaceMap.Add(ICsData_Projectile::Name, static_cast<ICsData_Projectile*>(Data));
+			FCsData_ProjectileInterfaceMap* EmulatedInterfaceMap = new FCsData_ProjectileInterfaceMap();
+
+			checkf(EmulatedDataInterfaceMap.Find(Name) == nullptr, TEXT("%s: Emulated Interface Map has already been created for Row: %s."), *Context, *(Name.ToString()));
+
+			EmulatedDataInterfaceMap.Add(Name, EmulatedInterfaceMap);
+
+			FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
+
+			InterfaceMap->Add<ICsData_Projectile>(FCsData_ProjectileImpl::Name, static_cast<ICsData_Projectile*>(Data));
+
+			Data->SetInterfaceMap(InterfaceMap);
 
 			TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
 			InterfaceImplMap.Add(FCsData_ProjectileImpl::Name, Data);
@@ -817,6 +835,8 @@ void UCsManager_Projectile::DeconstructEmulatedData(const FName& InterfaceImplNa
 	{
 		delete static_cast<FCsData_ProjectileImpl*>(Data);
 	}
+	// FCsData_ProjecitleVisualImpl
+	// FCsData_ProjectileCollisionImpl
 	else
 	{
 		checkf(0, TEXT("UCsManager_Projectile::DeconstructEmulatedData: Failed to delete InterfaceMap."));

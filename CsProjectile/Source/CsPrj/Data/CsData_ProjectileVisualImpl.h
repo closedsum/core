@@ -32,6 +32,10 @@ public:
 	FCsData_ProjectileVisualImpl();
 	~FCsData_ProjectileVisualImpl();
 
+public:
+
+	FORCEINLINE UObject* _getUObject() const { return nullptr; }
+
 // ICsGetInterfaceMap
 #pragma region
 public:
@@ -45,7 +49,10 @@ public:
 
 public:
 
-	FORCEINLINE UObject* _getUObject() const { return nullptr; }
+	FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map)
+	{
+		InterfaceMap = Map;
+	}
 
 // ICsData_ProjectileVisual
 #pragma region

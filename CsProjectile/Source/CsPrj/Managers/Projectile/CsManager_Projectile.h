@@ -45,6 +45,7 @@ class ICsGetManagerProjectile;
 class ICsData_Projectile;
 class UDataTable;
 struct FCsInterfaceMap;
+struct FCsData_ProjectileInterfaceMap;
 
 UCLASS()
 class CSPRJ_API UCsManager_Projectile : public UObject
@@ -623,12 +624,11 @@ public:
 	virtual void PopulateDataMapFromSettings();
 
 protected:
-
 	/** <DataName, InterfacePtr> */
 	TMap<FName, ICsData_Projectile*> EmulatedDataMap;
 
-	/** <DataName, <InterfaceName, InterfacePtr>> */
-	TMap<FName, TMap<FName, void*>> EmulatedDataInterfaceMap;
+	/** <DataName, InterfaceMapPtr> */
+	TMap<FName, FCsData_ProjectileInterfaceMap*> EmulatedDataInterfaceMap;
 
 	/** <DataName, <InterfaceImplName, InterfaceImplPtr>> */
 	TMap<FName, TMap<FName, void*>> EmulatedDataInterfaceImplMap;
@@ -649,17 +649,19 @@ public:
 	{
 		static_assert(std::is_abstract<InterfaceType>(), "UCsManager_Projectile::GetEmulatedData InterfaceType is NOT abstract.");
 		
+		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "UCsManager_Projectile::GetEmulatedData: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
+
 		checkf(Name != NAME_None, TEXT("UCsManager_Projectile::GetEmulatedData: Name = None is NOT Valid."));
 
-		TMap<FName, void*>* InterfaceMapPtr = EmulatedDataInterfaceMap.Find(Name);
+		FCsData_ProjectileInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap.Find(Name);
 
-		checkf(InterfaceMapPtr, TEXT("UCsManager_Projectile::GetEmulatedData: Failed to find any Interface for Data: %s."), *(Name.ToString()));
+		checkf(EmulatedInterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData:"));
 
-		void** DataPtr = InterfaceMapPtr->Find(InterfaceType::Name);
+		FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
 
-		checkf(DataPtr, TEXT("UCsManager_Projectile::GetEmulatedData: Failed to find Interface: %s for Data: %s."), *(InterfaceType::Name.ToString()), *(Name.ToString()));
+		checkf(InterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData:"));
 
-		return reinterpret_cast<InterfaceType*>(*DataPtr);
+		return InterfaceMap->Get<InterfaceType>();
 	}
 
 	/**
@@ -669,17 +671,19 @@ public:
 	{
 		static_assert(!std::is_abstract<InterfaceImplType>(), "UCsManager_Projectile::GetEmulatedDataImpl InterfaceImplType is NOT abstract.");
 
+		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceImplType>(), "UCsManager_Projectile::GetEmulatedDataImpl: InterfaceImplType is NOT a child of: ICsGetInterfaceMap.");
+
 		checkf(Name != NAME_None, TEXT("UCsManager_Projectile::GetEmulatedDataImpl: Name = None is NOT Valid."));
 
-		TMap<FName, void*>* InterfaceMapPtr = EmulatedDataInterfaceMap.Find(Name);
+		FCsData_ProjectileInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap.Find(Name);
 
-		checkf(InterfaceMapPtr, TEXT("UCsManager_Projectile::GetEmulatedDataImpl: Failed to find any Interface for Data: %s."), *(Name.ToString()));
+		checkf(EmulatedInterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData:"));
 
-		void** DataPtr = InterfaceMapPtr->Find(InterfaceImplType::Name);
+		FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
 
-		checkf(DataPtr, TEXT("UCsManager_Projectile::GetEmulatedDataImpl: Failed to find Interface: %s for Data: %s."), *(InterfaceType::Name.ToString()), *(Name.ToString()));
+		checkf(InterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData:"));
 
-		return reinterpret_cast<InterfaceImplType*>(*DataPtr);
+		return InterfaceMap->StaticCastChecked<InterfaceImplType>();
 	}
 
 protected:

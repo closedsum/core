@@ -49,3 +49,13 @@ namespace NCsCVarLog
 }
 
 #pragma endregion CVarLog
+
+// ScopedGroup
+#pragma region
+
+namespace NCsScopedGroup
+{
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsScopedGroup, Coroutine);
+}
+
+#pragma endregion ScopedGroup

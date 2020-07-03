@@ -3,6 +3,8 @@
 
 #pragma once
 
+extern CSPRJ_API TAutoConsoleVariable<int32> CsCVarLogProjectileCollision;
+
 #define CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_LENGTH 100.0f
 #define CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_THICKNESS 2.0f
 #define CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_DURATION 0.25f
@@ -22,6 +24,21 @@ extern CSPRJ_API TAutoConsoleVariable<int32> CsCVarDrawProjectilePath;
 extern CSPRJ_API TAutoConsoleVariable<float> CsCVarDrawProjectilePathInterval;
 extern CSPRJ_API TAutoConsoleVariable<int32> CsCVarDrawProjectilePathSegmentsPerInterval;
 extern CSPRJ_API TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness;
+
+// CVarLog
+#pragma region
+
+namespace NCsCVarLog
+{
+	extern CSPRJ_API const Type LogProjectileCollision;
+
+	namespace Map
+	{
+		extern CSPRJ_API CS_DECLARE_ADD_TO_CVAR_MAP(LogProjectileCollision);
+	}
+}
+
+#pragma endregion CVarLog
 
 // CVarDraw
 #pragma region

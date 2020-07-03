@@ -1,6 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Projectile/CsCVars_Projectile.h"
 
+TAutoConsoleVariable<int32> CsCVarLogProjectileCollision(
+	TEXT("log.projectile.collision"),
+	0,
+	TEXT("Log Projectile Collision."),
+	ECVF_SetByConsole
+);
+
 TAutoConsoleVariable<int32> CsCVarDrawProjectileImpactNormal(
 	TEXT("draw.projectile.impactnormal"),
 	0,
@@ -67,6 +74,21 @@ TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness(
 // CVarLog
 #pragma region
 
+namespace NCsCVarLog
+{
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogProjectileCollision, "Log Projectile Collision");
+
+	namespace Map
+	{
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogProjectileCollision, CsCVarLogProjectileCollision);
+	}
+}
+
+#pragma endregion CVarLog
+
+// CVarDraw
+#pragma region
+
 namespace NCsCVarDraw
 {
 	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarDraw, DrawProjectileImpactNormal, "Draw Projectile Impact Normal");
@@ -97,4 +119,4 @@ namespace NCsCVarDraw
 	}
 }
 
-#pragma endregion CVarLog
+#pragma endregion CVarDraw

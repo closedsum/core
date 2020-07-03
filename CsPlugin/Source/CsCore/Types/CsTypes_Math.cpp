@@ -32,7 +32,7 @@ namespace NCsTransformRules
 	}
 
 	CSCORE_API const int32 None = 0;
-	CSCORE_API const int32 All = 1;
+	CSCORE_API const int32 All = 7; // 1 + 2 + 4
 }
 
 #pragma endregion TransformRules

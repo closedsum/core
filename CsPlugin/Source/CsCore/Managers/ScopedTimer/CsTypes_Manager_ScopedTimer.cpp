@@ -2,6 +2,8 @@
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 #include "CsCore.h"
 
+// CVar
+#include "CsCVars.h"
 // Managers
 #include "Managers/ScopedTimer/CsManager_ScopedTimer.h"
 
@@ -13,7 +15,7 @@ const FCsScopedTimerHandle FCsScopedTimerHandle::Invalid;
 FCsScopedTimer::FCsScopedTimer() :
 	Handle(),
 	Name(nullptr),
-	CVar(),
+	CVar(nullptr),
 	Time(0.0),
 	AvgTime(0.0),
 	TotalTime(0.0),
@@ -26,10 +28,12 @@ FCsScopedTimer::~FCsScopedTimer()
 	Name = nullptr;
 }
 
-void FCsScopedTimer::Init(const FString* InName, const FECsCVarLog& InCVar)
+void FCsScopedTimer::Init(const FString* InName, const FECsCVarLog* InCVar)
 {
+	checkf(CVar, TEXT("FCsScopedTimer::Init: CVar is NULL."));
+
 	Name = const_cast<FString*>(InName);
-	CVar = InCVar;
+	CVar = const_cast<FECsCVarLog*>(InCVar);
 
 	Handle.New();
 }
@@ -49,7 +53,7 @@ void FCsScopedTimer::Reset()
 
 	Name = nullptr;
 
-	CVar = EMCsCVarLog::Get().GetMAX();
+	CVar = nullptr;
 
 	Time = 0.0;
 	AvgTime = 0.0;
@@ -60,7 +64,7 @@ void FCsScopedTimer::Reset()
 
 void FCsScopedTimer::Log()
 {
-	if (FCsCVarLogMap::Get().IsShowing(CVar))
+	if (FCsCVarLogMap::Get().IsShowing(*CVar))
 	{
 		UE_LOG(LogCs, Log, TEXT("%s: Time: %f AvgTime: %f TotalTime: %f Ticks: %d"), **Name, (float)Time, (float)AvgTime, (float)TotalTime, Ticks);
 	}

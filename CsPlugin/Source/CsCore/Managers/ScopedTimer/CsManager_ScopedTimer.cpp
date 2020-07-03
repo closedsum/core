@@ -39,7 +39,7 @@ void FCsManager_ScopedTimer::Update(const FCsDeltaTime& DeltaTime)
 	}
 }
 
-const FCsScopedTimerHandle& FCsManager_ScopedTimer::GetHandle(const FString* Name, const FECsCVarLog& CVar)
+const FCsScopedTimerHandle& FCsManager_ScopedTimer::GetHandle(const FString* Name, const FECsCVarLog* CVar)
 {
 	checkf(Name, TEXT("FCsManager_ScopedTimer::GetHandle: Name is NULL."));
 

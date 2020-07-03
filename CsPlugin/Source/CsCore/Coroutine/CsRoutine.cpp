@@ -247,8 +247,8 @@ void FCsRoutine::Init(FCsCoroutinePayload* Payload)
 	State = ECsCoroutineState::Init;
 
 	CoroutineImpl = Payload->CoroutineImpl;
-	StartTime = Payload->StartTime;
-	Owner	  = Payload->Owner;
+	StartTime	  = Payload->StartTime;
+	Owner		  = Payload->Owner;
 	
 	for (const FName& Message : Payload->AbortMessages)
 	{
@@ -291,6 +291,7 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 {
 	CS_SCOPED_TIMER(RoutineScopedTimerHandle);
 
+	// Check for Abort Messages
 	const int32 AbortIndex = (int32)ECsCoroutineMessage::Abort;
 
 	TSet<FName>& AbortMessages		    = Messages[AbortIndex];
@@ -315,13 +316,14 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 		}
 	}
 	AbortMessages_Recieved.Reset();
-
+	// If the Coroutine has been ended by a Abort Message, EXIT
 	if (State == ECsCoroutineState::End &&
 		EndReason == ECsCoroutineEndReason::AbortMessage)
 	{
 		return;
 	}
-
+	// If the Owner of the Coroutine is a UObject, check if that object
+	// is still valid
 	if (Owner.IsObject())
 	{
 		UObject* O = Owner.GetSafeObject();
@@ -333,7 +335,7 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 			return;
 		}
 	}
-
+	// Check if Coroutine should be aborted
 	for (FCsCoroutineAbortConditionImpl& AbortImpl : AbortImpls)
 	{
 		if (AbortImpl.Execute(this))
@@ -346,7 +348,7 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 			return;
 		}
 	}
-
+	// Check if the Coroutine has been ended
 	if (State == ECsCoroutineState::End)
 	{
 		if (EndReason == ECsCoroutineEndReason::ECsCoroutineEndReason_MAX)
@@ -354,18 +356,18 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 		return;
 	}
 
-	DeltaTime = InDeltaTime;
-
+	DeltaTime    = InDeltaTime;
 	ElapsedTime += DeltaTime;
 
 	++TickCount;
 
+	// Run the Coroutine
 	{
 		CS_SCOPED_TIMER(CoroutineScopedTimerHandle);
 
 		CoroutineImpl.Execute(this);
 	}
-
+	// Check if the Coroutine has ended
 	if (State == ECsCoroutineState::End)
 		End(ECsCoroutineEndReason::EndOfExecution);
 }

@@ -9,8 +9,13 @@ namespace NCsPoolTransaction
 	namespace Ref
 	{
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPoolTransaction, Allocate);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPoolTransaction, PreDeallocate);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPoolTransaction, Spawn);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPoolTransaction, PreDeallocate, "Pre-Deallocate");
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPoolTransaction, Deallocate);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPoolTransaction, DeallocateByQueue, "Deallocate by Queue");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPoolTransaction, DeallocateByUnknown, "Deallocate by Unknown");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPoolTransaction, DeallocateByLifeTime, "Deallocate by LifeTime");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPoolTransaction, Destroy);
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPoolTransaction, ECsPoolTransaction_MAX, "MAX");
 	}
 

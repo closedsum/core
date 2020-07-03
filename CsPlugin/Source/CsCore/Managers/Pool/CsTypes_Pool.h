@@ -11,16 +11,24 @@
 // PoolTransaction
 #pragma region
 
+/**
+* Type of transaction that is being executed for a Pooled Object.
+*/
 UENUM(BlueprintType)
 enum class ECsPoolTransaction : uint8
 {
 	Allocate				UMETA(DisplayName = "Allocate"),
+	Spawn					UMETA(DisplayName = "Spawn"),
 	PreDeallocate			UMETA(DisplayName = "Pre-Deallocate"),
 	Deallocate				UMETA(DisplayName = "Deallocate"),
+	DeallocateByQueue		UMETA(DisplayName = "Deallocate by Queue"),
+	DeallocateByUnknown		UMETA(DisplayName = "Deallocate by Unknown"),
+	DeallocateByLifeTime	UMETA(DisplayName = "Deallocate by LifeTime"),
+	Destroy					UMETA(DisplayName = "Destroy"),
 	ECsPoolTransaction_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsPoolTransaction : public TCsEnumMap<ECsPoolTransaction>
+struct CSCORE_API EMCsPoolTransaction final : public TCsEnumMap<ECsPoolTransaction>
 {
 	CS_ENUM_MAP_BODY(EMCsPoolTransaction, ECsPoolTransaction)
 };
@@ -32,8 +40,13 @@ namespace NCsPoolTransaction
 	namespace Ref
 	{
 		extern CSCORE_API const Type Allocate;
+		extern CSCORE_API const Type Spawn;
 		extern CSCORE_API const Type PreDeallocate;
 		extern CSCORE_API const Type Deallocate;
+		extern CSCORE_API const Type DeallocateByQueue;
+		extern CSCORE_API const Type DeallocateByUnknown;
+		extern CSCORE_API const Type DeallocateByLifeTime;
+		extern CSCORE_API const Type Destroy;
 		extern CSCORE_API const Type ECsPoolTransaction_MAX;
 	}
 
@@ -72,7 +85,7 @@ enum class ECsPoolTransactionOrder : uint8
 	ECsPoolTransactionOrder_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsPoolTransactionOrder : public TCsEnumMap<ECsPoolTransactionOrder>
+struct CSCORE_API EMCsPoolTransactionOrder final : public TCsEnumMap<ECsPoolTransactionOrder>
 {
 	CS_ENUM_MAP_BODY(EMCsPoolTransactionOrder, ECsPoolTransactionOrder)
 };
@@ -105,7 +118,7 @@ enum class ECsPooledObjectState : uint8
 	ECsPooledObjectState_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsPoolObjectState : public TCsEnumMap<ECsPooledObjectState>
+struct CSCORE_API EMCsPoolObjectState final : public TCsEnumMap<ECsPooledObjectState>
 {
 	CS_ENUM_MAP_BODY(EMCsPoolObjectState, ECsPooledObjectState)
 };
@@ -351,7 +364,7 @@ enum class ECsManagerPooledObject : uint8
 	ECsManagerPooledObject_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsManagerPooledObject : public TCsEnumMap<ECsManagerPooledObject>
+struct CSCORE_API EMCsManagerPooledObject final : public TCsEnumMap<ECsManagerPooledObject>
 {
 	CS_ENUM_MAP_BODY(EMCsManagerPooledObject, ECsManagerPooledObject)
 };

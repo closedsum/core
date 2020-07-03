@@ -1,8 +1,4 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/Enum/CsEnum_uint8.h"
-#include "Types/Enum/CsEnumStructMap.h"
-
-#include "CsTypes_Manager_ScopedTimer.generated.h"
 #pragma once
 
 // FCsScopedTimerHandle
@@ -112,31 +108,6 @@ public:
 };
 
 #pragma endregion FCsScopedTimerInternal
-
-// ScopedGroup
-#pragma region
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FECsScopedGroup : public FECsEnum_uint8
-{
-	GENERATED_USTRUCT_BODY()
-
-	CS_ENUM_UINT8_BODY(FECsScopedGroup)
-};
-
-CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsScopedGroup)
-
-struct CSCORE_API EMCsScopedGroup final : public TCsEnumStructMap<FECsScopedGroup, uint8>
-{
-	CS_ENUM_STRUCT_MAP_BODY(EMCsScopedGroup, FECsScopedGroup, uint8)
-};
-
-namespace NCsScopedGroup
-{
-	typedef FECsScopedGroup Type;
-}
-
-#pragma endregion ScopedGroup
 
 #if !UE_BUILD_SHIPPING
 #define CS_GET_SCOPED_TIMER_HANDLE(Handle, Name, CVar) Handle = FCsManager_ScopedTimer::Get().GetHandle((Name), (&(CVar)))

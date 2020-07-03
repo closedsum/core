@@ -392,7 +392,7 @@ namespace NCsCVarLog
 
 #pragma endregion CVarLog
 
-// CVarLogMap
+// FCsCVarLogMap
 #pragma region
 
 struct CSCORE_API FCsCVarLogMap : public ICsCVarMap
@@ -462,7 +462,7 @@ public:
 	void ResetDirty();
 };
 
-#pragma endregion CVarLogMap
+#pragma endregion FCsCVarLogMap
 
 // CVarToggle
 #pragma region
@@ -497,7 +497,7 @@ namespace NCsCVarToggle
 
 #pragma endregion CVarToggle
 
-// CVarToggleMap
+// FCsCVarToggleMap
 #pragma region
 
 struct CSCORE_API FCsCVarToggleMap : public ICsCVarMap
@@ -567,7 +567,7 @@ public:
 	void ResetDirty();
 };
 
-#pragma endregion CVarToggleMap
+#pragma endregion FCsCVarToggleMap
 
 // CVarDraw
 #pragma region
@@ -608,7 +608,7 @@ namespace NCsCVarDraw
 
 #pragma endregion CVarDraw
 
-// CVarDrawMap
+// FCsCVarDrawMap
 #pragma region
 
 struct CSCORE_API FCsCVarDrawMap : ICsCVarMap
@@ -678,4 +678,101 @@ public:
 	void ResetDirty();
 };
 
-#pragma endregion CVarDrawMap
+#pragma endregion FCsCVarDrawMap
+
+// ScopedGroup
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsScopedGroup : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsScopedGroup)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsScopedGroup)
+
+struct CSCORE_API EMCsScopedGroup final : public TCsEnumStructMap<FECsScopedGroup, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsScopedGroup, FECsScopedGroup, uint8)
+};
+
+namespace NCsScopedGroup
+{
+	typedef FECsScopedGroup Type;
+}
+
+#pragma endregion ScopedGroup
+
+// FCsScopedGroupMap
+#pragma region
+
+struct CSCORE_API FCsScopedGroupMap : public ICsCVarMap
+{
+protected:
+	FCsScopedGroupMap() {}
+	FCsScopedGroupMap(const FCsScopedGroupMap &) = delete;
+	FCsScopedGroupMap(FCsScopedGroupMap &&) = delete;
+public:
+	virtual ~FCsScopedGroupMap() {}
+private:
+	TMap<FECsScopedGroup, TCsAutoConsoleVariable_int32> Map;
+	TMap<FECsScopedGroup, int32> DefaultValues;
+	TMap<FECsScopedGroup, bool> DirtyMap;
+
+public:
+	static FCsScopedGroupMap& Get()
+	{
+		static FCsScopedGroupMap Instance;
+		return Instance;
+	}
+
+public:
+
+	FORCEINLINE const FECsScopedGroup& Add(const FECsScopedGroup& Log, TAutoConsoleVariable<int32>* CVar)
+	{
+		Map.Add(Log);
+		Map[Log].Init(CVar);
+		DefaultValues.Add(Log, GetValue(Log));
+		DirtyMap.Add(Log, false);
+		return Log;
+	}
+
+	FORCEINLINE int32 GetValue(const FECsScopedGroup& Log)
+	{
+		return Map[Log].Get();
+	}
+
+	FORCEINLINE bool IsShowing(const FECsScopedGroup& Log)
+	{
+		return Map[Log].Get() == CS_CVAR_SHOW_LOG;
+	}
+
+	FORCEINLINE bool IsHiding(const FECsScopedGroup& Log)
+	{
+		return Map[Log].Get() == CS_CVAR_HIDE_LOG;
+	}
+
+	FORCEINLINE void Show(const FECsScopedGroup& Log, bool MarkDirty = false)
+	{
+		Map[Log].Set(CS_CVAR_SHOW_LOG, ECVF_SetByConsole);
+
+		if (MarkDirty)
+			DirtyMap[Log] = true;
+	}
+
+	FORCEINLINE void Hide(const FECsScopedGroup& Log, bool MarkDirty = false)
+	{
+		Map[Log].Set(CS_CVAR_HIDE_LOG, ECVF_SetByConsole);
+
+		if (MarkDirty)
+			DirtyMap[Log] = true;
+	}
+
+	void Resolve();
+	void Reset();
+	void ResetDirty();
+};
+
+#pragma endregion FCsScopedGroupMap

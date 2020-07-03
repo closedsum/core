@@ -450,7 +450,7 @@ namespace NCsCVarLog
 
 #pragma endregion CVarLog
 
-// CVarLogMap
+// FCsCVarLogMap
 #pragma region
 
 void FCsCVarLogMap::Resolve()
@@ -486,9 +486,9 @@ void FCsCVarLogMap::ResetDirty()
 	}
 }
 
-#pragma endregion CVarLogMap
+#pragma endregion FCsCVarLogMap
 
-// CVarToggleMap
+// FCsCVarToggleMap
 #pragma region
 
 void FCsCVarToggleMap::Resolve()
@@ -524,9 +524,9 @@ void FCsCVarToggleMap::ResetDirty()
 	}
 }
 
-#pragma endregion CVarToggleMap
+#pragma endregion FCsCVarToggleMap
 
-// CVarDrawsMap
+// FCsCVarDrawMap
 #pragma region
 
 void FCsCVarDrawMap::Resolve()
@@ -562,4 +562,42 @@ void FCsCVarDrawMap::ResetDirty()
 	}
 }
 
-#pragma endregion CVarDrawsMap
+#pragma endregion FCsCVarDrawMap
+
+// FCsScopedGroupMap
+#pragma region
+
+void FCsScopedGroupMap::Resolve()
+{
+	for (TPair<FECsScopedGroup, TCsAutoConsoleVariable_int32>& Pair : Map)
+	{
+		const FECsScopedGroup& Key = Pair.Key;
+
+		Map[Key].Resolve();
+	}
+}
+
+void FCsScopedGroupMap::Reset()
+{
+	for (TPair<FECsScopedGroup, TCsAutoConsoleVariable_int32>& Pair : Map)
+	{
+		const FECsScopedGroup& Key = Pair.Key;
+
+		Map[Key].Set(DefaultValues[Key], ECVF_SetByConsole);
+		DirtyMap[Key] = false;
+	}
+}
+
+void FCsScopedGroupMap::ResetDirty()
+{
+	for (TPair<FECsScopedGroup, TCsAutoConsoleVariable_int32>& Pair : Map)
+	{
+		const FECsScopedGroup& Key = Pair.Key;
+
+		if (DirtyMap[Key])
+			Map[Key].Set(DefaultValues[Key], ECVF_SetByConsole);
+		DirtyMap[Key] = false;
+	}
+}
+
+#pragma endregion FCsScopedGroupMap

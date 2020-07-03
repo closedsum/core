@@ -12,6 +12,9 @@ class CSPRJ_API UCsData_ProjectileCollision : public UCsGetInterfaceMap
 	GENERATED_UINTERFACE_BODY()
 };
 
+/**
+* Interface for describing any collision associated with a Projectile.
+*/
 class CSPRJ_API ICsData_ProjectileCollision : public ICsGetInterfaceMap
 {
 	GENERATED_IINTERFACE_BODY()
@@ -26,4 +29,9 @@ public:
 	* return
 	*/
 	virtual const FCsCollisionPreset& GetCollisionPreset() const = 0;
+
+	/**
+	*
+	*/
+	virtual const float& GetCollisionRadius() const = 0;
 };

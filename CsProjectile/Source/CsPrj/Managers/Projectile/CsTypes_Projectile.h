@@ -224,8 +224,9 @@ namespace NCsProjectileData
 	typedef FECsProjectileData Type;
 
 	extern CSPRJ_API const Type Projectile;
-	extern CSPRJ_API const Type ProjectileVisual;
 	extern CSPRJ_API const Type ProjectileCollision;
+	extern CSPRJ_API const Type ProjectileStaticMeshVisual;
+	extern CSPRJ_API const Type ProjectileTrailVisual;
 }
 
 #pragma endregion ProjectileData

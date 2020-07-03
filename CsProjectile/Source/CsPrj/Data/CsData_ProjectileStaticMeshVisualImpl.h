@@ -1,15 +1,14 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "Data/CsData_ProjectileVisual.h"
+#include "Data/CsData_ProjectileStaticMeshVisual.h"
 
 struct FCsInterfaceMap;
-class UStaticMesh;
-class USkeletalMesh;
+struct FCsPrjStaticMesh;
 
 /**
 */
-struct CSPRJ_API FCsData_ProjectileVisualImpl final : public ICsData_ProjectileVisual
+struct CSPRJ_API FCsData_ProjectileStaticMeshVisualImpl final : public ICsData_ProjectileStaticMeshVisual
 {
 public:
 
@@ -21,16 +20,12 @@ private:
 
 	// ICsData_ProjectileVisual
 
-	UStaticMesh** StaticMesh;
-
-	USkeletalMesh** SkeletalMesh;
-
-	FCsFX* TrailFX;
+	FCsPrjStaticMesh* StaticMesh;
 
 public:
 
-	FCsData_ProjectileVisualImpl();
-	~FCsData_ProjectileVisualImpl();
+	FCsData_ProjectileStaticMeshVisualImpl();
+	~FCsData_ProjectileStaticMeshVisualImpl();
 
 public:
 
@@ -58,37 +53,17 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE UStaticMesh* GetStaticMesh() const 
+	FORCEINLINE const FCsPrjStaticMesh& GetStaticMesh() const 
 	{
 		return *StaticMesh;
-	}
-
-	FORCEINLINE USkeletalMesh* GetSkeletalMesh() const
-	{
-		return *SkeletalMesh;
-	}
-
-	FORCEINLINE const FCsFX& GetTrailFX() const
-	{
-		return *TrailFX;
 	}
 
 #pragma endregion ICsData_ProjectileVisual
 
 public:
 
-	FORCEINLINE void SetStaticMesh(UStaticMesh** Value)
+	FORCEINLINE void SetStaticMesh(FCsPrjStaticMesh* Value)
 	{
 		StaticMesh = Value;
-	}
-
-	FORCEINLINE void SetSkeletalMesh(USkeletalMesh** Value)
-	{
-		SkeletalMesh = Value;
-	}
-
-	FORCEINLINE void SetTrailFX(FCsFX* Value)
-	{
-		TrailFX = Value;
 	}
 };

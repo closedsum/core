@@ -301,6 +301,8 @@ void UCsManager_Projectile::SetupInternal()
 {
 	// Delegates
 	{
+		// Log
+		Internal.LogTransaction_Impl.BindUObject(this, &UCsManager_Projectile::LogTransaction);
 		// Container
 		Internal.ConstructContainer_Impl.BindUObject(this, &UCsManager_Projectile::ConstructContainer);
 		// Payload
@@ -663,6 +665,47 @@ bool UCsManager_Projectile::Destroy(ICsProjectile* Projectile)
 
 #pragma endregion Destroy
 
+	// Log
+#pragma region
+
+void UCsManager_Projectile::LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsProjectilePooled* Object)
+{
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerProjectileTransactions))
+	{
+		const FString& TransactionAsString = EMCsPoolTransaction::Get().ToString(Transaction);
+
+		ICsPooledObject* Interface  = Object->GetInterface();
+		const FString ClassName		= Object->GetObject()->GetClass()->GetName();
+		const FString ObjectName	= Object->GetObject()->GetName();
+		const UObject* ObjectOwner	= Interface->GetCache()->GetOwner();
+		const FString OwnerName		= ObjectOwner ? ObjectOwner->GetName() : NCsCached::Str::None;
+		const UObject* Parent		= Interface->GetCache()->GetParent();
+		const FString ParentName	= Parent ? Parent->GetName() : NCsCached::Str::None;
+		const float CurrentTime		= GetWorld()->GetTimeSeconds();
+
+		if (ObjectOwner && Parent)
+		{
+			UE_LOG(LogCsPrj, Warning, TEXT("%s: %s %s of Type: %s for %s attached to %s at %f."), *Context, *TransactionAsString, *ObjectName, *ClassName, *OwnerName, *ParentName, CurrentTime);
+		}
+		else 
+		if (ObjectOwner)
+		{
+			UE_LOG(LogCsPrj, Warning, TEXT("%s: %s %s of Type: %s for %s at %f."), *Context, *TransactionAsString, *ObjectName, *ClassName, *OwnerName, CurrentTime);
+		}
+		else
+		if (Parent)
+		{
+			UE_LOG(LogCsPrj, Warning, TEXT("%s: %s %s of Type: %s attached to %s at %f."), *Context, *TransactionAsString, *ObjectName, *ClassName, *ParentName, CurrentTime);
+		}
+		else
+		{
+			UE_LOG(LogCsPrj, Warning, TEXT("%s: %s %s of Type: %s at %f."), *Context, *TransactionAsString, *ObjectName, *ClassName, CurrentTime);
+		}
+	}
+}
+
+#pragma endregion Log
+
 #pragma endregion Internal
 
 // Data
@@ -735,21 +778,21 @@ void UCsManager_Projectile::CreateEmulatedDataFromDataTable(UDataTable* DataTabl
 		// GravityScale
 	UFloatProperty* GravityScaleProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Context, RowStruct, Name::GravityScale, NCsProjectileData::Projectile.GetDisplayName());
 
-	// ICsData_ProjectileVisual
-	bool Emulates_ICsData_ProjectileVisual = false;
-		// StaticMesh
-	//UStaticMesh** StaticMesh;
-		// SkeletalMesh
-	//USkeletalMesh** SkeletalMesh;
-		// TrailFX
-	//FCsFX* TrailFX;
+	// ICsData_ProjectileCollision
+	bool Emulates_ICsData_ProjectileCollision = false;
 
-	if (EmulatedDataInterfaces.Find(NCsProjectileData::ProjectileVisual))
+	// ICsData_ProjectileStaticMeshVisual
+	bool Emulates_ICsData_ProjectileStaticMeshVisual = false;
+		// StaticMesh
+	//FCsPrjStaticMesh* StaticMesh;
+
+	if (EmulatedDataInterfaces.Find(NCsProjectileData::ProjectileStaticMeshVisual))
 	{
 	}
 
-	// ICsData_ProjectileCollision
-	bool Emulates_ICsData_ProjectileCollision = false;
+	if (EmulatedDataInterfaces.Find(NCsProjectileData::ProjectileTrailVisual))
+	{
+	}
 
 		// CollisionPreset
 	UStructProperty* CollisionPresetProperty = nullptr;
@@ -815,13 +858,13 @@ void UCsManager_Projectile::CreateEmulatedDataFromDataTable(UDataTable* DataTabl
 				Data->SetGravityScale(Value);
 			}
 		}
-		// ICsData_ProjectileVisual
-		if (Emulates_ICsData_ProjectileVisual)
+		// ICsData_ProjectileCollision
+		if (Emulates_ICsData_ProjectileCollision)
 		{
 
 		}
-		// ICsData_ProjectileCollision
-		if (Emulates_ICsData_ProjectileCollision)
+		// ICsData_ProjectileStaticMeshVisual
+		if (Emulates_ICsData_ProjectileStaticMeshVisual)
 		{
 
 		}

@@ -558,6 +558,14 @@ public:
 
 #pragma endregion Destroy
 
+	// Log
+#pragma region
+protected:
+
+	void LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsProjectilePooled* Object);
+
+#pragma endregion Log
+
 #pragma endregion Internal
 
 // Pool

@@ -216,8 +216,9 @@ namespace NCsProjectileMovementFunctionType
 namespace NCsProjectileData
 {
 	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsProjectileData, Projectile, "ICsData_Projectile");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsProjectileData, ProjectileVisual, "ICsData_ProjectileVisual");
 	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsProjectileData, ProjectileCollision, "ICsData_ProjectileCollision");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsProjectileData, ProjectileStaticMeshVisual, "ICsData_ProjectileStaticMeshVisual");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsProjectileData, ProjectileTrailVisual, "ICsData_ProjectileTrailVisual");
 }
 
 #pragma endregion ProjectileData

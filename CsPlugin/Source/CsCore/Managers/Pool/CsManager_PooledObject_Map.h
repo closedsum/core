@@ -110,6 +110,7 @@ public:
 		CurrentUpdatePoolType(),
 		CurrentConstructPayloadType(),
 		ConstructPayload_Impl(),
+		LogTransaction_Impl(),
 		LogType(),
 		OnSpawn_Event(),
 		Script_GetCache_Impl(),
@@ -151,9 +152,12 @@ public:
 			const FCsManagerPooledObjectParams& ObjectParam = Pair.Value;
 
 			TManager_PooledObject_Abstract* Pool = ConstructManagerPooledObjects_Impl.Execute(Key);
+
+			Pool->LogTransaction_Impl = LogTransaction_Impl;
+
 			Pool->ConstructContainer_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructContainer_Internal);
 			Pool->ConstructPayload_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructPayload_Internal);
-			
+
 			// Bind the appropriate Script delegates.
 			Pool->Script_GetCache_Impl			= Script_GetCache_Impl;
 			Pool->Script_Allocate_Impl			= Script_Allocate_Impl;
@@ -418,6 +422,8 @@ public:
 		if (!PoolPtr)
 		{
 			Pool = ConstructManagerPooledObjects_Impl.Execute(Type);
+
+			Pool->LogTransaction_Impl = LogTransaction_Impl;
 
 			Pool->ConstructContainer_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructContainer_Internal);
 			Pool->ConstructPayload_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructPayload_Internal);
@@ -977,16 +983,13 @@ public:
 
 // Log
 #pragma region
+public:
+
+	TBaseDelegate<void, const FString& /*Context*/, const ECsPoolTransaction& /*Transaction*/, const InterfaceContainerType* /*Object*/> LogTransaction_Impl;
+
 protected:
 
-	virtual void Log(const FString& InLog){}
-
 	FECsCVarLog LogType;
-
-	virtual void LogTransaction(const FString& FunctionName, const ECsPoolTransaction& Transaction, InterfaceContainerType* O)
-	{
-
-	}
 
 #pragma endregion Log
 

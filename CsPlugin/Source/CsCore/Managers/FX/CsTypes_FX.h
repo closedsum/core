@@ -579,7 +579,7 @@ public:
 		LifeTime(0.0f),
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
-		TransformRules(1), // NCsTransformRules::All
+		TransformRules(7), // NCsTransformRules::All
 		Transform(FTransform::Identity)
 	{
 		//CS_SET_BLUEPRINT_BITFLAG(Particle_LoadFlags, ECsLoadFlags::Game);

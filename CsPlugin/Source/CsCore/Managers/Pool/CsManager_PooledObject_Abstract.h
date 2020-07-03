@@ -145,6 +145,7 @@ public:
 		PayloadSize(0),
 		PayloadIndex(0),
 		ConstructPayload_Impl(),
+		LogTransaction_Impl(),
 		LogType(),
 		OnSpawn_Event(),
 		Script_GetCache_Impl(),
@@ -873,6 +874,8 @@ protected:
 	{
 		if (AllocatedTail)
 		{
+			checkf(AllocatedHead, TEXT("%s::AddAllocatedLink: AllocatedHead is NULL when trying to add Link."), *Name);
+
 			Link->LinkAfter(AllocatedTail);
 			AllocatedTail = Link;
 		}
@@ -902,6 +905,12 @@ protected:
 				AllocatedHead = nullptr;
 				AllocatedTail = nullptr;
 			}
+		}
+		// Check to Update TAIL
+		else
+		if (Link == AllocatedTail)
+		{
+			AllocatedTail = Link->GetPrevLink();
 		}
 		Link->Unlink();
 	}
@@ -1167,7 +1176,7 @@ public:
 			if (Cache->ShouldDeallocate())
 			{
 #if !UE_BUILD_SHIPPING
-				//LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update], ECsPoolTransaction::Deallocate, O);
+				LogTransaction_Impl.Execute(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update], ECsPoolTransaction::DeallocateByQueue, O);
 #endif // #if !UE_BUILD_SHIPPING
 				O->Deallocate();
 				RemoveAllocatedLink(Current);
@@ -1180,9 +1189,7 @@ public:
 			if (!Cache->IsAllocated())
 			{
 #if !UE_BUILD_SHIPPING
-				//UE_LOG(LogCs, Warning, TEXT("%s::OnTick: %s: %s at PoolIndex: %d was prematurely deallocated NOT in a normal way."), *Name, *(ConstructParams.ClassName), *(GetObjectName(O)), O.GetCache()->GetIndex());
-
-				//LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update], ECsPoolTransaction::Deallocate, O);
+				LogTransaction_Impl.Execute(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update], ECsPoolTransaction::DeallocateByUnknown, O);
 #endif // #if !UE_BUILD_SHIPPING
 				RemoveAllocatedLink(Current);
 				continue;
@@ -1192,7 +1199,7 @@ public:
 			if (Cache->HasLifeTimeExpired())
 			{
 #if !UE_BUILD_SHIPPING
-				//LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update], ECsPoolTransaction::Deallocate, O);
+				LogTransaction_Impl.Execute(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update], ECsPoolTransaction::DeallocateByLifeTime, O);
 #endif // #if !UE_BUILD_SHIPPING
 				O->Deallocate();
 				RemoveAllocatedLink(Current);
@@ -1309,7 +1316,7 @@ public:
 		InterfaceContainerType* O						   = **Link;
 
 #if !UE_BUILD_SHIPPING
-		LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Deallocate], ECsPoolTransaction::Deallocate, O);
+		LogTransaction_Impl.Execute(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Deallocate], ECsPoolTransaction::Deallocate, O);
 #endif // #if !UE_BUILD_SHIPPING
 
 		O->Deallocate();
@@ -1359,7 +1366,7 @@ public:
 		for (InterfaceContainerType& O : AllocatedObjects)
 		{
 #if !UE_BUILD_SHIPPING
-			//LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::DeallocateAll], ECsPoolTransaction::Deallocate, O);
+			LogTransaction_Impl.Execute(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::DeallocateAll], ECsPoolTransaction::Deallocate, O);
 #endif // #if !UE_BUILD_SHIPPING
 			O.Deallocate();
 			OnDeallocate_Event.Broadcast(O);
@@ -1503,46 +1510,13 @@ public:
 
 // Log
 #pragma region
+public:
+
+	TBaseDelegate<void, const FString& /*Context*/, const ECsPoolTransaction& /*Transaction*/, const InterfaceContainerType* /*Object*/> LogTransaction_Impl;
+
 protected:
 
 	FECsCVarLog LogType;
-
-	virtual void LogTransaction(const FString& FunctionName, const ECsPoolTransaction& Transaction, const InterfaceContainerType* Object)
-	{
-		//if (FCsCVarLogMap::Get().IsShowing(LogType))
-		{
-			/*
-			const FString& TransactionAsString = NCsPoolTransaction::ToActionString(Transaction);
-
-			ICsPooledObject* Interface  = Object->GetInterface();
-			const FString ObjectName	= GetObjectName(Object);
-			const float CurrentTime		= GetCurrentTimeSeconds();
-			const UObject* ObjectOwner	= Interface->GetCache()->GetOwner();
-			const FString OwnerName		= ObjectOwner ? ObjectOwner->GetName() : NCsCached::Str::None;
-			const UObject* Parent		= Interface->GetCache()->GetParent();
-			const FString ParentName	= Parent ? Parent->GetName() : NCsCached::Str::None;
-
-			if (ObjectOwner && Parent)
-			{
-				//UE_LOG(LogCs, Warning, TEXT("%s: %s %s: %s of Type: %s at %f for %s attached to %s."), *FunctionName, *TransactionAsString, *(ConstructParams.ClassName), *ObjectName, CurrentTime, *OwnerName, *ParentName);
-			}
-			else
-			if (ObjectOwner)
-			{
-				//UE_LOG(LogCs, Warning, TEXT("%s: %s %s: %s of Type: %s at %f for %s."), *FunctionName, *TransactionAsString, *(ConstructParams.ClassName), *ObjectName, CurrentTime, *OwnerName);
-			}
-			else
-			if (Parent)
-			{
-				//UE_LOG(LogCs, Warning, TEXT("%s: %s %s: %s of Type: %s at %f attached to %s."), *FunctionName, *TransactionAsString, *(ConstructParams.ClassName), *ObjectName, CurrentTime, *ParentName);
-			}
-			else
-			{
-				//UE_LOG(LogCs, Warning, TEXT("%s: %s %s: %s of Type: %s at %f."), *FunctionName, *TransactionAsString, *(ConstructParams.ClassName), *ObjectName, CurrentTime);
-			}
-			*/
-		}
-	}
 
 #pragma endregion Log
 
@@ -1561,7 +1535,7 @@ public:
 		InterfaceContainerType* O = Allocate(Payload);
 
 #if !UE_BUILD_SHIPPING
-		LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn], ECsPoolTransaction::Allocate, O);
+		LogTransaction_Impl.Execute(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn], ECsPoolTransaction::Allocate, O);
 #endif // #if !UE_BUILD_SHIPPING
 
 		FCsInterfaceMap* InterfaceMap = Payload->GetInterfaceMap();
@@ -1594,7 +1568,7 @@ public:
 		InterfaceContainerType* O = Allocate(P);
 
 #if !UE_BUILD_SHIPPING
-		LogTransaction(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn], ECsPoolTransaction::Allocate, O)
+		LogTransaction_Impl.Execute(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn], ECsPoolTransaction::Spawn, O);
 #endif // #if !UE_BUILD_SHIPPING
 
 		// Get PooledObjectPayload

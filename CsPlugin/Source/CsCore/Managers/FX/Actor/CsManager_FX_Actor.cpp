@@ -271,6 +271,8 @@ void UCsManager_FX_Actor::SetupInternal()
 {
 	// Delegates
 	{
+		// Log
+		Internal.LogTransaction_Impl.BindUObject(this, &UCsManager_FX_Actor::LogTransaction);
 		// Container
 		Internal.ConstructContainer_Impl.BindUObject(this, &UCsManager_FX_Actor::ConstructContainer);
 		// Payload
@@ -612,6 +614,47 @@ bool UCsManager_FX_Actor::Destroy(ICsFXActorPooled* Object)
 }
 
 #pragma endregion Destroy
+
+	// Log
+#pragma region
+
+void UCsManager_FX_Actor::LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsFXActorPooled* Object)
+{
+		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerFXActorTransactions))
+	{
+		const FString& TransactionAsString = EMCsPoolTransaction::Get().ToString(Transaction);
+
+		ICsPooledObject* Interface  = Object->GetInterface();
+		const FString ClassName		= Object->GetObject()->GetClass()->GetName();
+		const FString ObjectName	= Object->GetObject()->GetName();
+		const UObject* ObjectOwner	= Interface->GetCache()->GetOwner();
+		const FString OwnerName		= ObjectOwner ? ObjectOwner->GetName() : NCsCached::Str::None;
+		const UObject* Parent		= Interface->GetCache()->GetParent();
+		const FString ParentName	= Parent ? Parent->GetName() : NCsCached::Str::None;
+		const float CurrentTime		= GetWorld()->GetTimeSeconds();
+
+		if (ObjectOwner && Parent)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s %s of Type: %s for %s attached to %s at %f."), *Context, *TransactionAsString, *ObjectName, *ClassName, *OwnerName, *ParentName, CurrentTime);
+		}
+		else 
+		if (ObjectOwner)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s %s of Type: %s for %s at %f."), *Context, *TransactionAsString, *ObjectName, *ClassName, *OwnerName, CurrentTime);
+		}
+		else
+		if (Parent)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s %s of Type: %s attached to %s at %f."), *Context, *TransactionAsString, *ObjectName, *ClassName, *ParentName, CurrentTime);
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s %s of Type: %s at %f."), *Context, *TransactionAsString, *ObjectName, *ClassName, CurrentTime);
+		}
+	}
+}
+
+#pragma endregion Log
 
 #pragma endregion Internal
 

@@ -18,6 +18,15 @@ FCsManagerPooledObjectParams::FCsManagerPooledObjectParams() :
 	bConstructPayloads(false),
 	PayloadSize(0),
 	bCreatePool(false),
-	PoolSize(0)
+	PoolSize(0),
+	CreatePoolScopedTimerCVar(),
+	UpdateScopedTimerCVar(),
+	UpdateObjectScopedTimerCVar(),
+	AllocateScopedTimerCVar(),
+	AllocateObjectScopedTimerCVar(),
+	DeallocateScopedTimerCVar(),
+	DeallocateObjectScopedTimerCVar(),
+	SpawnScopedTimerCVar(),
+	DestroyScopedTimerCVar()
 {
 }

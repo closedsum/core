@@ -417,6 +417,26 @@ void UCsManager_Projectile::InitInternalFromSettings()
 
 void UCsManager_Projectile::InitInternal(const FCsManager_Projectile_Internal::FCsManagerPooledObjectMapParams& Params)
 {
+	// Add CVars
+	{
+		FCsManager_Projectile_Internal::FCsManagerPooledObjectMapParams& P = const_cast<FCsManager_Projectile_Internal::FCsManagerPooledObjectMapParams&>(Params);
+
+		for (TPair<FECsProjectile, FCsManagerPooledObjectParams>& Pair : P.ObjectParams)
+		{
+			FCsManagerPooledObjectParams& ObjectParams = Pair.Value;
+
+			// Scoped Timer CVars
+			ObjectParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerProjectileScopedTimerCreatePool;
+			ObjectParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerProjectileScopedTimerUpdate;
+			ObjectParams.UpdateObjectScopedTimerCVar	= NCsCVarLog::LogManagerProjectileScopedTimerUpdateObject;
+			ObjectParams.AllocateScopedTimerCVar		= NCsCVarLog::LogManagerProjectileScopedTimerAllocate;
+			ObjectParams.AllocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerProjectileScopedTimerAllocateObject;
+			ObjectParams.DeallocateScopedTimerCVar		= NCsCVarLog::LogManagerProjectileScopedTimerDeallocate;
+			ObjectParams.DeallocateObjectScopedTimerCVar = NCsCVarLog::LogManagerProjectileScopedTimerDeallocateObject;
+			ObjectParams.SpawnScopedTimerCVar			= NCsCVarLog::LogManagerProjectileScopedTimerSpawn;
+			ObjectParams.DestroyScopedTimerCVar			= NCsCVarLog::LogManagerProjectileScopedTimerDestroy;
+		}
+	}
 	Internal.Init(Params);
 }
 

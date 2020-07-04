@@ -398,16 +398,22 @@ namespace NCsCVarLog
 struct CSCORE_API FCsCVarLogMap : public ICsCVarMap
 {
 protected:
-	FCsCVarLogMap() {}
+	FCsCVarLogMap() :
+		Map(),
+		DefaultValues(),
+		DirtyMap(),
+		Num(0)
+	{
+	}
 	FCsCVarLogMap(const FCsCVarLogMap &) = delete;
 	FCsCVarLogMap(FCsCVarLogMap &&) = delete;
 public:
 	virtual ~FCsCVarLogMap() {}
 private:
-	TMap<FECsCVarLog, TCsAutoConsoleVariable_int32> Map;
-	TMap<FECsCVarLog, int32> DefaultValues;
-	TMap<FECsCVarLog, bool> DirtyMap;
-
+	TArray<TCsAutoConsoleVariable_int32> Map;
+	TArray<int32> DefaultValues;
+	TArray<bool> DirtyMap;
+	int32 Num;
 public:
 	static FCsCVarLogMap& Get()
 	{
@@ -419,42 +425,51 @@ public:
 
 	FORCEINLINE const FECsCVarLog& Add(const FECsCVarLog& Log, TAutoConsoleVariable<int32>* CVar)
 	{
-		Map.Add(Log);
-		Map[Log].Init(CVar);
-		DefaultValues.Add(Log, GetValue(Log));
-		DirtyMap.Add(Log, false);
+		const int32 Index = Log.GetValue();
+
+		for (int32 I = Num - 1; I < Index; ++I)
+		{
+			Map.AddDefaulted();
+			DefaultValues.AddDefaulted();
+			DirtyMap.AddDefaulted();
+			++Num;
+		}
+
+		Map[Index].Init(CVar);
+		DefaultValues[Index] = GetValue(Log);
+		DirtyMap[Index] = false;
 		return Log;
 	}
 
 	FORCEINLINE int32 GetValue(const FECsCVarLog& Log)
 	{
-		return Map[Log].Get();
+		return Map[Log.GetValue()].Get();
 	}
 
 	FORCEINLINE bool IsShowing(const FECsCVarLog& Log)
 	{
-		return Map[Log].Get() == CS_CVAR_SHOW_LOG;
+		return Map[Log.GetValue()].Get() == CS_CVAR_SHOW_LOG;
 	}
 
 	FORCEINLINE bool IsHiding(const FECsCVarLog& Log)
 	{
-		return Map[Log].Get() == CS_CVAR_HIDE_LOG;
+		return Map[Log.GetValue()].Get() == CS_CVAR_HIDE_LOG;
 	}
 
 	FORCEINLINE void Show(const FECsCVarLog& Log, bool MarkDirty = false)
 	{
-		Map[Log].Set(CS_CVAR_SHOW_LOG, ECVF_SetByConsole);
+		Map[Log.GetValue()].Set(CS_CVAR_SHOW_LOG, ECVF_SetByConsole);
 
 		if (MarkDirty)
-			DirtyMap[Log] = true;
+			DirtyMap[Log.GetValue()] = true;
 	}
 
 	FORCEINLINE void Hide(const FECsCVarLog& Log, bool MarkDirty = false)
 	{
-		Map[Log].Set(CS_CVAR_HIDE_LOG, ECVF_SetByConsole);
+		Map[Log.GetValue()].Set(CS_CVAR_HIDE_LOG, ECVF_SetByConsole);
 
 		if (MarkDirty)
-			DirtyMap[Log] = true;
+			DirtyMap[Log.GetValue()] = true;
 	}
 
 	void Resolve();

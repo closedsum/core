@@ -455,34 +455,28 @@ namespace NCsCVarLog
 
 void FCsCVarLogMap::Resolve()
 {
-	for (TPair<FECsCVarLog, TCsAutoConsoleVariable_int32>& Pair : Map)
+	for (TCsAutoConsoleVariable_int32& Var : Map)
 	{
-		const FECsCVarLog& Key = Pair.Key;
-
-		Map[Key].Resolve();
+		Var.Resolve();
 	}
 }
 
 void FCsCVarLogMap::Reset()
 {
-	for (TPair<FECsCVarLog, TCsAutoConsoleVariable_int32>& Pair : Map)
+	for (int32 I = 0; I < Num; ++I)
 	{
-		const FECsCVarLog& Key = Pair.Key;
-
-		Map[Key].Set(DefaultValues[Key], ECVF_SetByConsole);
-		DirtyMap[Key] = false;
+		Map[I].Set(DefaultValues[I], ECVF_SetByConsole);
+		DirtyMap[I] = false;
 	}
 }
 
 void FCsCVarLogMap::ResetDirty()
 {
-	for (TPair<FECsCVarLog, TCsAutoConsoleVariable_int32>& Pair : Map)
+	for (int32 I = 0; I < Num; ++I)
 	{
-		const FECsCVarLog& Key = Pair.Key;
-
-		if (DirtyMap[Key])
-			Map[Key].Set(DefaultValues[Key], ECVF_SetByConsole);
-		DirtyMap[Key] = false;
+		if (DirtyMap[I])
+			Map[I].Set(DefaultValues[I], ECVF_SetByConsole);
+		DirtyMap[I] = false;
 	}
 }
 

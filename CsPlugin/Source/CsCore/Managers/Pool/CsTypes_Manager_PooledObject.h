@@ -10,6 +10,8 @@ class UWorld;
 class UObject;
 class UClass;
 
+/**
+*/
 struct CSCORE_API FCsManagerPooledObjectConstructParams
 {
 public:
@@ -32,6 +34,8 @@ public:
 // FCsManagerPooledObjectParams
 #pragma region
 
+/**
+*/
 struct CSCORE_API FCsManagerPooledObjectParams
 {
 public:
@@ -39,26 +43,47 @@ public:
 	/** */
 	FString Name;
 
-	/** */
+	/** World associated with the Manager. */
 	UWorld* World;
 
 	/** */
 	FECsCVarLog LogType;
 
-	/** */
+	/** Parameters for describing how to Construct a Pooled Object. */
 	FCsManagerPooledObjectConstructParams ConstructParams;
 
-	/** */
+	/** Whether to Construct the Payloads on Init. */
 	bool bConstructPayloads;
 
-	/** */
+	/** Number of Payloads to Construct if bConstructPayloads is true. */
 	int32 PayloadSize;
 
-	/** */
+	/** Whether to Create a Pool on Init. */
 	bool bCreatePool;
 
-	/** */
+	/** Size of the Pool to create if bCreatePool is true. */
 	int32 PoolSize;
+
+	// Scoped Timer
+
+	/** Scoped Timer for CreatePool */
+	FECsCVarLog CreatePoolScopedTimerCVar;
+	/** Scoped Timer for Update */
+	FECsCVarLog UpdateScopedTimerCVar;
+	/** Scoped Timer for Updating a single Object */
+	FECsCVarLog UpdateObjectScopedTimerCVar;
+	/** Scoped Timer for Allocate */
+	FECsCVarLog AllocateScopedTimerCVar;
+	/** Scoped Timer for PooledObject->Allocate */
+	FECsCVarLog AllocateObjectScopedTimerCVar;
+	/** Scoped Timer for Deallocate */
+	FECsCVarLog DeallocateScopedTimerCVar;
+	/** Scoped Timer for PooledObject->Deallocate */
+	FECsCVarLog DeallocateObjectScopedTimerCVar;
+	/** Scoped Timer for Spawn */
+	FECsCVarLog SpawnScopedTimerCVar;
+	/** Scoped Timer for Destroy */
+	FECsCVarLog DestroyScopedTimerCVar;
 
 	FCsManagerPooledObjectParams();
 };

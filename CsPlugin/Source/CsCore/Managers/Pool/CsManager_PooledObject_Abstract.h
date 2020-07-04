@@ -7,6 +7,7 @@
 #include "Managers/Pool/CsTypes_Manager_PooledObject.h"
 #include "Containers/CsDoubleLinkedList.h"
 #include "GameFramework/Actor.h"
+#include "Managers/ScopedTimer/CsManager_ScopedTimer.h"
 
 // ICsManager_PooledObject
 #pragma region
@@ -99,6 +100,19 @@ enum class ECsManagerPooledObjectFunctionNames : uint8
 	AllocatePayload,
 	Spawn,
 	ECsManagerPooledObjectFunctionNames_MAX,
+};
+
+enum class ECsManagerPooledObjectScopedTimerNames : uint8
+{
+	Update,
+	UpdateObject,
+	Allocate,
+	AllocateObject,
+	Deallocate,
+	DeallocateObject,
+	Spawn,
+	Destroy,
+	ECsManagerPooledObjectScopedTimerNames_MAX,
 };
 
 #pragma endregion Enums
@@ -202,13 +216,63 @@ public:
 		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::AllocatePayload] = Name + TEXT("::AllocatePayload");
 		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn]		   = Name + TEXT("::Spawn");
 
+		// Set Scoped Timer CVars
+		ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::Update]			= Name + TEXT("_Update");
+		ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::UpdateObject]	= Name + TEXT("_UpdateObject");
+		ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::Allocate]		= Name + TEXT("_Allocate");
+		ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::AllocateObject] = Name + TEXT("_AllocateObject");
+		ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::Deallocate]		= Name + TEXT("_Deallocate");
+		ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::DeallocateObject] = Name + TEXT("_DeallocateObject");
+		ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::Spawn]			= Name + TEXT("_Spawn");
+		ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::Destroy]		= Name + TEXT("_Destroy");
+
+		UpdateScopedTimerCVar			= Params.UpdateScopedTimerCVar;
+		UpdateObjectScopedTimerCVar		= Params.UpdateObjectScopedTimerCVar;
+		AllocateScopedTimerCVar			= Params.AllocateScopedTimerCVar;
+		AllocateObjectScopedTimerCVar	= Params.AllocateObjectScopedTimerCVar;
+		DeallocateScopedTimerCVar		= Params.DeallocateScopedTimerCVar;
+		DeallocateObjectScopedTimerCVar = Params.DeallocateObjectScopedTimerCVar;
+		DeallocateObjectScopedTimerCVar = Params.DeallocateObjectScopedTimerCVar;
+		SpawnScopedTimerCVar			= Params.SpawnScopedTimerCVar;
+		DestroyScopedTimerCVar			= Params.DestroyScopedTimerCVar;
+		/*
+	FCsScopedTimerHandle UpdateScopedTimerHandle;
+	FECsCVarLog UpdateScopedTimerCVar;
+
+	FCsScopedTimerHandle UpdateObjectScopedTimerHandle;
+	FECsCVarLog UpdateObjectScopedTimerCVar;
+
+	FCsScopedTimerHandle AllocateScopedTimerHandle;
+	FECsCVarLog AllocateScopedTimerCVar;
+
+	FCsScopedTimerHandle AllocateObjectScopedTimerHandle;
+	FECsCVarLog AllocateObjectScopedTimerCVar;
+
+	FCsScopedTimerHandle DeallocateScopedTimerHandle;
+	FECsCVarLog DeallocateScopedTimerCVar;
+
+	FCsScopedTimerHandle DeallocateObjectScopedTimerHandle;
+	FECsCVarLog DeallocateObjectScopedTimerCVar;
+
+	FCsScopedTimerHandle SpawnScopedTimerHandle;
+	FECsCVarLog SpawnScopedTimerCVar;
+
+	FCsScopedTimerHandle DestroyScopedTimerHandle;
+	FECsCVarLog DestroyScopedTimerCVar;
+		*/
+
+		// Scoped Timers
+		//CS_GET_SCOPED_TIMER_HANDLE(CreatePoolScopedTimerHandle, &Name, CreatePoolScopedTimerCVar);
+		//CS_GET_SCOPED_TIMER_HANDLE(UpdateObjectScopedTimerHandle, &Name, UpdateObjectScopedTimerCVar);
+
+		// Check to Construct Payloads
 		if (Params.bConstructPayloads)
 		{
 			checkf(Params.PayloadSize > 0, TEXT("%s::Init: PayloadSize must be GREATER THAN 0."), *Name);
 
 			ConstructPayloads(Params.PayloadSize);
 		}
-
+		// Check to Create Pool
 		if (Params.bCreatePool)
 		{
 			checkf(Params.PoolSize > 0, TEXT("%s::Init: PoolSize must be GREATER THAN 0."), *Name);
@@ -289,6 +353,10 @@ public:
 		}
 
 		OnUpdate_Object_Event.Clear();
+
+		// Scoped Timer
+		//CS_CLEAR_SCOPED_TIMER_HANDLE(CreatePoolScopedTimerHandle);
+		//CS_CLEAR_SCOPED_TIMER_HANDLE(UpdateObjectScopedTimerHandle);
 	}
 
 	/** */
@@ -1654,4 +1722,40 @@ public:
 	FCsPooledObject::FScript_OnConstructObject Script_OnConstructObject_Impl;
 
 #pragma endregion Script
+
+// Scoped Timer
+#pragma region
+protected:
+
+	/** */
+	FString ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::ECsManagerPooledObjectScopedTimerNames_MAX];
+
+	FCsScopedTimerHandle CreatePoolScopedTimerHandle;
+	FECsCVarLog CreatePoolScopedTimerCVar;
+
+	FCsScopedTimerHandle UpdateScopedTimerHandle;
+	FECsCVarLog UpdateScopedTimerCVar;
+
+	FCsScopedTimerHandle UpdateObjectScopedTimerHandle;
+	FECsCVarLog UpdateObjectScopedTimerCVar;
+
+	FCsScopedTimerHandle AllocateScopedTimerHandle;
+	FECsCVarLog AllocateScopedTimerCVar;
+
+	FCsScopedTimerHandle AllocateObjectScopedTimerHandle;
+	FECsCVarLog AllocateObjectScopedTimerCVar;
+
+	FCsScopedTimerHandle DeallocateScopedTimerHandle;
+	FECsCVarLog DeallocateScopedTimerCVar;
+
+	FCsScopedTimerHandle DeallocateObjectScopedTimerHandle;
+	FECsCVarLog DeallocateObjectScopedTimerCVar;
+
+	FCsScopedTimerHandle SpawnScopedTimerHandle;
+	FECsCVarLog SpawnScopedTimerCVar;
+
+	FCsScopedTimerHandle DestroyScopedTimerHandle;
+	FECsCVarLog DestroyScopedTimerCVar;
+
+#pragma endregion Scoped Timer
 };

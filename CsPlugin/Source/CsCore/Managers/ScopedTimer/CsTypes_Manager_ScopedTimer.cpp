@@ -15,11 +15,13 @@ const FCsScopedTimerHandle FCsScopedTimerHandle::Invalid;
 FCsScopedTimer::FCsScopedTimer() :
 	Handle(),
 	Name(nullptr),
+	Group(nullptr),
 	CVar(nullptr),
 	Time(0.0),
 	AvgTime(0.0),
 	TotalTime(0.0),
-	Ticks(0)
+	Ticks(0),
+	bDirty(false)
 {
 }
 
@@ -30,7 +32,9 @@ FCsScopedTimer::~FCsScopedTimer()
 
 void FCsScopedTimer::Init(const FString* InName, const FECsCVarLog* InCVar)
 {
-	checkf(CVar, TEXT("FCsScopedTimer::Init: CVar is NULL."));
+	checkf(InName, TEXT("FCsScopedTimer::Init: InName is NULL."));
+
+	checkf(InCVar, TEXT("FCsScopedTimer::Init: InCVar is NULL."));
 
 	Name = const_cast<FString*>(InName);
 	CVar = const_cast<FECsCVarLog*>(InCVar);
@@ -60,6 +64,8 @@ void FCsScopedTimer::Reset()
 	TotalTime = 0.0;
 
 	Ticks = 0;
+
+	bDirty = false;
 }
 
 void FCsScopedTimer::Log()
@@ -88,3 +94,40 @@ FCsScopedTimerInternal::~FCsScopedTimerInternal()
 }
 
 #pragma endregion FCsScopedTimerInternal
+
+// FCsScopedGroupTimer
+#pragma region
+
+void FCsScopedGroupTimer::Init(const FECsScopedGroup* InGroup)
+{
+	Group = const_cast<FECsScopedGroup*>(InGroup);
+}
+
+void FCsScopedGroupTimer::Add(const FCsScopedTimer& Timer)
+{
+	if (!bDirty)
+	{
+		Time = 0.0;
+
+		++Ticks;
+
+		bDirty = true;
+	}
+
+	Time += Timer.Time;
+}
+
+void FCsScopedGroupTimer::Resolve()
+{
+	AvgTime = (AvgTime + Time) / Ticks;
+}
+
+void FCsScopedGroupTimer::Log()
+{
+	if (FCsScopedGroupMap::Get().IsShowing(*Group))
+	{
+		UE_LOG(LogCs, Log, TEXT("%s: Time: %f AvgTime: %f Ticks: %d"), Group->DisplayNameToChar(), (float)Time, (float)AvgTime, Ticks);
+	}
+}
+
+#pragma endregion FCsScopedGroupTimer

@@ -39,6 +39,8 @@ public:
 
 	FCsManager_ScopedTimer_Internal Internal;
 
+	TArray<FCsScopedGroupTimer> GroupTimers;
+
 	const FCsScopedTimerHandle& GetHandle(const FString* Name, const FECsCVarLog* CVar);
 
 	void ClearHandle(const FCsScopedTimerHandle& Handle);

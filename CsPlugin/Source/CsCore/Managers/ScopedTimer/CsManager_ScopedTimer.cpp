@@ -2,12 +2,30 @@
 #include "Managers/ScopedTimer/CsManager_ScopedTimer.h"
 #include "CsCore.h"
 
-FCsManager_ScopedTimer::FCsManager_ScopedTimer()
+// CVars
+#include "CsCVars.h"
+
+FCsManager_ScopedTimer::FCsManager_ScopedTimer() :
+	Internal(),
+	GroupTimers()
 {
+	// Set Index values for Resources
 	for (FCsResource_ScopedTimer* Container : Internal.GetPool())
 	{
 		FCsScopedTimer* Resource = Container->Get();
 		Resource->Handle.Index   = Container->GetIndex();
+	}
+	// Initialize GroupTimers
+	{
+		const int32& Count = EMCsScopedGroup::Get().Num();
+
+		GroupTimers.Reserve(Count);
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			GroupTimers.AddDefaulted();
+			GroupTimers.Last().Init(&(EMCsScopedGroup::Get().GetEnumAt(I)));
+		}
 	}
 }
 
@@ -24,8 +42,9 @@ FCsManager_ScopedTimer::~FCsManager_ScopedTimer()
 
 void FCsManager_ScopedTimer::Update(const FCsDeltaTime& DeltaTime)
 {
+	// Scope Timers
 	TCsDoubleLinkedList<FCsResource_ScopedTimer*>* Current = Internal.GetAllocatedHead();
-	TCsDoubleLinkedList<FCsResource_ScopedTimer*>* Next = Current;
+	TCsDoubleLinkedList<FCsResource_ScopedTimer*>* Next	   = Current;
 
 	while (Next)
 	{
@@ -35,7 +54,29 @@ void FCsManager_ScopedTimer::Update(const FCsDeltaTime& DeltaTime)
 
 		FCsScopedTimer* R = Container->Get();
 
-		R->Log();
+		if (R->IsDirty())
+		{
+			R->Log();
+			R->MarkDirty();
+
+			// Update Group Timer
+			/*
+			const FECsScopedGroup& Group = R->GetGroup();
+
+			GroupTimers[Group.GetValue()].Add(*R);
+			*/
+		}
+	}
+
+	// Group Timers
+	for (FCsScopedGroupTimer& G : GroupTimers)
+	{
+		if (G.IsDirty())
+		{
+			G.Resolve();
+			G.Log();
+			G.ClearDirty();
+		}
 	}
 }
 
@@ -92,4 +133,5 @@ void FCsManager_ScopedTimer::UpdateHandle(FCsScopedTimerHandle& Handle, double T
 	checkf(ScopedTimer, TEXT("FCsManager_ScopedTimer::UpdateHandle: ScopedTimer is NULL."));
 
 	ScopedTimer->SetTime(Time);
+	ScopedTimer->MarkDirty();
 }

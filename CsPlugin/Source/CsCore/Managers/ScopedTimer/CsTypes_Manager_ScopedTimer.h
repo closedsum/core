@@ -4,6 +4,8 @@
 // FCsScopedTimerHandle
 #pragma region
 
+/**
+*/
 struct CSCORE_API FCsScopedTimerHandle
 {
 public:
@@ -60,8 +62,11 @@ public:
 // FCsScopedTimer
 #pragma region
 
+struct FECsScopedGroup;
 struct FECsCVarLog;
 
+/**
+*/
 struct CSCORE_API FCsScopedTimer
 {
 public:
@@ -69,6 +74,8 @@ public:
 	FCsScopedTimerHandle Handle;
 
 	FString* Name;
+
+	FECsScopedGroup* Group;
 
 	FECsCVarLog* CVar;
 
@@ -78,12 +85,34 @@ public:
 
 	int32 Ticks;
 
+	bool bDirty;
+
 	FCsScopedTimer();
 	~FCsScopedTimer();
 
 	void Init(const FString* InName, const FECsCVarLog* InCVar);
 
+	FORCEINLINE const FECsScopedGroup& GetGroup() const 
+	{
+		return *Group;
+	}
+
 	void SetTime(const double& InTime);
+
+	FORCEINLINE void MarkDirty()
+	{
+		bDirty = true;
+	}
+
+	FORCEINLINE void ClearDirty()
+	{
+		bDirty = false;
+	}
+
+	FORCEINLINE bool IsDirty() const
+	{
+		return bDirty;
+	}
 
 	void Reset();
 
@@ -95,6 +124,8 @@ public:
 // FCsScopedTimerInternal
 #pragma region
 
+/**
+*/
 struct CSCORE_API FCsScopedTimerInternal
 {
 public:
@@ -108,6 +139,56 @@ public:
 };
 
 #pragma endregion FCsScopedTimerInternal
+
+// FCsScopedGroupTimer
+#pragma region
+
+struct FECsScopedGroup;
+
+/**
+*/
+struct CSCORE_API FCsScopedGroupTimer
+{
+public:
+
+	FECsScopedGroup* Group;
+
+	double Time;
+	double AvgTime;
+
+	int32 Ticks;
+
+	bool bDirty;
+
+	FCsScopedGroupTimer() :
+		Group(nullptr),
+		Time(0.0),
+		AvgTime(0.0),
+		Ticks(0),
+		bDirty(false)
+	{
+	}
+
+	void Init(const FECsScopedGroup* InGroup);
+
+	FORCEINLINE void ClearDirty()
+	{
+		bDirty = false;
+	}
+
+	FORCEINLINE bool IsDirty() const
+	{
+		return bDirty;
+	}
+
+	void Add(const FCsScopedTimer& Timer);
+
+	void Resolve();
+
+	void Log();
+};
+
+#pragma endregion FCsScopedGroupTimer
 
 #if !UE_BUILD_SHIPPING
 #define CS_GET_SCOPED_TIMER_HANDLE(Handle, Name, CVar) Handle = FCsManager_ScopedTimer::Get().GetHandle((Name), (&(CVar)))

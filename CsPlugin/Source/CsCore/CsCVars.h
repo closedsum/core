@@ -644,16 +644,22 @@ namespace NCsCVarDraw
 struct CSCORE_API FCsCVarDrawMap : ICsCVarMap
 {
 protected:
-	FCsCVarDrawMap() {}
+	FCsCVarDrawMap() :
+		Map(),
+		DefaultValues(),
+		DirtyMap(),
+		Num(0)
+	{
+	}
 	FCsCVarDrawMap(const FCsCVarDrawMap &) = delete;
 	FCsCVarDrawMap(FCsCVarDrawMap &&) = delete;
 public:
 	virtual ~FCsCVarDrawMap() {}
 private:
-	TMap<FECsCVarDraw, TCsAutoConsoleVariable_int32> Map;
-	TMap<FECsCVarDraw, int32> DefaultValues;
-	TMap<FECsCVarDraw, bool> DirtyMap;
-
+	TArray<TCsAutoConsoleVariable_int32> Map;
+	TArray<int32> DefaultValues;
+	TArray<bool> DirtyMap;
+	int32 Num;
 public:
 	static FCsCVarDrawMap& Get()
 	{
@@ -665,42 +671,51 @@ public:
 
 	FORCEINLINE const FECsCVarDraw& Add(const FECsCVarDraw& Draw, TAutoConsoleVariable<int32>* CVar)
 	{
-		Map.Add(Draw);
-		Map[Draw].Init(CVar);
-		DefaultValues.Add(Draw, GetValue(Draw));
-		DirtyMap.Add(Draw, false);
+		const int32 Index = Draw.GetValue();
+
+		for (int32 I = Num - 1; I < Index; ++I)
+		{
+			Map.AddDefaulted();
+			DefaultValues.AddDefaulted();
+			DirtyMap.AddDefaulted();
+			++Num;
+		}
+
+		Map[Index].Init(CVar);
+		DefaultValues[Index] = GetValue(Draw);
+		DirtyMap[Index] = false;
 		return Draw;
 	}
 
 	FORCEINLINE int32 GetValue(const FECsCVarDraw& Draw)
 	{
-		return Map[Draw].Get();
+		return Map[Draw.GetValue()].Get();
 	}
 
 	FORCEINLINE bool IsDrawing(const FECsCVarDraw& Draw)
 	{
-		return Map[Draw].Get() == CS_CVAR_DRAW;
+		return Map[Draw.GetValue()].Get() == CS_CVAR_DRAW;
 	}
 
 	FORCEINLINE bool IsHiding(const FECsCVarDraw& Draw)
 	{
-		return Map[Draw].Get() == CS_CVAR_HIDE;
+		return Map[Draw.GetValue()].Get() == CS_CVAR_HIDE;
 	}
 
 	FORCEINLINE void Draw(const FECsCVarDraw& Draw, bool MarkDirty = false)
 	{
-		Map[Draw].Set(CS_CVAR_DRAW, ECVF_SetByConsole);
+		Map[Draw.GetValue()].Set(CS_CVAR_DRAW, ECVF_SetByConsole);
 
 		if (MarkDirty)
-			DirtyMap[Draw] = true;
+			DirtyMap[Draw.GetValue()] = true;
 	}
 
 	FORCEINLINE void Hide(const FECsCVarDraw& Draw, bool MarkDirty = false)
 	{
-		Map[Draw].Set(CS_CVAR_HIDE, ECVF_SetByConsole);
+		Map[Draw.GetValue()].Set(CS_CVAR_HIDE, ECVF_SetByConsole);
 
 		if (MarkDirty)
-			DirtyMap[Draw] = true;
+			DirtyMap[Draw.GetValue()] = true;
 	}
 
 	void Resolve();
@@ -741,16 +756,22 @@ namespace NCsScopedGroup
 struct CSCORE_API FCsScopedGroupMap : public ICsCVarMap
 {
 protected:
-	FCsScopedGroupMap() {}
+	FCsScopedGroupMap() :
+		Map(),
+		DefaultValues(),
+		DirtyMap(),
+		Num(0)
+	{
+	}
 	FCsScopedGroupMap(const FCsScopedGroupMap &) = delete;
 	FCsScopedGroupMap(FCsScopedGroupMap &&) = delete;
 public:
 	virtual ~FCsScopedGroupMap() {}
 private:
-	TMap<FECsScopedGroup, TCsAutoConsoleVariable_int32> Map;
-	TMap<FECsScopedGroup, int32> DefaultValues;
-	TMap<FECsScopedGroup, bool> DirtyMap;
-
+	TArray<TCsAutoConsoleVariable_int32> Map;
+	TArray<int32> DefaultValues;
+	TArray<bool> DirtyMap;
+	int32 Num;
 public:
 	static FCsScopedGroupMap& Get()
 	{
@@ -762,42 +783,51 @@ public:
 
 	FORCEINLINE const FECsScopedGroup& Add(const FECsScopedGroup& Log, TAutoConsoleVariable<int32>* CVar)
 	{
-		Map.Add(Log);
-		Map[Log].Init(CVar);
-		DefaultValues.Add(Log, GetValue(Log));
-		DirtyMap.Add(Log, false);
+		const int32 Index = Log.GetValue();
+
+		for (int32 I = Num - 1; I < Index; ++I)
+		{
+			Map.AddDefaulted();
+			DefaultValues.AddDefaulted();
+			DirtyMap.AddDefaulted();
+			++Num;
+		}
+
+		Map[Index].Init(CVar);
+		DefaultValues[Index] = GetValue(Log);
+		DirtyMap[Index] = false;
 		return Log;
 	}
 
 	FORCEINLINE int32 GetValue(const FECsScopedGroup& Log)
 	{
-		return Map[Log].Get();
+		return Map[Log.GetValue()].Get();
 	}
 
 	FORCEINLINE bool IsShowing(const FECsScopedGroup& Log)
 	{
-		return Map[Log].Get() == CS_CVAR_SHOW_LOG;
+		return Map[Log.GetValue()].Get() == CS_CVAR_SHOW_LOG;
 	}
 
 	FORCEINLINE bool IsHiding(const FECsScopedGroup& Log)
 	{
-		return Map[Log].Get() == CS_CVAR_HIDE_LOG;
+		return Map[Log.GetValue()].Get() == CS_CVAR_HIDE_LOG;
 	}
 
 	FORCEINLINE void Show(const FECsScopedGroup& Log, bool MarkDirty = false)
 	{
-		Map[Log].Set(CS_CVAR_SHOW_LOG, ECVF_SetByConsole);
+		Map[Log.GetValue()].Set(CS_CVAR_SHOW_LOG, ECVF_SetByConsole);
 
 		if (MarkDirty)
-			DirtyMap[Log] = true;
+			DirtyMap[Log.GetValue()] = true;
 	}
 
 	FORCEINLINE void Hide(const FECsScopedGroup& Log, bool MarkDirty = false)
 	{
-		Map[Log].Set(CS_CVAR_HIDE_LOG, ECVF_SetByConsole);
+		Map[Log.GetValue()].Set(CS_CVAR_HIDE_LOG, ECVF_SetByConsole);
 
 		if (MarkDirty)
-			DirtyMap[Log] = true;
+			DirtyMap[Log.GetValue()] = true;
 	}
 
 	void Resolve();

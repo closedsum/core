@@ -519,34 +519,28 @@ void FCsCVarToggleMap::ResetDirty()
 
 void FCsCVarDrawMap::Resolve()
 {
-	for (TPair<FECsCVarDraw, TCsAutoConsoleVariable_int32>& Pair : Map)
+	for (TCsAutoConsoleVariable_int32& Var : Map)
 	{
-		const FECsCVarDraw& Key = Pair.Key;
-
-		Map[Key].Resolve();
+		Var.Resolve();
 	}
 }
 
 void FCsCVarDrawMap::Reset()
 {
-	for (TPair<FECsCVarDraw, TCsAutoConsoleVariable_int32>& Pair : Map)
+	for (int32 I = 0; I < Num; ++I)
 	{
-		const FECsCVarDraw& Key = Pair.Key;
-
-		Map[Key].Set(DefaultValues[Key], ECVF_SetByConsole);
-		DirtyMap[Key] = false;
+		Map[I].Set(DefaultValues[I], ECVF_SetByConsole);
+		DirtyMap[I] = false;
 	}
 }
 
 void FCsCVarDrawMap::ResetDirty()
 {
-	for (TPair<FECsCVarDraw, TCsAutoConsoleVariable_int32>& Pair : Map)
+	for (int32 I = 0; I < Num; ++I)
 	{
-		const FECsCVarDraw& Key = Pair.Key;
-
-		if (DirtyMap[Key])
-			Map[Key].Set(DefaultValues[Key], ECVF_SetByConsole);
-		DirtyMap[Key] = false;
+		if (DirtyMap[I])
+			Map[I].Set(DefaultValues[I], ECVF_SetByConsole);
+		DirtyMap[I] = false;
 	}
 }
 
@@ -557,34 +551,28 @@ void FCsCVarDrawMap::ResetDirty()
 
 void FCsScopedGroupMap::Resolve()
 {
-	for (TPair<FECsScopedGroup, TCsAutoConsoleVariable_int32>& Pair : Map)
+	for (TCsAutoConsoleVariable_int32& Var : Map)
 	{
-		const FECsScopedGroup& Key = Pair.Key;
-
-		Map[Key].Resolve();
+		Var.Resolve();
 	}
 }
 
 void FCsScopedGroupMap::Reset()
 {
-	for (TPair<FECsScopedGroup, TCsAutoConsoleVariable_int32>& Pair : Map)
+	for (int32 I = 0; I < Num; ++I)
 	{
-		const FECsScopedGroup& Key = Pair.Key;
-
-		Map[Key].Set(DefaultValues[Key], ECVF_SetByConsole);
-		DirtyMap[Key] = false;
+		Map[I].Set(DefaultValues[I], ECVF_SetByConsole);
+		DirtyMap[I] = false;
 	}
 }
 
 void FCsScopedGroupMap::ResetDirty()
 {
-	for (TPair<FECsScopedGroup, TCsAutoConsoleVariable_int32>& Pair : Map)
+	for (int32 I = 0; I < Num; ++I)
 	{
-		const FECsScopedGroup& Key = Pair.Key;
-
-		if (DirtyMap[Key])
-			Map[Key].Set(DefaultValues[Key], ECVF_SetByConsole);
-		DirtyMap[Key] = false;
+		if (DirtyMap[I])
+			Map[I].Set(DefaultValues[I], ECVF_SetByConsole);
+		DirtyMap[I] = false;
 	}
 }
 

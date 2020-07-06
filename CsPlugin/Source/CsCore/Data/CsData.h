@@ -2,35 +2,28 @@
 #pragma once
 
 #include "UObject/Interface.h"
+#include "Containers/CsGetInterfaceMap.h"
 #include "Types/CsTypes_Load.h"
 #include "Containers/CsInterfaceObject.h"
 #include "CsData.generated.h"
 
 UINTERFACE(Blueprintable)
-class CSCORE_API UCsData : public UInterface
+class CSCORE_API UCsData : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class CSCORE_API ICsData
+/**
+*/
+class CSCORE_API ICsData : public ICsGetInterfaceMap
 {
 	GENERATED_IINTERFACE_BODY()
 
 public:
-	
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const FECsDataType& GetType() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const FName& GetShortCode() const = 0;
+	static const FName Name;
+
+public:
 
 	/**
 	*
@@ -38,14 +31,14 @@ public:
 	* @param LoadFlags
 	* return
 	*/
-	virtual bool IsValid(const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game) = 0;
+	virtual bool IsValid(const int32& LoadFlags) = 0;
 
 	/**
 	*
 	*
 	* @param LoadFlags
 	*/
-	virtual void Load(const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game) = 0;
+	virtual void Load(const int32& LoadFlags) = 0;
 
 	/**
 	*
@@ -77,47 +70,6 @@ public:
 
 	// Script
 #pragma region
-public:
-
-	/**
-	* Delegate type for getting the Type associated with a Data.
-	*  The Data implements a script interface of type: ICsData and the UClass
-	*  associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true.
-	*
-	* @param Object		Object->GetClass() that implements the interface: ICsData.
-	* return Cache		The cache associated with the Pooled Object.
-	*/
-	DECLARE_DELEGATE_TwoParams(FScript_GetType, UObject* /*Object*/, FECsDataType& /*OutDataType*/);
-
-	/** Delegate for getting the Type associated with a Data.
-		 The Data implements a script interface of type: ICsData. */
-	FScript_GetType Script_GetType_Impl;
-	
-private:
-
-	FECsDataType Internal_Script_GetType_OutDataType;
-
-public:
-
-	/**
-	* Delegate type for getting the Short Code associated with a Data.
-	*  The Short Code a unique FName associated with a Data.
-	*  The Data implements a script interface of type: ICsData and the UClass
-	*  associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true.
-	*
-	* @param Object		Object->GetClass() that implements the interface: ICsData.
-	* @param Payload	A "blob" of parameters to pass in when allocating a Pooled Object.
-	*/
-	DECLARE_DELEGATE_TwoParams(FScript_GetShortCode, UObject* /*Object*/, FName& /*OutShortCode*/);
-
-	/** Delegate type for getting the Short Code associated with a Data.
-		 The Data implements a script interface of type: ICsData and the UClass
-		 associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true. */
-	FScript_GetShortCode Script_GetShortCode_Impl;
-
-private:
-
-	FName Internal_Script_GetShortCode_OutShortCode;
 
 public:
 
@@ -130,7 +82,7 @@ public:
 	* @param LoadFlags	Subsets of a Data to test whether they have actually loaded.
 	* return			Whether the subsets of Data have successful loaded or not.
 	*/
-	DECLARE_DELEGATE_RetVal_TwoParams(bool /*IsValid*/, FScript_IsValid, UObject* /*Object*/, const ECsLoadFlags& /*LoadFlags*/);
+	DECLARE_DELEGATE_RetVal_TwoParams(bool /*IsValid*/, FScript_IsValid, UObject* /*Object*/, const int32& /*LoadFlags*/);
 
 	/** Delegate type for checking whether a Data is valid for the given Load Flags. 
 		 The Data implements a script interface of type: ICsData and the UClass
@@ -145,7 +97,7 @@ public:
 	* @param Object		Object->GetClass() that implements the interface: ICsData.
 	* @param LoadFlags	Subsets of a Data to test whether they have actually loaded.
 	*/
-	DECLARE_DELEGATE_TwoParams(FScript_Load, UObject* /*Object*/, const ECsLoadFlags& /*LoadFlags*/);
+	DECLARE_DELEGATE_TwoParams(FScript_Load, UObject* /*Object*/, const int32& /*LoadFlags*/);
 
 	/** Delegate type for loading a Data with the given Load Flags.
 		 The Data implements a script interface of type: ICsData and the UClass
@@ -187,8 +139,6 @@ public:
 
 	FCsData() :
 		Super(),
-		Script_GetType_Impl(),
-		Script_GetShortCode_Impl(),
 		Script_IsValid_Impl(),
 		Script_Load_Impl(),
 		Script_Unload_Impl(),
@@ -206,8 +156,6 @@ public:
 	{
 		Super::Reset();
 
-		Script_GetType_Impl.Unbind();
-		Script_GetShortCode_Impl.Unbind();
 		Script_IsValid_Impl.Unbind();
 		Script_Load_Impl.Unbind();
 		Script_Unload_Impl.Unbind();
@@ -220,27 +168,7 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE const FECsDataType& GetType()
-	{
-		if (bScript)
-		{
-			Script_GetType_Impl.Execute(Object, Internal_Script_GetType_OutDataType);
-			return Internal_Script_GetType_OutDataType;
-		}
-		return Interface->GetType();
-	}
-
-	FORCEINLINE const FName& GetShortCode()
-	{
-		if (bScript)
-		{
-			Script_GetShortCode_Impl.Execute(Object, Internal_Script_GetShortCode_OutShortCode);
-			return Internal_Script_GetShortCode_OutShortCode;
-		}
-		return Interface->GetShortCode();
-	}
-
-	FORCEINLINE bool _IsValid(const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game)
+	FORCEINLINE bool _IsValid(const int32& LoadFlags)
 	{
 		if (bScript)
 			return Script_IsValid_Impl.Execute(Object, LoadFlags);
@@ -248,12 +176,12 @@ public:
 			return Interface->IsValid(LoadFlags);
 	}
 
-	FORCEINLINE void Load(const ECsLoadFlags& LoadFlags = ECsLoadFlags::Game)
+	FORCEINLINE void Load(const int32& LoadFlags)
 	{
 		if (bScript)
 			Script_Load_Impl.Execute(Object, LoadFlags);
 		else
-			Interface->Load();
+			Interface->Load(LoadFlags);
 	}
 
 	FORCEINLINE void Unload()

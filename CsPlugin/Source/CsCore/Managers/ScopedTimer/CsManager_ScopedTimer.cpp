@@ -60,11 +60,9 @@ void FCsManager_ScopedTimer::Update(const FCsDeltaTime& DeltaTime)
 			R->MarkDirty();
 
 			// Update Group Timer
-			/*
 			const FECsScopedGroup& Group = R->GetGroup();
 
-			GroupTimers[Group.GetValue()].Add(*R);
-			*/
+			GroupTimers[Group.GetValue()].AddTime(*R);
 		}
 	}
 
@@ -80,15 +78,19 @@ void FCsManager_ScopedTimer::Update(const FCsDeltaTime& DeltaTime)
 	}
 }
 
-const FCsScopedTimerHandle& FCsManager_ScopedTimer::GetHandle(const FString* Name, const FECsCVarLog* CVar)
+const FCsScopedTimerHandle& FCsManager_ScopedTimer::GetHandle(const FString* Name, const FECsScopedGroup* Group, const FECsCVarLog* CVar)
 {
 	checkf(Name, TEXT("FCsManager_ScopedTimer::GetHandle: Name is NULL."));
 
 	checkf(!Name->IsEmpty(), TEXT("FCsManager_ScopedTimer::GetHandle: Name is Empty."));
 
+	checkf(Group, TEXT("FCsManager_ScopedTimer::GetHandle: Group is NULL."));
+
+	checkf(CVar, TEXT("FCsManager_ScopedTimer::GetHandle: CVar is NULL."));
+
 	FCsScopedTimer* ScopedTimer = Internal.AllocateResource();
 
-	ScopedTimer->Init(Name, CVar);
+	ScopedTimer->Init(Name, Group, CVar);
 
 	return ScopedTimer->Handle;
 }

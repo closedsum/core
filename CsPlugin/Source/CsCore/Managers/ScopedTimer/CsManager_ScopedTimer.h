@@ -21,6 +21,7 @@ struct CSCORE_API FCsManager_ScopedTimer_Internal : public TCsManager_ResourceVa
 
 #pragma endregion Structs
 
+struct FECsScopedGroup;
 struct FECsCVarLog;
 
 class CSCORE_API FCsManager_ScopedTimer
@@ -41,7 +42,7 @@ public:
 
 	TArray<FCsScopedGroupTimer> GroupTimers;
 
-	const FCsScopedTimerHandle& GetHandle(const FString* Name, const FECsCVarLog* CVar);
+	const FCsScopedTimerHandle& GetHandle(const FString* Name, const FECsScopedGroup* Group, const FECsCVarLog* CVar);
 
 	void ClearHandle(const FCsScopedTimerHandle& Handle);
 

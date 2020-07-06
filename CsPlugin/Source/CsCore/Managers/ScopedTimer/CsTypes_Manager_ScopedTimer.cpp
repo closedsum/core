@@ -30,13 +30,16 @@ FCsScopedTimer::~FCsScopedTimer()
 	Name = nullptr;
 }
 
-void FCsScopedTimer::Init(const FString* InName, const FECsCVarLog* InCVar)
+void FCsScopedTimer::Init(const FString* InName, const FECsScopedGroup* InGroup, const FECsCVarLog* InCVar)
 {
 	checkf(InName, TEXT("FCsScopedTimer::Init: InName is NULL."));
+
+	checkf(InGroup, TEXT("FCsScopedTimer::Init: InGroup is NULL."));
 
 	checkf(InCVar, TEXT("FCsScopedTimer::Init: InCVar is NULL."));
 
 	Name = const_cast<FString*>(InName);
+	Group = const_cast<FECsScopedGroup*>(InGroup);
 	CVar = const_cast<FECsCVarLog*>(InCVar);
 
 	Handle.New();
@@ -57,6 +60,7 @@ void FCsScopedTimer::Reset()
 
 	Name = nullptr;
 
+	Group = nullptr;
 	CVar = nullptr;
 
 	Time = 0.0;
@@ -103,7 +107,7 @@ void FCsScopedGroupTimer::Init(const FECsScopedGroup* InGroup)
 	Group = const_cast<FECsScopedGroup*>(InGroup);
 }
 
-void FCsScopedGroupTimer::Add(const FCsScopedTimer& Timer)
+void FCsScopedGroupTimer::AddTime(const FCsScopedTimer& Timer)
 {
 	if (!bDirty)
 	{

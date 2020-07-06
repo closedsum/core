@@ -518,16 +518,22 @@ namespace NCsCVarToggle
 struct CSCORE_API FCsCVarToggleMap : public ICsCVarMap
 {
 protected:
-	FCsCVarToggleMap() {}
+	FCsCVarToggleMap() :
+		Map(),
+		DefaultValues(),
+		DirtyMap(),
+		Num(0)
+	{
+	}
 	FCsCVarToggleMap(const FCsCVarToggleMap &) = delete;
 	FCsCVarToggleMap(FCsCVarToggleMap &&) = delete;
 public:
 	virtual ~FCsCVarToggleMap() {}
 private:
-	TMap<FECsCVarToggle, TCsAutoConsoleVariable_int32> Map;
-	TMap<FECsCVarToggle, int32> DefaultValues;
-	TMap<FECsCVarToggle, bool> DirtyMap;
-
+	TArray<TCsAutoConsoleVariable_int32> Map;
+	TArray<int32> DefaultValues;
+	TArray<bool> DirtyMap;
+	int32 Num;
 public:
 	static FCsCVarToggleMap& Get()
 	{
@@ -539,42 +545,51 @@ public:
 
 	FORCEINLINE const FECsCVarToggle& Add(const FECsCVarToggle& Toggle, TAutoConsoleVariable<int32>* CVar)
 	{
-		Map.Add(Toggle);
-		Map[Toggle].Init(CVar);
-		DefaultValues.Add(Toggle, GetValue(Toggle));
-		DirtyMap.Add(Toggle, false);
+		const int32 Index = Toggle.GetValue();
+
+		for (int32 I = Num - 1; I < Index; ++I)
+		{
+			Map.AddDefaulted();
+			DefaultValues.AddDefaulted();
+			DirtyMap.AddDefaulted();
+			++Num;
+		}
+
+		Map[Index].Init(CVar);
+		DefaultValues[Index] = GetValue(Toggle);
+		DirtyMap[Index] = false;
 		return Toggle;
 	}
 
 	FORCEINLINE bool GetValue(const FECsCVarToggle& Toggle)
 	{
-		return Map[Toggle].Get() != CS_CVAR_DISABLED;
+		return Map[Toggle.GetValue()].Get() != CS_CVAR_DISABLED;
 	}
 
 	FORCEINLINE bool IsEnabled(const FECsCVarToggle& Toggle)
 	{
-		return Map[Toggle].Get() == CS_CVAR_ENABLED;
+		return Map[Toggle.GetValue()].Get() == CS_CVAR_ENABLED;
 	}
 
 	FORCEINLINE bool IsDisabled(const FECsCVarToggle& Toggle)
 	{
-		return Map[Toggle].Get() == CS_CVAR_DISABLED;
+		return Map[Toggle.GetValue()].Get() == CS_CVAR_DISABLED;
 	}
 
 	FORCEINLINE void Enable(const FECsCVarToggle& Toggle, bool MarkDirty = false)
 	{
-		Map[Toggle].Set(CS_CVAR_ENABLED, ECVF_SetByConsole);
+		Map[Toggle.GetValue()].Set(CS_CVAR_ENABLED, ECVF_SetByConsole);
 
 		if (MarkDirty)
-			DirtyMap[Toggle] = true;
+			DirtyMap[Toggle.GetValue()] = true;
 	}
 
 	FORCEINLINE void Disable(const FECsCVarToggle& Toggle, bool MarkDirty = false)
 	{
-		Map[Toggle].Set(CS_CVAR_DISABLED, ECVF_SetByConsole);
+		Map[Toggle.GetValue()].Set(CS_CVAR_DISABLED, ECVF_SetByConsole);
 
 		if (MarkDirty)
-			DirtyMap[Toggle] = true;
+			DirtyMap[Toggle.GetValue()] = true;
 	}
 
 	void Resolve();

@@ -487,34 +487,28 @@ void FCsCVarLogMap::ResetDirty()
 
 void FCsCVarToggleMap::Resolve()
 {
-	for (TPair<FECsCVarToggle, TCsAutoConsoleVariable_int32>& Pair : Map)
+	for (TCsAutoConsoleVariable_int32& Var : Map)
 	{
-		const FECsCVarToggle& Key = Pair.Key;
-
-		Map[Key].Resolve();
+		Var.Resolve();
 	}
 }
 
 void FCsCVarToggleMap::Reset()
 {
-	for (TPair<FECsCVarToggle, TCsAutoConsoleVariable_int32>& Pair : Map)
+	for (int32 I = 0; I < Num; ++I)
 	{
-		const FECsCVarToggle& Key = Pair.Key;
-
-		Map[Key].Set(DefaultValues[Key], ECVF_SetByConsole);
-		DirtyMap[Key] = false;
+		Map[I].Set(DefaultValues[I], ECVF_SetByConsole);
+		DirtyMap[I] = false;
 	}
 }
 
 void FCsCVarToggleMap::ResetDirty()
 {
-	for (TPair<FECsCVarToggle, TCsAutoConsoleVariable_int32>& Pair : Map)
+	for (int32 I = 0; I < Num; ++I)
 	{
-		const FECsCVarToggle& Key = Pair.Key;
-
-		if (DirtyMap[Key])
-			Map[Key].Set(DefaultValues[Key], ECVF_SetByConsole);
-		DirtyMap[Key] = false;
+		if (DirtyMap[I])
+			Map[I].Set(DefaultValues[I], ECVF_SetByConsole);
+		DirtyMap[I] = false;
 	}
 }
 

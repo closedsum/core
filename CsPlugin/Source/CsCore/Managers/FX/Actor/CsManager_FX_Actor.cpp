@@ -352,9 +352,8 @@ void UCsManager_FX_Actor::InitInternalFromSettings()
 
 			ClassMap.Add(Type, Class);
 
-			ObjectParams.Name  = Params.Name + TEXT("_") + Type.Name;
-			ObjectParams.World = Params.World;
-			//ObjectParams.LogType
+			ObjectParams.Name							  = Params.Name + TEXT("_") + Type.Name;
+			ObjectParams.World							  = Params.World;
 			ObjectParams.ConstructParams.Outer			  = this;
 			ObjectParams.ConstructParams.Class			  = Class;
 			ObjectParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Object;
@@ -370,6 +369,28 @@ void UCsManager_FX_Actor::InitInternalFromSettings()
 
 void UCsManager_FX_Actor::InitInternal(const FCsManager_FX_Actor_Internal::FCsManagerPooledObjectMapParams& Params)
 {
+	// Add CVars
+	{
+		FCsManager_FX_Actor_Internal::FCsManagerPooledObjectMapParams& P = const_cast<FCsManager_FX_Actor_Internal::FCsManagerPooledObjectMapParams&>(Params);
+
+		for (TPair<FECsFX, FCsManagerPooledObjectParams>& Pair : P.ObjectParams)
+		{
+			FCsManagerPooledObjectParams& ObjectParams = Pair.Value;
+
+			// Scoped Timer CVars
+			ObjectParams.ScopedGroup = NCsScopedGroup::ManagerFXActor;
+
+			ObjectParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerFXActorScopedTimerCreatePool;
+			ObjectParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerFXActorScopedTimerUpdate;
+			ObjectParams.UpdateObjectScopedTimerCVar	= NCsCVarLog::LogManagerFXActorScopedTimerUpdateObject;
+			ObjectParams.AllocateScopedTimerCVar		= NCsCVarLog::LogManagerFXActorScopedTimerAllocate;
+			ObjectParams.AllocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerFXActorScopedTimerAllocateObject;
+			ObjectParams.DeallocateScopedTimerCVar		= NCsCVarLog::LogManagerFXActorScopedTimerDeallocate;
+			ObjectParams.DeallocateObjectScopedTimerCVar = NCsCVarLog::LogManagerFXActorScopedTimerDeallocateObject;
+			ObjectParams.SpawnScopedTimerCVar			= NCsCVarLog::LogManagerFXActorScopedTimerSpawn;
+			ObjectParams.DestroyScopedTimerCVar			= NCsCVarLog::LogManagerFXActorScopedTimerDestroy;
+		}
+	}
 	Internal.Init(Params);
 }
 

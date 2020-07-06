@@ -66,6 +66,8 @@ public:
 
 	// Scoped Timer
 
+	FECsScopedGroup ScopedGroup;
+
 	/** Scoped Timer for CreatePool */
 	FECsCVarLog CreatePoolScopedTimerCVar;
 	/** Scoped Timer for Update */

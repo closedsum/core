@@ -57,7 +57,7 @@ void FCsManager_ScopedTimer::Update(const FCsDeltaTime& DeltaTime)
 		if (R->IsDirty())
 		{
 			R->Log();
-			R->MarkDirty();
+			R->ClearDirty();
 
 			// Update Group Timer
 			const FECsScopedGroup& Group = R->GetGroup();

@@ -400,9 +400,8 @@ void UCsManager_Projectile::InitInternalFromSettings()
 
 			ClassMap.Add(Type, Class);
 
-			ObjectParams.Name  = Params.Name + TEXT("_") + Type.Name;
-			ObjectParams.World = Params.World;
-			//ObjectParams.LogType
+			ObjectParams.Name							  = Params.Name + TEXT("_") + Type.Name;
+			ObjectParams.World							  = Params.World;
 			ObjectParams.ConstructParams.Class			  = Class;
 			ObjectParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
 			ObjectParams.bConstructPayloads				  = true;
@@ -426,6 +425,8 @@ void UCsManager_Projectile::InitInternal(const FCsManager_Projectile_Internal::F
 			FCsManagerPooledObjectParams& ObjectParams = Pair.Value;
 
 			// Scoped Timer CVars
+			ObjectParams.ScopedGroup = NCsScopedGroup::ManagerProjectile;
+
 			ObjectParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerProjectileScopedTimerCreatePool;
 			ObjectParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerProjectileScopedTimerUpdate;
 			ObjectParams.UpdateObjectScopedTimerCVar	= NCsCVarLog::LogManagerProjectileScopedTimerUpdateObject;

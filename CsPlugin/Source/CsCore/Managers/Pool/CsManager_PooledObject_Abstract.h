@@ -104,6 +104,7 @@ enum class ECsManagerPooledObjectFunctionNames : uint8
 
 enum class ECsManagerPooledObjectScopedTimerNames : uint8
 {
+	CreatePool,
 	Update,
 	UpdateObject,
 	Allocate,
@@ -217,6 +218,9 @@ public:
 		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn]		   = Name + TEXT("::Spawn");
 
 		// Set Scoped Timer CVars
+		ScopedGroup = Params.ScopedGroup;
+
+		ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::CreatePool]		= Name + TEXT("_CreatePool");
 		ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::Update]			= Name + TEXT("_Update");
 		ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::UpdateObject]	= Name + TEXT("_UpdateObject");
 		ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::Allocate]		= Name + TEXT("_Allocate");
@@ -262,8 +266,15 @@ public:
 		*/
 
 		// Scoped Timers
-		//CS_GET_SCOPED_TIMER_HANDLE(CreatePoolScopedTimerHandle, &Name, CreatePoolScopedTimerCVar);
-		//CS_GET_SCOPED_TIMER_HANDLE(UpdateObjectScopedTimerHandle, &Name, UpdateObjectScopedTimerCVar);
+		CS_GET_SCOPED_TIMER_HANDLE(CreatePoolScopedTimerHandle, &(ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::CreatePool]), ScopedGroup, CreatePoolScopedTimerCVar);
+		CS_GET_SCOPED_TIMER_HANDLE(UpdateScopedTimerHandle, &(ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::Update]), ScopedGroup, UpdateScopedTimerCVar);
+		CS_GET_SCOPED_TIMER_HANDLE(UpdateObjectScopedTimerHandle, &(ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::UpdateObject]), ScopedGroup, UpdateObjectScopedTimerCVar);
+		CS_GET_SCOPED_TIMER_HANDLE(AllocateScopedTimerHandle, &(ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::Allocate]), ScopedGroup, AllocateScopedTimerCVar);
+		CS_GET_SCOPED_TIMER_HANDLE(AllocateObjectScopedTimerHandle, &(ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::AllocateObject]), ScopedGroup, AllocateObjectScopedTimerCVar);
+		CS_GET_SCOPED_TIMER_HANDLE(DeallocateScopedTimerHandle, &(ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::Deallocate]), ScopedGroup, DeallocateScopedTimerCVar);
+		CS_GET_SCOPED_TIMER_HANDLE(DeallocateObjectScopedTimerHandle, &(ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::DeallocateObject]), ScopedGroup, DeallocateObjectScopedTimerCVar);
+		CS_GET_SCOPED_TIMER_HANDLE(SpawnScopedTimerHandle, &(ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::Spawn]), ScopedGroup, SpawnScopedTimerCVar);
+		CS_GET_SCOPED_TIMER_HANDLE(DestroyScopedTimerHandle, &(ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::Destroy]), ScopedGroup, DestroyScopedTimerCVar);
 
 		// Check to Construct Payloads
 		if (Params.bConstructPayloads)
@@ -355,8 +366,15 @@ public:
 		OnUpdate_Object_Event.Clear();
 
 		// Scoped Timer
-		//CS_CLEAR_SCOPED_TIMER_HANDLE(CreatePoolScopedTimerHandle);
-		//CS_CLEAR_SCOPED_TIMER_HANDLE(UpdateObjectScopedTimerHandle);
+		CS_CLEAR_SCOPED_TIMER_HANDLE(CreatePoolScopedTimerHandle);
+		CS_CLEAR_SCOPED_TIMER_HANDLE(UpdateScopedTimerHandle);
+		CS_CLEAR_SCOPED_TIMER_HANDLE(UpdateObjectScopedTimerHandle);
+		CS_CLEAR_SCOPED_TIMER_HANDLE(AllocateScopedTimerHandle);
+		CS_CLEAR_SCOPED_TIMER_HANDLE(AllocateObjectScopedTimerHandle);
+		CS_CLEAR_SCOPED_TIMER_HANDLE(DeallocateScopedTimerHandle);
+		CS_CLEAR_SCOPED_TIMER_HANDLE(DeallocateObjectScopedTimerHandle);
+		CS_CLEAR_SCOPED_TIMER_HANDLE(SpawnScopedTimerHandle);
+		CS_CLEAR_SCOPED_TIMER_HANDLE(DestroyScopedTimerHandle);
 	}
 
 	/** */
@@ -565,6 +583,8 @@ public:
 	*/
 	void CreatePool(const int32& Size)
 	{
+		CS_SCOPED_TIMER(CreatePoolScopedTimerHandle);
+
 		checkf(Size > 0, TEXT("%s::CreatePool: Size must be GREATER THAN 0."), *Name);
 
 		PoolSize = Size;
@@ -1220,6 +1240,8 @@ public:
 	*/
 	void Update(const FCsDeltaTime& DeltaTime)
 	{
+		CS_SCOPED_TIMER(UpdateScopedTimerHandle);
+
 		TCsDoubleLinkedList<InterfaceContainerType*>* Current = AllocatedHead;
 		TCsDoubleLinkedList<InterfaceContainerType*>* Next	  = Current;
 
@@ -1227,6 +1249,8 @@ public:
 
 		while (Next)
 		{
+			CS_SCOPED_TIMER(UpdateObjectScopedTimerHandle);
+
 			Current					  = Next;
 			InterfaceContainerType* O = **Current;
 			Next					  = Current->Next();
@@ -1312,6 +1336,8 @@ protected:
 	*/
 	InterfaceContainerType* Allocate(PayloadType* Payload)
 	{
+		CS_SCOPED_TIMER(AllocateScopedTimerHandle);
+
 		if (IsExhausted())
 		{
 			checkf(0, TEXT("%s::Allocate: Pool is exhausted. Pool Size is %d."), *Name, PoolSize);
@@ -1335,6 +1361,8 @@ protected:
 
 				ICsPooledObjectPayload* P = InterfaceMap->Get<ICsPooledObjectPayload>();
 
+				CS_SCOPED_TIMER(AllocateObjectScopedTimerHandle);
+
 				O->Allocate(P);
 				return O;
 			}
@@ -1354,6 +1382,8 @@ public:
 	*/
 	bool Deallocate(const int32& Index)
 	{
+		CS_SCOPED_TIMER(DeallocateScopedTimerHandle);
+
 		// Check if Index is valid
 		if (Index <= INDEX_NONE)
 		{
@@ -1387,7 +1417,11 @@ public:
 		LogTransaction_Impl.Execute(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Deallocate], ECsPoolTransaction::Deallocate, O);
 #endif // #if !UE_BUILD_SHIPPING
 
-		O->Deallocate();
+		// Deallocate Object
+		{
+			CS_SCOPED_TIMER(DeallocateObjectScopedTimerHandle);
+			O->Deallocate();
+		}
 		RemoveAllocatedLink(Link);
 
 		// Update AllocatedObjects
@@ -1600,6 +1634,8 @@ public:
 	*/
 	const InterfaceContainerType* Spawn(PayloadType* Payload)
 	{
+		CS_SCOPED_TIMER(SpawnScopedTimerHandle);
+
 		InterfaceContainerType* O = Allocate(Payload);
 
 #if !UE_BUILD_SHIPPING
@@ -1621,9 +1657,11 @@ public:
 	template<typename OtherContainerType, typename OtherPayloadType>
 	const OtherContainerType* Spawn(OtherPayloadType* Payload)
 	{
-		static_assert(std::is_base_of<InterfaceContainerType, OtherContainerType>(), "");
+		static_assert(std::is_base_of<InterfaceContainerType, OtherContainerType>(), "TCsManager_PooledObject_Abstract: InterfaceContainerType:");
 
-		static_assert(std::is_abstract<OtherPayloadType>(), "");
+		static_assert(std::is_abstract<OtherPayloadType>(), "TCsManager_PooledObject_Abstract: InterfaceContainerType:");
+
+		CS_SCOPED_TIMER(SpawnScopedTimerHandle);
 
 		// Get Interface Map
 		FCsInterfaceMap* InterfaceMap = Payload->GetInterfaceMap();
@@ -1669,6 +1707,8 @@ public:
 	*/
 	bool Destroy(const int32& Index)
 	{
+		CS_SCOPED_TIMER(DestroyScopedTimerHandle);
+
 		return Deallocate(Index);
 	}
 
@@ -1726,6 +1766,8 @@ public:
 // Scoped Timer
 #pragma region
 protected:
+
+	FECsScopedGroup ScopedGroup;
 
 	/** */
 	FString ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::ECsManagerPooledObjectScopedTimerNames_MAX];

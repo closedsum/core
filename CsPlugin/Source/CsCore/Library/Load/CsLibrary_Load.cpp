@@ -609,7 +609,7 @@ void UCsLibrary_Load::LoadSoftClassProperty(USoftClassProperty* SoftClassPropert
 		if (!Member->ToSoftObjectPath().IsValid())
 			return;
 
-		if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
+		if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, LoadCodes))
 			return;
 
 		// Check if an "Internal" member exists (i.e. MemberName + _Internal)
@@ -633,7 +633,8 @@ void UCsLibrary_Load::LoadSoftClassProperty(USoftClassProperty* SoftClassPropert
 						// ICsData
 						if (ICsData* Data = Cast<ICsData>(*Internal))
 						{
-							Data->Load(LoadFlags);
+							if (!Data->IsLoaded())
+								Data->Load(LoadFlags);
 						}
 						else
 						{
@@ -678,7 +679,7 @@ void UCsLibrary_Load::LoadSoftClassProperty(USoftClassProperty* SoftClassPropert
 
 void UCsLibrary_Load::LoadArraySoftClassProperty(UArrayProperty* ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& LoadFlags, const int32& LoadCodes)
 {
-	if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
+	if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, LoadCodes))
 		return;
 
 	// Check if an "Internal" member exists (i.e. MemberName + _Internal)
@@ -720,7 +721,8 @@ void UCsLibrary_Load::LoadArraySoftClassProperty(UArrayProperty* ArrayProperty, 
 							// ICsData
 							if (ICsData* Data = Cast<ICsData>(*InternalPtr))
 							{
-								Data->Load(LoadFlags);
+								if (!Data->IsLoaded())
+									Data->Load(LoadFlags);
 							}
 							else
 							{
@@ -777,7 +779,7 @@ void UCsLibrary_Load::LoadSoftObjectProperty(USoftObjectProperty* SoftObjectProp
 		if (!Member->ToSoftObjectPath().IsValid())
 			return;
 
-		if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
+		if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, LoadCodes))
 			return;
 
 		// Check if an "Internal" member exists (i.e. MemberName + _Internal)
@@ -817,7 +819,7 @@ void UCsLibrary_Load::LoadSoftObjectProperty(USoftObjectProperty* SoftObjectProp
 
 void UCsLibrary_Load::LoadArraySoftObjectProperty(UArrayProperty* ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& LoadFlags, const int32& LoadCodes)
 {
-	if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, 0))
+	if (!CanLoad(StructValue, Struct, MemberName, LoadFlags, LoadCodes))
 		return;
 
 	// Check if an "Internal" member exists (i.e. MemberName + _Internal)
@@ -884,7 +886,8 @@ void UCsLibrary_Load::LoadClassProperty(UClassProperty* ClassProperty, void* Str
 			// ICsData
 			if (ICsData* Data = Cast<ICsData>(DOb))
 			{
-				Data->Load(LoadFlags);
+				if (!Data->IsLoaded())
+					Data->Load(LoadFlags);
 			}
 		}
 	}
@@ -908,7 +911,8 @@ void UCsLibrary_Load::LoadArrayClassProperty(UArrayProperty* ArrayProperty, void
 			// ICsData
 			if (ICsData* Data = Cast<ICsData>(DOb))
 			{
-				Data->Load(LoadFlags);
+				if (!Data->IsLoaded())
+					Data->Load(LoadFlags);
 			}
 		}
 	}

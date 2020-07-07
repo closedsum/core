@@ -22,6 +22,7 @@ namespace NCsFXActorPooledImplCached
 {
 	namespace Str
 	{
+		const FString Update = TEXT("UCsFXActorPooledImpl::Update");
 		const FString Allocate = TEXT("UCsFXActorPooledImpl::Allocate");
 	}
 }
@@ -80,7 +81,11 @@ void UCsFXActorPooledImpl::OnConstructObject()
 
 void UCsFXActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
+	using namespace NCsFXActorPooledImplCached;
 
+	FCsFXPooledCacheImpl* CacheImpl = FCsLibrary_PooledObjectCache::StaticCastChecked<FCsFXPooledCacheImpl>(Str::Update, Cache);
+
+	CacheImpl->Update(DeltaTime);
 }
 
 #pragma endregion ICsUpdate
@@ -109,14 +114,21 @@ void UCsFXActorPooledImpl::Allocate(ICsPooledObjectPayload* Payload)
 
 	ICsFXPooledPayload* FXPayload = FCsLibrary_PooledObjectPayload::GetInterfaceChecked<ICsFXPooledPayload>(Str::Allocate, Payload);
 
-	USceneComponent* Parent = Cast<USceneComponent>(Payload->GetParent());
-
 	FX->SetActorTickEnabled(true);
 	FX->SetActorHiddenInGame(false);
 
-	//NCsAttachmentTransformRules::ToRule()
+	if (USceneComponent* Parent = Cast<USceneComponent>(Payload->GetParent()))
+	{
+		FX->AttachToComponent(Parent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
-	FX->AttachToComponent(Parent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		//NCsAttachmentTransformRules::ToRule()
+
+		//FX->SetActorRelativeTransform(FXPayload->GetTransform());
+	}
+	else
+	{
+		FX->SetActorTransform(FXPayload->GetTransform());
+	}
 
 	FXComponent->SetAsset(FXPayload->GetFXSystem());
 	FXComponent->Activate();

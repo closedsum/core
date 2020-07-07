@@ -2,6 +2,9 @@
 #include "Managers/FX/Actor/CsFXActorPooledImpl.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
+#include "Types/CsTypes_AttachDetach.h"
 // Library
 #include "Managers/Pool/Cache/CsLibrary_PooledObjectCache.h"
 #include "Managers/Pool/Payload/CsLibrary_PooledObjectPayload.h"
@@ -117,14 +120,39 @@ void UCsFXActorPooledImpl::Allocate(ICsPooledObjectPayload* Payload)
 	FX->SetActorTickEnabled(true);
 	FX->SetActorHiddenInGame(false);
 
+	// If the Parent is set, attach the FX to the Parent
 	if (USceneComponent* Parent = Cast<USceneComponent>(Payload->GetParent()))
 	{
-		FX->AttachToComponent(Parent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		FX->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(FXPayload->GetAttachmentTransformRule()), FXPayload->GetBone());
 
-		//NCsAttachmentTransformRules::ToRule()
-
-		//FX->SetActorRelativeTransform(FXPayload->GetTransform());
+		const FTransform& Transform = FXPayload->GetTransform();
+		const int32& TransformRules = FXPayload->GetTransformRules();
+		
+		// Location | Rotation | Scale
+		if (TransformRules == NCsTransformRules::All)
+		{
+			FX->SetActorRelativeTransform(Transform);
+		}
+		else
+		{
+			// Location
+			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Location))
+			{
+				FX->SetActorRelativeLocation(Transform.GetLocation());
+			}
+			// Rotation
+			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Rotation))
+			{
+				FX->SetActorRelativeRotation(Transform.GetRotation().Rotator());
+			}
+			// Scale
+			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Scale))
+			{
+				FX->SetActorRelativeScale3D(Transform.GetScale3D());
+			}
+		}
 	}
+	// NO Parent, set the World Transform of the FX
 	else
 	{
 		FX->SetActorTransform(FXPayload->GetTransform());

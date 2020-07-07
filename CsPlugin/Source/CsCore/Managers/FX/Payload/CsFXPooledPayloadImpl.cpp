@@ -16,6 +16,8 @@ FCsFXPooledPayloadImpl::FCsFXPooledPayloadImpl() :
 	DeallocateMethod(ECsFXDeallocateMethod::Complete),
 	LifeTime(0.0f),
 	AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+	Bone(NAME_None),
+	TransformRules(0),
 	Transform(FTransform::Identity)
 {
 	InterfaceMap = new FCsInterfaceMap();
@@ -49,6 +51,8 @@ void FCsFXPooledPayloadImpl::Reset()
 	DeallocateMethod = ECsFXDeallocateMethod::Complete;
 	LifeTime = 0.0f;
 	AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+	Bone = NAME_None;
+	TransformRules = 0;
 	Transform = FTransform::Identity;
 }
 

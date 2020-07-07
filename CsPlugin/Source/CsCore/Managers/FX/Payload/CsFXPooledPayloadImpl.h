@@ -43,6 +43,10 @@ public:
 	
 	ECsAttachmentTransformRules AttachmentTransformRules;
 
+	FName Bone;
+
+	int32 TransformRules;
+
 	FTransform Transform;
 
 public:
@@ -141,6 +145,16 @@ public:
 	FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const
 	{
 		return AttachmentTransformRules;
+	}
+
+	FORCEINLINE const FName& GetBone() const
+	{
+		return Bone;
+	}
+
+	FORCEINLINE const int32& GetTransformRules() const
+	{
+		return TransformRules;
 	}
 
 	FORCEINLINE const FTransform& GetTransform() const

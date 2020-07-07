@@ -58,6 +58,21 @@ public:
 	*/
 	virtual const ECsAttachmentTransformRules& GetAttachmentTransformRule() const = 0;
 
+	/** 
+	* Relevant if the FX is attached to a Parent object.
+	* Bone or Socket to attach to.
+	*
+	* return Bone
+	*/
+	virtual const FName& GetBone() const = 0;
+
+	/** 
+	* Which of the components of Transform to apply to the FX.
+	*
+	* return Transform Rules (as a Bit Mask)
+	*/
+	virtual const int32& GetTransformRules() const = 0;
+
 	/**
 	* Get the Transform to apply to the FX. 
 	* If the FX is being attached to a Parent object, the Transform is applied as a Relative Transform

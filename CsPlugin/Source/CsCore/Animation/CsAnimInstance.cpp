@@ -10,7 +10,7 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
-#include "Managers/FX/CsManager_FX.h"
+//#include "Managers/FX/CsManager_FX.h"
 #include "Managers/Sound/CsManager_Sound.h"
 
 // Enums
@@ -136,8 +136,8 @@ void UCsAnimInstance::OnTick_Handle_ShowEditorIcons()
 
 	if (ShowEmitterEditorIconsHandle.HasChanged())
 	{
-		if (AICsManager_FX* MyManager_FX = GetManager_FX())
-			MyManager_FX->ToggleEmitterEditorIcons(ShowEmitterEditorIcons);
+		//if (AICsManager_FX* MyManager_FX = GetManager_FX())
+		//	MyManager_FX->ToggleEmitterEditorIcons(ShowEmitterEditorIcons);
 		ShowEmitterEditorIconsHandle.Clear();
 	}
 }
@@ -173,14 +173,17 @@ void UCsAnimInstance::Spawn_CoroutineScheduler()
 	Scheduler->MyOwner = this;
 }
 
+/*
 AICsManager_FX* UCsAnimInstance::GetManager_FX()
 {
 	return Manager_FX.IsValid() ? Manager_FX.Get() : nullptr;
 }
+*/
 
 void UCsAnimInstance::Spawn_Manager_FX()
 {
 	// Check if Manager_FX was already created. This may be the case when Refreshing Nodes for the AnimInstance
+	/*
 	for (TActorIterator<AICsManager_FX> Itr(GetWorld()); Itr; ++Itr)
 	{
 		if (Itr)
@@ -201,6 +204,7 @@ void UCsAnimInstance::Spawn_Manager_FX()
 		Manager_FX->CreatePool(4);
 		Manager_FX->ToggleEmitterEditorIcons(false);
 	}
+	*/
 }
 
 AICsManager_Sound* UCsAnimInstance::GetManager_Sound()
@@ -261,8 +265,8 @@ void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 			if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this))
 				Scheduler->Update(Group, DeltaTime);
 			// Manager_FX
-			if (AICsManager_FX* MyManager_FX = GetManager_FX())
-				MyManager_FX->OnTick(DeltaTimeX);
+			//if (AICsManager_FX* MyManager_FX = GetManager_FX())
+			//	MyManager_FX->OnTick(DeltaTimeX);
 			// Manager_Sound
 			if (AICsManager_Sound* MyManager_Sound = GetManager_Sound())
 				MyManager_Sound->OnTick(DeltaTimeX);

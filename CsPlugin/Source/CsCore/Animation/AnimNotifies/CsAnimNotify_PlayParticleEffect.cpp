@@ -11,7 +11,7 @@
 #include "Animation/AnimSequenceBase.h"
 
 // Manager
-#include "Managers/FX/CsManager_FX.h"
+//#include "Managers/FX/CsManager_FX.h"
 
 /////////////////////////////////////////////////////
 // UAnimNotify_PlayParticleEffect
@@ -72,6 +72,7 @@ void UCsAnimNotify_PlayParticleEffect::Notify(class USkeletalMeshComponent* Mesh
 	const bool InGame = UCsLibrary_Common::IsPlayInGame(CurrentWorld) || UCsLibrary_Common::IsPlayInPIE(CurrentWorld);
 
 	// Use FX Manager
+	/*
 	if (InGame)
 	{
 		AICsManager_FX* Manager_FX = AICsManager_FX::Get(CurrentWorld);
@@ -115,4 +116,5 @@ void UCsAnimNotify_PlayParticleEffect::Notify(class USkeletalMeshComponent* Mesh
 			UGameplayStatics::SpawnEmitterAtLocation(MeshComp->GetWorld(), FX.Particle, SpawnTransform);
 		}
 	}
+	*/
 }

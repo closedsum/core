@@ -14,7 +14,7 @@
 //#include "Data/CsData_ProjectileImpact.h"
 
 // Managers
-#include "Managers/FX/CsManager_FX.h"
+//#include "Managers/FX/CsManager_FX.h"
 #include "Managers/FX/CsEmitter.h"
 #include "Managers/Damage/CsManager_Damage.h"
 //#include "Managers/InteractiveActor/CsDamageableActor.h"

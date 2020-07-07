@@ -33,7 +33,7 @@ namespace ECsAnimInstanceRoutine
 
 #pragma endregion Enums
 
-class AICsManager_FX;
+//class AICsManager_FX;
 class AICsManager_Sound;
 
 UCLASS()
@@ -155,9 +155,9 @@ public:
 
 	// Manager FX
 
-	TWeakObjectPtr<AICsManager_FX> Manager_FX;
+	//TWeakObjectPtr<AICsManager_FX> Manager_FX;
 
-	AICsManager_FX* GetManager_FX();
+	//AICsManager_FX* GetManager_FX();
 
 	void Spawn_Manager_FX();
 

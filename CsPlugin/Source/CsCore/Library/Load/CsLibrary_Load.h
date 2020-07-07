@@ -243,6 +243,10 @@ public:
 
 	static void LoadArraySoftObjectProperty(UArrayProperty* ArrayProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& LoadFlags, const int32& LoadCodes);
 
+	static void LoadClassProperty(UClassProperty* ClassProperty, void* StructValue, UStruct* const& Struct, const int32& LoadFlags, const int32& LoadCodes);
+
+	static void LoadArrayClassProperty(UArrayProperty* ArrayProperty, void* StructValue, UStruct* const& Struct, const int32& LoadFlags, const int32& LoadCodes);
+
 	static void LoadArrayObjectProperty(UArrayProperty* ArrayProperty, void* StructValue, const int32& LoadFlags, const int32& LoadCodes);
 
 	static void LoadArrayStructProperty(UArrayProperty* ArrayProperty, void* StructValue, const int32& LoadFlags, const int32& LoadCodes);

@@ -7,6 +7,7 @@
 // FX
 #include "Particles/ParticleSystem.h"
 // Data
+#include "Data/CsData.h"
 #include "Engine/DataTable.h"
 
 UCsLibrary_Load::UCsLibrary_Load(const FObjectInitializer& ObjectInitializer)
@@ -629,7 +630,15 @@ void UCsLibrary_Load::LoadSoftClassProperty(USoftClassProperty* SoftClassPropert
 
 					if (*Internal)
 					{
-						LoadStruct(*Internal, Class, LoadFlags, LoadCodes);
+						// ICsData
+						if (ICsData* Data = Cast<ICsData>(*Internal))
+						{
+							Data->Load(LoadFlags);
+						}
+						else
+						{
+							LoadStruct(*Internal, Class, LoadFlags, LoadCodes);
+						}
 					}
 				}
 			}
@@ -706,9 +715,17 @@ void UCsLibrary_Load::LoadArraySoftClassProperty(UArrayProperty* ArrayProperty, 
 						UClass* Class = Cast<UClass>(O);
 						*InternalPtr  = Class->GetDefaultObject();
 
-						if (!InternalPtr)
+						if (InternalPtr)
 						{
-							LoadStruct(*InternalPtr, Class, LoadFlags, LoadCodes);
+							// ICsData
+							if (ICsData* Data = Cast<ICsData>(*InternalPtr))
+							{
+								Data->Load(LoadFlags);
+							}
+							else
+							{
+								LoadStruct(*InternalPtr, Class, LoadFlags, LoadCodes);
+							}
 						}
 					}
 				}
@@ -855,6 +872,48 @@ void UCsLibrary_Load::LoadArraySoftObjectProperty(UArrayProperty* ArrayProperty,
 	}
 }
 
+void UCsLibrary_Load::LoadClassProperty(UClassProperty* ClassProperty, void* StructValue, UStruct* const& Struct, const int32& LoadFlags, const int32& LoadCodes)
+{
+	if (UObject** Object = ClassProperty->GetPropertyValuePtr_InContainer(StructValue))
+	{
+		if (*Object)
+		{
+			UClass* Class = Cast<UClass>(*Object);
+			UObject* DOb = Class->GetDefaultObject();
+
+			// ICsData
+			if (ICsData* Data = Cast<ICsData>(DOb))
+			{
+				Data->Load(LoadFlags);
+			}
+		}
+	}
+}
+
+void UCsLibrary_Load::LoadArrayClassProperty(UArrayProperty* ArrayProperty, void* StructValue, UStruct* const& Struct, const int32& LoadFlags, const int32& LoadCodes)
+{
+	FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+
+	const int32 Count = Helper.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		UObject** Object = reinterpret_cast<UObject**>(Helper.GetRawPtr(I));
+
+		if (Object)
+		{
+			UClass* Class = Cast<UClass>(*Object);
+			UObject* DOb  = Class->GetDefaultObject();
+
+			// ICsData
+			if (ICsData* Data = Cast<ICsData>(DOb))
+			{
+				Data->Load(LoadFlags);
+			}
+		}
+	}
+}
+
 void UCsLibrary_Load::LoadArrayObjectProperty(UArrayProperty* ArrayProperty, void* StructValue, const int32& LoadFlags, const int32& LoadCodes)
 {
 	FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
@@ -907,6 +966,12 @@ void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct, cons
 			LoadSoftObjectProperty(SoftObjectProperty, StructValue, Struct, PropertyName, NCsLoadFlags::All, LoadCodes);
 			continue;
 		}
+		// Class
+		if (UClassProperty* ClassProperty = Cast<UClassProperty>(Property))
+		{
+			LoadClassProperty(ClassProperty, StructValue, Struct, LoadFlags, LoadCodes);
+			continue;
+		}
 		// Object
 		if (UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
 		{
@@ -944,6 +1009,12 @@ void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct, cons
 			if (USoftObjectProperty* InnerSoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
 			{
 				LoadArraySoftObjectProperty(ArrayProperty, StructValue, Struct, PropertyName, NCsLoadFlags::All, LoadCodes);
+				continue;
+			}
+			// Class
+			if (UClassProperty* InnerClassProperty = Cast<UClassProperty>(ArrayProperty->Inner))
+			{
+				LoadArrayClassProperty(ArrayProperty, StructValue, Struct, NCsLoadFlags::All, LoadCodes);
 				continue;
 			}
 			// Object

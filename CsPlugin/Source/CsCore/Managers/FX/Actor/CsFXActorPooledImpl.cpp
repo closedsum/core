@@ -83,7 +83,7 @@ void UCsFXActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
 	using namespace NCsFXActorPooledImplCached;
 
-	FCsFXPooledCacheImpl* CacheImpl = FCsLibrary_PooledObjectCache::StaticCastChecked<FCsFXPooledCacheImpl>(Str::Update, Cache);
+	FCsFXPooledCacheImpl* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsFXPooledCacheImpl>(Str::Update, Cache);
 
 	CacheImpl->Update(DeltaTime);
 }
@@ -102,7 +102,7 @@ void UCsFXActorPooledImpl::Allocate(ICsPooledObjectPayload* Payload)
 {
 	using namespace NCsFXActorPooledImplCached;
 
-	FCsFXPooledCacheImpl* CacheImpl = FCsLibrary_PooledObjectCache::StaticCastChecked<FCsFXPooledCacheImpl>(Str::Allocate, Cache);
+	FCsFXPooledCacheImpl* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsFXPooledCacheImpl>(Str::Allocate, Cache);
 
 	CacheImpl->Allocate(Payload);
 

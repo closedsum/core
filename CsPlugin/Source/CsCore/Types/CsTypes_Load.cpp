@@ -40,7 +40,7 @@ namespace NCsLoadCodes
 	}
 	*/
 	CSCORE_API const int32 None = 0;
-	CSCORE_API const int32 All = 1;
+	CSCORE_API const int32 All = 15; // 1 + 2 + 4 + 8
 }
 
 #pragma endregion LoadCodes
@@ -62,7 +62,7 @@ namespace NCsLoadFlags
 	}
 
 	CSCORE_API const int32 None = 0;
-	CSCORE_API const int32 All = 1;
+	CSCORE_API const int32 All = 63; // 1 + 2 + 4 + 8 + 16 + 32
 }
 
 #pragma endregion LoadFlags

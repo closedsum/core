@@ -16,15 +16,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement ="CsSoundPooled"))
 	TSoftClassPtr<UObject> Class; 
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
 	int32 PoolSize;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
 	int32 PayloadSize;
 
 	FCsSettings_Manager_Sound_PoolParams() :
 		Class(nullptr),
-		PoolSize(0),
+		PoolSize(4),
 		PayloadSize(4)
 	{
 	}

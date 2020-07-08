@@ -62,13 +62,13 @@ protected:
 	/** Reference to interface of type: ICsUpdate. */
 	ICsUpdate* _Update;
 
-	/** Does the object implement a script interface of type: ICsUpdate. */
+	/** Does the object implements a script interface of type: ICsUpdate. */
 	bool bScriptUpdate;
 
 	/** Reference to interface of type: ICsOnConstructObject. */
 	ICsOnConstructObject* _OnConstructObject;
 
-	/** Does the FX Actor implement a script interface of type: ICsOnConstructObject. */
+	/** Does the object implements a script interface of type: ICsOnConstructObject. */
 	bool bScriptOnConstructObject;
 
 // Script

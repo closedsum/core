@@ -3,7 +3,7 @@
 // Types
 #include "Types/CsTypes_Load.h"
 #include "Managers/FX/CsTypes_FX.h"
-#include "Types/CsTypes_Sound.h"
+#include "Managers/Sound/CsTypes_Sound.h"
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_SkeletalMesh.h"
 

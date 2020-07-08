@@ -6,8 +6,13 @@
 #include "Types/CsTypes_Load.h"
 #include "Types/Enum/CsUserDefinedEnum.h"
 #include "Settings/CsTypes_Settings.h"
+// FX
 #include "Managers/FX/CsTypes_FX.h"
 #include "Managers/FX/Actor/CsSettings_Manager_FX_Actor.h"
+// Sound
+#include "Managers/Sound/CsTypes_Sound.h"
+#include "Managers/Sound/CsSettings_Manager_Sound.h"
+
 #include "CsDeveloperSettings.generated.h"
 
 UCLASS(config = Game, defaultconfig, meta = (DisplayName = "CsCore Settings"))
@@ -71,4 +76,16 @@ public:
 	FCsSettings_Manager_FX_Actor Manager_FX_Actor;
 
 #pragma endregion FX
+
+// Sound
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound")
+	TArray<TSoftObjectPtr<UDataTable>> Sounds;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound", meta = (DisplayName = "Manager Sound"))
+	FCsSettings_Manager_Sound Manager_Sound;
+
+#pragma endregion Sound
 };

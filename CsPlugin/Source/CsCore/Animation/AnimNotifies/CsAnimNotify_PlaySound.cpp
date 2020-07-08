@@ -49,6 +49,7 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 	const bool InGame = UCsLibrary_Common::IsPlayInGame(CurrentWorld) || UCsLibrary_Common::IsPlayInPIE(CurrentWorld);
 
 	// Use Sound Manager
+	/*
 	if (InGame)
 	{
 		AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(CurrentWorld);
@@ -81,4 +82,5 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 			UGameplayStatics::PlaySoundAtLocation(CurrentWorld, Sound.Sound, MeshComp->GetComponentLocation(), Sound.VolumeMultiplier, Sound.PitchMultiplier);
 		}
 	}
+	*/
 }

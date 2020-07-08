@@ -98,13 +98,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogOverrideFunctions;
 
 #pragma endregion Script
 
-// Sound
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerSoundTransactions;
-
-#pragma endregion Sound
-
 // FX
 #pragma region
 
@@ -335,8 +328,6 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogJsonDataFilenames;
 	// Script
 	extern CSCORE_API const Type LogOverrideFunctions;
-	// Sound
-	extern CSCORE_API const Type LogManagerSoundTransactions;
 	// FX
 	extern CSCORE_API const Type LogManagerFxTransactions;
 	// Collision

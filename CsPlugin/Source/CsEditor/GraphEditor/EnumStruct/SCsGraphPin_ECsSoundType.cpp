@@ -2,7 +2,8 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsSoundType.h"
 #include "CsEditor.h"
 
-#include "Types/CsTypes_Sound.h"
+// Types
+#include "Managers/Sound/CsTypes_Sound.h"
 
 
 void SCsGraphPin_ECsSoundType::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)

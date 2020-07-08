@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Cache/CsPooledObjectCache.h"
-#include "Managers/FX/Cache/CsFXPooledCache.h"
+#include "Managers/Sound/Cache/CsSoundPooledCache.h"
 #include "Containers/CsWeakObjectPtr.h"
 
 #pragma once
@@ -8,15 +8,17 @@
 class UObject;
 struct FCsInterfaceMap;
 struct ICsPooledObjectPayload;
+class UAudioComponent;
+class USoundAttenuation;
 
 /**
 * Basic implementation for Cache implementing the interfaces:
-* ICsPooledObjectCache and ICsFXPooledCache. This only supports 
+* ICsPooledObjectCache and ICsSoundPooledCache. This only supports 
 * a bare minimum functionality. For custom functionality create
 * another implementation
 */
-struct CSCORE_API FCsFXPooledCacheImpl final : public ICsPooledObjectCache,
-											   public ICsFXPooledCache
+struct CSCORE_API FCsSoundPooledCacheImpl final : public ICsPooledObjectCache,
+												  public ICsSoundPooledCache
 {
 public:
 
@@ -56,17 +58,19 @@ private:
 
 	// ICsProjectileCache
 
-	UNiagaraComponent* FXComponent;
+	UAudioComponent* AudioComponent;
 
-	ECsFXDeallocateMethod DeallocateMethod;
+	USoundAttenuation* SoundAttenuation;
+
+	ECsSoundDeallocateMethod DeallocateMethod;
 
 	float QueuedLifeTime;
 
 public:
 
-	FCsFXPooledCacheImpl();
+	FCsSoundPooledCacheImpl();
 
-	~FCsFXPooledCacheImpl();
+	~FCsSoundPooledCacheImpl();
 
 // ICsGetInterfaceMap
 #pragma region
@@ -164,27 +168,35 @@ public:
 		LifeTime = InLifeTime;
 	}
 
-// ICsFXPooledCache
+// ICsSoundPooledCache
 #pragma region
 public:
 
-	FORCEINLINE UNiagaraComponent* GetFXComponent() const
+	FORCEINLINE UAudioComponent* GetAudioComponent() const
 	{
-		return FXComponent;
+		return AudioComponent;
 	}
 
-#pragma endregion ICsFXPooledCache
+	FORCEINLINE USoundAttenuation* GetSoundAttenuation() const
+	{
+		return SoundAttenuation;
+	}
+
+#pragma endregion ICsSoundPooledCache
 
 public:
 
-	FORCEINLINE void SetFXComponent(UNiagaraComponent* InFXComponent)
+	FORCEINLINE void SetAudioComponent(UAudioComponent* InAudioComponent)
 	{
-		FXComponent = InFXComponent;
+		AudioComponent = InAudioComponent;
+	}
+
+	FORCEINLINE void SetSoundAttenuation(USoundAttenuation* InSoundAttenuation)
+	{
+		SoundAttenuation = InSoundAttenuation;
 	}
 
 public:
 
 	void Update(const FCsDeltaTime& DeltaTime);
-
-	//void SetData(ICsData_Projectile* InData);
 };

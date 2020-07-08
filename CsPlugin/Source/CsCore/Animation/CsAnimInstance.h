@@ -34,7 +34,7 @@ namespace ECsAnimInstanceRoutine
 #pragma endregion Enums
 
 //class AICsManager_FX;
-class AICsManager_Sound;
+//class AICsManager_Sound;
 
 UCLASS()
 class CSCORE_API UCsAnimInstance : public UAnimInstance
@@ -163,9 +163,9 @@ public:
 
 	// Manager Sound
 
-	TWeakObjectPtr<AICsManager_Sound> Manager_Sound;
+	//TWeakObjectPtr<AICsManager_Sound> Manager_Sound;
 
-	AICsManager_Sound* GetManager_Sound();
+	//AICsManager_Sound* GetManager_Sound();
 
 	void Spawn_Manager_Sound();
 

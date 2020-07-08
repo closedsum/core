@@ -2,7 +2,7 @@
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/CsTypes_Curve.h"
-#include "Types/CsTypes_Sound.h"
+#include "Managers/Sound/CsTypes_Sound.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
 #include "Managers/FX/CsTypes_FX.h"
 #include "Types/CsTypes_Anim.h"

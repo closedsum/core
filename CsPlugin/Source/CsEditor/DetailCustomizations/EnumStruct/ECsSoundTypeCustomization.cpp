@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/EnumStruct/ECsSoundTypeCustomization.h"
 
-#include "Types/CsTypes_Sound.h"
+#include "Managers/Sound/CsTypes_Sound.h"
 
 #define LOCTEXT_NAMESPACE "ECsSurfaceTypeCustomization"
 

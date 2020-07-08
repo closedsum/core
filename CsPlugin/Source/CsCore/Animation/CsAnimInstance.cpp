@@ -207,14 +207,17 @@ void UCsAnimInstance::Spawn_Manager_FX()
 	*/
 }
 
+/*
 AICsManager_Sound* UCsAnimInstance::GetManager_Sound()
 {
 	return Manager_Sound.IsValid() ? Manager_Sound.Get() : nullptr;
 }
+*/
 
 void UCsAnimInstance::Spawn_Manager_Sound()
 {
 	// Check if Manager_Sound was already created. This may be the case when Refreshing Nodes for the AnimInstance
+	/*
 	for (TActorIterator<AICsManager_Sound> Itr(GetWorld()); Itr; ++Itr)
 	{
 		if (Itr)
@@ -235,6 +238,7 @@ void UCsAnimInstance::Spawn_Manager_Sound()
 
 		Manager_Sound->CreatePool(8);
 	}
+	*/
 }
 
 #endif // #if WITH_EDITOR
@@ -268,8 +272,8 @@ void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 			//if (AICsManager_FX* MyManager_FX = GetManager_FX())
 			//	MyManager_FX->OnTick(DeltaTimeX);
 			// Manager_Sound
-			if (AICsManager_Sound* MyManager_Sound = GetManager_Sound())
-				MyManager_Sound->OnTick(DeltaTimeX);
+			//if (AICsManager_Sound* MyManager_Sound = GetManager_Sound())
+			//	MyManager_Sound->OnTick(DeltaTimeX);
 		}
 	}
 #endif // #if WITH_EDITOR

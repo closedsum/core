@@ -1,112 +1,638 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Managers/CsManager.h"
-#include "Managers/Sound/CsSound.h"
+
+#include "UObject/Object.h"
+#include "Managers/Pool/CsManager_PooledObject_Map.h"
+#include "Managers/Resource/CsManager_ResourceValueType.h"
+#include "Managers/Sound/CsTypes_Sound.h"
+#include "Managers/Sound/Payload/CsSoundPooledPayload.h"
+#include "Managers/Sound/CsSoundPooled.h"
+#include "Managers/Sound/CsSettings_Manager_Sound.h"
 #include "CsManager_Sound.generated.h"
 
-#define CS_SOUND_POOL_SIZE 32
-#define CS_MAX_CONCURRENT_SOUNDS 16
-#define CS_SOUND_PAYLOAD_SIZE 16
-
-class FCsManager_Sound : public TCsManager_PooledObjects<ACsSound, FCsSoundPayload, CS_SOUND_PAYLOAD_SIZE>
-{
-private:
-	typedef TCsManager_PooledObjects<ACsSound, FCsSoundPayload, CS_SOUND_PAYLOAD_SIZE> Super;
-
-public:
-	~FCsManager_Sound();
-
-// Interface
+// Delegates
 #pragma region
 
-	virtual void DeconstructObject(ACsSound* a) override;
-	virtual FString GetObjectName(ACsSound* a) override;
-	virtual void LogTransaction(const FString& functionName, const ECsPoolTransaction& transaction, ACsSound* o) override;
-	virtual void Log(const FString& log) override;
-	virtual ACsSound* Spawn(FCsSoundPayload* payload) override;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerSound_OnSpawn, const FECsSoundType&, Type, TScriptInterface<ICsSoundPooled>, FXActor);
 
-#pragma endregion Interface
+#pragma endregion Delegates
 
-	void Stop(FCsSoundElement* InSound, UObject* InOwner, UObject* InParent);
+// Internal
+#pragma region
+
+class ICsSoundPooled;
+
+class CSCORE_API FCsManager_Sound_Internal : public TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, ICsSoundPooledPayload, FECsSoundType>
+{
+private:
+
+	typedef TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, ICsSoundPooledPayload, FECsSoundType> Super;
+
+public:
+
+	FCsManager_Sound_Internal();
+
+	FORCEINLINE virtual const FString& KeyTypeToString(const FECsSoundType& Type) override
+	{
+		return Type.GetName();
+	}
 };
 
+#pragma endregion Internal
+
+class ICsGetManagerSound;
+class ICsData_Sound;
+class UDataTable;
+
 UCLASS()
-class CSCORE_API AICsManager_Sound : public AActor
+class CSCORE_API UCsManager_Sound : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-public:
+public:	
 
-	virtual void PostActorCreated() override;
-
-protected:
-
-	FCsManager_Sound * Internal;
-
-	static TWeakObjectPtr<UObject> MyOwner;
-
-	static UObject* GetMyOwner();
-
-public:
-
-	static void Init(UObject* InOwner);
-
-	static AICsManager_Sound* Get(UWorld* InWorld);
-	template<typename T>
-	static T* Get(UWorld* InWorld)
-	{
-		return Cast<T>(Get(InWorld));
-	}
-
-	virtual void Destroyed() override;
-
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	void Clear();
-
-	void Shutdown();
-
-	virtual ACsSound* ConstructObject();
-
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	void CreatePool(const int32& Size);
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	void AddToPool(ACsSound* Sound);
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	void AddToActivePool(ACsSound* Sound);
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	void OnTick(const float& DeltaTime);
-
-	const TMap<int32, ACsSound*>& GetAllActiveActors();
-
-	const TArray<ACsSound*>& GetActors();
-
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	int32 GetActivePoolSize();
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	bool IsExhausted();
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	bool DeAllocate(const int32& Index);
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	void DeAllocateAll();
-
-	FCsSoundPayload* AllocatePayload();
-
-	//UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	ACsSound* Play(FCsSoundPayload& Payload);
-	ACsSound* Play(FCsSoundPayload* Payload);
-
-	template<typename T>
-	T* Play(FCsSoundPayload* Payload)
-	{
-		return Cast<T>(Play(Payload));
-	}
-
-// Stop
+// Singleton
 #pragma region
 public:
 
-	void Stop(FCsSoundElement* InSound, UObject* InOwner, UObject* InParent);
+	static UCsManager_Sound* Get(UObject* InRoot = nullptr);
+	
+	template<typename T>
+	static T* Get(UObject* InRoot = nullptr)
+	{
+		return Cast<T>(Get(InRoot));
+	}
 
-#pragma endregion Stop
+	static bool IsValid(UObject* InRoot = nullptr);
 
+	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Sound> ManagerSoundClass, UObject* InOuter = nullptr);
+	
+	static void Shutdown(UObject* InRoot = nullptr);
+	static bool HasShutdown(UObject* InRoot = nullptr);
+
+#if WITH_EDITOR
+protected:
+
+	static ICsGetManagerSound* Get_GetManagerSound(UObject* InRoot);
+	static ICsGetManagerSound* GetSafe_GetManagerSound(UObject* Object);
+
+	static UCsManager_Sound* GetSafe(UObject* Object);
+
+public:
+
+	static UCsManager_Sound* GetFromWorldContextObject(const UObject* WorldContextObject);
+
+#endif // #if WITH_EDITOR
+
+protected:
+
+	virtual void Initialize();
+	virtual void CleanUp();
+
+private:
+	// Singleton data
+	static UCsManager_Sound* s_Instance;
+	static bool s_bShutdown;
+
+	// Root
+#pragma region
+protected:
+
+	UObject* MyRoot;
+
+	void SetMyRoot(UObject* InRoot);
+
+public:
+
+	FORCEINLINE UObject* GetMyRoot()
+	{
+		return MyRoot;
+	}
+
+#pragma endregion Root
+
+#pragma endregion Singleton
+
+// Settings
+#pragma region
+protected:
+
+	FCsSettings_Manager_Sound Settings;
+
+public:
+
+	FORCEINLINE void SetSettings(const FCsSettings_Manager_Sound& InSettings)
+	{
+		Settings = InSettings;
+	}
+
+#pragma endregion Settings
+
+// Internal
+#pragma region
+protected:
+	
+	/** Reference to the internal manager for handling the pool of sounds. */
+	FCsManager_Sound_Internal Internal;
+	
+	/**
+	* Setup the internal manager for handling the pool of projectiles.
+	*/
+	virtual void SetupInternal();
+
+public:
+
+	/**
+	*
+	*/
+	void InitInternalFromSettings();
+
+	/**
+	*
+	*
+	* @param Params
+	*/
+	void InitInternal(const FCsManager_Sound_Internal::FCsManagerPooledObjectMapParams& Params);
+
+	virtual void Clear();
+
+	// Pool
+#pragma region
+public:
+
+	/**
+	* 
+	* @param Type
+	* @param Size
+	*/
+	virtual void CreatePool(const FECsSoundType& Type, const int32& Size);
+
+	/**
+	*
+	*
+	* return
+	*/
+	TBaseDelegate<FCsSoundPooled*, const FECsSoundType&>& GetConstructContainer_Impl();
+
+	/**
+	*
+	* @param Type
+	* return
+	*/
+	virtual FCsSoundPooled* ConstructContainer(const FECsSoundType& Type);
+
+	/**
+	*
+	*
+	* @param Type
+	* return
+	*/
+	TMulticastDelegate<void, const FCsSoundPooled*>& GetOnConstructObject_Event(const FECsSoundType& Type);
+
+	/**
+	*
+	*
+	* @param Type
+	* @param Object
+	*/
+	void OnAddToPool(const FECsSoundType& Type, const FCsSoundPooled* Object);
+
+		// Add
+#pragma region
+
+			// Pool
+#pragma region
+
+public:
+
+	/**
+	* Adds an Object to the pool for the appropriate Type.
+	*  The Object must implement the interface: ICsSoundPooled.
+	*
+	* @param Type			Type of pool to add the Object to.
+	* @param PooledObject	Object that implements the interface: ICsSoundPooled.
+	* @param Object			UObject reference.
+	* return				Container holding a reference to a pooled object.
+	*						Pooled Object implements the interface: ICsSoundPooled.
+	*/
+	const FCsSoundPooled* AddToPool(const FECsSoundType& Type, ICsSoundPooled* Object);
+
+	/**
+	* Adds an Object to the pool for the appropriate Type.
+	*  Object must implement the interface: ICsSoundPooled.
+	*
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object that implements the interface: ICsSoundPooled.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object implements the interface: ICsSoundPooled.
+	*/
+	const FCsSoundPooled* AddToPool(const FECsSoundType& Type, const FCsSoundPooled* Object);
+
+	/**
+	* Adds an Object to the pool for the appropriate Type.
+	*  Object must implement the interface: ICsSoundPooled or the UClass
+	*  associated with the Object have ImplementsInterface(UCsSoundPooled::StaticClass()) == true.
+	*
+	* @param Type		Type of the pool to add the object to.
+	* @param Object		Object or Object->GetClass() that implements the interface: ICsSoundPooled.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object or UClass associated with Pooled Object implements
+	*					the interface: ICsSoundPooled.
+	*/
+	const FCsSoundPooled* AddToPool(const FECsSoundType& Type, UObject* Object);
+
+#pragma endregion Pool
+
+			// Allocated Objects
+#pragma region
+public:
+
+	/**
+	* Adds an Object to the allocated objects for the appropriate Type.
+	* If the Object is NOT added to the pool, add it to the pool.
+	*  Object must implement the interface: ICsSoundPooled.
+	*
+	* @param Type			Type of pool to add the Object to.
+	* @param PooledObject	Object that implements the interface: ICsSoundPooled.
+	* @param Object			UObject reference.
+	* return				Container holding a reference to a pooled object.
+	*						Pooled Object implements the interface: ICsSoundPooled.
+	*/
+	const FCsSoundPooled* AddToAllocatedObjects(const FECsSoundType& Type, ICsSoundPooled* PooledObject, UObject* Object);
+
+	/**
+	* Adds an Object to the allocated objects for the appropriate Type.
+	* If the Object is NOT added to the pool, add it to the pool.
+	*  Object must implement the interface: ICsSoundPooled.
+	*
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object that implements the interface: ICsSoundPooled.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object implements the interface: ICsSoundPooled.
+	*/
+	const FCsSoundPooled* AddToAllocatedObjects(const FECsSoundType& Type, ICsSoundPooled* Object);
+
+	/**
+	* Adds an Object to the allocated objects for the appropriate Type.
+	* If the Object is NOT added to the pool, add it to the pool.
+	*  Object must implement the interface: ICsSoundPooled or the UClass
+	*  associated with the Object have ImplementsInterface(UCsSoundPooled::StaticClass()) == true.
+	*
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object or Object->GetClass() that implements the interface: ICsSoundPooled.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object or UClass associated with Pooled Object implements
+	*					the interface: ICsSoundPooled.
+	*/
+	const FCsSoundPooled* AddToAllocatedObjects(const FECsSoundType& Type, UObject* Object);
+
+#pragma endregion Allocated Objects
+
+#pragma endregion Add
+
+public:
+
+	/**
+	* Get the pool for the appropriate Type.
+	*  Pool is an array of containers holding references to objects that
+	*  implement the interface: ICsSoundPooled.
+	*
+	* @param Type	Type of pool to get.
+	* return		Pool associated with the type.
+	*/
+	const TArray<FCsSoundPooled*>& GetPool(const FECsSoundType& Type);
+
+	/**
+	* Get the allocated objects for the appropriate Type.
+	*  Allocated Objects are an array of containers holding references to objects that
+	*  implement the interface: ICsSoundPooled.
+	*
+	* @param Type	Type of allocated objects to get.
+	* return		Allocated Objects associated with the Type.
+	*/
+	const TArray<FCsSoundPooled*>& GetAllocatedObjects(const FECsSoundType& Type);
+
+	/**
+	* Get the number of elements in the pool for the appropriate Type.
+	*
+	*
+	* @param Type	Type of pool.
+	* return		Number of elements in the pool for the associated Type.
+	*/
+	const int32& GetPoolSize(const FECsSoundType& Type);
+
+	/**
+	* Get the number of allocated objects for the appropriate Type.
+	*
+	* @param Type	Type of allocated objects.
+	* return		Number of allocated objects for the associated Type.
+	*/
+	int32 GetAllocatedObjectsSize(const FECsSoundType& Type);
+
+	/**
+	* Get whether all elements in the pool for the appropriate Type
+	* have been allocated.
+	*
+	@ @param Type	Type of pool to check against.
+	* return		All elements allocated or not.
+	*/
+	bool IsExhausted(const FECsSoundType& Type);
+
+	// Find
+#pragma region
+public:
+
+	/**
+	* Find the container holding reference to a pooled object from the pool 
+	* for the appropriate Type by Index.
+	*
+	* @param Type	Type of pool to add the Object to.
+	* @param Index	Index of the pooled object.
+	* return		Container holding a reference to a pooled object.
+	*				Pooled Object implements the interface: ICsSoundPooled.
+	*/
+	const FCsSoundPooled* FindObject(const FECsSoundType& Type, const int32& Index);
+
+	/**
+	* Find the container holding a reference to a pooled object in the pool 
+	* for the appropriate Type by Interface.
+	*  Object must implement the interface: ICsSoundPooled.
+	*
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object of interface type: ICsSoundPooled.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object implements the interface: ICsSoundPooled.
+	*/
+	const FCsSoundPooled* FindObject(const FECsSoundType& Type, ICsSoundPooled* Object);
+
+	/**
+	* Find the container holding a reference to a pooled object in the pool 
+	* for the appropriate Type by UObject.
+	*  Object must implement the interface: ICsSoundPooled or the UClass
+	*  associated with the Object have ImplementsInterface(UCsSoundPooled::StaticClass()) == true.
+	*
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object or Object->GetClass() that implements the interface: ICsSoundPooled.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object or UClass associated with Pooled Object implements
+	*					the interface: ICsSoundPooled.
+	*/
+	const FCsSoundPooled* FindObject(const FECsSoundType& Type, UObject* Object);
+
+	/**
+	* Safely, via checks, find the container holding a reference to a pooled object in the pool 
+	* for the appropriate Type by Index.
+	*
+	* @param Type	Type of pool to add the Object to.
+	* @param Index	Index of the pooled object.
+	* return		Container holding a reference to a pooled object.
+	*				Pooled Object implements the interface: ICsFXActorPooled.
+	*/
+	const FCsSoundPooled* FindSafeObject(const FECsSoundType& Type, const int32& Index);
+
+	/**
+	* Safely, via checks, find the container holding a reference to a pooled object in the pool 
+	* for the appropriate Type by the Interface.
+	*
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object that implements the interface: ICsSoundPooled.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object implements the interface: ICsSoundPooled.
+	*/
+	const FCsSoundPooled* FindSafeObject(const FECsSoundType& Type, ICsSoundPooled* Object);
+
+	/**
+	* Safely, via checks, find the container holding a reference to a pooled object in the pool 
+	* for the appropriate Type by the UObject.
+	*
+	* @param Type		Type of pool to add the Object to.
+	* @param Object		Object or Object->GetClass() that implements the interface: ICsSoundPooled.
+	* return			Container holding a reference to a pooled object.
+	*					Pooled Object or UClass associated with Pooled Object implements
+	*					the interface: ICsSoundPooled.
+	*/
+	const FCsSoundPooled* FindSafeObject(const FECsSoundType& Type, UObject* Object);
+
+#pragma endregion Find
+
+#pragma endregion Pool
+
+	// Update
+#pragma region
+public:
+
+	virtual void Update(const FCsDeltaTime& DeltaTime);
+
+private:
+
+	FECsSoundType CurrentUpdatePoolType;
+
+	int32 CurrentUpdatePoolObjectIndex;
+
+protected:
+
+	void OnPreUpdate_Pool(const FECsSoundType& Type);
+
+	void OnUpdate_Object(const FECsSoundType& Type, const FCsSoundPooled* Object);
+
+	void OnPostUpdate_Pool(const FECsSoundType& Type);
+
+#pragma endregion Update
+
+	// Payload
+#pragma region
+public:
+
+	/**
+	*
+	*
+	* @param Type
+	* @param Size
+	*/
+	void ConstructPayloads(const FECsSoundType& Type, const int32& Size);
+
+	/**
+	*
+	*
+	* @param Type
+	* return
+	*/
+	virtual ICsSoundPooledPayload* ConstructPayload(const FECsSoundType& Type);
+
+	/**
+	* Get a payload object from a pool of payload objects for the appropriate Type.
+	*  Payload implements the interface: ICsPooledObjectPayload.
+	*
+	* @param Type	Type of payload.
+	* return		Payload that implements the interface: ICsSoundPooledPayload.
+	*/
+	ICsSoundPooledPayload* AllocatePayload(const FECsSoundType& Type);
+
+	/**
+	* Get a payload object from a pool of payload objects for the appropriate Type.
+	*  Payload implements the interface: ICsPooledObjectPayload.
+	*
+	* @param Type	Type of payload.
+	* return		Payload that implements the interface: ICsSoundPooledPayload.
+	*/
+	template<typename PayloadTypeImpl>
+	FORCEINLINE PayloadTypeImpl* AllocatePayload(const FECsSoundType& Type)
+	{
+		return Internal.AllocatePayload<PayloadTypeImpl>(Type);
+	}
+
+	//virtual ICsFXPooledPayload* ScriptAllocatePayload(const FECsFX& Type, const FCsScriptProjectilePayload& ScriptPayload);
+
+#pragma endregion Payload
+
+	// Spawn
+#pragma region
+public:
+
+	/**
+	*
+	*
+	* @param Type
+	* @param Payload
+	*/
+	const FCsSoundPooled* Spawn(const FECsSoundType& Type, ICsSoundPooledPayload* Payload);
+
+	/**
+	*
+	*/
+	//virtual const FCsFXActorPooled* ScriptSpawn(const FECsFX& Type, const FCsScriptProjectilePayload& ScriptPayload);
+
+	/**
+	* Delegate type after a Sound has been Spawned.
+	* 
+	* @param Type
+	* @param Object
+	*/
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSpawn, const FECsSoundType& /*Type*/, const FCsSoundPooled* /*Object*/);
+
+	/** */
+	FOnSpawn OnSpawn_Event;
+
+	/** */
+	FCsManagerSound_OnSpawn OnSpawn_ScriptEvent;
+
+#pragma endregion Spawn
+
+	// Destroy
+#pragma region
+public:
+
+	/**
+	*
+	*
+	* @param Type
+	* @param Object
+	*/
+	virtual bool Destroy(const FECsSoundType& Type, ICsSoundPooled* Object);
+
+	virtual bool Destroy(ICsSoundPooled* Object);
+
+	/**
+	* Delegate type after a Sound has been Destroyed.
+	*
+	* @param Type
+	* @param Object
+	*/
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDestroy, const FECsSoundType& /*Type*/, const FCsSoundPooled* /*Object*/);
+
+	FOnDestroy OnDestroy_Event;
+
+#pragma endregion Destroy
+
+	// Log
+#pragma region
+protected:
+
+	void LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsSoundPooled* Object);
+
+#pragma endregion Log
+
+#pragma endregion Internal
+
+// Pool
+#pragma region
+protected:
+
+	UPROPERTY()
+	TArray<UObject*> Pool;
+
+#pragma endregion Pool
+
+// Script
+#pragma region
+public:
+
+	// ICsSoundPooled
+#pragma region
+public:
+
+#pragma endregion ICsSoundPooled
+
+	// ICsPooledObject
+#pragma region
+public:
+
+	/** Delegate for getting the Cache associated with a Pooled Object. 
+		 The Pooled Object implements a script interface of type: ICsPooledObject. */
+	FCsPooledObject::FScript_GetCache Script_GetCache_Impl;
+
+	/** Delegate called after allocating a Pooled Object. 
+		 The Pooled Object implements a script interface of type: ICsPooledObject. */
+	FCsPooledObject::FScript_Allocate Script_Allocate_Impl;
+
+	/** Delegate called after allocating a Pooled Object. 
+		 The Pooled Object implements a script interface of type: ICsPooledObject.*/
+	FCsPooledObject::FScript_Deallocate Script_Deallocate_Impl;
+
+#pragma endregion ICsPooledObject
+
+	// ICsUpdate
+#pragma region
+public:
+
+	/** Delegate for updating a Pooled Object.
+		The Pooled Object implements a script interface of type: ICsPooledObject. */
+	FCsPooledObject::FScript_Update Script_Update_Impl;
+
+#pragma endregion ICsUpdate
+
+	// ICsOnConstructObject
+#pragma region
+
+	/** Delegate to execute after an object has been constructed.
+		 The object implements a script interface of type: ICsOnConstructObject. */
+	FCsPooledObject::FScript_OnConstructObject Script_OnConstructObject_Impl;
+
+#pragma endregion 
+
+#pragma endregion Script
+
+// Data
+#pragma region
+protected:
+
+	TMap<FName, ICsData_Sound*> DataMap;
+
+public:
+
+	virtual void PopulateDataMapFromSettings();
+
+	virtual void DeconstructData(ICsData_Sound* Data);
+
+	ICsData_Sound* GetData(const FName& Name);
+
+private:
+
+	UPROPERTY()
+	TMap<FECsSoundType, UClass*> ClassMap;
+
+	UPROPERTY()
+	TArray<UDataTable*> DataTables;
+
+#pragma endregion Data
 };

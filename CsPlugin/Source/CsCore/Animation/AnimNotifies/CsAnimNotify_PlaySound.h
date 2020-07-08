@@ -1,7 +1,7 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "Animation/AnimNotifies/AnimNotify.h"
-#include "Types/CsTypes_Sound.h"
+#include "Managers/Sound/CsTypes_Sound.h"
 #include "CsAnimNotify_PlaySound.generated.h"
 
 USTRUCT(BlueprintType)
@@ -16,7 +16,7 @@ struct FCsAnimNotifySound
 	FECsSoundType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	TEnumAsByte<ECsSoundPriority::Type> Priority;
+	ECsSoundPriority Priority;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	bool bSpatialize;
@@ -39,17 +39,6 @@ struct FCsAnimNotifySound
 		PitchMultiplier(1.0f),
 		Bone(NAME_None)
 	{
-	}
-
-	FCsAnimNotifySound& operator=(const FCsAnimNotifySound& B)
-	{
-		Sound = B.Sound;
-		Priority = B.Priority;
-		bSpatialize = B.bSpatialize;
-		VolumeMultiplier = B.VolumeMultiplier;
-		PitchMultiplier = B.PitchMultiplier;
-		Bone = B.Bone;
-		return *this;
 	}
 
 	bool operator==(const FCsAnimNotifySound& B) const

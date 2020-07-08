@@ -1,9 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Sound/CsSound.h"
+#include "Managers/Sound/CsSoundPooledImpl.h"
 #include "CsCore.h"
-#include "Library/CsLibrary_Common.h"
 
-ACsSound::ACsSound(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+#include "Library/CsLibrary_Common.h"
+// Sound
+#include "Managers/Sound/Cache/CsSoundPooledCacheImpl.h"
+
+ACsSoundPooledImpl::ACsSoundPooledImpl(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	AudioComponent = ObjectInitializer.CreateDefaultSubobject<UAudioComponent>(this, TEXT("AudioComponent"));
 
@@ -14,12 +17,12 @@ ACsSound::ACsSound(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 
 	RootComponent = AudioComponent;
 
-	DefaultAttenuation = ObjectInitializer.CreateDefaultSubobject<USoundAttenuation>(this, TEXT("AudioAttenuation"));
+	SoundAttenuation = ObjectInitializer.CreateDefaultSubobject<USoundAttenuation>(this, TEXT("SoundAttenuation"));
 
 	FSoundAttenuationSettings NewAttenuationSettings;
-	DefaultAttenuation->Attenuation					 = NewAttenuationSettings;
-	DefaultAttenuation->Attenuation.AttenuationShape = EAttenuationShape::Sphere;
-	AudioComponent->AttenuationSettings				 = DefaultAttenuation;
+	SoundAttenuation->Attenuation					 = NewAttenuationSettings;
+	SoundAttenuation->Attenuation.AttenuationShape   = EAttenuationShape::Sphere;
+	AudioComponent->AttenuationSettings				 = SoundAttenuation;
 
 	SetRemoteRoleForBackwardsCompat(ROLE_None);
 	bReplicates		   = false;
@@ -28,42 +31,76 @@ ACsSound::ACsSound(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 	SetCanBeDamaged(false);
 }
 
-void ACsSound::Init(const int32 &Index, const FECsSoundType &InType)
-{
-	PoolIndex = Index;
-	Type = InType;
+// UObject Interface
+#pragma region
 
-	Cache.Set(Index, this);
-	Cache.Type = Type;
+void ACsSoundPooledImpl::BeginDestroy()
+{
+	Super::BeginDestroy();
+
+	if (Cache)
+	{
+		delete Cache;
+		Cache = nullptr;
+	}
 }
 
-void ACsSound::Init(const int32 &Index)
+#pragma endregion UObject Interface
+
+// AActor Interface
+#pragma region
+
+void ACsSoundPooledImpl::BeginPlay()
 {
-	Init(Index, EMCsSoundType::Get().GetMAX());
+	Super::BeginPlay();
+
+	AudioComponent->SetComponentTickEnabled(false);
+
+	SetActorTickEnabled(false);
+
+	ConstructCache();
 }
 
-void ACsSound::Allocate(FCsSoundPayload* Payload)
-{
-	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsLibrary_Common::GetCurrentFrame(GetWorld()));
+#pragma endregion AActor Interface
 
+// ICsUpdate
+#pragma region
+
+void ACsSoundPooledImpl::Update(const FCsDeltaTime& DeltaTime)
+{
+}
+
+#pragma endregion ICsUpdate
+
+void ACsSoundPooledImpl::ConstructCache()
+{
+	Cache = new FCsSoundPooledCacheImpl();
+}
+
+// ICsPooledObject
+#pragma region
+
+ICsPooledObjectCache* ACsSoundPooledImpl::GetCache() const
+{
+	return Cache;
+}
+
+void ACsSoundPooledImpl::Allocate(ICsPooledObjectPayload* Payload)
+{
 	Play();
 }
 
-void ACsSound::DeAllocate()
+void ACsSoundPooledImpl::Deallocate()
 {
-	Super::DeAllocate();
-
-	Cache.Reset();
 }
 
-bool ACsSound::Play()
-{
-	if (!AudioComponent)
-	{
-		UE_LOG(LogCs, Warning, TEXT("ACsSound::Play (%s): AudioComponent is NULL."), *GetName())
-		return false;
-	}
+#pragma endregion ICsPooledObject
 
+bool ACsSoundPooledImpl::Play()
+{
+	checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Play: AudioComponent is NULL."));
+
+	/*
 	USoundCue* Cue = Cache.GetCue();
 	AudioComponent->SetSound(Cue);
 
@@ -110,11 +147,13 @@ bool ACsSound::Play()
 
 	AudioComponent->Activate(true);
 	AudioComponent->Play();
+	*/
 	return true;
 }
 
-bool ACsSound::Stop()
+bool ACsSoundPooledImpl::Stop()
 {
+	/*
 	SetActorRelativeLocation(FVector::ZeroVector, false, nullptr, ETeleportType::TeleportPhysics);
 	SetActorLocation(FVector(0.0f, 0.0f, 10000.0f), false, nullptr, ETeleportType::TeleportPhysics);
 	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
@@ -138,6 +177,6 @@ bool ACsSound::Stop()
 		AudioComponent->bAllowSpatialization = false;
 	}
 	SetActorHiddenInGame(true);
-
+	*/
 	return true;
 }

@@ -206,18 +206,6 @@ TAutoConsoleVariable<int32> CsCVarLogOverrideFunctions(
 
 #pragma endregion Script
 
-// Sound
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogManagerSoundTransactions(
-	TEXT("log.manager.sound.transactions"),
-	0,
-	TEXT("Log Manager Sound Allocation and DeAllocation."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Sound
-
 // FX
 #pragma region
 
@@ -399,8 +387,6 @@ namespace NCsCVarLog
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogJsonDataFilenames);
 	// Script
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogOverrideFunctions);
-	// Sound
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerSoundTransactions);
 	// FX
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerFxTransactions);
 	// Collision
@@ -431,8 +417,6 @@ namespace NCsCVarLog
 		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerLoad, CsCVarLogManagerLoad);
 			// Data
 		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerDataLoad, CsCVarLogManagerDataLoad);
-			// Projectile
-		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerProjectileTransactions, CsCVarLogManagerProjectileTransactions);
 
 			// Collectible
 		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerCollectibleTransactions, CsCVarLogManagerCollectibleTransactions);

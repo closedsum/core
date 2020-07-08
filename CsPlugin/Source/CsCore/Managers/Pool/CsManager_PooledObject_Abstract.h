@@ -239,31 +239,6 @@ public:
 		DeallocateObjectScopedTimerCVar = Params.DeallocateObjectScopedTimerCVar;
 		SpawnScopedTimerCVar			= Params.SpawnScopedTimerCVar;
 		DestroyScopedTimerCVar			= Params.DestroyScopedTimerCVar;
-		/*
-	FCsScopedTimerHandle UpdateScopedTimerHandle;
-	FECsCVarLog UpdateScopedTimerCVar;
-
-	FCsScopedTimerHandle UpdateObjectScopedTimerHandle;
-	FECsCVarLog UpdateObjectScopedTimerCVar;
-
-	FCsScopedTimerHandle AllocateScopedTimerHandle;
-	FECsCVarLog AllocateScopedTimerCVar;
-
-	FCsScopedTimerHandle AllocateObjectScopedTimerHandle;
-	FECsCVarLog AllocateObjectScopedTimerCVar;
-
-	FCsScopedTimerHandle DeallocateScopedTimerHandle;
-	FECsCVarLog DeallocateScopedTimerCVar;
-
-	FCsScopedTimerHandle DeallocateObjectScopedTimerHandle;
-	FECsCVarLog DeallocateObjectScopedTimerCVar;
-
-	FCsScopedTimerHandle SpawnScopedTimerHandle;
-	FECsCVarLog SpawnScopedTimerCVar;
-
-	FCsScopedTimerHandle DestroyScopedTimerHandle;
-	FECsCVarLog DestroyScopedTimerCVar;
-		*/
 
 		// Scoped Timers
 		CS_GET_SCOPED_TIMER_HANDLE(CreatePoolScopedTimerHandle, &(ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::CreatePool]), ScopedGroup, CreatePoolScopedTimerCVar);

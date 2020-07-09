@@ -1,4 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+#include "Types/Enum/CsEnum_uint8.h"
+#include "Types/Enum/CsEnumStructMap.h"
 #include "Types/CsTypes_View.h"
 #include "Managers/Pool/Payload/CsPooledObjectPayload.h"
 #include "Types/CsTypes_AttachDetach.h"
@@ -321,7 +323,7 @@ namespace NCsNoiseEvent
 
 #pragma endregion NoiseEvent
 
-// FCsFX
+// FCsSound
 #pragma region
 
 class USoundBase;
@@ -445,4 +447,4 @@ public:
 	}
 };
 
-#pragma endregion FCsFX
+#pragma endregion FCsSound

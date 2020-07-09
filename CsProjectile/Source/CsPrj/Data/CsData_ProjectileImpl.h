@@ -30,6 +30,28 @@ public:
 	FCsData_ProjectileImpl();
 	~FCsData_ProjectileImpl();
 
+	FORCEINLINE UObject* _getUObject() const { return nullptr; }
+
+public:
+
+	FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map)
+	{
+		InterfaceMap = Map;
+	}
+
+// ICsGetInterfaceMap
+#pragma region
+public:
+
+	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+	{
+		return InterfaceMap;
+	}
+
+#pragma endregion ICsGetInterfaceMap
+
+public:
+
 	FORCEINLINE void SetLifeTime(float* Value)
 	{
 		LifeTime = Value;
@@ -48,26 +70,6 @@ public:
 	FORCEINLINE void SetGravityScale(float* Value)
 	{
 		GravityScale = Value;
-	}
-
-	FORCEINLINE UObject* _getUObject() const { return nullptr; }
-
-// ICsGetInterfaceMap
-#pragma region
-public:
-
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-	{
-		return InterfaceMap;
-	}
-
-#pragma endregion ICsGetInterfaceMap
-
-public:
-
-	FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map)
-	{
-		InterfaceMap = Map;
 	}
 
 // ICsData_Projectile

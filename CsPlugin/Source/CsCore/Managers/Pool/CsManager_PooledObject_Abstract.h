@@ -1538,9 +1538,11 @@ public:
 	}
 
 	/**
+	* Get a payload object from a pool of payload objects.
+	*  Payload implements the interface: ICsPooledObjectPayload and PayloadType.
 	*
-	*
-	* return
+	* return	Payload that implements the interface: ICsPooledObjectPayload
+				and PayloadType.
 	*/
 	PayloadType* AllocatePayload()
 	{
@@ -1561,16 +1563,32 @@ public:
 	}
 
 	/**
+	* Get a payload object from a pool of payload objects.
+	*  Payload implements the interface: ICsPooledObjectPayload and PayloadType.
 	*
+	* @param Context	Calling context
+	* return			PayloadTypeImpl that implements the interface: ICsPooledObjectPayload
+						and PayloadType.
+	*/
+	template<typename PayloadTypeImpl>
+	PayloadTypeImpl* AllocatePayload(const FString& Context)
+	{
+		return NCsInterfaceMap::StaticCastChecked<PayloadTypeImpl, PayloadType>(Context, AllocatePayload());
+	}
+
+	/**
+	* Get a payload object from a pool of payload objects.
+	*  Payload implements the interface: ICsPooledObjectPayload and PayloadType.
 	*
-	* return
+	* return	PayloadTypeImpl that implements the interface: ICsPooledObjectPayload
+				and PayloadType.
 	*/
 	template<typename PayloadTypeImpl>
 	PayloadTypeImpl* AllocatePayload()
 	{
 		const FString& Context = FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::AllocatePayload];
 
-		return NCsInterfaceMap::StaticCastChecked<PayloadTypeImpl, PayloadType>(Context, AllocatePayload());
+		return AllocatePayload<PayloadTypeImpl>(Context);
 	}
 
 	/**

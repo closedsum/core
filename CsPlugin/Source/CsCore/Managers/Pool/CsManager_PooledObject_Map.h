@@ -958,8 +958,23 @@ public:
 	* Get a payload object from a pool of payload objects for the appropriate Type.
 	*  Payload implements the interface: ICsPooledObjectPayload and PayloadType
 	*
+	* @param Context	Calling context.
+	* @param Type		Type of payload.
+	* return			PayloadTypeImpl that implements the interface: ICsPooledObjectPayload
+	*					and PayloadType.
+	*/
+	template<typename PayloadTypeImpl>
+	FORCEINLINE PayloadTypeImpl* AllocatePayload(const FString& Context, const KeyType& Type)
+	{
+		return GetManagerPooledObjects(Type)->AllocatePayload<PayloadTypeImpl>(Context);
+	}
+
+	/**
+	* Get a payload object from a pool of payload objects for the appropriate Type.
+	*  Payload implements the interface: ICsPooledObjectPayload and PayloadType
+	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsPooledObjectPayload
+	* return		PayloadTypeImpl that implements the interface: ICsPooledObjectPayload
 	*				and PayloadType.
 	*/
 	template<typename PayloadTypeImpl>

@@ -488,12 +488,39 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPooledObjectPayload.
+	*  Payload implements the interface: ICsProjectilePayload.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsPooledObjectPayload.
+	* return		Payload that implements the interface: ICsProjectilePayload.
 	*/
 	ICsProjectilePayload* AllocatePayload(const FECsProjectile& Type);
+
+	/**
+	* Get a payload object from a pool of payload objects for the appropriate Type.
+	*  Payload implements the interface: ICsProjectilePayload.
+	*
+	* @param Context	Calling context.
+	* @param Type		Type of payload.
+	* return			Payload that implements the interface: ICsProjectilePayload.
+	*/
+	template<typename PayloadTypeImpl>
+	PayloadTypeImpl* AllocatePayload(const FString& Context, const FECsProjectile& Type)
+	{
+		return Internal.AllocatePayload<PayloadTypeImpl>(Context, Type);
+	}
+
+	/**
+	* Get a payload object from a pool of payload objects for the appropriate Type.
+	*  Payload implements the interface: ICsProjectilePayload.
+	*
+	* @param Type	Type of payload.
+	* return		Payload that implements the interface: ICsProjectilePayload.
+	*/
+	template<typename PayloadTypeImpl>
+	PayloadTypeImpl* AllocatePayload(const FECsProjectile& Type)
+	{
+		return Internal.AllocatePayload<PayloadTypeImpl>(Type);
+	}
 
 	virtual ICsProjectilePayload* ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload);
 

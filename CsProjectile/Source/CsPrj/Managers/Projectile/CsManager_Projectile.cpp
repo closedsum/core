@@ -854,6 +854,8 @@ void UCsManager_Projectile::CreateEmulatedDataFromDataTable(UDataTable* DataTabl
 			TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
 			InterfaceImplMap.Add(FCsData_ProjectileImpl::Name, Data);
 
+			DataMap.Add(Name, Data);
+
 			// LifeTime
 			{
 				float* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<float>(Context, LifeTimeProperty, RowPtr);

@@ -635,7 +635,7 @@ protected:
 	/** <DataName, InterfacePtr> */
 	TMap<FName, ICsData_Projectile*> EmulatedDataMap;
 
-	/** <DataName, InterfaceMapPtr> */
+	/** <DataName, InterfaceMapPtr> */ 
 	TMap<FName, FCsData_ProjectileInterfaceMap*> EmulatedDataInterfaceMap;
 
 	/** <DataName, <InterfaceImplName, InterfaceImplPtr>> */
@@ -663,11 +663,11 @@ public:
 
 		FCsData_ProjectileInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap.Find(Name);
 
-		checkf(EmulatedInterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData:"));
+		checkf(EmulatedInterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData: EmulatedInterfaceMap is NULL. Failed to find InterfaceMap associated with %s."), *(Name.ToString()));
 
 		FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
 
-		checkf(InterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData:"));
+		checkf(InterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData: InterfaceMap is NULL. Interface failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
 
 		return InterfaceMap->Get<InterfaceType>();
 	}
@@ -685,11 +685,11 @@ public:
 
 		FCsData_ProjectileInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap.Find(Name);
 
-		checkf(EmulatedInterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData:"));
+		checkf(EmulatedInterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData: EmulatedInterfaceMap is NULL. Failed to find InterfaceMap associated with %s."), *(Name.ToString()));
 
 		FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
 
-		checkf(InterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData:"));
+		checkf(InterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData: InterfaceMap is NULL. Interface failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
 
 		return InterfaceMap->StaticCastChecked<InterfaceImplType>();
 	}

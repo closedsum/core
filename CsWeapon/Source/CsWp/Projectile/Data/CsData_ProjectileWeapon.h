@@ -11,6 +11,9 @@ class CSWP_API UCsData_ProjectileWeapon : public UCsGetInterfaceMap
 	GENERATED_UINTERFACE_BODY()
 };
 
+/**
+*
+*/
 class CSWP_API ICsData_ProjectileWeapon : public ICsGetInterfaceMap
 {
 	GENERATED_IINTERFACE_BODY()
@@ -18,6 +21,8 @@ class CSWP_API ICsData_ProjectileWeapon : public ICsGetInterfaceMap
 public:
 
 	static const FName Name;
+
+public:
 
 	/**
 	*

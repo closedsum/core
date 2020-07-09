@@ -14,10 +14,10 @@
 #include "Settings/CsWeaponSettings.h"
 // Data
 #include "Data/CsData_Weapon.h"
+#include "Data/CsData_WeaponImpl.h"
+#include "Projectile/Data/CsData_ProjectileWeaponImpl.h"
 // Weapon
 #include "Payload/CsWeaponPooledPayloadImpl.h"
-#include "Data/CsData_WeaponImpl.h"
-#include "Data/CsData_ProjectileWeaponImpl.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"

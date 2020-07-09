@@ -3,8 +3,6 @@
 #include "Managers/Pool/Payload/CsPooledObjectPayload.h"
 #include "Types/CsTypes_AttachDetach.h"
 
-#include "Sound/SoundCue.h"
-
 #include "CsTypes_Sound.generated.h"
 #pragma once
 
@@ -170,6 +168,9 @@ struct CSCORE_API FCsSoundElement
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Sound_LoadFlags;
 
+	UPROPERTY(Transient)
+	USoundCue* Sound_Internal;
+
 	/** Hard reference to a Sound Asset. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	FECsSoundType Type;
@@ -195,16 +196,13 @@ struct CSCORE_API FCsSoundElement
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	FName Bone;
 
-private:
-	UPROPERTY(Transient)
-	class USoundCue* Sound_Internal;
-
 public:
+
 	FCsSoundElement() :
 		Sound_LoadFlags(0),
+		Sound_Internal(nullptr),
 		bSpatialize(false),
-		IsLooping(false),
-		Sound_Internal(nullptr)
+		IsLooping(false)
 	{
 		Type = EMCsSoundType::Get().GetMAX();
 		Priority = ECsSoundPriority::Medium;
@@ -230,12 +228,6 @@ public:
 	FORCEINLINE bool operator!=(const FCsSoundElement& B) const
 	{
 		return !(*this == B);
-	}
-
-	FORCEINLINE void Set(USoundCue* InSound)
-	{
-		Sound = TSoftObjectPtr<USoundCue>(InSound);
-		Sound_Internal = InSound;
 	}
 
 	FORCEINLINE USoundCue* Get() const
@@ -302,125 +294,6 @@ public:
 
 #pragma endregion FCsFpvSoundElement
 
-// FCsSoundPayload
-#pragma region
-
-class USoundCue;
-
-struct CSCORE_API FCsSoundPayload : public ICsPooledObjectPayload
-{
-public:
-
-	bool bAllocated;
-
-	UObject* Instigator;
-
-	UObject* Owner;
-
-	UObject* Parent;
-
-	FCsTime Time;
-
-	TWeakObjectPtr<USoundCue> Sound;
-
-	ECsSoundPriority Priority;
-
-	bool bSpatialize;
-
-	float Duration;
-
-	bool IsLooping;
-
-	float VolumeMultiplier;
-
-	float PitchMultiplier;
-
-	FName Bone;
-
-	FVector Location;
-
-	FCsSoundPayload()
-	{
-		Reset();
-	}
-	~FCsSoundPayload(){}
-
-// ICsPooledObjectPayload
-#pragma region
-public:
-
-	const bool& IsAllocated() const
-	{
-		return bAllocated;
-	}
-
-	UObject* GetInstigator() const
-	{
-		return Instigator;
-	}
-
-	UObject* GetOwner() const
-	{
-		return Owner;
-	}
-
-	UObject* GetParent() const
-	{
-		return Parent;
-	}
-
-	FORCEINLINE const FCsTime& GetTime() const 
-	{
-		return Time;
-	}
-
-	void Allocate()
-	{
-		bAllocated = true;
-	}
-
-	void Reset()
-	{
-		bAllocated = false;
-
-		Instigator = nullptr;
-		Owner = nullptr;
-		Parent = nullptr;
-
-		Time.Reset();
-
-		Sound = nullptr;
-		Priority = ECsSoundPriority::Medium;
-		bSpatialize = true;
-		Duration = 0.05f;
-		IsLooping = false;
-		VolumeMultiplier = 1.0f;
-		PitchMultiplier = 1.0f;
-		Bone = NAME_None;
-		Location = FVector::ZeroVector;
-	}
-
-#pragma endregion ICsPooledObjectPayload
-
-	FORCEINLINE void Set(FCsSoundElement* Element)
-	{
-		Sound = Element->Get();
-		Priority = Element->Priority;
-		bSpatialize = Element->bSpatialize;
-		Duration = Element->Duration;
-		IsLooping = Element->IsLooping;
-		VolumeMultiplier = Element->VolumeMultiplier;
-		PitchMultiplier = Element->PitchMultiplier;
-		Bone = Element->Bone;
-	}
-
-	FORCEINLINE USoundCue* GetCue() { return Sound.IsValid() ? Sound.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetCue() { return Cast<T>(GetCue()); }
-};
-
-#pragma endregion FCsSoundPayload
-
 // NoiseEvent
 #pragma region
 
@@ -452,6 +325,7 @@ namespace NCsNoiseEvent
 #pragma region
 
 class USoundBase;
+class USoundAttenuation;
 
 /**
 * Container holding general information for a Sound Asset.
@@ -479,6 +353,18 @@ struct CSCORE_API FCsSound
 		Sound object. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FECsSoundType Type;
+
+	/** Soft reference to Sound Attenuation Asset. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftObjectPtr<USoundAttenuation> Attenuation;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Attenuation_LoadFlags;
+
+	/** Hard reference to a Sound Attenuation Asset. */
+	UPROPERTY(Transient, BlueprintReadOnly)
+	USoundAttenuation* Attenuation_Internal;
 
 	/** Condition to determine when to deallocate the Sound object. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -526,6 +412,9 @@ public:
 		Sound_LoadFlags(0),
 		Sound_Internal(nullptr),
 		Type(),
+		Attenuation(nullptr),
+		Attenuation_LoadFlags(0),
+		Attenuation_Internal(nullptr),
 		DeallocateMethod(ECsSoundDeallocateMethod::Complete),
 		LifeTime(0.0f),
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
@@ -543,6 +432,16 @@ public:
 	FORCEINLINE USoundBase* Get() const
 	{
 		return Sound_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the Sound Attenuation Asset.
+	*
+	* return Sound Attenuation Asset
+	*/
+	FORCEINLINE USoundAttenuation* GetAttenuation() const
+	{
+		return Attenuation_Internal;
 	}
 };
 

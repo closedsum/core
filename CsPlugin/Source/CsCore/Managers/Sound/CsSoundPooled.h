@@ -33,13 +33,6 @@ public:
 	* return
 	*/
 	virtual UAudioComponent* GetAudioComponent() const = 0;
-
-	/**
-	*
-	*
-	* return
-	*/
-	virtual USoundAttenuation* GetSoundAttenuation() const = 0;
 };
 
 // FCsSoundPooled
@@ -86,19 +79,6 @@ public:
 		 The Object implements a script interface of type: ICsSoundPooled. */
 	FScript_GetAudioComponent Script_GetAudioComponent_Impl;
 
-	/**
-	* Delegate type for getting the pooled SoundAttenuation.
-	*  The Object implements a script interface of type: ICsSoundPooled.
-	*
-	* @param Object				An object of type: ICsSoundPooled.
-	* return SoundAttenuation	Component of type USoundAttenuation.
-	*/
-	DECLARE_DELEGATE_RetVal_OneParam(USoundAttenuation* /*SoundAttenuation*/, FScript_GetSoundAttenuation, UObject* /*Object*/);
-
-	/** Delegate for getting the pooled SpimdAttenuation. 
-		 The Object implements a script interface of type: ICsSoundPooled. */
-	FScript_GetSoundAttenuation Script_GetSoundAttenuation_Impl;
-
 #pragma endregion ICsSoundPooled
 
 #pragma endregion Script
@@ -126,8 +106,6 @@ public:
 public:
 
 	UAudioComponent* GetAudioComponent() const;
-
-	USoundAttenuation* GetSoundAttenuation() const;
 
 #pragma endregion ICsSoundPooled
 

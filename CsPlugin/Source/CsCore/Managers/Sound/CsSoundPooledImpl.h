@@ -12,6 +12,9 @@ class USoundAttenuation;
 struct ICsPooledObjectCache;
 struct ICsPooledObjectPayload;
 
+/**
+* 
+*/
 UCLASS()
 class CSCORE_API ACsSoundPooledImpl : public AActor,
 									  public ICsUpdate,
@@ -20,13 +23,10 @@ class CSCORE_API ACsSoundPooledImpl : public AActor,
 {
 	GENERATED_UCLASS_BODY()
 
+public:
+
 	UPROPERTY(Category = Sound, VisibleAnywhere, BlueprintReadOnly, meta = (ExposeFunctionCategories = "Sound,Audio,Audio|Components|Audio"))
 	UAudioComponent* AudioComponent;
-
-private:
-
-	UPROPERTY()
-	USoundAttenuation* SoundAttenuation;
 
 	// UObject Interface
 #pragma region
@@ -77,11 +77,6 @@ public:
 	FORCEINLINE UAudioComponent* GetAudioComponent() const
 	{
 		return AudioComponent;
-	}
-
-	FORCEINLINE USoundAttenuation* GetSoundAttenuation() const
-	{
-		return SoundAttenuation;
 	}
 
 #pragma endregion ICsSoundPooled

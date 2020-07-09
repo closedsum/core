@@ -28,6 +28,7 @@ namespace NCsSoundPooledCacheImplCached
 
 FCsSoundPooledCacheImpl::FCsSoundPooledCacheImpl() :
 	InterfaceMap(nullptr),
+	// ICsPooledObjectCache
 	Index(INDEX_NONE),
 	bAllocated(false),
 	bQueueDeallocate(false),
@@ -40,8 +41,8 @@ FCsSoundPooledCacheImpl::FCsSoundPooledCacheImpl() :
 	LifeTime(0.0f),
 	StartTime(),
 	ElapsedTime(),
+	// ICsProjectileCache
 	AudioComponent(nullptr),
-	SoundAttenuation(nullptr),
 	DeallocateMethod(ECsSoundDeallocateMethod::Complete),
 	QueuedLifeTime(0.0f)
 {
@@ -155,7 +156,6 @@ void FCsSoundPooledCacheImpl::Reset()
 	ElapsedTime.Reset();
 	// ICsSoundPooledCache
 	AudioComponent = nullptr;
-	SoundAttenuation = nullptr;
 	DeallocateMethod = ECsSoundDeallocateMethod::Complete;
 	QueuedLifeTime = 0.0f;
 }

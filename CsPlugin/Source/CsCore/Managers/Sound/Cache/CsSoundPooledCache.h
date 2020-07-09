@@ -27,11 +27,4 @@ public:
 	* return
 	*/
 	virtual UAudioComponent* GetAudioComponent() const = 0;
-
-	/**
-	*
-	*
-	* return
-	*/
-	virtual USoundAttenuation* GetSoundAttenuation() const = 0;
 };

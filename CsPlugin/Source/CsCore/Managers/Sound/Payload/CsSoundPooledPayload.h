@@ -5,6 +5,7 @@
 #pragma once
 
 class USoundBase;
+class USoundAttenuation;
 
 /**
 */
@@ -24,6 +25,13 @@ public:
 	* return Sound Asset
 	*/
 	virtual USoundBase* GetSound() const = 0;
+
+	/**
+	* Get the Sound Attenuation
+	*
+	* return Sound Attenuation
+	*/
+	virtual USoundAttenuation* GetSoundAttenuation() const = 0;
 
 	/**
 	* Get the Deallocate Method. Used to determine the conditions

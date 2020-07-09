@@ -60,8 +60,6 @@ private:
 
 	UAudioComponent* AudioComponent;
 
-	USoundAttenuation* SoundAttenuation;
-
 	ECsSoundDeallocateMethod DeallocateMethod;
 
 	float QueuedLifeTime;
@@ -177,11 +175,6 @@ public:
 		return AudioComponent;
 	}
 
-	FORCEINLINE USoundAttenuation* GetSoundAttenuation() const
-	{
-		return SoundAttenuation;
-	}
-
 #pragma endregion ICsSoundPooledCache
 
 public:
@@ -189,11 +182,6 @@ public:
 	FORCEINLINE void SetAudioComponent(UAudioComponent* InAudioComponent)
 	{
 		AudioComponent = InAudioComponent;
-	}
-
-	FORCEINLINE void SetSoundAttenuation(USoundAttenuation* InSoundAttenuation)
-	{
-		SoundAttenuation = InSoundAttenuation;
 	}
 
 public:

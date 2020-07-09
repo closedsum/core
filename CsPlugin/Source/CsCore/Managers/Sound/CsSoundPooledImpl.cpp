@@ -17,12 +17,14 @@ ACsSoundPooledImpl::ACsSoundPooledImpl(const FObjectInitializer& ObjectInitializ
 
 	RootComponent = AudioComponent;
 
+	/*
 	SoundAttenuation = ObjectInitializer.CreateDefaultSubobject<USoundAttenuation>(this, TEXT("SoundAttenuation"));
 
 	FSoundAttenuationSettings NewAttenuationSettings;
 	SoundAttenuation->Attenuation					 = NewAttenuationSettings;
 	SoundAttenuation->Attenuation.AttenuationShape   = EAttenuationShape::Sphere;
 	AudioComponent->AttenuationSettings				 = SoundAttenuation;
+	*/
 
 	SetRemoteRoleForBackwardsCompat(ROLE_None);
 	bReplicates		   = false;

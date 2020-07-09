@@ -7,12 +7,15 @@ const FName FCsSoundPooledPayloadImpl::Name = FName("FCsSoundPooledPayloadImpl")
 
 FCsSoundPooledPayloadImpl::FCsSoundPooledPayloadImpl() :
 	InterfaceMap(nullptr),
+	// ICsPooledObjectPayload
 	bAllocated(false),
 	Instigator(nullptr),
 	Owner(nullptr),
 	Parent(nullptr),
 	Time(),
+	// ICsSoundPooledPayload
 	Sound(nullptr),
+	SoundAttenuation(nullptr),
 	DeallocateMethod(ECsSoundDeallocateMethod::Complete),
 	LifeTime(0.0f),
 	AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
@@ -46,8 +49,9 @@ void FCsSoundPooledPayloadImpl::Reset()
 
 	Time.Reset();
 
-	// ICsFXPooledPayload
+	// ICsSoundPooledPayload
 	Sound = nullptr;
+	SoundAttenuation = nullptr;
 	DeallocateMethod = ECsSoundDeallocateMethod::Complete;
 	LifeTime = 0.0f;
 	AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;

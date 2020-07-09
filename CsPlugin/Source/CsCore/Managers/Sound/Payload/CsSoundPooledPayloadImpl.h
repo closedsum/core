@@ -33,9 +33,11 @@ public:
 	
 	FCsTime Time;
 
-	// ICsFXPooledPayload
+	// ICsSoundPooledPayload
 
 	USoundBase* Sound;
+
+	USoundAttenuation* SoundAttenuation;
 
 	ECsSoundDeallocateMethod DeallocateMethod;
 
@@ -130,6 +132,11 @@ public:
 	FORCEINLINE USoundBase* GetSound() const 
 	{
 		return Sound;
+	}
+
+	FORCEINLINE USoundAttenuation* GetSoundAttenuation() const
+	{
+		return SoundAttenuation;
 	}
 
 	FORCEINLINE const ECsSoundDeallocateMethod& GetDeallocateMethod() const

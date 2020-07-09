@@ -14,8 +14,7 @@ FCsSoundPooled::FCsSoundPooled() :
 	Super(),
 	Sound(nullptr),
 	bScriptSound(false),
-	Script_GetAudioComponent_Impl(),
-	Script_GetSoundAttenuation_Impl()
+	Script_GetAudioComponent_Impl()
 {
 }
 
@@ -73,12 +72,11 @@ void FCsSoundPooled::Reset()
 	bScriptSound = false;
 
 	Script_GetAudioComponent_Impl.Unbind();
-	Script_GetSoundAttenuation_Impl.Unbind();
 }
 
 #pragma endregion TCsInterfaceObject
 
-// ICsFXActorPooled
+// ICsSoundPooled
 #pragma region
 
 UAudioComponent* FCsSoundPooled::GetAudioComponent() const
@@ -88,14 +86,7 @@ UAudioComponent* FCsSoundPooled::GetAudioComponent() const
 	return Sound->GetAudioComponent();
 }
 
-USoundAttenuation* FCsSoundPooled::GetSoundAttenuation() const
-{
-	if (bScriptSound)
-		return Script_GetSoundAttenuation_Impl.Execute(Object);
-	return Sound->GetSoundAttenuation();
-}
-
-#pragma endregion ICsProjectile
+#pragma endregion ICsSoundPooled
 
 void FCsSoundPooled::SetPooledObject(const FCsPooledObject& PooledObject)
 {

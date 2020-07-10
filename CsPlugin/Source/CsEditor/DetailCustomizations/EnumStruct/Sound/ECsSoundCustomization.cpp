@@ -5,11 +5,30 @@
 
 #define LOCTEXT_NAMESPACE "ECsSurfaceCustomization"
 
+// Cached
+#pragma region
+
+namespace NCsSoundCustomizationCached
+{
+	namespace Str
+	{
+		const FString CustomPopulateEnumMap = TEXT("FECsSoundCustomization::CustomPopulateEnumMap");
+	}
+}
+
+#pragma endregion Cached
 
 FECsSoundCustomization::FECsSoundCustomization() :
 	Super()
 {
 	Init<EMCsSound, FECsSound>();
+}
+
+void FECsSoundCustomization::CustomPopulateEnumMap()
+{
+	using namespace NCsSoundCustomizationCached;
+
+	NCsSound::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsSoundCustomization::MakeInstance()

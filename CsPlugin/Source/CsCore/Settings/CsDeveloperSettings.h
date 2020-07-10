@@ -27,11 +27,8 @@ public:
 	template<typename EnumType>
 	const TArray<FCsSettings_Enum>& GetSettingsEnum() const;
 
-
 	template<typename EnumType>
 	FString GetSettingsEnumPath() const;
-
-
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum")
 	FCsUserDefinedEnum InputAction;
@@ -80,6 +77,24 @@ public:
 // Sound
 #pragma region
 public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound", meta = (DisplayName = "ECsSound - Populate Enum Map Method"))
+	ECsPopulateEnumMapMethod ECsSound_PopulateEnumMapMethod;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound", meta = (DisplayName = "ECsSound"))
+	TArray<FCsSettings_Enum> ECsSound;
+
+	template<>
+	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsSound>() const
+	{
+		return ECsSound;
+	}
+
+	template<>
+	FString GetSettingsEnumPath<FECsSound>() const
+	{
+		return TEXT("UCsDeveloperSettings.ECsSound");
+	}
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound")
 	TArray<TSoftObjectPtr<UDataTable>> Sounds;

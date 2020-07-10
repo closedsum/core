@@ -8,7 +8,7 @@
 #include "CsTypes_Sound.generated.h"
 #pragma once
 
-// SoundType
+// Sound
 #pragma region
 
 USTRUCT(BlueprintType)
@@ -33,9 +33,11 @@ namespace NCsSound
 	namespace Ref
 	{
 	}
+
+	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
 
-#pragma endregion SoundType
+#pragma endregion Sound
 
 // SoundPriority
 #pragma region

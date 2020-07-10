@@ -5,12 +5,31 @@
 // Types
 #include "Managers/Sound/CsTypes_Sound.h"
 
+// Cached
+#pragma region
+
+namespace NCsGraphPinSoundCached
+{
+	namespace Str
+	{
+		const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsSound::CustomPopulateEnumMap");
+	}
+}
+
+#pragma endregion Cached
 
 void SCsGraphPin_ECsSound::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
 	Construct_Internal<EMCsSound, FECsSound>();
+}
+
+void SCsGraphPin_ECsSound::CustomPopulateEnumMap()
+{
+	using namespace NCsGraphPinSoundCached;
+
+	NCsSound::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
 void SCsGraphPin_ECsSound::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)

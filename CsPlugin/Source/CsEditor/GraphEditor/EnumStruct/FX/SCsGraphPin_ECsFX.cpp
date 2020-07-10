@@ -11,7 +11,7 @@ namespace NCsGraphPinFXCached
 {
 	namespace Str
 	{
-		const FString CustomPopulateEnumMap = TEXT("NCsGraphPinFXCached::CustomPopulateEnumMap");
+		const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsFX::CustomPopulateEnumMap");
 	}
 }
 

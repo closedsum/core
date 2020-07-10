@@ -356,7 +356,7 @@ void UCsManager_Sound::InitInternalFromSettings()
 			ObjectParams.World							  = Params.World;
 			ObjectParams.ConstructParams.Outer			  = this;
 			ObjectParams.ConstructParams.Class			  = Class;
-			ObjectParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Object;
+			ObjectParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
 			ObjectParams.bConstructPayloads				  = true;
 			ObjectParams.PayloadSize					  = PoolParams.PayloadSize;
 			ObjectParams.bCreatePool					  = true;

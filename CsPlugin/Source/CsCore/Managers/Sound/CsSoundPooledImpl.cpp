@@ -30,8 +30,14 @@ ACsSoundPooledImpl::ACsSoundPooledImpl(const FObjectInitializer& ObjectInitializ
 	AudioComponent->bStopWhenOwnerDestroyed		 = true;
 	AudioComponent->bShouldRemainActiveIfDropped = false;
 	AudioComponent->Mobility				     = EComponentMobility::Movable;
+	AudioComponent->PrimaryComponentTick.bStartWithTickEnabled = false;
+
+	AudioComponent->Deactivate();
 
 	RootComponent = AudioComponent;
+
+	PrimaryActorTick.bCanEverTick		   = true;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	SetRemoteRoleForBackwardsCompat(ROLE_None);
 	bReplicates		   = false;
@@ -115,6 +121,8 @@ void ACsSoundPooledImpl::Allocate(ICsPooledObjectPayload* Payload)
 void ACsSoundPooledImpl::Deallocate()
 {
 	Stop();
+
+	Cache->Deallocate();
 }
 
 #pragma endregion ICsPooledObject
@@ -173,6 +181,22 @@ void ACsSoundPooledImpl::Play(ICsSoundPooledPayload* Payload)
 
 	AudioComponent->SetSound(Sound);
 	AudioComponent->AttenuationSettings = Payload->GetSoundAttenuation();
+
+	// Check for 3D sound (set bAllowSpatialization)
+	if (AudioComponent->AttenuationSettings)
+	{
+		if (AudioComponent->AttenuationSettings->Attenuation.bSpatialize)
+		{
+			AudioComponent->bAllowSpatialization = true;
+		}
+	}
+	else
+	{
+		if (const FSoundAttenuationSettings* AttenuationSettings = Sound->GetAttenuationSettingsToApply())
+		{
+			AudioComponent->bAllowSpatialization = AttenuationSettings->bSpatialize;
+		}
+	}
 	AudioComponent->Activate(true);
 	AudioComponent->Play();
 }
@@ -186,13 +210,13 @@ void ACsSoundPooledImpl::Stop()
 	AudioComponent->Deactivate();
 	AudioComponent->Stop();
 
-	//AudioComponent->SetVolumeMultiplier(1.f);
-	//AudioComponent->SetPitchMultiplier(1.f);
+	AudioComponent->SetVolumeMultiplier(1.f);
+	AudioComponent->SetPitchMultiplier(1.f);
 
 	AudioComponent->AttenuationSettings = nullptr;
 
 	AudioComponent->SetSound(nullptr);
 	SetActorTickEnabled(false);
 
-	//AudioComponent->bAllowSpatialization = false;
+	AudioComponent->bAllowSpatialization = false;
 }

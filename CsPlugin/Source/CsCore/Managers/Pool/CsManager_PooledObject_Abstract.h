@@ -160,6 +160,7 @@ public:
 		PayloadSize(0),
 		PayloadIndex(0),
 		ConstructPayload_Impl(),
+		Log_Impl(),
 		LogTransaction_Impl(),
 		LogType(),
 		OnSpawn_Event(),
@@ -1349,11 +1350,11 @@ protected:
 public:
 
 	/**
+	* Deallocate an object at specified Index.
+	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
-	*  NOTE: This process is O(n). Consider queueing the deallocate.
-	*
-	* @param Index
-	* return
+	* @param Index	Index of the object.
+	* return		Whether the object at Index was successfully deallocated or not.	
 	*/
 	bool Deallocate(const int32& Index)
 	{
@@ -1434,6 +1435,33 @@ public:
 	* @param Object
 	*/
 	TMulticastDelegate<void, const InterfaceContainerType* /*Object*/> OnDeallocate_Event;
+
+	/**
+	* Deallocate an Object.
+	*  NOTE: This process is O(n). Consider queuing the deallocate.
+	*
+	* @param Object		Object to deallocate.
+	* return			Whether the Object was successfully deallocated or not.	
+	*/
+	bool Deallocate(InterfaceContainerType* Object)
+	{
+		return Deallocate(Object->GetCache()->GetIndex());
+	}
+
+	/**
+	* Deallocate the FIRST object in the allocated list.
+	*  NOTE: This process is O(n). Consider queuing the deallocate.
+	*
+	* return	Whether the Object was successfully deallocated or not.
+	*/
+	const InterfaceContainerType* DeallocateHead()
+	{
+		if (!AllocatedHead)
+			return nullptr;
+		if (Deallocate(**AllocatedHead))
+			return **AllocatedHead;
+		return nullptr;
+	}
 
 	/**
 	*
@@ -1607,6 +1635,8 @@ public:
 #pragma region
 public:
 
+	TBaseDelegate<void, const FString& /*Str*/> Log_Impl;
+
 	TBaseDelegate<void, const FString& /*Context*/, const ECsPoolTransaction& /*Transaction*/, const InterfaceContainerType* /*Object*/> LogTransaction_Impl;
 
 protected:
@@ -1696,7 +1726,7 @@ public:
 	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Index
-	* return
+	* return		Whether the Object was succesfully "destroyed" / deallocated
 	*/
 	bool Destroy(const int32& Index)
 	{
@@ -1710,7 +1740,7 @@ public:
 	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Object
-	* return
+	* return			Whether the Object was succesfully "destroyed" / deallocated
 	*/
 	bool Destroy(InterfaceType* Object)
 	{
@@ -1724,12 +1754,23 @@ public:
 	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Object
-	* return
+	* return			Whether the Object was succesfully "destroyed" / deallocated
 	*/
 	bool Destroy(UObject* Object)
 	{
 		const InterfaceContainerType* O = FindObject(Object);
 		return Destroy(O->GetCache()->GetIndex());
+	}
+
+	/**
+	*
+	*  NOTE: This process is O(n). Consider queuing the deallocate.
+	*
+	* return	If successful return the FIRST object in the allocated list was succesfully "destroyed" / deallocated
+	*/
+	const InterfaceContainerType* DestroyHead()
+	{
+		return DeallocateHead();
 	}
 
 #pragma endregion Destroy

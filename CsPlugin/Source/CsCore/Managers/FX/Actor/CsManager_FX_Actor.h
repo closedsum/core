@@ -547,6 +547,8 @@ public:
 #pragma region
 protected:
 
+	void Log(const FString& /*Str*/);
+
 	void LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsFXActorPooled* Object);
 
 #pragma endregion Log

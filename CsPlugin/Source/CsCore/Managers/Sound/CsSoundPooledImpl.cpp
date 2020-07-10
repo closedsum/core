@@ -139,7 +139,7 @@ void ACsSoundPooledImpl::Play(ICsSoundPooledPayload* Payload)
 
 	SetActorTickEnabled(true);
 
-	ICsPooledObjectPayload* ObjectPayload = NCsInterfaceMap::GetInterfaceChecked<ICsPooledObjectPayload>(Str::Allocate, Payload);
+	ICsPooledObjectPayload* ObjectPayload = NCsInterfaceMap::GetInterfaceChecked<ICsPooledObjectPayload>(Str::Play, Payload);
 
 	// If the Parent is set, attach the Sound to the Parent
 	if (USceneComponent* Parent = Cast<USceneComponent>(ObjectPayload->GetParent()))

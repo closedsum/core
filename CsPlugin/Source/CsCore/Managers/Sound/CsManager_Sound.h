@@ -548,6 +548,8 @@ public:
 #pragma region
 protected:
 
+	void Log(const FString& Str);
+
 	void LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsSoundPooled* Object);
 
 #pragma endregion Log

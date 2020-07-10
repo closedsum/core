@@ -689,6 +689,11 @@ bool UCsManager_Projectile::Destroy(ICsProjectile* Projectile)
 	// Log
 #pragma region
 
+void UCsManager_Projectile::Log(const FString& Str)
+{
+	UE_LOG(LogCsPrj, Warning, TEXT("%s"), *Str);
+}
+
 void UCsManager_Projectile::LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsProjectilePooled* Object)
 {
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerProjectileTransactions))

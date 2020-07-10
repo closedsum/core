@@ -310,6 +310,9 @@ void UCsManager_Weapon::SetupInternal()
 {
 	// Delegates
 	{
+		// Log
+		Internal.Log_Impl.BindUObject(this, &UCsManager_Weapon::Log);
+		Internal.LogTransaction_Impl.BindUObject(this, &UCsManager_Weapon::LogTransaction);
 		// Container
 		Internal.ConstructContainer_Impl.BindUObject(this, &UCsManager_Weapon::ConstructContainer);
 		// Payload
@@ -621,6 +624,21 @@ bool UCsManager_Weapon::Destroy(ICsWeapon* Weapon)
 }
 
 #pragma endregion Destroy
+
+	// Log
+#pragma region
+
+void UCsManager_Weapon::Log(const FString& Str)
+{
+	UE_LOG(LogCsWp, Warning, TEXT("%s"), *Str);
+}
+
+void UCsManager_Weapon::LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsWeaponPooled* Object)
+{
+
+}
+
+#pragma endregion Log
 
 #pragma endregion Internal
 

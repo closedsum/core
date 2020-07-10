@@ -272,6 +272,7 @@ void UCsManager_Sound::SetupInternal()
 	// Delegates
 	{
 		// Log
+		Internal.Log_Impl.BindUObject(this, &UCsManager_Sound::Log);
 		Internal.LogTransaction_Impl.BindUObject(this, &UCsManager_Sound::LogTransaction);
 		// Container
 		Internal.ConstructContainer_Impl.BindUObject(this, &UCsManager_Sound::ConstructContainer);
@@ -607,6 +608,10 @@ ICsFXPooledPayload* UCsManager_FX_Actor::ScriptAllocatePayload(const FECsSound& 
 
 const FCsSoundPooled* UCsManager_Sound::Spawn(const FECsSound& Type, ICsSoundPooledPayload* Payload)
 {
+	if (Internal.IsExhausted(Type))
+	{
+		//Internal.GetAllo
+	}
 	return Internal.Spawn(Type, Payload);
 }
 
@@ -638,6 +643,11 @@ bool UCsManager_Sound::Destroy(ICsSoundPooled* Object)
 
 	// Log
 #pragma region
+
+void UCsManager_Sound::Log(const FString& Str)
+{
+	UE_LOG(LogCs, Warning, TEXT("%s"), *Str);
+}
 
 void UCsManager_Sound::LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsSoundPooled* Object)
 {

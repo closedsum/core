@@ -639,9 +639,14 @@ bool UCsManager_FX_Actor::Destroy(ICsFXActorPooled* Object)
 	// Log
 #pragma region
 
+void UCsManager_FX_Actor::Log(const FString& Str)
+{
+	UE_LOG(LogCs, Warning, TEXT("%s"), *Str);
+}
+
 void UCsManager_FX_Actor::LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsFXActorPooled* Object)
 {
-		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerFXActorTransactions))
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerFXActorTransactions))
 	{
 		const FString& TransactionAsString = EMCsPoolTransaction::Get().ToString(Transaction);
 

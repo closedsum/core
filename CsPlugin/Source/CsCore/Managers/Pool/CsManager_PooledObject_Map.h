@@ -110,6 +110,7 @@ public:
 		CurrentUpdatePoolType(),
 		CurrentConstructPayloadType(),
 		ConstructPayload_Impl(),
+		Log_Impl(),
 		LogTransaction_Impl(),
 		LogType(),
 		OnSpawn_Event(),
@@ -153,6 +154,7 @@ public:
 
 			TManager_PooledObject_Abstract* Pool = ConstructManagerPooledObjects_Impl.Execute(Key);
 
+			Pool->Log_Impl			  = Log_Impl;
 			Pool->LogTransaction_Impl = LogTransaction_Impl;
 
 			Pool->ConstructContainer_Impl.BindRaw(this, &TCsManager_PooledObject_Map<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructContainer_Internal);
@@ -1000,6 +1002,8 @@ public:
 #pragma region
 public:
 
+	TBaseDelegate<void, const FString& /*Str*/> Log_Impl;
+
 	TBaseDelegate<void, const FString& /*Context*/, const ECsPoolTransaction& /*Transaction*/, const InterfaceContainerType* /*Object*/> LogTransaction_Impl;
 
 protected:
@@ -1055,7 +1059,7 @@ public:
 	/**
 	* Destroy a pooled object with specified Index from a pool for the
 	* appropriate Type.
-	*  NOTE: This process is O(n). Consider queuing the deallocate.
+	* NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Type	Type of pool to destroy from.
 	* @param Index	Index of the object in the pool.
@@ -1120,7 +1124,7 @@ public:
 	/**
 	* Destroy an object.
 	*  Object must implement the interface: ICsPooledObject.
-	*  NOTE: This process is O(n). Consider queueing the deallocate.
+	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Object		Object that implements the interface: ICsPooledObject.
 	* return			Whether successfully destroyed the object or not.
@@ -1136,7 +1140,7 @@ public:
 	* Destroy an object.
 	*  Object must implement the interface: ICsPooledObject or the UClass
 	*  associated with the Object have ImplementsInterface(UCsPooledObject::StaticClass()) == true.
-	*  NOTE: This process is O(n). Consider queueing the deallocate.
+	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Object		Object or Object->GetClass() that implements the interface: ICsPooledObject.
 	* return			Whether successfully destroyed the object or not.
@@ -1162,6 +1166,24 @@ public:
 				OnDestroy_Event.Broadcast(Key, O);
 				return true;
 			}
+		}
+		return false;
+	}
+
+	/**
+	* Destroy the FIRST object in the allocated (currently spawned) list.
+	*  NOTE: This process is O(n). Consider queuing the deallocate.
+	*
+	* return Whether successfully destroyed the object or not.
+	*/
+	bool DestroyHead(const KeyType& Type)
+	{
+		TManager_PooledObject_Abstract* Pool = GetManagerPooledObjects(Type);
+
+		if (const InterfaceContainerType* Object = Pool->DestroyHead())
+		{
+			OnDestroy_Event.Broadcast(Type, Object);
+			return true;
 		}
 		return false;
 	}

@@ -11,6 +11,7 @@ class UAudioComponent;
 class USoundAttenuation;
 struct ICsPooledObjectCache;
 struct ICsPooledObjectPayload;
+struct ICsSoundPooledPayload;
 
 /**
 * 
@@ -86,6 +87,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Sound")
 	FECsSoundType Type;
 
-	bool Play();
-	bool Stop();
+	void Play(ICsSoundPooledPayload* Payload);
+	void Stop();
 };

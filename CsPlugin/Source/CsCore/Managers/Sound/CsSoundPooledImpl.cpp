@@ -5,6 +5,22 @@
 #include "Library/CsLibrary_Common.h"
 // Sound
 #include "Managers/Sound/Cache/CsSoundPooledCacheImpl.h"
+#include "Managers/Sound/Payload/CsSoundPooledPayloadImpl.h"
+
+// Cached
+#pragma region
+
+namespace NCsSoundPooledImplCached
+{
+	namespace Str
+	{
+		const FString Update = TEXT("ACsSoundPooledImpl::Update");
+		const FString Allocate = TEXT("ACsSoundPooledImpl::Allocate");
+		const FString Play = TEXT("ACsSoundPooledImpl::Play");
+	}
+}
+
+#pragma endregion Cached
 
 ACsSoundPooledImpl::ACsSoundPooledImpl(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -16,15 +32,6 @@ ACsSoundPooledImpl::ACsSoundPooledImpl(const FObjectInitializer& ObjectInitializ
 	AudioComponent->Mobility				     = EComponentMobility::Movable;
 
 	RootComponent = AudioComponent;
-
-	/*
-	SoundAttenuation = ObjectInitializer.CreateDefaultSubobject<USoundAttenuation>(this, TEXT("SoundAttenuation"));
-
-	FSoundAttenuationSettings NewAttenuationSettings;
-	SoundAttenuation->Attenuation					 = NewAttenuationSettings;
-	SoundAttenuation->Attenuation.AttenuationShape   = EAttenuationShape::Sphere;
-	AudioComponent->AttenuationSettings				 = SoundAttenuation;
-	*/
 
 	SetRemoteRoleForBackwardsCompat(ROLE_None);
 	bReplicates		   = false;
@@ -39,7 +46,7 @@ ACsSoundPooledImpl::ACsSoundPooledImpl(const FObjectInitializer& ObjectInitializ
 void ACsSoundPooledImpl::BeginDestroy()
 {
 	Super::BeginDestroy();
-
+	
 	if (Cache)
 	{
 		delete Cache;
@@ -70,6 +77,13 @@ void ACsSoundPooledImpl::BeginPlay()
 
 void ACsSoundPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
+	using namespace NCsSoundPooledImplCached;
+
+	// TODO: This should be opaque
+	
+	FCsSoundPooledCacheImpl* CacheImpl = NCsInterfaceMap::PureStaticCastChecked<FCsSoundPooledCacheImpl>(Str::Update, Cache);
+
+	CacheImpl->Update(DeltaTime);
 }
 
 #pragma endregion ICsUpdate
@@ -89,96 +103,96 @@ ICsPooledObjectCache* ACsSoundPooledImpl::GetCache() const
 
 void ACsSoundPooledImpl::Allocate(ICsPooledObjectPayload* Payload)
 {
-	Play();
+	using namespace NCsSoundPooledImplCached;
+
+	Cache->Allocate(Payload);
+
+	ICsSoundPooledPayload* SoundPayload = NCsInterfaceMap::GetInterfaceChecked<ICsSoundPooledPayload>(Str::Allocate, Payload);
+
+	Play(SoundPayload);
 }
 
 void ACsSoundPooledImpl::Deallocate()
 {
+	Stop();
 }
 
 #pragma endregion ICsPooledObject
 
-bool ACsSoundPooledImpl::Play()
+void ACsSoundPooledImpl::Play(ICsSoundPooledPayload* Payload)
 {
+	using namespace NCsSoundPooledImplCached;
+
 	checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Play: AudioComponent is NULL."));
+	
+	USoundBase* Sound = Payload->GetSound();
 
-	/*
-	USoundCue* Cue = Cache.GetCue();
-	AudioComponent->SetSound(Cue);
+	checkf(Sound, TEXT("ACsSoundPooledImpl::Play: Sound is NULL."));
 
-	if (const FSoundAttenuationSettings* Settings = Cue->GetAttenuationSettingsToApply())
-		AudioComponent->AttenuationSettings->Attenuation = *Settings;
+	SetActorTickEnabled(true);
 
-#if WITH_EDITOR
-	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
+	ICsPooledObjectPayload* ObjectPayload = NCsInterfaceMap::GetInterfaceChecked<ICsPooledObjectPayload>(Str::Allocate, Payload);
+
+	// If the Parent is set, attach the Sound to the Parent
+	if (USceneComponent* Parent = Cast<USceneComponent>(ObjectPayload->GetParent()))
 	{
-		AudioComponent->bAllowSpatialization = false;
-		AudioComponent->bIsUISound = true;
+		AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Payload->GetAttachmentTransformRule()), Payload->GetBone());
+
+		const FTransform& Transform = Payload->GetTransform();
+		const int32& TransformRules = Payload->GetTransformRules();
+
+		// Location | Rotation | Scale
+		if (TransformRules == NCsTransformRules::All)
+		{
+			SetActorRelativeTransform(Transform);
+		}
+		else
+		{
+			// Location
+			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Location))
+			{
+				SetActorRelativeLocation(Transform.GetLocation());
+			}
+			// Rotation
+			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Rotation))
+			{
+				SetActorRelativeRotation(Transform.GetRotation().Rotator());
+			}
+			// Scale
+			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Scale))
+			{
+				SetActorRelativeScale3D(Transform.GetScale3D());
+			}
+		}
 	}
+	// NO Parent, set the World Transform of the Sound
 	else
-#endif // #if WITH_EDITOR
 	{
-		AudioComponent->bAllowSpatialization = Cache.bSpatialize;
-	}
-	AudioComponent->AttenuationSettings->Attenuation.bSpatialize = Cache.bSpatialize;
-
-	AudioComponent->SetVolumeMultiplier(Cache.VolumeMultiplier);
-	AudioComponent->SetPitchMultiplier(Cache.PitchMultiplier);
-
-	SetActorHiddenInGame(false);
-
-	UObject* Parent = Cache.GetParent();
-
-	// Actors
-	if (AActor* Actor = Cast<AActor>(Parent))
-	{
-		SetActorLocation(Actor->GetActorLocation());
-		AttachToActor(Actor, FAttachmentTransformRules::KeepRelativeTransform, Cache.Bone);
-	}
-	// Component
-	else
-	if (USceneComponent*Component = Cast<USceneComponent>(Parent))
-	{
-		SetActorLocation(Component->GetComponentLocation());
-		AttachToComponent(Component, FAttachmentTransformRules::KeepRelativeTransform, Cache.Bone);
-	}
-	else
-	{
-		SetActorLocation(Cache.Location);
+		SetActorTransform(Payload->GetTransform());
 	}
 
+	AudioComponent->SetSound(Sound);
+	AudioComponent->AttenuationSettings = Payload->GetSoundAttenuation();
 	AudioComponent->Activate(true);
 	AudioComponent->Play();
-	*/
-	return true;
 }
 
-bool ACsSoundPooledImpl::Stop()
+void ACsSoundPooledImpl::Stop()
 {
-	/*
-	SetActorRelativeLocation(FVector::ZeroVector, false, nullptr, ETeleportType::TeleportPhysics);
-	SetActorLocation(FVector(0.0f, 0.0f, 10000.0f), false, nullptr, ETeleportType::TeleportPhysics);
-	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+	checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Stop: AudioComponent is NULL."));
 
-	if (AudioComponent)
-	{
-		AudioComponent->Deactivate();
-		AudioComponent->Stop();
+	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
-		AudioComponent->SetVolumeMultiplier(1.f);
-		AudioComponent->SetPitchMultiplier(1.f);
+	AudioComponent->Deactivate();
+	AudioComponent->Stop();
 
-		FSoundAttenuationSettings NewAttenuationSettings;
-		DefaultAttenuation->Attenuation = NewAttenuationSettings;
-		DefaultAttenuation->Attenuation.AttenuationShape = EAttenuationShape::Sphere;
-		AudioComponent->AttenuationSettings = DefaultAttenuation;
+	//AudioComponent->SetVolumeMultiplier(1.f);
+	//AudioComponent->SetPitchMultiplier(1.f);
 
-		AudioComponent->SetSound(nullptr);
+	AudioComponent->AttenuationSettings = nullptr;
 
-		AudioComponent->SetWorldLocation(FVector(10000.0f, 10000.0f, 10000.0f)); // reset the audio component 
-		AudioComponent->bAllowSpatialization = false;
-	}
-	SetActorHiddenInGame(true);
-	*/
-	return true;
+	AudioComponent->SetSound(nullptr);
+	SetActorTickEnabled(false);
+
+	//AudioComponent->bAllowSpatialization = false;
 }

@@ -78,7 +78,15 @@ void FCsSoundPooledCacheImpl::Allocate(ICsPooledObjectPayload* Payload)
 	ICsSoundPooledPayload* FXPayload = FCsLibrary_PooledObjectPayload::GetInterfaceChecked<ICsSoundPooledPayload>(Str::Allocate, Payload);
 
 	DeallocateMethod = FXPayload->GetDeallocateMethod();
-	QueuedLifeTime   = FXPayload->GetLifeTime();
+	LifeTime		 = FXPayload->GetLifeTime();
+
+	if (USoundBase* Sound = FXPayload->GetSound())
+	{
+		if (DeallocateMethod == ECsSoundDeallocateMethod::Complete)
+		{
+			LifeTime = Sound->GetDuration();
+		}
+	}
 }
 
 void FCsSoundPooledCacheImpl::Deallocate()
@@ -90,7 +98,7 @@ void FCsSoundPooledCacheImpl::QueueDeallocate()
 {
 	bQueueDeallocate = true;
 	// Deactivate Audio Component
-	checkf(AudioComponent, TEXT("FCsSoundPooledCacheImpl::QueueDeallocate: FXComponent is NULL."));
+	checkf(AudioComponent, TEXT("FCsSoundPooledCacheImpl::QueueDeallocate: AudioComponent is NULL."));
 
 	/*
 	AudioComponent->Deactivate();

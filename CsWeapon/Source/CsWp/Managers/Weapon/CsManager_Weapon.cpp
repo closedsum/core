@@ -13,9 +13,10 @@
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Data
-#include "Data/CsData_Weapon.h"
+#include "Data/CsData_WeaponInterfaceMap.h"
 #include "Data/CsData_WeaponImpl.h"
 #include "Projectile/Data/CsData_ProjectileWeaponImpl.h"
+#include "Projectile/Data/CsData_ProjectileWeaponSoundImpl.h"
 // Weapon
 #include "Payload/CsWeaponPooledPayloadImpl.h"
 
@@ -40,14 +41,16 @@ namespace NCsManagerWeapon
 	namespace Str
 	{
 		const FString PopulateDataMapFromSettings = TEXT("UCsManager_Weapon::PopulateDataMapFromSettings");
+		const FString CreateEmulatedDataFromDataTable = TEXT("UCsManager_Weapon::CreateEmulatedDataFromDataTable");
+		const FString DeconstructEmulatedData = TEXT("UCsManager_Weapon::DeconstructEmulatedData");
 	}
 
 	namespace Name
 	{
 		const FName Weapon = FName("Weapon");
+		const FName Data = FName("Data");
 
 		// ICsData_ProjectileWeapon
-
 		const FName bDoFireOnRelease = FName("bDoFireOnRelease");
 		const FName bFullAuto = FName("bFullAuto");
 		const FName MaxAmmo = FName("MaxAmmo");
@@ -55,6 +58,8 @@ namespace NCsManagerWeapon
 		const FName TimeBetweenShots = FName("TimeBetweenShots");
 		const FName TimeBetweenAutoShots = FName("TimeBetweenAutoShots");
 		const FName TimeBetweenProjectilesPerShot = FName("TimeBetweenProjectilesPerShot");
+		// ICsData_ProjectileWeaponSound
+		const FName FireSound = FName("FireSound");
 	}
 }
 
@@ -258,13 +263,32 @@ void UCsManager_Weapon::CleanUp()
 	Internal.Shutdown();
 	Pool.Reset();
 
-	for (TPair<FName, ICsData_Weapon*>& Pair : DataMap)
+	for (TPair<FName, TMap<FName, void*>>& DataPair : EmulatedDataInterfaceImplMap)
 	{
-		ICsData_Weapon* Data = Pair.Value;
-		DeconstructData(Data);
+		TMap<FName, void*> InterfaceImplMap = DataPair.Value;
+
+		for (TPair<FName, void*>& ImplPair : InterfaceImplMap)
+		{
+			DeconstructEmulatedData(ImplPair.Key, ImplPair.Value);
+
+			ImplPair.Value = nullptr;
+		}
+	}
+	EmulatedDataMap.Reset();
+	EmulatedDataInterfaceImplMap.Reset();
+
+	for (TPair<FName, FCsData_WeaponInterfaceMap*>& Pair : EmulatedDataInterfaceMap)
+	{
+		FCsData_WeaponInterfaceMap* Ptr = Pair.Value;
+		delete Ptr;
 		Pair.Value = nullptr;
 	}
+	EmulatedDataInterfaceMap.Reset();
+
 	DataMap.Reset();
+	ClassMap.Reset();
+	DataTables.Reset();
+	WeaponMap.Reset();
 }
 
 	// Root
@@ -609,12 +633,11 @@ void UCsManager_Weapon::PopulateDataMapFromSettings()
 
 	if (UCsWeaponSettings* ModuleSettings = GetMutableDefault<UCsWeaponSettings>())
 	{
-		// Check if the DataTable entries should emulate any interfaces (i.e. ICsData_Weapon, ... etc)
 		for (FCsWeaponSettings_DataTable_Weapons& Weapons : ModuleSettings->Weapons)
 		{
 			// TODO: Get DataTable from Manager_Data
 
-			// TODO: Add check for ModuleSettings->ManagerWeapon.Payload
+			// TODO: Add check for ModuleSettings->Manager_Weapon.Payload
 
 			bool LoadedFromManagerData = false;
 
@@ -628,180 +651,289 @@ void UCsManager_Weapon::PopulateDataMapFromSettings()
 
 			if (UDataTable* DT = DT_SoftObject.LoadSynchronous())
 			{
+				UCsLibrary_Load::LoadDataTable(DT, NCsLoadFlags::All, NCsLoadCodes::All);
+
 				if (!LoadedFromManagerData)
 				{
-					UCsLibrary_Load::LoadDataTable(DT, NCsLoadFlags::None, NCsLoadCodes::None);
-
 					DataTables.Add(DT);
 				}
 
-				const UScriptStruct* RowStruct = DT->GetRowStruct();
-
 				const TSet<FECsWeaponData>& EmulatedDataInterfaces = Weapons.EmulatedDataInterfaces;
 
-				// ICsData_Weapon
-				if (EmulatedDataInterfaces.Num() == 1 &&
-					EmulatedDataInterfaces.Find(NCsWeaponData::Weapon))
+				if (EmulatedDataInterfaces.Num() > CS_EMPTY)
 				{
-
+					CreateEmulatedDataFromDataTable(DT, EmulatedDataInterfaces);
 				}
-				// ICsData_Weapon, ICsData_ProjectileWeapon
 				else
-				if (EmulatedDataInterfaces.Num() == 2 &&
-					EmulatedDataInterfaces.Find(NCsWeaponData::Weapon) &&
-					EmulatedDataInterfaces.Find(NCsWeaponData::ProjectileWeapon))
 				{
-					// Weapon
-					UStructProperty* WeaponProperty = FCsLibrary_Property::FindPropertyByName<UStructProperty>(RowStruct, Name::Weapon);
-
-					if (!WeaponProperty)
-					{
-						UE_LOG(LogCsWp, Warning, TEXT("UCsManager_Weapon::PopulateDataMapFromSettings: Failed to find StructProperty: Weapon in Struct: %s"), *(RowStruct->GetName()));
-					}
-
-					// ICsData_ProjectileWeapon
-
-						// bDoFireOnRelease
-					UBoolProperty* bDoFireOnReleaseProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UBoolProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::bDoFireOnRelease, NCsWeaponData::ProjectileWeapon.GetDisplayName());
-						// bFullAuto
-					UBoolProperty* bFullAutoProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UBoolProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::bFullAuto, NCsWeaponData::ProjectileWeapon.GetDisplayName());
-						// MaxAmmo
-					UIntProperty* MaxAmmoProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UIntProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::MaxAmmo, NCsWeaponData::ProjectileWeapon.GetDisplayName());
-						// ProjectilesPerShot
-					UIntProperty* ProjectilesPerShotProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UIntProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::ProjectilesPerShot, NCsWeaponData::ProjectileWeapon.GetDisplayName());
-						// TimeBetweenShots
-					UFloatProperty* TimeBetweenShotsProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::TimeBetweenShots, NCsWeaponData::ProjectileWeapon.GetDisplayName());
-						// TimeBetweenAutoShots
-					UFloatProperty* TimeBetweenAutoShotsProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::TimeBetweenAutoShots, NCsWeaponData::ProjectileWeapon.GetDisplayName());
-						// TimeBetweenProjectilesPerShot
-					UFloatProperty* TimeBetweenProjectilesPerShotProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::TimeBetweenProjectilesPerShot, NCsWeaponData::ProjectileWeapon.GetDisplayName());
-
-					const TMap<FName, uint8*>& RowMap = DT->GetRowMap();
-
-					for (const TPair<FName, uint8*>& Pair : RowMap)
-					{
-						const FName& Name = Pair.Key;
-						uint8* RowPtr	  = const_cast<uint8*>(Pair.Value);
-
-						if (WeaponProperty)
-						{
-							const FECsWeapon& Type = EMCsWeapon::Get().GetEnum(Name);
-
-							// FCsWeaponPtr
-							if (WeaponProperty->Struct == FCsWeaponPtr::StaticStruct())
-							{
-								FCsWeaponPtr* WeaponPtr = WeaponProperty->ContainerPtrToValuePtr<FCsWeaponPtr>(RowPtr);
-
-								checkf(WeaponPtr, TEXT("UCsManager_Weapon::PopulateDataMapFromSettings: Failed to get FCsWeaponPtr ptr from StructProperty: Weapon."));
-
-								WeaponMap.Add(Type, WeaponPtr);
-							}
-							// FCsProjectileWeaponPtr
-							else
-							if (WeaponProperty->Struct == FCsProjectileWeaponPtr::StaticStruct())
-							{
-								FCsProjectileWeaponPtr* WeaponPtr = WeaponProperty->ContainerPtrToValuePtr<FCsProjectileWeaponPtr>(RowPtr);
-			
-								checkf(WeaponPtr, TEXT("UCsManager_Weapon::PopulateDataMapFromSettings: Failed to get FCsProjectileWeaponPtr ptr from StructProperty: Weapon."));
-
-								ProjectileWeaponMap.Add(Type, WeaponPtr);
-							}
-						}
-
-						FCsData_ProjectileWeaponImpl* Data = new FCsData_ProjectileWeaponImpl();
-
-						// NOTE: If Payload is cleared, this map should be cleared
-						DataMap.Add(Name, Data);
-
-						// bDoFireOnRelease
-						{
-							bool* Value = bDoFireOnReleaseProperty->ContainerPtrToValuePtr<bool>(RowPtr);
-
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to get bool ptr from BoolProperty: bDoFireOnRelease."));
-
-							Data->SetDoFireOnRelease(Value);
-						}
-						// bFullAuto
-						{
-							bool* Value = bFullAutoProperty->ContainerPtrToValuePtr<bool>(RowPtr);
-
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to get bool ptr from BoolProperty: bFullAuto."));
-
-							Data->SetFullAuto(Value);
-						}
-						// MaxAmmo
-						{
-							int32* Value = MaxAmmoProperty->ContainerPtrToValuePtr<int32>(RowPtr);
-
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to get int32 ptr from IntProperty: MaxAmmo."));
-
-							Data->SetMaxAmmo(Value);
-						}
-						// ProjectilesPerShot
-						{
-							int32* Value = ProjectilesPerShotProperty->ContainerPtrToValuePtr<int32>(RowPtr);
-
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to get int32 ptr from IntProperty: ProjectilesPerShot."));
-
-							Data->SetProjectilesPerShot(Value);
-						}
-						// TimeBetweenShots
-						{
-							float* Value = TimeBetweenShotsProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: TimeBetweenShots."));
-
-							Data->SetTimeBetweenShots(Value);
-						}
-						// TimeBetweenAutoShots
-						{
-							float* Value = TimeBetweenAutoShotsProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: TimeBetweenAutoShots."));
-
-							Data->SetTimeBetweenAutoShots(Value);
-						}
-						// TimeBetweenProjectilesPerShot
-						{
-							float* Value = TimeBetweenProjectilesPerShotProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: TimeBetweenProjectilesPerShot."));
-
-							Data->SetTimeBetweenProjectilesPerShot(Value);
-						}
-					}
+					PopulateDataMapFromDataTable(DT);
 				}
 			}
 		}
 	}
 }
 
-void UCsManager_Weapon::DeconstructData(ICsData_Weapon* Data)
+void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSet<FECsWeaponData>& EmulatedDataInterfaces)
 {
-	FCsInterfaceMap* InterfaceMap = Data->GetInterfaceMap();
+	using namespace NCsManagerWeapon;
 
-	checkf(InterfaceMap, TEXT("UCsManager_Weapon::DeconstructData: Data failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
-	
+	const FString& Context = Str::CreateEmulatedDataFromDataTable;
+
+	const UScriptStruct* RowStruct = DataTable->GetRowStruct();
+
+	checkf(EmulatedDataInterfaces.Find(NCsWeaponData::Weapon), TEXT("%s: Emulated Data Interfaces must include ICsData_Weapon."), *Context);
+
+	// ICsData_Weapon
+	bool Emulates_ICsDataWeapon = true;
+
+	// ICsData_ProjectileWeapon
+	bool Emulates_ICsData_ProjectileWeapon = false;
+
+		// bDoFireOnRelease
+	UBoolProperty* bDoFireOnReleaseProperty = nullptr;
+		// bFullAuto
+	UBoolProperty* bFullAutoProperty = nullptr;
+		// MaxAmmo
+	UIntProperty* MaxAmmoProperty = nullptr;
+		// ProjectilesPerShot
+	UIntProperty* ProjectilesPerShotProperty = nullptr;
+		// TimeBetweenShots
+	UFloatProperty* TimeBetweenShotsProperty = nullptr;
+		// TimeBetweenAutoShots
+	UFloatProperty* TimeBetweenAutoShotsProperty = nullptr;
+		// TimeBetweenProjectilesPerShot
+	UFloatProperty* TimeBetweenProjectilesPerShotProperty = nullptr;
+
+	if (EmulatedDataInterfaces.Find(NCsWeaponData::ProjectileWeapon))
+	{
+		// bDoFireOnRelease
+		bDoFireOnReleaseProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UBoolProperty>(Context, RowStruct, Name::bDoFireOnRelease, NCsWeaponData::ProjectileWeapon.GetDisplayName());
+		// bFullAuto
+		bFullAutoProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UBoolProperty>(Context, RowStruct, Name::bFullAuto, NCsWeaponData::ProjectileWeapon.GetDisplayName());
+		// MaxAmmo
+		MaxAmmoProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UIntProperty>(Context, RowStruct, Name::MaxAmmo, NCsWeaponData::ProjectileWeapon.GetDisplayName());
+		// ProjectilesPerShot
+		ProjectilesPerShotProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UIntProperty>(Context, RowStruct, Name::ProjectilesPerShot, NCsWeaponData::ProjectileWeapon.GetDisplayName());
+		// TimeBetweenShots
+		TimeBetweenShotsProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Context, RowStruct, Name::TimeBetweenShots, NCsWeaponData::ProjectileWeapon.GetDisplayName());
+		// TimeBetweenAutoShots
+		TimeBetweenAutoShotsProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Context, RowStruct, Name::TimeBetweenAutoShots, NCsWeaponData::ProjectileWeapon.GetDisplayName());
+		// TimeBetweenProjectilesPerShot
+		TimeBetweenProjectilesPerShotProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Context, RowStruct, Name::TimeBetweenProjectilesPerShot, NCsWeaponData::ProjectileWeapon.GetDisplayName());
+
+		Emulates_ICsData_ProjectileWeapon = true;
+	}
+
+	// ICsData_ProjectileWeaponSound
+	bool Emulates_ICsData_ProjectileWeaponSound = false;
+
+		// FireSound
+	UStructProperty* FireSoundProperty = nullptr;
+
+	if (EmulatedDataInterfaces.Find(NCsWeaponData::ProjectileWeaponSound))
+	{
+		// FireSound
+		FireSoundProperty = FCsLibrary_Property::FindStructPropertyByNameForInterfaceChecked<FCsSound>(Context, RowStruct, Name::FireSound, NCsWeaponData::ProjectileWeaponSound.GetDisplayName());
+
+		Emulates_ICsData_ProjectileWeaponSound = true;
+	}
+
+	// Weapon
+	UStructProperty* WeaponProperty = FCsLibrary_Property::FindPropertyByName<UStructProperty>(RowStruct, Name::Weapon);
+
+	if (!WeaponProperty)
+	{
+		UE_LOG(LogCsWp, Warning, TEXT("UCsManager_Weapon::CreateEmulatedDataFromDataTable: Failed to find StructProperty: Weapon in Struct: %s"), *(RowStruct->GetName()));
+	}
+
+	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+
+	for (const TPair<FName, uint8*>& Pair : RowMap)
+	{
+		const FName& Name = Pair.Key;
+		uint8* RowPtr	  = const_cast<uint8*>(Pair.Value);
+
+		// ICsData_Weapon
+		if (Emulates_ICsDataWeapon)
+		{
+			// Setup and Add Emulated Interface
+			FCsData_WeaponImpl* Data = new FCsData_WeaponImpl();
+
+			checkf(EmulatedDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s."), *Context, *(Name.ToString()));
+
+			EmulatedDataMap.Add(Name, Data);
+
+			FCsData_WeaponInterfaceMap* EmulatedInterfaceMap = new FCsData_WeaponInterfaceMap();
+
+			checkf(EmulatedDataInterfaceMap.Find(Name) == nullptr, TEXT("%s: Emulated Interface Map has already been created for Row: %s."), *Context, *(Name.ToString()));
+
+			EmulatedDataInterfaceMap.Add(Name, EmulatedInterfaceMap);
+
+			FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
+
+			InterfaceMap->Add<ICsData_Weapon>(FCsData_WeaponImpl::Name, static_cast<ICsData_Weapon*>(Data));
+
+			Data->SetInterfaceMap(InterfaceMap);
+
+			TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
+			InterfaceImplMap.Add(FCsData_WeaponImpl::Name, Data);
+
+			DataMap.Add(Name, Data);
+		}
+		// ICsData_ProjectileWeapon
+		if (Emulates_ICsData_ProjectileWeapon)
+		{
+			// Setup and Add Emulated Interface
+			FCsData_ProjectileWeaponImpl* Data = new FCsData_ProjectileWeaponImpl();
+
+			FCsData_WeaponInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap[Name];
+			FCsInterfaceMap* InterfaceMap					 = EmulatedInterfaceMap->GetInterfaceMap();
+
+			InterfaceMap->Add<ICsData_ProjectileWeapon>(FCsData_ProjectileWeaponImpl::Name, static_cast<ICsData_ProjectileWeapon*>(Data));
+
+			Data->SetInterfaceMap(InterfaceMap);
+
+			TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
+			InterfaceImplMap.Add(FCsData_ProjectileWeaponImpl::Name, Data);
+
+			// bDoFireOnRelease
+			{
+				bool* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<bool>(Context, bDoFireOnReleaseProperty, RowPtr);
+
+				Data->SetDoFireOnRelease(Value);
+			}
+			// bFullAuto
+			{
+				bool* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<bool>(Context, bFullAutoProperty, RowPtr);
+
+				Data->SetFullAuto(Value);
+			}
+			// MaxAmmo
+			{
+				int32* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<int32>(Context, MaxAmmoProperty, RowPtr);
+
+				Data->SetMaxAmmo(Value);
+			}
+			// ProjectilesPerShot
+			{
+				int32* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<int32>(Context, ProjectilesPerShotProperty, RowPtr);
+
+				Data->SetProjectilesPerShot(Value);
+			}
+			// TimeBetweenShots
+			{
+				float* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<float>(Context, TimeBetweenShotsProperty, RowPtr);
+
+				Data->SetTimeBetweenShots(Value);
+			}
+			// TimeBetweenAutoShots
+			{
+				float* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<float>(Context, TimeBetweenAutoShotsProperty, RowPtr);
+
+				Data->SetTimeBetweenAutoShots(Value);
+			}
+			// TimeBetweenProjectilesPerShot
+			{
+				float* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<float>(Context, TimeBetweenProjectilesPerShotProperty, RowPtr);
+
+				Data->SetTimeBetweenProjectilesPerShot(Value);
+			}
+		}
+		// ICsData_ProjectileWeaponSound
+		if (Emulates_ICsData_ProjectileWeaponSound)
+		{
+			// Setup and Add Emulated Interface
+			FCsData_ProjectileWeaponSoundImpl* Data = new FCsData_ProjectileWeaponSoundImpl();
+
+			FCsData_WeaponInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap[Name];
+			FCsInterfaceMap* InterfaceMap					 = EmulatedInterfaceMap->GetInterfaceMap();
+
+			InterfaceMap->Add<ICsData_ProjectileWeaponSound>(FCsData_ProjectileWeaponSoundImpl::Name, static_cast<ICsData_ProjectileWeaponSound*>(Data));
+
+			Data->SetInterfaceMap(InterfaceMap);
+
+			TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
+			InterfaceImplMap.Add(FCsData_ProjectileWeaponSoundImpl::Name, Data);
+
+			// FireSound
+			{
+				FCsSound* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<FCsSound>(Context, FireSoundProperty, RowPtr);
+
+				Data->SetFireSound(Value);
+			}
+		}
+
+		// Weapon
+		if (WeaponProperty)
+		{
+			FCsWeaponPtr* WeaponPtr = WeaponProperty->ContainerPtrToValuePtr<FCsWeaponPtr>(RowPtr);
+
+			checkf(WeaponPtr, TEXT("UCsManager_Weapon::CreateEmulatedDataFromDataTable: WeaponPtr is NULL."));
+
+			WeaponMap.Add(Name, WeaponPtr);
+		}
+	}
+}
+
+void UCsManager_Weapon::DeconstructEmulatedData(const FName& InterfaceImplName, void* Data)
+{
 	// FCsData_WeaponImpl
-	if (InterfaceMap->GetRootName() == FCsData_WeaponImpl::Name)
+	if (InterfaceImplName == FCsData_WeaponImpl::Name)
 	{
 		delete static_cast<FCsData_WeaponImpl*>(Data);
 	}
 	// FCsData_ProjectileWeaponImpl
 	else
-	if (InterfaceMap->GetRootName() == FCsData_ProjectileWeaponImpl::Name)
+	if (InterfaceImplName == FCsData_ProjectileWeaponImpl::Name)
 	{
 		delete static_cast<FCsData_ProjectileWeaponImpl*>(Data);
 	}
+	// FCsData_ProjectileWeaponSoundImpl
+	else
+	if (InterfaceImplName == FCsData_ProjectileWeaponSoundImpl::Name)
+	{
+		delete static_cast<FCsData_ProjectileWeaponSoundImpl*>(Data);
+	}
 	else
 	{
-		checkf(0, TEXT("UCsManager_Weapon::DeconstructData: Failed to delete Data."));
+		checkf(0, TEXT("UCsManager_Weapon::DeconstructEmulatedData: Failed to delete InterfaceMap."));
+	}
+}
+
+void UCsManager_Weapon::PopulateDataMapFromDataTable(UDataTable* DataTable)
+{
+	using namespace NCsManagerWeapon;
+
+	const UScriptStruct* RowStruct = DataTable->GetRowStruct();
+
+	// Data
+	UStructProperty* DataProperty = FCsLibrary_Property::FindPropertyByName<UStructProperty>(RowStruct, Name::Data);
+
+	if (DataProperty &&
+		DataProperty->Struct == FCsDataWeapon::StaticStruct())
+	{
+		const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+
+		for (const TPair<FName, uint8*>& Pair : RowMap)
+		{
+			const FName& Name = Pair.Key;
+			uint8* RowPtr     = const_cast<uint8*>(Pair.Value);
+
+			FCsDataWeapon* DataPtr = DataProperty->ContainerPtrToValuePtr<FCsDataWeapon>(RowPtr);
+
+			if (ICsData_Weapon* Data = DataPtr->Get<ICsData_Weapon>())
+			{
+				DataMap.Add(Name, Data);
+			}
+		}
 	}
 }
 
 ICsData_Weapon* UCsManager_Weapon::GetData(const FName& Name)
 {
-	checkf(Name != NAME_None, TEXT("UCsManager_Weapon::GetData: Name = None is NOT Valid."));
+	checkf(Name != NAME_None, TEXT("UCsManager_Weapon::GetData: Name: None is NOT Valid."));
+
+	// TODO: Get the Data from Manager_Data or have a callback whenever Payload is unloaded
 
 	ICsData_Weapon** DataPtr = DataMap.Find(Name);
 
@@ -810,18 +942,30 @@ ICsData_Weapon* UCsManager_Weapon::GetData(const FName& Name)
 	return *DataPtr;
 }
 
-FCsWeaponPtr* UCsManager_Weapon::GetWeaponPtr(const FECsWeapon& Weapon)
+ICsData_Weapon* UCsManager_Weapon::GetData(const FECsWeapon& Type)
 {
-	FCsWeaponPtr** Ptr = WeaponMap.Find(Weapon);
+	checkf(EMCsWeapon::Get().IsValidEnum(Type), TEXT("UCsManager_Weapon::GetData: Type: %s is NOT Valid."), Type.ToChar());
+
+	return GetData(Type.GetFName());
+}
+
+void UCsManager_Weapon::OnPayloadUnloaded(const FName& Payload)
+{
+}
+
+FCsWeaponPtr* UCsManager_Weapon::GetWeaponPtr(const FName& Name)
+{
+	checkf(Name != NAME_None, TEXT("UCsManager_Weapon::GetWeaponPtr: Name: None is NOT Valid."));
+
+	FCsWeaponPtr** Ptr = WeaponMap.Find(Name);
 
 	return Ptr ? *Ptr : nullptr;
 }
 
-FCsProjectileWeaponPtr* UCsManager_Weapon::GetProjectileWeaponPtr(const FECsWeapon& Weapon)
+FCsWeaponPtr* UCsManager_Weapon::GetWeaponPtr(const FECsWeapon& Type)
 {
-	FCsProjectileWeaponPtr** Ptr = ProjectileWeaponMap.Find(Weapon);
+	checkf(EMCsWeapon::Get().IsValidEnum(Type), TEXT("UCsManager_Weapon::GetWeaponPtr: Type: %s is NOT Valid."), Type.ToChar());
 
-	return Ptr ? *Ptr : nullptr;
+	return GetWeaponPtr(Type.GetFName());
 }
-
 #pragma endregion Data

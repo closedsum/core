@@ -15,15 +15,8 @@ FCsData_ProjectileWeaponImpl::FCsData_ProjectileWeaponImpl() :
 		TimeBetweenAutoShots(nullptr),
 		TimeBetweenProjectilesPerShot(nullptr)
 {
-	InterfaceMap = new FCsInterfaceMap();
-
-	InterfaceMap->SetRootName(FCsData_ProjectileWeaponImpl::Name);
-
-	InterfaceMap->Add<ICsData_Weapon>(static_cast<ICsData_Weapon*>(this));
-	InterfaceMap->Add<ICsData_ProjectileWeapon>(static_cast<ICsData_ProjectileWeapon*>(this));
 }
 
 FCsData_ProjectileWeaponImpl::~FCsData_ProjectileWeaponImpl() 
 {
-	delete InterfaceMap;
 }

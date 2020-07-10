@@ -1,11 +1,14 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "Data/CsData_Weapon.h"
+#include "Containers/CsGetInterfaceMap.h"
 
 struct FCsInterfaceMap;
+class UObject;
 
-struct CSWP_API FCsData_WeaponImpl : public ICsData_Weapon
+/**
+*/
+struct CSWP_API FCsData_WeaponInterfaceMap final : public ICsGetInterfaceMap
 {
 public:
 
@@ -17,17 +20,11 @@ private:
 
 public:
 
-	FCsData_WeaponImpl();
-	~FCsData_WeaponImpl();
+	FCsData_WeaponInterfaceMap();
+	~FCsData_WeaponInterfaceMap();
+
 
 	FORCEINLINE UObject* _getUObject() const { return nullptr; }
-
-public:
-
-	FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map)
-	{
-		InterfaceMap = Map;
-	}
 
 // ICsGetInterfaceMap
 #pragma region

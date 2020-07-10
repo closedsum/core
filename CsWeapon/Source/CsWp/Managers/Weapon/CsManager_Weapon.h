@@ -42,6 +42,7 @@ public:
 
 class ICsGetManagerWeapon;
 class ICsData_Weapon;
+struct FCsData_WeaponInterfaceMap;
 class UDataTable;
 struct FCsWeaponPtr;
 struct FCsProjectileWeaponPtr;
@@ -579,17 +580,96 @@ public:
 
 // Data
 #pragma region
-protected:
-
-	TMap<FName, ICsData_Weapon*> DataMap;
-
 public:
 
 	virtual void PopulateDataMapFromSettings();
 
-	virtual void DeconstructData(ICsData_Weapon* Data);
+protected:
+	/** <DataName, InterfacePtr> */
+	TMap<FName, ICsData_Weapon*> EmulatedDataMap;
 
+	/** <DataName, InterfaceMapPtr> */ 
+	TMap<FName, FCsData_WeaponInterfaceMap*> EmulatedDataInterfaceMap;
+
+	/** <DataName, <InterfaceImplName, InterfaceImplPtr>> */
+	TMap<FName, TMap<FName, void*>> EmulatedDataInterfaceImplMap;
+
+
+	virtual void CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSet<FECsWeaponData>& EmulatedDataInterfaces);
+
+protected:
+
+	virtual void DeconstructEmulatedData(const FName& InterfaceImplName, void* Data);
+
+public:
+
+	/**
+	*/
+	template<typename InterfaceType>
+	InterfaceType* GetEmulatedData(const FName& Name)
+	{
+		static_assert(std::is_abstract<InterfaceType>(), "UCsManager_Weapon::GetEmulatedData InterfaceType is NOT abstract.");
+		
+		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "UCsManager_Weapon::GetEmulatedData: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
+
+		checkf(Name != NAME_None, TEXT("UCsManager_Weapon::GetEmulatedData: Name = None is NOT Valid."));
+
+		FCsData_ProjectileInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap.Find(Name);
+
+		checkf(EmulatedInterfaceMap, TEXT("UCsManager_Weapon::GetEmulatedData: EmulatedInterfaceMap is NULL. Failed to find InterfaceMap associated with %s."), *(Name.ToString()));
+
+		FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
+
+		checkf(InterfaceMap, TEXT("UCsManager_Weapon::GetEmulatedData: InterfaceMap is NULL. Interface failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
+
+		return InterfaceMap->Get<InterfaceType>();
+	}
+
+	/**
+	*/
+	template<typename InterfaceImplType>
+	InterfaceImplType* GetEmulatedDataImpl(const FName& Name)
+	{
+		static_assert(!std::is_abstract<InterfaceImplType>(), "UCsManager_Weapon::GetEmulatedDataImpl InterfaceImplType is NOT abstract.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceImplType>(), "UCsManager_Weapon::GetEmulatedDataImpl: InterfaceImplType is NOT a child of: ICsGetInterfaceMap.");
+
+		checkf(Name != NAME_None, TEXT("UCsManager_Weapon::GetEmulatedDataImpl: Name = None is NOT Valid."));
+
+		FCsData_ProjectileInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap.Find(Name);
+
+		checkf(EmulatedInterfaceMap, TEXT("UCsManager_Weapon::GetEmulatedData: EmulatedInterfaceMap is NULL. Failed to find InterfaceMap associated with %s."), *(Name.ToString()));
+
+		FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
+
+		checkf(InterfaceMap, TEXT("UCsManager_Weapon::GetEmulatedData: InterfaceMap is NULL. Interface failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
+
+		return InterfaceMap->StaticCastChecked<InterfaceImplType>();
+	}
+
+protected:
+
+	TMap<FName, ICsData_Weapon*> DataMap;
+
+	void PopulateDataMapFromDataTable(UDataTable* DataTable);
+
+public:
+
+	/**
+	*
+	*
+	* @param Name
+	* return
+	*/
 	ICsData_Weapon* GetData(const FName& Name);
+
+	/**
+	*
+	*
+	* @param Type
+	* return
+	*/
+	ICsData_Weapon* GetData(const FECsWeapon& Type);
 
 private:
 
@@ -599,19 +679,15 @@ private:
 	UPROPERTY()
 	TArray<UDataTable*> DataTables;
 
-	TMap<FECsWeapon, FCsWeaponPtr*> WeaponMap;
+	void OnPayloadUnloaded(const FName& Payload);
+
+	TMap<FName, FCsWeaponPtr*> WeaponMap;
 
 public:
 
-	FCsWeaponPtr* GetWeaponPtr(const FECsWeapon& Weapon);
+	FCsWeaponPtr* GetWeaponPtr(const FName& Name);
 
-private:
-
-	TMap<FECsWeapon, FCsProjectileWeaponPtr*> ProjectileWeaponMap;
-
-public:
-
-	FCsProjectileWeaponPtr* GetProjectileWeaponPtr(const FECsWeapon& Weapon);
+	FCsWeaponPtr* GetWeaponPtr(const FECsWeapon& Type);
 
 #pragma endregion Data
 };

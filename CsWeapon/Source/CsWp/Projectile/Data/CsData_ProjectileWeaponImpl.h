@@ -1,12 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Data/CsData_Weapon.h"
 #include "Projectile/Data/CsData_ProjectileWeapon.h"
 
 struct FCsInterfaceMap;
 
-struct CSWP_API FCsData_ProjectileWeaponImpl : public ICsData_Weapon,
-											   public ICsData_ProjectileWeapon
+struct CSWP_API FCsData_ProjectileWeaponImpl : public ICsData_ProjectileWeapon
 {
 public:
 
@@ -34,6 +32,28 @@ public:
 
 	FCsData_ProjectileWeaponImpl();
 	~FCsData_ProjectileWeaponImpl();
+
+	FORCEINLINE UObject* _getUObject() const { return nullptr; }
+
+public:
+
+	FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map)
+	{
+		InterfaceMap = Map;
+	}
+
+// ICsGetInterfaceMap
+#pragma region
+public:
+
+	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+	{
+		return InterfaceMap;
+	}
+
+#pragma endregion ICsGetInterfaceMap
+
+public:
 
 	FORCEINLINE void SetDoFireOnRelease(bool* Value)
 	{
@@ -70,26 +90,7 @@ public:
 		TimeBetweenProjectilesPerShot = Value;
 	}
 
-	FORCEINLINE UObject* _getUObject() const { return nullptr; }
-
-	// ICsGetInterfaceMap
-#pragma region
-public:
-
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-	{
-		return InterfaceMap;
-	}
-
-#pragma endregion ICsGetInterfaceMap
-
-	// ICsData_Weapon
-#pragma region
-public:
-
-#pragma endregion ICsData_Weapon
-
-	// ICsData_ProjectileWeapon
+// ICsData_ProjectileWeapon
 #pragma region
 public:
 

@@ -285,6 +285,7 @@ namespace NCsWeaponData
 
 	extern CSWP_API const Type Weapon;
 	extern CSWP_API const Type ProjectileWeapon;
+	extern CSWP_API const Type ProjectileWeaponSound;
 }
 
 #pragma endregion WeaponData
@@ -302,7 +303,7 @@ struct CSWP_API FCsWeaponPtr
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsWeapon"))
-	TSoftObjectPtr<UObject> Weapon;
+	TSoftClassPtr<UObject> Weapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 Load_Flags;
@@ -310,17 +311,65 @@ public:
 	UPROPERTY(Transient, BlueprintReadOnly)
 	UObject* Weapon_Internal;
 
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UClass* Weapon_Class;
+
 	FCsWeaponPtr() :
 		Weapon(nullptr),
 		Load_Flags(0),
-		Weapon_Internal(nullptr)
+		Weapon_Internal(nullptr),
+		Weapon_Class(nullptr)
 	{
 	}
 
 	FORCEINLINE UObject* Get() const { return Weapon_Internal; }
+
+	FORCEINLINE UClass* GetClass() const { return Weapon_Class; }
 };
 
 #pragma endregion FCsWeaponPtr
+
+// FCsDataWeapon
+#pragma region
+
+class UObject;
+
+USTRUCT(BlueprintType)
+struct CSWP_API FCsDataWeapon
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsData_Weapon"))
+	TSoftClassPtr<UObject> Data;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 Load_Flags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UObject* Data_Internal;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UClass* Data_Class;
+
+	FCsDataWeapon() :
+		Data(nullptr),
+		Load_Flags(0),
+		Data_Internal(nullptr),
+		Data_Class(nullptr)
+	{
+	}
+
+	FORCEINLINE UObject* Get() const { return Data_Internal; }
+
+	template<typename T>
+	FORCEINLINE T* Get() const { return Cast<T>(Get()); }
+
+	FORCEINLINE UClass* GetClass() const { return Data_Class; }
+};
+
+#pragma endregion FCsDataWeapon
 
 // FCsWeaponEntry
 #pragma region

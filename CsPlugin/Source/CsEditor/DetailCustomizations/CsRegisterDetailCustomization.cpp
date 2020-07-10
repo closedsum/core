@@ -23,7 +23,7 @@
 #include "DetailCustomizations/EnumStruct/Damage/ECsDamageTypeCustomization.h"
 #include "DetailCustomizations/EnumStruct/Damage/ECsHitTypeCustomization.h"
 		// Sound
-#include "DetailCustomizations/EnumStruct/ECsSoundTypeCustomization.h"
+#include "DetailCustomizations/EnumStruct/Sound/ECsSoundCustomization.h"
 		// Sense
 #include "DetailCustomizations/EnumStruct/Sense/ECsSenseActorTypeCustomization.h"
 
@@ -51,7 +51,7 @@ void FCsRegisterDetailCustomization::Register()
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsDamageType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsDamageTypeCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsHitType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsHitTypeCustomization::MakeInstance));
 		// Sound
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsSoundType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSoundTypeCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsSound", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSoundCustomization::MakeInstance));
 		// Sense
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsSenseActorType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSenseActorTypeCustomization::MakeInstance));
 	}

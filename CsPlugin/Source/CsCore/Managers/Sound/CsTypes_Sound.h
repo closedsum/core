@@ -12,23 +12,23 @@
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsSoundType : public FECsEnum_uint8
+struct CSCORE_API FECsSound : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-	CS_ENUM_UINT8_BODY(FECsSoundType)
+	CS_ENUM_UINT8_BODY(FECsSound)
 };
 
-CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsSoundType)
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsSound)
 
-struct CSCORE_API EMCsSoundType : public TCsEnumStructMap<FECsSoundType, uint8>
+struct CSCORE_API EMCsSound : public TCsEnumStructMap<FECsSound, uint8>
 {
-	CS_ENUM_STRUCT_MAP_BODY(EMCsSoundType, FECsSoundType, uint8)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsSound, FECsSound, uint8)
 };
 
-namespace NCsSoundType
+namespace NCsSound
 {
-	typedef FECsSoundType Type;
+	typedef FECsSound Type;
 
 	namespace Ref
 	{
@@ -175,7 +175,7 @@ struct CSCORE_API FCsSoundElement
 
 	/** Hard reference to a Sound Asset. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	FECsSoundType Type;
+	FECsSound Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	ECsSoundPriority Priority;
@@ -206,7 +206,7 @@ public:
 		bSpatialize(false),
 		IsLooping(false)
 	{
-		Type = EMCsSoundType::Get().GetMAX();
+		Type = EMCsSound::Get().GetMAX();
 		Priority = ECsSoundPriority::Medium;
 		Duration = 0.05f;
 		VolumeMultiplier = 1.0f;
@@ -354,7 +354,7 @@ struct CSCORE_API FCsSound
 	    and can be used by a Manager pooling Sound objects to Spawn the correct
 		Sound object. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FECsSoundType Type;
+	FECsSound Type;
 
 	/** Soft reference to Sound Attenuation Asset. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

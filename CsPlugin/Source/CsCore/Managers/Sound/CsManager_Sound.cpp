@@ -330,9 +330,9 @@ void UCsManager_Sound::InitInternalFromSettings()
 		Params.Name  = TEXT("UCsManager_Sound::FCsManager_Sound_Internal");
 		Params.World = MyRoot->GetWorld();
 
-		for (const TPair<FECsSoundType, FCsSettings_Manager_Sound_PoolParams>& Pair : Settings.PoolParams)
+		for (const TPair<FECsSound, FCsSettings_Manager_Sound_PoolParams>& Pair : Settings.PoolParams)
 		{
-			const FECsSoundType& Type							   = Pair.Key;
+			const FECsSound& Type								   = Pair.Key;
 			const FCsSettings_Manager_Sound_PoolParams& PoolParams = Pair.Value;
 
 			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
@@ -373,7 +373,7 @@ void UCsManager_Sound::InitInternal(const FCsManager_Sound_Internal::FCsManagerP
 	{
 		FCsManager_Sound_Internal::FCsManagerPooledObjectMapParams& P = const_cast<FCsManager_Sound_Internal::FCsManagerPooledObjectMapParams&>(Params);
 
-		for (TPair<FECsSoundType, FCsManagerPooledObjectParams>& Pair : P.ObjectParams)
+		for (TPair<FECsSound, FCsManagerPooledObjectParams>& Pair : P.ObjectParams)
 		{
 			FCsManagerPooledObjectParams& ObjectParams = Pair.Value;
 
@@ -402,7 +402,7 @@ void UCsManager_Sound::Clear()
 	// Pool
 #pragma region
 
-void UCsManager_Sound::CreatePool(const FECsSoundType& Type, const int32& Size)
+void UCsManager_Sound::CreatePool(const FECsSound& Type, const int32& Size)
 {
 	const int32& PoolSize = Internal.GetPoolSize(Type);
 
@@ -414,17 +414,17 @@ void UCsManager_Sound::CreatePool(const FECsSoundType& Type, const int32& Size)
 	Internal.CreatePool(Type, Size);
 }
 
-TBaseDelegate<FCsSoundPooled*, const FECsSoundType&>& UCsManager_Sound::GetConstructContainer_Impl()
+TBaseDelegate<FCsSoundPooled*, const FECsSound&>& UCsManager_Sound::GetConstructContainer_Impl()
 {
 	return Internal.ConstructContainer_Impl;
 }
 
-FCsSoundPooled* UCsManager_Sound::ConstructContainer(const FECsSoundType& Type)
+FCsSoundPooled* UCsManager_Sound::ConstructContainer(const FECsSound& Type)
 {
 	return new FCsSoundPooled();
 }
 
-TMulticastDelegate<void, const FCsSoundPooled*>& UCsManager_Sound::GetOnConstructObject_Event(const FECsSoundType& Type)
+TMulticastDelegate<void, const FCsSoundPooled*>& UCsManager_Sound::GetOnConstructObject_Event(const FECsSound& Type)
 {
 	return Internal.GetOnConstructObject_Event(Type);
 }
@@ -435,22 +435,22 @@ TMulticastDelegate<void, const FCsSoundPooled*>& UCsManager_Sound::GetOnConstruc
 			// Pool
 #pragma region
 
-const FCsSoundPooled* UCsManager_Sound::AddToPool(const FECsSoundType& Type, ICsSoundPooled* Object)
+const FCsSoundPooled* UCsManager_Sound::AddToPool(const FECsSound& Type, ICsSoundPooled* Object)
 {
 	return Internal.AddToPool(Type, Object);
 }
 
-const FCsSoundPooled* UCsManager_Sound::AddToPool(const FECsSoundType& Type, const FCsSoundPooled* Object)
+const FCsSoundPooled* UCsManager_Sound::AddToPool(const FECsSound& Type, const FCsSoundPooled* Object)
 {
 	return Internal.AddToPool(Type, Object->GetObject());
 }
 
-const FCsSoundPooled* UCsManager_Sound::AddToPool(const FECsSoundType& Type, UObject* Object)
+const FCsSoundPooled* UCsManager_Sound::AddToPool(const FECsSound& Type, UObject* Object)
 {
 	return Internal.AddToPool(Type, Object);
 }
 
-void UCsManager_Sound::OnAddToPool(const FECsSoundType& Type, const FCsSoundPooled* Object)
+void UCsManager_Sound::OnAddToPool(const FECsSound& Type, const FCsSoundPooled* Object)
 {
 	Pool.Add(Object->GetObject());
 }
@@ -460,17 +460,17 @@ void UCsManager_Sound::OnAddToPool(const FECsSoundType& Type, const FCsSoundPool
 			// Allocated Objects
 #pragma region
 
-const FCsSoundPooled* UCsManager_Sound::AddToAllocatedObjects(const FECsSoundType& Type, ICsSoundPooled* Sound, UObject* Object)
+const FCsSoundPooled* UCsManager_Sound::AddToAllocatedObjects(const FECsSound& Type, ICsSoundPooled* Sound, UObject* Object)
 {
 	return Internal.AddToAllocatedObjects(Type, Sound, Object);
 }
 
-const FCsSoundPooled* UCsManager_Sound::AddToAllocatedObjects(const FECsSoundType& Type, ICsSoundPooled* Object)
+const FCsSoundPooled* UCsManager_Sound::AddToAllocatedObjects(const FECsSound& Type, ICsSoundPooled* Object)
 {
 	return Internal.AddToAllocatedObjects(Type, Object);
 }
 
-const FCsSoundPooled* UCsManager_Sound::AddToAllocatedObjects(const FECsSoundType& Type, UObject* Object)
+const FCsSoundPooled* UCsManager_Sound::AddToAllocatedObjects(const FECsSound& Type, UObject* Object)
 {
 	return Internal.AddToAllocatedObjects(Type, Object);
 }
@@ -479,27 +479,27 @@ const FCsSoundPooled* UCsManager_Sound::AddToAllocatedObjects(const FECsSoundTyp
 
 #pragma endregion Add
 
-const TArray<FCsSoundPooled*>& UCsManager_Sound::GetPool(const FECsSoundType& Type)
+const TArray<FCsSoundPooled*>& UCsManager_Sound::GetPool(const FECsSound& Type)
 {
 	return Internal.GetPool(Type);
 }
 
-const TArray<FCsSoundPooled*>& UCsManager_Sound::GetAllocatedObjects(const FECsSoundType& Type)
+const TArray<FCsSoundPooled*>& UCsManager_Sound::GetAllocatedObjects(const FECsSound& Type)
 {
 	return Internal.GetAllocatedObjects(Type);
 }
 
-const int32& UCsManager_Sound::GetPoolSize(const FECsSoundType& Type)
+const int32& UCsManager_Sound::GetPoolSize(const FECsSound& Type)
 {
 	return Internal.GetPoolSize(Type);
 }
 
-int32 UCsManager_Sound::GetAllocatedObjectsSize(const FECsSoundType& Type)
+int32 UCsManager_Sound::GetAllocatedObjectsSize(const FECsSound& Type)
 {
 	return Internal.GetAllocatedObjectsSize(Type);
 }
 
-bool UCsManager_Sound::IsExhausted(const FECsSoundType& Type)
+bool UCsManager_Sound::IsExhausted(const FECsSound& Type)
 {
 	return Internal.IsExhausted(Type);
 }
@@ -507,32 +507,32 @@ bool UCsManager_Sound::IsExhausted(const FECsSoundType& Type)
 	// Find
 #pragma region
 
-const FCsSoundPooled* UCsManager_Sound::FindObject(const FECsSoundType& Type, const int32& Index)
+const FCsSoundPooled* UCsManager_Sound::FindObject(const FECsSound& Type, const int32& Index)
 {
 	return Internal.FindObject(Type, Index);
 }
 
-const FCsSoundPooled* UCsManager_Sound::FindObject(const FECsSoundType& Type, ICsSoundPooled* Object)
+const FCsSoundPooled* UCsManager_Sound::FindObject(const FECsSound& Type, ICsSoundPooled* Object)
 {
 	return Internal.FindObject(Type, Object);
 }
 
-const FCsSoundPooled* UCsManager_Sound::FindObject(const FECsSoundType& Type, UObject* Object)
+const FCsSoundPooled* UCsManager_Sound::FindObject(const FECsSound& Type, UObject* Object)
 {
 	return Internal.FindObject(Type, Object);
 }
 
-const FCsSoundPooled* UCsManager_Sound::FindSafeObject(const FECsSoundType& Type, const int32& Index)
+const FCsSoundPooled* UCsManager_Sound::FindSafeObject(const FECsSound& Type, const int32& Index)
 {
 	return Internal.FindSafeObject(Type, Index);
 }
 
-const FCsSoundPooled* UCsManager_Sound::FindSafeObject(const FECsSoundType& Type, ICsSoundPooled* Object)
+const FCsSoundPooled* UCsManager_Sound::FindSafeObject(const FECsSound& Type, ICsSoundPooled* Object)
 {
 	return Internal.FindSafeObject(Type, Object);
 }
 
-const FCsSoundPooled* UCsManager_Sound::FindSafeObject(const FECsSoundType& Type, UObject* Object)
+const FCsSoundPooled* UCsManager_Sound::FindSafeObject(const FECsSound& Type, UObject* Object)
 {
 	return Internal.FindSafeObject(Type, Object);
 }
@@ -549,18 +549,18 @@ void UCsManager_Sound::Update(const FCsDeltaTime& DeltaTime)
 	Internal.Update(DeltaTime);
 }
 
-void UCsManager_Sound::OnPreUpdate_Pool(const FECsSoundType& Type)
+void UCsManager_Sound::OnPreUpdate_Pool(const FECsSound& Type)
 {
 	CurrentUpdatePoolType		 = Type;
 	CurrentUpdatePoolObjectIndex = 0;
 }
 
-void UCsManager_Sound::OnUpdate_Object(const FECsSoundType& Type, const FCsSoundPooled* Object)
+void UCsManager_Sound::OnUpdate_Object(const FECsSound& Type, const FCsSoundPooled* Object)
 {
 	++CurrentUpdatePoolObjectIndex;
 }
 
-void UCsManager_Sound::OnPostUpdate_Pool(const FECsSoundType& Type)
+void UCsManager_Sound::OnPostUpdate_Pool(const FECsSound& Type)
 {
 }
 
@@ -569,23 +569,23 @@ void UCsManager_Sound::OnPostUpdate_Pool(const FECsSoundType& Type)
 	// Payload
 #pragma region
 
-void UCsManager_Sound::ConstructPayloads(const FECsSoundType& Type, const int32& Size)
+void UCsManager_Sound::ConstructPayloads(const FECsSound& Type, const int32& Size)
 {
 	Internal.ConstructPayloads(Type, Size);
 }
 
-ICsSoundPooledPayload* UCsManager_Sound::ConstructPayload(const FECsSoundType& Type)
+ICsSoundPooledPayload* UCsManager_Sound::ConstructPayload(const FECsSound& Type)
 {
 	return new FCsSoundPooledPayloadImpl();
 }
 
-ICsSoundPooledPayload* UCsManager_Sound::AllocatePayload(const FECsSoundType& Type)
+ICsSoundPooledPayload* UCsManager_Sound::AllocatePayload(const FECsSound& Type)
 {
 	return Internal.AllocatePayload(Type);
 }
 
 /*
-ICsFXPooledPayload* UCsManager_FX_Actor::ScriptAllocatePayload(const FECsFX& Type, const FCsScriptProjectilePayload& ScriptPayload)
+ICsFXPooledPayload* UCsManager_FX_Actor::ScriptAllocatePayload(const FECsSound& Type, const FCsScriptProjectilePayload& ScriptPayload)
 {
 	ICsProjectilePayload* IP				= Internal.AllocatePayload(Type);
 	FCsProjectilePooledPayloadImpl* Payload = static_cast<FCsProjectilePooledPayloadImpl*>(IP);
@@ -605,7 +605,7 @@ ICsFXPooledPayload* UCsManager_FX_Actor::ScriptAllocatePayload(const FECsFX& Typ
 	// Spawn
 #pragma region
 
-const FCsSoundPooled* UCsManager_Sound::Spawn(const FECsSoundType& Type, ICsSoundPooledPayload* Payload)
+const FCsSoundPooled* UCsManager_Sound::Spawn(const FECsSound& Type, ICsSoundPooledPayload* Payload)
 {
 	return Internal.Spawn(Type, Payload);
 }
@@ -624,7 +624,7 @@ const FCsFXActorPooled* UCsManager_FX_Actor::ScriptSpawn(const FECsProjectile& T
 	// Destroy
 #pragma region
 
-bool UCsManager_Sound::Destroy(const FECsSoundType& Type, ICsSoundPooled* Object)
+bool UCsManager_Sound::Destroy(const FECsSound& Type, ICsSoundPooled* Object)
 {
 	return Internal.Destroy(Type, Object);
 }

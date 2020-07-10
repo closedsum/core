@@ -13,7 +13,7 @@ struct FCsAnimNotifySound
 	class USoundCue* Sound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	FECsSoundType Type;
+	FECsSound Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	ECsSoundPriority Priority;
@@ -32,7 +32,7 @@ struct FCsAnimNotifySound
 
 	FCsAnimNotifySound() :
 		Sound(nullptr),
-		Type(EMCsSoundType::Get().GetMAX()),
+		Type(EMCsSound::Get().GetMAX()),
 		Priority(ECsSoundPriority::Medium),
 		bSpatialize(true),
 		VolumeMultiplier(1.0f),

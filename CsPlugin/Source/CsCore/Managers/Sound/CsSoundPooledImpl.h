@@ -85,7 +85,7 @@ public:
 public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Sound")
-	FECsSoundType Type;
+	FECsSound Type;
 
 	void Play(ICsSoundPooledPayload* Payload);
 	void Stop();

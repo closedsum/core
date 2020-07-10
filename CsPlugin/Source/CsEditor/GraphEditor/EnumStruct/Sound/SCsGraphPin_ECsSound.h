@@ -2,10 +2,10 @@
 #pragma once
 #include "GraphEditor/EnumStruct/SCsGraphPin_EnumStruct.h"
 
-class SCsGraphPin_ECsSoundType : public SCsGraphPin_EnumStruct
+class SCsGraphPin_ECsSound : public SCsGraphPin_EnumStruct
 {
 public:
-	SLATE_BEGIN_ARGS(SCsGraphPin_ECsSoundType) {}
+	SLATE_BEGIN_ARGS(SCsGraphPin_ECsSound) {}
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj);

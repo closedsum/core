@@ -3,16 +3,16 @@
 #include "DetailCustomizations/EnumStruct/ECsEnumStructCustomization.h"
 
 /**
-* Customizes a FECsSoundType property to use a dropdown
+* Customizes a FECsSound property to use a dropdown
 */
-class CSEDITOR_API FECsSoundTypeCustomization : public FECsEnumStructCustomization
+class CSEDITOR_API FECsSoundCustomization : public FECsEnumStructCustomization
 {
 private:
 	typedef FECsEnumStructCustomization Super;
 
 public:
 
-	FECsSoundTypeCustomization();
+	FECsSoundCustomization();
 
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
 

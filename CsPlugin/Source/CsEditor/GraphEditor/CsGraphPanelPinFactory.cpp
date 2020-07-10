@@ -47,7 +47,7 @@
 	// Interactive
 //#include "GraphEditor/EnumStruct/Interactive/SCsGraphPin_ECsInteractiveType.h"
 	// Sound
-#include "GraphEditor/EnumStruct/SCsGraphPin_ECsSoundType.h"
+#include "GraphEditor/EnumStruct/Sound/SCsGraphPin_ECsSound.h"
 	// AI
 //#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAIType.h"
 //#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAIState.h"
@@ -127,8 +127,8 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 		// FECsInteractiveType
 		//if (DoesPinUseScriptStruct<FECsInteractiveType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsInteractiveType, InPin); }
 	}
-	// FECsSoundType
-	if (DoesPinUseScriptStruct<FECsSoundType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsSoundType, InPin); }
+	// FECsSound
+	if (DoesPinUseScriptStruct<FECsSound>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsSound, InPin); }
 	// AI
 	{
 		// FECsAIType

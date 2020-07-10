@@ -49,7 +49,7 @@ public:
 	FName Payload;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TMap<FECsSoundType, FCsSettings_Manager_Sound_PoolParams> PoolParams;
+	TMap<FECsSound, FCsSettings_Manager_Sound_PoolParams> PoolParams;
 
 	FCsSettings_Manager_Sound() :
 		Payload(NAME_None),

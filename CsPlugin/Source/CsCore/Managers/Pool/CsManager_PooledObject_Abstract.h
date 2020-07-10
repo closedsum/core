@@ -1573,7 +1573,7 @@ public:
 	template<typename PayloadTypeImpl>
 	PayloadTypeImpl* AllocatePayload(const FString& Context)
 	{
-		return NCsInterfaceMap::StaticCastChecked<PayloadTypeImpl, PayloadType>(Context, AllocatePayload());
+		return NCsInterfaceMap::PureStaticCastChecked<PayloadTypeImpl, PayloadType>(Context, AllocatePayload());
 	}
 
 	/**

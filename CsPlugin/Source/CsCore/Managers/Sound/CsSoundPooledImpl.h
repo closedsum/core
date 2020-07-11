@@ -8,7 +8,7 @@
 #include "CsSoundPooledImpl.generated.h"
 
 class UAudioComponent;
-class USoundAttenuation;
+class UDamageType;
 struct ICsPooledObjectCache;
 struct ICsPooledObjectPayload;
 struct ICsSoundPooledPayload;
@@ -42,6 +42,10 @@ public:
 public:
 
 	virtual void BeginPlay() override;
+
+	virtual void FellOutOfWorld(const UDamageType& DmgType) override;
+
+	virtual void OutsideWorldBounds() override;
 
 #pragma endregion AActor Interface
 

@@ -76,6 +76,16 @@ void ACsSoundPooledImpl::BeginPlay()
 	ConstructCache();
 }
 
+void ACsSoundPooledImpl::FellOutOfWorld(const UDamageType& DmgType)
+{
+	Cache->QueueDeallocate();
+}
+
+void ACsSoundPooledImpl::OutsideWorldBounds()
+{
+	Cache->QueueDeallocate();
+}
+
 #pragma endregion AActor Interface
 
 // ICsUpdate

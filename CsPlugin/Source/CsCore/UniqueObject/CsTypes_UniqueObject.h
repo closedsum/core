@@ -2,6 +2,8 @@
 #include "Misc/Guid.h"
 #pragma once
 
+/**
+*/
 struct FCsUniqueObjectId
 {
 public:
@@ -13,11 +15,14 @@ public:
 	{
 	}
 
-	virtual ~FCsUniqueObjectId(){}
-
 	FORCEINLINE friend bool operator==(const FCsUniqueObjectId& Lhs, const FCsUniqueObjectId& Rhs)
 	{
 		return Lhs.Id == Rhs.Id;
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsUniqueObjectId& Lhs, const FCsUniqueObjectId& Rhs)
+	{
+		return !(Lhs.Id == Rhs.Id);
 	}
 
 	void NewId()

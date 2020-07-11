@@ -917,11 +917,31 @@ protected:
 #pragma region
 public:
 
+	/**
+	* Get the current head (first object) of the allocated linked list.
+	*
+	* return Allocated Head.
+	*/
 	FORCEINLINE const TCsDoubleLinkedList<InterfaceContainerType*>* GetAllocatedHead()
 	{
 		return AllocatedHead;
 	}
 
+	/**
+	* Get the current head (first object) of the allocated linked list.
+	*
+	* return Allocated Head.
+	*/
+	FORCEINLINE const InterfaceContainerType* GetAllocatedHeadObject()
+	{
+		return AllocatedHead ? **AllocatedHead : nullptr;
+	}
+
+	/**
+	* Get the current tail (last object) of the allocated linked list.
+	*
+	* return Allocated Tail.
+	*/
 	FORCEINLINE const TCsDoubleLinkedList<InterfaceContainerType*>* GetAllocatedTail()
 	{
 		return AllocatedTail;
@@ -1347,8 +1367,6 @@ protected:
 		return nullptr;
 	}
 
-public:
-
 	/**
 	* Deallocate an object at specified Index.
 	*  NOTE: This process is O(n). Consider queuing the deallocate.
@@ -1742,6 +1760,20 @@ public:
 	* @param Object
 	* return			Whether the Object was succesfully "destroyed" / deallocated
 	*/
+	bool Destroy(const InterfaceContainerType* Object)
+	{
+		checkf(Object, TEXT("%s::Destroy: Object is NULL."), *Name);
+
+		return Destroy(Object->GetCache()->GetIndex());
+	}
+
+	/**
+	*
+	*  NOTE: This process is O(n). Consider queuing the deallocate.
+	*
+	* @param Object
+	* return			Whether the Object was succesfully "destroyed" / deallocated
+	*/
 	bool Destroy(InterfaceType* Object)
 	{
 		checkf(Object, TEXT("%s::Destroy: Object is NULL."), *Name);
@@ -1759,7 +1791,7 @@ public:
 	bool Destroy(UObject* Object)
 	{
 		const InterfaceContainerType* O = FindObject(Object);
-		return Destroy(O->GetCache()->GetIndex());
+		return Destroy(O);
 	}
 
 	/**

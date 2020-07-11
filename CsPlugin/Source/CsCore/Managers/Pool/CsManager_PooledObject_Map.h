@@ -683,6 +683,46 @@ public:
 
 #pragma endregion Add
 
+	// Linked List
+#pragma region
+public:
+
+	/**
+	* Get the current head (first object) of the allocated linked list for
+	* the appropriate Type.
+	*
+	* @param Type	Type of pool to get allocated head from.
+	* return		Allocated Head.
+	*/
+	FORCEINLINE const TCsDoubleLinkedList<InterfaceContainerType*>* GetAllocatedHead(const KeyType& Type)
+	{
+		return GetManagerPooledObjects(Type)->GetAllocatedHead();
+	}
+
+	/**
+	* Get the current head (first object) of the allocated linked list.
+	*
+	* @param Type	Type of pool to get allocated head object from.
+	* return		Allocated Head.
+	*/
+	FORCEINLINE const InterfaceContainerType* GetAllocatedHeadObject(const KeyType& Type)
+	{
+		return GetManagerPooledObjects(Type)->GetAllocatedHeadObject();
+	}
+
+	/**
+	* Get the current tail (last object) of the allocated linked list.
+	*
+	* @param Type	Type of pool to get allocated tail from.
+	* return		Allocated Tail.
+	*/
+	FORCEINLINE const TCsDoubleLinkedList<InterfaceContainerType*>* GetAllocatedTail(const KeyType& Type)
+	{
+		return GetManagerPooledObjects(Type)->GetAllocatedTail();
+	}
+
+#pragma endregion Linked List
+
 public:
 
 	/**
@@ -1088,10 +1128,33 @@ public:
 	* @param Object		Object that implements the interface: ICsPooledObject.
 	* return			Whether successfully destroyed the object or not.
 	*/
+	bool Destroy(const KeyType& Type, const InterfaceContainerType* Object)
+	{
+		checkf(Object, TEXT("%s::Destroy: Object is NULL."), *Name);
+
+		TManager_PooledObject_Abstract* Pool = GetManagerPooledObjects(Type);
+
+		const int32& Index = Object->GetCache()->GetIndex();
+
+		if (Pool->Destroy(Index))
+		{
+			OnDestroy_Event.Broadcast(Type, Object);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	* Destroy an object from a pool for the appropriate Type.
+	*  Object must implement the interface: ICsPooledObject.
+	*  NOTE: This process is O(n). Consider queuing the deallocate.
+	*
+	* @param Type		Type of pool to destroy from.
+	* @param Object		Object that implements the interface: ICsPooledObject.
+	* return			Whether successfully destroyed the object or not.
+	*/
 	bool Destroy(const KeyType& Type, InterfaceType* Object)
 	{
-		checkf(IsValidKey(Type), TEXT("%s::Destroy: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
-
 		return Destroy(Type, Object->_getUObject());
 	}
 

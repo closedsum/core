@@ -610,7 +610,16 @@ const FCsSoundPooled* UCsManager_Sound::Spawn(const FECsSound& Type, ICsSoundPoo
 {
 	if (Internal.IsExhausted(Type))
 	{
-		//Internal.GetAllo
+		const FCsSoundPooled* AllocatedHead = Internal.GetAllocatedHeadObject(Type);
+
+#if !UE_BUILD_SHIPPING
+		if (UObject* Object = AllocatedHead->GetObject())
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Sound::Spawn: Deallocating object: %s as pool for Type: %s is exhausted."), *(Object->GetName()), Type.ToChar());
+		}
+#endif // #if !UE_BUILD_SHIPPING
+
+		Internal.Destroy(Type, AllocatedHead);
 	}
 	return Internal.Spawn(Type, Payload);
 }

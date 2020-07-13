@@ -153,6 +153,46 @@ public:
 	}
 
 	/**
+	* Safely get a reference to the interface or slice of the root structure.
+	*
+	* return	Reference to the InterfaceType
+	*/
+	template<typename InterfaceType>
+	InterfaceType* GetSafe()
+	{
+		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::GetSafe: InterfaceType is NOT abstract.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "FCsInterfaceMap::GetSafe: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
+
+		checkf(InterfaceType::Name != NAME_None, TEXT("FCsInterfaceMap::GetSafe: InterfaceType::Name: None is NOT Valid."));
+
+		void** Ptr = Interfaces.Find(InterfaceType::Name);
+
+		if (Ptr)
+		{
+			checkf(((InterfaceType*)(*Ptr))->GetInterfaceMap() == this, TEXT("FCsInterfaceMap::GetSafe: InterfaceMap for Ptr does NOT point to this."));
+
+			return (InterfaceType*)(*Ptr);
+		}
+		return nullptr;
+	}
+
+	/**
+	* Check whether the object implements the interface with
+	* name: InterfaceName
+	*
+	* @param InterfaceName
+	* return				Whether the objects implements the interface with the given name.
+	*/
+	template<typename InterfaceType>
+	bool Implements()
+	{
+		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::Implements: InterfaceType is NOT abstract.");
+
+		return Interfaces.Find(InterfaceType::Name) != nullptr;
+	}
+
+	/**
 	* Check whether the object implements the interface with 
 	* name: InterfaceName
 	*
@@ -413,7 +453,7 @@ public:
 *
 */
 namespace NCsInterfaceMap
-{
+{	
 	/**
 	* Get the Interface Map from an Object with checks.
 	* Object should implement the interface: ICsGetInterfaceMap.
@@ -545,5 +585,37 @@ namespace NCsInterfaceMap
 		FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked<InterfaceType>(Context, Interface);
 
 		return InterfaceMap->Get<OtherInterfaceType>();
+	}
+
+	/**
+	* Safely get another interface from Interface with checks (for InterfaceMap).
+	* Interface should implement the interface: ICsGetInterfaceMap
+	* in order to get the appropriate memory offset (slice).
+	* OtherInterfaceType IS abstract.
+	*
+	* @param Context	The call context
+	* @param Interface	Interface that implements the interface: ICsGetInterfaceMap.
+	* return
+	*/
+	template<typename OtherInterfaceType, typename InterfaceType>
+	OtherInterfaceType* GetSafeInterfaceChecked(const FString& Context, InterfaceType* Interface)
+	{
+		static_assert(std::is_abstract<OtherInterfaceType>(), "NCsInterfaceMap::GetSafeInterfaceChecked: OtherInterfaceType is NOT abstract.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, OtherInterfaceType>(), "NCsInterfaceMap::GetSafeInterfaceChecked: OtherInterfaceType is NOT a child of: ICsGetInterfaceMap.");
+
+		FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked<InterfaceType>(Context, Interface);
+
+		return InterfaceMap->GetSafe<OtherInterfaceType>();
+	}
+
+	/**
+	*/
+	template<typename OtherInterfaceType, typename InterfaceType>
+	bool Implements(const FString& Context, InterfaceType* Interface)
+	{
+		FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked<InterfaceType>(Context);
+
+		return InterfaceMap->Implements<OtherInterfaceType>();
 	}
 }

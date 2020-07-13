@@ -1,92 +1,216 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Damage/CsManager_Damage.h"
 #include "CsCore.h"
-#include "CsCVars.h"
+
+// Library
 #include "Library/CsLibrary_Common.h"
 
-// Game
-//#include "Game/CsGameState_DEPRECATED.h"
+#if WITH_EDITOR
+#include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Managers/Damage/CsGetManagerDamage.h"
+
+#include "Library/CsLibrary_Common.h"
+
+#include "Classes/Engine/World.h"
+#include "Classes/Engine/Engine.h"
+
+#include "GameFramework/GameStateBase.h"
+#endif // #if WITH_EDITOR
 
 // static initializations
-TWeakObjectPtr<UObject> ACsManager_Damage::MyOwner;
+UCsManager_Damage* UCsManager_Damage::s_Instance;
+bool UCsManager_Damage::s_bShutdown = false;
 
-ACsManager_Damage::ACsManager_Damage(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	// Event
-	for (uint8 I = 0; I < CS_DAMAGE_EVENT_POOL_SIZE; ++I)
-	{
-		EventPool[I].Init(I);
-	}
-	// Result
-	for (uint8 I = 0; I < CS_DAMAGE_RESULT_POOL_SIZE; ++I)
-	{
-		ResultPool[I].Init(I);
-	}
 }
 
-/*static*/ UObject* ACsManager_Damage::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
+// Singleton
+#pragma region
 
-/*static*/ void ACsManager_Damage::Init(UObject* InOwner)
+/*static*/ UCsManager_Damage* UCsManager_Damage::Get(UObject* InRoot /*=nullptr*/)
 {
-	MyOwner = InOwner;
-}
-
-/*static*/ ACsManager_Damage* ACsManager_Damage::Get(UWorld* InWorld)
-{
-#if WITH_EDITOR 
-	// In Editor Preview Window
-	if (UCsLibrary_Common::IsPlayInEditorPreview(InWorld))
+#if WITH_EDITOR
+	return Get_GetManagerDamage(InRoot)->GetManager_Damage();
+#else
+	if (s_bShutdown)
 	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::Get: Manager has already shutdown."));
+		return nullptr;
 	}
-	// In Game
-	else
+	return s_Instance;
 #endif // #if WITH_EDITOR
+}
+
+/*static*/ bool UCsManager_Damage::IsValid(UObject* InRoot /*=nullptr*/)
+{
+#if WITH_EDITOR
+	return Get_GetManagerDamage(InRoot)->GetManager_Damage() != nullptr;
+#else
+	return s_Instance != nullptr;
+#endif // #if WITH_EDITOR
+}
+
+/*static*/ void UCsManager_Damage::Init(UObject* InRoot, TSubclassOf<UCsManager_Damage> ManagerDamageClass, UObject* InOuter /*=nullptr*/)
+{
+#if WITH_EDITOR
+	ICsGetManagerDamage* GetManagerDamage = Get_GetManagerDamage(InRoot);
+
+	UCsManager_Damage* Manager_Damage = GetManagerDamage->GetManager_Damage();
+
+	if (!Manager_Damage)
 	{
-		return nullptr;// Cast<ACsGameState_DEPRECATED>(GetMyOwner())->Manager_Damage;
+		Manager_Damage = NewObject<UCsManager_Damage>(InOuter ? InOuter : InRoot, ManagerDamageClass, TEXT("Manager_Damage_Singleton"), RF_Transient | RF_Public);
+
+		GetManagerDamage->SetManager_Damage(Manager_Damage);
+
+		Manager_Damage->SetMyRoot(InRoot);
+		Manager_Damage->Initialize();
 	}
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::Init: Init has already been called."));
+	}
+#else
+	s_bShutdown = false;
+
+	if (!s_Instance)
+	{
+		s_Instance = NewObject<UCsManager_Damage>(GetTransientPackage(), ManagerDamageClass, TEXT("Manager_Damage_Singleton"), RF_Transient | RF_Public);
+		s_Instance->AddToRoot();
+		s_Instance->SetMyRoot(InRoot);
+		s_Instance->Initialize();
+	}
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::Init: Init has already been called."));
+	}
+#endif // #if WITH_EDITOR
+}
+
+/*static*/ void UCsManager_Damage::Shutdown(UObject* InRoot /*=nullptr*/)
+{
+#if WITH_EDITOR
+	ICsGetManagerDamage* GetManagerDamage = Get_GetManagerDamage(InRoot);
+	UCsManager_Damage* Manager_Damage	  = GetManagerDamage->GetManager_Damage();
+	Manager_Damage->CleanUp();
+
+	GetManagerDamage->SetManager_Damage(nullptr);
+#else
+	if (!s_Instance)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::Shutdown: Manager has already been shutdown."));
+		return;
+	}
+
+	s_Instance->CleanUp();
+	s_Instance->RemoveFromRoot();
+	s_Instance = nullptr;
+	s_bShutdown = true;
+#endif // #if WITH_EDITOR
+}
+
+/*static*/ bool UCsManager_Damage::HasShutdown(UObject* InRoot /*=nullptr*/)
+{
+#if WITH_EDITOR
+	return Get_GetManagerDamage(InRoot)->GetManager_Damage() == nullptr;
+#else
+	return s_bShutdown;
+#endif // #if WITH_EDITOR
+}
+
+#if WITH_EDITOR
+
+/*static*/ ICsGetManagerDamage* UCsManager_Damage::Get_GetManagerDamage(UObject* InRoot)
+{
+	checkf(InRoot, TEXT("UCsManager_Damage::Get_GetManagerProjectile: InRoot is NULL."));
+
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+
+	checkf(GetManagerSingleton, TEXT("UCsManager_Damage::Get_GetManagerProjectile: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
+
+	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
+
+	checkf(Manager_Singleton, TEXT("UCsManager_Damage::Get_GetManagerProjectile: Manager_Singleton is NULL."));
+
+	ICsGetManagerDamage* GetManagerDamage = Cast<ICsGetManagerDamage>(Manager_Singleton);
+
+	checkf(GetManagerDamage, TEXT("UCsManager_Damage::Get_GetManagerProjectile: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetManagerDamage."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
+
+	return GetManagerDamage;
+}
+
+/*static*/ ICsGetManagerDamage* UCsManager_Damage::GetSafe_GetManagerDamage(UObject* Object)
+{
+	if (!Object)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::GetSafe_GetManagerDamage: Object is NULL."));
+		return nullptr;
+	}
+
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+
+	if (!GetManagerSingleton)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::GetSafe_GetManagerDamage: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
+		return nullptr;
+	}
+
+	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
+
+	if (!Manager_Singleton)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::GetSafe_GetManagerDamage: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
+		return nullptr;
+	}
+
+	return Cast<ICsGetManagerDamage>(Manager_Singleton);
+}
+
+/*static*/ UCsManager_Damage* UCsManager_Damage::GetSafe(UObject* Object)
+{
+	if (ICsGetManagerDamage* GetManagerDamage = GetSafe_GetManagerDamage(Object))
+		return GetManagerDamage->GetManager_Damage();
 	return nullptr;
 }
 
-// Event
+/*static*/ UCsManager_Damage* UCsManager_Damage::GetFromWorldContextObject(const UObject* WorldContextObject)
+{
+	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		// Game State
+		if (UCsManager_Damage* Manager = GetSafe(World->GetGameState()))
+			return Manager;
+
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::GetFromWorldContextObject: Failed to Manager Item of type UCsManager_Damage from GameState."));
+
+		return nullptr;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+#endif // #if WITH_EDITOR
+
+void UCsManager_Damage::Initialize()
+{
+}
+
+void UCsManager_Damage::CleanUp()
+{
+}
+
+	// Root
 #pragma region
 
-FCsDamageEvent* ACsManager_Damage::AllocateEvent()
+void UCsManager_Damage::SetMyRoot(UObject* InRoot)
 {
-	for (uint8 I = 0; I < CS_DAMAGE_EVENT_POOL_SIZE; ++I)
-	{
-		EventPoolIndex		  = (EventPoolIndex + 1) % CS_DAMAGE_EVENT_POOL_SIZE;
-		FCsDamageEvent* Event = &(EventPool[EventPoolIndex]);
-
-		if (!Event->bAllocated)
-		{
-			Event->bAllocated = true;
-			return Event;
-		}
-	}
-	checkf(0, TEXT("ACsManager_Damage::AllocateEvent: Pool is exhausted"));
-	return nullptr;
+	MyRoot = InRoot;
 }
 
-#pragma endregion Event
+#pragma endregion Root
 
-// Result
-#pragma region
-
-FCsDamageResult* ACsManager_Damage::AllocateResult()
-{
-	for (uint8 I = 0; I < CS_DAMAGE_RESULT_POOL_SIZE; ++I)
-	{
-		ResultPoolIndex			= (ResultPoolIndex + 1) % CS_DAMAGE_RESULT_POOL_SIZE;
-		FCsDamageResult* Result = &(ResultPool[ResultPoolIndex]);
-
-		if (!Result->bAllocated)
-		{
-			Result->bAllocated = true;
-			return Result;
-		}
-	}
-	checkf(0, TEXT("ACsManager_Damage::AllocateResult: Pool is exhausted"));
-	return nullptr;
-}
-
-#pragma endregion Result
+#pragma endregion Singleton

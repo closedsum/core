@@ -20,8 +20,18 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsDamageType)
 
 struct CSCORE_API EMCsDamageType : public TCsEnumStructMap<FECsDamageType, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsDamageType)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsDamageType, FECsDamageType, uint8)
 };
+
+namespace NCsDamageType
+{
+	typedef FECsDamageType Type;
+
+	namespace Ref
+	{
+
+	}
+}
 
 #pragma endregion DamageType
 
@@ -40,8 +50,18 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsHitType)
 
 struct CSCORE_API EMCsHitType : public TCsEnumStructMap<FECsHitType, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsHitType)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsHitType, FECsHitType, uint8)
 };
+
+namespace NCsHitType
+{
+	typedef FECsHitType Type;
+
+	namespace Ref
+	{
+
+	}
+}
 
 #pragma endregion HitType
 
@@ -65,9 +85,9 @@ enum class ECsHitDirection : uint8
 	ECsHitDirection_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsHitDirection : public TCsEnumMap<ECsHitDirection>
+struct CSCORE_API EMCsHitDirection final : public TCsEnumMap<ECsHitDirection>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsHitDirection)
+	CS_ENUM_MAP_BODY(EMCsHitDirection, ECsHitDirection)
 };
 
 namespace NCsHitDirection
@@ -312,12 +332,6 @@ struct CSCORE_API FCsDamageEvent
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	uint8 Index;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	bool bAllocated;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	float Damage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
@@ -341,48 +355,13 @@ struct CSCORE_API FCsDamageEvent
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	FHitResult HitInfo;
 
-	FCsDamageEvent() :
-		Index(0)
+	FCsDamageEvent()
 	{
 		Reset();
-	}
-	virtual ~FCsDamageEvent(){}
-
-	FORCEINLINE FCsDamageEvent& operator=(const FCsDamageEvent& B)
-	{
-		Damage = B.Damage;
-		Instigator = B.Instigator;
-		Causer = B.Causer;
-		DamageType = B.DamageType;
-		HitType = B.HitType;
-		HasImpulse = B.HasImpulse;
-		HitInfo = B.HitInfo;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsDamageEvent& B) const
-	{
-		return Damage == B.Damage &&
-			   Instigator == B.Instigator &&
-			   Causer == B.Causer &&
-			   DamageType == B.DamageType &&
-		 	   HitType == B.HitType &&
-			   HasImpulse == B.HasImpulse;
-	}
-
-	FORCEINLINE bool operator!=(const FCsDamageEvent& B) const
-	{
-		return !(*this == B);
-	}
-
-	void Init(const uint8 &InIndex)
-	{
-		Index = InIndex;
 	}
 
 	void Reset()
 	{
-		bAllocated = false;
 		Damage = 0.0f;
 		Instigator.Reset();
 		Instigator = nullptr;
@@ -409,12 +388,6 @@ struct CSCORE_API FCsDamageResult
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	uint8 Index;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	bool bAllocated;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	float Damage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
@@ -429,22 +402,9 @@ struct CSCORE_API FCsDamageResult
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	FHitResult HitInfo;
 
-	FCsDamageResult() :
-		Index(0)
+	FCsDamageResult()
 	{
 		Reset();
-	}
-	virtual ~FCsDamageResult() {}
-
-	FORCEINLINE FCsDamageResult& operator=(const FCsDamageResult& B)
-	{
-		Damage = B.Damage;
-		
-		Victim = B.Victim;
-		DamageType = B.DamageType;
-		HitType = B.HitType;
-		HitInfo = B.HitInfo;
-		return *this;
 	}
 
 	FORCEINLINE bool operator==(const FCsDamageResult& B) const
@@ -460,14 +420,8 @@ struct CSCORE_API FCsDamageResult
 		return !(*this == B);
 	}
 
-	void Init(const uint8 &InIndex)
-	{
-		Index = InIndex;
-	}
-
 	void Reset()
 	{
-		bAllocated = false;
 		Damage = 0.0f;
 		Victim.Reset();
 		Victim = nullptr;

@@ -186,7 +186,7 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 
 	ICsGetManagerProjectile* GetManagerProjectile = Cast<ICsGetManagerProjectile>(Manager_Singleton);
 
-	checkf(GetManagerProjectile, TEXT("UCsManager_Projectile::Get_GetManagerProjectile: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetManagerItem."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
+	checkf(GetManagerProjectile, TEXT("UCsManager_Projectile::Get_GetManagerProjectile: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetManagerProjectile."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
 
 	return GetManagerProjectile;
 }

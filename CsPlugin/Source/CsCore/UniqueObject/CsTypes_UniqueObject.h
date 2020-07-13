@@ -4,7 +4,7 @@
 
 /**
 */
-struct FCsUniqueObjectId
+struct CSCORE_API FCsUniqueObjectId
 {
 public:
 

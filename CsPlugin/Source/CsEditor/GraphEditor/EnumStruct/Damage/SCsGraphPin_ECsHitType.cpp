@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/Damage/SCsGraphPin_ECsHitType.h"
 #include "CsEditor.h"
 
-#include "Types/CsTypes_Damage.h"
+#include "Managers/Damage/CsTypes_Damage.h"
 
 
 void SCsGraphPin_ECsHitType::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
@@ -36,6 +36,3 @@ FText SCsGraphPin_ECsHitType::OnGetTooltip(int32 EnumIndex)
 {
 	return OnGetTooltip_Internal<EMCsHitType>(EnumIndex);
 }
-
-
-

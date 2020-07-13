@@ -1,14 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Damage.h"
-
-// DamageType
-CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsDamageType)
-
-// HitType
-CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsHitType)
-
-// HitDirection
-CS_DEFINE_ENUM_MAP_BODY(EMCsHitDirection)
+#include "Managers/Damage/CsTypes_Damage.h"
 
 namespace NCsHitDirection
 {

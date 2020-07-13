@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "Data/CsData_ProjectileStaticMeshVisual.h"
+#include "Data/Visual/CsData_ProjectileStaticMeshVisual.h"
 
 struct FCsInterfaceMap;
 struct FCsPrjStaticMesh;

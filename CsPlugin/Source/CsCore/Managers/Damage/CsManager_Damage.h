@@ -1,52 +1,74 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "GameFramework/Actor.h"
-#include "Types/CsTypes_Damage.h"
+#include "UObject/Object.h"
 #include "CsManager_Damage.generated.h"
 
-#define CS_DAMAGE_EVENT_POOL_SIZE 255
-#define CS_DAMAGE_RESULT_POOL_SIZE 255
+class ICsGetManagerDamage;
 
 UCLASS()
-class CSCORE_API ACsManager_Damage : public AActor
+class CSCORE_API UCsManager_Damage : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+// Singleton
+#pragma region
+public:
+
+	static UCsManager_Damage* Get(UObject* InRoot = nullptr);
+	
+	template<typename T>
+	static T* Get(UObject* InRoot = nullptr)
+	{
+		return Cast<T>(Get(InRoot));
+	}
+
+	static bool IsValid(UObject* InRoot = nullptr);
+
+	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Damage> ManagerDamageClass, UObject* InOuter = nullptr);
+	
+	static void Shutdown(UObject* InRoot = nullptr);
+	static bool HasShutdown(UObject* InRoot = nullptr);
+
+#if WITH_EDITOR
 protected:
 
-	static TWeakObjectPtr<UObject> MyOwner;
+	static ICsGetManagerDamage* Get_GetManagerDamage(UObject* InRoot);
+	static ICsGetManagerDamage* GetSafe_GetManagerDamage(UObject* Object);
 
-	static UObject* GetMyOwner();
-	template<typename T>
-	static T* GetMyOwner()
-	{
-		return Cast<T>(GetMyOwner());
-	}
+	static UCsManager_Damage* GetSafe(UObject* Object);
 
 public:
 
-	static void Init(UObject* InOwner);
-	static ACsManager_Damage* Get(UWorld* InWorld);
+	static UCsManager_Damage* GetFromWorldContextObject(const UObject* WorldContextObject);
 
-// Event
+#endif // #if WITH_EDITOR
+
+protected:
+
+	virtual void Initialize();
+	virtual void CleanUp();
+
+private:
+	// Singleton data
+	static UCsManager_Damage* s_Instance;
+	static bool s_bShutdown;
+
+	// Root
 #pragma region
+protected:
 
-	FCsDamageEvent EventPool[CS_DAMAGE_EVENT_POOL_SIZE];
+	UObject* MyRoot;
 
-	uint8 EventPoolIndex;
+	void SetMyRoot(UObject* InRoot);
 
-	virtual FCsDamageEvent* AllocateEvent();
+public:
 
-#pragma endregion Event
+	FORCEINLINE UObject* GetMyRoot()
+	{
+		return MyRoot;
+	}
 
-// Result
-#pragma region
+#pragma endregion Root
 
-	FCsDamageResult ResultPool[CS_DAMAGE_RESULT_POOL_SIZE];
-
-	uint8 ResultPoolIndex;
-
-	virtual FCsDamageResult* AllocateResult();
-
-#pragma endregion Result
+#pragma endregion Singleton
 };

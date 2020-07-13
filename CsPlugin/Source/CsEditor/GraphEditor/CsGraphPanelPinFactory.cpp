@@ -9,7 +9,7 @@
 //#include "Types/CsTypes_Character.h"
 //#include "Types/CsTypes_Item.h"
 //#include "Types/CsTypes_Recipe.h"
-#include "Types/CsTypes_Damage.h"
+#include "Managers/Damage/CsTypes_Damage.h"
 #include "Managers/Sound/CsTypes_Sound.h"
 //#include "Types/CsTypes_Interactive.h"
 //#include "AI/CsTypes_AI.h"

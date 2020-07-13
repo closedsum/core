@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/Damage/SCsGraphPin_ECsDamageType.h"
 #include "CsEditor.h"
 
-#include "Types/CsTypes_Damage.h"
+#include "Managers/Damage/CsTypes_Damage.h"
 
 
 void SCsGraphPin_ECsDamageType::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)

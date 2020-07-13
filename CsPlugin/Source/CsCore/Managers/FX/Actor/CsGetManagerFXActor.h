@@ -12,6 +12,9 @@ class CSCORE_API UCsGetManagerFXActor : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
+/**
+*
+*/
 class CSCORE_API ICsGetManagerFXActor
 {
 	GENERATED_IINTERFACE_BODY()

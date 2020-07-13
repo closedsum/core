@@ -50,6 +50,7 @@ struct FCsFxCache : public FCsPooledObjectCache
 		Index = InIndex;
 		Emitter = InEmitter;
 	}
+	/*
 	void Init(FCsFxPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
 		bAllocated = true;
@@ -75,7 +76,7 @@ struct FCsFxCache : public FCsPooledObjectCache
 		RealTime = InRealTime;
 		SetFrame(InFrame);
 	}
-
+	*/
 	virtual void Reset() override
 	{
 		FCsPooledObjectCache::Reset();
@@ -121,7 +122,7 @@ public:
 
 	void Init(const int32 &Index);
 	void OnCreatePool();
-	void Allocate(FCsFxPayload* Payload);
+	//void Allocate(FCsFxPayload* Payload);
 
 	void DeAllocate();
 	void StartDeath();

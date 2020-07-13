@@ -46,6 +46,7 @@ void ACsEmitter::OnCreatePool()
 {
 }
 
+/*
 void ACsEmitter::Allocate(FCsFxPayload* Payload)
 {
 	UParticleSystem* Particle = Payload->GetParticle();
@@ -95,6 +96,7 @@ void ACsEmitter::Allocate(FCsFxPayload* Payload)
 		SetActorLocationAndRotation(Cache.Location, Cache.Rotation);
 	Play();
 }
+*/
 
 void ACsEmitter::DeAllocate()
 {

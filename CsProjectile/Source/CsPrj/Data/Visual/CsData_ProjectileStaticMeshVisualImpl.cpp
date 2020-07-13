@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Data/CsData_ProjectileStaticMeshVisualImpl.h"
+#include "Data/Visual/CsData_ProjectileStaticMeshVisualImpl.h"
 
 #include "Containers/CsInterfaceMap.h"
 

@@ -2,22 +2,19 @@
 #pragma once
 
 #include "UObject/Interface.h"
-#include "UniqueObject/CsTypes_UniqueObject.h"
-#include "CsUniqueObject.generated.h"
+#include "CsDamageableObject.generated.h"
 
 UINTERFACE(BlueprintType, meta = (CannotImplementInterfaceInBlueprint))
-class CSCORE_API UCsUniqueObject : public UInterface
+class CSCORE_API UCsDamageableObject : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
 /**
 */
-class CSCORE_API ICsUniqueObject
+class CSCORE_API ICsDamageableObject
 {
 	GENERATED_IINTERFACE_BODY()
 
 public:
-
-	virtual const FCsUniqueObjectId& GetId() = 0;
 };

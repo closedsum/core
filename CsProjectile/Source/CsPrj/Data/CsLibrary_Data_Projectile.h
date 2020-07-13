@@ -62,4 +62,19 @@ struct CSPRJ_API FCsLibrary_Data_Projectile
 	{
 		return NCsInterfaceMap::GetInterfaceChecked<OtherInterfaceType>(Context, Data);
 	}
+
+	/**
+	* Safely perform the operation static_cast<OtherInterfaceType*>("Data associated with ICsData_Projectile") 
+	* with checks (for InterfaceMap).
+	* OtherInterfaceType IS abstract.
+	*
+	* @param Context	The calling context
+	* @param Data		Data that implements the interface: ICsData_Projectile.
+	* return			Data casted to OtherInterfaceType (static_cast<OtherInterfaceType*>(Data))
+	*/
+	template<typename OtherInterfaceType>
+	FORCEINLINE static OtherInterfaceType* GetSafeInterfaceChecked(const FString& Context, ICsData_Projectile* Data)
+	{
+		return NCsInterfaceMap::GetSafeInterfaceChecked<OtherInterfaceType>(Context, Data);
+	}
 };

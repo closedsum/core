@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Data/CsData_ProjectileTrailVisual.h"
+#include "Data/Visual/CsData_ProjectileTrailVisual.h"
 #include "CsPrj.h"
 
 const FName ICsData_ProjectileTrailVisual::Name = FName("ICsData_ProjectileTrailVisual");

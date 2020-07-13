@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/EnumStruct/Damage/ECsHitTypeCustomization.h"
 
-#include "Types/CsTypes_Damage.h"
+#include "Managers/Damage/CsTypes_Damage.h"
 
 #define LOCTEXT_NAMESPACE "ECsHitTypeCustomization"
 

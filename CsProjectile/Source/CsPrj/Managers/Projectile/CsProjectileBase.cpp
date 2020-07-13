@@ -482,15 +482,15 @@ void ACsProjectileBase::OnHitCallback(UPrimitiveComponent* HitComp, AActor* Othe
 	if (!Cache.bAllocated)
 		return;
 
-	ACsManager_Damage* Manager_Damage = ACsManager_Damage::Get(GetWorld());
-	FCsDamageEvent* Event			  = Manager_Damage->AllocateEvent();
+	//ACsManager_Damage* Manager_Damage = ACsManager_Damage::Get(GetWorld());
+	//FCsDamageEvent* Event			  = Manager_Damage->AllocateEvent();
 
-	Event->Damage = 0.0f;// Cache.GetData()->GetDamage();
-	Event->Instigator = Cache.GetInstigator();
-	Event->Causer	  = Cache.GetOwner();
+	//Event->Damage = 0.0f;// Cache.GetData()->GetDamage();
+	//Event->Instigator = Cache.GetInstigator();
+	//Event->Causer	  = Cache.GetOwner();
 	//Event->SetDamageType();
 	//Event->SetHitType();
-	Event->HitInfo = HitResult;
+	//Event->HitInfo = HitResult;
 
 	// Process Damage on SERVER Only
 	if (GetLocalRole() == ROLE_Authority)
@@ -534,7 +534,7 @@ void ACsProjectileBase::OnHitCallback(UPrimitiveComponent* HitComp, AActor* Othe
 		//Cache.GetData()->GetData_Impact()->PlayImpactSound(GetWorld(), PhysicalMaterial->SurfaceType, Cache.GetOwner(), HitResult.Location);
 	}
 
-	Event->Reset();
+	//Event->Reset();
 
 	Cache.bLifeTime = true;
 	Cache.LifeTime	= 0.0f;

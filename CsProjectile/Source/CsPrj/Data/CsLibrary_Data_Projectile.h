@@ -60,7 +60,7 @@ struct CSPRJ_API FCsLibrary_Data_Projectile
 	template<typename OtherInterfaceType>
 	FORCEINLINE static OtherInterfaceType* GetInterfaceChecked(const FString& Context, ICsData_Projectile* Data)
 	{
-		return NCsInterfaceMap::GetInterfaceChecked<OtherInterfaceType>(Context, Data);
+		return NCsInterfaceMap::GetInterfaceChecked<OtherInterfaceType, ICsData_Projectile>(Context, Data);
 	}
 
 	/**
@@ -75,6 +75,6 @@ struct CSPRJ_API FCsLibrary_Data_Projectile
 	template<typename OtherInterfaceType>
 	FORCEINLINE static OtherInterfaceType* GetSafeInterfaceChecked(const FString& Context, ICsData_Projectile* Data)
 	{
-		return NCsInterfaceMap::GetSafeInterfaceChecked<OtherInterfaceType>(Context, Data);
+		return NCsInterfaceMap::GetSafeInterfaceChecked<OtherInterfaceType, ICsData_Projectile>(Context, Data);
 	}
 };

@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Damage/Event/CsDamageEvent.h"
-
+#include "Containers/CsInterfaceMap.h"
 #pragma once
 
 class UObject;
@@ -15,7 +15,7 @@ public:
 
 private:
 
-	FCsInterfaceMap* InterfaceMap;
+	FCsInterfaceMap InterfaceMap;
 
 public:
 
@@ -34,7 +34,6 @@ public:
 public:
 
 	FCsDamageEventImpl();
-	~FCsDamageEventImpl();
 
 // ICsGetInterfaceMap
 #pragma region
@@ -42,7 +41,7 @@ public:
 
 	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
 	{
-		return InterfaceMap;
+		return const_cast<FCsInterfaceMap*>(&InterfaceMap);
 	}
 
 #pragma endregion ICsGetInterfaceMap

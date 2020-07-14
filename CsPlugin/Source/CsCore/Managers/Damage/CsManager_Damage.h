@@ -1,9 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UObject/Object.h"
+#include "UniqueObject/CsTypes_UniqueObject.h"
 #include "CsManager_Damage.generated.h"
 
 class ICsGetManagerDamage;
+class ICsDamageableObject;
+struct ICsDamageEvent;
 
 UCLASS()
 class CSCORE_API UCsManager_Damage : public UObject
@@ -71,4 +74,22 @@ public:
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+// Damageable Objects
+#pragma region
+protected:
+
+	TMap<FCsUniqueObjectId, ICsDamageableObject*> DamageableObjectMap;
+
+public:
+
+	void Add(ICsDamageableObject* Object);
+
+	void Remove(ICsDamageableObject* Object);
+
+#pragma endregion Damageable Objects
+
+public:
+
+	void OnEvent(ICsDamageEvent* Event);
 };

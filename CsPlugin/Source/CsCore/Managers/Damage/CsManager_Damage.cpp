@@ -4,6 +4,10 @@
 
 // Library
 #include "Library/CsLibrary_Common.h"
+// Damage
+#include "Managers/Damage/CsDamageableObject.h"
+// Unique
+#include "UniqueObject/CsUniqueObject.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -214,3 +218,57 @@ void UCsManager_Damage::SetMyRoot(UObject* InRoot)
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+// Damageable Objects
+#pragma region
+
+void UCsManager_Damage::Add(ICsDamageableObject* Object)
+{
+	checkf(Object, TEXT("UCsManager_Damage::Add: Object is NULL."));
+
+	UObject* O = Object->_getUObject();
+
+	checkf(O, TEXT("UCsManager_Damage::Add: Object is NOT a UObject."));
+
+	UClass* Class = O->GetClass();
+
+	checkf(Class->ImplementsInterface(UCsUniqueObject::StaticClass()), TEXT("UCsManager_Damage::Add: Object: %s with Class: %s does NOT implement interface: ICsUniqueObject."), *(O->GetName()), *(Class->GetName()));
+
+	// TODO: Need to look at script objects
+	ICsUniqueObject* UniqueObject = Cast<ICsUniqueObject>(O);
+
+	checkf(UniqueObject, TEXT("UCsManager_Damage::Add: Object: %s with Class: %s does NOT implement interface: ICsUniqueObject."), *(O->GetName()), *(Class->GetName()));
+
+	const FCsUniqueObjectId& Id = UniqueObject->GetId();
+
+	DamageableObjectMap.Add(Id, Object);
+}
+
+void UCsManager_Damage::Remove(ICsDamageableObject* Object)
+{
+	checkf(Object, TEXT("UCsManager_Damage::Remove: Object is NULL."));
+
+	UObject* O = Object->_getUObject();
+
+	checkf(O, TEXT("UCsManager_Damage::Remove: Object is NOT a UObject."));
+
+	UClass* Class = O->GetClass();
+
+	checkf(Class->ImplementsInterface(UCsUniqueObject::StaticClass()), TEXT("UCsManager_Damage::Remove: Object: %s with Class: %s does NOT implement interface: ICsUniqueObject."), *(O->GetName()), *(Class->GetName()));
+
+	// TODO: Need to look at script objects
+	ICsUniqueObject* UniqueObject = Cast<ICsUniqueObject>(O);
+
+	checkf(UniqueObject, TEXT("UCsManager_Damage::Remove: Object: %s with Class: %s does NOT implement interface: ICsUniqueObject."), *(O->GetName()), *(Class->GetName()));
+
+	const FCsUniqueObjectId& Id = UniqueObject->GetId();
+
+	DamageableObjectMap.Remove(Id);
+}
+
+#pragma endregion Damageable Objects
+
+void UCsManager_Damage::OnEvent(ICsDamageEvent* Event)
+{
+	checkf(Event, TEXT("UCsManager_Damage::OnEvent: Event is NULL."));
+}

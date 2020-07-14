@@ -5,7 +5,8 @@
 #pragma once
 
 /**
-*
+* Interface to describe Damage. Other interfaces can be "added" on top of this to 
+* expose more functionality (i.e. ICsDamageShape, ICsDamagePhysics, ... etc)
 */
 struct CSCORE_API ICsDamageExpression : virtual public ICsGetInterfaceMap
 {
@@ -17,7 +18,17 @@ public:
 
 	virtual ~ICsDamageExpression() {}
 
+	/**
+	* Get the amount of damage.
+	* 
+	* return Damage.
+	*/
 	virtual float GetDamage() const = 0;
 
+	/**
+	* Get the type of damage.
+	*
+	* return Damage Type.
+	*/
 	virtual const FECsDamageType& GetType() const = 0;
 };

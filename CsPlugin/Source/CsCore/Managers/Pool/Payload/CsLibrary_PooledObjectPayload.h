@@ -34,6 +34,21 @@ struct CSCORE_API FCsLibrary_PooledObjectPayload
 	}
 
 	/**
+	* Perform the operation static_cast<DerivedType*>("Payload associated with ICsPooledObjectPayload") with checks.
+	* DerivedType is NOT abstract.
+	* Does NOT check if the InterfaceMap "emulates" interfaces.
+	*
+	* @param Context	The calling context
+	* @param Cache		Payload that implements the interface: ICsPooledObjectPayload.
+	* return			Payload casted to DerivedType (static_cast<DerivedType*>(Payload))
+	*/
+	template<typename DerivedType>
+	FORCEINLINE static DerivedType* PureStaticCastChecked(const FString& Context, ICsPooledObjectPayload* Payload)
+	{
+		return NCsInterfaceMap::PureStaticCastChecked<DerivedType, ICsPooledObjectPayload>(Context, Payload);
+	}
+
+	/**
 	* Perform the operation static_cast<OtherInterfaceType*>("Payload associated with ICsPooledObjectPayload") with checks.
 	* OtherInterfaceType IS abstract.
 	*

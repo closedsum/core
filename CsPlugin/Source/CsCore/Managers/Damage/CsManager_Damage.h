@@ -89,7 +89,26 @@ public:
 
 #pragma endregion Damageable Objects
 
+// Event
+#pragma region
 public:
 
-	void OnEvent(ICsDamageEvent* Event);
+	/**
+	*
+	*
+	* @param Event
+	*/
+	void OnEvent(const ICsDamageEvent* Event);
+
+	/**
+	*
+	*
+	* @param Event
+	*/
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnEvent, const ICsDamageEvent* /*Event*/);
+
+	/** */
+	FOnEvent OnEvent_Event;
+
+#pragma endregion Event
 };

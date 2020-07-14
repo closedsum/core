@@ -3,9 +3,9 @@
 #include "Containers/CsInterfaceMap.h"
 #pragma once
 
-class ICsDamageExpression;
+struct ICsDamageExpression;
 
-struct CSPRJ_API FCsLibrary_DamageExpression
+struct CSCORE_API FCsLibrary_DamageExpression
 {
 	/**
 	* Get the Interface Map from an Data with checks.

@@ -10,6 +10,8 @@ class CSCORE_API UCsDamageableObject : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
+struct ICsDamageEvent;
+
 /**
 */
 class CSCORE_API ICsDamageableObject
@@ -17,4 +19,6 @@ class CSCORE_API ICsDamageableObject
 	GENERATED_IINTERFACE_BODY()
 
 public:
+
+	virtual void Damage(const ICsDamageEvent* Event) = 0;
 };

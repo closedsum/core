@@ -4,8 +4,12 @@
 
 // Library
 #include "Library/CsLibrary_Common.h"
+#include "Managers/Damage/Expression/CsLibrary_DamageExpression.h"
 // Damage
 #include "Managers/Damage/CsDamageableObject.h"
+#include "Managers/Damage/Event/CsDamageEvent.h"
+#include "Managers/Damage/Expression/CsDamageExpression.h"
+#include "Managers/Damage/Shape/CsDamageShape.h"
 // Unique
 #include "UniqueObject/CsUniqueObject.h"
 
@@ -21,6 +25,19 @@
 
 #include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
+
+// Cached
+#pragma region
+
+namespace NCsManagerDamageCached
+{
+	namespace Str
+	{
+		const FString OnEvent = TEXT("UCsManager_Damage::OnEvent");
+	}
+}
+
+#pragma endregion Cached
 
 // static initializations
 UCsManager_Damage* UCsManager_Damage::s_Instance;
@@ -268,7 +285,67 @@ void UCsManager_Damage::Remove(ICsDamageableObject* Object)
 
 #pragma endregion Damageable Objects
 
-void UCsManager_Damage::OnEvent(ICsDamageEvent* Event)
+void UCsManager_Damage::OnEvent(const ICsDamageEvent* Event)
 {
+	using namespace NCsManagerDamageCached;
+
 	checkf(Event, TEXT("UCsManager_Damage::OnEvent: Event is NULL."));
+
+	ICsDamageExpression* Expression = Event->GetExpression();
+
+	checkf(Expression, TEXT("UCsManager_Damage::OnEvent: Expression is NULL. No Damage Expression found for Event."));
+
+	// ICsDamageShape
+	if (ICsDamageShape* Shape = FCsLibrary_DamageExpression::GetSafeInterfaceChecked<ICsDamageShape>(Str::OnEvent, Expression))
+	{
+
+	}
+	// Point
+	else
+	{
+		const FHitResult& HitResult = Event->GetHitResult();
+		
+		// Actor
+		if (AActor* Actor = HitResult.GetActor())
+		{
+			// Check if Actor implements interface: ICsDamageableObject
+			UClass* Class = Actor->GetClass();
+			
+			if (Class->ImplementsInterface(UCsDamageableObject::StaticClass()))
+			{
+				// Interface
+				if (ICsDamageableObject* Object = Cast<ICsDamageableObject>(Actor))
+				{
+					Object->Damage(Event);
+					OnEvent_Event.Broadcast(Event);
+				}
+				// Script Interface
+				else
+				{
+				}
+				return;
+			}
+		}
+		// Component
+		if (UPrimitiveComponent* Component = HitResult.GetComponent())
+		{
+			// Check if Component implements interface: ICsDamageableObject
+			UClass* Class = Component->GetClass();
+
+			if (Class->ImplementsInterface(UCsDamageableObject::StaticClass()))
+			{
+				// Interface
+				if (ICsDamageableObject* Object = Cast<ICsDamageableObject>(Component))
+				{
+					Object->Damage(Event);
+					OnEvent_Event.Broadcast(Event);
+				}
+				// Script Interface
+				else
+				{
+				}
+				return;
+			}
+		}
+	}
 }

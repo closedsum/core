@@ -2,6 +2,8 @@
 #include "Managers/Damage/CsManager_Damage.h"
 #include "CsCore.h"
 
+// CVar
+#include "Managers/Damage/CsCVars_Manager_Damage.h"
 // Library
 #include "Library/CsLibrary_Common.h"
 #include "Managers/Damage/Expression/CsLibrary_DamageExpression.h"
@@ -317,12 +319,15 @@ void UCsManager_Damage::OnEvent(const ICsDamageEvent* Event)
 				if (ICsDamageableObject* Object = Cast<ICsDamageableObject>(Actor))
 				{
 					Object->Damage(Event);
-					OnEvent_Event.Broadcast(Event);
 				}
 				// Script Interface
 				else
 				{
 				}
+#if !UE_BUILD_SHIPPING
+				LogEventPoint(Event);
+#endif // #if !UE_BUILD_SHIPPING
+				OnEvent_Event.Broadcast(Event);
 				return;
 			}
 		}
@@ -338,14 +343,61 @@ void UCsManager_Damage::OnEvent(const ICsDamageEvent* Event)
 				if (ICsDamageableObject* Object = Cast<ICsDamageableObject>(Component))
 				{
 					Object->Damage(Event);
-					OnEvent_Event.Broadcast(Event);
 				}
 				// Script Interface
 				else
 				{
 				}
+#if !UE_BUILD_SHIPPING
+				LogEventPoint(Event);
+#endif // #if !UE_BUILD_SHIPPING
+				OnEvent_Event.Broadcast(Event);
 				return;
 			}
 		}
 	}
 }
+
+
+// Log
+#pragma region
+
+void UCsManager_Damage::LogEventPoint(const ICsDamageEvent* Event)
+{
+	ICsDamageExpression* Expression = Event->GetExpression();
+
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerDamageEvents))
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::OnEvent:"));
+		// Expression
+		UE_LOG(LogCs, Warning, TEXT("- Expression: Point"));
+		UE_LOG(LogCs, Warning, TEXT("-- Damage: %f"), Expression->GetDamage());
+		UE_LOG(LogCs, Warning, TEXT("-- Type: %s"), Expression->GetType().ToChar());
+		// Instigator
+		UE_LOG(LogCs, Warning, TEXT("- Instigator: %s"), Event->GetInstigator() ? *(Event->GetInstigator()->GetName()) : TEXT("None"));
+		// Causer
+		UE_LOG(LogCs, Warning, TEXT("- Causer: %s"), Event->GetCauser() ? *(Event->GetCauser()->GetName()) : TEXT("None"));
+		// HitResult
+		const FHitResult& HitResult = Event->GetHitResult();
+
+		UE_LOG(LogCs, Warning, TEXT("- HitResult"));
+		UE_LOG(LogCs, Warning, TEXT("-- bBlockingHit: %s"), HitResult.bBlockingHit ? TEXT("True") : TEXT("False"));
+		UE_LOG(LogCs, Warning, TEXT("-- bStartPenetrating"), HitResult.bStartPenetrating ? TEXT("True") : TEXT("False"));
+		UE_LOG(LogCs, Warning, TEXT("-- Time: %f"), HitResult.Time);
+		UE_LOG(LogCs, Warning, TEXT("-- Location: %s"), *(HitResult.Location.ToString()));
+		UE_LOG(LogCs, Warning, TEXT("-- ImpactPoint: %s"), *(HitResult.ImpactPoint.ToString()));
+		UE_LOG(LogCs, Warning, TEXT("-- Normal: %s"), *(HitResult.Normal.ToString()));
+		UE_LOG(LogCs, Warning, TEXT("-- ImpactNormal: %s"), *(HitResult.ImpactNormal.ToString()));
+		UE_LOG(LogCs, Warning, TEXT("-- TraceStart: %s"), *(HitResult.TraceStart.ToString()));
+		UE_LOG(LogCs, Warning, TEXT("-- TraceEnd: %s"), *(HitResult.TraceEnd.ToString()));
+		UE_LOG(LogCs, Warning, TEXT("-- PenetrationDepth: %f"), HitResult.PenetrationDepth);
+		UE_LOG(LogCs, Warning, TEXT("-- Item: %d"), HitResult.Item);
+		UE_LOG(LogCs, Warning, TEXT("-- PhysMaterial: %s"), HitResult.PhysMaterial.IsValid() ? *(HitResult.PhysMaterial->GetName()) : TEXT("None"));
+		UE_LOG(LogCs, Warning, TEXT("-- Actor: %s"), HitResult.Actor.IsValid() ? *(HitResult.Actor->GetName()) : TEXT("None"));
+		UE_LOG(LogCs, Warning, TEXT("-- Component: %s"), HitResult.Component.IsValid() ? *(HitResult.Component->GetName()) : TEXT("None"));
+		UE_LOG(LogCs, Warning, TEXT("-- BoneName: %s"), HitResult.BoneName.IsValid() ? *(HitResult.BoneName.ToString()) : TEXT("None"));
+		UE_LOG(LogCs, Warning, TEXT("-- FaceIndex: %d"), HitResult.FaceIndex);
+	}
+}
+
+#pragma endregion Log

@@ -19,5 +19,5 @@ class CSCORE_API ICsUniqueObject
 
 public:
 
-	virtual const FCsUniqueObjectId& GetId() = 0;
+	virtual const FCsUniqueObjectId& GetId() const = 0;
 };

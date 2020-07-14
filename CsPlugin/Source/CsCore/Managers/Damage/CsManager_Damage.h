@@ -111,4 +111,12 @@ public:
 	FOnEvent OnEvent_Event;
 
 #pragma endregion Event
+
+// Log
+#pragma region
+public:
+
+	void LogEventPoint(const ICsDamageEvent* Event);
+
+#pragma endregion Log
 };

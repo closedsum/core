@@ -3,8 +3,6 @@
 #include "Containers/CsInterfaceMap.h"
 #pragma once
 
-struct ICsDamagePhysics;
-
 /**
 *
 */

@@ -6,7 +6,7 @@
 
 /**
 * Interface to describe Damage. Other interfaces can be "added" on top of this to 
-* expose more functionality (i.e. ICsDamageShape, ICsDamagePhysics, ... etc)
+* expose more functionality (i.e. ICsDamageShape, ... etc)
 */
 struct CSCORE_API ICsDamageExpression : virtual public ICsGetInterfaceMap
 {

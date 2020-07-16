@@ -5,6 +5,9 @@
 
 // Types
 #include "Types/CsTypes_Curve.h"
+#include "Types/CsTypes_Interpolation.h"
+// Library
+#include "Library/CsLibrary_Math.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Game
@@ -424,13 +427,13 @@ float UCsLibrary_Common::Stream_GetFloat(const TCHAR*& Str)
 ERichCurveInterpMode UCsLibrary_Common::Stream_GetRichCurveInterpMode(const TCHAR*& Str)
 {
 	FString Arg = Stream_GetString(Str, true);
-	return ECsRichCurveInterpMode::ToBaseType(Arg);
+	return NCsRichCurveInterpMode::ToBaseType(Arg);
 }
 
 ERichCurveTangentMode UCsLibrary_Common::Stream_GetRichCurveTangentMode(const TCHAR*& Str)
 {
 	FString Arg = Stream_GetString(Str, true);
-	return ECsRichCurveTangentMode::ToBaseType(Arg);
+	return NCsRichCurveTangentMode::ToBaseType(Arg);
 }
 
 ECsViewType UCsLibrary_Common::Stream_GetViewType(const TCHAR*& Str)
@@ -1052,160 +1055,6 @@ void UCsLibrary_Common::GetHMDWorldViewPoint(APlayerController* PlayerController
 	}
 }
 */
-
-// Easing
-#pragma region
-
-float UCsLibrary_Common::Ease(const ECsEasingType &EasingType, const float &Time, const float &Start, const float &Final, const float &Duration)
-{
-	if (EasingType == ECsEasingType::Linear)
-		return Linear(Time, Start, Final, Duration);
-	if (EasingType == ECsEasingType::BounceIn)
-		return BounceEaseIn(Time, Start, Final, Duration);
-	if (EasingType == ECsEasingType::BounceOut)
-		return BounceEaseOut(Time, Start, Final, Duration);
-	if (EasingType == ECsEasingType::BounceInOut)
-		return BounceEaseInOut(Time, Start, Final, Duration);
-	if (EasingType == ECsEasingType::CubicIn)
-		return CubicEaseIn(Time, Start, Final, Duration);
-	if (EasingType == ECsEasingType::CubicOut)
-		return CubicEaseOut(Time, Start, Final, Duration);
-	if (EasingType == ECsEasingType::CubicInOut)
-		return CubicEaseInOut(Time, Start, Final, Duration);
-	if (EasingType == ECsEasingType::ExpoIn)
-		return ExpoEaseIn(Time, Start, Final, Duration);
-	if (EasingType == ECsEasingType::ExpoOut)
-		return ExpoEaseOut(Time, Start, Final, Duration);
-	if (EasingType == ECsEasingType::ExpoInOut)
-		return ExpoEaseInOut(Time, Start, Final, Duration);
-	return Linear(Time, Start, Final, Duration);
-}
-
-float UCsLibrary_Common::Linear(const float &Time, const float &Start, const float &Final, const float &Duration)
-{
-	return ((Final * Time) / Duration) + Start;
-}
-
-float UCsLibrary_Common::BounceEaseOut(const float &Time, const float &Start, const float &Final, const float &Duration)
-{
-	float T = Time;
-
-	T /= Duration;
-
-	if (T < (1 / 2.75f))
-	{
-		return Final * (7.5625f * T * T) + Start;
-	}
-	else if (Time < (2.0f / 2.75f))
-	{
-		T -= (1.5f / 2.75f);
-		return Final * (7.5625f * T * T + 0.75f) + Start;
-	}
-	else if (Time < (2.5f / 2.75f))
-	{
-		T -= (2.25f / 2.75f);
-		return Final * (7.5625f * T * T + 0.9375f) + Start;
-	}
-	else
-	{
-		T -= (2.625f / 2.75f);
-		return Final * (7.5625f * T * T + 0.984375f) + Start;
-	}
-}
-
-float UCsLibrary_Common::BounceEaseIn(const float &Time, const float &Start, const float &Final, const float &Duration)
-{
-	return Final - BounceEaseOut(Duration - Time, 0, Final, Duration) + Start;
-}
-
-float UCsLibrary_Common::BounceEaseInOut(const float &Time, const float &Start, const float &Final, const float &Duration)
-{
-	if (Time < (Duration / 2.0f))
-		return (BounceEaseIn(Time * 2, 0, Final, Duration) * 0.5f) + Start;
-	else
-		return (BounceEaseOut(Time * 2 - Duration, 0, Final, Duration) * 0.5f) + Final * 0.5f + Start;
-}
-
-float UCsLibrary_Common::CubicEaseIn(const float &Time, const float &Start, const float &Final, const float &Duration)
-{
-	float T = Time;
-	T /= Duration;
-	return Final * T * T * T + Start;
-}
-
-float UCsLibrary_Common::CubicEaseOut(const float &Time, const float &Start, const float &Final, const float &Duration)
-{
-	float T = Time;
-	T = (T / Duration) - 1.0f;
-	return Final * ((T *  T * T) + 1) + Start;
-}
-
-float UCsLibrary_Common::CubicEaseInOut(const float &Time, const float &Start, const float &Final, const float &Duration)
-{
-	float T = Time;
-
-	if ((T / (Duration / 2.0f)) < 1)
-	{
-		T /= Duration / 2.0f;
-		return (Final / (2.0f * T * T * T)) + Start;
-	}
-	T -= 2.0f;
-	return (Final / (2 * T * T * T + 2)) + Start;
-}
-
-float UCsLibrary_Common::ExpoEaseIn(const float &Time, const float &Start, const float &Final, const float &Duration)
-{
-	return (Time == 0.0f) ? Start : Final * FMath::Pow(2.0f, 10.0f * (Time / Duration - 1.0f)) + Start;
-}
-
-float UCsLibrary_Common::ExpoEaseOut(const float &Time, const float &Start, const float &Final, const float &Duration)
-{
-	return (Time == Duration) ? Start + Final : Final * (-1.0f * FMath::Pow(2.0f, -10.0f * Time / Duration) + 1.0f) + Start;
-}
-
-float UCsLibrary_Common::ExpoEaseInOut(const float &Time, const float &Start, const float &Final, const float &Duration)
-{
-	float T = Time;
-
-	if (T == 0)
-		return Start;
-	if (T == Duration)
-		return Start + Final;
-	if (Duration / 2.0f < 1.0f)
-	{
-		T /= Duration / 2.0f;
-		return (Final / 2.0f) * FMath::Pow(2.0f, 10 * (T - 1.0f)) + Start;
-	}
-	T--;
-	return (Final / 2.0f) * (-FMath::Pow(2.0f, -10.0f * T) + 2.0f) + Start;
-}
-
-TCsEasingFunction UCsLibrary_Common::GetEasingFunction(const ECsEasingType &EasingType)
-{
-	if (EasingType == ECsEasingType::Linear)
-		return &UCsLibrary_Common::Linear;
-	if (EasingType == ECsEasingType::BounceIn)
-		return &UCsLibrary_Common::BounceEaseIn;
-	if (EasingType == ECsEasingType::BounceOut)
-		return &UCsLibrary_Common::BounceEaseOut;
-	if (EasingType == ECsEasingType::BounceInOut)
-		return &UCsLibrary_Common::BounceEaseInOut;
-	if (EasingType == ECsEasingType::CubicIn)
-		return &UCsLibrary_Common::CubicEaseIn;
-	if (EasingType == ECsEasingType::CubicOut)
-		return &UCsLibrary_Common::CubicEaseOut;
-	if (EasingType == ECsEasingType::CubicInOut)
-		return &UCsLibrary_Common::CubicEaseInOut;
-	if (EasingType == ECsEasingType::ExpoIn)
-		return &UCsLibrary_Common::ExpoEaseIn;
-	if (EasingType == ECsEasingType::ExpoOut)
-		return &UCsLibrary_Common::ExpoEaseOut;
-	if (EasingType == ECsEasingType::ExpoInOut)
-		return &UCsLibrary_Common::ExpoEaseInOut;
-	return &UCsLibrary_Common::Linear;
-}
-
-#pragma endregion Easing
 
 void UCsLibrary_Common::GetKeyValue(const FString& Pair, FString& Key, FString& Value, const TCHAR* PairDelimiter)
 {
@@ -1909,7 +1758,7 @@ char UCsLibrary_Common::ScaleActorOverTime_Internal(FCsRoutine* R)
 			}
 			else
 			{
-				float Time = Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
+				float Time = FCsLibrary_Math::Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
 				Scale	   = ClampVectorComponents(FMath::Lerp(StartScale, EndScale, Time), CS_ACTOR_SMALLEST_SCALE);
 			}
 
@@ -2106,7 +1955,7 @@ char UCsLibrary_Common::MoveActorOverTime_Internal(FCsRoutine* R)
 	{
 		{
 			const float Percent    = FMath::Clamp((CurrentTime.Time - StartTime.Time) / MaxTime, 0.0f, 1.0f);
-			float Time			   = Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
+			float Time			   = FCsLibrary_Math::Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
 			const FVector Location = FMath::Lerp(StartLocation, EndLocation, Time);
 
 			if (IsRelativeLocation)
@@ -2256,7 +2105,7 @@ char UCsLibrary_Common::FadeCameraOverTime_Internal(FCsRoutine* R)
 	{
 		{
 			const float Percent = FMath::Clamp((CurrentTime.Time - StartTime.Time) / MaxTime, 0.0f, 1.0f);
-			const float Time    = Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
+			const float Time    = FCsLibrary_Math::Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
 			const float Alpha	= IsFadeOut ? 1.0f - (Min + Percent * Delta) : Min + Percent * Delta;
 
 			PC->PlayerCameraManager->SetManualCameraFade(Alpha, Color, false);

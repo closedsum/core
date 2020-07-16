@@ -67,6 +67,11 @@ public:
 		return Resource;
 	}
 
+	FORCEINLINE const ResourceType* Get() const
+	{
+		return Resource;
+	}
+
 	FORCEINLINE void Set(ResourceType* InResource)
 	{
 		Resource = InResource;

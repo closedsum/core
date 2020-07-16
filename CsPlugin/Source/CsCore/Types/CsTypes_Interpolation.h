@@ -7,6 +7,8 @@
 // BlendDirection
 #pragma region
 
+/**
+*/
 UENUM(BlueprintType)
 enum class ECsBlendDirection : uint8
 {
@@ -37,6 +39,8 @@ namespace NCsBlendDirection
 // EasingType
 #pragma region
 
+/**
+*/
 UENUM(BlueprintType)
 enum class ECsEasingType : uint8
 {
@@ -60,10 +64,10 @@ struct CSCORE_API EMCsEasingType : public TCsEnumMap<ECsEasingType>
 
 namespace NCsEasingType
 {
+	typedef ECsEasingType Type;
+
 	namespace Ref
 	{
-		typedef ECsEasingType Type;
-
 		extern CSCORE_API const Type Linear;
 		extern CSCORE_API const Type BounceIn;
 		extern CSCORE_API const Type BounceOut;
@@ -82,3 +86,37 @@ namespace NCsEasingType
 
 // Easing Function (Time, Start, Final, Duration)
 typedef float(*TCsEasingFunction)(const float&, const float&, const float&, const float&);
+
+// InterpolatingMethod
+#pragma region
+
+/**
+*/
+UENUM(BlueprintType)
+enum class ECsInterpolatingMethod : uint8
+{
+	Easing						UMETA(DisplayName = "Easing"),
+	Curve						UMETA(DisplayName = "Curve"),
+	Custom						UMETA(DisplayName = "Custom"),
+	ECsInterpolatingMethod_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsInterpolatingMethod : public TCsEnumMap<ECsInterpolatingMethod>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsInterpolatingMethod, ECsInterpolatingMethod)
+};
+
+namespace NCsInterpolatingMethod
+{
+	typedef ECsInterpolatingMethod Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Easing;
+		extern CSCORE_API const Type Curve;
+		extern CSCORE_API const Type Custom;
+		extern CSCORE_API const Type ECsInterpolatingMethod_MAX;
+	}
+}
+
+#pragma endregion InterpolatingMethod

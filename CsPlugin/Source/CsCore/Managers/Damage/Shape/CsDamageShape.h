@@ -18,25 +18,21 @@ public:
 	virtual ~ICsDamageShape() {}
 
 	/**
-	* Get the minimum damage.
-	*
-	* return Minimum Damage.
-	*/
-	virtual const float& GetMinDamage() const = 0;
-
-	/**
-	* Get the maximum damage.
-	*
-	* return Maximum Damage.
-	*/
-	virtual const float& GetMaxDamage() const = 0;
-
-	/**
 	* Calculate damage given an origin and point.
 	*
 	* @param Origin		The center of the damage event.
 	* @param Point		The location to evaluate for how much damage
+	* return			Damage
 	*
 	*/
 	virtual float CalculateDamage(const FVector& Origin, const FVector& Point) const = 0;
+
+	/**
+	* Check if a given Point is within the bounds of an Origin.
+	*
+	* @param Origin		The center of the bounds.
+	* @param Point		The location to evaluate if in bounds.
+	* return			Whether the point is in bounds of the origin.
+	*/
+	virtual bool IsInBounds(const FVector& Origin, const FVector& Point) const = 0;
 };

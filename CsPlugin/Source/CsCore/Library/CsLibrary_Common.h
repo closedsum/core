@@ -311,37 +311,6 @@ class CSCORE_API UCsLibrary_Common : public UBlueprintFunctionLibrary
 	// The HMD world position and PlayerCamera can be in different positions
 	//static void GetHMDWorldViewPoint(APlayerController* PlayerController, FVector& out_Location, FRotator& out_Rotation);
 
-// Easing
-#pragma region
-
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float Ease(const ECsEasingType &EasingType, const float &Time, const float &Start, const float &Final, const float &Duration);
-	
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float Linear(const float &Time, const float &Start, const float &Final, const float &Duration);
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float BounceEaseOut(const float &Time, const float &Start, const float &Final, const float &Duration);
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float BounceEaseIn(const float &Time, const float &Start, const float &Final, const float &Duration);
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float BounceEaseInOut(const float &Time, const float &Start, const float &Final, const float &Duration);
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float CubicEaseIn(const float &Time, const float &Start, const float &Final, const float &Duration);
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float CubicEaseOut(const float &Time, const float &Start, const float &Final, const float &Duration);
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float CubicEaseInOut(const float &Time, const float &Start, const float &Final, const float &Duration);
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float ExpoEaseIn(const float &Time, const float &Start, const float &Final, const float &Duration);
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float ExpoEaseOut(const float &Time, const float &Start, const float &Final, const float &Duration);
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float ExpoEaseInOut(const float &Time, const float &Start, const float &Final, const float &Duration);
-
-	static TCsEasingFunction GetEasingFunction(const ECsEasingType &EasingType);
-
-#pragma endregion Easing
-
 	static void GetKeyValue(const FString& Pair, FString& Key, FString& Value, const TCHAR* PairDelimiter = TEXT("="));
 	static bool GrabOption(FString& Options, FString& Result);
 	static FString ParseOption(const FString& Options, const FString& InKey);

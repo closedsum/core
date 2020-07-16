@@ -9,7 +9,7 @@
 #include "Managers/Damage/Expression/CsLibrary_DamageExpression.h"
 // Damage
 #include "Managers/Damage/CsDamageableObject.h"
-#include "Managers/Damage/Event/CsDamageEvent.h"
+#include "Managers/Damage/Event/CsDamageEventImpl.h"
 #include "Managers/Damage/Expression/CsDamageExpression.h"
 #include "Managers/Damage/Shape/CsDamageShape.h"
 // Unique
@@ -36,6 +36,7 @@ namespace NCsManagerDamageCached
 	namespace Str
 	{
 		const FString OnEvent = TEXT("UCsManager_Damage::OnEvent");
+		const FString OnEventContainer = TEXT("UCsManager_Damage::OnEventContainer");
 	}
 }
 
@@ -220,6 +221,13 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 
 void UCsManager_Damage::Initialize()
 {
+	// Bind Construct Resource Impl
+	Manager_Event.ConstructResourceType_Impl.BindUObject(this, &UCsManager_Damage::ConstructEvent);
+
+	// TODO: Poll config in future
+
+	// Create Pools
+	Manager_Event.CreatePool(4);
 }
 
 void UCsManager_Damage::CleanUp()
@@ -286,6 +294,14 @@ void UCsManager_Damage::Remove(ICsDamageableObject* Object)
 }
 
 #pragma endregion Damageable Objects
+
+// Event
+#pragma region
+
+ICsDamageEvent* UCsManager_Damage::ConstructEvent()
+{
+	return new FCsDamageEventImpl();
+}
 
 void UCsManager_Damage::OnEvent(const ICsDamageEvent* Event)
 {
@@ -358,6 +374,19 @@ void UCsManager_Damage::OnEvent(const ICsDamageEvent* Event)
 	}
 }
 
+
+void UCsManager_Damage::OnEventContainer(const FCsResource_DamageEvent* Event)
+{
+	using namespace NCsManagerDamageCached;
+
+	check(Manager_Event.IsValidChecked(Str::OnEventContainer, Event));
+
+	const ICsDamageEvent* IEvent = Event->Get();
+
+	OnEvent(IEvent);
+}
+
+#pragma endregion Event
 
 // Log
 #pragma region

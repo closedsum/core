@@ -1,12 +1,28 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UObject/Object.h"
+#include "Managers/Resource/CsManager_ResourceValueType_Abstract_Fixed.h"
+#include "Managers/Damage/Event/CsDamageEvent.h"
 #include "UniqueObject/CsTypes_UniqueObject.h"
 #include "CsManager_Damage.generated.h"
 
+// Structs
+#pragma region
+
+	// DamageEvent
+
+struct CSCORE_API FCsResource_DamageEvent : public TCsResourceContainer<ICsDamageEvent>
+{
+};
+
+struct CSCORE_API FCsManager_DamageEvent : public TCsManager_ResourceValueType_Abstract_Fixed<ICsDamageEvent, FCsResource_DamageEvent, 0>
+{
+};
+
+#pragma endregion Structs
+
 class ICsGetManagerDamage;
 class ICsDamageableObject;
-struct ICsDamageEvent;
 
 UCLASS()
 class CSCORE_API UCsManager_Damage : public UObject
@@ -91,6 +107,13 @@ public:
 
 // Event
 #pragma region
+protected:
+
+	FCsManager_DamageEvent Manager_Event;
+
+	virtual ICsDamageEvent* ConstructEvent();
+
+
 public:
 
 	/**
@@ -99,6 +122,13 @@ public:
 	* @param Event
 	*/
 	void OnEvent(const ICsDamageEvent* Event);
+
+	/**
+	*
+	*
+	* @param Event
+	*/
+	void OnEventContainer(const FCsResource_DamageEvent* Event);
 
 	/**
 	*

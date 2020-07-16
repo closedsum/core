@@ -3,45 +3,35 @@
 #include "CsCore.h"
 
 // RichCurveInterpMode
-EMCsRichCurveInterpMode* EMCsRichCurveInterpMode::Instance;
+#pragma region
 
-EMCsRichCurveInterpMode& EMCsRichCurveInterpMode::Get()
-{
-	if (!Instance)
-		Instance = new EMCsRichCurveInterpMode();
-	return *Instance;
-}
-
-namespace ECsRichCurveInterpMode
+namespace NCsRichCurveInterpMode
 {
 	namespace Ref
 	{
-		CSCORE_API const Type RCIM_Linear = EMCsRichCurveInterpMode::Get().Add(Type::RCIM_Linear, TEXT("RCIM_Linear"), TEXT("Linear"));
-		CSCORE_API const Type RCIM_Constant = EMCsRichCurveInterpMode::Get().Add(Type::RCIM_Constant, TEXT("RCIM_Constant"), TEXT("Constant"));
-		CSCORE_API const Type RCIM_Cubic = EMCsRichCurveInterpMode::Get().Add(Type::RCIM_Cubic, TEXT("RCIM_Cubic"), TEXT("Cubic"));
-		CSCORE_API const Type RCIM_None = EMCsRichCurveInterpMode::Get().Add(Type::RCIM_None, TEXT("RCIM_None"), TEXT("None"));
-		CSCORE_API const Type ECsRichCurveInterpMode_MAX = EMCsRichCurveInterpMode::Get().Add(Type::ECsRichCurveInterpMode_MAX, TEXT("ECsRichCurveInterpMode_MAX"), TEXT("MAX"));
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveInterpMode, RCIM_Linear, "Linear");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveInterpMode, RCIM_Constant, "Constant");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveInterpMode, RCIM_Cubic, "Cubic");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveInterpMode, RCIM_None, "None");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveInterpMode, ECsRichCurveInterpMode_MAX, "MAX");
 	}
 }
+
+#pragma endregion RichCurveInterpMode
 
 // RichCurveTangentMode
-EMCsRichCurveTangentMode* EMCsRichCurveTangentMode::Instance;
+#pragma region
 
-EMCsRichCurveTangentMode& EMCsRichCurveTangentMode::Get()
-{
-	if (!Instance)
-		Instance = new EMCsRichCurveTangentMode();
-	return *Instance;
-}
-
-namespace ECsRichCurveTangentMode
+namespace NCsRichCurveTangentMode
 {
 	namespace Ref
 	{
-		CSCORE_API const Type RCTM_Auto = EMCsRichCurveTangentMode::Get().Add(Type::RCTM_Auto, TEXT("RCTM_Auto"), TEXT("Auto"));
-		CSCORE_API const Type RCTM_User = EMCsRichCurveTangentMode::Get().Add(Type::RCTM_User, TEXT("RCTM_User"), TEXT("User"));
-		CSCORE_API const Type RCTM_Break = EMCsRichCurveTangentMode::Get().Add(Type::RCTM_Break, TEXT("RCTM_Break"), TEXT("Break"));
-		CSCORE_API const Type RCTM_None = EMCsRichCurveTangentMode::Get().Add(Type::RCTM_None, TEXT("RCTM_None"), TEXT("None"));
-		CSCORE_API const Type ECsRichCurveTangentMode_MAX = EMCsRichCurveTangentMode::Get().Add(Type::ECsRichCurveTangentMode_MAX, TEXT("ECsRichCurveTangentMode_MAX"), TEXT("MAX"));
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveTangentMode, RCTM_Auto, "Auto");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveTangentMode, RCTM_User, "User");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveTangentMode, RCTM_Break, "Break");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveTangentMode, RCTM_None, "None");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveTangentMode, ECsRichCurveTangentMode_MAX, "MAX");
 	}
 }
+
+#pragma endregion RichCurveTangentMode

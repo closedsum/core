@@ -1,45 +1,35 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Load.h"
-
-#include "Curves/CurveFloat.h"
-#include "Curves/CurveVector.h"
+#include "Types/Enum/CsEnumMap.h"
+#include "Curves/RealCurve.h"
 
 #include "CsTypes_Curve.generated.h"
 #pragma once
 
-// Curves
+// UCurveFloat
 #pragma region
 
-// UCurveFloat
+class UCurveFloat;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsCurveFloat
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Curves")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftObjectPtr<UCurveFloat> Curve;
 
-	UPROPERTY(EditAnywhere, Category = "Curves", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Curve_LoadFlags;
 
-private:
-	UPROPERTY(Transient)
-	class UCurveFloat* Curve_Internal;
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UCurveFloat* Curve_Internal;
 
 public:
 	FCsCurveFloat() :
+		Curve(nullptr),
 		Curve_LoadFlags(0),
 		Curve_Internal(nullptr)
 	{
-		CS_SET_BLUEPRINT_BITFLAG(Curve_LoadFlags, ECsLoadFlags::Game);
-	}
-
-	FORCEINLINE FCsCurveFloat& operator=(const FCsCurveFloat& B)
-	{
-		Curve = B.Curve;
-		Curve_LoadFlags = B.Curve_LoadFlags;
-		Curve_Internal = B.Curve_Internal;
-		return *this;
 	}
 
 	FORCEINLINE bool operator==(const FCsCurveFloat& B) const
@@ -58,36 +48,34 @@ public:
 	}
 };
 
-// UCurveVector
-USTRUCT()
+#pragma endregion UCurveFloat
+
+// FCsCurveVector
+#pragma region
+
+class UCurveVector;
+
+USTRUCT(BlueprintType)
 struct CSCORE_API FCsCurveVector
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Curves")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftObjectPtr<UCurveVector> Curve;
 
-	UPROPERTY(EditAnywhere, Category = "Curves", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Curve_LoadFlags;
 
-private:
-	UPROPERTY(Transient)
-	class UCurveVector* Curve_Internal;
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UCurveVector* Curve_Internal;
 
 public:
+
 	FCsCurveVector() :
+		Curve(nullptr),
 		Curve_LoadFlags(0),
 		Curve_Internal(nullptr)
 	{
-		CS_SET_BLUEPRINT_BITFLAG(Curve_LoadFlags, ECsLoadFlags::Game);
-	}
-
-	FORCEINLINE FCsCurveVector& operator=(const FCsCurveVector& B)
-	{
-		Curve = B.Curve;
-		Curve_LoadFlags = B.Curve_LoadFlags;
-		Curve_Internal = B.Curve_Internal;
-		return *this;
 	}
 
 	FORCEINLINE bool operator==(const FCsCurveVector& B) const
@@ -106,38 +94,30 @@ public:
 	}
 };
 
+#pragma endregion FCsCurveVector
+
+// RichCurveInterpMode
+#pragma region
+
 UENUM(BlueprintType)
-namespace ECsRichCurveInterpMode
+enum class ECsRichCurveInterpMode : uint8
 {
-	enum Type
-	{
-		RCIM_Linear					UMETA(DisplayName = "Linear"),
-		RCIM_Constant				UMETA(DisplayName = "Constant"),
-		RCIM_Cubic					UMETA(DisplayName = "Cubic"),
-		RCIM_None					UMETA(DisplayName = "None"),
-		ECsRichCurveInterpMode_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsRichCurveInterpMode::Type TCsRichCurveInterpMode;
-
-struct CSCORE_API EMCsRichCurveInterpMode : public TCsEnumMap<ECsRichCurveInterpMode::Type>
-{
-protected:
-	EMCsRichCurveInterpMode() {}
-	EMCsRichCurveInterpMode(const EMCsRichCurveInterpMode &) = delete;
-	EMCsRichCurveInterpMode(EMCsRichCurveInterpMode &&) = delete;
-public:
-	~EMCsRichCurveInterpMode() {}
-private:
-	static EMCsRichCurveInterpMode* Instance;
-
-public:
-	static EMCsRichCurveInterpMode& Get();
+	RCIM_Linear					UMETA(DisplayName = "Linear"),
+	RCIM_Constant				UMETA(DisplayName = "Constant"),
+	RCIM_Cubic					UMETA(DisplayName = "Cubic"),
+	RCIM_None					UMETA(DisplayName = "None"),
+	ECsRichCurveInterpMode_MAX	UMETA(Hidden),
 };
 
-namespace ECsRichCurveInterpMode
+struct CSCORE_API EMCsRichCurveInterpMode : public TCsEnumMap<ECsRichCurveInterpMode>
 {
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsRichCurveInterpMode, ECsRichCurveInterpMode)
+};
+
+namespace NCsRichCurveInterpMode
+{
+	typedef ECsRichCurveInterpMode Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type RCIM_Linear;
@@ -168,38 +148,30 @@ namespace ECsRichCurveInterpMode
 	}
 }
 
+#pragma endregion RichCurveInterpMode
+
+// RichCurveTangentMode
+#pragma region
+
 UENUM(BlueprintType)
-namespace ECsRichCurveTangentMode
+enum class ECsRichCurveTangentMode : uint8
 {
-	enum Type
-	{
-		RCTM_Auto					UMETA(DisplayName = "Auto"),
-		RCTM_User					UMETA(DisplayName = "User"),
-		RCTM_Break					UMETA(DisplayName = "Break"),
-		RCTM_None					UMETA(DisplayName = "None"),
-		ECsRichCurveTangentMode_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsRichCurveTangentMode::Type TCsRichCurveTangentMode;
-
-struct CSCORE_API EMCsRichCurveTangentMode : public TCsEnumMap<ECsRichCurveTangentMode::Type>
-{
-protected:
-	EMCsRichCurveTangentMode() {}
-	EMCsRichCurveTangentMode(const EMCsRichCurveTangentMode &) = delete;
-	EMCsRichCurveTangentMode(EMCsRichCurveTangentMode &&) = delete;
-public:
-	~EMCsRichCurveTangentMode() {}
-private:
-	static EMCsRichCurveTangentMode* Instance;
-
-public:
-	static EMCsRichCurveTangentMode& Get();
+	RCTM_Auto					UMETA(DisplayName = "Auto"),
+	RCTM_User					UMETA(DisplayName = "User"),
+	RCTM_Break					UMETA(DisplayName = "Break"),
+	RCTM_None					UMETA(DisplayName = "None"),
+	ECsRichCurveTangentMode_MAX	UMETA(Hidden),
 };
 
-namespace ECsRichCurveTangentMode
+struct CSCORE_API EMCsRichCurveTangentMode : public TCsEnumMap<ECsRichCurveTangentMode>
 {
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsRichCurveTangentMode, ECsRichCurveTangentMode)
+};
+
+namespace NCsRichCurveTangentMode
+{
+	typedef ECsRichCurveTangentMode Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type RCTM_Auto;
@@ -230,4 +202,4 @@ namespace ECsRichCurveTangentMode
 	}
 }
 
-#pragma endregion Curves
+#pragma endregion RichCurveTangentMode

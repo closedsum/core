@@ -111,8 +111,8 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath()
 
 	// Get Memory loaded and the time it took
 	const int32 Bytes	  = Object->GetResourceSizeBytes(EResourceSizeMode::Exclusive);
-	const float Kilobytes = UCsLibrary_Math::BytesToKilobytes(Bytes);
-	const float Megabytes = UCsLibrary_Math::BytesToMegabytes(Bytes);
+	const float Kilobytes = FCsLibrary_Math::BytesToKilobytes(Bytes);
+	const float Megabytes = FCsLibrary_Math::BytesToMegabytes(Bytes);
 
 	SizeLoaded.Bytes	 += Bytes;
 	SizeLoaded.Kilobytes += Kilobytes;
@@ -161,8 +161,8 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPaths()
 
 		// Get Memory loaded and the time it took
 		const int32 Bytes	  = Object->GetResourceSizeBytes(EResourceSizeMode::Exclusive);
-		const float Kilobytes = UCsLibrary_Math::BytesToKilobytes(Bytes);
-		const float Megabytes = UCsLibrary_Math::BytesToMegabytes(Bytes);
+		const float Kilobytes = FCsLibrary_Math::BytesToKilobytes(Bytes);
+		const float Megabytes = FCsLibrary_Math::BytesToMegabytes(Bytes);
 
 		SizeLoaded.Bytes	 += Bytes;
 		SizeLoaded.Kilobytes += Kilobytes;

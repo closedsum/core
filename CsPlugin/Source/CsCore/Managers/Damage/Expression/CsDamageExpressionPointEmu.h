@@ -6,7 +6,7 @@
 /**
 *
 */
-struct CSCORE_API FCsDamageExpressionPoint : public ICsDamageExpression
+struct CSCORE_API FCsDamageExpressionPointEmu : public ICsDamageExpression
 {
 public:
 
@@ -24,7 +24,7 @@ public:
 
 public:
 
-	FCsDamageExpressionPoint();
+	FCsDamageExpressionPointEmu();
 
 // ICsGetInterfaceMap
 #pragma region

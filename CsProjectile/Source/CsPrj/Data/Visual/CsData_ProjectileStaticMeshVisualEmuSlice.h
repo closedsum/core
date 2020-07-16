@@ -8,7 +8,7 @@ struct FCsPrjStaticMesh;
 
 /**
 */
-struct CSPRJ_API FCsData_ProjectileStaticMeshVisualImpl final : public ICsData_ProjectileStaticMeshVisual
+struct CSPRJ_API FCsData_ProjectileStaticMeshVisualEmuSlice final : public ICsData_ProjectileStaticMeshVisual
 {
 public:
 
@@ -18,14 +18,14 @@ private:
 
 	FCsInterfaceMap* InterfaceMap;
 
-	// ICsData_ProjectileVisual
+	// ICsData_ProjectileStaticMeshVisual
 
 	FCsPrjStaticMesh* StaticMesh;
 
 public:
 
-	FCsData_ProjectileStaticMeshVisualImpl();
-	~FCsData_ProjectileStaticMeshVisualImpl();
+	FCsData_ProjectileStaticMeshVisualEmuSlice();
+	~FCsData_ProjectileStaticMeshVisualEmuSlice();
 
 public:
 

@@ -8,7 +8,7 @@
 // FCsPrjDamageExpressionPoint
 #pragma region
 
-struct FCsDamageExpressionPoint;
+struct FCsDamageExpressionPointEmu;
 
 USTRUCT(BlueprintType)
 struct CSPRJ_API FCsPrjDamageExpressionPoint
@@ -29,7 +29,7 @@ public:
 	{
 	}
 
-	void SetExpression(FCsDamageExpressionPoint* Expression);
+	void SetExpression(FCsDamageExpressionPointEmu* Expression);
 };
 
 #pragma endregion FCsPrjDamageExpressionPoint

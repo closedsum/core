@@ -14,8 +14,8 @@
 #include "Settings/CsWeaponSettings.h"
 // Data
 #include "Data/CsData_WeaponInterfaceMap.h"
-#include "Data/CsData_WeaponImpl.h"
-#include "Projectile/Data/CsData_ProjectileWeaponImpl.h"
+#include "Data/CsData_WeaponEmuSlice.h"
+#include "Projectile/Data/CsData_ProjectileWeaponEmuSlice.h"
 #include "Projectile/Data/CsData_ProjectileWeaponSoundImpl.h"
 // Weapon
 #include "Payload/CsWeaponPooledPayloadImpl.h"
@@ -775,7 +775,7 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 		if (Emulates_ICsDataWeapon)
 		{
 			// Setup and Add Emulated Interface
-			FCsData_WeaponImpl* Data = new FCsData_WeaponImpl();
+			FCsData_WeaponEmuSlice* Data = new FCsData_WeaponEmuSlice();
 
 			checkf(EmulatedDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s."), *Context, *(Name.ToString()));
 
@@ -789,12 +789,12 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 
 			FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
 
-			InterfaceMap->Add<ICsData_Weapon>(FCsData_WeaponImpl::Name, static_cast<ICsData_Weapon*>(Data));
+			InterfaceMap->Add<ICsData_Weapon>(FCsData_WeaponEmuSlice::Name, static_cast<ICsData_Weapon*>(Data));
 
 			Data->SetInterfaceMap(InterfaceMap);
 
 			TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
-			InterfaceImplMap.Add(FCsData_WeaponImpl::Name, Data);
+			InterfaceImplMap.Add(FCsData_WeaponEmuSlice::Name, Data);
 
 			DataMap.Add(Name, Data);
 		}
@@ -802,17 +802,17 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 		if (Emulates_ICsData_ProjectileWeapon)
 		{
 			// Setup and Add Emulated Interface
-			FCsData_ProjectileWeaponImpl* Data = new FCsData_ProjectileWeaponImpl();
+			FCsData_ProjectileWeaponEmuSlice* Data = new FCsData_ProjectileWeaponEmuSlice();
 
 			FCsData_WeaponInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap[Name];
 			FCsInterfaceMap* InterfaceMap					 = EmulatedInterfaceMap->GetInterfaceMap();
 
-			InterfaceMap->Add<ICsData_ProjectileWeapon>(FCsData_ProjectileWeaponImpl::Name, static_cast<ICsData_ProjectileWeapon*>(Data));
+			InterfaceMap->Add<ICsData_ProjectileWeapon>(FCsData_ProjectileWeaponEmuSlice::Name, static_cast<ICsData_ProjectileWeapon*>(Data));
 
 			Data->SetInterfaceMap(InterfaceMap);
 
 			TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
-			InterfaceImplMap.Add(FCsData_ProjectileWeaponImpl::Name, Data);
+			InterfaceImplMap.Add(FCsData_ProjectileWeaponEmuSlice::Name, Data);
 
 			// bDoFireOnRelease
 			{
@@ -895,16 +895,16 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 
 void UCsManager_Weapon::DeconstructEmulatedData(const FName& InterfaceImplName, void* Data)
 {
-	// FCsData_WeaponImpl
-	if (InterfaceImplName == FCsData_WeaponImpl::Name)
+	// FCsData_WeaponEmuSlice
+	if (InterfaceImplName == FCsData_WeaponEmuSlice::Name)
 	{
-		delete static_cast<FCsData_WeaponImpl*>(Data);
+		delete static_cast<FCsData_WeaponEmuSlice*>(Data);
 	}
-	// FCsData_ProjectileWeaponImpl
+	// FCsData_ProjectileWeaponEmuSlice
 	else
-	if (InterfaceImplName == FCsData_ProjectileWeaponImpl::Name)
+	if (InterfaceImplName == FCsData_ProjectileWeaponEmuSlice::Name)
 	{
-		delete static_cast<FCsData_ProjectileWeaponImpl*>(Data);
+		delete static_cast<FCsData_ProjectileWeaponEmuSlice*>(Data);
 	}
 	// FCsData_ProjectileWeaponSoundImpl
 	else

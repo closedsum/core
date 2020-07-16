@@ -1,11 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Projectile/Data/CsData_ProjectileWeaponImpl.h"
+#include "Projectile/Data/CsData_ProjectileWeaponEmuSlice.h"
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsData_ProjectileWeaponImpl::Name = FName("FCsData_ProjectileWeaponImpl");
+const FName FCsData_ProjectileWeaponEmuSlice::Name = FName("FCsData_ProjectileWeaponEmuSlice");
 
-FCsData_ProjectileWeaponImpl::FCsData_ProjectileWeaponImpl() :
+FCsData_ProjectileWeaponEmuSlice::FCsData_ProjectileWeaponEmuSlice() :
 		InterfaceMap(nullptr),
 		bDoFireOnRelease(nullptr),
 		bFullAuto(nullptr),
@@ -17,6 +17,6 @@ FCsData_ProjectileWeaponImpl::FCsData_ProjectileWeaponImpl() :
 {
 }
 
-FCsData_ProjectileWeaponImpl::~FCsData_ProjectileWeaponImpl() 
+FCsData_ProjectileWeaponEmuSlice::~FCsData_ProjectileWeaponEmuSlice()
 {
 }

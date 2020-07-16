@@ -4,7 +4,7 @@
 
 struct FCsInterfaceMap;
 
-struct CSWP_API FCsData_ProjectileWeaponImpl : public ICsData_ProjectileWeapon
+struct CSWP_API FCsData_ProjectileWeaponEmuSlice : public ICsData_ProjectileWeapon
 {
 public:
 
@@ -30,8 +30,8 @@ private:
 
 public:
 
-	FCsData_ProjectileWeaponImpl();
-	~FCsData_ProjectileWeaponImpl();
+	FCsData_ProjectileWeaponEmuSlice();
+	~FCsData_ProjectileWeaponEmuSlice();
 
 	FORCEINLINE UObject* _getUObject() const { return nullptr; }
 

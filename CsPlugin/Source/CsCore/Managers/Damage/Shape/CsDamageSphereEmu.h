@@ -9,8 +9,8 @@ struct FCsInterfaceMap;
 /**
 *
 */
-struct CSCORE_API FCsDamageSphere : public ICsDamageExpression,
-									public ICsDamageShape
+struct CSCORE_API FCsDamageSphereEmu : public ICsDamageExpression,
+									   public ICsDamageShape
 {
 public:
 
@@ -42,7 +42,7 @@ public:
 
 public:
 
-	FCsDamageSphere();
+	FCsDamageSphereEmu();
 
 // ICsGetInterfaceMap
 #pragma region

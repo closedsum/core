@@ -2,7 +2,7 @@
 #include "Data/Damage/CsTypes_Data_ProjectileDamage.h"
 
 #include "Managers/Damage/Expression/CsDamageExpressionPoint.h"
-#include "Managers/Damage/Shape/CsDamageSphere.h"
+#include "Managers/Damage/Shape/CsDamageSphereEmu.h"
 
 // FCsPrjDamageExpressionPoint
 #pragma region
@@ -18,7 +18,7 @@ void FCsPrjDamageExpressionPoint::SetExpression(FCsDamageExpressionPoint* Expres
 // FCsPrjDamageSphere
 #pragma region
 
-void FCsPrjDamageSphere::SetExpression(FCsDamageSphere* Expression)
+void FCsPrjDamageSphere::SetExpression(FCsDamageSphereEmu* Expression)
 {
 	Expression->SetType(&Type);
 	Expression->SetMinDamage(&MinDamage);

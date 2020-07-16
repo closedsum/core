@@ -303,6 +303,11 @@ ICsDamageEvent* UCsManager_Damage::ConstructEvent()
 	return new FCsDamageEventImpl();
 }
 
+FCsResource_DamageEvent* UCsManager_Damage::AllocateEvent()
+{
+	return Manager_Event.Allocate();
+}
+
 void UCsManager_Damage::OnEvent(const ICsDamageEvent* Event)
 {
 	using namespace NCsManagerDamageCached;
@@ -384,6 +389,8 @@ void UCsManager_Damage::OnEventContainer(const FCsResource_DamageEvent* Event)
 	const ICsDamageEvent* IEvent = Event->Get();
 
 	OnEvent(IEvent);
+
+	Manager_Event.Deallocate(const_cast<FCsResource_DamageEvent*>(Event));
 }
 
 #pragma endregion Event

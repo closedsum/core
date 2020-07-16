@@ -5,6 +5,9 @@
 
 class ICsDamageExpression;
 
+/**
+* Library for interface: ICsDamageExpression
+*/
 struct CSCORE_API FCsLibrary_DamageExpression
 {
 	/**

@@ -113,8 +113,14 @@ protected:
 
 	virtual ICsDamageEvent* ConstructEvent();
 
-
 public:
+
+	/**
+	*
+	*
+	* return
+	*/
+	FCsResource_DamageEvent* AllocateEvent();
 
 	/**
 	*

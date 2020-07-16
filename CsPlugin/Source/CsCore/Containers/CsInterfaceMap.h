@@ -7,7 +7,7 @@
 /**
 * Map of interfaces for an object. This stores the memory offsets for each "slice"
 * or interface of the object.
-* If storing "emulated" interfaces, those interfaces do NOT route back to same
+* If storing "emulated sliced" interfaces, those interfaces do NOT route back to same
 * root object.
 */
 struct CSCORE_API FCsInterfaceMap
@@ -21,18 +21,18 @@ private:
 	TMap<FName, void*> Interfaces;
 
 	/** */
-	bool bEmulated;
+	bool bEmulatedSlices;
 
 	/** */
-	TMap<FName, void*> InterfacesByEmulatedRootName;
+	TMap<FName, void*> InterfacesByEmulatedSliceRootName;
 
 public:
 
 	FCsInterfaceMap() :
 		RootName(NAME_None),
 		Interfaces(),
-		bEmulated(false),
-		InterfacesByEmulatedRootName()
+		bEmulatedSlices(false),
+		InterfacesByEmulatedSliceRootName()
 	{
 	}
 
@@ -56,9 +56,9 @@ public:
 		return RootName;
 	}
 
-	FORCEINLINE void SetEmulated()
+	FORCEINLINE void SetEmulatedSlices()
 	{
-		bEmulated = true;
+		bEmulatedSlices = true;
 	}
 
 	/**
@@ -67,7 +67,7 @@ public:
 	{
 		checkf(Name != NAME_None, TEXT("FCsInterfaceMap::EmulatesRootName: Name: None is NOT Valid."));
 
-		return InterfacesByEmulatedRootName.Find(Name) != nullptr;
+		return InterfacesByEmulatedSliceRootName.Find(Name) != nullptr;
 	}
 
 	/**
@@ -109,7 +109,7 @@ public:
 		checkf(InterfaceType::Name != NAME_None, TEXT("FCsInterfaceMap::Add: InterfaceName: None is NOT Valid."));
 
 		Interfaces.Add(InterfaceType::Name, Interface);
-		InterfacesByEmulatedRootName.Add(EmulatedRootName, Interface);
+		InterfacesByEmulatedSliceRootName.Add(EmulatedRootName, Interface);
 	}
 
 	/**
@@ -227,11 +227,11 @@ public:
 
 		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "NCsInterfaceMap::StaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
 
-		if (bEmulated)
+		if (bEmulatedSlices)
 		{
-			checkf(InterfacesByEmulatedRootName.Find(DerivedType::Name), TEXT("%s: Failed to find Interface with Root Name: %s."), *Context, *(DerivedType::Name.ToString()));
+			checkf(InterfacesByEmulatedSliceRootName.Find(DerivedType::Name), TEXT("%s: Failed to find Interface with Root Name: %s."), *Context, *(DerivedType::Name.ToString()));
 
-			checkf((InterfaceType*)(InterfacesByEmulatedRootName.Find(DerivedType::Name)) == Interface, TEXT("%s: this does NOT contain a reference to Interface of type: %s."), *Context, *(InterfaceType::Name.ToString()));
+			checkf((InterfaceType*)(InterfacesByEmulatedSliceRootName.Find(DerivedType::Name)) == Interface, TEXT("%s: this does NOT contain a reference to Interface of type: %s."), *Context, *(InterfaceType::Name.ToString()));
 
 			DerivedType* DerivedPtr = static_cast<DerivedType*>(Interface);
 
@@ -274,9 +274,9 @@ public:
 
 		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "NCsInterfaceMap::StaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
 
-		if (bEmulated)
+		if (bEmulatedSlices)
 		{
-			void** Ptr = InterfacesByEmulatedRootName.Find(DerivedType::Name);
+			void** Ptr = InterfacesByEmulatedSliceRootName.Find(DerivedType::Name);
 
 			checkf(Ptr, TEXT("%s: Failed to find Interface with Root Name: %s."), *Context, *(DerivedType::Name.ToString()));
 
@@ -323,9 +323,9 @@ public:
 
 		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "FCsInterfaceMap::StaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
 
-		if (bEmulated)
+		if (bEmulatedSlices)
 		{
-			void** Ptr = InterfacesByEmulatedRootName.Find(DerivedType::Name);
+			void** Ptr = InterfacesByEmulatedSliceRootName.Find(DerivedType::Name);
 
 			checkf(Ptr, TEXT("FCsInterfaceMap::StaticCastChecked: Failed to find Interface with Root Name: %s."), *(DerivedType::Name.ToString()));
 

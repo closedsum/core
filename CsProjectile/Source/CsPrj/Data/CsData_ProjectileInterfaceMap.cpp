@@ -11,7 +11,7 @@ FCsData_ProjectileInterfaceMap::FCsData_ProjectileInterfaceMap() :
 	InterfaceMap = new FCsInterfaceMap();
 
 	InterfaceMap->SetRootName(FCsData_ProjectileInterfaceMap::Name);
-	InterfaceMap->SetEmulated();
+	InterfaceMap->SetEmulatedSlices();
 }
 
 FCsData_ProjectileInterfaceMap::~FCsData_ProjectileInterfaceMap()

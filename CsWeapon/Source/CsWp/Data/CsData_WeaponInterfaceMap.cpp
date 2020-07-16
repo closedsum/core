@@ -11,7 +11,7 @@ FCsData_WeaponInterfaceMap::FCsData_WeaponInterfaceMap() :
 	InterfaceMap = new FCsInterfaceMap();
 
 	InterfaceMap->SetRootName(FCsData_WeaponInterfaceMap::Name);
-	InterfaceMap->SetEmulated();
+	InterfaceMap->SetEmulatedSlices();
 }
 
 FCsData_WeaponInterfaceMap::~FCsData_WeaponInterfaceMap()

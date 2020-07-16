@@ -2,21 +2,28 @@
 #include "Containers/CsGetInterfaceMap.h"
 #include "Managers/Damage/CsTypes_Damage.h"
 #include "Engine/EngineTypes.h"
+#include "CsDamageExpression.generated.h"
 #pragma once
+
+UINTERFACE(BlueprintType)
+class CSCORE_API UCsDamageExpression : public UCsGetInterfaceMap
+{
+	GENERATED_UINTERFACE_BODY()
+};
 
 /**
 * Interface to describe Damage. Other interfaces can be "added" on top of this to 
 * expose more functionality (i.e. ICsDamageShape, ... etc)
 */
-struct CSCORE_API ICsDamageExpression : virtual public ICsGetInterfaceMap
+class CSCORE_API ICsDamageExpression : public ICsGetInterfaceMap
 {
+	GENERATED_IINTERFACE_BODY()
+
 public:
 
 	static const FName Name;
 
 public:
-
-	virtual ~ICsDamageExpression() {}
 
 	/**
 	* Get the amount of damage.

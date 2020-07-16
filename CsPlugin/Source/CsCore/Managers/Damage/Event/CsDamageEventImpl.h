@@ -5,7 +5,7 @@
 
 class UObject;
 struct FCsInterfaceMap;
-struct ICsDamageExpression;
+class ICsDamageExpression;
 
 struct CSCORE_API FCsDamageEventImpl final : public ICsDamageEvent
 {

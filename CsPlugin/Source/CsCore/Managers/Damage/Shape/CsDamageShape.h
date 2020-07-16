@@ -1,21 +1,28 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Containers/CsGetInterfaceMap.h"
 #include "Engine/EngineTypes.h"
+#include "CsDamageShape.generated.h"
 #pragma once
+
+UINTERFACE(BlueprintType)
+class CSCORE_API UCsDamageShape : public UCsGetInterfaceMap
+{
+	GENERATED_UINTERFACE_BODY()
+};
 
 /**
 * Interface to describe he shape of Damage. This should be used with 
 * the interface "base" ICsDamageExpression.
 */
-struct CSCORE_API ICsDamageShape : virtual public ICsGetInterfaceMap
+class CSCORE_API ICsDamageShape : public ICsGetInterfaceMap
 {
+	GENERATED_IINTERFACE_BODY()
+
 public:
 
 	static const FName Name;
 
 public:
-
-	virtual ~ICsDamageShape() {}
 
 	/**
 	* Calculate damage given an origin and point.

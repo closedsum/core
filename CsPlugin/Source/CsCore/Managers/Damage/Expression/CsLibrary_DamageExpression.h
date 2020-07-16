@@ -3,7 +3,7 @@
 #include "Containers/CsInterfaceMap.h"
 #pragma once
 
-struct ICsDamageExpression;
+class ICsDamageExpression;
 
 struct CSCORE_API FCsLibrary_DamageExpression
 {

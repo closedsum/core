@@ -16,10 +16,17 @@ FCsDamageSphereEmu::FCsDamageSphereEmu() :
 	EasingType(nullptr),
 	Curve(nullptr)
 {
+	InterfaceMap = new FCsInterfaceMap();
+
 	InterfaceMap->SetRootName(FCsDamageSphereEmu::Name);
 
 	InterfaceMap->Add<ICsDamageExpression>(static_cast<ICsDamageExpression*>(this));
 	InterfaceMap->Add<ICsDamageShape>(static_cast<ICsDamageShape*>(this));
+}
+
+FCsDamageSphereEmu::~FCsDamageSphereEmu()
+{
+	delete InterfaceMap;
 }
 
 // ICsDamageShape

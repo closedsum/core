@@ -4,7 +4,7 @@
 #include "Managers/Damage/CsTypes_Damage.h"
 #pragma once
 
-struct ICsDamageExpression;
+class ICsDamageExpression;
 
 /**
 *

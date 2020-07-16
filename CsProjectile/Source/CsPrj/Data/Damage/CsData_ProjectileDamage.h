@@ -11,7 +11,7 @@ class CSPRJ_API UCsData_ProjectileDamage : public UCsGetInterfaceMap
 	GENERATED_UINTERFACE_BODY()
 };
 
-struct ICsDamageExpression;
+class ICsDamageExpression;
 
 /**
 *

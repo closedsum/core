@@ -43,6 +43,9 @@ public:
 public:
 
 	FCsDamageSphereEmu();
+	~FCsDamageSphereEmu();
+
+	FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 // ICsGetInterfaceMap
 #pragma region

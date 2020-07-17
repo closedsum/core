@@ -8,7 +8,7 @@
 
 FECsCharacterBlendSpaceCustomization::FECsCharacterBlendSpaceCustomization()
 {
-	Init<FECsCharacterBlendSpace, EMCsCharacterBlendSpace>();
+	Init<EMCsCharacterBlendSpace, FECsCharacterBlendSpace>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsCharacterBlendSpaceCustomization::MakeInstance()
@@ -23,7 +23,7 @@ void FECsCharacterBlendSpaceCustomization::SetPropertyHandles(TSharedRef<IProper
 
 void FECsCharacterBlendSpaceCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsCharacterBlendSpace, EMCsCharacterBlendSpace>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsCharacterBlendSpace, FECsCharacterBlendSpace>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

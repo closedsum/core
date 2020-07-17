@@ -8,7 +8,7 @@
 
 FECsInteractiveTypeCustomization::FECsInteractiveTypeCustomization()
 {
-	Init<FECsInteractiveType, EMCsInteractiveType>();
+	Init<EMCsInteractiveType, FECsInteractiveType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsInteractiveTypeCustomization::MakeInstance()
@@ -23,7 +23,7 @@ void FECsInteractiveTypeCustomization::SetPropertyHandles(TSharedRef<IPropertyHa
 
 void FECsInteractiveTypeCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsInteractiveType, EMCsInteractiveType>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsInteractiveType, FECsInteractiveType>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

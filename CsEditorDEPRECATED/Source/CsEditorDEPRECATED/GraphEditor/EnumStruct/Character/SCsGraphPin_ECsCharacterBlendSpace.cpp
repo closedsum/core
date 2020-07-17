@@ -9,7 +9,7 @@ void SCsGraphPin_ECsCharacterBlendSpace::Construct(const FArguments& InArgs, UEd
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<FECsCharacterBlendSpace, EMCsCharacterBlendSpace>();
+	Construct_Internal<EMCsCharacterBlendSpace, FECsCharacterBlendSpace>();
 }
 
 void SCsGraphPin_ECsCharacterBlendSpace::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
@@ -19,12 +19,12 @@ void SCsGraphPin_ECsCharacterBlendSpace::GenerateComboBoxIndexes(TArray<TSharedP
 
 FString SCsGraphPin_ECsCharacterBlendSpace::OnGetText() const
 {
-	return OnGetText_Internal<FECsCharacterBlendSpace, EMCsCharacterBlendSpace>();
+	return OnGetText_Internal<EMCsCharacterBlendSpace, FECsCharacterBlendSpace>();
 }
 
 void SCsGraphPin_ECsCharacterBlendSpace::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<FECsCharacterBlendSpace, EMCsCharacterBlendSpace>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EMCsCharacterBlendSpace, FECsCharacterBlendSpace>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsCharacterBlendSpace::OnGetFriendlyName(int32 EnumIndex)

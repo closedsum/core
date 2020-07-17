@@ -8,7 +8,7 @@
 
 FECsItemInteractionCustomization::FECsItemInteractionCustomization()
 {
-	Init<FECsItemInteraction, EMCsItemInteraction>();
+	Init<EMCsItemInteraction, FECsItemInteraction>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsItemInteractionCustomization::MakeInstance()
@@ -23,7 +23,7 @@ void FECsItemInteractionCustomization::SetPropertyHandles(TSharedRef<IPropertyHa
 
 void FECsItemInteractionCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsItemInteraction, EMCsItemInteraction>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsItemInteraction, FECsItemInteraction>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

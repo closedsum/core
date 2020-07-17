@@ -8,7 +8,7 @@
 
 FECsRecipeTypeCustomization::FECsRecipeTypeCustomization()
 {
-	Init<FECsRecipeType, EMCsRecipeType>();
+	Init<EMCsRecipeType, FECsRecipeType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsRecipeTypeCustomization::MakeInstance()
@@ -23,7 +23,7 @@ void FECsRecipeTypeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle>
 
 void FECsRecipeTypeCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsRecipeType, EMCsRecipeType>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsRecipeType, FECsRecipeType>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

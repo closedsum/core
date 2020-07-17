@@ -8,7 +8,7 @@
 
 FECsItemOwnerCustomization::FECsItemOwnerCustomization()
 {
-	Init<FECsItemOwner, EMCsItemOwner>();
+	Init<EMCsItemOwner, FECsItemOwner>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsItemOwnerCustomization::MakeInstance()
@@ -23,7 +23,7 @@ void FECsItemOwnerCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> 
 
 void FECsItemOwnerCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsItemOwner, EMCsItemOwner>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsItemOwner, FECsItemOwner>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

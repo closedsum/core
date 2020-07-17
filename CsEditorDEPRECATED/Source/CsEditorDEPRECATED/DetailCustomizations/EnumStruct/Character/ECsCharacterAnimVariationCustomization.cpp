@@ -8,7 +8,7 @@
 
 FECsCharacterAnimVariationCustomization::FECsCharacterAnimVariationCustomization()
 {
-	Init<FECsCharacterAnimVariation, EMCsCharacterAnimVariation>();
+	Init<EMCsCharacterAnimVariation, FECsCharacterAnimVariation>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsCharacterAnimVariationCustomization::MakeInstance()
@@ -23,7 +23,7 @@ void FECsCharacterAnimVariationCustomization::SetPropertyHandles(TSharedRef<IPro
 
 void FECsCharacterAnimVariationCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsCharacterAnimVariation, EMCsCharacterAnimVariation>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsCharacterAnimVariation, FECsCharacterAnimVariation>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

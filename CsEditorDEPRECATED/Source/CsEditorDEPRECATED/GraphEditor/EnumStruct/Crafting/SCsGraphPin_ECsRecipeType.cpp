@@ -9,22 +9,22 @@ void SCsGraphPin_ECsRecipeType::Construct(const FArguments& InArgs, UEdGraphPin*
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<FECsRecipeType, EMCsRecipeType>();
+	Construct_Internal<EMCsRecipeType, FECsRecipeType>();
 }
 
 void SCsGraphPin_ECsRecipeType::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
 {
-	GenenerateComboBoxIndexes_Internal<EMCsItemType>(OutComboBoxIndexes);
+	GenenerateComboBoxIndexes_Internal<EMCsRecipeType>(OutComboBoxIndexes);
 }
 
 FString SCsGraphPin_ECsRecipeType::OnGetText() const
 {
-	return OnGetText_Internal<FECsRecipeType, EMCsRecipeType>();
+	return OnGetText_Internal<EMCsRecipeType, FECsRecipeType>();
 }
 
 void SCsGraphPin_ECsRecipeType::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<FECsRecipeType, EMCsRecipeType>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EMCsRecipeType, FECsRecipeType>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsRecipeType::OnGetFriendlyName(int32 EnumIndex)

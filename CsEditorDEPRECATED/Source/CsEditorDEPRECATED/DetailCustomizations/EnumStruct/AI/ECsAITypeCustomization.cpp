@@ -8,7 +8,7 @@
 
 FECsAITypeCustomization::FECsAITypeCustomization()
 {
-	Init<FECsAIType, EMCsAIType>();
+	Init<EMCsAIType, FECsAIType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsAITypeCustomization::MakeInstance()
@@ -23,7 +23,7 @@ void FECsAITypeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> Str
 
 void FECsAITypeCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<FECsAIType, EMCsAIType>(DisplayName);
+	SetEnumWithDisplayName_Internal<EMCsAIType, FECsAIType>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

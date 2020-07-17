@@ -271,15 +271,14 @@ void UCsManager_DigitalAgreement::Query()
 {
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler			   = UCsCoroutineScheduler::Get(MyRoot);
-	FCsResource_CoroutinePayload* PayloadContainer = Scheduler->AllocatePayload(UpdateGroup);
-	FCsCoroutinePayload* Payload				   = PayloadContainer->Get();
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(UpdateGroup);
 
-	Payload->Coroutine.BindUObject(this, &UCsManager_DigitalAgreement::Query_Internal);
+	Payload->CoroutineImpl.BindUObject(this, &UCsManager_DigitalAgreement::Query_Internal);
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
 	Payload->Owner.SetOwner(this);
-	Payload->SetName(NCsManagerDigitalAgreementCached::Name::Query_Internal);
-	Payload->SetNameAsString(NCsManagerDigitalAgreementCached::Str::Query_Internal);
+	Payload->SetFName(NCsManagerDigitalAgreementCached::Name::Query_Internal);
+	Payload->SetName(NCsManagerDigitalAgreementCached::Str::Query_Internal);
 
 	Scheduler->Start(Payload); 
 }

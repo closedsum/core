@@ -5,6 +5,8 @@
 // Types
 
 // EnumStructs
+	// Status Effect
+#include "GraphEditor/EnumStruct/SCsGraphPin_ECsStatusEffectTriggerCondition.h"
 
 TSharedPtr<SGraphPin> FCsSePanelGraphPinFactory::CreatePin(UEdGraphPin* InPin) const
 {
@@ -12,6 +14,11 @@ TSharedPtr<SGraphPin> FCsSePanelGraphPinFactory::CreatePin(UEdGraphPin* InPin) c
 	/*
 	Check if pin is struct, and then check if that pin is of struct type we want customize
 	*/
+	// Status Effect
+	{
+		// FECsStatusEffectTriggerCondition
+		if (DoesPinUseScriptStruct<FECsStatusEffectTriggerCondition>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsStatusEffectTriggerCondition, InPin); }
+	}
 	return nullptr;
 }
 

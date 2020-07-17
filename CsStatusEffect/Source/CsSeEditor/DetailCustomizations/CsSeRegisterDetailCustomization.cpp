@@ -7,6 +7,8 @@
 
 // DetailCustomizations
 	// EnumStruct
+		// StatusEffect
+#include "DetailCustomizations/EnumStruct/ECsStatusEffectTriggerConditionCustomization.h"
 
 void FCsSeRegisterDetailCustomization::Register()
 {
@@ -14,5 +16,7 @@ void FCsSeRegisterDetailCustomization::Register()
 
 	// EnumStruct
 	{
+		// ECsStatusEffectTriggerCondition
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsStatusEffectTriggerCondition", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsStatusEffectTriggerConditionCustomization::MakeInstance));
 	}
 }

@@ -1,12 +1,14 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/CsTypes_Pool.h"
-#include "Managers/Pool/CsPooledObjectCache.h"
+#include "Managers/Pool/Cache/CsPooledObjectCache.h"
 #include "Containers/CsWeakObjectPtr.h"
 #pragma once
 
 class UObject;
 struct FCsInterfaceMap;
 
+/**
+*/
 struct CSTD_API FCsTdCreepPooledCacheImpl : public ICsPooledObjectCache
 {
 public:
@@ -84,7 +86,7 @@ public:
 		bQueueDeallocate = true;
 	}
 
-	FORCEINLINE const bool& ShouldDeallocate() const
+	FORCEINLINE bool ShouldDeallocate() const
 	{
 		return bQueueDeallocate;
 	}

@@ -5,7 +5,7 @@
 #include "CsTypes_Weapon.h"
 #include "Types/CsTypes_View.h"
 #include "Coroutine/CsTypes_Coroutine.h"
-#include "Types/CsTypes_Damage.h"
+#include "Managers/Damage/CsTypes_Damage.h"
 #include "Managers/Sense/CsTypes_Sense.h"
 #include "Types/CsTypes_Trace.h"
 #include "Types/CsTypes_Character.h"

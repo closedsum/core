@@ -191,8 +191,8 @@ FCsFpvAnimMontage* UCsData_ProjectileWeapon_DEPRECATED::GetFCsFpvAnimMontage(con
 // FX
 #pragma region
 
-FCsFxElement* UCsData_ProjectileWeapon_DEPRECATED::GetMuzzleFX(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const int32& Index /*=0*/){ return nullptr; }
-FCsFxElement* UCsData_ProjectileWeapon_DEPRECATED::GetMuzzleFX(const FECsWeaponFireMode& FireMode, const int32& Index /*=0*/) { return nullptr; }
+FCsFxElement_DEPRECATED* UCsData_ProjectileWeapon_DEPRECATED::GetMuzzleFX(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const int32& Index /*=0*/){ return nullptr; }
+FCsFxElement_DEPRECATED* UCsData_ProjectileWeapon_DEPRECATED::GetMuzzleFX(const FECsWeaponFireMode& FireMode, const int32& Index /*=0*/) { return nullptr; }
 
 #pragma endregion FX
 
@@ -204,6 +204,7 @@ FCsSoundElement* UCsData_ProjectileWeapon_DEPRECATED::GetSound(const FECsWeaponF
 
 void UCsData_ProjectileWeapon_DEPRECATED::PlaySound(UWorld* InWorld, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, UObject* InParent)
 {
+	/*
 	FCsSoundElement* SoundElement	= GetSound(ViewType, FireMode, SoundType);
 
 	if (!SoundElement->Get())
@@ -220,10 +221,12 @@ void UCsData_ProjectileWeapon_DEPRECATED::PlaySound(UWorld* InWorld, const ECsVi
 	Payload->Parent = InParent;
 
 	Manager_Sound->Play(Payload);
+	*/
 }
 
 void UCsData_ProjectileWeapon_DEPRECATED::PlaySound(UWorld* InWorld, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, UObject* InParent)
 {
+	/*
 	FCsSoundElement* SoundElement = GetSound(FireMode, SoundType);
 
 	if (!SoundElement->Get())
@@ -240,10 +243,12 @@ void UCsData_ProjectileWeapon_DEPRECATED::PlaySound(UWorld* InWorld, const FECsW
 	Payload->Parent = InParent;
 
 	Manager_Sound->Play(Payload);
+	*/
 }
 
 void UCsData_ProjectileWeapon_DEPRECATED::PlaySound(UWorld* InWorld, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, const FVector& Location)
 {
+	/*
 	FCsSoundElement* SoundElement = GetSound(ViewType, FireMode, SoundType);
 
 	if (!SoundElement->Get())
@@ -260,10 +265,12 @@ void UCsData_ProjectileWeapon_DEPRECATED::PlaySound(UWorld* InWorld, const ECsVi
 	Payload->Location = Location;
 
 	Manager_Sound->Play(Payload);
+	*/
 }
 
 void UCsData_ProjectileWeapon_DEPRECATED::PlaySound(UWorld* InWorld, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, const FVector& Location)
 {
+	/*
 	FCsSoundElement* SoundElement = GetSound(FireMode, SoundType);
 	
 	if (!SoundElement->Get())
@@ -280,22 +287,27 @@ void UCsData_ProjectileWeapon_DEPRECATED::PlaySound(UWorld* InWorld, const FECsW
 	Payload->Location = Location;
 
 	Manager_Sound->Play(Payload);
+	*/
 }
 
 void UCsData_ProjectileWeapon_DEPRECATED::StopSound(UWorld* InWorld, const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, UObject* InParent)
 {
+	/*
 	FCsSoundElement* SoundElement	= GetSound(ViewType, FireMode, SoundType);
 	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
 
 	Manager_Sound->Stop(SoundElement, InOwner, InParent);
+	*/
 }
 
 void UCsData_ProjectileWeapon_DEPRECATED::StopSound(UWorld* InWorld, const FECsWeaponFireMode& FireMode, const FECsWeaponSound& SoundType, UObject* InOwner, UObject* InParent)
 {
+	/*
 	FCsSoundElement* SoundElement	= GetSound(FireMode, SoundType);
 	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
 
 	Manager_Sound->Stop(SoundElement, InOwner, InParent);
+	*/
 }
 
 #pragma endregion Sounds

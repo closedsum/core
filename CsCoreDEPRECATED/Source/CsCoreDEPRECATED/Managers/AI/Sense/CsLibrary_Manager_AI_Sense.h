@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Runtime/CoreUObject/Public/UObject/Object.h"
-#include "Types/CsTypes_Sound.h"
+#include "Managers/Sound/CsTypes_Sound.h"
 #include "CsLibrary_Manager_AI_Sense.generated.h"
 
 class AActor;

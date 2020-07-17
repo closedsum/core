@@ -446,8 +446,8 @@ void UCsDataMapping::PopulateAssetReferences()
 								Reference.Reference				   = Asset;
 								Reference.Reference_Internal	   = AssetRef;
 								Reference.Size.Bytes			   = OutAsset->GetResourceSizeBytes(EResourceSizeMode::Exclusive);
-								Reference.Size.Kilobytes		   = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-								Reference.Size.Megabytes		   = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+								Reference.Size.Kilobytes		   = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+								Reference.Size.Megabytes		   = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 
 								AssetReferences[J].References.Add(Reference);
 
@@ -694,10 +694,10 @@ const FCsData& UCsDataMapping::LoadData_Internal(const FString& FunctionName, co
 	}
 
 	const FCsData& IData = AddLoadedData(DataType, Mapping.ShortCode, Data);
-	Data->Load(LoadFlags);
+	Data->Load((int32)LoadFlags);
 
-	FString Name = Data->GetShortCode().ToString();
-	checkf(Data->IsValid(), TEXT("%s: Data: %s is NOT Valid."), *FunctionName, *Name);
+	FString Name;// Data->GetShortCode().ToString();
+	checkf(Data->IsValid(0), TEXT("%s: Data: %s is NOT Valid."), *FunctionName, *Name);
 	return IData;
 }
 
@@ -903,8 +903,8 @@ bool UCsDataMapping::CheckDataIsValid(const FString& FunctionName, const FECsDat
 		return true;
 	}
 
-	Data->Load(LoadFlags);
-	return Data->IsValid();
+	Data->Load((int32)LoadFlags);
+	return Data->IsValid(0);
 }
 
 bool UCsDataMapping::CheckAllDataIsValid(const FString& FunctionName, const FECsDataType& DataType, const ECsLoadFlags& LoadFlags /*=ECsLoadFlags::Game*/)
@@ -1288,8 +1288,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 									ICsData* IData = Cast<ICsData>(DOb);
 
 									// ADD
-									if (ShortCode == IData->GetShortCode() &&
-										DataType == IData->GetType())
+									//if (ShortCode == IData->GetShortCode() &&
+									//	DataType == IData->GetType())
 									{
 										Member->AddDefaulted();
 										(*Member)[EntryCount].ShortCode		 = ShortCode;
@@ -1310,12 +1310,12 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const FECsDataType&
 										return true;
 									}
 									// Mismatch. FAILED
-									else
+									//else
 									{
-										if (ShortCode != IData->GetShortCode())
-											OutOutput = TEXT("ShortCode mismatch. ") + IData->GetShortCode().ToString() + TEXT(" != ") + ShortCode.ToString();
-										else
-											OutOutput = TEXT("DataType mismatch. ") + IData->GetType().Name + TEXT(" != ") + DataTypeAsString;
+										//if (ShortCode != IData->GetShortCode())
+										//	OutOutput = TEXT("ShortCode mismatch. ") + IData->GetShortCode().ToString() + TEXT(" != ") + ShortCode.ToString();
+										//else
+										//	OutOutput = TEXT("DataType mismatch. ") + IData->GetType().Name + TEXT(" != ") + DataTypeAsString;
 										OutMessage = TEXT("FAILED.");
 
 										if (UCsLibrary_Common::IsDefaultObject(this))
@@ -1433,18 +1433,18 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 		if (IData)
 		{
 			// ADD
-			if (ShortCode == IData->GetShortCode() &&
-				EMCsDataType::Get().IsValidEnum(IData->GetType()))
+			//if (ShortCode == IData->GetShortCode() &&
+			//	EMCsDataType::Get().IsValidEnum(IData->GetType()))
 			{
 				Data = Cast<UBlueprintCore>(Bps[0])->GeneratedClass;
 			}
 			// Mismatch. FAILED
-			else
+			//else
 			{
-				if (ShortCode != IData->GetShortCode())
-					OutOutput = TEXT("ShortCode mismatch. ") + IData->GetShortCode().ToString() + TEXT(" != ") + ShortCode.ToString();
-				else
-					OutOutput = TEXT("Asset: ") + ShortCode.ToString() + TEXT(" has an INVALID DataType");
+				//if (ShortCode != IData->GetShortCode())
+				//	OutOutput = TEXT("ShortCode mismatch. ") + IData->GetShortCode().ToString() + TEXT(" != ") + ShortCode.ToString();
+				//else
+				//	OutOutput = TEXT("Asset: ") + ShortCode.ToString() + TEXT(" has an INVALID DataType");
 				OutMessage = TEXT("FAILED.");
 
 				if (UCsLibrary_Common::IsDefaultObject(this))
@@ -1485,7 +1485,8 @@ bool UCsDataMapping::PerformAddEntry(const FName& ShortCode, const int32& LoadFl
 		return false;
 	}
 
-	const FECsDataType& DataType = IData->GetType();
+	//const FECsDataType& DataType = IData->GetType();
+	FECsDataType DataType;
 
 	// Search Entries
 	int32 DataTypeIndex = INDEX_NONE;

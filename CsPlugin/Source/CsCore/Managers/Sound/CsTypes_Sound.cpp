@@ -2,6 +2,9 @@
 #include "Managers/Sound/CsTypes_Sound.h"
 #include "CsCore.h"
 
+// Settings
+#include "Settings/CsDeveloperSettings.h"
+
 // Sound
 #pragma region
 

@@ -5,6 +5,7 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_AttachDetach.h"
+#include "Types/CsTypes_Math.h"
 // Library
 #include "Managers/Pool/Cache/CsLibrary_PooledObjectCache.h"
 #include "Managers/Pool/Payload/CsLibrary_PooledObjectPayload.h"

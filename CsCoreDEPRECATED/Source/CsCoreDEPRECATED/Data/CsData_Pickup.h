@@ -2,8 +2,8 @@
 #pragma once
 #include "Data/CsData_Interactive.h"
 #include "Types/CsTypes_Interactive.h"
-#include "Types/CsTypes_FX.h"
-#include "Types/CsTypes_Sound.h"
+#include "Managers/FX/CsTypes_FX.h"
+#include "Managers/Sound/CsTypes_Sound.h"
 #include "CsData_Pickup.generated.h"
 
 UCLASS(Abstract)
@@ -25,7 +25,7 @@ class CSCOREDEPRECATED_API UCsData_Pickup : public UCsData_Interactive
 // FX
 #pragma region
 
-	virtual FCsFxElement* GetFX(const FECsPickupFX& FxType);
+	virtual FCsFxElement_DEPRECATED* GetFX(const FECsPickupFX& FxType);
 
 #pragma endregion FX
 

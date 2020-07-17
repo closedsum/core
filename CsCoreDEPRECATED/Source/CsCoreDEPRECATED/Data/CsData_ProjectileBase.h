@@ -3,7 +3,7 @@
 #include "Data/CsData_Impl.h"
 #include "Types/CsTypes_View.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
-#include "Types/CsTypes_FX.h"
+#include "Managers/FX/CsTypes_FX.h"
 #include "CsData_ProjectileBase.generated.h"
 
 class UCsData_ProjectileImpact;
@@ -134,7 +134,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "FX")
 	virtual const bool& GetUseTrailFX();
 
-	virtual FCsFxElement* GetTrailFX(const ECsViewType& ViewType);
+	virtual FCsFxElement_DEPRECATED* GetTrailFX(const ECsViewType& ViewType);
 
 #pragma endregion FX
 

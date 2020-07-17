@@ -7,19 +7,21 @@
 #include "Types/CsTypes.h"
 #include "Managers/Input/CsTypes_Input.h"
 #include "UI/CsTypes_UI.h"
-#include "Types/CsTypes_FX.h"
-#include "Types/CsTypes_Sound.h"
+#include "Managers/FX/CsTypes_FX.h"
+#include "Managers/Sound/CsTypes_Sound.h"
 #include "Types/CsTypes_Anim.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
 #include "CsTypes_Weapon.h"
 #include "Types/CsTypes_Weapon_DEPRECATED.h"
-#include "Types/CsTypes_Damage.h"
+#include "Managers/Damage/CsTypes_Damage.h"
 #include "Types/CsTypes_Character.h"
 #include "Types/CsTypes_Interactive.h"
 #include "Types/CsTypes_Item.h"
 #include "Types/CsTypes_Recipe.h"
 #include "Types/CsTypes_Math.h"
 #include "Managers/Sense/CsTypes_Sense.h"
+#include "Types/CsTypes_StaticMesh.h"
+#include "Types/CsTypes_SkeletalMesh.h"
 // Data
 #include "Data/CsData.h"
 #include "Data/CsData_ProjectileBase.h"
@@ -49,7 +51,7 @@ namespace NCsCommonLoadCached
 		const FString HorizTextAligment = TEXT("EHorizTextAligment");
 		const FString VerticalTextAligment = TEXT("EVerticalTextAligment");
 		const FString CsLoadFlags_Editor = TEXT("ECsLoadFlags_Editor");
-		const FString CsFxPriority = TEXT("ECsFxPriority");
+		const FString CsFXPriority = TEXT("ECsFXPriority");
 		const FString CsSoundPriority = TEXT("ECsSoundPriority");
 		const FString CsInteractiveCollision = TEXT("ECsInteractiveCollision");
 		const FString CsProjectileMovementFunctionType = TEXT("ECsProjectileMovementFunctionType");
@@ -544,11 +546,11 @@ void UCsLibrary_Load_DEPRECATED::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFxElement
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			// FCsFxElement_DEPRECATED
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteMemberStructPropertyToJson<FCsFxElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+				{ WriteMemberStructPropertyToJson<FCsFxElement_DEPRECATED>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
@@ -766,9 +768,9 @@ void UCsLibrary_Load_DEPRECATED::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>
 				// FECsProjectile
 				if (StructProperty->Struct == FECsProjectile::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsProjectile>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
-				// FECsSoundType
-				if (StructProperty->Struct == FECsSoundType::StaticStruct())
-				{ WriteMemberEnumStructPropertyToJson<FECsSoundType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsSound
+				if (StructProperty->Struct == FECsSound::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsSound>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 				// FECsItemType
 				if (StructProperty->Struct == FECsItemType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsItemType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
@@ -839,9 +841,9 @@ void UCsLibrary_Load_DEPRECATED::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsFxElement
-				if (InnerStructProperty->Struct == FCsFxElement::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsFxElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsFxElement_DEPRECATED
+				if (InnerStructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFxElement_DEPRECATED>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsFpvFxElement
 				if (InnerStructProperty->Struct == FCsFpvFxElement::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsFpvFxElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
@@ -968,15 +970,15 @@ void UCsLibrary_Load_DEPRECATED::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>
 				// ECsLoadFlags_Editor
 				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
 				//{ WriteMemberEnumAsBytePropertyToJson<ECsLoadFlags_Editor::Type, EMCsLoadFlags_Editor>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
-				// ECsFxPriority
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFxPriority))
-				{ WriteMemberEnumAsBytePropertyToJson<ECsFxPriority::Type, EMCsFxPriority>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
+				// ECsFXPriority
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFXPriority))
+				//{ WriteMemberEnumAsBytePropertyToJson<ECsFXPriority, EMCsFXPriority>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
 				// ECsSoundPriority
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
-				{ WriteMemberEnumAsBytePropertyToJson<ECsSoundPriority::Type, EMCsSoundPriority>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
+				//{ WriteMemberEnumAsBytePropertyToJson<ECsSoundPriority, EMCsSoundPriority>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
 				// ECsParametricFunctionType
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
-				{ WriteMemberEnumAsBytePropertyToJson<ECsParametricFunctionType::Type, EMCsParametricFunctionType>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
+				//{ WriteMemberEnumAsBytePropertyToJson<ECsParametricFunctionType, EMCsParametricFunctionType>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
 				// ECsItemMemberValueType
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsItemMemberValueType))
 				{ WriteMemberEnumAsBytePropertyToJson<ECsItemMemberValueType::Type, EMCsItemMemberValueType>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
@@ -1312,11 +1314,11 @@ void UCsLibrary_Load_DEPRECATED::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFxElement
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			// FCsFxElement_DEPRECATED
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteMemberStructPropertyToJson<FCsFxElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+				{ WriteMemberStructPropertyToJson<FCsFxElement_DEPRECATED>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
@@ -1537,9 +1539,9 @@ void UCsLibrary_Load_DEPRECATED::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>
 				// FECsProjectile
 				if (StructProperty->Struct == FECsProjectile::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsProjectile>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
-				// FECsSoundType
-				if (StructProperty->Struct == FECsSoundType::StaticStruct())
-				{ WriteMemberEnumStructPropertyToJson<FECsSoundType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsSound
+				if (StructProperty->Struct == FECsSound::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsSound>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 				// FECsItemType
 				if (StructProperty->Struct == FECsItemType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsItemType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
@@ -1610,9 +1612,9 @@ void UCsLibrary_Load_DEPRECATED::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsFxElement
-				if (InnerStructProperty->Struct == FCsFxElement::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsFxElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsFxElement_DEPRECATED
+				if (InnerStructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFxElement_DEPRECATED>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsFpvFxElement
 				if (InnerStructProperty->Struct == FCsFpvFxElement::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsFpvFxElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
@@ -1739,15 +1741,15 @@ void UCsLibrary_Load_DEPRECATED::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>
 				// ECsLoadFlags_Editor
 				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
 				//{ WriteMemberEnumAsBytePropertyToJson<ECsLoadFlags_Editor::Type, EMCsLoadFlags_Editor>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
-				// ECsFxPriority
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFxPriority))
-				{ WriteMemberEnumAsBytePropertyToJson<ECsFxPriority::Type, EMCsFxPriority>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
+				// ECsFXPriority
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFXPriority))
+				//{ WriteMemberEnumAsBytePropertyToJson<ECsFXPriority, EMCsFXPriority>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
 				// ECsSoundPriority
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
-				{ WriteMemberEnumAsBytePropertyToJson<ECsSoundPriority::Type, EMCsSoundPriority>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
+				//{ WriteMemberEnumAsBytePropertyToJson<ECsSoundPriority, EMCsSoundPriority>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
 				// ECsParametricFunctionType
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
-				{ WriteMemberEnumAsBytePropertyToJson<ECsParametricFunctionType::Type, EMCsParametricFunctionType>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
+				//{ WriteMemberEnumAsBytePropertyToJson<ECsParametricFunctionType, EMCsParametricFunctionType>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
 				// ECsItemMemberValueType
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsItemMemberValueType))
 				{ WriteMemberEnumAsBytePropertyToJson<ECsItemMemberValueType::Type, EMCsItemMemberValueType>(InJsonWriter, ByteProperty, InStruct, MemberName); continue; }
@@ -2076,11 +2078,11 @@ void UCsLibrary_Load_DEPRECATED::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>
 			// FCsParticleSystem
 			if (StructProperty->Struct == FCsParticleSystem::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsParticleSystem>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
-			// FCsFxElement
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			// FCsFxElement_DEPRECATED
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteMemberStructPropertyToJson<FCsFxElement>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				{ WriteMemberStructPropertyToJson<FCsFxElement_DEPRECATED>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 
 				if (WriteObjectToJson_Internal_Helper(Internal, Property, InJsonWriter, InObject, InClass)) { continue; }
 				continue;
@@ -2250,9 +2252,9 @@ void UCsLibrary_Load_DEPRECATED::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>
 				// FECsProjectile
 				if (StructProperty->Struct == FECsProjectile::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsProjectile>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
-				// FECsSoundType
-				if (StructProperty->Struct == FECsSoundType::StaticStruct())
-				{ WriteMemberEnumStructPropertyToJson<FECsSoundType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsSound
+				if (StructProperty->Struct == FECsSound::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsSound>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 				// FECsItemType
 				if (StructProperty->Struct == FECsItemType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsItemType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
@@ -2318,9 +2320,9 @@ void UCsLibrary_Load_DEPRECATED::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsAnimMontage>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
-				// FCsFxElement
-				if (InnerStructProperty->Struct == FCsFxElement::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsFxElement>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+				// FCsFxElement_DEPRECATED
+				if (InnerStructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFxElement_DEPRECATED>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 				// FCsFpvFxElement
 				if (InnerStructProperty->Struct == FCsFpvFxElement::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsFpvFxElement>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
@@ -2425,15 +2427,15 @@ void UCsLibrary_Load_DEPRECATED::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>
 				// ECsLoadFlags_Editor
 				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
 				//{ WriteMemberEnumAsBytePropertyToJson<ECsLoadFlags_Editor::Type, EMCsLoadFlags_Editor>(InJsonWriter, ByteProperty, InObject, MemberName); continue; }
-				// ECsFxPriority
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFxPriority))
-				{ WriteMemberEnumAsBytePropertyToJson<ECsFxPriority::Type, EMCsFxPriority>(InJsonWriter, ByteProperty, InObject, MemberName); continue; }
+				// ECsFXPriority
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFXPriority))
+				//{ WriteMemberEnumAsBytePropertyToJson<ECsFXPriority, EMCsFXPriority>(InJsonWriter, ByteProperty, InObject, MemberName); continue; }
 				// ECsSoundPriority
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
-				{ WriteMemberEnumAsBytePropertyToJson<ECsSoundPriority::Type, EMCsSoundPriority>(InJsonWriter, ByteProperty, InObject, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
+				//{ WriteMemberEnumAsBytePropertyToJson<ECsSoundPriority, EMCsSoundPriority>(InJsonWriter, ByteProperty, InObject, MemberName); continue; }
 				// ECsParametricFunctionType
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
-				{ WriteMemberEnumAsBytePropertyToJson<ECsParametricFunctionType::Type, EMCsParametricFunctionType>(InJsonWriter, ByteProperty, InObject, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
+				//{ WriteMemberEnumAsBytePropertyToJson<ECsParametricFunctionType, EMCsParametricFunctionType>(InJsonWriter, ByteProperty, InObject, MemberName); continue; }
 				// ECsItemMemberValueType
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsItemMemberValueType))
 				{ WriteMemberEnumAsBytePropertyToJson<ECsItemMemberValueType::Type, EMCsItemMemberValueType>(InJsonWriter, ByteProperty, InObject, MemberName); continue; }
@@ -2917,11 +2919,11 @@ void UCsLibrary_Load_DEPRECATED::ReadStructFromJson(TSharedPtr<FJsonObject> &Jso
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFxElement
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			// FCsFxElement_DEPRECATED
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteToMemberStructPropertyFromJson<FCsFxElement>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+				{ WriteToMemberStructPropertyFromJson<FCsFxElement_DEPRECATED>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
@@ -3141,9 +3143,9 @@ void UCsLibrary_Load_DEPRECATED::ReadStructFromJson(TSharedPtr<FJsonObject> &Jso
 				// FECsProjectile
 				if (StructProperty->Struct == FECsProjectile::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsProjectile, EMCsProjectile>(JsonObject, StructProperty, InStruct, MemberName); continue; }
-				// FECsSoundType
-				if (StructProperty->Struct == FECsSoundType::StaticStruct())
-				{ WriteToMemberEnumStructPropertyFromJson<FECsSoundType, EMCsSoundType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsSound
+				if (StructProperty->Struct == FECsSound::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsSound, EMCsSound>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 				// FECsItemType
 				if (StructProperty->Struct == FECsItemType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsItemType, EMCsItemType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
@@ -3215,9 +3217,9 @@ void UCsLibrary_Load_DEPRECATED::ReadStructFromJson(TSharedPtr<FJsonObject> &Jso
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
-				// FCsFxElement
-				if (InnerStructProperty->Struct == FCsFxElement::StaticStruct())
-				{ WriteToMemberArrayStructPropertyFromJson<FCsFxElement>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsFxElement_DEPRECATED
+				if (InnerStructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFxElement_DEPRECATED>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
 				// FCsFpvFxElement
 				if (InnerStructProperty->Struct == FCsFpvFxElement::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsFpvFxElement>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
@@ -3341,15 +3343,15 @@ void UCsLibrary_Load_DEPRECATED::ReadStructFromJson(TSharedPtr<FJsonObject> &Jso
 				// ECsLoadFlags_Editor
 				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
 				//{ WriteToMemberEnumAsBytePropertyFromJson<ECsLoadFlags_Editor::Type, EMCsLoadFlags_Editor>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
-				// ECsFxPriority
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFxPriority))
-				{ WriteToMemberEnumAsBytePropertyFromJson<ECsFxPriority::Type, EMCsFxPriority>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
+				// ECsFXPriority
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFXPriority))
+				//{ WriteToMemberEnumAsBytePropertyFromJson<ECsFXPriority, EMCsFXPriority>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
 				// ECsSoundPriority
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
-				{ WriteToMemberEnumAsBytePropertyFromJson<ECsSoundPriority::Type, EMCsSoundPriority>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
+				//{ WriteToMemberEnumAsBytePropertyFromJson<ECsSoundPriority, EMCsSoundPriority>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
 				// ECsParametricFunctionType
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
-				{ WriteToMemberEnumAsBytePropertyFromJson<ECsParametricFunctionType::Type, EMCsParametricFunctionType>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
+				//{ WriteToMemberEnumAsBytePropertyFromJson<ECsParametricFunctionType, EMCsParametricFunctionType>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
 				// ECsItemMemberValueType
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsProjectileMovementFunctionType))
 				{ WriteToMemberEnumAsBytePropertyFromJson<ECsItemMemberValueType::Type, EMCsItemMemberValueType>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
@@ -3686,11 +3688,11 @@ void UCsLibrary_Load_DEPRECATED::ReadStructFromJson(TSharedPtr<FJsonObject> &Jso
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFxElement
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			// FCsFxElement_DEPRECATED
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteToMemberStructPropertyFromJson<FCsFxElement>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+				{ WriteToMemberStructPropertyFromJson<FCsFxElement_DEPRECATED>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
@@ -3913,9 +3915,9 @@ void UCsLibrary_Load_DEPRECATED::ReadStructFromJson(TSharedPtr<FJsonObject> &Jso
 				// FECsProjectile
 				if (StructProperty->Struct == FECsProjectile::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsProjectile, EMCsProjectile>(JsonObject, StructProperty, InStruct, MemberName); continue; }
-				// FECsSoundType
-				if (StructProperty->Struct == FECsSoundType::StaticStruct())
-				{ WriteToMemberEnumStructPropertyFromJson<FECsSoundType, EMCsSoundType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsSound
+				if (StructProperty->Struct == FECsSound::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsSound, EMCsSound>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 				// FECsItemType
 				if (StructProperty->Struct == FECsItemType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsItemType, EMCsItemType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
@@ -3984,9 +3986,9 @@ void UCsLibrary_Load_DEPRECATED::ReadStructFromJson(TSharedPtr<FJsonObject> &Jso
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
-				// FCsFxElement
-				if (InnerStructProperty->Struct == FCsFxElement::StaticStruct())
-				{ WriteToMemberArrayStructPropertyFromJson<FCsFxElement>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsFxElement_DEPRECATED
+				if (InnerStructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFxElement_DEPRECATED>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
 				// FCsFpvFxElement
 				if (InnerStructProperty->Struct == FCsFpvFxElement::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsFpvFxElement>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
@@ -4113,15 +4115,15 @@ void UCsLibrary_Load_DEPRECATED::ReadStructFromJson(TSharedPtr<FJsonObject> &Jso
 				// ECsLoadFlags_Editor
 				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
 				//{ WriteToMemberEnumAsBytePropertyFromJson<ECsLoadFlags_Editor::Type, EMCsLoadFlags_Editor>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
-				// ECsFxPriority
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFxPriority))
-				{ WriteToMemberEnumAsBytePropertyFromJson<ECsFxPriority::Type, EMCsFxPriority>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
+				// ECsFXPriority
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFXPriority))
+				//{ WriteToMemberEnumAsBytePropertyFromJson<ECsFXPriority, EMCsFXPriority>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
 				// ECsSoundPriority
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
-				{ WriteToMemberEnumAsBytePropertyFromJson<ECsSoundPriority::Type, EMCsSoundPriority>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
+				//{ WriteToMemberEnumAsBytePropertyFromJson<ECsSoundPriority, EMCsSoundPriority>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
 				// ECsParametricFunctionType
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
-				{ WriteToMemberEnumAsBytePropertyFromJson<ECsParametricFunctionType::Type, EMCsParametricFunctionType>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
+				//{ WriteToMemberEnumAsBytePropertyFromJson<ECsParametricFunctionType, EMCsParametricFunctionType>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
 				// ECsItemMemberValueType
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsProjectileMovementFunctionType))
 				{ WriteToMemberEnumAsBytePropertyFromJson<ECsItemMemberValueType::Type, EMCsItemMemberValueType>(JsonObject, ByteProperty, InStruct, MemberName); continue; }
@@ -4464,11 +4466,11 @@ void UCsLibrary_Load_DEPRECATED::ReadObjectFromJson(TSharedPtr<FJsonObject> &Jso
 			// FCsParticleSystem
 			if (StructProperty->Struct == FCsParticleSystem::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsParticleSystem>(JsonObject, StructProperty, InObject, MemberName); continue; }
-			// FCsFxElement
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			// FCsFxElement_DEPRECATED
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteToMemberStructPropertyFromJson<FCsFxElement>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				{ WriteToMemberStructPropertyFromJson<FCsFxElement_DEPRECATED>(JsonObject, StructProperty, InObject, MemberName); continue; }
 
 				if (ReadObjectFromJson_Internal_Helper(Internal, Property, JsonObject, InObject, InClass)) { continue; }
 				continue;
@@ -4632,9 +4634,9 @@ void UCsLibrary_Load_DEPRECATED::ReadObjectFromJson(TSharedPtr<FJsonObject> &Jso
 				// FECsProjectile
 				if (StructProperty->Struct == FECsProjectile::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsProjectile, EMCsProjectile>(JsonObject, StructProperty, InObject, MemberName); continue; }
-				// FECsSoundType
-				if (StructProperty->Struct == FECsSoundType::StaticStruct())
-				{ WriteToMemberEnumStructPropertyFromJson<FECsSoundType, EMCsSoundType>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				// FECsSound
+				if (StructProperty->Struct == FECsSound::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsSound, EMCsSound>(JsonObject, StructProperty, InObject, MemberName); continue; }
 				// FECsItemType
 				if (StructProperty->Struct == FECsItemType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsItemType, EMCsItemType>(JsonObject, StructProperty, InObject, MemberName); continue; }
@@ -4700,9 +4702,9 @@ void UCsLibrary_Load_DEPRECATED::ReadObjectFromJson(TSharedPtr<FJsonObject> &Jso
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimMontage>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
-				// FCsFxElement
-				if (InnerStructProperty->Struct == FCsFxElement::StaticStruct())
-				{ WriteToMemberArrayStructPropertyFromJson<FCsFxElement>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
+				// FCsFxElement_DEPRECATED
+				if (InnerStructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFxElement_DEPRECATED>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
 				// FCsFpvFxElement
 				if (InnerStructProperty->Struct == FCsFpvFxElement::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsFpvFxElement>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
@@ -4804,15 +4806,15 @@ void UCsLibrary_Load_DEPRECATED::ReadObjectFromJson(TSharedPtr<FJsonObject> &Jso
 				// EVerticalTextAligment
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::VerticalTextAligment))
 				{ WriteToMemberEnumAsBytePropertyFromJson<EVerticalTextAligment, EMVerticalTextAligment>(JsonObject, ByteProperty, InObject, MemberName); continue; }
-				// ECsFxPriority
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFxPriority))
-				{ WriteToMemberEnumAsBytePropertyFromJson<ECsFxPriority::Type, EMCsFxPriority>(JsonObject, ByteProperty, InObject, MemberName); continue; }
+				// ECsFXPriority
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFXPriority))
+				//{ WriteToMemberEnumAsBytePropertyFromJson<ECsFXPriority, EMCsFXPriority>(JsonObject, ByteProperty, InObject, MemberName); continue; }
 				// ECsSoundPriority
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
-				{ WriteToMemberEnumAsBytePropertyFromJson<ECsSoundPriority::Type, EMCsSoundPriority>(JsonObject, ByteProperty, InObject, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
+				//{ WriteToMemberEnumAsBytePropertyFromJson<ECsSoundPriority, EMCsSoundPriority>(JsonObject, ByteProperty, InObject, MemberName); continue; }
 				// ECsParametricFunctionType
-				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
-				{ WriteToMemberEnumAsBytePropertyFromJson<ECsParametricFunctionType::Type, EMCsParametricFunctionType>(JsonObject, ByteProperty, InObject, MemberName); continue; }
+				//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsParametricFunctionType))
+				//{ WriteToMemberEnumAsBytePropertyFromJson<ECsParametricFunctionType, EMCsParametricFunctionType>(JsonObject, ByteProperty, InObject, MemberName); continue; }
 				// ECsItemMemberValueType
 				if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsItemMemberValueType))
 				{ WriteToMemberEnumAsBytePropertyFromJson<ECsItemMemberValueType::Type, EMCsItemMemberValueType>(JsonObject, ByteProperty, InObject, MemberName); continue; }
@@ -5437,8 +5439,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromSoftObjectProperty_AnimMon
 				}
 			}
 
-			Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
@@ -5486,8 +5488,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromSoftObjectProperty_AnimMon
 				}
 			}
 
-			Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Kilobytes);
-			Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Kilobytes);
+			Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
@@ -5522,8 +5524,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromSoftObjectProperty_AnimSeq
 			UAnimSequence* Asset = Cast<UAnimSequence>(Member->LoadSynchronous());
 
 			Reference.Size.Bytes	 = Asset->GetApproxCompressedSize();
-			Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
@@ -5558,8 +5560,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromSoftObjectProperty_AnimSeq
 			UAnimSequence* Asset = Cast<UAnimSequence>(Member->LoadSynchronous());
 
 			Reference.Size.Bytes	 = Asset->GetApproxCompressedSize();
-			Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
@@ -5605,8 +5607,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromSoftObjectProperty_Materia
 				Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 			}
 
-			Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
@@ -5652,8 +5654,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromSoftObjectProperty_Materia
 				Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 			}
 
-			Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
@@ -5690,8 +5692,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromSoftObjectProperty_Bluepri
 			UObject* Asset = Member->LoadSynchronous();
 
 			Reference.Size.Bytes = Asset->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
-			Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
@@ -5728,8 +5730,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromSoftObjectProperty_Bluepri
 			UObject* Asset = Member->LoadSynchronous();
 
 			Reference.Size.Bytes = Asset->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
-			Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
@@ -5781,8 +5783,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromArraySoftObjectProperty_An
 					}
 				}
 
-				Reference.Size.Kilobytes = UCsLibrary_Math::KilobytesToBytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = FCsLibrary_Math::KilobytesToBytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -5835,8 +5837,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromArraySoftObjectProperty_An
 					}
 				}
 
-				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -5876,8 +5878,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromArraySoftObjectProperty_An
 				UAnimSequence* Asset = Cast<UAnimSequence>((*Member)[I].LoadSynchronous());
 
 				Reference.Size.Bytes = Asset->GetApproxCompressedSize();
-				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -5917,8 +5919,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromArraySoftObjectProperty_An
 				UAnimSequence* Asset = Cast<UAnimSequence>((*Member)[I].LoadSynchronous());
 
 				Reference.Size.Bytes = Asset->GetApproxCompressedSize();
-				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -5975,8 +5977,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromArraySoftObjectProperty_Ma
 					Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 				}
 
-				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -6027,8 +6029,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromArraySoftObjectProperty_Ma
 					Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 				}
 
-				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -6069,8 +6071,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromArraySoftObjectProperty_Bl
 				UBlueprint* Asset = (*Member)[I].LoadSynchronous();
 
 				Reference.Size.Bytes = Asset->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
-				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -6111,8 +6113,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferenceFromArraySoftObjectProperty_Bl
 				UBlueprint* Asset = (*Member)[I].LoadSynchronous();
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
-				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -6163,8 +6165,8 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferencesFromStruct(void* InStruct, US
 			{
 				if (SoftObjectProperty->ArrayDim == CS_SINGLETON)
 				{ GetAssetReferenceFromSoftObjectProperty_MaterialInstanceConstant(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
-				if (SoftObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
-				{ GetAssetReferenceFromFixedArraySoftObjectProperty_EnumSize_MaterialInstanceConstant<ECS_INTERACTIVE_STATE_MAX>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
+				//if (SoftObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
+				//{ GetAssetReferenceFromFixedArraySoftObjectProperty_EnumSize_MaterialInstanceConstant<ECS_INTERACTIVE_STATE_MAX>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
 
 				if (Internal)
 				{
@@ -6275,11 +6277,11 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferencesFromStruct(void* InStruct, US
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ GetAssetReferencesFromStructProperty<FCsFpvSoundElement>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			}
-			// FCsFxElement
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			// FCsFxElement_DEPRECATED
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ GetAssetReferencesFromStructProperty<FCsFxElement>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+				{ GetAssetReferencesFromStructProperty<FCsFxElement_DEPRECATED>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			}
 			// FCsFpvFxElement
 			if (StructProperty->Struct == FCsFpvFxElement::StaticStruct())
@@ -6424,9 +6426,9 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferencesFromStruct(void* InStruct, US
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsAnimMontage>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
-				// FCsFxElement
-				if (InnerStructProperty->Struct == FCsFxElement::StaticStruct())
-				{ GetAssetReferencesFromArrayStructProperty<FCsFxElement>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+				// FCsFxElement_DEPRECATED
+				if (InnerStructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
+				{ GetAssetReferencesFromArrayStructProperty<FCsFxElement_DEPRECATED>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 				// FCsFpvFxElement
 				if (InnerStructProperty->Struct == FCsFpvFxElement::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsFpvFxElement>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
@@ -6581,11 +6583,11 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferencesFromObject(void* InObject, UC
 			// FCsParticleSystem
 			if (StructProperty->Struct == FCsParticleSystem::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsParticleSystem>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
-			// FCsFxElement
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			// FCsFxElement_DEPRECATED
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{ 
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ GetAssetReferencesFromStructProperty<FCsFxElement>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+				{ GetAssetReferencesFromStructProperty<FCsFxElement_DEPRECATED>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 				
 				if (Internal)
 				{
@@ -6687,9 +6689,9 @@ void UCsLibrary_Load_DEPRECATED::GetAssetReferencesFromObject(void* InObject, UC
 				// FCsMaterialInstanceConstant
 				if (InnerStructProperty->Struct == FCsMaterialInstanceConstant::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsMaterialInstanceConstant>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
-				// FCsFxElement
-				if (InnerStructProperty->Struct == FCsFxElement::StaticStruct())
-				{ GetAssetReferencesFromArrayStructProperty<FCsFxElement>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+				// FCsFxElement_DEPRECATED
+				if (InnerStructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
+				{ GetAssetReferencesFromArrayStructProperty<FCsFxElement_DEPRECATED>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 				// FCsFpvFxElement
 				if (InnerStructProperty->Struct == FCsFpvFxElement::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsFpvFxElement>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
@@ -7646,11 +7648,11 @@ void UCsLibrary_Load_DEPRECATED::LoadStructWithTSoftObjectPtrs(const FString &Ob
 				}
 				continue;
 			}
-			// FCsFxElement
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			// FCsFxElement_DEPRECATED
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ LoadMemberStructProperty<FCsFxElement>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+				{ LoadMemberStructProperty<FCsFxElement_DEPRECATED>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 				
 				if (Internal)
 				{
@@ -7772,9 +7774,9 @@ void UCsLibrary_Load_DEPRECATED::LoadStructWithTSoftObjectPtrs(const FString &Ob
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ LoadMemberArrayStructProperty<FCsAnimMontage>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
-				// FCsFxElement
-				if (InnerStructProperty->Struct == FCsFxElement::StaticStruct())
-				{ LoadMemberArrayStructProperty<FCsFxElement>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
+				// FCsFxElement_DEPRECATED
+				if (InnerStructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
+				{ LoadMemberArrayStructProperty<FCsFxElement_DEPRECATED>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
 				// FCsFpvFxElement
 				if (InnerStructProperty->Struct == FCsFpvFxElement::StaticStruct())
 				{ LoadMemberArrayStructProperty<FCsFpvFxElement>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
@@ -8003,11 +8005,11 @@ void UCsLibrary_Load_DEPRECATED::LoadObjectWithTSoftObjectPtrs(const FString &Ob
 			// FCsParticleSystem
 			if (StructProperty->Struct == FCsParticleSystem::StaticStruct())
 			{ LoadMemberStructProperty<FCsParticleSystem>(StructProperty, InObject, StructName, LoadFlags); continue; }
-			// FCsFxElement
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			// FCsFxElement_DEPRECATED
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ LoadMemberStructProperty<FCsFxElement>(StructProperty, InObject, StructName, LoadFlags); continue; }
+				{ LoadMemberStructProperty<FCsFxElement_DEPRECATED>(StructProperty, InObject, StructName, LoadFlags); continue; }
 
 				if (Internal)
 				{
@@ -8908,11 +8910,11 @@ void UCsLibrary_Load_DEPRECATED::UnLoadStructWithTSoftObjectPtrs(void* InStruct,
 				{ UnLoadMemberStructProperty<FCsFpvSoundElement>(StructProperty, InStruct); continue; }
 				continue;
 			}
-			// FCsFxElement
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			// FCsFxElement_DEPRECATED
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ UnLoadMemberStructProperty<FCsFxElement>(StructProperty, InStruct); continue; }
+				{ UnLoadMemberStructProperty<FCsFxElement_DEPRECATED>(StructProperty, InStruct); continue; }
 				continue;
 			}
 			// FCsFpvFxElement
@@ -9099,11 +9101,11 @@ void UCsLibrary_Load_DEPRECATED::UnLoadObjectWithTSoftObjectPtrs(void* InObject,
 				{ UnLoadMemberStructProperty<FCsFpvSoundElement>(StructProperty, InObject); continue; }
 				continue;
 			}
-			// FCsFxElement
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			// FCsFxElement_DEPRECATED
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ UnLoadMemberStructProperty<FCsFxElement>(StructProperty, InObject); continue; }
+				{ UnLoadMemberStructProperty<FCsFxElement_DEPRECATED>(StructProperty, InObject); continue; }
 				continue;
 			}
 			// FCsFpvFxElement
@@ -9895,12 +9897,12 @@ bool UCsLibrary_Load_DEPRECATED::IsLoadedStructWithTSoftObjectPtrs(const FString
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsFpvSoundElement>(StructProperty, InStruct, StructName);
 			}
-			// FCsFxElement
+			// FCsFxElement_DEPRECATED
 			else
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-					Pass &= IsLoadedMemberStructProperty<FCsFxElement>(StructProperty, InStruct, StructName);
+					Pass &= IsLoadedMemberStructProperty<FCsFxElement_DEPRECATED>(StructProperty, InStruct, StructName);
 			}
 			// FCsFpvFxElement
 			else
@@ -10082,12 +10084,12 @@ bool UCsLibrary_Load_DEPRECATED::IsLoadedObjectWithTSoftObjectPtrs(const FString
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsFpvSoundElement>(StructProperty, InObject, StructName);
 			}
-			// FCsFxElement
+			// FCsFxElement_DEPRECATED
 			else
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-					Pass &= IsLoadedMemberStructProperty<FCsFxElement>(StructProperty, InObject, StructName);
+					Pass &= IsLoadedMemberStructProperty<FCsFxElement_DEPRECATED>(StructProperty, InObject, StructName);
 			}
 			// FCsFpvFxElement
 			else
@@ -10403,11 +10405,11 @@ void UCsLibrary_Load_DEPRECATED::CheckObjectWithEnum(const FString &ObjectName, 
 			// FCsParticleSystem
 			if (StructProperty->Struct == FCsParticleSystem::StaticStruct())
 			{ CheckEnumStructProperty<FCsParticleSystem>(StructProperty, InObject, StructName, nullptr); continue; }
-			// FCsFxElement
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			// FCsFxElement_DEPRECATED
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ CheckEnumStructProperty<FCsFxElement>(StructProperty, InObject, StructName, nullptr); continue; }
+				{ CheckEnumStructProperty<FCsFxElement_DEPRECATED>(StructProperty, InObject, StructName, nullptr); continue; }
 
 				if (Internal)
 				{
@@ -10584,12 +10586,12 @@ void UCsLibrary_Load_DEPRECATED::CheckObjectWithEnum(const FString &ObjectName, 
 					// ECsLoadFlags_Editor
 					//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsLoadFlags_Editor))
 					//{ CheckEnumByteProperty<ECsLoadFlags_Editor::Type>(ByteProperty, InObject, MemberName, ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX); continue; }
-					// ECsFxPriority
-					if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFxPriority))
-					{ CheckEnumByteProperty<ECsFxPriority::Type>(ByteProperty, InObject, MemberName, ECsFxPriority::ECsFxPriority_MAX); continue; }
+					// ECsFXPriority
+					//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsFXPriority))
+					//{ CheckEnumByteProperty<ECsFXPriority>(ByteProperty, InObject, MemberName, ECsFXPriority::ECsFXPriority_MAX); continue; }
 					// ECsSoundPriority
-					if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
-					{ CheckEnumByteProperty<ECsSoundPriority::Type>(ByteProperty, InObject, MemberName, ECsSoundPriority::ECsSoundPriority_MAX); continue; }
+					//if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsSoundPriority))
+					//{ CheckEnumByteProperty<ECsSoundPriority>(ByteProperty, InObject, MemberName, ECsSoundPriority::ECsSoundPriority_MAX); continue; }
 					// ECsInteractiveCollision
 					if (ByteProperty->Enum->CppType.Contains(NCsCommonLoadCached::Str::CsInteractiveCollision))
 					{
@@ -11135,12 +11137,12 @@ void UCsLibrary_Load_DEPRECATED::SetObjectMembers(void* FromObject, void* ToObje
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 					SetMemberProperty<FCsFpvSoundElement>(ToObject, Property, MemberValues[Index]);
 			}
-			// FCsFxElement
+			// FCsFxElement_DEPRECATED
 			else
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-					SetMemberProperty<FCsFxElement>(ToObject, Property, MemberValues[Index]);
+					SetMemberProperty<FCsFxElement_DEPRECATED>(ToObject, Property, MemberValues[Index]);
 			}
 			// FCsFpvFxElement
 			else
@@ -11560,12 +11562,12 @@ void UCsLibrary_Load_DEPRECATED::GetObjectMembers(void* InObject, UClass* const 
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFpvSoundElement>(InObject));
 			}
-			// FCsFxElement
+			// FCsFxElement_DEPRECATED
 			else
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			if (StructProperty->Struct == FCsFxElement_DEPRECATED::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFxElement>(InObject));
+					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFxElement_DEPRECATED>(InObject));
 			}
 			// FCsFpvFxElement
 			else

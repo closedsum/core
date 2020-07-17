@@ -17,7 +17,7 @@
 #include "Data/CsData_Character.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
-#include "Managers/FX/CsManager_FX.h"
+//#include "Managers/FX/CsManager_FX.h"
 #include "Managers/Projectile/CsManager_Projectile.h"
 #include "Managers/Projectile/CsProjectileBase.h"
 #include "Managers/Damage/CsManager_Damage.h"
@@ -997,7 +997,7 @@ void ACsWeapon_DEPRECATED::Disable()
 {
 	const int32& Count = EMCsWeaponFireMode::Get().Num();
 
-	if (CurrentState == FiringState || GetSound(FireSound))
+	//if (CurrentState == FiringState || GetSound(FireSound))
 	{
 		for (int32 I = 0; I < Count; ++I)
 		{
@@ -1123,7 +1123,7 @@ void ACsWeapon_DEPRECATED::StopAnimation(const FECsWeaponFireMode& FireMode, con
 #pragma region
 
 UObject* ACsWeapon_DEPRECATED::GetSoundParent() { return nullptr; }
-ACsSound* ACsWeapon_DEPRECATED::GetSound(const FECsWeaponSound &SoundType){ return nullptr; }
+//ACsSound* ACsWeapon_DEPRECATED::GetSound(const FECsWeaponSound &SoundType){ return nullptr; }
 
 void ACsWeapon_DEPRECATED::PlaySound(const FECsWeaponFireMode& FireMode, const FECsWeaponSound &SoundType)
 {
@@ -2141,8 +2141,8 @@ void ACsWeapon_DEPRECATED::FireHitscan(const FECsWeaponFireMode& FireMode, const
 		// Hit IS Found. Check penetrations and modifiers
 		if (HitFound)
 		{
-			ACsManager_Damage* Manager_Damage = ACsManager_Damage::Get(GetWorld());
-			FCsDamageEvent* Event			  = Manager_Damage->AllocateEvent();
+			//ACsManager_Damage* Manager_Damage = ACsManager_Damage::Get(GetWorld());
+			FCsDamageEvent* Event = nullptr;// Manager_Damage->AllocateEvent();
 
 			Event->Damage	  = Data_Projectile->GetDamage();
 			Event->Instigator = GetMyOwner();
@@ -2246,6 +2246,7 @@ FVector ACsWeapon_DEPRECATED::GetMuzzleLocation(const ECsViewType& ViewType, con
 
 void ACsWeapon_DEPRECATED::PlayMuzzleFlash(const FECsWeaponFireMode& FireMode)
 {
+	/*
 	AICsManager_FX* Manager_FX = nullptr;
 
 #if WITH_EDITOR 
@@ -2279,6 +2280,7 @@ void ACsWeapon_DEPRECATED::PlayMuzzleFlash(const FECsWeaponFireMode& FireMode)
 	Payload->Parent = GetMuzzleFlashParent(ViewType);
 
 	Manager_FX->Play(Payload);
+	*/
 }
 
 #pragma endregion Firing

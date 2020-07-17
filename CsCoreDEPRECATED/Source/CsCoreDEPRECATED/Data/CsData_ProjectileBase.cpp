@@ -88,7 +88,7 @@ const float& UCsData_ProjectileBase::GetSphereRadius() { return NCsCached::Ref::
 #pragma region
 
 const bool& UCsData_ProjectileBase::GetUseTrailFX() { return NCsCached::Ref::False; }
-FCsFxElement* UCsData_ProjectileBase::GetTrailFX(const ECsViewType& ViewType) { return nullptr; }
+FCsFxElement_DEPRECATED* UCsData_ProjectileBase::GetTrailFX(const ECsViewType& ViewType) { return nullptr; }
 
 #pragma endregion FX
 

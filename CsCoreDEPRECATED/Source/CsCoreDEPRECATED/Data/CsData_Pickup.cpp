@@ -21,7 +21,7 @@ FVector UCsData_Pickup::GetSpawnAcceleration() { return FVector::ZeroVector; }
 // FX
 #pragma region
 
-FCsFxElement* UCsData_Pickup::GetFX(const FECsPickupFX& FxType) { return nullptr; }
+FCsFxElement_DEPRECATED* UCsData_Pickup::GetFX(const FECsPickupFX& FxType) { return nullptr; }
 
 #pragma endregion FX
 
@@ -34,6 +34,7 @@ FCsSoundElement* UCsData_Pickup::GetSound(const FECsPickupSound& SoundType) { re
 
 void UCsData_Pickup::PlaySound(UWorld* InWorld, const FECsPickupSound& SoundType, UObject* InOwner, UObject* InParent)
 {
+	/*
 	FCsSoundElement* SoundElement = GetSound(SoundType);
 
 	if (!SoundElement->Get())
@@ -50,6 +51,7 @@ void UCsData_Pickup::PlaySound(UWorld* InWorld, const FECsPickupSound& SoundType
 	Payload->Parent = InParent;
 
 	Manager_Sound->Play(Payload);
+	*/
 }
 
 #pragma endregion Sound

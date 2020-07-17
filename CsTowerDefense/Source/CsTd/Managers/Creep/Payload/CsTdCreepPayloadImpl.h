@@ -1,12 +1,14 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "Managers/Pool/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
 #include "Managers/Creep/Payload/CsTdCreepPayload.h"
 
 struct FCsInterfaceMap;
 class UObject;
 
+/**
+*/
 struct CSTD_API FCsTdCreepPayloadImpl : public ICsPooledObjectPayload,
 									public ICsTdCreepPayload
 {

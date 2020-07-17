@@ -1082,8 +1082,8 @@ public:
 				UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -1119,8 +1119,8 @@ public:
 				UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -1187,8 +1187,8 @@ public:
 									UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 									Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-									Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-									Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+									Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+									Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 								}
 #endif // #if WITH_EDITOR
 							}
@@ -1223,8 +1223,8 @@ public:
 				UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 #endif // #if WITH_EDITOR
 			}
 		}
@@ -1314,8 +1314,8 @@ public:
 				UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 #endif // #if WITH_EDITOR
 			}
 		}
@@ -1353,8 +1353,8 @@ public:
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-					Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
@@ -1390,7 +1390,7 @@ public:
 					continue;
 
 				OutAssetReferences.AddDefaulted();
-
+				w
 				const int32 Size = OutAssetReferences.Num();
 
 				FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
@@ -1413,8 +1413,8 @@ public:
 						Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 					}
 
-					Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
@@ -1456,8 +1456,8 @@ public:
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(EResourceSizeMode::Inclusive);
-					Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
@@ -1496,8 +1496,8 @@ public:
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(EResourceSizeMode::Inclusive);
-					Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
@@ -1583,8 +1583,8 @@ public:
 				UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -1624,8 +1624,8 @@ public:
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-					Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
@@ -1666,8 +1666,8 @@ public:
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-					Reference.Size.Kilobytes = UCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = UCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = FCsLibrary_Math::BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = FCsLibrary_Math::BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}

@@ -18,7 +18,7 @@
 #include "Managers/Input/CsManager_Input.h"
 #include "Managers/Runnable/CsManager_Runnable.h"
 #include "Managers/WidgetActor/CsManager_WidgetActor.h"
-#include "Managers/FX/CsManager_FX.h"
+//#include "Managers/FX/CsManager_FX.h"
 #include "Managers/Sound/CsManager_Sound.h"
 #include "Managers/Projectile/CsManager_Projectile.h"
 #include "Managers/Damage/CsManager_Damage.h"
@@ -171,19 +171,22 @@ void ACsGameState_DEPRECATED::SeamlessTravelTransitionCheckpoint(bool bToTransit
 
 	}
 	// Manager FX
+	/*
 	if (Manager_FX && !Manager_FX->IsPendingKill())
 	{
 		Manager_FX->Destroy(true);
 		Manager_FX = nullptr;
-
 	}
+	*/
 	// Manager Sound
+	/*
 	if (Manager_Sound && !Manager_Sound->IsPendingKill())
 	{
 		Manager_Sound->Destroy(true);
 		Manager_Sound = nullptr;
 
 	}
+	*/
 	// Manager Projectile
 	/*
 	if (Manager_Projectile && !Manager_Projectile->IsPendingKill())
@@ -194,12 +197,13 @@ void ACsGameState_DEPRECATED::SeamlessTravelTransitionCheckpoint(bool bToTransit
 	}
 	*/
 	// Manager Damage
+	/*
 	if (Manager_Damage && !Manager_Damage->IsPendingKill())
 	{
 		Manager_Damage->Destroy(true);
 		Manager_Damage = nullptr;
-
 	}
+	*/
 	// Manager InteractiveActor
 	if (Manager_InteractiveActor && !Manager_InteractiveActor->IsPendingKill())
 	{

@@ -1,7 +1,7 @@
 #include "Data/CsData_Impact.h"
 #include "CsCoreDEPRECATED.h"
 
-#include "Managers/FX/CsManager_FX.h"
+//#include "Managers/FX/CsManager_FX.h"
 #include "Managers/Sound/CsManager_Sound.h"
 
 UCsData_Impact::UCsData_Impact(const FObjectInitializer& ObjectInitializer)
@@ -9,10 +9,11 @@ UCsData_Impact::UCsData_Impact(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-FCsFxElement* UCsData_Impact::GetImpactFX(const TCsSurfaceType& SurfaceType) { return nullptr; }
+FCsFxElement_DEPRECATED* UCsData_Impact::GetImpactFX(const TCsSurfaceType& SurfaceType) { return nullptr; }
 
 void UCsData_Impact::PlayImpactFX(UWorld* InWorld, const TEnumAsByte<EPhysicalSurface>& PhysicalSurface, UObject* InOwner, const FVector& Location, const FVector& Normal)
 {
+	/*
 	const TCsSurfaceType SurfaceType = (*PhysicalSurfaceToSurfaceType)(PhysicalSurface);
 	FCsFxElement* FxElement			 = GetImpactFX(SurfaceType);
 
@@ -30,12 +31,14 @@ void UCsData_Impact::PlayImpactFX(UWorld* InWorld, const TEnumAsByte<EPhysicalSu
 	Payload->Rotation = Normal.Rotation();
 
 	Manager_FX->Play(Payload);
+	*/
 }
 
 FCsSoundElement* UCsData_Impact::GetImpactSound(const TCsSurfaceType& SurfaceType) { return nullptr; }
 
 void UCsData_Impact::PlayImpactSound(UWorld* InWorld, const TEnumAsByte<EPhysicalSurface>& PhysicalSurface, UObject* InOwner, const FVector& Location)
 {
+	/*
 	const TCsSurfaceType SurfaceType = (*PhysicalSurfaceToSurfaceType)(PhysicalSurface);
 	FCsSoundElement* SoundElement	 = GetImpactSound(SurfaceType);
 
@@ -53,4 +56,5 @@ void UCsData_Impact::PlayImpactSound(UWorld* InWorld, const TEnumAsByte<EPhysica
 	Payload->Location = Location;
 
 	Manager_Sound->Play(Payload);
+	*/
 }

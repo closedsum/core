@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "Types/CsTypes_Sound.h"
+#include "Managers/Sound/CsTypes_Sound.h"
 #include "CsManager_AI_Sense.generated.h"
 
 class AActor;

@@ -257,17 +257,17 @@ public:
 	UPROPERTY()
 	class AICsManager_WidgetActor* Manager_WidgetActor;
 
-	UPROPERTY()
-	class AICsManager_FX* Manager_FX;
+	//UPROPERTY()
+	//class AICsManager_FX* Manager_FX;
 
-	UPROPERTY()
-	class AICsManager_Sound* Manager_Sound;
+	//UPROPERTY()
+	//class AICsManager_Sound* Manager_Sound;
 
 	UPROPERTY()
 	class UCsManager_Projectile* Manager_Projectile;
 
-	UPROPERTY()
-	class ACsManager_Damage* Manager_Damage;
+	//UPROPERTY()
+	//class ACsManager_Damage* Manager_Damage;
 
 	UPROPERTY()
 	class AICsManager_InteractiveActor* Manager_InteractiveActor;

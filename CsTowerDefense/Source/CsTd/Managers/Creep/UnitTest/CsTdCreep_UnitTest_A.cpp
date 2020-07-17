@@ -3,8 +3,8 @@
 #include "CsTd.h"
 
 // Pool
-#include "Managers/Pool/CsPooledObjectCache.h"
-#include "Managers/Pool/CsPooledObjectPayload.h"
+#include "Managers/Pool/Cache/CsPooledObjectCache.h"
+#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
 // Components
 #include "Components/StaticMeshComponent.h"
 // Creep

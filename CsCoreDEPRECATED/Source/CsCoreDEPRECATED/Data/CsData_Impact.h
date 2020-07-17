@@ -1,8 +1,8 @@
 #pragma once
 #include "Data/CsData_Impl.h"
 #include "Types/CsTypes.h"
-#include "Types/CsTypes_FX.h"
-#include "Types/CsTypes_Sound.h"
+#include "Managers/FX/CsTypes_FX.h"
+#include "Managers/Sound/CsTypes_Sound.h"
 #include "CsData_Impact.generated.h"
 
 /* Current Order of Categories
@@ -21,7 +21,7 @@ class CSCOREDEPRECATED_API UCsData_Impact : public UCsData_Impl
 
 	CS_DECLARE_SURFACE_TYPE_FUNCTIONS
 
-	virtual FCsFxElement* GetImpactFX(const TCsSurfaceType& SurfaceType);
+	virtual FCsFxElement_DEPRECATED* GetImpactFX(const TCsSurfaceType& SurfaceType);
 
 	UFUNCTION(BlueprintCallable, Category = "Impacts")
 	virtual void PlayImpactFX(UWorld* InWorld, const TEnumAsByte<EPhysicalSurface>& PhysicalSurface, UObject* InOwner, const FVector& Location, const FVector& Normal);

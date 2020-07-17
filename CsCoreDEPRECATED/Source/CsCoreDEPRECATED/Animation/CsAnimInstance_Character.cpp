@@ -13,7 +13,7 @@
 #include "Data/CsData_Weapon_DEPRECATED.h"
 #include "Data/CsData_WeaponMaterialSkin.h"
 // Managers
-#include "Managers/FX/CsManager_FX.h"
+//#include "Managers/FX/CsManager_FX.h"
 #include "Managers/Sound/CsManager_Sound.h"
 
 #include "Pawn/CsPawn.h"

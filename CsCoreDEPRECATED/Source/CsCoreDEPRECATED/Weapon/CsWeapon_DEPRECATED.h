@@ -564,8 +564,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Sound")
 	virtual UObject* GetSoundParent();
 
-	UFUNCTION(BlueprintCallable, Category = "Sound")
-	virtual class ACsSound* GetSound(const FECsWeaponSound &SoundType);
+	//UFUNCTION(BlueprintCallable, Category = "Sound")
+	//virtual class ACsSound* GetSound(const FECsWeaponSound &SoundType);
 
 	virtual void PlaySound(const FECsWeaponFireMode& FireMode, const FECsWeaponSound &SoundType);
 	virtual void StopSound(const FECsWeaponFireMode& FireMode, const FECsWeaponSound &SoundType);

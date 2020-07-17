@@ -89,8 +89,8 @@ class CSCOREDEPRECATED_API UCsData_ProjectileWeapon_DEPRECATED : public UCsData_
 // FX
 #pragma region
 
-	virtual FCsFxElement* GetMuzzleFX(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const int32& Index = 0);
-	virtual FCsFxElement* GetMuzzleFX(const FECsWeaponFireMode& FireMode, const int32& Index = 0);
+	virtual FCsFxElement_DEPRECATED* GetMuzzleFX(const ECsViewType& ViewType, const FECsWeaponFireMode& FireMode, const int32& Index = 0);
+	virtual FCsFxElement_DEPRECATED* GetMuzzleFX(const FECsWeaponFireMode& FireMode, const int32& Index = 0);
 
 #pragma endregion FX
 

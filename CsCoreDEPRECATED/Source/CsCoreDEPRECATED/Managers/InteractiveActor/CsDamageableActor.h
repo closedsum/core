@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Managers/InteractiveActor/CsInteractiveActor.h"
-#include "Types/CsTypes_Damage.h"
+#include "Managers/Damage/CsTypes_Damage.h"
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "CsDamageableActor.generated.h"
 

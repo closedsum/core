@@ -2,8 +2,8 @@
 	"FileVersion": 3,
 	"Version": 2,
 	"VersionName": "0.0.1",
-	"FriendlyName": "Platform Services",
-	"Description": "Closed Sum Games Platform Services",
+	"FriendlyName": "Closed Sum Games Status Effect",
+	"Description": "Closed Sum Games Status Effect",
 	"Category": "Programming",
 	"CreatedBy": "Closed Sum Games LLC",
 	"CreatedByURL": "",
@@ -15,22 +15,19 @@
 	"Installed": true,
   "Modules": [
     {
-      "Name": "CsPlatformServices",
+      "Name": "CsSe",
       "Type": "Runtime",
+      "LoadingPhase": "PostEngineInit"
+    },
+    {
+      "Name": "CsSeEditor",
+      "Type": "Editor",
       "LoadingPhase": "Default"
     }
   ],
   "Plugins": [
     {
       "Name": "CsPlugin",
-      "Enabled": true
-    },
-    {
-      "Name": "OnlineSubsystem",
-      "Enabled": true
-    },
-    {
-      "Name": "OnlineSubsystemUtils",
       "Enabled": true
     }
   ]

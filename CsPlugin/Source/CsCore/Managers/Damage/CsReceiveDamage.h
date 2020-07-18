@@ -2,10 +2,10 @@
 #pragma once
 
 #include "UObject/Interface.h"
-#include "CsReceiveDamageObject.generated.h"
+#include "CsReceiveDamage.generated.h"
 
 UINTERFACE(BlueprintType, meta = (CannotImplementInterfaceInBlueprint))
-class CSCORE_API UCsReceiveDamageObject : public UInterface
+class CSCORE_API UCsReceiveDamage : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
@@ -14,7 +14,7 @@ struct ICsDamageEvent;
 
 /**
 */
-class CSCORE_API ICsReceiveDamageObject
+class CSCORE_API ICsReceiveDamage
 {
 	GENERATED_IINTERFACE_BODY()
 

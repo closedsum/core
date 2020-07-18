@@ -53,4 +53,8 @@ public:
 	* return
 	*/
 	virtual const FHitResult& GetHitResult() const = 0;
+
+	/**
+	*/
+	virtual const TArray<UObject*>& GetIgnoreObjects() const = 0;
 };

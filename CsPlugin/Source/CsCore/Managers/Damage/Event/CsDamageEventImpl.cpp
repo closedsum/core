@@ -10,7 +10,8 @@ FCsDamageEventImpl::FCsDamageEventImpl() :
 	Instigator(nullptr),
 	Causer(nullptr),
 	HitType(),
-	HitResult()
+	HitResult(),
+	IgnoreObjects()
 {
 	InterfaceMap.SetRootName(FCsDamageEventImpl::Name);
 
@@ -24,4 +25,5 @@ void FCsDamageEventImpl::Reset()
 	Causer = nullptr;
 	HitType = EMCsHitType::Get().GetMAX();
 	HitResult.Reset(0.0f, false);
+	IgnoreObjects.Reset(IgnoreObjects.Max());
 }

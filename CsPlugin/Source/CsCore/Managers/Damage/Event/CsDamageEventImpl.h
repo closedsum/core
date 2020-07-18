@@ -31,6 +31,8 @@ public:
 
 	FHitResult HitResult;
 
+	TArray<UObject*> IgnoreObjects;
+
 public:
 
 	FCsDamageEventImpl();
@@ -73,6 +75,11 @@ public:
 	FORCEINLINE const FHitResult& GetHitResult() const
 	{
 		return HitResult;
+	}
+
+	FORCEINLINE const TArray<UObject*>& GetIgnoreObjects() const
+	{
+		return IgnoreObjects;
 	}
 
 #pragma endregion ICsDamageEvent

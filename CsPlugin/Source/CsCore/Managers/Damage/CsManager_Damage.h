@@ -22,7 +22,7 @@ struct CSCORE_API FCsManager_DamageEvent : public TCsManager_ResourceValueType_A
 #pragma endregion Structs
 
 class ICsGetManagerDamage;
-class ICsDamageableObject;
+class ICsReceiveDamageObject;
 
 UCLASS()
 class CSCORE_API UCsManager_Damage : public UObject
@@ -95,13 +95,13 @@ public:
 #pragma region
 protected:
 
-	TMap<FCsUniqueObjectId, ICsDamageableObject*> DamageableObjectMap;
+	TMap<FCsUniqueObjectId, ICsReceiveDamageObject*> DamageableObjectMap;
 
 public:
 
-	void Add(ICsDamageableObject* Object);
+	void Add(ICsReceiveDamageObject* Object);
 
-	void Remove(ICsDamageableObject* Object);
+	void Remove(ICsReceiveDamageObject* Object);
 
 #pragma endregion Damageable Objects
 

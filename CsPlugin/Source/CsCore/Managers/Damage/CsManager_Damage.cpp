@@ -8,7 +8,7 @@
 #include "Library/CsLibrary_Common.h"
 #include "Managers/Damage/Expression/CsLibrary_DamageExpression.h"
 // Damage
-#include "Managers/Damage/CsDamageableObject.h"
+#include "Managers/Damage/CsReceiveDamageObject.h"
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
 #include "Managers/Damage/Expression/CsDamageExpression.h"
 #include "Managers/Damage/Shape/CsDamageShape.h"
@@ -249,7 +249,7 @@ void UCsManager_Damage::SetMyRoot(UObject* InRoot)
 // Damageable Objects
 #pragma region
 
-void UCsManager_Damage::Add(ICsDamageableObject* Object)
+void UCsManager_Damage::Add(ICsReceiveDamageObject* Object)
 {
 	checkf(Object, TEXT("UCsManager_Damage::Add: Object is NULL."));
 
@@ -271,7 +271,7 @@ void UCsManager_Damage::Add(ICsDamageableObject* Object)
 	DamageableObjectMap.Add(Id, Object);
 }
 
-void UCsManager_Damage::Remove(ICsDamageableObject* Object)
+void UCsManager_Damage::Remove(ICsReceiveDamageObject* Object)
 {
 	checkf(Object, TEXT("UCsManager_Damage::Remove: Object is NULL."));
 
@@ -331,13 +331,13 @@ void UCsManager_Damage::OnEvent(const ICsDamageEvent* Event)
 		// Actor
 		if (AActor* Actor = HitResult.GetActor())
 		{
-			// Check if Actor implements interface: ICsDamageableObject
+			// Check if Actor implements interface: ICsReceiveDamageObject
 			UClass* Class = Actor->GetClass();
 			
-			if (Class->ImplementsInterface(UCsDamageableObject::StaticClass()))
+			if (Class->ImplementsInterface(UCsReceiveDamageObject::StaticClass()))
 			{
 				// Interface
-				if (ICsDamageableObject* Object = Cast<ICsDamageableObject>(Actor))
+				if (ICsReceiveDamageObject* Object = Cast<ICsReceiveDamageObject>(Actor))
 				{
 					Object->Damage(Event);
 				}
@@ -358,10 +358,10 @@ void UCsManager_Damage::OnEvent(const ICsDamageEvent* Event)
 			// Check if Component implements interface: ICsDamageableObject
 			UClass* Class = Component->GetClass();
 
-			if (Class->ImplementsInterface(UCsDamageableObject::StaticClass()))
+			if (Class->ImplementsInterface(UCsReceiveDamageObject::StaticClass()))
 			{
 				// Interface
-				if (ICsDamageableObject* Object = Cast<ICsDamageableObject>(Component))
+				if (ICsReceiveDamageObject* Object = Cast<ICsReceiveDamageObject>(Component))
 				{
 					Object->Damage(Event);
 				}

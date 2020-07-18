@@ -1,19 +1,19 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "UObject/Interface.h"
+#include "Containers/CsGetInterfaceMap.h"
 #include "CsTypes_StatusEffect.h"
 #include "CsStatusEffect.generated.h"
 
 UINTERFACE(Blueprintable)
-class CSSE_API UCsStatusEffect : public UInterface
+class CSSE_API UCsStatusEffect : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
 /**
 */
-class CSSE_API ICsStatusEffect
+class CSSE_API ICsStatusEffect : public ICsGetInterfaceMap
 {
 	GENERATED_IINTERFACE_BODY()
 

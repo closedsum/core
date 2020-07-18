@@ -5,3 +5,5 @@
 UCsStatusEffect::UCsStatusEffect(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
+
+const FName ICsStatusEffect::Name = FName("ICsStatusEffect");

@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
+#include "Types/Enum/CsEnumMap.h"
 
 #include "CsTypes_StatusEffect.generated.h"
 #pragma once
@@ -29,8 +30,43 @@ namespace NCsStatusEffectTriggerCondition
 
 	namespace Ref
 	{
+		extern CSSE_API const Type OnParentTrigger;
 		extern CSSE_API const Type OnHit;
 	}
 }
 
 #pragma endregion StatusEffectTriggerCondition
+
+// StatusEffectTriggerType
+#pragma region
+
+UENUM(BlueprintType)
+enum class ECsStatusEffectTriggerType : uint8
+{
+	Once							UMETA(DisplayName = "Once"),
+	Count							UMETA(DisplayName = "Count"),
+	Infinite						UMETA(DisplayName = "Infinite"),
+	ECsStatusEffectTriggerType_MAX  UMETA(Hidden),
+};
+
+struct CSSE_API EMCsStatusEffectTriggerType : public TCsEnumMap<ECsStatusEffectTriggerType>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsStatusEffectTriggerType, ECsStatusEffectTriggerType)
+};
+
+namespace NCsStatusEffectTriggerType
+{
+	typedef ECsStatusEffectTriggerType Type;
+
+	namespace Ref
+	{
+		extern CSSE_API const Type Once;
+		extern CSSE_API const Type Count;
+		extern CSSE_API const Type Infinite;
+		extern CSSE_API const Type ECsStatusEffectTriggerType_MAX;
+	}
+
+	extern CSSE_API const uint8 MAX;
+}
+
+#pragma endregion StatusEffectTriggerType

@@ -246,7 +246,7 @@ void UCsManager_Damage::SetMyRoot(UObject* InRoot)
 
 #pragma endregion Singleton
 
-// Damageable Objects
+// Receive Damage
 #pragma region
 
 void UCsManager_Damage::Add(ICsReceiveDamage* Object)
@@ -268,7 +268,7 @@ void UCsManager_Damage::Add(ICsReceiveDamage* Object)
 
 	const FCsUniqueObjectId& Id = UniqueObject->GetId();
 
-	DamageableObjectMap.Add(Id, Object);
+	ReceiveDamageMap.Add(Id, Object);
 }
 
 void UCsManager_Damage::Remove(ICsReceiveDamage* Object)
@@ -290,10 +290,10 @@ void UCsManager_Damage::Remove(ICsReceiveDamage* Object)
 
 	const FCsUniqueObjectId& Id = UniqueObject->GetId();
 
-	DamageableObjectMap.Remove(Id);
+	ReceiveDamageMap.Remove(Id);
 }
 
-#pragma endregion Damageable Objects
+#pragma endregion Receive Damage
 
 // Event
 #pragma region

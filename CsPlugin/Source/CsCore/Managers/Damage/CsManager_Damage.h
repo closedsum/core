@@ -91,11 +91,11 @@ public:
 
 #pragma endregion Singleton
 
-// Damageable Objects
+// Receive Damage
 #pragma region
 protected:
 
-	TMap<FCsUniqueObjectId, ICsReceiveDamage*> DamageableObjectMap;
+	TMap<FCsUniqueObjectId, ICsReceiveDamage*> ReceiveDamageMap;
 
 public:
 
@@ -103,7 +103,7 @@ public:
 
 	void Remove(ICsReceiveDamage* Object);
 
-#pragma endregion Damageable Objects
+#pragma endregion Receive Damage
 
 // Event
 #pragma region

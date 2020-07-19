@@ -28,7 +28,8 @@ public:
 		Links(),
 		AllocatedHead(nullptr),
 		AllocatedTail(nullptr),
-		AllocatedSize(0)
+		AllocatedSize(0),
+		bDeconstructResourcesOnShutdown(false)
 	{
 		Name		  = TEXT("TCsManager_ResourcePointerType_Fixed");
 		Name_Internal = FName(*Name);
@@ -44,14 +45,14 @@ public:
 
 private:
 
-	/** String Name of the Manager */
+	/** String Name of the Manager. */
 	FString Name;
-	/** FName of the Manager */
+	/** FName of the Manager. */
 	FName Name_Internal;
 
-	/** List of ResourceContainerTypes */
+	/** List of ResourceContainerTypes. */
 	TArray<ResourceContainerType> ResourceContainers;
-	/** List of ResourceTypes */
+	/** List of ResourceTypes. */
 	TArray<ResourceType*> Resources;
 	/** List of references to ResourceContainerTypes. These references map one to one with
 		the elements in ResourceContainers. */
@@ -64,26 +65,29 @@ private:
 	/** Index of the last allocated ResourceContainerType in Pool. */
 	uint32 PoolIndex;
 
-	/** List of LinkedList elements storing references to ResourceContainerTypes */
+	/** List of LinkedList elements storing references to ResourceContainerTypes. */
 	TArray<TCsDoubleLinkedList<ResourceContainerType*>> Links;
 
-	/** Current head of the linked list of allocated ResourceContainerTypes */
+	/** Current head of the linked list of allocated ResourceContainerTypes. */
 	TCsDoubleLinkedList<ResourceContainerType*>* AllocatedHead;
-	/** Current tail of the linked list of allocated ResourceContainerTypes */
+	/** Current tail of the linked list of allocated ResourceContainerTypes. */
 	TCsDoubleLinkedList<ResourceContainerType*>* AllocatedTail;
-	/** The current number of allocated ResourceContainerTypes */
+	/** The current number of allocated ResourceContainerTypes. */
 	int32 AllocatedSize;
+
+	/** Whether to deconstruct / delete the Resources on Shutdown. */
+	bool bDeconstructResourcesOnShutdown;
 
 public:
 
 	/**
+	* Get the name of the Manager as a FString.
 	*
-	*
-	* return
+	* return Name of the Manager as a FString.
 	*/
 	FORCEINLINE const FString& GetName() const
 	{
-		return  Name;
+		return Name;
 	}
 
 	/**
@@ -94,14 +98,16 @@ public:
 	*/
 	void SetName(const FString& InName)
 	{
-		Name		  = InName;
-		Name_Internal = FName(*Name);
+		Name = InName;
+
+		if (Name_Internal == NAME_None)
+			Name_Internal = FName(*Name);
 	}
 
 	/**
+	* Get the name of the Manager as a FName.
 	*
-	*
-	* return
+	* return Name of the Manager as a FName.
 	*/
 	FORCEINLINE const FName& GetFName() const 
 	{
@@ -117,7 +123,16 @@ public:
 	void SetFName(const FName& InName)
 	{
 		Name_Internal = InName;
-		Name		  = Name_Internal.ToString();
+
+		if (Name.IsEmpty())
+			Name = Name_Internal.ToString();
+	}
+
+	/**
+	*/
+	void SetDeconstructResourcesOnShutdown()
+	{
+		bDeconstructResourcesOnShutdown = true;
 	}
 
 	/**
@@ -142,11 +157,22 @@ public:
 			}
 			Pool.Reset();
 		}
+		// Resources
+		{
+			for (int32 I = 0; I < PoolSize; ++I)
+			{
+				if (bDeconstructResourcesOnShutdown)
+				{
+					ResourceType* R = Resources[I];
+					delete R;
+				}
+				Resources[I] = nullptr;
+			}
+			Resources.Reset();
+		}
 		PoolSize = 0;
 		PoolSizeMinusOne = 0;
 		PoolIndex = 0;
-
-		Resources.Reset();
 
 		// Links
 		{

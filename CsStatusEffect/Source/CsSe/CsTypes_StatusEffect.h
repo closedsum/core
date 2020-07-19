@@ -9,6 +9,8 @@
 // StatusEffectTriggerCondition
 #pragma region
 
+/**
+*/
 USTRUCT(BlueprintType)
 struct CSSE_API FECsStatusEffectTriggerCondition : public FECsEnum_uint8
 {
@@ -40,6 +42,8 @@ namespace NCsStatusEffectTriggerCondition
 // StatusEffectTriggerType
 #pragma region
 
+/**
+*/
 UENUM(BlueprintType)
 enum class ECsStatusEffectTriggerType : uint8
 {
@@ -70,3 +74,36 @@ namespace NCsStatusEffectTriggerType
 }
 
 #pragma endregion StatusEffectTriggerType
+
+// StatusEffectEvent
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSSE_API FECsStatusEffectEvent : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsStatusEffectEvent)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsStatusEffectEvent)
+
+struct CSSE_API EMCsStatusEffectEvent : public TCsEnumStructMap<FECsStatusEffectEvent, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsStatusEffectEvent, FECsStatusEffectEvent, uint8)
+};
+
+namespace NCsStatusEffectEvent
+{
+	typedef FECsStatusEffectEvent Type;
+
+	namespace Ref
+	{
+		extern CSSE_API const Type Default;
+		extern CSSE_API const Type Damage;
+	}
+}
+
+#pragma endregion StatusEffectEvent

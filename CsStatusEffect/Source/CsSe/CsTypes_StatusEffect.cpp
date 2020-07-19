@@ -33,3 +33,17 @@ namespace NCsStatusEffectTriggerType
 }
 
 #pragma endregion StatusEffectTriggerType
+
+// StatusEffectEvent
+#pragma region
+
+namespace NCsStatusEffectEvent
+{
+	namespace Ref
+	{
+		CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsStatusEffectEvent, Default, "ICsStatusEffectEvent");
+		CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsStatusEffectEvent, Damage, "ICsStatusEffectDamageEvent");
+	}
+}
+
+#pragma endregion StatusEffectEvent

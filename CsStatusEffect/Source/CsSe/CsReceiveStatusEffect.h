@@ -2,10 +2,10 @@
 #pragma once
 
 #include "UObject/Interface.h"
-#include "CsRecieveStatusEffect.generated.h"
+#include "CsReceiveStatusEffect.generated.h"
 
 UINTERFACE(BlueprintType, meta = (CannotImplementInterfaceInBlueprint))
-class CSSE_API UCsRecieveStatusEffect : public UInterface
+class CSSE_API UCsReceiveStatusEffect : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
@@ -14,7 +14,7 @@ struct ICsStatusEffectEvent;
 
 /**
 */
-class CSSE_API ICsRecieveStatusEffect
+class CSSE_API ICsReceiveStatusEffect
 {
 	GENERATED_IINTERFACE_BODY()
 

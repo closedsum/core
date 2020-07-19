@@ -19,7 +19,7 @@ private:
 
 public:
 
-	// ICsDamageEvent
+	// ICsStatusEffectEvent
 
 	ICsStatusEffect* StatusEffect;
 

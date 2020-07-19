@@ -2,7 +2,7 @@
 #include "Containers/CsGetInterfaceMap.h"
 #pragma once
 
-class ICsDamageEvent;
+struct ICsDamageEvent;
 
 /**
 */

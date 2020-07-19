@@ -98,10 +98,8 @@ public:
 	*/
 	void SetName(const FString& InName)
 	{
-		Name = InName;
-
-		if (Name_Internal == NAME_None)
-			Name_Internal = FName(*Name);
+		Name		  = InName;
+		Name_Internal = FName(*Name);
 	}
 
 	/**
@@ -123,9 +121,7 @@ public:
 	void SetFName(const FName& InName)
 	{
 		Name_Internal = InName;
-
-		if (Name.IsEmpty())
-			Name = Name_Internal.ToString();
+		Name		  = Name_Internal.ToString();
 	}
 
 	/**

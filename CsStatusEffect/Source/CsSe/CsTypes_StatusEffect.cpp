@@ -7,11 +7,8 @@
 
 namespace NCsStatusEffectTriggerCondition
 {
-	namespace Ref
-	{
-		CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsStatusEffectTriggerCondition, OnParentTrigger, "On Parent Trigger");
-		CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsStatusEffectTriggerCondition, OnHit, "On Hit");
-	}
+	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsStatusEffectTriggerCondition, OnParentTrigger, "On Parent Trigger");
+	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsStatusEffectTriggerCondition, OnHit, "On Hit");
 }
 
 #pragma endregion StatusEffectTriggerCondition
@@ -39,11 +36,8 @@ namespace NCsStatusEffectTriggerType
 
 namespace NCsStatusEffectEvent
 {
-	namespace Ref
-	{
-		CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsStatusEffectEvent, Default, "ICsStatusEffectEvent");
-		CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsStatusEffectEvent, Damage, "ICsStatusEffectDamageEvent");
-	}
+	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsStatusEffectEvent, Default, "ICsStatusEffectEvent");
+	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsStatusEffectEvent, Damage, "ICsStatusEffectDamageEvent");
 }
 
 #pragma endregion StatusEffectEvent

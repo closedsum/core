@@ -30,11 +30,8 @@ namespace NCsStatusEffectTriggerCondition
 {
 	typedef FECsStatusEffectTriggerCondition Type;
 
-	namespace Ref
-	{
-		extern CSSE_API const Type OnParentTrigger;
-		extern CSSE_API const Type OnHit;
-	}
+	extern CSSE_API const Type OnParentTrigger;
+	extern CSSE_API const Type OnHit;
 }
 
 #pragma endregion StatusEffectTriggerCondition
@@ -99,11 +96,8 @@ namespace NCsStatusEffectEvent
 {
 	typedef FECsStatusEffectEvent Type;
 
-	namespace Ref
-	{
-		extern CSSE_API const Type Default;
-		extern CSSE_API const Type Damage;
-	}
+	extern CSSE_API const Type Default;
+	extern CSSE_API const Type Damage;
 }
 
 #pragma endregion StatusEffectEvent

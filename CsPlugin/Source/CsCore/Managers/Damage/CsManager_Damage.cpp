@@ -226,8 +226,10 @@ void UCsManager_Damage::Initialize()
 
 	// TODO: Poll config in future
 
-	// Create Pools
-	Manager_Event.CreatePool(4);
+	// Create Pool
+	static const int32 PoolSize = 64;
+
+	Manager_Event.CreatePool(PoolSize);
 }
 
 void UCsManager_Damage::CleanUp()

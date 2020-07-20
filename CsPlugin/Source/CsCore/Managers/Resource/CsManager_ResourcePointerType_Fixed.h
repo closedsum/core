@@ -278,10 +278,11 @@ public:
 	}
 
 	/**
+	* Get the container of type: ResourceContainerType holding a
+	* resource of type: ResourceType at the specified Index.
 	*
-	*
-	* @param Index
-	* return ResourceContainerType
+	* @param Index	Index of the container to get.
+	* return		Resource Container of type: ResourceContainerType
 	*/
 	FORCEINLINE ResourceContainerType* GetAt(const int32& Index) const
 	{
@@ -291,10 +292,10 @@ public:
 	}
 
 	/**
+	* Get the resource of type: ResourceType at the specified Index.
 	*
-	*
-	* @param Index
-	* return ResourceType
+	* @param Index	Index of the resource to get.
+	* return		ResourceType
 	*/
 	FORCEINLINE ResourceType* GetResourceAt(const int32& Index) const
 	{
@@ -304,9 +305,11 @@ public:
 	}
 
 	/**
+	* Get the container that holds the Resource of type: ResourceType.
+	* NOTE: This process is O(n).
 	*
 	* @param Resource	Resource to find the associated container for.
-	* return Resource Container associated with the Resource
+	* return			Resource Container associated with the Resource.
 	*/
 	ResourceContainerType* GetContainer(ResourceType* Resource)
 	{
@@ -329,6 +332,29 @@ public:
 			}
 		}
 		return nullptr;
+	}
+
+	/**
+	* Performs checks on ResourceContainer to see if it belongs to this manager.
+	*
+	* @param Context			Calling context.
+	* @param ResourceContainer	Resource Container to perform checks on.
+	*/
+	bool IsValidChecked(const FString& Context, const ResourceContainerType* ResourceContainer) const
+	{
+		checkf(ResourceContainer, TEXT("%s: ResourceContainer is NULL."), *Context);
+
+		checkf(ResourceContainer->Get(), TEXT("%s: Resource is NULL."), *Context);
+
+		const int32& Index = ResourceContainer->GetIndex();
+
+		checkf(Index >= 0 && Index < PoolSize, TEXT("%s: Index: %d (< 0 or >= %d) of Resource Container is NOT Valid."), *Context, Index, PoolSize);
+		
+		ResourceContainerType* M = Pool[Index];
+
+		checkf(M == ResourceContainer, TEXT("%s: Resource is NOT contained in Pool."), *Name);
+
+		return true;
 	}
 
 #pragma endregion Pool

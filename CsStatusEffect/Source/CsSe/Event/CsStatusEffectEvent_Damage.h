@@ -6,7 +6,7 @@ struct ICsDamageEvent;
 
 /**
 */
-struct CSSE_API ICsStatusEffectDamageEvent : virtual public ICsGetInterfaceMap
+struct CSSE_API ICsStatusEffectEvent_Damage : virtual public ICsGetInterfaceMap
 {
 public:
 

@@ -2,10 +2,10 @@
 #pragma once
 
 #include "Containers/CsGetInterfaceMap.h"
-#include "CsStatusEffectDamage.generated.h"
+#include "CsStatusEffect_Damage.generated.h"
 
 UINTERFACE(Blueprintable)
-class CSSE_API UCsStatusEffectDamage : public UCsGetInterfaceMap
+class CSSE_API UCsStatusEffect_Damage : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
@@ -14,7 +14,7 @@ class ICsDamageExpression;
 
 /**
 */
-class CSSE_API ICsStatusEffectDamage : public ICsGetInterfaceMap
+class CSSE_API ICsStatusEffect_Damage : public ICsGetInterfaceMap
 {
 	GENERATED_IINTERFACE_BODY()
 

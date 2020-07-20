@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Event/CsStatusEffectEvent.h"
-#include "Event/CsStatusEffectDamageEvent.h"
+#include "Event/CsStatusEffectEvent_Damage.h"
 #include "Containers/CsInterfaceMap.h"
 #pragma once
 
@@ -9,8 +9,8 @@ struct FCsInterfaceMap;
 class ICsStatusEffect;
 struct ICsDamageEvent;
 
-struct CSSE_API FCsStatusEffectDamageEventImpl final : public ICsStatusEffectEvent,
-													   public ICsStatusEffectDamageEvent
+struct CSSE_API FCsStatusEffectEvent_DamageImpl final : public ICsStatusEffectEvent,
+													    public ICsStatusEffectEvent_Damage
 {
 public:
 
@@ -30,13 +30,13 @@ public:
 
 	UObject* Causer;
 
-	// ICsStatusEffectDamageEvent
+	// ICsStatusEffectEvent_Damage
 
 	ICsDamageEvent* DamageEvent;
 
 public:
 
-	FCsStatusEffectDamageEventImpl();
+	FCsStatusEffectEvent_DamageImpl();
 
 // ICsGetInterfaceMap
 #pragma region
@@ -70,7 +70,7 @@ public:
 
 #pragma endregion ICsStatusEffectEvent
 
-// ICsStatusEffectDamageEvent
+// ICsStatusEffectEvent_Damage
 #pragma region
 public:
 
@@ -79,7 +79,7 @@ public:
 		return DamageEvent;
 	}
 
-#pragma endregion ICsStatusEffectDamageEvent
+#pragma endregion ICsStatusEffectEvent_Damage
 
 public:
 

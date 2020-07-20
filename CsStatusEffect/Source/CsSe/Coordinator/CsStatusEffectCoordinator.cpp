@@ -10,7 +10,7 @@
 // StatusEffect
 #include "CsReceiveStatusEffect.h"
 #include "Event/CsStatusEffectEventImpl.h"
-#include "Event/CsStatusEffectDamageEventImpl.h"
+#include "Event/CsStatusEffectEvent_DamageImpl.h"
 // Unique
 #include "UniqueObject/CsUniqueObject.h"
 
@@ -326,7 +326,7 @@ ICsStatusEffectEvent* UCsStatusEffectCoordinator::ConstructEvent(const FECsStatu
 		return new FCsStatusEffectEventImpl();
 	// Damage
 	if (Type == NCsStatusEffectEvent::Damage)
-		return new FCsStatusEffectDamageEventImpl();
+		return new FCsStatusEffectEvent_DamageImpl();
 	return nullptr;
 }
 

@@ -10,7 +10,7 @@
 // StatusEffect
 #include "CsReceiveStatusEffect.h"
 #include "Event/CsStatusEffectEventImpl.h"
-//#include "Event/CsDamageEventImpl.h"
+#include "Event/CsStatusEffectDamageEventImpl.h"
 // Unique
 #include "UniqueObject/CsUniqueObject.h"
 
@@ -220,13 +220,35 @@ UCsStatusEffectCoordinator::UCsStatusEffectCoordinator(const FObjectInitializer&
 
 void UCsStatusEffectCoordinator::Initialize()
 {
-	// Bind Construct Resource Impl
-	//Manager_Event.ConstructResourceType_Impl.BindUObject(this, &UCsManager_Damage::ConstructEvent);
-
 	// TODO: Poll config in future
 
-	// Create Pools
-	//Manager_Event.CreatePool(4);
+	const int32& Count = EMCsStatusEffectEvent::Get().Num();
+
+	Manager_Events.Reserve(Count);
+	Manager_Events.AddDefaulted(Count);
+
+	for (const FECsStatusEffectEvent& Event : EMCsStatusEffectEvent::Get())
+	{
+		FCsManager_StatusEffectEvent& Manager = Manager_Events[Event.GetValue()];
+		
+		const FString Name = FString::Printf(TEXT("UCsStatusEffectCoordinator::FCsManager_StatusEffectEvent[%s]"), Event.ToChar());
+
+		Manager.SetName(Name);
+		Manager.SetDeconstructResourcesOnShutdown();
+
+		const int32 PoolSize = 64;
+
+		Manager.CreatePool(PoolSize);
+
+		for (int32 I = 0; I < PoolSize; ++I)
+		{
+			ICsStatusEffectEvent* IEvent = ConstructEvent(Event);
+
+			checkf(IEvent, TEXT("UCsStatusEffectCoordinator::Initialize: Failed to construct event for type: %s."), Event.ToChar());
+
+			Manager.Add(IEvent);
+		} 
+	}
 }
 
 void UCsStatusEffectCoordinator::CleanUp()
@@ -299,12 +321,18 @@ void UCsStatusEffectCoordinator::Remove(ICsReceiveStatusEffect* Object)
 
 ICsStatusEffectEvent* UCsStatusEffectCoordinator::ConstructEvent(const FECsStatusEffectEvent& Type)
 {
-	return new FCsStatusEffectEventImpl();
+	// Default
+	if (Type == NCsStatusEffectEvent::Default)
+		return new FCsStatusEffectEventImpl();
+	// Damage
+	if (Type == NCsStatusEffectEvent::Damage)
+		return new FCsStatusEffectDamageEventImpl();
+	return nullptr;
 }
 
 FCsResource_StatusEffectEvent* UCsStatusEffectCoordinator::AllocateEvent(const FECsStatusEffectEvent& Type)
 {
-	return nullptr;// return Manager_Event.Allocate();
+	return Manager_Events[Type.GetValue()].Allocate();
 }
 
 void UCsStatusEffectCoordinator::OnEvent(const ICsStatusEffectEvent* Event)

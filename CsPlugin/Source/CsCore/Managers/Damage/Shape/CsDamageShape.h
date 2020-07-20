@@ -11,7 +11,7 @@ class CSCORE_API UCsDamageShape : public UCsGetInterfaceMap
 };
 
 /**
-* Interface to describe he shape of Damage. This should be used with 
+* Interface to describe the shape of Damage. This should be used with 
 * the interface "base" ICsDamageExpression.
 */
 class CSCORE_API ICsDamageShape : public ICsGetInterfaceMap

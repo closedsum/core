@@ -5,7 +5,7 @@
 /**
 *
 */
-struct CSCORE_API FCsDamageExpressionPointEmu : public ICsDamageExpression
+struct CSCORE_API FCsDamagePointEmu : public ICsDamageExpression
 {
 public:
 
@@ -23,8 +23,8 @@ public:
 
 public:
 
-	FCsDamageExpressionPointEmu();
-	~FCsDamageExpressionPointEmu();
+	FCsDamagePointEmu();
+	~FCsDamagePointEmu();
 
 	FORCEINLINE UObject* _getUObject() const { return nullptr; }
 

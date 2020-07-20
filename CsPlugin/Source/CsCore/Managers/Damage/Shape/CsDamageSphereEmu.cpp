@@ -6,15 +6,20 @@
 const FName FCsDamageSphereEmu::Name = FName("FCsDamageSphereEmu");
 
 FCsDamageSphereEmu::FCsDamageSphereEmu() :
+	// ICsGetInterfaceMap
 	InterfaceMap(),
+	// ICsDamageExpression
 	Type(nullptr),
+	// ICsDamageShape
 	MinDamage(nullptr),
 	MaxDamage(nullptr),
 	MinRadius(nullptr),
 	MaxRadius(nullptr),
 	InterpolationMethod(nullptr),
 	EasingType(nullptr),
-	Curve(nullptr)
+	Curve(nullptr),
+	// ICsDamageCollision
+	bIgnoreHitResultObject(nullptr)
 {
 	InterfaceMap = new FCsInterfaceMap();
 
@@ -22,6 +27,7 @@ FCsDamageSphereEmu::FCsDamageSphereEmu() :
 
 	InterfaceMap->Add<ICsDamageExpression>(static_cast<ICsDamageExpression*>(this));
 	InterfaceMap->Add<ICsDamageShape>(static_cast<ICsDamageShape*>(this));
+	InterfaceMap->Add<ICsDamageCollision>(static_cast<ICsDamageCollision*>(this));
 }
 
 FCsDamageSphereEmu::~FCsDamageSphereEmu()

@@ -55,6 +55,9 @@ public:
 	virtual const FHitResult& GetHitResult() const = 0;
 
 	/**
+	*
+	*
+	* return
 	*/
 	virtual const TArray<UObject*>& GetIgnoreObjects() const = 0;
 };

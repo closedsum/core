@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Damage/Expression/CsDamageExpression.h"
 #include "Managers/Damage/Shape/CsDamageShape.h"
+#include "Managers/Damage/Collision/CsDamageCollision.h"
 #include "Types/CsTypes_Interpolation.h"
 #pragma once
 
@@ -10,7 +11,8 @@ struct FCsInterfaceMap;
 *
 */
 struct CSCORE_API FCsDamageSphereEmu : public ICsDamageExpression,
-									   public ICsDamageShape
+									   public ICsDamageShape,
+									   public ICsDamageCollision
 {
 public:
 
@@ -26,6 +28,8 @@ public:
 
 	FECsDamageType* Type;
 
+	// ICsDamageShape
+
 	float* MinDamage;
 
 	float* MaxDamage;
@@ -39,6 +43,10 @@ public:
 	ECsEasingType* EasingType;
 
 	FCsCurveFloat* Curve;
+
+	// ICsDamageCollision
+
+	bool* bIgnoreHitResultObject;
 
 public:
 
@@ -126,5 +134,23 @@ public:
 	void SetCurve(FCsCurveFloat* Value)
 	{
 		Curve = Value;
+	}
+
+// ICsDamageCollision
+#pragma region
+public:
+
+	FORCEINLINE bool IgnoreHitResultObject() const
+	{
+		return *bIgnoreHitResultObject;
+	}
+
+#pragma endregion ICsDamageCollision
+
+public:
+
+	void SetIgnoreHitResultObject(bool* Value)
+	{
+		bIgnoreHitResultObject = Value;
 	}
 };

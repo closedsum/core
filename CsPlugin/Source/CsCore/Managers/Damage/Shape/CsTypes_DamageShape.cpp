@@ -1,24 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Data/Damage/CsTypes_Data_ProjectileDamage.h"
+#include "Managers/Damage/Shape/CsTypes_DamageShape.h"
 
-#include "Managers/Damage/Expression/CsDamagePointEmu.h"
 #include "Managers/Damage/Shape/CsDamageSphereEmu.h"
-
-// FCsPrjDamageExpressionPoint
-#pragma region
-
-void FCsPrjDamageExpressionPoint::SetExpression(FCsDamagePointEmu* Expression)
-{
-	Expression->SetDamage(&Damage);
-	Expression->SetType(&Type);
-}
-
-#pragma endregion FCsPrjDamageExpressionPoint
 
 // FCsPrjDamageSphere
 #pragma region
 
-void FCsPrjDamageSphere::SetExpression(FCsDamageSphereEmu* Expression)
+void FCsScriptDamageSphere::SetExpression(FCsDamageSphereEmu* Expression)
 {
 	// ICsDamageExpression
 	Expression->SetType(&Type);

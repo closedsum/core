@@ -2,45 +2,16 @@
 #include "Managers/Damage/CsTypes_Damage.h"
 #include "Types/CsTypes_Interpolation.h"
 #include "Types/CsTypes_Curve.h"
-#include "CsTypes_Data_ProjectileDamage.generated.h"
+#include "CsTypes_DamageShape.generated.h"
 #pragma once
 
-// FCsPrjDamageExpressionPoint
-#pragma region
-
-struct FCsDamagePointEmu;
-
-USTRUCT(BlueprintType)
-struct CSPRJ_API FCsPrjDamageExpressionPoint
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float Damage;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FECsDamageType Type;
-
-public:
-
-	FCsPrjDamageExpressionPoint() : 
-		Damage(0.0f),
-		Type()
-	{
-	}
-
-	void SetExpression(FCsDamagePointEmu* Expression);
-};
-
-#pragma endregion FCsPrjDamageExpressionPoint
-
-// FCsPrjDamageSphere
+// FCsScriptDamageSphere
 #pragma region
 
 struct FCsDamageSphereEmu;
 
 USTRUCT(BlueprintType)
-struct CSPRJ_API FCsPrjDamageSphere
+struct CSCORE_API FCsScriptDamageSphere
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -76,7 +47,7 @@ struct CSPRJ_API FCsPrjDamageSphere
 
 public:
 
-	FCsPrjDamageSphere() :
+	FCsScriptDamageSphere() :
 		Type(),
 		MinDamage(0.0f),
 		MaxDamage(0.0f),
@@ -91,4 +62,4 @@ public:
 	void SetExpression(FCsDamageSphereEmu* Expression);
 };
 
-#pragma endregion FCsPrjDamageExpressionPoint
+#pragma endregion FCsScriptDamageSphere

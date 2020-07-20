@@ -4,6 +4,8 @@
 
 // Containers
 #include "Containers/CsInterfaceMap.h"
+// Damage
+#include "Managers/Damage/Expression/CsDamagePointEmu.h"
 
 const FName UCsStatusEffect_DamagePoint::Name = FName("UCsStatusEffect_DamagePoint");
 
@@ -25,15 +27,14 @@ void UCsStatusEffect_DamagePoint::PostLoad()
 		{
 			// Setup InterfaceMap
 			InterfaceMap = new FCsInterfaceMap();
-			/*
-			InterfaceMap->Add<ICsData>(Cast<ICsData>(this));
-			InterfaceMap->Add<ICsData_Projectile>(Cast<ICsData_Projectile>(this));
-			InterfaceMap->Add<ICsData_ProjectileCollision>(Cast<ICsData_ProjectileCollision>(this));
-			InterfaceMap->Add<ICsData_ProjectileStaticMeshVisual>(Cast<ICsData_ProjectileStaticMeshVisual>(this));
-			InterfaceMap->Add<ICsData_ProjectileTrailVisual>(Cast<ICsData_ProjectileTrailVisual>(this));
-			InterfaceMap->Add<ICsData_ProjectileImpactVisual>(Cast<ICsData_ProjectileImpactVisual>(this));
-			InterfaceMap->Add<ICsData_ProjectileDamage>(Cast<ICsData_ProjectileDamage>(this));
-			*/
+			
+			InterfaceMap->Add<ICsStatusEffect>(Cast<ICsStatusEffect>(this));
+			InterfaceMap->Add<ICsStatusEffect_Damage>(Cast<ICsStatusEffect_Damage>(this));
+		}
+		// ICsStatusEffect_Damage
+		{
+			DamagePointEmu = new FCsDamagePointEmu();
+			DamagePoint.SetExpression(static_cast<FCsDamagePointEmu*>(DamagePointEmu));
 		}
 		bLoaded = false;
 	}
@@ -48,6 +49,13 @@ void UCsStatusEffect_DamagePoint::BeginDestroy()
 	{
 		delete InterfaceMap;
 		InterfaceMap = nullptr;
+	}
+	// ICsStatusEffect_Damage
+	if (DamagePointEmu)
+	{
+		FCsDamagePointEmu* Emu = static_cast<FCsDamagePointEmu*>(DamagePointEmu);
+		delete Emu;
+		DamagePointEmu = nullptr;
 	}
 }
 

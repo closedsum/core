@@ -31,22 +31,22 @@ public:
 	virtual const FECsStatusEffectTriggerCondition& GetTriggerCondition() const = 0;
 
 	/**
-	* Get the trigger type.
-	* If GetTriggerType() == ECsStatusEffectTriggerType::Once,
+	* Get the trigger frequency.
+	* If GetTriggerFrequency() == ECsStatusEffectTriggerFrequency::Once,
 	*  Ignore GetCount() and GetInterval().
-	* If GetTriggerType() == ECsStatusEffectTriggerType::Count,
+	* If GetTriggerFrequency() == ECsStatusEffectTriggerFrequency::Count,
 	*  GetCount() should be > 0, if NOT, it will be treated
-	*  as ECsStatusEffectTriggerType::Once.
-	* If GetTriggerType() == ECsStatusEffectTriggerType::Infinite,
+	*  as ECsStatusEffectTriggerFrequency::Once.
+	* If GetTriggerFrequency() == ECsStatusEffectTriggerFrequency::Infinite,
 	*  Ignore GetCount() and GetInterval() should be > 0.0f.
 	* 
 	* return Trigger Type
 	*/
-	virtual const ECsStatusEffectTriggerType& GetTriggerType() const = 0;
+	virtual const ECsStatusEffectTriggerFrequency& GetTriggerFrequency() const = 0;
 
 	/**
 	* Get the number of times to apply the status effect when triggered.
-	* Only valid if GetTriggerType() == ECsStatusEffectTriggerType::Count.
+	* Only valid if GetTriggerFrequency() == ECsStatusEffectTriggerFrequency::Count.
 	* Should be > 0.
 	*
 	* return Count
@@ -65,9 +65,9 @@ public:
 	/**
 	* Get the time between each status effect being applied when triggered.
 	* Only valid if, 
-	*  GetTriggerType() == ECsStatusEffectTriggerType::Count 
+	*  GetTriggerFrequency() == ECsStatusEffectTriggerFrequency::Count 
 	*  or
-	*  GetTriggerType() == ECsStatusEffectTriggerType::Infinite 
+	*  GetTriggerFrequency() == ECsStatusEffectTriggerFrequency::Infinite 
 	*
 	* return Interval
 	*/

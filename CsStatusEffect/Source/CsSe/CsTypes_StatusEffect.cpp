@@ -13,23 +13,23 @@ namespace NCsStatusEffectTriggerCondition
 
 #pragma endregion StatusEffectTriggerCondition
 
-// StatusEffectTriggerType
+// StatusEffectTriggerFrequency
 #pragma region
 
-namespace NCsStatusEffectTriggerType
+namespace NCsStatusEffectTriggerFrequency
 {
 	namespace Ref
 	{
-		CSSE_API CS_ADD_TO_ENUM_MAP(EMCsStatusEffectTriggerType, Once);
-		CSSE_API CS_ADD_TO_ENUM_MAP(EMCsStatusEffectTriggerType, Count);
-		CSSE_API CS_ADD_TO_ENUM_MAP(EMCsStatusEffectTriggerType, Infinite);
-		CSSE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsStatusEffectTriggerType, ECsStatusEffectTriggerType_MAX, "MAX");
+		CSSE_API CS_ADD_TO_ENUM_MAP(EMCsStatusEffectTriggerFrequency, Once);
+		CSSE_API CS_ADD_TO_ENUM_MAP(EMCsStatusEffectTriggerFrequency, Count);
+		CSSE_API CS_ADD_TO_ENUM_MAP(EMCsStatusEffectTriggerFrequency, Infinite);
+		CSSE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsStatusEffectTriggerFrequency, ECsStatusEffectTriggerFrequency_MAX, "MAX");
 	}
 
-	CSSE_API const uint8 MAX = (uint8)Type::ECsStatusEffectTriggerType_MAX;
+	CSSE_API const uint8 MAX = (uint8)Type::ECsStatusEffectTriggerFrequency_MAX;
 }
 
-#pragma endregion StatusEffectTriggerType
+#pragma endregion StatusEffectTriggerFrequency
 
 // StatusEffectEvent
 #pragma region

@@ -10,6 +10,7 @@
 #pragma region
 
 /**
+* How the status effect will get triggered.
 */
 USTRUCT(BlueprintType)
 struct CSSE_API FECsStatusEffectTriggerCondition : public FECsEnum_uint8
@@ -36,41 +37,42 @@ namespace NCsStatusEffectTriggerCondition
 
 #pragma endregion StatusEffectTriggerCondition
 
-// StatusEffectTriggerType
+// StatusEffectTriggerFrequency
 #pragma region
 
 /**
+* The frequency the status effect will occur once triggered.
 */
 UENUM(BlueprintType)
-enum class ECsStatusEffectTriggerType : uint8
+enum class ECsStatusEffectTriggerFrequency : uint8
 {
-	Once							UMETA(DisplayName = "Once"),
-	Count							UMETA(DisplayName = "Count"),
-	Infinite						UMETA(DisplayName = "Infinite"),
-	ECsStatusEffectTriggerType_MAX  UMETA(Hidden),
+	Once								 UMETA(DisplayName = "Once"),
+	Count								 UMETA(DisplayName = "Count"),
+	Infinite							 UMETA(DisplayName = "Infinite"),
+	ECsStatusEffectTriggerFrequency_MAX  UMETA(Hidden),
 };
 
-struct CSSE_API EMCsStatusEffectTriggerType : public TCsEnumMap<ECsStatusEffectTriggerType>
+struct CSSE_API EMCsStatusEffectTriggerFrequency : public TCsEnumMap<ECsStatusEffectTriggerFrequency>
 {
-	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsStatusEffectTriggerType, ECsStatusEffectTriggerType)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsStatusEffectTriggerFrequency, ECsStatusEffectTriggerFrequency)
 };
 
-namespace NCsStatusEffectTriggerType
+namespace NCsStatusEffectTriggerFrequency
 {
-	typedef ECsStatusEffectTriggerType Type;
+	typedef ECsStatusEffectTriggerFrequency Type;
 
 	namespace Ref
 	{
 		extern CSSE_API const Type Once;
 		extern CSSE_API const Type Count;
 		extern CSSE_API const Type Infinite;
-		extern CSSE_API const Type ECsStatusEffectTriggerType_MAX;
+		extern CSSE_API const Type ECsStatusEffectTriggerFrequency_MAX;
 	}
 
 	extern CSSE_API const uint8 MAX;
 }
 
-#pragma endregion StatusEffectTriggerType
+#pragma endregion StatusEffectTriggerFrequency
 
 // StatusEffectEvent
 #pragma region

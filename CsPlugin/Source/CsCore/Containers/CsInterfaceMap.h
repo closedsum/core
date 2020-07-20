@@ -118,7 +118,7 @@ public:
 	* return	Reference to the InterfaceType
 	*/
 	template<typename InterfaceType>
-	InterfaceType* Get()
+	FORCEINLINE InterfaceType* Get()
 	{
 		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::Get: InterfaceType is NOT abstract.");
 
@@ -141,7 +141,7 @@ public:
 	* @param InterfaceName	Name of the interface structure.
 	* return				Raw pointer to an interface.
 	*/
-	void* Get(const FName& InterfaceName)
+	FORCEINLINE void* Get(const FName& InterfaceName)
 	{
 		checkf(InterfaceName != NAME_None, TEXT("FCsInterfaceMap::Get: InterfaceName: None is NOT Valid."));
 
@@ -158,7 +158,7 @@ public:
 	* return	Reference to the InterfaceType
 	*/
 	template<typename InterfaceType>
-	InterfaceType* GetSafe()
+	FORCEINLINE InterfaceType* GetSafe()
 	{
 		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::GetSafe: InterfaceType is NOT abstract.");
 
@@ -185,7 +185,7 @@ public:
 	* return				Whether the objects implements the interface with the given name.
 	*/
 	template<typename InterfaceType>
-	bool Implements()
+	FORCEINLINE bool Implements()
 	{
 		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::Implements: InterfaceType is NOT abstract.");
 
@@ -199,7 +199,7 @@ public:
 	* @param InterfaceName
 	* return				Whether the objects implements the interface with the given name.
 	*/
-	bool Implements(const FName& InterfaceName)
+	FORCEINLINE bool Implements(const FName& InterfaceName)
 	{
 		checkf(InterfaceName != NAME_None, TEXT("FCsInterfaceMap::Implements: InterfaceName: None is NOT Valid."));
 
@@ -215,7 +215,7 @@ public:
 	* return			Interface casted to DerivedType (static_cast<DerivedType*>(Interface)).
 	*/
 	template<typename DerivedType, typename InterfaceType>
-	DerivedType* StaticCastChecked(const FString& Context, InterfaceType* Interface)
+	FORCEINLINE DerivedType* StaticCastChecked(const FString& Context, InterfaceType* Interface)
 	{
 		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::StaticCastChecked: DerivedType IS abstract.");
 
@@ -262,7 +262,7 @@ public:
 	*					(static_cast<DerivedType*>("Interface associated with InterfaceType")).
 	*/
 	template<typename DerivedType, typename InterfaceType>
-	DerivedType* StaticCastChecked(const FString& Context)
+	FORCEINLINE DerivedType* StaticCastChecked(const FString& Context)
 	{
 		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::StaticCastChecked: DerivedType IS abstract.");
 
@@ -311,7 +311,7 @@ public:
 	*					(static_cast<DerivedType*>("Interface associated with InterfaceType")).
 	*/
 	template<typename DerivedType, typename InterfaceType>
-	DerivedType* StaticCastChecked()
+	FORCEINLINE DerivedType* StaticCastChecked()
 	{
 		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::StaticCastChecked: DerivedType IS abstract.");
 
@@ -362,7 +362,7 @@ public:
 	* return			Interface casted to DerivedType (static_cast<DerivedType*>(Interface)).
 	*/
 	template<typename DerivedType, typename InterfaceType>
-	DerivedType* PureStaticCastChecked(const FString& Context, InterfaceType* Interface)
+	FORCEINLINE DerivedType* PureStaticCastChecked(const FString& Context, InterfaceType* Interface)
 	{
 		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType IS abstract.");
 
@@ -395,7 +395,7 @@ public:
 	*					(static_cast<DerivedType*>("Interface associated with InterfaceType")).
 	*/
 	template<typename DerivedType, typename InterfaceType>
-	DerivedType* PureStaticCastChecked(const FString& Context)
+	FORCEINLINE DerivedType* PureStaticCastChecked(const FString& Context)
 	{
 		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType IS abstract.");
 
@@ -426,7 +426,7 @@ public:
 	*					(static_cast<DerivedType*>("Interface associated with InterfaceType")).
 	*/
 	template<typename DerivedType, typename InterfaceType>
-	DerivedType* PureStaticCastChecked()
+	FORCEINLINE DerivedType* PureStaticCastChecked()
 	{
 		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType IS abstract.");
 
@@ -463,7 +463,7 @@ namespace NCsInterfaceMap
 	* return			Interface Map
 	*/
 	template<typename InterfaceType>
-	FCsInterfaceMap* GetInterfaceMapChecked(const FString& Context, InterfaceType* Interface)
+	FORCEINLINE FCsInterfaceMap* GetInterfaceMapChecked(const FString& Context, InterfaceType* Interface)
 	{
 		static_assert(std::is_abstract<InterfaceType>(), "NCsInterfaceMap::GetInterfaceMapChecked: InterfaceType is NOT abstract.");
 
@@ -489,7 +489,7 @@ namespace NCsInterfaceMap
 	* return			Interface Map
 	*/
 	template<typename DerivedType, typename InterfaceType>
-	FCsInterfaceMap* GetInterfaceMapChecked(const FString& Context, DerivedType* Object)
+	FORCEINLINE FCsInterfaceMap* GetInterfaceMapChecked(const FString& Context, DerivedType* Object)
 	{
 		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::GetInterfaceMapChecked: DerivedType IS abstract.");
 
@@ -517,7 +517,7 @@ namespace NCsInterfaceMap
 	* return			Interface casted to DerivedType (static_cast<DerivedType*>(Interface))
 	*/
 	template<typename DerivedType, typename InterfaceType>
-	DerivedType* StaticCastChecked(const FString& Context, InterfaceType* Interface)
+	FORCEINLINE DerivedType* StaticCastChecked(const FString& Context, InterfaceType* Interface)
 	{
 		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::StaticCastChecked: DerivedType IS abstract.");
 
@@ -546,7 +546,7 @@ namespace NCsInterfaceMap
 	* return			Interface casted to DerivedType (static_cast<DerivedType*>(Interface))
 	*/
 	template<typename DerivedType, typename InterfaceType>
-	DerivedType* PureStaticCastChecked(const FString& Context, InterfaceType* Interface)
+	FORCEINLINE DerivedType* PureStaticCastChecked(const FString& Context, InterfaceType* Interface)
 	{
 		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType IS abstract.");
 
@@ -576,7 +576,7 @@ namespace NCsInterfaceMap
 	* return
 	*/
 	template<typename OtherInterfaceType, typename InterfaceType>
-	OtherInterfaceType* GetInterfaceChecked(const FString& Context, InterfaceType* Interface)
+	FORCEINLINE OtherInterfaceType* GetInterfaceChecked(const FString& Context, InterfaceType* Interface)
 	{
 		static_assert(std::is_abstract<OtherInterfaceType>(), "NCsInterfaceMap::GetInterfaceChecked: OtherInterfaceType is NOT abstract.");
 
@@ -598,7 +598,7 @@ namespace NCsInterfaceMap
 	* return
 	*/
 	template<typename OtherInterfaceType, typename InterfaceType>
-	OtherInterfaceType* GetSafeInterfaceChecked(const FString& Context, InterfaceType* Interface)
+	FORCEINLINE OtherInterfaceType* GetSafeInterfaceChecked(const FString& Context, InterfaceType* Interface)
 	{
 		static_assert(std::is_abstract<OtherInterfaceType>(), "NCsInterfaceMap::GetSafeInterfaceChecked: OtherInterfaceType is NOT abstract.");
 
@@ -612,7 +612,7 @@ namespace NCsInterfaceMap
 	/**
 	*/
 	template<typename OtherInterfaceType, typename InterfaceType>
-	bool Implements(const FString& Context, InterfaceType* Interface)
+	FORCEINLINE bool Implements(const FString& Context, InterfaceType* Interface)
 	{
 		FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked<InterfaceType>(Context);
 

@@ -384,11 +384,11 @@ void UCsStatusEffectCoordinator::ProcessStatusEffectEvent(const ICsStatusEffectE
 
 			checkf(DamageEventContainer, TEXT("UCsStatusEffectCoordinator::ProcessStatusEffectEvent: DamageEventContainer is NULL."));
 
-			UCsManager_Damage::Get(MyRoot)->OnEventContainer(DamageEventContainer);
+			UCsManager_Damage::Get(MyRoot)->ProcessDamageEventContainer(DamageEventContainer);
 		}
 		else
 		{
-			UCsManager_Damage::Get(MyRoot)->OnEvent(DamageEvent);
+			UCsManager_Damage::Get(MyRoot)->ProcessDamageEvent(DamageEvent);
 		}
 	}
 }

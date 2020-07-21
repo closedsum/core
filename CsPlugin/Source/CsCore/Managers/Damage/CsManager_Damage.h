@@ -127,24 +127,24 @@ public:
 	*
 	* @param Event
 	*/
-	void OnEvent(const ICsDamageEvent* Event);
+	void ProcessDamageEvent(const ICsDamageEvent* Event);
 
 	/**
 	*
 	*
 	* @param Event
 	*/
-	void OnEventContainer(const FCsResource_DamageEvent* Event);
+	void ProcessDamageEventContainer(const FCsResource_DamageEvent* Event);
 
 	/**
 	*
 	*
 	* @param Event
 	*/
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnEvent, const ICsDamageEvent* /*Event*/);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnProcessDamageEvent, const ICsDamageEvent* /*Event*/);
 
 	/** */
-	FOnEvent OnEvent_Event;
+	FOnProcessDamageEvent OnProcessDamageEvent_Event;
 
 #pragma endregion Event
 

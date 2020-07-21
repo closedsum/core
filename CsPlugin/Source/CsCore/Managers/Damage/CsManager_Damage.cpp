@@ -35,8 +35,8 @@ namespace NCsManagerDamageCached
 {
 	namespace Str
 	{
-		const FString OnEvent = TEXT("UCsManager_Damage::OnEvent");
-		const FString OnEventContainer = TEXT("UCsManager_Damage::OnEventContainer");
+		const FString ProcessDamageEvent = TEXT("UCsManager_Damage::ProcessDamageEvent");
+		const FString ProcessDamageEventContainer = TEXT("UCsManager_Damage::ProcessDamageEventContainer");
 	}
 }
 
@@ -310,18 +310,18 @@ FCsResource_DamageEvent* UCsManager_Damage::AllocateEvent()
 	return Manager_Event.Allocate();
 }
 
-void UCsManager_Damage::OnEvent(const ICsDamageEvent* Event)
+void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 {
 	using namespace NCsManagerDamageCached;
 
-	checkf(Event, TEXT("UCsManager_Damage::OnEvent: Event is NULL."));
+	checkf(Event, TEXT("UCsManager_Damage::ProcessDamageEvent: Event is NULL."));
 
 	ICsDamageExpression* Expression = Event->GetExpression();
 
-	checkf(Expression, TEXT("UCsManager_Damage::OnEvent: Expression is NULL. No Damage Expression found for Event."));
+	checkf(Expression, TEXT("UCsManager_Damage::ProcessDamageEvent: Expression is NULL. No Damage Expression found for Event."));
 
 	// ICsDamageShape
-	if (ICsDamageShape* Shape = FCsLibrary_DamageExpression::GetSafeInterfaceChecked<ICsDamageShape>(Str::OnEvent, Expression))
+	if (ICsDamageShape* Shape = FCsLibrary_DamageExpression::GetSafeInterfaceChecked<ICsDamageShape>(Str::ProcessDamageEvent, Expression))
 	{
 
 	}
@@ -350,7 +350,7 @@ void UCsManager_Damage::OnEvent(const ICsDamageEvent* Event)
 #if !UE_BUILD_SHIPPING
 				LogEventPoint(Event);
 #endif // #if !UE_BUILD_SHIPPING
-				OnEvent_Event.Broadcast(Event);
+				OnProcessDamageEvent_Event.Broadcast(Event);
 				return;
 			}
 		}
@@ -374,7 +374,7 @@ void UCsManager_Damage::OnEvent(const ICsDamageEvent* Event)
 #if !UE_BUILD_SHIPPING
 				LogEventPoint(Event);
 #endif // #if !UE_BUILD_SHIPPING
-				OnEvent_Event.Broadcast(Event);
+				OnProcessDamageEvent_Event.Broadcast(Event);
 				return;
 			}
 		}
@@ -382,15 +382,15 @@ void UCsManager_Damage::OnEvent(const ICsDamageEvent* Event)
 }
 
 
-void UCsManager_Damage::OnEventContainer(const FCsResource_DamageEvent* Event)
+void UCsManager_Damage::ProcessDamageEventContainer(const FCsResource_DamageEvent* Event)
 {
 	using namespace NCsManagerDamageCached;
 
-	check(Manager_Event.IsValidChecked(Str::OnEventContainer, Event));
+	check(Manager_Event.IsValidChecked(Str::ProcessDamageEventContainer, Event));
 
 	const ICsDamageEvent* IEvent = Event->Get();
 
-	OnEvent(IEvent);
+	ProcessDamageEvent(IEvent);
 
 	Manager_Event.Deallocate(const_cast<FCsResource_DamageEvent*>(Event));
 }
@@ -406,7 +406,7 @@ void UCsManager_Damage::LogEventPoint(const ICsDamageEvent* Event)
 
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerDamageEvents))
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::OnEvent:"));
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::ProcessDamageEvent:"));
 		// Expression
 		UE_LOG(LogCs, Warning, TEXT("- Expression: Point"));
 		UE_LOG(LogCs, Warning, TEXT("-- Damage: %f"), Expression->GetDamage());

@@ -4,12 +4,15 @@
 const FName FCsStatusEffectEvent_DamageImpl::Name = FName("FCsStatusEffectEvent_DamageImpl");;
 
 FCsStatusEffectEvent_DamageImpl::FCsStatusEffectEvent_DamageImpl() :
+	// ICsGetInterfaceMap
 	InterfaceMap(),
 	// ICsStatusEffectEvent
 	StatusEffect(nullptr),
 	Instigator(nullptr),
 	Causer(nullptr),
-	DamageEvent(nullptr)
+	// ICsStatusEffectEvent_Damage
+	DamageEvent(nullptr),
+	DamageEventContainer(nullptr)
 {
 	InterfaceMap.SetRootName(FCsStatusEffectEvent_DamageImpl::Name);
 

@@ -124,18 +124,34 @@ public:
 	FCsResource_StatusEffectEvent* AllocateEvent(const FECsStatusEffectEvent& Type);
 
 	/**
+	* Get the type (interface) of the Event.
 	*
-	*
-	* @param Event
+	* @param Event	Event of type: ICsStatusEffectEvent.
+	* return		Type of StatusEffectEvent.
 	*/
-	void OnEvent(const ICsStatusEffectEvent* Event);
+	const FECsStatusEffectEvent& GetTypeFromEvent(ICsStatusEffectEvent* Event);
 
 	/**
+	* Get the type (interface) of the Event.
 	*
-	*
-	* @param Event
+	* @param Event	Container for event of type: ICsStatusEffectEvent.
+	* return		Type of StatusEffectEvent.
 	*/
-	void OnEventContainer(const FCsResource_StatusEffectEvent* Event);
+	const FECsStatusEffectEvent& GetTypeFromEvent(FCsResource_StatusEffectEvent* Event);
+
+	/**
+	* Process the Event
+	*
+	* @param Event	Event of type: ICsStatusEffectEvent.
+	*/
+	void ProcessStatusEffectEvent(const ICsStatusEffectEvent* Event);
+
+	/**
+	* Process the Event
+	*
+	* @param Event	Container for event of type: ICsStatusEffectEvent.
+	*/
+	void ProcessStatusEffectEventContainer(const FCsResource_StatusEffectEvent* Event);
 
 	/**
 	*

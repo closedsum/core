@@ -8,6 +8,7 @@ class UObject;
 struct FCsInterfaceMap;
 class ICsStatusEffect;
 struct ICsDamageEvent;
+struct FCsResource_DamageEvent;
 
 struct CSSE_API FCsStatusEffectEvent_DamageImpl final : public ICsStatusEffectEvent,
 													    public ICsStatusEffectEvent_Damage
@@ -17,6 +18,8 @@ public:
 	static const FName Name;
 
 private:
+
+	// ICsGetInterfaceMap
 
 	FCsInterfaceMap InterfaceMap;
 
@@ -33,6 +36,8 @@ public:
 	// ICsStatusEffectEvent_Damage
 
 	ICsDamageEvent* DamageEvent;
+
+	FCsResource_DamageEvent* DamageEventContainer;
 
 public:
 

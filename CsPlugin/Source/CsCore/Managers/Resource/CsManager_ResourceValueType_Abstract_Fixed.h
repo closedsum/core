@@ -497,6 +497,8 @@ public:
 
 			if (!M->IsAllocated())
 			{
+				checkf(M->Get(), TEXT("%s:Allocate: Resource is NULL. Container %d no longer holds a reference to a resource."), *Name, PoolIndex);
+
 				M->Allocate();
 				AddAllocatedLink(&(Links[PoolIndex]));
 				++AllocatedSize;
@@ -534,6 +536,8 @@ public:
 
 			if (!M->IsAllocated())
 			{
+				checkf(M->Get(), TEXT("%s:AllocateAfter: Resource is NULL. Container %d no longer holds a reference to a resource."), *Name, PoolIndex);
+
 				M->Allocate();
 				R    = M;
 				Link = &(Links[PoolIndex]);
@@ -589,6 +593,8 @@ public:
 
 			if (!M->IsAllocated())
 			{
+				checkf(M->Get(), TEXT("%s:AllocateBefore: Resource is NULL. Container %d no longer holds a reference to a resource."), *Name, PoolIndex);
+
 				M->Allocate();
 				R    = M;
 				Link = &(Links[PoolIndex]);

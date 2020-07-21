@@ -52,6 +52,21 @@ struct CSSE_API FCsLibrary_StatusEffectEvent
 	}
 
 	/**
+	* Safely perform the operation static_cast<DerivedType*>("Event associated with ICsStatusEffectEvent") with checks (For InterfaceMap).
+	* DerivedType is NOT abstract.
+	* Event NOT check if the InterfaceMap "emulates" interfaces.
+	*
+	* @param Context	The calling context
+	* @param Event		Event that implements the interface: ICsStatusEffectEvent.
+	* return			Event casted to DerivedType (static_cast<DerivedType*>(Event))
+	*/
+	template<typename DerivedType>
+	FORCEINLINE static DerivedType* SafePureStaticCastChecked(const FString& Context, ICsStatusEffectEvent* Event)
+	{
+		return NCsInterfaceMap::SafePureStaticCastChecked<DerivedType, ICsStatusEffectEvent>(Context, Event);
+	}
+
+	/**
 	* Perform the operation static_cast<OtherInterfaceType*>("Event associated with ICsStatusEffectEvent") with checks.
 	* OtherInterfaceType IS abstract.
 	*

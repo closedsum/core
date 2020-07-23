@@ -58,10 +58,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FECsStatusEffectTriggerCondition TriggerCondition;
 
-	/** The trigger frequency params. This describes the frequency the status effect is
+	/** Parameters that describes the frequency the status effect is
 		triggered. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FCsStatusEffectTriggerFrequencyParams TriggerFrequencyParams;
+
+	/**  */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FCsStatusEffectTransferFrequencyParams TransferFrequencyParams;
 
 	TArray<ICsStatusEffect*> Children;
 
@@ -77,6 +81,11 @@ public:
 	FORCEINLINE const FCsStatusEffectTriggerFrequencyParams& GetTriggerFrequencyParams() const
 	{
 		return TriggerFrequencyParams;
+	}
+
+	FORCEINLINE const FCsStatusEffectTransferFrequencyParams& GetTransferFrequencyParams() const
+	{
+		return TransferFrequencyParams;
 	}
 
 	FORCEINLINE const TArray<ICsStatusEffect*>& GetChildren() const

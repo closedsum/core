@@ -43,5 +43,12 @@ public:
 	*
 	* return
 	*/
+	virtual const FCsStatusEffectTransferFrequencyParams& GetTransferFrequencyParams() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
 	virtual const TArray<ICsStatusEffect*>& GetChildren() const = 0;
 };

@@ -24,6 +24,12 @@ public:
 	virtual void ApplyStatusEffect(const ICsStatusEffectEvent* Event) = 0;
 };
 
+// FCsReceiveStatusEffect
+#pragma region
+
+class ICsGetManagerStatusEffect;
+class UCsManager_StatusEffect;
+
 struct CSSE_API FCsReceiveStatusEffect : public TCsInterfaceObject<ICsReceiveStatusEffect>
 {
 private:
@@ -33,6 +39,12 @@ private:
 public:
 
 	static const FCsReceiveStatusEffect Empty;
+
+protected:
+
+	ICsGetManagerStatusEffect* GetManagerStatusEffect;
+
+	bool bScriptGetManagerStatusEffect;
 
 // Script
 #pragma region
@@ -57,11 +69,47 @@ public:
 
 #pragma endregion ICsReceiveStatusEffect
 
+	// ICsGetManagerStatusEffect
+#pragma region
+public:
+
+	/**
+	* Delegate type for
+	*  The Object implements a script interface of type: ICsGetManagerStatusEffect.
+	*
+	* @param Object			A Object of type: ICsGetManagerStatusEffect.
+	* return Manager
+	*/
+	DECLARE_DELEGATE_RetVal_OneParam(UCsManager_StatusEffect* /*Manager*/, FScript_GetManager_StatusEffect, UObject* /*Object*/);
+
+	/** Delegate for .
+		 The Object implements a script interface of type: ICsReceiveStatusEffect. */
+	FScript_GetManager_StatusEffect Script_GetManager_StatusEffect_Impl;
+
+	/**
+	* Delegate type for
+	*  The Object implements a script interface of type: ICsGetManagerStatusEffect.
+	*
+	* @param Object			A Object of type: ICsGetManagerStatusEffect.
+	* @oaran InManager
+	*/
+	DECLARE_DELEGATE_TwoParams(FScript_SetManager_StatusEffect, UObject* /*Object*/, UCsManager_StatusEffect* /*InManager*/);
+
+	/** Delegate for .
+		 The Object implements a script interface of type: ICsReceiveStatusEffect. */
+	FScript_SetManager_StatusEffect Script_SetManager_StatusEffect_Impl;
+
+#pragma endregion ICsGetManagerStatusEffect
+
 #pragma endregion Script
 
 	FCsReceiveStatusEffect() :
 		Super(),
-		Script_ApplyStatusEffect_Impl()
+		GetManagerStatusEffect(nullptr),
+		bScriptGetManagerStatusEffect(false),
+		Script_ApplyStatusEffect_Impl(),
+		Script_GetManager_StatusEffect_Impl(),
+		Script_SetManager_StatusEffect_Impl()
 	{
 
 	}
@@ -88,5 +136,44 @@ public:
 			Interface->ApplyStatusEffect(Event);
 	}
 
-#pragma endregion ICsReceiveStatusEffects
+#pragma endregion ICsReceiveStatusEffect
+
+// ICsGetManagerStatusEffect
+#pragma region
+public:
+
+	UCsManager_StatusEffect* GetManager_StatusEffect();
+
+	void SetManager_StatusEffect(UCsManager_StatusEffect* InManager);
+
+#pragma endregion ICsGetManagerStatusEffect
+
+public:
+
+	FORCEINLINE bool Implements_ICsGetManagerStatusEffect() const
+	{
+		return GetManagerStatusEffect != nullptr || bScriptGetManagerStatusEffect;
+	}
+
+	FORCEINLINE void SetScriptGetManagerStatusEffect()
+	{
+		bScriptGetManagerStatusEffect = true;
+	}
+
+	FORCEINLINE const bool& IsScriptGetManagerStatusEffect() const
+	{
+		return bScriptGetManagerStatusEffect;
+	}
+
+	FORCEINLINE ICsGetManagerStatusEffect* Get_GetManagerStatusEffect() const
+	{
+		return GetManagerStatusEffect;
+	}
+
+	FORCEINLINE void Set_GetManagerStatusEffect(ICsGetManagerStatusEffect* O)
+	{
+		GetManagerStatusEffect = O;
+	}
 };
+
+#pragma endregion FCsReceiveStatusEffect

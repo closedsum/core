@@ -4,6 +4,7 @@
 #include "Managers/Resource/CsManager_ResourceValueType_Abstract_Fixed.h"
 #include "Managers/Damage/Event/CsDamageEvent.h"
 #include "UniqueObject/CsTypes_UniqueObject.h"
+#include "Managers/Damage/CsReceiveDamage.h"
 #include "CsManager_Damage.generated.h"
 
 // Structs
@@ -22,7 +23,6 @@ struct CSCORE_API FCsManager_DamageEvent : public TCsManager_ResourceValueType_A
 #pragma endregion Structs
 
 class ICsGetManagerDamage;
-class ICsReceiveDamage;
 
 UCLASS()
 class CSCORE_API UCsManager_Damage : public UObject
@@ -121,6 +121,12 @@ public:
 	* return
 	*/
 	FCsResource_DamageEvent* AllocateEvent();
+
+private:
+
+	TArray<FCsReceiveDamage> Local_Recievers;
+
+public:
 
 	/**
 	*

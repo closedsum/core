@@ -4,10 +4,10 @@
 #include "Event/CsResource_StatusEffectEvent.h"
 #include "UniqueObject/CsTypes_UniqueObject.h"
 #include "CsTypes_StatusEffect.h"
+#include "CsReceiveStatusEffect.h"
 #include "CsStatusEffectCoordinator.generated.h"
 
 class ICsGetStatusEffectCoordinator;
-class ICsReceiveStatusEffect;
 
 UCLASS()
 class CSSE_API UCsStatusEffectCoordinator : public UObject
@@ -129,6 +129,12 @@ public:
 	* @param Event
 	*/
 	void DeallocateEvent(FCsResource_StatusEffectEvent* Event);
+
+private:
+
+	TArray<FCsReceiveStatusEffect> Local_Receivers;
+
+public:
 
 	/**
 	* Process the Event

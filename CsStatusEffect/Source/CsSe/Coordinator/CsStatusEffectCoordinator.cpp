@@ -9,8 +9,11 @@
 #include "CsLibrary_StatusEffect.h"
 #include "Event/CsLibrary_StatusEffectEvent.h"
 // Managers
+#include "Managers/StatusEffect/CsManager_StatusEffect.h"
+#include "Managers/StatusEffect/CsGetManagerStatusEffect.h"
 #include "Managers/Damage/CsManager_Damage.h"
 // StatusEffect
+#include "Shape/CsStatusEffect_Shape.h"
 #include "CsReceiveStatusEffect.h"
 #include "Damage/CsStatusEffect_Damage.h"
 #include "Event/CsStatusEffectEventImpl.h"
@@ -258,6 +261,13 @@ void UCsStatusEffectCoordinator::Initialize()
 
 void UCsStatusEffectCoordinator::CleanUp()
 {
+	for (const FECsStatusEffectEvent& Event : EMCsStatusEffectEvent::Get())
+	{
+		FCsManager_StatusEffectEvent& Manager = Manager_Events[Event.GetValue()];
+
+		Manager.Shutdown();
+	}
+	Manager_Events.Reset();
 }
 
 	// Root
@@ -378,26 +388,76 @@ void UCsStatusEffectCoordinator::ProcessStatusEffectEvent(const ICsStatusEffectE
 
 	checkf(StatusEffect, TEXT("%s: StatusEffect is NULL. No Status Effect found for Event."), *Context);
 
-	// ICsStatusEffectEvent_Damage
-	if (ICsStatusEffectEvent_Damage* SeDamageEvent = FCsLibrary_StatusEffectEvent::GetSafeInterfaceChecked<ICsStatusEffectEvent_Damage>(Context, const_cast<ICsStatusEffectEvent*>(Event)))
+	const FCsStatusEffectTriggerFrequencyParams& TriggerParams   = StatusEffect->GetTriggerFrequencyParams();
+	const FCsStatusEffectTransferFrequencyParams& TransferParams = StatusEffect->GetTransferFrequencyParams();
+
+	Local_Receivers.Reset(Local_Receivers.Max());
+
+	// TODO: Need to check for Shape
+
+	// Check for Status Effects will no transfer / pass through and will be consumed immediately
+	if (TriggerParams.Type == ECsStatusEffectTriggerFrequency::Once &&
+		TransferParams.Type == ECsStatusEffectTransferFrequency::None)
 	{
-		// Get the DamageEvent
-		ICsDamageEvent* DamageEvent = SeDamageEvent->GetDamageEvent();
-
-		checkf(DamageEvent, TEXT("%s: DamageEvent is NULL. No Damage Event found for Event implementing interface: ICsStatusEffectEvent_Damage."), *Context);
-		
-		// Get the implementation to get the container (for quick deallocation).
-		if (FCsStatusEffectEvent_DamageImpl* SetDamageEventImpl = FCsLibrary_StatusEffectEvent::SafePureStaticCastChecked<FCsStatusEffectEvent_DamageImpl>(Context, const_cast<ICsStatusEffectEvent*>(Event)))
+		// ICsStatusEffectEvent_Damage
+		if (ICsStatusEffectEvent_Damage* SeDamageEvent = FCsLibrary_StatusEffectEvent::GetSafeInterfaceChecked<ICsStatusEffectEvent_Damage>(Context, const_cast<ICsStatusEffectEvent*>(Event)))
 		{
-			FCsResource_DamageEvent* DamageEventContainer = SetDamageEventImpl->DamageEventContainer;
+			// Get the DamageEvent
+			ICsDamageEvent* DamageEvent = SeDamageEvent->GetDamageEvent();
 
-			checkf(DamageEventContainer, TEXT("%s: DamageEventContainer is NULL."), *Context);
+			checkf(DamageEvent, TEXT("%s: DamageEvent is NULL. No Damage Event found for Event implementing interface: ICsStatusEffectEvent_Damage."), *Context);
 
-			UCsManager_Damage::Get(MyRoot)->ProcessDamageEventContainer(DamageEventContainer);
+			// Get the implementation to get the container (for quick deallocation).
+			if (FCsStatusEffectEvent_DamageImpl* SetDamageEventImpl = FCsLibrary_StatusEffectEvent::SafePureStaticCastChecked<FCsStatusEffectEvent_DamageImpl>(Context, const_cast<ICsStatusEffectEvent*>(Event)))
+			{
+				FCsResource_DamageEvent* DamageEventContainer = SetDamageEventImpl->DamageEventContainer;
+
+				checkf(DamageEventContainer, TEXT("%s: DamageEventContainer is NULL."), *Context);
+
+				UCsManager_Damage::Get(MyRoot)->ProcessDamageEventContainer(DamageEventContainer);
+			}
+			else
+			{
+				UCsManager_Damage::Get(MyRoot)->ProcessDamageEvent(DamageEvent);
+			}
 		}
 		else
 		{
-			UCsManager_Damage::Get(MyRoot)->ProcessDamageEvent(DamageEvent);
+
+		}
+	}
+	else
+	{
+		// ICsStatusEffect_Shape
+		if (ICsStatusEffect_Shape* Shape = FCsLibrary_StatusEffect::GetSafeInterfaceChecked<ICsStatusEffect_Shape>(Context, StatusEffect))
+		{
+
+		}
+		// Point
+		else
+		{
+			if (UObject* Receiver = Event->GetReceiver())
+			{
+				if (Receiver->GetClass()->ImplementsInterface(UCsReceiveStatusEffect::StaticClass()))
+				{
+					Local_Receivers.AddDefaulted();
+					Local_Receivers.Last().SetObject(Receiver);
+				}
+			}
+		}
+	}
+
+	for (FCsReceiveStatusEffect& Receiver : Local_Receivers)
+	{
+		if (Receiver.Implements_ICsGetManagerStatusEffect())
+		{
+			UCsManager_StatusEffect* Manager_StatusEffect = Receiver.GetManager_StatusEffect();
+
+			Manager_StatusEffect->ApplyStatusEffect(const_cast<ICsStatusEffectEvent*>(Event));
+		}
+		else
+		{
+			Receiver.ApplyStatusEffect(Event);
 		}
 	}
 }

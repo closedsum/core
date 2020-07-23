@@ -8,7 +8,6 @@
 #include "Library/CsLibrary_Common.h"
 #include "Managers/Damage/Expression/CsLibrary_DamageExpression.h"
 // Damage
-#include "Managers/Damage/CsReceiveDamage.h"
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
 #include "Managers/Damage/Expression/CsDamageExpression.h"
 #include "Managers/Damage/Shape/CsDamageShape.h"
@@ -108,7 +107,7 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Projectile::Init: Init has already been called."));
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::Init: Init has already been called."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -314,14 +313,18 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 {
 	using namespace NCsManagerDamageCached;
 
-	checkf(Event, TEXT("UCsManager_Damage::ProcessDamageEvent: Event is NULL."));
+	const FString& Context = Str::ProcessDamageEvent;
+
+	checkf(Event, TEXT("%s: Event is NULL."), *Context);
 
 	ICsDamageExpression* Expression = Event->GetExpression();
 
-	checkf(Expression, TEXT("UCsManager_Damage::ProcessDamageEvent: Expression is NULL. No Damage Expression found for Event."));
+	checkf(Expression, TEXT("%s: Expression is NULL. No Damage Expression found for Event."), *Context);
+
+	Local_Recievers.Reset(Local_Recievers.Max());
 
 	// ICsDamageShape
-	if (ICsDamageShape* Shape = FCsLibrary_DamageExpression::GetSafeInterfaceChecked<ICsDamageShape>(Str::ProcessDamageEvent, Expression))
+	if (ICsDamageShape* Shape = FCsLibrary_DamageExpression::GetSafeInterfaceChecked<ICsDamageShape>(Context, Expression))
 	{
 
 	}
@@ -338,20 +341,8 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 			
 			if (Class->ImplementsInterface(UCsReceiveDamage::StaticClass()))
 			{
-				// Interface
-				if (ICsReceiveDamage* Object = Cast<ICsReceiveDamage>(Actor))
-				{
-					Object->Damage(Event);
-				}
-				// Script Interface
-				else
-				{
-				}
-#if !UE_BUILD_SHIPPING
-				LogEventPoint(Event);
-#endif // #if !UE_BUILD_SHIPPING
-				OnProcessDamageEvent_Event.Broadcast(Event);
-				return;
+				Local_Recievers.AddDefaulted();
+				Local_Recievers.Last().SetObject(Actor);
 			}
 		}
 		// Component
@@ -362,22 +353,20 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 
 			if (Class->ImplementsInterface(UCsReceiveDamage::StaticClass()))
 			{
-				// Interface
-				if (ICsReceiveDamage* Object = Cast<ICsReceiveDamage>(Component))
-				{
-					Object->Damage(Event);
-				}
-				// Script Interface
-				else
-				{
-				}
-#if !UE_BUILD_SHIPPING
-				LogEventPoint(Event);
-#endif // #if !UE_BUILD_SHIPPING
-				OnProcessDamageEvent_Event.Broadcast(Event);
-				return;
+				Local_Recievers.AddDefaulted();
+				Local_Recievers.Last().SetObject(Component);
 			}
 		}
+	}
+
+	for (FCsReceiveDamage& Receiver : Local_Recievers)
+	{
+		Receiver.Damage(Event);
+
+#if !UE_BUILD_SHIPPING
+		LogEventPoint(Event);
+#endif // #if !UE_BUILD_SHIPPING
+		OnProcessDamageEvent_Event.Broadcast(Event);
 	}
 }
 

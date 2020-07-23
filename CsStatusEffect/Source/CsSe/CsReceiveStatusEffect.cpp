@@ -2,6 +2,9 @@
 #include "CsReceiveStatusEffect.h"
 #include "CsSe.h"
 
+// Managers
+#include "Managers/StatusEffect/CsGetManagerStatusEffect.h"
+
 UCsReceiveStatusEffect::UCsReceiveStatusEffect(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -53,5 +56,25 @@ void FCsReceiveStatusEffect::Reset()
 }
 
 #pragma endregion TCsInterfaceObject
+
+// ICsGetManagerStatusEffect
+#pragma region
+
+UCsManager_StatusEffect* FCsReceiveStatusEffect::GetManager_StatusEffect()
+{
+	if (bScriptGetManagerStatusEffect)
+		return Script_GetManager_StatusEffect_Impl.Execute(Object);
+	return GetManagerStatusEffect->GetManager_StatusEffect();
+}
+
+void FCsReceiveStatusEffect::SetManager_StatusEffect(UCsManager_StatusEffect* InManager)
+{
+	if (bScriptGetManagerStatusEffect)
+		Script_SetManager_StatusEffect_Impl.Execute(Object, InManager);
+	else
+		GetManagerStatusEffect->SetManager_StatusEffect(InManager);
+}
+
+#pragma endregion ICsGetManagerStatusEffect
 
 #pragma endregion FCsReceiveStatusEffect

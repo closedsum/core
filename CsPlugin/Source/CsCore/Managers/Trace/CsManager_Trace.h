@@ -10,55 +10,6 @@
 // Enums
 #pragma region
 
-	// TraceTransaction
-#pragma region
-
-UENUM(BlueprintType)
-enum class ECsTraceTransaction : uint8
-{
-	Add						UMETA(DisplayName = "Add"),
-	Complete				UMETA(DisplayName = "Complete"),
-	ECsTraceTransaction_MAX	UMETA(Hidden),
-};
-
-struct CSCORE_API EMCsTraceTransaction : public TCsEnumMap<ECsTraceTransaction>
-{
-	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsTraceTransaction, ECsTraceTransaction)
-};
-
-namespace NCsTraceTransaction
-{
-	typedef ECsTraceTransaction Type;
-
-	namespace Ref
-	{
-		extern CSCORE_API const Type Add;
-		extern CSCORE_API const Type Complete;
-		extern CSCORE_API const Type ECsTraceTransaction_MAX;
-	}
-
-	extern CSCORE_API const uint8 MAX;
-
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		extern CSCORE_API const TCsString Add;
-		extern CSCORE_API const TCsString Complete;
-	}
-
-	FORCEINLINE const FString& ToActionString(const Type &EType)
-	{
-		if (EType == Type::Add) { return Str::Add.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
-		if (EType == Type::Complete) { return Str::Complete.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-}
-
-#define ECS_TRACE_TRANSACTION_MAX NCsTraceTransaction::MAX
-
-#pragma endregion TraceTransaction
-
 #pragma endregion Enums
 
 #define CS_POOLED_TRACE_REQUEST_SIZE 255

@@ -27,25 +27,6 @@ namespace NCsManagerTraceCached
 // Enums
 #pragma region
 
-	// TraceTransaction
-namespace NCsTraceTransaction
-{
-	namespace Ref
-	{
-		CSCORE_API const Type Add = EMCsTraceTransaction::Get().Add(Type::Add, TEXT("Add"));
-		CSCORE_API const Type Complete = EMCsTraceTransaction::Get().Add(Type::Complete, TEXT("Complete"));
-		CSCORE_API const Type ECsTraceTransaction_MAX = EMCsTraceTransaction::Get().Add(Type::ECsTraceTransaction_MAX, TEXT("ECsTraceTransaction_MAX"), TEXT("MAX"));
-	}
-
-	CSCORE_API const uint8 MAX = (uint8)Type::ECsTraceTransaction_MAX;
-
-	namespace Str
-	{
-		CSCORE_API const TCsString Add = TCsString(TEXT("Add"), TEXT("add"), TEXT("Adding"));
-		CSCORE_API const TCsString Complete = TCsString(TEXT("Complete"), TEXT("complete"), TEXT("Completing"));
-	}
-}
-
 #pragma endregion Enums
 
 ACsManager_Trace::ACsManager_Trace(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)

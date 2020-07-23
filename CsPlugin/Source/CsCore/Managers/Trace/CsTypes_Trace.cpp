@@ -2,49 +2,78 @@
 #include "Managers/Trace/CsTypes_Trace.h"
 
 // TraceType
-CS_DEFINE_ENUM_MAP_BODY(EMCsTraceType)
+#pragma region
 
 namespace NCsTraceType
 {
 	namespace Ref
 	{
-		CSCORE_API const Type Line = EMCsTraceType::Get().Add(Type::Line, TEXT("Line"));
-		CSCORE_API const Type Sweep = EMCsTraceType::Get().Add(Type::Sweep, TEXT("Sweep"));
-		CSCORE_API const Type Overlap = EMCsTraceType::Get().Add(Type::Overlap, TEXT("Overlap"));
-		CSCORE_API const Type ECsTraceType_MAX = EMCsTraceType::Get().Add(Type::ECsTraceType_MAX, TEXT("ECsTraceType_MAX"), TEXT("MAX"));
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceType, Line);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceType, Sweep);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceType, Overlap);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsTraceType, ECsTraceType_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsTraceType_MAX;
 }
 
+#pragma endregion TraceType
+
 // TraceMethod
-CS_DEFINE_ENUM_MAP_BODY(EMCsTraceMethod)
+#pragma region
 
 namespace NCsTraceMethod
 {
 	namespace Ref
 	{
-		CSCORE_API const Type Test = EMCsTraceMethod::Get().Add(Type::Test, TEXT("Test"));
-		CSCORE_API const Type Single = EMCsTraceMethod::Get().Add(Type::Single, TEXT("Single"));
-		CSCORE_API const Type Multi = EMCsTraceMethod::Get().Add(Type::Multi, TEXT("Multi"));
-		CSCORE_API const Type ECsTraceMethod_MAX = EMCsTraceMethod::Get().Add(Type::ECsTraceMethod_MAX, TEXT("ECsTraceMethod_MAX"), TEXT("MAX"));
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceMethod, Test);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceMethod, Single);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceMethod, Multi);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsTraceMethod, ECsTraceMethod_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsTraceMethod_MAX;
 }
 
+#pragma endregion TraceMethod
+
 // TraceQuery
-CS_DEFINE_ENUM_MAP_BODY(EMCsTraceQuery)
+#pragma region
 
 namespace NCsTraceQuery
 {
 	namespace Ref
 	{
-		CSCORE_API const Type Channel = EMCsTraceQuery::Get().Add(Type::Channel, TEXT("Channel"));
-		CSCORE_API const Type ObjectType = EMCsTraceQuery::Get().Add(Type::ObjectType, TEXT("ObjectType"));
-		CSCORE_API const Type Profile = EMCsTraceQuery::Get().Add(Type::Profile, TEXT("Profile"));
-		CSCORE_API const Type ECsTraceQuery_MAX = EMCsTraceQuery::Get().Add(Type::ECsTraceQuery_MAX, TEXT("ECsTraceQuery_MAX"), TEXT("MAX"));
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceQuery, Channel);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceQuery, ObjectType);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceQuery, Profile);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsTraceQuery, ECsTraceQuery_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsTraceQuery_MAX;
 }
+
+#pragma endregion TraceQuery
+
+// TraceTransaction
+#pragma region
+
+namespace NCsTraceTransaction
+{
+	namespace Ref
+	{
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceTransaction, Add);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceTransaction, Complete);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsTraceTransaction, ECsTraceTransaction_MAX, "MAX");
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsTraceTransaction_MAX;
+
+	namespace Str
+	{
+		CSCORE_API const TCsString Add = TCsString(TEXT("Add"), TEXT("add"), TEXT("Adding"));
+		CSCORE_API const TCsString Complete = TCsString(TEXT("Complete"), TEXT("complete"), TEXT("Completing"));
+	}
+}
+
+#pragma endregion TraceTransaction

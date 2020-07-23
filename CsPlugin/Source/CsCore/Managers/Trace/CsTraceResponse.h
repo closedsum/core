@@ -36,14 +36,16 @@ struct CSCORE_API FCsTraceResponse
 	FORCEINLINE FCsTraceResponse& operator=(const FCsTraceResponse& B)
 	{
 		bAllocated = B.bAllocated;
-		bResult = B.bResult;
+		bResult	   = B.bResult;
 
-		OutHits.Reset();
+		OutHits.Reset(FMath::Max(OutHits.Max(), B.OutHits.Max()));
 
 		for (const FHitResult& Hit : B.OutHits)
 		{
 			OutHits.Add(Hit);
 		}
+
+		OutOverlaps.Reset(FMath::Max(OutOverlaps.Max(), B.OutOverlaps.Max()));
 
 		for (const FOverlapResult& Overlap : B.OutOverlaps)
 		{

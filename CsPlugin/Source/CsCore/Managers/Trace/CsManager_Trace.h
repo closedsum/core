@@ -2,7 +2,7 @@
 #pragma once
 #include "GameFramework/Actor.h"
 // Types
-#include "Managers/Trace/CsTypes_Trace.h"
+#include "Managers/Trace/CsTraceRequest.h"
 #include "Managers/Trace/CsTraceResponse.h"
 
 #include "CsManager_Trace.generated.h"

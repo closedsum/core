@@ -24,11 +24,6 @@ namespace NCsManagerTraceCached
 
 #pragma endregion Cache
 
-// Enums
-#pragma region
-
-#pragma endregion Enums
-
 ACsManager_Trace::ACsManager_Trace(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	RequestsProcessedPerTick = 64;

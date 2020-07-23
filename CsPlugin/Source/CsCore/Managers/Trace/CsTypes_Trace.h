@@ -168,88 +168,9 @@ namespace NCsTraceTransaction
 
 #pragma endregion TraceTransaction
 
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsTraceResponse
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
-	bool bAllocated;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Trace")
-	bool bResult;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Trace")
-	float ElapsedTime;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Trace")
-	TArray<struct FHitResult> OutHits;
-
-	TArray<struct FOverlapResult> OutOverlaps;
-
-	FCsTraceResponse() 
-	{
-		Reset();
-	}
-
-	~FCsTraceResponse() 
-	{
-	}
-
-	FORCEINLINE FCsTraceResponse& operator=(const FCsTraceResponse& B)
-	{
-		bAllocated = B.bAllocated;
-		bResult = B.bResult;
-
-		OutHits.Reset();
-
-		for (const FHitResult& Hit : B.OutHits)
-		{
-			OutHits.Add(Hit);
-		}
-
-		for (const FOverlapResult& Overlap : B.OutOverlaps)
-		{
-			OutOverlaps.Add(Overlap);
-		}
-		ElapsedTime = B.ElapsedTime;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsTraceResponse& B) const
-	{
-		if (bAllocated != B.bAllocated)
-			return false;
-		if (bResult != B.bResult)
-			return false;
-		if (ElapsedTime != B.ElapsedTime)
-			return false;
-		if (OutHits.Num() != B.OutHits.Num())
-			return false;
-		if (OutOverlaps.Num() != B.OutOverlaps.Num())
-			return false;
-		return true;
-	}
-
-	FORCEINLINE bool operator!=(const FCsTraceResponse& B) const
-	{
-		return !(*this == B);
-	}
-
-	FORCEINLINE void Reset()
-	{
-		bAllocated = false;
-		bResult = false;
-		ElapsedTime = 0.0f;
-
-		OutHits.Reset();
-		OutOverlaps.Reset();
-	}
-};
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerTrace_OnResponse, const uint8&, RequestId, const FCsTraceResponse&, Response);
-
 #define CS_INVALID_TRACE_REQUEST_ID 255
+
+struct FCsTraceResponse;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsTraceRequest
@@ -285,9 +206,6 @@ struct CSCORE_API FCsTraceRequest
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnResponse, const uint8&, FCsTraceResponse*);
 
 	FOnResponse OnResponse_Event;
-
-	UPROPERTY(BlueprintAssignable, Category = "Trace")
-	FBindableDynEvent_CsManagerTrace_OnResponse OnRespone_ScriptEvent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	bool bAsync;
@@ -335,29 +253,6 @@ struct CSCORE_API FCsTraceRequest
 
 		Reset();
 	}
-	~FCsTraceRequest() {}
-
-	FORCEINLINE FCsTraceRequest& operator=(const FCsTraceRequest& B)
-	{
-		StaleTime = B.StaleTime;
-		bAsync = B.bAsync;
-		Type = B.Type;
-		Method = B.Method;
-		Query = B.Query;
-		Start = B.Start;
-		End = B.End;
-		Rotation = B.Rotation;
-		Channel = B.Channel;
-		ProfileName = B.ProfileName;
-		Shape = B.Shape;
-		Params = B.Params;
-		ObjectParams = B.ObjectParams;
-		ResponseParam = B.ResponseParam;
-		ReplacePending = B.ReplacePending;
-		PendingId = B.PendingId;
-		CopyHandle_Internal(B.Handle, Handle);
-		return *this;
-	}
 
 	FORCEINLINE bool operator==(const FCsTraceRequest& B) const
 	{
@@ -392,9 +287,6 @@ struct CSCORE_API FCsTraceRequest
 		CallerId = UINT64_MAX;
 
 		OnResponse_Event.Clear();
-#if WITH_EDITOR
-		OnRespone_ScriptEvent.Clear();
-#endif // #if WITH_EDITOR
 
 		bAsync = false;
 		Type = ECsTraceType::ECsTraceType_MAX;

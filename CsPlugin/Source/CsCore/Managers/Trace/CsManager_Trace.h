@@ -3,14 +3,9 @@
 #include "GameFramework/Actor.h"
 // Types
 #include "Managers/Trace/CsTypes_Trace.h"
-#include "Types/Property/Multi/CsProperty_Multi_FString_Enum_ThreeParams.h"
+#include "Managers/Trace/CsTraceResponse.h"
 
 #include "CsManager_Trace.generated.h"
-
-// Enums
-#pragma region
-
-#pragma endregion Enums
 
 #define CS_POOLED_TRACE_REQUEST_SIZE 255
 #define CS_POOLED_TRACE_RESPONSE_SIZE 255

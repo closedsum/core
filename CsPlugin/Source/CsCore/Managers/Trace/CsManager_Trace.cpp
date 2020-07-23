@@ -1,8 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Trace/CsManager_Trace.h"
 #include "CsCore.h"
-#include "CsCVars.h"
 
+// CVars
+#include "CsCVars.h"
 // Library
 #include "Library/CsLibrary_Common.h"
 

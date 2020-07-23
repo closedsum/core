@@ -8,7 +8,9 @@ FCsStatusEffectEventImpl::FCsStatusEffectEventImpl() :
 	// ICsStatusEffectEvent
 	StatusEffect(nullptr),
 	Instigator(nullptr),
-	Causer(nullptr)
+	Causer(nullptr),
+	Receiver(nullptr),
+	IgnoreObjects()
 {
 	InterfaceMap.SetRootName(FCsStatusEffectEventImpl::Name);
 
@@ -20,4 +22,6 @@ void FCsStatusEffectEventImpl::Reset()
 	StatusEffect = nullptr;
 	Instigator = nullptr;
 	Causer = nullptr;
+	Receiver = nullptr;
+	IgnoreObjects.Reset(IgnoreObjects.Max());
 }

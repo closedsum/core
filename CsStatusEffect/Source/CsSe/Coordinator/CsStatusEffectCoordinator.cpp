@@ -359,30 +359,39 @@ const FECsStatusEffectEvent& UCsStatusEffectCoordinator::GetTypeFromEvent(FCsRes
 	return GetTypeFromEvent(Event->Get());
 }
 
+void UCsStatusEffectCoordinator::DeallocateEvent(FCsResource_StatusEffectEvent* Event)
+{
+	const FECsStatusEffectEvent& Type = GetTypeFromEvent(Event);
+
+	Manager_Events[Type.GetValue()].Deallocate(Event);
+}
+
 void UCsStatusEffectCoordinator::ProcessStatusEffectEvent(const ICsStatusEffectEvent* Event)
 {
 	using namespace NCsStatusEffectCoordinatorCached;
 
-	checkf(Event, TEXT("UCsStatusEffectCoordinator::ProcessStatusEffectEvent: Event is NULL."));
+	const FString& Context = Str::ProcessStatusEffectEvent;
+
+	checkf(Event, TEXT("%s: Event is NULL."), *Context);
 
 	ICsStatusEffect* StatusEffect = Event->GetStatusEffect();
 
-	checkf(StatusEffect, TEXT("UCsStatusEffectCoordinator::ProcessStatusEffectEvent: StatusEffect is NULL. No Status Effect found for Event."));
+	checkf(StatusEffect, TEXT("%s: StatusEffect is NULL. No Status Effect found for Event."), *Context);
 
 	// ICsStatusEffectEvent_Damage
-	if (ICsStatusEffectEvent_Damage* SeDamageEvent = FCsLibrary_StatusEffectEvent::GetSafeInterfaceChecked<ICsStatusEffectEvent_Damage>(Str::ProcessStatusEffectEvent, const_cast<ICsStatusEffectEvent*>(Event)))
+	if (ICsStatusEffectEvent_Damage* SeDamageEvent = FCsLibrary_StatusEffectEvent::GetSafeInterfaceChecked<ICsStatusEffectEvent_Damage>(Context, const_cast<ICsStatusEffectEvent*>(Event)))
 	{
-		// Get the DamageEVent
+		// Get the DamageEvent
 		ICsDamageEvent* DamageEvent = SeDamageEvent->GetDamageEvent();
 
-		checkf(DamageEvent, TEXT("UCsStatusEffectCoordinator::ProcessStatusEffectEvent: DamageEvent is NULL. No Damage Event found for Event implementing interface: ICsStatusEffectEvent_Damage."));
+		checkf(DamageEvent, TEXT("%s: DamageEvent is NULL. No Damage Event found for Event implementing interface: ICsStatusEffectEvent_Damage."), *Context);
 		
 		// Get the implementation to get the container (for quick deallocation).
-		if (FCsStatusEffectEvent_DamageImpl* SetDamageEventImpl = FCsLibrary_StatusEffectEvent::SafePureStaticCastChecked<FCsStatusEffectEvent_DamageImpl>(Str::ProcessStatusEffectEvent, const_cast<ICsStatusEffectEvent*>(Event)))
+		if (FCsStatusEffectEvent_DamageImpl* SetDamageEventImpl = FCsLibrary_StatusEffectEvent::SafePureStaticCastChecked<FCsStatusEffectEvent_DamageImpl>(Context, const_cast<ICsStatusEffectEvent*>(Event)))
 		{
 			FCsResource_DamageEvent* DamageEventContainer = SetDamageEventImpl->DamageEventContainer;
 
-			checkf(DamageEventContainer, TEXT("UCsStatusEffectCoordinator::ProcessStatusEffectEvent: DamageEventContainer is NULL."));
+			checkf(DamageEventContainer, TEXT("%s: DamageEventContainer is NULL."), *Context);
 
 			UCsManager_Damage::Get(MyRoot)->ProcessDamageEventContainer(DamageEventContainer);
 		}

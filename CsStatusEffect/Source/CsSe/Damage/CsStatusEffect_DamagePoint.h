@@ -54,41 +54,14 @@ protected:
 
 public:
 
-	/** * How the status effect will get triggered. */
+	/** How the status effect will get triggered. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FECsStatusEffectTriggerCondition TriggerCondition;
 
-	/** The frequency the status effect will occur once triggered.
-		If ECsStatusEffectTriggerFrequency::Once,
-		 Ignore GetCount() and GetInterval().
-		If ECsStatusEffectTriggerFrequency::Count,
-		 GetCount() should be > 0, if NOT, it will be treated as 
-		 ECsStatusEffectTriggerFrequency::Once.
-		If ECsStatusEffectTriggerFrequency::Infinite,
-		 Ignore GetCount() and GetInterval() should be > 0.0f.
-	*/
+	/** The trigger frequency params. This describes the frequency the status effect is
+		triggered. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	ECsStatusEffectTriggerFrequency TriggerFrequency;
-
-	/** Get the number of times to apply the status effect when triggered.
-		Only valid if GetTriggerFrequency() == ECsStatusEffectTriggerFrequency::Count.
-		Should be > 0. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
-	int32 Count;
-
-	/** Get the delay before applying the status effect when triggered.
-		If Delay == 0.0f, the status effect will be applied at a given interval.
-		If Delay == 0.0f and Interval == 0.0f, the status will be applied immediately. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float Delay;
-
-	/** Get the time between each status effect being applied when triggered.
-		Only valid if,
-		ECsStatusEffectTriggerFrequency::Count
-		 or
-		ECsStatusEffectTriggerFrequency::Infinite */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float Interval;
+	FCsStatusEffectTriggerFrequencyParams TriggerFrequencyParams;
 
 	TArray<ICsStatusEffect*> Children;
 
@@ -101,24 +74,9 @@ public:
 		return TriggerCondition;
 	}
 
-	FORCEINLINE const ECsStatusEffectTriggerFrequency& GetTriggerFrequency() const
+	FORCEINLINE const FCsStatusEffectTriggerFrequencyParams& GetTriggerFrequencyParams() const
 	{
-		return TriggerFrequency;
-	}
-
-	FORCEINLINE const int32& GetCount() const
-	{
-		return Count;
-	}
-
-	FORCEINLINE const float& GetDelay() const
-	{
-		return Delay;
-	}
-
-	FORCEINLINE const float& GetInterval() const
-	{
-		return Interval;
+		return TriggerFrequencyParams;
 	}
 
 	FORCEINLINE const TArray<ICsStatusEffect*>& GetChildren() const

@@ -48,6 +48,7 @@ enum class ECsStatusEffectTriggerFrequency : uint8
 {
 	Once								 UMETA(DisplayName = "Once"),
 	Count								 UMETA(DisplayName = "Count"),
+	Time								 UMETA(DisplayName = "Time"),
 	Infinite							 UMETA(DisplayName = "Infinite"),
 	ECsStatusEffectTriggerFrequency_MAX  UMETA(Hidden),
 };
@@ -65,6 +66,7 @@ namespace NCsStatusEffectTriggerFrequency
 	{
 		extern CSSE_API const Type Once;
 		extern CSSE_API const Type Count;
+		extern CSSE_API const Type Time;
 		extern CSSE_API const Type Infinite;
 		extern CSSE_API const Type ECsStatusEffectTriggerFrequency_MAX;
 	}
@@ -73,6 +75,140 @@ namespace NCsStatusEffectTriggerFrequency
 }
 
 #pragma endregion StatusEffectTriggerFrequency
+
+// FCsStatusEffectTriggerFrequencyParams
+#pragma region
+
+/**
+* Parameters describing the trigger frequency.
+*/
+USTRUCT(BlueprintType)
+struct CSSE_API FCsStatusEffectTriggerFrequencyParams
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Trigger Frequency
+		If Type == ECsStatusEffectTriggerFrequency::Once,
+	     Ignore Count and Interval.
+		If Type == ECsStatusEffectTriggerFrequency::Count,
+	     Count should be > 0, if NOT, it will be treated
+	     as ECsStatusEffectTriggerFrequency::Once.
+		if Type == ECsStatusEffectTriggerFrequency::Time, 
+		If Type == ECsStatusEffectTriggerFrequency::Infinite,
+	     Ignore Count and Interval should be > 0.0f. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsStatusEffectTriggerFrequency Type;
+
+	/** The delay before applying the status effect when triggered.
+		If Delay == 0.0f, the status effect will be applied at a given interval.
+		If Delay == 0.0f and Interval == 0.0f, the status will be applied immediately. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Delay;
+
+	/** The number of times to apply the status effect when triggered.
+		Only valid if Type == ECsStatusEffectTriggerFrequency::Count.
+		Should be > 0. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
+	int32 Count;
+
+	/** The time between each status effect being applied when triggered.
+		Only valid if,
+		Type == ECsStatusEffectTriggerFrequency::Count
+		 or
+		Type == ECsStatusEffectTriggerFrequency::Infinite */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Interval;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Time;
+
+	FCsStatusEffectTriggerFrequencyParams() :
+		Type(ECsStatusEffectTriggerFrequency::Once),
+		Delay(0.0f),
+		Count(0),
+		Interval(0.0f),
+		Time(0.0f)
+	{
+	}
+};
+ 
+#pragma endregion FCsStatusEffectTriggerFrequencyParams
+
+// StatusEffectTransferFrequency
+#pragma region
+
+UENUM(BlueprintType)
+enum class ECsStatusEffectTransferFrequency : uint8
+{
+	None								 UMETA(DisplayName = "None"),
+	Once								 UMETA(DisplayName = " nce"),
+	Count								 UMETA(DisplayName = "Count"),
+	Time								 UMETA(DisplayName = "Time"),
+	Infinite							 UMETA(DisplayName = "Infinite"),
+	ECsStatusEffectTransferFrequency_MAX  UMETA(Hidden),
+};
+
+struct CSSE_API EMCsStatusEffectTransferFrequency : public TCsEnumMap<ECsStatusEffectTransferFrequency>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsStatusEffectTransferFrequency, ECsStatusEffectTransferFrequency)
+};
+
+namespace NCsStatusEffectTransferFrequency
+{
+	typedef ECsStatusEffectTransferFrequency Type;
+
+	namespace Ref
+	{
+		extern CSSE_API const Type None;
+		extern CSSE_API const Type Once;
+		extern CSSE_API const Type Count;
+		extern CSSE_API const Type Time;
+		extern CSSE_API const Type Infinite;
+		extern CSSE_API const Type ECsStatusEffectTransferFrequency_MAX;
+	}
+
+	extern CSSE_API const uint8 MAX;
+}
+
+
+#pragma endregion StatusEffectTransferFrequency
+
+// FCsStatusEffectTransferFrequencyParams
+#pragma region
+
+/**
+* Parameters describing the transfer frequency.
+*/
+USTRUCT(BlueprintType)
+struct CSSE_API FCsStatusEffectTransferFrequencyParams
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsStatusEffectTransferFrequency Type;
+
+	/** */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
+	int32 Count;
+
+	/** */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Time;
+
+	FCsStatusEffectTransferFrequencyParams() :
+		Type(ECsStatusEffectTransferFrequency::Once),
+		Count(0),
+		Time(0.0f)
+	{
+	}
+};
+ 
+#pragma endregion FCsStatusEffectTriggerFrequencyParams
 
 // StatusEffectEvent
 #pragma region

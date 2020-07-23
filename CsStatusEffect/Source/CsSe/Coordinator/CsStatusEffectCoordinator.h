@@ -1,26 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UObject/Object.h"
-#include "Managers/Resource/CsManager_ResourcePointerType_Fixed.h"
-#include "Event/CsStatusEffectEvent.h"
+#include "Event/CsResource_StatusEffectEvent.h"
 #include "UniqueObject/CsTypes_UniqueObject.h"
 #include "CsTypes_StatusEffect.h"
 #include "CsStatusEffectCoordinator.generated.h"
-
-// Structs
-#pragma region
-
-	// StatusEffect
-
-struct CSSE_API FCsResource_StatusEffectEvent : public TCsResourceContainer<ICsStatusEffectEvent>
-{
-};
-
-struct CSSE_API FCsManager_StatusEffectEvent : public TCsManager_ResourcePointerType_Fixed<ICsStatusEffectEvent, FCsResource_StatusEffectEvent, 0>
-{
-};
-
-#pragma endregion Structs
 
 class ICsGetStatusEffectCoordinator;
 class ICsReceiveStatusEffect;
@@ -138,6 +122,13 @@ public:
 	* return		Type of StatusEffectEvent.
 	*/
 	const FECsStatusEffectEvent& GetTypeFromEvent(FCsResource_StatusEffectEvent* Event);
+
+	/**
+	*
+	*
+	* @param Event
+	*/
+	void DeallocateEvent(FCsResource_StatusEffectEvent* Event);
 
 	/**
 	* Process the Event

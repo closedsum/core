@@ -10,6 +10,8 @@ FCsStatusEffectEvent_DamageImpl::FCsStatusEffectEvent_DamageImpl() :
 	StatusEffect(nullptr),
 	Instigator(nullptr),
 	Causer(nullptr),
+	Receiver(nullptr),
+	IgnoreObjects(),
 	// ICsStatusEffectEvent_Damage
 	DamageEvent(nullptr),
 	DamageEventContainer(nullptr)
@@ -25,5 +27,8 @@ void FCsStatusEffectEvent_DamageImpl::Reset()
 	StatusEffect = nullptr;
 	Instigator = nullptr;
 	Causer = nullptr;
+	Receiver = nullptr;
+	IgnoreObjects.Reset(IgnoreObjects.Max());
 	DamageEvent = nullptr;
+	DamageEventContainer = nullptr;
 }

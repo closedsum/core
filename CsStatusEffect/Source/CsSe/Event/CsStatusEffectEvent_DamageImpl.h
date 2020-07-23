@@ -29,9 +29,13 @@ public:
 
 	ICsStatusEffect* StatusEffect;
 
-	UObject* Instigator;
+	TWeakObjectPtr<UObject> Instigator;
 
-	UObject* Causer;
+	TWeakObjectPtr<UObject> Causer;
+
+	TWeakObjectPtr<UObject> Receiver;
+
+	TArray<TWeakObjectPtr<UObject>> IgnoreObjects;
 
 	// ICsStatusEffectEvent_Damage
 
@@ -65,12 +69,22 @@ public:
 
 	FORCEINLINE UObject* GetInstigator() const
 	{
-		return Instigator;
+		return Instigator.IsValid() ? Instigator.Get() : nullptr;
 	}
 
 	FORCEINLINE UObject* GetCauser() const
 	{
-		return Causer;
+		return Causer.IsValid() ? Causer.Get() : nullptr;
+	}
+
+	FORCEINLINE UObject* GetReceiver() const
+	{
+		return Receiver.IsValid() ? Receiver.Get() : nullptr;
+	}
+
+	FORCEINLINE const TArray<TWeakObjectPtr<UObject>>& GetIgnoreObjects() const
+	{
+		return IgnoreObjects;
 	}
 
 #pragma endregion ICsStatusEffectEvent

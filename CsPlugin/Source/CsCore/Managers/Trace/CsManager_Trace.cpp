@@ -43,40 +43,8 @@ UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 {
 	RequestsProcessedPerTick = 64;
 
-	for (uint8 I = 0; I < CS_POOLED_TRACE_REQUEST_SIZE; ++I)
-	{
-		Requests[I].Id = I;
-	}
-
-	for (uint8 I = 0; I < ECS_TRACE_TYPE_MAX; ++I)
-	{
-		TraceCountLifetimeByType[I] = 0;
-		TraceCountThisFrameByType[I] = 0;
-
-		TMap<TCsTraceRequestId, FCsTraceRequest*> AddMap;
-		PendingRequestsByType.Add((ECsTraceType)I, AddMap);
-	}
-
-	for (uint8 I = 0; I < ECS_TRACE_METHOD_MAX; ++I)
-	{
-		TraceCountLifetimeByMethod[I] = 0;
-		TraceCountThisFrameByMethod[I] = 0;
-
-		TMap<TCsTraceRequestId, FCsTraceRequest*> AddMap;
-		PendingRequestsByMethod.Add((ECsTraceMethod)I, AddMap);
-	}
-
-	for (uint8 I = 0; I < ECS_TRACE_QUERY_MAX; ++I)
-	{
-		TraceCountLifetimeByQuery[I] = 0;
-		TraceCountThisFrameByQuery[I] = 0;
-
-		TMap<TCsTraceRequestId, FCsTraceRequest*> AddMap;
-		PendingRequestsByQuery.Add((ECsTraceQuery)I, AddMap);
-	}
-
-	TraceDelegate.BindUObject(this, &ACsManager_Trace::OnTraceResponse);
-	OverlapDelegate.BindUObject(this, &ACsManager_Trace::OnOverlapResponse);
+	TraceDelegate.BindUObject(this, &UCsManager_Trace::OnTraceResponse);
+	OverlapDelegate.BindUObject(this, &UCsManager_Trace::OnOverlapResponse);
 }
 
 // Singleton
@@ -149,7 +117,7 @@ UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 	UCsManager_Trace* Manager_Trace	    = GetManagerTrace->GetManager_Trace();
 	Manager_Trace->CleanUp();
 
-	GetManagerTrace->SetManager_Damage(nullptr);
+	GetManagerTrace->SetManager_Trace(nullptr);
 #else
 	if (!s_Instance)
 	{
@@ -175,7 +143,7 @@ UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerTrace* UCsManager_Trace::Get_GetManagerDamage(UObject* InRoot)
+/*static*/ ICsGetManagerTrace* UCsManager_Trace::Get_GetManagerTrace(UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_Trace::Get_GetManagerDamage: InRoot is NULL."));
 
@@ -254,46 +222,38 @@ void UCsManager_Trace::Initialize()
 
 	static const int32 PoolSize = 256;
 	
-	Manager_Request.CreatePool(PoolSize);
-	Manager_Response.CreatePool(PoolSize);
+	// Request
+	{
+		Manager_Request.CreatePool(PoolSize);
+
+		const TArray<FCsResource_TraceRequest*>& Pool = Manager_Request.GetPool();
+
+		for (FCsResource_TraceRequest* Container : Pool)
+		{
+			FCsTraceRequest* R = Container->Get();
+			const int32& Index = Container->GetIndex();
+			R->SetIndex(Index);
+		}
+	}
+	// Response
+	{
+		Manager_Response.CreatePool(PoolSize);
+
+		const TArray<FCsResource_TraceResponse*>& Pool = Manager_Response.GetPool();
+
+		for (FCsResource_TraceResponse* Container : Pool)
+		{
+			FCsTraceResponse* R = Container->Get();
+			const int32& Index  = Container->GetIndex();
+			R->SetIndex(Index);
+		}
+	}
 }
 
 void UCsManager_Trace::CleanUp()
 {
-	TraceCountLifetime = 0;
-	TraceCountThisFrame = 0;
-
-	for (uint8 I = 0; I < ECS_TRACE_TYPE_MAX; ++I)
-	{
-		TraceCountLifetimeByType[I] = 0;
-		TraceCountThisFrameByType[I] = 0;
-	}
-
-	for (uint8 I = 0; I < ECS_TRACE_METHOD_MAX; ++I)
-	{
-		TraceCountLifetimeByMethod[I] = 0;
-		TraceCountThisFrameByMethod[I] = 0;
-	}
-
-	for (uint8 I = 0; I < ECS_TRACE_QUERY_MAX; ++I)
-	{
-		TraceCountLifetimeByQuery[I] = 0;
-		TraceCountThisFrameByQuery[I] = 0;
-	}
-
-	for (uint8 I = 0; I < CS_POOLED_TRACE_REQUEST_SIZE; ++I)
-	{
-		Requests[I].Reset();
-	}
-
-	PendingRequestHead = nullptr;
-	PendingRequestTail = nullptr;
-
-	PendingRequests.Reset();
-	PendingRequestsByObjectId.Reset();
-	PendingRequestsByType.Reset();
-	PendingRequestsByMethod.Reset();
-	PendingRequestsByQuery.Reset();
+	Manager_Request.Shutdown();
+	Manager_Response.Shutdown();
 }
 
 	// Root
@@ -311,244 +271,112 @@ void UCsManager_Trace::SetMyRoot(UObject* InRoot)
 void UCsManager_Trace::OnTick(const float &DeltaSeconds)
 {
 	// Reset TraceCountThisFrame
-	TraceCountThisFrame = 0;
+	ThisFrameCountInfo.Reset();
 
-	for (uint8 I = 0; I < ECS_TRACE_TYPE_MAX; ++I)
-	{
-		TraceCountThisFrameByType[I] = 0;
-	}
-
-	for (uint8 I = 0; I < ECS_TRACE_METHOD_MAX; ++I)
-	{
-		TraceCountThisFrameByMethod[I] = 0;
-	}
-
-	for (uint8 I = 0; I < ECS_TRACE_QUERY_MAX; ++I)
-	{
-		TraceCountThisFrameByQuery[I] = 0;
-	}
 	// Process Requests
-	const int32 ProcessCountMax = FMath::Max(0, RequestsProcessedPerTick - TraceCountThisFrame);
-
-	TArray<TCsTraceRequestId> Keys;
-	PendingRequests.GetKeys(Keys);
-
-	const int32 KeyCount = Keys.Num();
-	const int32 Count    = FMath::Min(KeyCount, ProcessCountMax);
-
-	const float CurrentTime = GetWorld()->GetTimeSeconds();
-
-	int32 I = 0;
-
-	TLinkedList<FCsTraceRequest*>* Current = PendingRequestHead;
-
-	while (Current)
 	{
-		FCsTraceRequest* Request = **Current;
-		Current					 = PendingRequestHead->GetNextLink();
+		const int32 ProcessCountMax = FMath::Max(0, RequestsProcessedPerTick - (int32)ThisFrameCountInfo.TotalCount);
+		const int32 Count			= FMath::Min(Manager_Request.GetAllocatedSize(), ProcessCountMax);
 
-		// If Processing, SKIP
-		if (Request->bProcessing)
-			continue;
-		// If COMPLETED, Remove
-		if (Request->bCompleted)
+		const float CurrentTime = GetWorld()->GetTimeSeconds();
+
+		int32 I = 0;
+
+		TCsDoubleLinkedList<FCsResource_TraceRequest*>* Current = Manager_Request.GetAllocatedHead();
+		TCsDoubleLinkedList<FCsResource_TraceRequest*>* Next	= Current;
+
+		while (Next)
 		{
-			RemovePendingRequest(Request);
-			continue;
+			Current								= Next;
+			FCsResource_TraceRequest* Container = **Current;
+			Next								= Current->GetNextLink();
+
+			FCsTraceRequest* Request = Container->Get();
+
+			// If Processing, SKIP
+			if (Request->bProcessing)
+				continue;
+			// If COMPLETED, Remove
+			if (Request->bCompleted)
+			{
+				if (FCsTraceResponse* Response = Request->Response)
+				{
+					Request->OnResponse_Event.Broadcast(Response);
+				}
+				PendingRequests.Remove(Request);
+				DeallocateRequest(Request);
+				continue;
+			}
+			// Check to remove STALE Request
+			if (Request->StaleTime > 0.0f &&
+				CurrentTime - Request->StartTime >= Request->StaleTime)
+			{
+				PendingRequests.Remove(Request);
+				DeallocateRequest(Request);
+				continue;
+			}
+			// PROCESS Request
+			if (I < Count)
+			{
+				ProcessRequest(Request);
+				IncrementTraceCount(Request);
+			}
+			++I;
 		}
-		// Check to remove STALE Request
-		if (Request->StaleTime > 0.0f &&
-			CurrentTime - Request->StartTime >= Request->StaleTime)
+	}
+	// Process Responses
+	{
+		TCsDoubleLinkedList<FCsResource_TraceResponse*>* Current = Manager_Response.GetAllocatedHead();
+		TCsDoubleLinkedList<FCsResource_TraceResponse*>* Next	= Current;
+
+		while (Next)
 		{
-			RemovePendingRequest(Request);
-			continue;
+			Current							     = Next;
+			FCsResource_TraceResponse* Container = **Current;
+			Next								 = Current->GetNextLink();
+
+			FCsTraceResponse* Response = Container->Get();
+
+			if (Response->ShouldDeallocate())
+			{
+				DeallocateResponse(Response);
+			}
 		}
-		// PROCESS Request
-		if (I < Count)
-		{
-			ProcessRequest(Request);
-			IncrementTraceCount(Request);
-		}
-		++I;
 	}
 }
 
 void UCsManager_Trace::IncrementTraceCount(FCsTraceRequest* Request)
 {
-	FCsUniqueObjectId Id;
-	const ECsTraceType& Type	 = Request->Type;
-	const ECsTraceMethod& Method = Request->Method;
-	const ECsTraceQuery& Query	 = Request->Query;
-
 	// Lifetime
-	LifetimeCountInfo.Increment(Id, Type, Method, Query);
+	LifetimeCountInfo.Increment(Request);
 	// Frame
-	ThisFrameCountInfo.Increment(Id, Type, Method, Query);
+	ThisFrameCountInfo.Increment(Request);
 }
 
 // Request
 #pragma region
 
-FCsResource_TraceRequest* UCsManager_Trace::AllocateRequest()
+FCsTraceRequest* UCsManager_Trace::AllocateRequest()
 {
-	return Manager_Request.Allocate();
+	FCsResource_TraceRequest* Container = Manager_Request.Allocate();
+
+	return Container->Get();
 }
 
-void ACsManager_Trace::AddPendingRequest(FCsTraceRequest* Request)
+void UCsManager_Trace::DeallocateRequest(FCsTraceRequest* Request)
 {
-	if (PendingRequestTail)
-	{
-		Request->Link.LinkAfter(PendingRequestTail);
-		PendingRequestTail = &(Request->Link);
-	}
-	else
-	{
-		PendingRequestHead = &(Request->Link);
-		PendingRequestTail = PendingRequestHead;
-	}
+	if (FCsTraceResponse* Response = Request->Response)
+		DeallocateResponse(Response);
 
-	const TCsTraceRequestId& RequestId = Request->Id;
-
-	PendingRequests.Add(RequestId, Request);
-
-	// TraceId
-	const TCsTraceHandleId& HandleId = Request->Handle._Handle;
-
-	if (HandleId != 0)
-	{
-		PendingRequestsByTraceHandle.Add(HandleId, Request);
-	}
-
-	// ObjectId
-	if (TMap<TCsTraceRequestId, FCsTraceRequest*>* Map = PendingRequestsByObjectId.Find(Request->CallerId))
-	{
-		Map->Add(RequestId, Request);
-	}
-	else
-	{
-		TMap<TCsTraceRequestId, FCsTraceRequest*> NewMap;
-		NewMap.Add(RequestId, Request);
-		PendingRequestsByObjectId.Add(Request->CallerId, NewMap);
-	}
-	// Type
-	TMap<TCsTraceRequestId, FCsTraceRequest*>& MapType = PendingRequestsByType[Request->Type];
-	MapType.Add(RequestId, Request);
-	// Method
-	TMap<TCsTraceRequestId, FCsTraceRequest*>& MapMethod = PendingRequestsByMethod[Request->Method];
-	MapMethod.Add(RequestId, Request);
-	// Query
-	TMap<TCsTraceRequestId, FCsTraceRequest*>& MapQuery = PendingRequestsByQuery[Request->Query];
-	MapQuery.Add(RequestId, Request);
-
-	// Check if an EXISTING Request should be REPLACED
-	if (!Request->bProcessing && Request->ReplacePending)
-	{
-		const TCsTraceRequestId& PendingRequestId = Request->PendingId;
-
-		if (FCsTraceRequest** PendingRequestPtr = PendingRequests.Find(PendingRequestId))
-		{
-			FCsTraceRequest* PendingRequest	= *PendingRequestPtr;
-
-			ReplacePendingRequest(PendingRequest, Request);
-		}
-	}
-
-	// LOG TRANSACTION
-}
-
-void ACsManager_Trace::ReplacePendingRequest(FCsTraceRequest* PendingRequest, FCsTraceRequest* Request)
-{
-	// Update Maps
-	const TCsTraceRequestId& PendingRequestId = PendingRequest->Id;
-
-	PendingRequests.Remove(PendingRequestId);
-	// TraceId
-	const TCsTraceHandleId& PendingHandleId = PendingRequest->Handle._Handle;
-
-	PendingRequestsByTraceHandle.Remove(PendingHandleId);
-	// ObjectId
-	TMap<TCsTraceRequestId, FCsTraceRequest*>& MapId = PendingRequestsByObjectId[PendingRequest->CallerId];
-	MapId.Remove(PendingRequestId);
-	// Type
-	TMap<TCsTraceRequestId, FCsTraceRequest*>& MapType = PendingRequestsByType[PendingRequest->Type];
-	MapType.Remove(PendingRequestId);
-	// Method
-	TMap<TCsTraceRequestId, FCsTraceRequest*>& MapMethod = PendingRequestsByMethod[PendingRequest->Method];
-	MapMethod.Remove(PendingRequestId);
-	// Query
-	TMap<TCsTraceRequestId, FCsTraceRequest*>& MapQuery = PendingRequestsByQuery[PendingRequest->Query];
-	MapQuery.Remove(PendingRequestId);
-
-	TLinkedList<FCsTraceRequest*>* PendingLink = &(PendingRequest->Link);
-
-	Request->Link.LinkReplace(PendingLink);
-
-	// Check if Pending Link was the HEAD
-	if (PendingLink == PendingRequestHead)
-	{
-		PendingRequestHead = &(Request->Link);
-
-		if (PendingRequests.Num() == CS_SINGLETON)
-		{
-			PendingRequestTail = &(Request->Link);
-		}
-	}
-
-	// LOG
-
-	PendingRequest->Reset();
-}
-
-void ACsManager_Trace::RemovePendingRequest(FCsTraceRequest* Request)
-{
-	// Update Maps
-	const TCsTraceRequestId& RequestId = Request->Id;
-
-	PendingRequests.Remove(RequestId);
-	// TraceId
-	const TCsTraceHandleId& HandleId = Request->Handle._Handle;
-
-	PendingRequestsByTraceHandle.Remove(HandleId);
-	// ObjectId
-	TMap<TCsTraceRequestId, FCsTraceRequest*>& MapId = PendingRequestsByObjectId[Request->CallerId];
-	MapId.Remove(RequestId);
-	// Type
-	TMap<TCsTraceRequestId, FCsTraceRequest*>& MapType = PendingRequestsByType[Request->Type];
-	MapType.Remove(RequestId);
-	// Method
-	TMap<TCsTraceRequestId, FCsTraceRequest*>& MapMethod = PendingRequestsByMethod[Request->Method];
-	MapMethod.Remove(RequestId);
-	// Query
-	TMap<TCsTraceRequestId, FCsTraceRequest*>& MapQuery = PendingRequestsByQuery[Request->Query];
-	MapQuery.Remove(RequestId);
-
-	// LOG TRANSACTION
-
-	// Update HEAD of Queue
-	TLinkedList<FCsTraceRequest*>* Link = &(Request->Link);
-
-	if (Link == PendingRequestHead)
-	{
-		if (PendingRequests.Num() > CS_EMPTY)
-		{
-			PendingRequestHead = Link->GetNextLink();
-		}
-		else
-		{
-			PendingRequestHead = nullptr;
-			PendingRequestTail = nullptr;
-		}
-	}
 	Request->Reset();
+	Manager_Request.DeallocateAt(Request->GetIndex());
 }
 
-bool UCsManager_Trace::ProcessRequest(FCsResource_TraceRequest* Request)
+bool UCsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 {
-	checkf(Request, TEXT(""));
+	checkf(Request, TEXT("UCsManager_Trace::ProcessRequest: Request is NULL."));
 
-	FCsTraceRequest* R = Request->Get();
-
-	checkf(R, TEXT(""));
+	checkf(Request->IsValid(), TEXT("UCsManager_Trace::ProcessRequest: Request is NOT Valid."));
 
 #if !UE_BUILD_SHIPPING
 	if (CsCVarDrawManagerTraceRequests->GetInt() == CS_CVAR_DRAW)
@@ -598,7 +426,7 @@ bool UCsManager_Trace::ProcessRequest(FCsResource_TraceRequest* Request)
 		if (Request->Query == ECsTraceQuery::Profile)
 		{
 			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Line Trace %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *TraceMethodAsString);
-			Request->Reset();
+			DeallocateRequest(Request);
 			return false;
 		}
 	}
@@ -618,7 +446,7 @@ bool UCsManager_Trace::ProcessRequest(FCsResource_TraceRequest* Request)
 		if (Request->Query == ECsTraceQuery::Profile)
 		{
 			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Sweep Trace %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *TraceMethodAsString);
-			Request->Reset();
+			DeallocateRequest(Request);
 			return false;
 		}
 	}
@@ -638,7 +466,7 @@ bool UCsManager_Trace::ProcessRequest(FCsResource_TraceRequest* Request)
 		if (Request->Query == ECsTraceQuery::Profile)
 		{
 			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Sweep Trace %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *TraceMethodAsString);
-			Request->Reset();
+			DeallocateRequest(Request);
 			return false;
 		}
 	}
@@ -650,29 +478,39 @@ bool UCsManager_Trace::ProcessRequest(FCsResource_TraceRequest* Request)
 // Response
 #pragma region
 
-FCsResource_TraceResponse* UCsManager_Trace::AllocateResponse()
+FCsTraceResponse* UCsManager_Trace::AllocateResponse()
 {
-	return Manager_Response.Allocate();
+	FCsResource_TraceResponse* Container = Manager_Response.Allocate();
+
+	return Container->Get();
+}
+
+void UCsManager_Trace::DeallocateResponse(FCsTraceResponse* Response)
+{
+	Response->Reset();
+	Manager_Response.DeallocateAt(Response->GetIndex());
 }
 
 void UCsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& Datum)
 {
 	const TCsTraceHandleId& HandleId = Handle._Handle;
 	// Get Request
-	FCsTraceRequest* Request = PendingRequestsByTraceHandle[HandleId];
+	FCsTraceRequest* Request = PendingRequests.Get(Handle);
 	// Setup Response
 	FCsTraceResponse* Response = AllocateResponse();
 
 	Response->bResult	  = Datum.OutHits.Num() > CS_EMPTY && Datum.OutHits[CS_FIRST].bBlockingHit;
 	Response->ElapsedTime = GetWorld()->GetTimeSeconds() - Request->StartTime;
 
-	const uint8 Count = Datum.OutHits.Num();
+	// Copy Datum
+	const int32 Count = Datum.OutHits.Num();
 
-	for (uint8 I = 0; I < Count; ++I)
+	Response->OutHits.Reserve(FMath::Max(Response->OutHits.Max(), Count));
+
+	for (FHitResult& HitResult : Datum.OutHits)
 	{
 		Response->OutHits.AddDefaulted();
-
-		UCsLibrary_Common::CopyHitResult(Datum.OutHits[I], Response->OutHits[I]);
+		Response->OutHits.Last() = HitResult;
 	}
 	
 #if !UE_BUILD_SHIPPING
@@ -690,9 +528,10 @@ void UCsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 
 	LogTransaction(NCsManagerTraceCached::Str::OnTraceResponse, ECsTraceTransaction::Complete, Request, Response);
 
+	Request->Response = Response;
+
 	// Broadcast Response
-	Request->OnResponse_Event.Broadcast(Request->Id, Response);
-	Response->Reset();
+	Request->OnResponse_AsyncEvent.Broadcast(Response);
 
 	Request->bProcessing = false;
 	Request->bCompleted = true;
@@ -704,25 +543,24 @@ void UCsManager_Trace::OnOverlapResponse(const FTraceHandle& Handle, FOverlapDat
 
 #pragma endregion Response
 
-FCsResource_TraceResponse*  UCsManager_Trace::Trace(FCsResource_TraceRequest* Request)
+FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 {
-	FCsTraceRequest* R = Request->Get();
+	checkf(Request, TEXT("UCsManager_Trace::Trace: Request is NULL."));
 
-	R->StartTime = GetWorld()->GetTimeSeconds();
+	Request->StartTime = GetWorld()->GetTimeSeconds();
 
 	bool AddPending = !Request->bForce && ThisFrameCountInfo.TotalCount >= RequestsProcessedPerTick;
 
 	// TODO: Print warning for a normal trace moved to Async
 	if (AddPending && !Request->bAsync)
 	{
-		R->Reset();
-		Manager_Request.Deallocate(Request);
+		DeallocateRequest(Request);
 		UE_LOG(LogCs, Warning, TEXT("UCsManager_Trace::Trace: Reached maximum RequestsProcessedPerTick: %d and Request is NOT Async. Abandoning Request."), RequestsProcessedPerTick);
 		return nullptr;
 	}
 
 	// Async
-	if (R->bAsync ||
+	if (Request->bAsync ||
 		AddPending)
 	{
 		// if NOT Pending, Start Async
@@ -731,14 +569,14 @@ FCsResource_TraceResponse*  UCsManager_Trace::Trace(FCsResource_TraceRequest* Re
 			// if Successful in processing Request, EXIT
 			if (ProcessRequest(Request))
 			{
-				AddPendingRequest(Request);
+				PendingRequests.Add(Request);
 				IncrementTraceCount(Request);
 				return nullptr;
 			}
 		}
 
 		// ADD Pending Request
-		AddPendingRequest(Request);
+		PendingRequests.Add(Request);
 		return nullptr;
 	}
 	// Normal
@@ -755,6 +593,7 @@ FCsResource_TraceResponse*  UCsManager_Trace::Trace(FCsResource_TraceRequest* Re
 #endif // #if !UE_BUILD_SHIPPING
 
 		FCsTraceResponse* Response = AllocateResponse();
+		Response->QueueDeallocate();
 
 		Response->ElapsedTime = GetWorld()->GetTimeSeconds() - Request->StartTime;
 
@@ -818,6 +657,18 @@ FCsResource_TraceResponse*  UCsManager_Trace::Trace(FCsResource_TraceRequest* Re
 			// Test
 			if (Request->Method == ECsTraceMethod::Test)
 			{
+				// SweepTestByChannel
+				if (Request->Query == ECsTraceQuery::Channel)
+					Response->bResult = GetWorld()->SweepTestByChannel(Request->Start, Request->End, Request->Rotation.Quaternion(), Request->Channel, Request->Shape, Request->Params, Request->ResponseParam);
+				// SweepTestByObjectType
+				else
+				if (Request->Query == ECsTraceQuery::ObjectType)
+	
+					Response->bResult = GetWorld()->SweepTestByObjectType(Request->Start, Request->End, Request->Rotation.Quaternion(), Request->ObjectParams, Request->Shape, Request->Params);
+				// SweepTestByProfile
+				else
+				if (Request->Query == ECsTraceQuery::Profile)
+					Response->bResult = GetWorld()->SweepTestByProfile(Request->Start, Request->End, Request->Rotation.Quaternion(), Request->ProfileName, Request->Shape, Request->Params);
 			}
 			// Single
 			else
@@ -837,9 +688,9 @@ FCsResource_TraceResponse*  UCsManager_Trace::Trace(FCsResource_TraceRequest* Re
 		{
 		}
 		/*
-		bool SweepTestByChannel(const FVector& Start, const FVector& End, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
-		bool SweepTestByObjectType(const FVector& Start, const FVector& End, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-		bool SweepTestByProfile(const FVector& Start, const FVector& End, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params) const;
+		
+		
+		
 		bool SweepSingleByChannel(struct FHitResult& OutHit, const FVector& Start, const FVector& End, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
 		bool SweepSingleByObjectType(struct FHitResult& OutHit, const FVector& Start, const FVector& End, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
 		bool SweepSingleByProfile(struct FHitResult& OutHit, const FVector& Start, const FVector& End, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
@@ -856,7 +707,7 @@ FCsResource_TraceResponse*  UCsManager_Trace::Trace(FCsResource_TraceRequest* Re
 		bool OverlapMultiByProfile(TArray<struct FOverlapResult>& OutOverlaps, const FVector& Pos, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
 		*/
 		IncrementTraceCount(Request);
-		Request->Reset();
+		DeallocateRequest(Request);
 
 #if !UE_BUILD_SHIPPING
 		if (CsCVarDrawManagerTraceResponses->GetInt() == CS_CVAR_DRAW)
@@ -872,11 +723,11 @@ FCsResource_TraceResponse*  UCsManager_Trace::Trace(FCsResource_TraceRequest* Re
 #endif // #if !UE_BUILD_SHIPPING
 		return Response;
 	}
-	Request->Reset();
+	DeallocateRequest(Request);
 	return nullptr;
 }
 
-void ACsManager_Trace::LogTransaction(const FString& FunctionName, const ECsTraceTransaction& Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response)
+void UCsManager_Trace::LogTransaction(const FString& FunctionName, const ECsTraceTransaction& Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response)
 {
 #if !UE_BUILD_SHIPPING
 	if (CsCVarLogManagerTraceTransactions->GetInt() == CS_CVAR_SHOW_LOG)

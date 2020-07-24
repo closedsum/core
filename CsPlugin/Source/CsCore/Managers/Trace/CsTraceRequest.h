@@ -6,8 +6,7 @@
 #include "CsTraceRequest.generated.h"
 #pragma once
 
-#define CS_INVALID_TRACE_REQUEST_ID 255
-
+class ICsUniqueObject;
 struct FCsTraceResponse;
 
 /**
@@ -17,61 +16,73 @@ struct CSCORE_API FCsTraceRequest
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
-	uint8 Id;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 Index;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
-	bool bAllocated;
+	/** */
+	FTraceHandle Handle;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
+	/** */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bForce;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
+	/** */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bProcessing;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
+	/** */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bCompleted;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
+	/** */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float StartTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float StaleTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TWeakObjectPtr<UObject> Caller;
 
-	uint64 CallerId;
+	/** */
+	ICsUniqueObject* UniqueObject;
 
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnResponse, const uint8&, FCsTraceResponse*);
-
-	FOnResponse OnResponse_Event;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bAsync;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsTraceType Type;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsTraceMethod Method;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsTraceQuery Query;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	/** The start location of the trace. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector Start;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	/** The end location of the trace. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector End;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRotator Rotation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TEnumAsByte<ECollisionChannel> Channel;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName ProfileName;
 
 	FCollisionShape Shape;
@@ -79,74 +90,65 @@ struct CSCORE_API FCsTraceRequest
 	FCollisionObjectQueryParams ObjectParams;
 	FCollisionResponseParams ResponseParam;
 
-	bool ReplacePending;
-	uint8 PendingId;
+	/** */
+	FCsTraceResponse* Response;
 
-	FTraceHandle Handle;
+	/** */
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnResponse, FCsTraceResponse*);
 
-	TLinkedList<FCsTraceRequest*> Link;
+	/** */
+	FOnResponse OnResponse_Event;
+
+	/** */
+	FOnResponse OnResponse_AsyncEvent;
 
 	FCsTraceRequest() :
-		Id(0)
+		Index(INDEX_NONE),
+		Handle(),
+		bForce(false),
+		bProcessing(false),
+		bCompleted(false),
+		StartTime(0.0f),
+		StaleTime(1.0f),
+		Caller(nullptr),
+		UniqueObject(nullptr),
+		bAsync(false),
+		Type(ECsTraceType::ECsTraceType_MAX),
+		Method(ECsTraceMethod::ECsTraceMethod_MAX),
+		Query(ECsTraceQuery::ECsTraceQuery_MAX),
+		Start(FVector::ZeroVector),
+		End(FVector::ZeroVector),
+		Rotation(FRotator::ZeroRotator),
+		Channel(ECollisionChannel::ECC_MAX),
+		ProfileName(NAME_None),
+		Shape(),
+		Params(FCollisionQueryParams::DefaultQueryParam),
+		ObjectParams(FCollisionObjectQueryParams::DefaultObjectQueryParam),
+		ResponseParam(FCollisionResponseParams::DefaultResponseParam),
+		Response(nullptr),
+		OnResponse_Event(),
+		OnResponse_AsyncEvent()
 	{
-		Link = TLinkedList<FCsTraceRequest*>(this);
-
-		Reset();
+	}
+	
+	void SetIndex(const int32& InIndex)
+	{
+		Index = InIndex;
 	}
 
-	FORCEINLINE bool operator==(const FCsTraceRequest& B) const
+	FORCEINLINE const int32& GetIndex() const
 	{
-		return	bAllocated == B.bAllocated &&
-				StaleTime == B.StaleTime &&
-				bAsync == B.bAsync &&
-				Type == B.Type &&
-				Method == B.Method &&
-				Query == B.Query &&
-				Start == B.Start &&
-				End == B.End &&
-				Rotation == B.Rotation &&
-				Channel == B.Channel &&
-				ProfileName == B.ProfileName;
+		return Index;
 	}
 
-	FORCEINLINE bool operator!=(const FCsTraceRequest& B) const
+	FORCEINLINE bool IsValid() const
 	{
-		return !(*this == B);
+		return Index > INDEX_NONE;
 	}
 
-	FORCEINLINE void Reset()
+	FORCEINLINE bool IsHandleValid() const
 	{
-		bAllocated = false;
-		bForce = false;
-		bProcessing = false;
-		bCompleted = false;
-		StartTime = 0.0f;
-		StaleTime = 1.0f;
-		Caller.Reset();
-		Caller = nullptr;
-		CallerId = UINT64_MAX;
-
-		OnResponse_Event.Clear();
-
-		bAsync = false;
-		Type = ECsTraceType::ECsTraceType_MAX;
-		Method = ECsTraceMethod::ECsTraceMethod_MAX;
-		Query = ECsTraceQuery::ECsTraceQuery_MAX;
-		Start = FVector::ZeroVector;
-		End = FVector::ZeroVector;
-		Rotation = FRotator::ZeroRotator;
-		Channel = ECollisionChannel::ECC_MAX;
-		ProfileName = NAME_None;
-		Shape.ShapeType = ECollisionShape::Line;
-		Params = FCollisionQueryParams::DefaultQueryParam;
-		ObjectParams = FCollisionObjectQueryParams::DefaultObjectQueryParam;
-		ResponseParam = FCollisionResponseParams::DefaultResponseParam;
-		ReplacePending = false;
-		PendingId = CS_INVALID_TRACE_REQUEST_ID;
-
-		ResetHandle(Handle);
-
-		Link.Unlink();
+		return Handle._Handle != 0ull && Handle._Data.FrameNumber != 0 && Handle._Data.Index != 0;
 	}
 
 	FORCEINLINE void CopyHandle_Internal(const FTraceHandle &From, FTraceHandle &To)
@@ -166,5 +168,36 @@ struct CSCORE_API FCsTraceRequest
 		InHandle._Handle		   = 0;
 		InHandle._Data.FrameNumber = 0;
 		InHandle._Data.Index	   = 0;
+	}
+
+	FORCEINLINE void Reset()
+	{
+		ResetHandle(Handle);
+
+		bForce = false;
+		bProcessing = false;
+		bCompleted = false;
+		StartTime = 0.0f;
+		StaleTime = 1.0f;
+		Caller = nullptr;
+		UniqueObject = nullptr;
+
+		bAsync = false;
+		Type = ECsTraceType::ECsTraceType_MAX;
+		Method = ECsTraceMethod::ECsTraceMethod_MAX;
+		Query = ECsTraceQuery::ECsTraceQuery_MAX;
+		Start = FVector::ZeroVector;
+		End = FVector::ZeroVector;
+		Rotation = FRotator::ZeroRotator;
+		Channel = ECollisionChannel::ECC_MAX;
+		ProfileName = NAME_None;
+		Shape.ShapeType = ECollisionShape::Line;
+		Params = FCollisionQueryParams::DefaultQueryParam;
+		ObjectParams = FCollisionObjectQueryParams::DefaultObjectQueryParam;
+		ResponseParam = FCollisionResponseParams::DefaultResponseParam;
+
+		Response = nullptr;
+		OnResponse_Event.Clear();
+		OnResponse_AsyncEvent.Clear();
 	}
 };

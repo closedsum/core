@@ -3,6 +3,8 @@
 #include "UniqueObject/CsTypes_UniqueObject.h"
 #pragma once
 
+struct FCsTraceRequest;
+
 struct CSCORE_API FCsManagerTraceCountInfo
 {
 public:
@@ -43,17 +45,7 @@ public:
 		}
 	}
 
-	void Increment(const FCsUniqueObjectId& Id, const ECsTraceType& Type, const ECsTraceMethod& Method, const ECsTraceQuery& Query)
-	{
-		int64& Count = CountById.FindOrAdd(Id);
-		++Count;
-
-		++(CountByType[(uint8)Type]);
-		++(CountByMethod[(uint8)Method]);
-		++(CountByQuery[(uint8)Query]);
-
-		++TotalCount;
-	}
+	void Increment(FCsTraceRequest* Reqeust);
 
 	void Reset()
 	{
@@ -79,26 +71,26 @@ public:
 	}
 };
 
-struct FCsResource_TraceRequest;
+struct FCsTraceRequest;
 
 struct CSCORE_API FCsManagerTracePendingRequests
 {
 public:
 
 	/** */
-	TMap<FTraceHandle, FCsResource_TraceRequest*> RequestsByTraceHandle;
+	TMap<FTraceHandle, FCsTraceRequest*> RequestsByTraceHandle;
 
 	/** */
-	TMap<FCsUniqueObjectId, TMap<FTraceHandle, FCsResource_TraceRequest*>> RequestsById;
+	TMap<FCsUniqueObjectId, TMap<FTraceHandle, FCsTraceRequest*>> RequestsById;
 
 	/** */
-	TMap<ECsTraceType, TMap<FTraceHandle, FCsResource_TraceRequest*>> RequestsByType;
+	TMap<ECsTraceType, TMap<FTraceHandle, FCsTraceRequest*>> RequestsByType;
 
 	/** */
-	TMap<ECsTraceMethod, TMap<FTraceHandle, FCsResource_TraceRequest*>> RequestsByMethod;
+	TMap<ECsTraceMethod, TMap<FTraceHandle, FCsTraceRequest*>> RequestsByMethod;
 
 	/** */
-	TMap<ECsTraceQuery, TMap<FTraceHandle, FCsResource_TraceRequest*>> RequestsByQuery;
+	TMap<ECsTraceQuery, TMap<FTraceHandle, FCsTraceRequest*>> RequestsByQuery;
 
 	FCsManagerTracePendingRequests() :
 		RequestsByTraceHandle(),
@@ -107,5 +99,25 @@ public:
 		RequestsByMethod(),
 		RequestsByQuery()
 	{
+		// Type 
+		for (const ECsTraceType& Type : EMCsTraceType::Get())
+		{
+			RequestsByType.Add(Type);
+		}
+		// Method
+		for (const ECsTraceMethod& Method : EMCsTraceMethod::Get())
+		{
+			RequestsByMethod.Add(Method);
+		}
+		// Method
+		for (const ECsTraceMethod& Method : EMCsTraceMethod::Get())
+		{
+			RequestsByMethod.Add(Method);
+		}
 	}
-}
+
+	FCsTraceRequest* Get(const FTraceHandle& Handle) const;
+
+	void Add(FCsTraceRequest* Request);
+	void Remove(FCsTraceRequest* Request);
+};

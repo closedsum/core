@@ -117,7 +117,6 @@ public:
 
 	virtual void OnTick(const float &DeltaSeconds);
 
-	UPROPERTY(BlueprintReadWrite, Category = "Trace")
 	int32 RequestsProcessedPerTick;
 
 	/** */
@@ -137,25 +136,14 @@ private:
 
 public:
 	
-	FCsResource_TraceRequest* AllocateRequest();
-
-	TLinkedList<FCsTraceRequest*>* PendingRequestHead;
-	TLinkedList<FCsTraceRequest*>* PendingRequestTail;
-
-	TMap<TCsTraceRequestId, FCsTraceRequest*> PendingRequests;
-
-	TMap<FTraceHandle, FCsTraceRequest*> PendingRequestsByTraceHandle;
-
-	TMap<TCsObjectId, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByObjectId;
-	TMap<ECsTraceType, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByType;
-	TMap<ECsTraceMethod, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByMethod;
-	TMap<ECsTraceQuery, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByQuery;
+	FCsTraceRequest* AllocateRequest();
 
 private:
 
-	void AddPendingRequest(FCsTraceRequest* Request);
-	void ReplacePendingRequest(FCsTraceRequest* PendingRequest, FCsTraceRequest* Request);
-	void RemovePendingRequest(FCsTraceRequest* Request);
+	void DeallocateRequest(FCsTraceRequest* Request);
+
+	FCsManagerTracePendingRequests PendingRequests;
+
 	bool ProcessRequest(FCsTraceRequest* Request);
 
 #pragma endregion Request
@@ -168,10 +156,18 @@ private:
 
 public:
 
-	FCsManager_TraceResponse* AllocateResponse();
+	FCsTraceResponse* AllocateResponse();
+
+private:
+
+	void DeallocateResponse(FCsTraceResponse* Response);
+
+public:
 
 	FTraceDelegate TraceDelegate;
 	FOverlapDelegate OverlapDelegate;
+
+private:
 
 	void OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& Datum);
 	void OnOverlapResponse(const FTraceHandle& Handle, FOverlapDatum& Datum);
@@ -180,7 +176,7 @@ public:
 
 public:
 
-	FCsResource_TraceResponse* Trace(FCsResource_TraceRequest* Request);
+	FCsTraceResponse* Trace(FCsTraceRequest* Request);
 
 	virtual void LogTransaction(const FString& FunctionName, const ECsTraceTransaction& Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response);
 };

@@ -249,13 +249,23 @@ public:
 	}
 
 	/**
-	* Get the pool size.
+	* Get the number of elements in the pool.
 	* 
 	* return Pool Size
 	*/
 	FORCEINLINE const int32& GetPoolSize() const
 	{
 		return PoolSize;
+	}
+
+	/**
+	* Get the number of allocated elements.
+	*
+	* return Allocated Size.
+	*/
+	FORCEINLINE const int32& GetAllocatedSize() const
+	{
+		return AllocatedSize;
 	}
 
 	/**

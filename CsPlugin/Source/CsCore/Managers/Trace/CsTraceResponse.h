@@ -11,23 +11,33 @@ struct CSCORE_API FCsTraceResponse
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bAllocated;
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 Index;
 
+	/** Whether the response should be queued for deallocation. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bDeallocate;
+
+	/** */
 	UPROPERTY(BlueprintReadOnly)
 	bool bResult;
 
+	/** */
 	UPROPERTY(BlueprintReadOnly)
 	float ElapsedTime;
 
+	/** */
 	UPROPERTY(BlueprintReadOnly)
 	TArray<FHitResult> OutHits;
 
+	/** */
 	UPROPERTY()
 	TArray<FOverlapResult> OutOverlaps;
 
 	FCsTraceResponse() :
-		bAllocated(false),
+		Index(INDEX_NONE),
+		bDeallocate(false),
 		bResult(false),
 		ElapsedTime(0.0f),
 		OutHits(),
@@ -35,51 +45,29 @@ struct CSCORE_API FCsTraceResponse
 	{
 	}
 
-	FORCEINLINE FCsTraceResponse& operator=(const FCsTraceResponse& B)
+	void SetIndex(const int32& InIndex)
 	{
-		bAllocated = B.bAllocated;
-		bResult	   = B.bResult;
-
-		OutHits.Reset(FMath::Max(OutHits.Max(), B.OutHits.Max()));
-
-		for (const FHitResult& Hit : B.OutHits)
-		{
-			OutHits.Add(Hit);
-		}
-
-		OutOverlaps.Reset(FMath::Max(OutOverlaps.Max(), B.OutOverlaps.Max()));
-
-		for (const FOverlapResult& Overlap : B.OutOverlaps)
-		{
-			OutOverlaps.Add(Overlap);
-		}
-		ElapsedTime = B.ElapsedTime;
-		return *this;
+		Index = InIndex;
 	}
 
-	FORCEINLINE bool operator==(const FCsTraceResponse& B) const
+	FORCEINLINE const int32& GetIndex()
 	{
-		if (bAllocated != B.bAllocated)
-			return false;
-		if (bResult != B.bResult)
-			return false;
-		if (ElapsedTime != B.ElapsedTime)
-			return false;
-		if (OutHits.Num() != B.OutHits.Num())
-			return false;
-		if (OutOverlaps.Num() != B.OutOverlaps.Num())
-			return false;
-		return true;
+		return Index;
 	}
 
-	FORCEINLINE bool operator!=(const FCsTraceResponse& B) const
+	FORCEINLINE void QueueDeallocate()
 	{
-		return !(*this == B);
+		bDeallocate = true;
+	}
+
+	FORCEINLINE bool ShouldDeallocate() const
+	{
+		return bDeallocate;
 	}
 
 	FORCEINLINE void Reset()
 	{
-		bAllocated = false;
+		bDeallocate = false;
 		bResult = false;
 		ElapsedTime = 0.0f;
 

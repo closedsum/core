@@ -4,6 +4,8 @@
 #include "CsTraceResponse.generated.h"
 #pragma once
 
+/**
+*/
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsTraceResponse
 {

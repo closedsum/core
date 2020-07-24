@@ -9,6 +9,17 @@
 
 //#include "Game/CsGameState_DEPRECATED.h"
 
+#if WITH_EDITOR
+#include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Managers/Trace/CsGetManagerTrace.h"
+
+#include "Classes/Engine/World.h"
+#include "Classes/Engine/Engine.h"
+
+#include "GameFramework/GameStateBase.h"
+#endif // #if WITH_EDITOR
+
 // Cache
 #pragma region
 
@@ -16,15 +27,19 @@ namespace NCsManagerTraceCached
 {
 	namespace Str
 	{
-		const FString Trace = TEXT("ACsManager_Trace::Trace");
-		const FString ProcessRequest = TEXT("ACsManager_Trace::ProcessRequest");
-		const FString OnTraceResponse = TEXT("ACsManager_Trace::OnTraceResponse");
+		const FString Trace = TEXT("UCsManager_Trace::Trace");
+		const FString ProcessRequest = TEXT("UCsManager_Trace::ProcessRequest");
+		const FString OnTraceResponse = TEXT("UCsManager_Trace::OnTraceResponse");
 	}
 }
 
 #pragma endregion Cache
 
-ACsManager_Trace::ACsManager_Trace(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+// static initializations
+UCsManager_Trace* UCsManager_Trace::s_Instance;
+bool UCsManager_Trace::s_bShutdown = false;
+
+UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	RequestsProcessedPerTick = 64;
 
@@ -64,7 +79,186 @@ ACsManager_Trace::ACsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 	OverlapDelegate.BindUObject(this, &ACsManager_Trace::OnOverlapResponse);
 }
 
-void ACsManager_Trace::Clear()
+// Singleton
+#pragma region
+
+/*static*/ UCsManager_Trace* UCsManager_Trace::Get(UObject* InRoot /*=nullptr*/)
+{
+#if WITH_EDITOR
+	return Get_GetManagerTrace(InRoot)->GetManager_Trace();
+#else
+	if (s_bShutdown)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Trace::Get: Manager has already shutdown."));
+		return nullptr;
+	}
+	return s_Instance;
+#endif // #if WITH_EDITOR
+}
+
+/*static*/ bool UCsManager_Trace::IsValid(UObject* InRoot /*=nullptr*/)
+{
+#if WITH_EDITOR
+	return Get_GetManagerTrace(InRoot)->GetManager_Trace() != nullptr;
+#else
+	return s_Instance != nullptr;
+#endif // #if WITH_EDITOR
+}
+
+/*static*/ void UCsManager_Trace::Init(UObject* InRoot, TSubclassOf<UCsManager_Trace> ManagerTraceClass, UObject* InOuter /*=nullptr*/)
+{
+#if WITH_EDITOR
+	ICsGetManagerTrace* GetManagerTrace = Get_GetManagerTrace(InRoot);
+
+	UCsManager_Trace* Manager_Trace = GetManagerTrace->GetManager_Trace();
+
+	if (!Manager_Trace)
+	{
+		Manager_Trace = NewObject<UCsManager_Trace>(InOuter ? InOuter : InRoot, ManagerTraceClass, TEXT("Manager_Trace_Singleton"), RF_Transient | RF_Public);
+
+		GetManagerTrace->SetManager_Trace(Manager_Trace);
+
+		Manager_Trace->SetMyRoot(InRoot);
+		Manager_Trace->Initialize();
+	}
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::Init: Init has already been called."));
+	}
+#else
+	s_bShutdown = false;
+
+	if (!s_Instance)
+	{
+		s_Instance = NewObject<UCsManager_Trace>(GetTransientPackage(), ManagerTraceClass, TEXT("Manager_Trace_Singleton"), RF_Transient | RF_Public);
+		s_Instance->AddToRoot();
+		s_Instance->SetMyRoot(InRoot);
+		s_Instance->Initialize();
+	}
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Trace::Init: Init has already been called."));
+	}
+#endif // #if WITH_EDITOR
+}
+
+/*static*/ void UCsManager_Trace::Shutdown(UObject* InRoot /*=nullptr*/)
+{
+#if WITH_EDITOR
+	ICsGetManagerTrace* GetManagerTrace = Get_GetManagerTrace(InRoot);
+	UCsManager_Trace* Manager_Trace	    = GetManagerTrace->GetManager_Trace();
+	Manager_Trace->CleanUp();
+
+	GetManagerTrace->SetManager_Damage(nullptr);
+#else
+	if (!s_Instance)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Trace::Shutdown: Manager has already been shutdown."));
+		return;
+	}
+
+	s_Instance->CleanUp();
+	s_Instance->RemoveFromRoot();
+	s_Instance = nullptr;
+	s_bShutdown = true;
+#endif // #if WITH_EDITOR
+}
+
+/*static*/ bool UCsManager_Trace::HasShutdown(UObject* InRoot /*=nullptr*/)
+{
+#if WITH_EDITOR
+	return Get_GetManagerTrace(InRoot)->GetManager_Trace() == nullptr;
+#else
+	return s_bShutdown;
+#endif // #if WITH_EDITOR
+}
+
+#if WITH_EDITOR
+
+/*static*/ ICsGetManagerTrace* UCsManager_Trace::Get_GetManagerDamage(UObject* InRoot)
+{
+	checkf(InRoot, TEXT("UCsManager_Trace::Get_GetManagerDamage: InRoot is NULL."));
+
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+
+	checkf(GetManagerSingleton, TEXT("UCsManager_Trace::Get_GetManagerDamage: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
+
+	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
+
+	checkf(Manager_Singleton, TEXT("UCsManager_Trace::Get_GetManagerDamage: Manager_Singleton is NULL."));
+
+	ICsGetManagerTrace* GetManagerTrace = Cast<ICsGetManagerTrace>(Manager_Singleton);
+
+	checkf(GetManagerTrace, TEXT("UCsManager_Trace::Get_GetManagerDamage: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetManagerTrace."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
+
+	return GetManagerTrace;
+}
+
+/*static*/ ICsGetManagerTrace* UCsManager_Trace::GetSafe_GetManagerTrace(UObject* Object)
+{
+	if (!Object)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Trace::GetSafe_GetManagerTrace: Object is NULL."));
+		return nullptr;
+	}
+
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+
+	if (!GetManagerSingleton)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Trace::GetSafe_GetManagerTrace: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
+		return nullptr;
+	}
+
+	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
+
+	if (!Manager_Singleton)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Trace::GetSafe_GetManagerTrace: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
+		return nullptr;
+	}
+
+	return Cast<ICsGetManagerTrace>(Manager_Singleton);
+}
+
+/*static*/ UCsManager_Trace* UCsManager_Trace::GetSafe(UObject* Object)
+{
+	if (ICsGetManagerTrace* GetManagerTrace = GetSafe_GetManagerTrace(Object))
+		return GetManagerTrace->GetManager_Trace();
+	return nullptr;
+}
+
+/*static*/ UCsManager_Trace* UCsManager_Trace::GetFromWorldContextObject(const UObject* WorldContextObject)
+{
+	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		// Game State
+		if (UCsManager_Trace* Manager = GetSafe(World->GetGameState()))
+			return Manager;
+
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Trace::GetFromWorldContextObject: Failed to Manager Item of type UCsManager_Trace from GameState."));
+
+		return nullptr;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+#endif // #if WITH_EDITOR
+
+void UCsManager_Trace::Initialize()
+{
+	// TODO: Get PoolSize from config
+
+	static const int32 PoolSize = 256;
+	
+	Manager_Request.CreatePool(PoolSize);
+	Manager_Response.CreatePool(PoolSize);
+}
+
+void UCsManager_Trace::CleanUp()
 {
 	TraceCountLifetime = 0;
 	TraceCountThisFrame = 0;
@@ -102,23 +296,19 @@ void ACsManager_Trace::Clear()
 	PendingRequestsByQuery.Reset();
 }
 
-void ACsManager_Trace::Shutdown()
+	// Root
+#pragma region
+
+void UCsManager_Trace::SetMyRoot(UObject* InRoot)
 {
-	Clear();
+	MyRoot = InRoot;
 }
 
-void ACsManager_Trace::BeginDestroy()
-{
-	Shutdown();
-	Super::BeginDestroy();
-}
+#pragma endregion Root
 
-/*static*/ ACsManager_Trace* ACsManager_Trace::Get(UWorld* InWorld)
-{
-	return nullptr;// InWorld->GetGameState<ACsGameState_DEPRECATED>()->Manager_Trace;
-}
+#pragma endregion Singleton
 
-void ACsManager_Trace::OnTick(const float &DeltaSeconds)
+void UCsManager_Trace::OnTick(const float &DeltaSeconds)
 {
 	// Reset TraceCountThisFrame
 	TraceCountThisFrame = 0;
@@ -183,58 +373,25 @@ void ACsManager_Trace::OnTick(const float &DeltaSeconds)
 	}
 }
 
-void ACsManager_Trace::IncrementTraceCount(FCsTraceRequest* Request)
+void UCsManager_Trace::IncrementTraceCount(FCsTraceRequest* Request)
 {
+	FCsUniqueObjectId Id;
+	const ECsTraceType& Type	 = Request->Type;
+	const ECsTraceMethod& Method = Request->Method;
+	const ECsTraceQuery& Query	 = Request->Query;
+
 	// Lifetime
-	++TraceCountLifetime;
-
-	if (uint64* CountById = TraceCountLifetimeByObjectId.Find(Request->CallerId))
-	{
-		++(*CountById);
-	}
-	else
-	{
-		TraceCountLifetimeByObjectId.Add(Request->CallerId, 1);
-	}
-
-	++(TraceCountLifetimeByType[(uint8)Request->Type]);
-	++(TraceCountLifetimeByMethod[(uint8)Request->Method]);
-	++(TraceCountLifetimeByQuery[(uint8)Request->Query]);
+	LifetimeCountInfo.Increment(Id, Type, Method, Query);
 	// Frame
-	++TraceCountThisFrame;
-
-	if (uint16* CountById = TraceCountThisFrameByObjectId.Find(Request->CallerId))
-	{
-		++(*CountById);
-	}
-	else
-	{
-		TraceCountThisFrameByObjectId.Add(Request->CallerId, 1);
-	}
-
-	++(TraceCountThisFrameByType[(uint8)Request->Type]);
-	++(TraceCountThisFrameByMethod[(uint8)Request->Method]);
-	++(TraceCountThisFrameByQuery[(uint8)Request->Query]);
+	ThisFrameCountInfo.Increment(Id, Type, Method, Query);
 }
 
 // Request
 #pragma region
 
-FCsTraceRequest* ACsManager_Trace::AllocateRequest()
+FCsResource_TraceRequest* UCsManager_Trace::AllocateRequest()
 {
-	for (uint8 I = 0; I < CS_POOLED_TRACE_REQUEST_SIZE; ++I)
-	{
-		RequestIndex			 = (RequestIndex + 1) % CS_POOLED_TRACE_REQUEST_SIZE;
-		FCsTraceRequest* Request = &(Requests[RequestIndex]);
-
-		if (!Request->bAllocated)
-		{
-			Request->bAllocated = true;
-			return Request;
-		}
-	}
-	checkf(0, TEXT("ACsManager_Trace::AllocateRequest: Pool is exhausted"));
-	return nullptr;
+	return Manager_Request.Allocate();
 }
 
 void ACsManager_Trace::AddPendingRequest(FCsTraceRequest* Request)
@@ -259,7 +416,7 @@ void ACsManager_Trace::AddPendingRequest(FCsTraceRequest* Request)
 
 	if (HandleId != 0)
 	{
-		PendingRequestsByTraceId.Add(HandleId, Request);
+		PendingRequestsByTraceHandle.Add(HandleId, Request);
 	}
 
 	// ObjectId
@@ -308,7 +465,7 @@ void ACsManager_Trace::ReplacePendingRequest(FCsTraceRequest* PendingRequest, FC
 	// TraceId
 	const TCsTraceHandleId& PendingHandleId = PendingRequest->Handle._Handle;
 
-	PendingRequestsByTraceId.Remove(PendingHandleId);
+	PendingRequestsByTraceHandle.Remove(PendingHandleId);
 	// ObjectId
 	TMap<TCsTraceRequestId, FCsTraceRequest*>& MapId = PendingRequestsByObjectId[PendingRequest->CallerId];
 	MapId.Remove(PendingRequestId);
@@ -351,7 +508,7 @@ void ACsManager_Trace::RemovePendingRequest(FCsTraceRequest* Request)
 	// TraceId
 	const TCsTraceHandleId& HandleId = Request->Handle._Handle;
 
-	PendingRequestsByTraceId.Remove(HandleId);
+	PendingRequestsByTraceHandle.Remove(HandleId);
 	// ObjectId
 	TMap<TCsTraceRequestId, FCsTraceRequest*>& MapId = PendingRequestsByObjectId[Request->CallerId];
 	MapId.Remove(RequestId);
@@ -385,8 +542,14 @@ void ACsManager_Trace::RemovePendingRequest(FCsTraceRequest* Request)
 	Request->Reset();
 }
 
-bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
+bool UCsManager_Trace::ProcessRequest(FCsResource_TraceRequest* Request)
 {
+	checkf(Request, TEXT(""));
+
+	FCsTraceRequest* R = Request->Get();
+
+	checkf(R, TEXT(""));
+
 #if !UE_BUILD_SHIPPING
 	if (CsCVarDrawManagerTraceRequests->GetInt() == CS_CVAR_DRAW)
 	{
@@ -430,6 +593,7 @@ bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 		else
 		if (Request->Query == ECsTraceQuery::ObjectType)
 			Request->CopyHandle(GetWorld()->AsyncLineTraceByObjectType(AsyncTraceType, Request->Start, Request->End, Request->ObjectParams, Request->Params, &TraceDelegate));
+		// NOT SUPPORTED
 		else
 		if (Request->Query == ECsTraceQuery::Profile)
 		{
@@ -449,6 +613,7 @@ bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 		else
 		if (Request->Query == ECsTraceQuery::ObjectType)
 			Request->CopyHandle(GetWorld()->AsyncSweepByObjectType(AsyncTraceType, Request->Start, Request->End, Request->ObjectParams, Request->Shape, Request->Params, &TraceDelegate));
+		// NOT SUPPORTED
 		else
 		if (Request->Query == ECsTraceQuery::Profile)
 		{
@@ -468,6 +633,7 @@ bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 		else
 		if (Request->Query == ECsTraceQuery::ObjectType)
 			Request->CopyHandle(GetWorld()->AsyncOverlapByObjectType(Request->Start, Request->Rotation.Quaternion(), Request->ObjectParams, Request->Shape, Request->Params, &OverlapDelegate));
+		// NOT SUPPORTED
 		else
 		if (Request->Query == ECsTraceQuery::Profile)
 		{
@@ -484,28 +650,16 @@ bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 // Response
 #pragma region
 
-FCsTraceResponse* ACsManager_Trace::AllocateResponse()
+FCsResource_TraceResponse* UCsManager_Trace::AllocateResponse()
 {
-	for (uint8 I = 0; I < CS_POOLED_TRACE_RESPONSE_SIZE; ++I)
-	{
-		ResponseIndex				= (ResponseIndex + 1) % CS_POOLED_TRACE_RESPONSE_SIZE;
-		FCsTraceResponse* Response	= &(Responses[ResponseIndex]);
-
-		if (!Response->bAllocated)
-		{
-			Response->bAllocated = true;
-			return Response;
-		}
-	}
-	checkf(0, TEXT("ACsManager_Trace::AllocateResponse: Pool is exhausted"));
-	return nullptr;
+	return Manager_Response.Allocate();
 }
 
-void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& Datum)
+void UCsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& Datum)
 {
 	const TCsTraceHandleId& HandleId = Handle._Handle;
 	// Get Request
-	FCsTraceRequest* Request = PendingRequestsByTraceId[HandleId];
+	FCsTraceRequest* Request = PendingRequestsByTraceHandle[HandleId];
 	// Setup Response
 	FCsTraceResponse* Response = AllocateResponse();
 
@@ -544,28 +698,31 @@ void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 	Request->bCompleted = true;
 }
 
-void ACsManager_Trace::OnOverlapResponse(const FTraceHandle& Handle, FOverlapDatum& Datum)
+void UCsManager_Trace::OnOverlapResponse(const FTraceHandle& Handle, FOverlapDatum& Datum)
 {
 }
 
 #pragma endregion Response
 
-FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
+FCsResource_TraceResponse*  UCsManager_Trace::Trace(FCsResource_TraceRequest* Request)
 {
-	Request->StartTime = GetWorld()->GetTimeSeconds();
+	FCsTraceRequest* R = Request->Get();
 
-	bool AddPending = !Request->bForce && TraceCountThisFrame >= RequestsProcessedPerTick;
+	R->StartTime = GetWorld()->GetTimeSeconds();
+
+	bool AddPending = !Request->bForce && ThisFrameCountInfo.TotalCount >= RequestsProcessedPerTick;
 
 	// TODO: Print warning for a normal trace moved to Async
 	if (AddPending && !Request->bAsync)
 	{
-		Request->Reset();
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::Trace: Reached maximum RequestsProcessedPerTick: %d and Request is NOT Async. Abandoning Request."), RequestsProcessedPerTick);
+		R->Reset();
+		Manager_Request.Deallocate(Request);
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Trace::Trace: Reached maximum RequestsProcessedPerTick: %d and Request is NOT Async. Abandoning Request."), RequestsProcessedPerTick);
 		return nullptr;
 	}
 
 	// Async
-	if (Request->bAsync ||
+	if (R->bAsync ||
 		AddPending)
 	{
 		// if NOT Pending, Start Async

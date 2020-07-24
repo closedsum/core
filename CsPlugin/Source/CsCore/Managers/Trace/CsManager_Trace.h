@@ -1,7 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "GameFramework/Actor.h"
+#include "UObject/Object.h"
+#include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 // Types
+#include "Managers/Trace/CsTypes_Manager_Trace.h"
 #include "Managers/Trace/CsTraceRequest.h"
 #include "Managers/Trace/CsTraceResponse.h"
 
@@ -10,8 +12,35 @@
 #define CS_POOLED_TRACE_REQUEST_SIZE 255
 #define CS_POOLED_TRACE_RESPONSE_SIZE 255
 
+// Structs
+#pragma region
+
+	// TraceRequest
+
+struct CSCORE_API FCsResource_TraceRequest : public TCsResourceContainer<FCsTraceRequest>
+{
+};
+
+struct CSCORE_API FCsManager_TraceRequest : public TCsManager_ResourceValueType_Fixed<FCsTraceRequest, FCsResource_TraceRequest, 0>
+{
+};
+
+	// TraceResponse
+
+struct CSCORE_API FCsResource_TraceResponse : public TCsResourceContainer<FCsTraceResponse>
+{
+};
+
+struct CSCORE_API FCsManager_TraceResponse : public TCsManager_ResourceValueType_Fixed<FCsTraceResponse, FCsResource_TraceResponse, 0>
+{
+
+};
+#pragma endregion Structs
+
+class ICsGetManagerTrace;
+
 UCLASS()
-class CSCORE_API ACsManager_Trace : public AActor
+class CSCORE_API UCsManager_Trace : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
@@ -22,31 +51,79 @@ typedef uint64 TCsObjectId;
 
 public:
 
-	virtual void Clear();
-	virtual void Shutdown();
-	virtual void BeginDestroy() override;
+// Singleton
+#pragma region
+public:
 
-	static ACsManager_Trace* Get(UWorld* InWorld);
+	static UCsManager_Trace* Get(UObject* InRoot = nullptr);
+	
+	template<typename T>
+	static T* Get(UObject* InRoot = nullptr)
+	{
+		return Cast<T>(Get(InRoot));
+	}
+
+	static bool IsValid(UObject* InRoot = nullptr);
+
+	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Trace> ManagerTraceClass, UObject* InOuter = nullptr);
+	
+	static void Shutdown(UObject* InRoot = nullptr);
+	static bool HasShutdown(UObject* InRoot = nullptr);
+
+#if WITH_EDITOR
+protected:
+
+	static ICsGetManagerTrace* Get_GetManagerTrace(UObject* InRoot);
+	static ICsGetManagerTrace* GetSafe_GetManagerTrace(UObject* Object);
+
+	static UCsManager_Trace* GetSafe(UObject* Object);
+
+public:
+
+	static UCsManager_Trace* GetFromWorldContextObject(const UObject* WorldContextObject);
+
+#endif // #if WITH_EDITOR
+
+protected:
+
+	virtual void Initialize();
+	virtual void CleanUp();
+
+private:
+	// Singleton data
+	static UCsManager_Trace* s_Instance;
+	static bool s_bShutdown;
+
+	// Root
+#pragma region
+protected:
+
+	UObject* MyRoot;
+
+	void SetMyRoot(UObject* InRoot);
+
+public:
+
+	FORCEINLINE UObject* GetMyRoot()
+	{
+		return MyRoot;
+	}
+
+#pragma endregion Root
+
+#pragma endregion Singleton
+
+public:
 
 	virtual void OnTick(const float &DeltaSeconds);
 
 	UPROPERTY(BlueprintReadWrite, Category = "Trace")
 	int32 RequestsProcessedPerTick;
 
-	uint64 TraceCountLifetime;
-
-	TMap<uint64, uint64> TraceCountLifetimeByObjectId;
-	uint64 TraceCountLifetimeByType[ECsTraceType::ECsTraceType_MAX];
-	uint64 TraceCountLifetimeByMethod[ECsTraceMethod::ECsTraceMethod_MAX];
-	uint64 TraceCountLifetimeByQuery[ECsTraceQuery::ECsTraceQuery_MAX];
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
-	int32 TraceCountThisFrame;
-
-	TMap<uint64, uint16> TraceCountThisFrameByObjectId;
-	uint16 TraceCountThisFrameByType[ECsTraceType::ECsTraceType_MAX];
-	uint16 TraceCountThisFrameByMethod[ECsTraceMethod::ECsTraceMethod_MAX];
-	uint16 TraceCountThisFrameByQuery[ECsTraceQuery::ECsTraceQuery_MAX];
+	/** */
+	FCsManagerTraceCountInfo LifetimeCountInfo;
+	/** */
+	FCsManagerTraceCountInfo ThisFrameCountInfo;
 
 private:
 
@@ -56,19 +133,19 @@ private:
 #pragma region
 private:
 
-	FCsTraceRequest Requests[CS_POOLED_TRACE_REQUEST_SIZE];
-
-	uint8 RequestIndex;
+	FCsManager_TraceRequest Manager_Request;
 
 public:
 	
-	FCsTraceRequest* AllocateRequest();
+	FCsResource_TraceRequest* AllocateRequest();
 
 	TLinkedList<FCsTraceRequest*>* PendingRequestHead;
 	TLinkedList<FCsTraceRequest*>* PendingRequestTail;
 
 	TMap<TCsTraceRequestId, FCsTraceRequest*> PendingRequests;
-	TMap<TCsTraceHandleId, FCsTraceRequest*> PendingRequestsByTraceId;
+
+	TMap<FTraceHandle, FCsTraceRequest*> PendingRequestsByTraceHandle;
+
 	TMap<TCsObjectId, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByObjectId;
 	TMap<ECsTraceType, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByType;
 	TMap<ECsTraceMethod, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByMethod;
@@ -87,13 +164,11 @@ private:
 #pragma region
 private:
 
-	FCsTraceResponse Responses[CS_POOLED_TRACE_RESPONSE_SIZE];
-
-	uint8 ResponseIndex;
+	FCsManager_TraceResponse Manager_Response;
 
 public:
 
-	FCsTraceResponse * AllocateResponse();
+	FCsManager_TraceResponse* AllocateResponse();
 
 	FTraceDelegate TraceDelegate;
 	FOverlapDelegate OverlapDelegate;
@@ -105,7 +180,7 @@ public:
 
 public:
 
-	FCsTraceResponse* Trace(FCsTraceRequest* Request);
+	FCsResource_TraceResponse* Trace(FCsResource_TraceRequest* Request);
 
 	virtual void LogTransaction(const FString& FunctionName, const ECsTraceTransaction& Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response);
 };

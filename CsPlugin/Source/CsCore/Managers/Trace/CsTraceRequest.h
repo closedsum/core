@@ -10,6 +10,8 @@
 
 struct FCsTraceResponse;
 
+/**
+*/
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsTraceRequest
 {

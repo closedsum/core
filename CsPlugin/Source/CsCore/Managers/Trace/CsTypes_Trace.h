@@ -125,7 +125,10 @@ namespace NCsTraceQuery
 UENUM(BlueprintType)
 enum class ECsTraceTransaction : uint8
 {
+	Receive					UMETA(DisplayName = "Receive"),
+	Discard					UMETA(DisplayName = "Discard"),
 	Add						UMETA(DisplayName = "Add"),
+	Process					UMETA(DisplayName = "Process"),
 	Complete				UMETA(DisplayName = "Complete"),
 	ECsTraceTransaction_MAX	UMETA(Hidden),
 };
@@ -141,7 +144,10 @@ namespace NCsTraceTransaction
 
 	namespace Ref
 	{
+		extern CSCORE_API const Type Receive;
+		extern CSCORE_API const Type Discard;
 		extern CSCORE_API const Type Add;
+		extern CSCORE_API const Type Process;
 		extern CSCORE_API const Type Complete;
 		extern CSCORE_API const Type ECsTraceTransaction_MAX;
 	}
@@ -152,13 +158,19 @@ namespace NCsTraceTransaction
 
 	namespace Str
 	{
+		extern CSCORE_API const TCsString Receive;
+		extern CSCORE_API const TCsString Discard;
 		extern CSCORE_API const TCsString Add;
+		extern CSCORE_API const TCsString Process;
 		extern CSCORE_API const TCsString Complete;
 	}
 
 	FORCEINLINE const FString& ToActionString(const Type &EType)
 	{
+		if (EType == Type::Receive) { return Str::Receive.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
+		if (EType == Type::Discard) { return Str::Discard.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
 		if (EType == Type::Add) { return Str::Add.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
+		if (EType == Type::Process) { return Str::Process.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
 		if (EType == Type::Complete) { return Str::Complete.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}

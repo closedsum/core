@@ -28,7 +28,7 @@ namespace NCsManagerTraceCached
 	namespace Str
 	{
 		const FString Trace = TEXT("UCsManager_Trace::Trace");
-		const FString ProcessRequest = TEXT("UCsManager_Trace::ProcessRequest");
+		const FString ProcessAsyncRequest = TEXT("UCsManager_Trace::ProcessAsyncRequest");
 		const FString OnTraceResponse = TEXT("UCsManager_Trace::OnTraceResponse");
 	}
 }
@@ -318,7 +318,7 @@ void UCsManager_Trace::OnTick(const float &DeltaSeconds)
 			// PROCESS Request
 			if (I < Count)
 			{
-				ProcessRequest(Request);
+				ProcessAsyncRequest(Request);
 				IncrementTraceCount(Request);
 			}
 			++I;
@@ -337,6 +337,7 @@ void UCsManager_Trace::OnTick(const float &DeltaSeconds)
 
 			FCsTraceResponse* Response = Container->Get();
 
+			// Check to deallocate Response
 			if (Response->ShouldDeallocate())
 			{
 				DeallocateResponse(Response);
@@ -372,14 +373,22 @@ void UCsManager_Trace::DeallocateRequest(FCsTraceRequest* Request)
 	Manager_Request.DeallocateAt(Request->GetIndex());
 }
 
-bool UCsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
+bool UCsManager_Trace::ProcessAsyncRequest(FCsTraceRequest* Request)
 {
-	checkf(Request, TEXT("UCsManager_Trace::ProcessRequest: Request is NULL."));
+	using namespace NCsManagerTraceCached;
 
-	checkf(Request->IsValid(), TEXT("UCsManager_Trace::ProcessRequest: Request is NOT Valid."));
+	const FString& Context = Str::ProcessAsyncRequest;
+
+	checkf(Request, TEXT("%s: Request is NULL."), *Context);
+
+	checkf(Request->IsValid(), TEXT("%s: Request is NOT Valid."), *Context);
 
 #if !UE_BUILD_SHIPPING
-	if (CsCVarDrawManagerTraceRequests->GetInt() == CS_CVAR_DRAW)
+	LogTransaction(Context, ECsTraceTransaction::Process, Request, nullptr);
+#endif // #if !UE_BUILD_SHIPPING
+
+#if !UE_BUILD_SHIPPING
+	if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceRequests))
 	{
 		// Sphere around Start
 		DrawDebugSphere(GetWorld(), Request->Start, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
@@ -390,8 +399,7 @@ bool UCsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 
 	Request->bProcessing = true;
 
-	EAsyncTraceType AsyncTraceType	   = EAsyncTraceType::Single;
-	const FString& TraceMethodAsString = EMCsTraceMethod::Get().ToString(Request->Method);
+	EAsyncTraceType AsyncTraceType = EAsyncTraceType::Single;
 
 	// Test
 	if (Request->Method == ECsTraceMethod::Test)
@@ -411,70 +419,109 @@ bool UCsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 		AsyncTraceType = EAsyncTraceType::Multi;
 	}
 
+	// Request Members
+	const ECsTraceType& Type	 = Request->Type;
+	const ECsTraceMethod& Method = Request->Method;
+	const ECsTraceQuery& Query	 = Request->Query;
+
+	const FVector& Start	  = Request->Start;
+	const FVector& End		  = Request->End;
+	ECollisionChannel Channel = Request->Channel;
+	const FName& ProfileName  = Request->ProfileName;
+
+	const FCollisionShape& Shape					= Request->Shape;
+	const FCollisionQueryParams& Params				= Request->Params;
+	const FCollisionObjectQueryParams& ObjectParams = Request->ObjectParams;
+	const FCollisionResponseParams& ResponseParam	= Request->ResponseParam;
+
+	const FString& TraceMethodAsString = EMCsTraceMethod::Get().ToString(Method);
+
 	// Line
-	if (Request->Type == ECsTraceType::Line)
+	if (Type == ECsTraceType::Line)
 	{
 		// AsyncLineTraceByChannel
-		if (Request->Query == ECsTraceQuery::Channel)
-			Request->CopyHandle(GetWorld()->AsyncLineTraceByChannel(AsyncTraceType, Request->Start, Request->End, Request->Channel, Request->Params, Request->ResponseParam, &TraceDelegate));
+		if (Query == ECsTraceQuery::Channel)
+			Request->CopyHandle(GetWorld()->AsyncLineTraceByChannel(AsyncTraceType, Start, End, Channel, Params, ResponseParam, &TraceDelegate));
 		// AsyncLineTraceByObjectType
 		else
-		if (Request->Query == ECsTraceQuery::ObjectType)
-			Request->CopyHandle(GetWorld()->AsyncLineTraceByObjectType(AsyncTraceType, Request->Start, Request->End, Request->ObjectParams, Request->Params, &TraceDelegate));
+		if (Query == ECsTraceQuery::ObjectType)
+			Request->CopyHandle(GetWorld()->AsyncLineTraceByObjectType(AsyncTraceType, Start, End, ObjectParams, Params, &TraceDelegate));
 		// NOT SUPPORTED
 		else
-		if (Request->Query == ECsTraceQuery::Profile)
+		if (Query == ECsTraceQuery::Profile)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Line Trace %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *TraceMethodAsString);
+			UE_LOG(LogCs, Warning, TEXT("%s: There is NO Async Line Trace %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *Context, *TraceMethodAsString);
+
+#if !UE_BUILD_SHIPPING
+			LogTransaction(Context, ECsTraceTransaction::Discard, Request, nullptr);
+#endif // #if !UE_BUILD_SHIPPING
+
 			DeallocateRequest(Request);
 			return false;
 		}
 	}
 	// Sweep
 	else
-	if (Request->Type == ECsTraceType::Sweep)
+	if (Type == ECsTraceType::Sweep)
 	{
 		// AsyncSweepByChannel
-		if (Request->Query == ECsTraceQuery::Channel)
-			Request->CopyHandle(GetWorld()->AsyncSweepByChannel(AsyncTraceType, Request->Start, Request->End, Request->Channel, Request->Shape, Request->Params,  Request->ResponseParam, &TraceDelegate));
+		if (Query == ECsTraceQuery::Channel)
+			Request->CopyHandle(GetWorld()->AsyncSweepByChannel(AsyncTraceType, Start, End, Channel, Shape, Params,  ResponseParam, &TraceDelegate));
 		// AsyncSweepByObjectType
 		else
-		if (Request->Query == ECsTraceQuery::ObjectType)
-			Request->CopyHandle(GetWorld()->AsyncSweepByObjectType(AsyncTraceType, Request->Start, Request->End, Request->ObjectParams, Request->Shape, Request->Params, &TraceDelegate));
+		if (Query == ECsTraceQuery::ObjectType)
+			Request->CopyHandle(GetWorld()->AsyncSweepByObjectType(AsyncTraceType, Start, End, ObjectParams, Shape, Params, &TraceDelegate));
 		// NOT SUPPORTED
 		else
-		if (Request->Query == ECsTraceQuery::Profile)
+		if (Query == ECsTraceQuery::Profile)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Sweep %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *TraceMethodAsString);
+			UE_LOG(LogCs, Warning, TEXT("%s: There is NO Async Sweep %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *Context, *TraceMethodAsString);
+
+#if !UE_BUILD_SHIPPING
+			LogTransaction(Context, ECsTraceTransaction::Discard, Request, nullptr);
+#endif // #if !UE_BUILD_SHIPPING
+
 			DeallocateRequest(Request);
 			return false;
 		}
 	}
 	// Overlap
 	else
-	if (Request->Type == ECsTraceType::Overlap)
+	if (Type == ECsTraceType::Overlap)
 	{
+		FQuat Quat = Request->Rotation.Quaternion();
+
 		// AsyncOverlapByChannel
-		if (Request->Query == ECsTraceQuery::Channel)
-			Request->CopyHandle(GetWorld()->AsyncOverlapByChannel(Request->Start, Request->Rotation.Quaternion(), Request->Channel, Request->Shape, Request->Params, Request->ResponseParam, &OverlapDelegate));
+		if (Query == ECsTraceQuery::Channel)
+			Request->CopyHandle(GetWorld()->AsyncOverlapByChannel(Start, Quat, Channel, Shape, Params, ResponseParam, &OverlapDelegate));
 		// AsyncOverlapByObjectType
 		else
-		if (Request->Query == ECsTraceQuery::ObjectType)
-			Request->CopyHandle(GetWorld()->AsyncOverlapByObjectType(Request->Start, Request->Rotation.Quaternion(), Request->ObjectParams, Request->Shape, Request->Params, &OverlapDelegate));
+		if (Query == ECsTraceQuery::ObjectType)
+			Request->CopyHandle(GetWorld()->AsyncOverlapByObjectType(Start, Quat, ObjectParams, Shape, Params, &OverlapDelegate));
 		// NOT SUPPORTED
 		else
-		if (Request->Query == ECsTraceQuery::Profile)
+		if (Query == ECsTraceQuery::Profile)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Overlap %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *TraceMethodAsString);
+			UE_LOG(LogCs, Warning, TEXT("%s: There is NO Async Overlap %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *Context, *TraceMethodAsString);
+
+#if !UE_BUILD_SHIPPING
+			LogTransaction(Context, ECsTraceTransaction::Discard, Request, nullptr);
+#endif // #if !UE_BUILD_SHIPPING
+
 			DeallocateRequest(Request);
 			return false;
 		}
 	}
 	// OverlapBlocking
 	else
-	if (Request->Type == ECsTraceType::OverlapBlocking)
+	if (Type == ECsTraceType::OverlapBlocking)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Overap Blocking Method."));
+		UE_LOG(LogCs, Warning, TEXT("%s: There is NO Async Overap Blocking Method."), *Context);
+
+#if !UE_BUILD_SHIPPING
+		LogTransaction(Context, ECsTraceTransaction::Discard, Request, nullptr);
+#endif // #if !UE_BUILD_SHIPPING
+
 		DeallocateRequest(Request);
 	}
 	return true;
@@ -521,7 +568,7 @@ void UCsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 	}
 	
 #if !UE_BUILD_SHIPPING
-	if (CsCVarDrawManagerTraceResponses->GetInt() == CS_CVAR_DRAW)
+	if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceResponses))
 	{
 		if (Response->bResult)
 		{
@@ -552,9 +599,17 @@ void UCsManager_Trace::OnOverlapResponse(const FTraceHandle& Handle, FOverlapDat
 
 FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 {
-	checkf(Request, TEXT("UCsManager_Trace::Trace: Request is NULL."));
+	using namespace NCsManagerTraceCached;
+
+	const FString& Context = Str::Trace;
+
+	checkf(Request, TEXT("%s: Request is NULL."), *Context);
 
 	Request->StartTime = GetWorld()->GetTimeSeconds();
+
+#if !UE_BUILD_SHIPPING
+	LogTransaction(Context, ECsTraceTransaction::Receive, Request, nullptr);
+#endif // #if !UE_BUILD_SHIPPING
 
 	bool AddPending = !Request->bForce && ThisFrameCountInfo.TotalCount >= RequestsProcessedPerTick;
 
@@ -562,7 +617,7 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 	if (AddPending && !Request->bAsync)
 	{
 		DeallocateRequest(Request);
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Trace::Trace: Reached maximum RequestsProcessedPerTick: %d and Request is NOT Async. Abandoning Request."), RequestsProcessedPerTick);
+		UE_LOG(LogCs, Warning, TEXT("%s: Reached maximum RequestsProcessedPerTick: %d and Request is NOT Async. Abandoning Request."), *Context, RequestsProcessedPerTick);
 		return nullptr;
 	}
 
@@ -574,7 +629,7 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 		if (!AddPending)
 		{
 			// if Successful in processing Request, EXIT
-			if (ProcessRequest(Request))
+			if (ProcessAsyncRequest(Request))
 			{
 				PendingRequests.Add(Request);
 				IncrementTraceCount(Request);
@@ -590,7 +645,7 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 	else
 	{
 #if !UE_BUILD_SHIPPING
-		if (CsCVarDrawManagerTraceRequests->GetInt() == CS_CVAR_DRAW)
+		if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceRequests))
 		{
 			// Sphere around Start
 			DrawDebugSphere(GetWorld(), Request->Start, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
@@ -604,133 +659,158 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 
 		Response->ElapsedTime = GetWorld()->GetTimeSeconds() - Request->StartTime;
 
+		// Request Members
+		const ECsTraceType& Type	 = Request->Type;
+		const ECsTraceMethod& Method = Request->Method;
+		const ECsTraceQuery& Query	 = Request->Query;
+
+		const FVector& Start	  = Request->Start;
+		const FVector& End		  = Request->End;
+		ECollisionChannel Channel = Request->Channel;
+		const FName& ProfileName  = Request->ProfileName;
+
+		const FCollisionShape& Shape					= Request->Shape;
+		const FCollisionQueryParams& Params				= Request->Params;
+		const FCollisionObjectQueryParams& ObjectParams = Request->ObjectParams;
+		const FCollisionResponseParams& ResponseParam	= Request->ResponseParam;
+
+		// Response Members
+		TArray<FHitResult>& OutHits			= Response->OutHits;
+		TArray<FOverlapResult>& OutOverlaps = Response->OutOverlaps;
+
 		// Line
-		if (Request->Type == ECsTraceType::Line)
+		if (Type == ECsTraceType::Line)
 		{
 			// Test
-			if (Request->Method == ECsTraceMethod::Test)
+			if (Method == ECsTraceMethod::Test)
 			{
 				// LineTraceTestByChannel
-				if (Request->Query == ECsTraceQuery::Channel)
-					Response->bResult = GetWorld()->LineTraceTestByChannel(Request->Start, Request->End, Request->Channel, Request->Params, Request->ResponseParam);
+				if (Query == ECsTraceQuery::Channel)
+					Response->bResult = GetWorld()->LineTraceTestByChannel(Start, End, Channel, Params, ResponseParam);
 				// LineTraceTestByObjectType
 				else
-				if (Request->Query == ECsTraceQuery::ObjectType)
-					Response->bResult = GetWorld()->LineTraceTestByObjectType(Request->Start, Request->End, Request->ObjectParams, Request->Params);
+				if (Query == ECsTraceQuery::ObjectType)
+					Response->bResult = GetWorld()->LineTraceTestByObjectType(Start, End, ObjectParams, Params);
 				// LineTraceTestByProfile
 				else
-				if (Request->Query == ECsTraceQuery::Profile)
-					Response->bResult = GetWorld()->LineTraceTestByProfile(Request->Start, Request->End, Request->ProfileName, Request->Params);
+				if (Query == ECsTraceQuery::Profile)
+					Response->bResult = GetWorld()->LineTraceTestByProfile(Start, End, ProfileName, Params);
 			}
 			// Single
 			else
-			if (Request->Method == ECsTraceMethod::Single)
+			if (Method == ECsTraceMethod::Single)
 			{
-				Response->OutHits.AddDefaulted();
+				OutHits.AddDefaulted();
 
 				// LineTraceSingleByChannel
-				if (Request->Query == ECsTraceQuery::Channel)
-					Response->bResult = GetWorld()->LineTraceSingleByChannel(Response->OutHits[CS_FIRST], Request->Start, Request->End, Request->Channel, Request->Params, Request->ResponseParam);
+				if (Query == ECsTraceQuery::Channel)
+					Response->bResult = GetWorld()->LineTraceSingleByChannel(OutHits[CS_FIRST], Start, End, Channel, Params, ResponseParam);
 				// LineTraceSingleByObjectType
 				else
-				if (Request->Query == ECsTraceQuery::ObjectType)
-					Response->bResult = GetWorld()->LineTraceSingleByObjectType(Response->OutHits[CS_FIRST], Request->Start, Request->End, Request->ObjectParams, Request->Params);
+				if (Query == ECsTraceQuery::ObjectType)
+					Response->bResult = GetWorld()->LineTraceSingleByObjectType(OutHits[CS_FIRST], Start, End, ObjectParams, Params);
 				// LineTraceSingleByProfile
 				else
-				if (Request->Query == ECsTraceQuery::Profile)
-					Response->bResult = GetWorld()->LineTraceSingleByProfile(Response->OutHits[CS_FIRST], Request->Start, Request->End, Request->ProfileName, Request->Params);
+				if (Query == ECsTraceQuery::Profile)
+					Response->bResult = GetWorld()->LineTraceSingleByProfile(OutHits[CS_FIRST], Start, End, ProfileName, Params);
 			}
 			// Multi
 			else
-			if (Request->Method == ECsTraceMethod::Multi)
+			if (Method == ECsTraceMethod::Multi)
 			{
 				// LineTraceMultiByChannel
-				if (Request->Query == ECsTraceQuery::Channel)
-					Response->bResult = GetWorld()->LineTraceMultiByChannel(Response->OutHits, Request->Start, Request->End, Request->Channel, Request->Params, Request->ResponseParam);
+				if (Query == ECsTraceQuery::Channel)
+					Response->bResult = GetWorld()->LineTraceMultiByChannel(OutHits, Start, End, Channel, Params, ResponseParam);
 				// LineTraceMultiByObjectType
 				else
-				if (Request->Query == ECsTraceQuery::ObjectType)
-					Response->bResult = GetWorld()->LineTraceMultiByObjectType(Response->OutHits, Request->Start, Request->End, Request->ObjectParams, Request->Params);
+				if (Query == ECsTraceQuery::ObjectType)
+					Response->bResult = GetWorld()->LineTraceMultiByObjectType(OutHits, Start, End, ObjectParams, Params);
 				// LineTraceMultiByProfile
 				else
-				if (Request->Query == ECsTraceQuery::Profile)
-					Response->bResult = GetWorld()->LineTraceMultiByProfile(Response->OutHits, Request->Start, Request->End, Request->ProfileName, Request->Params);
+				if (Query == ECsTraceQuery::Profile)
+					Response->bResult = GetWorld()->LineTraceMultiByProfile(OutHits, Start, End, ProfileName, Params);
 			}
 		}
 		// Sweep
 		else
 		if (Request->Type == ECsTraceType::Sweep)
 		{
+			FQuat Quat = Request->Rotation.Quaternion();
+
 			// Test
-			if (Request->Method == ECsTraceMethod::Test)
+			if (Method == ECsTraceMethod::Test)
 			{
 				// SweepTestByChannel
-				if (Request->Query == ECsTraceQuery::Channel)
-					Response->bResult = GetWorld()->SweepTestByChannel(Request->Start, Request->End, Request->Rotation.Quaternion(), Request->Channel, Request->Shape, Request->Params, Request->ResponseParam);
+				if (Query == ECsTraceQuery::Channel)
+					Response->bResult = GetWorld()->SweepTestByChannel(Start, End, Quat, Channel, Shape, Params, ResponseParam);
 				// SweepTestByObjectType
 				else
-				if (Request->Query == ECsTraceQuery::ObjectType)
-					Response->bResult = GetWorld()->SweepTestByObjectType(Request->Start, Request->End, Request->Rotation.Quaternion(), Request->ObjectParams, Request->Shape, Request->Params);
+				if (Query == ECsTraceQuery::ObjectType)
+					Response->bResult = GetWorld()->SweepTestByObjectType(Start, End, Quat, ObjectParams, Shape, Params);
 				// SweepTestByProfile
 				else
-				if (Request->Query == ECsTraceQuery::Profile)
-					Response->bResult = GetWorld()->SweepTestByProfile(Request->Start, Request->End, Request->Rotation.Quaternion(), Request->ProfileName, Request->Shape, Request->Params);
+				if (Query == ECsTraceQuery::Profile)
+					Response->bResult = GetWorld()->SweepTestByProfile(Start, End, Quat, ProfileName, Shape, Params);
 			}
 			// Single
 			else
-			if (Request->Method == ECsTraceMethod::Single)
+			if (Method == ECsTraceMethod::Single)
 			{
+				OutHits.AddDefaulted();
+
 				// SweepSingleByChannel
-				if (Request->Query == ECsTraceQuery::Channel)
-					Response->bResult = GetWorld()->SweepSingleByChannel(Response->OutHits[CS_FIRST], Request->Start, Request->End, Request->Rotation.Quaternion(), Request->Channel, Request->Shape, Request->Params, Request->ResponseParam);
+				if (Query == ECsTraceQuery::Channel)
+					Response->bResult = GetWorld()->SweepSingleByChannel(OutHits[CS_FIRST], Start, End, Quat, Channel, Shape, Params, ResponseParam);
 				// SweepSingleByObjectType
 				else
-				if (Request->Query == ECsTraceQuery::ObjectType)
-					Response->bResult = GetWorld()->SweepSingleByObjectType(Response->OutHits[CS_FIRST], Request->Start, Request->End, Request->Rotation.Quaternion(), Request->ObjectParams, Request->Shape, Request->Params);
+				if (Query == ECsTraceQuery::ObjectType)
+					Response->bResult = GetWorld()->SweepSingleByObjectType(OutHits[CS_FIRST], Start, End, Quat, ObjectParams, Shape, Params);
 				// SweepSingleByProfile
 				else
-				if (Request->Query == ECsTraceQuery::Profile)
-					Response->bResult = GetWorld()->SweepSingleByProfile(Response->OutHits[CS_FIRST], Request->Start, Request->End, Request->Rotation.Quaternion(), Request->ProfileName, Request->Shape, Request->Params);
+				if (Query == ECsTraceQuery::Profile)
+					Response->bResult = GetWorld()->SweepSingleByProfile(OutHits[CS_FIRST], Start, End, Quat, ProfileName, Shape, Params);
 			}
 			// Multi
 			else
-			if (Request->Method == ECsTraceMethod::Multi)
+			if (Method == ECsTraceMethod::Multi)
 			{
 				// SweepMultiByChannel
-				if (Request->Query == ECsTraceQuery::Channel)
-					Response->bResult = GetWorld()->SweepMultiByChannel(Response->OutHits, Request->Start, Request->End, Request->Rotation.Quaternion(), Request->Channel, Request->Shape, Request->Params, Request->ResponseParam);
+				if (Query == ECsTraceQuery::Channel)
+					Response->bResult = GetWorld()->SweepMultiByChannel(OutHits, Start, End, Quat, Channel, Shape, Params, ResponseParam);
 				// SweepMultiByObjectType
 				else
-				if (Request->Query == ECsTraceQuery::ObjectType)
-					Response->bResult = GetWorld()->SweepMultiByObjectType(Response->OutHits, Request->Start, Request->End, Request->Rotation.Quaternion(), Request->ObjectParams, Request->Shape, Request->Params);
+				if (Query == ECsTraceQuery::ObjectType)
+					Response->bResult = GetWorld()->SweepMultiByObjectType(OutHits, Start, End, Quat, ObjectParams, Shape, Params);
 				// SweepMultiByProfile
 				else
-				if (Request->Query == ECsTraceQuery::Profile)
-					Response->bResult = GetWorld()->SweepMultiByProfile(Response->OutHits, Request->Start, Request->End, Request->Rotation.Quaternion(), Request->ProfileName, Request->Shape, Request->Params);
+				if (Query == ECsTraceQuery::Profile)
+					Response->bResult = GetWorld()->SweepMultiByProfile(OutHits, Start, End, Quat, ProfileName, Shape, Params);
 			}
 		}
 		// Overlap
 		else
 		if (Request->Type == ECsTraceType::Overlap)
 		{
+			FQuat Quat = Request->Rotation.Quaternion();
+
 			// Test
-			if (Request->Method == ECsTraceMethod::Test)
+			if (Method == ECsTraceMethod::Test)
 			{
 				// OverlapAnyTestByChannel
-				if (Request->Query == ECsTraceQuery::Channel)
-					Response->bResult = GetWorld()->OverlapAnyTestByChannel(Request->Start, Request->Rotation.Quaternion(), Request->Channel, Request->Shape, Request->Params, Request->ResponseParam);
+				if (Query == ECsTraceQuery::Channel)
+					Response->bResult = GetWorld()->OverlapAnyTestByChannel(Start, Quat, Channel, Shape, Params, ResponseParam);
 				// OverlapAnyTestByObjectType
 				else
-				if (Request->Query == ECsTraceQuery::ObjectType)
-					Response->bResult = GetWorld()->OverlapAnyTestByObjectType(Request->Start, Request->Rotation.Quaternion(), Request->ObjectParams, Request->Shape, Request->Params);
+				if (Query == ECsTraceQuery::ObjectType)
+					Response->bResult = GetWorld()->OverlapAnyTestByObjectType(Start, Quat, ObjectParams, Shape, Params);
 				// OverlapAnyTestByProfile
 				else
-				if (Request->Query == ECsTraceQuery::Profile)
-					Response->bResult = GetWorld()->OverlapAnyTestByProfile(Request->Start, Request->Rotation.Quaternion(), Request->ProfileName, Request->Shape, Request->Params);
+				if (Query == ECsTraceQuery::Profile)
+					Response->bResult = GetWorld()->OverlapAnyTestByProfile(Start, Quat, ProfileName, Shape, Params);
 			}
 			// Single
 			else
-			if (Request->Method == ECsTraceMethod::Single)
+			if (Method == ECsTraceMethod::Single)
 			{
 				UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::Trace: There is NO Overlap Single Method. Use TraceMethod: Test or Multi."));
 				DeallocateResponse(Response);
@@ -739,33 +819,35 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 			}
 			// Multi
 			else
-			if (Request->Method == ECsTraceMethod::Multi)
+			if (Method == ECsTraceMethod::Multi)
 			{
 				// OverlapMultiByChannel
-				if (Request->Query == ECsTraceQuery::Channel)
-					Response->bResult = GetWorld()->OverlapMultiByChannel(Response->OutOverlaps, Request->Start, Request->Rotation.Quaternion(), Request->Channel, Request->Shape, Request->Params, Request->ResponseParam);
+				if (Query == ECsTraceQuery::Channel)
+					Response->bResult = GetWorld()->OverlapMultiByChannel(OutOverlaps, Start, Quat, Channel, Shape, Params, ResponseParam);
 				// OverlapMultiByObjectType
 				else
-				if (Request->Query == ECsTraceQuery::ObjectType)
-					Response->bResult = GetWorld()->OverlapMultiByObjectType(Response->OutOverlaps, Request->Start, Request->Rotation.Quaternion(), Request->ObjectParams, Request->Shape, Request->Params);
+				if (Query == ECsTraceQuery::ObjectType)
+					Response->bResult = GetWorld()->OverlapMultiByObjectType(OutOverlaps, Start, Quat, ObjectParams, Shape, Params);
 				// OverlapMultiByProfile
 				else
-				if (Request->Query == ECsTraceQuery::Profile)
-					Response->bResult = GetWorld()->OverlapMultiByProfile(Response->OutOverlaps, Request->Start, Request->Rotation.Quaternion(), Request->ProfileName, Request->Shape, Request->Params);
+				if (Query == ECsTraceQuery::Profile)
+					Response->bResult = GetWorld()->OverlapMultiByProfile(OutOverlaps, Start, Quat, ProfileName, Shape, Params);
 			}
 		}
 		// OverlapBlocking
 		else
 		if (Request->Type == ECsTraceType::OverlapBlocking)
 		{
+			FQuat Quat = Request->Rotation.Quaternion();
+
 			// Test
-			if (Request->Method == ECsTraceMethod::Test)
+			if (Method == ECsTraceMethod::Test)
 			{
 				// OverlapBlockingTestByChannel
-				if (Request->Query == ECsTraceQuery::Channel)
-					Response->bResult = GetWorld()->OverlapBlockingTestByChannel(Request->Start, Request->Rotation.Quaternion(), Request->Channel, Request->Shape, Request->Params, Request->ResponseParam);
+				if (Query == ECsTraceQuery::Channel)
+					Response->bResult = GetWorld()->OverlapBlockingTestByChannel(Start, Quat, Channel, Shape, Params, ResponseParam);
 				else
-				if (Request->Query == ECsTraceQuery::ObjectType)
+				if (Query == ECsTraceQuery::ObjectType)
 				{
 					UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::Trace: There is NO Overlap Blocking Test Object Method. Use TraceQuery: Channel or Profile."));
 					DeallocateResponse(Response);
@@ -774,12 +856,12 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 				}
 				// OverlapBlockingTestByProfile
 				else
-				if (Request->Query == ECsTraceQuery::Profile)
-					Response->bResult = GetWorld()->OverlapBlockingTestByProfile(Request->Start, Request->Rotation.Quaternion(), Request->ProfileName, Request->Shape, Request->Params);
+				if (Query == ECsTraceQuery::Profile)
+					Response->bResult = GetWorld()->OverlapBlockingTestByProfile(Start, Quat, ProfileName, Shape, Params);
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::Trace: There is NO Overlap Blocking %s Method. Use TraceMethod: Single or Multi."), EMCsTraceMethod::Get().ToChar(Request->Method));
+				UE_LOG(LogCs, Warning, TEXT("%s: There is NO Overlap Blocking %s Method. Use TraceMethod: Test."), EMCsTraceMethod::Get().ToChar(Method), *Context);
 				DeallocateResponse(Response);
 				DeallocateRequest(Request);
 				return nullptr;
@@ -787,17 +869,22 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 		}
 
 		IncrementTraceCount(Request);
+
+#if !UE_BUILD_SHIPPING
+		LogTransaction(Context, ECsTraceTransaction::Complete, Request, Response);
+#endif // #if !UE_BUILD_SHIPPING
+
 		DeallocateRequest(Request);
 
 #if !UE_BUILD_SHIPPING
-		if (CsCVarDrawManagerTraceResponses->GetInt() == CS_CVAR_DRAW)
+		if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceResponses))
 		{
 			if (Response->bResult)
 			{
 				// Sphere around Start
-				DrawDebugSphere(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
+				DrawDebugSphere(GetWorld(), OutHits[CS_FIRST].TraceStart, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
 				// Line from Start to End
-				DrawDebugLine(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, Response->OutHits[CS_FIRST].Location, FColor::Red, false, 0.1f, 0, 1.0f);
+				DrawDebugLine(GetWorld(), OutHits[CS_FIRST].TraceStart, OutHits[CS_FIRST].Location, FColor::Red, false, 0.1f, 0, 1.0f);
 			}
 		}
 #endif // #if !UE_BUILD_SHIPPING
@@ -807,10 +894,9 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 	return nullptr;
 }
 
-void UCsManager_Trace::LogTransaction(const FString& FunctionName, const ECsTraceTransaction& Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response)
+void UCsManager_Trace::LogTransaction(const FString& Context, const ECsTraceTransaction& Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response)
 {
-#if !UE_BUILD_SHIPPING
-	if (CsCVarLogManagerTraceTransactions->GetInt() == CS_CVAR_SHOW_LOG)
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerTraceTransactions))
 	{
 		/*
 		const FString& TransactionAsString = NCsPoolTransaction::ToActionString(Transaction);
@@ -832,5 +918,4 @@ void UCsManager_Trace::LogTransaction(const FString& FunctionName, const ECsTrac
 		}
 		*/
 	}
-#endif // #if !UE_BUILD_SHIPPING
 }

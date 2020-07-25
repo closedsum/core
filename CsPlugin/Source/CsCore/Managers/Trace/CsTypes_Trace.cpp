@@ -63,7 +63,10 @@ namespace NCsTraceTransaction
 {
 	namespace Ref
 	{
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceTransaction, Receive);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceTransaction, Discard);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceTransaction, Add);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceTransaction, Process);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceTransaction, Complete);
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsTraceTransaction, ECsTraceTransaction_MAX, "MAX");
 	}
@@ -72,7 +75,10 @@ namespace NCsTraceTransaction
 
 	namespace Str
 	{
+		CSCORE_API const TCsString Receive = TCsString(TEXT("Receive"), TEXT("receive"), TEXT("Receiving"));
+		CSCORE_API const TCsString Discard = TCsString(TEXT("Discard"), TEXT("discard"), TEXT("Discarding"));
 		CSCORE_API const TCsString Add = TCsString(TEXT("Add"), TEXT("add"), TEXT("Adding"));
+		CSCORE_API const TCsString Process = TCsString(TEXT("Process"), TEXT("process"), TEXT("Processing"));
 		CSCORE_API const TCsString Complete = TCsString(TEXT("Complete"), TEXT("complete"), TEXT("Completing"));
 	}
 }

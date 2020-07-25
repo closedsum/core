@@ -144,7 +144,7 @@ private:
 
 	FCsManagerTracePendingRequests PendingRequests;
 
-	bool ProcessRequest(FCsTraceRequest* Request);
+	bool ProcessAsyncRequest(FCsTraceRequest* Request);
 
 #pragma endregion Request
 
@@ -178,5 +178,5 @@ public:
 
 	FCsTraceResponse* Trace(FCsTraceRequest* Request);
 
-	virtual void LogTransaction(const FString& FunctionName, const ECsTraceTransaction& Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response);
+	virtual void LogTransaction(const FString& Context, const ECsTraceTransaction& Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response);
 };

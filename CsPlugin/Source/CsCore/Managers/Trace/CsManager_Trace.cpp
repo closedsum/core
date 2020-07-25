@@ -3,7 +3,7 @@
 #include "CsCore.h"
 
 // CVars
-#include "CsCVars.h"
+#include "Managers/Trace/CsCVars_Manager_Trace.h"
 // Library
 #include "Library/CsLibrary_Common.h"
 
@@ -445,7 +445,7 @@ bool UCsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 		else
 		if (Request->Query == ECsTraceQuery::Profile)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Sweep Trace %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *TraceMethodAsString);
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Sweep %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *TraceMethodAsString);
 			DeallocateRequest(Request);
 			return false;
 		}
@@ -465,10 +465,17 @@ bool UCsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 		else
 		if (Request->Query == ECsTraceQuery::Profile)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Sweep Trace %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *TraceMethodAsString);
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Overlap %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *TraceMethodAsString);
 			DeallocateRequest(Request);
 			return false;
 		}
+	}
+	// OverlapBlocking
+	else
+	if (Request->Type == ECsTraceType::OverlapBlocking)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Overap Blocking Method."));
+		DeallocateRequest(Request);
 	}
 	return true;
 }
@@ -663,7 +670,6 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 				// SweepTestByObjectType
 				else
 				if (Request->Query == ECsTraceQuery::ObjectType)
-	
 					Response->bResult = GetWorld()->SweepTestByObjectType(Request->Start, Request->End, Request->Rotation.Quaternion(), Request->ObjectParams, Request->Shape, Request->Params);
 				// SweepTestByProfile
 				else
@@ -674,38 +680,112 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 			else
 			if (Request->Method == ECsTraceMethod::Single)
 			{
-				Response->OutHits.AddDefaulted();
+				// SweepSingleByChannel
+				if (Request->Query == ECsTraceQuery::Channel)
+					Response->bResult = GetWorld()->SweepSingleByChannel(Response->OutHits[CS_FIRST], Request->Start, Request->End, Request->Rotation.Quaternion(), Request->Channel, Request->Shape, Request->Params, Request->ResponseParam);
+				// SweepSingleByObjectType
+				else
+				if (Request->Query == ECsTraceQuery::ObjectType)
+					Response->bResult = GetWorld()->SweepSingleByObjectType(Response->OutHits[CS_FIRST], Request->Start, Request->End, Request->Rotation.Quaternion(), Request->ObjectParams, Request->Shape, Request->Params);
+				// SweepSingleByProfile
+				else
+				if (Request->Query == ECsTraceQuery::Profile)
+					Response->bResult = GetWorld()->SweepSingleByProfile(Response->OutHits[CS_FIRST], Request->Start, Request->End, Request->Rotation.Quaternion(), Request->ProfileName, Request->Shape, Request->Params);
 			}
 			// Multi
 			else
 			if (Request->Method == ECsTraceMethod::Multi)
 			{
+				// SweepMultiByChannel
+				if (Request->Query == ECsTraceQuery::Channel)
+					Response->bResult = GetWorld()->SweepMultiByChannel(Response->OutHits, Request->Start, Request->End, Request->Rotation.Quaternion(), Request->Channel, Request->Shape, Request->Params, Request->ResponseParam);
+				// SweepMultiByObjectType
+				else
+				if (Request->Query == ECsTraceQuery::ObjectType)
+					Response->bResult = GetWorld()->SweepMultiByObjectType(Response->OutHits, Request->Start, Request->End, Request->Rotation.Quaternion(), Request->ObjectParams, Request->Shape, Request->Params);
+				// SweepMultiByProfile
+				else
+				if (Request->Query == ECsTraceQuery::Profile)
+					Response->bResult = GetWorld()->SweepMultiByProfile(Response->OutHits, Request->Start, Request->End, Request->Rotation.Quaternion(), Request->ProfileName, Request->Shape, Request->Params);
 			}
 		}
 		// Overlap
 		else
 		if (Request->Type == ECsTraceType::Overlap)
 		{
+			// Test
+			if (Request->Method == ECsTraceMethod::Test)
+			{
+				// OverlapAnyTestByChannel
+				if (Request->Query == ECsTraceQuery::Channel)
+					Response->bResult = GetWorld()->OverlapAnyTestByChannel(Request->Start, Request->Rotation.Quaternion(), Request->Channel, Request->Shape, Request->Params, Request->ResponseParam);
+				// OverlapAnyTestByObjectType
+				else
+				if (Request->Query == ECsTraceQuery::ObjectType)
+					Response->bResult = GetWorld()->OverlapAnyTestByObjectType(Request->Start, Request->Rotation.Quaternion(), Request->ObjectParams, Request->Shape, Request->Params);
+				// OverlapAnyTestByProfile
+				else
+				if (Request->Query == ECsTraceQuery::Profile)
+					Response->bResult = GetWorld()->OverlapAnyTestByProfile(Request->Start, Request->Rotation.Quaternion(), Request->ProfileName, Request->Shape, Request->Params);
+			}
+			// Single
+			else
+			if (Request->Method == ECsTraceMethod::Single)
+			{
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::Trace: There is NO Overlap Single Method. Use TraceMethod: Test or Multi."));
+				DeallocateResponse(Response);
+				DeallocateRequest(Request);
+				return nullptr;
+			}
+			// Multi
+			else
+			if (Request->Method == ECsTraceMethod::Multi)
+			{
+				// OverlapMultiByChannel
+				if (Request->Query == ECsTraceQuery::Channel)
+					Response->bResult = GetWorld()->OverlapMultiByChannel(Response->OutOverlaps, Request->Start, Request->Rotation.Quaternion(), Request->Channel, Request->Shape, Request->Params, Request->ResponseParam);
+				// OverlapMultiByObjectType
+				else
+				if (Request->Query == ECsTraceQuery::ObjectType)
+					Response->bResult = GetWorld()->OverlapMultiByObjectType(Response->OutOverlaps, Request->Start, Request->Rotation.Quaternion(), Request->ObjectParams, Request->Shape, Request->Params);
+				// OverlapMultiByProfile
+				else
+				if (Request->Query == ECsTraceQuery::Profile)
+					Response->bResult = GetWorld()->OverlapMultiByProfile(Response->OutOverlaps, Request->Start, Request->Rotation.Quaternion(), Request->ProfileName, Request->Shape, Request->Params);
+			}
 		}
-		/*
-		
-		
-		
-		bool SweepSingleByChannel(struct FHitResult& OutHit, const FVector& Start, const FVector& End, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
-		bool SweepSingleByObjectType(struct FHitResult& OutHit, const FVector& Start, const FVector& End, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-		bool SweepSingleByProfile(struct FHitResult& OutHit, const FVector& Start, const FVector& End, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-		bool SweepMultiByChannel(TArray<struct FHitResult>& OutHits, const FVector& Start, const FVector& End, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
-		bool SweepMultiByObjectType(TArray<struct FHitResult>& OutHits, const FVector& Start, const FVector& End, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-		bool SweepMultiByProfile(TArray<FHitResult>& OutHits, const FVector& Start, const FVector& End, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-		bool OverlapBlockingTestByChannel(const FVector& Pos, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
-		bool OverlapAnyTestByChannel(const FVector& Pos, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
-		bool OverlapAnyTestByObjectType(const FVector& Pos, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-		bool OverlapBlockingTestByProfile(const FVector& Pos, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-		bool OverlapAnyTestByProfile(const FVector& Pos, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-		bool OverlapMultiByChannel(TArray<struct FOverlapResult>& OutOverlaps, const FVector& Pos, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
-		bool OverlapMultiByObjectType(TArray<struct FOverlapResult>& OutOverlaps, const FVector& Pos, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-		bool OverlapMultiByProfile(TArray<struct FOverlapResult>& OutOverlaps, const FVector& Pos, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-		*/
+		// OverlapBlocking
+		else
+		if (Request->Type == ECsTraceType::OverlapBlocking)
+		{
+			// Test
+			if (Request->Method == ECsTraceMethod::Test)
+			{
+				// OverlapBlockingTestByChannel
+				if (Request->Query == ECsTraceQuery::Channel)
+					Response->bResult = GetWorld()->OverlapBlockingTestByChannel(Request->Start, Request->Rotation.Quaternion(), Request->Channel, Request->Shape, Request->Params, Request->ResponseParam);
+				else
+				if (Request->Query == ECsTraceQuery::ObjectType)
+				{
+					UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::Trace: There is NO Overlap Blocking Test Object Method. Use TraceQuery: Channel or Profile."));
+					DeallocateResponse(Response);
+					DeallocateRequest(Request);
+					return nullptr;
+				}
+				// OverlapBlockingTestByProfile
+				else
+				if (Request->Query == ECsTraceQuery::Profile)
+					Response->bResult = GetWorld()->OverlapBlockingTestByProfile(Request->Start, Request->Rotation.Quaternion(), Request->ProfileName, Request->Shape, Request->Params);
+			}
+			else
+			{
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::Trace: There is NO Overlap Blocking %s Method. Use TraceMethod: Single or Multi."), EMCsTraceMethod::Get().ToChar(Request->Method));
+				DeallocateResponse(Response);
+				DeallocateRequest(Request);
+				return nullptr;
+			}
+		}
+
 		IncrementTraceCount(Request);
 		DeallocateRequest(Request);
 

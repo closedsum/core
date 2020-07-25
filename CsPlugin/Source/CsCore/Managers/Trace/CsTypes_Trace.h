@@ -16,6 +16,7 @@ enum class ECsTraceType : uint8
 	Line				UMETA(DisplayName = "Line"),
 	Sweep				UMETA(DisplayName = "Sweep"),
 	Overlap				UMETA(DisplayName = "Overlap"),
+	OverlapBlocking		UMETA(DisplayName = "Overlap Blocking"),
 	ECsTraceType_MAX	UMETA(Hidden),
 };
 
@@ -33,6 +34,7 @@ namespace NCsTraceType
 		extern CSCORE_API const Type Line;
 		extern CSCORE_API const Type Sweep;
 		extern CSCORE_API const Type Overlap;
+		extern CSCORE_API const Type OverlapBlocking;
 		extern CSCORE_API const Type ECsTraceType_MAX;
 	}
 

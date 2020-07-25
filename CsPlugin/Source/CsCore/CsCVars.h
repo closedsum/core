@@ -112,20 +112,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerInventoryTransacti
 
 #pragma endregion Inventory
 
-// Collision
-#pragma region
-
-	// Trace
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerTraceTransactions;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawManagerTraceRequests;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawManagerTraceResponses;
-
-#pragma endregion Trace
-
-#pragma endregion Collision
-
 // Runnable
 #pragma region
 
@@ -330,10 +316,6 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogOverrideFunctions;
 	// FX
 	extern CSCORE_API const Type LogManagerFxTransactions;
-	// Collision
-
-		// Trace
-	extern CSCORE_API const Type LogManagerTraceTransactions;
 	// Runnable
 	extern CSCORE_API const Type LogManagerRunnableTransactions;
 	// Process
@@ -356,8 +338,6 @@ namespace NCsCVarLog
 
 			// Load
 		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerLoad);
-			// Trace
-		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerTraceTransactions);
 			// Task
 		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerTaskTransactions);
 			// Runnable
@@ -611,20 +591,6 @@ struct CSCORE_API EMCsCVarDraw final : public TCsEnumStructMap<FECsCVarDraw, uin
 namespace NCsCVarDraw
 {
 	typedef FECsCVarDraw Type;
-
-	namespace Ref
-	{
-		// Trace
-		extern CSCORE_API const Type DrawManagerTraceRequests;
-		extern CSCORE_API const Type DrawManagerTraceResponses;
-	}
-
-	namespace Map
-	{
-		// Trace
-		extern CSCORE_API const Type DrawManagerTraceRequests;
-		extern CSCORE_API const Type DrawManagerTraceResponses;
-	}
 }
 
 #pragma endregion CVarDraw

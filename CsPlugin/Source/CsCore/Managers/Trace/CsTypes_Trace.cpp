@@ -11,6 +11,7 @@ namespace NCsTraceType
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceType, Line);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceType, Sweep);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceType, Overlap);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsTraceType, OverlapBlocking, "Overlap Blocking");
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsTraceType, ECsTraceType_MAX, "MAX");
 	}
 

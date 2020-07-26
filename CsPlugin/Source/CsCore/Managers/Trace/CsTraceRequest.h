@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Trace/CsTypes_Trace.h"
+#include "Managers/Time/CsTypes_Time.h"
 
 #include "WorldCollision.h"
 
@@ -37,6 +38,10 @@ struct CSCORE_API FCsTraceRequest
 	/** */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float StartTime;
+
+	/** */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FCsDeltaTime ElapsedTime;
 
 	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -109,6 +114,7 @@ struct CSCORE_API FCsTraceRequest
 		bProcessing(false),
 		bCompleted(false),
 		StartTime(0.0f),
+		ElapsedTime(),
 		StaleTime(1.0f),
 		Caller(nullptr),
 		UniqueObject(nullptr),
@@ -170,6 +176,17 @@ struct CSCORE_API FCsTraceRequest
 		InHandle._Data.Index	   = 0;
 	}
 
+	void SetCaller(UObject* InCaller);
+
+	UObject* GetCaller() const;
+
+	FORCEINLINE bool HasExpired() const
+	{
+		return StaleTime > 0.0f && ElapsedTime.Time > StaleTime;
+	}
+
+	void Update(const FCsDeltaTime& DeltaTime);
+
 	FORCEINLINE void Reset()
 	{
 		ResetHandle(Handle);
@@ -178,6 +195,7 @@ struct CSCORE_API FCsTraceRequest
 		bProcessing = false;
 		bCompleted = false;
 		StartTime = 0.0f;
+		ElapsedTime.Reset();
 		StaleTime = 1.0f;
 		Caller = nullptr;
 		UniqueObject = nullptr;

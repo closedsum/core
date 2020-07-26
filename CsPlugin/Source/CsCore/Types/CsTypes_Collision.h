@@ -2,6 +2,7 @@
 #include "Types/CsTypes_Physics.h"
 #include "Engine/EngineTypes.h"
 #include "Types/Enum/CsEnumMap.h"
+#include "CollisionShape.h"
 
 #include "CsTypes_Collision.generated.h"
 #pragma once
@@ -110,6 +111,31 @@ namespace NCsCollisionResponse
 };
 
 #pragma endregion CollisionResponse
+
+// CollisionShape
+#pragma region
+
+/**
+*/
+struct CSCORE_API EMCsCollisionShape final : public TCsEnumMap<ECollisionShape::Type>
+{
+	CS_ENUM_MAP_BODY(EMCsCollisionShape, ECollisionShape::Type)
+};
+
+namespace NCsCollisionShape
+{
+	typedef ECollisionShape::Type Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Line;
+		extern CSCORE_API const Type Box;
+		extern CSCORE_API const Type Sphere;
+		extern CSCORE_API const Type Capsule;
+	}
+}
+
+#pragma endregion CollisionShape
 
 // FCsCollisionPreset
 #pragma region

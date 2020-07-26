@@ -6,6 +6,10 @@
 #include "Managers/Trace/CsCVars_Manager_Trace.h"
 // Library
 #include "Library/CsLibrary_Common.h"
+// Settings
+#include "Settings/CsDeveloperSettings.h"
+// UniqueObject
+#include "UniqueObject/CsUniqueObject.h"
 
 //#include "Game/CsGameState_DEPRECATED.h"
 
@@ -27,9 +31,11 @@ namespace NCsManagerTraceCached
 {
 	namespace Str
 	{
+		const FString Update = TEXT("UCsManager_Trace::Update");
 		const FString Trace = TEXT("UCsManager_Trace::Trace");
 		const FString ProcessAsyncRequest = TEXT("UCsManager_Trace::ProcessAsyncRequest");
 		const FString OnTraceResponse = TEXT("UCsManager_Trace::OnTraceResponse");
+		const FString OnOverlapResponse = TEXT("UCsManager_Trace::::OnOverlapResponse");
 	}
 }
 
@@ -41,10 +47,6 @@ bool UCsManager_Trace::s_bShutdown = false;
 
 UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	RequestsProcessedPerTick = 64;
-
-	TraceDelegate.BindUObject(this, &UCsManager_Trace::OnTraceResponse);
-	OverlapDelegate.BindUObject(this, &UCsManager_Trace::OnOverlapResponse);
 }
 
 // Singleton
@@ -218,10 +220,22 @@ UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 
 void UCsManager_Trace::Initialize()
 {
-	// TODO: Get PoolSize from config
+	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
 
-	static const int32 PoolSize = 256;
+	checkf(Settings, TEXT("UCsManager_Trace::Initialize: Failed to find Settings of type: UCsDeveloperSettings."));
+
+	MaxRequestsProcessedPerTick = Settings->Manager_Trace.MaxRequestsProcessedPerTick;
+
+	checkf(MaxRequestsProcessedPerTick >= 4, TEXT("UCsManager_Trace::Initialize: MaxRequestsProcessedPerTick is NOT >= 4."));
+
+	TraceDelegate.BindUObject(this, &UCsManager_Trace::OnTraceResponse);
+	OverlapDelegate.BindUObject(this, &UCsManager_Trace::OnOverlapResponse);
+
+	// Set Pool Size for Requests and Responses
+	const int32& PoolSize = Settings->Manager_Trace.PoolSize;
 	
+	checkf(PoolSize >= 4, TEXT("UCsManager_Trace::Initialize: PoolSize is NOT >= 4."));
+
 	// Request
 	{
 		Manager_Request.CreatePool(PoolSize);
@@ -268,14 +282,18 @@ void UCsManager_Trace::SetMyRoot(UObject* InRoot)
 
 #pragma endregion Singleton
 
-void UCsManager_Trace::OnTick(const float &DeltaSeconds)
+void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 {
+	using namespace NCsManagerTraceCached;
+
+	const FString& Context = Str::Update;
+
 	// Reset TraceCountThisFrame
 	ThisFrameCountInfo.Reset();
 
 	// Process Requests
 	{
-		const int32 ProcessCountMax = FMath::Max(0, RequestsProcessedPerTick - (int32)ThisFrameCountInfo.TotalCount);
+		const int32 ProcessCountMax = FMath::Max(0, MaxRequestsProcessedPerTick - (int32)ThisFrameCountInfo.TotalCount);
 		const int32 Count			= FMath::Min(Manager_Request.GetAllocatedSize(), ProcessCountMax);
 
 		const float CurrentTime = GetWorld()->GetTimeSeconds();
@@ -299,6 +317,10 @@ void UCsManager_Trace::OnTick(const float &DeltaSeconds)
 			// If COMPLETED, Remove
 			if (Request->bCompleted)
 			{
+#if !UE_BUILD_SHIPPING
+				LogTransaction(Context, ECsTraceTransaction::Complete, Request, Request->Response);
+#endif // #if !UE_BUILD_SHIPPING
+
 				if (FCsTraceResponse* Response = Request->Response)
 				{
 					Request->OnResponse_Event.Broadcast(Response);
@@ -308,9 +330,12 @@ void UCsManager_Trace::OnTick(const float &DeltaSeconds)
 				continue;
 			}
 			// Check to remove STALE Request
-			if (Request->StaleTime > 0.0f &&
-				CurrentTime - Request->StartTime >= Request->StaleTime)
+			if (Request->HasExpired())
 			{
+#if !UE_BUILD_SHIPPING
+				LogTransaction(Context, ECsTraceTransaction::Discard, Request, Request->Response);
+#endif // #if !UE_BUILD_SHIPPING
+
 				PendingRequests.Remove(Request);
 				DeallocateRequest(Request);
 				continue;
@@ -321,6 +346,7 @@ void UCsManager_Trace::OnTick(const float &DeltaSeconds)
 				ProcessAsyncRequest(Request);
 				IncrementTraceCount(Request);
 			}
+			Request->Update(DeltaTime);
 			++I;
 		}
 	}
@@ -547,7 +573,10 @@ void UCsManager_Trace::DeallocateResponse(FCsTraceResponse* Response)
 
 void UCsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& Datum)
 {
-	const TCsTraceHandleId& HandleId = Handle._Handle;
+	using namespace NCsManagerTraceCached;
+
+	const FString& Context = Str::OnTraceResponse;
+
 	// Get Request
 	FCsTraceRequest* Request = PendingRequests.Get(Handle);
 	// Setup Response
@@ -580,8 +609,6 @@ void UCsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
-	LogTransaction(NCsManagerTraceCached::Str::OnTraceResponse, ECsTraceTransaction::Complete, Request, Response);
-
 	Request->Response = Response;
 
 	// Broadcast Response
@@ -593,6 +620,39 @@ void UCsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 
 void UCsManager_Trace::OnOverlapResponse(const FTraceHandle& Handle, FOverlapDatum& Datum)
 {
+	// Get Request
+	FCsTraceRequest* Request = PendingRequests.Get(Handle);
+	// Setup Response
+	FCsTraceResponse* Response = AllocateResponse();
+
+	Response->bResult	  = Datum.OutOverlaps.Num() > CS_EMPTY && Datum.OutOverlaps[CS_FIRST].bBlockingHit;
+	Response->ElapsedTime = GetWorld()->GetTimeSeconds() - Request->StartTime;
+
+	// Copy Datum
+	const int32 Count = Datum.OutOverlaps.Num();
+
+	Response->OutOverlaps.Reserve(FMath::Max(Response->OutOverlaps.Max(), Count));
+
+	for (FOverlapResult& OverlapResult : Datum.OutOverlaps)
+	{
+		Response->OutOverlaps.AddDefaulted();
+		Response->OutOverlaps.Last() = OverlapResult;
+	}
+
+#if !UE_BUILD_SHIPPING
+	if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceResponses))
+	{
+		/*
+		if (Response->bResult)
+		{
+			// Sphere around Start
+			DrawDebugSphere(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
+			// Line from Start to End
+			DrawDebugLine(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, Response->OutHits[CS_FIRST].Location, FColor::Red, false, 0.1f, 0, 1.0f);
+		}
+		*/
+	}
+#endif // #if !UE_BUILD_SHIPPING
 }
 
 #pragma endregion Response
@@ -611,13 +671,13 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 	LogTransaction(Context, ECsTraceTransaction::Receive, Request, nullptr);
 #endif // #if !UE_BUILD_SHIPPING
 
-	bool AddPending = !Request->bForce && ThisFrameCountInfo.TotalCount >= RequestsProcessedPerTick;
+	bool AddPending = !Request->bForce && ThisFrameCountInfo.TotalCount >= MaxRequestsProcessedPerTick;
 
 	// TODO: Print warning for a normal trace moved to Async
 	if (AddPending && !Request->bAsync)
 	{
 		DeallocateRequest(Request);
-		UE_LOG(LogCs, Warning, TEXT("%s: Reached maximum RequestsProcessedPerTick: %d and Request is NOT Async. Abandoning Request."), *Context, RequestsProcessedPerTick);
+		UE_LOG(LogCs, Warning, TEXT("%s: Reached MaxRequestsProcessedPerTick: %d and Request is NOT Async. Abandoning Request."), *Context, MaxRequestsProcessedPerTick);
 		return nullptr;
 	}
 
@@ -875,7 +935,7 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 #endif // #if !UE_BUILD_SHIPPING
 
 		DeallocateRequest(Request);
-
+		
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceResponses))
 		{
@@ -898,24 +958,182 @@ void UCsManager_Trace::LogTransaction(const FString& Context, const ECsTraceTran
 {
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerTraceTransactions))
 	{
-		/*
-		const FString& TransactionAsString = NCsPoolTransaction::ToActionString(Transaction);
+		const FString& TransactionAsString = NCsTraceTransaction::ToActionString(Transaction);
 
-		const FString ItemName				  = Item->ShortCode.ToString();
-		const FString Id					  = FString::Printf(TEXT("%llu"), Item->UniqueId);
-		const FString DataName				  = Item->GetData()->ShortCode.ToString();
-		const UCsData_Interactive* Data_Actor = Item->GetData_Actor();
-		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : NCsCached::Str::Empty;
-		const float CurrentTime				  = GetWorld()->GetTimeSeconds();
+		// Request
+		const ECsTraceType& Type	 = Request->Type;
+		const ECsTraceMethod& Method = Request->Method;
+		const ECsTraceQuery& Query	 = Request->Query;
 
-		if (Data_Actor)
+		UE_LOG(LogCs, Warning, TEXT("%s: %s Trace: %s %s %s."), *Context, *TransactionAsString, EMCsTraceType::Get().ToChar(Type), EMCsTraceMethod::Get().ToChar(Method), EMCsTraceQuery::Get().ToChar(Query));
+		UE_LOG(LogCs, Warning, TEXT("- Request"));
+		UE_LOG(LogCs, Warning, TEXT("-- Index: %d"), Request->Index);
+		UE_LOG(LogCs, Warning, TEXT("-- bForce: %s"), Request->bForce ? TEXT("True") : TEXT("False"));
+		UE_LOG(LogCs, Warning, TEXT("-- StartTime: %f"), Request->StartTime);
+		UE_LOG(LogCs, Warning, TEXT("-- StaleTime: %f"), Request->StaleTime);
+
+		if (UObject* Caller = Request->GetCaller())
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with UniqueId: %s, Data: %s, and with Data_Actor: %s at %f."), *FunctionName, *TransactionAsString, *ItemName,*Id, *DataName, *DataActorName, CurrentTime);
+			UE_LOG(LogCs, Warning, TEXT("-- Caller: %s Class: %s"), *(Caller->GetName()), *(Caller->GetClass()->GetName()));
+
+			if (ICsUniqueObject* UniqueObject = Request->UniqueObject)
+			{
+				const FCsUniqueObjectId& Id = UniqueObject->GetId();
+
+				UE_LOG(LogCs, Warning, TEXT("-- UniqueObject: %s"), *(Id.Id.ToString()));
+			}
 		}
-		else
+
+		UE_LOG(LogCs, Warning, TEXT("-- bAsync: %f"), Request->bAsync ? TEXT("True") : TEXT("False"));
+		UE_LOG(LogCs, Warning, TEXT("-- Start: %s"), *(*Request->Start.ToString()));
+
+		// Line | Sweep
+		if (Type == ECsTraceType::Line ||
+			Type == ECsTraceType::Sweep)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with UniqueId: % and Data: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *Id, *DataName, CurrentTime);
+			UE_LOG(LogCs, Warning, TEXT("-- End: %s"), *(*Request->End.ToString()));
 		}
-		*/
+		// Overlap | OverlapBlocking
+		if (Type == ECsTraceType::Overlap ||
+			Type == ECsTraceType::OverlapBlocking)
+		{
+			UE_LOG(LogCs, Warning, TEXT("-- Rotation: %s"), *(*Request->Rotation.ToString()));
+		}
+
+		// Channel
+		if (Query == ECsTraceQuery::Channel)
+		{
+			UE_LOG(LogCs, Warning, TEXT("-- Channel: %s"), EMCsCollisionChannel::Get().ToChar((ECollisionChannel)Request->Channel));
+		}
+		// ObjectType
+		if (Query == ECsTraceQuery::ObjectType)
+		{
+			UE_LOG(LogCs, Warning, TEXT("-- Object Params"));
+
+			for (const ECollisionChannel& Channel : EMCsCollisionChannel::Get())
+			{
+				if (Request->ObjectParams.IsValidObjectQuery(Channel))
+				{
+					UE_LOG(LogCs, Warning, TEXT("--- Channel: %s"), EMCsCollisionChannel::Get().ToChar(Channel));
+				}
+			}
+		}
+		// Profile
+		if (Query == ECsTraceQuery::Profile)
+		{
+			UE_LOG(LogCs, Warning, TEXT("-- Profile: %s"), *(Request->ProfileName.ToString()));
+		}
+
+		// Shape
+		if (Type != ECsTraceType::Line)
+		{
+			UE_LOG(LogCs, Warning, TEXT("-- Shape: %s"), EMCsCollisionShape::Get().ToChar(Request->Shape.ShapeType));
+		}
+ 
+		// Params
+		{
+			const FCollisionQueryParams& Params = Request->Params;
+
+			UE_LOG(LogCs, Warning, TEXT("-- Params"));
+			UE_LOG(LogCs, Warning, TEXT("--- TraceTag: %s"), *(Params.TraceTag.ToString()));
+			UE_LOG(LogCs, Warning, TEXT("--- OwnerTag: %s"), *(Params.OwnerTag.ToString()));
+			UE_LOG(LogCs, Warning, TEXT("--- bTraceComplex: %s"), Params.bTraceComplex ? TEXT("True") : TEXT("False"));
+			UE_LOG(LogCs, Warning, TEXT("--- bFindInitialOverlaps: %s"), Params.bFindInitialOverlaps ? TEXT("True") : TEXT("False"));
+			UE_LOG(LogCs, Warning, TEXT("--- bReturnFaceIndex: %s"), Params.bReturnFaceIndex ? TEXT("True") : TEXT("False"));
+			UE_LOG(LogCs, Warning, TEXT("--- bReturnPhysicalMaterial: %s"), Params.bReturnPhysicalMaterial ? TEXT("True") : TEXT("False"));
+			UE_LOG(LogCs, Warning, TEXT("--- bIgnoreBlocks: %s"), Params.bIgnoreBlocks ? TEXT("True") : TEXT("False"));
+			UE_LOG(LogCs, Warning, TEXT("--- bIgnoreTouches: %s"), Params.bIgnoreTouches ? TEXT("True") : TEXT("False"));
+		}
+
+		// Response Params
+		if (Query == ECsTraceQuery::Channel)
+		{
+			const FCollisionResponseParams& ResponseParam		 = Request->ResponseParam;
+			const FCollisionResponseContainer& ResponseContainer = ResponseParam.CollisionResponse;
+
+			UE_LOG(LogCs, Warning, TEXT("-- ResponseParam"));
+			
+			// Log Response for the appropriate Channel
+			for (const ECollisionChannel& Channel : EMCsCollisionChannel::Get())
+			{
+				const ECollisionResponse& CollisionResponse = ResponseContainer.GetResponse(Channel);
+
+				// Overlap | Block
+				if (CollisionResponse != ECollisionResponse::ECR_Ignore)
+				{
+					UE_LOG(LogCs, Warning, TEXT("--- %s: %s"), EMCsCollisionChannel::Get().ToChar(Channel), EMCollisionResponse::Get().ToChar(CollisionResponse));
+				}
+			}
+		}
+
+		// Response
+		if (Response)
+		{
+			TArray<FHitResult>& OutHits			= Response->OutHits;
+			TArray<FOverlapResult>& OutOverlaps = Response->OutOverlaps;
+
+			UE_LOG(LogCs, Warning, TEXT("- Response"));
+			UE_LOG(LogCs, Warning, TEXT("-- Index: %d"), Response->Index);
+
+			// Line | Sweep
+			if (Type == ECsTraceType::Line ||
+				Type == ECsTraceType::Sweep)
+			{
+				// Single | Multi
+				if (Method == ECsTraceMethod::Single ||
+					Method == ECsTraceMethod::Multi)
+				{
+					const int32 Count = Response->OutHits.Num();
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						const FHitResult& Hit = OutHits[I];
+
+						UE_LOG(LogCs, Warning, TEXT("-- OutHits[%d]"), I);
+						UE_LOG(LogCs, Warning, TEXT("--- bBlockingHit: %s"), Hit.bBlockingHit ? TEXT("True") : TEXT("False"));
+						UE_LOG(LogCs, Warning, TEXT("--- bStartPenetrating: %s"), Hit.bStartPenetrating ? TEXT("True") : TEXT("False"));
+						UE_LOG(LogCs, Warning, TEXT("--- FaceIndex: %d"), Hit.FaceIndex);
+						UE_LOG(LogCs, Warning, TEXT("--- Time: %f"), Hit.Time);
+						UE_LOG(LogCs, Warning, TEXT("--- Distance: %f"), Hit.Distance);
+						UE_LOG(LogCs, Warning, TEXT("--- Location: %s"), *(Hit.Location.ToString()));
+						UE_LOG(LogCs, Warning, TEXT("--- ImpactPoint: %s"), *(Hit.ImpactPoint.ToString()));
+						UE_LOG(LogCs, Warning, TEXT("--- Normal: %s"), *(Hit.Normal.ToString()));
+						UE_LOG(LogCs, Warning, TEXT("--- ImpactNormal: %s"), *(Hit.ImpactNormal.ToString()));
+						UE_LOG(LogCs, Warning, TEXT("--- TraceStart: %s"), *(Hit.TraceStart.ToString()));
+						UE_LOG(LogCs, Warning, TEXT("--- TraceEnd: %s"), *(Hit.TraceEnd.ToString()));
+						UE_LOG(LogCs, Warning, TEXT("--- PenetrationDepth: %f"), Hit.PenetrationDepth);
+						UE_LOG(LogCs, Warning, TEXT("--- Item: %d"), Hit.Item);
+
+						UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
+
+						UE_LOG(LogCs, Warning, TEXT("--- PhysMaterial: %s"), PhysMaterial ? *(PhysMaterial->GetName()) : TEXT("None"));
+						UE_LOG(LogCs, Warning, TEXT("--- Actor: %s"), Hit.GetActor() ? *(Hit.GetActor()->GetName()) : TEXT("None"));
+						UE_LOG(LogCs, Warning, TEXT("--- Component: %s"), Hit.GetComponent() ? *(Hit.GetComponent()->GetName()) : TEXT("None"));
+						UE_LOG(LogCs, Warning, TEXT("--- BoneName: %s"), *(Hit.BoneName.ToString()));
+						UE_LOG(LogCs, Warning, TEXT("--- MyBoneName: %s"), *(Hit.MyBoneName.ToString()));
+					}
+				}
+			}
+			// Overlap
+			if (Type == ECsTraceType::Overlap)
+			{
+				// Multi
+				if (Method == ECsTraceMethod::Multi)
+				{
+					const int32 Count = Response->OutOverlaps.Num();
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						const FOverlapResult& Overlap = OutOverlaps[I];
+
+						UE_LOG(LogCs, Warning, TEXT("-- OutOverlaps[%d]"), I);
+						UE_LOG(LogCs, Warning, TEXT("--- bBlockingHit: %s"), Overlap.bBlockingHit ? TEXT("True") : TEXT("False"));
+						UE_LOG(LogCs, Warning, TEXT("--- ItemIndex: %d"), Overlap.ItemIndex);
+						UE_LOG(LogCs, Warning, TEXT("--- Actor: %s"), Overlap.GetActor() ? *(Overlap.GetActor()->GetName()) : TEXT("None"));
+						UE_LOG(LogCs, Warning, TEXT("--- Component: %s"), Overlap.GetComponent() ? *(Overlap.GetComponent()->GetName()) : TEXT("None"));
+					}
+				}
+			}
+		}
 	}
 }

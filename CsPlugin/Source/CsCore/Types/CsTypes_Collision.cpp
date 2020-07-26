@@ -79,3 +79,19 @@ namespace NCsCollisionResponse
 }
 
 #pragma endregion CollisionResponse
+
+// CollisionShape
+#pragma region
+
+namespace NCsCollisionShape
+{
+	namespace Ref
+	{
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCollisionShape, Line);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCollisionShape, Box);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCollisionShape, Sphere);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCollisionShape, Capsule);
+	}
+}
+
+#pragma endregion CollisionShape

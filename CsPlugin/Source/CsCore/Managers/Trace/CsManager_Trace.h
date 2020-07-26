@@ -115,9 +115,9 @@ public:
 
 public:
 
-	virtual void OnTick(const float &DeltaSeconds);
+	void Update(const FCsDeltaTime& DeltaTime);
 
-	int32 RequestsProcessedPerTick;
+	int32 MaxRequestsProcessedPerTick;
 
 	/** */
 	FCsManagerTraceCountInfo LifetimeCountInfo;

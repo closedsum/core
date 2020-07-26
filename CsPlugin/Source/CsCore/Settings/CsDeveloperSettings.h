@@ -12,6 +12,8 @@
 // Sound
 #include "Managers/Sound/CsTypes_Sound.h"
 #include "Managers/Sound/CsSettings_Manager_Sound.h"
+// Trace
+#include "Managers/Trace/CsSettings_Manager_Trace.h"
 
 #include "CsDeveloperSettings.generated.h"
 
@@ -72,6 +74,11 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|FX", meta = (DisplayName = "Manager FX Actor"))
 	FCsSettings_Manager_FX_Actor Manager_FX_Actor;
 
+	// Unit Test
+#pragma region
+
+#pragma endregion Unit Test
+
 #pragma endregion FX
 
 // Sound
@@ -102,5 +109,19 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound", meta = (DisplayName = "Manager Sound"))
 	FCsSettings_Manager_Sound Manager_Sound;
 
+	// Unit Test
+#pragma region
+
+#pragma endregion Unit Test
+
 #pragma endregion Sound
+
+// Trace
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Trace", meta = (DisplayName = "Manager Trace"))
+	FCsSettings_Manager_Trace Manager_Trace;
+
+#pragma endregion Trace
 };

@@ -9,7 +9,7 @@
 // Cached
 #pragma region
 
-namespace NCsProjectileCustomizationCached
+namespace NCsStatusEffectTriggerConditionCustomizationCached
 {
 	namespace Str
 	{

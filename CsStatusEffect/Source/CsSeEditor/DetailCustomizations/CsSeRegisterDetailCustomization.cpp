@@ -9,6 +9,7 @@
 	// EnumStruct
 		// StatusEffect
 #include "DetailCustomizations/EnumStruct/ECsStatusEffectTriggerConditionCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsStatusEffectEventCustomization.h"
 
 void FCsSeRegisterDetailCustomization::Register()
 {
@@ -18,5 +19,7 @@ void FCsSeRegisterDetailCustomization::Register()
 	{
 		// ECsStatusEffectTriggerCondition
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsStatusEffectTriggerCondition", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsStatusEffectTriggerConditionCustomization::MakeInstance));
+		// ECsStatusEffectEvent
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsStatusEffectEvent", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsStatusEffectEventCustomization::MakeInstance));
 	}
 }

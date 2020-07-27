@@ -189,6 +189,11 @@ public:
 		return NameInternalMap.Find(Name) != nullptr;
 	}
 
+	FORCEINLINE bool IsValidEnumByDisplayName(const FString& Name)
+	{
+		return DisplayNameMap.Find(Name) != nullptr;
+	}
+
 	FORCEINLINE bool IsValidFlag(const uint64& Flag)
 	{
 		return FlagMap.Find(Flag) != nullptr;

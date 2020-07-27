@@ -181,6 +181,13 @@ struct CSCORE_API EMCsInputActionMap : public TCsEnumStructMaskMap<FECsInputActi
 	CS_ENUM_STRUCT_MASK_MAP_BODY(EMCsInputActionMap, FECsInputActionMap, int32)
 };
 
+namespace NCsInputActionMap
+{
+	typedef FECsInputActionMap Type;
+
+	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
+}
+
 #pragma endregion InputActionMap
 
 	// FCsInputActionMapRule

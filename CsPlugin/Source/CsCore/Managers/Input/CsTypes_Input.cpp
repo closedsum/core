@@ -1,7 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Input/CsTypes_Input.h"
+#include "CsCore.h"
 
-// Input
+// Settings
+#include "Settings/CsDeveloperSettings.h"
 #include "GameFramework/InputSettings.h"
 
 // InputDevice
@@ -75,6 +77,59 @@ namespace NCsInputValue
 }
 
 #pragma endregion InputValue
+
+// InputActionMap
+#pragma region
+
+namespace NCsInputActionMap
+{
+	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
+	{
+		if (UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>())
+		{
+#if WITH_EDITOR
+			EMCsInputActionMap::Get().ClearUserDefinedEnums();
+#endif // #if WITH_EDITOR
+
+			const TArray<FCsSettings_Enum>& Enums = Settings->GetSettingsEnum<FECsInputActionMap>();
+			const FString EnumSettingsPath		  = Settings->GetSettingsEnumPath<FECsInputActionMap>();
+
+			if (Enums.Num() > CS_EMPTY)
+			{
+				for (const FCsSettings_Enum& Enum : Enums)
+				{
+					const FString& Name		   = Enum.Name;
+					const FString& DisplayName = Enum.DisplayName;
+
+					if (Name.IsEmpty())
+					{
+						UE_LOG(LogCs, Warning, TEXT("%s: Empty Enum listed in %s."), *Context, *EnumSettingsPath);
+						return;
+					}
+
+					checkf(!EMCsInputActionMap::Get().IsValidEnum(Name), TEXT("%s: InputActionMap (Name): %s already exists (declared in native)."), *Context, *Name);
+
+					if (!Enum.DisplayName.IsEmpty())
+					{
+						checkf(!EMCsInputActionMap::Get().IsValidEnumByDisplayName(DisplayName), TEXT("%s: InputActionMap (DisplayName): %s already exists (declared in native)."), *Context, *DisplayName);
+
+						EMCsInputActionMap::Get().Create(Name, DisplayName, true);
+					}
+					else
+					{
+						EMCsInputActionMap::Get().Create(Name, true);
+					}
+				}
+			}
+			else
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s: Enum Setting @ %s is empty."), *Context, *EnumSettingsPath);
+			}
+		}
+	}
+}
+
+#pragma endregion InputActionMap
 
 // InputAction
 #pragma region

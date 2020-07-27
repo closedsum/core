@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Input/CsTypes_Input.h"
 
+// Input
+#include "GameFramework/InputSettings.h"
+
 // InputDevice
 #pragma region
 
@@ -72,6 +75,39 @@ namespace NCsInputValue
 }
 
 #pragma endregion InputValue
+
+// InputAction
+#pragma region
+
+namespace NCsInputAction
+{
+	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
+	{
+		if (UInputSettings* Settings = GetMutableDefault<UInputSettings>())
+		{
+#if WITH_EDITOR
+			EMCsInputAction::Get().ClearUserDefinedEnums();
+#endif // #if WITH_EDITOR
+
+			// Add ActionMappings
+			for (const FInputActionKeyMapping& Mapping : Settings->GetActionMappings())
+			{
+				const FName& Name = Mapping.ActionName;
+
+				EMCsInputAction::Get().Create(Name.ToString(), true);
+			}
+			// Add AxisMappings
+			for (const FInputAxisKeyMapping& Mapping : Settings->GetAxisMappings())
+			{
+				const FName& Name = Mapping.AxisName;
+
+				EMCsInputAction::Get().Create(Name.ToString(), true);
+			}
+		}
+	}
+}
+
+#pragma endregion InputAction
 
 // ControllerHand
 #pragma region

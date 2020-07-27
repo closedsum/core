@@ -6,6 +6,10 @@
 #include "Types/CsTypes_Load.h"
 #include "Types/Enum/CsUserDefinedEnum.h"
 #include "Settings/CsTypes_Settings.h"
+// Input
+#include "Managers/Input/CsTypes_Input.h"
+#include "Managers/Input/CsSettings_Input.h"
+#include "Managers/Input/CsSettings_Manager_Input.h"
 // FX
 #include "Managers/FX/CsTypes_FX.h"
 #include "Managers/FX/Actor/CsSettings_Manager_FX_Actor.h"
@@ -45,6 +49,57 @@ public:
 	FCsDataRootSetContainer DataRootSet;
 
 #pragma endregion Load
+
+// Input
+#pragma region
+public:
+
+	// InputActionMap
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsInputActionMap"))
+	TArray<FCsSettings_Enum> ECsInputActionMap;
+
+	template<>
+	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsInputActionMap>() const
+	{
+		return ECsInputActionMap;
+	}
+
+	template<>
+	FString GetSettingsEnumPath<FECsInputActionMap>() const
+	{
+		return TEXT("UCsDeveloperSettings.ECsInputActionMap");
+	}
+
+	// Game Event
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsGameEvent"))
+	TArray<FCsSettings_Enum> ECsGameEvent;
+
+	template<>
+	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsGameEvent>() const
+	{
+		return ECsGameEvent;
+	}
+
+	template<>
+	FString GetSettingsEnumPath<FECsGameEvent>() const
+	{
+		return TEXT("UCsDeveloperSettings.ECsGameEvent");
+	}
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input")
+	FCsSettings_Input Input;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "Manager Input"))
+	FCsSettings_Manager_Input Manager_Input;
+
+	// Unit Test
+#pragma region
+
+#pragma endregion Unit Test
+
+#pragma endregion Input
 
 // FX
 #pragma region

@@ -1506,6 +1506,13 @@ struct CSCORE_API EMCsGameEvent : public TCsEnumStructMap<FECsGameEvent, uint8>
 	CS_ENUM_STRUCT_MAP_BODY(EMCsGameEvent, FECsGameEvent, uint8)
 };
 
+namespace NCsGameEvent
+{
+	typedef FECsGameEvent Type;
+
+	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
+}
+
 #pragma endregion GameEvent
 
 	// Rep_GameEvent

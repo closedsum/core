@@ -180,3 +180,56 @@ namespace NCsControllerHand
 }
 
 #pragma endregion ControllerHand
+
+// GameEvent
+#pragma region
+
+namespace NCsGameEvent
+{
+	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
+	{
+		if (UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>())
+		{
+#if WITH_EDITOR
+			EMCsGameEvent::Get().ClearUserDefinedEnums();
+#endif // #if WITH_EDITOR
+
+			const TArray<FCsSettings_Enum>& Enums = Settings->GetSettingsEnum<FECsGameEvent>();
+			const FString EnumSettingsPath		  = Settings->GetSettingsEnumPath<FECsGameEvent>();
+
+			if (Enums.Num() > CS_EMPTY)
+			{
+				for (const FCsSettings_Enum& Enum : Enums)
+				{
+					const FString& Name		   = Enum.Name;
+					const FString& DisplayName = Enum.DisplayName;
+
+					if (Name.IsEmpty())
+					{
+						UE_LOG(LogCs, Warning, TEXT("%s: Empty Enum listed in %s."), *Context, *EnumSettingsPath);
+						return;
+					}
+
+					checkf(!EMCsGameEvent::Get().IsValidEnum(Name), TEXT("%s: GameEvent (Name): %s already exists (declared in native)."), *Context, *Name);
+
+					if (!Enum.DisplayName.IsEmpty())
+					{
+						checkf(!EMCsGameEvent::Get().IsValidEnumByDisplayName(DisplayName), TEXT("%s: GameEvent (DisplayName): %s already exists (declared in native)."), *Context, *DisplayName);
+
+						EMCsGameEvent::Get().Create(Name, DisplayName, true);
+					}
+					else
+					{
+						EMCsGameEvent::Get().Create(Name, true);
+					}
+				}
+			}
+			else
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s: Enum Setting @ %s is empty."), *Context, *EnumSettingsPath);
+			}
+		}
+	}
+}
+
+#pragma endregion GameEvent

@@ -7,9 +7,6 @@
 #include "Library/CsLibrary_Common.h"
 #include "Library/Load/CsLibrary_Load.h"
 
-#include "Managers/Input/CsInput_Base.h"
-// Game
-//#include "Game/CsGameInstance_DEPRECATED.h"
 // Player
 #include "GameFramework/PlayerController.h"
 //#include "Player/CsPlayerController.h"

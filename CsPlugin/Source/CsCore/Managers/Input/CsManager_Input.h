@@ -8,6 +8,11 @@
 #define CS_INPUT_POOL_SIZE 65535
 #define CS_MAX_INPUT_FRAMES 300
 
+// Struct
+#pragma region
+
+#pragma endregion Structs
+
 // TODO: Future: It doesn't seem necessary to have a "generic" call back that takes in the action and event at this point
 
 // Input Delegates

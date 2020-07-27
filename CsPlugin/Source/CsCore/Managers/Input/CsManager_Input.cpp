@@ -6,14 +6,14 @@
 // Library
 #include "Library/CsLibrary_Common.h"
 #include "Library/Load/CsLibrary_Load.h"
-
+// Settings
+#include "Settings/CsDeveloperSettings.h"
 // Player
 #include "GameFramework/PlayerController.h"
 //#include "Player/CsPlayerController.h"
 //#include "Player/CsCheatManager.h"
 #include "../Engine/Classes/Engine/LocalPlayer.h"
 // Input
-#include "Managers/Input/CsInputSetting.h"
 #include "../Engine/Classes/GameFramework/PlayerInput.h"
 #include "../HeadMountedDisplay/Public/IMotionController.h"
 
@@ -50,11 +50,11 @@ void UCsManager_Input::Init()
 	SetupInputActionMapping();
 	SetupGameEventDefinitions();
 
-	// Initialize CurrentGameEventInfos
-	//UCsGameInstance_DEPRECATED* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance_DEPRECATED>();
-	UCsInputSetting* InputSetting = nullptr;// GameInstance->InputSetting;
+	UCsDeveloperSettings* Settings		   = GetMutableDefault<UCsDeveloperSettings>();
+	const FCsSettings_Input& InputSettings = Settings->Input;
 
-	const int32 EventCount = InputSetting->GameEventPriorityList.Num();
+	// Initialize CurrentGameEventInfos
+	const int32 EventCount = InputSettings.GameEventPriorityList.Num();
 
 #if WITH_EDITOR
 	if (EMCsGameEvent::Get().Num() != EventCount)
@@ -63,7 +63,7 @@ void UCsManager_Input::Init()
 	}
 #endif // #if WITH_EDITOR
 
-	for (const FECsGameEvent& GameEvent : InputSetting->GameEventPriorityList)
+	for (const FECsGameEvent& GameEvent : InputSettings.GameEventPriorityList)
 	{
 		GameEventPriorityList.Add(GameEvent);
 	}
@@ -799,10 +799,10 @@ void UCsManager_Input::SetupInputActionEventInfos()
 
 void UCsManager_Input::SetupInputActionMapping()
 {
-	//UCsGameInstance_DEPRECATED* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance_DEPRECATED>();
-	UCsInputSetting* InputSetting = nullptr;// GameInstance->InputSetting;
+	UCsDeveloperSettings* Settings		   = GetMutableDefault<UCsDeveloperSettings>();
+	const FCsSettings_Input& InputSettings = Settings->Input;
 
-	const TMap<FECsInputActionMap, FCsInputActionSet>& InputActionMappings = InputSetting->InputActionMappings;
+	const TMap<FECsInputActionMap, FCsInputActionSet>& InputActionMappings = InputSettings.InputActionMappings;
 
 	for (const FECsInputActionMap& Map : EMCsInputActionMap::Get())
 	{
@@ -890,10 +890,10 @@ FCsInput* UCsManager_Input::GetPreviousPreviousInputAction(const FECsInputAction
 
 void UCsManager_Input::SetupGameEventDefinitions()
 {
-	//UCsGameInstance_DEPRECATED* GameInstance = GetWorld()->GetGameInstance<UCsGameInstance_DEPRECATED>();
-	UCsInputSetting* InputSetting = nullptr;// GameInstance->InputSetting;
+	UCsDeveloperSettings* Settings		   = GetMutableDefault<UCsDeveloperSettings>();
+	const FCsSettings_Input& InputSettings = Settings->Input;
 
-	for (const FCsGameEventDefinition& Def : InputSetting->GameEventDefinitions)
+	for (const FCsGameEventDefinition& Def : InputSettings.GameEventDefinitions)
 	{
 		GameEventDefinitions.Add(Def);
 	}
@@ -915,7 +915,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 		GameEventDefinitionMap.Add(Event, Sentence);
 	}
 
-	const TSet<FCsGameEventDefinitionSimple>& GameEventDefinitionsSimple = InputSetting->GameEventDefinitionsSimple;
+	const TSet<FCsGameEventDefinitionSimple>& GameEventDefinitionsSimple = InputSettings.GameEventDefinitionsSimple;
 
 	for (const FCsGameEventDefinitionSimple& Def : GameEventDefinitionsSimple)
 	{

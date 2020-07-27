@@ -5,6 +5,8 @@
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 #include "GameFramework/InputSettings.h"
+// Input
+#include "Managers/Input/CsInputFrame.h"
 
 // InputDevice
 #pragma region
@@ -163,6 +165,193 @@ namespace NCsInputAction
 }
 
 #pragma endregion InputAction
+
+// FCsInputWord
+#pragma region
+
+void FCsInputWord::ProcessInput(FCsInputFrame* InputFrame)
+{
+	int32 And = 0;
+	bool Or = false;
+
+	const int32 Count = InputFrame->Inputs.Num();
+
+	for (int32 I = Count - 1; I >= 0; --I)
+	{
+		FCsInput* Input = InputFrame->Inputs[I];
+
+		// Check And
+		const int32 AndCount = AndInputs.Num();
+
+		for (int32 J = And; J < AndCount; ++J)
+		{
+			if (Input->Action == AndInputs[J].Action &&
+				Input->Event == AndInputs[J].Event)
+			{
+				++And;
+			}
+		}
+		// Check Or
+		const int32 OrCount = OrInputs.Num();
+
+		for (const FCsInput& OrInput : OrInputs)
+		{
+			Or |= Input->Action == OrInput.Action && Input->Event == OrInput.Event;
+
+			if (Or)
+				break;
+		}
+
+		bCompleted = (And > 0 && And == AndCount) || Or;
+
+		if (bCompleted)
+		{
+			if (bConsume)
+				InputFrame->Inputs.RemoveAt(I, 1, false);
+			CompletedTime = InputFrame->Time.Time;
+			break;
+		}
+	}
+}
+
+#pragma endregion FCsInputWord
+
+// FCsInputPhrase
+#pragma region
+
+void FCsInputPhrase::ProcessInput(FCsInputFrame* InputFrame)
+{
+	const float& CurrentTime = InputFrame->Time.Time;
+
+	// Check if ALL Words are Completed
+	const int32 Count = Words.Num();
+	int32 Index		  = 0;
+
+	if (bUseInterval)
+	{
+		float ElapsedTime			= 0.0f;
+		float EarliestCompletedTime = CurrentTime;
+
+		for (Index = 0; Index < Count; ++Index)
+		{
+			if (Words[Index].bCompleted)
+			{
+				if (Words[Index].CompletedTime < EarliestCompletedTime)
+					EarliestCompletedTime = Words[Index].CompletedTime;
+
+				if (CurrentTime - EarliestCompletedTime > Interval)
+				{
+					Reset();
+
+					Index = 0;
+					break;
+				}
+			}
+
+			Words[Index].ProcessInput(InputFrame);
+
+			if (Index < Count - 1 || !Words[Index].bCompleted)
+				break;
+		}
+	}
+	else
+	{
+		for (Index = 0; Index < Count; ++Index)
+		{
+			if (Words[Index].bCompleted)
+				continue;
+
+			Words[Index].ProcessInput(InputFrame);
+
+			if (Index < Count - 1 || !Words[Index].bCompleted)
+				break;
+		}
+
+		if (Index != Count)
+			Reset();
+	}
+	// Check if Completed
+	if (Index > 0 && Index == Count)
+	{
+		bCompleted	  = true;
+		CompletedTime = CurrentTime;
+	}
+}
+
+#pragma endregion FCsInputPhrase
+
+// FCsInputSentence
+#pragma region
+
+void FCsInputSentence::ProcessInput(FCsInputFrame* InputFrame)
+{
+	const float& CurrentTime = InputFrame->Time.Time;
+
+	// Check if Cooldown has Expired
+	if (!bActive)
+	{
+		if (CurrentTime - CompletedTime >= Cooldown)
+			Reset();
+		else
+			return;
+	}
+	// Check if ALL Phrases are Completed
+	const int32 Count = Phrases.Num();
+	int32 Index		  = 0;
+
+	if (bUseInterval)
+	{
+		float ElapsedTime			= 0.0f;
+		float EarliestCompletedTime = CurrentTime;
+
+		for (Index = 0; Index < Count; ++Index)
+		{
+			if (Phrases[Index].bCompleted)
+			{
+				if (Phrases[Index].CompletedTime < EarliestCompletedTime)
+					EarliestCompletedTime = Phrases[Index].CompletedTime;
+
+				if (CurrentTime - EarliestCompletedTime > Interval)
+				{
+					Reset();
+
+					Index = 0;
+					break;
+				}
+			}
+
+			Phrases[Index].ProcessInput(InputFrame);
+
+			if (Index < Count - 1 || !Phrases[Index].bCompleted)
+				break;
+		}
+	}
+	else
+	{
+		for (Index = 0; Index < Count; ++Index)
+		{
+			if (Phrases[Index].bCompleted)
+				continue;
+
+			Phrases[Index].ProcessInput(InputFrame);
+
+			if (Index < Count - 1 || !Phrases[Index].bCompleted)
+				break;
+		}
+
+		if (Index != Count)
+			Reset();
+	}
+	// Check if Completed
+	if (Count > 0 && Index == Count)
+	{
+		bCompleted	  = true;
+		CompletedTime = CurrentTime;
+		bActive		  = false;
+	}
+}
+
+#pragma endregion FCsInputSentence
 
 // ControllerHand
 #pragma region

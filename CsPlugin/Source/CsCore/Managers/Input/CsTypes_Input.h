@@ -450,31 +450,40 @@ struct CSCORE_API FCsInput
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Input")
-	uint16 PoolIndex;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	bool bAllocated;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	bool IsConsumed;
+	UPROPERTY(BlueprintReadOnly)
+	bool bDeallocate;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(BlueprintReadOnly)
+	bool bConsumed;
+
+	UPROPERTY(BlueprintReadOnly)
 	FECsInputAction Action;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(BlueprintReadOnly)
 	ECsInputEvent Event;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+
+	UPROPERTY(BlueprintReadOnly)
 	float Value;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	
+	UPROPERTY(BlueprintReadOnly)
 	FVector Location;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	
+	UPROPERTY(BlueprintReadOnly)
 	FRotator Rotation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	
+	UPROPERTY(BlueprintReadOnly)
 	float Duration;
 
-	FCsInput()
+	FCsInput() :
+		bDeallocate(false),
+		bConsumed(false),
+		Action(),
+		Event(ECsInputEvent::ECsInputEvent_MAX),
+		Value(0.0f),
+		Location(0.0f),
+		Rotation(0.0f),
+		Duration(0.0f)
 	{
-		PoolIndex = CS_INVALID_INPUT_POOL_INDEX;
-		Reset();
 	}
 
 	FORCEINLINE FCsInput& operator=(const FRep_CsInput& B)
@@ -484,27 +493,20 @@ struct CSCORE_API FCsInput
 		return *this;
 	}
 
+
 	FORCEINLINE bool operator==(const FCsInput& B) const
 	{
-		if (bAllocated != B.bAllocated) { return false; }
-		if (IsConsumed != B.IsConsumed) { return false; }
-		if (Action != B.Action) { return false; }
-		if (Event != B.Event) { return false; }
-		if (Value != B.Value) { return false; }
-		if (Location != B.Location) { return false; }
-		if (Rotation != B.Rotation) { return false; }
-		if (Duration != B.Duration) { return false; }
-		return true;
+		return Action == B.Action &&
+				Event == B.Event &&
+				Value == B.Value &&
+				Location == B.Location &&
+				Rotation == B.Rotation &&
+				Duration == B.Duration;
 	}
 
 	FORCEINLINE bool operator!=(const FCsInput& B) const
 	{
 		return !(*this == B);
-	}
-
-	FORCEINLINE void Init(const uint16& inPoolIndex)
-	{
-		PoolIndex = inPoolIndex;
 	}
 
 	FORCEINLINE void Set(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const float& inValue, const FVector& inLocation, const FRotator& inRotation)
@@ -536,42 +538,26 @@ struct CSCORE_API FCsInput
 		Set(inAction, inEvent, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	FORCEINLINE void Allocate(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const float& inValue, const FVector& inLocation, const FRotator& inRotation)
+	FORCEINLINE void QueueDeallocate()
 	{
-		bAllocated = true;
-		Set(inAction, inEvent, inValue, inLocation, inRotation);
+		bDeallocate = true;
 	}
 
-	FORCEINLINE void Allocate(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const FVector& inLocation)
+	FORCEINLINE bool ShouldDeallocate() const
 	{
-		Allocate(inAction, inEvent, 0.0f, inLocation, FRotator::ZeroRotator);
-	}
-
-	FORCEINLINE void Allocate(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const FRotator& inRotation)
-	{
-		Allocate(inAction, inEvent, 0.0f, FVector::ZeroVector, inRotation);
-	}
-
-	FORCEINLINE void Allocate(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const float& inValue)
-	{
-		Allocate(inAction, inEvent, inValue, FVector::ZeroVector, FRotator::ZeroRotator);
-	}
-
-	FORCEINLINE void Allocate(const FECsInputAction& inAction, const ECsInputEvent& inEvent)
-	{
-		Allocate(inAction, inEvent, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
+		return bDeallocate;
 	}
 
 	FORCEINLINE void Reset()
 	{
-		bAllocated	  = false;
-		IsConsumed	  = false;
-		Action		  = EMCsInputAction::Get().GetMAX();
-		Event		  = ECsInputEvent::ECsInputEvent_MAX;
-		Value		  = INFINITY;
-		Location	  = FVector::ZeroVector;
-		Rotation	  = FRotator::ZeroRotator;
-		Duration	  = 0.0f;
+		bDeallocate = false;
+		bConsumed = false;
+		Action	  = EMCsInputAction::Get().GetMAX();
+		Event	  = ECsInputEvent::ECsInputEvent_MAX;
+		Value	  = INFINITY;
+		Location  = FVector::ZeroVector;
+		Rotation  = FRotator::ZeroRotator;
+		Duration  = 0.0f;
 	}
 
 	bool IsValid() const
@@ -582,118 +568,48 @@ struct CSCORE_API FCsInput
 
 #pragma endregion FCsInput
 
-	// FCsInputFrame
-#pragma region
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsInputFrame
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	float Time;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	float RealTime;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	float DeltaTime;
-
-	UPROPERTY(EditAnywhere, Category = "Input")
-	uint64 Frame;
-
-	TArray<struct FCsInput*> Inputs;
-
-	FORCEINLINE FCsInputFrame& operator=(const FCsInputFrame& B)
-	{
-		Time = B.Time;
-		RealTime = B.RealTime;
-		DeltaTime = B.DeltaTime;
-		Frame = B.Frame;
-
-		Inputs.Reset();
-
-		for (FCsInput* Input : B.Inputs)
-		{
-			Inputs.Add(Input);
-		}
-		return *this;
-	}
-
-	FORCEINLINE void Init(const float& inTime, const float& inRealTime, const float& inDeltaTime, const uint64& inFrame)
-	{
-		Time	  = inTime;
-		RealTime  = inRealTime;
-		DeltaTime = inDeltaTime;
-		Frame	  = inFrame;
-
-		for (FCsInput* Input : Inputs)
-		{
-			Input->Reset();
-		}
-		Inputs.Reset();
-	}
-
-	FORCEINLINE FCsInput* GetInput(const FECsInputAction& Action)
-	{
-		for (FCsInput* Input : Inputs)
-		{
-			if (Input->Action == Action)
-				return Input;
-		}
-		return nullptr;
-	}
-
-	FORCEINLINE FCsInput* GetInput(const FECsInputAction& Action, const ECsInputEvent& Event)
-	{
-		if (FCsInput* Input = GetInput(Action))
-			return Input->Event == Event ? Input : nullptr;
-		return nullptr;
-	}
-
-	FORCEINLINE FCsInput* GetInput(const FECsInputAction& Action, const TArray<ECsInputEvent>& Events)
-	{
-		if (FCsInput* Input = GetInput(Action))
-			return Events.Find(Input->Event) != INDEX_NONE ? Input : nullptr;
-		return nullptr;
-	}
-};
-
-#pragma endregion FCsInputFrame
-
 	// FCsInputWord
 #pragma region
 
+struct FCsInputFrame;
+
+/**
+*
+*/
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInputWord
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	UPROPERTY(BlueprintReadOnly)
 	bool bCompleted;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	UPROPERTY(BlueprintReadOnly)
 	float CompletedTime;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	UPROPERTY(BlueprintReadOnly)
 	bool bConsume;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FCsInput> AndInputs;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FCsInput> OrInputs;
 
-	FCsInputWord()
+	FCsInputWord() :
+		bCompleted(false),
+		CompletedTime(0.0f),
+		bConsume(false),
+		AndInputs(),
+		OrInputs()
 	{
-		bCompleted = false;
-		CompletedTime = 0.0f;
-		bConsume = false;
 	}
 
 	FORCEINLINE FCsInputWord& operator=(const FCsInputWord& B)
 	{
-		bCompleted = B.bCompleted;
+		bCompleted	  = B.bCompleted;
 		CompletedTime = B.CompletedTime;
-		bConsume = B.bConsume;
+		bConsume	  = B.bConsume;
 
 		AndInputs.Reset();
 
@@ -813,50 +729,7 @@ struct CSCORE_API FCsInputWord
 		bCompleted = false;
 	}
 
-	FORCEINLINE void ProcessInput(FCsInputFrame& InputFrame)
-	{
-		int32 And = 0;
-		bool Or   = false;
-
-		const int32 Count = InputFrame.Inputs.Num();
-
-		for (int32 I = Count - 1; I >= 0; --I)
-		{
-			FCsInput* Input = InputFrame.Inputs[I];
-
-			// Check And
-			const int32 AndCount = AndInputs.Num();
-
-			for (int32 J = And; J < AndCount; ++J)
-			{
-				if (Input->Action == AndInputs[J].Action &&
-					Input->Event == AndInputs[J].Event)
-				{
-					++And;
-				}
-			}
-			// Check Or
-			const int32 OrCount = OrInputs.Num();
-
-			for (const FCsInput& OrInput : OrInputs)
-			{
-				Or |= Input->Action == OrInput.Action && Input->Event == OrInput.Event;
-
-				if (Or)
-					break;
-			}
-			
-			bCompleted = (And > 0 && And == AndCount) || Or;
-
-			if (bCompleted)
-			{
-				if (bConsume)
-					InputFrame.Inputs.RemoveAt(I);
-				CompletedTime = InputFrame.Time;
-				break;
-			}
-		}
-	}
+	void ProcessInput(FCsInputFrame* InputFrame);
 
 	bool IsValid() const
 	{
@@ -886,40 +759,46 @@ struct CSCORE_API FCsInputWord
 	// FCsInputPhrase
 #pragma region
 
+struct FCsInputFrame;
+
+/**
+*
+*/
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInputPhrase
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	UPROPERTY(BlueprintReadOnly)
 	bool bCompleted;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	UPROPERTY(BlueprintReadOnly)
 	float CompletedTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bUseInterval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Interval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bUseFrames;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0"))
 	int32 Frames;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FCsInputWord> Words;
 
-	FCsInputPhrase()
+	FCsInputPhrase() :
+		bCompleted(false),
+		CompletedTime(0.0f),
+		bUseInterval(false),
+		Interval(0.0f),
+		bUseFrames(false),
+		Frames(0),
+		Words()
 	{
-		bCompleted = false;
-		CompletedTime = 0.0f;
-		bUseInterval = false;
-		Interval = 0.0f;
-		bUseFrames = false;
-		Frames = 0;
 	}
 
 	FORCEINLINE FCsInputPhrase& operator=(const FCsInputPhrase& B)
@@ -1005,64 +884,7 @@ struct CSCORE_API FCsInputPhrase
 		CompletedTime = 0.0f;
 	}
 
-	FORCEINLINE void ProcessInput(FCsInputFrame& InputFrame)
-	{
-		const float& CurrentTime = InputFrame.Time;
-
-		// Check if ALL Words are Completed
-		const int32 Count = Words.Num();
-		int32 Index		  = 0;
-
-		if (bUseInterval)
-		{
-			float ElapsedTime			= 0.0f;
-			float EarliestCompletedTime = CurrentTime;
-
-			for (Index = 0; Index < Count; ++Index)
-			{
-				if (Words[Index].bCompleted)
-				{
-					if (Words[Index].CompletedTime < EarliestCompletedTime)
-						EarliestCompletedTime = Words[Index].CompletedTime;
-
-					if (CurrentTime - EarliestCompletedTime > Interval)
-					{
-						Reset();
-
-						Index = 0;
-						break;
-					}
-				}
-
-				Words[Index].ProcessInput(InputFrame);
-
-				if (Index < Count - 1 || !Words[Index].bCompleted)
-					break;
-			}
-		}
-		else
-		{
-			for (Index = 0; Index < Count; ++Index)
-			{
-				if (Words[Index].bCompleted)
-					continue;
-
-				Words[Index].ProcessInput(InputFrame);
-
-				if (Index < Count - 1 || !Words[Index].bCompleted)
-					break;
-			}
-
-			if (Index != Count)
-				Reset();
-		}
-		// Check if Completed
-		if (Index > 0 && Index == Count)
-		{
-			bCompleted = true;
-			CompletedTime = CurrentTime;
-		}
-	}
+	void ProcessInput(FCsInputFrame* InputFrame);
 
 	bool IsValid() const
 	{
@@ -1082,48 +904,54 @@ struct CSCORE_API FCsInputPhrase
 	// FCsInputSentence
 #pragma region
 
+struct FCsInputFrame;
+
+/**
+*
+*/
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInputSentence
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	UPROPERTY(BlueprintReadOnly)
 	bool bActive;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	UPROPERTY(BlueprintReadOnly)
 	bool bCompleted;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	UPROPERTY(BlueprintReadOnly)
 	float CompletedTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Cooldown;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bUseInterval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Interval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bUseFrames;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0"))
 	int32 Frames;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FCsInputPhrase> Phrases;
 
-	FCsInputSentence()
+	FCsInputSentence() :
+		bActive(true),
+		bCompleted(false),
+		CompletedTime(0.0f),
+		Cooldown(0.0f),
+		bUseInterval(false),
+		Interval(0.0f),
+		bUseFrames(false),
+		Frames(0),
+		Phrases()
 	{
-		bActive = true;
-		bCompleted = false;
-		CompletedTime = 0.0f;
-		Cooldown = 0.0f;
-		bUseInterval = false;
-		Interval = 0.0f;
-		bUseFrames = false;
-		Frames = 0;
 	}
 
 	FORCEINLINE FCsInputSentence& operator=(const FCsInputSentence& B)
@@ -1186,73 +1014,7 @@ struct CSCORE_API FCsInputSentence
 		bCompleted = false;
 	}
 
-	FORCEINLINE void ProcessInput(FCsInputFrame& InputFrame)
-	{
-		const float& CurrentTime = InputFrame.Time;
-
-		// Check if Cooldown has Expired
-		if (!bActive)
-		{
-			if (CurrentTime - CompletedTime >= Cooldown)
-				Reset();
-			else
-				return;
-		}
-		// Check if ALL Phrases are Completed
-		const int32 Count = Phrases.Num();
-		int32 Index		  = 0;
-
-		if (bUseInterval)
-		{
-			float ElapsedTime			= 0.0f;
-			float EarliestCompletedTime = CurrentTime;
-
-			for (Index = 0; Index < Count; ++Index)
-			{
-				if (Phrases[Index].bCompleted)
-				{
-					if (Phrases[Index].CompletedTime < EarliestCompletedTime)
-						EarliestCompletedTime = Phrases[Index].CompletedTime;
-
-					if (CurrentTime - EarliestCompletedTime > Interval)
-					{
-						Reset();
-
-						Index = 0;
-						break;
-					}
-				}
-
-				Phrases[Index].ProcessInput(InputFrame);
-
-				if (Index < Count - 1 || !Phrases[Index].bCompleted)
-					break;
-			}
-		}
-		else
-		{
-			for (Index = 0; Index < Count; ++Index)
-			{
-				if (Phrases[Index].bCompleted)
-					continue;
-
-				Phrases[Index].ProcessInput(InputFrame);
-
-				if (Index < Count - 1 || !Phrases[Index].bCompleted)
-					break;
-			}
-
-			if (Index != Count)
-				Reset();
-		}
-		// Check if Completed
-		if (Count > 0 && Index == Count)
-		{
-			bCompleted = true;
-			CompletedTime = CurrentTime;
-			bActive = false;
-		}
-	}
+	void ProcessInput(FCsInputFrame* InputFrame);
 
 	bool IsValid() const
 	{
@@ -1580,10 +1342,10 @@ struct FCsGameEventDefinitionSimpleInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FECsInputAction Action;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsInputEvent Event;
 
 	FCsGameEventDefinitionSimpleInfo() :
@@ -1608,13 +1370,13 @@ struct FCsGameEventDefinitionSimple
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FECsGameEvent GameEvent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FECsInputAction Action;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsInputEvent Event;
 
 	FCsGameEventDefinitionSimple() :
@@ -1645,17 +1407,22 @@ FORCEINLINE uint32 GetTypeHash(const FCsGameEventDefinitionSimple& b)
 	// FCsGameEventDefinition
 #pragma region
 
+/**
+*
+*/
 USTRUCT(BlueprintType)
 struct FCsGameEventDefinition
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FECsGameEvent Event;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCsInputSentence Sentence;
 
 	FCsGameEventDefinition() :
+		Event(),
 		Sentence()
 	{
 		Event = EMCsGameEvent::Get().GetMAX();

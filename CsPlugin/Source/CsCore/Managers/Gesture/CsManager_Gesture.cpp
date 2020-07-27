@@ -88,7 +88,7 @@ UCsGesture* UCsManager_Gesture::GetGesture(const FECsGestureType &GestureType)
 	return nullptr;
 }
 
-void UCsManager_Gesture::ProcessInputs(FCsInputFrame &InputFrame)
+void UCsManager_Gesture::ProcessInputs(FCsInputFrame* InputFrame)
 {
 	const int32 Count = Gestures.Num();
 

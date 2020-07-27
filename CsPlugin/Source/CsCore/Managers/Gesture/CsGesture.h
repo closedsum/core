@@ -5,7 +5,9 @@
 #include "Managers/Input/CsTypes_Input.h"
 #include "CsGesture.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGesture_Override_ProcessInputs, const FCsInputFrame&, InputFrame);
+struct FCsInputFrame;
+
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGesture_Override_ProcessInputs, const FCsInputFrame*, InputFrame);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableDynEvent_CsGesture_OnComplete);
 DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsGesture_OnComplete);
@@ -22,6 +24,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Gesture")
 	void SetCurrentWorld(UWorld* InWorld);
+
 	UFUNCTION(BlueprintCallable, Category = "Gesture")
 	UWorld* GetCurrentWorld();
 
@@ -39,9 +42,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gesture")
 	virtual bool CanProcessInputs();
 
-	UPROPERTY(BlueprintAssignable, Category = "Gesture")
-	FBindableDynEvent_CsGesture_Override_ProcessInputs Override_ProcessInputs_ScriptEvent;
+	//UPROPERTY(BlueprintAssignable, Category = "Gesture")
+	//FBindableDynEvent_CsGesture_Override_ProcessInputs Override_ProcessInputs_ScriptEvent;
 
-	UFUNCTION(BlueprintCallable, Category = "Gesture")
-	virtual void ProcessInputs(struct FCsInputFrame &InputFrame);
+	//UFUNCTION(BlueprintCallable, Category = "Gesture")
+	virtual void ProcessInputs(FCsInputFrame* InputFrame);
 };

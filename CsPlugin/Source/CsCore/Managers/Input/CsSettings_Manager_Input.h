@@ -13,7 +13,11 @@ struct CSCORE_API FCsSettings_Manager_Input
 
 public:
 
-	FCsSettings_Manager_Input()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 InputPoolSize;
+	 
+	FCsSettings_Manager_Input() :
+		InputPoolSize(2048)
 	{
 	}
 };

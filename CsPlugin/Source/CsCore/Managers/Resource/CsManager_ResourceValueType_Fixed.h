@@ -9,6 +9,9 @@
 #include "Types/CsTypes_Macro.h"
 #include "Containers/CsDoubleLinkedList.h"
 
+/**
+*
+*/
 template<typename ResourceType, typename ResourceContainerType = TCsResourceContainer<ResourceType>, uint32 BUCKET_SIZE = 128>
 class TCsManager_ResourceValueType_Fixed : public ICsManager_Resource
 {

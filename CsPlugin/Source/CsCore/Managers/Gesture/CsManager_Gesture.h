@@ -4,6 +4,10 @@
 #include "Managers/Input/CsTypes_Input.h"
 #include "CsManager_Gesture.generated.h"
 
+struct FCsInputFrame;
+
+/**
+*/
 UCLASS(transient)
 class CSCORE_API UCsManager_Gesture : public UObject
 {
@@ -38,10 +42,10 @@ public:
 	void AddGesture(TSubclassOf<class UCsGesture> GestureClass);
 
 	UFUNCTION(BlueprintCallable, Category = "Gesture")
-	UCsGesture* GetGesture(const FECsGestureType &GestureType);
+	UCsGesture* GetGesture(const FECsGestureType& GestureType);
 	
-	UFUNCTION(BlueprintCallable, Category = "Gesture")
-	virtual void ProcessInputs(FCsInputFrame &InputFrame);
+	//UFUNCTION(BlueprintCallable, Category = "Gesture")
+	virtual void ProcessInputs(FCsInputFrame* InputFrame);
 
 private:
 	// Singleton data

@@ -8,6 +8,8 @@
 #include "Library/Load/CsLibrary_Load.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
+// Managers
+
 // Player
 #include "GameFramework/PlayerController.h"
 //#include "Player/CsPlayerController.h"
@@ -32,11 +34,6 @@ namespace NCsManagerInputCached
 
 UCsManager_Input::UCsManager_Input(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	for (int32 I = 0; I < CS_INPUT_POOL_SIZE; ++I)
-	{
-		InputPool[I].Init(I);
-	}
-
 	ControllerId = INDEX_NONE;
 
 	CurrentInputFrameIndex = INDEX_NONE;
@@ -46,11 +43,16 @@ UCsManager_Input::UCsManager_Input(const FObjectInitializer& ObjectInitializer) 
 
 void UCsManager_Input::Init() 
 {
+	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+	const FCsSettings_Manager_Input& ManagerSettings = Settings->Manager_Input;
+
+	Manager_Inputs.CreatePool(ManagerSettings.InputPoolSize);
+
 	SetupInputActionEventInfos();
 	SetupInputActionMapping();
 	SetupGameEventDefinitions();
 
-	UCsDeveloperSettings* Settings		   = GetMutableDefault<UCsDeveloperSettings>();
 	const FCsSettings_Input& InputSettings = Settings->Input;
 
 	// Initialize CurrentGameEventInfos
@@ -79,14 +81,8 @@ void UCsManager_Input::Init()
 
 		const FECsGameEvent& Event = GameEventPriorityList[I];
 
-		GameEventPriorityMap[Event.Value] = I;
+		GameEventPriorityMap[Event.GetValue()] = I;
 	}
-}
-
-/*static*/ UCsManager_Input* UCsManager_Input::Get(UWorld* World, const int32& Index /*= INDEX_NONE*/)
-{
-	// TODO: Fix
-	return nullptr;// UCsLibrary_Common::GetLocalPlayerController<ACsPlayerController>(World)->Manager_Input;
 }
 
 // UActorComponent Interface
@@ -130,10 +126,37 @@ void UCsManager_Input::SetupInputComponent()
 
 void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePaused)
 {
+	// Handle any Inputs that need to deallocated
+	TCsDoubleLinkedList<FCsResource_Input*>* Current = Manager_Inputs.GetAllocatedHead();
+	TCsDoubleLinkedList<FCsResource_Input*>* Next	 = Current;
+
+	while (Next)
+	{
+		Current						 = Next;
+		FCsResource_Input* Container = **Current;
+		Next						 = Current->GetNextLink();
+
+		FCsInput* Input = Container->Get();
+
+		if (Input->ShouldDeallocate())
+		{
+			Input->Reset();
+			Manager_Inputs.Deallocate(Container);
+		}
+	}
+
 	CurrentDeltaTime	   = DeltaTime;
 	CurrentInputFrameIndex = (CurrentInputFrameIndex + 1) % CS_MAX_INPUT_FRAMES;
+	CurrentInputFrame	   = &(InputFrames[CurrentInputFrameIndex]);
 
-	InputFrames[CurrentInputFrameIndex].Init(GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), DeltaTime, UCsLibrary_Common::GetCurrentFrame(GetWorld()));
+	{
+		FCsTime Time;
+		Time.Time = GetWorld()->GetTimeSeconds();
+		Time.RealTime = GetWorld()->GetRealTimeSeconds();
+		Time.Frame = 0ull;
+
+		CurrentInputFrame->Init(Time);
+	}
 
 	// Cache Raw Pressed Inputs
 	PressedKeys.Reset();
@@ -292,7 +315,7 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRaw) ||
 					FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRawAction))
 				{
-					const float& Time			= CurrentInputFrame.Time;
+					const float& Time			= CurrentInputFrame->Time.Time;
 					const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
 					const FString& LastEvent	= EMCsInputEvent::Get().ToString(Info.Last_Event);
 
@@ -308,7 +331,7 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRaw) ||
 					FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRawAction))
 				{
-					const float& Time			= CurrentInputFrame.Time;
+					const float& Time			= CurrentInputFrame->Time.Time;
 					const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
 
 					UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PreProcessInput (%s): Time: %f. Action: %s[%s]. Event: %s."), *(GetOwner()->GetName()), Time, *(Action.Name), *(Info.Key.ToString()), *CurrentEvent);
@@ -329,7 +352,7 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRaw) ||
 				FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRawAxis))
 			{
-				const float& Time			= CurrentInputFrame.Time;
+				const float& Time			= CurrentInputFrame->Time.Time;
 				const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
 
 				UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PreProcessInput (%s): Time: %f. Action: %s[%s]. Event: %s. Value: %f"), *(GetOwner()->GetName()), Time, *(Action.Name), *(Info.Key.ToString()), *CurrentEvent, Value);
@@ -347,14 +370,14 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 	// Add Queue Inputs
 	for (FCsInput* Input : QueuedInputsForNextFrame)
 	{
-		CurrentInputFrame.Inputs.Add(Input);
+		CurrentInputFrame->Inputs.Add(Input);
 	}
 	QueuedInputsForNextFrame.Reset();
 
 	// TODO: Need to rework how events are being fired. Not just firing from TryAddInput
 
 #if !UE_BUILD_SHIPPING
-	for (const FCsInput* Input : CurrentInputFrame.Inputs)
+	for (const FCsInput* Input : CurrentInputFrame->Inputs)
 	{
 		const FECsInputAction& Action = Input->Action;
 		const ECsInputEvent& Event	  = Input->Event;
@@ -367,7 +390,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 		if (ShowLog)
 		{
-			const float& Time			 = CurrentInputFrame.Time;
+			const float& Time			 = CurrentInputFrame->Time.Time;
 			const FString& EventAsString = EMCsInputEvent::Get().ToString(Input->Event);
 
 			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PostProcessInput (%s): Time: %f. Action: %s Event: %s."), *(GetOwner()->GetName()), Time, *(Action.Name), *EventAsString);
@@ -420,7 +443,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputGameEvent))
 			{
-				const float& Time = CurrentInputFrame.Time;
+				const float& Time = CurrentInputFrame->Time.Time;
 
 				UE_LOG(LogCs, Warning, TEXT("ACsManager_Input::PostProcessInput (%s): Time: %f. Event: %s."), *(GetOwner()->GetName()), Time, *(Info.Event.Name));
 			}
@@ -642,20 +665,11 @@ void UCsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 
 FCsInput* UCsManager_Input::AllocateInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*=0.0f*/, const FVector& Location /*=FVector::ZeroVector*/, const FRotator& Rotation /*=FRotator::ZeroRotator*/)
 {
-	for (int32 I = 0; I < CS_INPUT_POOL_SIZE; ++I)
-	{
-		CurrentInputPoolIndex = (CurrentInputPoolIndex + 1) % CS_INPUT_POOL_SIZE;
-		FCsInput* Input		  = &InputPool[CurrentInputPoolIndex];
+	FCsInput* Input = Manager_Inputs.AllocateResource();
 
-		// Add Input to InputFrame
-		if (!Input->bAllocated)
-		{
-			Input->Allocate(Action, Event, Value, Location, Rotation);
-			return Input;
-		}
-	}
-	checkf(0, TEXT("UCsManager_Input::AllocateInput: Input Pool has been exhaused."))
-	return nullptr;
+	Input->Set(Action, Event, Value, Location, Rotation);
+
+	return Input;
 }
 
 void UCsManager_Input::AddInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*=0.0f*/, const FVector& Location /*=FVector::ZeroVector*/, const FRotator& Rotation /*=FRotator::ZeroRotator*/)
@@ -705,20 +719,20 @@ void UCsManager_Input::ConsumeInput(const FECsInputAction& Action)
 	{
 		if (Input->Action == Action)
 		{
-			Input->IsConsumed = true;
+			Input->bConsumed = true;
 			break;
 		}
 	}
 
-	const int32 Count = CurrentInputFrame.Inputs.Num();
+	const int32 Count = CurrentInputFrame->Inputs.Num();
 
 	for (int32 I = Count - 1; I >= 0; --I)
 	{
-		FCsInput* Input = CurrentInputFrame.Inputs[I];
+		FCsInput* Input = CurrentInputFrame->Inputs[I];
 
 		if (Input->Action == Action)
 		{
-			CurrentInputFrame.Inputs.RemoveAt(I);
+			CurrentInputFrame->Inputs.RemoveAt(I, 1, false);
 			break;
 		}
 	}
@@ -984,7 +998,7 @@ void UCsManager_Input::LogProcessGameEventDefinition(const FString& FunctionName
 			const FECsInputAction& Action	  = Input.Action;
 			const FString& InputEventAsString = EMCsInputEvent::Get().ToString(Input.Event);
 
-			const float& Time = CurrentInputFrame.Time;
+			const float& Time = CurrentInputFrame->Time.Time;
 
 			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::%s (%s): Time: %f. (%s, %s) -> %s."), *FunctionName, *(GetOwner()->GetName()), Time, *(Action.Name), *InputEventAsString, *(Event.Name));
 		}

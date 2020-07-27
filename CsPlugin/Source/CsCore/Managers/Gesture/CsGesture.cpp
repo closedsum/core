@@ -10,4 +10,4 @@ void UCsGesture::SetCurrentWorld(UWorld* InWorld) { CurrentWorld = InWorld; }
 UWorld* UCsGesture::GetCurrentWorld() { return CurrentWorld.IsValid() ? CurrentWorld.Get() : nullptr; }
 
 bool UCsGesture::CanProcessInputs() { return true; }
-void UCsGesture::ProcessInputs(FCsInputFrame &InputFrame){}
+void UCsGesture::ProcessInputs(FCsInputFrame* InputFrame){}

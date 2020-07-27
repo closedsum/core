@@ -2,14 +2,24 @@
 #pragma once
 
 #include "Classes/Components/ActorComponent.h"
-#include "Managers/Input/CsTypes_Input.h"
+#include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
+#include "Managers/Input/CsInputFrame.h"
 #include "CsManager_Input.generated.h"
 
-#define CS_INPUT_POOL_SIZE 65535
-#define CS_MAX_INPUT_FRAMES 300
+#define CS_MAX_INPUT_FRAMES 32
 
 // Struct
 #pragma region
+
+	// Input
+
+struct CSCORE_API FCsResource_Input : public TCsResourceContainer<FCsInput>
+{
+};
+
+struct CSCORE_API FCsManager_Input : public TCsManager_ResourceValueType_Fixed<FCsInput, FCsResource_Input, 0>
+{
+};
 
 #pragma endregion Structs
 
@@ -68,8 +78,6 @@ class CSCORE_API UCsManager_Input : public UActorComponent
 
 	virtual void Init();
 
-	static UCsManager_Input* Get(UWorld* World, const int32& Index = INDEX_NONE);
-
 // UActorComponent Interface
 #pragma region
 protected:
@@ -94,7 +102,7 @@ public:
 
 	float CurrentDeltaTime;
 
-	FCsInput InputPool[CS_INPUT_POOL_SIZE];
+	FCsManager_Input Manager_Inputs;
 
 	FCsInput* AllocateInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator);
 
@@ -118,7 +126,7 @@ public:
 
 	int32 CurrentInputFrameIndex;
 
-	FCsInputFrame CurrentInputFrame;
+	FCsInputFrame* CurrentInputFrame;
 
 	TArray<FKey> AllKeys;
 	TArray<FKeyState*> AllKeyStates;

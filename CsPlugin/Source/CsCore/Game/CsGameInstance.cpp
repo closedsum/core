@@ -11,10 +11,25 @@
 #include "Managers/Runnable/CsManager_Runnable.h"
 #include "Managers/Time/CsManager_Time.h"
 #include "Async/AsyncWork.h"
+// Types
+#include "Managers/Input/CsTypes_Input.h"
 
 #if WITH_EDITOR
 #include "Editor.h"
 #endif // #if WITH_EDITOR
+
+// Cached
+#pragma region
+
+namespace NCsGameInstanceCached
+{
+	namespace Str
+	{
+		const FString Init = TEXT("UCsGameInstance::Init");
+	}
+}
+
+#pragma endregion Cached
 
 UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -23,11 +38,15 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 
 void UCsGameInstance::Init()
 {
+	using namespace NCsGameInstanceCached;
+
 	Super::Init();
 
 	// Register delegate for ticker callback
 	TickDelegate	   = FTickerDelegate::CreateUObject(this, &UCsGameInstance::Tick);
 	TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
+
+	NCsInputAction::PopulateEnumMapFromSettings(Str::Init, this);
 
 	ConstructManagerSingleton();
 

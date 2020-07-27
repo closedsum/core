@@ -5,6 +5,18 @@
 
 #define LOCTEXT_NAMESPACE "ECsInputActionCustomization"
 
+// Cached
+#pragma region
+
+namespace NCsInputActionCustomizationCached
+{
+	namespace Str
+	{
+		const FString CustomPopulateEnumMap = TEXT("FECsInputActionCustomization::CustomPopulateEnumMap");
+	}
+}
+
+#pragma endregion Cached
 
 FECsInputActionCustomization::FECsInputActionCustomization() :
 	Super()
@@ -12,14 +24,16 @@ FECsInputActionCustomization::FECsInputActionCustomization() :
 	Init<EMCsInputAction, FECsInputAction>();
 }
 
+void FECsInputActionCustomization::CustomPopulateEnumMap()
+{
+	using namespace NCsInputActionCustomizationCached;
+
+	NCsInputAction::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
+}
+
 TSharedRef<IPropertyTypeCustomization> FECsInputActionCustomization::MakeInstance()
 {
 	return MakeShareable(new FECsInputActionCustomization);
-}
-
-void FECsInputActionCustomization::CustomPopulateEnumMap()
-{
-	//FR6EnumEditorUtils::SyncInputAction();
 }
 
 void FECsInputActionCustomization::AddEnumToMap(const FString& Name)

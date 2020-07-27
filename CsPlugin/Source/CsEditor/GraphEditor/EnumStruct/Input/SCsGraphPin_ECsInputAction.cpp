@@ -4,12 +4,31 @@
 
 #include "Managers/Input/CsTypes_Input.h"
 
+// Cached
+#pragma region
+
+namespace NCsGraphPinInputActionCached
+{
+	namespace Str
+	{
+		const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsInputAction::CustomPopulateEnumMap");
+	}
+}
+
+#pragma endregion Cached
 
 void SCsGraphPin_ECsInputAction::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
 	Construct_Internal<EMCsInputAction, FECsInputAction>();
+}
+
+void SCsGraphPin_ECsInputAction::CustomPopulateEnumMap()
+{
+	using namespace NCsGraphPinInputActionCached;
+
+	NCsInputAction::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
 void SCsGraphPin_ECsInputAction::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)

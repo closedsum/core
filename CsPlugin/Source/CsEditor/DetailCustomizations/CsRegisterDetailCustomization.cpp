@@ -11,10 +11,9 @@
 #include "DetailCustomizations/EnumStruct/ECsAssetTypeCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsLoadAssetsTypeCustomization.h"
 		// Input
-#include "DetailCustomizations/EnumStruct/ECsInputActionCustomization.h"
-#include "DetailCustomizations/EnumStruct/ECsGameEventCustomization.h"
-#include "DetailCustomizations/EnumStruct/ECsSurfaceTypeCustomization.h"
-#include "DetailCustomizations/EnumStruct/ECsGestureTypeCustomization.h"
+#include "DetailCustomizations/EnumStruct/Input/ECsInputActionCustomization.h"
+#include "DetailCustomizations/EnumStruct/Input/ECsGameEventCustomization.h"
+#include "DetailCustomizations/EnumStruct/Input/ECsGestureTypeCustomization.h"
 		// Process
 #include "DetailCustomizations/EnumStruct/ECsProcessCustomization.h"
 		// FX
@@ -27,6 +26,8 @@
 		// Sense
 #include "DetailCustomizations/EnumStruct/Sense/ECsSenseActorTypeCustomization.h"
 
+#include "DetailCustomizations/EnumStruct/ECsSurfaceTypeCustomization.h"
+
 void FCsRegisterDetailCustomization::Register()
 {
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
@@ -37,12 +38,14 @@ void FCsRegisterDetailCustomization::Register()
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsAssetType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsAssetTypeCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsLoadAssetsType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsLoadAssetsTypeCustomization::MakeInstance));
 		// Input
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsInputAction", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsInputActionCustomization::MakeInstance));
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsGameEvent", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGameEventCustomization::MakeInstance));
+		{
+			PropertyModule.RegisterCustomPropertyTypeLayout("ECsInputAction", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsInputActionCustomization::MakeInstance));
+			PropertyModule.RegisterCustomPropertyTypeLayout("ECsGameEvent", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGameEventCustomization::MakeInstance));
+			// GestureType
+			PropertyModule.RegisterCustomPropertyTypeLayout("ECsGestureType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGestureTypeCustomization::MakeInstance));
+		}
 		// SurfaceType
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsSurfaceType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSurfaceTypeCustomization::MakeInstance));
-		// GestureType
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsGestureType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGestureTypeCustomization::MakeInstance));
 		// Process
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProcess", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProcessCustomization::MakeInstance));
 		// FX

@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "DetailCustomizations/EnumStruct/ECsGameEventCustomization.h"
+#include "DetailCustomizations/EnumStruct/Input/ECsGameEventCustomization.h"
 
 #include "Managers/Input/CsTypes_Input.h"
 

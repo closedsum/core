@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "GraphEditor/EnumStruct/SCsGraphPin_ECsInputAction.h"
+#include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsInputAction.h"
 #include "CsEditor.h"
 
 #include "Managers/Input/CsTypes_Input.h"

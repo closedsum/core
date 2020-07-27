@@ -22,10 +22,9 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsAssetType.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsLoadAssetsType.h"
 	// Input
-#include "GraphEditor/EnumStruct/SCsGraphPin_ECsInputAction.h"
-#include "GraphEditor/EnumStruct/SCsGraphPin_ECsGameEvent.h"
-#include "GraphEditor/EnumStruct/SCsGraphPin_ECsSurfaceType.h"
-#include "GraphEditor/EnumStruct/SCsGraphPin_ECsGestureType.h"
+#include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsInputAction.h"
+#include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsGameEvent.h"
+#include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsGestureType.h"
 	// FX
 #include "GraphEditor/EnumStruct/FX/SCsGraphPin_ECsFX.h"
 	// Character
@@ -55,6 +54,8 @@
 	// Sense
 #include "GraphEditor/EnumStruct/Sense/SCsGraphPin_ECsSenseActorType.h"
 
+#include "GraphEditor/EnumStruct/SCsGraphPin_ECsSurfaceType.h"
+
 // Managers
 #include "Managers/Process/CsProcess.h"
 
@@ -78,11 +79,11 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 		if (DoesPinUseScriptStruct<FECsInputAction>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsInputAction, InPin); }
 		// FECsGameEvent
 		if (DoesPinUseScriptStruct<FECsGameEvent>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsGameEvent, InPin); }
+		// FECsGestureType
+		if (DoesPinUseScriptStruct<FECsGestureType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsGestureType, InPin); }
 	}
 	// FECsSurfaceType
 	if (DoesPinUseScriptStruct<FECsSurfaceType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsSurfaceType, InPin); }
-	// FECsGestureType
-	if (DoesPinUseScriptStruct<FECsGestureType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsGestureType, InPin); }
 	// FX
 	{
 		// FECsFX

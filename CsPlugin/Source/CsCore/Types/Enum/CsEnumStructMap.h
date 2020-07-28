@@ -179,7 +179,7 @@ public:
 
 	FORCEINLINE bool IsValidEnum(const EnumStruct& E)
 	{
-		return E.GetValue() < Count && Enums.Find(E) > INDEX_NONE;
+		return E.IsValid() && E.GetValue() < Count && Enums.Find(E) > INDEX_NONE;
 	}
 
 	FORCEINLINE bool IsValidEnum(const FString& Name)

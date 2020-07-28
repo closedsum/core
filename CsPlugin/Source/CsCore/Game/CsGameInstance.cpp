@@ -46,8 +46,13 @@ void UCsGameInstance::Init()
 	TickDelegate	   = FTickerDelegate::CreateUObject(this, &UCsGameInstance::Tick);
 	TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
 
+	// Populate Enum Maps
+	
+		// Input
 	NCsInputAction::PopulateEnumMapFromSettings(Str::Init, this);
-
+	NCsInputActionMap::PopulateEnumMapFromSettings(Str::Init, this);
+	NCsGameEvent::PopulateEnumMapFromSettings(Str::Init, this);
+	
 	ConstructManagerSingleton();
 
 	UCsManager_UnitTest::Init(this);

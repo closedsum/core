@@ -1293,23 +1293,29 @@ typedef ECsRep_GameEvent::BitMask TCsRep_GameEvent;
 	// FCsGameEventInfo
 #pragma region
 
+/**
+*
+*/
 USTRUCT(BlueprintType)
 struct FCsGameEventInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FECsGameEvent Event;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Value;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector Location;
 
-	FCsGameEventInfo()
+	FCsGameEventInfo() :
+		Event(),
+		Value(0.0f),
+		Location(0.0f)
 	{
-		Reset();
 	}
-	~FCsGameEventInfo(){}
 
 	FORCEINLINE FCsGameEventInfo& operator=(const FCsGameEventInfo& B)
 	{
@@ -1328,7 +1334,7 @@ struct FCsGameEventInfo
 
 	FORCEINLINE bool IsValid() const
 	{
-		return Event != EMCsGameEvent::Get().GetMAX();
+		return Event.IsValid() && Event != EMCsGameEvent::Get().GetMAX();
 	}
 };
 
@@ -1337,6 +1343,9 @@ struct FCsGameEventInfo
 	// FCsGameEventDefinitionSimpleInfo
 #pragma region
 
+/**
+*
+*/
 USTRUCT(BlueprintType)
 struct FCsGameEventDefinitionSimpleInfo
 {
@@ -1349,6 +1358,7 @@ struct FCsGameEventDefinitionSimpleInfo
 	ECsInputEvent Event;
 
 	FCsGameEventDefinitionSimpleInfo() :
+		Action(),
 		Event(ECsInputEvent::ECsInputEvent_MAX)
 	{
 		Action = EMCsInputAction::Get().GetMAX();
@@ -1356,7 +1366,7 @@ struct FCsGameEventDefinitionSimpleInfo
 
 	bool IsValid() const
 	{
-		return Action != EMCsInputAction::Get().GetMAX() && Event != ECsInputEvent::ECsInputEvent_MAX;
+		return Action.IsValid() && Action != EMCsInputAction::Get().GetMAX() && Event != ECsInputEvent::ECsInputEvent_MAX;
 	}
 };
 

@@ -1,8 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Input/CsManager_Input.h"
 #include "CsCore.h"
-#include "CsCVars.h"
 
+// CVar
+#include "Managers/Input/CsCVars_Manager_Input.h"
 // Library
 #include "Library/CsLibrary_Common.h"
 #include "Library/Load/CsLibrary_Load.h"
@@ -26,7 +27,7 @@ namespace NCsManagerInputCached
 {
 	namespace Str
 	{
-		const FString PostProcessInput = TEXT("PostProcessInput");
+		const FString PostProcessInput = TEXT("UCsManager_Input::PostProcessInput");
 	}
 }
 
@@ -367,12 +368,16 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 
 void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGamePaused)
 {
+	using namespace NCsManagerInputCached;
+
+	const FString& Context = Str::PostProcessInput;
+
 	// Add Queue Inputs
 	for (FCsInput* Input : QueuedInputsForNextFrame)
 	{
 		CurrentInputFrame->Inputs.Add(Input);
 	}
-	QueuedInputsForNextFrame.Reset();
+	QueuedInputsForNextFrame.Reset(QueuedInputsForNextFrame.Max());
 
 	// TODO: Need to rework how events are being fired. Not just firing from TryAddInput
 
@@ -393,7 +398,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 			const float& Time			 = CurrentInputFrame->Time.Time;
 			const FString& EventAsString = EMCsInputEvent::Get().ToString(Input->Event);
 
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::PostProcessInput (%s): Time: %f. Action: %s Event: %s."), *(GetOwner()->GetName()), Time, *(Action.Name), *EventAsString);
+			UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s Event: %s."), *Context, *(GetOwner()->GetName()), Time, *(Action.Name), *EventAsString);
 		}
 	}
 #endif // #if !UE_BUILD_SHIPPING
@@ -403,7 +408,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 	{
 		Info.Reset();
 	}
-	CurrentValidGameEventInfos.Reset();
+	CurrentValidGameEventInfos.Reset(CurrentValidGameEventInfos.Max());
 
 	// Process GameEventDefinitions
 	for (FCsGameEventDefinition& Def : GameEventDefinitions)
@@ -415,12 +420,12 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 		if (Sentence.bCompleted)
 		{
-			const int32& Index					= GameEventPriorityMap[Event.Value];
+			const int32& Index					= GameEventPriorityMap[Event.GetValue()];
 			CurrentGameEventInfos[Index].Event  = Event;
 
-#if WITH_EDITOR
-			LogProcessGameEventDefinition(NCsManagerInputCached::Str::PostProcessInput, Event, Sentence);
-#endif // #if WITH_EDITOR
+#if !UE_BUILD_SHIPPING
+			LogProcessGameEventDefinition(Context, Event, Sentence);
+#endif // #if !UE_BUILD_SHIPPING
 		}
 	}
 
@@ -432,7 +437,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 		CurrentGameEventInfos[Index] = Info;
 	}
-	QueuedGameEventInfosForNextFrame.Reset();
+	QueuedGameEventInfosForNextFrame.Reset(QueuedGameEventInfosForNextFrame.Max());
 
 	for (const FCsGameEventInfo& Info : CurrentGameEventInfos)
 	{
@@ -445,14 +450,16 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 			{
 				const float& Time = CurrentInputFrame->Time.Time;
 
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Input::PostProcessInput (%s): Time: %f. Event: %s."), *(GetOwner()->GetName()), Time, *(Info.Event.Name));
+				UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Event: %s."), *Context, *(GetOwner()->GetName()), Time, *(Info.Event.Name));
 			}
 #endif // #if !UE_BUILD_SHIPPING
+
+			OnGameEventInfo_Event.Broadcast(Info);
 		}
 	}
 }
 
-void UCsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* PreviousInput, const struct FCsInput* CurrentInput, const float DeltaTime)
+void UCsManager_Input::ProcessInput(AActor* ActionOwner, const FCsInput* PreviousInput, const FCsInput* CurrentInput, const float DeltaTime)
 {
 	if (!CurrentInput)
 		return;
@@ -680,11 +687,11 @@ void UCsManager_Input::AddInput(const FECsInputAction& Action, const ECsInputEve
 
 bool UCsManager_Input::CanAddInput(const FECsInputAction& Action)
 {
-	if (InputActionMapping.Find(Action) == nullptr)
+	if (int32* Mask = InputActionMapping.Find(Action))
 	{
-		return false;
+		return (CurrentInputActionMap & *Mask) > 0;
 	}
-	return (CurrentInputActionMap & InputActionMapping[Action]) > 0;
+	return false;
 }
 
 bool UCsManager_Input::TryAddInput(const ECsInputType& Type, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*= 0.0f*/, const FVector& Location /*= FVector::ZeroVector*/, const FRotator& Rotation /*= FRotator::ZeroRotator*/)
@@ -720,19 +727,6 @@ void UCsManager_Input::ConsumeInput(const FECsInputAction& Action)
 		if (Input->Action == Action)
 		{
 			Input->bConsumed = true;
-			break;
-		}
-	}
-
-	const int32 Count = CurrentInputFrame->Inputs.Num();
-
-	for (int32 I = Count - 1; I >= 0; --I)
-	{
-		FCsInput* Input = CurrentInputFrame->Inputs[I];
-
-		if (Input->Action == Action)
-		{
-			CurrentInputFrame->Inputs.RemoveAt(I, 1, false);
 			break;
 		}
 	}
@@ -982,9 +976,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 #endif // #if WITH_EDITOR
 }
 
-#if WITH_EDITOR
-
-void UCsManager_Input::LogProcessGameEventDefinition(const FString& FunctionName, const FECsGameEvent& Event, const FCsInputSentence& Sentence)
+void UCsManager_Input::LogProcessGameEventDefinition(const FString& Context, const FECsGameEvent& Event, const FCsInputSentence& Sentence)
 {
 	//if (CsCVarLogManagerInputGameEventDefinitions->GetInt() == CS_CVAR_SHOW_LOG)
 	{
@@ -1000,12 +992,10 @@ void UCsManager_Input::LogProcessGameEventDefinition(const FString& FunctionName
 
 			const float& Time = CurrentInputFrame->Time.Time;
 
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::%s (%s): Time: %f. (%s, %s) -> %s."), *FunctionName, *(GetOwner()->GetName()), Time, *(Action.Name), *InputEventAsString, *(Event.Name));
+			UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. (%s, %s) -> %s."), *Context, *(GetOwner()->GetName()), Time, *(Action.Name), *InputEventAsString, *(Event.Name));
 		}
 	}
 }
-
-#endif // #if WITH_EDITOR
 
 void UCsManager_Input::QueueGameEvent(const FECsGameEvent& Event)
 {

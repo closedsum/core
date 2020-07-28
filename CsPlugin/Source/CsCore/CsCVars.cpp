@@ -28,81 +28,6 @@ TAutoConsoleVariable<int32> CsCVarDisplayLoading(
 
 #pragma endregion Loading
 
-// Input
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogInputRaw(
-	TEXT("log.input.raw"),
-	0,
-	TEXT("Log Input Raw"),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarLogInputRawAction(
-	TEXT("log.input.raw.action"),
-	0,
-	TEXT("Log Input Raw Action"),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarLogInputRawAxis(
-	TEXT("log.input.raw.axis"),
-	0,
-	TEXT("Log Input Raw Axis"),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarLogInput(
-	TEXT("log.input"),
-	0,
-	TEXT("Log Input"),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarLogInputAction(
-	TEXT("log.input.action"),
-	0,
-	TEXT("Log Input Action"),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarLogInputAxis(
-	TEXT("log.input.axis"),
-	0,
-	TEXT("Log Input Axis"),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarLogInputTrigger(
-	TEXT("log.input.trigger"),
-	0,
-	TEXT("Log Input Trigger"),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarLogInputLocation(
-	TEXT("log.input.location"),
-	0,
-	TEXT("Log Input Locaton"),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarLogInputRotation(
-	TEXT("log.input.rotation"),
-	0,
-	TEXT("Log Input Rotation"),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarLogInputGameEvent(
-	TEXT("log.input.gameevent"),
-	0,
-	TEXT("Log Input Game Event"),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Input
-
 // GameState
 #pragma region
 
@@ -335,20 +260,6 @@ namespace NCsCVarLog
 {
 	// Loading
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerLoading);
-	// Input
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInputRaw);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInputRawAction);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInputRawAxis);
-
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInput);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInputAction);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInputAxis);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInputTrigger);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInputLocation);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInputRotation);
-
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInputGameEvent);
-
 	// GameState
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogGameStateOnBoard);
 	// Json

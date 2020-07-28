@@ -24,24 +24,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDisplayLoading;
 
 #pragma endregion Loading
 
-// Input
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputRaw;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputRawAction;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputRawAxis;
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInput;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputAction;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputAxis;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputTrigger;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputLocation;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputRotation;
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputGameEvent;
-
-#pragma endregion Input
-
 // GameState
 #pragma region
 
@@ -295,19 +277,6 @@ namespace NCsCVarLog
 
 	// Loading
 	extern CSCORE_API const Type LogManagerLoading;
-	// Input
-	extern CSCORE_API const Type LogInputRaw;
-	extern CSCORE_API const Type LogInputRawAction;
-	extern CSCORE_API const Type LogInputRawAxis;
-
-	extern CSCORE_API const Type LogInput;
-	extern CSCORE_API const Type LogInputAction;
-	extern CSCORE_API const Type LogInputAxis;
-	extern CSCORE_API const Type LogInputTrigger;
-	extern CSCORE_API const Type LogInputLocation;
-	extern CSCORE_API const Type LogInputRotation;
-
-	extern CSCORE_API const Type LogInputGameEvent;
 	// GameState
 	extern CSCORE_API const Type LogGameStateOnBoard;
 	// Json

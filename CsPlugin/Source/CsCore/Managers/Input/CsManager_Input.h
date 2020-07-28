@@ -98,7 +98,7 @@ public:
 
 	virtual void PreProcessInput(const float DeltaTime, const bool bGamePaused);
 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused);
-	virtual void ProcessInput(AActor* ActionOwner, const struct FCsInput* PreviousInput, const struct FCsInput* CurrentInput, const float DeltaTime);
+	virtual void ProcessInput(AActor* ActionOwner, const FCsInput* PreviousInput, const FCsInput* CurrentInput, const float DeltaTime);
 
 	float CurrentDeltaTime;
 
@@ -177,9 +177,7 @@ public:
 	TArray<FCsGameEventInfo> CurrentValidGameEventInfos;
 	TArray<FCsGameEventInfo> QueuedGameEventInfosForNextFrame;
 
-#if WITH_EDITOR
-	void LogProcessGameEventDefinition(const FString& FunctionName, const FECsGameEvent& Event, const FCsInputSentence& Sentence);
-#endif // #if WITH_EDITOR
+	void LogProcessGameEventDefinition(const FString& Context, const FECsGameEvent& Event, const FCsInputSentence& Sentence);
 
 	virtual void QueueGameEvent(const FECsGameEvent& Event);
 
@@ -189,8 +187,13 @@ public:
 
 	bool HasActionEventOccured(const FECsInputAction& Action, const ECsInputEvent& Event);
 
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameEventInfo, const FCsGameEventInfo&);
+
+	FOnGameEventInfo OnGameEventInfo_Event;
+
 #pragma endregion Events
 
+public:
 
 	float GetInputValue(const FECsInputAction& Action);
 

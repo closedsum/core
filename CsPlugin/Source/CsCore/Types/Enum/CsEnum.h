@@ -82,4 +82,9 @@ struct CSCORE_API FECsEnum
 	{
 		return *DisplayName;
 	}
+
+	FORCEINLINE bool IsValid() const
+	{
+		return Name_Internal != NAME_None;
+	}
 };

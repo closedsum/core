@@ -14,6 +14,7 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputLocation;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputRotation;
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputGameEvent;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputGameEventDefinition;
 
 // CVarLog
 #pragma region
@@ -35,6 +36,7 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogInputRotation;
 
 	extern CSCORE_API const Type LogInputGameEvent;
+	extern CSCORE_API const Type LogInputGameEventDefinition;
 
 	namespace Map
 	{
@@ -50,6 +52,7 @@ namespace NCsCVarLog
 		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogInputRotation);
 
 		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogInputGameEvent);
+		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogInputGameEventDefinition);
 	}
 }
 

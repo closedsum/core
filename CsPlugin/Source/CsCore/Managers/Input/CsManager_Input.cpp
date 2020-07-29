@@ -978,7 +978,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 
 void UCsManager_Input::LogProcessGameEventDefinition(const FString& Context, const FECsGameEvent& Event, const FCsInputSentence& Sentence)
 {
-	//if (CsCVarLogManagerInputGameEventDefinitions->GetInt() == CS_CVAR_SHOW_LOG)
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputGameEventDefinition))
 	{
 		// For now handle a simple definition
 
@@ -992,7 +992,7 @@ void UCsManager_Input::LogProcessGameEventDefinition(const FString& Context, con
 
 			const float& Time = CurrentInputFrame->Time.Time;
 
-			UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. (%s, %s) -> %s."), *Context, *(GetOwner()->GetName()), Time, *(Action.Name), *InputEventAsString, *(Event.Name));
+			UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. (%s, %s) -> %s."), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *InputEventAsString, Event.ToChar());
 		}
 	}
 }

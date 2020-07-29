@@ -71,6 +71,13 @@ TAutoConsoleVariable<int32> CsCVarLogInputGameEvent(
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<int32> CsCVarLogInputGameEventDefinition(
+	TEXT("log.input.gameevent.definition"),
+	0,
+	TEXT("Log Input Game Event Definition"),
+	ECVF_SetByConsole
+);
+
 // CVarLog
 #pragma region
 
@@ -89,6 +96,7 @@ namespace NCsCVarLog
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInputRotation);
 
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInputGameEvent);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogInputGameEventDefinition);
 
 	namespace Map
 	{
@@ -104,6 +112,7 @@ namespace NCsCVarLog
 		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogInputRotation, CsCVarLogInputRotation);
 
 		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogInputGameEvent, CsCVarLogInputGameEvent);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogInputGameEventDefinition, CsCVarLogInputGameEventDefinition);
 	}
 }
 

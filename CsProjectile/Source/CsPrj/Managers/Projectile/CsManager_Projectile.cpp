@@ -730,7 +730,7 @@ void UCsManager_Projectile::LogTransaction(const FString& Context, const ECsPool
 	}
 }
 
-#pragma endregion Log
+#pragma endregion Log 
 
 #pragma endregion Internal
 

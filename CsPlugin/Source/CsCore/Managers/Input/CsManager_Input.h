@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "Classes/Components/ActorComponent.h"
+#include "Components/ActorComponent.h"
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 #include "Managers/Input/CsInputFrame.h"
 #include "CsManager_Input.generated.h"

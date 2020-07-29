@@ -23,7 +23,7 @@
 // Data
 //#include "Data/CsDataMapping.h"
 //#include "Data/CsData.h"
-#include "Managers/Data/CsDataRootSet.h"
+#include "Data/CsDataRootSetImpl.h"
 // Setting
 #include "Settings/CsDeveloperSettings.h"
 // Property
@@ -156,15 +156,16 @@ void UCsEdEngine::OnObjectSaved(UObject* Object)
 		// Settings
 		if (UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>())
 		{
-			FCsDataRootSetContainer& Container = Settings->DataRootSet;
-			UClass* Class					   = Container.Data.LoadSynchronous();
-			UCsDataRootSet* DataRootSet		   = Class ? Class->GetDefaultObject<UCsDataRootSet>() : nullptr;
+			TSoftClassPtr<UObject> SoftClass  = Settings->DataRootSet;
+			UClass* Class					  = SoftClass.LoadSynchronous();
+			UObject* O						  = Class ? Class->GetDefaultObject<UObject>() : nullptr;
+			ICsDataRootSet* DataRootSet		  = O ? Cast<ICsDataRootSet>(O) : nullptr;
 
 			// DataRootSet
 			if (DataRootSet)
 			{
 				// DataTables
-				if (UDataTable* DataTables = DataRootSet->DataTables)
+				if (UDataTable* DataTables = DataRootSet->GetDataTables())
 				{
 					if (FCsDataEntry_DataTable::StaticStruct() == DataTables->GetRowStruct())
 					{
@@ -352,11 +353,12 @@ void UCsEdEngine::OnObjectSaved_DataRootSet_Payloads(UDataTable* DataTable)
 		return;
 
 	// Get DataRootSet
-	FCsDataRootSetContainer& Container = Settings->DataRootSet;
-	UClass* Class					    = Container.Data.LoadSynchronous();
-	UCsDataRootSet* DataRootSet			= Class ? Class->GetDefaultObject<UCsDataRootSet>() : nullptr;
+	TSoftClassPtr<UObject> SoftObject	= Settings->DataRootSet;
+	UClass* Class						= SoftObject.LoadSynchronous();
+	UObject* Object						= Class ? Class->GetDefaultObject<UObject>() : nullptr;
+	UCsDataRootSetImpl* DataRootSetImpl	= Object ? Cast<UCsDataRootSetImpl>(Object) : nullptr;
 
-	if (!DataRootSet)
+	if (!DataRootSetImpl)
 		return;
 
 	// See which Payloads to push to Datas | DataTables
@@ -389,7 +391,7 @@ void UCsEdEngine::OnObjectSaved_DataRootSet_Payloads(UDataTable* DataTable)
 			}
 
 			// Add to Map of DataTables to Add to DataRootSet->DataTables
-			DataRootSet->AddDataTables(RowNamesByDataTableMap);
+			DataRootSetImpl->AddDataTables(RowNamesByDataTableMap);
 		}
 		RowPtr->bUpdateDataRootSetOnSave = false;
 	}

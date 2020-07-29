@@ -1156,8 +1156,9 @@ public:
 // FCsDataRootSetContainer
 #pragma region
 
-class UCsDataRootSet;
+class UObject;
 class UClass;
+class ICsDataRootSet;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsDataRootSetContainer
@@ -1166,26 +1167,26 @@ struct CSCORE_API FCsDataRootSetContainer
 
 public:
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TSoftClassPtr<UCsDataRootSet> Data;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (MustImplement = "CsDataRootSet"))
+	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
-	UCsDataRootSet* Data_Internal;
+	UObject* Data_Internal;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
 	UClass* Data_Class;
 
+	ICsDataRootSet* Interface;
+
 	FCsDataRootSetContainer() :
 		Data(nullptr),
 		Data_Internal(nullptr),
-		Data_Class(nullptr)
+		Data_Class(nullptr),
+		Interface(nullptr)
 	{
 	}
 
-	FORCEINLINE UCsDataRootSet* Get() const { return Data_Internal; }
-
-	template<typename T>
-	FORCEINLINE T* Get() const { return Cast<T>(Get()); }
+	FORCEINLINE ICsDataRootSet* Get() const { return Interface; }
 
 	FORCEINLINE UClass* GetClass() const { return Data_Class; }
 };

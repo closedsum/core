@@ -9,7 +9,7 @@
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Data
-#include "Managers/Data/CsDataRootSet.h"
+#include "Data/CsDataRootSet.h"
 // Managers
 #include "Managers/Load/CsManager_Load.h"
 
@@ -181,9 +181,9 @@ void UCsManager_Data::Initialize()
 {
 	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
 
-	DataRootSet				  = Settings->DataRootSet;
+	DataRootSet.Data		  = Settings->DataRootSet;
 	DataRootSet.Data_Class	  = DataRootSet.Data.LoadSynchronous();
-	DataRootSet.Data_Internal = DataRootSet.Data_Class->GetDefaultObject<UCsDataRootSet>();
+	DataRootSet.Data_Internal = DataRootSet.Data_Class->GetDefaultObject<UObject>();
 
 	// TODO: Move this to Coroutine and Async
 
@@ -395,7 +395,7 @@ void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Pay
 void UCsManager_Data::GenerateMaps() 
 {
 	// Datas
-	if (UDataTable* Datas = DataRootSet.Get()->Datas)
+	if (UDataTable* Datas = DataRootSet.Get()->GetDatas())
 	{
 		const UScriptStruct* ScriptStruct = Datas->GetRowStruct();
 
@@ -416,7 +416,7 @@ void UCsManager_Data::GenerateMaps()
 		}
 	}
 	// DataTables
-	if (UDataTable* DataTables = DataRootSet.Get()->DataTables)
+	if (UDataTable* DataTables = DataRootSet.Get()->GetDataTables())
 	{
 		const UScriptStruct* ScriptStruct = DataTables->GetRowStruct();
 
@@ -439,7 +439,7 @@ void UCsManager_Data::GenerateMaps()
 		}
 	}
 	// Payloads
-	if (UDataTable* Payloads = DataRootSet.Get()->Payloads)
+	if (UDataTable* Payloads = DataRootSet.Get()->GetPayloads())
 	{
 		const UScriptStruct* ScriptStruct = Payloads->GetRowStruct();
 

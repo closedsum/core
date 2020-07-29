@@ -10,7 +10,7 @@
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Data
-#include "Managers/Data/CsDataRootSet.h"
+#include "Data/CsDataRootSet.h"
 
 #if WITH_EDITOR
 #include "Engine/World.h"
@@ -336,10 +336,14 @@ void ACsLevelScriptActor::PopulatePayloadCombined()
 		UCsLibrary_Load::LoadStruct(Settings, UCsDeveloperSettings::StaticClass(), NCsLoadFlags::All, NCsLoadCodes::None);
 		
 		// DataRootSet
-		if (UCsDataRootSet* DataRootSet = Settings->DataRootSet.Get())
+		if (UObject* Object = Settings->DataRootSet.LoadSynchronous())
 		{
+			ICsDataRootSet* DataRootSet = Cast<ICsDataRootSet>(Object);
+
+			checkf(DataRootSet, TEXT("ACsLevelScriptActor::PopulatePayloadCombined: Object: %s @ %s does NOT implement interface: ICsDataRootSet."));
+
 			// Datas
-			if (UDataTable* Datas = DataRootSet->Datas)
+			if (UDataTable* Datas = DataRootSet->GetDatas())
 			{
 				if (Payload_Combined.Datas.Num() > CS_EMPTY)
 					Datas->MarkPackageDirty();
@@ -364,7 +368,7 @@ void ACsLevelScriptActor::PopulatePayloadCombined()
 				}
 			}
 			// DataTables
-			if (UDataTable* DataTables = DataRootSet->DataTables)
+			if (UDataTable* DataTables = DataRootSet->GetDataTables())
 			{
 				if (Payload_Combined.DataTables.Num() > CS_EMPTY)
 					DataTables->MarkPackageDirty();
@@ -389,7 +393,7 @@ void ACsLevelScriptActor::PopulatePayloadCombined()
 				}
 			}
 			// Payloads
-			if (UDataTable* Payloads = DataRootSet->Payloads)
+			if (UDataTable* Payloads = DataRootSet->GetPayloads())
 			{
 				if (Payload_Combined.DataTables.Num() > CS_EMPTY)
 					Payloads->MarkPackageDirty();

@@ -2,12 +2,16 @@
 #pragma once
 
 #include "UObject/Object.h"
-#include "CsDataRootSet.generated.h"
+// Interfaces
+#include "Data/CsDataRootSet.h"
+
+#include "CsDataRootSetImpl.generated.h"
 
 class UDataTable;
 
 UCLASS(Blueprintable)
-class CSCORE_API UCsDataRootSet : public UObject
+class CSCORE_API UCsDataRootSetImpl : public UObject,
+									  public ICsDataRootSet
 {
 	GENERATED_UCLASS_BODY()
 
@@ -31,6 +35,27 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Root")
 	UDataTable* Payloads;
+
+// ICsDataRootSet
+#pragma region
+public:
+
+	FORCEINLINE UDataTable* GetDatas() const
+	{
+		return Datas;
+	}
+
+	FORCEINLINE UDataTable* GetDataTables() const
+	{
+		return DataTables;
+	}
+
+	FORCEINLINE UDataTable* GetPayloads() const
+	{
+		return Payloads;
+	}
+
+#pragma endregion ICsDataRootSet
 
 	// Editor
 #pragma region

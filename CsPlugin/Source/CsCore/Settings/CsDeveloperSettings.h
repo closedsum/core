@@ -45,8 +45,8 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Load")
-	FCsDataRootSetContainer DataRootSet;
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Load", meta = (MustImplement = "CsDataRootSet"))
+	TSoftClassPtr<UObject> DataRootSet;
 
 #pragma endregion Load
 

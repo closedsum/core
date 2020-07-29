@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Data/CsDataRootSet.h"
+#include "Data/CsDataRootSetImpl.h"
 #include "CsCore.h"
 
 // Types
@@ -10,30 +10,34 @@
 // Cached
 #pragma region
 
-namespace NCsDataRootSetCached
+namespace NCsDataRootSetImplCached
 {
 	namespace Str
 	{
-		const FString AddDataTable = TEXT("UCsDataRootSet::AddDataTable");
+		const FString AddDataTable = TEXT("UCsDataRootSetImpl::AddDataTable");
 	}
 }
 
 #pragma endregion Cached
 
 
-UCsDataRootSet::UCsDataRootSet(const class FObjectInitializer& ObjectInitializer)
+UCsDataRootSetImpl::UCsDataRootSetImpl(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
 #if WITH_EDITOR
 
-void UCsDataRootSet::AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTable)
+void UCsDataRootSetImpl::AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTable)
 {
+	using namespace NCsDataRootSetImplCached;
+
+	const FString& Context = Str::AddDataTable;
+
 	// Check DataTables exists
 	if (!DataTables)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataRootSet::AddDataTable: DataTables is NULL."));
+		UE_LOG(LogCs, Warning, TEXT("%s: DataTables is NULL."), *Context);
 		return;
 	}
 
@@ -42,14 +46,12 @@ void UCsDataRootSet::AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTable)
 
 	if (!Path.IsValid())
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataRootSet::AddDataTable: InDataTable is NOT Valid."));
+		UE_LOG(LogCs, Warning, TEXT("%s: InDataTable is NOT Valid."), *Context);
 		return;
 	}
 
 	// Find or Add the DataTable
 	const FName& DataTableName = FName(*Path.GetAssetName());
-
-	const FString& Context = NCsDataRootSetCached::Str::AddDataTable;
 
 	FCsDataEntry_DataTable* RowPtr = DataTables->FindRow<FCsDataEntry_DataTable>(DataTableName, Context);
 
@@ -70,12 +72,16 @@ void UCsDataRootSet::AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTable)
 	DataTables->MarkPackageDirty();
 }
 
-void UCsDataRootSet::AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTable, const TSet<FName>& RowNames)
+void UCsDataRootSetImpl::AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTable, const TSet<FName>& RowNames)
 {
+	using namespace NCsDataRootSetImplCached;
+
+	const FString& Context = Str::AddDataTable;
+
 	// Check DataTables exists
 	if (!DataTables)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataRootSet::AddDataTable: DataTables is NULL."));
+		UE_LOG(LogCs, Warning, TEXT("%s: DataTables is NULL."), *Context);
 		return;
 	}
 
@@ -84,14 +90,12 @@ void UCsDataRootSet::AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTable,
 
 	if (!Path.IsValid())
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataRootSet::AddDataTable: InDataTable is NOT Valid."));
+		UE_LOG(LogCs, Warning, TEXT("%s: InDataTable is NOT Valid."), *Context);
 		return;
 	}
 
 	// Find or Add the DataTable
 	const FName& DataTableName = FName(*Path.GetAssetName());
-
-	const FString& Context = NCsDataRootSetCached::Str::AddDataTable;
 
 	FCsDataEntry_DataTable* RowPtr = DataTables->FindRow<FCsDataEntry_DataTable>(DataTableName, Context);
 
@@ -120,12 +124,12 @@ void UCsDataRootSet::AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTable,
 	DataTables->MarkPackageDirty();
 }
 
-void UCsDataRootSet::AddDataTables(const TSet<TSoftObjectPtr<UDataTable>>& InDataTables)
+void UCsDataRootSetImpl::AddDataTables(const TSet<TSoftObjectPtr<UDataTable>>& InDataTables)
 {
 	// Check DataTables exists
 	if (!DataTables)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataRootSet::AddDataTables: DataTables is NULL."));
+		UE_LOG(LogCs, Warning, TEXT("UCsDataRootSetImpl::AddDataTables: DataTables is NULL."));
 		return;
 	}
 
@@ -136,7 +140,7 @@ void UCsDataRootSet::AddDataTables(const TSet<TSoftObjectPtr<UDataTable>>& InDat
 
 		if (!Path.IsValid())
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsDataRootSet::AddDataTables: DT is NOT Valid."));
+			UE_LOG(LogCs, Warning, TEXT("UCsDataRootSetImpl::AddDataTables: DT is NOT Valid."));
 			continue;
 		}
 
@@ -144,12 +148,12 @@ void UCsDataRootSet::AddDataTables(const TSet<TSoftObjectPtr<UDataTable>>& InDat
 	}
 }
 
-void UCsDataRootSet::AddDataTables(const TMap<TSoftObjectPtr<UDataTable>, TSet<FName>>& RowNamesByDataTableMap)
+void UCsDataRootSetImpl::AddDataTables(const TMap<TSoftObjectPtr<UDataTable>, TSet<FName>>& RowNamesByDataTableMap)
 {
 	// Check DataTables exists
 	if (!DataTables)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataRootSet::AddDataTables: DataTables is NULL."));
+		UE_LOG(LogCs, Warning, TEXT("UCsDataRootSetImpl::AddDataTables: DataTables is NULL."));
 		return;
 	}
 
@@ -171,13 +175,13 @@ void UCsDataRootSet::AddDataTables(const TMap<TSoftObjectPtr<UDataTable>, TSet<F
 #pragma region
 #if WITH_EDITOR
 
-void UCsDataRootSet::PostEditChangeProperty(FPropertyChangedEvent& e)
+void UCsDataRootSetImpl::PostEditChangeProperty(FPropertyChangedEvent& e)
 {
 	const FName PropertyName	   = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
 	const FName MemberPropertyName = (e.MemberProperty != NULL) ? e.MemberProperty->GetFName() : NAME_None;
 
 	// DataTables
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsDataRootSet, DataTables))
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsDataRootSetImpl, DataTables))
 	{
 		if (DataTables)
 		{

@@ -2,32 +2,6 @@
 #include "CsCVars.h"
 #include "CsCore.h"
 
-// Loading
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogManagerLoad(
-	TEXT("log.manager.load"),
-	0,
-	TEXT("Log Manager Load"),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarManagerLoadingAsyncOrder(
-	TEXT("manager.loading.asyncorder"),
-	-1,
-	TEXT("Set Load Async Order for Async Loading. -1 = UNSET, 0 = None (Bulk), 1 = FirstToAst, 2 = Bulk"),
-	ECVF_SetByConsole
-);
-
-TAutoConsoleVariable<int32> CsCVarDisplayLoading(
-	TEXT("display.loading"),
-	0,
-	TEXT("Display Loading on HUD"),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Loading
-
 // GameState
 #pragma region
 
@@ -258,8 +232,6 @@ TAutoConsoleVariable<int32> CsCVarLogDataEntryPopulate(
 
 namespace NCsCVarLog
 {
-	// Loading
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerLoading);
 	// GameState
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogGameStateOnBoard);
 	// Json
@@ -288,8 +260,6 @@ namespace NCsCVarLog
 	{
 		// Managers
 
-			// Load
-		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerLoad, CsCVarLogManagerLoad);
 			// Data
 		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerDataLoad, CsCVarLogManagerDataLoad);
 

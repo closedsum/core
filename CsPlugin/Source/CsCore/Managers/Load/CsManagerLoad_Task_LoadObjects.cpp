@@ -4,7 +4,7 @@
 #include "CsCore.h"
 
 // CVar
-#include "CsCVars.h"
+#include "Managers/Load/CsCVars_Manager_Load.h"
 // Library
 #include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Math.h"

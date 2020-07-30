@@ -15,15 +15,6 @@
 #define CS_CVAR_ENABLED 1
 #define CS_CVAR_DISABLED 0
 
-// Loading
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerLoad;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarManagerLoadingAsyncOrder;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDisplayLoading;
-
-#pragma endregion Loading
-
 // GameState
 #pragma region
 
@@ -275,8 +266,6 @@ namespace NCsCVarLog
 {
 	typedef FECsCVarLog Type;
 
-	// Loading
-	extern CSCORE_API const Type LogManagerLoading;
 	// GameState
 	extern CSCORE_API const Type LogGameStateOnBoard;
 	// Json
@@ -305,8 +294,6 @@ namespace NCsCVarLog
 	{
 		// Managers
 
-			// Load
-		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerLoad);
 			// Task
 		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerTaskTransactions);
 			// Runnable

@@ -2,8 +2,9 @@
 
 #include "Managers/Data/CsManager_Data.h"
 #include "CsCore.h"
-#include "CsCVars_Manager_Data.h"
 
+// CVar
+#include "CsCVars_Manager_Data.h"
 // Library
 #include "Library/Load/CsLibrary_Load.h"
 // Settings

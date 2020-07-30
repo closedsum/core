@@ -262,6 +262,17 @@ FString UCsGameInstance::GetPersistentLevelName()
 	return FString();
 }
 
+FName UCsGameInstance::GetPersistentLevelFName()
+{
+	if (GetWorld())
+	{
+		const FString Name = UWorld::StripPIEPrefixFromPackageName(GetWorld()->GetOutermost()->GetName(), GetWorld()->StreamingLevelsPrefix);
+
+		return FName(*Name);
+	}
+	return NAME_None;
+}
+
 ACsLevelScriptActor* UCsGameInstance::GetPersistentLevelScriptActor()
 {
 	return Cast<ACsLevelScriptActor>(GetPersistentLevel());

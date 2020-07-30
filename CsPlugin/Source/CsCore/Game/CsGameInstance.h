@@ -105,6 +105,7 @@ public:
 	ULevel* GetPersistentLevel();
 
 	FString GetPersistentLevelName();
+	FName GetPersistentLevelFName();
 
 	ACsLevelScriptActor* GetPersistentLevelScriptActor();
 

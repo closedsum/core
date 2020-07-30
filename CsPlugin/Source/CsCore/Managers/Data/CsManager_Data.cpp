@@ -685,16 +685,18 @@ void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPay
 		return;
 	}
 
-	TArray<FSoftObjectPath> Paths;
-	Paths.Reserve(Count);
+	FCsManagerLoad_LoadObjectPathsPayload Payload;
 
-	GetPayloadSoftObjectPaths(PayloadName, Paths);
+	// Set ObjectPaths
+	Payload.ObjectPaths.Reserve(Count);
 
-	UCsManagerLoad_Task_LoadObjects::FOnFinishLoadObjectPaths OnFinishDelegate = UCsManagerLoad_Task_LoadObjects::FOnFinishLoadObjectPaths::CreateUObject(this, &UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload);
+	GetPayloadSoftObjectPaths(PayloadName, Payload.ObjectPaths);
+	// Set Async Order
+	Payload.AsyncOrder = EMCsLoadAsyncOrder::Get().GetEnumAt(CsCVarManagerDataLoadAsyncOrder->GetInt());
+	// Set callback On Finish
+	Payload.OnFinishLoadObjectPaths.BindUObject(this, &UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload);
 
-	FCsLoadHandle Handle = UCsManager_Load::Get(MyRoot)->LoadObjectPaths(Paths,
-																		 EMCsLoadAsyncOrder::Get().GetEnumAt(CsCVarManagerDataLoadAsyncOrder->GetInt()),
-																		 OnFinishDelegate);
+	FCsLoadHandle Handle = UCsManager_Load::Get(MyRoot)->LoadObjectPaths(Payload);
 
 	InProgressAsyncLoadPayloads.Add(Handle, PayloadName);
 	

@@ -8,6 +8,45 @@
 
 #include "CsManagerLoad_Task_LoadObjects.generated.h"
 
+// Delegates
+#pragma region
+
+/**
+* OnFinishLoadObjectPaths 
+*  Delegate type
+*
+* @param Handle
+* @param LoadedPaths
+* @param LoadedObjects
+* @param LoadTime
+*/
+DECLARE_DELEGATE_FourParams(FCsManagerLoad_OnFinishLoadObjectPaths, const FCsLoadHandle& /*Handle*/, const TArray<FSoftObjectPath>& /*LoadedPaths*/, const TArray<UObject*>& /*LoadedObjects*/, const float& /*LoadTime*/);
+
+#pragma endregion Delegates
+
+// Structs
+#pragma region
+
+struct CSCORE_API FCsManagerLoad_LoadObjectPathsPayload
+{
+public:
+
+	TArray<FSoftObjectPath> ObjectPaths;
+
+	ECsLoadAsyncOrder AsyncOrder;
+	
+	FCsManagerLoad_OnFinishLoadObjectPaths OnFinishLoadObjectPaths;
+
+	FCsManagerLoad_LoadObjectPathsPayload() :
+		ObjectPaths(),
+		AsyncOrder(ECsLoadAsyncOrder::Bulk),
+		OnFinishLoadObjectPaths()
+	{
+	}
+};
+
+#pragma endregion Structs
+
 class UWorld;
 class UCsManager_Load;
 
@@ -54,7 +93,7 @@ public:
 private:
 
 	/** */
-	TSharedPtr<FStreamableHandle> StreamableHandle;
+	TArray<TSharedPtr<FStreamableHandle>> StreamableHandles;
 
 	/** */
 	FStreamableDelegate OnFinishLoadObjectPathDelegate;
@@ -109,18 +148,8 @@ public:
 	/** Event to broadcast when starting to load all Object Paths. */
 	FOnStartLoadObjectPaths OnStartLoadObjectPaths_Event;
 
-	/**
-	*  Delegate type
-	*
-	* @param Handle
-	* @param LoadedPaths
-	* @param LoadedObjects
-	* @param LoadTime
-	*/
-	DECLARE_DELEGATE_FourParams(FOnFinishLoadObjectPaths, const FCsLoadHandle& /*Handle*/, const TArray<FSoftObjectPath>& /*LoadedPaths*/, const TArray<UObject*>& /*LoadedObjects*/, const float& /*LoadTime*/);
-
 	/** Event to broadcast when finished loading all Object Paths. */
-	FOnFinishLoadObjectPaths OnFinishLoadObjectPaths_Event;
+	FCsManagerLoad_OnFinishLoadObjectPaths OnFinishLoadObjectPaths_Event;
 
 	/**
 	*  Delegate type
@@ -177,7 +206,7 @@ private:
 
 public:
 
-	FCsLoadHandle LoadObjectPaths(const TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, FOnFinishLoadObjectPaths Delegate);
+	FCsLoadHandle LoadObjectPaths(const FCsManagerLoad_LoadObjectPathsPayload& Payload);
 
 #pragma endregion Load
 };

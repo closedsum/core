@@ -2,8 +2,9 @@
 
 #include "Managers/Load/CsManagerLoad_Task_LoadObjects.h"
 #include "CsCore.h"
-#include "CsCVars.h"
 
+// CVar
+#include "CsCVars.h"
 // Library
 #include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Math.h"
@@ -15,6 +16,8 @@ UCsManagerLoad_Task_LoadObjects::UCsManagerLoad_Task_LoadObjects(const FObjectIn
 	Index(INDEX_NONE),
 	Handle(),
 	UpdateGroup(NCsUpdateGroup::GameInstance),
+	StreamableManager(nullptr),
+	StreamableHandles(),
 	OnStartLoadObjectPath_Event(),
 	OnFinishLoadObjectPath_Event(),
 	OnStartLoadObjectPaths_Event(),
@@ -23,7 +26,6 @@ UCsManagerLoad_Task_LoadObjects::UCsManagerLoad_Task_LoadObjects(const FObjectIn
 	OnLoadProgressUpdated_Event(),
 	Order(ECsLoadAsyncOrder::Bulk),
 	Paths(),
-	World(nullptr),
 	Count(0),
 	SizeLoaded(),
 	Info(),
@@ -43,21 +45,21 @@ void UCsManagerLoad_Task_LoadObjects::Init()
 void UCsManagerLoad_Task_LoadObjects::Reset()
 {
 	Handle.Reset();
-	Order = ECsLoadAsyncOrder::Bulk;
-	Paths.Reset(Paths.Max());
+	StreamableHandles.Reset(StreamableHandles.Max());
 	OnStartLoadObjectPath_Event.Unbind();
 	OnFinishLoadObjectPath_Event.Unbind();
 	OnStartLoadObjectPaths_Event.Unbind();
 	OnFinishLoadObjectPaths_Event.Unbind();
 	OnStartLoadProgress_Event.Unbind();
 	OnLoadProgressUpdated_Event.Unbind();
-	World = nullptr;
+	Order = ECsLoadAsyncOrder::Bulk;
+	Paths.Reset(Paths.Max());
 	Count = 0;
 	SizeLoaded.Reset();
 	Info.Reset();
 	StartTime = 0.0f;
 	SingleStartTime = 0.0f;
-	StreamableHandle = nullptr;
+	LoadedObjects.Reset(LoadedObjects.Max());
 }
 
 // Update
@@ -70,13 +72,13 @@ void UCsManagerLoad_Task_LoadObjects::Update(const FCsDeltaTime& DeltaTime)
 		return;
 
 	if (Order == ECsLoadAsyncOrder::Bulk)
-		OnLoadProgressUpdated_Event.ExecuteIfBound(StreamableHandle->GetProgress());
+		OnLoadProgressUpdated_Event.ExecuteIfBound(StreamableHandles[CS_FIRST]->GetProgress());
 
 	// If Still Loading, EXIT
 	if (Count < Paths.Num())
 		return;
 
-	const float CurrentTime = World ? World->GetTimeSeconds() : UCsLibrary_Common::GetCurrentDateTimeSeconds();
+	const float CurrentTime = UCsLibrary_Common::GetCurrentDateTimeSeconds();
 	const float LoadTime    = CurrentTime - StartTime;
 
 	// All AssetReferences are LOADED
@@ -118,7 +120,7 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath()
 	SizeLoaded.Kilobytes += Kilobytes;
 	SizeLoaded.Megabytes += Megabytes;
 
-	const float CurrentTime = World ? World->GetTimeSeconds() : UCsLibrary_Common::GetCurrentDateTimeSeconds();
+	const float CurrentTime = UCsLibrary_Common::GetCurrentDateTimeSeconds();
 	const float LoadingTime	= CurrentTime - StartTime;
 
 	if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
@@ -146,7 +148,7 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath()
 			UE_LOG(LogCs, Log, TEXT("UCsManager_Load::OnFinishedLoadingAssetReference: Requesting Load of %s."), *(NextPath.ToString()));
 		}
 		OnStartLoadObjectPath_Event.ExecuteIfBound(NextPath);
-		StreamableManager->RequestAsyncLoad(NextPath, OnFinishLoadObjectPathDelegate);
+		StreamableHandles.Add(StreamableManager->RequestAsyncLoad(NextPath, OnFinishLoadObjectPathDelegate));
 	}
 	StartTime = CurrentTime;
 }
@@ -178,9 +180,11 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPaths()
 // Load
 #pragma region
 
-FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, FOnFinishLoadObjectPaths Delegate)
+FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const FCsManagerLoad_LoadObjectPathsPayload& Payload)
 {
-	Order = AsyncOrder;
+	Order = Payload.AsyncOrder;
+
+	const TArray<FSoftObjectPath>& ObjectPaths = Payload.ObjectPaths;
 
 	const int32 Size = ObjectPaths.Num();
 	const int32 Max  = FMath::Max(Paths.Max(), Size);
@@ -188,8 +192,10 @@ FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const TArray<FSof
 	Paths.Reserve(Max);
 	Paths.Append(ObjectPaths);
 
+	LoadedObjects.Reserve(Max);
+
 	// Add Callback
-	OnFinishLoadObjectPaths_Event = Delegate;
+	OnFinishLoadObjectPaths_Event = Payload.OnFinishLoadObjectPaths;
 
 	// Start Loading - Load All References
 	OnStartLoadObjectPaths_Event.ExecuteIfBound(Size);
@@ -199,8 +205,8 @@ FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const TArray<FSof
 	{
 		UE_LOG(LogCs, Log, TEXT("UCsManagerLoad_Task_LoadObjects::LoadObjectPaths: Requesting Load of %d Assets."), Size);
 		// None | Bulk
-		if (AsyncOrder == ECsLoadAsyncOrder::None ||
-			AsyncOrder == ECsLoadAsyncOrder::Bulk)
+		if (Order == ECsLoadAsyncOrder::None ||
+			Order == ECsLoadAsyncOrder::Bulk)
 		{
 			for (const FSoftObjectPath& Path : ObjectPaths)
 			{
@@ -211,22 +217,22 @@ FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const TArray<FSof
 	// Start the Async Load
 
 		// FirstToLast
-	if (AsyncOrder == ECsLoadAsyncOrder::FirstToLast)
+	if (Order == ECsLoadAsyncOrder::FirstToLast)
 	{
 		if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
 		{
 			UE_LOG(LogCs, Log, TEXT("UCsManagerLoad_Task_LoadObjects::LoadObjectPaths: Requesting Load of %s."), *(ObjectPaths[CS_FIRST].ToString()));
 		}
 		OnStartLoadObjectPath_Event.ExecuteIfBound(ObjectPaths[CS_FIRST]);
-		StreamableManager->RequestAsyncLoad(ObjectPaths[CS_FIRST], OnFinishLoadObjectPathDelegate);
+		StreamableHandles.Add(StreamableManager->RequestAsyncLoad(ObjectPaths[CS_FIRST], OnFinishLoadObjectPathDelegate));
 	}
 		// Bulk
 	else
 	{
-		StreamableHandle = StreamableManager->RequestAsyncLoad(ObjectPaths, OnFinishLoadObjectPathsDelegate);
+		StreamableHandles.Add(StreamableManager->RequestAsyncLoad(ObjectPaths, OnFinishLoadObjectPathsDelegate));
 	}
 
-	StartTime = World ? World->GetTimeSeconds() : UCsLibrary_Common::GetCurrentDateTimeSeconds();
+	StartTime =  UCsLibrary_Common::GetCurrentDateTimeSeconds();
 
 	Handle.New();
 

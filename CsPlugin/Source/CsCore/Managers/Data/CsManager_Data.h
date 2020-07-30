@@ -87,9 +87,7 @@ protected:
 	TMap<FName, FCsDataEntry_Data*> DataEntryMap;
 	TMap<FSoftObjectPath, FCsDataEntry_Data*> DataEntryByPathMap;
 
-#if WITH_EDITOR
 	TMap<FName, FCsDataEntry_Data*> DataEntryMap_Added;
-#endif // #if WITH_EDITOR
 
 	TMap<FName, FCsDataEntry_Data*> DataEntryMap_Loaded;
 	TMap<FSoftObjectPath, FCsDataEntry_Data*> DataEntryByPathMap_Loaded;
@@ -106,9 +104,7 @@ protected:
 	TMap<FName, FCsDataEntry_DataTable*> DataTableEntryMap;
 	TMap<FSoftObjectPath, FCsDataEntry_DataTable*> DataTableEntryByPathMap;
 
-#if WITH_EDITOR
 	TMap<FName, FCsDataEntry_DataTable*> DataTableEntryMap_Added;
-#endif // #if WITH_EDITOR
 
 	TMap<FName, TMap<FName, FCsDataEntry_DataTable*>> DataTableEntryRowMap_Loaded;
 	TMap<FSoftObjectPath, TMap<FName, FCsDataEntry_DataTable*>> DataTableEntryRowByPathMap_Loaded;
@@ -129,8 +125,6 @@ protected:
 	TMap<FName, FCsPayload*> PayloadMap;
 	TMap<FName, FCsPayload*> PayloadMap_Loaded;
 
-#if WITH_EDITOR
-
 	TMap<FName, FCsPayload*> PayloadMap_Added;
 
 public:
@@ -142,8 +136,6 @@ public:
 	* @param Payload
 	*/
 	void AddPayload(const FName& PayloadName, const FCsPayload& Payload);
-
-#endif // #if WITH_EDITOR
 
 #pragma endregion Payload
 
@@ -202,6 +194,7 @@ public:
 
 	// Payload
 #pragma region
+public:
 
 	/**
 	* Load a payload by Name.
@@ -210,9 +203,10 @@ public:
 	*/
 	void LoadPayload(const FName& PayloadName);
 
-		/**
+	/**
 	*  Delegate type
 	*
+	* @param WasSuccessful
 	* @param PayloadName
 	*/
 	DECLARE_DELEGATE_TwoParams(FOnAsyncLoadPayloadComplete, bool /*WasSuccessful*/, const FName& /*PayloadName*/);
@@ -223,6 +217,7 @@ public:
 	*
 	*
 	* @param PayloadName
+	* @param Delegate
 	*/
 	void AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate);
 

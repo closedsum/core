@@ -242,7 +242,7 @@ void UCsManager_Data::CleanUp()
 			Settings->WeaponAudio.Get()->RemoveFromRoot();
 	}
 	*/
-#if WITH_EDITOR
+
 	// Datas
 	{
 		for (TPair<FName, FCsDataEntry_Data*>& Pair : DataEntryMap_Added)
@@ -273,7 +273,6 @@ void UCsManager_Data::CleanUp()
 		}
 		PayloadMap_Added.Reset();
 	}
-#endif // #if WITH_EDITOR
 }
 
 	// Root
@@ -335,8 +334,6 @@ void UCsManager_Data::UpdateDataTableRowMap(const FName& TableName, const FName&
 	// Payload
 #pragma region
 
-#if WITH_EDITOR
-
 void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Payload)
 {
 	checkf(PayloadName != NAME_None, TEXT("UCsManager_Data::AddPayload: PayloadName is None."));
@@ -387,8 +384,6 @@ void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Pay
 		}
 	}
 }
-
-#endif // #if WITH_EDITOR
 
 #pragma endregion Payload
 

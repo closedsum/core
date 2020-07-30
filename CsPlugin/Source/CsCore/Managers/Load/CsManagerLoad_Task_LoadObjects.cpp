@@ -178,7 +178,7 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPaths()
 // Load
 #pragma region
 
-FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(UWorld* InWorld, const TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, FOnFinishLoadObjectPaths Delegate)
+FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, FOnFinishLoadObjectPaths Delegate)
 {
 	Order = AsyncOrder;
 
@@ -190,8 +190,6 @@ FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(UWorld* InWorld, 
 
 	// Add Callback
 	OnFinishLoadObjectPaths_Event = Delegate;
-
-	World = InWorld;
 
 	// Start Loading - Load All References
 	OnStartLoadObjectPaths_Event.ExecuteIfBound(Size);

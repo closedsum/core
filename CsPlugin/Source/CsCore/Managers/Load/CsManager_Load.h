@@ -108,5 +108,5 @@ public:
 
 	FStreamableManager StreamableManager;
 
-	FCsLoadHandle LoadObjectPaths(UWorld* CurrentWorld, TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, UCsManagerLoad_Task_LoadObjects::FOnFinishLoadObjectPaths Delegate);
+	FCsLoadHandle LoadObjectPaths(TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, UCsManagerLoad_Task_LoadObjects::FOnFinishLoadObjectPaths Delegate);
 };

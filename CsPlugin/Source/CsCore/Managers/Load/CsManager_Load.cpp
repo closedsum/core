@@ -232,12 +232,12 @@ void UCsManager_Load::Update(const FCsDeltaTime& DeltaTime)
 	}
 }
 
-FCsLoadHandle UCsManager_Load::LoadObjectPaths(UWorld* CurrentWorld, TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, UCsManagerLoad_Task_LoadObjects::FOnFinishLoadObjectPaths Delegate)
+FCsLoadHandle UCsManager_Load::LoadObjectPaths(TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, UCsManagerLoad_Task_LoadObjects::FOnFinishLoadObjectPaths Delegate)
 {
 	FCsResource_ManagerLoad_Task_LoadObjects* Resource = Manager_Tasks.Allocate();
 	UCsManagerLoad_Task_LoadObjects* Task			   = Resource->Get();
 
-	FCsLoadHandle Handle = Task->LoadObjectPaths(CurrentWorld, ObjectPaths, AsyncOrder, Delegate);
+	FCsLoadHandle Handle = Task->LoadObjectPaths(ObjectPaths, AsyncOrder, Delegate);
 
 	return Handle;
 }

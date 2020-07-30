@@ -177,7 +177,7 @@ private:
 
 public:
 
-	FCsLoadHandle LoadObjectPaths(UWorld* InWorld, const TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, FOnFinishLoadObjectPaths Delegate);
+	FCsLoadHandle LoadObjectPaths(const TArray<FSoftObjectPath>& ObjectPaths, const ECsLoadAsyncOrder& AsyncOrder, FOnFinishLoadObjectPaths Delegate);
 
 #pragma endregion Load
 };

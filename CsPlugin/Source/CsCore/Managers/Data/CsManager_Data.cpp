@@ -692,8 +692,7 @@ void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPay
 
 	UCsManagerLoad_Task_LoadObjects::FOnFinishLoadObjectPaths OnFinishDelegate = UCsManagerLoad_Task_LoadObjects::FOnFinishLoadObjectPaths::CreateUObject(this, &UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload);
 
-	FCsLoadHandle Handle = UCsManager_Load::Get(MyRoot)->LoadObjectPaths(nullptr,
-																		 Paths,
+	FCsLoadHandle Handle = UCsManager_Load::Get(MyRoot)->LoadObjectPaths(Paths,
 																		 EMCsLoadAsyncOrder::Get().GetEnumAt(CsCVarManagerDataLoadAsyncOrder->GetInt()),
 																		 OnFinishDelegate);
 

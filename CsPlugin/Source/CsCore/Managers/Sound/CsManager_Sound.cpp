@@ -236,6 +236,15 @@ UCsManager_Sound::UCsManager_Sound(const FObjectInitializer& ObjectInitializer)
 void UCsManager_Sound::Initialize()
 {
 	SetupInternal();
+
+	bInitialized = true;
+}
+
+/*static*/ bool UCsManager_Sound::IsInitialized(UObject* InRoot)
+{
+	if (!HasShutdown(InRoot))
+		Get(InRoot)->bInitialized;
+	return false;
 }
 
 void UCsManager_Sound::CleanUp()
@@ -250,6 +259,8 @@ void UCsManager_Sound::CleanUp()
 		Pair.Value = nullptr;
 	}
 	DataMap.Reset();
+
+	bInitialized = false;
 }
 
 	// Root

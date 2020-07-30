@@ -42,9 +42,9 @@ void ACsLevelScriptActor::PreSave(const ITargetPlatform* TargetPlatform)
 	Super::PreSave(TargetPlatform);
 
 #if WITH_EDITOR
-	SetupOnSubLevelSavedDelegate();
-	PopulatePayloadLevels();
-	PopulatePayloadCombined();
+	//SetupOnSubLevelSavedDelegate();
+	//PopulatePayloadLevels();
+	//PopulatePayloadCombined();
 #endif // #if WITH_EDITOR
  }
 
@@ -53,7 +53,7 @@ void ACsLevelScriptActor::PostLoad()
 	Super::PostLoad();
 
 #if WITH_EDITOR
-	SetupOnSubLevelSavedDelegate();
+	//SetupOnSubLevelSavedDelegate();
 #endif // #if WITH_EDITOR
 }
 
@@ -93,6 +93,7 @@ void ACsLevelScriptActor::PostInitializeComponents()
 	// NOTE: If Editor world is needed, some work is needed to properly
 	//		 setup UCsManager_Data
 
+	/*
 	if (bTest &&
 		World &&
 		World->IsPlayInEditor())
@@ -104,6 +105,7 @@ void ACsLevelScriptActor::PostInitializeComponents()
 		Manager_Data->AddPayload(LevelName, Payload_Combined);
 		Manager_Data->LoadPayload(LevelName);
 	}
+	*/
 #endif // #if WITH_EDITOR
 }
 
@@ -184,9 +186,10 @@ void ACsLevelScriptActor::PopulatePayload(ULevel* Level)
 	const FName LevelName = LevelWorld->GetFName();
 
 	FCsPayload& Payload_Level = Payload_Levels.FindOrAdd(LevelName);
+
 	// NOTE: For now, just get Objects that implement IData and DataTable
 	//		 It's a bit more difficult to manage arbitrary collection of individual assets
-	//		 since ultimately in use a hard reference is needed to the asset. Using some
+	//		 since ultimately a hard reference is needed to the asset. Using some
 	//		 sort of "grouping" makes it clearer and easier to use.
 
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogLevelPayloadPopulate))
@@ -463,7 +466,7 @@ void ACsLevelScriptActor::PostEditChangeChainProperty(FPropertyChangedChainEvent
 						Entry.Reset();
 					Payload.BuildMaps();
 					Payload.Populate();
-					PopulatePayloadCombined();
+					//PopulatePayloadCombined();
 				}
 			}
 		}
@@ -472,4 +475,5 @@ void ACsLevelScriptActor::PostEditChangeChainProperty(FPropertyChangedChainEvent
 }
 
 #endif // #if WITH_EDITOR
+
 #pragma endregion Editor

@@ -236,6 +236,15 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 void UCsManager_FX_Actor::Initialize()
 {
 	SetupInternal();
+
+	bInitialized = true;
+}
+
+/*static*/ bool UCsManager_FX_Actor::HasInitialized(UObject* InRoot)
+{
+	if (!HasShutdown(InRoot))
+		return Get(InRoot)->bInitialized;
+	return false;
 }
 
 void UCsManager_FX_Actor::CleanUp()
@@ -250,6 +259,8 @@ void UCsManager_FX_Actor::CleanUp()
 		Pair.Value = nullptr;
 	}
 	DataMap.Reset();
+
+	bInitialized = false;
 }
 
 	// Root

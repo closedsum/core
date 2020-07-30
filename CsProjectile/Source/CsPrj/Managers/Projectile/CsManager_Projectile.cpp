@@ -248,6 +248,15 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 void UCsManager_Projectile::Initialize()
 {
 	SetupInternal();
+
+	bInitialized = true;
+}
+
+/*static*/ bool UCsManager_Projectile::HasInitialized(UObject* InRoot)
+{
+	if (!HasShutdown(InRoot))
+		return Get(InRoot)->bInitialized;
+	return false;
 }
 
 void UCsManager_Projectile::CleanUp()
@@ -280,6 +289,8 @@ void UCsManager_Projectile::CleanUp()
 	DataMap.Reset();
 	ClassMap.Reset();
 	DataTables.Reset();
+
+	bInitialized = false;
 }
 
 	// Root

@@ -7,6 +7,9 @@
 #include "CsGameInstance.generated.h"
 
 class UCsManager_Singleton;
+struct FCsRoutine;
+class ULevel;
+class ACsLevelScriptActor;
 
 UCLASS(config = Game)
 class CSCORE_API UCsGameInstance : public UGameInstance, public ICsGetManagerSingleton
@@ -73,5 +76,37 @@ public:
 		return Manager_Singleton;
 	}
 
-#pragma endregion ICsGetManagerSingleton	
+#pragma endregion ICsGetManagerSingleton
+
+// TODO: Wrap into helper struct / library
+
+// Persistent Level
+#pragma region
+protected:
+
+	bool bFinishedLoadingPersistentlLevel;
+
+public:
+	
+	FORCEINLINE bool IsFinishedLoadingPersistentLevel() const
+	{
+		return bFinishedLoadingPersistentlLevel;
+	}
+
+	void Check_FinishedLoadingPersistentLevel();
+
+protected:
+
+	void Check_FinishedLoadingPersistentLevel(const FString& MapPackageName);
+	char Check_FinishedLoadingPersistentLevel_Internal(FCsRoutine* R);
+
+public:
+
+	ULevel* GetPersistentLevel();
+
+	FString GetPersistentLevelName();
+
+	ACsLevelScriptActor* GetPersistentLevelScriptActor();
+
+#pragma endregion Persistent Level
 };

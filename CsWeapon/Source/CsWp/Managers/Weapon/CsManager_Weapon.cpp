@@ -256,6 +256,15 @@ UCsManager_Weapon::UCsManager_Weapon(const FObjectInitializer& ObjectInitializer
 void UCsManager_Weapon::Initialize()
 {
 	SetupInternal();
+
+	bInitialized = true;
+}
+
+/*static*/ bool UCsManager_Weapon::HasInitialized(UObject* InRoot)
+{
+	if (!HasShutdown(InRoot))
+		return Get(InRoot)->bInitialized;
+	return false;
 }
 
 void UCsManager_Weapon::CleanUp()
@@ -289,6 +298,8 @@ void UCsManager_Weapon::CleanUp()
 	ClassMap.Reset();
 	DataTables.Reset();
 	WeaponMap.Reset();
+
+	bInitialized = false;
 }
 
 	// Root
@@ -986,4 +997,5 @@ FCsWeaponPtr* UCsManager_Weapon::GetWeaponPtr(const FECsWeapon& Type)
 
 	return GetWeaponPtr(Type.GetFName());
 }
+
 #pragma endregion Data

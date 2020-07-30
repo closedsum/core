@@ -229,10 +229,20 @@ void UCsManager_Damage::Initialize()
 	static const int32 PoolSize = 64;
 
 	Manager_Event.CreatePool(PoolSize);
+
+	bInitialized = true;
+}
+
+/*static*/ bool UCsManager_Damage::HasInitialized(UObject* InRoot)
+{
+	if (!HasShutdown(InRoot))
+		return Get(InRoot)->bInitialized;
+	return false;
 }
 
 void UCsManager_Damage::CleanUp()
 {
+	bInitialized = false;
 }
 
 	// Root

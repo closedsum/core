@@ -257,6 +257,15 @@ void UCsStatusEffectCoordinator::Initialize()
 			Manager.Add(IEvent);
 		} 
 	}
+
+	bInitialized = true;
+}
+
+/*static*/ bool UCsStatusEffectCoordinator::HasInitialized(UObject* InRoot)
+{
+	if (!HasShutdown(InRoot))
+		return Get(InRoot)->bInitialized;
+	return false;
 }
 
 void UCsStatusEffectCoordinator::CleanUp()
@@ -268,6 +277,8 @@ void UCsStatusEffectCoordinator::CleanUp()
 		Manager.Shutdown();
 	}
 	Manager_Events.Reset();
+
+	bInitialized = false;
 }
 
 	// Root

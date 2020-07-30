@@ -12,7 +12,10 @@
 #include "Managers/Time/CsManager_Time.h"
 #include "Async/AsyncWork.h"
 // Types
+#include "Managers/Time/CsTypes_Update.h"
 #include "Managers/Input/CsTypes_Input.h"
+// Level
+#include "Level/CsLevelScriptActor.h"
 
 #if WITH_EDITOR
 #include "Editor.h"
@@ -26,6 +29,12 @@ namespace NCsGameInstanceCached
 	namespace Str
 	{
 		const FString Init = TEXT("UCsGameInstance::Init");
+		const FString Check_FinishedLoadingPersistentLevel_Internal = TEXT("UCsGameInstance::Check_FinishedLoadingPersistentLevel_Internal");
+	}
+
+	namespace Name
+	{
+		const FName Check_FinishedLoadingPersistentLevel_Internal = FName("UCsGameInstance::Check_FinishedLoadingPersistentLevel_Internal");
 	}
 }
 
@@ -38,9 +47,11 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 
 void UCsGameInstance::Init()
 {
+	Super::Init();
+
 	using namespace NCsGameInstanceCached;
 
-	Super::Init();
+	const FString& Context = Str::Init;
 
 	// Register delegate for ticker callback
 	TickDelegate	   = FTickerDelegate::CreateUObject(this, &UCsGameInstance::Tick);
@@ -49,9 +60,9 @@ void UCsGameInstance::Init()
 	// Populate Enum Maps
 	
 		// Input
-	NCsInputAction::PopulateEnumMapFromSettings(Str::Init, this);
-	NCsInputActionMap::PopulateEnumMapFromSettings(Str::Init, this);
-	NCsGameEvent::PopulateEnumMapFromSettings(Str::Init, this);
+	NCsInputAction::PopulateEnumMapFromSettings(Context, this);
+	NCsInputActionMap::PopulateEnumMapFromSettings(Context, this);
+	NCsGameEvent::PopulateEnumMapFromSettings(Context, this);
 	
 	ConstructManagerSingleton();
 
@@ -137,3 +148,123 @@ void UCsGameInstance::ConstructManagerSingleton()
 }
 
 #pragma endregion Managers
+
+// Persistent Level
+#pragma region
+
+void UCsGameInstance::Check_FinishedLoadingPersistentLevel()
+{
+	using namespace NCsGameInstanceCached;
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this);
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(UpdateGroup);
+
+	Payload->CoroutineImpl.BindUObject(this, &UCsGameInstance::Check_FinishedLoadingPersistentLevel_Internal);
+	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(UpdateGroup);
+	Payload->Owner.SetOwner(this);
+	Payload->SetName(Str::Check_FinishedLoadingPersistentLevel_Internal);
+	Payload->SetFName(Name::Check_FinishedLoadingPersistentLevel_Internal);
+
+	bFinishedLoadingPersistentlLevel = false;
+
+	Scheduler->Start(Payload);
+}
+
+void UCsGameInstance::Check_FinishedLoadingPersistentLevel(const FString& MapPackageName)
+{
+	using namespace NCsGameInstanceCached;
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this);
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(UpdateGroup);
+
+	Payload->CoroutineImpl.BindUObject(this, &UCsGameInstance::Check_FinishedLoadingPersistentLevel_Internal);
+	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(UpdateGroup);
+	Payload->Owner.SetOwner(this);
+	Payload->SetName(Str::Check_FinishedLoadingPersistentLevel_Internal);
+	Payload->SetFName(Name::Check_FinishedLoadingPersistentLevel_Internal);
+
+	bFinishedLoadingPersistentlLevel = false;
+
+	Payload->SetValue_Flag(CS_FIRST, true);
+	Payload->SetValue_String(CS_FIRST, MapPackageName);
+
+	Scheduler->Start(Payload);
+}
+
+char UCsGameInstance::Check_FinishedLoadingPersistentLevel_Internal(FCsRoutine* R)
+{
+	const bool& CheckMapName	  = R->GetValue_Flag(CS_FIRST);
+	const FString& MapPackageName = R->GetValue_String(CS_FIRST);
+
+	if (GetWorld())
+	{
+		const TArray<ULevel*>& Levels = GetWorld()->GetLevels();
+
+		for (ULevel* Level : Levels)
+		{
+			if (Level->IsPersistentLevel() &&
+				Level->bIsVisible)
+			{
+				if (CheckMapName)
+				{
+					const FString PersistentLevelPackageName = UWorld::StripPIEPrefixFromPackageName(GetWorld()->GetOutermost()->GetName(), GetWorld()->StreamingLevelsPrefix);
+
+					if (PersistentLevelPackageName == MapPackageName)
+					{
+						bFinishedLoadingPersistentlLevel = true;
+						break;
+					}
+				}
+				else
+				{
+					bFinishedLoadingPersistentlLevel = true;
+					break;
+				}
+			}
+		}
+	}
+
+	CS_COROUTINE_BEGIN(R);
+
+	// Wait until Persistent level is loaded
+	CS_COROUTINE_WAIT_UNTIL(R, bFinishedLoadingPersistentlLevel);
+
+	CS_COROUTINE_END(R);
+}
+
+ULevel* UCsGameInstance::GetPersistentLevel()
+{
+	if (GetWorld())
+	{
+		const TArray<ULevel*>& Levels = GetWorld()->GetLevels();
+
+		for (ULevel* Level : Levels)
+		{
+			if (Level->IsPersistentLevel())
+			{
+				return Level;
+			}
+		}
+	}
+	return nullptr;
+}
+
+FString UCsGameInstance::GetPersistentLevelName()
+{
+	if (GetWorld())
+	{
+		return UWorld::StripPIEPrefixFromPackageName(GetWorld()->GetOutermost()->GetName(), GetWorld()->StreamingLevelsPrefix);
+	}
+	return FString();
+}
+
+ACsLevelScriptActor* UCsGameInstance::GetPersistentLevelScriptActor()
+{
+	return Cast<ACsLevelScriptActor>(GetPersistentLevel());
+}
+
+#pragma endregion Persistent Level

@@ -64,7 +64,16 @@ public:
 
 protected:
 
+	bool bInitialized;
+
 	virtual void Initialize();
+
+public:
+
+	static bool HasInitialized(UObject* InRoot);
+
+protected:
+
 	virtual void CleanUp();
 
 private:

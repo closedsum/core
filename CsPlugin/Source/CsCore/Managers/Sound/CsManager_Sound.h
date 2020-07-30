@@ -92,7 +92,7 @@ protected:
 
 public:
 
-	static bool IsInitialized(UObject* InRoot);
+	static bool HasInitialized(UObject* InRoot);
 
 protected:
 

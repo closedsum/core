@@ -240,7 +240,7 @@ void UCsManager_Sound::Initialize()
 	bInitialized = true;
 }
 
-/*static*/ bool UCsManager_Sound::IsInitialized(UObject* InRoot)
+/*static*/ bool UCsManager_Sound::HasInitialized(UObject* InRoot)
 {
 	if (!HasShutdown(InRoot))
 		Get(InRoot)->bInitialized;

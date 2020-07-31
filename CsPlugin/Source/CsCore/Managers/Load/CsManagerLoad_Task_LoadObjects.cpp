@@ -87,7 +87,7 @@ void UCsManagerLoad_Task_LoadObjects::Update(const FCsDeltaTime& DeltaTime)
 		UE_LOG(LogCs, Log, TEXT("UCsManagerLoad_Task_LoadObjects::OnUpdate: Finished Loading %d Assets. %s in %f seconds."), Count, *(SizeLoaded.ToString()), LoadTime);
 	}
 
-	OnFinishLoadObjectPaths_Event.ExecuteIfBound(Handle, Paths, LoadedObjects, LoadTime);
+	OnFinishLoadObjectPaths_Event.ExecuteIfBound(Handle, StreamableHandles, Paths, LoadedObjects, LoadTime);
 
 	Reset();
 }

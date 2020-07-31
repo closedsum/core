@@ -4,6 +4,8 @@
 #include "UObject/Object.h"
 // Types
 #include "Types/CsTypes_Load.h"
+#include "Managers/Load/CsTypes_Streaming.h"
+
 #include "CsManager_Data.generated.h"
 
 // Structs
@@ -106,17 +108,26 @@ protected:
 #pragma region
 protected:
 
+	/** <EntryName, Entry> */
 	TMap<FName, FCsDataEntry_DataTable*> DataTableEntryMap;
+	/** <Path, Entry> */
 	TMap<FSoftObjectPath, FCsDataEntry_DataTable*> DataTableEntryByPathMap;
 
+	/** <EntryName, Entry> */
 	TMap<FName, FCsDataEntry_DataTable*> DataTableEntryMap_Added;
 
+	/** <EntryName, <RowName, Entry>> */
 	TMap<FName, TMap<FName, FCsDataEntry_DataTable*>> DataTableEntryRowMap_Loaded;
+	/** <Path, <RowName, Entry>> */
 	TMap<FSoftObjectPath, TMap<FName, FCsDataEntry_DataTable*>> DataTableEntryRowByPathMap_Loaded;
 
+	/** <EntryName, DataTable> */
 	TMap<FName, UDataTable*> DataTableMap_Loaded;
+	/** <Path, DataTable> */
 	TMap<FSoftObjectPath, UDataTable*> DataTableByPathMap_Loaded;
+	/** <EntryName, <RowName, RowPtr>> */
 	TMap<FName, TMap<FName, uint8*>> DataTableRowMap_Loaded;
+	/** <Path, <RowName, RowPtr>> */
 	TMap<FSoftObjectPath, TMap<FName, uint8*>> DataTableRowByPathMap_Loaded;
 
 	void UpdateDataTableRowMap(const FName& TableName, const FName& RowName, uint8* RowPtr);
@@ -178,9 +189,10 @@ public:
 	UDataTable* LoadDataTable(const FSoftObjectPath& Path);
 
 	/**
-	* Load the Row of a DataTable by the DataTable Name and Row Name.
+	* Load the Row of a DataTable by the DataTable's Entry Name
+	* (Row Name in the master DataTable list) and Row Name.
 	*
-	* @param TableName
+	* @param TableName	Row Name in the master DataTable list.
 	* @param RowName
 	* return			Pointer to the row.
 	*/
@@ -189,7 +201,7 @@ public:
 	/**
 	* Check whether the Row of a DataTable has been loaded.
 	*
-	* @param TableName
+	* @param TableName	Row Name in the master DataTable list.
 	* @param RowName
 	* return			Whether the row is loaded or not.
 	*/
@@ -230,7 +242,7 @@ private:
 
 	TMap<FCsLoadHandle, FName> InProgressAsyncLoadPayloads;
 
-	void OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHandle& Handle, const TArray<FSoftObjectPath>& LoadedPaths, const TArray<UObject*>& LoadedObjects, const float& LoadTime);
+	void OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHandle& Handle, const TArray<TSharedPtr<FStreamableHandle>>& Handles, const TArray<FSoftObjectPath>& LoadedPaths, const TArray<UObject*>& LoadedObjects, const float& LoadTime);
 
 #pragma endregion Payload
 

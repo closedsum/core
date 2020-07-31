@@ -13,14 +13,16 @@
 
 /**
 * OnFinishLoadObjectPaths 
-*  Delegate type
+*  Delegate type for when loading has finished for any paths provided when executing 
+*  LoadObjectPaths.
 *
-* @param Handle
-* @param LoadedPaths
-* @param LoadedObjects
-* @param LoadTime
+* @param Handle			Handle to Task from Manager_Load. This is only valid in the executing scope.
+* @param Handles		Streamable Handles that hold onto the reference of a loaded asset.
+* @param LoadedPaths	The paths that were loaded.
+* @param LoadedObjects	The objects that were loaded.
+* @param LoadTime		How long it took to load LoadedPaths.
 */
-DECLARE_DELEGATE_FourParams(FCsManagerLoad_OnFinishLoadObjectPaths, const FCsLoadHandle& /*Handle*/, const TArray<FSoftObjectPath>& /*LoadedPaths*/, const TArray<UObject*>& /*LoadedObjects*/, const float& /*LoadTime*/);
+DECLARE_DELEGATE_FiveParams(FCsManagerLoad_OnFinishLoadObjectPaths, const FCsLoadHandle& /*Handle*/, const TArray<TSharedPtr<FStreamableHandle>>& /*Handles*/, const TArray<FSoftObjectPath>& /*LoadedPaths*/, const TArray<UObject*>& /*LoadedObjects*/, const float& /*LoadTime*/);
 
 #pragma endregion Delegates
 

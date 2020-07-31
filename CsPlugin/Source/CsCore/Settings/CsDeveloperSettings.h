@@ -6,6 +6,8 @@
 #include "Types/CsTypes_Load.h"
 #include "Types/Enum/CsUserDefinedEnum.h"
 #include "Settings/CsTypes_Settings.h"
+// Load
+#include "Managers/Load/CsSettings_Manager_Load.h"
 // Input
 #include "Managers/Input/CsTypes_Input.h"
 #include "Managers/Input/CsSettings_Input.h"
@@ -47,6 +49,9 @@ public:
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Load", meta = (MustImplement = "CsDataRootSet"))
 	TSoftClassPtr<UObject> DataRootSet;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Load", meta = (DisplayName = "Manager Load"))
+	FCsSettings_Manager_Load Manager_Load;
 
 #pragma endregion Load
 

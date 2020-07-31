@@ -3,6 +3,8 @@
 #include "Managers/Load/CsManager_Load.h"
 #include "CsCore.h"
 
+// Settings
+#include "Settings/CsDeveloperSettings.h"
 // Library
 #include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Math.h"
@@ -163,9 +165,13 @@ UCsManager_Load::UCsManager_Load(const FObjectInitializer& ObjectInitializer)
 
 void UCsManager_Load::Initialize()
 {
-	// TODO: Add a config variable to change the pool size
-	static const int32 DEFAULT_POOL_SIZE = 64;
-	Manager_Tasks.CreatePool(DEFAULT_POOL_SIZE);
+	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+	checkf(Settings, TEXT("UCsManager_Load::Initialize: Failed to get Settings of type: UCsDeveloperSettings."));
+
+	checkf(Settings->Manager_Load.PoolSize >= 4, TEXT("UCsManager_Load::Initialize: UCsDeveloperSettings.Manager_Load.PoolSize is NOT >= 4."));
+
+	Manager_Tasks.CreatePool(Settings->Manager_Load.PoolSize);
 	// Init Tasks
 	{
 		const TArray<FCsResource_ManagerLoad_Task_LoadObjects*>& Pool = Manager_Tasks.GetPool();

@@ -1,14 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+#include "Types/Enum/CsEnum_uint8.h"
+#include "Types/Enum/CsEnumStructMap.h"
 #include "Types/CsTypes_View.h"
-#include "Types/CsTypes_Load.h"
-#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
-#include "Runtime/Engine/Classes/Particles/ParticleSystem.h"
 #include "Types/CsTypes_AttachDetach.h"
 
 #include "CsTypes_FX.generated.h"
 #pragma once
-
-#define CS_MAX_EMITTER_COUNT 256
 
 // FX
 #pragma region
@@ -30,6 +27,8 @@ struct CSCORE_API EMCsFX final : public TCsEnumStructMap<FECsFX, uint8>
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsFX, FECsFX, uint8)
 };
+
+class UObject;
 
 namespace NCsFX
 {
@@ -63,10 +62,10 @@ struct CSCORE_API FCsParticleSystem
 
 public:
 	FCsParticleSystem() :
+		Particle(nullptr),
 		Particle_LoadFlags(0),
 		Particle_Internal(nullptr)
 	{
-		CS_SET_BLUEPRINT_BITFLAG(Particle_LoadFlags, ECsLoadFlags::Game);
 	}
 
 	FORCEINLINE UParticleSystem* Get() const
@@ -156,11 +155,12 @@ struct CSCORE_API FCsFxElement_DEPRECATED
 private:
 
 	UPROPERTY(Transient)
-	class UParticleSystem* Particle_Internal;
+	UParticleSystem* Particle_Internal;
 
 public:
 
 	FCsFxElement_DEPRECATED() :
+		Particle(nullptr),
 		Particle_LoadFlags(0),
 		LifeTime(0.0f),
 		DeathTime(0.0f),
@@ -170,8 +170,6 @@ public:
 		Rotation(0.0f),
 		Particle_Internal(nullptr)
 	{
-		CS_SET_BLUEPRINT_BITFLAG(Particle_LoadFlags, ECsLoadFlags::Game);
-
 		DeathTime = 1.0f;
 		Scale = 1.0f;
 		Priority = ECsFXPriority::Medium;
@@ -209,10 +207,8 @@ public:
 
 	FORCEINLINE void Reset()
 	{
-		//Particle = nullptr;
+		Particle = nullptr;
 		Particle_LoadFlags = 0;
-
-		CS_SET_BLUEPRINT_BITFLAG(Particle_LoadFlags, ECsLoadFlags::Game);
 
 		LifeTime = 0.0f;
 		DeathTime = 1.0f;
@@ -245,8 +241,6 @@ struct CSCORE_API FCsFpvFxElement
 
 	FCsFpvFxElement()
 	{
-		CS_SET_BLUEPRINT_BITFLAG(Effect1P.Particle_LoadFlags, ECsLoadFlags::Game1P);
-		CS_SET_BLUEPRINT_BITFLAG(Effect3P.Particle_LoadFlags, ECsLoadFlags::Game3P);
 	}
 
 	FORCEINLINE FCsFxElement_DEPRECATED* Get(const ECsViewType& ViewType)

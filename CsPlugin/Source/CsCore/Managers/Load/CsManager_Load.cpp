@@ -86,6 +86,15 @@ UCsManager_Load::UCsManager_Load(const FObjectInitializer& ObjectInitializer)
 #endif // #if WITH_EDITOR
 }
 
+/*static*/ bool UCsManager_Load::HasShutdown(UObject* InRoot /*=nullptr*/)
+{
+#if WITH_EDITOR
+	return Get_GetManagerLoad(InRoot)->GetManager_Load() == nullptr;
+#else
+	return s_bShutdown;
+#endif // #if WITH_EDITOR
+}
+
 #if WITH_EDITOR
 
 /*static*/ ICsGetManagerLoad* UCsManager_Load::Get_GetManagerLoad(UObject* InRoot)
@@ -175,6 +184,13 @@ void UCsManager_Load::Initialize()
 			Task->SetStreamableManager(&StreamableManager);
 		}
 	}
+}
+
+/*static*/ bool UCsManager_Load::HasInitialized(UObject* InRoot)
+{
+	if (!HasShutdown(InRoot))
+		return Get(InRoot)->bInitialized;
+	return false;
 }
 
 void UCsManager_Load::CleanUp()

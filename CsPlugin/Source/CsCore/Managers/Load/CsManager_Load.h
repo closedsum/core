@@ -38,7 +38,9 @@ public:
 
 	static UCsManager_Load* Get(UObject* InRoot = nullptr);
 	static void Init(UObject* InRoot);
+
 	static void Shutdown(UObject* InRoot = nullptr);
+	static bool HasShutdown(UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
 protected:
@@ -56,7 +58,16 @@ public:
 
 protected:
 
+	bool bInitialized;
+
 	void Initialize();
+
+public:
+
+	static bool HasInitialized(UObject* InRoot);
+
+protected:
+
 	void CleanUp();
 
 private:

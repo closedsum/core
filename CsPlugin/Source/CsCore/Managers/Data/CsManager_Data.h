@@ -6,6 +6,11 @@
 #include "Types/CsTypes_Load.h"
 #include "CsManager_Data.generated.h"
 
+// Structs
+#pragma region
+
+#pragma endregion Structs
+
 class ICsGetManagerData;
 class UDataTable;
 class ICsData;

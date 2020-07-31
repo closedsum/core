@@ -2,6 +2,8 @@
 
 #pragma once
 #include "UObject/Object.h"
+// Managers
+#include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 // Types
 #include "Types/CsTypes_Load.h"
 #include "Managers/Load/CsTypes_Streaming.h"
@@ -10,6 +12,16 @@
 
 // Structs
 #pragma region
+
+	// FCsPayload
+
+struct CSCORE_API FCsResource_Payload : public TCsResourceContainer<FCsPayload>
+{
+};
+
+struct CSCORE_API FCsManager_Payload: public TCsManager_ResourceValueType_Fixed<FCsPayload, FCsResource_Payload, 0>
+{
+};
 
 #pragma endregion Structs
 
@@ -116,6 +128,8 @@ protected:
 	/** <EntryName, Entry> */
 	TMap<FName, FCsDataEntry_DataTable*> DataTableEntryMap_Added;
 
+	// Loaded
+
 	/** <EntryName, <RowName, Entry>> */
 	TMap<FName, TMap<FName, FCsDataEntry_DataTable*>> DataTableEntryRowMap_Loaded;
 	/** <Path, <RowName, Entry>> */
@@ -130,6 +144,11 @@ protected:
 	/** <Path, <RowName, RowPtr>> */
 	TMap<FSoftObjectPath, TMap<FName, uint8*>> DataTableRowByPathMap_Loaded;
 
+	/** <EntryName, Handles> */
+	TMap<FName, TSet<FCsStreamableHandle>> DataTableHandleMap_Loaded;
+	/** <EntryName, <RowName, Handles>> */
+	TMap<FName, TMap<FName, TSet<FCsStreamableHandle>>> DataTableRowHandleMap_Loaded;
+
 	void UpdateDataTableRowMap(const FName& TableName, const FName& RowName, uint8* RowPtr);
 
 #pragma endregion DataTable
@@ -138,15 +157,27 @@ protected:
 #pragma region
 protected:
 
+	FCsManager_Payload Manager_Payload;
+
+	/** <PayloadName, Payload> */
 	TMap<FName, FCsPayload*> PayloadMap;
+
+	/** <PayloadName, Payload> */
+	TMap<FName, FCsPayload*> PayloadMap_Added;
+
+	/** <PayloadName, Payload> */
 	TMap<FName, FCsPayload*> PayloadMap_Loaded;
 
-	TMap<FName, FCsPayload*> PayloadMap_Added;
+	/** <PayloadName, Handles> */
+	TMap<FName, TArray<FCsStreamableHandle>> PayloadHandleMap_Loaded;
 
 public:
 
 	/**
-	*
+	* Add a Payload. This is for any payload that have not been 
+	* recorded or cached before. The primarily use is for any payload
+	* that is dynamically created or coming from a source that can't be 
+	* cached.
 	*
 	* @param PayloadName
 	* @param Payload

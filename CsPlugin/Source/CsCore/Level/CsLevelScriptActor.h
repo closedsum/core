@@ -9,7 +9,7 @@
 class ITargetPlatform;
 
 UCLASS()
-class ACsLevelScriptActor : public ALevelScriptActor
+class CSCORE_API ACsLevelScriptActor : public ALevelScriptActor
 {
 	GENERATED_UCLASS_BODY()
 

@@ -14,9 +14,13 @@ struct CSWP_API FCsWpDataRootSet
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FCsWeaponSettings_DataTable_Weapons Weapons;
+	TSoftObjectPtr<UDataTable> WeaponClasses;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FCsWeaponSettings_DataTable_Weapons> Weapons;
 
 	FCsWpDataRootSet() :
+		WeaponClasses(),
 		Weapons()
 	{
 	}

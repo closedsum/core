@@ -23,5 +23,5 @@ public:
 	*
 	* return
 	*/
-	virtual FCsWpDataRootSet& GetCsWpDataRootSet() const = 0;
+	virtual const FCsWpDataRootSet& GetCsWpDataRootSet() const = 0;
 };

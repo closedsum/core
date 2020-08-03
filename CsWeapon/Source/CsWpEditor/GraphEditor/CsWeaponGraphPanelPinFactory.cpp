@@ -7,6 +7,7 @@
 
 // EnumStructs
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeapon.h"
+#include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponClass.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponAnim.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponAnimBlueprint.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponBlendSpace.h"
@@ -27,6 +28,8 @@ TSharedPtr<SGraphPin> FCsWeaponPanelGraphPinFactory::CreatePin(UEdGraphPin* InPi
 
 	// FECsWeapon
 	if (DoesPinUseScriptStruct<FECsWeapon>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeapon, InPin); }
+	// FECsWeaponClass
+	if (DoesPinUseScriptStruct<FECsWeaponClass>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponClass, InPin); }
 	// FECsWeaponAnim
 	if (DoesPinUseScriptStruct<FECsWeaponAnim>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponAnim, InPin); }
 	// FECsWeaponAnimBlueprint

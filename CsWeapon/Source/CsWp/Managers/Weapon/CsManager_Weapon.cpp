@@ -13,6 +13,7 @@
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Data
+#include "Managers/Data/CsManager_Data.h"
 #include "Data/CsData_WeaponInterfaceMap.h"
 #include "Data/CsData_WeaponEmuSlice.h"
 #include "Projectile/Data/CsData_ProjectileWeaponEmuSlice.h"
@@ -395,8 +396,6 @@ void UCsManager_Weapon::InitInternalFromSettings()
 #endif // #if !UE_BUILD_SHIPPING
 
 			// TODO: Get DataTable from Manager_Data
-
-			// TODO: Add check for ModuleSettings->ManagerWeapon.Payload
 
 			UClass* Class = PoolParams.Class.LoadSynchronous();
 

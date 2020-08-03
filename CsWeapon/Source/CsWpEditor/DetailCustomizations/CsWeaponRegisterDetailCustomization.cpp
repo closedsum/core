@@ -8,6 +8,7 @@
 // DetailCustomizations
 	// EnumStruct
 #include "DetailCustomizations/EnumStruct/ECsWeaponCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsWeaponClassCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsWeaponAnimCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsWeaponAnimBlueprintCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsWeaponBlendSpaceCustomization.h"
@@ -25,10 +26,12 @@ void FCsWeaponRegisterDetailCustomization::Register()
 
 	// EnumStruct
 	{
-		// FECsWeaponAnim
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponAnim", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponAnimCustomization::MakeInstance));
 		// FECsWeapon
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeapon", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponCustomization::MakeInstance));
+		// FECsWeaponClass
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponClass", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponClassCustomization::MakeInstance));
+		// FECsWeaponAnim
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponAnim", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponAnimCustomization::MakeInstance));
 		// FECsWeaponAnimBlueprint
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponAnimBlueprint", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponAnimBlueprintCustomization::MakeInstance));
 		// FECsWeaponBlendSpace

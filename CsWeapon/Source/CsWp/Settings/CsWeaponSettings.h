@@ -21,14 +21,19 @@ public:
 #pragma region
 public:
 
+	template<typename EnumType>
+	const TArray<FCsSettings_Enum>& GetSettingsEnum() const;
+
+	template<typename EnumType>
+	FString GetSettingsEnumPath() const;
+
+	// Weapon
+
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (DisplayName = "ECsWeapon - Populate Enum Map Method"))
 	ECsPopulateEnumMapMethod ECsWeapon_PopulateEnumMapMethod;
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (DisplayName = "ECsWeapon"))
 	TArray<FCsSettings_Enum> ECsWeapon;
-
-	template<typename EnumType>
-	const TArray<FCsSettings_Enum>& GetSettingsEnum() const;
 
 	template<>
 	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsWeapon>() const
@@ -36,13 +41,30 @@ public:
 		return ECsWeapon;
 	}
 
-	template<typename EnumType>
-	FString GetSettingsEnumPath() const;
-
 	template<>
 	FString GetSettingsEnumPath<FECsWeapon>() const
 	{
 		return TEXT("UCsWeaponSettings.ECsWeapon");
+	}
+
+	// WeaponClass
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (DisplayName = "ECsWeaponClass - Populate Enum Map Method"))
+	ECsPopulateEnumMapMethod ECsWeaponClass_PopulateEnumMapMethod;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (DisplayName = "ECsWeaponClass"))
+	TArray<FCsSettings_Enum> ECsWeaponClass;
+
+	template<>
+	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsWeaponClass>() const
+	{
+		return ECsWeaponClass;
+	}
+
+	template<>
+	FString GetSettingsEnumPath<FECsWeaponClass>() const
+	{
+		return TEXT("UCsWeaponSettings.ECsWeaponClass");
 	}
 
 #pragma endregion Enum

@@ -23,5 +23,5 @@ public:
 	*
 	* return
 	*/
-	virtual FCsPrjDataRootSet& GetCsPrjDataRootSet() const = 0;
+	virtual const FCsPrjDataRootSet& GetCsPrjDataRootSet() const = 0;
 };

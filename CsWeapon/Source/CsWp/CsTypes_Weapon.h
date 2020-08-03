@@ -36,6 +36,35 @@ namespace NCsWeapon
 
 #pragma endregion Weapon
 
+// WeaponClass
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSWP_API FECsWeaponClass : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsWeaponClass)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponClass)
+
+struct CSWP_API EMCsWeaponClass : public TCsEnumStructMap<FECsWeaponClass, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsWeaponClass, FECsWeaponClass, uint8)
+};
+
+class UObject;
+
+namespace NCsWeaponClass
+{
+	typedef FECsWeaponClass Type;
+
+	CSWP_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
+}
+
+#pragma endregion WeaponClass
+
 // WeaponState
 #pragma region
 

@@ -15,8 +15,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
 	int32 PayloadPoolSize;
 	 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	int32 DataEntryDataPoolSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	int32 DataEntryDataTablePoolSize;
+
 	FCsSettings_Manager_Data() :
-		PayloadPoolSize(64)
+		PayloadPoolSize(64),
+		DataEntryDataPoolSize(256),
+		DataEntryDataTablePoolSize(256)
 	{
 	}
 };

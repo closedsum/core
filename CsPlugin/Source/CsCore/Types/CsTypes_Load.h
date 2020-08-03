@@ -194,6 +194,70 @@ namespace NCsUnloadCodes
 
 #pragma endregion UnloadCode
 
+// ObjectPathDependencyGroup
+#pragma region
+
+/**
+*/
+UENUM(BlueprintType)
+enum class ECsObjectPathDependencyGroup : uint8
+{
+	// Texture | Render Target | Font
+	Texture								UMETA(DisplayName = "Texture"),
+	// Material | Material Instance
+	Material							UMETA(DisplayName = "Material"),
+	StaticMesh							UMETA(DisplayName = "Static Mesh"),
+	// Skeletal Mesh | Physics Asset | Skeleton
+	Skeletal							UMETA(DisplayName = "Skeletal"),
+	// TODO: Need a way to capture other sound plugins (i.e. Wise)
+	Sound								UMETA(DisplayName = "Sound"),
+	// Particle System | TODO: Niagara (need to be careful what Niagara references)
+	FX									UMETA(DisplayName = "FX"),
+	// Anim Sequence | Blend Space
+	AnimationAsset						UMETA(DisplayName = "Animation Asset"),
+	// Anim Montage | Anim Composite
+	AnimComposite						UMETA(DisplayName = "Anim Composite"),
+	// General umbrella of blueprints: Anim Blueprint, ... etc
+	Blueprint							UMETA(DisplayName = "Blueprint"),
+	// IMovieScenePlayer (UMovieSceneSequencePlayer) | IMovieScenePlaybackClient | IMovieSceneBindingOwnerInterface | UMovieSceneSignedObject
+	Sequencer							UMETA(DisplayName = "Sequencer"),
+	DataTable							UMETA(DisplayName = "DataTable"),
+	// Catch all for anything not categorized
+	Other								UMETA(DisplayName = "Other"),
+	ECsObjectPathDependencyGroup_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsObjectPathDependencyGroup : public TCsEnumMap<ECsObjectPathDependencyGroup>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsObjectPathDependencyGroup, ECsObjectPathDependencyGroup)
+};
+
+namespace NCsObjectPathDependencyGroup
+{
+	typedef ECsObjectPathDependencyGroup Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Texture;
+		extern CSCORE_API const Type Material;
+		extern CSCORE_API const Type StaticMesh;
+		extern CSCORE_API const Type Skeletal;
+		extern CSCORE_API const Type Sound;
+		extern CSCORE_API const Type FX;
+		extern CSCORE_API const Type AnimationAsset;
+		extern CSCORE_API const Type AnimComposite;
+		extern CSCORE_API const Type Blueprint;
+		extern CSCORE_API const Type Sequencer;
+		extern CSCORE_API const Type DataTable;
+		extern CSCORE_API const Type Other;
+		extern CSCORE_API const Type ECsObjectPathDependencyGroup_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+}
+
+#pragma endregion ObjectPathDependencyGroup
+
 // FCsResourceSize
 #pragma region
 
@@ -331,9 +395,9 @@ struct CSCORE_API FCsTArraySoftObjectPath
 
 	void Reset()
 	{
-		Paths.Reset();
+		Paths.Reset(Paths.Max());
 		Set.Reset();
-		Internal.Reset();
+		Internal.Reset(Internal.Max());
 		InternalSet.Reset();
 		Size.Reset();
 	}
@@ -855,6 +919,9 @@ struct CSCORE_API FCsPayload : public FTableRowBase
 
 public:
 
+	UPROPERTY()
+	int32 Index;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	bool bUpdateDataRootSetOnSave;
 
@@ -878,6 +945,7 @@ public:
 	FCsTArraySoftObjectPath Paths;
 
 	FCsPayload() :
+		Index(INDEX_NONE),
 		bUpdateDataRootSetOnSave(true),
 		Datas(),
 		DataMap(),
@@ -885,6 +953,16 @@ public:
 		DataTableMap(),
 		Paths()
 	{
+	}
+
+	FORCEINLINE void SetIndex(const int32& InIndex)
+	{
+		Index = InIndex;
+	}
+
+	FORCEINLINE const int32& GetIndex() const
+	{
+		return Index;
 	}
 
 	void Reset()
@@ -1015,6 +1093,9 @@ struct CSCORE_API FCsDataEntry_Data : public FTableRowBase
 
 public:
 
+	UPROPERTY()
+	int32 Index;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	FName Name;
 
@@ -1034,6 +1115,7 @@ public:
 	FCsTArraySoftObjectPath Paths;
 
 	FCsDataEntry_Data() :
+		Index(INDEX_NONE),
 		Name(NAME_None),
 		Data(),
 		Data_Internal(nullptr),
@@ -1042,10 +1124,20 @@ public:
 	{
 	}
 
+	FORCEINLINE void SetIndex(const int32& InIndex)
+	{
+		Index = InIndex;
+	}
+
+	FORCEINLINE const int32& GetIndex() const
+	{
+		return Index;
+	}
+
 	void Reset()
 	{
 		Name = NAME_None;
-		Data.Reset();
+		Data = nullptr;
 		Data_Internal = nullptr;
 		Data_Class = nullptr;
 		Paths.Reset();
@@ -1069,6 +1161,9 @@ struct CSCORE_API FCsDataEntry_DataTable : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 public:
+
+	UPROPERTY()
+	int32 Index;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	bool bPopulateOnSave;
@@ -1099,6 +1194,7 @@ public:
 	TMap<FName, FCsTArraySoftObjectPath> PathsByRowMap;
 
 	FCsDataEntry_DataTable() :
+		Index(INDEX_NONE),
 		bPopulateOnSave(false),
 		Name(NAME_None),
 		DataTable(),
@@ -1115,10 +1211,20 @@ public:
 		return DataTable.IsValid();
 	}
 
+	FORCEINLINE void SetIndex(const int32& InIndex)
+	{
+		Index = InIndex;
+	}
+
+	FORCEINLINE const int32& GetIndex() const
+	{
+		return Index;
+	}
+
 	void Reset()
 	{
 		Name = NAME_None;
-		DataTable.Reset();
+		DataTable = nullptr;
 		DataTable_Internal = nullptr;
 		bAllRows = false;
 		Rows.Reset();

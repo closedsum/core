@@ -30,7 +30,7 @@ UUserDefinedEnum* FCsEnumEditorUtils::GetUserDefinedEnum(const FECsUserDefinedEn
 
 	if (UCsEdEngine* Engine = Cast<UCsEdEngine>(GEngine))
 	{
-		Map = Engine->GetEnumStructUserDefinedEnumMap();
+		//Map = Engine->GetEnumStructUserDefinedEnumMap();
 	}
 	else
 	{

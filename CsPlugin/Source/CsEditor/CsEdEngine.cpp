@@ -28,6 +28,8 @@
 #include "Settings/CsDeveloperSettings.h"
 // Property
 #include "DetailCustomizations/CsRegisterDetailCustomization.h"
+// Level
+#include "Level/CsLevelScriptActor.h"
 
 
 #include "Editor/UnrealEd/Public/Editor.h"
@@ -43,8 +45,9 @@ namespace NCsEdEngineCached
 {
 	namespace Str
 	{
-		const FString OnObjectSaved_DataRootSet_DataTables = TEXT("UCsEdEngine::OnObjectSaved_DataRootSet_DataTables");
-		const FString OnObjectSaved_DataRootSet_Payloads = TEXT("UCsEdEngine::OnObjectSaved_DataRootSet_Payloads");
+		const FString OnObjectSaved_Update_DataRootSet_DataTables = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_DataTables");
+		const FString OnObjectSaved_Update_DataRootSet_Payloads = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payloads");
+		const FString OnObjectSaved_Update_DataRootSet_Payload = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payload");
 	}
 }
 
@@ -59,11 +62,6 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 
 	FCsRegisterDetailCustomization::Register();
 
-	bTickedHandle.Set(&bTicked);
-	bTickedHandle.OnChange_Event.AddUObject(this, &UCsEdEngine::OnFirstTick);
-
-	GEditor->OnBlueprintPreCompile().AddUObject(this, &UCsEdEngine::OnBlueprintPreCompile);
-
 	FEditorDelegates::BeginPIE.AddUObject(this, &UCsEdEngine::OnBeginPIE);
 	FCoreUObjectDelegates::OnObjectSaved.AddUObject(this, &UCsEdEngine::OnObjectSaved);
 }
@@ -76,10 +74,6 @@ void UCsEdEngine::PreExit()
 void UCsEdEngine::Tick(float DeltaSeconds, bool bIdleMode)
 {
 	Super::Tick(DeltaSeconds, bIdleMode);
-
-	bTickedHandle = true;
-
-	OnBlueprintPreCompile_HandleEnums_Mutex.Unlock();
 }
 
 #pragma endregion UEngine Interface
@@ -106,35 +100,6 @@ bool UCsEdEngine::Exec(UWorld* InWorld, const TCHAR* Stream, FOutputDevice& Ar)
 }
 
 #pragma endregion FExec Interface
-
-// Tick
-#pragma region
-
-void UCsEdEngine::OnFirstTick(const bool& Value)
-{
-	//PopulateUserDefinedEnums();
-	//PopulateEnumMapsFromUserDefinedEnums();
-
-	/*
-	if (!DataMapping)
-	{
-		DataMapping = UCsLibrary_Asset::GetDataMapping();
-
-		if (DataMapping)
-			DataMapping->GenerateMaps();
-	}
-	*/
-}
-
-#pragma endregion Tick
-
-void UCsEdEngine::OnBlueprintPreCompile(UBlueprint* Blueprint)
-{
-	if (!bTicked)
-		return;
-
-	//OnBlueprintPreCompile_HandleEnums();
-}
 
 void UCsEdEngine::OnBeginPIE(bool IsSimulating)
 {
@@ -164,96 +129,42 @@ void UCsEdEngine::OnObjectSaved(UObject* Object)
 			// DataRootSet
 			if (DataRootSet)
 			{
+				// Datas
 				// DataTables
-				if (UDataTable* DataTables = DataRootSet->GetDataTables())
+				if (DataTable == DataRootSet->GetDataTables())
 				{
-					if (FCsDataEntry_DataTable::StaticStruct() == DataTables->GetRowStruct())
+					if (FCsDataEntry_DataTable::StaticStruct() == DataTable->GetRowStruct())
 					{
-						OnObjectSaved_DataRootSet_DataTables(DataTables);
+						OnObjectSaved_Update_DataRootSet_DataTables(DataTable);
+					}
+					else
+					{
+						UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s GetDataTables(): %s RowStruct: %s != FCsDataEntry_DataTable."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+					}
+				}
+				// Payloads
+				if (DataTable == DataRootSet->GetPayloads())
+				{
+					if (FCsPayload::StaticStruct() == DataTable->GetRowStruct())
+					{
+						OnObjectSaved_Update_DataRootSet_Payloads(DataTable);
+					}
+					else
+					{
+						UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s GetPayloads(): %s RowStruct: %s != FCsPayload."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
 					}
 				}
 			}
 		}
 	}
+	// LevelScriptActor
+	if (ACsLevelScriptActor* LevelScriptActor = Cast<ACsLevelScriptActor>(Object))
+	{
+		OnObjectSaved_Update_DataRootSet_Payload(LevelScriptActor->Payload);
+	}
 }
 
 #pragma endregion Save
-
-// Enums
-#pragma region
-
-UCsEnumStructUserDefinedEnumMap* UCsEdEngine::GetEnumStructUserDefinedEnumMap()
-{
-	if (EnumStructUserDefinedEnumMap.IsValid() && EnumStructUserDefinedEnumMap.Get())
-	{
-		return EnumStructUserDefinedEnumMap.Get();
-	}
-
-	EnumStructUserDefinedEnumMap = UCsLibrary_Asset::GetEnumStructUserDefinedEnumMap();
-
-	return EnumStructUserDefinedEnumMap.Get();
-}
-
-void UCsEdEngine::OnBlueprintPreCompile_HandleEnums()
-{
-	if (OnBlueprintPreCompile_HandleEnums_Mutex.IsLocked())
-		return;
-
-	OnBlueprintPreCompile_HandleEnums_Mutex.Lock();
-
-
-	PopulateUserDefinedEnums();
-	PopulateEnumMapsFromUserDefinedEnums();
-}
-
-void UCsEdEngine::PopulateUserDefinedEnums()
-{
-	PopulateUserDefinedEnum_InputAction();
-}
-
-void UCsEdEngine::PopulateUserDefinedEnum_InputAction()
-{
-	FCsEnumEditorUtils::SyncInputAction();
-}
-
-void UCsEdEngine::PopulateEnumMapsFromUserDefinedEnums()
-{
-	// DataType
-	PopulateEnumMapFromUserDefinedEnum<EMCsDataType>(NCsUserDefinedEnum::FECsDataType);
-	// DataCollection
-	PopulateEnumMapFromUserDefinedEnum<EMCsDataCollectionType>(NCsUserDefinedEnum::FECsDataCollectionType);
-	// Input
-	{
-		// InputAction
-		PopulateEnumMapFromUserDefinedEnum<EMCsInputAction>(NCsUserDefinedEnum::FECsInputAction);
-		// InputActionMap
-		PopulateEnumMapFromUserDefinedEnum<EMCsInputActionMap>(NCsUserDefinedEnum::FECsInputActionMap);
-		// GameEvent
-		PopulateEnumMapFromUserDefinedEnum<EMCsGameEvent>(NCsUserDefinedEnum::FECsGameEvent);
-	}
-}
-
-void UCsEdEngine::GetUserDefinedEnumNames(const FString& EnumName, const FECsUserDefinedEnum& EnumType, TArray<FString>& OutNames)
-{
-	if (UCsEnumStructUserDefinedEnumMap* Map = GetEnumStructUserDefinedEnumMap())
-	{
-		if (UUserDefinedEnum* Enum = Map->GetUserDefinedEnum(EnumType))
-		{
-			const int32 Count = Enum->NumEnums() - 1;
-
-			for (int32 I = 0; I < Count; ++I)
-			{
-				OutNames.Add(Enum->GetDisplayNameTextByIndex(I).ToString());
-			}
-		}
-		else
-		{
-			UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::GetUserDefinedEnumNames: Failed to find UserDefinedEnum: %s for EnumStruct: %s."), *(EnumType.Name), *EnumName);
-		}
-	}
-}
-
-#pragma endregion Enums
 
 // Stream
 #pragma region
@@ -325,15 +236,14 @@ void UCsEdEngine::MarkDatasDirty(const FECsAssetType& AssetType)
 // DataRootSet
 #pragma region
 
-void UCsEdEngine::OnObjectSaved_DataRootSet_DataTables(UDataTable* DataTable)
+void UCsEdEngine::OnObjectSaved_Update_DataRootSet_DataTables(UDataTable* DataTable)
 {
-	TArray<FName> RowNames = DataTable->GetRowNames();
+	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 	
-	for (const FName& RowName : RowNames)
+	for (const TPair<FName, uint8*>& Pair : RowMap)
 	{
-		const FString& Context = NCsEdEngineCached::Str::OnObjectSaved_DataRootSet_DataTables;
-
-		FCsDataEntry_DataTable* RowPtr = DataTable->FindRow<FCsDataEntry_DataTable>(RowName, Context);
+		const FName& RowName		   = Pair.Key;
+		FCsDataEntry_DataTable* RowPtr = reinterpret_cast<FCsDataEntry_DataTable*>(Pair.Value);
 
 		if (RowPtr->bPopulateOnSave)
 		{
@@ -344,7 +254,7 @@ void UCsEdEngine::OnObjectSaved_DataRootSet_DataTables(UDataTable* DataTable)
 	}
 }
 
-void UCsEdEngine::OnObjectSaved_DataRootSet_Payloads(UDataTable* DataTable)
+void UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payloads(UDataTable* DataTable)
 {
 	// Get Settings
 	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
@@ -362,43 +272,79 @@ void UCsEdEngine::OnObjectSaved_DataRootSet_Payloads(UDataTable* DataTable)
 		return;
 
 	// See which Payloads to push to Datas | DataTables
-	TArray<FName> RowNames = DataTable->GetRowNames();
+	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
-	for (const FName& RowName : RowNames)
+	for (const TPair<FName, uint8*>& Pair : RowMap)
 	{
-		const FString& Context = NCsEdEngineCached::Str::OnObjectSaved_DataRootSet_Payloads;
+		const FName& RowName = Pair.Key;
+		FCsPayload* RowPtr	 = reinterpret_cast<FCsPayload*>(Pair.Value);
 
-		FCsPayload* RowPtr = DataTable->FindRow<FCsPayload>(RowName, Context);
+		OnObjectSaved_Update_DataRootSet_Payload(*RowPtr);
+	}
+}
 
-		// Add the Payload to the Datas | DataTables
-		if (RowPtr->bUpdateDataRootSetOnSave)
+void UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payload(FCsPayload& Payload)
+{
+	using namespace NCsEdEngineCached;
+
+	const FString& Context = Str::OnObjectSaved_Update_DataRootSet_Payload;
+
+	// Get Settings
+	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+	if (!Settings)
+		return;
+
+	// Get DataRootSet
+	TSoftClassPtr<UObject> SoftObject	= Settings->DataRootSet;
+	UClass* Class						= SoftObject.LoadSynchronous();
+	UObject* Object						= Class ? Class->GetDefaultObject<UObject>() : nullptr;
+	UCsDataRootSetImpl* DataRootSetImpl	= Object ? Cast<UCsDataRootSetImpl>(Object) : nullptr;
+
+	if (!DataRootSetImpl)
+		return;
+
+	// Add / Update the Payload to the Datas | DataTables
+	if (Payload.bUpdateDataRootSetOnSave)
+	{
+		// Datas
+
+		// DataTables
+		if (UDataTable* DataTables = DataRootSetImpl->GetDataTables())
 		{
-			// DataTables
-			TMap<TSoftObjectPtr<UDataTable>, TSet<FName>> RowNamesByDataTableMap;
-
-			for (FCsPayload_DataTable& Payload_DataTable : RowPtr->DataTables)
+			for (FCsPayload_DataTable& Payload_DataTable : Payload.DataTables)
 			{
+				// Check Name is Valid
+				const FName& Name = Payload_DataTable.Name;
+
+				if (Name == NAME_None)
+				{
+					UE_LOG(LogCsEditor, Warning, TEXT("%s: Name is NOT Valid."), *Context);
+					continue;
+				}
+
+				// Check for Valid Path
 				TSoftObjectPtr<UDataTable>& DT = Payload_DataTable.DataTable;
 				const FSoftObjectPath& Path	   = DT.ToSoftObjectPath();
 
 				if (!Path.IsValid())
+				{
+					UE_LOG(LogCsEditor, Warning, TEXT("%s: Path is NOT Valid for Name: %s."), *Context, *(Name.ToString()));
 					continue;
+				}
 
-				// Update the Name
-				Payload_DataTable.Name = FName(*Path.GetAssetName());
-
-				RowNamesByDataTableMap.Add(DT, Payload_DataTable.Rows);
+				// Add to Map of DataTables to Add to DataRootSet->DataTables
+				if (Payload_DataTable.bAllRows)
+					DataRootSetImpl->AddDataTable(Name, DT);
+				else
+					DataRootSetImpl->AddDataTable(Name, DT, Payload_DataTable.Rows);
 			}
-
-			// Add to Map of DataTables to Add to DataRootSet->DataTables
-			DataRootSetImpl->AddDataTables(RowNamesByDataTableMap);
 		}
-		RowPtr->bUpdateDataRootSetOnSave = false;
 	}
+	Payload.bUpdateDataRootSetOnSave = false;
 }
 
 #pragma endregion DataRootSet
-
 
 // References
 #pragma region
@@ -474,8 +420,12 @@ void UCsEdEngine::PrintBlueprintReferencesReport(const FName& AssetName)
 				{
 					AActor* A = World->SpawnActor(Class);
 
-					UCsLibrary_Load::GetReferencesReport(A, A->GetClass(), AssetNameAsString, Report);
-					
+					FCsLibraryLoad_GetObjectPaths OutPaths;
+					OutPaths.SetRootName(AssetNameAsString);
+
+					//UCsLibrary_Load::GetObjectPaths(Cast<UObject>(A), Class, OutPaths);
+
+					OutPaths.Print();
 					A->Destroy();
 					break;
 				}
@@ -485,9 +435,11 @@ void UCsEdEngine::PrintBlueprintReferencesReport(const FName& AssetName)
 	// Object
 	else
 	{
-		UCsLibrary_Load::GetReferencesReport(DOb, DOb->GetClass(), AssetNameAsString, Report);
+		FCsLibraryLoad_GetObjectPaths OutPaths;
+		OutPaths.SetRootName(AssetNameAsString);
+
+		//UCsLibrary_Load::GetObjectPaths(DOb, DOb->GetClass(), OutPaths);
 	}
-	Report.Print();
 }
 
 #pragma endregion References

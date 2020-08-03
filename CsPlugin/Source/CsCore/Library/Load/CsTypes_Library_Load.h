@@ -184,6 +184,86 @@ public:
 
 #pragma endregion FCsLibraryLoad_GetSoftObjectPaths
 
+
+// FCsLibraryLoad_GetObjectPaths
+#pragma region
+
+struct CSCORE_API FCsLibraryLoad_GetObjectPaths
+{
+public:
+
+	FString RootName;
+	FString RootDefaultName;
+
+	TArray<FSoftObjectPath> Paths;
+	TArray<TArray<FSoftObjectPath>> PathGroups;
+	TArray<TSet<FSoftObjectPath>> PathSets;
+
+	TSet<FString> VisitedFunctions;
+
+	TMap<FName, TArray<void*>> VisitedPointers;
+
+	int32 TotalCount;
+
+	FCsLibraryLoad_GetObjectPaths();
+
+	void SetRootName(const FString& Name)
+	{
+		RootName = Name;
+		RootDefaultName = TEXT("Default__") + RootName + TEXT("_C");
+	}
+
+	void AddPath(const FSoftObjectPath& SoftPath);
+
+	void Resolve();
+
+	void VisitFunction(const FString& FunctionPath)
+	{
+		VisitedFunctions.Add(FunctionPath);
+	}
+
+	FORCEINLINE bool HasVisitedFunction(const FString& FunctionPath)
+	{
+		return VisitedFunctions.Contains(FunctionPath);
+	}
+
+	void VisitPointer(const FName& StructName, const void* Ptr)
+	{
+		TArray<void*>& Ptrs = VisitedPointers.FindOrAdd(StructName);
+		Ptrs.Add(const_cast<void*>(Ptr));
+	}
+
+	FORCEINLINE bool HasVisitedPointer(const FName& StructName, const void* Ptr)
+	{
+		if (TArray<void*>* Ptrs = VisitedPointers.Find(StructName))
+		{
+			return Ptrs->Contains(Ptr);
+		}
+		return false;
+	}
+
+	void Print();
+
+	void Reset()
+	{
+		RootName.Empty();
+		RootDefaultName.Empty();
+		Paths.Reset(Paths.Max());
+		PathGroups.Reset(PathGroups.Max());
+		
+		for (TSet<FSoftObjectPath>& Set : PathSets)
+		{
+			Set.Reset();
+		}
+
+		VisitedFunctions.Reset();
+		VisitedPointers.Reset();
+		TotalCount = 0;
+	}
+};
+
+#pragma endregion FCsLibraryLoad_GetObjectPaths
+
 // FCsLibraryLoad_GetReferencesReport_Category
 #pragma region
 
@@ -226,20 +306,49 @@ struct CSCORE_API FCsLibraryLoad_GetReferencesReport
 public:
 
 	FString Name;
+	FString DefaultName;
 	FString Path;
 
 	FCsLibraryLoad_GetReferencesReport_Category Hard;
 	FCsLibraryLoad_GetReferencesReport_Category Soft;
 
+	TSet<FString> VisitedFunctions;
+
+	TArray<TSet<FSoftObjectPath>> ReferenceDepthList;
+	int32 TotalCount;
+
 	FCsLibraryLoad_GetReferencesReport() :
 		Name(),
 		Path(),
 		Hard(),
-		Soft()
+		Soft(),
+		VisitedFunctions(),
+		ReferenceDepthList(),
+		TotalCount(0)
 	{
 		Hard.Name = TEXT("Hard");
 		Soft.Name = TEXT("Soft");
 	}
+
+	void SetName(const FString& InName)
+	{
+		Name = InName;
+		DefaultName = TEXT("Default__") + Name + TEXT("_C");
+	}
+
+	void VisitFunction(const FString& FunctionPath)
+	{
+		VisitedFunctions.Add(FunctionPath);
+	}
+
+	FORCEINLINE bool HasVisitedFunction(const FString& FunctionPath)
+	{
+		return VisitedFunctions.Contains(FunctionPath);
+	}
+
+	void AddToDepthList(const FSoftObjectPath& InPath, const int32& Depth);
+
+	void ResolveDepthList();
 
 	void Print();
 };

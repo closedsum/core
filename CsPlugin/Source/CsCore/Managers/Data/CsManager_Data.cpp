@@ -186,93 +186,73 @@ void UCsManager_Data::Initialize()
 	DataRootSet.Data_Class	  = DataRootSet.Data.LoadSynchronous();
 	DataRootSet.Data_Internal = DataRootSet.Data_Class->GetDefaultObject<UObject>();
 
+	// Manager_Payload
+	{
+		checkf(Settings->Manager_Data.PayloadPoolSize >= 4, TEXT("UCsManager_Data::Initialize: UCsDeveloperSettings.Manager_Data.PayloadPoolSize is NOT >= 4."));
+
+		Manager_Payload.CreatePool(Settings->Manager_Data.PayloadPoolSize);
+
+		const TArray<FCsResource_Payload*>& Pool = Manager_Payload.GetPool();
+
+		for (FCsResource_Payload* Container : Pool)
+		{
+			FCsPayload* R	   = Container->Get();
+			const int32& Index = Container->GetIndex();
+			R->SetIndex(Index);
+		}
+	}
+	// Manager_DataEntry_Data
+	{
+		checkf(Settings->Manager_Data.DataEntryDataPoolSize >= 4, TEXT("UCsManager_Data::Initialize: UCsDeveloperSettings.Manager_Data.DataEntryDataPoolSize is NOT >= 4."));
+
+		Manager_DataEntry_Data.CreatePool(Settings->Manager_Data.DataEntryDataPoolSize);
+
+		const TArray<FCsResource_DataEntry_Data*>& Pool = Manager_DataEntry_Data.GetPool();
+
+		for (FCsResource_DataEntry_Data* Container : Pool)
+		{
+			FCsDataEntry_Data* R = Container->Get();
+			const int32& Index   = Container->GetIndex();
+			R->SetIndex(Index);
+		}
+	}
+	// Manager_DataEntry_DataTable
+	{
+		checkf(Settings->Manager_Data.DataEntryDataTablePoolSize >= 4, TEXT("UCsManager_Data::Initialize: UCsDeveloperSettings.Manager_Data.DataEntryDataTablePoolSize is NOT >= 4."));
+
+		Manager_DataEntry_DataTable.CreatePool(Settings->Manager_Data.DataEntryDataTablePoolSize);
+
+		const TArray<FCsResource_DataEntry_DataTable*>& Pool = Manager_DataEntry_DataTable.GetPool();
+
+		for (FCsResource_DataEntry_DataTable* Container : Pool)
+		{
+			FCsDataEntry_DataTable* R = Container->Get();
+			const int32& Index		  = Container->GetIndex();
+			R->SetIndex(Index);
+		}
+	}
+
 	// TODO: Move this to Coroutine and Async
 
-	//UCsLibrary_Load::LoadStruct(Settings, UCsDeveloperSettings::StaticClass(), NCsLoadFlags::All, NCsLoadCodes::None);
-
 	GenerateMaps();
-
-	// REMOVE ME: Hack to stop GC from crashing.
-	/*
-	if (!GIsEditor)
-	{
-		if (Settings->DataRootSet.Get())
-			Settings->DataRootSet.Get()->AddToRoot();
-
-		if (Settings->Datas.Get())
-			Settings->Datas.Get()->AddToRoot();
-
-		if (Settings->DataTables.Get())
-			Settings->DataTables.Get()->AddToRoot();
-
-		if (Settings->Payloads.Get())
-			Settings->Payloads.Get()->AddToRoot();
-
-		if (Settings->Weapons.Get())
-			Settings->Weapons.Get()->AddToRoot();
-
-		if (Settings->WeaponAudio.Get())
-			Settings->WeaponAudio.Get()->AddToRoot();
-	}
-	*/
 }
 
 void UCsManager_Data::CleanUp()
 {
-	// REMOVE ME: Hack to stop GC from crashing.
-	/*
-	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-	if (!GIsEditor && Settings)
-	{
-		if (Settings->DataRootSet.Get())
-			Settings->DataRootSet.Get()->RemoveFromRoot();
-
-		if (Settings->Datas.Get())
-			Settings->Datas.Get()->RemoveFromRoot();
-
-		if (Settings->DataTables.Get())
-			Settings->DataTables.Get()->RemoveFromRoot();
-
-		if (Settings->Payloads.Get())
-			Settings->Payloads.Get()->RemoveFromRoot();
-
-		if (Settings->Weapons.Get())
-			Settings->Weapons.Get()->RemoveFromRoot();
-
-		if (Settings->WeaponAudio.Get())
-			Settings->WeaponAudio.Get()->RemoveFromRoot();
-	}
-	*/
-
 	// Datas
 	{
-		for (TPair<FName, FCsDataEntry_Data*>& Pair : DataEntryMap_Added)
-		{
-			FCsDataEntry_Data* Entry = Pair.Value;
-			delete Entry;
-			Pair.Value = nullptr;
-		}
 		DataEntryMap_Added.Reset();
+		Manager_DataEntry_Data.Shutdown();
 	}
 	// DataTables
 	{
-		for (TPair<FName, FCsDataEntry_DataTable*>& Pair : DataTableEntryMap_Added)
-		{
-			FCsDataEntry_DataTable* Entry = Pair.Value;
-			delete Entry;
-			Pair.Value = nullptr;
-		}
 		DataTableEntryMap_Added.Reset();
+		Manager_DataEntry_DataTable.Shutdown();
 	}
 	// Payloads
 	{
-		for (TPair<FName, FCsPayload*>& Pair : PayloadMap_Added)
-		{
-			FCsPayload* Payload = Pair.Value;
-			delete Payload;
-			Pair.Value = nullptr;
-		}
 		PayloadMap_Added.Reset();
+		Manager_Payload.Shutdown();
 	}
 }
 
@@ -342,21 +322,22 @@ void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Pay
 	if (PayloadMap_Added.Find(PayloadName))
 		return;
 
-	FCsPayload* P = new FCsPayload();
-	*P = Payload;
+	FCsPayload* P = Manager_Payload.AllocateResource();
+	*P			  = Payload;
+
 	PayloadMap_Added.Add(PayloadName, P);
 
 	// Datas
-	for (const FCsPayload_Data& Data : Payload.Datas)
+	for (FCsPayload_Data& Data : P->Datas)
 	{
 		const FName& Name = Data.Name;
 
 		if (!DataEntryMap.Find(Name) &&
 			!DataEntryMap_Added.Find(Name))
 		{
-			FCsDataEntry_Data* Entry = new FCsDataEntry_Data();
-			Entry->Name = Name;
-			Entry->Data = Data.Data;
+			FCsDataEntry_Data* Entry = Manager_DataEntry_Data.AllocateResource();
+			Entry->Name	 = Name;
+			Entry->Data  = Data.Data;
 			Entry->Paths = Data.Paths;
 
 			DataEntryMap.Add(Name, Entry);
@@ -372,7 +353,7 @@ void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Pay
 		if (!DataTableEntryMap.Find(Name) &&
 			!DataTableEntryMap_Added.Find(Name))
 		{
-			FCsDataEntry_DataTable* Entry = new FCsDataEntry_DataTable();
+			FCsDataEntry_DataTable* Entry = Manager_DataEntry_DataTable.AllocateResource();
 			Entry->Name		 = Name;
 			Entry->DataTable = DataTable.DataTable;
 			Entry->Paths	 = DataTable.Paths;
@@ -462,14 +443,14 @@ void UCsManager_Data::GenerateMaps()
 	// DataTable
 #pragma region
 
-UDataTable* UCsManager_Data::LoadDataTable(const FName& TableName)
+UDataTable* UCsManager_Data::LoadDataTable(const FName& EntryName)
 {
-	checkf(TableName != NAME_None, TEXT("UCsManager_Data::LoadDataTable: TableName is None."));
+	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::LoadDataTable: EntryName is None."));
 
-	if (UDataTable* Table = GetDataTable(TableName))
+	if (UDataTable* Table = GetDataTable(EntryName))
 		return Table;
 
-	if (FCsDataEntry_DataTable** EntryPtr = DataTableEntryMap.Find(TableName))
+	if (FCsDataEntry_DataTable** EntryPtr = DataTableEntryMap.Find(EntryName))
 	{
 		FCsDataEntry_DataTable* Entry = *EntryPtr;
 
@@ -480,22 +461,22 @@ UDataTable* UCsManager_Data::LoadDataTable(const FName& TableName)
 #if WITH_EDITOR
 		if (!DataTable)
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadDataTable: Failed to load DataTable: %s."), *(TableName.ToString()));
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadDataTable: Failed to load DataTable @ Entry: %s."), *(EntryName.ToString()));
 			return nullptr;
 		}
 #else
-		checkf(DataTable, TEXT("UCsManager_Data::LoadDataTable: Failed to load DataTable: %s."), *(TableName.ToString()));
+		checkf(DataTable, TEXT("UCsManager_Data::LoadDataTable: Failed to load DataTable @ Entry: %s."), *(EntryName.ToString()));
 #endif // If WITH_EDITOR
 
-		DataTableMap_Loaded.FindOrAdd(TableName) = DataTable;
+		DataTableMap_Loaded.FindOrAdd(EntryName) = DataTable;
 		DataTableByPathMap_Loaded.FindOrAdd(Entry->DataTable.ToSoftObjectPath()) = DataTable;
 
 		return Entry->Get();
 	}
 #if WITH_EDITOR
-	UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadDataTable: Failed to find DataTable: %s."), *(TableName.ToString()));
+	UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadDataTable: Failed to find DataTable @ Entry: %s."), *(EntryName.ToString()));
 #else
-	checkf(0, TEXT("UCsManager_Data::LoadDataTable: Failed to find DataTable: %s."), *(TableName.ToString()));
+	checkf(0, TEXT("UCsManager_Data::LoadDataTable: Failed to find DataTable @ Entry: %s."), *(EntryName.ToString()));
 #endif // #if WITH_EDITOR
 	return nullptr;
 }
@@ -506,34 +487,34 @@ UDataTable* UCsManager_Data::LoadDataTable(const FSoftObjectPath& Path)
 	return nullptr;
 }
 
-uint8* UCsManager_Data::LoadDataTableRow(const FName& TableName, const FName& RowName)
+uint8* UCsManager_Data::LoadDataTableRow(const FName& EntryName, const FName& RowName)
 {
-	checkf(TableName != NAME_None, TEXT("UCsManager_Data::LoadDataTableRow: TableName is None."));
+	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::LoadDataTableRow: EntryName is None."));
 
 	checkf(RowName != NAME_None, TEXT("UCsManager_Data::LoadDataTableRow: RowName is None."));
 
 	// Check if DataTable and Row are already loaded
-	if (uint8* RowPtr = GetDataTableRow(TableName, RowName))
+	if (uint8* RowPtr = GetDataTableRow(EntryName, RowName))
 		return RowPtr;
 
-	if (FCsDataEntry_DataTable** EntryPtr = DataTableEntryMap.Find(TableName))
+	if (FCsDataEntry_DataTable** EntryPtr = DataTableEntryMap.Find(EntryName))
 	{
 		FCsDataEntry_DataTable* Entry = *EntryPtr;
 
 		// If DataTable is NOT loaded, load it
 		if (!Entry->Get())
-			LoadDataTable(TableName);
+			LoadDataTable(EntryName);
 
 		UDataTable* DT = Entry->Get();
 
 #if WITH_EDITOR
 		if (!DT)
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadDataTableRow: Failed to find DataTable: %s."), *(TableName.ToString()));
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadDataTableRow: Failed to find DataTable @ Entry: %s."), *(EntryName.ToString()));
 			return nullptr;
 		}
 #else
-		checkf(DT, TEXT("UCsManager_Data::LoadDataTableRow: Failed to find DataTable: %s."), *(TableName.ToString()));
+		checkf(DT, TEXT("UCsManager_Data::LoadDataTableRow: Failed to find DataTable @ Entry: %s."), *(EntryName.ToString()));
 #endif // If WITH_EDITOR
 
 		const UScriptStruct* ScriptStruct = DT->GetRowStruct();
@@ -543,15 +524,15 @@ uint8* UCsManager_Data::LoadDataTableRow(const FName& TableName, const FName& Ro
 		if (uint8* RowPtr = DT->FindRowUnchecked(RowName))
 		{
 			UCsLibrary_Load::LoadStruct(RowPtr, Struct, NCsLoadFlags::All, NCsLoadCodes::None);
-			UpdateDataTableRowMap(TableName, RowName, RowPtr);
+			UpdateDataTableRowMap(EntryName, RowName, RowPtr);
 
 			return RowPtr;
 		}
 	}
 #if WITH_EDITOR
-	UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadDataTableRow: Failed to load DataTable: %s and Row: %s."), *(TableName.ToString()), *(RowName.ToString()));
+	UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::LoadDataTableRow: Failed to load DataTable @ Entry: %s and Row: %s."), *(EntryName.ToString()), *(RowName.ToString()));
 #else
-	checkf(0, TEXT("UCsManager_Data::LoadDataTableRow: Failed to load DataTable: %s and Row: %s."), *(TableName.ToString()), *(RowName.ToString()));
+	checkf(0, TEXT("UCsManager_Data::LoadDataTableRow: Failed to load DataTable @ Entry: %s and Row: %s."), *(EntryName.ToString()), *(RowName.ToString()));
 #endif // #if WITH_EDITOR
 	return nullptr;
 }

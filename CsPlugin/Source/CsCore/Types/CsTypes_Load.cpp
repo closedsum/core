@@ -1,13 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Load.h"
 #include "CsCore.h"
-#include "CsCVars.h"
 
+// CVar
+#include "CsCVars.h"
 // Library
 #include "Library/Load/CsLibrary_Load.h"
 #include "Library/CsLibrary_Math.h"
-
-#include "Sound/SoundCue.h"
 
 namespace ECsLoadCached
 {
@@ -105,6 +104,33 @@ namespace NCsUnloadCodes
 
 #pragma endregion UnloadCodes
 
+// ObjectPathDependencyGroup
+#pragma region
+
+namespace NCsObjectPathDependencyGroup
+{
+	namespace Ref
+	{
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, Texture);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, Material);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, StaticMesh);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, Skeletal);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, Sound);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, FX);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, AnimationAsset);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, AnimComposite);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, Blueprint);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, Sequencer);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, DataTable);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, Other);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsObjectPathDependencyGroup, ECsObjectPathDependencyGroup_MAX, "MAX");
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsObjectPathDependencyGroup_MAX;
+}
+
+#pragma endregion ObjectPathDependencyGroup
+
 // LoadAsyncOrder
 #pragma region
 
@@ -112,10 +138,10 @@ namespace NCsLoadAsyncOrder
 {
 	namespace Ref
 	{
-		CSCORE_API const Type None = EMCsLoadAsyncOrder::Get().Add(Type::None, TEXT("None"));
-		CSCORE_API const Type FirstToLast = EMCsLoadAsyncOrder::Get().Add(Type::FirstToLast, TEXT("FirstToLast"), TEXT("First to Last"));
-		CSCORE_API const Type Bulk = EMCsLoadAsyncOrder::Get().Add(Type::Bulk, TEXT("Bulk"));
-		CSCORE_API const Type ECsLoadAsyncOrder_MAX = EMCsLoadAsyncOrder::Get().Add(Type::ECsLoadAsyncOrder_MAX, TEXT("ECsLoadAsyncOrder_MAX"), TEXT("MAX"));
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsLoadAsyncOrder, None);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsLoadAsyncOrder, FirstToLast, "First to Last");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsLoadAsyncOrder, Bulk);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsLoadAsyncOrder, ECsLoadAsyncOrder_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsLoadAsyncOrder_MAX;
@@ -201,8 +227,6 @@ void FCsPayload_DataTable::Populate()
 		return;
 	}
 
-	Name = DT->GetFName();
-
 	const UScriptStruct* ScriptStruct = DT->GetRowStruct();
 	UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
 	UStruct* const Struct			  = Temp;
@@ -249,8 +273,7 @@ void FCsPayload_DataTable::Populate()
 	}
 
 	// Get Paths for appropriate rows
-	FCsLibraryLoad_GetSoftObjectPaths Result;
-	TArray<FName> Keys;
+	FCsLibraryLoad_GetObjectPaths Result;
 	FCsResourceSize Size;
 
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
@@ -269,7 +292,7 @@ void FCsPayload_DataTable::Populate()
 		const FString OuterName		  = FString::Printf(TEXT("%s.%s"), *DataTableName, *RowNameAsString);
 
 		Result.Reset();
-		UCsLibrary_Load::GetSoftObjectPaths(RowPtr, Struct, OuterName, Result);
+		UCsLibrary_Load::GetObjectPaths(RowPtr, Struct, Result);
 
 		const int32 Count = Result.Paths.Num();
 
@@ -301,13 +324,6 @@ void FCsPayload_DataTable::Populate()
 					if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 					{
 						UE_LOG(LogCs, Warning, TEXT("--- Failed to load Path: %s @ %s."), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
-
-						const TArray<FCsLibraryLoad_MemberInfo>& MemberInfos = Result.MemberInfosByPathMap[Path];
-
-						for (const FCsLibraryLoad_MemberInfo& Info : MemberInfos)
-						{
-							UE_LOG(LogCs, Warning, TEXT("---- Member: %s."), *(Info.ToString()));
-						}
 					}
 					continue;
 				}
@@ -520,7 +536,7 @@ void FCsDataEntry_DataTable::Populate()
 	}
 
 	// Get Paths for appropriate rows
-	FCsLibraryLoad_GetSoftObjectPaths Result;
+	FCsLibraryLoad_GetObjectPaths Result;
 	TArray<FName> Keys;
 	FCsResourceSize Size;
 
@@ -540,7 +556,7 @@ void FCsDataEntry_DataTable::Populate()
 		const FString OuterName		  = FString::Printf(TEXT("%s.%s"), *DataTableName, *RowNameAsString);
 
 		Result.Reset();
-		UCsLibrary_Load::GetSoftObjectPaths(RowPtr, Struct, OuterName, Result);
+		UCsLibrary_Load::GetObjectPaths(RowPtr, Struct, Result);
 
 		const int32 Count = Result.Paths.Num();
 
@@ -572,13 +588,6 @@ void FCsDataEntry_DataTable::Populate()
 					if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 					{
 						UE_LOG(LogCs, Warning, TEXT("--- Failed to load Path: %s @ %s."), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
-
-						const TArray<FCsLibraryLoad_MemberInfo>& MemberInfos = Result.MemberInfosByPathMap[Path];
-
-						for (const FCsLibraryLoad_MemberInfo& Info : MemberInfos)
-						{
-							UE_LOG(LogCs, Warning, TEXT("---- Member: %s."), *(Info.ToString()));
-						}
 					}
 					continue;
 				}

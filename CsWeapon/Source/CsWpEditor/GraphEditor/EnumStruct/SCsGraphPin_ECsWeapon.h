@@ -4,6 +4,10 @@
 
 class CSWPEDITOR_API SCsGraphPin_ECsWeapon : public SCsGraphPin_EnumStruct
 {
+private:
+
+	typedef SCsGraphPin_EnumStruct Super;
+
 public:
 	SLATE_BEGIN_ARGS(SCsGraphPin_ECsWeapon) {}
 	SLATE_END_ARGS()

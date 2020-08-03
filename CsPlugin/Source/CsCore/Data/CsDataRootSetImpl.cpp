@@ -28,7 +28,7 @@ UCsDataRootSetImpl::UCsDataRootSetImpl(const class FObjectInitializer& ObjectIni
 
 #if WITH_EDITOR
 
-void UCsDataRootSetImpl::AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTable)
+void UCsDataRootSetImpl::AddDataTable(const FName& EntryName, const TSoftObjectPtr<UDataTable>& DataTable)
 {
 	using namespace NCsDataRootSetImplCached;
 
@@ -42,37 +42,34 @@ void UCsDataRootSetImpl::AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTa
 	}
 
 	// Check Path is valid
-	const FSoftObjectPath& Path = InDataTable.ToSoftObjectPath();
+	const FSoftObjectPath& Path = DataTable.ToSoftObjectPath();
 
 	if (!Path.IsValid())
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: InDataTable is NOT Valid."), *Context);
+		UE_LOG(LogCs, Warning, TEXT("%s: DataTable is NOT Valid."), *Context);
 		return;
 	}
 
-	// Find or Add the DataTable
-	const FName& DataTableName = FName(*Path.GetAssetName());
-
-	FCsDataEntry_DataTable* RowPtr = DataTables->FindRow<FCsDataEntry_DataTable>(DataTableName, Context);
+	FCsDataEntry_DataTable* RowPtr = DataTables->FindRow<FCsDataEntry_DataTable>(EntryName, Context, false);
 
 	// Add the DataTable if has NOT already been added
 	if (!RowPtr)
 	{
 		FCsDataEntry_DataTable Row;
-		DataTables->AddRow(DataTableName, Row);
+		DataTables->AddRow(EntryName, Row);
 
-		RowPtr = DataTables->FindRow<FCsDataEntry_DataTable>(DataTableName, Context);
+		RowPtr = DataTables->FindRow<FCsDataEntry_DataTable>(EntryName, Context);
 	}
 
-	RowPtr->Name	  = DataTableName;
-	RowPtr->DataTable = InDataTable;
+	RowPtr->Name	  = EntryName;
+	RowPtr->DataTable = DataTable;
 	RowPtr->bAllRows  = true;
 	RowPtr->Populate();
 
 	DataTables->MarkPackageDirty();
 }
 
-void UCsDataRootSetImpl::AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTable, const TSet<FName>& RowNames)
+void UCsDataRootSetImpl::AddDataTable(const FName& EntryName, const TSoftObjectPtr<UDataTable>& DataTable, const TSet<FName>& RowNames)
 {
 	using namespace NCsDataRootSetImplCached;
 
@@ -86,18 +83,16 @@ void UCsDataRootSetImpl::AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTa
 	}
 
 	// Check Path is valid
-	const FSoftObjectPath& Path = InDataTable.ToSoftObjectPath();
+	const FSoftObjectPath& Path = DataTable.ToSoftObjectPath();
 
 	if (!Path.IsValid())
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: InDataTable is NOT Valid."), *Context);
+		UE_LOG(LogCs, Warning, TEXT("%s: DataTable is NOT Valid."), *Context);
 		return;
 	}
 
 	// Find or Add the DataTable
-	const FName& DataTableName = FName(*Path.GetAssetName());
-
-	FCsDataEntry_DataTable* RowPtr = DataTables->FindRow<FCsDataEntry_DataTable>(DataTableName, Context);
+	FCsDataEntry_DataTable* RowPtr = DataTables->FindRow<FCsDataEntry_DataTable>(EntryName, Context);
 
 	bool AllRowsAlreadySet = false;
 
@@ -105,68 +100,31 @@ void UCsDataRootSetImpl::AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTa
 	if (!RowPtr)
 	{
 		FCsDataEntry_DataTable Row;
-		DataTables->AddRow(DataTableName, Row);
+		DataTables->AddRow(EntryName, Row);
 
-		RowPtr = DataTables->FindRow<FCsDataEntry_DataTable>(DataTableName, Context);
+		RowPtr = DataTables->FindRow<FCsDataEntry_DataTable>(EntryName, Context);
 
 		AllRowsAlreadySet = RowPtr->bAllRows;
 	}
+	else
+	{
+		// DataTable changed, Update
+		if (RowPtr->DataTable.ToSoftObjectPath() != DataTable.ToSoftObjectPath())
+		{
+			RowPtr->Rows.Reset();
+		}
+	}
 
-	RowPtr->Name	  = DataTableName;
-	RowPtr->DataTable = InDataTable;
+	RowPtr->Name	  = EntryName;
+	RowPtr->DataTable = DataTable;
 	RowPtr->bAllRows  = AllRowsAlreadySet || RowNames.Num() == CS_EMPTY;
 
 	if (!AllRowsAlreadySet)
-		RowPtr->Rows = RowNames;
+		RowPtr->Rows.Append(RowNames);
 
 	RowPtr->Populate();
 
 	DataTables->MarkPackageDirty();
-}
-
-void UCsDataRootSetImpl::AddDataTables(const TSet<TSoftObjectPtr<UDataTable>>& InDataTables)
-{
-	// Check DataTables exists
-	if (!DataTables)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataRootSetImpl::AddDataTables: DataTables is NULL."));
-		return;
-	}
-
-	for (const TSoftObjectPtr<UDataTable>& DT : InDataTables)
-	{
-		// Check Path is valid
-		const FSoftObjectPath& Path = DT.ToSoftObjectPath();
-
-		if (!Path.IsValid())
-		{
-			UE_LOG(LogCs, Warning, TEXT("UCsDataRootSetImpl::AddDataTables: DT is NOT Valid."));
-			continue;
-		}
-
-		AddDataTable(DT);
-	}
-}
-
-void UCsDataRootSetImpl::AddDataTables(const TMap<TSoftObjectPtr<UDataTable>, TSet<FName>>& RowNamesByDataTableMap)
-{
-	// Check DataTables exists
-	if (!DataTables)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsDataRootSetImpl::AddDataTables: DataTables is NULL."));
-		return;
-	}
-
-	for (const TPair<TSoftObjectPtr<UDataTable>, TSet<FName>>& Pair : RowNamesByDataTableMap)
-	{
-		const TSoftObjectPtr<UDataTable>& DT = Pair.Key;
-		const TSet<FName>& RowNames			 = Pair.Value;
-
-		if (RowNames.Num() == CS_EMPTY)
-			AddDataTable(DT);
-		else
-			AddDataTable(DT, RowNames);
-	}
 }
 
 #endif // #if WITH_EDITOR

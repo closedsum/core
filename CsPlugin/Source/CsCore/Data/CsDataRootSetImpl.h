@@ -25,11 +25,8 @@ public:
 
 #if WITH_EDITOR
 
-	void AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTable);
-	void AddDataTable(const TSoftObjectPtr<UDataTable>& InDataTable, const TSet<FName>& RowNames);
-
-	void AddDataTables(const TSet<TSoftObjectPtr<UDataTable>>& InDataTables);
-	void AddDataTables(const TMap<TSoftObjectPtr<UDataTable>, TSet<FName>>& RowNamesByDataTableMap);
+	void AddDataTable(const FName& EntryName, const TSoftObjectPtr<UDataTable>& DataTable);
+	void AddDataTable(const FName& Entryname, const TSoftObjectPtr<UDataTable>& DataTable, const TSet<FName>& RowNames);
 
 #endif // #if WITH_EDITOR
 

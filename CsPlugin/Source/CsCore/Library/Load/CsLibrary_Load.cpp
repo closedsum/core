@@ -9,6 +9,14 @@
 // Data
 #include "Data/CsData.h"
 #include "Engine/DataTable.h"
+// Material
+#include "Classes/Materials/Material.h"
+#include "Classes/Materials/MaterialExpression.h"
+#include "Classes/Materials/MaterialFunction.h"
+// Graph
+#include "EdGraph/EdGraphNode.h"
+// Blueprint
+#include "Engine/BlueprintGeneratedClass.h"
 
 UCsLibrary_Load::UCsLibrary_Load(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -564,6 +572,664 @@ void UCsLibrary_Load::GetSoftObjectPaths(const void* StructValue, UStruct* const
 }
 
 #pragma endregion Soft
+
+void UCsLibrary_Load::GetObjectPaths_Class_Internal(UClass* Class, FCsLibraryLoad_GetObjectPaths& OutPaths)
+{
+	const bool ValidClass = Class->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint);
+
+	FSoftClassPath ClassPath(Class);
+	ClassPath.SetPath(ClassPath.GetAssetPathString());
+	
+	const bool ValidName = !ClassPath.GetAssetName().StartsWith(TEXT("Default__"));
+
+	const bool ValidPathRoot = !ClassPath.GetAssetPathString().StartsWith(TEXT("/Temp")) &&
+							   !ClassPath.GetAssetPathString().StartsWith(TEXT("/Script"));
+
+	if (ValidClass &&
+		ValidName &&
+		ValidPathRoot)
+	{
+		OutPaths.AddPath(ClassPath);
+	}
+
+	if (ValidClass)
+	{
+		if (!OutPaths.HasVisitedPointer(Class->GetFName(), Class))
+		{
+			OutPaths.VisitPointer(Class->GetFName(), Class);
+
+			GetObjectPaths_Internal(Class->GetDefaultObject(), Class, OutPaths);
+		}
+	}
+}
+
+void UCsLibrary_Load::GetObjectPaths_ClassProperty(UClassProperty* ClassProperty, const void* StructValue, FCsLibraryLoad_GetObjectPaths& OutPaths)
+{
+	if (UObject* const* Ptr = ClassProperty->ContainerPtrToValuePtr<UObject*>(StructValue))
+	{
+		if (const UObject* Object = *Ptr)
+		{
+			GetObjectPaths_ClassProperty_Internal(ClassProperty->MetaClass, Object, OutPaths);
+		}
+	}
+}
+
+void UCsLibrary_Load::GetObjectPaths_ClassProperty_Internal(UClass* MetaClass, const UObject* Object, FCsLibraryLoad_GetObjectPaths& OutPaths)
+{
+	const bool ValidClass = MetaClass->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint);
+
+	const UClass* Class = Cast<UClass>(Object);
+
+	if (ValidClass)
+	{
+		FSoftClassPath ClassPath(Class);
+		ClassPath.SetPath(ClassPath.GetAssetPathString());
+
+		const bool ValidPathRoot = !ClassPath.GetAssetPathString().StartsWith(TEXT("/Temp")) &&
+								   !ClassPath.GetAssetPathString().StartsWith(TEXT("/Script"));
+
+		if (ValidPathRoot)
+		{
+			OutPaths.AddPath(ClassPath);
+		}
+	}
+
+	if (!MetaClass->HasAnyClassFlags(EClassFlags::CLASS_Abstract))
+	{
+		if (!OutPaths.HasVisitedPointer(MetaClass->GetFName(), Class))
+		{
+			OutPaths.VisitPointer(MetaClass->GetFName(), Class);
+
+			GetObjectPaths_Internal(Class, Object->GetClass(), OutPaths);
+		}
+	}
+}
+
+void UCsLibrary_Load::GetObjectPaths_ObjectProperty(UObjectProperty* ObjectProperty, const void* StructValue, FCsLibraryLoad_GetObjectPaths& OutPaths)
+{
+	if (UObject* const* Ptr = ObjectProperty->ContainerPtrToValuePtr<UObject*>(StructValue))
+	{
+		if (const UObject* Object = *Ptr)
+		{
+			GetObjectPaths_ObjectProperty_Internal(ObjectProperty->PropertyClass, Object, OutPaths);
+		}
+	}
+}
+
+void UCsLibrary_Load::GetObjectPaths_ObjectProperty_Internal(UClass* PropertyClass, const UObject* Object, FCsLibraryLoad_GetObjectPaths& OutPaths)
+{
+	const bool ValidClass = PropertyClass->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint) ||
+							PropertyClass == UDataTable::StaticClass() ||
+							PropertyClass->ImplementsInterface(UInterface_AssetUserData::StaticClass());
+		
+	if (ValidClass)
+	{
+		FSoftObjectPath ObjectPath(Object);
+		ObjectPath.SetPath(ObjectPath.GetAssetPathString());
+
+		const bool ValidName = !ObjectPath.GetAssetName().StartsWith(TEXT("Default__"));
+
+		const bool ValidPathRoot = !ObjectPath.GetAssetPathString().StartsWith(TEXT("/Temp")) &&
+									!ObjectPath.GetAssetPathString().StartsWith(TEXT("/Script"));
+
+		if (ValidName &&
+			ValidPathRoot)
+		{
+			OutPaths.AddPath(ObjectPath);
+		}
+	}
+			
+	// Subobjects
+
+		// Ignore UFunction and UMaterialFunctionInterface as getting subobjects have some thread / resource contention issues
+	if (!PropertyClass->IsChildOf<UFunction>() &&
+		!PropertyClass->IsChildOf<UMaterialFunctionInterface>())
+	{
+		TArray<UObject*> OutDefaultSubobjects;
+		const_cast<UObject*>(Object)->GetDefaultSubobjects(OutDefaultSubobjects);
+
+		for (UObject* O : OutDefaultSubobjects)
+		{
+			if (!OutPaths.HasVisitedPointer(O->GetClass()->GetFName(), O))
+			{
+				OutPaths.VisitPointer(O->GetClass()->GetFName(), O);
+
+				GetObjectPaths_Internal(O, O->GetClass(), OutPaths);
+			}
+		}
+	}
+
+	if (ValidClass ||
+		!PropertyClass->HasAnyClassFlags(EClassFlags::CLASS_Abstract))
+	{
+		// DataTable
+		if (PropertyClass == UDataTable::StaticClass())
+		{
+			const UDataTable* DataTable = Cast<UDataTable>(Object);
+					
+			// Check each row for any Object Paths
+			const UScriptStruct* ScriptStruct = DataTable->GetRowStruct();
+			UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
+			UStruct* const Struct			  = Temp;
+
+			TArray<FName> RowNames = DataTable->GetRowNames();
+
+			for (const FName& RowName : RowNames)
+			{
+				uint8* RowPtr = DataTable->FindRowUnchecked(RowName);
+
+				GetObjectPaths_Internal(RowPtr, Struct, OutPaths);
+			}
+		}
+		else
+		{
+			if (!OutPaths.HasVisitedPointer(PropertyClass->GetFName(), Object))
+			{
+				OutPaths.VisitPointer(PropertyClass->GetFName(), Object);
+
+				GetObjectPaths_Internal(Object, Object->GetClass(), OutPaths);
+			}
+		}
+	}
+}
+
+void UCsLibrary_Load::GetObjectPaths_SoftClassProperty(USoftClassProperty* SoftClassProperty, const void* StructValue, FCsLibraryLoad_GetObjectPaths& OutPaths)
+{
+	if (const FSoftObjectPtr* Ptr = SoftClassProperty->GetPropertyValuePtr_InContainer(StructValue))
+	{
+		const FSoftObjectPath ObjectPath = Ptr->ToSoftObjectPath();
+
+		if (ObjectPath.IsValid())
+		{
+			UObject* O = Ptr->LoadSynchronous();
+
+			if (UClass* Class = Cast<UClass>(O))
+			{
+				GetObjectPaths_ClassProperty_Internal(SoftClassProperty->MetaClass, Class, OutPaths);
+			}
+		}
+	}
+}
+
+void UCsLibrary_Load::GetObjectPaths_SoftObjectProperty(USoftObjectProperty* SoftObjectProperty, const void* StructValue, FCsLibraryLoad_GetObjectPaths& OutPaths)
+{
+	if (const FSoftObjectPtr* Ptr = SoftObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
+	{
+		const FSoftObjectPath ObjectPath = Ptr->ToSoftObjectPath();
+
+		if (ObjectPath.IsValid())
+		{
+			if (UObject* O = Ptr->LoadSynchronous())
+			{
+				GetObjectPaths_ObjectProperty_Internal(SoftObjectProperty->PropertyClass, O, OutPaths);
+			}
+		}
+	}
+}
+
+void UCsLibrary_Load::GetObjectPaths_Struct(UStruct* Struct, FCsLibraryLoad_GetObjectPaths& OutPaths)
+{
+	for (TFieldIterator<UProperty> It(Struct); It; ++It)
+	{
+		UProperty* Property = Cast<UProperty>(*It);
+
+		UClass* Class = nullptr;
+		
+		// Class
+		if (UClassProperty* ClassProperty = Cast<UClassProperty>(Property))
+		{
+			Class = ClassProperty->MetaClass;
+		}
+		// Object
+		else
+		if (UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
+		{
+			 Class = ObjectProperty->PropertyClass;
+		}
+		// SoftClass
+		else
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
+		{
+			Class = SoftClassProperty->MetaClass;
+		}
+		// SoftObject
+		else
+		if (USoftClassProperty* SoftObjectProperty = Cast<USoftClassProperty>(Property))
+		{
+			Class = SoftObjectProperty->PropertyClass;
+		}
+
+		if (Class)
+		{
+			GetObjectPaths_Class_Internal(Class, OutPaths);
+			continue;
+		}
+
+		// Struct
+		if (UStructProperty* StructProperty = Cast<UStructProperty>(Property))
+		{
+			GetObjectPaths_Struct(StructProperty->Struct, OutPaths);
+			continue;
+		}
+		// Array
+		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
+		{
+			Class = nullptr;
+		
+			// Class
+			if (UClassProperty* InnerClassProperty = Cast<UClassProperty>(ArrayProperty->Inner))
+			{
+				Class = InnerClassProperty->MetaClass;
+			}
+			// Object
+			else
+			if (UObjectProperty* InnerObjectProperty = Cast<UObjectProperty>(ArrayProperty->Inner))
+			{
+				 Class = InnerObjectProperty->PropertyClass;
+			}
+			// SoftClass
+			else
+			if (USoftClassProperty* InnerSoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
+			{
+				Class = InnerSoftClassProperty->MetaClass;
+			}
+			// SoftObject
+			else
+			if (USoftClassProperty* InnerSoftObjectProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
+			{
+				Class = InnerSoftObjectProperty->PropertyClass;
+			}
+
+			if (Class)
+			{
+				GetObjectPaths_Class_Internal(Class, OutPaths);
+				continue;
+			}
+
+			// Struct
+			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
+			{
+				GetObjectPaths_Struct(InnerStructProperty->Struct, OutPaths);
+				continue;
+			}
+			continue;
+		}
+	}
+}
+
+void UCsLibrary_Load::GetObjectPaths_Function(UFunction* Function, FCsLibraryLoad_GetObjectPaths& OutPaths)
+{
+	for (UObject* Object : Function->ScriptObjectReferences)
+	{
+		UClass* Class = Object->GetClass();
+
+		const bool ValidClass = Class->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint);
+
+		FSoftClassPath ClassPath(Class);
+		ClassPath.SetPath(ClassPath.GetAssetPathString());
+
+		const bool ValidName = !ClassPath.GetAssetName().StartsWith(TEXT("Default__"));
+		/*
+		const bool ValidName = ClassPath.GetAssetName() != OutPaths.RootName &&
+							   ClassPath.GetAssetName() != OutPaths.RootDefaultName &&
+							   !ClassPath.GetAssetName().StartsWith(TEXT("Default__"));
+							   */
+		const bool ValidPathRoot = !ClassPath.GetAssetPathString().StartsWith(TEXT("/Temp")) &&
+								   !ClassPath.GetAssetPathString().StartsWith(TEXT("/Script"));
+
+		if (ValidClass &&
+			ValidName &&
+			ValidPathRoot)
+		{
+			OutPaths.AddPath(ClassPath);
+		}
+
+		if (ValidClass)
+		{
+			if (!OutPaths.HasVisitedPointer(Class->GetFName(), Class))
+			{
+				OutPaths.VisitPointer(Class->GetFName(), Class);
+
+				GetObjectPaths_Internal(Object, Class, OutPaths);
+			}
+		}
+	}
+
+	for (UProperty* Property = (UProperty*)Function->Children; Property; Property = (UProperty*)Property->Next)
+	{
+		const FString PropertyName = Property->GetName();
+
+		UClass* Class = nullptr;
+		
+		// Class
+		if (UClassProperty* ClassProperty = Cast<UClassProperty>(Property))
+		{
+			Class = ClassProperty->MetaClass;
+		}
+		// Object
+		else
+		if (UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
+		{
+			 Class = ObjectProperty->PropertyClass;
+		}
+		// SoftClass
+		else
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
+		{
+			Class = SoftClassProperty->MetaClass;
+		}
+		// SoftObject
+		else
+		if (USoftClassProperty* SoftObjectProperty = Cast<USoftClassProperty>(Property))
+		{
+			Class = SoftObjectProperty->PropertyClass;
+		}
+
+		if (Class)
+		{
+			GetObjectPaths_Class_Internal(Class, OutPaths);
+			continue;
+		}
+
+		// Struct
+		if (UStructProperty* StructProperty = Cast<UStructProperty>(Property))
+		{
+			GetObjectPaths_Struct(StructProperty->Struct, OutPaths);
+			continue;
+		}
+		// Array
+		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
+		{
+			Class = nullptr;
+		
+			// Class
+			if (UClassProperty* InnerClassProperty = Cast<UClassProperty>(ArrayProperty->Inner))
+			{
+				Class = InnerClassProperty->MetaClass;
+			}
+			// Object
+			else
+			if (UObjectProperty* InnerObjectProperty = Cast<UObjectProperty>(ArrayProperty->Inner))
+			{
+				 Class = InnerObjectProperty->PropertyClass;
+			}
+			// SoftClass
+			else
+			if (USoftClassProperty* InnerSoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
+			{
+				Class = InnerSoftClassProperty->MetaClass;
+			}
+			// SoftObject
+			else
+			if (USoftClassProperty* InnerSoftObjectProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
+			{
+				Class = InnerSoftObjectProperty->PropertyClass;
+			}
+
+			if (Class)
+			{
+				GetObjectPaths_Class_Internal(Class, OutPaths);
+				continue;
+			}
+
+			// Struct
+			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
+			{
+				GetObjectPaths_Struct(InnerStructProperty->Struct, OutPaths);
+				continue;
+			}
+			continue;
+		}
+	}
+}
+
+void UCsLibrary_Load::GetObjectPaths_Internal(const void* StructValue, UStruct* const& Struct, FCsLibraryLoad_GetObjectPaths& OutPaths)
+{
+	for (TFieldIterator<UProperty> It(Struct); It; ++It)
+	{
+		UProperty* Property = Cast<UProperty>(*It);
+
+		const FString PropertyName = Property->GetName();
+		
+		// Class
+		if (UClassProperty* ClassProperty = Cast<UClassProperty>(Property))
+		{
+			GetObjectPaths_ClassProperty(ClassProperty, StructValue, OutPaths);
+			continue;
+		}
+		// Object
+		if (UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
+		{
+			// Check for Material Expression that references Material.
+			// This leads to infinite recursion. So, Skip.
+			/*
+			if (Struct->IsChildOf<UMaterialExpression>() &&
+				ObjectProperty->PropertyClass->IsChildOf<UMaterialInterface>())
+			{
+				continue;
+			}
+			*/
+
+			// DataTable
+			if (ObjectProperty->PropertyClass == UDataTable::StaticClass())
+			{
+				UDataTable* const* DataTablePtr = ObjectProperty->ContainerPtrToValuePtr<UDataTable*>(StructValue);
+				
+				if (UDataTable* DataTable = *DataTablePtr)
+				{
+					if (!OutPaths.HasVisitedPointer(ObjectProperty->PropertyClass->GetFName(), DataTable))
+					{
+						OutPaths.VisitPointer(ObjectProperty->PropertyClass->GetFName(), DataTable);
+
+						OutPaths.AddPath(FSoftObjectPath(DataTable));
+
+						// Check each row for any Object Paths
+						const UScriptStruct* ScriptStruct = DataTable->GetRowStruct();
+						UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
+						UStruct* const RowStruct		  = Temp;
+
+						TArray<FName> RowNames = DataTable->GetRowNames();
+
+						for (const FName& RowName : RowNames)
+						{
+							uint8* RowPtr = DataTable->FindRowUnchecked(RowName);
+
+							GetObjectPaths_Internal(RowPtr, RowStruct, OutPaths);
+						}
+					}
+				}
+			}
+			else
+			{
+				GetObjectPaths_ObjectProperty(ObjectProperty, StructValue, OutPaths);
+			}
+			continue;
+		}
+		// SoftClass
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
+		{
+			GetObjectPaths_SoftClassProperty(SoftClassProperty, StructValue, OutPaths);
+			continue;
+		}
+		// SoftObject
+		if (USoftClassProperty* SoftObjectProperty = Cast<USoftClassProperty>(Property))
+		{
+			GetObjectPaths_SoftObjectProperty(SoftObjectProperty, StructValue, OutPaths);
+			continue;
+		}
+		// Struct
+		if (UStructProperty* StructProperty = Cast<UStructProperty>(Property))
+		{
+			//if (PropertyName.StartsWith(TEXT("UberGraphFrame")))
+			//	continue;
+
+			for (int32 I = 0; I < StructProperty->ArrayDim; ++I)
+			{
+				if (const uint8* Ptr = StructProperty->ContainerPtrToValuePtr<uint8>(StructValue, I))
+				{
+					if (!OutPaths.HasVisitedPointer(StructProperty->Struct->GetFName(), Ptr))
+					{
+						OutPaths.VisitPointer(StructProperty->Struct->GetFName(), Ptr);
+
+						GetObjectPaths_Internal(Ptr, StructProperty->Struct, OutPaths);
+					}
+				}
+			}
+			continue;
+		}
+		
+		// Array
+		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
+		{
+			FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+
+			const int32 Count = Helper.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				uint8* Ptr = Helper.GetRawPtr(I);
+
+				// Class
+				if (UClassProperty* InnerClassProperty = Cast<UClassProperty>(ArrayProperty->Inner))
+				{
+					UObject** ObjectPtr = reinterpret_cast<UObject**>(Ptr);
+
+					if (UObject* Object = *ObjectPtr)
+					{
+						if (!OutPaths.HasVisitedPointer(InnerClassProperty->MetaClass->GetFName(), Ptr))
+						{
+							OutPaths.VisitPointer(InnerClassProperty->MetaClass->GetFName(), Ptr);
+
+							GetObjectPaths_ClassProperty_Internal(InnerClassProperty->MetaClass, Object, OutPaths);
+						}
+					}
+					continue;
+				}
+				// Object
+				if (UObjectProperty* InnerObjectProperty = Cast<UObjectProperty>(ArrayProperty->Inner))
+				{
+					UObject** ObjectPtr = reinterpret_cast<UObject**>(Ptr);
+
+					if (UObject* Object = *ObjectPtr)
+					{
+						if (!OutPaths.HasVisitedPointer(InnerObjectProperty->PropertyClass->GetFName(), Ptr))
+						{
+							OutPaths.VisitPointer(InnerObjectProperty->PropertyClass->GetFName(), Ptr);
+
+							GetObjectPaths_ObjectProperty_Internal(InnerObjectProperty->PropertyClass, Object, OutPaths);
+						}
+					}
+					continue;
+				}
+				// SoftClass
+				if (USoftClassProperty* InnerSoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
+				{
+					TSoftClassPtr<UObject>* ObjectPtr = reinterpret_cast<TSoftClassPtr<UObject>*>(Helper.GetRawPtr(I));
+
+					if (ObjectPtr->IsValid())
+					{
+						UObject* Object = ObjectPtr->LoadSynchronous();
+
+						if (UClass* Class = Cast<UClass>(Object))
+						{
+							if (!OutPaths.HasVisitedPointer(InnerSoftClassProperty->MetaClass->GetFName(), Ptr))
+							{
+								OutPaths.VisitPointer(InnerSoftClassProperty->MetaClass->GetFName(), Ptr);
+
+								GetObjectPaths_ClassProperty_Internal(InnerSoftClassProperty->MetaClass, Object, OutPaths);
+							}
+						}
+					}
+					continue;
+				}
+				// SoftObject
+				if (USoftClassProperty* InnerSoftObjectProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
+				{
+					TSoftObjectPtr<UObject>* ObjectPtr = reinterpret_cast<TSoftObjectPtr<UObject>*>(Helper.GetRawPtr(I));
+
+					if (ObjectPtr->IsValid())
+					{
+						if (UObject* Object = ObjectPtr->LoadSynchronous())
+						{
+							if (!OutPaths.HasVisitedPointer(InnerSoftObjectProperty->PropertyClass->GetFName(), Ptr))
+							{
+								OutPaths.VisitPointer(InnerSoftObjectProperty->PropertyClass->GetFName(), Ptr);
+
+								GetObjectPaths_ObjectProperty_Internal(InnerSoftObjectProperty->PropertyClass, Object, OutPaths);
+							}
+						}
+					}
+					continue;
+				}
+				// Struct
+				if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
+				{
+					if (!OutPaths.HasVisitedPointer(InnerStructProperty->Struct->GetFName(), Ptr))
+					{
+						OutPaths.VisitPointer(InnerStructProperty->Struct->GetFName(), Ptr);
+
+						GetObjectPaths_Internal(Ptr, InnerStructProperty->Struct, OutPaths);
+					}
+					continue;
+				}
+			}
+			continue;
+		}
+	}
+	
+	// Iterate through Functions
+	for (UFunction* Function : TFieldRange<UFunction>(Struct))
+	{
+		const FString FunctionName = Function->GetName();
+
+		//if (FunctionName.StartsWith(TEXT("ExecuteUbergraph")))
+		//	continue;
+
+		const FString FunctionPath = FString::Printf(TEXT("%s.%s"), *(Struct->GetName()), *FunctionName);
+
+		if (!OutPaths.HasVisitedFunction(FunctionPath))
+		{
+			OutPaths.VisitFunction(FunctionPath);
+
+			GetObjectPaths_Function(Function, OutPaths);
+		}
+	}
+}
+
+void UCsLibrary_Load::GetObjectPaths(const void* StructValue, UStruct* const& Struct, FCsLibraryLoad_GetObjectPaths& OutPaths)
+{
+	OutPaths.VisitPointer(Struct->GetFName(), StructValue);
+
+	GetObjectPaths_Internal(StructValue, Struct, OutPaths);
+
+	OutPaths.Resolve();
+}
+
+void UCsLibrary_Load::GetObjectPaths(UObject* StructValue, UStruct* const& Struct, FCsLibraryLoad_GetObjectPaths& OutPaths)
+{
+	// Subobjects
+
+		// Ignore UFunction and UMaterialFunctionInterface as getting subobjects have some thread / resource contention issues
+	if (!Struct->IsChildOf<UFunction>() &&
+		!Struct->IsChildOf<UMaterialFunctionInterface>())
+	{
+		TArray<UObject*> OutDefaultSubobjects;
+		StructValue->GetDefaultSubobjects(OutDefaultSubobjects);
+
+		for (UObject* O : OutDefaultSubobjects)
+		{
+			OutPaths.VisitPointer(O->GetClass()->GetFName(), O);
+
+			GetObjectPaths_Internal(O, O->GetClass(), OutPaths);
+		}
+	}
+
+	OutPaths.VisitPointer(Struct->GetFName(), StructValue);
+
+	GetObjectPaths_Internal(StructValue, Struct, OutPaths);
+
+	OutPaths.Resolve();
+}
 
 #pragma endregion ObjectPath
 
@@ -1404,7 +2070,7 @@ void UCsLibrary_Load::UnloadDataTable(UDataTable* DataTable, const int32& Unload
 // References
 #pragma region
 
-void UCsLibrary_Load::GetReferencesReport_ClassProperty(UClassProperty* ClassProperty, const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport)
+void UCsLibrary_Load::GetReferencesReport_ClassProperty(UClassProperty* ClassProperty, const void* StructValue, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport, int32 Depth)
 {
 	if (UObject* const* Ptr = ClassProperty->ContainerPtrToValuePtr<UObject*>(StructValue))
 	{
@@ -1419,48 +2085,137 @@ void UCsLibrary_Load::GetReferencesReport_ClassProperty(UClassProperty* ClassPro
 		
 		if (const UObject* Object = *Ptr)
 		{
-			FSoftObjectPath ObjectPath(Object);
+			const bool ValidClass = ClassProperty->MetaClass->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint);
 
-			OutReport.Hard.Add(MemberInfo, ObjectPath);
+			const UClass* Class = Cast<UClass>(Object);
 
-			GetReferencesReport(Object, Object->GetClass(), MemberPath, OutReport);
+			if (ValidClass)
+			{
+				FSoftClassPath ClassPath(Class);
+
+				const bool ValidPathRoot = !ClassPath.GetAssetPathString().StartsWith(TEXT("/Temp")) &&
+										   !ClassPath.GetAssetPathString().StartsWith(TEXT("/Script"));
+
+				if (ValidPathRoot)
+				{
+					OutReport.Hard.Add(MemberInfo, ClassPath);
+
+					OutReport.AddToDepthList(ClassPath, Depth);
+				}
+			}
+
+			if (!ClassProperty->MetaClass->HasAnyClassFlags(EClassFlags::CLASS_Abstract))
+			{
+				GetReferencesReport(Class, Object->GetClass(), MemberPath, OutReport, Depth + 1);
+			}
 		}
+		/*
 		else
 		{
 			OutReport.Hard.AddUnused(MemberInfo);
 		}
+		*/
 	}
 }
 
-void UCsLibrary_Load::GetReferencesReport_ObjectProperty(UObjectProperty* ObjectProperty, const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport)
+void UCsLibrary_Load::GetReferencesReport_ObjectProperty(UObjectProperty* ObjectProperty, const void* StructValue, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport, int32 Depth)
 {
 	if (UObject* const* Ptr = ObjectProperty->ContainerPtrToValuePtr<UObject*>(StructValue))
 	{
-		FCsLibraryLoad_MemberInfo MemberInfo;
-
 		const FString PropertyName = ObjectProperty->GetName();
 		const FString MemberPath   = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
 
-		MemberInfo.SetName(PropertyName);
-		MemberInfo.SetPath(MemberPath);
-		MemberInfo.SetType(ObjectProperty->PropertyClass->GetName());
+		const bool ValidClass = ObjectProperty->PropertyClass->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint) ||
+								ObjectProperty->PropertyClass == UDataTable::StaticClass() ||
+								Cast<IInterface_AssetUserData>(ObjectProperty->PropertyClass) != nullptr;
 		
 		if (const UObject* Object = *Ptr)
 		{
-			FSoftObjectPath ObjectPath(Object);
+			if (ValidClass)
+			{
+				FSoftObjectPath ObjectPath(Object);
 
-			OutReport.Hard.Add(MemberInfo, ObjectPath);
+				const bool ValidName = ObjectPath.GetAssetName() != OutReport.Name &&
+									   ObjectPath.GetAssetName() != OutReport.DefaultName;
+				
+				const bool ValidPathRoot = !ObjectPath.GetAssetPathString().StartsWith(TEXT("/Temp")) &&
+										   !ObjectPath.GetAssetPathString().StartsWith(TEXT("/Script"));
 
-			GetReferencesReport(Object, Object->GetClass(), MemberPath, OutReport);
+				if (ValidName &&
+					ValidPathRoot)
+				{
+					FCsLibraryLoad_MemberInfo MemberInfo;
+
+					MemberInfo.SetName(PropertyName);
+					MemberInfo.SetPath(MemberPath);
+					MemberInfo.SetType(ObjectProperty->PropertyClass->GetName());
+
+					OutReport.Hard.Add(MemberInfo, ObjectPath);
+
+					OutReport.AddToDepthList(ObjectPath, Depth);
+				}
+			}
+			
+			// Subobjects
+			TArray<UObject*> OutDefaultSubobjects;
+			const_cast<UObject*>(Object)->GetDefaultSubobjects(OutDefaultSubobjects);
+
+			for (UObject* O : OutDefaultSubobjects)
+			{
+				const FString SubobjectPath = FString::Printf(TEXT("%s.%s"), *MemberPath, *(O->GetName()));
+
+				GetReferencesReport(O, O->GetClass(), SubobjectPath, OutReport, Depth + 1);
+			}
+
+			if (!ObjectProperty->PropertyClass->HasAnyClassFlags(EClassFlags::CLASS_Abstract))
+			{
+				if (ObjectProperty->PropertyClass == UDataTable::StaticClass())
+				{
+					UDataTable* const* DataTablePtr = ObjectProperty->ContainerPtrToValuePtr<UDataTable*>(StructValue);
+					
+					if (UDataTable* DataTable = *DataTablePtr)
+					{
+						const UScriptStruct* ScriptStruct = DataTable->GetRowStruct();
+						UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
+						UStruct* const Struct			  = Temp;
+
+						TArray<FName> RowNames = DataTable->GetRowNames();
+
+						for (const FName& RowName : RowNames)
+						{
+							uint8* RowPtr = DataTable->FindRowUnchecked(RowName);
+
+							const FString RowMemberPath = FString::Printf(TEXT("%s.%s[%s]"), *OuterName, *PropertyName, *(RowName.ToString()));
+
+							GetReferencesReport(RowPtr, Struct, RowMemberPath, OutReport, Depth + 1);
+						}
+					}
+				}
+				else
+				{
+					GetReferencesReport(Object, Object->GetClass(), MemberPath, OutReport, Depth + 1);
+				}
+			}
 		}
+		/*
 		else
 		{
-			OutReport.Hard.AddUnused(MemberInfo);
+			if (ValidClass)
+			{
+				FRsLibraryLoad_MemberInfo MemberInfo;
+
+				MemberInfo.SetName(PropertyName);
+				MemberInfo.SetPath(MemberPath);
+				MemberInfo.SetType(ObjectProperty->PropertyClass->GetName());
+
+				OutReport.Hard.AddUnused(MemberInfo);
+			}
 		}
+		*/
 	}
 }
 
-void UCsLibrary_Load::GetReferencesReport_SoftClassProperty(USoftClassProperty* SoftClassProperty, const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport)
+void UCsLibrary_Load::GetReferencesReport_SoftClassProperty(USoftClassProperty* SoftClassProperty, const void* StructValue, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport, int32 Depth)
 {
 	if (const FSoftObjectPtr* Ptr = SoftClassProperty->GetPropertyValuePtr_InContainer(StructValue))
 	{
@@ -1477,16 +2232,27 @@ void UCsLibrary_Load::GetReferencesReport_SoftClassProperty(USoftClassProperty* 
 
 		if (ObjectPath.IsValid())
 		{
-			OutReport.Soft.Add(MemberInfo, ObjectPath);
+			UObject* O = Ptr->LoadSynchronous();
+
+			if (UClass* Class = Cast<UClass>(O))
+			{
+				OutReport.Soft.Add(MemberInfo, ObjectPath);
+
+				OutReport.AddToDepthList(ObjectPath, Depth);
+
+				GetReferencesReport(Class->GetDefaultObject(), Class->StaticClass(), MemberPath, OutReport, Depth + 1);
+			}
 		}
+		/*
 		else
 		{
 			OutReport.Soft.AddUnused(MemberInfo);
 		}
+		*/
 	}
 }
 
-void UCsLibrary_Load::GetReferencesReport_SoftObjectProperty(USoftObjectProperty* SoftObjectProperty, const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport)
+void UCsLibrary_Load::GetReferencesReport_SoftObjectProperty(USoftObjectProperty* SoftObjectProperty, const void* StructValue, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport, int32 Depth)
 {
 	if (const FSoftObjectPtr* Ptr = SoftObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
 	{
@@ -1503,16 +2269,140 @@ void UCsLibrary_Load::GetReferencesReport_SoftObjectProperty(USoftObjectProperty
 
 		if (ObjectPath.IsValid())
 		{
-			OutReport.Soft.Add(MemberInfo, ObjectPath);
+			if (UObject* O = Ptr->LoadSynchronous())
+			{
+				OutReport.Soft.Add(MemberInfo, ObjectPath);
+
+				OutReport.AddToDepthList(ObjectPath, Depth);
+
+				if (SoftObjectProperty->PropertyClass == UDataTable::StaticClass())
+				{
+					UDataTable* DataTable = Cast<UDataTable>(O);
+
+					OutReport.AddToDepthList(FSoftObjectPath(DataTable), Depth + 1);
+
+					const UScriptStruct* ScriptStruct = DataTable->GetRowStruct();
+					UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
+					UStruct* const Struct			  = Temp;
+
+					TArray<FName> RowNames = DataTable->GetRowNames();
+
+					for (const FName& RowName : RowNames)
+					{
+						uint8* RowPtr = DataTable->FindRowUnchecked(RowName);
+
+						const FString RowMemberPath = FString::Printf(TEXT("%s.%s[%s]"), *OuterName, *PropertyName, *(RowName.ToString()));
+
+						GetReferencesReport(RowPtr, Struct, RowMemberPath, OutReport, Depth + 1);
+					}
+				}
+				else
+				{
+					GetReferencesReport(O, O->GetClass(), MemberPath, OutReport, Depth + 1);
+				}
+			}
 		}
+		/*
 		else
 		{
 			OutReport.Soft.AddUnused(MemberInfo);
 		}
+		*/
 	}
 }
 
-void UCsLibrary_Load::GetReferencesReport(const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport)
+void UCsLibrary_Load::GetReferencesReport_Function(UStruct* const& ParentStruct, UFunction* Function, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport, int32 Depth)
+{
+	//Function->ScriptObjectReferences
+	for (UProperty* Property = (UProperty*)Function->Children; Property; Property = (UProperty*)Property->Next)
+	{
+		const FString PropertyName = Property->GetName();
+
+		UClass* Class = nullptr;
+		
+		// Class
+		if (UClassProperty* ClassProperty = Cast<UClassProperty>(Property))
+		{
+			Class = ClassProperty->MetaClass;
+		}
+		// Object
+		else
+		if (UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
+		{
+			 Class = ObjectProperty->PropertyClass;
+		}
+		// SoftClass
+		else
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
+		{
+			Class = SoftClassProperty->MetaClass;
+		}
+		// SoftObject
+		else
+		if (USoftClassProperty* SoftObjectProperty = Cast<USoftClassProperty>(Property))
+		{
+			Class = SoftObjectProperty->PropertyClass;
+		}
+
+		if (Class)
+		{
+			const bool ValidClass = Class != ParentStruct &&
+									Class->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint);
+
+			FSoftClassPath ClassPath(Class);
+
+			const bool ValidName = ClassPath.GetAssetName() != OutReport.Name &&
+								   ClassPath.GetAssetName() != OutReport.DefaultName;
+
+			const bool ValidPathRoot = !ClassPath.GetAssetPathString().StartsWith(TEXT("/Temp")) &&
+									   !ClassPath.GetAssetPathString().StartsWith(TEXT("/Script"));
+
+			if (ValidClass &&
+				ValidName &&
+				ValidPathRoot)
+			{
+				FCsLibraryLoad_MemberInfo MemberInfo;
+
+				const FString MemberPath  = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
+
+				MemberInfo.SetName(PropertyName);
+				MemberInfo.SetPath(MemberPath);
+				MemberInfo.SetType(Class->GetName());
+
+				OutReport.Hard.Add(MemberInfo, ClassPath);
+
+				OutReport.AddToDepthList(ClassPath, Depth);
+			}
+
+			if (ValidClass)
+			{
+				const FString MemberPath = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
+
+				GetReferencesReport(Class->GetDefaultObject(), Class, MemberPath, OutReport, Depth + 1);
+			}
+		}
+
+		/*
+		// TODO:
+		// Struct
+		if (UStructProperty* StructProperty = Cast<UStructProperty>(Property))
+		{
+			for (int32 I = 0; I < StructProperty->ArrayDim; ++I)
+			{
+				if (const uint8* Ptr = StructProperty->ContainerPtrToValuePtr<uint8>(Function, I))
+				{
+					const FString MemberPath = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
+
+					GetReferencesReport(Ptr, StructProperty->Struct, MemberPath, OutReport);
+				}
+			}
+			continue;
+		}
+		*/
+	}
+}
+
+void UCsLibrary_Load::GetReferencesReport(const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport, int32 Depth)
 {
 	for (TFieldIterator<UProperty> It(Struct); It; ++It)
 	{
@@ -1523,37 +2413,75 @@ void UCsLibrary_Load::GetReferencesReport(const void* StructValue, UStruct* cons
 		// Class
 		if (UClassProperty* ClassProperty = Cast<UClassProperty>(Property))
 		{
-			GetReferencesReport_ClassProperty(ClassProperty, StructValue, Struct, OuterName, OutReport);
+			GetReferencesReport_ClassProperty(ClassProperty, StructValue, OuterName, OutReport, Depth + 1);
 			continue;
 		}
 		// Object
 		if (UObjectProperty* ObjectProperty = Cast<UObjectProperty>(Property))
 		{
-			GetReferencesReport_ObjectProperty(ObjectProperty, StructValue, Struct, OuterName, OutReport);
+			// Check for Material Expression that references Material.
+			// This leads to infinite recursion. So, Skip.
+			if (Struct->IsChildOf(UMaterialExpression::StaticClass()) &&
+				ObjectProperty->PropertyClass == UMaterial::StaticClass())
+			{
+				continue;
+			}
+
+			if (ObjectProperty->PropertyClass == UDataTable::StaticClass())
+			{
+				UDataTable* const* DataTablePtr = ObjectProperty->ContainerPtrToValuePtr<UDataTable*>(StructValue);
+				
+				if (UDataTable* DataTable = *DataTablePtr)
+				{
+					OutReport.AddToDepthList(FSoftObjectPath(DataTable), Depth + 1);
+
+					const UScriptStruct* ScriptStruct = DataTable->GetRowStruct();
+					UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
+					UStruct* const RowStruct		  = Temp;
+
+					TArray<FName> RowNames = DataTable->GetRowNames();
+
+					for (const FName& RowName : RowNames)
+					{
+						uint8* RowPtr = DataTable->FindRowUnchecked(RowName);
+
+						const FString MemberPath = FString::Printf(TEXT("%s.%s[%s]"), *OuterName, *PropertyName, *(RowName.ToString()));
+
+						GetReferencesReport(RowPtr, RowStruct, MemberPath, OutReport, Depth + 1);
+					}
+				}
+			}
+			else
+			{
+				GetReferencesReport_ObjectProperty(ObjectProperty, StructValue, OuterName, OutReport, Depth + 1);
+			}
 			continue;
 		}
 		// SoftClass
 		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(Property))
 		{
-			GetReferencesReport_SoftClassProperty(SoftClassProperty, StructValue, Struct, OuterName, OutReport);
+			GetReferencesReport_SoftClassProperty(SoftClassProperty, StructValue, OuterName, OutReport, Depth + 1);
 			continue;
 		}
 		// SoftObject
 		if (USoftClassProperty* SoftObjectProperty = Cast<USoftClassProperty>(Property))
 		{
-			GetReferencesReport_SoftObjectProperty(SoftObjectProperty, StructValue, Struct, OuterName, OutReport);
+			GetReferencesReport_SoftObjectProperty(SoftObjectProperty, StructValue, OuterName, OutReport, Depth + 1);
 			continue;
 		}
 		// Struct
 		if (UStructProperty* StructProperty = Cast<UStructProperty>(Property))
 		{
+			if (PropertyName.StartsWith(TEXT("UberGraphFrame")))
+				continue;
+
 			for (int32 I = 0; I < StructProperty->ArrayDim; ++I)
 			{
 				if (const uint8* Ptr = StructProperty->ContainerPtrToValuePtr<uint8>(StructValue, I))
 				{
 					const FString MemberPath = FString::Printf(TEXT("%s.%s"), *OuterName, *PropertyName);
 
-					GetReferencesReport(Ptr, StructProperty->Struct, MemberPath, OutReport);
+					GetReferencesReport(Ptr, StructProperty->Struct, MemberPath, OutReport, Depth + 1);
 				}
 			}
 			continue;
@@ -1568,9 +2496,16 @@ void UCsLibrary_Load::GetReferencesReport(const void* StructValue, UStruct* cons
 		if (FunctionName.StartsWith(TEXT("ExecuteUbergraph")))
 			continue;
 
-		const FString Name = FString::Printf(TEXT("%s.%s"), *OuterName, *FunctionName);
+		const FString FunctionPath = FString::Printf(TEXT("%s.%s"), *(Struct->GetName()), *FunctionName);
 
-		GetReferencesReport(Function, Function->GetClass(), Name, OutReport);
+		if (!OutReport.HasVisitedFunction(FunctionPath))
+		{
+			OutReport.VisitFunction(FunctionPath);
+
+			const FString Name = FString::Printf(TEXT("%s.%s"), *OuterName, *FunctionName);
+
+			GetReferencesReport_Function(Struct, Function, Name, OutReport, Depth + 1);
+		}
 	}
 }
 

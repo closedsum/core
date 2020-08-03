@@ -1,6 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "CsCVars.h"
-#include "CsCore.h"
+#include "Managers/Load/CsCVars_Manager_Load.h"
 
 
 TAutoConsoleVariable<int32> CsCVarLogManagerLoad(

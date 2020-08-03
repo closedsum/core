@@ -35,16 +35,6 @@ public:
 
 #pragma endregion FExec Interface
 
-// Tick
-#pragma region
-public:
-
-	bool bTicked;
-	TCsBool_Ref bTickedHandle;
-
-	virtual void OnFirstTick(const bool& Value);
-
-#pragma endregion Tick
 
 // Save
 #pragma region
@@ -56,50 +46,7 @@ public:
 
 public:
 
-	UCsDataMapping* DataMapping;
-
-	void OnBlueprintPreCompile(UBlueprint* Blueprint);
-
 	void OnBeginPIE(bool IsSimulating);
-
-// Enums
-#pragma region
-public:
-
-	TWeakObjectPtr<UCsEnumStructUserDefinedEnumMap> EnumStructUserDefinedEnumMap;
-
-	UCsEnumStructUserDefinedEnumMap* GetEnumStructUserDefinedEnumMap();
-
-	FCsMutex OnBlueprintPreCompile_HandleEnums_Mutex;
-
-	void OnBlueprintPreCompile_HandleEnums();
-
-	void PopulateUserDefinedEnums();
-	void PopulateUserDefinedEnum_InputAction();
-
-	void PopulateEnumMapsFromUserDefinedEnums();
-
-	template<typename EnumMap>
-	void PopulateEnumMapFromUserDefinedEnum(const FECsUserDefinedEnum& EnumType)
-	{
-		TArray<FString> Names;
-		GetUserDefinedEnumNames(EnumMap::Get().GetEnumName(), EnumType, Names);
-		EnumMap::Get().ClearUserDefinedEnums();
-		AddEnumsByNameToEnumMap<EnumMap>(Names);
-	}
-
-	void GetUserDefinedEnumNames(const FString& EnumName, const FECsUserDefinedEnum& EnumType, TArray<FString>& OutNames);
-
-	template<typename EnumMap>
-	void AddEnumsByNameToEnumMap(const TArray<FString>& Names)
-	{
-		for (const FString& Name : Names)
-		{
-			EnumMap::Get().CreateSafe(Name, true);
-		}
-	}
-
-#pragma endregion Enums
 
 // Stream
 #pragma region
@@ -122,8 +69,11 @@ public:
 #pragma region
 public:
 
-	void OnObjectSaved_DataRootSet_DataTables(UDataTable* DataTable);
-	void OnObjectSaved_DataRootSet_Payloads(UDataTable* DataTable);
+	void OnObjectSaved_Update_DataRootSet_DataTables(UDataTable* DataTable);
+
+	void OnObjectSaved_Update_DataRootSet_Payloads(UDataTable* DataTable);
+
+	void OnObjectSaved_Update_DataRootSet_Payload(FCsPayload& Payload);
 
 #pragma endregion DataRootSet
 

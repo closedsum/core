@@ -23,6 +23,26 @@ struct CSCORE_API FCsManager_Payload: public TCsManager_ResourceValueType_Fixed<
 {
 };
 
+	// FCsDataEntry_Data
+
+struct CSCORE_API FCsResource_DataEntry_Data : public TCsResourceContainer<FCsDataEntry_Data>
+{
+};
+
+struct CSCORE_API FCsManager_DataEntry_Data : public TCsManager_ResourceValueType_Fixed<FCsDataEntry_Data, FCsResource_DataEntry_Data, 0>
+{
+};
+
+	// FCsDataEntry_DataTable
+
+struct CSCORE_API FCsResource_DataEntry_DataTable : public TCsResourceContainer<FCsDataEntry_DataTable>
+{
+};
+
+struct CSCORE_API FCsManager_DataEntry_DataTable : public TCsManager_ResourceValueType_Fixed<FCsDataEntry_DataTable, FCsResource_DataEntry_DataTable, 0>
+{
+};
+
 #pragma endregion Structs
 
 class ICsGetManagerData;
@@ -103,6 +123,8 @@ public:
 #pragma region
 protected:
 
+	FCsManager_DataEntry_Data Manager_DataEntry_Data;
+
 	TMap<FName, FCsDataEntry_Data*> DataEntryMap;
 	TMap<FSoftObjectPath, FCsDataEntry_Data*> DataEntryByPathMap;
 
@@ -119,6 +141,8 @@ protected:
 	// DataTable
 #pragma region
 protected:
+
+	FCsManager_DataEntry_DataTable Manager_DataEntry_DataTable;
 
 	/** <EntryName, Entry> */
 	TMap<FName, FCsDataEntry_DataTable*> DataTableEntryMap;
@@ -204,12 +228,13 @@ public:
 public:
 
 	/**
-	* Load a DataTable by Name.
+	* Load a DataTable by Entry Name. This the Row Name
+	* in the master DataTable List
 	*
-	* @param TableName	Name of the DataTable to load.
+	* @param EntryName	Row Name in the master DataTable list.
 	* return			DataTable that has been loaded.
 	*/
-	UDataTable* LoadDataTable(const FName& TableName);
+	UDataTable* LoadDataTable(const FName& EntryName);
 
 	/**
 	* Load a DataTable by SoftObjectPath.
@@ -223,11 +248,11 @@ public:
 	* Load the Row of a DataTable by the DataTable's Entry Name
 	* (Row Name in the master DataTable list) and Row Name.
 	*
-	* @param TableName	Row Name in the master DataTable list.
+	* @param EntryName	Row Name in the master DataTable list.
 	* @param RowName
 	* return			Pointer to the row.
 	*/
-	uint8* LoadDataTableRow(const FName& TableName, const FName& RowName);
+	uint8* LoadDataTableRow(const FName& EntryName, const FName& RowName);
 
 	/**
 	* Check whether the Row of a DataTable has been loaded.

@@ -313,15 +313,18 @@ public:
 public:
 
 	/**
-	* Get a DataTable by Name. This assumes the DataTable is loaded.
+	* Get a DataTable by the DataTable's Entry Name
+	* (Row Name in the master DataTable list).
+	* Check against the current loaded data tables.
 	*
-	* @param TableName
+	* @param EntryName	Row Name in the master DataTable list.
 	* return			DataTable
 	*/
-	UDataTable* GetDataTable(const FName& TableName);
+	UDataTable* GetDataTable(const FName& EntryName);
 
 	/**
-	* Get a DataTable by SoftObjectPath. This assumes the DataTable is loaded.
+	* Get a DataTable by SoftObjectPath. 
+	* Check against the current loaded data tables.
 	*
 	* @param Path
 	* return		DataTable
@@ -329,7 +332,8 @@ public:
 	UDataTable* GetDataTable(const FSoftObjectPath& Path);
 
 	/**
-	* Get a DataTable by SoftObjectPtr. This assumes the DataTable is loaded.
+	* Get a DataTable by SoftObjectPtr.
+	* Check against the current loaded data tables.
 	*
 	* @param SoftObject
 	* return				DataTable
@@ -337,22 +341,54 @@ public:
 	UDataTable* GetDataTable(const TSoftObjectPtr<UDataTable>& SoftObject);
 
 	/**
+	* Get a DataTable by the DataTable's Entry Name
+	* (Row Name in the master DataTable list).
+	* Check against the current loaded data tables.
 	*
-	*
-	* @param TableName
-	* @param RowName
-	* return			Pointer to the row.
+	* @param Context	Calling context.
+	* @param EntryName	Row Name in the master DataTable list.
+	* return			DataTable
 	*/
-	uint8* GetDataTableRow(const FName& TableName, const FName& RowName);
+	UDataTable* GetDataTableChecked(const FString& Context, const FName& EntryName);
 
 	/**
+	* Get a pointer to the row in a data table by the data table's Entry Name
+	* (Row Name in the master DataTable list) and Row Name.
+	* Check against the current loaded data tables.
 	*
+	* @param EntryName	Row Name in the master DataTable list.
+	* @param RowName	Row Name in the retrieved data table.
+	* return			Pointer to the row.
+	*/
+	uint8* GetDataTableRow(const FName& EntryName, const FName& RowName);
+
+	template<typename RowStructType>
+	RowStructType* GetDataTableRow(const FName& EntryName, const FName& RowName)
+	{
+		return reinterpret_cast<RowStructType*>(GetDataTableRow(EntryName, RowName));
+	}
+
+	/**
+	* Get a pointer to the row in a data table by the data table's Path
+	* and Row Name.
+	* Check against the current loaded data tables.
 	*
-	* @param Path
-	* @param RowName
+	* @param Path		Soft Path to the data table.
+	* @param RowName	Row Name in the retrieved data table.
 	* return			Pointer to the row.
 	*/
 	uint8* GetDataTableRow(const FSoftObjectPath& Path, const FName& RowName);
+
+	/**
+	* Get a pointer to the row in a data table by the data table's Soft Object
+	* and Row Name.
+	* Check against the current loaded data tables.
+	*
+	* @param SoftObject	Soft Object to the data table.
+	* @param RowName	Row Name is retrieved data table.
+	* return			Pointer to the row.
+	*/
+	uint8* GetDataTableRow(const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName);
 
 		// Entry
 #pragma region

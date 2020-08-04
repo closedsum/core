@@ -41,6 +41,7 @@ public:
 #pragma endregion Internal
 
 class ICsGetManagerWeapon;
+class UWorld;
 class ICsData_Weapon;
 struct FCsData_WeaponInterfaceMap;
 class UDataTable;
@@ -597,11 +598,36 @@ public:
 
 #pragma endregion Script
 
+// Class
+#pragma region
+protected:
+
+	void PopulateClassMapFromSettings();
+
+
+	// <Weapon (type), Weapon Class>
+	TMap<FName, FCsWeaponPtr*> WeaponClassByTypeMap;
+
+public:
+
+	FCsWeaponPtr* GetWeaponPtr(const FECsWeapon& Type);
+
+protected:
+
+	// <Weapon Class (type), Weapon Class>
+	TMap<FName, FCsWeaponPtr*> WeaponClassByClassTypeMap; 
+
+public:
+
+	FCsWeaponPtr* GetWeaponPtr(const FECsWeaponClass& Type);
+
+#pragma endregion Class
+
 // Data
 #pragma region
 public:
 
-	virtual void PopulateDataMapFromSettings();
+	void PopulateDataMapFromSettings();
 
 protected:
 	/** <DataName, InterfacePtr> */
@@ -695,18 +721,11 @@ private:
 	UPROPERTY()
 	TMap<FECsWeapon, UClass*> ClassMap;
 
-	UPROPERTY()
 	TArray<UDataTable*> DataTables;
 
+	TMap<FSoftObjectPath, TMap<FName, uint8*>> DataTableRowByPathMap;
+
 	void OnPayloadUnloaded(const FName& Payload);
-
-	TMap<FName, FCsWeaponPtr*> WeaponMap;
-
-public:
-
-	FCsWeaponPtr* GetWeaponPtr(const FName& Name);
-
-	FCsWeaponPtr* GetWeaponPtr(const FECsWeapon& Type);
 
 #pragma endregion Data
 };

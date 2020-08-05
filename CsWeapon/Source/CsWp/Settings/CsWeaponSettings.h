@@ -68,9 +68,6 @@ public:
 	}
 
 #pragma endregion Enum
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	TArray<FCsWeaponSettings_DataTable_Weapons> Weapons;
 	
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	FCsSettings_Manager_Weapon ManagerWeapon;

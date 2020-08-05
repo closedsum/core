@@ -681,20 +681,20 @@ void UCsManager_Weapon::GetWeaponClassesDataTableChecked(const FString& Context,
 	// Get DataRootSetImpl
 	UWorld* World				  = MyRoot->GetWorld();
 	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
-	UObject* Object				  = Manager_Data->DataRootSet.Data_Internal;
+	UObject* DataRootSetImpl	  = Manager_Data->DataRootSet.GetObject();
 
-	checkf(Object, TEXT("%s: Failed to find DataRootSet."), *Context);
+	checkf(DataRootSetImpl, TEXT("%s: Failed to find DataRootSet."), *Context);
 
 	// Get DataRootSet for this Module
-	ICsWpGetDataRootSet* GetDataRootSet = Cast<ICsWpGetDataRootSet>(Object);
+	ICsWpGetDataRootSet* GetDataRootSet = Cast<ICsWpGetDataRootSet>(DataRootSetImpl);
 
-	checkf(GetDataRootSet, TEXT("%s: DataRootSet: %s with Class: %s does NOT implement interface: ICsWpGetDataRootSet."), *Context, *(Object->GetName()), *(Object->GetClass()->GetName()));
+	checkf(GetDataRootSet, TEXT("%s: DataRootSet: %s with Class: %s does NOT implement interface: ICsWpGetDataRootSet."), *Context, *(DataRootSetImpl->GetName()), *(DataRootSetImpl->GetClass()->GetName()));
 
 	const FCsWpDataRootSet& DataRootSet = GetDataRootSet->GetCsWpDataRootSet();
 
 	OutDataTableSoftObject = DataRootSet.WeaponClasses;
 
-	checkf(OutDataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsWpDataRootSet().WeaponClasses is NOT Valid."), *Context, *(Object->GetName()));
+	checkf(OutDataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsWpDataRootSet().WeaponClasses is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
 
 	OutDataTable = Manager_Data->GetDataTable(OutDataTableSoftObject);
 
@@ -803,14 +803,14 @@ void UCsManager_Weapon::PopulateDataMapFromSettings()
 	UWorld* World = MyRoot->GetWorld();
 
 	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
-	UObject* Object				  = Manager_Data->DataRootSet.Data_Internal;
+	UObject* DataRootSetImpl	  = Manager_Data->DataRootSet.GetObject();
 
-	checkf(Object, TEXT("%s: Failed to find DataRootSet."), *Context);
+	checkf(DataRootSetImpl, TEXT("%s: Failed to find DataRootSet."), *Context);
 
 	// Get DataRootSet for this Module
-	ICsWpGetDataRootSet* GetDataRootSet = Cast<ICsWpGetDataRootSet>(Object);
+	ICsWpGetDataRootSet* GetDataRootSet = Cast<ICsWpGetDataRootSet>(DataRootSetImpl);
 
-	checkf(GetDataRootSet, TEXT("%s: DataRootSet: %s with Class: %s does NOT implement interface: ICsWpGetDataRootSet."), *Context, *(Object->GetName()), *(Object->GetClass()->GetName()));
+	checkf(GetDataRootSet, TEXT("%s: DataRootSet: %s with Class: %s does NOT implement interface: ICsWpGetDataRootSet."), *Context, *(DataRootSetImpl->GetName()), *(DataRootSetImpl->GetClass()->GetName()));
 
 	const FCsWpDataRootSet& DataRootSet = GetDataRootSet->GetCsWpDataRootSet();
 

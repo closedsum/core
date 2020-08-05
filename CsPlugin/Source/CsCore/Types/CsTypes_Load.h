@@ -1292,9 +1292,11 @@ public:
 	{
 	}
 
-	FORCEINLINE ICsDataRootSet* Get() const { return Interface; }
+	FORCEINLINE UObject* GetObject() const { return Data_Internal;}
 
 	FORCEINLINE UClass* GetClass() const { return Data_Class; }
+
+	FORCEINLINE ICsDataRootSet* Get() const { return Interface; }
 };
 
 #pragma endregion FCsDataRootSetContainer

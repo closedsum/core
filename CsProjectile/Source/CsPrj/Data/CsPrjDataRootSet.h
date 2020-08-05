@@ -14,9 +14,13 @@ struct CSPRJ_API FCsPrjDataRootSet
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FCsProjectileSettings_DataTable_Projectiles Projectiles;
+	TSoftObjectPtr<UDataTable> ProjectileClasses;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FCsProjectileSettings_DataTable_Projectiles> Projectiles;
 
 	FCsPrjDataRootSet() :
+		ProjectileClasses(),
 		Projectiles()
 	{
 	}

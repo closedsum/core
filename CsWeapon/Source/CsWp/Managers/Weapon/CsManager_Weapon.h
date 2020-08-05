@@ -132,11 +132,30 @@ protected:
 
 	FCsSettings_Manager_Weapon Settings;
 
+	/** */
+	TArray<FECsWeapon> TypeMapArray;
+
 public:
 
 	FORCEINLINE void SetSettings(const FCsSettings_Manager_Weapon& InSettings)
 	{
 		Settings = InSettings;
+	}
+
+		/**
+	* If SET,
+	* - Get the type this Weapon has been mapped to for pooling.
+	*   i.e. If the weapon is completely data driven, then many weapons could share
+	*   the same class.
+	* If NOT set,
+	* - Return the same type.
+	*
+	* @param Type
+	* return Weapon Type 
+	*/
+	FORCEINLINE const FECsWeapon& GetTypeFromTypeMap(const FECsWeapon& Type)
+	{
+		return TypeMapArray[Type.GetValue()];
 	}
 
 #pragma endregion Settings
@@ -602,24 +621,50 @@ public:
 #pragma region
 protected:
 
+	void GetWeaponClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject);
+
 	void PopulateClassMapFromSettings();
 
-
 	// <Weapon (type), Weapon Class>
-	TMap<FName, FCsWeaponPtr*> WeaponClassByTypeMap;
+	TMap<FName, FCsWeapon> WeaponClassByTypeMap;
 
 public:
 
-	FCsWeaponPtr* GetWeaponPtr(const FECsWeapon& Type);
+/**
+	* Get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
+	* with the weapon Type.
+	*
+	* @param Type	Type of the weapon.
+	* return		Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
+	*/
+	FCsWeapon* GetWeapon(const FECsWeapon& Type);
 
 protected:
 
 	// <Weapon Class (type), Weapon Class>
-	TMap<FName, FCsWeaponPtr*> WeaponClassByClassTypeMap; 
+	TMap<FName, FCsWeapon> WeaponClassByClassTypeMap; 
 
 public:
 
-	FCsWeaponPtr* GetWeaponPtr(const FECsWeaponClass& Type);
+	/**
+	* Get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
+	* with the weapon class Type.
+	*
+	* @param Type	Class type of the weapon.
+	* return		Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
+	*/
+	FCsWeapon* GetWeapon(const FECsWeaponClass& Type);
+
+	/**
+	* Get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
+	* with the weapon class Type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Type		Class type of the weapon.
+	* return			Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
+	*/
+	FCsWeapon* GetWeaponChecked(const FString& Context, const FECsWeaponClass& Type);
 
 #pragma endregion Class
 
@@ -640,7 +685,7 @@ protected:
 	TMap<FName, TMap<FName, void*>> EmulatedDataInterfaceImplMap;
 
 
-	virtual void CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSet<FECsWeaponData>& EmulatedDataInterfaces);
+	virtual void CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const TSet<FECsWeaponData>& EmulatedDataInterfaces);
 
 protected:
 
@@ -696,30 +741,47 @@ protected:
 
 	TMap<FName, ICsData_Weapon*> DataMap;
 
-	void PopulateDataMapFromDataTable(UDataTable* DataTable);
+	void PopulateDataMapFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject);
 
 public:
 
 	/**
+	* Get the Data (implements interface: ICsData_Weapon) associated with Name of the weapon type.
 	*
-	*
-	* @param Name
-	* return
+	* @param Name	Name of the Weapon.
+	* return		Data that implements the interface: ICsData_Weapon.
 	*/
 	ICsData_Weapon* GetData(const FName& Name);
 
 	/**
+	* Get the Data (implements interface: ICsData_Weapon) associated with Type.
 	*
-	*
-	* @param Type
-	* return
+	* @param Type	Weapon type.
+	* return		Data that implements the interface: ICsData_Weapon.
 	*/
 	ICsData_Weapon* GetData(const FECsWeapon& Type);
 
-private:
+	/**
+	* Get the Data (implements interface: ICsData_Weapon) associated with Name of the weapon type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Name		Name of the Weapon.
+	* return			Data that implements the interface: ICsData_Weapon.
+	*/
+	ICsData_Weapon* GetDataChecked(const FString& Context, const FName& Name);
 
-	UPROPERTY()
-	TMap<FECsWeapon, UClass*> ClassMap;
+	/**
+	* Get the Data (implements interface: ICsData_Weapon) associated with Type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Type		Weapon type.
+	* return			Data that implements the interface: ICsData_Weapon.
+	*/
+	ICsData_Weapon* GetDataChecked(const FString& Context, const FECsWeapon& Type);
+
+private:
 
 	TArray<UDataTable*> DataTables;
 

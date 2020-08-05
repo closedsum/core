@@ -3,6 +3,7 @@
 #include "CsPrj.h"
 
 // Settings
+#include "Settings/CsDeveloperSettings.h"
 #include "Settings/CsProjectileSettings.h"
 
 // ProjectileRelevance

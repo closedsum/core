@@ -343,43 +343,33 @@ void UCsManager_Projectile::SetupInternal()
 	{
 		UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>();
 
-		checkf(ModuleSettings, TEXT("UCsManager_Projectile::SetupInternal: Failed to get settings of type: UCsTdSettings."));
+		checkf(ModuleSettings, TEXT("UCsManager_Projectile::SetupInternal: Failed to get settings of type: UCsProjectileSettings."));
 
 		Settings = ModuleSettings->Manager_Projectile;
 
-		// TODO: Need to Load Payload from Manager_Data
+		// Populate TypeMapArray
+		{
+			const int32& Count = EMCsProjectile::Get().Num();
+
+			TypeMapArray.Reserve(Count);
+
+			for (const FECsProjectile& Type : EMCsProjectile::Get())
+			{
+				TypeMapArray.Add(Type);
+			}
+
+			for (const TPair<FECsProjectile, FECsProjectile>& Pair : Settings.TypeMap)
+			{
+				TypeMapArray[Pair.Key.GetValue()] = Pair.Value;
+			}
+		}
+
 		InitInternalFromSettings();
 	}
 }
 
 void UCsManager_Projectile::InitInternalFromSettings()
 {
-#if WITH_EDITOR
-	if (Settings.Payload == NAME_None)
-	{
-		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::InitInternalFromSettings: No Payload specified in settings. Storing hard references on manager."));
-	}
-#else
-	checkf(Settings.Payload != NAME_None, TEXT("UCsManager_Projectile::InitInternalFromSettings: No Payload specified in settings."));
-#endif // #if WITH_EDITOR
-	
-	// Populate TypeMapArray
-	{
-		const int32& Count = EMCsProjectile::Get().Num();
-
-		TypeMapArray.Reserve(Count);
-
-		for (const FECsProjectile& Type : EMCsProjectile::Get())
-		{
-			TypeMapArray.Add(Type);
-		}
-
-		for (const TPair<FECsProjectile, FECsProjectile>& Pair : Settings.TypeMap)
-		{
-			TypeMapArray[Pair.Key.GetValue()] = Pair.Value;
-		}
-	}
-
 	PopulateDataMapFromSettings();
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)

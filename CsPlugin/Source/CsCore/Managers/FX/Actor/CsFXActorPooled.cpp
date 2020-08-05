@@ -39,8 +39,6 @@ void FCsFXActorPooled::SetObject(UObject* InObject)
 
 	if (Object)
 	{
-		UClass* Class = Object->GetClass();
-
 		// ICsFXActorPooled
 		{
 			// Interface
@@ -103,8 +101,6 @@ void FCsFXActorPooled::SetPooledObject(const FCsPooledObject& PooledObject)
 
 	if (bScript)
 	{
-		UClass* Class = Object->GetClass();
-
 		// GetCache
 		checkf(Script_GetCache_Impl.IsBound(), TEXT("FCsFXActorPooled::SetPooledObject: Object: %s with Class: %s does NOT have Script_GetCache_Impl bound to any function."), *(Object->GetName()), *(Class->GetName()));
 		// Allocate

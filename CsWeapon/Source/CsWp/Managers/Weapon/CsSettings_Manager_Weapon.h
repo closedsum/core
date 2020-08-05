@@ -14,7 +14,7 @@ struct CSWP_API FCsSettings_Manager_Weapon_PoolParams
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement ="CsWeapon"))
-	TSoftClassPtr<UObject> Class; 
+	FECsWeaponClass Class; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
 	int32 PoolSize;
@@ -23,7 +23,7 @@ public:
 	int32 PayloadSize;
 
 	FCsSettings_Manager_Weapon_PoolParams() :
-		Class(nullptr),
+		Class(),
 		PoolSize(0),
 		PayloadSize(4)
 	{
@@ -45,14 +45,16 @@ struct CSWP_API FCsSettings_Manager_Weapon
 
 public:
 
+	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FName Payload;
+	TMap<FECsWeapon, FECsWeapon> TypeMap;
 
+	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsWeapon, FCsSettings_Manager_Weapon_PoolParams> PoolParams;
 
 	FCsSettings_Manager_Weapon() :
-		Payload(NAME_None),
+		TypeMap(),
 		PoolParams()
 	{
 	}

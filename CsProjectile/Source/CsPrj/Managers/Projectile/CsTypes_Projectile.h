@@ -69,6 +69,33 @@ namespace NCsProjectile
 
 #pragma endregion Projectile
 
+// ProjectileClass
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSPRJ_API FECsProjectileClass : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsProjectileClass)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsProjectileClass)
+
+struct CSPRJ_API EMCsProjectileClass : public TCsEnumStructMap<FECsProjectileClass, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsProjectileClass, FECsProjectileClass, uint8)
+};
+
+namespace NCsProjectileClass
+{
+	typedef FECsProjectileClass Type;
+
+	CSPRJ_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
+}
+
+#pragma endregion Projectile
+
 // ProjectileState
 #pragma region
 

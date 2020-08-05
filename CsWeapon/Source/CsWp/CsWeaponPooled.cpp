@@ -38,8 +38,6 @@ void FCsWeaponPooled::SetObject(UObject* InObject)
 
 	if (Object)
 	{
-		UClass* Class = Object->GetClass();
-
 		// ICsWeapon
 		{
 			// Interface
@@ -108,8 +106,6 @@ void FCsWeaponPooled::SetPooledObject(const FCsPooledObject& PooledObject)
 
 	if (bScript)
 	{
-		UClass* Class = Object->GetClass();
-
 		// GetCache
 		checkf(Script_GetCache_Impl.IsBound(), TEXT("FCsWeaponPooled::SetPooledObject: Object: %s with Class: %s does NOT have Script_GetCache_Impl bound to any function."), *(Object->GetName()), *(Class->GetName()));
 		// Allocate

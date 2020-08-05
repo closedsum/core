@@ -3,16 +3,32 @@
 
 class UObject;
 
+/**
+* Container holding a pointer to an object that implements (natively or through script) InterfaceType.
+*/
 template<typename InterfaceType>
 struct TCsInterfaceObject
 {
 protected:
 
+	/** Pointer to InterfaceType. */
 	InterfaceType* Interface;
+
+	/** Weak pointer to UObject. */
 	TWeakObjectPtr<UObject> WeakObject;
+
+	/** Pointer to UObject. */
 	UObject* Object;
 
+	/** Pointer to UClass. */
+	UClass* Class;
+
+	/** Whether the container holds a UObject. */
 	bool bObject;
+
+	/** Whether the container holds a "script" object. 
+	    A script object is usually a UObject that does NOT 
+		directly implement InterfaceType. */
 	bool bScript;
 
 public:
@@ -21,6 +37,7 @@ public:
 		Interface(nullptr),
 		WeakObject(nullptr),
 		Object(nullptr),
+		Class(nullptr),
 		bObject(false),
 		bScript(false)
 	{
@@ -73,12 +90,18 @@ public:
 	{
 		Object	   = InObject;
 		WeakObject = Object;
+		Class	   = Object ? Object->GetClass() : nullptr;
 		bObject	   = Object != nullptr;
 	}
 
 	FORCEINLINE const bool& IsObject() const
 	{
 		return bObject;
+	}
+
+	FORCEINLINE UClass* GetClass() const
+	{
+		return Class;
 	}
 
 	void SetScript()

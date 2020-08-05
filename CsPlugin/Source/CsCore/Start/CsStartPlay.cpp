@@ -27,8 +27,6 @@ void FCsStartPlay::SetObject(UObject* InObject)
 
 	if (Object)
 	{
-		UClass* Class = Object->GetClass();
-
 		// ICsStartPlay
 		{
 			// Interface

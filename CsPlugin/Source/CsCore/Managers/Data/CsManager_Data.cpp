@@ -749,9 +749,9 @@ uint8* UCsManager_Data::GetDataTableRow(const FName& EntryName, const FName& Row
 
 	checkf(RowName != NAME_None, TEXT("UCsManager_Data::GetDataTableRow: RowName: None is NOT Valid."));
 
-	if (TMap<FName, uint8*>* TablePtr = DataTableRowMap_Loaded.Find(EntryName))
+	if (TMap<FName, uint8*>* RowMapPtr = DataTableRowMap_Loaded.Find(EntryName))
 	{
-		if (uint8** RowPtr = TablePtr->Find(RowName))
+		if (uint8** RowPtr = RowMapPtr->Find(RowName))
 		{
 			return *RowPtr;
 		}
@@ -765,9 +765,9 @@ uint8* UCsManager_Data::GetDataTableRow(const FSoftObjectPath& Path, const FName
 
 	checkf(RowName != NAME_None, TEXT("UCsManager_Data::GetDataTableRow: RowName: None is NOT Valid."));
 
-	if (TMap<FName, uint8*>* TablePtr = DataTableRowByPathMap_Loaded.Find(Path))
+	if (TMap<FName, uint8*>* RowMapPtr = DataTableRowByPathMap_Loaded.Find(Path))
 	{
-		if (uint8** RowPtr = TablePtr->Find(RowName))
+		if (uint8** RowPtr = RowMapPtr->Find(RowName))
 		{
 			return *RowPtr;
 		}

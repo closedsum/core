@@ -20,8 +20,6 @@ void FCsUpdate::SetObject(UObject* InObject)
 
 	if (Object)
 	{
-		UClass* Class = Object->GetClass();
-
 		// ICsUpdate
 		{
 			// Interface

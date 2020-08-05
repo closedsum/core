@@ -38,8 +38,6 @@ void FCsProjectilePooled::SetObject(UObject* InObject)
 
 	if (Object)
 	{
-		UClass* Class = Object->GetClass();
-
 		// ICsProjectile
 		{
 			// Interface
@@ -104,8 +102,6 @@ void FCsProjectilePooled::SetPooledObject(const FCsPooledObject& PooledObject)
 
 	if (bScript)
 	{
-		UClass* Class = Object->GetClass();
-
 		// GetCache
 		checkf(Script_GetCache_Impl.IsBound(), TEXT("FCsProjectile::SetPooledObject: Object: %s with Class: %s does NOT have Script_GetCache_Impl bound to any function."), *(Object->GetName()), *(Class->GetName()));
 		// Allocate

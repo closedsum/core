@@ -45,6 +45,7 @@ namespace NCsManagerWeapon
 {
 	namespace Str
 	{
+		const FString InitInternalFromSettings = TEXT("UCsManager_Weapon::InitInternalFromSettings");
 		const FString PopulateClassMapFromSettings = TEXT("UCsManager_Weapon::PopulateClassMapFromSettings");
 		const FString PopulateDataMapFromSettings = TEXT("UCsManager_Weapon::PopulateDataMapFromSettings");
 		const FString CreateEmulatedDataFromDataTable = TEXT("UCsManager_Weapon::CreateEmulatedDataFromDataTable");
@@ -281,7 +282,8 @@ void UCsManager_Weapon::CleanUp()
 	Pool.Reset();
 
 	// Class
-
+	WeaponClassByTypeMap.Reset();
+	WeaponClassByClassTypeMap.Reset();
 
 	// Data
 	for (TPair<FName, TMap<FName, void*>>& DataPair : EmulatedDataInterfaceImplMap)
@@ -307,7 +309,8 @@ void UCsManager_Weapon::CleanUp()
 	EmulatedDataInterfaceMap.Reset();
 
 	DataMap.Reset();
-	ClassMap.Reset();
+
+	DataTableRowByPathMap.Reset();
 	DataTables.Reset();
 
 	bInitialized = false;
@@ -365,24 +368,37 @@ void UCsManager_Weapon::SetupInternal()
 
 		Settings = ModuleSettings->ManagerWeapon;
 
+		// Populate TypeMapArray
+		{
+			const int32& Count = EMCsWeapon::Get().Num();
+
+			TypeMapArray.Reserve(Count);
+
+			for (const FECsWeapon& Type : EMCsWeapon::Get())
+			{
+				TypeMapArray.Add(Type);
+			}
+
+			for (const TPair<FECsWeapon, FECsWeapon>& Pair : Settings.TypeMap)
+			{
+				TypeMapArray[Pair.Key.GetValue()] = Pair.Value;
+			}
+		}
+
 		InitInternalFromSettings();
 	}
 }
 
 void UCsManager_Weapon::InitInternalFromSettings()
 {
-#if WITH_EDITOR
-	if (Settings.Payload == NAME_None)
-	{
-		UE_LOG(LogCsWp, Warning, TEXT("UCsManager_Weapon::InitInternalFromSettings: No Payload specified in settings. Storing hard references on manager."));
-	}
-#else
-	checkf(Settings.Payload != NAME_None, TEXT("UCsManager_Weapon::InitInternalFromSettings: No Payload specified in settings."));
-#endif // #if WITH_EDITOR
+	using namespace NCsManagerWeapon;
+
+	const FString& Context = Str::InitInternalFromSettings;
 
 	PopulateClassMapFromSettings();
 	PopulateDataMapFromSettings();
 
+	// Setup Pool
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
 		FCsManager_Weapon_Internal::FCsManagerPooledObjectMapParams Params;
@@ -390,6 +406,7 @@ void UCsManager_Weapon::InitInternalFromSettings()
 		Params.Name  = TEXT("UCsManager_Weapon::FCsManager_Weapon_Internal");
 		Params.World = MyRoot->GetWorld();
 
+		//  Pool params for each specified Weapon Type
 		for (const TPair<FECsWeapon, FCsSettings_Manager_Weapon_PoolParams>& Pair : Settings.PoolParams)
 		{
 			const FECsWeapon& Type									= Pair.Key;
@@ -397,22 +414,15 @@ void UCsManager_Weapon::InitInternalFromSettings()
 
 			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
 
-			checkf(PoolParams.Class.ToSoftObjectPath().IsValid(), TEXT("UCsManager_Weapon::InitInternalFromSettings: Class for Type: %s is NOT a Valid Path."), *(Type.Name));
+			// Get Class
+			const FECsWeaponClass& ClassType = PoolParams.Class;
 
-#if !UE_BUILD_SHIPPING
-			if (!PoolParams.Class.Get())
-			{
-				UE_LOG(LogCsWp, Warning, TEXT("UCsManager_Weapon::InitInternalFromSettings: Class @ for Type: %s is NOT already loaded in memory."), *(PoolParams.Class.ToString()), *(Type.Name));
-			}
-#endif // #if !UE_BUILD_SHIPPING
+			checkf(EMCsWeaponClass::Get().IsValidEnum(ClassType), TEXT("%s: Class for NOT Valid."), *Context, ClassType.ToChar());
 
-			// TODO: Get DataTable from Manager_Data
+			FCsWeapon* Weapon = GetWeaponChecked(Context, ClassType);
+			UClass* Class	  = Weapon->GetClass();
 
-			UClass* Class = PoolParams.Class.LoadSynchronous();
-
-			checkf(Class, TEXT("UCsManager_Weapon::InitInternalFromSettings: Failed to load Class @ for Type: %s."), *(PoolParams.Class.ToString()), *(Type.Name));
-
-			ClassMap.Add(Type, Class);
+			checkf(Class, TEXT("%s: Failed to get class for Type: %s ClassType: %s."), *Context, Type.ToChar(), ClassType.ToChar());
 
 			ObjectParams.Name  = Params.Name + TEXT("_") + Type.Name;
 			ObjectParams.World = Params.World;
@@ -666,19 +676,10 @@ void UCsManager_Weapon::LogTransaction(const FString& Context, const ECsPoolTran
 // Class
 #pragma region
 
-void UCsManager_Weapon::PopulateClassMapFromSettings()
+void UCsManager_Weapon::GetWeaponClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
 {
-	using namespace NCsManagerWeapon;
-
-	const FString& Context = Str::PopulateClassMapFromSettings;
-
-	// Reset appropriate containers
-	WeaponClassByTypeMap.Reset();
-	WeaponClassByClassTypeMap.Reset();
-
 	// Get DataRootSetImpl
-	UWorld* World = MyRoot->GetWorld();
-
+	UWorld* World				  = MyRoot->GetWorld();
 	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
 	UObject* Object				  = Manager_Data->DataRootSet.Data_Internal;
 
@@ -691,61 +692,97 @@ void UCsManager_Weapon::PopulateClassMapFromSettings()
 
 	const FCsWpDataRootSet& DataRootSet = GetDataRootSet->GetCsWpDataRootSet();
 
-	TSoftObjectPtr<UDataTable> DT_SoftObject = DataRootSet.WeaponClasses;
+	OutDataTableSoftObject = DataRootSet.WeaponClasses;
 
-	if (UDataTable* DataTable = Manager_Data->GetDataTable(DT_SoftObject))
+	checkf(OutDataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsWpDataRootSet().WeaponClasses is NOT Valid."), *Context, *(Object->GetName()));
+
+	OutDataTable = Manager_Data->GetDataTable(OutDataTableSoftObject);
+
+	checkf(OutDataTable, TEXT("%s: Failed to get DataTable @ %s."), *Context, *(OutDataTableSoftObject.ToSoftObjectPath().ToString()));
+}
+
+void UCsManager_Weapon::PopulateClassMapFromSettings()
+{
+	using namespace NCsManagerWeapon;
+
+	const FString& Context = Str::PopulateClassMapFromSettings;
+
+	// Reset appropriate containers
+	WeaponClassByTypeMap.Reset();
+	WeaponClassByClassTypeMap.Reset();
+
+	// Get DataRootSetImpl
+	UWorld* World				  = MyRoot->GetWorld();
+	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+
+	UDataTable* DataTable = nullptr;
+	TSoftObjectPtr<UDataTable> DT_SoftObject(nullptr);
+
+	GetWeaponClassesDataTableChecked(Context, DataTable, DT_SoftObject);
+
+	// Get Classes from DataTable
+
+	const UScriptStruct* RowStruct = DataTable->GetRowStruct();
+
+	// Get the Property named "Class" if it exists.
+	UStructProperty* ClassProperty = FCsLibrary_Property::FindStructPropertyByName<FCsWeaponPtr>(RowStruct, Name::Class);
+
+	if (!ClassProperty)
 	{
-		const UScriptStruct* RowStruct = DataTable->GetRowStruct();
+		UE_LOG(LogCsWp, Warning, TEXT("%s: Failed to find StructProperty: Class in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName()));
+		return;
+	}
 
-		// Get the Property named "Class" if it exists.
-		UStructProperty* ClassProperty = FCsLibrary_Property::FindPropertyByName<UStructProperty>(RowStruct, Name::Class);
+	// Cache any class related information that is loaded.
+	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
-		if (!ClassProperty)
+	for (const TPair<FName, uint8*>& Pair : RowMap)
+	{
+		const FName& Name = Pair.Key;
+		uint8* RowPtr	  = Manager_Data->GetDataTableRow(DT_SoftObject, Name);
+
+		if (!RowPtr)
+			continue;
+
+		// If Property named "Class" exists, cache the class.
+		if (ClassProperty)
 		{
-			UE_LOG(LogCsWp, Warning, TEXT("%s: Failed to find StructProperty: Class in Struct: %s"), *(RowStruct->GetName()));
-		}
+			FCsWeaponPtr* WeaponPtr = ClassProperty->ContainerPtrToValuePtr<FCsWeaponPtr>(RowPtr);
 
-		// Cache any class related information that is loaded.
-		const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+			checkf(WeaponPtr, TEXT("%s: WeaponPtr is NULL."), *Context);
 
-		for (const TPair<FName, uint8*>& Pair : RowMap)
-		{
-			const FName& Name = Pair.Key;
-			uint8* RowPtr	  = Manager_Data->GetDataTableRow(DT_SoftObject, Name);
+			UObject* O = WeaponPtr->Get();
 
-			if (!RowPtr)
-				continue;
+			checkf(O, TEXT("%s: Failed to get weapon from DataTable: %s: Row: %s."), *Context, *(DataTable->GetName()), *(Name.ToString()));
 
-			// If Property named "Class" exists, cache the class.
-			if (ClassProperty &&
-				ClassProperty->Struct == FCsWeaponPtr::StaticStruct())
-			{
-				FCsWeaponPtr* WeaponPtr = ClassProperty->ContainerPtrToValuePtr<FCsWeaponPtr>(RowPtr);
+			FCsWeapon& Weapon = WeaponClassByTypeMap.Add(Name);
 
-				checkf(WeaponPtr, TEXT("%s: WeaponPtr is NULL."));
-
-				WeaponClassByClassTypeMap.Add(Name, WeaponPtr);
-			}
+			Weapon.SetObject(O);
 		}
 	}
 }
 
-FCsWeaponPtr* UCsManager_Weapon::GetWeaponPtr(const FECsWeapon& Type)
+FCsWeapon* UCsManager_Weapon::GetWeapon(const FECsWeapon& Type)
 {
 	checkf(EMCsWeapon::Get().IsValidEnum(Type), TEXT("UCsManager_Weapon::GetWeaponPtr: Type: %s is NOT Valid."), Type.ToChar());
 
-	FCsWeaponPtr** Ptr = WeaponClassByTypeMap.Find(Type.GetFName());
-
-	return Ptr ? *Ptr : nullptr;
+	return WeaponClassByTypeMap.Find(Type.GetFName());
 }
 
-FCsWeaponPtr* UCsManager_Weapon::GetWeaponPtr(const FECsWeaponClass& Type)
+FCsWeapon* UCsManager_Weapon::GetWeapon(const FECsWeaponClass& Type)
 {
 	checkf(EMCsWeaponClass::Get().IsValidEnum(Type), TEXT("UCsManager_Weapon::GetWeaponPtr: Type: %s is NOT Valid."), Type.ToChar());
 
-	FCsWeaponPtr** Ptr = WeaponClassByClassTypeMap.Find(Type.GetFName());
+	return WeaponClassByClassTypeMap.Find(Type.GetFName());
+}
 
-	return Ptr ? *Ptr : nullptr;
+FCsWeapon* UCsManager_Weapon::GetWeaponChecked(const FString& Context, const FECsWeaponClass& Type)
+{
+	FCsWeapon* Ptr = GetWeapon(Type);
+
+	checkf(Ptr, TEXT("%s: Failed to find a Weapon associated with Type: %s."), *Context, Type.ToChar());
+
+	return Ptr;
 }
 
 #pragma endregion Class
@@ -792,18 +829,18 @@ void UCsManager_Weapon::PopulateDataMapFromSettings()
 
 			if (EmulatedDataInterfaces.Num() > CS_EMPTY)
 			{
-				CreateEmulatedDataFromDataTable(DT, EmulatedDataInterfaces);
+				CreateEmulatedDataFromDataTable(DT, DT_SoftObject, EmulatedDataInterfaces);
 			}
 			// "Normal" / Non-Emulated
 			else
 			{
-				PopulateDataMapFromDataTable(DT);
+				PopulateDataMapFromDataTable(DT, DT_SoftObject);
 			}
 		}
 	}
 }
 
-void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSet<FECsWeaponData>& EmulatedDataInterfaces)
+void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const TSet<FECsWeaponData>& EmulatedDataInterfaces)
 {
 	using namespace NCsManagerWeapon;
 
@@ -869,27 +906,30 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 	}
 
 	// Class
-	UStructProperty* ClassProperty = FCsLibrary_Property::FindPropertyByName<UStructProperty>(RowStruct, Name::Class);
+	UStructProperty* ClassProperty = FCsLibrary_Property::FindStructPropertyByName<FCsWeaponPtr>(RowStruct, Name::Class);
 
 	if (!ClassProperty)
 	{
-		UE_LOG(LogCsWp, Warning, TEXT("%s: Failed to find StructProperty: Weapon in Struct: %s"), *Context, *(RowStruct->GetName()));
+		UE_LOG(LogCsWp, Warning, TEXT("%s: Failed to find StructProperty: Class in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName()));
 	}
 
+	// Get Manager_Data
 	UWorld* World				  = MyRoot->GetWorld();
 	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
 
-	TSoftObjectPtr<UDataTable> DT_SoftObject = DataTable;
-
+	// Check which rows from the DataTable have been loaded
 	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
 	for (const TPair<FName, uint8*>& Pair : RowMap)
 	{
 		const FName& Name = Pair.Key;
-		uint8* RowPtr	  = Manager_Data->GetDataTableRow(DT_SoftObject, Name);
+		uint8* RowPtr	  = Manager_Data->GetDataTableRow(DataTableSoftObject, Name);
 
 		if (!RowPtr)
 			continue;
+
+		TMap<FName, uint8*>& Map = DataTableRowByPathMap.FindOrAdd(DataTableSoftObject.ToSoftObjectPath());
+		Map.Add(Name, RowPtr);
 
 		// ICsData_Weapon
 		if (Emulates_ICsDataWeapon)
@@ -1008,7 +1048,13 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 
 			checkf(WeaponPtr, TEXT("%s: WeaponPtr is NULL."), *Context);
 
-			WeaponClassByTypeMap.Add(Name, WeaponPtr);
+			UObject* O = WeaponPtr->Get();
+
+			checkf(O, TEXT("%s: Failed to get weapon from DataTable: %s: Row: %s."), *Context, *(DataTable->GetName()), *(Name.ToString()));
+
+			FCsWeapon& Weapon = WeaponClassByTypeMap.Add(Name);
+
+			Weapon.SetObject(O);
 		}
 	}
 }
@@ -1038,49 +1084,78 @@ void UCsManager_Weapon::DeconstructEmulatedData(const FName& InterfaceImplName, 
 	}
 }
 
-void UCsManager_Weapon::PopulateDataMapFromDataTable(UDataTable* DataTable)
+void UCsManager_Weapon::PopulateDataMapFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject)
 {
 	using namespace NCsManagerWeapon;
 
 	const FString& Context = Str::PopulateDataMapFromDataTable;
 
+	// Get Manager_Data
 	UWorld* World				  = MyRoot->GetWorld();
 	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
-
-	TSoftObjectPtr<UDataTable> DT_SoftObject = DataTable;
 
 	const UScriptStruct* RowStruct = DataTable->GetRowStruct();
 
 	// Data
-	UStructProperty* DataProperty = FCsLibrary_Property::FindPropertyByName<UStructProperty>(RowStruct, Name::Data);
+	UStructProperty* DataProperty = FCsLibrary_Property::FindStructPropertyByName<FCsDataWeapon>(RowStruct, Name::Data);
 
-	if (DataProperty &&
-		DataProperty->Struct == FCsDataWeapon::StaticStruct())
+	if (!DataProperty)
 	{
-		const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+		UE_LOG(LogCsWp, Warning, TEXT("%s: Failed to find StructProperty: Data in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName()));
+	}
 
-		for (const TPair<FName, uint8*>& Pair : RowMap)
+	// Class
+	UStructProperty* ClassProperty = FCsLibrary_Property::FindStructPropertyByName<FCsWeaponPtr>(RowStruct, Name::Class);
+
+	if (!ClassProperty)
+	{
+		UE_LOG(LogCsWp, Warning, TEXT("%s: Failed to find StructProperty: Class in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName()));
+	}
+
+	// Check which rows from the DataTable have been loaded
+	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+
+	for (const TPair<FName, uint8*>& Pair : RowMap)
+	{
+		const FName& Name = Pair.Key;
+		uint8* RowPtr     = Manager_Data->GetDataTableRow(DataTableSoftObject, Name);
+
+		if (!RowPtr)
+			continue;
+
+		TMap<FName, uint8*>& Map = DataTableRowByPathMap.FindOrAdd(DataTableSoftObject.ToSoftObjectPath());
+		Map.Add(Name, RowPtr);
+
+		// Data
+		if (DataProperty)
 		{
-			const FName& Name = Pair.Key;
-			uint8* RowPtr     = Manager_Data->GetDataTableRow(DT_SoftObject, Name);
+			FCsDataWeapon* DataPtr = DataProperty->ContainerPtrToValuePtr<FCsDataWeapon>(RowPtr);
 
-			if (!RowPtr)
-				continue;
+			UObject* Data = DataPtr->Get();
 
-			if (DataProperty)
-			{
-				FCsDataWeapon* DataPtr = DataProperty->ContainerPtrToValuePtr<FCsDataWeapon>(RowPtr);
-				UObject* Data		   = DataPtr->Get();
+			checkf(Data, TEXT("%s: Failed to get data from DataTable: %s Row: %s."), *Context, *(DataTable->GetName()), *(Name.ToString()));
 
-				checkf(Data, TEXT("%s: Failed to get data from DataTable: %s Row: %s."), *Context, *(DataTable->GetName()), *(Name.ToString()));
+			ICsData_Weapon* IData = Cast<ICsData_Weapon>(Data);
 
-				/*
-				if (ICsData_Weapon* Data = DataPtr->Get<ICsData_Weapon>())
-				{
-					DataMap.Add(Name, Data);
-				}
-				*/
-			}
+			checkf(IData, TEXT("%s: Data: %s with Class: %s does NOT implement interface: ICsData_Weapon."), *Context, *(Data->GetName()), *(Data->GetClass()->GetName()));
+
+			DataMap.Add(Name, IData);
+		}
+
+		// Class
+		if (ClassProperty)
+		{
+			FCsWeaponPtr* WeaponPtr = ClassProperty->ContainerPtrToValuePtr<FCsWeaponPtr>(RowPtr);
+
+			checkf(WeaponPtr, TEXT("%s: WeaponPtr is NULL."), *Context);
+
+			UObject* O = WeaponPtr->Get();
+
+			checkf(O, TEXT("%s: Failed to get weapon from DataTable: %s: Row: %s."), *Context, *(DataTable->GetName()), *(Name.ToString()));
+
+			FCsWeapon& Weapon = WeaponClassByTypeMap.Add(Name);
+
+			Weapon.SetObject(O);
 		}
 	}
 }
@@ -1089,13 +1164,15 @@ ICsData_Weapon* UCsManager_Weapon::GetData(const FName& Name)
 {
 	checkf(Name != NAME_None, TEXT("UCsManager_Weapon::GetData: Name: None is NOT Valid."));
 
-	// TODO: Get the Data from Manager_Data or have a callback whenever Payload is unloaded
+	// Check emulated data
+	if (ICsData_Weapon** EmuDataPtr = EmulatedDataMap.Find(Name))
+		return *EmuDataPtr;
 
-	ICsData_Weapon** DataPtr = DataMap.Find(Name);
+	// Check data
+	if (ICsData_Weapon** DataPtr = DataMap.Find(Name))
+		return *DataPtr;
 
-	checkf(DataPtr, TEXT("UCsManager_Weapon::GetData: Failed to find Data for Name: %s."), *(Name.ToString()));
-
-	return *DataPtr;
+	return nullptr;
 }
 
 ICsData_Weapon* UCsManager_Weapon::GetData(const FECsWeapon& Type)
@@ -1103,6 +1180,24 @@ ICsData_Weapon* UCsManager_Weapon::GetData(const FECsWeapon& Type)
 	checkf(EMCsWeapon::Get().IsValidEnum(Type), TEXT("UCsManager_Weapon::GetData: Type: %s is NOT Valid."), Type.ToChar());
 
 	return GetData(Type.GetFName());
+}
+
+ICsData_Weapon* UCsManager_Weapon::GetDataChecked(const FString& Context, const FName& Name)
+{
+	ICsData_Weapon* Ptr = GetData(Name);
+
+	checkf(Ptr, TEXT("%s: Failed to find a Data associated with Name: %s."), *(Name.ToString()));
+
+	return Ptr;
+}
+
+ICsData_Weapon* UCsManager_Weapon::GetDataChecked(const FString& Context, const FECsWeapon& Type)
+{
+	ICsData_Weapon* Ptr = GetData(Type);
+
+	checkf(Ptr, TEXT("%s: Failed to find a Data associated with Type: %s."), Type.ToChar());
+
+	return Ptr;
 }
 
 void UCsManager_Weapon::OnPayloadUnloaded(const FName& Payload)

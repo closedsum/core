@@ -23,8 +23,6 @@ void FCsReceiveDamage::SetObject(UObject* InObject)
 
 	if (Object)
 	{
-		UClass* Class = Object->GetClass();
-
 		// ICsReceiveStatusEffect
 		{
 			// Interface

@@ -26,6 +26,24 @@ public:
 	/**
 	*
 	*
+	* @param Struct
+	* @param PropertyName
+	* return
+	*/
+	template<typename StructType>
+	static UStructProperty* FindStructPropertyByName(const UStruct* Struct, const FName& PropertyName)
+	{
+		UStructProperty* Property = Cast<UStructProperty>(Struct->FindPropertyByName(PropertyName));
+		Property				  = Property ? Property : Cast<UStructProperty>(Struct->CustomFindProperty(PropertyName));
+
+		if (Property->Struct == StructType::StaticStruct())
+			return Property;
+		return nullptr;
+	}
+
+	/**
+	*
+	*
 	* @param Context
 	* @param Struct
 	* @param PropertyName
@@ -65,6 +83,14 @@ public:
 		return Property;
 	}
 
+	/**
+	*
+	*
+	* @param Context
+	* @param Property
+	* @param Ptr
+	* return
+	*/
 	template<typename ValueType>
 	static ValueType* ContainerPtrToValuePtrChecked(const FString& Context, UProperty* Property, void* Ptr)
 	{

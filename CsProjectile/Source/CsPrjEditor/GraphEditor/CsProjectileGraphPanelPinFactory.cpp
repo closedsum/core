@@ -8,6 +8,7 @@
 // EnumStructs
 	// Projectile
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsProjectile.h"
+#include "GraphEditor/EnumStruct/SCsGraphPin_ECsProjectileClass.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsProjectileData.h"
 
 TSharedPtr<SGraphPin> FCsProjectilePanelGraphPinFactory::CreatePin(UEdGraphPin* InPin) const
@@ -21,6 +22,8 @@ TSharedPtr<SGraphPin> FCsProjectilePanelGraphPinFactory::CreatePin(UEdGraphPin* 
 	{
 		// FECsProjectile
 		if (DoesPinUseScriptStruct<FECsProjectile>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsProjectile, InPin); }
+		// FECsProjectileClass
+		if (DoesPinUseScriptStruct<FECsProjectileClass>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsProjectileClass, InPin); }
 		// FECsProjectileData
 		if (DoesPinUseScriptStruct<FECsProjectileData>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsProjectileData, InPin); }
 	}

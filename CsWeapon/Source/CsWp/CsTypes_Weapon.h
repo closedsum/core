@@ -358,13 +358,13 @@ public:
 
 #pragma endregion FCsWeaponPtr
 
-// FCsDataWeapon
+// FCsData_WeaponPtr
 #pragma region
 
 class UObject;
 
 USTRUCT(BlueprintType)
-struct CSWP_API FCsDataWeapon
+struct CSWP_API FCsData_WeaponPtr
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -382,7 +382,7 @@ public:
 	UPROPERTY(Transient, BlueprintReadOnly)
 	UClass* Data_Class;
 
-	FCsDataWeapon() :
+	FCsData_WeaponPtr() :
 		Data(nullptr),
 		Load_Flags(0),
 		Data_Internal(nullptr),
@@ -398,7 +398,37 @@ public:
 	FORCEINLINE UClass* GetClass() const { return Data_Class; }
 };
 
-#pragma endregion FCsDataWeapon
+#pragma endregion FCsData_WeaponPtr
+
+// FCsWeaponClassEntry
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSWP_API FCsWeaponClassEntry : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** The enum (FECsWeapon) name for the weapon class. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Name;
+
+	/** The enum (FECsWeapon) display name for the weapon class. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString DisplayName;
+
+	/** Soft Reference to a weapon of type: ICsWeapon. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCsWeaponPtr Weapon;
+
+	FCsWeaponClassEntry() :
+		Name(),
+		DisplayName(),
+		Weapon()
+	{
+	}
+};
+
+#pragma endregion FCsWeaponClassEntry
 
 // FCsWeaponEntry
 #pragma region

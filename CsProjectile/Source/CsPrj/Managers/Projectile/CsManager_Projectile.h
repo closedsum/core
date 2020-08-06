@@ -663,26 +663,77 @@ public:
 
 #pragma endregion Script
 
-// Data
+// Class
 #pragma region
+protected:
+
+	// <Projectile (type), Projectile Class>
+	TMap<FName, FCsProjectile> ProjectileClassByTypeMap;
+
+	void GetProjectileClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject);
+
+	void PopulateClassMapFromSettings();
+
+	// <Projectile Class (type), Projectile Class>
+	TMap<FName, FCsProjectile> ProjectileClassByClassTypeMap;
+
 public:
 
-	virtual void PopulateDataMapFromSettings();
+/**
+	* Get the Projectile container (Interface (ICsProjectile), UObject, and / or UClass) associated
+	* with the projectile Type.
+	*
+	* @param Type	Type of the projectile.
+	* return		Projectile container (Interface (ICsProjectile), UObject, and / or UClass).
+	*/
+	FCsProjectile* GetProjectile(const FECsProjectile& Type);
+
+	/**
+	* Get the Projectile container (Interface (ICsProjectile), UObject, and / or UClass) associated
+	* with the projectile class Type.
+	*
+	* @param Type	Class type of the projectile.
+	* return		Projectile container (Interface (ICsProjectile), UObject, and / or UClass).
+	*/
+	FCsProjectile* GetProjectile(const FECsProjectileClass& Type);
+
+	/**
+	* Get the Projectile container (Interface (ICsProjectile), UObject, and / or UClass) associated
+	* with the projectile class Type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Type		Class type of the projectile.
+	* return			Projectile container (Interface (ICsProjectile), UObject, and / or UClass).
+	*/
+	FCsProjectile* GetProjectileChecked(const FString& Context, const FECsProjectileClass& Type);
 
 protected:
+
+	void ResetClassContainers();
+
+#pragma endregion Class
+
+// Data
+#pragma region
+protected:
+
 	/** <DataName, InterfacePtr> */
 	TMap<FName, ICsData_Projectile*> EmulatedDataMap;
 
-	/** <DataName, InterfaceMapPtr> */ 
+	/** <DataName, InterfaceMapPtr> */
 	TMap<FName, FCsData_ProjectileInterfaceMap*> EmulatedDataInterfaceMap;
 
 	/** <DataName, <InterfaceImplName, InterfaceImplPtr>> */
 	TMap<FName, TMap<FName, void*>> EmulatedDataInterfaceImplMap;
 
+public:
 
-	virtual void CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSet<FECsProjectileData>& EmulatedDataInterfaces);
+	virtual void PopulateDataMapFromSettings();
 
 protected:
+
+	virtual void CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const TSet<FECsProjectileData>& EmulatedDataInterfaces);
 
 	virtual void DeconstructEmulatedData(const FName& InterfaceImplName, void* Data);
 
@@ -734,35 +785,61 @@ public:
 
 protected:
 
+	// <EntryName, Data>
 	TMap<FName, ICsData_Projectile*> DataMap;
 
-	void PopulateDataMapFromDataTable(UDataTable* DataTable);
+	TArray<UDataTable*> DataTables;
+
+	// <Path, <EntryName, RowPtr>>
+	TMap<FSoftObjectPath, TMap<FName, uint8*>> DataTableRowByPathMap;
+
+	void PopulateDataMapFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject);
 
 public:
 
 	/**
+	* Get the Data (implements interface: ICsData_Projectile) associated with Name of the projectile type.
 	*
-	*
-	* @param Name
-	* return
+	* @param Name	Name of the Projectile.
+	* return		Data that implements the interface: ICsData_Projectile.
 	*/
 	ICsData_Projectile* GetData(const FName& Name);
 
+
 	/**
+	* Get the Data (implements interface: ICsData_Projectile) associated with Type.
 	*
-	*
-	* @param Type
-	* return
+	* @param Type	Projectile type.
+	* return		Data that implements the interface: ICsData_Projectile.
 	*/
 	ICsData_Projectile* GetData(const FECsProjectile& Type);
 
-private:
+	/**
+	* Get the Data (implements interface: ICsData_Projectile) associated with Name of the projectile type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Name		Name of the Projectile.
+	* return			Data that implements the interface: ICsData_Projectile.
+	*/
+	ICsData_Projectile* GetDataChecked(const FString& Context, const FName& Name);
+
+	/**
+	* Get the Data (implements interface: ICsData_Projectile) associated with Type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Type		Projectile type.
+	* return			Data that implements the interface: ICsData_Projectile.
+	*/
+	ICsData_Projectile* GetDataChecked(const FString& Context, const FECsProjectile& Type);
+
+protected:
+
+	void ResetDataContainers();
 
 	UPROPERTY()
 	TMap<FECsProjectile, UClass*> ClassMap;
-
-	UPROPERTY()
-	TArray<UDataTable*> DataTables;
 
 	void OnPayloadUnloaded(const FName& Payload);
 

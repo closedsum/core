@@ -723,13 +723,13 @@ public:
 
 #pragma endregion FCsProjectilePtr
 
-// FCsDataProjectilePtr
+// FCsData_ProjectilePtr
 #pragma region
 
 class UObject;
 
 USTRUCT(BlueprintType)
-struct CSPRJ_API FCsDataProjectilePtr
+struct CSPRJ_API FCsData_ProjectilePtr
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -747,7 +747,7 @@ public:
 	UPROPERTY(Transient, BlueprintReadOnly)
 	UClass* Data_Class;
 
-	FCsDataProjectilePtr() :
+	FCsData_ProjectilePtr() :
 		Data(nullptr),
 		Load_Flags(0),
 		Data_Internal(nullptr),
@@ -763,7 +763,37 @@ public:
 	FORCEINLINE UClass* GetClass() const { return Data_Class; }
 };
 
-#pragma endregion FCsDataProjectiletr
+#pragma endregion FCsData_ProjectilePtr
+
+// FCsProjectileClassEntry
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSPRJ_API FCsProjectileClassEntry : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** The enum (FECsProjectile) name for the projectile class. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Name;
+
+	/** The enum (FECsProjectile) display name for the projectile class. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString DisplayName;
+
+	/** Soft Reference to a projectile of type: ICsProjectile. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCsProjectilePtr Projectile;
+
+	FCsProjectileClassEntry() :
+		Name(),
+		DisplayName(), 
+		Projectile()
+	{
+	}
+};
+
+#pragma endregion FCsProjectileClassEntry
 
 // FCsProjectileEntry
 #pragma region
@@ -773,11 +803,11 @@ struct CSPRJ_API FCsProjectileEntry : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
-	/** The enum (FECsProjectile) name for the weapon. */
+	/** The enum (FECsProjectile) name for the projectile. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString Name;
 
-	/** The enum (FECsProjectile) display name for the weapon. */
+	/** The enum (FECsProjectile) display name for the projectile. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString DisplayName;
 
@@ -787,7 +817,7 @@ struct CSPRJ_API FCsProjectileEntry : public FTableRowBase
 
 	/** Soft Reference to a data of type: ICsData_Projectile. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FCsDataProjectilePtr Data;
+	FCsData_ProjectilePtr Data;
 
 	FCsProjectileEntry() :
 		Name(),

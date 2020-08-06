@@ -12,12 +12,21 @@
 #include "Library/Load/CsLibrary_Load.h" // TEMP
 #include "Data/CsLibrary_Data_Projectile.h"
 // Settings
+#include "Settings/CsDeveloperSettings.h"
 #include "Settings/CsProjectileSettings.h"
+// Managers
+#include "Managers/Data/CsManager_Data.h"
 // Data
+#include "Data/CsPrjGetDataRootSet.h"
 #include "Data/CsData_Projectile.h"
 // Projectile
 #include "Payload/CsProjectilePooledPayloadImpl.h"
 #include "Data/CsData_ProjectileImpl.h"
+// Game
+#include "Engine/GameInstance.h"
+#include "GameFramework/GameStateBase.h"
+
+#include "Classes/Engine/World.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -26,10 +35,7 @@
 
 #include "Library/CsLibrary_Common.h"
 
-#include "Classes/Engine/World.h"
 #include "Classes/Engine/Engine.h"
-
-#include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -39,13 +45,16 @@ namespace NCsManagerProjectile
 {
 	namespace Str
 	{
+		const FString PopulateClassMapFromSettings = TEXT("UCsManager_Projectile::PopulateClassMapFromSettings");
 		const FString PopulateDataMapFromSettings = TEXT("UCsManager_Projectile::PopulateDataMapFromSettings");
 		const FString CreateEmulatedDataFromDataTable = TEXT("UCsManager_Projectile::CreateEmulatedDataFromDataTable");
 		const FString DeconstructEmulatedData = TEXT("UCsManager_Projectile::DeconstructEmulatedData");
+		const FString PopulateDataMapFromDataTable = TEXT("UCsManager_Projectile::PopulateDataMapFromDataTable");
 	}
 
 	namespace Name
 	{
+		const FName Class = FName("Class");
 		const FName Data = FName("Data");
 
 		const FName LifeTime = FName("LifeTime");
@@ -264,31 +273,10 @@ void UCsManager_Projectile::CleanUp()
 	Internal.Shutdown();
 	Pool.Reset();
 
-	for (TPair<FName, TMap<FName, void*>>& DataPair : EmulatedDataInterfaceImplMap)
-	{
-		TMap<FName, void*> InterfaceImplMap = DataPair.Value;
-
-		for (TPair<FName, void*>& ImplPair : InterfaceImplMap)
-		{
-			DeconstructEmulatedData(ImplPair.Key, ImplPair.Value);
-
-			ImplPair.Value = nullptr;
-		}
-	}
-	EmulatedDataMap.Reset();
-	EmulatedDataInterfaceImplMap.Reset();
-
-	for (TPair<FName, FCsData_ProjectileInterfaceMap*>& Pair : EmulatedDataInterfaceMap)
-	{
-		FCsData_ProjectileInterfaceMap* Ptr = Pair.Value;
-		delete Ptr;
-		Pair.Value = nullptr;
-	}
-	EmulatedDataInterfaceMap.Reset();
-
-	DataMap.Reset();
-	ClassMap.Reset();
-	DataTables.Reset();
+	// Class
+	ResetClassContainers();
+	// Data
+	ResetDataContainers();
 
 	bInitialized = false;
 }
@@ -735,6 +723,125 @@ void UCsManager_Projectile::LogTransaction(const FString& Context, const ECsPool
 
 #pragma endregion Internal
 
+// Class
+#pragma region
+
+void UCsManager_Projectile::GetProjectileClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
+{
+	// Get DataRootSetImpl
+	UWorld* World				  = MyRoot->GetWorld();
+	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+	UObject* DataRootSetImpl	  = Manager_Data->DataRootSet.GetObject();
+
+	checkf(DataRootSetImpl, TEXT("%s: Failed to find DataRootSet."), *Context);
+
+	// Get DataRootSet for this Module
+	ICsPrjGetDataRootSet* GetDataRootSet = Cast<ICsPrjGetDataRootSet>(DataRootSetImpl);
+
+	checkf(GetDataRootSet, TEXT("%s: DataRootSet: %s with Class: %s does NOT implement interface: ICsPrjGetDataRootSet."), *Context, *(DataRootSetImpl->GetName()), *(DataRootSetImpl->GetClass()->GetName()));
+
+	const FCsPrjDataRootSet& DataRootSet = GetDataRootSet->GetCsPrjDataRootSet();
+
+	OutDataTableSoftObject = DataRootSet.ProjectileClasses;
+
+	checkf(OutDataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsPrjDataRootSet().ProjectileClasses is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
+
+	OutDataTable = Manager_Data->GetDataTable(OutDataTableSoftObject);
+
+	checkf(OutDataTable, TEXT("%s: Failed to get DataTable @ %s."), *Context, *(OutDataTableSoftObject.ToSoftObjectPath().ToString()));
+}
+
+void UCsManager_Projectile::PopulateClassMapFromSettings()
+{
+	using namespace NCsManagerProjectile;
+
+	const FString& Context = Str::PopulateClassMapFromSettings;
+
+	// Reset appropriate containers
+	ResetClassContainers();
+
+	// Get DataRootSetImpl
+	UWorld* World				  = MyRoot->GetWorld();
+	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+
+	UDataTable* DataTable = nullptr;
+	TSoftObjectPtr<UDataTable> DT_SoftObject(nullptr);
+
+	GetProjectileClassesDataTableChecked(Context, DataTable, DT_SoftObject);
+
+	// Get Classes from DataTable
+
+	const UScriptStruct* RowStruct = DataTable->GetRowStruct();
+
+	// Get the Property named "Class" if it exists.
+	UStructProperty* ClassProperty = FCsLibrary_Property::FindStructPropertyByName<FCsProjectilePtr>(RowStruct, Name::Class);
+
+	if (!ClassProperty)
+	{
+		UE_LOG(LogCsPrj, Warning, TEXT("%s: Failed to find StructProperty: Class in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName()));
+		return;
+	}
+
+	// Cache any class related information that is loaded.
+	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+
+	for (const TPair<FName, uint8*>& Pair : RowMap)
+	{
+		const FName& Name = Pair.Key;
+		uint8* RowPtr	  = Manager_Data->GetDataTableRow(DT_SoftObject, Name);
+
+		if (!RowPtr)
+			continue;
+
+		// If Property named "Class" exists, cache the class.
+		if (ClassProperty)
+		{
+			FCsProjectilePtr* ProjectilePtr = ClassProperty->ContainerPtrToValuePtr<FCsProjectilePtr>(RowPtr);
+
+			checkf(ProjectilePtr, TEXT("%s: ProjectilePtr is NULL."), *Context);
+
+			UObject* O = ProjectilePtr->Get();
+
+			checkf(O, TEXT("%s: Failed to get projectile from DataTable: %s: Row: %s."), *Context, *(DataTable->GetName()), *(Name.ToString()));
+
+			FCsProjectile& Projectile = ProjectileClassByTypeMap.Add(Name);
+
+			Projectile.SetObject(O);
+		}
+	}
+}
+
+FCsProjectile* UCsManager_Projectile::GetProjectile(const FECsProjectile& Type)
+{
+	checkf(EMCsProjectile::Get().IsValidEnum(Type), TEXT("UCsManager_Projectile::GetProjectile: Type: %s is NOT Valid."), Type.ToChar());
+
+	return ProjectileClassByTypeMap.Find(Type.GetFName());
+}
+
+FCsProjectile* UCsManager_Projectile::GetProjectile(const FECsProjectileClass& Type)
+{
+	checkf(EMCsProjectileClass::Get().IsValidEnum(Type), TEXT("UCsManager_Projectile::GetProjectile: Type: %s is NOT Valid."), Type.ToChar());
+
+	return ProjectileClassByClassTypeMap.Find(Type.GetFName());
+}
+
+FCsProjectile* UCsManager_Projectile::GetProjectileChecked(const FString& Context, const FECsProjectileClass& Type)
+{
+	FCsProjectile* Ptr = GetProjectile(Type);
+
+	checkf(Ptr, TEXT("%s: Failed to find a projectile associated with Type: %s."), *Context, Type.ToChar());
+
+	return Ptr;
+}
+
+void UCsManager_Projectile::ResetClassContainers()
+{
+	ProjectileClassByTypeMap.Reset();
+	ProjectileClassByClassTypeMap.Reset();
+}
+
+#pragma endregion Class
+
 // Data
 #pragma region
 
@@ -742,49 +849,53 @@ void UCsManager_Projectile::PopulateDataMapFromSettings()
 {
 	using namespace NCsManagerProjectile;
 
-	if (UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>())
+	const FString& Context = Str::PopulateDataMapFromSettings;
+
+	// Reset appropriate containers
+	ResetDataContainers();
+
+	// Get DataRootSetImpl
+	UWorld* World = MyRoot->GetWorld();
+
+	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+	UObject* DataRootSetImpl	  = Manager_Data->DataRootSet.GetObject();
+
+	checkf(DataRootSetImpl, TEXT("%s: Failed to find DataRootSet."), *Context);
+
+	// Get DataRootSet for this Module
+	ICsPrjGetDataRootSet* GetDataRootSet = Cast<ICsPrjGetDataRootSet>(DataRootSetImpl);
+
+	checkf(GetDataRootSet, TEXT("%s: DataRootSet: %s with Class: %s does NOT implement interface: ICsPrjGetDataRootSet."), *Context, *(DataRootSetImpl->GetName()), *(DataRootSetImpl->GetClass()->GetName()));
+
+	const FCsPrjDataRootSet& DataRootSet = GetDataRootSet->GetCsPrjDataRootSet();
+
+	// Find which DataTables have been loaded
+	for (const FCsProjectileSettings_DataTable_Projectiles& Projectiles : DataRootSet.Projectiles)
 	{
-		for (FCsProjectileSettings_DataTable_Projectiles& Projectiles : ModuleSettings->Projectiles)
+		// Check DataTable of Weapons
+		TSoftObjectPtr<UDataTable> DT_SoftObject = Projectiles.Projectiles;
+
+		if (UDataTable* DT = Manager_Data->GetDataTable(DT_SoftObject))
 		{
-			// TODO: Get DataTable from Manager_Data
+			DataTables.Add(DT);
 
-			// TODO: Add check for ModuleSettings->Manager_Projectile.Payload
+			// Emulated
+			const TSet<FECsProjectileData>& EmulatedDataInterfaces = Projectiles.EmulatedDataInterfaces;
 
-			bool LoadedFromManagerData = false;
-
-			if (!LoadedFromManagerData)
+			if (EmulatedDataInterfaces.Num() > CS_EMPTY)
 			{
-				// LOG Warning
+				CreateEmulatedDataFromDataTable(DT, DT_SoftObject, EmulatedDataInterfaces);
 			}
-
-			// Check DataTable of Projectiles
-			TSoftObjectPtr<UDataTable> DT_SoftObject = Projectiles.Projectiles;
-
-			if (UDataTable* DT = DT_SoftObject.LoadSynchronous())
+			// "Normal" / Non-Emulated
+			else
 			{
-				UCsLibrary_Load::LoadDataTable(DT, NCsLoadFlags::All, NCsLoadCodes::All);
-
-				if (!LoadedFromManagerData)
-				{
-					DataTables.Add(DT);
-				}
-
-				const TSet<FECsProjectileData>& EmulatedDataInterfaces = Projectiles.EmulatedDataInterfaces;
-
-				if (EmulatedDataInterfaces.Num() > CS_EMPTY)
-				{
-					CreateEmulatedDataFromDataTable(DT, EmulatedDataInterfaces);
-				}
-				else
-				{
-					PopulateDataMapFromDataTable(DT);
-				}
+				PopulateDataMapFromDataTable(DT, DT_SoftObject);
 			}
 		}
 	}
 }
 
-void UCsManager_Projectile::CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSet<FECsProjectileData>& EmulatedDataInterfaces)
+void UCsManager_Projectile::CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const TSet<FECsProjectileData>& EmulatedDataInterfaces)
 {
 	using namespace NCsManagerProjectile;
 
@@ -829,12 +940,28 @@ void UCsManager_Projectile::CreateEmulatedDataFromDataTable(UDataTable* DataTabl
 		CollisionPresetProperty = FCsLibrary_Property::FindStructPropertyByNameForInterfaceChecked<FCsCollisionPreset>(Context, RowStruct, Name::GravityScale, NCsProjectileData::ProjectileCollision.GetDisplayName());
 	}
 
+	// Class
+	UStructProperty* ClassProperty = FCsLibrary_Property::FindStructPropertyByName<FCsProjectilePtr>(RowStruct, Name::Class);
+
+	if (!ClassProperty)
+	{
+		UE_LOG(LogCsPrj, Warning, TEXT("%s: Failed to find StructProperty: Class in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName()));
+	}
+
+	// Get Manager_Data
+	UWorld* World				  = MyRoot->GetWorld();
+	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+
+	// Check which rows from the DataTable have been loaded
 	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
 	for (const TPair<FName, uint8*>& Pair : RowMap)
 	{
 		const FName& Name = Pair.Key;
-		uint8* RowPtr	  = const_cast<uint8*>(Pair.Value);
+		uint8* RowPtr	  = Manager_Data->GetDataTableRow(DataTableSoftObject, Name);
+
+		if (!RowPtr)
+			continue;
 
 		// ICsData_Projectile
 		if (Emulates_ICsDataProjectile)
@@ -897,6 +1024,22 @@ void UCsManager_Projectile::CreateEmulatedDataFromDataTable(UDataTable* DataTabl
 		{
 
 		}
+
+		// Class
+		if (ClassProperty)
+		{
+			FCsProjectilePtr* ProjectilePtr = ClassProperty->ContainerPtrToValuePtr<FCsProjectilePtr>(RowPtr);
+
+			checkf(ProjectilePtr, TEXT("%s: WeaponPtr is NULL."), *Context);
+
+			UObject* O = ProjectilePtr->Get();
+
+			checkf(O, TEXT("%s: Failed to get projectile from DataTable: %s: Row: %s."), *Context, *(DataTable->GetName()), *(Name.ToString()));
+
+			FCsProjectile& Projectile = ProjectileClassByTypeMap.Add(Name);
+
+			Projectile.SetObject(O);
+		}
 	}
 }
 
@@ -915,31 +1058,78 @@ void UCsManager_Projectile::DeconstructEmulatedData(const FName& InterfaceImplNa
 	}
 }
 
-void UCsManager_Projectile::PopulateDataMapFromDataTable(UDataTable* DataTable)
+void UCsManager_Projectile::PopulateDataMapFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject)
 {
 	using namespace NCsManagerProjectile;
 
+	const FString& Context = Str::PopulateDataMapFromDataTable;
+
+	// Get Manager_Data
+	UWorld* World				  = MyRoot->GetWorld();
+	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+
 	const UScriptStruct* RowStruct = DataTable->GetRowStruct();
 
-	// Data
-	UStructProperty* DataProperty = FCsLibrary_Property::FindPropertyByName<UStructProperty>(RowStruct, Name::Data);
+	// Class
+	UStructProperty* ClassProperty = FCsLibrary_Property::FindStructPropertyByName<FCsProjectilePtr>(RowStruct, Name::Class);
 
-	if (DataProperty &&
-		DataProperty->Struct == FCsDataProjectilePtr::StaticStruct())
+	if (!ClassProperty)
 	{
-		const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+		UE_LOG(LogCsPrj, Warning, TEXT("%s: Failed to find StructProperty: Class in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName()));
+	}
 
-		for (const TPair<FName, uint8*>& Pair : RowMap)
+	// Data
+	UStructProperty* DataProperty = FCsLibrary_Property::FindStructPropertyByName<FCsData_ProjectilePtr>(RowStruct, Name::Data);
+
+	if (!DataProperty)
+	{
+		UE_LOG(LogCsPrj, Warning, TEXT("%s: Failed to find StructProperty: Data in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName()));
+	}
+
+	// Check which rows from the DataTable have been loaded
+	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+
+	for (const TPair<FName, uint8*>& Pair : RowMap)
+	{
+		const FName& Name = Pair.Key;
+		uint8* RowPtr     = Manager_Data->GetDataTableRow(DataTableSoftObject, Name);
+
+		if (!RowPtr)
+			continue;
+
+		TMap<FName, uint8*>& Map = DataTableRowByPathMap.FindOrAdd(DataTableSoftObject.ToSoftObjectPath());
+		Map.Add(Name, RowPtr);
+
+		// Class
+		if (ClassProperty)
 		{
-			const FName& Name = Pair.Key;
-			uint8* RowPtr     = const_cast<uint8*>(Pair.Value);
+			FCsProjectilePtr* ProjectilePtr = ClassProperty->ContainerPtrToValuePtr<FCsProjectilePtr>(RowPtr);
 
-			FCsDataProjectilePtr* DataPtr = DataProperty->ContainerPtrToValuePtr<FCsDataProjectilePtr>(RowPtr);
+			checkf(ProjectilePtr, TEXT("%s: ProjectilePtr is NULL."), *Context);
 
-			if (ICsData_Projectile* Data = DataPtr->Get<ICsData_Projectile>())
-			{
-				DataMap.Add(Name, Data);
-			}
+			UObject* O = ProjectilePtr->Get();
+
+			checkf(O, TEXT("%s: Failed to get weapon from DataTable: %s: Row: %s."), *Context, *(DataTable->GetName()), *(Name.ToString()));
+
+			FCsProjectile& Projectile = ProjectileClassByTypeMap.Add(Name);
+
+			Projectile.SetObject(O);
+		}
+
+		// Data
+		if (DataProperty)
+		{
+			FCsData_ProjectilePtr* DataPtr = DataProperty->ContainerPtrToValuePtr<FCsData_ProjectilePtr>(RowPtr);
+
+			UObject* Data = DataPtr->Get();
+
+			checkf(Data, TEXT("%s: Failed to get data from DataTable: %s Row: %s."), *Context, *(DataTable->GetName()), *(Name.ToString()));
+
+			ICsData_Projectile* IData = Cast<ICsData_Projectile>(Data);
+
+			checkf(IData, TEXT("%s: Data: %s with Class: %s does NOT implement interface: ICsData_Weapon."), *Context, *(Data->GetName()), *(Data->GetClass()->GetName()));
+
+			DataMap.Add(Name, IData);
 		}
 	}
 }
@@ -948,13 +1138,15 @@ ICsData_Projectile* UCsManager_Projectile::GetData(const FName& Name)
 {
 	checkf(Name != NAME_None, TEXT("UCsManager_Projectile::GetData: Name: None is NOT Valid."));
 
-	// TODO: Get the Data from Manager_Data or have a callback whenever Payload is unloaded
+	// Check emulated data
+	if (ICsData_Projectile** EmuDataPtr = EmulatedDataMap.Find(Name))
+		return *EmuDataPtr;
 
-	ICsData_Projectile** DataPtr = DataMap.Find(Name);
+	// Check data
+	if (ICsData_Projectile** DataPtr = DataMap.Find(Name))
+		return *DataPtr;
 
-	checkf(DataPtr, TEXT("UCsManager_Projectile::GetData: Failed to find Data for Name: %s."), *(Name.ToString()));
-
-	return *DataPtr;
+	return nullptr;
 }
 
 ICsData_Projectile* UCsManager_Projectile::GetData(const FECsProjectile& Type)
@@ -962,6 +1154,53 @@ ICsData_Projectile* UCsManager_Projectile::GetData(const FECsProjectile& Type)
 	checkf(EMCsProjectile::Get().IsValidEnum(Type), TEXT("UCsManager_Projectile::GetData: Type: %s is NOT Valid."), Type.ToChar());
 
 	return GetData(Type.GetFName());
+}
+
+ICsData_Projectile* UCsManager_Projectile::GetDataChecked(const FString& Context, const FName& Name)
+{
+	ICsData_Projectile* Ptr = GetData(Name);
+
+	checkf(Ptr, TEXT("%s: Failed to find a Data associated with Name: %s."), *(Name.ToString()));
+
+	return Ptr;
+}
+
+ICsData_Projectile* UCsManager_Projectile::GetDataChecked(const FString& Context, const FECsProjectile& Type)
+{
+	ICsData_Projectile* Ptr = GetData(Type);
+
+	checkf(Ptr, TEXT("%s: Failed to find a Data associated with Type: %s."), Type.ToChar());
+
+	return Ptr;
+}
+
+void UCsManager_Projectile::ResetDataContainers()
+{
+	for (TPair<FName, TMap<FName, void*>>& DataPair : EmulatedDataInterfaceImplMap)
+	{
+		TMap<FName, void*> InterfaceImplMap = DataPair.Value;
+
+		for (TPair<FName, void*>& ImplPair : InterfaceImplMap)
+		{
+			DeconstructEmulatedData(ImplPair.Key, ImplPair.Value);
+
+			ImplPair.Value = nullptr;
+		}
+	}
+	EmulatedDataMap.Reset();
+	EmulatedDataInterfaceImplMap.Reset();
+
+	for (TPair<FName, FCsData_ProjectileInterfaceMap*>& Pair : EmulatedDataInterfaceMap)
+	{
+		FCsData_ProjectileInterfaceMap* Ptr = Pair.Value;
+		delete Ptr;
+		Pair.Value = nullptr;
+	}
+	EmulatedDataInterfaceMap.Reset();
+
+	DataMap.Reset();
+	DataTables.Reset(DataTables.Max());
+	DataTableRowByPathMap.Reset();
 }
 
 void UCsManager_Projectile::OnPayloadUnloaded(const FName& Payload)

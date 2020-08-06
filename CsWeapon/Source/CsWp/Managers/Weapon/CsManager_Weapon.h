@@ -621,12 +621,15 @@ public:
 #pragma region
 protected:
 
+	// <Weapon (type), Weapon Class>
+	TMap<FName, FCsWeapon> WeaponClassByTypeMap;
+
 	void GetWeaponClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject);
 
 	void PopulateClassMapFromSettings();
 
-	// <Weapon (type), Weapon Class>
-	TMap<FName, FCsWeapon> WeaponClassByTypeMap;
+	// <Weapon Class (type), Weapon Class>
+	TMap<FName, FCsWeapon> WeaponClassByClassTypeMap;
 
 public:
 
@@ -638,13 +641,6 @@ public:
 	* return		Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
 	*/
 	FCsWeapon* GetWeapon(const FECsWeapon& Type);
-
-protected:
-
-	// <Weapon Class (type), Weapon Class>
-	TMap<FName, FCsWeapon> WeaponClassByClassTypeMap; 
-
-public:
 
 	/**
 	* Get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
@@ -666,28 +662,32 @@ public:
 	*/
 	FCsWeapon* GetWeaponChecked(const FString& Context, const FECsWeaponClass& Type);
 
+protected:
+
+	void ResetClassContainers();
+
 #pragma endregion Class
 
 // Data
 #pragma region
-public:
-
-	void PopulateDataMapFromSettings();
-
 protected:
+
 	/** <DataName, InterfacePtr> */
 	TMap<FName, ICsData_Weapon*> EmulatedDataMap;
 
-	/** <DataName, InterfaceMapPtr> */ 
+	/** <DataName, InterfaceMapPtr> */
 	TMap<FName, FCsData_WeaponInterfaceMap*> EmulatedDataInterfaceMap;
 
 	/** <DataName, <InterfaceImplName, InterfaceImplPtr>> */
 	TMap<FName, TMap<FName, void*>> EmulatedDataInterfaceImplMap;
 
+public:
 
-	virtual void CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const TSet<FECsWeaponData>& EmulatedDataInterfaces);
+	void PopulateDataMapFromSettings();
 
 protected:
+
+	virtual void CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const TSet<FECsWeaponData>& EmulatedDataInterfaces);
 
 	virtual void DeconstructEmulatedData(const FName& InterfaceImplName, void* Data);
 
@@ -739,7 +739,13 @@ public:
 
 protected:
 
+	// <EntryName, Data>
 	TMap<FName, ICsData_Weapon*> DataMap;
+
+	TArray<UDataTable*> DataTables;
+
+	// <Path, <RowName, RowPtr>>
+	TMap<FSoftObjectPath, TMap<FName, uint8*>> DataTableRowByPathMap;
 
 	void PopulateDataMapFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject);
 
@@ -781,11 +787,9 @@ public:
 	*/
 	ICsData_Weapon* GetDataChecked(const FString& Context, const FECsWeapon& Type);
 
-private:
+protected:
 
-	TArray<UDataTable*> DataTables;
-
-	TMap<FSoftObjectPath, TMap<FName, uint8*>> DataTableRowByPathMap;
+	void ResetDataContainers();
 
 	void OnPayloadUnloaded(const FName& Payload);
 

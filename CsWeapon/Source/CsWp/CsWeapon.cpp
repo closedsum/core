@@ -11,7 +11,7 @@ UCsWeapon::UCsWeapon(const FObjectInitializer& ObjectInitializer) : Super(Object
 
 const FCsWeapon FCsWeapon::Empty;
 
-// TCsInterfaceObject
+	// TCsInterfaceObject
 #pragma region
 
 void FCsWeapon::SetObject(UObject* InObject)
@@ -43,7 +43,7 @@ void FCsWeapon::SetObject(UObject* InObject)
 
 #pragma endregion TCsInterfaceObject
 
-// ICsWeapon
+	// ICsWeapon
 #pragma region
 
 ICsData_Weapon* FCsWeapon::GetData()
@@ -61,6 +61,5 @@ const FECsWeaponState& FCsWeapon::GetCurrentState()
 }
 
 #pragma endregion ICsWeapon
-
 
 #pragma endregion FCsWeapon

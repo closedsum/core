@@ -13,8 +13,9 @@
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 #include "Settings/CsWeaponSettings.h"
-// Data
+// Managers
 #include "Managers/Data/CsManager_Data.h"
+// Data
 #include "Data/CsWpGetDataRootSet.h"
 #include "Data/CsData_WeaponInterfaceMap.h"
 #include "Data/CsData_WeaponEmuSlice.h"
@@ -282,36 +283,9 @@ void UCsManager_Weapon::CleanUp()
 	Pool.Reset();
 
 	// Class
-	WeaponClassByTypeMap.Reset();
-	WeaponClassByClassTypeMap.Reset();
-
+	ResetClassContainers();
 	// Data
-	for (TPair<FName, TMap<FName, void*>>& DataPair : EmulatedDataInterfaceImplMap)
-	{
-		TMap<FName, void*> InterfaceImplMap = DataPair.Value;
-
-		for (TPair<FName, void*>& ImplPair : InterfaceImplMap)
-		{
-			DeconstructEmulatedData(ImplPair.Key, ImplPair.Value);
-
-			ImplPair.Value = nullptr;
-		}
-	}
-	EmulatedDataMap.Reset();
-	EmulatedDataInterfaceImplMap.Reset();
-
-	for (TPair<FName, FCsData_WeaponInterfaceMap*>& Pair : EmulatedDataInterfaceMap)
-	{
-		FCsData_WeaponInterfaceMap* Ptr = Pair.Value;
-		delete Ptr;
-		Pair.Value = nullptr;
-	}
-	EmulatedDataInterfaceMap.Reset();
-
-	DataMap.Reset();
-
-	DataTableRowByPathMap.Reset();
-	DataTables.Reset();
+	ResetDataContainers();
 
 	bInitialized = false;
 }
@@ -708,8 +682,7 @@ void UCsManager_Weapon::PopulateClassMapFromSettings()
 	const FString& Context = Str::PopulateClassMapFromSettings;
 
 	// Reset appropriate containers
-	WeaponClassByTypeMap.Reset();
-	WeaponClassByClassTypeMap.Reset();
+	ResetClassContainers();
 
 	// Get DataRootSetImpl
 	UWorld* World				  = MyRoot->GetWorld();
@@ -785,6 +758,12 @@ FCsWeapon* UCsManager_Weapon::GetWeaponChecked(const FString& Context, const FEC
 	return Ptr;
 }
 
+void UCsManager_Weapon::ResetClassContainers()
+{
+	WeaponClassByTypeMap.Reset();
+	WeaponClassByClassTypeMap.Reset();
+}
+
 #pragma endregion Class
 
 // Data
@@ -797,7 +776,7 @@ void UCsManager_Weapon::PopulateDataMapFromSettings()
 	const FString& Context = Str::PopulateDataMapFromSettings;
 
 	// Reset appropriate containers
-	DataTables.Reset(DataTables.Max());
+	ResetDataContainers();
 
 	// Get DataRootSetImpl
 	UWorld* World = MyRoot->GetWorld();
@@ -1096,20 +1075,20 @@ void UCsManager_Weapon::PopulateDataMapFromDataTable(UDataTable* DataTable, cons
 
 	const UScriptStruct* RowStruct = DataTable->GetRowStruct();
 
-	// Data
-	UStructProperty* DataProperty = FCsLibrary_Property::FindStructPropertyByName<FCsDataWeapon>(RowStruct, Name::Data);
-
-	if (!DataProperty)
-	{
-		UE_LOG(LogCsWp, Warning, TEXT("%s: Failed to find StructProperty: Data in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName()));
-	}
-
 	// Class
 	UStructProperty* ClassProperty = FCsLibrary_Property::FindStructPropertyByName<FCsWeaponPtr>(RowStruct, Name::Class);
 
 	if (!ClassProperty)
 	{
 		UE_LOG(LogCsWp, Warning, TEXT("%s: Failed to find StructProperty: Class in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName()));
+	}
+
+	// Data
+	UStructProperty* DataProperty = FCsLibrary_Property::FindStructPropertyByName<FCsData_WeaponPtr>(RowStruct, Name::Data);
+
+	if (!DataProperty)
+	{
+		UE_LOG(LogCsWp, Warning, TEXT("%s: Failed to find StructProperty: Data in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName()));
 	}
 
 	// Check which rows from the DataTable have been loaded
@@ -1126,22 +1105,6 @@ void UCsManager_Weapon::PopulateDataMapFromDataTable(UDataTable* DataTable, cons
 		TMap<FName, uint8*>& Map = DataTableRowByPathMap.FindOrAdd(DataTableSoftObject.ToSoftObjectPath());
 		Map.Add(Name, RowPtr);
 
-		// Data
-		if (DataProperty)
-		{
-			FCsDataWeapon* DataPtr = DataProperty->ContainerPtrToValuePtr<FCsDataWeapon>(RowPtr);
-
-			UObject* Data = DataPtr->Get();
-
-			checkf(Data, TEXT("%s: Failed to get data from DataTable: %s Row: %s."), *Context, *(DataTable->GetName()), *(Name.ToString()));
-
-			ICsData_Weapon* IData = Cast<ICsData_Weapon>(Data);
-
-			checkf(IData, TEXT("%s: Data: %s with Class: %s does NOT implement interface: ICsData_Weapon."), *Context, *(Data->GetName()), *(Data->GetClass()->GetName()));
-
-			DataMap.Add(Name, IData);
-		}
-
 		// Class
 		if (ClassProperty)
 		{
@@ -1156,6 +1119,22 @@ void UCsManager_Weapon::PopulateDataMapFromDataTable(UDataTable* DataTable, cons
 			FCsWeapon& Weapon = WeaponClassByTypeMap.Add(Name);
 
 			Weapon.SetObject(O);
+		}
+
+		// Data
+		if (DataProperty)
+		{
+			FCsData_WeaponPtr* DataPtr = DataProperty->ContainerPtrToValuePtr<FCsData_WeaponPtr>(RowPtr);
+
+			UObject* Data = DataPtr->Get();
+
+			checkf(Data, TEXT("%s: Failed to get data from DataTable: %s Row: %s."), *Context, *(DataTable->GetName()), *(Name.ToString()));
+
+			ICsData_Weapon* IData = Cast<ICsData_Weapon>(Data);
+
+			checkf(IData, TEXT("%s: Data: %s with Class: %s does NOT implement interface: ICsData_Weapon."), *Context, *(Data->GetName()), *(Data->GetClass()->GetName()));
+
+			DataMap.Add(Name, IData);
 		}
 	}
 }
@@ -1198,6 +1177,35 @@ ICsData_Weapon* UCsManager_Weapon::GetDataChecked(const FString& Context, const 
 	checkf(Ptr, TEXT("%s: Failed to find a Data associated with Type: %s."), Type.ToChar());
 
 	return Ptr;
+}
+
+void UCsManager_Weapon::ResetDataContainers()
+{
+	for (TPair<FName, TMap<FName, void*>>& DataPair : EmulatedDataInterfaceImplMap)
+	{
+		TMap<FName, void*> InterfaceImplMap = DataPair.Value;
+
+		for (TPair<FName, void*>& ImplPair : InterfaceImplMap)
+		{
+			DeconstructEmulatedData(ImplPair.Key, ImplPair.Value);
+
+			ImplPair.Value = nullptr;
+		}
+	}
+	EmulatedDataMap.Reset();
+	EmulatedDataInterfaceImplMap.Reset();
+
+	for (TPair<FName, FCsData_WeaponInterfaceMap*>& Pair : EmulatedDataInterfaceMap)
+	{
+		FCsData_WeaponInterfaceMap* Ptr = Pair.Value;
+		delete Ptr;
+		Pair.Value = nullptr;
+	}
+	EmulatedDataInterfaceMap.Reset();
+
+	DataMap.Reset();
+	DataTables.Reset(DataTables.Max());
+	DataTableRowByPathMap.Reset();
 }
 
 void UCsManager_Weapon::OnPayloadUnloaded(const FName& Payload)

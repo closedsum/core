@@ -76,9 +76,6 @@ public:
 #pragma endregion Enum
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	TArray<FCsProjectileSettings_DataTable_Projectiles> Projectiles;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	FCsSettings_Manager_Projectile Manager_Projectile;
 
 // Unit Test

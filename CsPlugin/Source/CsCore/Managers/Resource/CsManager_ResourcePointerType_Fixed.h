@@ -161,8 +161,8 @@ public:
 				{
 					ResourceType* R = Resources[I];
 					delete R;
+					Resources[I] = nullptr;
 				}
-				Resources[I] = nullptr;
 			}
 			Resources.Reset();
 		}

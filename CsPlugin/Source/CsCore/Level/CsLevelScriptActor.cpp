@@ -362,7 +362,6 @@ void ACsLevelScriptActor::PopulatePayloadCombined()
 					else
 					{
 						FCsDataEntry_Data Entry;
-						Entry.Name = DataName;
 						Entry.Data = Payload_Data.Data;
 						Entry.Paths = Payload_Data.Paths;
 
@@ -387,7 +386,6 @@ void ACsLevelScriptActor::PopulatePayloadCombined()
 					else
 					{
 						FCsDataEntry_DataTable Entry;
-						Entry.Name		= DataTableName;
 						Entry.DataTable = Payload_DataTable.DataTable;
 						Entry.Paths		= Payload_DataTable.Paths;
 
@@ -449,6 +447,7 @@ void ACsLevelScriptActor::PostEditChangeChainProperty(FPropertyChangedChainEvent
 	const FName MemberPropertyName = (e.MemberProperty != NULL) ? e.MemberProperty->GetFName() : NAME_None;
 
 	// Payload
+	/*
 	{
 		// Payload.DataTables[Index]
 		{
@@ -471,6 +470,7 @@ void ACsLevelScriptActor::PostEditChangeChainProperty(FPropertyChangedChainEvent
 			}
 		}
 	}
+	*/
 	Super::PostEditChangeChainProperty(e);
 }
 

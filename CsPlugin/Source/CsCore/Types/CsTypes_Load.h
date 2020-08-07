@@ -43,7 +43,7 @@ enum class ECsLoadCode : uint8
 	SuppressLoadFlagsAllWarning	UMETA(DisplayName = "Suppress Load Flags All Warning"),	// 1
 	/** Data implements the interface: ICsData. */
 	RecursiveLoadData			UMETA(DisplayName = "Recursive Load Data"),				// 2
-	RecursiveLoadDataTable		UMETA(DisplayName = "Recursive Load DataTable",)		// 3
+	RecursiveLoadDataTable		UMETA(DisplayName = "Recursive Load DataTable"),		// 3
 };
 
 #define ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES 1
@@ -773,7 +773,7 @@ struct CSCORE_API FCsPayload_Data
 public:
 
 	/** Name of the Data Object. */
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName Name;
 
 	/** Object that implements the interface: ICsData. */
@@ -837,7 +837,7 @@ struct CSCORE_API FCsPayload_DataTable
 public:
 
 	/** Name of the DataTable */
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName Name;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -922,7 +922,7 @@ public:
 	UPROPERTY()
 	int32 Index;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bUpdateDataRootSetOnSave;
 
 	/** List of all Payload information related to objects that
@@ -1096,8 +1096,8 @@ public:
 	UPROPERTY()
 	int32 Index;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
-	FName Name;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bPopulateOnSave;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftClassPtr<UObject> Data;
@@ -1116,7 +1116,7 @@ public:
 
 	FCsDataEntry_Data() :
 		Index(INDEX_NONE),
-		Name(NAME_None),
+		bPopulateOnSave(false),
 		Data(),
 		Data_Internal(nullptr),
 		Data_Class(nullptr),
@@ -1136,7 +1136,6 @@ public:
 
 	void Reset()
 	{
-		Name = NAME_None;
 		Data = nullptr;
 		Data_Internal = nullptr;
 		Data_Class = nullptr;
@@ -1165,11 +1164,8 @@ public:
 	UPROPERTY()
 	int32 Index;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bPopulateOnSave;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
-	FName Name;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UDataTable> DataTable;
@@ -1196,7 +1192,6 @@ public:
 	FCsDataEntry_DataTable() :
 		Index(INDEX_NONE),
 		bPopulateOnSave(false),
-		Name(NAME_None),
 		DataTable(),
 		DataTable_Internal(nullptr),
 		bAllRows(false),
@@ -1223,7 +1218,6 @@ public:
 
 	void Reset()
 	{
-		Name = NAME_None;
 		DataTable = nullptr;
 		DataTable_Internal = nullptr;
 		bAllRows = false;

@@ -61,7 +61,6 @@ void UCsDataRootSetImpl::AddDataTable(const FName& EntryName, const TSoftObjectP
 		RowPtr = DataTables->FindRow<FCsDataEntry_DataTable>(EntryName, Context);
 	}
 
-	RowPtr->Name	  = EntryName;
 	RowPtr->DataTable = DataTable;
 	RowPtr->bAllRows  = true;
 	RowPtr->Populate();
@@ -115,7 +114,6 @@ void UCsDataRootSetImpl::AddDataTable(const FName& EntryName, const TSoftObjectP
 		}
 	}
 
-	RowPtr->Name	  = EntryName;
 	RowPtr->DataTable = DataTable;
 	RowPtr->bAllRows  = AllRowsAlreadySet || RowNames.Num() == CS_EMPTY;
 

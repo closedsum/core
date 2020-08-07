@@ -488,8 +488,6 @@ void FCsDataEntry_DataTable::Populate()
 		return;
 	}
 
-	Name = DT->GetFName();
-
 	const UScriptStruct* ScriptStruct = DT->GetRowStruct();
 	UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
 	UStruct* const Struct			  = Temp;

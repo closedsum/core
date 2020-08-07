@@ -185,6 +185,7 @@ void UCsManager_Data::Initialize()
 	DataRootSet.Data		  = Settings->DataRootSet;
 	DataRootSet.Data_Class	  = DataRootSet.Data.LoadSynchronous();
 	DataRootSet.Data_Internal = DataRootSet.Data_Class->GetDefaultObject<UObject>();
+	DataRootSet.Interface	  = Cast<ICsDataRootSet>(DataRootSet.Data_Internal);
 
 	// Manager_Payload
 	{
@@ -336,7 +337,6 @@ void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Pay
 			!DataEntryMap_Added.Find(Name))
 		{
 			FCsDataEntry_Data* Entry = Manager_DataEntry_Data.AllocateResource();
-			Entry->Name	 = Name;
 			Entry->Data  = Data.Data;
 			Entry->Paths = Data.Paths;
 
@@ -354,7 +354,6 @@ void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Pay
 			!DataTableEntryMap_Added.Find(Name))
 		{
 			FCsDataEntry_DataTable* Entry = Manager_DataEntry_DataTable.AllocateResource();
-			Entry->Name		 = Name;
 			Entry->DataTable = DataTable.DataTable;
 			Entry->Paths	 = DataTable.Paths;
 
@@ -720,7 +719,7 @@ UDataTable* UCsManager_Data::GetDataTable(const FName& EntryName)
 
 UDataTable* UCsManager_Data::GetDataTable(const FSoftObjectPath& Path)
 {
-	checkf(!Path.IsValid(), TEXT("UCsManager_Data::GetDataTable: Path is NOT Valid."));
+	checkf(Path.IsValid(), TEXT("UCsManager_Data::GetDataTable: Path is NOT Valid."));
 
 	if (UDataTable** TablePtr = DataTableByPathMap_Loaded.Find(Path))
 		return *TablePtr;
@@ -761,7 +760,7 @@ uint8* UCsManager_Data::GetDataTableRow(const FName& EntryName, const FName& Row
 
 uint8* UCsManager_Data::GetDataTableRow(const FSoftObjectPath& Path, const FName& RowName)
 {
-	checkf(!Path.IsValid(), TEXT("UCsManager_Data::GetDataTableRow: Path is NOT Valid."));
+	checkf(Path.IsValid(), TEXT("UCsManager_Data::GetDataTableRow: Path is NOT Valid."));
 
 	checkf(RowName != NAME_None, TEXT("UCsManager_Data::GetDataTableRow: RowName: None is NOT Valid."));
 
@@ -963,7 +962,6 @@ int32 UCsManager_Data::GetPayloadSoftObjectPathCount(const FName& PayloadName)
 
 	return Count;
 }
-
 
 #pragma endregion SoftObjectPath
 

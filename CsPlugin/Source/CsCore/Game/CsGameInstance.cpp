@@ -275,7 +275,7 @@ FName UCsGameInstance::GetPersistentLevelFName()
 
 ACsLevelScriptActor* UCsGameInstance::GetPersistentLevelScriptActor()
 {
-	return Cast<ACsLevelScriptActor>(GetPersistentLevel());
+	return Cast<ACsLevelScriptActor>(GetPersistentLevel()->LevelScriptActor);
 }
 
 #pragma endregion Persistent Level

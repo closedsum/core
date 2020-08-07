@@ -14,16 +14,12 @@ struct CSPRJ_API FCsProjectileSettings_DataTable_Projectiles
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSoftObjectPtr<UDataTable> ProjectileClasses;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftObjectPtr<UDataTable> Projectiles;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSet<FECsProjectileData> EmulatedDataInterfaces;
 
 	FCsProjectileSettings_DataTable_Projectiles() :
-		ProjectileClasses(nullptr),
 		Projectiles(nullptr),
 		EmulatedDataInterfaces()
 	{

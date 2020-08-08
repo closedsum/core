@@ -49,4 +49,9 @@ void FECsFXCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 	SetEnumWithDisplayName_Internal<EMCsFX, FECsFX>(DisplayName);
 }
 
+void FECsFXCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+{
+	GetDisplayNamePropertyValue_Internal<EMCsFX, FECsFX>(OutDisplayName);
+}
+
 #undef LOCTEXT_NAMESPACE

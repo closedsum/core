@@ -27,4 +27,9 @@ void FECsGameEventCustomization::SetEnumWithDisplayName(const FString& DisplayNa
 	SetEnumWithDisplayName_Internal<EMCsGameEvent, FECsGameEvent>(DisplayName);
 }
 
+void FECsGameEventCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+{
+	GetDisplayNamePropertyValue_Internal<EMCsGameEvent, FECsGameEvent>(OutDisplayName);
+}
+
 #undef LOCTEXT_NAMESPACE

@@ -133,14 +133,19 @@ public:
 
 // Action Map
 #pragma region
-public:
+private:
 
+	/** */
 	TArray<FCsInputInfo> InputActionEventInfos;
 
 	void SetupInputActionEventInfos();
+
+	/** */
+	TMap<FECsInputAction, int32> InputActionMapping;
+
 	void SetupInputActionMapping();
 
-	TMap<FECsInputAction, int32> InputActionMapping;
+public:
 
 	int32 CurrentInputActionMap;
 
@@ -152,6 +157,8 @@ public:
 
 #pragma endregion Action Map
 
+private:
+
 	TArray<FKey> PressedKeys;
 
 	FCsInput* GetPreviousInputAction(const FECsInputAction& Action);
@@ -161,29 +168,52 @@ public:
 
 // Events
 #pragma region
-public:
+private:
 
 	TSet<FCsGameEventDefinition> GameEventDefinitions;
 
 	TMap<FECsGameEvent, FCsInputSentence> GameEventDefinitionMap;
 
-	void SetupGameEventDefinitions();
-
 	TArray<FECsGameEvent> GameEventPriorityList;
 
 	TArray<int32> GameEventPriorityMap;
 
-	TArray<FCsGameEventInfo> CurrentGameEventInfos;
-	TArray<FCsGameEventInfo> CurrentValidGameEventInfos;
+	void SetupGameEventDefinitions();
+
+	/** */
 	TArray<FCsGameEventInfo> QueuedGameEventInfosForNextFrame;
+
+	/** */
+	TArray<FCsGameEventInfo> CurrentGameEventInfos;
+
+public:
+
+	FORCEINLINE const TArray<FCsGameEventInfo>& GetCurrentGameEventInfos() const
+	{
+		return CurrentGameEventInfos;
+	}
+
+private:
+
+	/** */
+	TArray<FCsGameEventInfo> CurrentValidGameEventInfos;
+
+public:
+
+	FORCEINLINE const TArray<FCsGameEventInfo>& GetCurrentValidGameEventInfos() const
+	{
+		return CurrentValidGameEventInfos;
+	}
+
+private:
 
 	void LogProcessGameEventDefinition(const FString& Context, const FECsGameEvent& Event, const FCsInputSentence& Sentence);
 
-	virtual void QueueGameEvent(const FECsGameEvent& Event);
+public:
+
+	void QueueGameEvent(const FECsGameEvent& Event);
 
 	void ClearQueuedGameEvents();
-
-	virtual void DetermineGameEvents(const TArray<FCsInput*>& InInputs);
 
 	bool HasActionEventOccured(const FECsInputAction& Action, const ECsInputEvent& Event);
 

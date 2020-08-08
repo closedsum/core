@@ -47,4 +47,9 @@ void FECsProjectileClassCustomization::SetEnumWithDisplayName(const FString& Dis
 	SetEnumWithDisplayName_Internal<EMCsProjectileClass, FECsProjectileClass>(DisplayName);
 }
 
+void FECsProjectileClassCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+{
+	GetDisplayNamePropertyValue_Internal<EMCsProjectileClass, FECsProjectileClass>(OutDisplayName);
+}
+
 #undef LOCTEXT_NAMESPACE

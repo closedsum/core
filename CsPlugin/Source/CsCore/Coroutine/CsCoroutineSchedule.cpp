@@ -112,7 +112,7 @@ const FCsRoutineHandle& FCsCoroutineSchedule::Start(FCsResource_CoroutinePayload
 
 	checkf(Payload, TEXT("FCsCoroutineSchedule::Start: PayloadContainer does NOT contain a reference to a Payload."));
 
-	checkf(Group == Payload->Group, TEXT("FCsCoroutineSchedule::Start: Mismatch between Payload->Group: %s and Group: %s"), *(Payload->Group.Name), *(Group.Name));
+	checkf(Group == Payload->Group, TEXT("FCsCoroutineSchedule::Start: Mismatch between Payload->Group: %s and Group: %s"), Payload->Group.ToChar(), Group.ToChar());
 
 	FCsRoutine* R = Manager_Routine.AllocateResource();
 
@@ -144,7 +144,7 @@ const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(FCsResource_CoroutinePa
 
 	checkf(Payload, TEXT("FCsCoroutineSchedule::StartChild: PayloadContainer does NOT contain a reference to a Payload."));
 
-	checkf(Group = Payload->Group, TEXT("FCsCoroutineSchedule::StartChild: Mismatch between Payload->Group: %s and Group: %s"), *(Payload->Group.Name), *(Group.Name));
+	checkf(Group == Payload->Group, TEXT("FCsCoroutineSchedule::StartChild: Mismatch between Payload->Group: %s and Group: %s"), Payload->Group.ToChar(), Group.ToChar());
 
 	FCsResource_Routine* ParentContainer = GetRoutineContainer(Payload->ParentHandle);
 

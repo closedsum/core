@@ -349,22 +349,22 @@ void UCsManager_Sound::InitInternalFromSettings()
 
 			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
 
-			checkf(PoolParams.Class.ToSoftObjectPath().IsValid(), TEXT("UCsManager_Sound::InitInternalFromSettings: Class for Type: %s is NOT a Valid Path."), *(Type.Name));
+			checkf(PoolParams.Class.ToSoftObjectPath().IsValid(), TEXT("UCsManager_Sound::InitInternalFromSettings: Class for Type: %s is NOT a Valid Path."), Type.ToChar());
 
 #if !UE_BUILD_SHIPPING
 			if (!PoolParams.Class.Get())
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Sound::InitInternalFromSettings: Class @ for Type: %s is NOT already loaded in memory."), *(PoolParams.Class.ToString()), *(Type.Name));
+				UE_LOG(LogCs, Warning, TEXT("UCsManager_Sound::InitInternalFromSettings: Class @ for Type: %s is NOT already loaded in memory."), *(PoolParams.Class.ToString()), Type.ToChar());
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
 			UClass* Class = PoolParams.Class.LoadSynchronous();
 
-			checkf(Class, TEXT("UCsManager_Sound::InitInternalFromSettings: Failed to load Class @ for Type: %s."), *(PoolParams.Class.ToString()), *(Type.Name));
+			checkf(Class, TEXT("UCsManager_Sound::InitInternalFromSettings: Failed to load Class @ for Type: %s."), *(PoolParams.Class.ToString()), Type.ToChar());
 
 			ClassMap.Add(Type, Class);
 
-			ObjectParams.Name							  = Params.Name + TEXT("_") + Type.Name;
+			ObjectParams.Name							  = Params.Name + TEXT("_") + Type.ToChar();
 			ObjectParams.World							  = Params.World;
 			ObjectParams.ConstructParams.Outer			  = this;
 			ObjectParams.ConstructParams.Class			  = Class;
@@ -420,7 +420,7 @@ void UCsManager_Sound::CreatePool(const FECsSound& Type, const int32& Size)
 
 	if (PoolSize > CS_EMPTY)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Sound::CreatePool: Pool for Sound: %s has already been created with Size: %d."), *(Type.Name), PoolSize);
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Sound::CreatePool: Pool for Sound: %s has already been created with Size: %d."), Type.ToChar(), PoolSize);
 	}
 
 	Internal.CreatePool(Type, Size);

@@ -8,6 +8,7 @@ namespace NCsCached
 		extern CSCORE_API const FString Empty;// = TEXT("");
 		extern CSCORE_API const FString None;// = TEXT("None");
 		extern CSCORE_API const FString INVALID;// = TEXT("INVALID");
+		extern CSCORE_API const FString __INVALID__;// = TEXT("__INVALID__");
 		extern CSCORE_API const FString Dot;// = TEXT(".");
 		extern CSCORE_API const FString True;// = TEXT("True");
 		extern CSCORE_API const FString _true;// = TEXT("true");
@@ -54,6 +55,7 @@ namespace NCsCached
 	{
 		extern CSCORE_API const FName None;// = NAME_None;
 		extern CSCORE_API const FName Null;// = FName("NULL");
+		extern CSCORE_API const FName __INVALID__;// = FName("__INVALID__");
 	}
 
 	namespace Ext

@@ -40,4 +40,9 @@ void FECsStatusEffectTriggerConditionCustomization::SetEnumWithDisplayName(const
 	SetEnumWithDisplayName_Internal<EMCsStatusEffectTriggerCondition, FECsStatusEffectTriggerCondition>(DisplayName);
 }
 
+void FECsStatusEffectTriggerConditionCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+{
+	GetDisplayNamePropertyValue_Internal<EMCsStatusEffectTriggerCondition, FECsStatusEffectTriggerCondition>(OutDisplayName);
+}
+
 #undef LOCTEXT_NAMESPACE

@@ -45,7 +45,7 @@ UUserDefinedEnum* FCsEnumEditorUtils::GetUserDefinedEnum(const FECsUserDefinedEn
 		}
 		else
 		{
-			UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::GetUserDefinedEnum: Failed to find a UserDefinedEnum associated with EnumStruct: %s."), *EnumType.Name);
+			UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::GetUserDefinedEnum: Failed to find a UserDefinedEnum associated with EnumStruct: %s."), EnumType.ToChar());
 		}
 	}
 	return nullptr;
@@ -186,7 +186,7 @@ void FCsEnumEditorUtils::UpdateNames(const FECsUserDefinedEnum& EnumType, const 
 		if (IndicesToRemove.Num() > 0 ||
 			IndicesToAdd.Num() > 0)
 		{
-			UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: UserDefinedEnum: %s is being repopulated. This may affect blueprints using it."), *EnumType.Name);
+			UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: UserDefinedEnum: %s is being repopulated. This may affect blueprints using it."), EnumType.ToChar());
 
 			// Remove Names
 			for (const int32& Index : IndicesToRemove)
@@ -194,7 +194,7 @@ void FCsEnumEditorUtils::UpdateNames(const FECsUserDefinedEnum& EnumType, const 
 				const FString EnumeratorName = Enum->GetNameStringByIndex(Index);
 				const FString DisplayName    = Enum->GetDisplayNameTextByIndex(Index).ToString();
 
-				UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: UserDefinedEnum: %s. Removing Enumerator: %s. DisplayName: %s. Index: %d."), *EnumType.Name, *EnumeratorName, *DisplayName, Index);
+				UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: UserDefinedEnum: %s. Removing Enumerator: %s. DisplayName: %s. Index: %d."), EnumType.ToChar(), *EnumeratorName, *DisplayName, Index);
 
 				FEnumEditorUtils::RemoveEnumeratorFromUserDefinedEnum(Enum, Index);
 			}
@@ -212,7 +212,7 @@ void FCsEnumEditorUtils::UpdateNames(const FECsUserDefinedEnum& EnumType, const 
 				const FString EnumeratorName = Enum->GetNameStringByIndex(LastIndex);
 				const FString DisplayName	 = Enum->GetDisplayNameTextByIndex(LastIndex).ToString();
 
-				UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: UserDefinedEnum: %s. Adding Enumerator: %s. DisplayName: %s. Index: %d."), *EnumType.Name, *EnumeratorName, *DisplayName, LastIndex);
+				UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: UserDefinedEnum: %s. Adding Enumerator: %s. DisplayName: %s. Index: %d."), EnumType.ToChar(), *EnumeratorName, *DisplayName, LastIndex);
 			}
 
 			Enum->MarkPackageDirty();
@@ -220,7 +220,7 @@ void FCsEnumEditorUtils::UpdateNames(const FECsUserDefinedEnum& EnumType, const 
 	}
 	else
 	{
-		UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: Failed to find UserDefinedEnum: %s. It is possible it was deleted or moved."), *EnumType.Name);
+		UE_LOG(LogCsEditor, Warning, TEXT("FCsEnumEditorUtils::UpdateNames: Failed to find UserDefinedEnum: %s. It is possible it was deleted or moved."), EnumType.ToChar());
 	}
 }
 

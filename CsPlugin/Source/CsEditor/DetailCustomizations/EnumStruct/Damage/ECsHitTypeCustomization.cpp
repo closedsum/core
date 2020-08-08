@@ -27,4 +27,9 @@ void FECsHitTypeCustomization::SetEnumWithDisplayName(const FString& DisplayName
 	SetEnumWithDisplayName_Internal<EMCsHitType, FECsHitType>(DisplayName);
 }
 
+void FECsHitTypeCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+{
+	GetDisplayNamePropertyValue_Internal<EMCsHitType, FECsHitType>(OutDisplayName);
+}
+
 #undef LOCTEXT_NAMESPACE

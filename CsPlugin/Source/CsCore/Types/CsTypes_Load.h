@@ -955,6 +955,17 @@ public:
 	{
 	}
 
+	FORCEINLINE FCsPayload& operator=(const FCsPayload& B)
+	{
+		bUpdateDataRootSetOnSave = B.bUpdateDataRootSetOnSave;
+		Datas = B.Datas;
+		DataMap = B.DataMap;
+		DataTables = B.DataTables;
+		DataTableMap = B.DataTableMap;
+		Paths = B.Paths;
+		return *this;
+	}
+
 	FORCEINLINE void SetIndex(const int32& InIndex)
 	{
 		Index = InIndex;
@@ -1124,6 +1135,16 @@ public:
 	{
 	}
 
+	FORCEINLINE FCsDataEntry_Data& operator=(const FCsDataEntry_Data& B)
+	{
+		bPopulateOnSave = B.bPopulateOnSave;
+		Data = B.Data;
+		Data_Internal = B.Data_Internal;
+		Data_Class = B.Data_Class;
+		Paths = B.Paths;
+		return *this;
+	}
+
 	FORCEINLINE void SetIndex(const int32& InIndex)
 	{
 		Index = InIndex;
@@ -1199,6 +1220,18 @@ public:
 		Paths(),
 		PathsByRowMap()
 	{
+	}
+
+	FORCEINLINE FCsDataEntry_DataTable& operator=(const FCsDataEntry_DataTable& B)
+	{
+		bPopulateOnSave = B.bPopulateOnSave;
+		DataTable = B.DataTable;
+		DataTable_Internal = B.DataTable_Internal;
+		bAllRows = B.bAllRows;
+		Rows = B.Rows;
+		Paths = B.Paths;
+		PathsByRowMap = B.PathsByRowMap;
+		return *this;
 	}
 
 	FORCEINLINE bool IsValid() const

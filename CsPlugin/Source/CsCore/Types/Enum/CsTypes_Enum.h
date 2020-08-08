@@ -4,5 +4,5 @@
 
 #pragma once
 
-#define CS_INVALID_ENUM_TO_STRING NCsCached::Str::INVALID
-#define CS_INVALID_ENUM_TO_NAME NCsCached::Name::None
+#define CS_INVALID_ENUM_TO_STRING NCsCached::Str::__INVALID__
+#define CS_INVALID_ENUM_TO_NAME NCsCached::Name::__INVALID__

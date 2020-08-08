@@ -51,11 +51,6 @@ const FName& FECsInputActionCustomization::GetEnumStructFName()
 	return EMCsInputAction::Get().GetEnumFName();
 }
 
-const FECsUserDefinedEnum& FECsInputActionCustomization::GetUserDefinedEnumType()
-{
-	return NCsUserDefinedEnum::FECsInputAction;
-}
-
 void FECsInputActionCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
 	SetPropertyHandles_Internal<FECsInputAction>(StructPropertyHandle);
@@ -64,6 +59,11 @@ void FECsInputActionCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle
 void FECsInputActionCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
 	SetEnumWithDisplayName_Internal<EMCsInputAction, FECsInputAction>(DisplayName);
+}
+
+void FECsInputActionCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+{
+	GetDisplayNamePropertyValue_Internal<EMCsInputAction, FECsInputAction>(OutDisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

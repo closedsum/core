@@ -8,6 +8,7 @@ namespace NCsCached
 		CSCORE_API const FString Empty = TEXT("");
 		CSCORE_API const FString None = TEXT("None");
 		CSCORE_API const FString INVALID = TEXT("INVALID");
+		CSCORE_API const FString __INVALID__ = TEXT("__INVALID__");
 		CSCORE_API const FString Dot = TEXT(".");
 		CSCORE_API const FString True = TEXT("True");
 		CSCORE_API const FString _true = TEXT("true");
@@ -54,6 +55,7 @@ namespace NCsCached
 	{
 		CSCORE_API const FName None = NAME_None;
 		CSCORE_API const FName Null = FName("NULL");
+		CSCORE_API const FName __INVALID__ = FName("__INVALID__");
 	}
 
 	namespace Ext

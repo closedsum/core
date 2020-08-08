@@ -411,38 +411,63 @@ public:
 	/**
 	*
 	*
-	* @param TableName
-	* @param OutPaths
+	* @param EntryName
+	* return
 	*/
-	void GetDataTableSoftObjectPaths(const FName& TableName, TArray<FSoftObjectPath>& OutPaths);
+	FSoftObjectPath GetDataTableSoftObjectPath(const FName& EntryName);
 
 	/**
 	*
 	*
-	* @param TableName
+	* @param Context
+	* @param EntryName
+	* return
+	*/
+	FSoftObjectPath GetDataTableSoftObjectPathChecked(const FString& Context, const FName& EntryName);
+
+	/**
+	*
+	*
+	* @param EntryName
+	* @param OutPaths
+	*/
+	void GetDataTableSoftObjectPaths(const FName& EntryName, TArray<FSoftObjectPath>& OutPaths);
+
+	/**
+	*
+	*
+	* @param EntryName
+	* @param OutPaths
+	*/
+	void GetDataTableSoftObjectPathsChecked(const FString& Context, const FName& EntryName, TArray<FSoftObjectPath>& OutPaths);
+
+	/**
+	*
+	*
+	* @param EntryName
 	* return			Number of SoftObjectPaths for the DataTable.
 	*					INDEX_NONE for an invalid TableName
 	*/
-	int32 GetDataTableSoftObjectPathCount(const FName& TableName);
+	int32 GetDataTableSoftObjectPathCount(const FName& EntryName);
 
 	/**
 	*
 	*
-	* @param TableName
+	* @param EntryName
 	* @param RowName
 	* @param OutPaths
 	*/
-	void GetDataTableRowSoftObjectPaths(const FName& TableName, const FName& RowName, TArray<FSoftObjectPath>& OutPaths);
+	void GetDataTableRowSoftObjectPaths(const FName& EntryName, const FName& RowName, TArray<FSoftObjectPath>& OutPaths);
 
 	/**
 	*
 	*
-	* @param TableName
+	* @param EntryName
 	* @param RowName
 	* return			Number of SoftObjectPaths for the DataTable.
 	*					INDEX_NONE for an invalid TableName or RowName
 	*/
-	int32 GetDataTableRowSoftObjectPathCount(const FName& TableName, const FName& RowName);
+	int32 GetDataTableRowSoftObjectPathCount(const FName& EntryName, const FName& RowName);
 
 #pragma endregion SoftObjectPath
 

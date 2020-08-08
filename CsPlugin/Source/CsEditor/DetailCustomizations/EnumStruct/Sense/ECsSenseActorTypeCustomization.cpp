@@ -27,4 +27,9 @@ void FECsSenseActorTypeCustomization::SetEnumWithDisplayName(const FString& Disp
 	SetEnumWithDisplayName_Internal<EMCsSenseActorType, FECsSenseActorType>(DisplayName);
 }
 
+void FECsSenseActorTypeCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+{
+	GetDisplayNamePropertyValue_Internal<EMCsSenseActorType, FECsSenseActorType>(OutDisplayName);
+}
+
 #undef LOCTEXT_NAMESPACE

@@ -2,65 +2,40 @@
 #include "CsEnum.generated.h"
 #pragma once
 
-#define CS_ENUM_MAX_NAME_LENGTH 1024
-#define CS_ENUM_MAX_DISPLAY_NAME_LENGTH 1024
-
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsEnum
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FString Name;
+private:
+	
+	static const FName Invalid;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FString DisplayName;
+public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName Name_Internal;
 
 	FECsEnum() :
-		Name(),
-		DisplayName(),
-		Name_Internal(NAME_None)
+		Name_Internal(Invalid)
 	{
 	}
 
 	virtual ~FECsEnum(){}
 
-	FORCEINLINE operator FString() const
+	FORCEINLINE bool operator==(const FECsEnum& B) const
 	{
-		return Name;
+		return Name_Internal == B.Name_Internal;
 	}
 
-	FORCEINLINE friend bool operator==(const FString& Lhs, const FECsEnum& Rhs)
+	FORCEINLINE bool operator!=(const FECsEnum& B) const
 	{
-		return Lhs == Rhs.Name;
+		return !(*this == B);
 	}
 
-	FORCEINLINE friend bool operator==(const FECsEnum& Lhs, const FString& Rhs)
+	FORCEINLINE void SetFName(const FName& InName)
 	{
-		return Lhs.Name == Rhs;
-	}
-
-	FORCEINLINE friend bool operator!=(const FString& Lhs, const FECsEnum& Rhs)
-	{
-		return !(Lhs == Rhs);
-	}
-
-	FORCEINLINE friend bool operator!=(const FECsEnum& Lhs, const FString& Rhs)
-	{
-		return !(Lhs == Rhs);
-	}
-
-	FORCEINLINE virtual FString ToString() const
-	{
-		return TEXT("Name: ") + Name;
-	}
-
-	FORCEINLINE const FString& GetName() const 
-	{
-		return Name;
+		Name_Internal = InName;
 	}
 
 	FORCEINLINE const FName& GetFName() const 
@@ -68,23 +43,8 @@ struct CSCORE_API FECsEnum
 		return Name_Internal;
 	}
 
-	FORCEINLINE const FString& GetDisplayName() const 
-	{
-		return DisplayName;
-	}
-
-	FORCEINLINE const TCHAR* ToChar() const
-	{
-		return *Name;
-	}
-
-	FORCEINLINE const TCHAR* DisplayNameToChar() const
-	{
-		return *DisplayName;
-	}
-
 	FORCEINLINE bool IsValid() const
 	{
-		return Name_Internal != NAME_None;
+		return Name_Internal != Invalid;
 	}
 };

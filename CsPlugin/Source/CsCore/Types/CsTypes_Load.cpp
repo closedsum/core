@@ -477,7 +477,7 @@ void FCsDataEntry_DataTable::Populate()
 {
 	Paths.Reset();
 
-	if (!DataTable.IsValid())
+	if (!DataTable.ToSoftObjectPath().IsValid())
 		return;
 
 	UDataTable* DT = DataTable.LoadSynchronous();
@@ -501,8 +501,9 @@ void FCsDataEntry_DataTable::Populate()
 	}
 
 	// Add DataTable Path
+	FSoftObjectPath DataTablePath = DataTable.ToSoftObjectPath();
 	{
-		FSoftObjectPath Path = DataTable.ToSoftObjectPath();
+		FSoftObjectPath Path = DataTablePath;
 
 		FCsSoftObjectPath TempPath;
 		TempPath.Path = Path;
@@ -548,6 +549,19 @@ void FCsDataEntry_DataTable::Populate()
 
 	for (const FName& RowName : RowNames)
 	{
+		FCsTArraySoftObjectPath& PathArray = PathsByRowMap.FindOrAdd(RowName);
+
+		// Add DataTable Path
+		{
+			FCsSoftObjectPath TempPath;
+			TempPath.Path = DataTablePath;
+
+			FSetElementId IdAtRow = PathArray.Set.Add(TempPath);
+			FCsSoftObjectPath& PathByRowAtId = PathArray.Set[IdAtRow];
+
+			PathByRowAtId.Path = DataTablePath;
+		}
+
 		uint8* RowPtr = DT->FindRowUnchecked(RowName);
 
 		const FString RowNameAsString = RowName.ToString();
@@ -603,7 +617,6 @@ void FCsDataEntry_DataTable::Populate()
 				PathAtId.Size.SetBytes(Bytes);
 
 				// Row
-				FCsTArraySoftObjectPath& PathArray = PathsByRowMap.FindOrAdd(RowName);
 				FSetElementId IdAtRow			   = PathArray.Set.Add(TempPath);
 				FCsSoftObjectPath& PathByRowAtId   = PathArray.Set[IdAtRow];
 

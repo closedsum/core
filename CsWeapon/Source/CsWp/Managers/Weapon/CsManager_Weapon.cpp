@@ -398,7 +398,7 @@ void UCsManager_Weapon::InitInternalFromSettings()
 
 			checkf(Class, TEXT("%s: Failed to get class for Type: %s ClassType: %s."), *Context, Type.ToChar(), ClassType.ToChar());
 
-			ObjectParams.Name  = Params.Name + TEXT("_") + Type.Name;
+			ObjectParams.Name  = Params.Name + TEXT("_") + Type.ToChar();
 			ObjectParams.World = Params.World;
 			//ObjectParams.LogType
 			ObjectParams.ConstructParams.Class			  = Class;
@@ -432,7 +432,7 @@ void UCsManager_Weapon::CreatePool(const FECsWeapon& Type, const int32& Size)
 
 	if (PoolSize > CS_EMPTY)
 	{
-		UE_LOG(LogCsWp, Warning, TEXT("UCsManager_Weapon::CreatePool: Pool for Creep: %s has already been created with Size: %d."), *(Type.Name), PoolSize);
+		UE_LOG(LogCsWp, Warning, TEXT("UCsManager_Weapon::CreatePool: Pool for Creep: %s has already been created with Size: %d."), Type.ToChar(), PoolSize);
 	}
 
 	Internal.CreatePool(Type, Size);

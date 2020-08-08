@@ -167,8 +167,6 @@ struct CSCORE_API FECsInputActionMap : public FECsEnumMask_int32
 	GENERATED_USTRUCT_BODY()
 
 	CS_ENUM_MASK_INT32_BODY(FECsInputActionMap)
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnumMask_int32::ToString(); }
 };
 
 FORCEINLINE uint32 GetTypeHash(const FECsInputActionMap& b)

@@ -27,4 +27,9 @@ void FECsGestureTypeCustomization::SetEnumWithDisplayName(const FString& Display
 	SetEnumWithDisplayName_Internal<EMCsGestureType, FECsGestureType>(DisplayName);
 }
 
+void FECsGestureTypeCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+{
+	GetDisplayNamePropertyValue_Internal<EMCsGestureType, FECsGestureType>(OutDisplayName);
+}
+
 #undef LOCTEXT_NAMESPACE

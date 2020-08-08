@@ -54,12 +54,12 @@ public:
 	ConstIterator const begin() { return { this, 0 }; }
 	ConstIterator const end() { return { this, EndPosition }; }
 
-	FORCEINLINE const FString& GetName()
+	FORCEINLINE const FString& GetName() const
 	{
 		return MapName;
 	}
 
-	FORCEINLINE const FString& GetEnumName()
+	FORCEINLINE const FString& GetEnumName() const
 	{
 		return EnumName;
 	}
@@ -85,82 +85,82 @@ public:
 		return Add(Enum, Name, Name);
 	}
 
-	FORCEINLINE const EnumType& operator[](const FString &Name)
+	FORCEINLINE const EnumType& operator[](const FString &Name) const
 	{
 		return FromNameMap[Name];
 	}
 
-	FORCEINLINE const EnumType& operator[](const FName &Name)
+	FORCEINLINE const EnumType& operator[](const FName &Name) const
 	{
 		return FromNameInternalMap[Name];
 	}
 
-	FORCEINLINE bool IsValidEnum(const EnumType& E)
+	FORCEINLINE bool IsValidEnum(const EnumType& Enum) const
 	{
-		return Enums.Find(E) > INDEX_NONE;
+		return Enums.Find(Enum) > INDEX_NONE;
 	}
 
-	FORCEINLINE bool IsValidEnum(const FString& Name)
+	FORCEINLINE bool IsValidEnum(const FString& Name) const
 	{
 		return FromNameMap.Find(Name) != nullptr;
 	}
 
-	FORCEINLINE bool IsValidEnum(const FName& Name)
+	FORCEINLINE bool IsValidEnum(const FName& Name) const
 	{
 		return FromNameInternalMap.Find(Name) != nullptr;
 	}
 
-	FORCEINLINE bool IsValidFlag(const uint32& Flag)
+	FORCEINLINE bool IsValidFlag(const uint32& Flag) const
 	{
 		return FlagMap.Find(Flag) != nullptr;
 	}
 
-	FORCEINLINE const EnumType& GetEnumAt(const int32& Index)
+	FORCEINLINE const EnumType& GetEnumAt(const int32& Index) const
 	{
 		return Enums[Index];
 	}
 
-	FORCEINLINE const EnumType& GetSafeEnumAt(const int32& Index)
+	FORCEINLINE const EnumType& GetSafeEnumAt(const int32& Index) const
 	{
 		return Index < Count ? Enums[Index] : First;
 	}
 
-	FORCEINLINE const EnumType& GetEnum(const FString& Name)
+	FORCEINLINE const EnumType& GetEnum(const FString& Name) const
 	{
 		return FromNameMap[Name];
 	}
 
-	FORCEINLINE const EnumType& GetSafeEnum(const FString& Name)
+	FORCEINLINE const EnumType& GetSafeEnum(const FString& Name) const
 	{
 		return IsValidEnum(Name) ? FromNameMap[Name] : First;
 	}
 
-	FORCEINLINE const EnumType& GetEnum(const FName& Name)
+	FORCEINLINE const EnumType& GetEnum(const FName& Name) const
 	{
 		return FromNameInternalMap[Name];
 	}
 
-	FORCEINLINE const EnumType& GetSafeEnum(const FName& Name)
+	FORCEINLINE const EnumType& GetSafeEnum(const FName& Name) const
 	{
 		return IsValidEnum(Name) ? FromNameInternalMap[Name] : First;
 	}
 
-	FORCEINLINE const EnumType& GetEnumByDisplayName(const FString& DisplayName)
+	FORCEINLINE const EnumType& GetEnumByDisplayName(const FString& DisplayName) const
 	{
 		return FromDisplayNameMap[DisplayName];
 	}
 
-	FORCEINLINE const EnumType& GetEnumByFlag(const uint32& Flag)
+	FORCEINLINE const EnumType& GetEnumByFlag(const uint32& Flag) const
 	{
 		return FlagMap[Flag];
 	}
 
-	FORCEINLINE const EnumType& GetSafeEnumByFlag(const uint32& Flag)
+	FORCEINLINE const EnumType& GetSafeEnumByFlag(const uint32& Flag) const
 	{
 		return IsValidFlag(Flag) ? FlagMap[Flag] : First;
 	}
 
-	FORCEINLINE const int32& Num()
+	FORCEINLINE const int32& Num() const
 	{
 		return Count;
 	}

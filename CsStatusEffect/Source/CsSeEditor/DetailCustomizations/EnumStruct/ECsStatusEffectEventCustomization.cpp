@@ -40,4 +40,9 @@ void FECsStatusEffectEventCustomization::SetEnumWithDisplayName(const FString& D
 	SetEnumWithDisplayName_Internal<EMCsStatusEffectEvent, FECsStatusEffectEvent>(DisplayName);
 }
 
+void FECsStatusEffectEventCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+{
+	GetDisplayNamePropertyValue_Internal<EMCsStatusEffectEvent, FECsStatusEffectEvent>(OutDisplayName);
+}
+
 #undef LOCTEXT_NAMESPACE

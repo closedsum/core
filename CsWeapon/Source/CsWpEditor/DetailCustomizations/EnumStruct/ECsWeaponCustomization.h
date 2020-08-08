@@ -26,4 +26,5 @@ protected:
 
 	virtual void SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle) override;
 	virtual void SetEnumWithDisplayName(const FString& DisplayName) override;
+	virtual void GetDisplayNamePropertyValue(FString& OutDisplayName) const override;
 };

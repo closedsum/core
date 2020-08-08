@@ -25,8 +25,7 @@ protected:
 	virtual const FString& GetEnumStructName() override;
 	virtual const FName& GetEnumStructFName() override;
 
-	virtual const FECsUserDefinedEnum& GetUserDefinedEnumType() override;
-
 	virtual void SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle) override;
 	virtual void SetEnumWithDisplayName(const FString& DisplayName) override;
+	virtual void GetDisplayNamePropertyValue(FString& OutDisplayName) const override;
 };

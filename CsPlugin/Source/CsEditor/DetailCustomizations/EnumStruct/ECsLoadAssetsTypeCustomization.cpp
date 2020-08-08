@@ -33,4 +33,9 @@ void FECsLoadAssetsTypeCustomization::SetEnumWithDisplayName(const FString& Disp
 	SetEnumWithDisplayName_Internal<EMCsLoadAssetsType, FECsLoadAssetsType>(DisplayName);
 }
 
+void FECsLoadAssetsTypeCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+{
+	GetDisplayNamePropertyValue_Internal<EMCsLoadAssetsType, FECsLoadAssetsType>(OutDisplayName);
+}
+
 #undef LOCTEXT_NAMESPACE

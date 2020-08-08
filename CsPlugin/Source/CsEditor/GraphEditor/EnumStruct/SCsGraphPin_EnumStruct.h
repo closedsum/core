@@ -106,7 +106,7 @@ protected:
 
 			if (SelectedString == GraphPinString)
 			{
-				return Enum.DisplayName;
+				return Enum.GetDisplayName();
 			}
 		}
 		return NCsGraphPinEnumStructCached::Str::INVALID;
@@ -132,7 +132,7 @@ protected:
 		}
 		else
 		{
-			EnumSelectionString = TEXT("(Value=0,Name=\"\",DisplayName=\"\",Name_Internal=\"None\")");;
+			EnumSelectionString = TEXT("(Value=0,Name_Internal=\"None\")");;
 		}
 
 		if (GraphPinObj->GetDefaultAsString() != EnumSelectionString)
@@ -155,7 +155,7 @@ protected:
 	template<typename EnumMap>
 	FText OnGetFriendlyName_Internal(const int32& EnumIndex)
 	{
-		return FText::FromString(EnumMap::Get().GetSafeEnumAt(EnumIndex).DisplayName);
+		return FText::FromString(EnumMap::Get().GetSafeEnumAt(EnumIndex).GetDisplayName());
 	}
 
 	/**
@@ -168,7 +168,7 @@ protected:
 	template<typename EnumMap>
 	FText OnGetTooltip_Internal(const int32& EnumIndex)
 	{
-		return FText::FromString(EnumMap::Get().GetSafeEnumAt(EnumIndex).DisplayName);
+		return FText::FromString(EnumMap::Get().GetSafeEnumAt(EnumIndex).GetDisplayName());
 	}
 
 	TSharedPtr<class SPinComboBox>ComboBox;

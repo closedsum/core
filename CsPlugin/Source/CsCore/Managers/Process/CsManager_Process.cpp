@@ -34,12 +34,12 @@ FString FCsManager_Process::GetObjectName(UCsProcess* p)
 
 const FString& FCsManager_Process::EnumTypeToString(const FECsProcess &e)
 {
-	return e.Name;
+	return e.GetName();
 }
 
 const FString& FCsManager_Process::EnumTypeToString(const int32 &index)
 {
-	return EMCsProcess::Get().GetEnumAt(index).Name;
+	return EMCsProcess::Get().GetEnumAt(index).GetName();
 }
 
 void FCsManager_Process::Log(const FString& log)

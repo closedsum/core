@@ -348,22 +348,22 @@ void UCsManager_FX_Actor::InitInternalFromSettings()
 
 			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
 
-			checkf(PoolParams.Class.ToSoftObjectPath().IsValid(), TEXT("UCsManager_FX_Actor::InitInternalFromSettings: Class for Type: %s is NOT a Valid Path."), *(Type.Name));
+			checkf(PoolParams.Class.ToSoftObjectPath().IsValid(), TEXT("UCsManager_FX_Actor::InitInternalFromSettings: Class for Type: %s is NOT a Valid Path."), Type.ToChar());
 
 #if !UE_BUILD_SHIPPING
 			if (!PoolParams.Class.Get())
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::InitInternalFromSettings: Class @ for Type: %s is NOT already loaded in memory."), *(PoolParams.Class.ToString()), *(Type.Name));
+				UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::InitInternalFromSettings: Class @ for Type: %s is NOT already loaded in memory."), *(PoolParams.Class.ToString()), Type.ToChar());
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
 			UClass* Class = PoolParams.Class.LoadSynchronous();
 
-			checkf(Class, TEXT("UCsManager_FX_Actor::InitInternalFromSettings: Failed to load Class @ for Type: %s."), *(PoolParams.Class.ToString()), *(Type.Name));
+			checkf(Class, TEXT("UCsManager_FX_Actor::InitInternalFromSettings: Failed to load Class @ for Type: %s."), *(PoolParams.Class.ToString()), Type.ToChar());
 
 			ClassMap.Add(Type, Class);
 
-			ObjectParams.Name							  = Params.Name + TEXT("_") + Type.Name;
+			ObjectParams.Name							  = Params.Name + TEXT("_") + Type.GetName();
 			ObjectParams.World							  = Params.World;
 			ObjectParams.ConstructParams.Outer			  = this;
 			ObjectParams.ConstructParams.Class			  = Class;
@@ -419,7 +419,7 @@ void UCsManager_FX_Actor::CreatePool(const FECsFX& Type, const int32& Size)
 
 	if (PoolSize > CS_EMPTY)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::CreatePool: Pool for Creep: %s has already been created with Size: %d."), *(Type.Name), PoolSize);
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::CreatePool: Pool for Creep: %s has already been created with Size: %d."), Type.ToChar(), PoolSize);
 	}
 
 	Internal.CreatePool(Type, Size);

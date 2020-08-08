@@ -46,4 +46,9 @@ void FECsSoundCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 	SetEnumWithDisplayName_Internal<EMCsSound, FECsSound>(DisplayName);
 }
 
+void FECsSoundCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+{
+	GetDisplayNamePropertyValue_Internal<EMCsSound, FECsSound>(OutDisplayName);
+}
+
 #undef LOCTEXT_NAMESPACE

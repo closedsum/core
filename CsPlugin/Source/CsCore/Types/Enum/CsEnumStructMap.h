@@ -3,9 +3,6 @@
 
 #pragma once
 
-#define CS_INVALID_ENUM_TO_STRING NCsCached::Str::INVALID
-#define CS_INVALID_ENUM_TO_NAME NCsCached::Name::None
-
 template<typename EnumStruct, typename EnumType>
 struct TCsEnumStructMap
 {
@@ -28,10 +25,7 @@ protected:
 	TCsEnumStructMap()
 	{
 		Count = 0;
-		MAX.Value = (EnumType)0;
-		MAX.Name = TEXT("MAX");
-		MAX.Name_Internal = FName("MAX");
-		MAX.DisplayName = TEXT("MAX");
+		MAX = EnumStruct((EnumType)0, TEXT("MAX"), TEXT("MAX"));
 		bExplicitMAX = false;
 		EndPosition = 0;
 	}
@@ -62,22 +56,22 @@ public:
 	ConstIterator const begin() { return { this, 0 }; }
 	ConstIterator const end() { return { this, EndPosition }; }
 
-	FORCEINLINE const FString& GetName()
+	FORCEINLINE const FString& GetName() const
 	{
 		return MapName;
 	}
 
-	FORCEINLINE const FName& GetFName()
+	FORCEINLINE const FName& GetFName() const
 	{
 		return MapFName;
 	}
 
-	FORCEINLINE const FString& GetEnumName()
+	FORCEINLINE const FString& GetEnumName() const
 	{
 		return EnumName;
 	}
 
-	FORCEINLINE const FName& GetEnumFName()
+	FORCEINLINE const FName& GetEnumFName() const
 	{
 		return EnumFName;
 	}
@@ -147,102 +141,140 @@ public:
 
 #endif // #if WITH_EDITOR
 	
-	bool Remove(const EnumStruct& E)
+	bool Remove(const EnumStruct& Enum)
 	{
-		bool Success = Enums.Remove(E) > 0;
-		UserDefinedEnums.Remove(E);
-		UserDefinedNameMap.Remove(E.GetName());
-		NameMap.Remove(E.GetName());
-		DisplayNameMap.Remove(E.GetDisplayName());
-		NameInternalMap.Remove(E.GetFName());
-		TypeMap.Remove(E.GetValue());
+		bool Success = Enums.Remove(Enum) > 0;
+		UserDefinedEnums.Remove(Enum);
+		UserDefinedNameMap.Remove(Enum.GetName());
+		NameMap.Remove(Enum.GetName());
+		DisplayNameMap.Remove(Enum.GetDisplayName());
+		NameInternalMap.Remove(Enum.GetFName());
+		TypeMap.Remove(Enum.GetValue());
 
 		MAX.Value = (EnumType)Enums.Num();
 
+		// Reset maps with the update values 
+		if (Success)
+		{
+			const int32 Size = Enums.Num();
+
+			for (int32 I = 0; I < Size; ++I)
+			{
+				EnumStruct& E = Enums[I];
+				E.SetValue((EnumType)I);
+
+				FString Name = E.GetName();
+
+				E.SetName(Name);
+
+				FString DisplayName = E.GetDisplayName();
+
+				E.SetDisplayName(DisplayName);
+
+				NameMap[Name] = E;
+				DisplayNameMap[DisplayName] = E;
+				NameInternalMap[E.GetFName()] = E;
+				TypeMap[E.GetValue()] = E;
+
+				for (EnumStruct& UserEnum : UserDefinedEnums)
+				{
+					if (UserEnum.GetValue() == (EnumType)I)
+					{
+						UserEnum = E;
+						break;
+					}
+				}
+
+				if (EnumStruct* EnumPtr = UserDefinedNameMap.Find(E.GetName()))
+				{
+					*EnumPtr = E;
+				}
+			}
+		}
 		return Success;
 	}
 
-	FORCEINLINE const EnumStruct& operator[](const EnumType &Type)
+	FORCEINLINE const EnumStruct& operator[](const EnumType &Type) const
 	{
 		return TypeMap[Type];
 	}
 
-	FORCEINLINE const EnumStruct& operator[](const FString &Name)
+	FORCEINLINE const EnumStruct& operator[](const FString &Name) const
 	{
 		return NameMap[Name];
 	}
 
-	FORCEINLINE const EnumStruct& operator[](const FName &Name)
+	FORCEINLINE const EnumStruct& operator[](const FName &Name) const
 	{
 		return NameInternalMap[Name];
 	}
 
-	FORCEINLINE bool IsValidEnum(const EnumStruct& E)
+	FORCEINLINE bool IsValidEnum(const EnumStruct& Enum) const
 	{
-		return E.IsValid() && E.GetValue() < Count && Enums.Find(E) > INDEX_NONE;
+		return Enum.IsValid() && Enum.GetValue() < Count && Enums.Find(Enum) > INDEX_NONE;
 	}
 
-	FORCEINLINE bool IsValidEnum(const FString& Name)
+	FORCEINLINE bool IsValidEnum(const FString& Name) const
 	{
 		return NameMap.Find(Name) != nullptr;
 	}
 
-	FORCEINLINE bool IsValidEnum(const FName& Name)
+	FORCEINLINE bool IsValidEnum(const FName& Name) const
 	{
 		return NameInternalMap.Find(Name) != nullptr;
 	}
 
-	FORCEINLINE bool IsValidEnumByDisplayName(const FString& Name)
+	FORCEINLINE bool IsValidEnumByDisplayName(const FString& Name) const
 	{
 		return DisplayNameMap.Find(Name) != nullptr;
 	}
 
-	FORCEINLINE const EnumStruct& GetEnumAt(const int32& Index)
+	FORCEINLINE const EnumStruct& GetEnumAt(const int32& Index) const
 	{
 		return Enums[Index];
 	}
 
-	FORCEINLINE const EnumStruct& GetSafeEnumAt(const int32& Index)
+	FORCEINLINE const EnumStruct& GetSafeEnumAt(const int32& Index) const
 	{
 		return Index < Count ? Enums[Index] : MAX;
 	}
 
-	FORCEINLINE const EnumStruct& GetEnum(const FString& Name)
+	FORCEINLINE const EnumStruct& GetEnum(const FString& Name) const
 	{
 		return NameMap[Name];
 	}
 
-	FORCEINLINE const EnumStruct& GetSafeEnum(const FString& Name)
+	FORCEINLINE const EnumStruct& GetSafeEnum(const FString& Name) const
 	{
 		return IsValidEnum(Name) ? NameMap[Name] : MAX;
 	}
 
-	FORCEINLINE const EnumStruct& GetEnum(const FName& Name)
+	FORCEINLINE const EnumStruct& GetEnum(const FName& Name) const
 	{
 		return NameInternalMap[Name];
 	}
 
-	FORCEINLINE const EnumStruct& GetSafeEnum(const FName& Name)
+	FORCEINLINE const EnumStruct& GetSafeEnum(const FName& Name) const
 	{
 		return IsValidEnum(Name) ? NameInternalMap[Name] : MAX;
 	}
 
-	FORCEINLINE const EnumStruct& GetEnum(const EnumType& Type)
+	FORCEINLINE const EnumStruct& GetEnum(const EnumType& Type) const
 	{
 		return TypeMap[Type];
 	}
 
-	FORCEINLINE const EnumStruct& GetEnumByDisplayName(const FString& DisplayName)
+	FORCEINLINE const EnumStruct& GetEnumByDisplayName(const FString& DisplayName) const
 	{
 		return DisplayNameMap[DisplayName];
 	}
 
-	FORCEINLINE const int32& Num()
+	FORCEINLINE const int32& Num() const
 	{
 		return Count;
 	}
 
-	FORCEINLINE const EnumStruct& GetMAX()
+	FORCEINLINE const EnumStruct& GetMAX() const
 	{
 		return MAX;
 	}
@@ -257,22 +289,38 @@ public:
 		{
 			const EnumStruct& E = Enums[I];
 
-			if (EnumStruct* EnumPtr = UserDefinedNameMap.Find(E.Name))
+			if (EnumStruct* EnumPtr = UserDefinedNameMap.Find(E.GetName()))
 			{
-				NameMap.Remove(E.Name);
-				DisplayNameMap.Remove(E.DisplayName);
-				NameInternalMap.Remove(E.Name_Internal);
-				TypeMap.Remove((EnumType)E.Value);
+				NameMap.Remove(E.GetName());
+				DisplayNameMap.Remove(E.GetDisplayName());
+				NameInternalMap.Remove(E.GetFName());
+				TypeMap.Remove((EnumType)E.GetValue());
 				Enums.RemoveAt(I);
-
-				Count = Enums.Num();
-				
-				for (int32 J = I; J < Count; ++J)
-				{
-					Enums[J].Value = J;
-				}
 			}
 		}
+
+		// Reset maps with the update values 
+		const int32 Size = Enums.Num();
+
+		for (int32 I = 0; I < Size; ++I)
+		{
+			EnumStruct& E = Enums[I];
+			E.SetValue((EnumType)I);
+
+			FString Name = E.GetName();
+
+			E.SetName(Name);
+
+			FString DisplayName = E.GetDisplayName();
+
+			E.SetDisplayName(DisplayName);
+
+			NameMap[Name] = E;
+			DisplayNameMap[DisplayName] = E;
+			NameInternalMap[E.GetFName()] = E;
+			TypeMap[E.GetValue()] = E;
+		}
+
 		UserDefinedEnums.Reset();
 		UserDefinedNameMap.Reset();
 	}

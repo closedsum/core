@@ -27,4 +27,9 @@ void FECsDamageTypeCustomization::SetEnumWithDisplayName(const FString& DisplayN
 	SetEnumWithDisplayName_Internal<EMCsDamageType, FECsDamageType>(DisplayName);
 }
 
+void FECsDamageTypeCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+{
+	GetDisplayNamePropertyValue_Internal<EMCsDamageType, FECsDamageType>(OutDisplayName);
+}
+
 #undef LOCTEXT_NAMESPACE

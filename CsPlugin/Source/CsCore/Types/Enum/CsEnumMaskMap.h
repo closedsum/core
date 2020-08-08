@@ -28,12 +28,12 @@ protected:
 public:
 	virtual ~TCsEnumMaskMap() {}
 
-	FORCEINLINE const FString& GetName()
+	FORCEINLINE const FString& GetName() const
 	{
 		return MapName;
 	}
 
-	FORCEINLINE const FString& GetEnumName()
+	FORCEINLINE const FString& GetEnumName() const
 	{
 		return EnumName;
 	}
@@ -57,27 +57,27 @@ public:
 		return Add(Enum, Name, Name);
 	}
 
-	FORCEINLINE const EnumType& operator[](const FString &Name)
+	FORCEINLINE const EnumType& operator[](const FString &Name) const
 	{
 		return FromNameMap[Name];
 	}
 
-	FORCEINLINE const EnumType& operator[](const FName &Name)
+	FORCEINLINE const EnumType& operator[](const FName &Name) const
 	{
 		return FromNameInternalMap[Name];
 	}
 
-	FORCEINLINE bool IsValidEnum(const EnumType& E)
+	FORCEINLINE bool IsValidEnum(const EnumType& Enum) const
 	{
-		return Enums.Find(E) > INDEX_NONE;
+		return Enums.Find(Enum) > INDEX_NONE;
 	}
 
-	FORCEINLINE bool IsValidEnum(const FString& Name)
+	FORCEINLINE bool IsValidEnum(const FString& Name) const
 	{
 		return FromNameMap.Find(Name) != nullptr;
 	}
 
-	FORCEINLINE bool IsValidEnum(const FName& Name)
+	FORCEINLINE bool IsValidEnum(const FName& Name) const
 	{
 		return FromNameInternalMap.Find(Name) != nullptr;
 	}

@@ -26,4 +26,9 @@ void FECsWeaponFireModeCustomization::SetEnumWithDisplayName(const FString& Disp
 	SetEnumWithDisplayName_Internal<EMCsWeaponFireMode, FECsWeaponFireMode>(DisplayName);
 }
 
+void FECsWeaponFireModeCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+{
+	GetDisplayNamePropertyValue_Internal<EMCsWeaponFireMode, FECsWeaponFireMode>(OutDisplayName);
+}
+
 #undef LOCTEXT_NAMESPACE

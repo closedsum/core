@@ -27,4 +27,9 @@ void FECsProcessCustomization::SetEnumWithDisplayName(const FString& DisplayName
 	SetEnumWithDisplayName_Internal<EMCsProcess, FECsProcess>(DisplayName);
 }
 
+void FECsProcessCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+{
+	GetDisplayNamePropertyValue_Internal<EMCsProcess, FECsProcess>(OutDisplayName);
+}
+
 #undef LOCTEXT_NAMESPACE

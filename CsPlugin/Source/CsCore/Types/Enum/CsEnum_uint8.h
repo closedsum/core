@@ -15,55 +15,12 @@ public:
 	uint8 Value;
 
 	FECsEnum_uint8() :
+		Super(),
 		Value(0)
 	{
 	}
 
-	FECsEnum_uint8(const uint8& InValue, const FString& InName, const FString& InDisplayName)
-	{
-		Value = InValue;
-		Name = InName;
-		DisplayName = InDisplayName;
-		Name_Internal = FName(*Name);
-	}
-
-	FECsEnum_uint8(const uint8& InValue, const FString& InName)
-	{
-		FECsEnum_uint8(InValue, InName, InName);
-	}
-
 	virtual ~FECsEnum_uint8(){}
-
-	FORCEINLINE operator uint8() const
-	{
-		return Value;
-	}
-
-	FORCEINLINE FECsEnum_uint8& operator=(const FECsEnum_uint8& B)
-	{
-		Value = B.Value;
-
-		// Name
-		{
-			const int32 Len = FMath::Max(Name.Len(), B.Name.Len());
-
-			checkf(Len < CS_ENUM_MAX_NAME_LENGTH, TEXT("FECsEnum_uint8::=: Name Length: %d exceeds Max Length: %d"), Len, CS_ENUM_MAX_NAME_LENGTH);
-
-			Name.Reset(Len);
-			Name += B.Name;
-		}
-		// Display Name
-		{
-			const int32 Len = FMath::Max(DisplayName.Len(), B.DisplayName.Len());
-
-			checkf(Len < CS_ENUM_MAX_NAME_LENGTH, TEXT("FECsEnum_uint8::=: DisplayName Length: %d exceeds Max Length: %d"), Len, CS_ENUM_MAX_NAME_LENGTH);
-
-			DisplayName.Reset(Len);
-			DisplayName += B.DisplayName;
-		}
-		Name_Internal = B.Name_Internal;
-		return *this;
-	}
 
 	FORCEINLINE bool operator==(const FECsEnum_uint8& B) const
 	{
@@ -73,6 +30,11 @@ public:
 	FORCEINLINE bool operator!=(const FECsEnum_uint8& B) const
 	{
 		return !(*this == B);
+	}
+
+	FORCEINLINE operator uint8() const
+	{
+		return Value;
 	}
 
 	FORCEINLINE friend bool operator==(const uint8& Lhs, const FECsEnum_uint8& Rhs)
@@ -95,29 +57,40 @@ public:
 		return !(Lhs == Rhs);
 	}
 
+	FORCEINLINE void SetValue(const uint8& InValue)
+	{
+		Value = InValue;
+	}
+
 	FORCEINLINE const uint8& GetValue() const
 	{
 		return Value;
 	}
 
-	FORCEINLINE virtual FString ToString() const override
-	{
-		return TEXT("Name: ") + Name + TEXT(" Value: ") + FString::FromInt(Value);
-	}
-
 	FORCEINLINE FString ToGraphPinString() const
 	{
-		return TEXT("(Value=") + FString::FromInt(Value) + TEXT(",Name=\"") + Name + TEXT("\",DisplayName=\"") + DisplayName + TEXT("\",Name_Internal=\"") + Name_Internal.ToString() + TEXT("\")");
+		return TEXT("(Value=") + FString::FromInt(Value) + TEXT(",Name_Internal=\"") + Name_Internal.ToString() + TEXT("\")");
 	}
 };
 
 #define CS_ENUM_UINT8_BODY(Enum) \
-	private: \
-		typedef FECsEnum_uint8 Super; \
 	public: \
 		Enum() {} \
-		Enum(const uint8& InValue, const FString& InName, const FString& InDisplayName) : Super(InValue, InName, InDisplayName) {} \
-		Enum(const uint8& InValue, const FString& InName) : Super(InValue, InName) {} \
+		Enum(const uint8& InValue, const FString& InName, const FString& InDisplayName) \
+		{ \
+			Value = InValue; \
+			Name_Internal = FName(*InName); \
+			\
+			for (int32 I = GetNames().Num(); I <= Value; ++I) \
+			{ \
+				GetNames().AddDefaulted(); \
+				GetDisplayNames().AddDefaulted(); \
+			} \
+			\
+			GetNames()[Value] = InName; \
+			GetDisplayNames()[Value] = InDisplayName; \
+		} \
+		Enum(const uint8& InValue, const FString& InName) : Enum(InValue, InName, InName) {} \
 		~Enum() {} \
 		\
 		FORCEINLINE bool operator==(const Enum& B) const \
@@ -125,7 +98,82 @@ public:
 			return Value == B.Value && Name_Internal == B.Name_Internal; \
 		} \
 		\
-		FORCEINLINE virtual FString ToString() const override { return Super::ToString(); }
+		FORCEINLINE bool operator!=(const Enum& B) const \
+		{ \
+			return !(*this == B); \
+		} \
+		\
+		FORCEINLINE operator FString() const \
+		{ \
+			return GetName(); \
+		} \
+		\
+		FORCEINLINE friend bool operator==(const FString& Lhs, const Enum& Rhs) \
+		{ \
+			return Lhs == Rhs.GetName(); \
+		} \
+		\
+		FORCEINLINE friend bool operator==(const Enum& Lhs, const FString& Rhs) \
+		{ \
+			return Lhs.GetName() == Rhs; \
+		} \
+		\
+		FORCEINLINE friend bool operator!=(const FString& Lhs, const Enum& Rhs) \
+		{ \
+			return !(Lhs == Rhs); \
+		} \
+		\
+		FORCEINLINE friend bool operator!=(const FECsEnum& Lhs, const Enum& Rhs) \
+		{ \
+			return !(Lhs == Rhs); \
+		} \
+		\
+		FORCEINLINE void SetName(const FString& InName) \
+		{ \
+			GetNames()[Value] = InName; \
+		} \
+		\
+		FORCEINLINE const FString& GetName() const \
+		{ \
+			return GetNames()[Value]; \
+		} \
+		\
+		FORCEINLINE void SetDisplayName(const FString& InDisplayName) \
+		{ \
+			GetDisplayNames()[Value] = InDisplayName; \
+		} \
+		\
+		FORCEINLINE const FString& GetDisplayName() const \
+		{ \
+			return GetDisplayNames()[Value]; \
+		} \
+		\
+		FORCEINLINE const TCHAR* ToChar() const \
+		{ \
+			return *(GetName()); \
+		} \
+		\
+		FORCEINLINE const TCHAR* DisplayNameToChar() const \
+		{ \
+			return *(GetDisplayName()); \
+		} \
+	private: \
+		static TArray<FString>& GetNames() \
+		{ \
+			static TArray<FString> Names; \
+			return Names; \
+		} \
+		\
+		static TArray<FString>& GetDisplayNames() \
+		{ \
+			static TArray<FString> DisplayNames; \
+			return DisplayNames; \
+		} \
+	public: \
+		FORCEINLINE FString ToString() const \
+		{ \
+			return TEXT("Name: ") + GetName() + TEXT(" Value: ") + FString::FromInt(Value); \
+		}
 
 #define CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(Enum) \
 	FORCEINLINE uint32 GetTypeHash(const Enum& b) \

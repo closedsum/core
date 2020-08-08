@@ -26,4 +26,9 @@ void FECsWeaponSoundCustomization::SetEnumWithDisplayName(const FString& Display
 	SetEnumWithDisplayName_Internal<EMCsWeaponSound, FECsWeaponSound>(DisplayName);
 }
 
+void FECsWeaponSoundCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+{
+	GetDisplayNamePropertyValue_Internal<EMCsWeaponSound, FECsWeaponSound>(OutDisplayName);
+}
+
 #undef LOCTEXT_NAMESPACE

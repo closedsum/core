@@ -18,22 +18,10 @@ public:
 	uint32 Mask;
 
 	FECsEnumMask_uint32() :
+		Super(),
 		Value(0),
 		Mask(0)
 	{
-	}
-
-	FECsEnumMask_uint32(const uint8& InValue, const FString& InName, const FString& InDisplayName)
-	{
-		Value = InValue > CS_UINT32_BIT_MAX ? CS_UINT32_BIT_MAX : InValue;
-		Mask = 1 << Value;
-		Name = InName;
-		DisplayName = InDisplayName;
-	}
-
-	FECsEnumMask_uint32(const uint8& InValue, const FString& InName)
-	{
-		FECsEnumMask_uint32(InValue, InName, InName);
 	}
 
 	virtual ~FECsEnumMask_uint32() {}
@@ -47,31 +35,13 @@ public:
 	{
 		Value = B.Value;
 		Mask = B.Mask;
-
-		// Name
-		{
-			const int32 Len = FMath::Max(Name.Len(), B.Name.Len());
-
-			checkf(Len < CS_ENUM_MAX_NAME_LENGTH, TEXT("FECsEnumMask_uint32::=: Name Length: %d exceeds Max Length: %d"), Len, CS_ENUM_MAX_NAME_LENGTH);
-
-			Name.Reset(Len);
-			Name += B.Name;
-		}
-		// Display Name
-		{
-			const int32 Len = FMath::Max(DisplayName.Len(), B.DisplayName.Len());
-
-			checkf(Len < CS_ENUM_MAX_NAME_LENGTH, TEXT("FECsEnumMask_uint32::=: DisplayName Length: %d exceeds Max Length: %d"), Len, CS_ENUM_MAX_NAME_LENGTH);
-
-			DisplayName.Reset(Len);
-			DisplayName += B.DisplayName;
-		}
+		Name_Internal = B.Name_Internal;
 		return *this;
 	}
 
 	FORCEINLINE bool operator==(const FECsEnumMask_uint32& B) const
 	{
-		return Value == B.Value && Mask == B.Mask && Name == B.Name;
+		return Value == B.Value && Mask == B.Mask && Name_Internal == B.Name_Internal;
 	}
 
 	FORCEINLINE bool operator!=(const FECsEnumMask_uint32& B) const
@@ -134,9 +104,19 @@ public:
 		return Lhs | Rhs.Mask;
 	}
 
+	FORCEINLINE void SetValue(const uint8& InValue)
+	{
+		Value = InValue;
+	}
+
 	FORCEINLINE const uint8& GetValue() const
 	{
 		return Value;
+	}
+
+	FORCEINLINE void SetMask(const int32& InMask)
+	{
+		Mask = InMask;
 	}
 
 	FORCEINLINE const uint32& GetMask() const
@@ -144,8 +124,113 @@ public:
 		return Mask;
 	}
 
-	FORCEINLINE virtual FString ToString() const override
+	FORCEINLINE void UpdateMask()
 	{
-		return TEXT("Name: ") + Name + TEXT(" Value: ") + FString::FromInt(Value) + TEXT(" Mask: ") + FString::FromInt(Mask);
+		Mask = 1 << Value;
 	}
 };
+
+#define CS_ENUM_MASK_UINT32_BODY(Enum) \
+	private: \
+		typedef FECsEnumMask_int32 Super; \
+	public: \
+		Enum() {} \
+		Enum(const uint8& InValue, const FString& InName, const FString& InDisplayName) \
+		{ \
+			Value = InValue > CS_UINT32_BIT_MAX ? CS_UINT32_BIT_MAX : InValue; \
+			Mask = 1 << Value; \
+			Name_Internal = FName(*InName); \
+			\
+			for (int32 I = GetNames().Num(); I <= Value; ++I) \
+			{ \
+				GetNames().AddDefaulted(); \
+				GetDisplayNames().AddDefaulted(); \
+			} \
+			\
+			GetNames()[Value] = InName; \
+			GetDisplayNames()[Value] = InDisplayName; \
+		} \
+		Enum(const uint8& InValue, const FString& InName) : Enum(InValue, InName, InName) {} \
+		~Enum() {} \
+		\
+		FORCEINLINE bool operator==(const Enum& B) const \
+		{ \
+			return Value == B.Value && Mask == B.Mask && Name_Internal == B.Name_Internal; \
+		} \
+		\
+		\ FORCEINLINE bool operator!=(const Enum& B) const \
+		{ \
+			return !(*this == B); \
+		} \
+		\
+		FORCEINLINE friend bool operator==(const FString& Lhs, const Enum& Rhs) \
+		{ \
+			return Lhs == Rhs.GetName(); \
+		} \
+		\
+		FORCEINLINE friend bool operator==(const Enum& Lhs, const FString& Rhs) \
+		{ \
+			return Lhs.GetName() == Rhs; \
+		} \
+		\
+		FORCEINLINE friend bool operator!=(const FString& Lhs, const Enum& Rhs) \
+		{ \
+			return !(Lhs == Rhs); \
+		} \
+		\
+		FORCEINLINE friend bool operator!=(const FECsEnum& Lhs, const Enum& Rhs) \
+		{ \
+			return !(Lhs == Rhs); \
+		} \
+		\
+		FORCEINLINE operator FString() const \
+		{ \
+			return GetName(); \
+		} \
+		\
+		FORCEINLINE void SetName(const FString& InName) \
+		{ \
+			GetNames()[Value] = InName; \
+		} \
+		\
+		FORCEINLINE const FString& GetName() const \
+		{ \
+			return GetNames()[Value]; \
+		} \
+		\
+		FORCEINLINE void SetDisplayName(const FString& InDisplayName) \
+		{ \
+			GetDisplayNames()[Value] = InDisplayName; \
+		} \
+		\
+		FORCEINLINE const FString& GetDisplayName() const \
+		{ \
+			return GetDisplayNames()[Value]; \
+		} \
+		\
+		FORCEINLINE const TCHAR* ToChar() const \
+		{ \
+			return *(GetName()); \
+		} \
+		\
+		FORCEINLINE const TCHAR* DisplayNameToChar() const \
+		{ \
+			return *(GetDisplayName()); \
+		} \
+	private: \
+		static TArray<FString>& GetNames() \
+		{ \
+			static TArray<FString> Names; \
+			return Names; \
+		} \
+			\
+			static TArray<FString>& GetDisplayNames() \
+		{ \
+			static TArray<FString> DisplayNames; \
+			return DisplayNames; \
+		} \
+	public: \
+		FORCEINLINE FString ToString() const \
+		{ \
+			return TEXT("Name: ") + GetName() + TEXT(" Value: ") + FString::FromInt(Value) + TEXT(" Mask: ") + FString::FromInt(Mask); \
+		}

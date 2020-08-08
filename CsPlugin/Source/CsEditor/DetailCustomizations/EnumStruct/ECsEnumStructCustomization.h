@@ -92,7 +92,7 @@ protected:
 		{
 			const EnumStruct& Enum = EnumMap::Get().GetEnumAt(I);
 
-			DisplayNameList.Add(MakeShareable(new FString(Enum.DisplayName)));
+			DisplayNameList.Add(MakeShareable(new FString(Enum.GetDisplayName())));
 		}
 	}
 
@@ -113,14 +113,12 @@ protected:
 	template<typename EnumStruct>
 	void SetPropertyHandles_Internal(TSharedRef<IPropertyHandle> StructPropertyHandle)
 	{
+		// Value
 		ValueHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(EnumStruct, Value));
 		check(ValueHandle.IsValid());
-		NameHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(EnumStruct, Name));
-		check(NameHandle.IsValid());
+		// Name_Internal
 		NameInternalHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(EnumStruct, Name_Internal));
 		check(NameInternalHandle.IsValid());
-		DisplayNameHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(EnumStruct, DisplayName));
-		check(DisplayNameHandle.IsValid());
 	}
 
 	TSharedRef<SWidget> OnGenerateWidget(TSharedPtr<FString> InItem);
@@ -135,56 +133,56 @@ protected:
 	template<typename EnumMap, typename EnumStruct>
 	void SetEnumWithDisplayName_Internal(const FString& DisplayName)
 	{
-		check(DisplayNameHandle.IsValid());
+		check(NameInternalHandle.IsValid());
 
-		FString OldDisplayName;
-		DisplayNameHandle->GetValue(OldDisplayName);
+		FName OldName;
+		NameInternalHandle->GetValue(OldName);
 
 		const EnumStruct& Enum = EnumMap::Get().GetEnumByDisplayName(DisplayName);
+		const FName& Name	   = Enum.GetFName();
 
-		if (OldDisplayName != DisplayName)
+		if (OldName != Name)
 		{
-			DisplayNameHandle->SetValue(DisplayName);
-
+			// Value
 			check(ValueHandle.IsValid());
-			ValueHandle->SetValue(Enum.Value);
-			check(NameHandle.IsValid());
-			NameHandle->SetValue(Enum.Name);
+			ValueHandle->SetValue(Enum.GetValue());
+			// Name_Internal
 			check(NameInternalHandle.IsValid());
-			NameInternalHandle->SetValue(Enum.Name_Internal);
+			NameInternalHandle->SetValue(Enum.GetFName());
 		}
 		else
 		{
+			// Value
 			check(ValueHandle.IsValid());
 			uint8 OutValue;
 			ValueHandle->GetValue(OutValue);
-			if (OutValue != Enum.Value)
-				ValueHandle->SetValue(Enum.Value);
-
-			check(NameHandle.IsValid());
-			FString OutString;
-			NameHandle->GetValue(OutString);
-			if (OutString != Enum.Name)
-				NameHandle->SetValue(Enum.Name);
-
+			if (OutValue != Enum.GetValue())
+				ValueHandle->SetValue(Enum.GetValue());
+			// Name_Internal
 			check(NameInternalHandle.IsValid());
 			FName OutName;
 			NameInternalHandle->GetValue(OutName);
-			if (OutName != Enum.Name_Internal)
-				NameInternalHandle->SetValue(Enum.Name_Internal);
+			if (OutName != Enum.GetFName())
+				NameInternalHandle->SetValue(Enum.GetFName());
 		}
 	}
 
-	void GetDisplayNamePropertyValue(FString& OutDisplayName) const;
+	virtual void GetDisplayNamePropertyValue(FString& OutDisplayName) const;
+
+	template<typename EnumMap, typename EnumStruct>
+	void GetDisplayNamePropertyValue_Internal(FString& OutDisplayName) const
+	{
+		const EnumStruct& Enum = EnumMap::Get().GetEnumByDisplayName(OutDisplayName);
+
+		OutDisplayName = Enum.GetDisplayName();
+	}
 
 	FText GetComboBoxContent() const;
 
 protected:
 
 	TSharedPtr<IPropertyHandle> ValueHandle;
-	TSharedPtr<IPropertyHandle> NameHandle;
 	TSharedPtr<IPropertyHandle> NameInternalHandle;
-	TSharedPtr<IPropertyHandle> DisplayNameHandle;
 	TArray<TSharedPtr<FString>> DisplayNameList;
 	TSharedPtr<SComboBox<TSharedPtr<FString>>> DisplayNameComboBox;
 };

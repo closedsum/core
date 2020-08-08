@@ -176,11 +176,7 @@ TSharedPtr<FString> FECsEnumStructCustomization::GetSelectedDisplayName() const
 
 void FECsEnumStructCustomization::SetEnumWithDisplayName(const FString& DisplayName){}
 
-void FECsEnumStructCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
-{
-	check(DisplayNameHandle.IsValid());
-	DisplayNameHandle->GetValue(OutDisplayName);
-}
+void FECsEnumStructCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const {}
 
 FText FECsEnumStructCustomization::GetComboBoxContent() const
 {

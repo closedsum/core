@@ -116,6 +116,7 @@ bool UCsGameInstance::Tick(float DeltaSeconds)
 
 	FCsManager_ScopedTimer::Get().Update(DeltaTime);
 	UCsCoroutineScheduler::Get(this)->Update(Group, DeltaTime);
+	UCsManager_Load::Get(this)->Update(DeltaTime);
 	return true;
 }
 

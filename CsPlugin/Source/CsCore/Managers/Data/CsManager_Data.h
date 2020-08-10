@@ -173,7 +173,7 @@ protected:
 	/** <EntryName, <RowName, Handles>> */
 	TMap<FName, TMap<FName, TSet<FCsStreamableHandle>>> DataTableRowHandleMap_Loaded;
 
-	void UpdateDataTableRowMap(const FName& TableName, const FName& RowName, uint8* RowPtr);
+	void UpdateDataTableRowMap(const FName& EntryName, const FName& RowName, uint8* RowPtr);
 
 #pragma endregion DataTable
 
@@ -257,11 +257,11 @@ public:
 	/**
 	* Check whether the Row of a DataTable has been loaded.
 	*
-	* @param TableName	Row Name in the master DataTable list.
+	* @param EntryName	Row Name in the master DataTable list.
 	* @param RowName
 	* return			Whether the row is loaded or not.
 	*/
-	bool IsLoadedDataTableRow(const FName& TableName, const FName& RowName);
+	bool IsLoadedDataTableRow(const FName& EntryName, const FName& RowName);
 
 #pragma endregion DataTable
 
@@ -315,30 +315,11 @@ public:
 	/**
 	* Get a DataTable by the DataTable's Entry Name
 	* (Row Name in the master DataTable list).
-	* Check against the current loaded data tables.
 	*
 	* @param EntryName	Row Name in the master DataTable list.
 	* return			DataTable
 	*/
 	UDataTable* GetDataTable(const FName& EntryName);
-
-	/**
-	* Get a DataTable by SoftObjectPath. 
-	* Check against the current loaded data tables.
-	*
-	* @param Path
-	* return		DataTable
-	*/
-	UDataTable* GetDataTable(const FSoftObjectPath& Path);
-
-	/**
-	* Get a DataTable by SoftObjectPtr.
-	* Check against the current loaded data tables.
-	*
-	* @param SoftObject
-	* return				DataTable
-	*/
-	UDataTable* GetDataTable(const TSoftObjectPtr<UDataTable>& SoftObject);
 
 	/**
 	* Get a DataTable by the DataTable's Entry Name
@@ -352,15 +333,62 @@ public:
 	UDataTable* GetDataTableChecked(const FString& Context, const FName& EntryName);
 
 	/**
+	* Get a DataTable by SoftObjectPath. 
+	*
+	* @param Path	Soft path to a data table.
+	* return		DataTable
+	*/
+	UDataTable* GetDataTable(const FSoftObjectPath& Path);
+
+	/**
+	* Get a DataTable by SoftObjectPath.
+	* Check against the current loaded data tables.
+	*
+	* @param Context	The calling context.
+	* @param Path		Soft path to a data table.
+	* return			DataTable
+	*/
+	UDataTable* GetDataTableChecked(const FString& Context, const FSoftObjectPath& Path);
+
+	/**
+	* Get a DataTable by SoftObjectPtr.
+	*
+	* @param SoftObject
+	* return				DataTable
+	*/
+	UDataTable* GetDataTable(const TSoftObjectPtr<UDataTable>& SoftObject);
+
+	/**
+	* Get a DataTable by SoftObjectPtr.
+	* Check against the current loaded data tables.
+	*
+	* @param Context		The calling context.
+	* @param SoftObject
+	* return				DataTable
+	*/
+	UDataTable* GetDataTableChecked(const FString& Context, const TSoftObjectPtr<UDataTable>& SoftObject);
+
+	/**
 	* Get a pointer to the row in a data table by the data table's Entry Name
 	* (Row Name in the master DataTable list) and Row Name.
-	* Check against the current loaded data tables.
 	*
 	* @param EntryName	Row Name in the master DataTable list.
 	* @param RowName	Row Name in the retrieved data table.
 	* return			Pointer to the row.
 	*/
 	uint8* GetDataTableRow(const FName& EntryName, const FName& RowName);
+
+	/**
+	* Get a pointer to the row in a data table by the data table's Entry Name
+	* (Row Name in the master DataTable list) and Row Name.
+	* Check against the current loaded data tables.
+	*
+	* @param Context	The calling context.
+	* @param EntryName	Row Name in the master DataTable list.
+	* @param RowName	Row Name in the retrieved data table.
+	* return			Pointer to the row.
+	*/
+	uint8* GetDataTableRowChecked(const FString& Context, const FName& EntryName, const FName& RowName);
 
 	template<typename RowStructType>
 	RowStructType* GetDataTableRow(const FName& EntryName, const FName& RowName)
@@ -371,7 +399,6 @@ public:
 	/**
 	* Get a pointer to the row in a data table by the data table's Path
 	* and Row Name.
-	* Check against the current loaded data tables.
 	*
 	* @param Path		Soft Path to the data table.
 	* @param RowName	Row Name in the retrieved data table.
@@ -380,15 +407,38 @@ public:
 	uint8* GetDataTableRow(const FSoftObjectPath& Path, const FName& RowName);
 
 	/**
-	* Get a pointer to the row in a data table by the data table's Soft Object
+	* Get a pointer to the row in a data table by the data table's Path
 	* and Row Name.
 	* Check against the current loaded data tables.
+	*
+	* @param Context	The calling context.
+	* @param Path		Soft Path to the data table.
+	* @param RowName	Row Name in the retrieved data table.
+	* return			Pointer to the row.
+	*/
+	uint8* GetDataTableRowChecked(const FString& Context, const FSoftObjectPath& Path, const FName& RowName);
+
+	/**
+	* Get a pointer to the row in a data table by the data table's Soft Object
+	* and Row Name.
 	*
 	* @param SoftObject	Soft Object to the data table.
 	* @param RowName	Row Name is retrieved data table.
 	* return			Pointer to the row.
 	*/
 	uint8* GetDataTableRow(const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName);
+
+	/**
+	* Get a pointer to the row in a data table by the data table's Soft Object
+	* and Row Name.
+	* Check against the current loaded data tables.
+	*
+	* @param Context	The calling context.
+	* @param SoftObject	Soft Object to the data table.
+	* @param RowName	Row Name is retrieved data table.
+	* return			Pointer to the row.
+	*/
+	uint8* GetDataTableRowChecked(const FString& Context, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName);
 
 		// Entry
 #pragma region
@@ -400,7 +450,7 @@ public:
 	* @param TableName
 	* return
 	*/
-	const FCsDataEntry_DataTable* GetDataTableEntry(const FName& TableName);
+	const FCsDataEntry_DataTable* GetDataTableEntry(const FName& EntryName);
 
 #pragma endregion Entry
 
@@ -436,6 +486,7 @@ public:
 	/**
 	*
 	*
+	* @param Context	The calling context.
 	* @param EntryName
 	* @param OutPaths
 	*/
@@ -446,9 +497,19 @@ public:
 	*
 	* @param EntryName
 	* return			Number of SoftObjectPaths for the DataTable.
-	*					INDEX_NONE for an invalid TableName
+	*					0 for an invalid EntryName.
 	*/
 	int32 GetDataTableSoftObjectPathCount(const FName& EntryName);
+
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* return			Number of SoftObjectPaths for the DataTable.
+	*					0 for an invalid EntryName.
+	*/
+	int32 GetDataTableSoftObjectPathCountChecked(const FString& Context, const FName& EntryName);
 
 	/**
 	*
@@ -462,12 +523,33 @@ public:
 	/**
 	*
 	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* @param RowName
+	* @param OutPaths
+	*/
+	void GetDataTableRowSoftObjectPathsChecked(const FString& Context, const FName& EntryName, const FName& RowName, TArray<FSoftObjectPath>& OutPaths);
+
+	/**
+	*
+	*
 	* @param EntryName
 	* @param RowName
 	* return			Number of SoftObjectPaths for the DataTable.
-	*					INDEX_NONE for an invalid TableName or RowName
+	*					0 for an invalid EntryName or RowName
 	*/
 	int32 GetDataTableRowSoftObjectPathCount(const FName& EntryName, const FName& RowName);
+
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* @param RowName
+	* return			Number of SoftObjectPaths for the DataTable.
+	*					0 for an invalid EntryName or RowName
+	*/
+	int32 GetDataTableRowSoftObjectPathCountChecked(const FString& Context, const FName& EntryName, const FName& RowName);
 
 #pragma endregion SoftObjectPath
 
@@ -489,15 +571,33 @@ public:
 	*/
 	void GetPayloadSoftObjectPaths(const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths);
 
+	/**
+	*
+	*
+	* @param Context		The calling context.
+	* @param PayloadName
+	* @param OutPaths
+	*/
+	void GetPayloadSoftObjectPathsChecked(const FString& Context, const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths);
 
 	/**
 	*
 	*
 	* @param PayloadName
 	* return			Number of SoftObjectPaths for the PayloadName.
-	*					INDEX_NONE for an invalid PayloadName.
+	*					0 for an invalid PayloadName.
 	*/
 	int32 GetPayloadSoftObjectPathCount(const FName& PayloadName);
+
+	/**
+	*
+	*
+	* @param Context		The calling context.
+	* @param PayloadName
+	* return				Number of SoftObjectPaths for the PayloadName.
+	*						0 for an invalid PayloadName.
+	*/
+	int32 GetPayloadSoftObjectPathCountChecked(const FString& Context, const FName& PayloadName);
 
 #pragma endregion SoftObjectPath
 

@@ -1185,6 +1185,9 @@ public:
 	UPROPERTY()
 	int32 Index;
 
+	UPROPERTY(BlueprintReadOnly)
+	FName Name;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bPopulateOnSave;
 
@@ -1212,6 +1215,7 @@ public:
 
 	FCsDataEntry_DataTable() :
 		Index(INDEX_NONE),
+		Name(NAME_None),
 		bPopulateOnSave(false),
 		DataTable(),
 		DataTable_Internal(nullptr),
@@ -1224,6 +1228,7 @@ public:
 
 	FORCEINLINE FCsDataEntry_DataTable& operator=(const FCsDataEntry_DataTable& B)
 	{
+		Name = B.Name;
 		bPopulateOnSave = B.bPopulateOnSave;
 		DataTable = B.DataTable;
 		DataTable_Internal = B.DataTable_Internal;

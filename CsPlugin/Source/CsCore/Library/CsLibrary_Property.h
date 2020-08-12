@@ -36,7 +36,8 @@ public:
 		UStructProperty* Property = Cast<UStructProperty>(Struct->FindPropertyByName(PropertyName));
 		Property				  = Property ? Property : Cast<UStructProperty>(Struct->CustomFindProperty(PropertyName));
 
-		if (Property->Struct == StructType::StaticStruct())
+		if (Property &&
+			Property->Struct == StructType::StaticStruct())
 			return Property;
 		return nullptr;
 	}

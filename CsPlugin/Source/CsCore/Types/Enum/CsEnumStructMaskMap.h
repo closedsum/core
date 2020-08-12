@@ -7,7 +7,9 @@ struct TCsEnumStructMaskMap
 {
 protected:
 	FString MapName;
+	FName MapFName;
 	FString EnumName;
+	FName EnumFName;
 private:
 	TArray<EnumStruct> Enums;
 	int32 Count;
@@ -58,9 +60,19 @@ public:
 		return MapName;
 	}
 
+	FORCEINLINE const FName& GetFName() const
+	{
+		return MapFName;
+	}
+
 	FORCEINLINE const FString& GetEnumName() const
 	{
 		return EnumName;
+	}
+
+	FORCEINLINE const FName& GetEnumFName() const
+	{
+		return EnumFName;
 	}
 
 	FORCEINLINE EnumStruct Create(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum = false)
@@ -88,7 +100,7 @@ public:
 
 		Enums.Add(E);
 		++Count;
-		EndPosition = 0;
+		EndPosition = Count;
 		if (UserDefinedEnum)
 		{
 			UserDefinedEnums.Add(E);
@@ -174,7 +186,7 @@ public:
 
 	FORCEINLINE bool IsValidEnum(const EnumStruct& Enum) const
 	{
-		return Enum.IsValid() && Enums.Find(Enum) > INDEX_NONE;
+		return Enum.IsValid() && Enum != NONE && Enums.Find(Enum) > INDEX_NONE;
 	}
 
 	FORCEINLINE bool IsValidEnum(const FString& Name) const
@@ -235,6 +247,13 @@ public:
 	FORCEINLINE const EnumStruct& GetEnumByDisplayName(const FString& DisplayName) const
 	{
 		return DisplayNameMap[DisplayName];
+	}
+
+	FORCEINLINE const EnumStruct& GetSafeEnumByDisplayName(const FString& DisplayName) const
+	{
+		if (const EnumStruct* EnumPtr = DisplayNameMap.Find(DisplayName))
+			return *EnumPtr;
+		return NONE;
 	}
 
 	FORCEINLINE const EnumStruct& GetEnumByFlag(const uint64& Flag) const
@@ -305,29 +324,22 @@ public:
 		}
 
 		// Reset maps with the update values 
-		const int32 Size = Enums.Num();
+		Count = Enums.Num();
 
-		for (int32 I = 0; I < Size; ++I)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			EnumStruct& E = Enums[I];
 
 			E.SetValue((EnumType)I);
 			E.UpdateMask();
 
-			FString Name = E.GetName();
-
-			E.SetName(Name);
-
-			FString DisplayName = E.GetDisplayName();
-
-			E.SetDisplayName(DisplayName);
-
-			NameMap[Name] = E;
-			DisplayNameMap[DisplayName] = E;
+			NameMap[E.GetName()] = E;
+			DisplayNameMap[E.GetDisplayName()] = E;
 			NameInternalMap[E.GetFName()] = E;
 			TypeMap[E.GetValue()] = E;
 			FlagMap[E.GetMask()] = E;
 		}
+
 		UserDefinedEnums.Reset();
 		UserDefinedNameMap.Reset();
 	}
@@ -342,7 +354,9 @@ public:
 		EnumMap() : Super() \
 		{ \
 			MapName = #EnumMap; \
+			MapFName = FName(*MapName); \
 			EnumName = #EnumStruct; \
+			EnumFName = FName(*EnumName); \
 		} \
 		EnumMap(const EnumMap &) = delete; \
 		EnumMap(EnumMap &&) = delete; \

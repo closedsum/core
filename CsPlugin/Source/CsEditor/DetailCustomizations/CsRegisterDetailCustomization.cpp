@@ -12,6 +12,7 @@
 #include "DetailCustomizations/EnumStruct/ECsLoadAssetsTypeCustomization.h"
 		// Input
 #include "DetailCustomizations/EnumStruct/Input/ECsInputActionCustomization.h"
+#include "DetailCustomizations/EnumStruct/Input/ECsInputActionMapCustomization.h"
 #include "DetailCustomizations/EnumStruct/Input/ECsGameEventCustomization.h"
 #include "DetailCustomizations/EnumStruct/Input/ECsGestureTypeCustomization.h"
 		// Process
@@ -40,6 +41,7 @@ void FCsRegisterDetailCustomization::Register()
 		// Input
 		{
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsInputAction", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsInputActionCustomization::MakeInstance));
+			PropertyModule.RegisterCustomPropertyTypeLayout("ECsInputActionMap", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsInputActionMapCustomization::MakeInstance));
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsGameEvent", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGameEventCustomization::MakeInstance));
 			// GestureType
 			PropertyModule.RegisterCustomPropertyTypeLayout("ECsGestureType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGestureTypeCustomization::MakeInstance));

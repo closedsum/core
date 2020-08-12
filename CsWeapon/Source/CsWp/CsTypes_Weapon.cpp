@@ -327,6 +327,60 @@ namespace NCsWeaponClass
 
 #pragma endregion WeaponClass
 
+// WeaponState
+#pragma region
+
+namespace NCsWeaponState
+{
+	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
+	{
+		UCsWeaponSettings* ModuleSettings = GetMutableDefault<UCsWeaponSettings>();
+
+		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsWeaponSettings."), *Context);
+
+#if WITH_EDITOR
+		EMCsWeaponState::Get().ClearUserDefinedEnums();
+#endif // #if WITH_EDITOR
+
+		const TArray<FCsSettings_Enum>& Enums = ModuleSettings->GetSettingsEnum<FECsWeaponState>();
+		const FString EnumSettingsPath		  = ModuleSettings->GetSettingsEnumPath<FECsWeaponState>();
+
+		if (Enums.Num() > CS_EMPTY)
+		{
+			for (const FCsSettings_Enum& Enum : Enums)
+			{
+				const FString& Name		   = Enum.Name;
+				const FString& DisplayName = Enum.DisplayName;
+
+				if (Name.IsEmpty())
+				{
+					UE_LOG(LogCsWp, Warning, TEXT("%s: Empty Enum listed in %s."), *Context, *EnumSettingsPath);
+					return;
+				}
+
+				checkf(!EMCsWeaponState::Get().IsValidEnum(Name), TEXT("%s: Weapon State (Name): %s already exists (declared in native)."), *Context, *Name);
+
+				if (!Enum.DisplayName.IsEmpty())
+				{
+					checkf(!EMCsWeaponState::Get().IsValidEnumByDisplayName(DisplayName), TEXT("%s: Weapon State (DisplayName): %s already exists (declared in native)."), *Context, *DisplayName);
+
+					EMCsWeaponState::Get().Create(Name, DisplayName, true);
+				}
+				else
+				{
+					EMCsWeaponState::Get().Create(Name, true);
+				}
+			}
+		}
+		else
+		{
+			UE_LOG(LogCsWp, Warning, TEXT("%s: Enum Setting @ %s is empty."), *Context, *EnumSettingsPath);
+		}
+	}
+}
+
+#pragma endregion WeaponState
+
 // WeaponData
 #pragma region
 

@@ -270,118 +270,74 @@ struct CSCORE_API FCsInputActionSet
 	// FCsInputInfo
 #pragma region
 
+/**
+*/
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInputInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-private:
-
-	bool bEvaluated;
-	
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	FKey Key;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	int32 KeyIndex;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(BlueprintReadOnly)
 	ECsInputType Type;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+
+	UPROPERTY(BlueprintReadOnly)
 	ECsInputValue ValueType;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+
+	UPROPERTY(BlueprintReadOnly)
 	ECsInputEvent Event;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+
+	UPROPERTY(BlueprintReadOnly)
 	ECsInputEvent Last_Event;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+
+	UPROPERTY(BlueprintReadOnly)
 	float Value;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+
+	UPROPERTY(BlueprintReadOnly)
+	float Last_Value;
+
+	UPROPERTY(BlueprintReadOnly)
 	FVector Location;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+
+	UPROPERTY(BlueprintReadOnly)
 	FRotator Rotation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+
+	UPROPERTY(BlueprintReadOnly)
 	float Duration;
 
 	FCsInputInfo() :
-		bEvaluated(false),
-		Key(EKeys::AnyKey),
-		KeyIndex(INDEX_NONE),
 		Type(ECsInputType::ECsInputType_MAX),
 		ValueType(ECsInputValue::ECsInputValue_MAX),
 		Event(ECsInputEvent::ECsInputEvent_MAX),
 		Last_Event(ECsInputEvent::ECsInputEvent_MAX),
 		Value(0.0f),
+		Last_Value(0.0f),
 		Location(0.0f),
 		Rotation(0.0f),
 		Duration(0.0f)
 	{
 	}
 
-	~FCsInputInfo(){}
-
-	FORCEINLINE FCsInputInfo& operator=(const FCsInputInfo& B)
+	FORCEINLINE void Set(const ECsInputEvent& InEvent, const float& InValue)
 	{
-		Key = B.Key;
-		KeyIndex = B.KeyIndex;
-		Type = B.Type;
-		ValueType = B.ValueType;
-		Event = B.Event;
-		Last_Event = B.Last_Event;
-		Value = B.Value;
-		Location = B.Location;
-		Rotation = B.Rotation;
-		Duration = B.Duration;
-		return *this;
+		Event = InEvent;
+		Value = InValue;
 	}
 
-	FORCEINLINE bool operator==(const FCsInputInfo& B) const
+	FORCEINLINE void Set(const ECsInputEvent& InEvent, const FVector& InLocation)
 	{
-		return Key == B.Key && KeyIndex == B.KeyIndex &&
-			   Type == B.Type && ValueType == B.ValueType && 
-			   Event == B.Event && Last_Event == B.Last_Event &&
-			   Value == B.Value && Location == B.Location && Rotation == B.Rotation &&
-			   Duration == B.Duration;
+		Event = InEvent;
+		Location = InLocation;
 	}
 
-	FORCEINLINE bool operator!=(const FCsInputInfo& B) const
+	FORCEINLINE void Set(const ECsInputEvent& InEvent, const FRotator& InRotation)
 	{
-		return !(*this == B);
+		Event = InEvent;
+		Rotation = InRotation;
 	}
 
-	FORCEINLINE void Set(const ECsInputEvent& inEvent, const float& inValue)
-	{
-		Event = inEvent;
-		Value = inValue;
-	}
-
-	FORCEINLINE void Set(const ECsInputEvent& inEvent, const FVector& inLocation)
-	{
-		Event = inEvent;
-		Location = inLocation;
-	}
-
-	FORCEINLINE void Set(const ECsInputEvent& inEvent, const FRotator& inRotation)
-	{
-		Event = inEvent;
-		Rotation = inRotation;
-	}
-
-	FORCEINLINE bool IsEvaluated()
-	{
-		return bEvaluated;
-	}
-
-	FORCEINLINE void StartEvaluation()
-	{
-		bEvaluated = true;
-	}
-
-	FORCEINLINE void EndEvaluation()
-	{
-		bEvaluated = false;
-	}
-
-	FORCEINLINE bool HasEventChanged()
+	FORCEINLINE bool HasEventChanged() const
 	{
 		return Event != Last_Event;
 	}
@@ -389,6 +345,11 @@ public:
 	FORCEINLINE void FlushEvent()
 	{
 		Last_Event = Event;
+	}
+
+	FORCEINLINE bool IsValid() const
+	{
+		return Type != ECsInputType::ECsInputType_MAX && ValueType != ECsInputValue::ECsInputValue_MAX;
 	}
 };
 
@@ -454,22 +415,22 @@ struct CSCORE_API FCsInput
 	UPROPERTY(BlueprintReadOnly)
 	bool bConsumed;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FECsInputAction Action;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsInputEvent Event;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float Value;
 	
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FVector Location;
 	
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FRotator Rotation;
 	
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float Duration;
 
 	FCsInput() :
@@ -490,7 +451,6 @@ struct CSCORE_API FCsInput
 		Event  = B.Event;
 		return *this;
 	}
-
 
 	FORCEINLINE bool operator==(const FCsInput& B) const
 	{
@@ -558,13 +518,461 @@ struct CSCORE_API FCsInput
 		Duration  = 0.0f;
 	}
 
-	bool IsValid() const
+	FORCEINLINE bool IsValid() const
 	{
-		return Action != EMCsInputAction::Get().GetMAX() && Event != ECsInputEvent::ECsInputEvent_MAX;
+		return EMCsInputAction::Get().IsValidEnum(Action) && Event != ECsInputEvent::ECsInputEvent_MAX;
 	}
 };
 
 #pragma endregion FCsInput
+
+// InputValueRule
+#pragma region
+
+/**
+*/
+UENUM(BlueprintType)
+enum class ECsInputValueRule : uint8
+{
+	None					UMETA(DisplayName = "None"),
+	Equal					UMETA(DisplayName = "=="),
+	NotEqual				UMETA(DisplayName = "!="),
+	Greater					UMETA(DisplayName = ">"),
+	GreaterOrEqual			UMETA(DisplayName = ">="),
+	Less					UMETA(DisplayName = "<"),
+	LessOrEqual			    UMETA(DisplayName = "<="),
+	ECsInputValueRule_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsInputValueRule : public TCsEnumMap<ECsInputValueRule>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsInputValueRule, ECsInputValueRule)
+};
+
+namespace NCsInputValueRule
+{
+	typedef ECsInputValueRule Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type None;
+		extern CSCORE_API const Type Equal;
+		extern CSCORE_API const Type NotEqual;
+		extern CSCORE_API const Type Greater;
+		extern CSCORE_API const Type GreaterOrEqual;
+		extern CSCORE_API const Type Less;
+		extern CSCORE_API const Type LessOrEqual;
+		extern CSCORE_API const Type ECsInputValueRule_MAX;
+	}
+}
+
+#pragma endregion InputValueRule
+
+// InputLocationRule
+#pragma region
+
+/**
+*/
+UENUM(BlueprintType)
+enum class ECsInputLocationRule : uint8
+{
+	None						UMETA(DisplayName = "None"),
+	Equal						UMETA(DisplayName = "=="),
+	NotEqual					UMETA(DisplayName = "!="),
+	ECsInputLocationRule_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsInputLocationRule : public TCsEnumMap<ECsInputLocationRule>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsInputLocationRule, ECsInputLocationRule)
+};
+
+namespace NCsInputLocationRule
+{
+	typedef ECsInputLocationRule Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type None;
+		extern CSCORE_API const Type Equal;
+		extern CSCORE_API const Type NotEqual;
+		extern CSCORE_API const Type ECsInputLocationRule_MAX;
+	}
+}
+
+#pragma endregion InputLocationRule
+
+// InputRotationRule
+#pragma region
+
+/**
+*/
+UENUM(BlueprintType)
+enum class ECsInputRotationRule : uint8
+{
+	None						UMETA(DisplayName = "None"),
+	Equal						UMETA(DisplayName = "=="),
+	NotEqual					UMETA(DisplayName = "!="),
+	ECsInputRotationRule_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsInputRotationRule : public TCsEnumMap<ECsInputRotationRule>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsInputRotationRule, ECsInputRotationRule)
+};
+
+namespace NCsInputRotationRule
+{
+	typedef ECsInputRotationRule Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type None;
+		extern CSCORE_API const Type Equal;
+		extern CSCORE_API const Type NotEqual;
+		extern CSCORE_API const Type ECsInputRotationRule_MAX;
+	}
+}
+
+#pragma endregion InputRotationRule
+
+// FCsInputCompareValue
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsInputCompareValue
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ECsInputValue ValueType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Value;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ECsInputValueRule ValueRule;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FVector Location;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ECsInputLocationRule LocationRule;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FRotator Rotation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ECsInputRotationRule RotationRule;
+
+	FCsInputCompareValue() :
+		ValueType(ECsInputValue::Void),
+		Value(0.0f),
+		ValueRule(ECsInputValueRule::None),
+		Location(0.0f),
+		LocationRule(ECsInputLocationRule::None),
+		Rotation(0.0f),
+		RotationRule(ECsInputRotationRule::None)
+	{
+	}
+
+	FORCEINLINE bool operator==(const FCsInputCompareValue& B) const
+	{
+		return  ValueType == B.ValueType &&
+				Value == B.Value &&
+				ValueRule == B.ValueRule &&
+				Location == B.Location &&
+				LocationRule == B.LocationRule &&
+				Rotation == B.Rotation &&
+				RotationRule == B.RotationRule;
+	}
+
+	FORCEINLINE bool operator!=(const FCsInputCompareValue& B) const
+	{
+		return !(*this == B);
+	}
+
+	bool Pass(const FCsInput& Input) const
+	{
+		// None | Void
+		if (ValueType == ECsInputValue::Void)
+			return true;
+		// Value | Float
+		if (ValueType == ECsInputValue::Float)
+		{
+			if (ValueRule != ECsInputValueRule::None)
+			{
+				// ==
+				if (ValueRule == ECsInputValueRule::Equal)
+					return Input.Value == Value;
+				// !=
+				if (ValueRule == ECsInputValueRule::NotEqual)
+					return Input.Value != Value;
+				// >
+				if (ValueRule == ECsInputValueRule::Greater)
+					return Input.Value > Value;
+				// >=
+				if (ValueRule == ECsInputValueRule::GreaterOrEqual)
+					return Input.Value >= Value;
+				// <
+				if (ValueRule == ECsInputValueRule::Less)
+					return Input.Value < Value;
+				// <=
+				if (ValueRule == ECsInputValueRule::LessOrEqual)
+					return Input.Value <= Value;
+			}
+			return true;
+		}
+		// Location | Vector
+		if (ValueType == ECsInputValue::Vector)
+		{
+			if (LocationRule != ECsInputLocationRule::None)
+			{
+				// ==
+				if (LocationRule == ECsInputLocationRule::Equal)
+					return Input.Location == Location;
+				// !=
+				if (LocationRule == ECsInputLocationRule::NotEqual)
+					return Input.Location != Location;
+			}
+			return true;
+		}
+		// Rotation | Rotator
+		if (ValueType == ECsInputValue::Rotator)
+		{
+			if (RotationRule != ECsInputRotationRule::None)
+			{
+				// ==
+				if (RotationRule == ECsInputRotationRule::Equal)
+					return Input.Rotation == Rotation;
+				// !=
+				if (RotationRule == ECsInputRotationRule::NotEqual)
+					return Input.Rotation != Rotation;
+			}
+		}
+		return true;
+	}
+};
+
+#pragma endregion FCsInputCompareValue
+
+// InputCompletedValueReturnType
+#pragma region
+
+/**
+*/
+
+UENUM(BlueprintType)
+enum class ECsInputCompletedValueReturnType : uint8
+{
+	PassThrough								UMETA(DisplayName = "Pass Through"),
+	Defined									UMETA(DisplayName = "Defined"),
+	Average									UMETA(DisplayName = "Average"),
+	ECsInputCompletedValueReturnType_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsInputCompletedValueReturnType : public TCsEnumMap<ECsInputCompletedValueReturnType>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsInputCompletedValueReturnType, ECsInputCompletedValueReturnType)
+};
+
+namespace NCsInputCompletedValueReturnType
+{
+	typedef ECsInputCompletedValueReturnType Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type PassThrough;
+		extern CSCORE_API const Type Defined;
+		extern CSCORE_API const Type Average;
+		extern CSCORE_API const Type ECsInputCompletedValueReturnType_MAX;
+	}
+}
+
+#pragma endregion InputCompletedValueReturnType
+
+// FCsInputCompletedValue
+#pragma region
+
+/**
+*
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsInputCompletedValue
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsInputValue ValueType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsInputCompletedValueReturnType ReturnType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Value;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FVector Location;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FRotator Rotation;
+
+	FCsInputCompletedValue() :
+		ValueType(ECsInputValue::Void),
+		ReturnType(ECsInputCompletedValueReturnType::PassThrough),
+		Value(0.0f),
+		Location(0.0f),
+		Rotation(0.0f)
+	{
+	}
+
+	FORCEINLINE bool operator==(const FCsInputCompletedValue& B) const
+	{
+		return  ValueType == B.ValueType &&
+				ReturnType == B.ReturnType &&
+				Value == B.Value &&
+				Location == B.Location &&
+				Rotation == B.Rotation;
+	}
+
+	FORCEINLINE bool operator!=(const FCsInputCompletedValue& B) const
+	{
+		return !(*this == B);
+	}
+
+	// TODO: FUTURE: For now only handle Pass Through
+	void OnPass(const FCsInput& Input)
+	{
+		if (ValueType == ECsInputValue::Void)
+			return;
+
+		// Value | Float
+		if (ValueType == ECsInputValue::Float)
+		{
+			// Pass Through
+			if (ReturnType == ECsInputCompletedValueReturnType::PassThrough)
+			{
+				Value = Input.Value;
+			}
+		}
+		// Location | Vector
+		else
+		if (ValueType == ECsInputValue::Vector)
+		{
+			// Pass Through
+			if (ReturnType == ECsInputCompletedValueReturnType::PassThrough)
+			{
+				Location = Input.Location;
+			}
+		}
+		// Rotation | Rotator
+		else
+		if (ValueType == ECsInputValue::Rotator)
+		{
+			// Pass Through
+			if (ReturnType == ECsInputCompletedValueReturnType::PassThrough)
+			{
+				Rotation = Input.Rotation;
+			}
+		}
+	}
+};
+
+#pragma endregion FCsInputCompletedValue
+
+// FCsInputDescription
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsInputDescription
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bPass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FECsInputAction Action;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ECsInputEvent Event;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bAnyEvent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCsInputCompareValue CompareValue;
+
+	UPROPERTY(BlueprintReadOnly)
+	FCsInputCompletedValue CompletedValue;
+
+	FCsInputDescription() :
+		bPass(false),
+		Action(),
+		Event(ECsInputEvent::ECsInputEvent_MAX),
+		bAnyEvent(false),
+		CompareValue(),
+		CompletedValue()
+	{
+	}
+
+	FORCEINLINE bool operator==(const FCsInputDescription& B) const
+	{
+		return  Action == B.Action &&
+				Event == B.Event &&
+				bAnyEvent == B.bAnyEvent &&
+				CompareValue == B.CompareValue &&
+				CompletedValue == B.CompletedValue;
+	}
+
+	FORCEINLINE bool operator!=(const FCsInputDescription& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE bool IsValid() const
+	{
+		return EMCsInputAction::Get().IsValidEnum(Action) && (bAnyEvent || Event != ECsInputEvent::ECsInputEvent_MAX);
+	}
+
+	FORCEINLINE bool HasPassed() const
+	{
+		return bPass;
+	}
+
+	bool Pass(const FCsInput& Input)
+	{
+		bPass = false;
+
+		if (Input.Action != Action)
+			return bPass;
+
+		if (!bAnyEvent && Input.Event != Event)
+			return bPass;
+
+		bPass = CompareValue.Pass(Input);
+
+		if (bPass)
+			CompletedValue.OnPass(Input);
+
+		return bPass;
+	}
+
+	void Reset()
+	{
+		bPass = false;
+	}
+};
+
+#pragma endregion FCsInputDescription
 
 	// FCsInputWord
 #pragma region
@@ -589,45 +997,22 @@ struct CSCORE_API FCsInputWord
 	bool bConsume;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FCsInput> AndInputs;
+	TArray<FCsInputDescription> AndInputs;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FCsInput> OrInputs;
+	TArray<FCsInputDescription> OrInputs;
+
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FCsInputCompletedValue> CompletedValues;
 
 	FCsInputWord() :
 		bCompleted(false),
 		CompletedTime(0.0f),
 		bConsume(false),
 		AndInputs(),
-		OrInputs()
+		OrInputs(),
+		CompletedValues()
 	{
-	}
-
-	FORCEINLINE FCsInputWord& operator=(const FCsInputWord& B)
-	{
-		bCompleted	  = B.bCompleted;
-		CompletedTime = B.CompletedTime;
-		bConsume	  = B.bConsume;
-
-		AndInputs.Reset();
-
-		for (const FCsInput& Input : B.AndInputs)
-		{
-			AndInputs.Add(Input);
-		}
-
-		OrInputs.Reset();
-
-		for (const FCsInput& Input : B.OrInputs)
-		{
-			OrInputs.Add(Input);
-		}
-		return *this;
-	}
-
-	FORCEINLINE bool operator!=(const FCsInputWord& B) const
-	{
-		return !(*this == B);
 	}
 
 	FORCEINLINE bool operator==(const FCsInputWord& B) const
@@ -657,7 +1042,28 @@ struct CSCORE_API FCsInputWord
 			if (OrInputs[I] != B.OrInputs[I])
 				return false;
 		}
+
+		if (CompletedValues.Num() != B.CompletedValues.Num())
+			return false;
+
+		const int32 CompletedCount = CompletedValues.Num();
+
+		for (int32 I = 0; I < CompletedCount; ++I)
+		{
+			if (CompletedValues[I] != B.CompletedValues[I])
+				return false;
+		}
 		return true;
+	}
+	
+	FORCEINLINE bool operator!=(const FCsInputWord& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE bool IsCompleted() const
+	{
+		return bCompleted;
 	}
 
 	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector& Location, const FRotator& Rotation)
@@ -666,9 +1072,9 @@ struct CSCORE_API FCsInputWord
 		const int32 Index = AndInputs.Num() - 1;
 		AndInputs[Index].Action = Action;
 		AndInputs[Index].Event = Event;
-		AndInputs[Index].Value = Value;
-		AndInputs[Index].Location = Location;
-		AndInputs[Index].Rotation = Rotation;
+		AndInputs[Index].CompareValue.Value = Value;
+		AndInputs[Index].CompareValue.Location = Location;
+		AndInputs[Index].CompareValue.Rotation = Rotation;
 	}
 
 	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event)
@@ -697,9 +1103,9 @@ struct CSCORE_API FCsInputWord
 		const int32 Index = OrInputs.Num() - 1;
 		OrInputs[Index].Action = Action;
 		OrInputs[Index].Event = Event;
-		OrInputs[Index].Value = Value;
-		OrInputs[Index].Location = Location;
-		OrInputs[Index].Rotation = Rotation;
+		OrInputs[Index].CompareValue.Value = Value;
+		OrInputs[Index].CompareValue.Location = Location;
+		OrInputs[Index].CompareValue.Rotation = Rotation;
 	}
 
 	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event)
@@ -725,6 +1131,7 @@ struct CSCORE_API FCsInputWord
 	FORCEINLINE void Reset()
 	{
 		bCompleted = false;
+		CompletedValues.Reset(CompletedValues.Max());
 	}
 
 	void ProcessInput(FCsInputFrame* InputFrame);
@@ -737,13 +1144,13 @@ struct CSCORE_API FCsInputWord
 			return false; 
 		}
 
-		for (const FCsInput& Input : AndInputs)
+		for (const FCsInputDescription& Input : AndInputs)
 		{
 			if (!Input.IsValid())
 				return false;
 		}
 
-		for (const FCsInput& Input : OrInputs)
+		for (const FCsInputDescription& Input : OrInputs)
 		{
 			if (!Input.IsValid())
 				return false;
@@ -788,6 +1195,9 @@ struct CSCORE_API FCsInputPhrase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FCsInputWord> Words;
 
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FCsInputCompletedValue> CompletedValues;
+
 	FCsInputPhrase() :
 		bCompleted(false),
 		CompletedTime(0.0f),
@@ -795,26 +1205,9 @@ struct CSCORE_API FCsInputPhrase
 		Interval(0.0f),
 		bUseFrames(false),
 		Frames(0),
-		Words()
+		Words(),
+		CompletedValues()
 	{
-	}
-
-	FORCEINLINE FCsInputPhrase& operator=(const FCsInputPhrase& B)
-	{
-		bCompleted = B.bCompleted;
-		CompletedTime = B.CompletedTime;
-		bUseInterval = B.bUseInterval;
-		Interval = B.Interval;
-		bUseFrames = B.bUseFrames;
-		Frames = B.Frames;
-
-		Words.Reset();
-
-		for (const FCsInputWord& Word : B.Words)
-		{
-			Words.Add(Word);
-		}
-		return *this;
 	}
 
 	FORCEINLINE bool operator==(const FCsInputPhrase& B) const
@@ -829,11 +1222,22 @@ struct CSCORE_API FCsInputPhrase
 		if (Words.Num() != B.Words.Num())
 			return false;
 
-		const int32 Count = Words.Num();
+		const int32 WordCount = Words.Num();
 
-		for (int32 I = 0; I < Count; ++I)
+		for (int32 I = 0; I < WordCount; ++I)
 		{
 			if (Words[I] != B.Words[I])
+				return false;
+		}
+
+		if (CompletedValues.Num() != B.CompletedValues.Num())
+			return false;
+
+		const int32 CompletedCount = CompletedValues.Num();
+
+		for (int32 I = 0; I < CompletedCount; ++I)
+		{
+			if (CompletedValues[I] != B.CompletedValues[I])
 				return false;
 		}
 		return true;
@@ -842,6 +1246,11 @@ struct CSCORE_API FCsInputPhrase
 	FORCEINLINE bool operator!=(const FCsInputPhrase& B) const
 	{
 		return !(*this == B);
+	}
+
+	FORCEINLINE bool IsCompleted() const
+	{
+		return bCompleted;
 	}
 
 	void AddAndInputToWord(const int32& Index, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator)
@@ -880,6 +1289,7 @@ struct CSCORE_API FCsInputPhrase
 		}
 		bCompleted = false;
 		CompletedTime = 0.0f;
+		CompletedValues.Reset(CompletedValues.Max());
 	}
 
 	void ProcessInput(FCsInputFrame* InputFrame);
@@ -912,6 +1322,8 @@ struct CSCORE_API FCsInputSentence
 {
 	GENERATED_USTRUCT_BODY()
 
+public:
+
 	UPROPERTY(BlueprintReadOnly)
 	bool bActive;
 
@@ -939,6 +1351,9 @@ struct CSCORE_API FCsInputSentence
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FCsInputPhrase> Phrases;
 
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FCsInputCompletedValue> CompletedValues;
+
 	FCsInputSentence() :
 		bActive(true),
 		bCompleted(false),
@@ -948,28 +1363,9 @@ struct CSCORE_API FCsInputSentence
 		Interval(0.0f),
 		bUseFrames(false),
 		Frames(0),
-		Phrases()
+		Phrases(),
+		CompletedValues()
 	{
-	}
-
-	FORCEINLINE FCsInputSentence& operator=(const FCsInputSentence& B)
-	{
-		bActive = B.bActive;
-		bCompleted = B.bCompleted;
-		CompletedTime = B.CompletedTime;
-		Cooldown = B.Cooldown;
-		bUseInterval = B.bUseInterval;
-		Interval = B.Interval;
-		bUseFrames = B.bUseFrames;
-		Frames = B.Frames;
-
-		Phrases.Reset();
-
-		for (const FCsInputPhrase& Phrase : B.Phrases)
-		{
-			Phrases.Add(Phrase);
-		}
-		return *this;
 	}
 
 	FORCEINLINE bool operator==(const FCsInputSentence& B) const
@@ -986,11 +1382,22 @@ struct CSCORE_API FCsInputSentence
 		if (Phrases.Num() != B.Phrases.Num())
 			return false;
 
-		const int32 Count = Phrases.Num();
+		const int32 PhraseCount = Phrases.Num();
 
-		for (int32 I = 0; I < Count; ++I)
+		for (int32 I = 0; I < PhraseCount; ++I)
 		{
 			if (Phrases[I] != B.Phrases[I])
+				return false;
+		}
+
+		if (CompletedValues.Num() != B.CompletedValues.Num())
+			return false;
+
+		const int32 CompletedCount = CompletedValues.Num();
+
+		for (int32 I = 0; I < CompletedCount; ++I)
+		{
+			if (CompletedValues[I] != B.CompletedValues[I])
 				return false;
 		}
 		return true;
@@ -1001,18 +1408,15 @@ struct CSCORE_API FCsInputSentence
 		return !(*this == B);
 	}
 
-	FORCEINLINE void Reset()
+	FORCEINLINE bool IsCompleted() const
 	{
-		bActive = true;
-
-		for (FCsInputPhrase& Phrase : Phrases)
-		{
-			Phrase.Reset();
-		}
-		bCompleted = false;
+		return bCompleted;
 	}
 
-	void ProcessInput(FCsInputFrame* InputFrame);
+	FORCEINLINE const TArray<FCsInputCompletedValue>& GetCompletedValues() const 
+	{
+		return CompletedValues;
+	}
 
 	bool IsValid() const
 	{
@@ -1024,6 +1428,21 @@ struct CSCORE_API FCsInputSentence
 				return false;
 		}
 		return true;
+	}
+
+	void ProcessInput(FCsInputFrame* InputFrame);
+
+	FORCEINLINE void Reset()
+	{
+		bActive = true;
+		bCompleted = false;
+
+		for (FCsInputPhrase& Phrase : Phrases)
+		{
+			Phrase.Reset();
+		}
+
+		CompletedValues.Reset(CompletedValues.Max());
 	}
 };
 
@@ -1332,7 +1751,17 @@ struct FCsGameEventInfo
 
 	FORCEINLINE bool IsValid() const
 	{
-		return Event.IsValid() && Event != EMCsGameEvent::Get().GetMAX();
+		return EMCsGameEvent::Get().IsValidEnum(Event);
+	}
+
+	void ApplyInputCompletedValue(const FCsInputCompletedValue& CompletedValue)
+	{
+		// Value | Float
+		if (CompletedValue.ValueType == ECsInputValue::Float)
+			Value = CompletedValue.Value;
+		// Location | Vector
+		if (CompletedValue.ValueType == ECsInputValue::Vector)
+			Location = CompletedValue.Location;
 	}
 };
 
@@ -1364,7 +1793,7 @@ struct FCsGameEventDefinitionSimpleInfo
 
 	bool IsValid() const
 	{
-		return Action.IsValid() && Action != EMCsInputAction::Get().GetMAX() && Event != ECsInputEvent::ECsInputEvent_MAX;
+		return EMCsInputAction::Get().IsValidEnum(Action) && Event != ECsInputEvent::ECsInputEvent_MAX;
 	}
 };
 
@@ -1401,7 +1830,7 @@ struct FCsGameEventDefinitionSimple
 
 	bool IsValid() const
 	{
-		return GameEvent != EMCsGameEvent::Get().GetMAX() && Action != EMCsInputAction::Get().GetMAX() && Event != ECsInputEvent::ECsInputEvent_MAX;
+		return EMCsGameEvent::Get().IsValidEnum(GameEvent) && EMCsInputAction::Get().IsValidEnum(Action) && Event != ECsInputEvent::ECsInputEvent_MAX;
 	}
 };
 
@@ -1443,7 +1872,7 @@ struct FCsGameEventDefinition
 
 	bool IsValid() const
 	{
-		return Event != EMCsGameEvent::Get().GetMAX() && Sentence.IsValid();
+		return EMCsGameEvent::Get().IsValidEnum(Event) && Sentence.IsValid();
 	}
 };
 

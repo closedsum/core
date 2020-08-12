@@ -5,6 +5,18 @@
 
 #define LOCTEXT_NAMESPACE "ECsGameEventCustomization"
 
+// Cached
+#pragma region
+
+namespace NCsGameEventCustomizationCached
+{
+	namespace Str
+	{
+		const FString CustomPopulateEnumMap = TEXT("FECsGameEventCustomization::CustomPopulateEnumMap");
+	}
+}
+
+#pragma endregion Cached
 
 FECsGameEventCustomization::FECsGameEventCustomization() :
 	Super()
@@ -15,6 +27,13 @@ FECsGameEventCustomization::FECsGameEventCustomization() :
 TSharedRef<IPropertyTypeCustomization> FECsGameEventCustomization::MakeInstance()
 {
 	return MakeShareable(new FECsGameEventCustomization);
+}
+
+void FECsGameEventCustomization::CustomPopulateEnumMap()
+{
+	using namespace NCsGameEventCustomizationCached;
+
+	NCsGameEvent::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
 void FECsGameEventCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)

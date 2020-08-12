@@ -11,10 +11,10 @@ struct CSCORE_API FECsEnumMask_int32 : public FECsEnum
 
 public:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	uint8 Value;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 Mask;
 
 	FECsEnumMask_int32() :
@@ -94,11 +94,6 @@ public:
 		return Lhs | Rhs.Mask;
 	}
 
-	FORCEINLINE void SetValue(const uint8& InValue)
-	{
-		Value = InValue;
-	}
-
 	FORCEINLINE const uint8& GetValue() const 
 	{
 		return Value;
@@ -117,6 +112,11 @@ public:
 	FORCEINLINE void UpdateMask()
 	{
 		Mask = 1 << Value;
+	}
+
+	FORCEINLINE FString ToGraphPinString() const
+	{
+		return TEXT("(Value=") + FString::FromInt(Value) + TEXT(",Mask=") + FString::FromInt(Mask) + TEXT(",Name_Internal=\"") + Name_Internal.ToString() + TEXT("\")");
 	}
 };
 
@@ -174,6 +174,22 @@ public:
 		FORCEINLINE operator FString() const \
 		{ \
 			return GetName(); \
+		} \
+		\
+		FORCEINLINE void SetValue(const uint8& InValue) \
+		{ \
+			FString CurrentName = GetName(); \
+			FString CurrentDisplayName = GetDisplayName(); \
+			Value = InValue; \
+			\
+			for (int32 I = GetNames().Num(); I <= Value; ++I) \
+			{ \
+				GetNames().AddDefaulted(); \
+				GetDisplayNames().AddDefaulted(); \
+			} \
+			\
+			SetName(CurrentName); \
+			SetDisplayName(CurrentDisplayName); \
 		} \
 		\
 		FORCEINLINE void SetName(const FString& InName) \

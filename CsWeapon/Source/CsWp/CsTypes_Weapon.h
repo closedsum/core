@@ -86,6 +86,8 @@ struct CSWP_API EMCsWeaponState : public TCsEnumStructMap<FECsWeaponState, uint8
 namespace NCsWeaponState
 {
 	typedef FECsWeaponState Type;
+
+	CSWP_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
 
 #pragma endregion WeaponState
@@ -418,12 +420,12 @@ struct CSWP_API FCsWeaponClassEntry : public FTableRowBase
 
 	/** Soft Reference to a weapon of type: ICsWeapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FCsWeaponPtr Weapon;
+	FCsWeaponPtr Class;
 
 	FCsWeaponClassEntry() :
 		Name(),
 		DisplayName(),
-		Weapon()
+		Class()
 	{
 	}
 };
@@ -448,12 +450,12 @@ struct CSWP_API FCsWeaponEntry : public FTableRowBase
 
 	/** Soft Reference to a weapon of type: ICsWeapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FCsWeaponPtr Weapon;
+	FCsWeaponPtr Class;
 
 	FCsWeaponEntry() :
 		Name(),
 		DisplayName(),
-		Weapon()
+		Class()
 	{
 	}
 };

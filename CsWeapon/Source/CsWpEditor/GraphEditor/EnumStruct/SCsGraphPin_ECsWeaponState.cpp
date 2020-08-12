@@ -4,12 +4,31 @@
 
 #include "CsTypes_Weapon.h"
 
+// Cached
+#pragma region
+
+namespace NCsGraphPinWeaponStateCached
+{
+	namespace Str
+	{
+		const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsWeaponState::CustomPopulateEnumMap");
+	}
+}
+
+#pragma endregion Cached
 
 void SCsGraphPin_ECsWeaponState::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
 	Construct_Internal<EMCsWeaponState, FECsWeaponState>();
+}
+
+void SCsGraphPin_ECsWeaponState::CustomPopulateEnumMap()
+{
+	using namespace NCsGraphPinWeaponStateCached;
+
+	NCsWeaponState::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
 void SCsGraphPin_ECsWeaponState::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)

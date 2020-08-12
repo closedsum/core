@@ -70,6 +70,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 class AActor;
 class APlayerController;
 struct FKeyState;
+class UCsInputListener;
 
 UCLASS(Blueprintable)
 class CSCORE_API UCsManager_Input : public UActorComponent
@@ -77,6 +78,14 @@ class CSCORE_API UCsManager_Input : public UActorComponent
 	GENERATED_UCLASS_BODY()
 
 	virtual void Init();
+
+// UObject Interface
+#pragma region
+public:
+
+	virtual void BeginDestroy() override;
+
+#pragma endregion UObject Interface
 
 // UActorComponent Interface
 #pragma region
@@ -96,9 +105,10 @@ public:
 
 #pragma endregion Owner
 
-	virtual void PreProcessInput(const float DeltaTime, const bool bGamePaused);
-	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused);
-	virtual void ProcessInput(AActor* ActionOwner, const FCsInput* PreviousInput, const FCsInput* CurrentInput, const float DeltaTime);
+public:
+
+	void PreProcessInput(const float DeltaTime, const bool bGamePaused);
+	void PostProcessInput(const float DeltaTime, const bool bGamePaused);
 
 	float CurrentDeltaTime;
 
@@ -127,9 +137,6 @@ public:
 	int32 CurrentInputFrameIndex;
 
 	FCsInputFrame* CurrentInputFrame;
-
-	TArray<FKey> AllKeys;
-	TArray<FKeyState*> AllKeyStates;
 
 // Action Map
 #pragma region
@@ -233,6 +240,23 @@ public:
 
 	float GetInputDuration(const FECsInputAction& Action);
 
+// Listener
+#pragma region
+private:
+
+	UPROPERTY()
+	TArray<UCsInputListener*> Listeners;
+
+public:
+
+	void OnAction_Pressed(const FECsInputAction& Action);
+
+	void OnAction_Released(const FECsInputAction& Action);
+
+	void OnAxis(const FECsInputAction& Action, const float& Value);
+
+#pragma endregion Listener
+
 // Profile
 #pragma region
 public:
@@ -249,6 +273,8 @@ public:
 	void LoadInputProfile();
 
 	bool IsValidKey(const ECsInputDevice& Device, const FKey& Key);
+
+	TArray<FKey> AllKeys;
 
 	const FKey& GetKey(const FString &KeyName);
 	

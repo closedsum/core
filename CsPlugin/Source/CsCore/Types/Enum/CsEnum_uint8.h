@@ -57,11 +57,6 @@ public:
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE void SetValue(const uint8& InValue)
-	{
-		Value = InValue;
-	}
-
 	FORCEINLINE const uint8& GetValue() const
 	{
 		return Value;
@@ -126,6 +121,22 @@ public:
 		FORCEINLINE friend bool operator!=(const FECsEnum& Lhs, const Enum& Rhs) \
 		{ \
 			return !(Lhs == Rhs); \
+		} \
+		\
+		FORCEINLINE void SetValue(const uint8& InValue) \
+		{ \
+			FString CurrentName = GetName(); \
+			FString CurrentDisplayName = GetDisplayName(); \
+			Value = InValue; \
+			\
+			for (int32 I = GetNames().Num(); I <= Value; ++I) \
+			{ \
+				GetNames().AddDefaulted(); \
+				GetDisplayNames().AddDefaulted(); \
+			} \
+			\
+			SetName(CurrentName); \
+			SetDisplayName(CurrentDisplayName); \
 		} \
 		\
 		FORCEINLINE void SetName(const FString& InName) \

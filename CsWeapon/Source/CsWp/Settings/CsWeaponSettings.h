@@ -67,6 +67,23 @@ public:
 		return TEXT("UCsWeaponSettings.ECsWeaponClass");
 	}
 
+	// WeaponState
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (DisplayName = "ECsWeaponState"))
+	TArray<FCsSettings_Enum> ECsWeaponState;
+
+	template<>
+	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsWeaponState>() const
+	{
+		return ECsWeaponState;
+	}
+
+	template<>
+	FString GetSettingsEnumPath<FECsWeaponState>() const
+	{
+		return TEXT("UCsWeaponSettings.ECsWeaponState");
+	}
+
 #pragma endregion Enum
 	
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")

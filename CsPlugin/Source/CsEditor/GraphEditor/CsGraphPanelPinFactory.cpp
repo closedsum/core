@@ -6,7 +6,6 @@
 #include "Types/CsTypes.h"
 #include "Managers/Input/CsTypes_Input.h"
 #include "Managers/FX/CsTypes_FX.h"
-//#include "Types/CsTypes_Character.h"
 //#include "Types/CsTypes_Item.h"
 //#include "Types/CsTypes_Recipe.h"
 #include "Managers/Damage/CsTypes_Damage.h"
@@ -23,15 +22,11 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsLoadAssetsType.h"
 	// Input
 #include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsInputAction.h"
+#include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsInputActionMap.h"
 #include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsGameEvent.h"
 #include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsGestureType.h"
 	// FX
 #include "GraphEditor/EnumStruct/FX/SCsGraphPin_ECsFX.h"
-	// Character
-//#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterAnim.h"
-//#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterAnimVariation.h"
-//#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterAnimBlueprint.h"
-//#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterBlendSpace.h"
 	// Process
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsProcess.h"
 	// Item
@@ -77,6 +72,8 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	{
 		// FECsInputAction
 		if (DoesPinUseScriptStruct<FECsInputAction>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsInputAction, InPin); }
+		// FECsInputActionMap
+		if (DoesPinUseScriptStruct<FECsInputActionMap>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsInputActionMap, InPin); }
 		// FECsGameEvent
 		if (DoesPinUseScriptStruct<FECsGameEvent>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsGameEvent, InPin); }
 		// FECsGestureType

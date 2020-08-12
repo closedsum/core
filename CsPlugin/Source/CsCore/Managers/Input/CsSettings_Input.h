@@ -13,13 +13,13 @@ struct CSCORE_API FCsSettings_Input
 
 public:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsInputActionMap, FCsInputActionSet> InputActionMappings;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSet<FCsGameEventDefinitionSimple> GameEventDefinitionsSimple;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSet<FCsGameEventDefinition> GameEventDefinitions;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

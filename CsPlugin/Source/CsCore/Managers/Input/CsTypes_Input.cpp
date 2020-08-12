@@ -151,20 +151,90 @@ namespace NCsInputAction
 			{
 				const FName& Name = Mapping.ActionName;
 
-				EMCsInputAction::Get().Create(Name.ToString(), true);
+				if (!EMCsInputAction::Get().IsValidEnum(Name))
+					EMCsInputAction::Get().Create(Name.ToString(), true);
 			}
 			// Add AxisMappings
 			for (const FInputAxisKeyMapping& Mapping : Settings->GetAxisMappings())
 			{
 				const FName& Name = Mapping.AxisName;
 
-				EMCsInputAction::Get().Create(Name.ToString(), true);
+				if (!EMCsInputAction::Get().IsValidEnum(Name))
+					EMCsInputAction::Get().Create(Name.ToString(), true);
 			}
 		}
 	}
 }
 
 #pragma endregion InputAction
+
+// InputValueRule
+#pragma region
+
+namespace NCsInputValueRule
+{
+	namespace Ref
+	{
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputValueRule, None);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputValueRule, Equal, "=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputValueRule, NotEqual, "!=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputValueRule, Greater, ">");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputValueRule, GreaterOrEqual, ">=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputValueRule, Less, "<");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputValueRule, LessOrEqual, "<=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputValueRule, ECsInputValueRule_MAX, "MAX");
+	}
+}
+
+#pragma endregion InputValueRule
+
+// InputLocationRule
+#pragma region
+
+namespace NCsInputLocationRule
+{
+	namespace Ref
+	{
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputLocationRule, None);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputLocationRule, Equal, "=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputLocationRule, NotEqual, "!=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputLocationRule, ECsInputLocationRule_MAX, "MAX");
+	}
+}
+
+#pragma endregion InputLocationRule
+
+// InputRotationRule
+#pragma region
+
+namespace NCsInputRotationRule
+{
+	namespace Ref
+	{
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputRotationRule, None);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputRotationRule, Equal, "=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputRotationRule, NotEqual, "!=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputRotationRule, ECsInputRotationRule_MAX, "MAX");
+	}
+}
+
+#pragma endregion InputRotationRule
+
+// InputCompletedValueReturnType
+#pragma region
+
+namespace NCsInputCompletedValueReturnType
+{
+	namespace Ref
+	{
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputCompletedValueReturnType, PassThrough, "Pass Through");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputCompletedValueReturnType, Defined);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputCompletedValueReturnType, Average);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputCompletedValueReturnType, ECsInputCompletedValueReturnType_MAX, "MAX");
+	}
+}
+
+#pragma endregion InputCompletedValueReturnType
 
 // FCsInputWord
 #pragma region
@@ -185,8 +255,7 @@ void FCsInputWord::ProcessInput(FCsInputFrame* InputFrame)
 
 		for (int32 J = And; J < AndCount; ++J)
 		{
-			if (Input->Action == AndInputs[J].Action &&
-				Input->Event == AndInputs[J].Event)
+			if (AndInputs[J].Pass(*Input))
 			{
 				++And;
 			}
@@ -194,9 +263,9 @@ void FCsInputWord::ProcessInput(FCsInputFrame* InputFrame)
 		// Check Or
 		const int32 OrCount = OrInputs.Num();
 
-		for (const FCsInput& OrInput : OrInputs)
+		for (FCsInputDescription& OrInput : OrInputs)
 		{
-			Or |= Input->Action == OrInput.Action && Input->Event == OrInput.Event;
+			Or |= OrInput.Pass(*Input);
 
 			if (Or)
 				break;
@@ -209,6 +278,21 @@ void FCsInputWord::ProcessInput(FCsInputFrame* InputFrame)
 			if (bConsume)
 				InputFrame->Inputs.RemoveAt(I, 1, false);
 			CompletedTime = InputFrame->Time.Time;
+
+			// Populate Completed Values
+			
+				// And
+			for (const FCsInputDescription& AndInput : AndInputs)
+			{
+				if (AndInput.HasPassed())
+					CompletedValues.Add(AndInput.CompletedValue);
+			}
+				// Or
+			for (const FCsInputDescription& OrInput : OrInputs)
+			{
+				if (OrInput.HasPassed())
+					CompletedValues.Add(OrInput.CompletedValue);
+			}
 			break;
 		}
 	}
@@ -234,7 +318,7 @@ void FCsInputPhrase::ProcessInput(FCsInputFrame* InputFrame)
 
 		for (Index = 0; Index < Count; ++Index)
 		{
-			if (Words[Index].bCompleted)
+			if (Words[Index].IsCompleted())
 			{
 				if (Words[Index].CompletedTime < EarliestCompletedTime)
 					EarliestCompletedTime = Words[Index].CompletedTime;
@@ -250,7 +334,7 @@ void FCsInputPhrase::ProcessInput(FCsInputFrame* InputFrame)
 
 			Words[Index].ProcessInput(InputFrame);
 
-			if (Index < Count - 1 || !Words[Index].bCompleted)
+			if (Index < Count - 1 || !Words[Index].IsCompleted())
 				break;
 		}
 	}
@@ -258,12 +342,12 @@ void FCsInputPhrase::ProcessInput(FCsInputFrame* InputFrame)
 	{
 		for (Index = 0; Index < Count; ++Index)
 		{
-			if (Words[Index].bCompleted)
+			if (Words[Index].IsCompleted())
 				continue;
 
 			Words[Index].ProcessInput(InputFrame);
 
-			if (Index < Count - 1 || !Words[Index].bCompleted)
+			if (Index < Count - 1 || !Words[Index].IsCompleted())
 				break;
 		}
 
@@ -275,6 +359,12 @@ void FCsInputPhrase::ProcessInput(FCsInputFrame* InputFrame)
 	{
 		bCompleted	  = true;
 		CompletedTime = CurrentTime;
+
+		// Populate Completed Values
+		for (const FCsInputWord& Word : Words)
+		{
+			CompletedValues.Append(Word.CompletedValues);
+		}
 	}
 }
 
@@ -306,7 +396,7 @@ void FCsInputSentence::ProcessInput(FCsInputFrame* InputFrame)
 
 		for (Index = 0; Index < Count; ++Index)
 		{
-			if (Phrases[Index].bCompleted)
+			if (Phrases[Index].IsCompleted())
 			{
 				if (Phrases[Index].CompletedTime < EarliestCompletedTime)
 					EarliestCompletedTime = Phrases[Index].CompletedTime;
@@ -322,7 +412,7 @@ void FCsInputSentence::ProcessInput(FCsInputFrame* InputFrame)
 
 			Phrases[Index].ProcessInput(InputFrame);
 
-			if (Index < Count - 1 || !Phrases[Index].bCompleted)
+			if (Index < Count - 1 || !Phrases[Index].IsCompleted())
 				break;
 		}
 	}
@@ -330,12 +420,12 @@ void FCsInputSentence::ProcessInput(FCsInputFrame* InputFrame)
 	{
 		for (Index = 0; Index < Count; ++Index)
 		{
-			if (Phrases[Index].bCompleted)
+			if (Phrases[Index].IsCompleted())
 				continue;
 
 			Phrases[Index].ProcessInput(InputFrame);
 
-			if (Index < Count - 1 || !Phrases[Index].bCompleted)
+			if (Index < Count - 1 || !Phrases[Index].IsCompleted())
 				break;
 		}
 
@@ -348,6 +438,12 @@ void FCsInputSentence::ProcessInput(FCsInputFrame* InputFrame)
 		bCompleted	  = true;
 		CompletedTime = CurrentTime;
 		bActive		  = false;
+
+		// Populate Completed Values
+		for (const FCsInputPhrase& Phrase : Phrases)
+		{
+			CompletedValues.Append(Phrase.CompletedValues);
+		}
 	}
 }
 

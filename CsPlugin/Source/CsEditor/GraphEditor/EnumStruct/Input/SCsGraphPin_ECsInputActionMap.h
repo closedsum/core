@@ -1,11 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "GraphEditor/EnumStruct/SCsGraphPin_EnumStruct.h"
+#include "GraphEditor/EnumStruct/SCsGraphPin_EnumStructMask.h"
 
-class SCsGraphPin_ECsGameEvent : public SCsGraphPin_EnumStruct
+class SCsGraphPin_ECsInputActionMap : public SCsGraphPin_EnumStructMask
 {
 public:
-	SLATE_BEGIN_ARGS(SCsGraphPin_ECsGameEvent) {}
+	SLATE_BEGIN_ARGS(SCsGraphPin_ECsInputActionMap) {}
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj);

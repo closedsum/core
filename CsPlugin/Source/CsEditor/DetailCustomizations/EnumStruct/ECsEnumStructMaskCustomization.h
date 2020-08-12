@@ -10,14 +10,14 @@ class IDetailGroup;
 /**
 * Customizes a FECsEnum property to use a dropdown
 */
-class CSEDITOR_API FECsEnumStructCustomization : public IPropertyTypeCustomization
+class CSEDITOR_API FECsEnumStructMaskCustomization : public IPropertyTypeCustomization
 {
 private:
-	typedef FECsEnumStructCustomization Super;
+	typedef IPropertyTypeCustomization Super;
 
 public:
 
-	FECsEnumStructCustomization();
+	FECsEnumStructMaskCustomization();
 
 protected:
 
@@ -42,12 +42,8 @@ protected:
 		CustomPopulateEnumMap();
 		PopulateEnumMapFromSettings();
 		
-		const int32& Count = EnumMap::Get().Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const EnumStruct& Enum : EnumMap::Get())
 		{
-			const EnumStruct& Enum = EnumMap::Get().GetEnumAt(I);
-
 			DisplayNameList.Add(MakeShareable(new FString(Enum.GetDisplayName())));
 		}
 	}
@@ -72,6 +68,9 @@ protected:
 		// Value
 		ValueHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(EnumStruct, Value));
 		check(ValueHandle.IsValid());
+		// Mask
+		MaskHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(EnumStruct, Mask));
+		check(MaskHandle.IsValid());
 		// Name_Internal
 		NameInternalHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(EnumStruct, Name_Internal));
 		check(NameInternalHandle.IsValid());
@@ -86,7 +85,7 @@ protected:
 
 	virtual void SetEnumWithDisplayName(const FString& DisplayName);
 
-	template<typename EnumMap, typename EnumStruct>
+	template<typename EnumMap, typename EnumStruct, typename ValueType>
 	void SetEnumWithDisplayName_Internal(const FString& DisplayName)
 	{
 		check(NameInternalHandle.IsValid());
@@ -102,6 +101,9 @@ protected:
 			// Value
 			check(ValueHandle.IsValid());
 			ValueHandle->SetValue(Enum.GetValue());
+			// Mask
+			check(MaskHandle.IsValid());
+			MaskHandle->SetValue(Enum.GetMask());
 			// Name_Internal
 			check(NameInternalHandle.IsValid());
 			NameInternalHandle->SetValue(Enum.GetFName());
@@ -114,6 +116,12 @@ protected:
 			ValueHandle->GetValue(OutValue);
 			if (OutValue != Enum.GetValue())
 				ValueHandle->SetValue(Enum.GetValue());
+			// Mask
+			check(MaskHandle.IsValid());
+			ValueType OutMask;
+			MaskHandle->GetValue(OutMask);
+			if (OutMask != Enum.GetMask())
+				MaskHandle->SetValue(Enum.GetMask());
 			// Name_Internal
 			check(NameInternalHandle.IsValid());
 			FName OutName;
@@ -143,6 +151,7 @@ protected:
 protected:
 
 	TSharedPtr<IPropertyHandle> ValueHandle;
+	TSharedPtr<IPropertyHandle> MaskHandle;
 	TSharedPtr<IPropertyHandle> NameInternalHandle;
 	TArray<TSharedPtr<FString>> DisplayNameList;
 	TSharedPtr<SComboBox<TSharedPtr<FString>>> DisplayNameComboBox;

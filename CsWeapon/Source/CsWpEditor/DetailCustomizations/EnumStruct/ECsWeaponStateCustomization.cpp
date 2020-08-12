@@ -5,10 +5,29 @@
 
 #define LOCTEXT_NAMESPACE "ECsWeaponStateCustomization"
 
+// Cached
+#pragma region
+
+namespace NCsWeaponStateCustomizationCached
+{
+	namespace Str
+	{
+		const FString CustomPopulateEnumMap = TEXT("FECsWeaponStateCustomization::CustomPopulateEnumMap");
+	}
+}
+
+#pragma endregion Cached
 
 FECsWeaponStateCustomization::FECsWeaponStateCustomization()
 {
 	Init<EMCsWeaponState, FECsWeaponState>();
+}
+
+void FECsWeaponStateCustomization::CustomPopulateEnumMap()
+{
+	using namespace NCsWeaponStateCustomizationCached;
+
+	NCsWeaponState::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsWeaponStateCustomization::MakeInstance()

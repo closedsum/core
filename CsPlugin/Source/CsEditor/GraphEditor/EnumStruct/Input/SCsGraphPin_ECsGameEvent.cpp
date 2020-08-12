@@ -4,12 +4,31 @@
 
 #include "Managers/Input/CsTypes_Input.h"
 
+// Cached
+#pragma region
+
+namespace NCsGraphPinGameEventCached
+{
+	namespace Str
+	{
+		const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsGameEvent::CustomPopulateEnumMap");
+	}
+}
+
+#pragma endregion Cached
 
 void SCsGraphPin_ECsGameEvent::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
 	Construct_Internal<EMCsGameEvent, FECsGameEvent>();
+}
+
+void SCsGraphPin_ECsGameEvent::CustomPopulateEnumMap()
+{
+	using namespace NCsGraphPinGameEventCached;
+
+	NCsGameEvent::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
 void SCsGraphPin_ECsGameEvent::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
@@ -36,6 +55,3 @@ FText SCsGraphPin_ECsGameEvent::OnGetTooltip(int32 EnumIndex)
 {
 	return OnGetTooltip_Internal<EMCsGameEvent>(EnumIndex);
 }
-
-
-

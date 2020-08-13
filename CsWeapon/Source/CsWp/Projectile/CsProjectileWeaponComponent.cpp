@@ -102,11 +102,15 @@ void UCsProjectileWeaponComponent::Update(const FCsDeltaTime& DeltaTime)
 
 void UCsProjectileWeaponComponent::SetUpdateGroup(const FECsUpdateGroup& Group)
 {
+	checkf(EMCsUpdateGroup::Get().IsValidEnum(Group), TEXT("UCsProjectileWeaponComponent::SetUpdateGroup: Group: %s is NOT Valid."), Group.ToChar());
+
 	UpdateGroup = Group;
 }
 
 void UCsProjectileWeaponComponent::SetWeaponType(const FECsWeapon& Type)
 {
+	checkf(EMCsWeapon::Get().IsValidEnum(Type), TEXT("UCsProjectileWeaponComponent::SetWeaponType: Type: %s is NOT Valid."), Type.ToChar());
+
 	WeaponType = Type;
 }
 
@@ -127,6 +131,8 @@ const FECsWeaponState& UCsProjectileWeaponComponent::GetCurrentState() const
 
 void UCsProjectileWeaponComponent::SetProjectileType(const FECsProjectile& Type)
 {
+	checkf(EMCsProjectile::Get().IsValidEnum(Type), TEXT("UCsProjectileWeaponComponent::SetProjectileType: Type: %s is NOT Valid."), Type.ToChar());
+
 	ProjectileType = Type;
 }
 

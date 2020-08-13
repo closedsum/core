@@ -452,10 +452,15 @@ struct CSWP_API FCsWeaponEntry : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FCsWeaponPtr Class;
 
+	/** Soft Reference to a weapon data of type: ICsData_Weapon. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCsData_WeaponPtr Data;
+
 	FCsWeaponEntry() :
 		Name(),
 		DisplayName(),
-		Class()
+		Class(),
+		Data()
 	{
 	}
 };

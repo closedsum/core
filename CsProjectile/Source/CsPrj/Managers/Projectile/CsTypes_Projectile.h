@@ -718,6 +718,12 @@ public:
 
 	FORCEINLINE UObject* Get() const { return Projectile_Internal; }
 
+	template<typename T>
+	FORCEINLINE T* Get() const
+	{
+		return Cast<T>(Get());
+	}
+
 	FORCEINLINE UClass* GetClass() const { return Projectile_Class; }
 };
 
@@ -783,12 +789,12 @@ struct CSPRJ_API FCsProjectileClassEntry : public FTableRowBase
 
 	/** Soft Reference to a projectile of type: ICsProjectile. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FCsProjectilePtr Projectile;
+	FCsProjectilePtr Class;
 
 	FCsProjectileClassEntry() :
 		Name(),
 		DisplayName(), 
-		Projectile()
+		Class()
 	{
 	}
 };
@@ -813,7 +819,7 @@ struct CSPRJ_API FCsProjectileEntry : public FTableRowBase
 
 	/** Soft Reference to a projectile of type: ICsProjectile. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FCsProjectilePtr Projectile;
+	FCsProjectilePtr Class;
 
 	/** Soft Reference to a data of type: ICsData_Projectile. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -822,7 +828,7 @@ struct CSPRJ_API FCsProjectileEntry : public FTableRowBase
 	FCsProjectileEntry() :
 		Name(),
 		DisplayName(), 
-		Projectile(),
+		Class(),
 		Data()
 	{
 	}

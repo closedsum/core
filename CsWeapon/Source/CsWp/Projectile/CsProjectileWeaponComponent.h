@@ -125,6 +125,10 @@ protected:
 
 	float Fire_StartTime;
 
+	int32 FireCount;
+
+	FCsRoutineHandle FireRoutineHandle;
+
 	/**
 	*
 	*/
@@ -138,7 +142,9 @@ protected:
 	*/
 	char Fire_Internal(FCsRoutine* R);
 
-	FCsRoutineHandle FireRoutineHandle;
+	/**
+	*/
+	void Fire_Internal_OnEnd(FCsRoutine* R);
 
 	// Projectile
 #pragma region
@@ -153,7 +159,9 @@ protected:
 
 	virtual void SetProjectilePayload(ICsProjectilePayload* Payload);
 
-	virtual FVector GetOwnerCurrentForward();
+	virtual FVector GetLaunchProjectileLocation();
+
+	virtual FVector GetLaunchProjectileDirection();
 
 	virtual void LaunchProjectile(const FCsProjectilePooled* ProjectilePooled, ICsProjectilePayload* Payload);
 

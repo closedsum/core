@@ -1,12 +1,14 @@
 #include "Projectile/CsProjectileWeaponComponent.h"
 #include "CsWp.h"
 
+// Coroutine
+#include "Coroutine/CsCoroutineScheduler.h"
 // Library
 #include "Payload/CsLibrary_ProjectilePayload.h"
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Managers/Sound/Payload/CsLibrary_SoundPooledPayload.h"
-// Coroutine
-#include "Coroutine/CsCoroutineScheduler.h"
+// Settings
+#include "Settings/CsWeaponSettings.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 #include "Managers/Weapon/CsManager_Weapon.h"
@@ -52,7 +54,26 @@ namespace NCsProjectileWeaponComponentCached
 #pragma endregion Cached
 
 UCsProjectileWeaponComponent::UCsProjectileWeaponComponent(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer),
+	// ICsUpdate
+	UpdateGroup(),
+	WeaponType(),
+	Data(nullptr),
+	ProjectileType(),
+	MyOwner(nullptr),
+	MyOwnerAsActor(nullptr),
+	// State
+	CurrentState(),
+	IdleState(),
+	FireState(),
+	// Fire
+	bFire(false),
+	bFire_Last(false),
+	Fire_StartTime(0.0f),
+	FireCount(0),
+	FireRoutineHandle(),
+	// Projectile
+	CurrentProjectilePerShotIndex(0)
 {
 }
 
@@ -74,7 +95,7 @@ void UCsProjectileWeaponComponent::BeginPlay()
 
 void UCsProjectileWeaponComponent::Update(const FCsDeltaTime& DeltaTime)
 { 
-
+	OnUpdate_HandleStates(DeltaTime);
 }
 
 #pragma endregion ICsUpdate
@@ -114,12 +135,16 @@ void UCsProjectileWeaponComponent::SetProjectileType(const FECsProjectile& Type)
 
 void UCsProjectileWeaponComponent::StartFire()
 {
-	Fire();
+	bFire = true;
+
+	Update(FCsDeltaTime::Zero);
 }
 
 void UCsProjectileWeaponComponent::StopFire()
 {
+	bFire = false;
 
+	Update(FCsDeltaTime::Zero);
 }
 
 #pragma endregion ICsProjectileWeapon
@@ -134,11 +159,23 @@ void UCsProjectileWeaponComponent::Init()
 
 	checkf(EMCsWeapon::Get().IsValidEnum(WeaponType), TEXT("%s: WeaponType: %s is NOT Valid."), *Context, WeaponType.ToChar());
 
+	// Get Data
 	Data = UCsManager_Weapon::Get(GetWorld()->GetGameState())->GetData(WeaponType.GetFName());
 
 	checkf(Data, TEXT("%s: Data is NULL. Failed to get Data of type: ICsData_Weapon for Weapon: %s"), *Context, WeaponType.ToChar());
 
 	checkf(EMCsProjectile::Get().IsValidEnum(ProjectileType), TEXT("%s: WeaponType: %s is NOT Valid."), *Context, ProjectileType.ToChar());
+
+	// Set States
+	UCsWeaponSettings* Settings = GetMutableDefault<UCsWeaponSettings>();
+
+	IdleState = Settings->ProjectileWeaponImpl.IdleState;
+
+	checkf(EMCsWeaponState::Get().IsValidEnum(IdleState), TEXT("%s: IdleState: %s is NOT Valid."), *Context, IdleState.ToChar());
+
+	FireState = Settings->ProjectileWeaponImpl.FireState;
+
+	checkf(EMCsWeaponState::Get().IsValidEnum(FireState), TEXT("%s: FireState: %s is NOT Valid."), *Context, FireState.ToChar())
 }
 
 // State
@@ -153,7 +190,7 @@ void UCsProjectileWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& Del
 	{
 		if (CanFire())
 		{
-			StartFire();
+			Fire();
 
 			CurrentState = FireState;
 		}
@@ -162,7 +199,17 @@ void UCsProjectileWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& Del
 	// Fire
 	if (CurrentState == FireState)
 	{
-
+		// If can fire, start firing
+		if (CanFire())
+		{
+			Fire();
+		}
+		// If no firing is active, go to idle
+		else
+		if (FireCount == 0)
+		{
+			CurrentState = IdleState;
+		}
 	}
 }
 
@@ -214,6 +261,8 @@ void UCsProjectileWeaponComponent::Fire()
 	Payload->Owner.SetObject(this);
 	Payload->SetName(Str::Fire_Internal);
 	Payload->SetFName(Name::Fire_Internal);
+	Payload->OnEnds.AddDefaulted();
+	Payload->OnEnds.Last().BindUObject(this, &UCsProjectileWeaponComponent::Fire_Internal_OnEnd);
 	Payload->AbortMessages.Add(Name::Abort_Fire_Internal);
 
 	// Cache pointer to ICsData_ProjectileWeapon
@@ -233,6 +282,8 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 	ElapsedTime += R->DeltaTime;
 	
 	CS_COROUTINE_BEGIN(R);
+
+	++FireCount;
 
 	do 
 	{
@@ -254,6 +305,11 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 	} while (CurrentProjectilePerShotIndex < PrjData->GetProjectilesPerShot());
 
 	CS_COROUTINE_END(R);
+}
+
+void UCsProjectileWeaponComponent::Fire_Internal_OnEnd(FCsRoutine* R)
+{
+	--FireCount;
 }
 
 	// Projectile
@@ -302,13 +358,17 @@ void UCsProjectileWeaponComponent::SetProjectilePayload(ICsProjectilePayload* Pa
 
 	PayloadImpl->Instigator = this;
 	PayloadImpl->Owner		= MyOwner;
-	PayloadImpl->Location	= MyOwnerAsActor->GetActorLocation();
-	PayloadImpl->Direction	= GetOwnerCurrentForward();
+	PayloadImpl->Location	= GetLaunchProjectileLocation();
+	PayloadImpl->Direction	= GetLaunchProjectileDirection();
 }
 
-FVector UCsProjectileWeaponComponent::GetOwnerCurrentForward()
+FVector UCsProjectileWeaponComponent::GetLaunchProjectileLocation()
 {
-	// MyOwner->CurrentForward;
+	return MyOwnerAsActor->GetActorLocation();
+}
+
+FVector UCsProjectileWeaponComponent::GetLaunchProjectileDirection()
+{
 	return FVector::ZeroVector;
 }
 

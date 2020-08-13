@@ -46,3 +46,27 @@ struct CSWP_API FCsWeaponSettings_DataTable_Weapons
 };
 
 #pragma endregion FCsWeaponSettings_DataTable_Weapon
+
+// FCsWeaponSettings_ProjectileWeaponImpl
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSWP_API FCsWeaponSettings_ProjectileWeaponImpl
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FECsWeaponState IdleState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FECsWeaponState FireState;
+
+	FCsWeaponSettings_ProjectileWeaponImpl() :
+		IdleState(),
+		FireState()
+	{
+
+	}
+};
+
+#pragma endregion FCsWeaponSettings_ProjectileWeaponImpl

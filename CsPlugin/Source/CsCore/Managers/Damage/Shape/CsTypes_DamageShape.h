@@ -55,7 +55,8 @@ public:
 		MaxRadius(0.0f),
 		InterpolationMethod(ECsInterpolatingMethod::Easing),
 		EasingType(ECsEasingType::Linear),
-		Curve()
+		Curve(),
+		bIgnoreHitResultObject(true)
 	{
 	}
 

@@ -98,6 +98,15 @@ public:
 
 #pragma endregion Unit Test
 
+// Implementation
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Implementation")
+	FCsWeaponSettings_ProjectileWeaponImpl ProjectileWeaponImpl;
+
+#pragma endregion Implementation
+
 #if WITH_EDITOR
 
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& e) override;

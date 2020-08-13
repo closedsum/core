@@ -3,7 +3,7 @@
 
 #include "Managers/Damage/Shape/CsDamageSphereEmu.h"
 
-// FCsPrjDamageSphere
+// FCsScriptDamageSphere
 #pragma region
 
 void FCsScriptDamageSphere::SetExpression(FCsDamageSphereEmu* Expression)
@@ -22,4 +22,4 @@ void FCsScriptDamageSphere::SetExpression(FCsDamageSphereEmu* Expression)
 	Expression->SetIgnoreHitResultObject(&bIgnoreHitResultObject);
 }
 
-#pragma endregion FCsPrjDamageSphere
+#pragma endregion FCsScriptDamageSphere

@@ -239,3 +239,48 @@ namespace NCsStatusEffectEvent
 }
 
 #pragma endregion StatusEffectEvent
+
+// FCsStatusEffectPtr
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSSE_API FCsStatusEffectPtr
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsStatusEffect"))
+	TSoftClassPtr<UObject> StatusEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 StatusEffect_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UObject* StatusEffect_Internal;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UClass* StatusEffect_Class;
+
+	FCsStatusEffectPtr() :
+		StatusEffect(nullptr),
+		StatusEffect_LoadFlags(0),
+		StatusEffect_Internal(nullptr),
+		StatusEffect_Class(nullptr)
+	{
+	}
+
+	FORCEINLINE UObject* Get() const { return StatusEffect_Internal; }
+
+	template<typename T>
+	FORCEINLINE T* Get() const
+	{
+		return Cast<T>(Get());
+	}
+
+	FORCEINLINE UClass* GetClass() const { return StatusEffect_Class; }
+};
+
+#pragma endregion FCsStatusEffectPtr

@@ -57,9 +57,9 @@ void FCsProjectilePooledCacheImpl::Deallocate()
 
 bool FCsProjectilePooledCacheImpl::HasLifeTimeExpired()
 {
-	if (Data->GetLifeTime() > 0.0f)
+	if (LifeTime > 0.0f)
 	{
-		return ElapsedTime.Time > Data->GetLifeTime();
+		return ElapsedTime.Time > LifeTime;
 	}
 	return false;
 }
@@ -87,5 +87,6 @@ void FCsProjectilePooledCacheImpl::Update(const FCsDeltaTime& DeltaTime)
 
 void FCsProjectilePooledCacheImpl::SetData(ICsData_Projectile* InData)
 {
-	Data = InData;
+	Data	 = InData;
+	LifeTime = Data->GetLifeTime();
 }

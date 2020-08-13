@@ -57,7 +57,23 @@ namespace NCsProjectilePooledImplCached
 
 #pragma endregion Cached
 
-ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	Type(),
+	State(),
+	// Collision
+	IgnoreActors(),
+	bDeallocateOnHit(true),
+	// ICsPooledObject
+	Cache(nullptr),
+	// ICsProjectile
+	Data(nullptr),
+	bLaunchOnAllocate(false),
+	// FX
+	TrailFXPooled(nullptr),
+	// Damage
+	OnBroadcastDamage_Event(),
+	OnBroadcastDamageContainer_Event()
 {
 	// Collision Component
 	CollisionComponent = ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("CollisionComponent"));
@@ -111,14 +127,6 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	SetReplicatingMovement(false);
 
 	InitialLifeSpan = 0.0f;
-
-	// ICsPooledObject
-	Cache = nullptr;
-	// ICsProjectile
-	Data = nullptr;
-
-	// FX
-	TrailFXPooled = nullptr;
 }
 
 // UObject Interface
@@ -296,9 +304,9 @@ void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
 		UCsManager_Projectile* Manager_Projectile = UCsManager_Projectile::Get(GetWorld()->GetGameState());
 
 		// Get Data associated with Type
-		Data = Manager_Projectile->GetData(Type);
+		Data = Manager_Projectile->GetDataChecked(Context, Type);
 
-		// TODO This is no longer necessary
+		// TODO: Need to determine best place to set LifeTime from Data
 
 		// Set Data on Cache
 		FCsProjectilePooledCacheImpl* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsProjectilePooledCacheImpl>(Context, Cache);
@@ -373,7 +381,14 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 		OnBroadcastDamageContainer_Event.Broadcast(Event);
 	}
 
-	Cache->QueueDeallocate();
+	OnHit_Internal(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
+
+	if (bDeallocateOnHit)
+		Cache->QueueDeallocate();
+}
+
+void ACsProjectilePooledImpl::OnHit_Internal(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
 }
 
 #pragma endregion Collision
@@ -410,19 +425,6 @@ ICsPooledObjectCache* ACsProjectilePooledImpl::GetCache() const
 void ACsProjectilePooledImpl::Allocate(ICsPooledObjectPayload* Payload)
 {
 	checkf(Payload, TEXT("ACsProjectilePooledImpl::Allocate: Payload is NULL."));
-/*
-#if WITH_EDITOR
-	if (Override_Allocate_Internal_ScriptEvent.IsBound())
-	{
-		if (CsCVarLogOverrideFunctions->GetInt() == CS_CVAR_DISPLAY)
-		{
-			UE_LOG(LogCsPrj, Warning, TEXT("ACsProjectileBase::Allocate_Internal (%s): Using Override Function."), *GetName());
-		}
-		Override_Allocate_Internal_ScriptEvent.Broadcast(PoolIndex);
-		return;
-	}
-#endif // #if WITH_EDITOR
-*/
 
 	Cache->Allocate(Payload);
 
@@ -536,6 +538,8 @@ void ACsProjectilePooledImpl::Launch(ICsPooledObjectPayload* Payload)
 	// ICsData_ProjectileStaticMeshVisual | Static Mesh
 	if (ICsData_ProjectileStaticMeshVisual* VisualData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ICsData_ProjectileStaticMeshVisual>(Context, Data))
 	{
+		// TODO: Allocate Static Mesh Actor and get Static Mesh Component
+
 		MeshComponent->AttachToComponent(CollisionComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 		UStaticMesh* Mesh = VisualData->GetStaticMesh().Get();

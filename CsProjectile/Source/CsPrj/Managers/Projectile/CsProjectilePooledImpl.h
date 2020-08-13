@@ -25,7 +25,7 @@ struct FCsFXActorPooled;
 struct ICsDamageEvent;
 struct FCsResource_DamageEvent;
 
-UCLASS()
+UCLASS(Blueprintable)
 class CSPRJ_API ACsProjectilePooledImpl : public AActor,
 										  public ICsUpdate,
 										  public ICsPooledObject,
@@ -81,10 +81,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Projectile")
 	ECsProjectileState State;
 
-	float InitialSpeed;
-	float CurrentSpeed;
-	float Damage;
-
 // Collision
 #pragma region
 protected:
@@ -96,8 +92,18 @@ protected:
 
 	AActor* GetIgnoreActor(const int32 &Index);
 
+public:
+
+	/** Whether to deallocate the projectile on hit. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
+	bool bDeallocateOnHit;
+
+protected:
+
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	virtual void OnHit_Internal(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 #pragma endregion Collision
 

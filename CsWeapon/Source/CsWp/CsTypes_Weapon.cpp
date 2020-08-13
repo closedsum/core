@@ -212,7 +212,7 @@ namespace NCsWeaponClass
 		const FCsWpDataRootSet& DataRootSet = GetDataRootSet->GetCsWpDataRootSet();
 
 #if WITH_EDITOR
-		EMCsWeapon::Get().ClearUserDefinedEnums();
+		EMCsWeaponClass::Get().ClearUserDefinedEnums();
 #endif // #if WITH_EDITOR
 
 		// Enum Settings

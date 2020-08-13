@@ -46,13 +46,9 @@ struct CSCORE_API FCsSettings_Manager_Sound
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FName Payload;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsSound, FCsSettings_Manager_Sound_PoolParams> PoolParams;
 
 	FCsSettings_Manager_Sound() :
-		Payload(NAME_None),
 		PoolParams()
 	{
 	}

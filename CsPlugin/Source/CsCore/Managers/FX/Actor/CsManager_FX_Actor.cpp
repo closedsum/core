@@ -323,15 +323,6 @@ void UCsManager_FX_Actor::SetupInternal()
 
 void UCsManager_FX_Actor::InitInternalFromSettings()
 {
-#if WITH_EDITOR
-	if (Settings.Payload == NAME_None)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::InitInternalFromSettings: No Payload specified in settings. Storing hard references on manager."));
-	}
-#else
-	checkf(Settings.Payload != NAME_None, TEXT("UCsManager_FX_Actor::InitInternalFromSettings: No Payload specified in settings."));
-#endif // #if WITH_EDITOR
-
 	PopulateDataMapFromSettings();
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)

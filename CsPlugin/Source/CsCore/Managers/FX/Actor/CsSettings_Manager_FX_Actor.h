@@ -46,13 +46,9 @@ struct CSCORE_API FCsSettings_Manager_FX_Actor
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FName Payload;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsFX, FCsSettings_Manager_FX_Actor_PoolParams> PoolParams;
 
 	FCsSettings_Manager_FX_Actor() :
-		Payload(NAME_None),
 		PoolParams()
 	{
 	}

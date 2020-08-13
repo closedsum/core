@@ -324,15 +324,6 @@ void UCsManager_Sound::SetupInternal()
 
 void UCsManager_Sound::InitInternalFromSettings()
 {
-#if WITH_EDITOR
-	if (Settings.Payload == NAME_None)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Sound::InitInternalFromSettings: No Payload specified in settings. Storing hard references on manager."));
-	}
-#else
-	checkf(Settings.Payload != NAME_None, TEXT("UCsManager_Sound::InitInternalFromSettings: No Payload specified in settings."));
-#endif // #if WITH_EDITOR
-
 	PopulateDataMapFromSettings();
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)

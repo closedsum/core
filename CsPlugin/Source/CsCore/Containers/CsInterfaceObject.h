@@ -104,6 +104,13 @@ public:
 		return Class;
 	}
 
+	FORCEINLINE UClass* GetClassChecked(const FString& Context) const
+	{
+		checkf(Class, TEXT("%s: Class is NULL."));
+
+		return Class;
+	}
+
 	void SetScript()
 	{
 		bScript = true;

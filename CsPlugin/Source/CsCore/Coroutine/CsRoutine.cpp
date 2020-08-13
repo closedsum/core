@@ -262,6 +262,13 @@ void FCsRoutine::Init(FCsCoroutinePayload* Payload)
 		Last = AbortImpl;
 	}
 
+	for (const FCsOnCoroutineEnd& OnEnd : Payload->OnEnds)
+	{
+		OnEnds.AddDefaulted();
+		FCsOnCoroutineEnd& Last = OnEnds.Last();
+		Last = OnEnd;
+	}
+
 	Name_Internal	= Payload->GetFName();
 	Name			= const_cast<FString*>(Payload->GetName());
 
@@ -383,6 +390,11 @@ void FCsRoutine::End(const ECsCoroutineEndReason& InEndReason)
 	State = ECsCoroutineState::End;
 	EndReason = InEndReason;
 
+	for (FCsOnCoroutineEnd& OnEnd : OnEnds)
+	{
+		OnEnd.Execute(this);
+	}
+
 	CS_CLEAR_SCOPED_TIMER_HANDLE(RoutineScopedTimerHandle);
 	CS_CLEAR_SCOPED_TIMER_HANDLE(CoroutineScopedTimerHandle);
 }
@@ -420,6 +432,7 @@ void FCsRoutine::Reset()
 	Name_Internal = NAME_None;
 
 	EndReason = ECsCoroutineEndReason::ECsCoroutineEndReason_MAX;
+	OnEnds.Reset(OnEnds.Max());
 
 	Owner.Reset();
 	

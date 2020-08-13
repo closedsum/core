@@ -450,6 +450,8 @@ DECLARE_DELEGATE_RetVal_OneParam(char, FCsCoroutineImpl, FCsRoutine*);
 // Abort Condition
 DECLARE_DELEGATE_RetVal_OneParam(bool, FCsCoroutineAbortConditionImpl, FCsRoutine*);
 DECLARE_DELEGATE_OneParam(FCsOnCoroutineAbort, FCsRoutine*);
+// End
+DECLARE_DELEGATE_OneParam(FCsOnCoroutineEnd, FCsRoutine*);
 
 #define CS_ROUTINE_MAX_TYPE 255
 #define CS_ROUTINE_INDEXER_SIZE 4
@@ -493,6 +495,8 @@ public:
 	TArray<FCsCoroutineAbortConditionImpl> AbortImpls;
 
 	TArray<FCsOnCoroutineAbort> OnAborts;
+
+	TArray<FCsOnCoroutineEnd> OnEnds;
 
 	FCsRoutineHandle ParentHandle;
 

@@ -153,6 +153,8 @@ public:
 
 	ECsCoroutineEndReason EndReason;
 
+	TArray<FCsOnCoroutineEnd> OnEnds;
+
 	void End(const ECsCoroutineEndReason& InEndReason);
 
 	FORCEINLINE bool HasEnded() const

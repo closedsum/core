@@ -548,6 +548,7 @@ void FCsCoroutinePayload::Reset()
 	Owner.Reset();
 	AbortImpls.Reset(AbortImpls.Max());
 	OnAborts.Reset(OnAborts.Max());
+	OnEnds.Reset(OnEnds.Max());
 	ParentHandle.Reset();
 	bDoInit = true;
 	bPerformFirstUpdate = true;

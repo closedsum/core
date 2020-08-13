@@ -644,6 +644,17 @@ public:
 
 	/**
 	* Get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
+	* with the weapon Type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Type		Type of the weapon.
+	* return			Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
+	*/
+	FCsWeapon* GetWeaponChecked(const FString& Context, const FECsWeapon& Type);
+
+	/**
+	* Get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
 	* with the weapon class Type.
 	*
 	* @param Type	Class type of the weapon.

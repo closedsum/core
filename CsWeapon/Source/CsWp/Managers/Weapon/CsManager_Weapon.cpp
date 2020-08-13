@@ -742,6 +742,15 @@ FCsWeapon* UCsManager_Weapon::GetWeapon(const FECsWeapon& Type)
 	return WeaponClassByTypeMap.Find(Type.GetFName());
 }
 
+FCsWeapon* UCsManager_Weapon::GetWeaponChecked(const FString& Context, const FECsWeapon& Type)
+{
+	FCsWeapon* Ptr = GetWeapon(Type);
+
+	checkf(Ptr, TEXT("%s: Failed to find a Weapon associated with Type: %s."), *Context, Type.ToChar());
+
+	return Ptr;
+}
+
 FCsWeapon* UCsManager_Weapon::GetWeapon(const FECsWeaponClass& Type)
 {
 	checkf(EMCsWeaponClass::Get().IsValidEnum(Type), TEXT("UCsManager_Weapon::GetWeaponPtr: Type: %s is NOT Valid."), Type.ToChar());

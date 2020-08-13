@@ -311,7 +311,7 @@ void FCsInputPhrase::ProcessInput(FCsInputFrame* InputFrame)
 	const int32 Count = Words.Num();
 	int32 Index		  = 0;
 
-	if (bUseInterval)
+	if (bInterval)
 	{
 		float ElapsedTime			= 0.0f;
 		float EarliestCompletedTime = CurrentTime;
@@ -389,7 +389,7 @@ void FCsInputSentence::ProcessInput(FCsInputFrame* InputFrame)
 	const int32 Count = Phrases.Num();
 	int32 Index		  = 0;
 
-	if (bUseInterval)
+	if (bInterval)
 	{
 		float ElapsedTime			= 0.0f;
 		float EarliestCompletedTime = CurrentTime;

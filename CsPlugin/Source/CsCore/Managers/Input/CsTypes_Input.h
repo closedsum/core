@@ -911,7 +911,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FCsInputCompareValue CompareValue;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FCsInputCompletedValue CompletedValue;
 
 	FCsInputDescription() :
@@ -1180,16 +1180,16 @@ struct CSCORE_API FCsInputPhrase
 	UPROPERTY(BlueprintReadOnly)
 	float CompletedTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bUseInterval;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (InlineEditConditionToggle))
+	bool bInterval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bInterval", ClampMin = "0.0", UIMin = "0.0"))
 	float Interval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bUseFrames;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (InlineEditConditionToggle))
+	bool bFrames;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bFrames", ClampMin = "0", UIMin = "0"))
 	int32 Frames;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -1201,9 +1201,9 @@ struct CSCORE_API FCsInputPhrase
 	FCsInputPhrase() :
 		bCompleted(false),
 		CompletedTime(0.0f),
-		bUseInterval(false),
+		bInterval(false),
 		Interval(0.0f),
-		bUseFrames(false),
+		bFrames(false),
 		Frames(0),
 		Words(),
 		CompletedValues()
@@ -1214,9 +1214,9 @@ struct CSCORE_API FCsInputPhrase
 	{
 		if (bCompleted != B.bCompleted) { return false; }
 		if (CompletedTime != B.CompletedTime) { return false; }
-		if (bUseInterval != B.bUseInterval) { return false; }
+		if (bInterval != B.bInterval) { return false; }
 		if (Interval != B.Interval) { return false; }
-		if (bUseFrames != B.bUseFrames) { return false; }
+		if (bFrames != B.bFrames) { return false; }
 		if (Frames != B.Frames) { return false; }
 
 		if (Words.Num() != B.Words.Num())
@@ -1336,16 +1336,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Cooldown;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bUseInterval;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (InlineEditConditionToggle))
+	bool bInterval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bInterval", ClampMin = "0.0", UIMin = "0.0"))
 	float Interval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bUseFrames;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (InlineEditConditionToggle))
+	bool bFrames;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bFrames", ClampMin = "0", UIMin = "0"))
 	int32 Frames;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -1359,9 +1359,9 @@ public:
 		bCompleted(false),
 		CompletedTime(0.0f),
 		Cooldown(0.0f),
-		bUseInterval(false),
+		bInterval(false),
 		Interval(0.0f),
-		bUseFrames(false),
+		bFrames(false),
 		Frames(0),
 		Phrases(),
 		CompletedValues()
@@ -1374,9 +1374,9 @@ public:
 		if (bCompleted != B.bActive) { return false; }
 		if (CompletedTime != B.CompletedTime) { return false; }
 		if (Cooldown != B.Cooldown) { return false; }
-		if (bUseInterval != B.bUseInterval) { return false; }
+		if (bInterval != B.bInterval) { return false; }
 		if (Interval != B.Interval) { return false; }
-		if (bUseFrames != B.bUseFrames) { return false; }
+		if (bFrames != B.bFrames) { return false; }
 		if (Frames != B.Frames) { return false; }
 
 		if (Phrases.Num() != B.Phrases.Num())

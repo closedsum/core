@@ -2,7 +2,7 @@
 #include "Managers/Sound/Cache/CsSoundPooledCacheImpl.h"
 
 // Library
-#include "Managers/Pool/Payload/CsLibrary_PooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Pool
 #include "Managers/Pool/Payload/CsPooledObjectPayload.h"
 // Sound
@@ -75,7 +75,7 @@ void FCsSoundPooledCacheImpl::Allocate(ICsPooledObjectPayload* Payload)
 	StartTime  = Payload->GetTime();
 
 	// ICsSoundPooledCache
-	ICsSoundPooledPayload* FXPayload = FCsLibrary_PooledObjectPayload::GetInterfaceChecked<ICsSoundPooledPayload>(Str::Allocate, Payload);
+	ICsSoundPooledPayload* FXPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsSoundPooledPayload>(Str::Allocate, Payload);
 
 	DeallocateMethod = FXPayload->GetDeallocateMethod();
 	LifeTime		 = FXPayload->GetLifeTime();

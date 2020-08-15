@@ -8,7 +8,7 @@
 #include "Types/CsTypes_Math.h"
 // Library
 #include "Managers/Pool/Cache/CsLibrary_PooledObjectCache.h"
-#include "Managers/Pool/Payload/CsLibrary_PooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Managers
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
 // Pooled Object
@@ -116,7 +116,7 @@ void UCsFXActorPooledImpl::Allocate(ICsPooledObjectPayload* Payload)
 
 	CacheImpl->SetFXComponent(FXComponent);
 
-	ICsFXPooledPayload* FXPayload = FCsLibrary_PooledObjectPayload::GetInterfaceChecked<ICsFXPooledPayload>(Str::Allocate, Payload);
+	ICsFXPooledPayload* FXPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsFXPooledPayload>(Str::Allocate, Payload);
 
 	FX->SetActorTickEnabled(true);
 	FX->SetActorHiddenInGame(false);

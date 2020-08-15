@@ -7,7 +7,7 @@
 // Library
 #include "Library/CsLibrary_Common.h"
 #include "Managers/Pool/Cache/CsLibrary_PooledObjectCache.h"
-#include "Managers/Pool/Payload/CsLibrary_PooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Data/CsLibrary_Data_Projectile.h"
 #include "Managers/Damage/Expression/CsLibrary_DamageExpression.h"
 #include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
@@ -534,7 +534,7 @@ void ACsProjectilePooledImpl::Launch(ICsPooledObjectPayload* Payload)
 	checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
 
 	// Get Projectile Payload
-	ICsProjectilePayload* ProjectilePayload = FCsLibrary_PooledObjectPayload::GetInterfaceChecked<ICsProjectilePayload>(Context, Payload);
+	ICsProjectilePayload* ProjectilePayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsProjectilePayload>(Context, Payload);
 
 	// Get Projectile Cache
 	ICsProjectileCache* ProjectileCache = FCsLibrary_PooledObjectCache::GetInterfaceChecked<ICsProjectileCache>(Context, Cache);

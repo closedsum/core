@@ -2,7 +2,7 @@
 #include "Managers/FX/Cache/CsFXPooledCacheImpl.h"
 
 // Library
-#include "Managers/Pool/Payload/CsLibrary_PooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Pool
 #include "Managers/Pool/Payload/CsPooledObjectPayload.h"
 // FX
@@ -73,7 +73,7 @@ void FCsFXPooledCacheImpl::Allocate(ICsPooledObjectPayload* Payload)
 	StartTime  = Payload->GetTime();
 
 	// ICsFXPooledCache
-	ICsFXPooledPayload* FXPayload = FCsLibrary_PooledObjectPayload::GetInterfaceChecked<ICsFXPooledPayload>(Str::Allocate, Payload);
+	ICsFXPooledPayload* FXPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsFXPooledPayload>(Str::Allocate, Payload);
 
 	DeallocateMethod = FXPayload->GetDeallocateMethod();
 	QueuedLifeTime   = FXPayload->GetLifeTime();

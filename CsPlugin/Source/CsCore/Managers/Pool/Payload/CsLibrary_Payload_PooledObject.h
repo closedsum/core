@@ -4,7 +4,7 @@
 
 #pragma once
 
-struct CSCORE_API FCsLibrary_PooledObjectPayload
+struct CSCORE_API FCsLibrary_Payload_PooledObject
 {
 	/**
 	* Get the Interface Map from an Payload with checks.

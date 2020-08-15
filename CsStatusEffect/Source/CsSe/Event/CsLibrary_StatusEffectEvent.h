@@ -39,7 +39,7 @@ struct CSSE_API FCsLibrary_StatusEffectEvent
 	/**
 	* Perform the operation static_cast<DerivedType*>("Event associated with ICsStatusEffectEvent") with checks.
 	* DerivedType is NOT abstract.
-	* Event NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context
 	* @param Event		Event that implements the interface: ICsStatusEffectEvent.
@@ -54,7 +54,7 @@ struct CSSE_API FCsLibrary_StatusEffectEvent
 	/**
 	* Safely perform the operation static_cast<DerivedType*>("Event associated with ICsStatusEffectEvent") with checks (For InterfaceMap).
 	* DerivedType is NOT abstract.
-	* Event NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context
 	* @param Event		Event that implements the interface: ICsStatusEffectEvent.

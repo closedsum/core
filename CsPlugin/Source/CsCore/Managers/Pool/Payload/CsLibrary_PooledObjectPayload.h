@@ -36,7 +36,7 @@ struct CSCORE_API FCsLibrary_PooledObjectPayload
 	/**
 	* Perform the operation static_cast<DerivedType*>("Payload associated with ICsPooledObjectPayload") with checks.
 	* DerivedType is NOT abstract.
-	* Does NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context
 	* @param Cache		Payload that implements the interface: ICsPooledObjectPayload.

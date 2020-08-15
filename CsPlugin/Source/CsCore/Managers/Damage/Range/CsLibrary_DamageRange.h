@@ -40,7 +40,7 @@ struct CSCORE_API FCsLibrary_DamageRange
 	/**
 	* Perform the operation static_cast<DerivedType*>("Range associated with ICsDamageRange") with checks.
 	* DerivedType is NOT abstract.
-	* Range does NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context
 	* @param Range		Range that implements the interface: ICsDamageRange.
@@ -55,7 +55,7 @@ struct CSCORE_API FCsLibrary_DamageRange
 	/**
 	* Safely perform the operation static_cast<DerivedType*>("Range associated with ICsDamageRange") with checks (For InterfaceMap).
 	* DerivedType is NOT abstract.
-	* Range does NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context
 	* @param Range		Range that implements the interface: ICsDamageRange.

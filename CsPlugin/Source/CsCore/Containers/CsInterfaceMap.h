@@ -7,8 +7,8 @@
 /**
 * Map of interfaces for an object. This stores the memory offsets for each "slice"
 * or interface of the object.
-* If storing "emulated sliced" interfaces, those interfaces do NOT route back to same
-* root object.
+* If storing "unique based sliced" interfaces, those interfaces do NOT route back to same
+* root / top level object.
 */
 struct CSCORE_API FCsInterfaceMap
 {
@@ -21,18 +21,18 @@ private:
 	TMap<FName, void*> Interfaces;
 
 	/** */
-	bool bEmulatedSlices;
+	bool bUniqueBasedSlices;
 
 	/** */
-	TMap<FName, void*> InterfacesByEmulatedSliceRootName;
+	TMap<FName, void*> InterfacesByUniqueBasedSliceRootName;
 
 public:
 
 	FCsInterfaceMap() :
 		RootName(NAME_None),
 		Interfaces(),
-		bEmulatedSlices(false),
-		InterfacesByEmulatedSliceRootName()
+		bUniqueBasedSlices(false),
+		InterfacesByUniqueBasedSliceRootName()
 	{
 	}
 
@@ -56,18 +56,18 @@ public:
 		return RootName;
 	}
 
-	FORCEINLINE void SetEmulatedSlices()
+	FORCEINLINE void SetUniqueBasedSlices()
 	{
-		bEmulatedSlices = true;
+		bUniqueBasedSlices = true;
 	}
 
 	/**
 	*/
-	FORCEINLINE bool EmulatesRootName(const FName& Name)
+	FORCEINLINE bool HasUniqueBasedRootName(const FName& Name)
 	{
-		checkf(Name != NAME_None, TEXT("FCsInterfaceMap::EmulatesRootName: Name: None is NOT Valid."));
+		checkf(Name != NAME_None, TEXT("FCsInterfaceMap::HasUniqueBasedRootName: Name: None is NOT Valid."));
 
-		return InterfacesByEmulatedSliceRootName.Find(Name) != nullptr;
+		return InterfacesByUniqueBasedSliceRootName.Find(Name) != nullptr;
 	}
 
 	/**
@@ -92,24 +92,24 @@ public:
 	/**
 	* Add a reference to the interface or slice of the root structure.
 	*
-	* @param EmulatedRootName	Name of the structure that is emulating the interface.
-	* @param Interface			Pointer to the InterfaceType of the root structure
+	* @param UniqueBasedRootName	Name of the structure that is implementing the interface.
+	* @param Interface				Pointer to the InterfaceType of the root structure
 	*/
 	template<typename InterfaceType>
-	void Add(const FName& EmulatedRootName, InterfaceType* Interface)
+	void Add(const FName& UniqueBasedRootName, InterfaceType* Interface)
 	{
 		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::Add: InterfaceType is NOT abstract.");
 
 		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "FCsInterfaceMap::Add: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
 
-		checkf(EmulatedRootName != NAME_None, TEXT("FCsInterfaceMap::Add: EmulatedRootName: None is NOT Valid."));
+		checkf(UniqueBasedRootName != NAME_None, TEXT("FCsInterfaceMap::Add: UniqueBasedRootName: None is NOT Valid."));
 
 		checkf(Interface, TEXT("FCsInterfaceMap::Add: Interface is NULL."));
 
 		checkf(InterfaceType::Name != NAME_None, TEXT("FCsInterfaceMap::Add: InterfaceName: None is NOT Valid."));
 
 		Interfaces.Add(InterfaceType::Name, Interface);
-		InterfacesByEmulatedSliceRootName.Add(EmulatedRootName, Interface);
+		InterfacesByUniqueBasedSliceRootName.Add(UniqueBasedRootName, Interface);
 	}
 
 	/**
@@ -227,11 +227,11 @@ public:
 
 		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "NCsInterfaceMap::StaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
 
-		if (bEmulatedSlices)
+		if (bUniqueBasedSlices)
 		{
-			checkf(InterfacesByEmulatedSliceRootName.Find(DerivedType::Name), TEXT("%s: Failed to find Interface with Root Name: %s."), *Context, *(DerivedType::Name.ToString()));
+			checkf(InterfacesByUniqueBasedSliceRootName.Find(DerivedType::Name), TEXT("%s: Failed to find Interface with Root Name: %s."), *Context, *(DerivedType::Name.ToString()));
 
-			checkf((InterfaceType*)(InterfacesByEmulatedSliceRootName.Find(DerivedType::Name)) == Interface, TEXT("%s: this does NOT contain a reference to Interface of type: %s."), *Context, *(InterfaceType::Name.ToString()));
+			checkf((InterfaceType*)(InterfacesByUniqueBasedSliceRootName.Find(DerivedType::Name)) == Interface, TEXT("%s: this does NOT contain a reference to Interface of type: %s."), *Context, *(InterfaceType::Name.ToString()));
 
 			DerivedType* DerivedPtr = static_cast<DerivedType*>(Interface);
 
@@ -274,9 +274,9 @@ public:
 
 		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "NCsInterfaceMap::StaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
 
-		if (bEmulatedSlices)
+		if (bUniqueBasedSlices)
 		{
-			void** Ptr = InterfacesByEmulatedSliceRootName.Find(DerivedType::Name);
+			void** Ptr = InterfacesByUniqueBasedSliceRootName.Find(DerivedType::Name);
 
 			checkf(Ptr, TEXT("%s: Failed to find Interface with Root Name: %s."), *Context, *(DerivedType::Name.ToString()));
 
@@ -323,9 +323,9 @@ public:
 
 		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "FCsInterfaceMap::StaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
 
-		if (bEmulatedSlices)
+		if (bUniqueBasedSlices)
 		{
-			void** Ptr = InterfacesByEmulatedSliceRootName.Find(DerivedType::Name);
+			void** Ptr = InterfacesByUniqueBasedSliceRootName.Find(DerivedType::Name);
 
 			checkf(Ptr, TEXT("FCsInterfaceMap::StaticCastChecked: Failed to find Interface with Root Name: %s."), *(DerivedType::Name.ToString()));
 
@@ -373,12 +373,12 @@ public:
 
 		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "NCsInterfaceMap::StaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
 
-		if (bEmulatedSlices)
+		if (bUniqueBasedSlices)
 		{
-			if (!InterfacesByEmulatedSliceRootName.Find(DerivedType::Name))
+			if (!InterfacesByUniqueBasedSliceRootName.Find(DerivedType::Name))
 				return nullptr;
 
-			checkf((InterfaceType*)(InterfacesByEmulatedSliceRootName.Find(DerivedType::Name)) == Interface, TEXT("%s: this does NOT contain a reference to Interface of type: %s."), *Context, *(InterfaceType::Name.ToString()));
+			checkf((InterfaceType*)(InterfacesByUniqueBasedSliceRootName.Find(DerivedType::Name)) == Interface, TEXT("%s: this does NOT contain a reference to Interface of type: %s."), *Context, *(InterfaceType::Name.ToString()));
 
 			DerivedType* DerivedPtr = static_cast<DerivedType*>(Interface);
 
@@ -422,9 +422,9 @@ public:
 
 		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "NCsInterfaceMap::StaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
 
-		if (bEmulatedSlices)
+		if (bUniqueBasedSlices)
 		{
-			void** Ptr = InterfacesByEmulatedSliceRootName.Find(DerivedType::Name);
+			void** Ptr = InterfacesByUniqueBasedSliceRootName.Find(DerivedType::Name);
 
 			if (!Ptr)
 				return nullptr;
@@ -473,9 +473,9 @@ public:
 
 		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "FCsInterfaceMap::StaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
 
-		if (bEmulatedSlices)
+		if (bUniqueBasedSlices)
 		{
-			void** Ptr = InterfacesByEmulatedSliceRootName.Find(DerivedType::Name);
+			void** Ptr = InterfacesByUniqueBasedSliceRootName.Find(DerivedType::Name);
 
 			if (!Ptr)
 				return nullptr;
@@ -507,7 +507,7 @@ public:
 	/**
 	* Perform the operation static_cast<DerivedType*>(Interface) with checks.
 	* DerivedType is NOT abstract.
-	* Does NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context.
 	* @param Interface	Interface to cast from.
@@ -540,7 +540,7 @@ public:
 	/**
 	* Perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks.
 	* DerivedType is NOT abstract.
-	* Does NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context.
 	* return			Interface casted to DerivedType 
@@ -572,7 +572,7 @@ public:
 	/**
 	* Perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks.
 	* DerivedType is NOT abstract.
-	* Does NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* return			Interface casted to DerivedType
 	*					(static_cast<DerivedType*>("Interface associated with InterfaceType")).
@@ -603,7 +603,7 @@ public:
 	/**
 	* Safely perform the operation static_cast<DerivedType*>(Interface) with checks (for InterfaceMap).
 	* DerivedType is NOT abstract.
-	* Does NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context.
 	* @param Interface	Interface to cast from.
@@ -637,7 +637,7 @@ public:
 	/**
 	* Safely perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks (for InterfaceMap).
 	* DerivedType is NOT abstract.
-	* Does NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context.
 	* return			Interface casted to DerivedType 
@@ -670,7 +670,7 @@ public:
 	/**
 	* Safely perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks (for InterfaceMap).
 	* DerivedType is NOT abstract.
-	* Does NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* return			Interface casted to DerivedType
 	*					(static_cast<DerivedType*>("Interface associated with InterfaceType")).
@@ -818,7 +818,7 @@ namespace NCsInterfaceMap
 	/**
 	* Perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks.
 	* DerivedType is NOT abstract.
-	* Does NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context
 	* @param Interface	Interface that implements the interface: ICsGetInterfaceMap.
@@ -847,7 +847,7 @@ namespace NCsInterfaceMap
 	/**
 	* Perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks (for InterfaceMap).
 	* DerivedType is NOT abstract.
-	* Does NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context
 	* @param Interface	Interface that implements the interface: ICsGetInterfaceMap.

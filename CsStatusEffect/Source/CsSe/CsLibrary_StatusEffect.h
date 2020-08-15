@@ -39,7 +39,7 @@ struct CSSE_API FCsLibrary_StatusEffect
 	/**
 	* Perform the operation static_cast<DerivedType*>("Effect associated with ICsStatusEffect") with checks.
 	* DerivedType is NOT abstract.
-	* Effect NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context
 	* @param Effect		Effect that implements the interface: ICsStatusEffect.

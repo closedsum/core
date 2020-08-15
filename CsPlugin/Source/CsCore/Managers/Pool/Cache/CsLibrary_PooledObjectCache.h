@@ -36,7 +36,7 @@ struct CSCORE_API FCsLibrary_PooledObjectCache
 	/**
 	* Perform the operation static_cast<DerivedType*>("Cache associated with ICsPooledObjectCache") with checks.
 	* DerivedType is NOT abstract.
-	* Does NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context
 	* @param Cache		Cache that implements the interface: ICsPooledObjectCache.

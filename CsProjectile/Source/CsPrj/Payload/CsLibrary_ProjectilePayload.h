@@ -35,7 +35,7 @@ struct CSPRJ_API FCsLibrary_ProjectilePayload
 	/**
 	* Perform the operation static_cast<DerivedType*>("Payload associated with ICsProjectilePayload") with checks.
 	* DerivedType is NOT abstract.
-	* Does NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context
 	* @param Payload	Payload that implements the interface: ICsProjectilePayload.

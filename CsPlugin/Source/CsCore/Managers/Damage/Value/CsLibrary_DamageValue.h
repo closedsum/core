@@ -40,7 +40,7 @@ struct CSCORE_API FCsLibrary_DamageValue
 	/**
 	* Perform the operation static_cast<DerivedType*>("Value associated with ICsDamageValue") with checks.
 	* DerivedType is NOT abstract.
-	* Value does NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context
 	* @param Value		Value that implements the interface: ICsDamageValue.
@@ -55,7 +55,7 @@ struct CSCORE_API FCsLibrary_DamageValue
 	/**
 	* Safely perform the operation static_cast<DerivedType*>("Event associated with ICsDamageValue") with checks (For InterfaceMap).
 	* DerivedType is NOT abstract.
-	* Value does NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context
 	* @param Value		Value that implements the interface: ICsDamageValue.

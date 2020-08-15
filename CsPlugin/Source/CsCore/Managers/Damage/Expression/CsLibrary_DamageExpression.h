@@ -40,7 +40,7 @@ struct CSCORE_API FCsLibrary_DamageExpression
 	/**
 	* Perform the operation static_cast<DerivedType*>("Expr associated with ICsDamageExpression") with checks.
 	* DerivedType is NOT abstract.
-	* Expr NOT check if the InterfaceMap "emulates" interfaces.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
 	*
 	* @param Context	The calling context
 	* @param Payload	Expr that implements the interface: ICsDamageExpression.

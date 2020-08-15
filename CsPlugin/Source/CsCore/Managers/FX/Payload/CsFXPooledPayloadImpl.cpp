@@ -24,7 +24,7 @@ FCsFXPooledPayloadImpl::FCsFXPooledPayloadImpl() :
 
 	InterfaceMap->SetRootName(FCsFXPooledPayloadImpl::Name);
 
-	InterfaceMap->Add<ICsPooledObjectPayload>(static_cast<ICsPooledObjectPayload*>(this));
+	InterfaceMap->Add<ICsPayload_PooledObject>(static_cast<ICsPayload_PooledObject*>(this));
 	InterfaceMap->Add<ICsFXPooledPayload>(static_cast<ICsFXPooledPayload*>(this));
 }
 
@@ -33,12 +33,12 @@ FCsFXPooledPayloadImpl::~FCsFXPooledPayloadImpl()
 	delete InterfaceMap;
 }
 
-// ICsPooledObjectPayload
+// ICsPayload_PooledObject
 #pragma region
 
 void FCsFXPooledPayloadImpl::Reset()
 {
-	// ICsPooledObjectPayload
+	// ICsPayload_PooledObject
 	bAllocated = false;
 	Instigator = nullptr;
 	Owner = nullptr;
@@ -56,4 +56,4 @@ void FCsFXPooledPayloadImpl::Reset()
 	Transform = FTransform::Identity;
 }
 
-#pragma endregion ICsPooledObjectPayload
+#pragma endregion ICsPayload_PooledObject

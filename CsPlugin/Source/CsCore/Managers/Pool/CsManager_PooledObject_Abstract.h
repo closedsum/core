@@ -3,7 +3,7 @@
 
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/Pool/Cache/CsPooledObjectCache.h"
-#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Managers/Pool/CsTypes_Manager_PooledObject.h"
 #include "Containers/CsDoubleLinkedList.h"
 #include "GameFramework/Actor.h"
@@ -302,7 +302,7 @@ public:
 		PoolSize = 0;
 		AllocatedObjects.Reset();
 
-		for (ICsPooledObjectPayload* P : PooledObjectPayloads)
+		for (ICsPayload_PooledObject* P : PooledObjectPayloads)
 		{
 			P->Reset();
 		}
@@ -1360,7 +1360,7 @@ protected:
 			if (!Cache->IsAllocated())
 			{
 				// Get Pooled Object Payload
-				ICsPooledObjectPayload* P = NCsInterfaceMap::GetInterfaceChecked<ICsPooledObjectPayload, PayloadType>(Context, Payload);
+				ICsPayload_PooledObject* P = NCsInterfaceMap::GetInterfaceChecked<ICsPayload_PooledObject, PayloadType>(Context, Payload);
 
 				CS_SCOPED_TIMER(AllocateObjectScopedTimerHandle);
 
@@ -1530,7 +1530,7 @@ protected:
 	/** */
 	TArray<PayloadType*> Payloads;
 	/** */
-	TArray<ICsPooledObjectPayload*> PooledObjectPayloads;
+	TArray<ICsPayload_PooledObject*> PooledObjectPayloads;
 	/** */
 	int32 PayloadSize;
 	/** */
@@ -1563,7 +1563,7 @@ public:
 			checkf(Payloads[I], TEXT("%s: Failed to construct payload of type: PayloadType."), *Context);
 
 			// Get Pooled Object Payload
-			ICsPooledObjectPayload* P = NCsInterfaceMap::GetInterfaceChecked<ICsPooledObjectPayload, PayloadType>(Context, Payloads[I]);
+			ICsPayload_PooledObject* P = NCsInterfaceMap::GetInterfaceChecked<ICsPayload_PooledObject, PayloadType>(Context, Payloads[I]);
 
 			PooledObjectPayloads.Add(P);
 		}
@@ -1593,9 +1593,9 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects.
-	*  Payload implements the interface: ICsPooledObjectPayload and PayloadType.
+	*  Payload implements the interface: ICsPayload_PooledObject and PayloadType.
 	*
-	* return	Payload that implements the interface: ICsPooledObjectPayload
+	* return	Payload that implements the interface: ICsPayload_PooledObject
 				and PayloadType.
 	*/
 	PayloadType* AllocatePayload()
@@ -1604,7 +1604,7 @@ public:
 		{
 			PayloadIndex			  = (PayloadIndex + 1) % PayloadSize;
 			PayloadType* Payload	  = Payloads[PayloadIndex];
-			ICsPooledObjectPayload* P = PooledObjectPayloads[PayloadIndex];
+			ICsPayload_PooledObject* P = PooledObjectPayloads[PayloadIndex];
 
 			if (!P->IsAllocated())
 			{
@@ -1618,10 +1618,10 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects.
-	*  Payload implements the interface: ICsPooledObjectPayload and PayloadType.
+	*  Payload implements the interface: ICsPayload_PooledObject and PayloadType.
 	*
 	* @param Context	Calling context
-	* return			PayloadTypeImpl that implements the interface: ICsPooledObjectPayload
+	* return			PayloadTypeImpl that implements the interface: ICsPayload_PooledObject
 						and PayloadType.
 	*/
 	template<typename PayloadTypeImpl>
@@ -1632,9 +1632,9 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects.
-	*  Payload implements the interface: ICsPooledObjectPayload and PayloadType.
+	*  Payload implements the interface: ICsPayload_PooledObject and PayloadType.
 	*
-	* return	PayloadTypeImpl that implements the interface: ICsPooledObjectPayload
+	* return	PayloadTypeImpl that implements the interface: ICsPayload_PooledObject
 				and PayloadType.
 	*/
 	template<typename PayloadTypeImpl>
@@ -1694,7 +1694,7 @@ public:
 #endif // #if !UE_BUILD_SHIPPING
 
 		// Get Pooled Object Payload
-		ICsPooledObjectPayload* P = NCsInterfaceMap::GetInterfaceChecked<ICsPooledObjectPayload, PayloadType>(Context, Payload);
+		ICsPayload_PooledObject* P = NCsInterfaceMap::GetInterfaceChecked<ICsPayload_PooledObject, PayloadType>(Context, Payload);
 
 		P->Reset();
 
@@ -1724,7 +1724,7 @@ public:
 #endif // #if !UE_BUILD_SHIPPING
 
 		// Get PooledObjectPayload
-		ICsPooledObjectPayload* PooledObjectPayload = InterfaceMap->Get<ICsPooledObjectPayload>();
+		ICsPayload_PooledObject* PooledObjectPayload = InterfaceMap->Get<ICsPayload_PooledObject>();
 		PooledObjectPayload->Reset();
 
 		AddToAllocatedObjects_Internal(O);

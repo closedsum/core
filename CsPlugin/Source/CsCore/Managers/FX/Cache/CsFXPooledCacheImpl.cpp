@@ -4,7 +4,7 @@
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Pool
-#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 // FX
 #include "Managers/FX/Payload/CsFXPooledPayload.h"
 #include "NiagaraComponent.h"
@@ -60,7 +60,7 @@ FCsFXPooledCacheImpl::~FCsFXPooledCacheImpl()
 // ICsPooledObjectCache
 #pragma region
 
-void FCsFXPooledCacheImpl::Allocate(ICsPooledObjectPayload* Payload)
+void FCsFXPooledCacheImpl::Allocate(ICsPayload_PooledObject* Payload)
 {
 	using namespace NCsFXPooledCacheImplCached;
 

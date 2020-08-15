@@ -10,7 +10,7 @@
 class UAudioComponent;
 class UDamageType;
 struct ICsPooledObjectCache;
-struct ICsPooledObjectPayload;
+struct ICsPayload_PooledObject;
 struct ICsSoundPooledPayload;
 
 /**
@@ -69,7 +69,7 @@ public:
 
 	ICsPooledObjectCache* GetCache() const;
 
-	void Allocate(ICsPooledObjectPayload* Payload);
+	void Allocate(ICsPayload_PooledObject* Payload);
 
 	void Deallocate();
 

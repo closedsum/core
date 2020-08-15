@@ -19,7 +19,7 @@ FCsProjectilePooledPayloadImpl::FCsProjectilePooledPayloadImpl() :
 
 	InterfaceMap->SetRootName(FCsProjectilePooledPayloadImpl::Name);
 
-	InterfaceMap->Add<ICsPooledObjectPayload>(static_cast<ICsPooledObjectPayload*>(this));
+	InterfaceMap->Add<ICsPayload_PooledObject>(static_cast<ICsPayload_PooledObject*>(this));
 	InterfaceMap->Add<ICsProjectilePayload>(static_cast<ICsProjectilePayload*>(this));
 }
 
@@ -28,7 +28,7 @@ FCsProjectilePooledPayloadImpl::~FCsProjectilePooledPayloadImpl()
 	delete InterfaceMap;
 }
 
-// ICsPooledObjectPayload
+// ICsPayload_PooledObject
 #pragma region
 
 void FCsProjectilePooledPayloadImpl::Reset()
@@ -44,4 +44,4 @@ void FCsProjectilePooledPayloadImpl::Reset()
 	Location = FVector::ZeroVector;
 }
 
-#pragma endregion ICsPooledObjectPayload
+#pragma endregion ICsPayload_PooledObject

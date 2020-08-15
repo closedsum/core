@@ -3,7 +3,7 @@
 #include "Types/CsTypes_Load.h"
 #include "Engine/DataTable.h"
 
-#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 
 #include "CsTypes_Projectile.generated.h"
 #pragma once
@@ -512,7 +512,7 @@ struct CSPRJ_API FCsProjectileFirePayload
 
 class UCsData_ProjectileBase;
 
-struct CSPRJ_API FCsProjectileBasePayload : public ICsPooledObjectPayload
+struct CSPRJ_API FCsProjectileBasePayload : public ICsPayload_PooledObject
 {
 public:
 
@@ -569,7 +569,7 @@ public:
 		return !(*this == B);
 	}
 
-// ICsPooledObjectPayload
+// ICsPayload_PooledObject
 #pragma region
 public:
 
@@ -624,7 +624,7 @@ public:
 		HomingAccelerationMagnitude = 0.0f;
 	}
 
-#pragma endregion ICsPooledObjectPayload
+#pragma endregion ICsPayload_PooledObject
 
 	FORCEINLINE void Set(FCsProjectileFirePayload* Payload)
 	{

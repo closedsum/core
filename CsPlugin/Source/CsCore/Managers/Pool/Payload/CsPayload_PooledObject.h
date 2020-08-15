@@ -11,7 +11,7 @@ class UObject;
 * object that implements the interface: ICsPooledObject. Usually this payload
 * is passed through a Manager handling the pooled objects.
 */
-struct CSCORE_API ICsPooledObjectPayload : virtual public ICsGetInterfaceMap
+struct CSCORE_API ICsPayload_PooledObject : virtual public ICsGetInterfaceMap
 {
 public:
 
@@ -19,7 +19,7 @@ public:
 
 public:
 	
-	virtual ~ICsPooledObjectPayload(){}
+	virtual ~ICsPayload_PooledObject(){}
 
 	/**
 	* Whether the payload has been marked to be used (allocated).

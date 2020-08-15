@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Cache/CsProjectilePooledCacheImpl.h"
 
-#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Containers/CsInterfaceMap.h"
 // Data
 #include "Data/CsData_Projectile.h"
@@ -40,7 +40,7 @@ FCsProjectilePooledCacheImpl::~FCsProjectilePooledCacheImpl()
 // ICsPooledObjectCache
 #pragma region
 
-void FCsProjectilePooledCacheImpl::Allocate(ICsPooledObjectPayload* Payload)
+void FCsProjectilePooledCacheImpl::Allocate(ICsPayload_PooledObject* Payload)
 {
 	bAllocated = true;
 	State	   = ECsPooledObjectState::Active;

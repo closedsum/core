@@ -1,23 +1,22 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Payload/CsWeaponPooledPayloadImpl.h"
+#include "Managers/Pool/Payload/CsPayload_PooledObjectImpl.h"
 
 #include "Containers/CsInterfaceMap.h"
 
-FCsWeaponPooledPayloadImpl::FCsWeaponPooledPayloadImpl() :
-	InterfaceMap(nullptr),
-	bAllocated(false),
-	Instigator(nullptr),
-	Owner(nullptr),
-	Parent(nullptr),
-	Time()
+const FName FCsPayload_PooledObjectImpl::Name = FName("FCsPayload_PooledObjectImpl");
+
+FCsPayload_PooledObjectImpl::FCsPayload_PooledObjectImpl()
 {
 	InterfaceMap = new FCsInterfaceMap();
 
+	InterfaceMap->SetRootName(FCsPayload_PooledObjectImpl::Name);
+
 	InterfaceMap->Add<ICsPayload_PooledObject>(static_cast<ICsPayload_PooledObject*>(this));
-	InterfaceMap->Add<ICsWeaponPayload>(static_cast<ICsWeaponPayload*>(this));
+
+	Reset();
 }
 
-FCsWeaponPooledPayloadImpl::~FCsWeaponPooledPayloadImpl()
+FCsPayload_PooledObjectImpl::~FCsPayload_PooledObjectImpl()
 {
 	delete InterfaceMap;
 }
@@ -25,9 +24,10 @@ FCsWeaponPooledPayloadImpl::~FCsWeaponPooledPayloadImpl()
 // ICsPayload_PooledObject
 #pragma region
 
-void FCsWeaponPooledPayloadImpl::Reset()
+void FCsPayload_PooledObjectImpl::Reset()
 {
 	bAllocated = false;
+
 	Instigator = nullptr;
 	Owner = nullptr;
 	Parent = nullptr;

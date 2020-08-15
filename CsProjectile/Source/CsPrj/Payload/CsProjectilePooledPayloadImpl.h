@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Payload/CsProjectilePayload.h"
 
 #pragma once
@@ -7,7 +7,7 @@
 class UObject;
 struct FCsInterfaceMap;
 
-struct CSPRJ_API FCsProjectilePooledPayloadImpl : public ICsPooledObjectPayload,
+struct CSPRJ_API FCsProjectilePooledPayloadImpl : public ICsPayload_PooledObject,
 												  public ICsProjectilePayload
 {
 public:
@@ -50,7 +50,7 @@ public:
 
 #pragma endregion ICsGetInterfaceMap
 
-// ICsPooledObjectPayload
+// ICsPayload_PooledObject
 #pragma region
 public:
 
@@ -86,7 +86,7 @@ public:
 
 	void Reset();
 
-#pragma endregion ICsPooledObjectPayload
+#pragma endregion ICsPayload_PooledObject
 
 public:
 

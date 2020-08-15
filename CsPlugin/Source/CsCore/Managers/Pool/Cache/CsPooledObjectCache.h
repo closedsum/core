@@ -6,7 +6,7 @@
 #pragma once
 
 class UObject;
-struct ICsPooledObjectPayload;
+struct ICsPayload_PooledObject;
 
 /**
 */
@@ -40,7 +40,7 @@ public:
 	* @param Payload
 	* @param InTime
 	*/
-	virtual void Allocate(ICsPooledObjectPayload* Payload) = 0;
+	virtual void Allocate(ICsPayload_PooledObject* Payload) = 0;
 
 	/**
 	*

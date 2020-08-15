@@ -12,7 +12,7 @@
 // Managers
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
 // Pooled Object
-#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 // FX
 #include "Managers/FX/Cache/CsFXPooledCacheImpl.h"
 #include "Managers/FX/Payload/CsFXPooledPayload.h"
@@ -102,7 +102,7 @@ ICsPooledObjectCache* UCsFXActorPooledImpl::GetCache() const
 	return Cache;
 }
 
-void UCsFXActorPooledImpl::Allocate(ICsPooledObjectPayload* Payload)
+void UCsFXActorPooledImpl::Allocate(ICsPayload_PooledObject* Payload)
 {
 	using namespace NCsFXActorPooledImplCached;
 

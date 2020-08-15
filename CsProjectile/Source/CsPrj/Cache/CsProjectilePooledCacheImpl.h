@@ -7,7 +7,7 @@
 
 class UObject;
 struct FCsInterfaceMap;
-struct ICsPooledObjectPayload;
+struct ICsPayload_PooledObject;
 class ICsData_Projectile;
 
 struct CSPRJ_API FCsProjectilePooledCacheImpl final : public ICsPooledObjectCache,
@@ -78,7 +78,7 @@ public:
 		return Index;
 	}
 
-	void Allocate(ICsPooledObjectPayload* Payload);
+	void Allocate(ICsPayload_PooledObject* Payload);
 
 	FORCEINLINE const bool& IsAllocated() const
 	{

@@ -428,7 +428,7 @@ ICsPooledObjectCache* ACsProjectilePooledImpl::GetCache() const
 	return Cache;
 }
 
-void ACsProjectilePooledImpl::Allocate(ICsPooledObjectPayload* Payload)
+void ACsProjectilePooledImpl::Allocate(ICsPayload_PooledObject* Payload)
 {
 	checkf(Payload, TEXT("ACsProjectilePooledImpl::Allocate: Payload is NULL."));
 
@@ -525,7 +525,7 @@ UObject* ACsProjectilePooledImpl::GetInstigator() const
 
 #pragma endregion ICsProjectile
 
-void ACsProjectilePooledImpl::Launch(ICsPooledObjectPayload* Payload)
+void ACsProjectilePooledImpl::Launch(ICsPayload_PooledObject* Payload)
 {
 	using namespace NCsProjectilePooledImplCached;
 

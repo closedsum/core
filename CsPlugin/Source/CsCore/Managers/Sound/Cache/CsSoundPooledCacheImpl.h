@@ -7,7 +7,7 @@
 
 class UObject;
 struct FCsInterfaceMap;
-struct ICsPooledObjectPayload;
+struct ICsPayload_PooledObject;
 class UAudioComponent;
 class USoundAttenuation;
 
@@ -95,7 +95,7 @@ public:
 		return Index;
 	}
 
-	void Allocate(ICsPooledObjectPayload* Payload);
+	void Allocate(ICsPayload_PooledObject* Payload);
 
 	FORCEINLINE const bool& IsAllocated() const
 	{

@@ -13,7 +13,7 @@ class CSCORE_API UCsPooledObject : public UInterface
 };
 
 struct ICsPooledObjectCache;
-struct ICsPooledObjectPayload;
+struct ICsPayload_PooledObject;
 
 class CSCORE_API ICsPooledObject
 {
@@ -33,7 +33,7 @@ public:
 	*
 	* @param Payload
 	*/
-	virtual void Allocate(ICsPooledObjectPayload* Payload) = 0;
+	virtual void Allocate(ICsPayload_PooledObject* Payload) = 0;
 
 	/**
 	*
@@ -99,7 +99,7 @@ public:
 	* @param Object		A Pooled Object of type: ICsPooledObject.
 	* @param Payload	A "blob" of parameters to pass in when allocating a Pooled Object.
 	*/
-	DECLARE_DELEGATE_TwoParams(FScript_Allocate, UObject* /*Object*/, ICsPooledObjectPayload* /*Payload*/);
+	DECLARE_DELEGATE_TwoParams(FScript_Allocate, UObject* /*Object*/, ICsPayload_PooledObject* /*Payload*/);
 
 	/** Delegate for allocating a Pooled Object. 
 		  The Pooled Object implements a script interface of type: ICsPooledObject. */
@@ -202,7 +202,7 @@ public:
 		return Interface->GetCache();
 	}
 
-	FORCEINLINE void Allocate(ICsPooledObjectPayload* Payload)
+	FORCEINLINE void Allocate(ICsPayload_PooledObject* Payload)
 	{
 		if (bScript)
 			Script_Allocate_Impl.Execute(Object, Payload);

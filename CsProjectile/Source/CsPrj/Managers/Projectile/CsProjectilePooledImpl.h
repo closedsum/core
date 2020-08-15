@@ -20,7 +20,7 @@ class USphereComponent;
 class UCsProjectileMovementComponent;
 class UStaticMeshComponent;
 struct ICsPooledObjectCache;
-struct ICsPooledObjectPayload;
+struct ICsPayload_PooledObject;
 class ICsData_Projectile;
 class ICsFXActorPooled;
 struct FCsFXActorPooled;
@@ -131,7 +131,7 @@ public:
 
 	ICsPooledObjectCache* GetCache() const;
 
-	void Allocate(ICsPooledObjectPayload* Payload);
+	void Allocate(ICsPayload_PooledObject* Payload);
 
 	void Deallocate();
 
@@ -162,7 +162,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
 	bool bLaunchOnAllocate;
 
-	void Launch(ICsPooledObjectPayload* Payload);
+	void Launch(ICsPayload_PooledObject* Payload);
 
 // FX
 #pragma region

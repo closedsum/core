@@ -4,7 +4,7 @@
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Pool
-#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 // Sound
 #include "Managers/Sound/Payload/CsSoundPooledPayload.h"
 #include "Components/AudioComponent.h"
@@ -62,7 +62,7 @@ FCsSoundPooledCacheImpl::~FCsSoundPooledCacheImpl()
 // ICsPooledObjectCache
 #pragma region
 
-void FCsSoundPooledCacheImpl::Allocate(ICsPooledObjectPayload* Payload)
+void FCsSoundPooledCacheImpl::Allocate(ICsPayload_PooledObject* Payload)
 {
 	using namespace NCsSoundPooledCacheImplCached;
 

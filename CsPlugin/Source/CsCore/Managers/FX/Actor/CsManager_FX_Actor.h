@@ -469,7 +469,7 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPooledObjectPayload.
+	*  Payload implements the interface: ICsPayload_PooledObject.
 	*
 	* @param Type	Type of payload.
 	* return		Payload that implements the interface: ICsFXPooledPayload.
@@ -478,7 +478,7 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPooledObjectPayload.
+	*  Payload implements the interface: ICsPayload_PooledObject.
 	*
 	* @param Type	Type of payload.
 	* return		Payload that implements the interface: ICsFXPooledPayload.

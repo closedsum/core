@@ -3,7 +3,7 @@
 
 #include "Managers/CsPooledObjectOld.h"
 #include "Managers/Pool/CsTypes_Pool.h"
-#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Types/CsTypes_String.h"
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
@@ -259,7 +259,7 @@ namespace NCsProcessPriorityModifier
 	}
 }
 
-struct FCsProcessPayload : public ICsPooledObjectPayload
+struct FCsProcessPayload : public ICsPayload_PooledObject
 {
 	bool bAllocated;
 
@@ -303,7 +303,7 @@ public:
 	}
 	~FCsProcessPayload() {}
 
-	// ICsPooledObjectPayload
+	// ICsPayload_PooledObject
 #pragma region
 
 	const bool& IsAllocated() const
@@ -357,7 +357,7 @@ public:
 		OptionalWorkingDirectory = NCsCached::Str::Empty;
 	}
 
-#pragma endregion ICsPooledObjectPayload
+#pragma endregion ICsPayload_PooledObject
 };
 
 #pragma endregion Payload

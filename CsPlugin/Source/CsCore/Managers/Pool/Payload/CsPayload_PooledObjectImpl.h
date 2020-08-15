@@ -1,12 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 
 #pragma once
 
 class UObject;
 struct FCsInterfaceMap;
 
-struct CSCORE_API FCsPooledObjectPayload : ICsPooledObjectPayload
+struct CSCORE_API FCsPayload_PooledObjectImpl : ICsPayload_PooledObject
 {
 public:
 
@@ -28,8 +28,8 @@ public:
 
 	FCsTime Time;
 
-	FCsPooledObjectPayload();
-	~FCsPooledObjectPayload();
+	FCsPayload_PooledObjectImpl();
+	~FCsPayload_PooledObjectImpl();
 
 // ICsGetInterfaceMap
 #pragma region
@@ -42,7 +42,7 @@ public:
 
 #pragma endregion ICsGetInterfaceMap
 
-// ICsPooledObjectPayload
+// ICsPayload_PooledObject
 #pragma region
 public:
 
@@ -78,5 +78,5 @@ public:
 
 	void Reset();
 
-#pragma endregion ICsPooledObjectPayload
+#pragma endregion ICsPayload_PooledObject
 };

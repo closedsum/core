@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Managers/Sound/Payload/CsSoundPooledPayload.h"
 
 #pragma once
@@ -8,7 +8,7 @@ class UObject;
 struct FCsInterfaceMap;
 class USoundBase;
 
-struct CSCORE_API FCsSoundPooledPayloadImpl final : public ICsPooledObjectPayload,
+struct CSCORE_API FCsSoundPooledPayloadImpl final : public ICsPayload_PooledObject,
 												    public ICsSoundPooledPayload
 {
 public:
@@ -67,7 +67,7 @@ public:
 
 #pragma endregion ICsGetInterfaceMap
 
-// ICsPooledObjectPayload
+// ICsPayload_PooledObject
 #pragma region
 public:
 
@@ -103,7 +103,7 @@ public:
 
 	void Reset();
 
-#pragma endregion ICsPooledObjectPayload
+#pragma endregion ICsPayload_PooledObject
 
 public:
 

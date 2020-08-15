@@ -2,7 +2,7 @@
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/CsTypes_View.h"
-#include "Managers/Pool/Payload/CsPooledObjectPayload.h"
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Types/CsTypes_AttachDetach.h"
 
 #include "CsTypes_Sound.generated.h"

@@ -11,7 +11,7 @@
 
 struct FCsFXActorPooled;
 struct ICsPooledObjectCache;
-struct ICsPooledObjectPayload;
+struct ICsPayload_PooledObject;
 class ANiagaraActor;
 
 UCLASS()
@@ -53,7 +53,7 @@ public:
 
 	ICsPooledObjectCache* GetCache() const;
 	
-	void Allocate(ICsPooledObjectPayload* Payload);
+	void Allocate(ICsPayload_PooledObject* Payload);
 
 	void Deallocate();
 

@@ -384,7 +384,7 @@ void UCsProjectileWeaponComponent::LaunchProjectile(const FCsProjectilePooled* P
 
 	const FString& Context = Str::LaunchProjectile;
 
-	ICsPooledObjectPayload* ObjectPayload = NCsInterfaceMap::GetInterfaceChecked<ICsPooledObjectPayload>(Context, Payload);
+	ICsPayload_PooledObject* ObjectPayload = NCsInterfaceMap::GetInterfaceChecked<ICsPayload_PooledObject>(Context, Payload);
 
 	ACsProjectilePooledImpl* Projectile = ProjectilePooled->GetObject<ACsProjectilePooledImpl>();
 

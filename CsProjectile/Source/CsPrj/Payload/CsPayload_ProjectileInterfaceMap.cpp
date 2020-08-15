@@ -6,8 +6,10 @@
 const FName FCsPayload_ProjectileInterfaceMap::Name = FName("FCsPayload_ProjectileInterfaceMap");
 
 FCsPayload_ProjectileInterfaceMap::FCsPayload_ProjectileInterfaceMap() :
+		// ICsGetInterfaceMap
 		InterfaceMap(nullptr)
 {
+	// ICsGetInterfaceMap
 	InterfaceMap = new FCsInterfaceMap();
 
 	InterfaceMap->SetRootName(FCsPayload_ProjectileInterfaceMap::Name);
@@ -16,4 +18,6 @@ FCsPayload_ProjectileInterfaceMap::FCsPayload_ProjectileInterfaceMap() :
 
 FCsPayload_ProjectileInterfaceMap::~FCsPayload_ProjectileInterfaceMap()
 {
+	// ICsGetInterfaceMap
+	delete InterfaceMap;
 }

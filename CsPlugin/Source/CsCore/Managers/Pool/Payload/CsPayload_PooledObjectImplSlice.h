@@ -7,9 +7,13 @@ class UObject;
 struct FCsInterfaceMap;
 
 /**
-* Basic implementation of the interface: ICsPayload_PooledObject
+* Basic "slice" implementation of the interface: ICsPayload_PooledObject.
+* The slice is intended to "layered" with other objects of the same category.
+* In this case, payload.
+* The slice shares a InterfaceMap with other slices.
+* The InterfaceMap is usually stored in a separate object for that category.
 */
-struct CSCORE_API FCsPayload_PooledObjectImpl : ICsPayload_PooledObject
+struct CSCORE_API FCsPayload_PooledObjectImplSlice : ICsPayload_PooledObject
 {
 public:
 
@@ -22,6 +26,8 @@ private:
 
 public:
 
+	// ICsPayload_PooledObject
+
 	bool bAllocated;
 
 	UObject* Instigator;
@@ -32,8 +38,7 @@ public:
 
 	FCsTime Time;
 
-	FCsPayload_PooledObjectImpl();
-	~FCsPayload_PooledObjectImpl();
+	FCsPayload_PooledObjectImplSlice();
 
 // ICsGetInterfaceMap
 #pragma region
@@ -45,6 +50,10 @@ public:
 	}
 
 #pragma endregion ICsGetInterfaceMap
+
+public:
+
+	void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
 
 // ICsPayload_PooledObject
 #pragma region

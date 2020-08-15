@@ -16,6 +16,8 @@ public:
 
 private:
 
+	// ICsGetInterfaceMap
+
 	FCsInterfaceMap* InterfaceMap;
 
 public:

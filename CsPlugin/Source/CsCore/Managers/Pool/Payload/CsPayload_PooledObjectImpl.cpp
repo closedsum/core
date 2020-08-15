@@ -5,19 +5,27 @@
 
 const FName FCsPayload_PooledObjectImpl::Name = FName("FCsPayload_PooledObjectImpl");
 
-FCsPayload_PooledObjectImpl::FCsPayload_PooledObjectImpl()
+FCsPayload_PooledObjectImpl::FCsPayload_PooledObjectImpl() :
+	// ICsGetInterfaceMap
+	InterfaceMap(nullptr),
+	// ICsPayload_PooledObject
+	bAllocated(false),
+	Instigator(nullptr),
+	Owner(nullptr),
+	Parent(nullptr),
+	Time()
 {
+	// ICsGetInterfaceMap
 	InterfaceMap = new FCsInterfaceMap();
 
 	InterfaceMap->SetRootName(FCsPayload_PooledObjectImpl::Name);
 
 	InterfaceMap->Add<ICsPayload_PooledObject>(static_cast<ICsPayload_PooledObject*>(this));
-
-	Reset();
 }
 
 FCsPayload_PooledObjectImpl::~FCsPayload_PooledObjectImpl()
 {
+	// ICsGetInterfaceMap
 	delete InterfaceMap;
 }
 
@@ -26,6 +34,7 @@ FCsPayload_PooledObjectImpl::~FCsPayload_PooledObjectImpl()
 
 void FCsPayload_PooledObjectImpl::Reset()
 {
+	// ICsPayload_PooledObject
 	bAllocated = false;
 
 	Instigator = nullptr;

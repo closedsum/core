@@ -61,6 +61,11 @@ public:
 		bUniqueBasedSlices = true;
 	}
 
+	FORCEINLINE bool HasUniqueBasedSlices() const
+	{
+		return bUniqueBasedSlices;
+	}
+
 	/**
 	*/
 	FORCEINLINE bool HasUniqueBasedRootName(const FName& Name)

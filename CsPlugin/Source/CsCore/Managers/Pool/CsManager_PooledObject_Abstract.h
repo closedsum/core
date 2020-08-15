@@ -95,8 +95,10 @@ public:
 enum class ECsManagerPooledObjectFunctionNames : uint8
 {
 	Update,
+	Allocate,
 	Deallocate,
 	DeallocateAll,
+	ConstructPayloads,
 	AllocatePayload,
 	Spawn,
 	ECsManagerPooledObjectFunctionNames_MAX,
@@ -213,8 +215,10 @@ public:
 		ConstructParams = Params.ConstructParams;
 
 		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update]		   = Name + TEXT("::Update");
+		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Allocate]		   = Name + TEXT("::Allocate");
 		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Deallocate]	   = Name + TEXT("::Deallocate");
 		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::DeallocateAll]   = Name + TEXT("::DeallocateAll");
+		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::ConstructPayloads] = Name + TEXT("::ConstructPayloads");
 		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::AllocatePayload] = Name + TEXT("::AllocatePayload");
 		FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn]		   = Name + TEXT("::Spawn");
 
@@ -1238,6 +1242,8 @@ public:
 	{
 		CS_SCOPED_TIMER(UpdateScopedTimerHandle);
 
+		const FString& Context = FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update];
+
 		TCsDoubleLinkedList<InterfaceContainerType*>* Current = AllocatedHead;
 		TCsDoubleLinkedList<InterfaceContainerType*>* Next	  = Current;
 
@@ -1264,7 +1270,7 @@ public:
 			if (Cache->ShouldDeallocate())
 			{
 #if !UE_BUILD_SHIPPING
-				LogTransaction_Impl.Execute(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update], ECsPoolTransaction::DeallocateByQueue, O);
+				LogTransaction_Impl.Execute(Context, ECsPoolTransaction::DeallocateByQueue, O);
 #endif // #if !UE_BUILD_SHIPPING
 				O->Deallocate();
 				RemoveAllocatedLink(Current);
@@ -1277,7 +1283,7 @@ public:
 			if (!Cache->IsAllocated())
 			{
 #if !UE_BUILD_SHIPPING
-				LogTransaction_Impl.Execute(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update], ECsPoolTransaction::DeallocateByUnknown, O);
+				LogTransaction_Impl.Execute(Context, ECsPoolTransaction::DeallocateByUnknown, O);
 #endif // #if !UE_BUILD_SHIPPING
 				RemoveAllocatedLink(Current);
 				continue;
@@ -1287,7 +1293,7 @@ public:
 			if (Cache->HasLifeTimeExpired())
 			{
 #if !UE_BUILD_SHIPPING
-				LogTransaction_Impl.Execute(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Update], ECsPoolTransaction::DeallocateByLifeTime, O);
+				LogTransaction_Impl.Execute(Context, ECsPoolTransaction::DeallocateByLifeTime, O);
 #endif // #if !UE_BUILD_SHIPPING
 				O->Deallocate();
 				RemoveAllocatedLink(Current);
@@ -1334,9 +1340,11 @@ protected:
 	{
 		CS_SCOPED_TIMER(AllocateScopedTimerHandle);
 
+		const FString& Context = FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Allocate];
+
 		if (IsExhausted())
 		{
-			checkf(0, TEXT("%s::Allocate: Pool is exhausted. Pool Size is %d."), *Name, PoolSize);
+			checkf(0, TEXT("%s: Pool is exhausted. Pool Size is %d."), *Context, PoolSize);
 			return nullptr;
 		}
 
@@ -1347,15 +1355,12 @@ protected:
 
 			ICsPooledObjectCache* Cache = O->GetCache();
 
-			checkf(Cache, TEXT("%s::Allocate: Cache is NULL."), *Name);
+			checkf(Cache, TEXT("%s: Cache is NULL."), *Context);
 
 			if (!Cache->IsAllocated())
 			{
-				FCsInterfaceMap* InterfaceMap = Payload->GetInterfaceMap();
-
-				checkf(InterfaceMap, TEXT("%s::Spawn: InterfaceMap is NULL. PayloadType failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."), *Name);
-
-				ICsPooledObjectPayload* P = InterfaceMap->Get<ICsPooledObjectPayload>();
+				// Get Pooled Object Payload
+				ICsPooledObjectPayload* P = NCsInterfaceMap::GetInterfaceChecked<ICsPooledObjectPayload, PayloadType>(Context, Payload);
 
 				CS_SCOPED_TIMER(AllocateObjectScopedTimerHandle);
 
@@ -1363,7 +1368,7 @@ protected:
 				return O;
 			}
 		}
-		checkf(0, TEXT("%s::Allocate: Pool is exhausted. Pool Size is %d."), *Name, PoolSize);
+		checkf(0, TEXT("%s: Pool is exhausted. Pool Size is %d."), *Context, PoolSize);
 		return nullptr;
 	}
 
@@ -1377,6 +1382,8 @@ protected:
 	bool Deallocate(const int32& Index)
 	{
 		CS_SCOPED_TIMER(DeallocateScopedTimerHandle);
+
+		const FString& Context = FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Deallocate];
 
 		// Check if Index is valid
 		if (Index <= INDEX_NONE)
@@ -1408,7 +1415,7 @@ protected:
 		InterfaceContainerType* O						   = **Link;
 
 #if !UE_BUILD_SHIPPING
-		LogTransaction_Impl.Execute(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Deallocate], ECsPoolTransaction::Deallocate, O);
+		LogTransaction_Impl.Execute(Context, ECsPoolTransaction::Deallocate, O);
 #endif // #if !UE_BUILD_SHIPPING
 
 		// Deallocate Object
@@ -1486,10 +1493,12 @@ protected:
 	*/
 	void DeallocateAll()
 	{
+		const FString& Context = FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::DeallocateAll];
+
 		for (InterfaceContainerType& O : AllocatedObjects)
 		{
 #if !UE_BUILD_SHIPPING
-			LogTransaction_Impl.Execute(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::DeallocateAll], ECsPoolTransaction::Deallocate, O);
+			LogTransaction_Impl.Execute(Context, ECsPoolTransaction::Deallocate, O);
 #endif // #if !UE_BUILD_SHIPPING
 			O.Deallocate();
 			OnDeallocate_Event.Broadcast(O);
@@ -1536,9 +1545,11 @@ public:
 	*/
 	void ConstructPayloads(const int32& Size)
 	{
-		checkf(Size > 0, TEXT("%s::ConstructPayloads: Size must be GREATER THAN 0."), *Name);
+		const FString& Context = FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::ConstructPayloads];
 
-		checkf(ConstructPayload_Impl.IsBound(), TEXT("%s::ConstructPaylaods: ConstructPayload_Impl is NOT bound."), *Name);
+		checkf(Size > 0, TEXT("%s: Size must be GREATER THAN 0."), *Context);
+
+		checkf(ConstructPayload_Impl.IsBound(), TEXT("%s: ConstructPayload_Impl is NOT bound."), *Context);
 
 		PayloadSize = Size;
 
@@ -1549,13 +1560,10 @@ public:
 		{
 			Payloads.Add(ConstructPayload_Impl.Execute());
 
-			checkf(Payloads[I], TEXT("%s::ConstructPayloads: Failed to construct payload of type: PayloadType."), *Name);
+			checkf(Payloads[I], TEXT("%s: Failed to construct payload of type: PayloadType."), *Context);
 
-			FCsInterfaceMap* InterfaceMap = Payloads[I]->GetInterfaceMap();
-
-			checkf(InterfaceMap, TEXT("%s::ConstructPayloads:InterfaceMap is NULL. PayloadType failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."), *Name);
-
-			ICsPooledObjectPayload* P = InterfaceMap->Get<ICsPooledObjectPayload>();
+			// Get Pooled Object Payload
+			ICsPooledObjectPayload* P = NCsInterfaceMap::GetInterfaceChecked<ICsPooledObjectPayload, PayloadType>(Context, Payloads[I]);
 
 			PooledObjectPayloads.Add(P);
 		}
@@ -1619,7 +1627,7 @@ public:
 	template<typename PayloadTypeImpl>
 	PayloadTypeImpl* AllocatePayload(const FString& Context)
 	{
-		return NCsInterfaceMap::PureStaticCastChecked<PayloadTypeImpl, PayloadType>(Context, AllocatePayload());
+		return NCsInterfaceMap::StaticCastChecked<PayloadTypeImpl, PayloadType>(Context, AllocatePayload());
 	}
 
 	/**
@@ -1679,15 +1687,15 @@ public:
 
 		InterfaceContainerType* O = Allocate(Payload);
 
+		const FString& Context = FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn];
+
 #if !UE_BUILD_SHIPPING
-		LogTransaction_Impl.Execute(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn], ECsPoolTransaction::Allocate, O);
+		LogTransaction_Impl.Execute(Context, ECsPoolTransaction::Allocate, O);
 #endif // #if !UE_BUILD_SHIPPING
 
-		FCsInterfaceMap* InterfaceMap = Payload->GetInterfaceMap();
+		// Get Pooled Object Payload
+		ICsPooledObjectPayload* P = NCsInterfaceMap::GetInterfaceChecked<ICsPooledObjectPayload, PayloadType>(Context, Payload);
 
-		checkf(InterfaceMap, TEXT("%s::Spawn: InterfaceMap is NULL. PayloadType failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."), *Name);
-
-		ICsPooledObjectPayload* P = InterfaceMap->Get<ICsPooledObjectPayload>();
 		P->Reset();
 
 		AddToAllocatedObjects_Internal(O);
@@ -1704,18 +1712,15 @@ public:
 
 		CS_SCOPED_TIMER(SpawnScopedTimerHandle);
 
-		// Get Interface Map
-		FCsInterfaceMap* InterfaceMap = Payload->GetInterfaceMap();
-
-		checkf(InterfaceMap, TEXT("%s::Spawn: InterfaceMap is NULL. PayloadType failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."), *Name);
+		const FString& Context = FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn];
 
 		// Get PayloadType
-		PayloadType* P = InterfaceMap->Get<PayloadType>();
+		PayloadType* P = NCsInterfaceMap::GetInterfaceChecked<PayloadType, OtherPayloadType>(Context, Payload);
 
 		InterfaceContainerType* O = Allocate(P);
 
 #if !UE_BUILD_SHIPPING
-		LogTransaction_Impl.Execute(FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn], ECsPoolTransaction::Spawn, O);
+		LogTransaction_Impl.Execute(Context, ECsPoolTransaction::Spawn, O);
 #endif // #if !UE_BUILD_SHIPPING
 
 		// Get PooledObjectPayload
@@ -1744,7 +1749,7 @@ public:
 	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Index
-	* return		Whether the Object was succesfully "destroyed" / deallocated
+	* return		Whether the Object was successfully "destroyed" / deallocated
 	*/
 	bool Destroy(const int32& Index)
 	{
@@ -1758,7 +1763,7 @@ public:
 	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Object
-	* return			Whether the Object was succesfully "destroyed" / deallocated
+	* return			Whether the Object was successfully "destroyed" / deallocated
 	*/
 	bool Destroy(const InterfaceContainerType* Object)
 	{
@@ -1772,7 +1777,7 @@ public:
 	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Object
-	* return			Whether the Object was succesfully "destroyed" / deallocated
+	* return			Whether the Object was successfully "destroyed" / deallocated
 	*/
 	bool Destroy(InterfaceType* Object)
 	{
@@ -1786,7 +1791,7 @@ public:
 	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
 	* @param Object
-	* return			Whether the Object was succesfully "destroyed" / deallocated
+	* return			Whether the Object was successfully "destroyed" / deallocated
 	*/
 	bool Destroy(UObject* Object)
 	{
@@ -1798,7 +1803,7 @@ public:
 	*
 	*  NOTE: This process is O(n). Consider queuing the deallocate.
 	*
-	* return	If successful return the FIRST object in the allocated list was succesfully "destroyed" / deallocated
+	* return	If successful return the FIRST object in the allocated list was successfully "destroyed" / deallocated
 	*/
 	const InterfaceContainerType* DestroyHead()
 	{

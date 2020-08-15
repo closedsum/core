@@ -7,10 +7,15 @@
 // Library
 #include "Library/CsLibrary_Common.h"
 #include "Managers/Damage/Expression/CsLibrary_DamageExpression.h"
+#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
 // Damage
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
 #include "Managers/Damage/Expression/CsDamageExpression.h"
 #include "Managers/Damage/Shape/CsDamageShape.h"
+#include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
+#include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
+#include "Managers/Damage/Range/CsDamageRangeImpl.h"
 // Unique
 #include "UniqueObject/CsUniqueObject.h"
 
@@ -36,6 +41,7 @@ namespace NCsManagerDamageCached
 	{
 		const FString ProcessDamageEvent = TEXT("UCsManager_Damage::ProcessDamageEvent");
 		const FString ProcessDamageEventContainer = TEXT("UCsManager_Damage::ProcessDamageEventContainer");
+		const FString LogEventPoint = TEXT("UCsManager_Damage::LogEventPoint");
 	}
 }
 
@@ -220,16 +226,44 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 
 void UCsManager_Damage::Initialize()
 {
-	// Bind Construct Resource Impl
-	Manager_Event.ConstructResourceType_Impl.BindUObject(this, &UCsManager_Damage::ConstructEvent);
+	// Event
+	{
+		// Bind Construct Resource Impl
+		Manager_Event.ConstructResourceType_Impl.BindUObject(this, &UCsManager_Damage::ConstructEvent);
 
-	// TODO: Poll config in future
+		// TODO: Poll config in future
 
-	// Create Pool
-	static const int32 PoolSize = 64;
+		// Create Pool
+		static const int32 PoolSize = 256;
 
-	Manager_Event.CreatePool(PoolSize);
+		Manager_Event.CreatePool(PoolSize);
+	}
+	// Value
+	{
+		const int32& Count = EMCsDamageValue::Get().Num();
+		
+		Manager_Values.Reserve(Count);
+		Manager_Values.AddDefaulted(Count);
+		
+		// TODO: Poll config in future
 
+			// Create Pool
+		static const int32 PoolSize = 256;
+
+		for (const FECsDamageValue& Value : EMCsDamageValue::Get())
+		{
+			FCsManager_DamageValue& Manager = Manager_Values[Value.GetValue()];
+
+			Manager.SetDeconstructResourcesOnShutdown();
+			Manager.CreatePool(PoolSize);
+
+			Manager.Add(ConstructValue(Value));
+		}
+	}
+	// Range
+	{
+
+	}
 	bInitialized = true;
 }
 
@@ -319,6 +353,19 @@ FCsResource_DamageEvent* UCsManager_Damage::AllocateEvent()
 	return Manager_Event.Allocate();
 }
 
+void UCsManager_Damage::DeallocateEvent(const FString& Context, FCsResource_DamageEvent* Event)
+{
+	if (FCsDamageEventImpl* Impl = FCsLibrary_DamageEvent::SafePureStaticCastChecked<FCsDamageEventImpl>(Context, Event->Get()))
+	{
+		// If the Event has a Damage Value Container, deallocate it
+		if (FCsResource_DamageValue* Value = Impl->DamageValueContainer)
+		{
+			DeallocateValue(Impl->DamageValueType, Value);
+		}
+	}
+	Manager_Event.Deallocate(Event);
+}
+
 void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 {
 	using namespace NCsManagerDamageCached;
@@ -331,8 +378,6 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 
 	checkf(Expression, TEXT("%s: Expression is NULL. No Damage Expression found for Event."), *Context);
 
-	Local_Recievers.Reset(Local_Recievers.Max());
-
 	// ICsDamageShape
 	if (ICsDamageShape* Shape = FCsLibrary_DamageExpression::GetSafeInterfaceChecked<ICsDamageShape>(Context, Expression))
 	{
@@ -342,6 +387,8 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 	else
 	{
 		const FHitResult& HitResult = Event->GetHitResult();
+		
+		bool CopyEvent = false;
 		
 		// Actor
 		if (AActor* Actor = HitResult.GetActor())
@@ -353,9 +400,12 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 			{
 				Local_Recievers.AddDefaulted();
 				Local_Recievers.Last().SetObject(Actor);
+
+				CopyEvent = true;
 			}
 		}
 		// Component
+		else
 		if (UPrimitiveComponent* Component = HitResult.GetComponent())
 		{
 			// Check if Component implements interface: ICsReceiveDamage
@@ -365,19 +415,49 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 			{
 				Local_Recievers.AddDefaulted();
 				Local_Recievers.Last().SetObject(Component);
+
+				CopyEvent = true;
 			}
+		}
+
+		if (CopyEvent)
+		{
+			// Copy the Event
+			FCsResource_DamageEvent* EventContainer = AllocateEvent();
+			ICsDamageEvent* Evt						= EventContainer->Get();
+
+			FCsLibrary_DamageEvent::CopyChecked(Context, const_cast<ICsDamageEvent*>(Event), Evt);
+
+			// Set the Damage
+			FCsLibrary_DamageEvent::SetDamageChecked(Context, Evt);
+
+			Local_Events.Add(EventContainer);
 		}
 	}
 
-	for (FCsReceiveDamage& Receiver : Local_Recievers)
+	const int32 Count = Local_Recievers.Num();
+
+	for (int32 I = 0; I < Count; ++I)
 	{
-		Receiver.Damage(Event);
+		FCsReceiveDamage& Receiver				= Local_Recievers[I];
+		FCsResource_DamageEvent* EventContainer = Local_Events[I];
+
+		ICsDamageEvent* Evt = EventContainer->Get();
+
+		Receiver.Damage(Evt);
 
 #if !UE_BUILD_SHIPPING
-		LogEventPoint(Event);
+		LogEventPoint(Evt);
 #endif // #if !UE_BUILD_SHIPPING
-		OnProcessDamageEvent_Event.Broadcast(Event);
+
+		OnProcessDamageEvent_Event.Broadcast(Evt);
+		DeallocateEvent(Context, EventContainer);
+
+		Local_Events[I] = nullptr;
 	}
+
+	Local_Recievers.Reset(Local_Recievers.Max());
+	Local_Events.Reset(Local_Events.Max());
 }
 
 
@@ -385,22 +465,88 @@ void UCsManager_Damage::ProcessDamageEventContainer(const FCsResource_DamageEven
 {
 	using namespace NCsManagerDamageCached;
 
-	check(Manager_Event.IsValidChecked(Str::ProcessDamageEventContainer, Event));
+	const FString& Context = Str::ProcessDamageEventContainer;
+
+	check(Manager_Event.IsValidChecked(Context, Event));
 
 	const ICsDamageEvent* IEvent = Event->Get();
 
 	ProcessDamageEvent(IEvent);
-
-	Manager_Event.Deallocate(const_cast<FCsResource_DamageEvent*>(Event));
+	DeallocateEvent(Context, const_cast<FCsResource_DamageEvent*>(Event));
 }
 
 #pragma endregion Event
+
+// Value
+#pragma region
+
+ICsDamageValue* UCsManager_Damage::ConstructValue(const FECsDamageValue& Type)
+{
+	// Point | ICsDamageValuePoint (FCsDamageValuePointImpl)
+	if (Type == NCsDamageValue::Point)
+		return new FCsDamageValuePointImpl();
+	// Point | ICsDamagePointRange (FCsDamageValueRangeImpl)
+	if (Type == NCsDamageValue::Range)
+		return new FCsDamageValueRangeImpl();
+	return nullptr;
+}
+
+FCsResource_DamageValue* UCsManager_Damage::AllocateValue(const FECsDamageValue& Type)
+{
+	checkf(EMCsDamageValue::Get().IsValidEnum(Type), TEXT("UCsManager_Damage::AllocateValue: Type: %s is NOT Valid."), Type.ToChar());
+
+	return Manager_Values[Type.GetValue()].Allocate();
+}
+
+void UCsManager_Damage::DeallocateValue(const FECsDamageValue& Type, FCsResource_DamageValue* Value)
+{
+	checkf(EMCsDamageValue::Get().IsValidEnum(Type), TEXT("UCsManager_Damage::DeallocateValue: Type: %s is NOT Valid."), Type.ToChar());
+
+	Manager_Values[Type.GetValue()].Deallocate(Value);
+}
+
+void UCsManager_Damage::DeallocateValue(const FString& Context, FCsResource_DamageValue* Value)
+{
+	// Point
+	if (ICsDamageValuePoint* Point = FCsLibrary_DamageValue::GetSafeInterfaceChecked<ICsDamageValuePoint>(Context, Value->Get()))
+	{
+		DeallocateValue(NCsDamageValue::Point, Value);
+	}
+	// Range
+	else
+	if (ICsDamageValueRange* Range = FCsLibrary_DamageValue::GetSafeInterfaceChecked<ICsDamageValueRange>(Context, Value->Get()))
+	{
+		DeallocateValue(NCsDamageValue::Range, Value);
+	}
+}
+
+#pragma endregion Value
+
+// Range
+#pragma region
+
+ICsDamageRange* UCsManager_Damage::ConstructRange()
+{
+	return new FCsDamageRangeImpl();
+}
+
+FCsResource_DamageRange* UCsManager_Damage::AllocateRange()
+{
+	return nullptr;
+}
+
+#pragma endregion Range
+
 
 // Log
 #pragma region
 
 void UCsManager_Damage::LogEventPoint(const ICsDamageEvent* Event)
 {
+	using namespace NCsManagerDamageCached;
+
+	const FString& Context = Str::LogEventPoint;
+
 	ICsDamageExpression* Expression = Event->GetExpression();
 
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerDamageEvents))
@@ -408,7 +554,17 @@ void UCsManager_Damage::LogEventPoint(const ICsDamageEvent* Event)
 		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::ProcessDamageEvent:"));
 		// Expression
 		UE_LOG(LogCs, Warning, TEXT("- Expression: Point"));
-		UE_LOG(LogCs, Warning, TEXT("-- Damage: %f"), Expression->GetDamage());
+
+		// Damage
+		{
+			const ICsDamageValue* Value = Event->GetDamageValue();
+
+			// Point
+			if (ICsDamageValuePoint* Point = FCsLibrary_DamageValue::GetSafeInterfaceChecked<ICsDamageValuePoint>(Context, const_cast<ICsDamageValue*>(Value)))
+			{
+				UE_LOG(LogCs, Warning, TEXT("-- Damage: %f"), Point->GetValue());
+			}
+		}
 		UE_LOG(LogCs, Warning, TEXT("-- Type: %s"), Expression->GetType().ToChar());
 		// Instigator
 		UE_LOG(LogCs, Warning, TEXT("- Instigator: %s"), Event->GetInstigator() ? *(Event->GetInstigator()->GetName()) : TEXT("None"));

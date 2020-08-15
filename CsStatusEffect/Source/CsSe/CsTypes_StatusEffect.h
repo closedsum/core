@@ -143,7 +143,7 @@ UENUM(BlueprintType)
 enum class ECsStatusEffectTransferFrequency : uint8
 {
 	None								 UMETA(DisplayName = "None"),
-	Once								 UMETA(DisplayName = " nce"),
+	Once								 UMETA(DisplayName = "Once"),
 	Count								 UMETA(DisplayName = "Count"),
 	Time								 UMETA(DisplayName = "Time"),
 	Infinite							 UMETA(DisplayName = "Infinite"),

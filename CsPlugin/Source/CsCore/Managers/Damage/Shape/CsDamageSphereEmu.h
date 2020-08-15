@@ -6,6 +6,7 @@
 #pragma once
 
 struct FCsInterfaceMap;
+struct ICsDamageValue;
 
 /**
 *
@@ -25,6 +26,7 @@ private:
 public:
 
 	// ICsDamageExpression
+	ICsDamageValue* DamageValue;
 
 	FECsDamageType* Type;
 
@@ -70,9 +72,9 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE float GetDamage() const
+	FORCEINLINE ICsDamageValue* GetValue() const
 	{
-		return *MaxDamage;
+		return DamageValue;
 	}
 
 	FORCEINLINE const FECsDamageType& GetType() const
@@ -93,7 +95,7 @@ public:
 #pragma region
 public:
 
-	float CalculateDamage(const FVector& Origin, const FVector& Point) const;
+	float CalculateDamage(const ICsDamageValue* Value, const FVector& Origin, const FVector& Point) const;
 
 	bool IsInBounds(const FVector& Origin, const FVector& Point) const;
 
@@ -101,15 +103,9 @@ public:
 
 public:
 
-	void SetMinDamage(float* Value)
-	{
-		MinDamage = Value;
-	}
+	void SetMinDamage(float* Value);
 
-	void SetMaxDamage(float* Value)
-	{
-		MaxDamage = Value;
-	}
+	void SetMaxDamage(float* Value);
 
 	void SetMinRadius(float* Value)
 	{

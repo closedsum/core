@@ -9,7 +9,9 @@
 #include "Managers/Pool/Cache/CsLibrary_PooledObjectCache.h"
 #include "Managers/Pool/Payload/CsLibrary_PooledObjectPayload.h"
 #include "Data/CsLibrary_Data_Projectile.h"
+#include "Managers/Damage/Expression/CsLibrary_DamageExpression.h"
 #include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
+#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
 // Components
@@ -34,6 +36,7 @@
 #include "Managers/FX/Payload/CsFXPooledPayloadImpl.h"
 // Damage
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
+#include "Managers/Damage/Shape/CsDamageShape.h"
 // Game
 #include "GameFramework/GameStateBase.h"
 
@@ -51,7 +54,8 @@ namespace NCsProjectilePooledImplCached
 		const FString Update = TEXT("ACsProjectilePooledImpl::Update");
 		const FString Deallocate = TEXT("ACsProjectilePooledImpl::Deallocate");
 		const FString Launch = TEXT("ACsProjectilePooledImpl::Launch");
-		const FString GetDamageEventContainerOnHit = TEXT("ACsProjectilePooledImpl::GetDamageEventContainerOnHit");
+		const FString OnAllocate_SetDamageContainersAndTypes = TEXT("ACsProjectilePooledImpl::OnAllocate_SetDamageContainersAndTypes");
+		const FString OnHit_GetDamageEventContainer = TEXT("ACsProjectilePooledImpl::OnHit_GetDamageEventContainer");
 	}
 }
 
@@ -72,6 +76,8 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	// FX
 	TrailFXPooled(nullptr),
 	// Damage
+	DamageValueContainer(nullptr),
+	DamageValueType(),
 	OnBroadcastDamage_Event(),
 	OnBroadcastDamageContainer_Event()
 {
@@ -375,7 +381,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 	// ICsData_ProjectileDamage
 	if (ICsData_ProjectileDamage* DamageData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ICsData_ProjectileDamage>(Context, Data))
 	{
-		const FCsResource_DamageEvent* Event = GetDamageEventContainerOnHit(Hit);
+		const FCsResource_DamageEvent* Event = OnHit_GetDamageEventContainer(Hit);
 
 		OnBroadcastDamage_Event.Broadcast(Event->Get());
 		OnBroadcastDamageContainer_Event.Broadcast(Event);
@@ -427,6 +433,9 @@ void ACsProjectilePooledImpl::Allocate(ICsPooledObjectPayload* Payload)
 	checkf(Payload, TEXT("ACsProjectilePooledImpl::Allocate: Payload is NULL."));
 
 	Cache->Allocate(Payload);
+
+	// Set Damage Value if the projectile supports damage
+	OnAllocate_SetDamageContainersAndTypes();
 
 	if (bLaunchOnAllocate)
 		Launch(Payload);
@@ -485,6 +494,15 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 
 	SetActorHiddenInGame(true);
 	SetActorTickEnabled(false);
+
+	// DamageValue
+	if (DamageValueContainer)
+	{
+		UCsManager_Damage::Get(GetWorld()->GetGameState())->DeallocateValue(DamageValueType, DamageValueContainer);
+
+		DamageValueContainer = nullptr;
+		DamageValueType = EMCsDamageValue::Get().GetMAX();
+	}
 }
 
 // ICsProjectile
@@ -642,8 +660,8 @@ void ACsProjectilePooledImpl::Launch(ICsPooledObjectPayload* Payload)
 	// Simulated
 	if (MovementType == ECsProjectileMovement::Simulated)
 	{
-		MovementComponent->InitialSpeed = Data->GetInitialSpeed();
-		MovementComponent->MaxSpeed		= Data->GetMaxSpeed();
+		MovementComponent->InitialSpeed			  = Data->GetInitialSpeed();
+		MovementComponent->MaxSpeed				  = Data->GetMaxSpeed();
 		MovementComponent->Velocity				  = MovementComponent->InitialSpeed * ProjectilePayload->GetDirection();
 		MovementComponent->ProjectileGravityScale = Data->GetGravityScale();
 	}
@@ -652,11 +670,62 @@ void ACsProjectilePooledImpl::Launch(ICsPooledObjectPayload* Payload)
 // Damage
 #pragma region
 
-const FCsResource_DamageEvent* ACsProjectilePooledImpl::GetDamageEventContainerOnHit(const FHitResult& HitResult)
+void ACsProjectilePooledImpl::OnAllocate_SetDamageContainersAndTypes()
 {
 	using namespace NCsProjectilePooledImplCached;
 
-	const FString& Context = Str::GetDamageEventContainerOnHit;
+	const FString& Context = Str::OnAllocate_SetDamageContainersAndTypes;
+
+	DamageValueContainer = nullptr;
+	DamageValueType		 = EMCsDamageValue::Get().GetMAX();
+
+	// ICsData_ProjectileDamage
+	if (ICsData_ProjectileDamage* DamageData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ICsData_ProjectileDamage>(Context, Data))
+	{
+		// Get Damage Expression
+		ICsDamageExpression* DamageExpression = DamageData->GetDamageExpression();
+
+		checkf(DamageExpression, TEXT("%s: DamageExpression is NULL."), *Context);
+
+		// Value
+		{
+			// Range
+			if (ICsDamageShape* DamageShape = FCsLibrary_DamageExpression::GetSafeInterfaceChecked<ICsDamageShape>(Context, DamageExpression))
+			{
+				DamageValueType = NCsDamageValue::Range;
+			}
+			// Point
+			else
+			{
+				DamageValueType = NCsDamageValue::Point;
+			}
+
+			DamageValueContainer = UCsManager_Damage::Get(GetWorld()->GetGameState())->AllocateValue(DamageValueType);
+
+			// Copy "base" damage
+			ICsDamageValue* DamageValue = DamageValueContainer->Get();
+
+			FCsLibrary_DamageValue::CopyChecked(Context, DamageExpression->GetValue(), DamageValue);
+		}
+		// Range
+		{
+
+		}
+		// Apply any modifiers
+		OnAllocate_ApplyDamageModifier(DamageValueContainer->Get());
+	}
+}
+
+void ACsProjectilePooledImpl::OnAllocate_ApplyDamageModifier(ICsDamageValue* DamageValue)
+{
+	// TODO: Potentially have Damage Modifiers "packaged" with Payload
+}
+
+const FCsResource_DamageEvent* ACsProjectilePooledImpl::OnHit_GetDamageEventContainer(const FHitResult& HitResult)
+{
+	using namespace NCsProjectilePooledImplCached;
+
+	const FString& Context = Str::OnHit_GetDamageEventContainer;
 
 	// Get Container from Manager_Damage
 	FCsResource_DamageEvent* Container = UCsManager_Damage::Get(GetWorld()->GetGameState())->AllocateEvent();
@@ -671,10 +740,20 @@ const FCsResource_DamageEvent* ACsProjectilePooledImpl::GetDamageEventContainerO
 
 	checkf(DamageExpression, TEXT("%s: DamageExpression is NULL."), *Context);
 
-	EventImpl->Expression = DamageExpression;
-	EventImpl->Instigator = Cache->GetInstigator();
-	EventImpl->Causer	  = this;
-	EventImpl->HitResult  = HitResult;
+	checkf(DamageValueContainer, TEXT("s: DamageValueContainer is NULL."), *Context);
+
+	EventImpl->DamageValueContainer = DamageValueContainer;
+	EventImpl->DamageValueType		= DamageValueType;
+	EventImpl->DamageValue			= DamageValueContainer->Get();
+	EventImpl->Expression			= DamageExpression;
+	EventImpl->Instigator			= Cache->GetInstigator();
+	EventImpl->Causer				= this;
+	EventImpl->Origin				= HitResult;
+	EventImpl->HitResult			= HitResult;
+
+	// Clear reference to DamageValueContainer
+	DamageValueContainer = nullptr;
+	DamageValueType = EMCsDamageValue::Get().GetMAX();
 
 	return Container;
 }

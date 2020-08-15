@@ -1,12 +1,22 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+
+// Interfaces
 #include "Managers/Damage/Event/CsDamageEvent.h"
+// Container
 #include "Containers/CsInterfaceMap.h"
+// Types
+#include "Managers/Damage/Value/CsTypes_DamageValue.h"
 #pragma once
 
 class UObject;
 struct FCsInterfaceMap;
+struct FCsResource_DamageValue;
+struct ICsDamageValue;
 class ICsDamageExpression;
 
+/**
+* Basic implementation of the interface: ICsDmaageEvent
+*/
 struct CSCORE_API FCsDamageEventImpl final : public ICsDamageEvent
 {
 public:
@@ -21,6 +31,14 @@ public:
 
 	// ICsDamageEvent
 
+	float Damage;
+
+	FCsResource_DamageValue* DamageValueContainer;
+
+	FECsDamageValue DamageValueType;
+
+	ICsDamageValue* DamageValue;
+
 	ICsDamageExpression* Expression;
 
 	UObject* Instigator;
@@ -28,6 +46,8 @@ public:
 	UObject* Causer;
 
 	FECsHitType HitType;
+
+	FHitResult Origin;
 
 	FHitResult HitResult;
 
@@ -52,6 +72,16 @@ public:
 #pragma region
 public:
 
+	FORCEINLINE const float& GetDamage() const
+	{
+		return Damage;
+	}
+
+	FORCEINLINE const ICsDamageValue* GetDamageValue() const
+	{
+		return DamageValue;
+	}
+
 	FORCEINLINE ICsDamageExpression* GetExpression() const
 	{
 		return Expression;
@@ -70,6 +100,11 @@ public:
 	FORCEINLINE const FECsHitType& GetHitType() const
 	{
 		return HitType;
+	}
+
+	FORCEINLINE const FHitResult& GetOrigin() const
+	{
+		return Origin;
 	}
 
 	FORCEINLINE const FHitResult& GetHitResult() const
@@ -97,6 +132,10 @@ public:
 	{
 		return Cast<T>(GetCauser());
 	}
+
+	void CopyFrom(const FCsDamageEventImpl* From);
+
+	void SetDamageChecked(const FString& Context);
 
 	void Reset();
 };

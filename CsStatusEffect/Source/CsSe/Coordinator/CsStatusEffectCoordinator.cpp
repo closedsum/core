@@ -419,6 +419,8 @@ void UCsStatusEffectCoordinator::ProcessStatusEffectEvent(const ICsStatusEffectE
 			checkf(DamageEvent, TEXT("%s: DamageEvent is NULL. No Damage Event found for Event implementing interface: ICsStatusEffectEvent_Damage."), *Context);
 
 			// Get the implementation to get the container (for quick deallocation).
+
+			// FCsStatusEffectEvent_DamageImpl
 			if (FCsStatusEffectEvent_DamageImpl* SetDamageEventImpl = FCsLibrary_StatusEffectEvent::SafePureStaticCastChecked<FCsStatusEffectEvent_DamageImpl>(Context, const_cast<ICsStatusEffectEvent*>(Event)))
 			{
 				FCsResource_DamageEvent* DamageEventContainer = SetDamageEventImpl->DamageEventContainer;

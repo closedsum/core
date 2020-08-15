@@ -9,7 +9,7 @@
 
 void FCsPrjDamageExpressionPoint::SetExpression(FCsDamagePointEmu* Expression)
 {
-	Expression->SetDamage(&Damage);
+	Expression->SetValue(&Damage);
 	Expression->SetType(&Type);
 }
 

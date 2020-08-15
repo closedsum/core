@@ -7,6 +7,8 @@
 #include "Managers/Projectile/CsProjectile.h"
 // Types
 #include "Managers/Projectile/CsTypes_Projectile.h"
+#include "Managers/Damage/Value/CsTypes_DamageValue.h"
+
 #include "CsProjectilePooledImpl.generated.h"
 
 // Delegates
@@ -24,6 +26,8 @@ class ICsFXActorPooled;
 struct FCsFXActorPooled;
 struct ICsDamageEvent;
 struct FCsResource_DamageEvent;
+struct FCsResource_DamageValue;
+struct ICsDamageValue;
 
 UCLASS(Blueprintable)
 class CSPRJ_API ACsProjectilePooledImpl : public AActor,
@@ -170,6 +174,16 @@ public:
 
 // Damage
 #pragma region
+protected:
+
+	FCsResource_DamageValue* DamageValueContainer;
+
+	FECsDamageValue DamageValueType;
+
+	void OnAllocate_SetDamageContainersAndTypes();
+
+	void OnAllocate_ApplyDamageModifier(ICsDamageValue* DamageValue);
+
 public:
 
 	/**
@@ -203,7 +217,7 @@ protected:
 	* @param HitResult	The HitResult from a OnComponentHit event
 	* return			DamageEvent
 	*/
-	virtual const FCsResource_DamageEvent* GetDamageEventContainerOnHit(const FHitResult& HitResult);
+	virtual const FCsResource_DamageEvent* OnHit_GetDamageEventContainer(const FHitResult& HitResult);
 
 #pragma endregion Damage
 };

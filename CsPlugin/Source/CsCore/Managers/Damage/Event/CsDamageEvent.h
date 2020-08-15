@@ -5,6 +5,7 @@
 #pragma once
 
 class ICsDamageExpression;
+struct ICsDamageValue;
 
 /**
 *
@@ -24,6 +25,20 @@ public:
 	*
 	* return
 	*/
+	virtual const float& GetDamage() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const ICsDamageValue* GetDamageValue() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/ 
 	virtual ICsDamageExpression* GetExpression() const = 0;
 
 	/**
@@ -46,6 +61,13 @@ public:
 	* return
 	*/
 	virtual const FECsHitType& GetHitType() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const FHitResult& GetOrigin() const = 0;
 
 	/**
 	*

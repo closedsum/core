@@ -1,7 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Damage/Shape/CsDamageSphereEmu.h"
 
+// Library
+#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+// Container
 #include "Containers/CsInterfaceMap.h"
+// Damage
+#include "Managers/Damage/Value/CsDamageValue.h"
+#include "Managers/Damage/Value/Range/CsDamageValueRangeEmu.h"
 
 const FName FCsDamageSphereEmu::Name = FName("FCsDamageSphereEmu");
 
@@ -9,6 +15,7 @@ FCsDamageSphereEmu::FCsDamageSphereEmu() :
 	// ICsGetInterfaceMap
 	InterfaceMap(),
 	// ICsDamageExpression
+	DamageValue(nullptr),
 	Type(nullptr),
 	// ICsDamageShape
 	MinDamage(nullptr),
@@ -21,6 +28,7 @@ FCsDamageSphereEmu::FCsDamageSphereEmu() :
 	// ICsDamageCollision
 	bIgnoreHitResultObject(nullptr)
 {
+	// ICsGetInterfaceMap
 	InterfaceMap = new FCsInterfaceMap();
 
 	InterfaceMap->SetRootName(FCsDamageSphereEmu::Name);
@@ -28,6 +36,9 @@ FCsDamageSphereEmu::FCsDamageSphereEmu() :
 	InterfaceMap->Add<ICsDamageExpression>(static_cast<ICsDamageExpression*>(this));
 	InterfaceMap->Add<ICsDamageShape>(static_cast<ICsDamageShape*>(this));
 	InterfaceMap->Add<ICsDamageCollision>(static_cast<ICsDamageCollision*>(this));
+
+	// ICsDamageExpression
+	DamageValue = new FCsDamageValueRangeEmu();
 }
 
 FCsDamageSphereEmu::~FCsDamageSphereEmu()
@@ -38,7 +49,7 @@ FCsDamageSphereEmu::~FCsDamageSphereEmu()
 // ICsDamageShape
 #pragma region
 
-float FCsDamageSphereEmu::CalculateDamage(const FVector& Origin, const FVector& Point) const
+float FCsDamageSphereEmu::CalculateDamage(const ICsDamageValue* Value, const FVector& Origin, const FVector& Point) const
 {
 	return 0.0f;
 }
@@ -49,3 +60,15 @@ bool FCsDamageSphereEmu::IsInBounds(const FVector& Origin, const FVector& Point)
 }
 
 #pragma endregion ICsDamageSphere
+
+void FCsDamageSphereEmu::SetMinDamage(float* Value)
+{
+	FCsDamageValueRangeEmu* Emu = static_cast<FCsDamageValueRangeEmu*>(DamageValue);
+	Emu->SetMinValue(Value);
+}
+
+void FCsDamageSphereEmu::SetMaxDamage(float* Value)
+{
+	FCsDamageValueRangeEmu* Emu = static_cast<FCsDamageValueRangeEmu*>(DamageValue);
+	Emu->SetMaxValue(Value);
+}

@@ -5,7 +5,7 @@
 /**
 * 
 */
-class CSCORE_API ICsDamageValueRange : public ICsGetInterfaceMap
+struct CSCORE_API ICsDamageValueRange : public ICsGetInterfaceMap
 {
 public:
 

@@ -196,6 +196,8 @@ public:
 	*/
 	void CreatePool(const int32& InSize)
 	{
+		checkf(InSize > 0, TEXT("%s::CreatePool: InSize must be GREATER THAN 0."), *Name);
+
 		Shutdown();
 
 		// Make PoolSize a power of 2.
@@ -239,6 +241,8 @@ public:
 	*/
 	void Add(ResourceType* Resource)
 	{
+		checkf(Resource, TEXT("%s::Add: Resource is NULL."), *Name);
+
 		checkf(Resources.Num() < PoolSize, TEXT("%s::Add: Resources is at MAX capacity (%d)."), *Name, PoolSize);
 
 		const int32 Index = Resources.Num();

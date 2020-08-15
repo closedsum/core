@@ -165,7 +165,7 @@ public:
 	*/
 	void CreatePool(const int32& InSize)
 	{
-		checkf(InSize > 0, TEXT("TCsManager_MemoryResource::CreatePool: InSize must be GREATER THAN 0."));
+		checkf(InSize > 0, TEXT("%s::CreatePool: InSize must be GREATER THAN 0."), *Name);
 
 		Shutdown();
 
@@ -195,6 +195,8 @@ public:
 	*/
 	void Add(ResourceType* Resource)
 	{
+		checkf(Resource, TEXT("%s::Add: Resource is NULL."), *Name);
+
 		if (Resources.Num() < PoolSize)
 		{
 			const int32 Index = Resources.Num();

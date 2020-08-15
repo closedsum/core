@@ -2,6 +2,9 @@
 #include "Managers/Damage/Expression/CsDamageExpression.h"
 #pragma once
 
+struct FCsInterfaceMap;
+struct ICsDamageValue;
+
 /**
 *
 */
@@ -13,11 +16,15 @@ public:
 
 private:
 
+	// ICsGetInterfaceMap
+
 	FCsInterfaceMap* InterfaceMap;
 
 public:
 
-	float* Damage;
+	// ICsDamageExpression
+
+	ICsDamageValue* Value;
 
 	FECsDamageType* Type;
 
@@ -43,9 +50,9 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE float GetDamage() const
+	FORCEINLINE ICsDamageValue* GetValue() const
 	{
-		return const_cast<float&>(*Damage);
+		return Value;
 	}
 
 	FORCEINLINE const FECsDamageType& GetType() const
@@ -57,13 +64,10 @@ public:
 
 public:
 
-	void SetDamage(float* Value)
-	{
-		Damage = Value;
-	}
+	void SetValue(float* InValue);
 
-	void SetType(FECsDamageType* Value)
+	void SetType(FECsDamageType* InValue)
 	{
-		Type = Value;
+		Type = InValue;
 	}
 };

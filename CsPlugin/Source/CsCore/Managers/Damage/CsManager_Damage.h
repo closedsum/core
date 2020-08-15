@@ -1,10 +1,19 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UObject/Object.h"
+// Resource
 #include "Managers/Resource/CsManager_ResourceValueType_Abstract_Fixed.h"
+#include "Managers/Resource/CsManager_ResourcePointerType_Fixed.h"
+// Damage
 #include "Managers/Damage/Event/CsDamageEvent.h"
-#include "UniqueObject/CsTypes_UniqueObject.h"
+#include "Managers/Damage/Value/CsDamageValue.h"
+#include "Managers/Damage/Range/CsDamageRange.h"
 #include "Managers/Damage/CsReceiveDamage.h"
+// Types
+#include "Managers/Damage/Value/CsTypes_DamageValue.h"
+
+#include "UniqueObject/CsTypes_UniqueObject.h"
+
 #include "CsManager_Damage.generated.h"
 
 // Structs
@@ -17,6 +26,26 @@ struct CSCORE_API FCsResource_DamageEvent : public TCsResourceContainer<ICsDamag
 };
 
 struct CSCORE_API FCsManager_DamageEvent : public TCsManager_ResourceValueType_Abstract_Fixed<ICsDamageEvent, FCsResource_DamageEvent, 0>
+{
+};
+	
+	// DamageValue
+
+struct CSCORE_API FCsResource_DamageValue : public TCsResourceContainer<ICsDamageValue>
+{
+};
+
+struct CSCORE_API FCsManager_DamageValue : public TCsManager_ResourcePointerType_Fixed<ICsDamageValue, FCsResource_DamageValue, 0>
+{
+};
+
+	// DamageRange
+
+struct CSCORE_API FCsResource_DamageRange : public TCsResourceContainer<ICsDamageRange>
+{
+};
+
+struct CSCORE_API FCsManager_DamageRange : public TCsManager_ResourceValueType_Abstract_Fixed<ICsDamageRange, FCsResource_DamageRange, 0>
 {
 };
 
@@ -131,9 +160,14 @@ public:
 	*/
 	FCsResource_DamageEvent* AllocateEvent();
 
+protected:
+
+	virtual void DeallocateEvent(const FString& Context, FCsResource_DamageEvent* Event);
+
 private:
 
 	TArray<FCsReceiveDamage> Local_Recievers;
+	TArray<FCsResource_DamageEvent*> Local_Events;
 
 public:
 
@@ -162,6 +196,58 @@ public:
 	FOnProcessDamageEvent OnProcessDamageEvent_Event;
 
 #pragma endregion Event
+
+// Value
+#pragma region
+protected:
+
+	TArray<FCsManager_DamageValue> Manager_Values;
+
+	virtual ICsDamageValue* ConstructValue(const FECsDamageValue& Type);
+
+public:
+
+	/**
+	*
+	*
+	* @param Type
+	* return
+	*/
+	FCsResource_DamageValue* AllocateValue(const FECsDamageValue& Type);
+
+	/**
+	*
+	*
+	* @param Type
+	* @param Value
+	*/
+	virtual void DeallocateValue(const FECsDamageValue& Type, FCsResource_DamageValue* Value);
+
+protected:
+
+	/**
+	*
+	*
+	* @param Context
+	* @param Value
+	*/
+	virtual void DeallocateValue(const FString& Context, FCsResource_DamageValue* Value);
+
+#pragma endregion Value
+
+// Range
+#pragma region
+protected:
+
+	FCsManager_DamageRange Manager_Range;
+
+	virtual ICsDamageRange* ConstructRange();
+
+public:
+
+	FCsResource_DamageRange* AllocateRange();
+
+#pragma endregion Range
 
 // Log
 #pragma region

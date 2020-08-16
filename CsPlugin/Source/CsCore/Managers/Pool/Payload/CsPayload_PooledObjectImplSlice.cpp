@@ -1,7 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 
+// Container
 #include "Containers/CsInterfaceMap.h"
+// Reset
+#include "Reset/CsReset.h"
 
 const FName FCsPayload_PooledObjectImplSlice::Name = FName("FCsPayload_PooledObjectImplSlice");
 
@@ -13,7 +16,8 @@ FCsPayload_PooledObjectImplSlice::FCsPayload_PooledObjectImplSlice() :
 	Instigator(nullptr),
 	Owner(nullptr),
 	Parent(nullptr),
-	Time()
+	Time(),
+	Resets()
 {
 }
 
@@ -41,6 +45,16 @@ void FCsPayload_PooledObjectImplSlice::Reset()
 	Parent = nullptr;
 
 	Time.Reset();
+
+	for (ICsReset* R : Resets)
+	{
+		R->Reset();
+	}
 }
 
 #pragma endregion ICsPayload_PooledObject
+
+void FCsPayload_PooledObjectImplSlice::AddReset(ICsReset* InReset)
+{
+	Resets.Add(InReset);
+}

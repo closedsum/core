@@ -48,4 +48,33 @@ struct CSPRJ_API FCsLibrary_Payload_Projectile
 	{
 		return NCsInterfaceMap::PureStaticCastChecked<DerivedType, ICsPayload_Projectile>(Context, Payload);
 	}
+
+	/**
+	* Perform the operation static_cast<OtherInterfaceType*>("Payload associated with ICsPayload_Projectile") with checks.
+	* OtherInterfaceType IS abstract.
+	*
+	* @param Context	The calling context
+	* @param Payload	Payload that implements the interface: ICsData_Weapon.
+	* return			Payload casted to OtherInterfaceType (static_cast<OtherInterfaceType*>(Payload))
+	*/
+	template<typename OtherInterfaceType>
+	FORCEINLINE static OtherInterfaceType* GetInterfaceChecked(const FString& Context, ICsPayload_Projectile* Payload)
+	{
+		return NCsInterfaceMap::GetInterfaceChecked<OtherInterfaceType>(Context, Payload);
+	}
+
+	/**
+	* Safely perform the operation static_cast<OtherInterfaceType*>("Payload associated with ICsPayload_Projectile") 
+	* with checks (for InterfaceMap).
+	* OtherInterfaceType IS abstract.
+	*
+	* @param Context	The calling context
+	* @param Payload	Payload that implements the interface: ICsData_Weapon.
+	* return			Payload casted to OtherInterfaceType (static_cast<OtherInterfaceType*>(Payload))
+	*/
+	template<typename OtherInterfaceType>
+	FORCEINLINE static OtherInterfaceType* GetSafeInterfaceChecked(const FString& Context, ICsPayload_Projectile* Payload)
+	{
+		return NCsInterfaceMap::GetSafeInterfaceChecked<OtherInterfaceType, ICsPayload_Projectile>(Context, Payload);
+	}
 };

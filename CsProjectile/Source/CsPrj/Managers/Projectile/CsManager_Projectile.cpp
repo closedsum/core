@@ -19,8 +19,11 @@
 // Data
 #include "Data/CsPrjGetDataRootSet.h"
 #include "Data/CsData_Projectile.h"
+// Pool
+#include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Projectile
-#include "Payload/CsPayload_ProjectilePooledImpl.h"
+#include "Payload/CsPayload_ProjectileInterfaceMap.h"
+#include "Payload/CsPayload_ProjectileImplSlice.h"
 #include "Data/CsData_ProjectileImpl.h"
 // Game
 #include "Engine/GameInstance.h"
@@ -271,6 +274,26 @@ void UCsManager_Projectile::Initialize()
 void UCsManager_Projectile::CleanUp()
 {
 	Internal.Shutdown();
+	
+	for (TPair<FName, TArray<void*>>& Pair : PayloadInterfaceImplMap)
+	{
+		const FName& InterfaceImplName = Pair.Key;
+		TArray<void*> Impls			   = Pair.Value;
+
+		for (void* Impl: Impls)
+		{
+			DeconstructPayloadSlice(InterfaceImplName, Impl);
+		}
+		Impls.Reset();
+	}
+	PayloadInterfaceImplMap.Reset();
+
+	for (FCsPayload_ProjectileInterfaceMap* Map : PayloadInterfaceMaps)
+	{
+		delete Map;
+	}
+	PayloadInterfaceMaps.Reset();
+	
 	Pool.Reset();
 
 	// Class
@@ -618,7 +641,46 @@ void UCsManager_Projectile::ConstructPayloads(const FECsProjectile& Type, const 
 
 ICsPayload_Projectile* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 {
-	return new FCsPayload_ProjectilePooledImpl();
+	FCsPayload_ProjectileInterfaceMap* PayloadInterfaceMap = new FCsPayload_ProjectileInterfaceMap();
+
+	PayloadInterfaceMaps.Add(PayloadInterfaceMap);
+
+	FCsInterfaceMap* InterfaceMap = PayloadInterfaceMap->GetInterfaceMap();
+
+	// FCsPayload_PooledObjectImplSlice
+	FCsPayload_PooledObjectImplSlice* BaseSlice = new FCsPayload_PooledObjectImplSlice();
+
+	{
+		BaseSlice->SetInterfaceMap(InterfaceMap);
+		// Add to map
+		TArray<void*>& ImplMap = PayloadInterfaceImplMap.FindOrAdd(FCsPayload_PooledObjectImplSlice::Name);
+		ImplMap.Add(BaseSlice);
+	}
+
+	// FCsPayload_ProjectileImplSlice
+	{
+		FCsPayload_ProjectileImplSlice* Slice = new FCsPayload_ProjectileImplSlice();
+
+		Slice->SetInterfaceMap(InterfaceMap);
+		// Add slice as ICsReset to BaseSlice so this slice gets reset call.
+		BaseSlice->AddReset(static_cast<ICsReset*>(Slice));
+		// NOTE: Do NOT add to map. Internal will take care of deconstruction.
+	}
+	return InterfaceMap->Get<ICsPayload_Projectile>();
+}
+
+void UCsManager_Projectile::DeconstructPayloadSlice(const FName& InterfaceImplName, void* Data)
+{
+	// FCsPayload_PooledObjectImplSlice
+	if (InterfaceImplName == FCsPayload_PooledObjectImplSlice::Name)
+	{
+		delete static_cast<FCsPayload_PooledObjectImplSlice*>(Data);
+	}
+	// FCsPayload_ProjectileImplSlice
+	if (InterfaceImplName == FCsPayload_ProjectileImplSlice::Name)
+	{
+		checkf(0, TEXT("UCsManager_Projectile::DeconstructPayloadSlice: Deletomg Data of type: FCsPayload_ProjectileImplSlice is handled by Intenral."));
+	}
 }
 
 ICsPayload_Projectile* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)
@@ -628,15 +690,23 @@ ICsPayload_Projectile* UCsManager_Projectile::AllocatePayload(const FECsProjecti
 
 ICsPayload_Projectile* UCsManager_Projectile::ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
 {
-	ICsPayload_Projectile* IP				 = Internal.AllocatePayload(GetTypeFromTypeMap(Type));
-	FCsPayload_ProjectilePooledImpl* Payload = static_cast<FCsPayload_ProjectilePooledImpl*>(IP);
-
-	Payload->Instigator = ScriptPayload.Instigator;
-	Payload->Owner		= ScriptPayload.Owner;
-	Payload->Parent		= ScriptPayload.Parent;
-	Payload->Direction	= ScriptPayload.Direction;
-	Payload->Location	= ScriptPayload.Location;
-
+	ICsPayload_Projectile* IP = Internal.AllocatePayload(GetTypeFromTypeMap(Type));
+	/*
+	
+	// FCsPayload_PooledObjectImplSlice
+	if (FCsPayload_PooledObjectImplSlice* Slice = FCsLibrary_Payload_Projectile::SafeStaticCastChecked<FCsPayload_PooledObjectImplSlice>())
+	{
+		Slice->Instigator = ScriptPayload.Instigator;
+		Slice->Owner	  = ScriptPayload.Owner;
+		Slice->Parent	  = ScriptPayload.Parent;
+	}
+	// FCsPayload_ProjectileImplSlice
+	if (FCsPayload_ProjectileImplSlice* Slice = FCsLibrary_Payload_Projectile::SafeStaticCastChecked<FCsPayload_ProjectileImplSlice>())
+	{
+		Slice->Direction = ScriptPayload.Direction;
+		Slice->Location	 = ScriptPayload.Location;
+	}
+	*/
 	return IP;
 }
 

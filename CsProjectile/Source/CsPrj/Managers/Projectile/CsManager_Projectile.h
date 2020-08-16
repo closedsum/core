@@ -45,6 +45,7 @@ class ICsGetManagerProjectile;
 class ICsData_Projectile;
 class UDataTable;
 struct FCsInterfaceMap;
+struct FCsPayload_ProjectileInterfaceMap;
 struct FCsData_ProjectileInterfaceMap;
 
 UCLASS()
@@ -478,6 +479,17 @@ protected:
 
 	// Payload
 #pragma region
+protected:
+
+	/** <InterfaceMapPtr> */
+	TArray<FCsPayload_ProjectileInterfaceMap*> PayloadInterfaceMaps;
+
+	/** <InterfaceImpName, <InterfaceImplPtr>> 
+		 stores all interface "slices" related to payload and projectile but 
+		 NOT the interface stored in Internal (i.e. FCsPayload_ProjectileImplSlice) 
+		 as Internal handles the deconstruction of that interface. */
+	TMap<FName, TArray<void*>> PayloadInterfaceImplMap;
+
 public:
 
 	/**
@@ -494,6 +506,12 @@ public:
 	* return
 	*/
 	virtual ICsPayload_Projectile* ConstructPayload(const FECsProjectile& Type);
+
+protected:
+
+	virtual void DeconstructPayloadSlice(const FName& InterfaceImplName, void* Data);
+
+public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.

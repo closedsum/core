@@ -35,6 +35,20 @@ struct CSPRJ_API FCsLibrary_Data_Projectile
 	}
 
 	/**
+	* Safely perform the operation static_cast<DerivedType*>("Data associated with ICsData_Projectile") with checks.
+	* DerivedType is NOT abstract.
+	*
+	* @param Context	The calling context
+	* @param Data		Data that implements the interface: ICsData_Projectile.
+	* return			Data casted to DerivedType (static_cast<DerivedType*>(Data))
+	*/
+	template<typename DerivedType>
+	FORCEINLINE static DerivedType* SafeStaticCastChecked(const FString& Context, ICsData_Projectile* Data)
+	{
+		return NCsInterfaceMap::SafeStaticCastChecked<DerivedType, ICsData_Projectile>(Context, Data);
+	}
+
+	/**
 	* Perform the operation static_cast<DerivedType*>("Data associated with ICsData_Projectile") with checks.
 	* DerivedType is NOT abstract.
 	* Does NOT check if the InterfaceMap has "unique based" interfaces.

@@ -5,6 +5,7 @@
 
 class UObject;
 struct FCsInterfaceMap;
+struct ICsReset;
 
 /**
 * Basic "slice" implementation of the interface: ICsPayload_PooledObject.
@@ -40,6 +41,10 @@ public:
 	FCsTime Time;
 
 	FCsPayload_PooledObjectImplSlice();
+
+protected:
+
+	TArray<ICsReset*> Resets;
 
 // ICsGetInterfaceMap
 #pragma region
@@ -93,4 +98,8 @@ public:
 	void Reset();
 
 #pragma endregion ICsPayload_PooledObject
+
+public:
+
+	void AddReset(ICsReset* InReset);
 };

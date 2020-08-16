@@ -2,7 +2,9 @@
 #include "Containers/CsGetInterfaceMap.h"
 #pragma once
 
-struct CSPRJ_API ICsProjectilePayload : virtual public ICsGetInterfaceMap
+/**
+*/
+struct CSPRJ_API ICsPayload_Projectile : virtual public ICsGetInterfaceMap
 {
 public:
 
@@ -10,7 +12,7 @@ public:
 
 public:
 
-	virtual ~ICsProjectilePayload(){}
+	virtual ~ICsPayload_Projectile(){}
 
 	virtual const FVector& GetDirection() const = 0;
 

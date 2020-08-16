@@ -20,7 +20,7 @@
 #include "Data/CsPrjGetDataRootSet.h"
 #include "Data/CsData_Projectile.h"
 // Projectile
-#include "Payload/CsProjectilePooledPayloadImpl.h"
+#include "Payload/CsPayload_ProjectilePooledImpl.h"
 #include "Data/CsData_ProjectileImpl.h"
 // Game
 #include "Engine/GameInstance.h"
@@ -616,20 +616,20 @@ void UCsManager_Projectile::ConstructPayloads(const FECsProjectile& Type, const 
 	Internal.ConstructPayloads(GetTypeFromTypeMap(Type), Size);
 }
 
-ICsProjectilePayload* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
+ICsPayload_Projectile* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 {
-	return new FCsProjectilePooledPayloadImpl();
+	return new FCsPayload_ProjectilePooledImpl();
 }
 
-ICsProjectilePayload* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)
+ICsPayload_Projectile* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)
 {
 	return Internal.AllocatePayload(GetTypeFromTypeMap(Type));
 }
 
-ICsProjectilePayload* UCsManager_Projectile::ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
+ICsPayload_Projectile* UCsManager_Projectile::ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
 {
-	ICsProjectilePayload* IP				= Internal.AllocatePayload(GetTypeFromTypeMap(Type));
-	FCsProjectilePooledPayloadImpl* Payload = static_cast<FCsProjectilePooledPayloadImpl*>(IP);
+	ICsPayload_Projectile* IP				 = Internal.AllocatePayload(GetTypeFromTypeMap(Type));
+	FCsPayload_ProjectilePooledImpl* Payload = static_cast<FCsPayload_ProjectilePooledImpl*>(IP);
 
 	Payload->Instigator = ScriptPayload.Instigator;
 	Payload->Owner		= ScriptPayload.Owner;
@@ -645,14 +645,14 @@ ICsProjectilePayload* UCsManager_Projectile::ScriptAllocatePayload(const FECsPro
 	// Spawn
 #pragma region
 
-const FCsProjectilePooled* UCsManager_Projectile::Spawn(const FECsProjectile& Type, ICsProjectilePayload* Payload)
+const FCsProjectilePooled* UCsManager_Projectile::Spawn(const FECsProjectile& Type, ICsPayload_Projectile* Payload)
 {
 	return Internal.Spawn(GetTypeFromTypeMap(Type), Payload);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::ScriptSpawn(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
 {
-	ICsProjectilePayload* Payload = ScriptAllocatePayload(GetTypeFromTypeMap(Type), ScriptPayload);
+	ICsPayload_Projectile* Payload = ScriptAllocatePayload(GetTypeFromTypeMap(Type), ScriptPayload);
 
 	return Spawn(Type, Payload);
 }

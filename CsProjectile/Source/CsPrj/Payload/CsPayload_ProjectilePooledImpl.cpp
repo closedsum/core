@@ -1,45 +1,50 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Payload/CsProjectilePooledPayloadImpl.h"
+#include "Payload/CsPayload_ProjectilePooledImpl.h"
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsProjectilePooledPayloadImpl::Name = FName("FCsProjectilePooledPayloadImpl");;
+const FName FCsPayload_ProjectilePooledImpl::Name = FName("FCsPayload_ProjectilePooledImpl");;
 
-FCsProjectilePooledPayloadImpl::FCsProjectilePooledPayloadImpl() :
+FCsPayload_ProjectilePooledImpl::FCsPayload_ProjectilePooledImpl() :
+	// ICsGetInterfaceMap
 	InterfaceMap(nullptr),
+	// ICsPayload_PooledObject
 	bAllocated(false),
 	Instigator(nullptr),
 	Owner(nullptr),
 	Parent(nullptr),
 	Time(),
+	// ICsPayload_Projectile
 	Direction(0.0f),
 	Location(0.0f)
 {
 	InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsProjectilePooledPayloadImpl::Name);
+	InterfaceMap->SetRootName(FCsPayload_ProjectilePooledImpl::Name);
 
 	InterfaceMap->Add<ICsPayload_PooledObject>(static_cast<ICsPayload_PooledObject*>(this));
-	InterfaceMap->Add<ICsProjectilePayload>(static_cast<ICsProjectilePayload*>(this));
+	InterfaceMap->Add<ICsPayload_Projectile>(static_cast<ICsPayload_Projectile*>(this));
 }
 
-FCsProjectilePooledPayloadImpl::~FCsProjectilePooledPayloadImpl()
+FCsPayload_ProjectilePooledImpl::~FCsPayload_ProjectilePooledImpl()
 {
+	// ICsGetInterfaceMap
 	delete InterfaceMap;
 }
 
 // ICsPayload_PooledObject
 #pragma region
 
-void FCsProjectilePooledPayloadImpl::Reset()
+void FCsPayload_ProjectilePooledImpl::Reset()
 {
+	// ICsPayload_PooledObject
 	bAllocated = false;
 	Instigator = nullptr;
 	Owner = nullptr;
 	Parent = nullptr;
 
 	Time.Reset();
-
+	// ICsPayload_Projectile
 	Direction = FVector::ZeroVector;
 	Location = FVector::ZeroVector;
 }

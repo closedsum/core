@@ -4,7 +4,7 @@
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Library
-#include "Payload/CsLibrary_ProjectilePayload.h"
+#include "Payload/CsLibrary_Payload_Projectile.h"
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Managers/Sound/Payload/CsLibrary_SoundPooledPayload.h"
 // Settings
@@ -21,7 +21,7 @@
 // Containers
 #include "Containers/CsInterfaceMap.h"
 // Projectile
-#include "Payload/CsProjectilePooledPayloadImpl.h"
+#include "Payload/CsPayload_ProjectilePooledImpl.h"
 #include "Managers/Projectile/CsProjectilePooledImpl.h"
 // Sound
 #include "Managers/Sound/Payload/CsSoundPooledPayloadImpl.h"
@@ -326,13 +326,13 @@ void UCsProjectileWeaponComponent::FireProjectile()
 	UCsManager_Projectile* Manager_Projectile = UCsManager_Projectile::Get(GetWorld()->GetGameState());
 
 	// Get Payload
-	ICsProjectilePayload* Payload1 = Manager_Projectile->AllocatePayload(ProjectileType);
+	ICsPayload_Projectile* Payload1 = Manager_Projectile->AllocatePayload(ProjectileType);
 
 	// Set appropriate members on Payload
 	SetProjectilePayload(Payload1);
 
 	// Cache copy of Payload for Launch
-	ICsProjectilePayload* Payload2 = Manager_Projectile->AllocatePayload(ProjectileType);
+	ICsPayload_Projectile* Payload2 = Manager_Projectile->AllocatePayload(ProjectileType);
 	
 	SetProjectilePayload(Payload2);
 
@@ -354,13 +354,13 @@ void UCsProjectileWeaponComponent::SetTypeForProjectile(const FCsProjectilePoole
 	Projectile->SetType(ProjectileType);
 }
 
-void UCsProjectileWeaponComponent::SetProjectilePayload(ICsProjectilePayload* Payload)
+void UCsProjectileWeaponComponent::SetProjectilePayload(ICsPayload_Projectile* Payload)
 {
 	using namespace NCsProjectileWeaponComponentCached;
 
 	const FString& Context = Str::SetProjectilePayload;
 
-	FCsProjectilePooledPayloadImpl* PayloadImpl = FCsLibrary_ProjectilePayload::PureStaticCastChecked<FCsProjectilePooledPayloadImpl>(Str::SetProjectilePayload, Payload);
+	FCsPayload_ProjectilePooledImpl* PayloadImpl = FCsLibrary_Payload_Projectile::PureStaticCastChecked<FCsPayload_ProjectilePooledImpl>(Str::SetProjectilePayload, Payload);
 
 	PayloadImpl->Instigator = this;
 	PayloadImpl->Owner		= MyOwner;
@@ -378,7 +378,7 @@ FVector UCsProjectileWeaponComponent::GetLaunchProjectileDirection()
 	return FVector::ZeroVector;
 }
 
-void UCsProjectileWeaponComponent::LaunchProjectile(const FCsProjectilePooled* ProjectilePooled, ICsProjectilePayload* Payload)
+void UCsProjectileWeaponComponent::LaunchProjectile(const FCsProjectilePooled* ProjectilePooled, ICsPayload_Projectile* Payload)
 {
 	using namespace NCsProjectileWeaponComponentCached;
 

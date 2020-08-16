@@ -8,7 +8,8 @@ struct FCsInterfaceMap;
 
 /**
 * Basic "slice" implementation of the interface: ICsPayload_PooledObject.
-* The slice is intended to "layered" with other objects of the same category.
+* The slice is intended to "layered" with other objects of the same category
+* (implementing interfaces related to payloads and pooled objects).
 * In this case, payload.
 * The slice shares a InterfaceMap with other slices.
 * The InterfaceMap is usually stored in a separate object for that category.

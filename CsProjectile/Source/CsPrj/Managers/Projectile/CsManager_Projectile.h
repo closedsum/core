@@ -5,7 +5,7 @@
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
 #include "Managers/Resource/CsManager_ResourceValueType.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
-#include "Payload/CsProjectilePayload.h"
+#include "Payload/CsPayload_Projectile.h"
 #include "Managers/Projectile/CsProjectile.h"
 #include "Managers/Projectile/CsProjectilePooled.h"
 #include "Managers/Projectile/CsSettings_Manager_Projectile.h"
@@ -23,11 +23,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerProjectile_OnSpawn, const
 
 class ICsProjectile;
 
-class CSPRJ_API FCsManager_Projectile_Internal : public TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, ICsProjectilePayload, FECsProjectile>
+class CSPRJ_API FCsManager_Projectile_Internal : public TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, ICsPayload_Projectile, FECsProjectile>
 {
 private:
 
-	typedef TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, ICsProjectilePayload, FECsProjectile> Super;
+	typedef TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, ICsPayload_Projectile, FECsProjectile> Super;
 
 public:
 
@@ -493,24 +493,24 @@ public:
 	* @param Type
 	* return
 	*/
-	virtual ICsProjectilePayload* ConstructPayload(const FECsProjectile& Type);
+	virtual ICsPayload_Projectile* ConstructPayload(const FECsProjectile& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsProjectilePayload.
+	*  Payload implements the interface: ICsPayload_Projectile.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsProjectilePayload.
+	* return		Payload that implements the interface: ICsPayload_Projectile.
 	*/
-	ICsProjectilePayload* AllocatePayload(const FECsProjectile& Type);
+	ICsPayload_Projectile* AllocatePayload(const FECsProjectile& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsProjectilePayload.
+	*  Payload implements the interface: ICsPayload_Projectile.
 	*
 	* @param Context	Calling context.
 	* @param Type		Type of payload.
-	* return			Payload that implements the interface: ICsProjectilePayload.
+	* return			Payload that implements the interface: ICsPayload_Projectile.
 	*/
 	template<typename PayloadTypeImpl>
 	PayloadTypeImpl* AllocatePayload(const FString& Context, const FECsProjectile& Type)
@@ -520,10 +520,10 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsProjectilePayload.
+	*  Payload implements the interface: ICsPayload_Projectile.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsProjectilePayload.
+	* return		Payload that implements the interface: ICsPayload_Projectile.
 	*/
 	template<typename PayloadTypeImpl>
 	PayloadTypeImpl* AllocatePayload(const FECsProjectile& Type)
@@ -531,7 +531,7 @@ public:
 		return Internal.AllocatePayload<PayloadTypeImpl>(Type);
 	}
 
-	virtual ICsProjectilePayload* ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload);
+	virtual ICsPayload_Projectile* ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload);
 
 #pragma endregion Payload
 
@@ -545,7 +545,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	const FCsProjectilePooled* Spawn(const FECsProjectile& Type, ICsProjectilePayload* Payload);
+	const FCsProjectilePooled* Spawn(const FECsProjectile& Type, ICsPayload_Projectile* Payload);
 
 	/**
 	*

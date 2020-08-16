@@ -13,7 +13,7 @@
 class ICsData_Weapon;
 class AActor;
 struct FCsRoutine;
-struct ICsProjectilePayload;
+struct ICsPayload_Projectile;
 struct FCsProjectilePooled;
 struct ICsSoundPooledPayload;
 
@@ -157,13 +157,13 @@ protected:
 
 	virtual void SetTypeForProjectile(const FCsProjectilePooled* ProjectilePooled);
 
-	virtual void SetProjectilePayload(ICsProjectilePayload* Payload);
+	virtual void SetProjectilePayload(ICsPayload_Projectile* Payload);
 
 	virtual FVector GetLaunchProjectileLocation();
 
 	virtual FVector GetLaunchProjectileDirection();
 
-	virtual void LaunchProjectile(const FCsProjectilePooled* ProjectilePooled, ICsProjectilePayload* Payload);
+	virtual void LaunchProjectile(const FCsProjectilePooled* ProjectilePooled, ICsPayload_Projectile* Payload);
 
 #pragma endregion Projectile
 	

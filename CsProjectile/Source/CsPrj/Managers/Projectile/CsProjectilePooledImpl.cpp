@@ -534,7 +534,7 @@ void ACsProjectilePooledImpl::Launch(ICsPayload_PooledObject* Payload)
 	checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
 
 	// Get Projectile Payload
-	ICsProjectilePayload* ProjectilePayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsProjectilePayload>(Context, Payload);
+	ICsPayload_Projectile* ProjectilePayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsPayload_Projectile>(Context, Payload);
 
 	// Get Projectile Cache
 	ICsProjectileCache* ProjectileCache = FCsLibrary_PooledObjectCache::GetInterfaceChecked<ICsProjectileCache>(Context, Cache);

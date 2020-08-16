@@ -1,14 +1,17 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
-#include "Payload/CsProjectilePayload.h"
+#include "Payload/CsPayload_Projectile.h"
 
 #pragma once
 
 class UObject;
 struct FCsInterfaceMap;
 
-struct CSPRJ_API FCsProjectilePooledPayloadImpl : public ICsPayload_PooledObject,
-												  public ICsProjectilePayload
+/**
+* Basic implementation of the interface: ICsPayload_PooledObject and ICsPayload_Projectile.
+*/
+struct CSPRJ_API FCsPayload_ProjectilePooledImpl : public ICsPayload_PooledObject,
+												   public ICsPayload_Projectile
 {
 public:
 
@@ -16,7 +19,11 @@ public:
 
 private:
 
+	// ICsGetInterfaceMap
+
 	FCsInterfaceMap* InterfaceMap;
+
+	// ICsPayload_PooledObject
 
 	bool bAllocated;
 
@@ -30,14 +37,16 @@ public:
 	
 	FCsTime Time;
 
+	// ICsPayload_Projectile
+
 	FVector Direction;
 
 	FVector Location;
 
 public:
 
-	FCsProjectilePooledPayloadImpl();
-	~FCsProjectilePooledPayloadImpl();
+	FCsPayload_ProjectilePooledImpl();
+	~FCsPayload_ProjectilePooledImpl();
 
 // ICsGetInterfaceMap
 #pragma region
@@ -108,7 +117,7 @@ public:
 		return Cast<T>(GetParent());
 	}
 
-// ICsProjectilePayload
+// ICsPayload_Projectile
 #pragma region
 public:
 
@@ -122,5 +131,5 @@ public:
 		return Location;
 	}
 
-#pragma endregion ICsProjectilePayload
+#pragma endregion ICsPayload_Projectile
 };

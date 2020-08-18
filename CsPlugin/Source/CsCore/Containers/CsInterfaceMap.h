@@ -143,6 +143,29 @@ public:
 	/**
 	* Get a reference to the interface or slice of the root structure.
 	*
+	* return	Reference to the InterfaceType
+	*/
+	template<typename InterfaceType>
+	FORCEINLINE const InterfaceType* Get() const
+	{
+		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::Get: InterfaceType is NOT abstract.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "FCsInterfaceMap::Get: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
+
+		checkf(InterfaceType::Name != NAME_None, TEXT("FCsInterfaceMap::Get: InterfaceType::Name: None is NOT Valid."));
+
+		void* const* Ptr = Interfaces.Find(InterfaceType::Name);
+
+		checkf(Ptr, TEXT("FCsInterfaceMap::Get: Failed to find InterfaceType with InterfaceType::Name: %s."), *(InterfaceType::Name.ToString()));
+
+		checkf(((const InterfaceType*)(*Ptr))->GetInterfaceMap() == this, TEXT("FCsInterfaceMap::Get: InterfaceMap for Ptr does NOT point to this."));
+
+		return (const InterfaceType*)(*Ptr);
+	}
+
+	/**
+	* Get a reference to the interface or slice of the root structure.
+	*
 	* @param InterfaceName	Name of the interface structure.
 	* return				Raw pointer to an interface.
 	*/
@@ -178,6 +201,31 @@ public:
 			checkf(((InterfaceType*)(*Ptr))->GetInterfaceMap() == this, TEXT("FCsInterfaceMap::GetSafe: InterfaceMap for Ptr does NOT point to this."));
 
 			return (InterfaceType*)(*Ptr);
+		}
+		return nullptr;
+	}
+
+	/**
+	* Safely get a reference to the interface or slice of the root structure.
+	*
+	* return	Reference to the InterfaceType
+	*/
+	template<typename InterfaceType>
+	FORCEINLINE const InterfaceType* GetSafe() const
+	{
+		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::GetSafe: InterfaceType is NOT abstract.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "FCsInterfaceMap::GetSafe: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
+
+		checkf(InterfaceType::Name != NAME_None, TEXT("FCsInterfaceMap::GetSafe: InterfaceType::Name: None is NOT Valid."));
+
+		void * const* Ptr = Interfaces.Find(InterfaceType::Name);
+
+		if (Ptr)
+		{
+			checkf(((const InterfaceType*)(*Ptr))->GetInterfaceMap() == this, TEXT("FCsInterfaceMap::GetSafe: InterfaceMap for Ptr does NOT point to this."));
+
+			return (const InterfaceType*)(*Ptr);
 		}
 		return nullptr;
 	}
@@ -543,6 +591,39 @@ public:
 	}
 
 	/**
+	* Perform the operation static_cast<DerivedType*>(Interface) with checks.
+	* DerivedType is NOT abstract.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
+	*
+	* @param Context	The calling context.
+	* @param Interface	Interface to cast from.
+	* return			Interface casted to DerivedType (static_cast<DerivedType*>(Interface)).
+	*/
+	template<typename DerivedType, typename InterfaceType>
+	FORCEINLINE const DerivedType* PureStaticCastChecked(const FString& Context, const InterfaceType* Interface) const
+	{
+		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType IS abstract.");
+
+		static_assert(std::is_base_of<InterfaceType, DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType is NOT a child of: InterfaceType.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType is NOT a child of: ICsGetInterfaceMap.");
+
+		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::PureStaticCastChecked: InterfaceType is NOT abstract.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "NCsInterfaceMap::PureStaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
+
+		checkf(DerivedType::Name == RootName, TEXT("%s: this does NOT route to DerivedType (%s != %s)."), *Context, *(DerivedType::Name.ToString()), *(RootName.ToString()));
+
+		checkf(Get<InterfaceType>() == Interface, TEXT("%s: this does NOT contain a reference to Interface of type: %s."), *Context, *(InterfaceType::Name.ToString()));
+
+		const DerivedType* DerivedPtr = static_cast<const DerivedType*>(Interface);
+
+		checkf(DerivedPtr->GetInterfaceMap() == this, TEXT("%s: InterfaceMap for static_cast<DerivedType*>(Interface) does NOT point to this."), *Context);
+
+		return DerivedPtr;
+	}
+
+	/**
 	* Perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks.
 	* DerivedType is NOT abstract.
 	* Does NOT check if the InterfaceMap has "unique based" interfaces.
@@ -574,6 +655,38 @@ public:
 		return DerivedPtr;
 	}
 
+		/**
+	* Perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks.
+	* DerivedType is NOT abstract.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
+	*
+	* @param Context	The calling context.
+	* return			Interface casted to DerivedType 
+	*					(static_cast<DerivedType*>("Interface associated with InterfaceType")).
+	*/
+	template<typename DerivedType, typename InterfaceType>
+	FORCEINLINE const DerivedType* PureStaticCastChecked(const FString& Context) const
+	{
+		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType IS abstract.");
+
+		static_assert(std::is_base_of<InterfaceType, DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType is NOT a child of: InterfaceType.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType is NOT a child of: ICsGetInterfaceMap.");
+
+		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::PureStaticCastChecked: InterfaceType is NOT abstract.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "NCsInterfaceMap::PureStaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
+
+		checkf(DerivedType::Name == RootName, TEXT("%s: this does NOT route to DerivedType (%s != %s)."), *Context, *(DerivedType::Name.ToString()), *(RootName.ToString()));
+
+		const InterfaceType* Interface = Get<InterfaceType>();
+		const DerivedType* DerivedPtr  = static_cast<const DerivedType*>(Interface);
+
+		checkf(DerivedPtr->GetInterfaceMap() == this, TEXT("%s: InterfaceMap for static_cast<DerivedType*>(Interface) does NOT point to this."), *Context);
+
+		return DerivedPtr;
+	}
+
 	/**
 	* Perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks.
 	* DerivedType is NOT abstract.
@@ -599,6 +712,38 @@ public:
 
 		InterfaceType* Interface = Get<InterfaceType>();
 		DerivedType* DerivedPtr = static_cast<DerivedType*>(Interface);
+
+		checkf(DerivedPtr->GetInterfaceMap() == this, TEXT("FCsInterfaceMap::PureStaticCastChecked: InterfaceMap for static_cast<DerivedType*>(Interface) does NOT point to this."));
+
+		return DerivedPtr;
+	}
+
+
+	/**
+	* Perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks.
+	* DerivedType is NOT abstract.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
+	*
+	* return			Interface casted to DerivedType
+	*					(static_cast<DerivedType*>("Interface associated with InterfaceType")).
+	*/
+	template<typename DerivedType, typename InterfaceType>
+	FORCEINLINE const DerivedType* PureStaticCastChecked() const
+	{
+		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType IS abstract.");
+
+		static_assert(std::is_base_of<InterfaceType, DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType is NOT a child of: InterfaceType.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType is NOT a child of: ICsGetInterfaceMap.");
+
+		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::PureStaticCastChecked: InterfaceType is NOT abstract.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "FCsInterfaceMap::PureStaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
+
+		checkf(DerivedType::Name == RootName, TEXT("FCsInterfaceMap::PureStaticCastChecked: this does NOT route to DerivedType (%s != %s)."), *(DerivedType::Name.ToString()), *(RootName.ToString()));
+
+		const InterfaceType* Interface = Get<InterfaceType>();
+		const DerivedType* DerivedPtr  = static_cast<const DerivedType*>(Interface);
 
 		checkf(DerivedPtr->GetInterfaceMap() == this, TEXT("FCsInterfaceMap::PureStaticCastChecked: InterfaceMap for static_cast<DerivedType*>(Interface) does NOT point to this."));
 
@@ -741,6 +886,32 @@ namespace NCsInterfaceMap
 	* Object should implement the interface: ICsGetInterfaceMap.
 	*
 	* @param Context	The calling context
+	* @param Interface	The object that implements the interface: ICsGetInterfaceMap.
+	* return			Interface Map
+	*/
+	template<typename InterfaceType>
+	FORCEINLINE const FCsInterfaceMap* GetInterfaceMapChecked(const FString& Context, const InterfaceType* Interface)
+	{
+		static_assert(std::is_abstract<InterfaceType>(), "NCsInterfaceMap::GetInterfaceMapChecked: InterfaceType is NOT abstract.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "NCsInterfaceMap::GetInterfaceMapChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
+
+		checkf(Interface, TEXT("%: Interface is NULL."), *Context);
+
+		const FCsInterfaceMap* InterfaceMap = Interface->GetInterfaceMap();
+
+		checkf(InterfaceMap, TEXT("%s: InterfaceMap is NULL. Interface failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."), *Context);
+
+		checkf(Interface == InterfaceMap->Get<InterfaceType>(), TEXT("%s: InterfaceMap does NOT contain a reference to Interface."));
+
+		return InterfaceMap;
+	}
+
+	/**
+	* Get the Interface Map from an Object with checks.
+	* Object should implement the interface: ICsGetInterfaceMap.
+	*
+	* @param Context	The calling context
 	* @param Object		The object that implements the interface: ICsGetInterfaceMap.
 	* return			Interface Map
 	*/
@@ -850,6 +1021,35 @@ namespace NCsInterfaceMap
 	}
 
 	/**
+	* Perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks.
+	* DerivedType is NOT abstract.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
+	*
+	* @param Context	The calling context
+	* @param Interface	Interface that implements the interface: ICsGetInterfaceMap.
+	* return			Interface casted to DerivedType (static_cast<DerivedType*>(Interface))
+	*/
+	template<typename DerivedType, typename InterfaceType>
+	FORCEINLINE const DerivedType* PureStaticCastChecked(const FString& Context, const InterfaceType* Interface)
+	{
+		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType IS abstract.");
+
+		static_assert(std::is_base_of<InterfaceType, DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType is NOT a child of: InterfaceType.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, DerivedType>(), "NCsInterfaceMap::PureStaticCastChecked: DerivedType is NOT a child of: ICsGetInterfaceMap.");
+
+		static_assert(std::is_abstract<InterfaceType>(), "NCsInterfaceMap::PureStaticCastChecked: InterfaceType is NOT abstarct.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "NCsInterfaceMap::PureStaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
+
+		checkf(Interface, TEXT("%: Interface is NULL."), *Context);
+
+		const FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked<InterfaceType>(Context, Interface);
+
+		return InterfaceMap->PureStaticCastChecked<DerivedType, InterfaceType>(Context, Interface);
+	}
+
+	/**
 	* Perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks (for InterfaceMap).
 	* DerivedType is NOT abstract.
 	* Does NOT check if the InterfaceMap has "unique based" interfaces.
@@ -918,6 +1118,28 @@ namespace NCsInterfaceMap
 		static_assert(std::is_base_of<ICsGetInterfaceMap, OtherInterfaceType>(), "NCsInterfaceMap::GetSafeInterfaceChecked: OtherInterfaceType is NOT a child of: ICsGetInterfaceMap.");
 
 		FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked<InterfaceType>(Context, Interface);
+
+		return InterfaceMap->GetSafe<OtherInterfaceType>();
+	}
+
+	/**
+	* Safely get another interface from Interface with checks (for InterfaceMap).
+	* Interface should implement the interface: ICsGetInterfaceMap
+	* in order to get the appropriate memory offset (slice).
+	* OtherInterfaceType IS abstract.
+	*
+	* @param Context	The call context
+	* @param Interface	Interface that implements the interface: ICsGetInterfaceMap.
+	* return
+	*/
+	template<typename OtherInterfaceType, typename InterfaceType>
+	FORCEINLINE const OtherInterfaceType* GetSafeInterfaceChecked(const FString& Context, const InterfaceType* Interface)
+	{
+		static_assert(std::is_abstract<OtherInterfaceType>(), "NCsInterfaceMap::GetSafeInterfaceChecked: OtherInterfaceType is NOT abstract.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, OtherInterfaceType>(), "NCsInterfaceMap::GetSafeInterfaceChecked: OtherInterfaceType is NOT a child of: ICsGetInterfaceMap.");
+
+		const FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked<InterfaceType>(Context, Interface);
 
 		return InterfaceMap->GetSafe<OtherInterfaceType>();
 	}

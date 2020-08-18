@@ -58,3 +58,11 @@ void FCsPayload_PooledObjectImplSlice::AddReset(ICsReset* InReset)
 {
 	Resets.Add(InReset);
 }
+
+void FCsPayload_PooledObjectImplSlice::CopyFrom(const FCsPayload_PooledObjectImplSlice* From)
+{
+	Instigator = From->Instigator;
+	Owner = From->Owner;
+	Parent = From->Parent;
+	Time = From->Time;
+}

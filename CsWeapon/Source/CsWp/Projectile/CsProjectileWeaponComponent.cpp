@@ -4,6 +4,7 @@
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Library
+#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Payload/CsLibrary_Payload_Projectile.h"
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Managers/Sound/Payload/CsLibrary_SoundPooledPayload.h"
@@ -20,8 +21,11 @@
 #include "Projectile/Data/CsData_ProjectileWeaponSound.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
+// Pooled
+#include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Projectile
 #include "Payload/CsPayload_ProjectilePooledImpl.h"
+#include "Payload/CsPayload_ProjectileImplSlice.h"
 #include "Managers/Projectile/CsProjectilePooledImpl.h"
 // Sound
 #include "Managers/Sound/Payload/CsSoundPooledPayloadImpl.h"
@@ -360,12 +364,28 @@ void UCsProjectileWeaponComponent::SetProjectilePayload(ICsPayload_Projectile* P
 
 	const FString& Context = Str::SetProjectilePayload;
 
-	FCsPayload_ProjectilePooledImpl* PayloadImpl = FCsLibrary_Payload_Projectile::PureStaticCastChecked<FCsPayload_ProjectilePooledImpl>(Str::SetProjectilePayload, Payload);
+	// PooledObject
+	{
+		typedef FCsPayload_PooledObjectImplSlice SliceType;
+		typedef ICsPayload_PooledObject SliceInterfaceType;
 
-	PayloadImpl->Instigator = this;
-	PayloadImpl->Owner		= MyOwner;
-	PayloadImpl->Location	= GetLaunchProjectileLocation();
-	PayloadImpl->Direction	= GetLaunchProjectileDirection();
+		if (SliceType* Slice = FCsLibrary_Payload_Projectile::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
+		{
+			Slice->Instigator = this;
+			Slice->Owner	  = MyOwner;
+		}
+	}
+	// Projectile
+	{
+		typedef FCsPayload_ProjectileImplSlice SliceType;
+		typedef ICsPayload_Projectile SliceInterfaceType;
+
+		if (SliceType* Slice = FCsLibrary_Payload_Projectile::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
+		{
+			Slice->Location  = GetLaunchProjectileLocation();
+			Slice->Direction = GetLaunchProjectileDirection();
+		}
+	}
 }
 
 FVector UCsProjectileWeaponComponent::GetLaunchProjectileLocation()

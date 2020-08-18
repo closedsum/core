@@ -37,6 +37,13 @@ public:
 	/**
 	*
 	*
+	* return 
+	*/
+	//virtual const ICsDamageRange* GetDamageRange() const = 0;
+
+	/**
+	*
+	*
 	* return
 	*/ 
 	virtual ICsDamageExpression* GetExpression() const = 0;

@@ -102,4 +102,6 @@ public:
 public:
 
 	void AddReset(ICsReset* InReset);
+
+	void CopyFrom(const FCsPayload_PooledObjectImplSlice* From);
 };

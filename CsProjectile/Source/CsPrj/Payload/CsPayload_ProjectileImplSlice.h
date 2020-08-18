@@ -73,4 +73,8 @@ public:
 	void Reset();
 
 #pragma endregion ICsReset
+
+public:
+
+	void CopyFrom(const FCsPayload_ProjectileImplSlice* From);
 };

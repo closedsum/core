@@ -37,3 +37,9 @@ void FCsPayload_ProjectileImplSlice::Reset()
 }
 
 #pragma endregion ICsReset
+
+void FCsPayload_ProjectileImplSlice::CopyFrom(const FCsPayload_ProjectileImplSlice* From)
+{
+	Direction = From->Direction;
+	Location = From->Location;
+}

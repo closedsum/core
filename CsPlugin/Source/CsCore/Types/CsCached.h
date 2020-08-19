@@ -33,6 +33,11 @@ namespace NCsCached
 		extern CSCORE_API const FString YawEquals;// = TEXT("Y=");
 	}
 
+	CSCORE_API FORCEINLINE const TCHAR* ToChar(bool Value)
+	{
+		return Value ? *(Str::True) : *(Str::False);
+	}
+
 	namespace Ref
 	{
 		extern CSCORE_API const bool True;// = true;

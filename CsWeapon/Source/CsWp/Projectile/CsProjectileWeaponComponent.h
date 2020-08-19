@@ -111,6 +111,14 @@ protected:
 
 #pragma endregion State
 
+// Ammo
+#pragma region
+protected:
+
+	int32 CurrentAmmo;
+
+#pragma endregion Ammo
+
 // Fire
 #pragma region
 protected:

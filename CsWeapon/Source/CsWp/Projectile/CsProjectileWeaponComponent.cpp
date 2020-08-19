@@ -1,8 +1,12 @@
 #include "Projectile/CsProjectileWeaponComponent.h"
 #include "CsWp.h"
 
+// CVar
+#include "Projectile/CsCVars_ProjectileWeapon.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
+// Types
+#include "Types/CsCached.h"
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Payload/CsLibrary_Payload_Projectile.h"
@@ -38,6 +42,7 @@ namespace NCsProjectileWeaponComponentCached
 	namespace Str
 	{
 		const FString Init = TEXT("UCsProjectileWeaponComponent::Init");
+		const FString OnUpdate_HandleStates = TEXT("UCsProjectileWeaponComponent::OnUpdate_HandleStates");
 		const FString CanFire = TEXT("UCsProjectileWeaponComponent::CanFire");
 		const FString Fire = TEXT("UCsProjectileWeaponComponent::Fire");
 		const FString Fire_Internal = TEXT("UCsProjectileWeaponComponent::Fire_Internal");
@@ -70,6 +75,8 @@ UCsProjectileWeaponComponent::UCsProjectileWeaponComponent(const FObjectInitiali
 	CurrentState(),
 	IdleState(),
 	FireState(),
+	// Ammo
+	CurrentAmmo(0),
 	// Fire
 	bFire(false),
 	bFire_Last(false),
@@ -174,6 +181,8 @@ void UCsProjectileWeaponComponent::Init()
 
 	checkf(Data, TEXT("%s: Data is NULL. Failed to get Data of type: ICsData_Weapon for Weapon: %s"), *Context, WeaponType.ToChar());
 
+	checkf(FCsLibrary_Data_Weapon::IsValidChecked(Context, Data), TEXT("%s: Data is NOT Valid."), *Context);
+
 	checkf(EMCsProjectile::Get().IsValidEnum(ProjectileType), TEXT("%s: WeaponType: %s is NOT Valid."), *Context, ProjectileType.ToChar());
 
 	// Set States
@@ -188,6 +197,11 @@ void UCsProjectileWeaponComponent::Init()
 	checkf(EMCsWeaponState::Get().IsValidEnum(FireState), TEXT("%s: FireState: %s is NOT Valid."), *Context, FireState.ToChar());
 
 	CurrentState = IdleState;
+
+	// Ammo
+	ICsData_ProjectileWeapon* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ICsData_ProjectileWeapon>(Context, Data);
+
+	CurrentAmmo = PrjData->GetMaxAmmo();
 }
 
 // State
@@ -195,7 +209,18 @@ void UCsProjectileWeaponComponent::Init()
 
 void UCsProjectileWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTime)
 {
+	using namespace NCsProjectileWeaponComponentCached;
+
+	const FString& Context = Str::OnUpdate_HandleStates;
+
 	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
+
+#if !UE_BUILD_SHIPPING
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogWeaponProjectileState))
+	{
+		UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: %s."), *Context, CurrentState.ToChar());
+	}
+#endif // #if !UE_BUILD_SHIPPING
 
 	// Idle
 	if (CurrentState == IdleState)
@@ -205,6 +230,13 @@ void UCsProjectileWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& Del
 			Fire();
 
 			CurrentState = FireState;
+
+#if !UE_BUILD_SHIPPING
+			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogWeaponProjectileStateTransition))
+			{
+				UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: Idle -> Fire."), *Context);
+			}
+#endif // #if !UE_BUILD_SHIPPING
 		}
 	}
 
@@ -221,6 +253,13 @@ void UCsProjectileWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& Del
 		if (FireCount == 0)
 		{
 			CurrentState = IdleState;
+
+#if !UE_BUILD_SHIPPING
+			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogWeaponProjectileStateTransition))
+			{
+				UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: Fire -> Idle."), *Context);
+			}
+#endif // #if !UE_BUILD_SHIPPING
 		}
 	}
 }
@@ -235,7 +274,7 @@ bool UCsProjectileWeaponComponent::CanFire() const
 	using namespace NCsProjectileWeaponComponentCached;
 
 	const FString& Context = Str::CanFire;
-
+	
 	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
 
 	ICsData_ProjectileWeapon* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ICsData_ProjectileWeapon>(Context, Data);
@@ -246,8 +285,30 @@ bool UCsProjectileWeaponComponent::CanFire() const
 	const bool Pass_Fire = bFire && !PrjData->DoFireOnRelease() && (PrjData->IsFullAuto() || !bFire_Last);
 	// Check if bFire has just been unset and on release.
 	const bool Pass_FireOnRelease = !bFire && PrjData->DoFireOnRelease() && bFire_Last;
+	// Check if has ammo to fire.
+	const bool Pass_Ammo = PrjData->HasInfiniteAmmo() || CurrentAmmo > 0;
 
-	return Pass_Time && (Pass_Fire || Pass_FireOnRelease);
+#if !UE_BUILD_SHIPPING
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogWeaponProjectileCanFire))
+	{
+		using namespace NCsCached;
+
+		UE_LOG(LogCsWp, Warning, TEXT("%s"), *Context);
+		// Pass_Time
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Time (%s): %f - %f > %f"), ToChar(Pass_Time), TimeSinceStart.Time, Fire_StartTime, PrjData->GetTimeBetweenShots());
+		// Pass_Fire
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Fire (%s): %s && %s && (%s || %s)"), ToChar(Pass_Fire), ToChar(bFire), ToChar(!PrjData->DoFireOnRelease()), ToChar(PrjData->IsFullAuto()), ToChar(!bFire_Last));
+		// Pass_FireOnRelease
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_FireOnRelease (%s): %s && %s && %s"), ToChar(Pass_FireOnRelease), ToChar(!bFire), ToChar(PrjData->DoFireOnRelease()), ToChar(bFire_Last));
+		// Pass_Ammo
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Ammo (%s): %s || %s"), ToChar(Pass_Ammo), ToChar(PrjData->HasInfiniteAmmo()), ToChar(CurrentAmmo > 0));
+
+		// Result
+		UE_LOG(LogCsWp, Warning, TEXT(" Result (%s): %s && (%s || %s) && %s"), ToChar(Pass_Time && (Pass_Fire || Pass_FireOnRelease) && Pass_Ammo), ToChar(Pass_Time), ToChar(Pass_Fire), ToChar(Pass_FireOnRelease), ToChar(Pass_Ammo));
+	}
+#endif // #if !UE_BUILD_SHIPPING
+
+	return Pass_Time && (Pass_Fire || Pass_FireOnRelease) && Pass_Ammo;
 }
 
 void UCsProjectileWeaponComponent::Fire()
@@ -302,14 +363,14 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 		{
 			ElapsedTime.Reset();
 
+			if (!PrjData->HasInfiniteAmmo())
+				--CurrentAmmo;
+
 			FireProjectile();
 			PlayFireSound();
 
-			// TODO: Need to handle infinite ammo
-			// TODO: Need to max sure Ammo Count is tracked and decremented
-
 			// Increment the shot index
-			CurrentProjectilePerShotIndex = FMath::Min(CurrentProjectilePerShotIndex + 1, FMath::Max(1, PrjData->GetMaxAmmo()));
+			CurrentProjectilePerShotIndex = FMath::Min(CurrentProjectilePerShotIndex + 1, PrjData->GetProjectilesPerShot());
 
 			// Check if more projectiles should be fired, if so wait
 			if (CurrentProjectilePerShotIndex < PrjData->GetProjectilesPerShot())

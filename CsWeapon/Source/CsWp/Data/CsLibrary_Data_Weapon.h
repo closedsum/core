@@ -5,7 +5,7 @@
 
 class ICsData_Weapon;
 
-struct CSPRJ_API FCsLibrary_Data_Weapon
+struct CSWP_API FCsLibrary_Data_Weapon
 {
 	/**
 	* Get the Interface Map from an Data with checks.
@@ -77,4 +77,13 @@ struct CSPRJ_API FCsLibrary_Data_Weapon
 	{
 		return NCsInterfaceMap::GetSafeInterfaceChecked<OtherInterfaceType, ICsData_Weapon>(Context, Data);
 	}
+
+	/**
+	*
+	*
+	* @param Context
+	* @param Data
+	* return
+	*/
+	static bool IsValidChecked(const FString& Context, ICsData_Weapon* Data);
 };

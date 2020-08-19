@@ -63,6 +63,7 @@ namespace NCsManagerWeapon
 		// ICsData_ProjectileWeapon
 		const FName bDoFireOnRelease = FName("bDoFireOnRelease");
 		const FName bFullAuto = FName("bFullAuto");
+		const FName bInfiniteAmmo = FName("bInfiniteAmmo");
 		const FName MaxAmmo = FName("MaxAmmo");
 		const FName ProjectilesPerShot = FName("ProjectilesPerShot");
 		const FName TimeBetweenShots = FName("TimeBetweenShots");
@@ -848,6 +849,8 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 	UBoolProperty* bDoFireOnReleaseProperty = nullptr;
 		// bFullAuto
 	UBoolProperty* bFullAutoProperty = nullptr;
+		// bInfiniteAmmo
+	UBoolProperty* bInfiniteAmmoProperty = nullptr;
 		// MaxAmmo
 	UIntProperty* MaxAmmoProperty = nullptr;
 		// ProjectilesPerShot
@@ -865,6 +868,8 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 		bDoFireOnReleaseProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UBoolProperty>(Context, RowStruct, Name::bDoFireOnRelease, NCsWeaponData::ProjectileWeapon.GetDisplayName());
 		// bFullAuto
 		bFullAutoProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UBoolProperty>(Context, RowStruct, Name::bFullAuto, NCsWeaponData::ProjectileWeapon.GetDisplayName());
+		// bInfiniteAmmo
+		bInfiniteAmmoProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UBoolProperty>(Context, RowStruct, Name::bInfiniteAmmo, NCsWeaponData::ProjectileWeapon.GetDisplayName());
 		// MaxAmmo
 		MaxAmmoProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<UIntProperty>(Context, RowStruct, Name::MaxAmmo, NCsWeaponData::ProjectileWeapon.GetDisplayName());
 		// ProjectilesPerShot
@@ -973,6 +978,12 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 				bool* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<bool>(Context, bFullAutoProperty, RowPtr);
 
 				Data->SetFullAuto(Value);
+			}
+			// bInfiniteAmmo
+			{
+				bool* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<bool>(Context, bInfiniteAmmoProperty, RowPtr);
+
+				Data->SetInfiniteAmmo(Value);
 			}
 			// MaxAmmo
 			{

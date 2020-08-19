@@ -43,6 +43,13 @@ public:
 	*
 	* return
 	*/
+	virtual const bool& HasInfiniteAmmo() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
 	virtual const int32& GetMaxAmmo() const = 0;
 
 	/**

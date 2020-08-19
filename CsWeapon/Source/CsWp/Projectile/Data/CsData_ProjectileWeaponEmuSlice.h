@@ -18,6 +18,8 @@ private:
 
 	bool* bFullAuto;
 
+	bool* bInfiniteAmmo;
+
 	int32* MaxAmmo;
 
 	int32* ProjectilesPerShot;
@@ -65,6 +67,11 @@ public:
 		bFullAuto = Value;
 	}
 
+	FORCEINLINE void SetInfiniteAmmo(bool* Value)
+	{
+		bInfiniteAmmo = Value;
+	}
+
 	FORCEINLINE void SetMaxAmmo(int32* Value)
 	{
 		MaxAmmo = Value;
@@ -102,6 +109,11 @@ public:
 	FORCEINLINE const bool& IsFullAuto() const
 	{
 		return *bFullAuto;
+	}
+
+	FORCEINLINE const bool& HasInfiniteAmmo() const
+	{
+		return *bInfiniteAmmo;
 	}
 
 	FORCEINLINE const int32& GetMaxAmmo() const

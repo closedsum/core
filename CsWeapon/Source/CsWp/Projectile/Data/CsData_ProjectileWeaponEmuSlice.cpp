@@ -9,6 +9,7 @@ FCsData_ProjectileWeaponEmuSlice::FCsData_ProjectileWeaponEmuSlice() :
 		InterfaceMap(nullptr),
 		bDoFireOnRelease(nullptr),
 		bFullAuto(nullptr),
+		bInfiniteAmmo(nullptr),
 		MaxAmmo(nullptr),
 		ProjectilesPerShot(nullptr),
 		TimeBetweenShots(nullptr),

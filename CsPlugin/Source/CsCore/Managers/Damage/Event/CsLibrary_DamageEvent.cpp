@@ -4,30 +4,25 @@
 // Damage
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
 
-void FCsLibrary_DamageEvent::CopyChecked(const FString& Context, ICsDamageEvent* From, ICsDamageEvent* To)
+bool FCsLibrary_DamageEvent::CopyChecked(const FString& Context, const ICsDamageEvent* From, ICsDamageEvent* To)
 {
 	// FCsDamageEventImpl (ICsDamageEvent)
 	if (FCsDamageEventImpl* ToImpl = SafePureStaticCastChecked<FCsDamageEventImpl>(Context, To))
 	{
-		FCsDamageEventImpl* FromImpl = PureStaticCastChecked<FCsDamageEventImpl>(Context, From);
+		const FCsDamageEventImpl* FromImpl = PureStaticCastChecked<FCsDamageEventImpl>(Context, From);
 
 		ToImpl->CopyFrom(FromImpl);
+		return true;
 	}
-	else
-	{
-		checkf(0, TEXT("%s: Failed to copy From to To."), *Context);
-	}
+	return false;
 }
 
-void FCsLibrary_DamageEvent::SetDamageChecked(const FString& Context, ICsDamageEvent* Event)
+bool FCsLibrary_DamageEvent::SetDamageChecked(const FString& Context, ICsDamageEvent* Event)
 {
 	// FCsDamageEventImpl (ICsDamageEvent)
 	if (FCsDamageEventImpl* Impl = SafePureStaticCastChecked<FCsDamageEventImpl>(Context, Event))
 	{
-		Impl->SetDamageChecked(Context);
+		return Impl->SetDamageChecked(Context);
 	}
-	else
-	{
-		checkf(0, TEXT("%s: Failed to set damage for Event"), *Context);
-	}
+	return false;
 }

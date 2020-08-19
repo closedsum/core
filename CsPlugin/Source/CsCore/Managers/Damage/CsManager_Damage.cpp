@@ -8,7 +8,12 @@
 #include "Library/CsLibrary_Common.h"
 #include "Managers/Damage/Expression/CsLibrary_DamageExpression.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Managers/Damage/Range/CsLibrary_DamageRange.h"
 #include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
+// Settings
+#include "Settings/CsDeveloperSettings.h"
+// Reset
+#include "Reset/CsReset.h"
 // Damage
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
 #include "Managers/Damage/Expression/CsDamageExpression.h"
@@ -226,15 +231,15 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 
 void UCsManager_Damage::Initialize()
 {
+	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
 	// Event
 	{
 		// Bind Construct Resource Impl
 		Manager_Event.ConstructResourceType_Impl.BindUObject(this, &UCsManager_Damage::ConstructEvent);
 
-		// TODO: Poll config in future
-
 		// Create Pool
-		static const int32 PoolSize = 256;
+		const int32& PoolSize = Settings->Manager_Damage.Event.PoolSize;
 
 		Manager_Event.CreatePool(PoolSize);
 	}
@@ -245,10 +250,8 @@ void UCsManager_Damage::Initialize()
 		Manager_Values.Reserve(Count);
 		Manager_Values.AddDefaulted(Count);
 		
-		// TODO: Poll config in future
-
 			// Create Pool
-		static const int32 PoolSize = 256;
+		const int32& PoolSize = Settings->Manager_Damage.Value.PoolSize;
 
 		for (const FECsDamageValue& Value : EMCsDamageValue::Get())
 		{
@@ -257,12 +260,21 @@ void UCsManager_Damage::Initialize()
 			Manager.SetDeconstructResourcesOnShutdown();
 			Manager.CreatePool(PoolSize);
 
-			Manager.Add(ConstructValue(Value));
+			for (int32 I = 0; I < PoolSize; ++I)
+			{
+				Manager.Add(ConstructValue(Value));
+			}
 		}
 	}
 	// Range
 	{
+		// Bind Construct Resource Impl
+		Manager_Range.ConstructResourceType_Impl.BindUObject(this, &UCsManager_Damage::ConstructRange);
 
+		// Create Pool
+		const int32& PoolSize = Settings->Manager_Damage.Range.PoolSize;
+
+		Manager_Range.CreatePool(PoolSize);
 	}
 	bInitialized = true;
 }
@@ -276,6 +288,20 @@ void UCsManager_Damage::Initialize()
 
 void UCsManager_Damage::CleanUp()
 {
+	// Event
+	Manager_Event.Shutdown();
+	// Value
+	{
+		for (const FECsDamageValue& Value : EMCsDamageValue::Get())
+		{
+			FCsManager_DamageValue& Manager = Manager_Values[Value.GetValue()];
+
+			Manager.Shutdown();
+		}
+	}
+	// Range
+	Manager_Range.Shutdown();
+
 	bInitialized = false;
 }
 
@@ -357,13 +383,66 @@ void UCsManager_Damage::DeallocateEvent(const FString& Context, FCsResource_Dama
 {
 	if (FCsDamageEventImpl* Impl = FCsLibrary_DamageEvent::SafePureStaticCastChecked<FCsDamageEventImpl>(Context, Event->Get()))
 	{
-		// If the Event has a Damage Value Container, deallocate it
+		// If Damage Value Container, deallocate it
 		if (FCsResource_DamageValue* Value = Impl->DamageValueContainer)
 		{
-			DeallocateValue(Impl->DamageValueType, Value);
+			DeallocateValue(Context, Impl->DamageValueType, Value);
+		}
+		// If Damage Range Container, deallocate it
+		if (FCsResource_DamageRange* Range = Impl->DamageRangeContainer)
+		{
+			DeallocateRange(Context, Impl->DamageRangeContainer);
 		}
 	}
+	// Reset
+	if (ICsReset* IReset = FCsLibrary_DamageEvent::GetSafeInterfaceChecked<ICsReset>(Context, Event->Get()))
+		IReset->Reset();
+
 	Manager_Event.Deallocate(Event);
+}
+
+bool UCsManager_Damage::CopyEvent(const FString& Context, const ICsDamageEvent* From, ICsDamageEvent* To)
+{
+	bool Success = FCsLibrary_DamageEvent::CopyChecked(Context, From, To);
+
+	checkf(Success, TEXT("%s: Failed to copy Event From to To."));
+
+	// FCsDamageEventImpl (ICsDamageEvent)
+	if (FCsDamageEventImpl* ToImpl = FCsLibrary_DamageEvent::SafePureStaticCastChecked<FCsDamageEventImpl>(Context, To))
+	{
+		// Value
+		ToImpl->DamageValueContainer = CreateCopyOfValue(Context, From->GetDamageValue());
+		ToImpl->DamageValue			 = ToImpl->DamageValueContainer->Get();
+		ToImpl->DamageValueType		 = GetValueType(Context, ToImpl->DamageValue);
+
+		checkf(EMCsDamageValue::Get().IsValidEnum(ToImpl->DamageValueType), TEXT("%s: DamageValueType: %s is NOT Valid."), ToImpl->DamageValueType.ToChar());
+
+		// Range
+		if (const ICsDamageRange* Range = From->GetDamageRange())
+		{
+			ToImpl->DamageRangeContainer = CreateCopyOfRange(Context, Range);
+			ToImpl->DamageRange			 = ToImpl->DamageRangeContainer->Get();
+		}
+		return true;
+	}
+	return false;
+}
+
+FCsResource_DamageEvent* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, const ICsDamageEvent* Event)
+{
+	FCsResource_DamageEvent* Container = AllocateEvent();
+	ICsDamageEvent* Copy			   = Container->Get();
+
+	bool Success = CopyEvent(Context, Event, Copy);
+
+	checkf(Success, TEXT("%s: Failed to create copy of Event."), *Context);
+
+	return Container;
+}
+
+FCsResource_DamageEvent* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, const FCsResource_DamageEvent* Event)
+{
+	return CreateCopyOfEvent(Context, Event->Get());
 }
 
 void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
@@ -388,7 +467,7 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 	{
 		const FHitResult& HitResult = Event->GetHitResult();
 		
-		bool CopyEvent = false;
+		bool ShouldCopyEvent = false;
 		
 		// Actor
 		if (AActor* Actor = HitResult.GetActor())
@@ -401,7 +480,7 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 				Local_Recievers.AddDefaulted();
 				Local_Recievers.Last().SetObject(Actor);
 
-				CopyEvent = true;
+				ShouldCopyEvent = true;
 			}
 		}
 		// Component
@@ -416,17 +495,15 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 				Local_Recievers.AddDefaulted();
 				Local_Recievers.Last().SetObject(Component);
 
-				CopyEvent = true;
+				ShouldCopyEvent = true;
 			}
 		}
 
-		if (CopyEvent)
+		if (ShouldCopyEvent)
 		{
 			// Copy the Event
-			FCsResource_DamageEvent* EventContainer = AllocateEvent();
+			FCsResource_DamageEvent* EventContainer = CreateCopyOfEvent(Context, Event);
 			ICsDamageEvent* Evt						= EventContainer->Get();
-
-			FCsLibrary_DamageEvent::CopyChecked(Context, const_cast<ICsDamageEvent*>(Event), Evt);
 
 			// Set the Damage
 			FCsLibrary_DamageEvent::SetDamageChecked(Context, Evt);
@@ -459,7 +536,6 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 	Local_Recievers.Reset(Local_Recievers.Max());
 	Local_Events.Reset(Local_Events.Max());
 }
-
 
 void UCsManager_Damage::ProcessDamageEventContainer(const FCsResource_DamageEvent* Event)
 {
@@ -498,9 +574,13 @@ FCsResource_DamageValue* UCsManager_Damage::AllocateValue(const FECsDamageValue&
 	return Manager_Values[Type.GetValue()].Allocate();
 }
 
-void UCsManager_Damage::DeallocateValue(const FECsDamageValue& Type, FCsResource_DamageValue* Value)
+void UCsManager_Damage::DeallocateValue(const FString& Context, const FECsDamageValue& Type, FCsResource_DamageValue* Value)
 {
 	checkf(EMCsDamageValue::Get().IsValidEnum(Type), TEXT("UCsManager_Damage::DeallocateValue: Type: %s is NOT Valid."), Type.ToChar());
+
+	// Reset
+	if (ICsReset* IReset = FCsLibrary_DamageValue::GetSafeInterfaceChecked<ICsReset>(Context, Value->Get()))
+		IReset->Reset();
 
 	Manager_Values[Type.GetValue()].Deallocate(Value);
 }
@@ -520,6 +600,42 @@ void UCsManager_Damage::DeallocateValue(const FString& Context, FCsResource_Dama
 	}
 }
 
+const FECsDamageValue& UCsManager_Damage::GetValueType(const FString& Context, const ICsDamageValue* Value)
+{
+	checkf(Value, TEXT("%s: Value is NULL."), *Context);
+
+	// Point
+	if (FCsLibrary_DamageValue::GetSafeInterfaceChecked<ICsDamageValuePoint>(Context, Value))
+		return NCsDamageValue::Point;
+	// Range
+	if (FCsLibrary_DamageValue::GetSafeInterfaceChecked<ICsDamageValueRange>(Context, Value))
+		return NCsDamageValue::Range;
+
+	return EMCsDamageValue::Get().GetMAX();
+}
+
+
+FCsResource_DamageValue* UCsManager_Damage::CreateCopyOfValue(const FString& Context, const ICsDamageValue* Value)
+{
+	const FECsDamageValue& ValueType = GetValueType(Context, Value);
+
+	checkf(EMCsDamageValue::Get().IsValidEnum(ValueType), TEXT("%s: ValueType: %s is NOT Valid."), ValueType.ToChar());
+
+	FCsResource_DamageValue* Container = AllocateValue(ValueType);
+	ICsDamageValue* Copy			   = Container->Get();
+
+	bool Success = FCsLibrary_DamageValue::CopyChecked(Context, Value, Copy);
+
+	checkf(Success, TEXT("%s: Failed to create copy of Event."), *Context);
+
+	return Container;
+}
+
+FCsResource_DamageValue* UCsManager_Damage::CreateCopyOfValue(const FString& Context, const FCsResource_DamageValue* Value)
+{
+	return CreateCopyOfValue(Context, Value->Get());
+}
+
 #pragma endregion Value
 
 // Range
@@ -532,11 +648,36 @@ ICsDamageRange* UCsManager_Damage::ConstructRange()
 
 FCsResource_DamageRange* UCsManager_Damage::AllocateRange()
 {
-	return nullptr;
+	return Manager_Range.Allocate();
 }
 
-#pragma endregion Range
+void UCsManager_Damage::DeallocateRange(const FString& Context, FCsResource_DamageRange* Range)
+{
+	// Reset
+	if (ICsReset* IReset = FCsLibrary_DamageRange::GetSafeInterfaceChecked<ICsReset>(Context, Range->Get()))
+		IReset->Reset();
 
+	Manager_Range.Deallocate(Range);
+}
+
+FCsResource_DamageRange* UCsManager_Damage::CreateCopyOfRange(const FString& Context, const ICsDamageRange* Range)
+{
+	FCsResource_DamageRange* Container = AllocateRange();
+	ICsDamageRange* Copy			   = Container->Get();
+
+	bool Success = FCsLibrary_DamageRange::CopyChecked(Context, Range, Copy);
+
+	checkf(Success, TEXT("%s: Failed to create copy of Event."), *Context);
+
+	return Container;
+}
+
+FCsResource_DamageRange* UCsManager_Damage::CreateCopyOfRange(const FString& Context, const FCsResource_DamageRange* Range)
+{
+	return CreateCopyOfRange(Context, Range->Get());
+}
+
+#pragma endregion  Range
 
 // Log
 #pragma region

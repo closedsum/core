@@ -32,7 +32,7 @@ public:
 	* 
 	* return Damage Value.
 	*/
-	virtual ICsDamageValue* GetValue() const = 0;
+	virtual const ICsDamageValue* GetValue() const = 0;
 
 	/**
 	* Get the type of damage.

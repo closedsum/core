@@ -29,7 +29,7 @@ void FCsPayload_PooledObjectImplSlice::SetInterfaceMap(FCsInterfaceMap* InInterf
 
 	InterfaceMap = InInterfaceMap;
 
-	InterfaceMap->Add<ICsPayload_PooledObject>(FCsPayload_PooledObjectImplSlice::Name, static_cast<FCsPayload_PooledObjectImplSlice*>(this));
+	InterfaceMap->Add<ICsPayload_PooledObject>(FCsPayload_PooledObjectImplSlice::Name, static_cast<ICsPayload_PooledObject*>(this));
 }
 
 // ICsPayload_PooledObject

@@ -2,6 +2,7 @@
 
 // Interfaces
 #include "Managers/Damage/Event/CsDamageEvent.h"
+#include "Reset/CsReset.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
 // Types
@@ -12,12 +13,15 @@ class UObject;
 struct FCsInterfaceMap;
 struct FCsResource_DamageValue;
 struct ICsDamageValue;
+struct FCsResource_DamageRange;
+struct ICsDamageRange;
 class ICsDamageExpression;
 
 /**
 * Basic implementation of the interface: ICsDmaageEvent
 */
-struct CSCORE_API FCsDamageEventImpl final : public ICsDamageEvent
+struct CSCORE_API FCsDamageEventImpl final : public ICsDamageEvent,
+											 public ICsReset
 {
 public:
 
@@ -39,6 +43,10 @@ public:
 
 	ICsDamageValue* DamageValue;
 
+	FCsResource_DamageRange* DamageRangeContainer;
+
+	ICsDamageRange* DamageRange;
+
 	ICsDamageExpression* Expression;
 
 	UObject* Instigator;
@@ -56,6 +64,8 @@ public:
 public:
 
 	FCsDamageEventImpl();
+
+	FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 // ICsGetInterfaceMap
 #pragma region
@@ -80,6 +90,11 @@ public:
 	FORCEINLINE const ICsDamageValue* GetDamageValue() const
 	{
 		return DamageValue;
+	}
+
+	FORCEINLINE const ICsDamageRange* GetDamageRange() const
+	{
+		return DamageRange;
 	}
 
 	FORCEINLINE ICsDamageExpression* GetExpression() const
@@ -133,9 +148,31 @@ public:
 		return Cast<T>(GetCauser());
 	}
 
+	/**
+	* Copy all elements from another Event 
+	*  EXCEPT:
+	*   InterfaceMap: This needs to be unique per instance.
+	*   DamageValueContainer: This pointer should be unique per instance.
+	*   DamageValue: This pointer should be unique per instance.
+	*   DamageRangeContainer: This pointer should be unique per instance.
+	*   DamageRange: This pointer should be unique per instance.
+	*
+	* @param From	Event to copy from.
+	*/
 	void CopyFrom(const FCsDamageEventImpl* From);
 
-	void SetDamageChecked(const FString& Context);
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* return			Whether the damage was successfully set.
+	*/
+	bool SetDamageChecked(const FString& Context);
+
+// ICsReset
+#pragma region
 
 	void Reset();
+
+#pragma endregion ICsReset
 };

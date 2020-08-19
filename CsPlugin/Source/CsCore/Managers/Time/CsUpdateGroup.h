@@ -163,27 +163,27 @@ public:
 		LastTime = Time;
 	}
 
-	FORCEINLINE const FCsTime& GetTime()
+	FORCEINLINE const FCsTime& GetTime() const
 	{
 		return Time;
 	}
 
-	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime()
+	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime() const
 	{
 		return ScaledDeltaTime;
 	}
 
-	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FName& ScaleName)
+	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FName& ScaleName) const
 	{
 		return ScaledDeltaTimes[ScaleName];
 	}
 
-	FORCEINLINE const FCsDeltaTime& GetTimeSinceStart()
+	FORCEINLINE const FCsDeltaTime& GetTimeSinceStart() const
 	{
 		return TimeSinceStart;
 	}
 
-	FORCEINLINE const FCsDeltaTime& GetTimePaused()
+	FORCEINLINE const FCsDeltaTime& GetTimePaused() const
 	{
 		return TimePaused;
 	}

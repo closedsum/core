@@ -144,12 +144,12 @@ void UCsManager_Time::Unpause(const FECsUpdateGroup& Group)
 
 void UCsManager_Time::Update(const FECsUpdateGroup& Group, const float& DeltaTime)
 {
-	UpdateGroups[Group.Value].Update(DeltaTime);
+	UpdateGroups[Group.GetValue()].Update(DeltaTime);
 }
 
 void UCsManager_Time::Update(const FECsUpdateGroup& Group, const float& DeltaTime, const float& Time, const float& RealTime)
 {
-	UpdateGroups[Group.Value].Update(DeltaTime, Time, RealTime);
+	UpdateGroups[Group.GetValue()].Update(DeltaTime, Time, RealTime);
 }
 
 #pragma endregion Update

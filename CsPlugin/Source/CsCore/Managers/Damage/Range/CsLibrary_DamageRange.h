@@ -68,6 +68,21 @@ struct CSCORE_API FCsLibrary_DamageRange
 	}
 
 	/**
+	* Safely perform the operation static_cast<DerivedType*>("Range associated with ICsDamageRange") with checks (For InterfaceMap).
+	* DerivedType is NOT abstract.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
+	*
+	* @param Context	The calling context
+	* @param Range		Range that implements the interface: ICsDamageRange.
+	* return			Range casted to DerivedType (static_cast<DerivedType*>(Range))
+	*/
+	template<typename DerivedType>
+	FORCEINLINE static const DerivedType* SafePureStaticCastChecked(const FString& Context, const ICsDamageRange* Range)
+	{
+		return NCsInterfaceMap::SafePureStaticCastChecked<DerivedType, ICsDamageRange>(Context, Range);
+	}
+
+	/**
 	* Perform the operation static_cast<OtherInterfaceType*>("Range associated with ICsDamageRange") with checks.
 	* OtherInterfaceType IS abstract.
 	*
@@ -105,5 +120,5 @@ struct CSCORE_API FCsLibrary_DamageRange
 	* @param From		What to copy.
 	* @param To			What to copy to.
 	*/
-	static void CopyChecked(const FString& Context, ICsDamageRange* From, ICsDamageRange* To);
+	static bool CopyChecked(const FString& Context, const ICsDamageRange* From, ICsDamageRange* To);
 };

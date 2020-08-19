@@ -52,6 +52,21 @@ struct CSCORE_API FCsLibrary_DamageEvent
 	}
 
 	/**
+	* Perform the operation static_cast<DerivedType*>("Event associated with ICsDamageEvent") with checks.
+	* DerivedType is NOT abstract.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
+	*
+	* @param Context	The calling context
+	* @param Event		Event that implements the interface: ICsDamageEvent.
+	* return			Event casted to DerivedType (static_cast<DerivedType*>(Event))
+	*/
+	template<typename DerivedType>
+	FORCEINLINE static const DerivedType* PureStaticCastChecked(const FString& Context, const ICsDamageEvent* Event)
+	{
+		return NCsInterfaceMap::PureStaticCastChecked<DerivedType, ICsDamageEvent>(Context, Event);
+	}
+
+	/**
 	* Safely perform the operation static_cast<DerivedType*>("Event associated with ICsDamageEvent") with checks (For InterfaceMap).
 	* DerivedType is NOT abstract.
 	* Does NOT check if the InterfaceMap has "unique based" interfaces.
@@ -103,14 +118,16 @@ struct CSCORE_API FCsLibrary_DamageEvent
 	* @param Context	The calling context.
 	* @param From		What to copy.
 	* @param To			What to copy to.
+	* return			Whether the copy was performed successfully.
 	*/
-	static void CopyChecked(const FString& Context, ICsDamageEvent* From, ICsDamageEvent* To);
+	static bool CopyChecked(const FString& Context, const ICsDamageEvent* From, ICsDamageEvent* To);
 
 	/**
 	* Set the damage on the Event with checks.
 	*
 	* @param Context	The calling context.
 	* @param Event
+	* return			Whether the damage was set successfully.
 	*/
-	static void SetDamageChecked(const FString&, ICsDamageEvent* Event);
+	static bool SetDamageChecked(const FString&, ICsDamageEvent* Event);
 };

@@ -96,7 +96,7 @@ protected:
 
 public:
 
-	void Init();
+	virtual void Init();
 
 // State
 #pragma region

@@ -11,6 +11,7 @@ class CSCORE_API UCsDamageShape : public UCsGetInterfaceMap
 };
 
 struct ICsDamageValue;
+struct ICsDamageRange;
 
 /**
 * Interface to describe the shape of Damage. This should be used with 
@@ -27,15 +28,23 @@ public:
 public:
 
 	/**
+	*
+	*
+	* return
+	*/
+	virtual const ICsDamageRange* GetRange() const = 0;
+
+	/**
 	* Calculate damage given an origin and point.
 	*
 	* @param Value		
+	* @param Range
 	* @param Origin		The center of the damage event.
 	* @param Point		The location to evaluate for how much damage
 	* return			Damage
 	*
 	*/
-	virtual float CalculateDamage(const ICsDamageValue* Value, const FVector& Origin, const FVector& Point) const = 0;
+	virtual float CalculateDamage(const ICsDamageValue* Value, const ICsDamageRange* Range, const FVector& Origin, const FVector& Point) const = 0;
 
 	/**
 	* Check if a given Point is within the bounds of an Origin.

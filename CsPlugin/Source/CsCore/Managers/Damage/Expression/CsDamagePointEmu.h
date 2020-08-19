@@ -50,7 +50,7 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE ICsDamageValue* GetValue() const
+	FORCEINLINE const ICsDamageValue* GetValue() const
 	{
 		return Value;
 	}

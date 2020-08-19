@@ -18,6 +18,8 @@ FCsDamageEventImpl::FCsDamageEventImpl() :
 	DamageValueContainer(nullptr),
 	DamageValueType(),
 	DamageValue(nullptr),
+	DamageRangeContainer(nullptr),
+	DamageRange(nullptr),
 	Expression(nullptr),
 	Instigator(nullptr),
 	Causer(nullptr),
@@ -28,25 +30,29 @@ FCsDamageEventImpl::FCsDamageEventImpl() :
 	InterfaceMap.SetRootName(FCsDamageEventImpl::Name);
 
 	InterfaceMap.Add<ICsDamageEvent>(static_cast<ICsDamageEvent*>(this));
+	InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));
 }
 
 void FCsDamageEventImpl::CopyFrom(const FCsDamageEventImpl* From)
 {
 	Damage = From->Damage;
-	DamageValueContainer = From->DamageValueContainer;
 	DamageValueType = From->DamageValueType;
-	DamageValue = From->DamageValue;
 	Expression = From->Expression;
 	Instigator = From->Instigator;
 	Causer = From->Causer;
 	HitType = From->HitType;
 	Origin = From->Origin;
 	HitResult = From->HitResult;
-	// TODO: Handle TArray copy
-	IgnoreObjects = From->IgnoreObjects;
+
+	IgnoreObjects.Reset(FMath::Max(IgnoreObjects.Max(), From->IgnoreObjects.Max()));
+
+	for (UObject* O : From->IgnoreObjects)
+	{
+		IgnoreObjects.Add(O);
+	}
 }
 
-void FCsDamageEventImpl::SetDamageChecked(const FString& Context)
+bool FCsDamageEventImpl::SetDamageChecked(const FString& Context)
 {
 	checkf(Expression, TEXT("%s: Expression is NULL."), *Context);
 
@@ -55,15 +61,21 @@ void FCsDamageEventImpl::SetDamageChecked(const FString& Context)
 	// Shape
 	if (ICsDamageShape* Shape = FCsLibrary_DamageExpression::GetSafeInterfaceChecked<ICsDamageShape>(Context, Expression))
 	{
-		Damage = Shape->CalculateDamage(DamageValue, Origin.ImpactPoint, HitResult.ImpactPoint);
+		Damage = Shape->CalculateDamage(DamageValue, DamageRange, Origin.ImpactPoint, HitResult.ImpactPoint);
+		return true;
 	}
 	// Point
 	else
 	{
 		ICsDamageValuePoint* DamageValuePoint = FCsLibrary_DamageValue::GetInterfaceChecked<ICsDamageValuePoint>(Context, DamageValue);
 		Damage								  = DamageValuePoint->GetValue();
+		return true;
 	}
+	return false;
 }
+
+// ICsReset
+#pragma region
 
 void FCsDamageEventImpl::Reset()
 {
@@ -71,6 +83,8 @@ void FCsDamageEventImpl::Reset()
 	DamageValueContainer = nullptr;
 	DamageValueType = EMCsDamageValue::Get().GetMAX();
 	DamageValue = nullptr;
+	DamageRangeContainer = nullptr;
+	DamageRange = nullptr;
 	Expression = nullptr;
 	Instigator = nullptr;
 	Causer = nullptr;
@@ -78,3 +92,5 @@ void FCsDamageEventImpl::Reset()
 	HitResult.Reset(0.0f, false);
 	IgnoreObjects.Reset(IgnoreObjects.Max());
 }
+
+#pragma endregion ICsReset

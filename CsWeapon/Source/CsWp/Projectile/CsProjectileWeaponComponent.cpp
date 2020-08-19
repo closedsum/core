@@ -185,7 +185,9 @@ void UCsProjectileWeaponComponent::Init()
 
 	FireState = Settings->ProjectileWeaponImpl.FireState;
 
-	checkf(EMCsWeaponState::Get().IsValidEnum(FireState), TEXT("%s: FireState: %s is NOT Valid."), *Context, FireState.ToChar())
+	checkf(EMCsWeaponState::Get().IsValidEnum(FireState), TEXT("%s: FireState: %s is NOT Valid."), *Context, FireState.ToChar());
+
+	CurrentState = IdleState;
 }
 
 // State
@@ -193,7 +195,7 @@ void UCsProjectileWeaponComponent::Init()
 
 void UCsProjectileWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTime)
 {
-	const FCsTime& Time = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTime(UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
 
 	// Idle
 	if (CurrentState == IdleState)
@@ -234,12 +236,12 @@ bool UCsProjectileWeaponComponent::CanFire() const
 
 	const FString& Context = Str::CanFire;
 
-	const FCsTime& Time = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTime(UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
 
 	ICsData_ProjectileWeapon* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ICsData_ProjectileWeapon>(Context, Data);
 
 	// Check if enough time has elapsed to fire again.
-	const bool Pass_Time = (Time.Time - Fire_StartTime > PrjData->GetTimeBetweenShots());
+	const bool Pass_Time = (TimeSinceStart.Time - Fire_StartTime > PrjData->GetTimeBetweenShots());
 	// Check if bFire is set, its not on release, and its either bFire is just set or FullAuto.
 	const bool Pass_Fire = bFire && !PrjData->DoFireOnRelease() && (PrjData->IsFullAuto() || !bFire_Last);
 	// Check if bFire has just been unset and on release.
@@ -259,9 +261,9 @@ void UCsProjectileWeaponComponent::Fire()
 	// End previous Fire Routine
 	Scheduler->End(UpdateGroup, FireRoutineHandle);
 
-	const FCsTime& Time = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTime(UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
 
-	Fire_StartTime = Time.Time;
+	Fire_StartTime = TimeSinceStart.Time;
 
 	// Setup Fire Routine
 	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload(UpdateGroup);
@@ -303,8 +305,11 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 			FireProjectile();
 			PlayFireSound();
 
+			// TODO: Need to handle infinite ammo
+			// TODO: Need to max sure Ammo Count is tracked and decremented
+
 			// Increment the shot index
-			CurrentProjectilePerShotIndex = FMath::Min(CurrentProjectilePerShotIndex + 1, PrjData->GetMaxAmmo());
+			CurrentProjectilePerShotIndex = FMath::Min(CurrentProjectilePerShotIndex + 1, FMath::Max(1, PrjData->GetMaxAmmo()));
 
 			// Check if more projectiles should be fired, if so wait
 			if (CurrentProjectilePerShotIndex < PrjData->GetProjectilesPerShot())

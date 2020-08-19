@@ -97,6 +97,21 @@ struct CSCORE_API FCsLibrary_DamageValue
 	}
 
 	/**
+	* Safely perform the operation static_cast<OtherInterfaceType*>("Value associated with ICsDamageValue")
+	* with checks (for InterfaceMap).
+	* OtherInterfaceType IS abstract.
+	*
+	* @param Context	The calling context
+	* @param Expr		Value that implements the interface: ICsDamageValue.
+	* return			Value casted to OtherInterfaceType (static_cast<OtherInterfaceType*>(Value))
+	*/
+	template<typename OtherInterfaceType>
+	FORCEINLINE static const OtherInterfaceType* GetSafeInterfaceChecked(const FString& Context, const ICsDamageValue* Value)
+	{
+		return NCsInterfaceMap::GetSafeInterfaceChecked<OtherInterfaceType, ICsDamageValue>(Context, Value);
+	}
+
+	/**
 	* Copy the values from From to To with checks.
 	* Currently supports To types of:
 	*  FCsDamageValuePointImpl (ICsDamageValuePoint)
@@ -106,5 +121,5 @@ struct CSCORE_API FCsLibrary_DamageValue
 	* @param From		What to copy.
 	* @param To			What to copy to.
 	*/
-	static void CopyChecked(const FString& Context, ICsDamageValue* From, ICsDamageValue* To);
+	static bool CopyChecked(const FString& Context, const ICsDamageValue* From, ICsDamageValue* To);
 };

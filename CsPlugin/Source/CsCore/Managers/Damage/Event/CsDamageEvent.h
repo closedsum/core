@@ -6,6 +6,7 @@
 
 class ICsDamageExpression;
 struct ICsDamageValue;
+struct ICsDamageRange;
 
 /**
 *
@@ -39,7 +40,7 @@ public:
 	*
 	* return 
 	*/
-	//virtual const ICsDamageRange* GetDamageRange() const = 0;
+	virtual const ICsDamageRange* GetDamageRange() const = 0;
 
 	/**
 	*

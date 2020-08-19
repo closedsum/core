@@ -32,6 +32,8 @@ public:
 
 	// ICsDamageShape
 
+	ICsDamageRange* DamageRange;
+
 	float* MinDamage;
 
 	float* MaxDamage;
@@ -72,7 +74,7 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE ICsDamageValue* GetValue() const
+	FORCEINLINE const ICsDamageValue* GetValue() const
 	{
 		return DamageValue;
 	}
@@ -95,7 +97,12 @@ public:
 #pragma region
 public:
 
-	float CalculateDamage(const ICsDamageValue* Value, const FVector& Origin, const FVector& Point) const;
+	FORCEINLINE const ICsDamageRange* GetRange() const
+	{
+		return DamageRange;
+	}
+
+	float CalculateDamage(const ICsDamageValue* Value, const ICsDamageRange* Range, const FVector& Origin, const FVector& Point) const;
 
 	bool IsInBounds(const FVector& Origin, const FVector& Point) const;
 
@@ -107,15 +114,9 @@ public:
 
 	void SetMaxDamage(float* Value);
 
-	void SetMinRadius(float* Value)
-	{
-		MinRadius = Value;
-	}
+	void SetMinRadius(float* Value);
 
-	void SetMaxRadius(float* Value)
-	{
-		MaxRadius = Value;
-	}
+	void SetMaxRadius(float* Value);
 
 	void SetInterpoloationMethod(ECsInterpolatingMethod* Value)
 	{

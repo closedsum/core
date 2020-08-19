@@ -8,6 +8,7 @@
 // Damage
 #include "Managers/Damage/Value/CsDamageValue.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRangeEmu.h"
+#include "Managers/Damage/Range/CsDamageRangeEmu.h"
 
 const FName FCsDamageSphereEmu::Name = FName("FCsDamageSphereEmu");
 
@@ -18,6 +19,7 @@ FCsDamageSphereEmu::FCsDamageSphereEmu() :
 	DamageValue(nullptr),
 	Type(nullptr),
 	// ICsDamageShape
+	DamageRange(nullptr),
 	MinDamage(nullptr),
 	MaxDamage(nullptr),
 	MinRadius(nullptr),
@@ -39,6 +41,8 @@ FCsDamageSphereEmu::FCsDamageSphereEmu() :
 
 	// ICsDamageExpression
 	DamageValue = new FCsDamageValueRangeEmu();
+	// ICsDamageShape
+	DamageRange = new FCsDamageRangeEmu();
 }
 
 FCsDamageSphereEmu::~FCsDamageSphereEmu()
@@ -49,7 +53,7 @@ FCsDamageSphereEmu::~FCsDamageSphereEmu()
 // ICsDamageShape
 #pragma region
 
-float FCsDamageSphereEmu::CalculateDamage(const ICsDamageValue* Value, const FVector& Origin, const FVector& Point) const
+float FCsDamageSphereEmu::CalculateDamage(const ICsDamageValue* Value, const ICsDamageRange* Range, const FVector& Origin, const FVector& Point) const
 {
 	return 0.0f;
 }
@@ -70,5 +74,17 @@ void FCsDamageSphereEmu::SetMinDamage(float* Value)
 void FCsDamageSphereEmu::SetMaxDamage(float* Value)
 {
 	FCsDamageValueRangeEmu* Emu = static_cast<FCsDamageValueRangeEmu*>(DamageValue);
+	Emu->SetMaxValue(Value);
+}
+
+void FCsDamageSphereEmu::SetMinRadius(float* Value)
+{
+	FCsDamageRangeEmu* Emu = static_cast<FCsDamageRangeEmu*>(DamageRange);
+	Emu->SetMinRange(Value);
+}
+
+void FCsDamageSphereEmu::SetMaxRadius(float* Value)
+{
+	FCsDamageRangeEmu* Emu = static_cast<FCsDamageRangeEmu*>(DamageRange);
 	Emu->SetMaxValue(Value);
 }

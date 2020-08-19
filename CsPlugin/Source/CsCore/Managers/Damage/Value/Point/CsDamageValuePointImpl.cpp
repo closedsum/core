@@ -15,9 +15,15 @@ FCsDamageValuePointImpl::FCsDamageValuePointImpl() :
 
 	InterfaceMap.Add<ICsDamageValue>(static_cast<ICsDamageValue*>(this));
 	InterfaceMap.Add<ICsDamageValuePoint>(static_cast<ICsDamageValuePoint*>(this));
+	InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));
 }
+
+// ICsReset
+#pragma region
 
 void FCsDamageValuePointImpl::Reset()
 {
 	Value = 0.0f;
 }
+
+#pragma endregion ICsReset

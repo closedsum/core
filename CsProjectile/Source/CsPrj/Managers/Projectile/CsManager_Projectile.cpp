@@ -48,6 +48,7 @@ namespace NCsManagerProjectile
 {
 	namespace Str
 	{
+		const FString InitInternalFromSettings = TEXT("UCsManager_Projectile::InitInternalFromSettings");
 		const FString PopulateClassMapFromSettings = TEXT("UCsManager_Projectile::PopulateClassMapFromSettings");
 		const FString PopulateDataMapFromSettings = TEXT("UCsManager_Projectile::PopulateDataMapFromSettings");
 		const FString CreateEmulatedDataFromDataTable = TEXT("UCsManager_Projectile::CreateEmulatedDataFromDataTable");
@@ -381,6 +382,11 @@ void UCsManager_Projectile::SetupInternal()
 
 void UCsManager_Projectile::InitInternalFromSettings()
 {
+	using namespace NCsManagerProjectile;
+
+	const FString& Context = Str::InitInternalFromSettings;
+
+	PopulateClassMapFromSettings();
 	PopulateDataMapFromSettings();
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
@@ -397,20 +403,15 @@ void UCsManager_Projectile::InitInternalFromSettings()
 
 			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
 
-			checkf(PoolParams.Class.ToSoftObjectPath().IsValid(), TEXT("UCsManager_Projectile::InitInternalFromSettings: Class for Type: %s is NOT a Valid Path."), Type.ToChar());
+			// Get Class
+			const FECsProjectileClass& ClassType = PoolParams.Class;
 
-#if !UE_BUILD_SHIPPING
-			if (!PoolParams.Class.Get())
-			{
-				UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::InitInternalFromSettings: Class @ for Type: %s is NOT already loaded in memory."), *(PoolParams.Class.ToString()), Type.ToChar());
-			}
-#endif // #if !UE_BUILD_SHIPPING
+			checkf(EMCsProjectileClass::Get().IsValidEnum(ClassType), TEXT("%s: Class for NOT Valid."), *Context, ClassType.ToChar());
 
-			UClass* Class = PoolParams.Class.LoadSynchronous();
+			FCsProjectile* Projectile = GetProjectileChecked(Context, ClassType);
+			UClass* Class			  = Projectile->GetClass();
 
-			checkf(Class, TEXT("UCsManager_Projectile::InitInternalFromSettings: Failed to load Class @ for Type: %s."), *(PoolParams.Class.ToString()), Type.ToChar());
-
-			ClassMap.Add(Type, Class);
+			checkf(Class, TEXT("%s: Failed to get class for Type: %s ClassType: %s."), *Context, Type.ToChar(), ClassType.ToChar());
 
 			ObjectParams.Name							  = Params.Name + TEXT("_") + Type.ToChar();
 			ObjectParams.World							  = Params.World;
@@ -874,7 +875,7 @@ void UCsManager_Projectile::PopulateClassMapFromSettings()
 
 			checkf(O, TEXT("%s: Failed to get projectile from DataTable: %s: Row: %s."), *Context, *(DataTable->GetName()), *(Name.ToString()));
 
-			FCsProjectile& Projectile = ProjectileClassByTypeMap.Add(Name);
+			FCsProjectile& Projectile = ProjectileClassByClassTypeMap.Add(Name);
 
 			Projectile.SetObject(O);
 		}

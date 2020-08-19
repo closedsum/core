@@ -2,6 +2,7 @@
 // Interfaces
 #include "Managers/Damage/Value/CsDamageValue.h"
 #include "Managers/Damage/Value/Point/CsDamageValuePoint.h"
+#include "Reset/CsReset.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
 #pragma once
@@ -10,7 +11,8 @@
 * Basic implementation of the interface: ICsDamageValue
 */
 struct CSCORE_API FCsDamageValuePointImpl : public ICsDamageValue,
-											public ICsDamageValuePoint
+											public ICsDamageValuePoint,
+											public ICsReset
 {
 public:
 
@@ -31,6 +33,11 @@ public:
 public:
 
 	FCsDamageValuePointImpl();
+
+	FCsDamageValuePointImpl(const FCsDamageValuePointImpl&) = delete;
+	FCsDamageValuePointImpl& operator = (const FCsDamageValuePointImpl&) = delete;
+
+	FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 // ICsGetInterfaceMap
 #pragma region
@@ -60,7 +67,11 @@ public:
 
 #pragma endregion ICsDamageValuePoint
 
+// ICsReset
+#pragma region
 public:
 
 	void Reset();
+
+#pragma endregion ICsReset
 };

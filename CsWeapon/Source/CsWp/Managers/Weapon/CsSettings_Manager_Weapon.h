@@ -13,7 +13,7 @@ struct CSWP_API FCsSettings_Manager_Weapon_PoolParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement ="CsWeapon"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FECsWeaponClass Class; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))

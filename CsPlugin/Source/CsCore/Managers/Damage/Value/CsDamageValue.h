@@ -5,7 +5,7 @@
 /**
 * 
 */
-struct CSCORE_API ICsDamageValue : public ICsGetInterfaceMap
+struct CSCORE_API ICsDamageValue : virtual public ICsGetInterfaceMap
 {
 public:
 

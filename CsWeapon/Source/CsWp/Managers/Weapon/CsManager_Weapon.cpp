@@ -728,7 +728,7 @@ void UCsManager_Weapon::PopulateClassMapFromSettings()
 
 			checkf(O, TEXT("%s: Failed to get weapon from DataTable: %s: Row: %s."), *Context, *(DataTable->GetName()), *(Name.ToString()));
 
-			FCsWeapon& Weapon = WeaponClassByTypeMap.Add(Name);
+			FCsWeapon& Weapon = WeaponClassByClassTypeMap.Add(Name);
 
 			Weapon.SetObject(O);
 		}

@@ -33,6 +33,11 @@ public:
 	FCsDamageValueRangeEmu();
 	~FCsDamageValueRangeEmu();
 
+	FCsDamageValueRangeEmu(const FCsDamageValueRangeEmu&) = delete;
+	FCsDamageValueRangeEmu& operator = (const FCsDamageValueRangeEmu&) = delete;
+
+	FORCEINLINE UObject* _getUObject() const { return nullptr; }
+
 // ICsGetInterfaceMap
 #pragma region
 public:

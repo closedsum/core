@@ -22,6 +22,8 @@
 #include "Managers/Sound/CsSettings_Manager_Sound.h"
 // Trace
 #include "Managers/Trace/CsSettings_Manager_Trace.h"
+// Damage
+#include "Managers/Damage/CsSettings_Manager_Damage.h"
 
 #include "CsDeveloperSettings.generated.h"
 
@@ -195,4 +197,13 @@ public:
 	FCsSettings_Manager_Trace Manager_Trace;
 
 #pragma endregion Trace
+
+// Damage
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Damage", meta = (DisplayName = "Manager Damage"))
+	FCsSettings_Manager_Damage Manager_Damage;
+
+#pragma endregion Damage
 };

@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 // Interfaces
 #include "Managers/Damage/Range/CsDamageRange.h"
+#include "Reset/CsReset.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
 #pragma once
@@ -8,7 +9,8 @@
 /**
 * Basic implementation of the interface: ICsDamageRange
 */
-struct CSCORE_API FCsDamageRangeImpl : public ICsDamageRange
+struct CSCORE_API FCsDamageRangeImpl : public ICsDamageRange,
+									   public ICsReset
 {
 public:
 
@@ -27,6 +29,8 @@ public:
 public:
 
 	FCsDamageRangeImpl();
+
+	FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 // ICsGetInterfaceMap
 #pragma region
@@ -55,7 +59,11 @@ public:
 
 #pragma endregion ICsDamageRange
 
+// ICsReset
+#pragma region
 public:
 
 	void Reset();
+
+#pragma endregion ICsReset
 };

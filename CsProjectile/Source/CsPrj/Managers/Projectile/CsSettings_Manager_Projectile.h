@@ -13,8 +13,8 @@ struct CSPRJ_API FCsSettings_Manager_Projectile_PoolParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement ="CsProjectile"))
-	TSoftClassPtr<AActor> Class; 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FECsProjectileClass Class;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
 	int32 PoolSize;
@@ -23,7 +23,7 @@ public:
 	int32 PayloadSize;
 
 	FCsSettings_Manager_Projectile_PoolParams() :
-		Class(nullptr),
+		Class(),
 		PoolSize(4),
 		PayloadSize(4)
 	{

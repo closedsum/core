@@ -14,10 +14,16 @@ FCsDamageValueRangeImpl::FCsDamageValueRangeImpl() :
 
 	InterfaceMap.Add<ICsDamageValue>(static_cast<ICsDamageValue*>(this));
 	InterfaceMap.Add<ICsDamageValueRange>(static_cast<ICsDamageValueRange*>(this));
+	InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));
 }
+
+// ICsReset
+#pragma region
 
 void FCsDamageValueRangeImpl::Reset()
 {
 	MinValue = 0.0f;
 	MaxValue = 0.0f;
 }
+
+#pragma endregion ICsReset

@@ -133,7 +133,7 @@ public:
 	* @param Group
 	* return 
 	*/
-	FORCEINLINE const FCsTime& GetTime(const FECsUpdateGroup& Group)
+	FORCEINLINE const FCsTime& GetTime(const FECsUpdateGroup& Group) const
 	{
 		return UpdateGroups[Group.GetValue()].GetTime();
 	}
@@ -152,7 +152,19 @@ public:
 	* @param Group
 	* return
 	*/
-	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FECsUpdateGroup& Group)
+	FORCEINLINE const FCsDeltaTime& GetTimeSinceStart(const FECsUpdateGroup& Group) const
+	{
+		return UpdateGroups[Group.GetValue()].GetTimeSinceStart();
+	}
+
+
+	/**
+	*
+	*
+	* @param Group
+	* return
+	*/
+	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FECsUpdateGroup& Group) const
 	{
 		return UpdateGroups[Group.GetValue()].GetScaledDeltaTime();
 	}
@@ -164,7 +176,7 @@ public:
 	* @param ScaleName
 	* return
 	*/
-	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FECsUpdateGroup& Group, const FName& ScaleName)
+	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FECsUpdateGroup& Group, const FName& ScaleName) const
 	{
 		return UpdateGroups[Group.GetValue()].GetScaledDeltaTime(ScaleName);
 	}

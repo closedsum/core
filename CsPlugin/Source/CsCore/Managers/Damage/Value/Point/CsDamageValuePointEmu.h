@@ -33,6 +33,9 @@ public:
 	FCsDamageValuePointEmu();
 	~FCsDamageValuePointEmu();
 
+	FCsDamageValuePointEmu(const FCsDamageValuePointEmu&) = delete;
+	FCsDamageValuePointEmu& operator = (const FCsDamageValuePointEmu&) = delete;
+
 // ICsGetInterfaceMap
 #pragma region
 public:

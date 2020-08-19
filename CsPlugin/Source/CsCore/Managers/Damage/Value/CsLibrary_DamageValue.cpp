@@ -8,33 +8,28 @@
 #include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRangeEmu.h"
 
-void FCsLibrary_DamageValue::CopyChecked(const FString& Context, ICsDamageValue* From, ICsDamageValue* To)
+bool FCsLibrary_DamageValue::CopyChecked(const FString& Context, const ICsDamageValue* From, ICsDamageValue* To)
 {
 	// Point
-	if (ICsDamageValuePoint* IFromPoint = GetSafeInterfaceChecked<ICsDamageValuePoint>(Context, From))
+	if (ICsDamageValuePoint* IFromPoint = GetSafeInterfaceChecked<ICsDamageValuePoint>(Context, const_cast<ICsDamageValue*>(From)))
 	{
 		// FCsDamageValuePointImpl (ICsDamageValuePoint)
 		if (FCsDamageValuePointImpl* ToImpl = SafePureStaticCastChecked<FCsDamageValuePointImpl>(Context, To))
 		{
 			ToImpl->Value = IFromPoint->GetValue();
-		}
-		else
-		{
-			checkf(0, TEXT("%s: Failed to copy From to To."), *Context);
+			return true;
 		}
 	}
 	// Range
-	if (ICsDamageValueRange* IFromRange = GetSafeInterfaceChecked<ICsDamageValueRange>(Context, From))
+	if (ICsDamageValueRange* IFromRange = GetSafeInterfaceChecked<ICsDamageValueRange>(Context, const_cast<ICsDamageValue*>(From)))
 	{
 		// FCsDamageValuePointImpl (ICsDamageValuePoint)
 		if (FCsDamageValueRangeImpl* ToImpl = SafePureStaticCastChecked<FCsDamageValueRangeImpl>(Context, To))
 		{
 			ToImpl->MinValue = IFromRange->GetMinValue();
 			ToImpl->MaxValue = IFromRange->GetMaxValue();
-		}
-		else
-		{
-			checkf(0, TEXT("%s: Failed to copy From to To."), *Context);
+			return true;
 		}
 	}
+	return false;
 }

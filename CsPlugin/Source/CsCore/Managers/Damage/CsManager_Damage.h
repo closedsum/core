@@ -164,6 +164,12 @@ protected:
 
 	virtual void DeallocateEvent(const FString& Context, FCsResource_DamageEvent* Event);
 
+	virtual bool CopyEvent(const FString& Context, const ICsDamageEvent* From, ICsDamageEvent* To);
+
+	FCsResource_DamageEvent* CreateCopyOfEvent(const FString& Context, const ICsDamageEvent* Event);
+
+	FCsResource_DamageEvent* CreateCopyOfEvent(const FString& Context, const FCsResource_DamageEvent* Event);
+
 private:
 
 	TArray<FCsReceiveDamage> Local_Recievers;
@@ -221,7 +227,7 @@ public:
 	* @param Type
 	* @param Value
 	*/
-	virtual void DeallocateValue(const FECsDamageValue& Type, FCsResource_DamageValue* Value);
+	virtual void DeallocateValue(const FString& Context, const FECsDamageValue& Type, FCsResource_DamageValue* Value);
 
 protected:
 
@@ -232,6 +238,16 @@ protected:
 	* @param Value
 	*/
 	virtual void DeallocateValue(const FString& Context, FCsResource_DamageValue* Value);
+
+public:
+
+	const FECsDamageValue& GetValueType(const FString& Context, const ICsDamageValue* Value);
+
+protected:
+
+	FCsResource_DamageValue* CreateCopyOfValue(const FString& Context, const ICsDamageValue* Value);
+
+	FCsResource_DamageValue* CreateCopyOfValue(const FString& Context, const FCsResource_DamageValue* Value);
 
 #pragma endregion Value
 
@@ -246,6 +262,14 @@ protected:
 public:
 
 	FCsResource_DamageRange* AllocateRange();
+
+	void DeallocateRange(const FString& Context, FCsResource_DamageRange* Range);
+
+protected:
+
+	FCsResource_DamageRange* CreateCopyOfRange(const FString& Context, const ICsDamageRange* Range);
+
+	FCsResource_DamageRange* CreateCopyOfRange(const FString& Context, const FCsResource_DamageRange* Range);
 
 #pragma endregion Range
 

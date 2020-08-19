@@ -5,16 +5,14 @@
 // Damage
 #include "Managers/Damage/Range/CsDamageRangeImpl.h"
 
-void FCsLibrary_DamageRange::CopyChecked(const FString& Context, ICsDamageRange* From, ICsDamageRange* To)
+bool FCsLibrary_DamageRange::CopyChecked(const FString& Context, const ICsDamageRange* From, ICsDamageRange* To)
 {
 	// FCsDamageValuePointImpl (ICsDamageRange)
 	if (FCsDamageRangeImpl* ToImpl = SafePureStaticCastChecked<FCsDamageRangeImpl>(Context, To))
 	{
 		ToImpl->MinRange = From->GetMinRange();
 		ToImpl->MaxRange = From->GetMaxRange();
+		return true;
 	}
-	else
-	{
-		checkf(0, TEXT("%s: Failed to copy From to To."), *Context);
-	}
+	return false;
 }

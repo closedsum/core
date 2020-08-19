@@ -1,10 +1,6 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
-
-
 #pragma once
 
-#include "CoreMinimal.h"
-#include "UObject/ObjectMacros.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "Managers/FX/CsTypes_FX.h"
 #include "CsAnimNotify_PlayParticleEffect.generated.h"

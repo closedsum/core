@@ -3,6 +3,8 @@
 #include "CsTypes_Time.generated.h"
 #pragma once
 
+/**
+*/
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsTime
 {
@@ -37,6 +39,8 @@ public:
 	}
 };
 
+/**
+*/
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsDeltaTime
 {

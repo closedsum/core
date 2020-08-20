@@ -43,6 +43,7 @@ public:
 
 protected:
 
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon|Update", meta = (AllowPrivateAccess))
 	FECsUpdateGroup UpdateGroup;
 
 public:
@@ -51,6 +52,7 @@ public:
 
 protected:
 
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon|Type", meta = (AllowPrivateAccess))
 	FECsWeapon WeaponType;
 
 public:
@@ -73,6 +75,7 @@ public:
 
 protected: 
 
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon|Projectile", meta = (AllowPrivateAccess))
 	FECsProjectile ProjectileType;
 
 public:
@@ -102,6 +105,7 @@ public:
 #pragma region
 protected:
 
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon|State", meta = (AllowPrivateAccess))
 	FECsWeaponState CurrentState;
 
 	void OnUpdate_HandleStates(const FCsDeltaTime& DeltaTime);
@@ -115,6 +119,7 @@ protected:
 #pragma region
 protected:
 
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon|Ammo", meta = (AllowPrivateAccess))
 	int32 CurrentAmmo;
 
 #pragma endregion Ammo
@@ -159,13 +164,44 @@ protected:
 protected:
 
 	/** */
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon|Fire|Projectile", meta = (AllowPrivateAccess))
 	int32 CurrentProjectilePerShotIndex;
 
 	void FireProjectile();
 
-	virtual void SetTypeForProjectile(const FCsProjectilePooled* ProjectilePooled);
+	/**
+	*
+	*
+	* @param Context			The calling context.
+	* @param ProjectilePooled
+	* return					Whether the type was successfully set.
+	*/
+	virtual bool SetTypeForProjectile(const FString& Context, const FCsProjectilePooled* ProjectilePooled);
 
-	virtual void SetProjectilePayload(ICsPayload_Projectile* Payload);
+	/**
+	*
+	* Currently supports To types of:
+	*  FCsPayload_PooledObjectImplSlice (ICsPayload_PooledObject)
+	*  FCsPayload_ProjecitleImplSlice (ICsPayload_Projectile)
+	*
+	* @param Context	The calling context.
+	* @param Payload	The payload to set.
+	* return			Whether the payload was successfully set.
+	*/
+	virtual bool SetProjectilePayload(const FString& Context, ICsPayload_Projectile* Payload);
+
+	/**
+	* Copy the slice of values from From to To with checks.
+	* Currently supports To types of:
+	*  FCsPayload_PooledObjectImplSlice (ICsPayload_PooledObject)
+	*  FCsPayload_ProjecitleImplSlice (ICsPayload_Projectile)
+	*
+	* @param Context	The calling context.
+	* @param From		What to copy.
+	* @param To			What to copy to.
+	* return			Whether the From copied to To successfully.
+	*/
+	virtual bool CopyProjectilePayload(const FString& Context, const ICsPayload_Projectile* From, ICsPayload_Projectile* To);
 
 	virtual FVector GetLaunchProjectileLocation();
 

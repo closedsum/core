@@ -6,10 +6,14 @@
 // Projectile
 #include "Payload/CsPayload_ProjectileImplSlice.h"
 
-void FCsLibrary_Payload_Projectile::CopyChecked(const FString& Context, ICsPayload_Projectile* From, ICsPayload_Projectile* To)
+bool FCsLibrary_Payload_Projectile::CopyChecked(const FString& Context, const ICsPayload_Projectile* From, ICsPayload_Projectile* To)
 {
+	bool Result = false;
+
 	// PooledObject
-	CopySliceChecked<FCsPayload_PooledObjectImplSlice, ICsPayload_PooledObject>(Context, From, To);
+	Result |= CopySliceChecked<FCsPayload_PooledObjectImplSlice, ICsPayload_PooledObject>(Context, From, To);
 	// Projectile
-	CopySliceChecked<FCsPayload_ProjectileImplSlice, ICsPayload_Projectile>(Context, From, To);
+	Result |= CopySliceChecked<FCsPayload_ProjectileImplSlice, ICsPayload_Projectile>(Context, From, To);
+
+	return Result;
 }

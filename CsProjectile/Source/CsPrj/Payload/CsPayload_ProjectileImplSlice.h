@@ -76,5 +76,5 @@ public:
 
 public:
 
-	void CopyFrom(const FCsPayload_ProjectileImplSlice* From);
+	bool CopyFrom(const FCsPayload_ProjectileImplSlice* From);
 };

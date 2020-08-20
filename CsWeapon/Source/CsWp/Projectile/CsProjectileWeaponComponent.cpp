@@ -393,42 +393,51 @@ void UCsProjectileWeaponComponent::Fire_Internal_OnEnd(FCsRoutine* R)
 
 void UCsProjectileWeaponComponent::FireProjectile()
 {
+	using namespace NCsProjectileWeaponComponentCached;
+
+	const FString& Context = Str::FireProjectile;
+
 	UCsManager_Projectile* Manager_Projectile = UCsManager_Projectile::Get(GetWorld()->GetGameState());
 
 	// Get Payload
 	ICsPayload_Projectile* Payload1 = Manager_Projectile->AllocatePayload(ProjectileType);
 
 	// Set appropriate members on Payload
-	SetProjectilePayload(Payload1);
+	const bool SetSuccess = SetProjectilePayload(Context, Payload1);
+
+	checkf(SetSuccess, TEXT("%s: Failed to set Payload1."), *Context);
 
 	// Cache copy of Payload for Launch
 	ICsPayload_Projectile* Payload2 = Manager_Projectile->AllocatePayload(ProjectileType);
 	
-	SetProjectilePayload(Payload2);
+	const bool CopySuccess = CopyProjectilePayload(Context, Payload1, Payload2);
+
+	checkf(CopySuccess, TEXT("%s: Failed to copy Payload1 to Payload2."), *Context);
 
 	// Spawn
 	const FCsProjectilePooled* ProjectilePooled = Manager_Projectile->Spawn(ProjectileType, Payload1);
 
-	SetTypeForProjectile(ProjectilePooled);
+	const bool TypeSuccess = SetTypeForProjectile(Context, ProjectilePooled);
+
+	checkf(TypeSuccess, TEXT("%s: Failed to set type for Projectile."), *Context);
 
 	// Launch
 	LaunchProjectile(ProjectilePooled, Payload2);
 }
 
-void UCsProjectileWeaponComponent::SetTypeForProjectile(const FCsProjectilePooled* ProjectilePooled)
+bool UCsProjectileWeaponComponent::SetTypeForProjectile(const FString& Context, const FCsProjectilePooled* ProjectilePooled)
 {
 	ACsProjectilePooledImpl* Projectile = ProjectilePooled->GetObject<ACsProjectilePooledImpl>();
 
-	checkf(Projectile, TEXT("UCsProjectileWeaponComponent::SetTypeForProjectile: Projectile is NULL. Projectile is not of type: ACsProjectilePooledImpl."));
+	checkf(Projectile, TEXT("%s: Projectile is NULL. Projectile is not of type: ACsProjectilePooledImpl."), *Context);
 
 	Projectile->SetType(ProjectileType);
+	return true;
 }
 
-void UCsProjectileWeaponComponent::SetProjectilePayload(ICsPayload_Projectile* Payload)
+bool UCsProjectileWeaponComponent::SetProjectilePayload(const FString& Context, ICsPayload_Projectile* Payload)
 {
-	using namespace NCsProjectileWeaponComponentCached;
-
-	const FString& Context = Str::SetProjectilePayload;
+	bool Result = true;
 
 	// PooledObject
 	{
@@ -439,6 +448,10 @@ void UCsProjectileWeaponComponent::SetProjectilePayload(ICsPayload_Projectile* P
 		{
 			Slice->Instigator = this;
 			Slice->Owner	  = MyOwner;
+		}
+		else
+		{
+			Result &= false;
 		}
 	}
 	// Projectile
@@ -451,7 +464,17 @@ void UCsProjectileWeaponComponent::SetProjectilePayload(ICsPayload_Projectile* P
 			Slice->Location  = GetLaunchProjectileLocation();
 			Slice->Direction = GetLaunchProjectileDirection();
 		}
+		else
+		{
+			Result &= false;
+		}
 	}
+	return Result;
+}
+
+bool UCsProjectileWeaponComponent::CopyProjectilePayload(const FString& Context, const ICsPayload_Projectile* From, ICsPayload_Projectile* To)
+{
+	return FCsLibrary_Payload_Projectile::CopyChecked(Context, From, To);
 }
 
 FVector UCsProjectileWeaponComponent::GetLaunchProjectileLocation()
@@ -471,8 +494,7 @@ void UCsProjectileWeaponComponent::LaunchProjectile(const FCsProjectilePooled* P
 	const FString& Context = Str::LaunchProjectile;
 
 	ICsPayload_PooledObject* ObjectPayload = NCsInterfaceMap::GetInterfaceChecked<ICsPayload_PooledObject>(Context, Payload);
-
-	ACsProjectilePooledImpl* Projectile = ProjectilePooled->GetObject<ACsProjectilePooledImpl>();
+	ACsProjectilePooledImpl* Projectile	   = ProjectilePooled->GetObject<ACsProjectilePooledImpl>();
 
 	checkf(Projectile, TEXT("%s: Projectile is NULL. Projectile is not of type: ACsProjectilePooledImpl."), *Context);
 

@@ -609,7 +609,9 @@ void UCsLibrary_Load::GetObjectPaths_ClassProperty(UClassProperty* ClassProperty
 	{
 		if (const UObject* Object = *Ptr)
 		{
-			GetObjectPaths_ClassProperty_Internal(ClassProperty->MetaClass, Object, OutPaths);
+			UClass* Class = const_cast<UClass*>(Cast<UClass>(Object));
+
+			GetObjectPaths_ClassProperty_Internal(Class, Class, OutPaths);
 		}
 	}
 }
@@ -640,7 +642,7 @@ void UCsLibrary_Load::GetObjectPaths_ClassProperty_Internal(UClass* MetaClass, c
 		{
 			OutPaths.VisitPointer(MetaClass->GetFName(), Class);
 
-			GetObjectPaths_Internal(Class, Object->GetClass(), OutPaths);
+			GetObjectPaths_Internal(Class->GetDefaultObject(), const_cast<UClass*>(Class), OutPaths);
 		}
 	}
 }
@@ -745,7 +747,7 @@ void UCsLibrary_Load::GetObjectPaths_SoftClassProperty(USoftClassProperty* SoftC
 
 			if (UClass* Class = Cast<UClass>(O))
 			{
-				GetObjectPaths_ClassProperty_Internal(SoftClassProperty->MetaClass, Class, OutPaths);
+				GetObjectPaths_ClassProperty_Internal(Class, Class, OutPaths);
 			}
 		}
 	}
@@ -1052,7 +1054,7 @@ void UCsLibrary_Load::GetObjectPaths_Internal(const void* StructValue, UStruct* 
 			continue;
 		}
 		// SoftObject
-		if (USoftClassProperty* SoftObjectProperty = Cast<USoftClassProperty>(Property))
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(Property))
 		{
 			GetObjectPaths_SoftObjectProperty(SoftObjectProperty, StructValue, OutPaths);
 			continue;

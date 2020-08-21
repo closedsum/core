@@ -1,9 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Coordinator/CsStatusEffectCoordinator.h"
+#include "Coordinators/StatusEffect/CsCoordinator_StatusEffect.h"
 #include "CsSe.h"
 
 // CVar
-#include "Coordinator/CsCVars_StatusEffectCoordinator.h"
+#include "Coordinators/StatusEffect/CsCVars_Coordinator_StatusEffect.h"
 // Library
 #include "Library/CsLibrary_Common.h"
 #include "CsLibrary_StatusEffect.h"
@@ -24,7 +24,7 @@
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
-#include "Coordinator/CsGetStatusEffectCoordinator.h"
+#include "Coordinators/StatusEffect/CsGetCoordinatorStatusEffect.h"
 
 #include "Library/CsLibrary_Common.h"
 
@@ -37,101 +37,101 @@
 // Cached
 #pragma region
 
-namespace NCsStatusEffectCoordinatorCached
+namespace NCsCoordinator_StatusEffectCached
 {
 	namespace Str
 	{
-		const FString GetTypeFromEvent = TEXT("UCsStatusEffectCoordinator::GetTypeFromEvent");
-		const FString ProcessStatusEffectEvent = TEXT("UCsStatusEffectCoordinator::ProcessStatusEffectEvent");
-		const FString ProcessStatusEffectEventContainer = TEXT("UCsStatusEffectCoordinator::ProcessStatusEffectEventContainer");
+		const FString GetTypeFromEvent = TEXT("UCsCoordinator_StatusEffect::GetTypeFromEvent");
+		const FString ProcessStatusEffectEvent = TEXT("UCsCoordinator_StatusEffect::ProcessStatusEffectEvent");
+		const FString ProcessStatusEffectEventContainer = TEXT("UCsCoordinator_StatusEffect::ProcessStatusEffectEventContainer");
 	}
 }
 
 #pragma endregion Cached
 
 // static initializations
-UCsStatusEffectCoordinator* UCsStatusEffectCoordinator::s_Instance;
-bool UCsStatusEffectCoordinator::s_bShutdown = false;
+UCsCoordinator_StatusEffect* UCsCoordinator_StatusEffect::s_Instance;
+bool UCsCoordinator_StatusEffect::s_bShutdown = false;
 
-UCsStatusEffectCoordinator::UCsStatusEffectCoordinator(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsCoordinator_StatusEffect::UCsCoordinator_StatusEffect(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
 
 // Singleton
 #pragma region
 
-/*static*/ UCsStatusEffectCoordinator* UCsStatusEffectCoordinator::Get(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsCoordinator_StatusEffect* UCsCoordinator_StatusEffect::Get(UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
-	return Get_GetStatusEffectCoordinator(InRoot)->GetStatusEffectCoordinator();
+	return Get_GetCoordinatorStatusEffect(InRoot)->GetCoordinator_StatusEffect();
 #else
 	if (s_bShutdown)
 	{
-		UE_LOG(LogCsSe, Warning, TEXT("UCsStatusEffectCoordinator::Get: Coordinator has already shutdown."));
+		UE_LOG(LogCsSe, Warning, TEXT("UCsCoordinator_StatusEffect::Get: Coordinator has already shutdown."));
 		return nullptr;
 	}
 	return s_Instance;
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ bool UCsStatusEffectCoordinator::IsValid(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsCoordinator_StatusEffect::IsValid(UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
-	return Get_GetStatusEffectCoordinator(InRoot)->GetStatusEffectCoordinator() != nullptr;
+	return Get_GetCoordinatorStatusEffect(InRoot)->GetCoordinator_StatusEffect() != nullptr;
 #else
 	return s_Instance != nullptr;
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsStatusEffectCoordinator::Init(UObject* InRoot, TSubclassOf<UCsStatusEffectCoordinator> StatusEffectCoordinatorClass, UObject* InOuter /*=nullptr*/)
+/*static*/ void UCsCoordinator_StatusEffect::Init(UObject* InRoot, TSubclassOf<UCsCoordinator_StatusEffect> CoordinatorStatusEffectClass, UObject* InOuter /*=nullptr*/)
 {
 #if WITH_EDITOR
-	ICsGetStatusEffectCoordinator* GetStatusEffectCoordinator = Get_GetStatusEffectCoordinator(InRoot);
+	ICsGetCoordinatorStatusEffect* GetCoordinatorStatusEffect = Get_GetCoordinatorStatusEffect(InRoot);
 
-	UCsStatusEffectCoordinator* StatusEffectCoordinator = GetStatusEffectCoordinator->GetStatusEffectCoordinator();
+	UCsCoordinator_StatusEffect* Coordinator_StatusEffect = GetCoordinatorStatusEffect->GetCoordinator_StatusEffect();
 
-	if (!StatusEffectCoordinator)
+	if (!Coordinator_StatusEffect)
 	{
-		StatusEffectCoordinator = NewObject<UCsStatusEffectCoordinator>(InOuter ? InOuter : InRoot, StatusEffectCoordinatorClass, TEXT("Status_Effect_Coorindator_Singleton"), RF_Transient | RF_Public);
+		Coordinator_StatusEffect = NewObject<UCsCoordinator_StatusEffect>(InOuter ? InOuter : InRoot, CoordinatorStatusEffectClass, TEXT("Coorindator_Status_Effect_Singleton"), RF_Transient | RF_Public);
 
-		GetStatusEffectCoordinator->SetStatusEffectCoordinator(StatusEffectCoordinator);
+		GetCoordinatorStatusEffect->SetCoordinator_StatusEffect(Coordinator_StatusEffect);
 
-		StatusEffectCoordinator->SetMyRoot(InRoot);
-		StatusEffectCoordinator->Initialize();
+		Coordinator_StatusEffect->SetMyRoot(InRoot);
+		Coordinator_StatusEffect->Initialize();
 	}
 	else
 	{
-		UE_LOG(LogCsSe, Warning, TEXT("UCsStatusEffectCoordinator::Init: Init has already been called."));
+		UE_LOG(LogCsSe, Warning, TEXT("UCsCoordinator_StatusEffect::Init: Init has already been called."));
 	}
 #else
 	s_bShutdown = false;
 
 	if (!s_Instance)
 	{
-		s_Instance = NewObject<UCsStatusEffectCoordinator>(GetTransientPackage(), StatusEffectCoordinatorClass, TEXT("Status_Effect_Coorindator_Singleton"), RF_Transient | RF_Public);
+		s_Instance = NewObject<UCsCoordinator_StatusEffect>(GetTransientPackage(), CoordinatorStatusEffectClass, TEXT("Coorindator_Status_Effect_Singleton"), RF_Transient | RF_Public);
 		s_Instance->AddToRoot();
 		s_Instance->SetMyRoot(InRoot);
 		s_Instance->Initialize();
 	}
 	else
 	{
-		UE_LOG(LogCsSe, Warning, TEXT("UCsStatusEffectCoordinator::Init: Init has already been called."));
+		UE_LOG(LogCsSe, Warning, TEXT("UCsCoordinator_StatusEffect::Init: Init has already been called."));
 	}
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsStatusEffectCoordinator::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsCoordinator_StatusEffect::Shutdown(UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
-	ICsGetStatusEffectCoordinator* GetStatusEffectCoordinator = Get_GetStatusEffectCoordinator(InRoot);
-	UCsStatusEffectCoordinator* StatusEffectCoordinator		  = GetStatusEffectCoordinator->GetStatusEffectCoordinator();
-	StatusEffectCoordinator->CleanUp();
+	ICsGetCoordinatorStatusEffect* GetCoordinatorStatusEffect = Get_GetCoordinatorStatusEffect(InRoot);
+	UCsCoordinator_StatusEffect* Coordinator_StatusEffect	  = GetCoordinatorStatusEffect->GetCoordinator_StatusEffect();
+	Coordinator_StatusEffect->CleanUp();
 
-	GetStatusEffectCoordinator->SetStatusEffectCoordinator(nullptr);
+	GetCoordinatorStatusEffect->SetCoordinator_StatusEffect(nullptr);
 #else
 	if (!s_Instance)
 	{
-		UE_LOG(LogCsSe, Warning, TEXT("UCsStatusEffectCoordinator::Shutdown: Coorindator has already been shutdown."));
+		UE_LOG(LogCsSe, Warning, TEXT("UCsCoordinator_StatusEffect::Shutdown: Coorindator has already been shutdown."));
 		return;
 	}
 
@@ -142,10 +142,10 @@ UCsStatusEffectCoordinator::UCsStatusEffectCoordinator(const FObjectInitializer&
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ bool UCsStatusEffectCoordinator::HasShutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsCoordinator_StatusEffect::HasShutdown(UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
-	return Get_GetStatusEffectCoordinator(InRoot)->GetStatusEffectCoordinator() == nullptr;
+	return Get_GetCoordinatorStatusEffect(InRoot)->GetCoordinator_StatusEffect() == nullptr;
 #else
 	return s_bShutdown;
 #endif // #if WITH_EDITOR
@@ -153,30 +153,30 @@ UCsStatusEffectCoordinator::UCsStatusEffectCoordinator(const FObjectInitializer&
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetStatusEffectCoordinator* UCsStatusEffectCoordinator::Get_GetStatusEffectCoordinator(UObject* InRoot)
+/*static*/ ICsGetCoordinatorStatusEffect* UCsCoordinator_StatusEffect::Get_GetCoordinatorStatusEffect(UObject* InRoot)
 {
-	checkf(InRoot, TEXT("UCsStatusEffectCoordinator::Get_GetStatusEffectCoordinator: InRoot is NULL."));
+	checkf(InRoot, TEXT("UCsCoordinator_StatusEffect::Get_GetCoordinatorStatusEffect: InRoot is NULL."));
 
 	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
-	checkf(GetManagerSingleton, TEXT("UCsStatusEffectCoordinator::Get_GetStatusEffectCoordinator: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
+	checkf(GetManagerSingleton, TEXT("UCsCoordinator_StatusEffect::Get_GetCoordinatorStatusEffect: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
-	checkf(Manager_Singleton, TEXT("UCsStatusEffectCoordinator::Get_GetStatusEffectCoordinator: Manager_Singleton is NULL."));
+	checkf(Manager_Singleton, TEXT("UCsCoordinator_StatusEffect::Get_GetCoordinatorStatusEffect: Manager_Singleton is NULL."));
 
-	ICsGetStatusEffectCoordinator* GetStatusEffectCoorindator = Cast<ICsGetStatusEffectCoordinator>(Manager_Singleton);
+	ICsGetCoordinatorStatusEffect* GetCoorindatorStatusEffect = Cast<ICsGetCoordinatorStatusEffect>(Manager_Singleton);
 
-	checkf(GetStatusEffectCoorindator, TEXT("UCsStatusEffectCoordinator::Get_GetStatusEffectCoordinator: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetStatusEffectCoordinator."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
+	checkf(GetCoorindatorStatusEffect, TEXT("UCsCoordinator_StatusEffect::Get_GetCoordinatorStatusEffect: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetCoordinatorStatusEffect."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
 
-	return GetStatusEffectCoorindator;
+	return GetCoorindatorStatusEffect;
 }
 
-/*static*/ ICsGetStatusEffectCoordinator* UCsStatusEffectCoordinator::GetSafe_GetStatusEffectCoordinator(UObject* Object)
+/*static*/ ICsGetCoordinatorStatusEffect* UCsCoordinator_StatusEffect::GetSafe_GetCoordinatorStatusEffect(UObject* Object)
 {
 	if (!Object)
 	{
-		UE_LOG(LogCsSe, Warning, TEXT("UCsStatusEffectCoordinator::GetSafe_GetStatusEffectCoordinator: Object is NULL."));
+		UE_LOG(LogCsSe, Warning, TEXT("UCsCoordinator_StatusEffect::GetSafe_GetCoordinatorStatusEffect: Object is NULL."));
 		return nullptr;
 	}
 
@@ -184,7 +184,7 @@ UCsStatusEffectCoordinator::UCsStatusEffectCoordinator(const FObjectInitializer&
 
 	if (!GetManagerSingleton)
 	{
-		UE_LOG(LogCsSe, Warning, TEXT("UCsManager_Damage::GetSafe_GetStatusEffectCoordinator: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
+		UE_LOG(LogCsSe, Warning, TEXT("UCsManager_Damage::GetSafe_GetCoordinatorStatusEffect: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
 		return nullptr;
 	}
 
@@ -192,29 +192,29 @@ UCsStatusEffectCoordinator::UCsStatusEffectCoordinator(const FObjectInitializer&
 
 	if (!Manager_Singleton)
 	{
-		UE_LOG(LogCsSe, Warning, TEXT("UCsManager_Damage::GetSafe_GetStatusEffectCoordinator: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
+		UE_LOG(LogCsSe, Warning, TEXT("UCsManager_Damage::GetSafe_GetCoordinatorStatusEffect: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
 		return nullptr;
 	}
 
-	return Cast<ICsGetStatusEffectCoordinator>(Manager_Singleton);
+	return Cast<ICsGetCoordinatorStatusEffect>(Manager_Singleton);
 }
 
-/*static*/ UCsStatusEffectCoordinator* UCsStatusEffectCoordinator::GetSafe(UObject* Object)
+/*static*/ UCsCoordinator_StatusEffect* UCsCoordinator_StatusEffect::GetSafe(UObject* Object)
 {
-	if (ICsGetStatusEffectCoordinator* GetStatusEffectCoordinator = GetSafe_GetStatusEffectCoordinator(Object))
-		return GetStatusEffectCoordinator->GetStatusEffectCoordinator();
+	if (ICsGetCoordinatorStatusEffect* GetCoordinatorStatusEffect = GetSafe_GetCoordinatorStatusEffect(Object))
+		return GetCoordinatorStatusEffect->GetCoordinator_StatusEffect();
 	return nullptr;
 }
 
-/*static*/ UCsStatusEffectCoordinator* UCsStatusEffectCoordinator::GetFromWorldContextObject(const UObject* WorldContextObject)
+/*static*/ UCsCoordinator_StatusEffect* UCsCoordinator_StatusEffect::GetFromWorldContextObject(const UObject* WorldContextObject)
 {
 	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
 	{
 		// Game State
-		if (UCsStatusEffectCoordinator* Manager = GetSafe(World->GetGameState()))
+		if (UCsCoordinator_StatusEffect* Manager = GetSafe(World->GetGameState()))
 			return Manager;
 
-		UE_LOG(LogCsSe, Warning, TEXT("UCsStatusEffectCoordinator::GetFromWorldContextObject: Failed to Manager Item of type UCsStatusEffectCoordinator from GameState."));
+		UE_LOG(LogCsSe, Warning, TEXT("UCsCoordinator_StatusEffect::GetFromWorldContextObject: Failed to Manager Item of type UCsCoordinator_StatusEffect from GameState."));
 
 		return nullptr;
 	}
@@ -226,7 +226,7 @@ UCsStatusEffectCoordinator::UCsStatusEffectCoordinator(const FObjectInitializer&
 
 #endif // #if WITH_EDITOR
 
-void UCsStatusEffectCoordinator::Initialize()
+void UCsCoordinator_StatusEffect::Initialize()
 {
 	// TODO: Poll config in future
 
@@ -239,7 +239,7 @@ void UCsStatusEffectCoordinator::Initialize()
 	{
 		FCsManager_StatusEffectEvent& Manager = Manager_Events[Event.GetValue()];
 		
-		const FString Name = FString::Printf(TEXT("UCsStatusEffectCoordinator::FCsManager_StatusEffectEvent[%s]"), Event.ToChar());
+		const FString Name = FString::Printf(TEXT("UCsCoordinator_StatusEffect::FCsManager_StatusEffectEvent[%s]"), Event.ToChar());
 
 		Manager.SetName(Name);
 		Manager.SetDeconstructResourcesOnShutdown();
@@ -252,7 +252,7 @@ void UCsStatusEffectCoordinator::Initialize()
 		{
 			ICsStatusEffectEvent* IEvent = ConstructEvent(Event);
 
-			checkf(IEvent, TEXT("UCsStatusEffectCoordinator::Initialize: Failed to construct event for type: %s."), Event.ToChar());
+			checkf(IEvent, TEXT("UCsCoordinator_StatusEffect::Initialize: Failed to construct event for type: %s."), Event.ToChar());
 
 			Manager.Add(IEvent);
 		} 
@@ -261,14 +261,14 @@ void UCsStatusEffectCoordinator::Initialize()
 	bInitialized = true;
 }
 
-/*static*/ bool UCsStatusEffectCoordinator::HasInitialized(UObject* InRoot)
+/*static*/ bool UCsCoordinator_StatusEffect::HasInitialized(UObject* InRoot)
 {
 	if (!HasShutdown(InRoot))
 		return Get(InRoot)->bInitialized;
 	return false;
 }
 
-void UCsStatusEffectCoordinator::CleanUp()
+void UCsCoordinator_StatusEffect::CleanUp()
 {
 	for (const FECsStatusEffectEvent& Event : EMCsStatusEffectEvent::Get())
 	{
@@ -284,7 +284,7 @@ void UCsStatusEffectCoordinator::CleanUp()
 	// Root
 #pragma region
 
-void UCsStatusEffectCoordinator::SetMyRoot(UObject* InRoot)
+void UCsCoordinator_StatusEffect::SetMyRoot(UObject* InRoot)
 {
 	MyRoot = InRoot;
 }
@@ -296,44 +296,44 @@ void UCsStatusEffectCoordinator::SetMyRoot(UObject* InRoot)
 // Receive Status Effect
 #pragma region
 
-void UCsStatusEffectCoordinator::Add(ICsReceiveStatusEffect* Object)
+void UCsCoordinator_StatusEffect::Add(ICsReceiveStatusEffect* Object)
 {
-	checkf(Object, TEXT("UCsStatusEffectCoordinator::Add: Object is NULL."));
+	checkf(Object, TEXT("UCsCoordinator_StatusEffect::Add: Object is NULL."));
 
 	UObject* O = Object->_getUObject();
 
-	checkf(O, TEXT("UCsStatusEffectCoordinator::Add: Object is NOT a UObject."));
+	checkf(O, TEXT("UCsCoordinator_StatusEffect::Add: Object is NOT a UObject."));
 
 	UClass* Class = O->GetClass();
 
-	checkf(Class->ImplementsInterface(UCsUniqueObject::StaticClass()), TEXT("UCsStatusEffectCoordinator::Add: Object: %s with Class: %s does NOT implement interface: ICsUniqueObject."), *(O->GetName()), *(Class->GetName()));
+	checkf(Class->ImplementsInterface(UCsUniqueObject::StaticClass()), TEXT("UCsCoordinator_StatusEffect::Add: Object: %s with Class: %s does NOT implement interface: ICsUniqueObject."), *(O->GetName()), *(Class->GetName()));
 
 	// TODO: Need to look at script objects
 	ICsUniqueObject* UniqueObject = Cast<ICsUniqueObject>(O);
 
-	checkf(UniqueObject, TEXT("UCsStatusEffectCoordinator::Add: Object: %s with Class: %s does NOT implement interface: ICsUniqueObject."), *(O->GetName()), *(Class->GetName()));
+	checkf(UniqueObject, TEXT("UCsCoordinator_StatusEffect::Add: Object: %s with Class: %s does NOT implement interface: ICsUniqueObject."), *(O->GetName()), *(Class->GetName()));
 
 	const FCsUniqueObjectId& Id = UniqueObject->GetId();
 
 	ReceiveStatusEffectMap.Add(Id, Object);
 }
 
-void UCsStatusEffectCoordinator::Remove(ICsReceiveStatusEffect* Object)
+void UCsCoordinator_StatusEffect::Remove(ICsReceiveStatusEffect* Object)
 {
-	checkf(Object, TEXT("UCsStatusEffectCoordinator::Remove: Object is NULL."));
+	checkf(Object, TEXT("UCsCoordinator_StatusEffect::Remove: Object is NULL."));
 
 	UObject* O = Object->_getUObject();
 
-	checkf(O, TEXT("UCsStatusEffectCoordinator::Remove: Object is NOT a UObject."));
+	checkf(O, TEXT("UCsCoordinator_StatusEffect::Remove: Object is NOT a UObject."));
 
 	UClass* Class = O->GetClass();
 
-	checkf(Class->ImplementsInterface(UCsUniqueObject::StaticClass()), TEXT("UCsStatusEffectCoordinator::Remove: Object: %s with Class: %s does NOT implement interface: ICsUniqueObject."), *(O->GetName()), *(Class->GetName()));
+	checkf(Class->ImplementsInterface(UCsUniqueObject::StaticClass()), TEXT("UCsCoordinator_StatusEffect::Remove: Object: %s with Class: %s does NOT implement interface: ICsUniqueObject."), *(O->GetName()), *(Class->GetName()));
 
 	// TODO: Need to look at script objects
 	ICsUniqueObject* UniqueObject = Cast<ICsUniqueObject>(O);
 
-	checkf(UniqueObject, TEXT("UCsStatusEffectCoordinator::Remove: Object: %s with Class: %s does NOT implement interface: ICsUniqueObject."), *(O->GetName()), *(Class->GetName()));
+	checkf(UniqueObject, TEXT("UCsCoordinator_StatusEffect::Remove: Object: %s with Class: %s does NOT implement interface: ICsUniqueObject."), *(O->GetName()), *(Class->GetName()));
 
 	const FCsUniqueObjectId& Id = UniqueObject->GetId();
 
@@ -345,7 +345,7 @@ void UCsStatusEffectCoordinator::Remove(ICsReceiveStatusEffect* Object)
 // Event
 #pragma region
 
-ICsStatusEffectEvent* UCsStatusEffectCoordinator::ConstructEvent(const FECsStatusEffectEvent& Type)
+ICsStatusEffectEvent* UCsCoordinator_StatusEffect::ConstructEvent(const FECsStatusEffectEvent& Type)
 {
 	// Default
 	if (Type == NCsStatusEffectEvent::Default)
@@ -356,16 +356,16 @@ ICsStatusEffectEvent* UCsStatusEffectCoordinator::ConstructEvent(const FECsStatu
 	return nullptr;
 }
 
-FCsResource_StatusEffectEvent* UCsStatusEffectCoordinator::AllocateEvent(const FECsStatusEffectEvent& Type)
+FCsResource_StatusEffectEvent* UCsCoordinator_StatusEffect::AllocateEvent(const FECsStatusEffectEvent& Type)
 {
 	return Manager_Events[Type.GetValue()].Allocate();
 }
 
-const FECsStatusEffectEvent& UCsStatusEffectCoordinator::GetTypeFromEvent(ICsStatusEffectEvent* Event)
+const FECsStatusEffectEvent& UCsCoordinator_StatusEffect::GetTypeFromEvent(ICsStatusEffectEvent* Event)
 {
-	using namespace NCsStatusEffectCoordinatorCached;
+	using namespace NCsCoordinator_StatusEffectCached;
 
-	checkf(Event, TEXT("UCsStatusEffectCoordinator::GetTypeFromEvent: Event is NULL."));
+	checkf(Event, TEXT("UCsCoordinator_StatusEffect::GetTypeFromEvent: Event is NULL."));
 
 	// Damage
 	if (FCsLibrary_StatusEffectEvent::GetSafeInterfaceChecked<ICsStatusEffectEvent_Damage>(Str::GetTypeFromEvent, Event))
@@ -373,23 +373,23 @@ const FECsStatusEffectEvent& UCsStatusEffectCoordinator::GetTypeFromEvent(ICsSta
 	return NCsStatusEffectEvent::Default;
 }
 
-const FECsStatusEffectEvent& UCsStatusEffectCoordinator::GetTypeFromEvent(FCsResource_StatusEffectEvent* Event)
+const FECsStatusEffectEvent& UCsCoordinator_StatusEffect::GetTypeFromEvent(FCsResource_StatusEffectEvent* Event)
 {
-	checkf(Event, TEXT("UCsStatusEffectCoordinator::GetTypeFromEvent: Event is NULL."));
+	checkf(Event, TEXT("UCsCoordinator_StatusEffect::GetTypeFromEvent: Event is NULL."));
 
 	return GetTypeFromEvent(Event->Get());
 }
 
-void UCsStatusEffectCoordinator::DeallocateEvent(FCsResource_StatusEffectEvent* Event)
+void UCsCoordinator_StatusEffect::DeallocateEvent(FCsResource_StatusEffectEvent* Event)
 {
 	const FECsStatusEffectEvent& Type = GetTypeFromEvent(Event);
 
 	Manager_Events[Type.GetValue()].Deallocate(Event);
 }
 
-void UCsStatusEffectCoordinator::ProcessStatusEffectEvent(const ICsStatusEffectEvent* Event)
+void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const ICsStatusEffectEvent* Event)
 {
-	using namespace NCsStatusEffectCoordinatorCached;
+	using namespace NCsCoordinator_StatusEffectCached;
 
 	const FString& Context = Str::ProcessStatusEffectEvent;
 
@@ -475,9 +475,9 @@ void UCsStatusEffectCoordinator::ProcessStatusEffectEvent(const ICsStatusEffectE
 	}
 }
 
-void UCsStatusEffectCoordinator::ProcessStatusEffectEventContainer(const FCsResource_StatusEffectEvent* Event)
+void UCsCoordinator_StatusEffect::ProcessStatusEffectEventContainer(const FCsResource_StatusEffectEvent* Event)
 {
-	using namespace NCsStatusEffectCoordinatorCached;
+	using namespace NCsCoordinator_StatusEffectCached;
 
 	// Get Type
 	const FECsStatusEffectEvent& Type = GetTypeFromEvent(const_cast<FCsResource_StatusEffectEvent*>(Event));
@@ -499,7 +499,7 @@ void UCsStatusEffectCoordinator::ProcessStatusEffectEventContainer(const FCsReso
 #pragma region
 
 /*
-void UCsStatusEffectCoordinator::LogEventPoint(const ICsDamageEvent* Event)
+void UCsCoordinator_StatusEffect::LogEventPoint(const ICsDamageEvent* Event)
 {
 	ICsDamageExpression* Expression = Event->GetExpression();
 

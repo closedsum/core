@@ -5,12 +5,13 @@
 #include "UniqueObject/CsTypes_UniqueObject.h"
 #include "CsTypes_StatusEffect.h"
 #include "CsReceiveStatusEffect.h"
-#include "CsStatusEffectCoordinator.generated.h"
 
-class ICsGetStatusEffectCoordinator;
+#include "CsCoordinator_StatusEffect.generated.h"
+
+class ICsGetCoordinatorStatusEffect;
 
 UCLASS()
-class CSSE_API UCsStatusEffectCoordinator : public UObject
+class CSSE_API UCsCoordinator_StatusEffect : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
@@ -18,7 +19,7 @@ class CSSE_API UCsStatusEffectCoordinator : public UObject
 #pragma region
 public:
 
-	static UCsStatusEffectCoordinator* Get(UObject* InRoot = nullptr);
+	static UCsCoordinator_StatusEffect* Get(UObject* InRoot = nullptr);
 	
 	template<typename T>
 	static T* Get(UObject* InRoot = nullptr)
@@ -28,7 +29,7 @@ public:
 
 	static bool IsValid(UObject* InRoot = nullptr);
 
-	static void Init(UObject* InRoot, TSubclassOf<UCsStatusEffectCoordinator> StatusEffectCoordinatorClass, UObject* InOuter = nullptr);
+	static void Init(UObject* InRoot, TSubclassOf<UCsCoordinator_StatusEffect> CoordinatorStatusEffectClass, UObject* InOuter = nullptr);
 	
 	static void Shutdown(UObject* InRoot = nullptr);
 	static bool HasShutdown(UObject* InRoot = nullptr);
@@ -36,14 +37,14 @@ public:
 #if WITH_EDITOR
 protected:
 
-	static ICsGetStatusEffectCoordinator* Get_GetStatusEffectCoordinator(UObject* InRoot);
-	static ICsGetStatusEffectCoordinator* GetSafe_GetStatusEffectCoordinator(UObject* Object);
+	static ICsGetCoordinatorStatusEffect* Get_GetCoordinatorStatusEffect(UObject* InRoot);
+	static ICsGetCoordinatorStatusEffect* GetSafe_GetCoordinatorStatusEffect(UObject* Object);
 
-	static UCsStatusEffectCoordinator* GetSafe(UObject* Object);
+	static UCsCoordinator_StatusEffect* GetSafe(UObject* Object);
 
 public:
 
-	static UCsStatusEffectCoordinator* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static UCsCoordinator_StatusEffect* GetFromWorldContextObject(const UObject* WorldContextObject);
 
 #endif // #if WITH_EDITOR
 
@@ -63,7 +64,7 @@ protected:
 
 private:
 	// Singleton data
-	static UCsStatusEffectCoordinator* s_Instance;
+	static UCsCoordinator_StatusEffect* s_Instance;
 	static bool s_bShutdown;
 
 	// Root

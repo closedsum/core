@@ -3,7 +3,7 @@
 #include "CsSe.h"
 
 // Coordinator
-#include "Coordinator/CsStatusEffectCoordinator.h"
+#include "Coordinators/StatusEffect/CsCoordinator_StatusEffect.h"
 // Game
 #include "GameFramework/GameStateBase.h"
 // World
@@ -32,9 +32,9 @@ void UCsManager_StatusEffect::Shutdown(UObject* InRoot)
 	AGameStateBase* GameState = World ? World->GetGameState() : nullptr;
 	
 	if (GameState &&
-		UCsStatusEffectCoordinator::IsValid(GameState))
+		UCsCoordinator_StatusEffect::IsValid(GameState))
 	{
-		UCsStatusEffectCoordinator* StatusEffectCoordinator = UCsStatusEffectCoordinator::Get(GameState);
+		UCsCoordinator_StatusEffect* StatusEffectCoordinator = UCsCoordinator_StatusEffect::Get(GameState);
 
 		TCsDoubleLinkedList<FCsResource_StatusEffectEventInfo*>* Current = Manager_Event.GetAllocatedHead();
 		TCsDoubleLinkedList<FCsResource_StatusEffectEventInfo*>* Next	 = Current;

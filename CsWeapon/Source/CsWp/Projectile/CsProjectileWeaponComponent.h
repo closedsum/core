@@ -10,6 +10,13 @@
 #include "Managers/Sound/CsTypes_Sound.h"
 #include "CsProjectileWeaponComponent.generated.h"
 
+// Delegates
+#pragma region
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsProjectileWeaponComponent_OnConsumeAmmo, UObject*, Weapon, const int32&, PreviousAmmo, const int32&, NewAmmo);
+
+#pragma endregion Delegates
+
 class ICsData_Weapon;
 class AActor;
 struct FCsRoutine;
@@ -121,6 +128,14 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Weapon|Ammo", meta = (AllowPrivateAccess))
 	int32 CurrentAmmo;
+
+	virtual void ConsumeAmmo();
+
+public:
+
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnConsumeAmmo, ICsWeapon* /*Weapon*/, const int32& /*PreviousAmmo*/, const int32& /*NewAmmo*/);
+
+	FOnConsumeAmmo OnConsumeAmmo_Event;
 
 #pragma endregion Ammo
 

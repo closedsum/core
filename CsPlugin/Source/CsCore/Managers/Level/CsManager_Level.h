@@ -6,6 +6,9 @@
 #include "CsManager_Level.generated.h"
 
 class ICsGetManagerLevel;
+struct FCsRoutine;
+class ULevel;
+class ACsLevelScriptActor;
 
 UCLASS(transient)
 class CSCORE_API UCsManager_Level : public UObject
@@ -70,4 +73,39 @@ public:
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+// Persistent Level
+#pragma region
+protected:
+
+	bool bFinishedLoadingPersistentlLevel;
+
+public:
+	
+	FORCEINLINE bool IsFinishedLoadingPersistentLevel() const
+	{
+		return bFinishedLoadingPersistentlLevel;
+	}
+
+	void Check_FinishedLoadingPersistentLevel();
+	void Check_FinishedLoadingPersistentLevel(const FString& MapPackageName);
+
+protected:
+
+	char Check_FinishedLoadingPersistentLevel_Internal(FCsRoutine* R);
+
+public:
+
+	ULevel* GetPersistentLevel();
+
+	FString GetPersistentLevelName();
+	FName GetPersistentLevelFName();
+
+	bool IsPersistentLevelName(const FString& MapPackageName);
+
+	ACsLevelScriptActor* GetPersistentLevelScriptActor();
+
+
+#pragma endregion Persistent Level
+
 };

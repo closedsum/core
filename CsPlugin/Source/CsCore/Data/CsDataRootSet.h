@@ -25,6 +25,34 @@ public:
 	*
 	* return
 	*/
+	virtual const FSoftObjectPath& GetEntryMap() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const FSoftObjectPath& GetTransitionEntryToMainMap() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const FSoftObjectPath& GetMainMap() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const FName& GetStartupPayload() const = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
 	virtual UDataTable* GetDatas() const = 0;
 
 	/**

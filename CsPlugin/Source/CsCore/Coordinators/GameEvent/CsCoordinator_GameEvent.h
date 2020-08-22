@@ -27,7 +27,7 @@ public:
 
 	static bool IsValid(UObject* InRoot = nullptr);
 
-	static void Init(UObject* InRoot, TSubclassOf<UCsCoordinator_GameEvent> CoordinatorGameEventClass, UObject* InOuter = nullptr);
+	static void Init(UObject* InRoot = nullptr);
 	
 	static void Shutdown(UObject* InRoot = nullptr);
 	static bool HasShutdown(UObject* InRoot = nullptr);
@@ -83,4 +83,14 @@ public:
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+public:
+
+	void OnGameEventInfo(const FCsGameEventInfo& Info);
+
+	void ProcessGameEventInfo(const FCsGameEventInfo& Info);
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnProcessGameEventInfo, const FCsGameEventInfo& /*Info*/);
+
+	FOnProcessGameEventInfo OnProcessGameEventInfo_Event;
 };

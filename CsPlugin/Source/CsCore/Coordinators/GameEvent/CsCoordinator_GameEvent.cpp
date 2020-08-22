@@ -3,7 +3,7 @@
 #include "CsCore.h"
 
 // CVar
-//#include "Coordinator/CsCVars_StatusEffectCoordinator.h"
+#include "Coordinators/GameEvent/CsCVars_Coordinator_GameEvent.h"
 // Library
 #include "Library/CsLibrary_Common.h"
 
@@ -69,7 +69,7 @@ UCsCoordinator_GameEvent::UCsCoordinator_GameEvent(const FObjectInitializer& Obj
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsCoordinator_GameEvent::Init(UObject* InRoot, TSubclassOf<UCsCoordinator_GameEvent> CoordinatorGameEventClass, UObject* InOuter /*=nullptr*/)
+/*static*/ void UCsCoordinator_GameEvent::Init(UObject* InRoot)
 {
 #if WITH_EDITOR
 	ICsGetCoordinatorGameEvent* GetCoordinatorGameEvent = Get_GetCoordinatorGameEvent(InRoot);
@@ -78,7 +78,7 @@ UCsCoordinator_GameEvent::UCsCoordinator_GameEvent(const FObjectInitializer& Obj
 
 	if (!Coordinator_GameEvent)
 	{
-		Coordinator_GameEvent = NewObject<UCsCoordinator_GameEvent>(InOuter ? InOuter : InRoot, CoordinatorGameEventClass, TEXT("Coorindator_Game_Event_Singleton"), RF_Transient | RF_Public);
+		Coordinator_GameEvent = NewObject<UCsCoordinator_GameEvent>(InRoot, UCsCoordinator_GameEvent::StaticClass(), TEXT("Coorindator_Game_Event_Singleton"), RF_Transient | RF_Public);
 
 		GetCoordinatorGameEvent->SetCoordinator_GameEvent(Coordinator_GameEvent);
 
@@ -94,7 +94,7 @@ UCsCoordinator_GameEvent::UCsCoordinator_GameEvent(const FObjectInitializer& Obj
 
 	if (!s_Instance)
 	{
-		s_Instance = NewObject<UCsCoordinator_GameEvent>(GetTransientPackage(), CoordinatorGameEventClass, TEXT("Coorindator_Game_Event_Singleton"), RF_Transient | RF_Public);
+		s_Instance = NewObject<UCsCoordinator_GameEvent>(GetTransientPackage(), UCsCoordinator_GameEvent::StaticClass(), TEXT("Coorindator_Game_Event_Singleton"), RF_Transient | RF_Public);
 		s_Instance->AddToRoot();
 		s_Instance->SetMyRoot(InRoot);
 		s_Instance->Initialize();
@@ -239,3 +239,13 @@ void UCsCoordinator_GameEvent::SetMyRoot(UObject* InRoot)
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+void UCsCoordinator_GameEvent::OnGameEventInfo(const FCsGameEventInfo& Info)
+{
+	ProcessGameEventInfo(Info);
+}
+
+void UCsCoordinator_GameEvent::ProcessGameEventInfo(const FCsGameEventInfo& Info)
+{
+	OnProcessGameEventInfo_Event.Broadcast(Info);
+}

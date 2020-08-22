@@ -17,6 +17,30 @@ class CSCORE_API UCsDataRootSetImpl : public UObject,
 
 public:
 
+// Flow
+#pragma region
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Root", meta = (AllowedClasses = "World"))
+	FSoftObjectPath EntryMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Root", meta = (AllowedClasses = "World"))
+	FSoftObjectPath TransitionEntryToMainMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Root", meta = (AllowedClasses = "World"))
+	FSoftObjectPath MainMap;
+
+#pragma endregion Flow
+
+// Startup
+#pragma region
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Root")
+	FName StartupPayload;
+
+#pragma endregion Startup
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Root")
 	UDataTable* Datas;
 
@@ -36,6 +60,26 @@ public:
 // ICsDataRootSet
 #pragma region
 public:
+
+	FORCEINLINE const FSoftObjectPath& GetEntryMap() const
+	{
+		return EntryMap;
+	}
+
+	FORCEINLINE const FSoftObjectPath& GetTransitionEntryToMainMap() const
+	{
+		return TransitionEntryToMainMap;
+	}
+
+	FORCEINLINE const FSoftObjectPath& GetMainMap() const
+	{
+		return MainMap;
+	}
+
+	FORCEINLINE const FName& GetStartupPayload() const
+	{
+		return StartupPayload;
+	}
 
 	FORCEINLINE UDataTable* GetDatas() const
 	{

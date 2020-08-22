@@ -266,6 +266,19 @@ void UCsProjectileWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& Del
 
 #pragma endregion State
 
+// Ammo
+#pragma region
+
+void UCsProjectileWeaponComponent::ConsumeAmmo()
+{
+	int32 PreviousAmmo = CurrentAmmo;
+	--CurrentAmmo;
+
+	OnConsumeAmmo_Event.Broadcast(this, PreviousAmmo, CurrentAmmo);
+}
+
+#pragma endregion Ammo
+
 // Fire
 #pragma region
 
@@ -364,7 +377,7 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 			ElapsedTime.Reset();
 
 			if (!PrjData->HasInfiniteAmmo())
-				--CurrentAmmo;
+				ConsumeAmmo();
 
 			FireProjectile();
 			PlayFireSound();

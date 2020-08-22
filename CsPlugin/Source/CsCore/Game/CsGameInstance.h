@@ -77,37 +77,4 @@ public:
 	}
 
 #pragma endregion ICsGetManagerSingleton
-
-// TODO: Wrap into helper struct / library
-
-// Persistent Level
-#pragma region
-protected:
-
-	bool bFinishedLoadingPersistentlLevel;
-
-public:
-	
-	FORCEINLINE bool IsFinishedLoadingPersistentLevel() const
-	{
-		return bFinishedLoadingPersistentlLevel;
-	}
-
-	void Check_FinishedLoadingPersistentLevel();
-
-protected:
-
-	void Check_FinishedLoadingPersistentLevel(const FString& MapPackageName);
-	char Check_FinishedLoadingPersistentLevel_Internal(FCsRoutine* R);
-
-public:
-
-	ULevel* GetPersistentLevel();
-
-	FString GetPersistentLevelName();
-	FName GetPersistentLevelFName();
-
-	ACsLevelScriptActor* GetPersistentLevelScriptActor();
-
-#pragma endregion Persistent Level
 };

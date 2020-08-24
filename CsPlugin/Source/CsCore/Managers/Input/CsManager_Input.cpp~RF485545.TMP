@@ -69,29 +69,9 @@ void UCsManager_Input::Init()
 	}
 #endif // #if WITH_EDITOR
 
-	TArray<bool> EventsFound;
-
-	EventsFound.Reserve(EventCount);
-	EventsFound.AddDefaulted(EventCount);
-
-	for (int32 I = 0; I < EventCount; ++I)
+	for (const FECsGameEvent& GameEvent : InputSettings.GameEventPriorityList)
 	{
-		EventsFound[I] = false;
-	}
-
-	for (const FECsGameEvent& Event : InputSettings.GameEventPriorityList)
-	{
-		EventsFound[Event.GetValue()] = true;
-
-		GameEventPriorityList.Add(Event);
-	}
-
-	for (int32 I = 0; I < EventCount; ++I)
-	{
-		if (!EventsFound[I])
-		{
-			GameEventPriorityList.Add(EMCsGameEvent::Get().GetEnumAt(I));
-		}
+		GameEventPriorityList.Add(GameEvent);
 	}
 
 	// Update GameEventPriorityMap
@@ -171,7 +151,6 @@ void UCsManager_Input::SetupInputComponent()
 
 void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePaused)
 {
-	// Update Event "state" for Actions
 	for (const FECsInputAction& Action : EMCsInputAction::Get())
 	{
 		FCsInputInfo& Info	 = InputActionEventInfos[Action.GetValue()];
@@ -202,174 +181,6 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 	using namespace NCsManagerInputCached;
 
 	const FString& Context = Str::PostProcessInput;
-
-	// Capture Mouse Inputs
-	if (OwnerAsController->bShowMouseCursor)
-	{
-		// __MousePositionXY__
-		{
-			CurrentMousePosition = FVector::ZeroVector;
-			
-			if (OwnerAsController->GetMousePosition(CurrentMousePosition.X, CurrentMousePosition.Y))
-			{
-				FCsInputInfo& Info = InputActionEventInfos[NCsInputAction::__MousePositionXY__.GetValue()];
-
-				ECsInputEvent& Event = Info.Event;
-
-				Info.Last_Location = Info.Location;
-
-				// Change
-				if (Info.Location != CurrentMousePosition)
-				{
-					// FirstStationary | Stationary -> FirstMoved
-					if (Event == ECsInputEvent::FirstStationary ||
-						Event == ECsInputEvent::Stationary)
-					{
-						Event = ECsInputEvent::FirstMoved;
-					}
-					// FirstMoved -> Moved
-					else
-					if (Event == ECsInputEvent::FirstMoved)
-					{
-						Event = ECsInputEvent::Moved;
-					}
-				}
-				// No Change
-				else
-				{
-					// FirstMoved | Moved -> FirstStationary
-					if (Event == ECsInputEvent::FirstMoved ||
-						Event == ECsInputEvent::Moved)
-					{
-						Event = ECsInputEvent::FirstStationary;
-					}
-					// FirstStationary -> Stationary
-					else
-					if (Event == ECsInputEvent::FirstStationary)
-					{
-						Event = ECsInputEvent::Stationary;
-					}
-				}
-
-				Info.Location = CurrentMousePosition;
-			}
-		}
-		// __MouseLeftButton__
-		{
-			FCsInputInfo& Info = InputActionEventInfos[NCsInputAction::__MouseLeftButton__.GetValue()];
-
-			const ECsInputEvent& Last_Event = Info.Last_Event;
-
-			// FirstReleased | Released -> FirstPressed
-			if (OwnerAsController->PlayerInput->IsPressed(EKeys::LeftMouseButton))
-			{
-				if (Last_Event == ECsInputEvent::FirstReleased ||
-					Last_Event == ECsInputEvent::Released)
-				{
-					Info.Event = ECsInputEvent::FirstPressed;
-				}
-			}
-			// FirstPressed | Pressed -> FirstReleased
-			else
-			{
-				if (Last_Event == ECsInputEvent::FirstPressed ||
-					Last_Event == ECsInputEvent::Pressed)
-				{
-					Info.Event = ECsInputEvent::FirstReleased;
-				}
-			}
-		}
-		// __MouseRightButton__
-		{
-			FCsInputInfo& Info = InputActionEventInfos[NCsInputAction::__MouseRightButton__.GetValue()];
-
-			const ECsInputEvent& Last_Event = Info.Last_Event;
-
-			// FirstReleased | Released -> FirstPressed
-			if (OwnerAsController->PlayerInput->IsPressed(EKeys::RightMouseButton))
-			{
-				if (Last_Event == ECsInputEvent::FirstReleased ||
-					Last_Event == ECsInputEvent::Released)
-				{
-					Info.Event = ECsInputEvent::FirstPressed;
-				}
-			}
-			// FirstPressed | Pressed -> FirstReleased
-			else
-			{
-				if (Last_Event == ECsInputEvent::FirstPressed ||
-					Last_Event == ECsInputEvent::Pressed)
-				{
-					Info.Event = ECsInputEvent::FirstReleased;
-				}
-			}
-		}
-	}
-
-	/*
-	ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Controller->Player);
-
-	if (LocalPlayer && LocalPlayer->ViewportClient)
-	{
-		FVector2D MousePosition;
-
-		const bool bGotMousePosition = LocalPlayer->ViewportClient->GetMousePosition(MousePosition);
-		
-		Mouse_Location_Raw.ExecuteIfBound(FVector(MousePosition.X, MousePosition.Y, 0.0f));
-	}
-	*/
-
-	// Capture VR related Input
-	const bool IsVR = UCsLibrary_Common::IsVR();
-
-	if (IsVR)
-	{
-		FRotator Rotation;
-		FVector Location;
-
-		UCsLibrary_Common::GetHMDOrientationAndPosition(Rotation, Location);
-
-		//HMD_Rotation_Raw.ExecuteIfBound(Rotation);
-		//HMD_Location_Raw.ExecuteIfBound(Location);
-	}
-
-	TArray<IMotionController*> Controllers = IModularFeatures::Get().GetModularFeatureImplementations<IMotionController>(IMotionController::GetModularFeatureName());
-
-	for (IMotionController* Controller : Controllers)
-	{
-		const uint8 LocalPlayerIndex = 0;
-
-		// Check controllers are being Tracked
-
-		/*
-		const ETrackingStatus LeftStatus = Controllers[I]->GetControllerTrackingStatus(LocalPlayerIndex, EControllerHand::Left);
-		
-		if (LeftStatus != ETrackingStatus::Tracked)
-			continue;
-
-		const ETrackingStatus RightStatus = Controllers[I]->GetControllerTrackingStatus(LocalPlayerIndex, EControllerHand::Right);
-
-		if (RightStatus != ETrackingStatus::Tracked)
-			continue;
-		*/
-		const float WorldToMetersScale = 100.0f;
-
-		FRotator Rotation;
-		FVector Location;
-
-		// Left
-		if (Controller->GetControllerOrientationAndPosition(LocalPlayerIndex, EMCsControllerHand::Get().ToName(ECsControllerHand::Left), Rotation, Location, WorldToMetersScale))
-		{
-		//	LeftHand_Rotation_Raw.ExecuteIfBound(Rotation);
-		//	LeftHand_Location_Raw.ExecuteIfBound(Location);
-		}
-		// Right
-		if (Controller->GetControllerOrientationAndPosition(LocalPlayerIndex, EMCsControllerHand::Get().ToName(ECsControllerHand::Right), Rotation, Location, WorldToMetersScale))
-		{
-		//	RightHand_Rotation_Raw.ExecuteIfBound(Rotation);
-		//	RightHand_Location_Raw.ExecuteIfBound(Location);
-		}
-	}
 
 	// Handle any Inputs that need to deallocated
 	TCsDoubleLinkedList<FCsResource_Input*>* Current = Manager_Inputs.GetAllocatedHead();
@@ -402,6 +213,79 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		Time.Frame = 0ull;
 
 		CurrentInputFrame->Init(Time);
+	}
+
+	// Capture Mouse Position
+
+	CurrentMousePosition		 = FVector::ZeroVector;
+	const bool bGotMousePosition = OwnerAsController->GetMousePosition(CurrentMousePosition.X, CurrentMousePosition.Y);
+
+	if (bGotMousePosition)
+		Mouse_Location_Raw.ExecuteIfBound(CurrentMousePosition);
+
+	/*
+	ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Controller->Player);
+
+	if (LocalPlayer && LocalPlayer->ViewportClient)
+	{
+		FVector2D MousePosition;
+
+		const bool bGotMousePosition = LocalPlayer->ViewportClient->GetMousePosition(MousePosition);
+		
+		Mouse_Location_Raw.ExecuteIfBound(FVector(MousePosition.X, MousePosition.Y, 0.0f));
+	}
+	*/
+
+	// Capture VR related Input
+	const bool IsVR = UCsLibrary_Common::IsVR();
+
+	if (IsVR)
+	{
+		FRotator Rotation;
+		FVector Location;
+
+		UCsLibrary_Common::GetHMDOrientationAndPosition(Rotation, Location);
+
+		HMD_Rotation_Raw.ExecuteIfBound(Rotation);
+		HMD_Location_Raw.ExecuteIfBound(Location);
+	}
+
+	TArray<IMotionController*> Controllers = IModularFeatures::Get().GetModularFeatureImplementations<IMotionController>(IMotionController::GetModularFeatureName());
+
+	for (IMotionController* Controller : Controllers)
+	{
+		const uint8 LocalPlayerIndex = 0;
+
+		// Check controllers are being Tracked
+
+		/*
+		const ETrackingStatus LeftStatus = Controllers[I]->GetControllerTrackingStatus(LocalPlayerIndex, EControllerHand::Left);
+		
+		if (LeftStatus != ETrackingStatus::Tracked)
+			continue;
+
+		const ETrackingStatus RightStatus = Controllers[I]->GetControllerTrackingStatus(LocalPlayerIndex, EControllerHand::Right);
+
+		if (RightStatus != ETrackingStatus::Tracked)
+			continue;
+		*/
+		const float WorldToMetersScale = 100.0f;
+
+		FRotator Rotation;
+		FVector Location;
+
+		// Left
+		if (Controller->GetControllerOrientationAndPosition(LocalPlayerIndex, EMCsControllerHand::Get().ToName(ECsControllerHand::Left), Rotation, Location, WorldToMetersScale))
+		{
+			LeftHand_Rotation_Raw.ExecuteIfBound(Rotation);
+			LeftHand_Location_Raw.ExecuteIfBound(Location);
+		}
+		// Right
+		if (Controller->GetControllerOrientationAndPosition(LocalPlayerIndex, EMCsControllerHand::Get().ToName(ECsControllerHand::Right), Rotation, Location, WorldToMetersScale))
+		{
+			RightHand_Rotation_Raw.ExecuteIfBound(Rotation);
+			RightHand_Location_Raw.ExecuteIfBound(Location);
+		}
 	}
 
 	for (const FECsInputAction& Action : EMCsInputAction::Get())
@@ -449,6 +333,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		else
 		if (Type == ECsInputType::Axis)
 		{
+
 			float Value = Info.Value;
 
 #if !UE_BUILD_SHIPPING
@@ -474,12 +359,6 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 			TryAddInput(Type, Action, Event, Value);
 
 			Info.FlushEvent();
-		}
-		// Location
-		else
-		if (Type == ECsInputType::Location)
-		{
-
 		}
 	}
 
@@ -550,33 +429,16 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 	for (const FCsGameEventInfo& Info : QueuedGameEventInfosForNextFrame)
 	{
 		const FECsGameEvent& Event  = Info.Event;
-		const int32& Index			= GameEventPriorityMap[Event.GetValue()];
+		const int32& Index			= GameEventPriorityMap[Event.Value];
 
 		CurrentGameEventInfos[Index] = Info;
 	}
 	QueuedGameEventInfosForNextFrame.Reset(QueuedGameEventInfosForNextFrame.Max());
 
-	for (FCsGameEventInfo& Info : CurrentGameEventInfos)
+	for (const FCsGameEventInfo& Info : CurrentGameEventInfos)
 	{
 		if (Info.IsValid())
 		{
-			const FECsGameEvent& Event = Info.Event;
-
-			// For "default" mouse related pressed events, also add the position information
-
-			// __MouseLeftButtonPressed__ | __MouseRightButtonPressed__
-			if (Event == NCsGameEvent::__MouseLeftButtonPressed__ ||
-				Event == NCsGameEvent::__MouseRightButtonPressed__)
-			{
-				const int32& Index							= GameEventPriorityMap[NCsGameEvent::__MousePositionXY__.GetValue()];
-				const FCsGameEventInfo& MousePositionXYInfo = CurrentGameEventInfos[Index];
-
-				if (MousePositionXYInfo.IsValid())
-				{
-					Info.Location = MousePositionXYInfo.Location;
-				}
-			}
-
 			CurrentValidGameEventInfos.Add(Info);
 
 #if !UE_BUILD_SHIPPING
@@ -672,36 +534,6 @@ void UCsManager_Input::SetupInputActionEventInfos()
 	for (const FECsInputAction& Action : EMCsInputAction::Get())
 	{
 		FCsInputInfo& Info = InputActionEventInfos[Action.GetValue()];
-
-		// Ignore creating listener for "default" mouse related actions
-
-		// __MousePositionXY__
-		if (Action == NCsInputAction::__MousePositionXY__)
-		{
-			Info.Type		= ECsInputType::Location;
-			Info.ValueType	= ECsInputValue::Vector;
-			Info.Event		= ECsInputEvent::Stationary;
-			Info.Last_Event = ECsInputEvent::Stationary;
-			continue;
-		}
-		// __MouseLeftButton__
-		if (Action == NCsInputAction::__MouseLeftButton__)
-		{
-			Info.Type		= ECsInputType::Action;
-			Info.ValueType	= ECsInputValue::Void;
-			Info.Event		= ECsInputEvent::Released;
-			Info.Last_Event = ECsInputEvent::Released;
-			continue;
-		}
-		// __MouseRightButton__
-		if (Action == NCsInputAction::__MouseRightButton__)
-		{
-			Info.Type		= ECsInputType::Action;
-			Info.ValueType	= ECsInputValue::Void;
-			Info.Event		= ECsInputEvent::Released;
-			Info.Last_Event = ECsInputEvent::Released;
-			continue;
-		}
 
 		Listeners[Action.GetValue()] = NewObject<UCsInputListener>(this);
 
@@ -891,91 +723,11 @@ void UCsManager_Input::SetupGameEventDefinitions()
 		GameEventDefinitionMap.Add(GameEvent, Sentence);
 
 		FCsGameEventDefinition GameEventDefinition;
-		GameEventDefinition.Event	 = GameEvent;
+		GameEventDefinition.Event = GameEvent;
 		GameEventDefinition.Sentence = Sentence;
 
 		GameEventDefinitions.Add(GameEventDefinition);
 	}
-
-	// Setup default game events for "default" mouse related actions
-
-	// __MousePositionXY__
-	{
-		const FECsGameEvent& Event = NCsGameEvent::__MousePositionXY__;
-
-		if (!GameEventDefinitionMap.Find(Event))
-		{
-			FCsGameEventDefinition Def;
-			Def.Event = Event;
-
-			Def.Sentence.Phrases.AddDefaulted();
-			FCsInputSentence& Sentence = Def.Sentence;
-			FCsInputPhrase& Phrase = Sentence.Phrases[CS_FIRST];
-			Phrase.Words.AddDefaulted();
-			FCsInputWord& Word = Phrase.Words[CS_FIRST];
-			Word.AndInputs.AddDefaulted();
-			FCsInputDescription& Desc = Word.AndInputs[CS_FIRST];
-			Desc.Action = NCsInputAction::__MousePositionXY__;
-			Desc.bAnyEvent = true;
-			Desc.CompareValue.ValueType = ECsInputValue::Vector;
-			Desc.CompletedValue.ValueType = ECsInputValue::Vector;
-			Desc.CompletedValue.ReturnType = ECsInputCompletedValueReturnType::PassThrough;
-
-			GameEventDefinitionMap.Add(Event, Sentence);
-			GameEventDefinitions.Add(Def);
-		} 
-	}
-	// __MouseLeftButtonPressed__
-	{
-		const FECsGameEvent& Event = NCsGameEvent::__MouseLeftButtonPressed__;
-
-		if (!GameEventDefinitionMap.Find(Event))
-		{
-			FCsGameEventDefinition Def;
-			Def.Event = Event;
-
-			Def.Sentence.Phrases.AddDefaulted();
-			FCsInputSentence& Sentence = Def.Sentence;
-			FCsInputPhrase& Phrase = Sentence.Phrases[CS_FIRST];
-			Phrase.Words.AddDefaulted();
-			FCsInputWord& Word = Phrase.Words[CS_FIRST];
-			Word.AndInputs.AddDefaulted();
-			FCsInputDescription& Desc = Word.AndInputs[CS_FIRST];
-			Desc.Action = NCsInputAction::__MouseLeftButton__;
-			Desc.Event = ECsInputEvent::FirstPressed;
-			Desc.CompareValue.ValueType = ECsInputValue::Void;
-			Desc.CompletedValue.ValueType = ECsInputValue::Void;
-
-			GameEventDefinitionMap.Add(Event, Sentence);
-			GameEventDefinitions.Add(Def);
-		}
-	}
-	// __MouseRightButtonPressed__
-	{
-		const FECsGameEvent& Event = NCsGameEvent::__MouseRightButtonPressed__;
-
-		if (!GameEventDefinitionMap.Find(Event))
-		{
-			FCsGameEventDefinition Def;
-			Def.Event = Event;
-
-			Def.Sentence.Phrases.AddDefaulted();
-			FCsInputSentence& Sentence = Def.Sentence;
-			FCsInputPhrase& Phrase = Sentence.Phrases[CS_FIRST];
-			Phrase.Words.AddDefaulted();
-			FCsInputWord& Word = Phrase.Words[CS_FIRST];
-			Word.AndInputs.AddDefaulted();
-			FCsInputDescription& Desc = Word.AndInputs[CS_FIRST];
-			Desc.Action = NCsInputAction::__MouseRightButton__;
-			Desc.Event = ECsInputEvent::FirstPressed;
-			Desc.CompareValue.ValueType = ECsInputValue::Void;
-			Desc.CompletedValue.ValueType = ECsInputValue::Void;
-
-			GameEventDefinitionMap.Add(Event, Sentence);
-			GameEventDefinitions.Add(Def);
-		}
-	}
-
 
 #if WITH_EDITOR
 	for (const FECsGameEvent& Event : EMCsGameEvent::Get())

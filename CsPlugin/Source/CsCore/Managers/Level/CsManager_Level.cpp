@@ -35,11 +35,13 @@ namespace NCsManagerLevelCached
 	namespace Str
 	{
 		const FString Check_FinishedLoadingPersistentLevel_Internal = TEXT("UCsGameInstance::Check_FinishedLoadingPersistentLevel_Internal");
+		const FString ChangeMap_Internal = TEXT("USbManager_Level::ChangeMap_Internal");
 	}
 
 	namespace Name
 	{
 		const FName Check_FinishedLoadingPersistentLevel_Internal = TEXT("UCsGameInstance::Check_FinishedLoadingPersistentLevel_Internal");
+		const FName ChangeMap_Internal = FName("USbManager_Level::ChangeMap_Internal");
 	}
 }
 
@@ -359,3 +361,70 @@ ACsLevelScriptActor* UCsManager_Level::GetPersistentLevelScriptActor()
 }
 
 #pragma endregion Persistent Level
+
+// TODO: Add ChangeMap Params
+
+void UCsManager_Level::ChangeMap(const FCsManagerLevelChangeMap& Params)
+{
+	checkf(Params.Map.IsEmpty(), TEXT("USbManager_Level::ChangeMap: Params.Map is Empty."));
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(UpdateGroup);
+
+	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Level::ChangeMap_Internal);
+	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
+	Payload->Owner.SetObject(this);
+	Payload->SetName(NCsManagerLevelCached::Str::ChangeMap_Internal);
+	Payload->SetFName(NCsManagerLevelCached::Name::ChangeMap_Internal);
+
+	static const int32 MAP_INDEX = 0;
+	Payload->SetValue_String(MAP_INDEX, Params.Map);
+
+	static const int32 TRANSITION_MAP_INDEX = 1;
+	Payload->SetValue_String(TRANSITION_MAP_INDEX, Params.TransitionMap);
+
+	CurrentMap = GetPersistentLevelName();
+
+	Scheduler->Start(Payload);
+}
+
+char UCsManager_Level::ChangeMap_Internal(FCsRoutine* R)
+{
+	static const int32 MAP_INDEX = 0;
+	const FString& NewMap = R->GetValue_String(MAP_INDEX);
+
+	static const int32 TRANSITION_MAP_INDEX = 1;
+	const FString& TransitionMap = R->GetValue_String(TRANSITION_MAP_INDEX);
+
+	CS_COROUTINE_BEGIN(R);
+
+	// Transition to New Map
+	{
+		// TODO: Add setting Transition Map
+		if (!TransitionMap.IsEmpty())
+		{
+
+		}
+		/*
+#if !UE_BUILD_SHIPPING
+		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogGameStartup))
+		{
+			UE_LOG(LogSb, Warning, TEXT("%s: Transition to Shell: %s."), *Context, *URL);
+		}
+#endif // #if !UE_BUILD_SHIPPING
+		*/
+		GetWorld()->ServerTravel(NewMap);
+		Check_FinishedLoadingPersistentLevel(NewMap);
+	}
+
+	// Wait until the New Map is loaded
+	CS_COROUTINE_WAIT_UNTIL(R, HasFinishedLoadingPersistentLevel());
+
+	OnChangeMapComplete_Event.Broadcast(CurrentMap, NewMap);
+
+	CurrentMap = NewMap;
+
+	CS_COROUTINE_END(R);
+}

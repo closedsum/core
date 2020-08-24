@@ -262,12 +262,22 @@ void UCsManager_Trace::Initialize()
 			R->SetIndex(Index);
 		}
 	}
+	bInitialized = true;
+}
+
+/*static*/ bool UCsManager_Trace::HasInitialized(UObject* InRoot)
+{
+	if (!HasShutdown(InRoot))
+		return Get(InRoot)->bInitialized;
+	return false;
 }
 
 void UCsManager_Trace::CleanUp()
 {
 	Manager_Request.Shutdown();
 	Manager_Response.Shutdown();
+
+	bInitialized = false;
 }
 
 	// Root

@@ -240,6 +240,10 @@ namespace NCsInputAction
 {
 	typedef FECsInputAction Type;
 
+	extern CSCORE_API const Type __MousePositionXY__;
+	extern CSCORE_API const Type __MouseLeftButton__;
+	extern CSCORE_API const Type __MouseRightButton__;
+
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
 
@@ -264,8 +268,6 @@ struct CSCORE_API FCsInputActionSet
 };
 
 #pragma endregion FCsInputActionSet
-
-#define CS_INVALID_INPUT_POOL_INDEX 65535
 
 	// FCsInputInfo
 #pragma region
@@ -301,6 +303,9 @@ public:
 	FVector Location;
 
 	UPROPERTY(BlueprintReadOnly)
+	FVector Last_Location;
+
+	UPROPERTY(BlueprintReadOnly)
 	FRotator Rotation;
 
 	UPROPERTY(BlueprintReadOnly)
@@ -314,6 +319,7 @@ public:
 		Value(0.0f),
 		Last_Value(0.0f),
 		Location(0.0f),
+		Last_Location(0.0f),
 		Rotation(0.0f),
 		Duration(0.0f)
 	{
@@ -1688,6 +1694,10 @@ struct CSCORE_API EMCsGameEvent : public TCsEnumStructMap<FECsGameEvent, uint8>
 namespace NCsGameEvent
 {
 	typedef FECsGameEvent Type;
+
+	extern CSCORE_API const Type __MousePositionXY__;
+	extern CSCORE_API const Type __MouseLeftButtonPressed__;
+	extern CSCORE_API const Type __MouseRightButtonPressed__;
 
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }

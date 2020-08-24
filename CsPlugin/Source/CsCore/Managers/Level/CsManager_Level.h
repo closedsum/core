@@ -2,6 +2,8 @@
 
 #pragma once
 #include "UObject/Object.h"
+// Types
+#include "Managers/Level/CsTypes_Manager_Level.h"
 
 #include "CsManager_Level.generated.h"
 
@@ -82,7 +84,7 @@ protected:
 
 public:
 	
-	FORCEINLINE bool IsFinishedLoadingPersistentLevel() const
+	FORCEINLINE bool HasFinishedLoadingPersistentLevel() const
 	{
 		return bFinishedLoadingPersistentlLevel;
 	}
@@ -105,7 +107,34 @@ public:
 
 	ACsLevelScriptActor* GetPersistentLevelScriptActor();
 
-
 #pragma endregion Persistent Level
 
+// Change Map
+#pragma region
+protected:
+
+	FString CurrentMap;
+
+	bool bChangeMapCompleted;
+
+public:
+
+	FORCEINLINE bool HasChangeMapCompleted() const
+	{
+		return bChangeMapCompleted;
+	}
+
+	void ChangeMap(const FCsManagerLevelChangeMap& Params);
+
+protected:
+
+public:
+
+	char ChangeMap_Internal(FCsRoutine* R);
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChangeMapComplete, const FString& /*PreviousMap*/, const FString& /*NewMap*/);
+
+	FOnChangeMapComplete OnChangeMapComplete_Event;
+
+#pragma endregion Change Map
 };

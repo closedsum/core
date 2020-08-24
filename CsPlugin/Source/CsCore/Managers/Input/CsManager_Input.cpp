@@ -60,14 +60,7 @@ void UCsManager_Input::Init()
 	const FCsSettings_Input& InputSettings = Settings->Input;
 
 	// Initialize CurrentGameEventInfos
-	const int32 EventCount = InputSettings.GameEventPriorityList.Num();
-
-#if WITH_EDITOR
-	if (EMCsGameEvent::Get().Num() != EventCount)
-	{
-
-	}
-#endif // #if WITH_EDITOR
+	const int32 EventCount = EMCsGameEvent::Get().Num();
 
 	TArray<bool> EventsFound;
 
@@ -206,13 +199,13 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 	// Capture Mouse Inputs
 	if (OwnerAsController->bShowMouseCursor)
 	{
-		// __MousePositionXY__
+		// Default__MousePositionXY__
 		{
 			CurrentMousePosition = FVector::ZeroVector;
 			
 			if (OwnerAsController->GetMousePosition(CurrentMousePosition.X, CurrentMousePosition.Y))
 			{
-				FCsInputInfo& Info = InputActionEventInfos[NCsInputAction::__MousePositionXY__.GetValue()];
+				FCsInputInfo& Info = InputActionEventInfos[NCsInputAction::Default__MousePositionXY__.GetValue()];
 
 				ECsInputEvent& Event = Info.Event;
 
@@ -254,9 +247,9 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 				Info.Location = CurrentMousePosition;
 			}
 		}
-		// __MouseLeftButton__
+		// Default__MouseLeftButton__
 		{
-			FCsInputInfo& Info = InputActionEventInfos[NCsInputAction::__MouseLeftButton__.GetValue()];
+			FCsInputInfo& Info = InputActionEventInfos[NCsInputAction::Default__MouseLeftButton__.GetValue()];
 
 			const ECsInputEvent& Last_Event = Info.Last_Event;
 
@@ -279,9 +272,9 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 				}
 			}
 		}
-		// __MouseRightButton__
+		// Default__MouseRightButton__
 		{
-			FCsInputInfo& Info = InputActionEventInfos[NCsInputAction::__MouseRightButton__.GetValue()];
+			FCsInputInfo& Info = InputActionEventInfos[NCsInputAction::Default__MouseRightButton__.GetValue()];
 
 			const ECsInputEvent& Last_Event = Info.Last_Event;
 
@@ -462,11 +455,11 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 				{
 					const FString& LastEvent = EMCsInputEvent::Get().ToString(Info.Last_Event);
 
-					UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s. Event: %s -> %s. Value: %f -> %f"), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *LastEvent, *CurrentEvent, Info.Last_Value, Value);
+					UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s. Event: %s -> %s. Value: %f -> %f."), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *LastEvent, *CurrentEvent, Info.Last_Value, Value);
 				}
 				else
 				{
-					UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s. Event: %s. Value: %f"), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *CurrentEvent, Value);
+					UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s. Event: %s. Value: %f."), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *CurrentEvent, Value);
 				}
 			}
 #endif // #if !UE_BUILD_SHIPPING
@@ -479,7 +472,32 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		else
 		if (Type == ECsInputType::Location)
 		{
+			const FVector& Location = Info.Location;
 
+#if !UE_BUILD_SHIPPING
+			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRaw) ||
+				FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputLocation))
+			{
+				const float& Time			= CurrentInputFrame->Time.Time;
+				const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
+
+				if (Info.HasEventChanged())
+				{
+					const FString& LastEvent   = EMCsInputEvent::Get().ToString(Info.Last_Event);
+					const FString LastLocation = Info.Last_Location.ToString();
+
+					UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s. Event: %s -> %s. Location: %s -> %s."), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *LastEvent, *CurrentEvent, *LastLocation, *(Location.ToString()));
+				}
+				else
+				{
+					UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s. Event: %s. Location: %s."), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *CurrentEvent, *(Location.ToString()));
+				}
+			}
+#endif // #if !UE_BUILD_SHIPPING
+
+			TryAddInput(Type, Action, Event, 0.0f, Info.Location);
+
+			Info.FlushEvent();
 		}
 	}
 
@@ -564,11 +582,11 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 			// For "default" mouse related pressed events, also add the position information
 
-			// __MouseLeftButtonPressed__ | __MouseRightButtonPressed__
-			if (Event == NCsGameEvent::__MouseLeftButtonPressed__ ||
-				Event == NCsGameEvent::__MouseRightButtonPressed__)
+			// Default__MouseLeftButtonPressed__ | Default__MouseRightButtonPressed__
+			if (Event == NCsGameEvent::Default__MouseLeftButtonPressed__ ||
+				Event == NCsGameEvent::Default__MouseRightButtonPressed__)
 			{
-				const int32& Index							= GameEventPriorityMap[NCsGameEvent::__MousePositionXY__.GetValue()];
+				const int32& Index							= GameEventPriorityMap[NCsGameEvent::Default__MousePositionXY__.GetValue()];
 				const FCsGameEventInfo& MousePositionXYInfo = CurrentGameEventInfos[Index];
 
 				if (MousePositionXYInfo.IsValid())
@@ -675,8 +693,8 @@ void UCsManager_Input::SetupInputActionEventInfos()
 
 		// Ignore creating listener for "default" mouse related actions
 
-		// __MousePositionXY__
-		if (Action == NCsInputAction::__MousePositionXY__)
+		// Default__MousePositionXY__
+		if (Action == NCsInputAction::Default__MousePositionXY__)
 		{
 			Info.Type		= ECsInputType::Location;
 			Info.ValueType	= ECsInputValue::Vector;
@@ -684,8 +702,8 @@ void UCsManager_Input::SetupInputActionEventInfos()
 			Info.Last_Event = ECsInputEvent::Stationary;
 			continue;
 		}
-		// __MouseLeftButton__
-		if (Action == NCsInputAction::__MouseLeftButton__)
+		// Default__MouseLeftButton__
+		if (Action == NCsInputAction::Default__MouseLeftButton__)
 		{
 			Info.Type		= ECsInputType::Action;
 			Info.ValueType	= ECsInputValue::Void;
@@ -693,8 +711,8 @@ void UCsManager_Input::SetupInputActionEventInfos()
 			Info.Last_Event = ECsInputEvent::Released;
 			continue;
 		}
-		// __MouseRightButton__
-		if (Action == NCsInputAction::__MouseRightButton__)
+		// Default__MouseRightButton__
+		if (Action == NCsInputAction::Default__MouseRightButton__)
 		{
 			Info.Type		= ECsInputType::Action;
 			Info.ValueType	= ECsInputValue::Void;
@@ -899,9 +917,9 @@ void UCsManager_Input::SetupGameEventDefinitions()
 
 	// Setup default game events for "default" mouse related actions
 
-	// __MousePositionXY__
+	// Default__MousePositionXY__
 	{
-		const FECsGameEvent& Event = NCsGameEvent::__MousePositionXY__;
+		const FECsGameEvent& Event = NCsGameEvent::Default__MousePositionXY__;
 
 		if (!GameEventDefinitionMap.Find(Event))
 		{
@@ -915,7 +933,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 			FCsInputWord& Word = Phrase.Words[CS_FIRST];
 			Word.AndInputs.AddDefaulted();
 			FCsInputDescription& Desc = Word.AndInputs[CS_FIRST];
-			Desc.Action = NCsInputAction::__MousePositionXY__;
+			Desc.Action = NCsInputAction::Default__MousePositionXY__;
 			Desc.bAnyEvent = true;
 			Desc.CompareValue.ValueType = ECsInputValue::Vector;
 			Desc.CompletedValue.ValueType = ECsInputValue::Vector;
@@ -925,9 +943,9 @@ void UCsManager_Input::SetupGameEventDefinitions()
 			GameEventDefinitions.Add(Def);
 		} 
 	}
-	// __MouseLeftButtonPressed__
+	// Default__MouseLeftButtonPressed__
 	{
-		const FECsGameEvent& Event = NCsGameEvent::__MouseLeftButtonPressed__;
+		const FECsGameEvent& Event = NCsGameEvent::Default__MouseLeftButtonPressed__;
 
 		if (!GameEventDefinitionMap.Find(Event))
 		{
@@ -941,7 +959,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 			FCsInputWord& Word = Phrase.Words[CS_FIRST];
 			Word.AndInputs.AddDefaulted();
 			FCsInputDescription& Desc = Word.AndInputs[CS_FIRST];
-			Desc.Action = NCsInputAction::__MouseLeftButton__;
+			Desc.Action = NCsInputAction::Default__MouseLeftButton__;
 			Desc.Event = ECsInputEvent::FirstPressed;
 			Desc.CompareValue.ValueType = ECsInputValue::Void;
 			Desc.CompletedValue.ValueType = ECsInputValue::Void;
@@ -950,9 +968,9 @@ void UCsManager_Input::SetupGameEventDefinitions()
 			GameEventDefinitions.Add(Def);
 		}
 	}
-	// __MouseRightButtonPressed__
+	// Default__MouseRightButtonPressed__
 	{
-		const FECsGameEvent& Event = NCsGameEvent::__MouseRightButtonPressed__;
+		const FECsGameEvent& Event = NCsGameEvent::Default__MouseRightButtonPressed__;
 
 		if (!GameEventDefinitionMap.Find(Event))
 		{
@@ -966,7 +984,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 			FCsInputWord& Word = Phrase.Words[CS_FIRST];
 			Word.AndInputs.AddDefaulted();
 			FCsInputDescription& Desc = Word.AndInputs[CS_FIRST];
-			Desc.Action = NCsInputAction::__MouseRightButton__;
+			Desc.Action = NCsInputAction::Default__MouseRightButton__;
 			Desc.Event = ECsInputEvent::FirstPressed;
 			Desc.CompareValue.ValueType = ECsInputValue::Void;
 			Desc.CompletedValue.ValueType = ECsInputValue::Void;

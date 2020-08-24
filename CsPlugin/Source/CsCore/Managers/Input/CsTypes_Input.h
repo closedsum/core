@@ -240,9 +240,9 @@ namespace NCsInputAction
 {
 	typedef FECsInputAction Type;
 
-	extern CSCORE_API const Type __MousePositionXY__;
-	extern CSCORE_API const Type __MouseLeftButton__;
-	extern CSCORE_API const Type __MouseRightButton__;
+	extern CSCORE_API const Type Default__MousePositionXY__;
+	extern CSCORE_API const Type Default__MouseLeftButton__;
+	extern CSCORE_API const Type Default__MouseRightButton__;
 
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
@@ -1695,9 +1695,9 @@ namespace NCsGameEvent
 {
 	typedef FECsGameEvent Type;
 
-	extern CSCORE_API const Type __MousePositionXY__;
-	extern CSCORE_API const Type __MouseLeftButtonPressed__;
-	extern CSCORE_API const Type __MouseRightButtonPressed__;
+	extern CSCORE_API const Type Default__MousePositionXY__;
+	extern CSCORE_API const Type Default__MouseLeftButtonPressed__;
+	extern CSCORE_API const Type Default__MouseRightButtonPressed__;
 
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }

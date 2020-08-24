@@ -94,9 +94,15 @@ public:
 		NameInternalMap.Add(E.Name_Internal, E);
 		TypeMap.Add(Index, E);
 		if (bExplicitMAX)
+		{
 			MAX = E;
+		}
 		else
+		{
 			MAX.SetValue((EnumType)Count);
+			MAX.SetName(TEXT("MAX"));
+			MAX.SetDisplayName(TEXT("MAX"));
+		}
 		return Enums.Last();
 	}
 

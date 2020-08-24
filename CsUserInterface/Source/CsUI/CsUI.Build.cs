@@ -18,5 +18,11 @@ public class CsUI : ModuleRules
                     "UMG",
                 }
             );
+
+       PrivateDependencyModuleNames.AddRange(
+                new string[] {
+                    "InputCore",
+                }
+            );
     }
 }

@@ -6,7 +6,7 @@
 * Interface to describe modifying a damage object (ICsDamageValue or ICsDamageRange)
 *  from a status effect (ICsStatusEffect_Damage)
 */
-class CSSE_API ICsStatusEffect_DamageModifier : public ICsGetInterfaceMap
+class CSSE_API ICsStatusEffect_ModifierDamage : public ICsGetInterfaceMap
 {
 public:
 

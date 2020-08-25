@@ -670,9 +670,14 @@ void UCsManager_Damage::LogEventPoint(const ICsDamageEvent* Event)
 			const ICsDamageValue* Value = Event->GetDamageValue();
 
 			// Point
-			if (ICsDamageValuePoint* Point = FCsLibrary_DamageValue::GetSafeInterfaceChecked<ICsDamageValuePoint>(Context, const_cast<ICsDamageValue*>(Value)))
+			if (const ICsDamageValuePoint* Point = FCsLibrary_DamageValue::GetSafeInterfaceChecked<ICsDamageValuePoint>(Context, Value))
 			{
 				UE_LOG(LogCs, Warning, TEXT("-- Damage: %f"), Point->GetValue());
+			}
+			// Range
+			if (const ICsDamageValueRange* Range = FCsLibrary_DamageValue::GetSafeInterfaceChecked<ICsDamageValueRange>(Context, Value))
+			{
+				UE_LOG(LogCs, Warning, TEXT("-- Damage: %f <-> %f"), Range->GetMinValue(), Range->GetMaxValue());
 			}
 		}
 		UE_LOG(LogCs, Warning, TEXT("-- Type: %s"), Expression->GetType().ToChar());

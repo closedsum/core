@@ -19,6 +19,8 @@
 #include "Engine/World.h"
 // UI
 #include "Components/WidgetComponent.h"
+// Input
+#include "InputCoreTypes.h"
 
 // Cached
 #pragma region
@@ -88,9 +90,8 @@ void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FCsGameEventInf
 
 	const FECsGameEvent& Event = Info.Event;
 
-	// __MouseLeftButtonPressed__ | __MouseRightButtonPressed__
-	if (Event == NCsGameEvent::__MouseLeftButtonPressed__ ||
-		Event == NCsGameEvent::__MouseRightButtonPressed__)
+	// Default__MousePositionXY__ 
+	if (Event == NCsGameEvent::Default__MousePositionXY__)
 	{
 		//const FCsGameEventInfo& MousePositionXYEvent = 
 
@@ -113,7 +114,7 @@ void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FCsGameEventInf
 			FVector WorldOrigin;
 			FVector WorldDirection;
 
-			if (UGameplayStatics::DeprojectScreenToWorld(PlayerController, MousePosition, WorldOrigin, WorldDirection) == true)
+			if (UGameplayStatics::DeprojectScreenToWorld(PlayerController, MousePosition, WorldOrigin, WorldDirection))
 			{
 				UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(GetWorld()->GetGameState());
 
@@ -150,5 +151,18 @@ void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FCsGameEventInf
 				}
 			}
 		}
+	}
+
+	// Default__MouseLeftButtonPressed__
+	if (Event == NCsGameEvent::Default__MouseLeftButtonPressed__)
+	{
+		PressPointerKey(EKeys::LeftMouseButton);
+		ReleasePointerKey(EKeys::LeftMouseButton);
+	}
+	// Default__MouseRightButtonPressed__
+	if (Event == NCsGameEvent::Default__MouseRightButtonPressed__)
+	{
+		PressPointerKey(EKeys::RightMouseButton);
+		ReleasePointerKey(EKeys::RightMouseButton);
 	}
 }

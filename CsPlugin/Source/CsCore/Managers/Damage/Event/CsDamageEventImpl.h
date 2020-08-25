@@ -6,14 +6,13 @@
 // Container
 #include "Containers/CsInterfaceMap.h"
 // Types
-#include "Managers/Damage/Value/CsTypes_DamageValue.h"
+#include "Managers/Damage/Value/CsAllocated_DamageValue.h"
+#include "Managers/Damage/Range/CsAllocated_DamageRange.h"
 #pragma once
 
 class UObject;
 struct FCsInterfaceMap;
-struct FCsResource_DamageValue;
 struct ICsDamageValue;
-struct FCsResource_DamageRange;
 struct ICsDamageRange;
 class ICsDamageExpression;
 
@@ -37,15 +36,9 @@ public:
 
 	float Damage;
 
-	FCsResource_DamageValue* DamageValueContainer;
+	FCsAllocated_DamageValue DamageValue;
 
-	FECsDamageValue DamageValueType;
-
-	ICsDamageValue* DamageValue;
-
-	FCsResource_DamageRange* DamageRangeContainer;
-
-	ICsDamageRange* DamageRange;
+	FCsAllocated_DamageRange DamageRange;
 
 	ICsDamageExpression* Expression;
 
@@ -89,12 +82,12 @@ public:
 
 	FORCEINLINE const ICsDamageValue* GetDamageValue() const
 	{
-		return DamageValue;
+		return DamageValue.Value;
 	}
 
 	FORCEINLINE const ICsDamageRange* GetDamageRange() const
 	{
-		return DamageRange;
+		return DamageRange.Range;
 	}
 
 	FORCEINLINE ICsDamageExpression* GetExpression() const
@@ -152,10 +145,6 @@ public:
 	* Copy all elements from another Event 
 	*  EXCEPT:
 	*   InterfaceMap: This needs to be unique per instance.
-	*   DamageValueContainer: This pointer should be unique per instance.
-	*   DamageValue: This pointer should be unique per instance.
-	*   DamageRangeContainer: This pointer should be unique per instance.
-	*   DamageRange: This pointer should be unique per instance.
 	*
 	* @param From	Event to copy from.
 	*/

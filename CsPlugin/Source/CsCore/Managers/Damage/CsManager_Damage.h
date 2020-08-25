@@ -8,6 +8,7 @@
 #include "Managers/Damage/Event/CsDamageEvent.h"
 #include "Managers/Damage/Value/CsDamageValue.h"
 #include "Managers/Damage/Range/CsDamageRange.h"
+#include "Managers/Damage/Modifier/CsDamageModifier.h"
 #include "Managers/Damage/CsReceiveDamage.h"
 // Types
 #include "Managers/Damage/Value/CsTypes_DamageValue.h"
@@ -46,6 +47,17 @@ struct CSCORE_API FCsResource_DamageRange : public TCsResourceContainer<ICsDamag
 };
 
 struct CSCORE_API FCsManager_DamageRange : public TCsManager_ResourceValueType_Abstract_Fixed<ICsDamageRange, FCsResource_DamageRange, 0>
+{
+};
+
+	// DamageModifier
+
+struct CSCORE_API FCsResource_DamageModifier : public TCsResourceContainer<ICsDamageModifier>
+{
+
+};
+
+struct CSCORE_API FCsManager_DamageModifier : public TCsManager_ResourceValueType_Abstract_Fixed<ICsDamageModifier, FCsResource_DamageModifier, 0>
 {
 };
 
@@ -241,13 +253,11 @@ protected:
 
 public:
 
-	const FECsDamageValue& GetValueType(const FString& Context, const ICsDamageValue* Value);
+	virtual const FECsDamageValue& GetValueType(const FString& Context, const ICsDamageValue* Value);
 
-protected:
+	virtual FCsResource_DamageValue* CreateCopyOfValue(const FString& Context, const ICsDamageValue* Value);
 
-	FCsResource_DamageValue* CreateCopyOfValue(const FString& Context, const ICsDamageValue* Value);
-
-	FCsResource_DamageValue* CreateCopyOfValue(const FString& Context, const FCsResource_DamageValue* Value);
+	virtual FCsResource_DamageValue* CreateCopyOfValue(const FString& Context, const FCsResource_DamageValue* Value);
 
 #pragma endregion Value
 
@@ -265,13 +275,17 @@ public:
 
 	void DeallocateRange(const FString& Context, FCsResource_DamageRange* Range);
 
-protected:
-
 	FCsResource_DamageRange* CreateCopyOfRange(const FString& Context, const ICsDamageRange* Range);
 
 	FCsResource_DamageRange* CreateCopyOfRange(const FString& Context, const FCsResource_DamageRange* Range);
 
 #pragma endregion Range
+
+// Modifier
+#pragma region
+protected:
+
+#pragma endregion Modifier
 
 // Log
 #pragma region

@@ -381,19 +381,6 @@ FCsResource_DamageEvent* UCsManager_Damage::AllocateEvent()
 
 void UCsManager_Damage::DeallocateEvent(const FString& Context, FCsResource_DamageEvent* Event)
 {
-	if (FCsDamageEventImpl* Impl = FCsLibrary_DamageEvent::SafePureStaticCastChecked<FCsDamageEventImpl>(Context, Event->Get()))
-	{
-		// If Damage Value Container, deallocate it
-		if (FCsResource_DamageValue* Value = Impl->DamageValueContainer)
-		{
-			DeallocateValue(Context, Impl->DamageValueType, Value);
-		}
-		// If Damage Range Container, deallocate it
-		if (FCsResource_DamageRange* Range = Impl->DamageRangeContainer)
-		{
-			DeallocateRange(Context, Impl->DamageRangeContainer);
-		}
-	}
 	// Reset
 	if (ICsReset* IReset = FCsLibrary_DamageEvent::GetSafeInterfaceChecked<ICsReset>(Context, Event->Get()))
 		IReset->Reset();
@@ -407,24 +394,6 @@ bool UCsManager_Damage::CopyEvent(const FString& Context, const ICsDamageEvent* 
 
 	checkf(Success, TEXT("%s: Failed to copy Event From to To."));
 
-	// FCsDamageEventImpl (ICsDamageEvent)
-	if (FCsDamageEventImpl* ToImpl = FCsLibrary_DamageEvent::SafePureStaticCastChecked<FCsDamageEventImpl>(Context, To))
-	{
-		// Value
-		ToImpl->DamageValueContainer = CreateCopyOfValue(Context, From->GetDamageValue());
-		ToImpl->DamageValue			 = ToImpl->DamageValueContainer->Get();
-		ToImpl->DamageValueType		 = GetValueType(Context, ToImpl->DamageValue);
-
-		checkf(EMCsDamageValue::Get().IsValidEnum(ToImpl->DamageValueType), TEXT("%s: DamageValueType: %s is NOT Valid."), ToImpl->DamageValueType.ToChar());
-
-		// Range
-		if (const ICsDamageRange* Range = From->GetDamageRange())
-		{
-			ToImpl->DamageRangeContainer = CreateCopyOfRange(Context, Range);
-			ToImpl->DamageRange			 = ToImpl->DamageRangeContainer->Get();
-		}
-		return true;
-	}
 	return false;
 }
 

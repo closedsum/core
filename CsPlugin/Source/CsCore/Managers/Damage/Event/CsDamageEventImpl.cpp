@@ -15,11 +15,8 @@ FCsDamageEventImpl::FCsDamageEventImpl() :
 	InterfaceMap(),
 	// ICsDamageEvent
 	Damage(0.0f),
-	DamageValueContainer(nullptr),
-	DamageValueType(),
-	DamageValue(nullptr),
-	DamageRangeContainer(nullptr),
-	DamageRange(nullptr),
+	DamageValue(),
+	DamageRange(),
 	Expression(nullptr),
 	Instigator(nullptr),
 	Causer(nullptr),
@@ -36,7 +33,10 @@ FCsDamageEventImpl::FCsDamageEventImpl() :
 void FCsDamageEventImpl::CopyFrom(const FCsDamageEventImpl* From)
 {
 	Damage = From->Damage;
-	DamageValueType = From->DamageValueType;
+
+	DamageValue.CopyFrom(&(From->DamageValue));
+	DamageRange.CopyFrom(&(From->DamageRange));
+
 	Expression = From->Expression;
 	Instigator = From->Instigator;
 	Causer = From->Causer;
@@ -56,18 +56,18 @@ bool FCsDamageEventImpl::SetDamageChecked(const FString& Context)
 {
 	checkf(Expression, TEXT("%s: Expression is NULL."), *Context);
 
-	checkf(DamageValue, TEXT("%s: DamageValue is NULL."), *Context);
+	checkf(DamageValue.GetValue(), TEXT("%s: DamageValue.Value is NULL."), *Context);
 
 	// Shape
 	if (ICsDamageShape* Shape = FCsLibrary_DamageExpression::GetSafeInterfaceChecked<ICsDamageShape>(Context, Expression))
 	{
-		Damage = Shape->CalculateDamage(DamageValue, DamageRange, Origin.ImpactPoint, HitResult.ImpactPoint);
+		Damage = Shape->CalculateDamage(DamageValue.GetValue(), DamageRange.GetRange(), Origin.ImpactPoint, HitResult.ImpactPoint);
 		return true;
 	}
 	// Point
 	else
 	{
-		ICsDamageValuePoint* DamageValuePoint = FCsLibrary_DamageValue::GetInterfaceChecked<ICsDamageValuePoint>(Context, DamageValue);
+		ICsDamageValuePoint* DamageValuePoint = FCsLibrary_DamageValue::GetInterfaceChecked<ICsDamageValuePoint>(Context, DamageValue.Value);
 		Damage								  = DamageValuePoint->GetValue();
 		return true;
 	}
@@ -80,11 +80,8 @@ bool FCsDamageEventImpl::SetDamageChecked(const FString& Context)
 void FCsDamageEventImpl::Reset()
 {
 	Damage = 0.0f;
-	DamageValueContainer = nullptr;
-	DamageValueType = EMCsDamageValue::Get().GetMAX();
-	DamageValue = nullptr;
-	DamageRangeContainer = nullptr;
-	DamageRange = nullptr;
+	DamageValue.Reset();
+	DamageRange.Reset();
 	Expression = nullptr;
 	Instigator = nullptr;
 	Causer = nullptr;

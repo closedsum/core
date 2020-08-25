@@ -6,9 +6,13 @@
 * Interface to describe modifying a damage object (ICsDamageValue or ICsDamageRange)
 *  from a status effect (ICsStatusEffect_Damage)
 */
-class CSSE_API ICsStatusEffect_ModifierDamage : public ICsGetInterfaceMap
+struct CSSE_API ICsStatusEffect_ModifierDamage : public ICsGetInterfaceMap
 {
 public:
 
 	static const FName Name;
+
+public:
+
+	virtual ~ICsStatusEffect_ModifierDamage() {}
 };

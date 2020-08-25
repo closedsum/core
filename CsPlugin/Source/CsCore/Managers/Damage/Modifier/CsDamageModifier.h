@@ -6,7 +6,7 @@
 * Interface to describe modifying a damage object (ICsDamageValue or ICsDamageRange)
 *  from a damage expression (ICsDamageExpression)
 */
-class CSCORE_API ICsDamageModifier : public ICsGetInterfaceMap
+struct CSCORE_API ICsDamageModifier : public ICsGetInterfaceMap
 {
 public:
 

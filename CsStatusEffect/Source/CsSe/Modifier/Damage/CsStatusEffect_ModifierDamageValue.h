@@ -9,13 +9,15 @@ struct ICsDamageValue;
 * Interface to describe modifying a damage value (ICsDamageValue) from 
 *  a status effect (ICsDamageStatus_Damage).
 */
-class CSSE_API ICsStatusEffect_ModifierDamageValue : public ICsGetInterfaceMap
+struct CSSE_API ICsStatusEffect_ModifierDamageValue : public ICsGetInterfaceMap
 {
 public:
 
 	static const FName Name;
 
 public:
+
+	virtual ~ICsStatusEffect_ModifierDamageValue() {}
 
 	/**
 	* Modify the damage Value. This value is a copy of the DamageValue from StatusEffect.

@@ -9,7 +9,7 @@ struct ICsDamageValue;
 * Interface to describe modifying a damage value (ICsDamageValue) from 
 *  a status effect (ICsDamageExpression).
 */
-class CSCORE_API ICsDamageModifierValue : public ICsGetInterfaceMap
+struct CSCORE_API ICsDamageModifierValue : public ICsGetInterfaceMap
 {
 public:
 

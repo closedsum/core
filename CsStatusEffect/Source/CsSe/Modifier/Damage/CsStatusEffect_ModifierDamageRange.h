@@ -17,6 +17,8 @@ public:
 
 public:
 
+	virtual ~ICsStatusEffect_ModifierDamageRange() {}
+
 	/**
 	* Modify the damage Range. This range is a copy of the DamageRange from StatusEffect.
 	*

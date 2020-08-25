@@ -5,9 +5,13 @@
 /**
 * Interface to describe modifying a status effect
 */
-class CSSE_API ICsStatusEffect_Modifier : public ICsGetInterfaceMap
+struct CSSE_API ICsStatusEffect_Modifier : public ICsGetInterfaceMap
 {
 public:
 
 	static const FName Name;
+
+public:
+
+	virtual ~ICsStatusEffect_Modifier() {}
 };

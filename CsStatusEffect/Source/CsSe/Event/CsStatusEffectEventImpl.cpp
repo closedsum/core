@@ -6,7 +6,7 @@ const FName FCsStatusEffectEventImpl::Name = FName("FCsStatusEffectEventImpl");;
 FCsStatusEffectEventImpl::FCsStatusEffectEventImpl() :
 	InterfaceMap(),
 	// ICsStatusEffectEvent
-	StatusEffect(nullptr),
+	Data(nullptr),
 	Instigator(nullptr),
 	Causer(nullptr),
 	Receiver(nullptr),
@@ -19,7 +19,7 @@ FCsStatusEffectEventImpl::FCsStatusEffectEventImpl() :
 
 void FCsStatusEffectEventImpl::Reset()
 {
-	StatusEffect = nullptr;
+	Data = nullptr;
 	Instigator = nullptr;
 	Causer = nullptr;
 	Receiver = nullptr;

@@ -3,7 +3,7 @@
 #include "CsSe.h"
 
 // Status Effect
-#include "CsStatusEffect.h"
+#include "Data/CsData_StatusEffect.h"
 #include "Event/CsResource_StatusEffectEvent.h"
 
 FCsStatusEffectEventInfo::FCsStatusEffectEventInfo() :
@@ -24,9 +24,9 @@ void FCsStatusEffectEventInfo::SetEvent(FCsResource_StatusEffectEvent* InEvent)
 	Container = InEvent;
 	Event	  = Container->Get();
 
-	ICsStatusEffect* StatusEffect = Event->GetStatusEffect();
+	ICsData_StatusEffect* Data = Event->GetData();
 
-	FrequencyInfo.SetStatusEffect(StatusEffect);
+	FrequencyInfo.SetData(Data);
 }
 
 bool FCsStatusEffectEventInfo::CanApply() const

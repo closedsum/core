@@ -1,16 +1,16 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Event/CsTypes_StatusEffectEvent.h"
 
-#include "CsStatusEffect.h"
+#include "Data/CsData_StatusEffect.h"
 
 // FCsStatusEffectTriggerFrequencyInfo
 #pragma region
 
-void FCsStatusEffectTriggerFrequencyInfo::SetStatusEffect(ICsStatusEffect* Effect)
+void FCsStatusEffectTriggerFrequencyInfo::SetData(ICsData_StatusEffect* InData)
 {
-	StatusEffect = Effect;
+	Data = InData;
 
-	const FCsStatusEffectTriggerFrequencyParams& Params = StatusEffect->GetTriggerFrequencyParams();
+	const FCsStatusEffectTriggerFrequencyParams& Params = Data->GetTriggerFrequencyParams();
 	const ECsStatusEffectTriggerFrequency& Type		    = Params.Type;
 
 	bDelayComplete = Params.Delay > 0.0f;
@@ -36,7 +36,7 @@ void FCsStatusEffectTriggerFrequencyInfo::SetStatusEffect(ICsStatusEffect* Effec
 
 bool FCsStatusEffectTriggerFrequencyInfo::CanApply() const
 {
-	const FCsStatusEffectTriggerFrequencyParams& Params = StatusEffect->GetTriggerFrequencyParams();
+	const FCsStatusEffectTriggerFrequencyParams& Params = Data->GetTriggerFrequencyParams();
 	const ECsStatusEffectTriggerFrequency& Type			= Params.Type;
 
 	// Once
@@ -89,7 +89,7 @@ void FCsStatusEffectTriggerFrequencyInfo::Increment()
 
 bool FCsStatusEffectTriggerFrequencyInfo::IsComplete() const
 {
-	const FCsStatusEffectTriggerFrequencyParams& Params = StatusEffect->GetTriggerFrequencyParams();
+	const FCsStatusEffectTriggerFrequencyParams& Params = Data->GetTriggerFrequencyParams();
 	const ECsStatusEffectTriggerFrequency& Type			= Params.Type;
 
 	// Once
@@ -121,7 +121,7 @@ void FCsStatusEffectTriggerFrequencyInfo::Update(const FCsDeltaTime& DeltaTime)
 
 void FCsStatusEffectTriggerFrequencyInfo::Reset()
 {
-	StatusEffect = nullptr;
+	Data = nullptr;
 	TotalTime = 0.0f;
 	ElapsedTotalTime.Reset();
 	ElapsedDelayTime.Reset();

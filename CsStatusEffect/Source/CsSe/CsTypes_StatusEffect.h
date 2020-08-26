@@ -240,39 +240,39 @@ namespace NCsStatusEffectEvent
 
 #pragma endregion StatusEffectEvent
 
-// FCsStatusEffectPtr
+// FCsData_StatusEffectPtr
 #pragma region
 
 /**
 */
 USTRUCT(BlueprintType)
-struct CSSE_API FCsStatusEffectPtr
+struct CSSE_API FCsData_StatusEffectPtr
 {
 	GENERATED_USTRUCT_BODY()
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsStatusEffect"))
-	TSoftClassPtr<UObject> StatusEffect;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsData_StatusEffect"))
+	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 StatusEffect_LoadFlags;
+	int32 Data_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
-	UObject* StatusEffect_Internal;
+	UObject* Data_Internal;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
-	UClass* StatusEffect_Class;
+	UClass* Data_Class;
 
-	FCsStatusEffectPtr() :
-		StatusEffect(nullptr),
-		StatusEffect_LoadFlags(0),
-		StatusEffect_Internal(nullptr),
-		StatusEffect_Class(nullptr)
+	FCsData_StatusEffectPtr() :
+		Data(nullptr),
+		Data_LoadFlags(0),
+		Data_Internal(nullptr),
+		Data_Class(nullptr)
 	{
 	}
 
-	FORCEINLINE UObject* Get() const { return StatusEffect_Internal; }
+	FORCEINLINE UObject* Get() const { return Data_Internal; }
 
 	template<typename T>
 	FORCEINLINE T* Get() const
@@ -280,7 +280,7 @@ public:
 		return Cast<T>(Get());
 	}
 
-	FORCEINLINE UClass* GetClass() const { return StatusEffect_Class; }
+	FORCEINLINE UClass* GetClass() const { return Data_Class; }
 };
 
-#pragma endregion FCsStatusEffectPtr
+#pragma endregion FCsData_StatusEffectPtr

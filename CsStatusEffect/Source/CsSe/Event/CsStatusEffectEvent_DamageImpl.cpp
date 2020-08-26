@@ -7,7 +7,7 @@ FCsStatusEffectEvent_DamageImpl::FCsStatusEffectEvent_DamageImpl() :
 	// ICsGetInterfaceMap
 	InterfaceMap(),
 	// ICsStatusEffectEvent
-	StatusEffect(nullptr),
+	Data(nullptr),
 	Instigator(nullptr),
 	Causer(nullptr),
 	Receiver(nullptr),
@@ -24,7 +24,7 @@ FCsStatusEffectEvent_DamageImpl::FCsStatusEffectEvent_DamageImpl() :
 
 void FCsStatusEffectEvent_DamageImpl::Reset()
 {
-	StatusEffect = nullptr;
+	Data = nullptr;
 	Instigator = nullptr;
 	Causer = nullptr;
 	Receiver = nullptr;

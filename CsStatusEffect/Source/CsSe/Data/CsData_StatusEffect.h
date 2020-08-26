@@ -3,17 +3,17 @@
 
 #include "Containers/CsGetInterfaceMap.h"
 #include "CsTypes_StatusEffect.h"
-#include "CsStatusEffect.generated.h"
+#include "CsData_StatusEffect.generated.h"
 
 UINTERFACE(Blueprintable)
-class CSSE_API UCsStatusEffect : public UCsGetInterfaceMap
+class CSSE_API UCsData_StatusEffect : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
 /**
 */
-class CSSE_API ICsStatusEffect : public ICsGetInterfaceMap
+class CSSE_API ICsData_StatusEffect : public ICsGetInterfaceMap
 {
 	GENERATED_IINTERFACE_BODY()
 
@@ -50,5 +50,5 @@ public:
 	*
 	* return
 	*/
-	virtual const TArray<ICsStatusEffect*>& GetChildren() const = 0;
+	virtual const TArray<ICsData_StatusEffect*>& GetChildren() const = 0;
 };

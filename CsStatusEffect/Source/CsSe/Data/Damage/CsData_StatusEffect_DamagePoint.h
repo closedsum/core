@@ -2,20 +2,20 @@
 #pragma once
 #include "UObject/Object.h"
 // Interface
-#include "CsStatusEffect.h"
-#include "Damage/CsStatusEffect_Damage.h"
+#include "Data/CsData_StatusEffect.h"
+#include "Data/Damage/CsData_StatusEffect_Damage.h"
 // Types
 #include "CsTypes_StatusEffect.h"
-#include "Managers/Damage/Data/Shape/CsTypes_Data_DamageShape.h"
-#include "CsStatusEffect_DamageSphere.generated.h"
+#include "Managers/Damage/Data/CsTypes_Data_Damage.h"
+#include "CsData_StatusEffect_DamagePoint.generated.h"
 
 struct FCsInterfaceMap;
 class ICsData_Damage;
 
 UCLASS(BlueprintType, Blueprintable)
-class CSSE_API UCsStatusEffect_DamageSphere : public UObject,
-											  public ICsStatusEffect,
-											  public ICsStatusEffect_Damage
+class CSSE_API UCsData_StatusEffect_DamagePoint : public UObject,
+												  public ICsData_StatusEffect,
+												  public ICsData_StatusEffect_Damage
 {
 	GENERATED_UCLASS_BODY()
 
@@ -67,9 +67,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FCsStatusEffectTransferFrequencyParams TransferFrequencyParams;
 
-	TArray<ICsStatusEffect*> Children;
+	TArray<ICsData_StatusEffect*> Children;
 
-// ICsStatusEffect
+// ICsData_StatusEffect
 #pragma region
 public:
 
@@ -88,7 +88,7 @@ public:
 		return TransferFrequencyParams;
 	}
 
-	FORCEINLINE const TArray<ICsStatusEffect*>& GetChildren() const
+	FORCEINLINE const TArray<ICsData_StatusEffect*>& GetChildren() const
 	{
 		return Children;
 	}
@@ -98,9 +98,9 @@ public:
 public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FCsScriptData_DamageSphere DamageSphere;
+	FCsScriptData_DamagePoint DamagePoint;
 
-	ICsData_Damage* DamageSphereEmu;
+	ICsData_Damage* DamagePointEmu;
 
 // ICsStatusEffect_Damage
 #pragma region
@@ -108,7 +108,7 @@ public:
 
 	FORCEINLINE ICsData_Damage* GetDamageData() const
 	{
-		return DamageSphereEmu;
+		return DamagePointEmu;
 	}
 
 #pragma endregion ICsStatusEffect_Damage

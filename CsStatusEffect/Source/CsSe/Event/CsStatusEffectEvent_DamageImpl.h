@@ -6,7 +6,7 @@
 
 class UObject;
 struct FCsInterfaceMap;
-class ICsStatusEffect;
+class ICsData_StatusEffect;
 struct ICsDamageEvent;
 struct FCsResource_DamageEvent;
 
@@ -27,7 +27,7 @@ public:
 
 	// ICsStatusEffectEvent
 
-	ICsStatusEffect* StatusEffect;
+	ICsData_StatusEffect* Data;
 
 	TWeakObjectPtr<UObject> Instigator;
 
@@ -62,9 +62,9 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE ICsStatusEffect* GetStatusEffect() const
+	FORCEINLINE ICsData_StatusEffect* GetData() const
 	{
-		return StatusEffect;
+		return Data;
 	}
 
 	FORCEINLINE UObject* GetInstigator() const

@@ -4,9 +4,9 @@
 
 /**
 * Interface to describe modifying a damage object (ICsDamageValue or ICsDamageRange)
-*  from a status effect (ICsStatusEffect_Damage)
+*  from a status effect (ICsData_StatusEffect_Damage)
 */
-struct CSSE_API ICsStatusEffect_ModifierDamage : public ICsGetInterfaceMap
+struct CSSE_API ICsStatusEffectModifier_Damage : public ICsGetInterfaceMap
 {
 public:
 
@@ -14,5 +14,5 @@ public:
 
 public:
 
-	virtual ~ICsStatusEffect_ModifierDamage() {}
+	virtual ~ICsStatusEffectModifier_Damage() {}
 };

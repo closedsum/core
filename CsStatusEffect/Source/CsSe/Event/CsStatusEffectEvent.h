@@ -3,7 +3,7 @@
 #include "Managers/Time/CsTypes_Time.h"
 #pragma once
 
-class ICsStatusEffect;
+class ICsData_StatusEffect;
 
 /**
 */
@@ -20,7 +20,7 @@ public:
 	*
 	* return
 	*/
-	virtual ICsStatusEffect* GetStatusEffect() const = 0;
+	virtual ICsData_StatusEffect* GetData() const = 0;
 
 	/**
 	*

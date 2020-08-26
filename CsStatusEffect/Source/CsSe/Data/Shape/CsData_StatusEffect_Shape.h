@@ -1,20 +1,20 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Containers/CsGetInterfaceMap.h"
 #include "Engine/EngineTypes.h"
-#include "CsStatusEffect_Shape.generated.h"
+#include "CsData_StatusEffect_Shape.generated.h"
 #pragma once
 
 UINTERFACE(BlueprintType)
-class CSSE_API UCsStatusEffect_Shape : public UCsGetInterfaceMap
+class CSSE_API UCsData_StatusEffect_Shape : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
 /**
 * Interface to describe the shape of a Status Effect. This should be used with 
-* the interface "base" ICsStatusEffect.
+* the interface "base" ICsData_StatusEffect.
 */
-class CSSE_API ICsStatusEffect_Shape : public ICsGetInterfaceMap
+class CSSE_API ICsData_StatusEffect_Shape : public ICsGetInterfaceMap
 {
 	GENERATED_IINTERFACE_BODY()
 

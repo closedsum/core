@@ -11,7 +11,7 @@ class CSSE_API UCsData_ProjectileStatusEffect : public UCsGetInterfaceMap
 	GENERATED_UINTERFACE_BODY()
 };
 
-class ICsStatusEffect;
+class ICsData_StatusEffect;
 
 /**
 *
@@ -26,5 +26,5 @@ public:
 
 public:
 
-	virtual const TArray<ICsStatusEffect*>& GetStatusEffects() const = 0;
+	virtual const TArray<ICsData_StatusEffect*>& GetStatusEffects() const = 0;
 };

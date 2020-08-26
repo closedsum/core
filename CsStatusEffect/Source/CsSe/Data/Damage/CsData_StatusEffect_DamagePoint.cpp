@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Damage/CsStatusEffect_DamagePoint.h"
+#include "Data/Damage/CsData_StatusEffect_DamagePoint.h"
 #include "CsSe.h"
 
 // Containers
@@ -7,9 +7,9 @@
 // Damage
 #include "Managers/Damage/Data/CsData_DamagePointEmu.h"
 
-const FName UCsStatusEffect_DamagePoint::Name = FName("UCsStatusEffect_DamagePoint");
+const FName UCsData_StatusEffect_DamagePoint::Name = FName("UCsData_StatusEffect_DamagePoint");
 
-UCsStatusEffect_DamagePoint::UCsStatusEffect_DamagePoint(const FObjectInitializer& ObjectInitializer)
+UCsData_StatusEffect_DamagePoint::UCsData_StatusEffect_DamagePoint(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
@@ -17,19 +17,19 @@ UCsStatusEffect_DamagePoint::UCsStatusEffect_DamagePoint(const FObjectInitialize
 // UObject Interface
 #pragma region
 
-void UCsStatusEffect_DamagePoint::PostLoad()
+void UCsData_StatusEffect_DamagePoint::PostLoad()
 {
 	Super::PostLoad();
 
-	if (this == GetClass()->GetDefaultObject<UCsStatusEffect_DamagePoint>())
+	if (this == GetClass()->GetDefaultObject<UCsData_StatusEffect_DamagePoint>())
 	{
 		// ICsGetInterfaceMap
 		{
 			// Setup InterfaceMap
 			InterfaceMap = new FCsInterfaceMap();
 			
-			InterfaceMap->Add<ICsStatusEffect>(Cast<ICsStatusEffect>(this));
-			InterfaceMap->Add<ICsStatusEffect_Damage>(Cast<ICsStatusEffect_Damage>(this));
+			InterfaceMap->Add<ICsData_StatusEffect>(Cast<ICsData_StatusEffect>(this));
+			InterfaceMap->Add<ICsData_StatusEffect_Damage>(Cast<ICsData_StatusEffect_Damage>(this));
 		}
 		// ICsStatusEffect_Damage
 		{
@@ -40,7 +40,7 @@ void UCsStatusEffect_DamagePoint::PostLoad()
 	}
 }
 
-void UCsStatusEffect_DamagePoint::BeginDestroy()
+void UCsData_StatusEffect_DamagePoint::BeginDestroy()
 {
 	Super::BeginDestroy();
 

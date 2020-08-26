@@ -5,7 +5,7 @@
 /**
 * Interface to describe modifying a status effect
 */
-struct CSSE_API ICsStatusEffect_Modifier : public ICsGetInterfaceMap
+struct CSSE_API ICsStatusEffectModifier : public ICsGetInterfaceMap
 {
 public:
 
@@ -13,5 +13,5 @@ public:
 
 public:
 
-	virtual ~ICsStatusEffect_Modifier() {}
+	virtual ~ICsStatusEffectModifier() {}
 };

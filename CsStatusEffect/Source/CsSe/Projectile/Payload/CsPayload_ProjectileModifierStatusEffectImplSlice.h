@@ -6,7 +6,7 @@
 
 class UObject;
 struct FCsInterfaceMap;
-struct ICsStatusEffect_Modifier;
+struct ICsStatusEffectModifier;
 
 /**
 * 
@@ -28,7 +28,7 @@ public:
 
 	// ICsPayload_ProjectileModifierDamage
 
-	TArray<ICsStatusEffect_Modifier*> Modifiers;
+	TArray<ICsStatusEffectModifier*> Modifiers;
 
 public:
 
@@ -53,7 +53,7 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE const TArray<ICsStatusEffect_Modifier*>& GetDamageModifiers() const
+	FORCEINLINE const TArray<ICsStatusEffectModifier*>& GetDamageModifiers() const
 	{
 		return Modifiers;
 	}

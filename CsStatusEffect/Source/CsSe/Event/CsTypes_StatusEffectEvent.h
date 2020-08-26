@@ -5,13 +5,13 @@
 // FCsStatusEffectTriggerFrequencyInfo
 #pragma region
 
-class ICsStatusEffect;
+class ICsData_StatusEffect;
 
 struct CSSE_API FCsStatusEffectTriggerFrequencyInfo
 {
 public:
 
-	ICsStatusEffect* StatusEffect;
+	ICsData_StatusEffect* Data;
 
 	float TotalTime;
 
@@ -29,7 +29,7 @@ public:
 	{
 	}
 
-	void SetStatusEffect(ICsStatusEffect* Effect);
+	void SetData(ICsData_StatusEffect* InData);
 
 	bool CanApply() const;
 

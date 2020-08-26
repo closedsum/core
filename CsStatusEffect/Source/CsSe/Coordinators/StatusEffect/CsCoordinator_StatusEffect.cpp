@@ -6,16 +6,16 @@
 #include "Coordinators/StatusEffect/CsCVars_Coordinator_StatusEffect.h"
 // Library
 #include "Library/CsLibrary_Common.h"
-#include "CsLibrary_StatusEffect.h"
+#include "Data/CsLibrary_Data_StatusEffect.h"
 #include "Event/CsLibrary_StatusEffectEvent.h"
 // Managers
 #include "Managers/StatusEffect/CsManager_StatusEffect.h"
 #include "Managers/StatusEffect/CsGetManagerStatusEffect.h"
 #include "Managers/Damage/CsManager_Damage.h"
 // StatusEffect
-#include "Shape/CsStatusEffect_Shape.h"
+#include "Data/Shape/CsData_StatusEffect_Shape.h"
 #include "CsReceiveStatusEffect.h"
-#include "Damage/CsStatusEffect_Damage.h"
+#include "Data/Damage/CsData_StatusEffect_Damage.h"
 #include "Event/CsStatusEffectEventImpl.h"
 #include "Event/CsStatusEffectEvent_DamageImpl.h"
 // Unique
@@ -395,12 +395,12 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const ICsStatusEffect
 
 	checkf(Event, TEXT("%s: Event is NULL."), *Context);
 
-	ICsStatusEffect* StatusEffect = Event->GetStatusEffect();
+	ICsData_StatusEffect* Data = Event->GetData();
 
-	checkf(StatusEffect, TEXT("%s: StatusEffect is NULL. No Status Effect found for Event."), *Context);
+	checkf(Data, TEXT("%s: Data is NULL. No Status Effect found for Event."), *Context);
 
-	const FCsStatusEffectTriggerFrequencyParams& TriggerParams   = StatusEffect->GetTriggerFrequencyParams();
-	const FCsStatusEffectTransferFrequencyParams& TransferParams = StatusEffect->GetTransferFrequencyParams();
+	const FCsStatusEffectTriggerFrequencyParams& TriggerParams   = Data->GetTriggerFrequencyParams();
+	const FCsStatusEffectTransferFrequencyParams& TransferParams = Data->GetTransferFrequencyParams();
 
 	Local_Receivers.Reset(Local_Receivers.Max());
 
@@ -441,8 +441,8 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const ICsStatusEffect
 	}
 	else
 	{
-		// ICsStatusEffect_Shape
-		if (ICsStatusEffect_Shape* Shape = FCsLibrary_StatusEffect::GetSafeInterfaceChecked<ICsStatusEffect_Shape>(Context, StatusEffect))
+		// ICsData_StatusEffect_Shape
+		if (ICsData_StatusEffect_Shape* ShapeData = FCsLibrary_Data_StatusEffect::GetSafeInterfaceChecked<ICsData_StatusEffect_Shape>(Context, Data))
 		{
 
 		}

@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Event/CsStatusEffectEvent.h"
+#include "Reset/CsReset.h"
 #include "Containers/CsInterfaceMap.h"
 #pragma once
 
@@ -7,7 +8,8 @@ class UObject;
 struct FCsInterfaceMap;
 class ICsData_StatusEffect;
 
-struct CSSE_API FCsStatusEffectEventImpl final : public ICsStatusEffectEvent
+struct CSSE_API FCsStatusEffectEventImpl final : public ICsStatusEffectEvent,
+												 public ICsReset
 {
 public:
 
@@ -91,5 +93,11 @@ public:
 		return Cast<T>(GetCauser());
 	}
 
+// ICsReset
+#pragma region
+public:
+
 	void Reset();
+
+#pragma endregion ICsReset
 };

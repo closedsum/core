@@ -15,7 +15,11 @@ FCsStatusEffectEventImpl::FCsStatusEffectEventImpl() :
 	InterfaceMap.SetRootName(FCsStatusEffectEventImpl::Name);
 
 	InterfaceMap.Add<ICsStatusEffectEvent>(static_cast<ICsStatusEffectEvent*>(this));
+	InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));
 }
+
+// ICsReset
+#pragma region
 
 void FCsStatusEffectEventImpl::Reset()
 {
@@ -25,3 +29,5 @@ void FCsStatusEffectEventImpl::Reset()
 	Receiver = nullptr;
 	IgnoreObjects.Reset(IgnoreObjects.Max());
 }
+
+#pragma endregion ICsReset

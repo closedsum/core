@@ -20,7 +20,11 @@ FCsStatusEffectEvent_DamageImpl::FCsStatusEffectEvent_DamageImpl() :
 
 	InterfaceMap.Add<ICsStatusEffectEvent>(static_cast<ICsStatusEffectEvent*>(this));
 	InterfaceMap.Add<ICsStatusEffectEvent_Damage>(static_cast<ICsStatusEffectEvent_Damage*>(this));
+	InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));
 }
+
+// ICsReset
+#pragma region
 
 void FCsStatusEffectEvent_DamageImpl::Reset()
 {
@@ -32,3 +36,5 @@ void FCsStatusEffectEvent_DamageImpl::Reset()
 	DamageEvent = nullptr;
 	DamageEventContainer = nullptr;
 }
+
+#pragma endregion ICsReset

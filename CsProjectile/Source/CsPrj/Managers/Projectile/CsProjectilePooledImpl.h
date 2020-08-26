@@ -183,7 +183,7 @@ protected:
 
 	FCsResource_DamageRange* DamageRangeContainer;
 
-	void OnLaunch_SetDamageContainersAndTypes();
+	virtual void OnLaunch_SetDamageContainersAndTypes();
 
 	void OnAllocate_ApplyDamageModifier(ICsDamageValue* DamageValue);
 

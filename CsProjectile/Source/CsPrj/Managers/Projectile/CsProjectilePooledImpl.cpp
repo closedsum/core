@@ -735,6 +735,7 @@ void ACsProjectilePooledImpl::OnLaunch_SetDamageContainersAndTypes()
 		ICsDamageValue* DamageValue = DamageValueContainer->Get();
 
 		FCsLibrary_DamageValue::CopyChecked(Context, DamageExpression->GetValue(), DamageValue);
+		
 		// Range
 		{
 
@@ -770,13 +771,15 @@ const FCsResource_DamageEvent* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(
 
 	checkf(DamageValueContainer, TEXT("s: DamageValueContainer is NULL."), *Context);
 
-	// NOTE: Not sure if it's cleaner to copy the damage containers
+	EventImpl->DamageValue.CopyFrom(GetWorld()->GetGameState(), DamageExpression->GetValue());
 
-	EventImpl->DamageValueContainer = DamageValueContainer;
-	EventImpl->DamageValueType		= DamageValueType;
-	EventImpl->DamageValue			= DamageValueContainer->Get();
-	EventImpl->DamageRangeContainer	= DamageRangeContainer;
-	EventImpl->DamageRange			= DamageRangeContainer ? DamageRangeContainer->Get() : nullptr;
+	if (ICsDamageShape* DamageShape = FCsLibrary_DamageExpression::GetSafeInterfaceChecked<ICsDamageShape>(Context, DamageExpression))
+	{
+		EventImpl->DamageRange.CopyFrom(GetWorld()->GetGameState(), DamageShape->GetRange());
+	}
+
+	// Apply Damage Modifiers
+
 	EventImpl->Expression			= DamageExpression;
 	EventImpl->Instigator			= Cache->GetInstigator();
 	EventImpl->Causer				= this;
@@ -784,6 +787,7 @@ const FCsResource_DamageEvent* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(
 	EventImpl->HitResult			= HitResult;
 
 	// Clear reference to Damage Containers
+	// TODO: Remove
 	DamageValueContainer = nullptr;
 	DamageValueType		 = EMCsDamageValue::Get().GetMAX();
 

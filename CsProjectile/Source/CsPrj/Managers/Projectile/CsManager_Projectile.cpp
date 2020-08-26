@@ -24,6 +24,7 @@
 // Projectile
 #include "Payload/CsPayload_ProjectileInterfaceMap.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
+#include "Payload/Damage/CsPayload_ProjectileModifierDamageImplSlice.h"
 #include "Data/CsData_ProjectileImpl.h"
 // Game
 #include "Engine/GameInstance.h"
@@ -667,6 +668,22 @@ ICsPayload_Projectile* UCsManager_Projectile::ConstructPayload(const FECsProject
 		BaseSlice->AddReset(static_cast<ICsReset*>(Slice));
 		// NOTE: Do NOT add to map. Internal will take care of deconstruction.
 	}
+
+	UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>();
+	
+	const TSet<FECsProjectilePayload> PayloadTypes = ModuleSettings->Manager_Projectile.PayloadTypes;
+
+	// FCsPayload_ProjectileModifierDamageImplSlice
+	if (PayloadTypes.Contains(NCsProjectilePayload::ProjectileDamageModifier))
+	{
+		FCsPayload_ProjectileModifierDamageImplSlice* Slice = new FCsPayload_ProjectileModifierDamageImplSlice();
+
+		Slice->SetInterfaceMap(InterfaceMap);
+		// Add to map
+		TArray<void*>& ImplMap = PayloadInterfaceImplMap.FindOrAdd(FCsPayload_ProjectileModifierDamageImplSlice::Name);
+		ImplMap.Add(Slice);
+	}
+
 	return InterfaceMap->Get<ICsPayload_Projectile>();
 }
 
@@ -680,7 +697,12 @@ void UCsManager_Projectile::DeconstructPayloadSlice(const FName& InterfaceImplNa
 	// FCsPayload_ProjectileImplSlice
 	if (InterfaceImplName == FCsPayload_ProjectileImplSlice::Name)
 	{
-		checkf(0, TEXT("UCsManager_Projectile::DeconstructPayloadSlice: Deletomg Data of type: FCsPayload_ProjectileImplSlice is handled by Intenral."));
+		checkf(0, TEXT("UCsManager_Projectile::DeconstructPayloadSlice: Deleting Data of type: FCsPayload_ProjectileImplSlice is handled by Intenral."));
+	}
+	// FCsPayload_ProjectileModifierDamageImplSlice
+	if (InterfaceImplName == FCsPayload_ProjectileModifierDamageImplSlice::Name)
+	{
+		delete static_cast<FCsPayload_ProjectileModifierDamageImplSlice*>(Data);
 	}
 }
 

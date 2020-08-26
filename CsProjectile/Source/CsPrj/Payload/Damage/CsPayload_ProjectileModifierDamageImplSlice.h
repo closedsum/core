@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Payload/CsPayload_Projectile.h"
+#include "Payload/Damage/CsPayload_ProjectileModifierDamage.h"
 #include "Reset/CsReset.h"
 
 #pragma once
@@ -8,10 +8,10 @@ class UObject;
 struct FCsInterfaceMap;
 
 /**
-* Basic implementation of the interface: ICsPayload_Projectile.
+* 
 */
-struct CSPRJ_API FCsPayload_ProjectileImplSlice : public ICsPayload_Projectile,
-												  public ICsReset
+struct CSPRJ_API FCsPayload_ProjectileModifierDamageImplSlice : public ICsPayload_ProjectileModifierDamage,
+																public ICsReset
 {
 public:
 
@@ -25,15 +25,13 @@ private:
 
 public:
 
-	// ICsPayload_Projectile
+	// ICsPayload_ProjectileModifierDamage
 
-	FVector Direction;
-
-	FVector Location;
+	TArray<ICsDamageModifier*> Modifiers;
 
 public:
 
-	FCsPayload_ProjectileImplSlice();
+	FCsPayload_ProjectileModifierDamageImplSlice();
 
 // ICsGetInterfaceMap
 #pragma region
@@ -50,21 +48,16 @@ public:
 
 	void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
 
-// ICsPayload_Projectile
+// ICsPayload_ProjectileModifierDamage
 #pragma region
 public:
 
-	FORCEINLINE const FVector& GetDirection() const
+	FORCEINLINE const TArray<ICsDamageModifier*>& GetDamageModifiers() const
 	{
-		return Direction;
+		return Modifiers;
 	}
 
-	FORCEINLINE const FVector& GetLocation() const
-	{
-		return Location;
-	}
-
-#pragma endregion ICsPayload_Projectile
+#pragma endregion ICsPayload_ProjectileModifierDamage
 
 // ICsReset
 #pragma region
@@ -76,5 +69,5 @@ public:
 
 public:
 
-	bool CopyFrom(const FCsPayload_ProjectileImplSlice* From);
+	bool CopyFrom(const FCsPayload_ProjectileModifierDamageImplSlice* From);
 };

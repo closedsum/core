@@ -1,5 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Projectile/CsTypes_Projectile.h"
+#include "Payload/CsTypes_Payload_Projectile.h"
+
 #include "CsSettings_Manager_Projectile.generated.h"
 #pragma once
 
@@ -55,11 +57,16 @@ public:
 
 	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSet<FECsProjectilePayload> PayloadTypes;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsProjectile, FCsSettings_Manager_Projectile_PoolParams> PoolParams;
 
 	FCsSettings_Manager_Projectile() :
 		Payload(NAME_None),
 		TypeMap(),
+		PayloadTypes(),
 		PoolParams()
 	{
 	}

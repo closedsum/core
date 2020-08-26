@@ -36,8 +36,8 @@ namespace NCsCVarLog
 {
 	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerDamageEvents, "Log Manager Damage Events");
 	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerDamageTransactionEvent, "Log Manager Damage Transaction Event");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerDamageTransactionEvent, "Log Manager Damage Transaction Value");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerDamageTransactionEvent, "Log Manager Damage Transaction Range");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerDamageTransactionValue, "Log Manager Damage Transaction Value");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerDamageTransactionRange, "Log Manager Damage Transaction Range");
 
 	namespace Map
 	{

@@ -259,6 +259,10 @@ public:
 
 	virtual FCsResource_DamageValue* CreateCopyOfValue(const FString& Context, const FCsResource_DamageValue* Value);
 
+protected:
+
+	//void LogValue(const ICsDamageValue* Value);
+
 #pragma endregion Value
 
 // Range
@@ -291,7 +295,7 @@ protected:
 #pragma region
 public:
 
-	void LogEventPoint(const ICsDamageEvent* Event);
+	void LogEvent(const ICsDamageEvent* Event);
 
 #pragma endregion Log
 };

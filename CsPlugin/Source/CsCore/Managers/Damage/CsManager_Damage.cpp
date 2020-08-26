@@ -46,7 +46,7 @@ namespace NCsManagerDamageCached
 	{
 		const FString ProcessDamageEvent = TEXT("UCsManager_Damage::ProcessDamageEvent");
 		const FString ProcessDamageEventContainer = TEXT("UCsManager_Damage::ProcessDamageEventContainer");
-		const FString LogEventPoint = TEXT("UCsManager_Damage::LogEventPoint");
+		const FString LogEvent = TEXT("UCsManager_Damage::LogEvent");
 	}
 }
 
@@ -493,7 +493,7 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 		Receiver.Damage(Evt);
 
 #if !UE_BUILD_SHIPPING
-		LogEventPoint(Evt);
+		LogEvent(Evt);
 #endif // #if !UE_BUILD_SHIPPING
 
 		OnProcessDamageEvent_Event.Broadcast(Evt);
@@ -651,11 +651,11 @@ FCsResource_DamageRange* UCsManager_Damage::CreateCopyOfRange(const FString& Con
 // Log
 #pragma region
 
-void UCsManager_Damage::LogEventPoint(const ICsDamageEvent* Event)
+void UCsManager_Damage::LogEvent(const ICsDamageEvent* Event)
 {
 	using namespace NCsManagerDamageCached;
 
-	const FString& Context = Str::LogEventPoint;
+	const FString& Context = Str::LogEvent;
 
 	ICsDamageExpression* Expression = Event->GetExpression();
 

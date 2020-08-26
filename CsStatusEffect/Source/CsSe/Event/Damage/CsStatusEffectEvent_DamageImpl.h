@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Event/CsStatusEffectEvent.h"
-#include "Event/CsStatusEffectEvent_Damage.h"
+#include "Event/Damage/CsStatusEffectEvent_Damage.h"
 #include "Containers/CsInterfaceMap.h"
 #pragma once
 

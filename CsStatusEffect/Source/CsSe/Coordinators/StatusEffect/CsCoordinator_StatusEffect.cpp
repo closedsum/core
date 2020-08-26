@@ -17,7 +17,7 @@
 #include "CsReceiveStatusEffect.h"
 #include "Data/Damage/CsData_StatusEffect_Damage.h"
 #include "Event/CsStatusEffectEventImpl.h"
-#include "Event/CsStatusEffectEvent_DamageImpl.h"
+#include "Event/Damage/CsStatusEffectEvent_DamageImpl.h"
 // Unique
 #include "UniqueObject/CsUniqueObject.h"
 

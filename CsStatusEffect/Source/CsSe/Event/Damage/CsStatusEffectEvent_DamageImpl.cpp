@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Event/CsStatusEffectEvent_DamageImpl.h"
+#include "Event/Damage/CsStatusEffectEvent_DamageImpl.h"
 
 const FName FCsStatusEffectEvent_DamageImpl::Name = FName("FCsStatusEffectEvent_DamageImpl");;
 

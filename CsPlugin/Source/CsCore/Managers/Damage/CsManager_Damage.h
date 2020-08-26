@@ -205,8 +205,6 @@ public:
 	*/
 	FCsResource_DamageEvent* AllocateEvent();
 
-protected:
-
 	virtual void DeallocateEvent(const FString& Context, FCsResource_DamageEvent* Event);
 
 	virtual bool CopyEvent(const FString& Context, const ICsDamageEvent* From, ICsDamageEvent* To);

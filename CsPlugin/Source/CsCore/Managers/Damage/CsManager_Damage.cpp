@@ -10,6 +10,7 @@
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Managers/Damage/Range/CsLibrary_DamageRange.h"
 #include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
+#include "managers/Damage/Modifier/CsLibrary_DamageModifier.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Reset
@@ -646,7 +647,77 @@ FCsResource_DamageRange* UCsManager_Damage::CreateCopyOfRange(const FString& Con
 	return CreateCopyOfRange(Context, Range->Get());
 }
 
+const ICsDamageRange* UCsManager_Damage::GetRange(const FString& Context, const ICsData_Damage* Data)
+{
+	if (const ICsDamageRange* Value = FCsLibrary_Data_Damage::GetRangeChecked(Context, Data))
+	{
+		return Value;
+	}
+	return nullptr;
+}
+
 #pragma endregion  Range
+
+// Modifier
+#pragma region
+
+ICsDamageModifier* UCsManager_Damage::ConstructModifier()
+{
+	return nullptr;
+}
+
+FCsResource_DamageModifier* UCsManager_Damage::AllocateModifier()
+{
+	return nullptr;
+}
+
+void UCsManager_Damage::DeallocateModifier(const FString& Context, FCsResource_DamageModifier* Modifier)
+{
+
+}
+
+FCsResource_DamageModifier* UCsManager_Damage::CreateCopyOfModifier(const FString& Context, const ICsDamageModifier* Modifier)
+{
+	FCsResource_DamageModifier* Container = AllocateModifier();
+	ICsDamageModifier* Copy				  = Container->Get();
+
+	bool Success = FCsLibrary_DamageModifier::CopyChecked(Context, Modifier, Copy);
+
+	checkf(Success, TEXT("%s: Failed to create copy of Event."), *Context);
+
+	return Container;
+}
+
+FCsResource_DamageModifier* UCsManager_Damage::CreateCopyOfModifier(const FString& Context, const FCsResource_DamageModifier* Modifier)
+{
+	return CreateCopyOfModifier(Context, Modifier->Get());
+}
+
+void UCsManager_Damage::ModifyValue(const FString& Context, const ICsDamageModifier* Modifier, const ICsData_Damage* Data, ICsDamageValue* Value)
+{
+	checkf(Data, TEXT("%s: Data is NULL."), *Context);
+
+	checkf(Value, TEXT("%s: Value is NULL."), *Context);
+
+	if (!FCsLibrary_DamageModifier::ModifyChecked(Context, Modifier, Data, Value))
+	{
+
+	}
+}
+
+void UCsManager_Damage::ModifyRange(const FString& Context, const ICsDamageModifier* Modifier, const ICsData_Damage* Data, ICsDamageRange* Range)
+{
+	checkf(Data, TEXT("%s: Data is NULL."), *Context);
+
+	checkf(Range, TEXT("%s: Range is NULL."), *Context);
+
+	if (!FCsLibrary_DamageModifier::ModifyChecked(Context, Modifier, Data, Range))
+	{
+
+	}
+}
+
+#pragma endregion Modifier
 
 // Log
 #pragma region

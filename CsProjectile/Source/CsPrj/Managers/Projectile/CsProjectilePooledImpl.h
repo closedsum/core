@@ -21,14 +21,13 @@ class UCsProjectileMovementComponent;
 class UStaticMeshComponent;
 struct ICsPooledObjectCache;
 struct ICsPayload_PooledObject;
+struct ICsPayload_Projectile;
 class ICsData_Projectile;
 class ICsFXActorPooled;
 struct FCsFXActorPooled;
 struct ICsDamageEvent;
 struct FCsResource_DamageEvent;
-struct FCsResource_DamageValue;
-struct ICsDamageValue;
-struct FCsResource_DamageRange;
+struct FCsResource_DamageModifier;
 
 UCLASS(Blueprintable)
 class CSPRJ_API ACsProjectilePooledImpl : public AActor,
@@ -165,6 +164,8 @@ public:
 
 	void Launch(ICsPayload_PooledObject* Payload);
 
+	virtual void OnLaunch_SetModifiers(ICsPayload_Projectile* Payload);
+
 // FX
 #pragma region
 public:
@@ -177,15 +178,7 @@ public:
 #pragma region
 protected:
 
-	FCsResource_DamageValue* DamageValueContainer;
-
-	FECsDamageValue DamageValueType;
-
-	FCsResource_DamageRange* DamageRangeContainer;
-
-	virtual void OnLaunch_SetDamageContainersAndTypes();
-
-	void OnAllocate_ApplyDamageModifier(ICsDamageValue* DamageValue);
+	TArray<FCsResource_DamageModifier*> DamageModifiers;
 
 public:
 

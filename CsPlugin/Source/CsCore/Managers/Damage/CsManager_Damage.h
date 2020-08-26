@@ -22,41 +22,73 @@
 
 	// DamageEvent
 
+/**
+* Container for holding a reference to an object that implements the interface: ICsDamageEvent.
+* This serves as an easy way for a Manager Resource to keep track of the resource.
+*/
 struct CSCORE_API FCsResource_DamageEvent : public TCsResourceContainer<ICsDamageEvent>
 {
 };
 
+/**
+* A manager handling allocating and deallocating objects that implement the interface: ICsDamageEvent and
+* are wrapped in the container: FCsResource_DamageEvent.
+*/
 struct CSCORE_API FCsManager_DamageEvent : public TCsManager_ResourceValueType_Abstract_Fixed<ICsDamageEvent, FCsResource_DamageEvent, 0>
 {
 };
 	
 	// DamageValue
 
+/**
+* Container for holding a reference to an object that implements the interface: ICsDamageValue.
+* This serves as an easy way for a Manager Resource to keep track of the resource.
+*/
 struct CSCORE_API FCsResource_DamageValue : public TCsResourceContainer<ICsDamageValue>
 {
 };
 
+/**
+* A manager handling allocating and deallocating objects that implement the interface: ICsDamageValue and
+* are wrapped in the container: FCsResource_DamageValue.
+*/
 struct CSCORE_API FCsManager_DamageValue : public TCsManager_ResourcePointerType_Fixed<ICsDamageValue, FCsResource_DamageValue, 0>
 {
 };
 
 	// DamageRange
 
+/**
+* Container for holding a reference to an object that implements the interface: ICsDamageRange.
+* This serves as an easy way for a Manager Resource to keep track of the resource.
+*/
 struct CSCORE_API FCsResource_DamageRange : public TCsResourceContainer<ICsDamageRange>
 {
 };
 
+/**
+* A manager handling allocating and deallocating objects that implement the interface: ICsDamageRange and
+* are wrapped in the container: FCsResource_DamageRange.
+*/
 struct CSCORE_API FCsManager_DamageRange : public TCsManager_ResourceValueType_Abstract_Fixed<ICsDamageRange, FCsResource_DamageRange, 0>
 {
 };
 
 	// DamageModifier
 
+/**
+* Container for holding a reference to an object that implements the interface: ICsDamageModifier.
+* This serves as an easy way for a Manager Resource to keep track of the resource.
+*/
 struct CSCORE_API FCsResource_DamageModifier : public TCsResourceContainer<ICsDamageModifier>
 {
 
 };
 
+/**
+* A manager handling allocating and deallocating objects that implement the interface: ICsDamageModifier and
+* are wrapped in the container: FCsResource_DamageModifier.
+*/
 struct CSCORE_API FCsManager_DamageModifier : public TCsManager_ResourceValueType_Abstract_Fixed<ICsDamageModifier, FCsResource_DamageModifier, 0>
 {
 };
@@ -64,6 +96,7 @@ struct CSCORE_API FCsManager_DamageModifier : public TCsManager_ResourceValueTyp
 #pragma endregion Structs
 
 class ICsGetManagerDamage;
+class ICsData_Damage;
 
 UCLASS()
 class CSCORE_API UCsManager_Damage : public UObject
@@ -221,6 +254,13 @@ protected:
 
 	TArray<FCsManager_DamageValue> Manager_Values;
 
+	/**
+	* Constructs an object that implements the interface: ICsDamageValue for the 
+	* appropriate Type.
+	*
+	* @param Type
+	* return
+	*/
 	virtual ICsDamageValue* ConstructValue(const FECsDamageValue& Type);
 
 public:
@@ -253,10 +293,31 @@ protected:
 
 public:
 
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param Value
+	* return
+	*/
 	virtual const FECsDamageValue& GetValueType(const FString& Context, const ICsDamageValue* Value);
 
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param Value
+	* return
+	*/
 	virtual FCsResource_DamageValue* CreateCopyOfValue(const FString& Context, const ICsDamageValue* Value);
 
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param Value
+	* return
+	*/
 	virtual FCsResource_DamageValue* CreateCopyOfValue(const FString& Context, const FCsResource_DamageValue* Value);
 
 protected:
@@ -283,11 +344,36 @@ public:
 
 	FCsResource_DamageRange* CreateCopyOfRange(const FString& Context, const FCsResource_DamageRange* Range);
 
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param Data
+	* return
+	*/
+	virtual const ICsDamageRange* GetRange(const FString& Context, const ICsData_Damage* Data);
+
 #pragma endregion Range
 
 // Modifier
 #pragma region
 protected:
+
+	virtual ICsDamageModifier* ConstructModifier();
+
+public:
+
+	FCsResource_DamageModifier* AllocateModifier();
+
+	void DeallocateModifier(const FString& Context, FCsResource_DamageModifier* Modifier);
+
+	FCsResource_DamageModifier* CreateCopyOfModifier(const FString& Context, const ICsDamageModifier* Modifier);
+
+	FCsResource_DamageModifier* CreateCopyOfModifier(const FString& Context, const FCsResource_DamageModifier* Modifier);
+
+	virtual void ModifyValue(const FString& Context, const ICsDamageModifier* Modifier, const ICsData_Damage* Data, ICsDamageValue* Value);
+
+	virtual void ModifyRange(const FString& Context, const ICsDamageModifier* Modifier, const ICsData_Damage* Data, ICsDamageRange* Range);
 
 #pragma endregion Modifier
 

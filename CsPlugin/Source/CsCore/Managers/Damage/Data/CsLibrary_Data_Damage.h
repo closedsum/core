@@ -4,6 +4,7 @@
 #pragma once
 
 class ICsData_Damage;
+struct ICsDamageRange;
 
 /**
 * Library for interface: ICsData_Damage
@@ -80,4 +81,28 @@ struct CSCORE_API FCsLibrary_Data_Damage
 	{
 		return NCsInterfaceMap::GetSafeInterfaceChecked<OtherInterfaceType, ICsData_Damage>(Context, Data);
 	}
+
+	/**
+	* Safely perform the operation static_cast<OtherInterfaceType*>("Data associated with ICsData_Damage")
+	* with checks (for InterfaceMap).
+	* OtherInterfaceType IS abstract.
+	*
+	* @param Context	The calling context
+	* @param Data		Data that implements the interface: ICsData_Damage.
+	* return			Data casted to OtherInterfaceType (static_cast<OtherInterfaceType*>(Data))
+	*/
+	template<typename OtherInterfaceType>
+	FORCEINLINE static const OtherInterfaceType* GetSafeInterfaceChecked(const FString& Context, const ICsData_Damage* Data)
+	{
+		return NCsInterfaceMap::GetSafeInterfaceChecked<OtherInterfaceType, ICsData_Damage>(Context, Data);
+	}
+
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param Data
+	* return			
+	*/
+	static const ICsDamageRange* GetRangeChecked(const FString& Context, const ICsData_Damage* Data);
 };

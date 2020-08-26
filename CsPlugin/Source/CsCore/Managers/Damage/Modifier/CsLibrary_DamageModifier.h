@@ -3,6 +3,10 @@
 #include "Containers/CsInterfaceMap.h"
 #pragma once
 
+class ICsData_Damage;
+struct ICsDamageValue;
+struct ICsDamageRange;
+
 /**
 * Library for interface: ICsDamageModifier
 */
@@ -108,4 +112,38 @@ struct CSCORE_API FCsLibrary_DamageModifier
 	{
 		return NCsInterfaceMap::GetSafeInterfaceChecked<OtherInterfaceType, ICsDamageModifier>(Context, Modifier);
 	}
+
+	/**
+	* Copy the values from From to To with checks.
+	* Currently supports To types of:
+	*  
+	*
+	* @param Context	The calling context.
+	* @param From		What to copy.
+	* @param To			What to copy to.
+	* return			Whether the copy was performed successfully.
+	*/
+	static bool CopyChecked(const FString& Context, const ICsDamageModifier* From, ICsDamageModifier* To);
+
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param Modifier
+	* @param Data
+	* @param Value
+	* return			Whether the Modify was "attempted" (a Modify method was called) successfully.
+	*/
+	static bool ModifyChecked(const FString& Context, const ICsDamageModifier* Modifier, const ICsData_Damage* Data, ICsDamageValue* Value);
+
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param Modifier
+	* @param Data
+	* @param Range
+	* return			Whether the Modify was "attempted" (a Modify method was called) successfully.
+	*/
+	static bool ModifyChecked(const FString& Context, const ICsDamageModifier* Modifier, const ICsData_Damage* Data, ICsDamageRange* Range);
 };

@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Expression/CsDamageExpression.h"
+#include "Managers/Damage/Data/CsData_Damage.h"
 #pragma once
 
 struct FCsInterfaceMap;
@@ -8,7 +8,7 @@ struct ICsDamageValue;
 /**
 *
 */
-struct CSCORE_API FCsDamagePointEmu : public ICsDamageExpression
+struct CSCORE_API FCsData_DamagePointEmu : public ICsData_Damage
 {
 public:
 
@@ -22,7 +22,7 @@ private:
 
 public:
 
-	// ICsDamageExpression
+	// ICsData_Damage
 
 	ICsDamageValue* Value;
 
@@ -30,8 +30,8 @@ public:
 
 public:
 
-	FCsDamagePointEmu();
-	~FCsDamagePointEmu();
+	FCsData_DamagePointEmu();
+	~FCsData_DamagePointEmu();
 
 	FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
@@ -46,7 +46,7 @@ public:
 
 #pragma endregion ICsGetInterfaceMap
 
-// ICsDamageExpression
+// ICsData_Damage
 #pragma region
 public:
 
@@ -60,7 +60,7 @@ public:
 		return const_cast<FECsDamageType&>(*Type);
 	}
 
-#pragma endregion ICsDamageExpression
+#pragma endregion ICsData_Damage
 
 public:
 

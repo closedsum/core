@@ -2,16 +2,16 @@
 #include "Managers/Damage/CsTypes_Damage.h"
 #include "Types/CsTypes_Interpolation.h"
 #include "Types/CsTypes_Curve.h"
-#include "CsTypes_DamageShape.generated.h"
+#include "CsTypes_Data_DamageShape.generated.h"
 #pragma once
 
-// FCsScriptDamageSphere
+// FCsScriptData_DamageSphere
 #pragma region
 
-struct FCsDamageSphereEmu;
+struct FCsData_DamageSphereEmu;
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsScriptDamageSphere
+struct CSCORE_API FCsScriptData_DamageSphere
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -47,7 +47,7 @@ struct CSCORE_API FCsScriptDamageSphere
 
 public:
 
-	FCsScriptDamageSphere() :
+	FCsScriptData_DamageSphere() :
 		Type(),
 		MinDamage(0.0f),
 		MaxDamage(0.0f),
@@ -60,7 +60,7 @@ public:
 	{
 	}
 
-	void SetExpression(FCsDamageSphereEmu* Expression);
+	void SetData(FCsData_DamageSphereEmu* Data);
 };
 
-#pragma endregion FCsScriptDamageSphere
+#pragma endregion FCsScriptData_DamageSphere

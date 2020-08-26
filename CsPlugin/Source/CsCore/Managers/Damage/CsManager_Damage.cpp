@@ -6,7 +6,7 @@
 #include "Managers/Damage/CsCVars_Manager_Damage.h"
 // Library
 #include "Library/CsLibrary_Common.h"
-#include "Managers/Damage/Expression/CsLibrary_DamageExpression.h"
+#include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Managers/Damage/Range/CsLibrary_DamageRange.h"
 #include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
@@ -16,8 +16,8 @@
 #include "Reset/CsReset.h"
 // Damage
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
-#include "Managers/Damage/Expression/CsDamageExpression.h"
-#include "Managers/Damage/Shape/CsDamageShape.h"
+#include "Managers/Damage/Data/CsData_Damage.h"
+#include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
 #include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
 #include "Managers/Damage/Range/CsDamageRangeImpl.h"
@@ -422,12 +422,12 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 
 	checkf(Event, TEXT("%s: Event is NULL."), *Context);
 
-	ICsDamageExpression* Expression = Event->GetExpression();
+	ICsData_Damage* Data = Event->GetData();
 
-	checkf(Expression, TEXT("%s: Expression is NULL. No Damage Expression found for Event."), *Context);
+	checkf(Data, TEXT("%s: Data is NULL. No Damage Data found for Event."), *Context);
 
-	// ICsDamageShape
-	if (ICsDamageShape* Shape = FCsLibrary_DamageExpression::GetSafeInterfaceChecked<ICsDamageShape>(Context, Expression))
+	// ICsData_DamageShape
+	if (ICsData_DamageShape* Shape = FCsLibrary_Data_Damage::GetSafeInterfaceChecked<ICsData_DamageShape>(Context, Data))
 	{
 
 	}
@@ -657,13 +657,13 @@ void UCsManager_Damage::LogEvent(const ICsDamageEvent* Event)
 
 	const FString& Context = Str::LogEvent;
 
-	ICsDamageExpression* Expression = Event->GetExpression();
+	ICsData_Damage* Data = Event->GetData();
 
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerDamageEvents))
 	{
 		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::ProcessDamageEvent:"));
-		// Expression
-		UE_LOG(LogCs, Warning, TEXT("- Expression: Point"));
+		// Data
+		UE_LOG(LogCs, Warning, TEXT("- Data: Point"));
 
 		// Damage
 		{
@@ -680,7 +680,7 @@ void UCsManager_Damage::LogEvent(const ICsDamageEvent* Event)
 				UE_LOG(LogCs, Warning, TEXT("-- Damage: %f <-> %f"), Range->GetMinValue(), Range->GetMaxValue());
 			}
 		}
-		UE_LOG(LogCs, Warning, TEXT("-- Type: %s"), Expression->GetType().ToChar());
+		UE_LOG(LogCs, Warning, TEXT("-- Type: %s"), Data->GetType().ToChar());
 		// Instigator
 		UE_LOG(LogCs, Warning, TEXT("- Instigator: %s"), Event->GetInstigator() ? *(Event->GetInstigator()->GetName()) : TEXT("None"));
 		// Causer

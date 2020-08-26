@@ -4,7 +4,7 @@
 #include "Managers/Damage/CsTypes_Damage.h"
 #pragma once
 
-class ICsDamageExpression;
+class ICsData_Damage;
 struct ICsDamageValue;
 struct ICsDamageRange;
 
@@ -47,7 +47,7 @@ public:
 	*
 	* return
 	*/ 
-	virtual ICsDamageExpression* GetExpression() const = 0;
+	virtual ICsData_Damage* GetData() const = 0;
 
 	/**
 	*

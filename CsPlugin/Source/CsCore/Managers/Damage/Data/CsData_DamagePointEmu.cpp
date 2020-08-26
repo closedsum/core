@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Expression/CsDamagePointEmu.h"
+#include "Managers/Damage/Data/CsData_DamagePointEmu.h"
 
 // Library
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
@@ -9,12 +9,12 @@
 #include "Managers/Damage/Value/CsDamageValue.h"
 #include "Managers/Damage/Value/Point/CsDamageValuePointEmu.h"
 
-const FName FCsDamagePointEmu::Name = FName("FCsDamagePointEmu");
+const FName FCsData_DamagePointEmu::Name = FName("FCsData_DamagePointEmu");
 
-FCsDamagePointEmu::FCsDamagePointEmu() :
+FCsData_DamagePointEmu::FCsData_DamagePointEmu() :
 	// ICsInterfaceMap
 	InterfaceMap(nullptr),
-	// ICsDamageExpression
+	// ICsData_Damage
 	Value(nullptr),
 	Type(nullptr)
 {
@@ -22,15 +22,15 @@ FCsDamagePointEmu::FCsDamagePointEmu() :
 
 	InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsDamagePointEmu::Name);
+	InterfaceMap->SetRootName(FCsData_DamagePointEmu::Name);
 
-	InterfaceMap->Add<ICsDamageExpression>(static_cast<ICsDamageExpression*>(this));
+	InterfaceMap->Add<ICsData_Damage>(static_cast<ICsData_Damage*>(this));
 
-	// ICsDamageExpression
+	// ICsData_Damage
 	Value = new FCsDamageValuePointEmu();
 }
 
-FCsDamagePointEmu::~FCsDamagePointEmu()
+FCsData_DamagePointEmu::~FCsData_DamagePointEmu()
 {
 	// ICsInterfaceMap
 	if (InterfaceMap)
@@ -38,7 +38,7 @@ FCsDamagePointEmu::~FCsDamagePointEmu()
 		delete InterfaceMap;
 		InterfaceMap = nullptr;
 	}
-	// ICsDamageExpression
+	// ICsData_Damage
 	if (Value)
 	{
 		delete Value;
@@ -46,7 +46,7 @@ FCsDamagePointEmu::~FCsDamagePointEmu()
 	}
 }
 
-void FCsDamagePointEmu::SetValue(float* InValue)
+void FCsData_DamagePointEmu::SetValue(float* InValue)
 {
 	FCsDamageValuePointEmu* Emu = static_cast<FCsDamageValuePointEmu*>(Value);
 	Emu->SetValue(InValue);

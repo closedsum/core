@@ -5,7 +5,7 @@
 // Containers
 #include "Containers/CsInterfaceMap.h"
 // Damage
-#include "Managers/Damage/Expression/CsDamagePointEmu.h"
+#include "Managers/Damage/Data/CsData_DamagePointEmu.h"
 
 const FName UCsStatusEffect_DamagePoint::Name = FName("UCsStatusEffect_DamagePoint");
 
@@ -33,8 +33,8 @@ void UCsStatusEffect_DamagePoint::PostLoad()
 		}
 		// ICsStatusEffect_Damage
 		{
-			DamagePointEmu = new FCsDamagePointEmu();
-			DamagePoint.SetExpression(static_cast<FCsDamagePointEmu*>(DamagePointEmu));
+			DamagePointEmu = new FCsData_DamagePointEmu();
+			DamagePoint.SetData(static_cast<FCsData_DamagePointEmu*>(DamagePointEmu));
 		}
 		bLoaded = false;
 	}
@@ -53,7 +53,7 @@ void UCsStatusEffect_DamagePoint::BeginDestroy()
 	// ICsStatusEffect_Damage
 	if (DamagePointEmu)
 	{
-		FCsDamagePointEmu* Emu = static_cast<FCsDamagePointEmu*>(DamagePointEmu);
+		FCsData_DamagePointEmu* Emu = static_cast<FCsData_DamagePointEmu*>(DamagePointEmu);
 		delete Emu;
 		DamagePointEmu = nullptr;
 	}

@@ -1,15 +1,15 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Damage/CsTypes_Damage.h"
-#include "CsTypes_DamageExpression.generated.h"
+#include "CsTypes_Data_Damage.generated.h"
 #pragma once
 
-// FCsScriptDamagePoint
+// FCsScriptData_DamagePoint
 #pragma region
 
-struct FCsDamagePointEmu;
+struct FCsData_DamagePointEmu;
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsScriptDamagePoint
+struct CSCORE_API FCsScriptData_DamagePoint
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -19,13 +19,13 @@ struct CSCORE_API FCsScriptDamagePoint
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Damage;
 
-	FCsScriptDamagePoint() :
+	FCsScriptData_DamagePoint() :
 		Type(),
 		Damage(0.0f)
 	{
 	}
 
-	void SetExpression(FCsDamagePointEmu* Expression);
+	void SetData(FCsData_DamagePointEmu* Data);
 };
 
 #pragma endregion FCsScriptDamagePoint

@@ -5,13 +5,13 @@
 #include "CsTypes_Data_ProjectileDamage.generated.h"
 #pragma once
 
-// FCsPrjDamageExpressionPoint
+// FCsPrjData_DamagePoint
 #pragma region
 
-struct FCsDamagePointEmu;
+struct FCsData_DamagePointEmu;
 
 USTRUCT(BlueprintType)
-struct CSPRJ_API FCsPrjDamageExpressionPoint
+struct CSPRJ_API FCsPrjData_DamagePoint
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -23,24 +23,24 @@ struct CSPRJ_API FCsPrjDamageExpressionPoint
 
 public:
 
-	FCsPrjDamageExpressionPoint() : 
+	FCsPrjData_DamagePoint() :
 		Damage(0.0f),
 		Type()
 	{
 	}
 
-	void SetExpression(FCsDamagePointEmu* Expression);
+	void SetData(FCsData_DamagePointEmu* Data);
 };
 
-#pragma endregion FCsPrjDamageExpressionPoint
+#pragma endregion FCsPrjData_DamagePoint
 
-// FCsPrjDamageSphere
+// FCsPrjData_DamageSphere
 #pragma region
 
-struct FCsDamageSphereEmu;
+struct FCsData_DamageSphereEmu;
 
 USTRUCT(BlueprintType)
-struct CSPRJ_API FCsPrjDamageSphere
+struct CSPRJ_API FCsPrjData_DamageSphere
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -76,7 +76,7 @@ struct CSPRJ_API FCsPrjDamageSphere
 
 public:
 
-	FCsPrjDamageSphere() :
+	FCsPrjData_DamageSphere() :
 		Type(),
 		MinDamage(0.0f),
 		MaxDamage(0.0f),
@@ -89,7 +89,7 @@ public:
 	{
 	}
 
-	void SetExpression(FCsDamageSphereEmu* Expression);
+	void SetData(FCsData_DamageSphereEmu* Data);
 };
 
-#pragma endregion FCsPrjDamageExpressionPoint
+#pragma endregion FCsPrjData_DamageSphere

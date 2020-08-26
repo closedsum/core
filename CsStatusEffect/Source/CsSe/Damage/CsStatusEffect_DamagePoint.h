@@ -6,11 +6,11 @@
 #include "Damage/CsStatusEffect_Damage.h"
 // Types
 #include "CsTypes_StatusEffect.h"
-#include "Managers/Damage/Expression/CsTypes_DamageExpression.h"
+#include "Managers/Damage/Data/CsTypes_Data_Damage.h"
 #include "CsStatusEffect_DamagePoint.generated.h"
 
 struct FCsInterfaceMap;
-class ICsDamageExpression;
+class ICsData_Damage;
 
 UCLASS(BlueprintType, Blueprintable)
 class CSSE_API UCsStatusEffect_DamagePoint : public UObject,
@@ -98,15 +98,15 @@ public:
 public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FCsScriptDamagePoint DamagePoint;
+	FCsScriptData_DamagePoint DamagePoint;
 
-	ICsDamageExpression* DamagePointEmu;
+	ICsData_Damage* DamagePointEmu;
 
 // ICsStatusEffect_Damage
 #pragma region
 public:
 
-	FORCEINLINE ICsDamageExpression* GetDamageExpression() const
+	FORCEINLINE ICsData_Damage* GetDamageData() const
 	{
 		return DamagePointEmu;
 	}

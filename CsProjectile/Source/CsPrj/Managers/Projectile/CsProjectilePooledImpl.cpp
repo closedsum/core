@@ -9,7 +9,7 @@
 #include "Managers/Pool/Cache/CsLibrary_PooledObjectCache.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Data/CsLibrary_Data_Projectile.h"
-#include "Managers/Damage/Expression/CsLibrary_DamageExpression.h"
+#include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
 #include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 // Containers
@@ -36,7 +36,7 @@
 #include "Managers/FX/Payload/CsFXPooledPayloadImpl.h"
 // Damage
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
-#include "Managers/Damage/Shape/CsDamageShape.h"
+#include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
 // Game
 #include "GameFramework/GameStateBase.h"
 
@@ -711,15 +711,15 @@ void ACsProjectilePooledImpl::OnLaunch_SetDamageContainersAndTypes()
 	DamageValueType		 = EMCsDamageValue::Get().GetMAX();
 
 	// ICsData_ProjectileDamage
-	if (ICsData_ProjectileDamage* DamageData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ICsData_ProjectileDamage>(Context, Data))
+	if (ICsData_ProjectileDamage* PrjDamageData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ICsData_ProjectileDamage>(Context, Data))
 	{
-		// Get Damage Expression
-		ICsDamageExpression* DamageExpression = DamageData->GetDamageExpression();
+		// Get Damage Data
+		ICsData_Damage* DamageData = PrjDamageData->GetDamageData();
 
-		checkf(DamageExpression, TEXT("%s: DamageExpression is NULL."), *Context);
+		checkf(DamageData, TEXT("%s: DamageData is NULL."), *Context);
 
 		// Range
-		if (ICsDamageShape* DamageShape = FCsLibrary_DamageExpression::GetSafeInterfaceChecked<ICsDamageShape>(Context, DamageExpression))
+		if (ICsData_DamageShape* DamageShape = FCsLibrary_Data_Damage::GetSafeInterfaceChecked<ICsData_DamageShape>(Context, DamageData))
 		{
 			DamageValueType = NCsDamageValue::Range;
 		}
@@ -734,7 +734,7 @@ void ACsProjectilePooledImpl::OnLaunch_SetDamageContainersAndTypes()
 		// Copy "base" damage
 		ICsDamageValue* DamageValue = DamageValueContainer->Get();
 
-		FCsLibrary_DamageValue::CopyChecked(Context, DamageExpression->GetValue(), DamageValue);
+		FCsLibrary_DamageValue::CopyChecked(Context, DamageData->GetValue(), DamageValue);
 		
 		// Range
 		{
@@ -763,28 +763,28 @@ const FCsResource_DamageEvent* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(
 	FCsDamageEventImpl* EventImpl = FCsLibrary_DamageEvent::PureStaticCastChecked<FCsDamageEventImpl>(Context, Event);
 
 	// ICsData_ProjectileDamage
-	ICsData_ProjectileDamage* DamageData = FCsLibrary_Data_Projectile::GetInterfaceChecked<ICsData_ProjectileDamage>(Context, Data);
-	// Get Damage Expression
-	ICsDamageExpression* DamageExpression = DamageData->GetDamageExpression();
+	ICsData_ProjectileDamage* PrjDamageData = FCsLibrary_Data_Projectile::GetInterfaceChecked<ICsData_ProjectileDamage>(Context, Data);
+	// Get Damage Data
+	ICsData_Damage* DamageData = PrjDamageData->GetDamageData();
 
-	checkf(DamageExpression, TEXT("%s: DamageExpression is NULL."), *Context);
+	checkf(DamageData, TEXT("%s: DamageData is NULL."), *Context);
 
 	checkf(DamageValueContainer, TEXT("s: DamageValueContainer is NULL."), *Context);
 
-	EventImpl->DamageValue.CopyFrom(GetWorld()->GetGameState(), DamageExpression->GetValue());
+	EventImpl->DamageValue.CopyFrom(GetWorld()->GetGameState(), DamageData->GetValue());
 
-	if (ICsDamageShape* DamageShape = FCsLibrary_DamageExpression::GetSafeInterfaceChecked<ICsDamageShape>(Context, DamageExpression))
+	if (ICsData_DamageShape* DamageShape = FCsLibrary_Data_Damage::GetSafeInterfaceChecked<ICsData_DamageShape>(Context, DamageData))
 	{
 		EventImpl->DamageRange.CopyFrom(GetWorld()->GetGameState(), DamageShape->GetRange());
 	}
 
 	// Apply Damage Modifiers
 
-	EventImpl->Expression			= DamageExpression;
-	EventImpl->Instigator			= Cache->GetInstigator();
-	EventImpl->Causer				= this;
-	EventImpl->Origin				= HitResult;
-	EventImpl->HitResult			= HitResult;
+	EventImpl->Data			= DamageData;
+	EventImpl->Instigator	= Cache->GetInstigator();
+	EventImpl->Causer		= this;
+	EventImpl->Origin		= HitResult;
+	EventImpl->HitResult	= HitResult;
 
 	// Clear reference to Damage Containers
 	// TODO: Remove

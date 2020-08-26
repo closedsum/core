@@ -5,7 +5,7 @@
 // Containers
 #include "Containers/CsInterfaceMap.h"
 // Damage
-#include "Managers/Damage/Shape/CsDamageSphereEmu.h"
+#include "Managers/Damage/Data/Shape/CsData_DamageSphereEmu.h"
 
 const FName UCsStatusEffect_DamageSphere::Name = FName("UCsStatusEffect_DamageSphere");
 
@@ -33,8 +33,8 @@ void UCsStatusEffect_DamageSphere::PostLoad()
 		}
 		// ICsStatusEffect_Damage
 		{
-			DamageSphereEmu = new FCsDamageSphereEmu();
-			DamageSphere.SetExpression(static_cast<FCsDamageSphereEmu*>(DamageSphereEmu));
+			DamageSphereEmu = new FCsData_DamageSphereEmu();
+			DamageSphere.SetData(static_cast<FCsData_DamageSphereEmu*>(DamageSphereEmu));
 		}
 		bLoaded = false;
 	}
@@ -53,7 +53,7 @@ void UCsStatusEffect_DamageSphere::BeginDestroy()
 	// ICsStatusEffect_Damage
 	if (DamageSphereEmu)
 	{
-		FCsDamageSphereEmu* Emu = static_cast<FCsDamageSphereEmu*>(DamageSphereEmu);
+		FCsData_DamageSphereEmu* Emu = static_cast<FCsData_DamageSphereEmu*>(DamageSphereEmu);
 		delete Emu;
 		DamageSphereEmu = nullptr;
 	}

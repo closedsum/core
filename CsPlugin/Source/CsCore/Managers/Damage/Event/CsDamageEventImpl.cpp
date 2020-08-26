@@ -2,11 +2,11 @@
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
 
 // Library
-#include "Managers/Damage/Expression/CsLibrary_DamageExpression.h"
+#include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 // Damage
-#include "Managers/Damage/Expression/CsDamageExpression.h"
-#include "Managers/Damage/Shape/CsDamageShape.h"
+#include "Managers/Damage/Data/CsData_Damage.h"
+#include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
 #include "Managers/Damage/Value/Point/CsDamageValuePoint.h"
 
 const FName FCsDamageEventImpl::Name = FName("FCsDamageEventImpl");;
@@ -17,7 +17,7 @@ FCsDamageEventImpl::FCsDamageEventImpl() :
 	Damage(0.0f),
 	DamageValue(),
 	DamageRange(),
-	Expression(nullptr),
+	Data(nullptr),
 	Instigator(nullptr),
 	Causer(nullptr),
 	HitType(),
@@ -37,7 +37,7 @@ void FCsDamageEventImpl::CopyFrom(const FCsDamageEventImpl* From)
 	DamageValue.CopyFrom(&(From->DamageValue));
 	DamageRange.CopyFrom(&(From->DamageRange));
 
-	Expression = From->Expression;
+	Data = From->Data;
 	Instigator = From->Instigator;
 	Causer = From->Causer;
 	HitType = From->HitType;
@@ -54,12 +54,12 @@ void FCsDamageEventImpl::CopyFrom(const FCsDamageEventImpl* From)
 
 bool FCsDamageEventImpl::SetDamageChecked(const FString& Context)
 {
-	checkf(Expression, TEXT("%s: Expression is NULL."), *Context);
+	checkf(Data, TEXT("%s: Data is NULL."), *Context);
 
 	checkf(DamageValue.GetValue(), TEXT("%s: DamageValue.Value is NULL."), *Context);
 
 	// Shape
-	if (ICsDamageShape* Shape = FCsLibrary_DamageExpression::GetSafeInterfaceChecked<ICsDamageShape>(Context, Expression))
+	if (ICsData_DamageShape* Shape = FCsLibrary_Data_Damage::GetSafeInterfaceChecked<ICsData_DamageShape>(Context, Data))
 	{
 		Damage = Shape->CalculateDamage(DamageValue.GetValue(), DamageRange.GetRange(), Origin.ImpactPoint, HitResult.ImpactPoint);
 		return true;
@@ -82,7 +82,7 @@ void FCsDamageEventImpl::Reset()
 	Damage = 0.0f;
 	DamageValue.Reset();
 	DamageRange.Reset();
-	Expression = nullptr;
+	Data = nullptr;
 	Instigator = nullptr;
 	Causer = nullptr;
 	HitType = EMCsHitType::Get().GetMAX();

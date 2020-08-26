@@ -2,12 +2,12 @@
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
 
-class ICsDamageExpression;
+class ICsData_Damage;
 struct ICsDamageValue;
 
 /**
 * Interface to describe modifying a damage value (ICsDamageValue) from 
-*  a status effect (ICsDamageExpression).
+*  a damage data (ICsData_Damage).
 */
 struct CSCORE_API ICsDamageModifierValue : public ICsGetInterfaceMap
 {
@@ -18,12 +18,12 @@ public:
 public:
 
 	/**
-	* Modify the damage Value. This value is a copy of the DamageValue from Expression.
+	* Modify the damage Value. This value is a copy of the DamageValue from Data.
 	*
-	* @param Expression		The expression from which the Value was copied. This serves
-	*						as a type and a way to check if and how the Value should be modified.
-	* @param Value			The copy of the DamageValue from Expression to be modified.
-	*						NOTE: This value is allocated and must be freed at end of use.
+	* @param Data		The data from which the Value was copied. This serves
+	*					as a type and a way to check if and how the Value should be modified.
+	* @param Value		The copy of the DamageValue from Data to be modified.
+	*					NOTE: This value is allocated and must be freed at end of use.
 	*/
-	virtual void Modify(ICsDamageExpression* Expression, ICsDamageValue* Value) = 0;
+	virtual void Modify(ICsData_Damage* Data, ICsDamageValue* Value) = 0;
 };

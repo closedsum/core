@@ -1,19 +1,20 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Expression/CsDamageExpression.h"
-#include "Managers/Damage/Shape/CsDamageShape.h"
-#include "Managers/Damage/Collision/CsDamageCollision.h"
+#include "Managers/Damage/Data/CsData_Damage.h"
+#include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
+#include "Managers/Damage/Data/Collision/CsData_DamageCollision.h"
 #include "Types/CsTypes_Interpolation.h"
 #pragma once
 
 struct FCsInterfaceMap;
 struct ICsDamageValue;
+struct ICsDamageRange;
 
 /**
 *
 */
-struct CSCORE_API FCsDamageSphereEmu : public ICsDamageExpression,
-									   public ICsDamageShape,
-									   public ICsDamageCollision
+struct CSCORE_API FCsData_DamageSphereEmu : public ICsData_Damage,
+											public ICsData_DamageShape,
+											public ICsData_DamageCollision
 {
 public:
 
@@ -25,12 +26,12 @@ private:
 
 public:
 
-	// ICsDamageExpression
+	// ICsData_Damage
 	ICsDamageValue* DamageValue;
 
 	FECsDamageType* Type;
 
-	// ICsDamageShape
+	// ICsData_DamageShape
 
 	ICsDamageRange* DamageRange;
 
@@ -48,14 +49,14 @@ public:
 
 	FCsCurveFloat* Curve;
 
-	// ICsDamageCollision
+	// ICsData_DamageCollision
 
 	bool* bIgnoreHitResultObject;
 
 public:
 
-	FCsDamageSphereEmu();
-	~FCsDamageSphereEmu();
+	FCsData_DamageSphereEmu();
+	~FCsData_DamageSphereEmu();
 
 	FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
@@ -70,7 +71,7 @@ public:
 
 #pragma endregion ICsGetInterfaceMap
 
-// ICsDamageExpression
+// ICsData_Damage
 #pragma region
 public:
 
@@ -84,7 +85,7 @@ public:
 		return const_cast<FECsDamageType&>(*Type);
 	}
 
-#pragma endregion ICsDamageExpression
+#pragma endregion ICsData_Damage
 
 public:
 
@@ -93,7 +94,7 @@ public:
 		Type = Value;
 	}
 
-// ICsDamageShape
+// ICsData_DamageShape
 #pragma region
 public:
 
@@ -106,7 +107,7 @@ public:
 
 	bool IsInBounds(const FVector& Origin, const FVector& Point) const;
 
-#pragma endregion ICsDamageSphere
+#pragma endregion ICsData_DamageShape
 
 public:
 
@@ -133,7 +134,7 @@ public:
 		Curve = Value;
 	}
 
-// ICsDamageCollision
+// ICsData_DamageCollision
 #pragma region
 public:
 
@@ -142,7 +143,7 @@ public:
 		return *bIgnoreHitResultObject;
 	}
 
-#pragma endregion ICsDamageCollision
+#pragma endregion ICsData_DamageCollision
 
 public:
 

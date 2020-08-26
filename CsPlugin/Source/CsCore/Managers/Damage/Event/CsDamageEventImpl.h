@@ -14,7 +14,7 @@ class UObject;
 struct FCsInterfaceMap;
 struct ICsDamageValue;
 struct ICsDamageRange;
-class ICsDamageExpression;
+class ICsData_Damage;
 
 /**
 * Basic implementation of the interface: ICsDmaageEvent
@@ -40,7 +40,7 @@ public:
 
 	FCsAllocated_DamageRange DamageRange;
 
-	ICsDamageExpression* Expression;
+	ICsData_Damage* Data;
 
 	UObject* Instigator;
 
@@ -90,9 +90,9 @@ public:
 		return DamageRange.Range;
 	}
 
-	FORCEINLINE ICsDamageExpression* GetExpression() const
+	FORCEINLINE ICsData_Damage* GetData() const
 	{
-		return Expression;
+		return Data;
 	}
 
 	FORCEINLINE UObject* GetInstigator() const

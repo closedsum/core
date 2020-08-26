@@ -501,15 +501,15 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEventContainer(const FCsRes
 /*
 void UCsCoordinator_StatusEffect::LogEventPoint(const ICsDamageEvent* Event)
 {
-	ICsDamageExpression* Expression = Event->GetExpression();
+	ICsData_Damage* Data = Event->GetData();
 
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerDamageEvents))
 	{
 		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::OnEvent:"));
-		// Expression
-		UE_LOG(LogCs, Warning, TEXT("- Expression: Point"));
-		UE_LOG(LogCs, Warning, TEXT("-- Damage: %f"), Expression->GetDamage());
-		UE_LOG(LogCs, Warning, TEXT("-- Type: %s"), Expression->GetType().ToChar());
+		// Data
+		UE_LOG(LogCs, Warning, TEXT("- Data: Point"));
+		UE_LOG(LogCs, Warning, TEXT("-- Damage: %f"), Data->GetDamage());
+		UE_LOG(LogCs, Warning, TEXT("-- Type: %s"), Data->GetType().ToChar());
 		// Instigator
 		UE_LOG(LogCs, Warning, TEXT("- Instigator: %s"), Event->GetInstigator() ? *(Event->GetInstigator()->GetName()) : TEXT("None"));
 		// Causer

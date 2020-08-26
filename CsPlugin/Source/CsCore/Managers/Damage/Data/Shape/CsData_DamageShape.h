@@ -1,11 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Containers/CsGetInterfaceMap.h"
 #include "Engine/EngineTypes.h"
-#include "CsDamageShape.generated.h"
+#include "CsData_DamageShape.generated.h"
 #pragma once
 
 UINTERFACE(BlueprintType)
-class CSCORE_API UCsDamageShape : public UCsGetInterfaceMap
+class CSCORE_API UCsData_DamageShape : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
@@ -15,9 +15,9 @@ struct ICsDamageRange;
 
 /**
 * Interface to describe the shape of Damage. This should be used with 
-* the interface "base" ICsDamageExpression.
+* the interface "base" ICsData_Damage.
 */
-class CSCORE_API ICsDamageShape : public ICsGetInterfaceMap
+class CSCORE_API ICsData_DamageShape : public ICsGetInterfaceMap
 {
 	GENERATED_IINTERFACE_BODY()
 

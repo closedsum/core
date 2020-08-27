@@ -93,6 +93,15 @@ public:
 		return Cast<T>(GetCauser());
 	}
 
+	/**
+	* Copy all elements from another Event 
+	*  EXCEPT:
+	*   InterfaceMap: This needs to be unique per instance.
+	*
+	* @param From	Event to copy from.
+	*/
+	void CopyFrom(const FCsStatusEffectEventImpl* From);
+
 // ICsReset
 #pragma region
 public:

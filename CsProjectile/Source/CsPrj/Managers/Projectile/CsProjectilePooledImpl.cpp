@@ -716,6 +716,22 @@ const FCsResource_DamageEvent* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(
 
 	const FString& Context = Str::OnHit_CreateDamageEvent;
 
+	// ICsData_ProjectileDamage
+	ICsData_ProjectileDamage* PrjDamageData = FCsLibrary_Data_Projectile::GetInterfaceChecked<ICsData_ProjectileDamage>(Context, Data);
+	// Get Damage Data
+	ICsData_Damage* DamageData = PrjDamageData->GetDamageData();
+
+	return OnHit_CreateDamageEvent(HitResult, DamageData);
+}
+
+const FCsResource_DamageEvent* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(const FHitResult& HitResult, ICsData_Damage* DamageData)
+{
+	using namespace NCsProjectilePooledImplCached;
+
+	const FString& Context = Str::OnHit_CreateDamageEvent;
+
+	checkf(DamageData, TEXT("%s: DamageData is NULL."), *Context);
+
 	UObject* ContextRoot			  = GetWorld()->GetGameState();
 	UCsManager_Damage* Manager_Damage = UCsManager_Damage::Get(ContextRoot);
 
@@ -724,13 +740,6 @@ const FCsResource_DamageEvent* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(
 	ICsDamageEvent* Event			   = Container->Get();
 
 	FCsDamageEventImpl* EventImpl = FCsLibrary_DamageEvent::PureStaticCastChecked<FCsDamageEventImpl>(Context, Event);
-
-	// ICsData_ProjectileDamage
-	ICsData_ProjectileDamage* PrjDamageData = FCsLibrary_Data_Projectile::GetInterfaceChecked<ICsData_ProjectileDamage>(Context, Data);
-	// Get Damage Data
-	ICsData_Damage* DamageData = PrjDamageData->GetDamageData();
-
-	checkf(DamageData, TEXT("%s: DamageData is NULL."), *Context);
 
 		// Value
 	EventImpl->DamageValue.CopyFrom(ContextRoot, DamageData->GetValue());

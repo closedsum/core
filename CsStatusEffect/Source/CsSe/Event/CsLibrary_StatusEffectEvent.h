@@ -52,6 +52,21 @@ struct CSSE_API FCsLibrary_StatusEffectEvent
 	}
 
 	/**
+	* Perform the operation static_cast<DerivedType*>("Event associated with ICsStatusEffectEvent") with checks.
+	* DerivedType is NOT abstract.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
+	*
+	* @param Context	The calling context
+	* @param Event		Event that implements the interface: ICsStatusEffectEvent.
+	* return			Event casted to DerivedType (static_cast<DerivedType*>(Event))
+	*/
+	template<typename DerivedType>
+	FORCEINLINE static const DerivedType* PureStaticCastChecked(const FString& Context, const ICsStatusEffectEvent* Event)
+	{
+		return NCsInterfaceMap::PureStaticCastChecked<DerivedType, ICsStatusEffectEvent>(Context, Event);
+	}
+
+	/**
 	* Safely perform the operation static_cast<DerivedType*>("Event associated with ICsStatusEffectEvent") with checks (For InterfaceMap).
 	* DerivedType is NOT abstract.
 	* Does NOT check if the InterfaceMap has "unique based" interfaces.
@@ -94,4 +109,31 @@ struct CSSE_API FCsLibrary_StatusEffectEvent
 	{
 		return NCsInterfaceMap::GetSafeInterfaceChecked<OtherInterfaceType, ICsStatusEffectEvent>(Context, Event);
 	}
+
+	/**
+	* Safely perform the operation static_cast<OtherInterfaceType*>("Event associated with ICsStatusEffectEvent")
+	* with checks (for InterfaceMap).
+	* OtherInterfaceType IS abstract.
+	*
+	* @param Context	The calling context
+	* @param Event		Event that implements the interface: ICsStatusEffectEvent.
+	* return			Event casted to OtherInterfaceType (static_cast<OtherInterfaceType*>(Event))
+	*/
+	template<typename OtherInterfaceType>
+	FORCEINLINE static const OtherInterfaceType* GetSafeInterfaceChecked(const FString& Context, const ICsStatusEffectEvent* Event)
+	{
+		return NCsInterfaceMap::GetSafeInterfaceChecked<OtherInterfaceType, ICsStatusEffectEvent>(Context, Event);
+	}
+
+	/**
+	* Copy the values from From to To with checks.
+	* Currently supports To types of:
+	*  FCsDamageEventImpl (ICsDamageEvent)
+	*
+	* @param Context	The calling context.
+	* @param From		What to copy.
+	* @param To			What to copy to.
+	* return			Whether the copy was performed successfully.
+	*/
+	static bool CopyChecked(const FString& Context, const ICsStatusEffectEvent* From, ICsStatusEffectEvent* To);
 };

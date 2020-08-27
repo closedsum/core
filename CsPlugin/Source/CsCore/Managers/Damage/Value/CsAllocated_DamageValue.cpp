@@ -43,7 +43,7 @@ void FCsAllocated_DamageValue::CopyFrom(const FCsAllocated_DamageValue* From)
 
 	checkf(From->Root, TEXT("&s: From->Root is NULL."), *Context);
 
-	checkf(Container, TEXT("%s: Container is already SET."), *Context);
+	checkf(!Container, TEXT("%s: Container is already SET."), *Context);
 
 	if (From->Container)
 	{

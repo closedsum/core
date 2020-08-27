@@ -18,6 +18,21 @@ FCsStatusEffectEventImpl::FCsStatusEffectEventImpl() :
 	InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));
 }
 
+void FCsStatusEffectEventImpl::CopyFrom(const FCsStatusEffectEventImpl* From)
+{
+	Data = From->Data;
+	Instigator = From->Instigator;
+	Causer = From->Causer;
+	Receiver = From->Receiver;
+
+	IgnoreObjects.Reset(FMath::Max(IgnoreObjects.Max(), From->IgnoreObjects.Max()));
+
+	for (TWeakObjectPtr<UObject> O : From->IgnoreObjects)
+	{
+		IgnoreObjects.Add(O);
+	}
+}
+
 // ICsReset
 #pragma region
 

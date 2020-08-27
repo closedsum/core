@@ -32,6 +32,8 @@ public:
 		return Event;
 	}
 
+	void Set(UObject* InRoot, FCsResource_DamageEvent* InContainer);
+
 	void CopyFrom(UObject* InRoot, const ICsDamageEvent* From);
 
 	void CopyFrom(const FCsAllocated_DamageEvent* Event);

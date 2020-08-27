@@ -215,7 +215,7 @@ public:
 
 private:
 
-	TArray<FCsReceiveDamage> Local_Recievers;
+	TArray<FCsReceiveDamage> Local_Receivers;
 	TArray<FCsResource_DamageEvent*> Local_Events;
 
 public:

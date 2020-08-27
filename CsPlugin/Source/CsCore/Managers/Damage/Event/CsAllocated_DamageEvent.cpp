@@ -19,6 +19,19 @@ namespace NCsAllocatedDamageEventCached
 
 #pragma endregion Cached
 
+void FCsAllocated_DamageEvent::Set(UObject* InRoot, FCsResource_DamageEvent* InContainer)
+{
+	checkf(InRoot, TEXT("FCsAllocated_DamageEvent::Set: InRoot is NULL."));
+
+	checkf(InContainer, TEXT("FCsAllocated_DamageEvent::Set: From is NULL."));
+
+	checkf(!Container, TEXT("FCsAllocated_DamageEvent::Set: Container is already SET."));
+
+	Root	  = InRoot;
+	Container = InContainer;
+	Event	  = Container->Get();
+}
+
 void FCsAllocated_DamageEvent::CopyFrom(UObject* InRoot, const ICsDamageEvent* From)
 {
 	using namespace NCsAllocatedDamageEventCached;
@@ -40,9 +53,9 @@ void FCsAllocated_DamageEvent::CopyFrom(const FCsAllocated_DamageEvent* From)
 
 	const FString& Context = Str::CopyFrom;
 
-	checkf(From->Root, TEXT("&s: From->Root is NULL."), *Context);
+	checkf(From->Root, TEXT("%s: From->Root is NULL."), *Context);
 
-	checkf(Container, TEXT("%s: Container is already SET."), *Context);
+	checkf(!Container, TEXT("%s: Container is already SET."), *Context);
 
 	if (From->Container)
 	{

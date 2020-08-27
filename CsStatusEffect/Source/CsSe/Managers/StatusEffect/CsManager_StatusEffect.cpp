@@ -9,6 +9,19 @@
 // World
 #include "Classes/Engine/World.h"
 
+// Cached
+#pragma region
+
+namespace NCsManagerStatusEffectCached
+{
+	namespace Str
+	{
+		const FString Shutdown = TEXT("Shutdown");
+	}
+}
+
+#pragma endregion Cached
+
 UCsManager_StatusEffect::UCsManager_StatusEffect(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
@@ -26,6 +39,10 @@ void UCsManager_StatusEffect::Init(UObject* InRoot)
 
 void UCsManager_StatusEffect::Shutdown(UObject* InRoot)
 {
+	using namespace NCsManagerStatusEffectCached;
+
+	const FString& Context = Str::Shutdown;
+
 	// Deallocate any ICsStatusEffectEvent objects from UCsStatusEffectCoordinator 
 	UObject* Object			  = MyRoot.GetObject();
 	UWorld* World			  = Object ? Object->GetWorld() : nullptr;
@@ -49,7 +66,7 @@ void UCsManager_StatusEffect::Shutdown(UObject* InRoot)
 
 			if (Info->Container)
 			{
-				StatusEffectCoordinator->DeallocateEvent(Info->Container);
+				StatusEffectCoordinator->DeallocateEvent(Context, Info->Container);
 			}
 		}
 	}
@@ -103,6 +120,8 @@ void UCsManager_StatusEffect::Update(const FCsDeltaTime& DeltaTime)
 void UCsManager_StatusEffect::ApplyStatusEffect(FCsResource_StatusEffectEvent* Event)
 {
 	checkf(Event, TEXT("UCsManager_StatusEffect::ApplyStatusEffect::Event is NULL."));
+
+	// TODO: Need to create a copy
 
 	FCsResource_StatusEffectEventInfo* EventInfoContainer = Manager_Event.Allocate();
 	FCsStatusEffectEventInfo* EventInfo					  = EventInfoContainer->Get();

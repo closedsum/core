@@ -34,8 +34,12 @@ void FCsDamageEventImpl::CopyFrom(const FCsDamageEventImpl* From)
 {
 	Damage = From->Damage;
 
+	checkf(From->DamageValue.GetValue(), TEXT("FCsDamageEventImpl::CopyFrom: From->DamageValue.Value is NULL."));
+
 	DamageValue.CopyFrom(&(From->DamageValue));
-	DamageRange.CopyFrom(&(From->DamageRange));
+
+	if (From->DamageRange.GetRange())
+		DamageRange.CopyFrom(&(From->DamageRange));
 
 	Data = From->Data;
 	Instigator = From->Instigator;

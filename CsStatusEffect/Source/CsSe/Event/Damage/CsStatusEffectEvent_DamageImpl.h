@@ -3,13 +3,14 @@
 #include "Event/Damage/CsStatusEffectEvent_Damage.h"
 #include "Reset/CsReset.h"
 #include "Containers/CsInterfaceMap.h"
+// Types
+#include "Managers/Damage/Event/CsAllocated_DamageEvent.h"
 #pragma once
 
 class UObject;
 struct FCsInterfaceMap;
 class ICsData_StatusEffect;
 struct ICsDamageEvent;
-struct FCsResource_DamageEvent;
 
 struct CSSE_API FCsStatusEffectEvent_DamageImpl final : public ICsStatusEffectEvent,
 													    public ICsStatusEffectEvent_Damage,
@@ -41,9 +42,7 @@ public:
 
 	// ICsStatusEffectEvent_Damage
 
-	ICsDamageEvent* DamageEvent;
-
-	FCsResource_DamageEvent* DamageEventContainer;
+	FCsAllocated_DamageEvent DamageEvent;
 
 public:
 
@@ -97,7 +96,7 @@ public:
 
 	FORCEINLINE ICsDamageEvent* GetDamageEvent() const
 	{
-		return DamageEvent;
+		return DamageEvent.Event;
 	}
 
 #pragma endregion ICsStatusEffectEvent_Damage
@@ -115,6 +114,15 @@ public:
 	{
 		return Cast<T>(GetCauser());
 	}
+
+	/**
+	* Copy all elements from another Event 
+	*  EXCEPT:
+	*   InterfaceMap: This needs to be unique per instance.
+	*
+	* @param From	Event to copy from.
+	*/
+	void CopyFrom(const FCsStatusEffectEvent_DamageImpl* From);
 
 // ICsReset
 #pragma region

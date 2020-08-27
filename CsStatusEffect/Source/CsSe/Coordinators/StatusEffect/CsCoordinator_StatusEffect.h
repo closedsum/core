@@ -120,29 +120,39 @@ public:
 	/**
 	* Get the type (interface) of the Event.
 	*
-	* @param Event	Event of type: ICsStatusEffectEvent.
-	* return		Type of StatusEffectEvent.
+	* @param Context	The calling context.
+	* @param Event		Event of type: ICsStatusEffectEvent.
+	* return			Type of StatusEffectEvent.
 	*/
-	const FECsStatusEffectEvent& GetTypeFromEvent(ICsStatusEffectEvent* Event);
+	virtual const FECsStatusEffectEvent& GetEventType(const FString& Context, const ICsStatusEffectEvent* Event);
 
 	/**
 	* Get the type (interface) of the Event.
 	*
-	* @param Event	Container for event of type: ICsStatusEffectEvent.
-	* return		Type of StatusEffectEvent.
+	* @param Context	The calling context.
+	* @param Event		Container for event of type: ICsStatusEffectEvent.
+	* return			Type of StatusEffectEvent.
 	*/
-	const FECsStatusEffectEvent& GetTypeFromEvent(FCsResource_StatusEffectEvent* Event);
+	virtual const FECsStatusEffectEvent& GetEventType(const FString& Context, const FCsResource_StatusEffectEvent* Event);
 
 	/**
 	*
 	*
+	* @param Context	The calling context.
 	* @param Event
 	*/
-	void DeallocateEvent(FCsResource_StatusEffectEvent* Event);
+	void DeallocateEvent(const FString& Context, FCsResource_StatusEffectEvent* Event);
+
+	virtual bool CopyEvent(const FString& Context, const ICsStatusEffectEvent* From, ICsStatusEffectEvent* To);
+
+	FCsResource_StatusEffectEvent* CreateCopyOfEvent(const FString& Context, const ICsStatusEffectEvent* Event);
+
+	FCsResource_StatusEffectEvent* CreateCopyOfEvent(const FString& Context, const FCsResource_StatusEffectEvent* Event);
 
 private:
 
 	TArray<FCsReceiveStatusEffect> Local_Receivers;
+	TArray<FCsResource_StatusEffectEvent*> Local_Events;
 
 public:
 

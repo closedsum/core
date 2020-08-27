@@ -28,6 +28,7 @@ struct FCsFXActorPooled;
 struct ICsDamageEvent;
 struct FCsResource_DamageEvent;
 struct FCsResource_DamageModifier;
+class ICsData_Damage;
 
 UCLASS(Blueprintable)
 class CSPRJ_API ACsProjectilePooledImpl : public AActor,
@@ -214,6 +215,8 @@ protected:
 	* return			DamageEvent
 	*/
 	virtual const FCsResource_DamageEvent* OnHit_CreateDamageEvent(const FHitResult& HitResult);
+
+	virtual const FCsResource_DamageEvent* OnHit_CreateDamageEvent(const FHitResult& HitResult, ICsData_Damage* DamageData);
 
 #pragma endregion Damage
 };

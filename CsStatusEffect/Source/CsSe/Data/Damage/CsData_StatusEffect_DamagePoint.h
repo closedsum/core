@@ -2,6 +2,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Interface
+#include "Data/CsData.h"
 #include "Data/CsData_StatusEffect.h"
 #include "Data/Damage/CsData_StatusEffect_Damage.h"
 // Types
@@ -14,6 +15,7 @@ class ICsData_Damage;
 
 UCLASS(BlueprintType, Blueprintable)
 class CSSE_API UCsData_StatusEffect_DamagePoint : public UObject,
+												  public ICsData,
 												  public ICsData_StatusEffect,
 												  public ICsData_StatusEffect_Damage
 {
@@ -35,6 +37,8 @@ public:
 
 private:
 
+	void Init();
+
 	FCsInterfaceMap* InterfaceMap;
 
 // ICsGetInterfaceMap
@@ -51,6 +55,20 @@ public:
 protected:
 
 	bool bLoaded;
+
+// ICsData
+#pragma region
+public:
+
+	bool IsValid(const int32& LoadFlags);
+
+	void Load(const int32& LoadFlags);
+
+	void Unload();
+
+	bool IsLoaded() const;
+
+#pragma endregion ICsData
 
 public:
 

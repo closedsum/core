@@ -391,11 +391,7 @@ void UCsManager_Damage::DeallocateEvent(const FString& Context, FCsResource_Dama
 
 bool UCsManager_Damage::CopyEvent(const FString& Context, const ICsDamageEvent* From, ICsDamageEvent* To)
 {
-	bool Success = FCsLibrary_DamageEvent::CopyChecked(Context, From, To);
-
-	checkf(Success, TEXT("%s: Failed to copy Event From to To."));
-
-	return false;
+	return FCsLibrary_DamageEvent::CopyChecked(Context, From, To);
 }
 
 FCsResource_DamageEvent* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, const ICsDamageEvent* Event)
@@ -447,8 +443,8 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 			
 			if (Class->ImplementsInterface(UCsReceiveDamage::StaticClass()))
 			{
-				Local_Recievers.AddDefaulted();
-				Local_Recievers.Last().SetObject(Actor);
+				Local_Receivers.AddDefaulted();
+				Local_Receivers.Last().SetObject(Actor);
 
 				ShouldCopyEvent = true;
 			}
@@ -462,8 +458,8 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 
 			if (Class->ImplementsInterface(UCsReceiveDamage::StaticClass()))
 			{
-				Local_Recievers.AddDefaulted();
-				Local_Recievers.Last().SetObject(Component);
+				Local_Receivers.AddDefaulted();
+				Local_Receivers.Last().SetObject(Component);
 
 				ShouldCopyEvent = true;
 			}
@@ -482,11 +478,11 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 		}
 	}
 
-	const int32 Count = Local_Recievers.Num();
+	const int32 Count = Local_Receivers.Num();
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		FCsReceiveDamage& Receiver				= Local_Recievers[I];
+		FCsReceiveDamage& Receiver				= Local_Receivers[I];
 		FCsResource_DamageEvent* EventContainer = Local_Events[I];
 
 		ICsDamageEvent* Evt = EventContainer->Get();
@@ -503,7 +499,7 @@ void UCsManager_Damage::ProcessDamageEvent(const ICsDamageEvent* Event)
 		Local_Events[I] = nullptr;
 	}
 
-	Local_Recievers.Reset(Local_Recievers.Max());
+	Local_Receivers.Reset(Local_Receivers.Max());
 	Local_Events.Reset(Local_Events.Max());
 }
 
@@ -583,7 +579,6 @@ const FECsDamageValue& UCsManager_Damage::GetValueType(const FString& Context, c
 
 	return EMCsDamageValue::Get().GetMAX();
 }
-
 
 FCsResource_DamageValue* UCsManager_Damage::CreateCopyOfValue(const FString& Context, const ICsDamageValue* Value)
 {

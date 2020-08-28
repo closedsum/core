@@ -1,14 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Containers/CsGetInterfaceMap.h"
-#include "Managers/FX/CsTypes_FX.h"
-#include "Types/CsTypes_AttachDetach.h"
+#include "Managers/WidgetActor/CsTypes_WidgetActor.h"
 #pragma once
 
-class UNiagaraSystem;
+class UUserWidget;
 
 /**
 */
-struct CSCORE_API ICsFXPooledPayload : virtual public ICsGetInterfaceMap
+struct CSUI_API ICsPayload_WidgetActor : virtual public ICsGetInterfaceMap
 {
 public:
 
@@ -16,34 +15,35 @@ public:
 
 public:
 
-	virtual ~ICsFXPooledPayload(){}
+	virtual ~ICsPayload_WidgetActor(){}
 
 	/**
-	* Get the FX System to pass to the pooled FX object
+	* Get the UserWidget
 	*
-	* return FX System
+	* return UserWidget
 	*/
-	virtual UNiagaraSystem* GetFXSystem() const = 0;
+	virtual UUserWidget* GetUserWidget() const = 0;
 
 	/**
 	* Get the Deallocate Method. Used to determine the conditions
-	* to deallocate an FX Object (Lifetime, Complete, ... etc).
+	* to deallocate a Widget Actor, object that implements the 
+	* interface: ICsWidgetActor, (Lifetime, ... etc).
 	* 
 	* return Deallocate Method
 	*/
-	virtual const ECsFXDeallocateMethod& GetDeallocateMethod() const = 0;
+	virtual const ECsWidgetActorDeallocateMethod& GetDeallocateMethod() const = 0;
 
 	/**
-	* Relevant if the DeallocateMethod == ECsFXDeallocateMethod::LifeTime.
-	* - If an FX IS attached to a Parent object, 
-	*	 LifeTime == 0.0f means the FX object will be deallocated immediately
+	* Relevant if the DeallocateMethod == ECsWidgetActorDeallocateMethod::LifeTime.
+	* - If an Widget Actor IS attached to a Parent object, 
+	*	 LifeTime == 0.0f means the Widget Actor will be deallocated immediately
 	*     when the Parent object has been destroyed / deallocated.
 	*	 LifeTime > 0.0f will be the time after the Parent object has been 
-	*	  destroyed / deallocated to deallocate the FX object.
-	* - If an FX is NOT attached to a Parent object,
-	*	 LifeTime == 0.0f means the FX object will stay active forever.
-	*	 LifeTime > 0.0f means the FX will be deallocated after LifeTime amount of time after
-	*     the FX object has been allocated.
+	*	  destroyed / deallocated to deallocate the Widget Actor.
+	* - If a Widget Actor is NOT attached to a Parent object,
+	*	 LifeTime == 0.0f means the Widget Actor will stay active forever.
+	*	 LifeTime > 0.0f means the Widget Actor will be deallocated after LifeTime amount of time after
+	*     the Widget Actor has been allocated.
 	* 
 	* return Life Time
 	*/

@@ -86,10 +86,4 @@ public:
 	//FCsTdSettings_UnitTestPlan_Manager_Creep UnitTestPlan_ManagerCreep;
 
 #pragma endregion Unit Test
-
-#if WITH_EDITOR
-
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& e) override;
-
-#endif // #if WITH_EDITOR
 };

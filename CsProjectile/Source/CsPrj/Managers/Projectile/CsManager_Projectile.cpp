@@ -352,7 +352,7 @@ void UCsManager_Projectile::SetupInternal()
 	//}
 	//else
 #endif // #if !UE_BUILD_SHIPPING
-		// If any settings have been set for Manager_Creep, apply them
+		// If any settings have been set for Manager_WidgetActor, apply them
 	{
 		UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>();
 
@@ -643,6 +643,9 @@ void UCsManager_Projectile::ConstructPayloads(const FECsProjectile& Type, const 
 
 ICsPayload_Projectile* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 {
+	// TODO: Perform a new in place for all structs.
+	//		 Need to call dtor manually
+
 	FCsPayload_ProjectileInterfaceMap* PayloadInterfaceMap = new FCsPayload_ProjectileInterfaceMap();
 
 	PayloadInterfaceMaps.Add(PayloadInterfaceMap);
@@ -679,6 +682,8 @@ ICsPayload_Projectile* UCsManager_Projectile::ConstructPayload(const FECsProject
 		FCsPayload_ProjectileModifierDamageImplSlice* Slice = new FCsPayload_ProjectileModifierDamageImplSlice();
 
 		Slice->SetInterfaceMap(InterfaceMap);
+		// Add slice as ICsReset to BaseSlice so this slice gets reset call.
+		BaseSlice->AddReset(static_cast<ICsReset*>(Slice));
 		// Add to map
 		TArray<void*>& ImplMap = PayloadInterfaceImplMap.FindOrAdd(FCsPayload_ProjectileModifierDamageImplSlice::Name);
 		ImplMap.Add(Slice);

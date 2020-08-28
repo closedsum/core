@@ -18,6 +18,11 @@
       "Name": "CsUI",
       "Type": "Runtime",
       "LoadingPhase": "Default"
+    },
+    {
+      "Name": "CsUIEditor",
+      "Type": "Editor",
+      "LoadingPhase": "Default"
     }
   ],
   "Plugins": [

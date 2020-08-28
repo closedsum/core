@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "GraphEditor/EnumStruct/SCsGraphPin_ECsWidgetActorClass.h"
+#include "GraphEditor/EnumStruct/WidgetActor/SCsGraphPin_ECsWidgetActorClass.h"
 #include "CsUIEditor.h"
 
 #include "Managers/WidgetActor/CsTypes_WidgetActor.h"

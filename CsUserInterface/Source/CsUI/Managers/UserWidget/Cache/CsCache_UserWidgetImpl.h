@@ -1,7 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Cache/CsPooledObjectCache.h"
-#include "Managers/WidgetActor/Cache/CsCache_WidgetActor.h"
-#include "Managers/WidgetActor/CsTypes_WidgetActor.h"
+#include "Managers/UserWidget/Cache/CsCache_UserWidget.h"
 #include "Containers/CsWeakObjectPtr.h"
 
 #pragma once
@@ -9,16 +8,15 @@
 class UObject;
 struct FCsInterfaceMap;
 struct ICsPayload_PooledObject;
-class UCsWidgetComponent;
 
 /**
 * Basic implementation for Cache implementing the interfaces:
-* ICsPooledObjectCache and ICsCache_WidgetActor. This only supports 
+* ICsPooledObjectCache and ICsCache_UserWidget. This only supports 
 * a bare minimum functionality. For custom functionality create
 * another implementation
 */
-struct CSUI_API FCsCache_WidgetActorImpl final : public ICsPooledObjectCache,
-												 public ICsCache_WidgetActor
+struct CSUI_API FCsCache_UserWidgetImpl final : public ICsPooledObjectCache,
+												  public ICsCache_UserWidget
 {
 public:
 
@@ -56,19 +54,13 @@ private:
 
 	FCsDeltaTime ElapsedTime;
 
-	// ICsCache_WidgetActor
-
-	UCsWidgetComponent* WidgetComponent;
-
-	ECsWidgetActorDeallocateMethod DeallocateMethod;
-
-	float QueuedLifeTime;
+	// ICsProjectileCache
 
 public:
 
-	FCsCache_WidgetActorImpl();
+	FCsCache_UserWidgetImpl();
 
-	~FCsCache_WidgetActorImpl();
+	~FCsCache_UserWidgetImpl();
 
 // ICsGetInterfaceMap
 #pragma region
@@ -166,23 +158,11 @@ public:
 		LifeTime = InLifeTime;
 	}
 
-// ICsCache_WidgetActor
+// ICsCache_UserWidget
 #pragma region
 public:
 
-	FORCEINLINE UCsWidgetComponent* GetWidgetComponent() const
-	{
-		return WidgetComponent;
-	}
-
-#pragma endregion ICsCache_WidgetActor
-
-public:
-
-	FORCEINLINE void SetWidgetComponent(UCsWidgetComponent* InWidgetComponent)
-	{
-		WidgetComponent = InWidgetComponent;
-	}
+#pragma endregion ICsCache_UserWidget
 
 public:
 

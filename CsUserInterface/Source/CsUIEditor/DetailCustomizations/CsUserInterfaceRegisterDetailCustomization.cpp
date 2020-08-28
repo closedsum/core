@@ -8,8 +8,13 @@
 // DetailCustomizations
 	// EnumStruct
 		// WidgetActpr
-#include "DetailCustomizations/EnumStruct/ECsWidgetActorCustomization.h"
-#include "DetailCustomizations/EnumStruct/ECsWidgetActorClassCustomization.h"
+#include "DetailCustomizations/EnumStruct/WidgetActor/ECsWidgetActorCustomization.h"
+#include "DetailCustomizations/EnumStruct/WidgetActor/ECsWidgetActorClassCustomization.h"
+		// UserWidget
+#include "DetailCustomizations/EnumStruct/UserWidget/ECsUserWidgetCustomization.h"
+#include "DetailCustomizations/EnumStruct/UserWidget/ECsUserWidgetClassCustomization.h"
+#include "DetailCustomizations/EnumStruct/UserWidget/ECsUserWidgetPooledCustomization.h"
+#include "DetailCustomizations/EnumStruct/UserWidget/ECsUserWidgetPooledClassCustomization.h"
 
 void FCsUserInterfaceRegisterDetailCustomization::Register()
 {
@@ -17,9 +22,23 @@ void FCsUserInterfaceRegisterDetailCustomization::Register()
 
 	// EnumStruct
 	{
-		// ECsWidgetActor
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWidgetActor", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWidgetActorCustomization::MakeInstance));
-		// ECsWidgetActorCLass
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWidgetActorClass", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWidgetActorClassCustomization::MakeInstance));
+		// WidgetActor
+		{
+			// ECsWidgetActor
+			PropertyModule.RegisterCustomPropertyTypeLayout("ECsWidgetActor", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWidgetActorCustomization::MakeInstance));
+			// ECsWidgetActorCLass
+			PropertyModule.RegisterCustomPropertyTypeLayout("ECsWidgetActorClass", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWidgetActorClassCustomization::MakeInstance));
+		}
+		// UserWidget
+		{
+			// ECsUserWidget
+			PropertyModule.RegisterCustomPropertyTypeLayout("ECsUserWidget", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsUserWidgetCustomization::MakeInstance));
+			// ECsUserWidgetCLass
+			PropertyModule.RegisterCustomPropertyTypeLayout("ECsUserWidgetClass", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsUserWidgetClassCustomization::MakeInstance));
+			// ECsUserWidgetPooled
+			PropertyModule.RegisterCustomPropertyTypeLayout("ECsUserWidgetPooled", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsUserWidgetPooledCustomization::MakeInstance));
+			// ECsUserWidgetPooledCLass
+			PropertyModule.RegisterCustomPropertyTypeLayout("ECsUserWidgetPooledClass", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsUserWidgetPooledClassCustomization::MakeInstance));
+		}
 	}
 }

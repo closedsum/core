@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "DetailCustomizations/EnumStruct/ECsWidgetActorClassCustomization.h"
+#include "DetailCustomizations/EnumStruct/WidgetActor/ECsWidgetActorClassCustomization.h"
 
 // Types
 #include "Managers/WidgetActor/CsTypes_WidgetActor.h"

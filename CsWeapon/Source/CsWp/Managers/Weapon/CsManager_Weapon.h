@@ -219,7 +219,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsWeaponPooled*>& GetOnConstructObject_Event(const FECsWeapon& Type);
+	TMulticastDelegate<void, const FCsWeaponPooled*, const FCsManagerPooledObjectConstructParams&>& GetOnConstructObject_Event(const FECsWeapon& Type);
 
 		// Add
 #pragma region

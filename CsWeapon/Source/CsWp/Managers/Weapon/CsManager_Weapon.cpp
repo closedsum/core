@@ -449,7 +449,7 @@ FCsWeaponPooled* UCsManager_Weapon::ConstructContainer(const FECsWeapon& Type)
 	return new FCsWeaponPooled();
 }
 
-TMulticastDelegate<void, const FCsWeaponPooled*>& UCsManager_Weapon::GetOnConstructObject_Event(const FECsWeapon& Type)
+TMulticastDelegate<void, const FCsWeaponPooled*, const FCsManagerPooledObjectConstructParams&>& UCsManager_Weapon::GetOnConstructObject_Event(const FECsWeapon& Type)
 {
 	return Internal.GetOnConstructObject_Event(Type);
 }

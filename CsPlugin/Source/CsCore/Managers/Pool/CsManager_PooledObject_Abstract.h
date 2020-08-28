@@ -402,20 +402,20 @@ public:
 	*
 	* return
 	*/
-	InterfaceContainerType* ConstructObject()
+	InterfaceContainerType* ConstructObject(const FCsManagerPooledObjectConstructParams& Params)
 	{
-		UClass* Class = ConstructParams.Class;
+		UClass* Class = Params.Class;
 
 		checkf(Class, TEXT("%s:ConstructObject: No Class set."), *Name);
 
 		UObject* Object = nullptr;
 
 		// Actor
-		if (ConstructParams.ConstructionType == ECsPooledObjectConstruction::Actor)
+		if (Params.ConstructionType == ECsPooledObjectConstruction::Actor)
 		{
-			AActor* Actor = GetCurrentWorld()->SpawnActor<AActor>(Class, ConstructParams.ConstructionInfo);
+			AActor* Actor = GetCurrentWorld()->SpawnActor<AActor>(Class, Params.ConstructionInfo);
 
-			if (!ConstructParams.bReplicates)
+			if (!Params.bReplicates)
 			{
 				Actor->SetReplicates(false);
 				Actor->SetRole(ROLE_None);
@@ -428,9 +428,9 @@ public:
 		}
 		// Object
 		else
-		if (ConstructParams.ConstructionType == ECsPooledObjectConstruction::Object)
+		if (Params.ConstructionType == ECsPooledObjectConstruction::Object)
 		{
-			Object = NewObject<UObject>(ConstructParams.Outer, Class);
+			Object = NewObject<UObject>(Params.Outer, Class);
 
 			checkf(Object, TEXT("%s:ContructObject: Object is NULL. Class: %s. Object did NOT get constructed."), *Name, *(Class->GetName()));
 		}
@@ -476,9 +476,9 @@ public:
 
 			if (O->Implements_ICsOnConstructObject())
 			{
-				O->OnConstructObject();
+				O->OnConstructObject(Params);
 			}
-			OnConstructObject_Event.Broadcast(O);
+			OnConstructObject_Event.Broadcast(O, Params);
 
 			return O;
 		}
@@ -491,14 +491,14 @@ public:
 	*
 	* return Object
 	*/
-	TBaseDelegate<InterfaceContainerType* /*Object*/> ConstructObject_Impl;
+	TBaseDelegate<InterfaceContainerType* /*Object*/, const FCsManagerPooledObjectConstructParams& /*Params*/> ConstructObject_Impl;
 
 	/**
 	*
 	*
 	* @param Object
 	*/
-	TMulticastDelegate<void, const InterfaceContainerType* /*Object*/> OnConstructObject_Event;
+	TMulticastDelegate<void, const InterfaceContainerType* /*Object*/, const FCsManagerPooledObjectConstructParams& /*Params*/> OnConstructObject_Event;
 
 	/**
 	* Delete (or mark for deconstruction) a pooled object.
@@ -575,7 +575,7 @@ public:
 
 		for (int32 I = 0; I < Size; ++I)
 		{
-			InterfaceContainerType* O = ConstructObject_Impl.Execute();
+			InterfaceContainerType* O = ConstructObject_Impl.Execute(ConstructParams);
 
 			checkf(O, TEXT("%s::CreatePool: Failed to ConstructObject of type: InterfaceContainerType."), *Name);
 

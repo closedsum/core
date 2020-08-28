@@ -196,7 +196,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsFXActorPooled*>& GetOnConstructObject_Event(const FECsFX& Type);
+	TMulticastDelegate<void, const FCsFXActorPooled*, const FCsManagerPooledObjectConstructParams&>& GetOnConstructObject_Event(const FECsFX& Type);
 
 	/**
 	*

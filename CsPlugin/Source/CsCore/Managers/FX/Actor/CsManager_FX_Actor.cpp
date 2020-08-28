@@ -426,7 +426,7 @@ FCsFXActorPooled* UCsManager_FX_Actor::ConstructContainer(const FECsFX& Type)
 	return new FCsFXActorPooled();
 }
 
-TMulticastDelegate<void, const FCsFXActorPooled*>& UCsManager_FX_Actor::GetOnConstructObject_Event(const FECsFX& Type)
+TMulticastDelegate<void, const FCsFXActorPooled*, const FCsManagerPooledObjectConstructParams&>& UCsManager_FX_Actor::GetOnConstructObject_Event(const FECsFX& Type)
 {
 	return Internal.GetOnConstructObject_Event(Type);
 }

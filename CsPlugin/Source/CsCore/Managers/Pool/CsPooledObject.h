@@ -4,6 +4,7 @@
 #include "UObject/Interface.h"
 #include "Containers/CsInterfaceObject.h"
 #include "Managers/Time/CsTypes_Time.h"
+#include "Managers/Pool/CsTypes_Manager_PooledObject.h"
 #include "CsPooledObject.generated.h"
 
 UINTERFACE(Blueprintable)
@@ -146,8 +147,9 @@ public:
 	*  The object implements a script interface of type: ICsOnConstructObject.
 	*
 	* @param Object		An object of type: ICsOnConstructObject.
+	* @para Params
 	*/
-	DECLARE_DELEGATE_OneParam(FScript_OnConstructObject, UObject* /*Object*/);
+	DECLARE_DELEGATE_TwoParams(FScript_OnConstructObject, UObject* /*Object*/, const FCsManagerPooledObjectConstructParams& /*Params*/);
 
 	/** Delegate to execute after an object has been constructed.
 		 The object implements a script interface of type: ICsOnConstructObject. */
@@ -254,7 +256,7 @@ public:
 #pragma region
 public:
 
-	void OnConstructObject();
+	void OnConstructObject(const FCsManagerPooledObjectConstructParams& Params);
 
 #pragma endregion ICsOnConstructObject
 

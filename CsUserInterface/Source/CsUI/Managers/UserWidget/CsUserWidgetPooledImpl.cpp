@@ -54,7 +54,7 @@ void UCsUserWidgetPooledImpl::BeginDestroy()
 // ICsOnConstructObject
 #pragma region
 
-void UCsUserWidgetPooledImpl::OnConstructObject()
+void UCsUserWidgetPooledImpl::OnConstructObject(const FCsManagerPooledObjectConstructParams& Params)
 {
 	ConstructCache();
 

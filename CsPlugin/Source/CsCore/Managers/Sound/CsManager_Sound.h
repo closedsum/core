@@ -196,7 +196,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsSoundPooled*>& GetOnConstructObject_Event(const FECsSound& Type);
+	TMulticastDelegate<void, const FCsSoundPooled*, const FCsManagerPooledObjectConstructParams&>& GetOnConstructObject_Event(const FECsSound& Type);
 
 	/**
 	*

@@ -225,7 +225,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsProjectilePooled*>& GetOnConstructObject_Event(const FECsProjectile& Type);
+	TMulticastDelegate<void, const FCsProjectilePooled*, const FCsManagerPooledObjectConstructParams&>& GetOnConstructObject_Event(const FECsProjectile& Type);
 
 		// Add
 #pragma region

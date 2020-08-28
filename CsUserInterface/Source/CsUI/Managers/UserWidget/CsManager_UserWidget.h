@@ -196,7 +196,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsUserWidgetPooled*>& GetOnConstructObject_Event(const FECsUserWidgetPooled& Type);
+	TMulticastDelegate<void, const FCsUserWidgetPooled*, const FCsManagerPooledObjectConstructParams&>& GetOnConstructObject_Event(const FECsUserWidgetPooled& Type);
 
 	/**
 	*

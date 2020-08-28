@@ -7,6 +7,7 @@
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/FX/Actor/CsFXActorPooled.h"
+
 #include "CsFXActorPooledImpl.generated.h"
 
 struct FCsFXActorPooled;
@@ -35,7 +36,7 @@ public:
 #pragma region
 public:
 
-	void OnConstructObject();
+	void OnConstructObject(const FCsManagerPooledObjectConstructParams& Params);
 
 #pragma endregion ICsOnConstructObject
 

@@ -371,11 +371,11 @@ FCsUserWidgetPooled* UCsManager_UserWidget::ConstructContainer(const FECsUserWid
 	return new FCsUserWidgetPooled();
 }
 
-TMulticastDelegate<void, const FCsUserWidgetPooled*>& UCsManager_UserWidget::GetOnConstructObject_Event(const FECsUserWidgetPooled& Type)
+TMulticastDelegate<void, const FCsUserWidgetPooled*, const FCsManagerPooledObjectConstructParams&>& UCsManager_UserWidget::GetOnConstructObject_Event(const FECsUserWidgetPooled& Type)
 {
 	return Internal.GetOnConstructObject_Event(Type);
 }
-
+ 
 		// Add
 #pragma region
 

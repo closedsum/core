@@ -485,7 +485,7 @@ FCsProjectilePooled* UCsManager_Projectile::ConstructContainer(const FECsProject
 	return new FCsProjectilePooled();
 }
 
-TMulticastDelegate<void, const FCsProjectilePooled*>& UCsManager_Projectile::GetOnConstructObject_Event(const FECsProjectile& Type)
+TMulticastDelegate<void, const FCsProjectilePooled*, const FCsManagerPooledObjectConstructParams&>& UCsManager_Projectile::GetOnConstructObject_Event(const FECsProjectile& Type)
 {
 	return Internal.GetOnConstructObject_Event(Type);
 }

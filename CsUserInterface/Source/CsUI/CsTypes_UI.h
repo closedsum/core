@@ -1,4 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+#include "Engine/DataTable.h"
+
 #include "CsTypes_UI.generated.h"
 #pragma once
 
@@ -9,7 +11,7 @@ class UUserWidget;
 class UClass;
 
 USTRUCT(BlueprintType)
-struct CSUI_API FCsUserWidget
+struct CSUI_API FCsUserWidget : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 

@@ -11,7 +11,8 @@
 #pragma region
 
 /**
-* Enum for Widget Actor types
+* Enum for Widget Actor types, objects that implement the interface:
+* ICsWidgetActor
 */
 USTRUCT(BlueprintType)
 struct CSUI_API FECsWidgetActor : public FECsEnum_uint8
@@ -42,6 +43,10 @@ namespace NCsWidgetActor
 // WidgetActorClass
 #pragma region
 
+/**
+* Enum for Widget Actor class types, classes that implement the interface:
+* ICsWidgetActor
+*/
 USTRUCT(BlueprintType)
 struct CSUI_API FECsWidgetActorClass : public FECsEnum_uint8
 {
@@ -110,3 +115,55 @@ namespace NCsWidgetActorDeallocateMethod
 }
 
 #pragma endregion WidgetActorDeallocateMethod
+
+// FCsWidgetActorPtr
+#pragma region
+
+class UObject;
+class UClass;
+
+USTRUCT(BlueprintType)
+struct CSUI_API FCsWidgetActorPtr : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsWidgetActor"))
+	TSoftClassPtr<UObject> Widget;
+
+	UPROPERTY()
+	int32 Widget_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UObject* Widget_Internal;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UClass* Widget_Class;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	TSubclassOf<UObject> Widget_SubclassOf;
+
+	FCsWidgetActorPtr() :
+		Widget(nullptr),
+		Widget_LoadFlags(0),
+		Widget_Internal(nullptr),
+		Widget_Class(nullptr),
+		Widget_SubclassOf(nullptr)
+	{
+	}
+
+	FORCEINLINE UObject* Get() const { return Widget_Internal; }
+	
+	template<typename T>
+	FORCEINLINE T* Get() const { return Cast<T>(Get()); }
+
+	FORCEINLINE UClass* GetClass() const { return Widget_Class; }
+
+	template<typename T>
+	FORCEINLINE T* GetClass() const { return Cast<T>(GetClass()); }
+
+	FORCEINLINE TSubclassOf<UObject> GetSubclassOf() const { return Widget_SubclassOf; }
+};
+
+#pragma endregion FCsWidgetActorPtr

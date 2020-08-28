@@ -433,7 +433,7 @@ FCsWidgetActorPooled* UCsManager_WidgetActor::ConstructContainer(const FECsWidge
 	return new FCsWidgetActorPooled();
 }
 
-TMulticastDelegate<void, const FCsWidgetActorPooled*>& UCsManager_WidgetActor::GetOnConstructObject_Event(const FECsWidgetActor& Type)
+TMulticastDelegate<void, const FCsWidgetActorPooled*, const FCsManagerPooledObjectConstructParams&>& UCsManager_WidgetActor::GetOnConstructObject_Event(const FECsWidgetActor& Type)
 {
 	return Internal.GetOnConstructObject_Event(Type);
 }

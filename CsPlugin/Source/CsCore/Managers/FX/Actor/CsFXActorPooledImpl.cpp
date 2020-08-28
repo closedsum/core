@@ -55,10 +55,10 @@ void UCsFXActorPooledImpl::BeginDestroy()
 // ICsOnConstructObject
 #pragma region
 
-void UCsFXActorPooledImpl::OnConstructObject()
+void UCsFXActorPooledImpl::OnConstructObject(const FCsManagerPooledObjectConstructParams& Params)
 {
 	ConstructCache();
-
+	
 	UObject* MyOuter = GetOuter();
 
 	checkf(MyOuter, TEXT("UCsFXActorPooledImpl::OnConstructObject: Outer is NULL. No Outer set for %s."), *(GetName()));
@@ -71,9 +71,9 @@ void UCsFXActorPooledImpl::OnConstructObject()
 
 	checkf(World, TEXT("UCsFXActorPooledImpl::OnConstructObject: World is NULL. No World associated with Manager_FX_Actor."));
 
-	FActorSpawnParameters Params;
+	FActorSpawnParameters SpawnParams;
 
-	FX = World->SpawnActor<ANiagaraActor>(ANiagaraActor::StaticClass(), Params);
+	FX = World->SpawnActor<ANiagaraActor>(ANiagaraActor::StaticClass(), SpawnParams);
 
 	checkf(FX, TEXT("UCsFXActorPooledImpl::OnConstructObject: Failed to spawn FX of type: ANiagaraActor."));
 }

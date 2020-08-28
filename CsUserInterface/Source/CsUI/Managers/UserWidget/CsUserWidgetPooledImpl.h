@@ -7,6 +7,7 @@
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/UserWidget/CsUserWidgetPooled.h"
+
 #include "CsUserWidgetPooledImpl.generated.h"
 
 struct ICsPooledObjectCache;
@@ -34,7 +35,7 @@ public:
 #pragma region
 public:
 
-	void OnConstructObject();
+	void OnConstructObject(const FCsManagerPooledObjectConstructParams& Params);
 
 #pragma endregion ICsOnConstructObject
 

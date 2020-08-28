@@ -2,6 +2,8 @@
 #pragma once
 
 #include "UObject/Interface.h"
+#include "Managers/Pool/CsTypes_Manager_PooledObject.h"
+
 #include "CsOnConstructObject.generated.h"
 
 UINTERFACE(Blueprintable)
@@ -16,5 +18,5 @@ class CSCORE_API ICsOnConstructObject
 
 public:
 
-	virtual void OnConstructObject() = 0;
+	virtual void OnConstructObject(const FCsManagerPooledObjectConstructParams& Params) = 0;
 };

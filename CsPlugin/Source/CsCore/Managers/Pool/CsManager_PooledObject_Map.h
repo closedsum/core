@@ -273,13 +273,13 @@ protected:
 	* @param Type
 	* return		
 	*/
-	InterfaceContainerType* ConstructObject(const KeyType& Type)
+	InterfaceContainerType* ConstructObject(const KeyType& Type, const FCsManagerPooledObjectConstructParams& Params)
 	{
 		checkf(IsValidKey(Type), TEXT("%s::ConstructObject: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
 
 		CurrentConstructObjectType = Type;
 
-		return Pools[Type]->ConstructObject();
+		return Pools[Type]->ConstructObject(Params);
 	}
 
 public:
@@ -290,7 +290,7 @@ public:
 	* @param Type
 	* return		Event for OnConstructObject for Type.
 	*/
-	FORCEINLINE TMulticastDelegate<void, const InterfaceContainerType*>& GetOnConstructObject_Event(const KeyType& Type)
+	FORCEINLINE TMulticastDelegate<void, const InterfaceContainerType*, const FCsManagerPooledObjectConstructParams&>& GetOnConstructObject_Event(const KeyType& Type)
 	{
 		checkf(IsValidKey(Type), TEXT("%s::GetOnConstructObject_Event: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
 
@@ -394,13 +394,13 @@ public:
 	* @param Type
 	* @param Object
 	*/
-	TMulticastDelegate<void, const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/> OnConstructObject_Event;
+	TMulticastDelegate<void, const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/, const FCsManagerPooledObjectConstructParams& /*Params*/> OnConstructObject_Event;
 
 protected:
 
-	void OnConstructObject(const InterfaceContainerType* Object)
+	void OnConstructObject(const InterfaceContainerType* Object, const FCsManagerPooledObjectConstructParams& Params)
 	{
-		OnConstructObject_Event.Broadcast(CurrentCreatePoolType, Object);
+		OnConstructObject_Event.Broadcast(CurrentCreatePoolType, Object, Params);
 	}
 
 public:

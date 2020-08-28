@@ -427,7 +427,7 @@ FCsSoundPooled* UCsManager_Sound::ConstructContainer(const FECsSound& Type)
 	return new FCsSoundPooled();
 }
 
-TMulticastDelegate<void, const FCsSoundPooled*>& UCsManager_Sound::GetOnConstructObject_Event(const FECsSound& Type)
+TMulticastDelegate<void, const FCsSoundPooled*, const FCsManagerPooledObjectConstructParams&>& UCsManager_Sound::GetOnConstructObject_Event(const FECsSound& Type)
 {
 	return Internal.GetOnConstructObject_Event(Type);
 }

@@ -134,12 +134,12 @@ void FCsPooledObject::Update(const FCsDeltaTime& DeltaTime)
 // ICsOnConstructObject
 #pragma region
 
-void FCsPooledObject::OnConstructObject()
+void FCsPooledObject::OnConstructObject(const FCsManagerPooledObjectConstructParams& Params)
 {
 	if (bScriptOnConstructObject)
-		Script_OnConstructObject_Impl.Execute(Object);
+		Script_OnConstructObject_Impl.Execute(Object, Params);
 	else
-		_OnConstructObject->OnConstructObject();
+		_OnConstructObject->OnConstructObject(Params);
 }
 
 #pragma endregion ICsOnConstructObject

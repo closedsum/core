@@ -20,6 +20,10 @@ public:
 
 	UClass* Class;
 
+	/** Pass through "data" / classes. This is mostly used for 
+	    objects that are used as containers for other objects / classes. */
+	TArray<UClass*> OtherClasses;
+
 	ECsPooledObjectConstruction ConstructionType;
 
 	FActorSpawnParameters ConstructionInfo;

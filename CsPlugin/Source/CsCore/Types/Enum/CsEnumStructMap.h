@@ -284,8 +284,6 @@ public:
 		return MAX;
 	}
 	
-#if WITH_EDITOR
-
 	void ClearUserDefinedEnums()
 	{
 		const int32 StartSize = Enums.Num();
@@ -326,8 +324,6 @@ public:
 		UserDefinedEnums.Reset();
 		UserDefinedNameMap.Reset();
 	}
-
-#endif // #if WITH_EDITOR
 };
 
 #define CS_ENUM_STRUCT_MAP_BODY(EnumMap, EnumStruct, EnumType) \

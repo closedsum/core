@@ -28,10 +28,15 @@ struct CSUI_API EMCsUserWidget final : public TCsEnumStructMap<FECsUserWidget, u
 };
 
 class UObject;
+struct FCsUIDataRootSet;
 
 namespace NCsUserWidget
 {
 	typedef FECsUserWidget Type;
+
+	CSUI_API void FromEnumSettings(const FString& Context);
+
+	CSUI_API void FromDataTable(const FString& Context, UObject* ContextRoot);
 
 	CSUI_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
@@ -63,6 +68,10 @@ struct CSUI_API EMCsUserWidgetClass : public TCsEnumStructMap<FECsUserWidgetClas
 namespace NCsUserWidgetClass
 {
 	typedef FECsUserWidgetClass Type;
+
+	CSUI_API void FromEnumSettings(const FString& Context);
+
+	CSUI_API void FromDataTable(const FString& Context, UObject* ContextRoot);
 
 	CSUI_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
@@ -97,6 +106,10 @@ namespace NCsUserWidgetPooled
 {
 	typedef FECsUserWidgetPooled Type;
 
+	CSUI_API void FromEnumSettings(const FString& Context);
+
+	CSUI_API void FromDataTable(const FString& Context, UObject* ContextRoot);
+
 	CSUI_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
 
@@ -127,6 +140,10 @@ struct CSUI_API EMCsUserWidgetPooledClass : public TCsEnumStructMap<FECsUserWidg
 namespace NCsUserWidgetPooledClass
 {
 	typedef FECsUserWidgetPooledClass Type;
+
+	CSUI_API void FromEnumSettings(const FString& Context);
+
+	CSUI_API void FromDataTable(const FString& Context, UObject* ContextRoot);
 
 	CSUI_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }

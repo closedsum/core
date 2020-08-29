@@ -1,4 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+
+// Settings
+#include "Settings/CsDeveloperSettings.h"
+// Managers
+#include "Managers/Data/CsManager_Data.h"
+// Game
+#include "Engine/GameInstance.h"
+
 #pragma once
 
 class UObject;
@@ -24,16 +32,12 @@ public:
 	* @param ContextRoot
 	* return
 	*/
-	template<typename DataRootSetType, typename GetDataRootSetType, typename ModuleSettingsType>
+	template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType&(GetDataRootSetType::*GetDataRootSetFn)() const>
 	static const DataRootSetType* GetDataRootSet(const FString& Context, UObject* ContextRoot)
 	{
 		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
 
 		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
-		ModuleSettingsType* ModuleSettings = GetMutableDefault<ModuleSettingsType>();
-
-		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: ModuleSettingsType."), *Context);
 
 		// Get DataRootSet
 		UObject* DataRootSetImpl = nullptr;
@@ -59,7 +63,7 @@ public:
 		if (!GetDataRootSet)
 			return nullptr;
 
-		const DataRootSetType& DataRootSet = GetDataRootSet->GetCsPrjDataRootSet();
+		const DataRootSetType& DataRootSet = (GetDataRootSet->*GetDataRootSetFn)();
 
 		return &DataRootSet;
 	}

@@ -31,6 +31,10 @@ namespace NCsWeapon
 {
 	typedef FECsWeapon Type;
 
+	CSWP_API void FromEnumSettings(const FString& Context);
+
+	CSWP_API void FromDataTable(const FString& Context, UObject* ContextRoot);
+
 	CSWP_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
 
@@ -60,6 +64,10 @@ namespace NCsWeaponClass
 {
 	typedef FECsWeaponClass Type;
 
+	CSWP_API void FromEnumSettings(const FString& Context);
+
+	CSWP_API void FromDataTable(const FString& Context, UObject* ContextRoot);
+
 	CSWP_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
 
@@ -86,6 +94,9 @@ struct CSWP_API EMCsWeaponState : public TCsEnumStructMap<FECsWeaponState, uint8
 namespace NCsWeaponState
 {
 	typedef FECsWeaponState Type;
+
+
+	CSWP_API void FromEnumSettings(const FString& Context);
 
 	CSWP_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }

@@ -66,15 +66,11 @@ namespace NCsProjectile
 {
 	typedef FECsProjectile Type;
 
-	CSPRJ_API const FCsPrjDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot);
-
 	CSPRJ_API void FromEnumSettings(const FString& Context);
 
 	CSPRJ_API void FromDataTable(const FString& Context, UObject* ContextRoot);
 
 	CSPRJ_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
-
-	CSPRJ_API void Log(const FString& Str);
 }
 
 #pragma endregion Projectile
@@ -101,15 +97,11 @@ namespace NCsProjectileClass
 {
 	typedef FECsProjectileClass Type;
 
-	CSPRJ_API const FCsPrjDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot);
-
 	CSPRJ_API void FromEnumSettings(const FString& Context);
 
 	CSPRJ_API void FromDataTable(const FString& Context, UObject* ContextRoot);
 
 	CSPRJ_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
-
-	CSPRJ_API void Log(const FString& Str);
 }
 
 #pragma endregion Projectile

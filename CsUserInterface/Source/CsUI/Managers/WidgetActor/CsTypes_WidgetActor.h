@@ -30,10 +30,17 @@ struct CSUI_API EMCsWidgetActor final : public TCsEnumStructMap<FECsWidgetActor,
 };
 
 class UObject;
+struct FCsUIDataRootSet;
 
 namespace NCsWidgetActor
 {
 	typedef FECsWidgetActor Type;
+
+	CSUI_API const FCsUIDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot);
+
+	CSUI_API void FromEnumSettings(const FString& Context);
+
+	CSUI_API void FromDataTable(const FString& Context, UObject* ContextRoot);
 
 	CSUI_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
@@ -65,6 +72,12 @@ struct CSUI_API EMCsWidgetActorClass : public TCsEnumStructMap<FECsWidgetActorCl
 namespace NCsWidgetActorClass
 {
 	typedef FECsWidgetActorClass Type;
+
+	CSUI_API const FCsUIDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot);
+
+	CSUI_API void FromEnumSettings(const FString& Context);
+
+	CSUI_API void FromDataTable(const FString& Context, UObject* ContextRoot);
 
 	CSUI_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }

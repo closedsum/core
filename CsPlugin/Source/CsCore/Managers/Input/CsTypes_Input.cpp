@@ -7,6 +7,9 @@
 #include "GameFramework/InputSettings.h"
 // Input
 #include "Managers/Input/CsInputFrame.h"
+// Utility
+#include "Utility/CsLog.h"
+#include "Utility/CsPopulateEnumMapFromSettings.h"
 
 // InputDevice
 #pragma region
@@ -85,6 +88,11 @@ namespace NCsInputValue
 
 namespace NCsInputActionMap
 {
+	namespace Str
+	{
+		const FString InputActionMap = TEXT("InputActionMap");
+	}
+
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
 		if (UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>())
@@ -93,40 +101,7 @@ namespace NCsInputActionMap
 			EMCsInputActionMap::Get().ClearUserDefinedEnums();
 #endif // #if WITH_EDITOR
 
-			const TArray<FCsSettings_Enum>& Enums = Settings->GetSettingsEnum<FECsInputActionMap>();
-			const FString EnumSettingsPath		  = Settings->GetSettingsEnumPath<FECsInputActionMap>();
-
-			if (Enums.Num() > CS_EMPTY)
-			{
-				for (const FCsSettings_Enum& Enum : Enums)
-				{
-					const FString& Name		   = Enum.Name;
-					const FString& DisplayName = Enum.DisplayName;
-
-					if (Name.IsEmpty())
-					{
-						UE_LOG(LogCs, Warning, TEXT("%s: Empty Enum listed in %s."), *Context, *EnumSettingsPath);
-						return;
-					}
-
-					checkf(!EMCsInputActionMap::Get().IsValidEnum(Name), TEXT("%s: InputActionMap (Name): %s already exists (declared in native)."), *Context, *Name);
-
-					if (!Enum.DisplayName.IsEmpty())
-					{
-						checkf(!EMCsInputActionMap::Get().IsValidEnumByDisplayName(DisplayName), TEXT("%s: InputActionMap (DisplayName): %s already exists (declared in native)."), *Context, *DisplayName);
-
-						EMCsInputActionMap::Get().Create(Name, DisplayName, true);
-					}
-					else
-					{
-						EMCsInputActionMap::Get().Create(Name, true);
-					}
-				}
-			}
-			else
-			{
-				UE_LOG(LogCs, Warning, TEXT("%s: Enum Setting @ %s is empty."), *Context, *EnumSettingsPath);
-			}
+			FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsDeveloperSettings, EMCsInputActionMap, FECsInputActionMap>(Context, Str::InputActionMap, &FCsLog::Warning);
 		}
 	}
 }
@@ -475,6 +450,11 @@ namespace NCsControllerHand
 
 namespace NCsGameEvent
 {
+	namespace Str
+	{
+		const FString GameEvent = TEXT("GameEvent");
+	}
+
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameEvent, Default__MousePositionXY__);
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameEvent, Default__MouseLeftButtonPressed__);
 	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameEvent, Default__MouseRightButtonPressed__);
@@ -487,40 +467,7 @@ namespace NCsGameEvent
 			EMCsGameEvent::Get().ClearUserDefinedEnums();
 #endif // #if WITH_EDITOR
 
-			const TArray<FCsSettings_Enum>& Enums = Settings->GetSettingsEnum<FECsGameEvent>();
-			const FString EnumSettingsPath		  = Settings->GetSettingsEnumPath<FECsGameEvent>();
-
-			if (Enums.Num() > CS_EMPTY)
-			{
-				for (const FCsSettings_Enum& Enum : Enums)
-				{
-					const FString& Name		   = Enum.Name;
-					const FString& DisplayName = Enum.DisplayName;
-
-					if (Name.IsEmpty())
-					{
-						UE_LOG(LogCs, Warning, TEXT("%s: Empty Enum listed in %s."), *Context, *EnumSettingsPath);
-						return;
-					}
-
-					checkf(!EMCsGameEvent::Get().IsValidEnum(Name), TEXT("%s: GameEvent (Name): %s already exists (declared in native)."), *Context, *Name);
-
-					if (!Enum.DisplayName.IsEmpty())
-					{
-						checkf(!EMCsGameEvent::Get().IsValidEnumByDisplayName(DisplayName), TEXT("%s: GameEvent (DisplayName): %s already exists (declared in native)."), *Context, *DisplayName);
-
-						EMCsGameEvent::Get().Create(Name, DisplayName, true);
-					}
-					else
-					{
-						EMCsGameEvent::Get().Create(Name, true);
-					}
-				}
-			}
-			else
-			{
-				UE_LOG(LogCs, Warning, TEXT("%s: Enum Setting @ %s is empty."), *Context, *EnumSettingsPath);
-			}
+			FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsDeveloperSettings, EMCsGameEvent, FECsGameEvent>(Context, Str::GameEvent, &FCsLog::Warning);
 		}
 	}
 }

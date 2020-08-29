@@ -7,12 +7,10 @@
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 #include "Settings/CsProjectileSettings.h"
-// Managers
-#include "Managers/Data/CsManager_Data.h"
-// Game
-#include "Engine/GameInstance.h"
 // Utility
+#include "Utility/CsPrjLog.h"
 #include "Utility/CsPopulateEnumMapFromSettings.h"
+#include "Utility/CsPrjPopulateEnumMapFromSettings.h"
 
 // ProjectileRelevance
 #pragma region
@@ -42,26 +40,21 @@ namespace NCsProjectile
 		const FString Projectile = TEXT("Projectile");
 	}
 
-	const FCsPrjDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot)
-	{
-		return FCsPopulateEnumMapFromSettings::GetDataRootSet<FCsPrjDataRootSet, ICsPrjGetDataRootSet, UCsProjectileSettings>(Context, ContextRoot);
-	}
-
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsProjectileSettings, EMCsProjectile, FECsProjectile>(Context, Str::Projectile, &Log);
+		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsProjectileSettings, EMCsProjectile, FECsProjectile>(Context, Str::Projectile, &FCsPrjLog::Warning);
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
-		const FCsPrjDataRootSet* DataRootSet = GetDataRootSet(Context, ContextRoot);
+		const FCsPrjDataRootSet* DataRootSet = FCsPrjPopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
 
 		if (!DataRootSet)
 			return;
 
 		for (const FCsProjectileSettings_DataTable_Projectiles& Projectiles : DataRootSet->Projectiles)
 		{
-			FCsPopulateEnumMapFromSettings::FromDataTable<EMCsProjectile>(Context, ContextRoot, Projectiles.Projectiles, Str::Projectile, &Log);
+			FCsPopulateEnumMapFromSettings::FromDataTable<EMCsProjectile>(Context, ContextRoot, Projectiles.Projectiles, Str::Projectile, &FCsPrjLog::Warning);
 		}
 	}
 
@@ -91,11 +84,6 @@ namespace NCsProjectile
 			FromDataTable(Context, ContextRoot);
 		}
 	}
-
-	void Log(const FString& Str)
-	{
-		UE_LOG(LogCsPrj, Warning, TEXT("%s"), *Str);
-	}
 }
 
 #pragma endregion Projectile
@@ -110,24 +98,19 @@ namespace NCsProjectileClass
 		const FString ProjectileClass = TEXT("ProjectileClass");
 	}
 
-	const FCsPrjDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot)
-	{
-		return FCsPopulateEnumMapFromSettings::GetDataRootSet<FCsPrjDataRootSet, ICsPrjGetDataRootSet, UCsProjectileSettings>(Context, ContextRoot);
-	}
-
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsProjectileSettings, EMCsProjectileClass, FECsProjectileClass>(Context, Str::ProjectileClass, &Log);
+		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsProjectileSettings, EMCsProjectileClass, FECsProjectileClass>(Context, Str::ProjectileClass, &FCsPrjLog::Warning);
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
-		const FCsPrjDataRootSet* DataRootSet = GetDataRootSet(Context, ContextRoot);
+		const FCsPrjDataRootSet* DataRootSet = FCsPrjPopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
 
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsProjectileClass>(Context, ContextRoot, DataRootSet->ProjectileClasses, Str::ProjectileClass, &Log);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsProjectileClass>(Context, ContextRoot, DataRootSet->ProjectileClasses, Str::ProjectileClass, &FCsPrjLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
@@ -155,11 +138,6 @@ namespace NCsProjectileClass
 		{
 			FromDataTable(Context, ContextRoot);
 		}
-	}
-
-	void Log(const FString& Str)
-	{
-		UE_LOG(LogCsPrj, Warning, TEXT("%s"), *Str);
 	}
 }
 

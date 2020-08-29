@@ -11,6 +11,7 @@
 #include "DetailCustomizations/EnumStruct/ECsProjectileCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsProjectileClassCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsProjectileDataCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsProjectilePayloadCustomization.h"
 
 void FCsProjectileRegisterDetailCustomization::Register()
 {
@@ -24,5 +25,7 @@ void FCsProjectileRegisterDetailCustomization::Register()
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProjectileClass", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProjectileClassCustomization::MakeInstance));
 		// ECsProjectileData
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProjectileData", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProjectileDataCustomization::MakeInstance));
+		// ECsProjectilePayload
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProjectilePayload", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProjectilePayloadCustomization::MakeInstance));
 	}
 }

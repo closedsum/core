@@ -27,6 +27,22 @@
 
 #include "CsDeveloperSettings.generated.h"
 
+// Cached
+#pragma region
+
+namespace NCsDeveloperSettings
+{
+	namespace Str
+	{
+		extern CSCORE_API const FString InputActionMap;
+		extern CSCORE_API const FString GameEvent;
+		extern CSCORE_API const FString FX;
+		extern CSCORE_API const FString Sound;
+	}
+}
+
+#pragma endregion Cached
+
 UCLASS(config = Game, defaultconfig, meta = (DisplayName = "CsCore Settings"))
 class CSCORE_API UCsDeveloperSettings : public UDeveloperSettings
 {
@@ -40,7 +56,7 @@ public:
 	const TArray<FCsSettings_Enum>& GetSettingsEnum() const;
 
 	template<typename EnumType>
-	FString GetSettingsEnumPath() const;
+	const FString& GetSettingsEnumPath() const;
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum")
 	FCsUserDefinedEnum InputAction;
@@ -84,9 +100,9 @@ public:
 	}
 
 	template<>
-	FString GetSettingsEnumPath<FECsInputActionMap>() const
+	const FString& GetSettingsEnumPath<FECsInputActionMap>() const
 	{
-		return TEXT("UCsDeveloperSettings.ECsInputActionMap");
+		return NCsDeveloperSettings::Str::InputActionMap;
 	}
 
 	// Game Event
@@ -101,9 +117,9 @@ public:
 	}
 
 	template<>
-	FString GetSettingsEnumPath<FECsGameEvent>() const
+	const FString& GetSettingsEnumPath<FECsGameEvent>() const
 	{
-		return TEXT("UCsDeveloperSettings.ECsGameEvent");
+		return NCsDeveloperSettings::Str::GameEvent;
 	}
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input")
@@ -136,9 +152,9 @@ public:
 	}
 
 	template<>
-	FString GetSettingsEnumPath<FECsFX>() const
+	const FString& GetSettingsEnumPath<FECsFX>() const
 	{
-		return TEXT("UCsDeveloperSettings.ECsFX");
+		return NCsDeveloperSettings::Str::FX;
 	}
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|FX")
@@ -171,9 +187,9 @@ public:
 	}
 
 	template<>
-	FString GetSettingsEnumPath<FECsSound>() const
+	const FString& GetSettingsEnumPath<FECsSound>() const
 	{
-		return TEXT("UCsDeveloperSettings.ECsSound");
+		return NCsDeveloperSettings::Str::Sound;
 	}
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound")

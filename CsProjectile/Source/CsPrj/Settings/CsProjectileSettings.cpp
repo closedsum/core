@@ -4,6 +4,20 @@
 
 #include "Managers/Projectile/CsProjectile.h"
 
+// Cached
+#pragma region
+
+namespace NCsProjectileSettings
+{
+	namespace Str
+	{
+		CSPRJ_API const FString Projectile = TEXT("UCsProjectileSettings.ECsProjectile");
+		CSPRJ_API const FString ProjectileClass = TEXT("UCsProjectileSettings.ECsProjectileClass");
+	}
+}
+
+#pragma endregion Cached
+
 UCsProjectileSettings::UCsProjectileSettings(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }

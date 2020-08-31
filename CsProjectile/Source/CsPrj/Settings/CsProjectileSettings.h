@@ -11,6 +11,15 @@
 // Cached
 #pragma region
 
+namespace NCsProjectileSettings
+{
+	namespace Str
+	{
+		extern CSPRJ_API const FString Projectile;
+		extern CSPRJ_API const FString ProjectileClass;
+	}
+}
+
 #pragma endregion Cached
 
 class UDataTable;
@@ -31,7 +40,7 @@ public:
 	const TArray<FCsSettings_Enum>& GetSettingsEnum() const;
 
 	template<typename EnumType>
-	FString GetSettingsEnumPath() const;
+	const FString& GetSettingsEnumPath() const;
 
 	// Projectile
 
@@ -48,9 +57,9 @@ public:
 	}
 
 	template<>
-	FString GetSettingsEnumPath<FECsProjectile>() const
+	const FString& GetSettingsEnumPath<FECsProjectile>() const
 	{
-		return TEXT("UCsProjectileSettings.ECsProjectile");
+		return NCsProjectileSettings::Str::Projectile;
 	}
 
 	// ProjectileClass
@@ -68,9 +77,9 @@ public:
 	}
 
 	template<>
-	FString GetSettingsEnumPath<FECsProjectileClass>() const
+	const FString& GetSettingsEnumPath<FECsProjectileClass>() const
 	{
-		return TEXT("UCsProjectileSettings.ECsProjectileClass");
+		return NCsProjectileSettings::Str::ProjectileClass;
 	}
 
 #pragma endregion Enum

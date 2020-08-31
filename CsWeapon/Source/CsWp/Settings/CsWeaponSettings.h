@@ -8,6 +8,21 @@
 #include "Managers/Weapon/CsSettings_Manager_Weapon.h"
 #include "CsWeaponSettings.generated.h"
 
+// Cached
+#pragma region
+
+namespace NCsWeaponSettings
+{
+	namespace Str
+	{
+		extern CSWP_API const FString Weapon;
+		extern CSWP_API const FString WeaponClass;
+		extern CSWP_API const FString WeaponState;
+	}
+}
+
+#pragma endregion Cached
+
 class UDataTable;
 
 UCLASS(config = Game, defaultconfig, meta = (DisplayName = "Cs Weapon Settings"))
@@ -25,7 +40,7 @@ public:
 	const TArray<FCsSettings_Enum>& GetSettingsEnum() const;
 
 	template<typename EnumType>
-	FString GetSettingsEnumPath() const;
+	const FString& GetSettingsEnumPath() const;
 
 	// Weapon
 
@@ -42,9 +57,9 @@ public:
 	}
 
 	template<>
-	FString GetSettingsEnumPath<FECsWeapon>() const
+	const FString& GetSettingsEnumPath<FECsWeapon>() const
 	{
-		return TEXT("UCsWeaponSettings.ECsWeapon");
+		return NCsWeaponSettings::Str::Weapon;
 	}
 
 	// WeaponClass
@@ -62,9 +77,9 @@ public:
 	}
 
 	template<>
-	FString GetSettingsEnumPath<FECsWeaponClass>() const
+	const FString& GetSettingsEnumPath<FECsWeaponClass>() const
 	{
-		return TEXT("UCsWeaponSettings.ECsWeaponClass");
+		return NCsWeaponSettings::Str::WeaponClass;
 	}
 
 	// WeaponState
@@ -79,9 +94,9 @@ public:
 	}
 
 	template<>
-	FString GetSettingsEnumPath<FECsWeaponState>() const
+	const FString& GetSettingsEnumPath<FECsWeaponState>() const
 	{
-		return TEXT("UCsWeaponSettings.ECsWeaponState");
+		return NCsWeaponSettings::Str::WeaponState;
 	}
 
 #pragma endregion Enum
@@ -106,10 +121,4 @@ public:
 	FCsWeaponSettings_ProjectileWeaponImpl ProjectileWeaponImpl;
 
 #pragma endregion Implementation
-
-#if WITH_EDITOR
-
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& e) override;
-
-#endif // #if WITH_EDITOR
 };

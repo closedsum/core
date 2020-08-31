@@ -24,6 +24,8 @@ public:
 
 	TCsManager_PooledObject_DataHandler() :
 		MyRoot(nullptr),
+		DataMap(),
+		DataTableRowByPathMap(),
 		EmulatedDataMap(),
 		EmulatedDataInterfaceMap(),
 		EmulatedDataInterfaceImplMap(),
@@ -47,6 +49,12 @@ public:
 	}
 
 protected:
+
+	// <EntryName, Data>
+	TMap<FName, InterfaceDataType*> DataMap;
+
+	// <Path, <RowName, RowPtr>>
+	TMap<FSoftObjectPath, TMap<FName, uint8*>> DataTableRowByPathMap;
 
 	/** <DataName, InterfacePtr> */
 	TMap<FName, InterfaceDataType*> EmulatedDataMap;
@@ -79,12 +87,12 @@ public:
 		// Emulated
 		if (HasEmulatedDataInterfaces())
 		{
-			CreateEmulatedDataFromDataTable(DT, DT_SoftObject);
+			CreateEmulatedDataFromDataTable(Context, DataTable, DT_SoftObject);
 		}
 		// "Normal" / Non-Emulated
 		else
 		{
-			PopulateDataMapFromDataTable(DT, DT_SoftObject);
+			PopulateDataMapFromDataTable(Context, DataTable, DT_SoftObject);
 		}
 	}
 
@@ -93,7 +101,7 @@ public:
 		return false;
 	}
 
-	virtual void CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject)
+	virtual void CreateEmulatedDataFromDataTable(const FString& Context, UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject)
 	{
 	}
 
@@ -143,7 +151,7 @@ public:
 
 				checkf(Data, TEXT("%s: Failed to get data from DataTable: %s Row: %s."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
 
-				DataType* IData = Cast<DataType>(Data);
+				InterfaceDataType* IData = Cast<InterfaceDataType>(Data);
 
 				checkf(IData, TEXT("%s: Data: %s with Class: %s does NOT implement interface: DataType."), *Context, *(Data->GetName()), *(Data->GetClass()->GetName()));
 
@@ -168,14 +176,14 @@ public:
 	}
 
 	template<typename EnumMap, typename EnumType>
-	InterfaceDataType* GetData(const FString& Context, const EnumType& Type)
+	FORCEINLINE InterfaceDataType* GetData(const FString& Context, const EnumType& Type)
 	{
 		checkf(EnumMap::Get().IsValidEnum(Type), TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar());
 
 		return GetData(Type.GetFName());
 	}
 
-	InterfaceDataType* GetDataChecked(const FString& Context, const FName& Name)
+	FORCEINLINE InterfaceDataType* GetDataChecked(const FString& Context, const FName& Name)
 	{
 		InterfaceDataType* Ptr = GetData(Context, Name);
 
@@ -185,7 +193,7 @@ public:
 	}
 
 	template<typename EnumMap, typename EnumType>
-	InterfaceDataType* GetDataChecked(const FString& Context, const EnumType& Type)
+	FORCEINLINE InterfaceDataType* GetDataChecked(const FString& Context, const EnumType& Type)
 	{
 		InterfaceDataType* Ptr = GetData<EnumMap, EnumType>(Context, Type);
 
@@ -219,7 +227,6 @@ public:
 		EmulatedDataInterfaceMap.Reset();
 
 		DataMap.Reset();
-		DataTables.Reset(DataTables.Max());
 		DataTableRowByPathMap.Reset();
 	}
 

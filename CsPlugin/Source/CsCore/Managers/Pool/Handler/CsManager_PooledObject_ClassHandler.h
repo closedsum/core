@@ -184,7 +184,7 @@ public:
 	}
 
 	template<typename EnumMap>
-	InterfacePooledContainerType* GetClassByType(const FString& Context, const EnumType& Type)
+	FORCEINLINE InterfacePooledContainerType* GetClassByType(const FString& Context, const EnumType& Type)
 	{
 		checkf(EnumMap::Get().IsValidEnum(Type), TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar());
 
@@ -192,7 +192,7 @@ public:
 	}
 
 	template<typename EnumClassMap, typename EnumClassType>
-	InterfacePooledContainerType* GetClassByClassType(const FString& Context, const EnumClassType& Type)
+	FORCEINLINE InterfacePooledContainerType* GetClassByClassType(const FString& Context, const EnumClassType& Type)
 	{
 		checkf(EnumClassMap::Get().IsValidEnum(Type), TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar());
 
@@ -200,7 +200,7 @@ public:
 	}
 
 	template<typename EnumClassMap, typename EnumClassType>
-	InterfacePooledContainerType* GetClassByClassTypeChecked(const FString& Context, const EnumClassType& Type)
+	FORCEINLINE InterfacePooledContainerType* GetClassByClassTypeChecked(const FString& Context, const EnumClassType& Type)
 	{
 		InterfacePooledContainerType* Ptr = GetClassByClassType<EnumClassMap, EnumClassType>(Context, Type);
 

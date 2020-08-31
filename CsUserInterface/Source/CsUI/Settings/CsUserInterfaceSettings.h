@@ -13,6 +13,16 @@
 // Cached
 #pragma region
 
+namespace NCsUserInterfaceSettings
+{
+	namespace Str
+	{
+		extern CSUI_API const FString WidgetActor;
+		extern CSUI_API const FString UserWidget;
+		extern CSUI_API const FString UserWidgetPooled;
+	}
+}
+
 #pragma endregion Cached
 
 class UDataTable;
@@ -32,7 +42,7 @@ public:
 	const TArray<FCsSettings_Enum>& GetSettingsEnum() const;
 
 	template<typename EnumType>
-	FString GetSettingsEnumPath() const;
+	const FString& GetSettingsEnumPath() const;
 
 #pragma endregion Enum
 
@@ -55,29 +65,9 @@ public:
 	}
 
 	template<>
-	FString GetSettingsEnumPath<FECsWidgetActor>() const
+	const FString& GetSettingsEnumPath<FECsWidgetActor>() const
 	{
-		return TEXT("UCsUserInterfaceSettings.ECsWidgetActor");
-	}
-
-	// WidgetActorClass
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|WidgetActor", meta = (DisplayName = "ECsWidgetActorClass - Populate Enum Map Method"))
-	ECsPopulateEnumMapMethod ECsWidgetActorClass_PopulateEnumMapMethod;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|WidgetActor", meta = (DisplayName = "ECsWidgetActorClass"))
-	TArray<FCsSettings_Enum> ECsWidgetActorClass;
-
-	template<>
-	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsWidgetActorClass>() const
-	{
-		return ECsWidgetActorClass;
-	}
-
-	template<>
-	FString GetSettingsEnumPath<FECsWidgetActorClass>() const
-	{
-		return TEXT("UCsUserInterfaceSettings.ECsWidgetActorClass");
+		return NCsUserInterfaceSettings::Str::WidgetActor;
 	}
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|WidgetActor")
@@ -113,29 +103,9 @@ public:
 	}
 
 	template<>
-	FString GetSettingsEnumPath<FECsUserWidget>() const
+	const FString& GetSettingsEnumPath<FECsUserWidget>() const
 	{
-		return TEXT("UCsUserInterfaceSettings.ECsUserWidget");
-	}
-
-	// UserWidgetClass
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|UserWidget", meta = (DisplayName = "ECsUserWidgetClass - Populate Enum Map Method"))
-	ECsPopulateEnumMapMethod ECsUserWidgetClass_PopulateEnumMapMethod;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|UserWidget", meta = (DisplayName = "ECsUserWidgetClass"))
-	TArray<FCsSettings_Enum> ECsUserWidgetClass;
-
-	template<>
-	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsUserWidgetClass>() const
-	{
-		return ECsUserWidgetClass;
-	}
-
-	template<>
-	FString GetSettingsEnumPath<FECsUserWidgetClass>() const
-	{
-		return TEXT("UCsUserInterfaceSettings.ECsUserWidgetClass");
+		return NCsUserInterfaceSettings::Str::UserWidget;
 	}
 
 	// UserWidgetPooled
@@ -153,29 +123,9 @@ public:
 	}
 
 	template<>
-	FString GetSettingsEnumPath<FECsUserWidgetPooled>() const
+	const FString& GetSettingsEnumPath<FECsUserWidgetPooled>() const
 	{
-		return TEXT("UCsUserInterfaceSettings.ECsUserWidgetPooled");
-	}
-
-	// UserWidgetPooledClass
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|UserWidget", meta = (DisplayName = "ECsUserWidgetPooledClass - Populate Enum Map Method"))
-	ECsPopulateEnumMapMethod ECsUserWidgetPooledClass_PopulateEnumMapMethod;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|UserWidget", meta = (DisplayName = "ECsUserWidgetPooledClass"))
-	TArray<FCsSettings_Enum> ECsUserWidgetPooledClass;
-
-	template<>
-	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsUserWidgetPooledClass>() const
-	{
-		return ECsUserWidgetPooledClass;
-	}
-
-	template<>
-	FString GetSettingsEnumPath<FECsUserWidgetPooledClass>() const
-	{
-		return TEXT("UCsUserInterfaceSettings.ECsUserWidgetPooledClass");
+		return NCsUserInterfaceSettings::Str::UserWidgetPooled;
 	}
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|UserWidget")

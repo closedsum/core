@@ -831,9 +831,10 @@ struct CSPRJ_API FCsProjectileEntry : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString DisplayName;
 
-	/** Soft Reference to a projectile of type: ICsProjectile. */
+	/** Class Type. This is used to get the actual class from a data table
+	    of projectile classes (FCsPrjDataRootSet.ProjectileClasses). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FCsProjectilePtr Class;
+	FECsProjectileClass Class;
 
 	/** Soft Reference to a data of type: ICsData_Projectile. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

@@ -7,11 +7,11 @@
 
 /**
 */
-class CSPRJ_API FCsManager_Projectile_ClassHandler : public TCsManager_PooledObject_ClassHandler<FCsProjectilePooled, FCsProjectilePtr, FECsProjectile>
+class CSPRJ_API FCsManager_Projectile_ClassHandler : public TCsManager_PooledObject_ClassHandler<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass>
 {
 private:
 
-	typedef TCsManager_PooledObject_ClassHandler<FCsProjectilePooled, FCsProjectilePtr, FECsProjectile> Super;
+	typedef TCsManager_PooledObject_ClassHandler<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass> Super;
 
 public:
 

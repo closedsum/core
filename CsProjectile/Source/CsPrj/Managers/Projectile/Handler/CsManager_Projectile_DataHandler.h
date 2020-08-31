@@ -16,4 +16,20 @@ private:
 public:
 
 	FCsManager_Projectile_DataHandler();
+
+// TCsManager_PooledObject_DataHandler Interface
+#pragma region
+protected:
+
+	virtual bool HasEmulatedDataInterfaces(const FString& Context, const int32& Index) const override;
+
+	virtual void CreateEmulatedDataFromDataTable(const FString& Context, const int32& Index, UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject) override;
+
+	virtual bool DeconstructEmulatedData(const FName& InterfaceImplName, void* Data) override;
+
+#pragma endregion TCsManager_PooledObject_DataHandler Interface
+
+protected:
+
+	const TSet<FECsProjectileData>& GetEmulatedDataInterfaces(const FString& Context, const int32& Index);
 };

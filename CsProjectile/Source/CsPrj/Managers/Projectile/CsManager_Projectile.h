@@ -44,8 +44,15 @@ public:
 class ICsGetManagerProjectile;
 class ICsData_Projectile;
 class UDataTable;
-struct FCsInterfaceMap;
 struct FCsPayload_ProjectileInterfaceMap;
+
+template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumType>
+class TCsManager_PooledObject_ClassHandler;
+
+template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
+class TCsManager_PooledObject_DataHandler;
+
+struct FCsInterfaceMap;
 struct FCsData_ProjectileInterfaceMap;
 
 UCLASS()
@@ -685,15 +692,11 @@ public:
 #pragma region
 protected:
 
-	// <Projectile (type), Projectile Class>
-	TMap<FName, FCsProjectile> ProjectileClassByTypeMap;
+	TCsManager_PooledObject_ClassHandler<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass>* ClassHandler;
 
-	void GetProjectileClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject);
+	virtual void ConstructClassHandler();
 
-	void PopulateClassMapFromSettings();
-
-	// <Projectile Class (type), Projectile Class>
-	TMap<FName, FCsProjectile> ProjectileClassByClassTypeMap;
+	void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject);
 
 public:
 
@@ -704,7 +707,7 @@ public:
 	* @param Type	Type of the projectile.
 	* return		Projectile container (Interface (ICsProjectile), UObject, and / or UClass).
 	*/
-	FCsProjectile* GetProjectile(const FECsProjectile& Type);
+	FCsProjectilePooled* GetProjectile(const FECsProjectile& Type);
 
 	/**
 	* Get the Projectile container (Interface (ICsProjectile), UObject, and / or UClass) associated
@@ -713,7 +716,7 @@ public:
 	* @param Type	Class type of the projectile.
 	* return		Projectile container (Interface (ICsProjectile), UObject, and / or UClass).
 	*/
-	FCsProjectile* GetProjectile(const FECsProjectileClass& Type);
+	FCsProjectilePooled* GetProjectile(const FECsProjectileClass& Type);
 
 	/**
 	* Get the Projectile container (Interface (ICsProjectile), UObject, and / or UClass) associated
@@ -724,11 +727,7 @@ public:
 	* @param Type		Class type of the projectile.
 	* return			Projectile container (Interface (ICsProjectile), UObject, and / or UClass).
 	*/
-	FCsProjectile* GetProjectileChecked(const FString& Context, const FECsProjectileClass& Type);
-
-protected:
-
-	void ResetClassContainers();
+	FCsProjectilePooled* GetProjectileChecked(const FString& Context, const FECsProjectileClass& Type);
 
 #pragma endregion Class
 
@@ -736,82 +735,11 @@ protected:
 #pragma region
 protected:
 
-	/** <DataName, InterfacePtr> */
-	TMap<FName, ICsData_Projectile*> EmulatedDataMap;
+	TCsManager_PooledObject_DataHandler<ICsData_Projectile, FCsData_ProjectilePtr, FCsData_ProjectileInterfaceMap>* DataHandler;
 
-	/** <DataName, InterfaceMapPtr> */
-	TMap<FName, FCsData_ProjectileInterfaceMap*> EmulatedDataInterfaceMap;
+	virtual void ConstructDataHandler();
 
-	/** <DataName, <InterfaceImplName, InterfaceImplPtr>> */
-	TMap<FName, TMap<FName, void*>> EmulatedDataInterfaceImplMap;
-
-public:
-
-	virtual void PopulateDataMapFromSettings();
-
-protected:
-
-	virtual void CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const TSet<FECsProjectileData>& EmulatedDataInterfaces);
-
-	virtual void DeconstructEmulatedData(const FName& InterfaceImplName, void* Data);
-
-public:
-
-	/**
-	*/
-	template<typename InterfaceType>
-	InterfaceType* GetEmulatedData(const FName& Name)
-	{
-		static_assert(std::is_abstract<InterfaceType>(), "UCsManager_Projectile::GetEmulatedData InterfaceType is NOT abstract.");
-		
-		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "UCsManager_Projectile::GetEmulatedData: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
-
-		checkf(Name != NAME_None, TEXT("UCsManager_Projectile::GetEmulatedData: Name = None is NOT Valid."));
-
-		FCsData_ProjectileInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap.Find(Name);
-
-		checkf(EmulatedInterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData: EmulatedInterfaceMap is NULL. Failed to find InterfaceMap associated with %s."), *(Name.ToString()));
-
-		FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
-
-		checkf(InterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData: InterfaceMap is NULL. Interface failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
-
-		return InterfaceMap->Get<InterfaceType>();
-	}
-
-	/**
-	*/
-	template<typename InterfaceImplType>
-	InterfaceImplType* GetEmulatedDataImpl(const FName& Name)
-	{
-		static_assert(!std::is_abstract<InterfaceImplType>(), "UCsManager_Projectile::GetEmulatedDataImpl InterfaceImplType is NOT abstract.");
-
-		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceImplType>(), "UCsManager_Projectile::GetEmulatedDataImpl: InterfaceImplType is NOT a child of: ICsGetInterfaceMap.");
-
-		checkf(Name != NAME_None, TEXT("UCsManager_Projectile::GetEmulatedDataImpl: Name = None is NOT Valid."));
-
-		FCsData_ProjectileInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap.Find(Name);
-
-		checkf(EmulatedInterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData: EmulatedInterfaceMap is NULL. Failed to find InterfaceMap associated with %s."), *(Name.ToString()));
-
-		FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
-
-		checkf(InterfaceMap, TEXT("UCsManager_Projectile::GetEmulatedData: InterfaceMap is NULL. Interface failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
-
-		return InterfaceMap->StaticCastChecked<InterfaceImplType>();
-	}
-
-protected:
-
-	// <EntryName, Data>
-	TMap<FName, ICsData_Projectile*> DataMap;
-
-	TArray<UDataTable*> DataTables;
-
-	// <Path, <EntryName, RowPtr>>
-	TMap<FSoftObjectPath, TMap<FName, uint8*>> DataTableRowByPathMap;
-
-	void PopulateDataMapFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject);
+	void GetDatasDataTableChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects);
 
 public:
 
@@ -851,13 +779,6 @@ public:
 	* return			Data that implements the interface: ICsData_Projectile.
 	*/
 	ICsData_Projectile* GetDataChecked(const FString& Context, const FECsProjectile& Type);
-
-protected:
-
-	void ResetDataContainers();
-
-	UPROPERTY()
-	TMap<FECsProjectile, UClass*> ClassMap;
 
 	void OnPayloadUnloaded(const FName& Payload);
 

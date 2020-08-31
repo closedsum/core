@@ -17,6 +17,8 @@ namespace NCsManagerPooledObjectDataHandlerCached
 class UObject;
 class UDataTable;
 
+/**
+*/
 template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
 class TCsManager_PooledObject_DataHandler
 {
@@ -29,7 +31,7 @@ public:
 		EmulatedDataMap(),
 		EmulatedDataInterfaceMap(),
 		EmulatedDataInterfaceImplMap(),
-		GetDatasDataTableChecked_Impl(),
+		GetDatasDataTablesChecked_Impl(),
 		Log(nullptr)
 	{
 	}
@@ -70,38 +72,72 @@ public:
 	/**
 	*
 	*/
-	TBaseDelegate<void, const FString& /*Context*/, UDataTable*& /*OutDataTable*/, TSoftObjectPtr<UDataTable>& /*OutDataTableSoftObject*/> GetDatasDataTableChecked_Impl;
+	TBaseDelegate<void, const FString& /*Context*/, TArray<UDataTable*>& /*OutDataTables*/, TArray<TSoftObjectPtr<UDataTable>>& /*OutDataTableSoftObjects*/> GetDatasDataTablesChecked_Impl;
 
+	/**
+	*
+	*
+	* @param Context
+	*/
 	virtual void PopulateDataMapFromSettings(const FString& Context)
 	{
 		// Reset appropriate containers
 		ResetDataContainers();
 
-		checkf(GetDatasDataTableChecked_Impl.IsBound(), TEXT("%s: GetDatasDataTableChecked_Impl is NOT bound."), *Context);
+		checkf(GetDatasDataTablesChecked_Impl.IsBound(), TEXT("%s: GetDatasDataTablesChecked_Impl is NOT bound."), *Context);
 
-		UDataTable* DataTable = nullptr;
-		TSoftObjectPtr<UDataTable> DT_SoftObject(nullptr);
+		TArray<UDataTable*> DataTables;
+		TArray<TSoftObjectPtr<UDataTable>> DataTableSoftObjects;
 
-		GetDatasDataTableChecked_Impl.Execute(Context, DataTable, DT_SoftObject);
+		GetDatasDataTablesChecked_Impl.Execute(Context, DataTables, DataTableSoftObjects);
 
-		// Emulated
-		if (HasEmulatedDataInterfaces())
+		const int32 Count = DataTables.Num();
+
+		checkf(Count > 0, TEXT("%s: Failed to find any DataTables."), *Context);
+
+		for (int32 I = 0; I < Count; ++I)
 		{
-			CreateEmulatedDataFromDataTable(Context, DataTable, DT_SoftObject);
-		}
-		// "Normal" / Non-Emulated
-		else
-		{
-			PopulateDataMapFromDataTable(Context, DataTable, DT_SoftObject);
+			UDataTable* DataTable								  = DataTables[I];
+			const TSoftObjectPtr<UDataTable>& DataTableSoftObject = DataTableSoftObjects[I];
+
+			// Emulated
+			if (HasEmulatedDataInterfaces(Context, I))
+			{
+				CreateEmulatedDataFromDataTable(Context, I, DataTable, DataTableSoftObject);
+			}
+			// "Normal" / Non-Emulated
+			else
+			{
+				PopulateDataMapFromDataTable(Context, I, DataTable, DataTableSoftObject);
+			}
 		}
 	}
 
-	virtual bool HasEmulatedDataInterfaces() const 
+	virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
+	{
+	}
+
+	/**
+	*
+	*
+	* @param Context
+	* @param Index
+	* return
+	*/
+	virtual bool HasEmulatedDataInterfaces(const FString& Context, const int32& Index) const 
 	{
 		return false;
 	}
 
-	virtual void CreateEmulatedDataFromDataTable(const FString& Context, UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject)
+	/**
+	*
+	*
+	* @param Context
+	* @param Index
+	* @param DataTable
+	* @param DataTableSoftObjectPath
+	*/
+	virtual void CreateEmulatedDataFromDataTable(const FString& Context, const int32& Index, UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject)
 	{
 	}
 
@@ -110,7 +146,7 @@ public:
 		return false;
 	}
 
-	void PopulateDataMapFromDataTable(const FString& Context, UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject)
+	void PopulateDataMapFromDataTable(const FString& Context, const int32& Index, UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject)
 	{
 		using namespace NCsManagerPooledObjectDataHandlerCached;
 
@@ -180,7 +216,7 @@ public:
 	{
 		checkf(EnumMap::Get().IsValidEnum(Type), TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar());
 
-		return GetData(Type.GetFName());
+		return GetData(Context, Type.GetFName());
 	}
 
 	FORCEINLINE InterfaceDataType* GetDataChecked(const FString& Context, const FName& Name)
@@ -210,7 +246,9 @@ public:
 
 			for (TPair<FName, void*>& ImplPair : InterfaceImplMap)
 			{
-				DeconstructEmulatedData(ImplPair.Key, ImplPair.Value);
+				const bool Success = DeconstructEmulatedData(ImplPair.Key, ImplPair.Value);
+
+				checkf(Success, TEXT("Failed to deconstruct emulated data @ DataName: %s InterfaceImplName: %s."), *(DataPair.Key.ToString()), *(ImplPair.Key.ToString()));
 
 				ImplPair.Value = nullptr;
 			}

@@ -17,7 +17,7 @@ namespace NCsManagerPooledObjectClassHandlerCached
 class UObject;
 class UDataTable;
 
-template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumType>
+template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumClassType>
 class TCsManager_PooledObject_ClassHandler
 {
 public:
@@ -27,7 +27,7 @@ public:
 		ClassByTypeMap(),
 		ClassByClassTypeMap(),
 		GetClassesDataTableChecked_Impl(),
-		GetDatasDataTableChecked_Impl(),
+		GetDatasDataTablesChecked_Impl(),
 		Log(nullptr)
 	{
 	}
@@ -66,7 +66,7 @@ public:
 	/**
 	*
 	*/
-	TBaseDelegate<void, const FString& /*Context*/, UDataTable*& /*OutDataTable*/, TSoftObjectPtr<UDataTable>& /*OutDataTableSoftObject*/> GetDatasDataTableChecked_Impl;
+	TBaseDelegate<void, const FString& /*Context*/, TArray<UDataTable*>& /*OutDataTables*/, TArray<TSoftObjectPtr<UDataTable>>& /*OutDataTableSoftObject*/> GetDatasDataTablesChecked_Impl;
 
 	virtual void PopulateClassMapFromSettings(const FString& Context)
 	{
@@ -130,60 +130,68 @@ public:
 		}
 		// Get Datas DataTable
 		{
-			checkf(GetDatasDataTableChecked_Impl.IsBound(), TEXT("%s: GetDatasDataTableChecked_Impl is NOT bound."), *Context);
+			checkf(GetDatasDataTablesChecked_Impl.IsBound(), TEXT("%s: GetDatasDataTablesChecked_Impl is NOT bound."), *Context);
 
-			UDataTable* DataTable = nullptr;
-			TSoftObjectPtr<UDataTable> DT_SoftObject(nullptr);
+			TArray<UDataTable*> DataTables;
+			TArray<TSoftObjectPtr<UDataTable>> DataTableSoftObjects;
 
-			GetDatasDataTableChecked_Impl.Execute(Context, DataTable, DT_SoftObject);
+			GetDatasDataTablesChecked_Impl.Execute(Context, DataTables, DataTableSoftObjects);
 
-			const UScriptStruct* RowStruct = DataTable->GetRowStruct();
+			const int32 Count = DataTables.Num();
 
-			// Get the Property named "Class" if it exists.
-			UStructProperty* ClassProperty = FCsLibrary_Property::FindStructPropertyByName<EnumType>(RowStruct, Name::Class);
-
-			if (!ClassProperty)
+			for (int32 I = 0; I < Count; ++I)
 			{
-#if !UE_BUILD_SHIPPING
-				Log(FString::Printf(TEXT("%s: Failed to find StructProperty: Class in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName())));
-#endif // #if !UE_BUILD_SHIPPING
-				return;
-			}
+				UDataTable* DataTable								  = DataTables[I];
+				const TSoftObjectPtr<UDataTable>& DataTableSoftObject = DataTableSoftObjects[I];
 
-			// Cache any class related information that is loaded.
-			UWorld* World				  = MyRoot->GetWorld();
-			UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+				const UScriptStruct* RowStruct = DataTable->GetRowStruct();
 
-			const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+				// Get the Property named "Class" if it exists.
+				UStructProperty* ClassProperty = FCsLibrary_Property::FindStructPropertyByName<EnumClassType>(RowStruct, Name::Class);
 
-			for (const TPair<FName, uint8*>& Pair : RowMap)
-			{
-				const FName& RowName = Pair.Key;
-				uint8* RowPtr		 = Manager_Data->GetDataTableRow(DT_SoftObject, RowName);
-
-				if (!RowPtr)
-					continue;
-
-				// If Property named "Class" exists, cache the class.
-				if (ClassProperty)
+				if (!ClassProperty)
 				{
-					EnumType* StructPtr = ClassProperty->ContainerPtrToValuePtr<EnumType>(RowPtr);
+#if !UE_BUILD_SHIPPING
+					Log(FString::Printf(TEXT("%s: Failed to find StructProperty: Class in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName())));
+#endif // #if !UE_BUILD_SHIPPING
+					return;
+				}
 
-					checkf(StructPtr, TEXT("%s: StructPtr is NULL."), *Context);
+				// Cache any class related information that is loaded.
+				UWorld* World				  = MyRoot->GetWorld();
+				UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
 
-					InterfacePooledContainerType* ContainerPtr = ClassByClassTypeMap.Find(StructPtr->GetFName());
+				const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
-					checkf(ContainerPtr, TEXT("%s: "), *Context);
+				for (const TPair<FName, uint8*>& Pair : RowMap)
+				{
+					const FName& RowName = Pair.Key;
+					uint8* RowPtr		 = Manager_Data->GetDataTableRow(DataTableSoftObject, RowName);
 
-					InterfacePooledContainerType& PooledContainer = ClassByTypeMap.Add(RowName);
+					if (!RowPtr)
+						continue;
 
-					PooledContainer.SetObject(ContainerPtr->GetObject());
+					// If Property named "Class" exists, cache the class.
+					if (ClassProperty)
+					{
+						EnumClassType* StructPtr = ClassProperty->ContainerPtrToValuePtr<EnumClassType>(RowPtr);
+
+						checkf(StructPtr, TEXT("%s: StructPtr is NULL."), *Context);
+
+						InterfacePooledContainerType* ContainerPtr = ClassByClassTypeMap.Find(StructPtr->GetFName());
+
+						checkf(ContainerPtr, TEXT("%s: "), *Context);
+
+						InterfacePooledContainerType& PooledContainer = ClassByTypeMap.Add(RowName);
+
+						PooledContainer.SetObject(ContainerPtr->GetObject());
+					}
 				}
 			}
 		}
 	}
 
-	template<typename EnumMap>
+	template<typename EnumMap, typename EnumType>
 	FORCEINLINE InterfacePooledContainerType* GetClassByType(const FString& Context, const EnumType& Type)
 	{
 		checkf(EnumMap::Get().IsValidEnum(Type), TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar());
@@ -191,7 +199,7 @@ public:
 		return ClassByTypeMap.Find(Type.GetFName());
 	}
 
-	template<typename EnumClassMap, typename EnumClassType>
+	template<typename EnumClassMap>
 	FORCEINLINE InterfacePooledContainerType* GetClassByClassType(const FString& Context, const EnumClassType& Type)
 	{
 		checkf(EnumClassMap::Get().IsValidEnum(Type), TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar());
@@ -199,10 +207,10 @@ public:
 		return ClassByClassTypeMap.Find(Type.GetFName());
 	}
 
-	template<typename EnumClassMap, typename EnumClassType>
+	template<typename EnumClassMap>
 	FORCEINLINE InterfacePooledContainerType* GetClassByClassTypeChecked(const FString& Context, const EnumClassType& Type)
 	{
-		InterfacePooledContainerType* Ptr = GetClassByClassType<EnumClassMap, EnumClassType>(Context, Type);
+		InterfacePooledContainerType* Ptr = GetClassByClassType<EnumClassMap>(Context, Type);
 
 		checkf(Ptr, TEXT("%s: Failed to find a Class associated with Type: %s."), *Context, Type.ToChar());
 

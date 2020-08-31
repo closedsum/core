@@ -19,6 +19,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftObjectPtr<UDataTable> WidgetActors;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bWidgetActorsHasData;
+
 	// User Widget
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -28,18 +31,27 @@ public:
 	TSoftObjectPtr<UDataTable> UserWidgetPooleds;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bUserWidgetPooledsHasData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftObjectPtr<UDataTable> UserWidgetClasses;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftObjectPtr<UDataTable> UserWidgets;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bUserWidgetsHasData;
+
 	FCsUIDataRootSet() :
 		WidgetActorClasses(nullptr),
 		WidgetActors(nullptr),
+		bWidgetActorsHasData(false),
 		UserWidgetPooledClasses(nullptr),
 		UserWidgetPooleds(nullptr),
+		bUserWidgetPooledsHasData(false),
 		UserWidgetClasses(nullptr),
-		UserWidgets(nullptr)
+		UserWidgets(nullptr),
+		bUserWidgetsHasData(false)
 	{
 	}
 };

@@ -46,6 +46,7 @@ namespace NCsManagerWeapon
 {
 	namespace Str
 	{
+		const FString SetupInternal = TEXT("UCsManager_Weapon::SetupInternal");
 		const FString InitInternalFromSettings = TEXT("UCsManager_Weapon::InitInternalFromSettings");
 		const FString PopulateClassMapFromSettings = TEXT("UCsManager_Weapon::PopulateClassMapFromSettings");
 		const FString PopulateDataMapFromSettings = TEXT("UCsManager_Weapon::PopulateDataMapFromSettings");
@@ -308,6 +309,18 @@ void UCsManager_Weapon::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Weapon::SetupInternal()
 {
+	using namespace NCsManagerWeapon;
+
+	const FString& Context = Str::SetupInternal;
+
+	// Populate EnumMaps
+	UWorld* World				= MyRoot->GetWorld();
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+
+	NCsWeapon::PopulateEnumMapFromSettings(Context, GameInstance);
+	NCsWeaponClass::PopulateEnumMapFromSettings(Context, GameInstance);
+	NCsWeaponState::PopulateEnumMapFromSettings(Context, GameInstance);
+
 	// Delegates
 	{
 		// Log

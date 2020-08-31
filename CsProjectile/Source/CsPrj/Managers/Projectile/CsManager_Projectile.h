@@ -696,8 +696,6 @@ protected:
 
 	virtual void ConstructClassHandler();
 
-	void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject);
-
 public:
 
 /**
@@ -738,8 +736,6 @@ protected:
 	TCsManager_PooledObject_DataHandler<ICsData_Projectile, FCsData_ProjectilePtr, FCsData_ProjectileInterfaceMap>* DataHandler;
 
 	virtual void ConstructDataHandler();
-
-	void GetDatasDataTableChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects);
 
 public:
 

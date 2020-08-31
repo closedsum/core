@@ -23,11 +23,10 @@ class TCsManager_PooledObject_ClassHandler
 public:
 
 	TCsManager_PooledObject_ClassHandler() :
+		Outer(nullptr),
 		MyRoot(nullptr),
 		ClassByTypeMap(),
 		ClassByClassTypeMap(),
-		GetClassesDataTableChecked_Impl(),
-		GetDatasDataTablesChecked_Impl(),
 		Log(nullptr)
 	{
 	}
@@ -39,6 +38,10 @@ public:
 
 public:
 
+	/** */
+	UObject* Outer;
+
+	/** */
 	UObject* MyRoot;
 
 	void Shutdown()
@@ -58,16 +61,6 @@ protected:
 
 public:
 
-	/**
-	*
-	*/
-	TBaseDelegate<void, const FString& /*Context*/, UDataTable*& /*OutDataTable*/, TSoftObjectPtr<UDataTable>& /*OutDataTableSoftObject*/> GetClassesDataTableChecked_Impl;
-
-	/**
-	*
-	*/
-	TBaseDelegate<void, const FString& /*Context*/, TArray<UDataTable*>& /*OutDataTables*/, TArray<TSoftObjectPtr<UDataTable>>& /*OutDataTableSoftObject*/> GetDatasDataTablesChecked_Impl;
-
 	virtual void PopulateClassMapFromSettings(const FString& Context)
 	{
 		using namespace NCsManagerPooledObjectClassHandlerCached;
@@ -77,12 +70,10 @@ public:
 
 		// Get Classes DataTable
 		{
-			checkf(GetClassesDataTableChecked_Impl.IsBound(), TEXT("%s: GetClassesDataTableChecked_Impl is NOT bound."), *Context);
-
 			UDataTable* DataTable = nullptr;
 			TSoftObjectPtr<UDataTable> DT_SoftObject(nullptr);
 
-			GetClassesDataTableChecked_Impl.Execute(Context, DataTable, DT_SoftObject);
+			GetClassesDataTableChecked(Context, DataTable, DT_SoftObject);
 
 			const UScriptStruct* RowStruct = DataTable->GetRowStruct();
 
@@ -130,12 +121,10 @@ public:
 		}
 		// Get Datas DataTable
 		{
-			checkf(GetDatasDataTablesChecked_Impl.IsBound(), TEXT("%s: GetDatasDataTablesChecked_Impl is NOT bound."), *Context);
-
 			TArray<UDataTable*> DataTables;
 			TArray<TSoftObjectPtr<UDataTable>> DataTableSoftObjects;
 
-			GetDatasDataTablesChecked_Impl.Execute(Context, DataTables, DataTableSoftObjects);
+			GetDatasDataTablesChecked(Context, DataTables, DataTableSoftObjects);
 
 			const int32 Count = DataTables.Num();
 
@@ -191,6 +180,20 @@ public:
 		}
 	}
 
+protected:
+
+	virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
+	{
+		checkf(0, TEXT("%s::GetClassesDataTableChecked: Failed to implement method."), *(Outer->GetName()));
+	}
+
+	virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject)
+	{
+		checkf(0, TEXT("%s::GetDatasDataTablesChecked: Failed to implement method."), *(Outer->GetName()));
+	}
+
+public:
+
 	template<typename EnumMap, typename EnumType>
 	FORCEINLINE InterfacePooledContainerType* GetClassByType(const FString& Context, const EnumType& Type)
 	{
@@ -216,6 +219,8 @@ public:
 
 		return Ptr;
 	}
+
+protected:
 
 	void ResetClassContainers()
 	{

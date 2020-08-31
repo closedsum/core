@@ -16,4 +16,12 @@ private:
 public:
 
 	FCsManager_WidgetActor_DataHandler();
+
+// TCsManager_PooledObject_DataHandler Interface
+#pragma region
+protected:
+
+	virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
+
+#pragma endregion TCsManager_PooledObject_DataHandler Interface
 };

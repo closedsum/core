@@ -45,6 +45,7 @@ namespace NCsManagerWidgetActor
 {
 	namespace Str
 	{
+		const FString SetupInternal = TEXT("UCsManager_WidgetActor::SetupInternal");
 		const FString InitInternalFromSettings = TEXT("UCsManager_WidgetActor::InitInternalFromSettings");
 		const FString PopulateClassMapFromSettings = TEXT("UCsManager_WidgetActor::PopulateClassMapFromSettings");
 		const FString PopulateDataMapFromSettings = TEXT("UCsManager_WidgetActor::PopulateDataMapFromSettings");
@@ -285,10 +286,26 @@ void UCsManager_WidgetActor::SetMyRoot(UObject* InRoot)
 
 void UCsManager_WidgetActor::SetupInternal()
 {
+	using namespace NCsManagerWidgetActor;
+
+	const FString& Context = Str::SetupInternal;
+
+	// Populate EnumMaps
+	UWorld* World				= MyRoot->GetWorld();
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+
+	NCsWidgetActor::PopulateEnumMapFromSettings(Context, GameInstance);
+	NCsWidgetActorClass::PopulateEnumMapFromSettings(Context, GameInstance);
+
 	// Class Handler
 	ConstructClassHandler();
+
+	checkf(ClassHandler, TEXT("%s: Failed to construct ClassHandler."), *Context);
+
 	// Data Handler
 	ConstructDataHandler();
+
+	checkf(DataHandler, TEXT("%s: Failed to construct DataHandler."), *Context);
 
 	// Delegates
 	{
@@ -698,45 +715,28 @@ void UCsManager_WidgetActor::LogTransaction(const FString& Context, const ECsPoo
 void UCsManager_WidgetActor::ConstructClassHandler()
 {
 	ClassHandler = new FCsManager_WidgetActor_ClassHandler();
+	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
-	ClassHandler->GetClassesDataTableChecked_Impl.BindUObject(this, &UCsManager_WidgetActor::GetClassesDataTableChecked);
-	ClassHandler->GetDatasDataTableChecked_Impl.BindUObject(this, &UCsManager_WidgetActor::GetDatasDataTableChecked);
-}
-
-void UCsManager_WidgetActor::GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
-{
-	UObject* DataRootSetImpl			= FCsLibrary_DataRootSet::GetImplChecked(Context, MyRoot);
-	const FCsUIDataRootSet& DataRootSet = FCsUILibrary_DataRootSet::GetChecked(Context, MyRoot);
-
-	OutDataTableSoftObject = DataRootSet.WidgetActorClasses;
-
-	checkf(OutDataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetSbDataRootSet().WidgetActorClasses is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
-
-	UWorld* World				  = MyRoot->GetWorld();
-	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
-
-	OutDataTable = Manager_Data->GetDataTable(OutDataTableSoftObject);
-
-	checkf(OutDataTable, TEXT("%s: Failed to get DataTable @ %s."), *Context, *(OutDataTableSoftObject.ToSoftObjectPath().ToString()));
+	ClassHandler->Log = &FCsUILog::Warning;
 }
 
 FCsWidgetActorPooled* UCsManager_WidgetActor::GetWidgetActor(const FECsWidgetActor& Type)
 {
 	const FString& Context = NCsManagerWidgetActor::Str::GetWidgetActor;
 
-	return ClassHandler->GetClassByType<EMCsWidgetActor>(Context, Type);
+	return ClassHandler->GetClassByType<EMCsWidgetActor, FECsWidgetActor>(Context, Type);
 }
 
 FCsWidgetActorPooled* UCsManager_WidgetActor::GetWidgetActor(const FECsWidgetActorClass& Type)
 {
 	const FString& Context = NCsManagerWidgetActor::Str::GetWidgetActor;
 
-	return ClassHandler->GetClassByClassType<EMCsWidgetActorClass, FECsWidgetActorClass>(Context, Type);
+	return ClassHandler->GetClassByClassType<EMCsWidgetActorClass>(Context, Type);
 }
 
 FCsWidgetActorPooled* UCsManager_WidgetActor::GetWidgetActorChecked(const FString& Context, const FECsWidgetActorClass& Type)
 {
-	return ClassHandler->GetClassByClassTypeChecked<EMCsWidgetActorClass, FECsWidgetActorClass>(Context, Type);
+	return ClassHandler->GetClassByClassTypeChecked<EMCsWidgetActorClass>(Context, Type);
 }
 
 #pragma endregion Class
@@ -747,25 +747,9 @@ FCsWidgetActorPooled* UCsManager_WidgetActor::GetWidgetActorChecked(const FStrin
 void UCsManager_WidgetActor::ConstructDataHandler()
 {
 	DataHandler = new FCsManager_WidgetActor_DataHandler();
+	DataHandler->Outer = this;
 	DataHandler->MyRoot = MyRoot;
-	DataHandler->GetDatasDataTableChecked_Impl.BindUObject(this, &UCsManager_WidgetActor::GetDatasDataTableChecked);
-}
-
-void UCsManager_WidgetActor::GetDatasDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
-{
-	UObject* DataRootSetImpl			= FCsLibrary_DataRootSet::GetImplChecked(Context, MyRoot);
-	const FCsUIDataRootSet& DataRootSet = FCsUILibrary_DataRootSet::GetChecked(Context, MyRoot);
-
-	OutDataTableSoftObject = DataRootSet.WidgetActors;
-
-	checkf(OutDataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetSbDataRootSet().WidgetActors is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
-
-	UWorld* World				  = MyRoot->GetWorld();
-	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
-
-	OutDataTable = Manager_Data->GetDataTable(OutDataTableSoftObject);
-
-	checkf(OutDataTable, TEXT("%s: Failed to get DataTable @ %s."), *Context, *(OutDataTableSoftObject.ToSoftObjectPath().ToString()));
+	DataHandler->Log = &FCsUILog::Warning;
 }
 
 ICsData_WidgetActor* UCsManager_WidgetActor::GetData(const FName& Name)

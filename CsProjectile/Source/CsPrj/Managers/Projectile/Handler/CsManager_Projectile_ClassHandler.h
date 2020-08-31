@@ -16,4 +16,14 @@ private:
 public:
 
 	FCsManager_Projectile_ClassHandler();
+
+// TCsManager_PooledObject_ClassHandler Interface
+#pragma region
+protected:
+
+	virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject) override;
+
+	virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject) override;
+
+#pragma endregion TCsManager_PooledObject_ClassHandler Interface
 };

@@ -602,15 +602,53 @@ protected:
 
 #pragma endregion Pool
 
+// Script
+#pragma region
+public:
+
+	// ICsWidgetActor
+#pragma region
+public:
+
+#pragma endregion ICsWidgetActor
+
+	// ICsPooledObject
+#pragma region
+public:
+
+	/** Delegate for getting the Cache associated with a Pooled Object. 
+		 The Pooled Object implements a script interface of type: ICsPooledObject. */
+	FCsPooledObject::FScript_GetCache Script_GetCache_Impl;
+
+	/** Delegate called after allocating a Pooled Object. 
+		 The Pooled Object implements a script interface of type: ICsPooledObject. */
+	FCsPooledObject::FScript_Allocate Script_Allocate_Impl;
+
+	/** Delegate called after allocating a Pooled Object. 
+		 The Pooled Object implements a script interface of type: ICsPooledObject.*/
+	FCsPooledObject::FScript_Deallocate Script_Deallocate_Impl;
+
+#pragma endregion ICsPooledObject
+
+	// ICsUpdate
+#pragma region
+public:
+
+	/** Delegate for updating a Pooled Object.
+		The Pooled Object implements a script interface of type: ICsPooledObject. */
+	FCsPooledObject::FScript_Update Script_Update_Impl;
+
+#pragma endregion ICsUpdate
+
+#pragma endregion Script
+
 // Class
 #pragma region
 protected:
 
-	TCsManager_PooledObject_ClassHandler<FCsWidgetActorPooled, FCsWidgetActorPtr, FECsWidgetActor>* ClassHandler;
+	TCsManager_PooledObject_ClassHandler<FCsWidgetActorPooled, FCsWidgetActorPtr, FECsWidgetActorClass>* ClassHandler;
 
 	virtual void ConstructClassHandler();
-
-	void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject);
 
 public:
 
@@ -653,8 +691,6 @@ protected:
 
 	virtual void ConstructDataHandler();
 
-	void GetDatasDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject);
-
 public:
 
 	/**
@@ -694,44 +730,4 @@ public:
 	ICsData_WidgetActor* GetDataChecked(const FString& Context, const FECsWidgetActor& Type);
 
 #pragma endregion Data
-
-// Script
-#pragma region
-public:
-
-	// ICsWidgetActor
-#pragma region
-public:
-
-#pragma endregion ICsWidgetActor
-
-	// ICsPooledObject
-#pragma region
-public:
-
-	/** Delegate for getting the Cache associated with a Pooled Object. 
-		 The Pooled Object implements a script interface of type: ICsPooledObject. */
-	FCsPooledObject::FScript_GetCache Script_GetCache_Impl;
-
-	/** Delegate called after allocating a Pooled Object. 
-		 The Pooled Object implements a script interface of type: ICsPooledObject. */
-	FCsPooledObject::FScript_Allocate Script_Allocate_Impl;
-
-	/** Delegate called after allocating a Pooled Object. 
-		 The Pooled Object implements a script interface of type: ICsPooledObject.*/
-	FCsPooledObject::FScript_Deallocate Script_Deallocate_Impl;
-
-#pragma endregion ICsPooledObject
-
-	// ICsUpdate
-#pragma region
-public:
-
-	/** Delegate for updating a Pooled Object.
-		The Pooled Object implements a script interface of type: ICsPooledObject. */
-	FCsPooledObject::FScript_Update Script_Update_Impl;
-
-#pragma endregion ICsUpdate
-
-#pragma endregion Script
 };

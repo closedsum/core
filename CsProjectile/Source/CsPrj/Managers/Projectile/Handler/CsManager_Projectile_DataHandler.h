@@ -21,6 +21,8 @@ public:
 #pragma region
 protected:
 
+	virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
+
 	virtual bool HasEmulatedDataInterfaces(const FString& Context, const int32& Index) const override;
 
 	virtual void CreateEmulatedDataFromDataTable(const FString& Context, const int32& Index, UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject) override;

@@ -11,6 +11,8 @@
 #include "Managers/Data/CsManager_Data.h"
 // Projectile
 #include "Data/CsData_ProjectileImpl.h"
+// Game
+#include "Engine/GameInstance.h"
 // World
 #include "Engine/World.h"
 
@@ -36,6 +38,29 @@ FCsManager_Projectile_DataHandler::FCsManager_Projectile_DataHandler()
 
 // TCsManager_PooledObject_DataHandler Interface
 #pragma region
+
+void FCsManager_Projectile_DataHandler::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
+{
+	UObject* DataRootSetImpl			 = FCsLibrary_DataRootSet::GetImplChecked(Context, MyRoot);
+	const FCsPrjDataRootSet& DataRootSet = FCsPrjLibrary_DataRootSet::GetChecked(Context, MyRoot);
+
+	for (const FCsProjectileSettings_DataTable_Projectiles& Projectiles : DataRootSet.Projectiles)
+	{
+		TSoftObjectPtr<UDataTable> DataTableSoftObject = Projectiles.Projectiles;
+
+		checkf(DataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsPrjDataRootSet().Projectiles is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
+
+		UWorld* World				  = MyRoot->GetWorld();
+		UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+
+		UDataTable* DataTable = Manager_Data->GetDataTable(DataTableSoftObject);
+
+		checkf(DataTable, TEXT("%s: Failed to get DataTable @ %s."), *Context, *(DataTableSoftObject.ToSoftObjectPath().ToString()));
+
+		OutDataTables.Add(DataTable);
+		OutDataTableSoftObjects.Add(DataTableSoftObject);
+	}
+}
 
 bool FCsManager_Projectile_DataHandler::HasEmulatedDataInterfaces(const FString& Context, const int32& Index) const
 {

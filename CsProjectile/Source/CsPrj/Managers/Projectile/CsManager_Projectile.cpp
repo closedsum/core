@@ -847,27 +847,9 @@ void UCsManager_Projectile::ConstructClassHandler()
 {
 	ClassHandler = new FCsManager_Projectile_ClassHandler();
 	ClassHandler->MyRoot = MyRoot;
-	ClassHandler->GetClassesDataTableChecked_Impl.BindUObject(this, &UCsManager_Projectile::GetClassesDataTableChecked);
-	ClassHandler->GetDatasDataTablesChecked_Impl.BindUObject(this, &UCsManager_Projectile::GetDatasDataTableChecked);
 	ClassHandler->Log = &FCsPrjLog::Warning;
 }
 
-void UCsManager_Projectile::GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
-{
-	UObject* DataRootSetImpl			 = FCsLibrary_DataRootSet::GetImplChecked(Context, MyRoot);
-	const FCsPrjDataRootSet& DataRootSet = FCsPrjLibrary_DataRootSet::GetChecked(Context, MyRoot);
-
-	OutDataTableSoftObject = DataRootSet.ProjectileClasses;
-
-	checkf(OutDataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsPrjDataRootSet().ProjectileClasses is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
-
-	UWorld* World				  = MyRoot->GetWorld();
-	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
-
-	OutDataTable = Manager_Data->GetDataTable(OutDataTableSoftObject);
-
-	checkf(OutDataTable, TEXT("%s: Failed to get DataTable @ %s."), *Context, *(OutDataTableSoftObject.ToSoftObjectPath().ToString()));
-}
 
 FCsProjectilePooled* UCsManager_Projectile::GetProjectile(const FECsProjectile& Type)
 {
@@ -901,31 +883,7 @@ void UCsManager_Projectile::ConstructDataHandler()
 {
 	DataHandler = new FCsManager_Projectile_DataHandler();
 	DataHandler->MyRoot = MyRoot;
-	DataHandler->GetDatasDataTablesChecked_Impl.BindUObject(this, &UCsManager_Projectile::GetDatasDataTableChecked);
 	DataHandler->Log = &FCsPrjLog::Warning;
-}
-
-void UCsManager_Projectile::GetDatasDataTableChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
-{
-	UObject* DataRootSetImpl			 = FCsLibrary_DataRootSet::GetImplChecked(Context, MyRoot);
-	const FCsPrjDataRootSet& DataRootSet = FCsPrjLibrary_DataRootSet::GetChecked(Context, MyRoot);
-
-	for (const FCsProjectileSettings_DataTable_Projectiles& Projectiles : DataRootSet.Projectiles)
-	{
-		TSoftObjectPtr<UDataTable> DataTableSoftObject = Projectiles.Projectiles;
-
-		checkf(DataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsPrjDataRootSet().Projectiles is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
-
-		UWorld* World				  = MyRoot->GetWorld();
-		UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
-
-		UDataTable* DataTable = Manager_Data->GetDataTable(DataTableSoftObject);
-
-		checkf(DataTable, TEXT("%s: Failed to get DataTable @ %s."), *Context, *(DataTableSoftObject.ToSoftObjectPath().ToString()));
-
-		OutDataTables.Add(DataTable);
-		OutDataTableSoftObjects.Add(DataTableSoftObject);
-	}
 }
 
 ICsData_Projectile* UCsManager_Projectile::GetData(const FName& Name)

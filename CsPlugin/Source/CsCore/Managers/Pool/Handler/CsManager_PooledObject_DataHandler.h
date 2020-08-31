@@ -25,13 +25,13 @@ class TCsManager_PooledObject_DataHandler
 public:
 
 	TCsManager_PooledObject_DataHandler() :
+		Outer(nullptr),
 		MyRoot(nullptr),
 		DataMap(),
 		DataTableRowByPathMap(),
 		EmulatedDataMap(),
 		EmulatedDataInterfaceMap(),
 		EmulatedDataInterfaceImplMap(),
-		GetDatasDataTablesChecked_Impl(),
 		Log(nullptr)
 	{
 	}
@@ -43,6 +43,10 @@ public:
 
 public:
 
+	/** */
+	UObject* Outer;
+
+	/** */
 	UObject* MyRoot;
 
 	void Shutdown()
@@ -71,11 +75,6 @@ public:
 
 	/**
 	*
-	*/
-	TBaseDelegate<void, const FString& /*Context*/, TArray<UDataTable*>& /*OutDataTables*/, TArray<TSoftObjectPtr<UDataTable>>& /*OutDataTableSoftObjects*/> GetDatasDataTablesChecked_Impl;
-
-	/**
-	*
 	*
 	* @param Context
 	*/
@@ -84,12 +83,10 @@ public:
 		// Reset appropriate containers
 		ResetDataContainers();
 
-		checkf(GetDatasDataTablesChecked_Impl.IsBound(), TEXT("%s: GetDatasDataTablesChecked_Impl is NOT bound."), *Context);
-
 		TArray<UDataTable*> DataTables;
 		TArray<TSoftObjectPtr<UDataTable>> DataTableSoftObjects;
 
-		GetDatasDataTablesChecked_Impl.Execute(Context, DataTables, DataTableSoftObjects);
+		GetDatasDataTablesChecked(Context, DataTables, DataTableSoftObjects);
 
 		const int32 Count = DataTables.Num();
 
@@ -113,8 +110,11 @@ public:
 		}
 	}
 
+protected:
+
 	virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 	{
+		checkf(0, TEXT("%s::GetDatasDataTablesChecked: Failed to implement method."), *(Outer->GetName()));
 	}
 
 	/**
@@ -196,6 +196,8 @@ public:
 		}
 	}
 
+public:
+
 	InterfaceDataType* GetData(const FString& Context, const FName& Name)
 	{
 		checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
@@ -237,6 +239,8 @@ public:
 
 		return Ptr;
 	}
+
+protected:
 
 	void ResetDataContainers()
 	{

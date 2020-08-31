@@ -138,6 +138,7 @@ class TCsManager_PooledObject_Abstract
 	static_assert(std::is_base_of<ICsGetInterfaceMap, PayloadType>(), "TCsManager_PooledObject_Abstract: PayloadType does NOT implement the interface: ICsGetInterfaceMap.");
 
 public:
+
 	TCsManager_PooledObject_Abstract() :
 		Name(),
 		CurrentWorld(nullptr),

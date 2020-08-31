@@ -3,12 +3,13 @@
 
 #include "UObject/Object.h"
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
-#include "Managers/Resource/CsManager_ResourceValueType.h"
+//#include "Managers/Pool/CsManager_PooledObject_ClassAndDataHandler.h"
 #include "Managers/WidgetActor/CsWidgetActor.h"
 #include "Managers/WidgetActor/CsWidgetActorPooled.h"
 #include "Managers/WidgetActor/Payload/CsPayload_WidgetActor.h"
 #include "Managers/WidgetActor/CsTypes_WidgetActor.h"
 #include "Managers/WidgetActor/CsSettings_Manager_WidgetActor.h"
+
 #include "CsManager_WidgetActor.generated.h"
 
 // Delegates
@@ -43,6 +44,15 @@ public:
 
 class ICsGetManagerWidgetActor;
 class UDataTable;
+
+template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumType>
+class TCsManager_PooledObject_ClassHandler;
+
+template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
+class TCsManager_PooledObject_DataHandler;
+
+class ICsData_WidgetActor;
+struct FCsData_WidgetActorInterfaceMap;
 
 UCLASS()
 class CSUI_API UCsManager_WidgetActor : public UObject
@@ -591,6 +601,99 @@ protected:
 	TArray<UObject*> Pool;
 
 #pragma endregion Pool
+
+// Class
+#pragma region
+protected:
+
+	TCsManager_PooledObject_ClassHandler<FCsWidgetActorPooled, FCsWidgetActorPtr, FECsWidgetActor>* ClassHandler;
+
+	virtual void ConstructClassHandler();
+
+	void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject);
+
+public:
+
+	/**
+	* Get the WidgetActor container (Interface (ICsWidgetActor), UObject, and / or UClass) associated
+	* with the widget actor Type.
+	*
+	* @param Type	Type of the widget actor.
+	* return		WidgetActor container (Interface (ICsWidgetActor), UObject, and / or UClass).
+	*/
+	FCsWidgetActorPooled* GetWidgetActor(const FECsWidgetActor& Type);
+
+	/**
+	* Get the WidgetActor container (Interface (ICsWidgetActor), UObject, and / or UClass) associated
+	* with the widget actor class Type.
+	*
+	* @param Type	Class type of the WidgetActor.
+	* return		WidgetActor container (Interface (ICsWidgetActor), UObject, and / or UClass).
+	*/
+	FCsWidgetActorPooled* GetWidgetActor(const FECsWidgetActorClass& Type);
+
+	/**
+	* Get the WidgetActor container (Interface (ICsWidgetActor), UObject, and / or UClass) associated
+	* with the widget actor class Type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Type		Class type of the widget actor.
+	* return			WidgetActor container (Interface (ICsWidgetActor), UObject, and / or UClass).
+	*/
+	FCsWidgetActorPooled* GetWidgetActorChecked(const FString& Context, const FECsWidgetActorClass& Type);
+
+#pragma endregion Class
+
+// Data
+#pragma region
+protected:
+
+	TCsManager_PooledObject_DataHandler<ICsData_WidgetActor, FCsData_WidgetActorPtr, FCsData_WidgetActorInterfaceMap>* DataHandler;
+
+	virtual void ConstructDataHandler();
+
+	void GetDatasDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject);
+
+public:
+
+	/**
+	* Get the Data (implements interface: ICsData_WidgetActor) associated with Name of the character type.
+	*
+	* @param Name	Name of the Character.
+	* return		Data that implements the interface: ICsData_WidgetActor.
+	*/
+	ICsData_WidgetActor* GetData(const FName& Name);
+
+	/**
+	* Get the Data (implements interface: ICsData_WidgetActor) associated with Type.
+	*
+	* @param Type	Character type.
+	* return		Data that implements the interface: ICsData_WidgetActor.
+	*/
+	ICsData_WidgetActor* GetData(const FECsWidgetActor& Type);
+
+	/**
+	* Get the Data (implements interface: ICsData_WidgetActor) associated with Name of the character type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Name		Name of the Character.
+	* return			Data that implements the interface: ICsData_WidgetActor.
+	*/
+	ICsData_WidgetActor* GetDataChecked(const FString& Context, const FName& Name);
+
+	/**
+	* Get the Data (implements interface: ICsData_WidgetActor) associated with Type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Type		Character type.
+	* return			Data that implements the interface: ICsData_WidgetActor.
+	*/
+	ICsData_WidgetActor* GetDataChecked(const FString& Context, const FECsWidgetActor& Type);
+
+#pragma endregion Data
 
 // Script
 #pragma region

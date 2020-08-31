@@ -41,7 +41,7 @@ public:
 	*/
 	DECLARE_DELEGATE_RetVal_OneParam(UCsWidgetComponent* /*WidgetComponent*/, FScript_GetWidgetComponent, UObject* /*Object*/);
 
-	/** Delegate for getting the pooled FX Actor. 
+	/** Delegate for getting the WidgetComponent associated with Widget Actor. 
 		 The object implements a script interface of type: ICsWidgetActor. */
 	FScript_GetWidgetComponent Script_GetWidgetComponent_Impl;
 

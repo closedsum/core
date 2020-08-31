@@ -10,6 +10,7 @@
 // Utility
 #include "Utility/CsUILog.h"
 #include "Utility/CsPopulateEnumMapFromSettings.h"
+#include "Utility/CsUIPopulateEnumMapFromSettings.h"
 
 // WidgetActor
 #pragma region
@@ -21,11 +22,6 @@ namespace NCsWidgetActor
 		const FString WidgetActor = TEXT("WidgetActor");
 	}
 
-	const FCsUIDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot)
-	{
-		return FCsPopulateEnumMapFromSettings::GetDataRootSet<FCsUIDataRootSet, ICsUIGetDataRootSet, &ICsUIGetDataRootSet::GetCsUIDataRootSet>(Context, ContextRoot);
-	}
-
 	void FromEnumSettings(const FString& Context)
 	{
 		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsUserInterfaceSettings, EMCsWidgetActor, FECsWidgetActor>(Context, Str::WidgetActor, &FCsUILog::Warning);
@@ -33,7 +29,7 @@ namespace NCsWidgetActor
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
-		const FCsUIDataRootSet* DataRootSet = GetDataRootSet(Context, ContextRoot);
+		const FCsUIDataRootSet* DataRootSet = FCsUIPopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
 
 		if (!DataRootSet)
 			return;
@@ -83,15 +79,9 @@ namespace NCsWidgetActorClass
 	{
 		return FCsPopulateEnumMapFromSettings::GetDataRootSet<FCsUIDataRootSet, ICsUIGetDataRootSet, &ICsUIGetDataRootSet::GetCsUIDataRootSet>(Context, ContextRoot);
 	}
-
-	void FromEnumSettings(const FString& Context)
-	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsUserInterfaceSettings, EMCsWidgetActorClass, FECsWidgetActorClass>(Context, Str::WidgetActorClass, &FCsUILog::Warning);
-	}
-
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
-		const FCsUIDataRootSet* DataRootSet = GetDataRootSet(Context, ContextRoot);
+		const FCsUIDataRootSet* DataRootSet = FCsUIPopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
 
 		if (!DataRootSet)
 			return;
@@ -111,17 +101,7 @@ namespace NCsWidgetActorClass
 
 		EMCsWidgetActorClass::Get().ClearUserDefinedEnums();
 
-		// Enum Settings
-		if (ModuleSettings->ECsWidgetActorClass_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
-		{
-			FromEnumSettings(Context);
-		}
-
-		// DataTable
-		if (ModuleSettings->ECsWidgetActorClass_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::DataTable)
-		{
-			FromDataTable(Context, ContextRoot);
-		}
+		FromDataTable(Context, ContextRoot);
 	}
 }
 

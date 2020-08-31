@@ -22,7 +22,7 @@ namespace NCsSound
 			if (Settings->ECsSound_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
 			{
 				const TArray<FCsSettings_Enum>& Enums = Settings->GetSettingsEnum<FECsSound>();
-				const FString EnumSettingsPath		  = Settings->GetSettingsEnumPath<FECsSound>();
+				const FString& EnumSettingsPath		  = Settings->GetSettingsEnumPath<FECsSound>();
 
 				if (Enums.Num() > CS_EMPTY)
 				{

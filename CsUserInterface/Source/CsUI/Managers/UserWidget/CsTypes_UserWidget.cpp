@@ -74,11 +74,6 @@ namespace NCsUserWidgetClass
 		const FString UserWidgetClass = TEXT("UserWidgetClass");
 	}
 
-	void FromEnumSettings(const FString& Context)
-	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsUserInterfaceSettings, EMCsUserWidgetClass, FECsUserWidgetClass>(Context, Str::UserWidgetClass, &FCsUILog::Warning);
-	}
-
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
 		const FCsUIDataRootSet* DataRootSet = FCsUIPopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
@@ -101,17 +96,7 @@ namespace NCsUserWidgetClass
 
 		EMCsUserWidgetClass::Get().ClearUserDefinedEnums();
 
-		// Enum Settings
-		if (ModuleSettings->ECsUserWidgetClass_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
-		{
-			FromEnumSettings(Context);
-		}
-
-		// DataTable
-		if (ModuleSettings->ECsUserWidgetClass_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::DataTable)
-		{
-			FromDataTable(Context, ContextRoot);
-		}
+		FromDataTable(Context, ContextRoot);
 	}
 }
 
@@ -180,11 +165,6 @@ namespace NCsUserWidgetPooledClass
 		const FString UserWidgetPooledClass = TEXT("UserWidgetPooledClass");
 	}
 
-	void FromEnumSettings(const FString& Context)
-	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsUserInterfaceSettings, EMCsUserWidgetPooledClass, FECsUserWidgetPooledClass>(Context, Str::UserWidgetPooledClass, &FCsUILog::Warning);
-	}
-
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
 		const FCsUIDataRootSet* DataRootSet = FCsUIPopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
@@ -207,17 +187,7 @@ namespace NCsUserWidgetPooledClass
 
 		EMCsUserWidgetPooledClass::Get().ClearUserDefinedEnums();
 
-		// Enum Settings
-		if (ModuleSettings->ECsUserWidgetPooledClass_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
-		{
-			FromEnumSettings(Context);
-		}
-
-		// DataTable
-		if (ModuleSettings->ECsUserWidgetPooledClass_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::DataTable)
-		{
-			FromDataTable(Context, ContextRoot);
-		}
+		FromDataTable(Context, ContextRoot);
 	}
 }
 

@@ -784,6 +784,8 @@ public:
 // FCsProjectileClassEntry
 #pragma region
 
+/**
+*/
 USTRUCT(BlueprintType)
 struct CSPRJ_API FCsProjectileClassEntry : public FTableRowBase
 {
@@ -814,6 +816,8 @@ struct CSPRJ_API FCsProjectileClassEntry : public FTableRowBase
 // FCsProjectileEntry
 #pragma region
 
+/**
+*/
 USTRUCT(BlueprintType)
 struct CSPRJ_API FCsProjectileEntry : public FTableRowBase
 {

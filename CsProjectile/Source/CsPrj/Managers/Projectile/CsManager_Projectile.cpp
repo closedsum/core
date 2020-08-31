@@ -49,6 +49,7 @@ namespace NCsManagerProjectile
 {
 	namespace Str
 	{
+		const FString SetupInternal = TEXT("UCsManager_Projectile::SetupInternal");
 		const FString InitInternalFromSettings = TEXT("UCsManager_Projectile::InitInternalFromSettings");
 		const FString PopulateClassMapFromSettings = TEXT("UCsManager_Projectile::PopulateClassMapFromSettings");
 		const FString PopulateDataMapFromSettings = TEXT("UCsManager_Projectile::PopulateDataMapFromSettings");
@@ -323,6 +324,17 @@ void UCsManager_Projectile::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Projectile::SetupInternal()
 {
+	using namespace NCsManagerProjectile;
+
+	const FString& Context = Str::SetupInternal;
+
+	// Populate EnumMaps
+	UWorld* World				= MyRoot->GetWorld();
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+
+	NCsProjectile::PopulateEnumMapFromSettings(Context, GameInstance);
+	NCsProjectileClass::PopulateEnumMapFromSettings(Context, GameInstance);
+
 	// Delegates
 	{
 		// Log

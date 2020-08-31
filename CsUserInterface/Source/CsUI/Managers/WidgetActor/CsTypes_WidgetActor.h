@@ -36,8 +36,6 @@ namespace NCsWidgetActor
 {
 	typedef FECsWidgetActor Type;
 
-	CSUI_API const FCsUIDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot);
-
 	CSUI_API void FromEnumSettings(const FString& Context);
 
 	CSUI_API void FromDataTable(const FString& Context, UObject* ContextRoot);
@@ -72,10 +70,6 @@ struct CSUI_API EMCsWidgetActorClass : public TCsEnumStructMap<FECsWidgetActorCl
 namespace NCsWidgetActorClass
 {
 	typedef FECsWidgetActorClass Type;
-
-	CSUI_API const FCsUIDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot);
-
-	CSUI_API void FromEnumSettings(const FString& Context);
 
 	CSUI_API void FromDataTable(const FString& Context, UObject* ContextRoot);
 
@@ -180,3 +174,115 @@ public:
 };
 
 #pragma endregion FCsWidgetActorPtr
+
+// FCsWidgetActorClassEntry
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSUI_API FCsWidgetActorClassEntry : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** The enum (FECsWidgetActor) name for the widget actor class. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Name;
+
+	/** The enum (FECsWidgetActor) display name for the widget actor class. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString DisplayName;
+
+	/** Soft Reference to a widget actor class of type: ICsWidgetActor. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCsWidgetActorPtr Class;
+
+	FCsWidgetActorClassEntry() :
+		Name(),
+		DisplayName(),
+		Class()
+	{
+	}
+};
+
+#pragma endregion FCsProjectileClassEntry
+
+// FCsData_WidgetActorPtr
+#pragma region
+
+class UObject;
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSUI_API FCsData_WidgetActorPtr
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsData_WidgetActor"))
+	TSoftClassPtr<UObject> Data;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 Load_Flags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UObject* Data_Internal;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UClass* Data_Class;
+
+	FCsData_WidgetActorPtr() :
+		Data(nullptr),
+		Load_Flags(0),
+		Data_Internal(nullptr),
+		Data_Class(nullptr)
+	{
+	}
+
+	FORCEINLINE UObject* Get() const { return Data_Internal; }
+
+	template<typename T>
+	FORCEINLINE T* Get() const { return Cast<T>(Get()); }
+
+	FORCEINLINE UClass* GetClass() const { return Data_Class; }
+};
+
+#pragma endregion FCsData_WidgetActorPtr
+
+// FCsWidgetActorEntry
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSUI_API FCsWidgetActorEntry : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** The enum (FECsProjectile) name for the projectile. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Name;
+
+	/** The enum (FECsProjectile) display name for the projectile. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString DisplayName;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FECsWidgetActorClass Class;
+
+	/** Soft Reference to a data of type: ICsData_Projectile. */
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	//FCsData_ProjectilePtr Data;
+
+	FCsWidgetActorEntry() :
+		Name(),
+		DisplayName(),
+		Class()
+	{
+	}
+};
+
+#pragma endregion FCsProjectileEntry

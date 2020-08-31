@@ -22,7 +22,7 @@ namespace NCsFX
 			if (Settings->ECsFX_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
 			{
 				const TArray<FCsSettings_Enum>& Enums = Settings->GetSettingsEnum<FECsFX>();
-				const FString EnumSettingsPath		  = Settings->GetSettingsEnumPath<FECsFX>();
+				const FString& EnumSettingsPath		  = Settings->GetSettingsEnumPath<FECsFX>();
 
 				if (Enums.Num() > CS_EMPTY)
 				{

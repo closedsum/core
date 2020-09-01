@@ -8,7 +8,7 @@
 #include "Data/CsPrjLibrary_DataRootSet.h"
 #include "Library/CsLibrary_Property.h"
 // Projectile
-#include "Data/CsData_ProjectileImpl.h"
+#include "Data/CsData_ProjectileEmuSlice.h"
 
 // Cached
 #pragma region
@@ -129,7 +129,7 @@ void FCsManager_Projectile_DataHandler::CreateEmulatedDataFromDataTable(const FS
 		// ICsData_Projectile
 		if (Emulates_ICsDataProjectile)
 		{
-			FCsData_ProjectileImpl* Data = new FCsData_ProjectileImpl();
+			FCsData_ProjectileEmuSlice* Data = new FCsData_ProjectileEmuSlice();
 
 			checkf(EmulatedDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s."), *Context, *(Name.ToString()));
 
@@ -143,12 +143,12 @@ void FCsManager_Projectile_DataHandler::CreateEmulatedDataFromDataTable(const FS
 
 			FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
 
-			InterfaceMap->Add<ICsData_Projectile>(FCsData_ProjectileImpl::Name, static_cast<ICsData_Projectile*>(Data));
+			InterfaceMap->Add<ICsData_Projectile>(FCsData_ProjectileEmuSlice::Name, static_cast<ICsData_Projectile*>(Data));
 
 			Data->SetInterfaceMap(InterfaceMap);
 
 			TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
-			InterfaceImplMap.Add(FCsData_ProjectileImpl::Name, Data);
+			InterfaceImplMap.Add(FCsData_ProjectileEmuSlice::Name, Data);
 
 			DataMap.Add(Name, Data);
 
@@ -192,14 +192,14 @@ void FCsManager_Projectile_DataHandler::CreateEmulatedDataFromDataTable(const FS
 
 bool FCsManager_Projectile_DataHandler::DeconstructEmulatedData(const FName& InterfaceImplName, void* Data)
 {
-	// FCsData_ProjectileImpl
-	if (InterfaceImplName == FCsData_ProjectileImpl::Name)
+	// FCsData_ProjectileEmuSlice
+	if (InterfaceImplName == FCsData_ProjectileEmuSlice::Name)
 	{
-		delete static_cast<FCsData_ProjectileImpl*>(Data);
+		delete static_cast<FCsData_ProjectileEmuSlice*>(Data);
 		return true;
 	}
-	// FCsData_ProjecitleVisualImpl
-	// FCsData_ProjectileCollisionImpl
+	// FCsData_ProjecitleVisualEmuSlice
+	// FCsData_ProjectileCollisionEmuSlice
 	return false;
 }
 

@@ -7,7 +7,7 @@ struct FCsInterfaceMap;
 
 /**
 */
-struct CSPRJ_API FCsData_ProjectileImpl final : public ICsData_Projectile
+struct CSPRJ_API FCsData_ProjectileEmuSlice final : public ICsData_Projectile
 {
 public:
 
@@ -27,8 +27,8 @@ private:
 
 public:
 
-	FCsData_ProjectileImpl();
-	~FCsData_ProjectileImpl();
+	FCsData_ProjectileEmuSlice();
+	~FCsData_ProjectileEmuSlice();
 
 	FORCEINLINE UObject* _getUObject() const { return nullptr; }
 

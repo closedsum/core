@@ -1,4 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+
+// Library
+#include "Library/CsLibrary_Property.h"
+// Managers
+#include "Managers/Data/CsManager_Data.h"
+// Game
+#include "Engine/GameInstance.h"
+// World
+#include "Engine/World.h"
 #pragma once
 
 // Cached
@@ -22,6 +31,10 @@ class UDataTable;
 template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
 class TCsManager_PooledObject_DataHandler
 {
+	static_assert(std::is_abstract<InterfaceDataType>(), "TCsManager_PooledObject_DataHandler: InterfaceDataType MUST be abstract.");
+
+	static_assert(!std::is_abstract<DataContainerType>(), "TCsManager_PooledObject_DataHandler: DataContainerType IS abstract.");
+
 public:
 
 	TCsManager_PooledObject_DataHandler() :

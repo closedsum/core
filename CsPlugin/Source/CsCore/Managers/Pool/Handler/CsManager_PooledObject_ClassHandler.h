@@ -1,4 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+
+// Library
+#include "Library/CsLibrary_Property.h"
+// Managers
+#include "Managers/Data/CsManager_Data.h"
+// Game
+#include "Engine/GameInstance.h"
+// World
+#include "Engine/World.h"
 #pragma once
 
 // Cached
@@ -17,6 +26,8 @@ namespace NCsManagerPooledObjectClassHandlerCached
 class UObject;
 class UDataTable;
 
+/**
+*/
 template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumClassType>
 class TCsManager_PooledObject_ClassHandler
 {
@@ -71,9 +82,9 @@ public:
 		// Get Classes DataTable
 		{
 			UDataTable* DataTable = nullptr;
-			TSoftObjectPtr<UDataTable> DT_SoftObject(nullptr);
+			TSoftObjectPtr<UDataTable> DataTableSoftObject(nullptr);
 
-			GetClassesDataTableChecked(Context, DataTable, DT_SoftObject);
+			GetClassesDataTableChecked(Context, DataTable, DataTableSoftObject);
 
 			const UScriptStruct* RowStruct = DataTable->GetRowStruct();
 
@@ -97,7 +108,7 @@ public:
 			for (const TPair<FName, uint8*>& Pair : RowMap)
 			{
 				const FName& RowName = Pair.Key;
-				uint8* RowPtr	     = Manager_Data->GetDataTableRow(DT_SoftObject, RowName);
+				uint8* RowPtr	     = Manager_Data->GetDataTableRow(DataTableSoftObject, RowName);
 
 				if (!RowPtr)
 					continue;
@@ -107,7 +118,7 @@ public:
 				{
 					InterfaceUStructContainerType* StructPtr = ClassProperty->ContainerPtrToValuePtr<InterfaceUStructContainerType>(RowPtr);
 
-					checkf(StructPtr, TEXT("%s: StructPtr is NULL."), *Context);
+					checkf(StructPtr, TEXT("%s: StructPtr is NULL. Failed to get pointer from Property: Class of type EnumClassType."), *Context);
 
 					UObject* O = StructPtr->Get();
 
@@ -165,11 +176,11 @@ public:
 					{
 						EnumClassType* StructPtr = ClassProperty->ContainerPtrToValuePtr<EnumClassType>(RowPtr);
 
-						checkf(StructPtr, TEXT("%s: StructPtr is NULL."), *Context);
+						checkf(StructPtr, TEXT("%s: StructPtr is NULL. Failed to get pointer from Property: Class of type EnumClassType."), *Context);
 
 						InterfacePooledContainerType* ContainerPtr = ClassByClassTypeMap.Find(StructPtr->GetFName());
 
-						checkf(ContainerPtr, TEXT("%s: "), *Context);
+						checkf(ContainerPtr, TEXT("%s: ContainerPtr is NULL. Failed to find class of class type: %s"), *Context, StructPtr->ToChar());
 
 						InterfacePooledContainerType& PooledContainer = ClassByTypeMap.Add(RowName);
 

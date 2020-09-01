@@ -7,14 +7,8 @@
 #include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsPrjLibrary_DataRootSet.h"
 #include "Library/CsLibrary_Property.h"
-// Managers
-#include "Managers/Data/CsManager_Data.h"
 // Projectile
 #include "Data/CsData_ProjectileImpl.h"
-// Game
-#include "Engine/GameInstance.h"
-// World
-#include "Engine/World.h"
 
 // Cached
 #pragma region

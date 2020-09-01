@@ -846,10 +846,10 @@ void UCsManager_Projectile::LogTransaction(const FString& Context, const ECsPool
 void UCsManager_Projectile::ConstructClassHandler()
 {
 	ClassHandler = new FCsManager_Projectile_ClassHandler();
+	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
 	ClassHandler->Log = &FCsPrjLog::Warning;
 }
-
 
 FCsProjectilePooled* UCsManager_Projectile::GetProjectile(const FECsProjectile& Type)
 {
@@ -882,6 +882,7 @@ FCsProjectilePooled* UCsManager_Projectile::GetProjectileChecked(const FString& 
 void UCsManager_Projectile::ConstructDataHandler()
 {
 	DataHandler = new FCsManager_Projectile_DataHandler();
+	DataHandler->Outer = this;
 	DataHandler->MyRoot = MyRoot;
 	DataHandler->Log = &FCsPrjLog::Warning;
 }

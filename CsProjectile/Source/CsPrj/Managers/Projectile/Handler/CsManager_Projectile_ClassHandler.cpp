@@ -4,12 +4,6 @@
 // Library
 #include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsPrjLibrary_DataRootSet.h"
-// Managers
-#include "Managers/Data/CsManager_Data.h"
-// Game
-#include "Engine/GameInstance.h"
-// World
-#include "Engine/World.h"
 
 FCsManager_Projectile_ClassHandler::FCsManager_Projectile_ClassHandler()
 {
@@ -26,7 +20,7 @@ void FCsManager_Projectile_ClassHandler::GetClassesDataTableChecked(const FStrin
 
 	OutDataTableSoftObject = DataRootSet.ProjectileClasses;
 
-	checkf(OutDataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetSbDataRootSet().ProjectileClasses is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
+	checkf(OutDataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsPrjDataRootSet().ProjectileClasses is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
 
 	UWorld* World				  = MyRoot->GetWorld();
 	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());

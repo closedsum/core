@@ -630,3 +630,25 @@ void UCsManager_UserWidget::LogTransaction(const FString& Context, const ECsPool
 #pragma endregion Log
 
 #pragma endregion Internal
+
+// Class
+#pragma region
+
+FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidget(const FECsUserWidgetPooled& Type)
+{
+	return nullptr;
+}
+
+
+FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidget(const FECsUserWidgetPooledClass& Type)
+{
+	return nullptr;
+}
+
+
+FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidgetChecked(const FString& Context, const FECsUserWidgetPooledClass& Type)
+{
+	return nullptr;
+}
+
+#pragma endregion Class

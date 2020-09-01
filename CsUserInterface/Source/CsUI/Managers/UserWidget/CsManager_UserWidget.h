@@ -621,4 +621,48 @@ public:
 #pragma endregion 
 
 #pragma endregion Script
+
+// Class
+#pragma region
+protected:
+
+public:
+
+	/**
+	* Get the UserWidget container (Interface (ICsUserWidgetPooled), UObject, and / or UClass) associated
+	* with the user widget Type.
+	*
+	* @param Type	Type of the user widget.
+	* return		UserWidget container (Interface (ICsUserWidgetPooled), UObject, and / or UClass).
+	*/
+	FCsUserWidgetPooled* GetUserWidget(const FECsUserWidgetPooled& Type);
+
+	/**
+	* Get the UserWidget container (Interface (ICsUserWidgetPooled), UObject, and / or UClass) associated
+	* with the user widget class Type.
+	*
+	* @param Type	Class type of the UserWidget.
+	* return		UserWidget container (Interface (ICsUserWidgetPooled), UObject, and / or UClass).
+	*/
+	FCsUserWidgetPooled* GetUserWidget(const FECsUserWidgetPooledClass& Type);
+
+	/**
+	* Get the UserWidget container (Interface (ICsUserWidgetPooled), UObject, and / or UClass) associated
+	* with the user widget class Type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Type		Class type of the user widget.
+	* return			UserWidget container (Interface (ICsUserWidgetPooled), UObject, and / or UClass).
+	*/
+	FCsUserWidgetPooled* GetUserWidgetChecked(const FString& Context, const FECsUserWidgetPooledClass& Type);
+
+
+#pragma endregion Class
+
+// Data
+#pragma region
+protected:
+
+#pragma endregion Data
 };

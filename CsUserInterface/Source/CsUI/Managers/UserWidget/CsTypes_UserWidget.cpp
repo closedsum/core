@@ -102,6 +102,15 @@ namespace NCsUserWidgetClass
 
 #pragma endregion UserWidgetClass
 
+// UserWidgetData
+#pragma region
+
+namespace NCsUserWidgetData
+{
+}
+
+#pragma endregion UserWidgetData
+
 // UserWidgetPooled
 #pragma region
 
@@ -192,3 +201,16 @@ namespace NCsUserWidgetPooledClass
 }
 
 #pragma endregion UserWidgetPooledClass
+
+// FCsUserWidgetPtr
+#pragma region
+
+void FCsUserWidgetPtr::SetObject(UObject* InWidget)
+{
+	Widget			  = InWidget;
+	Widget_Internal	  = InWidget;
+	Widget_Class	  = InWidget->GetClass();
+	Widget_SubclassOf = Widget_Class;
+}
+
+#pragma endregion FCsUserWidgetPtr

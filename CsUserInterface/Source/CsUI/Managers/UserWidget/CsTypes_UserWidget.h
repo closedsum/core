@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
+#include "Engine/DataTable.h"
 
 #include "CsTypes_UserWidget.generated.h"
 #pragma once
@@ -76,6 +77,31 @@ namespace NCsUserWidgetClass
 
 #pragma endregion UserWidgetClass
 
+// UserWidgetData
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSUI_API FECsUserWidgetData : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsUserWidgetData)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsUserWidgetData)
+
+struct CSUI_API EMCsUserWidgetData : public TCsEnumStructMap<FECsUserWidgetData, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsUserWidgetData, FECsUserWidgetData, uint8)
+};
+
+namespace NCsUserWidgetData
+{
+	typedef FECsUserWidgetData Type;
+}
+
+#pragma endregion UserWidgetData
+
 // UserWidgetPooled
 #pragma region
 
@@ -145,3 +171,299 @@ namespace NCsUserWidgetPooledClass
 }
 
 #pragma endregion UserWidgetPooledClass
+
+// FCsUserWidgetPtr
+#pragma region
+
+class UObject;
+class UClass;
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSUI_API FCsUserWidgetPtr : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "UserWidget"))
+	TSoftClassPtr<UObject> Widget;
+
+	UPROPERTY()
+	int32 Widget_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UObject* Widget_Internal;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UClass* Widget_Class;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	TSubclassOf<UObject> Widget_SubclassOf;
+
+	FCsUserWidgetPtr() :
+		Widget(nullptr),
+		Widget_LoadFlags(0),
+		Widget_Internal(nullptr),
+		Widget_Class(nullptr),
+		Widget_SubclassOf(nullptr)
+	{
+	}
+
+	FORCEINLINE UObject* Get() const { return Widget_Internal; }
+	
+	template<typename T>
+	FORCEINLINE T* Get() const { return Cast<T>(Get()); }
+
+	FORCEINLINE UClass* GetClass() const { return Widget_Class; }
+
+	template<typename T>
+	FORCEINLINE T* GetClass() const { return Cast<T>(GetClass()); }
+
+	FORCEINLINE TSubclassOf<UObject> GetSubclassOf() const { return Widget_SubclassOf; }
+
+	// Added functions to mimic behavior for containers for interfaces
+
+	void SetObject(UObject* InWidget);
+
+	FORCEINLINE UObject* GetObject() const { return Widget_Internal; }
+};
+
+#pragma endregion FCsUserWidgetPtr
+
+// FCsUserWidgetClassEntry
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSUI_API FCsUserWidgetClassEntry : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** The enum (FECsUserWidgetClass) name for the user widget class. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Name;
+
+	/** The enum (FECsUserWidgetClass) display name for the user widget class. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString DisplayName;
+
+	/** Soft Reference to a user widget class of type: UUserWidget. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCsUserWidgetPtr Class;
+
+	FCsUserWidgetClassEntry() :
+		Name(),
+		DisplayName(),
+		Class()
+	{
+	}
+};
+
+#pragma endregion FCsUserWidgetClassEntry
+
+// FCsData_UserWidgetPtr
+#pragma region
+
+class UObject;
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSUI_API FCsData_UserWidgetPtr
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsData_UserWidget"))
+	TSoftClassPtr<UObject> Data;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 Load_Flags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UObject* Data_Internal;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UClass* Data_Class;
+
+	FCsData_UserWidgetPtr() :
+		Data(nullptr),
+		Load_Flags(0),
+		Data_Internal(nullptr),
+		Data_Class(nullptr)
+	{
+	}
+
+	FORCEINLINE UObject* Get() const { return Data_Internal; }
+
+	template<typename T>
+	FORCEINLINE T* Get() const { return Cast<T>(Get()); }
+
+	FORCEINLINE UClass* GetClass() const { return Data_Class; }
+};
+
+#pragma endregion FCsData_UserWidgetPtr
+
+// FCsUserWidgetEntry
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSUI_API FCsUserWidgetEntry : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** The enum (FECsUserWidget) name for the user widget. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Name;
+
+	/** The enum (FECsUserWidget) display name for the user widget. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString DisplayName;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FECsUserWidgetClass Class;
+
+	/** Soft Reference to a data of type: ICsData_UserWidget. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCsData_UserWidgetPtr Data;
+
+	FCsUserWidgetEntry() :
+		Name(),
+		DisplayName(),
+		Class(),
+		Data()
+	{
+	}
+};
+
+#pragma endregion FCsUserWidgetEntry
+
+// FCsUserWidgetPooledPtr
+#pragma region
+
+class UObject;
+class UClass;
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSUI_API FCsUserWidgetPooledPtr : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "ICsUserWidgetPooled"))
+	TSoftClassPtr<UObject> Widget;
+
+	UPROPERTY()
+	int32 Widget_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UObject* Widget_Internal;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UClass* Widget_Class;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	TSubclassOf<UObject> Widget_SubclassOf;
+
+	FCsUserWidgetPooledPtr() :
+		Widget(nullptr),
+		Widget_LoadFlags(0),
+		Widget_Internal(nullptr),
+		Widget_Class(nullptr),
+		Widget_SubclassOf(nullptr)
+	{
+	}
+
+	FORCEINLINE UObject* Get() const { return Widget_Internal; }
+	
+	template<typename T>
+	FORCEINLINE T* Get() const { return Cast<T>(Get()); }
+
+	FORCEINLINE UClass* GetClass() const { return Widget_Class; }
+
+	template<typename T>
+	FORCEINLINE T* GetClass() const { return Cast<T>(GetClass()); }
+
+	FORCEINLINE TSubclassOf<UObject> GetSubclassOf() const { return Widget_SubclassOf; }
+};
+
+#pragma endregion FCsUserWidgetPooledPtr
+
+// FCsUserWidgetPooledClassEntry
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSUI_API FCsUserWidgetPooledClassEntry : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** The enum (FECsUserWidgetPooledClass) name for the user widget pooled class. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Name;
+
+	/** The enum (FECsUserWidgetPooledClass) display name for the user widget pooled class. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString DisplayName;
+
+	/** Soft Reference to a user widget class of type: ICsUserWidgetPooled. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCsUserWidgetPooledPtr Class;
+
+	FCsUserWidgetPooledClassEntry() :
+		Name(),
+		DisplayName(),
+		Class()
+	{
+	}
+};
+
+#pragma endregion FCsUserWidgetClassEntry
+
+// FCsUserWidgetPooledEntry
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSUI_API FCsUserWidgetPooledEntry : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** The enum (FECsUserWidgetPooled) name for the user widget pooled. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Name;
+
+	/** The enum (FECsUserWidgetPooled) display name for the user widget pooled. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString DisplayName;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FECsUserWidgetPooledClass Class;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FECsUserWidget UserWidget;
+
+	FCsUserWidgetPooledEntry() :
+		Name(),
+		DisplayName(),
+		Class(),
+		UserWidget()
+	{
+	}
+};
+
+#pragma endregion FCsUserWidgetEntry

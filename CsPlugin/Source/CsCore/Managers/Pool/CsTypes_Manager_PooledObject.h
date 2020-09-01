@@ -20,9 +20,13 @@ public:
 
 	UClass* Class;
 
-	/** Pass through "data" / classes. This is mostly used for 
-	    objects that are used as containers for other objects / classes. */
-	TArray<UClass*> OtherClasses;
+	/** Pass through name of the Type. This additional data is not usually used in 
+	    normal cases. Can be used a additional Type information for a nested object. */
+	FName TypeName;
+
+	/** Pass through name of the Class Type. This additional data is not usually used in
+		normal cases. Can be used a additional Type information for a nested object. */
+	FName ClassTypeName;
 
 	ECsPooledObjectConstruction ConstructionType;
 

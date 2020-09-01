@@ -4,7 +4,8 @@
 FCsManagerPooledObjectConstructParams::FCsManagerPooledObjectConstructParams() :
 	Outer(nullptr),
 	Class(nullptr),
-	OtherClasses(),
+	TypeName(NAME_None),
+	ClassTypeName(NAME_None),
 	ConstructionType(ECsPooledObjectConstruction::Object),
 	ConstructionInfo(),
 	bReplicates(false)

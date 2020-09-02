@@ -7,6 +7,7 @@ public class CsWpEditor : ModuleRules
     public CsWpEditor(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        bLegacyPublicIncludePaths = false;
 
         PublicDependencyModuleNames.AddRange(
                 new string[] {

@@ -7,6 +7,7 @@ public class CsSe : ModuleRules
     public CsSe(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        bLegacyPublicIncludePaths = false;
 
         PublicDependencyModuleNames.AddRange(
                 new string[] {

@@ -7,6 +7,7 @@ public class CsCore : ModuleRules
     public CsCore(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        bLegacyPublicIncludePaths = false;
 
         PublicDependencyModuleNames.AddRange(
                 new string[] {

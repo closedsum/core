@@ -7,6 +7,7 @@ public class CsUI : ModuleRules
     public CsUI(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        bLegacyPublicIncludePaths = false;
 
         PublicDependencyModuleNames.AddRange(
                 new string[] {

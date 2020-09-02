@@ -7,9 +7,13 @@
 #include "Managers/UserWidget/CsCVars_Manager_UserWidget.h"
 // Library
 #include "Library/CsLibrary_Property.h"
+// Utility
+#include "Utility/CsUILog.h"
 // Settings
 #include "Settings/CsUserInterfaceSettings.h"
 // UserWidget
+#include "Managers/UserWidget/Handler/CsManager_UserWidget_ClassHandler.h"
+#include "Managers/UserWidget/Handler/CsManager_UserWidget_DataHandler.h"
 #include "Managers/UserWidget/Payload/CsPayload_UserWidgetImpl.h"
 
 #if WITH_EDITOR
@@ -28,12 +32,15 @@
 // Cached
 #pragma region
 
-namespace NCsManagerUserWidget
+namespace NCsManagerUserWidgetCached
 {
 	namespace Str
 	{
 		const FString SetupInternal = TEXT("UCsManager_UserWidget::SetupInternal");
 		const FString PopulateDataMapFromSettings = TEXT("UCsManager_UserWidget::PopulateDataMapFromSettings");
+		const FString GetUserWidgetPooled = TEXT("UCsManager_UserWidget::GetUserWidgetPooled");
+		const FString GetUserWidget = TEXT("UCsManager_UserWidget::GetUserWidget");
+		const FString GetData = TEXT("UCsManager_UserWidget::GetData");
 	}
 
 	namespace Name
@@ -250,6 +257,10 @@ void UCsManager_UserWidget::CleanUp()
 	Internal.Shutdown();
 	Pool.Reset();
 
+	delete ClassHandler;
+	delete PooledClassHandler;
+	delete DataHandler;
+
 	bInitialized = false;
 }
 
@@ -270,7 +281,7 @@ void UCsManager_UserWidget::SetMyRoot(UObject* InRoot)
 
 void UCsManager_UserWidget::SetupInternal()
 {
-	using namespace NCsManagerUserWidget;
+	using namespace NCsManagerUserWidgetCached;
 
 	const FString& Context = Str::SetupInternal;
 
@@ -282,6 +293,20 @@ void UCsManager_UserWidget::SetupInternal()
 	NCsUserWidgetClass::PopulateEnumMapFromSettings(Context, GameInstance);
 	NCsUserWidgetPooled::PopulateEnumMapFromSettings(Context, GameInstance);
 	NCsUserWidgetPooledClass::PopulateEnumMapFromSettings(Context, GameInstance);
+
+	// Class Handler
+	ConstructClassHandler();
+
+	checkf(ClassHandler, TEXT("%s: Failed to construct ClassHandler."), *Context);
+
+	ConstructPooledClassHandler();
+
+	checkf(PooledClassHandler, TEXT("%s: Failed to construct PooledClassHandler."), *Context);
+
+	// Data Handler
+	ConstructDataHandler();
+
+	checkf(DataHandler, TEXT("%s: Failed to construct DataHandler."), *Context);
 
 	// Delegates
 	{
@@ -648,21 +673,107 @@ void UCsManager_UserWidget::LogTransaction(const FString& Context, const ECsPool
 // Class
 #pragma region
 
-FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidget(const FECsUserWidgetPooled& Type)
+void UCsManager_UserWidget::ConstructClassHandler()
 {
-	return nullptr;
+	ClassHandler = new FCsManager_UserWidget_ClassHandler();
+	ClassHandler->Outer = this;
+	ClassHandler->MyRoot = MyRoot;
+	ClassHandler->Log = &FCsUILog::Warning;
 }
 
-
-FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidget(const FECsUserWidgetPooledClass& Type)
+FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidgetPooled(const FECsUserWidgetPooled& Type)
 {
-	return nullptr;
+	using namespace NCsManagerUserWidgetCached;
+
+	const FString& Context = Str::GetUserWidgetPooled;
+
+	return PooledClassHandler->GetClassByType<EMCsUserWidgetPooled, FECsUserWidgetPooled>(Context, Type);
 }
 
-
-FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidgetChecked(const FString& Context, const FECsUserWidgetPooledClass& Type)
+FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidgetPooled(const FECsUserWidgetPooledClass& Type)
 {
-	return nullptr;
+	using namespace NCsManagerUserWidgetCached;
+
+	const FString& Context = Str::GetUserWidgetPooled;
+
+	return PooledClassHandler->GetClassByClassType<EMCsUserWidgetPooledClass>(Context, Type);
+}
+
+FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidgetPooledChecked(const FString& Context, const FECsUserWidgetPooledClass& Type)
+{
+	return PooledClassHandler->GetClassByClassTypeChecked<EMCsUserWidgetPooledClass>(Context, Type);
+}
+
+void UCsManager_UserWidget::ConstructPooledClassHandler()
+{
+	PooledClassHandler = new FCsManager_UserWidget_Pooled_ClassHandler();
+	PooledClassHandler->Outer = this;
+	PooledClassHandler->MyRoot = MyRoot;
+	PooledClassHandler->Log = &FCsUILog::Warning;
+}
+
+FCsUserWidgetPtr* UCsManager_UserWidget::GetUserWidget(const FECsUserWidget& Type)
+{
+	using namespace NCsManagerUserWidgetCached;
+
+	const FString& Context = Str::GetUserWidget;
+
+	return ClassHandler->GetClassByType<EMCsUserWidget, FECsUserWidget>(Context, Type);
+}
+
+FCsUserWidgetPtr* UCsManager_UserWidget::GetUserWidget(const FECsUserWidgetClass& Type)
+{
+	using namespace NCsManagerUserWidgetCached;
+
+	const FString& Context = Str::GetUserWidget;
+
+	return ClassHandler->GetClassByClassType<EMCsUserWidgetClass>(Context, Type);
+}
+
+FCsUserWidgetPtr* UCsManager_UserWidget::GetUserWidgetChecked(const FString& Context, const FECsUserWidgetClass& Type)
+{
+	return ClassHandler->GetClassByClassTypeChecked<EMCsUserWidgetClass>(Context, Type);
 }
 
 #pragma endregion Class
+
+// Data
+#pragma region
+
+void UCsManager_UserWidget::ConstructDataHandler()
+{
+	DataHandler = new FCsManager_UserWidget_DataHandler();
+	DataHandler->Outer = this;
+	DataHandler->MyRoot = MyRoot;
+	DataHandler->Log = &FCsUILog::Warning;
+}
+
+ICsData_UserWidget* UCsManager_UserWidget::GetData(const FName& Name)
+{
+	using namespace NCsManagerUserWidgetCached;
+
+	const FString& Context = Str::GetData;
+
+	return DataHandler->GetData(Context, Name);
+}
+
+ICsData_UserWidget* UCsManager_UserWidget::GetData(const FECsUserWidget& Type)
+{
+	using namespace NCsManagerUserWidgetCached;
+
+	const FString& Context = Str::GetData;
+
+	return DataHandler->GetData<EMCsUserWidget, FECsUserWidget>(Context, Type);
+}
+
+ICsData_UserWidget* UCsManager_UserWidget::GetDataChecked(const FString& Context, const FName& Name)
+{
+	return DataHandler->GetData(Context, Name);
+}
+
+ICsData_UserWidget* UCsManager_UserWidget::GetDataChecked(const FString& Context, const FECsUserWidget& Type)
+{
+	return DataHandler->GetData<EMCsUserWidget, FECsUserWidget>(Context, Type);
+}
+
+#pragma endregion Data

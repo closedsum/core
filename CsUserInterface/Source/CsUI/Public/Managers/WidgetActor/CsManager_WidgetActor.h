@@ -696,7 +696,7 @@ public:
 	/**
 	* Get the Data (implements interface: ICsData_WidgetActor) associated with Name of the character type.
 	*
-	* @param Name	Name of the Character.
+	* @param Name	Name of the WidgetActor.
 	* return		Data that implements the interface: ICsData_WidgetActor.
 	*/
 	ICsData_WidgetActor* GetData(const FName& Name);
@@ -704,7 +704,7 @@ public:
 	/**
 	* Get the Data (implements interface: ICsData_WidgetActor) associated with Type.
 	*
-	* @param Type	Character type.
+	* @param Type	WidgetActor type.
 	* return		Data that implements the interface: ICsData_WidgetActor.
 	*/
 	ICsData_WidgetActor* GetData(const FECsWidgetActor& Type);
@@ -714,7 +714,7 @@ public:
 	* "Checked" in regards to returning a valid pointer.
 	*
 	* @param Context	The calling context.
-	* @param Name		Name of the Character.
+	* @param Name		Name of the WidgetActor.
 	* return			Data that implements the interface: ICsData_WidgetActor.
 	*/
 	ICsData_WidgetActor* GetDataChecked(const FString& Context, const FName& Name);

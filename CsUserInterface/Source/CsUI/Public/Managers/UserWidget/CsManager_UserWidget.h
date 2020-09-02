@@ -50,7 +50,9 @@ class TCsManager_PooledObject_ClassHandler;
 template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
 class TCsManager_PooledObject_DataHandler;
 
+struct FCsUserWidgetPtr;
 class ICsData_UserWidget;
+struct FCsData_UserWidgetPtr;
 struct FCsData_UserWidgetInterfaceMap;
 
 UCLASS()
@@ -387,7 +389,7 @@ public:
 	* Find the container holding a reference to a pooled object in the pool 
 	* for the appropriate Type by UObject.
 	*  Object must implement the interface: ICsUserWidgetPooled or the UClass
-	*  associated with the Object have ImplementsInterface(UCsFXActorPooled::StaticClass()) == true.
+	*  associated with the Object have ImplementsInterface(UCsUserWidgetPooled::StaticClass()) == true.
 	*
 	* @param Type		Type of pool to add the Object to.
 	* @param Object		Object or Object->GetClass() that implements the interface: ICsUserWidgetPooled.
@@ -635,48 +637,125 @@ public:
 #pragma region
 protected:
 
-	//TCsManager_PooledObject_ClassHandler<FCsUserWidgetPtr, FCsUserWidgetPtr, FECsUserWidgetClass>* ClassHandler;
+	TCsManager_PooledObject_ClassHandler<FCsUserWidgetPtr, FCsUserWidgetPtr, FECsUserWidgetClass>* ClassHandler;
 
-	//TCsManager_PooledObject_ClassHandler<FCsUserWidgetPooled, FCsUserWidgetPtr, FECsUserWidgetClass>* ClassHandler;
-
-	//virtual void ConstructClassHandler();
+	virtual void ConstructClassHandler();
 
 public:
 
 	/**
-	* Get the UserWidget container (Interface (ICsUserWidgetPooled), UObject, and / or UClass) associated
+	* Get the UserWidget Pooled container (Interface (ICsUserWidgetPooled), UObject, and / or UClass) associated
+	* with the user widget pooled Type.
+	*
+	* @param Type	Type of the user widget pooled.
+	* return		UserWidget Pooled container (Interface (ICsUserWidgetPooled), UObject, and / or UClass).
+	*/
+	FCsUserWidgetPooled* GetUserWidgetPooled(const FECsUserWidgetPooled& Type);
+
+	/**
+	* Get the UserWidget Pooled container (Interface (ICsUserWidgetPooled), UObject, and / or UClass) associated
+	* with the user widget pooled class Type.
+	*
+	* @param Type	Class type of the UserWidget Pooled.
+	* return		UserWidget Pooled container (Interface (ICsUserWidgetPooled), UObject, and / or UClass).
+	*/
+	FCsUserWidgetPooled* GetUserWidgetPooled(const FECsUserWidgetPooledClass& Type);
+
+	/**
+	* Get the UserWidget Pooled container (Interface (ICsUserWidgetPooled), UObject, and / or UClass) associated
+	* with the user widget class pooled Type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Type		Class type of the user widget pooled.
+	* return			UserWidget Pooled container (Interface (ICsUserWidgetPooled), UObject, and / or UClass).
+	*/
+	FCsUserWidgetPooled* GetUserWidgetPooledChecked(const FString& Context, const FECsUserWidgetPooledClass& Type);
+
+protected:
+
+	TCsManager_PooledObject_ClassHandler<FCsUserWidgetPooled, FCsUserWidgetPooledPtr, FECsUserWidgetPooledClass>* PooledClassHandler;
+
+	virtual void ConstructPooledClassHandler();
+
+public:
+
+	/**
+	* Get the UserWidget container (UUserWidget) associated
 	* with the user widget Type.
 	*
 	* @param Type	Type of the user widget.
-	* return		UserWidget container (Interface (ICsUserWidgetPooled), UObject, and / or UClass).
+	* return		UserWidget container (UUserWidget).
 	*/
-	FCsUserWidgetPooled* GetUserWidget(const FECsUserWidgetPooled& Type);
+	FCsUserWidgetPtr* GetUserWidget(const FECsUserWidget& Type);
 
 	/**
-	* Get the UserWidget container (Interface (ICsUserWidgetPooled), UObject, and / or UClass) associated
+	* Get the UserWidget container (UUserWidget) associated
 	* with the user widget class Type.
 	*
 	* @param Type	Class type of the UserWidget.
-	* return		UserWidget container (Interface (ICsUserWidgetPooled), UObject, and / or UClass).
+	* return		UserWidget container (UUserWidget).
 	*/
-	FCsUserWidgetPooled* GetUserWidget(const FECsUserWidgetPooledClass& Type);
+	FCsUserWidgetPtr* GetUserWidget(const FECsUserWidgetClass& Type);
 
 	/**
-	* Get the UserWidget container (Interface (ICsUserWidgetPooled), UObject, and / or UClass) associated
+	* Get the UserWidget container (UUserWidget) associated
 	* with the user widget class Type.
 	* "Checked" in regards to returning a valid pointer.
 	*
 	* @param Context	The calling context.
 	* @param Type		Class type of the user widget.
-	* return			UserWidget container (Interface (ICsUserWidgetPooled), UObject, and / or UClass).
+	* return			UserWidget container (UUserWidget).
 	*/
-	FCsUserWidgetPooled* GetUserWidgetChecked(const FString& Context, const FECsUserWidgetPooledClass& Type);
+	FCsUserWidgetPtr* GetUserWidgetChecked(const FString& Context, const FECsUserWidgetClass& Type);
 
 #pragma endregion Class
 
 // Data
 #pragma region
 protected:
+
+	TCsManager_PooledObject_DataHandler<ICsData_UserWidget, FCsData_UserWidgetPtr, FCsData_UserWidgetInterfaceMap>* DataHandler;
+
+	virtual void ConstructDataHandler();
+
+public:
+
+	/**
+	* Get the Data (implements interface: ICsData_UserWidget) associated with Name of the character type.
+	*
+	* @param Name	Name of the UserWidget.
+	* return		Data that implements the interface: ICsData_UserWidget.
+	*/
+	ICsData_UserWidget* GetData(const FName& Name);
+
+	/**
+	* Get the Data (implements interface: ICsData_UserWidget) associated with Type.
+	*
+	* @param Type	UserWidget type.
+	* return		Data that implements the interface: ICsData_UserWidget.
+	*/
+	ICsData_UserWidget* GetData(const FECsUserWidget& Type);
+
+	/**
+	* Get the Data (implements interface: ICsData_UserWidget) associated with Name of the character type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Name		Name of the UserWidget.
+	* return			Data that implements the interface: ICsData_UserWidget.
+	*/
+	ICsData_UserWidget* GetDataChecked(const FString& Context, const FName& Name);
+
+	/**
+	* Get the Data (implements interface: ICsData_UserWidget) associated with Type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Type		UserWidget type.
+	* return			Data that implements the interface: ICsData_UserWidget.
+	*/
+	ICsData_UserWidget* GetDataChecked(const FString& Context, const FECsUserWidget& Type);
 
 #pragma endregion Data
 };

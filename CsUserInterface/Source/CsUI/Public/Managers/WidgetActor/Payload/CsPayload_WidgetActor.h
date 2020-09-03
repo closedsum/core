@@ -51,16 +51,16 @@ public:
 	virtual const float& GetLifeTime() const = 0;
 
 	/**
-	* Relevant if the FX is attached to a Parent object or when an FX object is
+	* Relevant if the WidgetActor is attached to a Parent object or when an WidgetActor is
 	* allocated, the Parent field of the payload is set. If the Parent object is NULL, 
-	* the FX will NOT be attached.
+	* the WidgetActor will NOT be attached.
 	*
 	* return Attachment Rule
 	*/
 	virtual const ECsAttachmentTransformRules& GetAttachmentTransformRule() const = 0;
 
 	/** 
-	* Relevant if the FX is attached to a Parent object.
+	* Relevant if the WidgetActor is attached to a Parent object.
 	* Bone or Socket to attach to.
 	*
 	* return Bone
@@ -68,7 +68,7 @@ public:
 	virtual const FName& GetBone() const = 0;
 
 	/** 
-	* Which of the components of Transform to apply to the FX.
+	* Which of the components of Transform to apply to the WidgetActor.
 	*
 	* return Transform Rules (as a Bit Mask)
 	*/
@@ -76,7 +76,7 @@ public:
 
 	/**
 	* Get the Transform to apply to the FX. 
-	* If the FX is being attached to a Parent object, the Transform is applied as a Relative Transform
+	* If the WidgetActor is being attached to a Parent object, the Transform is applied as a Relative Transform
 	* after the attachment.
 	* Else, the Transform is applied as a World Transform.
 	*

@@ -70,8 +70,6 @@ public:
 
 protected:
 
-	virtual void SetUserWidgetPayload(ICsPayload_UserWidget* UserWidgetPayload);
-
 	void Deallocate_Internal();
 
 	ICsPooledObjectCache* Cache;

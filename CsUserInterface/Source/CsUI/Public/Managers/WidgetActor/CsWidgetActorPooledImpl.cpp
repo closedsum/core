@@ -181,47 +181,67 @@ void ACsWidgetActorPooledImpl::Allocate(ICsPayload_PooledObject* Payload)
 	SetActorHiddenInGame(false);
 
 	WidgetComponent->Activate();
+	WidgetComponent->SetHiddenInGame(false);
 	WidgetComponent->SetComponentTickEnabled(true);
 
 	// If the Parent is set, attach the WidgetComponent to the Parent
-	if (USceneComponent* Parent = Cast<USceneComponent>(Payload->GetParent()))
+	if (UObject* Parent = Payload->GetParent())
 	{
-		AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(WidgetActorPayload->GetAttachmentTransformRule()), WidgetActorPayload->GetBone());
+		USceneComponent* ComponentToAttachTo = nullptr;
 
-		const FTransform& Transform = WidgetActorPayload->GetTransform();
-		const int32& TransformRules = WidgetActorPayload->GetTransformRules();
-		
-		// Location | Rotation | Scale
-		if (TransformRules == NCsTransformRules::All)
+		// Actor
+		if (AActor* Actor = Cast<AActor>(Parent))
 		{
-			SetActorRelativeTransform(Transform);
+			ComponentToAttachTo = Actor->GetRootComponent();
 		}
+		// SceneComponent
 		else
 		{
-			// Location
-			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Location))
+			ComponentToAttachTo = Cast<USceneComponent>(Parent);
+		}
+
+		if (ComponentToAttachTo)
+		{
+			AttachToComponent(ComponentToAttachTo, NCsAttachmentTransformRules::ToRule(WidgetActorPayload->GetAttachmentTransformRule()), WidgetActorPayload->GetBone());
+
+			const FTransform& Transform = WidgetActorPayload->GetTransform();
+			const int32& TransformRules = WidgetActorPayload->GetTransformRules();
+		
+			// Location | Rotation | Scale
+			if (TransformRules == NCsTransformRules::All)
 			{
-				SetActorRelativeLocation(Transform.GetLocation());
+				SetActorRelativeTransform(Transform);
 			}
-			// Rotation
-			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Rotation))
+			else
 			{
-				SetActorRelativeRotation(Transform.GetRotation().Rotator());
-			}
-			// Scale
-			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Scale))
-			{
-				SetActorRelativeScale3D(Transform.GetScale3D());
+				// Location
+				if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Location))
+				{
+					SetActorRelativeLocation(Transform.GetLocation());
+				}
+				// Rotation
+				if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Rotation))
+				{
+					SetActorRelativeRotation(Transform.GetRotation().Rotator());
+				}
+				// Scale
+				if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Scale))
+				{
+					SetActorRelativeScale3D(Transform.GetScale3D());
+				}
 			}
 		}
+		// NO Component, set the World Transform of the WidgetComponent
+		else
+		{
+			SetActorTransform(WidgetActorPayload->GetTransform());
+		}
 	}
-	// NO Parent, set the World Transform of the FX
+	// NO Parent, set the World Transform of the WidgetComponent
 	else
 	{
 		SetActorTransform(WidgetActorPayload->GetTransform());
 	}
-
-	//FXComponent->SetAsset(FXPayload->GetFXSystem());
 }
 
 void ACsWidgetActorPooledImpl::Deallocate()
@@ -231,11 +251,6 @@ void ACsWidgetActorPooledImpl::Deallocate()
 }
 
 #pragma endregion ICsPooledObject
-
-void ACsWidgetActorPooledImpl::SetUserWidgetPayload(ICsPayload_UserWidget* UserWidgetPayload)
-{
-
-}
 
 void ACsWidgetActorPooledImpl::Deallocate_Internal()
 {

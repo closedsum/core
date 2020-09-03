@@ -3,6 +3,7 @@
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/CsTypes_AttachDetach.h"
+#include "Engine/DataTable.h"
 
 #include "CsTypes_WidgetActor.generated.h"
 #pragma once
@@ -286,3 +287,71 @@ struct CSUI_API FCsWidgetActorEntry : public FTableRowBase
 };
 
 #pragma endregion FCsProjectileEntry
+
+/**
+* Container holding general information for a pooled WidgetActor.
+*  This is mostly used by object pooled by a Manager
+*/
+USTRUCT(BlueprintType)
+struct CSUI_API FCsWidgetActorPooledInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Type of WidgetActor. The reference for the WidgetActor is obtained from
+	    Manager_WidgetActor. Generally, this should be set to the DefaultType set 
+		in UCsUserInterfaceSettings->Manager_WidgetActor.DefaultType. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FECsWidgetActor WidgetActor;
+
+	/** Condition to determine when to deallocate the WidgetActor. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ECsWidgetActorDeallocateMethod DeallocateMethod;
+
+	/** Valid if the DeallocateMethod == ECsWidgetActorDeallocateMethod::LifeTime.
+		- If a WidgetActor IS attached to a Parent object, 
+		   LifeTime == 0.of means the WidgetActor will be deallocated immediately
+	        when the Parent object has been destroyed / deallocated.
+		   LifeTime > 0.0f will be the time after the Parent object has been 
+		    destroyed / deallocated to deallocate the WidgetActor.
+	    - If a WidgetActor is NOT attached to a Parent object,
+		   LifeTime == 0.0f means the WidgetActor will stay active forever.
+		   LifeTime > 0.0f means the WidgetActor will be deallocated after LifeTime amount of time after
+	        the WidgetActor has been allocated. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float LifeTime;
+
+	/** Valid if the WidgetActor is attached to a Parent object or when a WidgetActor is
+		allocated, the Parent field of the payload is set.If the Parent object is NULL,
+		the WidgetActor will NOT be attached. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ECsAttachmentTransformRules AttachmentTransformRules;
+
+	/** Valid only when the WidgetActor is attached to a Parent object. 
+	    Bone or Socket to attach to. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName Bone;
+
+	/** Which of the components of Transform to apply to the WidgetActor. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+	int32 TransformRules;
+
+	/** The Transform to apply to the WidgetActor.
+		If the WidgetActor is attached to a parent object, the Transform is applied as a Relative Transform
+		after the attachment.
+	    Else, the Transform is applied as a World Transform. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FTransform Transform;
+
+public:
+
+	FCsWidgetActorPooledInfo() :
+		WidgetActor(),
+		DeallocateMethod(ECsWidgetActorDeallocateMethod::Complete),
+		LifeTime(0.0f),
+		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+		Bone(NAME_None),
+		TransformRules(7), // NCsTransformRules::All
+		Transform(FTransform::Identity)
+	{
+	}
+};

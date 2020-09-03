@@ -205,6 +205,11 @@ public:
 	}
 
 	/**
+	* Check whether the Interface implements the interface: OtherInterfaceType
+	*
+	* @param Context		The calling context.
+	* @param Interface
+	* return				Whether the Interface implements the interface: OtherInterfaceType.
 	*/
 	template<typename OtherInterfaceType>
 	FORCEINLINE static bool Implements(const FString& Context, const InterfaceType* Interface)
@@ -215,6 +220,12 @@ public:
 	}
 
 	/**
+	* Check whether the Interface references an interface map (FCsInterfaceMap) stores
+	* unique based interface slices
+	*
+	* @param Context	The calling context.
+	* @param Interface
+	* return			Whether the Interface stores references to other unique based interface slices.
 	*/
 	FORCEINLINE static bool HasUniqueBasedSlices(const FString& Context, const InterfaceType* Interface)
 	{

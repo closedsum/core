@@ -7,10 +7,13 @@
 #include "Managers/UserWidget/CsCVars_Manager_UserWidget.h"
 // Library
 #include "Library/CsLibrary_Property.h"
+#include "Data/CsUILibrary_DataRootSet.h"
 // Utility
 #include "Utility/CsUILog.h"
 // Settings
 #include "Settings/CsUserInterfaceSettings.h"
+// Data
+#include "Data/CsUIDataRootSet.h"
 // UserWidget
 #include "Managers/UserWidget/Handler/CsManager_UserWidget_ClassHandler.h"
 #include "Managers/UserWidget/Handler/CsManager_UserWidget_DataHandler.h"
@@ -37,6 +40,7 @@ namespace NCsManagerUserWidgetCached
 	namespace Str
 	{
 		const FString SetupInternal = TEXT("UCsManager_UserWidget::SetupInternal");
+		const FString InitInternalFromSettings = TEXT("UCsManager_UserWidget::InitInternalFromSettings");
 		const FString PopulateDataMapFromSettings = TEXT("UCsManager_UserWidget::PopulateDataMapFromSettings");
 		const FString GetUserWidgetPooled = TEXT("UCsManager_UserWidget::GetUserWidgetPooled");
 		const FString GetUserWidget = TEXT("UCsManager_UserWidget::GetUserWidget");
@@ -258,8 +262,13 @@ void UCsManager_UserWidget::CleanUp()
 	Pool.Reset();
 
 	delete ClassHandler;
+	ClassHandler = nullptr;
+
 	delete PooledClassHandler;
+	PooledClassHandler = nullptr;
+
 	delete DataHandler;
+	DataHandler = nullptr;
 
 	bInitialized = false;
 }
@@ -343,7 +352,7 @@ void UCsManager_UserWidget::SetupInternal()
 
 		checkf(ModuleSettings, TEXT("UCsManager_UserWidget::SetupInternal: Failed to get settings of type: UCsUserInterfaceSettings."));
 
-		//Settings = ModuleSettings->Manager_UserWidget;
+		Settings = ModuleSettings->Manager_UserWidget;
 
 		InitInternalFromSettings();
 	}
@@ -351,6 +360,58 @@ void UCsManager_UserWidget::SetupInternal()
 
 void UCsManager_UserWidget::InitInternalFromSettings()
 {
+	using namespace NCsManagerUserWidgetCached;
+
+	const FString& Context = Str::InitInternalFromSettings;
+
+	ClassHandler->PopulateClassMapFromSettings(Context);
+	PooledClassHandler->PopulateClassMapFromSettings(Context);
+
+	const FCsUIDataRootSet& DataRootSet = FCsUILibrary_DataRootSet::GetChecked(Context, MyRoot);
+
+	if (DataRootSet.bUserWidgetsHasData)
+		DataHandler->PopulateDataMapFromSettings(Context);
+
+	// TODO: Add support for Data for UserWidgetPooled
+
+	if (Settings.PoolParams.Num() > CS_EMPTY)
+	{
+		FCsManager_UserWidget_Internal::FCsManagerPooledObjectMapParams Params;
+
+		Params.Name  = TEXT("UCsManager_UserWidget::FCsManager_UserWidget_Internal");
+		Params.World = MyRoot->GetWorld();
+
+		for (const TPair<FECsUserWidgetPooled, FCsSettings_Manager_UserWidget_PoolParams>& Pair : Settings.PoolParams)
+		{
+			const FECsUserWidgetPooled& Type							= Pair.Key;
+			const FCsSettings_Manager_UserWidget_PoolParams& PoolParams = Pair.Value;
+
+			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
+
+			// Get Class
+			const FECsUserWidgetPooledClass& ClassType = PoolParams.Class;
+
+			checkf(EMCsUserWidgetPooledClass::Get().IsValidEnum(ClassType), TEXT("%s: Class for NOT Valid."), *Context, ClassType.ToChar());
+
+			FCsUserWidgetPooled* UserWidget = GetUserWidgetPooledChecked(Context, ClassType);
+			UClass* Class					= UserWidget->GetClass();
+
+			checkf(Class, TEXT("%s: Failed to get class for Type: %s ClassType: %s."), *Context, Type.ToChar(), ClassType.ToChar());
+
+			ObjectParams.Name							  = Params.Name + TEXT("_") + Type.ToChar();
+			ObjectParams.World							  = Params.World;
+			ObjectParams.ConstructParams.Outer			  = this;
+			ObjectParams.ConstructParams.Class			  = Class;
+			ObjectParams.ConstructParams.TypeName		  = PoolParams.Widget.GetFName();
+			ObjectParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Object;
+			ObjectParams.bConstructPayloads				  = true;
+			ObjectParams.PayloadSize					  = PoolParams.PayloadSize;
+			ObjectParams.bCreatePool					  = true;
+			ObjectParams.PoolSize						  = PoolParams.PoolSize;
+		}
+
+		InitInternal(Params);
+	}
 }
 
 void UCsManager_UserWidget::InitInternal(const FCsManager_UserWidget_Internal::FCsManagerPooledObjectMapParams& Params)
@@ -719,6 +780,11 @@ FCsUserWidgetPtr* UCsManager_UserWidget::GetUserWidget(const FECsUserWidget& Typ
 	const FString& Context = Str::GetUserWidget;
 
 	return ClassHandler->GetClassByType<EMCsUserWidget, FECsUserWidget>(Context, Type);
+}
+
+FCsUserWidgetPtr* UCsManager_UserWidget::GetUserWidgetChecked(const FString& Context, const FECsUserWidget& Type)
+{
+	return ClassHandler->GetClassByTypeChecked<EMCsUserWidget, FECsUserWidget>(Context, Type);
 }
 
 FCsUserWidgetPtr* UCsManager_UserWidget::GetUserWidget(const FECsUserWidgetClass& Type)

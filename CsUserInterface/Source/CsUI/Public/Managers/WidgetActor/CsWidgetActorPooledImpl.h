@@ -11,6 +11,8 @@
 struct ICsPooledObjectCache;
 struct ICsPayload_PooledObject;
 class UCsWidgetComponent;
+struct ICsPayload_UserWidget;
+struct FCsUserWidgetPooled;
 
 UCLASS()
 class CSUI_API ACsWidgetActorPooledImpl : public AActor,
@@ -27,6 +29,14 @@ public:
 	virtual void BeginDestroy() override;
 
 #pragma endregion UObject Interface
+
+// AActor Interface
+#pragma region
+protected:
+
+	virtual void BeginPlay() override;
+
+#pragma endregion AActor Interface
 
 // AActor Interface
 #pragma region
@@ -60,6 +70,8 @@ public:
 
 protected:
 
+	virtual void SetUserWidgetPayload(ICsPayload_UserWidget* UserWidgetPayload);
+
 	void Deallocate_Internal();
 
 	ICsPooledObjectCache* Cache;
@@ -81,4 +93,6 @@ protected:
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "Components")
 	UCsWidgetComponent* WidgetComponent;
+
+	FCsUserWidgetPooled* UserWidgetPooled;
 };

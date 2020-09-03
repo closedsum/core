@@ -213,6 +213,16 @@ public:
 		return ClassByTypeMap.Find(Type.GetFName());
 	}
 
+	template<typename EnumMap, typename EnumType>
+	FORCEINLINE InterfacePooledContainerType* GetClassByTypeChecked(const FString& Context, const EnumType& Type)
+	{
+		InterfacePooledContainerType* Ptr = GetClassByType<EnumMap, EnumType>(Context, Type);
+
+		checkf(Ptr, TEXT("%s: Failed to find a Class associated with Type: %s."), *Context, Type.ToChar());
+
+		return Ptr;
+	}
+
 	template<typename EnumClassMap>
 	FORCEINLINE InterfacePooledContainerType* GetClassByClassType(const FString& Context, const EnumClassType& Type)
 	{

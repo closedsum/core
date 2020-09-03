@@ -238,7 +238,7 @@ public:
 	* return				Whether the objects implements the interface with the given name.
 	*/
 	template<typename InterfaceType>
-	FORCEINLINE bool Implements()
+	FORCEINLINE bool Implements() const
 	{
 		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::Implements: InterfaceType is NOT abstract.");
 
@@ -252,7 +252,7 @@ public:
 	* @param InterfaceName
 	* return				Whether the objects implements the interface with the given name.
 	*/
-	FORCEINLINE bool Implements(const FName& InterfaceName)
+	FORCEINLINE bool Implements(const FName& InterfaceName) const
 	{
 		checkf(InterfaceName != NAME_None, TEXT("FCsInterfaceMap::Implements: InterfaceName: None is NOT Valid."));
 
@@ -957,7 +957,7 @@ public:
 		return DerivedPtr;
 	}
 
-		/**
+	/**
 	* Perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks.
 	* DerivedType is NOT abstract.
 	* Does NOT check if the InterfaceMap has "unique based" interfaces.
@@ -1654,10 +1654,20 @@ namespace NCsInterfaceMap
 	/**
 	*/
 	template<typename OtherInterfaceType, typename InterfaceType>
-	FORCEINLINE bool Implements(const FString& Context, InterfaceType* Interface)
+	FORCEINLINE bool Implements(const FString& Context, const InterfaceType* Interface)
 	{
-		FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked<InterfaceType>(Context);
+		FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked<InterfaceType>(Context, Interface);
 
 		return InterfaceMap->Implements<OtherInterfaceType>();
+	}
+
+	/**
+	*/
+	template<typename InterfaceType>
+	FORCEINLINE bool HasUniqueBasedSlices(const FString& Context, const InterfaceType* Interface)
+	{
+		FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked<InterfaceType>(Context, Interface);
+
+		return InterfaceMap->HasUniqueBasedSlices();
 	}
 }

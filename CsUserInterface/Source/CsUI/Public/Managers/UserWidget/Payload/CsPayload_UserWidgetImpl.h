@@ -34,6 +34,8 @@ public:
 
 	// ICsPayload_UserWidget
 
+	ESlateVisibility Visibility;
+
 public:
 
 	FCsPayload_UserWidgetImpl();
@@ -111,6 +113,11 @@ public:
 // ICsPayload_UserWidget
 #pragma region
 public:
+
+	FORCEINLINE const ESlateVisibility& GetVisibility() const
+	{
+		return Visibility;
+	}
 
 #pragma endregion ICsPayload_UserWidget
 };

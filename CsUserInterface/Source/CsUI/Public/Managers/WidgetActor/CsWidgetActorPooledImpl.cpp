@@ -9,6 +9,8 @@
 // Library
 #include "Managers/Pool/Cache/CsLibrary_PooledObjectCache.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+// Managers
+#include "Managers/UserWidget/CsManager_UserWidget.h"
 // Pooled Object
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 // WidgetActor
@@ -16,6 +18,10 @@
 #include "Managers/WidgetActor/Payload/CsPayload_WidgetActorImpl.h"
 // Components
 #include "Components/CsWidgetComponent.h"
+// Game
+#include "GameFramework/GameStateBase.h"
+// World
+#include "Engine/World.h"
 
 // Cached
 #pragma region
@@ -24,6 +30,7 @@ namespace NCsWidgetActorPooledImplCached
 {
 	namespace Str
 	{
+		const FString BeginPlay = TEXT("ACsWidgetActorPooledImpl::BeginPlay");
 		const FString Update = TEXT("ACsWidgetActorPooledImpl::Update");
 		const FString Allocate = TEXT("ACsWidgetActorPooledImpl::Allocate");
 	}
@@ -33,6 +40,19 @@ namespace NCsWidgetActorPooledImplCached
 
 ACsWidgetActorPooledImpl::ACsWidgetActorPooledImpl(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	// Widget Component
+	WidgetComponent = ObjectInitializer.CreateDefaultSubobject<UCsWidgetComponent>(this, TEXT("WidgetComponent"));
+	WidgetComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//WidgetComponent->SetCollisionObjectType(CS_COLLISION_PROJECTILE);
+	WidgetComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+	WidgetComponent->SetGenerateOverlapEvents(false);
+	WidgetComponent->bReturnMaterialOnMove = true;
+	WidgetComponent->SetNotifyRigidBodyCollision(false);
+	WidgetComponent->PrimaryComponentTick.bStartWithTickEnabled = false;
+
+	WidgetComponent->Deactivate();
+
+	RootComponent = WidgetComponent;
 }
 
 // UObject Interface
@@ -50,6 +70,30 @@ void ACsWidgetActorPooledImpl::BeginDestroy()
 }
 
 #pragma endregion UObject Interface
+
+// AActor Interface
+#pragma region
+
+void ACsWidgetActorPooledImpl::BeginPlay()
+{
+	using namespace NCsWidgetActorPooledImplCached;
+
+	const FString& Context = Str::BeginPlay;
+
+	Super::BeginPlay();
+
+	WidgetComponent->SetComponentTickEnabled(false);
+
+	SetActorTickEnabled(false);
+
+	ConstructCache();
+
+	FCsCache_WidgetActorImpl* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsCache_WidgetActorImpl>(Context, Cache);
+
+	CacheImpl->SetWidgetComponent(WidgetComponent);
+}
+
+#pragma endregion AActor Interface
 
 // AActor Interface
 #pragma region
@@ -98,18 +142,48 @@ void ACsWidgetActorPooledImpl::Allocate(ICsPayload_PooledObject* Payload)
 
 	const FString& Context = Str::Allocate;
 
+	// Get / Assign UserWidget
+	ICsPayload_WidgetActor* WidgetActorPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsPayload_WidgetActor>(Context, Payload);
+	{
+		// Passing reference to UserWidget
+		if (UUserWidget* UserWidget = WidgetActorPayload->GetUserWidget())
+		{
+			WidgetComponent->SetWidget(UserWidget);
+		}
+		// Passing UserWidgetPooledType
+		else
+		{
+			// Get "slice" ICsPayload_WidgetActorUserWidget
+			ICsPayload_WidgetActorUserWidget* WidgetActorUserWidgetPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsPayload_WidgetActorUserWidget>(Context, Payload);
+
+				// Get type
+			const FECsUserWidgetPooled& UserWidgetPooledType = WidgetActorUserWidgetPayload->GetUserWidgetPooledType();
+
+			checkf(EMCsUserWidgetPooled::Get().IsValidEnum(UserWidgetPooledType), TEXT("%s: UserWidgetPooledType: %s is NOT Valid from Payload(ICsPayload_WidgetActor)->GetUserWidgetPooledType()."), *Context, UserWidgetPooledType.ToChar());
+				// Get payload (ICsPayload_UserWidget)
+			ICsPayload_UserWidget* UserWidgetPayload = WidgetActorUserWidgetPayload->GetUserWidgetPayload();
+
+			checkf(UserWidgetPayload, TEXT("%s: UserWidgetPayload is NULL from Payload(ICsPayload_WidgetActorUserPayload)->GetUserWidgetPayload()."), *Context)
+				// "Spawn" / allocate UserWidget
+			UCsManager_UserWidget* UManager_UserWidget = UCsManager_UserWidget::Get(GetWorld()->GetGameState());
+
+			UserWidgetPooled = const_cast<FCsUserWidgetPooled*>(UManager_UserWidget->Spawn(UserWidgetPooledType, UserWidgetPayload));
+
+			WidgetComponent->SetWidget(UserWidgetPooled->GetUserWidget());
+		}	
+	}
+
 	FCsCache_WidgetActorImpl* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsCache_WidgetActorImpl>(Context, Cache);
 
 	CacheImpl->Allocate(Payload);
 
-	CacheImpl->SetWidgetComponent(WidgetComponent);
-
-	ICsPayload_WidgetActor* WidgetActorPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsPayload_WidgetActor>(Context, Payload);
-
 	SetActorTickEnabled(true);
 	SetActorHiddenInGame(false);
 
-	// If the Parent is set, attach the FX to the Parent
+	WidgetComponent->Activate();
+	WidgetComponent->SetComponentTickEnabled(true);
+
+	// If the Parent is set, attach the WidgetComponent to the Parent
 	if (USceneComponent* Parent = Cast<USceneComponent>(Payload->GetParent()))
 	{
 		AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(WidgetActorPayload->GetAttachmentTransformRule()), WidgetActorPayload->GetBone());
@@ -148,8 +222,6 @@ void ACsWidgetActorPooledImpl::Allocate(ICsPayload_PooledObject* Payload)
 	}
 
 	//FXComponent->SetAsset(FXPayload->GetFXSystem());
-
-	WidgetComponent->Activate();
 }
 
 void ACsWidgetActorPooledImpl::Deallocate()
@@ -160,15 +232,28 @@ void ACsWidgetActorPooledImpl::Deallocate()
 
 #pragma endregion ICsPooledObject
 
+void ACsWidgetActorPooledImpl::SetUserWidgetPayload(ICsPayload_UserWidget* UserWidgetPayload)
+{
+
+}
+
 void ACsWidgetActorPooledImpl::Deallocate_Internal()
 {
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
+	WidgetComponent->SetComponentTickEnabled(false);
+	WidgetComponent->Deactivate();
+
 	SetActorTickEnabled(false);
 	SetActorHiddenInGame(true);
 
-	// TODO: "Free" Widget
-	//WidgetComponent->SetWidget(nullptr);
+	// "Free" Widget
+	if (UserWidgetPooled)
+	{
+		UserWidgetPooled->GetCache()->QueueDeallocate();
+	}
+	UserWidgetPooled = nullptr;
+	WidgetComponent->SetWidget(nullptr);
 }
 
 void ACsWidgetActorPooledImpl::ConstructCache()

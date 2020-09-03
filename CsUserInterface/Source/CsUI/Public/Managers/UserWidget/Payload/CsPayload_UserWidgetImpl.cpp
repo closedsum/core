@@ -13,7 +13,9 @@ FCsPayload_UserWidgetImpl::FCsPayload_UserWidgetImpl() :
 	Instigator(nullptr),
 	Owner(nullptr),
 	Parent(nullptr),
-	Time()
+	Time(),
+	// ICsPayload_UserWidget
+	Visibility(ESlateVisibility::SelfHitTestInvisible)
 {
 	InterfaceMap = new FCsInterfaceMap();
 
@@ -40,6 +42,8 @@ void FCsPayload_UserWidgetImpl::Reset()
 	Parent = nullptr;
 
 	Time.Reset();
+	// ICsPayload_UserWidget
+	Visibility = ESlateVisibility::SelfHitTestInvisible;
 }
 
 #pragma endregion ICsPayload_PooledObject

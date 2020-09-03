@@ -175,7 +175,7 @@ namespace NCsUserWidgetPooledClass
 // FCsUserWidgetPtr
 #pragma region
 
-class UObject;
+class UUserWidget;
 class UClass;
 
 /**
@@ -187,20 +187,20 @@ struct CSUI_API FCsUserWidgetPtr : public FTableRowBase
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "UserWidget"))
-	TSoftClassPtr<UObject> Widget;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<UUserWidget> Widget;
 
 	UPROPERTY()
 	int32 Widget_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
-	UObject* Widget_Internal;
+	UUserWidget* Widget_Internal;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
 	UClass* Widget_Class;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
-	TSubclassOf<UObject> Widget_SubclassOf;
+	TSubclassOf<UUserWidget> Widget_SubclassOf;
 
 	FCsUserWidgetPtr() :
 		Widget(nullptr),
@@ -211,7 +211,7 @@ public:
 	{
 	}
 
-	FORCEINLINE UObject* Get() const { return Widget_Internal; }
+	FORCEINLINE UUserWidget* Get() const { return Widget_Internal; }
 	
 	template<typename T>
 	FORCEINLINE T* Get() const { return Cast<T>(Get()); }
@@ -221,13 +221,13 @@ public:
 	template<typename T>
 	FORCEINLINE T* GetClass() const { return Cast<T>(GetClass()); }
 
-	FORCEINLINE TSubclassOf<UObject> GetSubclassOf() const { return Widget_SubclassOf; }
+	FORCEINLINE TSubclassOf<UUserWidget> GetSubclassOf() const { return Widget_SubclassOf; }
 
 	// Added functions to mimic behavior for containers for interfaces
 
 	void SetObject(UObject* InWidget);
 
-	FORCEINLINE UObject* GetObject() const { return Widget_Internal; }
+	UObject* GetObject() const;
 };
 
 #pragma endregion FCsUserWidgetPtr
@@ -360,18 +360,22 @@ struct CSUI_API FCsUserWidgetPooledPtr : public FTableRowBase
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "ICsUserWidgetPooled"))
+	/** Soft Class reference to an object that implements the interface: ICsUserWidgetPooled. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsUserWidgetPooled"))
 	TSoftClassPtr<UObject> Widget;
 
 	UPROPERTY()
 	int32 Widget_LoadFlags;
 
+	/** Hard reference to an object that implements the interface: ICsUserWidgetPooled. */
 	UPROPERTY(Transient, BlueprintReadOnly)
 	UObject* Widget_Internal;
 
+	/** Hard reference to the class that implements the interface: ICsUserWidgetPooled. */
 	UPROPERTY(Transient, BlueprintReadOnly)
 	UClass* Widget_Class;
 
+	/** Subclass to a hard reference to the class that implements the interface: ICsUserWidgetPooled. */
 	UPROPERTY(Transient, BlueprintReadOnly)
 	TSubclassOf<UObject> Widget_SubclassOf;
 

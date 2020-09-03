@@ -10,6 +10,8 @@
 #include "Utility/CsUILog.h"
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsUIPopulateEnumMapFromSettings.h"
+// UI
+#include "Blueprint/UserWidget.h"
 
 // UserWidget
 #pragma region
@@ -81,7 +83,7 @@ namespace NCsUserWidgetClass
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsUserWidgetClass>(Context, ContextRoot, DataRootSet->UserWidgets, Str::UserWidgetClass, &FCsUILog::Warning);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsUserWidgetClass>(Context, ContextRoot, DataRootSet->UserWidgetClasses, Str::UserWidgetClass, &FCsUILog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
@@ -207,10 +209,19 @@ namespace NCsUserWidgetPooledClass
 
 void FCsUserWidgetPtr::SetObject(UObject* InWidget)
 {
-	Widget			  = InWidget;
-	Widget_Internal	  = InWidget;
+	checkf(InWidget, TEXT("FCsUserWidgetPtr::SetObject: InWidget is NULL."));
+
+	checkf(Cast<UUserWidget>(InWidget), TEXT("FCsUserWidgetPtr::SetObject: InWidget is NOT a UUserWidget."));
+
+	Widget			  = Cast<UUserWidget>(InWidget);
+	Widget_Internal	  = Cast<UUserWidget>(InWidget);
 	Widget_Class	  = InWidget->GetClass();
 	Widget_SubclassOf = Widget_Class;
+}
+
+UObject* FCsUserWidgetPtr::GetObject() const
+{
+	return Widget_Internal;
 }
 
 #pragma endregion FCsUserWidgetPtr

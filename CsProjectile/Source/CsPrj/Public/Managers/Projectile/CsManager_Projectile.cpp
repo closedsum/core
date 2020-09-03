@@ -299,7 +299,10 @@ void UCsManager_Projectile::CleanUp()
 	Pool.Reset();
 
 	delete ClassHandler;
+	ClassHandler = nullptr;
+
 	delete DataHandler;
+	DataHandler = nullptr;
 
 	bInitialized = false;
 }
@@ -435,6 +438,7 @@ void UCsManager_Projectile::InitInternalFromSettings()
 
 			ObjectParams.Name							  = Params.Name + TEXT("_") + Type.ToChar();
 			ObjectParams.World							  = Params.World;
+			ObjectParams.ConstructParams.Outer			  = this;
 			ObjectParams.ConstructParams.Class			  = Class;
 			ObjectParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
 			ObjectParams.bConstructPayloads				  = true;

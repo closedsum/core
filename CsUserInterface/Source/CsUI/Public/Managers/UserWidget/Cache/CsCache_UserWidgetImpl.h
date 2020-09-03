@@ -16,7 +16,7 @@ struct ICsPayload_PooledObject;
 * another implementation
 */
 struct CSUI_API FCsCache_UserWidgetImpl final : public ICsPooledObjectCache,
-												  public ICsCache_UserWidget
+												public ICsCache_UserWidget
 {
 public:
 

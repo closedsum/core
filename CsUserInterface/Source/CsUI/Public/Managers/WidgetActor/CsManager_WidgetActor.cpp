@@ -41,7 +41,7 @@
 // Cached
 #pragma region
 
-namespace NCsManagerWidgetActor
+namespace NCsManagerWidgetActorCached
 {
 	namespace Str
 	{
@@ -286,7 +286,7 @@ void UCsManager_WidgetActor::SetMyRoot(UObject* InRoot)
 
 void UCsManager_WidgetActor::SetupInternal()
 {
-	using namespace NCsManagerWidgetActor;
+	using namespace NCsManagerWidgetActorCached;
 
 	const FString& Context = Str::SetupInternal;
 
@@ -340,7 +340,7 @@ void UCsManager_WidgetActor::SetupInternal()
 	{
 		UCsUserInterfaceSettings* ModuleSettings = GetMutableDefault<UCsUserInterfaceSettings>();
 
-		checkf(ModuleSettings, TEXT("UCsManager_WidgetActor::SetupInternal: Failed to get settings of type: UCsUserInterfaceSettings."));
+		checkf(ModuleSettings, TEXT("%s: Failed to get settings of type: UCsUserInterfaceSettings."), *Context);
 
 		Settings = ModuleSettings->Manager_WidgetActor;
 
@@ -355,12 +355,14 @@ void UCsManager_WidgetActor::SetupInternal()
 				TypeMapArray.Add(Type);
 			}
 			/*
-			for (const TPair<FECsProjectile, FECsProjectile>& Pair : Settings.TypeMap)
+			for (const TPair<FECsWidgetActor, FECsWidgetActor>& Pair : Settings.TypeMap)
 			{
 				TypeMapArray[Pair.Key.GetValue()] = Pair.Value;
 			}
 			*/
 		}
+
+		checkf(EMCsWidgetActor::Get().IsValidEnum(Settings.DefaultType), TEXT("%s: UCsUserInterfaceSettings->Manager_WidgetActor.DefaultType: %s is NOT Valid."), *Context, Settings.DefaultType.ToChar());
 
 		InitInternalFromSettings();
 	}
@@ -368,7 +370,7 @@ void UCsManager_WidgetActor::SetupInternal()
 
 void UCsManager_WidgetActor::InitInternalFromSettings()
 {
-	using namespace NCsManagerWidgetActor;
+	using namespace NCsManagerWidgetActorCached;
 
 	const FString& Context = Str::InitInternalFromSettings;
 
@@ -722,14 +724,14 @@ void UCsManager_WidgetActor::ConstructClassHandler()
 
 FCsWidgetActorPooled* UCsManager_WidgetActor::GetWidgetActor(const FECsWidgetActor& Type)
 {
-	const FString& Context = NCsManagerWidgetActor::Str::GetWidgetActor;
+	const FString& Context = NCsManagerWidgetActorCached::Str::GetWidgetActor;
 
 	return ClassHandler->GetClassByType<EMCsWidgetActor, FECsWidgetActor>(Context, Type);
 }
 
 FCsWidgetActorPooled* UCsManager_WidgetActor::GetWidgetActor(const FECsWidgetActorClass& Type)
 {
-	const FString& Context = NCsManagerWidgetActor::Str::GetWidgetActor;
+	const FString& Context = NCsManagerWidgetActorCached::Str::GetWidgetActor;
 
 	return ClassHandler->GetClassByClassType<EMCsWidgetActorClass>(Context, Type);
 }
@@ -754,7 +756,7 @@ void UCsManager_WidgetActor::ConstructDataHandler()
 
 ICsData_WidgetActor* UCsManager_WidgetActor::GetData(const FName& Name)
 {
-	using namespace NCsManagerWidgetActor;
+	using namespace NCsManagerWidgetActorCached;
 
 	const FString& Context = Str::GetData;
 

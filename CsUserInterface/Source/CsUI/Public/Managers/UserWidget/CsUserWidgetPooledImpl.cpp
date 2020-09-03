@@ -25,6 +25,7 @@ namespace NCsUserWidgetPooledImplCached
 {
 	namespace Str
 	{
+		const FString OnConstructObject = TEXT("UCsUserWidgetPooledImpl::OnConstructObject");
 		const FString Update = TEXT("UCsUserWidgetPooledImpl::Update");
 		const FString Allocate = TEXT("UCsUserWidgetPooledImpl::Allocate");
 	}
@@ -56,30 +57,48 @@ void UCsUserWidgetPooledImpl::BeginDestroy()
 
 void UCsUserWidgetPooledImpl::OnConstructObject(const FCsManagerPooledObjectConstructParams& Params)
 {
+	using namespace NCsUserWidgetPooledImplCached;
+
+	const FString& Context = Str::OnConstructObject;
+
 	ConstructCache();
 
+	// Create the UserWidget from Params.TypeName
+
+		// Get the Manager_UserWidget
 	UObject* MyOuter = GetOuter();
 
-	checkf(MyOuter, TEXT("UCsUserWidgetPooledImpl::OnConstructObject: Outer is NULL. No Outer set for %s."), *(GetName()));
+	checkf(MyOuter, TEXT("%s: Outer is NULL. No Outer set for %s."), *Context, *(GetName()));
 
 	UCsManager_UserWidget* Manager_UserWidget = Cast<UCsManager_UserWidget>(MyOuter);
 
-	checkf(Manager_UserWidget, TEXT("UCsUserWidgetPooledImpl::OnConstructObject: Outer for %s is NOT of type: UCsManager_UserWidget."), *(GetName()));
+	checkf(Manager_UserWidget, TEXT("%s: Outer for %s is NOT of type: UCsManager_UserWidget."), *Context, *(GetName()));
 
 	UWorld* World = Manager_UserWidget->GetWorld();
 
-	checkf(World, TEXT("UCsUserWidgetPooledImpl::OnConstructObject: World is NULL. No World associated with Manager_UserWidget."));
+	checkf(World, TEXT("%s: World is NULL. No World associated with Manager_UserWidget."), *Context);
 
-	//Params.TypeName;
-	//Params.ClassTypeName;
+		// Get the UserWidget Type
+	const FName& TypeName = Params.TypeName;
 
-	/*
-	FActorSpawnParameters Params;
+	checkf(TypeName != NAME_None, TEXT("%s: TypeName = None is NOT Valid."), *Context);
 
-	FX = World->SpawnActor<ANiagaraActor>(ANiagaraActor::StaticClass(), Params);
+	const FECsUserWidget& UserWidgetType = EMCsUserWidget::Get().GetEnum(TypeName);
+		
+		// Get the Class
+	FCsUserWidgetPtr* UserWidgetPtr = Manager_UserWidget->GetUserWidgetChecked(Context, UserWidgetType);
 
-	checkf(FX, TEXT("UCsFXActorPooledImpl::OnConstructObject: Failed to spawn FX of type: ANiagaraActor."));
-	*/
+	UClass* Class = UserWidgetPtr->GetClass();
+
+	checkf(Class, TEXT("%s: Failed to get Class from UserWidgetPtr of type: %s."), *Context, UserWidgetType.ToChar());
+
+		// Create the Widget
+	UserWidget = CreateWidget(World, Class);
+
+	checkf(UserWidget, TEXT("%s: Failed to create UserWidget with Class: %s of type: %s."), *Context, *(Class->GetName()), UserWidgetType.ToChar());
+
+	UserWidget->SetVisibility(ESlateVisibility::Collapsed);
+	UserWidget->SetIsEnabled(false);
 }
 
 #pragma endregion ICsOnConstructObject
@@ -118,19 +137,16 @@ void UCsUserWidgetPooledImpl::Allocate(ICsPayload_PooledObject* Payload)
 
 	CacheImpl->Allocate(Payload);
 
-	//CacheImpl->SetUserWidget(UserWidget);
-
 	ICsPayload_UserWidget* UserWidgetPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsPayload_UserWidget>(Context, Payload);
 
-	// TODO: Payload should have SlateVisibility
-	//UserWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	//UserWidget->SetIsEnabled(true);
+	UserWidget->SetVisibility(UserWidgetPayload->GetVisibility());
+	UserWidget->SetIsEnabled(true);
 }
 
 void UCsUserWidgetPooledImpl::Deallocate()
 {
-	//UserWidget->SetIsEnabled(false);
-	//UserWidget->SetVisibility(ESlateVisibility::Collapsed);
+	UserWidget->SetVisibility(ESlateVisibility::Collapsed);
+	UserWidget->SetIsEnabled(false);
 }
 
 #pragma endregion ICsPooledObject

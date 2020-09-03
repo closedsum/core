@@ -14,10 +14,10 @@ struct CSUI_API FCsSettings_Manager_UserWidget_PoolParams
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FECsUserWidgetPooledClass ContainerClass; 
+	FECsUserWidgetPooledClass Class; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FECsUserWidgetClass WidgetClass;
+	FECsUserWidget Widget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
 	int32 PoolSize;
@@ -26,8 +26,8 @@ public:
 	int32 PayloadSize;
 
 	FCsSettings_Manager_UserWidget_PoolParams() :
-		ContainerClass(),
-		WidgetClass(),
+		Class(),
+		Widget(),
 		PoolSize(4),
 		PayloadSize(4)
 	{
@@ -49,10 +49,20 @@ struct CSUI_API FCsSettings_Manager_UserWidget
 
 public:
 
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TMap<FECsUserWidgetPooled, FECsUserWidgetPooled> TypeMap;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FECsUserWidgetPooled DefaultType;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsUserWidgetPooled, FCsSettings_Manager_UserWidget_PoolParams> PoolParams;
 
 	FCsSettings_Manager_UserWidget() :
+		TypeMap(),
+		DefaultType(),
 		PoolParams()
 	{
 	}

@@ -139,11 +139,30 @@ protected:
 
 	FCsSettings_Manager_UserWidget Settings;
 
+	/** */
+	TArray<FECsUserWidgetPooled> TypeMapArray;
+
 public:
 
 	FORCEINLINE void SetSettings(const FCsSettings_Manager_UserWidget& InSettings)
 	{
 		Settings = InSettings;
+	}
+
+	/**
+	* If SET,
+	* - Get the type this UserWidgetPooled has been mapped to for pooling.
+	*   i.e. If the widget actor is completely data driven, then many user widget pooled objects could share
+	*   the same class.
+	* If NOT set,
+	* - Return the same type.
+	*
+	* @param Type
+	* return UserWidgetPooled Type 
+	*/
+	FORCEINLINE const FECsUserWidgetPooled& GetTypeFromTypeMap(const FECsUserWidgetPooled& Type)
+	{
+		return TypeMapArray[Type.GetValue()];
 	}
 
 #pragma endregion Settings
@@ -688,6 +707,17 @@ public:
 	* return		UserWidget container (UUserWidget).
 	*/
 	FCsUserWidgetPtr* GetUserWidget(const FECsUserWidget& Type);
+
+	/**
+	* Get the UserWidget container (UUserWidget) associated
+	* with the user widget Type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Type		Type of the user widget.
+	* return			UserWidget container (UUserWidget).
+	*/
+	FCsUserWidgetPtr* GetUserWidgetChecked(const FString& Context, const FECsUserWidget& Type);
 
 	/**
 	* Get the UserWidget container (UUserWidget) associated

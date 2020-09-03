@@ -1,15 +1,22 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Managers/WidgetActor/Payload/CsPayload_WidgetActor.h"
+#include "Managers/WidgetActor/Payload/CsPayload_WidgetActorUserWidget.h"
+// Types
+#include "Managers/UserWidget/CsTypes_UserWidget.h"
 
 #pragma once
 
 class UObject;
 struct FCsInterfaceMap;
 class UUserWidget;
+struct ICsPayload_UserWidget;
 
+/**
+*/
 struct CSUI_API FCsPayload_WidgetActorImpl final : public ICsPayload_PooledObject,
-													 public ICsPayload_WidgetActor
+												   public ICsPayload_WidgetActor,
+												   public ICsPayload_WidgetActorUserWidget
 {
 public:
 
@@ -33,7 +40,7 @@ public:
 	
 	FCsTime Time;
 
-	// ICsFXPooledPayload
+	// ICsPayload_WidgetActor
 
 	UUserWidget* UserWidget;
 
@@ -48,6 +55,12 @@ public:
 	int32 TransformRules;
 
 	FTransform Transform;
+
+	// ICsPayload_WidgetActorUserWidget
+
+	FECsUserWidgetPooled UserWidgetPooledType;
+
+	ICsPayload_UserWidget* UserWidgetPayload;
 
 public:
 
@@ -127,7 +140,7 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE UUserWidget* GetUserWidget() const 
+	FORCEINLINE UUserWidget* GetUserWidget() const
 	{
 		return UserWidget;
 	}
@@ -163,4 +176,20 @@ public:
 	}
 
 #pragma endregion ICsPayload_WidgetActor
+
+// ICsPayload_WidgetActorUserWidget
+#pragma region
+public:
+
+	FORCEINLINE const FECsUserWidgetPooled& GetUserWidgetPooledType() const
+	{
+		return UserWidgetPooledType;
+	}
+
+	FORCEINLINE ICsPayload_UserWidget* GetUserWidgetPayload() const
+	{
+		return UserWidgetPayload;
+	}
+
+#pragma endregion ICsPayload_WidgetActorUserWidget
 };

@@ -45,10 +45,20 @@ struct CSUI_API FCsSettings_Manager_WidgetActor
 
 public:
 
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TMap<FECsWidgetActor, FECsWidgetActor> TypeMap;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FECsWidgetActor DefaultType;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsWidgetActor, FCsSettings_Manager_WidgetActor_PoolParams> PoolParams;
 
 	FCsSettings_Manager_WidgetActor() :
+		TypeMap(),
+		DefaultType(),
 		PoolParams()
 	{
 	}

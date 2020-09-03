@@ -407,7 +407,7 @@ public:
 	{
 		UClass* Class = Params.Class;
 
-		checkf(Class, TEXT("%s:ConstructObject: No Class set."), *Name);
+		checkf(Class, TEXT("%s::ConstructObject: No Class set."), *Name);
 
 		UObject* Object = nullptr;
 
@@ -423,7 +423,7 @@ public:
 				GetCurrentWorld()->RemoveNetworkActor(Actor);
 			}
 
-			checkf(Actor, TEXT("%s:ContructObject: Actor is NULL. Class: %s. Actor did NOT spawn."), *Name, *(Class->GetName()));
+			checkf(Actor, TEXT("%s::ConstructObject: Actor is NULL. Class: %s. Actor did NOT spawn."), *Name, *(Class->GetName()));
 
 			Object = Actor;
 		}
@@ -431,9 +431,11 @@ public:
 		else
 		if (Params.ConstructionType == ECsPooledObjectConstruction::Object)
 		{
+			checkf(Params.Outer, TEXT("%s::ConstructObject: Params.Outer is NULL. This should be Valid if Params.ConstructionType == ECsPooledObjectConstruction::Object"), *Name)
+
 			Object = NewObject<UObject>(Params.Outer, Class);
 
-			checkf(Object, TEXT("%s:ContructObject: Object is NULL. Class: %s. Object did NOT get constructed."), *Name, *(Class->GetName()));
+			checkf(Object, TEXT("%s::ConstructObject: Object is NULL. Class: %s. Object did NOT get constructed."), *Name, *(Class->GetName()));
 		}
 
 		if (Object)
@@ -459,19 +461,19 @@ public:
 			{
 				checkf(O->Script_GetCache_Impl.IsBound(), TEXT("%s::ConstructObject: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Update_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 
-				checkf(O->Script_Allocate_Impl.IsBound(), TEXT("%s:ConstructObject: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Allocate_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
+				checkf(O->Script_Allocate_Impl.IsBound(), TEXT("%s::ConstructObject: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Allocate_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 
-				checkf(O->Script_Deallocate_Impl.IsBound(), TEXT("%s:ConstructObject: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Deallocate_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
+				checkf(O->Script_Deallocate_Impl.IsBound(), TEXT("%s::ConstructObject: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Deallocate_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 			}
 			// ICsUpdate Script Interface
 			if (O->IsScriptUpdate())
 			{
-				checkf(O->Script_Update_Impl.IsBound(), TEXT("%s:ConstructObject: Object: %s with Class: %s implements a script interface of type: ICsUpdate. Script_Update_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
+				checkf(O->Script_Update_Impl.IsBound(), TEXT("%s::ConstructObject: Object: %s with Class: %s implements a script interface of type: ICsUpdate. Script_Update_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 			}
 			// ICsOnConstructObject Script Interface
 			if (O->IsScriptOnConstructObject())
 			{
-				checkf(O->Script_OnConstructObject_Impl.IsBound(), TEXT("%s:ConstructObject: Object: %s with Class: %s implements a script interface of type: ICsOnConstructObject. Script_OnConstructObject_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
+				checkf(O->Script_OnConstructObject_Impl.IsBound(), TEXT("%s::ConstructObject: Object: %s with Class: %s implements a script interface of type: ICsOnConstructObject. Script_OnConstructObject_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 			}
 #endif // #if WITH_EDITOR
 

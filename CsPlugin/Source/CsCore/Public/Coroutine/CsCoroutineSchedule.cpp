@@ -73,7 +73,7 @@ void FCsCoroutineSchedule::SetGroup(const FECsUpdateGroup& InGroup)
 // Routine
 #pragma region
 
-FCsResource_Routine* FCsCoroutineSchedule::GetRoutineContainer(const FCsRoutineHandle& Handle)
+FCsResource_Routine* FCsCoroutineSchedule::GetRoutineContainer(const FCsRoutineHandle& Handle) const
 {
 	if (!Handle.IsValid())
 		return nullptr;
@@ -94,7 +94,7 @@ FCsResource_Routine* FCsCoroutineSchedule::GetRoutineContainer(const FCsRoutineH
 	return nullptr;
 }
 
-FCsRoutine* FCsCoroutineSchedule::GetRoutine(const FCsRoutineHandle& Handle)
+FCsRoutine* FCsCoroutineSchedule::GetRoutine(const FCsRoutineHandle& Handle) const
 {
 	FCsResource_Routine* Container = GetRoutineContainer(Handle);
 

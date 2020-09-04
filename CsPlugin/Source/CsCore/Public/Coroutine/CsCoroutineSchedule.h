@@ -73,7 +73,7 @@ public:
 	* @param Handle
 	* return
 	*/
-	FCsResource_Routine* GetRoutineContainer(const FCsRoutineHandle& Handle);
+	FCsResource_Routine* GetRoutineContainer(const FCsRoutineHandle& Handle) const;
 
 	/**
 	*
@@ -81,9 +81,20 @@ public:
 	* @param Handle
 	* return
 	*/
-	FCsRoutine* GetRoutine(const FCsRoutineHandle& Handle);
+	FCsRoutine* GetRoutine(const FCsRoutineHandle& Handle) const;
 
 #pragma endregion Routine
+
+// Handle
+#pragma region
+public:
+
+	FORCEINLINE bool IsHandleValid(const FCsRoutineHandle& Handle) const
+	{
+		return GetRoutineContainer(Handle) != nullptr;
+	}
+
+#pragma endregion Handle
 
 // Start
 #pragma region

@@ -12,6 +12,7 @@ class CSCORE_API UCsSpawner : public UInterface
 };
 
 class ICsSpawner;
+struct ICsSpawnerParams;
 
 /**
 * OnStart
@@ -31,13 +32,30 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FCsSpawner_OnStop, ICsSpawner* /*Spawner*/);
 * @param Spawner
 * @param SpawnedObject
 */
-DECLARE_MULTICAST_DELEGATE_TwoParams(FCsSpawner_OnSpawn, ICsSpawner* /*Spawner*/, UObject* /*SpawnedObject*/);
+DECLARE_MULTICAST_DELEGATE_OneParam(FCsSpawner_OnSpawn, ICsSpawner* /*Spawner*/);
+/**
+* OnSpawnObject
+*
+* @param Spawner
+* @param SpawnedObject
+*/
+DECLARE_MULTICAST_DELEGATE_TwoParams(FCsSpawner_OnSpawnObject, ICsSpawner* /*Spawner*/, UObject* /*SpawnedObject*/);
+/**
+* OnFinish
+*
+* @param Spawner
+*/
+DECLARE_MULTICAST_DELEGATE_OneParam(FCsSpawner_OnFinish, ICsSpawner* /*Spawner*/);
 
 class CSCORE_API ICsSpawner
 {
 	GENERATED_IINTERFACE_BODY()
 
 public:
+
+	/**
+	*/
+	virtual const ICsSpawnerParams* GetParams() const = 0;
 
 	/**
 	*
@@ -65,10 +83,8 @@ public:
 
 	/**
 	*
-	*
-	* return
 	*/
-	virtual UObject* Spawn() = 0;
+	virtual void Spawn() = 0;
 
 	/**
 	*
@@ -76,6 +92,20 @@ public:
 	* return
 	*/
 	virtual FCsSpawner_OnSpawn& GetOnSpawn_Event() = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual FCsSpawner_OnSpawnObject& GetOnSpawnObject_Event() = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual FCsSpawner_OnFinish& GetOnFinish_Event() = 0;
 };
 
 // FCsSpawner
@@ -110,9 +140,8 @@ public:
 	*  The object implements a script interface of type: ICsSpawner.
 	*
 	* @param Object		An object of type: ICsSpawner.
-	* return			UObject.
 	*/
-	DECLARE_DELEGATE_RetVal_OneParam(UObject* /*SpawnedObject*/, FScript_Spawn, UObject* /*Object*/);
+	DECLARE_DELEGATE_OneParam(FScript_Spawn, UObject* /*Object*/);
 
 	/** Delegate type for an object spawning a UObject.
 		  The object implements a script interface of type: ICsSpawner. */
@@ -179,11 +208,12 @@ public:
 		return Interface->GetOnStop_Event();
 	}
 
-	FORCEINLINE UObject* Spawn()
+	FORCEINLINE void Spawn()
 	{
 		if (bScript)
-			return Script_Spawn_Impl.Execute(Object);
-		return Interface->Spawn();
+			Script_Spawn_Impl.Execute(Object);
+		else
+			Interface->Spawn();
 	}
 
 	FORCEINLINE FCsSpawner_OnSpawn& GetOnSpawn_Event() 

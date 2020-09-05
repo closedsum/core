@@ -15,9 +15,9 @@ UCsScriptSpawner::UCsScriptSpawner(const class FObjectInitializer& ObjectInitial
 	// ICsSpawner
 #pragma region
 
-UObject* ICsScriptSpawner::Spawn()
+void ICsScriptSpawner::Spawn()
 {
-	return ICsScriptSpawner::Execute_Script_Spawn(_getUObject());
+	ICsScriptSpawner::Execute_Script_Spawn(_getUObject());
 }
 
 #pragma endregion ICsSpawner

@@ -194,7 +194,19 @@ public:
 
 #pragma endregion Payload
 
+// Handle
+#pragma region
+public:
+
+	FORCEINLINE bool IsHandleValid(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle) const
+	{
+		return Schedules[Group.GetValue()].GetRoutineContainer(Handle) != nullptr;
+	}
+
+#pragma endregion Handle
+
 // Message
+#pragma region
 public:
 
 	void BroadcastMessage(const FECsUpdateGroup& Group, const ECsCoroutineMessage& MessageType, const FName& Message, void* InOwner = nullptr);

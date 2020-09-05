@@ -186,11 +186,11 @@ struct CSUI_API FCsWidgetActorClassEntry : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
-	/** The enum (FECsWidgetActor) name for the widget actor class. */
+	/** The enum (FECsWidgetActorClass) name for the widget actor class. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString Name;
 
-	/** The enum (FECsWidgetActor) display name for the widget actor class. */
+	/** The enum (FECsWidgetActorClass) display name for the widget actor class. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString DisplayName;
 
@@ -222,15 +222,18 @@ struct CSUI_API FCsData_WidgetActorPtr
 
 public:
 
+	/** Soft Reference to an object that implements the interface: ICsData_WidgetActor. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsData_WidgetActor"))
 	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 Load_Flags;
 
+	/** Hard Reference to an object that implements the interface: ICsData_WidgetActor. */
 	UPROPERTY(Transient, BlueprintReadOnly)
 	UObject* Data_Internal;
 
+	/** Hard Reference to a class that implements the interface: ICsData_WidgetActor. */
 	UPROPERTY(Transient, BlueprintReadOnly)
 	UClass* Data_Class;
 
@@ -262,15 +265,16 @@ struct CSUI_API FCsWidgetActorEntry : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
-	/** The enum (FECsProjectile) name for the projectile. */
+	/** The enum (FECsWidgetActor) name for the widget actor. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString Name;
 
-	/** The enum (FECsProjectile) display name for the projectile. */
+	/** The enum (FECsWidgetActor) display name for the widget actor. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString DisplayName;
 
-	/** */
+	/** The type of WidgetActor. A reference to the WidgetActor is obtained 
+		from Manager_WidgetActor. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FECsWidgetActorClass Class;
 
@@ -287,6 +291,9 @@ struct CSUI_API FCsWidgetActorEntry : public FTableRowBase
 };
 
 #pragma endregion FCsProjectileEntry
+
+// FCsWidgetActorPooledInfo
+#pragma region
 
 /**
 * Container holding general information for a pooled WidgetActor.
@@ -355,3 +362,5 @@ public:
 	{
 	}
 };
+
+#pragma endregion FCsWidgetActorPooledInfo

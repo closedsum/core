@@ -2165,46 +2165,6 @@ FString UCsLibrary_Common::GetProxyAsString(AActor* InActor)
 	return NCsCommonCached::Str::Unknown;
 }
 
-// World
-#pragma region
-
-bool UCsLibrary_Common::IsPlayInGame(UWorld* InWorld)
-{
-	return InWorld && InWorld->WorldType == EWorldType::Game;
-}
-
-bool UCsLibrary_Common::IsPlayInEditor(UWorld* InWorld)
-{
-	return InWorld && InWorld->WorldType == EWorldType::Editor;
-}
-
-bool UCsLibrary_Common::IsPlayInPIE(UWorld* InWorld)
-{
-	return InWorld && InWorld->WorldType == EWorldType::PIE;
-}
-
-bool UCsLibrary_Common::IsPlayInEditorPreview(UWorld* InWorld)
-{
-	return InWorld && InWorld->WorldType == EWorldType::EditorPreview;
-}
-
-bool UCsLibrary_Common::IsAnyWorldContextEditorOrEditorPreview()
-{
-	const TIndirectArray<FWorldContext>& WorldContexts = GEngine->GetWorldContexts();
-
-	for (const FWorldContext& Context : WorldContexts)
-	{
-		if (Context.WorldType == EWorldType::Editor ||
-			Context.WorldType == EWorldType::EditorPreview)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-#pragma endregion World
-
 bool UCsLibrary_Common::IsDefaultObject(UObject* InObject)
 {
 	return InObject->GetName().StartsWith(TEXT("Default__"));

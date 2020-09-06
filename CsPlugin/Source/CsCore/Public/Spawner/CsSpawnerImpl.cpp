@@ -7,9 +7,13 @@
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
-#include "Spawner/Params/CsTypes_SpawnerParams.h"
+#include "Debug/CsTypes_Debug.h"
+// Library
+#include "Library/CsLibrary_World.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
+// Spawner
+#include "Spawner/Params/CsSpawnerParams.h"
 
 // Cached
 #pragma region
@@ -24,7 +28,7 @@ namespace NCsSpawnerImplCached
 		const FString SpawnObjects = TEXT("ACsSpawnerImpl::SpawnObjects");
 		const FString SpawnObjects_Internal = TEXT("ACsSpawnerImpl::SpawnObjects_Internal");
 	}
-	
+
 
 	namespace Name
 	{
@@ -44,8 +48,8 @@ ACsSpawnerImpl::ACsSpawnerImpl(const FObjectInitializer& ObjectInitializer)
 	CountParams(nullptr),
 	FrequencyParams(nullptr),
 	TotalTime(nullptr),
-		// Events
-	OnStart_Event(), 
+	// Events
+	OnStart_Event(),
 	OnStop_Event(),
 	OnSpawn_Event(),
 	OnFinish_Event(),
@@ -54,7 +58,54 @@ ACsSpawnerImpl::ACsSpawnerImpl(const FObjectInitializer& ObjectInitializer)
 	Start_Internal_Handle(),
 	SpawnObjects_Internal_Handles()
 {
+	PrimaryActorTick.bCanEverTick = true;
+#if WITH_EDITOR
+	PrimaryActorTick.bStartWithTickEnabled = true;
+#else
+	PrimaryActorTick.bStartWithTickEnabled = false;
+#endif // #if WITH_EDITOR
 }
+
+// AActor Interface
+#pragma region
+
+void ACsSpawnerImpl::BeginPlay()
+{
+	Super::BeginPlay();
+
+#if !UE_BUILD_SHIPPING
+	if (FCsDebugDrawSphere* Sphere = GetDebugDrawSphere())
+	{
+		if (Sphere->bEnableInPlay)
+		{
+			SetActorTickEnabled(true);
+		}
+	}
+#endif // #if !UE_BUILD_SHIPPING
+}
+
+void ACsSpawnerImpl::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+#if !UE_BUILD_SHIPPING
+	DebugDraw();
+#endif // #if !UE_BUILD_SHIPPING
+}
+
+bool ACsSpawnerImpl::ShouldTickIfViewportsOnly() const
+{
+#if WITH_EDITOR
+	if (FCsLibrary_World::IsPlayInEditor(GetWorld()) ||
+		FCsLibrary_World::IsPlayInEditorPreview(GetWorld()))
+	{
+		return true;
+	}
+#endif // #if WITH_EDITOR
+	return Super::ShouldTickIfViewportsOnly();
+}
+
+#pragma endregion AActor Interface
 
 // ICsStartPlay
 #pragma region
@@ -69,9 +120,15 @@ void ACsSpawnerImpl::StartPlay()
 
 	checkf(Params, TEXT("%s: Params is NULL. Failed to ConstructParams."), *Context);
 
+	CountParams = const_cast<FCsSpawnerCountParams*>(&(Params->GetCountParams()));
+
 	checkf(CountParams, TEXT("%s: CountParams is NULL. Failed to get the reference for CountParams."), *Context);
 
+	FrequencyParams = const_cast<FCsSpawnerFrequencyParams*>(&(Params->GetFrequencyParams()));
+
 	checkf(FrequencyParams, TEXT("%s: FrequencyParams is NULL. Failed to get the reference for FrequencyParams."), *Context);
+
+	TotalTime = const_cast<float*>(&(Params->GetTotalTime()));
 
 	checkf(TotalTime, TEXT("%s: TotalTime is NULL. Failed to get the reference for TotalTime."), *Context);
 
@@ -354,3 +411,32 @@ void ACsSpawnerImpl::LogCountParams() const
 }
 
 #pragma endregion Log
+
+// Debug
+#pragma region
+
+void ACsSpawnerImpl::DebugDraw()
+{
+	// Circle
+	if (FCsDebugDrawCircle* Circle = GetDebugDrawCircle())
+	{
+		Circle->Draw(GetWorld(), GetActorTransform());
+	}
+	// Sphere
+	if (FCsDebugDrawSphere* Sphere = GetDebugDrawSphere())
+	{
+		Sphere->Draw(GetWorld(), GetActorTransform());
+	}
+}
+
+FCsDebugDrawCircle* ACsSpawnerImpl::GetDebugDrawCircle()
+{
+	return nullptr;
+}
+
+FCsDebugDrawSphere* ACsSpawnerImpl::GetDebugDrawSphere()
+{
+	return nullptr;
+}
+
+#pragma endregion Debug

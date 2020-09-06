@@ -6,6 +6,7 @@
 // Library
 #include "Library/Load/CsLibrary_Load.h"
 #include "Library/CsLibrary_Common.h"
+#include "Library/CsLibrary_World.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Managers
@@ -43,7 +44,7 @@ void UCsAnimInstance::BeginDestroy()
 	Super::BeginDestroy();
 
 #if WITH_EDITOR 
-	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
+	if (FCsLibrary_World::IsPlayInEditorPreview(GetWorld()))
 	{
 		// Manager_Time
 		if (UCsManager_Time* Manager = UCsManager_Time::Get(this))
@@ -105,7 +106,7 @@ USkeletalMeshComponent* UCsAnimInstance::GetSkeletalMeshComponent(){ return GetS
 
 void UCsAnimInstance::SetupInGameSimulation()
 {
-	if (!UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
+	if (!FCsLibrary_World::IsPlayInEditorPreview(GetWorld()))
 		return;
 
 	Spawn_Manager_Time();
@@ -251,7 +252,7 @@ void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 	Super::NativeUpdateAnimation(DeltaTimeX);
 
 #if WITH_EDITOR
-	if (UCsLibrary_Common::IsPlayInEditorPreview(GetWorld()))
+	if (FCsLibrary_World::IsPlayInEditorPreview(GetWorld()))
 	{
 		OnTick_Handle_bSetupInGameSimulation();
 		OnTick_Handle_ShowEditorIcons();

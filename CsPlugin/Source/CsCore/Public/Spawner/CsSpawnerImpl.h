@@ -13,6 +13,8 @@ struct FCsRoutine;
 struct ICsSpawnerParams;
 struct FCsSpawnerCountParams;
 struct FCsSpawnerFrequencyParams;
+struct FCsDebugDrawCircle;
+struct FCsDebugDrawSphere;
 
 UCLASS()
 class CSCORE_API ACsSpawnerImpl : public AActor,
@@ -20,6 +22,16 @@ class CSCORE_API ACsSpawnerImpl : public AActor,
 								  public ICsSpawner
 {
 	GENERATED_UCLASS_BODY()
+
+// AActor Interface
+#pragma region
+public:
+
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
+	virtual bool ShouldTickIfViewportsOnly() const override;
+
+#pragma endregion AActor Interface
 
 protected:
 
@@ -149,4 +161,16 @@ protected:
 	void LogCountParams() const;
 
 #pragma endregion Log
+
+// Debug
+#pragma region
+protected:
+
+	virtual void DebugDraw();
+
+	virtual FCsDebugDrawCircle* GetDebugDrawCircle();
+
+	virtual FCsDebugDrawSphere* GetDebugDrawSphere();
+
+#pragma endregion Debug
 };

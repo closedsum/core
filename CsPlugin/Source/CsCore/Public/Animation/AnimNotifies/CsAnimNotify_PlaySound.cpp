@@ -2,7 +2,10 @@
 
 #include "Animation/AnimNotifies/CsAnimNotify_PlaySound.h"
 #include "CsCore.h"
+
+// Library
 #include "Library/CsLibrary_Common.h"
+#include "Library/CsLibrary_World.h"
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -46,7 +49,7 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 
 	// TODO: need to check case of AnimInstance
 
-	const bool InGame = UCsLibrary_Common::IsPlayInGame(CurrentWorld) || UCsLibrary_Common::IsPlayInPIE(CurrentWorld);
+	const bool InGame = FCsLibrary_World::IsPlayInGame(CurrentWorld) || FCsLibrary_World::IsPlayInPIE(CurrentWorld);
 
 	// Use Sound Manager
 	/*

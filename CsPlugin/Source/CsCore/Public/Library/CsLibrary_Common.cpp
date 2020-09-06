@@ -2200,8 +2200,8 @@ float UCsLibrary_Common::GetCurrentDateTimeSeconds()
 uint64 UCsLibrary_Common::GetCurrentFrame(UWorld* InWorld) 
 {
 #if WITH_EDITOR
-	if (IsPlayInEditorPreview(InWorld))
-		return 0;
+	//if (IsPlayInEditorPreview(InWorld))
+	//	return 0;
 #endif // #if WITH_EDITOR
 	return 0ull;// InWorld->GetGameInstance<UCsGameInstance_DEPRECATED>()->CurrentGameFrame;
 }

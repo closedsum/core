@@ -15,13 +15,24 @@ public:
 	virtual ~ICsSpawnerParams(){}
 	
 	/**
-	*
+	* Get the parameters describing the number of objects "created" when
+	* Spawn is called.
 	*
 	* return Count Params
 	*/
 	virtual const FCsSpawnerCountParams& GetCountParams() const = 0;
 
+	/**
+	*
+	*
+	* return Frequency Params
+	*/
 	virtual const FCsSpawnerFrequencyParams& GetFrequencyParams() const = 0;
 
+	/**
+	*
+	*
+	* return Total Time
+	*/
 	virtual const float& GetTotalTime() const = 0;
 };

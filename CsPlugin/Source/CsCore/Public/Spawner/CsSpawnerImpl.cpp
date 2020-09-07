@@ -48,7 +48,7 @@ ACsSpawnerImpl::ACsSpawnerImpl(const FObjectInitializer& ObjectInitializer)
 	CountParams(nullptr),
 	FrequencyParams(nullptr),
 	TotalTime(nullptr),
-	// Events
+		// Events
 	OnStart_Event(),
 	OnStop_Event(),
 	OnSpawn_Event(),

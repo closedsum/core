@@ -28,7 +28,7 @@ class UDataTable;
 
 /**
 */
-template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumClassType>
+template<typename InterfaceContainerType, typename InterfaceUStructContainerType, typename EnumClassType>
 class TCsManager_PooledObject_ClassHandler
 {
 public:
@@ -65,10 +65,10 @@ public:
 protected:
 
 	/** */
-	TMap<FName, InterfacePooledContainerType> ClassByTypeMap;
+	TMap<FName, InterfaceContainerType> ClassByTypeMap;
 
 	/** */
-	TMap<FName, InterfacePooledContainerType> ClassByClassTypeMap;
+	TMap<FName, InterfaceContainerType> ClassByClassTypeMap;
 
 public:
 
@@ -124,9 +124,9 @@ public:
 
 					checkf(O, TEXT("%s: Failed to get character from DataTable: %s: Row: %s."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
 
-					InterfacePooledContainerType& PooledContainer = ClassByClassTypeMap.Add(RowName);
+					InterfaceContainerType& Container = ClassByClassTypeMap.Add(RowName);
 
-					PooledContainer.SetObject(O);
+					Container.SetObject(O);
 				}
 			}
 		}
@@ -178,13 +178,13 @@ public:
 
 						checkf(StructPtr, TEXT("%s: StructPtr is NULL. Failed to get pointer from Property: Class of type EnumClassType."), *Context);
 
-						InterfacePooledContainerType* ContainerPtr = ClassByClassTypeMap.Find(StructPtr->GetFName());
+						InterfaceContainerType* ContainerPtr = ClassByClassTypeMap.Find(StructPtr->GetFName());
 
 						checkf(ContainerPtr, TEXT("%s: ContainerPtr is NULL. Failed to find class of class type: %s"), *Context, StructPtr->ToChar());
 
-						InterfacePooledContainerType& PooledContainer = ClassByTypeMap.Add(RowName);
+						InterfaceContainerType& Container = ClassByTypeMap.Add(RowName);
 
-						PooledContainer.SetObject(ContainerPtr->GetObject());
+						Container.SetObject(ContainerPtr->GetObject());
 					}
 				}
 			}
@@ -206,7 +206,7 @@ protected:
 public:
 
 	template<typename EnumMap, typename EnumType>
-	FORCEINLINE InterfacePooledContainerType* GetClassByType(const FString& Context, const EnumType& Type)
+	FORCEINLINE InterfaceContainerType* GetClassByType(const FString& Context, const EnumType& Type)
 	{
 		checkf(EnumMap::Get().IsValidEnum(Type), TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar());
 
@@ -214,9 +214,9 @@ public:
 	}
 
 	template<typename EnumMap, typename EnumType>
-	FORCEINLINE InterfacePooledContainerType* GetClassByTypeChecked(const FString& Context, const EnumType& Type)
+	FORCEINLINE InterfaceContainerType* GetClassByTypeChecked(const FString& Context, const EnumType& Type)
 	{
-		InterfacePooledContainerType* Ptr = GetClassByType<EnumMap, EnumType>(Context, Type);
+		InterfaceContainerType* Ptr = GetClassByType<EnumMap, EnumType>(Context, Type);
 
 		checkf(Ptr, TEXT("%s: Failed to find a Class associated with Type: %s."), *Context, Type.ToChar());
 
@@ -224,7 +224,7 @@ public:
 	}
 
 	template<typename EnumClassMap>
-	FORCEINLINE InterfacePooledContainerType* GetClassByClassType(const FString& Context, const EnumClassType& Type)
+	FORCEINLINE InterfaceContainerType* GetClassByClassType(const FString& Context, const EnumClassType& Type)
 	{
 		checkf(EnumClassMap::Get().IsValidEnum(Type), TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar());
 
@@ -232,9 +232,9 @@ public:
 	}
 
 	template<typename EnumClassMap>
-	FORCEINLINE InterfacePooledContainerType* GetClassByClassTypeChecked(const FString& Context, const EnumClassType& Type)
+	FORCEINLINE InterfaceContainerType* GetClassByClassTypeChecked(const FString& Context, const EnumClassType& Type)
 	{
-		InterfacePooledContainerType* Ptr = GetClassByClassType<EnumClassMap>(Context, Type);
+		InterfaceContainerType* Ptr = GetClassByClassType<EnumClassMap>(Context, Type);
 
 		checkf(Ptr, TEXT("%s: Failed to find a Class associated with Type: %s."), *Context, Type.ToChar());
 

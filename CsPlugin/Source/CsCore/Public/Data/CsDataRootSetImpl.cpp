@@ -2,8 +2,8 @@
 #include "Data/CsDataRootSetImpl.h"
 #include "CsCore.h"
 
-// DataTable
-#include "Engine/DataTable.h"
+// Types
+#include "Types/CsTypes_Load.h"
 
 UCsDataRootSetImpl::UCsDataRootSetImpl(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

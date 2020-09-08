@@ -2,6 +2,8 @@
 #include "Managers/StaticMesh/CsStaticMeshActorPooled.h"
 #include "CsCore.h"
 
+#include "Managers/StaticMesh/CsStaticMeshActor.h"
+
 const FCsStaticMeshActorPooled FCsStaticMeshActorPooled::Empty;
 
 FCsStaticMeshActorPooled::FCsStaticMeshActorPooled() :

@@ -1,8 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Engine/StaticMeshActor.h"
+// Interfaces
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Pool/CsPooledObject.h"
+#include "Managers/StaticMesh/CsStaticMeshActor.h"
+// Types
 #include "Managers/StaticMesh/CsStaticMeshActorPooled.h"
 #include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
 

@@ -10,7 +10,7 @@
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Data
-#include "Data/CsDataRootSet.h"
+#include "Data/CsGetDataRootSet.h"
 // Managers
 #include "Managers/Load/CsManager_Load.h"
 
@@ -188,7 +188,7 @@ void UCsManager_Data::Initialize()
 	DataRootSet.Data		  = Settings->DataRootSet;
 	DataRootSet.Data_Class	  = DataRootSet.Data.LoadSynchronous();
 	DataRootSet.Data_Internal = DataRootSet.Data_Class->GetDefaultObject<UObject>();
-	DataRootSet.Interface	  = Cast<ICsDataRootSet>(DataRootSet.Data_Internal);
+	DataRootSet.Interface	  = Cast<ICsGetDataRootSet>(DataRootSet.Data_Internal);
 
 	// Manager_Payload
 	{
@@ -364,7 +364,7 @@ void UCsManager_Data::GenerateMaps()
 	const FString& Context = Str::GenerateMaps;
 
 	// Datas
-	if (UDataTable* Datas = DataRootSet.Get()->GetDatas())
+	if (UDataTable* Datas = DataRootSet.Get()->GetCsDataRootSet().Datas)
 	{
 		const UScriptStruct* ScriptStruct = Datas->GetRowStruct();
 
@@ -386,7 +386,7 @@ void UCsManager_Data::GenerateMaps()
 		}
 	}
 	// DataTables
-	if (UDataTable* DataTables = DataRootSet.Get()->GetDataTables())
+	if (UDataTable* DataTables = DataRootSet.Get()->GetCsDataRootSet().DataTables)
 	{
 		const UScriptStruct* ScriptStruct = DataTables->GetRowStruct();
 
@@ -414,7 +414,7 @@ void UCsManager_Data::GenerateMaps()
 		}
 	}
 	// Payloads
-	if (UDataTable* Payloads = DataRootSet.Get()->GetPayloads())
+	if (UDataTable* Payloads = DataRootSet.Get()->GetCsDataRootSet().Payloads)
 	{
 		const UScriptStruct* ScriptStruct = Payloads->GetRowStruct();
 

@@ -1296,7 +1296,7 @@ public:
 
 class UObject;
 class UClass;
-class ICsDataRootSet;
+class ICsGetDataRootSet;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsDataRootSetContainer
@@ -1305,7 +1305,7 @@ struct CSCORE_API FCsDataRootSetContainer
 
 public:
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (MustImplement = "CsDataRootSet"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (MustImplement = "CsGetDataRootSet"))
 	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
@@ -1314,7 +1314,7 @@ public:
 	UPROPERTY(Transient, BlueprintReadOnly)
 	UClass* Data_Class;
 
-	ICsDataRootSet* Interface;
+	ICsGetDataRootSet* Interface;
 
 	FCsDataRootSetContainer() :
 		Data(nullptr),
@@ -1328,7 +1328,7 @@ public:
 
 	FORCEINLINE UClass* GetClass() const { return Data_Class; }
 
-	FORCEINLINE ICsDataRootSet* Get() const { return Interface; }
+	FORCEINLINE ICsGetDataRootSet* Get() const { return Interface; }
 };
 
 #pragma endregion FCsDataRootSetContainer

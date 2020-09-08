@@ -1,71 +1,64 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "UObject/Interface.h"
 
 #include "CsDataRootSet.generated.h"
-
-UINTERFACE(Blueprintable)
-class CSCORE_API UCsDataRootSet : public UInterface
-{
-	GENERATED_UINTERFACE_BODY()
-};
 
 class UDataTable;
 
 /**
 */
-class CSCORE_API ICsDataRootSet
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDataRootSet
 {
-	GENERATED_IINTERFACE_BODY()
+	GENERATED_USTRUCT_BODY()
+
+	// Flow
+#pragma region
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "World"))
+	FSoftObjectPath EntryMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "World"))
+	FSoftObjectPath TransitionEntryToMainMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "World"))
+	FSoftObjectPath MainMap;
+
+#pragma endregion Flow
+
+// Startup
+#pragma region
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName StartupPayload;
+
+#pragma endregion Startup
 
 public:
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const FSoftObjectPath& GetEntryMap() const = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UDataTable* Datas;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const FSoftObjectPath& GetTransitionEntryToMainMap() const = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UDataTable* DataTables;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const FSoftObjectPath& GetMainMap() const = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UDataTable* Payloads;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const FName& GetStartupPayload() const = 0;
+	FCsDataRootSet() :
+		StartupPayload(NAME_None),
+		Datas(nullptr),
+		DataTables(nullptr),
+		Payloads(nullptr)
+	{
+	}
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual UDataTable* GetDatas() const = 0;
+#if WITH_EDITOR
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual UDataTable* GetDataTables() const = 0;
+	void AddDataTable(const FName& EntryName, const TSoftObjectPtr<UDataTable>& DataTable);
+	void AddDataTable(const FName& Entryname, const TSoftObjectPtr<UDataTable>& DataTable, const TSet<FName>& RowNames);
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual UDataTable* GetPayloads() const = 0;
+#endif // #if WITH_EDITOR
 };

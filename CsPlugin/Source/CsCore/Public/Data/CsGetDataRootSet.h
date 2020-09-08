@@ -2,7 +2,7 @@
 #pragma once
 #include "UObject/Interface.h"
 // Types
-//#include "Data/CsDataRootSet.h"
+#include "Data/CsDataRootSet.h"
 
 #include "CsGetDataRootSet.generated.h"
 
@@ -23,5 +23,5 @@ public:
 	*
 	* return
 	*/
-	//virtual const FCsDataRootSet& GetCsDataRootSet() const = 0;
+	virtual const FCsDataRootSet& GetCsDataRootSet() const = 0;
 };

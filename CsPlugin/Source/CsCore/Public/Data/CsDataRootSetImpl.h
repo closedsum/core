@@ -3,7 +3,7 @@
 
 #include "UObject/Object.h"
 // Interfaces
-#include "Data/CsDataRootSet.h"
+#include "Data/CsGetDataRootSet.h"
 
 #include "CsDataRootSetImpl.generated.h"
 
@@ -11,41 +11,25 @@ class UDataTable;
 
 UCLASS(Blueprintable)
 class CSCORE_API UCsDataRootSetImpl : public UObject,
-									  public ICsDataRootSet
+									  public ICsGetDataRootSet
 {
 	GENERATED_UCLASS_BODY()
 
 public:
 
-// Flow
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Root", meta = (DisplayName = "Core: DataRootSet"))
+	FCsDataRootSet Core_DataRootSet;
+
+// ICsGetDataRootSet
 #pragma region
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Root", meta = (AllowedClasses = "World"))
-	FSoftObjectPath EntryMap;
+	FORCEINLINE const FCsDataRootSet& GetCsDataRootSet() const
+	{
+		return Core_DataRootSet;
+	}
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Root", meta = (AllowedClasses = "World"))
-	FSoftObjectPath TransitionEntryToMainMap;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Root", meta = (AllowedClasses = "World"))
-	FSoftObjectPath MainMap;
-
-#pragma endregion Flow
-
-// Startup
-#pragma region
-public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Root")
-	FName StartupPayload;
-
-#pragma endregion Startup
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Root")
-	UDataTable* Datas;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Root")
-	UDataTable* DataTables;
+#pragma endregion ICsGetDataRootSet
 
 #if WITH_EDITOR
 
@@ -53,50 +37,6 @@ public:
 	void AddDataTable(const FName& Entryname, const TSoftObjectPtr<UDataTable>& DataTable, const TSet<FName>& RowNames);
 
 #endif // #if WITH_EDITOR
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Root")
-	UDataTable* Payloads;
-
-// ICsDataRootSet
-#pragma region
-public:
-
-	FORCEINLINE const FSoftObjectPath& GetEntryMap() const
-	{
-		return EntryMap;
-	}
-
-	FORCEINLINE const FSoftObjectPath& GetTransitionEntryToMainMap() const
-	{
-		return TransitionEntryToMainMap;
-	}
-
-	FORCEINLINE const FSoftObjectPath& GetMainMap() const
-	{
-		return MainMap;
-	}
-
-	FORCEINLINE const FName& GetStartupPayload() const
-	{
-		return StartupPayload;
-	}
-
-	FORCEINLINE UDataTable* GetDatas() const
-	{
-		return Datas;
-	}
-
-	FORCEINLINE UDataTable* GetDataTables() const
-	{
-		return DataTables;
-	}
-
-	FORCEINLINE UDataTable* GetPayloads() const
-	{
-		return Payloads;
-	}
-
-#pragma endregion ICsDataRootSet
 
 	// Editor
 #pragma region

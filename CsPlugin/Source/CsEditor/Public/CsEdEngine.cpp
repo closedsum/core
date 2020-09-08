@@ -23,7 +23,7 @@
 // Data
 //#include "Data/CsDataMapping.h"
 //#include "Data/CsData.h"
-#include "Data/CsDataRootSetImpl.h"
+#include "Data/CsGetDataRootSet.h"
 // Setting
 #include "Settings/CsDeveloperSettings.h"
 // Property
@@ -122,14 +122,16 @@ void UCsEdEngine::OnObjectSaved(UObject* Object)
 			TSoftClassPtr<UObject> SoftClass  = Settings->DataRootSet;
 			UClass* Class					  = SoftClass.LoadSynchronous();
 			UObject* O						  = Class ? Class->GetDefaultObject<UObject>() : nullptr;
-			ICsDataRootSet* DataRootSet		  = O ? Cast<ICsDataRootSet>(O) : nullptr;
+			ICsGetDataRootSet* GetDataRootSet = O ? Cast<ICsGetDataRootSet>(O) : nullptr;
 
 			// DataRootSet
-			if (DataRootSet)
+			if (GetDataRootSet)
 			{
+				const FCsDataRootSet& DataRootSet = GetDataRootSet->GetCsDataRootSet();
+
 				// Datas
 				// DataTables
-				if (DataTable == DataRootSet->GetDataTables())
+				if (DataTable == DataRootSet.DataTables)
 				{
 					if (FCsDataEntry_DataTable::StaticStruct() == DataTable->GetRowStruct())
 					{
@@ -137,11 +139,11 @@ void UCsEdEngine::OnObjectSaved(UObject* Object)
 					}
 					else
 					{
-						UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s GetDataTables(): %s RowStruct: %s != FCsDataEntry_DataTable."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+						UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s DataTables: %s RowStruct: %s != FCsDataEntry_DataTable."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
 					}
 				}
 				// Payloads
-				if (DataTable == DataRootSet->GetPayloads())
+				if (DataTable == DataRootSet.Payloads)
 				{
 					if (FCsPayload::StaticStruct() == DataTable->GetRowStruct())
 					{
@@ -149,7 +151,7 @@ void UCsEdEngine::OnObjectSaved(UObject* Object)
 					}
 					else
 					{
-						UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s GetPayloads(): %s RowStruct: %s != FCsPayload."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+						UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s Payloads: %s RowStruct: %s != FCsPayload."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
 					}
 				}
 			}
@@ -266,9 +268,9 @@ void UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payloads(UDataTable* DataTabl
 	TSoftClassPtr<UObject> SoftObject	= Settings->DataRootSet;
 	UClass* Class						= SoftObject.LoadSynchronous();
 	UObject* Object						= Class ? Class->GetDefaultObject<UObject>() : nullptr;
-	UCsDataRootSetImpl* DataRootSetImpl	= Object ? Cast<UCsDataRootSetImpl>(Object) : nullptr;
+	ICsGetDataRootSet* GetDataRootSet	= Object ? Cast<ICsGetDataRootSet>(Object) : nullptr;
 
-	if (!DataRootSetImpl)
+	if (!GetDataRootSet)
 		return;
 
 	// See which Payloads to push to Datas | DataTables
@@ -299,18 +301,20 @@ void UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payload(FCsPayload& Payload)
 	TSoftClassPtr<UObject> SoftObject	= Settings->DataRootSet;
 	UClass* Class						= SoftObject.LoadSynchronous();
 	UObject* Object						= Class ? Class->GetDefaultObject<UObject>() : nullptr;
-	UCsDataRootSetImpl* DataRootSetImpl	= Object ? Cast<UCsDataRootSetImpl>(Object) : nullptr;
+	ICsGetDataRootSet* GetDataRootSet	= Object ? Cast<ICsGetDataRootSet>(Object) : nullptr;
 
-	if (!DataRootSetImpl)
+	if (!GetDataRootSet)
 		return;
 
 	// Add / Update the Payload to the Datas | DataTables
 	if (Payload.bUpdateDataRootSetOnSave)
 	{
+		FCsDataRootSet& DataRootSet = const_cast<FCsDataRootSet&>(GetDataRootSet->GetCsDataRootSet());
+
 		// Datas
 
 		// DataTables
-		if (UDataTable* DataTables = DataRootSetImpl->GetDataTables())
+		if (UDataTable* DataTables = DataRootSet.DataTables)
 		{
 			for (FCsPayload_DataTable& Payload_DataTable : Payload.DataTables)
 			{
@@ -335,9 +339,9 @@ void UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payload(FCsPayload& Payload)
 
 				// Add to Map of DataTables to Add to DataRootSet->DataTables
 				if (Payload_DataTable.bAllRows)
-					DataRootSetImpl->AddDataTable(Name, DT);
+					DataRootSet.AddDataTable(Name, DT);
 				else
-					DataRootSetImpl->AddDataTable(Name, DT, Payload_DataTable.Rows);
+					DataRootSet.AddDataTable(Name, DT, Payload_DataTable.Rows);
 			}
 		}
 	}

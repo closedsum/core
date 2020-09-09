@@ -137,34 +137,34 @@ public:
  
 #pragma endregion FCsSpawnerFrequencyParams
 
-// SpawnerTransform
+// SpawnerPoint
 #pragma region
 
 /**
 * The where to get the Transform to apply to the spawned object.
 */
 UENUM(BlueprintType)
-enum class ECsSpawnerTransform : uint8
+enum class ECsSpawnerPoint : uint8
 {
 	/** Spawn using the Spawner's Transform */
-	Self								 UMETA(DisplayName = "Self"),
+	Self				UMETA(DisplayName = "Self"),
 	/** Spawn from a predefined list of Transforms */
-	Transform							 UMETA(DisplayName = "Transform"),
+	Transform			UMETA(DisplayName = "Transform"),
 	/** Spawn using the an Actor's Transform */
-	Actor								 UMETA(DisplayName = "Actor"),
+	Actor				UMETA(DisplayName = "Actor"),
 	/** Spawn using a custom method */
-	Custom								 UMETA(DisplayName = "Custom"),
-	ECsSpawnerTransform_MAX				 UMETA(Hidden),
+	Custom				UMETA(DisplayName = "Custom"),
+	ECsSpawnerPoint_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsSpawnerTransform : public TCsEnumMap<ECsSpawnerTransform>
+struct CSCORE_API EMCsSpawnerPoint : public TCsEnumMap<ECsSpawnerPoint>
 {
-	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSpawnerTransform, ECsSpawnerTransform)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSpawnerPoint, ECsSpawnerPoint)
 };
 
-namespace NCsSpawnerTransform
+namespace NCsSpawnerPoint
 {
-	typedef ECsSpawnerTransform Type;
+	typedef ECsSpawnerPoint Type;
 
 	namespace Ref
 	{
@@ -172,15 +172,15 @@ namespace NCsSpawnerTransform
 		extern CSCORE_API const Type Transform;
 		extern CSCORE_API const Type Actor;
 		extern CSCORE_API const Type Custom;
-		extern CSCORE_API const Type ECsSpawnerTransform_MAX;
+		extern CSCORE_API const Type ECsSpawnerPoint_MAX;
 	}
 
 	extern CSCORE_API const uint8 MAX;
 }
 
-#pragma endregion SpawnerTransform
+#pragma endregion SpawnerPoint
 
-// FCsSpawnerTransformParams
+// FCsSpawnerPointParams
 #pragma region
 
 class AActor;
@@ -189,14 +189,14 @@ class AActor;
 * Parameters describing where and how to apply the transform to the object spawned.
 */
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsSpawnerTransformParams
+struct CSCORE_API FCsSpawnerPointParams
 {
 	GENERATED_USTRUCT_BODY()
 
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECsSpawnerTransform Type;
+	ECsSpawnerPoint Type;
 
 	/** Which of the components of Transform to apply to the spawned object. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
@@ -208,8 +208,8 @@ public:
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite)
 	TArray<AActor*> Actors;
 
-	FCsSpawnerTransformParams() :
-		Type(ECsSpawnerTransform::Self),
+	FCsSpawnerPointParams() :
+		Type(ECsSpawnerPoint::Self),
 		TransformRules(7), // ALL
 		Transforms(),
 		Actors()
@@ -217,4 +217,4 @@ public:
 	}
 };
 
-#pragma endregion FCsSpawnerTransformParams
+#pragma endregion FCsSpawnerPointParams

@@ -65,21 +65,21 @@ bool FCsSpawnerFrequencyParams::IsValidChecked(const FString& Context) const
 #pragma endregion FCsSpawnerFrequencyParams
 
 
-// SpawnerTransform
+// SpawnerPoint
 #pragma region
 
-namespace NCsSpawnerTransform
+namespace NCsSpawnerPoint
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerTransform, Self);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerTransform, Transform);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerTransform, Actor);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerTransform, Custom);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSpawnerTransform, ECsSpawnerTransform_MAX, "MAX");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPoint, Self);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPoint, Transform);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPoint, Actor);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPoint, Custom);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSpawnerPoint, ECsSpawnerPoint_MAX, "MAX");
 	}
 
-	CSCORE_API const uint8 MAX = (uint8)Type::ECsSpawnerTransform_MAX;
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsSpawnerPoint_MAX;
 }
 
-#pragma endregion SpawnerTransform
+#pragma endregion SpawnerPoint

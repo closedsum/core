@@ -7,6 +7,10 @@
 
 // DetailCustomizations
 	// EnumStruct
+		// CVar
+#include "DetailCustomizations/EnumStruct/CVar/ECsCVarLogCustomization.h"
+#include "DetailCustomizations/EnumStruct/CVar/ECsCVarToggleCustomization.h"
+#include "DetailCustomizations/EnumStruct/CVar/ECsCVarDrawCustomization.h"
 		// Asset
 #include "DetailCustomizations/EnumStruct/ECsAssetTypeCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsLoadAssetsTypeCustomization.h"
@@ -35,6 +39,10 @@ void FCsRegisterDetailCustomization::Register()
 
 	// EnumStruct
 	{
+		// CVar
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsCVarLog", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCVarLogCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsCVarToggle", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCVarToggleCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsCVarDraw", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCVarDrawCustomization::MakeInstance));
 		// Asset
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsAssetType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsAssetTypeCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsLoadAssetsType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsLoadAssetsTypeCustomization::MakeInstance));

@@ -2,6 +2,8 @@
 #include "GraphEditor/CsGraphPanelPinFactory.h"
 #include "CsEditor.h"
 
+// CVar
+#include "CsCVars.h"
 // Types
 #include "Types/CsTypes.h"
 #include "Managers/Input/CsTypes_Input.h"
@@ -17,6 +19,10 @@
 #include "SlateBasics.h"
 
 // EnumStructs
+	// CVar
+#include "GraphEditor/EnumStruct/CVar/SCsGraphPin_ECsCVarLog.h"
+#include "GraphEditor/EnumStruct/CVar/SCsGraphPin_ECsCVarToggle.h"
+#include "GraphEditor/EnumStruct/CVar/SCsGraphPin_ECsCVarDraw.h"
 	// Asset
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsAssetType.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsLoadAssetsType.h"
@@ -61,6 +67,15 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	Check if pin is struct, and then check if that pin is of struct type we want customize
 	*/
 
+	// CVar
+	{
+		// FECsCVarLog
+		if (DoesPinUseScriptStruct<FECsCVarLog>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCVarLog, InPin); }
+		// FECsCVarToggle
+		if (DoesPinUseScriptStruct<FECsCVarToggle>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCVarToggle, InPin); }
+		// FECsCVarDraw
+		if (DoesPinUseScriptStruct<FECsCVarDraw>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCVarDraw, InPin); }
+	}
 	// Asset
 	{
 		// FECsAssetType

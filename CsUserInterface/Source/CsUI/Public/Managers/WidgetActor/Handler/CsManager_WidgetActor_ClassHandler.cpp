@@ -20,7 +20,7 @@ void FCsManager_WidgetActor_ClassHandler::GetClassesDataTableChecked(const FStri
 
 	OutDataTableSoftObject = DataRootSet.WidgetActorClasses;
 
-	checkf(OutDataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetSbDataRootSet().WidgetActorClasses is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
+	checkf(OutDataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetB5DataRootSet().WidgetActorClasses is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
 
 	UWorld* World				  = MyRoot->GetWorld();
 	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
@@ -37,7 +37,7 @@ void FCsManager_WidgetActor_ClassHandler::GetDatasDataTablesChecked(const FStrin
 
 	TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSet.WidgetActors;
 
-	checkf(DataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetSbDataRootSet().WidgetActors is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
+	checkf(DataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetB5DataRootSet().WidgetActors is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
 
 	UWorld* World				  = MyRoot->GetWorld();
 	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());

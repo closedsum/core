@@ -20,7 +20,7 @@ void FCsManager_WidgetActor_DataHandler::GetDatasDataTablesChecked(const FString
 
 	TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSet.WidgetActors;
 
-	checkf(DataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetSbDataRootSet().WidgetActors is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
+	checkf(DataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetB5DataRootSet().WidgetActors is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
 
 	UWorld* World				  = MyRoot->GetWorld();
 	UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());

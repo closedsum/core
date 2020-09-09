@@ -35,13 +35,13 @@ namespace NCsManagerLevelCached
 	namespace Str
 	{
 		const FString Check_FinishedLoadingPersistentLevel_Internal = TEXT("UCsGameInstance::Check_FinishedLoadingPersistentLevel_Internal");
-		const FString ChangeMap_Internal = TEXT("USbManager_Level::ChangeMap_Internal");
+		const FString ChangeMap_Internal = TEXT("UCsManager_Level::ChangeMap_Internal");
 	}
 
 	namespace Name
 	{
 		const FName Check_FinishedLoadingPersistentLevel_Internal = TEXT("UCsGameInstance::Check_FinishedLoadingPersistentLevel_Internal");
-		const FName ChangeMap_Internal = FName("USbManager_Level::ChangeMap_Internal");
+		const FName ChangeMap_Internal = FName("UCsManager_Level::ChangeMap_Internal");
 	}
 }
 
@@ -366,7 +366,7 @@ ACsLevelScriptActor* UCsManager_Level::GetPersistentLevelScriptActor()
 
 void UCsManager_Level::ChangeMap(const FCsManagerLevelChangeMap& Params)
 {
-	checkf(Params.Map.IsEmpty(), TEXT("USbManager_Level::ChangeMap: Params.Map is Empty."));
+	checkf(Params.Map.IsEmpty(), TEXT("UCsManager_Level::ChangeMap: Params.Map is Empty."));
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
@@ -411,7 +411,7 @@ char UCsManager_Level::ChangeMap_Internal(FCsRoutine* R)
 #if !UE_BUILD_SHIPPING
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogGameStartup))
 		{
-			UE_LOG(LogSb, Warning, TEXT("%s: Transition to Shell: %s."), *Context, *URL);
+			UE_LOG(LogCs, Warning, TEXT("%s: Transition to Shell: %s."), *Context, *URL);
 		}
 #endif // #if !UE_BUILD_SHIPPING
 		*/

@@ -39,6 +39,38 @@ namespace NCsDebugDrawPriority
 
 #pragma endregion DebugDrawPriority
 
+// DebugDrawFrequency
+#pragma region
+
+UENUM(BlueprintType)
+enum class ECsDebugDrawFrequency : uint8
+{
+	Once						UMETA(DisplayName = "Once"),
+	Update						UMETA(DisplayName = "Update"),
+	ECsDebugDrawFrequency_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsDebugDrawFrequency : public TCsEnumMap<ECsDebugDrawFrequency>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsDebugDrawFrequency, ECsDebugDrawFrequency)
+};
+
+namespace NCsDebugDrawFrequency
+{
+	typedef ECsDebugDrawFrequency Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Once;
+		extern CSCORE_API const Type Update;
+		extern CSCORE_API const Type ECsDebugDrawFrequency_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+}
+
+#pragma endregion DebugDrawFrequency
+
 // DebugDrawRotation
 #pragma region
 
@@ -142,7 +174,7 @@ public:
 
 	bool CanDraw(UWorld* World) const;
 
-	void Draw(UWorld* World, const FTransform& Transform);
+	void Draw(UWorld* World, const FTransform& Transform) const;
 };
 
 #pragma endregion FCsDebugDrawCircle
@@ -218,7 +250,207 @@ public:
 
 	bool CanDraw(UWorld* World) const;
 
-	void Draw(UWorld* World, const FTransform& Transform);
+	void Draw(UWorld* World, const FTransform& Transform) const;
 };
 
 #pragma endregion FCsDebugDrawSphere
+
+// FCsDebugDrawPoint
+#pragma region
+
+class UWorld;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDebugDrawPoint
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsCVarDraw CVar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPreview;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsDebugDrawPriority PriorityInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPlay;
+
+	/** Applied as a translation offset to Location. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Offset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Radius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Segments;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FColor Color;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LifeTime; 
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Thickness;
+
+	FCsDebugDrawPoint() :
+		CVar(),
+		bEnableInPreview(false),
+		PriorityInPlay(ECsDebugDrawPriority::Any),
+		bEnableInPlay(false),
+		Offset(FVector::ZeroVector),
+		Radius(32.0f),
+		Segments(4),
+		Color(FColor::Red),
+		LifeTime(0.1f),
+		Thickness(1.0f)
+	{
+	}
+
+	bool CanDraw(UWorld* World) const;
+
+	void Draw(UWorld* World, const FVector& Location) const;
+};
+
+#pragma endregion FCsDebugDrawPoint
+
+// FCsDebugDrawLine
+#pragma region
+
+class UWorld;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDebugDrawLine
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsCVarDraw CVar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPreview;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsDebugDrawPriority PriorityInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPlay;
+
+	/** Applied as a translation offset to Start. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector StartOffset;
+
+	/** Applied as a translation offset to End. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector EndOffset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FColor Color;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LifeTime; 
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Thickness;
+
+	FCsDebugDrawLine() :
+		CVar(),
+		bEnableInPreview(false),
+		PriorityInPlay(ECsDebugDrawPriority::Any),
+		bEnableInPlay(false),
+		StartOffset(FVector::ZeroVector),
+		EndOffset(FVector::ZeroVector),
+		Color(FColor::Red),
+		LifeTime(0.1f),
+		Thickness(1.0f)
+	{
+	}
+
+	bool CanDraw(UWorld* World) const;
+
+	void Draw(UWorld* World, const FVector& Start, const FVector& End) const;
+};
+
+#pragma endregion FCsDebugDrawPoint
+
+// FCsDebugDrawLineAndPoint
+#pragma region
+
+class UWorld;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDebugDrawLineAndPoint
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsCVarDraw CVar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPreview;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsDebugDrawPriority PriorityInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPlay;
+
+	/** Applied as a translation offset to Start. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector StartOffset;
+
+	/** Applied as a translation offset to End. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector EndOffset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Radius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Segments;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FColor Color;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LifeTime; 
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Thickness;
+
+	FCsDebugDrawLineAndPoint() :
+		CVar(),
+		bEnableInPreview(false),
+		PriorityInPlay(ECsDebugDrawPriority::Any),
+		bEnableInPlay(false),
+		StartOffset(FVector::ZeroVector),
+		EndOffset(FVector::ZeroVector),
+		Radius(32.0f),
+		Segments(4),
+		Color(FColor::Red),
+		LifeTime(0.1f),
+		Thickness(1.0f)
+	{
+	}
+
+	bool CanDraw(UWorld* World) const;
+
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const float& InLifeTime) const;
+
+	void Draw(UWorld* World, const FVector& Start, const FVector& End) const;
+
+	void DrawOnlyLine(UWorld* World, const FVector& Start, const FVector& End) const;
+
+	void DrawOnlyPoint(UWorld* World, const FVector& Location) const;
+};
+
+#pragma endregion FCsDebugDrawLineAndPoint

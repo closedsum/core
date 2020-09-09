@@ -15,5 +15,7 @@ public:
 
 	static bool IsPlayInEditorPreview(UWorld* World);
 
+	static bool IsPlayInGameOrPIE(UWorld* World);
+
 	static bool IsAnyWorldContextEditorOrEditorPreview();
 };

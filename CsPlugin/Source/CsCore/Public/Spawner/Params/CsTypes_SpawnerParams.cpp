@@ -10,7 +10,8 @@ namespace NCsSpawnerFrequency
 	{
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerFrequency, Once);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerFrequency, Count);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerFrequency, Time);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerFrequency, TimeCount);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerFrequency, TimeInterval);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerFrequency, Infinite);
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSpawnerFrequency, ECsSpawnerFrequency_MAX, "MAX");
 	}
@@ -47,11 +48,17 @@ bool FCsSpawnerFrequencyParams::IsValidChecked(const FString& Context) const
 	{
 		checkf(Count >= 1, TEXT("%s: Count MUST be >= 1 if Type == ECsSpawnerFrequency::Count."), *Context);
 	}
-	// Time
+	// TimeCount
 	else
-	if (Type == ECsSpawnerFrequency::Time)
+	if (Type == ECsSpawnerFrequency::TimeCount)
 	{
-		// TODO
+		checkf(Count >= 1, TEXT("%s: Count MUST be >= 1 if Type == ECsSpawnerFrequency::TimeCount."), *Context);
+	}
+	// TimeInterval
+	else
+	if (Type == ECsSpawnerFrequency::TimeInterval)
+	{
+		checkf(Interval > 0.0f, TEXT("%s: Interval MUST be > 0.0f if Type == ECsSpawnerFrequency::TimeInterval."), *Context);
 	}
 	// Infinite
 	else
@@ -60,6 +67,30 @@ bool FCsSpawnerFrequencyParams::IsValidChecked(const FString& Context) const
 		checkf(Interval > 0.0f, TEXT("%s: Interval MUST be > 0.0f if Type == ECsSpawnerFrequency::Infinite."), *Context);
 	}
 	return true;
+}
+
+void FCsSpawnerFrequencyParams::OnPostEditChange()
+{
+	if (Time > 0.0f)
+	{
+		// TimeCount
+		if (Type == ECsSpawnerFrequency::TimeCount)
+		{
+			if (Count >= 1)
+			{
+				Interval = Time / (float)Count;
+			}
+		}
+		// TimeInterval
+		else
+		if (Type == ECsSpawnerFrequency::TimeInterval)
+		{
+			if (Interval > 0.0f)
+			{
+				Count = FMath::FloorToInt(Time / Interval);
+			}
+		}
+	}
 }
 
 #pragma endregion FCsSpawnerFrequencyParams

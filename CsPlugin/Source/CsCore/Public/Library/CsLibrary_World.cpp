@@ -26,6 +26,11 @@ bool FCsLibrary_World::IsPlayInEditorPreview(UWorld* World)
 	return World && World->WorldType == EWorldType::EditorPreview;
 }
 
+bool FCsLibrary_World::IsPlayInGameOrPIE(UWorld* World)
+{
+	return World && (World->WorldType == EWorldType::Game || World->WorldType == EWorldType::PIE);
+}
+
 bool FCsLibrary_World::IsAnyWorldContextEditorOrEditorPreview()
 {
 	const TIndirectArray<FWorldContext>& WorldContexts = GEngine->GetWorldContexts();

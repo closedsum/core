@@ -22,6 +22,23 @@ namespace NCsDebugDrawPriority
 
 #pragma endregion DebugDrawPriority
 
+// DebugDrawFrequency
+#pragma region
+
+namespace NCsDebugDrawFrequency
+{
+	namespace Ref
+	{
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsDebugDrawFrequency, Once);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsDebugDrawFrequency, Update);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsDebugDrawFrequency, ECsDebugDrawFrequency_MAX, "MAX");
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsDebugDrawFrequency_MAX;
+}
+
+#pragma endregion DebugDrawFrequency
+
 // DebugDrawRotation
 #pragma region
 
@@ -70,7 +87,7 @@ bool FCsDebugDrawCircle::CanDraw(UWorld* World) const
 	return false;
 }
 
-void FCsDebugDrawCircle::Draw(UWorld* World, const FTransform& Transform)
+void FCsDebugDrawCircle::Draw(UWorld* World, const FTransform& Transform) const
 {
 	if (CanDraw(World))
 	{
@@ -147,7 +164,7 @@ bool FCsDebugDrawSphere::CanDraw(UWorld* World) const
 	return false;
 }
 
-void FCsDebugDrawSphere::Draw(UWorld* World, const FTransform& Transform)
+void FCsDebugDrawSphere::Draw(UWorld* World, const FTransform& Transform) const
 {
 	if (CanDraw(World))
 	{
@@ -194,3 +211,149 @@ void FCsDebugDrawSphere::Draw(UWorld* World, const FTransform& Transform)
 }
 
 #pragma endregion FCsDebugDrawSphere
+
+// FCsDebugDrawPoint
+#pragma region
+
+bool FCsDebugDrawPoint::CanDraw(UWorld* World) const
+{
+	if (!World)
+		return false;
+
+	// Preview
+	if (World->WorldType == EWorldType::Editor ||
+		World->WorldType == EWorldType::EditorPreview)
+	{
+		return bEnableInPreview;
+	}
+	// Play
+	if (World->WorldType == EWorldType::Game ||
+		World->WorldType == EWorldType::PIE)
+	{
+		// Any
+		if (PriorityInPlay == ECsDebugDrawPriority::Any)
+			return bEnableInPlay || FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// CVar
+		if (PriorityInPlay == ECsDebugDrawPriority::CVar)
+			return FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// Flag
+		if (PriorityInPlay == ECsDebugDrawPriority::Flag)
+			return bEnableInPlay;
+	}
+	return false;
+}
+
+void FCsDebugDrawPoint::Draw(UWorld* World, const FVector& Location) const
+{
+	if (CanDraw(World))
+	{
+		DrawDebugSphere(World, Location + Offset, Radius, Segments, Color, false, LifeTime, 0, Thickness);
+	}
+}
+
+#pragma endregion FCsDebugDrawPoint
+
+// FCsDebugDrawLine
+#pragma region
+
+bool FCsDebugDrawLine::CanDraw(UWorld* World) const
+{
+	if (!World)
+		return false;
+
+	// Preview
+	if (World->WorldType == EWorldType::Editor ||
+		World->WorldType == EWorldType::EditorPreview)
+	{
+		return bEnableInPreview;
+	}
+	// Play
+	if (World->WorldType == EWorldType::Game ||
+		World->WorldType == EWorldType::PIE)
+	{
+		// Any
+		if (PriorityInPlay == ECsDebugDrawPriority::Any)
+			return bEnableInPlay || FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// CVar
+		if (PriorityInPlay == ECsDebugDrawPriority::CVar)
+			return FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// Flag
+		if (PriorityInPlay == ECsDebugDrawPriority::Flag)
+			return bEnableInPlay;
+	}
+	return false;
+}
+
+void FCsDebugDrawLine::Draw(UWorld* World, const FVector& Start, const FVector& End) const
+{
+	if (CanDraw(World))
+	{
+		DrawDebugLine(World, Start + StartOffset, End + EndOffset, Color, false, LifeTime, 0, Thickness);
+	}
+}
+
+#pragma endregion FCsDebugDrawLine
+
+// FCsDebugDrawLineAndPoint
+#pragma region
+
+bool FCsDebugDrawLineAndPoint::CanDraw(UWorld* World) const
+{
+	if (!World)
+		return false;
+
+	// Preview
+	if (World->WorldType == EWorldType::Editor ||
+		World->WorldType == EWorldType::EditorPreview)
+	{
+		return bEnableInPreview;
+	}
+	// Play
+	if (World->WorldType == EWorldType::Game ||
+		World->WorldType == EWorldType::PIE)
+	{
+		// Any
+		if (PriorityInPlay == ECsDebugDrawPriority::Any)
+			return bEnableInPlay || FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// CVar
+		if (PriorityInPlay == ECsDebugDrawPriority::CVar)
+			return FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// Flag
+		if (PriorityInPlay == ECsDebugDrawPriority::Flag)
+			return bEnableInPlay;
+	}
+	return false;
+}
+
+void FCsDebugDrawLineAndPoint::Draw(UWorld* World, const FVector& Start, const FVector& End, const float& InLifeTime) const
+{
+	if (CanDraw(World))
+	{
+		DrawDebugLine(World, Start + StartOffset, End + EndOffset, Color, false, InLifeTime, 0, Thickness);
+
+		DrawDebugSphere(World, End + EndOffset, Radius, Segments, Color, false, InLifeTime, 0, Thickness);
+	}
+}
+
+void FCsDebugDrawLineAndPoint::Draw(UWorld* World, const FVector& Start, const FVector& End) const
+{
+	Draw(World, Start, End, LifeTime);
+}
+
+void FCsDebugDrawLineAndPoint::DrawOnlyLine(UWorld* World, const FVector& Start, const FVector& End) const
+{
+	if (CanDraw(World))
+	{
+		DrawDebugLine(World, Start + StartOffset, End + EndOffset, Color, false, LifeTime, 0, Thickness);
+	}
+}
+
+void FCsDebugDrawLineAndPoint::DrawOnlyPoint(UWorld* World, const FVector& Location) const
+{
+	if (CanDraw(World))
+	{
+		DrawDebugSphere(World, Location + StartOffset, Radius, Segments, Color, false, LifeTime, 0, Thickness);
+	}
+}
+
+#pragma endregion FCsDebugDrawLineAndPoint

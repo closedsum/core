@@ -10,6 +10,7 @@
 #include "Debug/CsTypes_Debug.h"
 // Library
 #include "Library/CsLibrary_World.h"
+#include "Spawner/Params/CsLibrary_SpawnerParams.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 // Spawner
@@ -73,6 +74,10 @@ void ACsSpawnerImpl::BeginPlay()
 {
 	Super::BeginPlay();
 
+#if WITH_EDITOR
+	SetActorTickEnabled(false);
+#endif // #if WITH_EDITOR
+
 #if !UE_BUILD_SHIPPING
 	if (FCsDebugDrawSphere* Sphere = GetDebugDrawSphere())
 	{
@@ -133,6 +138,8 @@ void ACsSpawnerImpl::StartPlay()
 	checkf(TotalTime, TEXT("%s: TotalTime is NULL. Failed to get the reference for TotalTime."), *Context);
 
 	checkf(IsParamsValid(Context), TEXT("%s: Parms is NOT Valid."), *Context);
+
+	*TotalTime = FCsLibrary_SpawnerParams::CalculateTotalTime(Params);
 }
 
 #pragma endregion ICsStartPlay
@@ -231,6 +238,8 @@ void ACsSpawnerImpl::Spawn()
 // Spawn
 #pragma region
 
+//void ACsSpawnerImpl::OnPreStart(ICsSpawner* Spawner){}
+
 char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 {
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
@@ -247,10 +256,16 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 
 	CS_COROUTINE_BEGIN(R);
 
+	OnPreStart_Event.Broadcast(this);
+	OnPreSpawnObjects_Event.Broadcast(this, CurrentSpawnCount);
+	OnPreSpawnObject_Event.Broadcast(this, CurrentSpawnCount);
+
 	// If there is a Delay, Wait
 	CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= FrequencyParams->Delay);
 
 	OnStart_Event.Broadcast(this);
+
+	CanSpawn = true;
 
 	do
 	{
@@ -262,14 +277,14 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 			// Once
 			if (FrequencyType == ECsSpawnerFrequency::Once)
 			{
-				 // Do Nothing
+				 // Do Nothing 
 			}
-			// Count
+			// Count | TimeCount | TimeInterval
 			else
-			if (FrequencyType == ECsSpawnerFrequency::Count)
+			if (FrequencyType == ECsSpawnerFrequency::Count ||
+				FrequencyType == ECsSpawnerFrequency::TimeCount ||
+				FrequencyType == ECsSpawnerFrequency::TimeInterval)
 			{
-				++CurrentSpawnCount;
-
 				CanSpawn		 = CurrentSpawnCount < FrequencyParams->Count;
 				HasSpawnInterval = CanSpawn && FrequencyParams->Interval > 0.0f;
 			}
@@ -277,14 +292,15 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 			else
 			if (FrequencyType == ECsSpawnerFrequency::Infinite)
 			{
-				++CurrentSpawnCount;
-
 				CanSpawn		 = true;
 				HasSpawnInterval = true;
 			}
 
 			if (HasSpawnInterval)
 			{
+				OnPreSpawnObjects_Event.Broadcast(this, CurrentSpawnCount);
+				OnPreSpawnObject_Event.Broadcast(this, CurrentSpawnCount);
+
 				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= FrequencyParams->Interval);
 			}
 		}
@@ -292,10 +308,19 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 
 	CS_COROUTINE_WAIT_UNTIL(R, R->ElapsedTime.Time >= *TotalTime);
 
+#if !UE_BUILD_SHIPPING
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSpawnerTransactions))
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::Start_Internal (%s): Finished Spawning %d Objects."), *(GetName()), CurrentSpawnCount);
+	}
+#endif // #if !UE_BUILD_SHIPPING
+
 	OnFinish_Event.Broadcast(this);
 
 	CS_COROUTINE_END(R);
 }
+
+//void ACsSpawnerImpl::OnPreSpawnObjects(ICsSpawner* Spawner, const int32& Index){}
 
 void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 {
@@ -335,8 +360,12 @@ void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 	Payload->SetFName(Name::SpawnObjects_Internal);
 
 	SpawnObjects_Internal_Handles.AddDefaulted();
+	FCsRoutineHandle& Handle = SpawnObjects_Internal_Handles.Last();
 
-	Start_Internal_Handle = Scheduler->Start(Payload);
+	static const int32 CURRENT_GROUP = 0;
+	Payload->SetValue_Int(CURRENT_GROUP, Index);
+
+	Handle = Scheduler->Start(Payload);
 }
 
 char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
@@ -345,7 +374,10 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 
 	ElapsedTime += R->DeltaTime;
 
-	static const int32 CURRENT_COUNT_PER_SPAWN = 0;
+	static const int32 CURRENT_GROUP = 0;
+	const int32& CurrentGroup = R->GetValue_Int(CURRENT_GROUP);
+
+	static const int32 CURRENT_COUNT_PER_SPAWN = 1;
 	int32& CurrentCountPerSpawn = R->GetValue_Int(CURRENT_COUNT_PER_SPAWN);
 
 	CS_COROUTINE_BEGIN(R);
@@ -358,27 +390,63 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 #if !UE_BUILD_SHIPPING
 			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSpawnerTransactions))
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::SpawnObjects_Internal (%s): Spawning Object: %d / %d"), *(GetName()), CurrentCountPerSpawn, CountParams->CountPerSpawn);
+				static const int32 FROM_SPAWN = -1;
+
+				if (CurrentGroup == FROM_SPAWN)
+				{
+					UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::SpawnObjects_Internal (%s): Group: %d. Spawning Object: %d / %d"), *(GetName()), CurrentGroup, CurrentCountPerSpawn, CountParams->CountPerSpawn);
+				}
+				else
+				{
+					UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::SpawnObjects_Internal (%s): Spawning Object: %d / %d"), *(GetName()), CurrentCountPerSpawn, CountParams->CountPerSpawn);
+				}
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			SpawnObject(CurrentCountPerSpawn);
+			// Spawn Object
+			{
+				UObject* SpawnedObject = SpawnObject(CurrentCountPerSpawn);
 
+				OnSpawnObject_Event.Broadcast(this, SpawnedObject);
+			}
+
+			++CurrentSpawnCount;
 			++CurrentCountPerSpawn;
 
 			if (CurrentCountPerSpawn < CountParams->CountPerSpawn)
 			{
+				OnPreSpawnObject_Event.Broadcast(this, CurrentSpawnCount);
+
 				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= CountParams->TimeBetweenCountPerSpawn);
 			}
 		}
 	} while (CurrentCountPerSpawn < CountParams->CountPerSpawn);
 
+#if !UE_BUILD_SHIPPING
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSpawnerTransactions))
+	{
+		static const int32 FROM_SPAWN = -1;
+
+		if (CurrentGroup == FROM_SPAWN)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::SpawnObjects_Internal (%s): Finished Spawning %d Objects."), *(GetName()), CountParams->CountPerSpawn);
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::SpawnObjects_Internal (%s): Group: %d. Finished Spawning %d Objects."), *(GetName()), CurrentGroup, CountParams->CountPerSpawn);
+		}
+	}
+#endif // #if !UE_BUILD_SHIPPING
+
 	CS_COROUTINE_END(R);
 }
 
-void ACsSpawnerImpl::SpawnObject(const int32& Index)
+//void ACsSpawnerImpl::OnPreSpawnObject(ICsSpawner* Spawner, const int32& Index){}
+
+UObject* ACsSpawnerImpl::SpawnObject(const int32& Index)
 {
 	checkf(0, TEXT("ACsSpawnerImpl::SpawnObject: This MUST be implemented."));
+	return nullptr;
 }
 
 #pragma endregion Spawn

@@ -96,6 +96,7 @@ public:
 		return Params;
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "ICsSpawner")
 	virtual void Start();
 
 	FORCEINLINE FCsSpawner_OnStart& GetOnStart_Event()
@@ -138,9 +139,27 @@ protected:
 
 public:
 
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPreStart, ICsSpawner* /*Spawner*/);
+
+	FOnPreStart OnPreStart_Event;
+
+protected:
+
+	//virtual void OnPreStart(ICsSpawner* Spawner);
+
 	FCsRoutineHandle Start_Internal_Handle;
 
 	char Start_Internal(FCsRoutine* R);
+
+public:
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPreSpawnObjects, ICsSpawner* /*Spawner*/, const int32& /*Index*/);
+
+	FOnPreSpawnObjects OnPreSpawnObjects_Event;
+
+protected:
+	
+	//virtual void OnPreSpawnObjects(ICsSpawner* Spawner, const int32& Index);
 
 	TArray<FCsRoutineHandle> SpawnObjects_Internal_Handles;
 
@@ -148,7 +167,17 @@ public:
 
 	char SpawnObjects_Internal(FCsRoutine* R);
 
-	virtual void SpawnObject(const int32& Index);
+public:
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPreSpawnObject, ICsSpawner* /*Spawner*/, const int32& /*Index*/);
+
+	FOnPreSpawnObject OnPreSpawnObject_Event;
+
+protected:
+
+	//virtual void OnPreSpawnObject(ICsSpawner* Spawner, const int32& Index);
+
+	virtual UObject* SpawnObject(const int32& Index);
 
 #pragma endregion Spawn
 

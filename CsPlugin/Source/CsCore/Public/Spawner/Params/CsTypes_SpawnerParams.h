@@ -13,11 +13,17 @@
 UENUM(BlueprintType)
 enum class ECsSpawnerFrequency : uint8
 {
-	Once								 UMETA(DisplayName = "Once"),
-	Count								 UMETA(DisplayName = "Count"),
-	Time								 UMETA(DisplayName = "Time"),
-	Infinite							 UMETA(DisplayName = "Infinite"),
-	ECsSpawnerFrequency_MAX  UMETA(Hidden),
+	/** */
+	Once						UMETA(DisplayName = "Once"),
+	/** */
+	Count						UMETA(DisplayName = "Count"),
+	/** */
+	TimeCount					UMETA(DisplayName = "Time Count"),
+	/** */
+	TimeInterval				UMETA(DisplayName = "Time Interval"),
+	/** */
+	Infinite					UMETA(DisplayName = "Infinite"),
+	ECsSpawnerFrequency_MAX		UMETA(Hidden),
 };
 
 struct CSCORE_API EMCsSpawnerFrequency : public TCsEnumMap<ECsSpawnerFrequency>
@@ -33,7 +39,8 @@ namespace NCsSpawnerFrequency
 	{
 		extern CSCORE_API const Type Once;
 		extern CSCORE_API const Type Count;
-		extern CSCORE_API const Type Time;
+		extern CSCORE_API const Type TimeCount;
+		extern CSCORE_API const Type TimeInterval;
 		extern CSCORE_API const Type Infinite;
 		extern CSCORE_API const Type ECsSpawnerFrequency_MAX;
 	}
@@ -94,7 +101,8 @@ public:
 		If Type == ECsStatusEffectTriggerFrequency::Count,
 	     Count should be > 0, if NOT, it will be treated
 	     as ECsStatusEffectTriggerFrequency::Once.
-		if Type == ECsSpawnerFrequency::Time, 
+		if Type == ECsSpawnerFrequency::TimeCount,
+		if Type == ECsSpawnerFrequency::TimeInterval,
 		If Type == ECsSpawnerFrequency::Infinite,
 	     Ignore Count and Interval should be > 0.0f. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -107,7 +115,9 @@ public:
 	float Delay;
 
 	/** The number of times to call Spawn after Start is called.
-		Only valid if Type == ECsSpawnerFrequency::Count.
+		Only valid if 
+		 Type == ECsSpawnerFrequency::Count
+		 Type == ECsSpawnerFrequency::TimeCount
 		Should be > 0. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
 	int32 Count;
@@ -115,7 +125,7 @@ public:
 	/** The time between each Spawn call after Start is called.
 		Only valid if,
 		Type == ECsSpawnerFrequency::Count
-		 or
+		Type == ECsSpawnerFrequency::TimeInterval
 		Type == ECsSpawnerFrequency::Infinite */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Interval;
@@ -133,6 +143,8 @@ public:
 	}
 
 	bool IsValidChecked(const FString& Context) const;
+
+	void OnPostEditChange();
 };
  
 #pragma endregion FCsSpawnerFrequencyParams

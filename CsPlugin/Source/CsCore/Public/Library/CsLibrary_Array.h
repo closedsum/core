@@ -5,6 +5,7 @@ class CSCORE_API FCsLibrary_Array
 {
 // TArray
 #pragma region
+public:
 
 	template<typename T>
 	static bool AreTArraysEqual(TArray<T>& A, TArray<T>& B)
@@ -247,6 +248,7 @@ class CSCORE_API FCsLibrary_Array
 
 // Fixed Array
 #pragma region
+public:
 
 	template<typename T>
 	void CopyFixedArrays(T* To, T* From, const int32 &Size)

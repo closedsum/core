@@ -551,12 +551,13 @@ public:
 	* @param Type				Type of pool to add the Object to.
 	* @param InterfaceObject	Object that implements the interface: ICsPooledObject.
 	* @param Object				UObject reference.
+	* @param DeallocateOnAdd	
 	* return					Container holding a reference to a pooled object.
 	*							Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const InterfaceContainerType* AddToPool(const KeyType& Type, InterfaceType* InterfaceObject, UObject* Object)
+	const InterfaceContainerType* AddToPool(const KeyType& Type, InterfaceType* InterfaceObject, UObject* Object, bool DeallocateOnAdd = true)
 	{
-		const InterfaceContainerType* O = GetManagerPooledObjects(Type)->AddToPool(InterfaceObject, Object);
+		const InterfaceContainerType* O = GetManagerPooledObjects(Type)->AddToPool(InterfaceObject, Object, DeallocateOnAdd);
 
 		OnAddToPool_Event.Broadcast(Type, O);
 		 
@@ -567,14 +568,15 @@ public:
 	* Adds an Object to the pool for the appropriate Type.
 	*  Object must implement the interface: ICsPooledObject.
 	*
-	* @param Type		Type of pool to add the Object to.
-	* @param Object		Object that implements the interface: ICsPooledObject.
-	* return			Container holding a reference to a pooled object.
-	*					Pooled Object implements the interface: ICsPooledObject.
+	* @param Type				Type of pool to add the Object to.
+	* @param Object				Object that implements the interface: ICsPooledObject.
+	* @param DeallocateOnAdd
+	* return					Container holding a reference to a pooled object.
+	*							Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const InterfaceContainerType* AddToPool(const KeyType& Type, InterfaceType* Object)
+	const InterfaceContainerType* AddToPool(const KeyType& Type, InterfaceType* Object, bool DeallocateOnAdd = true)
 	{
-		return AddToPool(Type, Object, Object->_getUObject());
+		return AddToPool(Type, Object, Object->_getUObject(), DeallocateOnAdd);
 	}
 
 	/**
@@ -582,23 +584,24 @@ public:
 	*  Object must implement the interface: ICsPooledObject or the UClass 
 	*  associated with the Object have ImplementsInterface(UCsPooledObject::StaticClass()) == true.
 	*
-	* @param Type		Type of the pool to add the object to.
-	* @param Object		Object or Object->GetClass() that implements the interface: ICsPooledObject.
-	* return			Container holding a reference to a pooled object.
-	*					Pooled Object or UClass associated with Pooled Object implements
-	*					the interface: ICsPooledObject.
+	* @param Type				Type of the pool to add the object to.
+	* @param Object				Object or Object->GetClass() that implements the interface: ICsPooledObject.
+	* @param DeallocateOnAdd
+	* return					Container holding a reference to a pooled object.
+	*							Pooled Object or UClass associated with Pooled Object implements
+	*							the interface: ICsPooledObject.
 	*/
-	const InterfaceContainerType* AddToPool(const KeyType& Type, UObject* Object)
+	const InterfaceContainerType* AddToPool(const KeyType& Type, UObject* Object, bool DeallocateOnAdd = true)
 	{
-		return AddToPool(Type, nullptr, Object);
+		return AddToPool(Type, nullptr, Object, DeallocateOnAdd);
 	}
 
 	template<typename ContainerType>
-	const ContainerType* AddToPool(const KeyType& Type, UObject* Object)
+	const ContainerType* AddToPool(const KeyType& Type, UObject* Object, bool DeallocateOnAdd = true)
 	{
 		static_assert(std::is_base_of<InterfaceContainerType, ContainerType>(), "");
 	
-		return static_cast<const ContainerType*>(AddToPool(Type, Object));
+		return static_cast<const ContainerType*>(AddToPool(Type, Object, DeallocateOnAdd));
 	}
 
 	/**
@@ -1005,10 +1008,10 @@ public:
 	* return			PayloadTypeImpl that implements the interface: ICsPayload_PooledObject
 	*					and PayloadType.
 	*/
-	template<typename PayloadTypeImpl>
-	FORCEINLINE PayloadTypeImpl* AllocatePayload(const FString& Context, const KeyType& Type)
+	template<typename PayloadImplType>
+	FORCEINLINE PayloadImplType* AllocatePayload(const FString& Context, const KeyType& Type)
 	{
-		return GetManagerPooledObjects(Type)->AllocatePayload<PayloadTypeImpl>(Context);
+		return GetManagerPooledObjects(Type)->AllocatePayload<PayloadImplType>(Context);
 	}
 
 	/**
@@ -1019,10 +1022,10 @@ public:
 	* return		PayloadTypeImpl that implements the interface: ICsPayload_PooledObject
 	*				and PayloadType.
 	*/
-	template<typename PayloadTypeImpl>
-	FORCEINLINE PayloadTypeImpl* AllocatePayload(const KeyType& Type)
+	template<typename PayloadImplType>
+	FORCEINLINE PayloadImplType* AllocatePayload(const KeyType& Type)
 	{
-		return GetManagerPooledObjects(Type)->AllocatePayload<PayloadTypeImpl>();
+		return GetManagerPooledObjects(Type)->AllocatePayload<PayloadImplType>();
 	}
 
 	/**

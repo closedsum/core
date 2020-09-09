@@ -635,6 +635,7 @@ public:
 
 		// Pool
 #pragma region
+public:
 
 	/**
 	* Adds an Object to the pool.
@@ -642,10 +643,11 @@ public:
 	*
 	* @param InterfaceObject	Object that implements the interface: ICsPooledObject.
 	* @param Object				UObject reference.
+	* @param DeallocateOnAdd
 	* return					Container holding a reference to a pooled object.
 	*							Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const InterfaceContainerType* AddToPool(InterfaceType* InterfaceObject, UObject* Object)
+	const InterfaceContainerType* AddToPool(InterfaceType* InterfaceObject, UObject* Object, bool DeallocateOnAdd = true)
 	{
 		checkf(Object, TEXT("%s::AddToPool: Object is NULL."), *Name);
 
@@ -697,7 +699,9 @@ public:
 #endif // #if WITH_EDITOR
 
 		Cache->Init(PoolSize);
-		O->Deallocate();
+
+		if (DeallocateOnAdd)
+			O->Deallocate();
 
 		// Add Link
 		Links.Add(new TCsDoubleLinkedList<InterfaceContainerType*>());
@@ -717,31 +721,32 @@ public:
 	* Adds an Object to the pool.
 	*  Object must implement the interface: ICsPooledObject.
 	*
-	* @param Type		Type of pool to add the Object to.
-	* @param Object		Object that implements the interface: ICsPooledObject.
-	* return			Container holding a reference to a pooled object.
-	*					Pooled Object implements the interface: ICsPooledObject.
+	* @param Type				Type of pool to add the Object to.
+	* @param Object				Object that implements the interface: ICsPooledObject.
+	* @param DeallocateOnAdd
+	* return					Container holding a reference to a pooled object.
+	*							Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const InterfaceContainerType* AddToPool(InterfaceType* Object)
+	const InterfaceContainerType* AddToPool(InterfaceType* Object, bool DeallocateOnAdd = true)
 	{
-		return AddToPool(Object, Object->_getUObject());
+		return AddToPool(Object, Object->_getUObject(), DeallocateOnAdd);
 	}
 
 	template<typename OtherInterfaceType, typename ContainerType>
-	const ContainerType* AddToPool(OtherInterfaceType* Object)
+	const ContainerType* AddToPool(OtherInterfaceType* Object, bool DeallocateOnAdd = true)
 	{
 		static_assert(std::is_abstract<OtherInterfaceType>(), "TCsManager_PooledObject_Abstract::AddToPool: OtherInterfaceType is NOT an abstract class.");
 
 		static_assert(std::is_base_of<InterfaceContainerType, ContainerType>(), "TCsManager_PooledObject_Abstract::AddToPool: ContainerType is NOT a child of InterfaceContainerType.");
 
 #if WITH_EDITOR
-		const ContainerType* Ptr = dynamic_cast<const ContainerType*>(AddToPool(Object));
+		const ContainerType* Ptr = dynamic_cast<const ContainerType*>(AddToPool(Object, DeallocateOnAdd));
 
 		checkf(Ptr, TEXT("%s::AddToPool: Failed to cast to ContainerType."), *Name);
 
 		return Ptr;
 #else
-		return static_cast<ContainerType*>(AddToPool(Object->_getUObject()));
+		return static_cast<ContainerType*>(AddToPool(Object->_getUObject(), DeallocateOnAdd));
 #endif // #if WITH_EDITOR
 	}
 
@@ -750,29 +755,30 @@ public:
 	*  Object must implement the interface: ICsPooledObject or the UClass
 	*  associated with the Object have ImplementsInterface(UCsPooledObject::StaticClass()) == true.
 	*
-	* @param Object		Object or Object->GetClass() that implements the interface: ICsPooledObject.
-	* return			Container holding a reference to a pooled object.
-	*					Pooled Object or UClass associated with Pooled Object implements
-	*					the interface: ICsPooledObject.
+	* @param Object				Object or Object->GetClass() that implements the interface: ICsPooledObject.
+	* @param DeallocateOnAdd
+	* return					Container holding a reference to a pooled object.
+	*							Pooled Object or UClass associated with Pooled Object implements
+	*							the interface: ICsPooledObject.
 	*/
-	const InterfaceContainerType* AddToPool(UObject* Object)
+	const InterfaceContainerType* AddToPool(UObject* Object, bool DeallocateOnAdd = true)
 	{
-		return AddToPool(nullptr, Object);
+		return AddToPool(nullptr, Object, DeallocateOnAdd);
 	}
 
 	template<typename ContainerType>
-	const ContainerType* AddToPool(UObject* Object)
+	const ContainerType* AddToPool(UObject* Object, bool DeallocateOnAdd = true)
 	{
 		static_assert(std::is_base_of<InterfaceContainerType, ContainerType>(), "TCsManager_PooledObject_Abstract::AddToPool ContainerType is NOT a child of InterfaceContainerType.");
 		
 #if WITH_EDITOR
-		const ContainerType* Ptr = dynamic_cast<const ContainerType*>(AddToPool(Object));
+		const ContainerType* Ptr = dynamic_cast<const ContainerType*>(AddToPool(Object, DeallocateOnAdd));
 
 		checkf(Ptr, TEXT("%s::AddToPool: Failed to cast to ContainerType."), *Name);
 
 		return Ptr;
 #else
-		return static_cast<const ContainerType*>(AddToPool(Object));
+		return static_cast<const ContainerType*>(AddToPool(Object, DeallocateOnAdd));
 #endif // #if WITH_EDITOR
 	}
 
@@ -836,7 +842,7 @@ public:
 		// Add to pool
 		if (Index == INDEX_NONE)
 		{
-			const InterfaceContainerType* O = AddToPool(InterfaceObject, Object);
+			const InterfaceContainerType* O = AddToPool(InterfaceObject, Object, false);
 
 			AddToAllocatedObjects_Internal(const_cast<InterfaceContainerType*>(O));
 
@@ -1627,10 +1633,10 @@ public:
 	* return			PayloadTypeImpl that implements the interface: ICsPayload_PooledObject
 						and PayloadType.
 	*/
-	template<typename PayloadTypeImpl>
-	PayloadTypeImpl* AllocatePayload(const FString& Context)
+	template<typename PayloadImplType>
+	PayloadImplType* AllocatePayload(const FString& Context)
 	{
-		return NCsInterfaceMap::StaticCastChecked<PayloadTypeImpl, PayloadType>(Context, AllocatePayload());
+		return NCsInterfaceMap::StaticCastChecked<PayloadImplType, PayloadType>(Context, AllocatePayload());
 	}
 
 	/**
@@ -1640,12 +1646,12 @@ public:
 	* return	PayloadTypeImpl that implements the interface: ICsPayload_PooledObject
 				and PayloadType.
 	*/
-	template<typename PayloadTypeImpl>
-	PayloadTypeImpl* AllocatePayload()
+	template<typename PayloadImplType>
+	PayloadImplType* AllocatePayload()
 	{
 		const FString& Context = FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::AllocatePayload];
 
-		return AllocatePayload<PayloadTypeImpl>(Context);
+		return AllocatePayload<PayloadImplType>(Context);
 	}
 
 	/**

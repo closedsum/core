@@ -41,22 +41,22 @@ namespace NCsProjectileWeaponComponentCached
 {
 	namespace Str
 	{
-		const FString Init = TEXT("UCsProjectileWeaponComponent::Init");
-		const FString OnUpdate_HandleStates = TEXT("UCsProjectileWeaponComponent::OnUpdate_HandleStates");
-		const FString CanFire = TEXT("UCsProjectileWeaponComponent::CanFire");
-		const FString Fire = TEXT("UCsProjectileWeaponComponent::Fire");
-		const FString Fire_Internal = TEXT("UCsProjectileWeaponComponent::Fire_Internal");
-		const FString FireProjectile = TEXT("UCsProjectileWeaponComponent::FireProjectile");
-		const FString SetProjectilePayload = TEXT("UCsProjectileWeaponComponent::SetProjectilePayload");
-		const FString LaunchProjectile = TEXT("UCsProjectileWeaponComponent::LaunchProjectile");
-		const FString PlayFireSound = TEXT("UCsProjectileWeaponComponent::PlayFireSound");
-		const FString SetSoundPooledPayload = TEXT("UCsProjectileWeaponComponent::SetSoundPooledPayload");
+		CS_DEFINE_CACHED_STRING(Init, "UCsProjectileWeaponComponent::Init");
+		CS_DEFINE_CACHED_STRING(OnUpdate_HandleStates, "UCsProjectileWeaponComponent::OnUpdate_HandleStates");
+		CS_DEFINE_CACHED_STRING(CanFire, "UCsProjectileWeaponComponent::CanFire");
+		CS_DEFINE_CACHED_STRING(Fire, "UCsProjectileWeaponComponent::Fire");
+		CS_DEFINE_CACHED_STRING(Fire_Internal, "UCsProjectileWeaponComponent::Fire_Internal");
+		CS_DEFINE_CACHED_STRING(FireProjectile, "UCsProjectileWeaponComponent::FireProjectile");
+		CS_DEFINE_CACHED_STRING(SetProjectilePayload, "UCsProjectileWeaponComponent::SetProjectilePayload");
+		CS_DEFINE_CACHED_STRING(LaunchProjectile, "UCsProjectileWeaponComponent::LaunchProjectile");
+		CS_DEFINE_CACHED_STRING(PlayFireSound, "UCsProjectileWeaponComponent::PlayFireSound");
+		CS_DEFINE_CACHED_STRING(SetSoundPooledPayload, "UCsProjectileWeaponComponent::SetSoundPooledPayload");
 	}
 
 	namespace Name
 	{
-		const FName Fire_Internal = FName("UCsProjectileWeaponComponent::Fire_Internal");
-		const FName Abort_Fire_Internal = FName("Abort_Fire_Internal");
+		CS_DEFINE_CACHED_NAME(Fire_Internal, "UCsProjectileWeaponComponent::Fire_Internal");
+		CS_DEFINE_CACHED_NAME(Abort_Fire_Internal, "Abort_Fire_Internal");
 	}
 }
 

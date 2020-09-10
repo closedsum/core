@@ -30,9 +30,9 @@ namespace NCsWidgetActorPooledImplCached
 {
 	namespace Str
 	{
-		const FString BeginPlay = TEXT("ACsWidgetActorPooledImpl::BeginPlay");
-		const FString Update = TEXT("ACsWidgetActorPooledImpl::Update");
-		const FString Allocate = TEXT("ACsWidgetActorPooledImpl::Allocate");
+		CS_DEFINE_CACHED_STRING(BeginPlay, "ACsWidgetActorPooledImpl::BeginPlay");
+		CS_DEFINE_CACHED_STRING(Update, "ACsWidgetActorPooledImpl::Update");
+		CS_DEFINE_CACHED_STRING(Allocate, "ACsWidgetActorPooledImpl::Allocate");
 	}
 }
 

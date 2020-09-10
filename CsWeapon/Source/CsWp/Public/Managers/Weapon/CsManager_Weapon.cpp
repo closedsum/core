@@ -46,13 +46,13 @@ namespace NCsManagerWeapon
 {
 	namespace Str
 	{
-		const FString SetupInternal = TEXT("UCsManager_Weapon::SetupInternal");
-		const FString InitInternalFromSettings = TEXT("UCsManager_Weapon::InitInternalFromSettings");
-		const FString PopulateClassMapFromSettings = TEXT("UCsManager_Weapon::PopulateClassMapFromSettings");
-		const FString PopulateDataMapFromSettings = TEXT("UCsManager_Weapon::PopulateDataMapFromSettings");
-		const FString CreateEmulatedDataFromDataTable = TEXT("UCsManager_Weapon::CreateEmulatedDataFromDataTable");
-		const FString DeconstructEmulatedData = TEXT("UCsManager_Weapon::DeconstructEmulatedData");
-		const FString PopulateDataMapFromDataTable = TEXT("UCsManager_Weapon::PopulateDataMapFromDataTable");
+		CS_DEFINE_CACHED_STRING(SetupInternal, "UCsManager_Weapon::SetupInternal");
+		CS_DEFINE_CACHED_STRING(InitInternalFromSettings, "UCsManager_Weapon::InitInternalFromSettings");
+		CS_DEFINE_CACHED_STRING(PopulateClassMapFromSettings, "UCsManager_Weapon::PopulateClassMapFromSettings");
+		CS_DEFINE_CACHED_STRING(PopulateDataMapFromSettings, "UCsManager_Weapon::PopulateDataMapFromSettings");
+		CS_DEFINE_CACHED_STRING(CreateEmulatedDataFromDataTable, "UCsManager_Weapon::CreateEmulatedDataFromDataTable");
+		CS_DEFINE_CACHED_STRING(DeconstructEmulatedData, "UCsManager_Weapon::DeconstructEmulatedData");
+		CS_DEFINE_CACHED_STRING(PopulateDataMapFromDataTable, "UCsManager_Weapon::PopulateDataMapFromDataTable");
 	}
 
 	namespace Name

@@ -14,8 +14,8 @@ namespace NCsStaticMeshActorImplCached
 {
 	namespace Str
 	{
-		const FString Update = TEXT("ACsStaticMeshActorPooledImpl::Update");
-		const FString Allocate = TEXT("ACsStaticMeshActorPooledImpl::Allocate");
+		CS_DEFINE_CACHED_STRING(Update, "ACsStaticMeshActorPooledImpl::Update");
+		CS_DEFINE_CACHED_STRING(Allocate, "ACsStaticMeshActorPooledImpl::Allocate");
 	}
 }
 

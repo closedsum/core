@@ -23,18 +23,18 @@ namespace NCsSpawnerImplCached
 {
 	namespace Str
 	{
-		const FString StartPlay = TEXT("ACsSpawnerImpl::StartPlay");
-		const FString Start = TEXT("ACsSpawnerImpl::Start");
-		const FString Start_Internal = TEXT("ACsSpawnerImpl::Start_Internal");
-		const FString SpawnObjects = TEXT("ACsSpawnerImpl::SpawnObjects");
-		const FString SpawnObjects_Internal = TEXT("ACsSpawnerImpl::SpawnObjects_Internal");
+		CS_DEFINE_CACHED_STRING(StartPlay, "ACsSpawnerImpl::StartPlay");
+		CS_DEFINE_CACHED_STRING(Start, "ACsSpawnerImpl::Start");
+		CS_DEFINE_CACHED_STRING(Start_Internal, "ACsSpawnerImpl::Start_Internal");
+		CS_DEFINE_CACHED_STRING(SpawnObjects, "ACsSpawnerImpl::SpawnObjects");
+		CS_DEFINE_CACHED_STRING(SpawnObjects_Internal, "ACsSpawnerImpl::SpawnObjects_Internal");
 	}
 
 
 	namespace Name
 	{
-		const FName Start_Internal = FName("ACsSpawnerImpl::Start_Internal");
-		const FName SpawnObjects_Internal = FName("ACsSpawnerImpl::SpawnObjects_Internal");
+		CS_DEFINE_CACHED_NAME(Start_Internal, "ACsSpawnerImpl::Start_Internal");
+		CS_DEFINE_CACHED_NAME(SpawnObjects_Internal, "ACsSpawnerImpl::SpawnObjects_Internal");
 	}
 }
 

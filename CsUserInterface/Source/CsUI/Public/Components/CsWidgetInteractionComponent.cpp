@@ -34,7 +34,7 @@ namespace NCsWidgetInteractionComponent
 
 	namespace Name
 	{
-		const FName OnProcessGameEventInfo = FName("UCsWidgetInteractionComponent::OnProcessGameEventInfo");
+		CS_DEFINE_CACHED_NAME(OnProcessGameEventInfo, "UCsWidgetInteractionComponent::OnProcessGameEventInfo");
 	}
 }
 

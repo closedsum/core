@@ -35,7 +35,7 @@ namespace NCsManagerFXActor
 {
 	namespace Str
 	{
-		const FString PopulateDataMapFromSettings = TEXT("UCsManager_FX_Actor::PopulateDataMapFromSettings");
+		CS_DEFINE_CACHED_STRING(PopulateDataMapFromSettings, "UCsManager_FX_Actor::PopulateDataMapFromSettings");
 	}
 
 	namespace Name

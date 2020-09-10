@@ -12,8 +12,8 @@ namespace NCsAllocatedDamageRangeCached
 {
 	namespace Str
 	{
-		const FString CopyFrom = TEXT("FCsAllocated_DamageRange::CopyFrom");
-		const FString Reset = TEXT("FCsAllocated_DamageRange::Reset");
+		CS_DEFINE_CACHED_STRING(CopyFrom, "FCsAllocated_DamageRange::CopyFrom");
+		CS_DEFINE_CACHED_STRING(Reset, "FCsAllocated_DamageRange::Reset");
 	}
 }
 

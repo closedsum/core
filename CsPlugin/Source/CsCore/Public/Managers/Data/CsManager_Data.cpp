@@ -32,10 +32,10 @@ namespace NCsManagerDataCached
 {
 	namespace Str
 	{
-		const FString GenerateMaps = TEXT("UCsManager_Data::GenerateMaps");
-		const FString AsyncLoadPayload = TEXT("UCsManager_Data::AsyncLoadPayload");
-		const FString GetPayloadSoftObjectPaths = TEXT("UCsManager_Data::GetPayloadSoftObjectPaths");
-		const FString GetPayloadSoftObjectPathCount = TEXT("UCsManager_Data::GetPayloadSoftObjectPathCount");
+		CS_DEFINE_CACHED_STRING(GenerateMaps, "UCsManager_Data::GenerateMaps");
+		CS_DEFINE_CACHED_STRING(AsyncLoadPayload, "UCsManager_Data::AsyncLoadPayload");
+		CS_DEFINE_CACHED_STRING(GetPayloadSoftObjectPaths, "UCsManager_Data::GetPayloadSoftObjectPaths");
+		CS_DEFINE_CACHED_STRING(GetPayloadSoftObjectPathCount, "UCsManager_Data::GetPayloadSoftObjectPathCount");
 	}
 }
 

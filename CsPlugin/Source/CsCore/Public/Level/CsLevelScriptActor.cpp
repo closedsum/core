@@ -23,7 +23,7 @@ namespace NCsLevelScriptActorCached
 {
 	namespace Str
 	{
-		const FString PopulatePayloadLevels = TEXT("ACsLevelScriptActor::PopulatePayloadLevels");
+		CS_DEFINE_CACHED_STRING(PopulatePayloadLevels, "ACsLevelScriptActor::PopulatePayloadLevels");
 	}
 }
 

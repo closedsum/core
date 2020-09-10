@@ -36,7 +36,7 @@ namespace NCsManagerStaticMeshActor
 {
 	namespace Str
 	{
-		const FString InitInternalFromSettings = TEXT("UCsManager_StaticMeshActor::InitInternalFromSettings");
+		CS_DEFINE_CACHED_STRING(InitInternalFromSettings, "UCsManager_StaticMeshActor::InitInternalFromSettings");
 	}
 
 	namespace Name

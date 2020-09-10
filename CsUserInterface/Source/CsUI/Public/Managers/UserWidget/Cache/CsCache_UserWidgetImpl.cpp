@@ -19,7 +19,7 @@ namespace NCsCacheUserWidgetImplCached
 {
 	namespace Str
 	{
-		const FString Allocate = TEXT("FCsCache_UserWidgetImpl::Allocate");
+		CS_DEFINE_CACHED_STRING(Allocate, "FCsCache_UserWidgetImpl::Allocate");
 	}
 }
 

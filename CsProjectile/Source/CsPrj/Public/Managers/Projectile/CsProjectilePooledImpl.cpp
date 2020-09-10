@@ -51,13 +51,13 @@ namespace NCsProjectilePooledImplCached
 {
 	namespace Str
 	{
-		const FString SetType = TEXT("ACsProjectilePooledImpl::SetType");
-		const FString OnHit = TEXT("ACsProjectilePooledImpl::OnHit");
-		const FString Update = TEXT("ACsProjectilePooledImpl::Update");
-		const FString Deallocate = TEXT("ACsProjectilePooledImpl::Deallocate");
-		const FString Launch = TEXT("ACsProjectilePooledImpl::Launch");
-		const FString OnLaunch_SetModifiers = TEXT("ACsProjectilePooledImpl::OnLaunch_SetModifiers");
-		const FString OnHit_CreateDamageEvent = TEXT("ACsProjectilePooledImpl::OnHit_CreateDamageEvent");
+		CS_DEFINE_CACHED_STRING(SetType, "ACsProjectilePooledImpl::SetType");
+		CS_DEFINE_CACHED_STRING(OnHit, "ACsProjectilePooledImpl::OnHit");
+		CS_DEFINE_CACHED_STRING(Update, "ACsProjectilePooledImpl::Update");
+		CS_DEFINE_CACHED_STRING(Deallocate, "ACsProjectilePooledImpl::Deallocate");
+		CS_DEFINE_CACHED_STRING(Launch, "ACsProjectilePooledImpl::Launch");
+		CS_DEFINE_CACHED_STRING(OnLaunch_SetModifiers, "ACsProjectilePooledImpl::OnLaunch_SetModifiers");
+		CS_DEFINE_CACHED_STRING(OnHit_CreateDamageEvent, "ACsProjectilePooledImpl::OnHit_CreateDamageEvent");
 	}
 }
 

@@ -20,7 +20,7 @@ namespace NCsCacheWidgetActorImplCached
 {
 	namespace Str
 	{
-		const FString Allocate = TEXT("FCsCache_WidgetActorImpl::Allocate");
+		CS_DEFINE_CACHED_STRING(Allocate, "FCsCache_WidgetActorImpl::Allocate");
 	}
 }
 

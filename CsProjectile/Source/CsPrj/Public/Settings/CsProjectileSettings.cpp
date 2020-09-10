@@ -11,8 +11,8 @@ namespace NCsProjectileSettings
 {
 	namespace Str
 	{
-		CSPRJ_API const FString Projectile = TEXT("UCsProjectileSettings.ECsProjectile");
-		CSPRJ_API const FString ProjectileClass = TEXT("UCsProjectileSettings.ECsProjectileClass");
+		CSPRJ_API CS_DEFINE_CACHED_STRING(Projectile, "UCsProjectileSettings.ECsProjectile");
+		CSPRJ_API CS_DEFINE_CACHED_STRING(ProjectileClass, "UCsProjectileSettings.ECsProjectileClass");
 	}
 }
 

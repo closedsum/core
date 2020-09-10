@@ -35,7 +35,7 @@ namespace NCsManagerSound
 {
 	namespace Str
 	{
-		const FString PopulateDataMapFromSettings = TEXT("UCsManager_Sound::PopulateDataMapFromSettings");
+		CS_DEFINE_CACHED_STRING(PopulateDataMapFromSettings, "UCsManager_Sound::PopulateDataMapFromSettings");
 	}
 
 	namespace Name

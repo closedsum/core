@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Spawner/Params/CsTypes_SpawnerParams.h"
 
+// Library
+#include "Library/CsLibrary_Array.h"
+
 // SpawnerFrequency
 #pragma region
 
@@ -95,7 +98,6 @@ void FCsSpawnerFrequencyParams::OnPostEditChange()
 
 #pragma endregion FCsSpawnerFrequencyParams
 
-
 // SpawnerPoint
 #pragma region
 
@@ -133,3 +135,86 @@ namespace NCsSpawnerPointOrder
 }
 
 #pragma endregion SpawnerPointOrder
+
+// FCsSpawnerPointHelper
+#pragma region
+
+void FCsSpawnerPointHelper::PrepareSpawns()
+{
+	// NO spawns to prepare for Self
+	if (Params->Type == ECsSpawnerPoint::Self)
+		return;
+
+	// Transform
+	if (Params->Type == ECsSpawnerPoint::Transform)
+	{
+		const TArray<FTransform>& _Transforms = Params->Transforms;
+
+		Transforms.Reset(FMath::Max(Transforms.Max(), _Transforms.Num()));
+		Transforms.Append(_Transforms);
+
+		// RandomShuffle
+		if (Params->Order == ECsSpawnerPointOrder::RandomShuffle)
+			FCsLibrary_Array::ShuffleTArray<FTransform>(Transforms);
+	}
+	// Actor
+	else
+	if (Params->Type == ECsSpawnerPoint::Actor)
+	{
+		const TArray<AActor*>& _Actors = Params->Actors;
+
+		Actors.Reset(FMath::Max(Actors.Max(), _Actors.Num()));
+		Actors.Append(_Actors);
+
+		// RandomShuffle
+		if (Params->Order == ECsSpawnerPointOrder::RandomShuffle)
+			FCsLibrary_Array::ShuffleTArray<AActor*>(Actors);
+	}
+}
+
+void FCsSpawnerPointHelper::AdvanceIndex()
+{
+	int32 Count = Params->Type == ECsSpawnerPoint::Transform ? Params->Transforms.Num() : Params->Actors.Num();
+
+	// FirstToLast
+	if (Params->Order == ECsSpawnerPointOrder::FirstToLast)
+		Index = (Index + 1) % Count;
+	// RandomShuffle
+	else
+	if (Params->Order == ECsSpawnerPointOrder::RandomShuffle)
+		Index = (Index + 1) % Count;
+	// Random
+	else
+	if (Params->Order == ECsSpawnerPointOrder::Random)
+		Index = FMath::RandRange(0, Count - 1);
+}
+
+FTransform FCsSpawnerPointHelper::GetSpawnTransform() const
+{
+	// Self
+	if (Params->Type == ECsSpawnerPoint::Self)
+		return SpawnerAsActor->GetActorTransform();
+	// Transform
+	if (Params->Type == ECsSpawnerPoint::Transform)
+		return Transforms[Index];
+	// Actor
+	if (Params->Type == ECsSpawnerPoint::Actor)
+		return Actors[Index]->GetActorTransform();
+	return FTransform::Identity;
+}
+
+FVector FCsSpawnerPointHelper::GetSpawnLocation() const
+{
+	// Self
+	if (Params->Type == ECsSpawnerPoint::Self)
+		return SpawnerAsActor->GetActorLocation();
+	// Transform
+	if (Params->Type == ECsSpawnerPoint::Transform)
+		return Transforms[Index].GetTranslation();
+	// Actor
+	if (Params->Type == ECsSpawnerPoint::Actor)
+		return Actors[Index]->GetActorLocation();
+	return FVector::ZeroVector;
+}
+
+#pragma endregion FCsSpawnerPointHelper

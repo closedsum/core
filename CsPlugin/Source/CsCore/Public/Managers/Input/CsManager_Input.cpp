@@ -28,7 +28,7 @@ namespace NCsManagerInputCached
 {
 	namespace Str
 	{
-		const FString PostProcessInput = TEXT("UCsManager_Input::PostProcessInput");
+		CS_DEFINE_CACHED_STRING(PostProcessInput, "UCsManager_Input::PostProcessInput");
 	}
 }
 

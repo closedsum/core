@@ -273,3 +273,99 @@ public:
 };
 
 #pragma endregion FCsSpawnerPointParams
+
+// FCsSpawnerPointHelper
+#pragma region
+
+class ICsSpawner;
+class AActor;
+
+struct CSCORE_API FCsSpawnerPointHelper
+{
+public:
+
+	ICsSpawner* Spawner;
+
+	AActor* SpawnerAsActor;
+
+	FCsSpawnerPointParams* Params;
+
+	int32 Index;
+
+	TArray<AActor*> Actors;
+
+	TArray<FTransform> Transforms;
+
+	// Delegates
+
+	DECLARE_DELEGATE(FPrepareSpawns);
+
+	FPrepareSpawns PrepareSpawns_Impl;
+
+	DECLARE_DELEGATE(FAdvanceIndex);
+
+	FAdvanceIndex AdvanceIndex_Impl;
+
+	DECLARE_DELEGATE_RetVal(FTransform, FGetSpawnTransform);
+
+	FGetSpawnTransform GetSpawnTransform_Impl;
+
+	DECLARE_DELEGATE_RetVal(FVector, FGetSpawnLocation);
+
+	FGetSpawnLocation GetSpawnLocation_Impl;
+
+	FCsSpawnerPointHelper() :
+		Spawner(nullptr),
+		SpawnerAsActor(nullptr),
+		Params(nullptr),
+		Index(0),
+		Actors(),
+		Transforms(),
+		PrepareSpawns_Impl(),
+		AdvanceIndex_Impl(),
+		GetSpawnLocation_Impl()
+	{
+		PrepareSpawns_Impl.BindRaw(this, &FCsSpawnerPointHelper::PrepareSpawns);
+		AdvanceIndex_Impl.BindRaw(this, &FCsSpawnerPointHelper::AdvanceIndex);
+		GetSpawnTransform_Impl.BindRaw(this, &FCsSpawnerPointHelper::GetSpawnTransform);
+		GetSpawnLocation_Impl.BindRaw(this, &FCsSpawnerPointHelper::GetSpawnLocation);
+	}
+
+	void PrepareSpawns();
+
+	FORCEINLINE void PrepareSpawnsChecked(const FString& Context)
+	{
+		checkf(PrepareSpawns_Impl.IsBound(), TEXT("%s: PrepareSpawns_Impl is NOT bound to any function."));
+
+		PrepareSpawns_Impl.Execute();
+	}
+
+	void AdvanceIndex();
+
+	FORCEINLINE void AdvanceIndexChecked(const FString& Context)
+	{
+		checkf(AdvanceIndex_Impl.IsBound(), TEXT("%s: AdvanceIndex_Impl is NOT bound to any function."));
+
+		AdvanceIndex_Impl.Execute();
+	}
+
+	FTransform GetSpawnTransform() const;
+
+	FORCEINLINE FTransform GetSpawnTransformChecked(const FString& Context) const
+	{
+		checkf(GetSpawnTransform_Impl.IsBound(), TEXT("%s: GetSpawnTransform_Impl is NOT bound to any function."));
+
+		return GetSpawnTransform_Impl.Execute();
+	}
+
+	FVector GetSpawnLocation() const;
+
+	FORCEINLINE FVector GetSpawnLocationChecked(const FString& Context) const
+	{
+		checkf(GetSpawnLocation_Impl.IsBound(), TEXT("%s: GetSpawnLocation_Impl is NOT bound to any function."));
+
+		return GetSpawnLocation_Impl.Execute();
+	}
+};
+
+#pragma endregion FCsSpawnerPointHelper

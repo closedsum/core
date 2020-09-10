@@ -25,9 +25,9 @@ namespace NCsUserWidgetPooledImplCached
 {
 	namespace Str
 	{
-		const FString OnConstructObject = TEXT("UCsUserWidgetPooledImpl::OnConstructObject");
-		const FString Update = TEXT("UCsUserWidgetPooledImpl::Update");
-		const FString Allocate = TEXT("UCsUserWidgetPooledImpl::Allocate");
+		CS_DEFINE_CACHED_STRING(OnConstructObject, "UCsUserWidgetPooledImpl::OnConstructObject");
+		CS_DEFINE_CACHED_STRING(Update, "UCsUserWidgetPooledImpl::Update");
+		CS_DEFINE_CACHED_STRING(Allocate, "UCsUserWidgetPooledImpl::Allocate");
 	}
 }
 

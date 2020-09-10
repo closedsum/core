@@ -14,9 +14,9 @@ namespace NCsSoundPooledImplCached
 {
 	namespace Str
 	{
-		const FString Update = TEXT("ACsSoundPooledImpl::Update");
-		const FString Allocate = TEXT("ACsSoundPooledImpl::Allocate");
-		const FString Play = TEXT("ACsSoundPooledImpl::Play");
+		CS_DEFINE_CACHED_STRING(Update, "ACsSoundPooledImpl::Update");
+		CS_DEFINE_CACHED_STRING(Allocate, "ACsSoundPooledImpl::Allocate");
+		CS_DEFINE_CACHED_STRING(Play, "ACsSoundPooledImpl::Play");
 	}
 }
 

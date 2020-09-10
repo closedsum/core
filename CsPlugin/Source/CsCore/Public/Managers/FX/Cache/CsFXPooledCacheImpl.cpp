@@ -20,7 +20,7 @@ namespace NCsFXPooledCacheImplCached
 {
 	namespace Str
 	{
-		const FString Allocate = TEXT("FCsFXPooledCacheImpl::Allocate");
+		CS_DEFINE_CACHED_STRING(Allocate, "FCsFXPooledCacheImpl::Allocate");
 	}
 }
 

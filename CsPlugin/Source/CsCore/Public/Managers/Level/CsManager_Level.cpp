@@ -34,14 +34,14 @@ namespace NCsManagerLevelCached
 {
 	namespace Str
 	{
-		const FString Check_FinishedLoadingPersistentLevel_Internal = TEXT("UCsGameInstance::Check_FinishedLoadingPersistentLevel_Internal");
-		const FString ChangeMap_Internal = TEXT("UCsManager_Level::ChangeMap_Internal");
+		CS_DEFINE_CACHED_STRING(Check_FinishedLoadingPersistentLevel_Internal, "UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal");
+		CS_DEFINE_CACHED_STRING(ChangeMap_Internal, "UCsManager_Level::ChangeMap_Internal");
 	}
 
 	namespace Name
 	{
-		const FName Check_FinishedLoadingPersistentLevel_Internal = TEXT("UCsGameInstance::Check_FinishedLoadingPersistentLevel_Internal");
-		const FName ChangeMap_Internal = FName("UCsManager_Level::ChangeMap_Internal");
+		CS_DEFINE_CACHED_NAME(Check_FinishedLoadingPersistentLevel_Internal, "UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal");
+		CS_DEFINE_CACHED_NAME(ChangeMap_Internal, "UCsManager_Level::ChangeMap_Internal");
 	}
 }
 

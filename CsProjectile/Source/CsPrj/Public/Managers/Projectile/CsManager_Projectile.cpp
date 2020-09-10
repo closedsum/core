@@ -53,15 +53,15 @@ namespace NCsManagerProjectileCached
 {
 	namespace Str
 	{
-		const FString SetupInternal = TEXT("UCsManager_Projectile::SetupInternal");
-		const FString InitInternalFromSettings = TEXT("UCsManager_Projectile::InitInternalFromSettings");
-		const FString PopulateClassMapFromSettings = TEXT("UCsManager_Projectile::PopulateClassMapFromSettings");
-		const FString PopulateDataMapFromSettings = TEXT("UCsManager_Projectile::PopulateDataMapFromSettings");
-		const FString CreateEmulatedDataFromDataTable = TEXT("UCsManager_Projectile::CreateEmulatedDataFromDataTable");
-		const FString DeconstructEmulatedData = TEXT("UCsManager_Projectile::DeconstructEmulatedData");
-		const FString PopulateDataMapFromDataTable = TEXT("UCsManager_Projectile::PopulateDataMapFromDataTable");
-		const FString GetProjectile = TEXT("UCsManager_Projectile::GetProjectile");
-		const FString GetData = TEXT("UCsManager_Projectile::GetData");
+		CS_DEFINE_CACHED_STRING(SetupInternal, "UCsManager_Projectile::SetupInternal");
+		CS_DEFINE_CACHED_STRING(InitInternalFromSettings, "UCsManager_Projectile::InitInternalFromSettings");
+		CS_DEFINE_CACHED_STRING(PopulateClassMapFromSettings, "UCsManager_Projectile::PopulateClassMapFromSettings");
+		CS_DEFINE_CACHED_STRING(PopulateDataMapFromSettings, "UCsManager_Projectile::PopulateDataMapFromSettings");
+		CS_DEFINE_CACHED_STRING(CreateEmulatedDataFromDataTable, "UCsManager_Projectile::CreateEmulatedDataFromDataTable");
+		CS_DEFINE_CACHED_STRING(DeconstructEmulatedData, "UCsManager_Projectile::DeconstructEmulatedData");
+		CS_DEFINE_CACHED_STRING(PopulateDataMapFromDataTable, "UCsManager_Projectile::PopulateDataMapFromDataTable");
+		CS_DEFINE_CACHED_STRING(GetProjectile, "UCsManager_Projectile::GetProjectile");
+		CS_DEFINE_CACHED_STRING(GetData, "UCsManager_Projectile::GetData");
 	}
 
 	namespace Name

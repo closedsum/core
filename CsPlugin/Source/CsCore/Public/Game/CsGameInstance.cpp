@@ -29,13 +29,13 @@ namespace NCsGameInstanceCached
 {
 	namespace Str
 	{
-		const FString Init = TEXT("UCsGameInstance::Init");
-		const FString Check_FinishedLoadingPersistentLevel_Internal = TEXT("UCsGameInstance::Check_FinishedLoadingPersistentLevel_Internal");
+		CS_DEFINE_CACHED_STRING(Init, "UCsGameInstance::Init");
+		CS_DEFINE_CACHED_STRING(Check_FinishedLoadingPersistentLevel_Internal, "UCsGameInstance::Check_FinishedLoadingPersistentLevel_Internal");
 	}
 
 	namespace Name
 	{
-		const FName Check_FinishedLoadingPersistentLevel_Internal = FName("UCsGameInstance::Check_FinishedLoadingPersistentLevel_Internal");
+		CS_DEFINE_CACHED_NAME(Check_FinishedLoadingPersistentLevel_Internal, "UCsGameInstance::Check_FinishedLoadingPersistentLevel_Internal");
 	}
 }
 

@@ -16,7 +16,7 @@ namespace NCsManagerStatusEffectCached
 {
 	namespace Str
 	{
-		const FString Shutdown = TEXT("Shutdown");
+		CS_DEFINE_CACHED_STRING(Shutdown, "UCsManager_StatusEffect::Shutdown");
 	}
 }
 

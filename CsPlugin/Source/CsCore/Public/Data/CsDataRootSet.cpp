@@ -12,7 +12,7 @@ namespace NCsDataRootSetCached
 {
 	namespace Str
 	{
-		const FString AddDataTable = TEXT("FCsDataRootSet::AddDataTable");
+		CS_DEFINE_CACHED_STRING(AddDataTable, "FCsDataRootSet::AddDataTable");
 	}
 }
 

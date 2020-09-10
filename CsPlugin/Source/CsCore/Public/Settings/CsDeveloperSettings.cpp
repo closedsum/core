@@ -9,10 +9,10 @@ namespace NCsDeveloperSettings
 {
 	namespace Str
 	{
-		CSCORE_API const FString InputActionMap = TEXT("UCsDeveloperSettings.ECsInputActionMap");
-		CSCORE_API const FString GameEvent = TEXT("UCsDeveloperSettings.ECsGameEvent");
-		CSCORE_API const FString FX = TEXT("UCsDeveloperSettings.ECsFX");
-		CSCORE_API const FString Sound = TEXT("UCsDeveloperSettings.ECsSound");
+		CSCORE_API CS_DEFINE_CACHED_STRING(InputActionMap, "UCsDeveloperSettings::InputActionMap");
+		CSCORE_API CS_DEFINE_CACHED_STRING(GameEvent, "UCsDeveloperSettings::GameEvent");
+		CSCORE_API CS_DEFINE_CACHED_STRING(FX, "UCsDeveloperSettings::FX");
+		CSCORE_API CS_DEFINE_CACHED_STRING(Sound, "UCsDeveloperSettings::Sound");
 	}
 }
 

@@ -192,6 +192,45 @@ namespace NCsSpawnerPoint
 
 #pragma endregion SpawnerPoint
 
+// SpawnerPointOrder
+#pragma region
+
+/**
+* The order in which to use spawn points.
+*/
+UENUM(BlueprintType)
+enum class ECsSpawnerPointOrder : uint8
+{
+	FirstToLast					UMETA(DisplayName = "First to Last"),
+	RandomShuffle				UMETA(DisplayName = "Random Shuffle"),
+	Random						UMETA(DisplayName = "Random"),
+	Custom						UMETA(DisplayName = "Custom"),
+	ECsSpawnerPointOrder_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsSpawnerPointOrder : public TCsEnumMap<ECsSpawnerPointOrder>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSpawnerPointOrder, ECsSpawnerPointOrder)
+};
+
+namespace NCsSpawnerPointOrder
+{
+	typedef ECsSpawnerPointOrder Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type FirstToLast;
+		extern CSCORE_API const Type RandomShuffle;
+		extern CSCORE_API const Type Random;
+		extern CSCORE_API const Type Custom;
+		extern CSCORE_API const Type ECsSpawnerPointOrder_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+}
+
+#pragma endregion SpawnerPointOrder
+
 // FCsSpawnerPointParams
 #pragma region
 
@@ -210,6 +249,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsSpawnerPoint Type;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsSpawnerPointOrder Order;
+
 	/** Which of the components of Transform to apply to the spawned object. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
 	int32 TransformRules;
@@ -222,6 +264,7 @@ public:
 
 	FCsSpawnerPointParams() :
 		Type(ECsSpawnerPoint::Self),
+		Order(ECsSpawnerPointOrder::FirstToLast),
 		TransformRules(7), // ALL
 		Transforms(),
 		Actors()

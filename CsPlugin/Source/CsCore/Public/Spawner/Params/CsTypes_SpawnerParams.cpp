@@ -114,3 +114,22 @@ namespace NCsSpawnerPoint
 }
 
 #pragma endregion SpawnerPoint
+
+// SpawnerPointOrder
+#pragma region
+
+namespace NCsSpawnerPointOrder
+{
+	namespace Ref
+	{
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPointOrder, FirstToLast);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPointOrder, RandomShuffle);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPointOrder, Random);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPointOrder, Custom);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSpawnerPointOrder, ECsSpawnerPointOrder_MAX, "MAX");
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsSpawnerPointOrder_MAX;
+}
+
+#pragma endregion SpawnerPointOrder

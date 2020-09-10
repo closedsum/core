@@ -21,3 +21,15 @@
 #define CS_TEST_BITFLAG(Bitmask, Bit) ((Bitmask & static_cast<uint32>(Bit)) == static_cast<uint32>(Bit))
 #define CS_SET_BITFLAG(Bitmask, Bit) (Bitmask |= static_cast<uint32>(Bit))
 #define CS_CLEAR_BITFLAG(Bitmask, Bit) (Bitmask &= ~static_cast<uint32>(Bit))
+
+#if !UE_BUILD_SHIPPING
+#define CS_DEFINE_CACHED_STRING(VariableName, StringValue) const FString VariableName = TEXT(StringValue)
+#else
+#define CS_DEFINE_CACHED_STRING(VariableName, StringValue) const FString VariableName = TEXT("")
+#endif // #if !UE_BUILD_SHIPPING
+
+#if !UE_BUILD_SHIPPING
+#define CS_DEFINE_CACHED_NAME(VariableName, NameValue) const FName VariableName = FName(NameValue)
+#else
+#define CS_DEFINE_CACHED_NAME(VariableName, NameValue) const FName VariableName = NAME_None
+#endif // #if !UE_BUILD_SHIPPING

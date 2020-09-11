@@ -19,11 +19,4 @@ public:
 public:
 
 	virtual ~ICsCache_WidgetActor() {}
-
-	/**
-	*
-	*
-	* return
-	*/
-	virtual UCsWidgetComponent* GetWidgetComponent() const = 0;
 };

@@ -58,7 +58,7 @@ private:
 
 	// ICsCache_WidgetActor
 
-	UCsWidgetComponent* WidgetComponent;
+	// TODO:
 
 	ECsWidgetActorDeallocateMethod DeallocateMethod;
 
@@ -170,19 +170,7 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE UCsWidgetComponent* GetWidgetComponent() const
-	{
-		return WidgetComponent;
-	}
-
 #pragma endregion ICsCache_WidgetActor
-
-public:
-
-	FORCEINLINE void SetWidgetComponent(UCsWidgetComponent* InWidgetComponent)
-	{
-		WidgetComponent = InWidgetComponent;
-	}
 
 public:
 

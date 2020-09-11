@@ -40,7 +40,6 @@ FCsCache_WidgetActorImpl::FCsCache_WidgetActorImpl() :
 	LifeTime(0.0f),
 	StartTime(),
 	ElapsedTime(),
-	WidgetComponent(nullptr),
 	DeallocateMethod(ECsWidgetActorDeallocateMethod::Complete),
 	QueuedLifeTime(0.0f)
 {
@@ -89,10 +88,6 @@ void FCsCache_WidgetActorImpl::Deallocate()
 void FCsCache_WidgetActorImpl::QueueDeallocate()
 {
 	bQueueDeallocate = true;
-	// Deactivate FX Component
-	checkf(WidgetComponent, TEXT("FCsCache_WidgetActorImpl::QueueDeallocate: WidgetComponent is NULL."));
-
-	WidgetComponent->Deactivate();
 
 	// LifeTime
 	if (DeallocateMethod == ECsWidgetActorDeallocateMethod::LifeTime)
@@ -113,6 +108,7 @@ bool FCsCache_WidgetActorImpl::ShouldDeallocate() const
 		{
 			return false;
 		}
+		return bQueueDeallocate;
 	}
 	return false;
 }
@@ -136,7 +132,6 @@ void FCsCache_WidgetActorImpl::Reset()
 	StartTime.Reset();
 	ElapsedTime.Reset();
 	// ICsCache_WidgetActor
-	WidgetComponent = nullptr;
 	DeallocateMethod = ECsWidgetActorDeallocateMethod::ECsWidgetActorDeallocateMethod_MAX;
 	QueuedLifeTime = 0.0f;
 }

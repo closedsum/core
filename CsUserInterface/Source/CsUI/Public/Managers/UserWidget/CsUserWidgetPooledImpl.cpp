@@ -122,11 +122,6 @@ void UCsUserWidgetPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 // ICsPooledObject
 #pragma region
 
-ICsPooledObjectCache* UCsUserWidgetPooledImpl::GetCache() const
-{
-	return Cache;
-}
-
 void UCsUserWidgetPooledImpl::Allocate(ICsPayload_PooledObject* Payload)
 {
 	using namespace NCsUserWidgetPooledImplCached;

@@ -87,10 +87,6 @@ void ACsWidgetActorPooledImpl::BeginPlay()
 	SetActorTickEnabled(false);
 
 	ConstructCache();
-
-	FCsCache_WidgetActorImpl* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsCache_WidgetActorImpl>(Context, Cache);
-
-	CacheImpl->SetWidgetComponent(WidgetComponent);
 }
 
 #pragma endregion AActor Interface
@@ -101,12 +97,14 @@ void ACsWidgetActorPooledImpl::BeginPlay()
 void ACsWidgetActorPooledImpl::FellOutOfWorld(const UDamageType& DmgType)
 {
 	Deallocate_Internal();
+	SetActorLocation(FVector::ZeroVector);
 	Cache->QueueDeallocate();
 }
 
 void ACsWidgetActorPooledImpl::OutsideWorldBounds()
 {
 	Deallocate_Internal();
+	SetActorLocation(FVector::ZeroVector);
 	Cache->QueueDeallocate();
 }
 
@@ -130,11 +128,6 @@ void ACsWidgetActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 // ICsPooledObject
 #pragma region
-
-ICsPooledObjectCache* ACsWidgetActorPooledImpl::GetCache() const
-{
-	return Cache;
-}
 
 void ACsWidgetActorPooledImpl::Allocate(ICsPayload_PooledObject* Payload)
 {

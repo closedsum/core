@@ -51,7 +51,10 @@ public:
 #pragma region
 public:
 
-	ICsPooledObjectCache* GetCache() const;
+	FORCEINLINE ICsPooledObjectCache* GetCache() const
+	{
+		return Cache;
+	}
 	
 	void Allocate(ICsPayload_PooledObject* Payload);
 

@@ -183,12 +183,30 @@ UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
 
 void UCsManager_Data::Initialize()
 {
+	// Get DataRootSet
 	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
 
-	DataRootSet.Data		  = Settings->DataRootSet;
-	DataRootSet.Data_Class	  = DataRootSet.Data.LoadSynchronous();
+	TSoftClassPtr<UObject> SoftClass = Settings->DataRootSet;
+	const FSoftObjectPath& Path		 = SoftClass.ToSoftObjectPath();
+
+	checkf(Path.IsValid(), TEXT("UCsManager_Data::Initialize: UCsDeveloperSettings.DataRootSet is NOT Valid."));
+
+	DataRootSet.Data = SoftClass;
+
+	UClass* Class = SoftClass.LoadSynchronous();
+
+	checkf(Class, TEXT("UCsManager_Data::Initialize: Failed to Load DataRootSet at %s."), *(Path.ToString()));
+
+	DataRootSet.Data_Class	  = Class;
 	DataRootSet.Data_Internal = DataRootSet.Data_Class->GetDefaultObject<UObject>();
-	DataRootSet.Interface	  = Cast<ICsGetDataRootSet>(DataRootSet.Data_Internal);
+
+	checkf(DataRootSet.Data_Internal, TEXT("UCsManager_Data::Initialize: Failed to get DefaultObject for Class: %s at Path: %s"), *(Class->GetName()), *(Path.ToString()));
+
+	ICsGetDataRootSet* GetDataRootSet = Cast<ICsGetDataRootSet>(DataRootSet.Data_Internal);
+
+	checkf(GetDataRootSet, TEXT("UCsManager_Data::Initialize: Class: %s does NOT implement the interface: ICsGetDataRootSet."), *(Class->GetName()));
+
+	DataRootSet.Interface = GetDataRootSet;
 
 	// Manager_Payload
 	{

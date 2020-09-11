@@ -1694,9 +1694,13 @@ public:
 	{
 		CS_SCOPED_TIMER(SpawnScopedTimerHandle);
 
+		const FString& Context = FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn];
+
+		checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
+
 		InterfaceContainerType* O = Allocate(Payload);
 
-		const FString& Context = FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn];
+		checkf(O->GetCache()->IsAllocated(), TEXT("%s: Object was NOT allocated properly (GetCache()->IsAllocated() == false)."), *Context);
 
 #if !UE_BUILD_SHIPPING
 		LogTransaction_Impl.Execute(Context, ECsPoolTransaction::Allocate, O);
@@ -1723,6 +1727,8 @@ public:
 
 		const FString& Context = FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::Spawn];
 
+		checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
+
 		// Get PayloadType
 		PayloadType* P = NCsInterfaceMap::GetInterfaceChecked<PayloadType, OtherPayloadType>(Context, Payload);
 
@@ -1734,6 +1740,7 @@ public:
 
 		// Get PooledObjectPayload
 		ICsPayload_PooledObject* PooledObjectPayload = InterfaceMap->Get<ICsPayload_PooledObject>();
+		
 		PooledObjectPayload->Reset();
 
 		AddToAllocatedObjects_Internal(O);

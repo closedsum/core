@@ -2,6 +2,9 @@
 #pragma once
 
 #include "Engine/LevelScriptActor.h"
+// Interfaces
+#include "Start/CsStartPlay.h"
+#include "Level/CsGetLevelPayload.h"
 // Types
 #include "Types/CsTypes_Load.h"
 #include "CsLevelScriptActor.generated.h"
@@ -9,7 +12,9 @@
 class ITargetPlatform;
 
 UCLASS()
-class CSCORE_API ACsLevelScriptActor : public ALevelScriptActor
+class CSCORE_API ACsLevelScriptActor : public ALevelScriptActor,
+									   public ICsStartPlay,
+									   public ICsGetLevelPayload
 {
 	GENERATED_UCLASS_BODY()
 
@@ -34,6 +39,42 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 #pragma endregion AActor Interface
+
+// ICsStartPlay
+#pragma region
+public:
+
+	void StartPlay();
+
+protected:
+
+	bool bHasStartedPlay;
+
+public:
+
+	FORCEINLINE bool HasStartedPlay() const
+	{
+		return bHasStartedPlay;
+	}
+
+#pragma endregion ICsStartPlay
+
+protected:
+
+	/** Script Event when StartPlay is called. */
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "StartPlay"))
+	void ReceiveStartPlay();
+
+// ICsGetLevelPayload
+#pragma region
+public:
+
+	FORCEINLINE const FCsPayload& GetLevelPayload() const
+	{
+		return Payload;
+	}
+
+#pragma endregion ICsGetLevelPayload
 
 // Level
 #pragma region

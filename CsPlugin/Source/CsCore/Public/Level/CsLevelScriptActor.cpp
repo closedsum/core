@@ -116,6 +116,16 @@ void ACsLevelScriptActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 #pragma endregion AActor Interface
 
+// ICsStartPlay
+#pragma region
+
+void ACsLevelScriptActor::StartPlay()
+{
+	ReceiveStartPlay();
+}
+
+#pragma endregion ICsStartPlay
+
 // Level
 #pragma region
 

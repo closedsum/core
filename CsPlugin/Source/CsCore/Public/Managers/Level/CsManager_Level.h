@@ -10,7 +10,7 @@
 class ICsGetManagerLevel;
 struct FCsRoutine;
 class ULevel;
-class ACsLevelScriptActor;
+class ALevelScriptActor;
 
 UCLASS(transient)
 class CSCORE_API UCsManager_Level : public UObject
@@ -105,7 +105,7 @@ public:
 
 	bool IsPersistentLevelName(const FString& MapPackageName);
 
-	ACsLevelScriptActor* GetPersistentLevelScriptActor();
+	ALevelScriptActor* GetPersistentLevelScriptActor();
 
 #pragma endregion Persistent Level
 

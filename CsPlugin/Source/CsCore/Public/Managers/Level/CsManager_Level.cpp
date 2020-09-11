@@ -355,9 +355,9 @@ bool UCsManager_Level::IsPersistentLevelName(const FString& MapPackageName)
 	return false;
 }
 
-ACsLevelScriptActor* UCsManager_Level::GetPersistentLevelScriptActor()
+ALevelScriptActor* UCsManager_Level::GetPersistentLevelScriptActor()
 {
-	return Cast<ACsLevelScriptActor>(GetPersistentLevel()->LevelScriptActor);
+	return GetPersistentLevel()->LevelScriptActor;
 }
 
 #pragma endregion Persistent Level

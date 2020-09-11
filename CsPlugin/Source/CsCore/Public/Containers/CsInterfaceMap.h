@@ -280,6 +280,8 @@ public:
 
 		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "NCsInterfaceMap::StaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
 
+		checkf(Interface, TEXT("%s: Interface is NULL."), *Context);
+
 		if (bUniqueBasedSlices)
 		{
 			checkf(InterfacesByUniqueBasedSliceRootName.Find(DerivedType::Name), TEXT("%s: Failed to find Interface with Root Name: %s."), *Context, *(DerivedType::Name.ToString()));
@@ -326,6 +328,8 @@ public:
 		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::StaticCastChecked: InterfaceType is NOT abstract.");
 
 		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "NCsInterfaceMap::StaticCastChecked: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
+
+		checkf(Interface, TEXT("%s: Interface is NULL."), *Context);
 
 		if (bUniqueBasedSlices)
 		{

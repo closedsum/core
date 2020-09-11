@@ -1459,7 +1459,22 @@ void UCsLibrary_Load::LoadSoftObjectProperty(FSoftObjectProperty* SoftObjectProp
 
 		if (FObjectProperty* InternalObjectProperty = FindFProperty<FObjectProperty>(Struct, *InternalMemberName))
 		{
+			// Blueprint
+			if (SoftObjectProperty->PropertyClass->IsChildOf(UBlueprint::StaticClass()) &&
+				InternalObjectProperty->PropertyClass->IsChildOf(UBlueprintGeneratedClass::StaticClass()))
+			{
+				if (UObject** Internal = InternalObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
+				{
+					*Internal = Cast<UBlueprintCore>(Member->LoadSynchronous())->GeneratedClass;
+
+					if (*Internal)
+					{
+						LoadStruct(*Internal, Cast<UClass>((*Internal)), LoadFlags, LoadCodes);
+					}
+				}
+			}
 			// Check Member is the same type as the Member_Internal
+			else
 			if (SoftObjectProperty->PropertyClass == InternalObjectProperty->PropertyClass)
 			{
 				if (UObject** Internal = InternalObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
@@ -1503,7 +1518,35 @@ void UCsLibrary_Load::LoadArraySoftObjectProperty(FArrayProperty* ArrayProperty,
 		{
 			FSoftObjectProperty* SoftObjectProperty = CastField<FSoftObjectProperty>(ArrayProperty->Inner);
 
+			// Blueprint
+			if (SoftObjectProperty->PropertyClass->IsChildOf(UBlueprint::StaticClass()) &&
+				InternalSoftObjectProperty->PropertyClass->IsChildOf(UBlueprintGeneratedClass::StaticClass()))
+			{
+				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+				FScriptArrayHelper_InContainer InternalHelper(InternalArrayProperty, StructValue);
+
+				const int32 Count = Helper.Num();
+
+				InternalHelper.EmptyAndAddUninitializedValues(Helper.Num());
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					TSoftObjectPtr<UObject>* Ptr = reinterpret_cast<TSoftObjectPtr<UObject>*>(Helper.GetRawPtr(I));
+					UObject** InternalPtr = reinterpret_cast<UObject**>(InternalHelper.GetRawPtr(I));
+
+					*InternalPtr = nullptr;
+
+					if (Ptr->IsValid())
+						*InternalPtr = Cast<UBlueprintCore>(Ptr->LoadSynchronous())->GeneratedClass;
+
+					if (*InternalPtr)
+					{
+						LoadStruct(*InternalPtr, Cast<UClass>((*InternalPtr)), LoadFlags, LoadCodes);
+					}
+				}
+			}
 			// Check Member is the same type as the Member_Internal
+			else
 			if (SoftObjectProperty->PropertyClass == InternalSoftObjectProperty->PropertyClass)
 			{
 				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);

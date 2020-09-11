@@ -26,6 +26,7 @@ namespace NCsSpawnerImplCached
 		CS_DEFINE_CACHED_STRING(StartPlay, "ACsSpawnerImpl::StartPlay");
 		CS_DEFINE_CACHED_STRING(Start, "ACsSpawnerImpl::Start");
 		CS_DEFINE_CACHED_STRING(Start_Internal, "ACsSpawnerImpl::Start_Internal");
+		CS_DEFINE_CACHED_STRING(Spawn, "ACsSpawnerImpl::Spawn");
 		CS_DEFINE_CACHED_STRING(SpawnObjects, "ACsSpawnerImpl::SpawnObjects");
 		CS_DEFINE_CACHED_STRING(SpawnObjects_Internal, "ACsSpawnerImpl::SpawnObjects_Internal");
 	}
@@ -53,9 +54,14 @@ ACsSpawnerImpl::ACsSpawnerImpl(const FObjectInitializer& ObjectInitializer)
 	OnStart_Event(),
 	OnStop_Event(),
 	OnSpawn_Event(),
+	OnSpawnObject_Event(),
+	OnSpawnObjects_Event(),
 	OnFinish_Event(),
 	// Spawn
 	CurrentSpawnCount(0),
+	MaxConcurrentSpawnObjects(4),
+	Manager_SpawnedObjects(),
+	SpawnedObjects(),
 	Start_Internal_Handle(),
 	SpawnObjects_Internal_Handles()
 {
@@ -121,6 +127,10 @@ void ACsSpawnerImpl::StartPlay()
 
 	const FString& Context = Str::StartPlay;
 
+	// ICsSpawner
+
+		// Params
+
 	ConstructParams();
 
 	checkf(Params, TEXT("%s: Params is NULL. Failed to ConstructParams."), *Context);
@@ -140,6 +150,11 @@ void ACsSpawnerImpl::StartPlay()
 	checkf(IsParamsValid(Context), TEXT("%s: Parms is NOT Valid."), *Context);
 
 	*TotalTime = FCsLibrary_SpawnerParams::CalculateTotalTime(Params);
+
+	// Spawn
+
+	if (MaxConcurrentSpawnObjects > 0)
+		Manager_SpawnedObjects.CreatePool(MaxConcurrentSpawnObjects);
 }
 
 #pragma endregion ICsStartPlay
@@ -222,10 +237,24 @@ void ACsSpawnerImpl::ACsSpawnerImpl::Stop()
 
 void ACsSpawnerImpl::Spawn()
 {
+	using namespace NCsSpawnerImplCached;
+
+	const FString& Context = Str::Spawn;
+
+	const FECsUpdateGroup UpdateGroup = NCsUpdateGroup::GameState;
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
+
+	if (Scheduler->IsHandleValid(UpdateGroup, Start_Internal_Handle))
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Spawner has already started. Call Stop first."), *Context);
+		return;
+	}
+
 #if !UE_BUILD_SHIPPING
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSpawnerTransactions))
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::Spawn (%s): Spawning"), *(GetName()));
+		UE_LOG(LogCs, Warning, TEXT("%s (%s): Spawning"), *(GetName()), *Context);
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -358,11 +387,22 @@ void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 	Payload->Owner.SetObject(this);
 	Payload->SetName(Str::SpawnObjects_Internal);
 	Payload->SetFName(Name::SpawnObjects_Internal);
+	Payload->OnEnds.AddDefaulted();
+	Payload->OnEnds.Last().BindUObject(this, &ACsSpawnerImpl::SpawnObjects_Internal_OnEnd);
 
 	SpawnObjects_Internal_Handles.AddDefaulted();
 	FCsRoutineHandle& Handle = SpawnObjects_Internal_Handles.Last();
 
-	static const int32 CURRENT_GROUP = 0;
+	// Allocate a Spawned Objects container
+	FCsResource_SpawnerSpawnedObjects* Container = Manager_SpawnedObjects.Allocate();
+	FCsSpawnerSpawnedObjects* Resource = Container->Get();
+
+	Resource->Group = Index;
+
+	static const int32 RESOURCE_SPAWNED_OBJECTS = 0;
+	Payload->SetValue_Int(RESOURCE_SPAWNED_OBJECTS, Container->GetIndex());
+
+	static const int32 CURRENT_GROUP = 1;
 	Payload->SetValue_Int(CURRENT_GROUP, Index);
 
 	Handle = Scheduler->Start(Payload);
@@ -374,10 +414,15 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 
 	ElapsedTime += R->DeltaTime;
 
-	static const int32 CURRENT_GROUP = 0;
+	static const int32 RESOURCE_SPAWNED_OBJECTS = 0;
+	const int32& ResourceIndex = R->GetValue_Int(RESOURCE_SPAWNED_OBJECTS);
+
+	FCsSpawnerSpawnedObjects* Resource = Manager_SpawnedObjects.GetResourceAt(ResourceIndex);
+
+	static const int32 CURRENT_GROUP = 1;
 	const int32& CurrentGroup = R->GetValue_Int(CURRENT_GROUP);
 
-	static const int32 CURRENT_COUNT_PER_SPAWN = 1;
+	static const int32 CURRENT_COUNT_PER_SPAWN = 2;
 	int32& CurrentCountPerSpawn = R->GetValue_Int(CURRENT_COUNT_PER_SPAWN);
 
 	CS_COROUTINE_BEGIN(R);
@@ -407,7 +452,11 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 			{
 				UObject* SpawnedObject = SpawnObject(CurrentCountPerSpawn);
 
+				Resource->Add(SpawnedObject);
+				SpawnedObjects.Add(SpawnedObject);
+
 				OnSpawnObject_Event.Broadcast(this, SpawnedObject);
+				OnSpawnObject_ScriptEvent.Broadcast(this, SpawnedObject);
 			}
 
 			++CurrentSpawnCount;
@@ -421,6 +470,8 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 			}
 		}
 	} while (CurrentCountPerSpawn < CountParams->CountPerSpawn);
+
+	OnSpawnObjects_Event.Broadcast(this, Resource->Objects);
 
 #if !UE_BUILD_SHIPPING
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSpawnerTransactions))
@@ -439,6 +490,19 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 #endif // #if !UE_BUILD_SHIPPING
 
 	CS_COROUTINE_END(R);
+}
+
+void ACsSpawnerImpl::SpawnObjects_Internal_OnEnd(FCsRoutine* R)
+{
+	// "Free" the Spawned Objects resource
+	static const int32 RESOURCE_SPAWNED_OBJECTS = 0;
+	const int32& ResourceIndex = R->GetValue_Int(RESOURCE_SPAWNED_OBJECTS);
+
+	FCsSpawnerSpawnedObjects* Resource = Manager_SpawnedObjects.GetResourceAt(ResourceIndex);
+
+	Resource->Reset();
+
+	Manager_SpawnedObjects.DeallocateAt(ResourceIndex);
 }
 
 //void ACsSpawnerImpl::OnPreSpawnObject(ICsSpawner* Spawner, const int32& Index){}

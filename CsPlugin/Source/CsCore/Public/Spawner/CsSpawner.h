@@ -41,6 +41,13 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FCsSpawner_OnSpawn, ICsSpawner* /*Spawner*/)
 */
 DECLARE_MULTICAST_DELEGATE_TwoParams(FCsSpawner_OnSpawnObject, ICsSpawner* /*Spawner*/, UObject* /*SpawnedObject*/);
 /**
+* OnSpawnObjects
+*
+* @param Spawner
+* @param SpawnedObjects
+*/
+DECLARE_MULTICAST_DELEGATE_TwoParams(FCsSpawner_OnSpawnObjects, ICsSpawner* /*Spawner*/, const TArray<UObject*>& /*SpawnedObjects*/);
+/**
 * OnFinish
 *
 * @param Spawner
@@ -99,6 +106,13 @@ public:
 	* return
 	*/
 	virtual FCsSpawner_OnSpawnObject& GetOnSpawnObject_Event() = 0;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual FCsSpawner_OnSpawnObjects& GetOnSpawnObjects_Event() = 0;
 
 	/**
 	*

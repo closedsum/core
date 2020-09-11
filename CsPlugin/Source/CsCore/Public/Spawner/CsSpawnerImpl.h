@@ -6,8 +6,36 @@
 #include "Spawner/CsSpawner.h"
 // Types
 #include "Coroutine/CsTypes_Coroutine.h"
+#include "Spawner/CsTypes_Spawner.h"
+#include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 
 #include "CsSpawnerImpl.generated.h"
+
+// Delegates
+#pragma region
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsSpawnerImpl_OnSpawnObject, ACsSpawnerImpl*, Spawner, UObject*, SpawnedObject);
+
+
+#pragma endregion Delegates
+
+// Structs
+#pragma region
+
+	// Memory Resource
+#pragma region
+
+struct CSCORE_API FCsResource_SpawnerSpawnedObjects : public TCsResourceContainer<FCsSpawnerSpawnedObjects>
+{
+};
+
+struct CSCORE_API FCsManager_SpawnerSpawnedObjects : public TCsManager_ResourceValueType_Fixed<FCsSpawnerSpawnedObjects, FCsResource_SpawnerSpawnedObjects, 0>
+{
+};
+
+#pragma endregion Memory Resource
+
+#pragma endregion Structs
 
 struct FCsRoutine;
 struct ICsSpawnerParams;
@@ -83,6 +111,8 @@ protected:
 
 	FCsSpawner_OnSpawnObject OnSpawnObject_Event;
 
+	FCsSpawner_OnSpawnObjects OnSpawnObjects_Event;
+
 	FCsSpawner_OnFinish OnFinish_Event;
 
 #pragma endregion Events
@@ -96,7 +126,7 @@ public:
 		return Params;
 	}
 
-	UFUNCTION(BlueprintCallable, Category = "ICsSpawner")
+	UFUNCTION(BlueprintCallable, Category = "CsCore|ICsSpawner")
 	virtual void Start();
 
 	FORCEINLINE FCsSpawner_OnStart& GetOnStart_Event()
@@ -104,6 +134,7 @@ public:
 		return OnStart_Event;
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "CsCore|ICsSpawner")
 	void Stop();
 
 	FORCEINLINE FCsSpawner_OnStop& GetOnStop_Event()
@@ -111,6 +142,7 @@ public:
 		return OnStop_Event;
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "CsCore|ICsSpawner")
 	void Spawn();
 	
 	FORCEINLINE FCsSpawner_OnSpawn& GetOnSpawn_Event()
@@ -121,6 +153,11 @@ public:
 	FORCEINLINE FCsSpawner_OnSpawnObject& GetOnSpawnObject_Event()
 	{
 		return OnSpawnObject_Event;
+	}
+
+	FORCEINLINE FCsSpawner_OnSpawnObjects& GetOnSpawnObjects_Event()
+	{
+		return OnSpawnObjects_Event;
 	}
 
 	FORCEINLINE FCsSpawner_OnFinish& GetOnFinish_Event()
@@ -136,6 +173,15 @@ protected:
 
 	/** */
 	int32 CurrentSpawnCount;
+
+	/** */
+	int32 MaxConcurrentSpawnObjects;
+
+	/** Manager for objects of type: FCsSpawnerSpawnedObjects. */
+	FCsManager_SpawnerSpawnedObjects Manager_SpawnedObjects;
+
+	/** */
+	FCsSpawnerSpawnedObjects SpawnedObjects;
 
 public:
 
@@ -167,6 +213,8 @@ protected:
 
 	char SpawnObjects_Internal(FCsRoutine* R);
 
+	void SpawnObjects_Internal_OnEnd(FCsRoutine* R);
+
 public:
 
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPreSpawnObject, ICsSpawner* /*Spawner*/, const int32& /*Index*/);
@@ -178,6 +226,9 @@ protected:
 	//virtual void OnPreSpawnObject(ICsSpawner* Spawner, const int32& Index);
 
 	virtual UObject* SpawnObject(const int32& Index);
+
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Spawner")
+	FCsSpawnerImpl_OnSpawnObject OnSpawnObject_ScriptEvent;
 
 #pragma endregion Spawn
 

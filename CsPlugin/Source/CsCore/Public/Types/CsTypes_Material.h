@@ -75,6 +75,43 @@ public:
 
 #pragma endregion FCsMaterialInstanceConstant
 
+
+// FCsTArrayMaterialInterface
+#pragma region
+
+class UMaterialInterface;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsTArrayMaterialnterface
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<TSoftObjectPtr<UMaterialInterface>> Materials;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Materials_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	TArray<UMaterialInterface*> Materials_Internal;
+
+public:
+
+	FCsTArrayMaterialnterface() :
+		Materials(),
+		Materials_LoadFlags(0),
+		Materials_Internal()
+	{
+	}
+
+	FORCEINLINE const TArray<UMaterialInterface*>& Get() const
+	{
+		return Materials_Internal;
+	}
+};
+
+#pragma endregion FCsTArrayMaterialnterface
+
 // FCsTArrayMaterialInstanceConstant
 #pragma region
 

@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Collision.h"
 
+// Components
+#include "Components/SkeletalMeshComponent.h"
+
 // CollisionEnabled
 #pragma region
 
@@ -95,3 +98,22 @@ namespace NCsCollisionShape
 }
 
 #pragma endregion CollisionShape
+
+// FCsCollisionPreset
+#pragma region
+
+void FCsCollisionPreset::Apply(USkeletalMeshComponent* Mesh) const
+{
+	if (CollisionEnabled != ECollisionEnabled::NoCollision)
+	{
+		Mesh->SetCollisionObjectType(ObjectType);
+		Mesh->SetCollisionResponseToChannels(CollisionResponses);
+
+		Mesh->SetNotifyRigidBodyCollision(bSimulationGeneratesHitEvents);
+		Mesh->SetGenerateOverlapEvents(bGenerateOverlapEvents);
+
+		Mesh->SetCollisionEnabled(CollisionEnabled);
+	}
+}
+
+#pragma endregion FCsCollisionPreset

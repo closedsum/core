@@ -140,6 +140,8 @@ namespace NCsCollisionShape
 // FCsCollisionPreset
 #pragma region
 
+class USkeletalMeshComponent;
+
 /**
 */
 USTRUCT(BlueprintType)
@@ -188,6 +190,8 @@ struct CSCORE_API FCsCollisionPreset
 	{
 		return !(*this == B);
 	}
+
+	void Apply(USkeletalMeshComponent* Mesh) const;
 };
 
 #pragma endregion FCsCollisionPreset

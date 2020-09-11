@@ -98,7 +98,7 @@ public:
 	{
 	}
 
-	FORCEINLINE UAnimSequence* Get()
+	FORCEINLINE UAnimSequence* Get() const
 	{
 		return Anim_Internal;
 	}
@@ -451,7 +451,7 @@ public:
 	{
 	}
 
-	FORCEINLINE UAnimBlueprintGeneratedClass* Get()
+	FORCEINLINE UAnimBlueprintGeneratedClass* Get() const
 	{
 		return Blueprint_Internal;
 	}

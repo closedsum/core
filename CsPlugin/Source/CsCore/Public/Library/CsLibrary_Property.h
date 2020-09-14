@@ -101,4 +101,21 @@ public:
 
 		return ValuePtr;
 	}
+
+#if WITH_EDITOR
+
+	/**
+	 * Gets the Array Index of the "current object" based on a particular name.
+	 * This can be used to check if a property is part of the given "chain" of events.
+	 *
+	 * @param e			A FPropertyChangedChainEvent.
+	 * @param Name		Name of the property to find the array index for
+	 * @param OutIndex	The array index of the property name found. 
+						Set to INDEX_NONE if property name is NOT found or the property is 
+						NOT an array.
+	 * return			Whether the property with Name was found.
+	 */
+	static bool GetArrayIndex(FPropertyChangedChainEvent& e, const FString& Name, int32& OutIndex);
+
+#endif // #if WITH_EDITOR
 };

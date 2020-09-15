@@ -176,26 +176,6 @@ class CSCORE_API UCsLibrary_Common : public UBlueprintFunctionLibrary
 	*/
 #pragma endregion 
 
-// Materials
-#pragma region
-
-	static void SetMaterials(UStaticMeshComponent* InMesh, const TArray<UMaterialInstanceConstant*>& Materials);
-	static void SetMaterials(USkeletalMeshComponent* InMesh, const TArray<UMaterialInstanceConstant*>& Materials);
-
-	static void ClearOverrideMaterials(UStaticMeshComponent* InMesh);
-	static void ClearOverrideMaterials(USkeletalMeshComponent* InMesh);
-
-	static void DestroyMIDs(TArray<UMaterialInstanceDynamic*>& MIDs);
-	static void SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<FSkeletalMaterial>& Materials);
-	static void SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInstanceConstant*>& Materials);
-	static void SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
-
-	static void MIDs_SetScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float &Value);
-	static void MIDs_SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector &Value);
-	static void MIDs_SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor &Value);
-
-#pragma endregion Materials
-
 	static FVector GetBoneLocation(USkeletalMeshComponent* InMesh, const int32 &BoneIndex, const TEnumAsByte<EBoneSpaces::Type> &Space = EBoneSpaces::WorldSpace);
 	static FName GetParentBone(USkeletalMeshComponent* InMesh, const int32 &BoneIndex);
 

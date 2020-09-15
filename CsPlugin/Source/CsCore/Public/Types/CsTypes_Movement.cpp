@@ -6,6 +6,54 @@
 // Curve
 #include "Curves/CurveFloat.h"
 
+// FCsSpeed
+#pragma region
+
+#if WITH_EDITOR
+
+void FCsSpeed::OnPostEditChange(const FName& PropertyName)
+{
+	// UUpS
+	if (PropertyName == FName("UUpS"))
+		FromUUpS();
+	// MpH
+	else
+	if (PropertyName == FName("MpH"))
+		FromMpH();
+	// KpH
+	else
+	if (PropertyName == FName("KpH"))
+		FromKpH();
+}
+
+#endif // #if WITH_EDITOR
+
+#pragma endregion FCsSpeed
+
+// FCsAcceleration
+#pragma region
+
+#if WITH_EDITOR
+
+void FCsAcceleration::OnPostEditChange(const FName& PropertyName)
+{
+	// UUpSS
+	if (PropertyName == FName("UUpSS"))
+		FromUUpSS();
+	// MpHS
+	else
+	if (PropertyName == FName("MpHS"))
+		FromMpHS();
+	// KpHS
+	else
+	if (PropertyName == FName("KpHS"))
+		FromKpHS();
+}
+
+#endif // #if WITH_EDITOR
+
+#pragma endregion FCsAcceleration
+
 // SpeedInterpMethod
 #pragma region
 
@@ -45,6 +93,17 @@ bool FCsSpeedInterp::IsValidChecked() const
 	return true;
 }
 
+#if WITH_EDITOR
+
+void FCsSpeedInterp::OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName)
+{
+	// Acceleration
+	if (PropertyNames.Find(TEXT("Acceleration")))
+		Acceleration.OnPostEditChange(PropertyName);
+}
+
+#endif // #if WITH_EDITOR
+
 #pragma endregion FCsSpeedInterp
 
 // FCsSpeedInterpHelper
@@ -52,18 +111,42 @@ bool FCsSpeedInterp::IsValidChecked() const
 
 void FCsSpeedInterpHelper::SetMinSpeed(const float& Speed)
 {
-	checkf(MaxSpeed <= 0.0f, TEXT("FCsSpeedInterpHelper::SetMinSpeed: MaxSpeed (%f) <= 0.0f"), MaxSpeed);
+	checkf(MaxSpeed > 0.0f, TEXT("FCsSpeedInterpHelper::SetMinSpeed: MaxSpeed (%f) <= 0.0f"), MaxSpeed);
 
 	checkf(Speed <= MaxSpeed, TEXT("FCsSpeedInterpHelper::SetMinSpeed: Speed > MaxSpeed (%f > %f)."), Speed, MaxSpeed);
 
-	MinSpeed		  = Speed;
-	MinSpeedAsPercent = MinSpeed / MaxSpeed;
+	if (Speed != MinSpeed)
+	{
+		MinSpeed		  = Speed;
+		MinSpeedAsPercent = MinSpeed / MaxSpeed;
+		MinBound		  = MinSpeedAsPercent;
+	}
 }
 
 void FCsSpeedInterpHelper::SetTargetSpeed(const float& Speed)
 {
-	TargetSpeed			 = Speed;
-	TargetSpeedAsPercent = TargetSpeed / MaxSpeed;
+	checkf(MaxSpeed > 0.0f, TEXT("FCsSpeedInterpHelper::SetTargetSpeed: MaxSpeed (%f) <= 0.0f"), MaxSpeed);
+
+	checkf(Speed <= MaxSpeed, TEXT("FCsSpeedInterpHelper::SetTargetSpeed: Speed > MaxSpeed (%f > %f)."), Speed, MaxSpeed);
+
+	if (Speed != TargetSpeed)
+	{
+		TargetSpeed			 = Speed;
+		TargetSpeedAsPercent = TargetSpeed / MaxSpeed;
+	}
+}
+
+void FCsSpeedInterpHelper::SetTargetSpeedAsPercent(const float& Percent)
+{
+	checkf(MaxSpeed > 0.0f, TEXT("FCsSpeedInterpHelper::SetTargetSpeedAsPercent: MaxSpeed (%f) <= 0.0f"), MaxSpeed);
+
+	checkf(Percent >= -1.0f && Percent <= 1.0f, TEXT("FCsSpeedInterpHelper::SetTargetSpeedAsPercent: Percent: %f should be between [-1.0f, 1.0f] inclusive."), Percent);
+
+	if (Percent != TargetSpeedAsPercent)
+	{
+		TargetSpeedAsPercent = Percent;
+		TargetSpeed			 = FMath::Abs(TargetSpeedAsPercent) * MaxSpeed;
+	}
 }
 
 void FCsSpeedInterpHelper::SetInterp(FCsSpeedInterp* InInterp)
@@ -72,15 +155,17 @@ void FCsSpeedInterpHelper::SetInterp(FCsSpeedInterp* InInterp)
 
 	Interp = InInterp;
 
-	checkf(Interp->IsValidChecked(), TEXT(""));
+	checkf(Interp->IsValidChecked(), TEXT("FCsSpeedInterpHelper::SetInterp:"));
 
 	// Acceleration
 	if (Interp->Method == ECsSpeedInterpMethod::Acceleration)
 	{
-		checkf(MaxSpeed <= 0.0f, TEXT("FCsSpeedInterpHelper::SetInterp: MaxSpeed (%f) <= 0.0f"), MaxSpeed);
+		checkf(MaxSpeed > 0.0f, TEXT("FCsSpeedInterpHelper::SetInterp: MaxSpeed (%f) <= 0.0f"), MaxSpeed);
 
 		AccelerationAsPercent = Interp->Acceleration.UUpSS / MaxSpeed;
 	}
+
+	DirectionSign = Interp->Direction == ECsSpeedInterpDirection::Increasing ? 1.0f : -1.0f;
 }
 
 void FCsSpeedInterpHelper::SetCurrentSpeedAsPercent(const float& Percent)
@@ -88,8 +173,8 @@ void FCsSpeedInterpHelper::SetCurrentSpeedAsPercent(const float& Percent)
 	// Easing
 	if (Interp->Method == ECsSpeedInterpMethod::Easing)
 	{
-		// Remap Percent from [0.0f, 1.0f] to be percent of [MinSpeedAsPercent, TargetSpeedAsPercent]
-		float RemappedPercent = (FMath::Max(Percent, MinSpeedAsPercent) - MinSpeedAsPercent) / (TargetSpeedAsPercent - MinSpeedAsPercent);
+		// Remap Percent from [0.0f, 1.0f] to be percent of [MinSpeedAsPercent, 1.0f]
+		float RemappedPercent = (FMath::Max(Percent, MinSpeedAsPercent) - MinSpeedAsPercent) / (1.0f - MinSpeedAsPercent);
 
 		// TODO: Get the Alpha that corresponds to the Percent
 		CurrentAlpha = RemappedPercent;
@@ -98,8 +183,8 @@ void FCsSpeedInterpHelper::SetCurrentSpeedAsPercent(const float& Percent)
 	else
 	if (Interp->Method == ECsSpeedInterpMethod::Curve)
 	{
-		// Remap Percent from [0.0f, 1.0f] to be percent of [MinSpeedAsPercent, TargetSpeedAsPercent]
-		float RemappedPercent = (FMath::Max(Percent, MinSpeedAsPercent) - MinSpeedAsPercent) / (TargetSpeedAsPercent - MinSpeedAsPercent);
+		// Remap Percent from [0.0f, 1.0f] to be percent of [MinSpeedAsPercent, 1.0f]
+		float RemappedPercent = (FMath::Max(Percent, MinSpeedAsPercent) - MinSpeedAsPercent) / (1.0f - MinSpeedAsPercent);
 
 		// TODO: Get the Alpha that corresponds to the Percent
 		// TODO: Use Curve Lookup Table
@@ -107,7 +192,6 @@ void FCsSpeedInterpHelper::SetCurrentSpeedAsPercent(const float& Percent)
 	}
 	CurrentSpeedAsPercent = Percent;
 }
-
 
 void FCsSpeedInterpHelper::Update(const float& DeltaTime)
 {
@@ -117,7 +201,12 @@ void FCsSpeedInterpHelper::Update(const float& DeltaTime)
 	// Acceleration
 	if (Interp->Method == ECsSpeedInterpMethod::Acceleration)
 	{
-		CurrentSpeedAsPercent = FMath::Clamp(CurrentSpeedAsPercent + DeltaTime * AccelerationAsPercent, MinSpeedAsPercent, TargetSpeedAsPercent);
+		// Increasing to TargetSpeedAsPercent
+		if (DirectionSign > 0)
+			CurrentSpeedAsPercent = FMath::Clamp(CurrentSpeedAsPercent + DeltaTime * AccelerationAsPercent, MinBound, TargetSpeedAsPercent);
+		// Decreasing to TargetSpeedAsPercent
+		else
+			CurrentSpeedAsPercent = FMath::Clamp(CurrentSpeedAsPercent - DeltaTime * AccelerationAsPercent, TargetSpeedAsPercent, MaxBound);
 	}
 	// Easing
 	else
@@ -125,10 +214,18 @@ void FCsSpeedInterpHelper::Update(const float& DeltaTime)
 	{
 		const float AdjustedDeltaTime = DeltaTime / Interp->Time;
 
-		CurrentAlpha		= FMath::Clamp(CurrentAlpha + AdjustedDeltaTime, 0.0f, 1.0f);
-		const float Percent = FCsLibrary_Math::Ease(Interp->Easing, CurrentAlpha, 0.0f, 1.0f, 1.0f);
-		// Remap Percent from [0.0f, 1.0f] to [MinSpeedAsPercent, TargetSpeedAsPercent]
-		CurrentSpeedAsPercent = Percent * (TargetSpeedAsPercent - MinSpeedAsPercent) + MinSpeedAsPercent;
+		CurrentAlpha				= FMath::Clamp(CurrentAlpha + AdjustedDeltaTime, 0.0f, 1.0f);
+		const float Percent		    = FCsLibrary_Math::Ease(Interp->Easing, CurrentAlpha, 0.0f, 1.0f, 1.0f);
+		const float AdjustedPercent = Interp->Direction == ECsSpeedInterpDirection::Increasing ? Percent : 1.0f - Percent;
+
+		// Remap Percent from [0.0f, 1.0f] to [MinSpeedAsPercent, 1.0f]
+
+		// Increasing
+		if (Interp->Direction == ECsSpeedInterpDirection::Increasing)
+			CurrentSpeedAsPercent = FMath::Clamp(Percent * (1.0f - MinSpeedAsPercent) + MinSpeedAsPercent, 0.0f, TargetSpeedAsPercent);
+		// Decreasing
+		else
+			CurrentSpeedAsPercent = FMath::Max(TargetSpeedAsPercent, Percent * (1.0f - MinSpeedAsPercent) + MinSpeedAsPercent);
 	}
 	// Curve
 	else
@@ -136,10 +233,18 @@ void FCsSpeedInterpHelper::Update(const float& DeltaTime)
 	{
 		const float AdjustedDeltaTime = DeltaTime / Interp->Time;
 
-		CurrentAlpha		= FMath::Clamp(CurrentAlpha + AdjustedDeltaTime, 0.0f, 1.0f);
-		const float Percent = Interp->Curve->GetFloatValue(CurrentAlpha);
-		// Remap Percent from [0.0f, 1.0f] to [MinSpeedAsPercent, TargetSpeedAsPercent]
-		CurrentSpeedAsPercent = Percent * (TargetSpeedAsPercent - MinSpeedAsPercent) + MinSpeedAsPercent;
+		CurrentAlpha				= FMath::Clamp(CurrentAlpha + AdjustedDeltaTime, 0.0f, 1.0f);
+		const float Percent			= Interp->Curve->GetFloatValue(CurrentAlpha);
+		const float AdjustedPercent = Interp->Direction == ECsSpeedInterpDirection::Increasing ? Percent : 1.0f - Percent;
+
+		// Remap Percent from [0.0f, 1.0f] to [MinSpeedAsPercent, 1.0f]
+
+		// Increasing
+		if (Interp->Direction == ECsSpeedInterpDirection::Increasing)
+			CurrentSpeedAsPercent = FMath::Clamp(Percent * (1.0f - MinSpeedAsPercent) + MinSpeedAsPercent, 0.0f, TargetSpeedAsPercent);
+		// Decreasing
+		else
+			CurrentSpeedAsPercent = FMath::Max(TargetSpeedAsPercent, Percent * (1.0f - MinSpeedAsPercent) + MinSpeedAsPercent);
 	}
 }
 

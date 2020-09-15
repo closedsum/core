@@ -6,6 +6,7 @@
 #include "Managers/Projectile/CsCVars_Projectile.h"
 // Library
 #include "Library/CsLibrary_Common.h"
+#include "Library/CsLibrary_Material.h"
 #include "Managers/Pool/Cache/CsLibrary_PooledObjectCache.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Data/CsLibrary_Data_Projectile.h"
@@ -506,7 +507,7 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	// Deallocate attachments
 
 	// Mesh
-	UCsLibrary_Common::ClearOverrideMaterials(MeshComponent);
+	FCsLibrary_Material::ClearOverrideMaterials(MeshComponent);
 	MeshComponent->SetStaticMesh(nullptr);
 	MeshComponent->SetVisibility(false);
 	MeshComponent->SetHiddenInGame(true);

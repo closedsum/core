@@ -66,6 +66,10 @@ struct CSCORE_API FCsSpeed
 		UUpS = CS_KILOMETERS_PER_HOUR_TO_UNREAL_UNITS_PER_SECOND * KpH;
 		MpH = CS_KILOMETERS_PER_HOUR_TO_MILES_PER_HOUR * KpH;
 	}
+
+#if WITH_EDITOR
+	void OnPostEditChange(const FName& PropertyName);
+#endif // #if WITH_EDITOR
 };
 
 #pragma endregion FCsSpeed
@@ -199,6 +203,10 @@ struct CSCORE_API FCsAcceleration
 		UUpSS = CS_KILOMETERS_PER_HOUR_TO_UNREAL_UNITS_PER_SECOND * KpHS;
 		MpHS = CS_KILOMETERS_PER_HOUR_TO_MILES_PER_HOUR * KpHS;
 	}
+
+#if WITH_EDITOR
+	void OnPostEditChange(const FName& PropertyName);
+#endif // #if WITH_EDITOR
 };
 
 #pragma endregion FCsAcceleration
@@ -209,6 +217,7 @@ struct CSCORE_API FCsAcceleration
 class UCurveFloat;
 
 /**
+* Describes how speed should be interpolated.
 */
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsSpeedInterp
@@ -252,6 +261,10 @@ struct CSCORE_API FCsSpeedInterp
 	}
 
 	bool IsValidChecked() const;
+
+#if WITH_EDITOR
+	void OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName);
+#endif // #if WITH_EDITOR
 };
 
 #pragma endregion FCsSpeedInterp
@@ -261,27 +274,52 @@ struct CSCORE_API FCsSpeedInterp
 
 struct FCsSpeedInterp;
 
+/**
+*
+*/
 struct CSCORE_API FCsSpeedInterpHelper
 {
 public:
 
-	/** Max Speed in UUpS (Unreal Units per Second). */
+	/** Usually the same as MinSpeedAsPercent.
+		[-1.0f, 1.0f] inclusive. */
+	float MinBound;
+
+	/** Usually 1.0f.
+		[-1.0f, 1.0f] inclusive. */
+	float MaxBound;
+
+	/** Max Speed in UUpS (Unreal Units per Second). 
+		This is considered be a value of 1.9f on a normalized scale. */
 	float MaxSpeed;
 
 	/** Minimum Speed in UUpS (Unreal Units per Second). */
 	float MinSpeed;
 
-	/** Minimum Speed as a percent. MinSpeed / MaxSpeed. */
+	/** Minimum Speed as a percent. 
+		 MinSpeed / MaxSpeed. 
+		 [0.0f, 1.0f] inclusive. */
 	float MinSpeedAsPercent;
 
-	/** Target Speed in UUpS (Unreal Units per Second). 
+	/** The desired speed to reach in UUpS (Unreal Units per Second). 
 		Should be <= MaxSpeed. */
 	float TargetSpeed;
 
+	/** Target Speed as a percent. 
+		 TargetSpeed / MaxSpeed. */
 	float TargetSpeedAsPercent;
 
+	/** Describes how to interpolate Speed over time. */
 	FCsSpeedInterp* Interp;
 
+	/** Sign 1 or -1 to indicate whether Speed is increasing (1) or 
+	    decreasing (-1) to TargetSpeedAsPercent */
+	float DirectionSign;
+
+	/** Interp's Acceleration as a percent. 
+		 Interp->Acceleration.UUpSS / MaxSpeed.
+		 [0.0f , 1.0f] inclusive. 
+		 Only Valid if Interp->Method == Acceleration (ECsSpeedInterpMethod::Acceleration) */
 	float AccelerationAsPercent;
 
 	float CurrentSpeedAsPercent;
@@ -289,12 +327,15 @@ public:
 	float CurrentAlpha;
 
 	FCsSpeedInterpHelper() :
+		MinBound(0.0f),
+		MaxBound(1.0f),
 		MaxSpeed(0.0f),
 		MinSpeed(0.0f),
 		MinSpeedAsPercent(0.0f),
 		TargetSpeed(0.0f),
 		TargetSpeedAsPercent(0.0f),
 		Interp(nullptr),
+		DirectionSign(1.0f),
 		AccelerationAsPercent(0.0f),
 		CurrentSpeedAsPercent(0.0f),
 		CurrentAlpha(0.0f)
@@ -304,6 +345,8 @@ public:
 	void SetMinSpeed(const float& Speed);
 
 	void SetTargetSpeed(const float& Speed);
+
+	void SetTargetSpeedAsPercent(const float& Percent);
 
 	void SetInterp(FCsSpeedInterp* InInterp);
 

@@ -4,7 +4,7 @@
 
 #if WITH_EDITOR
 
-bool FCsLibrary_Property::GetArrayIndex(FPropertyChangedChainEvent& e, const FString& Name, int32& OutIndex)
+TArrayView<const TMap<FString, int32>>& FCsLibrary_Property::GetArrayIndicesPerObject(FPropertyChangedChainEvent& e)
 {
 	// A bit of a hack to get access to e.ArrayIndicesPerObject, which is private.
 	// Access is needed to determine if a property is part of the chain of events.
@@ -22,7 +22,12 @@ bool FCsLibrary_Property::GetArrayIndex(FPropertyChangedChainEvent& e, const FSt
 	// Offset by ObjectIteratorIndex
 	Offset += sizeof(int32);
 
-	TArrayView<const TMap<FString, int32>>& ArrayIndicesPerObject = *((TArrayView<const TMap<FString, int32>>*)(Base + Offset));
+	return *((TArrayView<const TMap<FString, int32>>*)(Base + Offset));
+}
+
+bool FCsLibrary_Property::GetArrayIndex(FPropertyChangedChainEvent& e, const FString& Name, int32& OutIndex)
+{
+	TArrayView<const TMap<FString, int32>>& ArrayIndicesPerObject = GetArrayIndicesPerObject(e);
 
 	//default to unknown index
 	OutIndex = INDEX_NONE;
@@ -36,6 +41,36 @@ bool FCsLibrary_Property::GetArrayIndex(FPropertyChangedChainEvent& e, const FSt
 		}
 	}
 	return false;
+}
+
+void FCsLibrary_Property::GetPropertyNamesInChain(FPropertyChangedChainEvent& e, TSet<FString>& OutNames)
+{
+	TArrayView<const TMap<FString, int32>>& ArrayIndicesPerObject = GetArrayIndicesPerObject(e);
+
+	if (ArrayIndicesPerObject.IsValidIndex(e.ObjectIteratorIndex))
+	{
+		const TMap<FString, int32>& Map = ArrayIndicesPerObject[e.ObjectIteratorIndex];
+
+		for (const TPair<FString, int32>& Pair : Map)
+		{
+			OutNames.Add(Pair.Key);
+		}
+	}
+}
+
+void FCsLibrary_Property::GetPropertyNamesWithIndexInChain(FPropertyChangedChainEvent& e, TMap<FString, int32>& OutIndexByNameMap)
+{
+	TArrayView<const TMap<FString, int32>>& ArrayIndicesPerObject = GetArrayIndicesPerObject(e);
+
+	if (ArrayIndicesPerObject.IsValidIndex(e.ObjectIteratorIndex))
+	{
+		const TMap<FString, int32>& Map = ArrayIndicesPerObject[e.ObjectIteratorIndex];
+
+		for (const TPair<FString, int32>& Pair : Map)
+		{
+			OutIndexByNameMap.Add(Pair.Key, Pair.Value);
+		}
+	}
 }
 
 #endif // #if WITH_EDITOR

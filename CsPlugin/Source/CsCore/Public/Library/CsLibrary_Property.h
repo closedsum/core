@@ -105,6 +105,10 @@ public:
 #if WITH_EDITOR
 
 	/**
+	*/
+	static TArrayView<const TMap<FString, int32>>& GetArrayIndicesPerObject(FPropertyChangedChainEvent& e);
+
+	/**
 	 * Gets the Array Index of the "current object" based on a particular name.
 	 * This can be used to check if a property is part of the given "chain" of events.
 	 *
@@ -116,6 +120,22 @@ public:
 	 * return			Whether the property with Name was found.
 	 */
 	static bool GetArrayIndex(FPropertyChangedChainEvent& e, const FString& Name, int32& OutIndex);
+
+	/**
+	*
+	*
+	* @param e
+	* @param OutNames
+	*/
+	static void GetPropertyNamesInChain(FPropertyChangedChainEvent& e, TSet<FString>& OutNames);
+
+	/**
+	*
+	*
+	* @param e
+	* @param OutIndexByNameMap
+	*/
+	static void GetPropertyNamesWithIndexInChain(FPropertyChangedChainEvent& e, TMap<FString, int32>& OutIndexByNameMap);
 
 #endif // #if WITH_EDITOR
 };

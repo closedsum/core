@@ -245,7 +245,7 @@ void UCsManager_Load::Update(const FCsDeltaTime& DeltaTime)
 	{
 		Current												= Next;
 		FCsResource_ManagerLoad_Task_LoadObjects* Container = **Current;
-		Next												= Current->Next();
+		Next												= Current->GetNextLink();
 
 		UCsManagerLoad_Task_LoadObjects* Task = Container->Get();
 

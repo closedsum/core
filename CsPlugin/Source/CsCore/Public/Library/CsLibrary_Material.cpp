@@ -28,6 +28,25 @@ void FCsLibrary_Material::SetMaterials(UStaticMeshComponent* InMesh, const TArra
 	}
 }
 
+void FCsLibrary_Material::SetMaterials(USkeletalMeshComponent* InMesh, const TArray<UMaterialInterface*>& Materials)
+{
+	const int32 Count		  = InMesh->SkeletalMesh->Materials.Num();
+	const int32 MaterialCount = Materials.Num();
+
+	if (Count > MaterialCount)
+	{
+		UE_LOG(LogCs, Warning, TEXT("FCsLibrary_Material::SetMaterials: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *InMesh->SkeletalMesh->GetName(), Count, MaterialCount);
+		return;
+	}
+
+	ClearOverrideMaterials(InMesh);
+
+	for (int32 Index = 0; Index < Count; ++Index)
+	{
+		InMesh->SetMaterial(Index, Materials[Index]);
+	}
+}
+
 void FCsLibrary_Material::SetMaterials(USkeletalMeshComponent* InMesh, const TArray<UMaterialInstanceConstant*>& Materials)
 {
 	const int32 Count		  = InMesh->SkeletalMesh->Materials.Num();
@@ -80,6 +99,9 @@ void FCsLibrary_Material::ClearOverrideMaterials(USkeletalMeshComponent* InMesh)
 
 	InMesh->OverrideMaterials.SetNum(0, true);
 }
+
+// MID
+#pragma region
 
 void FCsLibrary_Material::DestroyMIDs(TArray<UMaterialInstanceDynamic*>& MIDs)
 {
@@ -164,3 +186,5 @@ void FCsLibrary_Material::MIDs_SetVectorParameterValue(TArray<UMaterialInstanceD
 		MID->SetVectorParameterValue(ParamName, Value);
 	}
 }
+
+#pragma endregion MID

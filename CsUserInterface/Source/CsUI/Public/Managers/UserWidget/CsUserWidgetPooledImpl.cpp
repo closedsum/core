@@ -142,6 +142,8 @@ void UCsUserWidgetPooledImpl::Deallocate()
 {
 	UserWidget->SetVisibility(ESlateVisibility::Collapsed);
 	UserWidget->SetIsEnabled(false);
+
+	Cache->Deallocate();
 }
 
 #pragma endregion ICsPooledObject

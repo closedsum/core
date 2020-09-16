@@ -383,7 +383,7 @@ private:
 	*
 	* @param Link	Pointer to LinkedList element containing a ResourceContainerType.
 	*/
-	void AddAllocatedLink(TCsDoubleLinkedList<ResourceContainerType*>* Link)
+	FORCEINLINE void AddAllocatedLink(TCsDoubleLinkedList<ResourceContainerType*>* Link)
 	{
 		if (AllocatedTail)
 		{ 
@@ -405,7 +405,7 @@ private:
 	* @param Link					Pointer to LinkedList element containing a ResourceContainerType.
 	* @param ResourceContainer		Container for a ResourceType
 	*/
-	void AddAllocatedLinkAfter(TCsDoubleLinkedList<ResourceContainerType*>* Link, ResourceContainerType* ResourceContainer)
+	FORCEINLINE void AddAllocatedLinkAfter(TCsDoubleLinkedList<ResourceContainerType*>* Link, ResourceContainerType* ResourceContainer)
 	{
 		// Resource to Link After
 		const int32& LinkAfterIndex = ResourceContainer->GetIndex();
@@ -429,7 +429,7 @@ private:
 	* @param Link					Pointer to LinkedList element containing a ResourceContainerType.
 	* @param ResourceContainer		Container for a ResourceType
 	*/
-	void AddAllocatedLinkBefore(TCsDoubleLinkedList<ResourceContainerType*>* Link, ResourceContainerType* ResourceContainer)
+	FORCEINLINE void AddAllocatedLinkBefore(TCsDoubleLinkedList<ResourceContainerType*>* Link, ResourceContainerType* ResourceContainer)
 	{
 		// Resource to Link Before
 		const int32& LinkBeforeIndex = ResourceContainer->GetIndex();
@@ -451,18 +451,15 @@ private:
 	*
 	* @param Link	Pointer to LinkedList element containing a ResourceContainerType.
 	*/
-	void RemoveActiveLink(TCsDoubleLinkedList<ResourceContainerType*>* Link)
+	FORCEINLINE void RemoveActiveLink(TCsDoubleLinkedList<ResourceContainerType*>* Link)
 	{
 		// Check to Update HEAD
 		if (Link == AllocatedHead)
 		{
-			if (AllocatedSize > CS_SINGLETON)
+			AllocatedHead = Link->GetNextLink();
+
+			if (!AllocatedHead)
 			{
-				AllocatedHead = Link->GetNextLink();
-			}
-			else
-			{
-				AllocatedHead = nullptr;
 				AllocatedTail = nullptr;
 			}
 		}

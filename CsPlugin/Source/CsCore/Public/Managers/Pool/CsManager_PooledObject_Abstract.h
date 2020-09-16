@@ -389,7 +389,7 @@ public:
 
 protected:
 
-	InterfaceContainerType* ConstructContainer()
+	FORCEINLINE InterfaceContainerType* ConstructContainer()
 	{
 		return new InterfaceContainerType();
 	}
@@ -727,13 +727,13 @@ public:
 	* return					Container holding a reference to a pooled object.
 	*							Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const InterfaceContainerType* AddToPool(InterfaceType* Object, bool DeallocateOnAdd = true)
+	FORCEINLINE const InterfaceContainerType* AddToPool(InterfaceType* Object, bool DeallocateOnAdd = true)
 	{
 		return AddToPool(Object, Object->_getUObject(), DeallocateOnAdd);
 	}
 
 	template<typename OtherInterfaceType, typename ContainerType>
-	const ContainerType* AddToPool(OtherInterfaceType* Object, bool DeallocateOnAdd = true)
+	FORCEINLINE const ContainerType* AddToPool(OtherInterfaceType* Object, bool DeallocateOnAdd = true)
 	{
 		static_assert(std::is_abstract<OtherInterfaceType>(), "TCsManager_PooledObject_Abstract::AddToPool: OtherInterfaceType is NOT an abstract class.");
 
@@ -761,13 +761,13 @@ public:
 	*							Pooled Object or UClass associated with Pooled Object implements
 	*							the interface: ICsPooledObject.
 	*/
-	const InterfaceContainerType* AddToPool(UObject* Object, bool DeallocateOnAdd = true)
+	FORCEINLINE const InterfaceContainerType* AddToPool(UObject* Object, bool DeallocateOnAdd = true)
 	{
 		return AddToPool(nullptr, Object, DeallocateOnAdd);
 	}
 
 	template<typename ContainerType>
-	const ContainerType* AddToPool(UObject* Object, bool DeallocateOnAdd = true)
+	FORCEINLINE const ContainerType* AddToPool(UObject* Object, bool DeallocateOnAdd = true)
 	{
 		static_assert(std::is_base_of<InterfaceContainerType, ContainerType>(), "TCsManager_PooledObject_Abstract::AddToPool ContainerType is NOT a child of InterfaceContainerType.");
 		
@@ -880,7 +880,7 @@ public:
 	* return			Container holding a reference to a pooled object.
 	*					Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const InterfaceContainerType* AddToAllocatedObjects(InterfaceType* Object)
+	FORCEINLINE const InterfaceContainerType* AddToAllocatedObjects(InterfaceType* Object)
 	{
 		checkf(Object, TEXT("%s::AddToAllocatedObjects: Object is NULL."));
 
@@ -898,7 +898,7 @@ public:
 	*					Pooled Object or UClass associated with Pooled Object implements
 	*					the interface: ICsPooledObject.
 	*/
-	const InterfaceContainerType* AddToAllocatedObjects(UObject* Object)
+	FORCEINLINE const InterfaceContainerType* AddToAllocatedObjects(UObject* Object)
 	{
 		return AddToAllocatedObjects(nullptr, Object);
 	}
@@ -967,12 +967,10 @@ protected:
 	*
 	* @param Link
 	*/
-	void AddAllocatedLink(TCsDoubleLinkedList<InterfaceContainerType*>* Link)
+	FORCEINLINE void AddAllocatedLink(TCsDoubleLinkedList<InterfaceContainerType*>* Link)
 	{
 		if (AllocatedTail)
 		{
-			checkf(AllocatedHead, TEXT("%s::AddAllocatedLink: AllocatedHead is NULL when trying to add Link."), *Name);
-
 			Link->LinkAfter(AllocatedTail);
 			AllocatedTail = Link;
 		}
@@ -988,18 +986,17 @@ protected:
 	*
 	* @param Link
 	*/
-	void RemoveAllocatedLink(TCsDoubleLinkedList<InterfaceContainerType*>* Link)
+	FORCEINLINE void RemoveAllocatedLink(TCsDoubleLinkedList<InterfaceContainerType*>* Link)
 	{
 		// Check to Update HEAD
 		if (Link == AllocatedHead)
 		{
-			if (AllocatedObjectsSize > CS_SINGLETON)
+			AllocatedHead = Link->GetNextLink();
+
+			if (!AllocatedHead)
 			{
-				AllocatedHead = Link->Next();
-			}
-			else
-			{
-				AllocatedHead = nullptr;
+				checkf(Link == AllocatedTail, TEXT("%s::RemoveAllocatedLink: Link == AllocatedHead == AllocatedTail."), *Name);
+
 				AllocatedTail = nullptr;
 			}
 		}
@@ -1161,7 +1158,7 @@ public:
 	* return		Container holding a reference to a pooled object.
 	*				Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const InterfaceContainerType* FindSafeObject(const int32& Index)
+	FORCEINLINE const InterfaceContainerType* FindSafeObject(const int32& Index)
 	{
 		if (Index < 0 || Index >= PoolSize)
 			return nullptr;
@@ -1175,7 +1172,7 @@ public:
 	* return			Container holding a reference to a pooled object.
 	*					Pooled Object implements the interface: ICsPooledObject.
 	*/
-	const InterfaceContainerType* FindSafeObject(InterfaceType* Object)
+	FORCEINLINE const InterfaceContainerType* FindSafeObject(InterfaceType* Object)
 	{
 		if (!Object)
 			return nullptr;
@@ -1264,7 +1261,7 @@ public:
 
 			Current					  = Next;
 			InterfaceContainerType* O = **Current;
-			Next					  = Current->Next();
+			Next					  = Current->GetNextLink();
 
 			ICsPooledObjectCache* Cache = O->GetCache();
 
@@ -1282,6 +1279,9 @@ public:
 				LogTransaction_Impl.Execute(Context, ECsPoolTransaction::DeallocateByQueue, O);
 #endif // #if !UE_BUILD_SHIPPING
 				O->Deallocate();
+
+				checkf(!Cache->IsAllocated(), TEXT("%s: Failed to deallocate object."), *Context);
+
 				RemoveAllocatedLink(Current);
 
 				OnDeallocate_Event.Broadcast(O);
@@ -1305,6 +1305,9 @@ public:
 				LogTransaction_Impl.Execute(Context, ECsPoolTransaction::DeallocateByLifeTime, O);
 #endif // #if !UE_BUILD_SHIPPING
 				O->Deallocate();
+
+				checkf(!Cache->IsAllocated(), TEXT("%s: Failed to deallocate object."), *Context);
+
 				RemoveAllocatedLink(Current);
 
 				OnDeallocate_Event.Broadcast(O);
@@ -1444,7 +1447,7 @@ protected:
 		{
 			Current = Next;
 			O		= **Current;
-			Next	= Current->Next();
+			Next	= Current->GetNextLink();
 
 			if (NewSize < AllocatedObjectsSize)
 			{
@@ -1477,7 +1480,7 @@ protected:
 	* @param Object		Object to deallocate.
 	* return			Whether the Object was successfully deallocated or not.	
 	*/
-	bool Deallocate(InterfaceContainerType* Object)
+	FORCEINLINE bool Deallocate(InterfaceContainerType* Object)
 	{
 		return Deallocate(Object->GetCache()->GetIndex());
 	}
@@ -1521,7 +1524,7 @@ protected:
 		while (Next)
 		{
 			Current = Next;
-			Next	= Current->Next();
+			Next	= Current->GetNextLink();
 
 			Current->Unlink();
 		}
@@ -1634,7 +1637,7 @@ public:
 						and PayloadType.
 	*/
 	template<typename PayloadImplType>
-	PayloadImplType* AllocatePayload(const FString& Context)
+	FORCEINLINE PayloadImplType* AllocatePayload(const FString& Context)
 	{
 		return NCsInterfaceMap::StaticCastChecked<PayloadImplType, PayloadType>(Context, AllocatePayload());
 	}
@@ -1647,7 +1650,7 @@ public:
 				and PayloadType.
 	*/
 	template<typename PayloadImplType>
-	PayloadImplType* AllocatePayload()
+	FORCEINLINE PayloadImplType* AllocatePayload()
 	{
 		const FString& Context = FunctionNames[(uint8)ECsManagerPooledObjectFunctionNames::AllocatePayload];
 
@@ -1767,7 +1770,7 @@ public:
 	* @param Index
 	* return		Whether the Object was successfully "destroyed" / deallocated
 	*/
-	bool Destroy(const int32& Index)
+	FORCEINLINE bool Destroy(const int32& Index)
 	{
 		CS_SCOPED_TIMER(DestroyScopedTimerHandle);
 
@@ -1781,7 +1784,7 @@ public:
 	* @param Object
 	* return			Whether the Object was successfully "destroyed" / deallocated
 	*/
-	bool Destroy(const InterfaceContainerType* Object)
+	FORCEINLINE bool Destroy(const InterfaceContainerType* Object)
 	{
 		checkf(Object, TEXT("%s::Destroy: Object is NULL."), *Name);
 
@@ -1795,7 +1798,7 @@ public:
 	* @param Object
 	* return			Whether the Object was successfully "destroyed" / deallocated
 	*/
-	bool Destroy(InterfaceType* Object)
+	FORCEINLINE bool Destroy(InterfaceType* Object)
 	{
 		checkf(Object, TEXT("%s::Destroy: Object is NULL."), *Name);
 
@@ -1809,7 +1812,7 @@ public:
 	* @param Object
 	* return			Whether the Object was successfully "destroyed" / deallocated
 	*/
-	bool Destroy(UObject* Object)
+	FORCEINLINE bool Destroy(UObject* Object)
 	{
 		const InterfaceContainerType* O = FindObject(Object);
 		return Destroy(O);
@@ -1821,7 +1824,7 @@ public:
 	*
 	* return	If successful return the FIRST object in the allocated list was successfully "destroyed" / deallocated
 	*/
-	const InterfaceContainerType* DestroyHead()
+	FORCEINLINE const InterfaceContainerType* DestroyHead()
 	{
 		return DeallocateHead();
 	}

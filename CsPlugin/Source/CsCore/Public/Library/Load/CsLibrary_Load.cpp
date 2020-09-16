@@ -1303,8 +1303,12 @@ void UCsLibrary_Load::LoadSoftClassProperty(FSoftClassProperty* SoftClassPropert
 						// ICsData
 						if (ICsData* Data = Cast<ICsData>(*Internal))
 						{
+#if WITH_EDITOR
+							Data->Load(LoadFlags);
+#else
 							if (!Data->IsLoaded())
 								Data->Load(LoadFlags);
+#endif // #if WITH_EDITOR
 						}
 						else
 						{
@@ -1359,7 +1363,7 @@ void UCsLibrary_Load::LoadArraySoftClassProperty(FArrayProperty* ArrayProperty, 
 
 	if (FArrayProperty* InternalArrayProperty = FindFProperty<FArrayProperty>(Struct, *InternalMemberName))
 	{
-		if (FSoftObjectProperty* InternalSoftObjectProperty = CastField<FSoftObjectProperty>(InternalArrayProperty->Inner))
+		if (FObjectProperty* InternalSoftObjectProperty = CastField<FObjectProperty>(InternalArrayProperty->Inner))
 		{
 			FSoftClassProperty* SoftClassProperty = CastField<FSoftClassProperty>(ArrayProperty->Inner);
 
@@ -1391,8 +1395,12 @@ void UCsLibrary_Load::LoadArraySoftClassProperty(FArrayProperty* ArrayProperty, 
 							// ICsData
 							if (ICsData* Data = Cast<ICsData>(*InternalPtr))
 							{
+#if WITH_EDITOR
+								Data->Load(LoadFlags);
+#else
 								if (!Data->IsLoaded())
 									Data->Load(LoadFlags);
+#endif // #if WITH_EDITOR
 							}
 							else
 							{
@@ -1514,7 +1522,7 @@ void UCsLibrary_Load::LoadArraySoftObjectProperty(FArrayProperty* ArrayProperty,
 
 	if (FArrayProperty* InternalArrayProperty = FindFProperty<FArrayProperty>(Struct, *InternalMemberName))
 	{
-		if (FSoftObjectProperty* InternalSoftObjectProperty = CastField<FSoftObjectProperty>(InternalArrayProperty->Inner))
+		if (FObjectProperty* InternalSoftObjectProperty = CastField<FObjectProperty>(InternalArrayProperty->Inner))
 		{
 			FSoftObjectProperty* SoftObjectProperty = CastField<FSoftObjectProperty>(ArrayProperty->Inner);
 
@@ -1599,8 +1607,12 @@ void UCsLibrary_Load::LoadClassProperty(FClassProperty* ClassProperty, void* Str
 			// ICsData
 			if (ICsData* Data = Cast<ICsData>(DOb))
 			{
+#if WITH_EDITOR
+				Data->Load(LoadFlags);
+#else
 				if (!Data->IsLoaded())
 					Data->Load(LoadFlags);
+#endif // #if WITH_EDITOR
 			}
 		}
 	}
@@ -1624,8 +1636,12 @@ void UCsLibrary_Load::LoadArrayClassProperty(FArrayProperty* ArrayProperty, void
 			// ICsData
 			if (ICsData* Data = Cast<ICsData>(DOb))
 			{
+#if WITH_EDITOR
+				Data->Load(LoadFlags);
+#else
 				if (!Data->IsLoaded())
 					Data->Load(LoadFlags);
+#endif // #if WITH_EDITOR
 			}
 		}
 	}

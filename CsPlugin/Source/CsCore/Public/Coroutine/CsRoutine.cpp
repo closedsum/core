@@ -98,7 +98,7 @@ FCsRoutine::FCsRoutine()
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
 	Floats.AddDefaulted(CS_ROUTINE_FLOAT_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Int].AddDefaulted(Floats.Max());
+	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Float].AddDefaulted(Floats.Max());
 	
 	for (float& Float : Floats)
 	{
@@ -133,8 +133,8 @@ FCsRoutine::FCsRoutine()
 		// Rotator
 	Registers.AddDefaulted();
 	RegisterFlags.AddDefaulted();
-	Registers[(uint8)ECsRoutineRegisterValueType::Rotator].AddDefaulted(Rotators.Max());
 	Rotators.AddDefaulted(CS_ROUTINE_ROTATOR_SIZE);
+	Registers[(uint8)ECsRoutineRegisterValueType::Rotator].AddDefaulted(Rotators.Max());
 
 	for (FRotator& R : Rotators)
 	{

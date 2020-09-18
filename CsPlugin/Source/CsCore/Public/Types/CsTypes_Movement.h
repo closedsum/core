@@ -4,6 +4,42 @@
 #include "CsTypes_Movement.generated.h"
 #pragma once
 
+// SpeedFormat
+#pragma region
+
+/**
+*/
+UENUM(BlueprintType)
+enum class ECsSpeedFormat : uint8
+{
+	UUpS				UMETA(DisplayName = "Unreal Units per Second"),
+	MpH					UMETA(DisplayName = "Miles per Hour"),
+	KpH					UMETA(DisplayName = "Kilometers per Hour"),
+	ECsSpeedFormat_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsSpeedFormat final : public TCsEnumMap<ECsSpeedFormat>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSpeedFormat, ECsSpeedFormat)
+};
+
+namespace NCsSpeedFormat
+{
+	typedef ECsSpeedFormat Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type UUpS;
+		extern CSCORE_API const Type MpH;
+		extern CSCORE_API const Type KpH;
+		extern CSCORE_API const Type ECsSpeedFormat_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+}
+
+#pragma endregion SpeedFormat
+
 // 1 uu = ~ 0.00000621372 mi
 // 1 mi = 160934 uu
 // 1 sec = ~0.000277778 hr
@@ -88,7 +124,7 @@ enum class ECsSpeedInterpMethod : uint8
 		  so = Initial Speed
 		  a = Acceleration
 		  dt = Delta Time */
-	Acceleration				UMETA(DisplayName = "Delta"),
+	Acceleration				UMETA(DisplayName = "Acceleration"),
 	/** Using a Duration and Easing Type, determine the Speed. */
 	Easing						UMETA(DisplayName = "Easing"),
 	/** Using a Duration and Curve, determine the Speed. */
@@ -256,6 +292,7 @@ struct CSCORE_API FCsSpeedInterp
 		Direction(ECsSpeedInterpDirection::Increasing),
 		Easing(ECsEasingType::Linear),
 		Curve(nullptr),
+		Time(0.0f),
 		Acceleration()
 	{
 	}
@@ -281,13 +318,17 @@ struct CSCORE_API FCsSpeedInterpHelper
 {
 public:
 
+	bool bMinBound;
+
 	/** Usually the same as MinSpeedAsPercent.
 		[-1.0f, 1.0f] inclusive. */
 	float MinBound;
 
+	bool bMaxBound;
+
 	/** Usually 1.0f.
 		[-1.0f, 1.0f] inclusive. */
-	float MaxBound;
+	float MaxBound;;
 
 	/** Max Speed in UUpS (Unreal Units per Second). 
 		This is considered be a value of 1.9f on a normalized scale. */
@@ -327,7 +368,9 @@ public:
 	float CurrentAlpha;
 
 	FCsSpeedInterpHelper() :
+		bMinBound(true),
 		MinBound(0.0f),
+		bMaxBound(true),
 		MaxBound(1.0f),
 		MaxSpeed(0.0f),
 		MinSpeed(0.0f),
@@ -356,6 +399,8 @@ public:
 	* @param Percent Value [0.0f, 1.0f] Inclusive.
 	*/
 	void SetCurrentSpeedAsPercent(const float& Percent);
+
+	float GetCurrentSpeedAsPercent(const float& DeltaTime) const;
 
 	void Update(const float& DeltaTime);
 };

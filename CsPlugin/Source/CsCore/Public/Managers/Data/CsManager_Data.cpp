@@ -789,16 +789,6 @@ FSoftObjectPath UCsManager_Data::GetDataTableSoftObjectPath(const FName& EntryNa
 	return FSoftObjectPath();
 }
 
-FSoftObjectPath UCsManager_Data::GetDataTableSoftObjectPathChecked(const FString& Context, const FName& EntryName)
-{
-	checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
-
-	if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
-		return Entry->DataTable.ToSoftObjectPath();
-	checkf(0, TEXT("%s: Failed to find DataTable with EntryName: %s."), *Context, *(EntryName.ToString()));
-	return FSoftObjectPath();
-} 
-
 void UCsManager_Data::GetDataTableSoftObjectPaths(const FName& EntryName, TArray<FSoftObjectPath>& OutPaths)
 {
 	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableSoftObjectPaths: EntryName: None is NOT Valid."));
@@ -813,20 +803,6 @@ void UCsManager_Data::GetDataTableSoftObjectPaths(const FName& EntryName, TArray
 	}
 }
 
-void UCsManager_Data::GetDataTableSoftObjectPathsChecked(const FString& Context, const FName& EntryName, TArray<FSoftObjectPath>& OutPaths)
-{
-	checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
-
-	if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
-	{
-		OutPaths.Append(Entry->Paths.Internal);
-	}
-	else
-	{
-		checkf(0, TEXT("%s: Failed to find DataTable with EntryName: %s."), *Context, *(EntryName.ToString()));
-	}
-}
-
 int32 UCsManager_Data::GetDataTableSoftObjectPathCount(const FName& EntryName)
 {
 	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableSoftObjectPathCount: EntryName: None is NOT Valid."));
@@ -834,16 +810,6 @@ int32 UCsManager_Data::GetDataTableSoftObjectPathCount(const FName& EntryName)
 	if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
 		return Entry->Paths.Internal.Num();
 	UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableSoftObjectPathCount: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString()));
-	return 0;
-}
-
-int32 UCsManager_Data::GetDataTableSoftObjectPathCountChecked(const FString& Context, const FName& EntryName)
-{
-	checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
-
-	if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
-		return Entry->Paths.Internal.Num();
-	checkf(0, TEXT("%s: Failed to find DataTable with EntryName: %s."), *Context, *(EntryName.ToString()));
 	return 0;
 }
 
@@ -870,29 +836,6 @@ void UCsManager_Data::GetDataTableRowSoftObjectPaths(const FName& EntryName, con
 	}
 }
 
-void UCsManager_Data::GetDataTableRowSoftObjectPathsChecked(const FString& Context, const FName& EntryName, const FName& RowName, TArray<FSoftObjectPath>& OutPaths)
-{
-	checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
-
-	checkf(RowName != NAME_None, TEXT("%s: RowName: None is NOT Valid."), *Context);
-
-	if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
-	{
-		if (const FCsTArraySoftObjectPath* Paths = Entry->PathsByRowMap.Find(RowName))
-		{
-			OutPaths.Append(Paths->Internal);
-		}
-		else
-		{
-			checkf(0, TEXT("%s: DataTable with EntryName: %s does NOT have Row: %s as an entry."), *Context, *(EntryName.ToString()), *(RowName.ToString()));
-		}
-	}
-	else
-	{
-		checkf(0, TEXT("%s: Failed to find DataTable with EntryName: %s."), * Context, *(EntryName.ToString()));
-	}
-}
-
 int32 UCsManager_Data::GetDataTableRowSoftObjectPathCount(const FName& EntryName, const FName& RowName)
 {
 	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPathCount: EntryName: None is NOT Valid."));
@@ -913,30 +856,6 @@ int32 UCsManager_Data::GetDataTableRowSoftObjectPathCount(const FName& EntryName
 	else
 	{
 		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPathCount: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString()));
-	}
-	return 0;
-}
-
-int32 UCsManager_Data::GetDataTableRowSoftObjectPathCountChecked(const FString& Context, const FName& EntryName, const FName& RowName)
-{
-	checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
-
-	checkf(RowName != NAME_None, TEXT("%s: RowName: None is NOT Valid."), *Context);
-
-	if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
-	{
-		if (const FCsTArraySoftObjectPath* Paths = Entry->PathsByRowMap.Find(RowName))
-		{
-			return Paths->Internal.Num();
-		}
-		else
-		{
-			checkf(0, TEXT("%s: DataTable with EntryName: %s does NOT have Row: %s as an entry."), *Context, *(EntryName.ToString()), *(RowName.ToString()));
-		}
-	}
-	else
-	{
-		checkf(0, TEXT("%s: Failed to find DataTable with EntryName: %s."), *Context, *(EntryName.ToString()));
 	}
 	return 0;
 }

@@ -696,7 +696,15 @@ public:
 	* @param EntryName
 	* return
 	*/
-	FSoftObjectPath GetDataTableSoftObjectPathChecked(const FString& Context, const FName& EntryName);
+	FORCEINLINE FSoftObjectPath GetDataTableSoftObjectPathChecked(const FString& Context, const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+			return Entry->DataTable.ToSoftObjectPath();
+		checkf(0, TEXT("%s: Failed to find DataTable with EntryName: %s."), *Context, *(EntryName.ToString()));
+		return FSoftObjectPath();
+	}
 
 	/**
 	*
@@ -713,7 +721,19 @@ public:
 	* @param EntryName
 	* @param OutPaths
 	*/
-	void GetDataTableSoftObjectPathsChecked(const FString& Context, const FName& EntryName, TArray<FSoftObjectPath>& OutPaths);
+	FORCEINLINE void GetDataTableSoftObjectPathsChecked(const FString& Context, const FName& EntryName, TArray<FSoftObjectPath>& OutPaths)
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+		{
+			OutPaths.Append(Entry->Paths.Internal);
+		}
+		else
+		{
+			checkf(0, TEXT("%s: Failed to find DataTable with EntryName: %s."), *Context, *(EntryName.ToString()));
+		}
+	}
 
 	/**
 	*
@@ -732,7 +752,15 @@ public:
 	* return			Number of SoftObjectPaths for the DataTable.
 	*					0 for an invalid EntryName.
 	*/
-	int32 GetDataTableSoftObjectPathCountChecked(const FString& Context, const FName& EntryName);
+	FORCEINLINE int32 GetDataTableSoftObjectPathCountChecked(const FString& Context, const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+			return Entry->Paths.Internal.Num();
+		checkf(0, TEXT("%s: Failed to find DataTable with EntryName: %s."), *Context, *(EntryName.ToString()));
+		return 0;
+	}
 
 	/**
 	*
@@ -751,7 +779,28 @@ public:
 	* @param RowName
 	* @param OutPaths
 	*/
-	void GetDataTableRowSoftObjectPathsChecked(const FString& Context, const FName& EntryName, const FName& RowName, TArray<FSoftObjectPath>& OutPaths);
+	FORCEINLINE void GetDataTableRowSoftObjectPathsChecked(const FString& Context, const FName& EntryName, const FName& RowName, TArray<FSoftObjectPath>& OutPaths)
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+		checkf(RowName != NAME_None, TEXT("%s: RowName: None is NOT Valid."), *Context);
+
+		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+		{
+			if (const FCsTArraySoftObjectPath* Paths = Entry->PathsByRowMap.Find(RowName))
+			{
+				OutPaths.Append(Paths->Internal);
+			}
+			else
+			{
+				checkf(0, TEXT("%s: DataTable with EntryName: %s does NOT have Row: %s as an entry."), *Context, *(EntryName.ToString()), *(RowName.ToString()));
+			}
+		}
+		else
+		{
+			checkf(0, TEXT("%s: Failed to find DataTable with EntryName: %s."), *Context, *(EntryName.ToString()));
+		}
+	}
 
 	/**
 	*
@@ -772,7 +821,29 @@ public:
 	* return			Number of SoftObjectPaths for the DataTable.
 	*					0 for an invalid EntryName or RowName
 	*/
-	int32 GetDataTableRowSoftObjectPathCountChecked(const FString& Context, const FName& EntryName, const FName& RowName);
+	FORCEINLINE int32 GetDataTableRowSoftObjectPathCountChecked(const FString& Context, const FName& EntryName, const FName& RowName)
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+		checkf(RowName != NAME_None, TEXT("%s: RowName: None is NOT Valid."), *Context);
+
+		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+		{
+			if (const FCsTArraySoftObjectPath* Paths = Entry->PathsByRowMap.Find(RowName))
+			{
+				return Paths->Internal.Num();
+			}
+			else
+			{
+				checkf(0, TEXT("%s: DataTable with EntryName: %s does NOT have Row: %s as an entry."), *Context, *(EntryName.ToString()), *(RowName.ToString()));
+			}
+		}
+		else
+		{
+			checkf(0, TEXT("%s: Failed to find DataTable with EntryName: %s."), *Context, *(EntryName.ToString()));
+		}
+		return 0;
+	}
 
 #pragma endregion SoftObjectPath
 

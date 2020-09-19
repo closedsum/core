@@ -69,6 +69,8 @@ public:
 #pragma region
 public:
 
+	void OnObjectSaved_Update_DataRootSet_Datas(UDataTable* DataTable);
+
 	void OnObjectSaved_Update_DataRootSet_DataTables(UDataTable* DataTable);
 
 	void OnObjectSaved_Update_DataRootSet_Payloads(UDataTable* DataTable);

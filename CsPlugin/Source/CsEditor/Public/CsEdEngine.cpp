@@ -130,6 +130,17 @@ void UCsEdEngine::OnObjectSaved(UObject* Object)
 				const FCsDataRootSet& DataRootSet = GetDataRootSet->GetCsDataRootSet();
 
 				// Datas
+				if (DataTable == DataRootSet.Datas)
+				{
+					if (FCsDataEntry_Data::StaticStruct() == DataTable->GetRowStruct())
+					{
+						OnObjectSaved_Update_DataRootSet_Datas(DataTable);
+					}
+					else
+					{
+						UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s DataTables: %s RowStruct: %s != FCsDataEntry_Data."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+					}
+				}
 				// DataTables
 				if (DataTable == DataRootSet.DataTables)
 				{
@@ -235,6 +246,24 @@ void UCsEdEngine::MarkDatasDirty(const FECsAssetType& AssetType)
 
 // DataRootSet
 #pragma region
+
+void UCsEdEngine::OnObjectSaved_Update_DataRootSet_Datas(UDataTable* DataTable)
+{
+	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+
+	for (const TPair<FName, uint8*>& Pair : RowMap)
+	{
+		const FName& RowName	  = Pair.Key;
+		FCsDataEntry_Data* RowPtr = reinterpret_cast<FCsDataEntry_Data*>(Pair.Value);
+
+		if (RowPtr->bPopulateOnSave)
+		{
+			RowPtr->Populate();
+
+			RowPtr->bPopulateOnSave = false;
+		}
+	}
+}
 
 void UCsEdEngine::OnObjectSaved_Update_DataRootSet_DataTables(UDataTable* DataTable)
 {

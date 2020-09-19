@@ -1107,6 +1107,9 @@ public:
 	UPROPERTY()
 	int32 Index;
 
+	UPROPERTY(BlueprintReadOnly)
+	FName Name;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bPopulateOnSave;
 
@@ -1127,6 +1130,7 @@ public:
 
 	FCsDataEntry_Data() :
 		Index(INDEX_NONE),
+		Name(NAME_None),
 		bPopulateOnSave(false),
 		Data(),
 		Data_Internal(nullptr),
@@ -1137,6 +1141,7 @@ public:
 
 	FORCEINLINE FCsDataEntry_Data& operator=(const FCsDataEntry_Data& B)
 	{
+		Name = B.Name;
 		bPopulateOnSave = B.bPopulateOnSave;
 		Data = B.Data;
 		Data_Internal = B.Data_Internal;
@@ -1165,7 +1170,20 @@ public:
 
 	FORCEINLINE UObject* Get() { return Data_Internal; }
 
+	template<typename T>
+	FORCEINLINE T* Get(){ return Cast<T>(Get()); }
+
 	FORCEINLINE UClass* GetClass() { return Data_Class; }
+
+#if WITH_EDITOR
+
+	/**
+	* Get all ObjectPaths and Resource Sizes (Memory Size) from Data and
+	*  store that in Paths.
+	*/
+	void Populate();
+
+#endif // #if WITH_EDITOR
 };
 
 #pragma endregion FCsPayload_Data

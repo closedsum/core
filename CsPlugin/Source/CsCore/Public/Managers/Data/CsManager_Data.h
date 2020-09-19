@@ -125,15 +125,24 @@ protected:
 
 	FCsManager_DataEntry_Data Manager_DataEntry_Data;
 
+	/** <EntryName, Entry> */
 	TMap<FName, FCsDataEntry_Data*> DataEntryMap;
+	/** <Path, Entry> */
 	TMap<FSoftObjectPath, FCsDataEntry_Data*> DataEntryByPathMap;
 
+	/** <EntryName, Entry> */
 	TMap<FName, FCsDataEntry_Data*> DataEntryMap_Added;
 
+	// Loaded
+
+	/** <EntryName, Entry> */
 	TMap<FName, FCsDataEntry_Data*> DataEntryMap_Loaded;
+	/** <Path, Entry> */
 	TMap<FSoftObjectPath, FCsDataEntry_Data*> DataEntryByPathMap_Loaded;
 
+	/** <EntryName, Data> */
 	TMap<FName, ICsData*> DataMap_Loaded;
+	/** <Path, Data> */
 	TMap<FSoftObjectPath, ICsData*> DataByPathMap_Loaded;
 
 #pragma endregion Data
@@ -223,6 +232,37 @@ public:
 #pragma region
 public:
 
+	// Data
+#pragma region
+public:
+
+	/**
+	*
+	*
+	* @param EntryName
+	* return			
+	*/
+	ICsData* LoadData(const FName& EntryName);
+
+	ICsData* LoadData(const FSoftObjectPath& Path);
+
+	/**
+	*
+	*
+	* @param EntryName
+	* return
+	*/
+	FORCEINLINE bool IsLoadedData(const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::IsLoadedData: EntryName is None."));
+
+		if (ICsData* Data = GetData(EntryName))
+			return true;
+		return false;
+	}
+
+#pragma endregion Data
+
 	// DataTable
 #pragma region
 public:
@@ -308,6 +348,78 @@ private:
 #pragma region
 public:
 
+	// Data
+#pragma region
+public:
+
+	/**
+	*
+	*
+	* @param EntryName
+	* return			Data
+	*/
+	FORCEINLINE ICsData* GetData(const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetData: EntryName: None is NOT Valid."));
+
+		if (ICsData** DataPtr = DataMap_Loaded.Find(EntryName))
+			return *DataPtr;
+		return nullptr;
+	}
+
+	/**
+	*
+	*
+	* @param Context
+	* @param EntryName
+	* return			
+	*/
+	FORCEINLINE ICsData* GetDataChecked(const FString& Context, const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName is None."), *Context);
+
+		if (ICsData** DataPtr = DataMap_Loaded.Find(EntryName))
+			return *DataPtr;
+
+		checkf(0, TEXT("%s: Failed to find Data with EntryName: %s."), *Context, *(EntryName.ToString()));
+		return nullptr;
+	}
+
+	/**
+	*
+	*
+	* @param Path
+	* return		Data
+	*/
+	FORCEINLINE ICsData* GetData(const FSoftObjectPath& Path)
+	{
+		checkf(Path.IsValid(), TEXT("UCsManager_Data::GetData: Path is NOT Valid."));
+
+		if (ICsData** DataPtr = DataByPathMap_Loaded.Find(Path))
+			return *DataPtr;
+		return nullptr;
+	}
+
+	/**
+	*
+	*
+	* @param Context
+	* @param EntryName
+	* return
+	*/
+	FORCEINLINE ICsData* GetDataChecked(const FString& Context, const FSoftObjectPath& Path)
+	{
+		checkf(Path.IsValid(), TEXT("%s: Path is NOT Valid."), *Context);
+
+		if (ICsData** DataPtr = DataByPathMap_Loaded.Find(Path))
+			return *DataPtr;
+
+		checkf(0, TEXT("%s: Failed to find Data at Path: %s."), *Context, *(Path.ToString()));
+		return nullptr;
+	}
+
+#pragma endregion Data
+
 	// DataTable
 #pragma region
 public:
@@ -319,7 +431,14 @@ public:
 	* @param EntryName	Row Name in the master DataTable list.
 	* return			DataTable
 	*/
-	UDataTable* GetDataTable(const FName& EntryName);
+	FORCEINLINE UDataTable* GetDataTable(const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTable: EntryName: None is NOT Valid."));
+
+		if (UDataTable** TablePtr = DataTableMap_Loaded.Find(EntryName))
+			return *TablePtr;
+		return nullptr;
+	}
 
 	/**
 	* Get a DataTable by the DataTable's Entry Name
@@ -330,7 +449,16 @@ public:
 	* @param EntryName	Row Name in the master DataTable list.
 	* return			DataTable
 	*/
-	UDataTable* GetDataTableChecked(const FString& Context, const FName& EntryName);
+	FORCEINLINE UDataTable* GetDataTableChecked(const FString& Context, const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName is None."), *Context);
+
+		if (UDataTable** TablePtr = DataTableMap_Loaded.Find(EntryName))
+			return *TablePtr;
+
+		checkf(0, TEXT("%s: Failed to find DataTable with EntryName: %s."), *Context, *(EntryName.ToString()));
+		return nullptr;
+	}
 
 	/**
 	* Get a DataTable by SoftObjectPath. 
@@ -338,7 +466,14 @@ public:
 	* @param Path	Soft path to a data table.
 	* return		DataTable
 	*/
-	UDataTable* GetDataTable(const FSoftObjectPath& Path);
+	FORCEINLINE UDataTable* GetDataTable(const FSoftObjectPath& Path)
+	{
+		checkf(Path.IsValid(), TEXT("UCsManager_Data::GetDataTable: Path is NOT Valid."));
+
+		if (UDataTable** TablePtr = DataTableByPathMap_Loaded.Find(Path))
+			return *TablePtr;
+		return nullptr;
+	}
 
 	/**
 	* Get a DataTable by SoftObjectPath.
@@ -348,7 +483,16 @@ public:
 	* @param Path		Soft path to a data table.
 	* return			DataTable
 	*/
-	UDataTable* GetDataTableChecked(const FString& Context, const FSoftObjectPath& Path);
+	FORCEINLINE UDataTable* GetDataTableChecked(const FString& Context, const FSoftObjectPath& Path)
+	{
+		checkf(Path.IsValid(), TEXT("%s: Path is NOT Valid."), *Context);
+
+		if (UDataTable** TablePtr = DataTableByPathMap_Loaded.Find(Path))
+			return *TablePtr;
+
+		checkf(0, TEXT("%s: Failed to find DataTable @ %s."), *(Path.ToString()));
+		return nullptr;
+	}
 
 	/**
 	* Get a DataTable by SoftObjectPtr.
@@ -356,7 +500,10 @@ public:
 	* @param SoftObject
 	* return				DataTable
 	*/
-	UDataTable* GetDataTable(const TSoftObjectPtr<UDataTable>& SoftObject);
+	FORCEINLINE UDataTable* GetDataTable(const TSoftObjectPtr<UDataTable>& SoftObject)
+	{
+		return GetDataTable(SoftObject.ToSoftObjectPath());
+	}
 
 	/**
 	* Get a DataTable by SoftObjectPtr.
@@ -366,7 +513,10 @@ public:
 	* @param SoftObject
 	* return				DataTable
 	*/
-	UDataTable* GetDataTableChecked(const FString& Context, const TSoftObjectPtr<UDataTable>& SoftObject);
+	FORCEINLINE UDataTable* GetDataTableChecked(const FString& Context, const TSoftObjectPtr<UDataTable>& SoftObject)
+	{
+		return GetDataTableChecked(Context, SoftObject.ToSoftObjectPath());
+	}
 
 	/**
 	* Get a pointer to the row in a data table by the data table's Entry Name
@@ -376,7 +526,21 @@ public:
 	* @param RowName	Row Name in the retrieved data table.
 	* return			Pointer to the row.
 	*/
-	uint8* GetDataTableRow(const FName& EntryName, const FName& RowName);
+	FORCEINLINE uint8* GetDataTableRow(const FName& EntryName, const FName& RowName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableRow: EntryName: None is NOT Valid."));
+
+		checkf(RowName != NAME_None, TEXT("UCsManager_Data::GetDataTableRow: RowName: None is NOT Valid."));
+
+		if (TMap<FName, uint8*>* RowMapPtr = DataTableRowMap_Loaded.Find(EntryName))
+		{
+			if (uint8** RowPtr = RowMapPtr->Find(RowName))
+			{
+				return *RowPtr;
+			}
+		}
+		return nullptr;
+	}
 
 	/**
 	* Get a pointer to the row in a data table by the data table's Entry Name
@@ -388,10 +552,26 @@ public:
 	* @param RowName	Row Name in the retrieved data table.
 	* return			Pointer to the row.
 	*/
-	uint8* GetDataTableRowChecked(const FString& Context, const FName& EntryName, const FName& RowName);
+	FORCEINLINE uint8* GetDataTableRowChecked(const FString& Context, const FName& EntryName, const FName& RowName)
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+		checkf(RowName != NAME_None, TEXT("%s: RowName: None is NOT Valid."), *Context);
+
+		if (TMap<FName, uint8*>* RowMapPtr = DataTableRowMap_Loaded.Find(EntryName))
+		{
+			if (uint8** RowPtr = RowMapPtr->Find(RowName))
+			{
+				return *RowPtr;
+			}
+			checkf(0, TEXT("%s: Failed to find Row with RowName: %s from DataTable with EntryName: %s."), *Context, *(RowName.ToString()), *(EntryName.ToString()));
+		}
+		checkf(0, TEXT("%s: Failed to find DataTable with EntryName: %s."), *Context, *(EntryName.ToString()));
+		return nullptr;
+	}
 
 	template<typename RowStructType>
-	RowStructType* GetDataTableRow(const FName& EntryName, const FName& RowName)
+	FORCEINLINE RowStructType* GetDataTableRow(const FName& EntryName, const FName& RowName)
 	{
 		return reinterpret_cast<RowStructType*>(GetDataTableRow(EntryName, RowName));
 	}
@@ -404,7 +584,21 @@ public:
 	* @param RowName	Row Name in the retrieved data table.
 	* return			Pointer to the row.
 	*/
-	uint8* GetDataTableRow(const FSoftObjectPath& Path, const FName& RowName);
+	FORCEINLINE uint8* GetDataTableRow(const FSoftObjectPath& Path, const FName& RowName)
+	{
+		checkf(Path.IsValid(), TEXT("UCsManager_Data::GetDataTableRow: Path is NOT Valid."));
+
+		checkf(RowName != NAME_None, TEXT("UCsManager_Data::GetDataTableRow: RowName: None is NOT Valid."));
+
+		if (TMap<FName, uint8*>* RowMapPtr = DataTableRowByPathMap_Loaded.Find(Path))
+		{
+			if (uint8** RowPtr = RowMapPtr->Find(RowName))
+			{
+				return *RowPtr;
+			}
+		}
+		return nullptr;
+	}
 
 	/**
 	* Get a pointer to the row in a data table by the data table's Path
@@ -416,7 +610,23 @@ public:
 	* @param RowName	Row Name in the retrieved data table.
 	* return			Pointer to the row.
 	*/
-	uint8* GetDataTableRowChecked(const FString& Context, const FSoftObjectPath& Path, const FName& RowName);
+	FORCEINLINE uint8* GetDataTableRowChecked(const FString& Context, const FSoftObjectPath& Path, const FName& RowName)
+	{
+		checkf(Path.IsValid(), TEXT("%s: Path is NOT Valid."), *Context);
+
+		checkf(RowName != NAME_None, TEXT("%s: RowName: None is NOT Valid."), *Context);
+
+		if (TMap<FName, uint8*>* RowMapPtr = DataTableRowByPathMap_Loaded.Find(Path))
+		{
+			if (uint8** RowPtr = RowMapPtr->Find(RowName))
+			{
+				return *RowPtr;
+			}
+			checkf(0, TEXT("%s: Failed to find Row with RowName: %s from DataTable @ Path: %s."), *Context, *(RowName.ToString()), *(Path.ToString()));
+		}
+		checkf(0, TEXT("%s: Failed to find DataTable with Path: %s."), *Context, *(Path.ToString()));
+		return nullptr;
+	}
 
 	/**
 	* Get a pointer to the row in a data table by the data table's Soft Object
@@ -426,7 +636,10 @@ public:
 	* @param RowName	Row Name is retrieved data table.
 	* return			Pointer to the row.
 	*/
-	uint8* GetDataTableRow(const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName);
+	FORCEINLINE uint8* GetDataTableRow(const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName)
+	{
+		return GetDataTableRow(SoftObject.ToSoftObjectPath(), RowName);
+	}
 
 	/**
 	* Get a pointer to the row in a data table by the data table's Soft Object
@@ -438,7 +651,10 @@ public:
 	* @param RowName	Row Name is retrieved data table.
 	* return			Pointer to the row.
 	*/
-	uint8* GetDataTableRowChecked(const FString& Context, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName);
+	FORCEINLINE uint8* GetDataTableRowChecked(const FString& Context, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName)
+	{
+		return GetDataTableRowChecked(Context, SoftObject.ToSoftObjectPath(), RowName);
+	}
 
 		// Entry
 #pragma region
@@ -450,7 +666,14 @@ public:
 	* @param TableName
 	* return
 	*/
-	const FCsDataEntry_DataTable* GetDataTableEntry(const FName& EntryName);
+	FORCEINLINE const FCsDataEntry_DataTable* GetDataTableEntry(const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableEntry: EntryName: None is NOT Valid."));
+
+		if (FCsDataEntry_DataTable** EntryPtr = DataTableEntryMap.Find(EntryName))
+			return *EntryPtr;
+		return nullptr;
+	}
 
 #pragma endregion Entry
 

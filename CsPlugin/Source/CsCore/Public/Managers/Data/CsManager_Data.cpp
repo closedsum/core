@@ -11,6 +11,7 @@
 #include "Settings/CsDeveloperSettings.h"
 // Data
 #include "Data/CsGetDataRootSet.h"
+#include "Data/CsData.h"
 // Managers
 #include "Managers/Load/CsManager_Load.h"
 
@@ -457,6 +458,75 @@ void UCsManager_Data::GenerateMaps()
 // Load
 #pragma region
 
+	// Data
+#pragma region
+
+ICsData* UCsManager_Data::LoadData(const FName& EntryName)
+{
+	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::LoadData: EntryName is None."));
+
+	if (ICsData* Data = GetData(EntryName))
+		return Data;
+
+	if (FCsDataEntry_Data** EntryPtr = DataEntryMap.Find(EntryName))
+	{
+		FCsDataEntry_Data* Entry = *EntryPtr;
+	
+		checkf(Entry->Name == EntryName, TEXT("UCsManager_Data::LoadData: Mismatch between Entry->Name != EntryName (%s != %s)."), *(Entry->Name.ToString()), *(EntryName.ToString()));
+
+		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_Data::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
+
+		UObject* O = Entry->Get();
+
+		checkf(O, TEXT("UCsManager_Data::LoadData: Failed to load Data @ Entry: %s."), *(EntryName.ToString()));
+		
+		ICsData* Data = Cast<ICsData>(O);
+
+		checkf(Data, TEXT("UCsManager_Data::LoadData: Object: %s with Class: %s does NOT implement interface: ICsData."), *(O->GetName()), *(O->GetClass()->GetName()));
+
+		DataMap_Loaded.FindOrAdd(EntryName) = Data;
+		DataByPathMap_Loaded.FindOrAdd(Entry->Data.ToSoftObjectPath()) = Data;
+
+		return Entry->Get<ICsData>();
+	}
+	checkf(0, TEXT("UCsManager_Data::LoadData: Failed to find Data @ Entry: %s."), *(EntryName.ToString()));
+	return nullptr;
+}
+
+ICsData* UCsManager_Data::LoadData(const FSoftObjectPath& Path)
+{
+	checkf(Path.IsValid(), TEXT("UCsManager_Data::LoadData: Path is NOT Valid."));
+
+	if (ICsData* Data = GetData(Path))
+		return Data;
+
+	if (FCsDataEntry_Data** EntryPtr = DataEntryByPathMap.Find(Path))
+	{
+		FCsDataEntry_Data* Entry = *EntryPtr;
+
+		checkf(Entry->Data.ToSoftObjectPath() == Path, TEXT("UCsManager_Data::LoadData: Mismatch between Entry's Path != Path (%s != %s)."), *(Entry->Data.ToSoftObjectPath().ToString()), *(Path.ToString()));
+
+		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_DataTable::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
+
+		UObject* O = Entry->Get();
+
+		checkf(O, TEXT("UCsManager_Data::LoadData: Failed to load Data @ Entry: %s."), *(Path.ToString()));
+
+		ICsData* Data = Cast<ICsData>(O);
+
+		checkf(Data, TEXT("UCsManager_Data::LoadData: Object: %s with Class: %s does NOT implement interface: ICsData."), *(O->GetName()), *(O->GetClass()->GetName()));
+
+		DataMap_Loaded.FindOrAdd(Entry->Name) = Data;
+		DataByPathMap_Loaded.FindOrAdd(Path) = Data;
+
+		return Entry->Get<ICsData>();
+	}
+	checkf(0, TEXT("UCsManager_Data::LoadData: Failed to find Data @ Path: %s."), *(Path.ToString()));
+	return nullptr;
+}
+
+#pragma endregion Data
+
 	// DataTable
 #pragma region
 
@@ -703,152 +773,9 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHand
 // Get
 #pragma region
 
+
 	// DataTable
 #pragma region
-
-UDataTable* UCsManager_Data::GetDataTable(const FName& EntryName)
-{
-	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTable: EntryName: None is NOT Valid."));
-
-	if (UDataTable** TablePtr = DataTableMap_Loaded.Find(EntryName))
-		return *TablePtr;
-	return nullptr;
-}
-
-UDataTable* UCsManager_Data::GetDataTableChecked(const FString& Context, const FName& EntryName)
-{
-	checkf(EntryName != NAME_None, TEXT("%s: EntryName is None."));
-
-	if (UDataTable** TablePtr = DataTableMap_Loaded.Find(EntryName))
-		return *TablePtr;
-
-	checkf(0, TEXT("%s: Failed to find DataTable with EntryName; %s."), *Context, *(EntryName.ToString()));
-	return nullptr;
-}
-
-
-UDataTable* UCsManager_Data::GetDataTable(const FSoftObjectPath& Path)
-{
-	checkf(Path.IsValid(), TEXT("UCsManager_Data::GetDataTable: Path is NOT Valid."));
-
-	if (UDataTable** TablePtr = DataTableByPathMap_Loaded.Find(Path))
-		return *TablePtr;
-	return nullptr;
-}
-
-UDataTable* UCsManager_Data::GetDataTableChecked(const FString& Context, const FSoftObjectPath& Path)
-{
-	checkf(Path.IsValid(), TEXT("%s: Path is NOT Valid."), *Context);
-
-	if (UDataTable** TablePtr = DataTableByPathMap_Loaded.Find(Path))
-		return *TablePtr;
-
-	checkf(0, TEXT("%s: Failed to find DataTable @ %s."), *(Path.ToString()));
-	return nullptr;
-}
-
-UDataTable* UCsManager_Data::GetDataTable(const TSoftObjectPtr<UDataTable>& SoftObject)
-{
-	return GetDataTable(SoftObject.ToSoftObjectPath());
-}
-
-UDataTable* UCsManager_Data::GetDataTableChecked(const FString& Context, const TSoftObjectPtr<UDataTable>& SoftObject)
-{
-	return GetDataTableChecked(Context, SoftObject.ToSoftObjectPath());
-}
-
-uint8* UCsManager_Data::GetDataTableRow(const FName& EntryName, const FName& RowName)
-{
-	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableRow: EntryName: None is NOT Valid."));
-
-	checkf(RowName != NAME_None, TEXT("UCsManager_Data::GetDataTableRow: RowName: None is NOT Valid."));
-
-	if (TMap<FName, uint8*>* RowMapPtr = DataTableRowMap_Loaded.Find(EntryName))
-	{
-		if (uint8** RowPtr = RowMapPtr->Find(RowName))
-		{
-			return *RowPtr;
-		}
-	}
-	return nullptr;
-}
-
-uint8* UCsManager_Data::GetDataTableRowChecked(const FString& Context, const FName& EntryName, const FName& RowName)
-{
-	checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
-
-	checkf(RowName != NAME_None, TEXT("%s: RowName: None is NOT Valid."), *Context);
-
-	if (TMap<FName, uint8*>* RowMapPtr = DataTableRowMap_Loaded.Find(EntryName))
-	{
-		if (uint8** RowPtr = RowMapPtr->Find(RowName))
-		{
-			return *RowPtr;
-		}
-		checkf(0, TEXT("%s: Failed to find Row with RowName: %s from DataTable with EntryName: %s."), *Context, *(RowName.ToString()), *(EntryName.ToString()));
-	}
-	checkf(0, TEXT("%s: Failed to find DataTable with EntryName: %s."), *Context, *(EntryName.ToString()));
-	return nullptr;
-}
-
-uint8* UCsManager_Data::GetDataTableRow(const FSoftObjectPath& Path, const FName& RowName)
-{
-	checkf(Path.IsValid(), TEXT("UCsManager_Data::GetDataTableRow: Path is NOT Valid."));
-
-	checkf(RowName != NAME_None, TEXT("UCsManager_Data::GetDataTableRow: RowName: None is NOT Valid."));
-
-	if (TMap<FName, uint8*>* RowMapPtr = DataTableRowByPathMap_Loaded.Find(Path))
-	{
-		if (uint8** RowPtr = RowMapPtr->Find(RowName))
-		{
-			return *RowPtr;
-		}
-	}
-	return nullptr;
-}
-
-uint8* UCsManager_Data::GetDataTableRowChecked(const FString& Context, const FSoftObjectPath& Path, const FName& RowName)
-{
-	checkf(Path.IsValid(), TEXT("%s: Path is NOT Valid."), *Context);
-
-	checkf(RowName != NAME_None, TEXT("%s: RowName: None is NOT Valid."), *Context);
-
-	if (TMap<FName, uint8*>* RowMapPtr = DataTableRowByPathMap_Loaded.Find(Path))
-	{
-		if (uint8** RowPtr = RowMapPtr->Find(RowName))
-		{
-			return *RowPtr;
-		}
-		checkf(0, TEXT("%s: Failed to find Row with RowName: %s from DataTable @ Path: %s."), *Context, *(RowName.ToString()), *(Path.ToString()));
-	}
-	checkf(0, TEXT("%s: Failed to find DataTable with Path: %s."), *Context, *(Path.ToString()));
-	return nullptr;
-}
-
-uint8* UCsManager_Data::GetDataTableRow(const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName)
-{
-	return GetDataTableRow(SoftObject.ToSoftObjectPath(), RowName);
-}
-
-uint8* UCsManager_Data::GetDataTableRowChecked(const FString& Context, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName)
-{
-	return GetDataTableRowChecked(Context, SoftObject.ToSoftObjectPath(), RowName);
-}
-
-		// Entry
-#pragma region
-
-const FCsDataEntry_DataTable* UCsManager_Data::GetDataTableEntry(const FName& EntryName)
-{
-	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableEntry: EntryName: None is NOT Valid."));
-
-	if (FCsDataEntry_DataTable** EntryPtr = DataTableEntryMap.Find(EntryName))
-		return *EntryPtr;
-	return nullptr;
-}
-
-#pragma endregion Entry
-
 		// SoftObjectPath
 #pragma region
 

@@ -468,6 +468,111 @@ void FCsPayload::Append(const TMap<FName, FCsPayload>& PayloadMap)
 // DataEntry
 #pragma region
 
+	// FCsDataEntry_Data
+#pragma region
+
+#if WITH_EDITOR
+
+void FCsDataEntry_Data::Populate()
+{
+	Paths.Reset();
+
+	if (!Data.ToSoftObjectPath().IsValid())
+		return;
+
+	UClass* Class = Data.LoadSynchronous();
+
+	if (!Class)
+	{
+		UE_LOG(LogCs, Warning, TEXT("FCsDataEntry_Data::Populate: Failed to load Data at Path: %s"), *(Data.ToString()));
+		return;
+	}
+
+	UObject* DOb = Class->GetDefaultObject();
+
+	// Add Data Path
+	FSoftObjectPath DataPath = Data.ToSoftObjectPath();
+	{
+		FSoftObjectPath Path = DataPath;
+
+		FCsSoftObjectPath TempPath;
+		TempPath.Path = Path;
+
+		FSetElementId Id = Paths.Set.Add(TempPath);
+		FCsSoftObjectPath& PathAtId = Paths.Set[Id];
+
+		PathAtId.Path = Path;
+		int32 Size = DOb->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
+		PathAtId.Size.SetBytes(Size);
+
+		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+		{
+			UE_LOG(LogCs, Warning, TEXT("- Adding Path: %s [%s]."), *(Path.ToString()), *(PathAtId.Size.ToString()));
+		}
+	}
+
+	// Get Paths for anything Data references
+	FCsLibraryLoad_GetObjectPaths Result;
+	
+	UCsLibrary_Load::GetObjectPaths(DOb, Class, Result);
+
+	FCsResourceSize Size;
+	int32 I = 0;
+
+	for (const FSoftObjectPath& Path : Result.Paths)
+	{
+		// Load Object and get the Resource Size
+		UObject* Object = Path.TryLoad();
+
+		int32 Bytes = 0;
+
+		if (Object)
+		{
+			Bytes = Object->GetResourceSizeBytes(EResourceSizeMode::Exclusive);
+		}
+		else
+		{
+			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+			{
+				UE_LOG(LogCs, Warning, TEXT("--- Failed to load Path: %s @ %s."), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
+			}
+			continue;
+		}
+
+		// Update the Paths
+		FCsSoftObjectPath TempPath;
+		TempPath.Path = Path;
+
+		// Cumulative
+		FSetElementId Id = Paths.Set.Add(TempPath);
+		FCsSoftObjectPath& PathAtId = Paths.Set[Id];
+
+		PathAtId.Path = Path;
+
+		PathAtId.Size.SetBytes(Bytes);
+
+		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+		{
+			UE_LOG(LogCs, Warning, TEXT("---- [%d] [%s] %s @ %s."), I, *(PathAtId.Size.ToString()), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
+		}
+
+		Size += PathAtId.Size;
+		++I;
+	}
+
+	// Update internal structures for fast search / look up
+	Paths.BuildFromSet();
+
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+	{
+		UE_LOG(LogCs, Warning, TEXT("- Summary: Populated %d Paths [%s]."), Paths.Internal.Num(), *(Paths.Size.ToString()));
+	}
+}
+
+#endif // WITH_EDITOR
+
+#pragma endregion FCsDataEntry_Data
+
 	// FCsDataEntry_DataTable
 #pragma region
 

@@ -292,3 +292,6 @@ public:
 
 #define CS_ADD_TO_ENUM_MAP(EnumMap, EnumElementName) const Type EnumElementName = EnumMap::Get().Add(Type::EnumElementName, #EnumElementName)
 #define CS_ADD_TO_ENUM_MAP_CUSTOM(EnumMap, EnumElementName, DisplayName) const Type EnumElementName = EnumMap::Get().Add(Type::EnumElementName, #EnumElementName, TEXT(DisplayName))
+
+
+#define CS_NESTED_ENUM_ADD_TO_ENUM_MAP(Class, Namespace, Ref, EnumMap, EnumType, EnumElementName) const Class::EnumType Class::Namespace::Ref::EnumElementName = Class::EnumMap::Get().Add(Class::EnumType::EnumElementName, #EnumElementName);

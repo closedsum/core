@@ -261,19 +261,19 @@ namespace NCsCVarLog
 		// Managers
 
 			// Data
-		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerDataLoad, CsCVarLogManagerDataLoad);
+		//CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerDataLoad, CsCVarLogManagerDataLoad);
 
 			// Collectible
-		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerCollectibleTransactions, CsCVarLogManagerCollectibleTransactions);
+		//CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerCollectibleTransactions, CsCVarLogManagerCollectibleTransactions);
 			// Level
-		//CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerLevelTransactions, CsCVarLogManagerLevelTransactions);
+		//CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerLevelTransactions, CsCVarLogManagerLevelTransactions);
 
 		// Level
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogLevelPayloadPopulate, CsCVarLogLevelPayloadPopulate);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogLevelPayloadPopulate, CsCVarLogLevelPayloadPopulate);
 		// Payload
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogPayloadPopulate, CsCVarLogPayloadPopulate);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogPayloadPopulate, CsCVarLogPayloadPopulate);
 		// Data
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogDataEntryPopulate, CsCVarLogDataEntryPopulate);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogDataEntryPopulate, CsCVarLogDataEntryPopulate);
 	}
 }
 

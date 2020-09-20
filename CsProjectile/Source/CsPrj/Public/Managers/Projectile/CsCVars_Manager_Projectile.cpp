@@ -100,18 +100,18 @@ namespace NCsCVarLog
 
 	namespace Map
 	{
-		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerProjectileTransactions, CsCVarLogManagerProjectileTransactions);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogManagerProjectileTransactions, CsCVarLogManagerProjectileTransactions);
 		// Scoped Timer
-		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerProjectileScopedTimer, CsCVarLogManagerProjectileScopedTimer);
-		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerProjectileScopedTimerCreatePool, CsCVarLogManagerProjectileScopedTimerCreatePool);
-		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerProjectileScopedTimerUpdate, CsCVarLogManagerProjectileScopedTimerUpdate);
-		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerProjectileScopedTimerUpdateObject, CsCVarLogManagerProjectileScopedTimerUpdateObject);
-		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerProjectileScopedTimerAllocate, CsCVarLogManagerProjectileScopedTimerAllocate);
-		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerProjectileScopedTimerAllocateObject, CsCVarLogManagerProjectileScopedTimerAllocateObject);
-		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerProjectileScopedTimerDeallocate, CsCVarLogManagerProjectileScopedTimerDeallocate);
-		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerProjectileScopedTimerDeallocateObject, CsCVarLogManagerProjectileScopedTimerDeallocateObject);
-		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerProjectileScopedTimerSpawn, CsCVarLogManagerProjectileScopedTimerSpawn);
-		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerProjectileScopedTimerDestroy, CsCVarLogManagerProjectileScopedTimerDestroy);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogManagerProjectileScopedTimer, CsCVarLogManagerProjectileScopedTimer);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogManagerProjectileScopedTimerCreatePool, CsCVarLogManagerProjectileScopedTimerCreatePool);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogManagerProjectileScopedTimerUpdate, CsCVarLogManagerProjectileScopedTimerUpdate);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogManagerProjectileScopedTimerUpdateObject, CsCVarLogManagerProjectileScopedTimerUpdateObject);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogManagerProjectileScopedTimerAllocate, CsCVarLogManagerProjectileScopedTimerAllocate);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogManagerProjectileScopedTimerAllocateObject, CsCVarLogManagerProjectileScopedTimerAllocateObject);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogManagerProjectileScopedTimerDeallocate, CsCVarLogManagerProjectileScopedTimerDeallocate);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogManagerProjectileScopedTimerDeallocateObject, CsCVarLogManagerProjectileScopedTimerDeallocateObject);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogManagerProjectileScopedTimerSpawn, CsCVarLogManagerProjectileScopedTimerSpawn);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogManagerProjectileScopedTimerDestroy, CsCVarLogManagerProjectileScopedTimerDestroy);
 	}
 }
 
@@ -126,7 +126,7 @@ namespace NCsScopedGroup
 
 	namespace Map
 	{
-		extern CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsScopedGroupMap, ManagerProjectile, CsCVarLogManagerProjectileScopedTimer);
+		extern CSPRJ_API CS_ADD_TO_CVAR_MAP(ManagerProjectile, CsCVarLogManagerProjectileScopedTimer);
 	}
 }
 

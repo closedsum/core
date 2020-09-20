@@ -99,19 +99,19 @@ namespace NCsCVarLog
 
 	namespace Map
 	{
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogInputRaw, CsCVarLogInputRaw);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogInputRawAction, CsCVarLogInputRawAction);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogInputRawAxis, CsCVarLogInputRawAxis);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogInputRaw, CsCVarLogInputRaw);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogInputRawAction, CsCVarLogInputRawAction);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogInputRawAxis, CsCVarLogInputRawAxis);
 
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogInput, CsCVarLogInput);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogInputAction, CsCVarLogInputAction);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogInputAxis, CsCVarLogInputAxis);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogInputTrigger, CsCVarLogInputTrigger);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogInputLocation, CsCVarLogInputLocation);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogInputRotation, CsCVarLogInputRotation);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogInput, CsCVarLogInput);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogInputAction, CsCVarLogInputAction);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogInputAxis, CsCVarLogInputAxis);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogInputTrigger, CsCVarLogInputTrigger);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogInputLocation, CsCVarLogInputLocation);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogInputRotation, CsCVarLogInputRotation);
 
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogInputGameEvent, CsCVarLogInputGameEvent);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogInputGameEventDefinition, CsCVarLogInputGameEventDefinition);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogInputGameEvent, CsCVarLogInputGameEvent);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogInputGameEventDefinition, CsCVarLogInputGameEventDefinition);
 	}
 }
 
@@ -126,7 +126,7 @@ namespace NCsScopedGroup
 
 	namespace Map
 	{
-		//extern CSCORE_API CS_ADD_TO_CVAR_MAP(FCsScopedGroupMap, ManagerInput, CsCVarLogManagerDamageScopedTimer);
+		//extern CSCORE_API CS_ADD_TO_CVAR_MAP(ManagerInput, CsCVarLogManagerDamageScopedTimer);
 	}
 }
 

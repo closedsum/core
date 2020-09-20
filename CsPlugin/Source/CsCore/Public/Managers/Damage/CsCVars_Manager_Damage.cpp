@@ -41,10 +41,10 @@ namespace NCsCVarLog
 
 	namespace Map
 	{
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerDamageEvents, CsCVarLogManagerDamageEvents);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerDamageTransactionEvent, CsCVarLogManagerDamageTransactionEvent);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerDamageTransactionValue, CsCVarLogManagerDamageTransactionValue);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerDamageTransactionRange, CsCVarLogManagerDamageTransactionRange);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerDamageEvents, CsCVarLogManagerDamageEvents);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerDamageTransactionEvent, CsCVarLogManagerDamageTransactionEvent);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerDamageTransactionValue, CsCVarLogManagerDamageTransactionValue);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerDamageTransactionRange, CsCVarLogManagerDamageTransactionRange);
 	}
 }
 
@@ -59,7 +59,7 @@ namespace NCsScopedGroup
 
 	namespace Map
 	{
-		//extern CSCORE_API CS_ADD_TO_CVAR_MAP(FCsScopedGroupMap, ManagerDamage, CsCVarLogManagerDamageScopedTimer);
+		//extern CSCORE_API CS_ADD_TO_CVAR_MAP(ManagerDamage, CsCVarLogManagerDamageScopedTimer);
 	}
 }
 

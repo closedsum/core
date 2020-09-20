@@ -101,18 +101,18 @@ namespace NCsCVarLog
 
 	namespace Map
 	{
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerFXActorTransactions, CsCVarLogManagerFXActorTransactions);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerFXActorTransactions, CsCVarLogManagerFXActorTransactions);
 		// Scoped Timer
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerFXActorScopedTimer, CsCVarLogManagerFXActorScopedTimer);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerFXActorScopedTimerCreatePool, CsCVarLogManagerFXActorScopedTimerCreatePool);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerFXActorScopedTimerUpdate, CsCVarLogManagerFXActorScopedTimerUpdate);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerFXActorScopedTimerUpdateObject, CsCVarLogManagerFXActorScopedTimerUpdateObject);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerFXActorScopedTimerAllocate, CsCVarLogManagerFXActorScopedTimerAllocate);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerFXActorScopedTimerAllocateObject, CsCVarLogManagerFXActorScopedTimerAllocateObject);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerFXActorScopedTimerDeallocate, CsCVarLogManagerFXActorScopedTimerDeallocate);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerFXActorScopedTimerDeallocateObject, CsCVarLogManagerFXActorScopedTimerDeallocateObject);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerFXActorScopedTimerSpawn, CsCVarLogManagerFXActorScopedTimerSpawn);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerFXActorScopedTimerDestroy, CsCVarLogManagerFXActorScopedTimerDestroy);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerFXActorScopedTimer, CsCVarLogManagerFXActorScopedTimer);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerFXActorScopedTimerCreatePool, CsCVarLogManagerFXActorScopedTimerCreatePool);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerFXActorScopedTimerUpdate, CsCVarLogManagerFXActorScopedTimerUpdate);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerFXActorScopedTimerUpdateObject, CsCVarLogManagerFXActorScopedTimerUpdateObject);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerFXActorScopedTimerAllocate, CsCVarLogManagerFXActorScopedTimerAllocate);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerFXActorScopedTimerAllocateObject, CsCVarLogManagerFXActorScopedTimerAllocateObject);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerFXActorScopedTimerDeallocate, CsCVarLogManagerFXActorScopedTimerDeallocate);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerFXActorScopedTimerDeallocateObject, CsCVarLogManagerFXActorScopedTimerDeallocateObject);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerFXActorScopedTimerSpawn, CsCVarLogManagerFXActorScopedTimerSpawn);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerFXActorScopedTimerDestroy, CsCVarLogManagerFXActorScopedTimerDestroy);
 	}
 }
 
@@ -127,7 +127,7 @@ namespace NCsScopedGroup
 
 	namespace Map
 	{
-		extern CSCORE_API CS_ADD_TO_CVAR_MAP(FCsScopedGroupMap, ManagerFXActor, CsCVarLogManagerFXActorScopedTimer);
+		extern CSCORE_API CS_ADD_TO_CVAR_MAP(ManagerFXActor, CsCVarLogManagerFXActorScopedTimer);
 	}
 }
 

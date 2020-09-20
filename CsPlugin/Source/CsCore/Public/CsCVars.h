@@ -242,7 +242,8 @@ struct CSCORE_API ICsCVarMap
 };
 
 #define CS_DECLARE_ADD_TO_CVAR_MAP(EnumStruct) const Type __##EnumStruct
-#define CS_ADD_TO_CVAR_MAP(CVarMap, EnumStruct, CVar) const Type __##EnumStruct = CVarMap::Get().Add(EnumStruct, &CVar);
+// Assume typedef "EnumType" Type and typedef "CVarMapType" CVarMapType
+#define CS_ADD_TO_CVAR_MAP(EnumStruct, CVar) const Type __##EnumStruct = CVarMapType::Get().Add(EnumStruct, &CVar);
 
 // CVarLog
 #pragma region
@@ -262,65 +263,7 @@ struct CSCORE_API EMCsCVarLog final : public TCsEnumStructMap<FECsCVarLog, uint8
 	CS_ENUM_STRUCT_MAP_BODY(EMCsCVarLog, FECsCVarLog, uint8)
 };
 
-namespace NCsCVarLog
-{
-	typedef FECsCVarLog Type;
-	typedef EMCsCVarLog EnumMapType;
-
-	// GameState
-	extern CSCORE_API const Type LogGameStateOnBoard;
-	// Json
-	extern CSCORE_API const Type LogJsonDataFilenames;
-	// Script
-	extern CSCORE_API const Type LogOverrideFunctions;
-	// FX
-	extern CSCORE_API const Type LogManagerFxTransactions;
-	// Runnable
-	extern CSCORE_API const Type LogManagerRunnableTransactions;
-	// Process
-	extern CSCORE_API const Type LogManagerProcessTransactions;
-	extern CSCORE_API const Type LogProcessIO;
-	// Sense
-	extern CSCORE_API const Type LogManagerSenseSeesActorByDot;
-	// Managers
-
-	// Level
-	extern CSCORE_API const Type LogLevelPayloadPopulate;
-	// Payload
-	extern CSCORE_API const Type LogPayloadPopulate;
-	// Data
-	extern CSCORE_API const Type LogDataEntryPopulate;
-
-	namespace Map
-	{
-		// Managers
-
-			// Task
-		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerTaskTransactions);
-			// Runnable
-		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerRunnableTransactions);
-			// Data
-		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerDataLoad);
-			// Projectile
-		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerProjectileTransactions);
-
-			// Collectible
-		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerCollectibleTransactions);
-			// Level
-		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerLevelTransactions);
-
-		// Level
-		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogLevelPayloadPopulate);
-		// Payload
-		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogPayloadPopulate);
-		// Data
-		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogDataEntryPopulate);
-	}
-}
-
-#pragma endregion CVarLog
-
-// FCsCVarLogMap
+	// FCsCVarLogMap
 #pragma region
 
 struct CSCORE_API FCsCVarLogMap : public ICsCVarMap
@@ -407,6 +350,66 @@ public:
 
 #pragma endregion FCsCVarLogMap
 
+namespace NCsCVarLog
+{
+	typedef FECsCVarLog Type;
+	typedef EMCsCVarLog EnumMapType;
+
+	// GameState
+	extern CSCORE_API const Type LogGameStateOnBoard;
+	// Json
+	extern CSCORE_API const Type LogJsonDataFilenames;
+	// Script
+	extern CSCORE_API const Type LogOverrideFunctions;
+	// FX
+	extern CSCORE_API const Type LogManagerFxTransactions;
+	// Runnable
+	extern CSCORE_API const Type LogManagerRunnableTransactions;
+	// Process
+	extern CSCORE_API const Type LogManagerProcessTransactions;
+	extern CSCORE_API const Type LogProcessIO;
+	// Sense
+	extern CSCORE_API const Type LogManagerSenseSeesActorByDot;
+	// Managers
+
+	// Level
+	extern CSCORE_API const Type LogLevelPayloadPopulate;
+	// Payload
+	extern CSCORE_API const Type LogPayloadPopulate;
+	// Data
+	extern CSCORE_API const Type LogDataEntryPopulate;
+
+	namespace Map
+	{
+		typedef FCsCVarLogMap CVarMapType;
+
+		// Managers
+
+			// Task
+		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerTaskTransactions);
+			// Runnable
+		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerRunnableTransactions);
+			// Data
+		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerDataLoad);
+			// Projectile
+		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerProjectileTransactions);
+
+			// Collectible
+		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerCollectibleTransactions);
+			// Level
+		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerLevelTransactions);
+
+		// Level
+		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogLevelPayloadPopulate);
+		// Payload
+		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogPayloadPopulate);
+		// Data
+		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogDataEntryPopulate);
+	}
+}
+
+#pragma endregion CVarLog
+
 // CVarToggle
 #pragma region
 
@@ -425,23 +428,7 @@ struct CSCORE_API EMCsCVarToggle final : public TCsEnumStructMap<FECsCVarToggle,
 	CS_ENUM_STRUCT_MAP_BODY(EMCsCVarToggle, FECsCVarToggle, uint8)
 };
 
-namespace NCsCVarToggle
-{
-	typedef FECsCVarToggle Type;
-	typedef EMCsCVarToggle EnumMapType;
-
-	namespace Ref
-	{
-	}
-
-	namespace Map
-	{
-	}
-}
-
-#pragma endregion CVarToggle
-
-// FCsCVarToggleMap
+	// FCsCVarToggleMap
 #pragma region
 
 struct CSCORE_API FCsCVarToggleMap : public ICsCVarMap
@@ -528,6 +515,23 @@ public:
 
 #pragma endregion FCsCVarToggleMap
 
+namespace NCsCVarToggle
+{
+	typedef FECsCVarToggle Type;
+	typedef EMCsCVarToggle EnumMapType;
+
+	namespace Ref
+	{
+	}
+
+	namespace Map
+	{
+		typedef FCsCVarToggleMap CVarMapType;
+	}
+}
+
+#pragma endregion CVarToggle
+
 // CVarDraw
 #pragma region
 
@@ -546,15 +550,7 @@ struct CSCORE_API EMCsCVarDraw final : public TCsEnumStructMap<FECsCVarDraw, uin
 	CS_ENUM_STRUCT_MAP_BODY(EMCsCVarDraw, FECsCVarDraw, uint8)
 };
 
-namespace NCsCVarDraw
-{
-	typedef FECsCVarDraw Type;
-	typedef EMCsCVarDraw EnumMapType;
-}
-
-#pragma endregion CVarDraw
-
-// FCsCVarDrawMap
+	// FCsCVarDrawMap
 #pragma region
 
 struct CSCORE_API FCsCVarDrawMap : ICsCVarMap
@@ -641,6 +637,19 @@ public:
 
 #pragma endregion FCsCVarDrawMap
 
+namespace NCsCVarDraw
+{
+	typedef FECsCVarDraw Type;
+	typedef EMCsCVarDraw EnumMapType;
+
+	namespace Map
+	{
+		typedef FCsCVarDrawMap CVarMapType;
+	}
+}
+
+#pragma endregion CVarDraw
+
 // ScopedGroup
 #pragma region
 
@@ -659,15 +668,7 @@ struct CSCORE_API EMCsScopedGroup final : public TCsEnumStructMap<FECsScopedGrou
 	CS_ENUM_STRUCT_MAP_BODY(EMCsScopedGroup, FECsScopedGroup, uint8)
 };
 
-namespace NCsScopedGroup
-{
-	typedef FECsScopedGroup Type;
-	typedef EMCsScopedGroup EnumMapType;
-}
-
-#pragma endregion ScopedGroup
-
-// FCsScopedGroupMap
+	// FCsScopedGroupMap
 #pragma region
 
 struct CSCORE_API FCsScopedGroupMap : public ICsCVarMap
@@ -753,3 +754,16 @@ public:
 };
 
 #pragma endregion FCsScopedGroupMap
+
+namespace NCsScopedGroup
+{
+	typedef FECsScopedGroup Type;
+	typedef EMCsScopedGroup EnumMapType;
+
+	namespace Map
+	{
+		typedef FCsScopedGroupMap CVarMapType;
+	}
+}
+
+#pragma endregion ScopedGroup

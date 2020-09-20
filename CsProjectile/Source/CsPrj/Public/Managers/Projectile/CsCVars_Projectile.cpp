@@ -80,7 +80,7 @@ namespace NCsCVarLog
 
 	namespace Map
 	{
-		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogProjectileCollision, CsCVarLogProjectileCollision);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogProjectileCollision, CsCVarLogProjectileCollision);
 	}
 }
 
@@ -105,17 +105,17 @@ namespace NCsCVarDraw
 
 	namespace Map
 	{
-		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarDrawMap, DrawProjectileImpactNormal, CsCVarDrawProjectileImpactNormal);
-		//CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarDrawMap, DrawProjectileImpactNormalLength, CsCVarDrawProjectileImpactNormalLength);
-		//CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarDrawMap, DrawProjectileImpactNormalThickness, CsCVarDrawProjectileImpactNormalThickness);
-		//CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarDrawMap, DrawProjectileImpactNormalDuration, CsCVarDrawProjectileImpactNormalDuration);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(DrawProjectileImpactNormal, CsCVarDrawProjectileImpactNormal);
+		//CSPRJ_API CS_ADD_TO_CVAR_MAP(DrawProjectileImpactNormalLength, CsCVarDrawProjectileImpactNormalLength);
+		//CSPRJ_API CS_ADD_TO_CVAR_MAP(DrawProjectileImpactNormalThickness, CsCVarDrawProjectileImpactNormalThickness);
+		//CSPRJ_API CS_ADD_TO_CVAR_MAP(DrawProjectileImpactNormalDuration, CsCVarDrawProjectileImpactNormalDuration);
 
-		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarDrawMap, DrawProjectileCollision, CsCVarDrawProjectileCollision);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(DrawProjectileCollision, CsCVarDrawProjectileCollision);
 
-		CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarDrawMap, DrawProjectilePath, CsCVarDrawProjectilePath);
-		//CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarDrawMap, DrawProjectilePathInterval, CsCVarDrawProjectilePathInterval);
-		//CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarDrawMap, DrawProjectilePathSegmentsPerInterval, CsCVarDrawProjectilePathSegmentsPerInterval);
-		//CSPRJ_API CS_ADD_TO_CVAR_MAP(FCsCVarDrawMap, DrawProjectilePathThickness, CsCVarDrawProjectilePathThickness);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(DrawProjectilePath, CsCVarDrawProjectilePath);
+		//CSPRJ_API CS_ADD_TO_CVAR_MAP(DrawProjectilePathInterval, CsCVarDrawProjectilePathInterval);
+		//CSPRJ_API CS_ADD_TO_CVAR_MAP(DrawProjectilePathSegmentsPerInterval, CsCVarDrawProjectilePathSegmentsPerInterval);
+		//CSPRJ_API CS_ADD_TO_CVAR_MAP(DrawProjectilePathThickness, CsCVarDrawProjectilePathThickness);
 	}
 }
 

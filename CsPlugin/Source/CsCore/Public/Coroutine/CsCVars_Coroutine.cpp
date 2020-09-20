@@ -52,12 +52,12 @@ namespace NCsCVarLog
 
 	namespace Map
 	{
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogCoroutineTransactions, CsCVarLogCoroutineTransactions);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogCoroutineRunning, CsCVarLogCoroutineRunning);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogCoroutineTransactions, CsCVarLogCoroutineTransactions);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogCoroutineRunning, CsCVarLogCoroutineRunning);
 		// Scoped Timer
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogCoroutinesScopedTimer, CsCVarLogCoroutinesScopedTimer);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogRoutineScopedTimer, CsCVarLogRoutineScopedTimer);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogCoroutineScopedTimer, CsCVarLogCoroutineScopedTimer);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogCoroutinesScopedTimer, CsCVarLogCoroutinesScopedTimer);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogRoutineScopedTimer, CsCVarLogRoutineScopedTimer);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogCoroutineScopedTimer, CsCVarLogCoroutineScopedTimer);
 	}
 }
 
@@ -72,7 +72,7 @@ namespace NCsScopedGroup
 
 	namespace Map
 	{
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsScopedGroupMap, Coroutine, CsCVarLogCoroutinesScopedTimer);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(Coroutine, CsCVarLogCoroutinesScopedTimer);
 	}
 }
 

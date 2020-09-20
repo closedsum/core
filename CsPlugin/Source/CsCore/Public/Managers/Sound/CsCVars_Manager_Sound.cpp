@@ -101,18 +101,18 @@ namespace NCsCVarLog
 
 	namespace Map
 	{
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerSoundTransactions, CsCVarLogManagerSoundTransactions);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerSoundTransactions, CsCVarLogManagerSoundTransactions);
 		// Scoped Timer
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerSoundScopedTimer, CsCVarLogManagerSoundScopedTimer);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerSoundScopedTimerCreatePool, CsCVarLogManagerSoundScopedTimerCreatePool);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerSoundScopedTimerUpdate, CsCVarLogManagerSoundScopedTimerUpdate);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerSoundScopedTimerUpdateObject, CsCVarLogManagerSoundScopedTimerUpdateObject);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerSoundScopedTimerAllocate, CsCVarLogManagerSoundScopedTimerAllocate);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerSoundScopedTimerAllocateObject, CsCVarLogManagerSoundScopedTimerAllocateObject);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerSoundScopedTimerDeallocate, CsCVarLogManagerSoundScopedTimerDeallocate);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerSoundScopedTimerDeallocateObject, CsCVarLogManagerSoundScopedTimerDeallocateObject);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerSoundScopedTimerSpawn, CsCVarLogManagerSoundScopedTimerSpawn);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerSoundScopedTimerDestroy, CsCVarLogManagerSoundScopedTimerDestroy);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerSoundScopedTimer, CsCVarLogManagerSoundScopedTimer);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerSoundScopedTimerCreatePool, CsCVarLogManagerSoundScopedTimerCreatePool);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerSoundScopedTimerUpdate, CsCVarLogManagerSoundScopedTimerUpdate);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerSoundScopedTimerUpdateObject, CsCVarLogManagerSoundScopedTimerUpdateObject);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerSoundScopedTimerAllocate, CsCVarLogManagerSoundScopedTimerAllocate);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerSoundScopedTimerAllocateObject, CsCVarLogManagerSoundScopedTimerAllocateObject);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerSoundScopedTimerDeallocate, CsCVarLogManagerSoundScopedTimerDeallocate);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerSoundScopedTimerDeallocateObject, CsCVarLogManagerSoundScopedTimerDeallocateObject);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerSoundScopedTimerSpawn, CsCVarLogManagerSoundScopedTimerSpawn);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerSoundScopedTimerDestroy, CsCVarLogManagerSoundScopedTimerDestroy);
 	}
 }
 
@@ -127,7 +127,7 @@ namespace NCsScopedGroup
 
 	namespace Map
 	{
-		extern CSCORE_API CS_ADD_TO_CVAR_MAP(FCsScopedGroupMap, ManagerSound, CsCVarLogManagerSoundScopedTimer);
+		extern CSCORE_API CS_ADD_TO_CVAR_MAP(ManagerSound, CsCVarLogManagerSoundScopedTimer);
 	}
 }
 

@@ -17,7 +17,7 @@ namespace NCsCVarLog
 
 	namespace Map
 	{
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogSpawnerTransactions, CsCVarLogSpawnerTransactions);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogSpawnerTransactions, CsCVarLogSpawnerTransactions);
 	}
 }
 

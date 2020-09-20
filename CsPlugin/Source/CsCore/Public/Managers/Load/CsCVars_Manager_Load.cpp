@@ -32,7 +32,7 @@ namespace NCsCVarLog
 
 	namespace Map
 	{
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerLoad, CsCVarLogManagerLoad);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerLoad, CsCVarLogManagerLoad);
 	}
 }
 

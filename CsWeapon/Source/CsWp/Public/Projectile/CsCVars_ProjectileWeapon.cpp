@@ -33,9 +33,9 @@ namespace NCsCVarLog
 
 	namespace Map
 	{
-		CSWP_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogWeaponProjectileState, CsCVarLogWeaponProjectileState);
-		CSWP_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogWeaponProjectileStateTransition, CsCVarLogWeaponProjectileStateTransition);
-		CSWP_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogWeaponProjectileCanFire, CsCVarLogWeaponProjectileCanFire);
+		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileState, CsCVarLogWeaponProjectileState);
+		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileStateTransition, CsCVarLogWeaponProjectileStateTransition);
+		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileCanFire, CsCVarLogWeaponProjectileCanFire);
 	}
 }
 

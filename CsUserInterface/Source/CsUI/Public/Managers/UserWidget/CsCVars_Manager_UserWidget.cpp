@@ -101,18 +101,18 @@ namespace NCsCVarLog
 
 	namespace Map
 	{
-		CSUI_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerUserWidgetTransactions, CsCVarLogManagerUserWidgetTransactions);
+		CSUI_API CS_ADD_TO_CVAR_MAP(LogManagerUserWidgetTransactions, CsCVarLogManagerUserWidgetTransactions);
 		// Scoped Timer
-		CSUI_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerUserWidgetScopedTimer, CsCVarLogManagerUserWidgetScopedTimer);
-		CSUI_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerUserWidgetScopedTimerCreatePool, CsCVarLogManagerUserWidgetScopedTimerCreatePool);
-		CSUI_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerUserWidgetScopedTimerUpdate, CsCVarLogManagerUserWidgetScopedTimerUpdate);
-		CSUI_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerUserWidgetScopedTimerUpdateObject, CsCVarLogManagerUserWidgetScopedTimerUpdateObject);
-		CSUI_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerUserWidgetScopedTimerAllocate, CsCVarLogManagerUserWidgetScopedTimerAllocate);
-		CSUI_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerUserWidgetScopedTimerAllocateObject, CsCVarLogManagerUserWidgetScopedTimerAllocateObject);
-		CSUI_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerUserWidgetScopedTimerDeallocate, CsCVarLogManagerUserWidgetScopedTimerDeallocate);
-		CSUI_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerUserWidgetScopedTimerDeallocateObject, CsCVarLogManagerUserWidgetScopedTimerDeallocateObject);
-		CSUI_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerUserWidgetScopedTimerSpawn, CsCVarLogManagerUserWidgetScopedTimerSpawn);
-		CSUI_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerUserWidgetScopedTimerDestroy, CsCVarLogManagerUserWidgetScopedTimerDestroy);
+		CSUI_API CS_ADD_TO_CVAR_MAP(LogManagerUserWidgetScopedTimer, CsCVarLogManagerUserWidgetScopedTimer);
+		CSUI_API CS_ADD_TO_CVAR_MAP(LogManagerUserWidgetScopedTimerCreatePool, CsCVarLogManagerUserWidgetScopedTimerCreatePool);
+		CSUI_API CS_ADD_TO_CVAR_MAP(LogManagerUserWidgetScopedTimerUpdate, CsCVarLogManagerUserWidgetScopedTimerUpdate);
+		CSUI_API CS_ADD_TO_CVAR_MAP(LogManagerUserWidgetScopedTimerUpdateObject, CsCVarLogManagerUserWidgetScopedTimerUpdateObject);
+		CSUI_API CS_ADD_TO_CVAR_MAP(LogManagerUserWidgetScopedTimerAllocate, CsCVarLogManagerUserWidgetScopedTimerAllocate);
+		CSUI_API CS_ADD_TO_CVAR_MAP(LogManagerUserWidgetScopedTimerAllocateObject, CsCVarLogManagerUserWidgetScopedTimerAllocateObject);
+		CSUI_API CS_ADD_TO_CVAR_MAP(LogManagerUserWidgetScopedTimerDeallocate, CsCVarLogManagerUserWidgetScopedTimerDeallocate);
+		CSUI_API CS_ADD_TO_CVAR_MAP(LogManagerUserWidgetScopedTimerDeallocateObject, CsCVarLogManagerUserWidgetScopedTimerDeallocateObject);
+		CSUI_API CS_ADD_TO_CVAR_MAP(LogManagerUserWidgetScopedTimerSpawn, CsCVarLogManagerUserWidgetScopedTimerSpawn);
+		CSUI_API CS_ADD_TO_CVAR_MAP(LogManagerUserWidgetScopedTimerDestroy, CsCVarLogManagerUserWidgetScopedTimerDestroy);
 	}
 }
 
@@ -127,7 +127,7 @@ namespace NCsScopedGroup
 
 	namespace Map
 	{
-		extern CSUI_API CS_ADD_TO_CVAR_MAP(FCsScopedGroupMap, ManagerUserWidget, CsCVarLogManagerUserWidgetScopedTimer);
+		extern CSUI_API CS_ADD_TO_CVAR_MAP(ManagerUserWidget, CsCVarLogManagerUserWidgetScopedTimer);
 	}
 }
 

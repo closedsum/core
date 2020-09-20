@@ -17,7 +17,7 @@ namespace NCsCVarLog
 
 	namespace Map
 	{
-		CSSE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogCoordinatorStatusEffectEvents, CsCVarLogCoordinatorStatusEffectEvents);
+		CSSE_API CS_ADD_TO_CVAR_MAP(LogCoordinatorStatusEffectEvents, CsCVarLogCoordinatorStatusEffectEvents);
 	}
 }
 
@@ -32,7 +32,7 @@ namespace NCsScopedGroup
 
 	namespace Map
 	{
-		//extern CSCORE_API CS_ADD_TO_CVAR_MAP(FCsScopedGroupMap, ManagerDamage, CsCVarLogManagerDamageScopedTimer);
+		//extern CSCORE_API CS_ADD_TO_CVAR_MAP(ManagerDamage, CsCVarLogManagerDamageScopedTimer);
 	}
 }
 

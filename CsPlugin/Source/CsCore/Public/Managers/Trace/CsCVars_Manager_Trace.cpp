@@ -31,7 +31,7 @@ namespace NCsCVarLog
 
 	namespace Map
 	{
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerTraceTransactions, CsCVarLogManagerTraceTransactions);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerTraceTransactions, CsCVarLogManagerTraceTransactions);
 	}
 }
 
@@ -47,8 +47,8 @@ namespace NCsCVarDraw
 
 	namespace Map
 	{
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarDrawMap, DrawManagerTraceRequests, CsCVarDrawManagerTraceRequests);
-		CSCORE_API CS_ADD_TO_CVAR_MAP(FCsCVarDrawMap, DrawManagerTraceResponses, CsCVarDrawManagerTraceResponses);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(DrawManagerTraceRequests, CsCVarDrawManagerTraceRequests);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(DrawManagerTraceResponses, CsCVarDrawManagerTraceResponses);
 	}
 }
 

@@ -7,6 +7,8 @@
 // Types
 #include "Types/CsTypes_Load.h"
 #include "Managers/Load/CsTypes_Streaming.h"
+// Log
+#include "Utility/CsLog.h"
 
 #include "CsManager_Data.generated.h"
 
@@ -144,6 +146,10 @@ protected:
 	TMap<FName, ICsData*> DataMap_Loaded;
 	/** <Path, Data> */
 	TMap<FSoftObjectPath, ICsData*> DataByPathMap_Loaded;
+	/** <EntryName, Data> */
+	TMap<FName, UObject*> DataObjectMap_Loaded;
+	/** <Path, Data> */
+	TMap<FSoftObjectPath, UObject*> DataObjectByPathMap_Loaded;
 
 #pragma endregion Data
 
@@ -301,7 +307,16 @@ public:
 	* @param RowName
 	* return			Whether the row is loaded or not.
 	*/
-	bool IsLoadedDataTableRow(const FName& EntryName, const FName& RowName);
+	FORCEINLINE bool IsLoadedDataTableRow(const FName& EntryName, const FName& RowName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::IsLoadedDataTableRow: EntryName is None."));
+
+		checkf(RowName != NAME_None, TEXT("UCsManager_Data::IsLoadedDataTableRow: RowName is None."));
+
+		if (uint8* RowPtr = GetDataTableRow(EntryName, RowName))
+			return true;
+		return false;
+	}
 
 #pragma endregion DataTable
 
@@ -317,13 +332,15 @@ public:
 	void LoadPayload(const FName& PayloadName);
 
 	/**
-	*  Delegate type
+	* Delegate type
+	*  This is a synchronous event (fired on the Game Thread).
 	*
 	* @param WasSuccessful
 	* @param PayloadName
 	*/
 	DECLARE_DELEGATE_TwoParams(FOnAsyncLoadPayloadComplete, bool /*WasSuccessful*/, const FName& /*PayloadName*/);
 
+	/** */
 	FOnAsyncLoadPayloadComplete OnAsyncLoadPayloadCompleted_Event;
 
 	/**
@@ -417,6 +434,238 @@ public:
 		checkf(0, TEXT("%s: Failed to find Data at Path: %s."), *Context, *(Path.ToString()));
 		return nullptr;
 	}
+
+	/**
+	*
+	*
+	* @param EntryName
+	* return			Data
+	*/
+	FORCEINLINE UObject* GetDataObject(const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataObject: EntryName: None is NOT Valid."));
+
+		if (UObject** DataPtr = DataObjectMap_Loaded.Find(EntryName))
+			return *DataPtr;
+		return nullptr;
+	}
+
+	template<typename T>
+	FORCEINLINE T* GetDataObject(const FName& EntryName)
+	{
+		return Cast<T>(GetDataObject(EntryName));
+	}
+
+	/**
+	*
+	*
+	* @param Context
+	* @param EntryName
+	* return			
+	*/
+	FORCEINLINE UObject* GetDataObjectChecked(const FString& Context, const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName is None."), *Context);
+
+		if (UObject** DataPtr = DataObjectMap_Loaded.Find(EntryName))
+			return *DataPtr;
+
+		checkf(0, TEXT("%s: Failed to find Data with EntryName: %s."), *Context, *(EntryName.ToString()));
+		return nullptr;
+	}
+
+	template<typename T>
+	FORCEINLINE T* GetDataObjectChecked(const FString& Context, const FName& EntryName)
+	{
+		checkf(GetDataObjectChecked(Context, EntryName), TEXT("%s: Failed to cast Object to type: T."), *Context);
+
+		return Cast<T>(GetDataObjectChecked(Context, EntryName));
+	}
+
+	/**
+	*
+	*
+	* @param Path
+	* return		Data
+	*/
+	FORCEINLINE UObject* GetDataObject(const FSoftObjectPath& Path)
+	{
+		checkf(Path.IsValid(), TEXT("UCsManager_Data::GetData: Path is NOT Valid."));
+
+		if (UObject** DataPtr = DataObjectByPathMap_Loaded.Find(Path))
+			return *DataPtr;
+		return nullptr;
+	}
+
+	template<typename T>
+	FORCEINLINE T* GetDataObject(const FSoftObjectPath& Path)
+	{
+		return Cast<T>(GetDataObject(EntryName));
+	}
+
+	/**
+	*
+	*
+	* @param Context
+	* @param EntryName
+	* return
+	*/
+	FORCEINLINE UObject* GetDataObjectChecked(const FString& Context, const FSoftObjectPath& Path)
+	{
+		checkf(Path.IsValid(), TEXT("%s: Path is NOT Valid."), *Context);
+
+		if (UObject** DataPtr = DataObjectByPathMap_Loaded.Find(Path))
+			return *DataPtr;
+
+		checkf(0, TEXT("%s: Failed to find Data at Path: %s."), *Context, *(Path.ToString()));
+		return nullptr;
+	}
+
+	template<typename T>
+	FORCEINLINE T* GetDataObjectChecked(const FString& Context, const FSoftObjectPath& Path)
+	{
+		return Cast<T>(GetDataObjectChecked(Context, Path));
+	}
+
+	// Entry
+#pragma region
+public:
+
+	/**
+	*
+	*
+	* @param EntryName
+	* return
+	*/
+	FORCEINLINE const FCsDataEntry_Data* GetDataEntry(const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataEntry: EntryName: None is NOT Valid."));
+
+		if (FCsDataEntry_Data** EntryPtr = DataEntryMap.Find(EntryName))
+			return *EntryPtr;
+		return nullptr;
+	}
+
+#pragma endregion Entry
+
+	// SoftObjectPath
+#pragma region
+public:
+
+	/**
+	*
+	*
+	* @param EntryName
+	* return
+	*/
+	FORCEINLINE FSoftObjectPath GetDataSoftObjectPath(const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableSoftObjectPath: EntryName: None is NOT Valid."));
+
+		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+			return Entry->DataTable.ToSoftObjectPath();
+		CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::GetDataTableSoftObjectPath: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString())));
+		return FSoftObjectPath();
+	}
+
+	/**
+	*
+	*
+	* @param Context
+	* @param EntryName
+	* return
+	*/
+	FORCEINLINE FSoftObjectPath GetDataSoftObjectPathChecked(const FString& Context, const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+		if (const FCsDataEntry_Data* Entry = GetDataEntry(EntryName))
+			return Entry->Data.ToSoftObjectPath();
+		checkf(0, TEXT("%s: Failed to find Data with EntryName: %s."), *Context, *(EntryName.ToString()));
+		return FSoftObjectPath();
+	}
+
+	/**
+	*
+	*
+	* @param EntryName
+	* @param OutPaths
+	*/
+	FORCEINLINE void GetDataSoftObjectPaths(const FName& EntryName, TArray<FSoftObjectPath>& OutPaths)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataSoftObjectPaths: EntryName: None is NOT Valid."));
+
+		if (const FCsDataEntry_Data* Entry = GetDataEntry(EntryName))
+		{
+			OutPaths.Append(Entry->Paths.Internal);
+		}
+#if !UE_BUILD_SHIPPING
+		else
+		{
+			CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::GetDataSoftObjectPaths: Failed to find Data with EntryName: %s."), *(EntryName.ToString())));
+		}
+#endif // #if !UE_BUILD_SHIPPING
+	}
+
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* @param OutPaths
+	*/
+	FORCEINLINE void GetDataSoftObjectPathsChecked(const FString& Context, const FName& EntryName, TArray<FSoftObjectPath>& OutPaths)
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+		if (const FCsDataEntry_Data* Entry = GetDataEntry(EntryName))
+		{
+			OutPaths.Append(Entry->Paths.Internal);
+		}
+#if !UE_BUILD_SHIPPING
+		else
+		{
+			checkf(0, TEXT("%s: Failed to find Data with EntryName: %s."), *Context, *(EntryName.ToString()));
+		}
+#endif // #if !UE_BUILD_SHIPPING
+	}
+
+	/**
+	*
+	*
+	* @param EntryName
+	* return			Number of SoftObjectPaths for the Data.
+	*					0 for an invalid EntryName.
+	*/
+	FORCEINLINE int32 GetDataSoftObjectPathCount(const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataSoftObjectPathCount: EntryName: None is NOT Valid."));
+
+		if (const FCsDataEntry_Data* Entry = GetDataEntry(EntryName))
+			return Entry->Paths.Internal.Num();
+		CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::GetDataSoftObjectPathCount: Failed to find Data with EntryName: %s."), *(EntryName.ToString())));
+		return 0;
+	}
+
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* return			Number of SoftObjectPaths for the Data.
+	*					0 for an invalid EntryName.
+	*/
+	FORCEINLINE int32 GetDataSoftObjectPathCountChecked(const FString& Context, const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+		if (const FCsDataEntry_Data* Entry = GetDataEntry(EntryName))
+			return Entry->Paths.Internal.Num();
+		checkf(0, TEXT("%s: Failed to find Data with EntryName: %s."), *Context, *(EntryName.ToString()));
+		return 0;
+	}
+
+#pragma endregion SoftObjectPath
 
 #pragma endregion Data
 
@@ -687,7 +936,15 @@ public:
 	* @param EntryName
 	* return
 	*/
-	FSoftObjectPath GetDataTableSoftObjectPath(const FName& EntryName);
+	FORCEINLINE FSoftObjectPath GetDataTableSoftObjectPath(const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableSoftObjectPath: EntryName: None is NOT Valid."));
+
+		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+			return Entry->DataTable.ToSoftObjectPath();
+		CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::GetDataTableSoftObjectPath: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString())));
+		return FSoftObjectPath();
+	}
 
 	/**
 	*
@@ -712,7 +969,21 @@ public:
 	* @param EntryName
 	* @param OutPaths
 	*/
-	void GetDataTableSoftObjectPaths(const FName& EntryName, TArray<FSoftObjectPath>& OutPaths);
+	FORCEINLINE void GetDataTableSoftObjectPaths(const FName& EntryName, TArray<FSoftObjectPath>& OutPaths)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableSoftObjectPaths: EntryName: None is NOT Valid."));
+
+		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+		{
+			OutPaths.Append(Entry->Paths.Internal);
+		}
+#if !UE_BUILD_SHIPPING
+		else
+		{
+			CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::GetDataTableSoftObjectPaths: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString())));
+		}
+#endif // #if !UE_BUILD_SHIPPING
+	}
 
 	/**
 	*
@@ -742,7 +1013,15 @@ public:
 	* return			Number of SoftObjectPaths for the DataTable.
 	*					0 for an invalid EntryName.
 	*/
-	int32 GetDataTableSoftObjectPathCount(const FName& EntryName);
+	FORCEINLINE int32 GetDataTableSoftObjectPathCount(const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableSoftObjectPathCount: EntryName: None is NOT Valid."));
+
+		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+			return Entry->Paths.Internal.Num();
+		CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::GetDataTableSoftObjectPathCount: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString())));
+		return 0;
+	}
 
 	/**
 	*
@@ -769,7 +1048,32 @@ public:
 	* @param RowName
 	* @param OutPaths
 	*/
-	void GetDataTableRowSoftObjectPaths(const FName& EntryName, const FName& RowName, TArray<FSoftObjectPath>& OutPaths);
+	FORCEINLINE void GetDataTableRowSoftObjectPaths(const FName& EntryName, const FName& RowName, TArray<FSoftObjectPath>& OutPaths)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPaths: EntryName: None is NOT Valid."));
+
+		checkf(RowName != NAME_None, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPaths: RowName: None is NOT Valid."));
+
+		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+		{
+			if (const FCsTArraySoftObjectPath* Paths = Entry->PathsByRowMap.Find(RowName))
+			{
+				OutPaths.Append(Paths->Internal);
+			}
+#if !UE_BUILD_SHIPPING
+			else
+			{
+				CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::GetDataTableRowSoftObjectPaths: DataTable with EntryName: %s does NOT have Row: %s as an entry."), *(EntryName.ToString()), *(RowName.ToString())));
+			}
+#endif // #if !UE_BUILD_SHIPPING
+		}
+#if !UE_BUILD_SHIPPING
+		else
+		{
+			CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::GetDataTableRowSoftObjectPaths: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString())));
+		}
+#endif // #if !UE_BUILD_SHIPPING
+	}
 
 	/**
 	*
@@ -810,7 +1114,33 @@ public:
 	* return			Number of SoftObjectPaths for the DataTable.
 	*					0 for an invalid EntryName or RowName
 	*/
-	int32 GetDataTableRowSoftObjectPathCount(const FName& EntryName, const FName& RowName);
+	FORCEINLINE int32 GetDataTableRowSoftObjectPathCount(const FName& EntryName, const FName& RowName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPathCount: EntryName: None is NOT Valid."));
+
+		checkf(RowName != NAME_None, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPathCount: RowName: None is NOT Valid."));
+
+		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+		{
+			if (const FCsTArraySoftObjectPath* Paths = Entry->PathsByRowMap.Find(RowName))
+			{
+				return Paths->Internal.Num();
+			}
+#if !UE_BUILD_SHIPPING
+			else
+			{
+				CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::GetDataTableRowSoftObjectPathCount: DataTable with EntryName: %s does NOT have Row: %s as an entry."), *(EntryName.ToString()), *(RowName.ToString())));
+			}
+#endif // #if !UE_BUILD_SHIPPING
+		}
+#if !UE_BUILD_SHIPPING
+		else
+		{
+			CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::GetDataTableRowSoftObjectPathCount: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString())));
+		}
+#endif // #if !UE_BUILD_SHIPPING
+		return 0;
+	}
 
 	/**
 	*

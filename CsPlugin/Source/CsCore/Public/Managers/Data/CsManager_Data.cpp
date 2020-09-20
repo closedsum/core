@@ -33,10 +33,13 @@ namespace NCsManagerDataCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(GenerateMaps, "UCsManager_Data::GenerateMaps");
-		CS_DEFINE_CACHED_STRING(AsyncLoadPayload, "UCsManager_Data::AsyncLoadPayload");
-		CS_DEFINE_CACHED_STRING(GetPayloadSoftObjectPaths, "UCsManager_Data::GetPayloadSoftObjectPaths");
-		CS_DEFINE_CACHED_STRING(GetPayloadSoftObjectPathCount, "UCsManager_Data::GetPayloadSoftObjectPathCount");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, GenerateMaps);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadData);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadDataTable);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadDataTableRow);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayload);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, GetPayloadSoftObjectPaths);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, GetPayloadSoftObjectPathCount);
 	}
 }
 
@@ -463,7 +466,11 @@ void UCsManager_Data::GenerateMaps()
 
 ICsData* UCsManager_Data::LoadData(const FName& EntryName)
 {
-	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::LoadData: EntryName is None."));
+	using namespace NCsManagerDataCached;
+
+	const FString& Context = Str::LoadData;
+
+	checkf(EntryName != NAME_None, TEXT("%s: EntryName is None."), *Context);
 
 	if (ICsData* Data = GetData(EntryName))
 		return Data;
@@ -472,30 +479,31 @@ ICsData* UCsManager_Data::LoadData(const FName& EntryName)
 	{
 		FCsDataEntry_Data* Entry = *EntryPtr;
 	
-		checkf(Entry->Name == EntryName, TEXT("UCsManager_Data::LoadData: Mismatch between Entry->Name != EntryName (%s != %s)."), *(Entry->Name.ToString()), *(EntryName.ToString()));
+		checkf(Entry->Name == EntryName, TEXT("%s: Mismatch between Entry->Name != EntryName (%s != %s)."), *Context, *(Entry->Name.ToString()), *(EntryName.ToString()));
 
 		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_Data::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
 
-		UObject* O = Entry->Get();
-
-		checkf(O, TEXT("UCsManager_Data::LoadData: Failed to load Data @ Entry: %s."), *(EntryName.ToString()));
-		
-		ICsData* Data = Cast<ICsData>(O);
-
-		checkf(Data, TEXT("UCsManager_Data::LoadData: Object: %s with Class: %s does NOT implement interface: ICsData."), *(O->GetName()), *(O->GetClass()->GetName()));
+		UObject* O	  = Entry->GetChecked(Context);
+		ICsData* Data = Entry->GetInterfaceChecked<ICsData>(Context);
 
 		DataMap_Loaded.FindOrAdd(EntryName) = Data;
 		DataByPathMap_Loaded.FindOrAdd(Entry->Data.ToSoftObjectPath()) = Data;
+		DataObjectMap_Loaded.FindOrAdd(EntryName) = O;
+		DataObjectByPathMap_Loaded.FindOrAdd(Entry->Data.ToSoftObjectPath()) = O;
 
 		return Entry->Get<ICsData>();
 	}
-	checkf(0, TEXT("UCsManager_Data::LoadData: Failed to find Data @ Entry: %s."), *(EntryName.ToString()));
+	checkf(0, TEXT("%s: Failed to find Data @ Entry: %s."), *Context, *(EntryName.ToString()));
 	return nullptr;
 }
 
 ICsData* UCsManager_Data::LoadData(const FSoftObjectPath& Path)
 {
-	checkf(Path.IsValid(), TEXT("UCsManager_Data::LoadData: Path is NOT Valid."));
+	using namespace NCsManagerDataCached;
+
+	const FString& Context = Str::LoadData;
+
+	checkf(Path.IsValid(), TEXT("%s: Path is NOT Valid."), *Context);
 
 	if (ICsData* Data = GetData(Path))
 		return Data;
@@ -504,24 +512,21 @@ ICsData* UCsManager_Data::LoadData(const FSoftObjectPath& Path)
 	{
 		FCsDataEntry_Data* Entry = *EntryPtr;
 
-		checkf(Entry->Data.ToSoftObjectPath() == Path, TEXT("UCsManager_Data::LoadData: Mismatch between Entry's Path != Path (%s != %s)."), *(Entry->Data.ToSoftObjectPath().ToString()), *(Path.ToString()));
+		checkf(Entry->Data.ToSoftObjectPath() == Path, TEXT("%s: Mismatch between Entry's Path != Path (%s != %s)."), *Context, *(Entry->Data.ToSoftObjectPath().ToString()), *(Path.ToString()));
 
 		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_DataTable::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
 
-		UObject* O = Entry->Get();
-
-		checkf(O, TEXT("UCsManager_Data::LoadData: Failed to load Data @ Entry: %s."), *(Path.ToString()));
-
-		ICsData* Data = Cast<ICsData>(O);
-
-		checkf(Data, TEXT("UCsManager_Data::LoadData: Object: %s with Class: %s does NOT implement interface: ICsData."), *(O->GetName()), *(O->GetClass()->GetName()));
+		UObject* O	  = Entry->GetChecked(Context);
+		ICsData* Data = Entry->GetInterfaceChecked<ICsData>(Context);
 
 		DataMap_Loaded.FindOrAdd(Entry->Name) = Data;
 		DataByPathMap_Loaded.FindOrAdd(Path) = Data;
+		DataObjectMap_Loaded.FindOrAdd(Entry->Name) = O;
+		DataObjectByPathMap_Loaded.FindOrAdd(Path) = O;
 
 		return Entry->Get<ICsData>();
 	}
-	checkf(0, TEXT("UCsManager_Data::LoadData: Failed to find Data @ Path: %s."), *(Path.ToString()));
+	checkf(0, TEXT("%s: Failed to find Data @ Path: %s."), *Context, *(Path.ToString()));
 	return nullptr;
 }
 
@@ -532,7 +537,11 @@ ICsData* UCsManager_Data::LoadData(const FSoftObjectPath& Path)
 
 UDataTable* UCsManager_Data::LoadDataTable(const FName& EntryName)
 {
-	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::LoadDataTable: EntryName is None."));
+	using namespace NCsManagerDataCached;
+
+	const FString& Context = Str::LoadDataTable;
+
+	checkf(EntryName != NAME_None, TEXT("%s: EntryName is None."), *Context);
 
 	if (UDataTable* Table = GetDataTable(EntryName))
 		return Table;
@@ -541,26 +550,28 @@ UDataTable* UCsManager_Data::LoadDataTable(const FName& EntryName)
 	{
 		FCsDataEntry_DataTable* Entry = *EntryPtr;
 
-		checkf(Entry->Name == EntryName, TEXT("UCsManager_Data::LoadDataTable: Mismatch between Entry->Name != EntryName (%s != %s)."), *(Entry->Name.ToString()), *(EntryName.ToString()));
+		checkf(Entry->Name == EntryName, TEXT("%s: Mismatch between Entry->Name != EntryName (%s != %s)."), *Context, *(Entry->Name.ToString()), *(EntryName.ToString()));
 
 		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_DataTable::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
 
-		UDataTable* DataTable = Entry->Get();
-
-		checkf(DataTable, TEXT("UCsManager_Data::LoadDataTable: Failed to load DataTable @ Entry: %s."), *(EntryName.ToString()));
+		UDataTable* DataTable = Entry->GetChecked(Context);
 
 		DataTableMap_Loaded.FindOrAdd(EntryName) = DataTable;
 		DataTableByPathMap_Loaded.FindOrAdd(Entry->DataTable.ToSoftObjectPath()) = DataTable;
 
 		return Entry->Get();
 	}
-	checkf(0, TEXT("UCsManager_Data::LoadDataTable: Failed to find DataTable @ Entry: %s."), *(EntryName.ToString()));
+	checkf(0, TEXT("%s: Failed to find DataTable @ Entry: %s."), *Context, *(EntryName.ToString()));
 	return nullptr;
 }
 
 UDataTable* UCsManager_Data::LoadDataTable(const FSoftObjectPath& Path)
 {
-	checkf(Path.IsValid(), TEXT("UCsManager_Data::LoadDataTable: Path is NOT Valid."));
+	using namespace NCsManagerDataCached;
+
+	const FString& Context = Str::LoadDataTable;
+
+	checkf(Path.IsValid(), TEXT("%s: Path is NOT Valid."), *Context);
 
 	if (UDataTable* Table = GetDataTable(Path))
 		return Table;
@@ -569,28 +580,30 @@ UDataTable* UCsManager_Data::LoadDataTable(const FSoftObjectPath& Path)
 	{
 		FCsDataEntry_DataTable* Entry = *EntryPtr;
 
-		checkf(Entry->DataTable.ToSoftObjectPath() == Path, TEXT("UCsManager_Data::LoadDataTable: Mismatch between Entry's Path != Path (%s != %s)."), *(Entry->DataTable.ToSoftObjectPath().ToString()), *(Path.ToString()));
+		checkf(Entry->DataTable.ToSoftObjectPath() == Path, TEXT("%s: Mismatch between Entry's Path != Path (%s != %s)."), *Context, *(Entry->DataTable.ToSoftObjectPath().ToString()), *(Path.ToString()));
 
 		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_DataTable::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
 
-		UDataTable* DataTable = Entry->Get();
-
-		checkf(DataTable, TEXT("UCsManager_Data::LoadDataTable: Failed to load DataTable @ Path: %s."), *(Path.ToString()));
+		UDataTable* DataTable = Entry->GetChecked(Context);
 
 		DataTableMap_Loaded.FindOrAdd(Entry->Name) = DataTable;
 		DataTableByPathMap_Loaded.FindOrAdd(Path) = DataTable;
 
 		return Entry->Get();
 	}
-	checkf(0, TEXT("UCsManager_Data::LoadDataTable: Failed to find DataTable @ Path: %s."), *(Path.ToString()));
+	checkf(0, TEXT("%s: Failed to find DataTable @ Path: %s."), *Context, *(Path.ToString()));
 	return nullptr;
 }
 
 uint8* UCsManager_Data::LoadDataTableRow(const FName& EntryName, const FName& RowName)
 {
-	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::LoadDataTableRow: EntryName is None."));
+	using namespace NCsManagerDataCached;
 
-	checkf(RowName != NAME_None, TEXT("UCsManager_Data::LoadDataTableRow: RowName is None."));
+	const FString& Context = Str::LoadDataTableRow;
+
+	checkf(EntryName != NAME_None, TEXT("%s: EntryName is None."), *Context);
+
+	checkf(RowName != NAME_None, TEXT("%s: RowName is None."), *Context);
 
 	// Check if DataTable and Row are already loaded
 	if (uint8* RowPtr = GetDataTableRow(EntryName, RowName))
@@ -604,9 +617,7 @@ uint8* UCsManager_Data::LoadDataTableRow(const FName& EntryName, const FName& Ro
 		if (!Entry->Get())
 			LoadDataTable(EntryName);
 
-		UDataTable* DT = Entry->Get();
-
-		checkf(DT, TEXT("UCsManager_Data::LoadDataTableRow: Failed to find DataTable @ Entry: %s."), *(EntryName.ToString()));
+		UDataTable* DT = Entry->GetChecked(Context);
 
 		const UScriptStruct* ScriptStruct = DT->GetRowStruct();
 		UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
@@ -620,19 +631,8 @@ uint8* UCsManager_Data::LoadDataTableRow(const FName& EntryName, const FName& Ro
 			return RowPtr;
 		}
 	}
-	checkf(0, TEXT("UCsManager_Data::LoadDataTableRow: Failed to load DataTable @ Entry: %s and Row: %s."), *(EntryName.ToString()), *(RowName.ToString()));
+	checkf(0, TEXT("%s: Failed to load DataTable @ Entry: %s and Row: %s."), *Context, *(EntryName.ToString()), *(RowName.ToString()));
 	return nullptr;
-}
-
-bool UCsManager_Data::IsLoadedDataTableRow(const FName& EntryName, const FName& RowName)
-{
-	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::IsLoadedDataTableRow: EntryName is None."));
-
-	checkf(RowName != NAME_None, TEXT("UCsManager_Data::IsLoadedDataTableRow: RowName is None."));
-
-	if (uint8* RowPtr = GetDataTableRow(EntryName, RowName))
-		return true;
-	return false;
 }
 
 #pragma endregion DataTable
@@ -661,7 +661,10 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 		// Datas
 		for (FCsPayload_Data& Payload_Data : Payload->Datas)
 		{
+			// Load the Data
+			const FName& EntryName = Payload_Data.Name;
 
+			ICsData* Data = LoadData(EntryName);
 		}
 
 		// DataTables
@@ -671,8 +674,6 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 			const FName& EntryName = Payload_DataTable.Name;
 
 			UDataTable* DT = LoadDataTable(EntryName);
-
-			checkf(DT, TEXT("UCsManager_Data::LoadPayload: Failed to load DataTable with EntryName: %s."), *(EntryName.ToString()));
 
 			// Load the appropriate Rows from the DataTable
 			const UScriptStruct* ScriptStruct = DT->GetRowStruct();
@@ -773,97 +774,6 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHand
 // Get
 #pragma region
 
-
-	// DataTable
-#pragma region
-		// SoftObjectPath
-#pragma region
-
-FSoftObjectPath UCsManager_Data::GetDataTableSoftObjectPath(const FName& EntryName)
-{
-	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableSoftObjectPath: EntryName: None is NOT Valid."));
-
-	if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
-		return Entry->DataTable.ToSoftObjectPath();
-	UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableSoftObjectPath: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString()));
-	return FSoftObjectPath();
-}
-
-void UCsManager_Data::GetDataTableSoftObjectPaths(const FName& EntryName, TArray<FSoftObjectPath>& OutPaths)
-{
-	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableSoftObjectPaths: EntryName: None is NOT Valid."));
-
-	if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
-	{
-		OutPaths.Append(Entry->Paths.Internal);
-	}
-	else
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableSoftObjectPathCount: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString()));
-	}
-}
-
-int32 UCsManager_Data::GetDataTableSoftObjectPathCount(const FName& EntryName)
-{
-	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableSoftObjectPathCount: EntryName: None is NOT Valid."));
-
-	if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
-		return Entry->Paths.Internal.Num();
-	UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableSoftObjectPathCount: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString()));
-	return 0;
-}
-
-void UCsManager_Data::GetDataTableRowSoftObjectPaths(const FName& EntryName, const FName& RowName, TArray<FSoftObjectPath>& OutPaths)
-{
-	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPaths: EntryName: None is NOT Valid."));
-
-	checkf(RowName != NAME_None, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPaths: RowName: None is NOT Valid."));
-
-	if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
-	{
-		if (const FCsTArraySoftObjectPath* Paths = Entry->PathsByRowMap.Find(RowName))
-		{
-			OutPaths.Append(Paths->Internal);
-		}
-		else
-		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPaths: DataTable with EntryName: %s does NOT have Row: %s as an entry."), *(EntryName.ToString()), *(RowName.ToString()));
-		}
-	}
-	else
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPaths: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString()));
-	}
-}
-
-int32 UCsManager_Data::GetDataTableRowSoftObjectPathCount(const FName& EntryName, const FName& RowName)
-{
-	checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPathCount: EntryName: None is NOT Valid."));
-
-	checkf(RowName != NAME_None, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPathCount: RowName: None is NOT Valid."));
-
-	if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
-	{
-		if (const FCsTArraySoftObjectPath* Paths = Entry->PathsByRowMap.Find(RowName))
-		{
-			return Paths->Internal.Num();
-		}
-		else
-		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPathCount: DataTable with EntryName: %s does NOT have Row: %s as an entry."), *(EntryName.ToString()), *(RowName.ToString()));
-		}
-	}
-	else
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetDataTableRowSoftObjectPathCount: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString()));
-	}
-	return 0;
-}
-
-#pragma endregion SoftObjectPath
-
-#pragma endregion DataTable
-
 	// Payload
 #pragma region
 
@@ -888,7 +798,12 @@ void UCsManager_Data::GetPayloadSoftObjectPaths(const FName& PayloadName, TArray
 		const FCsPayload* Payload = *PayloadPtr;
 
 		// Datas
+		for (const FCsPayload_Data& Payload_Data : Payload->Datas)
+		{
+			const FName& EntryName = Payload_Data.Name;
 
+			GetDataSoftObjectPathsChecked(Context, EntryName, OutPaths);
+		}
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -933,7 +848,12 @@ void UCsManager_Data::GetPayloadSoftObjectPathsChecked(const FString& Context, c
 		const FCsPayload* Payload = *PayloadPtr;
 
 		// Datas
+		for (const FCsPayload_Data& Payload_Data : Payload->Datas)
+		{
+			const FName& EntryName = Payload_Data.Name;
 
+			GetDataSoftObjectPathsChecked(Context, EntryName, OutPaths);
+		}
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -984,7 +904,12 @@ int32 UCsManager_Data::GetPayloadSoftObjectPathCount(const FName& PayloadName)
 		const FCsPayload* Payload = *PayloadPtr;
 
 		// Datas
+		for (const FCsPayload_Data& Payload_Data : Payload->Datas)
+		{
+			const FName& EntryName = Payload_Data.Name;
 
+			Count += GetDataSoftObjectPathCountChecked(Context, EntryName);
+		}
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1029,7 +954,12 @@ int32 UCsManager_Data::GetPayloadSoftObjectPathCountChecked(const FString& Conte
 		const FCsPayload* Payload = *PayloadPtr;
 
 		// Datas
+		for (const FCsPayload_Data& Payload_Data : Payload->Datas)
+		{
+			const FName& EntryName = Payload_Data.Name;
 
+			Count += GetDataSoftObjectPathCountChecked(Context, EntryName);
+		}
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{

@@ -98,14 +98,52 @@ protected:
 
 public:
 
-	ULevel* GetPersistentLevel();
+	/**
+	* Get the current Persistent Level.
+	*
+	* return Level
+	*/
+	ULevel* GetPersistentLevel() const;
 
-	FString GetPersistentLevelName();
-	FName GetPersistentLevelFName();
+	/**
+	* Get the current Persistent Level with checks.
+	*
+	* @param Context	The calling context.
+	* return			Level
+	*/
+	ULevel* GetPersistentLevelChecked(const FString& Context) const;
 
-	bool IsPersistentLevelName(const FString& MapPackageName);
+	template<typename T>
+	T* GetPersistentLevelChecked(const FString& Context) const
+	{
+		return Cast<T>(GetPersistentLevelChecked(Context));
+	}
 
-	ALevelScriptActor* GetPersistentLevelScriptActor();
+	/**
+	* Get the current Persistent Level name.
+	*
+	* return Level name as a FString.
+	*/
+	FString GetPersistentLevelName() const;
+
+	/**
+	* Get the current Persistent Level name.
+	*
+	* return Level name as a FName.
+	*/
+	FName GetPersistentLevelFName() const;
+
+	bool IsPersistentLevelName(const FString& MapPackageName) const;
+
+	ALevelScriptActor* GetPersistentLevelScriptActor() const;
+
+	ALevelScriptActor* GetPersistentLevelScriptActorChecked(const FString& Context) const;
+
+	template<typename T>
+	FORCEINLINE T* GetPersistentLevelScriptActorChecked(const FString& Context) const
+	{
+		return Cast<T>(GetPersistentLevelScriptActorChecked(Context));
+	}
 
 #pragma endregion Persistent Level
 

@@ -18,10 +18,12 @@ namespace NCsInputDevice
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputDevice, MouseAndKeyboard, "Mouse and Keyboard");
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputDevice, Gamepad);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputDevice, MotionController, "Motion Controller");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputDevice, ECsInputDevice_MAX, "MAX");
+		typedef EMCsInputDevice EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(MouseAndKeyboard, "Mouse and Keyboard");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Gamepad);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(MotionController, "Motion Controller");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsInputDevice_MAX, "MAX");
 	}
 }
 
@@ -34,12 +36,14 @@ namespace NCsInputType
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputType, Action);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputType, Axis);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputType, Trigger);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputType, Location);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputType, Rotation);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputType, ECsInputType_MAX, "MAX");
+		typedef EMCsInputType EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Action);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Axis);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Trigger);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Location);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Rotation);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsInputType_MAX, "MAX");
 	}
 }
 
@@ -52,15 +56,17 @@ namespace NCsInputEvent
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputEvent, FirstPressed, "First Pressed");
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputEvent, Pressed);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputEvent, FirstReleased, "First Released");
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputEvent, Released);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputEvent, FirstMoved, "First Moved");
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputEvent, Moved);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputEvent, FirstStationary, "First Stationary");
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputEvent, Stationary);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputEvent, ECsInputEvent_MAX, "MAX");
+		typedef EMCsInputEvent EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(FirstPressed, "First Pressed");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Pressed);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(FirstReleased, "First Released");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Released);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(FirstMoved, "First Moved");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Moved);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(FirstStationary, "First Stationary");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Stationary);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsInputEvent_MAX, "MAX");
 	}
 }
 
@@ -73,11 +79,13 @@ namespace NCsInputValue
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputValue, Void);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputValue, Float);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputValue, Vector);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputValue, Rotator);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputValue, ECsInputValue_MAX, "MAX");
+		typedef EMCsInputValue EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Void);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Float);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Vector);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Rotator);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsInputValue_MAX, "MAX");
 	}
 }
 
@@ -154,14 +162,16 @@ namespace NCsInputValueRule
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputValueRule, None);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputValueRule, Equal, "=");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputValueRule, NotEqual, "!=");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputValueRule, Greater, ">");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputValueRule, GreaterOrEqual, ">=");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputValueRule, Less, "<");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputValueRule, LessOrEqual, "<=");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputValueRule, ECsInputValueRule_MAX, "MAX");
+		typedef EMCsInputValueRule EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(None);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(Equal, "=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(NotEqual, "!=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(Greater, ">");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(GreaterOrEqual, ">=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(Less, "<");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(LessOrEqual, "<=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsInputValueRule_MAX, "MAX");
 	}
 }
 
@@ -174,10 +184,12 @@ namespace NCsInputLocationRule
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputLocationRule, None);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputLocationRule, Equal, "=");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputLocationRule, NotEqual, "!=");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputLocationRule, ECsInputLocationRule_MAX, "MAX");
+		typedef EMCsInputLocationRule EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(None);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(Equal, "=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(NotEqual, "!=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsInputLocationRule_MAX, "MAX");
 	}
 }
 
@@ -190,10 +202,12 @@ namespace NCsInputRotationRule
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputRotationRule, None);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputRotationRule, Equal, "=");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputRotationRule, NotEqual, "!=");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputRotationRule, ECsInputRotationRule_MAX, "MAX");
+		typedef EMCsInputRotationRule EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(None);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(Equal, "=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(NotEqual, "!=");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsInputRotationRule_MAX, "MAX");
 	}
 }
 
@@ -206,10 +220,12 @@ namespace NCsInputCompletedValueReturnType
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputCompletedValueReturnType, PassThrough, "Pass Through");
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputCompletedValueReturnType, Defined);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInputCompletedValueReturnType, Average);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInputCompletedValueReturnType, ECsInputCompletedValueReturnType_MAX, "MAX");
+		typedef EMCsInputCompletedValueReturnType EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PassThrough, "Pass Through");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Defined);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Average);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsInputCompletedValueReturnType_MAX, "MAX");
 	}
 }
 

@@ -7,10 +7,15 @@
 
 namespace NCsPopulateEnumMapMethod
 {
-	CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPopulateEnumMapMethod, Native);
-	CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPopulateEnumMapMethod, EnumSettings, "Enum Settings");
-	CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPopulateEnumMapMethod, DataTable);
-	CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPopulateEnumMapMethod, ECsPopulateEnumMapMethod_MAX, "MAX");
+	namespace Ref
+	{
+		typedef EMCsPopulateEnumMapMethod EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Native);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EnumSettings, "Enum Settings");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(DataTable);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsPopulateEnumMapMethod_MAX, "MAX");
+	}
 
 	CSCORE_API const uint8 MAX = (uint8)ECsPopulateEnumMapMethod::ECsPopulateEnumMapMethod_MAX;
 }

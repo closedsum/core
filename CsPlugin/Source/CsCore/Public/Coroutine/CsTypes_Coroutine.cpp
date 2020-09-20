@@ -8,11 +8,13 @@ namespace NCsCoroutineState
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineState, Free);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineState, Init);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineState, Update);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineState, End);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineState, ECsCoroutineState_MAX, "MAX");
+		typedef EMCsCoroutineState EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Free);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Init);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Update);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(End);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsCoroutineState_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsCoroutineState_MAX;
@@ -27,10 +29,12 @@ namespace NCsCoroutineMessage
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineMessage, Notify);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineMessage, Listen);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineMessage, Abort);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineMessage, ECsCoroutineMessage_MAX, "MAX");
+		typedef EMCsCoroutineMessage EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Notify);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Listen);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Abort);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsCoroutineMessage_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsCoroutineMessage_MAX;
@@ -45,15 +49,17 @@ namespace NCsCoroutineEndReason
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineEndReason, EndOfExecution, "End of Execution");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineEndReason, AbortMessage, "Abort Message");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineEndReason, AbortCondition, "Abort Condition");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineEndReason, OwnerIsInvalid, "Owner is Invalid");
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineEndReason, Parent);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineEndReason, UniqueInstance, "Unique Instance");
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineEndReason, Shutdown);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsCoroutineEndReason, Manual);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsCoroutineEndReason, ECsCoroutineEndReason_MAX, "MAX");
+		typedef EMCsCoroutineEndReason EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EndOfExecution, "End of Execution");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(AbortMessage, "Abort Message");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(AbortCondition, "Abort Condition");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(OwnerIsInvalid, "Owner is Invalid");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Parent);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(UniqueInstance, "Unique Instance");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Shutdown);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Manual);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsCoroutineEndReason_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsCoroutineEndReason_MAX;
@@ -68,10 +74,12 @@ namespace NCsCoroutineTransaction
 {
 	namespace Ref
 	{
-		CSCORE_API const Type Allocate = EMCsCoroutineTransaction::Get().Add(Type::Allocate, TEXT("Allocate"));
-		CSCORE_API const Type Start = EMCsCoroutineTransaction::Get().Add(Type::Start, TEXT("Start"));
-		CSCORE_API const Type End = EMCsCoroutineTransaction::Get().Add(Type::End, TEXT("End"));
-		CSCORE_API const Type ECsCoroutineTransaction_MAX = EMCsCoroutineTransaction::Get().Add(Type::ECsCoroutineTransaction_MAX, TEXT("ECsCoroutineTransaction_MAX"), TEXT("MAX"));
+		typedef EMCsCoroutineTransaction EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Allocate);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Start);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(End);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsCoroutineTransaction_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsCoroutineTransaction_MAX;
@@ -93,23 +101,25 @@ namespace NCsRoutineRegisterValueType
 {
 	namespace Ref
 	{
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Indexer);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Counter);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Flag);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Timer);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, DeltaTime);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Int);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Float);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Double);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Vector);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Rotator);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Color);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Name);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, String);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, StringPtr);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Object);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsRoutineRegisterValueType, Void);
-		extern CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRoutineRegisterValueType, ECsRoutineRegisterValueType_MAX, "MAX");
+		typedef EMCsRoutineRegisterValueType EnumMapType;
+
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(Indexer);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(Counter);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(Flag);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(Timer);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(DeltaTime);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(Int);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(Float);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(Double);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(Vector);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(Rotator);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(Color);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(Name);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(String);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(StringPtr);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(Object);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP(Void);
+		extern CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsRoutineRegisterValueType_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsRoutineRegisterValueType_MAX;

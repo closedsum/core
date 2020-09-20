@@ -8,15 +8,17 @@ namespace NCsPoolTransaction
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPoolTransaction, Allocate);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPoolTransaction, Spawn);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPoolTransaction, PreDeallocate, "Pre-Deallocate");
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPoolTransaction, Deallocate);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPoolTransaction, DeallocateByQueue, "Deallocate by Queue");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPoolTransaction, DeallocateByUnknown, "Deallocate by Unknown");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPoolTransaction, DeallocateByLifeTime, "Deallocate by LifeTime");
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPoolTransaction, Destroy);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPoolTransaction, ECsPoolTransaction_MAX, "MAX");
+		typedef EMCsPoolTransaction EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Allocate);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Spawn);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PreDeallocate, "Pre-Deallocate");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Deallocate);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(DeallocateByQueue, "Deallocate by Queue");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(DeallocateByUnknown, "Deallocate by Unknown");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(DeallocateByLifeTime, "Deallocate by LifeTime");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Destroy);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsPoolTransaction_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsPoolTransaction_MAX;
@@ -38,9 +40,11 @@ namespace NCsPoolTransactionOrder
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPoolTransactionOrder, FillAny, "Fill Any");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPoolTransactionOrder, FillOrKill, "Fill or Kill");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPoolTransactionOrder, ECsPoolTransactionOrder_MAX, "MAX");
+		typedef EMCsPoolTransactionOrder EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(FillAny, "Fill Any");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(FillOrKill, "Fill or Kill");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsPoolTransactionOrder_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsPoolTransactionOrder_MAX;
@@ -55,10 +59,12 @@ namespace NCsPooledObjectState
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPoolObjectState, WarmUp, "Warm Up");
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPoolObjectState, Active);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPoolObjectState, Inactive);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPoolObjectState, ECsPooledObjectState_MAX, "MAX");
+		typedef EMCsPoolObjectState EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(WarmUp, "Warm Up");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Active);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Inactive);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsPooledObjectState_MAX, "MAX");
 	}
 }
 
@@ -71,9 +77,11 @@ namespace NCsPooledObjectConstruction
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPooledObjectConstruction, Object);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPooledObjectConstruction, Actor);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPooledObjectConstruction, ECsPooledObjectConstruction_MAX, "MAX");
+		typedef EMCsPooledObjectConstruction EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Object);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Actor);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsPooledObjectConstruction_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsPooledObjectConstruction_MAX;
@@ -88,11 +96,13 @@ namespace NCsPooledObjectUpdate
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPooledObjectUpdate, Self);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPooledObjectUpdate, Manager);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPooledObjectUpdate, Owner);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsPooledObjectUpdate, Instigator);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsPooledObjectUpdate, ECsPooledObjectUpdate_MAX, "MAX");
+		typedef EMCsPooledObjectUpdate EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Self);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Manager);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Owner);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Instigator);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsPooledObjectUpdate_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsPooledObjectUpdate_MAX;
@@ -107,9 +117,11 @@ namespace NCsManagerPooledObject
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsManagerPooledObject, Dynamic);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsManagerPooledObject, Fixed);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsManagerPooledObject, ECsManagerPooledObject_MAX, "MAX");
+		typedef EMCsManagerPooledObject EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Dynamic);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Fixed);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsManagerPooledObject_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsManagerPooledObject_MAX;

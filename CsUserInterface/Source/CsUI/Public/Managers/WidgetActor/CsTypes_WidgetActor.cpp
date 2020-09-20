@@ -114,9 +114,11 @@ namespace NCsWidgetActorDeallocateMethod
 {
 	namespace Ref
 	{
-		CSUI_API CS_ADD_TO_ENUM_MAP(EMCsWidgetActorDeallocateMethod, Complete);
-		CSUI_API CS_ADD_TO_ENUM_MAP(EMCsWidgetActorDeallocateMethod, LifeTime);
-		CSUI_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsWidgetActorDeallocateMethod, ECsWidgetActorDeallocateMethod_MAX, "MAX");
+		typedef EMCsWidgetActorDeallocateMethod EnumMapType;
+
+		CSUI_API CS_ADD_TO_ENUM_MAP(Complete);
+		CSUI_API CS_ADD_TO_ENUM_MAP(LifeTime);
+		CSUI_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsWidgetActorDeallocateMethod_MAX, "MAX");
 	}
 
 	CSUI_API const uint8 MAX = (uint8)Type::ECsWidgetActorDeallocateMethod_MAX;

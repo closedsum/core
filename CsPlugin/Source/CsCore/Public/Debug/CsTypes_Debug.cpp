@@ -11,10 +11,12 @@ namespace NCsDebugDrawPriority
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsDebugDrawPriority, Any);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsDebugDrawPriority, CVar);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsDebugDrawPriority, Flag);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsDebugDrawPriority, ECsDebugDrawPriority_MAX, "MAX");
+		typedef EMCsDebugDrawPriority EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Any);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(CVar);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Flag);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsDebugDrawPriority_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsDebugDrawPriority_MAX;
@@ -29,9 +31,11 @@ namespace NCsDebugDrawFrequency
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsDebugDrawFrequency, Once);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsDebugDrawFrequency, Update);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsDebugDrawFrequency, ECsDebugDrawFrequency_MAX, "MAX");
+		typedef EMCsDebugDrawFrequency EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Once);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Update);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsDebugDrawFrequency_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsDebugDrawFrequency_MAX;
@@ -46,9 +50,11 @@ namespace NCsDebugDrawRotation
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsDebugDrawRotation, Absolute);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsDebugDrawRotation, Offset);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsDebugDrawRotation, ECsDebugDrawRotation_MAX, "MAX");
+		typedef EMCsDebugDrawRotation EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Absolute);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Offset);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsDebugDrawRotation_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsDebugDrawRotation_MAX;

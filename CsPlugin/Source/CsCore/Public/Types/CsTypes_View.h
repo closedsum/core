@@ -29,10 +29,13 @@ namespace NCsViewType
 {
 	typedef ECsViewType Type;
 
-	extern CSCORE_API const Type FirstPerson;
-	extern CSCORE_API const Type ThirdPerson;
-	extern CSCORE_API const Type VR;
-	extern CSCORE_API const Type ECsViewType_MAX;
+	namespace Ref
+	{
+		extern CSCORE_API const Type FirstPerson;
+		extern CSCORE_API const Type ThirdPerson;
+		extern CSCORE_API const Type VR;
+		extern CSCORE_API const Type ECsViewType_MAX;
+	}
 
 	extern CSCORE_API const uint8 MAX;
 }

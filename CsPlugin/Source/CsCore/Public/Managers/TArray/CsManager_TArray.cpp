@@ -13,11 +13,13 @@ namespace NCsManagerTArraySize
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsManagerTArraySize, Small);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsManagerTArraySize, Medium);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsManagerTArraySize, Large);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsManagerTArraySize, VeryLarge, "Very Large");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsManagerTArraySize, ECsManagerTArraySize_MAX, "MAX");
+		typedef EMCsManagerTArraySize EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Small);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Medium);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Large);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(VeryLarge, "Very Large");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsManagerTArraySize_MAX, "MAX");
 	}
 }
 

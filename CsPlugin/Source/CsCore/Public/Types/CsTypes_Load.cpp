@@ -111,19 +111,21 @@ namespace NCsObjectPathDependencyGroup
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, Texture);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, Material);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, StaticMesh);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, Skeletal);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, Sound);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, FX);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, AnimationAsset);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, AnimComposite);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, Blueprint);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, Sequencer);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, DataTable);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsObjectPathDependencyGroup, Other);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsObjectPathDependencyGroup, ECsObjectPathDependencyGroup_MAX, "MAX");
+		typedef EMCsObjectPathDependencyGroup EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Texture);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Material);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(StaticMesh);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Skeletal);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Sound);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(FX);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(AnimationAsset);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(AnimComposite);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Blueprint);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Sequencer);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(DataTable);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Other);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsObjectPathDependencyGroup_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsObjectPathDependencyGroup_MAX;
@@ -138,10 +140,12 @@ namespace NCsLoadAsyncOrder
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsLoadAsyncOrder, None);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsLoadAsyncOrder, FirstToLast, "First to Last");
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsLoadAsyncOrder, Bulk);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsLoadAsyncOrder, ECsLoadAsyncOrder_MAX, "MAX");
+		typedef EMCsLoadAsyncOrder EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(None);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(FirstToLast, "First to Last");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Bulk);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsLoadAsyncOrder_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsLoadAsyncOrder_MAX;

@@ -8,11 +8,13 @@ namespace NCsTraceType
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceType, Line);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceType, Sweep);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceType, Overlap);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsTraceType, OverlapBlocking, "Overlap Blocking");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsTraceType, ECsTraceType_MAX, "MAX");
+		typedef EMCsTraceType EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Line);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Sweep);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Overlap);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(OverlapBlocking, "Overlap Blocking");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsTraceType_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsTraceType_MAX;
@@ -27,10 +29,12 @@ namespace NCsTraceMethod
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceMethod, Test);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceMethod, Single);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceMethod, Multi);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsTraceMethod, ECsTraceMethod_MAX, "MAX");
+		typedef EMCsTraceMethod EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Test);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Single);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Multi);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsTraceMethod_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsTraceMethod_MAX;
@@ -45,10 +49,12 @@ namespace NCsTraceQuery
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceQuery, Channel);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceQuery, ObjectType);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceQuery, Profile);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsTraceQuery, ECsTraceQuery_MAX, "MAX");
+		typedef EMCsTraceQuery EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Channel);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(ObjectType);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Profile);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsTraceQuery_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsTraceQuery_MAX;
@@ -63,12 +69,14 @@ namespace NCsTraceTransaction
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceTransaction, Receive);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceTransaction, Discard);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceTransaction, Add);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceTransaction, Process);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsTraceTransaction, Complete);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsTraceTransaction, ECsTraceTransaction_MAX, "MAX");
+		typedef EMCsTraceTransaction EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Receive);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Discard);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Add);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Process);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Complete);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsTraceTransaction_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsTraceTransaction_MAX;

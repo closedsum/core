@@ -129,10 +129,12 @@ namespace NCsFXPriority
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsFXPriority, Low);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsFXPriority, Medium);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsFXPriority, High);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsFXPriority, ECsFXPriority_MAX, "MAX");
+		typedef EMCsFXPriority EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Low);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Medium);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(High);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsFXPriority_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsFXPriority_MAX;
@@ -147,9 +149,11 @@ namespace NCsFXDeallocateMethod
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsFXDeallocateMethod, LifeTime);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsFXDeallocateMethod, Complete);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsFXDeallocateMethod, ECsFXDeallocateMethod_MAX, "MAX");
+		typedef EMCsFXDeallocateMethod EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(LifeTime);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Complete);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsFXDeallocateMethod_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsFXDeallocateMethod_MAX;

@@ -8,11 +8,13 @@ namespace NCsAttachmentTransformRules
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsAttachmentTransformRules, KeepRelativeTransform, "Keep Relative Transform");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsAttachmentTransformRules, KeepWorldTransform, "Keep World Transform");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsAttachmentTransformRules, SnapToTargetNotIncludingScale, "Snap to Target Not Including Scale");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsAttachmentTransformRules, SnapToTargetIncludingScale, "Snap to Target Including Scale");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsAttachmentTransformRules, ECsAttachmentTransformRules_MAX, "MAX");
+		typedef EMCsAttachmentTransformRules EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(KeepRelativeTransform, "Keep Relative Transform");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(KeepWorldTransform, "Keep World Transform");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(SnapToTargetNotIncludingScale, "Snap to Target Not Including Scale");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(SnapToTargetIncludingScale, "Snap to Target Including Scale");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsAttachmentTransformRules_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsAttachmentTransformRules_MAX;
@@ -27,9 +29,11 @@ namespace NCsDetachmentTransformRules
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsDetachmentTransformRules, KeepRelativeTransform, "Keep Relative Transform");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsDetachmentTransformRules, KeepWorldTransform, "Keep World Transform");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsDetachmentTransformRules, ECsDetachmentTransformRules_MAX, "MAX");
+		typedef EMCsDetachmentTransformRules EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(KeepRelativeTransform, "Keep Relative Transform");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(KeepWorldTransform, "Keep World Transform");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsDetachmentTransformRules_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsDetachmentTransformRules_MAX;

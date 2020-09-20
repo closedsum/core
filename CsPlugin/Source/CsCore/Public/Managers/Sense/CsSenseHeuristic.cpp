@@ -9,10 +9,12 @@ namespace NCsSenseHeuristicScoreSortOrder
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSenseHeuristicScoreSortOrder, Descending);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSenseHeuristicScoreSortOrder, Ascending);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSenseHeuristicScoreSortOrder, Custom);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSenseHeuristicScoreSortOrder, ECsSenseHeuristicScoreSortOrder_MAX, "MAX");
+		typedef EMCsSenseHeuristicScoreSortOrder EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Descending);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Ascending);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Custom);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSenseHeuristicScoreSortOrder_MAX, "MAX");
 	}
 }
 

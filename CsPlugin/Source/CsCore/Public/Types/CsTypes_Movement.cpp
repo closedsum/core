@@ -13,10 +13,12 @@ namespace NCsSpeedFormat
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSpeedFormat, UUpS, "Unreal Units per Second");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSpeedFormat, MpH, "Miles per Hour");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSpeedFormat, KpH, "Kilometers per Hour");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSpeedFormat, ECsSpeedFormat_MAX, "MAX");
+		typedef EMCsSpeedFormat EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(UUpS, "Unreal Units per Second");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(MpH, "Miles per Hour");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(KpH, "Kilometers per Hour");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSpeedFormat_MAX, "MAX");
 	}
 }
 
@@ -77,10 +79,12 @@ namespace NCsSpeedInterpMethod
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpeedInterpMethod, Acceleration);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpeedInterpMethod, Easing);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpeedInterpMethod, Curve);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSpeedInterpMethod, ECsSpeedInterpMethod_MAX, "MAX");
+		typedef EMCsSpeedInterpMethod EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Acceleration);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Easing);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Curve);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSpeedInterpMethod_MAX, "MAX");
 	}
 }
 
@@ -93,9 +97,11 @@ namespace NCsSpeedInterpDirection
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpeedInterpDirection, Increasing);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpeedInterpDirection, Decreasing);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSpeedInterpDirection, ECsSpeedInterpDirection_MAX, "MAX");
+		typedef EMCsSpeedInterpDirection EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Increasing);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Decreasing);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSpeedInterpDirection_MAX, "MAX");
 	}
 }
 

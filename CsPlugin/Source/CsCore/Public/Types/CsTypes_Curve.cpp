@@ -9,11 +9,13 @@ namespace NCsRichCurveInterpMode
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveInterpMode, RCIM_Linear, "Linear");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveInterpMode, RCIM_Constant, "Constant");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveInterpMode, RCIM_Cubic, "Cubic");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveInterpMode, RCIM_None, "None");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveInterpMode, ECsRichCurveInterpMode_MAX, "MAX");
+		typedef EMCsRichCurveInterpMode EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(RCIM_Linear, "Linear");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(RCIM_Constant, "Constant");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(RCIM_Cubic, "Cubic");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(RCIM_None, "None");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsRichCurveInterpMode_MAX, "MAX");
 	}
 }
 
@@ -26,11 +28,13 @@ namespace NCsRichCurveTangentMode
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveTangentMode, RCTM_Auto, "Auto");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveTangentMode, RCTM_User, "User");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveTangentMode, RCTM_Break, "Break");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveTangentMode, RCTM_None, "None");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsRichCurveTangentMode, ECsRichCurveTangentMode_MAX, "MAX");
+		typedef EMCsRichCurveTangentMode EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(RCTM_Auto, "Auto");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(RCTM_User, "User");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(RCTM_Break, "Break");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(RCTM_None, "None");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsRichCurveTangentMode_MAX, "MAX");
 	}
 }
 

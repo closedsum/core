@@ -9,10 +9,12 @@ namespace NCsParametricFunctionType
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsParametricFunctionType, Linear);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsParametricFunctionType, Quadratic);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsParametricFunctionType, Sine);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsParametricFunctionType, ECsParametricFunctionType_MAX, "MAX");
+		typedef EMCsParametricFunctionType EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Linear);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Quadratic);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Sine);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsParametricFunctionType_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsParametricFunctionType_MAX;

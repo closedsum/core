@@ -8,9 +8,11 @@ namespace NCsBlendDirection
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsBlendDirection, In);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsBlendDirection, Out);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsBlendDirection, ECsBlendDirection_MAX, "MAX");
+		typedef EMCsBlendDirection EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(In);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Out);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsBlendDirection_MAX, "MAX");
 	}
 }
 
@@ -23,17 +25,19 @@ namespace NCsEasingType
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsEasingType, Linear);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsEasingType, BounceIn);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsEasingType, BounceOut);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsEasingType, BounceInOut);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsEasingType, CubicIn);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsEasingType, CubicOut);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsEasingType, CubicInOut);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsEasingType, ExpoIn);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsEasingType, ExpoOut);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsEasingType, ExpoInOut);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsEasingType, ECsEasingType_MAX, "MAX");
+		typedef EMCsEasingType EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Linear);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(BounceIn);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(BounceOut);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(BounceInOut);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(CubicIn);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(CubicOut);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(CubicInOut);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(ExpoIn);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(ExpoOut);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(ExpoInOut);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsEasingType_MAX, "MAX");
 	}
 }
 
@@ -46,10 +50,12 @@ namespace NCsInterpolatingMethod
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInterpolatingMethod, Easing);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInterpolatingMethod, Curve);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsInterpolatingMethod, Custom);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsInterpolatingMethod, ECsInterpolatingMethod_MAX, "MAX");
+		typedef EMCsInterpolatingMethod EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Easing);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Curve);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Custom);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsInterpolatingMethod_MAX, "MAX");
 	}
 }
 

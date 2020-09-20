@@ -48,10 +48,13 @@ namespace NCsPopulateEnumMapMethod
 {
 	typedef ECsPopulateEnumMapMethod Type;
 
-	extern CSCORE_API const Type Native;
-	extern CSCORE_API const Type EnumSettings;
-	extern CSCORE_API const Type DataTable;
-	extern CSCORE_API const Type ECsPopulateEnumMapMethod_MAX;
+	namespace Ref
+	{
+		extern CSCORE_API const Type Native;
+		extern CSCORE_API const Type EnumSettings;
+		extern CSCORE_API const Type DataTable;
+		extern CSCORE_API const Type ECsPopulateEnumMapMethod_MAX;
+	}
 
 	extern CSCORE_API const uint8 MAX;
 }

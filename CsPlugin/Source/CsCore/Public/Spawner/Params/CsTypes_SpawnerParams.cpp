@@ -11,12 +11,14 @@ namespace NCsSpawnerFrequency
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerFrequency, Once);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerFrequency, Count);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerFrequency, TimeCount);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerFrequency, TimeInterval);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerFrequency, Infinite);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSpawnerFrequency, ECsSpawnerFrequency_MAX, "MAX");
+		typedef EMCsSpawnerFrequency EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Once);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Count);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(TimeCount);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(TimeInterval);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Infinite);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSpawnerFrequency_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsSpawnerFrequency_MAX;
@@ -105,11 +107,13 @@ namespace NCsSpawnerPoint
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPoint, Self);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPoint, Transform);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPoint, Actor);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPoint, Custom);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSpawnerPoint, ECsSpawnerPoint_MAX, "MAX");
+		typedef EMCsSpawnerPoint EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Self);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Transform);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Actor);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Custom);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSpawnerPoint_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsSpawnerPoint_MAX;
@@ -124,11 +128,13 @@ namespace NCsSpawnerPointOrder
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPointOrder, FirstToLast);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPointOrder, RandomShuffle);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPointOrder, Random);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSpawnerPointOrder, Custom);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSpawnerPointOrder, ECsSpawnerPointOrder_MAX, "MAX");
+		typedef EMCsSpawnerPointOrder EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(FirstToLast);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(RandomShuffle);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Random);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Custom);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSpawnerPointOrder_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsSpawnerPointOrder_MAX;

@@ -20,11 +20,13 @@ namespace NCsStatusEffectTriggerFrequency
 {
 	namespace Ref
 	{
-		CSSE_API CS_ADD_TO_ENUM_MAP(EMCsStatusEffectTriggerFrequency, Once);
-		CSSE_API CS_ADD_TO_ENUM_MAP(EMCsStatusEffectTriggerFrequency, Count);
-		CSSE_API CS_ADD_TO_ENUM_MAP(EMCsStatusEffectTriggerFrequency, Time);
-		CSSE_API CS_ADD_TO_ENUM_MAP(EMCsStatusEffectTriggerFrequency, Infinite);
-		CSSE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsStatusEffectTriggerFrequency, ECsStatusEffectTriggerFrequency_MAX, "MAX");
+		typedef EMCsStatusEffectTriggerFrequency EnumMapType;
+
+		CSSE_API CS_ADD_TO_ENUM_MAP(Once);
+		CSSE_API CS_ADD_TO_ENUM_MAP(Count);
+		CSSE_API CS_ADD_TO_ENUM_MAP(Time);
+		CSSE_API CS_ADD_TO_ENUM_MAP(Infinite);
+		CSSE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsStatusEffectTriggerFrequency_MAX, "MAX");
 	}
 
 	CSSE_API const uint8 MAX = (uint8)Type::ECsStatusEffectTriggerFrequency_MAX;
@@ -39,12 +41,14 @@ namespace NCsStatusEffectTransferFrequency
 {
 	namespace Ref
 	{
-		CSSE_API CS_ADD_TO_ENUM_MAP(EMCsStatusEffectTransferFrequency, None);
-		CSSE_API CS_ADD_TO_ENUM_MAP(EMCsStatusEffectTransferFrequency, Once);
-		CSSE_API CS_ADD_TO_ENUM_MAP(EMCsStatusEffectTransferFrequency, Count);
-		CSSE_API CS_ADD_TO_ENUM_MAP(EMCsStatusEffectTransferFrequency, Time);
-		CSSE_API CS_ADD_TO_ENUM_MAP(EMCsStatusEffectTransferFrequency, Infinite);
-		CSSE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsStatusEffectTransferFrequency, ECsStatusEffectTransferFrequency_MAX, "MAX");
+		typedef EMCsStatusEffectTransferFrequency EnumMapType;
+
+		CSSE_API CS_ADD_TO_ENUM_MAP(None);
+		CSSE_API CS_ADD_TO_ENUM_MAP(Once);
+		CSSE_API CS_ADD_TO_ENUM_MAP(Count);
+		CSSE_API CS_ADD_TO_ENUM_MAP(Time);
+		CSSE_API CS_ADD_TO_ENUM_MAP(Infinite);
+		CSSE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsStatusEffectTransferFrequency_MAX, "MAX");
 	}
 
 	CSSE_API const uint8 MAX = (uint8)Type::ECsStatusEffectTransferFrequency_MAX;

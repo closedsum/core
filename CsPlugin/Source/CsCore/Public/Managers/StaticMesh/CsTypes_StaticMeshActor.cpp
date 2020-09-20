@@ -95,9 +95,11 @@ namespace NCsStaticMeshActorDeallocateMethod
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsStaticMeshActorDeallocateMethod, LifeTime);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsStaticMeshActorDeallocateMethod, Complete);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsStaticMeshActorDeallocateMethod, ECsStaticMeshActorDeallocateMethod_MAX, "MAX");
+		typedef EMCsStaticMeshActorDeallocateMethod EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(LifeTime);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Complete);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsStaticMeshActorDeallocateMethod_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsStaticMeshActorDeallocateMethod_MAX;

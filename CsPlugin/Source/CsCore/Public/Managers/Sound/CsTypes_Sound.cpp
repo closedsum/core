@@ -129,12 +129,14 @@ namespace NCsSoundPriority
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSoundPriority, VeryLow, "Very Low");
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSoundPriority, Low);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSoundPriority, Medium);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSoundPriority, High);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSoundPriority, VeryHigh, "Very High");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSoundPriority, ECsSoundPriority_MAX, "MAX");
+		typedef EMCsSoundPriority EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(VeryLow, "Very Low");
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Low);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Medium);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(High);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(VeryHigh, "Very High");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSoundPriority_MAX, "MAX");
 	}
 }
 
@@ -147,9 +149,11 @@ namespace NCsSoundDeallocateMethod
 {
 	namespace Ref
 	{
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSoundDeallocateMethod, LifeTime);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(EMCsSoundDeallocateMethod, Complete);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMCsSoundDeallocateMethod, ECsSoundDeallocateMethod_MAX, "MAX");
+		typedef EMCsSoundDeallocateMethod EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(LifeTime);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Complete);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSoundDeallocateMethod_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsSoundDeallocateMethod_MAX;

@@ -15,6 +15,7 @@
 * OnFinishLoadObjectPaths 
 *  Delegate type for when loading has finished for any paths provided when executing 
 *  LoadObjectPaths.
+*  This is a synchronous event (fired on the Game Thread).
 *
 * @param Handle			Handle to Task from Manager_Load. This is only valid in the executing scope.
 * @param Handles		Streamable Handles that hold onto the reference of a loaded asset.

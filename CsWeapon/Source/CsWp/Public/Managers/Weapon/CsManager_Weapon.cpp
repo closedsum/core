@@ -46,13 +46,13 @@ namespace NCsManagerWeapon
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(SetupInternal, "UCsManager_Weapon::SetupInternal");
-		CS_DEFINE_CACHED_STRING(InitInternalFromSettings, "UCsManager_Weapon::InitInternalFromSettings");
-		CS_DEFINE_CACHED_STRING(PopulateClassMapFromSettings, "UCsManager_Weapon::PopulateClassMapFromSettings");
-		CS_DEFINE_CACHED_STRING(PopulateDataMapFromSettings, "UCsManager_Weapon::PopulateDataMapFromSettings");
-		CS_DEFINE_CACHED_STRING(CreateEmulatedDataFromDataTable, "UCsManager_Weapon::CreateEmulatedDataFromDataTable");
-		CS_DEFINE_CACHED_STRING(DeconstructEmulatedData, "UCsManager_Weapon::DeconstructEmulatedData");
-		CS_DEFINE_CACHED_STRING(PopulateDataMapFromDataTable, "UCsManager_Weapon::PopulateDataMapFromDataTable");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, SetupInternal);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, InitInternalFromSettings);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, PopulateClassMapFromSettings);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, PopulateDataMapFromSettings);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, CreateEmulatedDataFromDataTable);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, DeconstructEmulatedData);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, PopulateDataMapFromDataTable);
 	}
 
 	namespace Name

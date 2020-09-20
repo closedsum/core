@@ -14,8 +14,8 @@ namespace NCsStaticMeshActorImplCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(Update, "ACsStaticMeshActorPooledImpl::Update");
-		CS_DEFINE_CACHED_STRING(Allocate, "ACsStaticMeshActorPooledImpl::Allocate");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsStaticMeshActorPooledImpl, Update);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsStaticMeshActorPooledImpl, Allocate);
 	}
 }
 

@@ -19,9 +19,9 @@ namespace NCsCoroutineCached
 {
 	namespace Str
 	{
-		const FString Allocate = TEXT("UCsCoroutineScheduler::Allocate");
-		const FString Start = TEXT("UCsCoroutineScheduler::Start");
-		const FString Update = TEXT("UCsCoroutineScheduler::Update");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, Allocate);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, Start);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, Update);
 	}
 }
 

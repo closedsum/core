@@ -20,7 +20,7 @@ namespace NCsSoundPooledCacheImplCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(Allocate, "FCsSoundPooledCacheImpl::Allocate");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsSoundPooledCacheImpl, Allocate);
 	}
 }
 

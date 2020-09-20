@@ -45,12 +45,12 @@ namespace NCsManagerWidgetActorCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(SetupInternal, "UCsManager_WidgetActor::SetupInternal");
-		CS_DEFINE_CACHED_STRING(InitInternalFromSettings, "UCsManager_WidgetActor::InitInternalFromSettings");
-		CS_DEFINE_CACHED_STRING(PopulateClassMapFromSettings, "UCsManager_WidgetActor::PopulateClassMapFromSettings");
-		CS_DEFINE_CACHED_STRING(PopulateDataMapFromSettings, "UCsManager_WidgetActor::PopulateDataMapFromSettings");
-		CS_DEFINE_CACHED_STRING(GetWidgetActor, "UCsManager_WidgetActor::GetWidgetActor");
-		CS_DEFINE_CACHED_STRING(GetData, "UCsManager_WidgetActor::GetData");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_WidgetActor, SetupInternal);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_WidgetActor, InitInternalFromSettings);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_WidgetActor, PopulateClassMapFromSettings);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_WidgetActor, PopulateDataMapFromSettings);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_WidgetActor, GetWidgetActor);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_WidgetActor, GetData);
 	}
 }
 

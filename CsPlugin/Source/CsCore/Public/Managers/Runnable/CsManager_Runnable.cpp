@@ -15,8 +15,8 @@ namespace NCsManagerRunnableCached
 {
 	namespace Str
 	{
-		const FString OnTick = TEXT("UCsManager_Runnable::OnTick");
-		const FString Prep = TEXT("UCsManager_Runnable::Prep");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Runnable, OnTick);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Runnable, Prep);
 	}
 }
 

@@ -45,9 +45,9 @@ namespace NCsManagerDamageCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(ProcessDamageEvent, "UCsManager_Damage::ProcessDamageEvent");
-		CS_DEFINE_CACHED_STRING(ProcessDamageEventContainer, "UCsManager_Damage::ProcessDamageEventContainer");
-		CS_DEFINE_CACHED_STRING(LogEvent, "UCsManager_Damage::LogEvent");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, ProcessDamageEvent);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, ProcessDamageEventContainer);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, LogEvent);
 	}
 }
 

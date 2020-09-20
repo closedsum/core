@@ -41,22 +41,22 @@ namespace NCsProjectileWeaponComponentCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(Init, "UCsProjectileWeaponComponent::Init");
-		CS_DEFINE_CACHED_STRING(OnUpdate_HandleStates, "UCsProjectileWeaponComponent::OnUpdate_HandleStates");
-		CS_DEFINE_CACHED_STRING(CanFire, "UCsProjectileWeaponComponent::CanFire");
-		CS_DEFINE_CACHED_STRING(Fire, "UCsProjectileWeaponComponent::Fire");
-		CS_DEFINE_CACHED_STRING(Fire_Internal, "UCsProjectileWeaponComponent::Fire_Internal");
-		CS_DEFINE_CACHED_STRING(FireProjectile, "UCsProjectileWeaponComponent::FireProjectile");
-		CS_DEFINE_CACHED_STRING(SetProjectilePayload, "UCsProjectileWeaponComponent::SetProjectilePayload");
-		CS_DEFINE_CACHED_STRING(LaunchProjectile, "UCsProjectileWeaponComponent::LaunchProjectile");
-		CS_DEFINE_CACHED_STRING(PlayFireSound, "UCsProjectileWeaponComponent::PlayFireSound");
-		CS_DEFINE_CACHED_STRING(SetSoundPooledPayload, "UCsProjectileWeaponComponent::SetSoundPooledPayload");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, Init);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, OnUpdate_HandleStates);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, CanFire);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, Fire);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, Fire_Internal);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, FireProjectile);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, SetProjectilePayload);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, LaunchProjectile);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, PlayFireSound);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, SetSoundPooledPayload);
 	}
 
 	namespace Name
 	{
-		CS_DEFINE_CACHED_NAME(Fire_Internal, "UCsProjectileWeaponComponent::Fire_Internal");
-		CS_DEFINE_CACHED_NAME(Abort_Fire_Internal, "Abort_Fire_Internal");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsProjectileWeaponComponent, Fire_Internal);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsProjectileWeaponComponent, Abort_Fire_Internal);
 	}
 }
 

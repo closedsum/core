@@ -68,17 +68,15 @@ namespace NCsProcessPriorityModifier
 
 namespace NCsProcessCached
 {
-	namespace Name
-	{
-		// Functions
-		const FName StartRead_Internal = FName("UCsProcess::StartRead_Internal");
-	};
-
 	namespace Str
 	{
-		// Functions
-		const FString StartRead_Internal = TEXT("UCsProcess::StartRead_Internal");
-	};
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProcess, StartRead_Internal);
+	}
+
+	namespace Name
+	{
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsProcess, StartRead_Internal);
+	}
 }
 
 #pragma endregion Cache

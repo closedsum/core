@@ -53,15 +53,15 @@ namespace NCsManagerProjectileCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(SetupInternal, "UCsManager_Projectile::SetupInternal");
-		CS_DEFINE_CACHED_STRING(InitInternalFromSettings, "UCsManager_Projectile::InitInternalFromSettings");
-		CS_DEFINE_CACHED_STRING(PopulateClassMapFromSettings, "UCsManager_Projectile::PopulateClassMapFromSettings");
-		CS_DEFINE_CACHED_STRING(PopulateDataMapFromSettings, "UCsManager_Projectile::PopulateDataMapFromSettings");
-		CS_DEFINE_CACHED_STRING(CreateEmulatedDataFromDataTable, "UCsManager_Projectile::CreateEmulatedDataFromDataTable");
-		CS_DEFINE_CACHED_STRING(DeconstructEmulatedData, "UCsManager_Projectile::DeconstructEmulatedData");
-		CS_DEFINE_CACHED_STRING(PopulateDataMapFromDataTable, "UCsManager_Projectile::PopulateDataMapFromDataTable");
-		CS_DEFINE_CACHED_STRING(GetProjectile, "UCsManager_Projectile::GetProjectile");
-		CS_DEFINE_CACHED_STRING(GetData, "UCsManager_Projectile::GetData");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, SetupInternal);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, InitInternalFromSettings);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateClassMapFromSettings);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateDataMapFromSettings);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, CreateEmulatedDataFromDataTable);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, DeconstructEmulatedData);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateDataMapFromDataTable);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, GetProjectile);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, GetData);
 	}
 
 	namespace Name

@@ -30,9 +30,9 @@ namespace NCsWidgetActorPooledImplCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(BeginPlay, "ACsWidgetActorPooledImpl::BeginPlay");
-		CS_DEFINE_CACHED_STRING(Update, "ACsWidgetActorPooledImpl::Update");
-		CS_DEFINE_CACHED_STRING(Allocate, "ACsWidgetActorPooledImpl::Allocate");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsWidgetActorPooledImpl, BeginPlay);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsWidgetActorPooledImpl, Update);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsWidgetActorPooledImpl, Allocate);
 	}
 }
 

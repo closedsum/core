@@ -35,7 +35,7 @@ namespace NCsManagerFXActor
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(PopulateDataMapFromSettings, "UCsManager_FX_Actor::PopulateDataMapFromSettings");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, PopulateDataMapFromSettings);
 	}
 
 	namespace Name

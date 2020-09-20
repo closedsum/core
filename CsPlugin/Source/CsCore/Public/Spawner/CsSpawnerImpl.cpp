@@ -23,19 +23,18 @@ namespace NCsSpawnerImplCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(StartPlay, "ACsSpawnerImpl::StartPlay");
-		CS_DEFINE_CACHED_STRING(Start, "ACsSpawnerImpl::Start");
-		CS_DEFINE_CACHED_STRING(Start_Internal, "ACsSpawnerImpl::Start_Internal");
-		CS_DEFINE_CACHED_STRING(Spawn, "ACsSpawnerImpl::Spawn");
-		CS_DEFINE_CACHED_STRING(SpawnObjects, "ACsSpawnerImpl::SpawnObjects");
-		CS_DEFINE_CACHED_STRING(SpawnObjects_Internal, "ACsSpawnerImpl::SpawnObjects_Internal");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, StartPlay);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Start);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Start_Internal);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Spawn);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, SpawnObjects);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, SpawnObjects_Internal);
 	}
-
 
 	namespace Name
 	{
-		CS_DEFINE_CACHED_NAME(Start_Internal, "ACsSpawnerImpl::Start_Internal");
-		CS_DEFINE_CACHED_NAME(SpawnObjects_Internal, "ACsSpawnerImpl::SpawnObjects_Internal");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsSpawnerImpl, Start_Internal);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsSpawnerImpl, SpawnObjects_Internal);
 	}
 }
 

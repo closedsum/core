@@ -39,12 +39,12 @@ namespace NCsManagerUserWidgetCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(SetupInternal, "UCsManager_UserWidget::SetupInternal");
-		CS_DEFINE_CACHED_STRING(InitInternalFromSettings, "UCsManager_UserWidget::InitInternalFromSettings");
-		CS_DEFINE_CACHED_STRING(PopulateDataMapFromSettings, "UCsManager_UserWidget::PopulateDataMapFromSettings");
-		CS_DEFINE_CACHED_STRING(GetUserWidgetPooled, "UCsManager_UserWidget::GetUserWidgetPooled");
-		CS_DEFINE_CACHED_STRING(GetUserWidget, "UCsManager_UserWidget::GetUserWidget");
-		CS_DEFINE_CACHED_STRING(GetData, "UCsManager_UserWidget::GetData");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, SetupInternal);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, InitInternalFromSettings);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, PopulateDataMapFromSettings);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, GetUserWidgetPooled);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, GetUserWidget);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, GetData);
 	}
 
 	namespace Name

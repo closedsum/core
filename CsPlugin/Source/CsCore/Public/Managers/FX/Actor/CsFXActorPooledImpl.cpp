@@ -26,8 +26,8 @@ namespace NCsFXActorPooledImplCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(Update, "UCsFXActorPooledImpl::Update");
-		CS_DEFINE_CACHED_STRING(Allocate, "UCsFXActorPooledImpl::Allocate");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Update);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Allocate);
 	}
 }
 

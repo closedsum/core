@@ -25,12 +25,12 @@ namespace NCsManagerUnitTestCached
 {
 	namespace Str
 	{
-		const FString Start_Internal = TEXT("UCsManager_UnitTest::Start_Internal");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UnitTest, Start_Internal);
 	}
 
 	namespace Name
 	{
-		const FName Start_Internal = FName("UCsManager_UnitTest::Start_Internal");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_UnitTest, Start_Internal);
 	}
 }
 

@@ -27,9 +27,9 @@ namespace NCsStatusEffectCoordinatorCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(GetTypeFromEvent, "UCsStatusEffectCoordinator::GetTypeFromEvent");
-		CS_DEFINE_CACHED_STRING(ProcessStatusEffectEvent, "UCsStatusEffectCoordinator::ProcessStatusEffectEvent");
-		CS_DEFINE_CACHED_STRING(ProcessStatusEffectEventContainer, "UCsStatusEffectCoordinator::ProcessStatusEffectEventContainer");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsStatusEffectCoordinator, GetTypeFromEvent);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsStatusEffectCoordinator, ProcessStatusEffectEvent);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsStatusEffectCoordinator, ProcessStatusEffectEventContainer);
 	}
 }
 

@@ -20,7 +20,7 @@ namespace NCsFXPooledCacheImplCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(Allocate, "FCsFXPooledCacheImpl::Allocate");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsFXPooledCacheImpl, Allocate);
 	}
 }
 

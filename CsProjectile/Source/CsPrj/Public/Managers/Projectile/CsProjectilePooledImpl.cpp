@@ -52,13 +52,13 @@ namespace NCsProjectilePooledImplCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(SetType, "ACsProjectilePooledImpl::SetType");
-		CS_DEFINE_CACHED_STRING(OnHit, "ACsProjectilePooledImpl::OnHit");
-		CS_DEFINE_CACHED_STRING(Update, "ACsProjectilePooledImpl::Update");
-		CS_DEFINE_CACHED_STRING(Deallocate, "ACsProjectilePooledImpl::Deallocate");
-		CS_DEFINE_CACHED_STRING(Launch, "ACsProjectilePooledImpl::Launch");
-		CS_DEFINE_CACHED_STRING(OnLaunch_SetModifiers, "ACsProjectilePooledImpl::OnLaunch_SetModifiers");
-		CS_DEFINE_CACHED_STRING(OnHit_CreateDamageEvent, "ACsProjectilePooledImpl::OnHit_CreateDamageEvent");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, SetType);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnHit);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Update);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Deallocate);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnLaunch_SetModifiers);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnHit_CreateDamageEvent);
 	}
 }
 

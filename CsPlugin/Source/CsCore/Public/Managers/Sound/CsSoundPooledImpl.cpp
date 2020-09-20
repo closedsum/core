@@ -14,9 +14,9 @@ namespace NCsSoundPooledImplCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(Update, "ACsSoundPooledImpl::Update");
-		CS_DEFINE_CACHED_STRING(Allocate, "ACsSoundPooledImpl::Allocate");
-		CS_DEFINE_CACHED_STRING(Play, "ACsSoundPooledImpl::Play");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Update);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Allocate);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Play);
 	}
 }
 

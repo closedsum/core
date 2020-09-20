@@ -12,7 +12,7 @@ namespace NCsDataRootSetCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(AddDataTable, "FCsDataRootSet::AddDataTable");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsDataRootSet, AddDataTable);
 	}
 }
 

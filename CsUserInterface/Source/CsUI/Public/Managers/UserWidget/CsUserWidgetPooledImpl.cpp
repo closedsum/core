@@ -25,9 +25,9 @@ namespace NCsUserWidgetPooledImplCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(OnConstructObject, "UCsUserWidgetPooledImpl::OnConstructObject");
-		CS_DEFINE_CACHED_STRING(Update, "UCsUserWidgetPooledImpl::Update");
-		CS_DEFINE_CACHED_STRING(Allocate, "UCsUserWidgetPooledImpl::Allocate");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidgetPooledImpl, OnConstructObject);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidgetPooledImpl, Update);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidgetPooledImpl, Allocate);
 	}
 }
 

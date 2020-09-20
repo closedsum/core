@@ -20,7 +20,7 @@ namespace NCsCacheStaticMeshActorImplCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(Allocate, "FCsCache_StaticMeshActorImpl::Allocate");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsCache_StaticMeshActorImpl, Allocate);
 	}
 }
 

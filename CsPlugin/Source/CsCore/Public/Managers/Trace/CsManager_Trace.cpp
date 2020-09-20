@@ -31,11 +31,11 @@ namespace NCsManagerTraceCached
 {
 	namespace Str
 	{
-		const FString Update = TEXT("UCsManager_Trace::Update");
-		const FString Trace = TEXT("UCsManager_Trace::Trace");
-		const FString ProcessAsyncRequest = TEXT("UCsManager_Trace::ProcessAsyncRequest");
-		const FString OnTraceResponse = TEXT("UCsManager_Trace::OnTraceResponse");
-		const FString OnOverlapResponse = TEXT("UCsManager_Trace::::OnOverlapResponse");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, Update);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, Trace);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, ProcessAsyncRequest);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, OnTraceResponse);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, OnOverlapResponse);
 	}
 }
 

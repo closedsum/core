@@ -16,7 +16,7 @@ namespace NCsManagerStatusEffectCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(Shutdown, "UCsManager_StatusEffect::Shutdown");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StatusEffect, Shutdown);
 	}
 }
 

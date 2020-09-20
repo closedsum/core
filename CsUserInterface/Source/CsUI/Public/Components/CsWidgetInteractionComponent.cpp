@@ -34,7 +34,7 @@ namespace NCsWidgetInteractionComponent
 
 	namespace Name
 	{
-		CS_DEFINE_CACHED_NAME(OnProcessGameEventInfo, "UCsWidgetInteractionComponent::OnProcessGameEventInfo");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsWidgetInteractionComponent, OnProcessGameEventInfo);
 	}
 }
 

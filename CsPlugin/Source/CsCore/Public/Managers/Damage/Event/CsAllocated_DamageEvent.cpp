@@ -12,8 +12,8 @@ namespace NCsAllocatedDamageEventCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(CopyFrom, "FCsAllocated_DamageEvent::CopyFrom");
-		CS_DEFINE_CACHED_STRING(Reset, "FCsAllocated_DamageEvent::Reset");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsAllocated_DamageEvent, CopyFrom);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsAllocated_DamageEvent, Reset);
 	}
 }
 

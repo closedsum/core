@@ -12,8 +12,8 @@ namespace NCsAllocatedDamageRangeCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_STRING(CopyFrom, "FCsAllocated_DamageRange::CopyFrom");
-		CS_DEFINE_CACHED_STRING(Reset, "FCsAllocated_DamageRange::Reset");
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsAllocated_DamageRange, CopyFrom);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsAllocated_DamageRange, Reset);
 	}
 }
 

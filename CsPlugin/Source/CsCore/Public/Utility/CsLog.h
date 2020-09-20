@@ -7,3 +7,9 @@ public:
 
 	static void Warning(const FString& Str);
 };
+
+#if !UE_BUILD_SHIPPING
+#define CS_LOG_WARNING(Str) FCsLog::Warning(Str)
+#else
+#define CS_LOG_WARNING(Str)
+#endif // #if !UE_BUILD_SHIPPING

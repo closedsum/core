@@ -133,15 +133,29 @@ public:
 	*/
 	FName GetPersistentLevelFName() const;
 
+	/**
+	*/
 	bool IsPersistentLevelName(const FString& MapPackageName) const;
 
+	/**
+	*/
 	ALevelScriptActor* GetPersistentLevelScriptActor() const;
 
+	template<typename T>
+	FORCEINLINE T* GetPersistentLevelScriptActor() const
+	{
+		return Cast<T>(GetPersistentLevelScriptActor());
+	}
+
+	/**
+	*/
 	ALevelScriptActor* GetPersistentLevelScriptActorChecked(const FString& Context) const;
 
 	template<typename T>
 	FORCEINLINE T* GetPersistentLevelScriptActorChecked(const FString& Context) const
 	{
+		checkf(Cast<T>(GetPersistentLevelScriptActorChecked(Context)), TEXT("%s: Failed to cast LevelScriptActor to type: T."), *Context);
+
 		return Cast<T>(GetPersistentLevelScriptActorChecked(Context));
 	}
 

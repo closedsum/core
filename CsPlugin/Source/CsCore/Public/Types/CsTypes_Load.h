@@ -1173,6 +1173,31 @@ public:
 	template<typename T>
 	FORCEINLINE T* Get(){ return Cast<T>(Get()); }
 
+	FORCEINLINE UObject* GetChecked(const FString& Context)
+	{
+		checkf(Data_Internal, TEXT("%s: Failed to load Data with Entry: %s @ Path: %s."), *Context, *(Name.ToString()), *(Data.ToSoftObjectPath().ToString()));
+
+		return Data_Internal;
+	}
+
+	template<typename T>
+	FORCEINLINE T* GetChecked(const FString& Context)
+	{
+		checkf(Cast<T>(GetChecked(Context)), TEXT("%s: Failed to cast Object: %s with Class: %s to type: T."), *Context, *(Data_Internal->GetName()), *(Data_Class->GetName()));
+
+		return Cast<T>(GetChecked(Context));
+	}
+
+	template<typename InterfaceType>
+	FORCEINLINE InterfaceType* GetInterfaceChecked(const FString& Context)
+	{
+		static_assert(std::is_abstract<InterfaceType>(), "FCsDataEntry_Data::GetInterfaceChecked: InterfaceType must be Abstract.");
+
+		checkf(Cast<InterfaceType>(GetChecked(Context)), TEXT("%s: Object: %s with Class: %s does NOT implement interface: InterfaceType."), *Context, *(Data_Internal->GetName()), *(Data_Class->GetName()));
+
+		return Cast<InterfaceType>(GetChecked(Context));
+	}
+
 	FORCEINLINE UClass* GetClass() { return Data_Class; }
 
 #if WITH_EDITOR
@@ -1283,6 +1308,13 @@ public:
 	}
 
 	FORCEINLINE UDataTable* Get() { return DataTable_Internal; }
+
+	FORCEINLINE UDataTable* GetChecked(const FString& Context)
+	{
+		checkf(DataTable_Internal, TEXT("%s: Failed to load DataTable with Entry: %s @ Path: %s."), *Context, *(Name.ToString()), *(DataTable.ToSoftObjectPath().ToString()));
+
+		return DataTable_Internal;
+	}
 
 	void BuildFromPaths()
 	{

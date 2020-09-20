@@ -256,6 +256,8 @@ void UCsEdEngine::OnObjectSaved_Update_DataRootSet_Datas(UDataTable* DataTable)
 		const FName& RowName	  = Pair.Key;
 		FCsDataEntry_Data* RowPtr = reinterpret_cast<FCsDataEntry_Data*>(Pair.Value);
 
+		RowPtr->Name = RowName;
+
 		if (RowPtr->bPopulateOnSave)
 		{
 			RowPtr->Populate();

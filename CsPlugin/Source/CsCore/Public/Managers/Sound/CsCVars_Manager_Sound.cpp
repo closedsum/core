@@ -85,18 +85,18 @@ TAutoConsoleVariable<int32> CsCVarLogManagerSoundScopedTimerDestroy(
 
 namespace NCsCVarLog
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerSoundTransactions, "Log Manager Sound Transactions");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerSoundTransactions, "Log Manager Sound Transactions");
 	// Scoped Timer
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerSoundScopedTimer, "Log Manager Sound Scoped Timer");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerSoundScopedTimerCreatePool, "Log Manager Sound Scoped Timer Create Pool");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerSoundScopedTimerUpdate, "Log Manager Sound Scoped Timer Update");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerSoundScopedTimerUpdateObject, "Log Manager Sound Scoped Timer Update Object");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerSoundScopedTimerAllocate, "Log Manager Sound Scoped Allocate");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerSoundScopedTimerAllocateObject, "Log Manager Sound Scoped Allocate Object");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerSoundScopedTimerDeallocate, "Log Manager Sound Scoped Timer Deallocate");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerSoundScopedTimerDeallocateObject, "Log Manager Sound Scoped Timer Deallocate Object");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerSoundScopedTimerSpawn, "Log Manager Sound Scoped Timer Spawn");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerSoundScopedTimerDestroy, "Log Manager Sound Scoped Timer Destroy");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerSoundScopedTimer, "Log Manager Sound Scoped Timer");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerSoundScopedTimerCreatePool, "Log Manager Sound Scoped Timer Create Pool");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerSoundScopedTimerUpdate, "Log Manager Sound Scoped Timer Update");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerSoundScopedTimerUpdateObject, "Log Manager Sound Scoped Timer Update Object");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerSoundScopedTimerAllocate, "Log Manager Sound Scoped Allocate");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerSoundScopedTimerAllocateObject, "Log Manager Sound Scoped Allocate Object");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerSoundScopedTimerDeallocate, "Log Manager Sound Scoped Timer Deallocate");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerSoundScopedTimerDeallocateObject, "Log Manager Sound Scoped Timer Deallocate Object");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerSoundScopedTimerSpawn, "Log Manager Sound Scoped Timer Spawn");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerSoundScopedTimerDestroy, "Log Manager Sound Scoped Timer Destroy");
 
 
 	namespace Map
@@ -123,7 +123,7 @@ namespace NCsCVarLog
 
 namespace NCsScopedGroup
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsScopedGroup, ManagerSound, "Manager Sound");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(ManagerSound, "Manager Sound");
 
 	namespace Map
 	{

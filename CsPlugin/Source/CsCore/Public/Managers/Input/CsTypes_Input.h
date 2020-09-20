@@ -182,6 +182,7 @@ struct CSCORE_API EMCsInputActionMap : public TCsEnumStructMaskMap<FECsInputActi
 namespace NCsInputActionMap
 {
 	typedef FECsInputActionMap Type;
+	typedef EMCsInputActionMap EnumMapType;
 
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
@@ -239,6 +240,7 @@ struct CSCORE_API EMCsInputAction : public TCsEnumStructMap<FECsInputAction, uin
 namespace NCsInputAction
 {
 	typedef FECsInputAction Type;
+	typedef EMCsInputAction EnumMapType;
 
 	extern CSCORE_API const Type Default__MousePositionXY__;
 	extern CSCORE_API const Type Default__MouseLeftButton__;
@@ -1694,6 +1696,7 @@ struct CSCORE_API EMCsGameEvent : public TCsEnumStructMap<FECsGameEvent, uint8>
 namespace NCsGameEvent
 {
 	typedef FECsGameEvent Type;
+	typedef EMCsGameEvent EnumMapType;
 
 	extern CSCORE_API const Type Default__MousePositionXY__;
 	extern CSCORE_API const Type Default__MouseLeftButtonPressed__;

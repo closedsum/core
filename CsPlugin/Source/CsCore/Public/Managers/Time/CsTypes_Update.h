@@ -26,6 +26,7 @@ struct CSCORE_API EMCsUpdateGroup final : public TCsEnumStructMap<FECsUpdateGrou
 namespace NCsUpdateGroup
 {
 	typedef FECsUpdateGroup Type;
+	typedef EMCsUpdateGroup EnumMapType;
 
 	extern CSCORE_API const Type EditorEngine;
 	extern CSCORE_API const Type GameInstance;

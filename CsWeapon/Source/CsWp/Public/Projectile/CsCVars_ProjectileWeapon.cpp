@@ -27,9 +27,9 @@ TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileCanFire(
 
 namespace NCsCVarLog
 {
-	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogWeaponProjectileState, "Log ProjectileWeapon Current State");
-	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogWeaponProjectileStateTransition, "Log ProjectileWeapon State Transition");
-	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogWeaponProjectileCanFire, "Log ProjectileWeapon CanFire()");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileState, "Log ProjectileWeapon Current State");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileStateTransition, "Log ProjectileWeapon State Transition");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileCanFire, "Log ProjectileWeapon CanFire()");
 
 	namespace Map
 	{

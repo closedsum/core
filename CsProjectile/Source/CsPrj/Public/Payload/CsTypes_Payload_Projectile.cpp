@@ -7,8 +7,8 @@
 
 namespace NCsProjectilePayload
 {
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsProjectilePayload, Projectile, "ICsPayload_Projectile");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsProjectilePayload, ProjectileDamageModifier, "ICsPayload_ProjectileDamageModifier");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(Projectile, "ICsPayload_Projectile");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(ProjectileDamageModifier, "ICsPayload_ProjectileDamageModifier");
 }
 
 #pragma endregion NCsProjectilePayload

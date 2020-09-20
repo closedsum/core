@@ -23,6 +23,7 @@ struct CSSE_API EMCsStatusEffectModifier : public TCsEnumStructMap<FECsStatusEff
 namespace NCsStatusEffectModifier
 {
 	typedef FECsStatusEffectModifier Type;
+	typedef EMCsStatusEffectModifier EnumMapType;
 
 	extern CSSE_API const Type DamageValue;
 	extern CSSE_API const Type DamageRange;

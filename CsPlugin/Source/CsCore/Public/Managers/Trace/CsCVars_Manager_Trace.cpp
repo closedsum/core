@@ -27,7 +27,7 @@ TAutoConsoleVariable<int32> CsCVarDrawManagerTraceResponses(
 
 namespace NCsCVarLog
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerTraceTransactions);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(LogManagerTraceTransactions);
 
 	namespace Map
 	{
@@ -42,8 +42,8 @@ namespace NCsCVarLog
 
 namespace NCsCVarDraw
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarDraw, DrawManagerTraceRequests);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarDraw, DrawManagerTraceResponses);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(DrawManagerTraceRequests);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(DrawManagerTraceResponses);
 
 	namespace Map
 	{

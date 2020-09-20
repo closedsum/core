@@ -23,6 +23,7 @@ struct CSCORE_API EMCsDamageValue : public TCsEnumStructMap<FECsDamageValue, uin
 namespace NCsDamageValue
 {
 	typedef FECsDamageValue Type;
+	typedef EMCsDamageValue EnumMapType;
 
 	extern CSCORE_API const Type Point;
 	extern CSCORE_API const Type Range;

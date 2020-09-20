@@ -26,6 +26,7 @@ struct CSCORE_API EMCsMemberType : public TCsEnumStructMap<FECsMemberType, uint8
 namespace NCsMemberType
 {
 	typedef FECsMemberType Type;
+	typedef EMCsMemberType EnumMapType;
 
 	extern CSCORE_API const Type Bool;
 	extern CSCORE_API const Type Uint8;

@@ -394,5 +394,6 @@ public:
 		return *Instance; \
 	}
 
-#define CS_CREATE_ENUM_STRUCT(EnumMap, EnumElementName) const Type EnumElementName = EnumMap::Get().Create(#EnumElementName, false)
-#define CS_CREATE_ENUM_STRUCT_CUSTOM(EnumMap, EnumElementName, DisplayName) const Type EnumElementName = EnumMap::Get().Create(#EnumElementName, TEXT(DisplayName), false)
+// Assume typedef "EnumType" Type and typedef "EnumMapType" EnumMapType
+#define CS_CREATE_ENUM_STRUCT(EnumElementName) const Type EnumElementName = EnumMapType::Get().Create(#EnumElementName, false)
+#define CS_CREATE_ENUM_STRUCT_CUSTOM(EnumElementName, DisplayName) const Type EnumElementName = EnumMapType::Get().Create(#EnumElementName, TEXT(DisplayName), false)

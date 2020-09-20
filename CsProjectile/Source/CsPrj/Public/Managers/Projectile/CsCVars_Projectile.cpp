@@ -76,7 +76,7 @@ TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness(
 
 namespace NCsCVarLog
 {
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogProjectileCollision, "Log Projectile Collision");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogProjectileCollision, "Log Projectile Collision");
 
 	namespace Map
 	{
@@ -91,17 +91,17 @@ namespace NCsCVarLog
 
 namespace NCsCVarDraw
 {
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarDraw, DrawProjectileImpactNormal, "Draw Projectile Impact Normal");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarDraw, DrawProjectileImpactNormalLength, "Draw Projectile Impact Normal Length");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarDraw, DrawProjectileImpactNormalThickness, "Draw Projectile Impact Normal Thickness");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarDraw, DrawProjectileImpactNormalDuration, "Draw Projectile Impact Normal Duration");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(DrawProjectileImpactNormal, "Draw Projectile Impact Normal");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(DrawProjectileImpactNormalLength, "Draw Projectile Impact Normal Length");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(DrawProjectileImpactNormalThickness, "Draw Projectile Impact Normal Thickness");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(DrawProjectileImpactNormalDuration, "Draw Projectile Impact Normal Duration");
 
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarDraw, DrawProjectileCollision, "Draw Projectile Collision");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(DrawProjectileCollision, "Draw Projectile Collision");
 
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarDraw, DrawProjectilePath, "Draw Projectile Path");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarDraw, DrawProjectilePathInterval, "Draw Projectile Path Interval");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarDraw, DrawProjectilePathSegmentsPerInterval, "Draw Projectile Path Segments Per Interval");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarDraw, DrawProjectilePathThickness, "Draw Projectile Path Thickness");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(DrawProjectilePath, "Draw Projectile Path");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(DrawProjectilePathInterval, "Draw Projectile Path Interval");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(DrawProjectilePathSegmentsPerInterval, "Draw Projectile Path Segments Per Interval");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(DrawProjectilePathThickness, "Draw Projectile Path Thickness");
 
 	namespace Map
 	{

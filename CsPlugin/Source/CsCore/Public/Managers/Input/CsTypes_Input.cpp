@@ -121,9 +121,9 @@ namespace NCsInputActionMap
 
 namespace NCsInputAction
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsInputAction, Default__MousePositionXY__);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsInputAction, Default__MouseLeftButton__);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsInputAction, Default__MouseRightButton__);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(Default__MousePositionXY__);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(Default__MouseLeftButton__);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(Default__MouseRightButton__);
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
@@ -471,9 +471,9 @@ namespace NCsGameEvent
 		const FString GameEvent = TEXT("GameEvent");
 	}
 
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameEvent, Default__MousePositionXY__);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameEvent, Default__MouseLeftButtonPressed__);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsGameEvent, Default__MouseRightButtonPressed__);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(Default__MousePositionXY__);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(Default__MouseLeftButtonPressed__);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(Default__MouseRightButtonPressed__);
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{

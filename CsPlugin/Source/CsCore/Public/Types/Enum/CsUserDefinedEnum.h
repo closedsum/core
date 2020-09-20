@@ -26,6 +26,7 @@ struct CSCORE_API EMCsUserDefinedEnum : public TCsEnumStructMap<FECsUserDefinedE
 namespace NCsUserDefinedEnum
 {
 	typedef FECsUserDefinedEnum Type;
+	typedef EMCsUserDefinedEnum EnumMapType;
 
 	extern CSCORE_API const Type FECsDataType;
 	extern CSCORE_API const Type FECsDataCollectionType;

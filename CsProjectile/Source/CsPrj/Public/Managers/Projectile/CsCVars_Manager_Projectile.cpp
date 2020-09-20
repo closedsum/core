@@ -85,18 +85,18 @@ TAutoConsoleVariable<int32> CsCVarLogManagerProjectileScopedTimerDestroy(
 
 namespace NCsCVarLog
 {
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerProjectileTransactions, "Log Manager Projectile Transactions");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerProjectileTransactions, "Log Manager Projectile Transactions");
 	// Scoped Timer
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerProjectileScopedTimer, "Log Manager Projectile Scoped Timer");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerProjectileScopedTimerCreatePool, "Log Manager Projectile Scoped Timer Create Pool");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerProjectileScopedTimerUpdate, "Log Manager Projectile Scoped Timer Update");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerProjectileScopedTimerUpdateObject, "Log Manager Projectile Scoped Timer Update Object");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerProjectileScopedTimerAllocate, "Log Manager Projectile Scoped Allocate");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerProjectileScopedTimerAllocateObject, "Log Manager Projectile Scoped Allocate Object");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerProjectileScopedTimerDeallocate, "Log Manager Projectile Scoped Timer Deallocate");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerProjectileScopedTimerDeallocateObject, "Log Manager Projectile Scoped Timer Deallocate Object");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerProjectileScopedTimerSpawn, "Log Manager Projectile Scoped Timer Spawn");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerProjectileScopedTimerDestroy, "Log Manager Projectile Scoped Timer Destroy");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerProjectileScopedTimer, "Log Manager Projectile Scoped Timer");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerProjectileScopedTimerCreatePool, "Log Manager Projectile Scoped Timer Create Pool");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerProjectileScopedTimerUpdate, "Log Manager Projectile Scoped Timer Update");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerProjectileScopedTimerUpdateObject, "Log Manager Projectile Scoped Timer Update Object");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerProjectileScopedTimerAllocate, "Log Manager Projectile Scoped Allocate");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerProjectileScopedTimerAllocateObject, "Log Manager Projectile Scoped Allocate Object");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerProjectileScopedTimerDeallocate, "Log Manager Projectile Scoped Timer Deallocate");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerProjectileScopedTimerDeallocateObject, "Log Manager Projectile Scoped Timer Deallocate Object");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerProjectileScopedTimerSpawn, "Log Manager Projectile Scoped Timer Spawn");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerProjectileScopedTimerDestroy, "Log Manager Projectile Scoped Timer Destroy");
 
 	namespace Map
 	{
@@ -122,7 +122,7 @@ namespace NCsCVarLog
 
 namespace NCsScopedGroup
 {
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsScopedGroup, ManagerProjectile, "Manager Projectile");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(ManagerProjectile, "Manager Projectile");
 
 	namespace Map
 	{

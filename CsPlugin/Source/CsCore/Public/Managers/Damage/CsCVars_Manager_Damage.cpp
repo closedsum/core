@@ -34,10 +34,10 @@ TAutoConsoleVariable<int32> CsCVarLogManagerDamageTransactionRange(
 
 namespace NCsCVarLog
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerDamageEvents, "Log Manager Damage Events");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerDamageTransactionEvent, "Log Manager Damage Transaction Event");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerDamageTransactionValue, "Log Manager Damage Transaction Value");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerDamageTransactionRange, "Log Manager Damage Transaction Range");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerDamageEvents, "Log Manager Damage Events");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerDamageTransactionEvent, "Log Manager Damage Transaction Event");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerDamageTransactionValue, "Log Manager Damage Transaction Value");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerDamageTransactionRange, "Log Manager Damage Transaction Range");
 
 	namespace Map
 	{
@@ -55,7 +55,7 @@ namespace NCsCVarLog
 
 namespace NCsScopedGroup
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsScopedGroup, ManagerDamage, "Manager Damage");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(ManagerDamage, "Manager Damage");
 
 	namespace Map
 	{

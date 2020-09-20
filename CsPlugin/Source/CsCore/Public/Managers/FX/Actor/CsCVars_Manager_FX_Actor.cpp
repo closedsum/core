@@ -85,18 +85,18 @@ TAutoConsoleVariable<int32> CsCVarLogManagerFXActorScopedTimerDestroy(
 
 namespace NCsCVarLog
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerFXActorTransactions, "Log Manager FX Actor Transactions");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerFXActorTransactions, "Log Manager FX Actor Transactions");
 	// Scoped Timer
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerFXActorScopedTimer, "Log Manager FX Actor Scoped Timer");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerFXActorScopedTimerCreatePool, "Log Manager FX Actor Scoped Timer Create Pool");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerFXActorScopedTimerUpdate, "Log Manager FX Actor Scoped Timer Update");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerFXActorScopedTimerUpdateObject, "Log Manager FX Actor Scoped Timer Update Object");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerFXActorScopedTimerAllocate, "Log Manager FX Actor Scoped Allocate");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerFXActorScopedTimerAllocateObject, "Log Manager FX Actor Scoped Allocate Object");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerFXActorScopedTimerDeallocate, "Log Manager FX Actor Scoped Timer Deallocate");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerFXActorScopedTimerDeallocateObject, "Log Manager FX Actor Scoped Timer Deallocate Object");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerFXActorScopedTimerSpawn, "Log Manager FX Actor Scoped Timer Spawn");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerFXActorScopedTimerDestroy, "Log Manager FX Actor Scoped Timer Destroy");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerFXActorScopedTimer, "Log Manager FX Actor Scoped Timer");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerFXActorScopedTimerCreatePool, "Log Manager FX Actor Scoped Timer Create Pool");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerFXActorScopedTimerUpdate, "Log Manager FX Actor Scoped Timer Update");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerFXActorScopedTimerUpdateObject, "Log Manager FX Actor Scoped Timer Update Object");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerFXActorScopedTimerAllocate, "Log Manager FX Actor Scoped Allocate");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerFXActorScopedTimerAllocateObject, "Log Manager FX Actor Scoped Allocate Object");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerFXActorScopedTimerDeallocate, "Log Manager FX Actor Scoped Timer Deallocate");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerFXActorScopedTimerDeallocateObject, "Log Manager FX Actor Scoped Timer Deallocate Object");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerFXActorScopedTimerSpawn, "Log Manager FX Actor Scoped Timer Spawn");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerFXActorScopedTimerDestroy, "Log Manager FX Actor Scoped Timer Destroy");
 
 
 	namespace Map
@@ -123,7 +123,7 @@ namespace NCsCVarLog
 
 namespace NCsScopedGroup
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsScopedGroup, ManagerFXActor, "Manager FX Actor");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(ManagerFXActor, "Manager FX Actor");
 
 	namespace Map
 	{

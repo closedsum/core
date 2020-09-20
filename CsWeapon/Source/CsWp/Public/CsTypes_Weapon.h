@@ -324,6 +324,7 @@ struct CSWP_API EMCsWeaponData : public TCsEnumStructMap<FECsWeaponData, uint8>
 namespace NCsWeaponData
 {
 	typedef FECsWeaponData Type;
+	typedef EMCsWeaponData EnumMapType;
 
 	extern CSWP_API const Type Weapon;
 	extern CSWP_API const Type ProjectileWeapon;

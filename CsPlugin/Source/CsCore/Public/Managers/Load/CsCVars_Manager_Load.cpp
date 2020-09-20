@@ -28,7 +28,7 @@ TAutoConsoleVariable<int32> CsCVarDisplayLoading(
 
 namespace NCsCVarLog
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerLoad);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(LogManagerLoad);
 
 	namespace Map
 	{

@@ -13,7 +13,7 @@ TAutoConsoleVariable<int32> CsCVarLogSpawnerTransactions(
 
 namespace NCsCVarLog
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogSpawnerTransactions, "Log Spawner Transactions");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogSpawnerTransactions, "Log Spawner Transactions");
 
 	namespace Map
 	{

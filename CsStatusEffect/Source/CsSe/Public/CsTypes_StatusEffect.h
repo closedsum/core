@@ -30,6 +30,7 @@ struct CSSE_API EMCsStatusEffectTriggerCondition : public TCsEnumStructMap<FECsS
 namespace NCsStatusEffectTriggerCondition
 {
 	typedef FECsStatusEffectTriggerCondition Type;
+	typedef EMCsStatusEffectTriggerCondition EnumMapType;
 
 	extern CSSE_API const Type OnParentTrigger;
 	extern CSSE_API const Type OnHit;
@@ -233,6 +234,7 @@ struct CSSE_API EMCsStatusEffectEvent : public TCsEnumStructMap<FECsStatusEffect
 namespace NCsStatusEffectEvent
 {
 	typedef FECsStatusEffectEvent Type;
+	typedef EMCsStatusEffectEvent EnumMapType;
 
 	extern CSSE_API const Type Default;
 	extern CSSE_API const Type Damage;

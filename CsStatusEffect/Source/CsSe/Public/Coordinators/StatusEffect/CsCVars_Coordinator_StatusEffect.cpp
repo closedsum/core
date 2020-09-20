@@ -13,7 +13,7 @@ TAutoConsoleVariable<int32> CsCVarLogCoordinatorStatusEffectEvents(
 
 namespace NCsCVarLog
 {
-	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogCoordinatorStatusEffectEvents, "Log Coordinator Status Effect Events");
+	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogCoordinatorStatusEffectEvents, "Log Coordinator Status Effect Events");
 
 	namespace Map
 	{
@@ -28,7 +28,7 @@ namespace NCsCVarLog
 
 namespace NCsScopedGroup
 {
-	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsScopedGroup, CoordinatorStatusEffect, "Coordinator Status Effect");
+	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(CoordinatorStatusEffect, "Coordinator Status Effect");
 
 	namespace Map
 	{

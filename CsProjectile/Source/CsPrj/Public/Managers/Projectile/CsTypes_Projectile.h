@@ -259,6 +259,7 @@ struct CSPRJ_API EMCsProjectileData : public TCsEnumStructMap<FECsProjectileData
 namespace NCsProjectileData
 {
 	typedef FECsProjectileData Type;
+	typedef EMCsProjectileData EnumMapType;
 
 	extern CSPRJ_API const Type Projectile;
 	extern CSPRJ_API const Type ProjectileCollision;

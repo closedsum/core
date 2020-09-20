@@ -43,12 +43,12 @@ TAutoConsoleVariable<int32> CsCVarLogCoroutineScopedTimer(
 
 namespace NCsCVarLog
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogCoroutineTransactions, "Log Coroutine Transactions");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogCoroutineRunning, "Log Coroutine Running");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogCoroutineTransactions, "Log Coroutine Transactions");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogCoroutineRunning, "Log Coroutine Running");
 	// Scoped Timer
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogCoroutinesScopedTimer, "Log Coroutines Scoped Timer");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogRoutineScopedTimer, "Log Routine Scoped Timer");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogCoroutineScopedTimer, "Log Coroutine Scoped Timer");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogCoroutinesScopedTimer, "Log Coroutines Scoped Timer");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogRoutineScopedTimer, "Log Routine Scoped Timer");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogCoroutineScopedTimer, "Log Coroutine Scoped Timer");
 
 	namespace Map
 	{
@@ -68,7 +68,7 @@ namespace NCsCVarLog
 
 namespace NCsScopedGroup
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsScopedGroup, Coroutine);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(Coroutine);
 
 	namespace Map
 	{

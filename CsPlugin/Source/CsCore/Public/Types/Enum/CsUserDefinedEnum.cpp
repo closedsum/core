@@ -6,11 +6,11 @@
 
 namespace NCsUserDefinedEnum
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsUserDefinedEnum, FECsDataType);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsUserDefinedEnum, FECsDataCollectionType);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsUserDefinedEnum, FECsInputAction);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsUserDefinedEnum, FECsInputActionMap);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsUserDefinedEnum, FECsGameEvent);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(FECsDataType);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(FECsDataCollectionType);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(FECsInputAction);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(FECsInputActionMap);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(FECsGameEvent);
 }
 
 #pragma endregion UserDefinedEnum

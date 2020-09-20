@@ -3,6 +3,6 @@
 
 namespace NCsDamageValue
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsDamageValue, Point, "ICsDamageValuePoint");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsDamageValue, Range, "ICsDamageValueRange");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(Point, "ICsDamageValuePoint");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(Range, "ICsDamageValueRange");
 }

@@ -3,6 +3,6 @@
 
 namespace NCsStatusEffectModifier
 {
-	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsStatusEffectModifier, DamageValue, "ICsStatusEffectModifier_DamageValue");
-	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsStatusEffectModifier, DamageRange, "ICsStatusEffectModifier_DamageRange");
+	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(DamageValue, "ICsStatusEffectModifier_DamageValue");
+	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(DamageRange, "ICsStatusEffectModifier_DamageRange");
 }

@@ -233,28 +233,28 @@ TAutoConsoleVariable<int32> CsCVarLogDataEntryPopulate(
 namespace NCsCVarLog
 {
 	// GameState
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogGameStateOnBoard);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(LogGameStateOnBoard);
 	// Json
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogJsonDataFilenames);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(LogJsonDataFilenames);
 	// Script
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogOverrideFunctions);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(LogOverrideFunctions);
 	// FX
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerFxTransactions);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(LogManagerFxTransactions);
 	// Runnable
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerRunnableTransactions);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(LogManagerRunnableTransactions);
 	// Process
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerProcessTransactions);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogProcessIO);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(LogManagerProcessTransactions);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(LogProcessIO);
 	// Sense
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerSenseSeesActorByDot);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(LogManagerSenseSeesActorByDot);
 	// Managers
 
 	// Level
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogLevelPayloadPopulate);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(LogLevelPayloadPopulate);
 	// Payload
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogPayloadPopulate);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(LogPayloadPopulate);
 	// Data
-	CSCORE_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogDataEntryPopulate);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(LogDataEntryPopulate);
 
 	namespace Map
 	{

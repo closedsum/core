@@ -85,18 +85,18 @@ TAutoConsoleVariable<int32> CsCVarLogManagerUserWidgetScopedTimerDestroy(
 
 namespace NCsCVarLog
 {
-	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerUserWidgetTransactions, "Log Manager UserWidget Transactions");
+	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerUserWidgetTransactions, "Log Manager UserWidget Transactions");
 	// Scoped Timer
-	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerUserWidgetScopedTimer, "Log Manager UserWidget Scoped Timer");
-	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerUserWidgetScopedTimerCreatePool, "Log Manager UserWidget Scoped Timer Create Pool");
-	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerUserWidgetScopedTimerUpdate, "Log Manager UserWidget Scoped Timer Update");
-	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerUserWidgetScopedTimerUpdateObject, "Log Manager UserWidget Scoped Timer Update Object");
-	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerUserWidgetScopedTimerAllocate, "Log Manager UserWidget Scoped Allocate");
-	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerUserWidgetScopedTimerAllocateObject, "Log Manager UserWidget Scoped Allocate Object");
-	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerUserWidgetScopedTimerDeallocate, "Log Manager UserWidget Scoped Timer Deallocate");
-	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerUserWidgetScopedTimerDeallocateObject, "Log Manager UserWidget Scoped Timer Deallocate Object");
-	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerUserWidgetScopedTimerSpawn, "Log Manager UserWidget Scoped Timer Spawn");
-	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerUserWidgetScopedTimerDestroy, "Log Manager UserWidget Scoped Timer Destroy");
+	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerUserWidgetScopedTimer, "Log Manager UserWidget Scoped Timer");
+	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerUserWidgetScopedTimerCreatePool, "Log Manager UserWidget Scoped Timer Create Pool");
+	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerUserWidgetScopedTimerUpdate, "Log Manager UserWidget Scoped Timer Update");
+	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerUserWidgetScopedTimerUpdateObject, "Log Manager UserWidget Scoped Timer Update Object");
+	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerUserWidgetScopedTimerAllocate, "Log Manager UserWidget Scoped Allocate");
+	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerUserWidgetScopedTimerAllocateObject, "Log Manager UserWidget Scoped Allocate Object");
+	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerUserWidgetScopedTimerDeallocate, "Log Manager UserWidget Scoped Timer Deallocate");
+	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerUserWidgetScopedTimerDeallocateObject, "Log Manager UserWidget Scoped Timer Deallocate Object");
+	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerUserWidgetScopedTimerSpawn, "Log Manager UserWidget Scoped Timer Spawn");
+	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerUserWidgetScopedTimerDestroy, "Log Manager UserWidget Scoped Timer Destroy");
 
 
 	namespace Map
@@ -123,7 +123,7 @@ namespace NCsCVarLog
 
 namespace NCsScopedGroup
 {
-	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsScopedGroup, ManagerUserWidget, "Manager UserWidget");
+	CSUI_API CS_CREATE_ENUM_STRUCT_CUSTOM(ManagerUserWidget, "Manager UserWidget");
 
 	namespace Map
 	{

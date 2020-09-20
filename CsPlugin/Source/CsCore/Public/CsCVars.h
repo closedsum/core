@@ -265,6 +265,7 @@ struct CSCORE_API EMCsCVarLog final : public TCsEnumStructMap<FECsCVarLog, uint8
 namespace NCsCVarLog
 {
 	typedef FECsCVarLog Type;
+	typedef EMCsCVarLog EnumMapType;
 
 	// GameState
 	extern CSCORE_API const Type LogGameStateOnBoard;
@@ -427,6 +428,7 @@ struct CSCORE_API EMCsCVarToggle final : public TCsEnumStructMap<FECsCVarToggle,
 namespace NCsCVarToggle
 {
 	typedef FECsCVarToggle Type;
+	typedef EMCsCVarToggle EnumMapType;
 
 	namespace Ref
 	{
@@ -547,6 +549,7 @@ struct CSCORE_API EMCsCVarDraw final : public TCsEnumStructMap<FECsCVarDraw, uin
 namespace NCsCVarDraw
 {
 	typedef FECsCVarDraw Type;
+	typedef EMCsCVarDraw EnumMapType;
 }
 
 #pragma endregion CVarDraw
@@ -659,6 +662,7 @@ struct CSCORE_API EMCsScopedGroup final : public TCsEnumStructMap<FECsScopedGrou
 namespace NCsScopedGroup
 {
 	typedef FECsScopedGroup Type;
+	typedef EMCsScopedGroup EnumMapType;
 }
 
 #pragma endregion ScopedGroup

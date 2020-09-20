@@ -85,18 +85,18 @@ TAutoConsoleVariable<int32> CsCVarLogManagerStaticMeshActorScopedTimerDestroy(
 
 namespace NCsCVarLog
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerStaticMeshActorTransactions, "Log Manager StaticMeshActor Transactions");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerStaticMeshActorTransactions, "Log Manager StaticMeshActor Transactions");
 	// Scoped Timer
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerStaticMeshActorScopedTimer, "Log Manager StaticMeshActor Scoped Timer");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerStaticMeshActorScopedTimerCreatePool, "Log Manager StaticMeshActor Scoped Timer Create Pool");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerStaticMeshActorScopedTimerUpdate, "Log Manager StaticMeshActor Scoped Timer Update");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerStaticMeshActorScopedTimerUpdateObject, "Log Manager StaticMeshActor Scoped Timer Update Object");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerStaticMeshActorScopedTimerAllocate, "Log Manager StaticMeshActor Scoped Allocate");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerStaticMeshActorScopedTimerAllocateObject, "Log Manager StaticMeshActor Scoped Allocate Object");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerStaticMeshActorScopedTimerDeallocate, "Log Manager StaticMeshActor Scoped Timer Deallocate");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerStaticMeshActorScopedTimerDeallocateObject, "Log Manager StaticMeshActor Scoped Timer Deallocate Object");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerStaticMeshActorScopedTimerSpawn, "Log Manager StaticMeshActor Scoped Timer Spawn");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsCVarLog, LogManagerStaticMeshActorScopedTimerDestroy, "Log Manager StaticMeshActor Scoped Timer Destroy");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerStaticMeshActorScopedTimer, "Log Manager StaticMeshActor Scoped Timer");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerStaticMeshActorScopedTimerCreatePool, "Log Manager StaticMeshActor Scoped Timer Create Pool");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerStaticMeshActorScopedTimerUpdate, "Log Manager StaticMeshActor Scoped Timer Update");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerStaticMeshActorScopedTimerUpdateObject, "Log Manager StaticMeshActor Scoped Timer Update Object");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerStaticMeshActorScopedTimerAllocate, "Log Manager StaticMeshActor Scoped Allocate");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerStaticMeshActorScopedTimerAllocateObject, "Log Manager StaticMeshActor Scoped Allocate Object");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerStaticMeshActorScopedTimerDeallocate, "Log Manager StaticMeshActor Scoped Timer Deallocate");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerStaticMeshActorScopedTimerDeallocateObject, "Log Manager StaticMeshActor Scoped Timer Deallocate Object");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerStaticMeshActorScopedTimerSpawn, "Log Manager StaticMeshActor Scoped Timer Spawn");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerStaticMeshActorScopedTimerDestroy, "Log Manager StaticMeshActor Scoped Timer Destroy");
 
 
 	namespace Map
@@ -123,7 +123,7 @@ namespace NCsCVarLog
 
 namespace NCsScopedGroup
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(EMCsScopedGroup, ManagerStaticMeshActor, "Manager StaticMeshActor");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(ManagerStaticMeshActor, "Manager StaticMeshActor");
 
 	namespace Map
 	{

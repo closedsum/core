@@ -5,41 +5,33 @@
 #include "CsTypes_Runnable.generated.h"
 #pragma once
 
+// ThreadPriority
+#pragma region
+
+/**
+*/
 UENUM(BlueprintType)
-namespace ECsThreadPriority
+enum class ECsThreadPriority : uint8
 {
-	enum Type
-	{
-		TPri_Normal					UMETA(DisplayName = "Normal"),
-		TPri_AboveNormal			UMETA(DisplayName = "Above Normal"),
-		TPri_BelowNormal			UMETA(DisplayName = "Below Normal"),
-		TPri_Highest				UMETA(DisplayName = "Highest"),
-		TPri_Lowest					UMETA(DisplayName = "Lowest"),
-		TPri_SlightlyBelowNormal	UMETA(DisplayName = "Slightly Below Normal"),
-		TPri_TimeCritical			UMETA(DisplayName = "Time Critical"),
-		ECsThreadPriority_MAX		UMETA(Hidden),
-	};
-}
-
-typedef ECsThreadPriority::Type TCsThreadPriority;
-
-struct CSCORE_API EMCsThreadPriority : public TCsEnumMap<ECsThreadPriority::Type>
-{
-protected:
-	EMCsThreadPriority() {}
-	EMCsThreadPriority(const EMCsThreadPriority &) = delete;
-	EMCsThreadPriority(EMCsThreadPriority &&) = delete;
-public:
-	~EMCsThreadPriority() {}
-private:
-	static EMCsThreadPriority* Instance;
-
-public:
-	static EMCsThreadPriority& Get();
+	TPri_Normal					UMETA(DisplayName = "Normal"),
+	TPri_AboveNormal			UMETA(DisplayName = "Above Normal"),
+	TPri_BelowNormal			UMETA(DisplayName = "Below Normal"),
+	TPri_Highest				UMETA(DisplayName = "Highest"),
+	TPri_Lowest					UMETA(DisplayName = "Lowest"),
+	TPri_SlightlyBelowNormal	UMETA(DisplayName = "Slightly Below Normal"),
+	TPri_TimeCritical			UMETA(DisplayName = "Time Critical"),
+	ECsThreadPriority_MAX		UMETA(Hidden),
 };
 
-namespace ECsThreadPriority
+struct CSCORE_API EMCsThreadPriority : public TCsEnumMap<ECsThreadPriority>
 {
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsThreadPriority, ECsThreadPriority)
+};
+
+namespace NCsThreadPriority
+{
+	typedef ECsThreadPriority Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type TPri_Normal;
@@ -77,31 +69,65 @@ namespace ECsThreadPriority
 	}
 }
 
-struct FCsRunnablePayload
+#pragma endregion ThreadPriority
+
+// FCsRunnableHandle
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsRunnableHandle
 {
-	bool bAllocated;
+	GENERATED_USTRUCT_BODY()
 
-	TWeakObjectPtr<class UObject> Owner;
+public:
 
-	uint32 StackSize;
-	EThreadPriority ThreadPriority;
+	static const FCsRunnableHandle Invalid;
 
-	FCsRunnablePayload()
+public:
+
+	UPROPERTY()
+	int32 Index;
+
+	UPROPERTY()
+	FGuid Handle;
+
+	FCsRunnableHandle() :
+		Index(INDEX_NONE),
+		Handle()
 	{
-		Reset();
-	}
-	~FCsRunnablePayload() {}
-
-	void Reset()
-	{
-		bAllocated = false;
-		Owner.Reset();
-		Owner = nullptr;
-		StackSize = 0;
-		ThreadPriority = EThreadPriority::TPri_Lowest;
 	}
 
-	class UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
-	template<typename T>
-	T* GetOwner() { return Cast<T>(GetOwner()); }
+	FORCEINLINE bool operator==(const FCsRunnableHandle& B) const
+	{
+		return Index == B.Index && Handle == B.Handle;
+	}
+
+	FORCEINLINE bool operator!=(const FCsRunnableHandle& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE const int32& GetIndex() const { return Index; }
+
+	friend uint32 GetTypeHash(const FCsRunnableHandle& InHandle)
+	{
+		return GetTypeHash(InHandle.Handle);
+	}
+
+	FORCEINLINE bool IsValid() const
+	{
+		return Index > INDEX_NONE && Handle.IsValid();
+	}
+
+	FORCEINLINE void New()
+	{
+		Handle.NewGuid();
+	}
+
+	FORCEINLINE void Reset()
+	{
+		Handle.Invalidate();
+	}
 };
+
+#pragma endregion FCsRunnableHandle

@@ -10,6 +10,8 @@
 #include "Managers/Data/CsSettings_Manager_Data.h"
 // Load
 #include "Managers/Load/CsSettings_Manager_Load.h"
+// Runnable
+#include "Managers/Runnable/CsSettings_Manager_Runnable.h"
 // Input
 #include "Managers/Input/CsTypes_Input.h"
 #include "Managers/Input/CsSettings_Input.h"
@@ -83,6 +85,15 @@ public:
 	FCsSettings_Manager_Load Manager_Load;
 
 #pragma endregion Load
+
+// Runnable
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Runnable", meta = (DisplayName = "Manager Runnable"))
+	FCsSettings_Manager_Runnable Manager_Runnable;
+
+#pragma endregion Runnable
 
 // Input
 #pragma region

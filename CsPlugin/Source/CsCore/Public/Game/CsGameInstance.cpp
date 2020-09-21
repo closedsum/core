@@ -71,7 +71,7 @@ void UCsGameInstance::Init()
 	UCsManager_Time::Init(this);
 	UCsCoroutineScheduler::Init(this);
 	UCsManager_Load::Init(this);
-	UCsManager_Runnable::Init();
+	UCsManager_Runnable::Init(this);
 	UCsCoordinator_GameEvent::Init(this);
 }
 
@@ -86,7 +86,7 @@ void UCsGameInstance::Shutdown()
 	UCsManager_Time::Shutdown(this);
 	UCsCoroutineScheduler::Shutdown(this);
 	UCsManager_Load::Shutdown(this);
-	UCsManager_Runnable::Shutdown();
+	UCsManager_Runnable::Shutdown(this);
 	UCsCoordinator_GameEvent::Shutdown(this);
 }
 
@@ -120,6 +120,7 @@ bool UCsGameInstance::Tick(float DeltaSeconds)
 	FCsManager_ScopedTimer::Get().Update(DeltaTime);
 	UCsCoroutineScheduler::Get(this)->Update(Group, DeltaTime);
 	UCsManager_Load::Get(this)->Update(DeltaTime);
+	UCsManager_Runnable::Get(this)->Update(DeltaTime);
 	return true;
 }
 

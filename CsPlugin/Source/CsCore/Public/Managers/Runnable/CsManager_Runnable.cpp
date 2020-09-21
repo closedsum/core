@@ -33,8 +33,6 @@ namespace NCsManagerRunnableCached
 {
 	namespace Str
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Runnable, OnTick);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Runnable, Prep);
 	}
 }
 

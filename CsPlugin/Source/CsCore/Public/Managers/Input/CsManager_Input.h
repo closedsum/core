@@ -25,7 +25,6 @@ struct CSCORE_API FCsManager_Input : public TCsManager_ResourceValueType_Fixed<F
 
 class AActor;
 class APlayerController;
-struct FKeyState;
 class UCsInputListener;
 
 UCLASS(Blueprintable)
@@ -86,8 +85,6 @@ public:
 
 	void ConsumeInput(const FECsInputAction& Action);
 
-	uint16 CurrentInputPoolIndex;
-
 	FCsInputFrame InputFrames[CS_MAX_INPUT_FRAMES];
 
 	int32 CurrentInputFrameIndex;
@@ -110,12 +107,35 @@ private:
 
 public:
 
+	/** Bit mask of current active InputActionMaps */
 	int32 CurrentInputActionMap;
 
+	/**
+	* Sets the bit (Map) in CurrentInputActionMap.
+	*
+	* @param Map	A EnumStructFlag (contains a bit flag).
+	*/
 	void SetCurrentInputActionMap(const FECsInputActionMap& Map);
+	
+	/**
+	* Sets the bit (Map) in CurrentInputActionMap.
+	*
+	* @param Map	A bit flag.
+	*/
 	void SetCurrentInputActionMap(const int32& Map);
 
+	/**
+	* Clears the bit (Map) in CurrentInputActionMap.
+	*
+	* @param Map	A EnumStructFlag (contains a bit flag).
+	*/
 	void ClearCurrentInputActionMap(const FECsInputActionMap& Map);
+
+	/**
+	* Clears the bit (Map) in CurrentInputActionMap.
+	*
+	* @param Map	A bit flag.
+	*/
 	void ClearCurrentInputActionMap(const int32& Map);
 
 #pragma endregion Action Map
@@ -180,11 +200,20 @@ public:
 
 	bool HasActionEventOccured(const FECsInputAction& Action, const ECsInputEvent& Event);
 
+	/** Flag for whether OnGameEventInfo_Event and OnGameEventInfos_Event should be broadcasted. */
+	bool bOnGameEventInfo;
+
 	/**
 	*/
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameEventInfo, const FCsGameEventInfo& /*Info*/);
 
 	FOnGameEventInfo OnGameEventInfo_Event;
+
+	/**
+	*/
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameEventInfos, const TArray<FCsGameEventInfo>& /*Infos*/);
+
+	FOnGameEventInfos OnGameEventInfos_Event;
 
 #pragma endregion Events
 

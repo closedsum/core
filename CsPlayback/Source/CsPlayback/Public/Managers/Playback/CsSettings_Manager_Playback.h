@@ -12,7 +12,16 @@ struct CSPLAYBACK_API FCsSettings_Manager_Playback
 
 public:
 
-	FCsSettings_Manager_Playback()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString CustomUsername;
+
+	/** Maximum time to recorde a playback. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float MaxRecordTime;
+
+	FCsSettings_Manager_Playback() :
+		CustomUsername(),
+		MaxRecordTime(60.0f)
 	{
 	}
 };

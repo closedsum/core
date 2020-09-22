@@ -4,6 +4,12 @@
 
 // Settings
 //#include "Settings/CsDeveloperSettings.h"
+// Managers
+#include "Managers/Time/CsManager_Time.h"
+#include "Managers/Runnable/CsManager_Runnable.h"
+#include "Managers/Level/CsManager_Level.h"
+// Json
+#include  "JsonObjectConverter.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -198,6 +204,36 @@ UCsManager_Playback::UCsManager_Playback(const FObjectInitializer& ObjectInitial
 
 void UCsManager_Playback::Initialize()
 {
+	// PlaybackByEvents
+	{
+		Last_Events.Reserve(EMCsGameEvent::Get().Num());
+		Last_Events.AddDefaulted(EMCsGameEvent::Get().Num());
+		
+		Preview_Events.Reserve(EMCsGameEvent::Get().Num());
+		Preview_Events.AddDefaulted(EMCsGameEvent::Get().Num());
+
+		Final_Events.Reserve(EMCsGameEvent::Get().Num());
+		Final_Events.AddDefaulted(EMCsGameEvent::Get().Num());
+
+		PlaybackByEventsWriteTask = new UCsManager_Playback::FTask();
+
+		// Set FileName
+		{
+			const FString Dir		 = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir());
+			const FString SaveFolder = TEXT("Playback/") + FString(FPlatformProcess::UserName()) + TEXT("/");
+			const FString FileName	 = Dir + SaveFolder + FDateTime::Now().ToString(TEXT("%Y%m%d%H%M%S%s")) + TEXT("_") + FGuid::NewGuid().ToString(EGuidFormats::Digits) + TEXT(".json");
+
+			PlaybackByEventsWriteTask->FileName = FileName;
+		}
+
+		FCsRunnablePayload* Payload = UCsManager_Runnable::Get(MyRoot)->AllocatePayload();
+		Payload->Owner			= this;
+		Payload->ThreadPriority = TPri_Normal;
+		Payload->Task			= PlaybackByEventsWriteTask;
+	 
+		PlaybackByEventsRunnable = UCsManager_Runnable::Get(MyRoot)->Start(Payload);
+	}
+
 	bInitialized = true;
 }
 
@@ -225,6 +261,141 @@ void UCsManager_Playback::SetMyRoot(UObject* InRoot)
 
 #pragma endregion Singleton
 
+void UCsManager_Playback::Record()
+{
+	PlaybackByEvents.Reset();
+
+	PlaybackByEvents.Username = FString(FPlatformProcess::UserName());
+	PlaybackByEvents.Level	  = FSoftObjectPath(UCsManager_Level::Get(MyRoot)->GetPersistentLevelName());
+	PlaybackByEvents.Date	  = FDateTime::Now();
+
+	RecordStartTime.Reset();
+
+	PlaybackState = EPlaybackState::Record;
+}
+
 void UCsManager_Playback::Update(const FCsDeltaTime& DeltaTime)
 {
+	// Playback
+	// Record
+	if (PlaybackState == EPlaybackState::Record)
+	{
+		if (PlaybackByEventsRunnable->IsIdle() &&
+			PlaybackByEventsWriteTask->IsReady())
+		{
+			 bool PerformWriteTask = PlaybackByEventsWriteTask->Events.CopyFrom(PlaybackByEvents);
+
+			 if (PerformWriteTask)
+			 {
+				 PlaybackByEventsWriteTask->Start();
+				 PlaybackByEventsRunnable->Start();
+			 }
+		}
+	}
 }
+
+// Event
+#pragma region
+
+void UCsManager_Playback::OnGameEventInfos(const TArray<FCsGameEventInfo>& Infos)
+{
+	if (!IsRecording())
+		return;
+
+	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(NCsUpdateGroup::GameState);
+	FCsDeltaTime DeltaTime	   = FCsDeltaTime::GetDeltaTime(CurrentTime, RecordStartTime);
+
+	Final_Events.Reset(Final_Events.Max());
+	Final_Events.AddDefaulted(Final_Events.Max());
+
+	// Check mark Preview_Events to be used
+	for (const FCsGameEventInfo& Info : Infos)
+	{
+		FCsPlaybackByEvent& Last_Event    = Last_Events[Info.Event.GetValue()];
+		FCsPlaybackByEvent& Preview_Event = Preview_Events[Info.Event.GetValue()];
+		FCsPlaybackByEvent& Final_Event   = Final_Events[Info.Event.GetValue()];
+
+		if (Last_Event.IsValid() &&
+			Last_Event.Event == Info.Event)
+		{
+			if (Last_Event.Value == Info.Value &&
+				Last_Event.Location == Info.Location)
+			{
+				// Start Repeated
+				if (Last_Event.RepeatedState == ECsPlaybackEventRepeatedState::None)
+				{
+					Last_Event.RepeatedState = ECsPlaybackEventRepeatedState::Start;
+					Final_Event = Last_Event;
+				}
+			}
+			else
+			{
+				Last_Event.RepeatedState = ECsPlaybackEventRepeatedState::None;
+				Final_Event = Last_Event;
+			}
+		}
+		else
+		{
+			Final_Event.Event = Info.Event;
+			Final_Event.Value = Info.Value;
+			Final_Event.Location = Info.Location;
+		}
+
+		Preview_Event.Event = Info.Event;
+		Preview_Event.Value = Info.Value;
+		Preview_Event.Location = Info.Location;
+	}
+
+	// Check for any repeated events that have ended
+	for (FCsPlaybackByEvent& Last_Event : Last_Events)
+	{
+		FCsPlaybackByEvent& Preview_Event = Preview_Events[Last_Event.Event.GetValue()];
+		FCsPlaybackByEvent& Final_Event   = Final_Events[Last_Event.Event.GetValue()];
+
+		// Start -> End
+		if (Last_Event.IsValid() &&
+			!Preview_Event.IsValid() &&
+			!Final_Event.IsValid() &&
+			Last_Event.RepeatedState == ECsPlaybackEventRepeatedState::Start)
+		{
+			Last_Event.RepeatedState = ECsPlaybackEventRepeatedState::End;
+			Final_Event = Last_Event;
+		}
+
+		Last_Event = Final_Event;
+
+		Preview_Event.Reset();
+	}
+
+	FCsPlaybackByEventsByDeltaTime& Events = PlaybackByEvents.Events.AddDefaulted_GetRef();
+
+	Events.DeltaTime = DeltaTime;
+
+	for (FCsPlaybackByEvent& Final_Event : Final_Events)
+	{
+		if (Final_Event.IsValid())
+			Events.Events.Add(Final_Event);
+	}
+}
+
+#pragma endregion Event
+
+// Task
+#pragma region
+
+void UCsManager_Playback::FTask::Execute()
+{
+	// Struct to Json String
+	FString OutString;
+	bStructToJsonSuccess = FJsonObjectConverter::UStructToJsonObjectString<FCsPlaybackByEvents>(Events, OutString, 0, 0);
+	
+	// String to File
+	if (bStructToJsonSuccess)
+	{
+		bSaveStrToFileSuccess = FFileHelper::SaveStringToFile(OutString, *FileName);
+	}
+
+	State = EState::Complete;
+}
+
+#pragma endregion 

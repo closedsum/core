@@ -16,6 +16,7 @@ public class CsPlayback : ModuleRules
                     "Engine",
                     "AssetRegistry",
                     "CsCore",
+                    "JsonUtilities"
                 }
             );
 

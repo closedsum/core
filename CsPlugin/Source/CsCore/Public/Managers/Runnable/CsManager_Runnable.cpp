@@ -412,7 +412,7 @@ void UCsManager_Runnable::Update(const FCsDeltaTime& DeltaTime)
 // Delegate
 #pragma region
 
-FCsRunnableHandle UCsManager_Runnable::Start(FCsRunnablePayload* Payload)
+FCsRunnable* UCsManager_Runnable::Start(FCsRunnablePayload* Payload)
 {
 	checkf(Payload, TEXT("UCsManager_Runnable::Start: Payload is NULL."));
 
@@ -426,7 +426,7 @@ FCsRunnableHandle UCsManager_Runnable::Start(FCsRunnablePayload* Payload)
 		Payload->Reset();
 		Manager_Payload.DeallocateAt(Payload->GetIndex());
 	}
-	return R->GetHandle();
+	return R;
 }
 
 #pragma endregion Payload

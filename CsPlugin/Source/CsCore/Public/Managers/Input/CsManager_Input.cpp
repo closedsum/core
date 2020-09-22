@@ -34,13 +34,44 @@ namespace NCsManagerInputCached
 
 #pragma endregion Cached
 
-UCsManager_Input::UCsManager_Input(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsManager_Input::UCsManager_Input(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	// Owner
+	OwnerAsController(nullptr),
+	ControllerId(INDEX_NONE),
+	CurrentDeltaTime(0.0f),
+	Manager_Inputs(),
+	QueuedInputsForNextFrame(),
+	CurrentInputFrameIndex(0),
+	CurrentInputFrame(nullptr),
+	// Action Map
+	InputActionEventInfos(),
+	InputActionMapping(),
+	CurrentInputActionMap(0),
+	PressedKeys(),
+	// Events
+	GameEventDefinitions(),
+	GameEventDefinitionMap(),
+	GameEventPriorityList(),
+	GameEventPriorityMap(),
+	QueuedGameEventInfosForNextFrame(),
+	CurrentGameEventInfos(),
+	CurrentValidGameEventInfos(),
+	bOnGameEventInfo(true),
+	OnGameEventInfo_Event(),
+	// Listener
+	Listeners(),
+	// Profile
+	InputProfile(),
+	AllKeys(),
+	// Actions
+	Infos(),
+	Actions(),
+	Last_Actions(),
+	// Location Events
+		// Mouse
+	CurrentMousePosition(FVector::ZeroVector)
 {
-	ControllerId = INDEX_NONE;
-
-	CurrentInputFrameIndex = INDEX_NONE;
-	
-	CurrentInputActionMap = 0;
 }
 
 void UCsManager_Input::Init() 
@@ -609,6 +640,9 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 			OnGameEventInfo_Event.Broadcast(Info);
 		}
 	}
+
+	if (CurrentValidGameEventInfos.Num() > CS_EMPTY)
+		OnGameEventInfos_Event.Broadcast(CurrentValidGameEventInfos);
 }
 
 FCsInput* UCsManager_Input::AllocateInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*=0.0f*/, const FVector& Location /*=FVector::ZeroVector*/, const FRotator& Rotation /*=FRotator::ZeroRotator*/)

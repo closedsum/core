@@ -17,7 +17,7 @@
     {
       "Name": "CsVeh",
       "Type": "Runtime",
-      "LoadingPhase": "PostEngineInit"
+      "LoadingPhase": "Default"
     },
     {
       "Name": "CsVehEditor",

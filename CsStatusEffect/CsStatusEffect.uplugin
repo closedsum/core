@@ -17,7 +17,7 @@
     {
       "Name": "CsSe",
       "Type": "Runtime",
-      "LoadingPhase": "PostEngineInit"
+      "LoadingPhase": "Default"
     },
     {
       "Name": "CsSeEditor",

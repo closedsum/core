@@ -34,6 +34,7 @@
 #include "Data/Damage/CsData_ProjectileDamage.h"
 // Projectile
 #include "Cache/CsProjectilePooledCacheImpl.h"
+#include "Payload/Damage/CsPayload_ProjectileModifierDamage.h"
 // FX
 #include "Managers/FX/Cache/CsFXPooledCacheImpl.h"
 #include "Managers/FX/Payload/CsFXPooledPayloadImpl.h"

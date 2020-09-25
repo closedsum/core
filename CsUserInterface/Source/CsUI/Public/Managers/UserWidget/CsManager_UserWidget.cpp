@@ -15,6 +15,7 @@
 // Data
 #include "Data/CsUIDataRootSet.h"
 // UserWidget
+#include "Blueprint/UserWidget.h"
 #include "Managers/UserWidget/Handler/CsManager_UserWidget_ClassHandler.h"
 #include "Managers/UserWidget/Handler/CsManager_UserWidget_DataHandler.h"
 #include "Managers/UserWidget/Payload/CsPayload_UserWidgetImpl.h"

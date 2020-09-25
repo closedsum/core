@@ -162,7 +162,7 @@ void UCsManager_Input::OnRegister()
 	Super::OnRegister();
 
 	OwnerAsController = Cast<APlayerController>(GetOwner());
-
+	
 	Init();
 }
 

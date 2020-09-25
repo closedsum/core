@@ -25,8 +25,16 @@ void UCsInputListener::Init(const FECsInputAction& InAction, const ECsInputType&
 	// Action
 	if (Type == ECsInputType::Action)
 	{
-		InputComponent->BindAction<UCsInputListener>(Action.GetFName(), EInputEvent::IE_Pressed, this, &UCsInputListener::OnAction_Pressed);
-		InputComponent->BindAction<UCsInputListener>(Action.GetFName(), EInputEvent::IE_Released, this, &UCsInputListener::OnAction_Released);
+		// Pressed
+		{
+			FInputActionBinding& Binding = InputComponent->BindAction<UCsInputListener>(Action.GetFName(), EInputEvent::IE_Pressed, this, &UCsInputListener::OnAction_Pressed);
+			Binding.bConsumeInput		 = false;
+		}
+		// Released
+		{
+			FInputActionBinding& Binding = InputComponent->BindAction<UCsInputListener>(Action.GetFName(), EInputEvent::IE_Released, this, &UCsInputListener::OnAction_Released);
+			Binding.bConsumeInput		 = false;
+		}
 
 		OnAction_Pressed_Event.BindUObject(Manager_Input, &UCsManager_Input::OnAction_Pressed);
 		OnAction_Released_Event.BindUObject(Manager_Input, &UCsManager_Input::OnAction_Released);
@@ -35,7 +43,8 @@ void UCsInputListener::Init(const FECsInputAction& InAction, const ECsInputType&
 	else
 	if (Type == ECsInputType::Axis)
 	{
-		InputComponent->BindAxis<UCsInputListener>(Action.GetFName(), this, &UCsInputListener::OnAxis);
+		FInputAxisBinding& Binding = InputComponent->BindAxis<UCsInputListener>(Action.GetFName(), this, &UCsInputListener::OnAxis);
+		Binding.bConsumeInput	   = false;
 
 		OnAxis_Event.BindUObject(Manager_Input, &UCsManager_Input::OnAxis);
 	}

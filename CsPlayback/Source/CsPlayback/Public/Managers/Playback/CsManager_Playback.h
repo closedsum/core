@@ -21,16 +21,36 @@ class CSPLAYBACK_API UCsManager_Playback : public UObject
 #pragma region
 public:
 
+#if !UE_BUILD_SHIPPING
 	static UCsManager_Playback* Get(UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static UCsManager_Playback* Get(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if !UE_BUILD_SHIPPING
 
+#if WITH_EDITOR
 	static bool IsValid(UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static bool IsValid(UObject* InRoot = nullptr)
+	{
+		return s_Instance != nullptr;
+	}
+#endif // #if WITH_EDITOR
 
 	static void Init(UObject* InRoot);
 
 	static void Shutdown(UObject* InRoot = nullptr);
-	static bool HasShutdown(UObject* InRoot = nullptr);
 
-	static void Shutdown();
+#if WITH_EDITOR
+	static bool HasShutdown(UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static bool HasShutdown(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown;
+	}
+#endif // #if WITH_EDITOR
 
 #if WITH_EDITOR
 protected:
@@ -86,7 +106,7 @@ public:
 
 // State
 #pragma region
-private:
+public:
 
 	enum class EPlaybackState : uint8
 	{
@@ -95,32 +115,15 @@ private:
 		Record
 	};
 
+private:
+
 	EPlaybackState PlaybackState;
-
-#pragma endregion State
-
-private:
-
-	FCsTime PlaybackStartTime;
-
-	FCsDeltaTime PlaybackElapsedTime;
-
-// Record
-#pragma region
-private:
-
-	FCsTime RecordStartTime;
 
 public:
 
-	void Record();
+	void SetPlaybackState(const EPlaybackState& NewState);
 
-	FORCEINLINE bool IsRecording() const
-	{
-		return PlaybackState == EPlaybackState::Record;
-	}
-
-#pragma endregion Record
+#pragma endregion State
 
 public:
 
@@ -129,8 +132,6 @@ public:
 // Event
 #pragma region
 private:
-
-	FCsPlaybackByEvents PlaybackByEvents;
 
 	TArray<FCsPlaybackByEvent> Last_Events;
 	TArray<FCsPlaybackByEvent> Preview_Events;
@@ -142,93 +143,153 @@ public:
 
 #pragma endregion Event
 
-// Task
+// Record
 #pragma region
 private:
 
-	FCsRunnable* PlaybackByEventsRunnable;
-
-	struct FTask : ICsRunnableTask
+	struct FRecord
 	{
+		friend class UCsManager_Playback;
+
 	private:
- 
-		enum class EState : uint8 
+
+		bool bActive;
+
+		FCsPlaybackByEvents PlaybackByEvents;
+
+		FCsTime StartTime;
+
+		FCsDeltaTime ElapsedTime;
+
+		FCsRunnable* Runnable;
+
+		struct FTask : ICsRunnableTask
 		{
-			None,
-			Running,
-			Complete
+			friend struct FRecord;
+
+		private:
+
+			enum class EState : uint8
+			{
+				None,
+				Running,
+				Complete
+			};
+
+			EState State;
+
+			TArray<FCsOnRunnableTaskComplete> OnComplete_Events;
+
+			TArray<FCsOnRunnableTaskComplete> OnComplete_AsyncEvents;
+
+		public:
+
+			FCsPlaybackByEvents Events;
+
+			FString FileName;
+
+			bool bStructToJsonSuccess;
+
+			bool bSaveStrToFileSuccess;
+
+			FTask() :
+				State(EState::None),
+				OnComplete_Events(),
+				OnComplete_AsyncEvents(),
+				Events(),
+				FileName(),
+				bStructToJsonSuccess(false),
+				bSaveStrToFileSuccess(false)
+			{
+			}
+
+			~FTask() {}
+
+			// ICsRunnableTask
+
+			void Execute();
+
+			FORCEINLINE bool IsRunning() const
+			{
+				return State == EState::Running;
+			}
+
+			FORCEINLINE bool IsComplete() const
+			{
+				return State == EState::Complete;
+			}
+
+			TArray<FCsOnRunnableTaskComplete>& GetOnComplete_Events()
+			{
+				return OnComplete_Events;
+			}
+
+			TArray< FCsOnRunnableTaskComplete>& GetOnComplete_AsyncEvents()
+			{
+				return OnComplete_AsyncEvents;
+			}
+
+			void Reset()
+			{
+				State = EState::None;
+			}
+
+			FORCEINLINE bool IsReady() const
+			{
+				return State == EState::None || State == EState::Complete;
+			}
+
+			FORCEINLINE void Start()
+			{
+				State = EState::Running;
+			}
 		};
 
-		EState State;
-
-		TArray<FCsOnRunnableTaskComplete> OnComplete_Events;
-
-		TArray<FCsOnRunnableTaskComplete> OnComplete_AsyncEvents;
+		FTask* Task;
 
 	public:
 
-		FCsPlaybackByEvents Events;
-
-		FString FileName;
-
-		bool bStructToJsonSuccess;
-
-		bool bSaveStrToFileSuccess;
-
-		FTask() :
-			State(EState::None),
-			OnComplete_Events(),
-			OnComplete_AsyncEvents(),
-			Events(),
-			FileName(),
-			bStructToJsonSuccess(false),
-			bSaveStrToFileSuccess(false)
+		FRecord() :
+			bActive(false),
+			PlaybackByEvents(),
+			StartTime(),
+			ElapsedTime(),
+			Runnable(nullptr), 
+			Task(nullptr)
 		{
 		}
 
-		~FTask(){}
-
-	// ICsRunnableTask
-		
-		void Execute();
-
-		FORCEINLINE bool IsRunning() const
+		FORCEINLINE bool IsActive() const
 		{
-			return State == EState::Running;
+			return bActive;
 		}
 
-		FORCEINLINE bool IsComplete() const
-		{
-			return State == EState::Complete;
-		}
+		void Start(const FSoftObjectPath& LevelPath);
 
-		TArray<FCsOnRunnableTaskComplete>& GetOnComplete_Events()
-		{
-			return OnComplete_Events;
-		}
+		void Stop();
 
-		TArray< FCsOnRunnableTaskComplete>& GetOnComplete_AsyncEvents()
-		{
-			return OnComplete_AsyncEvents;
-		}
-
-		void Reset()
-		{
-			State = EState::None;
-		}
-
-		FORCEINLINE bool IsReady() const
-		{
-			return State == EState::None || State == EState::Complete;
-		}
-
-		FORCEINLINE void Start()
-		{
-			State = EState::Running;
-		}
+		void Update(const FCsDeltaTime& DeltaTime);
 	};
 
-	FTask* PlaybackByEventsWriteTask;
+	FRecord Record;
 
-#pragma endregion Task
+public:
+
+	FORCEINLINE bool IsRecording() const
+	{
+		return PlaybackState == EPlaybackState::Record;
+	}
+
+#pragma endregion Record
+
+// Playback
+#pragma region
+private:
+
+	struct FPlayback
+	{
+
+	};
+
+#pragma endregion Playback
 };

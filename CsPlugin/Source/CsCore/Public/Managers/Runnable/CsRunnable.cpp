@@ -7,6 +7,7 @@
 #include "Managers/Runnable/Payload/CsRunnablePayload.h"
 // Task
 #include "Managers/Runnable/Task/CsRunnableTask.h"
+#include "Managers/Runnable/Task/CsRunnableTaskPayload.h"
 
 // Cache
 #pragma region

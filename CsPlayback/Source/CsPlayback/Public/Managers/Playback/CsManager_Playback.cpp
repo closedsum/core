@@ -36,6 +36,7 @@ UCsManager_Playback::UCsManager_Playback(const FObjectInitializer& ObjectInitial
 // Singleton
 #pragma region
 
+#if !UE_BUILD_SHIPPING
 /*static*/ UCsManager_Playback* UCsManager_Playback::Get(UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
@@ -49,15 +50,14 @@ UCsManager_Playback::UCsManager_Playback(const FObjectInitializer& ObjectInitial
 	return s_Instance;
 #endif // #if WITH_EDITOR
 }
+#endif // #if !UE_BUILD_SHIPPING
 
+#if WITH_EDITOR
 /*static*/ bool UCsManager_Playback::IsValid(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerPlayback(InRoot)->GetManager_Playback() != nullptr;
-#else
-	return s_Instance != nullptr;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_Playback::Init(UObject* InRoot)
 {
@@ -118,14 +118,12 @@ UCsManager_Playback::UCsManager_Playback(const FObjectInitializer& ObjectInitial
 #endif // #if WITH_EDITOR
 }
 
+#if WITH_EDITOR
 /*static*/ bool UCsManager_Playback::HasShutdown(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerPlayback(InRoot)->GetManager_Playback() == nullptr;
-#else
-	return s_bShutdown;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
 #if WITH_EDITOR
 
@@ -215,7 +213,7 @@ void UCsManager_Playback::Initialize()
 		Final_Events.Reserve(EMCsGameEvent::Get().Num());
 		Final_Events.AddDefaulted(EMCsGameEvent::Get().Num());
 
-		PlaybackByEventsWriteTask = new UCsManager_Playback::FTask();
+		Record.Task = new UCsManager_Playback::FRecord::FTask();
 
 		// Set FileName
 		{
@@ -223,15 +221,15 @@ void UCsManager_Playback::Initialize()
 			const FString SaveFolder = TEXT("Playback/") + FString(FPlatformProcess::UserName()) + TEXT("/");
 			const FString FileName	 = Dir + SaveFolder + FDateTime::Now().ToString(TEXT("%Y%m%d%H%M%S%s")) + TEXT("_") + FGuid::NewGuid().ToString(EGuidFormats::Digits) + TEXT(".json");
 
-			PlaybackByEventsWriteTask->FileName = FileName;
+			Record.Task->FileName = FileName;
 		}
 
 		FCsRunnablePayload* Payload = UCsManager_Runnable::Get(MyRoot)->AllocatePayload();
 		Payload->Owner			= this;
 		Payload->ThreadPriority = TPri_Normal;
-		Payload->Task			= PlaybackByEventsWriteTask;
+		Payload->Task			= Record.Task;
 	 
-		PlaybackByEventsRunnable = UCsManager_Runnable::Get(MyRoot)->Start(Payload);
+		Record.Runnable = UCsManager_Runnable::Get(MyRoot)->Start(Payload);
 	}
 
 	bInitialized = true;
@@ -261,18 +259,29 @@ void UCsManager_Playback::SetMyRoot(UObject* InRoot)
 
 #pragma endregion Singleton
 
-void UCsManager_Playback::Record()
+// State
+#pragma region
+
+void UCsManager_Playback::SetPlaybackState(const EPlaybackState& NewState)
 {
-	PlaybackByEvents.Reset();
+	if (PlaybackState == NewState)
+	{
+		UE_LOG(LogCsPlayback, Warning, TEXT(""));
+		return;
+	}
 
-	PlaybackByEvents.Username = FString(FPlatformProcess::UserName());
-	PlaybackByEvents.Level	  = FSoftObjectPath(UCsManager_Level::Get(MyRoot)->GetPersistentLevelName());
-	PlaybackByEvents.Date	  = FDateTime::Now();
+	PlaybackState = NewState;
 
-	RecordStartTime.Reset();
+	// Record
+	if (PlaybackState == EPlaybackState::Record)
+	{
+		FSoftObjectPath LevelPath(UCsManager_Level::Get(MyRoot)->GetPersistentLevelName());
 
-	PlaybackState = EPlaybackState::Record;
+		Record.Start(LevelPath);
+	}	
 }
+
+#pragma endregion State
 
 void UCsManager_Playback::Update(const FCsDeltaTime& DeltaTime)
 {
@@ -280,17 +289,7 @@ void UCsManager_Playback::Update(const FCsDeltaTime& DeltaTime)
 	// Record
 	if (PlaybackState == EPlaybackState::Record)
 	{
-		if (PlaybackByEventsRunnable->IsIdle() &&
-			PlaybackByEventsWriteTask->IsReady())
-		{
-			 bool PerformWriteTask = PlaybackByEventsWriteTask->Events.CopyFrom(PlaybackByEvents);
-
-			 if (PerformWriteTask)
-			 {
-				 PlaybackByEventsWriteTask->Start();
-				 PlaybackByEventsRunnable->Start();
-			 }
-		}
+		Record.Update(DeltaTime);
 	}
 }
 
@@ -303,7 +302,7 @@ void UCsManager_Playback::OnGameEventInfos(const TArray<FCsGameEventInfo>& Infos
 		return;
 
 	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(NCsUpdateGroup::GameState);
-	FCsDeltaTime DeltaTime	   = FCsDeltaTime::GetDeltaTime(CurrentTime, RecordStartTime);
+	Record.ElapsedTime	       = FCsDeltaTime::GetDeltaTime(CurrentTime, Record.StartTime);
 
 	Final_Events.Reset(Final_Events.Max());
 	Final_Events.AddDefaulted(Final_Events.Max());
@@ -367,9 +366,9 @@ void UCsManager_Playback::OnGameEventInfos(const TArray<FCsGameEventInfo>& Infos
 		Preview_Event.Reset();
 	}
 
-	FCsPlaybackByEventsByDeltaTime& Events = PlaybackByEvents.Events.AddDefaulted_GetRef();
+	FCsPlaybackByEventsByDeltaTime& Events = Record.PlaybackByEvents.Events.AddDefaulted_GetRef();
 
-	Events.DeltaTime = DeltaTime;
+	Events.DeltaTime = Record.ElapsedTime;
 
 	for (FCsPlaybackByEvent& Final_Event : Final_Events)
 	{
@@ -380,15 +379,48 @@ void UCsManager_Playback::OnGameEventInfos(const TArray<FCsGameEventInfo>& Infos
 
 #pragma endregion Event
 
-// Task
+// Record
 #pragma region
 
-void UCsManager_Playback::FTask::Execute()
+void UCsManager_Playback::FRecord::Start(const FSoftObjectPath& LevelPath)
+{
+	PlaybackByEvents.Reset();
+
+	PlaybackByEvents.Username = FString(FPlatformProcess::UserName());
+	PlaybackByEvents.Level	  = LevelPath;
+	PlaybackByEvents.Date	  = FDateTime::Now();
+
+	StartTime.Reset();
+}
+
+void UCsManager_Playback::FRecord::Stop()
+{
+}
+
+void UCsManager_Playback::FRecord::Update(const FCsDeltaTime& DeltaTime)
+{
+	if (Runnable->IsIdle() &&
+		Task->IsReady())
+	{
+		bool PerformWriteTask = Task->Events.CopyFrom(PlaybackByEvents);
+
+		if (PerformWriteTask)
+		{
+			Task->Start();
+			Runnable->Start();
+		}
+	}
+}
+
+	// Task
+#pragma region
+
+void UCsManager_Playback::FRecord::FTask::Execute()
 {
 	// Struct to Json String
 	FString OutString;
 	bStructToJsonSuccess = FJsonObjectConverter::UStructToJsonObjectString<FCsPlaybackByEvents>(Events, OutString, 0, 0);
-	
+
 	// String to File
 	if (bStructToJsonSuccess)
 	{
@@ -398,4 +430,6 @@ void UCsManager_Playback::FTask::Execute()
 	State = EState::Complete;
 }
 
-#pragma endregion 
+#pragma endregion Task
+
+#pragma endregion Record

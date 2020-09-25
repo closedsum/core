@@ -3,7 +3,7 @@
 #include "CsPrj.h"
 
 // CVar
-#include "CsCVars.h"
+#include "Managers/Projectile/CsCVars_Projectile.h"
 // Library
 #include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Material.h"

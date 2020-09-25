@@ -17,7 +17,7 @@
     {
       "Name": "CsPrj",
       "Type": "Runtime",
-      "LoadingPhase": "PostEngineInit"
+      "LoadingPhase": "Default"
     },
     {
       "Name": "CsPrjEditor",

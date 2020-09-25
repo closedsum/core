@@ -41,8 +41,8 @@ namespace NCsGameInstanceCached
 
 #pragma endregion Cached
 
-UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer)
 {
 }
 

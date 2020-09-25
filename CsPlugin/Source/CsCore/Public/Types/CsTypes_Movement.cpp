@@ -295,17 +295,17 @@ void FCsSpeedInterpHelper::Update(const float& DeltaTime)
 		if (DirectionSign > 0)
 		{
 			if (bMinBound)
-				CurrentSpeedAsPercent = FMath::Clamp(CurrentSpeedAsPercent + DeltaTime * AccelerationAsPercent, MinBound, TargetSpeedAsPercent);
+				CurrentSpeedAsPercent = FMath::Clamp(CurrentSpeedAsPercent + (DeltaTime * AccelerationAsPercent), MinBound, TargetSpeedAsPercent);
 			else
-				CurrentSpeedAsPercent =  FMath::Min(CurrentSpeedAsPercent + DeltaTime * AccelerationAsPercent, TargetSpeedAsPercent);
+				CurrentSpeedAsPercent =  FMath::Min(CurrentSpeedAsPercent + (DeltaTime * AccelerationAsPercent), TargetSpeedAsPercent);
 		}
 		// Decreasing to TargetSpeedAsPercent
 		else
 		{
 			if (bMaxBound)
-				CurrentSpeedAsPercent = FMath::Clamp(CurrentSpeedAsPercent - DeltaTime * AccelerationAsPercent, TargetSpeedAsPercent, MaxBound);
+				CurrentSpeedAsPercent = FMath::Clamp(CurrentSpeedAsPercent - (DeltaTime * AccelerationAsPercent), TargetSpeedAsPercent, MaxBound);
 			else
-				CurrentSpeedAsPercent = FMath::Max(TargetSpeedAsPercent, CurrentSpeedAsPercent - DeltaTime * AccelerationAsPercent);
+				CurrentSpeedAsPercent = FMath::Max(TargetSpeedAsPercent, CurrentSpeedAsPercent - (DeltaTime * AccelerationAsPercent));
 		}
 	}
 	// Easing

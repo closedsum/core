@@ -16,8 +16,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 InputPoolSize;
 	 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<int32> RemappedGamepadControllerIds;
+
 	FCsSettings_Manager_Input() :
-		InputPoolSize(2048)
+		InputPoolSize(2048),
+		RemappedGamepadControllerIds()
 	{
 	}
 };

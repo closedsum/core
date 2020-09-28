@@ -2,6 +2,8 @@
 #include "Library/CsLibrary_Player.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Player
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/PlayerState.h"

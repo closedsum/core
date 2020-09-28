@@ -41,56 +41,7 @@ class CSCORE_API UCsLibrary_Common : public UBlueprintFunctionLibrary
 
 // Local Client
 #pragma region
-
-	template<typename T>
-	static T* GetLocalPlayerController(UWorld* InWorld)
-	{
-		return Cast<T>(GEngine->GetFirstLocalPlayerController(InWorld));
-	}
-
-	static AController* GetLocalPlayerController(UWorld* InWorld);
-
-	template<typename T>
-	static T* GetLocalHUD(UWorld* InWorld)
-	{
-		APlayerController* Controller = GetLocalPlayerController<APlayerController>(InWorld);
-
-		return Cast<T>(Controller->MyHUD);
-	}
-
-	static class UPlayerInput* GetLocalPlayerInput(UWorld* InWorld);
-
-	template<typename T>
-	static T* GetLocalPlayerState(UWorld* InWorld)
-	{
-		AController* Controller = GetLocalPlayerController(InWorld);
-
-		return Controller ? Cast<T>(Controller->PlayerState) : nullptr;
-	}
-
-	static APlayerState* GetLocalPlayerState(UWorld* InWorld);
-	
-	static bool IsLocalPlayerState(UWorld* InWorld, APlayerState* InPlayerState);
-
-	template<typename T>
-	static T* GetLocalPawn(UWorld* InWorld)
-	{
-		APlayerController* Controller = GetLocalPlayerController<APlayerController>(InWorld);
-
-		return Controller ? Cast<T>(Controller->GetPawn()) : nullptr;
-	}
-
-	UFUNCTION(BlueprintCallable, Category = "Pawn")
-	static bool IsLocalPawn(UWorld* InWorld, APawn* InPawn);
-	
-	template<typename T>
-	static void GetLocalPlayerViewPoint(UWorld* InWorld, FVector &OutLocation, FRotator &OutRotation)
-	{
-		T* PC = GetLocalPlayerController<T>(InWorld);
-
-		if (APlayerController* Controller = Cast<APlayerController>(PC))
-			Controller->GetPlayerViewPoint(OutLocation, OutRotation);
-	}
+public:
 
 	static void GetLocalPlayerViewPoint(UWorld* InWorld, FVector &OutLocation, FRotator &OutRotation);
 

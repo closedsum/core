@@ -7,12 +7,12 @@
 class UCsManager_Input;
 
 UINTERFACE(Blueprintable)
-class UCsGetManagerInput : public UInterface
+class CSCORE_API UCsGetManagerInput : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class ICsGetManagerInput
+class CSCORE_API ICsGetManagerInput
 {
 	GENERATED_IINTERFACE_BODY()
 

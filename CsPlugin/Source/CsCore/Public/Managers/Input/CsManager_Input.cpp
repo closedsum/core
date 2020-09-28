@@ -7,6 +7,7 @@
 // Library
 #include "Library/CsLibrary_Common.h"
 #include "Library/Load/CsLibrary_Load.h"
+#include "Library/CsLibrary_Player.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Managers
@@ -1396,7 +1397,7 @@ const FKey& UCsManager_Input::GetKeyFromAction(const ECsInputDevice& Device, con
 
 const FKey& UCsManager_Input::GetKeyFromAction(const FECsInputAction& Action)
 {
-	UPlayerInput* PlayerInput = UCsLibrary_Common::GetLocalPlayerInput(GetWorld());
+	UPlayerInput* PlayerInput = FCsLibrary_Player::GetFirstLocalPlayerInput(GetWorld());
 
 	const FString& ActionAsString = Action.GetName();
 	const FName& ActionName		  = Action.GetFName();

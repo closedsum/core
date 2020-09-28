@@ -9,6 +9,7 @@
 // Library
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Material.h"
+#include "Library/CsLibrary_Player.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Game
@@ -133,46 +134,14 @@ bool UCsLibrary_Common::IsLocallyControlled(AShooterCharacter* InPawn, UWorld* I
 // Local Client
 #pragma region
 
-AController* UCsLibrary_Common::GetLocalPlayerController(UWorld* InWorld)
-{
-	return GetLocalPlayerController<AController>(InWorld);
-}
-
-UPlayerInput* UCsLibrary_Common::GetLocalPlayerInput(UWorld* InWorld)
-{
-	APlayerController* Controller = GetLocalPlayerController<APlayerController>(InWorld);
-	return Controller->PlayerInput;
-}
-
-APlayerState* UCsLibrary_Common::GetLocalPlayerState(UWorld* InWorld)
-{
-	return GetLocalPlayerState<APlayerState>(InWorld);
-}
-
-bool UCsLibrary_Common::IsLocalPlayerState(UWorld* InWorld, APlayerState* InPlayerState)
-{
-	if (!InPlayerState)
-		return false;
-	return InPlayerState == GetLocalPlayerState(InWorld);
-}
-
-bool UCsLibrary_Common::IsLocalPawn(UWorld* InWorld, APawn* InPawn)
-{
-	if (!InPawn)
-		return false;
-	if (!InPawn->GetPlayerState())
-		return false;
-	return InPawn->GetPlayerState() == GetLocalPlayerState(InWorld);
-}
-
 void UCsLibrary_Common::GetLocalPlayerViewPoint(UWorld* InWorld, FVector &OutLocation, FRotator &OutRotation)
 {
-	GetLocalPlayerViewPoint<APlayerController>(InWorld, OutLocation, OutRotation);
+	//GetLocalPlayerViewPoint<APlayerController>(InWorld, OutLocation, OutRotation);
 }
 
 float UCsLibrary_Common::GetSquaredDistanceToLocalControllerEye(UWorld *InWorld, const FVector& Location)
 {
-	APlayerController* LocalController = GetLocalPlayerController<APlayerController>(InWorld);
+	APlayerController* LocalController = FCsLibrary_Player::GetFirstLocalPlayerController(InWorld);
 
 	if (!LocalController)
 		return -1.0f;
@@ -184,29 +153,7 @@ float UCsLibrary_Common::GetSquaredDistanceToLocalControllerEye(UWorld *InWorld,
 
 	return FVector::DistSquared(ViewLocation, Location);
 }
-/*
-ACsMotionController_DEPRECATED* UCsLibrary_Common::GetLocalHand(UWorld *InWorld, const ECsControllerHand &Hand)
-{
-	ACsPlayerPawn_VR* Pawn = GetLocalPawn<ACsPlayerPawn_VR>(InWorld);
 
-	if (!Pawn)
-		return nullptr;
-
-	if (Hand == ECsControllerHand::Left)
-		return Pawn->LeftHand;
-	if (Hand == ECsControllerHand::Right)
-		return Pawn->RightHand;
-	return nullptr;
-}
-*/
-/*
-ACsManager_Inventory* UCsLibrary_Common::GetLocalManager_Inventory(UWorld *InWorld)
-{
-	ACsPlayerState* PlayerState = GetLocalPlayerState<ACsPlayerState>(InWorld);
-
-	return PlayerState ? PlayerState->Manager_Inventory : nullptr;
-}
-*/
 #pragma endregion Local Client
 
 // VR
@@ -253,7 +200,7 @@ void UCsLibrary_Common::GetHMDOrientationAndPosition(FRotator& DeviceRotation, F
 
 void UCsLibrary_Common::GetHMDWorldViewPoint(UWorld* InWorld, FVector &OutLocation, FRotator& OutRotation)
 {
-	APlayerController* PlayerController = GetLocalPlayerController<APlayerController>(InWorld);
+	APlayerController* PlayerController = FCsLibrary_Player::GetFirstLocalPlayerController(InWorld);
 	
 	PlayerController->GetPlayerViewPoint(OutLocation, OutRotation);
 	// TODO: FIX:

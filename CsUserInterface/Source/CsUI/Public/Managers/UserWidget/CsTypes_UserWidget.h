@@ -223,6 +223,13 @@ public:
 
 	FORCEINLINE TSubclassOf<UUserWidget> GetSubclassOf() const { return Widget_SubclassOf; }
 
+	bool IsValidChecked(const FString& Context)
+	{
+		checkf(Widget.ToSoftObjectPath().IsValid(), TEXT("%s: FCsUserWidgetPtr.Widget's Path: %s is NOT Valid."), *Context, *(Widget.ToSoftObjectPath().ToString()));
+
+		return true;
+	}
+
 	// Added functions to mimic behavior for containers for interfaces
 
 	void SetObject(UObject* InWidget);

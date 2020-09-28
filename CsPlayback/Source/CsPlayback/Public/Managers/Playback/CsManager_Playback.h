@@ -35,7 +35,7 @@ public:
 #else
 	FORCEINLINE static bool IsValid(UObject* InRoot = nullptr)
 	{
-		return s_Instance != nullptr;
+		return !s_bShutdown && s_Instance != nullptr;
 	}
 #endif // #if WITH_EDITOR
 

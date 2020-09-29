@@ -104,7 +104,7 @@ void UCsManager_Time::Initialize()
 	{
 		const int32& Count = EMCsUpdateGroup::Get().Num();
 
-		UpdateGroups.Reserve(Count);
+		UpdateGroups.Reset(Count);
 
 		for (const FECsUpdateGroup& Group : EMCsUpdateGroup::Get())
 		{

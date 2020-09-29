@@ -572,9 +572,9 @@ public:
 
 		PoolSize = Size;
 
-		Pool.Reserve(PoolSize);
-		Links.Reserve(PoolSize);
-		AllocatedObjects.Reserve(PoolSize);
+		Pool.Reset(PoolSize);
+		Links.Reset(PoolSize);
+		AllocatedObjects.Reset(PoolSize);
 
 		for (int32 I = 0; I < Size; ++I)
 		{
@@ -1565,8 +1565,8 @@ public:
 
 		PayloadSize = Size;
 
-		Payloads.Reserve(PayloadSize);
-		PooledObjectPayloads.Reserve(PayloadSize);
+		Payloads.Reset(PayloadSize);
+		PooledObjectPayloads.Reset(PayloadSize);
 
 		for (int32 I = 0; I < Size; ++I)
 		{

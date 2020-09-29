@@ -248,7 +248,7 @@ void UCsManager_Damage::Initialize()
 	{
 		const int32& Count = EMCsDamageValue::Get().Num();
 		
-		Manager_Values.Reserve(Count);
+		Manager_Values.Reset(Count);
 		Manager_Values.AddDefaulted(Count);
 		
 			// Create Pool

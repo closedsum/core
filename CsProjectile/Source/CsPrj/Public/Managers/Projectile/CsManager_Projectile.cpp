@@ -386,7 +386,7 @@ void UCsManager_Projectile::SetupInternal()
 		{
 			const int32& Count = EMCsProjectile::Get().Num();
 
-			TypeMapArray.Reserve(Count);
+			TypeMapArray.Reset(Count);
 
 			for (const FECsProjectile& Type : EMCsProjectile::Get())
 			{

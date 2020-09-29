@@ -134,7 +134,7 @@ public:
 
 	FCsPlaybackByEvents() :
 		Username(),
-		Date(),
+		Date(1, 1, 1, 0, 0, 0, 0),
 		Level(),
 		Events()
 	{

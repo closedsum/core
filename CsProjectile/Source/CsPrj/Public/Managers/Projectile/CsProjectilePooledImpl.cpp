@@ -698,7 +698,7 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(ICsPayload_Projectile* Paylo
 	{
 		const TArray<ICsDamageModifier*> Modifiers = DmgModifierPayload->GetDamageModifiers();
 
-		DamageModifiers.Reserve(FMath::Max(DamageModifiers.Max(), Modifiers.Num()));
+		DamageModifiers.Reset(FMath::Max(DamageModifiers.Max(), Modifiers.Num()));
 
 		UCsManager_Damage* Manager_Damage = UCsManager_Damage::Get(GetWorld()->GetGameState());
 

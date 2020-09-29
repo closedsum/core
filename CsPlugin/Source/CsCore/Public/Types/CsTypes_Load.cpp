@@ -12,6 +12,7 @@ namespace ECsLoadCached
 {
 	namespace Str
 	{
+		CSCORE_API const FString _Path = TEXT("_Path");
 		CSCORE_API const FString _Internal = TEXT("_Internal");
 		CSCORE_API const FString _Class = TEXT("_Class");
 		CSCORE_API const FString _SubclassOf = TEXT("_SubclassOf");

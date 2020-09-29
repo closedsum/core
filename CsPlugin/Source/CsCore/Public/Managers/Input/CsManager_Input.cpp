@@ -96,7 +96,7 @@ void UCsManager_Input::Init()
 
 	TArray<bool> EventsFound;
 
-	EventsFound.Reserve(EventCount);
+	EventsFound.Reset(EventCount);
 	EventsFound.AddDefaulted(EventCount);
 
 	for (int32 I = 0; I < EventCount; ++I)
@@ -120,8 +120,8 @@ void UCsManager_Input::Init()
 	}
 
 	// Update GameEventPriorityMap
-	CurrentGameEventInfos.Reserve(EventCount);
-	GameEventPriorityMap.Reserve(EventCount);
+	CurrentGameEventInfos.Reset(EventCount);
+	GameEventPriorityMap.Reset(EventCount);
 	GameEventPriorityMap.AddDefaulted(EventCount);
 
 	for (int32 I = 0; I < EventCount; ++I)
@@ -717,9 +717,9 @@ void UCsManager_Input::SetupInputActionEventInfos()
 
 	const int32& ActionCount = EMCsInputAction::Get().Num();
 
-	InputActionEventInfos.Reserve(ActionCount);
+	InputActionEventInfos.Reset(ActionCount);
 	InputActionEventInfos.AddDefaulted(ActionCount);
-	Listeners.Reserve(ActionCount);
+	Listeners.Reset(ActionCount);
 	Listeners.AddDefaulted(ActionCount);
 
 	for (const FECsInputAction& Action : EMCsInputAction::Get())

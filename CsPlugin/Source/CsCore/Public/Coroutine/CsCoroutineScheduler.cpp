@@ -160,7 +160,7 @@ void UCsCoroutineScheduler::Initialize()
 	{
 		const int32& Count = EMCsUpdateGroup::Get().Num();
 
-		Schedules.Reserve(Count);
+		Schedules.Reset(Count);
 
 		for (const FECsUpdateGroup& Group : EMCsUpdateGroup::Get())
 		{

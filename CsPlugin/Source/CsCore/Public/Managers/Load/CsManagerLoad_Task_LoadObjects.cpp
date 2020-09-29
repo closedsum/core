@@ -189,10 +189,10 @@ FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const FCsManagerL
 	const int32 Size = ObjectPaths.Num();
 	const int32 Max  = FMath::Max(Paths.Max(), Size);
 
-	Paths.Reserve(Max);
+	Paths.Reset(Max);
 	Paths.Append(ObjectPaths);
 
-	LoadedObjects.Reserve(Max);
+	LoadedObjects.Reset(Max);
 
 	// Add Callback
 	OnFinishLoadObjectPaths_Event = Payload.OnFinishLoadObjectPaths;

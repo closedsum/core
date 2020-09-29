@@ -435,7 +435,6 @@ struct CSCORE_API FCsAnimBlueprint
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
 	TSoftObjectPtr<UAnimBlueprint> Blueprint;
 
-
 	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;
 

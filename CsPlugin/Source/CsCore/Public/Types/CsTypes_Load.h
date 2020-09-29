@@ -21,6 +21,7 @@ namespace ECsLoadCached
 {
 	namespace Str
 	{
+		extern CSCORE_API const FString _Path;// = TEXT("_Path");
 		extern CSCORE_API const FString _Internal;// = TEXT("_Internal");
 		extern CSCORE_API const FString _Class;// = TEXT("_Class");
 		extern CSCORE_API const FString _SubclassOf;// = TEXT("_Class");
@@ -1376,9 +1377,25 @@ public:
 
 	FORCEINLINE UObject* GetObject() const { return Data_Internal;}
 
+	template<typename T>
+	FORCEINLINE T* GetObject() const
+	{
+		return Cast<T>(GetObject());
+	}
+
 	FORCEINLINE UClass* GetClass() const { return Data_Class; }
 
 	FORCEINLINE ICsGetDataRootSet* Get() const { return Interface; }
+
+	template<typename T>
+	FORCEINLINE T* GetChecked(const FString& Context) const
+	{
+		T* Slice = Cast<T>(Data_Internal);
+
+		checkf(Slice, TEXT("%s: Failed to cast Data_Internal to type: T."), *Context);
+
+		return Slice;
+	}
 };
 
 #pragma endregion FCsDataRootSetContainer

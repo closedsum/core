@@ -116,35 +116,40 @@ void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FCsGameEventInf
 
 			if (UGameplayStatics::DeprojectScreenToWorld(PlayerController, MousePosition, WorldOrigin, WorldDirection))
 			{
-				UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(GetWorld()->GetGameState());
-
-				FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
-				Request->ProfileName = Name::OnProcessGameEventInfo;
-				Request->Type   = ECsTraceType::Line;
-				Request->Method = ECsTraceMethod::Multi;
-				Request->Query  = ECsTraceQuery::Channel;
-				Request->Start  = WorldOrigin;
-				Request->End	= WorldOrigin + WorldDirection * InteractionDistance;
-				Request->Channel = TraceChannel;
-
-				Internal_ComponentsToIgnoreOnTrace.Reset(Internal_ComponentsToIgnoreOnTrace.Max());
-				GetRelatedComponentsToIgnoreInAutomaticHitTesting(Internal_ComponentsToIgnoreOnTrace);
-
-				Request->Params = FCollisionQueryParams::DefaultQueryParam;
-				Request->Params.AddIgnoredComponents(Internal_ComponentsToIgnoreOnTrace);
-
-				if (FCsTraceResponse* Response = Manager_Trace->Trace(Request))
+				// NOTE: For actors placed in the level and if in the process of a seamless level transition,
+				//		 check if Manager_Trace is valid.
+				if (UCsManager_Trace::IsValid(GetWorld()->GetGameState()))
 				{
-					TArray<FHitResult>& OutHits = Response->OutHits;
+					UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(GetWorld()->GetGameState());
 
-					for (const FHitResult& HitResult : OutHits)
+					FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
+					Request->ProfileName	= Name::OnProcessGameEventInfo;
+					Request->Type			= ECsTraceType::Line;
+					Request->Method			= ECsTraceMethod::Multi;
+					Request->Query			= ECsTraceQuery::Channel;
+					Request->Start			= WorldOrigin;
+					Request->End			= WorldOrigin + WorldDirection * InteractionDistance;
+					Request->Channel		= TraceChannel;
+
+					Internal_ComponentsToIgnoreOnTrace.Reset(Internal_ComponentsToIgnoreOnTrace.Max());
+					GetRelatedComponentsToIgnoreInAutomaticHitTesting(Internal_ComponentsToIgnoreOnTrace);
+
+					Request->Params = FCollisionQueryParams::DefaultQueryParam;
+					Request->Params.AddIgnoredComponents(Internal_ComponentsToIgnoreOnTrace);
+
+					if (FCsTraceResponse* Response = Manager_Trace->Trace(Request))
 					{
-						if (UWidgetComponent* HitWidgetComponent = Cast<UWidgetComponent>(HitResult.GetComponent()))
+						TArray<FHitResult>& OutHits = Response->OutHits;
+
+						for (const FHitResult& HitResult : OutHits)
 						{
-							if (HitWidgetComponent->IsVisible())
+							if (UWidgetComponent* HitWidgetComponent = Cast<UWidgetComponent>(HitResult.GetComponent()))
 							{
-								CustomHitResult = HitResult;
-								break;
+								if (HitWidgetComponent->IsVisible())
+								{
+									CustomHitResult = HitResult;
+									break;
+								}
 							}
 						}
 					}

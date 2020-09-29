@@ -232,7 +232,7 @@ void UCsCoordinator_StatusEffect::Initialize()
 
 	const int32& Count = EMCsStatusEffectEvent::Get().Num();
 
-	Manager_Events.Reserve(Count);
+	Manager_Events.Reset(Count);
 	Manager_Events.AddDefaulted(Count);
 
 	for (const FECsStatusEffectEvent& Event : EMCsStatusEffectEvent::Get())

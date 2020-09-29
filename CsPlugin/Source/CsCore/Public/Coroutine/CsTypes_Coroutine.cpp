@@ -348,8 +348,8 @@ FCsCoroutinePayload::FCsCoroutinePayload()
 	Group = EMCsUpdateGroup::Get().GetMAX();
 
 	// Registers
-	Registers.Reserve(NCsRoutineRegisterValueType::MAX);
-	RegisterFlags.Reserve(NCsRoutineRegisterValueType::MAX);
+	Registers.Reset(NCsRoutineRegisterValueType::MAX);
+	RegisterFlags.Reset(NCsRoutineRegisterValueType::MAX);
 
 		// Indexers
 	Registers.AddDefaulted();

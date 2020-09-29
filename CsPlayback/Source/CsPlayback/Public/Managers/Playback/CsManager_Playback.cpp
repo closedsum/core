@@ -204,13 +204,13 @@ void UCsManager_Playback::Initialize()
 {
 	// PlaybackByEvents
 	{
-		Last_Events.Reserve(EMCsGameEvent::Get().Num());
+		Last_Events.Reset(EMCsGameEvent::Get().Num());
 		Last_Events.AddDefaulted(EMCsGameEvent::Get().Num());
 		
-		Preview_Events.Reserve(EMCsGameEvent::Get().Num());
+		Preview_Events.Reset(EMCsGameEvent::Get().Num());
 		Preview_Events.AddDefaulted(EMCsGameEvent::Get().Num());
 
-		Final_Events.Reserve(EMCsGameEvent::Get().Num());
+		Final_Events.Reset(EMCsGameEvent::Get().Num());
 		Final_Events.AddDefaulted(EMCsGameEvent::Get().Num());
 
 		Record.Task = new UCsManager_Playback::FRecord::FTask();

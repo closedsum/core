@@ -63,13 +63,13 @@ public:
 	TCsManager_TArray_ValueType() :
 		Sizes()
 	{
-		Sizes.Reserve((uint8)ECsManagerTArraySize::ECsManagerTArraySize_MAX);
+		Sizes.Reset((uint8)ECsManagerTArraySize::ECsManagerTArraySize_MAX);
 		Sizes.Add(8);
 		Sizes.Add(64);
 		Sizes.Add(128);
 		Sizes.Add(512);
 
-		Pool.Reserve((uint8)ECsManagerTArraySize::ECsManagerTArraySize_MAX);
+		Pool.Reset((uint8)ECsManagerTArraySize::ECsManagerTArraySize_MAX);
 
 		for (const ECsManagerTArraySize& Size : EMCsManagerTArraySize::Get())
 		{
@@ -80,7 +80,7 @@ public:
 			for (ResourceContainerType* C : Array)
 			{
 				TArray<ValueType>* R = C->Get();
-				R->Reserve(Sizes[(uint8)Size]);
+				R->Reset(Sizes[(uint8)Size]);
 			}
 
 			Pool.Add(M);
@@ -150,13 +150,13 @@ public:
 	TCsManager_TArray_PointerType() :
 		Sizes()
 	{
-		Sizes.Reserve((uint8)ECsManagerTArraySize::ECsManagerTArraySize_MAX);
+		Sizes.Reset((uint8)ECsManagerTArraySize::ECsManagerTArraySize_MAX);
 		Sizes.Add(8);
 		Sizes.Add(64);
 		Sizes.Add(128);
 		Sizes.Add(512);
 
-		Pool.Reserve((uint8)ECsManagerTArraySize::ECsManagerTArraySize_MAX);
+		Pool.Reset((uint8)ECsManagerTArraySize::ECsManagerTArraySize_MAX);
 
 		for (const ECsManagerTArraySize& Size : EMCsManagerTArraySize::Get())
 		{
@@ -167,7 +167,7 @@ public:
 			for (ResourceContainerType* C : Array)
 			{
 				TArray<PointerType*>* R = C->Get();
-				R->Reserve(Sizes[(uint8)Size]);
+				R->Reset(Sizes[(uint8)Size]);
 			}
 
 			Pool.Add(M);

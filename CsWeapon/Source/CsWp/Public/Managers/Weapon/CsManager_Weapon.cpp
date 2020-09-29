@@ -360,7 +360,7 @@ void UCsManager_Weapon::SetupInternal()
 		{
 			const int32& Count = EMCsWeapon::Get().Num();
 
-			TypeMapArray.Reserve(Count);
+			TypeMapArray.Reset(Count);
 
 			for (const FECsWeapon& Type : EMCsWeapon::Get())
 			{

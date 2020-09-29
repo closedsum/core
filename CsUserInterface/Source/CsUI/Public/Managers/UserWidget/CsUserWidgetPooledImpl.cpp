@@ -74,7 +74,7 @@ void UCsUserWidgetPooledImpl::OnConstructObject(const FCsManagerPooledObjectCons
 
 	checkf(Manager_UserWidget, TEXT("%s: Outer for %s is NOT of type: UCsManager_UserWidget."), *Context, *(GetName()));
 
-	UWorld* World = Manager_UserWidget->GetWorld();
+	UWorld* World = Manager_UserWidget->GetMyRoot()->GetWorld();
 
 	checkf(World, TEXT("%s: World is NULL. No World associated with Manager_UserWidget."), *Context);
 

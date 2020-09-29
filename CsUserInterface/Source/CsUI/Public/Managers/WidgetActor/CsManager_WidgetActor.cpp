@@ -348,7 +348,7 @@ void UCsManager_WidgetActor::SetupInternal()
 		{
 			const int32& Count = EMCsWidgetActor::Get().Num();
 
-			TypeMapArray.Reserve(Count);
+			TypeMapArray.Reset(Count);
 
 			for (const FECsWidgetActor& Type : EMCsWidgetActor::Get())
 			{

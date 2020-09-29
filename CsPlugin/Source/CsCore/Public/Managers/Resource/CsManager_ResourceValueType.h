@@ -177,12 +177,12 @@ public:
 
 		Shutdown();
 
-		Resources.Reserve(PoolSize);
+		Resources.Reset(PoolSize);
 		Resources.AddDefaulted(PoolSize);
 
-		Pool.Reserve(PoolSize);
+		Pool.Reset(PoolSize);
 
-		Links.Reserve(PoolSize);
+		Links.Reset(PoolSize);
 		Links.AddDefaulted(PoolSize);
 
 		for (int32 I = 0; I < PoolSize; ++I)

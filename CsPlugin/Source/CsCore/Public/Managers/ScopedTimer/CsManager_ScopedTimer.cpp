@@ -19,7 +19,7 @@ FCsManager_ScopedTimer::FCsManager_ScopedTimer() :
 	{
 		const int32& Count = EMCsScopedGroup::Get().Num();
 
-		GroupTimers.Reserve(Count);
+		GroupTimers.Reset(Count);
 
 		for (int32 I = 0; I < Count; ++I)
 		{

@@ -377,7 +377,7 @@ ALevelScriptActor* UCsManager_Level::GetPersistentLevelScriptActorChecked(const 
 
 void UCsManager_Level::ChangeMap(const FCsManagerLevelChangeMap& Params)
 {
-	checkf(Params.Map.IsEmpty(), TEXT("UCsManager_Level::ChangeMap: Params.Map is Empty."));
+	checkf(!Params.Map.IsEmpty(), TEXT("UCsManager_Level::ChangeMap: Params.Map is Empty."));
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
@@ -426,7 +426,7 @@ char UCsManager_Level::ChangeMap_Internal(FCsRoutine* R)
 		}
 #endif // #if !UE_BUILD_SHIPPING
 		*/
-		GetWorld()->ServerTravel(NewMap);
+		MyRoot->GetWorld()->ServerTravel(NewMap);
 		Check_FinishedLoadingPersistentLevel(NewMap);
 	}
 

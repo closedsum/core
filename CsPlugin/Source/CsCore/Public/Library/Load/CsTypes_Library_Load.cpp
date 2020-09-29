@@ -11,6 +11,7 @@
 #include "MovieSceneSignedObject.h"
 // Blueprint
 #include "Engine/BlueprintGeneratedClass.h"
+#include "Engine/BlueprintCore.h"
 // Animation
 #include "Animation/AnimCompositeBase.h"
 #include "Animation/BlendSpaceBase.h"
@@ -56,7 +57,7 @@ FCsLibraryLoad_GetObjectPaths::FCsLibraryLoad_GetObjectPaths() :
 {
 	const int32& Count = EMCsObjectPathDependencyGroup::Get().Num();
 
-	PathSets.Reserve(Count);
+	PathSets.Reset(Count);
 
 	for (const ECsObjectPathDependencyGroup& Group : EMCsObjectPathDependencyGroup::Get())
 	{
@@ -90,6 +91,29 @@ void FCsLibraryLoad_GetObjectPaths::AddPath(const FSoftObjectPath& SoftPath)
 	if (Class->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint) ||
 		Class->IsChildOf<UBlueprintGeneratedClass>())
 	{
+		// Check for SkeletonGeneratedClasses. Skip adding the path.
+		if (UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O))
+		{
+			if (UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy))
+			{
+				if (O == BpC->SkeletonGeneratedClass)
+				{
+					return;
+				}
+			}
+		}
+
+		if (UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(Class))
+		{
+			if (UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy))
+			{
+				if (Class == BpC->SkeletonGeneratedClass)
+				{
+					return;
+				}
+			}
+		}
+
 		PathSets[(uint8)ECsObjectPathDependencyGroup::Blueprint].Add(SoftPath);
 	}
 	// AnimComposite
@@ -156,7 +180,7 @@ void FCsLibraryLoad_GetObjectPaths::AddPath(const FSoftObjectPath& SoftPath)
 
 void FCsLibraryLoad_GetObjectPaths::Resolve()
 {
-	PathGroups.Reserve(PathSets.Num());
+	PathGroups.Reset(PathSets.Num());
 
 	for (TSet<FSoftObjectPath>& Set : PathSets)
 	{
@@ -165,7 +189,7 @@ void FCsLibraryLoad_GetObjectPaths::Resolve()
 			PathGroups.AddDefaulted();
 			TArray<FSoftObjectPath>& L = PathGroups.Last();
 
-			L.Reserve(Set.Num());
+			L.Reset(Set.Num());
 
 			for (FSoftObjectPath& SoftPath : Set)
 			{
@@ -176,7 +200,7 @@ void FCsLibraryLoad_GetObjectPaths::Resolve()
 		}
 	}
 
-	Paths.Reserve(TotalCount);
+	Paths.Reset(TotalCount);
 
 	for (TSet<FSoftObjectPath>& Set : PathSets)
 	{

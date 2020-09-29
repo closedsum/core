@@ -63,7 +63,14 @@ public:
 		return Cast<T>(Get(InRoot));
 	}
 
+#if WITH_EDITOR
 	static bool IsValid(UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static bool IsValid(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? false : s_Instance != nullptr; 
+	}
+#endif // #if WITH_EDITOR
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Trace> ManagerTraceClass, UObject* InOuter = nullptr);
 	
@@ -121,6 +128,10 @@ public:
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+private:
+
+	UWorld* CurrentWorld;
 
 public:
 

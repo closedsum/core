@@ -738,7 +738,7 @@ void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPay
 	FCsManagerLoad_LoadObjectPathsPayload Payload;
 
 	// Set ObjectPaths
-	Payload.ObjectPaths.Reserve(Count);
+	Payload.ObjectPaths.Reset(Count);
 
 	GetPayloadSoftObjectPathsChecked(Context, PayloadName, Payload.ObjectPaths);
 	// Set Async Order

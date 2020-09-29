@@ -17,6 +17,8 @@
 #include "EdGraph/EdGraphNode.h"
 // Blueprint
 #include "Engine/BlueprintGeneratedClass.h"
+#include "Engine/BlueprintCore.h"
+#include "Animation/AnimBlueprintGeneratedClass.h"
 // Class
 #include "UObject/Class.h"
 
@@ -626,7 +628,8 @@ void UCsLibrary_Load::GetObjectPaths_ClassProperty_Internal(UClass* MetaClass, c
 
 	if (ValidClass)
 	{
-		FSoftClassPath ClassPath(Class);
+		//FSoftClassPath ClassPath(Class);
+		FSoftObjectPath ClassPath(Class->GetDefaultObject());
 		ClassPath.SetPath(ClassPath.GetAssetPathString());
 
 		const bool ValidPathRoot = !ClassPath.GetAssetPathString().StartsWith(TEXT("/Temp")) &&
@@ -1473,12 +1476,26 @@ void UCsLibrary_Load::LoadSoftObjectProperty(FSoftObjectProperty* SoftObjectProp
 			{
 				if (UObject** Internal = InternalObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
 				{
-					*Internal = Cast<UBlueprintCore>(Member->LoadSynchronous())->GeneratedClass;
+					FString Path = Member->ToSoftObjectPath().ToString();
 
+					if (!Path.EndsWith(ECsLoadCached::Str::_C))
+						Path.Append(ECsLoadCached::Str::_C);
+
+					FSoftObjectPath SoftPath(Path);
+
+					UObject* O = SoftPath.TryLoad();
+
+					checkf(O, TEXT("UCsLibrary_Load::LoadSoftObjectProperty: Failed to load Object at Path: %s."), *Path);
+
+					*Internal = O;
+
+					// TODO: Eventually get LoadStruct to work for BlueprintGeneratedClass
+					/*
 					if (*Internal)
 					{
 						LoadStruct(*Internal, Cast<UClass>((*Internal)), LoadFlags, LoadCodes);
 					}
+					*/
 				}
 			}
 			// Check Member is the same type as the Member_Internal
@@ -1540,12 +1557,37 @@ void UCsLibrary_Load::LoadArraySoftObjectProperty(FArrayProperty* ArrayProperty,
 				for (int32 I = 0; I < Count; ++I)
 				{
 					TSoftObjectPtr<UObject>* Ptr = reinterpret_cast<TSoftObjectPtr<UObject>*>(Helper.GetRawPtr(I));
-					UObject** InternalPtr = reinterpret_cast<UObject**>(InternalHelper.GetRawPtr(I));
+					UObject** InternalPtr		 = reinterpret_cast<UObject**>(InternalHelper.GetRawPtr(I));
 
 					*InternalPtr = nullptr;
 
-					if (Ptr->IsValid())
-						*InternalPtr = Cast<UBlueprintCore>(Ptr->LoadSynchronous())->GeneratedClass;
+					if (Ptr->ToSoftObjectPath().IsValid())
+					{
+						FString Path = Ptr->ToSoftObjectPath().ToString();
+
+						if (!Path.EndsWith(ECsLoadCached::Str::_C))
+							Path.Append(ECsLoadCached::Str::_C);
+
+						FSoftObjectPath SoftPath(Path);
+
+						UObject* O = SoftPath.TryLoad();
+
+						checkf(O, TEXT("UCsLibrary_Load::LoadArraySoftObjectProperty: Failed to load Object at Path: %s."), *Path);
+
+						UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O);
+
+						checkf(BpGC, TEXT("UCsLibrary_Load::LoadArraySoftObjectProperty: Failed to cast Object: %s to UBlueprintGeneratedClass."), *(O->GetName()));
+
+						checkf(BpGC->ClassGeneratedBy, TEXT("UCsLibrary_Load::LoadArraySoftObjectProperty: ClassGeneratedBy is NULL for Object: %s."), *(O->GetName()));
+
+						UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
+
+						checkf(BpC, TEXT("UCsLibrary_Load::LoadArraySoftObjectProperty: Failed to cast Class: %s to UBlueprintCore."), *(BpGC->ClassGeneratedBy->GetName()));
+
+						checkf(BpC->GeneratedClass, TEXT("UCsLibrary_Load::LoadArraySoftObjectProperty: Failed to get GeneratedClass from Class: %s."), *(BpC->GetName()));
+
+						*InternalPtr = BpC->GeneratedClass;
+					}
 
 					if (*InternalPtr)
 					{
@@ -1571,8 +1613,10 @@ void UCsLibrary_Load::LoadArraySoftObjectProperty(FArrayProperty* ArrayProperty,
 
 					*InternalPtr = nullptr;
 
-					if (Ptr->IsValid())
+					if (Ptr->ToSoftObjectPath().IsValid())
+					{
 						*InternalPtr = Ptr->LoadSynchronous();
+					}
 
 					if (*InternalPtr)
 					{
@@ -1724,7 +1768,7 @@ void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct, cons
 			for (int32 I = 0; I < StructProperty->ArrayDim; ++I)
 			{
 				uint8* Value = StructProperty->ContainerPtrToValuePtr<uint8>(StructValue, I);
-
+				
 				LoadStruct(Value, StructProperty->Struct, LoadFlags, LoadCodes);
 			}
 			continue;

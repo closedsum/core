@@ -628,8 +628,7 @@ void UCsLibrary_Load::GetObjectPaths_ClassProperty_Internal(UClass* MetaClass, c
 
 	if (ValidClass)
 	{
-		//FSoftClassPath ClassPath(Class);
-		FSoftObjectPath ClassPath(Class->GetDefaultObject());
+		FSoftClassPath ClassPath(Class);
 		ClassPath.SetPath(ClassPath.GetAssetPathString());
 
 		const bool ValidPathRoot = !ClassPath.GetAssetPathString().StartsWith(TEXT("/Temp")) &&

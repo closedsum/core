@@ -70,9 +70,7 @@ namespace NCsProjectile
 
 		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsProjectileSettings."), *Context);
 
-#if WITH_EDITOR
 		EMCsProjectile::Get().ClearUserDefinedEnums();
-#endif // #if WITH_EDITOR
 
 		// Enum Settings
 		if (ModuleSettings->ECsProjectile_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
@@ -125,9 +123,7 @@ namespace NCsProjectileClass
 
 		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsProjectileSettings."), *Context);
 
-#if WITH_EDITOR
 		EMCsProjectileClass::Get().ClearUserDefinedEnums();
-#endif // #if WITH_EDITOR
 
 		// Enum Settings
 		if (ModuleSettings->ECsProjectileClass_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)

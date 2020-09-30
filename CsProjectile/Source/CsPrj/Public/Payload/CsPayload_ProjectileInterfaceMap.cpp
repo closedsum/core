@@ -3,21 +3,27 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsPayload_ProjectileInterfaceMap::Name = FName("FCsPayload_ProjectileInterfaceMap");
+const FName NCsProjectile::NPayload::FInterfaceMap::Name = FName("NCsProjectile::NPayload::FInterfaceMap");
 
-FCsPayload_ProjectileInterfaceMap::FCsPayload_ProjectileInterfaceMap() :
-		// ICsGetInterfaceMap
-		InterfaceMap(nullptr)
+namespace NCsProjectile
 {
-	// ICsGetInterfaceMap
-	InterfaceMap = new FCsInterfaceMap();
+	namespace NPayload
+	{
+		FInterfaceMap::FInterfaceMap() :
+				// ICsGetInterfaceMap
+				InterfaceMap(nullptr)
+		{
+			// ICsGetInterfaceMap
+			InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsPayload_ProjectileInterfaceMap::Name);
-	InterfaceMap->SetUniqueBasedSlices();
-}
+			InterfaceMap->SetRootName(FInterfaceMap::Name);
+			InterfaceMap->SetUniqueBasedSlices();
+		}
 
-FCsPayload_ProjectileInterfaceMap::~FCsPayload_ProjectileInterfaceMap()
-{
-	// ICsGetInterfaceMap
-	delete InterfaceMap;
+		FInterfaceMap::~FInterfaceMap()
+		{
+			// ICsGetInterfaceMap
+			delete InterfaceMap;
+		}
+	}
 }

@@ -10,8 +10,14 @@
 
 #include "CsUserWidgetPooledImpl.generated.h"
 
-struct ICsPooledObjectCache;
-struct ICsPayload_PooledObject;
+namespace NCsPooledObject {
+	namespace NCache {
+		struct ICache; } }
+
+namespace NCsPooledObject {
+	namespace NPayload {
+		struct IPayload; } }
+
 class UUserWidget;
 
 UCLASS()
@@ -51,12 +57,12 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE ICsPooledObjectCache* GetCache() const
+	FORCEINLINE NCsPooledObject::NCache::ICache* GetCache() const
 	{
 		return Cache;
 	}
 	
-	void Allocate(ICsPayload_PooledObject* Payload);
+	void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
 
 	void Deallocate();
 
@@ -64,7 +70,7 @@ public:
 
 protected:
 
-	ICsPooledObjectCache* Cache;
+	NCsPooledObject::NCache::ICache* Cache;
 
 	void ConstructCache();
 

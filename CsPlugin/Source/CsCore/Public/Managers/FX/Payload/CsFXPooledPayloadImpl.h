@@ -8,7 +8,7 @@ class UObject;
 struct FCsInterfaceMap;
 class UNiagaraSystem;
 
-struct CSCORE_API FCsFXPooledPayloadImpl final : public ICsPayload_PooledObject,
+struct CSCORE_API FCsFXPooledPayloadImpl final : public NCsPooledObject::NPayload::IPayload,
 												 public ICsFXPooledPayload
 {
 public:
@@ -23,7 +23,7 @@ private:
 
 public:
 
-	// ICsPayload_PooledObject
+	// NCsPooledObject::NPayload::IPayload
 
 	UObject* Instigator;
 
@@ -65,7 +65,7 @@ public:
 
 #pragma endregion ICsGetInterfaceMap
 
-// ICsPayload_PooledObject
+// NCsPooledObject::NPayload::IPayload
 #pragma region
 public:
 
@@ -101,7 +101,7 @@ public:
 
 	void Reset();
 
-#pragma endregion ICsPayload_PooledObject
+#pragma endregion NCsPooledObject::NPayload::IPayload
 
 public:
 

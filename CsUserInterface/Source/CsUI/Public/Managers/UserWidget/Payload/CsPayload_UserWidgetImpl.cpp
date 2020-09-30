@@ -8,7 +8,7 @@ const FName FCsPayload_UserWidgetImpl::Name = FName("FCsPayload_UserWidgetImpl")
 FCsPayload_UserWidgetImpl::FCsPayload_UserWidgetImpl() :
 	// ICsGetInterfaceMap
 	InterfaceMap(nullptr),
-	// ICsPayload_PooledObject
+	// NCsPooledObject::NPayload::IPayload
 	bAllocated(false),
 	Instigator(nullptr),
 	Owner(nullptr),
@@ -21,7 +21,7 @@ FCsPayload_UserWidgetImpl::FCsPayload_UserWidgetImpl() :
 
 	InterfaceMap->SetRootName(FCsPayload_UserWidgetImpl::Name);
 
-	InterfaceMap->Add<ICsPayload_PooledObject>(static_cast<ICsPayload_PooledObject*>(this));
+	InterfaceMap->Add<NCsPooledObject::NPayload::IPayload>(static_cast<NCsPooledObject::NPayload::IPayload*>(this));
 	InterfaceMap->Add<ICsPayload_UserWidget>(static_cast<ICsPayload_UserWidget*>(this));
 }
 
@@ -30,12 +30,12 @@ FCsPayload_UserWidgetImpl::~FCsPayload_UserWidgetImpl()
 	delete InterfaceMap;
 }
 
-// ICsPayload_PooledObject
+// NCsPooledObject::NPayload::IPayload
 #pragma region
 
 void FCsPayload_UserWidgetImpl::Reset()
 {
-	// ICsPayload_PooledObject
+	// NCsPooledObject::NPayload::IPayload
 	bAllocated = false;
 	Instigator = nullptr;
 	Owner = nullptr;
@@ -46,4 +46,4 @@ void FCsPayload_UserWidgetImpl::Reset()
 	Visibility = ESlateVisibility::SelfHitTestInvisible;
 }
 
-#pragma endregion ICsPayload_PooledObject
+#pragma endregion NCsPooledObject::NPayload::IPayload

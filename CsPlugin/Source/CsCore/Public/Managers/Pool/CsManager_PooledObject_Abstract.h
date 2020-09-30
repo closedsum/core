@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Managers/Pool/CsPooledObject.h"
-#include "Managers/Pool/Cache/CsPooledObjectCache.h"
+#include "Managers/Pool/Cache/CsCache_PooledObject.h"
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Managers/Pool/CsTypes_Manager_PooledObject.h"
 #include "Containers/CsDoubleLinkedList.h"
@@ -195,6 +195,11 @@ public:
 		Shutdown();
 	}
 
+private:
+
+	typedef NCsPooledObject::NPayload::IPayload BasePayloadType;
+	typedef NCsPooledObject::NCache::ICache CacheType;
+
 protected:
 
 	/** */
@@ -303,7 +308,7 @@ public:
 		PoolSize = 0;
 		AllocatedObjects.Reset();
 
-		for (ICsPayload_PooledObject* P : PooledObjectPayloads)
+		for (NCsPooledObject::NPayload::IPayload* P : PooledObjectPayloads)
 		{
 			P->Reset();
 		}
@@ -610,9 +615,9 @@ public:
 			}
 #endif // #if WTIH_EDITOR
 
-			ICsPooledObjectCache* Cache = O->GetCache();
+			CacheType* Cache = O->GetCache();
 
-			checkf(Cache, TEXT("%s::CreatePool: Failed to get Cache of type: ICsPooledObjectCache."), *Name);
+			checkf(Cache, TEXT("%s::CreatePool: Failed to get Cache of type: NCsPooledObject::NCache::ICache."), *Name);
 
 			Cache->Init(I);
 			O->Deallocate();
@@ -664,7 +669,7 @@ public:
 		O->Script_Deallocate_Impl = Script_Deallocate_Impl;
 		O->Script_Update_Impl	 = Script_Update_Impl;
 
-		ICsPooledObjectCache* Cache = O->GetCache();
+		CacheType* Cache = O->GetCache();
 
 		checkf(Cache, TEXT("%s::AddToPool: Cache is NULL."), *Name);
 
@@ -820,7 +825,7 @@ public:
 		// Interface
 		if (ICsPooledObject* P = Cast<ICsPooledObject>(Object))
 		{
-			ICsPooledObjectCache* Cache = P->GetCache();
+			CacheType* Cache = P->GetCache();
 
 			checkf(Cache, TEXT("%s::AddToAllocatedObjects: Cache is NULL."), *Name);
 
@@ -857,7 +862,7 @@ public:
 
 			InterfaceContainerType* O = Pool[Index];
 
-			ICsPooledObjectCache* Cache = O->GetCache();
+			CacheType* Cache = O->GetCache();
 
 			checkf(Cache, TEXT("%s::AddToAllocatedObjects: Cache is NULL."), *Name);
 
@@ -1120,7 +1125,7 @@ public:
 		// Interface
 		if (ICsPooledObject* Interface = Cast<ICsPooledObject>(Object))
 		{
-			ICsPooledObjectCache* Cache = Interface->GetCache();
+			CacheType* Cache = Interface->GetCache();
 
 			checkf(Cache, TEXT("%s::FindObject: Cache is NULL."), *Name);
 
@@ -1199,7 +1204,7 @@ public:
 		// Interface
 		if (ICsPooledObject* Interface = Cast<ICsPooledObject>(Object))
 		{
-			ICsPooledObjectCache* Cache = Interface->GetCache();
+			CacheType* Cache = Interface->GetCache();
 
 			checkf(Cache, TEXT("%s::FindSafeObject: Cache is NULL."), *Name);
 
@@ -1263,7 +1268,7 @@ public:
 			InterfaceContainerType* O = **Current;
 			Next					  = Current->GetNextLink();
 
-			ICsPooledObjectCache* Cache = O->GetCache();
+			CacheType* Cache = O->GetCache();
 
 			checkf(Cache, TEXT("%s::Update: Cache is NULL."), *Name);
 
@@ -1365,14 +1370,14 @@ protected:
 			PoolIndex				  = (PoolIndex + 1) % PoolSize;
 			InterfaceContainerType* O = Pool[PoolIndex];
 
-			ICsPooledObjectCache* Cache = O->GetCache();
+			CacheType* Cache = O->GetCache();
 
 			checkf(Cache, TEXT("%s: Cache is NULL."), *Context);
 
 			if (!Cache->IsAllocated())
 			{
 				// Get Pooled Object Payload
-				ICsPayload_PooledObject* P = NCsInterfaceMap::GetInterfaceChecked<ICsPayload_PooledObject, PayloadType>(Context, Payload);
+				BasePayloadType* P = NCsInterfaceMap::GetInterfaceChecked<BasePayloadType, PayloadType>(Context, Payload);
 
 				CS_SCOPED_TIMER(AllocateObjectScopedTimerHandle);
 
@@ -1542,7 +1547,7 @@ protected:
 	/** */
 	TArray<PayloadType*> Payloads;
 	/** */
-	TArray<ICsPayload_PooledObject*> PooledObjectPayloads;
+	TArray<BasePayloadType*> PooledObjectPayloads;
 	/** */
 	int32 PayloadSize;
 	/** */
@@ -1575,7 +1580,7 @@ public:
 			checkf(Payloads[I], TEXT("%s: Failed to construct payload of type: PayloadType."), *Context);
 
 			// Get Pooled Object Payload
-			ICsPayload_PooledObject* P = NCsInterfaceMap::GetInterfaceChecked<ICsPayload_PooledObject, PayloadType>(Context, Payloads[I]);
+			BasePayloadType* P = NCsInterfaceMap::GetInterfaceChecked<BasePayloadType, PayloadType>(Context, Payloads[I]);
 
 			PooledObjectPayloads.Add(P);
 		}
@@ -1605,18 +1610,18 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects.
-	*  Payload implements the interface: ICsPayload_PooledObject and PayloadType.
+	*  Payload implements the interface: NCsPooledObject::NPayload::IPayload and PayloadType.
 	*
-	* return	Payload that implements the interface: ICsPayload_PooledObject
+	* return	Payload that implements the interface: NCsPooledObject::NPayload::IPayload
 				and PayloadType.
 	*/
 	PayloadType* AllocatePayload()
 	{
 		for (int32 I = 0; I < PayloadSize; ++I)
 		{
-			PayloadIndex			  = (PayloadIndex + 1) % PayloadSize;
-			PayloadType* Payload	  = Payloads[PayloadIndex];
-			ICsPayload_PooledObject* P = PooledObjectPayloads[PayloadIndex];
+			PayloadIndex			= (PayloadIndex + 1) % PayloadSize;
+			PayloadType* Payload	= Payloads[PayloadIndex];
+			BasePayloadType* P		= PooledObjectPayloads[PayloadIndex];
 
 			if (!P->IsAllocated())
 			{
@@ -1630,10 +1635,10 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects.
-	*  Payload implements the interface: ICsPayload_PooledObject and PayloadType.
+	*  Payload implements the interface: NCsPooledObject::NPayload::IPayload and PayloadType.
 	*
 	* @param Context	Calling context
-	* return			PayloadTypeImpl that implements the interface: ICsPayload_PooledObject
+	* return			PayloadTypeImpl that implements the interface: NCsPooledObject::NPayload::IPayload
 						and PayloadType.
 	*/
 	template<typename PayloadImplType>
@@ -1644,9 +1649,9 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects.
-	*  Payload implements the interface: ICsPayload_PooledObject and PayloadType.
+	*  Payload implements the interface: NCsPooledObject::NPayload::IPayload and PayloadType.
 	*
-	* return	PayloadTypeImpl that implements the interface: ICsPayload_PooledObject
+	* return	PayloadTypeImpl that implements the interface: NCsPooledObject::NPayload::IPayload
 				and PayloadType.
 	*/
 	template<typename PayloadImplType>
@@ -1710,7 +1715,7 @@ public:
 #endif // #if !UE_BUILD_SHIPPING
 
 		// Get Pooled Object Payload
-		ICsPayload_PooledObject* P = NCsInterfaceMap::GetInterfaceChecked<ICsPayload_PooledObject, PayloadType>(Context, Payload);
+		BasePayloadType* P = NCsInterfaceMap::GetInterfaceChecked<BasePayloadType, PayloadType>(Context, Payload);
 
 		P->Reset();
 
@@ -1742,7 +1747,7 @@ public:
 #endif // #if !UE_BUILD_SHIPPING
 
 		// Get PooledObjectPayload
-		ICsPayload_PooledObject* PooledObjectPayload = InterfaceMap->Get<ICsPayload_PooledObject>();
+		BasePayloadType* PooledObjectPayload = InterfaceMap->Get<BasePayloadType>();
 		
 		PooledObjectPayload->Reset();
 

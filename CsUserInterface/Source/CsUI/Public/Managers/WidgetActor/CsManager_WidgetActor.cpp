@@ -626,12 +626,12 @@ void UCsManager_WidgetActor::ConstructPayloads(const FECsWidgetActor& Type, cons
 	Internal.ConstructPayloads(Type, Size);
 }
 
-ICsPayload_WidgetActor* UCsManager_WidgetActor::ConstructPayload(const FECsWidgetActor& Type)
+NCsWidgetActor::NPayload::IPayload* UCsManager_WidgetActor::ConstructPayload(const FECsWidgetActor& Type)
 {
-	return new FCsPayload_WidgetActorImpl();
+	return new NCsWidgetActor::NPayload::FImpl();
 }
 
-ICsPayload_WidgetActor* UCsManager_WidgetActor::AllocatePayload(const FECsWidgetActor& Type)
+NCsWidgetActor::NPayload::IPayload* UCsManager_WidgetActor::AllocatePayload(const FECsWidgetActor& Type)
 {
 	return Internal.AllocatePayload(Type);
 }
@@ -641,7 +641,7 @@ ICsPayload_WidgetActor* UCsManager_WidgetActor::AllocatePayload(const FECsWidget
 	// Spawn
 #pragma region
 
-const FCsWidgetActorPooled* UCsManager_WidgetActor::Spawn(const FECsWidgetActor& Type, ICsPayload_WidgetActor* Payload)
+const FCsWidgetActorPooled* UCsManager_WidgetActor::Spawn(const FECsWidgetActor& Type, NCsWidgetActor::NPayload::IPayload* Payload)
 {
 	return Internal.Spawn(Type, Payload);
 }

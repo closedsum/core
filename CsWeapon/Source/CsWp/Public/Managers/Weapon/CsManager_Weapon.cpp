@@ -22,7 +22,7 @@
 #include "Projectile/Data/CsData_ProjectileWeaponEmuSlice.h"
 #include "Projectile/Data/CsData_ProjectileWeaponSoundImpl.h"
 // Weapon
-#include "Payload/CsWeaponPooledPayloadImpl.h"
+#include "Payload/CsPayload_WeaponPooledImpl.h"
 // Game
 #include "Engine/GameInstance.h"
 #include "GameFramework/GameStateBase.h"
@@ -607,12 +607,12 @@ void UCsManager_Weapon::ConstructPayloads(const FECsWeapon& Type, const int32& S
 	Internal.ConstructPayloads(Type, Size);
 }
 
-ICsWeaponPayload* UCsManager_Weapon::ConstructPayload(const FECsWeapon& Type)
+NCsWeapon::NPayload::IPayload* UCsManager_Weapon::ConstructPayload(const FECsWeapon& Type)
 {
-	return new FCsWeaponPooledPayloadImpl();
+	return new NCsWeapon::NPayload::FImplPooled();
 }
 
-ICsWeaponPayload* UCsManager_Weapon::AllocatePayload(const FECsWeapon& Type)
+NCsWeapon::NPayload::IPayload* UCsManager_Weapon::AllocatePayload(const FECsWeapon& Type)
 {
 	return Internal.AllocatePayload(Type);
 }
@@ -622,7 +622,7 @@ ICsWeaponPayload* UCsManager_Weapon::AllocatePayload(const FECsWeapon& Type)
 	// Spawn
 #pragma region
 
-const FCsWeaponPooled* UCsManager_Weapon::Spawn(const FECsWeapon& Type, ICsWeaponPayload* Payload)
+const FCsWeaponPooled* UCsManager_Weapon::Spawn(const FECsWeapon& Type, NCsWeapon::NPayload::IPayload* Payload)
 {
 	return Internal.Spawn(Type, Payload);
 }

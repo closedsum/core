@@ -129,14 +129,14 @@ void ACsWidgetActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 // ICsPooledObject
 #pragma region
 
-void ACsWidgetActorPooledImpl::Allocate(ICsPayload_PooledObject* Payload)
+void ACsWidgetActorPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
 {
 	using namespace NCsWidgetActorPooledImplCached;
 
 	const FString& Context = Str::Allocate;
 
 	// Get / Assign UserWidget
-	ICsPayload_WidgetActor* WidgetActorPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsPayload_WidgetActor>(Context, Payload);
+	NCsWidgetActor::NPayload::IPayload* WidgetActorPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<NCsWidgetActor::NPayload::IPayload>(Context, Payload);
 	{
 		// Passing reference to UserWidget
 		if (UUserWidget* UserWidget = WidgetActorPayload->GetUserWidget())
@@ -146,17 +146,17 @@ void ACsWidgetActorPooledImpl::Allocate(ICsPayload_PooledObject* Payload)
 		// Passing UserWidgetPooledType
 		else
 		{
-			// Get "slice" ICsPayload_WidgetActorUserWidget
-			ICsPayload_WidgetActorUserWidget* WidgetActorUserWidgetPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsPayload_WidgetActorUserWidget>(Context, Payload);
+			// Get "slice" NCsWidgetActor::NPayload::IUserWidget
+			NCsWidgetActor::NPayload::IUserWidget* WidgetActorUserWidgetPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<NCsWidgetActor::NPayload::IUserWidget>(Context, Payload);
 
 				// Get type
 			const FECsUserWidgetPooled& UserWidgetPooledType = WidgetActorUserWidgetPayload->GetUserWidgetPooledType();
 
-			checkf(EMCsUserWidgetPooled::Get().IsValidEnum(UserWidgetPooledType), TEXT("%s: UserWidgetPooledType: %s is NOT Valid from Payload(ICsPayload_WidgetActor)->GetUserWidgetPooledType()."), *Context, UserWidgetPooledType.ToChar());
+			checkf(EMCsUserWidgetPooled::Get().IsValidEnum(UserWidgetPooledType), TEXT("%s: UserWidgetPooledType: %s is NOT Valid from Payload(NCsWidgetActor::NPayload::IPayload)->GetUserWidgetPooledType()."), *Context, UserWidgetPooledType.ToChar());
 				// Get payload (ICsPayload_UserWidget)
 			ICsPayload_UserWidget* UserWidgetPayload = WidgetActorUserWidgetPayload->GetUserWidgetPayload();
 
-			checkf(UserWidgetPayload, TEXT("%s: UserWidgetPayload is NULL from Payload(ICsPayload_WidgetActorUserPayload)->GetUserWidgetPayload()."), *Context)
+			checkf(UserWidgetPayload, TEXT("%s: UserWidgetPayload is NULL from Payload(NCsWidgetActor::NPayload::IUserWidget)->GetUserWidgetPayload()."), *Context)
 				// "Spawn" / allocate UserWidget
 			UCsManager_UserWidget* UManager_UserWidget = UCsManager_UserWidget::Get(GetWorld()->GetGameState());
 

@@ -410,10 +410,12 @@ void UCsProjectileWeaponComponent::FireProjectile()
 
 	const FString& Context = Str::FireProjectile;
 
+	typedef NCsProjectile::NPayload::IPayload PayloadInterfaceType;
+
 	UCsManager_Projectile* Manager_Projectile = UCsManager_Projectile::Get(GetWorld()->GetGameState());
 
 	// Get Payload
-	ICsPayload_Projectile* Payload1 = Manager_Projectile->AllocatePayload(ProjectileType);
+	PayloadInterfaceType* Payload1 = Manager_Projectile->AllocatePayload(ProjectileType);
 
 	// Set appropriate members on Payload
 	const bool SetSuccess = SetProjectilePayload(Context, Payload1);
@@ -421,7 +423,7 @@ void UCsProjectileWeaponComponent::FireProjectile()
 	checkf(SetSuccess, TEXT("%s: Failed to set Payload1."), *Context);
 
 	// Cache copy of Payload for Launch
-	ICsPayload_Projectile* Payload2 = Manager_Projectile->AllocatePayload(ProjectileType);
+	PayloadInterfaceType* Payload2 = Manager_Projectile->AllocatePayload(ProjectileType);
 	
 	const bool CopySuccess = CopyProjectilePayload(Context, Payload1, Payload2);
 
@@ -448,14 +450,14 @@ bool UCsProjectileWeaponComponent::SetTypeForProjectile(const FString& Context, 
 	return true;
 }
 
-bool UCsProjectileWeaponComponent::SetProjectilePayload(const FString& Context, ICsPayload_Projectile* Payload)
+bool UCsProjectileWeaponComponent::SetProjectilePayload(const FString& Context, NCsProjectile::NPayload::IPayload* Payload)
 {
 	bool Result = true;
 
 	// PooledObject
 	{
-		typedef FCsPayload_PooledObjectImplSlice SliceType;
-		typedef ICsPayload_PooledObject SliceInterfaceType;
+		typedef NCsPooledObject::NPayload::FImplSlice SliceType;
+		typedef NCsPooledObject::NPayload::IPayload SliceInterfaceType;
 
 		if (SliceType* Slice = FCsLibrary_Payload_Projectile::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
@@ -469,8 +471,8 @@ bool UCsProjectileWeaponComponent::SetProjectilePayload(const FString& Context, 
 	}
 	// Projectile
 	{
-		typedef FCsPayload_ProjectileImplSlice SliceType;
-		typedef ICsPayload_Projectile SliceInterfaceType;
+		typedef NCsProjectile::NPayload::FImplSlice SliceType;
+		typedef NCsProjectile::NPayload::IPayload SliceInterfaceType;
 
 		if (SliceType* Slice = FCsLibrary_Payload_Projectile::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
@@ -485,7 +487,7 @@ bool UCsProjectileWeaponComponent::SetProjectilePayload(const FString& Context, 
 	return Result;
 }
 
-bool UCsProjectileWeaponComponent::CopyProjectilePayload(const FString& Context, const ICsPayload_Projectile* From, ICsPayload_Projectile* To)
+bool UCsProjectileWeaponComponent::CopyProjectilePayload(const FString& Context, const NCsProjectile::NPayload::IPayload* From, NCsProjectile::NPayload::IPayload* To)
 {
 	return FCsLibrary_Payload_Projectile::CopyChecked(Context, From, To);
 }
@@ -500,14 +502,14 @@ FVector UCsProjectileWeaponComponent::GetLaunchProjectileDirection()
 	return FVector::ZeroVector;
 }
 
-void UCsProjectileWeaponComponent::LaunchProjectile(const FCsProjectilePooled* ProjectilePooled, ICsPayload_Projectile* Payload)
+void UCsProjectileWeaponComponent::LaunchProjectile(const FCsProjectilePooled* ProjectilePooled, NCsProjectile::NPayload::IPayload* Payload)
 {
 	using namespace NCsProjectileWeaponComponentCached;
 
 	const FString& Context = Str::LaunchProjectile;
 
-	ICsPayload_PooledObject* ObjectPayload = NCsInterfaceMap::GetInterfaceChecked<ICsPayload_PooledObject>(Context, Payload);
-	ACsProjectilePooledImpl* Projectile	   = ProjectilePooled->GetObject<ACsProjectilePooledImpl>();
+	NCsPooledObject::NPayload::IPayload* ObjectPayload = NCsInterfaceMap::GetInterfaceChecked<NCsPooledObject::NPayload::IPayload>(Context, Payload);
+	ACsProjectilePooledImpl* Projectile				   = ProjectilePooled->GetObject<ACsProjectilePooledImpl>();
 
 	checkf(Projectile, TEXT("%s: Projectile is NULL. Projectile is not of type: ACsProjectilePooledImpl."), *Context);
 

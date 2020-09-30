@@ -112,12 +112,12 @@ void ACsSoundPooledImpl::ConstructCache()
 // ICsPooledObject
 #pragma region
 
-ICsPooledObjectCache* ACsSoundPooledImpl::GetCache() const
+NCsPooledObject::NCache::ICache* ACsSoundPooledImpl::GetCache() const
 {
 	return Cache;
 }
 
-void ACsSoundPooledImpl::Allocate(ICsPayload_PooledObject* Payload)
+void ACsSoundPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
 {
 	using namespace NCsSoundPooledImplCached;
 
@@ -149,7 +149,9 @@ void ACsSoundPooledImpl::Play(ICsSoundPooledPayload* Payload)
 
 	SetActorTickEnabled(true);
 
-	ICsPayload_PooledObject* ObjectPayload = NCsInterfaceMap::GetInterfaceChecked<ICsPayload_PooledObject>(Str::Play, Payload);
+	typedef NCsPooledObject::NPayload::IPayload PayloadInterfaceType;
+
+	PayloadInterfaceType* ObjectPayload = NCsInterfaceMap::GetInterfaceChecked<PayloadInterfaceType>(Str::Play, Payload);
 
 	// If the Parent is set, attach the Sound to the Parent
 	if (USceneComponent* Parent = Cast<USceneComponent>(ObjectPayload->GetParent()))

@@ -7,129 +7,135 @@
 class UObject;
 struct FCsInterfaceMap;
 
-/**
-* Basic implementation of the interface: ICsPayload_PooledObject and ICsPayload_Projectile.
-*/
-struct CSPRJ_API FCsPayload_ProjectilePooledImpl : public ICsPayload_PooledObject,
-												   public ICsPayload_Projectile
+namespace NCsProjectile
 {
-public:
+	namespace NPayload
+	{
+		/**
+		* Basic implementation of the interface: NCsPooledObject::NPayload::IPayload and NCsProjectile::NPayload::IPayload.
+		*/
+		struct CSPRJ_API FImplPooled : public NCsPooledObject::NPayload::IPayload,
+									   public NCsProjectile::NPayload::IPayload
+		{
+		public:
 
-	static const FName Name;
+			static const FName Name;
 
-private:
+		private:
 
-	// ICsGetInterfaceMap
+			// ICsGetInterfaceMap
 
-	FCsInterfaceMap* InterfaceMap;
+			FCsInterfaceMap* InterfaceMap;
 
-	// ICsPayload_PooledObject
+			// NCsPooledObject::NPayload::IPayload
 
-	bool bAllocated;
+			bool bAllocated;
 
-public:
+		public:
 
-	UObject* Instigator;
+			UObject* Instigator;
 
-	UObject* Owner;
+			UObject* Owner;
 
-	UObject* Parent;
+			UObject* Parent;
 	
-	FCsTime Time;
+			FCsTime Time;
 
-	// ICsPayload_Projectile
+			// IPayload
 
-	FVector Direction;
+			FVector Direction;
 
-	FVector Location;
+			FVector Location;
 
-public:
+		public:
 
-	FCsPayload_ProjectilePooledImpl();
-	~FCsPayload_ProjectilePooledImpl();
+			FImplPooled();
+			~FImplPooled();
 
-// ICsGetInterfaceMap
-#pragma region
-public:
+		// ICsGetInterfaceMap
+		#pragma region
+		public:
 
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-	{
-		return InterfaceMap;
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+			{
+				return InterfaceMap;
+			}
+
+		#pragma endregion ICsGetInterfaceMap
+
+		// NCsPooledObject::NPayload::IPayload
+		#pragma region
+		public:
+
+			FORCEINLINE const bool& IsAllocated() const
+			{
+				return bAllocated;
+			}
+
+			FORCEINLINE UObject* GetInstigator() const
+			{
+				return Instigator;
+			}
+
+			FORCEINLINE UObject* GetOwner() const
+			{
+				return Owner;
+			}
+
+			FORCEINLINE UObject* GetParent() const
+			{
+				return Parent;
+			}
+
+			FORCEINLINE const FCsTime& GetTime() const
+			{
+				return Time;
+			}
+
+			FORCEINLINE void Allocate()
+			{
+				bAllocated = true;
+			}
+
+			void Reset();
+
+		#pragma endregion NCsPooledObject::NPayload::IPayload
+
+		public:
+
+			template<typename T>
+			FORCEINLINE T* GetInstigator() const
+			{
+				return Cast<T>(GetInstigator());
+			}
+
+			template<typename T>
+			FORCEINLINE T* GetOwner() const
+			{
+				return Cast<T>(GetOwner());
+			}
+
+			template<typename T>
+			FORCEINLINE T* GetParent() const
+			{
+				return Cast<T>(GetParent());
+			}
+
+		// IPayload
+		#pragma region
+		public:
+
+			FORCEINLINE const FVector& GetDirection() const
+			{
+				return Direction;
+			}
+
+			FORCEINLINE const FVector& GetLocation() const
+			{
+				return Location;
+			}
+
+		#pragma endregion IPayload
+		};
 	}
-
-#pragma endregion ICsGetInterfaceMap
-
-// ICsPayload_PooledObject
-#pragma region
-public:
-
-	FORCEINLINE const bool& IsAllocated() const
-	{
-		return bAllocated;
-	}
-
-	FORCEINLINE UObject* GetInstigator() const
-	{
-		return Instigator;
-	}
-
-	FORCEINLINE UObject* GetOwner() const
-	{
-		return Owner;
-	}
-
-	FORCEINLINE UObject* GetParent() const
-	{
-		return Parent;
-	}
-
-	FORCEINLINE const FCsTime& GetTime() const
-	{
-		return Time;
-	}
-
-	FORCEINLINE void Allocate()
-	{
-		bAllocated = true;
-	}
-
-	void Reset();
-
-#pragma endregion ICsPayload_PooledObject
-
-public:
-
-	template<typename T>
-	FORCEINLINE T* GetInstigator() const
-	{
-		return Cast<T>(GetInstigator());
-	}
-
-	template<typename T>
-	FORCEINLINE T* GetOwner() const
-	{
-		return Cast<T>(GetOwner());
-	}
-
-	template<typename T>
-	FORCEINLINE T* GetParent() const
-	{
-		return Cast<T>(GetParent());
-	}
-
-// ICsPayload_Projectile
-#pragma region
-public:
-
-	FORCEINLINE const FVector& GetDirection() const
-	{
-		return Direction;
-	}
-
-	FORCEINLINE const FVector& GetLocation() const
-	{
-		return Location;
-	}
-
-#pragma endregion ICsPayload_Projectile
-};
+}

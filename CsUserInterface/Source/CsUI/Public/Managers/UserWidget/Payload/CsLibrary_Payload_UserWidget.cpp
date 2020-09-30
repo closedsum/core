@@ -12,7 +12,12 @@ bool FCsLibrary_Payload_UserWidget::CopyChecked(const FString& Context, const IC
 	{
 		checkf(HasUniqueBasedSlices(Context, To), TEXT("%s: To does NOT have Unique Based Slices like From."), *Context);
 		// PooledObject
-		Result |= CopySliceChecked<FCsPayload_PooledObjectImplSlice, ICsPayload_PooledObject>(Context, From, To);
+		{
+			typedef NCsPooledObject::NPayload::IPayload PayloadInterfaceType;
+			typedef NCsPooledObject::NPayload::FImplSlice SliceType;
+
+			Result |= CopySliceChecked<SliceType, PayloadInterfaceType>(Context, From, To);
+		}
 	}
 	return Result;
 }

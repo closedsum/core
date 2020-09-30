@@ -4,7 +4,7 @@
 #include "UObject/Object.h"
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
 #include "Managers/Resource/CsManager_ResourceValueType.h"
-#include "Payload/CsWeaponPayload.h"
+#include "Payload/CsPayload_Weapon.h"
 #include "CsWeapon.h"
 #include "CsWeaponPooled.h"
 #include "Managers/Weapon/CsSettings_Manager_Weapon.h"
@@ -22,11 +22,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerWeapon_OnSpawn, const FEC
 
 class ICsWeapon;
 
-class CSWP_API FCsManager_Weapon_Internal : public TCsManager_PooledObject_Map<ICsWeapon, FCsWeaponPooled, ICsWeaponPayload, FECsWeapon>
+class CSWP_API FCsManager_Weapon_Internal : public TCsManager_PooledObject_Map<ICsWeapon, FCsWeaponPooled, NCsWeapon::NPayload::IPayload, FECsWeapon>
 {
 private:
 
-	typedef TCsManager_PooledObject_Map<ICsWeapon, FCsWeaponPooled, ICsWeaponPayload, FECsWeapon> Super;
+	typedef TCsManager_PooledObject_Map<ICsWeapon, FCsWeaponPooled, NCsWeapon::NPayload::IPayload, FECsWeapon> Super;
 
 public:
 
@@ -125,6 +125,10 @@ public:
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+public:
+
+	typedef NCsWeapon::NPayload::IPayload PayloadInterfaceType;
 
 // Settings
 #pragma region
@@ -480,16 +484,16 @@ public:
 	* @param Type
 	* return
 	*/
-	virtual ICsWeaponPayload* ConstructPayload(const FECsWeapon& Type);
+	virtual PayloadInterfaceType* ConstructPayload(const FECsWeapon& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsWeaponPayload.
+	*  Payload implements the interface: NCsWeapon::NPayload::IPayload.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsWeaponPayload.
+	* return		Payload that implements the interface: NCsWeapon::NPayload::IPayload.
 	*/
-	ICsWeaponPayload* AllocatePayload(const FECsWeapon& Type);
+	PayloadInterfaceType* AllocatePayload(const FECsWeapon& Type);
 
 #pragma endregion Payload
 
@@ -503,7 +507,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	const FCsWeaponPooled* Spawn(const FECsWeapon& Type, ICsWeaponPayload* Payload);
+	const FCsWeaponPooled* Spawn(const FECsWeapon& Type, PayloadInterfaceType* Payload);
 
 	/**
 	* Delegate type after a Weapon has been Spawned.

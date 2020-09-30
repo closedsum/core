@@ -2,19 +2,25 @@
 #include "Containers/CsGetInterfaceMap.h"
 #pragma once
 
-/**
-*/
-struct CSPRJ_API ICsPayload_Projectile : virtual public ICsGetInterfaceMap
+namespace NCsProjectile
 {
-public:
+	namespace NPayload
+	{
+		/**
+		*/
+		struct CSPRJ_API IPayload : virtual public ICsGetInterfaceMap
+		{
+		public:
 
-	static const FName Name;
+			static const FName Name;
 
-public:
+		public:
 
-	virtual ~ICsPayload_Projectile(){}
+			virtual ~IPayload(){}
 
-	virtual const FVector& GetDirection() const = 0;
+			virtual const FVector& GetDirection() const = 0;
 
-	virtual const FVector& GetLocation() const = 0;
-};
+			virtual const FVector& GetLocation() const = 0;
+		};
+	}
+}

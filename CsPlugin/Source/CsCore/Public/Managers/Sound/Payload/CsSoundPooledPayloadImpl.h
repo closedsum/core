@@ -8,7 +8,7 @@ class UObject;
 struct FCsInterfaceMap;
 class USoundBase;
 
-struct CSCORE_API FCsSoundPooledPayloadImpl final : public ICsPayload_PooledObject,
+struct CSCORE_API FCsSoundPooledPayloadImpl final : public NCsPooledObject::NPayload::IPayload,
 												    public ICsSoundPooledPayload
 {
 public:
@@ -67,7 +67,7 @@ public:
 
 #pragma endregion ICsGetInterfaceMap
 
-// ICsPayload_PooledObject
+// NCsPooledObject::NPayload::IPayload
 #pragma region
 public:
 
@@ -103,7 +103,7 @@ public:
 
 	void Reset();
 
-#pragma endregion ICsPayload_PooledObject
+#pragma endregion NCsPooledObject::NPayload::IPayload
 
 public:
 

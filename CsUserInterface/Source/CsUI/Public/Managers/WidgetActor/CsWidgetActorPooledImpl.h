@@ -8,8 +8,12 @@
 #include "Managers/WidgetActor/CsWidgetActor.h"
 #include "CsWidgetActorPooledImpl.generated.h"
 
-struct ICsPooledObjectCache;
-struct ICsPayload_PooledObject;
+struct NCsPooledObject::NCache::ICache;
+
+namespace NCsPooledObject {
+	namespace NPayload {
+		struct IPayload; } }
+
 class UCsWidgetComponent;
 struct ICsPayload_UserWidget;
 struct FCsUserWidgetPooled;
@@ -60,12 +64,12 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE ICsPooledObjectCache* GetCache() const
+	FORCEINLINE NCsPooledObject::NCache::ICache* GetCache() const
 	{
 		return Cache;
 	}
 	
-	void Allocate(ICsPayload_PooledObject* Payload);
+	void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
 
 	void Deallocate();
 
@@ -75,7 +79,7 @@ protected:
 
 	void Deallocate_Internal();
 
-	ICsPooledObjectCache* Cache;
+	NCsPooledObject::NCache::ICache* Cache;
 
 	void ConstructCache();
 

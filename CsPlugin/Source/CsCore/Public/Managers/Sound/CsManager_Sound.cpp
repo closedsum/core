@@ -587,22 +587,6 @@ ICsSoundPooledPayload* UCsManager_Sound::AllocatePayload(const FECsSound& Type)
 	return Internal.AllocatePayload(Type);
 }
 
-/*
-ICsFXPooledPayload* UCsManager_FX_Actor::ScriptAllocatePayload(const FECsSound& Type, const FCsScriptProjectilePayload& ScriptPayload)
-{
-	ICsPayload_Projectile* IP				= Internal.AllocatePayload(Type);
-	FCsPayload_ProjectilePooledImpl* Payload = static_cast<FCsPayload_ProjectilePooledImpl*>(IP);
-
-	Payload->Instigator = ScriptPayload.Instigator;
-	Payload->Owner		= ScriptPayload.Owner;
-	Payload->Parent		= ScriptPayload.Parent;
-	Payload->Direction	= ScriptPayload.Direction;
-	Payload->Location	= ScriptPayload.Location;
-
-	return IP;
-}
-*/
-
 #pragma endregion Payload
 
 	// Spawn
@@ -625,15 +609,6 @@ const FCsSoundPooled* UCsManager_Sound::Spawn(const FECsSound& Type, ICsSoundPoo
 	}
 	return Internal.Spawn(Type, Payload);
 }
-
-/*
-const FCsFXActorPooled* UCsManager_FX_Actor::ScriptSpawn(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
-{
-	ICsPayload_Projectile* Payload = ScriptAllocatePayload(Type, ScriptPayload);
-
-	return Spawn(Type, Payload);
-}
-*/
 
 #pragma endregion Spawn
 

@@ -6,6 +6,8 @@
 #include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Player.h"
+// Managers
+#include "Managers/Input/CsManager_Input.h"
 // Player
 #include "GameFramework/PlayerController.h"
 // Input

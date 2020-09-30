@@ -11,6 +11,12 @@ class CSWP_API UCsData_ProjectileWeapon : public UCsGetInterfaceMap
 	GENERATED_UINTERFACE_BODY()
 };
 
+namespace NCsWeapon {
+	namespace NProjectile { 
+		namespace NParams {
+			namespace NLaunch {
+				struct ILaunch; } } } }
+
 /**
 *
 */
@@ -79,4 +85,13 @@ public:
 	* return
 	*/
 	virtual const float& GetTimeBetweenProjectilesPerShot() const = 0;
+
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
+
+	/**
+	*
+	*
+	* return
+	*/
+	virtual const LaunchParamsType* GetLaunchParams() const = 0;
 };

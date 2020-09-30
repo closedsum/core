@@ -28,7 +28,7 @@ namespace NCsSoundPooledCacheImplCached
 
 FCsSoundPooledCacheImpl::FCsSoundPooledCacheImpl() :
 	InterfaceMap(nullptr),
-	// ICsPooledObjectCache
+	// NCsPooledObject::NCache::ICache
 	Index(INDEX_NONE),
 	bAllocated(false),
 	bQueueDeallocate(false),
@@ -41,7 +41,7 @@ FCsSoundPooledCacheImpl::FCsSoundPooledCacheImpl() :
 	LifeTime(0.0f),
 	StartTime(),
 	ElapsedTime(),
-	// ICsProjectileCache
+	// ICsSoundPooledCache
 	AudioComponent(nullptr),
 	DeallocateMethod(ECsSoundDeallocateMethod::Complete),
 	QueuedLifeTime(0.0f)
@@ -50,7 +50,7 @@ FCsSoundPooledCacheImpl::FCsSoundPooledCacheImpl() :
 
 	InterfaceMap->SetRootName(FCsSoundPooledCacheImpl::Name);
 
-	InterfaceMap->Add<ICsPooledObjectCache>(static_cast<ICsPooledObjectCache*>(this));
+	InterfaceMap->Add<NCsPooledObject::NCache::ICache>(static_cast<NCsPooledObject::NCache::ICache*>(this));
 	InterfaceMap->Add<ICsSoundPooledCache>(static_cast<ICsSoundPooledCache*>(this));
 }
 
@@ -59,14 +59,14 @@ FCsSoundPooledCacheImpl::~FCsSoundPooledCacheImpl()
 	delete InterfaceMap;
 }
 
-// ICsPooledObjectCache
+// NCsPooledObject::NCache::ICache
 #pragma region
 
-void FCsSoundPooledCacheImpl::Allocate(ICsPayload_PooledObject* Payload)
+void FCsSoundPooledCacheImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
 {
 	using namespace NCsSoundPooledCacheImplCached;
 
-	// ICsPooledObjectCache
+	// NCsPooledObject::NCache::ICache
 	bAllocated = true;
 	State	   = ECsPooledObjectState::Active;
 	Instigator = Payload->GetInstigator();
@@ -151,7 +151,7 @@ bool FCsSoundPooledCacheImpl::HasLifeTimeExpired()
 
 void FCsSoundPooledCacheImpl::Reset()
 {
-	// ICsPooledObjectCache
+	// NCsPooledObject::NCache::ICache
 	bAllocated = false;
 	bQueueDeallocate = false;
 	State = ECsPooledObjectState::Inactive;
@@ -168,7 +168,7 @@ void FCsSoundPooledCacheImpl::Reset()
 	QueuedLifeTime = 0.0f;
 }
 
-#pragma endregion ICsPooledObjectCache
+#pragma endregion NCsPooledObject::NCache::ICache
 
 void FCsSoundPooledCacheImpl::Update(const FCsDeltaTime& DeltaTime)
 {

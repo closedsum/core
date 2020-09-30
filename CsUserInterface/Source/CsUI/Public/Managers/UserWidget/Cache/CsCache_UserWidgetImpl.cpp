@@ -28,7 +28,7 @@ namespace NCsCacheUserWidgetImplCached
 FCsCache_UserWidgetImpl::FCsCache_UserWidgetImpl() :
 	// ICsGetInterfaceMap
 	InterfaceMap(nullptr),
-	// ICsCache_PooledObject
+	// NCsPooledObject::NCache::ICache
 	Index(INDEX_NONE),
 	bAllocated(false),
 	bQueueDeallocate(false),
@@ -46,23 +46,23 @@ FCsCache_UserWidgetImpl::FCsCache_UserWidgetImpl() :
 
 	InterfaceMap->SetRootName(FCsCache_UserWidgetImpl::Name);
 
-	InterfaceMap->Add<ICsPooledObjectCache>(static_cast<ICsPooledObjectCache*>(this));
+	InterfaceMap->Add<NCsPooledObject::NCache::ICache>(static_cast<NCsPooledObject::NCache::ICache*>(this));
 	InterfaceMap->Add<ICsCache_UserWidget>(static_cast<ICsCache_UserWidget*>(this));
 }
 
 FCsCache_UserWidgetImpl::~FCsCache_UserWidgetImpl()
 {
 	delete InterfaceMap;
-}
+} 
 
-// ICsPooledObjectCache
+// NCsPooledObject::NCache::ICache
 #pragma region
 
-void FCsCache_UserWidgetImpl::Allocate(ICsPayload_PooledObject* Payload)
+void FCsCache_UserWidgetImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
 {
 	using namespace NCsCacheUserWidgetImplCached;
 
-	// ICsPooledObjectCache
+	// NCsPooledObject::NCache::ICache
 	bAllocated = true;
 	State	   = ECsPooledObjectState::Active;
 	Instigator = Payload->GetInstigator();
@@ -93,7 +93,7 @@ bool FCsCache_UserWidgetImpl::HasLifeTimeExpired()
 
 void FCsCache_UserWidgetImpl::Reset()
 {
-	// ICsPooledObjectCache
+	// NCsPooledObject::NCache::ICache
 	bAllocated = false;
 	bQueueDeallocate = false;
 	State = ECsPooledObjectState::Inactive;
@@ -106,7 +106,7 @@ void FCsCache_UserWidgetImpl::Reset()
 	ElapsedTime.Reset();
 }
 
-#pragma endregion ICsPooledObjectCache
+#pragma endregion NCsPooledObject::NCache::ICache
 
 void FCsCache_UserWidgetImpl::Update(const FCsDeltaTime& DeltaTime)
 {

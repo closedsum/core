@@ -4,17 +4,29 @@
 
 struct ICsDamageModifier;
 
-/**
-*/
-struct CSPRJ_API ICsPayload_ProjectileModifierDamage : virtual public ICsGetInterfaceMap
+namespace NCsProjectile
 {
-public:
+	namespace NPayload
+	{
+		namespace NModifier
+		{
+			namespace NDamage
+			{
+				/**
+				*/
+				struct CSPRJ_API IDamage : virtual public ICsGetInterfaceMap
+				{
+				public:
 
-	static const FName Name;
+					static const FName Name;
 
-public:
+				public:
 
-	virtual ~ICsPayload_ProjectileModifierDamage(){}
+					virtual ~IDamage(){}
 
-	virtual const TArray<ICsDamageModifier*>& GetDamageModifiers() const = 0;
-};
+					virtual const TArray<ICsDamageModifier*>& GetDamageModifiers() const = 0;
+				};
+			}
+		}
+	}
+}

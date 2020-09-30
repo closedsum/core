@@ -46,7 +46,10 @@ class UObject;
 class UClass;
 class AActor;
 class ICsPooledObject;
-struct ICsPayload_PooledObject;
+
+namespace NCsPooledObject {
+	namespace NPayload {
+		struct IPayload; } }
 
 template<typename InterfaceType, typename InterfaceContainerType, typename PayloadType, typename KeyType>
 class TCsManager_PooledObject_Map : public ICsManager_PooledObject_Map
@@ -947,7 +950,7 @@ public:
 
 	/**
 	* Create a number (Size) of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPayload_PooledObject.
+	*  Payload implements the interface: NCsPooledObject::NPayload::IPayload.
 	*
 	* @param Type	Type of payload.
 	* @param Size	Number of payload objects to create.
@@ -988,10 +991,10 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPayload_PooledObject and PayloadType.
+	*  Payload implements the interface: NCsPooledObject::NPayload::IPayload and PayloadType.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsPayload_PooledObject
+	* return		Payload that implements the interface: NCsPooledObject::NPayload::IPayload
 					and PayloadType.
 	*/
 	FORCEINLINE PayloadType* AllocatePayload(const KeyType& Type)
@@ -1001,11 +1004,11 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPayload_PooledObject and PayloadType
+	*  Payload implements the interface: NCsPooledObject::NPayload::IPayload and PayloadType
 	*
 	* @param Context	Calling context.
 	* @param Type		Type of payload.
-	* return			PayloadTypeImpl that implements the interface: ICsPayload_PooledObject
+	* return			PayloadTypeImpl that implements the interface: NCsPooledObject::NPayload::IPayload
 	*					and PayloadType.
 	*/
 	template<typename PayloadImplType>
@@ -1016,10 +1019,10 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPayload_PooledObject and PayloadType
+	*  Payload implements the interface: NCsPooledObject::NPayload::IPayload and PayloadType
 	*
 	* @param Type	Type of payload.
-	* return		PayloadTypeImpl that implements the interface: ICsPayload_PooledObject
+	* return		PayloadTypeImpl that implements the interface: NCsPooledObject::NPayload::IPayload
 	*				and PayloadType.
 	*/
 	template<typename PayloadImplType>

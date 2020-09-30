@@ -11,8 +11,15 @@
 #include "CsFXActorPooledImpl.generated.h"
 
 struct FCsFXActorPooled;
-struct ICsPooledObjectCache;
-struct ICsPayload_PooledObject;
+
+namespace NCsPooledObject {
+	namespace NCache {
+		struct ICache; } }
+
+namespace NCsPooledObject {
+	namespace NPayload {
+		struct IPayload; } }
+
 class ANiagaraActor;
 
 UCLASS()
@@ -52,9 +59,9 @@ public:
 #pragma region
 public:
 
-	ICsPooledObjectCache* GetCache() const;
+	NCsPooledObject::NCache::ICache* GetCache() const;
 	
-	void Allocate(ICsPayload_PooledObject* Payload);
+	void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
 
 	void Deallocate();
 
@@ -62,7 +69,7 @@ public:
 
 protected:
 
-	ICsPooledObjectCache* Cache;
+	NCsPooledObject::NCache::ICache* Cache;
 
 	void ConstructCache();
 

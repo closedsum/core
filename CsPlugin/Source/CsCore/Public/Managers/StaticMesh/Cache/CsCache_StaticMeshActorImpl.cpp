@@ -28,7 +28,7 @@ namespace NCsCacheStaticMeshActorImplCached
 
 FCsCache_StaticMeshActorImpl::FCsCache_StaticMeshActorImpl() :
 	InterfaceMap(nullptr),
-	// ICsPooledObjectCache
+	// NCsPooledObject::NCache::ICache
 	Index(INDEX_NONE),
 	bAllocated(false),
 	bQueueDeallocate(false),
@@ -47,7 +47,7 @@ FCsCache_StaticMeshActorImpl::FCsCache_StaticMeshActorImpl() :
 
 	InterfaceMap->SetRootName(FCsCache_StaticMeshActorImpl::Name);
 
-	InterfaceMap->Add<ICsPooledObjectCache>(static_cast<ICsPooledObjectCache*>(this));
+	InterfaceMap->Add<NCsPooledObject::NCache::ICache>(static_cast<NCsPooledObject::NCache::ICache*>(this));
 	InterfaceMap->Add<ICsCache_StaticMeshActor>(static_cast<ICsCache_StaticMeshActor*>(this));
 }
 
@@ -56,14 +56,14 @@ FCsCache_StaticMeshActorImpl::~FCsCache_StaticMeshActorImpl()
 	delete InterfaceMap;
 }
 
-// ICsPooledObjectCache
+// NCsPooledObject::NCache::ICache
 #pragma region
 
-void FCsCache_StaticMeshActorImpl::Allocate(ICsPayload_PooledObject* Payload)
+void FCsCache_StaticMeshActorImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
 {
 	using namespace NCsCacheStaticMeshActorImplCached;
 
-	// ICsPooledObjectCache
+	// NCsPooledObject::NCache::ICache
 	bAllocated = true;
 	State	   = ECsPooledObjectState::Active;
 	Instigator = Payload->GetInstigator();
@@ -150,7 +150,7 @@ bool FCsCache_StaticMeshActorImpl::HasLifeTimeExpired()
 
 void FCsCache_StaticMeshActorImpl::Reset()
 {
-	// ICsPooledObjectCache
+	// NCsPooledObject::NCache::ICache
 	bAllocated = false;
 	bQueueDeallocate = false;
 	State = ECsPooledObjectState::Inactive;
@@ -167,7 +167,7 @@ void FCsCache_StaticMeshActorImpl::Reset()
 	//QueuedLifeTime = 0.0f;
 }
 
-#pragma endregion ICsPooledObjectCache
+#pragma endregion NCsPooledObject::NCache::ICache
 
 void FCsCache_StaticMeshActorImpl::Update(const FCsDeltaTime& DeltaTime)
 {

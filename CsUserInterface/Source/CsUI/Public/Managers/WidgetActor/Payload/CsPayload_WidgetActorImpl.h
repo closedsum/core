@@ -12,184 +12,190 @@ struct FCsInterfaceMap;
 class UUserWidget;
 struct ICsPayload_UserWidget;
 
-/**
-*/
-struct CSUI_API FCsPayload_WidgetActorImpl final : public ICsPayload_PooledObject,
-												   public ICsPayload_WidgetActor,
-												   public ICsPayload_WidgetActorUserWidget
+namespace NCsWidgetActor
 {
-public:
+	namespace NPayload
+	{
+		/**
+		*/
+		struct CSUI_API FImpl final : public NCsPooledObject::NPayload::IPayload,
+									  public NCsWidgetActor::NPayload::IPayload,
+									  public NCsWidgetActor::NPayload::IUserWidget
+		{
+		public:
 
-	static const FName Name;
+			static const FName Name;
 
-private:
+		private:
 
-	FCsInterfaceMap* InterfaceMap;
+			FCsInterfaceMap* InterfaceMap;
 
-	bool bAllocated;
+			bool bAllocated;
 
-public:
+		public:
 
-	// ICsPayload_PooledObject
+			// NCsPooledObject::NPayload::IPayload
 
-	UObject* Instigator;
+			UObject* Instigator;
 
-	UObject* Owner;
+			UObject* Owner;
 
-	UObject* Parent;
+			UObject* Parent;
 	
-	FCsTime Time;
+			FCsTime Time;
 
-	// ICsPayload_WidgetActor
+			// NCsWidgetActor::NPayload::IPayload
 
-	UUserWidget* UserWidget;
+			UUserWidget* UserWidget;
 
-	ECsWidgetActorDeallocateMethod DeallocateMethod;
+			ECsWidgetActorDeallocateMethod DeallocateMethod;
 
-	float LifeTime;
+			float LifeTime;
 	
-	ECsAttachmentTransformRules AttachmentTransformRules;
+			ECsAttachmentTransformRules AttachmentTransformRules;
 
-	FName Bone;
+			FName Bone;
 
-	int32 TransformRules;
+			int32 TransformRules;
 
-	FTransform Transform;
+			FTransform Transform;
 
-	// ICsPayload_WidgetActorUserWidget
+			// ICsPayload_WidgetActorUserWidget
 
-	FECsUserWidgetPooled UserWidgetPooledType;
+			FECsUserWidgetPooled UserWidgetPooledType;
 
-	ICsPayload_UserWidget* UserWidgetPayload;
+			ICsPayload_UserWidget* UserWidgetPayload;
 
-public:
+		public:
 
-	FCsPayload_WidgetActorImpl();
-	~FCsPayload_WidgetActorImpl();
+			FImpl();
+			~FImpl();
 
-// ICsGetInterfaceMap
-#pragma region
-public:
+		// ICsGetInterfaceMap
+		#pragma region
+		public:
 
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-	{
-		return InterfaceMap;
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+			{
+				return InterfaceMap;
+			}
+
+		#pragma endregion ICsGetInterfaceMap
+
+		// NCsPooledObject::NPayload::IPayload
+		#pragma region
+		public:
+
+			FORCEINLINE const bool& IsAllocated() const
+			{
+				return bAllocated;
+			}
+
+			FORCEINLINE UObject* GetInstigator() const
+			{
+				return Instigator;
+			}
+
+			FORCEINLINE UObject* GetOwner() const
+			{
+				return Owner;
+			}
+
+			FORCEINLINE UObject* GetParent() const
+			{
+				return Parent;
+			}
+
+			FORCEINLINE const FCsTime& GetTime() const
+			{
+				return Time;
+			}
+
+			FORCEINLINE void Allocate()
+			{
+				bAllocated = true;
+			}
+
+			void Reset();
+
+		#pragma endregion NCsPooledObject::NPayload::IPayload
+
+		public:
+
+			template<typename T>
+			FORCEINLINE T* GetInstigator() const
+			{
+				return Cast<T>(GetInstigator());
+			}
+
+			template<typename T>
+			FORCEINLINE T* GetOwner() const
+			{
+				return Cast<T>(GetOwner());
+			}
+
+			template<typename T>
+			FORCEINLINE T* GetParent() const
+			{
+				return Cast<T>(GetParent());
+			}
+
+		// NCsWidgetActor::NPayload::IPayload
+		#pragma region
+		public:
+
+			FORCEINLINE UUserWidget* GetUserWidget() const
+			{
+				return UserWidget;
+			}
+
+			FORCEINLINE const ECsWidgetActorDeallocateMethod& GetDeallocateMethod() const
+			{
+				return DeallocateMethod;
+			}
+
+			FORCEINLINE const float& GetLifeTime() const
+			{
+				return LifeTime;
+			}
+
+			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const
+			{
+				return AttachmentTransformRules;
+			}
+
+			FORCEINLINE const FName& GetBone() const
+			{
+				return Bone;
+			}
+
+			FORCEINLINE const int32& GetTransformRules() const
+			{
+				return TransformRules;
+			}
+
+			FORCEINLINE const FTransform& GetTransform() const
+			{
+				return Transform;
+			}
+
+		#pragma endregion NCsWidgetActor::NPayload::IPayload
+
+		// NCsWidgetActor::NPayload::IUserWidget
+		#pragma region
+		public:
+
+			FORCEINLINE const FECsUserWidgetPooled& GetUserWidgetPooledType() const
+			{
+				return UserWidgetPooledType;
+			}
+
+			FORCEINLINE ICsPayload_UserWidget* GetUserWidgetPayload() const
+			{
+				return UserWidgetPayload;
+			}
+
+		#pragma endregion NCsWidgetActor::NPayload::IUserWidget
+		};
 	}
-
-#pragma endregion ICsGetInterfaceMap
-
-// ICsPayload_PooledObject
-#pragma region
-public:
-
-	FORCEINLINE const bool& IsAllocated() const
-	{
-		return bAllocated;
-	}
-
-	FORCEINLINE UObject* GetInstigator() const
-	{
-		return Instigator;
-	}
-
-	FORCEINLINE UObject* GetOwner() const
-	{
-		return Owner;
-	}
-
-	FORCEINLINE UObject* GetParent() const
-	{
-		return Parent;
-	}
-
-	FORCEINLINE const FCsTime& GetTime() const
-	{
-		return Time;
-	}
-
-	FORCEINLINE void Allocate()
-	{
-		bAllocated = true;
-	}
-
-	void Reset();
-
-#pragma endregion ICsPayload_PooledObject
-
-public:
-
-	template<typename T>
-	FORCEINLINE T* GetInstigator() const
-	{
-		return Cast<T>(GetInstigator());
-	}
-
-	template<typename T>
-	FORCEINLINE T* GetOwner() const
-	{
-		return Cast<T>(GetOwner());
-	}
-
-	template<typename T>
-	FORCEINLINE T* GetParent() const
-	{
-		return Cast<T>(GetParent());
-	}
-
-// ICsPayload_WidgetActor
-#pragma region
-public:
-
-	FORCEINLINE UUserWidget* GetUserWidget() const
-	{
-		return UserWidget;
-	}
-
-	FORCEINLINE const ECsWidgetActorDeallocateMethod& GetDeallocateMethod() const
-	{
-		return DeallocateMethod;
-	}
-
-	FORCEINLINE const float& GetLifeTime() const
-	{
-		return LifeTime;
-	}
-
-	FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const
-	{
-		return AttachmentTransformRules;
-	}
-
-	FORCEINLINE const FName& GetBone() const
-	{
-		return Bone;
-	}
-
-	FORCEINLINE const int32& GetTransformRules() const
-	{
-		return TransformRules;
-	}
-
-	FORCEINLINE const FTransform& GetTransform() const
-	{
-		return Transform;
-	}
-
-#pragma endregion ICsPayload_WidgetActor
-
-// ICsPayload_WidgetActorUserWidget
-#pragma region
-public:
-
-	FORCEINLINE const FECsUserWidgetPooled& GetUserWidgetPooledType() const
-	{
-		return UserWidgetPooledType;
-	}
-
-	FORCEINLINE ICsPayload_UserWidget* GetUserWidgetPayload() const
-	{
-		return UserWidgetPayload;
-	}
-
-#pragma endregion ICsPayload_WidgetActorUserWidget
-};
+}

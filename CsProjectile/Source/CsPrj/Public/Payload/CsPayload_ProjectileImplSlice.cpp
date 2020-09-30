@@ -3,44 +3,50 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsPayload_ProjectileImplSlice::Name = FName("FCsPayload_ProjectileImplSlice");;
+const FName NCsProjectile::NPayload::FImplSlice::Name = FName("NCsProjectile::NPayload::FImplSlice");;
 
-FCsPayload_ProjectileImplSlice::FCsPayload_ProjectileImplSlice() :
-	// ICsGetInterfaceMap
-	InterfaceMap(nullptr),
-	// ICsPayload_Projectile
-	Direction(0.0f),
-	Location(0.0f)
+namespace NCsProjectile
 {
-}
+	namespace NPayload
+	{
+		FImplSlice::FImplSlice() :
+			// ICsGetInterfaceMap
+			InterfaceMap(nullptr),
+			// IPayload
+			Direction(0.0f),
+			Location(0.0f)
+		{
+		}
 
-void FCsPayload_ProjectileImplSlice::SetInterfaceMap(FCsInterfaceMap* InInterfaceMap)
-{
-	checkf(InInterfaceMap, TEXT("FCsPayload_ProjectileImplSlice::SetInterfaceMap: InInterfaceMap is NULL."));
+		void FImplSlice::SetInterfaceMap(FCsInterfaceMap* InInterfaceMap)
+		{
+			checkf(InInterfaceMap, TEXT("FCsPayload_ProjectileImplSlice::SetInterfaceMap: InInterfaceMap is NULL."));
 
-	checkf(InInterfaceMap->HasUniqueBasedSlices(), TEXT("FCsPayload_ProjectileImplSlice::SetInterfaceMap: This only takes an InterfaceMap with bUniqueBasedSlices = true."));
+			checkf(InInterfaceMap->HasUniqueBasedSlices(), TEXT("FCsPayload_ProjectileImplSlice::SetInterfaceMap: This only takes an InterfaceMap with bUniqueBasedSlices = true."));
 
-	InterfaceMap = InInterfaceMap;
+			InterfaceMap = InInterfaceMap;
 
-	InterfaceMap->Add<ICsPayload_Projectile>(FCsPayload_ProjectileImplSlice::Name, static_cast<ICsPayload_Projectile*>(this));
-}
+			InterfaceMap->Add<IPayload>(FImplSlice::Name, static_cast<IPayload*>(this));
+		}
 
 
-// ICsReset
-#pragma region
+		// ICsReset
+		#pragma region
 
-void FCsPayload_ProjectileImplSlice::Reset()
-{
-	// ICsPayload_Projectile
-	Direction = FVector::ZeroVector;
-	Location = FVector::ZeroVector;
-}
+		void FImplSlice::Reset()
+		{
+			// IPayload
+			Direction = FVector::ZeroVector;
+			Location = FVector::ZeroVector;
+		}
 
-#pragma endregion ICsReset
+		#pragma endregion ICsReset
 
-bool FCsPayload_ProjectileImplSlice::CopyFrom(const FCsPayload_ProjectileImplSlice* From)
-{
-	Direction = From->Direction;
-	Location = From->Location;
-	return true;
+		bool FImplSlice::CopyFrom(const FImplSlice* From)
+		{
+			Direction = From->Direction;
+			Location = From->Location;
+			return true;
+		}
+	}
 }

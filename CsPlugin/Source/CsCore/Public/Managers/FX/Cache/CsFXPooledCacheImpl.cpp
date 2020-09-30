@@ -48,7 +48,7 @@ FCsFXPooledCacheImpl::FCsFXPooledCacheImpl() :
 
 	InterfaceMap->SetRootName(FCsFXPooledCacheImpl::Name);
 
-	InterfaceMap->Add<ICsPooledObjectCache>(static_cast<ICsPooledObjectCache*>(this));
+	InterfaceMap->Add<NCsPooledObject::NCache::ICache>(static_cast<NCsPooledObject::NCache::ICache*>(this));
 	InterfaceMap->Add<ICsFXPooledCache>(static_cast<ICsFXPooledCache*>(this));
 }
 
@@ -57,14 +57,14 @@ FCsFXPooledCacheImpl::~FCsFXPooledCacheImpl()
 	delete InterfaceMap;
 }
 
-// ICsPooledObjectCache
+// NCsPooledObject::NCache::ICache
 #pragma region
 
-void FCsFXPooledCacheImpl::Allocate(ICsPayload_PooledObject* Payload)
+void FCsFXPooledCacheImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
 {
 	using namespace NCsFXPooledCacheImplCached;
 
-	// ICsPooledObjectCache
+	// NCsPooledObject::NCache::ICache
 	bAllocated = true;
 	State	   = ECsPooledObjectState::Active;
 	Instigator = Payload->GetInstigator();
@@ -137,7 +137,7 @@ bool FCsFXPooledCacheImpl::HasLifeTimeExpired()
 
 void FCsFXPooledCacheImpl::Reset()
 {
-	// ICsPooledObjectCache
+	// NCsPooledObject::NCache::ICache
 	bAllocated = false;
 	bQueueDeallocate = false;
 	State = ECsPooledObjectState::Inactive;
@@ -152,7 +152,7 @@ void FCsFXPooledCacheImpl::Reset()
 	FXComponent = nullptr;
 }
 
-#pragma endregion ICsPooledObjectCache
+#pragma endregion NCsPooledObject::NCache::ICache
 
 void FCsFXPooledCacheImpl::Update(const FCsDeltaTime& DeltaTime)
 {

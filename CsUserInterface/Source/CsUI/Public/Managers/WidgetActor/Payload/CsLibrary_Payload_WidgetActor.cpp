@@ -4,7 +4,7 @@
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 
-bool FCsLibrary_Payload_WidgetActor::CopyChecked(const FString& Context, const ICsPayload_WidgetActor* From, ICsPayload_WidgetActor* To)
+bool FCsLibrary_Payload_WidgetActor::CopyChecked(const FString& Context, const NCsWidgetActor::NPayload::IPayload* From, NCsWidgetActor::NPayload::IPayload* To)
 {
 	bool Result = false;
 
@@ -12,7 +12,12 @@ bool FCsLibrary_Payload_WidgetActor::CopyChecked(const FString& Context, const I
 	{
 		checkf(HasUniqueBasedSlices(Context, To), TEXT("%s: To does NOT have Unique Based Slices like From."), *Context);
 		// PooledObject
-		Result |= CopySliceChecked<FCsPayload_PooledObjectImplSlice, ICsPayload_PooledObject>(Context, From, To);
+		{
+			typedef NCsPooledObject::NPayload::FImplSlice SliceType;
+			typedef NCsPooledObject::NPayload::IPayload PayloadInterfaceType;
+
+			Result |= CopySliceChecked<SliceType, PayloadInterfaceType>(Context, From, To);
+		}
 	}
 	return Result;
 }

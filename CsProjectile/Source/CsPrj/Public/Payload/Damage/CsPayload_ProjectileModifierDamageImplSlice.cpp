@@ -3,39 +3,50 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsPayload_ProjectileModifierDamageImplSlice::Name = FName("FCsPayload_ProjectileModifierDamageImplSlice");;
+const FName NCsProjectile::NPayload::NModifier::NDamage::FImplSlice::Name = FName("NCsProjectile::NPayload::NModifier::NDamage::FImplSlice");;
 
-FCsPayload_ProjectileModifierDamageImplSlice::FCsPayload_ProjectileModifierDamageImplSlice() :
-	// ICsGetInterfaceMap
-	InterfaceMap(nullptr),
-	// ICsPayload_Projectile
-	Modifiers()
+namespace NCsProjectile
 {
-}
+	namespace NPayload
+	{
+		namespace NModifier
+		{
+			namespace NDamage
+			{
+				FImplSlice::FImplSlice() :
+					// ICsGetInterfaceMap
+					InterfaceMap(nullptr),
+					// IPayload
+					Modifiers()
+				{
+				}
 
-void FCsPayload_ProjectileModifierDamageImplSlice::SetInterfaceMap(FCsInterfaceMap* InInterfaceMap)
-{
-	checkf(InInterfaceMap, TEXT("FCsPayload_ProjectileModifierDamageImplSlice::SetInterfaceMap: InInterfaceMap is NULL."));
+				void FImplSlice::SetInterfaceMap(FCsInterfaceMap* InInterfaceMap)
+				{
+					checkf(InInterfaceMap, TEXT("NCsProjectile::NPayload::NModifier::NDamage::FImplSlice::SetInterfaceMap: InInterfaceMap is NULL."));
 
-	checkf(InInterfaceMap->HasUniqueBasedSlices(), TEXT("FCsPayload_ProjectileModifierDamageImplSlice::SetInterfaceMap: This only takes an InterfaceMap with bUniqueBasedSlices = true."));
+					checkf(InInterfaceMap->HasUniqueBasedSlices(), TEXT("NCsProjectile::NPayload::NModifier::NDamage::FImplSlice::SetInterfaceMap: This only takes an InterfaceMap with bUniqueBasedSlices = true."));
 
-	InterfaceMap = InInterfaceMap;
+					InterfaceMap = InInterfaceMap;
 
-	InterfaceMap->Add<ICsPayload_ProjectileModifierDamage>(FCsPayload_ProjectileModifierDamageImplSlice::Name, static_cast<ICsPayload_ProjectileModifierDamage*>(this));
-}
+					InterfaceMap->Add<IDamage>(FImplSlice::Name, static_cast<IDamage*>(this));
+				}
 
+				// ICsReset
+				#pragma region
 
-// ICsReset
-#pragma region
+				void FImplSlice::Reset()
+				{	
+					Modifiers.Reset(Modifiers.Max());
+				}
 
-void FCsPayload_ProjectileModifierDamageImplSlice::Reset()
-{	
-	Modifiers.Reset(Modifiers.Max());
-}
+				#pragma endregion ICsReset
 
-#pragma endregion ICsReset
-
-bool FCsPayload_ProjectileModifierDamageImplSlice::CopyFrom(const FCsPayload_ProjectileModifierDamageImplSlice* From)
-{
-	return true;
+				bool FImplSlice::CopyFrom(const FImplSlice* From)
+				{
+					return true;
+				}
+			}
+		}
+	}
 }

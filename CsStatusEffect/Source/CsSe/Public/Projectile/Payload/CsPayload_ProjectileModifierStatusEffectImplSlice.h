@@ -26,7 +26,7 @@ private:
 
 public:
 
-	// ICsPayload_ProjectileModifierDamage
+	// ICsPayload_ProjectileModifierStatusEffect
 
 	TArray<ICsStatusEffectModifier*> Modifiers;
 
@@ -49,7 +49,7 @@ public:
 
 	void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
 
-// ICsPayload_ProjectileModifierDamage
+// ICsPayload_ProjectileModifierStatusEffect
 #pragma region
 public:
 
@@ -58,7 +58,7 @@ public:
 		return Modifiers;
 	}
 
-#pragma endregion ICsPayload_ProjectileModifierDamage
+#pragma endregion ICsPayload_ProjectileModifierStatusEffect
 
 // ICsReset
 #pragma region

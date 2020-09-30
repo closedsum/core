@@ -8,7 +8,7 @@ class UObject;
 struct FCsInterfaceMap;
 class UStaticMesh;
 
-struct CSCORE_API FCsPayload_StaticMeshActorImpl final : public ICsPayload_PooledObject,
+struct CSCORE_API FCsPayload_StaticMeshActorImpl final : public NCsPooledObject::NPayload::IPayload,
 														 public ICsPayload_StaticMeshActor
 {
 public:
@@ -23,7 +23,7 @@ private:
 
 public:
 
-	// ICsPooledObjectPayload
+	// NCsPooledObject::NPayload::IPayload
 
 	UObject* Instigator;
 
@@ -65,7 +65,7 @@ public:
 
 #pragma endregion ICsGetInterfaceMap
 
-// ICsPayload_PooledObject
+// NCsPooledObject::NPayload::IPayload
 #pragma region
 public:
 
@@ -101,7 +101,7 @@ public:
 
 	void Reset();
 
-#pragma endregion ICsPayload_PooledObject
+#pragma endregion NCsPooledObject::NPayload::IPayload
 
 public:
 

@@ -23,11 +23,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerWidgetActor_OnSpawn, cons
 
 class ICsWidgetActor;
 
-class CSUI_API FCsManager_WidgetActor_Internal : public TCsManager_PooledObject_Map<ICsWidgetActor, FCsWidgetActorPooled, ICsPayload_WidgetActor, FECsWidgetActor>
+class CSUI_API FCsManager_WidgetActor_Internal : public TCsManager_PooledObject_Map<ICsWidgetActor, FCsWidgetActorPooled, NCsWidgetActor::NPayload::IPayload, FECsWidgetActor>
 {
 private:
 
-	typedef TCsManager_PooledObject_Map<ICsWidgetActor, FCsWidgetActorPooled, ICsPayload_WidgetActor, FECsWidgetActor> Super;
+	typedef TCsManager_PooledObject_Map<ICsWidgetActor, FCsWidgetActorPooled, NCsWidgetActor::NPayload::IPayload, FECsWidgetActor> Super;
 
 public:
 
@@ -493,23 +493,23 @@ public:
 	* @param Type
 	* return
 	*/
-	virtual ICsPayload_WidgetActor* ConstructPayload(const FECsWidgetActor& Type);
+	virtual NCsWidgetActor::NPayload::IPayload* ConstructPayload(const FECsWidgetActor& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPayload_PooledObject.
+	*  Payload implements the interface: NCsWidgetActor::NPayload::IPayload.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsFXPooledPayload.
+	* return		Payload that implements the interface: NCsWidgetActor::NPayload::IPayload.
 	*/
-	ICsPayload_WidgetActor* AllocatePayload(const FECsWidgetActor& Type);
+	NCsWidgetActor::NPayload::IPayload* AllocatePayload(const FECsWidgetActor& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPayload_PooledObject.
+	*  Payload implements the interface: NCsWidgetActor::NPayload::IPayload.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsFXPooledPayload.
+	* return		Payload that implements the interface: NCsWidgetActor::NPayload::IPayload.
 	*/
 	template<typename PayloadTypeImpl>
 	FORCEINLINE PayloadTypeImpl* AllocatePayload(const FECsWidgetActor& Type)
@@ -531,7 +531,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	const FCsWidgetActorPooled* Spawn(const FECsWidgetActor& Type, ICsPayload_WidgetActor* Payload);
+	const FCsWidgetActorPooled* Spawn(const FECsWidgetActor& Type, NCsWidgetActor::NPayload::IPayload* Payload);
 
 	/**
 	*

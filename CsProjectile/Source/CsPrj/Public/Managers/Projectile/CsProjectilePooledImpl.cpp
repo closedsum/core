@@ -33,7 +33,7 @@
 #include "Data/Visual/CsData_ProjectileImpactVisual.h"
 #include "Data/Damage/CsData_ProjectileDamage.h"
 // Projectile
-#include "Cache/CsProjectilePooledCacheImpl.h"
+#include "Cache/CsCache_ProjectilePooledImpl.h"
 #include "Payload/Damage/CsPayload_ProjectileModifierDamage.h"
 // FX
 #include "Managers/FX/Cache/CsFXPooledCacheImpl.h"
@@ -318,7 +318,9 @@ void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
 		// TODO: Need to determine best place to set LifeTime from Data
 
 		// Set Data on Cache
-		FCsProjectilePooledCacheImpl* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsProjectilePooledCacheImpl>(Context, Cache);
+		 typedef NCsProjectile::NCache::FImplPooled CacheImplType;
+
+		CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 		CacheImpl->SetData(Data);
 	}
@@ -434,7 +436,9 @@ void ACsProjectilePooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 	const FString& Context = Str::Update;
 
-	FCsProjectilePooledCacheImpl* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsProjectilePooledCacheImpl>(Context, Cache);
+	typedef NCsProjectile::NCache::FImplPooled CacheImplType;
+
+	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Update(DeltaTime);
 }
@@ -443,18 +447,20 @@ void ACsProjectilePooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 void ACsProjectilePooledImpl::ConstructCache()
 {
-	Cache = new FCsProjectilePooledCacheImpl();
+	typedef NCsProjectile::NCache::FImplPooled CacheImplType;
+
+	Cache = new CacheImplType();
 }
 
 // ICsPooledObject
 #pragma region
 
-ICsPooledObjectCache* ACsProjectilePooledImpl::GetCache() const
+NCsPooledObject::NCache::ICache* ACsProjectilePooledImpl::GetCache() const
 {
 	return Cache;
 }
 
-void ACsProjectilePooledImpl::Allocate(ICsPayload_PooledObject* Payload)
+void ACsProjectilePooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
 {
 	checkf(Payload, TEXT("ACsProjectilePooledImpl::Allocate: Payload is NULL."));
 
@@ -484,8 +490,8 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	if (TrailFXPooled)
 	{
 		// Deactivate the Trail FX
-		ICsPooledObjectCache* FXCache	  = TrailFXPooled->GetCache();
-		FCsFXPooledCacheImpl* FXCacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsFXPooledCacheImpl>(Context, FXCache);
+		NCsPooledObject::NCache::ICache* FXCache = TrailFXPooled->GetCache();
+		FCsFXPooledCacheImpl* FXCacheImpl		 = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsFXPooledCacheImpl>(Context, FXCache);
 
 		FXCacheImpl->QueueDeallocate();
 
@@ -542,7 +548,7 @@ UObject* ACsProjectilePooledImpl::GetInstigator() const
 
 #pragma endregion ICsProjectile
 
-void ACsProjectilePooledImpl::Launch(ICsPayload_PooledObject* Payload)
+void ACsProjectilePooledImpl::Launch(NCsPooledObject::NPayload::IPayload* Payload)
 {
 	using namespace NCsProjectilePooledImplCached;
 
@@ -551,10 +557,14 @@ void ACsProjectilePooledImpl::Launch(ICsPayload_PooledObject* Payload)
 	checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
 
 	// Get Projectile Payload
-	ICsPayload_Projectile* ProjectilePayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsPayload_Projectile>(Context, Payload);
+	typedef NCsProjectile::NPayload::IPayload PayloadInterfaceType;
+
+	PayloadInterfaceType* ProjectilePayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<PayloadInterfaceType>(Context, Payload);
 
 	// Get Projectile Cache
-	ICsProjectileCache* ProjectileCache = FCsLibrary_PooledObjectCache::GetInterfaceChecked<ICsProjectileCache>(Context, Cache);
+	typedef NCsProjectile::NCache::ICache CacheInterfaceType;
+
+	CacheInterfaceType* ProjectileCache = FCsLibrary_PooledObjectCache::GetInterfaceChecked<CacheInterfaceType>(Context, Cache);
 
 	// Set Damage Value if the projectile supports damage
 	OnLaunch_SetModifiers(ProjectilePayload);
@@ -687,24 +697,28 @@ void ACsProjectilePooledImpl::Launch(ICsPayload_PooledObject* Payload)
 	}
 }
 
-void ACsProjectilePooledImpl::OnLaunch_SetModifiers(ICsPayload_Projectile* Payload)
+void ACsProjectilePooledImpl::OnLaunch_SetModifiers(NCsProjectile::NPayload::IPayload* Payload)
 {
 	using namespace NCsProjectilePooledImplCached;
 
 	const FString& Context = Str::OnLaunch_SetModifiers;
 
-	// ICsPayload_ProjectileModiferDamage
-	if (ICsPayload_ProjectileModifierDamage* DmgModifierPayload = FCsLibrary_Payload_Projectile::GetSafeInterfaceChecked<ICsPayload_ProjectileModifierDamage>(Context, Payload))
+	// NCsProjectile::NPayload::NModifier::NDamage::IDamage
 	{
-		const TArray<ICsDamageModifier*> Modifiers = DmgModifierPayload->GetDamageModifiers();
+		typedef NCsProjectile::NPayload::NModifier::NDamage::IDamage PayloadInterfaceType;
 
-		DamageModifiers.Reset(FMath::Max(DamageModifiers.Max(), Modifiers.Num()));
-
-		UCsManager_Damage* Manager_Damage = UCsManager_Damage::Get(GetWorld()->GetGameState());
-
-		for (const ICsDamageModifier* From : Modifiers)
+		if (PayloadInterfaceType* DmgModifierPayload = FCsLibrary_Payload_Projectile::GetSafeInterfaceChecked<PayloadInterfaceType>(Context, Payload))
 		{
-			DamageModifiers.Add(Manager_Damage->CreateCopyOfModifier(Context, From));
+			const TArray<ICsDamageModifier*> Modifiers = DmgModifierPayload->GetDamageModifiers();
+
+			DamageModifiers.Reset(FMath::Max(DamageModifiers.Max(), Modifiers.Num()));
+
+			UCsManager_Damage* Manager_Damage = UCsManager_Damage::Get(GetWorld()->GetGameState());
+
+			for (const ICsDamageModifier* From : Modifiers)
+			{
+				DamageModifiers.Add(Manager_Damage->CreateCopyOfModifier(Context, From));
+			}
 		}
 	}
 }

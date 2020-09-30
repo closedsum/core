@@ -290,7 +290,7 @@ void UCsManager_Projectile::CleanUp()
 	}
 	PayloadInterfaceImplMap.Reset();
 
-	for (FCsPayload_ProjectileInterfaceMap* Map : PayloadInterfaceMaps)
+	for (NCsProjectile::NPayload::FInterfaceMap* Map : PayloadInterfaceMaps)
 	{
 		delete Map;
 	}
@@ -664,30 +664,36 @@ void UCsManager_Projectile::ConstructPayloads(const FECsProjectile& Type, const 
 	Internal.ConstructPayloads(GetTypeFromTypeMap(Type), Size);
 }
 
-ICsPayload_Projectile* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
+NCsProjectile::NPayload::IPayload* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 {
+	typedef NCsProjectile::NPayload::IPayload PayloadInterfaceType;
+
 	// TODO: Perform a new in place for all structs.
 	//		 Need to call dtor manually
 
-	FCsPayload_ProjectileInterfaceMap* PayloadInterfaceMap = new FCsPayload_ProjectileInterfaceMap();
+	NCsProjectile::NPayload::FInterfaceMap* PayloadInterfaceMap = new NCsProjectile::NPayload::FInterfaceMap();
 
 	PayloadInterfaceMaps.Add(PayloadInterfaceMap);
 
 	FCsInterfaceMap* InterfaceMap = PayloadInterfaceMap->GetInterfaceMap();
 
 	// FCsPayload_PooledObjectImplSlice
-	FCsPayload_PooledObjectImplSlice* BaseSlice = new FCsPayload_PooledObjectImplSlice();
+	typedef NCsPooledObject::NPayload::FImplSlice BaseSliceType;
+
+	BaseSliceType* BaseSlice = new BaseSliceType();
 
 	{
 		BaseSlice->SetInterfaceMap(InterfaceMap);
 		// Add to map
-		TArray<void*>& ImplMap = PayloadInterfaceImplMap.FindOrAdd(FCsPayload_PooledObjectImplSlice::Name);
+		TArray<void*>& ImplMap = PayloadInterfaceImplMap.FindOrAdd(BaseSliceType::Name);
 		ImplMap.Add(BaseSlice);
 	}
 
-	// FCsPayload_ProjectileImplSlice
+	// NCsProjectile::NPayload::FImplSice
 	{
-		FCsPayload_ProjectileImplSlice* Slice = new FCsPayload_ProjectileImplSlice();
+		typedef NCsProjectile::NPayload::FImplSlice SliceType;
+
+		SliceType* Slice = new SliceType();
 
 		Slice->SetInterfaceMap(InterfaceMap);
 		// Add slice as ICsReset to BaseSlice so this slice gets reset call.
@@ -699,49 +705,55 @@ ICsPayload_Projectile* UCsManager_Projectile::ConstructPayload(const FECsProject
 	
 	const TSet<FECsProjectilePayload> PayloadTypes = ModuleSettings->Manager_Projectile.PayloadTypes;
 
-	// FCsPayload_ProjectileModifierDamageImplSlice
+	// NCsProjectile::NPayload::NModifier::NDamage::FImplSlice
 	if (PayloadTypes.Contains(NCsProjectilePayload::ProjectileDamageModifier))
 	{
-		FCsPayload_ProjectileModifierDamageImplSlice* Slice = new FCsPayload_ProjectileModifierDamageImplSlice();
+		typedef NCsProjectile::NPayload::NModifier::NDamage::FImplSlice SliceType;
+
+		SliceType* Slice = new SliceType();
 
 		Slice->SetInterfaceMap(InterfaceMap);
 		// Add slice as ICsReset to BaseSlice so this slice gets reset call.
 		BaseSlice->AddReset(static_cast<ICsReset*>(Slice));
 		// Add to map
-		TArray<void*>& ImplMap = PayloadInterfaceImplMap.FindOrAdd(FCsPayload_ProjectileModifierDamageImplSlice::Name);
+		TArray<void*>& ImplMap = PayloadInterfaceImplMap.FindOrAdd(SliceType::Name);
 		ImplMap.Add(Slice);
 	}
 
-	return InterfaceMap->Get<ICsPayload_Projectile>();
+	return InterfaceMap->Get<PayloadInterfaceType>();
 }
 
 void UCsManager_Projectile::DeconstructPayloadSlice(const FName& InterfaceImplName, void* Data)
 {
 	// FCsPayload_PooledObjectImplSlice
-	if (InterfaceImplName == FCsPayload_PooledObjectImplSlice::Name)
+	if (InterfaceImplName == NCsPooledObject::NPayload::FImplSlice::Name)
 	{
-		delete static_cast<FCsPayload_PooledObjectImplSlice*>(Data);
+		delete static_cast<NCsPooledObject::NPayload::FImplSlice*>(Data);
 	}
 	// FCsPayload_ProjectileImplSlice
-	if (InterfaceImplName == FCsPayload_ProjectileImplSlice::Name)
+	if (InterfaceImplName == NCsProjectile::NPayload::FImplSlice::Name)
 	{
-		checkf(0, TEXT("UCsManager_Projectile::DeconstructPayloadSlice: Deleting Data of type: FCsPayload_ProjectileImplSlice is handled by Intenral."));
+		checkf(0, TEXT("UCsManager_Projectile::DeconstructPayloadSlice: Deleting Data of type: NCsProjectile::NPayload::FImplSlice is handled by Intenral."));
 	}
 	// FCsPayload_ProjectileModifierDamageImplSlice
-	if (InterfaceImplName == FCsPayload_ProjectileModifierDamageImplSlice::Name)
+	if (InterfaceImplName == NCsProjectile::NPayload::NModifier::NDamage::FImplSlice::Name)
 	{
-		delete static_cast<FCsPayload_ProjectileModifierDamageImplSlice*>(Data);
+		typedef NCsProjectile::NPayload::NModifier::NDamage::FImplSlice SliceType;
+
+		delete static_cast<SliceType*>(Data);
 	}
 }
 
-ICsPayload_Projectile* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)
+NCsProjectile::NPayload::IPayload* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)
 {
 	return Internal.AllocatePayload(GetTypeFromTypeMap(Type));
 }
 
-ICsPayload_Projectile* UCsManager_Projectile::ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
+NCsProjectile::NPayload::IPayload* UCsManager_Projectile::ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
 {
-	ICsPayload_Projectile* IP = Internal.AllocatePayload(GetTypeFromTypeMap(Type));
+	typedef NCsProjectile::NPayload::IPayload PayloadInterfaceType;
+
+	PayloadInterfaceType* IP = Internal.AllocatePayload(GetTypeFromTypeMap(Type));
 	/*
 	
 	// FCsPayload_PooledObjectImplSlice
@@ -751,8 +763,8 @@ ICsPayload_Projectile* UCsManager_Projectile::ScriptAllocatePayload(const FECsPr
 		Slice->Owner	  = ScriptPayload.Owner;
 		Slice->Parent	  = ScriptPayload.Parent;
 	}
-	// FCsPayload_ProjectileImplSlice
-	if (FCsPayload_ProjectileImplSlice* Slice = FCsLibrary_Payload_Projectile::SafeStaticCastChecked<FCsPayload_ProjectileImplSlice>())
+	// NCsProjectile::NPayload::FImplSlice
+	if (NCsProjectile::NPayload::FImplSlice* Slice = FCsLibrary_Payload_Projectile::SafeStaticCastChecked<NCsProjectile::NPayload::FImplSlice>())
 	{
 		Slice->Direction = ScriptPayload.Direction;
 		Slice->Location	 = ScriptPayload.Location;
@@ -766,14 +778,16 @@ ICsPayload_Projectile* UCsManager_Projectile::ScriptAllocatePayload(const FECsPr
 	// Spawn
 #pragma region
 
-const FCsProjectilePooled* UCsManager_Projectile::Spawn(const FECsProjectile& Type, ICsPayload_Projectile* Payload)
+const FCsProjectilePooled* UCsManager_Projectile::Spawn(const FECsProjectile& Type, NCsProjectile::NPayload::IPayload* Payload)
 {
 	return Internal.Spawn(GetTypeFromTypeMap(Type), Payload);
 }
 
 const FCsProjectilePooled* UCsManager_Projectile::ScriptSpawn(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
 {
-	ICsPayload_Projectile* Payload = ScriptAllocatePayload(GetTypeFromTypeMap(Type), ScriptPayload);
+	typedef NCsProjectile::NPayload::IPayload PayloadInterfaceType;
+
+	PayloadInterfaceType* Payload = ScriptAllocatePayload(GetTypeFromTypeMap(Type), ScriptPayload);
 
 	return Spawn(Type, Payload);
 }

@@ -3,68 +3,74 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsPayload_WidgetActorImpl::Name = FName("FCsPayload_WidgetActorImpl");;
+const FName NCsWidgetActor::NPayload::FImpl::Name = FName("NCsWidgetActor::NPayload::FImpl");;
 
-FCsPayload_WidgetActorImpl::FCsPayload_WidgetActorImpl() :
-	// ICsGetInterfaceMap
-	InterfaceMap(nullptr),
-	// ICsPayload_PooledObject
-	bAllocated(false),
-	Instigator(nullptr),
-	Owner(nullptr),
-	Parent(nullptr),
-	Time(),
-	// ICsPayload_WidgetActor
-	UserWidget(nullptr),
-	DeallocateMethod(ECsWidgetActorDeallocateMethod::Complete),
-	LifeTime(0.0f),
-	AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
-	Bone(NAME_None),
-	TransformRules(0),
-	Transform(FTransform::Identity),
-	// ICsPayload_WidgetActorUserWidget
-	UserWidgetPooledType(),
-	UserWidgetPayload(nullptr)
+namespace NCsWidgetActor
 {
-	InterfaceMap = new FCsInterfaceMap();
+	namespace NPayload
+	{ 
+		FImpl::FImpl() :
+			// ICsGetInterfaceMap
+			InterfaceMap(nullptr),
+			// NCsPooledObject::NPayload::IPayload
+			bAllocated(false),
+			Instigator(nullptr),
+			Owner(nullptr),
+			Parent(nullptr),
+			Time(),
+			// NCsWidgetActor::NPayload::IPayload
+			UserWidget(nullptr),
+			DeallocateMethod(ECsWidgetActorDeallocateMethod::Complete),
+			LifeTime(0.0f),
+			AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+			Bone(NAME_None),
+			TransformRules(0),
+			Transform(FTransform::Identity),
+			// NCsWidgetActor::NPayload::IUserWidget
+			UserWidgetPooledType(),
+			UserWidgetPayload(nullptr)
+		{
+			InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsPayload_WidgetActorImpl::Name);
+			InterfaceMap->SetRootName(FImpl::Name);
 
-	InterfaceMap->Add<ICsPayload_PooledObject>(static_cast<ICsPayload_PooledObject*>(this));
-	InterfaceMap->Add<ICsPayload_WidgetActor>(static_cast<ICsPayload_WidgetActor*>(this));
-	InterfaceMap->Add<ICsPayload_WidgetActorUserWidget>(static_cast<ICsPayload_WidgetActorUserWidget*>(this));
+			InterfaceMap->Add<NCsPooledObject::NPayload::IPayload>(static_cast<NCsPooledObject::NPayload::IPayload*>(this));
+			InterfaceMap->Add<NCsWidgetActor::NPayload::IPayload>(static_cast<NCsWidgetActor::NPayload::IPayload*>(this));
+			InterfaceMap->Add<NCsWidgetActor::NPayload::IUserWidget>(static_cast<NCsWidgetActor::NPayload::IUserWidget*>(this));
+		}
+
+		FImpl::~FImpl()
+		{
+			delete InterfaceMap;
+		}
+
+		// NCsPooledObject::NPayload::IPayload
+		#pragma region
+
+		void FImpl::Reset()
+		{
+			// NCsPooledObject::NPayload::IPayload
+			bAllocated = false;
+			Instigator = nullptr;
+			Owner = nullptr;
+			Parent = nullptr;
+
+			Time.Reset();
+
+			// NCsWidgetActor::NPayload::IPayload
+			UserWidget = nullptr;
+			DeallocateMethod = ECsWidgetActorDeallocateMethod::Complete;
+			LifeTime = 0.0f;
+			AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+			Bone = NAME_None;
+			TransformRules = 0;
+			Transform = FTransform::Identity;
+
+			// NCsWidgetActor::NPayload::IUserWidget
+			UserWidgetPooledType = EMCsUserWidgetPooled::Get().GetMAX();
+			UserWidgetPayload = nullptr;
+		}
+
+		#pragma endregion NCsPooledObject::NPayload::IPayload
+	}
 }
-
-FCsPayload_WidgetActorImpl::~FCsPayload_WidgetActorImpl()
-{
-	delete InterfaceMap;
-}
-
-// ICsPayload_PooledObject
-#pragma region
-
-void FCsPayload_WidgetActorImpl::Reset()
-{
-	// ICsPayload_PooledObject
-	bAllocated = false;
-	Instigator = nullptr;
-	Owner = nullptr;
-	Parent = nullptr;
-
-	Time.Reset();
-
-	// ICsPayload_WidgetActor
-	UserWidget = nullptr;
-	DeallocateMethod = ECsWidgetActorDeallocateMethod::Complete;
-	LifeTime = 0.0f;
-	AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
-	Bone = NAME_None;
-	TransformRules = 0;
-	Transform = FTransform::Identity;
-
-	// ICsPayload_WidgetActorUserWidget
-	UserWidgetPooledType = EMCsUserWidgetPooled::Get().GetMAX();
-	UserWidgetPayload = nullptr;
-}
-
-#pragma endregion ICsPayload_PooledObject

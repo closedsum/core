@@ -23,11 +23,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerProjectile_OnSpawn, const
 
 class ICsProjectile;
 
-class CSPRJ_API FCsManager_Projectile_Internal : public TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, ICsPayload_Projectile, FECsProjectile>
+class CSPRJ_API FCsManager_Projectile_Internal : public TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, NCsProjectile::NPayload::IPayload, FECsProjectile>
 {
 private:
 
-	typedef TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, ICsPayload_Projectile, FECsProjectile> Super;
+	typedef TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, NCsProjectile::NPayload::IPayload, FECsProjectile> Super;
 
 public:
 
@@ -44,7 +44,10 @@ public:
 class ICsGetManagerProjectile;
 class ICsData_Projectile;
 class UDataTable;
-struct FCsPayload_ProjectileInterfaceMap;
+
+namespace NCsProjectile {
+	namespace NPayload {
+		struct FInterfaceMap; } }
 
 template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumType>
 class TCsManager_PooledObject_ClassHandler;
@@ -132,6 +135,10 @@ public:
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+protected:
+
+	typedef NCsProjectile::NPayload::IPayload PayloadInterfaceType;
 
 // Settings
 #pragma region
@@ -489,11 +496,11 @@ protected:
 protected:
 
 	/** <InterfaceMapPtr> */
-	TArray<FCsPayload_ProjectileInterfaceMap*> PayloadInterfaceMaps;
+	TArray<NCsProjectile::NPayload::FInterfaceMap*> PayloadInterfaceMaps;
 
 	/** <InterfaceImpName, <InterfaceImplPtr>> 
 		 stores all interface "slices" related to payload and projectile but 
-		 NOT the interface stored in Internal (i.e. FCsPayload_ProjectileImplSlice) 
+		 NOT the interface stored in Internal (i.e. NCsProjectile::NPayload::FImplSlice) 
 		 as Internal handles the deconstruction of that interface. */
 	TMap<FName, TArray<void*>> PayloadInterfaceImplMap;
 
@@ -512,7 +519,7 @@ public:
 	* @param Type
 	* return
 	*/
-	virtual ICsPayload_Projectile* ConstructPayload(const FECsProjectile& Type);
+	virtual PayloadInterfaceType* ConstructPayload(const FECsProjectile& Type);
 
 protected:
 
@@ -522,20 +529,20 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPayload_Projectile.
+	*  Payload implements the interface: NCsProjectile::NPayload::IPayload.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsPayload_Projectile.
+	* return		Payload that implements the interface: NCsProjectile::NPayload::IPayload.
 	*/
-	ICsPayload_Projectile* AllocatePayload(const FECsProjectile& Type);
+	PayloadInterfaceType* AllocatePayload(const FECsProjectile& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPayload_Projectile.
+	*  Payload implements the interface: NCsProjectile::NPayload::IPayload.
 	*
 	* @param Context	Calling context.
 	* @param Type		Type of payload.
-	* return			Payload that implements the interface: ICsPayload_Projectile.
+	* return			Payload that implements the interface: NCsProjectile::NPayload::IPayload.
 	*/
 	template<typename PayloadTypeImpl>
 	PayloadTypeImpl* AllocatePayload(const FString& Context, const FECsProjectile& Type)
@@ -545,10 +552,10 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPayload_Projectile.
+	*  Payload implements the interface: NCsProjectile::NPayload::IPayload.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsPayload_Projectile.
+	* return		Payload that implements the interface: NCsProjectile::NPayload::IPayload.
 	*/
 	template<typename PayloadTypeImpl>
 	PayloadTypeImpl* AllocatePayload(const FECsProjectile& Type)
@@ -556,7 +563,7 @@ public:
 		return Internal.AllocatePayload<PayloadTypeImpl>(Type);
 	}
 
-	virtual ICsPayload_Projectile* ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload);
+	virtual PayloadInterfaceType* ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload);
 
 #pragma endregion Payload
 
@@ -570,7 +577,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	const FCsProjectilePooled* Spawn(const FECsProjectile& Type, ICsPayload_Projectile* Payload);
+	const FCsProjectilePooled* Spawn(const FECsProjectile& Type, NCsProjectile::NPayload::IPayload* Payload);
 
 	/**
 	*

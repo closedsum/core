@@ -7,7 +7,7 @@ const FName FCsPayload_StaticMeshActorImpl::Name = FName("FCsPayload_StaticMeshA
 
 FCsPayload_StaticMeshActorImpl::FCsPayload_StaticMeshActorImpl() :
 	InterfaceMap(nullptr),
-	// ICsPayload_PooledObject
+	// NCsPooledObject::NPayload::IPayload
 	bAllocated(false),
 	Instigator(nullptr),
 	Owner(nullptr),
@@ -26,7 +26,7 @@ FCsPayload_StaticMeshActorImpl::FCsPayload_StaticMeshActorImpl() :
 
 	InterfaceMap->SetRootName(FCsPayload_StaticMeshActorImpl::Name);
 
-	InterfaceMap->Add<ICsPayload_PooledObject>(static_cast<ICsPayload_PooledObject*>(this));
+	InterfaceMap->Add<NCsPooledObject::NPayload::IPayload>(static_cast<NCsPooledObject::NPayload::IPayload*>(this));
 	InterfaceMap->Add<ICsPayload_StaticMeshActor>(static_cast<ICsPayload_StaticMeshActor*>(this));
 }
 
@@ -35,12 +35,12 @@ FCsPayload_StaticMeshActorImpl::~FCsPayload_StaticMeshActorImpl()
 	delete InterfaceMap;
 }
 
-// ICsPayload_PooledObject
+// NCsPooledObject::NPayload::IPayload
 #pragma region
 
 void FCsPayload_StaticMeshActorImpl::Reset()
 {
-	// ICsPayload_PooledObject
+	// NCsPooledObject::NPayload::IPayload
 	bAllocated = false;
 	Instigator = nullptr;
 	Owner = nullptr;
@@ -58,4 +58,4 @@ void FCsPayload_StaticMeshActorImpl::Reset()
 	Transform = FTransform::Identity;
 }
 
-#pragma endregion ICsPayload_PooledObject
+#pragma endregion NCsPooledObject::NPayload::IPayload

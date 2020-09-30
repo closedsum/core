@@ -523,7 +523,7 @@ struct CSPRJ_API FCsProjectileFirePayload
 
 class UCsData_ProjectileBase;
 
-struct CSPRJ_API FCsProjectileBasePayload : public ICsPayload_PooledObject
+struct CSPRJ_API FCsProjectileBasePayload : public NCsPooledObject::NPayload::IPayload
 {
 public:
 
@@ -580,7 +580,7 @@ public:
 		return !(*this == B);
 	}
 
-// ICsPayload_PooledObject
+// NCsPooledObject::NPayload::IPayload
 #pragma region
 public:
 
@@ -635,7 +635,7 @@ public:
 		HomingAccelerationMagnitude = 0.0f;
 	}
 
-#pragma endregion ICsPayload_PooledObject
+#pragma endregion NCsPooledObject::NPayload::IPayload
 
 	FORCEINLINE void Set(FCsProjectileFirePayload* Payload)
 	{

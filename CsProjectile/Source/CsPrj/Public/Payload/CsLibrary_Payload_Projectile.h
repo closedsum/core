@@ -5,30 +5,30 @@
 
 /**
 */
-struct CSPRJ_API FCsLibrary_Payload_Projectile : public TCsLibrary_InterfaceMap<ICsPayload_Projectile>
+struct CSPRJ_API FCsLibrary_Payload_Projectile : public TCsLibrary_InterfaceMap<NCsProjectile::NPayload::IPayload>
 {
 public:
 
 	/**
 	* Copy the values from From to To with checks.
 	* Currently supports To types of:
-	*  FCsPayload_PooledObjectImplSlice (ICsPayload_PooledObject)
-	*  FCsPayload_ProjecitleImplSlice (ICsPayload_Projectile)
+	*  NCsPooledObject::NPayload::FImplSlice (NCsPooledObject::NPayload::IPayload)
+	*  NCsProjectile::NPayload::FImplSlice (NCsProjectile::NPayload::IPayload)
 	*
 	* @param Context	The calling context.
 	* @param From		What to copy.
 	* @param To			What to copy to.
 	* return			Whether the From copied to To successfully.
 	*/
-	static bool CopyChecked(const FString& Context, const ICsPayload_Projectile* From, ICsPayload_Projectile* To);
+	static bool CopyChecked(const FString& Context, const NCsProjectile::NPayload::IPayload* From, NCsProjectile::NPayload::IPayload* To);
 
 	// NOTE:
 
 	/**
 	* Copy the slice of values from From to To with checks.
 	* Currently supports To types of:
-	*  FCsInterface_PooledObjectImplSlice (ICsInterface_PooledObject)
-	*  FCsInterface_ProjecitleImplSlice (InterfaceType)
+	*  NCsPooledObject::NPayload::FImplSlice (NCsPooledObject::NPayload::IPayload)
+	*  NCsProjectile::NPayload::FImplSlice (NCsProjectile::NPayload::IPayload)
 	*
 	* @param Context	The calling context.
 	* @param From		What to copy.

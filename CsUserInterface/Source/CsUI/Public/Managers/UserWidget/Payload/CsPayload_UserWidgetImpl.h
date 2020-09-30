@@ -7,7 +7,7 @@
 class UObject;
 struct FCsInterfaceMap;
 
-struct CSUI_API FCsPayload_UserWidgetImpl final : public ICsPayload_PooledObject,
+struct CSUI_API FCsPayload_UserWidgetImpl final : public NCsPooledObject::NPayload::IPayload,
 												  public ICsPayload_UserWidget
 {
 public:
@@ -22,7 +22,7 @@ private:
 
 public:
 
-	// ICsPayload_PooledObject
+	// NCsPooledObject::NPayload::IPayload
 
 	UObject* Instigator;
 
@@ -52,7 +52,7 @@ public:
 
 #pragma endregion ICsGetInterfaceMap
 
-// ICsPayload_PooledObject
+// NCsPooledObject::NPayload::IPayload
 #pragma region
 public:
 
@@ -88,7 +88,7 @@ public:
 
 	void Reset();
 
-#pragma endregion ICsPayload_PooledObject
+#pragma endregion NCsPooledObject::NPayload::IPayload
 
 public:
 

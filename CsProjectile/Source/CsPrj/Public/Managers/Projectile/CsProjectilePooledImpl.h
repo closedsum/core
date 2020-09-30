@@ -19,9 +19,19 @@
 class USphereComponent;
 class UCsProjectileMovementComponent;
 class UStaticMeshComponent;
-struct ICsPooledObjectCache;
-struct ICsPayload_PooledObject;
-struct ICsPayload_Projectile;
+
+namespace NCsPooledObject {
+	namespace NCache {
+		struct ICache; } }
+
+namespace NCsPooledObject {
+	namespace NPayload {
+		struct IPayload; } }
+
+namespace NCsProjectile {
+	namespace NPayload {
+		struct IPayload; } }
+
 class ICsData_Projectile;
 class ICsFXActorPooled;
 struct FCsFXActorPooled;
@@ -37,6 +47,8 @@ class CSPRJ_API ACsProjectilePooledImpl : public AActor,
 										  public ICsProjectile
 {
 	GENERATED_UCLASS_BODY()
+
+protected:
 
 // UObject Interface
 #pragma region
@@ -122,7 +134,7 @@ public:
 
 protected:
 
-	ICsPooledObjectCache* Cache;
+	NCsPooledObject::NCache::ICache* Cache;
 
 	virtual void ConstructCache();
 
@@ -130,9 +142,9 @@ protected:
 #pragma region
 public:
 
-	ICsPooledObjectCache* GetCache() const;
+	NCsPooledObject::NCache::ICache* GetCache() const;
 
-	void Allocate(ICsPayload_PooledObject* Payload);
+	void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
 
 	void Deallocate();
 
@@ -163,9 +175,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
 	bool bLaunchOnAllocate;
 
-	void Launch(ICsPayload_PooledObject* Payload);
+	void Launch(NCsPooledObject::NPayload::IPayload* Payload);
 
-	virtual void OnLaunch_SetModifiers(ICsPayload_Projectile* Payload);
+	virtual void OnLaunch_SetModifiers(NCsProjectile::NPayload::IPayload* Payload);
 
 // FX
 #pragma region

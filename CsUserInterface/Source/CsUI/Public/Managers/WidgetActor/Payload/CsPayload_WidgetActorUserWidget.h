@@ -5,31 +5,37 @@
 
 struct ICsPayload_UserWidget;
 
-/**
-*/
-struct CSUI_API ICsPayload_WidgetActorUserWidget : virtual public ICsGetInterfaceMap
+namespace NCsWidgetActor
 {
-public:
+	namespace NPayload
+	{ 
+		/**
+		*/
+		struct CSUI_API IUserWidget : virtual public ICsGetInterfaceMap
+		{
+		public:
 
-	static const FName Name;
+			static const FName Name;
 
-public:
+		public:
 
-	virtual ~ICsPayload_WidgetActorUserWidget(){}
+			virtual ~IUserWidget(){}
 
-	/**
-	* Get the UserWidgetPooled Type.
-	*  "Spawn" (allocate) an object that implements the interface: ICsUserWidgetPooled 
-	*   and contains a reference to a UUserObject from the type GetUserWidgetType() from Manager_UserWidget.
-	*
-	* return UserWidgetPooled type.
-	*/
-	virtual const FECsUserWidgetPooled& GetUserWidgetPooledType() const = 0;
+			/**
+			* Get the UserWidgetPooled Type.
+			*  "Spawn" (allocate) an object that implements the interface: ICsUserWidgetPooled 
+			*   and contains a reference to a UUserObject from the type GetUserWidgetType() from Manager_UserWidget.
+			*
+			* return UserWidgetPooled type.
+			*/
+			virtual const FECsUserWidgetPooled& GetUserWidgetPooledType() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual ICsPayload_UserWidget* GetUserWidgetPayload() const = 0;
-};
+			/**
+			*
+			*
+			* return
+			*/
+			virtual ICsPayload_UserWidget* GetUserWidgetPayload() const = 0;
+		};
+	}
+}

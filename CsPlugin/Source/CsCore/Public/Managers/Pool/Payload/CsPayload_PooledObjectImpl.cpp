@@ -3,45 +3,51 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsPayload_PooledObjectImpl::Name = FName("FCsPayload_PooledObjectImpl");
+const FName NCsPooledObject::NPayload::FImpl::Name = FName("NCsPooledObject::NPayload::FImpl");
 
-FCsPayload_PooledObjectImpl::FCsPayload_PooledObjectImpl() :
-	// ICsGetInterfaceMap
-	InterfaceMap(nullptr),
-	// ICsPayload_PooledObject
-	bAllocated(false),
-	Instigator(nullptr),
-	Owner(nullptr),
-	Parent(nullptr),
-	Time()
+namespace NCsPooledObject
 {
-	// ICsGetInterfaceMap
-	InterfaceMap = new FCsInterfaceMap();
+	namespace NPayload
+	{
+		FImpl::FImpl() :
+			// ICsGetInterfaceMap
+			InterfaceMap(nullptr),
+			// IPayload
+			bAllocated(false),
+			Instigator(nullptr),
+			Owner(nullptr),
+			Parent(nullptr),
+			Time()
+		{
+			// ICsGetInterfaceMap
+			InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsPayload_PooledObjectImpl::Name);
+			InterfaceMap->SetRootName(FImpl::Name);
 
-	InterfaceMap->Add<ICsPayload_PooledObject>(static_cast<ICsPayload_PooledObject*>(this));
+			InterfaceMap->Add<IPayload>(static_cast<IPayload*>(this));
+		}
+
+		FImpl::~FImpl()
+		{
+			// ICsGetInterfaceMap
+			delete InterfaceMap;
+		}
+
+		// IPayload
+		#pragma region
+
+		void FImpl::Reset()
+		{
+			// IPayload
+			bAllocated = false;
+
+			Instigator = nullptr;
+			Owner = nullptr;
+			Parent = nullptr;
+
+			Time.Reset();
+		}
+
+		#pragma endregion IPayload
+	}
 }
-
-FCsPayload_PooledObjectImpl::~FCsPayload_PooledObjectImpl()
-{
-	// ICsGetInterfaceMap
-	delete InterfaceMap;
-}
-
-// ICsPayload_PooledObject
-#pragma region
-
-void FCsPayload_PooledObjectImpl::Reset()
-{
-	// ICsPayload_PooledObject
-	bAllocated = false;
-
-	Instigator = nullptr;
-	Owner = nullptr;
-	Parent = nullptr;
-
-	Time.Reset();
-}
-
-#pragma endregion ICsPayload_PooledObject

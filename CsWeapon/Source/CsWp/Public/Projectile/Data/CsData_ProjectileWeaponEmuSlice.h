@@ -4,6 +4,16 @@
 
 struct FCsInterfaceMap;
 
+namespace NCsWeapon {
+	namespace NProjectile {
+		namespace NParams {
+			namespace NLaunch {
+				struct ILaunch;
+			}
+		}
+	}
+}
+
 struct CSWP_API FCsData_ProjectileWeaponEmuSlice : public ICsData_ProjectileWeapon
 {
 public:
@@ -29,6 +39,8 @@ private:
 	float* TimeBetweenAutoShots;
 
 	float* TimeBetweenProjectilesPerShot;
+
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
 
 public:
 
@@ -139,6 +151,11 @@ public:
 	FORCEINLINE const float& GetTimeBetweenProjectilesPerShot() const
 	{
 		return *TimeBetweenProjectilesPerShot;
+	}
+
+	FORCEINLINE const LaunchParamsType* GetLaunchParams() const
+	{
+		return nullptr;
 	}
 
 #pragma endregion ICsData_ProjectileWeapon

@@ -259,7 +259,7 @@ namespace NCsProcessPriorityModifier
 	}
 }
 
-struct FCsProcessPayload : public ICsPayload_PooledObject
+struct FCsProcessPayload : public NCsPooledObject::NPayload::IPayload
 {
 	bool bAllocated;
 
@@ -303,7 +303,7 @@ public:
 	}
 	~FCsProcessPayload() {}
 
-	// ICsPayload_PooledObject
+	// NCsPooledObject:NPayload::IPayload
 #pragma region
 
 	const bool& IsAllocated() const
@@ -357,7 +357,7 @@ public:
 		OptionalWorkingDirectory = NCsCached::Str::Empty;
 	}
 
-#pragma endregion ICsPayload_PooledObject
+#pragma endregion NCsPooledObject:NPayload::IPayload
 };
 
 #pragma endregion Payload

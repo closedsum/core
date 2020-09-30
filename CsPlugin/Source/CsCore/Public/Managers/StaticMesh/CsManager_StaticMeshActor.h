@@ -473,7 +473,7 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPayload_PooledObject.
+	*  Payload implements the interface: ICsPayload_StaticMeshActor.
 	*
 	* @param Type	Type of payload.
 	* return		Payload that implements the interface: ICsPayload_StaticMeshActor.
@@ -482,7 +482,7 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPayload_PooledObject.
+	*  Payload implements the interface: ICsPayload_StaticMeshActor.
 	*
 	* @param Type	Type of payload.
 	* return		Payload that implements the interface: ICsPayload_StaticMeshActor.

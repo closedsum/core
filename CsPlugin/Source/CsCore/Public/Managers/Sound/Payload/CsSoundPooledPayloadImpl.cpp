@@ -7,7 +7,7 @@ const FName FCsSoundPooledPayloadImpl::Name = FName("FCsSoundPooledPayloadImpl")
 
 FCsSoundPooledPayloadImpl::FCsSoundPooledPayloadImpl() :
 	InterfaceMap(nullptr),
-	// ICsPayload_PooledObject
+	// NCsPooledObject::NPayload::IPayload
 	bAllocated(false),
 	Instigator(nullptr),
 	Owner(nullptr),
@@ -27,7 +27,7 @@ FCsSoundPooledPayloadImpl::FCsSoundPooledPayloadImpl() :
 
 	InterfaceMap->SetRootName(FCsSoundPooledPayloadImpl::Name);
 
-	InterfaceMap->Add<ICsPayload_PooledObject>(static_cast<ICsPayload_PooledObject*>(this));
+	InterfaceMap->Add<NCsPooledObject::NPayload::IPayload>(static_cast<NCsPooledObject::NPayload::IPayload*>(this));
 	InterfaceMap->Add<ICsSoundPooledPayload>(static_cast<ICsSoundPooledPayload*>(this));
 }
 
@@ -36,12 +36,12 @@ FCsSoundPooledPayloadImpl::~FCsSoundPooledPayloadImpl()
 	delete InterfaceMap;
 }
 
-// ICsPayload_PooledObject
+// NCsPooledObject::NPayload::IPayload
 #pragma region
 
 void FCsSoundPooledPayloadImpl::Reset()
 {
-	// ICsPayload_PooledObject
+	// NCsPooledObject::NPayload::IPayload
 	bAllocated = false;
 	Instigator = nullptr;
 	Owner = nullptr;
@@ -60,4 +60,4 @@ void FCsSoundPooledPayloadImpl::Reset()
 	Transform = FTransform::Identity;
 }
 
-#pragma endregion ICsPayload_PooledObject
+#pragma endregion NCsPooledObject::NPayload::IPayload

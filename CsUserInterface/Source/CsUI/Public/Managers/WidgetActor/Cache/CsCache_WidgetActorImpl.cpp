@@ -47,7 +47,7 @@ FCsCache_WidgetActorImpl::FCsCache_WidgetActorImpl() :
 
 	InterfaceMap->SetRootName(FCsCache_WidgetActorImpl::Name);
 
-	InterfaceMap->Add<ICsPooledObjectCache>(static_cast<ICsPooledObjectCache*>(this));
+	InterfaceMap->Add<NCsPooledObject::NCache::ICache>(static_cast<NCsPooledObject::NCache::ICache*>(this));
 	InterfaceMap->Add<ICsCache_WidgetActor>(static_cast<ICsCache_WidgetActor*>(this));
 }
 
@@ -56,16 +56,16 @@ FCsCache_WidgetActorImpl::~FCsCache_WidgetActorImpl()
 	delete InterfaceMap;
 }
 
-// ICsPooledObjectCache
+// NCsPooledObject::NCache::ICache
 #pragma region
 
-void FCsCache_WidgetActorImpl::Allocate(ICsPayload_PooledObject* Payload)
+void FCsCache_WidgetActorImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
 {
 	using namespace NCsCacheWidgetActorImplCached;
 
 	const FString& Context = Str::Allocate;
 
-	// ICsPooledObjectCache
+	// NCsPooledObject::NCache::ICache
 	bAllocated = true;
 	State	   = ECsPooledObjectState::Active;
 	Instigator = Payload->GetInstigator();
@@ -73,8 +73,8 @@ void FCsCache_WidgetActorImpl::Allocate(ICsPayload_PooledObject* Payload)
 	Parent	   = Payload->GetParent();
 	StartTime  = Payload->GetTime();
 
-	// ICsCache_WidgetActor
-	ICsPayload_WidgetActor* WidgetPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsPayload_WidgetActor>(Context, Payload);
+	// NCsWidgetActor::NPayload::IPayload
+	NCsWidgetActor::NPayload::IPayload* WidgetPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<NCsWidgetActor::NPayload::IPayload>(Context, Payload);
 
 	DeallocateMethod = WidgetPayload->GetDeallocateMethod();
 	QueuedLifeTime   = WidgetPayload->GetLifeTime();
@@ -120,7 +120,7 @@ bool FCsCache_WidgetActorImpl::HasLifeTimeExpired()
 
 void FCsCache_WidgetActorImpl::Reset()
 {
-	// ICsPooledObjectCache
+	// NCsPooledObject::NCache::ICache
 	bAllocated = false;
 	bQueueDeallocate = false;
 	State = ECsPooledObjectState::Inactive;
@@ -136,7 +136,7 @@ void FCsCache_WidgetActorImpl::Reset()
 	QueuedLifeTime = 0.0f;
 }
 
-#pragma endregion ICsPooledObjectCache
+#pragma endregion NCsPooledObject::NCache::ICache
 
 void FCsCache_WidgetActorImpl::Update(const FCsDeltaTime& DeltaTime)
 {

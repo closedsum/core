@@ -586,22 +586,6 @@ ICsFXPooledPayload* UCsManager_FX_Actor::AllocatePayload(const FECsFX& Type)
 	return Internal.AllocatePayload(Type);
 }
 
-/*
-ICsFXPooledPayload* UCsManager_FX_Actor::ScriptAllocatePayload(const FECsFX& Type, const FCsScriptProjectilePayload& ScriptPayload)
-{
-	ICsPayload_Projectile* IP				= Internal.AllocatePayload(Type);
-	FCsPayload_ProjectilePooledImpl* Payload = static_cast<FCsPayload_ProjectilePooledImpl*>(IP);
-
-	Payload->Instigator = ScriptPayload.Instigator;
-	Payload->Owner		= ScriptPayload.Owner;
-	Payload->Parent		= ScriptPayload.Parent;
-	Payload->Direction	= ScriptPayload.Direction;
-	Payload->Location	= ScriptPayload.Location;
-
-	return IP;
-}
-*/
-
 #pragma endregion Payload
 
 	// Spawn
@@ -611,15 +595,6 @@ const FCsFXActorPooled* UCsManager_FX_Actor::Spawn(const FECsFX& Type, ICsFXPool
 {
 	return Internal.Spawn(Type, Payload);
 }
-
-/*
-const FCsFXActorPooled* UCsManager_FX_Actor::ScriptSpawn(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
-{
-	ICsPayload_Projectile* Payload = ScriptAllocatePayload(Type, ScriptPayload);
-
-	return Spawn(Type, Payload);
-}
-*/
 
 #pragma endregion Spawn
 

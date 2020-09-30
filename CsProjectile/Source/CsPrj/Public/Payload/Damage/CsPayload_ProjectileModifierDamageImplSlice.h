@@ -7,67 +7,79 @@
 class UObject;
 struct FCsInterfaceMap;
 
-/**
-* 
-*/
-struct CSPRJ_API FCsPayload_ProjectileModifierDamageImplSlice : public ICsPayload_ProjectileModifierDamage,
-																public ICsReset
+namespace NCsProjectile
 {
-public:
-
-	static const FName Name;
-
-private:
-
-	// ICsGetInterfaceMap
-
-	FCsInterfaceMap* InterfaceMap;
-
-public:
-
-	// ICsPayload_ProjectileModifierDamage
-
-	TArray<ICsDamageModifier*> Modifiers;
-
-public:
-
-	FCsPayload_ProjectileModifierDamageImplSlice();
-
-// ICsGetInterfaceMap
-#pragma region
-public:
-
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+	namespace NPayload
 	{
-		return InterfaceMap;
+		namespace NModifier
+		{
+			namespace NDamage
+			{
+				/**
+				* 
+				*/
+				struct CSPRJ_API FImplSlice : public IDamage,
+											  public ICsReset
+				{
+				public:
+
+					static const FName Name;
+
+				private:
+
+					// ICsGetInterfaceMap
+
+					FCsInterfaceMap* InterfaceMap;
+
+				public:
+
+					// ICsPayload_ProjectileModifierDamage
+
+					TArray<ICsDamageModifier*> Modifiers;
+
+				public:
+
+					FImplSlice();
+
+				// ICsGetInterfaceMap
+				#pragma region
+				public:
+
+					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+					{
+						return InterfaceMap;
+					}
+
+				#pragma endregion ICsGetInterfaceMap
+
+				public:
+
+					void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
+
+				// ICsPayload_ProjectileModifierDamage
+				#pragma region
+				public:
+
+					FORCEINLINE const TArray<ICsDamageModifier*>& GetDamageModifiers() const
+					{
+						return Modifiers;
+					}
+
+				#pragma endregion ICsPayload_ProjectileModifierDamage
+
+				// ICsReset
+				#pragma region
+				public:
+
+					void Reset();
+
+				#pragma endregion ICsReset
+
+				public:
+
+					bool CopyFrom(const FImplSlice* From);
+				};
+			}
+		}
 	}
-
-#pragma endregion ICsGetInterfaceMap
-
-public:
-
-	void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
-
-// ICsPayload_ProjectileModifierDamage
-#pragma region
-public:
-
-	FORCEINLINE const TArray<ICsDamageModifier*>& GetDamageModifiers() const
-	{
-		return Modifiers;
-	}
-
-#pragma endregion ICsPayload_ProjectileModifierDamage
-
-// ICsReset
-#pragma region
-public:
-
-	void Reset();
-
-#pragma endregion ICsReset
-
-public:
-
-	bool CopyFrom(const FCsPayload_ProjectileModifierDamageImplSlice* From);
-};
+}

@@ -20,7 +20,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsProjectileWeaponComponent_OnCo
 class ICsData_Weapon;
 class AActor;
 struct FCsRoutine;
-struct ICsPayload_Projectile;
+
+namespace NCsProjectile {
+	namespace NPayload {
+		struct IPayload; } }
+
 struct FCsProjectilePooled;
 struct ICsSoundPooledPayload;
 
@@ -196,33 +200,33 @@ protected:
 	/**
 	*
 	* Currently supports To types of:
-	*  FCsPayload_PooledObjectImplSlice (ICsPayload_PooledObject)
-	*  FCsPayload_ProjecitleImplSlice (ICsPayload_Projectile)
+	*  NCsPooledObject::NPayload::FImplSlice (NCsPooledObject::NPayload::IPayload)
+	*  NCsProjectile::NPayload::FImplSlice (NCsProjectile::NPayload::IPayload)
 	*
 	* @param Context	The calling context.
 	* @param Payload	The payload to set.
 	* return			Whether the payload was successfully set.
 	*/
-	virtual bool SetProjectilePayload(const FString& Context, ICsPayload_Projectile* Payload);
+	virtual bool SetProjectilePayload(const FString& Context, NCsProjectile::NPayload::IPayload* Payload);
 
 	/**
 	* Copy the slice of values from From to To with checks.
 	* Currently supports To types of:
-	*  FCsPayload_PooledObjectImplSlice (ICsPayload_PooledObject)
-	*  FCsPayload_ProjecitleImplSlice (ICsPayload_Projectile)
+	*  NCsPooledObject::NPayload::FImplSlice (NCsPooledObject::NPayload::IPayload)
+	*  NCsProjectile::NPayload::FImplSlice (NCsProjectile::NPayload::IPayload)
 	*
 	* @param Context	The calling context.
 	* @param From		What to copy.
 	* @param To			What to copy to.
 	* return			Whether the From copied to To successfully.
 	*/
-	virtual bool CopyProjectilePayload(const FString& Context, const ICsPayload_Projectile* From, ICsPayload_Projectile* To);
+	virtual bool CopyProjectilePayload(const FString& Context, const NCsProjectile::NPayload::IPayload* From, NCsProjectile::NPayload::IPayload* To);
 
 	virtual FVector GetLaunchProjectileLocation();
 
 	virtual FVector GetLaunchProjectileDirection();
 
-	virtual void LaunchProjectile(const FCsProjectilePooled* ProjectilePooled, ICsPayload_Projectile* Payload);
+	virtual void LaunchProjectile(const FCsProjectilePooled* ProjectilePooled, NCsProjectile::NPayload::IPayload* Payload);
 
 #pragma endregion Projectile
 	

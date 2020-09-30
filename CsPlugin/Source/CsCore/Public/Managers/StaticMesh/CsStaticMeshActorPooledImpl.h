@@ -13,8 +13,15 @@
 
 class UAudioComponent;
 class UDamageType;
-struct ICsPooledObjectCache;
-struct ICsPayload_PooledObject;
+
+namespace NCsPooledObject {
+	namespace NPayload {
+		struct IPayload; } }
+
+namespace NCsPooledObject {
+	namespace NPayload {
+		struct IPayload; } }
+
 struct ICsPayload_StaticMeshActor;
 
 /**
@@ -58,7 +65,7 @@ public:
 
 protected:
 
-	ICsPooledObjectCache* Cache;
+	NCsPooledObject::NCache::ICache* Cache;
 
 	void ConstructCache();
 
@@ -66,9 +73,9 @@ protected:
 #pragma region
 public:
 
-	ICsPooledObjectCache* GetCache() const;
+	NCsPooledObject::NCache::ICache* GetCache() const;
 
-	void Allocate(ICsPayload_PooledObject* Payload);
+	void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
 
 	void Deallocate();
 

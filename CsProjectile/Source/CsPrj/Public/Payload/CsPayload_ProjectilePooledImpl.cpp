@@ -3,50 +3,56 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsPayload_ProjectilePooledImpl::Name = FName("FCsPayload_ProjectilePooledImpl");;
+const FName NCsProjectile::NPayload::FImplPooled::Name = FName("NCsProjectile::NPayload::FImplPooled");;
 
-FCsPayload_ProjectilePooledImpl::FCsPayload_ProjectilePooledImpl() :
-	// ICsGetInterfaceMap
-	InterfaceMap(nullptr),
-	// ICsPayload_PooledObject
-	bAllocated(false),
-	Instigator(nullptr),
-	Owner(nullptr),
-	Parent(nullptr),
-	Time(),
-	// ICsPayload_Projectile
-	Direction(0.0f),
-	Location(0.0f)
+namespace NCsProjectile
 {
-	InterfaceMap = new FCsInterfaceMap();
+	namespace NPayload
+	{
+		FImplPooled::FImplPooled() :
+			// ICsGetInterfaceMap
+			InterfaceMap(nullptr),
+			// NCsPooledObject::NPayload::IPayload
+			bAllocated(false),
+			Instigator(nullptr),
+			Owner(nullptr),
+			Parent(nullptr),
+			Time(),
+			// IPayload
+			Direction(0.0f),
+			Location(0.0f)
+		{
+			InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsPayload_ProjectilePooledImpl::Name);
+			InterfaceMap->SetRootName(FImplPooled::Name);
 
-	InterfaceMap->Add<ICsPayload_PooledObject>(static_cast<ICsPayload_PooledObject*>(this));
-	InterfaceMap->Add<ICsPayload_Projectile>(static_cast<ICsPayload_Projectile*>(this));
+			InterfaceMap->Add<NCsPooledObject::NPayload::IPayload>(static_cast<NCsPooledObject::NPayload::IPayload*>(this));
+			InterfaceMap->Add<NCsProjectile::NPayload::IPayload>(static_cast<NCsProjectile::NPayload::IPayload*>(this));
+		}
+
+		FImplPooled::~FImplPooled()
+		{
+			// ICsGetInterfaceMap
+			delete InterfaceMap;
+		}
+
+		// NCsPooledObject::NPayload::IPayload
+		#pragma region
+
+		void FImplPooled::Reset()
+		{
+			// NCsPooledObject::NPayload::IPayload
+			bAllocated = false;
+			Instigator = nullptr;
+			Owner = nullptr;
+			Parent = nullptr;
+
+			Time.Reset();
+			// IPayload
+			Direction = FVector::ZeroVector;
+			Location = FVector::ZeroVector;
+		}
+
+		#pragma endregion NCsPooledObject::NPayload::IPayload
+	}
 }
-
-FCsPayload_ProjectilePooledImpl::~FCsPayload_ProjectilePooledImpl()
-{
-	// ICsGetInterfaceMap
-	delete InterfaceMap;
-}
-
-// ICsPayload_PooledObject
-#pragma region
-
-void FCsPayload_ProjectilePooledImpl::Reset()
-{
-	// ICsPayload_PooledObject
-	bAllocated = false;
-	Instigator = nullptr;
-	Owner = nullptr;
-	Parent = nullptr;
-
-	Time.Reset();
-	// ICsPayload_Projectile
-	Direction = FVector::ZeroVector;
-	Location = FVector::ZeroVector;
-}
-
-#pragma endregion ICsPayload_PooledObject

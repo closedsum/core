@@ -632,22 +632,6 @@ ICsPayload_UserWidget* UCsManager_UserWidget::AllocatePayload(const FECsUserWidg
 	return Internal.AllocatePayload(Type);
 }
 
-/*
-ICsPayload_UserWidget* UCsManager_UserWidget::ScriptAllocatePayload(const FECsUserWidgetPooled& Type, const FCsScriptProjectilePayload& ScriptPayload)
-{
-	ICsPayload_Projectile* IP				= Internal.AllocatePayload(Type);
-	FCsPayload_ProjectilePooledImpl* Payload = static_cast<FCsPayload_ProjectilePooledImpl*>(IP);
-
-	Payload->Instigator = ScriptPayload.Instigator;
-	Payload->Owner		= ScriptPayload.Owner;
-	Payload->Parent		= ScriptPayload.Parent;
-	Payload->Direction	= ScriptPayload.Direction;
-	Payload->Location	= ScriptPayload.Location;
-
-	return IP;
-}
-*/
-
 #pragma endregion Payload
 
 	// Spawn
@@ -657,15 +641,6 @@ const FCsUserWidgetPooled* UCsManager_UserWidget::Spawn(const FECsUserWidgetPool
 {
 	return Internal.Spawn(Type, Payload);
 }
-
-/*
-const FCsUserWidgetPooled* UCsManager_UserWidget::ScriptSpawn(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
-{
-	ICsPayload_Projectile* Payload = ScriptAllocatePayload(Type, ScriptPayload);
-
-	return Spawn(Type, Payload);
-}
-*/
 
 #pragma endregion Spawn
 

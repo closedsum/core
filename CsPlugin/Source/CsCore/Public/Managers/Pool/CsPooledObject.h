@@ -13,8 +13,13 @@ class CSCORE_API UCsPooledObject : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
-struct ICsPooledObjectCache;
-struct ICsPayload_PooledObject;
+namespace NCsPooledObject {
+	namespace NCache {
+		struct ICache; } }
+
+namespace NCsPooledObject {
+	namespace NPayload {
+		struct IPayload; } }
 
 class CSCORE_API ICsPooledObject
 {
@@ -27,14 +32,14 @@ public:
 	*
 	* return
 	*/
-	virtual ICsPooledObjectCache* GetCache() const = 0;
+	virtual NCsPooledObject::NCache::ICache* GetCache() const = 0;
 
 	/**
 	*
 	*
 	* @param Payload
 	*/
-	virtual void Allocate(ICsPayload_PooledObject* Payload) = 0;
+	virtual void Allocate(NCsPooledObject::NPayload::IPayload* Payload) = 0;
 
 	/**
 	*
@@ -87,7 +92,7 @@ public:
 	* @param Object		A Pooled Object of type: ICsPooledObject.
 	* return Cache		The cache associated with the Pooled Object.
 	*/
-	DECLARE_DELEGATE_RetVal_OneParam(ICsPooledObjectCache* /*Cache*/, FScript_GetCache, UObject* /*Object*/);
+	DECLARE_DELEGATE_RetVal_OneParam(NCsPooledObject::NCache::ICache* /*Cache*/, FScript_GetCache, UObject* /*Object*/);
 
 	/** Delegate for getting the Cache associated with a Pooled Object. 
 		 The Pooled Object implements a script interface of type: ICsPooledObject. */
@@ -100,7 +105,7 @@ public:
 	* @param Object		A Pooled Object of type: ICsPooledObject.
 	* @param Payload	A "blob" of parameters to pass in when allocating a Pooled Object.
 	*/
-	DECLARE_DELEGATE_TwoParams(FScript_Allocate, UObject* /*Object*/, ICsPayload_PooledObject* /*Payload*/);
+	DECLARE_DELEGATE_TwoParams(FScript_Allocate, UObject* /*Object*/, NCsPooledObject::NPayload::IPayload* /*Payload*/);
 
 	/** Delegate for allocating a Pooled Object. 
 		  The Pooled Object implements a script interface of type: ICsPooledObject. */
@@ -197,14 +202,14 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE ICsPooledObjectCache* GetCache() const
+	FORCEINLINE NCsPooledObject::NCache::ICache* GetCache() const
 	{
 		if (bScript)
 			return Script_GetCache_Impl.Execute(Object);
 		return Interface->GetCache();
 	}
 
-	FORCEINLINE void Allocate(ICsPayload_PooledObject* Payload)
+	FORCEINLINE void Allocate(NCsPooledObject::NPayload::IPayload* Payload)
 	{
 		if (bScript)
 			Script_Allocate_Impl.Execute(Object, Payload);

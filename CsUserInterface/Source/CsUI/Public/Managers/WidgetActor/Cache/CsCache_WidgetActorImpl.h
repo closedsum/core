@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/Cache/CsPooledObjectCache.h"
+#include "Managers/Pool/Cache/CsCache_PooledObject.h"
 #include "Managers/WidgetActor/Cache/CsCache_WidgetActor.h"
 #include "Managers/WidgetActor/CsTypes_WidgetActor.h"
 #include "Containers/CsWeakObjectPtr.h"
@@ -8,16 +8,20 @@
 
 class UObject;
 struct FCsInterfaceMap;
-struct ICsPayload_PooledObject;
+
+namespace NCsPooledObject {
+	namespace NPayload {
+		struct IPayload; } }
+
 class UCsWidgetComponent;
 
 /**
 * Basic implementation for Cache implementing the interfaces:
-* ICsPooledObjectCache and ICsCache_WidgetActor. This only supports 
+* NCsPooledObject::NCache::ICache and ICsCache_WidgetActor. This only supports 
 * a bare minimum functionality. For custom functionality create
 * another implementation
 */
-struct CSUI_API FCsCache_WidgetActorImpl final : public ICsPooledObjectCache,
+struct CSUI_API FCsCache_WidgetActorImpl final : public NCsPooledObject::NCache::ICache,
 												 public ICsCache_WidgetActor
 {
 public:
@@ -30,7 +34,7 @@ private:
 
 	FCsInterfaceMap* InterfaceMap;
 
-	// ICsPooledObjectCache
+	// NCsPooledObject::NCache::ICache
 
 	int32 Index;
 
@@ -81,7 +85,7 @@ public:
 
 #pragma endregion ICsGetInterfaceMap
 
-// ICsPooledObjectCache
+// NCsPooledObject::NCache::ICache
 #pragma region
 public:
 
@@ -95,7 +99,7 @@ public:
 		return Index;
 	}
 
-	void Allocate(ICsPayload_PooledObject* Payload);
+	void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
 
 	FORCEINLINE const bool& IsAllocated() const
 	{
@@ -157,7 +161,7 @@ public:
 
 	void Reset();
 
-#pragma endregion ICsPooledObjectCache
+#pragma endregion NCsPooledObject::NCache::ICache
 
 public:
 

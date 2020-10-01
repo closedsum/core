@@ -7,6 +7,10 @@
 // ProjectileWeaponLaunchLocation
 #pragma region
 
+/**
+* Describes the different methods to get the Location from which a projectile of type:
+* ICsProjectile will be launched from a weapon of type: ICsProjectileWeapon.
+*/
 UENUM(BlueprintType)
 enum class ECsProjectileWeaponLaunchLocation : uint8
 {

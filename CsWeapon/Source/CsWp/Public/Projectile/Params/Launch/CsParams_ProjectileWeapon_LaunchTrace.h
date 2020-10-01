@@ -12,6 +12,29 @@ namespace NCsWeapon
 		{
 			namespace NLaunch
 			{
+			// TraceStart
+			#pragma region
+
+				enum class ETraceStart : uint8 
+				{
+					LaunchLocation,
+					Camera
+				};
+
+			#pragma endregion TraceStart
+
+			// TraceDirection
+			#pragma region
+
+				enum class ETraceDirection : uint8
+				{
+					Owner,
+					Camera,
+					Bone
+				};
+
+			#pragma endregion TraceDirection
+
 				/**
 				*/
 				struct CSWP_API ITrace : public ICsGetInterfaceMap
@@ -37,6 +60,20 @@ namespace NCsWeapon
 					* return
 					*/
 					virtual const ECsTraceMethod& GetTraceMethod() const = 0;
+
+					/**
+					*
+					*
+					* return
+					*/
+					virtual const ETraceStart& GetTraceStartType() const = 0;
+
+					/**
+					*
+					*
+					* return
+					*/
+					virtual const ETraceDirection& GetTraceDirectionType() const = 0;
 
 					/**
 					*

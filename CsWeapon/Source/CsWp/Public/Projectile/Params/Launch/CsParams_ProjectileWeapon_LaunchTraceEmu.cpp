@@ -11,15 +11,6 @@ namespace NCsWeapon
 		{
 			namespace NLaunch
 			{
-				FTraceEmu::FTraceEmu()
-				{
-				}
-
-				FTraceEmu::~FTraceEmu()
-				{
-
-				}
-
 				// ILaunch
 
 				// Trace

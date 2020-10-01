@@ -1,8 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
+// Interfaces
 #include "Projectile/Params/Launch/CsParams_ProjectileWeapon_Launch.h"
 #include "Projectile/Params/Launch/CsParams_ProjectileWeapon_LaunchTrace.h"
+// Types
+#include "Projectile/Params/Launch/CsTypes_Params_ProjectileWeapon_LaunchTrace.h"
 
 namespace NCsWeapon
 {
@@ -35,6 +37,10 @@ namespace NCsWeapon
 
 					ECsTraceMethod* TraceMethod;
 
+					ETraceStart* TraceStartType;
+
+					ETraceDirection* TraceDirectionType;
+
 					float* TraceDistance;
 
 				public:
@@ -44,11 +50,13 @@ namespace NCsWeapon
 						DirectionType(nullptr),
 						TraceType(nullptr),
 						TraceMethod(nullptr),
+						TraceStartType(nullptr),
+						TraceDirectionType(nullptr),
 						TraceDistance(nullptr)
 					{
 					}
 
-					~FTraceEmu();
+					~FTraceEmu(){}
 
 				// ILaunch
 				#pragma region
@@ -92,6 +100,16 @@ namespace NCsWeapon
 						return *TraceMethod;
 					}
 
+					FORCEINLINE const ETraceStart& GetTraceStartType() const
+					{
+						return *TraceStartType;
+					}
+
+					FORCEINLINE const ETraceDirection& GetTraceDirectionType() const
+					{
+						return *TraceDirectionType;
+					}
+
 					FORCEINLINE const float& GetTraceDistance() const
 					{
 						return *TraceDistance;
@@ -109,6 +127,16 @@ namespace NCsWeapon
 					FORCEINLINE void SetTraceMethod(ECsTraceMethod* Value)
 					{
 						TraceMethod = Value;
+					}
+
+					FORCEINLINE void SetTraceStartType(ECsProjectileWeaponLaunchTraceStart* Value)
+					{
+						TraceStartType = (ETraceStart*)Value;
+					}
+
+					FORCEINLINE void SetTraceDirectionType(ETraceDirection* Value)
+					{
+						TraceDirectionType = Value;
 					}
 
 					FORCEINLINE void SetTraceDistance(float* Value)

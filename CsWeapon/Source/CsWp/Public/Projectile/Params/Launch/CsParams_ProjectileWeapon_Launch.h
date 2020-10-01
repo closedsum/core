@@ -15,13 +15,17 @@ namespace NCsWeapon
 			// Location
 			#pragma region
 
-				enum class ELocation
+				/**
+				* Describes the different methods to get the Location from which a projectile of type:
+				* ICsProjectile will be launched from a weapon of type: ICsProjectileWeapon.
+				*/
+				enum class ELocation : uint8
 				{
 					/** Owner's Location. If the Owner is of type: AActor, then it will
-						GetActorLocation(). */
+						be GetActorLocation(). */
 					Owner,
 					/** If there is a SkeletalMesh that acts as the root object for the 
-						Weapon, use the Bone / Socket location. */
+						Weapon, use the Bone / Socket location. */ 
 					Bone,
 					Custom
 				};
@@ -31,15 +35,22 @@ namespace NCsWeapon
 			// Direction
 			#pragma region
 
-				enum class EDirection
+				/**
+				* Describes the different methods to get the Direction from which a projectile of type:
+				* ICsProjectile will be launched from a weapon of type: ICsProjectileWeapon.
+				*/
+				enum class EDirection : uint8
 				{
 					Owner,
+					/** Owner's Rotation. If the Owner is of type: AActor, then it will
+						be GetActorRotation(). */
 					Camera,
-					/** */
+					/** If there is a SkeletalMesh that acts as the root object for the Weapon, 
+						use the Bone / Socket's rotation. */
 					Bone,
-					/** A trace from the camera (center of the screen) is used to determine
-						the direction */
-					CameraTrace,
+					/** A trace is used to determine the direction. The start and end points of the 
+						trace are determined by other parameters. */
+					Trace,
 					Custom
 				};
 				
@@ -57,8 +68,12 @@ namespace NCsWeapon
 
 					virtual ~ILaunch() {}
 
+					/**
+					*/
 					virtual const ELocation& GetLocationType() const = 0;
 
+					/**
+					*/
 					virtual const EDirection& GetDirectionType() const = 0;
 				};
 			}

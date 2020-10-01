@@ -2,4 +2,4 @@
 #include "Managers/Damage/Range/CsDamageRange.h"
 #include "CsCore.h"
 
-const FName ICsDamageRange::Name = FName("ICsDamageRange");
+const FName NCsDamage::NRange::IRange::Name = FName("NCsDamage::NRange::IRange");

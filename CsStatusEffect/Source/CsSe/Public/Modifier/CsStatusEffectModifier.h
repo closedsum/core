@@ -2,16 +2,22 @@
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
 
-/**
-* Interface to describe modifying a status effect
-*/
-struct CSSE_API ICsStatusEffectModifier : public ICsGetInterfaceMap
+namespace NCsStatusEffect
 {
-public:
+	namespace NModifier
+	{
+		/**
+		* Interface to describe modifying a status effect
+		*/
+		struct CSSE_API IModifier : public ICsGetInterfaceMap
+		{
+		public:
 
-	static const FName Name;
+			static const FName Name;
 
-public:
+		public:
 
-	virtual ~ICsStatusEffectModifier() {}
-};
+			virtual ~IModifier() {}
+		};
+	}
+}

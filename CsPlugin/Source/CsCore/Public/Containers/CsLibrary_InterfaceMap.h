@@ -161,6 +161,51 @@ public:
 	}
 
 	/**
+	* Perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks.
+	* DerivedType is NOT abstract.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
+	*
+	* @param Context	The calling context
+	* @param Interface	Interface that implements the interface: InterfaceType.
+	* return			Interface casted to DerivedType (static_cast<DerivedType*>(Interface))
+	*/
+	template<typename DerivedType>
+	FORCEINLINE static const DerivedType* PureStaticCastChecked(const FString& Context, const InterfaceType* Interface)
+	{
+		return NCsInterfaceMap::PureStaticCastChecked<DerivedType, InterfaceType>(Context, Interface);
+	}
+
+	/**
+	* Safely perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks.
+	* DerivedType is NOT abstract.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
+	*
+	* @param Context	The calling context
+	* @param Interface	Interface that implements the interface: InterfaceType.
+	* return			Interface casted to DerivedType (static_cast<DerivedType*>(Interface))
+	*/
+	template<typename DerivedType>
+	FORCEINLINE static DerivedType* SafePureStaticCastChecked(const FString& Context, InterfaceType* Interface)
+	{
+		return NCsInterfaceMap::SafePureStaticCastChecked<DerivedType, InterfaceType>(Context, Interface);
+	}
+
+	/**
+	* Safely perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks.
+	* DerivedType is NOT abstract.
+	* Does NOT check if the InterfaceMap has "unique based" interfaces.
+	*
+	* @param Context	The calling context
+	* @param Interface	Interface that implements the interface: InterfaceType.
+	* return			Interface casted to DerivedType (static_cast<DerivedType*>(Interface))
+	*/
+	template<typename DerivedType>
+	FORCEINLINE static const DerivedType* SafePureStaticCastChecked(const FString& Context, const InterfaceType* Interface)
+	{
+		return NCsInterfaceMap::SafePureStaticCastChecked<DerivedType, InterfaceType>(Context, Interface);
+	}
+
+	/**
 	* Perform the operation static_cast<OtherInterfaceType*>("Interface associated with InterfaceType") with checks.
 	* OtherInterfaceType IS abstract.
 	*

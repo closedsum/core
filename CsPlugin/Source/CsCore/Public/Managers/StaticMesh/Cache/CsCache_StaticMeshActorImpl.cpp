@@ -11,165 +11,154 @@
 // Component
 //#include "Components/SceneComponent.h"
 
-const FName FCsCache_StaticMeshActorImpl::Name = FName("FCsCache_StaticMeshActorImpl");
+const FName NCsStaticMeshActor::NCache::FImpl::Name = FName("NCsStaticMeshActor::NCache::FImpl");
 
-// Cached
-#pragma region
-
-namespace NCsCacheStaticMeshActorImplCached
+namespace NCsStaticMeshActor
 {
-	namespace Str
+	namespace NCache
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsCache_StaticMeshActorImpl, Allocate);
-	}
-}
-
-#pragma endregion Cached
-
-FCsCache_StaticMeshActorImpl::FCsCache_StaticMeshActorImpl() :
-	InterfaceMap(nullptr),
-	// NCsPooledObject::NCache::ICache
-	Index(INDEX_NONE),
-	bAllocated(false),
-	bQueueDeallocate(false),
-	State(ECsPooledObjectState::Inactive),
-	UpdateType(ECsPooledObjectUpdate::Manager),
-	Instigator(),
-	Owner(),
-	Parent(),
-	WarmUpTime(0.0f),
-	LifeTime(0.0f),
-	StartTime(),
-	ElapsedTime()
-	// ICsCache_StaticMeshActor
-{
-	InterfaceMap = new FCsInterfaceMap();
-
-	InterfaceMap->SetRootName(FCsCache_StaticMeshActorImpl::Name);
-
-	InterfaceMap->Add<NCsPooledObject::NCache::ICache>(static_cast<NCsPooledObject::NCache::ICache*>(this));
-	InterfaceMap->Add<ICsCache_StaticMeshActor>(static_cast<ICsCache_StaticMeshActor*>(this));
-}
-
-FCsCache_StaticMeshActorImpl::~FCsCache_StaticMeshActorImpl()
-{
-	delete InterfaceMap;
-}
-
-// NCsPooledObject::NCache::ICache
-#pragma region
-
-void FCsCache_StaticMeshActorImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
-{
-	using namespace NCsCacheStaticMeshActorImplCached;
-
-	// NCsPooledObject::NCache::ICache
-	bAllocated = true;
-	State	   = ECsPooledObjectState::Active;
-	Instigator = Payload->GetInstigator();
-	Owner	   = Payload->GetOwner();
-	Parent	   = Payload->GetParent();
-	StartTime  = Payload->GetTime();
-
-	// ICsCache_StaticMeshActor
-	/*
-	ICsSoundPooledPayload* FXPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsSoundPooledPayload>(Str::Allocate, Payload);
-
-	DeallocateMethod = FXPayload->GetDeallocateMethod();
-	LifeTime		 = FXPayload->GetLifeTime();
-
-	if (USoundBase* Sound = FXPayload->GetSound())
-	{
-		if (DeallocateMethod == ECsSoundDeallocateMethod::Complete)
+		namespace NImplCached
 		{
-			LifeTime = Sound->GetDuration();
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStaticMeshActor::NCache::FImpl, Allocate);
+			}
 		}
-	}
-	*/
-}
 
-void FCsCache_StaticMeshActorImpl::Deallocate()
-{
-	Reset();
-}
-
-void FCsCache_StaticMeshActorImpl::QueueDeallocate()
-{
-	//bQueueDeallocate = true;
-	// Deactivate Audio Component
-	//checkf(AudioComponent, TEXT("FCsSoundPooledCacheImpl::QueueDeallocate: AudioComponent is NULL."));
-
-	/*
-	AudioComponent->Deactivate();
-
-	// LifeTime
-	if (DeallocateMethod == ECsSoundDeallocateMethod::LifeTime)
-	{
-		// Reset ElapsedTime
-		ElapsedTime.Reset();
-		// Set LifeTime
-		LifeTime = QueuedLifeTime;
-	}
-	*/
-}
-
-bool FCsCache_StaticMeshActorImpl::ShouldDeallocate() const
-{
-	//if (bQueueDeallocate)
-	{
-		// LifeTime, let HasLifeTimeExpired handle deallocation
-		//if (DeallocateMethod == ECsSoundDeallocateMethod::LifeTime)
+		FImpl::FImpl() :
+			InterfaceMap(nullptr),
+			// NCsPooledObject::NCache::ICache
+			Index(INDEX_NONE),
+			bAllocated(false),
+			bQueueDeallocate(false),
+			State(ECsPooledObjectState::Inactive),
+			UpdateType(ECsPooledObjectUpdate::Manager),
+			Instigator(),
+			Owner(),
+			Parent(),
+			WarmUpTime(0.0f),
+			LifeTime(0.0f),
+			StartTime(),
+			ElapsedTime()
+			// NCsStaticMeshActor::NCache::ICache
 		{
+			InterfaceMap = new FCsInterfaceMap();
+
+			InterfaceMap->SetRootName(FImpl::Name);
+
+			InterfaceMap->Add<NCsPooledObject::NCache::ICache>(static_cast<NCsPooledObject::NCache::ICache*>(this));
+			InterfaceMap->Add<NCsStaticMeshActor::NCache::ICache>(static_cast<NCsStaticMeshActor::NCache::ICache*>(this));
+		}
+
+		FImpl::~FImpl()
+		{
+			delete InterfaceMap;
+		}
+
+		// NCsPooledObject::NCache::ICache
+		#pragma region
+
+		void FImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
+		{
+			using namespace NImplCached;
+
+			// NCsPooledObject::NCache::ICache
+			bAllocated = true;
+			State	   = ECsPooledObjectState::Active;
+			Instigator = Payload->GetInstigator();
+			Owner	   = Payload->GetOwner();
+			Parent	   = Payload->GetParent();
+			StartTime  = Payload->GetTime();
+
+			// NCsStaticMeshActor::NCache::ICache
+			/*
+			*/
+		}
+
+		void FImpl::Deallocate()
+		{
+			Reset();
+		}
+
+		void FImpl::QueueDeallocate()
+		{
+			//bQueueDeallocate = true;
+			// Deactivate Audio Component
+			//checkf(AudioComponent, TEXT("NCsStaticMeshActor::NCache::FImpl::QueueDeallocate: AudioComponent is NULL."));
+
+			/*
+			AudioComponent->Deactivate();
+
+			// LifeTime
+			if (DeallocateMethod == ECsSoundDeallocateMethod::LifeTime)
+			{
+				// Reset ElapsedTime
+				ElapsedTime.Reset();
+				// Set LifeTime
+				LifeTime = QueuedLifeTime;
+			}
+			*/
+		}
+
+		bool FImpl::ShouldDeallocate() const
+		{
+			//if (bQueueDeallocate)
+			{
+				// LifeTime, let HasLifeTimeExpired handle deallocation
+				//if (DeallocateMethod == ECsSoundDeallocateMethod::LifeTime)
+				{
+					return false;
+				}
+				// Complete
+				//if (DeallocateMethod == ECsSoundDeallocateMethod::Complete)
+				{ 
+					/*
+					checkf(SoundComponent, TEXT("NCsStaticMeshActor::NCache::FImpl::ShouldDeallocate: SoundComponent is NULL."));
+
+					FNiagaraSystemInstance* SystemInstance = FXComponent->GetSystemInstance();
+
+					checkf(SystemInstance, TEXT("NCsStaticMeshActor::NCache::FImpl::ShouldDeallocate: SystemInstance is NULL on FXComponent: %s."), *(FXComponent->GetName()));
+
+					const ENiagaraExecutionState ExecutionState = SystemInstance->GetActualExecutionState();
+
+					return ExecutionState == ENiagaraExecutionState::Inactive ||
+						   ExecutionState == ENiagaraExecutionState::Complete ||
+						   ExecutionState == ENiagaraExecutionState::Disabled;
+						   */
+				}
+			}
 			return false;
 		}
-		// Complete
-		//if (DeallocateMethod == ECsSoundDeallocateMethod::Complete)
-		{ 
-			/*
-			checkf(SoundComponent, TEXT("FCsSoundPooledCacheImpl::ShouldDeallocate: SoundComponent is NULL."));
 
-			FNiagaraSystemInstance* SystemInstance = FXComponent->GetSystemInstance();
+		bool FImpl::HasLifeTimeExpired()
+		{
+			return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
+		}
 
-			checkf(SystemInstance, TEXT("FCsSoundPooledCacheImpl::ShouldDeallocate: SystemInstance is NULL on FXComponent: %s."), *(FXComponent->GetName()));
+		void FImpl::Reset()
+		{
+			// NCsPooledObject::NCache::ICache
+			bAllocated = false;
+			bQueueDeallocate = false;
+			State = ECsPooledObjectState::Inactive;
+			Instigator.Reset();
+			Owner.Reset();
+			Parent.Reset();
+			WarmUpTime = 0.0f;
+			LifeTime = 0.0f;
+			StartTime.Reset();
+			ElapsedTime.Reset();
+			// NCsStaticMeshActor::NCache::ICache
+			//AudioComponent = nullptr;
+			//DeallocateMethod = ECsSoundDeallocateMethod::Complete;
+			//QueuedLifeTime = 0.0f;
+		}
 
-			const ENiagaraExecutionState ExecutionState = SystemInstance->GetActualExecutionState();
+		#pragma endregion NCsPooledObject::NCache::ICache
 
-			return ExecutionState == ENiagaraExecutionState::Inactive ||
-				   ExecutionState == ENiagaraExecutionState::Complete ||
-				   ExecutionState == ENiagaraExecutionState::Disabled;
-				   */
+		void FImpl::Update(const FCsDeltaTime& DeltaTime)
+		{
+			ElapsedTime += DeltaTime;
 		}
 	}
-	return false;
-}
-
-bool FCsCache_StaticMeshActorImpl::HasLifeTimeExpired()
-{
-	return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
-}
-
-void FCsCache_StaticMeshActorImpl::Reset()
-{
-	// NCsPooledObject::NCache::ICache
-	bAllocated = false;
-	bQueueDeallocate = false;
-	State = ECsPooledObjectState::Inactive;
-	Instigator.Reset();
-	Owner.Reset();
-	Parent.Reset();
-	WarmUpTime = 0.0f;
-	LifeTime = 0.0f;
-	StartTime.Reset();
-	ElapsedTime.Reset();
-	// ICsCache_StaticMeshActor
-	//AudioComponent = nullptr;
-	//DeallocateMethod = ECsSoundDeallocateMethod::Complete;
-	//QueuedLifeTime = 0.0f;
-}
-
-#pragma endregion NCsPooledObject::NCache::ICache
-
-void FCsCache_StaticMeshActorImpl::Update(const FCsDeltaTime& DeltaTime)
-{
-	ElapsedTime += DeltaTime;
 }

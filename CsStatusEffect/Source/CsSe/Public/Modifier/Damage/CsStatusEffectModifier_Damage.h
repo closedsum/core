@@ -2,17 +2,26 @@
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
 
-/**
-* Interface to describe modifying a damage object (ICsDamageValue or ICsDamageRange)
-*  from a status effect (ICsData_StatusEffect_Damage)
-*/
-struct CSSE_API ICsStatusEffectModifier_Damage : public ICsGetInterfaceMap
+namespace NCsStatusEffect
 {
-public:
+	namespace NModifier
+	{
+		namespace NDamage
+		{
+			/**
+			* Interface to describe modifying a damage object (NCsDamage::NValue::IValue or NCsDamage::NRange::IRange)
+			*  from a status effect (ICsData_StatusEffect_Damage)
+			*/
+			struct CSSE_API IDamage : public ICsGetInterfaceMap
+			{
+			public:
 
-	static const FName Name;
+				static const FName Name;
 
-public:
+			public:
 
-	virtual ~ICsStatusEffectModifier_Damage() {}
-};
+				virtual ~IDamage() {}
+			};
+		}
+	}
+}

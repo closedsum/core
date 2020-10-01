@@ -2,4 +2,4 @@
 #include "Event/Damage/CsStatusEffectEvent_Damage.h"
 #include "CsSe.h"
 
-const FName ICsStatusEffectEvent_Damage::Name = FName("ICsStatusEffectEvent_Damage");
+const FName NCsStatusEffect::NEvent::NDamage::IDamage::Name = FName("NCsStatusEffect::NEvent::NDamage::IDamage");

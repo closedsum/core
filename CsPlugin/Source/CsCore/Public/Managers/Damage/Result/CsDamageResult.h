@@ -4,65 +4,71 @@
 #include "Managers/Damage/CsTypes_Damage.h"
 #pragma once
 
-/**
-*
-*/
-struct CSCORE_API ICsDamageResult : virtual public ICsGetInterfaceMap
+namespace NCsDamage
 {
-public:
+	namespace NResult
+	{
+		/**
+		*
+		*/
+		struct CSCORE_API IResult : virtual public ICsGetInterfaceMap
+		{
+		public:
 
-	static const FName Name;
+			static const FName Name;
 
-public:
+		public:
 
-	virtual ~ICsDamageResult() {}
+			virtual ~IResult() {}
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const float& GetDamage() const = 0;
+			/**
+			*
+			*
+			* return
+			*/
+			virtual const float& GetDamage() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual UObject* GetInstigator() const = 0;
+			/**
+			*
+			*
+			* return
+			*/
+			virtual UObject* GetInstigator() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual UObject* GetCauser() const = 0;
+			/**
+			*
+			*
+			* return
+			*/
+			virtual UObject* GetCauser() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual UObject* GetVictim() const = 0;
+			/**
+			*
+			*
+			* return
+			*/
+			virtual UObject* GetVictim() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const FECsDamageType& GetDamageType() const = 0;
+			/**
+			*
+			*
+			* return
+			*/
+			virtual const FECsDamageType& GetDamageType() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const FECsHitType& GetHitType() const = 0;
+			/**
+			*
+			*
+			* return
+			*/
+			virtual const FECsHitType& GetHitType() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const FHitResult& GetHitResult() const = 0;
-};
+			/**
+			*
+			*
+			* return
+			*/
+			virtual const FHitResult& GetHitResult() const = 0;
+		};
+	}
+}

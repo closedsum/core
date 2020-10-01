@@ -61,7 +61,7 @@ namespace NCsStatusEffectTransferFrequency
 
 namespace NCsStatusEffectEvent
 {
-	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(Default, "ICsStatusEffectEvent");
+	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(Default, "NCsStatusEffect::NEvent::IEvent");
 	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(Damage, "ICsStatusEffectDamageEvent");
 }
 

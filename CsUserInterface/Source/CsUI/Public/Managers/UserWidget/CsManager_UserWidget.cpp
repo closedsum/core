@@ -622,12 +622,12 @@ void UCsManager_UserWidget::ConstructPayloads(const FECsUserWidgetPooled& Type, 
 	Internal.ConstructPayloads(Type, Size);
 }
 
-ICsPayload_UserWidget* UCsManager_UserWidget::ConstructPayload(const FECsUserWidgetPooled& Type)
+NCsUserWidget::NPayload::IPayload* UCsManager_UserWidget::ConstructPayload(const FECsUserWidgetPooled& Type)
 {
-	return new FCsPayload_UserWidgetImpl();
+	return new NCsUserWidget::NPayload::FImpl();
 }
 
-ICsPayload_UserWidget* UCsManager_UserWidget::AllocatePayload(const FECsUserWidgetPooled& Type)
+NCsUserWidget::NPayload::IPayload* UCsManager_UserWidget::AllocatePayload(const FECsUserWidgetPooled& Type)
 {
 	return Internal.AllocatePayload(Type);
 }
@@ -637,7 +637,7 @@ ICsPayload_UserWidget* UCsManager_UserWidget::AllocatePayload(const FECsUserWidg
 	// Spawn
 #pragma region
 
-const FCsUserWidgetPooled* UCsManager_UserWidget::Spawn(const FECsUserWidgetPooled& Type, ICsPayload_UserWidget* Payload)
+const FCsUserWidgetPooled* UCsManager_UserWidget::Spawn(const FECsUserWidgetPooled& Type, NCsUserWidget::NPayload::IPayload* Payload)
 {
 	return Internal.Spawn(Type, Payload);
 }

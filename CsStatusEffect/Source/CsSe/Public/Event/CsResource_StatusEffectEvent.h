@@ -3,10 +3,10 @@
 #include "Event/CsStatusEffectEvent.h"
 #pragma once
 
-struct CSSE_API FCsResource_StatusEffectEvent : public TCsResourceContainer<ICsStatusEffectEvent>
+struct CSSE_API FCsResource_StatusEffectEvent : public TCsResourceContainer<NCsStatusEffect::NEvent::IEvent>
 {
 };
 
-struct CSSE_API FCsManager_StatusEffectEvent : public TCsManager_ResourcePointerType_Fixed<ICsStatusEffectEvent, FCsResource_StatusEffectEvent, 0>
+struct CSSE_API FCsManager_StatusEffectEvent : public TCsManager_ResourcePointerType_Fixed<NCsStatusEffect::NEvent::IEvent, FCsResource_StatusEffectEvent, 0>
 {
 };

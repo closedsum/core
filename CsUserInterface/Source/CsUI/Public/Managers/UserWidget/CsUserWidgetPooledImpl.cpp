@@ -112,7 +112,9 @@ void UCsUserWidgetPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 	const FString& Context = Str::Update;
 
-	FCsCache_UserWidgetImpl* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsCache_UserWidgetImpl>(Context, Cache);
+	typedef NCsUserWidget::NCache::FImpl CacheImplType;
+
+	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Update(DeltaTime);
 }
@@ -128,11 +130,15 @@ void UCsUserWidgetPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payl
 
 	const FString& Context = Str::Allocate;
 
-	FCsCache_UserWidgetImpl* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsCache_UserWidgetImpl>(Context, Cache);
+	typedef NCsUserWidget::NCache::FImpl CacheImplType;
+
+	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Allocate(Payload);
 
-	ICsPayload_UserWidget* UserWidgetPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsPayload_UserWidget>(Context, Payload);
+	typedef NCsUserWidget::NPayload::IPayload PayloadInterfaceType;
+
+	PayloadInterfaceType* UserWidgetPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<PayloadInterfaceType>(Context, Payload);
 
 	UserWidget->SetVisibility(UserWidgetPayload->GetVisibility());
 	UserWidget->SetIsEnabled(true);
@@ -151,5 +157,5 @@ void UCsUserWidgetPooledImpl::Deallocate()
 
 void UCsUserWidgetPooledImpl::ConstructCache()
 {
-	Cache = new FCsCache_UserWidgetImpl();
+	Cache = new NCsUserWidget::NCache::FImpl();
 }

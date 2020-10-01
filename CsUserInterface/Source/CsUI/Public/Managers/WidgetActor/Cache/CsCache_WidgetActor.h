@@ -5,18 +5,24 @@
 
 class UCsWidgetComponent;
 
-/**
-* Cache associated with an object that implements the interface: ICsWidgetActor
-*  The Manager for Widget Actor primarily interacts with the Cache object in terms
-*  of allocation and deallocation.
-*/
-struct CSUI_API ICsCache_WidgetActor : virtual public ICsGetInterfaceMap
+namespace NCsWidgetActor
 {
-public:
+	namespace NCache
+	{
+		/**
+		* Cache associated with an object that implements the interface: ICsWidgetActor
+		*  The Manager for Widget Actor primarily interacts with the Cache object in terms
+		*  of allocation and deallocation.
+		*/
+		struct CSUI_API ICache : virtual public ICsGetInterfaceMap
+		{
+		public:
 
-	static const FName Name;
+			static const FName Name;
 
-public:
+		public:
 
-	virtual ~ICsCache_WidgetActor() {}
-};
+			virtual ~ICache() {}
+		};
+	}
+}

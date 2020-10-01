@@ -11,134 +11,135 @@
 // Component
 #include "Components/CsWidgetComponent.h"
 
-const FName FCsCache_WidgetActorImpl::Name = FName("FCsCache_WidgetActorImpl");
+const FName NCsWidgetActor::NCache::FImpl::Name = FName("NCsWidgetActor::NCache::FImpl");
 
-// Cached
-#pragma region
-
-namespace NCsCacheWidgetActorImplCached
+namespace NCsWidgetActor
 {
-	namespace Str
+	namespace NCache
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsCache_WidgetActorImpl, Allocate);
-	}
-}
-
-#pragma endregion Cached
-
-FCsCache_WidgetActorImpl::FCsCache_WidgetActorImpl() :
-	InterfaceMap(nullptr),
-	Index(INDEX_NONE),
-	bAllocated(false),
-	bQueueDeallocate(false),
-	State(ECsPooledObjectState::Inactive),
-	UpdateType(ECsPooledObjectUpdate::Manager),
-	Instigator(),
-	Owner(),
-	Parent(),
-	WarmUpTime(0.0f),
-	LifeTime(0.0f),
-	StartTime(),
-	ElapsedTime(),
-	DeallocateMethod(ECsWidgetActorDeallocateMethod::Complete),
-	QueuedLifeTime(0.0f)
-{
-	InterfaceMap = new FCsInterfaceMap();
-
-	InterfaceMap->SetRootName(FCsCache_WidgetActorImpl::Name);
-
-	InterfaceMap->Add<NCsPooledObject::NCache::ICache>(static_cast<NCsPooledObject::NCache::ICache*>(this));
-	InterfaceMap->Add<ICsCache_WidgetActor>(static_cast<ICsCache_WidgetActor*>(this));
-}
-
-FCsCache_WidgetActorImpl::~FCsCache_WidgetActorImpl()
-{
-	delete InterfaceMap;
-}
-
-// NCsPooledObject::NCache::ICache
-#pragma region
-
-void FCsCache_WidgetActorImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
-{
-	using namespace NCsCacheWidgetActorImplCached;
-
-	const FString& Context = Str::Allocate;
-
-	// NCsPooledObject::NCache::ICache
-	bAllocated = true;
-	State	   = ECsPooledObjectState::Active;
-	Instigator = Payload->GetInstigator();
-	Owner	   = Payload->GetOwner();
-	Parent	   = Payload->GetParent();
-	StartTime  = Payload->GetTime();
-
-	// NCsWidgetActor::NPayload::IPayload
-	NCsWidgetActor::NPayload::IPayload* WidgetPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<NCsWidgetActor::NPayload::IPayload>(Context, Payload);
-
-	DeallocateMethod = WidgetPayload->GetDeallocateMethod();
-	QueuedLifeTime   = WidgetPayload->GetLifeTime();
-}
-
-void FCsCache_WidgetActorImpl::Deallocate()
-{
-	Reset();
-}
-
-void FCsCache_WidgetActorImpl::QueueDeallocate()
-{
-	bQueueDeallocate = true;
-
-	// LifeTime
-	if (DeallocateMethod == ECsWidgetActorDeallocateMethod::LifeTime)
-	{
-		// Reset ElapsedTime
-		ElapsedTime.Reset();
-		// Set LifeTime
-		LifeTime = QueuedLifeTime;
-	}
-}
-
-bool FCsCache_WidgetActorImpl::ShouldDeallocate() const
-{
-	if (bQueueDeallocate)
-	{
-		// LifeTime, let HasLifeTimeExpired handle deallocation
-		if (DeallocateMethod == ECsWidgetActorDeallocateMethod::LifeTime)
+		namespace NImplCached
 		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWidgetActor::NCache::FImpl, Allocate);
+			}
+		}
+
+		FImpl::FImpl() :
+			InterfaceMap(nullptr),
+			Index(INDEX_NONE),
+			bAllocated(false),
+			bQueueDeallocate(false),
+			State(ECsPooledObjectState::Inactive),
+			UpdateType(ECsPooledObjectUpdate::Manager),
+			Instigator(),
+			Owner(),
+			Parent(),
+			WarmUpTime(0.0f),
+			LifeTime(0.0f),
+			StartTime(),
+			ElapsedTime(),
+			DeallocateMethod(ECsWidgetActorDeallocateMethod::Complete),
+			QueuedLifeTime(0.0f)
+		{
+			InterfaceMap = new FCsInterfaceMap();
+
+			InterfaceMap->SetRootName(FImpl::Name);
+
+			InterfaceMap->Add<NCsPooledObject::NCache::ICache>(static_cast<NCsPooledObject::NCache::ICache*>(this));
+			InterfaceMap->Add<NCsWidgetActor::NCache::ICache>(static_cast<NCsWidgetActor::NCache::ICache*>(this));
+		}
+
+		FImpl::~FImpl()
+		{
+			delete InterfaceMap;
+		}
+
+		// NCsPooledObject::NCache::ICache
+		#pragma region
+
+		void FImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
+		{
+			using namespace NImplCached;
+
+			const FString& Context = Str::Allocate;
+
+			// NCsPooledObject::NCache::ICache
+			bAllocated = true;
+			State	   = ECsPooledObjectState::Active;
+			Instigator = Payload->GetInstigator();
+			Owner	   = Payload->GetOwner();
+			Parent	   = Payload->GetParent();
+			StartTime  = Payload->GetTime();
+
+			// NCsWidgetActor::NPayload::IPayload
+			NCsWidgetActor::NPayload::IPayload* WidgetPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<NCsWidgetActor::NPayload::IPayload>(Context, Payload);
+
+			DeallocateMethod = WidgetPayload->GetDeallocateMethod();
+			QueuedLifeTime   = WidgetPayload->GetLifeTime();
+		}
+
+		void FImpl::Deallocate()
+		{
+			Reset();
+		}
+
+		void FImpl::QueueDeallocate()
+		{
+			bQueueDeallocate = true;
+
+			// LifeTime
+			if (DeallocateMethod == ECsWidgetActorDeallocateMethod::LifeTime)
+			{
+				// Reset ElapsedTime
+				ElapsedTime.Reset();
+				// Set LifeTime
+				LifeTime = QueuedLifeTime;
+			}
+		}
+
+		bool FImpl::ShouldDeallocate() const
+		{
+			if (bQueueDeallocate)
+			{
+				// LifeTime, let HasLifeTimeExpired handle deallocation
+				if (DeallocateMethod == ECsWidgetActorDeallocateMethod::LifeTime)
+				{
+					return false;
+				}
+				return bQueueDeallocate;
+			}
 			return false;
 		}
-		return bQueueDeallocate;
+
+		bool FImpl::HasLifeTimeExpired()
+		{
+			return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
+		}
+
+		void FImpl::Reset()
+		{
+			// NCsPooledObject::NCache::ICache
+			bAllocated = false;
+			bQueueDeallocate = false;
+			State = ECsPooledObjectState::Inactive;
+			Instigator.Reset();
+			Owner.Reset();
+			Parent.Reset();
+			WarmUpTime = 0.0f;
+			LifeTime = 0.0f;
+			StartTime.Reset();
+			ElapsedTime.Reset();
+			// ICsCache_WidgetActor
+			DeallocateMethod = ECsWidgetActorDeallocateMethod::ECsWidgetActorDeallocateMethod_MAX;
+			QueuedLifeTime = 0.0f;
+		}
+
+		#pragma endregion NCsPooledObject::NCache::ICache
+
+		void FImpl::Update(const FCsDeltaTime& DeltaTime)
+		{
+			ElapsedTime += DeltaTime;
+		}
 	}
-	return false;
-}
-
-bool FCsCache_WidgetActorImpl::HasLifeTimeExpired()
-{
-	return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
-}
-
-void FCsCache_WidgetActorImpl::Reset()
-{
-	// NCsPooledObject::NCache::ICache
-	bAllocated = false;
-	bQueueDeallocate = false;
-	State = ECsPooledObjectState::Inactive;
-	Instigator.Reset();
-	Owner.Reset();
-	Parent.Reset();
-	WarmUpTime = 0.0f;
-	LifeTime = 0.0f;
-	StartTime.Reset();
-	ElapsedTime.Reset();
-	// ICsCache_WidgetActor
-	DeallocateMethod = ECsWidgetActorDeallocateMethod::ECsWidgetActorDeallocateMethod_MAX;
-	QueuedLifeTime = 0.0f;
-}
-
-#pragma endregion NCsPooledObject::NCache::ICache
-
-void FCsCache_WidgetActorImpl::Update(const FCsDeltaTime& DeltaTime)
-{
-	ElapsedTime += DeltaTime;
 }

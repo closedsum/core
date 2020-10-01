@@ -2,4 +2,4 @@
 #include "Managers/Damage/Value/Point/CsDamageValuePoint.h"
 #include "CsCore.h"
 
-const FName ICsDamageValuePoint::Name = FName("ICsDamageValuePoint");
+const FName NCsDamage::NValue::NPoint::IPoint::Name = FName("NCsDamage::NValue::NPoint::IPoint");

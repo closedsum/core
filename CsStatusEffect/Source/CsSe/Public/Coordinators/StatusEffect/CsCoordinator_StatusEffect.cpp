@@ -250,7 +250,9 @@ void UCsCoordinator_StatusEffect::Initialize()
 
 		for (int32 I = 0; I < PoolSize; ++I)
 		{
-			ICsStatusEffectEvent* IEvent = ConstructEvent(Event);
+			typedef NCsStatusEffect::NEvent::IEvent EventInterfaceType;
+
+			EventInterfaceType* IEvent = ConstructEvent(Event);
 
 			checkf(IEvent, TEXT("UCsCoordinator_StatusEffect::Initialize: Failed to construct event for type: %s."), Event.ToChar());
 
@@ -345,14 +347,14 @@ void UCsCoordinator_StatusEffect::Remove(ICsReceiveStatusEffect* Object)
 // Event
 #pragma region
 
-ICsStatusEffectEvent* UCsCoordinator_StatusEffect::ConstructEvent(const FECsStatusEffectEvent& Type)
+NCsStatusEffect::NEvent::IEvent* UCsCoordinator_StatusEffect::ConstructEvent(const FECsStatusEffectEvent& Type)
 {
 	// Default
 	if (Type == NCsStatusEffectEvent::Default)
-		return new FCsStatusEffectEventImpl();
+		return new NCsStatusEffect::NEvent::FImpl();
 	// Damage
 	if (Type == NCsStatusEffectEvent::Damage)
-		return new FCsStatusEffectEvent_DamageImpl();
+		return new NCsStatusEffect::NEvent::NDamage::FImpl();
 	return nullptr;
 }
 
@@ -361,12 +363,12 @@ FCsResource_StatusEffectEvent* UCsCoordinator_StatusEffect::AllocateEvent(const 
 	return Manager_Events[Type.GetValue()].Allocate();
 }
 
-const FECsStatusEffectEvent& UCsCoordinator_StatusEffect::GetEventType(const FString& Context, const ICsStatusEffectEvent* Event)
+const FECsStatusEffectEvent& UCsCoordinator_StatusEffect::GetEventType(const FString& Context, const NCsStatusEffect::NEvent::IEvent* Event)
 {
 	checkf(Event, TEXT("%s: Event is NULL."), *Context);
 
 	// Damage
-	if (FCsLibrary_StatusEffectEvent::GetSafeInterfaceChecked<ICsStatusEffectEvent_Damage>(Context, Event))
+	if (FCsLibrary_StatusEffectEvent::GetSafeInterfaceChecked<NCsStatusEffect::NEvent::NDamage::IDamage>(Context, Event))
 		return NCsStatusEffectEvent::Damage;
 	return NCsStatusEffectEvent::Default;
 }
@@ -389,19 +391,19 @@ void UCsCoordinator_StatusEffect::DeallocateEvent(const FString& Context, FCsRes
 	Manager_Events[Type.GetValue()].Deallocate(Event);
 }
 
-bool UCsCoordinator_StatusEffect::CopyEvent(const FString& Context, const ICsStatusEffectEvent* From, ICsStatusEffectEvent* To)
+bool UCsCoordinator_StatusEffect::CopyEvent(const FString& Context, const NCsStatusEffect::NEvent::IEvent* From, NCsStatusEffect::NEvent::IEvent* To)
 {
 	return FCsLibrary_StatusEffectEvent::CopyChecked(Context, From, To);
 }
 
-FCsResource_StatusEffectEvent* UCsCoordinator_StatusEffect::CreateCopyOfEvent(const FString& Context, const ICsStatusEffectEvent* Event)
+FCsResource_StatusEffectEvent* UCsCoordinator_StatusEffect::CreateCopyOfEvent(const FString& Context, const NCsStatusEffect::NEvent::IEvent* Event)
 {
 	const FECsStatusEffectEvent& EventType = GetEventType(Context, Event);
 
 	checkf(EMCsStatusEffectEvent::Get().IsValidEnum(EventType), TEXT("%s: EventType: %s is NOT Valid."), EventType.ToChar());
 
 	FCsResource_StatusEffectEvent* Container = AllocateEvent(EventType);
-	ICsStatusEffectEvent* Copy				 = Container->Get();
+	NCsStatusEffect::NEvent::IEvent* Copy	 = Container->Get();
 
 	bool Success = CopyEvent(Context, Event, Copy);
 
@@ -415,7 +417,7 @@ FCsResource_StatusEffectEvent* UCsCoordinator_StatusEffect::CreateCopyOfEvent(co
 	return CreateCopyOfEvent(Context, Event->Get());
 }
 
-void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const ICsStatusEffectEvent* Event)
+void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const NCsStatusEffect::NEvent::IEvent* Event)
 {
 	using namespace NCsCoordinator_StatusEffectCached;
 
@@ -436,13 +438,13 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const ICsStatusEffect
 	if (TriggerParams.Type == ECsStatusEffectTriggerFrequency::Once &&
 		TransferParams.Type == ECsStatusEffectTransferFrequency::None)
 	{
-		// ICsStatusEffectEvent_Damage
-		if (const ICsStatusEffectEvent_Damage* SeDamageEvent = FCsLibrary_StatusEffectEvent::GetSafeInterfaceChecked<ICsStatusEffectEvent_Damage>(Context, Event))
+		// NCsStatusEffect::NEvent::NDamage::IDamage
+		if (const NCsStatusEffect::NEvent::NDamage::IDamage* SeDamageEvent = FCsLibrary_StatusEffectEvent::GetSafeInterfaceChecked<NCsStatusEffect::NEvent::NDamage::IDamage>(Context, Event))
 		{
 			// Get the DamageEvent
-			const ICsDamageEvent* DamageEvent = SeDamageEvent->GetDamageEvent();
+			const NCsDamage::NEvent::IEvent* DamageEvent = SeDamageEvent->GetDamageEvent();
 
-			checkf(DamageEvent, TEXT("%s: DamageEvent is NULL. No Damage Event found for Event implementing interface: ICsStatusEffectEvent_Damage."), *Context);
+			checkf(DamageEvent, TEXT("%s: DamageEvent is NULL. No Damage Event found for Event implementing interface: NCsStatusEffect::NEvent::NDamage::IDamage."), *Context);
 
 			UCsManager_Damage::Get(MyRoot)->ProcessDamageEvent(DamageEvent);
 		}
@@ -484,13 +486,13 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const ICsStatusEffect
 		FCsReceiveStatusEffect& Receiver			  = Local_Receivers[I];
 		FCsResource_StatusEffectEvent* EventContainer = Local_Events[I];
 
-		ICsStatusEffectEvent* Evt = EventContainer->Get();
+		NCsStatusEffect::NEvent::IEvent* Evt = EventContainer->Get();
 
 		if (Receiver.Implements_ICsGetManagerStatusEffect())
 		{
 			UCsManager_StatusEffect* Manager_StatusEffect = Receiver.GetManager_StatusEffect();
 
-			Manager_StatusEffect->ApplyStatusEffect(const_cast<ICsStatusEffectEvent*>(Event));
+			Manager_StatusEffect->ApplyStatusEffect(const_cast<NCsStatusEffect::NEvent::IEvent*>(Event));
 		}
 		else
 		{
@@ -523,7 +525,7 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEventContainer(const FCsRes
 
 	check(Manager_Event.IsValidChecked(Context, Event));
 
-	const ICsStatusEffectEvent* IEvent = Event->Get();
+	const NCsStatusEffect::NEvent::IEvent* IEvent = Event->Get();
 	// Process Event
 	ProcessStatusEffectEvent(IEvent);
 	// Deallocate Event when finished
@@ -536,7 +538,7 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEventContainer(const FCsRes
 #pragma region
 
 /*
-void UCsCoordinator_StatusEffect::LogEventPoint(const ICsDamageEvent* Event)
+void UCsCoordinator_StatusEffect::LogEventPoint(const NCsDamage::NEvent::IEvent* Event)
 {
 	ICsData_Damage* Data = Event->GetData();
 

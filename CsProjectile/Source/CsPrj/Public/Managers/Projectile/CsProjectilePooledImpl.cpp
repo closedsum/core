@@ -36,8 +36,8 @@
 #include "Cache/CsCache_ProjectilePooledImpl.h"
 #include "Payload/Damage/CsPayload_ProjectileModifierDamage.h"
 // FX
-#include "Managers/FX/Cache/CsFXPooledCacheImpl.h"
-#include "Managers/FX/Payload/CsFXPooledPayloadImpl.h"
+#include "Managers/FX/Cache/CsCache_FXImpl.h"
+#include "Managers/FX/Payload/CsPayload_FXImpl.h"
 // Damage
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
 #include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
@@ -393,7 +393,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 		// Get Manager
 		UCsManager_FX_Actor* Manager_FX_Actor = UCsManager_FX_Actor::Get(GetWorld()->GetGameState());
 		// Get Payload
-		FCsFXPooledPayloadImpl* FXPayload = Manager_FX_Actor->AllocatePayload<FCsFXPooledPayloadImpl>(ImpactFX.Type);
+		NCsFX::NPayload::FImpl* FXPayload = Manager_FX_Actor->AllocatePayload<NCsFX::NPayload::FImpl>(ImpactFX.Type);
 		// Set appropriate data on Payload
 		FXPayload->Instigator = Cache->GetInstigator();
 
@@ -491,7 +491,7 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	{
 		// Deactivate the Trail FX
 		NCsPooledObject::NCache::ICache* FXCache = TrailFXPooled->GetCache();
-		FCsFXPooledCacheImpl* FXCacheImpl		 = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsFXPooledCacheImpl>(Context, FXCache);
+		NCsFX::NCache::FImpl* FXCacheImpl		 = FCsLibrary_PooledObjectCache::PureStaticCastChecked<NCsFX::NCache::FImpl>(Context, FXCache);
 
 		FXCacheImpl->QueueDeallocate();
 
@@ -674,7 +674,7 @@ void ACsProjectilePooledImpl::Launch(NCsPooledObject::NPayload::IPayload* Payloa
 		// Get Manager
 		UCsManager_FX_Actor* Manager_FX_Actor = UCsManager_FX_Actor::Get(GetWorld()->GetGameState());
 		// Get Payload
-		FCsFXPooledPayloadImpl* FXPayload = Manager_FX_Actor->AllocatePayload<FCsFXPooledPayloadImpl>(TrailFX.Type);
+		NCsFX::NPayload::FImpl* FXPayload = Manager_FX_Actor->AllocatePayload<NCsFX::NPayload::FImpl>(TrailFX.Type);
 		// Set appropriate data on Payload
 		FXPayload->Owner					= this;
 		FXPayload->Parent					= MeshComponent;
@@ -709,13 +709,15 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(NCsProjectile::NPayload::IPa
 
 		if (PayloadInterfaceType* DmgModifierPayload = FCsLibrary_Payload_Projectile::GetSafeInterfaceChecked<PayloadInterfaceType>(Context, Payload))
 		{
-			const TArray<ICsDamageModifier*> Modifiers = DmgModifierPayload->GetDamageModifiers();
+			typedef NCsDamage::NModifier::IModifier ModifierType;
+
+			const TArray<ModifierType*> Modifiers = DmgModifierPayload->GetDamageModifiers();
 
 			DamageModifiers.Reset(FMath::Max(DamageModifiers.Max(), Modifiers.Num()));
 
 			UCsManager_Damage* Manager_Damage = UCsManager_Damage::Get(GetWorld()->GetGameState());
 
-			for (const ICsDamageModifier* From : Modifiers)
+			for (const ModifierType* From : Modifiers)
 			{
 				DamageModifiers.Add(Manager_Damage->CreateCopyOfModifier(Context, From));
 			}
@@ -753,18 +755,29 @@ const FCsResource_DamageEvent* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(
 
 	// Get Container from Manager_Damage
 	FCsResource_DamageEvent* Container = Manager_Damage->AllocateEvent();
-	ICsDamageEvent* Event			   = Container->Get();
 
-	FCsDamageEventImpl* EventImpl = FCsLibrary_DamageEvent::PureStaticCastChecked<FCsDamageEventImpl>(Context, Event);
+		// Event
+	typedef NCsDamage::NEvent::IEvent DamageEventType;
+
+	DamageEventType* Event = Container->Get();
+		// Event Impl
+	typedef NCsDamage::NEvent::FImpl DamageEventImplType;
+
+	DamageEventImplType* EventImpl = FCsLibrary_DamageEvent::PureStaticCastChecked<DamageEventImplType>(Context, Event);
 
 		// Value
 	EventImpl->DamageValue.CopyFrom(ContextRoot, DamageData->GetValue());
-	ICsDamageValue* DamageValue = EventImpl->DamageValue.Value;
+
+	typedef NCsDamage::NValue::IValue DamageValueType;
+
+	DamageValueType* DamageValue = EventImpl->DamageValue.Value;
 
 		// Range
-	ICsDamageRange* DamageRange = nullptr;
+	typedef NCsDamage::NRange::IRange DamageRangeType;
 
-	if (const ICsDamageRange* Range = Manager_Damage->GetRange(Context, DamageData))
+	DamageRangeType* DamageRange = nullptr;
+
+	if (const DamageRangeType* Range = Manager_Damage->GetRange(Context, DamageData))
 	{
 		EventImpl->DamageRange.CopyFrom(ContextRoot, Range);
 		DamageRange = EventImpl->DamageRange.Range;

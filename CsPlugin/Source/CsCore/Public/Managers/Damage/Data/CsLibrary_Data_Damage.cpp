@@ -4,7 +4,7 @@
 // Data
 #include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
 
-const ICsDamageRange* FCsLibrary_Data_Damage::GetRangeChecked(const FString& Context, const ICsData_Damage* Data)
+const NCsDamage::NRange::IRange* FCsLibrary_Data_Damage::GetRangeChecked(const FString& Context, const ICsData_Damage* Data)
 {
 	// ICsData_DamageShape
 	if (const ICsData_DamageShape* Shape = GetSafeInterfaceChecked<ICsData_DamageShape>(Context, Data))

@@ -3,17 +3,17 @@
 #include "CsCore.h"
 
 
-bool FCsLibrary_DamageModifier::CopyChecked(const FString& Context, const ICsDamageModifier* From, ICsDamageModifier* To)
+bool FCsLibrary_DamageModifier::CopyChecked(const FString& Context, const NCsDamage::NModifier::IModifier* From, NCsDamage::NModifier::IModifier* To)
 {
 	return false;
 }
 
-bool FCsLibrary_DamageModifier::ModifyChecked(const FString& Context, const ICsDamageModifier* Modifier, const ICsData_Damage* Data, ICsDamageValue* Value)
+bool FCsLibrary_DamageModifier::ModifyChecked(const FString& Context, const NCsDamage::NModifier::IModifier* Modifier, const ICsData_Damage* Data, NCsDamage::NValue::IValue* Value)
 {
 	return false;
 }
 
-bool FCsLibrary_DamageModifier::ModifyChecked(const FString& Context, const ICsDamageModifier* Modifier, const ICsData_Damage* Data, ICsDamageRange* Range)
+bool FCsLibrary_DamageModifier::ModifyChecked(const FString& Context, const NCsDamage::NModifier::IModifier* Modifier, const ICsData_Damage* Data, NCsDamage::NRange::IRange* Range)
 {
 	return false;	 
 }

@@ -2,28 +2,37 @@
 #include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
 #include "CsCore.h"
 
-const FName FCsDamageValueRangeImpl::Name = FName("FCsDamageValueRangeImpl");
+const FName NCsDamage::NValue::NRange::FImpl::Name = FName("NCsDamage::NValue::NRange::FImpl");
 
-FCsDamageValueRangeImpl::FCsDamageValueRangeImpl() :
-	InterfaceMap(),
-	// ICsDamageValueRange
-	MinValue(0.0f),
-	MaxValue(0.0f)
+namespace NCsDamage
 {
-	InterfaceMap.SetRootName(FCsDamageValueRangeImpl::Name);
+	namespace NValue
+	{
+		namespace NRange
+		{
+			FImpl::FImpl() :
+				InterfaceMap(),
+				// IRange
+				MinValue(0.0f),
+				MaxValue(0.0f)
+			{
+				InterfaceMap.SetRootName(FImpl::Name);
 
-	InterfaceMap.Add<ICsDamageValue>(static_cast<ICsDamageValue*>(this));
-	InterfaceMap.Add<ICsDamageValueRange>(static_cast<ICsDamageValueRange*>(this));
-	InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));
+				InterfaceMap.Add<IValue>(static_cast<IValue*>(this));
+				InterfaceMap.Add<IRange>(static_cast<IRange*>(this));
+				InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));
+			}
+
+			// ICsReset
+			#pragma region
+
+			void FImpl::Reset()
+			{
+				MinValue = 0.0f;
+				MaxValue = 0.0f;
+			}
+
+			#pragma endregion ICsReset
+		}
+	}
 }
-
-// ICsReset
-#pragma region
-
-void FCsDamageValueRangeImpl::Reset()
-{
-	MinValue = 0.0f;
-	MaxValue = 0.0f;
-}
-
-#pragma endregion ICsReset

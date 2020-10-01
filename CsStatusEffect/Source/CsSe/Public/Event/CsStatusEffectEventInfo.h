@@ -3,49 +3,58 @@
 #include "Event/CsTypes_StatusEffectEvent.h"
 #pragma once
 
-struct ICsStatusEffectEvent;
+namespace NCsStatusEffect {
+	namespace NEvent {
+		struct IEvent; } }
+
 struct FCsResource_StatusEffectEvent;
 class ICsStatusEffect;
 
-/**
-*/
-struct CSSE_API FCsStatusEffectEventInfo
+namespace NCsStatusEffect
 {
-public:
+	namespace NEvent
+	{
+		/**
+		*/
+		struct CSSE_API FInfo
+		{
+		public:
 
-	ICsStatusEffectEvent* Event;
+			IEvent* Event;
 
-	FCsResource_StatusEffectEvent* Container;
+			FCsResource_StatusEffectEvent* Container;
 
-	FCsStatusEffectTriggerFrequencyInfo FrequencyInfo;
+			FCsStatusEffectTriggerFrequencyInfo FrequencyInfo;
 
-	float TotalTime;
+			float TotalTime;
 
-	FCsDeltaTime ElapsedTotalTime;
+			FCsDeltaTime ElapsedTotalTime;
 
-	bool bDelayComplete;
+			bool bDelayComplete;
 
-	FCsDeltaTime ElapsedDelayTime;
+			FCsDeltaTime ElapsedDelayTime;
 
-	FCsDeltaTime ElapsedIntervalTime;
+			FCsDeltaTime ElapsedIntervalTime;
 
-	int32 Count;
+			int32 Count;
 
-public:
+		public:
 
-	FCsStatusEffectEventInfo();
+			FInfo();
 
-public:
+		public:
 
-	void SetEvent(FCsResource_StatusEffectEvent* InEvent);
+			void SetEvent(FCsResource_StatusEffectEvent* InEvent);
 
-	bool CanApply() const;
+			bool CanApply() const;
 
-	void Increment();
+			void Increment();
 
-	bool IsComplete() const;
+			bool IsComplete() const;
 
-	void Update(const FCsDeltaTime& DeltaTime);
+			void Update(const FCsDeltaTime& DeltaTime);
 
-	void Reset();
-};
+			void Reset();
+		};
+	}
+}

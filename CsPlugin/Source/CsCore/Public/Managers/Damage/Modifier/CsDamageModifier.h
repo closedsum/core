@@ -2,13 +2,19 @@
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
 
-/**
-* Interface to describe modifying a damage object (ICsDamageValue or ICsDamageRange)
-*  from a damage expression (ICsData_Damage)
-*/
-struct CSCORE_API ICsDamageModifier : public ICsGetInterfaceMap
+namespace NCsDamage
 {
-public:
+	namespace NModifier
+	{
+		/**
+		* Interface to describe modifying a damage object (NCsDamage::NValue::IValue or NCsDamage::NRange::IRange)
+		*  from a damage expression (ICsData_Damage)
+		*/
+		struct CSCORE_API IModifier : public ICsGetInterfaceMap
+		{
+		public:
 
-	static const FName Name;
-};
+			static const FName Name;
+		};
+	}
+}

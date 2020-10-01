@@ -27,7 +27,9 @@ FCsData_DamagePointEmu::FCsData_DamagePointEmu() :
 	InterfaceMap->Add<ICsData_Damage>(static_cast<ICsData_Damage*>(this));
 
 	// ICsData_Damage
-	Value = new FCsDamageValuePointEmu();
+	typedef NCsDamage::NValue::NPoint::FEmu EnumType;
+
+	Value = new EnumType();
 }
 
 FCsData_DamagePointEmu::~FCsData_DamagePointEmu()
@@ -48,6 +50,8 @@ FCsData_DamagePointEmu::~FCsData_DamagePointEmu()
 
 void FCsData_DamagePointEmu::SetValue(float* InValue)
 {
-	FCsDamageValuePointEmu* Emu = static_cast<FCsDamageValuePointEmu*>(Value);
+	typedef NCsDamage::NValue::NPoint::FEmu EnumType;
+
+	EnumType* Emu = static_cast<EnumType*>(Value);
 	Emu->SetValue(InValue);
 }

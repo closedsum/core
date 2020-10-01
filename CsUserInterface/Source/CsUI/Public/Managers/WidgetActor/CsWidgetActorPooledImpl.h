@@ -15,7 +15,6 @@ namespace NCsPooledObject {
 		struct IPayload; } }
 
 class UCsWidgetComponent;
-struct ICsPayload_UserWidget;
 struct FCsUserWidgetPooled;
 
 UCLASS()

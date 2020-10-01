@@ -11,7 +11,9 @@ class CSSE_API UCsReceiveStatusEffect : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
-struct ICsStatusEffectEvent;
+namespace NCsStatusEffect {
+	namespace NEvent {
+		struct IEvent; } }
 
 /**
 */
@@ -21,7 +23,7 @@ class CSSE_API ICsReceiveStatusEffect
 
 public:
 
-	virtual void ApplyStatusEffect(const ICsStatusEffectEvent* Event) = 0;
+	virtual void ApplyStatusEffect(const NCsStatusEffect::NEvent::IEvent* Event) = 0;
 };
 
 // FCsReceiveStatusEffect
@@ -61,7 +63,7 @@ public:
 	* @param Object			A Object of type: ICsReceiveStatusEffect.
 	* @param Event
 	*/
-	DECLARE_DELEGATE_TwoParams(FScript_ApplyStatusEffect, UObject* /*Object*/, const ICsStatusEffectEvent* /*Event*/);
+	DECLARE_DELEGATE_TwoParams(FScript_ApplyStatusEffect, UObject* /*Object*/, const NCsStatusEffect::NEvent::IEvent* /*Event*/);
 
 	/** Delegate for .
 		 The Object implements a script interface of type: ICsReceiveStatusEffect. */
@@ -128,7 +130,7 @@ public:
 #pragma region
 public:
 
-	void ApplyStatusEffect(const ICsStatusEffectEvent* Event)
+	void ApplyStatusEffect(const NCsStatusEffect::NEvent::IEvent* Event)
 	{
 		if (bScript)
 			Script_ApplyStatusEffect_Impl.Execute(Object, Event);

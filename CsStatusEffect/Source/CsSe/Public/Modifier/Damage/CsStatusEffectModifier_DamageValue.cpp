@@ -2,4 +2,4 @@
 #include "Modifier/Damage/CsStatusEffectModifier_DamageValue.h"
 #include "CsSe.h"
 
-const FName ICsStatusEffectModifier_DamageValue::Name = FName("ICsStatusEffectModifier_DamageValue");
+const FName NCsStatusEffect::NModifier::NDamage::IDamageValue::Name = FName("NCsStatusEffect::NModifier::NDamage::IDamageValue");

@@ -4,8 +4,8 @@
 
 #include "Library/CsLibrary_Common.h"
 // Sound
-#include "Managers/Sound/Cache/CsSoundPooledCacheImpl.h"
-#include "Managers/Sound/Payload/CsSoundPooledPayloadImpl.h"
+#include "Managers/Sound/Cache/CsCache_SoundImpl.h"
+#include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 
 // Cached
 #pragma region
@@ -97,7 +97,9 @@ void ACsSoundPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 	// TODO: This should be opaque
 	
-	FCsSoundPooledCacheImpl* CacheImpl = NCsInterfaceMap::PureStaticCastChecked<FCsSoundPooledCacheImpl>(Str::Update, Cache);
+	typedef NCsSound::NCache::FImpl CacheType;
+
+	CacheType* CacheImpl = NCsInterfaceMap::PureStaticCastChecked<CacheType>(Str::Update, Cache);
 
 	CacheImpl->Update(DeltaTime);
 }
@@ -106,7 +108,7 @@ void ACsSoundPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 void ACsSoundPooledImpl::ConstructCache()
 {
-	Cache = new FCsSoundPooledCacheImpl();
+	Cache = new NCsSound::NCache::FImpl();
 }
 
 // ICsPooledObject
@@ -123,7 +125,9 @@ void ACsSoundPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
 
 	Cache->Allocate(Payload);
 
-	ICsSoundPooledPayload* SoundPayload = NCsInterfaceMap::GetInterfaceChecked<ICsSoundPooledPayload>(Str::Allocate, Payload);
+	typedef NCsSound::NPayload::IPayload PayloadInterfaceType;
+
+	PayloadInterfaceType* SoundPayload = NCsInterfaceMap::GetInterfaceChecked<PayloadInterfaceType>(Str::Allocate, Payload);
 
 	Play(SoundPayload);
 }
@@ -137,7 +141,7 @@ void ACsSoundPooledImpl::Deallocate()
 
 #pragma endregion ICsPooledObject
 
-void ACsSoundPooledImpl::Play(ICsSoundPooledPayload* Payload)
+void ACsSoundPooledImpl::Play(NCsSound::NPayload::IPayload* Payload)
 {
 	using namespace NCsSoundPooledImplCached;
 

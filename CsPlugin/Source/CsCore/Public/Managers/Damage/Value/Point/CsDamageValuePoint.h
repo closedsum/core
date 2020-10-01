@@ -2,16 +2,25 @@
 #include "Containers/CsGetInterfaceMap.h"
 #pragma once
 
-/**
-* 
-*/
-struct CSCORE_API ICsDamageValuePoint : public ICsGetInterfaceMap
+namespace NCsDamage
 {
-public:
+	namespace NValue
+	{
+		namespace NPoint
+		{
+			/**
+			* 
+			*/
+			struct CSCORE_API IPoint : public ICsGetInterfaceMap
+			{
+			public:
 
-	static const FName Name;
+				static const FName Name;
 
-public:
+			public:
 
-	virtual const float& GetValue() const = 0;
-};
+				virtual const float& GetValue() const = 0;
+			};
+		}
+	}
+}

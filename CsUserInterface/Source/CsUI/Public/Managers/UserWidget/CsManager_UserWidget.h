@@ -22,11 +22,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerUserWidget_OnSpawn, const
 
 class ICsUserWidgetPooled;
 
-class CSUI_API FCsManager_UserWidget_Internal : public TCsManager_PooledObject_Map<ICsUserWidgetPooled, FCsUserWidgetPooled, ICsPayload_UserWidget, FECsUserWidgetPooled>
+class CSUI_API FCsManager_UserWidget_Internal : public TCsManager_PooledObject_Map<ICsUserWidgetPooled, FCsUserWidgetPooled, NCsUserWidget::NPayload::IPayload, FECsUserWidgetPooled>
 {
 private:
 
-	typedef TCsManager_PooledObject_Map<ICsUserWidgetPooled, FCsUserWidgetPooled, ICsPayload_UserWidget, FECsUserWidgetPooled> Super;
+	typedef TCsManager_PooledObject_Map<ICsUserWidgetPooled, FCsUserWidgetPooled, NCsUserWidget::NPayload::IPayload, FECsUserWidgetPooled> Super;
 
 public:
 
@@ -495,23 +495,23 @@ public:
 	* @param Type
 	* return
 	*/
-	virtual ICsPayload_UserWidget* ConstructPayload(const FECsUserWidgetPooled& Type);
+	virtual NCsUserWidget::NPayload::IPayload* ConstructPayload(const FECsUserWidgetPooled& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPayload_UserWidget.
+	*  Payload implements the interface: NCsUserWidget::NPayload::IPayload.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsPayload_UserWidget.
+	* return		Payload that implements the interface: NCsUserWidget::NPayload::IPayload.
 	*/
-	ICsPayload_UserWidget* AllocatePayload(const FECsUserWidgetPooled& Type);
+	NCsUserWidget::NPayload::IPayload* AllocatePayload(const FECsUserWidgetPooled& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPayload_UserWidget.
+	*  Payload implements the interface: NCsUserWidget::NPayload::IPayload.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsPayload_UserWidget.
+	* return		Payload that implements the interface: NCsUserWidget::NPayload::IPayload.
 	*/
 	template<typename PayloadTypeImpl>
 	FORCEINLINE PayloadTypeImpl* AllocatePayload(const FECsUserWidgetPooled& Type)
@@ -519,7 +519,7 @@ public:
 		return Internal.AllocatePayload<PayloadTypeImpl>(Type);
 	}
 
-	//virtual ICsPayload_UserWidget* ScriptAllocatePayload(const FECsUserWidgetPooled& Type, const FCsScriptProjectilePayload& ScriptPayload);
+	//virtual NCsUserWidget::NPayload::IPayload* ScriptAllocatePayload(const FECsUserWidgetPooled& Type, const FCsScriptProjectilePayload& ScriptPayload);
 
 #pragma endregion Payload
 
@@ -533,7 +533,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	const FCsUserWidgetPooled* Spawn(const FECsUserWidgetPooled& Type, ICsPayload_UserWidget* Payload);
+	const FCsUserWidgetPooled* Spawn(const FECsUserWidgetPooled& Type, NCsUserWidget::NPayload::IPayload* Payload);
 
 	/**
 	*

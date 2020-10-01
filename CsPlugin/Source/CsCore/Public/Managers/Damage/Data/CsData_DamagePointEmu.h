@@ -3,7 +3,10 @@
 #pragma once
 
 struct FCsInterfaceMap;
-struct ICsDamageValue;
+
+namespace NCsDamage {
+	namespace NValue {
+		struct IValue; } }
 
 /**
 *
@@ -24,7 +27,7 @@ public:
 
 	// ICsData_Damage
 
-	ICsDamageValue* Value;
+	NCsDamage::NValue::IValue* Value;
 
 	FECsDamageType* Type;
 
@@ -50,7 +53,7 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE const ICsDamageValue* GetValue() const
+	FORCEINLINE const NCsDamage::NValue::IValue* GetValue() const
 	{
 		return Value;
 	}

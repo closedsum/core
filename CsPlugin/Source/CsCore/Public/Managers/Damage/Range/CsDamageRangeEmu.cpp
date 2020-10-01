@@ -5,29 +5,35 @@
 // Container
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsDamageRangeEmu::Name = FName("FCsDamageRangeEmu");
+const FName NCsDamage::NRange::FEmu::Name = FName("NCsDamage::NRange::FEmu");
 
-FCsDamageRangeEmu::FCsDamageRangeEmu() :
-	// ICsGetInterfaceMap
-	InterfaceMap(nullptr),
-	// ICsDamageValueRange
-	MinRange(nullptr),
-	MaxRange(nullptr)
+namespace NCsDamage
 {
-	// ICsGetInterfaceMap
-	InterfaceMap = new FCsInterfaceMap();
-
-	InterfaceMap->SetRootName(FCsDamageRangeEmu::Name);
-
-	InterfaceMap->Add<ICsDamageRange>(static_cast<ICsDamageRange*>(this));
-}
-
-FCsDamageRangeEmu::~FCsDamageRangeEmu()
-{
-	// ICsGetInterfaceMap
-	if (InterfaceMap)
+	namespace NRange
 	{
-		delete InterfaceMap;
-		InterfaceMap = nullptr;
+		FEmu::FEmu() :
+			// ICsGetInterfaceMap
+			InterfaceMap(nullptr),
+			// IRange
+			MinRange(nullptr),
+			MaxRange(nullptr)
+		{
+			// ICsGetInterfaceMap
+			InterfaceMap = new FCsInterfaceMap();
+
+			InterfaceMap->SetRootName(FEmu::Name);
+
+			InterfaceMap->Add<IRange>(static_cast<IRange*>(this));
+		}
+
+		FEmu::~FEmu()
+		{
+			// ICsGetInterfaceMap
+			if (InterfaceMap)
+			{
+				delete InterfaceMap;
+				InterfaceMap = nullptr;
+			}
+		}
 	}
 }

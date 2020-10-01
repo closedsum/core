@@ -8,159 +8,165 @@ class UObject;
 struct FCsInterfaceMap;
 class UStaticMesh;
 
-struct CSCORE_API FCsPayload_StaticMeshActorImpl final : public NCsPooledObject::NPayload::IPayload,
-														 public ICsPayload_StaticMeshActor
+namespace NCsStaticMeshActor
 {
-public:
+	namespace NPayload
+	{
+		struct CSCORE_API FImpl final : public NCsPooledObject::NPayload::IPayload,
+										public NCsStaticMeshActor::NPayload::IPayload
+		{
+		public:
 
-	static const FName Name;
+			static const FName Name;
 
-private:
+		private:
 
-	FCsInterfaceMap* InterfaceMap;
+			FCsInterfaceMap* InterfaceMap;
 
-	bool bAllocated;
+			bool bAllocated;
 
-public:
+		public:
 
-	// NCsPooledObject::NPayload::IPayload
+			// NCsPooledObject::NPayload::IPayload
 
-	UObject* Instigator;
+			UObject* Instigator;
 
-	UObject* Owner;
+			UObject* Owner;
 
-	UObject* Parent;
+			UObject* Parent;
 	
-	FCsTime Time;
+			FCsTime Time;
 
-	// ICsPayload_StaticMeshActor
+			// NCsStaticMeshActor::NPayload::IPayload
 
-	UStaticMesh* Mesh;
+			UStaticMesh* Mesh;
 
-	ECsStaticMeshActorDeallocateMethod DeallocateMethod;
+			ECsStaticMeshActorDeallocateMethod DeallocateMethod;
 
-	float LifeTime;
+			float LifeTime;
 	
-	ECsAttachmentTransformRules AttachmentTransformRules;
+			ECsAttachmentTransformRules AttachmentTransformRules;
 
-	FName Bone;
+			FName Bone;
 
-	int32 TransformRules;
+			int32 TransformRules;
 
-	FTransform Transform;
+			FTransform Transform;
 
-public:
+		public:
 
-	FCsPayload_StaticMeshActorImpl();
-	~FCsPayload_StaticMeshActorImpl();
+			FImpl();
+			~FImpl();
 
-// ICsGetInterfaceMap
-#pragma region
-public:
+		// ICsGetInterfaceMap
+		#pragma region
+		public:
 
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-	{
-		return InterfaceMap;
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+			{
+				return InterfaceMap;
+			}
+
+		#pragma endregion ICsGetInterfaceMap
+
+		// NCsPooledObject::NPayload::IPayload
+		#pragma region
+		public:
+
+			FORCEINLINE const bool& IsAllocated() const
+			{
+				return bAllocated;
+			}
+
+			FORCEINLINE UObject* GetInstigator() const
+			{
+				return Instigator;
+			}
+
+			FORCEINLINE UObject* GetOwner() const
+			{
+				return Owner;
+			}
+
+			FORCEINLINE UObject* GetParent() const
+			{
+				return Parent;
+			}
+
+			FORCEINLINE const FCsTime& GetTime() const
+			{
+				return Time;
+			}
+
+			FORCEINLINE void Allocate()
+			{
+				bAllocated = true;
+			}
+
+			void Reset();
+
+		#pragma endregion NCsPooledObject::NPayload::IPayload
+
+		public:
+
+			template<typename T>
+			FORCEINLINE T* GetInstigator() const
+			{
+				return Cast<T>(GetInstigator());
+			}
+
+			template<typename T>
+			FORCEINLINE T* GetOwner() const
+			{
+				return Cast<T>(GetOwner());
+			}
+
+			template<typename T>
+			FORCEINLINE T* GetParent() const
+			{
+				return Cast<T>(GetParent());
+			}
+
+		// NCsStaticMeshActor::NPayload::IPayload
+		#pragma region
+		public:
+
+			FORCEINLINE UStaticMesh* GetStaticMesh() const 
+			{
+				return Mesh;
+			}
+
+			FORCEINLINE const ECsStaticMeshActorDeallocateMethod& GetDeallocateMethod() const
+			{
+				return DeallocateMethod;
+			}
+
+			FORCEINLINE const float& GetLifeTime() const
+			{
+				return LifeTime;
+			}
+
+			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const
+			{
+				return AttachmentTransformRules;
+			}
+
+			FORCEINLINE const FName& GetBone() const
+			{
+				return Bone;
+			}
+
+			FORCEINLINE const int32& GetTransformRules() const
+			{
+				return TransformRules;
+			}
+
+			FORCEINLINE const FTransform& GetTransform() const
+			{
+				return Transform;
+			}
+
+		#pragma endregion NCsStaticMeshActor::NPayload::IPayload
+		};
 	}
-
-#pragma endregion ICsGetInterfaceMap
-
-// NCsPooledObject::NPayload::IPayload
-#pragma region
-public:
-
-	FORCEINLINE const bool& IsAllocated() const
-	{
-		return bAllocated;
-	}
-
-	FORCEINLINE UObject* GetInstigator() const
-	{
-		return Instigator;
-	}
-
-	FORCEINLINE UObject* GetOwner() const
-	{
-		return Owner;
-	}
-
-	FORCEINLINE UObject* GetParent() const
-	{
-		return Parent;
-	}
-
-	FORCEINLINE const FCsTime& GetTime() const
-	{
-		return Time;
-	}
-
-	FORCEINLINE void Allocate()
-	{
-		bAllocated = true;
-	}
-
-	void Reset();
-
-#pragma endregion NCsPooledObject::NPayload::IPayload
-
-public:
-
-	template<typename T>
-	FORCEINLINE T* GetInstigator() const
-	{
-		return Cast<T>(GetInstigator());
-	}
-
-	template<typename T>
-	FORCEINLINE T* GetOwner() const
-	{
-		return Cast<T>(GetOwner());
-	}
-
-	template<typename T>
-	FORCEINLINE T* GetParent() const
-	{
-		return Cast<T>(GetParent());
-	}
-
-// ICsPayload_StaticMeshActor
-#pragma region
-public:
-
-	FORCEINLINE UStaticMesh* GetStaticMesh() const 
-	{
-		return Mesh;
-	}
-
-	FORCEINLINE const ECsStaticMeshActorDeallocateMethod& GetDeallocateMethod() const
-	{
-		return DeallocateMethod;
-	}
-
-	FORCEINLINE const float& GetLifeTime() const
-	{
-		return LifeTime;
-	}
-
-	FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const
-	{
-		return AttachmentTransformRules;
-	}
-
-	FORCEINLINE const FName& GetBone() const
-	{
-		return Bone;
-	}
-
-	FORCEINLINE const int32& GetTransformRules() const
-	{
-		return TransformRules;
-	}
-
-	FORCEINLINE const FTransform& GetTransform() const
-	{
-		return Transform;
-	}
-
-#pragma endregion ICsPayload_StaticMeshActor
-};
+}

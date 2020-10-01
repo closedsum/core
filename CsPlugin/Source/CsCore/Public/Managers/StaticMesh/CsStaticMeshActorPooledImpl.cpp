@@ -80,7 +80,9 @@ void ACsStaticMeshActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 	// TODO: This should be opaque
 	
-	FCsCache_StaticMeshActorImpl* CacheImpl = NCsInterfaceMap::PureStaticCastChecked<FCsCache_StaticMeshActorImpl>(Context, Cache);
+	typedef NCsStaticMeshActor::NCache::FImpl CacheImplType;
+
+	CacheImplType* CacheImpl = NCsInterfaceMap::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Update(DeltaTime);
 }
@@ -89,7 +91,7 @@ void ACsStaticMeshActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 void ACsStaticMeshActorPooledImpl::ConstructCache()
 {
-	Cache = new FCsCache_StaticMeshActorImpl();
+	Cache = new NCsStaticMeshActor::NCache::FImpl();
 }
 
 // ICsPooledObject
@@ -108,7 +110,9 @@ void ACsStaticMeshActorPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload*
 
 	Cache->Allocate(Payload);
 
-	ICsPayload_StaticMeshActor* StaticMeshPayload = NCsInterfaceMap::GetInterfaceChecked<ICsPayload_StaticMeshActor>(Context, Payload);
+	typedef NCsStaticMeshActor::NPayload::IPayload PayloadType;
+
+	PayloadType* StaticMeshPayload = NCsInterfaceMap::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	/*
 	checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Play: AudioComponent is NULL."));

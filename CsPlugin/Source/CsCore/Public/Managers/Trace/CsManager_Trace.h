@@ -44,11 +44,6 @@ class CSCORE_API UCsManager_Trace : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-	// For Clarity
-typedef uint8 TCsTraceRequestId;
-typedef uint64 TCsTraceHandleId;
-typedef uint64 TCsObjectId;
-
 public:
 
 // Singleton

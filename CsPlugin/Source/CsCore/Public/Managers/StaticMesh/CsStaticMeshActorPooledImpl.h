@@ -22,7 +22,9 @@ namespace NCsPooledObject {
 	namespace NPayload {
 		struct IPayload; } }
 
-struct ICsPayload_StaticMeshActor;
+namespace NCsStaticMeshActor {
+	namespace NPayload {
+		struct IPayload; } }
 
 /**
 * 

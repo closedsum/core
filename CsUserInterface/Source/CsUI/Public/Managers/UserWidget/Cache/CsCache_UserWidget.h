@@ -4,18 +4,24 @@
 
 #pragma once
 
-/**
-* Cache associated with an UserWidget
-*  The Manager for UserWidget primarily interacts with the Cache object in terms
-*  of allocation and deallocation.
-*/
-struct CSUI_API ICsCache_UserWidget : virtual public ICsGetInterfaceMap
+namespace NCsUserWidget
 {
-public:
+	namespace NCache
+	{
+		/**
+		* Cache associated with an UserWidget
+		*  The Manager for UserWidget primarily interacts with the Cache object in terms
+		*  of allocation and deallocation.
+		*/
+		struct CSUI_API ICache : virtual public ICsGetInterfaceMap
+		{
+		public:
 
-	static const FName Name;
+			static const FName Name;
 
-public:
+		public:
 
-	virtual ~ICsCache_UserWidget() {}
-};
+			virtual ~ICache() {}
+		};
+	}
+}

@@ -43,7 +43,7 @@ void UCsManager_StatusEffect::Shutdown(UObject* InRoot)
 
 	const FString& Context = Str::Shutdown;
 
-	// Deallocate any ICsStatusEffectEvent objects from UCsStatusEffectCoordinator 
+	// Deallocate any NCsStatusEffect::NEvent::IEvent objects from UCsStatusEffectCoordinator 
 	UObject* Object			  = MyRoot.GetObject();
 	UWorld* World			  = Object ? Object->GetWorld() : nullptr;
 	AGameStateBase* GameState = World ? World->GetGameState() : nullptr;
@@ -62,7 +62,7 @@ void UCsManager_StatusEffect::Shutdown(UObject* InRoot)
 			FCsResource_StatusEffectEventInfo* Container = **Current;
 			Next										 = Current->GetNextLink();
 
-			FCsStatusEffectEventInfo* Info = Container->Get();
+			NCsStatusEffect::NEvent::FInfo* Info = Container->Get();
 
 			if (Info->Container)
 			{
@@ -93,7 +93,7 @@ void UCsManager_StatusEffect::Update(const FCsDeltaTime& DeltaTime)
 		FCsResource_StatusEffectEventInfo* Container = **Current;
 		Next										 = Current->GetNextLink();
 
-		FCsStatusEffectEventInfo* Info = Container->Get();
+		NCsStatusEffect::NEvent::FInfo* Info = Container->Get();
 
 		// Check Apply Status Effect
 		if (Info->CanApply())
@@ -124,12 +124,12 @@ void UCsManager_StatusEffect::ApplyStatusEffect(FCsResource_StatusEffectEvent* E
 	// TODO: Need to create a copy
 
 	FCsResource_StatusEffectEventInfo* EventInfoContainer = Manager_Event.Allocate();
-	FCsStatusEffectEventInfo* EventInfo					  = EventInfoContainer->Get();
+	NCsStatusEffect::NEvent::FInfo* EventInfo			  = EventInfoContainer->Get();
 
 	EventInfo->SetEvent(Event);
 }
 
-void UCsManager_StatusEffect::ApplyStatusEffect(ICsStatusEffectEvent* Event)
+void UCsManager_StatusEffect::ApplyStatusEffect(NCsStatusEffect::NEvent::IEvent* Event)
 {
 	checkf(Event, TEXT("UCsManager_StatusEffect::ApplyStatusEffect::Event is NULL."));
 }

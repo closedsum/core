@@ -12,17 +12,20 @@
 
 	// StatusEffectEventInfo
 
-struct CSSE_API FCsResource_StatusEffectEventInfo : public TCsResourceContainer<FCsStatusEffectEventInfo>
+struct CSSE_API FCsResource_StatusEffectEventInfo : public TCsResourceContainer<NCsStatusEffect::NEvent::FInfo>
 {
 };
 
-struct CSSE_API FCsManager_StatusEffectEventInfo : public TCsManager_ResourceValueType_Fixed<FCsStatusEffectEventInfo, FCsResource_StatusEffectEventInfo, 0>
+struct CSSE_API FCsManager_StatusEffectEventInfo : public TCsManager_ResourceValueType_Fixed<NCsStatusEffect::NEvent::FInfo, FCsResource_StatusEffectEventInfo, 0>
 {
 };
 
 #pragma endregion Structs
 
-struct ICsStatusEffectEvent;
+namespace NCsStatusEffect {
+	namespace NEvent {
+		struct IEvent; } }
+
 struct FCsResource_StatusEffectEvent;
 
 UCLASS()
@@ -65,5 +68,5 @@ public:
 
 	void ApplyStatusEffect(FCsResource_StatusEffectEvent* Event);
 
-	void ApplyStatusEffect(ICsStatusEffectEvent* Event);
+	void ApplyStatusEffect(NCsStatusEffect::NEvent::IEvent* Event);
 };

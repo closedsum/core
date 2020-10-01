@@ -3,59 +3,65 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsPayload_StaticMeshActorImpl::Name = FName("FCsPayload_StaticMeshActorImpl");;
+const FName NCsStaticMeshActor::NPayload::FImpl::Name = FName("NCsStaticMeshActor::NPayload::FImpl");;
 
-FCsPayload_StaticMeshActorImpl::FCsPayload_StaticMeshActorImpl() :
-	InterfaceMap(nullptr),
-	// NCsPooledObject::NPayload::IPayload
-	bAllocated(false),
-	Instigator(nullptr),
-	Owner(nullptr),
-	Parent(nullptr),
-	Time(),
-	// ICsPayload_StaticMeshActor
-	Mesh(nullptr),
-	DeallocateMethod(ECsStaticMeshActorDeallocateMethod::Complete),
-	LifeTime(0.0f),
-	AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
-	Bone(NAME_None),
-	TransformRules(0),
-	Transform(FTransform::Identity)
+namespace NCsStaticMeshActor
 {
-	InterfaceMap = new FCsInterfaceMap();
+	namespace NPayload
+	{
+		FImpl::FImpl() :
+			InterfaceMap(nullptr),
+			// NCsPooledObject::NPayload::IPayload
+			bAllocated(false),
+			Instigator(nullptr),
+			Owner(nullptr),
+			Parent(nullptr),
+			Time(),
+			// NCsStaticMeshActor::NPayload::IPayload
+			Mesh(nullptr),
+			DeallocateMethod(ECsStaticMeshActorDeallocateMethod::Complete),
+			LifeTime(0.0f),
+			AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+			Bone(NAME_None),
+			TransformRules(0),
+			Transform(FTransform::Identity)
+		{
+			InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsPayload_StaticMeshActorImpl::Name);
+			InterfaceMap->SetRootName(FImpl::Name);
 
-	InterfaceMap->Add<NCsPooledObject::NPayload::IPayload>(static_cast<NCsPooledObject::NPayload::IPayload*>(this));
-	InterfaceMap->Add<ICsPayload_StaticMeshActor>(static_cast<ICsPayload_StaticMeshActor*>(this));
+			InterfaceMap->Add<NCsPooledObject::NPayload::IPayload>(static_cast<NCsPooledObject::NPayload::IPayload*>(this));
+			InterfaceMap->Add<NCsStaticMeshActor::NPayload::IPayload>(static_cast<NCsStaticMeshActor::NPayload::IPayload*>(this));
+		}
+
+		FImpl::~FImpl()
+		{
+			delete InterfaceMap;
+		}
+
+		// NCsPooledObject::NPayload::IPayload
+		#pragma region
+
+		void FImpl::Reset()
+		{
+			// NCsPooledObject::NPayload::IPayload
+			bAllocated = false;
+			Instigator = nullptr;
+			Owner = nullptr;
+			Parent = nullptr;
+
+			Time.Reset();
+
+			// NCsStaticMeshActor::NPayload::IPayload
+			Mesh = nullptr;
+			DeallocateMethod = ECsStaticMeshActorDeallocateMethod::Complete;
+			LifeTime = 0.0f;
+			AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+			Bone = NAME_None;
+			TransformRules = 0;
+			Transform = FTransform::Identity;
+		}
+
+		#pragma endregion NCsPooledObject::NPayload::IPayload
+	}
 }
-
-FCsPayload_StaticMeshActorImpl::~FCsPayload_StaticMeshActorImpl()
-{
-	delete InterfaceMap;
-}
-
-// NCsPooledObject::NPayload::IPayload
-#pragma region
-
-void FCsPayload_StaticMeshActorImpl::Reset()
-{
-	// NCsPooledObject::NPayload::IPayload
-	bAllocated = false;
-	Instigator = nullptr;
-	Owner = nullptr;
-	Parent = nullptr;
-
-	Time.Reset();
-
-	// ICsPayload_StaticMeshActor
-	Mesh = nullptr;
-	DeallocateMethod = ECsStaticMeshActorDeallocateMethod::Complete;
-	LifeTime = 0.0f;
-	AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
-	Bone = NAME_None;
-	TransformRules = 0;
-	Transform = FTransform::Identity;
-}
-
-#pragma endregion NCsPooledObject::NPayload::IPayload

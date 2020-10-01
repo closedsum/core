@@ -5,29 +5,38 @@
 // Container
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsDamageValuePointEmu::Name = FName("FCsDamageValuePointEmu");
+const FName NCsDamage::NValue::NPoint::FEmu::Name = FName("NCsDamage::NValue::NPoint::FEmu");
 
-FCsDamageValuePointEmu::FCsDamageValuePointEmu() :
-	// ICsGetInterfaceMap
-	InterfaceMap(nullptr),
-	// ICsDamageValuePoint
-	Value(nullptr)
+namespace NCsDamage
 {
-	// ICsGetInterfaceMap
-	InterfaceMap = new FCsInterfaceMap();
-
-	InterfaceMap->SetRootName(FCsDamageValuePointEmu::Name);
-
-	InterfaceMap->Add<ICsDamageValue>(static_cast<ICsDamageValue*>(this));
-	InterfaceMap->Add<ICsDamageValuePoint>(static_cast<ICsDamageValuePoint*>(this));
-}
-
-FCsDamageValuePointEmu::~FCsDamageValuePointEmu()
-{
-	// ICsGetInterfaceMap
-	if (InterfaceMap)
+	namespace NValue
 	{
-		delete InterfaceMap;
-		InterfaceMap = nullptr;
+		namespace NPoint
+		{
+			FEmu::FEmu() :
+				// ICsGetInterfaceMap
+				InterfaceMap(nullptr),
+				// IPoint
+				Value(nullptr)
+			{
+				// ICsGetInterfaceMap
+				InterfaceMap = new FCsInterfaceMap();
+
+				InterfaceMap->SetRootName(FEmu::Name);
+
+				InterfaceMap->Add<IValue>(static_cast<IValue*>(this));
+				InterfaceMap->Add<IPoint>(static_cast<IPoint*>(this));
+			}
+
+			FEmu::~FEmu()
+			{
+				// ICsGetInterfaceMap
+				if (InterfaceMap)
+				{
+					delete InterfaceMap;
+					InterfaceMap = nullptr;
+				}
+			}
+		}
 	}
 }

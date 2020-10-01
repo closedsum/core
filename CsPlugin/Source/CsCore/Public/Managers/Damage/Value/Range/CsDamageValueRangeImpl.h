@@ -7,74 +7,83 @@
 #include "Containers/CsInterfaceMap.h"
 #pragma once
 
-/**
-* Basic implementation of the interface: ICsDamageValue
-*/
-struct CSCORE_API FCsDamageValueRangeImpl : public ICsDamageValue,
-											public ICsDamageValueRange,
-											public ICsReset
+namespace NCsDamage
 {
-public:
-
-	static const FName Name;
-
-private:
-
-	FCsInterfaceMap InterfaceMap;
-
-public:
-
-	float MinValue;
-
-	float MaxValue;
-
-public:
-
-	FCsDamageValueRangeImpl();
-
-	FCsDamageValueRangeImpl(const FCsDamageValueRangeImpl&) = delete;
-	FCsDamageValueRangeImpl& operator = (const FCsDamageValueRangeImpl&) = delete;
-
-	FORCEINLINE UObject* _getUObject() const { return nullptr; }
-
-// ICsGetInterfaceMap
-#pragma region
-public:
-
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+	namespace NValue
 	{
-		return const_cast<FCsInterfaceMap*>(&InterfaceMap);
+		namespace NRange
+		{
+			/**
+			* Basic implementation of the interface: NCsDamage::NValue::IValue
+			*/
+			struct CSCORE_API FImpl : public IValue,
+									  public IRange,
+									  public ICsReset
+			{
+			public:
+
+				static const FName Name;
+
+			private:
+
+				FCsInterfaceMap InterfaceMap;
+
+			public:
+
+				float MinValue;
+
+				float MaxValue;
+
+			public:
+
+				FImpl();
+
+				FImpl(const FImpl&) = delete;
+				FImpl& operator = (const FImpl&) = delete;
+
+				FORCEINLINE UObject* _getUObject() const { return nullptr; }
+
+			// ICsGetInterfaceMap
+			#pragma region
+			public:
+
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+				{
+					return const_cast<FCsInterfaceMap*>(&InterfaceMap);
+				}
+
+			#pragma endregion ICsGetInterfaceMap
+
+			// IValue
+			#pragma region
+			public:
+
+			#pragma endregion IValue
+
+			// IRange
+			#pragma region
+			public:
+
+				FORCEINLINE const float& GetMinValue() const
+				{
+					return MinValue;
+				}
+
+				FORCEINLINE const float& GetMaxValue() const
+				{
+					return MaxValue;
+				}
+
+			#pragma endregion IRange
+
+			// ICsReset
+			#pragma region
+			public:
+
+				void Reset();
+
+			#pragma endregion ICsReset
+			};
+		}
 	}
-
-#pragma endregion ICsGetInterfaceMap
-
-// ICsDamageValue
-#pragma region
-public:
-
-#pragma endregion ICsDamageValue
-
-// ICsDamageValueRange
-#pragma region
-public:
-
-	FORCEINLINE const float& GetMinValue() const
-	{
-		return MinValue;
-	}
-
-	FORCEINLINE const float& GetMaxValue() const
-	{
-		return MaxValue;
-	}
-
-#pragma endregion ICsDamageValueRange
-
-// ICsReset
-#pragma region
-public:
-
-	void Reset();
-
-#pragma endregion ICsReset
-};
+}

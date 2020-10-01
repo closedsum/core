@@ -5,7 +5,7 @@
 
 /**
 */
-struct CSUI_API FCsLibrary_Payload_UserWidget : public TCsLibrary_InterfaceMap<ICsPayload_UserWidget>
+struct CSUI_API FCsLibrary_Payload_UserWidget : public TCsLibrary_InterfaceMap<NCsUserWidget::NPayload::IPayload>
 {
 public:
 
@@ -18,7 +18,7 @@ public:
 	* @param To			What to copy to.
 	* return			Whether the From copied to To successfully.
 	*/
-	static bool CopyChecked(const FString& Context, const ICsPayload_UserWidget* From, ICsPayload_UserWidget* To);
+	static bool CopyChecked(const FString& Context, const NCsUserWidget::NPayload::IPayload* From, NCsUserWidget::NPayload::IPayload* To);
 
 	// NOTE:
 

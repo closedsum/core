@@ -4,17 +4,23 @@
 #include "Components/SlateWrapperTypes.h"
 #pragma once
 
-/**
-*/
-struct CSUI_API ICsPayload_UserWidget : virtual public ICsGetInterfaceMap
+namespace NCsUserWidget
 {
-public:
+	namespace NPayload
+	{
+		/**
+		*/
+		struct CSUI_API IPayload : virtual public ICsGetInterfaceMap
+		{
+		public:
 
-	static const FName Name;
+			static const FName Name;
 
-public:
+		public:
 
-	virtual ~ICsPayload_UserWidget(){}
+			virtual ~IPayload(){}
 
-	virtual const ESlateVisibility& GetVisibility() const = 0;
-};
+			virtual const ESlateVisibility& GetVisibility() const = 0;
+		};
+	}
+}

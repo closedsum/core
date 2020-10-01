@@ -6,8 +6,14 @@
 #pragma once
 
 struct FCsInterfaceMap;
-struct ICsDamageValue;
-struct ICsDamageRange;
+
+namespace NCsDamage {
+	namespace NValue {
+		struct IValue; } }
+
+namespace NCsDamage {
+	namespace NRange {
+		struct IRange; } }
 
 /**
 *
@@ -27,13 +33,13 @@ private:
 public:
 
 	// ICsData_Damage
-	ICsDamageValue* DamageValue;
+	NCsDamage::NValue::IValue* DamageValue;
 
 	FECsDamageType* Type;
 
 	// ICsData_DamageShape
 
-	ICsDamageRange* DamageRange;
+	NCsDamage::NRange::IRange* DamageRange;
 
 	float* MinDamage;
 
@@ -75,7 +81,7 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE const ICsDamageValue* GetValue() const
+	FORCEINLINE const NCsDamage::NValue::IValue* GetValue() const
 	{
 		return DamageValue;
 	}
@@ -98,12 +104,12 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE const ICsDamageRange* GetRange() const
+	FORCEINLINE const NCsDamage::NRange::IRange* GetRange() const
 	{
 		return DamageRange;
 	}
 
-	float CalculateDamage(const ICsDamageValue* Value, const ICsDamageRange* Range, const FVector& Origin, const FVector& Point) const;
+	float CalculateDamage(const NCsDamage::NValue::IValue* Value, const NCsDamage::NRange::IRange* Range, const FVector& Origin, const FVector& Point) const;
 
 	bool IsInBounds(const FVector& Origin, const FVector& Point) const;
 

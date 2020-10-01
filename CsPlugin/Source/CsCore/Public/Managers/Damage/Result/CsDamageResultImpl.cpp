@@ -3,40 +3,46 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsDamageResultImpl::Name = FName("FCsDamageResultImpl");;
+const FName NCsDamage::NResult::FImpl::Name = FName("NCsDamage::NResult::FImpl");;
 
-FCsDamageResultImpl::FCsDamageResultImpl() :
-	InterfaceMap(nullptr),
-	// ICsDamageResult
-	Damage(0.0f),
-	Instigator(nullptr),
-	Causer(nullptr),
-	Victim(nullptr),
-	DamageType(),
-	HitType(),
-	bImpulse(false),
-	HitResult()
+namespace NCsDamage
 {
-	InterfaceMap = new FCsInterfaceMap();
+	namespace NResult
+	{
+		FImpl::FImpl() :
+			InterfaceMap(nullptr),
+			// IResult
+			Damage(0.0f),
+			Instigator(nullptr),
+			Causer(nullptr),
+			Victim(nullptr),
+			DamageType(),
+			HitType(),
+			bImpulse(false),
+			HitResult()
+		{
+			InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsDamageResultImpl::Name);
+			InterfaceMap->SetRootName(FImpl::Name);
 
-	InterfaceMap->Add<ICsDamageResult>(static_cast<ICsDamageResult*>(this));
-}
+			InterfaceMap->Add<IResult>(static_cast<IResult*>(this));
+		}
 
-FCsDamageResultImpl::~FCsDamageResultImpl()
-{
-	delete InterfaceMap;
-}
+		FImpl::~FImpl()
+		{
+			delete InterfaceMap;
+		}
 
-void FCsDamageResultImpl::Reset()
-{
-	Damage = 0.0f;
-	Instigator = nullptr;
-	Causer = nullptr;
-	Victim = nullptr;
-	DamageType = EMCsDamageType::Get().GetMAX();
-	HitType = EMCsHitType::Get().GetMAX();
-	bImpulse = false;
-	HitResult.Reset(0.0f, false);
+		void FImpl::Reset()
+		{
+			Damage = 0.0f;
+			Instigator = nullptr;
+			Causer = nullptr;
+			Victim = nullptr;
+			DamageType = EMCsDamageType::Get().GetMAX();
+			HitType = EMCsHitType::Get().GetMAX();
+			bImpulse = false;
+			HitResult.Reset(0.0f, false);
+		}
+	}
 }

@@ -25,8 +25,11 @@ namespace NCsProjectile {
 	namespace NPayload {
 		struct IPayload; } }
 
+namespace NCsSound {
+	namespace NPayload {
+		struct IPayload; } }
+
 struct FCsProjectilePooled;
-struct ICsSoundPooledPayload;
 
 UCLASS()
 class CSWP_API UCsProjectileWeaponComponent : public UActorComponent,
@@ -236,7 +239,7 @@ protected:
 
 	void PlayFireSound();
 
-	void SetSoundPooledPayload(ICsSoundPooledPayload* Payload, const FCsSound& Sound);
+	void SetSoundPooledPayload(NCsSound::NPayload::IPayload* Payload, const FCsSound& Sound);
 
 #pragma endregion Sound
 

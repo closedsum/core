@@ -567,12 +567,12 @@ void UCsManager_StaticMeshActor::ConstructPayloads(const FECsStaticMeshActor& Ty
 	Internal.ConstructPayloads(Type, Size);
 }
 
-ICsPayload_StaticMeshActor* UCsManager_StaticMeshActor::ConstructPayload(const FECsStaticMeshActor& Type)
+NCsStaticMeshActor::NPayload::IPayload* UCsManager_StaticMeshActor::ConstructPayload(const FECsStaticMeshActor& Type)
 {
-	return new FCsPayload_StaticMeshActorImpl();
+	return new NCsStaticMeshActor::NPayload::FImpl();
 }
 
-ICsPayload_StaticMeshActor* UCsManager_StaticMeshActor::AllocatePayload(const FECsStaticMeshActor& Type)
+NCsStaticMeshActor::NPayload::IPayload* UCsManager_StaticMeshActor::AllocatePayload(const FECsStaticMeshActor& Type)
 {
 	return Internal.AllocatePayload(Type);
 }
@@ -582,7 +582,7 @@ ICsPayload_StaticMeshActor* UCsManager_StaticMeshActor::AllocatePayload(const FE
 	// Spawn
 #pragma region
 
-const FCsStaticMeshActorPooled* UCsManager_StaticMeshActor::Spawn(const FECsStaticMeshActor& Type, ICsPayload_StaticMeshActor* Payload)
+const FCsStaticMeshActorPooled* UCsManager_StaticMeshActor::Spawn(const FECsStaticMeshActor& Type, NCsStaticMeshActor::NPayload::IPayload* Payload)
 {
 	if (Internal.IsExhausted(Type))
 	{

@@ -106,7 +106,7 @@ protected:
 
 	TArray<FCsManager_StatusEffectEvent> Manager_Events;
 
-	virtual ICsStatusEffectEvent* ConstructEvent(const FECsStatusEffectEvent& Type);
+	virtual NCsStatusEffect::NEvent::IEvent* ConstructEvent(const FECsStatusEffectEvent& Type);
 
 public:
 
@@ -121,16 +121,16 @@ public:
 	* Get the type (interface) of the Event.
 	*
 	* @param Context	The calling context.
-	* @param Event		Event of type: ICsStatusEffectEvent.
+	* @param Event		Event of type: NCsStatusEffect::NEvent::IEvent.
 	* return			Type of StatusEffectEvent.
 	*/
-	virtual const FECsStatusEffectEvent& GetEventType(const FString& Context, const ICsStatusEffectEvent* Event);
+	virtual const FECsStatusEffectEvent& GetEventType(const FString& Context, const NCsStatusEffect::NEvent::IEvent* Event);
 
 	/**
 	* Get the type (interface) of the Event.
 	*
 	* @param Context	The calling context.
-	* @param Event		Container for event of type: ICsStatusEffectEvent.
+	* @param Event		Container for event of type: NCsStatusEffect::NEvent::IEvent.
 	* return			Type of StatusEffectEvent.
 	*/
 	virtual const FECsStatusEffectEvent& GetEventType(const FString& Context, const FCsResource_StatusEffectEvent* Event);
@@ -143,9 +143,9 @@ public:
 	*/
 	void DeallocateEvent(const FString& Context, FCsResource_StatusEffectEvent* Event);
 
-	virtual bool CopyEvent(const FString& Context, const ICsStatusEffectEvent* From, ICsStatusEffectEvent* To);
+	virtual bool CopyEvent(const FString& Context, const NCsStatusEffect::NEvent::IEvent* From, NCsStatusEffect::NEvent::IEvent* To);
 
-	FCsResource_StatusEffectEvent* CreateCopyOfEvent(const FString& Context, const ICsStatusEffectEvent* Event);
+	FCsResource_StatusEffectEvent* CreateCopyOfEvent(const FString& Context, const NCsStatusEffect::NEvent::IEvent* Event);
 
 	FCsResource_StatusEffectEvent* CreateCopyOfEvent(const FString& Context, const FCsResource_StatusEffectEvent* Event);
 
@@ -159,14 +159,14 @@ public:
 	/**
 	* Process the Event
 	*
-	* @param Event	Event of type: ICsStatusEffectEvent.
+	* @param Event	Event of type: NCsStatusEffect::NEvent::IEvent.
 	*/
-	void ProcessStatusEffectEvent(const ICsStatusEffectEvent* Event);
+	void ProcessStatusEffectEvent(const NCsStatusEffect::NEvent::IEvent* Event);
 
 	/**
 	* Process the Event
 	*
-	* @param Event	Container for event of type: ICsStatusEffectEvent.
+	* @param Event	Container for event of type: NCsStatusEffect::NEvent::IEvent.
 	*/
 	void ProcessStatusEffectEventContainer(const FCsResource_StatusEffectEvent* Event);
 
@@ -175,7 +175,7 @@ public:
 	*
 	* @param Event
 	*/
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnEvent, const ICsStatusEffectEvent* /*Event*/);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnEvent, const NCsStatusEffect::NEvent::IEvent* /*Event*/);
 
 	/** */
 	FOnEvent OnEvent_Event;
@@ -186,7 +186,7 @@ public:
 #pragma region
 public:
 
-	//void LogEventPoint(const ICsStatusEffectEvent* Event);
+	//void LogEventPoint(const NCsStatusEffect::NEvent::IEvent* Event);
 
 #pragma endregion Log
 };

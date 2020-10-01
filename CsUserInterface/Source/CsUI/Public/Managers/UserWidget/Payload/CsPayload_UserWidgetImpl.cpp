@@ -3,47 +3,53 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsPayload_UserWidgetImpl::Name = FName("FCsPayload_UserWidgetImpl");;
+const FName NCsUserWidget::NPayload::FImpl::Name = FName("NCsUserWidget::NPayload::FImpl");;
 
-FCsPayload_UserWidgetImpl::FCsPayload_UserWidgetImpl() :
-	// ICsGetInterfaceMap
-	InterfaceMap(nullptr),
-	// NCsPooledObject::NPayload::IPayload
-	bAllocated(false),
-	Instigator(nullptr),
-	Owner(nullptr),
-	Parent(nullptr),
-	Time(),
-	// ICsPayload_UserWidget
-	Visibility(ESlateVisibility::SelfHitTestInvisible)
+namespace NCsUserWidget
 {
-	InterfaceMap = new FCsInterfaceMap();
+	namespace NPayload
+	{
+		FImpl::FImpl() :
+			// ICsGetInterfaceMap
+			InterfaceMap(nullptr),
+			// NCsPooledObject::NPayload::IPayload
+			bAllocated(false),
+			Instigator(nullptr),
+			Owner(nullptr),
+			Parent(nullptr),
+			Time(),
+			// NCsUserWidget::NPayload::IPayload
+			Visibility(ESlateVisibility::SelfHitTestInvisible)
+		{
+			InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsPayload_UserWidgetImpl::Name);
+			InterfaceMap->SetRootName(FImpl::Name);
 
-	InterfaceMap->Add<NCsPooledObject::NPayload::IPayload>(static_cast<NCsPooledObject::NPayload::IPayload*>(this));
-	InterfaceMap->Add<ICsPayload_UserWidget>(static_cast<ICsPayload_UserWidget*>(this));
+			InterfaceMap->Add<NCsPooledObject::NPayload::IPayload>(static_cast<NCsPooledObject::NPayload::IPayload*>(this));
+			InterfaceMap->Add<NCsUserWidget::NPayload::IPayload>(static_cast<NCsUserWidget::NPayload::IPayload*>(this));
+		}
+
+		FImpl::~FImpl()
+		{
+			delete InterfaceMap;
+		}
+
+		// NCsPooledObject::NPayload::IPayload
+		#pragma region
+
+		void FImpl::Reset()
+		{
+			// NCsPooledObject::NPayload::IPayload
+			bAllocated = false;
+			Instigator = nullptr;
+			Owner = nullptr;
+			Parent = nullptr;
+
+			Time.Reset();
+			// NCsUserWidget::NPayload::IPayload
+			Visibility = ESlateVisibility::SelfHitTestInvisible;
+		}
+
+		#pragma endregion NCsPooledObject::NPayload::IPayload
+	}
 }
-
-FCsPayload_UserWidgetImpl::~FCsPayload_UserWidgetImpl()
-{
-	delete InterfaceMap;
-}
-
-// NCsPooledObject::NPayload::IPayload
-#pragma region
-
-void FCsPayload_UserWidgetImpl::Reset()
-{
-	// NCsPooledObject::NPayload::IPayload
-	bAllocated = false;
-	Instigator = nullptr;
-	Owner = nullptr;
-	Parent = nullptr;
-
-	Time.Reset();
-	// ICsPayload_UserWidget
-	Visibility = ESlateVisibility::SelfHitTestInvisible;
-}
-
-#pragma endregion NCsPooledObject::NPayload::IPayload

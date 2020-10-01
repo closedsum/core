@@ -7,117 +7,125 @@
 class UObject;
 struct FCsInterfaceMap;
 
-struct CSUI_API FCsPayload_UserWidgetImpl final : public NCsPooledObject::NPayload::IPayload,
-												  public ICsPayload_UserWidget
+namespace NCsUserWidget
 {
-public:
+	namespace NPayload
+	{
+		/**
+		*/
+		struct CSUI_API FImpl final : public NCsPooledObject::NPayload::IPayload,
+									  public NCsUserWidget::NPayload::IPayload
+		{
+		public:
 
-	static const FName Name;
+			static const FName Name;
 
-private:
+		private:
 
-	FCsInterfaceMap* InterfaceMap;
+			FCsInterfaceMap* InterfaceMap;
 
-	bool bAllocated;
+			bool bAllocated;
 
-public:
+		public:
 
-	// NCsPooledObject::NPayload::IPayload
+			// NCsPooledObject::NPayload::IPayload
 
-	UObject* Instigator;
+			UObject* Instigator;
 
-	UObject* Owner;
+			UObject* Owner;
 
-	UObject* Parent;
+			UObject* Parent;
 	
-	FCsTime Time;
+			FCsTime Time;
 
-	// ICsPayload_UserWidget
+			// NCsUserWidget::NPayload::IPayload
 
-	ESlateVisibility Visibility;
+			ESlateVisibility Visibility;
 
-public:
+		public:
 
-	FCsPayload_UserWidgetImpl();
-	~FCsPayload_UserWidgetImpl();
+			FImpl();
+			~FImpl();
 
-// ICsGetInterfaceMap
-#pragma region
-public:
+		// ICsGetInterfaceMap
+		#pragma region
+		public:
 
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-	{
-		return InterfaceMap;
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+			{
+				return InterfaceMap;
+			}
+
+		#pragma endregion ICsGetInterfaceMap
+
+		// NCsPooledObject::NPayload::IPayload
+		#pragma region
+		public:
+
+			FORCEINLINE const bool& IsAllocated() const
+			{
+				return bAllocated;
+			}
+
+			FORCEINLINE UObject* GetInstigator() const
+			{
+				return Instigator;
+			}
+
+			FORCEINLINE UObject* GetOwner() const
+			{
+				return Owner;
+			}
+
+			FORCEINLINE UObject* GetParent() const
+			{
+				return Parent;
+			}
+
+			FORCEINLINE const FCsTime& GetTime() const
+			{
+				return Time;
+			}
+
+			FORCEINLINE void Allocate()
+			{
+				bAllocated = true;
+			}
+
+			void Reset();
+
+		#pragma endregion NCsPooledObject::NPayload::IPayload
+
+		public:
+
+			template<typename T>
+			FORCEINLINE T* GetInstigator() const
+			{
+				return Cast<T>(GetInstigator());
+			}
+
+			template<typename T>
+			FORCEINLINE T* GetOwner() const
+			{
+				return Cast<T>(GetOwner());
+			}
+
+			template<typename T>
+			FORCEINLINE T* GetParent() const
+			{
+				return Cast<T>(GetParent());
+			}
+
+		// NCsUserWidget::NPayload::IPayload
+		#pragma region
+		public:
+
+			FORCEINLINE const ESlateVisibility& GetVisibility() const
+			{
+				return Visibility;
+			}
+
+		#pragma endregion NCsUserWidget::NPayload::IPayload
+		};
 	}
-
-#pragma endregion ICsGetInterfaceMap
-
-// NCsPooledObject::NPayload::IPayload
-#pragma region
-public:
-
-	FORCEINLINE const bool& IsAllocated() const
-	{
-		return bAllocated;
-	}
-
-	FORCEINLINE UObject* GetInstigator() const
-	{
-		return Instigator;
-	}
-
-	FORCEINLINE UObject* GetOwner() const
-	{
-		return Owner;
-	}
-
-	FORCEINLINE UObject* GetParent() const
-	{
-		return Parent;
-	}
-
-	FORCEINLINE const FCsTime& GetTime() const
-	{
-		return Time;
-	}
-
-	FORCEINLINE void Allocate()
-	{
-		bAllocated = true;
-	}
-
-	void Reset();
-
-#pragma endregion NCsPooledObject::NPayload::IPayload
-
-public:
-
-	template<typename T>
-	FORCEINLINE T* GetInstigator() const
-	{
-		return Cast<T>(GetInstigator());
-	}
-
-	template<typename T>
-	FORCEINLINE T* GetOwner() const
-	{
-		return Cast<T>(GetOwner());
-	}
-
-	template<typename T>
-	FORCEINLINE T* GetParent() const
-	{
-		return Cast<T>(GetParent());
-	}
-
-// ICsPayload_UserWidget
-#pragma region
-public:
-
-	FORCEINLINE const ESlateVisibility& GetVisibility() const
-	{
-		return Visibility;
-	}
-
-#pragma endregion ICsPayload_UserWidget
-};
+}

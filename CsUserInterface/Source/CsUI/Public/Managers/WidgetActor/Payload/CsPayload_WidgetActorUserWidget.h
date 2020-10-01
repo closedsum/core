@@ -3,7 +3,9 @@
 #include "Managers/UserWidget/CsTypes_UserWidget.h"
 #pragma once
 
-struct ICsPayload_UserWidget;
+namespace NCsUserWidget {
+	namespace NPayload {
+		struct IPayload; } }
 
 namespace NCsWidgetActor
 {
@@ -35,7 +37,7 @@ namespace NCsWidgetActor
 			*
 			* return
 			*/
-			virtual ICsPayload_UserWidget* GetUserWidgetPayload() const = 0;
+			virtual NCsUserWidget::NPayload::IPayload* GetUserWidgetPayload() const = 0;
 		};
 	}
 }

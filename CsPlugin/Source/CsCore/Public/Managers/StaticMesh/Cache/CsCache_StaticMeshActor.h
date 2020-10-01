@@ -4,18 +4,24 @@
 
 #pragma once
 
-/**
-* Cache associated with a StaticMeshActor Pooled.
-*  The Manager for StaticMeshActor primarily interacts with the Cache object in terms
-*  of allocation and deallocation.
-*/
-struct CSCORE_API ICsCache_StaticMeshActor : virtual public ICsGetInterfaceMap
+namespace NCsStaticMeshActor
 {
-public:
+	namespace NCache
+	{
+		/**
+		* Cache associated with a StaticMeshActor Pooled.
+		*  The Manager for StaticMeshActor primarily interacts with the Cache object in terms
+		*  of allocation and deallocation.
+		*/
+		struct CSCORE_API ICache : virtual public ICsGetInterfaceMap
+		{
+		public:
 
-	static const FName Name;
+			static const FName Name;
 
-public:
+		public:
 
-	virtual ~ICsCache_StaticMeshActor() {}
-};
+			virtual ~ICache() {}
+		};
+	}
+}

@@ -11,7 +11,9 @@ class CSCORE_API UCsReceiveDamage : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
-struct ICsDamageEvent;
+namespace NCsDamage {
+	namespace NEvent {
+		struct IEvent; } }
 
 /**
 */
@@ -21,7 +23,7 @@ class CSCORE_API ICsReceiveDamage
 
 public:
 
-	virtual void Damage(const ICsDamageEvent* Event) = 0;
+	virtual void Damage(const NCsDamage::NEvent::IEvent* Event) = 0;
 };
 
 // FCsReceiveDamage
@@ -54,7 +56,7 @@ public:
 	* @param Object		A Object of type: ICsReceiveDamage.
 	* @param Event
 	*/
-	DECLARE_DELEGATE_TwoParams(FScript_Damage, UObject* /*Object*/, const ICsDamageEvent* /*Event*/);
+	DECLARE_DELEGATE_TwoParams(FScript_Damage, UObject* /*Object*/, const NCsDamage::NEvent::IEvent* /*Event*/);
 
 	/** Delegate for .
 		 The Object implements a script interface of type: ICsReceiveDamage. */
@@ -84,7 +86,7 @@ public:
 #pragma region
 public:
 
-	void Damage(const ICsDamageEvent* Event)
+	void Damage(const NCsDamage::NEvent::IEvent* Event)
 	{
 		if (bScript)
 			Script_Damage_Impl.Execute(Object, Event);

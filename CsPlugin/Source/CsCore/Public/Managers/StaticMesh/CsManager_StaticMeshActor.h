@@ -25,11 +25,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerStaticMeshActor_OnSpawn, 
 
 class ICsStaticMeshActor;
 
-class CSCORE_API FCsManager_StaticMeshActor_Internal : public TCsManager_PooledObject_Map<ICsStaticMeshActor, FCsStaticMeshActorPooled, ICsPayload_StaticMeshActor, FECsStaticMeshActor>
+class CSCORE_API FCsManager_StaticMeshActor_Internal : public TCsManager_PooledObject_Map<ICsStaticMeshActor, FCsStaticMeshActorPooled, NCsStaticMeshActor::NPayload::IPayload, FECsStaticMeshActor>
 {
 private:
 
-	typedef TCsManager_PooledObject_Map<ICsStaticMeshActor, FCsStaticMeshActorPooled, ICsPayload_StaticMeshActor, FECsStaticMeshActor> Super;
+	typedef TCsManager_PooledObject_Map<ICsStaticMeshActor, FCsStaticMeshActorPooled, NCsStaticMeshActor::NPayload::IPayload, FECsStaticMeshActor> Super;
 
 public:
 
@@ -469,31 +469,29 @@ public:
 	* @param Type
 	* return
 	*/
-	virtual ICsPayload_StaticMeshActor* ConstructPayload(const FECsStaticMeshActor& Type);
+	virtual NCsStaticMeshActor::NPayload::IPayload* ConstructPayload(const FECsStaticMeshActor& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPayload_StaticMeshActor.
+	*  Payload implements the interface: NCsStaticMeshActor::NPayload::IPayload.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsPayload_StaticMeshActor.
+	* return		Payload that implements the interface: NCsStaticMeshActor::NPayload::IPayload.
 	*/
-	ICsPayload_StaticMeshActor* AllocatePayload(const FECsStaticMeshActor& Type);
+	NCsStaticMeshActor::NPayload::IPayload* AllocatePayload(const FECsStaticMeshActor& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsPayload_StaticMeshActor.
+	*  Payload implements the interface: NCsStaticMeshActor::NPayload::IPayload.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsPayload_StaticMeshActor.
+	* return		Payload that implements the interface: NCsStaticMeshActor::NPayload::IPayload.
 	*/
 	template<typename PayloadTypeImpl>
 	FORCEINLINE PayloadTypeImpl* AllocatePayload(const FECsStaticMeshActor& Type)
 	{
 		return Internal.AllocatePayload<PayloadTypeImpl>(Type);
 	}
-
-	//virtual ICsFXPooledPayload* ScriptAllocatePayload(const FECsFX& Type, const FCsScriptProjectilePayload& ScriptPayload);
 
 #pragma endregion Payload
 
@@ -507,7 +505,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	const FCsStaticMeshActorPooled* Spawn(const FECsStaticMeshActor& Type, ICsPayload_StaticMeshActor* Payload);
+	const FCsStaticMeshActorPooled* Spawn(const FECsStaticMeshActor& Type, NCsStaticMeshActor::NPayload::IPayload* Payload);
 
 	/**
 	*

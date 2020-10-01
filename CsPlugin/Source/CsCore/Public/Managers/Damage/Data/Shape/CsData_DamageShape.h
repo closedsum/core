@@ -10,8 +10,13 @@ class CSCORE_API UCsData_DamageShape : public UCsGetInterfaceMap
 	GENERATED_UINTERFACE_BODY()
 };
 
-struct ICsDamageValue;
-struct ICsDamageRange;
+namespace NCsDamage {
+	namespace NValue {
+		struct IValue; } }
+
+namespace NCsDamage {
+	namespace NRange {
+		struct IRange; } }
 
 /**
 * Interface to describe the shape of Damage. This should be used with 
@@ -32,7 +37,7 @@ public:
 	*
 	* return
 	*/
-	virtual const ICsDamageRange* GetRange() const = 0;
+	virtual const NCsDamage::NRange::IRange* GetRange() const = 0;
 
 	/**
 	* Calculate damage given an origin and point.
@@ -44,7 +49,7 @@ public:
 	* return			Damage
 	*
 	*/
-	virtual float CalculateDamage(const ICsDamageValue* Value, const ICsDamageRange* Range, const FVector& Origin, const FVector& Point) const = 0;
+	virtual float CalculateDamage(const NCsDamage::NValue::IValue* Value, const NCsDamage::NRange::IRange* Range, const FVector& Origin, const FVector& Point) const = 0;
 
 	/**
 	* Check if a given Point is within the bounds of an Origin.

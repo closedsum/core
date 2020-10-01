@@ -3,41 +3,50 @@
 
 class UObject;
 struct FCsResource_DamageRange;
-struct ICsDamageRange;
 
-/**
-* Container for an allocated object which implements the interface
-* ICsDamageRange. This container is used to some what cleanly free
-* the object after use.
-*/
-struct CSCORE_API FCsAllocated_DamageRange
+namespace NCsDamage {
+	namespace NRange {
+		struct IRange; } }
+
+namespace NCsDamage
 {
-public:
-
-	UObject* Root;
-
-	FCsResource_DamageRange* Container;
-
-	ICsDamageRange* Range;
-
-	FCsAllocated_DamageRange() :
-		Root(nullptr),
-		Container(nullptr),
-		Range(nullptr)
+	namespace NRange
 	{
+		/**
+		* Container for an allocated object which implements the interface
+		* IRange. This container is used to some what cleanly free
+		* the object after use.
+		*/
+		struct CSCORE_API FAllocated
+		{
+		public:
+
+			UObject* Root;
+
+			FCsResource_DamageRange* Container;
+
+			IRange* Range;
+
+			FAllocated() :
+				Root(nullptr),
+				Container(nullptr),
+				Range(nullptr)
+			{
+			}
+
+			FORCEINLINE const IRange* GetRange() const
+			{
+				return Range;
+			}
+
+			void CopyFrom(UObject* InRoot, const IRange* From);
+
+			void CopyFrom(const FAllocated* From);
+
+			/**
+			* Clear / null out all members and deallocate the Container.
+			*/
+			void Reset();
+		};
 	}
-
-	FORCEINLINE const ICsDamageRange* GetRange() const
-	{
-		return Range;
-	}
-
-	void CopyFrom(UObject* InRoot, const ICsDamageRange* From);
-
-	void CopyFrom(const FCsAllocated_DamageRange* From);
-
-	/**
-	* Clear / null out all members and deallocate the Container.
-	*/
-	void Reset();
-};
+}

@@ -119,7 +119,9 @@ void ACsWidgetActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 	const FString& Context = Str::Update;
 
-	FCsCache_WidgetActorImpl* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsCache_WidgetActorImpl>(Context, Cache);
+	typedef NCsWidgetActor::NCache::FImpl CacheImplType;
+
+	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Update(DeltaTime);
 }
@@ -153,8 +155,8 @@ void ACsWidgetActorPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Pay
 			const FECsUserWidgetPooled& UserWidgetPooledType = WidgetActorUserWidgetPayload->GetUserWidgetPooledType();
 
 			checkf(EMCsUserWidgetPooled::Get().IsValidEnum(UserWidgetPooledType), TEXT("%s: UserWidgetPooledType: %s is NOT Valid from Payload(NCsWidgetActor::NPayload::IPayload)->GetUserWidgetPooledType()."), *Context, UserWidgetPooledType.ToChar());
-				// Get payload (ICsPayload_UserWidget)
-			ICsPayload_UserWidget* UserWidgetPayload = WidgetActorUserWidgetPayload->GetUserWidgetPayload();
+				// Get payload (NCsUserWidget::NPayload::IPayload)
+			NCsUserWidget::NPayload::IPayload* UserWidgetPayload = WidgetActorUserWidgetPayload->GetUserWidgetPayload();
 
 			checkf(UserWidgetPayload, TEXT("%s: UserWidgetPayload is NULL from Payload(NCsWidgetActor::NPayload::IUserWidget)->GetUserWidgetPayload()."), *Context)
 				// "Spawn" / allocate UserWidget
@@ -166,7 +168,9 @@ void ACsWidgetActorPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Pay
 		}	
 	}
 
-	FCsCache_WidgetActorImpl* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsCache_WidgetActorImpl>(Context, Cache);
+	typedef NCsWidgetActor::NCache::FImpl CacheImplType;
+
+	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Allocate(Payload);
 
@@ -266,5 +270,7 @@ void ACsWidgetActorPooledImpl::Deallocate_Internal()
 
 void ACsWidgetActorPooledImpl::ConstructCache()
 {
-	Cache = new FCsCache_WidgetActorImpl();
+	typedef NCsWidgetActor::NCache::FImpl CacheImplType;
+
+	Cache = new CacheImplType();
 }

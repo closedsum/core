@@ -6,52 +6,58 @@
 #include "Data/CsData_StatusEffect.h"
 #include "Event/CsResource_StatusEffectEvent.h"
 
-FCsStatusEffectEventInfo::FCsStatusEffectEventInfo() :
-	Event(nullptr),
-	Container(nullptr),
-	FrequencyInfo(),
-	TotalTime(0.0f),
-	ElapsedTotalTime(),
-	bDelayComplete(false),
-	ElapsedDelayTime(),
-	ElapsedIntervalTime(),
-	Count(0)
+namespace NCsStatusEffect
 {
-}
+	namespace NEvent
+	{
+		FInfo::FInfo() :
+			Event(nullptr),
+			Container(nullptr),
+			FrequencyInfo(),
+			TotalTime(0.0f),
+			ElapsedTotalTime(),
+			bDelayComplete(false),
+			ElapsedDelayTime(),
+			ElapsedIntervalTime(),
+			Count(0)
+		{
+		}
 
-void FCsStatusEffectEventInfo::SetEvent(FCsResource_StatusEffectEvent* InEvent)
-{
-	Container = InEvent;
-	Event	  = Container->Get();
+		void FInfo::SetEvent(FCsResource_StatusEffectEvent* InEvent)
+		{
+			Container = InEvent;
+			Event	  = Container->Get();
 
-	ICsData_StatusEffect* Data = Event->GetData();
+			ICsData_StatusEffect* Data = Event->GetData();
 
-	FrequencyInfo.SetData(Data);
-}
+			FrequencyInfo.SetData(Data);
+		}
 
-bool FCsStatusEffectEventInfo::CanApply() const
-{
-	return FrequencyInfo.CanApply();
-}
+		bool FInfo::CanApply() const
+		{
+			return FrequencyInfo.CanApply();
+		}
 
-void FCsStatusEffectEventInfo::Increment()
-{
-	FrequencyInfo.Increment();
-}
+		void FInfo::Increment()
+		{
+			FrequencyInfo.Increment();
+		}
 
-bool FCsStatusEffectEventInfo::IsComplete() const
-{
-	return FrequencyInfo.IsComplete();
-}
+		bool FInfo::IsComplete() const
+		{
+			return FrequencyInfo.IsComplete();
+		}
 
-void FCsStatusEffectEventInfo::Update(const FCsDeltaTime& DeltaTime)
-{
-	FrequencyInfo.Update(DeltaTime);
-}
+		void FInfo::Update(const FCsDeltaTime& DeltaTime)
+		{
+			FrequencyInfo.Update(DeltaTime);
+		}
 
-void FCsStatusEffectEventInfo::Reset()
-{
-	Event = nullptr;
-	Container = nullptr;
-	FrequencyInfo.Reset();
+		void FInfo::Reset()
+		{
+			Event = nullptr;
+			Container = nullptr;
+			FrequencyInfo.Reset();
+		}
+	}
 }

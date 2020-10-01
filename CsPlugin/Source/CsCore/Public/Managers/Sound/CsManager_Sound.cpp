@@ -13,7 +13,7 @@
 #include "Managers/Sound/Data/CsData_Sound.h"
 #include "Managers/Sound/Data/CsData_SoundImpl.h"
 // FX
-#include "Managers/Sound/Payload/CsSoundPooledPayloadImpl.h"
+#include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -577,12 +577,12 @@ void UCsManager_Sound::ConstructPayloads(const FECsSound& Type, const int32& Siz
 	Internal.ConstructPayloads(Type, Size);
 }
 
-ICsSoundPooledPayload* UCsManager_Sound::ConstructPayload(const FECsSound& Type)
+NCsSound::NPayload::IPayload* UCsManager_Sound::ConstructPayload(const FECsSound& Type)
 {
-	return new FCsSoundPooledPayloadImpl();
+	return new NCsSound::NPayload::FImpl();
 }
 
-ICsSoundPooledPayload* UCsManager_Sound::AllocatePayload(const FECsSound& Type)
+NCsSound::NPayload::IPayload* UCsManager_Sound::AllocatePayload(const FECsSound& Type)
 {
 	return Internal.AllocatePayload(Type);
 }
@@ -592,7 +592,7 @@ ICsSoundPooledPayload* UCsManager_Sound::AllocatePayload(const FECsSound& Type)
 	// Spawn
 #pragma region
 
-const FCsSoundPooled* UCsManager_Sound::Spawn(const FECsSound& Type, ICsSoundPooledPayload* Payload)
+const FCsSoundPooled* UCsManager_Sound::Spawn(const FECsSound& Type, NCsSound::NPayload::IPayload* Payload)
 {
 	if (Internal.IsExhausted(Type))
 	{

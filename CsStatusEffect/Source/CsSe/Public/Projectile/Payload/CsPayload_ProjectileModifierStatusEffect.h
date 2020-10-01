@@ -2,19 +2,33 @@
 #include "Containers/CsGetInterfaceMap.h"
 #pragma once
 
-struct ICsStatusEffectModifier;
+namespace NCsStatusEffect {
+	namespace NModifier {
+		struct IModifier; } }
 
-/**
-*/
-struct CSSE_API ICsPayload_ProjectileModifierStatusEffect : virtual public ICsGetInterfaceMap
+namespace NCsProjectile
 {
-public:
+	namespace NPayload
+	{
+		namespace NModifier
+		{
+			namespace NStatusEffect
+			{
+				/**
+				*/
+				struct CSSE_API IStatusEffect : virtual public ICsGetInterfaceMap
+				{
+				public:
 
-	static const FName Name;
+					static const FName Name;
 
-public:
+				public:
 
-	virtual ~ICsPayload_ProjectileModifierStatusEffect(){}
+					virtual ~IStatusEffect(){}
 
-	virtual const TArray<ICsStatusEffectModifier*>& GetStatusEffectModifiers() const = 0;
-};
+					virtual const TArray<NCsStatusEffect::NModifier::IModifier*>& GetStatusEffectModifiers() const = 0;
+				};
+			}
+		}
+	}
+}

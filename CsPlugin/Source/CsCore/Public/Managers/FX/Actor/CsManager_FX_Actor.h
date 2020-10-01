@@ -5,7 +5,7 @@
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
 #include "Managers/Resource/CsManager_ResourceValueType.h"
 #include "Managers/FX/CsTypes_FX.h"
-#include "Managers/FX/Payload/CsFXPooledPayload.h"
+#include "Managers/FX/Payload/CsPayload_FX.h"
 #include "Managers/FX/Actor/CsFXActorPooled.h"
 #include "Managers/FX/Actor/CsSettings_Manager_FX_Actor.h"
 #include "CsManager_FX_Actor.generated.h"
@@ -22,11 +22,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerFXActor_OnSpawn, const FE
 
 class ICsFXActorPooled;
 
-class CSCORE_API FCsManager_FX_Actor_Internal : public TCsManager_PooledObject_Map<ICsFXActorPooled, FCsFXActorPooled, ICsFXPooledPayload, FECsFX>
+class CSCORE_API FCsManager_FX_Actor_Internal : public TCsManager_PooledObject_Map<ICsFXActorPooled, FCsFXActorPooled, NCsFX::NPayload::IPayload, FECsFX>
 {
 private:
 
-	typedef TCsManager_PooledObject_Map<ICsFXActorPooled, FCsFXActorPooled, ICsFXPooledPayload, FECsFX> Super;
+	typedef TCsManager_PooledObject_Map<ICsFXActorPooled, FCsFXActorPooled, NCsFX::NPayload::IPayload, FECsFX> Super;
 
 public:
 
@@ -465,23 +465,23 @@ public:
 	* @param Type
 	* return
 	*/
-	virtual ICsFXPooledPayload* ConstructPayload(const FECsFX& Type);
+	virtual NCsFX::NPayload::IPayload* ConstructPayload(const FECsFX& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsFXPooledPayload.
+	*  Payload implements the interface: NCsFX::NPayload::IPayload.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsFXPooledPayload.
+	* return		Payload that implements the interface: NCsFX::NPayload::IPayload.
 	*/
-	ICsFXPooledPayload* AllocatePayload(const FECsFX& Type);
+	NCsFX::NPayload::IPayload* AllocatePayload(const FECsFX& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsFXPooledPayload.
+	*  Payload implements the interface: NCsFX::NPayload::IPayload.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsFXPooledPayload.
+	* return		Payload that implements the interface: NCsFX::NPayload::IPayload.
 	*/
 	template<typename PayloadTypeImpl>
 	FORCEINLINE PayloadTypeImpl* AllocatePayload(const FECsFX& Type)
@@ -489,7 +489,7 @@ public:
 		return Internal.AllocatePayload<PayloadTypeImpl>(Type);
 	}
 
-	//virtual ICsFXPooledPayload* ScriptAllocatePayload(const FECsFX& Type, const FCsScriptProjectilePayload& ScriptPayload);
+	//virtual NCsFX::NPayload::IPayload* ScriptAllocatePayload(const FECsFX& Type, const FCsScriptProjectilePayload& ScriptPayload);
 
 #pragma endregion Payload
 
@@ -503,7 +503,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	const FCsFXActorPooled* Spawn(const FECsFX& Type, ICsFXPooledPayload* Payload);
+	const FCsFXActorPooled* Spawn(const FECsFX& Type, NCsFX::NPayload::IPayload* Payload);
 
 	/**
 	*

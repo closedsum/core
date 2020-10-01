@@ -3,43 +3,52 @@
 
 class UObject;
 struct FCsResource_DamageEvent;
-struct ICsDamageEvent;
 
-/**
-* Container for an allocated object which implements the interface
-* ICsDamageEvent. This container is used to some what cleanly free
-* the object after use.
-*/
-struct CSCORE_API FCsAllocated_DamageEvent
+namespace NCsDamage {
+	namespace NEvent { 
+		struct IEvent; } }
+
+namespace NCsDamage
 {
-public:
-
-	UObject* Root;
-
-	FCsResource_DamageEvent* Container;
-
-	ICsDamageEvent* Event;
-
-	FCsAllocated_DamageEvent() :
-		Root(nullptr),
-		Container(nullptr),
-		Event(nullptr)
+	namespace NEvent
 	{
+		/**
+		* Container for an allocated object which implements the interface
+		* NCsDamage::NEvent::IEvent. This container is used to some what cleanly free
+		* the object after use.
+		*/
+		struct CSCORE_API FAllocated
+		{
+		public:
+
+			UObject* Root;
+
+			FCsResource_DamageEvent* Container;
+
+			IEvent* Event;
+
+			FAllocated() :
+				Root(nullptr),
+				Container(nullptr),
+				Event(nullptr)
+			{
+			}
+
+			FORCEINLINE const IEvent* GetEvent() const
+			{
+				return Event;
+			}
+
+			void Set(UObject* InRoot, FCsResource_DamageEvent* InContainer);
+
+			void CopyFrom(UObject* InRoot, const IEvent* From);
+
+			void CopyFrom(const FAllocated* Event);
+
+			/**
+			* Clear / null out all members and deallocate the Container.
+			*/
+			void Reset();
+		};
 	}
-
-	FORCEINLINE const ICsDamageEvent* GetEvent() const
-	{
-		return Event;
-	}
-
-	void Set(UObject* InRoot, FCsResource_DamageEvent* InContainer);
-
-	void CopyFrom(UObject* InRoot, const ICsDamageEvent* From);
-
-	void CopyFrom(const FCsAllocated_DamageEvent* Event);
-
-	/**
-	* Clear / null out all members and deallocate the Container.
-	*/
-	void Reset();
-};
+}

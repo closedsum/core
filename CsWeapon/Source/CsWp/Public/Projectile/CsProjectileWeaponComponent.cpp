@@ -11,7 +11,7 @@
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Payload/CsLibrary_Payload_Projectile.h"
 #include "Data/CsLibrary_Data_Weapon.h"
-#include "Managers/Sound/Payload/CsLibrary_SoundPooledPayload.h"
+#include "Managers/Sound/Payload/CsLibrary_Payload_Sound.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Managers
@@ -32,7 +32,7 @@
 #include "Payload/CsPayload_ProjectileImplSlice.h"
 #include "Managers/Projectile/CsProjectilePooledImpl.h"
 // Sound
-#include "Managers/Sound/Payload/CsSoundPooledPayloadImpl.h"
+#include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 
 // Cached
 #pragma region
@@ -541,7 +541,7 @@ void UCsProjectileWeaponComponent::PlayFireSound()
 			// Get Manager
 			UCsManager_Sound* Manager_Sound = UCsManager_Sound::Get(GetWorld()->GetGameState());
 			// Allocate payload
-			ICsSoundPooledPayload* Payload = Manager_Sound->AllocatePayload(Sound.Type);
+			NCsSound::NPayload::IPayload* Payload = Manager_Sound->AllocatePayload(Sound.Type);
 			// Set appropriate values on payload
 			SetSoundPooledPayload(Payload, Sound);
 
@@ -554,13 +554,13 @@ void UCsProjectileWeaponComponent::PlayFireSound()
 	}
 }
 
-void UCsProjectileWeaponComponent::SetSoundPooledPayload(ICsSoundPooledPayload* Payload, const FCsSound& Sound)
+void UCsProjectileWeaponComponent::SetSoundPooledPayload(NCsSound::NPayload::IPayload* Payload, const FCsSound& Sound)
 {
 	using namespace NCsProjectileWeaponComponentCached;
 
 	const FString& Context = Str::SetSoundPooledPayload;
 
-	FCsSoundPooledPayloadImpl* PayloadImpl = FCsLibrary_SoundPooledPayload::PureStaticCastChecked<FCsSoundPooledPayloadImpl>(Context, Payload);
+	NCsSound::NPayload::FImpl* PayloadImpl = FCsLibrary_Payload_Sound::PureStaticCastChecked<NCsSound::NPayload::FImpl>(Context, Payload);
 
 	PayloadImpl->Instigator					= this;
 	PayloadImpl->Owner						= MyOwner;

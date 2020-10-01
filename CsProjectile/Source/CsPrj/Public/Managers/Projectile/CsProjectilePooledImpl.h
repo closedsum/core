@@ -35,7 +35,11 @@ namespace NCsProjectile {
 class ICsData_Projectile;
 class ICsFXActorPooled;
 struct FCsFXActorPooled;
-struct ICsDamageEvent;
+
+namespace NCsDamage {
+	namespace NEvent {
+		struct IEvent; } }
+
 struct FCsResource_DamageEvent;
 struct FCsResource_DamageModifier;
 class ICsData_Damage;
@@ -196,11 +200,11 @@ protected:
 public:
 
 	/**
-	* Event to broadcast a damage event of type: ICsDamageEvent.
+	* Event to broadcast a damage event of type: NCsDamage::NEvent::IEvent.
 	*
 	* @param Event	DamageEvent.
 	*/
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBroadcastDamage, const ICsDamageEvent* /*Event*/);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBroadcastDamage, const NCsDamage::NEvent::IEvent* /*Event*/);
 
 	/** */
 	FOnBroadcastDamage OnBroadcastDamage_Event;

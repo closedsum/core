@@ -4,20 +4,29 @@
 
 struct ICsDamageEvent;
 
-/**
-*/
-struct CSSE_API ICsStatusEffectEvent_Damage : virtual public ICsGetInterfaceMap
+namespace NCsStatusEffect
 {
-public:
+	namespace NEvent
+	{
+		namespace NDamage
+		{
+			/**
+			*/
+			struct CSSE_API IDamage : virtual public ICsGetInterfaceMap
+			{
+			public:
 
-	static const FName Name;
+				static const FName Name;
 
-public:
+			public:
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual ICsDamageEvent* GetDamageEvent() const = 0;
-};
+				/**
+				*
+				*
+				* return
+				*/
+				virtual NCsDamage::NEvent::IEvent* GetDamageEvent() const = 0;
+			};
+		}
+	}
+}

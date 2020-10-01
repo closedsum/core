@@ -5,89 +5,101 @@
 #pragma once
 
 class ICsData_Damage;
-struct ICsDamageValue;
-struct ICsDamageRange;
 
-/**
-*
-*/
-struct CSCORE_API ICsDamageEvent : virtual public ICsGetInterfaceMap
+namespace NCsDamage {
+	namespace NValue {
+		struct IValue; } }
+
+namespace NCsDamage {
+	namespace NRange {
+		struct IRange; } }
+
+namespace NCsDamage
 {
-public:
+	namespace NEvent
+	{
+		/**
+		*
+		*/
+		struct CSCORE_API IEvent : virtual public ICsGetInterfaceMap
+		{
+		public:
 
-	static const FName Name;
+			static const FName Name;
 
-public:
+		public:
 
-	virtual ~ICsDamageEvent() {}
+			virtual ~IEvent() {}
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const float& GetDamage() const = 0;
+			/**
+			*
+			*
+			* return
+			*/
+			virtual const float& GetDamage() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const ICsDamageValue* GetDamageValue() const = 0;
+			/**
+			*
+			*
+			* return
+			*/
+			virtual const NCsDamage::NValue::IValue* GetDamageValue() const = 0;
 
-	/**
-	*
-	*
-	* return 
-	*/
-	virtual const ICsDamageRange* GetDamageRange() const = 0;
+			/**
+			*
+			*
+			* return 
+			*/
+			virtual const NCsDamage::NRange::IRange* GetDamageRange() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/ 
-	virtual ICsData_Damage* GetData() const = 0;
+			/**
+			*
+			*
+			* return
+			*/ 
+			virtual ICsData_Damage* GetData() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual UObject* GetInstigator() const = 0;
+			/**
+			*
+			*
+			* return
+			*/
+			virtual UObject* GetInstigator() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual UObject* GetCauser() const = 0;
+			/**
+			*
+			*
+			* return
+			*/
+			virtual UObject* GetCauser() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const FECsHitType& GetHitType() const = 0;
+			/**
+			*
+			*
+			* return
+			*/
+			virtual const FECsHitType& GetHitType() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const FHitResult& GetOrigin() const = 0;
+			/**
+			*
+			*
+			* return
+			*/
+			virtual const FHitResult& GetOrigin() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const FHitResult& GetHitResult() const = 0;
+			/**
+			*
+			*
+			* return
+			*/
+			virtual const FHitResult& GetHitResult() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const TArray<UObject*>& GetIgnoreObjects() const = 0;
-};
+			/**
+			*
+			*
+			* return
+			*/
+			virtual const TArray<UObject*>& GetIgnoreObjects() const = 0;
+		};
+	}
+}

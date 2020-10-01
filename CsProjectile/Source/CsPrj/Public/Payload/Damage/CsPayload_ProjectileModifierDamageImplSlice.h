@@ -7,6 +7,10 @@
 class UObject;
 struct FCsInterfaceMap;
 
+namespace NCsDamage {
+	namespace NModifier {
+		struct IModifier; } }
+
 namespace NCsProjectile
 {
 	namespace NPayload
@@ -33,9 +37,9 @@ namespace NCsProjectile
 
 				public:
 
-					// ICsPayload_ProjectileModifierDamage
+					// IDamage
 
-					TArray<ICsDamageModifier*> Modifiers;
+					TArray<NCsDamage::NModifier::IModifier*> Modifiers;
 
 				public:
 
@@ -56,16 +60,16 @@ namespace NCsProjectile
 
 					void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
 
-				// ICsPayload_ProjectileModifierDamage
+				// IDamage
 				#pragma region
 				public:
 
-					FORCEINLINE const TArray<ICsDamageModifier*>& GetDamageModifiers() const
+					FORCEINLINE const TArray<NCsDamage::NModifier::IModifier*>& GetDamageModifiers() const
 					{
 						return Modifiers;
 					}
 
-				#pragma endregion ICsPayload_ProjectileModifierDamage
+				#pragma endregion IDamage
 
 				// ICsReset
 				#pragma region

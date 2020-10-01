@@ -8,27 +8,39 @@
 #include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRangeEmu.h"
 
-bool FCsLibrary_DamageValue::CopyChecked(const FString& Context, const ICsDamageValue* From, ICsDamageValue* To)
+bool FCsLibrary_DamageValue::CopyChecked(const FString& Context, const NCsDamage::NValue::IValue* From, NCsDamage::NValue::IValue* To)
 {
 	// Point
-	if (ICsDamageValuePoint* IFromPoint = GetSafeInterfaceChecked<ICsDamageValuePoint>(Context, const_cast<ICsDamageValue*>(From)))
 	{
-		// FCsDamageValuePointImpl (ICsDamageValuePoint)
-		if (FCsDamageValuePointImpl* ToImpl = SafePureStaticCastChecked<FCsDamageValuePointImpl>(Context, To))
+		typedef NCsDamage::NValue::NPoint::IPoint PointType;
+
+		if (PointType* IFromPoint = GetSafeInterfaceChecked<PointType>(Context, const_cast<NCsDamage::NValue::IValue*>(From)))
 		{
-			ToImpl->Value = IFromPoint->GetValue();
-			return true;
+			// NCsDamage::NValue::NPoint::FImpl (NCsDamage::NValue::NPoint::IPoint)
+			typedef NCsDamage::NValue::NPoint::FImpl ImplType;
+
+			if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
+			{
+				ToImpl->Value = IFromPoint->GetValue();
+				return true;
+			}
 		}
 	}
 	// Range
-	if (ICsDamageValueRange* IFromRange = GetSafeInterfaceChecked<ICsDamageValueRange>(Context, const_cast<ICsDamageValue*>(From)))
 	{
-		// FCsDamageValuePointImpl (ICsDamageValuePoint)
-		if (FCsDamageValueRangeImpl* ToImpl = SafePureStaticCastChecked<FCsDamageValueRangeImpl>(Context, To))
+		typedef NCsDamage::NValue::NRange::IRange RangeType;
+
+		if (RangeType* IFromRange = GetSafeInterfaceChecked<RangeType>(Context, const_cast<NCsDamage::NValue::IValue*>(From)))
 		{
-			ToImpl->MinValue = IFromRange->GetMinValue();
-			ToImpl->MaxValue = IFromRange->GetMaxValue();
-			return true;
+			// NCsDamage::NValue::NRange::FImpl (NCsDamage::NValue::NRange::IRange)
+			typedef NCsDamage::NValue::NRange::FImpl ImplType;
+
+			if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
+			{
+				ToImpl->MinValue = IFromRange->GetMinValue();
+				ToImpl->MaxValue = IFromRange->GetMaxValue();
+				return true;
+			}
 		}
 	}
 	return false;

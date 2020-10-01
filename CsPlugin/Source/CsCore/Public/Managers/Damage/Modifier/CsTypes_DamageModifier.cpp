@@ -3,6 +3,6 @@
 
 namespace NCsDamageModifier
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(Value, "ICsDamageModifierValue");
-	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(Range, "ICsDamageModifierRange");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(Value, "NCsDamage::NModifier::NValue::IValue");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(Range, "NCsDamage::NModifier::NRange::IRange");
 }

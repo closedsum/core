@@ -2,7 +2,9 @@
 #include "Containers/CsGetInterfaceMap.h"
 #pragma once
 
-struct ICsDamageModifier;
+namespace NCsDamage {
+	namespace NModifier {
+		struct IModifier; } }
 
 namespace NCsProjectile
 {
@@ -24,7 +26,7 @@ namespace NCsProjectile
 
 					virtual ~IDamage(){}
 
-					virtual const TArray<ICsDamageModifier*>& GetDamageModifiers() const = 0;
+					virtual const TArray<NCsDamage::NModifier::IModifier*>& GetDamageModifiers() const = 0;
 				};
 			}
 		}

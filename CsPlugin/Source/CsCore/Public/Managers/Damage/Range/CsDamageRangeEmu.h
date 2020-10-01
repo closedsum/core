@@ -5,68 +5,74 @@
 
 struct FCsInterfaceMap;
 
-/**
-* Basic implementation of the interface: ICsDmaageRange
-*/
-struct CSCORE_API FCsDamageRangeEmu : public ICsDamageRange
+namespace NCsDamage
 {
-public:
-
-	static const FName Name;
-
-private:
-
-	// ICsGetInterfaceMap
-
-	FCsInterfaceMap* InterfaceMap;
-
-public:
-
-	float* MinRange;
-
-	float* MaxRange;
-
-public:
-
-	FCsDamageRangeEmu();
-	~FCsDamageRangeEmu();
-
-// ICsGetInterfaceMap
-#pragma region
-public:
-
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+	namespace NRange
 	{
-		return InterfaceMap;
+		/**
+		* Basic implementation of the interface: NCsDamage::NRange::IRange
+		*/
+		struct CSCORE_API FEmu : public IRange
+		{
+		public:
+
+			static const FName Name;
+
+		private:
+
+			// ICsGetInterfaceMap
+
+			FCsInterfaceMap* InterfaceMap;
+
+		public:
+
+			float* MinRange;
+
+			float* MaxRange;
+
+		public:
+
+			FEmu();
+			~FEmu();
+
+		// ICsGetInterfaceMap
+		#pragma region
+		public:
+
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+			{
+				return InterfaceMap;
+			}
+
+		#pragma endregion ICsGetInterfaceMap
+
+		// IRange
+		#pragma region
+		public:
+
+			FORCEINLINE const float& GetMinRange() const
+			{
+				return *MinRange;
+			}
+
+			FORCEINLINE const float& GetMaxRange() const
+			{
+				return *MaxRange;
+			}
+
+		#pragma endregion IRange
+
+		public:
+
+			void SetMinRange(float* Value)
+			{
+				MinRange = Value;
+			}
+
+			void SetMaxValue(float* Value)
+			{
+				MaxRange = Value;
+			}
+		};
 	}
-
-#pragma endregion ICsGetInterfaceMap
-
-// ICsDamageRange
-#pragma region
-public:
-
-	FORCEINLINE const float& GetMinRange() const
-	{
-		return *MinRange;
-	}
-
-	FORCEINLINE const float& GetMaxRange() const
-	{
-		return *MaxRange;
-	}
-
-#pragma endregion ICsDamageRange
-
-public:
-
-	void SetMinRange(float* Value)
-	{
-		MinRange = Value;
-	}
-
-	void SetMaxValue(float* Value)
-	{
-		MaxRange = Value;
-	}
-};
+}

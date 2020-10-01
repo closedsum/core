@@ -2,4 +2,4 @@
 #include "Modifier/CsStatusEffectModifier.h"
 #include "CsSe.h"
 
-const FName ICsStatusEffectModifier::Name = FName("ICsStatusEffectModifier");
+const FName NCsStatusEffect::NModifier::IModifier::Name = FName("NCsStatusEffect::NModifier::IModifier");

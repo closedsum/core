@@ -6,117 +6,125 @@
 class UObject;
 struct FCsInterfaceMap;
 
-struct CSCORE_API FCsDamageResultImpl final : public ICsDamageResult
+namespace NCsDamage
 {
-public:
+	namespace NResult
+	{
+		/**
+		*/
+		struct CSCORE_API FImpl final : public IResult
+		{
+		public:
 
-	static const FName Name;
+			static const FName Name;
 
-private:
+		private:
 
-	FCsInterfaceMap* InterfaceMap;
+			FCsInterfaceMap* InterfaceMap;
 
-public:
+		public:
 
-	// ICsDamageEvent
+			// IResult
 
-	float Damage;
+			float Damage;
 
-	UObject* Instigator;
+			UObject* Instigator;
 
-	UObject* Causer;
+			UObject* Causer;
 
-	UObject* Victim;
+			UObject* Victim;
 	
-	FECsDamageType DamageType;
+			FECsDamageType DamageType;
 
-	FECsHitType HitType;
+			FECsHitType HitType;
 
-	bool bImpulse;
+			bool bImpulse;
 
-	FHitResult HitResult;
+			FHitResult HitResult;
 
-public:
+		public:
 
-	FCsDamageResultImpl();
-	~FCsDamageResultImpl();
+			FImpl();
+			~FImpl();
 
-// ICsGetInterfaceMap
-#pragma region
-public:
+		// ICsGetInterfaceMap
+		#pragma region
+		public:
 
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-	{
-		return InterfaceMap;
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+			{
+				return InterfaceMap;
+			}
+
+		#pragma endregion ICsGetInterfaceMap
+
+		// IResult
+		#pragma region
+		public:
+
+			FORCEINLINE const float& GetDamage() const
+			{
+				return Damage;
+			}
+
+			FORCEINLINE UObject* GetInstigator() const
+			{
+				return Instigator;
+			}
+
+			FORCEINLINE UObject* GetCauser() const
+			{
+				return Causer;
+			}
+
+			FORCEINLINE UObject* GetVictim() const
+			{
+				return Victim;
+			}
+
+			FORCEINLINE const FECsDamageType& GetDamageType() const
+			{
+				return DamageType;
+			}
+
+			FORCEINLINE const FECsHitType& GetHitType() const
+			{
+				return HitType;
+			}
+
+			FORCEINLINE const bool& HasImpulse() const
+			{
+				return bImpulse;
+			}
+
+			FORCEINLINE const FHitResult& GetHitResult() const
+			{
+				return HitResult;
+			}
+
+		#pragma endregion IResult
+
+		public:
+
+			template<typename T>
+			FORCEINLINE T* GetInstigator() const
+			{
+				return Cast<T>(GetInstigator());
+			}
+
+			template<typename T>
+			FORCEINLINE T* GetCauser() const
+			{
+				return Cast<T>(GetCauser());
+			}
+
+			template<typename T>
+			FORCEINLINE T* GetVictim() const
+			{
+				return Cast<T>(GetVictim());
+			}
+
+			void Reset();
+		};
 	}
-
-#pragma endregion ICsGetInterfaceMap
-
-// ICsDamageResult
-#pragma region
-public:
-
-	FORCEINLINE const float& GetDamage() const
-	{
-		return Damage;
-	}
-
-	FORCEINLINE UObject* GetInstigator() const
-	{
-		return Instigator;
-	}
-
-	FORCEINLINE UObject* GetCauser() const
-	{
-		return Causer;
-	}
-
-	FORCEINLINE UObject* GetVictim() const
-	{
-		return Victim;
-	}
-
-	FORCEINLINE const FECsDamageType& GetDamageType() const
-	{
-		return DamageType;
-	}
-
-	FORCEINLINE const FECsHitType& GetHitType() const
-	{
-		return HitType;
-	}
-
-	FORCEINLINE const bool& HasImpulse() const
-	{
-		return bImpulse;
-	}
-
-	FORCEINLINE const FHitResult& GetHitResult() const
-	{
-		return HitResult;
-	}
-
-#pragma endregion ICsDamageResult
-
-public:
-
-	template<typename T>
-	FORCEINLINE T* GetInstigator() const
-	{
-		return Cast<T>(GetInstigator());
-	}
-
-	template<typename T>
-	FORCEINLINE T* GetCauser() const
-	{
-		return Cast<T>(GetCauser());
-	}
-
-	template<typename T>
-	FORCEINLINE T* GetVictim() const
-	{
-		return Cast<T>(GetVictim());
-	}
-
-	void Reset();
-};
+}

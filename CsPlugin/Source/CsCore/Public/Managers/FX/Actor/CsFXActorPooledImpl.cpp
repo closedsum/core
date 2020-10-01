@@ -14,8 +14,8 @@
 // Pooled Object
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 // FX
-#include "Managers/FX/Cache/CsFXPooledCacheImpl.h"
-#include "Managers/FX/Payload/CsFXPooledPayload.h"
+#include "Managers/FX/Cache/CsCache_FXImpl.h"
+#include "Managers/FX/Payload/CsPayload_FX.h"
 #include "NiagaraActor.h"
 #include "NiagaraComponent.h"
 
@@ -87,7 +87,9 @@ void UCsFXActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
 	using namespace NCsFXActorPooledImplCached;
 
-	FCsFXPooledCacheImpl* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsFXPooledCacheImpl>(Str::Update, Cache);
+	typedef NCsFX::NCache::FImpl CacheImplType;
+
+	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Str::Update, Cache);
 
 	CacheImpl->Update(DeltaTime);
 }
@@ -106,7 +108,9 @@ void UCsFXActorPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload
 {
 	using namespace NCsFXActorPooledImplCached;
 
-	FCsFXPooledCacheImpl* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<FCsFXPooledCacheImpl>(Str::Allocate, Cache);
+	typedef NCsFX::NCache::FImpl CacheImplType;
+
+	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Str::Allocate, Cache);
 
 	CacheImpl->Allocate(Payload);
 
@@ -116,7 +120,7 @@ void UCsFXActorPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload
 
 	CacheImpl->SetFXComponent(FXComponent);
 
-	ICsFXPooledPayload* FXPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<ICsFXPooledPayload>(Str::Allocate, Payload);
+	NCsFX::NPayload::IPayload* FXPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<NCsFX::NPayload::IPayload>(Str::Allocate, Payload);
 
 	FX->SetActorTickEnabled(true);
 	FX->SetActorHiddenInGame(false);
@@ -178,5 +182,5 @@ void UCsFXActorPooledImpl::Deallocate()
 
 void UCsFXActorPooledImpl::ConstructCache()
 {
-	Cache = new FCsFXPooledCacheImpl();
+	Cache = new NCsFX::NCache::FImpl();
 }

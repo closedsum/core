@@ -18,7 +18,9 @@ namespace NCsPooledObject {
 	namespace NPayload {
 		struct IPayload; } }
 
-struct ICsSoundPooledPayload;
+namespace NCsSound {
+	namespace NPayload {
+		struct IPayload; } }
 
 /**
 * 
@@ -98,6 +100,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Sound")
 	FECsSound Type;
 
-	void Play(ICsSoundPooledPayload* Payload);
+	void Play(NCsSound::NPayload::IPayload* Payload);
 	void Stop();
 };

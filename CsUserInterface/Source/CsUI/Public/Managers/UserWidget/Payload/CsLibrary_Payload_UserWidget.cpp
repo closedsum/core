@@ -4,7 +4,7 @@
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 
-bool FCsLibrary_Payload_UserWidget::CopyChecked(const FString& Context, const ICsPayload_UserWidget* From, ICsPayload_UserWidget* To)
+bool FCsLibrary_Payload_UserWidget::CopyChecked(const FString& Context, const NCsUserWidget::NPayload::IPayload* From, NCsUserWidget::NPayload::IPayload* To)
 {
 	bool Result = false;
 

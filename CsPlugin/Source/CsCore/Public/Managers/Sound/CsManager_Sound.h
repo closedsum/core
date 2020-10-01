@@ -5,7 +5,7 @@
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
 #include "Managers/Resource/CsManager_ResourceValueType.h"
 #include "Managers/Sound/CsTypes_Sound.h"
-#include "Managers/Sound/Payload/CsSoundPooledPayload.h"
+#include "Managers/Sound/Payload/CsPayload_Sound.h"
 #include "Managers/Sound/CsSoundPooled.h"
 #include "Managers/Sound/CsSettings_Manager_Sound.h"
 #include "CsManager_Sound.generated.h"
@@ -22,11 +22,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerSound_OnSpawn, const FECs
 
 class ICsSoundPooled;
 
-class CSCORE_API FCsManager_Sound_Internal : public TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, ICsSoundPooledPayload, FECsSound>
+class CSCORE_API FCsManager_Sound_Internal : public TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, NCsSound::NPayload::IPayload, FECsSound>
 {
 private:
 
-	typedef TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, ICsSoundPooledPayload, FECsSound> Super;
+	typedef TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, NCsSound::NPayload::IPayload, FECsSound> Super;
 
 public:
 
@@ -466,31 +466,29 @@ public:
 	* @param Type
 	* return
 	*/
-	virtual ICsSoundPooledPayload* ConstructPayload(const FECsSound& Type);
+	virtual NCsSound::NPayload::IPayload* ConstructPayload(const FECsSound& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsSoundPooledPayload.
+	*  Payload implements the interface: NCsSound::NPayload::IPayload.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsSoundPooledPayload.
+	* return		Payload that implements the interface: NCsSound::NPayload::IPayload.
 	*/
-	ICsSoundPooledPayload* AllocatePayload(const FECsSound& Type);
+	NCsSound::NPayload::IPayload* AllocatePayload(const FECsSound& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: ICsSoundPooledPayload.
+	*  Payload implements the interface: NCsSound::NPayload::IPayload.
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: ICsSoundPooledPayload.
+	* return		Payload that implements the interface: NCsSound::NPayload::IPayload.
 	*/
 	template<typename PayloadTypeImpl>
 	FORCEINLINE PayloadTypeImpl* AllocatePayload(const FECsSound& Type)
 	{
 		return Internal.AllocatePayload<PayloadTypeImpl>(Type);
 	}
-
-	//virtual ICsFXPooledPayload* ScriptAllocatePayload(const FECsFX& Type, const FCsScriptProjectilePayload& ScriptPayload);
 
 #pragma endregion Payload
 
@@ -504,7 +502,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	const FCsSoundPooled* Spawn(const FECsSound& Type, ICsSoundPooledPayload* Payload);
+	const FCsSoundPooled* Spawn(const FECsSound& Type, NCsSound::NPayload::IPayload* Payload);
 
 	/**
 	*

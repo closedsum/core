@@ -11,7 +11,9 @@ class CSCORE_API UCsData_Damage : public UCsGetInterfaceMap
 	GENERATED_UINTERFACE_BODY()
 };
 
-struct ICsDamageValue;
+namespace NCsDamage {
+	namespace NValue {
+		struct IValue; } }
 
 /**
 * Interface to describe Damage. Other interfaces can be "added" on top of this to 
@@ -32,7 +34,7 @@ public:
 	* 
 	* return Damage Value.
 	*/
-	virtual const ICsDamageValue* GetValue() const = 0;
+	virtual const NCsDamage::NValue::IValue* GetValue() const = 0;
 
 	/**
 	* Get the type of damage.

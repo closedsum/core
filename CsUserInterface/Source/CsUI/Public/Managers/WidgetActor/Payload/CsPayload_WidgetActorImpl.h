@@ -10,7 +10,10 @@
 class UObject;
 struct FCsInterfaceMap;
 class UUserWidget;
-struct ICsPayload_UserWidget;
+
+namespace NCsUserWidget {
+	namespace NPayload {
+		struct IPayload; } }
 
 namespace NCsWidgetActor
 {
@@ -60,11 +63,11 @@ namespace NCsWidgetActor
 
 			FTransform Transform;
 
-			// ICsPayload_WidgetActorUserWidget
+			// NCsWidgetActor::NPayload::IUserWidget
 
 			FECsUserWidgetPooled UserWidgetPooledType;
 
-			ICsPayload_UserWidget* UserWidgetPayload;
+			NCsUserWidget::NPayload::IPayload* UserWidgetPayload;
 
 		public:
 
@@ -190,7 +193,7 @@ namespace NCsWidgetActor
 				return UserWidgetPooledType;
 			}
 
-			FORCEINLINE ICsPayload_UserWidget* GetUserWidgetPayload() const
+			FORCEINLINE NCsUserWidget::NPayload::IPayload* GetUserWidgetPayload() const
 			{
 				return UserWidgetPayload;
 			}

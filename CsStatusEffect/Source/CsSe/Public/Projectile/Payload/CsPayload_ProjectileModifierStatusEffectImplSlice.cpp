@@ -3,39 +3,51 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsPayload_ProjectileModifierStatusEffectImplSlice::Name = FName("FCsPayload_ProjectileModifierStatusEffectImplSlice");;
+const FName NCsProjectile::NPayload::NModifier::NStatusEffect::FImplSlice::Name = FName("NCsProjectile::NPayload::NModifier::NStatusEffect::FImplSlice");;
 
-FCsPayload_ProjectileModifierStatusEffectImplSlice::FCsPayload_ProjectileModifierStatusEffectImplSlice() :
-	// ICsGetInterfaceMap
-	InterfaceMap(nullptr),
-	// ICsPayload_Projectile
-	Modifiers()
+namespace NCsProjectile
 {
-}
+	namespace NPayload
+	{
+		namespace NModifier
+		{
+			namespace NStatusEffect
+			{
+				FImplSlice::FImplSlice() :
+					// ICsGetInterfaceMap
+					InterfaceMap(nullptr),
+					// IStatusEffect
+					Modifiers()
+				{
+				}
 
-void FCsPayload_ProjectileModifierStatusEffectImplSlice::SetInterfaceMap(FCsInterfaceMap* InInterfaceMap)
-{
-	checkf(InInterfaceMap, TEXT("FCsPayload_ProjectileModifierStatusEffectImplSlice::SetInterfaceMap: InInterfaceMap is NULL."));
+				void FImplSlice::SetInterfaceMap(FCsInterfaceMap* InInterfaceMap)
+				{
+					checkf(InInterfaceMap, TEXT("NCsProjectile::NPayload::NModifier::NStatusEffect::FImplSlice::SetInterfaceMap: InInterfaceMap is NULL."));
 
-	checkf(InInterfaceMap->HasUniqueBasedSlices(), TEXT("FCsPayload_ProjectileModifierStatusEffectImplSlice::SetInterfaceMap: This only takes an InterfaceMap with bUniqueBasedSlices = true."));
+					checkf(InInterfaceMap->HasUniqueBasedSlices(), TEXT("NCsProjectile::NPayload::NModifier::NStatusEffect::FImplSlice::SetInterfaceMap: This only takes an InterfaceMap with bUniqueBasedSlices = true."));
 
-	InterfaceMap = InInterfaceMap;
+					InterfaceMap = InInterfaceMap;
 
-	InterfaceMap->Add<ICsPayload_ProjectileModifierStatusEffect>(FCsPayload_ProjectileModifierStatusEffectImplSlice::Name, static_cast<ICsPayload_ProjectileModifierStatusEffect*>(this));
-}
+					InterfaceMap->Add<IStatusEffect>(FImplSlice::Name, static_cast<IStatusEffect*>(this));
+				}
 
 
-// ICsReset
-#pragma region
+				// ICsReset
+				#pragma region
 
-void FCsPayload_ProjectileModifierStatusEffectImplSlice::Reset()
-{	
-	Modifiers.Reset(Modifiers.Max());
-}
+				void FImplSlice::Reset()
+				{	
+					Modifiers.Reset(Modifiers.Max());
+				}
 
-#pragma endregion ICsReset
+				#pragma endregion ICsReset
 
-bool FCsPayload_ProjectileModifierStatusEffectImplSlice::CopyFrom(const FCsPayload_ProjectileModifierStatusEffectImplSlice* From)
-{
-	return true;
+				bool FImplSlice::CopyFrom(const FImplSlice* From)
+				{
+					return true;
+				}
+			}
+		}
+	}
 }

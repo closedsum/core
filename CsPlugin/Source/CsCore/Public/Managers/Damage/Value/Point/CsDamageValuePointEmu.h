@@ -6,68 +6,77 @@
 
 struct FCsInterfaceMap;
 
-/**
-* Basic implementation of the interface: ICsDamageValue
-*/
-struct CSCORE_API FCsDamageValuePointEmu : public ICsDamageValue,
-										   public ICsDamageValuePoint
+namespace NCsDamage
 {
-public:
-
-	static const FName Name;
-
-private:
-
-	// ICsGetInterfaceMap
-
-	FCsInterfaceMap* InterfaceMap;
-
-public:
-
-	// ICsDamageValuePoint
-
-	float* Value;
-
-public:
-
-	FCsDamageValuePointEmu();
-	~FCsDamageValuePointEmu();
-
-	FCsDamageValuePointEmu(const FCsDamageValuePointEmu&) = delete;
-	FCsDamageValuePointEmu& operator = (const FCsDamageValuePointEmu&) = delete;
-
-// ICsGetInterfaceMap
-#pragma region
-public:
-
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+	namespace NValue
 	{
-		return InterfaceMap;
+		namespace NPoint
+		{
+			/**
+			* Basic implementation of the interface: NCsDamage::NValue::IValue
+			*/
+			struct CSCORE_API FEmu : public IValue,
+									 public IPoint
+			{
+			public:
+
+				static const FName Name;
+
+			private:
+
+				// ICsGetInterfaceMap
+
+				FCsInterfaceMap* InterfaceMap;
+
+			public:
+
+				// IPoint
+
+				float* Value;
+
+			public:
+
+				FEmu();
+				~FEmu();
+
+				FEmu(const FEmu&) = delete;
+				FEmu& operator = (const FEmu&) = delete;
+
+			// ICsGetInterfaceMap
+			#pragma region
+			public:
+
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+				{
+					return InterfaceMap;
+				}
+
+			#pragma endregion ICsGetInterfaceMap
+
+			// IValue
+			#pragma region
+			public:
+
+			#pragma endregion IValue
+
+			// IPoint
+			#pragma region
+			public:
+
+				FORCEINLINE const float& GetValue() const
+				{
+					return *Value;
+				}
+
+			#pragma endregion IPoint
+
+			public:
+
+				void SetValue(float* InValue)
+				{
+					Value = InValue;
+				}
+			};
+		}
 	}
-
-#pragma endregion ICsGetInterfaceMap
-
-// ICsDamageValue
-#pragma region
-public:
-
-#pragma endregion ICsDamageValue
-
-// ICsDamageValuePoint
-#pragma region
-public:
-
-	FORCEINLINE const float& GetValue() const
-	{
-		return *Value;
-	}
-
-#pragma endregion ICsDamageValuePoint
-
-public:
-
-	void SetValue(float* InValue)
-	{
-		Value = InValue;
-	}
-};
+}

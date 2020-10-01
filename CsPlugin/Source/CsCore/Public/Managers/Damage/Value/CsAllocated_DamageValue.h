@@ -4,44 +4,53 @@
 
 class UObject;
 struct FCsResource_DamageValue;
-struct ICsDamageValue;
 
-/**
-* Container for an allocated object which implements the interface
-* ICsDamageValue. This container is used to some what cleanly free
-* the object after use.
-*/
-struct CSCORE_API FCsAllocated_DamageValue
+namespace NCsDamage {
+	namespace NValue {
+		struct IValue; } }
+
+namespace NCsDamage
 {
-public:
-
-	UObject* Root;
-
-	FCsResource_DamageValue* Container;
-
-	ICsDamageValue* Value;
-
-	FECsDamageValue Type;
-
-	FCsAllocated_DamageValue() :
-		Root(nullptr),
-		Container(nullptr),
-		Value(nullptr),
-		Type()
+	namespace NValue
 	{
+		/**
+		* Container for an allocated object which implements the interface
+		* NCsDamage::NValue::IValue. This container is used to some what cleanly free
+		* the object after use.
+		*/
+		struct CSCORE_API FAllocated
+		{
+		public:
+
+			UObject* Root;
+
+			FCsResource_DamageValue* Container;
+
+			IValue* Value;
+
+			FECsDamageValue Type;
+
+			FAllocated() :
+				Root(nullptr),
+				Container(nullptr),
+				Value(nullptr),
+				Type()
+			{
+			}
+
+			FORCEINLINE const IValue* GetValue() const
+			{
+				return Value;
+			}
+
+			void CopyFrom(UObject* InRoot, const IValue* From);
+
+			void CopyFrom(const FAllocated* From);
+
+			/**
+			* Clear / null out all members and deallocate the Container.
+			*/
+			void Reset();
+		};
 	}
-
-	FORCEINLINE const ICsDamageValue* GetValue() const
-	{
-		return Value;
-	}
-
-	void CopyFrom(UObject* InRoot, const ICsDamageValue* From);
-
-	void CopyFrom(const FCsAllocated_DamageValue* From);
-
-	/**
-	* Clear / null out all members and deallocate the Container.
-	*/
-	void Reset();
-};
+}

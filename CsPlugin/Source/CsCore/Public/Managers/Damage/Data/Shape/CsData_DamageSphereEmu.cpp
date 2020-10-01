@@ -40,9 +40,9 @@ FCsData_DamageSphereEmu::FCsData_DamageSphereEmu() :
 	InterfaceMap->Add<ICsData_DamageCollision>(static_cast<ICsData_DamageCollision*>(this));
 
 	// ICsData_Damage
-	DamageValue = new FCsDamageValueRangeEmu();
+	DamageValue = new NCsDamage::NValue::NRange::FEmu();
 	// ICsData_DamageShape
-	DamageRange = new FCsDamageRangeEmu();
+	DamageRange = new NCsDamage::NRange::FEmu();
 }
 
 FCsData_DamageSphereEmu::~FCsData_DamageSphereEmu()
@@ -53,7 +53,7 @@ FCsData_DamageSphereEmu::~FCsData_DamageSphereEmu()
 // ICsDamageShape
 #pragma region
 
-float FCsData_DamageSphereEmu::CalculateDamage(const ICsDamageValue* Value, const ICsDamageRange* Range, const FVector& Origin, const FVector& Point) const
+float FCsData_DamageSphereEmu::CalculateDamage(const NCsDamage::NValue::IValue* Value, const NCsDamage::NRange::IRange* Range, const FVector& Origin, const FVector& Point) const
 {
 	return 0.0f;
 }
@@ -67,24 +67,32 @@ bool FCsData_DamageSphereEmu::IsInBounds(const FVector& Origin, const FVector& P
 
 void FCsData_DamageSphereEmu::SetMinDamage(float* Value)
 {
-	FCsDamageValueRangeEmu* Emu = static_cast<FCsDamageValueRangeEmu*>(DamageValue);
+	typedef NCsDamage::NValue::NRange::FEmu EmuType;
+
+	EmuType* Emu = static_cast<EmuType*>(DamageValue);
 	Emu->SetMinValue(Value);
 }
 
 void FCsData_DamageSphereEmu::SetMaxDamage(float* Value)
 {
-	FCsDamageValueRangeEmu* Emu = static_cast<FCsDamageValueRangeEmu*>(DamageValue);
+	typedef NCsDamage::NValue::NRange::FEmu EmuType;
+
+	EmuType* Emu = static_cast<EmuType*>(DamageValue);
 	Emu->SetMaxValue(Value);
 }
 
 void FCsData_DamageSphereEmu::SetMinRadius(float* Value)
 {
-	FCsDamageRangeEmu* Emu = static_cast<FCsDamageRangeEmu*>(DamageRange);
+	typedef NCsDamage::NRange::FEmu EmuType;
+
+	EmuType* Emu = static_cast<EmuType*>(DamageRange);
 	Emu->SetMinRange(Value);
 }
 
 void FCsData_DamageSphereEmu::SetMaxRadius(float* Value)
 {
-	FCsDamageRangeEmu* Emu = static_cast<FCsDamageRangeEmu*>(DamageRange);
+	typedef NCsDamage::NRange::FEmu EmuType;
+
+	EmuType* Emu = static_cast<EmuType*>(DamageRange);
 	Emu->SetMaxValue(Value);
 }

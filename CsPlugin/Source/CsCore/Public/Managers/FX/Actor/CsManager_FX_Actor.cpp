@@ -13,7 +13,7 @@
 #include "Managers/FX/Data/CsData_FX.h"
 #include "Managers/FX/Data/CsData_FXImpl.h"
 // FX
-#include "Managers/FX/Payload/CsFXPooledPayloadImpl.h"
+#include "Managers/FX/Payload/CsPayload_FXImpl.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -576,12 +576,12 @@ void UCsManager_FX_Actor::ConstructPayloads(const FECsFX& Type, const int32& Siz
 	Internal.ConstructPayloads(Type, Size);
 }
 
-ICsFXPooledPayload* UCsManager_FX_Actor::ConstructPayload(const FECsFX& Type)
+NCsFX::NPayload::IPayload* UCsManager_FX_Actor::ConstructPayload(const FECsFX& Type)
 {
-	return new FCsFXPooledPayloadImpl();
+	return new NCsFX::NPayload::FImpl();
 }
 
-ICsFXPooledPayload* UCsManager_FX_Actor::AllocatePayload(const FECsFX& Type)
+NCsFX::NPayload::IPayload* UCsManager_FX_Actor::AllocatePayload(const FECsFX& Type)
 {
 	return Internal.AllocatePayload(Type);
 }
@@ -591,7 +591,7 @@ ICsFXPooledPayload* UCsManager_FX_Actor::AllocatePayload(const FECsFX& Type)
 	// Spawn
 #pragma region
 
-const FCsFXActorPooled* UCsManager_FX_Actor::Spawn(const FECsFX& Type, ICsFXPooledPayload* Payload)
+const FCsFXActorPooled* UCsManager_FX_Actor::Spawn(const FECsFX& Type, NCsFX::NPayload::IPayload* Payload)
 {
 	return Internal.Spawn(Type, Payload);
 }

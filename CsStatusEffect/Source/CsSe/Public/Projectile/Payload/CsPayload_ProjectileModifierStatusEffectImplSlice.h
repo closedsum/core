@@ -6,69 +6,84 @@
 
 class UObject;
 struct FCsInterfaceMap;
-struct ICsStatusEffectModifier;
 
-/**
-* 
-*/
-struct CSSE_API FCsPayload_ProjectileModifierStatusEffectImplSlice : public ICsPayload_ProjectileModifierStatusEffect,
-																	 public ICsReset
+namespace NCsStatusEffect {
+	namespace NModifier { 
+		struct IModifier; } }
+
+namespace NCsProjectile
 {
-public:
-
-	static const FName Name;
-
-private:
-
-	// ICsGetInterfaceMap
-
-	FCsInterfaceMap* InterfaceMap;
-
-public:
-
-	// ICsPayload_ProjectileModifierStatusEffect
-
-	TArray<ICsStatusEffectModifier*> Modifiers;
-
-public:
-
-	FCsPayload_ProjectileModifierStatusEffectImplSlice();
-
-// ICsGetInterfaceMap
-#pragma region
-public:
-
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+	namespace NPayload
 	{
-		return InterfaceMap;
+		namespace NModifier
+		{
+			namespace NStatusEffect
+			{
+				/**
+				* 
+				*/
+				struct CSSE_API FImplSlice : public IStatusEffect,
+											 public ICsReset
+				{
+				public:
+
+					static const FName Name;
+
+				private:
+
+					// ICsGetInterfaceMap
+
+					FCsInterfaceMap* InterfaceMap;
+
+				public:
+
+					// IStatusEffect
+
+					TArray<NCsStatusEffect::NModifier::IModifier*> Modifiers;
+
+				public:
+
+					FImplSlice();
+
+				// ICsGetInterfaceMap
+				#pragma region
+				public:
+
+					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+					{
+						return InterfaceMap;
+					}
+
+				#pragma endregion ICsGetInterfaceMap
+
+				public:
+
+					void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
+
+				// IStatusEffect
+				#pragma region
+				public:
+
+					FORCEINLINE const TArray<NCsStatusEffect::NModifier::IModifier*>& GetDamageModifiers() const
+					{
+						return Modifiers;
+					}
+
+				#pragma endregion IStatusEffect
+
+				// ICsReset
+				#pragma region
+				public:
+
+					void Reset();
+
+				#pragma endregion ICsReset
+
+				public:
+
+					bool CopyFrom(const FImplSlice* From);
+				};
+			}
+		}
 	}
-
-#pragma endregion ICsGetInterfaceMap
-
-public:
-
-	void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
-
-// ICsPayload_ProjectileModifierStatusEffect
-#pragma region
-public:
-
-	FORCEINLINE const TArray<ICsStatusEffectModifier*>& GetDamageModifiers() const
-	{
-		return Modifiers;
-	}
-
-#pragma endregion ICsPayload_ProjectileModifierStatusEffect
-
-// ICsReset
-#pragma region
-public:
-
-	void Reset();
-
-#pragma endregion ICsReset
-
-public:
-
-	bool CopyFrom(const FCsPayload_ProjectileModifierStatusEffectImplSlice* From);
-};
+}

@@ -220,6 +220,20 @@ public:
 	}
 
 	/**
+	* Perform the operation static_cast<OtherInterfaceType*>("Interface associated with InterfaceType") with checks.
+	* OtherInterfaceType IS abstract.
+	*
+	* @param Context	The calling context
+	* @param Interface	Interface that implements the interface: ICsData_Weapon.
+	* return			Interface casted to OtherInterfaceType (static_cast<OtherInterfaceType*>(Interface))
+	*/
+	template<typename OtherInterfaceType>
+	FORCEINLINE static const OtherInterfaceType* GetInterfaceChecked(const FString& Context, const InterfaceType* Interface)
+	{
+		return NCsInterfaceMap::GetInterfaceChecked<OtherInterfaceType>(Context, Interface);
+	}
+
+	/**
 	* Safely perform the operation static_cast<OtherInterfaceType*>("Interface associated with InterfaceType") 
 	* with checks (for InterfaceMap).
 	* OtherInterfaceType IS abstract.

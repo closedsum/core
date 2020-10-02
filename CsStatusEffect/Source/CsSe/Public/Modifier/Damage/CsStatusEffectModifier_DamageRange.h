@@ -2,8 +2,11 @@
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
 
-class ICsStatusEffect_Damage;
-struct ICsDamageRange;
+class ICsData_StatusEffect_Damage;
+
+namespace NCsDamage {
+	namespace NRange {
+		struct IRange; } }
 
 namespace NCsStatusEffect
 {
@@ -25,6 +28,12 @@ namespace NCsStatusEffect
 
 				virtual ~IDamageRange() {}
 
+			private:
+
+				typedef NCsDamage::NRange::IRange DamageRangeType;
+
+			public:
+
 				/**
 				* Modify the damage Range. This range is a copy of the DamageRange from Data,
 				* which implements the interface ICsData_StatusEffect_Damage.
@@ -35,7 +44,7 @@ namespace NCsStatusEffect
 								ICsData_StatusEffect_Damage, to be modified.
 				*				NOTE: This range is allocated and must be freed at end of use.
 				*/
-				virtual void Modify(ICsData_StatusEffect_Damage* Data, ICsDamageRange* Range) = 0;
+				virtual void Modify(ICsData_StatusEffect_Damage* Data, DamageRangeType* Range) = 0;
 			};
 		}
 	}

@@ -34,7 +34,7 @@
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 
-// Cached
+// Cached 
 #pragma region
 
 namespace NCsProjectileWeaponComponentCached
@@ -88,6 +88,22 @@ UCsProjectileWeaponComponent::UCsProjectileWeaponComponent(const FObjectInitiali
 {
 }
 
+// UObject Interface
+#pragma region
+
+void UCsProjectileWeaponComponent::BeginDestroy()
+{
+	Super::BeginDestroy();
+
+	if (ProjectileImpl)
+	{
+		delete ProjectileImpl;
+		ProjectileImpl = nullptr;
+	}
+}
+
+#pragma endregion UObject Interface
+
 // UActorComponent Interface
 #pragma region
 
@@ -97,6 +113,9 @@ void UCsProjectileWeaponComponent::BeginPlay()
 
 	MyOwner		   = GetOwner();
 	MyOwnerAsActor = GetOwner();
+
+	ProjectileImpl = ConstructProjectileImpl();
+	ProjectileImpl->Weapon = this;
 }
 
 #pragma endregion UActorComponent Interface
@@ -410,22 +429,22 @@ void UCsProjectileWeaponComponent::FireProjectile()
 
 	const FString& Context = Str::FireProjectile;
 
-	typedef NCsProjectile::NPayload::IPayload PayloadInterfaceType;
+	typedef NCsProjectile::NPayload::IPayload PayloadType;
 
 	UCsManager_Projectile* Manager_Projectile = UCsManager_Projectile::Get(GetWorld()->GetGameState());
 
 	// Get Payload
-	PayloadInterfaceType* Payload1 = Manager_Projectile->AllocatePayload(ProjectileType);
+	PayloadType* Payload1 = Manager_Projectile->AllocatePayload(ProjectileType);
 
 	// Set appropriate members on Payload
-	const bool SetSuccess = SetProjectilePayload(Context, Payload1);
+	const bool SetSuccess = ProjectileImpl->SetPayload(Context, Payload1);
 
 	checkf(SetSuccess, TEXT("%s: Failed to set Payload1."), *Context);
 
 	// Cache copy of Payload for Launch
-	PayloadInterfaceType* Payload2 = Manager_Projectile->AllocatePayload(ProjectileType);
+	PayloadType* Payload2 = Manager_Projectile->AllocatePayload(ProjectileType);
 	
-	const bool CopySuccess = CopyProjectilePayload(Context, Payload1, Payload2);
+	const bool CopySuccess = ProjectileImpl->CopyPayload(Context, Payload1, Payload2);
 
 	checkf(CopySuccess, TEXT("%s: Failed to copy Payload1 to Payload2."), *Context);
 
@@ -437,7 +456,7 @@ void UCsProjectileWeaponComponent::FireProjectile()
 	checkf(TypeSuccess, TEXT("%s: Failed to set type for Projectile."), *Context);
 
 	// Launch
-	LaunchProjectile(ProjectilePooled, Payload2);
+	ProjectileImpl->Launch(ProjectilePooled, Payload2);
 }
 
 bool UCsProjectileWeaponComponent::SetTypeForProjectile(const FString& Context, const FCsProjectilePooled* ProjectilePooled)
@@ -450,8 +469,11 @@ bool UCsProjectileWeaponComponent::SetTypeForProjectile(const FString& Context, 
 	return true;
 }
 
-bool UCsProjectileWeaponComponent::SetProjectilePayload(const FString& Context, NCsProjectile::NPayload::IPayload* Payload)
+#define ProjectilePayloadType NCsProjectile::NPayload::IPayload
+bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Context, ProjectilePayloadType* Payload)
 {
+#undef ProjectilePayloadType
+
 	bool Result = true;
 
 	// PooledObject
@@ -461,8 +483,8 @@ bool UCsProjectileWeaponComponent::SetProjectilePayload(const FString& Context, 
 
 		if (SliceType* Slice = FCsLibrary_Payload_Projectile::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
-			Slice->Instigator = this;
-			Slice->Owner	  = MyOwner;
+			Slice->Instigator = Weapon;
+			Slice->Owner	  = Weapon->GetMyOwner();
 		}
 		else
 		{
@@ -476,8 +498,8 @@ bool UCsProjectileWeaponComponent::SetProjectilePayload(const FString& Context, 
 
 		if (SliceType* Slice = FCsLibrary_Payload_Projectile::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
-			Slice->Location  = GetLaunchProjectileLocation();
-			Slice->Direction = GetLaunchProjectileDirection();
+			Slice->Location  = GetLaunchLocation();
+			Slice->Direction = GetLaunchDirection();
 		}
 		else
 		{
@@ -487,29 +509,37 @@ bool UCsProjectileWeaponComponent::SetProjectilePayload(const FString& Context, 
 	return Result;
 }
 
-bool UCsProjectileWeaponComponent::CopyProjectilePayload(const FString& Context, const NCsProjectile::NPayload::IPayload* From, NCsProjectile::NPayload::IPayload* To)
+#define ProjectilePayloadType NCsProjectile::NPayload::IPayload
+bool UCsProjectileWeaponComponent::FProjectileImpl::CopyPayload(const FString& Context, const ProjectilePayloadType* From, ProjectilePayloadType* To)
 {
+#undef ProjectilePayloadType
 	return FCsLibrary_Payload_Projectile::CopyChecked(Context, From, To);
 }
 
-FVector UCsProjectileWeaponComponent::GetLaunchProjectileLocation()
+FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 {
-	return MyOwnerAsActor->GetActorLocation();
+	//return MyOwnerAsActor->GetActorLocation();
+	return FVector::ZeroVector;
 }
 
-FVector UCsProjectileWeaponComponent::GetLaunchProjectileDirection()
+FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 {
 	return FVector::ZeroVector;
 }
 
-void UCsProjectileWeaponComponent::LaunchProjectile(const FCsProjectilePooled* ProjectilePooled, NCsProjectile::NPayload::IPayload* Payload)
+#define ProjectilePayloadType NCsProjectile::NPayload::IPayload
+void UCsProjectileWeaponComponent::FProjectileImpl::Launch(const FCsProjectilePooled* ProjectilePooled, ProjectilePayloadType* Payload)
 {
+#undef ProjectilePayloadType
+
 	using namespace NCsProjectileWeaponComponentCached;
 
 	const FString& Context = Str::LaunchProjectile;
 
-	NCsPooledObject::NPayload::IPayload* ObjectPayload = NCsInterfaceMap::GetInterfaceChecked<NCsPooledObject::NPayload::IPayload>(Context, Payload);
-	ACsProjectilePooledImpl* Projectile				   = ProjectilePooled->GetObject<ACsProjectilePooledImpl>();
+	typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
+
+	PooledPayloadType* ObjectPayload    = NCsInterfaceMap::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
+	ACsProjectilePooledImpl* Projectile	= ProjectilePooled->GetObject<ACsProjectilePooledImpl>();
 
 	checkf(Projectile, TEXT("%s: Projectile is NULL. Projectile is not of type: ACsProjectilePooledImpl."), *Context);
 
@@ -518,6 +548,11 @@ void UCsProjectileWeaponComponent::LaunchProjectile(const FCsProjectilePooled* P
 
 	// Release payload so it returns to the pool
 	ObjectPayload->Reset();
+}
+
+UCsProjectileWeaponComponent::FProjectileImpl* UCsProjectileWeaponComponent::ConstructProjectileImpl()
+{
+	return new UCsProjectileWeaponComponent::FProjectileImpl();
 }
 
 #pragma endregion Projectile
@@ -554,13 +589,18 @@ void UCsProjectileWeaponComponent::PlayFireSound()
 	}
 }
 
-void UCsProjectileWeaponComponent::SetSoundPooledPayload(NCsSound::NPayload::IPayload* Payload, const FCsSound& Sound)
+#define SoundPayloadType NCsSound::NPayload::IPayload
+void UCsProjectileWeaponComponent::SetSoundPooledPayload(SoundPayloadType* Payload, const FCsSound& Sound)
 {
+#undef SoundPayloadType
+
 	using namespace NCsProjectileWeaponComponentCached;
 
 	const FString& Context = Str::SetSoundPooledPayload;
 
-	NCsSound::NPayload::FImpl* PayloadImpl = FCsLibrary_Payload_Sound::PureStaticCastChecked<NCsSound::NPayload::FImpl>(Context, Payload);
+	typedef NCsSound::NPayload::FImpl PayloadImplType;
+
+	PayloadImplType* PayloadImpl = FCsLibrary_Payload_Sound::PureStaticCastChecked<PayloadImplType>(Context, Payload);
 
 	PayloadImpl->Instigator					= this;
 	PayloadImpl->Owner						= MyOwner;

@@ -99,13 +99,19 @@ void UCsFXActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 // ICsPooledObject
 #pragma region
 
-NCsPooledObject::NCache::ICache* UCsFXActorPooledImpl::GetCache() const
+#define CacheType NCsPooledObject::NCache::ICache
+CacheType* UCsFXActorPooledImpl::GetCache() const
 {
+#undef CacheType
+
 	return Cache;
 }
 
-void UCsFXActorPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
+#define PayloadType NCsPooledObject::NPayload::IPayload
+void UCsFXActorPooledImpl::Allocate(PayloadType* Payload)
 {
+#undef PayloadType
+
 	using namespace NCsFXActorPooledImplCached;
 
 	typedef NCsFX::NCache::FImpl CacheImplType;

@@ -28,6 +28,12 @@ namespace NCsStatusEffect
 
 				virtual ~IDamageValue() {}
 
+			private:
+
+				typedef NCsDamage::NValue::IValue DamageValueType;
+
+			public:
+
 				/**
 				* Modify the damage Value. This value is a copy of the DamageValue from Data,
 				* which implements the interface ICsData_StatusEffect_Damage.
@@ -38,7 +44,7 @@ namespace NCsStatusEffect
 								ICsData_StatusEffect_Damage, to be modified.
 				*				NOTE: This value is allocated and must be freed at end of use.
 				*/
-				virtual void Modify(ICsData_StatusEffect_Damage* StatusEffect, NCsDamage::NValue::IValue* Value) = 0;
+				virtual void Modify(ICsData_StatusEffect_Damage* StatusEffect, DamageValueType* Value) = 0;
 			};
 		}
 	}

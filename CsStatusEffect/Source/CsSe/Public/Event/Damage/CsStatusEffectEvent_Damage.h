@@ -2,7 +2,9 @@
 #include "Containers/CsGetInterfaceMap.h"
 #pragma once
 
-struct ICsDamageEvent;
+namespace NCsDamage {
+	namespace NEvent {
+		struct IEvent; } }
 
 namespace NCsStatusEffect
 {
@@ -20,12 +22,13 @@ namespace NCsStatusEffect
 
 			public:
 
+				typedef NCsDamage::NEvent::IEvent DamageEventType;
 				/**
 				*
 				*
 				* return
 				*/
-				virtual NCsDamage::NEvent::IEvent* GetDamageEvent() const = 0;
+				virtual DamageEventType* GetDamageEvent() const = 0;
 			};
 		}
 	}

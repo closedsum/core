@@ -31,6 +31,8 @@ namespace NCsSound {
 
 struct FCsProjectilePooled;
 
+class USceneComponent;
+
 UCLASS()
 class CSWP_API UCsProjectileWeaponComponent : public UActorComponent,
 											  public ICsUpdate,
@@ -38,6 +40,17 @@ class CSWP_API UCsProjectileWeaponComponent : public UActorComponent,
 											  public ICsProjectileWeapon
 {
 	GENERATED_UCLASS_BODY()
+
+#define ProjectilePayloadType NCsProjectile::NPayload::IPayload
+#define SoundPayloadType NCsSound::NPayload::IPayload
+
+// UObject Interface
+#pragma region
+public:
+
+	virtual void BeginDestroy() override;
+
+#pragma endregion UObject Interface
 
 // UActorComponent Interface
 #pragma region
@@ -96,6 +109,11 @@ public:
 
 	void SetProjectileType(const FECsProjectile& Type);
 
+	FORCEINLINE const FECsProjectile& GetProjectileType() const
+	{
+		return ProjectileType;
+	}
+
 // ICsProjectileWeapon
 #pragma region
 public:
@@ -112,6 +130,11 @@ protected:
 	AActor* MyOwnerAsActor;
 
 public:
+
+	FORCEINLINE UObject* GetMyOwner() const 
+	{
+		return MyOwner;
+	}
 
 	virtual void Init();
 
@@ -200,36 +223,67 @@ protected:
 	*/
 	virtual bool SetTypeForProjectile(const FString& Context, const FCsProjectilePooled* ProjectilePooled);
 
-	/**
-	*
-	* Currently supports To types of:
-	*  NCsPooledObject::NPayload::FImplSlice (NCsPooledObject::NPayload::IPayload)
-	*  NCsProjectile::NPayload::FImplSlice (NCsProjectile::NPayload::IPayload)
-	*
-	* @param Context	The calling context.
-	* @param Payload	The payload to set.
-	* return			Whether the payload was successfully set.
-	*/
-	virtual bool SetProjectilePayload(const FString& Context, NCsProjectile::NPayload::IPayload* Payload);
+public:
 
 	/**
-	* Copy the slice of values from From to To with checks.
-	* Currently supports To types of:
-	*  NCsPooledObject::NPayload::FImplSlice (NCsPooledObject::NPayload::IPayload)
-	*  NCsProjectile::NPayload::FImplSlice (NCsProjectile::NPayload::IPayload)
-	*
-	* @param Context	The calling context.
-	* @param From		What to copy.
-	* @param To			What to copy to.
-	* return			Whether the From copied to To successfully.
 	*/
-	virtual bool CopyProjectilePayload(const FString& Context, const NCsProjectile::NPayload::IPayload* From, NCsProjectile::NPayload::IPayload* To);
+	struct CSWP_API FProjectileImpl
+	{
+		friend class UCsProjectileWeaponComponent;
 
-	virtual FVector GetLaunchProjectileLocation();
+	protected:
 
-	virtual FVector GetLaunchProjectileDirection();
+		UCsProjectileWeaponComponent* Weapon;
 
-	virtual void LaunchProjectile(const FCsProjectilePooled* ProjectilePooled, NCsProjectile::NPayload::IPayload* Payload);
+		USceneComponent* LaunchComponentTransform;
+
+	public:
+
+		FProjectileImpl() :
+			Weapon(nullptr),
+			LaunchComponentTransform(nullptr)
+		{
+		}
+
+	protected:
+
+		/**
+		*
+		* Currently supports To types of:
+		*  NCsPooledObject::NPayload::FImplSlice (NCsPooledObject::NPayload::IPayload)
+		*  NCsProjectile::NPayload::FImplSlice (NCsProjectile::NPayload::IPayload)
+		*
+		* @param Context	The calling context.
+		* @param Payload	The payload to set.
+		* return			Whether the payload was successfully set.
+		*/
+		virtual bool SetPayload(const FString& Context, ProjectilePayloadType* Payload);
+
+		/**
+		* Copy the slice of values from From to To with checks.
+		* Currently supports To types of:
+		*  NCsPooledObject::NPayload::FImplSlice (NCsPooledObject::NPayload::IPayload)
+		*  NCsProjectile::NPayload::FImplSlice (NCsProjectile::NPayload::IPayload)
+		*
+		* @param Context	The calling context.
+		* @param From		What to copy.
+		* @param To			What to copy to.
+		* return			Whether the From copied to To successfully.
+		*/
+		virtual bool CopyPayload(const FString& Context, const ProjectilePayloadType* From, ProjectilePayloadType* To);
+
+		virtual FVector GetLaunchLocation();
+
+		virtual FVector GetLaunchDirection();
+
+		virtual void Launch(const FCsProjectilePooled* ProjectilePooled, ProjectilePayloadType* Payload);
+	};
+
+protected:
+
+	virtual FProjectileImpl* ConstructProjectileImpl();
+
+	FProjectileImpl* ProjectileImpl;
 
 #pragma endregion Projectile
 	
@@ -239,9 +293,12 @@ protected:
 
 	void PlayFireSound();
 
-	void SetSoundPooledPayload(NCsSound::NPayload::IPayload* Payload, const FCsSound& Sound);
+	void SetSoundPooledPayload(SoundPayloadType* Payload, const FCsSound& Sound);
 
 #pragma endregion Sound
 
 #pragma endregion
+
+#undef ProjectilePayloadType
+#undef SoundPayloadType
 };

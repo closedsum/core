@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "../Types/Enum/CsEnumMap.h"
+#include "Types/Enum/CsEnumMap.h"
 #include "Types/Enum/CsEnumFlagMap.h"
 
 #include "CsTypes_Math.generated.h"
@@ -355,6 +355,58 @@ struct FCsParametricFunction
 
 #pragma endregion FCsParametricFunction
 
+// RotationRules
+#pragma region
+
+/**
+*/
+UENUM(BlueprintType, meta = (Bitflags))
+enum class ECsRotationRules : uint8
+{
+	Pitch		UMETA(DisplayName = "Pitch"),	// 0
+	Yaw			UMETA(DisplayName = "Yaw"),		// 1
+	Roll		UMETA(DisplayName = "Roll"),	// 2
+};
+
+struct CSCORE_API EMCsRotationRules : public TCsEnumFlagMap<ECsRotationRules>
+{
+	CS_ENUM_FLAG_MAP_BODY(EMCsRotationRules, ECsRotationRules)
+};
+
+class AActor;
+class USceneComponent;
+
+namespace NCsRotationRules
+{
+	typedef ECsRotationRules Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Pitch;
+		extern CSCORE_API const Type Yaw;
+		extern CSCORE_API const Type Roll;
+	}
+
+	extern CSCORE_API const int32 None;
+	extern CSCORE_API const int32 All;
+
+	/**
+	*/
+	CSCORE_API FRotator GetRotation(FRotator Rotation, const int32& Rules);
+
+	/**
+	*/
+	CSCORE_API FRotator GetRotation(AActor* Actor, const int32& Rules);
+
+	/**
+	*/
+	CSCORE_API FRotator GetRotation(USceneComponent* Component, const int32& Rules);
+}
+
+#define CS_ROTATION_FLAGS_NONE 0
+
+#pragma endregion RotationRules
+
 // TransformRules
 #pragma region
 
@@ -363,13 +415,15 @@ enum class ECsTransformRules : uint8
 {
 	Location	UMETA(DisplayName = "Location"),	// 0
 	Rotation	UMETA(DisplayName = "Rotation"),	// 1
-	Scale		UMETA(DisplayName = "Sacle"),		// 2
+	Scale		UMETA(DisplayName = "Scale"),		// 2
 };
 
 struct CSCORE_API EMCsTransformRules : public TCsEnumFlagMap<ECsTransformRules>
 {
 	CS_ENUM_FLAG_MAP_BODY(EMCsTransformRules, ECsTransformRules)
 };
+
+class AActor;
 
 namespace NCsTransformRules
 {
@@ -384,6 +438,10 @@ namespace NCsTransformRules
 
 	extern CSCORE_API const int32 None;
 	extern CSCORE_API const int32 All;
+
+	/**
+	*/
+	CSCORE_API void SetRelativeTransform(AActor* Actor, const FTransform& Transform, const int32& Rules);
 }
 
 #define CS_TRANSFORM_FLAGS_NONE 0

@@ -3,8 +3,12 @@
 // Interfaces
 #include "Projectile/Params/Launch/CsParams_ProjectileWeapon_Launch.h"
 #include "Projectile/Params/Launch/CsParams_ProjectileWeapon_LaunchTrace.h"
-// Types
-#include "Projectile/Params/Launch/CsTypes_Params_ProjectileWeapon_LaunchTrace.h"
+
+struct FCsInterfaceMap;
+enum class ECsProjectileWeaponLaunchLocation : uint8;
+enum class ECsProjectileWeaponLaunchDirection : uint8;
+enum class ECsProjectileWeaponLaunchTraceStart : uint8;
+enum class ECsProjectileWeaponLaunchTraceDirection : uint8;
 
 namespace NCsWeapon
 {
@@ -25,11 +29,17 @@ namespace NCsWeapon
 
 				private:
 
+					// ICsGetInterfaceMap
+
+					FCsInterfaceMap* InterfaceMap;
+
 					// ILaunch
 
 					ELocation* LocationType;
 
 					EDirection* DirectionType;
+
+					int32* DirectionRules;
 
 					// ITrace
 
@@ -45,18 +55,19 @@ namespace NCsWeapon
 
 				public:
 
-					FTraceEmu() :
-						LocationType(nullptr),
-						DirectionType(nullptr),
-						TraceType(nullptr),
-						TraceMethod(nullptr),
-						TraceStartType(nullptr),
-						TraceDirectionType(nullptr),
-						TraceDistance(nullptr)
+					FTraceEmu();
+					~FTraceEmu();
+
+				// ICsGetInterfaceMap
+				#pragma region
+				public:
+
+					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
 					{
+						return InterfaceMap;
 					}
 
-					~FTraceEmu(){}
+				#pragma endregion ICsGetInterfaceMap
 
 				// ILaunch
 				#pragma region
@@ -72,18 +83,28 @@ namespace NCsWeapon
 						return *DirectionType;
 					}
 
+					FORCEINLINE const int32& GetDirectionRules() const 
+					{
+						return *DirectionRules;
+					}
+
 				#pragma endregion ILaunch
 
 				public:
 
-					FORCEINLINE void SetLocationType(ELocation* Value)
+					FORCEINLINE void SetLocationType(ECsProjectileWeaponLaunchLocation* Value)
 					{
-						LocationType = Value;
+						LocationType = (ELocation*)Value;
 					}
 
-					FORCEINLINE void SetDirectionType(EDirection* Value)
+					FORCEINLINE void SetDirectionType(ECsProjectileWeaponLaunchDirection* Value)
 					{
-						DirectionType = Value;
+						DirectionType = (EDirection*)Value;
+					}
+
+					FORCEINLINE void SetDirectionRules(int32* Value)
+					{
+						DirectionRules = Value;
 					}
 
 				// ITrace
@@ -134,9 +155,9 @@ namespace NCsWeapon
 						TraceStartType = (ETraceStart*)Value;
 					}
 
-					FORCEINLINE void SetTraceDirectionType(ETraceDirection* Value)
+					FORCEINLINE void SetTraceDirectionType(ECsProjectileWeaponLaunchTraceDirection* Value)
 					{
-						TraceDirectionType = Value;
+						TraceDirectionType = (ETraceDirection*)Value;
 					}
 
 					FORCEINLINE void SetTraceDistance(float* Value)

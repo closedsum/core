@@ -1,7 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Projectile/Params/Launch/CsTypes_Params_ProjectileWeapon_Launch.h"
-
+// Containers
 #include "Containers/CsGetInterfaceMap.h"
 
 namespace NCsWeapon
@@ -27,6 +26,8 @@ namespace NCsWeapon
 					/** If there is a SkeletalMesh that acts as the root object for the 
 						Weapon, use the Bone / Socket location. */ 
 					Bone,
+					/** SceneComponent's Location. The Component is marked as the Launch Component Transform. */
+					Component,
 					Custom
 				};
 
@@ -41,13 +42,16 @@ namespace NCsWeapon
 				*/
 				enum class EDirection : uint8
 				{
-					Owner,
 					/** Owner's Rotation. If the Owner is of type: AActor, then it will
 						be GetActorRotation(). */
-					Camera,
+					Owner,
 					/** If there is a SkeletalMesh that acts as the root object for the Weapon, 
 						use the Bone / Socket's rotation. */
 					Bone,
+					/** SceneComponent's Rotation. The Component is marked as the Launch Component Transform. */
+					Component,
+					/** Owner's Camera's Rotation. */
+					Camera,
 					/** A trace is used to determine the direction. The start and end points of the 
 						trace are determined by other parameters. */
 					Trace,
@@ -57,6 +61,8 @@ namespace NCsWeapon
 			#pragma endregion Direction
 
 				/**
+				* Interface describing the Launch Parameters for a weapon of type: ICsProjectileWeapon. The
+				* parameters are usually used to location and direction of a projectile being fired from the weapon.
 				*/
 				struct CSWP_API ILaunch : public ICsGetInterfaceMap
 				{
@@ -75,6 +81,10 @@ namespace NCsWeapon
 					/**
 					*/
 					virtual const EDirection& GetDirectionType() const = 0;
+
+					/**
+					*/
+					virtual const int32& GetDirectionRules() const = 0;
 				};
 			}
 		}

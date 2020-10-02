@@ -284,5 +284,6 @@ public:
 			return Instance; \
 		}
 
-#define CS_ADD_TO_ENUM_FLAG_MAP(EnumMap, EnumElementName) const Type EnumElementName = EnumMap::Get().Add(Type::EnumElementName, #EnumElementName)
-#define CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(EnumMap, EnumElementName, DisplayName) const Type EnumElementName = EnumMap::Get().Add(Type::EnumElementName, #EnumElementName, TEXT(DisplayName))
+// Assume typedef "EnumType" Type and typedef "EnumMapType" EnumMapType
+#define CS_ADD_TO_ENUM_FLAG_MAP(EnumElementName) const Type EnumElementName = EnumMapType::Get().Add(Type::EnumElementName, #EnumElementName)
+#define CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(EnumElementName, DisplayName) const Type EnumElementName = EnumMapType::Get().Add(Type::EnumElementName, #EnumElementName, TEXT(DisplayName))

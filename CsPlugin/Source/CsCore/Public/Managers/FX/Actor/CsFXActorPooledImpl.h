@@ -31,6 +31,9 @@ class CSCORE_API UCsFXActorPooledImpl : public UObject,
 {
 	GENERATED_UCLASS_BODY()
 
+#define CacheType NCsPooledObject::NCache::ICache
+#define PayloadType NCsPooledObject::NPayload::IPayload
+
 // UObject Interface
 #pragma region
 public:
@@ -59,9 +62,9 @@ public:
 #pragma region
 public:
 
-	NCsPooledObject::NCache::ICache* GetCache() const;
+	CacheType* GetCache() const;
 	
-	void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
+	void Allocate(PayloadType* Payload);
 
 	void Deallocate();
 
@@ -69,7 +72,7 @@ public:
 
 protected:
 
-	NCsPooledObject::NCache::ICache* Cache;
+	CacheType* Cache;
 
 	void ConstructCache();
 
@@ -88,4 +91,7 @@ protected:
 
 	UPROPERTY()
 	ANiagaraActor* FX;
+
+#undef CacheType
+#undef PayloadType
 };

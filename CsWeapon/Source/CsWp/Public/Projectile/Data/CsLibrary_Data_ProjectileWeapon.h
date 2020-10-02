@@ -1,9 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+#include "Projectile/Data/CsData_ProjectileWeapon.h"
+#include "Containers/CsLibrary_InterfaceMap.h"
 
-class ICsData_ProjectileWeapon;
-
-struct CSWP_API FCsLibrary_Data_ProjectileWeapon
+struct CSWP_API FCsLibrary_Data_ProjectileWeapon : public TCsLibrary_InterfaceMap<ICsData_ProjectileWeapon>
 {
 	/**
 	*

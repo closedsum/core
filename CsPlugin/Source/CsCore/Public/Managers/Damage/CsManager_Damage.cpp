@@ -370,9 +370,14 @@ void UCsManager_Damage::Remove(ICsReceiveDamage* Object)
 // Event
 #pragma region
 
-NCsDamage::NEvent::IEvent* UCsManager_Damage::ConstructEvent()
+#define EventType NCsDamage::NEvent::IEvent
+EventType* UCsManager_Damage::ConstructEvent()
 {
-	return new NCsDamage::NEvent::FImpl();
+#undef EventType
+
+	typedef NCsDamage::NEvent::FImpl EventImplType;
+
+	return new EventImplType();
 }
 
 FCsResource_DamageEvent* UCsManager_Damage::AllocateEvent()
@@ -389,13 +394,18 @@ void UCsManager_Damage::DeallocateEvent(const FString& Context, FCsResource_Dama
 	Manager_Event.Deallocate(Event);
 }
 
-bool UCsManager_Damage::CopyEvent(const FString& Context, const NCsDamage::NEvent::IEvent* From, NCsDamage::NEvent::IEvent* To)
+#define EventType NCsDamage::NEvent::IEvent
+bool UCsManager_Damage::CopyEvent(const FString& Context, const EventType* From, EventType* To)
 {
+#undef EventType
 	return FCsLibrary_DamageEvent::CopyChecked(Context, From, To);
 }
 
-FCsResource_DamageEvent* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, const NCsDamage::NEvent::IEvent* Event)
+#define EventType NCsDamage::NEvent::IEvent
+FCsResource_DamageEvent* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, const EventType* Event)
 {
+#undef EventType
+
 	FCsResource_DamageEvent* Container = AllocateEvent();
 	NCsDamage::NEvent::IEvent* Copy	   = Container->Get();
 
@@ -411,8 +421,11 @@ FCsResource_DamageEvent* UCsManager_Damage::CreateCopyOfEvent(const FString& Con
 	return CreateCopyOfEvent(Context, Event->Get());
 }
 
-void UCsManager_Damage::ProcessDamageEvent(const NCsDamage::NEvent::IEvent* Event)
+#define EventType NCsDamage::NEvent::IEvent
+void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 {
+#undef EventType
+
 	using namespace NCsManagerDamageCached;
 
 	const FString& Context = Str::ProcessDamageEvent;
@@ -719,8 +732,11 @@ void UCsManager_Damage::ModifyRange(const FString& Context, const NCsDamage::NMo
 // Log
 #pragma region
 
-void UCsManager_Damage::LogEvent(const NCsDamage::NEvent::IEvent* Event)
+#define EventType NCsDamage::NEvent::IEvent
+void UCsManager_Damage::LogEvent(const EventType* Event)
 {
+#undef EventType
+
 	using namespace NCsManagerDamageCached;
 
 	const FString& Context = Str::LogEvent;

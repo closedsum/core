@@ -576,13 +576,20 @@ void UCsManager_FX_Actor::ConstructPayloads(const FECsFX& Type, const int32& Siz
 	Internal.ConstructPayloads(Type, Size);
 }
 
-NCsFX::NPayload::IPayload* UCsManager_FX_Actor::ConstructPayload(const FECsFX& Type)
+#define PayloadType NCsFX::NPayload::IPayload
+PayloadType* UCsManager_FX_Actor::ConstructPayload(const FECsFX& Type)
 {
-	return new NCsFX::NPayload::FImpl();
+#undef PayloadType
+
+	typedef NCsFX::NPayload::FImpl PayloadImplType;
+
+	return new PayloadImplType();
 }
 
-NCsFX::NPayload::IPayload* UCsManager_FX_Actor::AllocatePayload(const FECsFX& Type)
+#define PayloadType NCsFX::NPayload::IPayload
+PayloadType* UCsManager_FX_Actor::AllocatePayload(const FECsFX& Type)
 {
+#undef PayloadType
 	return Internal.AllocatePayload(Type);
 }
 
@@ -591,8 +598,10 @@ NCsFX::NPayload::IPayload* UCsManager_FX_Actor::AllocatePayload(const FECsFX& Ty
 	// Spawn
 #pragma region
 
-const FCsFXActorPooled* UCsManager_FX_Actor::Spawn(const FECsFX& Type, NCsFX::NPayload::IPayload* Payload)
+#define PayloadType NCsFX::NPayload::IPayload
+const FCsFXActorPooled* UCsManager_FX_Actor::Spawn(const FECsFX& Type, PayloadType* Payload)
 {
+#undef PayloadType
 	return Internal.Spawn(Type, Payload);
 }
 

@@ -22,11 +22,13 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerSound_OnSpawn, const FECs
 
 class ICsSoundPooled;
 
-class CSCORE_API FCsManager_Sound_Internal : public TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, NCsSound::NPayload::IPayload, FECsSound>
+#define PayloadType NCsSound::NPayload::IPayload
+
+class CSCORE_API FCsManager_Sound_Internal : public TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, PayloadType, FECsSound>
 {
 private:
 
-	typedef TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, NCsSound::NPayload::IPayload, FECsSound> Super;
+	typedef TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, PayloadType, FECsSound> Super;
 
 public:
 
@@ -38,6 +40,7 @@ public:
 	}
 };
 
+#undef PayloadType
 #pragma endregion Internal
 
 class ICsGetManagerSound;
@@ -50,6 +53,8 @@ class CSCORE_API UCsManager_Sound : public UObject
 	GENERATED_UCLASS_BODY()
 
 public:	
+
+#define PayloadType NCsSound::NPayload::IPayload
 
 // Singleton
 #pragma region
@@ -466,7 +471,7 @@ public:
 	* @param Type
 	* return
 	*/
-	virtual NCsSound::NPayload::IPayload* ConstructPayload(const FECsSound& Type);
+	virtual PayloadType* ConstructPayload(const FECsSound& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
@@ -475,7 +480,7 @@ public:
 	* @param Type	Type of payload.
 	* return		Payload that implements the interface: NCsSound::NPayload::IPayload.
 	*/
-	NCsSound::NPayload::IPayload* AllocatePayload(const FECsSound& Type);
+	PayloadType* AllocatePayload(const FECsSound& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
@@ -484,10 +489,10 @@ public:
 	* @param Type	Type of payload.
 	* return		Payload that implements the interface: NCsSound::NPayload::IPayload.
 	*/
-	template<typename PayloadTypeImpl>
-	FORCEINLINE PayloadTypeImpl* AllocatePayload(const FECsSound& Type)
+	template<typename PayloadImplType>
+	FORCEINLINE PayloadImplType* AllocatePayload(const FECsSound& Type)
 	{
-		return Internal.AllocatePayload<PayloadTypeImpl>(Type);
+		return Internal.AllocatePayload<PayloadImplType>(Type);
 	}
 
 #pragma endregion Payload
@@ -502,7 +507,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	const FCsSoundPooled* Spawn(const FECsSound& Type, NCsSound::NPayload::IPayload* Payload);
+	const FCsSoundPooled* Spawn(const FECsSound& Type, PayloadType* Payload);
 
 	/**
 	*
@@ -644,4 +649,6 @@ private:
 	TArray<UDataTable*> DataTables;
 
 #pragma endregion Data
+
+#undef PayloadType
 };

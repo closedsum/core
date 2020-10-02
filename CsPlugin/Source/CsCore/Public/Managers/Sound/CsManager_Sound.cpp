@@ -577,13 +577,20 @@ void UCsManager_Sound::ConstructPayloads(const FECsSound& Type, const int32& Siz
 	Internal.ConstructPayloads(Type, Size);
 }
 
-NCsSound::NPayload::IPayload* UCsManager_Sound::ConstructPayload(const FECsSound& Type)
+#define PayloadType NCsSound::NPayload::IPayload
+PayloadType* UCsManager_Sound::ConstructPayload(const FECsSound& Type)
 {
-	return new NCsSound::NPayload::FImpl();
+#undef PayloadType
+
+	typedef NCsSound::NPayload::FImpl PayloadImplType;
+
+	return new PayloadImplType();
 }
 
-NCsSound::NPayload::IPayload* UCsManager_Sound::AllocatePayload(const FECsSound& Type)
+#define PayloadType NCsSound::NPayload::IPayload
+PayloadType* UCsManager_Sound::AllocatePayload(const FECsSound& Type)
 {
+#undef PayloadType
 	return Internal.AllocatePayload(Type);
 }
 
@@ -592,8 +599,11 @@ NCsSound::NPayload::IPayload* UCsManager_Sound::AllocatePayload(const FECsSound&
 	// Spawn
 #pragma region
 
-const FCsSoundPooled* UCsManager_Sound::Spawn(const FECsSound& Type, NCsSound::NPayload::IPayload* Payload)
+#define PayloadType NCsSound::NPayload::IPayload
+const FCsSoundPooled* UCsManager_Sound::Spawn(const FECsSound& Type, PayloadType* Payload)
 {
+#undef PayloadType
+
 	if (Internal.IsExhausted(Type))
 	{
 		const FCsSoundPooled* AllocatedHead = Internal.GetAllocatedHeadObject(Type);

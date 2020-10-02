@@ -103,6 +103,8 @@ class CSCORE_API UCsManager_Damage : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+#define EventType NCsDamage::NEvent::IEvent
+
 // Singleton
 #pragma region
 public:
@@ -194,7 +196,12 @@ protected:
 
 	FCsManager_DamageEvent Manager_Event;
 
-	virtual NCsDamage::NEvent::IEvent* ConstructEvent();
+	/**
+	*
+	*
+	* return	Event that implements the interface: NCsDamage::NEvent::IEvent
+	*/
+	virtual EventType* ConstructEvent();
 
 public:
 
@@ -207,9 +214,9 @@ public:
 
 	virtual void DeallocateEvent(const FString& Context, FCsResource_DamageEvent* Event);
 
-	virtual bool CopyEvent(const FString& Context, const NCsDamage::NEvent::IEvent* From, NCsDamage::NEvent::IEvent* To);
+	virtual bool CopyEvent(const FString& Context, const EventType* From, EventType* To);
 
-	FCsResource_DamageEvent* CreateCopyOfEvent(const FString& Context, const NCsDamage::NEvent::IEvent* Event);
+	FCsResource_DamageEvent* CreateCopyOfEvent(const FString& Context, const EventType* Event);
 
 	FCsResource_DamageEvent* CreateCopyOfEvent(const FString& Context, const FCsResource_DamageEvent* Event);
 
@@ -223,9 +230,9 @@ public:
 	/**
 	*
 	*
-	* @param Event
+	* @param Event	Event that implements the interface: NCsDamage::NEvent::IEvent
 	*/
-	void ProcessDamageEvent(const NCsDamage::NEvent::IEvent* Event);
+	void ProcessDamageEvent(const EventType* Event);
 
 	/**
 	*
@@ -237,9 +244,9 @@ public:
 	/**
 	*
 	*
-	* @param Event
+	* @param Event	Event that implements the interface: NCsDamage::NEvent::IEvent
 	*/
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnProcessDamageEvent, const NCsDamage::NEvent::IEvent* /*Event*/);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnProcessDamageEvent, const EventType* /*Event*/);
 
 	/** */
 	FOnProcessDamageEvent OnProcessDamageEvent_Event;
@@ -379,7 +386,9 @@ public:
 #pragma region
 public:
 
-	void LogEvent(const NCsDamage::NEvent::IEvent* Event);
+	void LogEvent(const EventType* Event);
 
 #pragma endregion Log
+
+#undef EventType
 };

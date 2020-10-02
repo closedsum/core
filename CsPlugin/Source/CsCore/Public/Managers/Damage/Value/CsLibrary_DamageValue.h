@@ -3,10 +3,11 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
+#define ValueType NCsDamage::NValue::IValue
 /**
 * Library for interface: ICsDamageValue
 */
-struct CSCORE_API FCsLibrary_DamageValue : public TCsLibrary_InterfaceMap<NCsDamage::NValue::IValue>
+struct CSCORE_API FCsLibrary_DamageValue : public TCsLibrary_InterfaceMap<ValueType>
 {
 	/**
 	* Copy the values from From to To with checks.
@@ -18,5 +19,7 @@ struct CSCORE_API FCsLibrary_DamageValue : public TCsLibrary_InterfaceMap<NCsDam
 	* @param From		What to copy.
 	* @param To			What to copy to.
 	*/
-	static bool CopyChecked(const FString& Context, const NCsDamage::NValue::IValue* From, NCsDamage::NValue::IValue* To);
+	static bool CopyChecked(const FString& Context, const ValueType* From, ValueType* To);
 };
+
+#undef ValueType

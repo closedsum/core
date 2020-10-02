@@ -8,13 +8,16 @@
 #include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRangeEmu.h"
 
-bool FCsLibrary_DamageValue::CopyChecked(const FString& Context, const NCsDamage::NValue::IValue* From, NCsDamage::NValue::IValue* To)
+#define ValueType NCsDamage::NValue::IValue
+bool FCsLibrary_DamageValue::CopyChecked(const FString& Context, const ValueType* From, ValueType* To)
 {
+#undef ValueType
 	// Point
 	{
+		typedef NCsDamage::NValue::IValue ValueType;
 		typedef NCsDamage::NValue::NPoint::IPoint PointType;
 
-		if (PointType* IFromPoint = GetSafeInterfaceChecked<PointType>(Context, const_cast<NCsDamage::NValue::IValue*>(From)))
+		if (PointType* IFromPoint = GetSafeInterfaceChecked<PointType>(Context, const_cast<ValueType*>(From)))
 		{
 			// NCsDamage::NValue::NPoint::FImpl (NCsDamage::NValue::NPoint::IPoint)
 			typedef NCsDamage::NValue::NPoint::FImpl ImplType;
@@ -28,9 +31,10 @@ bool FCsLibrary_DamageValue::CopyChecked(const FString& Context, const NCsDamage
 	}
 	// Range
 	{
+		typedef NCsDamage::NValue::IValue ValueType;
 		typedef NCsDamage::NValue::NRange::IRange RangeType;
 
-		if (RangeType* IFromRange = GetSafeInterfaceChecked<RangeType>(Context, const_cast<NCsDamage::NValue::IValue*>(From)))
+		if (RangeType* IFromRange = GetSafeInterfaceChecked<RangeType>(Context, const_cast<ValueType*>(From)))
 		{
 			// NCsDamage::NValue::NRange::FImpl (NCsDamage::NValue::NRange::IRange)
 			typedef NCsDamage::NValue::NRange::FImpl ImplType;

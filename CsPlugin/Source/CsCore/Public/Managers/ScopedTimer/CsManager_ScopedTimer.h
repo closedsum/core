@@ -34,7 +34,11 @@ protected:
 public:
 	~FCsManager_ScopedTimer();
 
-	static FCsManager_ScopedTimer& Get();
+	FORCEINLINE static FCsManager_ScopedTimer& Get()
+	{
+		static FCsManager_ScopedTimer Instance;
+		return Instance;
+	}
 
 	void Update(const FCsDeltaTime& DeltaTime);
 
@@ -42,9 +46,10 @@ public:
 
 	TArray<FCsScopedGroupTimer> GroupTimers;
 
-	const FCsScopedTimerHandle& GetHandle(const FString* Name, const FECsScopedGroup* Group, const FECsCVarLog* CVar);
+	const FCsScopedTimerHandle& GetHandle(const FString* Name, const FECsScopedGroup& Group, const FECsCVarLog& CVar);
 
 	void ClearHandle(const FCsScopedTimerHandle& Handle);
+	void SilentClearHandle(const FCsScopedTimerHandle& Handle);
 
 	void UpdateHandle(FCsScopedTimerHandle& Handle, double Time);
 };

@@ -5,8 +5,10 @@
 #include "Event/CsStatusEffectEventImpl.h"
 #include "Event/Damage/CsStatusEffectEvent_DamageImpl.h"
 
-bool FCsLibrary_StatusEffectEvent::CopyChecked(const FString& Context, const NCsStatusEffect::NEvent::IEvent* From, NCsStatusEffect::NEvent::IEvent* To)
+#define EventType NCsStatusEffect::NEvent::IEvent
+bool FCsLibrary_StatusEffectEvent::CopyChecked(const FString& Context, const EventType* From, EventType* To)
 {
+#undef EventType
 	// NCsStatusEffect::NEvent::FImpl (NCsStatusEffect::NEvent::IEvent)
 	{
 		typedef NCsStatusEffect::NEvent::FImpl ImplType;

@@ -24,6 +24,10 @@ namespace NCsDamage
 
 				static const FName Name;
 
+			private:
+
+				typedef NCsDamage::NValue::IValue ValueType;
+
 			public:
 
 				/**
@@ -34,7 +38,7 @@ namespace NCsDamage
 				* @param Value		The copy of the DamageValue from Data to be modified.
 				*					NOTE: This value is allocated and must be freed at end of use.
 				*/
-				virtual void Modify(ICsData_Damage* Data, NCsDamage::NValue::IValue* Value) = 0;
+				virtual void Modify(ICsData_Damage* Data, ValueType* Value) = 0;
 			};
 		}
 	}

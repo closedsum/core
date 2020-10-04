@@ -12,11 +12,22 @@ const FCsScopedTimerHandle FCsScopedTimerHandle::Invalid;
 // FCsScopedTimer
 #pragma region
 
+namespace NCsScopedTimer
+{
+	namespace Cached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsScopedTimer, Init);
+		}
+	}
+}
+
 FCsScopedTimer::FCsScopedTimer() :
 	Handle(),
 	Name(nullptr),
-	Group(nullptr),
-	CVar(nullptr),
+	Group(),
+	CVar(),
 	Time(0.0),
 	AvgTime(0.0),
 	TotalTime(0.0),
@@ -30,17 +41,21 @@ FCsScopedTimer::~FCsScopedTimer()
 	Name = nullptr;
 }
 
-void FCsScopedTimer::Init(const FString* InName, const FECsScopedGroup* InGroup, const FECsCVarLog* InCVar)
+void FCsScopedTimer::Init(const FString* InName, const FECsScopedGroup& InGroup, const FECsCVarLog& InCVar)
 {
-	checkf(InName, TEXT("FCsScopedTimer::Init: InName is NULL."));
+	using namespace NCsScopedTimer::Cached;
 
-	checkf(InGroup, TEXT("FCsScopedTimer::Init: InGroup is NULL."));
+	const FString& Context = Str::Init;
 
-	checkf(InCVar, TEXT("FCsScopedTimer::Init: InCVar is NULL."));
+	checkf(InName, TEXT("%s: InName is NULL."), *Context);
+
+	check(EMCsScopedGroup::Get().IsValidEnumChecked(Context, InGroup));
+
+	check(EMCsCVarLog::Get().IsValidEnumChecked(Context, InCVar));
 
 	Name = const_cast<FString*>(InName);
-	Group = const_cast<FECsScopedGroup*>(InGroup);
-	CVar = const_cast<FECsCVarLog*>(InCVar);
+	Group = InGroup;
+	CVar = InCVar;
 
 	Handle.New();
 }
@@ -60,8 +75,8 @@ void FCsScopedTimer::Reset()
 
 	Name = nullptr;
 
-	Group = nullptr;
-	CVar = nullptr;
+	Group = EMCsScopedGroup::Get().GetMAX();
+	CVar = EMCsCVarLog::Get().GetMAX();
 
 	Time = 0.0;
 	AvgTime = 0.0;
@@ -74,7 +89,7 @@ void FCsScopedTimer::Reset()
 
 void FCsScopedTimer::Log()
 {
-	if (FCsCVarLogMap::Get().IsShowing(*CVar))
+	if (FCsCVarLogMap::Get().IsShowing(CVar))
 	{
 		UE_LOG(LogCs, Log, TEXT("%s: Time: %f AvgTime: %f TotalTime: %f Ticks: %d"), **Name, (float)Time, (float)AvgTime, (float)TotalTime, Ticks);
 	}
@@ -102,9 +117,9 @@ FCsScopedTimerInternal::~FCsScopedTimerInternal()
 // FCsScopedGroupTimer
 #pragma region
 
-void FCsScopedGroupTimer::Init(const FECsScopedGroup* InGroup)
+void FCsScopedGroupTimer::Init(const FECsScopedGroup& InGroup)
 {
-	Group = const_cast<FECsScopedGroup*>(InGroup);
+	Group = InGroup;
 }
 
 void FCsScopedGroupTimer::AddTime(const FCsScopedTimer& Timer)
@@ -128,9 +143,9 @@ void FCsScopedGroupTimer::Resolve()
 
 void FCsScopedGroupTimer::Log()
 {
-	if (FCsScopedGroupMap::Get().IsShowing(*Group))
+	if (FCsScopedGroupMap::Get().IsShowing(Group))
 	{
-		UE_LOG(LogCs, Log, TEXT("%s: Time: %f AvgTime: %f Ticks: %d"), Group->DisplayNameToChar(), (float)Time, (float)AvgTime, Ticks);
+		UE_LOG(LogCs, Log, TEXT("%s: Time: %f AvgTime: %f Ticks: %d"), Group.DisplayNameToChar(), (float)Time, (float)AvgTime, Ticks);
 	}
 }
 

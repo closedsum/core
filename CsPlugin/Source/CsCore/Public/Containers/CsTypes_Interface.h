@@ -104,11 +104,15 @@ private:
 	uint8 GroupCounter;
 	/** Counter to track the last Index "index" */
 	int32 IndexCounter;
+
+	TArray<TArray<FCsInterfaceInfo>> Infos;
 protected:
 	FCsInterfaceBaseSliceHelper() :
 		GroupIndex(0),
-		IndexCounter(INDEX_NONE)
+		IndexCounter(INDEX_NONE),
+		Infos()
 	{
+		Infos.AddDefaulted();
 	}
 public:
 	virtual ~FCsInterfaceBaseSliceHelper() {}
@@ -118,13 +122,21 @@ public:
 		if (IndexCounter < 31)
 		{
 			++IndexCounter;
+
+			Infos[GroupCounter].AddDefaulted();
 		}
 		else
 		{
 			++GroupCounter;
 			IndexCounter = 0;
+
+			Infos.AddDefaulted();
+			Infos[GroupCounter].AddDefaulted();
 		}
-		return FCsInterfaceInfo(Name, GroupCounter, (uint8)IndexCounter);
+		
+		FCsInterfaceInfo& Info = Infos[GroupCounter].Last();
+		Info = FCsInterfaceInfo(Name, GroupCounter, (uint8)IndexCounter);
+		return Info;
 	}
 };
 

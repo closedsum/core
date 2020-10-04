@@ -27,6 +27,11 @@ namespace NCsDamage
 
 			static const FName Name;
 
+		private:
+
+			typedef NCsDamage::NValue::IValue ValueType;
+			typedef NCsDamage::NRange::IRange RangeType;
+
 		public:
 
 			virtual ~IEvent() {}
@@ -43,14 +48,14 @@ namespace NCsDamage
 			*
 			* return
 			*/
-			virtual const NCsDamage::NValue::IValue* GetDamageValue() const = 0;
+			virtual const ValueType* GetDamageValue() const = 0;
 
 			/**
 			*
 			*
 			* return 
 			*/
-			virtual const NCsDamage::NRange::IRange* GetDamageRange() const = 0;
+			virtual const RangeType* GetDamageRange() const = 0;
 
 			/**
 			*

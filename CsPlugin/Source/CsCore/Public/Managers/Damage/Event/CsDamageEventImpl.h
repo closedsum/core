@@ -39,6 +39,11 @@ namespace NCsDamage
 
 		private:
 
+			typedef NCsDamage::NValue::IValue ValueType;
+			typedef NCsDamage::NValue::FAllocated AllocatedValueType;
+			typedef NCsDamage::NRange::IRange RangeType;
+			typedef NCsDamage::NRange::FAllocated AllocatedRangeType;
+
 			FCsInterfaceMap InterfaceMap;
 
 		public:
@@ -47,9 +52,9 @@ namespace NCsDamage
 
 			float Damage;
 
-			NCsDamage::NValue::FAllocated DamageValue;
+			AllocatedValueType DamageValue;
 
-			NCsDamage::NRange::FAllocated DamageRange;
+			AllocatedRangeType DamageRange;
 
 			ICsData_Damage* Data;
 
@@ -91,12 +96,12 @@ namespace NCsDamage
 				return Damage;
 			}
 
-			FORCEINLINE const NCsDamage::NValue::IValue* GetDamageValue() const
+			FORCEINLINE const ValueType* GetDamageValue() const
 			{
 				return DamageValue.Value;
 			}
 
-			FORCEINLINE const NCsDamage::NRange::IRange* GetDamageRange() const
+			FORCEINLINE const RangeType* GetDamageRange() const
 			{
 				return DamageRange.Range;
 			}

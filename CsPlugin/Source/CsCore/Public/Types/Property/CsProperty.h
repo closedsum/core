@@ -3,6 +3,8 @@
 
 struct ICsProperty
 {
+	virtual ~ICsProperty(){}
+
 	virtual void UpdateIsDirty() = 0;
 	virtual void Clear() = 0;
 	virtual void ResetValue() = 0;

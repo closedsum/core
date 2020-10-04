@@ -33,6 +33,8 @@ namespace NCsStatusEffect
 
 			private:
 
+				typedef NCsDamage::NEvent::FAllocated AllocatedDamageEventType;
+
 				// ICsGetInterfaceMap
 
 				FCsInterfaceMap InterfaceMap;
@@ -53,7 +55,7 @@ namespace NCsStatusEffect
 
 				// IDamage
 
-				NCsDamage::NEvent::FAllocated DamageEvent;
+				AllocatedDamageEventType DamageEvent;
 
 			public:
 

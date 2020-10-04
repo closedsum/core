@@ -3,10 +3,11 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
+#define RangeType NCsDamage::NRange::IRange
 /**
 * Library for interface: ICsDamageRange
 */
-struct CSCORE_API FCsLibrary_DamageRange : public TCsLibrary_InterfaceMap<NCsDamage::NRange::IRange>
+struct CSCORE_API FCsLibrary_DamageRange : public TCsLibrary_InterfaceMap<RangeType>
 {
 	/**
 	* Copy the values from From to To with checks.
@@ -17,5 +18,7 @@ struct CSCORE_API FCsLibrary_DamageRange : public TCsLibrary_InterfaceMap<NCsDam
 	* @param From		What to copy.
 	* @param To			What to copy to.
 	*/
-	static bool CopyChecked(const FString& Context, const NCsDamage::NRange::IRange* From, NCsDamage::NRange::IRange* To);
+	static bool CopyChecked(const FString& Context, const RangeType* From, RangeType* To);
 };
+
+#undef RangeType

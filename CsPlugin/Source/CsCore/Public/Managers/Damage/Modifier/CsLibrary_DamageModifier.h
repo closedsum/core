@@ -13,10 +13,13 @@ namespace NCsDamage {
 	namespace NRange {
 		struct IRange; } }
 
+#define ModifierType NCsDamage::NModifier::IModifier
+#define ValueType NCsDamage::NValue::IValue
+#define RangeType NCsDamage::NRange::IRange
 /**
 * Library for interface: ICsDamageModifier
 */
-struct CSCORE_API FCsLibrary_DamageModifier : public TCsLibrary_InterfaceMap<NCsDamage::NModifier::IModifier>
+struct CSCORE_API FCsLibrary_DamageModifier : public TCsLibrary_InterfaceMap<ModifierType>
 {
 	/**
 	* Copy the values from From to To with checks.
@@ -28,7 +31,7 @@ struct CSCORE_API FCsLibrary_DamageModifier : public TCsLibrary_InterfaceMap<NCs
 	* @param To			What to copy to.
 	* return			Whether the copy was performed successfully.
 	*/
-	static bool CopyChecked(const FString& Context, const NCsDamage::NModifier::IModifier* From, NCsDamage::NModifier::IModifier* To);
+	static bool CopyChecked(const FString& Context, const ModifierType* From, ModifierType* To);
 
 	/**
 	*
@@ -39,7 +42,7 @@ struct CSCORE_API FCsLibrary_DamageModifier : public TCsLibrary_InterfaceMap<NCs
 	* @param Value
 	* return			Whether the Modify was "attempted" (a Modify method was called) successfully.
 	*/
-	static bool ModifyChecked(const FString& Context, const NCsDamage::NModifier::IModifier* Modifier, const ICsData_Damage* Data, NCsDamage::NValue::IValue* Value);
+	static bool ModifyChecked(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, ValueType* Value);
 
 	/**
 	*
@@ -50,5 +53,9 @@ struct CSCORE_API FCsLibrary_DamageModifier : public TCsLibrary_InterfaceMap<NCs
 	* @param Range
 	* return			Whether the Modify was "attempted" (a Modify method was called) successfully.
 	*/
-	static bool ModifyChecked(const FString& Context, const NCsDamage::NModifier::IModifier* Modifier, const ICsData_Damage* Data, NCsDamage::NRange::IRange* Range);
+	static bool ModifyChecked(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, RangeType* Range);
 };
+
+#undef ModifierType
+#undef ValueType
+#undef RangeType

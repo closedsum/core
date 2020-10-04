@@ -24,6 +24,10 @@ namespace NCsDamage
 
 				static const FName Name;
 
+			private:
+
+				typedef NCsDamage::NRange::IRange RangeType;
+
 			public:
 
 				/**
@@ -34,7 +38,7 @@ namespace NCsDamage
 				* @param Range		The copy of the DamageRange from Data to be modified.
 				*					NOTE: This range is allocated and must be freed at end of use.
 				*/
-				virtual void Modify(ICsData_Damage* Data, NCsDamage::NRange::IRange* Range) = 0;
+				virtual void Modify(ICsData_Damage* Data, RangeType* Range) = 0;
 			};
 		}
 	}

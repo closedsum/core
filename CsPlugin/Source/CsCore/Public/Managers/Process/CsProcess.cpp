@@ -229,8 +229,10 @@ void UCsProcess::RunCommand(const FString& Command)
 
 void UCsProcess::StartRead()
 {
+	typedef NCsCoroutine::EEndReason EndReasonType;
+
 	if (StartRead_Internal_Routine)
-		StartRead_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
+		StartRead_Internal_Routine->End(EndReasonType::UniqueInstance);
 
 	ReadFlag = true;
 
@@ -293,8 +295,10 @@ void UCsProcess::StopRead()
 {
 	ReadFlag = false;
 
+	typedef NCsCoroutine::EEndReason EndReasonType;
+
 	if (StartRead_Internal_Routine)
-		StartRead_Internal_Routine->End(ECsCoroutineEndReason::Manual);
+		StartRead_Internal_Routine->End(EndReasonType::Manual);
 }
 
 void UCsProcess::AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent& Event)

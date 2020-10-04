@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+#include "CsCVars.h"
 
 // FCsScopedTimerHandle
 #pragma region
@@ -75,9 +76,9 @@ public:
 
 	FString* Name;
 
-	FECsScopedGroup* Group;
+	FECsScopedGroup Group;
 
-	FECsCVarLog* CVar;
+	FECsCVarLog CVar;
 
 	double Time;
 	double AvgTime;
@@ -90,11 +91,11 @@ public:
 	FCsScopedTimer();
 	~FCsScopedTimer();
 
-	void Init(const FString* InName, const FECsScopedGroup* InGroup, const FECsCVarLog* InCVar);
+	void Init(const FString* InName, const FECsScopedGroup& InGroup, const FECsCVarLog& InCVar);
 
 	FORCEINLINE const FECsScopedGroup& GetGroup() const 
 	{
-		return *Group;
+		return Group;
 	}
 
 	void SetTime(const double& InTime);
@@ -151,7 +152,7 @@ struct CSCORE_API FCsScopedGroupTimer
 {
 public:
 
-	FECsScopedGroup* Group;
+	FECsScopedGroup Group;
 
 	double Time;
 	double AvgTime;
@@ -161,7 +162,7 @@ public:
 	bool bDirty;
 
 	FCsScopedGroupTimer() :
-		Group(nullptr),
+		Group(),
 		Time(0.0),
 		AvgTime(0.0),
 		Ticks(0),
@@ -169,7 +170,7 @@ public:
 	{
 	}
 
-	void Init(const FECsScopedGroup* InGroup);
+	void Init(const FECsScopedGroup& InGroup);
 
 	FORCEINLINE void ClearDirty()
 	{
@@ -191,11 +192,13 @@ public:
 #pragma endregion FCsScopedGroupTimer
 
 #if !UE_BUILD_SHIPPING
-#define CS_GET_SCOPED_TIMER_HANDLE(Handle, Name, Group, CVar) Handle = FCsManager_ScopedTimer::Get().GetHandle((Name), (&(Group)), (&(CVar)))
+#define CS_GET_SCOPED_TIMER_HANDLE(Handle, Name, Group, CVar) Handle = FCsManager_ScopedTimer::Get().GetHandle((Name), (Group), (CVar))
 #define CS_CLEAR_SCOPED_TIMER_HANDLE(Handle) FCsManager_ScopedTimer::Get().ClearHandle(Handle)
+#define CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(Handle) FCsManager_ScopedTimer::Get().SilentClearHandle(Handle)
 #define CS_SCOPED_TIMER(Handle) FCsScopedTimerInternal __Temp_##Handle##_ScopedTimerInternal__(Handle)
 #else
 #define CS_GET_SCOPED_TIMER_HANDLE(Handle, Name, Group, CVar)
 #define CS_CLEAR_SCOPED_TIMER_HANDLE(Handle)
+#define CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(Handle)
 #define CS_SCOPED_TIMER(Handle)
 #endif // #if !UE_BUILD_SHIPPING

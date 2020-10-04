@@ -21,10 +21,10 @@ FCsManager_ScopedTimer::FCsManager_ScopedTimer() :
 
 		GroupTimers.Reset(Count);
 
-		for (int32 I = 0; I < Count; ++I)
+		for (const FECsScopedGroup& Group : EMCsScopedGroup::Get())
 		{
 			GroupTimers.AddDefaulted();
-			GroupTimers.Last().Init(&(EMCsScopedGroup::Get().GetEnumAt(I)));
+			GroupTimers.Last().Init(Group);
 		}
 	}
 }
@@ -32,12 +32,6 @@ FCsManager_ScopedTimer::FCsManager_ScopedTimer() :
 FCsManager_ScopedTimer::~FCsManager_ScopedTimer()
 {
 
-}
-
-/*static*/ FCsManager_ScopedTimer& FCsManager_ScopedTimer::Get()
-{
-	static FCsManager_ScopedTimer Instance;
-	return Instance;
 }
 
 void FCsManager_ScopedTimer::Update(const FCsDeltaTime& DeltaTime)
@@ -78,15 +72,15 @@ void FCsManager_ScopedTimer::Update(const FCsDeltaTime& DeltaTime)
 	}
 }
 
-const FCsScopedTimerHandle& FCsManager_ScopedTimer::GetHandle(const FString* Name, const FECsScopedGroup* Group, const FECsCVarLog* CVar)
+const FCsScopedTimerHandle& FCsManager_ScopedTimer::GetHandle(const FString* Name, const FECsScopedGroup& Group, const FECsCVarLog& CVar)
 {
 	checkf(Name, TEXT("FCsManager_ScopedTimer::GetHandle: Name is NULL."));
 
 	checkf(!Name->IsEmpty(), TEXT("FCsManager_ScopedTimer::GetHandle: Name is Empty."));
 
-	checkf(Group, TEXT("FCsManager_ScopedTimer::GetHandle: Group is NULL."));
+	checkf(EMCsScopedGroup::Get().IsValidEnum(Group), TEXT("FCsManager_ScopedTimer::GetHandle: Group: %s is NOT Valid."), Group.ToChar());
 
-	checkf(CVar, TEXT("FCsManager_ScopedTimer::GetHandle: CVar is NULL."));
+	checkf(EMCsCVarLog::Get().IsValidEnum(CVar), TEXT("FCsManager_ScopedTimer::GetHandle: CVar: %s is NOT Valid."), CVar.ToChar());
 
 	FCsScopedTimer* ScopedTimer = Internal.AllocateResource();
 
@@ -122,6 +116,28 @@ void FCsManager_ScopedTimer::ClearHandle(const FCsScopedTimerHandle& Handle)
 		UE_LOG(LogCs, Warning, TEXT("FCsManager_ScopedTimer::ClearHandle: ScopedTimer with Index: %d does NOT match Handle."), Handle.Index);
 		return;
 	}
+
+	Internal.Deallocate(Resource);
+}
+
+void FCsManager_ScopedTimer::SilentClearHandle(const FCsScopedTimerHandle& Handle)
+{
+	if (!Handle.IsValid())
+		return;
+
+	if (Handle.GetIndex() >= Internal.GetPoolSize())
+		return;
+
+	FCsResource_ScopedTimer* Resource = Internal.GetAt(Handle.GetIndex());
+
+	checkf(Resource, TEXT("FCsManager_ScopedTimer::ClearHandle: Resource is NULL."));
+
+	FCsScopedTimer* ScopedTimer = Resource->Get();
+
+	checkf(ScopedTimer, TEXT("FCsManager_ScopedTimer::ClearHandle: ScopedTimer is NULL."));
+
+	if (Handle != ScopedTimer->Handle)
+		return;
 
 	Internal.Deallocate(Resource);
 }

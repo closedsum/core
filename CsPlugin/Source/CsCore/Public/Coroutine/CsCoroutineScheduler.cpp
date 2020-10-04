@@ -262,9 +262,11 @@ FCsCoroutinePayload* UCsCoroutineScheduler::AllocatePayload(const FECsUpdateGrou
 // Message
 #pragma region
 
-void UCsCoroutineScheduler::BroadcastMessage(const FECsUpdateGroup& Group, const ECsCoroutineMessage& MessageType, const FName& Message, void* InOwner /*=nullptr*/)
+#define MessageType NCsCoroutine::EMessage
+void UCsCoroutineScheduler::BroadcastMessage(const FECsUpdateGroup& Group, const MessageType& Type, const FName& Message, void* InOwner /*=nullptr*/)
 {
-	Schedules[Group.Value].BroadcastMessage(MessageType, Message, nullptr);
+#undef MessageType
+	Schedules[Group.Value].BroadcastMessage(Type, Message, nullptr);
 }
 
 #pragma endregion Message

@@ -40,6 +40,12 @@ public:
 
 	virtual ~FCsCoroutineSchedule();
 
+#define MessageType NCsCoroutine::EMessage
+	
+private:
+
+	typedef NCsCoroutine::ETransaction TransactionType;
+
 // Schedule
 #pragma region
 protected:
@@ -213,11 +219,11 @@ public:
 	/**
 	*
 	*
-	* @param MessageType
+	* @param Type
 	* @param Message
 	* @param Owner
 	*/
-	void BroadcastMessage(const ECsCoroutineMessage& MessageType, const FName& Message, void* Owner = nullptr);
+	void BroadcastMessage(const MessageType& Type, const FName& Message, void* Owner = nullptr);
 
 #pragma endregion Message
 
@@ -232,7 +238,7 @@ public:
 	* @param Transaction
 	* @param R
 	*/
-	void LogTransaction(const FString& FunctionName, const ECsCoroutineTransaction& Transaction, FCsRoutine* R);
+	void LogTransaction(const FString& FunctionName, const TransactionType& Transaction, FCsRoutine* R);
 
 	/**
 	*
@@ -240,4 +246,6 @@ public:
 	void LogRunning();
 
 #pragma endregion Log
+
+#undef MessageType
 };

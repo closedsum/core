@@ -4,8 +4,10 @@
 // Damage
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
 
-bool FCsLibrary_DamageEvent::CopyChecked(const FString& Context, const NCsDamage::NEvent::IEvent* From, NCsDamage::NEvent::IEvent* To)
+#define EventType NCsDamage::NEvent::IEvent
+bool FCsLibrary_DamageEvent::CopyChecked(const FString& Context, const EventType* From, EventType* To)
 {
+#undef EventType
 	// NCsDamage::NEvent::FImpl (NCsDamage::NEvent::IEvent)
 	{
 		typedef NCsDamage::NEvent::FImpl ImplType;
@@ -21,8 +23,10 @@ bool FCsLibrary_DamageEvent::CopyChecked(const FString& Context, const NCsDamage
 	return false;
 }
 
-bool FCsLibrary_DamageEvent::SetDamageChecked(const FString& Context, NCsDamage::NEvent::IEvent* Event)
+#define EventType NCsDamage::NEvent::IEvent
+bool FCsLibrary_DamageEvent::SetDamageChecked(const FString& Context, EventType* Event)
 {
+#undef EventType
 	// NCsDamage::NEvent::FImpl (NCsDamage::NEvent::IEvent)
 	{
 		typedef NCsDamage::NEvent::FImpl ImplType;

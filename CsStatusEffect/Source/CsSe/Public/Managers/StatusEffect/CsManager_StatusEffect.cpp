@@ -129,7 +129,9 @@ void UCsManager_StatusEffect::ApplyStatusEffect(FCsResource_StatusEffectEvent* E
 	EventInfo->SetEvent(Event);
 }
 
-void UCsManager_StatusEffect::ApplyStatusEffect(NCsStatusEffect::NEvent::IEvent* Event)
+#define EventType NCsStatusEffect::NEvent::IEvent
+void UCsManager_StatusEffect::ApplyStatusEffect(EventType* Event)
 {
+#undef EventType
 	checkf(Event, TEXT("UCsManager_StatusEffect::ApplyStatusEffect::Event is NULL."));
 }

@@ -33,6 +33,8 @@ class CSSE_API UCsManager_StatusEffect : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+#define EventType NCsStatusEffect::NEvent::IEvent
+
 public:
 
 	void Init(UObject* InRoot);
@@ -68,5 +70,7 @@ public:
 
 	void ApplyStatusEffect(FCsResource_StatusEffectEvent* Event);
 
-	void ApplyStatusEffect(NCsStatusEffect::NEvent::IEvent* Event);
+	void ApplyStatusEffect(EventType* Event);
+
+#undef EventType
 };

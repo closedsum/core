@@ -75,9 +75,9 @@ namespace NCsDamage
 			// Point
 			else
 			{
-				typedef NCsDamage::NValue::NPoint::IPoint ValueType;
+				typedef NCsDamage::NValue::NPoint::IPoint PointType;
 
-				ValueType* DamageValuePoint = FCsLibrary_DamageValue::GetInterfaceChecked<ValueType>(Context, DamageValue.Value);
+				PointType* DamageValuePoint = FCsLibrary_DamageValue::GetInterfaceChecked<PointType>(Context, DamageValue.Value);
 				Damage						= DamageValuePoint->GetValue();
 				return true;
 			}

@@ -2,18 +2,27 @@
 #include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
 #include "CsCore.h"
 
-
-bool FCsLibrary_DamageModifier::CopyChecked(const FString& Context, const NCsDamage::NModifier::IModifier* From, NCsDamage::NModifier::IModifier* To)
+#define ModifierType NCsDamage::NModifier::IModifier
+bool FCsLibrary_DamageModifier::CopyChecked(const FString& Context, const ModifierType* From, ModifierType* To)
 {
+#undef ModifierType
 	return false;
 }
 
-bool FCsLibrary_DamageModifier::ModifyChecked(const FString& Context, const NCsDamage::NModifier::IModifier* Modifier, const ICsData_Damage* Data, NCsDamage::NValue::IValue* Value)
+#define ModifierType NCsDamage::NModifier::IModifier
+#define ValueType NCsDamage::NValue::IValue
+bool FCsLibrary_DamageModifier::ModifyChecked(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, ValueType* Value)
 {
+#undef ModifierType
+#undef ValueType
 	return false;
 }
 
-bool FCsLibrary_DamageModifier::ModifyChecked(const FString& Context, const NCsDamage::NModifier::IModifier* Modifier, const ICsData_Damage* Data, NCsDamage::NRange::IRange* Range)
+#define ModifierType NCsDamage::NModifier::IModifier
+#define RangeType NCsDamage::NRange::IRange
+bool FCsLibrary_DamageModifier::ModifyChecked(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, RangeType* Range)
 {
+#undef ModifierType
+#undef RangeType
 	return false;	 
 }

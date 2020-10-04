@@ -241,6 +241,7 @@ public:
 		ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::Spawn]			= Name + TEXT("_Spawn");
 		ScopedTimerNames[(uint8)ECsManagerPooledObjectScopedTimerNames::Destroy]		= Name + TEXT("_Destroy");
 
+		CreatePoolScopedTimerCVar		= Params.CreatePoolScopedTimerCVar;
 		UpdateScopedTimerCVar			= Params.UpdateScopedTimerCVar;
 		UpdateObjectScopedTimerCVar		= Params.UpdateObjectScopedTimerCVar;
 		AllocateScopedTimerCVar			= Params.AllocateScopedTimerCVar;

@@ -20,9 +20,11 @@ namespace NCsStatusEffect
 
 				static const FName Name;
 
-			public:
+			private:
 
 				typedef NCsDamage::NEvent::IEvent DamageEventType;
+
+			public:
 				/**
 				*
 				*

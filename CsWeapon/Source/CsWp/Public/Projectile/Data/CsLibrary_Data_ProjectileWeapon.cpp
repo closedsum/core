@@ -7,6 +7,8 @@
 
 bool FCsLibrary_Data_ProjectileWeapon::IsValidChecked(const FString& Context, ICsData_ProjectileWeapon* Data)
 {
+	checkf(Data, TEXT("%s: Data is NULL."), *Context);
+
 	// Check MaxAmmo is a valid value
 	if (!Data->HasInfiniteAmmo())
 	{

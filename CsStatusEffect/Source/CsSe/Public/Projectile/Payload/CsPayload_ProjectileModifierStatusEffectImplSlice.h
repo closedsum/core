@@ -31,6 +31,8 @@ namespace NCsProjectile
 
 				private:
 
+					typedef NCsStatusEffect::NModifier::IModifier ModifierType;
+
 					// ICsGetInterfaceMap
 
 					FCsInterfaceMap* InterfaceMap;
@@ -39,7 +41,7 @@ namespace NCsProjectile
 
 					// IStatusEffect
 
-					TArray<NCsStatusEffect::NModifier::IModifier*> Modifiers;
+					TArray<ModifierType*> Modifiers;
 
 				public:
 
@@ -64,7 +66,7 @@ namespace NCsProjectile
 				#pragma region
 				public:
 
-					FORCEINLINE const TArray<NCsStatusEffect::NModifier::IModifier*>& GetDamageModifiers() const
+					FORCEINLINE const TArray<ModifierType*>& GetDamageModifiers() const
 					{
 						return Modifiers;
 					}

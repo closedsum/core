@@ -3,10 +3,11 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
+#define EventType NCsDamage::NEvent::IEvent
 /**
 * Library for interface: NCsDamage::NEvent::IEvent
 */
-struct CSCORE_API FCsLibrary_DamageEvent : public TCsLibrary_InterfaceMap<NCsDamage::NEvent::IEvent>
+struct CSCORE_API FCsLibrary_DamageEvent : public TCsLibrary_InterfaceMap<EventType>
 {
 	/**
 	* Copy the values from From to To with checks.
@@ -18,7 +19,7 @@ struct CSCORE_API FCsLibrary_DamageEvent : public TCsLibrary_InterfaceMap<NCsDam
 	* @param To			What to copy to.
 	* return			Whether the copy was performed successfully.
 	*/
-	static bool CopyChecked(const FString& Context, const NCsDamage::NEvent::IEvent* From, NCsDamage::NEvent::IEvent* To);
+	static bool CopyChecked(const FString& Context, const EventType* From, EventType* To);
 
 	/**
 	* Set the damage on the Event with checks.
@@ -27,5 +28,7 @@ struct CSCORE_API FCsLibrary_DamageEvent : public TCsLibrary_InterfaceMap<NCsDam
 	* @param Event
 	* return			Whether the damage was set successfully.
 	*/
-	static bool SetDamageChecked(const FString&, NCsDamage::NEvent::IEvent* Event);
+	static bool SetDamageChecked(const FString&, EventType* Event);
 };
+
+#undef EventType

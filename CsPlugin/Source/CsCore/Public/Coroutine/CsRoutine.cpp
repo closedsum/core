@@ -6,218 +6,28 @@
 // Managers
 #include "Managers/ScopedTimer/CsManager_ScopedTimer.h"
 
-FCsRoutine::FCsRoutine()
+FCsRoutine::FCsRoutine() :
+	RegisterMap()
 {
 	Parent = nullptr;
 
 	Children.Reset(Children.Max());
 
-	for (const ECsCoroutineMessage& MessageType : EMCsCoroutineMessage::Get())
+	typedef NCsCoroutine::EMMessage MessageMapType;
+
+	for (const MessageType& Type : MessageMapType::Get())
 	{
 		Messages.AddDefaulted();
 		Messages_Recieved.AddDefaulted();
 	}
 
-	// Registers
-	Registers.Reset(NCsRoutineRegisterValueType::MAX);
-	RegisterFlags.Reset(NCsRoutineRegisterValueType::MAX);
-
-		// Indexers
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	Indexers.AddDefaulted(CS_ROUTINE_INDEXER_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Indexer].AddDefaulted(Indexers.Max());
-
-	for (int32& I : Indexers)
-	{
-		I = 0;
-		Registers[(uint8)ECsRoutineRegisterValueType::Indexer].Add(&I);
-	}
-
-		// Counter
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	Counters.AddDefaulted(CS_ROUTINE_COUNTER_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Counter].AddDefaulted(Counters.Max());
-
-	for (int32& I : Counters)
-	{
-		I = 0;
-		Registers[(uint8)ECsRoutineRegisterValueType::Counter].Add(&I);
-	}
-
-		// Flags
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	Flags.AddDefaulted(CS_ROUTINE_FLAG_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Flag].AddDefaulted(Flags.Max());
-
-	for (bool& Flag : Flags)
-	{
-		Flag = false;
-		Registers[(uint8)ECsRoutineRegisterValueType::Flag].Add(&Flag);
-	}
-
-		// Timer
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	Timers.AddDefaulted(CS_ROUTINE_TIMER_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Timer].AddDefaulted(Timers.Max());
-
-	for (FCsTime& Timer : Timers)
-	{
-		Timer.Reset();
-		Registers[(uint8)ECsRoutineRegisterValueType::Timer].Add(&Timer);
-	}
-
-		// DeltaTime
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	DeltaTimes.AddDefaulted(CS_ROUTINE_TIMER_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::DeltaTime].AddDefaulted(DeltaTimes.Max());
-
-	for (FCsDeltaTime& DT : DeltaTimes)
-	{
-		DT.Reset();
-		Registers[(uint8)ECsRoutineRegisterValueType::DeltaTime].Add(&DT);
-	}
-
-		// Ints
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	Ints.AddDefaulted(CS_ROUTINE_INT_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Int].AddDefaulted(Ints.Max());
-
-	for (int32& I : Ints)
-	{
-		I = 0;
-		Registers[(uint8)ECsRoutineRegisterValueType::Int].Add(&I);
-	}
-
-		// Float
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	Floats.AddDefaulted(CS_ROUTINE_FLOAT_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Float].AddDefaulted(Floats.Max());
-	
-	for (float& Float : Floats)
-	{
-		Float = 0.0f;
-		Registers[(uint8)ECsRoutineRegisterValueType::Float].Add(&Float);
-	}
-
-		// Double
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	Doubles.AddDefaulted(CS_ROUTINE_DOUBLE_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Double].AddDefaulted(Doubles.Max());
-	
-	for (double& Double : Doubles)
-	{
-		Double = 0.0;
-		Registers[(uint8)ECsRoutineRegisterValueType::Double].Add(&Double);
-	}
-
-		// Vector
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	Vectors.AddDefaulted(CS_ROUTINE_VECTOR_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Vector].AddDefaulted(Vectors.Max());
-
-	for (FVector& V : Vectors)
-	{
-		V = FVector::ZeroVector;
-		Registers[(uint8)ECsRoutineRegisterValueType::Vector].Add(&V);
-	}
-
-		// Rotator
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	Rotators.AddDefaulted(CS_ROUTINE_ROTATOR_SIZE);
-	Registers[(uint8)ECsRoutineRegisterValueType::Rotator].AddDefaulted(Rotators.Max());
-
-	for (FRotator& R : Rotators)
-	{
-		R = FRotator::ZeroRotator;
-		Registers[(uint8)ECsRoutineRegisterValueType::Rotator].Add(&R);
-	}
-
-		// Color
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	Colors.AddDefaulted(CS_ROUTINE_COLOR_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Color].AddDefaulted(Colors.Max());
-
-	for (FLinearColor& C : Colors)
-	{
-		C = FLinearColor::White;
-		Registers[(uint8)ECsRoutineRegisterValueType::Color].Add(&C);
-	}
-
-		// Name
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	Names.AddDefaulted(CS_ROUTINE_NAME_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Name].AddDefaulted(Names.Max());
-
-	for (FName& N : Names)
-	{
-		N = NAME_None;
-		Registers[(uint8)ECsRoutineRegisterValueType::Name].Add(&N);
-	}
-
-		// String
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	Strings.AddDefaulted(CS_ROUTINE_STRING_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::String].AddDefaulted(Strings.Max());
-	
-	for (FString& S : Strings)
-	{
-		S.Empty();
-		Registers[(uint8)ECsRoutineRegisterValueType::String].Add(&S);
-	}
-
-		// StringPtr
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	StringPointers.AddDefaulted(CS_ROUTINE_STRING_POINTER_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::StringPtr].AddDefaulted(StringPointers.Max());
-	
-	for (FString*& S : StringPointers)
-	{
-		S = nullptr;
-		Registers[(uint8)ECsRoutineRegisterValueType::StringPtr].Add(&S);
-	}
-
-		// Object
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	Objects.AddDefaulted(CS_ROUTINE_OBJECT_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Object].AddDefaulted(Objects.Max());
-
-	for (TCsWeakObjectPtr<UObject>& Object : Objects)
-	{
-		Object.Reset();
-		Registers[(uint8)ECsRoutineRegisterValueType::Object].Add(&Object);
-	}
-
-		// VoidPointers
-	Registers.AddDefaulted();
-	RegisterFlags.AddDefaulted();
-	VoidPointers.AddDefaulted(CS_ROUTINE_VOID_POINTER_SIZE);
-	RegisterFlags[(uint8)ECsRoutineRegisterValueType::Void].AddDefaulted(VoidPointers.Max());
-	
-	for (void*& V : VoidPointers)
-	{
-		V = nullptr;
-		Registers[(uint8)ECsRoutineRegisterValueType::Void].Add(&V);
-	}
 	Reset();
 }
 
 FCsRoutine::~FCsRoutine()
 {
+	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(RoutineScopedTimerHandle);
+	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(CoroutineScopedTimerHandle);
 }
 
 // Time
@@ -225,8 +35,10 @@ FCsRoutine::~FCsRoutine()
 
 void FCsRoutine::SetGroup(const FECsUpdateGroup& InGroup)
 {
-	Group	  = InGroup;
+	Group = InGroup;
+#if !UE_BUILD_SHIPPING
 	ScopeName = FString::Printf(TEXT("Routine_%d_%s"), Index, *(Group.GetName()));
+#endif !UE_BUILD_SHIPPING
 }
 
 #pragma endregion Time
@@ -244,7 +56,7 @@ void FCsRoutine::SetIndex(const int32& InIndex)
 
 void FCsRoutine::Init(FCsCoroutinePayload* Payload)
 {
-	State = ECsCoroutineState::Init;
+	State = StateType::Init;
 
 	CoroutineImpl = Payload->CoroutineImpl;
 	StartTime	  = Payload->StartTime;
@@ -252,7 +64,7 @@ void FCsRoutine::Init(FCsCoroutinePayload* Payload)
 	
 	for (const FName& Message : Payload->AbortMessages)
 	{
-		Messages[(uint8)ECsCoroutineMessage::Abort].Add(Message);
+		Messages[(uint8)MessageType::Abort].Add(Message);
 	}
 
 	for (const FCsCoroutineAbortConditionImpl& AbortImpl : Payload->AbortImpls)
@@ -273,17 +85,19 @@ void FCsRoutine::Init(FCsCoroutinePayload* Payload)
 	Name			= const_cast<FString*>(Payload->GetName());
 
 	// Copy Register values over
-	for (const FCsRoutineRegisterInfo& Info : Payload->RegisterInfos)
+	typedef NCsCoroutine::NRegister::FInfo InfoType;
+
+	for (const InfoType& Info : Payload->RegisterMap.Infos)
 	{
-		const ECsRoutineRegisterValueType& ValueType = Info.ValueType;
-		const int32&							   I = Info.Index;
+		const ValueType& Type = Info.Type;
+		const int32&		I = Info.Index;
 
-		void* From = Registers[(uint8)ValueType][I];
-		void* To   = Payload->Registers[(uint8)ValueType][I];
+		void* From = RegisterMap.Values[(uint8)Type][I];
+		void* To   = Payload->RegisterMap.Values[(uint8)Type][I];
 
-		NCsRoutineRegisterValueType::SetValue(ValueType, From, To);
+		NCsCoroutine::NRegister::NValueType::SetValue(Type, From, To);
 
-		SetRegisterFlag(ValueType, I);
+		RegisterMap.SetUsedValue(Type, I);
 	}
 	Handle.New();
 
@@ -299,7 +113,7 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 	CS_SCOPED_TIMER(RoutineScopedTimerHandle);
 
 	// Check for Abort Messages
-	const int32 AbortIndex = (int32)ECsCoroutineMessage::Abort;
+	const int32 AbortIndex = (int32)MessageType::Abort;
 
 	TSet<FName>& AbortMessages		    = Messages[AbortIndex];
 	TSet<FName>& AbortMessages_Recieved = Messages_Recieved[AbortIndex];
@@ -313,7 +127,7 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 			if (AbortMessages.Find(Recieved))
 			{
 				AbortMessages.Reset();
-				End(ECsCoroutineEndReason::AbortMessage);
+				End(EndReasonType::AbortMessage);
 
 				MatchFound = true;
 			}
@@ -323,9 +137,10 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 		}
 	}
 	AbortMessages_Recieved.Reset();
+
 	// If the Coroutine has been ended by a Abort Message, EXIT
-	if (State == ECsCoroutineState::End &&
-		EndReason == ECsCoroutineEndReason::AbortMessage)
+	if (State == StateType::End &&
+		EndReason == EndReasonType::AbortMessage)
 	{
 		return;
 	}
@@ -338,7 +153,7 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 		if (!O ||
 			O->IsPendingKill())
 		{
-			End(ECsCoroutineEndReason::OwnerIsInvalid);
+			End(EndReasonType::OwnerIsInvalid);
 			return;
 		}
 	}
@@ -351,15 +166,15 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 			{
 				OnAbort.Execute(this);
 			}
-			End(ECsCoroutineEndReason::AbortCondition);
+			End(EndReasonType::AbortCondition);
 			return;
 		}
 	}
 	// Check if the Coroutine has been ended
-	if (State == ECsCoroutineState::End)
+	if (State == StateType::End)
 	{
-		if (EndReason == ECsCoroutineEndReason::ECsCoroutineEndReason_MAX)
-			End(ECsCoroutineEndReason::EndOfExecution);
+		if (EndReason == EndReasonType::EEndReason_MAX)
+			End(EndReasonType::EndOfExecution);
 		return;
 	}
 
@@ -375,8 +190,8 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 		CoroutineImpl.Execute(this);
 	}
 	// Check if the Coroutine has ended
-	if (State == ECsCoroutineState::End)
-		End(ECsCoroutineEndReason::EndOfExecution);
+	if (State == StateType::End)
+		End(EndReasonType::EndOfExecution);
 }
 
 #pragma endregion Update
@@ -384,10 +199,10 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 // End
 #pragma region
 
-void FCsRoutine::End(const ECsCoroutineEndReason& InEndReason)
+void FCsRoutine::End(const EndReasonType& InEndReason)
 {
 	EndChildren();
-	State = ECsCoroutineState::End;
+	State = StateType::End;
 	EndReason = InEndReason;
 
 	for (FCsOnCoroutineEnd& OnEnd : OnEnds)
@@ -427,37 +242,25 @@ void FCsRoutine::Reset()
 	Handle.Reset();
 	AbortImpls.Reset(AbortImpls.Max());
 	OnAborts.Reset(OnAborts.Max());
-	State = ECsCoroutineState::Free;
+
+	State = StateType::Free;
+
 	Name = nullptr;
 	Name_Internal = NAME_None;
 
-	EndReason = ECsCoroutineEndReason::ECsCoroutineEndReason_MAX;
+	EndReason = EndReasonType::EEndReason_MAX;
 	OnEnds.Reset(OnEnds.Max());
 
 	Owner.Reset();
 	
-	// Registers
-
-		// Reset to default value
-	for (const FCsRoutineRegisterInfo& Info : RegisterInfos)
-	{
-		const ECsRoutineRegisterValueType& ValueType = Info.ValueType;
-		const int32& I								 = Info.Index;
-
-		void* Ptr = Registers[(uint8)ValueType][I];
-
-		NCsRoutineRegisterValueType::SetDefaultValue(ValueType, Ptr);
-
-		RegisterFlags[(uint8)ValueType][I] = false;
-	}
-
-	RegisterInfos.Reset(RegisterInfos.Max());
+	RegisterMap.Reset();
 
 	// Messages
+	typedef NCsCoroutine::EMMessage MessageMapType;
 
-	for (const ECsCoroutineMessage& MessageType : EMCsCoroutineMessage::Get())
+	for (const MessageType& Type : MessageMapType::Get())
 	{
-		const int32 I = (int32)MessageType;
+		const int32 I = (int32)Type;
 
 		Messages[I].Reset();
 		Messages_Recieved[I].Reset();
@@ -477,7 +280,7 @@ void FCsRoutine::EndChildren()
 {
 	for (FCsRoutine* Child : Children)
 	{
-		Child->End(ECsCoroutineEndReason::Parent);
+		Child->End(EndReasonType::Parent);
 	}
 	Children.Reset(Children.Max());
 }
@@ -490,7 +293,7 @@ void FCsRoutine::EndChild(FCsRoutine* Child)
 	{
 		if (Child == Children[I])
 		{
-			Child->End(ECsCoroutineEndReason::Parent);
+			Child->End(EndReasonType::Parent);
 			Children.RemoveAt(I, 1, false);
 			break;
 		}

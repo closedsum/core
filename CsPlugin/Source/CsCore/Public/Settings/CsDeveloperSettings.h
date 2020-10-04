@@ -118,7 +118,7 @@ public:
 
 	// Game Event
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsGameEvent"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsGameEvent", TitleProperty = "Name"))
 	TArray<FCsSettings_Enum> ECsGameEvent;
 
 	template<>

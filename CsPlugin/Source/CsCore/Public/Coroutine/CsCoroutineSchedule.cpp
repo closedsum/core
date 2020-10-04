@@ -126,7 +126,7 @@ const FCsRoutineHandle& FCsCoroutineSchedule::Start(FCsResource_CoroutinePayload
 		R->Update(FCsDeltaTime::Zero);
 	}
 
-	//LogTransaction(NCsCoroutineCached::Str::Allocate, (Payload->bDoInit && Payload->bPerformFirstRun) ? ECsCoroutineTransaction::Start : ECsCoroutineTransaction::Allocate, R);
+	//LogTransaction(NCsCoroutineCached::Str::Allocate, (Payload->bDoInit && Payload->bPerformFirstRun) ? TransactionType::Start : TransactionType::Allocate, R);
 
 	Payload->Reset();
 	Manager_Payload.Deallocate(PayloadContainer);
@@ -208,9 +208,11 @@ void FCsCoroutineSchedule::End()
 
 		FCsRoutine* R = RoutineContainer->Get();
 
-		R->End(ECsCoroutineEndReason::Shutdown);
+		typedef NCsCoroutine::EEndReason EndReasonType;
 
-		//LogTransaction(NCsCoroutineCached::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
+		R->End(EndReasonType::Shutdown);
+
+		//LogTransaction(NCsCoroutineCached::ToUpdate(ScheduleType), TransactionType::End, R);
 
 		R->Reset();
 		Manager_Routine.Deallocate(RoutineContainer);
@@ -223,9 +225,11 @@ void FCsCoroutineSchedule::End(const FCsRoutineHandle& Handle)
 	{
 		FCsRoutine* R = Container->Get();
 
-		R->End(ECsCoroutineEndReason::Manual);
+		typedef NCsCoroutine::EEndReason EndReasonType;
 
-		//LogTransaction(NCsCoroutineCached::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
+		R->End(EndReasonType::Manual);
+
+		//LogTransaction(NCsCoroutineCached::ToUpdate(ScheduleType), TransactionType::End, R);
 
 		R->Reset();
 		Manager_Routine.Deallocate(Container);
@@ -250,25 +254,27 @@ void FCsCoroutineSchedule::Update(const FCsDeltaTime& DeltaTime)
 
 		FCsRoutine* R = RoutineContainer->Get();
 
-		const ECsCoroutineState& State = R->State;
+		typedef NCsCoroutine::EState StateType;
+
+		const StateType& State = R->State;
 
 		// Init -> Update
-		if (State == ECsCoroutineState::Init)
+		if (State == StateType::Init)
 		{
 			R->StartUpdate();
 			R->Update(DeltaTime);
 		}
 		// Update
 		else
-		if (State == ECsCoroutineState::Update)
+		if (State == StateType::Update)
 		{
 			R->Update(DeltaTime);
 		}
 
 		// End
-		if (State == ECsCoroutineState::End)
+		if (State == StateType::End)
 		{
-			//LogTransaction(NCsCoroutineCached::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
+			//LogTransaction(NCsCoroutineCached::ToUpdate(ScheduleType), TransactionType::End, R);
 
 			R->Reset();
 			Manager_Routine.Deallocate(RoutineContainer);
@@ -300,8 +306,10 @@ FCsResource_CoroutinePayload* FCsCoroutineSchedule::GetPayloadContainer(FCsCorou
 // Message
 #pragma region
 
-void FCsCoroutineSchedule::BroadcastMessage(const ECsCoroutineMessage& MessageType, const FName& Message, void* Owner /*=nullptr*/)
+#define MessageType NCsCoroutine::EMessage
+void FCsCoroutineSchedule::BroadcastMessage(const MessageType& Type, const FName& Message, void* Owner /*=nullptr*/)
 {
+#undef MessageType
 	TCsDoubleLinkedList<FCsResource_Routine*>* Current = Manager_Routine.GetAllocatedHead();
 	TCsDoubleLinkedList<FCsResource_Routine*>* Next    = Current;
 
@@ -316,11 +324,11 @@ void FCsCoroutineSchedule::BroadcastMessage(const ECsCoroutineMessage& MessageTy
 		if (Owner)
 		{
 			if (R->Owner.GetOwner() == Owner)
-				R->ReceiveMessage(MessageType, Message);
+				R->ReceiveMessage(Type, Message);
 		}
 		else
 		{
-			R->ReceiveMessage(MessageType, Message);
+			R->ReceiveMessage(Type, Message);
 		}
 	}
 }
@@ -330,15 +338,15 @@ void FCsCoroutineSchedule::BroadcastMessage(const ECsCoroutineMessage& MessageTy
 // Log
 #pragma region
 
-void FCsCoroutineSchedule::LogTransaction(const FString& FunctionName, const ECsCoroutineTransaction& Transaction, FCsRoutine* R)
+void FCsCoroutineSchedule::LogTransaction(const FString& FunctionName, const TransactionType& Transaction, FCsRoutine* R)
 {
 	/*
 	if (CsCVarLogCoroutineTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		FString TransactionAsString = NCsCoroutineTransaction::ToActionString(Transaction);
+		FString TransactionAsString = NCsCoroutine::NTransaction::ToActionString(Transaction);
 			
-		if (Transaction == ECsCoroutineTransaction::End)
-			TransactionAsString = NCsCoroutineTransaction::ToActionString(Transaction) + TEXT("(Reason=") + EMCsCoroutineEndReason::Get().ToString(R->endReason) + TEXT(")");
+		if (Transaction == TransactionType::End)
+			TransactionAsString = NCsCoroutine::NTransaction::ToActionString(Transaction) + TEXT("(Reason=") + EMCsCoroutineEndReason::Get().ToString(R->endReason) + TEXT(")");
 
 		const FString& ScheduleTypeAsString = EMCsCoroutineSchedule::Get().ToString(R->scheduleType);
 
@@ -362,7 +370,7 @@ void FCsCoroutineSchedule::LogTransaction(const FString& FunctionName, const ECs
 
 		FString Elapsed = NCsCached::Str::None;
 
-		if (Transaction == ECsCoroutineTransaction::End)
+		if (Transaction == TransactionType::End)
 		{
 			const float Duration = CurrentTime - R->startTime;
 			Elapsed = TEXT("Ran for ") + FString::FromInt(R->tickCount) + TEXT(" Ticks and  ") + UCsLibrary_Common::GetFloatAsStringWithPrecision(Duration, 2) + TEXT(" Seconds.");

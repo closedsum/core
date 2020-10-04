@@ -222,6 +222,24 @@ public:
 		return NameInternalMap.Find(Name) != nullptr;
 	}
 
+	FORCEINLINE bool IsValidEnumChecked(const EnumStruct& Enum) const
+	{
+		const bool Result = Enum.IsValid() && Enum != MAX && Enum.GetValue() < Count && Enums.Find(Enum) > INDEX_NONE;
+
+		checkf(Result, TEXT("%s::IsValidEnumChecked: Enum: %s is NOT Valid"), *MapName, *(Enum.GetFName().ToString()));
+
+		return Result;
+	}
+
+	FORCEINLINE bool IsValidEnumChecked(const FString& Context, const EnumStruct& Enum) const
+	{
+		const bool Result = Enum.IsValid() && Enum != MAX && Enum.GetValue() < Count && Enums.Find(Enum) > INDEX_NONE;
+
+		checkf(Result, TEXT("%s: Enum: %s is NOT Valid"), *Context, *MapName, *(Enum.GetFName().ToString()));
+
+		return Result;
+	}
+
 	FORCEINLINE bool IsValidEnumByDisplayName(const FString& Name) const
 	{
 		return DisplayNameMap.Find(Name) != nullptr;

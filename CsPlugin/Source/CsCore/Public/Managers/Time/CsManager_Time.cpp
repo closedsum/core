@@ -121,7 +121,7 @@ void UCsManager_Time::CleanUp()
 
 void UCsManager_Time::Start(const FECsUpdateGroup& Group)
 {
-	UpdateGroups[Group.Value].Start();
+	UpdateGroups[Group.GetValue()].Start();
 }
 
 // Pause
@@ -129,12 +129,12 @@ void UCsManager_Time::Start(const FECsUpdateGroup& Group)
 
 void UCsManager_Time::Pause(const FECsUpdateGroup& Group)
 {
-	UpdateGroups[Group.Value].Pause();
+	UpdateGroups[Group.GetValue()].Pause();
 }
 
 void UCsManager_Time::Unpause(const FECsUpdateGroup& Group)
 {
-	UpdateGroups[Group.Value].Unpause();
+	UpdateGroups[Group.GetValue()].Unpause();
 }
 
 #pragma endregion Pause

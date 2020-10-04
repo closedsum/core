@@ -5,8 +5,10 @@
 // Damage
 #include "Managers/Damage/Range/CsDamageRangeImpl.h"
 
-bool FCsLibrary_DamageRange::CopyChecked(const FString& Context, const NCsDamage::NRange::IRange* From, NCsDamage::NRange::IRange* To)
+#define RangeType NCsDamage::NRange::IRange
+bool FCsLibrary_DamageRange::CopyChecked(const FString& Context, const RangeType* From, RangeType* To)
 {
+#undef RangeType
 	// NCsDamage::NRange::FImpl (NCsDamage::NRange::IRange)
 	{
 		typedef NCsDamage::NRange::FImpl ImplType;

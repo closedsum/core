@@ -22,11 +22,15 @@ namespace NCsProjectile
 
 					static const FName Name;
 
+				private:
+
+					typedef NCsStatusEffect::NModifier::IModifier ModifierType;
+
 				public:
 
 					virtual ~IStatusEffect(){}
 
-					virtual const TArray<NCsStatusEffect::NModifier::IModifier*>& GetStatusEffectModifiers() const = 0;
+					virtual const TArray<ModifierType*>& GetStatusEffectModifiers() const = 0;
 				};
 			}
 		}

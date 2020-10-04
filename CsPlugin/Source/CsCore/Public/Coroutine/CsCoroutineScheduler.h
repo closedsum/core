@@ -21,6 +21,8 @@ class CSCORE_API UCsCoroutineScheduler : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+#define MessageType NCsCoroutine::EMessage
+
 // Singleton
 #pragma region
 public:
@@ -209,7 +211,9 @@ public:
 #pragma region
 public:
 
-	void BroadcastMessage(const FECsUpdateGroup& Group, const ECsCoroutineMessage& MessageType, const FName& Message, void* InOwner = nullptr);
+	void BroadcastMessage(const FECsUpdateGroup& Group, const MessageType& Type, const FName& Message, void* InOwner = nullptr);
 
 #pragma endregion Message
+
+#undef MessageType
 };

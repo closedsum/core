@@ -22,6 +22,16 @@ TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileCanFire(
 	ECVF_SetByConsole
 );
 
+// Scoped Timer
+
+TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileScopedTimer(
+	TEXT("log.weapon.projecitle.scopedtimer"),
+	0,
+	TEXT("Log Weapon Projectile Scoped Timer."),
+	ECVF_SetByConsole
+);
+
+
 // CVarLog
 #pragma region
 
@@ -30,13 +40,32 @@ namespace NCsCVarLog
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileState, "Log ProjectileWeapon Current State");
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileStateTransition, "Log ProjectileWeapon State Transition");
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileCanFire, "Log ProjectileWeapon CanFire()");
+	// Scoped Timers
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileScopedTimer, "Log Weapon Projectile Scoped Timer");
 
 	namespace Map
 	{
 		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileState, CsCVarLogWeaponProjectileState);
 		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileStateTransition, CsCVarLogWeaponProjectileStateTransition);
 		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileCanFire, CsCVarLogWeaponProjectileCanFire);
+		// Scoped Timers
+		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileScopedTimer, CsCVarLogWeaponProjectileScopedTimer);
 	}
 }
 
 #pragma endregion CVarLog
+
+// ScopedGroup
+#pragma region
+
+namespace NCsScopedGroup
+{
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(WeaponProjectile, "Weapon Projectile");
+
+	namespace Map
+	{
+		extern CSWP_API CS_ADD_TO_CVAR_MAP(WeaponProjectile, CsCVarLogWeaponProjectileScopedTimer);
+	}
+}
+
+#pragma endregion ScopedGroup

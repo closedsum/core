@@ -22,6 +22,14 @@ public:
 	
 	~FCsRoutine();
 
+private:
+
+	typedef NCsCoroutine::EState StateType;
+	typedef NCsCoroutine::EMessage MessageType;
+	typedef NCsCoroutine::EEndReason EndReasonType;
+	typedef NCsCoroutine::NRegister::EValueType ValueType;
+	typedef NCsCoroutine::NRegister::FMap RegisterMapType;
+
 public:
 
 	struct pt pt;
@@ -79,7 +87,11 @@ public:
 
 	TArray<FCsOnCoroutineAbort> OnAborts;
 
-	ECsCoroutineState State;
+
+
+public:
+
+	StateType State;
 
 // Index
 #pragma region
@@ -140,7 +152,7 @@ public:
 
 	FORCEINLINE void StartUpdate()
 	{
-		State = ECsCoroutineState::Update;
+		State = StateType::Update;
 	}
 
 	void Update(const FCsDeltaTime& InDeltaTime);
@@ -151,15 +163,15 @@ public:
 #pragma region
 public:
 
-	ECsCoroutineEndReason EndReason;
+	EndReasonType EndReason;
 
 	TArray<FCsOnCoroutineEnd> OnEnds;
 
-	void End(const ECsCoroutineEndReason& InEndReason);
+	void End(const EndReasonType& InEndReason);
 
 	FORCEINLINE bool HasEnded() const
 	{
-		return State == ECsCoroutineState::End || State == ECsCoroutineState::Free;
+		return State == StateType::End || State == StateType::Free;
 	}
 
 #pragma endregion End
@@ -172,7 +184,7 @@ public:
 #pragma region
 public:
 
-	FCsRoutineOwner Owner;
+	NCsCoroutine::FOwner Owner;
 
 	FORCEINLINE void* GetOwner()
 	{
@@ -228,142 +240,28 @@ public:
 #pragma region
 protected:
 
-	TArray<FCsRoutineRegisterInfo> RegisterInfos;
-	TArray<TArray<bool>> RegisterFlags;
-
-	TArray<TArray<void*>> Registers;
-
-	TArray<int32, TFixedAllocator<CS_ROUTINE_INDEXER_SIZE>> Indexers;
-	TArray<int32, TFixedAllocator<CS_ROUTINE_COUNTER_SIZE>> Counters;
-	TArray<bool, TFixedAllocator<CS_ROUTINE_FLAG_SIZE>> Flags;
-	TArray<FCsTime, TFixedAllocator<CS_ROUTINE_TIMER_SIZE>> Timers;
-	TArray<FCsDeltaTime, TFixedAllocator<CS_ROUTINE_DELTA_TIME_SIZE>> DeltaTimes;
-	TArray<int32, TFixedAllocator<CS_ROUTINE_INT_SIZE>> Ints;
-	TArray<float, TFixedAllocator<CS_ROUTINE_FLOAT_SIZE>> Floats;
-	TArray<double, TFixedAllocator<CS_ROUTINE_FLOAT_SIZE>> Doubles;
-	TArray<FVector, TFixedAllocator<CS_ROUTINE_VECTOR_SIZE>> Vectors;
-	TArray<FRotator, TFixedAllocator<CS_ROUTINE_ROTATOR_SIZE>> Rotators;
-	TArray<FLinearColor, TFixedAllocator<CS_ROUTINE_COLOR_SIZE>> Colors;
-	TArray<FName, TFixedAllocator<CS_ROUTINE_NAME_SIZE>> Names;
-	TArray<FString, TFixedAllocator<CS_ROUTINE_STRING_SIZE>> Strings;
-	TArray<FString*, TFixedAllocator<CS_ROUTINE_STRING_SIZE>> StringPointers;
-	TArray<TCsWeakObjectPtr<UObject>, TFixedAllocator<CS_ROUTINE_OBJECT_SIZE>> Objects;
-	TArray<void*, TFixedAllocator<CS_ROUTINE_VOID_POINTER_SIZE>> VoidPointers;
+	RegisterMapType RegisterMap;
 
 	// Set
 #pragma region
-protected:
-
-	FORCEINLINE void SetRegisterFlag(const ECsRoutineRegisterValueType& ValueType, const int32& InIndex)
-	{
-		if (!RegisterFlags[(uint8)ValueType][InIndex])
-		{
-			RegisterInfos.AddDefaulted();
-			FCsRoutineRegisterInfo& Info = RegisterInfos.Last();
-			Info.ValueType				 = ValueType;
-			Info.Index					 = InIndex;
-
-			RegisterFlags[(uint8)ValueType][InIndex] = true;
-		}
-	}
-
 public:
 
-	FORCEINLINE void SetValue_Indexer(const int32& InIndex, const int32& Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Indexer, InIndex);
-		Indexers[InIndex] = Value;
-	}
-
-	FORCEINLINE void SetValue_Counter(const int32& InIndex, const int32& Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Counter, InIndex);
-		Counters[InIndex] = Value;
-	}
-
-	FORCEINLINE void SetValue_Flag(const int32& InIndex, const bool& Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Flag, InIndex);
-		Flags[InIndex] = Value;
-	}
-
-	FORCEINLINE void SetValue_Timer(const int32& InIndex, const FCsTime& Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Timer, InIndex);
-		Timers[InIndex] = Value;
-	}
-
-	FORCEINLINE void SetValue_DeltaTime(const int32& InIndex, const FCsDeltaTime& Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Timer, InIndex);
-		DeltaTimes[InIndex] = Value;
-	}
-
-	FORCEINLINE void SetValue_Int(const int32& InIndex, const int32& Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Int, InIndex);
-		Ints[InIndex] = Value;
-	}
-
-	FORCEINLINE void SetValue_Float(const int32& InIndex, const float& Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Float, InIndex);
-		Floats[InIndex] = Value;
-	}
-
-	FORCEINLINE void SetValue_Double(const int32& InIndex, const double& Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Double, InIndex);
-		Doubles[InIndex] = Value;
-	}
-
-	FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector& Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Vector, InIndex);
-		Vectors[InIndex] = Value;
-	}
-
-	FORCEINLINE void SetValue_Rotator(const int32& InIndex, const FRotator& Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Rotator, InIndex);
-		Rotators[InIndex] = Value;
-	}
-
-	FORCEINLINE void SetValue_Color(const int32& InIndex, const FLinearColor& Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Color, InIndex);
-		Colors[InIndex] = Value;
-	}
-
-	FORCEINLINE void SetValue_Name(const int32& InIndex, const FName& Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Name, InIndex);
-		Names[InIndex] = Value;
-	}
-
-	FORCEINLINE void SetValue_String(const int32& InIndex, const FString& Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::String, InIndex);
-		Strings[InIndex] = Value;
-	}
-
-	FORCEINLINE void SetValue_StringPtr(const int32& InIndex, FString* Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::StringPtr, InIndex);
-		StringPointers[InIndex] = Value;
-	}
-
-	FORCEINLINE void SetValue_Object(const int32& InIndex, UObject* Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Object, InIndex);
-		Objects[InIndex].Set(Value);
-	}
-
-	FORCEINLINE void SetValue_Void(const int32& InIndex, void* Value)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Void, InIndex);
-		VoidPointers[InIndex] = Value;
-	}
+	FORCEINLINE void SetValue_Indexer(const int32& InIndex, const int32& Value){			RegisterMap.SetValue_Indexer(InIndex, Value); }
+	FORCEINLINE void SetValue_Counter(const int32& InIndex, const int32& Value){			RegisterMap.SetValue_Counter(InIndex, Value); }
+	FORCEINLINE void SetValue_Flag(const int32& InIndex, const bool& Value){				RegisterMap.SetValue_Flag(InIndex, Value); }
+	FORCEINLINE void SetValue_Timer(const int32& InIndex, const FCsTime& Value){			RegisterMap.SetValue_Timer(InIndex, Value); }
+	FORCEINLINE void SetValue_DeltaTime(const int32& InIndex, const FCsDeltaTime& Value){	RegisterMap.SetValue_DeltaTime(InIndex, Value); }
+	FORCEINLINE void SetValue_Int(const int32& InIndex, const int32& Value){				RegisterMap.SetValue_Int(InIndex, Value); }
+	FORCEINLINE void SetValue_Float(const int32& InIndex, const float& Value){				RegisterMap.SetValue_Float(InIndex, Value); }
+	FORCEINLINE void SetValue_Double(const int32& InIndex, const double& Value){			RegisterMap.SetValue_Double(InIndex, Value); }
+	FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector& Value){			RegisterMap.SetValue_Vector(InIndex, Value); }
+	FORCEINLINE void SetValue_Rotator(const int32& InIndex, const FRotator& Value){			RegisterMap.SetValue_Rotator(InIndex, Value); }
+	FORCEINLINE void SetValue_Color(const int32& InIndex, const FLinearColor& Value){		RegisterMap.SetValue_Color(InIndex, Value); }
+	FORCEINLINE void SetValue_Name(const int32& InIndex, const FName& Value){				RegisterMap.SetValue_Name(InIndex, Value); }
+	FORCEINLINE void SetValue_String(const int32& InIndex, const FString& Value){			RegisterMap.SetValue_String(InIndex, Value); }
+	FORCEINLINE void SetValue_StringPtr(const int32& InIndex, FString* Value){				RegisterMap.SetValue_StringPtr(InIndex, Value); }
+	FORCEINLINE void SetValue_Object(const int32& InIndex, UObject* Value){					RegisterMap.SetValue_Object(InIndex, Value); }
+	FORCEINLINE void SetValue_Void(const int32& InIndex, void* Value){						RegisterMap.SetValue_Void(InIndex, Value); }
 
 #pragma endregion Set
 
@@ -371,108 +269,24 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE int32& GetValue_Indexer(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Indexer, InIndex);
-		return Indexers[InIndex];
-	}
-	
-	FORCEINLINE int32& GetValue_Counter(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Counter, InIndex);
-		return Counters[InIndex];
-	}
-	
-	FORCEINLINE bool& GetValue_Flag(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Flag, InIndex);
-		return Flags[InIndex];
-	}
-
-	FORCEINLINE FCsTime& GetValue_Timer(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Timer, InIndex);
-		return Timers[InIndex];
-	}
-
-	FORCEINLINE FCsDeltaTime& GetValue_DeltaTime(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::DeltaTime, InIndex);
-		return DeltaTimes[InIndex];
-	}
-
-	FORCEINLINE int32& GetValue_Int(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Int, InIndex);
-		return Ints[InIndex];
-	}
-
-	FORCEINLINE float& GetValue_Float(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Float, InIndex);
-		return Floats[InIndex];
-	}
-
-	FORCEINLINE double& GetValue_Double(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Double, InIndex);
-		return Doubles[InIndex];
-	}
-
-	FORCEINLINE FVector& GetValue_Vector(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Vector, InIndex);
-		return Vectors[InIndex];
-	}
-
-	FORCEINLINE FRotator& GetValue_Rotator(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Rotator, InIndex);
-		return Rotators[InIndex];
-	}
-
-	FORCEINLINE FLinearColor& GetValue_Color(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Color, InIndex);
-		return Colors[InIndex];
-	}
-
-	FORCEINLINE FName& GetValue_Name(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Name, InIndex);
-		return Names[InIndex];
-	}
-
-	FORCEINLINE FString& GetValue_String(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::String, InIndex);
-		return Strings[InIndex];
-	}
-
-	FORCEINLINE FString* GetValue_StringPtr(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::StringPtr, InIndex);
-		return StringPointers[InIndex];
-	}
-
-	FORCEINLINE TCsWeakObjectPtr<UObject>& GetValue_Object(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Object, InIndex);
-		return Objects[InIndex];
-	}
-
-	FORCEINLINE void* GetValue_Void(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Void, InIndex);
-		return VoidPointers[InIndex];
-	}
-
+	FORCEINLINE int32& GetValue_Indexer(const int32& InIndex){						return RegisterMap.GetValue_Indexer(InIndex); }
+	FORCEINLINE int32& GetValue_Counter(const int32& InIndex){						return RegisterMap.GetValue_Counter(InIndex); }
+	FORCEINLINE bool& GetValue_Flag(const int32& InIndex){							return RegisterMap.GetValue_Flag(InIndex); }
+	FORCEINLINE FCsTime& GetValue_Timer(const int32& InIndex){						return RegisterMap.GetValue_Timer(InIndex); }
+	FORCEINLINE FCsDeltaTime& GetValue_DeltaTime(const int32& InIndex){				return RegisterMap.GetValue_DeltaTime(InIndex); }
+	FORCEINLINE int32& GetValue_Int(const int32& InIndex){							return RegisterMap.GetValue_Int(InIndex); }
+	FORCEINLINE float& GetValue_Float(const int32& InIndex){						return RegisterMap.GetValue_Float(InIndex); }
+	FORCEINLINE double& GetValue_Double(const int32& InIndex){						return RegisterMap.GetValue_Double(InIndex); }
+	FORCEINLINE FVector& GetValue_Vector(const int32& InIndex){						return RegisterMap.GetValue_Vector(InIndex); }
+	FORCEINLINE FRotator& GetValue_Rotator(const int32& InIndex){					return RegisterMap.GetValue_Rotator(InIndex); }
+	FORCEINLINE FLinearColor& GetValue_Color(const int32& InIndex){					return RegisterMap.GetValue_Color(InIndex); }
+	FORCEINLINE FName& GetValue_Name(const int32& InIndex){							return RegisterMap.GetValue_Name(InIndex); }
+	FORCEINLINE FString& GetValue_String(const int32& InIndex){						return RegisterMap.GetValue_String(InIndex); }
+	FORCEINLINE FString* GetValue_StringPtr(const int32& InIndex){					return RegisterMap.GetValue_StringPtr(InIndex); }
+	FORCEINLINE TCsWeakObjectPtr<UObject>& GetValue_Object(const int32& InIndex){	return RegisterMap.GetValue_Object(InIndex); }
+	FORCEINLINE void* GetValue_Void(const int32& InIndex){							return RegisterMap.GetValue_Void(InIndex); }
 	template<typename T>
-	FORCEINLINE T* GetValue_Void(const int32& InIndex)
-	{
-		SetRegisterFlag(ECsRoutineRegisterValueType::Void, InIndex);
-		return (T*)VoidPointers[InIndex];
-	}
+	FORCEINLINE T* GetValue_Void(const int32& InIndex){								return RegisterMap.GetValue_Void<T>(InIndex); }
 
 #pragma endregion Get
 
@@ -485,14 +299,14 @@ public:
 	TArray<TSet<FName>> Messages;
 	TArray<TSet<FName>> Messages_Recieved;
 
-	FORCEINLINE void AddMessage(const ECsCoroutineMessage& MessageType, const FName& Message)
+	FORCEINLINE void AddMessage(const MessageType& Type, const FName& Message)
 	{
-		Messages[(uint8)MessageType].Add(Message);
+		Messages[(uint8)Type].Add(Message);
 	}
 
-	FORCEINLINE void ReceiveMessage(const ECsCoroutineMessage& MessageType, const FName& Message)
+	FORCEINLINE void ReceiveMessage(const MessageType& Type, const FName& Message)
 	{
-		Messages_Recieved[(uint8)MessageType].Add(Message);
+		Messages_Recieved[(uint8)Type].Add(Message);
 	}
 
 #pragma endregion Message

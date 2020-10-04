@@ -197,7 +197,7 @@ void ACsSpawnerImpl::Start()
 
 	CurrentSpawnCount = 0;
 
-	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload(UpdateGroup);
+	NCsCoroutine::NPayload::FImpl* Payload = Scheduler->AllocatePayload(UpdateGroup);
 
 	Payload->CoroutineImpl.BindUObject(this, &ACsSpawnerImpl::Start_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(UpdateGroup);
@@ -379,7 +379,7 @@ void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 
 	checkf(IsParamsValid(Context), TEXT("%s: Params is NOT Valid."), *Context);
 
-	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload(UpdateGroup);
+	NCsCoroutine::NPayload::FImpl* Payload = Scheduler->AllocatePayload(UpdateGroup);
 
 	Payload->CoroutineImpl.BindUObject(this, &ACsSpawnerImpl::SpawnObjects_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(UpdateGroup);

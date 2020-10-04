@@ -30,11 +30,13 @@ private:
 	typedef NCsCoroutine::NRegister::EValueType ValueType;
 	typedef NCsCoroutine::NRegister::FMap RegisterMapType;
 
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
 public:
 
 	struct pt pt;
 
-	FCsCoroutineImpl CoroutineImpl;
+	NCsCoroutine::FImpl CoroutineImpl;
 
 	// Time
 #pragma region
@@ -83,9 +85,9 @@ public:
 
 	FORCEINLINE const FCsRoutineHandle& GetHandle() const { return Handle; }
 
-	TArray<FCsCoroutineAbortConditionImpl> AbortImpls;
+	TArray<NCsCoroutine::FAbortConditionImpl> AbortImpls;
 
-	TArray<FCsOnCoroutineAbort> OnAborts;
+	TArray<NCsCoroutine::FOnAbort> OnAborts;
 
 
 
@@ -144,7 +146,7 @@ public:
 
 public:
 
-	void Init(FCsCoroutinePayload* Payload);
+	void Init(PayloadType* Payload);
 
 // Run
 #pragma region
@@ -165,7 +167,7 @@ public:
 
 	EndReasonType EndReason;
 
-	TArray<FCsOnCoroutineEnd> OnEnds;
+	TArray<NCsCoroutine::FOnEnd> OnEnds;
 
 	void End(const EndReasonType& InEndReason);
 

@@ -22,12 +22,12 @@ FCsCoroutineSchedule::FCsCoroutineSchedule()
 	}
 	// Payload
 	{
-		const TArray<FCsResource_CoroutinePayload*>& Pool = Manager_Payload.GetPool();
+		const TArray<PayloadResourceType*>& Pool = Manager_Payload.GetPool();
 
-		for (FCsResource_CoroutinePayload* Container : Pool)
+		for (PayloadResourceType* Container : Pool)
 		{
-			FCsCoroutinePayload* P = Container->Get();
-			const int32& Index	   = Container->GetIndex();
+			PayloadType* P		= Container->Get();
+			const int32& Index	= Container->GetIndex();
 			P->SetIndex(Index);
 		}
 	}
@@ -58,12 +58,12 @@ void FCsCoroutineSchedule::SetGroup(const FECsUpdateGroup& InGroup)
 	}
 	// Payload
 	{
-		const TArray<FCsResource_CoroutinePayload*>& Pool = Manager_Payload.GetPool();
+		const TArray<PayloadResourceType*>& Pool = Manager_Payload.GetPool();
 
-		for (FCsResource_CoroutinePayload* Container : Pool)
+		for (PayloadResourceType* Container : Pool)
 		{
-			FCsCoroutinePayload* P = Container->Get();
-			P->Group			   = Group;
+			PayloadType* P = Container->Get();
+			P->Group	   = Group;
 		}
 	}
 }
@@ -106,9 +106,9 @@ FCsRoutine* FCsCoroutineSchedule::GetRoutine(const FCsRoutineHandle& Handle) con
 // Start
 #pragma region
 
-const FCsRoutineHandle& FCsCoroutineSchedule::Start(FCsResource_CoroutinePayload* PayloadContainer)
+const FCsRoutineHandle& FCsCoroutineSchedule::Start(PayloadResourceType* PayloadContainer)
  {
-	FCsCoroutinePayload* Payload = PayloadContainer->Get();
+	PayloadType* Payload = PayloadContainer->Get();
 
 	checkf(Payload, TEXT("FCsCoroutineSchedule::Start: PayloadContainer does NOT contain a reference to a Payload."));
 
@@ -133,14 +133,14 @@ const FCsRoutineHandle& FCsCoroutineSchedule::Start(FCsResource_CoroutinePayload
 	return R->GetHandle();
 }
 
-const FCsRoutineHandle& FCsCoroutineSchedule::Start(FCsCoroutinePayload* Payload)
+const FCsRoutineHandle& FCsCoroutineSchedule::Start(PayloadType* Payload)
 {
 	return Start(GetPayloadContainer(Payload));
 }
 
-const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(FCsResource_CoroutinePayload* PayloadContainer)
+const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(PayloadResourceType* PayloadContainer)
 {
-	FCsCoroutinePayload* Payload = PayloadContainer->Get();
+	PayloadType* Payload = PayloadContainer->Get();
 
 	checkf(Payload, TEXT("FCsCoroutineSchedule::StartChild: PayloadContainer does NOT contain a reference to a Payload."));
 
@@ -185,7 +185,7 @@ const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(FCsResource_CoroutinePa
 	return R->GetHandle();
 }
 
-const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(FCsCoroutinePayload* Payload)
+const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(PayloadType* Payload)
 {
 	return StartChild(GetPayloadContainer(Payload));
 }
@@ -287,16 +287,19 @@ void FCsCoroutineSchedule::Update(const FCsDeltaTime& DeltaTime)
 // Payload
 #pragma region
 
-FCsResource_CoroutinePayload* FCsCoroutineSchedule::GetPayloadContainer(FCsCoroutinePayload* Payload)
+#define _PayloadResourceType NCsCoroutine::NPayload::FResource
+_PayloadResourceType* FCsCoroutineSchedule::GetPayloadContainer(PayloadType* Payload)
 {
+#undef _PayloadResourceType
+
 	if (Payload->GetIndex() == INDEX_NONE)
 	{
-		FCsResource_CoroutinePayload* PayloadContainer = Manager_Payload.Allocate();
-		FCsCoroutinePayload* P						   = PayloadContainer->Get();
+		PayloadResourceType* Container = Manager_Payload.Allocate();
+		PayloadType* P				   = Container->Get();
 
 		*P = *Payload;
 
-		return PayloadContainer;
+		return Container;
 	}
 	return Manager_Payload.GetAt(Payload->GetIndex());
 }
@@ -306,10 +309,8 @@ FCsResource_CoroutinePayload* FCsCoroutineSchedule::GetPayloadContainer(FCsCorou
 // Message
 #pragma region
 
-#define MessageType NCsCoroutine::EMessage
 void FCsCoroutineSchedule::BroadcastMessage(const MessageType& Type, const FName& Message, void* Owner /*=nullptr*/)
 {
-#undef MessageType
 	TCsDoubleLinkedList<FCsResource_Routine*>* Current = Manager_Routine.GetAllocatedHead();
 	TCsDoubleLinkedList<FCsResource_Routine*>* Next    = Current;
 

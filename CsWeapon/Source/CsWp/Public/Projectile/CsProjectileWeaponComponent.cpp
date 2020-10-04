@@ -384,7 +384,7 @@ void UCsProjectileWeaponComponent::Fire()
 	Fire_StartTime = TimeSinceStart.Time;
 
 	// Setup Fire Routine
-	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload(UpdateGroup);
+	NCsCoroutine::NPayload::FImpl* Payload = Scheduler->AllocatePayload(UpdateGroup);
 
 	Payload->CoroutineImpl.BindUObject(this, &UCsProjectileWeaponComponent::Fire_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTime(UpdateGroup);

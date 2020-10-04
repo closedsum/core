@@ -9,8 +9,70 @@
 #include "CsTypes_Coroutine.generated.h"
 #pragma once
 
+// FCsRoutineHandle
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsRoutineHandle
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	static const FCsRoutineHandle Invalid;
+
+public:
+
+	UPROPERTY()
+	int32 Index;
+
+	UPROPERTY()
+	FGuid Handle;
+
+	FCsRoutineHandle() :
+		Index(INDEX_NONE),
+		Handle()
+	{
+	}
+
+	FORCEINLINE bool operator==(const FCsRoutineHandle& B) const
+	{
+		return Index == B.Index && Handle == B.Handle;
+	}
+
+	FORCEINLINE bool operator!=(const FCsRoutineHandle& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE const int32& GetIndex() const { return Index; }
+
+	friend uint32 GetTypeHash(const FCsRoutineHandle& InHandle)
+	{
+		return GetTypeHash(InHandle.Handle);
+	}
+
+	FORCEINLINE bool IsValid() const
+	{
+		return Index > INDEX_NONE && Handle.IsValid();
+	}
+
+	FORCEINLINE void New()
+	{
+		Handle.NewGuid();
+	}
+
+	FORCEINLINE void Reset()
+	{
+		Handle.Invalidate();
+	}
+};
+
+#pragma endregion FCsRoutineHandle
+
 class UObject;
 class AActor;
+struct FCsRoutine;
 
 namespace NCsCoroutine
 {
@@ -666,197 +728,139 @@ namespace NCsCoroutine
 
 		#pragma endregion FMap
 	}
+
+	// Run
+	DECLARE_DELEGATE_RetVal_OneParam(char, FImpl, FCsRoutine*);
+	// Abort Condition
+	DECLARE_DELEGATE_RetVal_OneParam(bool, FAbortConditionImpl, FCsRoutine*);
+	DECLARE_DELEGATE_OneParam(FOnAbort, FCsRoutine*);
+	// End
+	DECLARE_DELEGATE_OneParam(FOnEnd, FCsRoutine*);
+
+	namespace NPayload
+	{
+		// FPayload
+		#pragma region
+
+		struct CSCORE_API FImpl
+		{
+		private:
+
+			typedef NCsCoroutine::NRegister::EValueType ValueType;
+			typedef NCsCoroutine::NRegister::FMap RegisterMapType;
+
+			int32 Index;
+
+		public:
+
+			FECsUpdateGroup Group;
+
+			NCsCoroutine::FImpl CoroutineImpl;
+
+			FCsTime StartTime;
+
+			NCsCoroutine::FOwner Owner;
+
+			TArray<FAbortConditionImpl> AbortImpls;
+
+			TArray<FOnAbort> OnAborts;
+
+			TArray<FOnEnd> OnEnds;
+
+			FCsRoutineHandle ParentHandle;
+
+			bool bDoInit;
+
+			bool bPerformFirstUpdate;
+
+			TArray<FName> AbortMessages;
+
+			RegisterMapType RegisterMap;
+
+		public:
+
+			FImpl();
+
+			~FImpl() {}
+
+			void SetIndex(const int32& InIndex);
+
+			FORCEINLINE const int32& GetIndex() const
+			{
+				return Index;
+			}
+
+			void Reset();
+
+		// Registers
+		#pragma region
+
+			// Set
+		#pragma region
+		public:
+
+			FORCEINLINE void SetValue_Indexer(const int32& InIndex, const int32& Value){			RegisterMap.SetValue_Indexer(InIndex, Value); }
+			FORCEINLINE void SetValue_Counter(const int32& InIndex, const int32& Value){			RegisterMap.SetValue_Counter(InIndex, Value); }
+			FORCEINLINE void SetValue_Flag(const int32& InIndex, const bool& Value){				RegisterMap.SetValue_Flag(InIndex, Value); }
+			FORCEINLINE void SetValue_Timer(const int32& InIndex, const FCsTime& Value){			RegisterMap.SetValue_Timer(InIndex, Value); }
+			FORCEINLINE void SetValue_DeltaTime(const int32& InIndex, const FCsDeltaTime& Value){	RegisterMap.SetValue_DeltaTime(InIndex, Value); }
+			FORCEINLINE void SetValue_Int(const int32& InIndex, const int32& Value){				RegisterMap.SetValue_Int(InIndex, Value); }
+			FORCEINLINE void SetValue_Float(const int32& InIndex, const float& Value){				RegisterMap.SetValue_Float(InIndex, Value); }
+			FORCEINLINE void SetValue_Double(const int32& InIndex, const double& Value){			RegisterMap.SetValue_Double(InIndex, Value); }
+			FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector& Value){			RegisterMap.SetValue_Vector(InIndex, Value); }
+			FORCEINLINE void SetValue_Rotator(const int32& InIndex, const FRotator& Value){			RegisterMap.SetValue_Rotator(InIndex, Value); }
+			FORCEINLINE void SetValue_Color(const int32& InIndex, const FLinearColor& Value){		RegisterMap.SetValue_Color(InIndex, Value); }
+			FORCEINLINE void SetValue_Name(const int32& InIndex, const FName& Value){				RegisterMap.SetValue_Name(InIndex, Value); }
+			FORCEINLINE void SetValue_String(const int32& InIndex, const FString& Value){			RegisterMap.SetValue_String(InIndex, Value); }
+			FORCEINLINE void SetValue_StringPtr(const int32& InIndex, FString* Value){				RegisterMap.SetValue_StringPtr(InIndex, Value); }
+			FORCEINLINE void SetValue_Object(const int32& InIndex, UObject* Value){					RegisterMap.SetValue_Object(InIndex, Value); }
+			FORCEINLINE void SetValue_Void(const int32& InIndex, void* Value){						RegisterMap.SetValue_Void(InIndex, Value); }
+
+		#pragma endregion Set
+
+		#pragma endregion Registers
+
+		// Name
+		#pragma region
+		protected:
+
+			FString* Name;
+
+			FName Name_Internal;
+
+		public:
+
+			FORCEINLINE void SetName(const FString& InName)
+			{
+				Name = const_cast<FString*>(&InName);
+			}
+
+			FORCEINLINE void SetFName(const FName& InName)
+			{
+				Name_Internal = InName;
+			}
+
+			FORCEINLINE const FString* GetName()
+			{
+				return Name;
+			}
+
+			FORCEINLINE const FName& GetFName()
+			{
+				return Name_Internal;
+			}
+
+		#pragma endregion Name
+		};
+
+		#pragma endregion FPayload
+	}
 }
-
-// FCsRoutineHandle
-#pragma region
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsRoutineHandle
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-
-	static const FCsRoutineHandle Invalid;
-
-public:
-
-	UPROPERTY()
-	int32 Index;
-
-	UPROPERTY()
-	FGuid Handle;
-
-	FCsRoutineHandle() :
-		Index(INDEX_NONE),
-		Handle()
-	{
-	}
-
-	FORCEINLINE bool operator==(const FCsRoutineHandle& B) const
-	{
-		return Index == B.Index && Handle == B.Handle;
-	}
-
-	FORCEINLINE bool operator!=(const FCsRoutineHandle& B) const
-	{
-		return !(*this == B);
-	}
-
-	FORCEINLINE const int32& GetIndex() const { return Index; }
-
-	friend uint32 GetTypeHash(const FCsRoutineHandle& InHandle)
-	{
-		return GetTypeHash(InHandle.Handle);
-	}
-
-	FORCEINLINE bool IsValid() const
-	{
-		return Index > INDEX_NONE && Handle.IsValid();
-	}
-
-	FORCEINLINE void New()
-	{
-		Handle.NewGuid();
-	}
-
-	FORCEINLINE void Reset()
-	{
-		Handle.Invalidate();
-	}
-};
-
-#pragma endregion FCsRoutineHandle
-
-struct FCsRoutine;
-
-// Run
-DECLARE_DELEGATE_RetVal_OneParam(char, FCsCoroutineImpl, FCsRoutine*);
-// Abort Condition
-DECLARE_DELEGATE_RetVal_OneParam(bool, FCsCoroutineAbortConditionImpl, FCsRoutine*);
-DECLARE_DELEGATE_OneParam(FCsOnCoroutineAbort, FCsRoutine*);
-// End
-DECLARE_DELEGATE_OneParam(FCsOnCoroutineEnd, FCsRoutine*);
 
 #define CS_ROUTINE_END -1
 #define CS_ROUTINE_FREE -2
 
-// FCsCoroutinePayload
-#pragma region
 
-struct CSCORE_API FCsCoroutinePayload
-{
-private:
-
-	typedef NCsCoroutine::NRegister::EValueType ValueType;
-	typedef NCsCoroutine::NRegister::FMap RegisterMapType;
-
-	int32 Index;
-
-public:
-
-	FECsUpdateGroup Group;
-
-	FCsCoroutineImpl CoroutineImpl;
-
-	FCsTime StartTime;
-
-	NCsCoroutine::FOwner Owner;
-
-	TArray<FCsCoroutineAbortConditionImpl> AbortImpls;
-
-	TArray<FCsOnCoroutineAbort> OnAborts;
-
-	TArray<FCsOnCoroutineEnd> OnEnds;
-
-	FCsRoutineHandle ParentHandle;
-
-	bool bDoInit;
-
-	bool bPerformFirstUpdate;
-
-	TArray<FName> AbortMessages;
-
-	RegisterMapType RegisterMap;
-
-public:
-
-	FCsCoroutinePayload();
-
-	~FCsCoroutinePayload() {}
-
-	void SetIndex(const int32& InIndex);
-
-	FORCEINLINE const int32& GetIndex() const
-	{
-		return Index;
-	}
-
-	void Reset();
-
-// Registers
-#pragma region
-
-	// Set
-#pragma region
-public:
-
-	FORCEINLINE void SetValue_Indexer(const int32& InIndex, const int32& Value){			RegisterMap.SetValue_Indexer(InIndex, Value); }
-	FORCEINLINE void SetValue_Counter(const int32& InIndex, const int32& Value){			RegisterMap.SetValue_Counter(InIndex, Value); }
-	FORCEINLINE void SetValue_Flag(const int32& InIndex, const bool& Value){				RegisterMap.SetValue_Flag(InIndex, Value); }
-	FORCEINLINE void SetValue_Timer(const int32& InIndex, const FCsTime& Value){			RegisterMap.SetValue_Timer(InIndex, Value); }
-	FORCEINLINE void SetValue_DeltaTime(const int32& InIndex, const FCsDeltaTime& Value){	RegisterMap.SetValue_DeltaTime(InIndex, Value); }
-	FORCEINLINE void SetValue_Int(const int32& InIndex, const int32& Value){				RegisterMap.SetValue_Int(InIndex, Value); }
-	FORCEINLINE void SetValue_Float(const int32& InIndex, const float& Value){				RegisterMap.SetValue_Float(InIndex, Value); }
-	FORCEINLINE void SetValue_Double(const int32& InIndex, const double& Value){			RegisterMap.SetValue_Double(InIndex, Value); }
-	FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector& Value){			RegisterMap.SetValue_Vector(InIndex, Value); }
-	FORCEINLINE void SetValue_Rotator(const int32& InIndex, const FRotator& Value){			RegisterMap.SetValue_Rotator(InIndex, Value); }
-	FORCEINLINE void SetValue_Color(const int32& InIndex, const FLinearColor& Value){		RegisterMap.SetValue_Color(InIndex, Value); }
-	FORCEINLINE void SetValue_Name(const int32& InIndex, const FName& Value){				RegisterMap.SetValue_Name(InIndex, Value); }
-	FORCEINLINE void SetValue_String(const int32& InIndex, const FString& Value){			RegisterMap.SetValue_String(InIndex, Value); }
-	FORCEINLINE void SetValue_StringPtr(const int32& InIndex, FString* Value){				RegisterMap.SetValue_StringPtr(InIndex, Value); }
-	FORCEINLINE void SetValue_Object(const int32& InIndex, UObject* Value){					RegisterMap.SetValue_Object(InIndex, Value); }
-	FORCEINLINE void SetValue_Void(const int32& InIndex, void* Value){						RegisterMap.SetValue_Void(InIndex, Value); }
-
-#pragma endregion Set
-
-#pragma endregion Registers
-
-// Name
-#pragma region
-protected:
-
-	FString* Name;
-
-	FName Name_Internal;
-
-public:
-
-	FORCEINLINE void SetName(const FString& InName)
-	{
-		Name = const_cast<FString*>(&InName);
-	}
-
-	FORCEINLINE void SetFName(const FName& InName)
-	{
-		Name_Internal = InName;
-	}
-
-	FORCEINLINE const FString* GetName()
-	{
-		return Name;
-	}
-
-	FORCEINLINE const FName& GetFName()
-	{
-		return Name_Internal;
-	}
-
-#pragma endregion Name
-};
-
-#pragma endregion FCsCoroutinePayload
 
 #define CS_COROUTINE_DECLARE(Func)	virtual void Func(); \
 									static char Func##_Internal(struct FCsRoutine* r); \

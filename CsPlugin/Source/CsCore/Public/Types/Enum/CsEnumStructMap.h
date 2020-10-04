@@ -235,7 +235,16 @@ public:
 	{
 		const bool Result = Enum.IsValid() && Enum != MAX && Enum.GetValue() < Count && Enums.Find(Enum) > INDEX_NONE;
 
-		checkf(Result, TEXT("%s: Enum: %s is NOT Valid"), *Context, *MapName, *(Enum.GetFName().ToString()));
+		checkf(Result, TEXT("%s: Enum: %s is NOT Valid"), *Context, *(Enum.GetFName().ToString()));
+
+		return Result;
+	}
+
+	FORCEINLINE bool IsValidEnumChecked(const FString& Context, const FString& EnumElementName, const EnumStruct& Enum) const
+	{
+		const bool Result = Enum.IsValid() && Enum != MAX && Enum.GetValue() < Count && Enums.Find(Enum) > INDEX_NONE;
+
+		checkf(Result, TEXT("%s: %s: %s is NOT Valid"), *Context, *EnumElementName, *(Enum.GetFName().ToString()));
 
 		return Result;
 	}

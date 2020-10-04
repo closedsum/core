@@ -560,45 +560,48 @@ namespace NCsCoroutine
 
 		#pragma endregion FMap
 	}
+
+	namespace NPayload
+	{
+		// FImpl
+		#pragma region
+
+		FImpl::FImpl() :
+			RegisterMap()
+		{
+			Index = INDEX_NONE;
+
+			Group = EMCsUpdateGroup::Get().GetMAX();
+
+			Reset();
+		}
+
+		void FImpl::SetIndex(const int32& InIndex)
+		{
+			Index = InIndex;
+		}
+
+		void FImpl::Reset()
+		{
+			CoroutineImpl.Unbind();
+			StartTime.Reset();
+			Owner.Reset();
+			AbortImpls.Reset(AbortImpls.Max());
+			OnAborts.Reset(OnAborts.Max());
+			OnEnds.Reset(OnEnds.Max());
+			ParentHandle.Reset();
+			bDoInit = true;
+			bPerformFirstUpdate = true;
+			Name = nullptr;
+			Name_Internal = NAME_None;
+
+			AbortMessages.Reset(AbortMessages.Max());
+
+			RegisterMap.Reset();
+		}
+
+		#pragma endregion FImpl
+	}
 }
 
 const FCsRoutineHandle FCsRoutineHandle::Invalid;
-
-// FCsCoroutinePayload
-#pragma region
-
-FCsCoroutinePayload::FCsCoroutinePayload() :
-	RegisterMap()
-{
-	Index = INDEX_NONE;
-
-	Group = EMCsUpdateGroup::Get().GetMAX();
-
-	Reset();
-}
-
-void FCsCoroutinePayload::SetIndex(const int32& InIndex)
-{
-	Index = InIndex;
-}
-
-void FCsCoroutinePayload::Reset()
-{
-	CoroutineImpl.Unbind();
-	StartTime.Reset();
-	Owner.Reset();
-	AbortImpls.Reset(AbortImpls.Max());
-	OnAborts.Reset(OnAborts.Max());
-	OnEnds.Reset(OnEnds.Max());
-	ParentHandle.Reset();
-	bDoInit = true;
-	bPerformFirstUpdate = true;
-	Name = nullptr;
-	Name_Internal = NAME_None;
-
-	AbortMessages.Reset(AbortMessages.Max());
-
-	RegisterMap.Reset();
-}
-
-#pragma endregion FCsCoroutinePayload

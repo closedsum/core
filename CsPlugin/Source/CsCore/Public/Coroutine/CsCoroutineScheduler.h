@@ -21,7 +21,11 @@ class CSCORE_API UCsCoroutineScheduler : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-#define MessageType NCsCoroutine::EMessage
+private:
+
+	typedef NCsCoroutine::EMessage MessageType;
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+	typedef NCsCoroutine::NPayload::FResource PayloadResourceType;
 
 // Singleton
 #pragma region
@@ -106,7 +110,12 @@ public:
 	* @param PayloadContainer
 	* return
 	*/
-	const FCsRoutineHandle& Start(FCsResource_CoroutinePayload* PayloadContainer);
+	FORCEINLINE const FCsRoutineHandle& Start(PayloadResourceType* PayloadContainer)
+	{
+		PayloadType* Payload = PayloadContainer->Get();
+
+		return Schedules[Payload->Group.GetValue()].Start(PayloadContainer);
+	}
 
 	/**
 	*
@@ -114,7 +123,10 @@ public:
 	* @param Payload
 	* return
 	*/
-	const FCsRoutineHandle& Start(FCsCoroutinePayload* Payload);
+	FORCEINLINE const FCsRoutineHandle& Start(PayloadType* Payload)
+	{
+		return Schedules[Payload->Group.GetValue()].Start(Payload);
+	}
 
 	/**
 	*
@@ -122,7 +134,12 @@ public:
 	* @param PayloadContainer
 	* return
 	*/
-	const FCsRoutineHandle& StartChild(FCsResource_CoroutinePayload* PayloadContainer);
+	FORCEINLINE const FCsRoutineHandle& StartChild(PayloadResourceType* PayloadContainer)
+	{
+		PayloadType* Payload = PayloadContainer->Get();
+
+		return Schedules[Payload->Group.GetValue()].StartChild(PayloadContainer);
+	}
 
 	/**
 	*
@@ -130,7 +147,10 @@ public:
 	* @param Payload
 	* return
 	*/
-	const FCsRoutineHandle& StartChild(FCsCoroutinePayload* Payload);
+	FORCEINLINE const FCsRoutineHandle& StartChild(PayloadType* Payload)
+	{
+		return Schedules[Payload->Group.GetValue()].StartChild(Payload);
+	}
 
 #pragma endregion Start
 
@@ -144,7 +164,10 @@ public:
 	* @param Group
 	* @param DeltaTime
 	*/
-	void Update(const FECsUpdateGroup& Group, const FCsDeltaTime& DeltaTime);
+	FORCEINLINE void Update(const FECsUpdateGroup& Group, const FCsDeltaTime& DeltaTime)
+	{
+		Schedules[Group.GetValue()].Update(DeltaTime);
+	}
 
 #pragma endregion Update
 	
@@ -157,7 +180,10 @@ public:
 	*
 	* @param Group
 	*/
-	void End(const FECsUpdateGroup& Group);
+	FORCEINLINE void End(const FECsUpdateGroup& Group)
+	{
+		Schedules[Group.GetValue()].End();
+	}
 
 	/**
 	*
@@ -165,7 +191,11 @@ public:
 	* @param Group
 	* @param Handle
 	*/
-	void End(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle);
+	FORCEINLINE void End(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
+	{
+		Schedules[Group.GetValue()].End(Handle);
+	}
+
 
 	/**
 	*
@@ -184,7 +214,10 @@ public:
 	* @param Group
 	* return
 	*/
-	FCsResource_CoroutinePayload* AllocatePayloadContainer(const FECsUpdateGroup& Group);
+	FORCEINLINE PayloadResourceType* AllocatePayloadContainer(const FECsUpdateGroup& Group)
+	{
+		return Schedules[Group.GetValue()].AllocatePayloadContainer();
+	}
 
 	/**
 	*
@@ -192,7 +225,10 @@ public:
 	* @param Group
 	* return
 	*/
-	FCsCoroutinePayload* AllocatePayload(const FECsUpdateGroup& Group);
+	FORCEINLINE PayloadType* AllocatePayload(const FECsUpdateGroup& Group)
+	{
+		return Schedules[Group.GetValue()].AllocatePayload();
+	}
 
 #pragma endregion Payload
 
@@ -211,9 +247,10 @@ public:
 #pragma region
 public:
 
-	void BroadcastMessage(const FECsUpdateGroup& Group, const MessageType& Type, const FName& Message, void* InOwner = nullptr);
+	FORCEINLINE void BroadcastMessage(const FECsUpdateGroup& Group, const MessageType& Type, const FName& Message, void* InOwner = nullptr)
+	{
+		Schedules[Group.Value].BroadcastMessage(Type, Message, InOwner);
+	}
 
 #pragma endregion Message
-
-#undef MessageType
 };

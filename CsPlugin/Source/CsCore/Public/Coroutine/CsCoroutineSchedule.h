@@ -22,13 +22,19 @@ struct CSCORE_API FCsManager_Routine : public TCsManager_ResourceValueType_Fixed
 
 	// Payload
 
-struct CSCORE_API FCsResource_CoroutinePayload : public TCsResourceContainer<FCsCoroutinePayload>
+namespace NCsCoroutine
 {
-};
+	namespace NPayload
+	{
+		struct CSCORE_API FResource : public TCsResourceContainer<FImpl>
+		{
+		};
 
-struct CSCORE_API FCsManager_CoroutinePayload : public TCsManager_ResourceValueType_Fixed<FCsCoroutinePayload, FCsResource_CoroutinePayload, CS_COROUTINE_PAYLOAD_SIZE>
-{
-};
+		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FImpl, FResource, CS_COROUTINE_PAYLOAD_SIZE>
+		{
+		};
+	}
+}
 
 #pragma endregion Structs
 
@@ -40,11 +46,13 @@ public:
 
 	virtual ~FCsCoroutineSchedule();
 
-#define MessageType NCsCoroutine::EMessage
-	
 private:
 
+	typedef NCsCoroutine::EMessage MessageType;
 	typedef NCsCoroutine::ETransaction TransactionType;
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+	typedef NCsCoroutine::NPayload::FResource PayloadResourceType;
+	typedef NCsCoroutine::NPayload::FManager PayloadManagerType;
 
 // Schedule
 #pragma region
@@ -112,7 +120,7 @@ public:
 	* @param PayloadContainer
 	* return
 	*/
-	const FCsRoutineHandle& Start(FCsResource_CoroutinePayload* PayloadContainer);
+	const FCsRoutineHandle& Start(PayloadResourceType* PayloadContainer);
 
 	/**
 	*
@@ -120,7 +128,7 @@ public:
 	* @param Payload
 	* return
 	*/
-	const FCsRoutineHandle& Start(FCsCoroutinePayload* Payload);
+	const FCsRoutineHandle& Start(PayloadType* Payload);
 
 	/**
 	*
@@ -128,7 +136,7 @@ public:
 	* @param PayloadContainer
 	* return
 	*/
-	const FCsRoutineHandle& StartChild(FCsResource_CoroutinePayload* PayloadContainer);
+	const FCsRoutineHandle& StartChild(PayloadResourceType* PayloadContainer);
 
 	/**
 	*
@@ -136,7 +144,7 @@ public:
 	* @param Payload
 	* return
 	*/
-	const FCsRoutineHandle& StartChild(FCsCoroutinePayload* Payload);
+	const FCsRoutineHandle& StartChild(PayloadType* Payload);
 
 #pragma endregion Start
 
@@ -176,7 +184,7 @@ public:
 protected:
 
 	/** */
-	FCsManager_CoroutinePayload Manager_Payload;
+	PayloadManagerType Manager_Payload;
 
 public:
 
@@ -185,7 +193,7 @@ public:
 	*
 	* return
 	*/
-	FORCEINLINE FCsResource_CoroutinePayload* AllocatePayloadContainer()
+	FORCEINLINE PayloadResourceType* AllocatePayloadContainer()
 	{
 		return Manager_Payload.Allocate();
 	}
@@ -195,7 +203,7 @@ public:
 	*
 	* return
 	*/
-	FORCEINLINE FCsCoroutinePayload* AllocatePayload()
+	FORCEINLINE PayloadType* AllocatePayload()
 	{
 		return Manager_Payload.AllocateResource();
 	}
@@ -208,7 +216,7 @@ protected:
 	* @param Payload
 	* return
 	*/
-	FCsResource_CoroutinePayload* GetPayloadContainer(FCsCoroutinePayload* Payload);
+	PayloadResourceType* GetPayloadContainer(PayloadType* Payload);
 
 #pragma endregion Payload
 
@@ -246,6 +254,4 @@ public:
 	void LogRunning();
 
 #pragma endregion Log
-
-#undef MessageType
 };

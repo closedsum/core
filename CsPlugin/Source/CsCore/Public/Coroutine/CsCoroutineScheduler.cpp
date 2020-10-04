@@ -185,54 +185,16 @@ void UCsCoroutineScheduler::CleanUp()
 // Start
 #pragma region
 
-const FCsRoutineHandle& UCsCoroutineScheduler::Start(FCsResource_CoroutinePayload* PayloadContainer)
-{
-	FCsCoroutinePayload* Payload = PayloadContainer->Get();
-
-	return Schedules[Payload->Group.GetValue()].Start(PayloadContainer);
-}
-
-const FCsRoutineHandle& UCsCoroutineScheduler::Start(FCsCoroutinePayload* Payload)
-{
-	return Schedules[Payload->Group.GetValue()].Start(Payload);
-}
-
-const FCsRoutineHandle& UCsCoroutineScheduler::StartChild(FCsResource_CoroutinePayload* PayloadContainer)
-{
-	FCsCoroutinePayload* Payload = PayloadContainer->Get();
-
-	return Schedules[Payload->Group.GetValue()].StartChild(PayloadContainer);
-}
-
-const FCsRoutineHandle& UCsCoroutineScheduler::StartChild(FCsCoroutinePayload* Payload)
-{
-	return Schedules[Payload->Group.GetValue()].StartChild(Payload);
-}
-
 #pragma endregion Start
 
 // Update
 #pragma region
-
-void UCsCoroutineScheduler::Update(const FECsUpdateGroup& Group, const FCsDeltaTime& DeltaTime)
-{
-	Schedules[Group.GetValue()].Update(DeltaTime);
-}
 
 #pragma endregion Update
 
 // End
 #pragma region
 
-void UCsCoroutineScheduler::End(const FECsUpdateGroup& Group)
-{
-	Schedules[Group.GetValue()].End();
-}
-
-void UCsCoroutineScheduler::End(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
-{
-	Schedules[Group.GetValue()].End(Handle);
-}
 
 void UCsCoroutineScheduler::UCsCoroutineScheduler::EndAll()
 {
@@ -247,26 +209,9 @@ void UCsCoroutineScheduler::UCsCoroutineScheduler::EndAll()
 // Payload
 #pragma region
 
-FCsResource_CoroutinePayload* UCsCoroutineScheduler::AllocatePayloadContainer(const FECsUpdateGroup& Group)
-{
-	return Schedules[Group.GetValue()].AllocatePayloadContainer();
-}
-
-FCsCoroutinePayload* UCsCoroutineScheduler::AllocatePayload(const FECsUpdateGroup& Group)
-{
-	return Schedules[Group.GetValue()].AllocatePayload();
-}
-
 #pragma endregion Payload
 
 // Message
 #pragma region
-
-#define MessageType NCsCoroutine::EMessage
-void UCsCoroutineScheduler::BroadcastMessage(const FECsUpdateGroup& Group, const MessageType& Type, const FName& Message, void* InOwner /*=nullptr*/)
-{
-#undef MessageType
-	Schedules[Group.Value].BroadcastMessage(Type, Message, nullptr);
-}
 
 #pragma endregion Message

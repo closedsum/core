@@ -191,8 +191,8 @@ void UCsManager_UnitTest::Start()
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(UpdateGroup);
+	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get(MyRoot);
+	NCsCoroutine::NPayload::FImpl* Payload	= Scheduler->AllocatePayload(UpdateGroup);
 
 	Payload->CoroutineImpl.BindUObject(this, &UCsManager_UnitTest::Start_Internal);
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);

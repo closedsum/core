@@ -216,8 +216,8 @@ void UCsManager_Level::Check_FinishedLoadingPersistentLevel()
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(UpdateGroup);
+	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get(MyRoot);
+	NCsCoroutine::NPayload::FImpl* Payload	= Scheduler->AllocatePayload(UpdateGroup);
 
 	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal);
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
@@ -238,8 +238,8 @@ void UCsManager_Level::Check_FinishedLoadingPersistentLevel(const FString& MapPa
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(UpdateGroup);
+	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get(MyRoot);
+	NCsCoroutine::NPayload::FImpl* Payload	= Scheduler->AllocatePayload(UpdateGroup);
 
 	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal);
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
@@ -381,8 +381,8 @@ void UCsManager_Level::ChangeMap(const FCsManagerLevelChangeMap& Params)
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(UpdateGroup);
+	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get(MyRoot);
+	NCsCoroutine::NPayload::FImpl* Payload	= Scheduler->AllocatePayload(UpdateGroup);
 
 	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Level::ChangeMap_Internal);
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);

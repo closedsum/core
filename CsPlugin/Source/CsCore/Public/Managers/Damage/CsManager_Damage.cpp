@@ -256,7 +256,9 @@ void UCsManager_Damage::Initialize()
 
 		for (const FECsDamageValue& Value : EMCsDamageValue::Get())
 		{
-			FCsManager_DamageValue& Manager = Manager_Values[Value.GetValue()];
+			typedef NCsDamage::NValue::FManager ValueManagerType;
+
+			ValueManagerType& Manager = Manager_Values[Value.GetValue()];
 
 			Manager.SetDeconstructResourcesOnShutdown();
 			Manager.CreatePool(PoolSize);
@@ -295,7 +297,9 @@ void UCsManager_Damage::CleanUp()
 	{
 		for (const FECsDamageValue& Value : EMCsDamageValue::Get())
 		{
-			FCsManager_DamageValue& Manager = Manager_Values[Value.GetValue()];
+			typedef NCsDamage::NValue::FManager ValueManagerType;
+
+			ValueManagerType& Manager = Manager_Values[Value.GetValue()];
 
 			Manager.Shutdown();
 		}
@@ -380,13 +384,18 @@ EventType* UCsManager_Damage::ConstructEvent()
 	return new EventImplType();
 }
 
-FCsResource_DamageEvent* UCsManager_Damage::AllocateEvent()
+#define EventResourceType NCsDamage::NEvent::FResource
+EventResourceType* UCsManager_Damage::AllocateEvent()
 {
+#undef EventResourceType
 	return Manager_Event.Allocate();
 }
 
-void UCsManager_Damage::DeallocateEvent(const FString& Context, FCsResource_DamageEvent* Event)
+#define EventResourceType NCsDamage::NEvent::FResource
+void UCsManager_Damage::DeallocateEvent(const FString& Context, EventResourceType* Event)
 {
+#undef EventResourceType
+
 	// Reset
 	if (ICsReset* IReset = FCsLibrary_DamageEvent::GetSafeInterfaceChecked<ICsReset>(Context, Event->Get()))
 		IReset->Reset();
@@ -401,13 +410,18 @@ bool UCsManager_Damage::CopyEvent(const FString& Context, const EventType* From,
 	return FCsLibrary_DamageEvent::CopyChecked(Context, From, To);
 }
 
+#define EventResourceType NCsDamage::NEvent::FResource
 #define EventType NCsDamage::NEvent::IEvent
-FCsResource_DamageEvent* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, const EventType* Event)
+EventResourceType* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, const EventType* Event)
 {
+#undef EventResourceType
 #undef EventType
 
-	FCsResource_DamageEvent* Container = AllocateEvent();
-	NCsDamage::NEvent::IEvent* Copy	   = Container->Get();
+	typedef NCsDamage::NEvent::FResource EventResourceType;
+	typedef NCsDamage::NEvent::IEvent EventType;
+
+	EventResourceType* Container = AllocateEvent();
+	EventType* Copy	   = Container->Get();
 
 	bool Success = CopyEvent(Context, Event, Copy);
 
@@ -416,8 +430,10 @@ FCsResource_DamageEvent* UCsManager_Damage::CreateCopyOfEvent(const FString& Con
 	return Container;
 }
 
-FCsResource_DamageEvent* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, const FCsResource_DamageEvent* Event)
+#define EventResourceType NCsDamage::NEvent::FResource
+EventResourceType* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, const EventResourceType* Event)
 {
+#undef EventResourceType
 	return CreateCopyOfEvent(Context, Event->Get());
 }
 
@@ -429,6 +445,9 @@ void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 	using namespace NCsManagerDamageCached;
 
 	const FString& Context = Str::ProcessDamageEvent;
+
+	typedef NCsDamage::NEvent::FResource EventResourceType;
+	typedef NCsDamage::NEvent::IEvent EventType;
 
 	checkf(Event, TEXT("%s: Event is NULL."), *Context);
 
@@ -481,8 +500,8 @@ void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 		if (ShouldCopyEvent)
 		{
 			// Copy the Event
-			FCsResource_DamageEvent* EventContainer = CreateCopyOfEvent(Context, Event);
-			NCsDamage::NEvent::IEvent* Evt			= EventContainer->Get();
+			EventResourceType* EventContainer = CreateCopyOfEvent(Context, Event);
+			EventType* Evt					  = EventContainer->Get();
 
 			// Set the Damage
 			FCsLibrary_DamageEvent::SetDamageChecked(Context, Evt);
@@ -495,10 +514,10 @@ void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		FCsReceiveDamage& Receiver				= Local_Receivers[I];
-		FCsResource_DamageEvent* EventContainer = Local_Events[I];
+		FCsReceiveDamage& Receiver		  = Local_Receivers[I];
+		EventResourceType* EventContainer = Local_Events[I];
 
-		NCsDamage::NEvent::IEvent* Evt = EventContainer->Get();
+		EventType* Evt = EventContainer->Get();
 
 		Receiver.Damage(Evt);
 
@@ -516,19 +535,25 @@ void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 	Local_Events.Reset(Local_Events.Max());
 }
 
-void UCsManager_Damage::ProcessDamageEventContainer(const FCsResource_DamageEvent* Event)
+#define EventResourceType NCsDamage::NEvent::FResource
+void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Event)
 {
+
+
 	using namespace NCsManagerDamageCached;
 
 	const FString& Context = Str::ProcessDamageEventContainer;
 
+	typedef NCsDamage::NEvent::IEvent EventType;
+
 	check(Manager_Event.IsValidChecked(Context, Event));
 
-	const NCsDamage::NEvent::IEvent* IEvent = Event->Get();
+	const EventType* IEvent = Event->Get();
 
 	ProcessDamageEvent(IEvent);
-	DeallocateEvent(Context, const_cast<FCsResource_DamageEvent*>(Event));
+	DeallocateEvent(Context, const_cast<EventResourceType*>(Event));
 }
+#undef EventResourceType
 
 #pragma endregion Event
 
@@ -546,15 +571,21 @@ NCsDamage::NValue::IValue* UCsManager_Damage::ConstructValue(const FECsDamageVal
 	return nullptr;
 }
 
-FCsResource_DamageValue* UCsManager_Damage::AllocateValue(const FECsDamageValue& Type)
+#define ValueResourceType NCsDamage::NValue::FResource
+ValueResourceType* UCsManager_Damage::AllocateValue(const FECsDamageValue& Type)
 {
+#undef ValueResourceType
+
 	checkf(EMCsDamageValue::Get().IsValidEnum(Type), TEXT("UCsManager_Damage::AllocateValue: Type: %s is NOT Valid."), Type.ToChar());
 
 	return Manager_Values[Type.GetValue()].Allocate();
 }
 
-void UCsManager_Damage::DeallocateValue(const FString& Context, const FECsDamageValue& Type, FCsResource_DamageValue* Value)
+#define ValueResourceType NCsDamage::NValue::FResource
+void UCsManager_Damage::DeallocateValue(const FString& Context, const FECsDamageValue& Type, ValueResourceType* Value)
 {
+#undef ValueResourceType
+
 	checkf(EMCsDamageValue::Get().IsValidEnum(Type), TEXT("UCsManager_Damage::DeallocateValue: Type: %s is NOT Valid."), Type.ToChar());
 
 	// Reset
@@ -564,43 +595,57 @@ void UCsManager_Damage::DeallocateValue(const FString& Context, const FECsDamage
 	Manager_Values[Type.GetValue()].Deallocate(Value);
 }
 
-void UCsManager_Damage::DeallocateValue(const FString& Context, FCsResource_DamageValue* Value)
+#define ValueResourceType NCsDamage::NValue::FResource
+void UCsManager_Damage::DeallocateValue(const FString& Context, ValueResourceType* Value)
 {
+#undef ValueResourceType
+
+	typedef NCsDamage::NValue::NPoint::IPoint PointType;
+	typedef NCsDamage::NValue::NRange::IRange RangeType;
+
 	// Point
-	if (NCsDamage::NValue::NPoint::IPoint* Point = FCsLibrary_DamageValue::GetSafeInterfaceChecked<NCsDamage::NValue::NPoint::IPoint>(Context, Value->Get()))
+	if (PointType* Point = FCsLibrary_DamageValue::GetSafeInterfaceChecked<PointType>(Context, Value->Get()))
 	{
 		DeallocateValue(NCsDamageValue::Point, Value);
 	}
 	// Range
 	else
-	if (NCsDamage::NValue::NRange::IRange* Range = FCsLibrary_DamageValue::GetSafeInterfaceChecked<NCsDamage::NValue::NRange::IRange>(Context, Value->Get()))
+	if (RangeType* Range = FCsLibrary_DamageValue::GetSafeInterfaceChecked<RangeType>(Context, Value->Get()))
 	{
 		DeallocateValue(NCsDamageValue::Range, Value);
 	}
 }
 
-const FECsDamageValue& UCsManager_Damage::GetValueType(const FString& Context, const NCsDamage::NValue::IValue* Value)
+#define ValueType NCsDamage::NValue::IValue
+const FECsDamageValue& UCsManager_Damage::GetValueType(const FString& Context, const ValueType* Value)
 {
+#undef ValueType
+
+	typedef NCsDamage::NValue::NPoint::IPoint PointType;
+	typedef NCsDamage::NValue::NRange::IRange RangeType;
+
 	checkf(Value, TEXT("%s: Value is NULL."), *Context);
 
 	// Point
-	if (FCsLibrary_DamageValue::GetSafeInterfaceChecked<NCsDamage::NValue::NPoint::IPoint>(Context, Value))
+	if (FCsLibrary_DamageValue::GetSafeInterfaceChecked<PointType>(Context, Value))
 		return NCsDamageValue::Point;
 	// Range
-	if (FCsLibrary_DamageValue::GetSafeInterfaceChecked<NCsDamage::NValue::NRange::IRange>(Context, Value))
+	if (FCsLibrary_DamageValue::GetSafeInterfaceChecked<RangeType>(Context, Value))
 		return NCsDamageValue::Range;
 
 	return EMCsDamageValue::Get().GetMAX();
 }
 
-FCsResource_DamageValue* UCsManager_Damage::CreateCopyOfValue(const FString& Context, const NCsDamage::NValue::IValue* Value)
+#define ValueResourceType NCsDamage::NValue::FResource
+#define ValueType NCsDamage::NValue::IValue
+ValueResourceType* UCsManager_Damage::CreateCopyOfValue(const FString& Context, const ValueType* Value)
 {
-	const FECsDamageValue& ValueType = GetValueType(Context, Value);
+	const FECsDamageValue& Type = GetValueType(Context, Value);
 
-	checkf(EMCsDamageValue::Get().IsValidEnum(ValueType), TEXT("%s: ValueType: %s is NOT Valid."), ValueType.ToChar());
+	checkf(EMCsDamageValue::Get().IsValidEnum(Type), TEXT("%s: Type: %s is NOT Valid."), Type.ToChar());
 
-	FCsResource_DamageValue* Container = AllocateValue(ValueType);
-	NCsDamage::NValue::IValue* Copy	   = Container->Get();
+	ValueResourceType* Container = AllocateValue(Type);
+	ValueType* Copy				 = Container->Get();
 
 	bool Success = FCsLibrary_DamageValue::CopyChecked(Context, Value, Copy);
 
@@ -608,9 +653,13 @@ FCsResource_DamageValue* UCsManager_Damage::CreateCopyOfValue(const FString& Con
 
 	return Container;
 }
+#undef ValueResourceType
+#undef ValueType
 
-FCsResource_DamageValue* UCsManager_Damage::CreateCopyOfValue(const FString& Context, const FCsResource_DamageValue* Value)
+#define ValueResourceType NCsDamage::NValue::FResource
+ValueResourceType* UCsManager_Damage::CreateCopyOfValue(const FString& Context, const ValueResourceType* Value)
 {
+#undef ValueResourceType
 	return CreateCopyOfValue(Context, Value->Get());
 }
 
@@ -619,18 +668,25 @@ FCsResource_DamageValue* UCsManager_Damage::CreateCopyOfValue(const FString& Con
 // Range
 #pragma region
 
-NCsDamage::NRange::IRange* UCsManager_Damage::ConstructRange()
+#define RangeType NCsDamage::NRange::IRange
+RangeType* UCsManager_Damage::ConstructRange()
 {
-	return new NCsDamage::NRange::FImpl();
+#undef RangeType
+	typedef NCsDamage::NRange::FImpl RangeImplType;
+	return new RangeImplType();
 }
 
-FCsResource_DamageRange* UCsManager_Damage::AllocateRange()
+#define RangeResourceType NCsDamage::NRange::FResource
+RangeResourceType* UCsManager_Damage::AllocateRange()
 {
+#undef RangeResourceType
 	return Manager_Range.Allocate();
 }
 
-void UCsManager_Damage::DeallocateRange(const FString& Context, FCsResource_DamageRange* Range)
+#define RangeResourceType NCsDamage::NRange::FResource
+void UCsManager_Damage::DeallocateRange(const FString& Context, RangeResourceType* Range)
 {
+#undef RangeResourceType
 	// Reset
 	if (ICsReset* IReset = FCsLibrary_DamageRange::GetSafeInterfaceChecked<ICsReset>(Context, Range->Get()))
 		IReset->Reset();
@@ -638,10 +694,12 @@ void UCsManager_Damage::DeallocateRange(const FString& Context, FCsResource_Dama
 	Manager_Range.Deallocate(Range);
 }
 
-FCsResource_DamageRange* UCsManager_Damage::CreateCopyOfRange(const FString& Context, const NCsDamage::NRange::IRange* Range)
+#define RangeResourceType NCsDamage::NRange::FResource
+#define RangeType NCsDamage::NRange::IRange
+RangeResourceType* UCsManager_Damage::CreateCopyOfRange(const FString& Context, const RangeType* Range)
 {
-	FCsResource_DamageRange* Container = AllocateRange();
-	NCsDamage::NRange::IRange* Copy	   = Container->Get();
+	RangeResourceType* Container = AllocateRange();
+	RangeType* Copy				 = Container->Get();
 
 	bool Success = FCsLibrary_DamageRange::CopyChecked(Context, Range, Copy);
 
@@ -649,47 +707,59 @@ FCsResource_DamageRange* UCsManager_Damage::CreateCopyOfRange(const FString& Con
 
 	return Container;
 }
+#undef RangeResourceType
+#undef RangeType
 
-FCsResource_DamageRange* UCsManager_Damage::CreateCopyOfRange(const FString& Context, const FCsResource_DamageRange* Range)
+#define RangeResourceType NCsDamage::NRange::FResource
+RangeResourceType* UCsManager_Damage::CreateCopyOfRange(const FString& Context, const RangeResourceType* Range)
 {
+#undef RangeResourceType
 	return CreateCopyOfRange(Context, Range->Get());
 }
 
-const NCsDamage::NRange::IRange* UCsManager_Damage::GetRange(const FString& Context, const ICsData_Damage* Data)
+#define RangeType NCsDamage::NRange::IRange
+const RangeType* UCsManager_Damage::GetRange(const FString& Context, const ICsData_Damage* Data)
 {
-	typedef NCsDamage::NRange::IRange RangeType;
-
 	if (const RangeType* Value = FCsLibrary_Data_Damage::GetRangeChecked(Context, Data))
 	{
 		return Value;
 	}
 	return nullptr;
 }
+#undef RangeType
 
 #pragma endregion  Range
 
 // Modifier
 #pragma region
 
-NCsDamage::NModifier::IModifier* UCsManager_Damage::ConstructModifier()
+#define ModifierType NCsDamage::NModifier::IModifier
+ModifierType* UCsManager_Damage::ConstructModifier()
 {
+#undef ModifierType
 	return nullptr;
 }
 
-FCsResource_DamageModifier* UCsManager_Damage::AllocateModifier()
+#define ModifierResourceType NCsDamage::NModifier::FResource
+ModifierResourceType* UCsManager_Damage::AllocateModifier()
 {
+#undef ModifierResourceType
 	return nullptr;
 }
 
-void UCsManager_Damage::DeallocateModifier(const FString& Context, FCsResource_DamageModifier* Modifier)
+#define ModifierResourceType NCsDamage::NModifier::FResource
+void UCsManager_Damage::DeallocateModifier(const FString& Context, ModifierResourceType* Modifier)
 {
+#undef ModifierResourceType
 
 }
 
-FCsResource_DamageModifier* UCsManager_Damage::CreateCopyOfModifier(const FString& Context, const NCsDamage::NModifier::IModifier* Modifier)
+#define ModifierResourceType NCsDamage::NModifier::FResource
+#define ModifierType NCsDamage::NModifier::IModifier
+ModifierResourceType* UCsManager_Damage::CreateCopyOfModifier(const FString& Context, const ModifierType* Modifier)
 {
-	FCsResource_DamageModifier* Container = AllocateModifier();
-	NCsDamage::NModifier::IModifier* Copy = Container->Get();
+	ModifierResourceType* Container = AllocateModifier();
+	ModifierType* Copy				= Container->Get();
 
 	bool Success = FCsLibrary_DamageModifier::CopyChecked(Context, Modifier, Copy);
 
@@ -697,15 +767,24 @@ FCsResource_DamageModifier* UCsManager_Damage::CreateCopyOfModifier(const FStrin
 
 	return Container;
 }
+#undef ModifierResourceType
+#undef ModifierType
 
-FCsResource_DamageModifier* UCsManager_Damage::CreateCopyOfModifier(const FString& Context, const FCsResource_DamageModifier* Modifier)
+#define ModifierResourceType NCsDamage::NModifier::FResource
+ModifierResourceType* UCsManager_Damage::CreateCopyOfModifier(const FString& Context, const ModifierResourceType* Modifier)
 {
+#undef ModifierResourceType
 	return CreateCopyOfModifier(Context, Modifier->Get());
 }
 
-void UCsManager_Damage::ModifyValue(const FString& Context, const NCsDamage::NModifier::IModifier* Modifier, const ICsData_Damage* Data, NCsDamage::NValue::IValue* Value)
+#define ModifierType NCsDamage::NModifier::IModifier
+#define ValueType NCsDamage::NValue::IValue
+void UCsManager_Damage::ModifyValue(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, ValueType* Value)
 {
-	checkf(Data, TEXT("%s: Data is NULL."), *Context);
+#undef ModifierType
+#undef ValueType
+
+	checkf(Data, TEXT("%s: Data  is NULL."), *Context);
 
 	checkf(Value, TEXT("%s: Value is NULL."), *Context);
 
@@ -715,8 +794,13 @@ void UCsManager_Damage::ModifyValue(const FString& Context, const NCsDamage::NMo
 	}
 }
 
-void UCsManager_Damage::ModifyRange(const FString& Context, const NCsDamage::NModifier::IModifier* Modifier, const ICsData_Damage* Data, NCsDamage::NRange::IRange* Range)
+#define ModifierType NCsDamage::NModifier::IModifier
+#define RangesType NCsDamage::NRange::IRange
+void UCsManager_Damage::ModifyRange(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, RangesType* Range)
 {
+#undef ModifierType
+#undef RangesType
+
 	checkf(Data, TEXT("%s: Data is NULL."), *Context);
 
 	checkf(Range, TEXT("%s: Range is NULL."), *Context);

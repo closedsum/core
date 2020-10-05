@@ -2,7 +2,10 @@
 #pragma once
 
 class UObject;
-struct FCsResource_DamageRange;
+
+namespace NCsDamage {
+	namespace NRange {
+		struct FResource; } }
 
 namespace NCsDamage {
 	namespace NRange {
@@ -23,7 +26,7 @@ namespace NCsDamage
 
 			UObject* Root;
 
-			FCsResource_DamageRange* Container;
+			FResource* Container;
 
 			IRange* Range;
 

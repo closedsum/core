@@ -18,7 +18,7 @@ namespace NCsDamage
 			}
 		}
 
-		void FAllocated::Set(UObject* InRoot, FCsResource_DamageEvent* InContainer)
+		void FAllocated::Set(UObject* InRoot, FResource* InContainer)
 		{
 			checkf(InRoot, TEXT("NCsDamage::NEvent::FAllocated::Set: InRoot is NULL."));
 

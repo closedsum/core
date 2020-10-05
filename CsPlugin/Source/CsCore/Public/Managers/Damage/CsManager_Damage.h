@@ -20,78 +20,93 @@
 // Structs
 #pragma region
 
-	// NCsDamage::NEvent::IEvent
-
-/**
-* Container for holding a reference to an object that implements the interface: NCsDamage::NEvent::IEvent.
-* This serves as an easy way for a Manager Resource to keep track of the resource.
-*/
-struct CSCORE_API FCsResource_DamageEvent : public TCsResourceContainer<NCsDamage::NEvent::IEvent>
+namespace NCsDamage
 {
-};
+	namespace NEvent
+	{
+		// NCsDamage::NEvent::IEvent
 
-/**
-* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NEvent::IEvent and
-* are wrapped in the container: FCsResource_DamageEvent.
-*/
-struct CSCORE_API FCsManager_DamageEvent : public TCsManager_ResourceValueType_Abstract_Fixed<NCsDamage::NEvent::IEvent, FCsResource_DamageEvent, 0>
-{
-};
-	
-	// NCsDamage::NValue::IValue
+		/**
+		* Container for holding a reference to an object that implements the interface: NCsDamage::NEvent::IEvent.
+		* This serves as an easy way for a Manager Resource to keep track of the resource.
+		*/
+		struct CSCORE_API FResource : public TCsResourceContainer<IEvent>
+		{
+		};
 
-/**
-* Container for holding a reference to an object that implements the interface: NCsDamage::NValue::IValue.
-* This serves as an easy way for a Manager Resource to keep track of the resource.
-*/
-struct CSCORE_API FCsResource_DamageValue : public TCsResourceContainer<NCsDamage::NValue::IValue>
-{
-};
+		/**
+		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NEvent::IEvent and
+		* are wrapped in the container: NCsDamage::NEvent::FResource.
+		*/
+		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Abstract_Fixed<IEvent, FResource, 0>
+		{
+		};
+	}
 
-/**
-* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NValue::IValue and
-* are wrapped in the container: FCsResource_DamageValue.
-*/
-struct CSCORE_API FCsManager_DamageValue : public TCsManager_ResourcePointerType_Fixed<NCsDamage::NValue::IValue, FCsResource_DamageValue, 0>
-{
-};
+	namespace NValue
+	{
+		// NCsDamage::NValue::IValue
 
-	// NCsDamage::NRange::IRange
+		/**
+		* Container for holding a reference to an object that implements the interface: NCsDamage::NValue::IValue.
+		* This serves as an easy way for a Manager Resource to keep track of the resource.
+		*/
+		struct CSCORE_API FResource : public TCsResourceContainer<IValue>
+		{
+		};
 
-/**
-* Container for holding a reference to an object that implements the interface: NCsDamage::NRange::IRange.
-* This serves as an easy way for a Manager Resource to keep track of the resource.
-*/
-struct CSCORE_API FCsResource_DamageRange : public TCsResourceContainer<NCsDamage::NRange::IRange>
-{
-};
+		/**
+		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NValue::IValue and
+		* are wrapped in the container: NCsDamage:;NValue::FResource.
+		*/
+		struct CSCORE_API FManager : public TCsManager_ResourcePointerType_Fixed<IValue, FResource, 0>
+		{
+		};
+	}
 
-/**
-* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NRange::IRange and
-* are wrapped in the container: FCsResource_DamageRange.
-*/
-struct CSCORE_API FCsManager_DamageRange : public TCsManager_ResourceValueType_Abstract_Fixed<NCsDamage::NRange::IRange, FCsResource_DamageRange, 0>
-{
-};
+	namespace NRange
+	{
+		// NCsDamage::NRange::IRange
 
-	// NCsDamage::NModifier::IModifier
+		/**
+		* Container for holding a reference to an object that implements the interface: NCsDamage::NRange::IRange.
+		* This serves as an easy way for a Manager Resource to keep track of the resource.
+		*/
+		struct CSCORE_API FResource : public TCsResourceContainer<IRange>
+		{
+		};
 
-/**
-* Container for holding a reference to an object that implements the interface: NCsDamage::NModifier::IModifier.
-* This serves as an easy way for a Manager Resource to keep track of the resource.
-*/
-struct CSCORE_API FCsResource_DamageModifier : public TCsResourceContainer<NCsDamage::NModifier::IModifier>
-{
+		/**
+		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NRange::IRange and
+		* are wrapped in the container: NCsDamage::NRange::FResource.
+		*/
+		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Abstract_Fixed<IRange, FResource, 0>
+		{
+		};
+	}
 
-};
+	namespace NModifier
+	{
+		// NCsDamage::NModifier::IModifier
 
-/**
-* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NModifier::IModifier and
-* are wrapped in the container: FCsResource_DamageModifier.
-*/
-struct CSCORE_API FCsManager_DamageModifier : public TCsManager_ResourceValueType_Abstract_Fixed<NCsDamage::NModifier::IModifier, FCsResource_DamageModifier, 0>
-{
-};
+		/**
+		* Container for holding a reference to an object that implements the interface: NCsDamage::NModifier::IModifier.
+		* This serves as an easy way for a Manager Resource to keep track of the resource.
+		*/
+		struct CSCORE_API FResource : public TCsResourceContainer<IModifier>
+		{
+
+		};
+
+		/**
+		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NModifier::IModifier and
+		* are wrapped in the container: NCsDamage::NModifer::FResource.
+		*/
+		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Abstract_Fixed<IModifier, FResource, 0>
+		{
+		};
+	}
+}
 
 #pragma endregion Structs
 
@@ -103,7 +118,21 @@ class CSCORE_API UCsManager_Damage : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+#define EventResourceType NCsDamage::NEvent::FResource
+#define EventManagerType NCsDamage::NEvent::FManager
 #define EventType NCsDamage::NEvent::IEvent
+
+#define ValueResourceType NCsDamage::NValue::FResource
+#define ValueManagerType NCsDamage::NValue::FManager
+#define ValueType NCsDamage::NValue::IValue
+
+#define RangeResourceType NCsDamage::NRange::FResource
+#define RangeManagerType NCsDamage::NRange::FManager
+#define RangeType NCsDamage::NRange::IRange
+
+#define ModifierResourceType NCsDamage::NModifier::FResource
+#define ModifierManagerType NCsDamage::NModifier::FManager
+#define ModifierType NCsDamage::NModifier::IModifier
 
 // Singleton
 #pragma region
@@ -194,7 +223,7 @@ public:
 #pragma region
 protected:
 
-	FCsManager_DamageEvent Manager_Event;
+	EventManagerType Manager_Event;
 
 	/**
 	*
@@ -210,20 +239,20 @@ public:
 	*
 	* return
 	*/
-	FCsResource_DamageEvent* AllocateEvent();
+	EventResourceType* AllocateEvent();
 
-	virtual void DeallocateEvent(const FString& Context, FCsResource_DamageEvent* Event);
+	virtual void DeallocateEvent(const FString& Context, EventResourceType* Event);
 
 	virtual bool CopyEvent(const FString& Context, const EventType* From, EventType* To);
 
-	FCsResource_DamageEvent* CreateCopyOfEvent(const FString& Context, const EventType* Event);
+	EventResourceType* CreateCopyOfEvent(const FString& Context, const EventType* Event);
 
-	FCsResource_DamageEvent* CreateCopyOfEvent(const FString& Context, const FCsResource_DamageEvent* Event);
+	EventResourceType* CreateCopyOfEvent(const FString& Context, const EventResourceType* Event);
 
 private:
 
 	TArray<FCsReceiveDamage> Local_Receivers;
-	TArray<FCsResource_DamageEvent*> Local_Events;
+	TArray<EventResourceType*> Local_Events;
 
 public:
 
@@ -239,7 +268,7 @@ public:
 	*
 	* @param Event
 	*/
-	void ProcessDamageEventContainer(const FCsResource_DamageEvent* Event);
+	void ProcessDamageEventContainer(const EventResourceType* Event);
 
 	/**
 	*
@@ -257,7 +286,7 @@ public:
 #pragma region
 protected:
 
-	TArray<FCsManager_DamageValue> Manager_Values;
+	TArray<ValueManagerType> Manager_Values;
 
 	/**
 	* Constructs an object that implements the interface: NCsDamage::NValue::IValue for the 
@@ -266,7 +295,7 @@ protected:
 	* @param Type
 	* return
 	*/
-	virtual NCsDamage::NValue::IValue* ConstructValue(const FECsDamageValue& Type);
+	virtual ValueType* ConstructValue(const FECsDamageValue& Type);
 
 public:
 
@@ -276,7 +305,7 @@ public:
 	* @param Type
 	* return
 	*/
-	FCsResource_DamageValue* AllocateValue(const FECsDamageValue& Type);
+	ValueResourceType* AllocateValue(const FECsDamageValue& Type);
 
 	/**
 	*
@@ -284,7 +313,7 @@ public:
 	* @param Type
 	* @param Value
 	*/
-	virtual void DeallocateValue(const FString& Context, const FECsDamageValue& Type, FCsResource_DamageValue* Value);
+	virtual void DeallocateValue(const FString& Context, const FECsDamageValue& Type, ValueResourceType* Value);
 
 protected:
 
@@ -294,7 +323,7 @@ protected:
 	* @param Context
 	* @param Value
 	*/
-	virtual void DeallocateValue(const FString& Context, FCsResource_DamageValue* Value);
+	virtual void DeallocateValue(const FString& Context, ValueResourceType* Value);
 
 public:
 
@@ -305,7 +334,7 @@ public:
 	* @param Value
 	* return
 	*/
-	virtual const FECsDamageValue& GetValueType(const FString& Context, const NCsDamage::NValue::IValue* Value);
+	virtual const FECsDamageValue& GetValueType(const FString& Context, const ValueType* Value);
 
 	/**
 	*
@@ -314,7 +343,7 @@ public:
 	* @param Value
 	* return
 	*/
-	virtual FCsResource_DamageValue* CreateCopyOfValue(const FString& Context, const NCsDamage::NValue::IValue* Value);
+	virtual ValueResourceType* CreateCopyOfValue(const FString& Context, const ValueType* Value);
 
 	/**
 	*
@@ -323,7 +352,7 @@ public:
 	* @param Value
 	* return
 	*/
-	virtual FCsResource_DamageValue* CreateCopyOfValue(const FString& Context, const FCsResource_DamageValue* Value);
+	virtual ValueResourceType* CreateCopyOfValue(const FString& Context, const ValueResourceType* Value);
 
 protected:
 
@@ -335,19 +364,19 @@ protected:
 #pragma region
 protected:
 
-	FCsManager_DamageRange Manager_Range;
+	RangeManagerType Manager_Range;
 
 	virtual NCsDamage::NRange::IRange* ConstructRange();
 
 public:
 
-	FCsResource_DamageRange* AllocateRange();
+	RangeResourceType* AllocateRange();
 
-	void DeallocateRange(const FString& Context, FCsResource_DamageRange* Range);
+	void DeallocateRange(const FString& Context, RangeResourceType* Range);
 
-	FCsResource_DamageRange* CreateCopyOfRange(const FString& Context, const NCsDamage::NRange::IRange* Range);
+	RangeResourceType* CreateCopyOfRange(const FString& Context, const RangeType* Range);
 
-	FCsResource_DamageRange* CreateCopyOfRange(const FString& Context, const FCsResource_DamageRange* Range);
+	RangeResourceType* CreateCopyOfRange(const FString& Context, const RangeResourceType* Range);
 
 	/**
 	*
@@ -368,17 +397,17 @@ protected:
 
 public:
 
-	FCsResource_DamageModifier* AllocateModifier();
+	ModifierResourceType* AllocateModifier();
 
-	void DeallocateModifier(const FString& Context, FCsResource_DamageModifier* Modifier);
+	void DeallocateModifier(const FString& Context, ModifierResourceType* Modifier);
 
-	FCsResource_DamageModifier* CreateCopyOfModifier(const FString& Context, const NCsDamage::NModifier::IModifier* Modifier);
+	ModifierResourceType* CreateCopyOfModifier(const FString& Context, const ModifierType* Modifier);
 
-	FCsResource_DamageModifier* CreateCopyOfModifier(const FString& Context, const FCsResource_DamageModifier* Modifier);
+	ModifierResourceType* CreateCopyOfModifier(const FString& Context, const ModifierResourceType* Modifier);
 
-	virtual void ModifyValue(const FString& Context, const NCsDamage::NModifier::IModifier* Modifier, const ICsData_Damage* Data, NCsDamage::NValue::IValue* Value);
+	virtual void ModifyValue(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, ValueType* Value);
 
-	virtual void ModifyRange(const FString& Context, const NCsDamage::NModifier::IModifier* Modifier, const ICsData_Damage* Data, NCsDamage::NRange::IRange* Range);
+	virtual void ModifyRange(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, RangeType* Range);
 
 #pragma endregion Modifier
 
@@ -390,5 +419,19 @@ public:
 
 #pragma endregion Log
 
+#undef EventResourceType
+#undef EventManagerType
 #undef EventType
+
+#undef ValueResourceType
+#undef ValueManagerType
+#undef ValueType
+
+#undef RangeResourceType
+#undef RangeManagerType
+#undef RangeType
+
+#undef ModifierResourceType
+#undef ModifierManagerType
+#undef ModifierType
 };

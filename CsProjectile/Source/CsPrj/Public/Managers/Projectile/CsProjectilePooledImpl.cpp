@@ -409,7 +409,9 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 	// ICsData_ProjectileDamage
 	if (ICsData_ProjectileDamage* DamageData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ICsData_ProjectileDamage>(Context, Data))
 	{
-		const FCsResource_DamageEvent* Event = OnHit_CreateDamageEvent(Hit);
+		typedef NCsDamage::NEvent::FResource DamageEventResourceType;
+
+		const DamageEventResourceType* Event = OnHit_CreateDamageEvent(Hit);
 
 		OnBroadcastDamage_Event.Broadcast(Event->Get());
 		OnBroadcastDamageContainer_Event.Broadcast(Event);
@@ -728,8 +730,11 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(NCsProjectile::NPayload::IPa
 // Damage
 #pragma region
 
-const FCsResource_DamageEvent* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(const FHitResult& HitResult)
+#define DamageEventResourceType NCsDamage::NEvent::FResource
+const DamageEventResourceType* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(const FHitResult& HitResult)
 {
+#undef DamageEventResourceType
+
 	using namespace NCsProjectilePooledImplCached;
 
 	const FString& Context = Str::OnHit_CreateDamageEvent;
@@ -742,7 +747,8 @@ const FCsResource_DamageEvent* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(
 	return OnHit_CreateDamageEvent(HitResult, DamageData);
 }
 
-const FCsResource_DamageEvent* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(const FHitResult& HitResult, ICsData_Damage* DamageData)
+#define DamageEventResourceType NCsDamage::NEvent::FResource
+const DamageEventResourceType* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(const FHitResult& HitResult, ICsData_Damage* DamageData)
 {
 	using namespace NCsProjectilePooledImplCached;
 
@@ -754,7 +760,7 @@ const FCsResource_DamageEvent* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(
 	UCsManager_Damage* Manager_Damage = UCsManager_Damage::Get(ContextRoot);
 
 	// Get Container from Manager_Damage
-	FCsResource_DamageEvent* Container = Manager_Damage->AllocateEvent();
+	DamageEventResourceType* Container = Manager_Damage->AllocateEvent();
 
 		// Event
 	typedef NCsDamage::NEvent::IEvent DamageEventType;
@@ -784,7 +790,9 @@ const FCsResource_DamageEvent* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(
 	}
 
 	// Apply Damage Modifiers
-	for (FCsResource_DamageModifier* Modifier : DamageModifiers)
+	typedef NCsDamage::NModifier::FResource MoidifierResourceType;
+
+	for (MoidifierResourceType* Modifier : DamageModifiers)
 	{
 		Manager_Damage->ModifyValue(Context, Modifier->Get(), DamageData, DamageValue);
 
@@ -802,5 +810,6 @@ const FCsResource_DamageEvent* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(
 
 	return Container;
 }
+#undef DamageEventResourceType
 
 #pragma endregion Damage

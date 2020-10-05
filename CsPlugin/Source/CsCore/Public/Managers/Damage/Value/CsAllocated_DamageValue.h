@@ -3,7 +3,10 @@
 #pragma once
 
 class UObject;
-struct FCsResource_DamageValue;
+
+namespace NCsDamage {
+	namespace NValue {
+		struct FResource; } }
 
 namespace NCsDamage {
 	namespace NValue {
@@ -24,7 +27,7 @@ namespace NCsDamage
 
 			UObject* Root;
 
-			FCsResource_DamageValue* Container;
+			FResource* Container;
 
 			IValue* Value;
 

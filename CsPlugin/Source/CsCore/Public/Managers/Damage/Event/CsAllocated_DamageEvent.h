@@ -2,7 +2,10 @@
 #pragma once
 
 class UObject;
-struct FCsResource_DamageEvent;
+
+namespace NCsDamage {
+	namespace NEvent {
+		struct FResource; } }
 
 namespace NCsDamage {
 	namespace NEvent { 
@@ -23,7 +26,7 @@ namespace NCsDamage
 
 			UObject* Root;
 
-			FCsResource_DamageEvent* Container;
+			FResource* Container;
 
 			IEvent* Event;
 
@@ -39,7 +42,7 @@ namespace NCsDamage
 				return Event;
 			}
 
-			void Set(UObject* InRoot, FCsResource_DamageEvent* InContainer);
+			void Set(UObject* InRoot, FResource* InContainer);
 
 			void CopyFrom(UObject* InRoot, const IEvent* From);
 

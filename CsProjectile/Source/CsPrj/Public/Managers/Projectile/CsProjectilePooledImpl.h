@@ -40,8 +40,14 @@ namespace NCsDamage {
 	namespace NEvent {
 		struct IEvent; } }
 
-struct FCsResource_DamageEvent;
-struct FCsResource_DamageModifier;
+namespace NCsDamage {
+	namespace NEvent {
+		struct FResource; } }
+
+namespace NCsDamage {
+	namespace NModifier {
+		struct FResource; } }
+
 class ICsData_Damage;
 
 UCLASS(Blueprintable)
@@ -52,7 +58,8 @@ class CSPRJ_API ACsProjectilePooledImpl : public AActor,
 {
 	GENERATED_UCLASS_BODY()
 
-protected:
+#define DamageEventResourceType NCsDamage::NEvent::FResource
+#define DamageModifierResourceType NCsDamage::NModifier::FResource
 
 // UObject Interface
 #pragma region
@@ -195,7 +202,7 @@ public:
 #pragma region
 protected:
 
-	TArray<FCsResource_DamageModifier*> DamageModifiers;
+	TArray<DamageModifierResourceType*> DamageModifiers;
 
 public:
 
@@ -210,11 +217,11 @@ public:
 	FOnBroadcastDamage OnBroadcastDamage_Event;
 
 	/**
-	* Event to broadcast a damage event container of type: FCsResource_DamageEvent.
+	* Event to broadcast a damage event container of type: NCsDamage::NDamage::FResource.
 	*
 	* @param Event	DamageEvent Container.
 	*/
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBroadcastDamageContainer, const FCsResource_DamageEvent* /*Event*/);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBroadcastDamageContainer, const DamageEventResourceType* /*Event*/);
 
 	/** */
 	FOnBroadcastDamageContainer OnBroadcastDamageContainer_Event;
@@ -230,9 +237,11 @@ protected:
 	* @param HitResult	The HitResult from a OnComponentHit event
 	* return			DamageEvent
 	*/
-	virtual const FCsResource_DamageEvent* OnHit_CreateDamageEvent(const FHitResult& HitResult);
+	virtual const DamageEventResourceType* OnHit_CreateDamageEvent(const FHitResult& HitResult);
 
-	virtual const FCsResource_DamageEvent* OnHit_CreateDamageEvent(const FHitResult& HitResult, ICsData_Damage* DamageData);
+	virtual const DamageEventResourceType* OnHit_CreateDamageEvent(const FHitResult& HitResult, ICsData_Damage* DamageData);
 
 #pragma endregion Damage
+
+#undef DamageEventResourceType
 };

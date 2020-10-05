@@ -3,10 +3,24 @@
 #include "Event/CsStatusEffectEvent.h"
 #pragma once
 
-struct CSSE_API FCsResource_StatusEffectEvent : public TCsResourceContainer<NCsStatusEffect::NEvent::IEvent>
+namespace NCsStatusEffect
 {
-};
+	namespace NEvent
+	{
+		/**
+		* Container for holding a reference to an object that implements the interface: NCsStatusEffect::NEvent::IEvent.
+		* This serves as an easy way for a Manager Resource to keep track of the resource.
+		*/
+		struct CSSE_API FResource : public TCsResourceContainer<IEvent>
+		{
+		};
 
-struct CSSE_API FCsManager_StatusEffectEvent : public TCsManager_ResourcePointerType_Fixed<NCsStatusEffect::NEvent::IEvent, FCsResource_StatusEffectEvent, 0>
-{
-};
+		/**
+		* A manager handling allocating and deallocating objects that implement the interface: NCsStatusEffect::NEvent::IEvent and
+		* are wrapped in the container: NCsStatusEffect::NEvent::FResource.
+		*/
+		struct CSSE_API FManager : public TCsManager_ResourcePointerType_Fixed<IEvent, FResource, 0>
+		{
+		};
+	}
+}

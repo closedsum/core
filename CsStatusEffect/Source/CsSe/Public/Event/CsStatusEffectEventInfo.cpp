@@ -10,54 +10,57 @@ namespace NCsStatusEffect
 {
 	namespace NEvent
 	{
-		FInfo::FInfo() :
-			Event(nullptr),
-			Container(nullptr),
-			FrequencyInfo(),
-			TotalTime(0.0f),
-			ElapsedTotalTime(),
-			bDelayComplete(false),
-			ElapsedDelayTime(),
-			ElapsedIntervalTime(),
-			Count(0)
+		namespace NInfo
 		{
-		}
+			FImpl::FImpl() :
+				Event(nullptr),
+				Container(nullptr),
+				FrequencyInfo(),
+				TotalTime(0.0f),
+				ElapsedTotalTime(),
+				bDelayComplete(false),
+				ElapsedDelayTime(),
+				ElapsedIntervalTime(),
+				Count(0)
+			{
+			}
 
-		void FInfo::SetEvent(FCsResource_StatusEffectEvent* InEvent)
-		{
-			Container = InEvent;
-			Event	  = Container->Get();
+			void FImpl::SetEvent(EventResourceType* InEvent)
+			{
+				Container = InEvent;
+				Event = Container->Get();
 
-			ICsData_StatusEffect* Data = Event->GetData();
+				ICsData_StatusEffect* Data = Event->GetData();
 
-			FrequencyInfo.SetData(Data);
-		}
+				FrequencyInfo.SetData(Data);
+			}
 
-		bool FInfo::CanApply() const
-		{
-			return FrequencyInfo.CanApply();
-		}
+			bool FImpl::CanApply() const
+			{
+				return FrequencyInfo.CanApply();
+			}
 
-		void FInfo::Increment()
-		{
-			FrequencyInfo.Increment();
-		}
+			void FImpl::Increment()
+			{
+				FrequencyInfo.Increment();
+			}
 
-		bool FInfo::IsComplete() const
-		{
-			return FrequencyInfo.IsComplete();
-		}
+			bool FImpl::IsComplete() const
+			{
+				return FrequencyInfo.IsComplete();
+			}
 
-		void FInfo::Update(const FCsDeltaTime& DeltaTime)
-		{
-			FrequencyInfo.Update(DeltaTime);
-		}
+			void FImpl::Update(const FCsDeltaTime& DeltaTime)
+			{
+				FrequencyInfo.Update(DeltaTime);
+			}
 
-		void FInfo::Reset()
-		{
-			Event = nullptr;
-			Container = nullptr;
-			FrequencyInfo.Reset();
+			void FImpl::Reset()
+			{
+				Event = nullptr;
+				Container = nullptr;
+				FrequencyInfo.Reset();
+			}
 		}
 	}
 }

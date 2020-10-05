@@ -7,54 +7,64 @@ namespace NCsStatusEffect {
 	namespace NEvent {
 		struct IEvent; } }
 
-struct FCsResource_StatusEffectEvent;
+namespace NCsStatusEffect {
+	namespace NEvent {
+		struct FResource; } }
+
 class ICsStatusEffect;
 
 namespace NCsStatusEffect
 {
 	namespace NEvent
 	{
-		/**
-		*/
-		struct CSSE_API FInfo
+		namespace NInfo
 		{
-		public:
+			/**
+			*/
+			struct CSSE_API FImpl
+			{
+			private:
 
-			IEvent* Event;
+				typedef NCsStatusEffect::NEvent::FResource EventResourceType;
 
-			FCsResource_StatusEffectEvent* Container;
+			public:
 
-			FCsStatusEffectTriggerFrequencyInfo FrequencyInfo;
+				IEvent* Event;
 
-			float TotalTime;
+				EventResourceType* Container;
 
-			FCsDeltaTime ElapsedTotalTime;
+				FCsStatusEffectTriggerFrequencyInfo FrequencyInfo;
 
-			bool bDelayComplete;
+				float TotalTime;
 
-			FCsDeltaTime ElapsedDelayTime;
+				FCsDeltaTime ElapsedTotalTime;
 
-			FCsDeltaTime ElapsedIntervalTime;
+				bool bDelayComplete;
 
-			int32 Count;
+				FCsDeltaTime ElapsedDelayTime;
 
-		public:
+				FCsDeltaTime ElapsedIntervalTime;
 
-			FInfo();
+				int32 Count;
 
-		public:
+			public:
 
-			void SetEvent(FCsResource_StatusEffectEvent* InEvent);
+				FImpl();
 
-			bool CanApply() const;
+			public:
 
-			void Increment();
+				void SetEvent(EventResourceType* InEvent);
 
-			bool IsComplete() const;
+				bool CanApply() const;
 
-			void Update(const FCsDeltaTime& DeltaTime);
+				void Increment();
 
-			void Reset();
-		};
+				bool IsComplete() const;
+
+				void Update(const FCsDeltaTime& DeltaTime);
+
+				void Reset();
+			};
+		}
 	}
 }

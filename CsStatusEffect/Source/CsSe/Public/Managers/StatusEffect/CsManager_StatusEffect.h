@@ -10,15 +10,32 @@
 // Structs
 #pragma region
 
-	// StatusEffectEventInfo
+	// NCsStatuseffect::NEvent::NInfo::FImpl
 
-struct CSSE_API FCsResource_StatusEffectEventInfo : public TCsResourceContainer<NCsStatusEffect::NEvent::FInfo>
+namespace NCsStatusEffect
 {
-};
+	namespace NEvent
+	{
+		namespace NInfo
+		{
+			/**
+			* Container for holding a reference to an object of type: NCsDamage::NEvent::NInfo::FImpl.
+			* This serves as an easy way for a Manager Resource to keep track of the resource.
+			*/
+			struct CSSE_API FResource : public TCsResourceContainer<FImpl>
+			{
+			};
 
-struct CSSE_API FCsManager_StatusEffectEventInfo : public TCsManager_ResourceValueType_Fixed<NCsStatusEffect::NEvent::FInfo, FCsResource_StatusEffectEventInfo, 0>
-{
-};
+			/**
+			* A manager handling allocating and deallocating objects of type: NCsDamage::NEvent::NInfo::FImpl and
+			* are wrapped in the container: NCsDamage::NEvent::FResource.
+			*/
+			struct CSSE_API FManager : public TCsManager_ResourceValueType_Fixed<FImpl, FResource, 0>
+			{
+			};
+		}
+	}
+}
 
 #pragma endregion Structs
 
@@ -26,7 +43,9 @@ namespace NCsStatusEffect {
 	namespace NEvent {
 		struct IEvent; } }
 
-struct FCsResource_StatusEffectEvent;
+namespace NCsStatusEffect {
+	namespace NEvent {
+		struct FResource; } }
 
 UCLASS()
 class CSSE_API UCsManager_StatusEffect : public UObject
@@ -34,6 +53,9 @@ class CSSE_API UCsManager_StatusEffect : public UObject
 	GENERATED_UCLASS_BODY()
 
 #define EventType NCsStatusEffect::NEvent::IEvent
+#define EventResourceType NCsStatusEffect::NEvent::FResource
+
+#define EventInfoManagerType NCsStatusEffect::NEvent::NInfo::FManager
 
 public:
 
@@ -64,13 +86,16 @@ public:
 
 private:
 
-	FCsManager_StatusEffectEventInfo Manager_Event;
+	EventInfoManagerType Manager_Event;
 
 public:
 
-	void ApplyStatusEffect(FCsResource_StatusEffectEvent* Event);
+	void ApplyStatusEffect(EventResourceType* Event);
 
 	void ApplyStatusEffect(EventType* Event);
 
 #undef EventType
+#undef EventResourceType
+
+#undef EventInfoManagerType
 };

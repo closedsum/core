@@ -15,6 +15,10 @@ class CSSE_API UCsCoordinator_StatusEffect : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+#define EventType NCsStatusEffect::NEvent::IEvent
+#define EventResourceType NCsStatusEffect::NEvent::FResource
+#define EventManagerType NCsStatusEffect::NEvent::FManager
+
 // Singleton
 #pragma region
 public:
@@ -104,7 +108,7 @@ public:
 #pragma region
 protected:
 
-	TArray<FCsManager_StatusEffectEvent> Manager_Events;
+	TArray<EventManagerType> Manager_Events;
 
 	virtual NCsStatusEffect::NEvent::IEvent* ConstructEvent(const FECsStatusEffectEvent& Type);
 
@@ -115,7 +119,7 @@ public:
 	*
 	* return
 	*/
-	FCsResource_StatusEffectEvent* AllocateEvent(const FECsStatusEffectEvent& Type);
+	EventResourceType* AllocateEvent(const FECsStatusEffectEvent& Type);
 
 	/**
 	* Get the type (interface) of the Event.
@@ -133,7 +137,7 @@ public:
 	* @param Event		Container for event of type: NCsStatusEffect::NEvent::IEvent.
 	* return			Type of StatusEffectEvent.
 	*/
-	virtual const FECsStatusEffectEvent& GetEventType(const FString& Context, const FCsResource_StatusEffectEvent* Event);
+	virtual const FECsStatusEffectEvent& GetEventType(const FString& Context, const EventResourceType* Event);
 
 	/**
 	*
@@ -141,18 +145,18 @@ public:
 	* @param Context	The calling context.
 	* @param Event
 	*/
-	void DeallocateEvent(const FString& Context, FCsResource_StatusEffectEvent* Event);
+	void DeallocateEvent(const FString& Context, EventResourceType* Event);
 
-	virtual bool CopyEvent(const FString& Context, const NCsStatusEffect::NEvent::IEvent* From, NCsStatusEffect::NEvent::IEvent* To);
+	virtual bool CopyEvent(const FString& Context, const EventType* From, EventType* To);
 
-	FCsResource_StatusEffectEvent* CreateCopyOfEvent(const FString& Context, const NCsStatusEffect::NEvent::IEvent* Event);
+	EventResourceType* CreateCopyOfEvent(const FString& Context, const EventType* Event);
 
-	FCsResource_StatusEffectEvent* CreateCopyOfEvent(const FString& Context, const FCsResource_StatusEffectEvent* Event);
+	EventResourceType* CreateCopyOfEvent(const FString& Context, const EventResourceType* Event);
 
 private:
 
 	TArray<FCsReceiveStatusEffect> Local_Receivers;
-	TArray<FCsResource_StatusEffectEvent*> Local_Events;
+	TArray<EventResourceType*> Local_Events;
 
 public:
 
@@ -161,21 +165,21 @@ public:
 	*
 	* @param Event	Event of type: NCsStatusEffect::NEvent::IEvent.
 	*/
-	void ProcessStatusEffectEvent(const NCsStatusEffect::NEvent::IEvent* Event);
+	void ProcessStatusEffectEvent(const EventType* Event);
 
 	/**
 	* Process the Event
 	*
 	* @param Event	Container for event of type: NCsStatusEffect::NEvent::IEvent.
 	*/
-	void ProcessStatusEffectEventContainer(const FCsResource_StatusEffectEvent* Event);
+	void ProcessStatusEffectEventContainer(const EventResourceType* Event);
 
 	/**
 	*
 	*
 	* @param Event
 	*/
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnEvent, const NCsStatusEffect::NEvent::IEvent* /*Event*/);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnEvent, const EventType* /*Event*/);
 
 	/** */
 	FOnEvent OnEvent_Event;
@@ -189,4 +193,8 @@ public:
 	//void LogEventPoint(const NCsStatusEffect::NEvent::IEvent* Event);
 
 #pragma endregion Log
+
+#undef EventType
+#undef EventResourceType
+#undef EventManagerType
 };

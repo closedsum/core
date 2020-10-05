@@ -48,21 +48,24 @@ void UCsManager_StatusEffect::Shutdown(UObject* InRoot)
 	UWorld* World			  = Object ? Object->GetWorld() : nullptr;
 	AGameStateBase* GameState = World ? World->GetGameState() : nullptr;
 	
+	typedef NCsStatusEffect::NEvent::NInfo::FResource EventInfoResourceType;
+	typedef NCsStatusEffect::NEvent::NInfo::FImpl EventInfoType;
+
 	if (GameState &&
 		UCsCoordinator_StatusEffect::IsValid(GameState))
 	{
 		UCsCoordinator_StatusEffect* StatusEffectCoordinator = UCsCoordinator_StatusEffect::Get(GameState);
 
-		TCsDoubleLinkedList<FCsResource_StatusEffectEventInfo*>* Current = Manager_Event.GetAllocatedHead();
-		TCsDoubleLinkedList<FCsResource_StatusEffectEventInfo*>* Next	 = Current;
+		TCsDoubleLinkedList<EventInfoResourceType*>* Current = Manager_Event.GetAllocatedHead();
+		TCsDoubleLinkedList<EventInfoResourceType*>* Next	 = Current;
 
 		while (Next)
 		{
 			Current										 = Next;
-			FCsResource_StatusEffectEventInfo* Container = **Current;
+			EventInfoResourceType* Container = **Current;
 			Next										 = Current->GetNextLink();
 
-			NCsStatusEffect::NEvent::FInfo* Info = Container->Get();
+			EventInfoType* Info = Container->Get();
 
 			if (Info->Container)
 			{
@@ -84,16 +87,19 @@ void UCsManager_StatusEffect::SetMyRoot(UObject* InRoot)
 
 void UCsManager_StatusEffect::Update(const FCsDeltaTime& DeltaTime)
 {
-	TCsDoubleLinkedList<FCsResource_StatusEffectEventInfo*>* Current = Manager_Event.GetAllocatedHead();
-	TCsDoubleLinkedList<FCsResource_StatusEffectEventInfo*>* Next	 = Current;
+	typedef NCsStatusEffect::NEvent::NInfo::FResource EventInfoResourceType;
+	typedef NCsStatusEffect::NEvent::NInfo::FImpl EventInfoType;
+
+	TCsDoubleLinkedList<EventInfoResourceType*>* Current = Manager_Event.GetAllocatedHead();
+	TCsDoubleLinkedList<EventInfoResourceType*>* Next	 = Current;
 
 	while (Next)
 	{
 		Current										 = Next;
-		FCsResource_StatusEffectEventInfo* Container = **Current;
+		EventInfoResourceType* Container = **Current;
 		Next										 = Current->GetNextLink();
 
-		NCsStatusEffect::NEvent::FInfo* Info = Container->Get();
+		EventInfoType* Info = Container->Get();
 
 		// Check Apply Status Effect
 		if (Info->CanApply())
@@ -117,14 +123,20 @@ void UCsManager_StatusEffect::Update(const FCsDeltaTime& DeltaTime)
 	}
 }
 
-void UCsManager_StatusEffect::ApplyStatusEffect(FCsResource_StatusEffectEvent* Event)
+#define EventResourceType NCsStatusEffect::NEvent::FResource
+void UCsManager_StatusEffect::ApplyStatusEffect(EventResourceType* Event)
 {
+#undef EventResourceType
+
 	checkf(Event, TEXT("UCsManager_StatusEffect::ApplyStatusEffect::Event is NULL."));
+
+	typedef NCsStatusEffect::NEvent::NInfo::FResource EventInfoResourceType;
+	typedef NCsStatusEffect::NEvent::NInfo::FImpl EventInfoType;
 
 	// TODO: Need to create a copy
 
-	FCsResource_StatusEffectEventInfo* EventInfoContainer = Manager_Event.Allocate();
-	NCsStatusEffect::NEvent::FInfo* EventInfo			  = EventInfoContainer->Get();
+	EventInfoResourceType* EventInfoContainer = Manager_Event.Allocate();
+	EventInfoType* EventInfo				  = EventInfoContainer->Get();
 
 	EventInfo->SetEvent(Event);
 }

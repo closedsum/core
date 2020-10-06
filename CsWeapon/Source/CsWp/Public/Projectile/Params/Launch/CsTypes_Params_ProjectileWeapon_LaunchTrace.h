@@ -27,7 +27,7 @@ enum class ECsProjectileWeaponLaunchTraceStart : uint8
 	/** Owner's Camera's Location. */
 	Camera									UMETA(DisplayName = "Camera"),
 	Custom									UMETA(DisplayName = "Custom"),
-	ECsProjectileWeaponLaunchTraceStart_MAX	UMETA(Hidden),
+	ECsProjectileWeaponLaunchTraceStart_MAX	UMETA(Hidden), 
 };
 
 
@@ -45,7 +45,9 @@ namespace NCsProjectileWeaponLaunchTraceStart
 		extern CSWP_API const Type LaunchLocation;
 		extern CSWP_API const Type Owner;
 		extern CSWP_API const Type Bone;
+		extern CSWP_API const Type Component;
 		extern CSWP_API const Type Camera;
+		extern CSWP_API const Type Custom;
 		extern CSWP_API const Type ECsProjectileWeaponLaunchTraceStart_MAX;
 	}
 

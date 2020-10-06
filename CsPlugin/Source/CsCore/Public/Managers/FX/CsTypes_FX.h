@@ -465,6 +465,31 @@ public:
 	{
 		return FX_Internal;
 	}
+
+	/**
+	* Get the Hard reference to the FX System.
+	*
+	* @param Context	The calling context.
+	* return			FX System
+	*/
+	FORCEINLINE UNiagaraSystem* GetChecked(const FString& Context) const
+	{
+		checkf(FX_Internal, TEXT("%s: FX_Internal is NULL."), *Context);
+
+		return FX_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the FX System.
+	*
+	* return FX System
+	*/
+	FORCEINLINE UNiagaraSystem* GetChecked() const
+	{
+		checkf(FX_Internal, TEXT("FCsFX::GetChecked: FX_Internal is NULL."));
+
+		return FX_Internal;
+	}
 };
 
 #pragma endregion FCsFX

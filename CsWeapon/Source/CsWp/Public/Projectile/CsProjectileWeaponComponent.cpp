@@ -13,6 +13,7 @@
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Data/CsLibrary_Data_Projectile.h"
 #include "Managers/Sound/Payload/CsLibrary_Payload_Sound.h"
+#include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 #include "Projectile/Params/Launch/CsLibrary_Params_ProjectileWeapon_Launch.h"
 #include "Library/CsLibrary_Camera.h"
 // Settings
@@ -22,11 +23,13 @@
 #include "Managers/Weapon/CsManager_Weapon.h"
 #include "Managers/Projectile/CsManager_Projectile.h"
 #include "Managers/Sound/CsManager_Sound.h"
+#include "Managers/FX/Actor/CsManager_FX_Actor.h"
 #include "Managers/Trace/CsManager_Trace.h"
 // Data
 #include "Data/CsData_Weapon.h"
 #include "Projectile/Data/CsData_ProjectileWeapon.h"
 #include "Projectile/Data/CsData_ProjectileWeaponSound.h"
+#include "Projectile/Data/Visual/CsData_ProjectileWeapon_VisualFire.h"
 #include "Data/CsData_Projectile.h"
 #include "Data/CsData_ProjectileCollision.h"
 // Containers
@@ -39,50 +42,63 @@
 #include "Managers/Projectile/CsProjectilePooledImpl.h"
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
+// FX
+#include "Managers/FX/Payload/CsPayload_FXImpl.h"
 // Params
 #include "Projectile/Params/Launch/CsParams_ProjectileWeapon_LaunchTrace.h"
 
 // Cached 
 #pragma region
 
-namespace NCsProjectileWeaponComponentCached
+namespace NCsProjectileWeaponComponent
 {
-	namespace Str
-	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, Init);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, OnUpdate_HandleStates);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, CanFire);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, Fire);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, Fire_Internal);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, FireProjectile);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, SetProjectilePayload);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, LaunchProjectile);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, PlayFireSound);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, SetSoundPooledPayload);
-	}
-
-	namespace Name
-	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsProjectileWeaponComponent, Fire_Internal);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsProjectileWeaponComponent, Abort_Fire_Internal);
-	}
-
-	namespace ProjectileImpl
+	namespace NCached
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FProjectileImpl, GetLaunchLocation);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FProjectileImpl, GetLaunchDirection);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FProjectileImpl, StartLaunch);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FProjectileImpl, Launch);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, Init);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, OnUpdate_HandleStates);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, CanFire);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, Fire);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, Fire_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, FireProjectile);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, SetProjectilePayload);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, LaunchProjectile);
 		}
-	}
 
-	namespace SoundImpl
-	{
-		namespace Str
+		namespace Name
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsProjectileWeaponComponent, Fire_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsProjectileWeaponComponent, Abort_Fire_Internal);
+		}
 
+		namespace ProjectileImpl
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FProjectileImpl, GetLaunchLocation);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FProjectileImpl, GetLaunchDirection);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FProjectileImpl, StartLaunch);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FProjectileImpl, Launch);
+			}
+		}
+
+		namespace SoundImpl
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FSoundImpl, Play);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FSoundImpl, SetPayload);
+			}
+		}
+
+		namespace FXImpl
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FFXImpl, Play);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FFXImpl, SetPayload);
+			}
 		}
 	}
 }
@@ -149,6 +165,9 @@ void UCsProjectileWeaponComponent::BeginPlay()
 
 	SoundImpl = ConstructSoundImpl();
 	SoundImpl->Weapon = this;
+
+	FXImpl = ConstructFXImpl();
+	FXImpl->Weapon = this;
 }
 
 #pragma endregion UActorComponent Interface
@@ -210,7 +229,7 @@ void UCsProjectileWeaponComponent::StopFire()
 
 void UCsProjectileWeaponComponent::Init()
 {
-	using namespace NCsProjectileWeaponComponentCached;
+	using namespace NCsProjectileWeaponComponent::NCached;
 
 	const FString& Context = Str::Init;
 
@@ -251,7 +270,7 @@ void UCsProjectileWeaponComponent::Init()
 
 void UCsProjectileWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTime)
 {
-	using namespace NCsProjectileWeaponComponentCached;
+	using namespace NCsProjectileWeaponComponent::NCached;
 
 	const FString& Context = Str::OnUpdate_HandleStates;
 
@@ -328,7 +347,7 @@ void UCsProjectileWeaponComponent::ConsumeAmmo()
 
 bool UCsProjectileWeaponComponent::CanFire() const
 {
-	using namespace NCsProjectileWeaponComponentCached;
+	using namespace NCsProjectileWeaponComponent::NCached;
 
 	const FString& Context = Str::CanFire;
 	
@@ -370,7 +389,7 @@ bool UCsProjectileWeaponComponent::CanFire() const
 
 void UCsProjectileWeaponComponent::Fire()
 {
-	using namespace NCsProjectileWeaponComponentCached;
+	using namespace NCsProjectileWeaponComponent::NCached;
 
 	const FString& Context = Str::Fire;
 
@@ -425,6 +444,7 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 
 			ProjectileImpl->StartLaunch();
 			SoundImpl->Play();
+			FXImpl->Play();
 
 			// Increment the shot index
 			CurrentProjectilePerShotIndex = FMath::Min(CurrentProjectilePerShotIndex + 1, PrjData->GetProjectilesPerShot());
@@ -507,7 +527,7 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::CopyPayload(const FString& C
 
 FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 {
-	using namespace NCsProjectileWeaponComponentCached::ProjectileImpl;
+	using namespace NCsProjectileWeaponComponent::NCached::ProjectileImpl;
 
 	const FString& Context = Str::GetLaunchLocation;
 
@@ -556,7 +576,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 
 FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 {
-	using namespace NCsProjectileWeaponComponentCached::ProjectileImpl;
+	using namespace NCsProjectileWeaponComponent::NCached::ProjectileImpl;
 
 	const FString& Context = Str::GetLaunchDirection;
 
@@ -765,7 +785,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 
 void UCsProjectileWeaponComponent::FProjectileImpl::StartLaunch()
 {
-	using namespace NCsProjectileWeaponComponentCached::ProjectileImpl;
+	using namespace NCsProjectileWeaponComponent::NCached::ProjectileImpl;
 
 	const FString& Context = Str::StartLaunch;
 
@@ -804,7 +824,7 @@ void UCsProjectileWeaponComponent::FProjectileImpl::Launch(const FCsProjectilePo
 {
 #undef ProjectilePayloadType
 
-	using namespace NCsProjectileWeaponComponentCached::ProjectileImpl;
+	using namespace NCsProjectileWeaponComponent::NCached::ProjectileImpl;
 
 	const FString& Context = Str::Launch;
 
@@ -834,16 +854,16 @@ UCsProjectileWeaponComponent::FProjectileImpl* UCsProjectileWeaponComponent::Con
 
 void UCsProjectileWeaponComponent::FSoundImpl::Play()
 {
-	using namespace NCsProjectileWeaponComponentCached;
+	using namespace NCsProjectileWeaponComponent::NCached::SoundImpl;
 
-	const FString& Context = Str::PlayFireSound;
+	const FString& Context = Str::Play;
 
 	// ICsData_ProjectileWeaponSound
 	if (ICsData_ProjectileWeaponSound* SoundData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<ICsData_ProjectileWeaponSound>(Context, Weapon->GetData()))
 	{
 		const FCsSound& Sound = SoundData->GetFireSound();
 
-		if (USoundBase* SoundAsset = Sound.Get())
+		if (USoundBase* SoundAsset = Sound.GetChecked(Context))
 		{
 			// Get Manager
 			UCsManager_Sound* Manager_Sound = UCsManager_Sound::Get(Weapon->GetWorld()->GetGameState());
@@ -868,9 +888,9 @@ void UCsProjectileWeaponComponent::FSoundImpl::SetPayload(SoundPayloadType* Payl
 {
 #undef SoundPayloadType
 
-	using namespace NCsProjectileWeaponComponentCached;
+	using namespace NCsProjectileWeaponComponent::NCached::SoundImpl;
 
-	const FString& Context = Str::SetSoundPooledPayload;
+	const FString& Context = Str::SetPayload;
 
 	typedef NCsSound::NPayload::FImpl PayloadImplType;
 
@@ -878,7 +898,7 @@ void UCsProjectileWeaponComponent::FSoundImpl::SetPayload(SoundPayloadType* Payl
 
 	PayloadImpl->Instigator					= Weapon;
 	PayloadImpl->Owner						= Weapon->GetMyOwner();
-	PayloadImpl->Sound						= Sound.Get();
+	PayloadImpl->Sound						= Sound.GetChecked(Context);
 	PayloadImpl->SoundAttenuation			= Sound.GetAttenuation();
 	PayloadImpl->DeallocateMethod			= Sound.DeallocateMethod;
 	PayloadImpl->LifeTime					= Sound.LifeTime;
@@ -894,6 +914,109 @@ UCsProjectileWeaponComponent::FSoundImpl* UCsProjectileWeaponComponent::Construc
 }
 
 #pragma endregion Sound
+
+	// FX
+#pragma region
+
+void UCsProjectileWeaponComponent::FFXImpl::Play()
+{
+	using namespace NCsProjectileWeaponComponent::NCached::FXImpl;
+
+	const FString& Context = Str::Play;
+
+	// ICsData_ProjectileWeaponVisualFire
+	if (ICsData_ProjectileWeaponVisualFire* FXData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<ICsData_ProjectileWeaponVisualFire>(Context, Weapon->GetData()))
+	{
+		typedef NCsWeapon::NProjectile::NData::NVisual::NFire::FParams ParamsType;
+
+		const ParamsType& Params = FXData->GetFireFXParams();
+		const FCsFX& FX			 = Params.GetFX();
+
+		if (UNiagaraSystem* FXAsset = FX.GetChecked(Context))
+		{
+			// Get Manager
+			UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(Weapon->GetWorld()->GetGameState());
+			// Allocate payload
+			typedef NCsFX::NPayload::IPayload PayloadType;
+
+			PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
+			// Set appropriate values on payload
+			SetPayload(Payload, FX);
+
+			Manager_FX->Spawn(FX.Type, Payload);
+		}
+		else
+		{
+
+		}
+	}
+}
+
+#define FXPayloadType NCsFX::NPayload::IPayload
+void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, const FCsFX& FX)
+{
+#undef FXPayloadType
+
+	using namespace NCsProjectileWeaponComponent::NCached::FXImpl;
+
+	const FString& Context = Str::SetPayload;
+
+	typedef NCsFX::NPayload::FImpl PayloadImplType;
+
+	PayloadImplType* PayloadImpl = FCsLibrary_Payload_FX::PureStaticCastChecked<PayloadImplType>(Context, Payload);
+
+	PayloadImpl->Instigator					= Weapon;
+	PayloadImpl->Owner						= Weapon->GetMyOwner();
+	PayloadImpl->FXSystem					= FX.GetChecked(Context);
+	PayloadImpl->DeallocateMethod			= FX.DeallocateMethod;
+	PayloadImpl->LifeTime					= FX.LifeTime;
+	PayloadImpl->AttachmentTransformRules	= FX.AttachmentTransformRules;
+	PayloadImpl->Bone						= FX.Bone;
+	PayloadImpl->TransformRules				= FX.TransformRules;
+	PayloadImpl->Transform					= FX.Transform;
+
+	typedef ICsData_ProjectileWeaponVisualFire FXDataType;
+
+	FXDataType* FXData = FCsLibrary_Data_Weapon::GetInterfaceChecked<FXDataType>(Context, Weapon->GetData());
+
+	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::FParams ParamsType;
+
+	const ParamsType& Params = FXData->GetFireFXParams();
+
+	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::EAttach AttachType;
+
+	const AttachType& Type = Params.GetAttachType();
+
+	// None
+	if (Type == AttachType::None)
+	{
+		// Do Nothing
+	}
+	// Owner
+	else
+	if (Type == AttachType::Owner)
+	{
+		PayloadImpl->Parent = Weapon->GetMyOwner();
+	}
+	// Component
+	else
+	if (Type == AttachType::Component)
+	{
+		PayloadImpl->Parent = Component;
+	}
+	// Custom
+	else
+	{
+		checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."));
+	}
+}
+
+UCsProjectileWeaponComponent::FFXImpl* UCsProjectileWeaponComponent::ConstructFXImpl()
+{
+	return new UCsProjectileWeaponComponent::FFXImpl();
+}
+
+#pragma endregion FX
 
 #pragma endregion Fire
 

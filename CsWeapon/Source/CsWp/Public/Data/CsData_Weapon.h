@@ -19,3 +19,16 @@ public:
 
 	static const FName Name;
 };
+
+namespace NCsWeapon
+{
+	namespace NData
+	{
+		struct CSWP_API IData : public ICsGetInterfaceMap
+		{
+		public:
+
+			static const FName Name;
+		};
+	}
+}

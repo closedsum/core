@@ -211,6 +211,159 @@ public:
  
 #pragma endregion FCsStatusEffectTriggerFrequencyParams
 
+namespace NCsStatusEffect
+{
+	namespace NTrigger
+	{
+		// Frequency
+		#pragma region
+
+		/**
+		* The frequency the status effect will occur once triggered.
+		*/
+		enum class EFrequency : uint8 
+		{
+			Once,
+			Count,
+			Time,
+			Infinite,
+			EFrequency_MAX
+		};
+
+		struct CSSE_API EMFrequency : public TCsEnumMap<EFrequency>
+		{
+			CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMFrequency, EFrequency)
+		};
+
+		namespace NFrequency
+		{
+			typedef EFrequency Type;
+
+			namespace Ref
+			{
+				extern CSSE_API const Type None;
+				extern CSSE_API const Type Once;
+				extern CSSE_API const Type Count;
+				extern CSSE_API const Type Time;
+				extern CSSE_API const Type Infinite;
+				extern CSSE_API const Type EFrequency_MAX;
+			}
+
+			extern CSSE_API const uint8 MAX;
+		}
+
+		#pragma endregion Frequency
+
+		struct CSSE_API FFrequencyParams
+		{
+		public:
+
+			/** Trigger Frequency
+				If Type == EFrequency::Once,
+				 Ignore Count and Interval.
+				If Type == EFrequency::Count,
+				 Count should be > 0, if NOT, it will be treated
+				 as EFrequency::Once.
+				if Type == EFrequency::Time, 
+				If Type == EFrequency::Infinite,
+				 Ignore Count and Interval should be > 0.0f. */
+				EFrequency Type;
+
+			/** The delay before applying the status effect when triggered.
+				If Delay == 0.0f, the status effect will be applied at a given interval.
+				If Delay == 0.0f and Interval == 0.0f, the status will be applied immediately. */
+			float Delay;
+
+			/** The number of times to apply the status effect when triggered.
+				Only valid if Type == EFrequency::Count.
+				Should be > 0. */
+			int32 Count;
+
+			/** The time between each status effect being applied when triggered.
+				Only valid if,
+				Type == EFrequency::Count
+				 or
+				Type == EFrequency::Infinite */
+			float Interval;
+
+			float Time;
+
+			FFrequencyParams() :
+				Type(EFrequency::Once),
+				Delay(0.0f),
+				Count(0),
+				Interval(0.0f),
+				Time(0.0f)
+			{
+			}
+		};
+	}
+
+	namespace NTransfer
+	{
+		// Frequency
+		#pragma region
+
+		enum class EFrequency : uint8
+		{
+			None,
+			Once,
+			Count,
+			Time,
+			Infinite,
+			EFrequency_MAX
+		};
+
+		struct CSSE_API EMFrequency : public TCsEnumMap<EFrequency>
+		{
+			CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMFrequency, EFrequency)
+		};
+
+		namespace NFrequency
+		{
+			typedef EFrequency Type;
+
+			namespace Ref
+			{
+				extern CSSE_API const Type None;
+				extern CSSE_API const Type Once;
+				extern CSSE_API const Type Count;
+				extern CSSE_API const Type Time;
+				extern CSSE_API const Type Infinite;
+				extern CSSE_API const Type EFrequency_MAX;
+			}
+
+			extern CSSE_API const uint8 MAX;
+		}
+
+		#pragma endregion Frequency
+
+		/**
+		* Parameters describing the transfer frequency.
+		*/
+		struct CSSE_API FFrequencyParams
+		{
+		public:
+
+			/** */
+			EFrequency Type;
+
+			/** */
+			int32 Count;
+
+			/** */
+			float Time;
+
+			FFrequencyParams() :
+				Type(EFrequency::Once),
+				Count(0),
+				Time(0.0f)
+			{
+			}
+		};
+	}
+}
+
 // StatusEffectEvent
 #pragma region
 

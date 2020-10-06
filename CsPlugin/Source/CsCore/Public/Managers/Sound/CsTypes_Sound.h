@@ -439,6 +439,31 @@ public:
 	}
 
 	/**
+	* Get the Hard reference to the Sound Asset.
+	*
+	* @param Context	The calling context.
+	* return			Sound Asset
+	*/
+	FORCEINLINE USoundBase* GetChecked(const FString& Context) const
+	{
+		checkf(Sound_Internal, TEXT("%s: Sound_Internal is NULL."), *Context);
+
+		return Sound_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the Sound Asset.
+	*
+	* return Sound Asset
+	*/
+	FORCEINLINE USoundBase* GetChecked() const
+	{
+		checkf(Sound_Internal, TEXT("FCsSound::GetChecked: Sound_Internal is NULL."));
+
+		return Sound_Internal;
+	}
+
+	/**
 	* Get the Hard reference to the Sound Attenuation Asset.
 	*
 	* return Sound Attenuation Asset

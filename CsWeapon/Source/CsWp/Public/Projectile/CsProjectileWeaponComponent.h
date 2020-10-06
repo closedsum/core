@@ -8,6 +8,7 @@
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Managers/Projectile/CsTypes_Projectile.h"
 #include "Managers/Sound/CsTypes_Sound.h"
+#include "Managers/FX/CsTypes_FX.h"
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 
 #include "CsProjectileWeaponComponent.generated.h"
@@ -31,6 +32,10 @@ namespace NCsSound {
 	namespace NPayload {
 		struct IPayload; } }
 
+namespace NCsFX {
+	namespace NPayload {
+		struct IPayload; } }
+
 struct FCsProjectilePooled;
 
 class USceneComponent;
@@ -45,6 +50,7 @@ class CSWP_API UCsProjectileWeaponComponent : public UActorComponent,
 
 #define ProjectilePayloadType NCsProjectile::NPayload::IPayload
 #define SoundPayloadType NCsSound::NPayload::IPayload
+#define FXPayloadType NCsFX::NPayload::IPayload
 
 // UObject Interface
 #pragma region
@@ -326,11 +332,21 @@ public:
 
 		UCsProjectileWeaponComponent* Weapon;
 
+		USceneComponent* Component;
+
 	public:
 
 		FSoundImpl() :
-			Weapon(nullptr)
+			Weapon(nullptr),
+			Component(nullptr)
 		{
+		}
+
+	public:
+
+		FORCEINLINE void SetComponent(USceneComponent* InComponent)
+		{
+			Component = InComponent;
 		}
 
 	protected:
@@ -356,6 +372,56 @@ protected:
 
 #pragma endregion Sound
 
+	// FX
+#pragma region
+public:
+
+	struct CSWP_API FFXImpl
+	{
+		friend class UCsProjectileWeaponComponent;
+
+	protected:
+
+		UCsProjectileWeaponComponent* Weapon;
+
+		USceneComponent* Component;
+
+	public:
+
+		FFXImpl() :
+			Weapon(nullptr),
+			Component(nullptr)
+		{
+		}
+
+		FORCEINLINE void SetComponent(USceneComponent* InComponent)
+		{
+			Component = InComponent;
+		}
+
+	protected:
+
+		/**
+		*/
+		void Play();
+
+		/**
+		*
+		*
+		* @param Payload
+		* @param FX
+		*/
+		void SetPayload(FXPayloadType* Payload, const FCsFX& FX);
+	};
+
+	FFXImpl* FXImpl;
+
+protected:
+
+	virtual FFXImpl* ConstructFXImpl();
+
+#pragma endregion FX
+
 #pragma endregion Fire
 
 // Print
@@ -370,4 +436,5 @@ public:
 
 #undef ProjectilePayloadType
 #undef SoundPayloadType
+#undef FXPayloadType
 };

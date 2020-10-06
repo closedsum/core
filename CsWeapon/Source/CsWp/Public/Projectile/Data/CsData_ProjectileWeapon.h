@@ -95,3 +95,91 @@ public:
 	*/
 	virtual const LaunchParamsType* GetLaunchParams() const = 0;
 };
+
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NData
+		{
+			/**
+			*
+			*/
+			struct CSWP_API IData : public ICsGetInterfaceMap
+			{
+			public:
+
+				static const FName Name;
+
+			private:
+
+				typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
+
+			public:
+
+				/**
+				*
+				*
+				* return
+				*/
+				virtual const bool& DoFireOnRelease() const = 0;
+
+				/**
+				*
+				*
+				* return
+				*/
+				virtual const bool& IsFullAuto() const = 0;
+
+				/**
+				*
+				*
+				* return
+				*/
+				virtual const bool& HasInfiniteAmmo() const = 0;
+
+				/**
+				*
+				*
+				* return
+				*/
+				virtual const int32& GetMaxAmmo() const = 0;
+
+				/**
+				*
+				*
+				* return
+				*/
+				virtual const int32& GetProjectilesPerShot() const = 0;
+
+				/**
+				*
+				*
+				* return
+				*/
+				virtual const float& GetTimeBetweenShots() const = 0;
+
+				/**
+				*
+				*
+				* return
+				*/
+				virtual const float& GetTimeBetweenAutoShots() const = 0;
+
+				/**
+				*
+				*
+				* return
+				*/
+				virtual const float& GetTimeBetweenProjectilesPerShot() const = 0;
+
+				/**
+				*
+				*
+				* return
+				*/
+				virtual const LaunchParamsType* GetLaunchParams() const = 0;
+			};
+		}
+	}
+}

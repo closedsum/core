@@ -7,3 +7,5 @@ const FName ICsData_ProjectileWeaponSound::Name = FName("ICsData_ProjectileWeapo
 UCsData_ProjectileWeaponSound::UCsData_ProjectileWeaponSound(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
+
+const FName NCsWeapon::NProjectile::NData::NSound::IFire::Name = FName("NCsWeapon::NProjectile::NData::NSound::IFire");

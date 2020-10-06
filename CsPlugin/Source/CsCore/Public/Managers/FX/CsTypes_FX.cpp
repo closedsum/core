@@ -14,9 +14,7 @@ namespace NCsFX
 	{
 		if (UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>())
 		{
-#if WITH_EDITOR
 			EMCsFX::Get().ClearUserDefinedEnums();
-#endif // #if WITH_EDITOR
 
 			// Enum Settings
 			if (Settings->ECsFX_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)

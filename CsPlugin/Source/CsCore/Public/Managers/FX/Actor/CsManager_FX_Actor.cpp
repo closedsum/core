@@ -33,13 +33,17 @@
 
 namespace NCsManagerFXActor
 {
-	namespace Str
+	namespace Cached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, PopulateDataMapFromSettings);
-	}
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, SetupInternal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, PopulateDataMapFromSettings);
+		}
 
-	namespace Name
-	{
+		namespace Name
+		{
+		}
 	}
 }
 
@@ -280,6 +284,16 @@ void UCsManager_FX_Actor::SetMyRoot(UObject* InRoot)
 
 void UCsManager_FX_Actor::SetupInternal()
 {
+	using namespace NCsManagerFXActor::Cached;
+
+	const FString& Context = Str::SetupInternal;
+
+	// Populate EnumMaps
+	UWorld* World				= MyRoot->GetWorld();
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+
+	NCsFX::PopulateEnumMapFromSettings(Context, GameInstance);
+
 	// Delegates
 	{
 		// Log
@@ -675,7 +689,7 @@ void UCsManager_FX_Actor::LogTransaction(const FString& Context, const ECsPoolTr
 
 void UCsManager_FX_Actor::PopulateDataMapFromSettings()
 {
-	using namespace NCsManagerFXActor;
+	using namespace NCsManagerFXActor::Cached;
 
 	if (UCsDeveloperSettings* ModuleSettings = GetMutableDefault<UCsDeveloperSettings>())
 	{

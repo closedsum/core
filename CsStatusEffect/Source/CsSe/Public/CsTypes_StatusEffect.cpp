@@ -62,7 +62,59 @@ namespace NCsStatusEffectTransferFrequency
 namespace NCsStatusEffectEvent
 {
 	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(Default, "NCsStatusEffect::NEvent::IEvent");
-	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(Damage, "ICsStatusEffectDamageEvent");
+	CSSE_API CS_CREATE_ENUM_STRUCT_CUSTOM(Damage, "NCsStatusEffect::NEvent::NDamage::IDamage");
 }
 
 #pragma endregion StatusEffectEvent
+
+namespace NCsStatusEffect
+{
+	namespace NTrigger
+	{
+		// Frequency
+#pragma region
+		
+		namespace NFrequency
+		{
+			namespace Ref
+			{
+				typedef EMFrequency EnumMapType;
+
+				CSSE_API CS_ADD_TO_ENUM_MAP(Once);
+				CSSE_API CS_ADD_TO_ENUM_MAP(Count);
+				CSSE_API CS_ADD_TO_ENUM_MAP(Time);
+				CSSE_API CS_ADD_TO_ENUM_MAP(Infinite);
+				CSSE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EFrequency_MAX, "MAX");
+			}
+
+			CSSE_API const uint8 MAX = (uint8)Type::EFrequency_MAX;
+		}
+
+#pragma endregion Frequency
+	}
+
+	namespace NTransfer
+	{
+		// Frequency
+		#pragma region
+
+		namespace NFrequency
+		{
+			namespace Ref
+			{
+				typedef EMFrequency EnumMapType;
+
+				CSSE_API CS_ADD_TO_ENUM_MAP(None);
+				CSSE_API CS_ADD_TO_ENUM_MAP(Once);
+				CSSE_API CS_ADD_TO_ENUM_MAP(Count);
+				CSSE_API CS_ADD_TO_ENUM_MAP(Time);
+				CSSE_API CS_ADD_TO_ENUM_MAP(Infinite);
+				CSSE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EFrequency_MAX, "MAX");
+			}
+
+			CSSE_API const uint8 MAX = (uint8)Type::EFrequency_MAX;
+		}
+
+		#pragma endregion StatusEffectTransferFrequency
+	}
+}

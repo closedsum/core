@@ -14,7 +14,7 @@ const FCsScopedTimerHandle FCsScopedTimerHandle::Invalid;
 
 namespace NCsScopedTimer
 {
-	namespace Cached
+	namespace NCached
 	{
 		namespace Str
 		{
@@ -43,7 +43,7 @@ FCsScopedTimer::~FCsScopedTimer()
 
 void FCsScopedTimer::Init(const FString* InName, const FECsScopedGroup& InGroup, const FECsCVarLog& InCVar)
 {
-	using namespace NCsScopedTimer::Cached;
+	using namespace NCsScopedTimer::NCached;
 
 	const FString& Context = Str::Init;
 

@@ -32,3 +32,29 @@ public:
 	*/
 	virtual const FCsSound& GetFireSound() const = 0;
 };
+
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NData
+		{
+			namespace NSound
+			{
+				struct CSWP_API IFire : public ICsGetInterfaceMap
+				{
+				public:
+
+					static const FName Name;
+
+					/**
+					*
+					*
+					* return
+					*/
+					virtual const FCsSound& GetFireSound() const = 0;
+				};
+			}
+		}
+	}
+}

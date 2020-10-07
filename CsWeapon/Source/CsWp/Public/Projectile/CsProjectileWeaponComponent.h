@@ -93,6 +93,11 @@ public:
 
 	void SetUpdateGroup(const FECsUpdateGroup& Group);
 
+	FORCEINLINE const FECsUpdateGroup& GetUpdateGroup() const 
+	{
+		return UpdateGroup;
+	}
+
 protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Weapon|Type", meta = (AllowPrivateAccess))
@@ -225,6 +230,48 @@ protected:
 	/**
 	*/
 	void Fire_Internal_OnEnd(FCsRoutine* R);
+
+public:
+
+	/**
+	*/
+	struct CSWP_API FTimeBetweenShotsImpl
+	{
+		friend class UCsProjectileWeaponComponent;
+
+	protected:
+
+		UCsProjectileWeaponComponent* Outer;
+
+	public:
+
+		/**
+		*/
+		DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnElapsedTime, ICsWeapon* /*Weapon*/, const float& /*PreviousTime*/, const float& /*NewTime*/);
+
+		FOnElapsedTime OnElapsedTime_Event;
+
+		/**
+		*/
+		DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnElapsedTimeAsPercent, ICsWeapon* /*Weapon*/, const float& /*PreviousValue*/, const float& /*NewValue*/);
+
+		FOnElapsedTimeAsPercent OnElapsedTimeAsPercent_Event;
+
+		FTimeBetweenShotsImpl() :
+			Outer(nullptr),
+			OnElapsedTime_Event(),
+			OnElapsedTimeAsPercent_Event()
+		{
+		}
+
+	private:
+
+		void OnElapsedTime();
+
+		char OnElapsedTime_Internal(FCsRoutine* R);
+	};
+
+	FTimeBetweenShotsImpl TimeBetweenShotsImpl;
 
 	// Projectile
 #pragma region

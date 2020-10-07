@@ -72,6 +72,20 @@ namespace NCsProjectileWeaponComponent
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsProjectileWeaponComponent, Abort_Fire_Internal);
 		}
 
+		namespace TimeBetweenShotsImpl
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FTimeBetweenShotsImpl, OnElapsedTime);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FTimeBetweenShotsImpl, OnElapsedTime_Internal);
+			}
+
+			namespace Name
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsProjectileWeaponComponent::FTimeBetweenShotsImpl, OnElapsedTime_Internal);
+			}
+		}
+
 		namespace ProjectileImpl
 		{
 			namespace Str
@@ -159,6 +173,8 @@ void UCsProjectileWeaponComponent::BeginPlay()
 
 	MyOwner		   = GetOwner();
 	MyOwnerAsActor = GetOwner();
+
+	TimeBetweenShotsImpl.Outer = this;
 
 	ProjectileImpl = ConstructProjectileImpl();
 	ProjectileImpl->Weapon = this;
@@ -292,6 +308,8 @@ void UCsProjectileWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& Del
 		{
 			Fire();
 
+			TimeBetweenShotsImpl.OnElapsedTime();
+
 			CurrentState = FireState;
 
 #if !UE_BUILD_SHIPPING
@@ -310,6 +328,8 @@ void UCsProjectileWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& Del
 		if (CanFire())
 		{
 			Fire();
+
+			TimeBetweenShotsImpl.OnElapsedTime();
 		}
 		// If no firing is active, go to idle
 		else
@@ -473,6 +493,66 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 void UCsProjectileWeaponComponent::Fire_Internal_OnEnd(FCsRoutine* R)
 {
 	--FireCount;
+}
+
+void UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
+{
+	using namespace NCsProjectileWeaponComponent::NCached::TimeBetweenShotsImpl;
+
+	const FString& Context = Str::OnElapsedTime;
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(Outer->GetWorld()->GetGameInstance());
+
+	// Setup Routine
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+	PayloadType* Payload = Scheduler->AllocatePayload(Outer->GetUpdateGroup());
+
+	Payload->CoroutineImpl.BindRaw(this, &UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime_Internal);
+	Payload->StartTime = UCsManager_Time::Get(Outer->GetWorld()->GetGameInstance())->GetTime(Outer->GetUpdateGroup());
+	Payload->Owner.SetObject(Outer);
+	Payload->SetName(Str::OnElapsedTime_Internal);
+	Payload->SetFName(Name::OnElapsedTime_Internal);
+
+	// Get total elapsed time (= TimeBetweenShots)
+	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
+
+	ProjectileDataType* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ProjectileDataType>(Context, Outer->GetData());
+
+	Payload->SetValue_Float(CS_FIRST, PrjData->GetTimeBetweenShots());
+
+	Scheduler->Start(Payload);
+}
+
+char UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime_Internal(FCsRoutine* R)
+{
+	FCsDeltaTime& ElapsedTime			   = R->GetValue_DeltaTime(CS_FIRST);
+	const FCsDeltaTime PreviousElapsedTime = ElapsedTime;
+
+	ElapsedTime += R->DeltaTime;
+
+	const float& TimeBetweenShots = R->GetValue_Float(CS_FIRST);
+
+	// Broadcast ElapsedTime events
+
+		// Time
+	const float& PreviousTime = PreviousElapsedTime.Time;
+	const float NewTime		   = FMath::Max(ElapsedTime.Time, TimeBetweenShots);
+
+	OnElapsedTime_Event.Broadcast(Outer, PreviousTime, NewTime);
+	// Percent
+	const float PreviousPercent = PreviousElapsedTime.Time / TimeBetweenShots;
+	const float NewPercent		= FMath::Min(ElapsedTime.Time / TimeBetweenShots, 1.0f);
+
+	OnElapsedTimeAsPercent_Event.Broadcast(Outer, PreviousPercent, NewPercent);
+
+	CS_COROUTINE_BEGIN(R);
+
+	ElapsedTime.Reset();
+
+	CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= TimeBetweenShots);
+
+	CS_COROUTINE_END(R);
 }
 
 	// Projectile

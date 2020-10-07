@@ -5,6 +5,9 @@
 
 struct FCsInterfaceMap;
 
+// NCsWeapon::NProjectile::NData::NSound::NFire::NParmas::IParams
+CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsWeapon, NProjectile, NData, NSound, NFire, NParams, IParams)
+
 namespace NCsWeapon
 {
 	namespace NProjectile
@@ -15,13 +18,15 @@ namespace NCsWeapon
 			{
 				namespace NFire
 				{
-					struct CSWP_API FImpl : public ICsData_ProjectileWeapon_SoundFire
+					struct CSWP_API FImpl// : public IFire
 					{
 					public:
 
 						static const FName Name;
-
+						/*
 					private:
+
+						typedef NCsWeapon::NProjectile::NData::NSound::NFire::NParams::IParams ParamsType;
 
 						FCsInterfaceMap* InterfaceMap;
 
@@ -73,6 +78,7 @@ namespace NCsWeapon
 						}
 
 					#pragma endregion ICsData_ProjectileWeapon_SoundFire
+					*/
 					};
 				}
 			}

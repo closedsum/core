@@ -38,9 +38,7 @@ class ICsWeapon;
 class ICsUpdate;
 
 // NCsWeapon::NData::IData
-namespace NCsWeapon {
-	namespace NData {
-		struct IData; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
 
 struct CSWP_API FCsProjectileWeapon : public TCsInterfaceObject<ICsProjectileWeapon>
 {

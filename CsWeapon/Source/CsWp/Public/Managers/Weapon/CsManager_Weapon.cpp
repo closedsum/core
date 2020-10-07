@@ -609,13 +609,20 @@ void UCsManager_Weapon::ConstructPayloads(const FECsWeapon& Type, const int32& S
 	Internal.ConstructPayloads(Type, Size);
 }
 
-NCsWeapon::NPayload::IPayload* UCsManager_Weapon::ConstructPayload(const FECsWeapon& Type)
+#define PayloadType NCsWeapon::NPayload::IPayload
+PayloadType* UCsManager_Weapon::ConstructPayload(const FECsWeapon& Type)
 {
-	return new NCsWeapon::NPayload::FImplPooled();
+#undef PayloadType
+	
+	typedef NCsWeapon::NPayload::FImplPooled PayloadImplType;
+
+	return new PayloadImplType();
 }
 
-NCsWeapon::NPayload::IPayload* UCsManager_Weapon::AllocatePayload(const FECsWeapon& Type)
+#define PayloadType NCsWeapon::NPayload::IPayload
+PayloadType* UCsManager_Weapon::AllocatePayload(const FECsWeapon& Type)
 {
+#undef PayloadType
 	return Internal.AllocatePayload(Type);
 }
 
@@ -624,8 +631,10 @@ NCsWeapon::NPayload::IPayload* UCsManager_Weapon::AllocatePayload(const FECsWeap
 	// Spawn
 #pragma region
 
-const FCsWeaponPooled* UCsManager_Weapon::Spawn(const FECsWeapon& Type, NCsWeapon::NPayload::IPayload* Payload)
+#define PayloadType NCsWeapon::NPayload::IPayload
+const FCsWeaponPooled* UCsManager_Weapon::Spawn(const FECsWeapon& Type, PayloadType* Payload)
 {
+#undef PayloadType
 	return Internal.Spawn(Type, Payload);
 }
 
@@ -1041,6 +1050,9 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 		if (Emulates_ICsData_ProjectileWeapon_SoundFire)
 		{
 			// Setup and Add Emulated Interface
+
+			// TODO: Change FImpl to FEmu functionality
+			/*
 			typedef ICsData_ProjectileWeapon_SoundFire SoundDataType;
 			typedef NCsWeapon::NProjectile::NData::NSound::NFire::FImpl SoundDataImplType;
 
@@ -1062,6 +1074,7 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 
 				Data->SetFireSound(Value);
 			}
+			*/
 		}
 
 		// Class

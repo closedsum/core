@@ -8,6 +8,7 @@
 #include "CsWeapon.h"
 #include "CsWeaponPooled.h"
 #include "Managers/Weapon/CsSettings_Manager_Weapon.h"
+
 #include "CsManager_Weapon.generated.h"
 
 // Delegates
@@ -22,11 +23,13 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerWeapon_OnSpawn, const FEC
 
 class ICsWeapon;
 
-class CSWP_API FCsManager_Weapon_Internal : public TCsManager_PooledObject_Map<ICsWeapon, FCsWeaponPooled, NCsWeapon::NPayload::IPayload, FECsWeapon>
+#define PayloadType NCsWeapon::NPayload::IPayload
+
+class CSWP_API FCsManager_Weapon_Internal : public TCsManager_PooledObject_Map<ICsWeapon, FCsWeaponPooled, PayloadType, FECsWeapon>
 {
 private:
 
-	typedef TCsManager_PooledObject_Map<ICsWeapon, FCsWeaponPooled, NCsWeapon::NPayload::IPayload, FECsWeapon> Super;
+	typedef TCsManager_PooledObject_Map<ICsWeapon, FCsWeaponPooled, PayloadType, FECsWeapon> Super;
 
 public:
 
@@ -38,15 +41,15 @@ public:
 	}
 };
 
+#undef PayloadType
+
 #pragma endregion Internal
 
 class ICsGetManagerWeapon;
 class UWorld;
 
 // NCsWeapon::NData::IData
-namespace NCsWeapon {
-	namespace NData {
-		struct IData; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
 
 struct FCsData_WeaponInterfaceMap;
 class UDataTable;
@@ -58,6 +61,7 @@ class CSWP_API UCsManager_Weapon : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+#define PayloadType NCsWeapon::NPayload::IPayload
 #define DataType NCsWeapon::NData::IData
 
 public:	
@@ -132,10 +136,6 @@ public:
 #pragma endregion Root
 
 #pragma endregion Singleton
-
-public:
-
-	typedef NCsWeapon::NPayload::IPayload PayloadInterfaceType;
 
 // Settings
 #pragma region
@@ -491,7 +491,7 @@ public:
 	* @param Type
 	* return
 	*/
-	virtual PayloadInterfaceType* ConstructPayload(const FECsWeapon& Type);
+	virtual PayloadType* ConstructPayload(const FECsWeapon& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
@@ -500,7 +500,7 @@ public:
 	* @param Type	Type of payload.
 	* return		Payload that implements the interface: NCsWeapon::NPayload::IPayload.
 	*/
-	PayloadInterfaceType* AllocatePayload(const FECsWeapon& Type);
+	PayloadType* AllocatePayload(const FECsWeapon& Type);
 
 #pragma endregion Payload
 
@@ -514,7 +514,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	const FCsWeaponPooled* Spawn(const FECsWeapon& Type, PayloadInterfaceType* Payload);
+	const FCsWeaponPooled* Spawn(const FECsWeapon& Type, PayloadType* Payload);
 
 	/**
 	* Delegate type after a Weapon has been Spawned.
@@ -817,5 +817,6 @@ protected:
 
 #pragma endregion Data
 
+#undef PayloadType
 #undef DataType
 };

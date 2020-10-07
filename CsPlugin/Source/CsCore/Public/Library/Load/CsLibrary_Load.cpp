@@ -666,6 +666,7 @@ void UCsLibrary_Load::GetObjectPaths_ObjectProperty_Internal(UClass* PropertyCla
 {
 	const bool ValidClass = PropertyClass->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint) ||
 							PropertyClass == UDataTable::StaticClass() ||
+							PropertyClass->IsChildOf<USoundBase>() ||
 							PropertyClass->ImplementsInterface(UInterface_AssetUserData::StaticClass());
 		
 	if (ValidClass)

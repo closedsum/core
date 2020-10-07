@@ -46,6 +46,7 @@
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 // Params
 #include "Projectile/Params/Launch/CsParams_ProjectileWeapon_LaunchTrace.h"
+#include "Projectile/Data/Sound/CsParams_ProjectileWeapon_SoundFire.h"
 
 // Cached 
 #pragma region
@@ -445,16 +446,18 @@ void UCsProjectileWeaponComponent::Fire()
 
 	ProjectileDataType* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ProjectileDataType>(Context, Data);
 
-	Payload->SetValue_Void(CS_FIRST, PrjData);
+	Payload->SetValue_Flag(CS_FIRST, PrjData->HasInfiniteAmmo());
+	Payload->SetValue_Int(CS_FIRST, PrjData->GetProjectilesPerShot());
+	Payload->SetValue_Float(CS_FIRST, PrjData->GetTimeBetweenProjectilesPerShot());
 
 	FireRoutineHandle = Scheduler->Start(Payload);
 }
 
 char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 {
-	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
-
-	ProjectileDataType* PrjData = R->GetValue_Void<ProjectileDataType>(CS_FIRST);
+	const bool& bInfiniteAmmo				   = R->GetValue_Flag(CS_FIRST);
+	const int32& ProjectilesPerShot			   = R->GetValue_Int(CS_FIRST);
+	const float& TimeBetweenProjectilesPerShot = R->GetValue_Float(CS_FIRST);
 
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 
@@ -469,7 +472,7 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 		{
 			ElapsedTime.Reset();
 
-			if (!PrjData->HasInfiniteAmmo())
+			if (!bInfiniteAmmo)
 				ConsumeAmmo();
 
 			ProjectileImpl->StartLaunch();
@@ -477,15 +480,15 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 			FXImpl->Play();
 
 			// Increment the shot index
-			CurrentProjectilePerShotIndex = FMath::Min(CurrentProjectilePerShotIndex + 1, PrjData->GetProjectilesPerShot());
+			CurrentProjectilePerShotIndex = FMath::Min(CurrentProjectilePerShotIndex + 1, ProjectilesPerShot);
 
 			// Check if more projectiles should be fired, if so wait
-			if (CurrentProjectilePerShotIndex < PrjData->GetProjectilesPerShot())
+			if (CurrentProjectilePerShotIndex < ProjectilesPerShot)
 			{
-				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= PrjData->GetTimeBetweenProjectilesPerShot());
+				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= TimeBetweenProjectilesPerShot);
 			}
 		}
-	} while (CurrentProjectilePerShotIndex < PrjData->GetProjectilesPerShot());
+	} while (CurrentProjectilePerShotIndex < ProjectilesPerShot);
 
 	CS_COROUTINE_END(R);
 }
@@ -952,12 +955,15 @@ void UCsProjectileWeaponComponent::FSoundImpl::Play()
 
 	const FString& Context = Str::Play;
 
-	// ICsData_ProjectileWeapon_Sound
+	// NCsWeapon::NProjectile::NData::NSound::NFire::IFire | ICsData_ProjectileWeapon_SoundFire
 	typedef NCsWeapon::NProjectile::NData::NSound::NFire::IFire SoundDataType;
 
 	if (SoundDataType* SoundData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
 	{
-		const FCsSound& Sound = SoundData->GetFireSound();
+		typedef NCsWeapon::NProjectile::NData::NSound::NFire::NParams::IParams ParamsType;
+
+		ParamsType* Params = SoundData->GetFireSoundParams();
+		const FCsSound& Sound = Params->GetSound();
 
 		USoundBase* SoundAsset = Sound.GetChecked(Context);
 
@@ -1015,7 +1021,7 @@ void UCsProjectileWeaponComponent::FFXImpl::Play()
 
 	const FString& Context = Str::Play;
 
-	// ICsData_ProjectileWeaponVisualFire
+	// NCsWeapon::NProjectile::NData::NVisual::NFire::IFire | ICsData_ProjectileWeapon_VisualFire
 	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::IFire FXDataType;
 
 	if (FXDataType* FXData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<FXDataType>(Context, Weapon->GetData()))

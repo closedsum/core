@@ -24,24 +24,13 @@ class AActor;
 struct FCsRoutine;
 
 // NCsWeapon::NData::IData
-namespace NCsWeapon {
-	namespace NData {
-		struct IData; } }
-
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
 // NCsProjectile::NPayload::IPayload
-namespace NCsProjectile {
-	namespace NPayload {
-		struct IPayload; } }
-
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
 // NCsSound::NPayload::IPayload
-namespace NCsSound {
-	namespace NPayload {
-		struct IPayload; } }
-
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, IPayload)
 // NCsFX::NPayload::IPayload
-namespace NCsFX {
-	namespace NPayload {
-		struct IPayload; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, IPayload)
 
 struct FCsProjectilePooled;
 

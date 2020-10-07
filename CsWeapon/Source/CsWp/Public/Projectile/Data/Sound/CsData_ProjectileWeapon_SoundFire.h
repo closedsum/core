@@ -6,6 +6,8 @@
 #include "Managers/Sound/CsTypes_Sound.h"
 #include "CsData_ProjectileWeapon_SoundFire.generated.h"
 
+// NCsWeapon::NProjectile::NData::NSound::NFire::NParmas::IParams
+CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsWeapon, NProjectile, NData, NSound, NFire, NParams, IParams)
 
 namespace NCsWeapon
 {
@@ -17,18 +19,25 @@ namespace NCsWeapon
 			{
 				namespace NFire
 				{
+					/**/
 					struct CSWP_API IFire : public ICsGetInterfaceMap
 					{
 					public:
 
 						static const FName Name;
 
+#define ParamsType NCsWeapon::NProjectile::NData::NSound::NFire::NParams::IParams
+
+					public:
+
 						/**
 						*
 						*
 						* return
 						*/
-						virtual const FCsSound& GetFireSound() const = 0;
+						virtual ParamsType* GetFireSoundParams() const = 0;
+
+#undef ParamsType
 					};
 				}
 			}
@@ -42,6 +51,9 @@ class CSWP_API UCsData_ProjectileWeapon_SoundFire : public UCsGetInterfaceMap
 	GENERATED_UINTERFACE_BODY()
 };
 
+// NCsWeapon::NProjectile::NData::NSound::NFire::NParmas::IParams
+CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsWeapon, NProjectile, NData, NSound, NFire, NParams, IParams)
+
 /**
 *
 */
@@ -53,6 +65,8 @@ public:
 
 	static const FName Name;
 
+#define ParamsType NCsWeapon::NProjectile::NData::NSound::NFire::NParams::IParams
+
 public:
 
 	/**
@@ -60,5 +74,7 @@ public:
 	*
 	* return
 	*/
-	virtual const FCsSound& GetFireSound() const = 0;
+	virtual ParamsType* GetFireSoundParams() const = 0;
+
+#undef ParamsType
 };

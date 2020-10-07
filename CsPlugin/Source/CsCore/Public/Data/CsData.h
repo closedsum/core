@@ -35,9 +35,7 @@ public:
 
 	static const FName Name;
 
-private:
-
-	typedef NCsData::IData DataType;
+#define DataType NCsData::IData
 
 public:
 
@@ -71,6 +69,8 @@ public:
 	* return
 	*/
 	virtual bool IsLoaded() const = 0;
+
+#undef DataType
 };
 
 // FCsData

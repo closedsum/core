@@ -42,7 +42,7 @@ namespace NCsWeapon
 }
 
 UINTERFACE(BlueprintType)
-class CSWP_API UCsData_ProjectileWeaponVisualFire : public UCsGetInterfaceMap
+class CSWP_API UCsData_ProjectileWeapon_VisualFire : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
@@ -50,7 +50,7 @@ class CSWP_API UCsData_ProjectileWeaponVisualFire : public UCsGetInterfaceMap
 /**
 *
 */
-class CSWP_API ICsData_ProjectileWeaponVisualFire : public ICsGetInterfaceMap
+class CSWP_API ICsData_ProjectileWeapon_VisualFire : public ICsGetInterfaceMap
 {
 	GENERATED_IINTERFACE_BODY()
 

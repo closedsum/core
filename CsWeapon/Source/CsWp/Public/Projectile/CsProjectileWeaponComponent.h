@@ -20,18 +20,25 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsProjectileWeaponComponent_OnCo
 
 #pragma endregion Delegates
 
-class ICsData_Weapon;
 class AActor;
 struct FCsRoutine;
 
+// NCsWeapon::NData::IData
+namespace NCsWeapon {
+	namespace NData {
+		struct IData; } }
+
+// NCsProjectile::NPayload::IPayload
 namespace NCsProjectile {
 	namespace NPayload {
 		struct IPayload; } }
 
+// NCsSound::NPayload::IPayload
 namespace NCsSound {
 	namespace NPayload {
 		struct IPayload; } }
 
+// NCsFX::NPayload::IPayload
 namespace NCsFX {
 	namespace NPayload {
 		struct IPayload; } }
@@ -48,6 +55,7 @@ class CSWP_API UCsProjectileWeaponComponent : public UActorComponent,
 {
 	GENERATED_UCLASS_BODY()
 
+#define DataType NCsWeapon::NData::IData
 #define ProjectilePayloadType NCsProjectile::NPayload::IPayload
 #define SoundPayloadType NCsSound::NPayload::IPayload
 #define FXPayloadType NCsFX::NPayload::IPayload
@@ -96,13 +104,13 @@ public:
 
 protected:
 
-	ICsData_Weapon* Data;
+	DataType* Data;
 
 // ICsWeapon
 #pragma region
 public:
 
-	FORCEINLINE ICsData_Weapon* GetData() const
+	FORCEINLINE DataType* GetData() const
 	{
 		return Data;
 	}
@@ -434,6 +442,7 @@ public:
 
 #pragma endregion Print
 
+#undef DataType
 #undef ProjectilePayloadType
 #undef SoundPayloadType
 #undef FXPayloadType

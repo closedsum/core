@@ -28,7 +28,7 @@
 // Data
 #include "Data/CsData_Weapon.h"
 #include "Projectile/Data/CsData_ProjectileWeapon.h"
-#include "Projectile/Data/CsData_ProjectileWeaponSound.h"
+#include "Projectile/Data/Sound/CsData_ProjectileWeapon_SoundFire.h"
 #include "Projectile/Data/Visual/CsData_ProjectileWeapon_VisualFire.h"
 #include "Data/CsData_Projectile.h"
 #include "Data/CsData_ProjectileCollision.h"
@@ -260,7 +260,9 @@ void UCsProjectileWeaponComponent::Init()
 	CurrentState = IdleState;
 
 	// Ammo
-	ICsData_ProjectileWeapon* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ICsData_ProjectileWeapon>(Context, Data);
+	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
+
+	ProjectileDataType* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ProjectileDataType>(Context, Data);
 
 	CurrentAmmo = PrjData->GetMaxAmmo();
 }
@@ -353,7 +355,9 @@ bool UCsProjectileWeaponComponent::CanFire() const
 	
 	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
 
-	ICsData_ProjectileWeapon* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ICsData_ProjectileWeapon>(Context, Data);
+	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
+
+	ProjectileDataType* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ProjectileDataType>(Context, Data);
 
 	// Check if enough time has elapsed to fire again.
 	const bool Pass_Time = (TimeSinceStart.Time - Fire_StartTime > PrjData->GetTimeBetweenShots());
@@ -403,7 +407,9 @@ void UCsProjectileWeaponComponent::Fire()
 	Fire_StartTime = TimeSinceStart.Time;
 
 	// Setup Fire Routine
-	NCsCoroutine::NPayload::FImpl* Payload = Scheduler->AllocatePayload(UpdateGroup);
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
 
 	Payload->CoroutineImpl.BindUObject(this, &UCsProjectileWeaponComponent::Fire_Internal);
 	Payload->StartTime = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTime(UpdateGroup);
@@ -415,7 +421,9 @@ void UCsProjectileWeaponComponent::Fire()
 	Payload->AbortMessages.Add(Name::Abort_Fire_Internal);
 
 	// Cache pointer to ICsData_ProjectileWeapon
-	ICsData_ProjectileWeapon* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ICsData_ProjectileWeapon>(Context, Data);
+	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
+
+	ProjectileDataType* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ProjectileDataType>(Context, Data);
 
 	Payload->SetValue_Void(CS_FIRST, PrjData);
 
@@ -424,7 +432,9 @@ void UCsProjectileWeaponComponent::Fire()
 
 char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 {
-	ICsData_ProjectileWeapon* PrjData = R->GetValue_Void<ICsData_ProjectileWeapon>(CS_FIRST);
+	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
+
+	ProjectileDataType* PrjData = R->GetValue_Void<ProjectileDataType>(CS_FIRST);
 
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 
@@ -532,7 +542,9 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 	const FString& Context = Str::GetLaunchLocation;
 
 	// Get Data Slice
-	ICsData_ProjectileWeapon* WeaponData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ICsData_ProjectileWeapon>(Context, Weapon->GetData());
+	typedef NCsWeapon::NProjectile::NData::IData WeaponDataType;
+
+	WeaponDataType* WeaponData = FCsLibrary_Data_Weapon::GetInterfaceChecked<WeaponDataType>(Context, Weapon->GetData());
 	
 	// Get Launch Params
 	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
@@ -581,7 +593,9 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 	const FString& Context = Str::GetLaunchDirection;
 
 	// Get Data Slice
-	ICsData_ProjectileWeapon* WeaponData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ICsData_ProjectileWeapon>(Context, Weapon->GetData());
+	typedef NCsWeapon::NProjectile::NData::IData WeaponDataType;
+
+	WeaponDataType* WeaponData = FCsLibrary_Data_Weapon::GetInterfaceChecked<WeaponDataType>(Context, Weapon->GetData());
 	
 	// Get Launch Params
 	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
@@ -858,28 +872,25 @@ void UCsProjectileWeaponComponent::FSoundImpl::Play()
 
 	const FString& Context = Str::Play;
 
-	// ICsData_ProjectileWeaponSound
-	if (ICsData_ProjectileWeaponSound* SoundData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<ICsData_ProjectileWeaponSound>(Context, Weapon->GetData()))
+	// ICsData_ProjectileWeapon_Sound
+	typedef NCsWeapon::NProjectile::NData::NSound::NFire::IFire SoundDataType;
+
+	if (SoundDataType* SoundData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
 	{
 		const FCsSound& Sound = SoundData->GetFireSound();
 
-		if (USoundBase* SoundAsset = Sound.GetChecked(Context))
-		{
-			// Get Manager
-			UCsManager_Sound* Manager_Sound = UCsManager_Sound::Get(Weapon->GetWorld()->GetGameState());
-			// Allocate payload
-			typedef NCsSound::NPayload::IPayload PayloadType;
+		USoundBase* SoundAsset = Sound.GetChecked(Context);
 
-			PayloadType* Payload = Manager_Sound->AllocatePayload(Sound.Type);
-			// Set appropriate values on payload
-			SetPayload(Payload, Sound);
+		// Get Manager
+		UCsManager_Sound* Manager_Sound = UCsManager_Sound::Get(Weapon->GetWorld()->GetGameState());
+		// Allocate payload
+		typedef NCsSound::NPayload::IPayload PayloadType;
 
-			Manager_Sound->Spawn(Sound.Type, Payload);
-		}
-		else
-		{
+		PayloadType* Payload = Manager_Sound->AllocatePayload(Sound.Type);
+		// Set appropriate values on payload
+		SetPayload(Payload, Sound);
 
-		}
+		Manager_Sound->Spawn(Sound.Type, Payload);
 	}
 }
 
@@ -925,30 +936,27 @@ void UCsProjectileWeaponComponent::FFXImpl::Play()
 	const FString& Context = Str::Play;
 
 	// ICsData_ProjectileWeaponVisualFire
-	if (ICsData_ProjectileWeaponVisualFire* FXData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<ICsData_ProjectileWeaponVisualFire>(Context, Weapon->GetData()))
+	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::IFire FXDataType;
+
+	if (FXDataType* FXData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<FXDataType>(Context, Weapon->GetData()))
 	{
 		typedef NCsWeapon::NProjectile::NData::NVisual::NFire::FParams ParamsType;
 
 		const ParamsType& Params = FXData->GetFireFXParams();
 		const FCsFX& FX			 = Params.GetFX();
 
-		if (UNiagaraSystem* FXAsset = FX.GetChecked(Context))
-		{
-			// Get Manager
-			UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(Weapon->GetWorld()->GetGameState());
-			// Allocate payload
-			typedef NCsFX::NPayload::IPayload PayloadType;
+		UNiagaraSystem* FXAsset = FX.GetChecked(Context);
 
-			PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
-			// Set appropriate values on payload
-			SetPayload(Payload, FX);
+		// Get Manager
+		UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(Weapon->GetWorld()->GetGameState());
+		// Allocate payload
+		typedef NCsFX::NPayload::IPayload PayloadType;
 
-			Manager_FX->Spawn(FX.Type, Payload);
-		}
-		else
-		{
+		PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
+		// Set appropriate values on payload
+		SetPayload(Payload, FX);
 
-		}
+		Manager_FX->Spawn(FX.Type, Payload);
 	}
 }
 
@@ -975,7 +983,7 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, c
 	PayloadImpl->TransformRules				= FX.TransformRules;
 	PayloadImpl->Transform					= FX.Transform;
 
-	typedef ICsData_ProjectileWeaponVisualFire FXDataType;
+	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::IFire FXDataType;
 
 	FXDataType* FXData = FCsLibrary_Data_Weapon::GetInterfaceChecked<FXDataType>(Context, Weapon->GetData());
 

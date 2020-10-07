@@ -20,14 +20,17 @@ class USphereComponent;
 class UCsProjectileMovementComponent;
 class UStaticMeshComponent;
 
+// NCsPooledObject::NCache::ICache
 namespace NCsPooledObject {
 	namespace NCache {
 		struct ICache; } }
 
+// NCsPooledObject::NPayload::IPayload
 namespace NCsPooledObject {
 	namespace NPayload {
 		struct IPayload; } }
 
+// NCsProjectile::NPayload::IPayload
 namespace NCsProjectile {
 	namespace NPayload {
 		struct IPayload; } }
@@ -36,19 +39,25 @@ class ICsData_Projectile;
 class ICsFXActorPooled;
 struct FCsFXActorPooled;
 
+// NCsDamage::NEvent::IEvent
 namespace NCsDamage {
 	namespace NEvent {
 		struct IEvent; } }
 
+// NCsDamage::NEvent::FResource
 namespace NCsDamage {
 	namespace NEvent {
 		struct FResource; } }
 
+// NCsDamage::NModifier::FResource
 namespace NCsDamage {
 	namespace NModifier {
 		struct FResource; } }
 
-class ICsData_Damage;
+// NCsDamage::NData::IData
+namespace NCsDamage {
+	namespace NData {
+		struct IData; } }
 
 UCLASS(Blueprintable)
 class CSPRJ_API ACsProjectilePooledImpl : public AActor,
@@ -58,8 +67,16 @@ class CSPRJ_API ACsProjectilePooledImpl : public AActor,
 {
 	GENERATED_UCLASS_BODY()
 
+#define DamageEventType NCsDamage::NEvent::IEvent
 #define DamageEventResourceType NCsDamage::NEvent::FResource
 #define DamageModifierResourceType NCsDamage::NModifier::FResource
+#define DamageDataType NCsDamage::NData::IData
+
+#define PooledCacheType NCsPooledObject::NCache::ICache
+
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+
+#define PayloadType NCsProjectile::NPayload::IPayload
 
 // UObject Interface
 #pragma region
@@ -145,7 +162,7 @@ public:
 
 protected:
 
-	NCsPooledObject::NCache::ICache* Cache;
+	PooledCacheType* Cache;
 
 	virtual void ConstructCache();
 
@@ -153,9 +170,9 @@ protected:
 #pragma region
 public:
 
-	NCsPooledObject::NCache::ICache* GetCache() const;
+	PooledCacheType* GetCache() const;
 
-	void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
+	void Allocate(PooledPayloadType* Payload);
 
 	void Deallocate();
 
@@ -186,9 +203,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
 	bool bLaunchOnAllocate;
 
-	void Launch(NCsPooledObject::NPayload::IPayload* Payload);
+	void Launch(PooledPayloadType* Payload);
 
-	virtual void OnLaunch_SetModifiers(NCsProjectile::NPayload::IPayload* Payload);
+	virtual void OnLaunch_SetModifiers(PayloadType* Payload);
 
 // FX
 #pragma region
@@ -211,7 +228,7 @@ public:
 	*
 	* @param Event	DamageEvent.
 	*/
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBroadcastDamage, const NCsDamage::NEvent::IEvent* /*Event*/);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBroadcastDamage, const DamageEventType* /*Event*/);
 
 	/** */
 	FOnBroadcastDamage OnBroadcastDamage_Event;
@@ -239,9 +256,18 @@ protected:
 	*/
 	virtual const DamageEventResourceType* OnHit_CreateDamageEvent(const FHitResult& HitResult);
 
-	virtual const DamageEventResourceType* OnHit_CreateDamageEvent(const FHitResult& HitResult, ICsData_Damage* DamageData);
+	virtual const DamageEventResourceType* OnHit_CreateDamageEvent(const FHitResult& HitResult, DamageDataType* DamageData);
 
 #pragma endregion Damage
 
+#undef DamageEventType
 #undef DamageEventResourceType
+#undef DamageModifierResourceType
+#undef DamageDataType
+
+#undef PooledCacheType
+
+#undef PooledPayloadType
+
+#undef PayloadType
 };

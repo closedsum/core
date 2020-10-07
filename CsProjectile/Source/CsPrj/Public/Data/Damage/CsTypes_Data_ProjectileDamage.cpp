@@ -7,7 +7,7 @@
 // FCsPrjData_DamagePoint
 #pragma region
 
-void FCsPrjData_DamagePoint::SetData(FCsData_DamagePointEmu* Data)
+void FCsPrjData_DamagePoint::SetData(PointDataEmuType* Data)
 {
 	Data->SetValue(&Damage);
 	Data->SetType(&Type);
@@ -18,7 +18,7 @@ void FCsPrjData_DamagePoint::SetData(FCsData_DamagePointEmu* Data)
 // FCsPrjData_DamageSphere
 #pragma region
 
-void FCsPrjData_DamageSphere::SetData(FCsData_DamageSphereEmu* Data)
+void FCsPrjData_DamageSphere::SetData(SphereDataEmuType* Data)
 {
 	// ICsData_Damage
 	Data->SetType(&Type);

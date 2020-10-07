@@ -6,9 +6,14 @@
 // Data
 #include "Projectile/Data/CsData_ProjectileWeapon.h"
 
-bool FCsLibrary_Data_Weapon::IsValidChecked(const FString& Context, ICsData_Weapon* Data)
+#define DataType NCsWeapon::NData::IData
+bool FCsLibrary_Data_Weapon::IsValidChecked(const FString& Context, DataType* Data)
 {
-	if (ICsData_ProjectileWeapon* PrjData = GetSafeInterfaceChecked<ICsData_ProjectileWeapon>(Context, Data))
-		return  FCsLibrary_Data_ProjectileWeapon::IsValidChecked(Context, PrjData);
+#undef DataType
+
+	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
+
+	if (ProjectileDataType* PrjData = GetSafeInterfaceChecked<ProjectileDataType>(Context, Data))
+		return FCsLibrary_Data_ProjectileWeapon::IsValidChecked(Context, PrjData);
 	return true;
 }

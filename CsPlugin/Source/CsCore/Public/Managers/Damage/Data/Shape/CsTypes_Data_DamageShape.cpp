@@ -6,7 +6,7 @@
 // FCsScriptData_DamageSphere
 #pragma region
 
-void FCsScriptData_DamageSphere::SetData(FCsData_DamageSphereEmu* Data)
+void FCsScriptData_DamageSphere::SetData(SphereDataEmuType* Data)
 {
 	// ICsData_Damage
 	Data->SetType(&Type);

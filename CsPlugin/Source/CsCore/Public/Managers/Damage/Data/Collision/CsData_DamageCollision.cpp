@@ -2,6 +2,8 @@
 #include "Managers/Damage/Data/Collision/CsData_DamageCollision.h"
 #include "CsCore.h"
 
+const FName NCsDamage::NData::NCollision::ICollision::Name = FName("NCsDamage::NData::NCollision::ICollision");
+
 UCsData_DamageCollision::UCsData_DamageCollision(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }

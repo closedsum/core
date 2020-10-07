@@ -3,6 +3,30 @@
 #include "CsData_DamageCollision.generated.h"
 #pragma once
 
+namespace NCsDamage
+{
+	namespace NData
+	{
+		namespace NCollision
+		{
+			/**
+			* Interface to describe the collision of Damage. This should be used with
+			* the interface "base" NCsDamage::NData::IData.
+			*/
+			struct CSCORE_API ICollision : public ICsGetInterfaceMap
+			{
+			public:
+
+				static const FName Name;
+
+			public:
+
+				virtual bool IgnoreHitResultObject() const = 0;
+			};
+		}
+	}
+}
+
 UINTERFACE(BlueprintType)
 class CSCORE_API UCsData_DamageCollision : public UCsGetInterfaceMap
 {

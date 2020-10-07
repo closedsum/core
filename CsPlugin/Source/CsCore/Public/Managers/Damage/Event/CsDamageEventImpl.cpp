@@ -67,7 +67,9 @@ namespace NCsDamage
 			checkf(DamageValue.GetValue(), TEXT("%s: DamageValue.Value is NULL."), *Context);
 
 			// Shape
-			if (ICsData_DamageShape* Shape = FCsLibrary_Data_Damage::GetSafeInterfaceChecked<ICsData_DamageShape>(Context, Data))
+			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
+
+			if (ShapeDataType* Shape = FCsLibrary_Data_Damage::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 			{
 				Damage = Shape->CalculateDamage(DamageValue.GetValue(), DamageRange.GetRange(), Origin.ImpactPoint, HitResult.ImpactPoint);
 				return true;

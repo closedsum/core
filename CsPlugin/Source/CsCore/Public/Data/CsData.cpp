@@ -2,6 +2,8 @@
 #include "Data/CsData.h"
 #include "CsCore.h"
 
+const FName NCsData::IData::Name = FName("NCsData::IData::Name");
+
 const FName ICsData::Name = FName("ICsData");
 
 UCsData::UCsData(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)

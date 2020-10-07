@@ -2,6 +2,8 @@
 #include "Data/Damage/CsData_StatusEffect_Damage.h"
 #include "CsSe.h"
 
+const FName NCsStatusEffect::NData::NDamage::IDamage::Name = FName("NCsStatusEffect::NData::NDamage::IDamage");
+
 UCsData_StatusEffect_Damage::UCsData_StatusEffect_Damage(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }

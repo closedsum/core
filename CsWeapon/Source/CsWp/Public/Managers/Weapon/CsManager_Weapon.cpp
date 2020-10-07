@@ -10,6 +10,7 @@
 // Library
 #include "Library/CsLibrary_Property.h"
 #include "Library/Load/CsLibrary_Load.h"
+#include "Data/CsLibrary_Data.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 #include "Settings/CsWeaponSettings.h"
@@ -18,9 +19,10 @@
 // Data
 #include "Data/CsWpGetDataRootSet.h"
 #include "Data/CsData_WeaponInterfaceMap.h"
+#include "Data/CsData.h"
 #include "Data/CsData_WeaponEmuSlice.h"
 #include "Projectile/Data/CsData_ProjectileWeaponEmuSlice.h"
-#include "Projectile/Data/CsData_ProjectileWeaponSoundImpl.h"
+#include "Projectile/Data/Sound/CsData_ProjectileWeapon_SoundFireImpl.h"
 // Weapon
 #include "Payload/CsPayload_WeaponPooledImpl.h"
 // Game
@@ -70,7 +72,7 @@ namespace NCsManagerWeapon
 		const FName TimeBetweenShots = FName("TimeBetweenShots");
 		const FName TimeBetweenAutoShots = FName("TimeBetweenAutoShots");
 		const FName TimeBetweenProjectilesPerShot = FName("TimeBetweenProjectilesPerShot");
-		// ICsData_ProjectileWeaponSound
+		// ICsData_ProjectileWeapon_SoundFire
 		const FName FireSound = FName("FireSound");
 	}
 }
@@ -897,8 +899,8 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 		Emulates_ICsData_ProjectileWeapon = true;
 	}
 
-	// ICsData_ProjectileWeaponSound
-	bool Emulates_ICsData_ProjectileWeaponSound = false;
+	// ICsData_ProjectileWeapon_SoundFire
+	bool Emulates_ICsData_ProjectileWeapon_SoundFire = false;
 
 		// FireSound
 	FStructProperty* FireSoundProperty = nullptr;
@@ -908,7 +910,7 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 		// FireSound
 		FireSoundProperty = FCsLibrary_Property::FindStructPropertyByNameForInterfaceChecked<FCsSound>(Context, RowStruct, Name::FireSound, NCsWeaponData::ProjectileWeaponSound.GetDisplayName());
 
-		Emulates_ICsData_ProjectileWeaponSound = true;
+		Emulates_ICsData_ProjectileWeapon_SoundFire = true;
 	}
 
 	// Class
@@ -941,7 +943,10 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 		if (Emulates_ICsDataWeapon)
 		{
 			// Setup and Add Emulated Interface
-			FCsData_WeaponEmuSlice* Data = new FCsData_WeaponEmuSlice();
+			typedef NCsWeapon::NData::IData DataType;
+			typedef NCsWeapon::NData::FEmuSlice DataEmuSliceType;
+
+			DataEmuSliceType* Data = new DataEmuSliceType();
 
 			checkf(EmulatedDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s."), *Context, *(Name.ToString()));
 
@@ -955,12 +960,12 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 
 			FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
 
-			InterfaceMap->Add<ICsData_Weapon>(FCsData_WeaponEmuSlice::Name, static_cast<ICsData_Weapon*>(Data));
+			InterfaceMap->Add<DataType>(DataEmuSliceType::Name, static_cast<DataType*>(Data));
 
 			Data->SetInterfaceMap(InterfaceMap);
 
 			TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
-			InterfaceImplMap.Add(FCsData_WeaponEmuSlice::Name, Data);
+			InterfaceImplMap.Add(DataEmuSliceType::Name, Data);
 
 			DataMap.Add(Name, Data);
 		}
@@ -968,17 +973,20 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 		if (Emulates_ICsData_ProjectileWeapon)
 		{
 			// Setup and Add Emulated Interface
-			FCsData_ProjectileWeaponEmuSlice* Data = new FCsData_ProjectileWeaponEmuSlice();
+			typedef NCsWeapon::NProjectile::NData::IData DataType;
+			typedef NCsWeapon::NProjectile::NData::FEmuSlice DataEmuSliceType;
+
+			DataEmuSliceType* Data = new DataEmuSliceType();
 
 			FCsData_WeaponInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap[Name];
 			FCsInterfaceMap* InterfaceMap					 = EmulatedInterfaceMap->GetInterfaceMap();
 
-			InterfaceMap->Add<ICsData_ProjectileWeapon>(FCsData_ProjectileWeaponEmuSlice::Name, static_cast<ICsData_ProjectileWeapon*>(Data));
+			InterfaceMap->Add<DataType>(DataEmuSliceType::Name, static_cast<DataType*>(Data));
 
 			Data->SetInterfaceMap(InterfaceMap);
 
 			TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
-			InterfaceImplMap.Add(FCsData_ProjectileWeaponEmuSlice::Name, Data);
+			InterfaceImplMap.Add(DataEmuSliceType::Name, Data);
 
 			// bDoFireOnRelease
 			{
@@ -1029,21 +1037,24 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 				Data->SetTimeBetweenProjectilesPerShot(Value);
 			}
 		}
-		// ICsData_ProjectileWeaponSound
-		if (Emulates_ICsData_ProjectileWeaponSound)
+		// ICsData_ProjectileWeapon_SoundFire
+		if (Emulates_ICsData_ProjectileWeapon_SoundFire)
 		{
 			// Setup and Add Emulated Interface
-			FCsData_ProjectileWeaponSoundImpl* Data = new FCsData_ProjectileWeaponSoundImpl();
+			typedef ICsData_ProjectileWeapon_SoundFire SoundDataType;
+			typedef NCsWeapon::NProjectile::NData::NSound::NFire::FImpl SoundDataImplType;
+
+			SoundDataImplType* Data = new SoundDataImplType();
 
 			FCsData_WeaponInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap[Name];
 			FCsInterfaceMap* InterfaceMap					 = EmulatedInterfaceMap->GetInterfaceMap();
 
-			InterfaceMap->Add<ICsData_ProjectileWeaponSound>(FCsData_ProjectileWeaponSoundImpl::Name, static_cast<ICsData_ProjectileWeaponSound*>(Data));
+			InterfaceMap->Add<SoundDataType>(SoundDataImplType::Name, static_cast<SoundDataType*>(Data));
 
 			Data->SetInterfaceMap(InterfaceMap);
 
 			TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
-			InterfaceImplMap.Add(FCsData_ProjectileWeaponSoundImpl::Name, Data);
+			InterfaceImplMap.Add(SoundDataImplType::Name, Data);
 
 			// FireSound
 			{
@@ -1073,22 +1084,22 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 
 void UCsManager_Weapon::DeconstructEmulatedData(const FName& InterfaceImplName, void* Data)
 {
-	// FCsData_WeaponEmuSlice
-	if (InterfaceImplName == FCsData_WeaponEmuSlice::Name)
+	// NCsWeapon::NData::FEmuSlice
+	if (InterfaceImplName == NCsWeapon::NData::FEmuSlice::Name)
 	{
-		delete static_cast<FCsData_WeaponEmuSlice*>(Data);
+		delete static_cast<NCsWeapon::NData::FEmuSlice*>(Data);
 	}
-	// FCsData_ProjectileWeaponEmuSlice
+	// NCsWeapon::NProjectile::NData::FEmuSlice
 	else
-	if (InterfaceImplName == FCsData_ProjectileWeaponEmuSlice::Name)
+	if (InterfaceImplName == NCsWeapon::NProjectile::NData::FEmuSlice::Name)
 	{
-		delete static_cast<FCsData_ProjectileWeaponEmuSlice*>(Data);
+		delete static_cast<NCsWeapon::NProjectile::NData::FEmuSlice*>(Data);
 	}
-	// FCsData_ProjectileWeaponSoundImpl
+	// NCsWeapon::NProjectile::NData::NSound::NFire::FImpl
 	else
-	if (InterfaceImplName == FCsData_ProjectileWeaponSoundImpl::Name)
+	if (InterfaceImplName == NCsWeapon::NProjectile::NData::NSound::NFire::FImpl::Name)
 	{
-		delete static_cast<FCsData_ProjectileWeaponSoundImpl*>(Data);
+		delete static_cast<NCsWeapon::NProjectile::NData::NSound::NFire::FImpl*>(Data);
 	}
 	else
 	{
@@ -1159,58 +1170,76 @@ void UCsManager_Weapon::PopulateDataMapFromDataTable(UDataTable* DataTable, cons
 		{
 			FCsData_WeaponPtr* DataPtr = DataProperty->ContainerPtrToValuePtr<FCsData_WeaponPtr>(RowPtr);
 
-			UObject* Data = DataPtr->Get();
+			UObject* O = DataPtr->Get();
 
-			checkf(Data, TEXT("%s: Failed to get data from DataTable: %s Row: %s."), *Context, *(DataTable->GetName()), *(Name.ToString()));
+			checkf(O, TEXT("%s: Failed to get data from DataTable: %s Row: %s."), *Context, *(DataTable->GetName()), *(Name.ToString()));
 
-			ICsData_Weapon* IData = Cast<ICsData_Weapon>(Data);
+			ICsData* Data = Cast<ICsData>(O);
 
-			checkf(IData, TEXT("%s: Data: %s with Class: %s does NOT implement interface: ICsData_Weapon."), *Context, *(Data->GetName()), *(Data->GetClass()->GetName()));
+			checkf(Data, TEXT("%s: Data: %s with Class: %s does NOT implement interface: ICsData."), *Context, *(O->GetName()), *(O->GetClass()->GetName()));
 
-			DataMap.Add(Name, IData);
+			typedef NCsData::IData DataType;
+
+			DataType* IData = Data->_getIData();
+
+			checkf(IData, TEXT("%s: Failed to get IData (Data emulating ICsData) from Data: %s with Class: %s."));
+
+			typedef NCsWeapon::NData::IData WeaponDataType;
+
+			WeaponDataType* WeaponData = NCsData::FLibrary::GetInterfaceChecked<WeaponDataType>(Context, IData);
+
+			DataMap.Add(Name, WeaponData);
 		}
 	}
 }
 
-ICsData_Weapon* UCsManager_Weapon::GetData(const FName& Name)
+#define DataType NCsWeapon::NData::IData
+DataType* UCsManager_Weapon::GetData(const FName& Name)
 {
 	checkf(Name != NAME_None, TEXT("UCsManager_Weapon::GetData: Name: None is NOT Valid."));
 
 	// Check emulated data
-	if (ICsData_Weapon** EmuDataPtr = EmulatedDataMap.Find(Name))
+	if (DataType** EmuDataPtr = EmulatedDataMap.Find(Name))
 		return *EmuDataPtr;
 
 	// Check data
-	if (ICsData_Weapon** DataPtr = DataMap.Find(Name))
+	if (DataType** DataPtr = DataMap.Find(Name))
 		return *DataPtr;
 
 	return nullptr;
 }
+#undef DataType
 
-ICsData_Weapon* UCsManager_Weapon::GetData(const FECsWeapon& Type)
+#define DataType NCsWeapon::NData::IData
+DataType* UCsManager_Weapon::GetData(const FECsWeapon& Type)
 {
+#undef DataType
 	checkf(EMCsWeapon::Get().IsValidEnum(Type), TEXT("UCsManager_Weapon::GetData: Type: %s is NOT Valid."), Type.ToChar());
 
 	return GetData(Type.GetFName());
 }
 
-ICsData_Weapon* UCsManager_Weapon::GetDataChecked(const FString& Context, const FName& Name)
+#define DataType NCsWeapon::NData::IData
+DataType* UCsManager_Weapon::GetDataChecked(const FString& Context, const FName& Name)
 {
-	ICsData_Weapon* Ptr = GetData(Name);
+	DataType* Ptr = GetData(Name);
 
 	checkf(Ptr, TEXT("%s: Failed to find a Data associated with Name: %s."), *(Name.ToString()));
 
 	return Ptr;
 }
+#undef DataType
 
-ICsData_Weapon* UCsManager_Weapon::GetDataChecked(const FString& Context, const FECsWeapon& Type)
+#define DataType NCsWeapon::NData::IData
+DataType* UCsManager_Weapon::GetDataChecked(const FString& Context, const FECsWeapon& Type)
 {
-	ICsData_Weapon* Ptr = GetData(Type);
+	DataType* Ptr = GetData(Type);
 
 	checkf(Ptr, TEXT("%s: Failed to find a Data associated with Type: %s."), Type.ToChar());
 
 	return Ptr;
 }
+#undef DataType
 
 void UCsManager_Weapon::ResetDataContainers()
 {

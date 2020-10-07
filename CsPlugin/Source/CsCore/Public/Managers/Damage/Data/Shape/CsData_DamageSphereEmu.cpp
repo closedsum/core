@@ -10,89 +10,107 @@
 #include "Managers/Damage/Value/Range/CsDamageValueRangeEmu.h"
 #include "Managers/Damage/Range/CsDamageRangeEmu.h"
 
-const FName FCsData_DamageSphereEmu::Name = FName("FCsData_DamageSphereEmu");
+const FName NCsDamage::NData::NShape::NSphere::FEmu::Name = FName("NCsDamage::NData::NShape::NSphere::FEmu");
 
-FCsData_DamageSphereEmu::FCsData_DamageSphereEmu() :
-	// ICsGetInterfaceMap
-	InterfaceMap(),
-	// ICsData_Damage
-	DamageValue(nullptr),
-	Type(nullptr),
-	// ICsData_DamageShape
-	DamageRange(nullptr),
-	MinDamage(nullptr),
-	MaxDamage(nullptr),
-	MinRadius(nullptr),
-	MaxRadius(nullptr),
-	InterpolationMethod(nullptr),
-	EasingType(nullptr),
-	Curve(nullptr),
-	// ICsData_DamageCollision
-	bIgnoreHitResultObject(nullptr)
+namespace NCsDamage
 {
-	// ICsGetInterfaceMap
-	InterfaceMap = new FCsInterfaceMap();
+	namespace NData
+	{
+		namespace NShape
+		{
+			namespace NSphere
+			{
+				FEmu::FEmu() :
+					// ICsGetInterfaceMap
+					InterfaceMap(),
+					// ICsData_Damage
+					DamageValue(nullptr),
+					Type(nullptr),
+					// ICsData_DamageShape
+					DamageRange(nullptr),
+					MinDamage(nullptr),
+					MaxDamage(nullptr),
+					MinRadius(nullptr),
+					MaxRadius(nullptr),
+					InterpolationMethod(nullptr),
+					EasingType(nullptr),
+					Curve(nullptr),
+					// ICsData_DamageCollision
+					bIgnoreHitResultObject(nullptr)
+				{
+					// ICsGetInterfaceMap
+					InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsData_DamageSphereEmu::Name);
+					InterfaceMap->SetRootName(FEmu::Name);
 
-	InterfaceMap->Add<ICsData_Damage>(static_cast<ICsData_Damage*>(this));
-	InterfaceMap->Add<ICsData_DamageShape>(static_cast<ICsData_DamageShape*>(this));
-	InterfaceMap->Add<ICsData_DamageCollision>(static_cast<ICsData_DamageCollision*>(this));
+					typedef NCsDamage::NData::IData DataType;
+					typedef NCsDamage::NData::NShape::IShape ShapeDataType;
+					typedef NCsDamage::NData::NCollision::ICollision CollisionDataType;
 
-	// ICsData_Damage
-	DamageValue = new NCsDamage::NValue::NRange::FEmu();
-	// ICsData_DamageShape
-	DamageRange = new NCsDamage::NRange::FEmu();
-}
+					InterfaceMap->Add<DataType>(static_cast<DataType*>(this));
+					InterfaceMap->Add<ShapeDataType>(static_cast<ShapeDataType*>(this));
+					InterfaceMap->Add<CollisionDataType>(static_cast<CollisionDataType*>(this));
 
-FCsData_DamageSphereEmu::~FCsData_DamageSphereEmu()
-{
-	delete InterfaceMap;
-}
+					// NCsDamage::NValue::NRange::IRange
+					typedef NCsDamage::NValue::NRange::FEmu ValueRangeEmuType;
+					DamageValue = new ValueRangeEmuType();
+					// NCsDamage::NRange::IRange
+					typedef NCsDamage::NRange::FEmu RangeEmuType;
+					DamageRange = new RangeEmuType();
+				}
 
-// ICsDamageShape
-#pragma region
+				FEmu::~FEmu()
+				{
+					delete InterfaceMap;
+				}
 
-float FCsData_DamageSphereEmu::CalculateDamage(const NCsDamage::NValue::IValue* Value, const NCsDamage::NRange::IRange* Range, const FVector& Origin, const FVector& Point) const
-{
-	return 0.0f;
-}
+				// ICsDamageShape
+				#pragma region
 
-bool FCsData_DamageSphereEmu::IsInBounds(const FVector& Origin, const FVector& Point) const
-{
-	return false;
-}
+				float FEmu::CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector& Origin, const FVector& Point) const
+				{
+					return 0.0f;
+				}
 
-#pragma endregion ICsDamageSphere
+				bool FEmu::IsInBounds(const FVector& Origin, const FVector& Point) const
+				{
+					return false;
+				}
 
-void FCsData_DamageSphereEmu::SetMinDamage(float* Value)
-{
-	typedef NCsDamage::NValue::NRange::FEmu EmuType;
+				#pragma endregion ICsDamageSphere
 
-	EmuType* Emu = static_cast<EmuType*>(DamageValue);
-	Emu->SetMinValue(Value);
-}
+				void FEmu::SetMinDamage(float* Value)
+				{
+					typedef NCsDamage::NValue::NRange::FEmu EmuType;
 
-void FCsData_DamageSphereEmu::SetMaxDamage(float* Value)
-{
-	typedef NCsDamage::NValue::NRange::FEmu EmuType;
+					EmuType* Emu = static_cast<EmuType*>(DamageValue);
+					Emu->SetMinValue(Value);
+				}
 
-	EmuType* Emu = static_cast<EmuType*>(DamageValue);
-	Emu->SetMaxValue(Value);
-}
+				void FEmu::SetMaxDamage(float* Value)
+				{
+					typedef NCsDamage::NValue::NRange::FEmu EmuType;
 
-void FCsData_DamageSphereEmu::SetMinRadius(float* Value)
-{
-	typedef NCsDamage::NRange::FEmu EmuType;
+					EmuType* Emu = static_cast<EmuType*>(DamageValue);
+					Emu->SetMaxValue(Value);
+				}
 
-	EmuType* Emu = static_cast<EmuType*>(DamageRange);
-	Emu->SetMinRange(Value);
-}
+				void FEmu::SetMinRadius(float* Value)
+				{
+					typedef NCsDamage::NRange::FEmu EmuType;
 
-void FCsData_DamageSphereEmu::SetMaxRadius(float* Value)
-{
-	typedef NCsDamage::NRange::FEmu EmuType;
+					EmuType* Emu = static_cast<EmuType*>(DamageRange);
+					Emu->SetMinRange(Value);
+				}
 
-	EmuType* Emu = static_cast<EmuType*>(DamageRange);
-	Emu->SetMaxValue(Value);
+				void FEmu::SetMaxRadius(float* Value)
+				{
+					typedef NCsDamage::NRange::FEmu EmuType;
+
+					EmuType* Emu = static_cast<EmuType*>(DamageRange);
+					Emu->SetMaxValue(Value);
+				}
+			}
+		}
+	}
 }

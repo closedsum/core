@@ -9,6 +9,47 @@
 // Damage
 #include "Managers/Damage/Data/CsData_DamagePointEmu.h"
 
+const FName NCsStatusEffect::NData::NDamage::FPointEmu::Name = FName("NCsStatusEffect::NData::NDamage::FPointEmu");
+
+namespace NCsStatusEffect
+{
+	namespace NData
+	{
+		namespace NDamage
+		{
+			FPointEmu::FPointEmu() :
+				Outer(nullptr),
+				// ICsGetInterfaceMap
+				InterfaceMap(nullptr),
+				// NCsStatusEffect::NData::IData
+				TriggerCondition(nullptr),
+				TriggerFrequencyParams(nullptr),
+				TransferFrequencyParams(nullptr),
+				Children(nullptr),
+				// NCsStatusEffect::NData::NDamage::IDamage
+				DamageData(nullptr)
+			{
+				InterfaceMap = new FCsInterfaceMap();
+
+				InterfaceMap->SetRootName(FPointEmu::Name);
+
+				typedef NCsData::IData DataType;
+				typedef NCsStatusEffect::NData::IData StatusEffectDataType;
+				typedef NCsStatusEffect::NData::NDamage::IDamage StatusEffectDamageDataType;
+
+				InterfaceMap->Add<DataType>(static_cast<DataType*>(this));
+				InterfaceMap->Add<StatusEffectDataType>(static_cast<StatusEffectDataType*>(this));
+				InterfaceMap->Add<StatusEffectDamageDataType>(static_cast<StatusEffectDamageDataType*>(this));
+			}
+
+			FPointEmu::~FPointEmu()
+			{
+				delete InterfaceMap;
+			}
+		}
+	}
+}
+
 const FName UCsData_StatusEffect_DamagePoint::Name = FName("UCsData_StatusEffect_DamagePoint");
 
 UCsData_StatusEffect_DamagePoint::UCsData_StatusEffect_DamagePoint(const FObjectInitializer& ObjectInitializer)
@@ -43,9 +84,16 @@ void UCsData_StatusEffect_DamagePoint::BeginDestroy()
 	// ICsStatusEffect_Damage
 	if (DamagePointEmu)
 	{
-		FCsData_DamagePointEmu* Emu = static_cast<FCsData_DamagePointEmu*>(DamagePointEmu);
+		typedef NCsDamage::NData::NPoint::FEmu PointDataEmuType;
+
+		PointDataEmuType* Emu = static_cast<PointDataEmuType*>(DamagePointEmu);
 		delete Emu;
 		DamagePointEmu = nullptr;
+	}
+	if (DataEmu)
+	{
+		delete DataEmu;
+		DataEmu = nullptr;
 	}
 }
 
@@ -68,11 +116,28 @@ void UCsData_StatusEffect_DamagePoint::Init()
 	// ICsStatusEffect_Damage
 	if (!DamagePointEmu)
 	{
-		DamagePointEmu = new FCsData_DamagePointEmu();
-		DamagePoint.SetData(static_cast<FCsData_DamagePointEmu*>(DamagePointEmu));
+		typedef NCsDamage::NData::NPoint::FEmu PointDataEmuType;
+
+		DamagePointEmu = new PointDataEmuType();
+		DamagePoint.SetData(static_cast<PointDataEmuType*>(DamagePointEmu));
+	}
+	if (!DataEmu)
+	{
+		typedef NCsStatusEffect::NData::NDamage::FPointEmu DataEmuType;
+
+		DataEmu = new DataEmuType();
+
+		DataEmuType* Emu = (DataEmuType*)DataEmu;
+		Emu->SetOuter(this);
+		// // NCsStatusEffect::NData::IData
+		//Emu->SetTriggerCondition(this);
+		//Emu->SetTriggerFrequencyParams(this);
+		//Emu->SetTransferFrequencyParams(this);
+		//Emu->SetChildren(this);
+		// NCsStatusEffect::NData::NDamage::IDamage
+		//Emu->SetDamageData();
 	}
 }
-
 
 // ICsData
 #pragma region

@@ -8,7 +8,11 @@
 // FCsPrjData_DamagePoint
 #pragma region
 
-struct FCsData_DamagePointEmu;
+// NCsDamage::NData::NPoint::FEmu
+namespace NCsDamage {
+	namespace NData {
+		namespace NPoint {
+			struct FEmu; } } }
 
 USTRUCT(BlueprintType)
 struct CSPRJ_API FCsPrjData_DamagePoint
@@ -29,7 +33,13 @@ public:
 	{
 	}
 
-	void SetData(FCsData_DamagePointEmu* Data);
+private:
+
+	typedef NCsDamage::NData::NPoint::FEmu PointDataEmuType;
+
+public:
+
+	void SetData(PointDataEmuType* Data);
 };
 
 #pragma endregion FCsPrjData_DamagePoint
@@ -37,12 +47,19 @@ public:
 // FCsPrjData_DamageSphere
 #pragma region
 
-struct FCsData_DamageSphereEmu;
+// NCsDamage::NData::NShape::NSphere::FEmu
+namespace NCsDamage {
+	namespace NData {
+		namespace NShape {
+			namespace NSphere {
+				struct FEmu; } } } }
 
 USTRUCT(BlueprintType)
 struct CSPRJ_API FCsPrjData_DamageSphere
 {
 	GENERATED_USTRUCT_BODY()
+
+public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FECsDamageType Type;
@@ -89,7 +106,13 @@ public:
 	{
 	}
 
-	void SetData(FCsData_DamageSphereEmu* Data);
+private:
+
+	typedef NCsDamage::NData::NShape::NSphere::FEmu SphereDataEmuType;
+
+public:
+
+	void SetData(SphereDataEmuType* Data);
 };
 
 #pragma endregion FCsPrjData_DamageSphere

@@ -3,21 +3,4 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsData_ProjectileWeaponEmuSlice::Name = FName("FCsData_ProjectileWeaponEmuSlice");
-
-FCsData_ProjectileWeaponEmuSlice::FCsData_ProjectileWeaponEmuSlice() :
-		InterfaceMap(nullptr),
-		bDoFireOnRelease(nullptr),
-		bFullAuto(nullptr),
-		bInfiniteAmmo(nullptr),
-		MaxAmmo(nullptr),
-		ProjectilesPerShot(nullptr),
-		TimeBetweenShots(nullptr),
-		TimeBetweenAutoShots(nullptr),
-		TimeBetweenProjectilesPerShot(nullptr)
-{
-}
-
-FCsData_ProjectileWeaponEmuSlice::~FCsData_ProjectileWeaponEmuSlice()
-{
-}
+const FName NCsWeapon::NProjectile::NData::FEmuSlice::Name = FName("NCsWeapon::NProjectile::NData::FEmuSlice");

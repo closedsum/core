@@ -2,6 +2,8 @@
 #include "Data/Damage/CsData_ProjectileDamage.h"
 #include "CsPrj.h"
 
+const FName NCsProjectile::NData::NDamage::IDamage::Name = FName("NCsProjectile::NData::NDamage::IDamage");
+
 const FName ICsData_ProjectileDamage::Name = FName("ICsData_ProjectileDamage");
 
 UCsData_ProjectileDamage::UCsData_ProjectileDamage(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)

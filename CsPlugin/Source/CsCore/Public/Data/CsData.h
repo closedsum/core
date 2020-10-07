@@ -7,6 +7,18 @@
 #include "Containers/CsInterfaceObject.h"
 #include "CsData.generated.h"
 
+namespace NCsData
+{
+	struct CSCORE_API IData : public ICsGetInterfaceMap
+	{
+	public:
+
+		static const FName Name;
+
+	public:
+	};
+}
+
 UINTERFACE(Blueprintable)
 class CSCORE_API UCsData : public UCsGetInterfaceMap
 {
@@ -23,7 +35,13 @@ public:
 
 	static const FName Name;
 
+private:
+
+	typedef NCsData::IData DataType;
+
 public:
+
+	virtual DataType* _getIData() const = 0;
 
 	/**
 	*
@@ -63,6 +81,7 @@ struct CSCORE_API FCsData : public TCsInterfaceObject<ICsData>
 private:
 
 	typedef TCsInterfaceObject<ICsData> Super;
+	typedef NCsData::IData DataType;
 
 public:
 
@@ -72,6 +91,10 @@ public:
 #pragma region
 
 public:
+
+	DECLARE_DELEGATE_RetVal_OneParam(DataType* /*Data*/, FScript_getIData, UObject* /*Object*/);
+
+	FScript_getIData Script_getIData_Impl;
 
 	/**
 	* Delegate type for checking whether a Data is valid for the given Load Flags.
@@ -139,6 +162,7 @@ public:
 
 	FCsData() :
 		Super(),
+		Script_getIData_Impl(),
 		Script_IsValid_Impl(),
 		Script_Load_Impl(),
 		Script_Unload_Impl(),
@@ -167,6 +191,13 @@ public:
 	// ICsData
 #pragma region
 public:
+
+	FORCEINLINE DataType* _getIData() const
+	{
+		if (bScript)
+			return Script_getIData_Impl.Execute(Object);
+		return Interface->_getIData();
+	}
 
 	FORCEINLINE bool _IsValid(const int32& LoadFlags)
 	{

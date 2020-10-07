@@ -8,69 +8,84 @@ namespace NCsDamage {
 	namespace NValue {
 		struct IValue; } }
 
-/**
-*
-*/
-struct CSCORE_API FCsData_DamagePointEmu : public ICsData_Damage
+namespace NCsDamage
 {
-public:
-
-	static const FName Name;
-
-private:
-
-	// ICsGetInterfaceMap
-
-	FCsInterfaceMap* InterfaceMap;
-
-public:
-
-	// ICsData_Damage
-
-	NCsDamage::NValue::IValue* Value;
-
-	FECsDamageType* Type;
-
-public:
-
-	FCsData_DamagePointEmu();
-	~FCsData_DamagePointEmu();
-
-	FORCEINLINE UObject* _getUObject() const { return nullptr; }
-
-// ICsGetInterfaceMap
-#pragma region
-public:
-
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+	namespace NData
 	{
-		return InterfaceMap;
+		namespace NPoint
+		{
+#define DataType NCsDamage::NData::IData
+
+			/**
+			*
+			*/
+			struct CSCORE_API FEmu : public DataType
+			{
+			public:
+
+				static const FName Name;
+
+			private:
+
+				typedef NCsDamage::NValue::IValue ValueType;
+
+				// ICsGetInterfaceMap
+
+				FCsInterfaceMap* InterfaceMap;
+
+			public:
+
+				// ICsData_Damage
+
+				ValueType* Value;
+
+				FECsDamageType* Type;
+
+			public:
+
+				FEmu();
+				~FEmu();
+
+				FORCEINLINE UObject* _getUObject() const { return nullptr; }
+
+			// ICsGetInterfaceMap
+			#pragma region
+			public:
+
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+				{
+					return InterfaceMap;
+				}
+
+			#pragma endregion ICsGetInterfaceMap
+
+			// ICsData_Damage
+			#pragma region
+			public:
+
+				FORCEINLINE const ValueType* GetValue() const
+				{
+					return Value;
+				}
+
+				FORCEINLINE const FECsDamageType& GetType() const
+				{
+					return const_cast<FECsDamageType&>(*Type);
+				}
+
+			#pragma endregion ICsData_Damage
+
+			public:
+
+				void SetValue(float* InValue);
+
+				void SetType(FECsDamageType* InValue)
+				{
+					Type = InValue;
+				}
+			};
+
+#undef DataType
+		}
 	}
-
-#pragma endregion ICsGetInterfaceMap
-
-// ICsData_Damage
-#pragma region
-public:
-
-	FORCEINLINE const NCsDamage::NValue::IValue* GetValue() const
-	{
-		return Value;
-	}
-
-	FORCEINLINE const FECsDamageType& GetType() const
-	{
-		return const_cast<FECsDamageType&>(*Type);
-	}
-
-#pragma endregion ICsData_Damage
-
-public:
-
-	void SetValue(float* InValue);
-
-	void SetType(FECsDamageType* InValue)
-	{
-		Type = InValue;
-	}
-};
+}

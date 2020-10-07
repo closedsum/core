@@ -3,13 +3,4 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsData_WeaponEmuSlice::Name = FName("FCsData_WeaponEmuSlice");
-
-FCsData_WeaponEmuSlice::FCsData_WeaponEmuSlice() :
-		InterfaceMap(nullptr)
-{
-}
-
-FCsData_WeaponEmuSlice::~FCsData_WeaponEmuSlice()
-{
-}
+const FName NCsWeapon::NData::FEmuSlice::Name = FName("NCsWeapon::NData::FEmuSlice");

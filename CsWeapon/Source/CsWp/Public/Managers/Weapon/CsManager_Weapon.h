@@ -42,7 +42,12 @@ public:
 
 class ICsGetManagerWeapon;
 class UWorld;
-class ICsData_Weapon;
+
+// NCsWeapon::NData::IData
+namespace NCsWeapon {
+	namespace NData {
+		struct IData; } }
+
 struct FCsData_WeaponInterfaceMap;
 class UDataTable;
 struct FCsWeaponPtr;
@@ -52,6 +57,8 @@ UCLASS()
 class CSWP_API UCsManager_Weapon : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+#define DataType NCsWeapon::NData::IData
 
 public:	
 
@@ -581,7 +588,7 @@ public:
 #pragma region
 public:
 
-	/** Delegate for getting the Data of type: ICsData_Weapon a Weapon is using. 
+	/** Delegate for getting the Data of type: NCsWeapon::NData::IData a Weapon is using. 
 		 The Projectile implements a script interface of type: ICsWeapon. */
 	FCsWeaponPooled::FScript_GetData Script_GetData_Impl;
 
@@ -688,7 +695,7 @@ protected:
 protected:
 
 	/** <DataName, InterfacePtr> */
-	TMap<FName, ICsData_Weapon*> EmulatedDataMap;
+	TMap<FName, DataType*> EmulatedDataMap;
 
 	/** <DataName, InterfaceMapPtr> */
 	TMap<FName, FCsData_WeaponInterfaceMap*> EmulatedDataInterfaceMap;
@@ -755,7 +762,7 @@ public:
 protected:
 
 	// <EntryName, Data>
-	TMap<FName, ICsData_Weapon*> DataMap;
+	TMap<FName, DataType*> DataMap;
 
 	TArray<UDataTable*> DataTables;
 
@@ -767,40 +774,40 @@ protected:
 public:
 
 	/**
-	* Get the Data (implements interface: ICsData_Weapon) associated with Name of the weapon type.
+	* Get the Data (implements interface: NCsWeapon::NData::IData) associated with Name of the weapon type.
 	*
 	* @param Name	Name of the Weapon.
-	* return		Data that implements the interface: ICsData_Weapon.
+	* return		Data that implements the interface: NCsWeapon::NData::IData.
 	*/
-	ICsData_Weapon* GetData(const FName& Name);
+	DataType* GetData(const FName& Name);
 
 	/**
-	* Get the Data (implements interface: ICsData_Weapon) associated with Type.
+	* Get the Data (implements interface: NCsWeapon::NData::IData) associated with Type.
 	*
 	* @param Type	Weapon type.
-	* return		Data that implements the interface: ICsData_Weapon.
+	* return		Data that implements the interface: NCsWeapon::NData::IData.
 	*/
-	ICsData_Weapon* GetData(const FECsWeapon& Type);
+	DataType* GetData(const FECsWeapon& Type);
 
 	/**
-	* Get the Data (implements interface: ICsData_Weapon) associated with Name of the weapon type.
+	* Get the Data (implements interface: NCsWeapon::NData::IData) associated with Name of the weapon type.
 	* "Checked" in regards to returning a valid pointer.
 	*
 	* @param Context	The calling context.
 	* @param Name		Name of the Weapon.
-	* return			Data that implements the interface: ICsData_Weapon.
+	* return			Data that implements the interface: NCsWeapon::NData::IData.
 	*/
-	ICsData_Weapon* GetDataChecked(const FString& Context, const FName& Name);
+	DataType* GetDataChecked(const FString& Context, const FName& Name);
 
 	/**
-	* Get the Data (implements interface: ICsData_Weapon) associated with Type.
+	* Get the Data (implements interface: NCsWeapon::NData::IData) associated with Type.
 	* "Checked" in regards to returning a valid pointer.
 	*
 	* @param Context	The calling context.
 	* @param Type		Weapon type.
-	* return			Data that implements the interface: ICsData_Weapon.
+	* return			Data that implements the interface: NCsWeapon::NData::IData.
 	*/
-	ICsData_Weapon* GetDataChecked(const FString& Context, const FECsWeapon& Type);
+	DataType* GetDataChecked(const FString& Context, const FECsWeapon& Type);
 
 protected:
 
@@ -809,4 +816,6 @@ protected:
 	void OnPayloadUnloaded(const FName& Payload);
 
 #pragma endregion Data
+
+#undef DataType
 };

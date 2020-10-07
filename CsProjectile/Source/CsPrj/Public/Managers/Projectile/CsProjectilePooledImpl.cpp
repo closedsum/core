@@ -28,9 +28,9 @@
 // Data
 #include "Data/CsData_Projectile.h"
 #include "Data/CsData_ProjectileCollision.h"
-#include "Data/Visual/CsData_ProjectileStaticMeshVisual.h"
-#include "Data/Visual/CsData_ProjectileTrailVisual.h"
-#include "Data/Visual/CsData_ProjectileImpactVisual.h"
+#include "Data/Visual/CsData_Projectile_VisualStaticMesh.h"
+#include "Data/Visual/CsData_Projectile_VisualTrail.h"
+#include "Data/Visual/CsData_Projectile_VisualImpact.h"
 #include "Data/Damage/CsData_ProjectileDamage.h"
 // Projectile
 #include "Cache/CsCache_ProjectilePooledImpl.h"
@@ -49,17 +49,20 @@
 // Cached
 #pragma region
 
-namespace NCsProjectilePooledImplCached
+namespace NCsProjectilePooledImpl
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, SetType);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnHit);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Update);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Deallocate);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnLaunch_SetModifiers);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnHit_CreateDamageEvent);
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, SetType);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnHit);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Update);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Deallocate);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnLaunch_SetModifiers);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnHit_CreateDamageEvent);
+		}
 	}
 }
 
@@ -300,7 +303,7 @@ FVector ACsProjectilePooledImpl::EvaluateMovementFunction(const float &Time)
 
 void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
 {
-	using namespace NCsProjectilePooledImplCached;
+	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::SetType;
 
@@ -343,7 +346,7 @@ AActor* ACsProjectilePooledImpl::GetIgnoreActor(const int32 &Index)
 
 void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	using namespace NCsProjectilePooledImplCached;
+	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::OnHit;
 
@@ -381,19 +384,21 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 	UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
 	EPhysicalSurface SurfaceType	= PhysMaterial ? PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
 
-	// ICsData_ProjectileImpactVisual
-	if (ICsData_ProjectileImpactVisual* ImpactVisualData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ICsData_ProjectileImpactVisual>(Context, Data))
+	// ICsData_Projectile_VisualImpact
+	if (ICsData_Projectile_VisualImpact* ImpactVisualData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ICsData_Projectile_VisualImpact>(Context, Data))
 	{
 		const FCsFX& ImpactFX = ImpactVisualData->GetImpactFX(SurfaceType);
 
 		UNiagaraSystem* FXSystem = ImpactFX.Get();
 
-		checkf(FXSystem, TEXT("%s: FXSystem is NULL for Visual Data inteface: ICsData_ProjectileImpactVisual"), *Context);
+		checkf(FXSystem, TEXT("%s: FXSystem is NULL for Visual Data inteface: ICsData_Projectile_VisualImpact"), *Context);
 
 		// Get Manager
 		UCsManager_FX_Actor* Manager_FX_Actor = UCsManager_FX_Actor::Get(GetWorld()->GetGameState());
 		// Get Payload
-		NCsFX::NPayload::FImpl* FXPayload = Manager_FX_Actor->AllocatePayload<NCsFX::NPayload::FImpl>(ImpactFX.Type);
+		typedef NCsFX::NPayload::FImpl FXPayloadImplType;
+
+		FXPayloadImplType* FXPayload = Manager_FX_Actor->AllocatePayload<FXPayloadImplType>(ImpactFX.Type);
 		// Set appropriate data on Payload
 		FXPayload->Instigator = Cache->GetInstigator();
 
@@ -434,7 +439,7 @@ void ACsProjectilePooledImpl::OnHit_Internal(UPrimitiveComponent* HitComponent, 
 
 void ACsProjectilePooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
-	using namespace NCsProjectilePooledImplCached;
+	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::Update;
 
@@ -482,7 +487,7 @@ void ACsProjectilePooledImpl::Deallocate()
 
 void ACsProjectilePooledImpl::Deallocate_Internal()
 {
-	using namespace NCsProjectilePooledImplCached;
+	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::Deallocate;
 
@@ -550,23 +555,26 @@ UObject* ACsProjectilePooledImpl::GetInstigator() const
 
 #pragma endregion ICsProjectile
 
-void ACsProjectilePooledImpl::Launch(NCsPooledObject::NPayload::IPayload* Payload)
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 {
-	using namespace NCsProjectilePooledImplCached;
+#undef PooledPayloadType
+
+	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::Launch;
 
 	checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
 
 	// Get Projectile Payload
-	typedef NCsProjectile::NPayload::IPayload PayloadInterfaceType;
+	typedef NCsProjectile::NPayload::IPayload PayloadType;
 
-	PayloadInterfaceType* ProjectilePayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<PayloadInterfaceType>(Context, Payload);
+	PayloadType* ProjectilePayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	// Get Projectile Cache
-	typedef NCsProjectile::NCache::ICache CacheInterfaceType;
+	typedef NCsProjectile::NCache::ICache CacheType;
 
-	CacheInterfaceType* ProjectileCache = FCsLibrary_PooledObjectCache::GetInterfaceChecked<CacheInterfaceType>(Context, Cache);
+	CacheType* ProjectileCache = FCsLibrary_PooledObjectCache::GetInterfaceChecked<CacheType>(Context, Cache);
 
 	// Set Damage Value if the projectile supports damage
 	OnLaunch_SetModifiers(ProjectilePayload);
@@ -585,70 +593,78 @@ void ACsProjectilePooledImpl::Launch(NCsPooledObject::NPayload::IPayload* Payloa
 		MovementComponent->SetComponentTickEnabled(true);
 	}
 	
-	// ICsData_ProjectileStaticMeshVisual | Static Mesh
-	if (ICsData_ProjectileStaticMeshVisual* VisualData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ICsData_ProjectileStaticMeshVisual>(Context, Data))
+	// ICsData_Projectile_VisualStaticMesh | Static Mesh
 	{
-		// TODO: Allocate Static Mesh Actor and get Static Mesh Component
+		typedef ICsData_Projectile_VisualStaticMesh VisualDataType;
 
-		MeshComponent->AttachToComponent(CollisionComponent, FAttachmentTransformRules::KeepRelativeTransform);
+		if (VisualDataType* VisualData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
+		{
+			// TODO: Allocate Static Mesh Actor and get Static Mesh Component
 
-		UStaticMesh* Mesh = VisualData->GetStaticMesh().Get();
+			MeshComponent->AttachToComponent(CollisionComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
-		checkf(Mesh, TEXT("%s: Mesh is NULL from Visual Data interface: ICsData_ProjectileStaticMeshVisual"), *(Str::Launch));
+			UStaticMesh* Mesh = VisualData->GetStaticMesh().Get();
 
-		MeshComponent->SetStaticMesh(Mesh);
-		MeshComponent->SetWorldScale3D(VisualData->GetStaticMesh().Scale);
-		MeshComponent->Activate();
-		MeshComponent->SetVisibility(true);
-		MeshComponent->SetHiddenInGame(false);
-		MeshComponent->SetComponentTickEnabled(true);
+			checkf(Mesh, TEXT("%s: Mesh is NULL from Visual Data interface: ICsData_Projectile_VisualStaticMesh"), *(Str::Launch));
+
+			MeshComponent->SetStaticMesh(Mesh);
+			MeshComponent->SetWorldScale3D(VisualData->GetStaticMesh().Scale);
+			MeshComponent->Activate();
+			MeshComponent->SetVisibility(true);
+			MeshComponent->SetHiddenInGame(false);
+			MeshComponent->SetComponentTickEnabled(true);
+		}
 	}
 
 	// ICsData_ProjectileCollision | Collision
-	if (ICsData_ProjectileCollision* CollisionData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ICsData_ProjectileCollision>(Context, Data))
 	{
-		const FCsCollisionPreset& CollisionPreset  = CollisionData->GetCollisionPreset();
+		typedef ICsData_ProjectileCollision CollisionDataType;
 
-		if (CollisionPreset.CollisionEnabled != ECollisionEnabled::NoCollision)
+		if (CollisionDataType* CollisionData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 		{
-			CollisionComponent->Activate();
+			const FCsCollisionPreset& CollisionPreset = CollisionData->GetCollisionPreset();
 
-			// Instigator
-			if (AActor* Actor = Cast<AActor>(Payload->GetInstigator()))
-				IgnoreActors.Add(Actor);
-			// Owner
-			if (AActor* Actor = Cast<AActor>(Payload->GetOwner()))
-				IgnoreActors.Add(Actor);
-			// Parent
-			if (AActor* Actor = Cast<AActor>(Payload->GetParent()))
-				IgnoreActors.Add(Actor);
-
-			const int32 Count = IgnoreActors.Num();
-
-			for (int32 I = 0; I < Count; ++I)
+			if (CollisionPreset.CollisionEnabled != ECollisionEnabled::NoCollision)
 			{
-				AActor* Actor = IgnoreActors[I].IsValid() ? IgnoreActors[I].Get() : nullptr;
+				CollisionComponent->Activate();
 
-				if (!Actor)
-					continue;
+				// Instigator
+				if (AActor* Actor = Cast<AActor>(Payload->GetInstigator()))
+					IgnoreActors.Add(Actor);
+				// Owner
+				if (AActor* Actor = Cast<AActor>(Payload->GetOwner()))
+					IgnoreActors.Add(Actor);
+				// Parent
+				if (AActor* Actor = Cast<AActor>(Payload->GetParent()))
+					IgnoreActors.Add(Actor);
 
-				CollisionComponent->MoveIgnoreActors.Add(Actor);
+				const int32 Count = IgnoreActors.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					AActor* Actor = IgnoreActors[I].IsValid() ? IgnoreActors[I].Get() : nullptr;
+
+					if (!Actor)
+						continue;
+
+					CollisionComponent->MoveIgnoreActors.Add(Actor);
+				}
+
+				//FCollisionResponseContainer CapsuleResponseContainer(ECR_Ignore);
+				//CapsuleResponseContainer.SetResponse(ECC_Pawn, ECR_Block);
+				//CapsuleResponseContainer.SetResponse(MBO_COLLISION_PROJECTILE, ECR_Ignore);
+
+				CollisionComponent->SetCollisionObjectType(CollisionPreset.ObjectType);
+				CollisionComponent->SetSphereRadius(CollisionData->GetCollisionRadius());
+				CollisionComponent->SetCollisionResponseToChannels(CollisionPreset.CollisionResponses);
+
+				CollisionComponent->SetNotifyRigidBodyCollision(CollisionPreset.bSimulationGeneratesHitEvents);
+				CollisionComponent->SetGenerateOverlapEvents(CollisionPreset.bGenerateOverlapEvents);
+
+				CollisionComponent->SetCollisionEnabled(CollisionPreset.CollisionEnabled);
+
+				CollisionComponent->SetComponentTickEnabled(true);
 			}
-
-			//FCollisionResponseContainer CapsuleResponseContainer(ECR_Ignore);
-			//CapsuleResponseContainer.SetResponse(ECC_Pawn, ECR_Block);
-			//CapsuleResponseContainer.SetResponse(MBO_COLLISION_PROJECTILE, ECR_Ignore);
-
-			CollisionComponent->SetCollisionObjectType(CollisionPreset.ObjectType);
-			CollisionComponent->SetSphereRadius(CollisionData->GetCollisionRadius());
-			CollisionComponent->SetCollisionResponseToChannels(CollisionPreset.CollisionResponses);
-				
-			CollisionComponent->SetNotifyRigidBodyCollision(CollisionPreset.bSimulationGeneratesHitEvents);
-			CollisionComponent->SetGenerateOverlapEvents(CollisionPreset.bGenerateOverlapEvents);
-
-			CollisionComponent->SetCollisionEnabled(CollisionPreset.CollisionEnabled);
-
-			CollisionComponent->SetComponentTickEnabled(true);
 		}
 	}
 	
@@ -666,27 +682,33 @@ void ACsProjectilePooledImpl::Launch(NCsPooledObject::NPayload::IPayload* Payloa
 	}
 
 	// Trail FX
-	if (ICsData_ProjectileTrailVisual* VisualData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ICsData_ProjectileTrailVisual>(Context, Data))
 	{
-		const FCsFX& TrailFX     = VisualData->GetTrailFX();
-		UNiagaraSystem* FXSystem = TrailFX.Get();
+		typedef ICsData_Projectile_VisualTrail VisualDataType;
 
-		checkf(FXSystem, TEXT("%s: FXSystem is NULL for Visual Data inteface: ICsData_ProjectileTrailVisual"), *Context);
+		if (VisualDataType* VisualData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
+		{
+			const FCsFX& TrailFX     = VisualData->GetTrailFX();
+			UNiagaraSystem* FXSystem = TrailFX.Get();
 
-		// Get Manager
-		UCsManager_FX_Actor* Manager_FX_Actor = UCsManager_FX_Actor::Get(GetWorld()->GetGameState());
-		// Get Payload
-		NCsFX::NPayload::FImpl* FXPayload = Manager_FX_Actor->AllocatePayload<NCsFX::NPayload::FImpl>(TrailFX.Type);
-		// Set appropriate data on Payload
-		FXPayload->Owner					= this;
-		FXPayload->Parent					= MeshComponent;
-		FXPayload->FXSystem					= FXSystem;
-		FXPayload->DeallocateMethod			= TrailFX.DeallocateMethod;
-		FXPayload->LifeTime					= TrailFX.LifeTime;
-		FXPayload->AttachmentTransformRules = TrailFX.AttachmentTransformRules;
-		FXPayload->Transform				= TrailFX.Transform;
-		// Spawn FX
-		TrailFXPooled = const_cast<FCsFXActorPooled*>(Manager_FX_Actor->Spawn(TrailFX.Type, FXPayload));
+			checkf(FXSystem, TEXT("%s: FXSystem is NULL for Visual Data inteface: ICsData_Projectile_VisualTrail"), *Context);
+
+			// Get Manager
+			UCsManager_FX_Actor* Manager_FX_Actor = UCsManager_FX_Actor::Get(GetWorld()->GetGameState());
+			// Get Payload
+			typedef NCsFX::NPayload::FImpl FXPayloadImplType;
+
+			FXPayloadImplType* FXPayload = Manager_FX_Actor->AllocatePayload<FXPayloadImplType>(TrailFX.Type);
+			// Set appropriate data on Payload
+			FXPayload->Owner					= this;
+			FXPayload->Parent					= MeshComponent;
+			FXPayload->FXSystem					= FXSystem;
+			FXPayload->DeallocateMethod			= TrailFX.DeallocateMethod;
+			FXPayload->LifeTime					= TrailFX.LifeTime;
+			FXPayload->AttachmentTransformRules = TrailFX.AttachmentTransformRules;
+			FXPayload->Transform				= TrailFX.Transform;
+			// Spawn FX
+			TrailFXPooled = const_cast<FCsFXActorPooled*>(Manager_FX_Actor->Spawn(TrailFX.Type, FXPayload));
+		}
 	}
 
 	// Simulated
@@ -699,17 +721,20 @@ void ACsProjectilePooledImpl::Launch(NCsPooledObject::NPayload::IPayload* Payloa
 	}
 }
 
-void ACsProjectilePooledImpl::OnLaunch_SetModifiers(NCsProjectile::NPayload::IPayload* Payload)
+#define PayloadType NCsProjectile::NPayload::IPayload
+void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 {
-	using namespace NCsProjectilePooledImplCached;
+#undef PayloadType
+
+	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::OnLaunch_SetModifiers;
 
 	// NCsProjectile::NPayload::NModifier::NDamage::IDamage
 	{
-		typedef NCsProjectile::NPayload::NModifier::NDamage::IDamage PayloadInterfaceType;
+		typedef NCsProjectile::NPayload::NModifier::NDamage::IDamage ModDamagePayloadType;
 
-		if (PayloadInterfaceType* DmgModifierPayload = FCsLibrary_Payload_Projectile::GetSafeInterfaceChecked<PayloadInterfaceType>(Context, Payload))
+		if (ModDamagePayloadType* DmgModifierPayload = FCsLibrary_Payload_Projectile::GetSafeInterfaceChecked<ModDamagePayloadType>(Context, Payload))
 		{
 			typedef NCsDamage::NModifier::IModifier ModifierType;
 
@@ -735,22 +760,25 @@ const DamageEventResourceType* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(
 {
 #undef DamageEventResourceType
 
-	using namespace NCsProjectilePooledImplCached;
+	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::OnHit_CreateDamageEvent;
 
 	// ICsData_ProjectileDamage
 	ICsData_ProjectileDamage* PrjDamageData = FCsLibrary_Data_Projectile::GetInterfaceChecked<ICsData_ProjectileDamage>(Context, Data);
 	// Get Damage Data
-	ICsData_Damage* DamageData = PrjDamageData->GetDamageData();
+	typedef NCsDamage::NData::IData DamageDataType;
+
+	DamageDataType* DamageData = PrjDamageData->GetDamageData();
 
 	return OnHit_CreateDamageEvent(HitResult, DamageData);
 }
 
 #define DamageEventResourceType NCsDamage::NEvent::FResource
-const DamageEventResourceType* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(const FHitResult& HitResult, ICsData_Damage* DamageData)
+#define DamageDataType NCsDamage::NData::IData
+const DamageEventResourceType* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(const FHitResult& HitResult, DamageDataType* DamageData)
 {
-	using namespace NCsProjectilePooledImplCached;
+	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::OnHit_CreateDamageEvent;
 
@@ -811,5 +839,6 @@ const DamageEventResourceType* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(
 	return Container;
 }
 #undef DamageEventResourceType
+#undef DamageDataType
 
 #pragma endregion Damage

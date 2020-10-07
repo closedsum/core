@@ -5,6 +5,19 @@
 #include "Containers/CsGetInterfaceMap.h"
 #include "CsData_Weapon.generated.h"
 
+namespace NCsWeapon
+{
+	namespace NData
+	{
+		struct CSWP_API IData : public ICsGetInterfaceMap
+		{
+		public:
+
+			static const FName Name;
+		};
+	}
+}
+
 UINTERFACE(BlueprintType)
 class CSWP_API UCsData_Weapon : public UCsGetInterfaceMap
 {
@@ -19,16 +32,3 @@ public:
 
 	static const FName Name;
 };
-
-namespace NCsWeapon
-{
-	namespace NData
-	{
-		struct CSWP_API IData : public ICsGetInterfaceMap
-		{
-		public:
-
-			static const FName Name;
-		};
-	}
-}

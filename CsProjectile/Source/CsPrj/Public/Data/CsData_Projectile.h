@@ -5,6 +5,49 @@
 #include "Containers/CsGetInterfaceMap.h"
 #include "CsData_Projectile.generated.h"
 
+namespace NCsProjectile
+{
+	namespace NData
+	{
+		/**
+		*/
+		struct CSPRJ_API IData : public ICsGetInterfaceMap
+		{
+		public:
+
+			static const FName Name;
+
+			/**
+			*
+			*
+			* return
+			*/
+			virtual const float& GetLifeTime() const = 0;
+
+			/**
+			*
+			*
+			* return
+			*/
+			virtual const float& GetInitialSpeed() const = 0;
+
+			/**
+			*
+			*
+			* return
+			*/
+			virtual const float& GetMaxSpeed() const = 0;
+
+			/**
+			*
+			*
+			* return
+			*/
+			virtual const float& GetGravityScale() const = 0;
+		};
+	}
+}
+
 UINTERFACE(BlueprintType)
 class CSPRJ_API UCsData_Projectile : public UCsGetInterfaceMap
 {

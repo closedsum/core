@@ -3,7 +3,9 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
-struct CSWP_API FCsLibrary_Data_Weapon : TCsLibrary_InterfaceMap<ICsData_Weapon>
+#define DataType NCsWeapon::NData::IData
+
+struct CSWP_API FCsLibrary_Data_Weapon : TCsLibrary_InterfaceMap<DataType>
 {
 	/**
 	*
@@ -12,5 +14,7 @@ struct CSWP_API FCsLibrary_Data_Weapon : TCsLibrary_InterfaceMap<ICsData_Weapon>
 	* @param Data
 	* return
 	*/
-	static bool IsValidChecked(const FString& Context, ICsData_Weapon* Data);
+	static bool IsValidChecked(const FString& Context, DataType* Data);
 };
+
+#undef DataType

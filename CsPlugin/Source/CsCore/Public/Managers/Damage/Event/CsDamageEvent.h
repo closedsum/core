@@ -4,15 +4,20 @@
 #include "Managers/Damage/CsTypes_Damage.h"
 #pragma once
 
-class ICsData_Damage;
-
+// NCsDamage::NValue::IValue
 namespace NCsDamage {
 	namespace NValue {
 		struct IValue; } }
 
+// NCsDamage::NRange::IRange
 namespace NCsDamage {
 	namespace NRange {
 		struct IRange; } }
+
+// NCsDamage::NData::IData
+namespace NCsDamage {
+	namespace NData {
+		struct IData; } }
 
 namespace NCsDamage
 {
@@ -31,6 +36,7 @@ namespace NCsDamage
 
 			typedef NCsDamage::NValue::IValue ValueType;
 			typedef NCsDamage::NRange::IRange RangeType;
+			typedef NCsDamage::NData::IData DataType;
 
 		public:
 
@@ -62,7 +68,7 @@ namespace NCsDamage
 			*
 			* return
 			*/ 
-			virtual ICsData_Damage* GetData() const = 0;
+			virtual DataType* GetData() const = 0;
 
 			/**
 			*

@@ -36,13 +36,19 @@ public:
 
 class ICsWeapon;
 class ICsUpdate;
-class ICsData_Weapon;
+
+// NCsWeapon::NData::IData
+namespace NCsWeapon {
+	namespace NData {
+		struct IData; } }
 
 struct CSWP_API FCsProjectileWeapon : public TCsInterfaceObject<ICsProjectileWeapon>
 {
 private:
 
 	typedef TCsInterfaceObject<ICsProjectileWeapon> Super;
+
+#define DataType NCsWeapon::NData::IData
 
 public:
 
@@ -76,7 +82,7 @@ public:
 	* @param Object		An object of type: ICsWeapon.
 	* return Data		The cache associated with the Pooled Object.
 	*/
-	DECLARE_DELEGATE_RetVal_OneParam(ICsData_Weapon* /*Data*/, FScript_GetData, UObject* /*Object*/);
+	DECLARE_DELEGATE_RetVal_OneParam(DataType* /*Data*/, FScript_GetData, UObject* /*Object*/);
 
 	/** Delegate for getting the Data associated with a Weapon. 
 		 The Weapon implements a script interface of type: ICsWeapon. */
@@ -258,6 +264,8 @@ public:
 	{
 		return _Update;
 	}
+
+#undef DataType
 };
 
 #pragma endregion FCsProjectileWeapon

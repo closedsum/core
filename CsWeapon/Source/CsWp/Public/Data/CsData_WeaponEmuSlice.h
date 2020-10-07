@@ -5,38 +5,49 @@
 
 struct FCsInterfaceMap;
 
-struct CSWP_API FCsData_WeaponEmuSlice : public ICsData_Weapon
+namespace NCsWeapon
 {
-public:
-
-	static const FName Name;
-
-private:
-
-	FCsInterfaceMap* InterfaceMap;
-
-public:
-
-	FCsData_WeaponEmuSlice();
-	~FCsData_WeaponEmuSlice();
-
-	FORCEINLINE UObject* _getUObject() const { return nullptr; }
-
-public:
-
-	FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map)
+	namespace NData
 	{
-		InterfaceMap = Map;
+		/**
+		*/
+		struct CSWP_API FEmuSlice : public IData
+		{
+		public:
+
+			static const FName Name;
+
+		private:
+
+			FCsInterfaceMap* InterfaceMap;
+
+		public:
+
+			FEmuSlice() :
+				InterfaceMap(nullptr)
+			{
+			}
+			~FEmuSlice(){}
+
+			FORCEINLINE UObject* _getUObject() const { return nullptr; }
+
+		public:
+
+			FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map)
+			{
+				InterfaceMap = Map;
+			}
+
+		// ICsGetInterfaceMap
+		#pragma region
+		public:
+
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+			{
+				return InterfaceMap;
+			}
+
+		#pragma endregion ICsGetInterfaceMap
+		};
 	}
-
-// ICsGetInterfaceMap
-#pragma region
-public:
-
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-	{
-		return InterfaceMap;
-	}
-
-#pragma endregion ICsGetInterfaceMap
-};
+}

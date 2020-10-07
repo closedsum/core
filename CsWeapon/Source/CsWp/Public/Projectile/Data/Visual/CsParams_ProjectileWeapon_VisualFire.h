@@ -55,7 +55,8 @@ namespace NCsWeapon
 							Attach(EAttach::None),
 							Emu_Attach(nullptr)
 						{
-
+							Emu_FX = &FX;
+							Emu_Attach = &Attach;
 						}
 
 					public:
@@ -67,12 +68,12 @@ namespace NCsWeapon
 
 						FORCEINLINE const FCsFX& GetFX() const 
 						{
-							return bEmulate ? *Emu_FX : FX;
+							return *Emu_FX;
 						}
 
 						FORCEINLINE const EAttach& GetAttachType() const
 						{
-							return bEmulate ? *Emu_Attach : Attach;
+							return *Emu_Attach;
 						}
 
 						FORCEINLINE void SetFX(FCsFX* InFX)

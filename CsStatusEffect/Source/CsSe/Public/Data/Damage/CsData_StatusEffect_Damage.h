@@ -4,13 +4,49 @@
 #include "Containers/CsGetInterfaceMap.h"
 #include "CsData_StatusEffect_Damage.generated.h"
 
+// NCsDamage::NData::IData
+namespace NCsDamage {
+	namespace NData {
+		struct IData; } }
+
+namespace NCsStatusEffect
+{
+	namespace NData
+	{
+		namespace NDamage
+		{
+			/**
+			*/
+			struct CSSE_API IDamage : public ICsGetInterfaceMap
+			{
+			public:
+
+				static const FName Name;
+
+			private:
+
+				typedef NCsDamage::NData::IData DamageDataType;
+
+			public:
+
+				/**
+				*/
+				virtual DamageDataType* GetDamageData() const = 0;
+			};
+		}
+	}
+}
+
 UINTERFACE(Blueprintable)
 class CSSE_API UCsData_StatusEffect_Damage : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class ICsData_Damage;
+// NCsDamage::NData::IData
+namespace NCsDamage {
+	namespace NData {
+		struct IData; } }
 
 /**
 */
@@ -22,9 +58,13 @@ public:
 
 	static const FName Name;
 
+private:
+
+	typedef NCsDamage::NData::IData DamageDataType;
+
 public:
 
 	/**
 	*/
-	virtual ICsData_Damage* GetDamageData() const = 0;
+	virtual DamageDataType* GetDamageData() const = 0;
 };

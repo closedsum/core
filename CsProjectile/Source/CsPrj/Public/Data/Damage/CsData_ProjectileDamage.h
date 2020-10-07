@@ -5,13 +5,45 @@
 #include "Containers/CsGetInterfaceMap.h"
 #include "CsData_ProjectileDamage.generated.h"
 
+// NCsDamage::NData::IData
+namespace NCsDamage {
+	namespace NData {
+		struct IData; } }
+
+namespace NCsProjectile
+{
+	namespace NData
+	{
+		namespace NDamage
+		{
+			struct CSPRJ_API IDamage : public ICsGetInterfaceMap
+			{
+			public:
+
+				static const FName Name;
+
+			private:
+
+				typedef NCsDamage::NData::IData DamageDataType;
+
+			public:
+
+				virtual DamageDataType* GetDamageData() const = 0;
+			};
+		}
+	}
+}
+
 UINTERFACE(BlueprintType)
 class CSPRJ_API UCsData_ProjectileDamage : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class ICsData_Damage;
+// NCsDamage::NData::IData
+namespace NCsDamage {
+	namespace NData {
+		struct IData; } }
 
 /**
 *
@@ -24,7 +56,11 @@ public:
 
 	static const FName Name;
 
+private:
+
+	typedef NCsDamage::NData::IData DamageDataType;
+
 public:
 
-	virtual ICsData_Damage* GetDamageData() const = 0;
+	virtual DamageDataType* GetDamageData() const = 0;
 };

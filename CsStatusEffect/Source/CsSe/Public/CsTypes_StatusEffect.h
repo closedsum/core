@@ -267,7 +267,7 @@ namespace NCsStatusEffect
 				if Type == EFrequency::Time, 
 				If Type == EFrequency::Infinite,
 				 Ignore Count and Interval should be > 0.0f. */
-				EFrequency Type;
+			EFrequency Type;
 
 			/** The delay before applying the status effect when triggered.
 				If Delay == 0.0f, the status effect will be applied at a given interval.

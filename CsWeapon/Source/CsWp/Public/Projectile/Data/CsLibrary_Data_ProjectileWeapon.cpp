@@ -5,8 +5,11 @@
 // Data
 #include "Projectile/Data/CsData_ProjectileWeapon.h"
 
-bool FCsLibrary_Data_ProjectileWeapon::IsValidChecked(const FString& Context, ICsData_ProjectileWeapon* Data)
+#define DataType NCsWeapon::NProjectile::NData::IData
+bool FCsLibrary_Data_ProjectileWeapon::IsValidChecked(const FString& Context, DataType* Data)
 {
+#undef DataType
+
 	checkf(Data, TEXT("%s: Data is NULL."), *Context);
 
 	// Check MaxAmmo is a valid value

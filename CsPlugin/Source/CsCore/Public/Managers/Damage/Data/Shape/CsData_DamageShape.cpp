@@ -2,6 +2,8 @@
 #include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
 #include "CsCore.h"
 
+const FName NCsDamage::NData::NShape::IShape::Name = FName("NCsDamage::NData::NShape::IShape");
+
 UCsData_DamageShape::UCsData_DamageShape(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }

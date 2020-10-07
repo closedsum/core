@@ -13,15 +13,20 @@
 class UObject;
 struct FCsInterfaceMap;
 
+// NCsDamage::NValue::IValue
 namespace NCsDamage {
 	namespace NValue {
 		struct IValue; } }
 
+// NCsDamage::NRange::IRange
 namespace NCsDamage {
 	namespace NRange {
 		struct IRange; } }
 
-class ICsData_Damage;
+// NCsDamage::NData::IData
+namespace NCsDamage {
+	namespace NData {
+		struct IData; } }
 
 namespace NCsDamage
 {
@@ -43,6 +48,7 @@ namespace NCsDamage
 			typedef NCsDamage::NValue::FAllocated AllocatedValueType;
 			typedef NCsDamage::NRange::IRange RangeType;
 			typedef NCsDamage::NRange::FAllocated AllocatedRangeType;
+			typedef NCsDamage::NData::IData DataType;
 
 			FCsInterfaceMap InterfaceMap;
 
@@ -56,7 +62,7 @@ namespace NCsDamage
 
 			AllocatedRangeType DamageRange;
 
-			ICsData_Damage* Data;
+			DataType* Data;
 
 			UObject* Instigator;
 
@@ -106,7 +112,7 @@ namespace NCsDamage
 				return DamageRange.Range;
 			}
 
-			FORCEINLINE ICsData_Damage* GetData() const
+			FORCEINLINE DataType* GetData() const
 			{
 				return Data;
 			}

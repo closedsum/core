@@ -5,13 +5,19 @@
 #include "CsTypes_Weapon.h"
 
 class ICsWeapon;
-class ICsData_Weapon;
+
+// NCsWeapon::NData::IData
+namespace NCsWeapon {
+	namespace NData {
+		struct IData; } }
 
 struct CSWP_API FCsWeaponPooled : public FCsPooledObject
 {
 private:
 
 	typedef FCsPooledObject Super;
+
+#define DataType NCsWeapon::NData::IData
 
 public:
 
@@ -30,15 +36,15 @@ protected:
 public:
 
 	/**
-	* Delegate type for getting the Data of type: ICsData_Weapon a Weapon is using.
+	* Delegate type for getting the Data of type: NCsWeapon::NData::IData a Weapon is using.
 	*  The Weapon implements a script interface of type: ICsWeapon.
 	*
 	* @param Object		A Weapon of type: ICsWeapon.
 	* return Data		Data the Weapon is using.
 	*/
-	DECLARE_DELEGATE_RetVal_OneParam(ICsData_Weapon* /*Data*/, FScript_GetData, UObject* /*Object*/);
+	DECLARE_DELEGATE_RetVal_OneParam(DataType* /*Data*/, FScript_GetData, UObject* /*Object*/);
 
-	/** Delegate for getting the Data of type: ICsData_Weapon a Weapon of using. 
+	/** Delegate for getting the Data of type: NCsWeapon::NData::IData a Weapon of using. 
 		 The Projectile implements a script interface of type: ICsProjectile. */
 	FScript_GetData Script_GetData_Impl;
 
@@ -79,7 +85,7 @@ public:
 #pragma region
 public:
 
-	ICsData_Weapon* GetData() const;
+	DataType* GetData() const;
 
 	const FECsWeaponState& GetCurrentState() const;
 
@@ -108,4 +114,6 @@ public:
 	{
 		Weapon = InWeapon;
 	}
+
+#undef DataType
 };

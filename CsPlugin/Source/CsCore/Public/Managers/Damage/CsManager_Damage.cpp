@@ -451,12 +451,16 @@ void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 
 	checkf(Event, TEXT("%s: Event is NULL."), *Context);
 
-	ICsData_Damage* Data = Event->GetData();
+	typedef NCsDamage::NData::IData DataType;
+
+	DataType* Data = Event->GetData();
 
 	checkf(Data, TEXT("%s: Data is NULL. No Damage Data found for Event."), *Context);
 
 	// ICsData_DamageShape
-	if (ICsData_DamageShape* Shape = FCsLibrary_Data_Damage::GetSafeInterfaceChecked<ICsData_DamageShape>(Context, Data))
+	typedef NCsDamage::NData::NShape::IShape ShapeDataType;
+
+	if (ShapeDataType* Shape = FCsLibrary_Data_Damage::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 	{
 
 	}
@@ -718,7 +722,8 @@ RangeResourceType* UCsManager_Damage::CreateCopyOfRange(const FString& Context, 
 }
 
 #define RangeType NCsDamage::NRange::IRange
-const RangeType* UCsManager_Damage::GetRange(const FString& Context, const ICsData_Damage* Data)
+#define DataType NCsDamage::NData::IData
+const RangeType* UCsManager_Damage::GetRange(const FString& Context, const DataType* Data)
 {
 	if (const RangeType* Value = FCsLibrary_Data_Damage::GetRangeChecked(Context, Data))
 	{
@@ -727,6 +732,7 @@ const RangeType* UCsManager_Damage::GetRange(const FString& Context, const ICsDa
 	return nullptr;
 }
 #undef RangeType
+#undef DataType
 
 #pragma endregion  Range
 
@@ -778,10 +784,12 @@ ModifierResourceType* UCsManager_Damage::CreateCopyOfModifier(const FString& Con
 }
 
 #define ModifierType NCsDamage::NModifier::IModifier
+#define DataType NCsDamage::NData::IData
 #define ValueType NCsDamage::NValue::IValue
-void UCsManager_Damage::ModifyValue(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, ValueType* Value)
+void UCsManager_Damage::ModifyValue(const FString& Context, const ModifierType* Modifier, const DataType* Data, ValueType* Value)
 {
 #undef ModifierType
+#undef DataType
 #undef ValueType
 
 	checkf(Data, TEXT("%s: Data  is NULL."), *Context);
@@ -795,10 +803,12 @@ void UCsManager_Damage::ModifyValue(const FString& Context, const ModifierType* 
 }
 
 #define ModifierType NCsDamage::NModifier::IModifier
+#define DataType NCsDamage::NData::IData
 #define RangesType NCsDamage::NRange::IRange
-void UCsManager_Damage::ModifyRange(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, RangesType* Range)
+void UCsManager_Damage::ModifyRange(const FString& Context, const ModifierType* Modifier, const DataType* Data, RangesType* Range)
 {
 #undef ModifierType
+#undef DataType
 #undef RangesType
 
 	checkf(Data, TEXT("%s: Data is NULL."), *Context);
@@ -825,7 +835,9 @@ void UCsManager_Damage::LogEvent(const EventType* Event)
 
 	const FString& Context = Str::LogEvent;
 
-	ICsData_Damage* Data = Event->GetData();
+	typedef NCsDamage::NData::IData DataType;
+
+	DataType* Data = Event->GetData();
 
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerDamageEvents))
 	{

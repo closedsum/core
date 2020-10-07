@@ -10,19 +10,23 @@ bool FCsLibrary_DamageModifier::CopyChecked(const FString& Context, const Modifi
 }
 
 #define ModifierType NCsDamage::NModifier::IModifier
+#define DataType NCsDamage::NData::IData
 #define ValueType NCsDamage::NValue::IValue
-bool FCsLibrary_DamageModifier::ModifyChecked(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, ValueType* Value)
+bool FCsLibrary_DamageModifier::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, ValueType* Value)
 {
 #undef ModifierType
+#undef DataType
 #undef ValueType
 	return false;
 }
 
 #define ModifierType NCsDamage::NModifier::IModifier
+#define DataType NCsDamage::NData::IData
 #define RangeType NCsDamage::NRange::IRange
-bool FCsLibrary_DamageModifier::ModifyChecked(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, RangeType* Range)
+bool FCsLibrary_DamageModifier::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, RangeType* Range)
 {
 #undef ModifierType
+#undef DataType
 #undef RangeType
 	return false;	 
 }

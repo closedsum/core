@@ -3,16 +3,4 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsData_ProjectileEmuSlice::Name = FName("FCsData_ProjectileEmuSlice");
-
-FCsData_ProjectileEmuSlice::FCsData_ProjectileEmuSlice() :
-		InterfaceMap(nullptr),
-		InitialSpeed(nullptr),
-		MaxSpeed(nullptr),
-		GravityScale(nullptr)
-{
-}
-
-FCsData_ProjectileEmuSlice::~FCsData_ProjectileEmuSlice()
-{
-}
+const FName NCsProjectile::NData::FEmuSlice::Name = FName("NCsProjectile::NData::FEmuSlice");

@@ -5,96 +5,109 @@
 
 struct FCsInterfaceMap;
 
-/**
-*/
-struct CSPRJ_API FCsData_ProjectileEmuSlice final : public ICsData_Projectile
+namespace NCsProjectile
 {
-public:
-
-	static const FName Name;
-
-private:
-
-	FCsInterfaceMap* InterfaceMap;
-
-	float* LifeTime;
-
-	float* InitialSpeed;
-
-	float* MaxSpeed;
-
-	float* GravityScale;
-
-public:
-
-	FCsData_ProjectileEmuSlice();
-	~FCsData_ProjectileEmuSlice();
-
-	FORCEINLINE UObject* _getUObject() const { return nullptr; }
-
-public:
-
-	FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map)
+	namespace NData
 	{
-		InterfaceMap = Map;
+		/**
+		*/
+		struct CSPRJ_API FEmuSlice final : public IData
+		{
+		public:
+
+			static const FName Name;
+
+		private:
+
+			FCsInterfaceMap* InterfaceMap;
+
+			float* LifeTime;
+
+			float* InitialSpeed;
+
+			float* MaxSpeed;
+
+			float* GravityScale;
+
+		public:
+
+			FEmuSlice() :
+				InterfaceMap(nullptr),
+				InitialSpeed(nullptr),
+				MaxSpeed(nullptr),
+				GravityScale(nullptr)
+			{
+			}
+
+			~FEmuSlice(){}
+
+			FORCEINLINE UObject* _getUObject() const { return nullptr; }
+
+		public:
+
+			FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map)
+			{
+				InterfaceMap = Map;
+			}
+
+		// ICsGetInterfaceMap
+		#pragma region
+		public:
+
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+			{
+				return InterfaceMap;
+			}
+
+		#pragma endregion ICsGetInterfaceMap
+
+		public:
+
+			FORCEINLINE void SetLifeTime(float* Value)
+			{
+				LifeTime = Value;
+			}
+
+			FORCEINLINE void SetInitialSpeed(float* Value)
+			{
+				InitialSpeed = Value;
+			}
+
+			FORCEINLINE void SetMaxSpeed(float* Value)
+			{
+				MaxSpeed = Value;
+			}
+
+			FORCEINLINE void SetGravityScale(float* Value)
+			{
+				GravityScale = Value;
+			}
+
+		// ICsData_Projectile
+		#pragma region
+		public:
+
+			FORCEINLINE const float& GetLifeTime() const
+			{
+				return *LifeTime;
+			}
+
+			FORCEINLINE const float& GetInitialSpeed() const
+			{
+				return *InitialSpeed;
+			}
+
+			FORCEINLINE const float& GetMaxSpeed() const
+			{
+				return *MaxSpeed;
+			}
+
+			FORCEINLINE const float& GetGravityScale() const
+			{
+				return *GravityScale;
+			}
+
+		#pragma endregion ICsData_Projectile
+		};
 	}
-
-// ICsGetInterfaceMap
-#pragma region
-public:
-
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-	{
-		return InterfaceMap;
-	}
-
-#pragma endregion ICsGetInterfaceMap
-
-public:
-
-	FORCEINLINE void SetLifeTime(float* Value)
-	{
-		LifeTime = Value;
-	}
-
-	FORCEINLINE void SetInitialSpeed(float* Value)
-	{
-		InitialSpeed = Value;
-	}
-
-	FORCEINLINE void SetMaxSpeed(float* Value)
-	{
-		MaxSpeed = Value;
-	}
-
-	FORCEINLINE void SetGravityScale(float* Value)
-	{
-		GravityScale = Value;
-	}
-
-// ICsData_Projectile
-#pragma region
-public:
-
-	FORCEINLINE const float& GetLifeTime() const
-	{
-		return *LifeTime;
-	}
-
-	FORCEINLINE const float& GetInitialSpeed() const
-	{
-		return *InitialSpeed;
-	}
-
-	FORCEINLINE const float& GetMaxSpeed() const
-	{
-		return *MaxSpeed;
-	}
-
-	FORCEINLINE const float& GetGravityScale() const
-	{
-		return *GravityScale;
-	}
-
-#pragma endregion ICsData_Projectile
-};
+}

@@ -4,12 +4,21 @@
 // Data
 #include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
 
-const NCsDamage::NRange::IRange* FCsLibrary_Data_Damage::GetRangeChecked(const FString& Context, const ICsData_Damage* Data)
+#define RangeType NCsDamage::NRange::IRange
+#define DataType NCsDamage::NData::IData
+const RangeType* FCsLibrary_Data_Damage::GetRangeChecked(const FString& Context, const DataType* Data)
 {
-	// ICsData_DamageShape
-	if (const ICsData_DamageShape* Shape = GetSafeInterfaceChecked<ICsData_DamageShape>(Context, Data))
+#undef RangeType
+#undef DataType
+
+	// NCsDamage::NData::NShape::IShape
 	{
-		return Shape->GetRange();
+		typedef NCsDamage::NData::NShape::IShape ShapeDataType;
+
+		if (const ShapeDataType* Shape = GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
+		{
+			return Shape->GetRange();
+		}
 	}
 	return nullptr;
 }

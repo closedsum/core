@@ -226,8 +226,8 @@ namespace NCsProjectileData
 {
 	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(Projectile, "ICsData_Projectile");
 	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(ProjectileCollision, "ICsData_ProjectileCollision");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(ProjectileStaticMeshVisual, "ICsData_ProjectileStaticMeshVisual");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(ProjectileTrailVisual, "ICsData_ProjectileTrailVisual");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(ProjectileStaticMeshVisual, "ICsData_Projectile_VisualStaticMesh");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(ProjectileTrailVisual, "ICsData_Projectile_VisualTrail");
 }
 
 #pragma endregion ProjectileData

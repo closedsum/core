@@ -111,7 +111,10 @@ namespace NCsDamage
 #pragma endregion Structs
 
 class ICsGetManagerDamage;
-class ICsData_Damage;
+
+namespace NCsDamage {
+	namespace NData {
+		struct IData; } }
 
 UCLASS()
 class CSCORE_API UCsManager_Damage : public UObject
@@ -133,6 +136,8 @@ class CSCORE_API UCsManager_Damage : public UObject
 #define ModifierResourceType NCsDamage::NModifier::FResource
 #define ModifierManagerType NCsDamage::NModifier::FManager
 #define ModifierType NCsDamage::NModifier::IModifier
+
+#define DataType NCsDamage::NData::IData
 
 // Singleton
 #pragma region
@@ -385,7 +390,7 @@ public:
 	* @param Data
 	* return
 	*/
-	virtual const NCsDamage::NRange::IRange* GetRange(const FString& Context, const ICsData_Damage* Data);
+	virtual const RangeType* GetRange(const FString& Context, const DataType* Data);
 
 #pragma endregion Range
 
@@ -393,7 +398,7 @@ public:
 #pragma region
 protected:
 
-	virtual NCsDamage::NModifier::IModifier* ConstructModifier();
+	virtual ModifierType* ConstructModifier();
 
 public:
 
@@ -405,9 +410,9 @@ public:
 
 	ModifierResourceType* CreateCopyOfModifier(const FString& Context, const ModifierResourceType* Modifier);
 
-	virtual void ModifyValue(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, ValueType* Value);
+	virtual void ModifyValue(const FString& Context, const ModifierType* Modifier, const DataType* Data, ValueType* Value);
 
-	virtual void ModifyRange(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, RangeType* Range);
+	virtual void ModifyRange(const FString& Context, const ModifierType* Modifier, const DataType* Data, RangeType* Range);
 
 #pragma endregion Modifier
 
@@ -434,4 +439,6 @@ public:
 #undef ModifierResourceType
 #undef ModifierManagerType
 #undef ModifierType
+
+#undef DataType
 };

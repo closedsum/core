@@ -8,7 +8,12 @@
 // FCsScriptData_DamageSphere
 #pragma region
 
-struct FCsData_DamageSphereEmu;
+// NCsDamage::NData::NShape::NSphere::FEmu
+namespace NCsDamage {
+	namespace NData {
+		namespace NShape {
+			namespace NSphere {
+				struct FEmu; } } } }
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsScriptData_DamageSphere
@@ -60,7 +65,13 @@ public:
 	{
 	}
 
-	void SetData(FCsData_DamageSphereEmu* Data);
+private:
+
+	typedef NCsDamage::NData::NShape::NSphere::FEmu SphereDataEmuType;
+
+public:
+
+	void SetData(SphereDataEmuType* Data);
 };
 
 #pragma endregion FCsScriptData_DamageSphere

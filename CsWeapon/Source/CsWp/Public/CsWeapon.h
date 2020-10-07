@@ -13,7 +13,10 @@ class CSWP_API UCsWeapon : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
-class ICsData_Weapon;
+// NCsWeapon::NData::IData
+namespace NCsWeapon {
+	namespace NData {
+		struct IData; } }
 
 class CSWP_API ICsWeapon
 {
@@ -21,12 +24,14 @@ class CSWP_API ICsWeapon
 
 public:
 
+#define DataType NCsWeapon::NData::IData
+
 	/**
 	*
 	*
 	* return
 	*/
-	virtual ICsData_Weapon* GetData() const = 0;
+	virtual DataType* GetData() const = 0;
 
 	/**
 	*
@@ -34,6 +39,8 @@ public:
 	* return
 	*/
 	virtual const FECsWeaponState& GetCurrentState() const = 0;
+
+#undef DataType
 };
 
 // FCsWeapon
@@ -44,6 +51,8 @@ struct CSWP_API FCsWeapon : public TCsInterfaceObject<ICsWeapon>
 private:
 
 	typedef TCsInterfaceObject<ICsWeapon> Super;
+
+#define DataType NCsWeapon::NData::IData
 
 public:
 
@@ -60,7 +69,7 @@ public:
 	* @param Object		Object->GetClass() that implements the interface: ICsWeapon.
 	* return			.
 	*/
-	DECLARE_DELEGATE_RetVal_OneParam(ICsData_Weapon* /*Data*/, FScript_GetData, UObject* /*Object*/);
+	DECLARE_DELEGATE_RetVal_OneParam(DataType* /*Data*/, FScript_GetData, UObject* /*Object*/);
 
 	/** Delegate type for . 
 		 The Data implements a script interface of type: ICsWeapon and the UClass
@@ -117,11 +126,13 @@ public:
 #pragma region
 public:
 
-	ICsData_Weapon* GetData();
+	DataType* GetData();
 
 	const FECsWeaponState& GetCurrentState();
 
 #pragma endregion ICsWeapon
+
+#undef DataType
 };
 
 #pragma endregion FCsWeapon

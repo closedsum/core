@@ -6,7 +6,7 @@
 // FCsScriptData_DamagePoint
 #pragma region
 
-void FCsScriptData_DamagePoint::SetData(FCsData_DamagePointEmu* Data)
+void FCsScriptData_DamagePoint::SetData(PointDataEmuType* Data)
 {
 	Data->SetValue(&Damage);
 	Data->SetType(&Type);

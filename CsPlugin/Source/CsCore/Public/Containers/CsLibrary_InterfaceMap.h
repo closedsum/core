@@ -210,7 +210,7 @@ public:
 	* OtherInterfaceType IS abstract.
 	*
 	* @param Context	The calling context
-	* @param Interface	Interface that implements the interface: ICsData_Weapon.
+	* @param Interface	Interface that implements the interface: InterfaceType.
 	* return			Interface casted to OtherInterfaceType (static_cast<OtherInterfaceType*>(Interface))
 	*/
 	template<typename OtherInterfaceType>
@@ -224,7 +224,7 @@ public:
 	* OtherInterfaceType IS abstract.
 	*
 	* @param Context	The calling context
-	* @param Interface	Interface that implements the interface: ICsData_Weapon.
+	* @param Interface	Interface that implements the interface: InterfaceType.
 	* return			Interface casted to OtherInterfaceType (static_cast<OtherInterfaceType*>(Interface))
 	*/
 	template<typename OtherInterfaceType>
@@ -239,7 +239,7 @@ public:
 	* OtherInterfaceType IS abstract.
 	*
 	* @param Context	The calling context
-	* @param Interface	Interface that implements the interface: ICsData_Weapon.
+	* @param Interface	Interface that implements the interface: InterfaceType.
 	* return			Interface casted to OtherInterfaceType (static_cast<OtherInterfaceType*>(Interface))
 	*/
 	template<typename OtherInterfaceType>
@@ -254,7 +254,7 @@ public:
 	* OtherInterfaceType IS abstract.
 	*
 	* @param Context	The calling context
-	* @param Interface	Interface that implements the interface: ICsData_Weapon.
+	* @param Interface	Interface that implements the interface: InterfaceType.
 	* return			Interface casted to OtherInterfaceType (static_cast<OtherInterfaceType*>(Interface))
 	*/
 	template<typename OtherInterfaceType>

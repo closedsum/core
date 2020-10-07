@@ -5,6 +5,47 @@
 #include "CsData_Damage.generated.h"
 #pragma once
 
+namespace NCsDamage {
+	namespace NValue {
+		struct IValue; } }
+
+namespace NCsDamage
+{
+	namespace NData
+	{
+		/**
+		* Interface to describe Damage. Other interfaces can be "added" on top of this to
+		* expose more functionality (i.e. NCsDamage::NShape::IShape, ... etc)
+		*/
+		struct CSCORE_API IData : public ICsGetInterfaceMap
+		{
+		public:
+
+			static const FName Name;
+
+		private:
+
+			typedef NCsDamage::NValue::IValue ValueType;
+
+		public:
+
+			/**
+			* Get the amount of damage.
+			*
+			* return Damage Value.
+			*/
+			virtual const ValueType* GetValue() const = 0;
+
+			/**
+			* Get the type of damage.
+			*
+			* return Damage Type.
+			*/
+			virtual const FECsDamageType& GetType() const = 0;
+		};
+	}
+}
+
 UINTERFACE(BlueprintType)
 class CSCORE_API UCsData_Damage : public UCsGetInterfaceMap
 {
@@ -27,6 +68,10 @@ public:
 
 	static const FName Name;
 
+private:
+
+	typedef NCsDamage::NValue::IValue ValueType;
+
 public:
 
 	/**
@@ -34,7 +79,7 @@ public:
 	* 
 	* return Damage Value.
 	*/
-	virtual const NCsDamage::NValue::IValue* GetValue() const = 0;
+	virtual const ValueType* GetValue() const = 0;
 
 	/**
 	* Get the type of damage.

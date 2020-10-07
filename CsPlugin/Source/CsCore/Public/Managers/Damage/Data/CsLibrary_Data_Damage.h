@@ -3,17 +3,23 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
-class ICsData_Damage;
-
+// NCsDamage::NRange::IRange
 namespace NCsDamage {
 	namespace NRange {
 		struct IRange; } }
 
+#define DataType NCsDamage::NData::IData
+
 /**
 * Library for interface: ICsData_Damage
 */
-struct CSCORE_API FCsLibrary_Data_Damage : public TCsLibrary_InterfaceMap<ICsData_Damage>
+struct CSCORE_API FCsLibrary_Data_Damage : public TCsLibrary_InterfaceMap<DataType>
 {
+
+#define RangeType NCsDamage::NRange::IRange
+
+public:
+
 	/**
 	*
 	*
@@ -21,5 +27,9 @@ struct CSCORE_API FCsLibrary_Data_Damage : public TCsLibrary_InterfaceMap<ICsDat
 	* @param Data
 	* return			
 	*/
-	static const NCsDamage::NRange::IRange* GetRangeChecked(const FString& Context, const ICsData_Damage* Data);
+	static const RangeType* GetRangeChecked(const FString& Context, const DataType* Data);
+
+#undef RangeType
 };
+
+#undef DataType

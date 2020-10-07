@@ -3,6 +3,7 @@
 
 // Types
 #include "Types/CsTypes_Macro.h"
+#include "Types/CsTypes_Collision.h"
 // Library
 #include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsPrjLibrary_DataRootSet.h"
@@ -90,8 +91,8 @@ void FCsManager_Projectile_DataHandler::CreateEmulatedDataFromDataTable(const FS
 	// ICsData_ProjectileCollision
 	bool Emulates_ICsData_ProjectileCollision = false;
 
-	// ICsData_ProjectileStaticMeshVisual
-	bool Emulates_ICsData_ProjectileStaticMeshVisual = false;
+	// ICsData_Projectile_VisualStaticMesh
+	bool Emulates_ICsData_Projectile_VisualStaticMesh = false;
 		// StaticMesh
 	//FCsPrjStaticMesh* StaticMesh;
 
@@ -129,11 +130,15 @@ void FCsManager_Projectile_DataHandler::CreateEmulatedDataFromDataTable(const FS
 		// ICsData_Projectile
 		if (Emulates_ICsDataProjectile)
 		{
-			FCsData_ProjectileEmuSlice* Data = new FCsData_ProjectileEmuSlice();
+			typedef NCsProjectile::NData::IData DataType;
+			typedef NCsProjectile::NData::FEmuSlice DataEmuSliceType;
+
+			DataEmuSliceType* Data = new DataEmuSliceType();
 
 			checkf(EmulatedDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s."), *Context, *(Name.ToString()));
 
-			EmulatedDataMap.Add(Name, Data);
+			// TODO: Fix / Update
+			//EmulatedDataMap.Add(Name, Data);
 
 			FCsData_ProjectileInterfaceMap* EmulatedInterfaceMap = new FCsData_ProjectileInterfaceMap();
 
@@ -143,14 +148,15 @@ void FCsManager_Projectile_DataHandler::CreateEmulatedDataFromDataTable(const FS
 
 			FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
 
-			InterfaceMap->Add<ICsData_Projectile>(FCsData_ProjectileEmuSlice::Name, static_cast<ICsData_Projectile*>(Data));
+			InterfaceMap->Add<DataType>(DataEmuSliceType::Name, static_cast<DataType*>(Data));
 
 			Data->SetInterfaceMap(InterfaceMap);
 
 			TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
-			InterfaceImplMap.Add(FCsData_ProjectileEmuSlice::Name, Data);
+			InterfaceImplMap.Add(DataEmuSliceType::Name, Data);
 
-			DataMap.Add(Name, Data);
+			// TODO: Fix / Update
+			//DataMap.Add(Name, Data);
 
 			// LifeTime
 			{
@@ -182,8 +188,8 @@ void FCsManager_Projectile_DataHandler::CreateEmulatedDataFromDataTable(const FS
 		{
 
 		}
-		// ICsData_ProjectileStaticMeshVisual
-		if (Emulates_ICsData_ProjectileStaticMeshVisual)
+		// ICsData_Projectile_VisualStaticMesh
+		if (Emulates_ICsData_Projectile_VisualStaticMesh)
 		{
 
 		}
@@ -192,10 +198,10 @@ void FCsManager_Projectile_DataHandler::CreateEmulatedDataFromDataTable(const FS
 
 bool FCsManager_Projectile_DataHandler::DeconstructEmulatedData(const FName& InterfaceImplName, void* Data)
 {
-	// FCsData_ProjectileEmuSlice
-	if (InterfaceImplName == FCsData_ProjectileEmuSlice::Name)
+	// NCsProjectile::NData::FEmuSlice
+	if (InterfaceImplName == NCsProjectile::NData::FEmuSlice::Name)
 	{
-		delete static_cast<FCsData_ProjectileEmuSlice*>(Data);
+		delete static_cast<NCsProjectile::NData::FEmuSlice*>(Data);
 		return true;
 	}
 	// FCsData_ProjecitleVisualEmuSlice

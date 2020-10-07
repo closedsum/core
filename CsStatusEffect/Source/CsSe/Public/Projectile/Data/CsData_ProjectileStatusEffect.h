@@ -5,6 +5,38 @@
 #include "Containers/CsGetInterfaceMap.h"
 #include "CsData_ProjectileStatusEffect.generated.h"
 
+// NCsStatusEffect::NData::IData
+namespace NCsStatusEffect {
+	namespace NData {
+		struct IData; } }
+
+namespace NCsProjectile
+{
+	namespace NData
+	{
+		namespace NStatusEffect
+		{
+#define StatusEffectDataType NCsStatusEffect::NData::IData
+
+			/**
+			*
+			*/
+			struct CSSE_API IStatusEffect : public ICsGetInterfaceMap
+			{
+			public:
+
+				static const FName Name;
+
+			public:
+
+				virtual const TArray<StatusEffectDataType*>& GetStatusEffects() const = 0;
+			};
+
+#undef StatusEffectDataType
+		}
+	}
+}
+
 UINTERFACE(BlueprintType)
 class CSSE_API UCsData_ProjectileStatusEffect : public UCsGetInterfaceMap
 {

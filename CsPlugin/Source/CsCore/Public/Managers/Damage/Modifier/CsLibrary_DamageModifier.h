@@ -3,19 +3,26 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
-class ICsData_Damage;
-
+// NCsDamage::NValue::IValue
 namespace NCsDamage {
 	namespace NValue {
 		struct IValue; } }
 
+// NCsDamage::NRange::IRange
 namespace NCsDamage {
 	namespace NRange {
 		struct IRange; } }
 
+// NCsDamage::NData::IData
+namespace NCsDamage {
+	namespace NData {
+		struct IData; } }
+
 #define ModifierType NCsDamage::NModifier::IModifier
 #define ValueType NCsDamage::NValue::IValue
 #define RangeType NCsDamage::NRange::IRange
+#define DataType NCsDamage::NData::IData
+
 /**
 * Library for interface: ICsDamageModifier
 */
@@ -42,7 +49,7 @@ struct CSCORE_API FCsLibrary_DamageModifier : public TCsLibrary_InterfaceMap<Mod
 	* @param Value
 	* return			Whether the Modify was "attempted" (a Modify method was called) successfully.
 	*/
-	static bool ModifyChecked(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, ValueType* Value);
+	static bool ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, ValueType* Value);
 
 	/**
 	*
@@ -53,9 +60,10 @@ struct CSCORE_API FCsLibrary_DamageModifier : public TCsLibrary_InterfaceMap<Mod
 	* @param Range
 	* return			Whether the Modify was "attempted" (a Modify method was called) successfully.
 	*/
-	static bool ModifyChecked(const FString& Context, const ModifierType* Modifier, const ICsData_Damage* Data, RangeType* Range);
+	static bool ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, RangeType* Range);
 };
 
 #undef ModifierType
 #undef ValueType
 #undef RangeType
+#undef DataType

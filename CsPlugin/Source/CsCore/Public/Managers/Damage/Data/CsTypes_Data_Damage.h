@@ -6,7 +6,11 @@
 // FCsScriptData_DamagePoint
 #pragma region
 
-struct FCsData_DamagePointEmu;
+// NCsDamage::NData::NPoint::FEmu
+namespace NCsDamage {
+	namespace NData {
+		namespace NPoint {
+			struct FEmu; } } }
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsScriptData_DamagePoint
@@ -25,7 +29,13 @@ struct CSCORE_API FCsScriptData_DamagePoint
 	{
 	}
 
-	void SetData(FCsData_DamagePointEmu* Data);
+private:
+
+	typedef NCsDamage::NData::NPoint::FEmu PointDataEmuType;
+
+public:
+
+	void SetData(PointDataEmuType* Data);
 };
 
 #pragma endregion FCsScriptDamagePoint

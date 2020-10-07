@@ -75,8 +75,10 @@ void FCsWeaponPooled::Reset()
 // ICsWeapon
 #pragma region
 
-ICsData_Weapon* FCsWeaponPooled::GetData() const
+#define DataType NCsWeapon::NData::IData
+DataType* FCsWeaponPooled::GetData() const
 {
+#undef DataType
 	if (bScript)
 		return Script_GetData_Impl.Execute(Object);
 	return Weapon->GetData();

@@ -2,6 +2,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Interface
+#include "Data/CsData.h"
 #include "Data/CsData_StatusEffect.h"
 #include "Data/Damage/CsData_StatusEffect_Damage.h"
 // Types
@@ -9,11 +10,129 @@
 #include "Managers/Damage/Data/Shape/CsTypes_Data_DamageShape.h"
 #include "CsData_StatusEffect_DamageSphere.generated.h"
 
+// Emu
+#pragma region
+
 struct FCsInterfaceMap;
-class ICsData_Damage;
+
+// NCsDamage::NData::IData
+namespace NCsDamage {
+	namespace NData {
+		struct IData; } }
+
+namespace NCsStatusEffect
+{
+	namespace NData
+	{
+		namespace NDamage
+		{
+#define DataType NCsData::IData
+#define StatusEffectDataType NCsStatusEffect::NData::IData
+#define StatusEffectDamageDataType NCsStatusEffect::NData::NDamage::IDamage
+			/**
+			* "Emulates" UCsData_StatusEffect_DamageSphere by mimicking the interfaces and having pointers to the appropriate
+			* members. The idea behind this struct is to keep the code a cleaner and more readable.
+			*/
+			struct CSSE_API FSphereEmu : public DataType,
+										 public StatusEffectDataType,
+										 public StatusEffectDamageDataType
+			{
+			public:
+
+				static const FName Name;
+
+			private:
+
+				typedef NCsStatusEffect::NTrigger::FFrequencyParams TriggerFrequencyParamsType;
+				typedef NCsStatusEffect::NTransfer::FFrequencyParams TransferFrequencyParamsType;
+				typedef NCsDamage::NData::IData DamageDataType;
+
+				UObject* Outer;
+
+				// ICsGetInterfaceMap
+
+				FCsInterfaceMap* InterfaceMap;
+
+				// NCsStatusEffect::NData::IData
+
+				FECsStatusEffectTriggerCondition* TriggerCondition;
+
+				TriggerFrequencyParamsType* TriggerFrequencyParams;
+
+				TransferFrequencyParamsType* TransferFrequencyParams;
+
+				TArray<StatusEffectDataType*>* Children;
+
+				// NCsStatusEffect::NData::NDamage::IDamage
+
+				DamageDataType* DamageData;
+
+			public:
+
+				FSphereEmu();
+				~FSphereEmu();
+
+				FORCEINLINE void SetOuter(UObject* InOuter) { Outer = InOuter; }
+
+				FORCEINLINE UObject* _getUObject() const { return nullptr; }
+
+			// ICsGetInterfaceMap
+			#pragma region
+			public:
+
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+
+			#pragma endregion ICsGetInterfaceMap
+
+			public:
+
+				FORCEINLINE void SetTriggerCondition(FECsStatusEffectTriggerCondition* Value) { TriggerCondition = Value; }
+				FORCEINLINE void SetTriggerFrequencyParams(TriggerFrequencyParamsType* Value) { TriggerFrequencyParams = Value; }
+				FORCEINLINE void SetTransferFrequencyParams(TransferFrequencyParamsType* Value) { TransferFrequencyParams = Value; }
+				FORCEINLINE void SetChildren(TArray<StatusEffectDataType*>* Value) { Children = Value; }
+
+			// NCsStatusEffect::NData::IData
+			#pragma region
+			public:
+
+				FORCEINLINE const FECsStatusEffectTriggerCondition& GetTriggerCondition() const { return *TriggerCondition; }
+				FORCEINLINE const TriggerFrequencyParamsType& GetTriggerFrequencyParams() const { return *TriggerFrequencyParams; }
+				FORCEINLINE const TransferFrequencyParamsType& GetTransferFrequencyParams() const { return *TransferFrequencyParams; }
+				FORCEINLINE const TArray<StatusEffectDataType*>& GetChildren() const { return *Children; }
+
+			#pragma endregion NCsStatusEffect::NData::IData
+
+			public:
+
+				FORCEINLINE void SetDamageData(DamageDataType* Value) { DamageData = Value; }
+
+			// NCsStatusEffect::NData::NDamage::IDamage
+			#pragma region
+			public:
+
+				FORCEINLINE DamageDataType* GetDamageData() const { return DamageData; }
+
+			#pragma endregion NCsStatusEffect::NData::NDamage::IDamage
+			};
+
+#undef DataType
+#undef StatusEffectDataType
+#undef StatusEffectDamageDataType
+		}
+	}
+}
+#pragma endregion Emu
+
+struct FCsInterfaceMap;
+
+// NCsDamage::NData::IData
+namespace NCsDamage {
+	namespace NData {
+		struct IData; } }
 
 UCLASS(BlueprintType, Blueprintable)
 class CSSE_API UCsData_StatusEffect_DamageSphere : public UObject,
+												   public ICsData,
 												   public ICsData_StatusEffect,
 												   public ICsData_StatusEffect_Damage
 {
@@ -22,6 +141,13 @@ class CSSE_API UCsData_StatusEffect_DamageSphere : public UObject,
 public:
 
 	static const FName Name;
+
+private:
+
+	typedef NCsData::IData DataType;
+	typedef NCsDamage::NData::IData DamageDataType;
+
+	DataType* DataEmu;
 
 // UObject Interface
 #pragma region
@@ -34,6 +160,8 @@ public:
 #pragma endregion UObject Interface
 
 private:
+
+	void Init();
 
 	FCsInterfaceMap* InterfaceMap;
 
@@ -51,6 +179,25 @@ public:
 protected:
 
 	bool bLoaded;
+
+// ICsData
+#pragma region
+public:
+
+	FORCEINLINE DataType* _getIData() const
+	{
+		return DataEmu;
+	}
+
+	bool IsValid(const int32& LoadFlags);
+
+	void Load(const int32& LoadFlags);
+
+	void Unload();
+
+	bool IsLoaded() const;
+
+#pragma endregion ICsData
 
 public:
 
@@ -100,13 +247,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FCsScriptData_DamageSphere DamageSphere;
 
-	ICsData_Damage* DamageSphereEmu;
+	DamageDataType* DamageSphereEmu;
 
 // ICsStatusEffect_Damage
 #pragma region
 public:
 
-	FORCEINLINE ICsData_Damage* GetDamageData() const
+	FORCEINLINE DamageDataType* GetDamageData() const
 	{
 		return DamageSphereEmu;
 	}

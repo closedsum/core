@@ -9,13 +9,15 @@ namespace NCsDamage
 		/**
 		* 
 		*/
-		struct CSCORE_API IRange : virtual public ICsGetInterfaceMap
+		struct CSCORE_API IRange : public ICsGetInterfaceMap
 		{
 		public:
 
 			static const FName Name;
 
 		public:
+
+			virtual ~IRange(){}
 
 			virtual const float& GetMinRange() const = 0;
 

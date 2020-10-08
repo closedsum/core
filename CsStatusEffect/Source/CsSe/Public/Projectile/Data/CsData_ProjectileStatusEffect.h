@@ -29,6 +29,8 @@ namespace NCsProjectile
 
 			public:
 
+				virtual ~IStatusEffect() {}
+
 				virtual const TArray<StatusEffectDataType*>& GetStatusEffects() const = 0;
 			};
 

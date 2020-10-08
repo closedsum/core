@@ -14,19 +14,11 @@ class UObject;
 struct FCsInterfaceMap;
 
 // NCsDamage::NValue::IValue
-namespace NCsDamage {
-	namespace NValue {
-		struct IValue; } }
-
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 // NCsDamage::NRange::IRange
-namespace NCsDamage {
-	namespace NRange {
-		struct IRange; } }
-
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 // NCsDamage::NData::IData
-namespace NCsDamage {
-	namespace NData {
-		struct IData; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 
 namespace NCsDamage
 {

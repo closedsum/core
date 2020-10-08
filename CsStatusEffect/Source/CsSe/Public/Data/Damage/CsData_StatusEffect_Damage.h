@@ -1,13 +1,14 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
+// Interfaces
 #include "Containers/CsGetInterfaceMap.h"
+// Types
+#include "Types/CsTypes_Macro.h"
+
 #include "CsData_StatusEffect_Damage.generated.h"
 
 // NCsDamage::NData::IData
-namespace NCsDamage {
-	namespace NData {
-		struct IData; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 
 namespace NCsStatusEffect
 {
@@ -29,6 +30,8 @@ namespace NCsStatusEffect
 
 			public:
 
+				virtual ~IDamage(){}
+
 				/**
 				*/
 				virtual DamageDataType* GetDamageData() const = 0;
@@ -44,9 +47,7 @@ class CSSE_API UCsData_StatusEffect_Damage : public UCsGetInterfaceMap
 };
 
 // NCsDamage::NData::IData
-namespace NCsDamage {
-	namespace NData {
-		struct IData; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 
 /**
 */

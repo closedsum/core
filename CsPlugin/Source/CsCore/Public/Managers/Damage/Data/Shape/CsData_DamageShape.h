@@ -1,18 +1,16 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Interfaces
 #include "Containers/CsGetInterfaceMap.h"
-#include "Engine/EngineTypes.h"
+// Types
+#include "Types/CsTypes_Macro.h"
+
 #include "CsData_DamageShape.generated.h"
 #pragma once
 
 // NCsDamage::NValue::IValue
-namespace NCsDamage {
-	namespace NValue {
-		struct IValue; } }
-
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 // NCsDamage::NRange::IRange
-namespace NCsDamage {
-	namespace NRange {
-		struct IRange; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 
 namespace NCsDamage
 {
@@ -36,6 +34,8 @@ namespace NCsDamage
 				typedef NCsDamage::NRange::IRange RangeType;
 
 			public:
+
+				virtual ~IShape(){}
 
 				/**
 				*
@@ -76,13 +76,9 @@ class CSCORE_API UCsData_DamageShape : public UCsGetInterfaceMap
 };
 
 // NCsDamage::NValue::IValue
-namespace NCsDamage {
-	namespace NValue {
-		struct IValue; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 // NCsDamage::NRange::IRange
-namespace NCsDamage {
-	namespace NRange {
-		struct IRange; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 
 /**
 * Interface to describe the shape of Damage. This should be used with 

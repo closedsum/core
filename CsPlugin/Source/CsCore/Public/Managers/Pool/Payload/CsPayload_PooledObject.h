@@ -15,7 +15,7 @@ namespace NCsPooledObject
 		* object that implements the interface: ICsPooledObject. Usually this payload
 		* is passed through a Manager handling the pooled objects.
 		*/
-		struct CSCORE_API IPayload : virtual public ICsGetInterfaceMap
+		struct CSCORE_API IPayload : public ICsGetInterfaceMap
 		{
 		public:
 

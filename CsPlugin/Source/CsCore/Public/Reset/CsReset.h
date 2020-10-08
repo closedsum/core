@@ -5,7 +5,7 @@
 
 /**
 */
-struct CSCORE_API ICsReset : virtual public ICsGetInterfaceMap
+struct CSCORE_API ICsReset : public ICsGetInterfaceMap
 {
 public:
 

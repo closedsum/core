@@ -6,7 +6,7 @@ namespace NCsWeapon
 {
 	namespace NPayload
 	{
-		struct CSWP_API IPayload : virtual public ICsGetInterfaceMap
+		struct CSWP_API IPayload : public ICsGetInterfaceMap
 		{
 		public:
 

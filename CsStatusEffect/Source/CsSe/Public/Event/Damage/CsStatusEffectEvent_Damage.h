@@ -1,10 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Containers/CsGetInterfaceMap.h"
+// Types
+#include "Types/CsTypes_Macro.h"
 #pragma once
 
-namespace NCsDamage {
-	namespace NEvent {
-		struct IEvent; } }
+// NCsDamage::NEvent::IEvent
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, IEvent)
 
 namespace NCsStatusEffect
 {
@@ -14,7 +15,7 @@ namespace NCsStatusEffect
 		{
 			/**
 			*/
-			struct CSSE_API IDamage : virtual public ICsGetInterfaceMap
+			struct CSSE_API IDamage : public ICsGetInterfaceMap
 			{
 			public:
 

@@ -13,7 +13,7 @@ namespace NCsWidgetActor
 	{ 
 		/**
 		*/
-		struct CSUI_API IUserWidget : virtual public ICsGetInterfaceMap
+		struct CSUI_API IUserWidget : public ICsGetInterfaceMap
 		{
 		public:
 

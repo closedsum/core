@@ -5,9 +5,8 @@
 #include "CsData_Damage.generated.h"
 #pragma once
 
-namespace NCsDamage {
-	namespace NValue {
-		struct IValue; } }
+// NCsDamage::NValue::IValue
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 
 namespace NCsDamage
 {
@@ -28,6 +27,8 @@ namespace NCsDamage
 			typedef NCsDamage::NValue::IValue ValueType;
 
 		public:
+
+			virtual ~IData(){}
 
 			/**
 			* Get the amount of damage.

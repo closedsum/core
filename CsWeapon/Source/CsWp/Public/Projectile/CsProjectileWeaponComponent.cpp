@@ -155,11 +155,27 @@ UCsProjectileWeaponComponent::UCsProjectileWeaponComponent(const FObjectInitiali
 void UCsProjectileWeaponComponent::BeginDestroy()
 {
 	Super::BeginDestroy();
+	
+	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
 
 	if (ProjectileImpl)
 	{
+		CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(ProjectileImpl->StartLaunchScopedHandle);
+
 		delete ProjectileImpl;
 		ProjectileImpl = nullptr;
+	}
+
+	if (SoundImpl)
+	{
+		delete SoundImpl;
+		SoundImpl = nullptr;
+	}
+
+	if (FXImpl)
+	{
+		delete FXImpl;
+		FXImpl = nullptr;
 	}
 }
 
@@ -178,13 +194,37 @@ void UCsProjectileWeaponComponent::BeginPlay()
 	TimeBetweenShotsImpl.Outer = this;
 
 	ProjectileImpl = ConstructProjectileImpl();
-	ProjectileImpl->Weapon = this;
+	ProjectileImpl->Outer = this;
 
 	SoundImpl = ConstructSoundImpl();
 	SoundImpl->Weapon = this;
 
 	FXImpl = ConstructFXImpl();
 	FXImpl->Weapon = this;
+
+	// ScopedHandles
+#if !UE_BUILD_SHIPPING
+	{
+		using namespace NCsProjectileWeaponComponent::NCached;
+
+		// FireScopedHandle
+		{
+			const FString& ScopeName		   = Str::Fire_Internal;
+			const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponProjectile;
+			const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponProjectileFireScopedTimer;
+
+			FireScopedHandle.Handle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
+		}
+		// StartLaunchScopedHandle
+		{
+			const FString& ScopeName		   = ProjectileImpl::Str::StartLaunch;
+			const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponProjectile;
+			const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponProjectileProjectileStartLaunchScopedTimer;
+
+			ProjectileImpl->StartLaunchScopedHandle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
+		}
+	}
+#endif // #if !UE_BUILD_SHIPPING
 }
 
 #pragma endregion UActorComponent Interface
@@ -455,6 +495,8 @@ void UCsProjectileWeaponComponent::Fire()
 
 char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 {
+	using namespace NCsProjectileWeaponComponent::NCached;
+
 	const bool& bInfiniteAmmo				   = R->GetValue_Flag(CS_FIRST);
 	const int32& ProjectilesPerShot			   = R->GetValue_Int(CS_FIRST);
 	const float& TimeBetweenProjectilesPerShot = R->GetValue_Float(CS_FIRST);
@@ -470,6 +512,8 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 	do 
 	{
 		{
+			CS_SET_SCOPED_TIMER_HANDLE(FireScopedHandle);
+
 			ElapsedTime.Reset();
 
 			if (!bInfiniteAmmo)
@@ -487,6 +531,8 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 			{
 				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= TimeBetweenProjectilesPerShot);
 			}
+
+			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle);
 		}
 	} while (CurrentProjectilePerShotIndex < ProjectilesPerShot);
 
@@ -555,6 +601,8 @@ char UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime_Internal
 
 	CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= TimeBetweenShots);
 
+	OnComplete_Event.Broadcast(Outer);
+
 	CS_COROUTINE_END(R);
 }
 
@@ -567,7 +615,7 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetType(const FString& Conte
 
 	checkf(Projectile, TEXT("%s: Projectile is NULL. Projectile is not of type: ACsProjectilePooledImpl."), *Context);
 
-	Projectile->SetType(Weapon->GetProjectileType());
+	Projectile->SetType(Outer->GetProjectileType());
 	return true;
 }
 
@@ -585,8 +633,8 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 
 		if (SliceType* Slice = FCsLibrary_Payload_Projectile::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
-			Slice->Instigator = Weapon;
-			Slice->Owner	  = Weapon->GetMyOwner();
+			Slice->Instigator = Outer;
+			Slice->Owner	  = Outer->GetMyOwner();
 		}
 		else
 		{
@@ -600,7 +648,8 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 
 		if (SliceType* Slice = FCsLibrary_Payload_Projectile::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
-			Slice->Location  = GetLaunchLocation();
+
+			Slice->Location = GetLaunchLocation();
 			Slice->Direction = GetLaunchDirection();
 		}
 		else
@@ -622,12 +671,18 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 {
 	using namespace NCsProjectileWeaponComponent::NCached::ProjectileImpl;
 
+	const FString& ScopeName		   = Str::GetLaunchLocation;
+	const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponProjectile;
+	const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponProjectileGetLaunchLocationScopedTimer;
+
+	CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
+
 	const FString& Context = Str::GetLaunchLocation;
 
 	// Get Data Slice
 	typedef NCsWeapon::NProjectile::NData::IData WeaponDataType;
 
-	WeaponDataType* WeaponData = FCsLibrary_Data_Weapon::GetInterfaceChecked<WeaponDataType>(Context, Weapon->GetData());
+	WeaponDataType* WeaponData = FCsLibrary_Data_Weapon::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
 	
 	// Get Launch Params
 	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
@@ -641,9 +696,9 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 	// Owner
 	if (LocationType == ELocation::Owner)
 	{
-		UObject* TheOwner = Weapon->GetMyOwner();
+		UObject* TheOwner = Outer->GetMyOwner();
 
-		checkf(TheOwner, TEXT("%s: No Owner found for %s."), *Context, *(Weapon->PrintNameAndClass()));
+		checkf(TheOwner, TEXT("%s: No Owner found for %s."), *Context, *(Outer->PrintNameAndClass()));
 
 		// Actor
 		if (AActor* Actor = Cast<AActor>(TheOwner))
@@ -652,7 +707,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 		if (USceneComponent* Component = Cast<USceneComponent>(TheOwner))
 			return Component->GetComponentLocation();
 
-		checkf(0, TEXT("%s: Failed to get Location from %s."), *Context, *(Weapon->PrintNameClassAndOwner()));
+		checkf(0, TEXT("%s: Failed to get Location from %s."), *Context, *(Outer->PrintNameClassAndOwner()));
 	}
 	// Bone
 	if (LocationType == ELocation::Bone)
@@ -673,12 +728,18 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 {
 	using namespace NCsProjectileWeaponComponent::NCached::ProjectileImpl;
 
+	const FString& ScopeName		   = Str::GetLaunchDirection;
+	const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponProjectile;
+	const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponProjectileGetLaunchDirectionScopedTimer;
+
+	CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
+
 	const FString& Context = Str::GetLaunchDirection;
 
 	// Get Data Slice
 	typedef NCsWeapon::NProjectile::NData::IData WeaponDataType;
 
-	WeaponDataType* WeaponData = FCsLibrary_Data_Weapon::GetInterfaceChecked<WeaponDataType>(Context, Weapon->GetData());
+	WeaponDataType* WeaponData = FCsLibrary_Data_Weapon::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
 	
 	// Get Launch Params
 	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
@@ -696,7 +757,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 	// Owner
 	if (DirectionType == EDirection::Owner)
 	{
-		if (UObject* TheOwner = Weapon->GetMyOwner())
+		if (UObject* TheOwner = Outer->GetMyOwner())
 		{
 			// AActor
 			if (AActor* Actor = Cast<AActor>(TheOwner))
@@ -704,7 +765,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 			// USceneComponent
 			if (USceneComponent* Component = Cast<USceneComponent>(TheOwner))
 				return NCsRotationRules::GetRotation(Component, DirectionRules).Vector();
-			checkf(0, TEXT("%s: Failed to get Direction from %s."), *Context, *(Weapon->PrintNameClassAndOwner()));
+			checkf(0, TEXT("%s: Failed to get Direction from %s."), *Context, *(Outer->PrintNameClassAndOwner()));
 		}
 	}
 	// Bone
@@ -725,11 +786,11 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 	if (DirectionType == EDirection::Camera)
 	{
 		// Try to get camera through the owner
-		if (UObject* TheOwner = Weapon->GetMyOwner())
+		if (UObject* TheOwner = Outer->GetMyOwner())
 		{
 			return FCsLibrary_Camera::GetDirectionChecked(Context, TheOwner);
 		}
-		checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(Weapon->PrintNameAndClass()));
+		checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(Outer->PrintNameAndClass()));
 	}
 	// ITrace | Get Launch Trace Params
 	if (DirectionType == EDirection::Trace)
@@ -771,14 +832,14 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		if (TraceStart == ETraceStart::Camera)
 		{
 			// Try to get camera through the owner
-			if (UObject* TheOwner = Weapon->GetMyOwner())
+			if (UObject* TheOwner = Outer->GetMyOwner())
 			{
 				Start = FCsLibrary_Camera::GetLocationChecked(Context, TheOwner);
 			}
 			// TODO: For now assert
 			else
 			{
-				checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(Weapon->PrintNameAndClass()));
+				checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(Outer->PrintNameAndClass()));
 			}
 		}
 
@@ -813,14 +874,14 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		if (TraceDirection == ETraceDirection::Camera)
 		{
 			// Try to get camera through the owner
-			if (UObject* TheOwner = Weapon->GetMyOwner())
+			if (UObject* TheOwner = Outer->GetMyOwner())
 			{
 				Dir = FCsLibrary_Camera::GetDirectionChecked(Context, TheOwner, DirectionRules);
 			}
 			// TODO: For now assert
 			else
 			{
-				checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(Weapon->PrintNameAndClass()));
+				checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(Outer->PrintNameAndClass()));
 			}
 		}
 
@@ -829,14 +890,14 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		const FVector End = Start + Distance * Dir;
 
 		// Perform Trace
-		UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(Weapon->GetWorld()->GetGameState());
+		UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(Outer->GetWorld()->GetGameState());
 
 		FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
 		Request->Start = Start;
 		Request->End = End;
 
 		// Get collision information related to the projectile to be used in the trace.
-		ICsData_Projectile* PrjData					  = UCsManager_Projectile::Get(Weapon->GetWorld()->GetGameState())->GetDataChecked(Context, Weapon->GetProjectileType());
+		ICsData_Projectile* PrjData					  = UCsManager_Projectile::Get(Outer->GetWorld()->GetGameState())->GetDataChecked(Context, Outer->GetProjectileType());
 		ICsData_ProjectileCollision* PrjCollisionData = FCsLibrary_Data_Projectile::GetInterfaceChecked<ICsData_ProjectileCollision>(Context, PrjData);
 
 		const FCsCollisionPreset& CollisionPreset		 = PrjCollisionData->GetCollisionPreset();
@@ -882,16 +943,18 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 
 void UCsProjectileWeaponComponent::FProjectileImpl::StartLaunch()
 {
+	CS_SCOPED_TIMER(StartLaunchScopedHandle);
+
 	using namespace NCsProjectileWeaponComponent::NCached::ProjectileImpl;
 
 	const FString& Context = Str::StartLaunch;
 
 	typedef NCsProjectile::NPayload::IPayload PayloadType;
 
-	UCsManager_Projectile* Manager_Projectile = UCsManager_Projectile::Get(Weapon->GetWorld()->GetGameState());
+	UCsManager_Projectile* Manager_Projectile = UCsManager_Projectile::Get(Outer->GetWorld()->GetGameState());
 
 	// Get Payload
-	PayloadType* Payload1 = Manager_Projectile->AllocatePayload(Weapon->GetProjectileType());
+	PayloadType* Payload1 = Manager_Projectile->AllocatePayload(Outer->GetProjectileType());
 
 	// Set appropriate members on Payload
 	const bool SetSuccess = SetPayload(Context, Payload1);
@@ -899,14 +962,14 @@ void UCsProjectileWeaponComponent::FProjectileImpl::StartLaunch()
 	checkf(SetSuccess, TEXT("%s: Failed to set Payload1."), *Context);
 
 	// Cache copy of Payload for Launch
-	PayloadType* Payload2 = Manager_Projectile->AllocatePayload(Weapon->GetProjectileType());
+	PayloadType* Payload2 = Manager_Projectile->AllocatePayload(Outer->GetProjectileType());
 
 	const bool CopySuccess = CopyPayload(Context, Payload1, Payload2);
 
 	checkf(CopySuccess, TEXT("%s: Failed to copy Payload1 to Payload2."), *Context);
 
 	// Spawn
-	const FCsProjectilePooled* ProjectilePooled = Manager_Projectile->Spawn(Weapon->GetProjectileType(), Payload1);
+	const FCsProjectilePooled* ProjectilePooled = Manager_Projectile->Spawn(Outer->GetProjectileType(), Payload1);
 
 	const bool TypeSuccess = SetType(Context, ProjectilePooled);
 
@@ -962,7 +1025,7 @@ void UCsProjectileWeaponComponent::FSoundImpl::Play()
 	{
 		typedef NCsWeapon::NProjectile::NData::NSound::NFire::NParams::IParams ParamsType;
 
-		ParamsType* Params = SoundData->GetFireSoundParams();
+		ParamsType* Params	  = SoundData->GetFireSoundParams();
 		const FCsSound& Sound = Params->GetSound();
 
 		USoundBase* SoundAsset = Sound.GetChecked(Context);
@@ -1041,6 +1104,7 @@ void UCsProjectileWeaponComponent::FFXImpl::Play()
 		PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
 		// Set appropriate values on payload
 		SetPayload(Payload, FX);
+		SetPayload(Payload, FXData);
 
 		Manager_FX->Spawn(FX.Type, Payload);
 	}
@@ -1080,6 +1144,53 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, c
 	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::EAttach AttachType;
 
 	const AttachType& Type = Params.GetAttachType();
+
+	// None
+	if (Type == AttachType::None)
+	{
+		// Do Nothing
+	}
+	// Owner
+	else
+	if (Type == AttachType::Owner)
+	{
+		PayloadImpl->Parent = Weapon->GetMyOwner();
+	}
+	// Component
+	else
+	if (Type == AttachType::Component)
+	{
+		PayloadImpl->Parent = Component;
+	}
+	// Custom
+	else
+	{
+		checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."));
+	}
+}
+
+#define FXPayloadType NCsFX::NPayload::IPayload
+#define FXDataType NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
+void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, FXDataType* FXData)
+{
+#undef FXPayloadType
+#undef FXDataType
+
+	using namespace NCsProjectileWeaponComponent::NCached::FXImpl;
+
+	const FString& Context = Str::SetPayload;
+
+	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::FParams ParamsType;
+
+	const ParamsType& Params = FXData->GetFireFXParams();
+
+	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::EAttach AttachType;
+
+	const AttachType& Type = Params.GetAttachType();
+
+	typedef NCsFX::NPayload::FImpl PayloadImplType;
+
+	PayloadImplType* PayloadImpl = FCsLibrary_Payload_FX::PureStaticCastChecked<PayloadImplType>(Context, Payload);
 
 	// None
 	if (Type == AttachType::None)

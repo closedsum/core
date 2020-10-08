@@ -19,6 +19,8 @@ namespace NCsDamage
 
 			public:
 
+				virtual ~IRange(){}
+
 				/**
 				* Get the minimum value.
 				*

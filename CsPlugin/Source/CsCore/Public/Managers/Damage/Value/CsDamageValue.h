@@ -9,13 +9,15 @@ namespace NCsDamage
 		/**
 		* 
 		*/
-		struct CSCORE_API IValue : virtual public ICsGetInterfaceMap
+		struct CSCORE_API IValue : public ICsGetInterfaceMap
 		{
 		public:
 
 			static const FName Name;
 
 		public:
+
+			virtual ~IValue(){}
 		};
 	}
 }

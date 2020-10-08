@@ -10,7 +10,7 @@ namespace NCsUserWidget
 	{
 		/**
 		*/
-		struct CSUI_API IPayload : virtual public ICsGetInterfaceMap
+		struct CSUI_API IPayload : public ICsGetInterfaceMap
 		{
 		public:
 

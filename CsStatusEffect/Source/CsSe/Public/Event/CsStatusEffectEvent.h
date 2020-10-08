@@ -11,13 +11,15 @@ namespace NCsStatusEffect
 	{
 		/**
 		*/
-		struct CSSE_API IEvent : virtual public ICsGetInterfaceMap
+		struct CSSE_API IEvent : public ICsGetInterfaceMap
 		{
 		public:
 
 			static const FName Name;
 
 		public:
+
+			virtual ~IEvent(){}
 
 			/**
 			*

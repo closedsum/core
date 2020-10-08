@@ -1,16 +1,14 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
-#include "UObject/Interface.h"
+// Interfaces
 #include "Containers/CsGetInterfaceMap.h"
+// Types
+#include "Types/CsTypes_Macro.h"
+
 #include "CsData_ProjectileWeapon.generated.h"
 
 // NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
-namespace NCsWeapon {
-	namespace NProjectile { 
-		namespace NParams {
-			namespace NLaunch {
-				struct ILaunch; } } } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NParams, NLaunch, ILaunch)
 
 namespace NCsWeapon
 {
@@ -32,6 +30,8 @@ namespace NCsWeapon
 				typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
 
 			public:
+
+				virtual ~IData(){}
 
 				/**
 				*
@@ -107,11 +107,7 @@ class CSWP_API UCsData_ProjectileWeapon : public UCsGetInterfaceMap
 };
 
 // NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
-namespace NCsWeapon {
-	namespace NProjectile { 
-		namespace NParams {
-			namespace NLaunch {
-				struct ILaunch; } } } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NParams, NLaunch, ILaunch)
 
 /**
 *

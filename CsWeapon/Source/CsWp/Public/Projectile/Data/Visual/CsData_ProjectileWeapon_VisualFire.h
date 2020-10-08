@@ -28,6 +28,10 @@ namespace NCsWeapon
 
 						static const FName Name;
 
+					public:
+
+						virtual ~IFire(){}
+
 						/**
 						*
 						*

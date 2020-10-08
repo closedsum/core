@@ -13,7 +13,7 @@ namespace NCsSound
 	{
 		/**
 		*/
-		struct CSCORE_API IPayload : virtual public ICsGetInterfaceMap
+		struct CSCORE_API IPayload : public ICsGetInterfaceMap
 		{
 		public:
 

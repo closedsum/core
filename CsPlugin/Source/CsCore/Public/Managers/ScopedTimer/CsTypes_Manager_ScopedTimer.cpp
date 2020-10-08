@@ -102,14 +102,23 @@ void FCsScopedTimer::Log()
 
 FCsScopedTimerInternal::FCsScopedTimerInternal(const FCsScopedTimerHandle& InHandle)
 {
-	Handle = InHandle;
+	bOneShot = false;
+	Handle	 = InHandle;
+
+	StartTime = FPlatformTime::Seconds();
+}
+
+FCsScopedTimerInternal::FCsScopedTimerInternal(const FString* Name, const FECsScopedGroup& Group, const FECsCVarLog& CVar)
+{
+	bOneShot = true;
+	Handle	 = FCsManager_ScopedTimer::Get().GetHandle(Name, Group, CVar);
 
 	StartTime = FPlatformTime::Seconds();
 }
 
 FCsScopedTimerInternal::~FCsScopedTimerInternal()
 {
-	FCsManager_ScopedTimer::Get().UpdateHandle(Handle, FPlatformTime::Seconds() - StartTime);
+	FCsManager_ScopedTimer::Get().UpdateHandle(Handle, FPlatformTime::Seconds() - StartTime, bOneShot);
 }
 
 #pragma endregion FCsScopedTimerInternal

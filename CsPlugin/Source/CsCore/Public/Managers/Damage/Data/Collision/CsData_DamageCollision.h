@@ -21,6 +21,8 @@ namespace NCsDamage
 
 			public:
 
+				virtual ~ICollision(){}
+
 				virtual bool IgnoreHitResultObject() const = 0;
 			};
 		}

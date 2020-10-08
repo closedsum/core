@@ -30,6 +30,8 @@ namespace NCsWeapon
 
 					public:
 
+						virtual ~IFire(){}
+
 						/**
 						*
 						*

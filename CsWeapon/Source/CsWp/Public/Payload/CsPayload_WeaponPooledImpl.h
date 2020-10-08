@@ -12,7 +12,7 @@ namespace NCsWeapon
 	namespace NPayload
 	{
 		struct CSWP_API FImplPooled : public NCsPooledObject::NPayload::IPayload,
-									  public NPayload::IPayload
+									  public NCsWeapon::NPayload::IPayload
 		{
 		private:
 

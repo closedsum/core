@@ -14,6 +14,10 @@ namespace NCsWeapon
 		public:
 
 			static const FName Name;
+
+		public:
+
+			virtual ~IData(){}
 		};
 	}
 }

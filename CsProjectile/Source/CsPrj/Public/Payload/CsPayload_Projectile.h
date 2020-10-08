@@ -8,7 +8,7 @@ namespace NCsProjectile
 	{
 		/**
 		*/
-		struct CSPRJ_API IPayload : virtual public ICsGetInterfaceMap
+		struct CSPRJ_API IPayload : public ICsGetInterfaceMap
 		{
 		public:
 

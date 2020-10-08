@@ -31,6 +31,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, IPayload)
 // NCsFX::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, IPayload)
+// NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NData, NVisual, NFire, IFire)
 
 struct FCsProjectilePooled;
 
@@ -220,6 +222,8 @@ protected:
 	*/
 	void Fire_Internal_OnEnd(FCsRoutine* R);
 
+	FCsScopedTimerHandleWrapper FireScopedHandle;
+
 public:
 
 	/**
@@ -235,21 +239,44 @@ public:
 	public:
 
 		/**
+		* Delegate type for getting the time elapsed between "shots" after Fire() is called.
+		* 
+		* @param Weapon
+		* @param PreviousTime
+		* @param NewTime
 		*/
 		DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnElapsedTime, ICsWeapon* /*Weapon*/, const float& /*PreviousTime*/, const float& /*NewTime*/);
 
+		/** Delegate for getting the time elapsed between "shots" after Fire() is called. */
 		FOnElapsedTime OnElapsedTime_Event;
 
 		/**
+		* Delegate type for getting the time elapsed as a percent between "shots" after Fire() is called.
+		* 
+		* @param Weapon
+		* @param PreviousValue
+		* @param NewValue
 		*/
 		DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnElapsedTimeAsPercent, ICsWeapon* /*Weapon*/, const float& /*PreviousValue*/, const float& /*NewValue*/);
 
+		/** Delegate for getting the time elapsed as a percent between "shots" after Fire() is called. */
 		FOnElapsedTimeAsPercent OnElapsedTimeAsPercent_Event;
+
+		/**
+		* Delegate type for when Fire() has "completed". Meaning time between shots amount of time has elapsed from
+		* Fire() being called.
+		* 
+		* @param Weapon
+		*/
+		DECLARE_MULTICAST_DELEGATE_OneParam(FOnComplete, ICsWeapon* /*Weapon*/);
+
+		FOnComplete OnComplete_Event;
 
 		FTimeBetweenShotsImpl() :
 			Outer(nullptr),
 			OnElapsedTime_Event(),
-			OnElapsedTimeAsPercent_Event()
+			OnElapsedTimeAsPercent_Event(),
+			OnComplete_Event()
 		{
 		}
 
@@ -280,21 +307,17 @@ public:
 
 	protected:
 
-		UCsProjectileWeaponComponent* Weapon;
+		UCsProjectileWeaponComponent* Outer;
 
 		USceneComponent* LaunchComponentTransform;
 
-		FCsScopedTimerHandle GetLaunchLocationScopedHandle;
-
-		FCsScopedTimerHandle GetLaunchDirectionScopedHandle;
+		FCsScopedTimerHandle StartLaunchScopedHandle;
 
 	public:
 
 		FProjectileImpl() :
-			Weapon(nullptr),
-			LaunchComponentTransform(nullptr),
-			GetLaunchLocationScopedHandle(),
-			GetLaunchDirectionScopedHandle()
+			Outer(nullptr),
+			LaunchComponentTransform(nullptr)
 		{
 		}
 
@@ -399,6 +422,8 @@ public:
 		*/
 		void Play();
 
+	public:
+
 		/**
 		*
 		*
@@ -448,6 +473,8 @@ public:
 		/**
 		*/
 		void Play();
+	
+	public:
 
 		/**
 		*
@@ -456,6 +483,17 @@ public:
 		* @param FX
 		*/
 		void SetPayload(FXPayloadType* Payload, const FCsFX& FX);
+
+#define FXDataType NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
+		/**
+		*
+		*
+		* @param Payload
+		* @param FXData
+		*/
+		void SetPayload(FXPayloadType* Payload, FXDataType* FXData);
+
+#undef FXDataType
 	};
 
 	FFXImpl* FXImpl;

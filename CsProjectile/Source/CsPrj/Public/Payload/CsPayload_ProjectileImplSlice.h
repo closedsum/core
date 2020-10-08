@@ -34,10 +34,10 @@ namespace NCsProjectile
 			FVector Direction;
 
 			FVector Location;
-
 		public:
 
 			FImplSlice();
+			~FImplSlice(){}
 
 		// ICsGetInterfaceMap
 		#pragma region

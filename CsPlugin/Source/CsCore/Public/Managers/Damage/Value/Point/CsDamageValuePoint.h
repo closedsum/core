@@ -19,6 +19,8 @@ namespace NCsDamage
 
 			public:
 
+				virtual ~IPoint(){}
+
 				virtual const float& GetValue() const = 0;
 			};
 		}

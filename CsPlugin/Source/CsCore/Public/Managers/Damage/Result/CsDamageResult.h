@@ -11,7 +11,7 @@ namespace NCsDamage
 		/**
 		*
 		*/
-		struct CSCORE_API IResult : virtual public ICsGetInterfaceMap
+		struct CSCORE_API IResult : public ICsGetInterfaceMap
 		{
 		public:
 

@@ -11,9 +11,8 @@ class UObject;
 struct FCsInterfaceMap;
 class ICsData_StatusEffect;
 
-namespace NCsDamage {
-	namespace NEvent {
-		struct IEvent; } }
+// NCsDamage::NEvent::IEvent
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, IEvent)
 
 namespace NCsStatusEffect
 {

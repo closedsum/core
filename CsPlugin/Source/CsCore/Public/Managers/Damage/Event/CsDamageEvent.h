@@ -5,19 +5,11 @@
 #pragma once
 
 // NCsDamage::NValue::IValue
-namespace NCsDamage {
-	namespace NValue {
-		struct IValue; } }
-
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 // NCsDamage::NRange::IRange
-namespace NCsDamage {
-	namespace NRange {
-		struct IRange; } }
-
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 // NCsDamage::NData::IData
-namespace NCsDamage {
-	namespace NData {
-		struct IData; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 
 namespace NCsDamage
 {
@@ -26,7 +18,7 @@ namespace NCsDamage
 		/**
 		*
 		*/
-		struct CSCORE_API IEvent : virtual public ICsGetInterfaceMap
+		struct CSCORE_API IEvent : public ICsGetInterfaceMap
 		{
 		public:
 

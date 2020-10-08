@@ -4,9 +4,8 @@
 
 class ICsData_Damage;
 
-namespace NCsDamage {
-	namespace NRange {
-		struct IRange; } }
+// NCsDamage::NRange::IRange
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 
 namespace NCsDamage
 {
@@ -29,6 +28,8 @@ namespace NCsDamage
 				typedef NCsDamage::NRange::IRange RangeType;
 
 			public:
+
+				virtual ~IRange(){}
 
 				/**
 				* Modify the damage Range. This range is a copy of the DamageRange from Data.

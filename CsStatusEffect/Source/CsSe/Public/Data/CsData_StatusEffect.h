@@ -24,6 +24,8 @@ namespace NCsStatusEffect
 
 		public:
 
+			virtual ~IData(){}
+
 			/**
 			* Get the trigger condition
 			*

@@ -15,6 +15,10 @@ namespace NCsDamage
 		public:
 
 			static const FName Name;
+
+		public:
+
+			virtual ~IModifier(){}
 		};
 	}
 }

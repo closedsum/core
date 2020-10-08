@@ -1,10 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Containers/CsGetInterfaceMap.h"
+// Types
+#include "Types/CsTypes_Macro.h"
 #pragma once
 
-namespace NCsDamage {
-	namespace NModifier {
-		struct IModifier; } }
+// NCsDamage::NModifier::IModifier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
 
 namespace NCsProjectile
 {
@@ -16,7 +17,7 @@ namespace NCsProjectile
 			{
 				/**
 				*/
-				struct CSPRJ_API IDamage : virtual public ICsGetInterfaceMap
+				struct CSPRJ_API IDamage : public ICsGetInterfaceMap
 				{
 				public:
 

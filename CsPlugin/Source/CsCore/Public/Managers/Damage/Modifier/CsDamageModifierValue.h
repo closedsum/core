@@ -4,9 +4,8 @@
 
 class ICsData_Damage;
 
-namespace NCsDamage {
-	namespace NValue {
-		struct IValue; } }
+// NCsDamage::NValue::IValue
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 
 namespace NCsDamage
 {
@@ -29,6 +28,8 @@ namespace NCsDamage
 				typedef NCsDamage::NValue::IValue ValueType;
 
 			public:
+
+				virtual ~IValue(){}
 
 				/**
 				* Modify the damage Value. This value is a copy of the DamageValue from Data.

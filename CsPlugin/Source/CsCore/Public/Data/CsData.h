@@ -16,6 +16,8 @@ namespace NCsData
 		static const FName Name;
 
 	public:
+
+		virtual ~IData(){}
 	};
 }
 

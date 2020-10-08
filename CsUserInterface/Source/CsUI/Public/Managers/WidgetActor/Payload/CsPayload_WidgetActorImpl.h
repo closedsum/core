@@ -11,25 +11,30 @@ class UObject;
 struct FCsInterfaceMap;
 class UUserWidget;
 
-namespace NCsUserWidget {
-	namespace NPayload {
-		struct IPayload; } }
+// NCsUserWidget::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NPayload, IPayload)
 
 namespace NCsWidgetActor
 {
 	namespace NPayload
 	{
+#define PayloadType NCsPooledObject::NPayload::IPayload
+#define WidgetPayloadType NCsWidgetActor::NPayload::IPayload
+#define UserWidgetType NCsWidgetActor::NPayload::IUserWidget
+
 		/**
 		*/
-		struct CSUI_API FImpl final : public NCsPooledObject::NPayload::IPayload,
-									  public NCsWidgetActor::NPayload::IPayload,
-									  public NCsWidgetActor::NPayload::IUserWidget
+		struct CSUI_API FImpl final : public PayloadType,
+									  public WidgetPayloadType,
+									  public UserWidgetType
 		{
 		public:
 
 			static const FName Name;
 
 		private:
+
+			typedef NCsUserWidget::NPayload::IPayload UserWidgetPayloadType;
 
 			FCsInterfaceMap* InterfaceMap;
 
@@ -67,7 +72,7 @@ namespace NCsWidgetActor
 
 			FECsUserWidgetPooled UserWidgetPooledType;
 
-			NCsUserWidget::NPayload::IPayload* UserWidgetPayload;
+			UserWidgetPayloadType* UserWidgetPayload;
 
 		public:
 
@@ -193,12 +198,16 @@ namespace NCsWidgetActor
 				return UserWidgetPooledType;
 			}
 
-			FORCEINLINE NCsUserWidget::NPayload::IPayload* GetUserWidgetPayload() const
+			FORCEINLINE UserWidgetPayloadType* GetUserWidgetPayload() const
 			{
 				return UserWidgetPayload;
 			}
 
 		#pragma endregion NCsWidgetActor::NPayload::IUserWidget
 		};
+
+#undef PayloadType
+#undef WidgetPayloadType
+#undef UserWidgetType
 	}
 }

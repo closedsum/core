@@ -26,6 +26,8 @@ namespace NCsProjectile
 
 				public:
 
+					virtual ~IStaticMesh(){}
+
 					virtual const FCsPrjStaticMesh& GetStaticMesh() const = 0;
 				};
 			}

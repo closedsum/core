@@ -7,9 +7,8 @@
 class UObject;
 struct FCsInterfaceMap;
 
-namespace NCsDamage {
-	namespace NModifier {
-		struct IModifier; } }
+// NCsDamage::NModifier::IModifier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
 
 namespace NCsProjectile
 {

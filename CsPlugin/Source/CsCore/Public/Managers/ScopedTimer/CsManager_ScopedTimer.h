@@ -51,5 +51,5 @@ public:
 	void ClearHandle(const FCsScopedTimerHandle& Handle);
 	void SilentClearHandle(const FCsScopedTimerHandle& Handle);
 
-	void UpdateHandle(FCsScopedTimerHandle& Handle, double Time);
+	void UpdateHandle(FCsScopedTimerHandle& Handle, double Time, bool bClear = false);
 };

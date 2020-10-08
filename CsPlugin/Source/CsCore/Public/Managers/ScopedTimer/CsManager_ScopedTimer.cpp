@@ -142,7 +142,7 @@ void FCsManager_ScopedTimer::SilentClearHandle(const FCsScopedTimerHandle& Handl
 	Internal.Deallocate(Resource);
 }
 
-void FCsManager_ScopedTimer::UpdateHandle(FCsScopedTimerHandle& Handle, double Time)
+void FCsManager_ScopedTimer::UpdateHandle(FCsScopedTimerHandle& Handle, double Time, bool bClear /*= false*/)
 {
 	checkf(Handle.IsValid(), TEXT("FCsManager_ScopedTimer::UpdateHandle: Handle is NOT Valid."));
 
@@ -151,5 +151,14 @@ void FCsManager_ScopedTimer::UpdateHandle(FCsScopedTimerHandle& Handle, double T
 	checkf(ScopedTimer, TEXT("FCsManager_ScopedTimer::UpdateHandle: ScopedTimer is NULL."));
 
 	ScopedTimer->SetTime(Time);
-	ScopedTimer->MarkDirty();
+
+	if (bClear)
+	{
+		ScopedTimer->Log();
+		ClearHandle(ScopedTimer->Handle);
+	}
+	else
+	{
+		ScopedTimer->MarkDirty();
+	}
 }

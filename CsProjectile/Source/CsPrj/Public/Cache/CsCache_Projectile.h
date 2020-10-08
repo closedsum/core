@@ -7,7 +7,7 @@ namespace NCsProjectile
 {
 	namespace NCache
 	{
-		struct CSPRJ_API ICache : virtual public ICsGetInterfaceMap
+		struct CSPRJ_API ICache : public ICsGetInterfaceMap
 		{
 		public:
 

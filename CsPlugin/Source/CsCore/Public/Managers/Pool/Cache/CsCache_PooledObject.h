@@ -7,9 +7,8 @@
 
 class UObject;
 
-namespace NCsPooledObject {
-	namespace NPayload {
-		struct IPayload; } }
+// NCsPooledObject::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
 namespace NCsPooledObject
 {
@@ -17,11 +16,13 @@ namespace NCsPooledObject
 	{
 		/**
 		*/
-		struct CSCORE_API ICache : virtual public ICsGetInterfaceMap
+		struct CSCORE_API ICache : public ICsGetInterfaceMap
 		{
 		public:
 
 			static const FName Name;
+
+#define PayloadType NCsPooledObject::NPayload::IPayload
 
 		public:
 
@@ -47,7 +48,7 @@ namespace NCsPooledObject
 			* @param Payload
 			* @param InTime
 			*/
-			virtual void Allocate(NCsPooledObject::NPayload::IPayload* Payload) = 0;
+			virtual void Allocate(PayloadType* Payload) = 0;
 
 			/**
 			*
@@ -147,6 +148,8 @@ namespace NCsPooledObject
 			*
 			*/
 			virtual void Reset() = 0;
+
+#undef PayloadType
 		};
 	}
 }

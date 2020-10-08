@@ -15,7 +15,7 @@ namespace NCsSound
 		*  The Manager for Sound primarily interacts with the Cache object in terms
 		*  of allocation and deallocation.
 		*/
-		struct CSCORE_API ICache : virtual public ICsGetInterfaceMap
+		struct CSCORE_API ICache : public ICsGetInterfaceMap
 		{
 		public:
 

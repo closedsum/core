@@ -14,7 +14,7 @@ namespace NCsWidgetActor
 		*  The Manager for Widget Actor primarily interacts with the Cache object in terms
 		*  of allocation and deallocation.
 		*/
-		struct CSUI_API ICache : virtual public ICsGetInterfaceMap
+		struct CSUI_API ICache : public ICsGetInterfaceMap
 		{
 		public:
 

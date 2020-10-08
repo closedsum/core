@@ -110,7 +110,7 @@ protected:
 
 	TArray<EventManagerType> Manager_Events;
 
-	virtual NCsStatusEffect::NEvent::IEvent* ConstructEvent(const FECsStatusEffectEvent& Type);
+	virtual EventType* ConstructEvent(const FECsStatusEffectEvent& Type);
 
 public:
 
@@ -128,7 +128,7 @@ public:
 	* @param Event		Event of type: NCsStatusEffect::NEvent::IEvent.
 	* return			Type of StatusEffectEvent.
 	*/
-	virtual const FECsStatusEffectEvent& GetEventType(const FString& Context, const NCsStatusEffect::NEvent::IEvent* Event);
+	virtual const FECsStatusEffectEvent& GetEventType(const FString& Context, const EventType* Event);
 
 	/**
 	* Get the type (interface) of the Event.

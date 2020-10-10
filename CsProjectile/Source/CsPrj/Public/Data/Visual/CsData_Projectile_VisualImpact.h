@@ -1,9 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
-#include "UObject/Interface.h"
+// Interfaces
 #include "Containers/CsGetInterfaceMap.h"
+// Types
 #include "Managers/FX/CsTypes_FX.h"
+
 #include "CsData_Projectile_VisualImpact.generated.h"
 
 namespace NCsProjectile
@@ -24,6 +25,12 @@ namespace NCsProjectile
 
 				public:
 
+					/**
+					* Get the FX information associated with the given SurfaceType.
+					* 
+					* @param SurfaceType	Physics Surface type.
+					* return				FX associated with the given SurfaceType
+					*/
 					virtual const FCsFX& GetImpactFX(const EPhysicalSurface& SurfaceType) const = 0;
 				};
 			}
@@ -49,5 +56,11 @@ public:
 
 public:
 	
+	/**
+	* Get the FX information associated with the given SurfaceType.
+	* 
+	* @param SurfaceType	Physics Surface type.
+	* return				FX associated with the given SurfaceType
+	*/
 	virtual const FCsFX& GetImpactFX(const EPhysicalSurface& SurfaceType) const = 0;
 };

@@ -22,25 +22,29 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerFXActor_OnSpawn, const FE
 
 class ICsFXActorPooled;
 
+namespace NCsFX
+{
 #define PayloadType NCsFX::NPayload::IPayload
 
-class CSCORE_API FCsManager_FX_Actor_Internal : public TCsManager_PooledObject_Map<ICsFXActorPooled, FCsFXActorPooled, PayloadType, FECsFX>
-{
-private:
-
-	typedef TCsManager_PooledObject_Map<ICsFXActorPooled, FCsFXActorPooled, PayloadType, FECsFX> Super;
-
-public:
-
-	FCsManager_FX_Actor_Internal();
-
-	FORCEINLINE virtual const FString& KeyTypeToString(const FECsFX& Type) override
+	class CSCORE_API FManager : public TCsManager_PooledObject_Map<ICsFXActorPooled, FCsFXActorPooled, PayloadType, FECsFX>
 	{
-		return Type.GetName();
-	}
-};
+	private:
+
+		typedef TCsManager_PooledObject_Map<ICsFXActorPooled, FCsFXActorPooled, PayloadType, FECsFX> Super;
+
+	public:
+
+		FManager();
+
+		FORCEINLINE virtual const FString& KeyTypeToString(const FECsFX& Type) override
+		{
+			return Type.GetName();
+		}
+	};
 
 #undef PayloadType
+}
+
 #pragma endregion Internal
 
 class ICsGetManagerFXActor;
@@ -54,6 +58,7 @@ class CSCORE_API UCsManager_FX_Actor : public UObject
 
 public:	
 
+#define ManagerType NCsFX::FManager 
 #define PayloadType NCsFX::NPayload::IPayload
 
 // Singleton
@@ -147,7 +152,7 @@ public:
 protected:
 	
 	/** Reference to the internal manager for handling the pool of fx actors. */
-	FCsManager_FX_Actor_Internal Internal;
+	ManagerType Internal;
 	
 	/**
 	* Setup the internal manager for handling the pool of projectiles.
@@ -166,7 +171,7 @@ public:
 	*
 	* @param Params
 	*/
-	void InitInternal(const FCsManager_FX_Actor_Internal::FCsManagerPooledObjectMapParams& Params);
+	void InitInternal(const ManagerType::FCsManagerPooledObjectMapParams& Params);
 
 	virtual void Clear();
 
@@ -645,5 +650,6 @@ private:
 
 #pragma endregion Data
 
+#undef ManagerType
 #undef PayloadType
 };

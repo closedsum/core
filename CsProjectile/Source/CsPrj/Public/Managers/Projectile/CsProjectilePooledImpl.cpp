@@ -24,6 +24,7 @@
 // Managers
 #include "Managers/Projectile/CsManager_Projectile.h"
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
+#include "Managers/Sound/CsManager_Sound.h"
 #include "Managers/Damage/CsManager_Damage.h"
 // Data
 #include "Data/CsData_Projectile.h"
@@ -31,6 +32,7 @@
 #include "Data/Visual/CsData_Projectile_VisualStaticMesh.h"
 #include "Data/Visual/CsData_Projectile_VisualTrail.h"
 #include "Data/Visual/CsData_Projectile_VisualImpact.h"
+#include "Data/Sound/CsData_Projectile_SoundImpact.h"
 #include "Data/Damage/CsData_ProjectileDamage.h"
 // Projectile
 #include "Cache/CsCache_ProjectilePooledImpl.h"
@@ -38,6 +40,8 @@
 // FX
 #include "Managers/FX/Cache/CsCache_FXImpl.h"
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
+// Sound
+#include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 // Damage
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
 #include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
@@ -385,43 +389,81 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 	EPhysicalSurface SurfaceType	= PhysMaterial ? PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
 
 	// ICsData_Projectile_VisualImpact
-	if (ICsData_Projectile_VisualImpact* ImpactVisualData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ICsData_Projectile_VisualImpact>(Context, Data))
 	{
-		const FCsFX& ImpactFX = ImpactVisualData->GetImpactFX(SurfaceType);
+		typedef ICsData_Projectile_VisualImpact ImpactVisualDataType;
 
-		UNiagaraSystem* FXSystem = ImpactFX.Get();
+		if (ImpactVisualDataType* ImpactVisualData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
+		{
+			const FCsFX& ImpactFX = ImpactVisualData->GetImpactFX(SurfaceType);
 
-		checkf(FXSystem, TEXT("%s: FXSystem is NULL for Visual Data inteface: ICsData_Projectile_VisualImpact"), *Context);
+			UNiagaraSystem* FXSystem = ImpactFX.Get();
 
-		// Get Manager
-		UCsManager_FX_Actor* Manager_FX_Actor = UCsManager_FX_Actor::Get(GetWorld()->GetGameState());
-		// Get Payload
-		typedef NCsFX::NPayload::FImpl FXPayloadImplType;
+			checkf(FXSystem, TEXT("%s: FXSystem is NULL for Visual Data inteface: %s"), *Context, *(ImpactVisualDataType::Name.ToString()));
 
-		FXPayloadImplType* FXPayload = Manager_FX_Actor->AllocatePayload<FXPayloadImplType>(ImpactFX.Type);
-		// Set appropriate data on Payload
-		FXPayload->Instigator = Cache->GetInstigator();
+			// Get Manager
+			UCsManager_FX_Actor* Manager_FX_Actor = UCsManager_FX_Actor::Get(GetWorld()->GetGameState());
+			// Get Payload
+			typedef NCsFX::NPayload::FImpl PayloadImplType;
 
-		FXPayload->Transform.SetLocation(Hit.Location);
-		FXPayload->Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+			PayloadImplType* Payload = Manager_FX_Actor->AllocatePayload<PayloadImplType>(ImpactFX.Type);
+			// Set appropriate data on Payload
+			Payload->Instigator = Cache->GetInstigator();
 
-		FXPayload->FXSystem			= FXSystem;
-		FXPayload->DeallocateMethod = ImpactFX.DeallocateMethod;
-		FXPayload->LifeTime			= ImpactFX.LifeTime;
-		// Spawn FX
-		Manager_FX_Actor->Spawn(ImpactFX.Type, FXPayload);
+			Payload->Transform.SetLocation(Hit.Location);
+			Payload->Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+
+			Payload->FXSystem		  = FXSystem;
+			Payload->DeallocateMethod = ImpactFX.DeallocateMethod;
+			Payload->LifeTime		  = ImpactFX.LifeTime;
+			// Spawn FX
+			Manager_FX_Actor->Spawn(ImpactFX.Type, Payload);
+		}
+	}
+	// ICsData_Projectile_SoundImpact
+	{
+		typedef ICsData_Projectile_SoundImpact ImpactSoundDataType;
+
+		if (ImpactSoundDataType* ImpactSoundData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
+		{
+			const FCsSound& ImpactSound = ImpactSoundData->GetImpactSound(SurfaceType);
+
+			USoundBase* Sound = ImpactSound.Get();
+
+			checkf(Sound, TEXT("%s: Sound is NULL for Sound Data inteface: %s"), *Context, *(ImpactSoundDataType::Name.ToString()));
+
+			// Get Manager
+			UCsManager_Sound* Manager_Sound = UCsManager_Sound::Get(GetWorld()->GetGameState());
+			// Get Payload
+			typedef NCsSound::NPayload::FImpl PayloadImplType;
+
+			PayloadImplType* Payload = Manager_Sound->AllocatePayload<PayloadImplType>(ImpactSound.Type);
+			// Set appropriate data on Payload
+			Payload->Instigator = Cache->GetInstigator();
+
+			Payload->Transform.SetLocation(Hit.Location);
+			Payload->Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+
+			Payload->Sound			  = Sound;
+			Payload->DeallocateMethod = ImpactSound.GetDeallocateMethod();
+			Payload->LifeTime		  = ImpactSound.LifeTime;
+			// Spawn FX
+			Manager_Sound->Spawn(ImpactSound.Type, Payload);
+		}
 	}
 	// ICsData_ProjectileDamage
-	if (ICsData_ProjectileDamage* DamageData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ICsData_ProjectileDamage>(Context, Data))
 	{
-		typedef NCsDamage::NEvent::FResource DamageEventResourceType;
+		typedef ICsData_ProjectileDamage DamageDataType;
 
-		const DamageEventResourceType* Event = OnHit_CreateDamageEvent(Hit);
+		if (DamageDataType* DamageData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<DamageDataType>(Context, Data))
+		{
+			typedef NCsDamage::NEvent::FResource DamageEventResourceType;
 
-		OnBroadcastDamage_Event.Broadcast(Event->Get());
-		OnBroadcastDamageContainer_Event.Broadcast(Event);
+			const DamageEventResourceType* Event = OnHit_CreateDamageEvent(Hit);
+
+			OnBroadcastDamage_Event.Broadcast(Event->Get());
+			OnBroadcastDamageContainer_Event.Broadcast(Event);
+		}
 	}
-
 	OnHit_Internal(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
 
 	if (bDeallocateOnHit)
@@ -497,8 +539,11 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	if (TrailFXPooled)
 	{
 		// Deactivate the Trail FX
-		NCsPooledObject::NCache::ICache* FXCache = TrailFXPooled->GetCache();
-		NCsFX::NCache::FImpl* FXCacheImpl		 = FCsLibrary_PooledObjectCache::PureStaticCastChecked<NCsFX::NCache::FImpl>(Context, FXCache);
+		typedef NCsPooledObject::NCache::ICache CacheType;
+		typedef NCsFX::NCache::FImpl CacheImplType;
+
+		CacheType* FXCache		   = TrailFXPooled->GetCache();
+		CacheImplType* FXCacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, FXCache);
 
 		FXCacheImpl->QueueDeallocate();
 

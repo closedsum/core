@@ -11,16 +11,16 @@ namespace NCsSound
 	{
 		FImpl::FImpl() :
 			InterfaceMap(nullptr),
-			// NCsPooledObject::NPayload::IPayload
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated(false),
 			Instigator(nullptr),
 			Owner(nullptr),
 			Parent(nullptr),
 			Time(),
-			// NCsSound::NPayload::IPayload
+			// SoundPayloadType (NCsSound::NPayload::IPayload)
 			Sound(nullptr),
 			SoundAttenuation(nullptr),
-			DeallocateMethod(ECsSoundDeallocateMethod::Complete),
+			DeallocateMethod(EDeallocateMethod::Complete),
 			LifeTime(0.0f),
 			AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Bone(NAME_None),
@@ -31,8 +31,11 @@ namespace NCsSound
 
 			InterfaceMap->SetRootName(FImpl::Name);
 
-			InterfaceMap->Add<NCsPooledObject::NPayload::IPayload>(static_cast<NCsPooledObject::NPayload::IPayload*>(this));
-			InterfaceMap->Add<NCsSound::NPayload::IPayload>(static_cast<NCsSound::NPayload::IPayload*>(this));
+			typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
+			typedef NCsSound::NPayload::IPayload SoundPayloadType;
+
+			InterfaceMap->Add<PooledPayloadType>(static_cast<PooledPayloadType*>(this));
+			InterfaceMap->Add<SoundPayloadType>(static_cast<SoundPayloadType*>(this));
 		}
 
 		FImpl::~FImpl()
@@ -40,12 +43,12 @@ namespace NCsSound
 			delete InterfaceMap;
 		}
 
-		// NCsPooledObject::NPayload::IPayload
+		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		#pragma region
 
 		void FImpl::Reset()
 		{
-			// NCsPooledObject::NPayload::IPayload
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated = false;
 			Instigator = nullptr;
 			Owner = nullptr;
@@ -53,10 +56,10 @@ namespace NCsSound
 
 			Time.Reset();
 
-			// NCsSound::NPayload::IPayload
+			// SoundPayloadType (NCsSound::NPayload::IPayload)
 			Sound = nullptr;
 			SoundAttenuation = nullptr;
-			DeallocateMethod = ECsSoundDeallocateMethod::Complete;
+			DeallocateMethod = EDeallocateMethod::Complete;
 			LifeTime = 0.0f;
 			AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Bone = NAME_None;
@@ -64,6 +67,6 @@ namespace NCsSound
 			Transform = FTransform::Identity;
 		}
 
-		#pragma endregion NCsPooledObject::NPayload::IPayload
+		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 	}
 }

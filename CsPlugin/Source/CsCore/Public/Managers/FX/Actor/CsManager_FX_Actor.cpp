@@ -52,9 +52,12 @@ namespace NCsManagerFXActor
 // Internal
 #pragma region
 
-FCsManager_FX_Actor_Internal::FCsManager_FX_Actor_Internal() 
-	: Super()
+namespace NCsFX
 {
+	FManager::FManager()
+		: Super()
+	{
+	}
 }
 
 #pragma endregion Internal
@@ -341,9 +344,11 @@ void UCsManager_FX_Actor::InitInternalFromSettings()
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		FCsManager_FX_Actor_Internal::FCsManagerPooledObjectMapParams Params;
+		typedef NCsFX::FManager ManagerType;
 
-		Params.Name  = TEXT("UCsManager_FX_Actor::FCsManager_FX_Actor_Internal");
+		ManagerType::FCsManagerPooledObjectMapParams Params;
+
+		Params.Name  = TEXT("UCsManager_FX_Actor::NCsFX::FManager");
 		Params.World = MyRoot->GetWorld();
 
 		for (const TPair<FECsFX, FCsSettings_Manager_FX_Actor_PoolParams>& Pair : Settings.PoolParams)
@@ -383,11 +388,12 @@ void UCsManager_FX_Actor::InitInternalFromSettings()
 	}
 }
 
-void UCsManager_FX_Actor::InitInternal(const FCsManager_FX_Actor_Internal::FCsManagerPooledObjectMapParams& Params)
+#define ManagerType NCsFX::FManager
+void UCsManager_FX_Actor::InitInternal(const ManagerType::FCsManagerPooledObjectMapParams& Params)
 {
 	// Add CVars
 	{
-		FCsManager_FX_Actor_Internal::FCsManagerPooledObjectMapParams& P = const_cast<FCsManager_FX_Actor_Internal::FCsManagerPooledObjectMapParams&>(Params);
+		ManagerType::FCsManagerPooledObjectMapParams& P = const_cast<ManagerType::FCsManagerPooledObjectMapParams&>(Params);
 
 		for (TPair<FECsFX, FCsManagerPooledObjectParams>& Pair : P.ObjectParams)
 		{
@@ -409,6 +415,7 @@ void UCsManager_FX_Actor::InitInternal(const FCsManager_FX_Actor_Internal::FCsMa
 	}
 	Internal.Init(Params);
 }
+#undef ManagerType
 
 void UCsManager_FX_Actor::Clear()
 {

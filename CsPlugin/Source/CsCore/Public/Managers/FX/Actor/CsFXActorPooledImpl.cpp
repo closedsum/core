@@ -22,12 +22,21 @@
 // Cached
 #pragma region
 
-namespace NCsFXActorPooledImplCached
+namespace NCsFXActorPooledImpl
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Update);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Allocate);
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, OnConstructObject);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Update);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Allocate);
+		}
+
+		namespace Name
+		{
+			const FName Asset = FName("Asset");
+		}
 	}
 }
 
@@ -57,25 +66,40 @@ void UCsFXActorPooledImpl::BeginDestroy()
 
 void UCsFXActorPooledImpl::OnConstructObject(const FCsManagerPooledObjectConstructParams& Params)
 {
+	using namespace NCsFXActorPooledImpl::NCached;
+
+	const FString& Context = Str::OnConstructObject;
+
 	ConstructCache();
 	
+	// Create the FX Actor
 	UObject* MyOuter = GetOuter();
 
-	checkf(MyOuter, TEXT("UCsFXActorPooledImpl::OnConstructObject: Outer is NULL. No Outer set for %s."), *(GetName()));
+	checkf(MyOuter, TEXT("%s: Outer is NULL. No Outer set for %s."), *Context, *(GetName()));
 
 	UCsManager_FX_Actor* Manager_FX_Actor = Cast<UCsManager_FX_Actor>(MyOuter);
 
-	checkf(Manager_FX_Actor, TEXT("UCsFXActorPooledImpl::OnConstructObject: Outer for %s is NOT of type: UCsManager_FX_Actor."), *(GetName()));
+	checkf(Manager_FX_Actor, TEXT("%s: Outer for %s is NOT of type: UCsManager_FX_Actor."), *Context, *(GetName()));
 
-	UWorld* World = Manager_FX_Actor->GetWorld();
+	UWorld* World = Manager_FX_Actor->GetMyRoot()->GetWorld();
 
-	checkf(World, TEXT("UCsFXActorPooledImpl::OnConstructObject: World is NULL. No World associated with Manager_FX_Actor."));
+	checkf(World, TEXT("%s: World is NULL. No World associated with Manager_FX_Actor."), *Context);
 
 	FActorSpawnParameters SpawnParams;
 
 	FX = World->SpawnActor<ANiagaraActor>(ANiagaraActor::StaticClass(), SpawnParams);
 
-	checkf(FX, TEXT("UCsFXActorPooledImpl::OnConstructObject: Failed to spawn FX of type: ANiagaraActor."));
+	checkf(FX, TEXT("%s: Failed to spawn FX of type: ANiagaraActor."), *Context);
+
+	// Cache the FProperty for UNiagaraComponent->Asset
+	UNiagaraComponent* Component = FX->GetNiagaraComponent();
+	FProperty* Property			 = Component->GetClass()->FindPropertyByName(Name::Asset);
+	
+	checkf(Property, TEXT("%s: Failed to find FProperty with Name: %s from UNiagaraComponent."), *Context, *(Name::Asset.ToString()));
+	
+	AssetPropertyPtr = Property->ContainerPtrToValuePtr<UNiagaraSystem*>(Component);
+	
+	checkf(AssetPropertyPtr, TEXT("%s: Failed to get pointer to type: UNiagaraSystem from Property: UNiagaraComponent.Asset."), *Context);
 }
 
 #pragma endregion ICsOnConstructObject
@@ -85,7 +109,7 @@ void UCsFXActorPooledImpl::OnConstructObject(const FCsManagerPooledObjectConstru
 
 void UCsFXActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
-	using namespace NCsFXActorPooledImplCached;
+	using namespace NCsFXActorPooledImpl::NCached;
 
 	typedef NCsFX::NCache::FImpl CacheImplType;
 
@@ -112,7 +136,7 @@ void UCsFXActorPooledImpl::Allocate(PayloadType* Payload)
 {
 #undef PayloadType
 
-	using namespace NCsFXActorPooledImplCached;
+	using namespace NCsFXActorPooledImpl::NCached;
 
 	typedef NCsFX::NCache::FImpl CacheImplType;
 
@@ -126,7 +150,9 @@ void UCsFXActorPooledImpl::Allocate(PayloadType* Payload)
 
 	CacheImpl->SetFXComponent(FXComponent);
 
-	NCsFX::NPayload::IPayload* FXPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<NCsFX::NPayload::IPayload>(Str::Allocate, Payload);
+	typedef NCsFX::NPayload::IPayload FXPayloadType;
+
+	FXPayloadType* FXPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<FXPayloadType>(Str::Allocate, Payload);
 
 	FX->SetActorTickEnabled(true);
 	FX->SetActorHiddenInGame(false);
@@ -175,12 +201,25 @@ void UCsFXActorPooledImpl::Allocate(PayloadType* Payload)
 
 void UCsFXActorPooledImpl::Deallocate()
 {
+	using namespace NCsFXActorPooledImpl::NCached;
+
 	FX->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
 	FX->SetActorTickEnabled(false);
 	FX->SetActorHiddenInGame(true);
 
+	// NOTE: 4.25. Currently there is a BUG at Runtime when calling UNiagaraComponent->SetAsset(nullptr) where
+	//			   some code runs assuming the Asset is valid. The work around is to manually
+	//			   call DestroyInstanc() and then "null" out the Asset member on UNiagaraComponent.
+#if WITH_EDITOR
 	FX->GetNiagaraComponent()->SetAsset(nullptr);
+#else
+	*AssetPropertyPtr = nullptr;
+
+	FX->GetNiagaraComponent()->DestroyInstance();
+#endif // #if WITH_EDITOR
+
+	Cache->Deallocate();
 }
 
 #pragma endregion ICsPooledObject
@@ -188,5 +227,7 @@ void UCsFXActorPooledImpl::Deallocate()
 
 void UCsFXActorPooledImpl::ConstructCache()
 {
-	Cache = new NCsFX::NCache::FImpl();
+	typedef NCsFX::NCache::FImpl CacheImplType;
+
+	Cache = new CacheImplType();
 }

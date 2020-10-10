@@ -50,7 +50,13 @@ namespace NCsManagerWeapon
 	{
 		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, SetupInternal);
 		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, InitInternalFromSettings);
+		CS_DEFINE_CACHED_STRING(Class, "Class");
+
 		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, PopulateClassMapFromSettings);
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, GetWeapon);
+		CS_DEFINE_CACHED_STRING(Type, "Type");
+
+		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, GetData);
 		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, PopulateDataMapFromSettings);
 		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, CreateEmulatedDataFromDataTable);
 		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, DeconstructEmulatedData);
@@ -407,7 +413,7 @@ void UCsManager_Weapon::InitInternalFromSettings()
 			// Get Class
 			const FECsWeaponClass& ClassType = PoolParams.Class;
 
-			checkf(EMCsWeaponClass::Get().IsValidEnum(ClassType), TEXT("%s: Class for NOT Valid."), *Context, ClassType.ToChar());
+			check(EMCsWeaponClass::Get().IsValidEnumChecked(Context, Str::Class, ClassType));
 
 			FCsWeapon* Weapon = GetWeaponChecked(Context, ClassType);
 			UClass* Class	  = Weapon->GetClass();
@@ -762,7 +768,11 @@ void UCsManager_Weapon::PopulateClassMapFromSettings()
 
 FCsWeapon* UCsManager_Weapon::GetWeapon(const FECsWeapon& Type)
 {
-	checkf(EMCsWeapon::Get().IsValidEnum(Type), TEXT("UCsManager_Weapon::GetWeaponPtr: Type: %s is NOT Valid."), Type.ToChar());
+	using namespace NCsManagerWeapon;
+
+	const FString& Context = Str::GetWeapon;
+
+	check(EMCsWeapon::Get().IsValidEnumChecked(Context, Str::Type, Type));
 
 	return WeaponClassByTypeMap.Find(Type.GetFName());
 }
@@ -778,7 +788,11 @@ FCsWeapon* UCsManager_Weapon::GetWeaponChecked(const FString& Context, const FEC
 
 FCsWeapon* UCsManager_Weapon::GetWeapon(const FECsWeaponClass& Type)
 {
-	checkf(EMCsWeaponClass::Get().IsValidEnum(Type), TEXT("UCsManager_Weapon::GetWeaponPtr: Type: %s is NOT Valid."), Type.ToChar());
+	using namespace NCsManagerWeapon;
+
+	const FString& Context = Str::GetWeapon;
+
+	check(EMCsWeaponClass::Get().IsValidEnumChecked(Context, Str::Type, Type));
 
 	return WeaponClassByClassTypeMap.Find(Type.GetFName());
 }
@@ -1227,7 +1241,12 @@ DataType* UCsManager_Weapon::GetData(const FName& Name)
 DataType* UCsManager_Weapon::GetData(const FECsWeapon& Type)
 {
 #undef DataType
-	checkf(EMCsWeapon::Get().IsValidEnum(Type), TEXT("UCsManager_Weapon::GetData: Type: %s is NOT Valid."), Type.ToChar());
+
+	using namespace NCsManagerWeapon;
+
+	const FString& Context = Str::GetData;
+
+	check(EMCsWeapon::Get().IsValidEnumChecked(Context, Str::Type, Type));
 
 	return GetData(Type.GetFName());
 }

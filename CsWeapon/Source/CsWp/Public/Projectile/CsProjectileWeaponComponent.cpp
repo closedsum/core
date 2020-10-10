@@ -57,7 +57,20 @@ namespace NCsProjectileWeaponComponent
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, SetUpdateGroup);
+			CS_DEFINE_CACHED_STRING(Group, "Group");
+
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, SetWeaponType);
+			CS_DEFINE_CACHED_STRING(Type, "Type");
+
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, SetProjectileType);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, Init);
+			CS_DEFINE_CACHED_STRING(UpdateGroup, "UpdateGroup");
+			CS_DEFINE_CACHED_STRING(WeaponType, "WeaponType");
+			CS_DEFINE_CACHED_STRING(ProjectileType, "ProjectileType");
+			CS_DEFINE_CACHED_STRING(IdleState, "IdleState");
+			CS_DEFINE_CACHED_STRING(FireState, "FireState");
+
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, OnUpdate_HandleStates);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, CanFire);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent, Fire);
@@ -241,14 +254,22 @@ void UCsProjectileWeaponComponent::Update(const FCsDeltaTime& DeltaTime)
 
 void UCsProjectileWeaponComponent::SetUpdateGroup(const FECsUpdateGroup& Group)
 {
-	checkf(EMCsUpdateGroup::Get().IsValidEnum(Group), TEXT("UCsProjectileWeaponComponent::SetUpdateGroup: Group: %s is NOT Valid."), Group.ToChar());
+	using namespace NCsProjectileWeaponComponent::NCached;
+
+	const FString& Context = Str::SetUpdateGroup;
+
+	check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Str::Group, Group));
 
 	UpdateGroup = Group;
 }
 
 void UCsProjectileWeaponComponent::SetWeaponType(const FECsWeapon& Type)
 {
-	checkf(EMCsWeapon::Get().IsValidEnum(Type), TEXT("UCsProjectileWeaponComponent::SetWeaponType: Type: %s is NOT Valid."), Type.ToChar());
+	using namespace NCsProjectileWeaponComponent::NCached;
+
+	const FString& Context = Str::SetWeaponType;
+
+	check(EMCsWeapon::Get().IsValidEnumChecked(Context, Str::Type, Type));
 
 	WeaponType = Type;
 }
@@ -260,7 +281,11 @@ void UCsProjectileWeaponComponent::SetWeaponType(const FECsWeapon& Type)
 
 void UCsProjectileWeaponComponent::SetProjectileType(const FECsProjectile& Type)
 {
-	checkf(EMCsProjectile::Get().IsValidEnum(Type), TEXT("UCsProjectileWeaponComponent::SetProjectileType: Type: %s is NOT Valid."), Type.ToChar());
+	using namespace NCsProjectileWeaponComponent::NCached;
+
+	const FString& Context = Str::SetProjectileType;
+
+	check(EMCsProjectile::Get().IsValidEnumChecked(Context, Str::Type, Type));
 
 	ProjectileType = Type;
 }
@@ -290,9 +315,9 @@ void UCsProjectileWeaponComponent::Init()
 
 	const FString& Context = Str::Init;
 
-	checkf(EMCsUpdateGroup::Get().IsValidEnum(UpdateGroup), TEXT("%s: UpdateGroup: %s is NOT Valid."), *Context, UpdateGroup.ToChar());
+	check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Str::UpdateGroup, UpdateGroup));
 
-	checkf(EMCsWeapon::Get().IsValidEnum(WeaponType), TEXT("%s: WeaponType: %s is NOT Valid."), *Context, WeaponType.ToChar());
+	check(EMCsWeapon::Get().IsValidEnumChecked(Context, Str::WeaponType, WeaponType));
 
 	// Get Data
 	Data = UCsManager_Weapon::Get(GetWorld()->GetGameState())->GetData(WeaponType.GetFName());
@@ -301,18 +326,18 @@ void UCsProjectileWeaponComponent::Init()
 
 	checkf(FCsLibrary_Data_Weapon::IsValidChecked(Context, Data), TEXT("%s: Data is NOT Valid."), *Context);
 
-	checkf(EMCsProjectile::Get().IsValidEnum(ProjectileType), TEXT("%s: WeaponType: %s is NOT Valid."), *Context, ProjectileType.ToChar());
+	check(EMCsProjectile::Get().IsValidEnumChecked(Context, Str::ProjectileType, ProjectileType));
 
 	// Set States
 	UCsWeaponSettings* Settings = GetMutableDefault<UCsWeaponSettings>();
 
 	IdleState = Settings->ProjectileWeaponImpl.IdleState;
 
-	checkf(EMCsWeaponState::Get().IsValidEnum(IdleState), TEXT("%s: IdleState: %s is NOT Valid."), *Context, IdleState.ToChar());
+	check(EMCsWeaponState::Get().IsValidEnumChecked(Context, Str::IdleState, IdleState));
 
 	FireState = Settings->ProjectileWeaponImpl.FireState;
 
-	checkf(EMCsWeaponState::Get().IsValidEnum(FireState), TEXT("%s: FireState: %s is NOT Valid."), *Context, FireState.ToChar());
+	check(EMCsWeaponState::Get().IsValidEnumChecked(Context, Str::FireState, FireState));
 
 	CurrentState = IdleState;
 
@@ -1060,7 +1085,7 @@ void UCsProjectileWeaponComponent::FSoundImpl::SetPayload(SoundPayloadType* Payl
 	PayloadImpl->Owner						= Weapon->GetMyOwner();
 	PayloadImpl->Sound						= Sound.GetChecked(Context);
 	PayloadImpl->SoundAttenuation			= Sound.GetAttenuation();
-	PayloadImpl->DeallocateMethod			= Sound.DeallocateMethod;
+	PayloadImpl->DeallocateMethod			= Sound.GetDeallocateMethod();
 	PayloadImpl->LifeTime					= Sound.LifeTime;
 	PayloadImpl->AttachmentTransformRules	= Sound.AttachmentTransformRules;
 	PayloadImpl->Bone						= Sound.Bone;

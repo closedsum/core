@@ -8,9 +8,10 @@
 class UObject;
 struct FCsInterfaceMap;
 
-namespace NCsPooledObject {
-	namespace NPayload {
-		struct IPayload; } }
+// NCsPooledObject::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
+// NCsSound::EDeallocateMethod
+CS_FWD_DECLARE_ENUM_CLASS_UINT8_NAMESPACE_1(NCsSound, EDeallocateMethod)
 
 class UAudioComponent;
 class USoundAttenuation;
@@ -19,18 +20,24 @@ namespace NCsSound
 {
 	namespace NCache
 	{
+#define PooledCacheType NCsPooledObject::NCache::ICache
+#define SoundCacheType NCsSound::NCache::ICache
+
 		/**
 		* Basic implementation for Cache implementing the interfaces:
-		* NCsPooledObject::NCache::ICache and NCsSound::NCache::ICache. This only supports 
+		* PooledCacheType (NCsPooledObject::NCache::ICache) and 
+		* SoundCacheType (NCsSound::NCache::ICache). This only supports 
 		* a bare minimum functionality. For custom functionality create
 		* another implementation
 		*/
-		struct CSCORE_API FImpl final : public NCsPooledObject::NCache::ICache,
-										public NCsSound::NCache::ICache
+		struct CSCORE_API FImpl final : public PooledCacheType,
+										public SoundCacheType
 		{
 		public:
 
 			static const FName Name;
+
+#define PayloadType NCsPooledObject::NPayload::IPayload
 
 		private:
 
@@ -38,7 +45,7 @@ namespace NCsSound
 
 			FCsInterfaceMap* InterfaceMap;
 
-			// NCsPooledObject::NCache::ICache
+			// PooledCacheType (CsPooledObject::NCache::ICache)
 
 			int32 Index;
 
@@ -64,11 +71,11 @@ namespace NCsSound
 
 			FCsDeltaTime ElapsedTime;
 
-			// NCsSound::NCache::ICache
+			// SoundCacheType (NCsSound::NCache::ICache)
 
 			UAudioComponent* AudioComponent;
 
-			ECsSoundDeallocateMethod DeallocateMethod;
+			EDeallocateMethod DeallocateMethod;
 
 			float QueuedLifeTime;
 
@@ -89,7 +96,7 @@ namespace NCsSound
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// NCsPooledObject::NCache::ICache
+		// PooledCacheType (CsPooledObject::NCache::ICache)
 		#pragma region
 		public:
 
@@ -103,7 +110,7 @@ namespace NCsSound
 				return Index;
 			}
 
-			void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
+			void Allocate(PayloadType* Payload);
 
 			FORCEINLINE const bool& IsAllocated() const
 			{
@@ -165,7 +172,7 @@ namespace NCsSound
 
 			void Reset();
 
-		#pragma endregion NCsPooledObject::NCache::ICache
+		#pragma endregion PooledCacheType (CsPooledObject::NCache::ICache)
 
 		public:
 
@@ -174,7 +181,7 @@ namespace NCsSound
 				LifeTime = InLifeTime;
 			}
 
-		// NCsSound::NCache::ICache
+		// SoundCacheType (NCsSound::NCache::ICache)
 		#pragma region
 		public:
 
@@ -183,7 +190,7 @@ namespace NCsSound
 				return AudioComponent;
 			}
 
-		#pragma endregion NCsSound::NCache::ICache
+		#pragma endregion SoundCacheType (NCsSound::NCache::ICache)
 
 		public:
 
@@ -195,6 +202,11 @@ namespace NCsSound
 		public:
 
 			void Update(const FCsDeltaTime& DeltaTime);
+
+#undef PayloadType
 		};
+
+#undef PooledCacheType
+#undef SoundCacheType
 	}
 }

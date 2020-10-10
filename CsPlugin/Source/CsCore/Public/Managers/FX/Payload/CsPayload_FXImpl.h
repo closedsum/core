@@ -12,10 +12,13 @@ namespace NCsFX
 {
 	namespace NPayload
 	{
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+#define FXPayloadType NCsFX::NPayload::IPayload
+
 		/**
 		*/
-		struct CSCORE_API FImpl final : public NCsPooledObject::NPayload::IPayload,
-										public NCsFX::NPayload::IPayload
+		struct CSCORE_API FImpl final : public PooledPayloadType,
+										public FXPayloadType
 		{
 		public:
 
@@ -29,7 +32,7 @@ namespace NCsFX
 
 		public:
 
-			// NCsPooledObject::NPayload::IPayload
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
 			UObject* Instigator;
 
@@ -39,7 +42,7 @@ namespace NCsFX
 	
 			FCsTime Time;
 
-			// ICsFXPooledPayload
+			// FXPayloadType (NCsFX::Payload::IPayload)
 
 			UNiagaraSystem* FXSystem;
 
@@ -71,104 +74,48 @@ namespace NCsFX
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// NCsPooledObject::NPayload::IPayload
+		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		#pragma region
 		public:
 
-			FORCEINLINE const bool& IsAllocated() const
-			{
-				return bAllocated;
-			}
-
-			FORCEINLINE UObject* GetInstigator() const
-			{
-				return Instigator;
-			}
-
-			FORCEINLINE UObject* GetOwner() const
-			{
-				return Owner;
-			}
-
-			FORCEINLINE UObject* GetParent() const
-			{
-				return Parent;
-			}
-
-			FORCEINLINE const FCsTime& GetTime() const
-			{
-				return Time;
-			}
-
-			FORCEINLINE void Allocate()
-			{
-				bAllocated = true;
-			}
+			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
+			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
+			FORCEINLINE UObject* GetOwner() const { return Owner; }
+			FORCEINLINE UObject* GetParent() const { return Parent; }
+			FORCEINLINE const FCsTime& GetTime() const { return Time; }
+			FORCEINLINE void Allocate(){ bAllocated = true; }
 
 			void Reset();
 
-		#pragma endregion NCsPooledObject::NPayload::IPayload
+		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
 		public:
 
 			template<typename T>
-			FORCEINLINE T* GetInstigator() const
-			{
-				return Cast<T>(GetInstigator());
-			}
+			FORCEINLINE T* GetInstigator() const { return Cast<T>(GetInstigator()); }
 
 			template<typename T>
-			FORCEINLINE T* GetOwner() const
-			{
-				return Cast<T>(GetOwner());
-			}
+			FORCEINLINE T* GetOwner() const { return Cast<T>(GetOwner()); }
 
 			template<typename T>
-			FORCEINLINE T* GetParent() const
-			{
-				return Cast<T>(GetParent());
-			}
+			FORCEINLINE T* GetParent() const { return Cast<T>(GetParent()); }
 
-		// NCsFX:NPayload::IPayload
+		// FXPayloadType (NCsFX::Payload::IPayload)
 		#pragma region
 		public:
 
-			FORCEINLINE UNiagaraSystem* GetFXSystem() const 
-			{
-				return FXSystem;
-			}
+			FORCEINLINE UNiagaraSystem* GetFXSystem() const { return FXSystem; }
+			FORCEINLINE const ECsFXDeallocateMethod& GetDeallocateMethod() const { return DeallocateMethod; }
+			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
+			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
+			FORCEINLINE const FName& GetBone() const { return Bone; }
+			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
+			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
 
-			FORCEINLINE const ECsFXDeallocateMethod& GetDeallocateMethod() const
-			{
-				return DeallocateMethod;
-			}
-
-			FORCEINLINE const float& GetLifeTime() const
-			{
-				return LifeTime;
-			}
-
-			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const
-			{
-				return AttachmentTransformRules;
-			}
-
-			FORCEINLINE const FName& GetBone() const
-			{
-				return Bone;
-			}
-
-			FORCEINLINE const int32& GetTransformRules() const
-			{
-				return TransformRules;
-			}
-
-			FORCEINLINE const FTransform& GetTransform() const
-			{
-				return Transform;
-			}
-
-		#pragma endregion NCsFX:NPayload::IPayload
+		#pragma endregion FXPayloadType (NCsFX::Payload::IPayload)
 		};
+
+#undef PooledPayloadType
+#undef FXPayloadType
 	}
 }

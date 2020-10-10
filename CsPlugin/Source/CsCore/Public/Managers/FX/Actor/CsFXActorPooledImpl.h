@@ -12,15 +12,13 @@
 
 struct FCsFXActorPooled;
 
-namespace NCsPooledObject {
-	namespace NCache {
-		struct ICache; } }
-
-namespace NCsPooledObject {
-	namespace NPayload {
-		struct IPayload; } }
+// NCsPooledObject::NCache::ICache
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
+// NCsPooledObject::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
 class ANiagaraActor;
+class UNiagaraSystem;
 
 UCLASS()
 class CSCORE_API UCsFXActorPooledImpl : public UObject,
@@ -91,6 +89,8 @@ protected:
 
 	UPROPERTY()
 	ANiagaraActor* FX;
+
+	UNiagaraSystem** AssetPropertyPtr;
 
 #undef CacheType
 #undef PayloadType

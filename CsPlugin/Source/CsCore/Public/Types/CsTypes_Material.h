@@ -36,6 +36,20 @@ public:
 	{
 		return Material_Internal;
 	}
+
+	FORCEINLINE UMaterialInstance* GetChecked() const 
+	{
+		checkf(Material_Internal, TEXT("FCsMaterialInstance::GetChecked: Material_Internal is NULL."));
+
+		return Material_Internal;
+	}
+
+	FORCEINLINE UMaterialInstance* GetChecked(const FString& Context) const
+	{
+		checkf(Material_Internal, TEXT("%s: Material_Internal is NULL."), *Context);
+
+		return Material_Internal;
+	}
 };
 
 #pragma endregion FCsMaterialInstance
@@ -74,7 +88,6 @@ public:
 };
 
 #pragma endregion FCsMaterialInstanceConstant
-
 
 // FCsTArrayMaterialInterface
 #pragma region

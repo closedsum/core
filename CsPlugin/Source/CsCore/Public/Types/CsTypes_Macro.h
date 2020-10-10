@@ -93,3 +93,30 @@
 				namespace __Ns5 { \
 					namespace __Ns6 { \
 						struct __Struct; } } } } } }
+
+#define CS_FWD_DECLARE_ENUM_CLASS_UINT8_NAMESPACE_1(__Ns1, __Enum) namespace __Ns1 { enum class __Enum : uint8; }
+#define CS_FWD_DECLARE_ENUM_CLASS_UINT8_NAMESPACE_2(__Ns1, __Ns2, __Enum) namespace __Ns1 { \
+	namespace __Ns2 { \
+		enum class __Enum : uint8; } }
+#define CS_FWD_DECLARE_ENUM_CLASS_UINT8_NAMESPACE_3(__Ns1, __Ns2, __Ns3, __Enum) namespace __Ns1 { \
+	namespace __Ns2 { \
+		namespace __Ns3 { \
+			enum class __Enum : uint8; } } }
+#define CS_FWD_DECLARE_ENUM_CLASS_UINT8_NAMESPACE_4(__Ns1, __Ns2, __Ns3, __Ns4, __Enum) namespace __Ns1 { \
+	namespace __Ns2 { \
+		namespace __Ns3 { \
+			namespace __Ns4 { \
+			enum class __Enum : uint8; } } } }
+#define CS_FWD_DECLARE_ENUM_CLASS_UINT8_NAMESPACE_5(__Ns1, __Ns2, __Ns3, __Ns4, __Ns5, __Enum) namespace __Ns1 { \
+	namespace __Ns2 { \
+		namespace __Ns3 { \
+			namespace __Ns4 { \
+				namespace __Ns5 { \
+					enum class __Enum : uint8; } } } } }
+#define CS_FWD_DECLARE_ENUM_CLASS_UINT8_NAMESPACE_6(__Ns1, __Ns2, __Ns3, __Ns4, __Ns5, __Ns6, __Enum) namespace __Ns1 { \
+	namespace __Ns2 { \
+		namespace __Ns3 { \
+			namespace __Ns4 { \
+				namespace __Ns5 { \
+					namespace __Ns6 { \
+						enum class __Enum : uint8; } } } } } }

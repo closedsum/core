@@ -12,10 +12,13 @@ namespace NCsSound
 {
 	namespace NPayload
 	{
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+#define SoundPayloadType NCsSound::NPayload::IPayload
+
 		/**
 		*/
-		struct CSCORE_API FImpl final : public NCsPooledObject::NPayload::IPayload,
-										public NCsSound::NPayload::IPayload
+		struct CSCORE_API FImpl final : public PooledPayloadType,
+										public SoundPayloadType
 		{
 		public:
 
@@ -29,7 +32,7 @@ namespace NCsSound
 
 		public:
 
-			// NCsPooledObject::NPayload::IPayload
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
 			UObject* Instigator;
 
@@ -39,13 +42,13 @@ namespace NCsSound
 	
 			FCsTime Time;
 
-			// NCsSound::NPayload::IPayload
+			// SoundPayloadType (NCsSound::NPayload::IPayload)
 
 			USoundBase* Sound;
 
 			USoundAttenuation* SoundAttenuation;
 
-			ECsSoundDeallocateMethod DeallocateMethod;
+			EDeallocateMethod DeallocateMethod;
 
 			float LifeTime;
 	
@@ -73,109 +76,49 @@ namespace NCsSound
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// NCsPooledObject::NPayload::IPayload
+		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		#pragma region
 		public:
 
-			FORCEINLINE const bool& IsAllocated() const
-			{
-				return bAllocated;
-			}
-
-			FORCEINLINE UObject* GetInstigator() const
-			{
-				return Instigator;
-			}
-
-			FORCEINLINE UObject* GetOwner() const
-			{
-				return Owner;
-			}
-
-			FORCEINLINE UObject* GetParent() const
-			{
-				return Parent;
-			}
-
-			FORCEINLINE const FCsTime& GetTime() const
-			{
-				return Time;
-			}
-
-			FORCEINLINE void Allocate()
-			{
-				bAllocated = true;
-			}
+			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
+			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
+			FORCEINLINE UObject* GetOwner() const { return Owner; }
+			FORCEINLINE UObject* GetParent() const { return Parent; }
+			FORCEINLINE const FCsTime& GetTime() const { return Time; }
+			FORCEINLINE void Allocate(){ bAllocated = true; }
 
 			void Reset();
 
-		#pragma endregion NCsPooledObject::NPayload::IPayload
+		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
 		public:
 
 			template<typename T>
-			FORCEINLINE T* GetInstigator() const
-			{
-				return Cast<T>(GetInstigator());
-			}
+			FORCEINLINE T* GetInstigator() const { return Cast<T>(GetInstigator()); }
 
 			template<typename T>
-			FORCEINLINE T* GetOwner() const
-			{
-				return Cast<T>(GetOwner());
-			}
+			FORCEINLINE T* GetOwner() const { return Cast<T>(GetOwner()); }
 
 			template<typename T>
-			FORCEINLINE T* GetParent() const
-			{
-				return Cast<T>(GetParent());
-			}
+			FORCEINLINE T* GetParent() const { return Cast<T>(GetParent()); }
 
-		// NCsSound::NPayload::IPayload
+		// SoundPayloadType (NCsSound::NPayload::IPayload)
 		#pragma region
 		public:
 
-			FORCEINLINE USoundBase* GetSound() const 
-			{
-				return Sound;
-			}
+			FORCEINLINE USoundBase* GetSound() const { return Sound; }
+			FORCEINLINE USoundAttenuation* GetSoundAttenuation() const { return SoundAttenuation; }
+			FORCEINLINE const EDeallocateMethod& GetDeallocateMethod() const { return DeallocateMethod; }
+			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
+			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
+			FORCEINLINE const FName& GetBone() const { return Bone; }
+			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
+			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
 
-			FORCEINLINE USoundAttenuation* GetSoundAttenuation() const
-			{
-				return SoundAttenuation;
-			}
-
-			FORCEINLINE const ECsSoundDeallocateMethod& GetDeallocateMethod() const
-			{
-				return DeallocateMethod;
-			}
-
-			FORCEINLINE const float& GetLifeTime() const
-			{
-				return LifeTime;
-			}
-
-			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const
-			{
-				return AttachmentTransformRules;
-			}
-
-			FORCEINLINE const FName& GetBone() const
-			{
-				return Bone;
-			}
-
-			FORCEINLINE const int32& GetTransformRules() const
-			{
-				return TransformRules;
-			}
-
-			FORCEINLINE const FTransform& GetTransform() const
-			{
-				return Transform;
-			}
-
-		#pragma endregion NCsSound::NPayload::IPayload
+		#pragma endregion SoundPayloadType (NCsSound::NPayload::IPayload)
 		};
+
+#undef PooledPayloadType
+#undef SoundPayloadType
 	}
 }

@@ -1758,7 +1758,10 @@ void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct, cons
 			{
 				UDataTable** DataTable = ObjectProperty->ContainerPtrToValuePtr<UDataTable*>(StructValue);
 
-				LoadDataTable(*DataTable, LoadFlags, LoadCodes);
+				if (*DataTable)
+				{
+					LoadDataTable(*DataTable, LoadFlags, LoadCodes);
+				}
 			}
 			continue;
 		}

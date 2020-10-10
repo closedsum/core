@@ -2,7 +2,6 @@
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/CsTypes_View.h"
-#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Types/CsTypes_AttachDetach.h"
 
 #include "CsTypes_Sound.generated.h"
@@ -331,6 +330,9 @@ namespace NCsNoiseEvent
 class USoundBase;
 class USoundAttenuation;
 
+// NCsSound::EDeallocateMethod
+CS_FWD_DECLARE_ENUM_CLASS_UINT8_NAMESPACE_1(NCsSound, EDeallocateMethod)
+
 /**
 * Container holding general information for a Sound Asset.
 *  This is mostly used by object pooled by a Manager
@@ -339,6 +341,12 @@ USTRUCT(BlueprintType)
 struct CSCORE_API FCsSound
 {
 	GENERATED_USTRUCT_BODY()
+
+private:
+
+	typedef NCsSound::EDeallocateMethod DeallocateMethodType;
+
+public:
 
 	/** Soft reference to a Sound Asset. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -373,6 +381,8 @@ struct CSCORE_API FCsSound
 	/** Condition to determine when to deallocate the Sound object. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsSoundDeallocateMethod DeallocateMethod;
+
+	DeallocateMethodType* DeallocateMethodEmu;
 
 	/** Valid if the DeallocateMethod == ECsSoundDeallocateMethod::LifeTime.
 		- If a Sound IS attached to a Parent object, 
@@ -420,14 +430,21 @@ public:
 		Attenuation_LoadFlags(0),
 		Attenuation_Internal(nullptr),
 		DeallocateMethod(ECsSoundDeallocateMethod::Complete),
+		DeallocateMethodEmu(nullptr),
 		LifeTime(0.0f),
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
 		Transform(FTransform::Identity)
 	{
+		DeallocateMethodEmu = (DeallocateMethodType*)(&DeallocateMethod);
 	}
 	
+	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const
+	{
+		return *DeallocateMethodEmu;
+	}
+
 	/**
 	* Get the Hard reference to the Sound Asset.
 	*

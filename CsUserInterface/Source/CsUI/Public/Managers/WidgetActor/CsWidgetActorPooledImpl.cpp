@@ -33,6 +33,7 @@ namespace NCsWidgetActorPooledImplCached
 		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsWidgetActorPooledImpl, BeginPlay);
 		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsWidgetActorPooledImpl, Update);
 		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsWidgetActorPooledImpl, Allocate);
+		CS_DEFINE_CACHED_STRING(UserWidgetPooledType, "UserWidgetPooledType");
 	}
 }
 

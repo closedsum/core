@@ -24,6 +24,8 @@ namespace NCsProjectile
 
 				public:
 
+					/**
+					*/
 					virtual const FCsFX& GetTrailFX() const = 0;
 				};
 			}
@@ -49,5 +51,7 @@ public:
 
 public:
 
+	/**
+	*/
 	virtual const FCsFX& GetTrailFX() const = 0;
 };

@@ -4,11 +4,20 @@
 // Cached
 #pragma region
 
-namespace NCsManagerPooledObjectClassHandlerCached
+namespace NCsPooledObject
 {
-	namespace Name
+	namespace NManager
 	{
-		CSCORE_API const FName Class = FName("Class");
+		namespace NHandler
+		{
+			namespace NCached
+			{
+				namespace Name
+				{
+					CSCORE_API const FName Class = FName("Class");
+				}
+			}
+		}
 	}
 }
 

@@ -91,7 +91,7 @@ void FCsScopedTimer::Log()
 {
 	if (FCsCVarLogMap::Get().IsShowing(CVar))
 	{
-		UE_LOG(LogCs, Log, TEXT("%s: Time: %f AvgTime: %f TotalTime: %f Ticks: %d"), **Name, (float)Time, (float)AvgTime, (float)TotalTime, Ticks);
+		UE_LOG(LogCs, Log, TEXT("%s: Time: %fms AvgTime: %fms TotalTime: %fms Ticks: %d"), **Name, (float)(1000.0 * Time), (float)(1000.0 * AvgTime), (float)(1000.0 * TotalTime), Ticks);
 	}
 }
 
@@ -154,7 +154,7 @@ void FCsScopedGroupTimer::Log()
 {
 	if (FCsScopedGroupMap::Get().IsShowing(Group))
 	{
-		UE_LOG(LogCs, Log, TEXT("%s: Time: %f AvgTime: %f Ticks: %d"), Group.DisplayNameToChar(), (float)Time, (float)AvgTime, Ticks);
+		UE_LOG(LogCs, Log, TEXT("%s: Time: %fms AvgTime: %fms Ticks: %d"), Group.DisplayNameToChar(), (float)(1000.0 * Time), (float)(1000.0 * AvgTime), Ticks);
 	}
 }
 

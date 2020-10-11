@@ -712,7 +712,9 @@ void UCsManager_UserWidget::LogTransaction(const FString& Context, const ECsPool
 
 void UCsManager_UserWidget::ConstructClassHandler()
 {
-	ClassHandler = new FCsManager_UserWidget_ClassHandler();
+	typedef NCsUserWidget::NManager::NHandler::FClass ClassHandlerType;
+
+	ClassHandler = new ClassHandlerType();
 	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
 	ClassHandler->Log = &FCsUILog::Warning;
@@ -743,7 +745,9 @@ FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidgetPooledChecked(const FSt
 
 void UCsManager_UserWidget::ConstructPooledClassHandler()
 {
-	PooledClassHandler = new FCsManager_UserWidget_Pooled_ClassHandler();
+	typedef NCsUserWidget::NManager::NHandler::FPooledClass ClassHandlerType;
+
+	PooledClassHandler = new ClassHandlerType();
 	PooledClassHandler->Outer = this;
 	PooledClassHandler->MyRoot = MyRoot;
 	PooledClassHandler->Log = &FCsUILog::Warning;

@@ -716,7 +716,9 @@ void UCsManager_WidgetActor::LogTransaction(const FString& Context, const ECsPoo
 
 void UCsManager_WidgetActor::ConstructClassHandler()
 {
-	ClassHandler = new FCsManager_WidgetActor_ClassHandler();
+	typedef NCsWidgetActor::NManager::NHandler::FClass ClassHandlerType;
+
+	ClassHandler = new ClassHandlerType();
 	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
 	ClassHandler->Log = &FCsUILog::Warning;

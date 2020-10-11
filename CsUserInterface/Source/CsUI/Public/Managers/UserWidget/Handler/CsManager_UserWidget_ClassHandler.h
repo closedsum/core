@@ -3,50 +3,65 @@
 // Types
 #include "Managers/UserWidget/CsTypes_UserWidget.h"
 #include "Managers/UserWidget/CsUserWidgetPooled.h"
+// UI
+#include "Blueprint/UserWidget.h"
 #pragma once
 
-/**
-*/
-class CSUI_API FCsManager_UserWidget_ClassHandler : public TCsManager_PooledObject_ClassHandler<FCsUserWidgetPtr, FCsUserWidgetPtr, FECsUserWidgetClass>
+namespace NCsUserWidget
 {
-private:
+	namespace NManager
+	{
+		namespace NHandler
+		{
+#define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
 
-	typedef TCsManager_PooledObject_ClassHandler<FCsUserWidgetPtr, FCsUserWidgetPtr, FECsUserWidgetClass> Super;
+			/**
+			*/
+			class CSUI_API FClass : public ClassHandlerType<FCsUserWidgetPtr, FCsUserWidgetPtr, FECsUserWidgetClass>
+			{
+			private:
 
-public:
+				typedef ClassHandlerType<FCsUserWidgetPtr, FCsUserWidgetPtr, FECsUserWidgetClass> Super;
 
-	FCsManager_UserWidget_ClassHandler();
+			public:
 
-// TCsManager_PooledObject_ClassHandler Interface
-#pragma region
-protected:
+				FClass();
 
-	virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject) override;
+			// ClassHandlerType
+			#pragma region
+			protected:
 
-	virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject) override;
+				virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject) override;
 
-#pragma endregion TCsManager_PooledObject_ClassHandler Interface
-};
+				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject) override;
 
-/**
-*/
-class CSUI_API FCsManager_UserWidget_Pooled_ClassHandler : public TCsManager_PooledObject_ClassHandler<FCsUserWidgetPooled, FCsUserWidgetPooledPtr, FECsUserWidgetPooledClass>
-{
-private:
+			#pragma endregion ClassHandlerType
+			};
 
-	typedef TCsManager_PooledObject_ClassHandler<FCsUserWidgetPooled, FCsUserWidgetPooledPtr, FECsUserWidgetPooledClass> Super;
+			/**
+			*/
+			class CSUI_API FPooledClass : public ClassHandlerType<FCsUserWidgetPooled, FCsUserWidgetPooledPtr, FECsUserWidgetPooledClass>
+			{
+			private:
 
-public:
+				typedef ClassHandlerType<FCsUserWidgetPooled, FCsUserWidgetPooledPtr, FECsUserWidgetPooledClass> Super;
 
-	FCsManager_UserWidget_Pooled_ClassHandler();
+			public:
 
-	// TCsManager_PooledObject_ClassHandler Interface
-#pragma region
-protected:
+				FPooledClass();
 
-	virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject) override;
+			// ClassHandlerType
+			#pragma region
+			protected:
 
-	virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject) override;
+				virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject) override;
 
-#pragma endregion TCsManager_PooledObject_ClassHandler Interface
-};
+				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject) override;
+
+			#pragma endregion ClassHandlerType
+			};
+
+#undef ClassHandlerType
+		}
+	}
+}

@@ -71,16 +71,48 @@ TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness(
 	ECVF_SetByConsole
 );
 
+// Scoped Timer
+
+TAutoConsoleVariable<int32> CsCVarLogProjectileScopedTimer(
+	TEXT("log.projectile.scopedtimer"),
+	0,
+	TEXT("Log Projectile Scoped Timer."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarLogProjectileScopedTimerLaunchSetCollision(
+	TEXT("log.projectile.scopedtimer.launch.setcollision"),
+	0,
+	TEXT("Log Projectile Scoped Timer Launch Set Collision."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarLogProjectileScopedTimerLaunchSetTrailVisual(
+	TEXT("log.projectile.scopedtimer.launch.settrailvisual"),
+	0,
+	TEXT("Log Projectile Scoped Timer Launch Set Trail Visual."),
+	ECVF_SetByConsole
+);
+
+
 // CVarLog
 #pragma region
 
 namespace NCsCVarLog
 {
 	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogProjectileCollision, "Log Projectile Collision");
+	// Scoped Timers
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogProjectileScopedTimer, "Log Projectile Scoped Timer");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogProjectileScopedTimerLaunchSetCollision, "Log Projectile Scoped Timer Launch Set Collision");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogProjectileScopedTimerLaunchSetTrailVisual, "Log Projectile Scoped Timer Launch Set Trail Visual");
 
 	namespace Map
 	{
 		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogProjectileCollision, CsCVarLogProjectileCollision);
+		// Scoped Timers
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogProjectileScopedTimer, CsCVarLogProjectileScopedTimer);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogProjectileScopedTimerLaunchSetCollision, CsCVarLogProjectileScopedTimerLaunchSetCollision);
+		CSPRJ_API CS_ADD_TO_CVAR_MAP(LogProjectileScopedTimerLaunchSetTrailVisual, CsCVarLogProjectileScopedTimerLaunchSetTrailVisual);
 	}
 }
 
@@ -120,3 +152,18 @@ namespace NCsCVarDraw
 }
 
 #pragma endregion CVarDraw
+
+// ScopedGroup
+#pragma region
+
+namespace NCsScopedGroup
+{
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(Projectile, "Projectile");
+
+	namespace Map
+	{
+		extern CSPRJ_API CS_ADD_TO_CVAR_MAP(Projectile, CsCVarLogProjectileScopedTimer);
+	}
+}
+
+#pragma endregion ScopedGroup

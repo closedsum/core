@@ -22,25 +22,28 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerSound_OnSpawn, const FECs
 
 class ICsSoundPooled;
 
+namespace NCsSound
+{
 #define PayloadType NCsSound::NPayload::IPayload
 
-class CSCORE_API FCsManager_Sound_Internal : public TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, PayloadType, FECsSound>
-{
-private:
-
-	typedef TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, PayloadType, FECsSound> Super;
-
-public:
-
-	FCsManager_Sound_Internal();
-
-	FORCEINLINE virtual const FString& KeyTypeToString(const FECsSound& Type) override
+	class CSCORE_API FManager : public TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, PayloadType, FECsSound>
 	{
-		return Type.GetName();
-	}
-};
+	private:
+
+		typedef TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, PayloadType, FECsSound> Super;
+
+	public:
+
+		FManager();
+
+		FORCEINLINE virtual const FString& KeyTypeToString(const FECsSound& Type) override
+		{
+			return Type.GetName();
+		}
+	};
 
 #undef PayloadType
+}
 #pragma endregion Internal
 
 class ICsGetManagerSound;
@@ -54,6 +57,7 @@ class CSCORE_API UCsManager_Sound : public UObject
 
 public:	
 
+#define ManagerType NCsSound::FManager
 #define PayloadType NCsSound::NPayload::IPayload
 
 // Singleton
@@ -147,7 +151,7 @@ public:
 protected:
 	
 	/** Reference to the internal manager for handling the pool of sounds. */
-	FCsManager_Sound_Internal Internal;
+	ManagerType Internal;
 	
 	/**
 	* Setup the internal manager for handling the pool of projectiles.
@@ -166,7 +170,7 @@ public:
 	*
 	* @param Params
 	*/
-	void InitInternal(const FCsManager_Sound_Internal::FCsManagerPooledObjectMapParams& Params);
+	void InitInternal(const ManagerType::FCsManagerPooledObjectMapParams& Params);
 
 	virtual void Clear();
 
@@ -650,5 +654,6 @@ private:
 
 #pragma endregion Data
 
+#undef ManagerType
 #undef PayloadType
 };

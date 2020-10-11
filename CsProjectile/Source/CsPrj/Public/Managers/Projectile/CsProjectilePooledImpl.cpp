@@ -47,6 +47,8 @@
 #include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
 // Game
 #include "GameFramework/GameStateBase.h"
+// Scoped
+#include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 
 //#define CS_COLLISION_PROJECTILE	ECC_GameTraceChannel2
 
@@ -66,6 +68,12 @@ namespace NCsProjectilePooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnLaunch_SetModifiers);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnHit_CreateDamageEvent);
+		}
+
+		namespace ScopedTimer
+		{
+			CS_DEFINE_CACHED_STRING(SetCollision, "ACsProjectilePooledImpl::Launch_SetCollision");
+			CS_DEFINE_CACHED_STRING(SetTrailVisual, "ACsProjectilePooledImpl::Launch_SetTrailVisual");
 		}
 	}
 }
@@ -661,8 +669,61 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 		}
 	}
 
+	const ECsProjectileMovement MovementType = ECsProjectileMovement::Simulated;// Data_Projectile->GetMovementType();
+
+	// Simulated
+	if (MovementType == ECsProjectileMovement::Simulated)
+	{
+		const FVector& Direction = ProjectilePayload->GetDirection();
+		FRotator Rotation		 = Direction.Rotation();
+
+		TeleportTo(ProjectilePayload->GetLocation(), Rotation, false, true);
+	}
+
+	// Trail FX
+	{
+		const FString& ScopeName		   = ScopedTimer::SetTrailVisual;
+		const FECsScopedGroup& ScopedGroup = NCsScopedGroup::Projectile;
+		const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogProjectileScopedTimerLaunchSetTrailVisual;
+
+		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
+		
+		typedef ICsData_Projectile_VisualTrail VisualDataType;
+
+		if (VisualDataType* VisualData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
+		{
+			const FCsFX& TrailFX     = VisualData->GetTrailFX();
+			UNiagaraSystem* FXSystem = TrailFX.Get();
+
+			checkf(FXSystem, TEXT("%s: FXSystem is NULL for Visual Data inteface: ICsData_Projectile_VisualTrail"), *Context);
+
+			// Get Manager
+			UCsManager_FX_Actor* Manager_FX_Actor = UCsManager_FX_Actor::Get(GetWorld()->GetGameState());
+			// Get Payload
+			typedef NCsFX::NPayload::FImpl FXPayloadImplType;
+
+			FXPayloadImplType* FXPayload = Manager_FX_Actor->AllocatePayload<FXPayloadImplType>(TrailFX.Type);
+			// Set appropriate data on Payload
+			FXPayload->Owner					= this;
+			FXPayload->Parent					= MeshComponent;
+			FXPayload->FXSystem					= FXSystem;
+			FXPayload->DeallocateMethod			= TrailFX.DeallocateMethod;
+			FXPayload->LifeTime					= TrailFX.LifeTime;
+			FXPayload->AttachmentTransformRules = TrailFX.AttachmentTransformRules;
+			FXPayload->Transform				= TrailFX.Transform;
+			// Spawn FX
+			TrailFXPooled = const_cast<FCsFXActorPooled*>(Manager_FX_Actor->Spawn(TrailFX.Type, FXPayload));
+		}
+	}
+
 	// ICsData_ProjectileCollision | Collision
 	{
+		const FString& ScopeName		   = ScopedTimer::SetCollision;
+		const FECsScopedGroup& ScopedGroup = NCsScopedGroup::Projectile;
+		const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogProjectileScopedTimerLaunchSetCollision;
+
+		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
+
 		typedef ICsData_ProjectileCollision CollisionDataType;
 
 		if (CollisionDataType* CollisionData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
@@ -671,8 +732,6 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 
 			if (CollisionPreset.CollisionEnabled != ECollisionEnabled::NoCollision)
 			{
-				CollisionComponent->Activate();
-
 				// Instigator
 				if (AActor* Actor = Cast<AActor>(Payload->GetInstigator()))
 					IgnoreActors.Add(Actor);
@@ -706,55 +765,15 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 				CollisionComponent->SetNotifyRigidBodyCollision(CollisionPreset.bSimulationGeneratesHitEvents);
 				CollisionComponent->SetGenerateOverlapEvents(CollisionPreset.bGenerateOverlapEvents);
 
-				CollisionComponent->SetCollisionEnabled(CollisionPreset.CollisionEnabled);
-
+				CollisionComponent->Activate();
 				CollisionComponent->SetComponentTickEnabled(true);
+
+				CollisionComponent->SetCollisionEnabled(CollisionPreset.CollisionEnabled);
 			}
 		}
 	}
 	
 	SetActorTickEnabled(true);
-
-	const ECsProjectileMovement MovementType = ECsProjectileMovement::Simulated;// Data_Projectile->GetMovementType();
-
-	// Simulated
-	if (MovementType == ECsProjectileMovement::Simulated)
-	{
-		const FVector& Direction = ProjectilePayload->GetDirection();
-		FRotator Rotation		 = Direction.Rotation();
-
-		TeleportTo(ProjectilePayload->GetLocation(), Rotation, false, true);
-	}
-
-	// Trail FX
-	{
-		typedef ICsData_Projectile_VisualTrail VisualDataType;
-
-		if (VisualDataType* VisualData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
-		{
-			const FCsFX& TrailFX     = VisualData->GetTrailFX();
-			UNiagaraSystem* FXSystem = TrailFX.Get();
-
-			checkf(FXSystem, TEXT("%s: FXSystem is NULL for Visual Data inteface: ICsData_Projectile_VisualTrail"), *Context);
-
-			// Get Manager
-			UCsManager_FX_Actor* Manager_FX_Actor = UCsManager_FX_Actor::Get(GetWorld()->GetGameState());
-			// Get Payload
-			typedef NCsFX::NPayload::FImpl FXPayloadImplType;
-
-			FXPayloadImplType* FXPayload = Manager_FX_Actor->AllocatePayload<FXPayloadImplType>(TrailFX.Type);
-			// Set appropriate data on Payload
-			FXPayload->Owner					= this;
-			FXPayload->Parent					= MeshComponent;
-			FXPayload->FXSystem					= FXSystem;
-			FXPayload->DeallocateMethod			= TrailFX.DeallocateMethod;
-			FXPayload->LifeTime					= TrailFX.LifeTime;
-			FXPayload->AttachmentTransformRules = TrailFX.AttachmentTransformRules;
-			FXPayload->Transform				= TrailFX.Transform;
-			// Spawn FX
-			TrailFXPooled = const_cast<FCsFXActorPooled*>(Manager_FX_Actor->Spawn(TrailFX.Type, FXPayload));
-		}
-	}
 
 	// Simulated
 	if (MovementType == ECsProjectileMovement::Simulated)

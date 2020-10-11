@@ -25,16 +25,29 @@ extern CSPRJ_API TAutoConsoleVariable<float> CsCVarDrawProjectilePathInterval;
 extern CSPRJ_API TAutoConsoleVariable<int32> CsCVarDrawProjectilePathSegmentsPerInterval;
 extern CSPRJ_API TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness;
 
+// Scoped Timers
+extern CSPRJ_API TAutoConsoleVariable<int32> CsCVarLogProjectileScopedTimer;
+extern CSPRJ_API TAutoConsoleVariable<int32> CsCVarLogProjectileScopedTimerLaunchSetCollision;
+extern CSPRJ_API TAutoConsoleVariable<int32> CsCVarLogProjectileScopedTimerLaunchSetVisualTrail;
+
 // CVarLog
 #pragma region
 
 namespace NCsCVarLog
 {
 	extern CSPRJ_API const Type LogProjectileCollision;
+	// Scoped Timers
+	extern CSPRJ_API const Type LogProjectileScopedTimer;
+	extern CSPRJ_API const Type LogProjectileScopedTimerLaunchSetCollision;
+	extern CSPRJ_API const Type LogProjectileScopedTimerLaunchSetTrailVisual;
 
 	namespace Map
 	{
 		extern CSPRJ_API CS_DECLARE_ADD_TO_CVAR_MAP(LogProjectileCollision);
+		// Scoped Timers
+		extern CSPRJ_API CS_DECLARE_ADD_TO_CVAR_MAP(LogProjectileScopedTimer);
+		extern CSPRJ_API CS_DECLARE_ADD_TO_CVAR_MAP(LogProjectileScopedTimerLaunchSetCollision);
+		extern CSPRJ_API CS_DECLARE_ADD_TO_CVAR_MAP(LogProjectileScopedTimerLaunchSetTrailVisual);
 	}
 }
 
@@ -74,3 +87,18 @@ namespace NCsCVarDraw
 }
 
 #pragma endregion CVarLog
+
+// ScopedGroup
+#pragma region
+
+namespace NCsScopedGroup
+{
+	extern CSPRJ_API const Type Projectile;
+
+	namespace Map
+	{
+		extern CSPRJ_API CS_DECLARE_ADD_TO_CVAR_MAP(Projectile);
+	}
+}
+
+#pragma endregion ScopedGroup

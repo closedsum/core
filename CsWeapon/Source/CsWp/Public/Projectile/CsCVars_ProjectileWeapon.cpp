@@ -31,31 +31,31 @@ TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileScopedTimer(
 	ECVF_SetByConsole
 );
 
-TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileFireScopedTimer(
-	TEXT("log.weapon.projectile.fire.scopedtimer"),
+TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileScopedTimerFire(
+	TEXT("log.weapon.projectile.scopedtimer.fire"),
 	0,
-	TEXT("Log Weapon Projectile Fire() Scoped Timer."),
+	TEXT("Log Weapon Projectile Scoped Timer Fire()."),
 	ECVF_SetByConsole
 );
 
-TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileGetLaunchLocationScopedTimer(
-	TEXT("log.weapon.projectile.getlaunchlocation.scopedtimer"),
+TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileScopedTimerGetLaunchLocation(
+	TEXT("log.weapon.projectile.scopedtimer.getlaunchlocation"),
 	0,
-	TEXT("Log Weapon Projectile GetLaunchLocation() Scoped Timer."),
+	TEXT("Log Weapon Projectile Scoped Timer GetLaunchLocation()."),
 	ECVF_SetByConsole
 );
 
-TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileGetLaunchDirectionScopedTimer(
-	TEXT("log.weapon.projectile.getlaunchdirection.scopedtimer"),
+TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileScopedTimerGetLaunchDirection(
+	TEXT("log.weapon.projectile.scopedtimer.getlaunchdirection"),
 	0,
-	TEXT("Log Weapon Projectile GetLaunchDirection() Scoped Timer."),
+	TEXT("Log Weapon Projectile Scoped Timer GetLaunchDirection()."),
 	ECVF_SetByConsole
 );
 
-TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileProjectileStartLaunchScopedTimer(
-	TEXT("log.weapon.projectile.projectile.startlaunch.scopedtimer"),
+TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileProjectileScopedTimerStartLaunch(
+	TEXT("log.weapon.projectile.projectile.scopedtimer.startlaunch"),
 	0,
-	TEXT("Log Weapon Projectile ProjectileImpl.StartLaunch() Scoped Timer."),
+	TEXT("Log Weapon Projectile Scoped Timer ProjectileImpl.StartLaunch()."),
 	ECVF_SetByConsole
 );
 
@@ -69,10 +69,10 @@ namespace NCsCVarLog
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileCanFire, "Log ProjectileWeapon CanFire()");
 	// Scoped Timers
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileScopedTimer, "Log Weapon Projectile Scoped Timer");
-	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileFireScopedTimer, "Log Weapon Projectile Fire() Scoped Timer");
-	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileGetLaunchLocationScopedTimer, "Log Weapon Projectile GetLaunchLocation() Scoped Timer");
-	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileGetLaunchDirectionScopedTimer, "Log Weapon Projectile GetLaunchDirection() Scoped Timer");
-	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileProjectileStartLaunchScopedTimer, "Log Weapon Projectile ProjectileImpl.StartLaunch() Scoped Timer");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileScopedTimerFire, "Log Weapon Projectile Scoped Timer Fire()");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileScopedTimerGetLaunchLocation, "Log Weapon Projectile Scoped Timer GetLaunchLocation()");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileScopedTimerGetLaunchDirection, "Log Weapon Projectile Scoped Timer GetLaunchDirection()");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileProjectileScopedTimerStartLaunch, "Log Weapon Projectile Scoped Timer ProjectileImpl.StartLaunch()");
 
 	namespace Map
 	{
@@ -81,10 +81,10 @@ namespace NCsCVarLog
 		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileCanFire, CsCVarLogWeaponProjectileCanFire);
 		// Scoped Timers
 		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileScopedTimer, CsCVarLogWeaponProjectileScopedTimer);
-		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileFireScopedTimer, CsCVarLogWeaponProjectileFireScopedTimer);
-		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileGetLaunchLocationScopedTimer, CsCVarLogWeaponProjectileGetLaunchLocationScopedTimer);
-		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileGetLaunchDirectionScopedTimer, CsCVarLogWeaponProjectileGetLaunchDirectionScopedTimer);
-		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileProjectileStartLaunchScopedTimer, CsCVarLogWeaponProjectileProjectileStartLaunchScopedTimer);
+		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileScopedTimerFire, CsCVarLogWeaponProjectileScopedTimerFire);
+		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileScopedTimerGetLaunchLocation, CsCVarLogWeaponProjectileScopedTimerGetLaunchLocation);
+		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileScopedTimerGetLaunchDirection, CsCVarLogWeaponProjectileScopedTimerGetLaunchDirection);
+		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileProjectileScopedTimerStartLaunch, CsCVarLogWeaponProjectileProjectileScopedTimerStartLaunch);
 	}
 }
 

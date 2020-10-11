@@ -2,6 +2,8 @@
 #include "Managers/FX/Actor/CsFXActorPooledImpl.h"
 #include "CsCore.h"
 
+// CVar
+#include "Managers/FX/CsCVars_FX.h"
 // Types
 #include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_AttachDetach.h"
@@ -18,6 +20,8 @@
 #include "Managers/FX/Payload/CsPayload_FX.h"
 #include "NiagaraActor.h"
 #include "NiagaraComponent.h"
+// Scoped
+#include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 
 // Cached
 #pragma region
@@ -36,6 +40,11 @@ namespace NCsFXActorPooledImpl
 		namespace Name
 		{
 			const FName Asset = FName("Asset");
+		}
+
+		namespace ScopedTimer
+		{
+			CS_DEFINE_CACHED_STRING(SetAsset, "UCsFXActorPooledImpl::Allocate_SetAsset");
 		}
 	}
 }
@@ -154,9 +163,6 @@ void UCsFXActorPooledImpl::Allocate(PayloadType* Payload)
 
 	FXPayloadType* FXPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<FXPayloadType>(Str::Allocate, Payload);
 
-	FX->SetActorTickEnabled(true);
-	FX->SetActorHiddenInGame(false);
-
 	// If the Parent is set, attach the FX to the Parent
 	if (USceneComponent* Parent = Cast<USceneComponent>(Payload->GetParent()))
 	{
@@ -196,7 +202,19 @@ void UCsFXActorPooledImpl::Allocate(PayloadType* Payload)
 	}
 
 	FXComponent->SetAsset(FXPayload->GetFXSystem());
-	FXComponent->Activate();
+
+	FX->SetActorTickEnabled(true);
+	FX->SetActorHiddenInGame(false);
+
+	{
+		const FString& ScopeName		   = ScopedTimer::SetAsset;
+		const FECsScopedGroup& ScopedGroup = NCsScopedGroup::FX;
+		const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogFXScopedTimerActivate;
+
+		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
+
+		FXComponent->Activate();
+	}
 }
 
 void UCsFXActorPooledImpl::Deallocate()

@@ -48,9 +48,12 @@ namespace NCsManagerSound
 // Internal
 #pragma region
 
-FCsManager_Sound_Internal::FCsManager_Sound_Internal() 
-	: Super()
+namespace NCsSound
 {
+	FManager::FManager()
+		: Super()
+	{
+	}
 }
 
 #pragma endregion Internal
@@ -328,9 +331,11 @@ void UCsManager_Sound::InitInternalFromSettings()
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		FCsManager_Sound_Internal::FCsManagerPooledObjectMapParams Params;
+		typedef NCsSound::FManager ManagerType;
 
-		Params.Name  = TEXT("UCsManager_Sound::FCsManager_Sound_Internal");
+		ManagerType::FCsManagerPooledObjectMapParams Params;
+
+		Params.Name  = TEXT("UCsManager_Sound::NCsSound::FManager");
 		Params.World = MyRoot->GetWorld();
 
 		for (const TPair<FECsSound, FCsSettings_Manager_Sound_PoolParams>& Pair : Settings.PoolParams)
@@ -370,11 +375,12 @@ void UCsManager_Sound::InitInternalFromSettings()
 	}
 }
 
-void UCsManager_Sound::InitInternal(const FCsManager_Sound_Internal::FCsManagerPooledObjectMapParams& Params)
+#define ManagerType NCsSound::FManager
+void UCsManager_Sound::InitInternal(const ManagerType::FCsManagerPooledObjectMapParams& Params)
 {
 	// Add CVars
 	{
-		FCsManager_Sound_Internal::FCsManagerPooledObjectMapParams& P = const_cast<FCsManager_Sound_Internal::FCsManagerPooledObjectMapParams&>(Params);
+		ManagerType::FCsManagerPooledObjectMapParams& P = const_cast<ManagerType::FCsManagerPooledObjectMapParams&>(Params);
 
 		for (TPair<FECsSound, FCsManagerPooledObjectParams>& Pair : P.ObjectParams)
 		{
@@ -396,6 +402,7 @@ void UCsManager_Sound::InitInternal(const FCsManager_Sound_Internal::FCsManagerP
 	}
 	Internal.Init(Params);
 }
+#undef ManagerType
 
 void UCsManager_Sound::Clear()
 {

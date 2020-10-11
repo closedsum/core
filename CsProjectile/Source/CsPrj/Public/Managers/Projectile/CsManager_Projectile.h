@@ -23,21 +23,28 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerProjectile_OnSpawn, const
 
 class ICsProjectile;
 
-class CSPRJ_API FCsManager_Projectile_Internal : public TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, NCsProjectile::NPayload::IPayload, FECsProjectile>
+namespace NCsProjectile
 {
-private:
+#define PayloadType NCsProjectile::NPayload::IPayload
 
-	typedef TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, NCsProjectile::NPayload::IPayload, FECsProjectile> Super;
-
-public:
-
-	FCsManager_Projectile_Internal();
-
-	FORCEINLINE virtual const FString& KeyTypeToString(const FECsProjectile& Type) override
+	class CSPRJ_API FManager : public TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, PayloadType, FECsProjectile>
 	{
-		return Type.GetName();
-	}
-};
+	private:
+
+		typedef TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, PayloadType, FECsProjectile> Super;
+
+	public:
+
+		FManager();
+
+		FORCEINLINE virtual const FString& KeyTypeToString(const FECsProjectile& Type) override
+		{
+			return Type.GetName();
+		}
+	};
+
+#undef PayloadType
+}
 
 #pragma endregion Internal
 
@@ -45,12 +52,15 @@ class ICsGetManagerProjectile;
 class ICsData_Projectile;
 class UDataTable;
 
-namespace NCsProjectile {
-	namespace NPayload {
-		struct FInterfaceMap; } }
+// NCsProjectile::NPayload::FInterfaceMap
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, FInterfaceMap)
 
-template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumType>
-class TCsManager_PooledObject_ClassHandler;
+// NCsPooledObject::NManager::NHandler::TClass
+namespace NCsPooledObject {
+	namespace NManager {
+		namespace NHandler {
+			template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumType>
+			class TClass; } } }
 
 template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
 class TCsManager_PooledObject_DataHandler;
@@ -62,6 +72,10 @@ UCLASS()
 class CSPRJ_API UCsManager_Projectile : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+#define ManagerType NCsProjectile::FManager
+#define PayloadType NCsProjectile::NPayload::IPayload
+#define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
 
 public:	
 
@@ -136,10 +150,6 @@ public:
 
 #pragma endregion Singleton
 
-protected:
-
-	typedef NCsProjectile::NPayload::IPayload PayloadInterfaceType;
-
 // Settings
 #pragma region
 protected:
@@ -185,8 +195,8 @@ public:
 protected:
 	
 	/** Reference to the internal manager for handling the pool of projectiles. */
-	FCsManager_Projectile_Internal Internal;
-	
+	ManagerType Internal;
+
 	/**
 	* Setup the internal manager for handling the pool of projectiles.
 	*/
@@ -204,7 +214,7 @@ public:
 	*
 	* @param Params
 	*/
-	void InitInternal(const FCsManager_Projectile_Internal::FCsManagerPooledObjectMapParams& Params);
+	void InitInternal(const ManagerType::FCsManagerPooledObjectMapParams& Params);
 
 	virtual void Clear();
 
@@ -519,7 +529,7 @@ public:
 	* @param Type
 	* return
 	*/
-	virtual PayloadInterfaceType* ConstructPayload(const FECsProjectile& Type);
+	virtual PayloadType* ConstructPayload(const FECsProjectile& Type);
 
 protected:
 
@@ -534,7 +544,7 @@ public:
 	* @param Type	Type of payload.
 	* return		Payload that implements the interface: NCsProjectile::NPayload::IPayload.
 	*/
-	PayloadInterfaceType* AllocatePayload(const FECsProjectile& Type);
+	PayloadType* AllocatePayload(const FECsProjectile& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
@@ -563,7 +573,7 @@ public:
 		return Internal.AllocatePayload<PayloadTypeImpl>(Type);
 	}
 
-	virtual PayloadInterfaceType* ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload);
+	virtual PayloadType* ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload);
 
 #pragma endregion Payload
 
@@ -699,7 +709,7 @@ public:
 #pragma region
 protected:
 
-	TCsManager_PooledObject_ClassHandler<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass>* ClassHandler;
+	ClassHandlerType<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass>* ClassHandler;
 
 	virtual void ConstructClassHandler();
 
@@ -786,4 +796,8 @@ public:
 	void OnPayloadUnloaded(const FName& Payload);
 
 #pragma endregion Data
+
+#undef ManagerType
+#undef PayloadType
+#undef ClassHandlerType
 };

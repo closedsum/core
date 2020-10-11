@@ -4,24 +4,36 @@
 #include "Managers/WidgetActor/CsTypes_WidgetActor.h"
 #pragma once
 
-
-class CSUI_API FCsManager_WidgetActor_ClassHandler : public TCsManager_PooledObject_ClassHandler<FCsWidgetActorPooled, FCsWidgetActorPtr, FECsWidgetActorClass>
+namespace NCsWidgetActor
 {
-private:
+	namespace NManager
+	{
+		namespace NHandler
+		{
+#define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
 
-	typedef TCsManager_PooledObject_ClassHandler<FCsWidgetActorPooled, FCsWidgetActorPtr, FECsWidgetActorClass> Super;
+			class CSUI_API FClass : public ClassHandlerType<FCsWidgetActorPooled, FCsWidgetActorPtr, FECsWidgetActorClass>
+			{
+			private:
 
-public:
+				typedef ClassHandlerType<FCsWidgetActorPooled, FCsWidgetActorPtr, FECsWidgetActorClass> Super;
 
-	FCsManager_WidgetActor_ClassHandler();
+			public:
 
-// TCsManager_PooledObject_ClassHandler Interface
-#pragma region
-protected:
+				FClass();
 
-	virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject) override;
+			// ClassHandlerType
+			#pragma region
+			protected:
 
-	virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject) override;
+				virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject) override;
 
-#pragma endregion TCsManager_PooledObject_ClassHandler Interface
-};
+				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject) override;
+
+			#pragma endregion ClassHandlerType
+			};
+
+#undef ClassHandlerType
+		}
+	}
+}

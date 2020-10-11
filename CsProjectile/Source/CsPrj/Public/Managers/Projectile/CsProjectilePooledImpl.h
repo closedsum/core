@@ -21,43 +21,24 @@ class UCsProjectileMovementComponent;
 class UStaticMeshComponent;
 
 // NCsPooledObject::NCache::ICache
-namespace NCsPooledObject {
-	namespace NCache {
-		struct ICache; } }
-
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
 // NCsPooledObject::NPayload::IPayload
-namespace NCsPooledObject {
-	namespace NPayload {
-		struct IPayload; } }
-
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 // NCsProjectile::NPayload::IPayload
-namespace NCsProjectile {
-	namespace NPayload {
-		struct IPayload; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
 
 class ICsData_Projectile;
 class ICsFXActorPooled;
 struct FCsFXActorPooled;
 
 // NCsDamage::NEvent::IEvent
-namespace NCsDamage {
-	namespace NEvent {
-		struct IEvent; } }
-
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, IEvent)
 // NCsDamage::NEvent::FResource
-namespace NCsDamage {
-	namespace NEvent {
-		struct FResource; } }
-
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, FResource)
 // NCsDamage::NModifier::FResource
-namespace NCsDamage {
-	namespace NModifier {
-		struct FResource; } }
-
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
 // NCsDamage::NData::IData
-namespace NCsDamage {
-	namespace NData {
-		struct IData; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 
 UCLASS(Blueprintable)
 class CSPRJ_API ACsProjectilePooledImpl : public AActor,

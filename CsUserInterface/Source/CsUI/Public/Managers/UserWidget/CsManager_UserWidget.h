@@ -44,8 +44,11 @@ class ICsGetManagerUserWidget;
 class ICsData_FX;
 class UDataTable;
 
-template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumType>
-class TCsManager_PooledObject_ClassHandler;
+namespace NCsPooledObject {
+	namespace NManager {
+		namespace NHandler {
+			template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumType>
+			class TClass; } } }
 
 template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
 class TCsManager_PooledObject_DataHandler;
@@ -59,6 +62,8 @@ UCLASS()
 class CSUI_API UCsManager_UserWidget : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+#define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
 
 public:	
 
@@ -656,7 +661,7 @@ public:
 #pragma region
 protected:
 
-	TCsManager_PooledObject_ClassHandler<FCsUserWidgetPtr, FCsUserWidgetPtr, FECsUserWidgetClass>* ClassHandler;
+	ClassHandlerType<FCsUserWidgetPtr, FCsUserWidgetPtr, FECsUserWidgetClass>* ClassHandler;
 
 	virtual void ConstructClassHandler();
 
@@ -693,7 +698,7 @@ public:
 
 protected:
 
-	TCsManager_PooledObject_ClassHandler<FCsUserWidgetPooled, FCsUserWidgetPooledPtr, FECsUserWidgetPooledClass>* PooledClassHandler;
+	ClassHandlerType<FCsUserWidgetPooled, FCsUserWidgetPooledPtr, FECsUserWidgetPooledClass>* PooledClassHandler;
 
 	virtual void ConstructPooledClassHandler();
 
@@ -788,4 +793,6 @@ public:
 	ICsData_UserWidget* GetDataChecked(const FString& Context, const FECsUserWidget& Type);
 
 #pragma endregion Data
+
+#undef ClassHandlerType
 };

@@ -224,7 +224,7 @@ void UCsProjectileWeaponComponent::BeginPlay()
 		{
 			const FString& ScopeName		   = Str::Fire_Internal;
 			const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponProjectile;
-			const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponProjectileFireScopedTimer;
+			const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponProjectileScopedTimerFire;
 
 			FireScopedHandle.Handle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
 		}
@@ -232,7 +232,7 @@ void UCsProjectileWeaponComponent::BeginPlay()
 		{
 			const FString& ScopeName		   = ProjectileImpl::Str::StartLaunch;
 			const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponProjectile;
-			const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponProjectileProjectileStartLaunchScopedTimer;
+			const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponProjectileProjectileScopedTimerStartLaunch;
 
 			ProjectileImpl->StartLaunchScopedHandle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
 		}
@@ -698,7 +698,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 
 	const FString& ScopeName		   = Str::GetLaunchLocation;
 	const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponProjectile;
-	const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponProjectileGetLaunchLocationScopedTimer;
+	const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponProjectileScopedTimerGetLaunchLocation;
 
 	CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
@@ -755,7 +755,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 
 	const FString& ScopeName		   = Str::GetLaunchDirection;
 	const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponProjectile;
-	const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponProjectileGetLaunchDirectionScopedTimer;
+	const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponProjectileScopedTimerGetLaunchDirection;
 
 	CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 

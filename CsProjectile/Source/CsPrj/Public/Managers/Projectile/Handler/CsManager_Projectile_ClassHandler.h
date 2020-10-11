@@ -5,25 +5,38 @@
 #include "Managers/Projectile/CsProjectilePooled.h"
 #pragma once
 
-/**
-*/
-class CSPRJ_API FCsManager_Projectile_ClassHandler : public TCsManager_PooledObject_ClassHandler<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass>
+namespace NCsProjectile
 {
-private:
+	namespace NManager
+	{
+		namespace NHandler
+		{
+#define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
 
-	typedef TCsManager_PooledObject_ClassHandler<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass> Super;
+			/**
+			*/
+			class CSPRJ_API FClass : public ClassHandlerType<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass>
+			{
+			private:
 
-public:
+				typedef ClassHandlerType<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass> Super;
 
-	FCsManager_Projectile_ClassHandler();
+			public:
 
-// TCsManager_PooledObject_ClassHandler Interface
-#pragma region
-protected:
+				FClass();
 
-	virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject) override;
+			// ClassHandlerType
+			#pragma region
+			protected:
 
-	virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject) override;
+				virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject) override;
 
-#pragma endregion TCsManager_PooledObject_ClassHandler Interface
-};
+				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject) override;
+
+			#pragma endregion ClassHandlerType
+			};
+
+#undef ClassHandlerType
+		}
+	}
+}

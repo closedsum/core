@@ -49,23 +49,26 @@
 // Cached
 #pragma region
 
-namespace NCsManagerProjectileCached
+namespace NCsManagerProjectile
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, SetupInternal);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, InitInternalFromSettings);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateClassMapFromSettings);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateDataMapFromSettings);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, CreateEmulatedDataFromDataTable);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, DeconstructEmulatedData);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateDataMapFromDataTable);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, GetProjectile);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, GetData);
-	}
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, SetupInternal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, InitInternalFromSettings);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateClassMapFromSettings);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateDataMapFromSettings);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, CreateEmulatedDataFromDataTable);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, DeconstructEmulatedData);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateDataMapFromDataTable);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, GetProjectile);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, GetData);
+		}
 
-	namespace Name
-	{
+		namespace Name
+		{
+		}
 	}
 }
 
@@ -74,9 +77,12 @@ namespace NCsManagerProjectileCached
 // Internal
 #pragma region
 
-FCsManager_Projectile_Internal::FCsManager_Projectile_Internal() 
-	: Super()
+namespace NCsProjectile
 {
+	FManager::FManager()
+		: Super()
+	{
+	}
 }
 
 #pragma endregion Internal
@@ -324,7 +330,7 @@ void UCsManager_Projectile::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Projectile::SetupInternal()
 {
-	using namespace NCsManagerProjectileCached;
+	using namespace NCsManagerProjectile::NCached;
 
 	const FString& Context = Str::SetupInternal;
 
@@ -405,7 +411,7 @@ void UCsManager_Projectile::SetupInternal()
 
 void UCsManager_Projectile::InitInternalFromSettings()
 {
-	using namespace NCsManagerProjectileCached;
+	using namespace NCsManagerProjectile::NCached;
 
 	const FString& Context = Str::InitInternalFromSettings;
 
@@ -414,9 +420,11 @@ void UCsManager_Projectile::InitInternalFromSettings()
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		FCsManager_Projectile_Internal::FCsManagerPooledObjectMapParams Params;
+		typedef NCsProjectile::FManager ManagerType;
 
-		Params.Name  = TEXT("UCsManager_Projectile::FCsManager_Projectile_Internal");
+		ManagerType::FCsManagerPooledObjectMapParams Params;
+
+		Params.Name  = TEXT("UCsManager_Projectile::NCsProjectile::FManager");
 		Params.World = MyRoot->GetWorld();
 
 		for (const TPair<FECsProjectile, FCsSettings_Manager_Projectile_PoolParams>& Pair : Settings.PoolParams)
@@ -451,11 +459,12 @@ void UCsManager_Projectile::InitInternalFromSettings()
 	}
 }
 
-void UCsManager_Projectile::InitInternal(const FCsManager_Projectile_Internal::FCsManagerPooledObjectMapParams& Params)
+#define ManagerType NCsProjectile::FManager
+void UCsManager_Projectile::InitInternal(const ManagerType::FCsManagerPooledObjectMapParams& Params)
 {
 	// Add CVars
 	{
-		FCsManager_Projectile_Internal::FCsManagerPooledObjectMapParams& P = const_cast<FCsManager_Projectile_Internal::FCsManagerPooledObjectMapParams&>(Params);
+		ManagerType::FCsManagerPooledObjectMapParams& P = const_cast<ManagerType::FCsManagerPooledObjectMapParams&>(Params);
 
 		for (TPair<FECsProjectile, FCsManagerPooledObjectParams>& Pair : P.ObjectParams)
 		{
@@ -477,6 +486,7 @@ void UCsManager_Projectile::InitInternal(const FCsManager_Projectile_Internal::F
 	}
 	Internal.Init(Params);
 }
+#undef ManagerType
 
 void UCsManager_Projectile::Clear()
 {
@@ -863,7 +873,9 @@ void UCsManager_Projectile::LogTransaction(const FString& Context, const ECsPool
 
 void UCsManager_Projectile::ConstructClassHandler()
 {
-	ClassHandler = new FCsManager_Projectile_ClassHandler();
+	typedef NCsProjectile::NManager::NHandler::FClass ClassHandlerType;
+
+	ClassHandler = new ClassHandlerType();
 	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
 	ClassHandler->Log = &FCsPrjLog::Warning;
@@ -871,7 +883,7 @@ void UCsManager_Projectile::ConstructClassHandler()
 
 FCsProjectilePooled* UCsManager_Projectile::GetProjectile(const FECsProjectile& Type)
 {
-	using namespace NCsManagerProjectileCached;
+	using namespace NCsManagerProjectile::NCached;
 
 	const FString& Context = Str::GetProjectile;
 
@@ -880,7 +892,7 @@ FCsProjectilePooled* UCsManager_Projectile::GetProjectile(const FECsProjectile& 
 
 FCsProjectilePooled* UCsManager_Projectile::GetProjectile(const FECsProjectileClass& Type)
 {
-	using namespace NCsManagerProjectileCached;
+	using namespace NCsManagerProjectile::NCached;
 
 	const FString& Context = Str::GetProjectile;
 
@@ -907,7 +919,7 @@ void UCsManager_Projectile::ConstructDataHandler()
 
 ICsData_Projectile* UCsManager_Projectile::GetData(const FName& Name)
 {
-	using namespace NCsManagerProjectileCached;
+	using namespace NCsManagerProjectile::NCached;
 
 	const FString& Context = Str::GetData;
 
@@ -916,7 +928,7 @@ ICsData_Projectile* UCsManager_Projectile::GetData(const FName& Name)
 
 ICsData_Projectile* UCsManager_Projectile::GetData(const FECsProjectile& Type)
 {
-	using namespace NCsManagerProjectileCached;
+	using namespace NCsManagerProjectile::NCached;
 
 	const FString& Context = Str::GetData;
 

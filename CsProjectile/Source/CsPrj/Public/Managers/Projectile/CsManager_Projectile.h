@@ -25,13 +25,14 @@ class ICsProjectile;
 
 namespace NCsProjectile
 {
+#define ManagerMapType NCsPooledObject::NManager::TTMap
 #define PayloadType NCsProjectile::NPayload::IPayload
 
-	class CSPRJ_API FManager : public TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, PayloadType, FECsProjectile>
+	class CSPRJ_API FManager : public ManagerMapType<ICsProjectile, FCsProjectilePooled, PayloadType, FECsProjectile>
 	{
 	private:
 
-		typedef TCsManager_PooledObject_Map<ICsProjectile, FCsProjectilePooled, PayloadType, FECsProjectile> Super;
+		typedef ManagerMapType<ICsProjectile, FCsProjectilePooled, PayloadType, FECsProjectile> Super;
 
 	public:
 
@@ -62,8 +63,12 @@ namespace NCsPooledObject {
 			template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumType>
 			class TClass; } } }
 
-template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
-class TCsManager_PooledObject_DataHandler;
+// NCsPooledObject::NManager::NHandler::TData
+namespace NCsPooledObject {
+	namespace NManager {
+		namespace NHandler {
+			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
+			class TData; } } }
 
 struct FCsInterfaceMap;
 struct FCsData_ProjectileInterfaceMap;
@@ -74,8 +79,11 @@ class CSPRJ_API UCsManager_Projectile : public UObject
 	GENERATED_UCLASS_BODY()
 
 #define ManagerType NCsProjectile::FManager
+#define ManagerParamsType NCsProjectile::FManager::FParams
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 #define PayloadType NCsProjectile::NPayload::IPayload
 #define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
+#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
 
 public:	
 
@@ -214,7 +222,7 @@ public:
 	*
 	* @param Params
 	*/
-	void InitInternal(const ManagerType::FCsManagerPooledObjectMapParams& Params);
+	void InitInternal(const ManagerParamsType& Params);
 
 	virtual void Clear();
 
@@ -249,7 +257,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsProjectilePooled*, const FCsManagerPooledObjectConstructParams&>& GetOnConstructObject_Event(const FECsProjectile& Type);
+	TMulticastDelegate<void, const FCsProjectilePooled*, const ConstructParamsType&>& GetOnConstructObject_Event(const FECsProjectile& Type);
 
 		// Add
 #pragma region
@@ -750,7 +758,7 @@ public:
 #pragma region
 protected:
 
-	TCsManager_PooledObject_DataHandler<ICsData_Projectile, FCsData_ProjectilePtr, FCsData_ProjectileInterfaceMap>* DataHandler;
+	DataHandlerType<ICsData_Projectile, FCsData_ProjectilePtr, FCsData_ProjectileInterfaceMap>* DataHandler;
 
 	virtual void ConstructDataHandler();
 
@@ -798,6 +806,9 @@ public:
 #pragma endregion Data
 
 #undef ManagerType
+#undef ManagerParamsType
+#undef ConstructParamsType
 #undef PayloadType
 #undef ClassHandlerType
+#undef DataHandlerType
 };

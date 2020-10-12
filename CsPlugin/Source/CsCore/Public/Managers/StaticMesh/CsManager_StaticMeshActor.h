@@ -25,21 +25,28 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerStaticMeshActor_OnSpawn, 
 
 class ICsStaticMeshActor;
 
-class CSCORE_API FCsManager_StaticMeshActor_Internal : public TCsManager_PooledObject_Map<ICsStaticMeshActor, FCsStaticMeshActorPooled, NCsStaticMeshActor::NPayload::IPayload, FECsStaticMeshActor>
+namespace NCsStaticMeshActor
 {
-private:
+#define ManagerMapType NCsPooledObject::NManager::TTMap
+#define PayloadType NCsStaticMeshActor::NPayload::IPayload
 
-	typedef TCsManager_PooledObject_Map<ICsStaticMeshActor, FCsStaticMeshActorPooled, NCsStaticMeshActor::NPayload::IPayload, FECsStaticMeshActor> Super;
-
-public:
-
-	FCsManager_StaticMeshActor_Internal();
-
-	FORCEINLINE virtual const FString& KeyTypeToString(const FECsStaticMeshActor& Type) override
+	class CSCORE_API FManager : public ManagerMapType<ICsStaticMeshActor, FCsStaticMeshActorPooled, PayloadType, FECsStaticMeshActor>
 	{
-		return Type.GetName();
-	}
-};
+	private:
+
+		typedef ManagerMapType<ICsStaticMeshActor, FCsStaticMeshActorPooled, PayloadType, FECsStaticMeshActor> Super;
+
+	public:
+
+		FManager();
+
+		FORCEINLINE virtual const FString& KeyTypeToString(const FECsStaticMeshActor& Type) override
+		{
+			return Type.GetName();
+		}
+	};
+#undef PayloadType
+}
 
 #pragma endregion Internal
 
@@ -51,6 +58,11 @@ UCLASS()
 class CSCORE_API UCsManager_StaticMeshActor : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+#define ManagerType NCsStaticMeshActor::FManager
+#define ManagerParamsType NCsStaticMeshActor::FManager::FParams
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
+#define PayloadType NCsStaticMeshActor::NPayload::IPayload
 
 public:	
 
@@ -145,7 +157,7 @@ public:
 protected:
 	
 	/** Reference to the internal manager for handling the pool of sounds. */
-	FCsManager_StaticMeshActor_Internal Internal;
+	ManagerType Internal;
 	
 	/**
 	* Setup the internal manager for handling the pool of projectiles.
@@ -164,7 +176,7 @@ public:
 	*
 	* @param Params
 	*/
-	void InitInternal(const FCsManager_StaticMeshActor_Internal::FCsManagerPooledObjectMapParams& Params);
+	void InitInternal(const ManagerParamsType& Params);
 
 	virtual void Clear();
 
@@ -199,7 +211,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsStaticMeshActorPooled*, const FCsManagerPooledObjectConstructParams&>& GetOnConstructObject_Event(const FECsStaticMeshActor& Type);
+	TMulticastDelegate<void, const FCsStaticMeshActorPooled*, const ConstructParamsType&>& GetOnConstructObject_Event(const FECsStaticMeshActor& Type);
 
 	/**
 	*
@@ -469,7 +481,7 @@ public:
 	* @param Type
 	* return
 	*/
-	virtual NCsStaticMeshActor::NPayload::IPayload* ConstructPayload(const FECsStaticMeshActor& Type);
+	virtual PayloadType* ConstructPayload(const FECsStaticMeshActor& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
@@ -478,7 +490,7 @@ public:
 	* @param Type	Type of payload.
 	* return		Payload that implements the interface: NCsStaticMeshActor::NPayload::IPayload.
 	*/
-	NCsStaticMeshActor::NPayload::IPayload* AllocatePayload(const FECsStaticMeshActor& Type);
+	PayloadType* AllocatePayload(const FECsStaticMeshActor& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
@@ -505,7 +517,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	const FCsStaticMeshActorPooled* Spawn(const FECsStaticMeshActor& Type, NCsStaticMeshActor::NPayload::IPayload* Payload);
+	const FCsStaticMeshActorPooled* Spawn(const FECsStaticMeshActor& Type, PayloadType* Payload);
 
 	/**
 	*
@@ -623,4 +635,9 @@ public:
 #pragma endregion 
 
 #pragma endregion Script
+
+#undef ManagerType
+#undef ManagerParamsType
+#undef ConstructParamsType
+#undef PayloadType
 };

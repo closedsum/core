@@ -49,9 +49,12 @@ namespace NCsManagerStaticMeshActor
 // Internal
 #pragma region
 
-FCsManager_StaticMeshActor_Internal::FCsManager_StaticMeshActor_Internal() 
-	: Super()
+namespace NCsStaticMeshActor
 {
+	FManager::FManager()
+		: Super()
+	{
+	}
 }
 
 #pragma endregion Internal
@@ -323,20 +326,24 @@ void UCsManager_StaticMeshActor::InitInternalFromSettings()
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		FCsManager_StaticMeshActor_Internal::FCsManagerPooledObjectMapParams Params;
+		typedef NCsStaticMeshActor::FManager::FParams ManagerParamsType;
 
-		Params.Name  = TEXT("UCsManager_StaticMeshActor::FCsManager_StaticMeshActor_Internal");
-		Params.World = MyRoot->GetWorld();
+		ManagerParamsType ManagerParams;
+
+		ManagerParams.Name  = TEXT("UCsManager_StaticMeshActor::NCsStaticMeshActor::FManager");
+		ManagerParams.World = MyRoot->GetWorld();
 
 		for (const TPair<FECsStaticMeshActor, FCsSettings_Manager_StaticMeshActor_PoolParams>& Pair : Settings.PoolParams)
 		{
 			const FECsStaticMeshActor& Type								   = Pair.Key;
-			const FCsSettings_Manager_StaticMeshActor_PoolParams& PoolParams = Pair.Value;
+			const FCsSettings_Manager_StaticMeshActor_PoolParams& Params = Pair.Value;
 
-			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
+			typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
+
+			PoolParamsType& PoolParams = ManagerParams.ObjectParams.Add(Type);
 
 			// Get Class
-			const FECsStaticMeshActorClass& ClassType = PoolParams.Class;
+			const FECsStaticMeshActorClass& ClassType = Params.Class;
 
 			checkf(EMCsStaticMeshActorClass::Get().IsValidEnum(ClassType), TEXT("%s: Class for NOT Valid."), *Context, ClassType.ToChar());
 
@@ -345,47 +352,51 @@ void UCsManager_StaticMeshActor::InitInternalFromSettings()
 
 			checkf(Class, TEXT("%s: Failed to get class for Type: %s ClassType: %s."), *Context, Type.ToChar(), ClassType.ToChar());
 
-			ObjectParams.Name							  = Params.Name + TEXT("_") + Type.ToChar();
-			ObjectParams.World							  = Params.World;
-			ObjectParams.ConstructParams.Outer			  = this;
-			ObjectParams.ConstructParams.Class			  = Class;
-			ObjectParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
-			ObjectParams.bConstructPayloads				  = true;
-			ObjectParams.PayloadSize					  = PoolParams.PayloadSize;
-			ObjectParams.bCreatePool					  = true;
-			ObjectParams.PoolSize						  = PoolParams.PoolSize;
+			PoolParams.Name								= ManagerParams.Name + TEXT("_") + Type.ToChar();
+			PoolParams.World							= ManagerParams.World;
+			PoolParams.ConstructParams.Outer			= this;
+			PoolParams.ConstructParams.Class			= Class;
+			PoolParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
+			PoolParams.bConstructPayloads				= true;
+			PoolParams.PayloadSize						= Params.PayloadSize;
+			PoolParams.bCreatePool						= true;
+			PoolParams.PoolSize							= Params.PoolSize;
 		}
 
-		InitInternal(Params);
+		InitInternal(ManagerParams);
 	}
 }
 
-void UCsManager_StaticMeshActor::InitInternal(const FCsManager_StaticMeshActor_Internal::FCsManagerPooledObjectMapParams& Params)
+#define ManagerParamsType NCsStaticMeshActor::FManager::FParams
+void UCsManager_StaticMeshActor::InitInternal(const ManagerParamsType& Params)
 {
 	// Add CVars
 	{
-		FCsManager_StaticMeshActor_Internal::FCsManagerPooledObjectMapParams& P = const_cast<FCsManager_StaticMeshActor_Internal::FCsManagerPooledObjectMapParams&>(Params);
+		ManagerParamsType& P = const_cast<ManagerParamsType&>(Params);
 
-		for (TPair<FECsStaticMeshActor, FCsManagerPooledObjectParams>& Pair : P.ObjectParams)
+		typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
+
+		for (TPair<FECsStaticMeshActor, PoolParamsType>& Pair : P.ObjectParams)
 		{
-			FCsManagerPooledObjectParams& ObjectParams = Pair.Value;
+			PoolParamsType& PoolParams = Pair.Value;
 
 			// Scoped Timer CVars
-			ObjectParams.ScopedGroup = NCsScopedGroup::ManagerStaticMeshActor;
+			PoolParams.ScopedGroup = NCsScopedGroup::ManagerStaticMeshActor;
 
-			ObjectParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerStaticMeshActorScopedTimerCreatePool;
-			ObjectParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerStaticMeshActorScopedTimerUpdate;
-			ObjectParams.UpdateObjectScopedTimerCVar	= NCsCVarLog::LogManagerStaticMeshActorScopedTimerUpdateObject;
-			ObjectParams.AllocateScopedTimerCVar		= NCsCVarLog::LogManagerStaticMeshActorScopedTimerAllocate;
-			ObjectParams.AllocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerStaticMeshActorScopedTimerAllocateObject;
-			ObjectParams.DeallocateScopedTimerCVar		= NCsCVarLog::LogManagerStaticMeshActorScopedTimerDeallocate;
-			ObjectParams.DeallocateObjectScopedTimerCVar = NCsCVarLog::LogManagerStaticMeshActorScopedTimerDeallocateObject;
-			ObjectParams.SpawnScopedTimerCVar			= NCsCVarLog::LogManagerStaticMeshActorScopedTimerSpawn;
-			ObjectParams.DestroyScopedTimerCVar			= NCsCVarLog::LogManagerStaticMeshActorScopedTimerDestroy;
+			PoolParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerStaticMeshActorScopedTimerCreatePool;
+			PoolParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerStaticMeshActorScopedTimerUpdate;
+			PoolParams.UpdateObjectScopedTimerCVar		= NCsCVarLog::LogManagerStaticMeshActorScopedTimerUpdateObject;
+			PoolParams.AllocateScopedTimerCVar			= NCsCVarLog::LogManagerStaticMeshActorScopedTimerAllocate;
+			PoolParams.AllocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerStaticMeshActorScopedTimerAllocateObject;
+			PoolParams.DeallocateScopedTimerCVar		= NCsCVarLog::LogManagerStaticMeshActorScopedTimerDeallocate;
+			PoolParams.DeallocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerStaticMeshActorScopedTimerDeallocateObject;
+			PoolParams.SpawnScopedTimerCVar				= NCsCVarLog::LogManagerStaticMeshActorScopedTimerSpawn;
+			PoolParams.DestroyScopedTimerCVar			= NCsCVarLog::LogManagerStaticMeshActorScopedTimerDestroy;
 		}
 	}
 	Internal.Init(Params);
 }
+#undef ManagerParamsType
 
 void UCsManager_StaticMeshActor::Clear()
 {
@@ -417,8 +428,10 @@ FCsStaticMeshActorPooled* UCsManager_StaticMeshActor::ConstructContainer(const F
 	return new FCsStaticMeshActorPooled();
 }
 
-TMulticastDelegate<void, const FCsStaticMeshActorPooled*, const FCsManagerPooledObjectConstructParams&>& UCsManager_StaticMeshActor::GetOnConstructObject_Event(const FECsStaticMeshActor& Type)
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
+TMulticastDelegate<void, const FCsStaticMeshActorPooled*, const ConstructParamsType&>& UCsManager_StaticMeshActor::GetOnConstructObject_Event(const FECsStaticMeshActor& Type)
 {
+#undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);
 }
 
@@ -567,13 +580,20 @@ void UCsManager_StaticMeshActor::ConstructPayloads(const FECsStaticMeshActor& Ty
 	Internal.ConstructPayloads(Type, Size);
 }
 
-NCsStaticMeshActor::NPayload::IPayload* UCsManager_StaticMeshActor::ConstructPayload(const FECsStaticMeshActor& Type)
+#define PayloadType NCsStaticMeshActor::NPayload::IPayload
+PayloadType* UCsManager_StaticMeshActor::ConstructPayload(const FECsStaticMeshActor& Type)
 {
-	return new NCsStaticMeshActor::NPayload::FImpl();
+#undef PayloadType
+
+	typedef NCsStaticMeshActor::NPayload::FImpl PayloadImplType;
+
+	return new PayloadImplType();
 }
 
-NCsStaticMeshActor::NPayload::IPayload* UCsManager_StaticMeshActor::AllocatePayload(const FECsStaticMeshActor& Type)
+#define PayloadType NCsStaticMeshActor::NPayload::IPayload
+PayloadType* UCsManager_StaticMeshActor::AllocatePayload(const FECsStaticMeshActor& Type)
 {
+#undef PayloadType
 	return Internal.AllocatePayload(Type);
 }
 
@@ -582,8 +602,10 @@ NCsStaticMeshActor::NPayload::IPayload* UCsManager_StaticMeshActor::AllocatePayl
 	// Spawn
 #pragma region
 
-const FCsStaticMeshActorPooled* UCsManager_StaticMeshActor::Spawn(const FECsStaticMeshActor& Type, NCsStaticMeshActor::NPayload::IPayload* Payload)
+#define PayloadType NCsStaticMeshActor::NPayload::IPayload
+const FCsStaticMeshActorPooled* UCsManager_StaticMeshActor::Spawn(const FECsStaticMeshActor& Type, PayloadType* Payload)
 {
+#undef PayloadType
 	if (Internal.IsExhausted(Type))
 	{
 		const FCsStaticMeshActorPooled* AllocatedHead = Internal.GetAllocatedHeadObject(Type);

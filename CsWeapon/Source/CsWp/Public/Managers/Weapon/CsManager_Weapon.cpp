@@ -88,9 +88,12 @@ namespace NCsManagerWeapon
 // Internal
 #pragma region
 
-FCsManager_Weapon_Internal::FCsManager_Weapon_Internal()
-	: Super()
+namespace NCsWeapon
 {
+	FManager::FManager()
+		: Super()
+	{
+	}
 }
 
 #pragma endregion Internal
@@ -397,21 +400,25 @@ void UCsManager_Weapon::InitInternalFromSettings()
 	// Setup Pool
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		FCsManager_Weapon_Internal::FCsManagerPooledObjectMapParams Params;
+		typedef NCsWeapon::FManager::FParams ManagerParamsType;
 
-		Params.Name  = TEXT("UCsManager_Weapon::FCsManager_Weapon_Internal");
-		Params.World = MyRoot->GetWorld();
+		ManagerParamsType ManagerParams;
+
+		ManagerParams.Name  = TEXT("UCsManager_Weapon::NCsWeapon::FManager");
+		ManagerParams.World = MyRoot->GetWorld();
 
 		//  Pool params for each specified Weapon Type
 		for (const TPair<FECsWeapon, FCsSettings_Manager_Weapon_PoolParams>& Pair : Settings.PoolParams)
 		{
 			const FECsWeapon& Type									= Pair.Key;
-			const FCsSettings_Manager_Weapon_PoolParams& PoolParams = Pair.Value;
+			const FCsSettings_Manager_Weapon_PoolParams& Params = Pair.Value;
 
-			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
+			typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
+
+			PoolParamsType& PoolParams = ManagerParams.ObjectParams.Add(Type);
 
 			// Get Class
-			const FECsWeaponClass& ClassType = PoolParams.Class;
+			const FECsWeaponClass& ClassType = Params.Class;
 
 			check(EMCsWeaponClass::Get().IsValidEnumChecked(Context, Str::Class, ClassType));
 
@@ -420,23 +427,25 @@ void UCsManager_Weapon::InitInternalFromSettings()
 
 			checkf(Class, TEXT("%s: Failed to get class for Type: %s ClassType: %s."), *Context, Type.ToChar(), ClassType.ToChar());
 
-			ObjectParams.Name  = Params.Name + TEXT("_") + Type.ToChar();
-			ObjectParams.World = Params.World;
-			//ObjectParams.LogType
-			ObjectParams.ConstructParams.Class			  = Class;
-			ObjectParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
-			ObjectParams.bConstructPayloads				  = true;
-			ObjectParams.PayloadSize					  = PoolParams.PayloadSize;
-			ObjectParams.bCreatePool					  = true;
-			ObjectParams.PoolSize						  = PoolParams.PoolSize;
+			PoolParams.Name								= ManagerParams.Name + TEXT("_") + Type.ToChar();
+			PoolParams.World							= ManagerParams.World;
+			//PoolParams.LogType
+			PoolParams.ConstructParams.Class			= Class;
+			PoolParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
+			PoolParams.bConstructPayloads				= true;
+			PoolParams.PayloadSize						= Params.PayloadSize;
+			PoolParams.bCreatePool						= true;
+			PoolParams.PoolSize							= Params.PoolSize;
 		}
 
-		InitInternal(Params);
+		InitInternal(ManagerParams);
 	}
 }
 
-void UCsManager_Weapon::InitInternal(const FCsManager_Weapon_Internal::FCsManagerPooledObjectMapParams& Params)
+#define ManagerParamsType NCsWeapon::FManager::FParams
+void UCsManager_Weapon::InitInternal(const ManagerParamsType& Params)
 {
+#undef ManagerParamsType
 	Internal.Init(Params);
 }
 
@@ -470,8 +479,10 @@ FCsWeaponPooled* UCsManager_Weapon::ConstructContainer(const FECsWeapon& Type)
 	return new FCsWeaponPooled();
 }
 
-TMulticastDelegate<void, const FCsWeaponPooled*, const FCsManagerPooledObjectConstructParams&>& UCsManager_Weapon::GetOnConstructObject_Event(const FECsWeapon& Type)
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
+TMulticastDelegate<void, const FCsWeaponPooled*, const ConstructParamsType&>& UCsManager_Weapon::GetOnConstructObject_Event(const FECsWeapon& Type)
 {
+#undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);
 }
 

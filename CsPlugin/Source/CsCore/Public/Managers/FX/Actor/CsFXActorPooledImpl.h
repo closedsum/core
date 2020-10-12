@@ -31,6 +31,7 @@ class CSCORE_API UCsFXActorPooledImpl : public UObject,
 
 #define CacheType NCsPooledObject::NCache::ICache
 #define PayloadType NCsPooledObject::NPayload::IPayload
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 
 // UObject Interface
 #pragma region
@@ -44,7 +45,7 @@ public:
 #pragma region
 public:
 
-	void OnConstructObject(const FCsManagerPooledObjectConstructParams& Params);
+	void OnConstructObject(const ConstructParamsType& Params);
 
 #pragma endregion ICsOnConstructObject
 
@@ -94,4 +95,5 @@ protected:
 
 #undef CacheType
 #undef PayloadType
+#undef ConstructParamsType
 };

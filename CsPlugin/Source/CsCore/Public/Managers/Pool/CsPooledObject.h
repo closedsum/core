@@ -13,17 +13,17 @@ class CSCORE_API UCsPooledObject : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
-namespace NCsPooledObject {
-	namespace NCache {
-		struct ICache; } }
-
-namespace NCsPooledObject {
-	namespace NPayload {
-		struct IPayload; } }
+// NCsPooledObject::NCache::ICache
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
+// NCsPooledObject::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
 class CSCORE_API ICsPooledObject
 {
 	GENERATED_IINTERFACE_BODY()
+
+#define CacheType NCsPooledObject::NCache::ICache
+#define PayloadType NCsPooledObject::NPayload::IPayload
 
 public:
 
@@ -32,19 +32,22 @@ public:
 	*
 	* return
 	*/
-	virtual NCsPooledObject::NCache::ICache* GetCache() const = 0;
+	virtual CacheType* GetCache() const = 0;
 
 	/**
 	*
 	*
 	* @param Payload
 	*/
-	virtual void Allocate(NCsPooledObject::NPayload::IPayload* Payload) = 0;
+	virtual void Allocate(PayloadType* Payload) = 0;
 
 	/**
 	*
 	*/
 	virtual void Deallocate() = 0;
+
+#undef CacheType
+#undef PayloadType
 };
 
 // FCsPooledObject
@@ -58,6 +61,10 @@ struct CSCORE_API FCsPooledObject : public TCsInterfaceObject<ICsPooledObject>
 private:
 
 	typedef TCsInterfaceObject<ICsPooledObject> Super;
+
+#define CacheType NCsPooledObject::NCache::ICache
+#define PayloadType NCsPooledObject::NPayload::IPayload
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 
 public:
 
@@ -92,7 +99,7 @@ public:
 	* @param Object		A Pooled Object of type: ICsPooledObject.
 	* return Cache		The cache associated with the Pooled Object.
 	*/
-	DECLARE_DELEGATE_RetVal_OneParam(NCsPooledObject::NCache::ICache* /*Cache*/, FScript_GetCache, UObject* /*Object*/);
+	DECLARE_DELEGATE_RetVal_OneParam(CacheType* /*Cache*/, FScript_GetCache, UObject* /*Object*/);
 
 	/** Delegate for getting the Cache associated with a Pooled Object. 
 		 The Pooled Object implements a script interface of type: ICsPooledObject. */
@@ -105,7 +112,7 @@ public:
 	* @param Object		A Pooled Object of type: ICsPooledObject.
 	* @param Payload	A "blob" of parameters to pass in when allocating a Pooled Object.
 	*/
-	DECLARE_DELEGATE_TwoParams(FScript_Allocate, UObject* /*Object*/, NCsPooledObject::NPayload::IPayload* /*Payload*/);
+	DECLARE_DELEGATE_TwoParams(FScript_Allocate, UObject* /*Object*/, PayloadType* /*Payload*/);
 
 	/** Delegate for allocating a Pooled Object. 
 		  The Pooled Object implements a script interface of type: ICsPooledObject. */
@@ -154,7 +161,7 @@ public:
 	* @param Object		An object of type: ICsOnConstructObject.
 	* @para Params
 	*/
-	DECLARE_DELEGATE_TwoParams(FScript_OnConstructObject, UObject* /*Object*/, const FCsManagerPooledObjectConstructParams& /*Params*/);
+	DECLARE_DELEGATE_TwoParams(FScript_OnConstructObject, UObject* /*Object*/, const ConstructParamsType& /*Params*/);
 
 	/** Delegate to execute after an object has been constructed.
 		 The object implements a script interface of type: ICsOnConstructObject. */
@@ -202,14 +209,14 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE NCsPooledObject::NCache::ICache* GetCache() const
+	FORCEINLINE CacheType* GetCache() const
 	{
 		if (bScript)
 			return Script_GetCache_Impl.Execute(Object);
 		return Interface->GetCache();
 	}
 
-	FORCEINLINE void Allocate(NCsPooledObject::NPayload::IPayload* Payload)
+	FORCEINLINE void Allocate(PayloadType* Payload)
 	{
 		if (bScript)
 			Script_Allocate_Impl.Execute(Object, Payload);
@@ -261,7 +268,7 @@ public:
 #pragma region
 public:
 
-	void OnConstructObject(const FCsManagerPooledObjectConstructParams& Params);
+	void OnConstructObject(const ConstructParamsType& Params);
 
 #pragma endregion ICsOnConstructObject
 
@@ -291,6 +298,10 @@ public:
 	{
 		_OnConstructObject = O;
 	}
+
+#undef CacheType
+#undef PayloadType
+#undef ConstructParamsType
 };
 
 #pragma endregion FCsPooledObject

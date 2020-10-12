@@ -344,73 +344,77 @@ void UCsManager_FX_Actor::InitInternalFromSettings()
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		typedef NCsFX::FManager ManagerType;
+		typedef NCsFX::FManager::FParams ManagerParamsType;
 
-		ManagerType::FCsManagerPooledObjectMapParams Params;
+		ManagerParamsType ManagerParams;
 
-		Params.Name  = TEXT("UCsManager_FX_Actor::NCsFX::FManager");
-		Params.World = MyRoot->GetWorld();
+		ManagerParams.Name  = TEXT("UCsManager_FX_Actor::NCsFX::FManager");
+		ManagerParams.World = MyRoot->GetWorld();
 
 		for (const TPair<FECsFX, FCsSettings_Manager_FX_Actor_PoolParams>& Pair : Settings.PoolParams)
 		{
-			const FECsFX& Type										  = Pair.Key;
-			const FCsSettings_Manager_FX_Actor_PoolParams& PoolParams = Pair.Value;
+			const FECsFX& Type									  = Pair.Key;
+			const FCsSettings_Manager_FX_Actor_PoolParams& Params = Pair.Value;
 
-			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
+			typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
-			checkf(PoolParams.Class.ToSoftObjectPath().IsValid(), TEXT("UCsManager_FX_Actor::InitInternalFromSettings: Class for Type: %s is NOT a Valid Path."), Type.ToChar());
+			PoolParamsType& PoolParams = ManagerParams.ObjectParams.Add(Type);
+
+			checkf(Params.Class.ToSoftObjectPath().IsValid(), TEXT("UCsManager_FX_Actor::InitInternalFromSettings: Class for Type: %s is NOT a Valid Path."), Type.ToChar());
 
 #if !UE_BUILD_SHIPPING
-			if (!PoolParams.Class.Get())
+			if (!Params.Class.Get())
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::InitInternalFromSettings: Class @ for Type: %s is NOT already loaded in memory."), *(PoolParams.Class.ToString()), Type.ToChar());
+				UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::InitInternalFromSettings: Class @ for Type: %s is NOT already loaded in memory."), *(Params.Class.ToString()), Type.ToChar());
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			UClass* Class = PoolParams.Class.LoadSynchronous();
+			UClass* Class = Params.Class.LoadSynchronous();
 
-			checkf(Class, TEXT("UCsManager_FX_Actor::InitInternalFromSettings: Failed to load Class @ for Type: %s."), *(PoolParams.Class.ToString()), Type.ToChar());
+			checkf(Class, TEXT("UCsManager_FX_Actor::InitInternalFromSettings: Failed to load Class @ for Type: %s."), *(Params.Class.ToString()), Type.ToChar());
 
 			ClassMap.Add(Type, Class);
 
-			ObjectParams.Name							  = Params.Name + TEXT("_") + Type.GetName();
-			ObjectParams.World							  = Params.World;
-			ObjectParams.ConstructParams.Outer			  = this;
-			ObjectParams.ConstructParams.Class			  = Class;
-			ObjectParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Object;
-			ObjectParams.bConstructPayloads				  = true;
-			ObjectParams.PayloadSize					  = PoolParams.PayloadSize;
-			ObjectParams.bCreatePool					  = true;
-			ObjectParams.PoolSize						  = PoolParams.PoolSize;
+			PoolParams.Name							  = ManagerParams.Name + TEXT("_") + Type.GetName();
+			PoolParams.World						  = ManagerParams.World;
+			PoolParams.ConstructParams.Outer		  = this;
+			PoolParams.ConstructParams.Class		  = Class;
+			PoolParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Object;
+			PoolParams.bConstructPayloads			  = true;
+			PoolParams.PayloadSize					  = Params.PayloadSize;
+			PoolParams.bCreatePool					  = true;
+			PoolParams.PoolSize						  = Params.PoolSize;
 		}
 
-		InitInternal(Params);
+		InitInternal(ManagerParams);
 	}
 }
 
-#define ManagerType NCsFX::FManager
-void UCsManager_FX_Actor::InitInternal(const ManagerType::FCsManagerPooledObjectMapParams& Params)
+#define ManagerParamsType NCsFX::FManager::FParams
+void UCsManager_FX_Actor::InitInternal(const ManagerParamsType& Params)
 {
 	// Add CVars
 	{
-		ManagerType::FCsManagerPooledObjectMapParams& P = const_cast<ManagerType::FCsManagerPooledObjectMapParams&>(Params);
+		ManagerParamsType& P = const_cast<ManagerParamsType&>(Params);
 
-		for (TPair<FECsFX, FCsManagerPooledObjectParams>& Pair : P.ObjectParams)
+		typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
+
+		for (TPair<FECsFX, PoolParamsType>& Pair : P.ObjectParams)
 		{
-			FCsManagerPooledObjectParams& ObjectParams = Pair.Value;
+			PoolParamsType& PoolParams = Pair.Value;
 
 			// Scoped Timer CVars
-			ObjectParams.ScopedGroup = NCsScopedGroup::ManagerFXActor;
+			PoolParams.ScopedGroup = NCsScopedGroup::ManagerFXActor;
 
-			ObjectParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerFXActorScopedTimerCreatePool;
-			ObjectParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerFXActorScopedTimerUpdate;
-			ObjectParams.UpdateObjectScopedTimerCVar	= NCsCVarLog::LogManagerFXActorScopedTimerUpdateObject;
-			ObjectParams.AllocateScopedTimerCVar		= NCsCVarLog::LogManagerFXActorScopedTimerAllocate;
-			ObjectParams.AllocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerFXActorScopedTimerAllocateObject;
-			ObjectParams.DeallocateScopedTimerCVar		= NCsCVarLog::LogManagerFXActorScopedTimerDeallocate;
-			ObjectParams.DeallocateObjectScopedTimerCVar = NCsCVarLog::LogManagerFXActorScopedTimerDeallocateObject;
-			ObjectParams.SpawnScopedTimerCVar			= NCsCVarLog::LogManagerFXActorScopedTimerSpawn;
-			ObjectParams.DestroyScopedTimerCVar			= NCsCVarLog::LogManagerFXActorScopedTimerDestroy;
+			PoolParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerFXActorScopedTimerCreatePool;
+			PoolParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerFXActorScopedTimerUpdate;
+			PoolParams.UpdateObjectScopedTimerCVar		= NCsCVarLog::LogManagerFXActorScopedTimerUpdateObject;
+			PoolParams.AllocateScopedTimerCVar			= NCsCVarLog::LogManagerFXActorScopedTimerAllocate;
+			PoolParams.AllocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerFXActorScopedTimerAllocateObject;
+			PoolParams.DeallocateScopedTimerCVar		= NCsCVarLog::LogManagerFXActorScopedTimerDeallocate;
+			PoolParams.DeallocateObjectScopedTimerCVar = NCsCVarLog::LogManagerFXActorScopedTimerDeallocateObject;
+			PoolParams.SpawnScopedTimerCVar				= NCsCVarLog::LogManagerFXActorScopedTimerSpawn;
+			PoolParams.DestroyScopedTimerCVar			= NCsCVarLog::LogManagerFXActorScopedTimerDestroy;
 		}
 	}
 	Internal.Init(Params);
@@ -447,8 +451,10 @@ FCsFXActorPooled* UCsManager_FX_Actor::ConstructContainer(const FECsFX& Type)
 	return new FCsFXActorPooled();
 }
 
-TMulticastDelegate<void, const FCsFXActorPooled*, const FCsManagerPooledObjectConstructParams&>& UCsManager_FX_Actor::GetOnConstructObject_Event(const FECsFX& Type)
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
+TMulticastDelegate<void, const FCsFXActorPooled*, const ConstructParamsType&>& UCsManager_FX_Actor::GetOnConstructObject_Event(const FECsFX& Type)
 {
+#undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);
 }
 

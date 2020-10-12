@@ -73,8 +73,11 @@ void UCsFXActorPooledImpl::BeginDestroy()
 // ICsOnConstructObject
 #pragma region
 
-void UCsFXActorPooledImpl::OnConstructObject(const FCsManagerPooledObjectConstructParams& Params)
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
+void UCsFXActorPooledImpl::OnConstructObject(const ConstructParamsType& Params)
 {
+#undef ConstructParamsType
+
 	using namespace NCsFXActorPooledImpl::NCached;
 
 	const FString& Context = Str::OnConstructObject;

@@ -24,13 +24,14 @@ class ICsSoundPooled;
 
 namespace NCsSound
 {
+#define ManagerMapType NCsPooledObject::NManager::TTMap
 #define PayloadType NCsSound::NPayload::IPayload
 
-	class CSCORE_API FManager : public TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, PayloadType, FECsSound>
+	class CSCORE_API FManager : public ManagerMapType<ICsSoundPooled, FCsSoundPooled, PayloadType, FECsSound>
 	{
 	private:
 
-		typedef TCsManager_PooledObject_Map<ICsSoundPooled, FCsSoundPooled, PayloadType, FECsSound> Super;
+		typedef ManagerMapType<ICsSoundPooled, FCsSoundPooled, PayloadType, FECsSound> Super;
 
 	public:
 
@@ -42,6 +43,7 @@ namespace NCsSound
 		}
 	};
 
+#undef ManagerMapType
 #undef PayloadType
 }
 #pragma endregion Internal
@@ -58,6 +60,8 @@ class CSCORE_API UCsManager_Sound : public UObject
 public:	
 
 #define ManagerType NCsSound::FManager
+#define ManagerParamsType NCsSound::FManager::FParams
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 #define PayloadType NCsSound::NPayload::IPayload
 
 // Singleton
@@ -170,7 +174,7 @@ public:
 	*
 	* @param Params
 	*/
-	void InitInternal(const ManagerType::FCsManagerPooledObjectMapParams& Params);
+	void InitInternal(const ManagerParamsType& Params);
 
 	virtual void Clear();
 
@@ -205,7 +209,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsSoundPooled*, const FCsManagerPooledObjectConstructParams&>& GetOnConstructObject_Event(const FECsSound& Type);
+	TMulticastDelegate<void, const FCsSoundPooled*, const ConstructParamsType&>& GetOnConstructObject_Event(const FECsSound& Type);
 
 	/**
 	*
@@ -655,5 +659,7 @@ private:
 #pragma endregion Data
 
 #undef ManagerType
+#undef ManagerParamsType
+#undef ConstructParamsType
 #undef PayloadType
 };

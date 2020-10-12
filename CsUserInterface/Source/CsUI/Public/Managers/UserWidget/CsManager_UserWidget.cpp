@@ -36,20 +36,23 @@
 // Cached
 #pragma region
 
-namespace NCsManagerUserWidgetCached
+namespace NCsManagerUserWidget
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, SetupInternal);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, InitInternalFromSettings);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, PopulateDataMapFromSettings);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, GetUserWidgetPooled);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, GetUserWidget);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, GetData);
-	}
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, SetupInternal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, InitInternalFromSettings);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, PopulateDataMapFromSettings);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, GetUserWidgetPooled);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, GetUserWidget);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, GetData);
+		}
 
-	namespace Name
-	{
+		namespace Name
+		{
+		}
 	}
 }
 
@@ -58,9 +61,12 @@ namespace NCsManagerUserWidgetCached
 // Internal
 #pragma region
 
-FCsManager_UserWidget_Internal::FCsManager_UserWidget_Internal() 
-	: Super()
+namespace NCsUserWidget
 {
+	FManager::FManager()
+		: Super()
+	{
+	}
 }
 
 #pragma endregion Internal
@@ -291,7 +297,7 @@ void UCsManager_UserWidget::SetMyRoot(UObject* InRoot)
 
 void UCsManager_UserWidget::SetupInternal()
 {
-	using namespace NCsManagerUserWidgetCached;
+	using namespace NCsManagerUserWidget::NCached;
 
 	const FString& Context = Str::SetupInternal;
 
@@ -361,7 +367,7 @@ void UCsManager_UserWidget::SetupInternal()
 
 void UCsManager_UserWidget::InitInternalFromSettings()
 {
-	using namespace NCsManagerUserWidgetCached;
+	using namespace NCsManagerUserWidget::NCached;
 
 	const FString& Context = Str::InitInternalFromSettings;
 
@@ -377,20 +383,24 @@ void UCsManager_UserWidget::InitInternalFromSettings()
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		FCsManager_UserWidget_Internal::FCsManagerPooledObjectMapParams Params;
+		typedef NCsUserWidget::FManager::FParams ManagerParamsType;
 
-		Params.Name  = TEXT("UCsManager_UserWidget::FCsManager_UserWidget_Internal");
-		Params.World = MyRoot->GetWorld();
+		ManagerParamsType ManagerParams;
+
+		ManagerParams.Name  = TEXT("UCsManager_UserWidget::NCsUserWidget::FManager");
+		ManagerParams.World = MyRoot->GetWorld();
 
 		for (const TPair<FECsUserWidgetPooled, FCsSettings_Manager_UserWidget_PoolParams>& Pair : Settings.PoolParams)
 		{
-			const FECsUserWidgetPooled& Type							= Pair.Key;
-			const FCsSettings_Manager_UserWidget_PoolParams& PoolParams = Pair.Value;
+			const FECsUserWidgetPooled& Type						= Pair.Key;
+			const FCsSettings_Manager_UserWidget_PoolParams& Params = Pair.Value;
 
-			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
+			typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
+
+			PoolParamsType& PoolParams = ManagerParams.ObjectParams.Add(Type);
 
 			// Get Class
-			const FECsUserWidgetPooledClass& ClassType = PoolParams.Class;
+			const FECsUserWidgetPooledClass& ClassType = Params.Class;
 
 			checkf(EMCsUserWidgetPooledClass::Get().IsValidEnum(ClassType), TEXT("%s: Class for NOT Valid."), *Context, ClassType.ToChar());
 
@@ -399,48 +409,52 @@ void UCsManager_UserWidget::InitInternalFromSettings()
 
 			checkf(Class, TEXT("%s: Failed to get class for Type: %s ClassType: %s."), *Context, Type.ToChar(), ClassType.ToChar());
 
-			ObjectParams.Name							  = Params.Name + TEXT("_") + Type.ToChar();
-			ObjectParams.World							  = Params.World;
-			ObjectParams.ConstructParams.Outer			  = this;
-			ObjectParams.ConstructParams.Class			  = Class;
-			ObjectParams.ConstructParams.TypeName		  = PoolParams.Widget.GetFName();
-			ObjectParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Object;
-			ObjectParams.bConstructPayloads				  = true;
-			ObjectParams.PayloadSize					  = PoolParams.PayloadSize;
-			ObjectParams.bCreatePool					  = true;
-			ObjectParams.PoolSize						  = PoolParams.PoolSize;
+			PoolParams.Name								= ManagerParams.Name + TEXT("_") + Type.ToChar();
+			PoolParams.World							= ManagerParams.World;
+			PoolParams.ConstructParams.Outer			= this;
+			PoolParams.ConstructParams.Class			= Class;
+			PoolParams.ConstructParams.TypeName			= Params.Widget.GetFName();
+			PoolParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Object;
+			PoolParams.bConstructPayloads				= true;
+			PoolParams.PayloadSize						= Params.PayloadSize;
+			PoolParams.bCreatePool						= true;
+			PoolParams.PoolSize							= Params.PoolSize;
 		}
 
-		InitInternal(Params);
+		InitInternal(ManagerParams);
 	}
 }
 
-void UCsManager_UserWidget::InitInternal(const FCsManager_UserWidget_Internal::FCsManagerPooledObjectMapParams& Params)
+#define ManagerParamsType NCsUserWidget::FManager::FParams
+void UCsManager_UserWidget::InitInternal(const ManagerParamsType& Params)
 {
 	// Add CVars
 	{
-		FCsManager_UserWidget_Internal::FCsManagerPooledObjectMapParams& P = const_cast<FCsManager_UserWidget_Internal::FCsManagerPooledObjectMapParams&>(Params);
+		ManagerParamsType& P = const_cast<ManagerParamsType&>(Params);
 
-		for (TPair<FECsUserWidgetPooled, FCsManagerPooledObjectParams>& Pair : P.ObjectParams)
+		typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
+
+		for (TPair<FECsUserWidgetPooled, PoolParamsType>& Pair : P.ObjectParams)
 		{
-			FCsManagerPooledObjectParams& ObjectParams = Pair.Value;
+			PoolParamsType& PoolParams = Pair.Value;
 
 			// Scoped Timer CVars
-			ObjectParams.ScopedGroup = NCsScopedGroup::ManagerUserWidget;
+			PoolParams.ScopedGroup = NCsScopedGroup::ManagerUserWidget;
 
-			ObjectParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerUserWidgetScopedTimerCreatePool;
-			ObjectParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerUserWidgetScopedTimerUpdate;
-			ObjectParams.UpdateObjectScopedTimerCVar	= NCsCVarLog::LogManagerUserWidgetScopedTimerUpdateObject;
-			ObjectParams.AllocateScopedTimerCVar		= NCsCVarLog::LogManagerUserWidgetScopedTimerAllocate;
-			ObjectParams.AllocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerUserWidgetScopedTimerAllocateObject;
-			ObjectParams.DeallocateScopedTimerCVar		= NCsCVarLog::LogManagerUserWidgetScopedTimerDeallocate;
-			ObjectParams.DeallocateObjectScopedTimerCVar = NCsCVarLog::LogManagerUserWidgetScopedTimerDeallocateObject;
-			ObjectParams.SpawnScopedTimerCVar			= NCsCVarLog::LogManagerUserWidgetScopedTimerSpawn;
-			ObjectParams.DestroyScopedTimerCVar			= NCsCVarLog::LogManagerUserWidgetScopedTimerDestroy;
+			PoolParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerUserWidgetScopedTimerCreatePool;
+			PoolParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerUserWidgetScopedTimerUpdate;
+			PoolParams.UpdateObjectScopedTimerCVar		= NCsCVarLog::LogManagerUserWidgetScopedTimerUpdateObject;
+			PoolParams.AllocateScopedTimerCVar			= NCsCVarLog::LogManagerUserWidgetScopedTimerAllocate;
+			PoolParams.AllocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerUserWidgetScopedTimerAllocateObject;
+			PoolParams.DeallocateScopedTimerCVar		= NCsCVarLog::LogManagerUserWidgetScopedTimerDeallocate;
+			PoolParams.DeallocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerUserWidgetScopedTimerDeallocateObject;
+			PoolParams.SpawnScopedTimerCVar				= NCsCVarLog::LogManagerUserWidgetScopedTimerSpawn;
+			PoolParams.DestroyScopedTimerCVar			= NCsCVarLog::LogManagerUserWidgetScopedTimerDestroy;
 		}
 	}
 	Internal.Init(Params);
 }
+#undef ManagerParamsType
 
 void UCsManager_UserWidget::Clear()
 {
@@ -472,8 +486,10 @@ FCsUserWidgetPooled* UCsManager_UserWidget::ConstructContainer(const FECsUserWid
 	return new FCsUserWidgetPooled();
 }
 
-TMulticastDelegate<void, const FCsUserWidgetPooled*, const FCsManagerPooledObjectConstructParams&>& UCsManager_UserWidget::GetOnConstructObject_Event(const FECsUserWidgetPooled& Type)
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
+TMulticastDelegate<void, const FCsUserWidgetPooled*, const ConstructParamsType&>& UCsManager_UserWidget::GetOnConstructObject_Event(const FECsUserWidgetPooled& Type)
 {
+#undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);
 }
  
@@ -622,13 +638,20 @@ void UCsManager_UserWidget::ConstructPayloads(const FECsUserWidgetPooled& Type, 
 	Internal.ConstructPayloads(Type, Size);
 }
 
-NCsUserWidget::NPayload::IPayload* UCsManager_UserWidget::ConstructPayload(const FECsUserWidgetPooled& Type)
+#define PayloadType NCsUserWidget::NPayload::IPayload
+PayloadType* UCsManager_UserWidget::ConstructPayload(const FECsUserWidgetPooled& Type)
 {
-	return new NCsUserWidget::NPayload::FImpl();
+#undef PayloadType
+
+	typedef NCsUserWidget::NPayload::FImpl PayloadImplType;
+
+	return new PayloadImplType();
 }
 
-NCsUserWidget::NPayload::IPayload* UCsManager_UserWidget::AllocatePayload(const FECsUserWidgetPooled& Type)
+#define PayloadType NCsUserWidget::NPayload::IPayload
+PayloadType* UCsManager_UserWidget::AllocatePayload(const FECsUserWidgetPooled& Type)
 {
+#undef PayloadType
 	return Internal.AllocatePayload(Type);
 }
 
@@ -637,8 +660,10 @@ NCsUserWidget::NPayload::IPayload* UCsManager_UserWidget::AllocatePayload(const 
 	// Spawn
 #pragma region
 
-const FCsUserWidgetPooled* UCsManager_UserWidget::Spawn(const FECsUserWidgetPooled& Type, NCsUserWidget::NPayload::IPayload* Payload)
+#define PayloadType NCsUserWidget::NPayload::IPayload
+const FCsUserWidgetPooled* UCsManager_UserWidget::Spawn(const FECsUserWidgetPooled& Type, PayloadType* Payload)
 {
+#undef PayloadType
 	return Internal.Spawn(Type, Payload);
 }
 
@@ -722,7 +747,7 @@ void UCsManager_UserWidget::ConstructClassHandler()
 
 FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidgetPooled(const FECsUserWidgetPooled& Type)
 {
-	using namespace NCsManagerUserWidgetCached;
+	using namespace NCsManagerUserWidget::NCached;
 
 	const FString& Context = Str::GetUserWidgetPooled;
 
@@ -731,7 +756,7 @@ FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidgetPooled(const FECsUserWi
 
 FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidgetPooled(const FECsUserWidgetPooledClass& Type)
 {
-	using namespace NCsManagerUserWidgetCached;
+	using namespace NCsManagerUserWidget::NCached;
 
 	const FString& Context = Str::GetUserWidgetPooled;
 
@@ -755,7 +780,7 @@ void UCsManager_UserWidget::ConstructPooledClassHandler()
 
 FCsUserWidgetPtr* UCsManager_UserWidget::GetUserWidget(const FECsUserWidget& Type)
 {
-	using namespace NCsManagerUserWidgetCached;
+	using namespace NCsManagerUserWidget::NCached;
 
 	const FString& Context = Str::GetUserWidget;
 
@@ -769,7 +794,7 @@ FCsUserWidgetPtr* UCsManager_UserWidget::GetUserWidgetChecked(const FString& Con
 
 FCsUserWidgetPtr* UCsManager_UserWidget::GetUserWidget(const FECsUserWidgetClass& Type)
 {
-	using namespace NCsManagerUserWidgetCached;
+	using namespace NCsManagerUserWidget::NCached;
 
 	const FString& Context = Str::GetUserWidget;
 
@@ -788,7 +813,9 @@ FCsUserWidgetPtr* UCsManager_UserWidget::GetUserWidgetChecked(const FString& Con
 
 void UCsManager_UserWidget::ConstructDataHandler()
 {
-	DataHandler = new FCsManager_UserWidget_DataHandler();
+	typedef NCsUserWidget::NManager::NHandler::FData DataHandlerType;
+
+	DataHandler = new DataHandlerType();
 	DataHandler->Outer = this;
 	DataHandler->MyRoot = MyRoot;
 	DataHandler->Log = &FCsUILog::Warning;
@@ -796,7 +823,7 @@ void UCsManager_UserWidget::ConstructDataHandler()
 
 ICsData_UserWidget* UCsManager_UserWidget::GetData(const FName& Name)
 {
-	using namespace NCsManagerUserWidgetCached;
+	using namespace NCsManagerUserWidget::NCached;
 
 	const FString& Context = Str::GetData;
 
@@ -805,7 +832,7 @@ ICsData_UserWidget* UCsManager_UserWidget::GetData(const FName& Name)
 
 ICsData_UserWidget* UCsManager_UserWidget::GetData(const FECsUserWidget& Type)
 {
-	using namespace NCsManagerUserWidgetCached;
+	using namespace NCsManagerUserWidget::NCached;
 
 	const FString& Context = Str::GetData;
 

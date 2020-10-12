@@ -23,25 +23,30 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerWeapon_OnSpawn, const FEC
 
 class ICsWeapon;
 
+namespace NCsWeapon
+{
+#define ManagerMapType NCsPooledObject::NManager::TTMap
 #define PayloadType NCsWeapon::NPayload::IPayload
 
-class CSWP_API FCsManager_Weapon_Internal : public TCsManager_PooledObject_Map<ICsWeapon, FCsWeaponPooled, PayloadType, FECsWeapon>
-{
-private:
-
-	typedef TCsManager_PooledObject_Map<ICsWeapon, FCsWeaponPooled, PayloadType, FECsWeapon> Super;
-
-public:
-
-	FCsManager_Weapon_Internal();
-
-	FORCEINLINE virtual const FString& KeyTypeToString(const FECsWeapon& Type) override
+	class CSWP_API FManager : public ManagerMapType<ICsWeapon, FCsWeaponPooled, PayloadType, FECsWeapon>
 	{
-		return Type.GetName();
-	}
-};
+	private:
 
+		typedef ManagerMapType<ICsWeapon, FCsWeaponPooled, PayloadType, FECsWeapon> Super;
+
+	public:
+
+		FManager();
+
+		FORCEINLINE virtual const FString& KeyTypeToString(const FECsWeapon& Type) override
+		{
+			return Type.GetName();
+		}
+	};
+
+#undef ManagerMapType
 #undef PayloadType
+}
 
 #pragma endregion Internal
 
@@ -61,6 +66,9 @@ class CSWP_API UCsManager_Weapon : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+#define ManagerType NCsWeapon::FManager
+#define ManagerParamsType NCsWeapon::FManager::FParams
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 #define PayloadType NCsWeapon::NPayload::IPayload
 #define DataType NCsWeapon::NData::IData
 
@@ -153,7 +161,7 @@ public:
 		Settings = InSettings;
 	}
 
-		/**
+	/**
 	* If SET,
 	* - Get the type this Weapon has been mapped to for pooling.
 	*   i.e. If the weapon is completely data driven, then many weapons could share
@@ -176,7 +184,7 @@ public:
 protected:
 	
 	/** Reference to the internal manager for handling the pool of projectiles. */
-	FCsManager_Weapon_Internal Internal;
+	ManagerType Internal;
 	
 	/**
 	* Setup the internal manager for handling the pool of projectiles.
@@ -195,7 +203,7 @@ public:
 	*
 	* @param Params
 	*/
-	void InitInternal(const FCsManager_Weapon_Internal::FCsManagerPooledObjectMapParams& Params);
+	void InitInternal(const ManagerParamsType& Params);
 
 	virtual void Clear();
 
@@ -230,7 +238,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsWeaponPooled*, const FCsManagerPooledObjectConstructParams&>& GetOnConstructObject_Event(const FECsWeapon& Type);
+	TMulticastDelegate<void, const FCsWeaponPooled*, const ConstructParamsType&>& GetOnConstructObject_Event(const FECsWeapon& Type);
 
 		// Add
 #pragma region
@@ -817,6 +825,9 @@ protected:
 
 #pragma endregion Data
 
+#undef ManagerType
+#undef ManagerParamsType
+#undef ConstructParamsType
 #undef PayloadType
 #undef DataType
 };

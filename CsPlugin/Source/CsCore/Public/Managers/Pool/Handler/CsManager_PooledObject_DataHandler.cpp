@@ -1,15 +1,19 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Handler/CsManager_PooledObject_DataHandler.h"
 
-// Cached
-#pragma region
-
-namespace NCsManagerPooledObjectDataHandlerCached
+namespace NCsPooledObject
 {
-	namespace Name
+	namespace NManager
 	{
-		CSCORE_API const FName Data = FName("Data");
+		namespace NHandler
+		{
+			namespace NCached
+			{
+				namespace Name
+				{
+					CSCORE_API const FName Data = FName("Data");
+				}
+			}
+		}
 	}
 }
-
-#pragma endregion Cached

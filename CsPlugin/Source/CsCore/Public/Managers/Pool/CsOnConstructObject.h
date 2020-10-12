@@ -18,5 +18,9 @@ class CSCORE_API ICsOnConstructObject
 
 public:
 
-	virtual void OnConstructObject(const FCsManagerPooledObjectConstructParams& Params) = 0;
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
+
+	virtual void OnConstructObject(const ConstructParamsType& Params) = 0;
+
+#undef ConstructParamsType
 };

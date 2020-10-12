@@ -24,13 +24,14 @@ class ICsFXActorPooled;
 
 namespace NCsFX
 {
+#define ManagerMapType NCsPooledObject::NManager::TTMap
 #define PayloadType NCsFX::NPayload::IPayload
 
-	class CSCORE_API FManager : public TCsManager_PooledObject_Map<ICsFXActorPooled, FCsFXActorPooled, PayloadType, FECsFX>
+	class CSCORE_API FManager : public ManagerMapType<ICsFXActorPooled, FCsFXActorPooled, PayloadType, FECsFX>
 	{
 	private:
 
-		typedef TCsManager_PooledObject_Map<ICsFXActorPooled, FCsFXActorPooled, PayloadType, FECsFX> Super;
+		typedef ManagerMapType<ICsFXActorPooled, FCsFXActorPooled, PayloadType, FECsFX> Super;
 
 	public:
 
@@ -60,6 +61,7 @@ public:
 
 #define ManagerType NCsFX::FManager 
 #define PayloadType NCsFX::NPayload::IPayload
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 
 // Singleton
 #pragma region
@@ -171,7 +173,7 @@ public:
 	*
 	* @param Params
 	*/
-	void InitInternal(const ManagerType::FCsManagerPooledObjectMapParams& Params);
+	void InitInternal(const ManagerType::FParams& Params);
 
 	virtual void Clear();
 
@@ -206,7 +208,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsFXActorPooled*, const FCsManagerPooledObjectConstructParams&>& GetOnConstructObject_Event(const FECsFX& Type);
+	TMulticastDelegate<void, const FCsFXActorPooled*, const ConstructParamsType&>& GetOnConstructObject_Event(const FECsFX& Type);
 
 	/**
 	*
@@ -652,4 +654,5 @@ private:
 
 #undef ManagerType
 #undef PayloadType
+#undef ConstructParamsType
 };

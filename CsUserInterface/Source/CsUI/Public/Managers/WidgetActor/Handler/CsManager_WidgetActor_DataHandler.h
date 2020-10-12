@@ -7,21 +7,36 @@
 #include "Managers/WidgetActor/Data/CsData_WidgetActorInterfaceMap.h"
 #pragma once
 
-class CSUI_API FCsManager_WidgetActor_DataHandler : public TCsManager_PooledObject_DataHandler<ICsData_WidgetActor, FCsData_WidgetActorPtr, FCsData_WidgetActorInterfaceMap>
+namespace NCsWidgetActor
 {
-private:
+	namespace NManager
+	{
+		namespace NHandler
+		{
+#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
 
-	typedef TCsManager_PooledObject_DataHandler<ICsData_WidgetActor, FCsData_WidgetActorPtr, FCsData_WidgetActorInterfaceMap> Super;
+			/**
+			*/
+			class CSUI_API FData : public DataHandlerType<ICsData_WidgetActor, FCsData_WidgetActorPtr, FCsData_WidgetActorInterfaceMap>
+			{
+			private:
 
-public:
+				typedef DataHandlerType<ICsData_WidgetActor, FCsData_WidgetActorPtr, FCsData_WidgetActorInterfaceMap> Super;
 
-	FCsManager_WidgetActor_DataHandler();
+			public:
 
-// TCsManager_PooledObject_DataHandler Interface
-#pragma region
-protected:
+				FData();
 
-	virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
+			// DataHandlerType (NCsPooledObject::NManager::NHandler::TData)
+			#pragma region
+			protected:
 
-#pragma endregion TCsManager_PooledObject_DataHandler Interface
-};
+				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
+
+			#pragma endregion DataHandlerType (NCsPooledObject::NManager::NHandler::TData)
+			};
+
+#undef DataHandlerType
+		}
+	}
+}

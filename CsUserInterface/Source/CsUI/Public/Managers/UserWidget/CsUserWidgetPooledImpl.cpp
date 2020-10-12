@@ -21,13 +21,16 @@
 // Cached
 #pragma region
 
-namespace NCsUserWidgetPooledImplCached
+namespace NCsUserWidgetPooledImpl
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidgetPooledImpl, OnConstructObject);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidgetPooledImpl, Update);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidgetPooledImpl, Allocate);
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidgetPooledImpl, OnConstructObject);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidgetPooledImpl, Update);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidgetPooledImpl, Allocate);
+		}
 	}
 }
 
@@ -55,9 +58,12 @@ void UCsUserWidgetPooledImpl::BeginDestroy()
 // ICsOnConstructObject
 #pragma region
 
-void UCsUserWidgetPooledImpl::OnConstructObject(const FCsManagerPooledObjectConstructParams& Params)
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
+void UCsUserWidgetPooledImpl::OnConstructObject(const ConstructParamsType& Params)
 {
-	using namespace NCsUserWidgetPooledImplCached;
+#undef ConstructParamsType
+
+	using namespace NCsUserWidgetPooledImpl::NCached;
 
 	const FString& Context = Str::OnConstructObject;
 
@@ -108,7 +114,7 @@ void UCsUserWidgetPooledImpl::OnConstructObject(const FCsManagerPooledObjectCons
 
 void UCsUserWidgetPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
-	using namespace NCsUserWidgetPooledImplCached;
+	using namespace NCsUserWidgetPooledImpl::NCached;
 
 	const FString& Context = Str::Update;
 
@@ -124,9 +130,12 @@ void UCsUserWidgetPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 // ICsPooledObject
 #pragma region
 
-void UCsUserWidgetPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
+#define PayloadType NCsPooledObject::NPayload::IPayload
+void UCsUserWidgetPooledImpl::Allocate(PayloadType* Payload)
 {
-	using namespace NCsUserWidgetPooledImplCached;
+#undef PayloadType
+
+	using namespace NCsUserWidgetPooledImpl::NCached;
 
 	const FString& Context = Str::Allocate;
 
@@ -136,9 +145,9 @@ void UCsUserWidgetPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payl
 
 	CacheImpl->Allocate(Payload);
 
-	typedef NCsUserWidget::NPayload::IPayload PayloadInterfaceType;
+	typedef NCsUserWidget::NPayload::IPayload UserWidgetPayloadType;
 
-	PayloadInterfaceType* UserWidgetPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<PayloadInterfaceType>(Context, Payload);
+	UserWidgetPayloadType* UserWidgetPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<UserWidgetPayloadType>(Context, Payload);
 
 	UserWidget->SetVisibility(UserWidgetPayload->GetVisibility());
 	UserWidget->SetIsEnabled(true);
@@ -157,5 +166,7 @@ void UCsUserWidgetPooledImpl::Deallocate()
 
 void UCsUserWidgetPooledImpl::ConstructCache()
 {
-	Cache = new NCsUserWidget::NCache::FImpl();
+	typedef NCsUserWidget::NCache::FImpl CacheImplType;
+
+	Cache = new CacheImplType();
 }

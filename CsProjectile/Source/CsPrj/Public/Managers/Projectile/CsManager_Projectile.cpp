@@ -420,22 +420,24 @@ void UCsManager_Projectile::InitInternalFromSettings()
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		typedef NCsProjectile::FManager ManagerType;
+		typedef NCsProjectile::FManager::FParams ManagerParamsType;
 
-		ManagerType::FCsManagerPooledObjectMapParams Params;
+		ManagerParamsType ManagerParams;
 
-		Params.Name  = TEXT("UCsManager_Projectile::NCsProjectile::FManager");
-		Params.World = MyRoot->GetWorld();
+		ManagerParams.Name  = TEXT("UCsManager_Projectile::NCsProjectile::FManager");
+		ManagerParams.World = MyRoot->GetWorld();
 
 		for (const TPair<FECsProjectile, FCsSettings_Manager_Projectile_PoolParams>& Pair : Settings.PoolParams)
 		{
 			const FECsProjectile& Type									= Pair.Key;
-			const FCsSettings_Manager_Projectile_PoolParams& PoolParams = Pair.Value;
+			const FCsSettings_Manager_Projectile_PoolParams& Params = Pair.Value;
 
-			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
+			typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
+
+			PoolParamsType& PoolParams = ManagerParams.ObjectParams.Add(Type);
 
 			// Get Class
-			const FECsProjectileClass& ClassType = PoolParams.Class;
+			const FECsProjectileClass& ClassType = Params.Class;
 
 			checkf(EMCsProjectileClass::Get().IsValidEnum(ClassType), TEXT("%s: Class for NOT Valid."), *Context, ClassType.ToChar());
 
@@ -444,49 +446,51 @@ void UCsManager_Projectile::InitInternalFromSettings()
 
 			checkf(Class, TEXT("%s: Failed to get class for Type: %s ClassType: %s."), *Context, Type.ToChar(), ClassType.ToChar());
 
-			ObjectParams.Name							  = Params.Name + TEXT("_") + Type.ToChar();
-			ObjectParams.World							  = Params.World;
-			ObjectParams.ConstructParams.Outer			  = this;
-			ObjectParams.ConstructParams.Class			  = Class;
-			ObjectParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
-			ObjectParams.bConstructPayloads				  = true;
-			ObjectParams.PayloadSize					  = PoolParams.PayloadSize;
-			ObjectParams.bCreatePool					  = true;
-			ObjectParams.PoolSize						  = PoolParams.PoolSize;
+			PoolParams.Name								= ManagerParams.Name + TEXT("_") + Type.ToChar();
+			PoolParams.World							= ManagerParams.World;
+			PoolParams.ConstructParams.Outer			= this;
+			PoolParams.ConstructParams.Class			= Class;
+			PoolParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
+			PoolParams.bConstructPayloads				= true;
+			PoolParams.PayloadSize						= Params.PayloadSize;
+			PoolParams.bCreatePool						= true;
+			PoolParams.PoolSize							= Params.PoolSize;
 		}
 
-		InitInternal(Params);
+		InitInternal(ManagerParams);
 	}
 }
 
-#define ManagerType NCsProjectile::FManager
-void UCsManager_Projectile::InitInternal(const ManagerType::FCsManagerPooledObjectMapParams& Params)
+#define ManagerParamsType NCsProjectile::FManager::FParams
+void UCsManager_Projectile::InitInternal(const ManagerParamsType& Params)
 {
 	// Add CVars
 	{
-		ManagerType::FCsManagerPooledObjectMapParams& P = const_cast<ManagerType::FCsManagerPooledObjectMapParams&>(Params);
+		ManagerParamsType& P = const_cast<ManagerParamsType&>(Params);
 
-		for (TPair<FECsProjectile, FCsManagerPooledObjectParams>& Pair : P.ObjectParams)
+		typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
+
+		for (TPair<FECsProjectile, PoolParamsType>& Pair : P.ObjectParams)
 		{
-			FCsManagerPooledObjectParams& ObjectParams = Pair.Value;
+			PoolParamsType& PoolParams = Pair.Value;
 
 			// Scoped Timer CVars
-			ObjectParams.ScopedGroup = NCsScopedGroup::ManagerProjectile;
+			PoolParams.ScopedGroup = NCsScopedGroup::ManagerProjectile;
 
-			ObjectParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerProjectileScopedTimerCreatePool;
-			ObjectParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerProjectileScopedTimerUpdate;
-			ObjectParams.UpdateObjectScopedTimerCVar	= NCsCVarLog::LogManagerProjectileScopedTimerUpdateObject;
-			ObjectParams.AllocateScopedTimerCVar		= NCsCVarLog::LogManagerProjectileScopedTimerAllocate;
-			ObjectParams.AllocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerProjectileScopedTimerAllocateObject;
-			ObjectParams.DeallocateScopedTimerCVar		= NCsCVarLog::LogManagerProjectileScopedTimerDeallocate;
-			ObjectParams.DeallocateObjectScopedTimerCVar = NCsCVarLog::LogManagerProjectileScopedTimerDeallocateObject;
-			ObjectParams.SpawnScopedTimerCVar			= NCsCVarLog::LogManagerProjectileScopedTimerSpawn;
-			ObjectParams.DestroyScopedTimerCVar			= NCsCVarLog::LogManagerProjectileScopedTimerDestroy;
+			PoolParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerProjectileScopedTimerCreatePool;
+			PoolParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerProjectileScopedTimerUpdate;
+			PoolParams.UpdateObjectScopedTimerCVar		= NCsCVarLog::LogManagerProjectileScopedTimerUpdateObject;
+			PoolParams.AllocateScopedTimerCVar			= NCsCVarLog::LogManagerProjectileScopedTimerAllocate;
+			PoolParams.AllocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerProjectileScopedTimerAllocateObject;
+			PoolParams.DeallocateScopedTimerCVar		= NCsCVarLog::LogManagerProjectileScopedTimerDeallocate;
+			PoolParams.DeallocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerProjectileScopedTimerDeallocateObject;
+			PoolParams.SpawnScopedTimerCVar				= NCsCVarLog::LogManagerProjectileScopedTimerSpawn;
+			PoolParams.DestroyScopedTimerCVar			= NCsCVarLog::LogManagerProjectileScopedTimerDestroy;
 		}
 	}
 	Internal.Init(Params);
 }
-#undef ManagerType
+#undef ManagerParamsType
 
 void UCsManager_Projectile::Clear()
 {
@@ -518,8 +522,10 @@ FCsProjectilePooled* UCsManager_Projectile::ConstructContainer(const FECsProject
 	return new FCsProjectilePooled();
 }
 
-TMulticastDelegate<void, const FCsProjectilePooled*, const FCsManagerPooledObjectConstructParams&>& UCsManager_Projectile::GetOnConstructObject_Event(const FECsProjectile& Type)
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
+TMulticastDelegate<void, const FCsProjectilePooled*, const ConstructParamsType&>& UCsManager_Projectile::GetOnConstructObject_Event(const FECsProjectile& Type)
 {
+#undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);
 }
 
@@ -911,7 +917,9 @@ FCsProjectilePooled* UCsManager_Projectile::GetProjectileChecked(const FString& 
 
 void UCsManager_Projectile::ConstructDataHandler()
 {
-	DataHandler = new FCsManager_Projectile_DataHandler();
+	typedef NCsProjectile::NManager::NHandler::FData DataHandlerType;
+
+	DataHandler = new DataHandlerType();
 	DataHandler->Outer = this;
 	DataHandler->MyRoot = MyRoot;
 	DataHandler->Log = &FCsPrjLog::Warning;

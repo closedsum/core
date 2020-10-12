@@ -3,99 +3,107 @@
 #include "CsCVars.h"
 #pragma once
 
-// FCsManagerPooledObjectConstructParams
-#pragma region
 
 class UWorld;
 class UObject;
 class UClass;
 
-/**
-*/
-struct CSCORE_API FCsManagerPooledObjectConstructParams
+namespace NCsPooledObject
 {
-public:
+	namespace NManager
+	{
+		// FConstructParams
+		#pragma region
 
-	UObject* Outer;
 
-	UClass* Class;
+		/**
+		*/
+		struct CSCORE_API FConstructParams
+		{
+		public:
 
-	/** Pass through name of the Type. This additional data is not usually used in 
-	    normal cases. Can be used a additional Type information for a nested object. */
-	FName TypeName;
+			UObject* Outer;
 
-	/** Pass through name of the Class Type. This additional data is not usually used in
-		normal cases. Can be used a additional Type information for a nested object. */
-	FName ClassTypeName;
+			UClass* Class;
 
-	ECsPooledObjectConstruction ConstructionType;
+			/** Pass through name of the Type. This additional data is not usually used in
+				normal cases. Can be used a additional Type information for a nested object. */
+			FName TypeName;
 
-	FActorSpawnParameters ConstructionInfo;
+			/** Pass through name of the Class Type. This additional data is not usually used in
+				normal cases. Can be used a additional Type information for a nested object. */
+			FName ClassTypeName;
 
-	bool bReplicates;
+			ECsPooledObjectConstruction ConstructionType;
 
-	FCsManagerPooledObjectConstructParams();
-};
+			FActorSpawnParameters ConstructionInfo;
 
-#pragma endregion FCsManagerPooledObjectConstructParams
+			bool bReplicates;
 
-// FCsManagerPooledObjectParams
-#pragma region
+			FConstructParams();
+		};
 
-/**
-*/
-struct CSCORE_API FCsManagerPooledObjectParams
-{
-public:
+#		pragma endregion FConstructParams
 
-	/** */
-	FString Name;
+		// FPoolParams
+		#pragma region
 
-	/** World associated with the Manager. */
-	UWorld* World;
+		/**
+		*/
+		struct CSCORE_API FPoolParams
+		{
+		public:
 
-	/** */
-	FECsCVarLog LogType;
+			/** */
+			FString Name;
 
-	/** Parameters for describing how to Construct a Pooled Object. */
-	FCsManagerPooledObjectConstructParams ConstructParams;
+			/** World associated with the Manager. */
+			UWorld* World;
 
-	/** Whether to Construct the Payloads on Init. */
-	bool bConstructPayloads;
+			/** */
+			FECsCVarLog LogType;
 
-	/** Number of Payloads to Construct if bConstructPayloads is true. */
-	int32 PayloadSize;
+			/** Parameters for describing how to Construct a Pooled Object. */
+			FConstructParams ConstructParams;
 
-	/** Whether to Create a Pool on Init. */
-	bool bCreatePool;
+			/** Whether to Construct the Payloads on Init. */
+			bool bConstructPayloads;
 
-	/** Size of the Pool to create if bCreatePool is true. */
-	int32 PoolSize;
+			/** Number of Payloads to Construct if bConstructPayloads is true. */
+			int32 PayloadSize;
 
-	// Scoped Timer
+			/** Whether to Create a Pool on Init. */
+			bool bCreatePool;
 
-	FECsScopedGroup ScopedGroup;
+			/** Size of the Pool to create if bCreatePool is true. */
+			int32 PoolSize;
 
-	/** Scoped Timer for CreatePool */
-	FECsCVarLog CreatePoolScopedTimerCVar;
-	/** Scoped Timer for Update */
-	FECsCVarLog UpdateScopedTimerCVar;
-	/** Scoped Timer for Updating a single Object */
-	FECsCVarLog UpdateObjectScopedTimerCVar;
-	/** Scoped Timer for Allocate */
-	FECsCVarLog AllocateScopedTimerCVar;
-	/** Scoped Timer for PooledObject->Allocate */
-	FECsCVarLog AllocateObjectScopedTimerCVar;
-	/** Scoped Timer for Deallocate */
-	FECsCVarLog DeallocateScopedTimerCVar;
-	/** Scoped Timer for PooledObject->Deallocate */
-	FECsCVarLog DeallocateObjectScopedTimerCVar;
-	/** Scoped Timer for Spawn */
-	FECsCVarLog SpawnScopedTimerCVar;
-	/** Scoped Timer for Destroy */
-	FECsCVarLog DestroyScopedTimerCVar;
+			// Scoped Timer
 
-	FCsManagerPooledObjectParams();
-};
+			FECsScopedGroup ScopedGroup;
 
-#pragma endregion FCsManagerPooledObjectParams
+			/** Scoped Timer for CreatePool */
+			FECsCVarLog CreatePoolScopedTimerCVar;
+			/** Scoped Timer for Update */
+			FECsCVarLog UpdateScopedTimerCVar;
+			/** Scoped Timer for Updating a single Object */
+			FECsCVarLog UpdateObjectScopedTimerCVar;
+			/** Scoped Timer for Allocate */
+			FECsCVarLog AllocateScopedTimerCVar;
+			/** Scoped Timer for PooledObject->Allocate */
+			FECsCVarLog AllocateObjectScopedTimerCVar;
+			/** Scoped Timer for Deallocate */
+			FECsCVarLog DeallocateScopedTimerCVar;
+			/** Scoped Timer for PooledObject->Deallocate */
+			FECsCVarLog DeallocateObjectScopedTimerCVar;
+			/** Scoped Timer for Spawn */
+			FECsCVarLog SpawnScopedTimerCVar;
+			/** Scoped Timer for Destroy */
+			FECsCVarLog DestroyScopedTimerCVar;
+
+			FPoolParams();
+		};
+
+		#pragma endregion FPoolParams
+	}
+}

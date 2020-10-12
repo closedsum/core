@@ -331,78 +331,82 @@ void UCsManager_Sound::InitInternalFromSettings()
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		typedef NCsSound::FManager ManagerType;
+		typedef NCsSound::FManager::FParams ManagerParamsType;
 
-		ManagerType::FCsManagerPooledObjectMapParams Params;
+		ManagerParamsType ManagerParams;
 
-		Params.Name  = TEXT("UCsManager_Sound::NCsSound::FManager");
-		Params.World = MyRoot->GetWorld();
+		ManagerParams.Name  = TEXT("UCsManager_Sound::NCsSound::FManager");
+		ManagerParams.World = MyRoot->GetWorld();
 
 		for (const TPair<FECsSound, FCsSettings_Manager_Sound_PoolParams>& Pair : Settings.PoolParams)
 		{
-			const FECsSound& Type								   = Pair.Key;
-			const FCsSettings_Manager_Sound_PoolParams& PoolParams = Pair.Value;
+			const FECsSound& Type							   = Pair.Key;
+			const FCsSettings_Manager_Sound_PoolParams& Params = Pair.Value;
 
-			FCsManagerPooledObjectParams& ObjectParams = Params.ObjectParams.Add(Type);
+			typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
-			checkf(PoolParams.Class.ToSoftObjectPath().IsValid(), TEXT("UCsManager_Sound::InitInternalFromSettings: Class for Type: %s is NOT a Valid Path."), Type.ToChar());
+			PoolParamsType& PoolParams = ManagerParams.ObjectParams.Add(Type);
+
+			checkf(Params.Class.ToSoftObjectPath().IsValid(), TEXT("UCsManager_Sound::InitInternalFromSettings: Class for Type: %s is NOT a Valid Path."), Type.ToChar());
 
 #if !UE_BUILD_SHIPPING
-			if (!PoolParams.Class.Get())
+			if (!Params.Class.Get())
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_Sound::InitInternalFromSettings: Class @ for Type: %s is NOT already loaded in memory."), *(PoolParams.Class.ToString()), Type.ToChar());
+				UE_LOG(LogCs, Warning, TEXT("UCsManager_Sound::InitInternalFromSettings: Class @ for Type: %s is NOT already loaded in memory."), *(Params.Class.ToString()), Type.ToChar());
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			UClass* Class = PoolParams.Class.LoadSynchronous();
+			UClass* Class = Params.Class.LoadSynchronous();
 
-			checkf(Class, TEXT("UCsManager_Sound::InitInternalFromSettings: Failed to load Class @ for Type: %s."), *(PoolParams.Class.ToString()), Type.ToChar());
+			checkf(Class, TEXT("UCsManager_Sound::InitInternalFromSettings: Failed to load Class @ for Type: %s."), *(Params.Class.ToString()), Type.ToChar());
 
 			ClassMap.Add(Type, Class);
 
-			ObjectParams.Name							  = Params.Name + TEXT("_") + Type.ToChar();
-			ObjectParams.World							  = Params.World;
-			ObjectParams.ConstructParams.Outer			  = this;
-			ObjectParams.ConstructParams.Class			  = Class;
-			ObjectParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
-			ObjectParams.bConstructPayloads				  = true;
-			ObjectParams.PayloadSize					  = PoolParams.PayloadSize;
-			ObjectParams.bCreatePool					  = true;
-			ObjectParams.PoolSize						  = PoolParams.PoolSize;
+			PoolParams.Name								= ManagerParams.Name + TEXT("_") + Type.ToChar();
+			PoolParams.World							= ManagerParams.World;
+			PoolParams.ConstructParams.Outer			= this;
+			PoolParams.ConstructParams.Class			= Class;
+			PoolParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
+			PoolParams.bConstructPayloads				= true;
+			PoolParams.PayloadSize						= Params.PayloadSize;
+			PoolParams.bCreatePool						= true;
+			PoolParams.PoolSize							= Params.PoolSize;
 		}
 
-		InitInternal(Params);
+		InitInternal(ManagerParams);
 	}
 }
 
-#define ManagerType NCsSound::FManager
-void UCsManager_Sound::InitInternal(const ManagerType::FCsManagerPooledObjectMapParams& Params)
+#define ManagerParamsType NCsSound::FManager::FParams
+void UCsManager_Sound::InitInternal(const ManagerParamsType& Params)
 {
 	// Add CVars
 	{
-		ManagerType::FCsManagerPooledObjectMapParams& P = const_cast<ManagerType::FCsManagerPooledObjectMapParams&>(Params);
+		ManagerParamsType& P = const_cast<ManagerParamsType&>(Params);
 
-		for (TPair<FECsSound, FCsManagerPooledObjectParams>& Pair : P.ObjectParams)
+		typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
+
+		for (TPair<FECsSound, PoolParamsType>& Pair : P.ObjectParams)
 		{
-			FCsManagerPooledObjectParams& ObjectParams = Pair.Value;
+			PoolParamsType& PoolParams = Pair.Value;
 
 			// Scoped Timer CVars
-			ObjectParams.ScopedGroup = NCsScopedGroup::ManagerSound;
+			PoolParams.ScopedGroup = NCsScopedGroup::ManagerSound;
 
-			ObjectParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerSoundScopedTimerCreatePool;
-			ObjectParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerSoundScopedTimerUpdate;
-			ObjectParams.UpdateObjectScopedTimerCVar	= NCsCVarLog::LogManagerSoundScopedTimerUpdateObject;
-			ObjectParams.AllocateScopedTimerCVar		= NCsCVarLog::LogManagerSoundScopedTimerAllocate;
-			ObjectParams.AllocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerSoundScopedTimerAllocateObject;
-			ObjectParams.DeallocateScopedTimerCVar		= NCsCVarLog::LogManagerSoundScopedTimerDeallocate;
-			ObjectParams.DeallocateObjectScopedTimerCVar = NCsCVarLog::LogManagerSoundScopedTimerDeallocateObject;
-			ObjectParams.SpawnScopedTimerCVar			= NCsCVarLog::LogManagerSoundScopedTimerSpawn;
-			ObjectParams.DestroyScopedTimerCVar			= NCsCVarLog::LogManagerSoundScopedTimerDestroy;
+			PoolParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerSoundScopedTimerCreatePool;
+			PoolParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerSoundScopedTimerUpdate;
+			PoolParams.UpdateObjectScopedTimerCVar		= NCsCVarLog::LogManagerSoundScopedTimerUpdateObject;
+			PoolParams.AllocateScopedTimerCVar			= NCsCVarLog::LogManagerSoundScopedTimerAllocate;
+			PoolParams.AllocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerSoundScopedTimerAllocateObject;
+			PoolParams.DeallocateScopedTimerCVar		= NCsCVarLog::LogManagerSoundScopedTimerDeallocate;
+			PoolParams.DeallocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerSoundScopedTimerDeallocateObject;
+			PoolParams.SpawnScopedTimerCVar				= NCsCVarLog::LogManagerSoundScopedTimerSpawn;
+			PoolParams.DestroyScopedTimerCVar			= NCsCVarLog::LogManagerSoundScopedTimerDestroy;
 		}
 	}
 	Internal.Init(Params);
 }
-#undef ManagerType
+#undef ManagerParamsType
 
 void UCsManager_Sound::Clear()
 {
@@ -434,8 +438,10 @@ FCsSoundPooled* UCsManager_Sound::ConstructContainer(const FECsSound& Type)
 	return new FCsSoundPooled();
 }
 
-TMulticastDelegate<void, const FCsSoundPooled*, const FCsManagerPooledObjectConstructParams&>& UCsManager_Sound::GetOnConstructObject_Event(const FECsSound& Type)
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
+TMulticastDelegate<void, const FCsSoundPooled*, const ConstructParamsType&>& UCsManager_Sound::GetOnConstructObject_Event(const FECsSound& Type)
 {
+#undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);
 }
 

@@ -23,35 +23,48 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerWidgetActor_OnSpawn, cons
 
 class ICsWidgetActor;
 
-class CSUI_API FCsManager_WidgetActor_Internal : public TCsManager_PooledObject_Map<ICsWidgetActor, FCsWidgetActorPooled, NCsWidgetActor::NPayload::IPayload, FECsWidgetActor>
+#define ManagerMapType NCsPooledObject::NManager::TTMap
+#define PayloadType NCsWidgetActor::NPayload::IPayload
+
+namespace NCsWidgetActor
 {
-private:
-
-	typedef TCsManager_PooledObject_Map<ICsWidgetActor, FCsWidgetActorPooled, NCsWidgetActor::NPayload::IPayload, FECsWidgetActor> Super;
-
-public:
-
-	FCsManager_WidgetActor_Internal();
-
-	FORCEINLINE virtual const FString& KeyTypeToString(const FECsWidgetActor& Type) override
+	class CSUI_API FManager : public ManagerMapType<ICsWidgetActor, FCsWidgetActorPooled, PayloadType, FECsWidgetActor>
 	{
-		return Type.GetName();
-	}
-};
+	private:
+
+		typedef ManagerMapType<ICsWidgetActor, FCsWidgetActorPooled, PayloadType, FECsWidgetActor> Super;
+
+	public:
+
+		FManager();
+
+		FORCEINLINE virtual const FString& KeyTypeToString(const FECsWidgetActor& Type) override
+		{
+			return Type.GetName();
+		}
+	};
+
+#undef ManagerMapType
+#undef PayloadType
+}
 
 #pragma endregion Internal
 
 class ICsGetManagerWidgetActor;
 class UDataTable;
 
+// NCsPooledObject::NManager::NHandler::TClass
 namespace NCsPooledObject {
 	namespace NManager {
 		namespace NHandler {
 			template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumType>
 			class TClass; } } }
-
-template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
-class TCsManager_PooledObject_DataHandler;
+// NCsPooledObject::NManager::NHandler::TData
+namespace NCsPooledObject {
+	namespace NManager {
+		namespace NHandler {
+			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
+			class TData; } } }
 
 class ICsData_WidgetActor;
 struct FCsData_WidgetActorInterfaceMap;
@@ -61,7 +74,12 @@ class CSUI_API UCsManager_WidgetActor : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+#define ManagerType NCsWidgetActor::FManager
+#define ManagerParamsType NCsWidgetActor::FManager::FParams
+#define PayloadType NCsWidgetActor::NPayload::IPayload
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 #define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
+#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
 
 public:	
 
@@ -175,7 +193,7 @@ public:
 protected:
 	
 	/** Reference to the internal manager for handling the pool of fx actors. */
-	FCsManager_WidgetActor_Internal Internal;
+	ManagerType Internal;
 	
 	/**
 	* Setup the internal manager for handling the pool of projectiles.
@@ -194,7 +212,7 @@ public:
 	*
 	* @param Params
 	*/
-	void InitInternal(const FCsManager_WidgetActor_Internal::FCsManagerPooledObjectMapParams& Params);
+	void InitInternal(const ManagerParamsType& Params);
 
 	virtual void Clear();
 
@@ -229,7 +247,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsWidgetActorPooled*, const FCsManagerPooledObjectConstructParams&>& GetOnConstructObject_Event(const FECsWidgetActor& Type);
+	TMulticastDelegate<void, const FCsWidgetActorPooled*, const ConstructParamsType&>& GetOnConstructObject_Event(const FECsWidgetActor& Type);
 
 	/**
 	*
@@ -498,7 +516,7 @@ public:
 	* @param Type
 	* return
 	*/
-	virtual NCsWidgetActor::NPayload::IPayload* ConstructPayload(const FECsWidgetActor& Type);
+	virtual PayloadType* ConstructPayload(const FECsWidgetActor& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
@@ -507,7 +525,7 @@ public:
 	* @param Type	Type of payload.
 	* return		Payload that implements the interface: NCsWidgetActor::NPayload::IPayload.
 	*/
-	NCsWidgetActor::NPayload::IPayload* AllocatePayload(const FECsWidgetActor& Type);
+	PayloadType* AllocatePayload(const FECsWidgetActor& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
@@ -534,7 +552,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	const FCsWidgetActorPooled* Spawn(const FECsWidgetActor& Type, NCsWidgetActor::NPayload::IPayload* Payload);
+	const FCsWidgetActorPooled* Spawn(const FECsWidgetActor& Type, PayloadType* Payload);
 
 	/**
 	*
@@ -689,7 +707,7 @@ public:
 #pragma region
 protected:
 
-	TCsManager_PooledObject_DataHandler<ICsData_WidgetActor, FCsData_WidgetActorPtr, FCsData_WidgetActorInterfaceMap>* DataHandler;
+	DataHandlerType<ICsData_WidgetActor, FCsData_WidgetActorPtr, FCsData_WidgetActorInterfaceMap>* DataHandler;
 
 	virtual void ConstructDataHandler();
 
@@ -733,5 +751,10 @@ public:
 
 #pragma endregion Data
 
+#undef ManagerType
+#undef ManagerParamsType
+#undef PayloadType
+#undef ConstructParamsType
 #undef ClassHandlerType
+#undef DataHandlerType
 };

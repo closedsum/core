@@ -10,13 +10,10 @@
 
 #include "CsUserWidgetPooledImpl.generated.h"
 
-namespace NCsPooledObject {
-	namespace NCache {
-		struct ICache; } }
-
-namespace NCsPooledObject {
-	namespace NPayload {
-		struct IPayload; } }
+// NCsPooledObject::NCache::ICache
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
+// NCsPooledObject::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
 class UUserWidget;
 
@@ -28,6 +25,10 @@ class CSUI_API UCsUserWidgetPooledImpl : public UObject,
 										 public ICsUserWidgetPooled
 {
 	GENERATED_UCLASS_BODY()
+
+#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
+#define CacheType NCsPooledObject::NCache::ICache
+#define PayloadType NCsPooledObject::NPayload::IPayload
 
 // UObject Interface
 #pragma region
@@ -41,7 +42,7 @@ public:
 #pragma region
 public:
 
-	void OnConstructObject(const FCsManagerPooledObjectConstructParams& Params);
+	void OnConstructObject(const ConstructParamsType& Params);
 
 #pragma endregion ICsOnConstructObject
 
@@ -57,12 +58,12 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE NCsPooledObject::NCache::ICache* GetCache() const
+	FORCEINLINE CacheType* GetCache() const
 	{
 		return Cache;
 	}
 	
-	void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
+	void Allocate(PayloadType* Payload);
 
 	void Deallocate();
 
@@ -70,7 +71,7 @@ public:
 
 protected:
 
-	NCsPooledObject::NCache::ICache* Cache;
+	CacheType* Cache;
 
 	void ConstructCache();
 
@@ -89,4 +90,8 @@ protected:
 
 	UPROPERTY()
 	UUserWidget* UserWidget;
+
+#undef ConstructParamsType
+#undef CacheType
+#undef PayloadType
 };

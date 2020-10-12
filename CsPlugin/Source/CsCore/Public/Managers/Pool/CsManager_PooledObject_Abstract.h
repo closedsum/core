@@ -309,7 +309,7 @@ namespace NCsPooledObject
 				PoolSize = 0;
 				AllocatedObjects.Reset();
 
-				for (NCsPooledObject::NPayload::IPayload* P : PooledObjectPayloads)
+				for (PooledPayloadType* P : PooledObjectPayloads)
 				{
 					P->Reset();
 				}

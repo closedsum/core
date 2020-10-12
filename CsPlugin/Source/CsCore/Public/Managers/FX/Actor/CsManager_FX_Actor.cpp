@@ -419,7 +419,7 @@ void UCsManager_FX_Actor::InitInternal(const ManagerParamsType& Params)
 	}
 	Internal.Init(Params);
 }
-#undef ManagerType
+#undef ManagerParamsType
 
 void UCsManager_FX_Actor::Clear()
 {

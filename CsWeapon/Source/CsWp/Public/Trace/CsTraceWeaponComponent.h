@@ -312,8 +312,6 @@ public:
 		virtual FVector GetLocation();
 
 		virtual FVector GetDirection();
-
-		virtual void Trace();
 	};
 
 	FTraceImpl* TraceImpl;
@@ -321,6 +319,8 @@ public:
 protected:
 
 	virtual FTraceImpl* ConstructTraceImpl();
+
+	void Trace();
 
 #pragma endregion Trace
 	

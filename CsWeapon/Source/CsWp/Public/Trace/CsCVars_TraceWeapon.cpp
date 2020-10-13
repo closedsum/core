@@ -70,9 +70,9 @@ namespace NCsCVarLog
 	// Scoped Timers
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponTraceScopedTimer, "Log Weapon Trace Scoped Timer");
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponTraceScopedTimerFire, "Log Weapon Trace Scoped Timer Fire()");
-	//CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileScopedTimerGetLaunchLocation, "Log Weapon Projectile Scoped Timer GetLaunchLocation()");
-	//CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileScopedTimerGetLaunchDirection, "Log Weapon Projectile Scoped Timer GetLaunchDirection()");
-	//CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponProjectileProjectileScopedTimerStartLaunch, "Log Weapon Projectile Scoped Timer ProjectileImpl.StartLaunch()");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponTraceScopedTimerTraceGetLocation, "Log Weapon Trace Scoped Timer TraceImpl.GetLocation()");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponTraceScopedTimerTraceGetDirection, "Log Weapon Trace Scoped Timer TraceImpl.GetDirection()");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponTraceScopedTimerTrace, "Log Weapon Trace Scoped Timer Trace()");
 
 	namespace Map
 	{
@@ -82,9 +82,9 @@ namespace NCsCVarLog
 		// Scoped Timers
 		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimer, CsCVarLogWeaponTraceScopedTimer);
 		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimerFire, CsCVarLogWeaponTraceScopedTimerFire);
-		//CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimerGetLaunchLocation, CsCVarLogWeaponProjectileScopedTimerGetLaunchLocation);
-		//CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileScopedTimerGetLaunchDirection, CsCVarLogWeaponProjectileScopedTimerGetLaunchDirection);
-		//CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponProjectileProjectileScopedTimerStartLaunch, CsCVarLogWeaponProjectileProjectileScopedTimerStartLaunch);
+		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimerTraceGetLocation, CsCVarLogWeaponTraceScopedTimerTraceGetLocation);
+		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimerTraceGetDirection, CsCVarLogWeaponTraceScopedTimerTraceGetDirection);
+		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimerTrace, CsCVarLogWeaponTraceScopedTimerTrace);
 	}
 }
 

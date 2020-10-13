@@ -67,6 +67,7 @@ namespace NCsTraceWeaponComponent
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent, CanFire);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent, Fire);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent, Fire_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent, Trace);
 		}
 
 		namespace Name
@@ -95,7 +96,6 @@ namespace NCsTraceWeaponComponent
 			{
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent::FTraceImpl, GetLocation);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent::FTraceImpl, GetDirection);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent::FTraceImpl, Trace);
 			}
 		}
 
@@ -619,9 +619,9 @@ FVector UCsTraceWeaponComponent::FTraceImpl::GetLocation()
 
 	const FString& ScopeName		   = Str::GetLocation;
 	const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponTrace;
-	//const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponTraceScopedTimerGetLocation;
+	const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponTraceScopedTimerTraceGetLocation;
 
-	//CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
+	CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
 	const FString& Context = Str::GetLocation;
 
@@ -678,9 +678,9 @@ FVector UCsTraceWeaponComponent::FTraceImpl::GetDirection()
 
 	const FString& ScopeName		   = Str::GetDirection;
 	const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponTrace;
-	//const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponTraceScopedTimerGetDirection;
+	const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponTraceScopedTimerTraceGetDirection;
 
-	//CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
+	CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
 	const FString& Context = Str::GetDirection;
 
@@ -891,21 +891,33 @@ FVector UCsTraceWeaponComponent::FTraceImpl::GetDirection()
 	return FVector::ZeroVector;
 }
 
-void UCsTraceWeaponComponent::FTraceImpl::Trace()
+void UCsTraceWeaponComponent::Trace()
 {
-	using namespace NCsTraceWeaponComponent::NCached::TraceImpl;
+	using namespace NCsTraceWeaponComponent::NCached;
 
 	const FString& Context = Str::Trace;
 
-	const FVector Start = GetLocation();
-	const FVector Dir = GetDirection();
+	const FVector Start = TraceImpl.GetLocation();
+	const FVector Dir = TraceImpl.GetDirection();
 	const FVector End = Start + 10000.0f * Dir;
 
-	UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(Outer->GetWorld()->GetGameState());
+	UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(GetWorld()->GetGameState());
 
 	FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
 	Request->Start = Start;
 	Request->End = End;
+
+	// Get collision information related to the trace.
+	ICsData_TraceWeapon* TraceData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ICsData_TraceWeapon>(Context, Data);
+
+	const ECollisionChannel& ObjectType = TraceData->GetObjectType();
+
+	Request->ObjectParams.AddObjectTypesToQuery(ObjectType);
+
+	// Line
+
+	//Request->Type = LaunchTraceParams->GetTraceType();
+	//Request->Shape
 
 	FCsTraceResponse* Response = Manager_Trace->Trace(Request);
 }

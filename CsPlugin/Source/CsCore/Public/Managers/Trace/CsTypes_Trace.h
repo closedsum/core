@@ -179,3 +179,32 @@ namespace NCsTraceTransaction
 #define ECS_TRACE_TRANSACTION_MAX NCsTraceTransaction::MAX
 
 #pragma endregion TraceTransaction
+
+// TraceCollisionBox
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsTraceCollisionBox
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float HalfExtentX;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float HalfExtentY;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float HalfExtentZ;
+
+	FCsTraceCollisionBox() :
+		HalfExtentX(0.0f),
+		HalfExtentY(0.0f),
+		HalfExtentZ(0.0f)
+	{
+	}
+};
+
+#pragma endregion TraceCollisionBox

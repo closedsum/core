@@ -5,6 +5,9 @@
 
 #include "CsData_TraceWeapon.generated.h"
 
+// NCsWeapon::NTrace::NParams::NTrace::ITrace
+CS_FWD_DECLARE_CLASS_NAMESPACE_4(NCsWeapon, NTrace, NParams, NTrace, ITrace)
+
 namespace NCsWeapon
 {
 	namespace NTrace
@@ -79,6 +82,14 @@ namespace NCsWeapon
 				* return
 				*/
 				virtual const float& GetTimeBetweenTracesPerShot() const = 0;
+
+			#define TraceParamsType NCsWeapon::NTrace::NParams::NTrace::ITrace
+
+				/**
+				*/
+				virtual const TraceParamsType* GetTraceParams() const = 0;
+
+			#undef TraceParamsType
 			};
 		}
 	}
@@ -89,6 +100,9 @@ class CSWP_API UCsData_TraceWeapon : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
+
+// NCsWeapon::NTrace::NParams::NTrace::ITrace
+CS_FWD_DECLARE_CLASS_NAMESPACE_4(NCsWeapon, NTrace, NParams, NTrace, ITrace)
 
 /**
 *
@@ -158,4 +172,12 @@ public:
 	* return
 	*/
 	virtual const float& GetTimeBetweenTracesPerShot() const = 0;
+
+#define TraceParamsType NCsWeapon::NTrace::NParams::NTrace::ITrace
+
+	/**
+	*/
+	virtual const TraceParamsType* GetTraceParams() const = 0;
+
+#undef TraceParamsType
 };

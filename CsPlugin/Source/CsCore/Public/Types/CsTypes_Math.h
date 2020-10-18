@@ -404,6 +404,10 @@ namespace NCsRotationRules
 }
 
 #define CS_ROTATION_FLAGS_NONE 0
+#define CS_ROTATION_FLAGS_PITCH 1
+#define CS_ROTATION_FLAGS_YAW 2
+#define CS_ROTATION_FLAGS_ROLL 4
+#define CS_ROTATION_FLAGS_PITCH_AND_YAW 3
 
 #pragma endregion RotationRules
 

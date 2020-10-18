@@ -31,6 +31,8 @@ namespace NCsWeapon
 					Bone,
 					/** SceneComponent's Location. The Component is marked as the Trace Component Transform. */
 					Component,
+					/** Owner's Camera's Location. */
+					Camera,
 					Custom
 				};
 
@@ -87,12 +89,20 @@ namespace NCsWeapon
 
 					/**
 					*/
+					virtual const int32& GetDirectionRules() const = 0;
+
+					/**
+					*/
 					virtual const ECollisionChannel& GetObjectType() const = 0;
 
 					/**
 					* 
 					*/
 					virtual const FCollisionShape& GetShape() const = 0;
+
+					/**
+					*/
+					virtual const float& GetDistance() const = 0;
 				};
 			}
 		}

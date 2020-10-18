@@ -2,11 +2,13 @@
 #pragma once
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
+// Types
+#include "Types/CsTypes_Macro.h"
 
 #include "CsData_TraceWeapon.generated.h"
 
 // NCsWeapon::NTrace::NParams::NTrace::ITrace
-CS_FWD_DECLARE_CLASS_NAMESPACE_4(NCsWeapon, NTrace, NParams, NTrace, ITrace)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NParams, NTrace, ITrace)
 
 namespace NCsWeapon
 {
@@ -102,7 +104,7 @@ class CSWP_API UCsData_TraceWeapon : public UCsGetInterfaceMap
 };
 
 // NCsWeapon::NTrace::NParams::NTrace::ITrace
-CS_FWD_DECLARE_CLASS_NAMESPACE_4(NCsWeapon, NTrace, NParams, NTrace, ITrace)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NParams, NTrace, ITrace)
 
 /**
 *

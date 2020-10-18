@@ -7,6 +7,7 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
 #include "Types/CsCached.h"
+#include "Types/CsTypes_Math.h"
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Data/CsLibrary_Data_Weapon.h"
@@ -41,6 +42,7 @@
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 // Params
 #include "Trace/Data/Sound/CsParams_TraceWeapon_SoundFire.h"
+#include "Trace/Data/Params/CsParams_TraceWeapon_Trace.h"
 
 // Cached 
 #pragma region
@@ -159,7 +161,7 @@ void UCsTraceWeaponComponent::BeginDestroy()
 
 	if (TraceImpl)
 	{
-		CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(TraceImpl->TraceScopedHandle);
+		CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(TraceScopedHandle);
 
 		delete TraceImpl;
 		TraceImpl = nullptr;
@@ -214,13 +216,13 @@ void UCsTraceWeaponComponent::BeginPlay()
 
 			FireScopedHandle.Handle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
 		}
-		// StartLaunchScopedHandle
+		// TraceScopedHandle
 		{
-			const FString& ScopeName		   = TraceImpl::Str::Trace;
+			const FString& ScopeName		   = Str::Trace;
 			const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponTrace;
-			//const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponTraceScopedTimerTrace;
+			const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponTraceScopedTimerTrace;
 
-			//TraceImpl->TraceScopedHandle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
+			TraceScopedHandle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
 		}
 	}
 #endif // #if !UE_BUILD_SHIPPING
@@ -523,7 +525,7 @@ char UCsTraceWeaponComponent::Fire_Internal(FCsRoutine* R)
 			if (!bInfiniteAmmo)
 				ConsumeAmmo();
 
-			TraceImpl->Trace();
+			Trace();
 			SoundImpl->Play();
 			FXImpl->Play();
 
@@ -631,14 +633,14 @@ FVector UCsTraceWeaponComponent::FTraceImpl::GetLocation()
 	WeaponDataType* WeaponData = FCsLibrary_Data_Weapon::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
 	
 	// Get Trace Params
-	/*
-	using namespace NCsWeapon::NTrace::NParams::NLaunch;
 
-	const ILaunch* LaunchParams = WeaponData->GetLaunchParams();
+	using namespace NCsWeapon::NTrace::NParams::NTrace;
 
-	checkf(LaunchParams, TEXT("%s: Failed to get LaunchParams from Data."), *Context);
+	const ITrace* TraceParams = WeaponData->GetTraceParams();
 
-	const ELocation& LocationType = LaunchParams->GetLocationType();
+	checkf(TraceParams, TEXT("%s: Failed to get TraceParams from Data."), *Context);
+
+	const ELocation& LocationType = TraceParams->GetLocationType();
 
 	// Owner
 	if (LocationType == ELocation::Owner)
@@ -664,11 +666,25 @@ FVector UCsTraceWeaponComponent::FTraceImpl::GetLocation()
 	// Component
 	if (LocationType == ELocation::Component)
 	{
-		checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
+		checkf(TraceComponentTransform, TEXT("%s: TraceComponentTransform is NULL."), *Context);
 
-		return LaunchComponentTransform->GetComponentLocation();
+		return TraceComponentTransform->GetComponentLocation();
 	}
-	*/
+	// Camera
+	if (LocationType == ELocation::Camera)
+	{
+		// Try to get camera through the owner
+		if (UObject* TheOwner = Outer->GetMyOwner())
+		{
+			return FCsLibrary_Camera::GetLocationChecked(Context, TheOwner);
+		}
+		checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(Outer->PrintNameAndClass()));
+	}
+	// Custom
+	if (LocationType == ELocation::Custom)
+	{
+		checkf(0, TEXT("NOT IMPLEMENTED"));
+	}
 	return FVector::ZeroVector;
 }
 
@@ -690,18 +706,17 @@ FVector UCsTraceWeaponComponent::FTraceImpl::GetDirection()
 	WeaponDataType* WeaponData = FCsLibrary_Data_Weapon::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
 	
 	// Get Trace Params
-	/*
-	using namespace NCsWeapon::NTrace::NParams::NLaunch;
+	using namespace NCsWeapon::NTrace::NParams::NTrace;
 
-	const ILaunch* LaunchParams = WeaponData->GetLaunchParams();
+	const ITrace* TraceParams = WeaponData->GetTraceParams();
 
-	checkf(LaunchParams, TEXT("%s: Failed to get LaunchParams from Data."), *Context);
+	checkf(TraceParams, TEXT("%s: Failed to get TraceParams from Data."), *Context);
 
-	const ELocation& LocationType   = LaunchParams->GetLocationType();
-	const EDirection& DirectionType = LaunchParams->GetDirectionType();
-	const int32& DirectionRules		= LaunchParams->GetDirectionRules();
+	const ELocation& LocationType   = TraceParams->GetLocationType();
+	const EDirection& DirectionType = TraceParams->GetDirectionType();
+	const int32& DirectionRules		= TraceParams->GetDirectionRules();
 
-	checkf(DirectionRules != NCsRotationRules::None, TEXT("%s: No DirectionRules set in Launchparams for Data."), *Context);
+	checkf(DirectionRules != NCsRotationRules::None, TEXT("%s: No DirectionRules set in TraceParams for Data."), *Context);
 
 	// Owner
 	if (DirectionType == EDirection::Owner)
@@ -725,9 +740,9 @@ FVector UCsTraceWeaponComponent::FTraceImpl::GetDirection()
 	// Component
 	if (DirectionType == EDirection::Component)
 	{
-		checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
+		checkf(TraceComponentTransform, TEXT("%s: TraceComponentTransform is NULL."));
 		
-		const FRotator Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform, DirectionRules);
+		const FRotator Rotation = NCsRotationRules::GetRotation(TraceComponentTransform, DirectionRules);
 
 		return Rotation.Vector();
 	}
@@ -741,153 +756,11 @@ FVector UCsTraceWeaponComponent::FTraceImpl::GetDirection()
 		}
 		checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(Outer->PrintNameAndClass()));
 	}
-	// ITrace | Get Launch Trace Params
+	// Trace
 	if (DirectionType == EDirection::Trace)
 	{
-		const ITrace* LaunchTraceParams = FLibrary::GetInterfaceChecked<ITrace>(Context, LaunchParams);
-		
-		// Start
-		const ETraceStart& TraceStart = LaunchTraceParams->GetTraceStartType();
-
-		FVector Start = FVector::ZeroVector;
-
-		// LaunchLocation
-		if (TraceStart == ETraceStart::LaunchLocation)
-		{
-			Start = GetLaunchLocation();
-		}
-		// Owner
-		else
-		if (TraceStart == ETraceStart::Owner)
-		{
-			checkf(0, TEXT("NOT IMPLEMENTED"));
-		}
-		// Bone
-		else
-		if (TraceStart == ETraceStart::Bone)
-		{
-			checkf(0, TEXT("NOT IMPLEMENTED"));
-		}
-		// Component
-		else
-		if (TraceStart == ETraceStart::Component)
-		{
-			checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
-
-			Start = LaunchComponentTransform->GetComponentLocation();
-		}
-		// Camera
-		else
-		if (TraceStart == ETraceStart::Camera)
-		{
-			// Try to get camera through the owner
-			if (UObject* TheOwner = Outer->GetMyOwner())
-			{
-				Start = FCsLibrary_Camera::GetLocationChecked(Context, TheOwner);
-			}
-			// TODO: For now assert
-			else
-			{
-				checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(Outer->PrintNameAndClass()));
-			}
-		}
-
-		// Direction
-		const ETraceDirection& TraceDirection  = LaunchTraceParams->GetTraceDirectionType();
-
-		FVector Dir = FVector::ZeroVector;
-
-		// Owner
-		if (TraceDirection == ETraceDirection::Owner)
-		{
-			checkf(0, TEXT("NOT IMPLEMENTED"));
-		}
-		// Bone
-		else
-		if (TraceDirection == ETraceDirection::Bone)
-		{
-			checkf(0, TEXT("NOT IMPLEMENTED"));
-		}
-		// Component
-		else
-		if (TraceDirection == ETraceDirection::Component)
-		{
-			checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
-
-			const FRotator Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform->GetComponentRotation(), DirectionRules);
-
-			Dir = Rotation.Vector();
-		}
-		else
-		// Camera
-		if (TraceDirection == ETraceDirection::Camera)
-		{
-			// Try to get camera through the owner
-			if (UObject* TheOwner = Outer->GetMyOwner())
-			{
-				Dir = FCsLibrary_Camera::GetDirectionChecked(Context, TheOwner, DirectionRules);
-			}
-			// TODO: For now assert
-			else
-			{
-				checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(Outer->PrintNameAndClass()));
-			}
-		}
-
-		const float& Distance = LaunchTraceParams->GetTraceDistance();
-
-		const FVector End = Start + Distance * Dir;
-
-		// Perform Trace
-		UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(Outer->GetWorld()->GetGameState());
-
-		FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
-		Request->Start = Start;
-		Request->End = End;
-
-		// Get collision information related to the projectile to be used in the trace.
-		ICsData_Projectile* PrjData					  = UCsManager_Projectile::Get(Outer->GetWorld()->GetGameState())->GetDataChecked(Context, Outer->GetProjectileType());
-		ICsData_ProjectileCollision* PrjCollisionData = FCsLibrary_Data_Projectile::GetInterfaceChecked<ICsData_ProjectileCollision>(Context, PrjData);
-
-		const FCsCollisionPreset& CollisionPreset		 = PrjCollisionData->GetCollisionPreset();
-		const TEnumAsByte<ECollisionChannel>& ObjectType = CollisionPreset.ObjectType;
-
-		Request->ObjectParams.AddObjectTypesToQuery(ObjectType);
-
-		Request->Type = LaunchTraceParams->GetTraceType();
-
-		if (Request->Type == ECsTraceType::Sweep)
-		{
-			//Request->Shape = 
-		}
-		
-		FCsTraceResponse* Response = Manager_Trace->Trace(Request);
-
-		FVector LookAtLocation = FVector::ZeroVector;
-
-		if (Response &&
-			Response->bResult)
-		{
-			LookAtLocation = Start + Response->OutHits[CS_FIRST].Distance * Dir;
-		}
-		else
-		{
-			LookAtLocation = Start + Distance * Dir;
-		}
-
-		const FVector LaunchLocation  = GetLaunchLocation();
-		const FVector LaunchDirection = (LookAtLocation - LaunchLocation).GetSafeNormal();
-
-		// Check the direction is in FRONT of the Start. The trace could produce a result BEHIND the start
-
-		if (Start == LaunchDirection ||
-			FVector::DotProduct(Dir, LaunchDirection) > 0)
-		{
-			return LaunchDirection;
-		}
-		return Dir;
+		checkf(0, TEXT("NOT IMPLEMENTED"));
 	}
-	*/
 	return FVector::ZeroVector;
 }
 
@@ -897,8 +770,8 @@ void UCsTraceWeaponComponent::Trace()
 
 	const FString& Context = Str::Trace;
 
-	const FVector Start = TraceImpl.GetLocation();
-	const FVector Dir = TraceImpl.GetDirection();
+	const FVector Start = TraceImpl->GetLocation();
+	const FVector Dir = TraceImpl->GetDirection();
 	const FVector End = Start + 10000.0f * Dir;
 
 	UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(GetWorld()->GetGameState());
@@ -910,9 +783,9 @@ void UCsTraceWeaponComponent::Trace()
 	// Get collision information related to the trace.
 	ICsData_TraceWeapon* TraceData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ICsData_TraceWeapon>(Context, Data);
 
-	const ECollisionChannel& ObjectType = TraceData->GetObjectType();
+	//const ECollisionChannel& ObjectType = TraceData->GetObjectType();
 
-	Request->ObjectParams.AddObjectTypesToQuery(ObjectType);
+	//Request->ObjectParams.AddObjectTypesToQuery(ObjectType);
 
 	// Line
 
@@ -945,8 +818,8 @@ void UCsTraceWeaponComponent::FSoundImpl::Play()
 	{
 		typedef NCsWeapon::NTrace::NData::NSound::NFire::NParams::IParams ParamsType;
 
-		ParamsType* Params	  = SoundData->GetFireSoundParams();
-		const FCsSound& Sound = Params->GetSound();
+		const ParamsType* Params = SoundData->GetFireSoundParams();
+		const FCsSound& Sound	 = Params->GetSound();
 
 		USoundBase* SoundAsset = Sound.GetChecked(Context);
 

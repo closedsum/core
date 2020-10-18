@@ -180,7 +180,7 @@ namespace NCsTraceTransaction
 
 #pragma endregion TraceTransaction
 
-// TraceCollisionBox
+// FCsTraceCollisionBox
 #pragma region
 
 /**
@@ -207,4 +207,50 @@ struct CSCORE_API FCsTraceCollisionBox
 	}
 };
 
-#pragma endregion TraceCollisionBox
+#pragma endregion FCsTraceCollisionBox
+
+// FCsTraceCollisionSphere
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsTraceCollisionSphere
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float Radius;
+
+	FCsTraceCollisionSphere() :
+		Radius(0.0f)
+	{
+	}
+};
+
+#pragma endregion FCsTraceCollisionSphere
+
+// FCsTraceCollisionCapsule
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsTraceCollisionCapsule
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float Radius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float HalfHeight;
+
+	FCsTraceCollisionCapsule() :
+		Radius(0.0f),
+		HalfHeight(0.0f)
+	{
+	}
+};
+
+#pragma endregion FCsTraceCollisionCapsule

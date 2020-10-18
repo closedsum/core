@@ -45,7 +45,7 @@ TAutoConsoleVariable<int32> CsCVarLogWeaponTraceScopedTimerTraceGetLocation(
 	ECVF_SetByConsole
 );
 
-TAutoConsoleVariable<int32> CsCVarLogWeaponTraceScopedTimerGetDirection(
+TAutoConsoleVariable<int32> CsCVarLogWeaponTraceScopedTimerTraceGetDirection(
 	TEXT("log.weapon.trace.scopedtimer.trace.getdirection"),
 	0,
 	TEXT("Log Weapon Trace Scoped Timer TraceImpl.GetDirection()."),

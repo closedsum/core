@@ -289,14 +289,11 @@ public:
 
 		USceneComponent* TraceComponentTransform;
 
-		FCsScopedTimerHandle TraceScopedHandle;
-
 	public:
 
 		FTraceImpl() :
 			Outer(nullptr),
-			TraceComponentTransform(nullptr),
-			TraceScopedHandle()
+			TraceComponentTransform(nullptr)
 		{
 		}
 
@@ -319,6 +316,8 @@ public:
 protected:
 
 	virtual FTraceImpl* ConstructTraceImpl();
+
+	FCsScopedTimerHandle TraceScopedHandle;
 
 	void Trace();
 

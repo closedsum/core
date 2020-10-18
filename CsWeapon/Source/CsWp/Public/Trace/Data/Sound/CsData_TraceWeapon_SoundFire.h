@@ -39,7 +39,7 @@ namespace NCsWeapon
 						*
 						* return
 						*/
-						virtual ParamsType* GetFireSoundParams() const = 0;
+						virtual const ParamsType* GetFireSoundParams() const = 0;
 
 					#undef ParamsType
 					};
@@ -78,7 +78,7 @@ public:
 	*
 	* return
 	*/
-	virtual ParamsType* GetFireSoundParams() const = 0;
+	virtual const ParamsType* GetFireSoundParams() const = 0;
 
 #undef ParamsType
 };

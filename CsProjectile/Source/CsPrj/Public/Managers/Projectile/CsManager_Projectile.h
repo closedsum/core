@@ -50,9 +50,10 @@ namespace NCsProjectile
 #pragma endregion Internal
 
 class ICsGetManagerProjectile;
-class ICsData_Projectile;
 class UDataTable;
 
+// NCsProjectile::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
 // NCsProjectile::NPayload::FInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, FInterfaceMap)
 
@@ -84,6 +85,7 @@ class CSPRJ_API UCsManager_Projectile : public UObject
 #define PayloadType NCsProjectile::NPayload::IPayload
 #define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
 #define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define DataType NCsProjectile::NData::IData
 
 public:	
 
@@ -758,48 +760,49 @@ public:
 #pragma region
 protected:
 
-	DataHandlerType<ICsData_Projectile, FCsData_ProjectilePtr, FCsData_ProjectileInterfaceMap>* DataHandler;
+	DataHandlerType<DataType, FCsData_ProjectilePtr, FCsData_ProjectileInterfaceMap>* DataHandler;
 
 	virtual void ConstructDataHandler();
 
 public:
 
 	/**
-	* Get the Data (implements interface: ICsData_Projectile) associated with Name of the projectile type.
+	* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Name of the projectile type.
 	*
 	* @param Name	Name of the Projectile.
-	* return		Data that implements the interface: ICsData_Projectile.
+	* return		Data that implements the interface: DataType (NCsProjectile::NData::IData).
 	*/
-	ICsData_Projectile* GetData(const FName& Name);
+	DataType* GetData(const FName& Name);
 
 
 	/**
-	* Get the Data (implements interface: ICsData_Projectile) associated with Type.
+	* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Type.
 	*
 	* @param Type	Projectile type.
-	* return		Data that implements the interface: ICsData_Projectile.
+	* return		Data that implements the interface: DataType (NCsProjectile::NData::IData).
 	*/
-	ICsData_Projectile* GetData(const FECsProjectile& Type);
+	DataType* GetData(const FECsProjectile& Type);
 
 	/**
-	* Get the Data (implements interface: ICsData_Projectile) associated with Name of the projectile type.
+	* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Name of the projectile type.
 	* "Checked" in regards to returning a valid pointer.
 	*
 	* @param Context	The calling context.
 	* @param Name		Name of the Projectile.
-	* return			Data that implements the interface: ICsData_Projectile.
+	* return			Data that implements the interface: DataType (NCsProjectile::NData::IData).
 	*/
-	ICsData_Projectile* GetDataChecked(const FString& Context, const FName& Name);
+	
+	DataType* GetDataChecked(const FString& Context, const FName& Name);
 
 	/**
-	* Get the Data (implements interface: ICsData_Projectile) associated with Type.
+	* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Type.
 	* "Checked" in regards to returning a valid pointer.
 	*
 	* @param Context	The calling context.
 	* @param Type		Projectile type.
-	* return			Data that implements the interface: ICsData_Projectile.
+	* return			Data that implements the interface: DataType (NCsProjectile::NData::IData).
 	*/
-	ICsData_Projectile* GetDataChecked(const FString& Context, const FECsProjectile& Type);
+	DataType* GetDataChecked(const FString& Context, const FECsProjectile& Type);
 
 	void OnPayloadUnloaded(const FName& Payload);
 
@@ -811,4 +814,5 @@ public:
 #undef PayloadType
 #undef ClassHandlerType
 #undef DataHandlerType
+#undef DataType
 };

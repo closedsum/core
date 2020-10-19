@@ -139,8 +139,7 @@ namespace NCsProjectile
 
 						checkf(EmulatedDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s."), *Context, *(Name.ToString()));
 
-						// TODO: Fix / Update
-						//EmulatedDataMap.Add(Name, Data);
+						EmulatedDataMap.Add(Name, Data);
 
 						FCsData_ProjectileInterfaceMap* EmulatedInterfaceMap = new FCsData_ProjectileInterfaceMap();
 
@@ -157,8 +156,7 @@ namespace NCsProjectile
 						TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
 						InterfaceImplMap.Add(DataEmuSliceType::Name, Data);
 
-						// TODO: Fix / Update
-						//DataMap.Add(Name, Data);
+						DataMap.Add(Name, Data);
 
 						// LifeTime
 						{

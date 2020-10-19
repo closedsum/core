@@ -7,7 +7,7 @@ namespace NCsData
 {
 	/**
 	*/
-	struct CSPRJ_API FLibrary : public TCsLibrary_InterfaceMap<IData>
+	struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<IData>
 	{
 	};
 }

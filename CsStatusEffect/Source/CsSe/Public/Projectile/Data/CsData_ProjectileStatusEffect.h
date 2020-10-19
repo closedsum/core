@@ -6,9 +6,7 @@
 #include "CsData_ProjectileStatusEffect.generated.h"
 
 // NCsStatusEffect::NData::IData
-namespace NCsStatusEffect {
-	namespace NData {
-		struct IData; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
 
 namespace NCsProjectile
 {
@@ -45,7 +43,8 @@ class CSSE_API UCsData_ProjectileStatusEffect : public UCsGetInterfaceMap
 	GENERATED_UINTERFACE_BODY()
 };
 
-class ICsData_StatusEffect;
+// NCsStatusEffect::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
 
 /**
 *
@@ -58,7 +57,11 @@ public:
 
 	static const FName Name;
 
+#define StatusEffectDataType NCsStatusEffect::NData::IData
+
 public:
 
-	virtual const TArray<ICsData_StatusEffect*>& GetStatusEffects() const = 0;
+	virtual const TArray<StatusEffectDataType*>& GetStatusEffects() const = 0;
+
+#undef StatusEffectDataType
 };

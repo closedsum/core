@@ -1,8 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
+// Interfaces
 #include "UObject/Interface.h"
 #include "Containers/CsInterfaceObject.h"
+// Types
+#include "Types/CsTypes_Macro.h"
+
 #include "CsProjectile.generated.h"
 
 UINTERFACE(Blueprintable)
@@ -11,20 +14,23 @@ class CSPRJ_API UCsProjectile : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
-class ICsData_Projectile;
+// NCsProjectile::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
 
 class CSPRJ_API ICsProjectile
 {
 	GENERATED_IINTERFACE_BODY()
 
+#define DataType NCsProjectile::NData::IData
+
 public:
-	
+
 	/**
 	* The Data the projectile is currently using.
 	*
-	* return Data that implements the interface: ICsData_Projectile.
+	* return Data that implements the interface: DataType (NCsProjectile::NData::IData).
 	*/
-	virtual ICsData_Projectile* GetData() const = 0;
+	virtual DataType* GetData() const = 0;
 
 	/**
 	* The object that "owns" the projectile.
@@ -39,19 +45,24 @@ public:
 	* return Instigator of the projectile.
 	*/
 	virtual UObject* GetInstigator() const = 0;
+
+#undef DataType
 };
 
 
 // FCsProjectile
 #pragma region
 
-class ICsData_Projectile;
+// NCsProjectile::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
 
 struct CSPRJ_API FCsProjectile : public TCsInterfaceObject<ICsProjectile>
 {
 private:
 
 	typedef TCsInterfaceObject<ICsProjectile> Super;
+
+#define DataType NCsProjectile::NData::IData
 
 public:
 
@@ -68,7 +79,7 @@ public:
 	* @param Object		Object->GetClass() that implements the interface: ICsProjectile.
 	* return			.
 	*/
-	DECLARE_DELEGATE_RetVal_OneParam(ICsData_Projectile* /*Data*/, FScript_GetData, UObject* /*Object*/);
+	DECLARE_DELEGATE_RetVal_OneParam(DataType* /*Data*/, FScript_GetData, UObject* /*Object*/);
 
 	/** Delegate type for . 
 		 The Data implements a script interface of type: ICsWeapon and the UClass
@@ -138,13 +149,20 @@ public:
 #pragma region
 public:
 
-	ICsData_Projectile* GetData();
+	DataType* GetData()
+	{
+		if (bScript)
+			return Script_GetData_Impl.Execute(Object);
+		return Interface->GetData();
+	}
 
 	UObject* GetOwner();
 
 	UObject* GetInstigator();
 
 #pragma endregion ICsProjectile
+
+#undef DataType
 };
 
 #pragma endregion FCsProjectile

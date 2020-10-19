@@ -1,17 +1,21 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Time/CsTypes_Time.h"
+#include "Types/CsTypes_Macro.h"
 #pragma once
 
 // FCsStatusEffectTriggerFrequencyInfo
 #pragma region
 
-class ICsData_StatusEffect;
+// NCsStatusEffect::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
 
 struct CSSE_API FCsStatusEffectTriggerFrequencyInfo
 {
 public:
 
-	ICsData_StatusEffect* Data;
+#define DataType NCsStatusEffect::NData::IData
+
+	DataType* Data;
 
 	float TotalTime;
 
@@ -29,7 +33,7 @@ public:
 	{
 	}
 
-	void SetData(ICsData_StatusEffect* InData);
+	void SetData(DataType* InData);
 
 	bool CanApply() const;
 
@@ -40,6 +44,8 @@ public:
 	void Update(const FCsDeltaTime& DeltaTime);
 
 	void Reset();
+
+#undef DataType
 };
 
 #pragma endregion FCsStatusEffectTriggerFrequencyInfo

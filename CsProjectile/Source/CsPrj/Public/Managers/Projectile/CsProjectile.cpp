@@ -46,13 +46,6 @@ void FCsProjectile::SetObject(UObject* InObject)
 	// ICsProjectile
 #pragma region
 
-ICsData_Projectile* FCsProjectile::GetData()
-{
-	if (bScript)
-		return Script_GetData_Impl.Execute(Object);
-	return Interface->GetData();
-}
-
 UObject* FCsProjectile::GetOwner()
 {
 	if (bScript)

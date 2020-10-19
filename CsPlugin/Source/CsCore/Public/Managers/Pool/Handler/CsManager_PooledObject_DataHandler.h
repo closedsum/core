@@ -2,6 +2,7 @@
 
 // Library
 #include "Library/CsLibrary_Property.h"
+#include "Data/CsLibrary_Data.h"
 // Managers
 #include "Managers/Data/CsManager_Data.h"
 // Game
@@ -21,6 +22,11 @@ namespace NCsPooledObject
 		{
 			namespace NCached
 			{
+				namespace Str
+				{
+					extern CSCORE_API const FString Type;
+				}
+
 				namespace Name
 				{
 					extern CSCORE_API const FName Data;
@@ -197,13 +203,15 @@ namespace NCsPooledObject
 						{
 							DataContainerType* DataPtr = DataProperty->ContainerPtrToValuePtr<DataContainerType>(RowPtr);
 
-							UObject* Data = DataPtr->Get();
+							UObject* O = DataPtr->Get();
 
-							checkf(Data, TEXT("%s: Failed to get data from DataTable: %s Row: %s."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
+							checkf(O, TEXT("%s: Failed to get data from DataTable: %s Row: %s."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
 
-							InterfaceDataType* IData = Cast<InterfaceDataType>(Data);
+							ICsData* Data = Cast<ICsData>(O);
 
-							checkf(IData, TEXT("%s: Data: %s with Class: %s does NOT implement interface: DataType."), *Context, *(Data->GetName()), *(Data->GetClass()->GetName()));
+							checkf(Data, TEXT("%s: Data: %s with Class: %s does NOT implement interface: ICsData."), *Context, *(O->GetName()), *(O->GetClass()->GetName()));
+
+							InterfaceDataType* IData = NCsData::FLibrary::GetInterfaceChecked<InterfaceDataType>(Context, Data->_getIData());
 
 							DataMap.Add(RowName, IData);
 						}
@@ -230,7 +238,9 @@ namespace NCsPooledObject
 				template<typename EnumMap, typename EnumType>
 				FORCEINLINE InterfaceDataType* GetData(const FString& Context, const EnumType& Type)
 				{
-					checkf(EnumMap::Get().IsValidEnum(Type), TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar());
+					using namespace NCached;
+
+					check(EnumMap::Get().IsValidEnumChecked(Context, Str::Type, Type));
 
 					return GetData(Context, Type.GetFName());
 				}

@@ -32,8 +32,11 @@ namespace NCsProjectile
 
 			InterfaceMap->SetRootName(FImplPooled::Name);
 
-			InterfaceMap->Add<NCsPooledObject::NCache::ICache>(static_cast<NCsPooledObject::NCache::ICache*>(this));
-			InterfaceMap->Add<NCsProjectile::NCache::ICache>(static_cast<NCsProjectile::NCache::ICache*>(this));
+			typedef NCsPooledObject::NCache::ICache PooledCacheType;
+			typedef NCsProjectile::NCache::ICache ProjectileCacheType;
+
+			InterfaceMap->Add<PooledCacheType>(static_cast<PooledCacheType*>(this));
+			InterfaceMap->Add<ProjectileCacheType>(static_cast<ProjectileCacheType*>(this));
 		}
 
 		FImplPooled::~FImplPooled()
@@ -41,11 +44,14 @@ namespace NCsProjectile
 			delete InterfaceMap;
 		}
 
-		// NCsPooledObject::NCache::ICache
+		// PooledCacheType (NCsPooledObject::NCache::ICache)s
 		#pragma region
 
-		void FImplPooled::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
+		#define PayloadType NCsPooledObject::NPayload::IPayload
+		void FImplPooled::Allocate(PayloadType* Payload)
 		{
+		#undef PayloadType
+
 			bAllocated = true;
 			State	   = ECsPooledObjectState::Active;
 			Instigator = Payload->GetInstigator();
@@ -82,15 +88,18 @@ namespace NCsProjectile
 			ElapsedTime.Reset();
 		}
 
-		#pragma endregion NCsPooledObject::NCache::ICache
+		#pragma endregion PooledCacheType (NCsPooledObject::NCache::ICache)
 
 		void FImplPooled::Update(const FCsDeltaTime& DeltaTime)
 		{
 			ElapsedTime += DeltaTime;
 		}
 
-		void FImplPooled::SetData(ICsData_Projectile* InData)
+		#define DataType NCsProjectile::NData::IData
+		void FImplPooled::SetData(DataType* InData)
 		{
+		#undef DataType
+
 			Data	 = InData;
 			LifeTime = Data->GetLifeTime();
 		}

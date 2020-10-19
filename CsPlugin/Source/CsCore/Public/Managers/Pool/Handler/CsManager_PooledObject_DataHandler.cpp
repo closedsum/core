@@ -9,6 +9,11 @@ namespace NCsPooledObject
 		{
 			namespace NCached
 			{
+				namespace Str
+				{
+					CSCORE_API CS_DEFINE_CACHED_STRING(Type, "Type");
+				}
+
 				namespace Name
 				{
 					CSCORE_API const FName Data = FName("Data");

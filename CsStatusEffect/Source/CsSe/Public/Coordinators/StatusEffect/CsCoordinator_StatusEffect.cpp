@@ -447,18 +447,26 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Even
 
 	checkf(Event, TEXT("%s: Event is NULL."), *Context);
 
-	ICsData_StatusEffect* Data = Event->GetData();
+	typedef NCsStatusEffect::NData::IData DataType;
+
+	DataType* Data = Event->GetData();
 
 	checkf(Data, TEXT("%s: Data is NULL. No Status Effect found for Event."), *Context);
 
-	const FCsStatusEffectTriggerFrequencyParams& TriggerParams   = Data->GetTriggerFrequencyParams();
-	const FCsStatusEffectTransferFrequencyParams& TransferParams = Data->GetTransferFrequencyParams();
+	typedef NCsStatusEffect::NTrigger::FFrequencyParams TriggerFrequencyParamsType;
+	typedef NCsStatusEffect::NTransfer::FFrequencyParams TransferFrequencyParamsType;
+
+	const TriggerFrequencyParamsType& TriggerParams   = Data->GetTriggerFrequencyParams();
+	const TransferFrequencyParamsType& TransferParams = Data->GetTransferFrequencyParams();
 
 	// TODO: Need to check for Shape
 
 	// Check for Status Effects will no transfer / pass through and will be consumed immediately
-	if (TriggerParams.Type == ECsStatusEffectTriggerFrequency::Once &&
-		TransferParams.Type == ECsStatusEffectTransferFrequency::None)
+	typedef NCsStatusEffect::NTrigger::EFrequency TriggerFrequencyType;
+	typedef NCsStatusEffect::NTransfer::EFrequency TransferFrequencyType;
+
+	if (TriggerParams.Type == TriggerFrequencyType::Once &&
+		TransferParams.Type == TransferFrequencyType::None)
 	{
 		// NCsStatusEffect::NEvent::NDamage::IDamage
 		typedef NCsStatusEffect::NEvent::NDamage::IDamage SeDamageEventType;
@@ -481,8 +489,10 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Even
 	}
 	else
 	{
-		// ICsData_StatusEffect_Shape
-		if (ICsData_StatusEffect_Shape* ShapeData = FCsLibrary_Data_StatusEffect::GetSafeInterfaceChecked<ICsData_StatusEffect_Shape>(Context, Data))
+		// ShapeDataType
+		typedef NCsStatusEffect::NData::NShape::IShape ShapeDataType;
+
+		if (ShapeDataType* ShapeData = FCsLibrary_Data_StatusEffect::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 		{
 
 		}

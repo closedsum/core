@@ -9,8 +9,9 @@
 
 class UObject;
 struct FCsInterfaceMap;
-class ICsData_StatusEffect;
 
+// NCsStatusEffect::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
 // NCsDamage::NEvent::IEvent
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, IEvent)
 
@@ -30,6 +31,8 @@ namespace NCsStatusEffect
 
 				static const FName Name;
 
+			#define DataType NCsStatusEffect::NData::IData
+
 			private:
 
 				typedef NCsDamage::NEvent::FAllocated AllocatedDamageEventType;
@@ -42,7 +45,7 @@ namespace NCsStatusEffect
 
 				// IEvent
 
-				ICsData_StatusEffect* Data;
+				DataType* Data;
 
 				TWeakObjectPtr<UObject> Instigator;
 
@@ -59,15 +62,14 @@ namespace NCsStatusEffect
 			public:
 
 				FImpl();
+	
+				FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 			// ICsGetInterfaceMap
 			#pragma region
 			public:
 
-				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-				{
-					return const_cast<FCsInterfaceMap*>(&InterfaceMap);
-				}
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return const_cast<FCsInterfaceMap*>(&InterfaceMap); }
 
 			#pragma endregion ICsGetInterfaceMap
 
@@ -75,30 +77,11 @@ namespace NCsStatusEffect
 			#pragma region
 			public:
 
-				FORCEINLINE ICsData_StatusEffect* GetData() const
-				{
-					return Data;
-				}
-
-				FORCEINLINE UObject* GetInstigator() const
-				{
-					return Instigator.IsValid() ? Instigator.Get() : nullptr;
-				}
-
-				FORCEINLINE UObject* GetCauser() const
-				{
-					return Causer.IsValid() ? Causer.Get() : nullptr;
-				}
-
-				FORCEINLINE UObject* GetReceiver() const
-				{
-					return Receiver.IsValid() ? Receiver.Get() : nullptr;
-				}
-
-				FORCEINLINE const TArray<TWeakObjectPtr<UObject>>& GetIgnoreObjects() const
-				{
-					return IgnoreObjects;
-				}
+				FORCEINLINE DataType* GetData() const { return Data; }
+				FORCEINLINE UObject* GetInstigator() const { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+				FORCEINLINE UObject* GetCauser() const { return Causer.IsValid() ? Causer.Get() : nullptr; }
+				FORCEINLINE UObject* GetReceiver() const { return Receiver.IsValid() ? Receiver.Get() : nullptr; }
+				FORCEINLINE const TArray<TWeakObjectPtr<UObject>>& GetIgnoreObjects() const { return IgnoreObjects; }
 
 			#pragma endregion IEvent
 
@@ -106,26 +89,17 @@ namespace NCsStatusEffect
 			#pragma region
 			public:
 
-				FORCEINLINE NCsDamage::NEvent::IEvent* GetDamageEvent() const
-				{
-					return DamageEvent.Event;
-				}
+				FORCEINLINE NCsDamage::NEvent::IEvent* GetDamageEvent() const { return DamageEvent.Event; }
 
 			#pragma endregion IDamage
 
 			public:
 
 				template<typename T>
-				FORCEINLINE T* GetInstigator() const
-				{
-					return Cast<T>(GetInstigator());
-				}
+				FORCEINLINE T* GetInstigator() const { return Cast<T>(GetInstigator()); }
 
 				template<typename T>
-				FORCEINLINE T* GetCauser() const
-				{
-					return Cast<T>(GetCauser());
-				}
+				FORCEINLINE T* GetCauser() const { return Cast<T>(GetCauser()); }
 
 				/**
 				* Copy all elements from another Event 
@@ -143,6 +117,8 @@ namespace NCsStatusEffect
 				void Reset();
 
 			#pragma endregion ICsReset
+
+			#undef DataType
 			};
 		}
 	}

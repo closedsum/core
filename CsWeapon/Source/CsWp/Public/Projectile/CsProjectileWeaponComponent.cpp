@@ -922,8 +922,13 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		Request->End = End;
 
 		// Get collision information related to the projectile to be used in the trace.
-		ICsData_Projectile* PrjData					  = UCsManager_Projectile::Get(Outer->GetWorld()->GetGameState())->GetDataChecked(Context, Outer->GetProjectileType());
-		ICsData_ProjectileCollision* PrjCollisionData = FCsLibrary_Data_Projectile::GetInterfaceChecked<ICsData_ProjectileCollision>(Context, PrjData);
+		typedef NCsProjectile::NData::IData PrjDataType;
+
+		PrjDataType* PrjData = UCsManager_Projectile::Get(Outer->GetWorld()->GetGameState())->GetDataChecked(Context, Outer->GetProjectileType());
+
+		typedef NCsProjectile::NData::NCollision::ICollision PrjCollisionDataType;
+
+		PrjCollisionDataType* PrjCollisionData = FCsLibrary_Data_Projectile::GetInterfaceChecked<PrjCollisionDataType>(Context, PrjData);
 
 		const FCsCollisionPreset& CollisionPreset		 = PrjCollisionData->GetCollisionPreset();
 		const TEnumAsByte<ECollisionChannel>& ObjectType = CollisionPreset.ObjectType;
@@ -1043,7 +1048,7 @@ void UCsProjectileWeaponComponent::FSoundImpl::Play()
 
 	const FString& Context = Str::Play;
 
-	// NCsWeapon::NProjectile::NData::NSound::NFire::IFire | ICsData_ProjectileWeapon_SoundFire
+	// SoundDataType (NCsWeapon::NProjectile::NData::NSound::NFire::IFire)
 	typedef NCsWeapon::NProjectile::NData::NSound::NFire::IFire SoundDataType;
 
 	if (SoundDataType* SoundData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
@@ -1109,7 +1114,7 @@ void UCsProjectileWeaponComponent::FFXImpl::Play()
 
 	const FString& Context = Str::Play;
 
-	// NCsWeapon::NProjectile::NData::NVisual::NFire::IFire | ICsData_ProjectileWeapon_VisualFire
+	// FXDataType (NCsWeapon::NProjectile::NData::NVisual::NFire::IFire)
 	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::IFire FXDataType;
 
 	if (FXDataType* FXData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<FXDataType>(Context, Weapon->GetData()))

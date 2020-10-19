@@ -8,22 +8,27 @@
 class UObject;
 struct FCsInterfaceMap;
 
-namespace NCsPooledObject {
-	namespace NPayload {
-		struct IPayload; } }
-
-class ICsData_Projectile;
+// NCsPooledObject::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
+// NCsProjectile::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
 
 namespace NCsProjectile
 {
 	namespace NCache
 	{
-		struct CSPRJ_API FImplPooled final : public NCsPooledObject::NCache::ICache,
-											 public NCsProjectile::NCache::ICache
+#define PooledCacheType NCsPooledObject::NCache::ICache
+#define ProjectileCacheType NCsProjectile::NCache::ICache
+
+		struct CSPRJ_API FImplPooled final : public PooledCacheType,
+											 public ProjectileCacheType
 		{
 		public:
 
 			static const FName Name;
+
+		#define DataType NCsProjectile::NData::IData
+		#define PayloadType NCsPooledObject::NPayload::IPayload
 
 		private:
 
@@ -53,120 +58,71 @@ namespace NCsProjectile
 
 			FCsDeltaTime ElapsedTime;
 
-			ICsData_Projectile* Data;
+			DataType* Data;
 
 		public:
 
 			FImplPooled();
-
 			~FImplPooled();
+
+			FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 		// ICsGetInterfaceMap
 		#pragma region
 		public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return InterfaceMap;
-			}
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// NCsPooledObject::NCache::ICache
+		// PooledCacheType (NCsPooledObject::NCache::ICache)
 		#pragma region
 		public:
 
-			FORCEINLINE void Init(const int32& InIndex)
-			{
-				Index = InIndex;
-			}
+			FORCEINLINE void Init(const int32& InIndex){ Index = InIndex; }
+			FORCEINLINE const int32& GetIndex() const { return Index; }
 
-			FORCEINLINE const int32& GetIndex() const
-			{
-				return Index;
-			}
+			void Allocate(PayloadType* Payload);
 
-			void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
-
-			FORCEINLINE const bool& IsAllocated() const
-			{
-				return bAllocated;
-			}
+			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
 
 			void Deallocate();
 
-			FORCEINLINE void QueueDeallocate()
-			{
-				bQueueDeallocate = true;
-			}
-
-			FORCEINLINE bool ShouldDeallocate() const
-			{
-				return bQueueDeallocate;
-			}
-
-			FORCEINLINE const ECsPooledObjectState& GetState() const
-			{
-				return State;
-			}
-
-			FORCEINLINE const ECsPooledObjectUpdate& GetUpdateType() const
-			{
-				return UpdateType;
-			}
-
-			FORCEINLINE UObject* GetInstigator() const
-			{
-				return Instigator.Get();
-			}
-
-			FORCEINLINE UObject* GetOwner() const
-			{
-				return Owner.Get();
-			}
-
-			FORCEINLINE UObject* GetParent() const
-			{
-				return Parent.Get();
-			}
-
-			FORCEINLINE const float& GetWarmUpTime() const
-			{
-				return WarmUpTime;
-			}
-
-			FORCEINLINE const float& GetLifeTime() const
-			{
-				return LifeTime;
-			}
-
-			FORCEINLINE const FCsTime& GetStartTime() const
-			{
-				return StartTime;
-			}
-
-			FORCEINLINE const FCsDeltaTime& GetElapsedTime() const
-			{
-				return ElapsedTime;
-			}
+			FORCEINLINE void QueueDeallocate(){ bQueueDeallocate = true; }
+			FORCEINLINE bool ShouldDeallocate() const { return bQueueDeallocate; }
+			FORCEINLINE const ECsPooledObjectState& GetState() const { return State; }
+			FORCEINLINE const ECsPooledObjectUpdate& GetUpdateType() const { return UpdateType; }
+			FORCEINLINE UObject* GetInstigator() const { return Instigator.Get(); }
+			FORCEINLINE UObject* GetOwner() const { return Owner.Get(); }
+			FORCEINLINE UObject* GetParent() const { return Parent.Get(); }
+			FORCEINLINE const float& GetWarmUpTime() const { return WarmUpTime; }
+			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
+			FORCEINLINE const FCsTime& GetStartTime() const { return StartTime; }
+			FORCEINLINE const FCsDeltaTime& GetElapsedTime() const { return ElapsedTime; }
 
 			bool HasLifeTimeExpired();
 
 			void Reset();
 
-		#pragma endregion NCsPooledObject::NCache::ICache
+		#pragma endregion PooledCacheType (NCsPooledObject::NCache::ICache)
 
-		// NCsProjectile::NCache::ICache
+		// ProjectileCacheType (NCsProjectile::NCache::ICache)
 		#pragma region
 		public:
 
-		#pragma endregion NCsProjectile::NCache::ICache
+		#pragma endregion ProjectileCacheType (NCsProjectile::NCache::ICache)
 
 		public:
 
 			void Update(const FCsDeltaTime& DeltaTime);
 
-			void SetData(ICsData_Projectile* InData);
+			void SetData(DataType* InData);
+
+		#undef DataType
+		#undef PayloadType
 		};
+
+#undef PooledCacheType
+#undef ProjectileCacheType
 	}
 }

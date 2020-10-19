@@ -925,8 +925,11 @@ void UCsManager_Projectile::ConstructDataHandler()
 	DataHandler->Log = &FCsPrjLog::Warning;
 }
 
-ICsData_Projectile* UCsManager_Projectile::GetData(const FName& Name)
+#define DataType NCsProjectile::NData::IData
+DataType* UCsManager_Projectile::GetData(const FName& Name)
 {
+#undef DataType
+
 	using namespace NCsManagerProjectile::NCached;
 
 	const FString& Context = Str::GetData;
@@ -934,8 +937,11 @@ ICsData_Projectile* UCsManager_Projectile::GetData(const FName& Name)
 	return DataHandler->GetData(Context, Name);
 }
 
-ICsData_Projectile* UCsManager_Projectile::GetData(const FECsProjectile& Type)
+#define DataType NCsProjectile::NData::IData
+DataType* UCsManager_Projectile::GetData(const FECsProjectile& Type)
 {
+#undef DataType
+
 	using namespace NCsManagerProjectile::NCached;
 
 	const FString& Context = Str::GetData;
@@ -943,13 +949,17 @@ ICsData_Projectile* UCsManager_Projectile::GetData(const FECsProjectile& Type)
 	return DataHandler->GetData<EMCsProjectile, FECsProjectile>(Context, Type);
 }
 
-ICsData_Projectile* UCsManager_Projectile::GetDataChecked(const FString& Context, const FName& Name)
+#define DataType NCsProjectile::NData::IData
+DataType* UCsManager_Projectile::GetDataChecked(const FString& Context, const FName& Name)
 {
+#undef DataType
 	return DataHandler->GetDataChecked(Context, Name);
 }
 
-ICsData_Projectile* UCsManager_Projectile::GetDataChecked(const FString& Context, const FECsProjectile& Type)
+#define DataType NCsProjectile::NData::IData
+DataType* UCsManager_Projectile::GetDataChecked(const FString& Context, const FECsProjectile& Type)
 {
+#undef DataType
 	return DataHandler->GetDataChecked<EMCsProjectile, FECsProjectile>(Context, Type);
 }
 

@@ -3,13 +3,10 @@
 #include "Event/CsTypes_StatusEffectEvent.h"
 #pragma once
 
-namespace NCsStatusEffect {
-	namespace NEvent {
-		struct IEvent; } }
-
-namespace NCsStatusEffect {
-	namespace NEvent {
-		struct FResource; } }
+// NCsStatusEffect::NEvent::IEvent
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NEvent, IEvent)
+// NCsStatusEffect::NEvent::FResource
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NEvent, FResource)
 
 class ICsStatusEffect;
 

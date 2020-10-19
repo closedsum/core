@@ -20,14 +20,18 @@ class USphereComponent;
 class UCsProjectileMovementComponent;
 class UStaticMeshComponent;
 
+// NCsProjectile::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
+
 // NCsPooledObject::NCache::ICache
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 // NCsProjectile::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
+// NCsProjectile::NData::NDamage::IDamage
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NData, NDamage, IDamage)
 
-class ICsData_Projectile;
 class ICsFXActorPooled;
 struct FCsFXActorPooled;
 
@@ -48,10 +52,14 @@ class CSPRJ_API ACsProjectilePooledImpl : public AActor,
 {
 	GENERATED_UCLASS_BODY()
 
+#define DataType NCsProjectile::NData::IData
+
 #define DamageEventType NCsDamage::NEvent::IEvent
 #define DamageEventResourceType NCsDamage::NEvent::FResource
 #define DamageModifierResourceType NCsDamage::NModifier::FResource
 #define DamageDataType NCsDamage::NData::IData
+
+#define ProjectileDamageDataType NCsProjectile::NData::NDamage::IDamage
 
 #define PooledCacheType NCsPooledObject::NCache::ICache
 
@@ -151,7 +159,10 @@ protected:
 #pragma region
 public:
 
-	PooledCacheType* GetCache() const;
+	FORCEINLINE PooledCacheType* GetCache() const
+	{
+		return Cache;
+	}
 
 	void Allocate(PooledPayloadType* Payload);
 
@@ -165,13 +176,16 @@ protected:
 
 protected:
 
-	ICsData_Projectile* Data;
+	DataType* Data;
 
 // ICsProjectile
 #pragma region
 public:
 
-	ICsData_Projectile* GetData() const;
+	FORCEINLINE DataType* GetData() const
+	{
+		return Data;
+	}
 
 	UObject* GetOwner() const;
 
@@ -241,10 +255,14 @@ protected:
 
 #pragma endregion Damage
 
+#undef DataType
+
 #undef DamageEventType
 #undef DamageEventResourceType
 #undef DamageModifierResourceType
 #undef DamageDataType
+
+#undef ProjectileDamageDataType
 
 #undef PooledCacheType
 

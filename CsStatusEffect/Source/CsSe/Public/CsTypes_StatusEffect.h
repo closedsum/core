@@ -435,6 +435,19 @@ public:
 		return Cast<T>(Get());
 	}
 
+	FORCEINLINE UObject* GetChecked(const FString& Context) const
+	{
+		checkf(Data_Internal, TEXT("%s: Data_Internal is NULL."), *Context);
+
+		return Data_Internal;
+	}
+
+	template<typename T>
+	FORCEINLINE T* GetChecked(const FString& Context) const
+	{
+		return Cast<T>(GetChecked(Context));
+	}
+
 	FORCEINLINE UClass* GetClass() const { return Data_Class; }
 };
 

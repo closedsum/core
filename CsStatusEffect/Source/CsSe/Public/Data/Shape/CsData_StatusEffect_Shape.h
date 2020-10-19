@@ -4,6 +4,39 @@
 #include "CsData_StatusEffect_Shape.generated.h"
 #pragma once
 
+namespace NCsStatusEffect
+{
+	namespace NData
+	{
+		namespace NShape
+		{
+			/**
+			* Interface to describe the shape of a Status Effect. This should be used with
+			* the interface "base" IData.
+			*/
+			struct IShape : public ICsGetInterfaceMap
+			{
+			public:
+
+				static const FName Name;
+
+			public:
+
+				virtual ~IShape(){}
+
+				/**
+				* Check if a given Point is within the bounds of an Origin.
+				*
+				* @param Origin		The center of the bounds.
+				* @param Point		The location to evaluate if in bounds.
+				* return			Whether the point is in bounds of the origin.
+				*/
+				virtual bool IsInBounds(const FVector& Origin, const FVector& Point) const = 0;
+			};
+		}
+	}
+}
+
 UINTERFACE(BlueprintType)
 class CSSE_API UCsData_StatusEffect_Shape : public UCsGetInterfaceMap
 {

@@ -811,7 +811,7 @@ void UCsTraceWeaponComponent::FSoundImpl::Play()
 
 	const FString& Context = Str::Play;
 
-	// NCsWeapon::NTrace::NData::NSound::NFire::IFire | ICsData_ProjectileWeapon_SoundFire
+	// SoundDataType (NCsWeapon::NTrace::NData::NSound::NFire::IFire)
 	typedef NCsWeapon::NTrace::NData::NSound::NFire::IFire SoundDataType;
 
 	if (SoundDataType* SoundData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
@@ -877,7 +877,7 @@ void UCsTraceWeaponComponent::FFXImpl::Play()
 
 	const FString& Context = Str::Play;
 
-	// NCsWeapon::NTrace::NData::NVisual::NFire::IFire | ICsData_ProjectileWeapon_VisualFire
+	// FXDataType (NCsWeapon::NTrace::NData::NVisual::NFire::IFire)
 	typedef NCsWeapon::NTrace::NData::NVisual::NFire::IFire FXDataType;
 
 	if (FXDataType* FXData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<FXDataType>(Context, Weapon->GetData()))

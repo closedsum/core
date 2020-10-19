@@ -396,9 +396,9 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 	UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
 	EPhysicalSurface SurfaceType	= PhysMaterial ? PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
 
-	// ICsData_Projectile_VisualImpact
+	// ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact)
 	{
-		typedef ICsData_Projectile_VisualImpact ImpactVisualDataType;
+		typedef NCsProjectile::NData::NVisual::NImpact::IImpact ImpactVisualDataType;
 
 		if (ImpactVisualDataType* ImpactVisualData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
 		{
@@ -427,9 +427,9 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			Manager_FX_Actor->Spawn(ImpactFX.Type, Payload);
 		}
 	}
-	// ICsData_Projectile_SoundImpact
+	// ImpactSoundDataType (NCsProjectile::NData::NSound::NImpact::IImpact)
 	{
-		typedef ICsData_Projectile_SoundImpact ImpactSoundDataType;
+		typedef NCsProjectile::NData::NSound::NImpact::IImpact ImpactSoundDataType;
 
 		if (ImpactSoundDataType* ImpactSoundData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
 		{
@@ -458,9 +458,9 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			Manager_Sound->Spawn(ImpactSound.Type, Payload);
 		}
 	}
-	// ICsData_ProjectileDamage
+	// DamageDataType (NCsProjectile::NData::NDamage::IDamage)
 	{
-		typedef ICsData_ProjectileDamage DamageDataType;
+		typedef NCsProjectile::NData::NDamage::IDamage DamageDataType;
 
 		if (DamageDataType* DamageData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<DamageDataType>(Context, Data))
 		{
@@ -512,13 +512,11 @@ void ACsProjectilePooledImpl::ConstructCache()
 // ICsPooledObject
 #pragma region
 
-NCsPooledObject::NCache::ICache* ACsProjectilePooledImpl::GetCache() const
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
 {
-	return Cache;
-}
+#undef PooledPayloadType
 
-void ACsProjectilePooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
-{
 	checkf(Payload, TEXT("ACsProjectilePooledImpl::Allocate: Payload is NULL."));
 
 	Cache->Allocate(Payload);
@@ -591,11 +589,6 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 // ICsProjectile
 #pragma region
 
-ICsData_Projectile* ACsProjectilePooledImpl::GetData() const
-{
-	return Data;
-}
-
 UObject* ACsProjectilePooledImpl::GetOwner() const
 {
 	return Cache->GetOwner();
@@ -646,9 +639,9 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 		MovementComponent->SetComponentTickEnabled(true);
 	}
 	
-	// ICsData_Projectile_VisualStaticMesh | Static Mesh
+	// VisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
 	{
-		typedef ICsData_Projectile_VisualStaticMesh VisualDataType;
+		typedef NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh VisualDataType;
 
 		if (VisualDataType* VisualData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
 		{
@@ -688,7 +681,7 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 
 		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 		
-		typedef ICsData_Projectile_VisualTrail VisualDataType;
+		typedef NCsProjectile::NData::NVisual::NTrail::ITrail VisualDataType;
 
 		if (VisualDataType* VisualData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
 		{
@@ -716,7 +709,7 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 		}
 	}
 
-	// ICsData_ProjectileCollision | Collision
+	// ICollisionDataType (NCsProjectile::NData::NCollision::ICollision)
 	{
 		const FString& ScopeName		   = ScopedTimer::SetCollision;
 		const FECsScopedGroup& ScopedGroup = NCsScopedGroup::Projectile;
@@ -724,7 +717,7 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 
 		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
-		typedef ICsData_ProjectileCollision CollisionDataType;
+		typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
 
 		if (CollisionDataType* CollisionData = FCsLibrary_Data_Projectile::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 		{

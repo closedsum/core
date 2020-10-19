@@ -23,7 +23,6 @@ namespace NCsProjectileSettings
 #pragma endregion Cached
 
 class UDataTable;
-class ICsData_Projectile;
 
 UCLASS(config = Game, defaultconfig, meta = (DisplayName = "Cs Projectile Settings"))
 class CSPRJ_API UCsProjectileSettings : public UDeveloperSettings

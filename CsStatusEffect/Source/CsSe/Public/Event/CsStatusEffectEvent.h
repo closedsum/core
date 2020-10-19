@@ -3,7 +3,8 @@
 #include "Managers/Time/CsTypes_Time.h"
 #pragma once
 
-class ICsData_StatusEffect;
+// NCsStatusEffect::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
 
 namespace NCsStatusEffect
 {
@@ -17,6 +18,8 @@ namespace NCsStatusEffect
 
 			static const FName Name;
 
+		#define DataType NCsStatusEffect::NData::IData
+
 		public:
 
 			virtual ~IEvent(){}
@@ -26,7 +29,7 @@ namespace NCsStatusEffect
 			*
 			* return
 			*/
-			virtual ICsData_StatusEffect* GetData() const = 0;
+			virtual DataType* GetData() const = 0;
 
 			/**
 			*
@@ -55,6 +58,8 @@ namespace NCsStatusEffect
 			* return
 			*/
 			virtual const TArray<TWeakObjectPtr<UObject>>& GetIgnoreObjects() const = 0;
+
+		#undef DataType
 		};
 	}
 }

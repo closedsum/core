@@ -1,14 +1,14 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
-#include "UObject/Interface.h"
+// Interface
 #include "Containers/CsGetInterfaceMap.h"
+// Types
+#include "Types/CsTypes_Macro.h"
+
 #include "CsData_ProjectileDamage.generated.h"
 
 // NCsDamage::NData::IData
-namespace NCsDamage {
-	namespace NData {
-		struct IData; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 
 namespace NCsProjectile
 {
@@ -22,13 +22,13 @@ namespace NCsProjectile
 
 				static const FName Name;
 
-			private:
-
-				typedef NCsDamage::NData::IData DamageDataType;
+			#define DamageDataType NCsDamage::NData::IData
 
 			public:
 
 				virtual DamageDataType* GetDamageData() const = 0;
+
+			#undef DamageDataType
 			};
 		}
 	}
@@ -41,9 +41,7 @@ class CSPRJ_API UCsData_ProjectileDamage : public UCsGetInterfaceMap
 };
 
 // NCsDamage::NData::IData
-namespace NCsDamage {
-	namespace NData {
-		struct IData; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 
 /**
 *
@@ -56,11 +54,11 @@ public:
 
 	static const FName Name;
 
-private:
-
-	typedef NCsDamage::NData::IData DamageDataType;
+#define DamageDataType NCsDamage::NData::IData
 
 public:
 
 	virtual DamageDataType* GetDamageData() const = 0;
+
+#undef DamageDataType
 };

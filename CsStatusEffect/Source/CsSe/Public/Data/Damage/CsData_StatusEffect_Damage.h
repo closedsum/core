@@ -24,9 +24,7 @@ namespace NCsStatusEffect
 
 				static const FName Name;
 
-			private:
-
-				typedef NCsDamage::NData::IData DamageDataType;
+			#define DamageDataType NCsDamage::NData::IData
 
 			public:
 
@@ -35,6 +33,8 @@ namespace NCsStatusEffect
 				/**
 				*/
 				virtual DamageDataType* GetDamageData() const = 0;
+
+			#undef DamageDataType
 			};
 		}
 	}
@@ -59,13 +59,13 @@ public:
 
 	static const FName Name;
 
-private:
-
-	typedef NCsDamage::NData::IData DamageDataType;
+#define DamageDataType NCsDamage::NData::IData
 
 public:
 
 	/**
 	*/
 	virtual DamageDataType* GetDamageData() const = 0;
+
+#undef DamageDataType
 };

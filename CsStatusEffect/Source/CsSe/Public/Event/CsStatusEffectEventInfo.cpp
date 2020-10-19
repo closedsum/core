@@ -30,7 +30,9 @@ namespace NCsStatusEffect
 				Container = InEvent;
 				Event = Container->Get();
 
-				ICsData_StatusEffect* Data = Event->GetData();
+				typedef NCsStatusEffect::NData::IData DataType;
+
+				DataType* Data = Event->GetData();
 
 				FrequencyInfo.SetData(Data);
 			}

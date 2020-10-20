@@ -11,9 +11,11 @@
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Data/CsLibrary_Data_Weapon.h"
+#include "Skin/Data/Visual/CsLibrary_Data_Skin_Visual.h"
 #include "Managers/Sound/Payload/CsLibrary_Payload_Sound.h"
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 #include "Library/CsLibrary_Camera.h"
+#include "Library/CsLibrary_Material.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Managers
@@ -25,6 +27,8 @@
 #include "Managers/Trace/CsManager_Trace.h"
 // Data
 #include "Data/CsData_Weapon.h"
+#include "Data/Visual/CsData_Weapon_VisualSkin.h"
+#include "Skin/Data/Visual/CsData_Skin_Visual.h"
 #include "Trace/Data/CsData_TraceWeapon.h"
 #include "Trace/Data/Sound/CsData_TraceWeapon_SoundFire.h"
 #include "Trace/Data/Visual/CsData_TraceWeapon_VisualFire.h"
@@ -43,6 +47,9 @@
 // Params
 #include "Trace/Data/Sound/CsParams_TraceWeapon_SoundFire.h"
 #include "Trace/Data/Params/CsParams_TraceWeapon_Trace.h"
+// Components
+#include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 // Cached 
 #pragma region
@@ -297,11 +304,30 @@ void UCsTraceWeaponComponent::Init()
 	check(EMCsWeapon::Get().IsValidEnumChecked(Context, Str::WeaponType, WeaponType));
 
 	// Get Data
-	Data = UCsManager_Weapon::Get(GetWorld()->GetGameState())->GetData(WeaponType.GetFName());
+	Data = UCsManager_Weapon::Get(GetWorld()->GetGameState())->GetDataChecked(Context, WeaponType.GetFName());
 
-	checkf(Data, TEXT("%s: Data is NULL. Failed to get Data of type: ICsData_Weapon for Weapon: %s"), *Context, WeaponType.ToChar());
+	check(FCsLibrary_Data_Weapon::IsValidChecked(Context, Data));
 
-	checkf(FCsLibrary_Data_Weapon::IsValidChecked(Context, Data), TEXT("%s: Data is NOT Valid."), *Context);
+	// Set Skin
+	{
+		typedef NCsWeapon::NData::NVisual::NSkin::ISkin WeaponSkinType;
+
+		if (WeaponSkinType* WeaponSkin = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<WeaponSkinType>(Context, Data))
+		{
+			typedef NCsSkin::NData::NVisual::IVisual SkinType;
+
+			SkinType* Skin = WeaponSkin->GetSkin();
+
+			checkf(Skin, TEXT("%s: Failed to get Skin of type: %s from Data."), *Context, *(SkinType::Name.ToString()));
+
+			typedef NCsSkin::NData::NVisual::FLibrary SkinLibrary;
+
+			// Static Mesh
+			SkinLibrary::SetSafeStaticMeshAndMaterials(Context, Skin, GetStaticMeshComponent());
+			// Skeletal Mesh
+			SkinLibrary::SetSafeSkeletalMeshAndMaterials(Context, Skin, GetSkeletalMeshComponent());
+		}
+	}
 
 	// Set States
 	UCsWeaponSettings* Settings = GetMutableDefault<UCsWeaponSettings>();

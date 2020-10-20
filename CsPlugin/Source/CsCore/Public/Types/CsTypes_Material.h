@@ -94,6 +94,8 @@ public:
 
 class UMaterialInterface;
 
+/**
+*/
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsTArrayMaterialnterface
 {

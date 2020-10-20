@@ -15,24 +15,68 @@ class CSCORE_API FCsLibrary_Material
 public:
 
 	/**
+	* Set the materials on a StaticMeshComponent.
+	* 
+	* @param Mesh
+	* @param Materials
 	*/
-	static void SetMaterials(UStaticMeshComponent* InMesh, const TArray<UMaterialInstanceConstant*>& Materials);
+	static void SetMaterials(UStaticMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials);
 
 	/**
+	* Set the materials on a StaticMeshComponent.
+	*
+	* @param Mesh
+	* @param Materials
 	*/
-	static void SetMaterials(USkeletalMeshComponent* InMesh, const TArray<UMaterialInterface*>& Materials);
+	static void SetMaterials(UStaticMeshComponent* Mesh, const TArray<UMaterialInstanceConstant*>& Materials);
 
 	/**
+	* Set the materials on a StaticMeshComponent.
+	*
+	* @param Context	The calling context.
+	* @param Mesh
+	* @param Materials
 	*/
-	static void SetMaterials(USkeletalMeshComponent* InMesh, const TArray<UMaterialInstanceConstant*>& Materials);
+	static void SetMaterialsChecked(const FString& Context, UStaticMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials);
 
 	/**
+	* Set the materials on a SkeletalMeshComponent.
+	*
+	* @param Mesh
+	* @param Materials
 	*/
-	static void ClearOverrideMaterials(UStaticMeshComponent* InMesh);
+	static void SetMaterials(USkeletalMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials);
+
+	/**
+	* Set the materials on a SkeletalMeshComponent.
+	*
+	* @param Mesh
+	* @param Materials
+	*/
+	static void SetMaterials(USkeletalMeshComponent* Mesh, const TArray<UMaterialInstanceConstant*>& Materials);
+
+	/**
+	* Set the materials on a SkeletalMeshComponent.
+	*
+	* @param Context	The calling context.
+	* @param Mesh
+	* @param Materials
+	*/
+	static void SetMaterialsChecked(const FString& Context, USkeletalMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials);
+
+	/**
+	* Clear the override materials on a StaticMeshComponent.
+	* 
+	* @param Mesh
+	*/
+	static void ClearOverrideMaterials(UStaticMeshComponent* Mesh);
 	
 	/**
+	* Clear the override materials on a SkeletalMeshComponent.
+	*
+	* @param Mesh
 	*/
-	static void ClearOverrideMaterials(USkeletalMeshComponent* InMesh);
+	static void ClearOverrideMaterials(USkeletalMeshComponent* Mesh);
 
 // MID
 #pragma region
@@ -44,15 +88,15 @@ public:
 
 	/**
 	*/
-	static void SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<FSkeletalMaterial>& Materials);
+	static void SetMIDs(USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<FSkeletalMaterial>& Materials);
 	
 	/**
 	*/
-	static void SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInstanceConstant*>& Materials);
+	static void SetMIDs(USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInstanceConstant*>& Materials);
 	
 	/**
 	*/
-	static void SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
+	static void SetMIDs(USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
 
 	/**
 	*/

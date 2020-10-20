@@ -35,6 +35,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NTrace, NData, NVisual, NFire, IFire)
 
 class USceneComponent;
+class UStaticMeshComponent;
+class USkeletalMeshComponent;
 
 UCLASS()
 class CSWP_API UCsTraceWeaponComponent : public UActorComponent,
@@ -441,6 +443,46 @@ protected:
 #pragma endregion FX
 
 #pragma endregion Fire
+
+// Visual
+#pragma region
+protected:
+
+	UStaticMeshComponent* StaticMeshComponent;
+
+public:
+
+	FORCEINLINE UStaticMeshComponent* GetStaticMeshComponent() const
+	{
+		return StaticMeshComponent;
+	}
+
+	FORCEINLINE UStaticMeshComponent* GetStaticMeshComponentChecked(const FString& Context) const
+	{
+		checkf(StaticMeshComponent, TEXT("%s: StaticMeshComponent is NULL."), *Context);
+
+		return StaticMeshComponent;
+	}
+
+protected:
+
+	USkeletalMeshComponent* SkeletalMeshComponent;
+
+public:
+
+	FORCEINLINE USkeletalMeshComponent* GetSkeletalMeshComponent() const
+	{
+		return SkeletalMeshComponent;
+	}
+
+	FORCEINLINE USkeletalMeshComponent* GetSkeletalMeshComponentChecked(const FString& Context) const
+	{
+		checkf(SkeletalMeshComponent, TEXT("%s: SkeletalMeshComponent is NULL."), *Context);
+
+		return SkeletalMeshComponent;
+	}
+
+#pragma endregion Visual
 
 // Print
 #pragma region

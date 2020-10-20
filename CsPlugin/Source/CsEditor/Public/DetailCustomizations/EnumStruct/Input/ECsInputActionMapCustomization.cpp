@@ -8,11 +8,14 @@
 // Cached
 #pragma region
 
-namespace NCsInputActionMapCustomizationCached
+namespace NCsInputActionMapCustomization
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CustomPopulateEnumMap = TEXT("FECsInputActionMapCustomization::CustomPopulateEnumMap");
+		namespace Str
+		{
+			const FString CustomPopulateEnumMap = TEXT("FECsInputActionMapCustomization::CustomPopulateEnumMap");
+		}
 	}
 }
 
@@ -26,7 +29,7 @@ FECsInputActionMapCustomization::FECsInputActionMapCustomization() :
 
 void FECsInputActionMapCustomization::CustomPopulateEnumMap()
 {
-	using namespace NCsInputActionMapCustomizationCached;
+	using namespace NCsInputActionMapCustomization::NCached;
 
 	NCsInputActionMap::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }

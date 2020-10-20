@@ -1767,6 +1767,12 @@ struct FCsGameEventInfo
 		return EMCsGameEvent::Get().IsValidEnum(Event);
 	}
 
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		checkf(IsValid(), TEXT("%s: Info is NOT Valid."), *Context);
+		return true;
+	}
+
 	void ApplyInputCompletedValue(const FCsInputCompletedValue& CompletedValue)
 	{
 		// Value | Float

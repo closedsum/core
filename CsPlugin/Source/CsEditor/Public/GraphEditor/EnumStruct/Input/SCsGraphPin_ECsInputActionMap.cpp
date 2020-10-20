@@ -7,11 +7,14 @@
 // Cached
 #pragma region
 
-namespace NCsGraphPinInputActionMapCached
+namespace NCsGraphPinInputActionMap
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsInputActionMap::CustomPopulateEnumMap");
+		namespace Str
+		{
+			const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsInputActionMap::CustomPopulateEnumMap");
+		}
 	}
 }
 
@@ -26,9 +29,9 @@ void SCsGraphPin_ECsInputActionMap::Construct(const FArguments& InArgs, UEdGraph
 
 void SCsGraphPin_ECsInputActionMap::CustomPopulateEnumMap()
 {
-	using namespace NCsGraphPinInputActionMapCached;
+	using namespace NCsGraphPinInputActionMap::NCached;
 
-	NCsInputAction::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
+	NCsInputActionMap::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
 void SCsGraphPin_ECsInputActionMap::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)

@@ -29,11 +29,6 @@ public:
 	{
 	}
 
-	FORCEINLINE UStaticMesh* Get() const
-	{
-		return Mesh_Internal;
-	}
-
 	FORCEINLINE bool operator==(const FCsStaticMesh& B) const
 	{
 		return Mesh == B.Mesh && Mesh_LoadFlags == B.Mesh_LoadFlags && Mesh_Internal == B.Mesh_Internal;
@@ -42,6 +37,18 @@ public:
 	FORCEINLINE bool operator!=(const FCsStaticMesh& B) const
 	{
 		return !(*this == B);
+	}
+
+	FORCEINLINE UStaticMesh* Get() const
+	{
+		return Mesh_Internal;
+	}
+
+	FORCEINLINE UStaticMesh* GetChecked(const FString& Context) const 
+	{
+		checkf(Mesh_Internal, TEXT("%s: Mesh_Internal is NULL."), *Context);
+
+		return Mesh_Internal;
 	}
 };
 

@@ -3,8 +3,6 @@
 
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
-// Types
-#include "Types/CsTypes_Material.h"
 
 #include "CsData_Skin_VisualMaterial.generated.h"
 

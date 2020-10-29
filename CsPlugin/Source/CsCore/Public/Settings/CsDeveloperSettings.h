@@ -101,7 +101,7 @@ public:
 
 	// InputActionMap
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsInputActionMap"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsInputActionMap", TitleProperty = "Name"))
 	TArray<FCsSettings_Enum> ECsInputActionMap;
 
 	template<>
@@ -153,7 +153,7 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|FX", meta = (DisplayName = "ECsFX - Populate Enum Map Method"))
 	ECsPopulateEnumMapMethod ECsFX_PopulateEnumMapMethod;
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|FX", meta = (DisplayName = "ECsFX"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|FX", meta = (DisplayName = "ECsFX", TitleProperty = "Name"))
 	TArray<FCsSettings_Enum> ECsFX;
 
 	template<>
@@ -188,7 +188,7 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound", meta = (DisplayName = "ECsSound - Populate Enum Map Method"))
 	ECsPopulateEnumMapMethod ECsSound_PopulateEnumMapMethod;
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound", meta = (DisplayName = "ECsSound"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound", meta = (DisplayName = "ECsSound", TitleProperty = "Name"))
 	TArray<FCsSettings_Enum> ECsSound;
 
 	template<>

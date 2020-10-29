@@ -375,6 +375,7 @@ struct CSCORE_API EMCsRotationRules : public TCsEnumFlagMap<ECsRotationRules>
 
 class AActor;
 class USceneComponent;
+class USkeletalMeshComponent;
 
 namespace NCsRotationRules
 {
@@ -401,6 +402,10 @@ namespace NCsRotationRules
 	/**
 	*/
 	CSCORE_API FRotator GetRotation(USceneComponent* Component, const int32& Rules);
+
+	/**
+	*/
+	CSCORE_API FRotator GetRotation(USkeletalMeshComponent* Component, const FName& Bone, const int32& Rules);
 }
 
 #define CS_ROTATION_FLAGS_NONE 0

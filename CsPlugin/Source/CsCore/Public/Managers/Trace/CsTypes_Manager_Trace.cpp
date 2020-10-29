@@ -9,8 +9,23 @@
 // FCsManagerTraceCountInfo
 #pragma region
 
+namespace NCsManagerTraceCountInfo
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsManagerTraceCountInfo, Increment);
+		}
+	}
+}
+
 void FCsManagerTraceCountInfo::Increment(FCsTraceRequest* Request)
 {
+	using namespace NCsManagerTraceCountInfo::NCached;
+
+	const FString& Context = Str::Increment;
+
 	// Id
 	if (ICsUniqueObject* UniqueObject = Request->UniqueObject)
 	{

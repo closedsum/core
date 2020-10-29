@@ -56,6 +56,7 @@ const FName UCsData_Skin_VisualStaticMeshAndMaterialImpl::Name = FName("UCsData_
 
 UCsData_Skin_VisualStaticMeshAndMaterialImpl::UCsData_Skin_VisualStaticMeshAndMaterialImpl(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer),
+	DataEmu(nullptr),
 	// ICsGetInterfaceMap
 	InterfaceMap(nullptr),
 	// ICsData
@@ -85,23 +86,17 @@ void UCsData_Skin_VisualStaticMeshAndMaterialImpl::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	// ICsGetInterfaceMap
-	if (InterfaceMap)
-	{
-		delete InterfaceMap;
-		InterfaceMap = nullptr;
-	}
-	if (DataEmu)
-	{
-		delete DataEmu;
-		DataEmu = nullptr;
-	}
+	Reset();
 }
 
 #pragma endregion UObject Interface
 
 void UCsData_Skin_VisualStaticMeshAndMaterialImpl::Init()
 {
+#if WITH_EDITOR
+	Reset();
+#endif // #if WITH_EDITOR
+
 	// ICsGetInterfaceMap
 	if (!InterfaceMap)
 	{
@@ -132,6 +127,21 @@ void UCsData_Skin_VisualStaticMeshAndMaterialImpl::Init()
 		Emu->SetStaticMesh(&(Mesh.Mesh_Internal));
 		// MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 		Emu->SetMaterials(&(Materials.Materials_Internal));
+	}
+}
+
+void UCsData_Skin_VisualStaticMeshAndMaterialImpl::Reset()
+{
+	// ICsGetInterfaceMap
+	if (InterfaceMap)
+	{
+		delete InterfaceMap;
+		InterfaceMap = nullptr;
+	}
+	if (DataEmu)
+	{
+		delete DataEmu;
+		DataEmu = nullptr;
 	}
 }
 

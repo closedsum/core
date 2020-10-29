@@ -51,14 +51,6 @@ public:
 		return Interface;
 	}
 
-	template<typename InterfaceChildType>
-	FORCEINLINE InterfaceChildType* GetInterface() const
-	{
-		static_assert(std::is_base_of<InterfaceType, InterfaceChildType>(), TEXT("TCsInterfaceObject::GetInterface: InterfaceChildType does NOT implement interface: InterfaceType."));
-
-		return (InterfaceChildType*)Interface;
-	}
-
 	virtual void SetInterface(InterfaceType* InInterface)
 	{
 		Interface = InInterface;
@@ -84,6 +76,25 @@ public:
 	FORCEINLINE T* GetObject() const
 	{
 		return Cast<T>(GetObject());
+	}
+
+	FORCEINLINE UObject* GetObjectChecked(const FString& Context) const
+	{
+		checkf(Object, TEXT("%s: Object is NULL."), *Context);
+
+		return Object;
+	}
+
+	template<typename T>
+	FORCEINLINE T* GetObjectChecked(const FString& Context) const
+	{
+		checkf(Object, TEXT("%s: Object is NULL."), *Context);
+
+		T* O = Cast<T>(Object);
+
+		checkf(O, TEXT("%s: Failed to Cast Object to type: %s."), *Context, *(T::StaticClass()->GetName()));
+
+		return Cast<T>(Object);
 	}
 
 	virtual void SetObject(UObject* InObject)

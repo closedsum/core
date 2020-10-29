@@ -139,7 +139,10 @@ void ACsWidgetActorPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Pay
 	const FString& Context = Str::Allocate;
 
 	// Get / Assign UserWidget
-	NCsWidgetActor::NPayload::IPayload* WidgetActorPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<NCsWidgetActor::NPayload::IPayload>(Context, Payload);
+	typedef NCsWidgetActor::NPayload::IPayload WidgetActorPayloadType;
+	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
+
+	WidgetActorPayloadType* WidgetActorPayload = PooledPayloadLibrary::GetInterfaceChecked<WidgetActorPayloadType>(Context, Payload);
 	{
 		// Passing reference to UserWidget
 		if (UUserWidget* UserWidget = WidgetActorPayload->GetUserWidget())
@@ -150,7 +153,9 @@ void ACsWidgetActorPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Pay
 		else
 		{
 			// Get "slice" NCsWidgetActor::NPayload::IUserWidget
-			NCsWidgetActor::NPayload::IUserWidget* WidgetActorUserWidgetPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<NCsWidgetActor::NPayload::IUserWidget>(Context, Payload);
+			typedef NCsWidgetActor::NPayload::IUserWidget UserWidgetPayloadType;
+
+			UserWidgetPayloadType* WidgetActorUserWidgetPayload = PooledPayloadLibrary::GetInterfaceChecked<UserWidgetPayloadType>(Context, Payload);
 
 				// Get type
 			const FECsUserWidgetPooled& UserWidgetPooledType = WidgetActorUserWidgetPayload->GetUserWidgetPooledType();

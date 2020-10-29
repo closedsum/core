@@ -45,7 +45,7 @@ public class CsEditor : ModuleRules
         }
         else
         {
-            PublicDependencyModuleNames.AddRange(
+            PrivateDependencyModuleNames.AddRange(
                 new string[] {
                 }
             );

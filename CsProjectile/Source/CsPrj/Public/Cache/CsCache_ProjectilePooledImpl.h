@@ -42,7 +42,7 @@ namespace NCsProjectile
 
 			ECsPooledObjectState State;
 
-			ECsPooledObjectUpdate UpdateType;
+			NCsPooledObject::EUpdate UpdateType;
 
 			TCsWeakObjectPtr<UObject> Instigator;
 
@@ -91,7 +91,7 @@ namespace NCsProjectile
 			FORCEINLINE void QueueDeallocate(){ bQueueDeallocate = true; }
 			FORCEINLINE bool ShouldDeallocate() const { return bQueueDeallocate; }
 			FORCEINLINE const ECsPooledObjectState& GetState() const { return State; }
-			FORCEINLINE const ECsPooledObjectUpdate& GetUpdateType() const { return UpdateType; }
+			FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
 			FORCEINLINE UObject* GetInstigator() const { return Instigator.Get(); }
 			FORCEINLINE UObject* GetOwner() const { return Owner.Get(); }
 			FORCEINLINE UObject* GetParent() const { return Parent.Get(); }

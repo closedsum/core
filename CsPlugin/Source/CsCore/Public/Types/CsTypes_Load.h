@@ -346,10 +346,15 @@ struct CSCORE_API FCsSoftObjectPath
 
 	FORCEINLINE bool operator==(const FCsSoftObjectPath& B) const
 	{
-		return Path.GetAssetPathName() == B.Path.GetAssetPathName() && Path.GetSubPathString() == B.Path.GetSubPathString() && Size == B.Size;
+		return Path.GetAssetPathName() == B.Path.GetAssetPathName() && Path.GetSubPathString() == B.Path.GetSubPathString();
 	}
 
-	FString ToString() const
+	FORCEINLINE bool operator!=(const FCsSoftObjectPath& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE FString ToString() const
 	{
 		return FString::Printf(TEXT("[%s] @ %s"), *(Size.ToString()), *(Path.ToString()));
 	}

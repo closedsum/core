@@ -86,7 +86,7 @@ namespace NCsPooledObject
 			*
 			* return
 			*/
-			virtual const ECsPooledObjectUpdate& GetUpdateType() const = 0;
+			virtual const EUpdate& GetUpdateType() const = 0;
 
 			/**
 			*

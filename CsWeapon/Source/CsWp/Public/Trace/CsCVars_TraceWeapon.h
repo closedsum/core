@@ -12,6 +12,7 @@ extern CSWP_API TAutoConsoleVariable<int32> CsCVarLogWeaponTraceScopedTimerFire;
 extern CSWP_API TAutoConsoleVariable<int32> CsCVarLogWeaponTraceScopedTimerTraceGetLocation;
 extern CSWP_API TAutoConsoleVariable<int32> CsCVarLogWeaponTraceScopedTimerTraceGetDirection;
 extern CSWP_API TAutoConsoleVariable<int32> CsCVarLogWeaponTraceScopedTimerTrace;
+extern CSWP_API TAutoConsoleVariable<int32> CsCVarLogWeaponTraceScopedTimerLineTrace;
 
 // CVarLog
 #pragma region
@@ -27,6 +28,7 @@ namespace NCsCVarLog
 	extern CSWP_API const Type LogWeaponTraceScopedTimerTraceGetLocation;
 	extern CSWP_API const Type LogWeaponTraceScopedTimerTraceGetDirection;
 	extern CSWP_API const Type LogWeaponTraceScopedTimerTrace;
+	extern CSWP_API const Type LogWeaponTraceScopedTimerLineTrace;
 
 	namespace Map
 	{
@@ -39,10 +41,30 @@ namespace NCsCVarLog
 		extern CSWP_API CS_DECLARE_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimerTraceGetLocation);
 		extern CSWP_API CS_DECLARE_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimerTraceGetDirection);
 		extern CSWP_API CS_DECLARE_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimerTrace);
+		extern CSWP_API CS_DECLARE_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimerLineTrace);
 	}
 }
 
 #pragma endregion CVarLog
+
+extern CSWP_API TAutoConsoleVariable<int32> CsCVarDrawWeaponTraceTrace;
+
+// CVarDraw
+#pragma region
+
+namespace NCsCVarDraw
+{
+	extern CSWP_API const Type DrawWeaponTraceTrace;
+	extern CSWP_API const Type DrawWeaponTraceLineTrace;
+
+	namespace Map
+	{
+		extern CSWP_API CS_DECLARE_ADD_TO_CVAR_MAP(DrawWeaponTraceTrace);
+		extern CSWP_API CS_DECLARE_ADD_TO_CVAR_MAP(DrawWeaponTraceLineTrace);
+	}
+}
+
+#pragma endregion CVarDraw
 
 // ScopedGroup
 #pragma region

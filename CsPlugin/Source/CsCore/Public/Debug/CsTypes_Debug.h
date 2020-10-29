@@ -103,11 +103,87 @@ namespace NCsDebugDrawRotation
 
 #pragma endregion DebugDrawRotation
 
+// FCsDebugDrawBox
+#pragma region
+
+class UWorld;
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDebugDrawBox
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsCVarDraw CVar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPreview;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsDebugDrawPriority PriorityInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPlay;
+
+	/** Applied as a translation offset to center and / or transform matrix. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Location;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsDebugDrawRotation RotationType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FRotator Rotation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Extent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FColor Color;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float LifeTime; 
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bSolid;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float Thickness;
+
+	FCsDebugDrawBox() :
+		CVar(),
+		bEnableInPreview(false),
+		PriorityInPlay(ECsDebugDrawPriority::Any),
+		bEnableInPlay(false),
+		Location(FVector::ZeroVector),
+		RotationType(ECsDebugDrawRotation::Absolute),
+		Rotation(FRotator::ZeroRotator),
+		Extent(FVector::OneVector),
+		Color(FColor::Red),
+		LifeTime(0.1f),
+		bSolid(false),
+		Thickness(1.0f)
+	{
+	}
+
+	bool CanDraw(UWorld* World) const;
+
+	void Draw(UWorld* World, const FTransform& Transform) const;
+};
+
+#pragma endregion FCsDebugDrawBox
+
 // FCsDebugDrawCircle
 #pragma region
 
 class UWorld;
 
+/**
+*/
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsDebugDrawCircle
 {
@@ -149,10 +225,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FColor Color;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime; 
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Thickness;
 
 	FCsDebugDrawCircle() :
@@ -225,10 +301,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FColor Color;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime; 
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Thickness;
 
 	FCsDebugDrawSphere() :
@@ -283,7 +359,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector Offset;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Radius;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -292,10 +368,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FColor Color;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime; 
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Thickness;
 
 	FCsDebugDrawPoint() :
@@ -354,10 +430,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FColor Color;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime; 
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Thickness;
 
 	FCsDebugDrawLine() :
@@ -412,7 +488,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector EndOffset;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Radius;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -421,10 +497,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FColor Color;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime; 
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Thickness;
 
 	FCsDebugDrawLineAndPoint() :
@@ -454,3 +530,329 @@ public:
 };
 
 #pragma endregion FCsDebugDrawLineAndPoint
+
+// FCsDebugDrawTraceLine
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDebugDrawTraceLine
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsCVarDraw CVar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPreview;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsDebugDrawPriority PriorityInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor Color;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor HitColor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float LifeTime;
+
+	FCsDebugDrawTraceLine() :
+		CVar(),
+		bEnableInPreview(false),
+		PriorityInPlay(ECsDebugDrawPriority::Any),
+		bEnableInPlay(false),
+		Color(FLinearColor::Red),
+		HitColor(FLinearColor::Green),
+		LifeTime(0.1f)
+	{
+		
+	}
+
+	bool CanDraw(UWorld* World) const;
+
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const FHitResult& Hit) const;
+};
+
+#pragma endregion FCsDebugDrawTraceLine
+
+// FCsDebugDrawTraceBox
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDebugDrawTraceBox
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsCVarDraw CVar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPreview;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsDebugDrawPriority PriorityInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor Color;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor HitColor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float LifeTime;
+
+	FCsDebugDrawTraceBox() :
+		CVar(),
+		bEnableInPreview(false),
+		PriorityInPlay(ECsDebugDrawPriority::Any),
+		bEnableInPlay(false),
+		Color(FLinearColor::Red),
+		HitColor(FLinearColor::Green),
+		LifeTime(0.1f)
+	{
+		
+	}
+
+	bool CanDraw(UWorld* World) const;
+
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const FVector& HalfSize, const FRotator& Rotation, const FHitResult& Hit) const;
+};
+
+#pragma endregion FCsDebugDrawTraceBox
+
+// FCsDebugDrawTraceSphere
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDebugDrawTraceSphere
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsCVarDraw CVar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPreview;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsDebugDrawPriority PriorityInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor Color;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor HitColor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float LifeTime;
+
+	FCsDebugDrawTraceSphere() :
+		CVar(),
+		bEnableInPreview(false),
+		PriorityInPlay(ECsDebugDrawPriority::Any),
+		bEnableInPlay(false),
+		Color(FLinearColor::Red),
+		HitColor(FLinearColor::Green),
+		LifeTime(0.1f)
+	{
+		
+	}
+
+	bool CanDraw(UWorld* World) const;
+
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const FHitResult& Hit) const;
+};
+
+#pragma endregion FCsDebugDrawTraceSphere
+
+// FCsDebugDrawTraceCapsule
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDebugDrawTraceCapsule
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsCVarDraw CVar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPreview;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsDebugDrawPriority PriorityInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor Color;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor HitColor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float LifeTime;
+
+	FCsDebugDrawTraceCapsule() :
+		CVar(),
+		bEnableInPreview(false),
+		PriorityInPlay(ECsDebugDrawPriority::Any),
+		bEnableInPlay(false),
+		Color(FLinearColor::Red),
+		HitColor(FLinearColor::Green),
+		LifeTime(0.1f)
+	{
+		
+	}
+
+	bool CanDraw(UWorld* World) const;
+
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const float& HalfHeight, const FHitResult& Hit) const;
+};
+
+#pragma endregion FCsDebugDrawTraceCapsule
+
+// FCsDebugDrawTraceShape
+#pragma region
+
+struct FCollisionShape;
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDebugDrawTraceShape
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsCVarDraw CVar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPreview;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsDebugDrawPriority PriorityInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor Color;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor HitColor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float LifeTime;
+
+	FCsDebugDrawTraceShape() :
+		CVar(),
+		bEnableInPreview(false),
+		PriorityInPlay(ECsDebugDrawPriority::Any),
+		bEnableInPlay(false),
+		Color(FLinearColor::Red),
+		HitColor(FLinearColor::Green),
+		LifeTime(0.1f)
+	{
+		
+	}
+
+	bool CanDraw(UWorld* World) const;
+
+	/**
+	* Draw a Line Trace from Start to End with the given FHitResult (Hit) information.
+	*
+	* @param World	World context.
+	* @param Start	Start location of the trace.
+	* @param End	End location of the trace.
+	* @param Hit	FHitResult information of the trace.
+	*/
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const FHitResult& Hit) const;
+
+	/**
+	* Draw a Box Trace from Start to End with the given FHitResult (Hit) information.
+	*
+	* @param World		World context.
+	* @param Start		Start location of the trace.
+	* @param End		End location of the trace.
+	* @param HalfSize	Extents of the box.
+	* @param Rotation	Orientation of the box. 
+	* @param Hit		FHitResult information of the trace.
+	*/
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const FVector& HalfSize, const FRotator& Rotation, const FHitResult& Hit) const;
+
+	/**
+	* Draw a Sphere Trace from Start to End with the given FHitResult (Hit) information.
+	*
+	* @param World	World context.
+	* @param Start	Start location of the trace.
+	* @param End	End location of the trace.
+	* @param Radius Radius of the sphere. 
+	* @param Hit	FHitResult information of the trace.
+	*/
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const FHitResult& Hit) const;
+	
+	/**
+	* Draw a Capsule Trace from Start to End with the given FHitResult (Hit) information.
+	*
+	* @param World		World context.
+	* @param Start		Start location of the trace.
+	* @param End		End location of the trace.
+	* @param Radius		Radius of the capsule.
+	* @param HalfHeight Half height of the capsule.
+	* @param Hit		FHitResult information of the trace.
+	*/
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const float& HalfHeight, const FHitResult& Hit) const;
+
+	/**
+	* Draw a Trace's shape (Line, Box, Sphere, or Capsule) from Start to End with the given FHitResult (Hit) information.
+	*
+	* @param World	World context.
+	* @param Start	Start location of the trace.
+	* @param End	End location of the trace.
+	* @param Shape	Shape of the trace (Line, Box, Sphere, or Capsule). 
+	* @param Hit	FHitResult information of the trace.
+	*/
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const FCollisionShape* Shape, const FHitResult& Hit) const;
+
+	/**
+	* Draw a Trace's shape (Line, Box, Sphere, or Capsule) from Start to End.
+	*
+	* @param World	World context.
+	* @param Start	Start location of the trace.
+	* @param End	End location of the trace.
+	* @param Shape	Shape of the trace (Line, Box, Sphere, or Capsule). 
+	*/
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const FCollisionShape* Shape) const;
+};
+
+#pragma endregion FCsDebugDrawTraceShape

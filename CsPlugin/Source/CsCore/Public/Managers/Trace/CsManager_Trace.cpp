@@ -8,6 +8,8 @@
 #include "Library/CsLibrary_Common.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
+// Managers
+#include "Managers/ScopedTimer/CsManager_ScopedTimer.h"
 // UniqueObject
 #include "UniqueObject/CsUniqueObject.h"
 
@@ -27,19 +29,74 @@
 // Cache
 #pragma region
 
-namespace NCsManagerTraceCached
+namespace NCsManagerTrace
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, Update);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, Trace);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, ProcessAsyncRequest);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, OnTraceResponse);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, OnOverlapResponse);
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, Update);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, ProcessAsyncRequest);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, OnTraceResponse);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, OnOverlapResponse);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, Trace);
+		}
 	}
 }
 
 #pragma endregion Cache
+
+// ScopedTimer
+#pragma region
+
+namespace NCsManagerTrace
+{
+	namespace NScopedTimer
+	{
+		FCsScopedTimerHandle Update;
+		FCsScopedTimerHandle ProcessAsyncRequest;
+		FCsScopedTimerHandle Trace;
+
+		void Setup()
+		{
+			using namespace NCached;
+
+			// Update
+			{
+				const FString& ScopeName		   = Str::Update;
+				const FECsScopedGroup& ScopedGroup = NCsScopedGroup::ManagerTrace;
+				const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogManagerTraceScopedTimerUpdate;
+
+				Update = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
+			}
+			// ProcessAsyncRequest
+			{
+				const FString& ScopeName		   = Str::ProcessAsyncRequest;
+				const FECsScopedGroup& ScopedGroup = NCsScopedGroup::ManagerTrace;
+				const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogManagerTraceScopedTimerProcessAsyncRequest;
+
+				ProcessAsyncRequest = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
+			}
+			// Trace
+			{
+				const FString& ScopeName		   = Str::Trace;
+				const FECsScopedGroup& ScopedGroup = NCsScopedGroup::ManagerTrace;
+				const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogManagerTraceScopedTimerTrace;
+
+				Trace = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
+			}
+		}
+
+		void Clear()
+		{
+			FCsManager_ScopedTimer::Get().SilentClearHandle(Update);
+			FCsManager_ScopedTimer::Get().SilentClearHandle(ProcessAsyncRequest);
+			FCsManager_ScopedTimer::Get().SilentClearHandle(Trace);
+		}
+	}
+}
+
+#pragma endregion ScopedTimer
 
 // static initializations
 UCsManager_Trace* UCsManager_Trace::s_Instance;
@@ -52,19 +109,13 @@ UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
 /*static*/ UCsManager_Trace* UCsManager_Trace::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerTrace(InRoot)->GetManager_Trace();
-#else
-	if (s_bShutdown)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Trace::Get: Manager has already shutdown."));
-		return nullptr;
-	}
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
+
 
 #if WITH_EDITOR
 /*static*/ bool UCsManager_Trace::IsValid(UObject* InRoot /*=nullptr*/)
@@ -218,6 +269,8 @@ UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 
 void UCsManager_Trace::Initialize()
 {
+	using namespace NCsManagerTrace::NCached;
+
 	CurrentWorld = MyRoot->GetWorld();
 
 	checkf(CurrentWorld, TEXT("UCsManager_Trace::Initialize: Failed to get a World from MyRoot: %s."), *(MyRoot->GetName()));
@@ -264,6 +317,11 @@ void UCsManager_Trace::Initialize()
 			R->SetIndex(Index);
 		}
 	}
+
+	// ScopedHandles
+#if !UE_BUILD_SHIPPING
+	NCsManagerTrace::NScopedTimer::Setup();
+#endif // #if !UE_BUILD_SHIPPING
 	bInitialized = true;
 }
 
@@ -278,6 +336,11 @@ void UCsManager_Trace::CleanUp()
 {
 	Manager_Request.Shutdown();
 	Manager_Response.Shutdown();
+
+	// ScopedHandles
+#if !UE_BUILD_SHIPPING
+	NCsManagerTrace::NScopedTimer::Clear();
+#endif // #if !UE_BUILD_SHIPPING
 
 	bInitialized = false;
 }
@@ -296,7 +359,9 @@ void UCsManager_Trace::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 {
-	using namespace NCsManagerTraceCached;
+	CS_SCOPED_TIMER_NAMESPACE_2(NCsManagerTrace, NScopedTimer, Update);
+
+	using namespace NCsManagerTrace::NCached;
 
 	const FString& Context = Str::Update;
 
@@ -321,6 +386,8 @@ void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 
 			FCsTraceRequest* Request = Container->Get();
 
+			check(Request->IsValidChecked(Context));
+
 			// If Processing, SKIP
 			if (Request->bProcessing)
 				continue;
@@ -333,6 +400,9 @@ void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 
 				if (FCsTraceResponse* Response = Request->Response)
 				{
+#if !UE_BUILD_SHIPPING
+					DrawResponse(Request, Response);
+#endif // #if !UE_BUILD_SHIPPING
 					Request->OnResponse_Event.Broadcast(Response);
 				}
 				PendingRequests.Remove(Request);
@@ -353,8 +423,12 @@ void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 			// PROCESS Request
 			if (I < Count)
 			{
-				ProcessAsyncRequest(Request);
-				IncrementTraceCount(Request);
+				const bool Success = ProcessAsyncRequest(Request);
+
+				if (Success)
+					IncrementTraceCount(Request);
+				else
+					continue;
 			}
 			Request->Update(DeltaTime);
 			++I;
@@ -411,7 +485,9 @@ void UCsManager_Trace::DeallocateRequest(FCsTraceRequest* Request)
 
 bool UCsManager_Trace::ProcessAsyncRequest(FCsTraceRequest* Request)
 {
-	using namespace NCsManagerTraceCached;
+	CS_SCOPED_TIMER_NAMESPACE_2(NCsManagerTrace, NScopedTimer, ProcessAsyncRequest);
+
+	using namespace NCsManagerTrace::NCached;
 
 	const FString& Context = Str::ProcessAsyncRequest;
 
@@ -424,13 +500,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(FCsTraceRequest* Request)
 #endif // #if !UE_BUILD_SHIPPING
 
 #if !UE_BUILD_SHIPPING
-	if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceRequests))
-	{
-		// Sphere around Start
-		DrawDebugSphere(CurrentWorld, Request->Start, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
-		// Line from Start to End
-		DrawDebugLine(CurrentWorld, Request->Start, Request->End, FColor::Red, false, 0.1f, 0, 1.0f);
-	}
+	DrawRequest(Request);
 #endif // #if !UE_BUILD_SHIPPING
 
 	Request->bProcessing = true;
@@ -559,8 +629,34 @@ bool UCsManager_Trace::ProcessAsyncRequest(FCsTraceRequest* Request)
 #endif // #if !UE_BUILD_SHIPPING
 
 		DeallocateRequest(Request);
+		return false;
+	}
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Type: %s is NOT Valid. Discarding Request."), *Context, EMCsTraceType::Get().ToChar(Type));
+
+#if !UE_BUILD_SHIPPING
+		LogTransaction(Context, ECsTraceTransaction::Discard, Request, nullptr);
+#endif // #if !UE_BUILD_SHIPPING
+
+		DeallocateRequest(Request);
+		return false;
 	}
 	return true;
+}
+
+void UCsManager_Trace::DrawRequest(const FCsTraceRequest* Request) const
+{
+	if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceRequests))
+	{
+		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+		const FCollisionShape& Shape = Request->Shape;
+		const FVector& Start		 = Request->Start;
+		const FVector& End			 = Request->End;
+
+		Settings->Manager_Trace.Debug.DrawRequest.Draw(GetWorld(), Start, End, &Shape);
+	}
 }
 
 #pragma endregion Request
@@ -583,7 +679,7 @@ void UCsManager_Trace::DeallocateResponse(FCsTraceResponse* Response)
 
 void UCsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& Datum)
 {
-	using namespace NCsManagerTraceCached;
+	using namespace NCsManagerTrace::NCached;
 
 	const FString& Context = Str::OnTraceResponse;
 
@@ -665,15 +761,35 @@ void UCsManager_Trace::OnOverlapResponse(const FTraceHandle& Handle, FOverlapDat
 #endif // #if !UE_BUILD_SHIPPING
 }
 
+void UCsManager_Trace::DrawResponse(const FCsTraceRequest* Request, const FCsTraceResponse* Response) const
+{
+	if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceRequests))
+	{
+		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+		const FCollisionShape& Shape = Request->Shape;
+		const FVector& Start		 = Request->Start;
+		const FVector& End			 = Request->End;
+
+		const FHitResult& Hit = Response->bResult ? Response->OutHits[CS_FIRST] : NCsCollision::NHit::Default;
+
+		Settings->Manager_Trace.Debug.DrawResponse.Draw(GetWorld(), Start, End, &Shape, Hit);
+	}
+}
+
 #pragma endregion Response
 
 FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 {
-	using namespace NCsManagerTraceCached;
+	CS_SCOPED_TIMER_NAMESPACE_2(NCsManagerTrace, NScopedTimer, Trace);
+
+	using namespace NCsManagerTrace::NCached;
 
 	const FString& Context = Str::Trace;
 
 	checkf(Request, TEXT("%s: Request is NULL."), *Context);
+
+	check(Request->IsValidChecked(Context));
 
 	Request->StartTime = CurrentWorld->GetTimeSeconds();
 
@@ -715,13 +831,7 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 	else
 	{
 #if !UE_BUILD_SHIPPING
-		if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceRequests))
-		{
-			// Sphere around Start
-			DrawDebugSphere(CurrentWorld, Request->Start, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
-			// Line from Start to End
-			DrawDebugLine(CurrentWorld, Request->Start, Request->End, FColor::Red, false, 0.1f, 0, 1.0f);
-		}
+		DrawRequest(Request);
 #endif // #if !UE_BUILD_SHIPPING
 
 		FCsTraceResponse* Response = AllocateResponse();
@@ -944,20 +1054,11 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 		LogTransaction(Context, ECsTraceTransaction::Complete, Request, Response);
 #endif // #if !UE_BUILD_SHIPPING
 
-		DeallocateRequest(Request);
-		
 #if !UE_BUILD_SHIPPING
-		if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceResponses))
-		{
-			if (Response->bResult)
-			{
-				// Sphere around Start
-				DrawDebugSphere(CurrentWorld, OutHits[CS_FIRST].TraceStart, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
-				// Line from Start to End
-				DrawDebugLine(CurrentWorld, OutHits[CS_FIRST].TraceStart, OutHits[CS_FIRST].Location, FColor::Red, false, 0.1f, 0, 1.0f);
-			}
-		}
+		DrawResponse(Request, Response);
 #endif // #if !UE_BUILD_SHIPPING
+
+		DeallocateRequest(Request);
 		return Response;
 	}
 	DeallocateRequest(Request);

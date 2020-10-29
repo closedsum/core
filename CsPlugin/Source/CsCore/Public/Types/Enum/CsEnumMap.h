@@ -11,6 +11,7 @@ protected:
 	FString EnumName;
 	FName EnumFName;
 private:
+	TSet<EnumType> EnumSet;
 	TArray<EnumType> Enums;
 	int32 Count;
 	TMap<FString, EnumType> FromNameMap;
@@ -21,7 +22,17 @@ private:
 	TMap<EnumType, FName> ToNameInternalMap;
 	EnumType MAX;
 protected:
-	TCsEnumMap()
+	TCsEnumMap() :
+		EnumSet(),
+		Enums(),
+		Count(0),
+		FromNameMap(),
+		ToNameMap(),
+		FromDisplayNameMap(),
+		ToDisplayNameMap(),
+		FromNameInternalMap(),
+		ToNameInternalMap(),
+		MAX()
 	{
 		Count = 0;
 		bExplicitMAX = false;
@@ -76,6 +87,7 @@ public:
 
 	FORCEINLINE EnumType Add(const EnumType& Enum, const FString& Name, const FString& DisplayName)
 	{
+		EnumSet.Add(Enum);
 		Enums.Add(Enum);
 		MAX = Enum;
 		++Count;
@@ -111,7 +123,7 @@ public:
 
 	FORCEINLINE bool IsValidEnum(const EnumType& Enum) const
 	{
-		return Enums.Find(Enum) > INDEX_NONE;
+		return EnumSet.Find(Enum) != nullptr;
 	}
 
 	FORCEINLINE bool IsValidEnum(const FString& Name) const
@@ -122,6 +134,33 @@ public:
 	FORCEINLINE bool IsValidEnum(const FName& Name) const
 	{
 		return FromNameInternalMap.Find(Name) != nullptr;
+	}
+
+	FORCEINLINE bool IsValidEnumChecked(const EnumType& Enum)
+	{
+		const bool Result = IsValidEnum(Enum);
+
+		checkf(Result, TEXT("%s::IsValidEnumChecked: Enum: %s is NOT Valid"), *MapName, ToChar(Enum));
+
+		return Result;
+	}
+
+	FORCEINLINE bool IsValidEnumChecked(const FString& Context, const EnumType& Enum)
+	{
+		const bool Result = IsValidEnum(Enum);
+
+		checkf(Result, TEXT("%s: Enum: %s is NOT Valid"), *Context, ToChar(Enum));
+
+		return Result;
+	}
+
+	FORCEINLINE bool IsValidEnumChecked(const FString& Context, const FString& EnumElementName, const EnumType& Enum)
+	{
+		const bool Result = IsValidEnum(Enum);
+
+		checkf(Result, TEXT("%s: %s: %s is NOT Valid"), *Context, *EnumElementName, ToChar(Enum));
+
+		return Result;
 	}
 
 	FORCEINLINE const EnumType& GetEnumAt(const int32& Index) const

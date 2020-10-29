@@ -152,6 +152,8 @@ struct CSCORE_API FCsTraceRequest
 		return Index > INDEX_NONE;
 	}
 
+	bool IsValidChecked(const FString& Context) const;
+
 	FORCEINLINE bool IsHandleValid() const
 	{
 		return Handle._Handle != 0ull && Handle._Data.FrameNumber != 0 && Handle._Data.Index != 0;

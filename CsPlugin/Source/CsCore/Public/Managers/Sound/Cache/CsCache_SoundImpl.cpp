@@ -32,7 +32,7 @@ namespace NCsSound
 			bAllocated(false),
 			bQueueDeallocate(false),
 			State(ECsPooledObjectState::Inactive),
-			UpdateType(ECsPooledObjectUpdate::Manager),
+			UpdateType(NCsPooledObject::EUpdate::Manager),
 			Instigator(),
 			Owner(),
 			Parent(),
@@ -80,8 +80,9 @@ namespace NCsSound
 
 			// SoundCacheType (NCsSound::NCache::ICache)
 			typedef NCsSound::NPayload::IPayload SoundPayloadType;
+			typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
 
-			SoundPayloadType* SoundPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<SoundPayloadType>(Str::Allocate, Payload);
+			SoundPayloadType* SoundPayload = PooledPayloadLibrary::GetInterfaceChecked<SoundPayloadType>(Str::Allocate, Payload);
 
 			DeallocateMethod = SoundPayload->GetDeallocateMethod();
 			LifeTime		 = SoundPayload->GetLifeTime();

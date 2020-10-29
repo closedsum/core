@@ -8,6 +8,7 @@
 // Types
 #include "Types/CsCached.h"
 #include "Types/CsTypes_Math.h"
+#include "Types/CsTypes_Collision.h"
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Data/CsLibrary_Data_Weapon.h"
@@ -47,6 +48,7 @@
 // Params
 #include "Trace/Data/Sound/CsParams_TraceWeapon_SoundFire.h"
 #include "Trace/Data/Params/CsParams_TraceWeapon_Trace.h"
+#include "Trace/Data/Params/CsLibrary_Params_TraceWeapon_Trace.h"
 // Components
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -103,8 +105,9 @@ namespace NCsTraceWeaponComponent
 		{
 			namespace Str
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent::FTraceImpl, GetLocation);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent::FTraceImpl, GetStart);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent::FTraceImpl, GetDirection);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent::FTraceImpl, GetEnd);
 			}
 		}
 
@@ -306,13 +309,15 @@ void UCsTraceWeaponComponent::Init()
 	// Get Data
 	Data = UCsManager_Weapon::Get(GetWorld()->GetGameState())->GetDataChecked(Context, WeaponType.GetFName());
 
-	check(FCsLibrary_Data_Weapon::IsValidChecked(Context, Data));
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
+
+	check(WeaponDataLibrary::IsValidChecked(Context, Data));
 
 	// Set Skin
 	{
 		typedef NCsWeapon::NData::NVisual::NSkin::ISkin WeaponSkinType;
 
-		if (WeaponSkinType* WeaponSkin = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<WeaponSkinType>(Context, Data))
+		if (WeaponSkinType* WeaponSkin = WeaponDataLibrary::GetSafeInterfaceChecked<WeaponSkinType>(Context, Data))
 		{
 			typedef NCsSkin::NData::NVisual::IVisual SkinType;
 
@@ -345,7 +350,7 @@ void UCsTraceWeaponComponent::Init()
 	// Ammo
 	typedef NCsWeapon::NTrace::NData::IData TraceDataType;
 
-	TraceDataType* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<TraceDataType>(Context, Data);
+	TraceDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Data);
 
 	CurrentAmmo = PrjData->GetMaxAmmo();
 }
@@ -443,8 +448,9 @@ bool UCsTraceWeaponComponent::CanFire() const
 	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
 
 	typedef NCsWeapon::NTrace::NData::IData TraceDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	TraceDataType* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<TraceDataType>(Context, Data);
+	TraceDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Data);
 
 	// Check if enough time has elapsed to fire again.
 	const bool Pass_Time = (TimeSinceStart.Time - Fire_StartTime > PrjData->GetTimeBetweenShots());
@@ -509,8 +515,11 @@ void UCsTraceWeaponComponent::Fire()
 
 	// Cache pointer to TraceDataType (NCsWeapon::NTrace::NData::IData)
 	typedef NCsWeapon::NTrace::NData::IData TraceDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	TraceDataType* TraceData = FCsLibrary_Data_Weapon::GetInterfaceChecked<TraceDataType>(Context, Data);
+	TraceDataType* TraceData = WeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Data);
+
+	check(WeaponDataLibrary::IsValidChecked(Context, Data));
 
 	Payload->SetValue_Flag(CS_FIRST, TraceData->HasInfiniteAmmo());
 	Payload->SetValue_Int(CS_FIRST, TraceData->GetTracesPerShot());
@@ -597,8 +606,9 @@ void UCsTraceWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	// Get total elapsed time (= TimeBetweenShots)
 	typedef NCsWeapon::NTrace::NData::IData TraceDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	TraceDataType* TraceData = FCsLibrary_Data_Weapon::GetInterfaceChecked<TraceDataType>(Context, Outer->GetData());
+	TraceDataType* TraceData = WeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Outer->GetData());
 
 	Payload->SetValue_Float(CS_FIRST, TraceData->GetTimeBetweenShots());
 
@@ -641,22 +651,23 @@ char UCsTraceWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime_Internal(FCsR
 	// Trace
 #pragma region
 
-FVector UCsTraceWeaponComponent::FTraceImpl::GetLocation()
+FVector UCsTraceWeaponComponent::FTraceImpl::GetStart()
 {
 	using namespace NCsTraceWeaponComponent::NCached::TraceImpl;
 
-	const FString& ScopeName		   = Str::GetLocation;
+	const FString& ScopeName		   = Str::GetStart;
 	const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponTrace;
 	const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponTraceScopedTimerTraceGetLocation;
 
 	CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
-	const FString& Context = Str::GetLocation;
+	const FString& Context = Str::GetStart;
 
 	// Get Data Slice
 	typedef NCsWeapon::NTrace::NData::IData WeaponDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	WeaponDataType* WeaponData = FCsLibrary_Data_Weapon::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
+	WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
 	
 	// Get Trace Params
 
@@ -664,10 +675,20 @@ FVector UCsTraceWeaponComponent::FTraceImpl::GetLocation()
 
 	const ITrace* TraceParams = WeaponData->GetTraceParams();
 
-	checkf(TraceParams, TEXT("%s: Failed to get TraceParams from Data."), *Context);
+	typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
 
-	const ELocation& LocationType = TraceParams->GetLocationType();
+	check(TraceParamsLibrary::IsValidChecked(Context, TraceParams));
 
+	const FLocationInfo& LocationInfo = TraceParams->GetLocationInfo();
+	const ELocation& LocationType	  = LocationInfo.GetType();
+
+	// Self
+	if (LocationType == ELocation::Self)
+	{
+		checkf(Outer->RootComponent, TEXT("%s: RootComponent is NULL."));
+
+		return Outer->RootComponent->GetComponentLocation();
+	}
 	// Owner
 	if (LocationType == ELocation::Owner)
 	{
@@ -687,7 +708,11 @@ FVector UCsTraceWeaponComponent::FTraceImpl::GetLocation()
 	// Bone
 	if (LocationType == ELocation::Bone)
 	{
-		checkf(0, TEXT("NOT IMPLEMENTED"));
+		checkf(Outer->SkeletalMeshComponent, TEXT("%s:  SkeletalMeshComponent is NULL."), *Context);
+
+		const FName& Bone = LocationInfo.GetBoneOrSocket();
+
+		return Outer->SkeletalMeshComponent->GetBoneLocation(Bone);
 	}
 	// Component
 	if (LocationType == ELocation::Component)
@@ -709,7 +734,9 @@ FVector UCsTraceWeaponComponent::FTraceImpl::GetLocation()
 	// Custom
 	if (LocationType == ELocation::Custom)
 	{
-		checkf(0, TEXT("NOT IMPLEMENTED"));
+		checkf(GetStartImpl.IsBound(), TEXT("%s: NOT IMPLEMENTED. GetStartImpl is NOT Bound."));
+
+		return GetStartImpl.Execute();
 	}
 	return FVector::ZeroVector;
 }
@@ -728,22 +755,32 @@ FVector UCsTraceWeaponComponent::FTraceImpl::GetDirection()
 
 	// Get Data Slice
 	typedef NCsWeapon::NTrace::NData::IData WeaponDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	WeaponDataType* WeaponData = FCsLibrary_Data_Weapon::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
+	WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
 	
 	// Get Trace Params
 	using namespace NCsWeapon::NTrace::NParams::NTrace;
 
 	const ITrace* TraceParams = WeaponData->GetTraceParams();
 
-	checkf(TraceParams, TEXT("%s: Failed to get TraceParams from Data."), *Context);
+	typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
 
-	const ELocation& LocationType   = TraceParams->GetLocationType();
-	const EDirection& DirectionType = TraceParams->GetDirectionType();
-	const int32& DirectionRules		= TraceParams->GetDirectionRules();
+	check(TraceParamsLibrary::IsValidChecked(Context, TraceParams));
+
+	const FDirectionInfo& DirectionInfo = TraceParams->GetDirectionInfo();
+	const EDirection& DirectionType		= DirectionInfo.GetType();
+	const int32& DirectionRules			= DirectionInfo.GetRules();
 
 	checkf(DirectionRules != NCsRotationRules::None, TEXT("%s: No DirectionRules set in TraceParams for Data."), *Context);
 
+	// Self
+	if (DirectionType == EDirection::Self)
+	{
+		checkf(Outer->RootComponent, TEXT("%s: RootComponent is NULL."), *Context);
+
+		return NCsRotationRules::GetRotation(Outer->RootComponent->GetComponentRotation(), DirectionRules).Vector();
+	}
 	// Owner
 	if (DirectionType == EDirection::Owner)
 	{
@@ -761,7 +798,11 @@ FVector UCsTraceWeaponComponent::FTraceImpl::GetDirection()
 	// Bone
 	if (DirectionType == EDirection::Bone)
 	{
-		checkf(0, TEXT("NOT IMPLEMENTED"));
+		checkf(Outer->SkeletalMeshComponent, TEXT("%s:  SkeletalMeshComponent is NULL."), *Context);
+
+		const FName& Bone = DirectionInfo.GetBoneOrSocket();
+
+		return NCsRotationRules::GetRotation(Outer->SkeletalMeshComponent, Bone, DirectionRules).Vector();
 	}
 	// Component
 	if (DirectionType == EDirection::Component)
@@ -787,18 +828,50 @@ FVector UCsTraceWeaponComponent::FTraceImpl::GetDirection()
 	{
 		checkf(0, TEXT("NOT IMPLEMENTED"));
 	}
+	// Custom
+	if (DirectionType == EDirection::Custom)
+	{
+		checkf(GetDirectionImpl.IsBound(), TEXT("%s: NOT IMPLEMENTED. GetDirectionImpl is NOT Bound."));
+
+		return GetDirectionImpl.Execute();
+	}
 	return FVector::ZeroVector;
+}
+
+FVector UCsTraceWeaponComponent::FTraceImpl::GetEnd(const FVector& Start)
+{
+	using namespace NCsTraceWeaponComponent::NCached::TraceImpl;
+
+	const FString& Context = Str::GetEnd;
+
+	// Get Data Slice
+	typedef NCsWeapon::NTrace::NData::IData WeaponDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
+
+	WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
+
+	// Get Trace Params
+	using namespace NCsWeapon::NTrace::NParams::NTrace;
+
+	const ITrace* TraceParams = WeaponData->GetTraceParams();
+
+	typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
+
+	check(TraceParamsLibrary::IsValidChecked(Context, TraceParams));
+
+	return Start + TraceParams->GetDistance() * GetDirection();
 }
 
 void UCsTraceWeaponComponent::Trace()
 {
+	CS_SCOPED_TIMER(TraceScopedHandle);
+
 	using namespace NCsTraceWeaponComponent::NCached;
 
 	const FString& Context = Str::Trace;
 
-	const FVector Start = TraceImpl->GetLocation();
-	const FVector Dir = TraceImpl->GetDirection();
-	const FVector End = Start + 10000.0f * Dir;
+	const FVector Start = TraceImpl->GetStart();
+	const FVector End	= TraceImpl->GetEnd(Start);
 
 	UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(GetWorld()->GetGameState());
 
@@ -807,18 +880,54 @@ void UCsTraceWeaponComponent::Trace()
 	Request->End = End;
 
 	// Get collision information related to the trace.
-	ICsData_TraceWeapon* TraceData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ICsData_TraceWeapon>(Context, Data);
+	typedef NCsWeapon::NTrace::NData::IData TraceDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	//const ECollisionChannel& ObjectType = TraceData->GetObjectType();
+	TraceDataType* TraceData = WeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Data);
 
-	//Request->ObjectParams.AddObjectTypesToQuery(ObjectType);
+	typedef NCsWeapon::NTrace::NParams::NTrace::ITrace TraceParamsType;
+
+	const TraceParamsType* TraceParams = TraceData->GetTraceParams();
+
+	typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
+
+	check(TraceParamsLibrary::IsValidChecked(Context, TraceParams));
+
+	// For now assume trace via ObjectType
+	const TArray<ECollisionChannel>& ObjectTypes = TraceParams->GetObjectTypes();
+
+	for (const ECollisionChannel& ObjectType : ObjectTypes)
+	{
+		Request->ObjectParams.AddObjectTypesToQuery(ObjectType);
+	}
+
+	const FCollisionShape& Shape = TraceParams->GetShape();
+
+	Request->Shape  = Shape;
+	Request->Method = ECsTraceMethod::Single;
+	Request->Query  = ECsTraceQuery::ObjectType;
 
 	// Line
-
-	//Request->Type = LaunchTraceParams->GetTraceType();
-	//Request->Shape
+	if (Shape.IsLine())
+	{
+		Request->Type = ECsTraceType::Line;
+	}
+	else
+	{
+		Request->Type = ECsTraceType::Sweep;
+	}
 
 	FCsTraceResponse* Response = Manager_Trace->Trace(Request);
+	
+#if !UE_BUILD_SHIPPING
+	if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawWeaponTraceTrace))
+	{
+		UCsWeaponSettings* Settings = GetMutableDefault<UCsWeaponSettings>();
+		const FHitResult& Hit		= Response->bResult ? Response->OutHits[CS_FIRST] : NCsCollision::NHit::Default;
+
+		Settings->TraceWeaponImpl.Debug.DrawTrace.Draw(GetWorld(), Start, End, &Shape, Hit);
+	}
+#endif // #if !UE_BUILD_SHIPPING
 }
 
 UCsTraceWeaponComponent::FTraceImpl* UCsTraceWeaponComponent::ConstructTraceImpl()
@@ -839,8 +948,9 @@ void UCsTraceWeaponComponent::FSoundImpl::Play()
 
 	// SoundDataType (NCsWeapon::NTrace::NData::NSound::NFire::IFire)
 	typedef NCsWeapon::NTrace::NData::NSound::NFire::IFire SoundDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	if (SoundDataType* SoundData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
+	if (SoundDataType* SoundData = WeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
 	{
 		typedef NCsWeapon::NTrace::NData::NSound::NFire::NParams::IParams ParamsType;
 
@@ -905,8 +1015,9 @@ void UCsTraceWeaponComponent::FFXImpl::Play()
 
 	// FXDataType (NCsWeapon::NTrace::NData::NVisual::NFire::IFire)
 	typedef NCsWeapon::NTrace::NData::NVisual::NFire::IFire FXDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	if (FXDataType* FXData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<FXDataType>(Context, Weapon->GetData()))
+	if (FXDataType* FXData = WeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Weapon->GetData()))
 	{
 		typedef NCsWeapon::NTrace::NData::NVisual::NFire::NParams::IParams ParamsType;
 
@@ -953,8 +1064,9 @@ void UCsTraceWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, const 
 	PayloadImpl->Transform					= FX.Transform;
 
 	typedef NCsWeapon::NTrace::NData::NVisual::NFire::IFire FXDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	FXDataType* FXData = FCsLibrary_Data_Weapon::GetInterfaceChecked<FXDataType>(Context, Weapon->GetData());
+	FXDataType* FXData = WeaponDataLibrary::GetInterfaceChecked<FXDataType>(Context, Weapon->GetData());
 
 	typedef NCsWeapon::NTrace::NData::NVisual::NFire::NParams::IParams ParamsType;
 
@@ -1043,6 +1155,19 @@ UCsTraceWeaponComponent::FFXImpl* UCsTraceWeaponComponent::ConstructFXImpl()
 #pragma endregion FX
 
 #pragma endregion Fire
+
+// Visual
+#pragma region
+
+void UCsTraceWeaponComponent::ConstructSkeletalMeshComponent()
+{
+	checkf(!SkeletalMeshComponent, TEXT("UCsTraceWeaponComponent::ConstructSkeletalMeshComponent: SkeletalMeshComponent has already been constructed."));
+
+	SkeletalMeshComponent = NewObject<USkeletalMeshComponent>(this, FName("SkeletalMeshComponent"));
+	SkeletalMeshComponent->RegisterComponent();
+}
+
+#pragma endregion Visual
 
 // Print
 #pragma region

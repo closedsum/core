@@ -30,7 +30,7 @@ namespace NCsUserWidget
 			bAllocated(false),
 			bQueueDeallocate(false),
 			State(ECsPooledObjectState::Inactive),
-			UpdateType(ECsPooledObjectUpdate::Manager),
+			UpdateType(NCsPooledObject::EUpdate::Manager),
 			Instigator(),
 			Owner(),
 			Parent(),

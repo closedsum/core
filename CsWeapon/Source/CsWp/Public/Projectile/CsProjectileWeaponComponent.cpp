@@ -324,7 +324,9 @@ void UCsProjectileWeaponComponent::Init()
 
 	checkf(Data, TEXT("%s: Data is NULL. Failed to get Data of type: ICsData_Weapon for Weapon: %s"), *Context, WeaponType.ToChar());
 
-	checkf(FCsLibrary_Data_Weapon::IsValidChecked(Context, Data), TEXT("%s: Data is NOT Valid."), *Context);
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
+
+	checkf(WeaponDataLibrary::IsValidChecked(Context, Data), TEXT("%s: Data is NOT Valid."), *Context);
 
 	check(EMCsProjectile::Get().IsValidEnumChecked(Context, Str::ProjectileType, ProjectileType));
 
@@ -344,7 +346,7 @@ void UCsProjectileWeaponComponent::Init()
 	// Ammo
 	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
 
-	ProjectileDataType* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ProjectileDataType>(Context, Data);
+	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
 
 	CurrentAmmo = PrjData->GetMaxAmmo();
 }
@@ -442,8 +444,9 @@ bool UCsProjectileWeaponComponent::CanFire() const
 	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
 
 	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	ProjectileDataType* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ProjectileDataType>(Context, Data);
+	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
 
 	// Check if enough time has elapsed to fire again.
 	const bool Pass_Time = (TimeSinceStart.Time - Fire_StartTime > PrjData->GetTimeBetweenShots());
@@ -508,8 +511,9 @@ void UCsProjectileWeaponComponent::Fire()
 
 	// Cache pointer to ICsData_ProjectileWeapon
 	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	ProjectileDataType* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ProjectileDataType>(Context, Data);
+	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
 
 	Payload->SetValue_Flag(CS_FIRST, PrjData->HasInfiniteAmmo());
 	Payload->SetValue_Int(CS_FIRST, PrjData->GetProjectilesPerShot());
@@ -590,8 +594,9 @@ void UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	// Get total elapsed time (= TimeBetweenShots)
 	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	ProjectileDataType* PrjData = FCsLibrary_Data_Weapon::GetInterfaceChecked<ProjectileDataType>(Context, Outer->GetData());
+	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Outer->GetData());
 
 	Payload->SetValue_Float(CS_FIRST, PrjData->GetTimeBetweenShots());
 
@@ -706,8 +711,9 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 
 	// Get Data Slice
 	typedef NCsWeapon::NProjectile::NData::IData WeaponDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	WeaponDataType* WeaponData = FCsLibrary_Data_Weapon::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
+	WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
 	
 	// Get Launch Params
 	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
@@ -763,8 +769,9 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 
 	// Get Data Slice
 	typedef NCsWeapon::NProjectile::NData::IData WeaponDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	WeaponDataType* WeaponData = FCsLibrary_Data_Weapon::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
+	WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
 	
 	// Get Launch Params
 	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
@@ -1050,8 +1057,9 @@ void UCsProjectileWeaponComponent::FSoundImpl::Play()
 
 	// SoundDataType (NCsWeapon::NProjectile::NData::NSound::NFire::IFire)
 	typedef NCsWeapon::NProjectile::NData::NSound::NFire::IFire SoundDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	if (SoundDataType* SoundData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
+	if (SoundDataType* SoundData = WeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
 	{
 		typedef NCsWeapon::NProjectile::NData::NSound::NFire::NParams::IParams ParamsType;
 
@@ -1116,8 +1124,9 @@ void UCsProjectileWeaponComponent::FFXImpl::Play()
 
 	// FXDataType (NCsWeapon::NProjectile::NData::NVisual::NFire::IFire)
 	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::IFire FXDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	if (FXDataType* FXData = FCsLibrary_Data_Weapon::GetSafeInterfaceChecked<FXDataType>(Context, Weapon->GetData()))
+	if (FXDataType* FXData = WeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Weapon->GetData()))
 	{
 		typedef NCsWeapon::NProjectile::NData::NVisual::NFire::FParams ParamsType;
 
@@ -1164,8 +1173,9 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, c
 	PayloadImpl->Transform					= FX.Transform;
 
 	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::IFire FXDataType;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	FXDataType* FXData = FCsLibrary_Data_Weapon::GetInterfaceChecked<FXDataType>(Context, Weapon->GetData());
+	FXDataType* FXData = WeaponDataLibrary::GetInterfaceChecked<FXDataType>(Context, Weapon->GetData());
 
 	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::FParams ParamsType;
 

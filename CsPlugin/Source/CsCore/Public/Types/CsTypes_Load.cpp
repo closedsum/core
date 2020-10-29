@@ -508,7 +508,9 @@ void FCsDataEntry_Data::Populate()
 
 		PathAtId.Path = Path;
 		int32 Size = DOb->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
-		PathAtId.Size.SetBytes(Size);
+
+		if (Size > 0)
+			PathAtId.Size.SetBytes(Size);
 
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 		{
@@ -554,7 +556,8 @@ void FCsDataEntry_Data::Populate()
 
 		PathAtId.Path = Path;
 
-		PathAtId.Size.SetBytes(Bytes);
+		if (Bytes > 0)
+			PathAtId.Size.SetBytes(Bytes);
 
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 		{
@@ -623,7 +626,9 @@ void FCsDataEntry_DataTable::Populate()
 	
 		PathAtId.Path = Path;
 		int32 Size = DT->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
-		PathAtId.Size.SetBytes(Size);
+
+		if (Size > 0)
+			PathAtId.Size.SetBytes(Size);
 
 		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 		{
@@ -732,7 +737,8 @@ void FCsDataEntry_DataTable::Populate()
 
 				PathByRowAtId.Path = Path;
 
-				PathByRowAtId.Size.SetBytes(Bytes);
+				if (Bytes > 0)
+					PathByRowAtId.Size.SetBytes(Bytes);
 
 				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
 				{

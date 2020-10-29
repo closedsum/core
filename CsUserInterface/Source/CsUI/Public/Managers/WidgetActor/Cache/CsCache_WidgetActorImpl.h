@@ -9,9 +9,8 @@
 class UObject;
 struct FCsInterfaceMap;
 
-namespace NCsPooledObject {
-	namespace NPayload {
-		struct IPayload; } }
+// NCsPooledObject::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
 class UCsWidgetComponent;
 
@@ -19,18 +18,24 @@ namespace NCsWidgetActor
 {
 	namespace NCache
 	{
+	#define PooledCacheType NCsPooledObject::NCache::ICache
+	#define WidgetActorCacheType NCsWidgetActor::NCache::ICache
+
 		/**
 		* Basic implementation for Cache implementing the interfaces:
-		* NCsPooledObject::NCache::ICache and ICsCache_WidgetActor. This only supports 
+		* PooledCacheType (NCsPooledObject::NCache::ICache) and 
+		* WidgetActorCacheType (NCsWidgetActor::NCache::ICache). This only supports 
 		* a bare minimum functionality. For custom functionality create
 		* another implementation
 		*/
-		struct CSUI_API FImpl final : public NCsPooledObject::NCache::ICache,
-									  public NCsWidgetActor::NCache::ICache
+		struct CSUI_API FImpl final : public PooledCacheType,
+									  public WidgetActorCacheType
 		{
 		public:
 
 			static const FName Name;
+
+		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
 		private:
 
@@ -38,7 +43,7 @@ namespace NCsWidgetActor
 
 			FCsInterfaceMap* InterfaceMap;
 
-			// NCsPooledObject::NCache::ICache
+			// PooledCacheType (NCsPooledObject::NCache::ICache)
 
 			int32 Index;
 
@@ -48,7 +53,7 @@ namespace NCsWidgetActor
 
 			ECsPooledObjectState State;
 
-			ECsPooledObjectUpdate UpdateType;
+			NCsPooledObject::EUpdate UpdateType;
 
 			TCsWeakObjectPtr<UObject> Instigator;
 
@@ -64,7 +69,7 @@ namespace NCsWidgetActor
 
 			FCsDeltaTime ElapsedTime;
 
-			// ICsCache_WidgetActor
+			// WidgetActorCacheType (NCsWidgetActor::NCache::ICache)
 
 			// TODO:
 
@@ -75,17 +80,15 @@ namespace NCsWidgetActor
 		public:
 
 			FImpl();
-
 			~FImpl();
+
+			FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 		// ICsGetInterfaceMap
 		#pragma region
 		public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return InterfaceMap;
-			}
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
 
@@ -93,22 +96,12 @@ namespace NCsWidgetActor
 		#pragma region
 		public:
 
-			FORCEINLINE void Init(const int32& InIndex)
-			{
-				Index = InIndex;
-			}
+			FORCEINLINE void Init(const int32& InIndex) { Index = InIndex; }
+			FORCEINLINE const int32& GetIndex() const { return Index; }
 
-			FORCEINLINE const int32& GetIndex() const
-			{
-				return Index;
-			}
+			void Allocate(PooledPayloadType* Payload);
 
-			void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
-
-			FORCEINLINE const bool& IsAllocated() const
-			{
-				return bAllocated;
-			}
+			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
 
 			void Deallocate();
 
@@ -116,50 +109,15 @@ namespace NCsWidgetActor
 
 			bool ShouldDeallocate() const;
 
-			FORCEINLINE const ECsPooledObjectState& GetState() const
-			{
-				return State;
-			}
-
-			FORCEINLINE const ECsPooledObjectUpdate& GetUpdateType() const
-			{
-				return UpdateType;
-			}
-
-			FORCEINLINE UObject* GetInstigator() const
-			{
-				return Instigator.Get();
-			}
-
-			FORCEINLINE UObject* GetOwner() const
-			{
-				return Owner.Get();
-			}
-
-			FORCEINLINE UObject* GetParent() const
-			{
-				return Parent.Get();
-			}
-
-			FORCEINLINE const float& GetWarmUpTime() const
-			{
-				return WarmUpTime;
-			}
-
-			FORCEINLINE const float& GetLifeTime() const
-			{
-				return LifeTime;
-			}
-
-			FORCEINLINE const FCsTime& GetStartTime() const
-			{
-				return StartTime;
-			}
-
-			FORCEINLINE const FCsDeltaTime& GetElapsedTime() const
-			{
-				return ElapsedTime;
-			}
+			FORCEINLINE const ECsPooledObjectState& GetState() const { return State; }
+			FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
+			FORCEINLINE UObject* GetInstigator() const { return Instigator.Get(); }
+			FORCEINLINE UObject* GetOwner() const { return Owner.Get(); }
+			FORCEINLINE UObject* GetParent() const { return Parent.Get(); }
+			FORCEINLINE const float& GetWarmUpTime() const { return WarmUpTime; }
+			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
+			FORCEINLINE const FCsTime& GetStartTime() const { return StartTime; }
+			FORCEINLINE const FCsDeltaTime& GetElapsedTime() const { return ElapsedTime; }
 
 			bool HasLifeTimeExpired();
 
@@ -169,10 +127,7 @@ namespace NCsWidgetActor
 
 		public:
 
-			FORCEINLINE void SetLifeTime(const float& InLifeTime)
-			{
-				LifeTime = InLifeTime;
-			}
+			FORCEINLINE void SetLifeTime(const float& InLifeTime) { LifeTime = InLifeTime; }
 
 		// NCsWidgetActor::NCache::ICache
 		#pragma region
@@ -185,6 +140,11 @@ namespace NCsWidgetActor
 			void Update(const FCsDeltaTime& DeltaTime);
 
 			//void SetData(ICsData_Projectile* InData);
+
+		#undef PooledPayloadType
 		};
+
+	#undef PooledCacheType
+	#undef WidgetActorCacheType
 	}
 }

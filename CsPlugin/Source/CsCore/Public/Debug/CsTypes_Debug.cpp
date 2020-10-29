@@ -1,6 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Debug/CsTypes_Debug.h"
 
+// Types
+#include "Types/CsTypes_Collision.h"
+// Library
+#include "Debug/CsLibrary_Debug_Draw.h"
+// Collision
+#include "CollisionShape.h"
 // World
 #include "Engine/World.h"
 
@@ -61,6 +67,50 @@ namespace NCsDebugDrawRotation
 }
 
 #pragma endregion DebugDrawRotation
+
+// FCsDebugDrawBox
+#pragma region
+
+bool FCsDebugDrawBox::CanDraw(UWorld* World) const
+{
+	if (!World)
+		return false;
+
+	// Preview
+	if (World->WorldType == EWorldType::Editor ||
+		World->WorldType == EWorldType::EditorPreview)
+	{
+		return bEnableInPreview;
+	}
+	// Play
+	if (World->WorldType == EWorldType::Game ||
+		World->WorldType == EWorldType::PIE)
+	{
+		// Any
+		if (PriorityInPlay == ECsDebugDrawPriority::Any)
+			return bEnableInPlay || FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// CVar
+		if (PriorityInPlay == ECsDebugDrawPriority::CVar)
+			return FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// Flag
+		if (PriorityInPlay == ECsDebugDrawPriority::Flag)
+			return bEnableInPlay;
+	}
+	return false;
+}
+
+void FCsDebugDrawBox::Draw(UWorld* World, const FTransform& Transform) const
+{
+	if (CanDraw(World))
+	{
+		if (bSolid)
+			DrawDebugSolidBox(World, Transform.GetTranslation() + Location, Extent, Rotation.Quaternion(), Color, false, LifeTime, 0);
+		else
+			DrawDebugBox(World, Transform.GetTranslation() + Location, Extent, Rotation.Quaternion(), Color, false, LifeTime, 0, Thickness);
+	}
+}
+
+#pragma endregion FCsDebugDrawBox
 
 // FCsDebugDrawCircle
 #pragma region
@@ -363,3 +413,264 @@ void FCsDebugDrawLineAndPoint::DrawOnlyPoint(UWorld* World, const FVector& Locat
 }
 
 #pragma endregion FCsDebugDrawLineAndPoint
+
+// FCsDebugDrawTraceLine
+#pragma region
+
+bool FCsDebugDrawTraceLine::CanDraw(UWorld* World) const
+{
+	if (!World)
+		return false;
+
+	// Preview
+	if (World->WorldType == EWorldType::Editor ||
+		World->WorldType == EWorldType::EditorPreview)
+	{
+		return bEnableInPreview;
+	}
+	// Play
+	if (World->WorldType == EWorldType::Game ||
+		World->WorldType == EWorldType::PIE)
+	{
+		// Any
+		if (PriorityInPlay == ECsDebugDrawPriority::Any)
+			return bEnableInPlay || FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// CVar
+		if (PriorityInPlay == ECsDebugDrawPriority::CVar)
+			return FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// Flag
+		if (PriorityInPlay == ECsDebugDrawPriority::Flag)
+			return bEnableInPlay;
+	}
+	return false;
+}
+
+void FCsDebugDrawTraceLine::Draw(UWorld* World, const FVector& Start, const FVector& End, const FHitResult& Hit) const
+{
+	if (CanDraw(World))
+	{
+		NCsDebug::NDraw::FLibrary::LineTraceSingle(World, Start, End, EDrawDebugTrace::ForDuration, Hit.bBlockingHit, Hit, Color, HitColor, LifeTime);
+	}
+}
+
+#pragma endregion FCsDebugDrawTraceLine
+
+// FCsDebugDrawTraceBox
+#pragma region
+
+bool FCsDebugDrawTraceBox::CanDraw(UWorld* World) const
+{
+	if (!World)
+		return false;
+
+	// Preview
+	if (World->WorldType == EWorldType::Editor ||
+		World->WorldType == EWorldType::EditorPreview)
+	{
+		return bEnableInPreview;
+	}
+	// Play
+	if (World->WorldType == EWorldType::Game ||
+		World->WorldType == EWorldType::PIE)
+	{
+		// Any
+		if (PriorityInPlay == ECsDebugDrawPriority::Any)
+			return bEnableInPlay || FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// CVar
+		if (PriorityInPlay == ECsDebugDrawPriority::CVar)
+			return FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// Flag
+		if (PriorityInPlay == ECsDebugDrawPriority::Flag)
+			return bEnableInPlay;
+	}
+	return false;
+}
+
+void FCsDebugDrawTraceBox::Draw(UWorld* World, const FVector& Start, const FVector& End, const FVector& HalfSize, const FRotator& Rotation, const FHitResult& Hit) const
+{
+	if (CanDraw(World))
+	{
+		NCsDebug::NDraw::FLibrary::BoxTraceSingle(World, Start, End, HalfSize, Rotation, EDrawDebugTrace::ForDuration, Hit.bBlockingHit, Hit, Color, HitColor, LifeTime);
+	}
+}
+
+#pragma endregion FCsDebugDrawTraceBox
+
+// FCsDebugDrawTraceSphere
+#pragma region
+
+bool FCsDebugDrawTraceSphere::CanDraw(UWorld* World) const
+{
+	if (!World)
+		return false;
+
+	// Preview
+	if (World->WorldType == EWorldType::Editor ||
+		World->WorldType == EWorldType::EditorPreview)
+	{
+		return bEnableInPreview;
+	}
+	// Play
+	if (World->WorldType == EWorldType::Game ||
+		World->WorldType == EWorldType::PIE)
+	{
+		// Any
+		if (PriorityInPlay == ECsDebugDrawPriority::Any)
+			return bEnableInPlay || FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// CVar
+		if (PriorityInPlay == ECsDebugDrawPriority::CVar)
+			return FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// Flag
+		if (PriorityInPlay == ECsDebugDrawPriority::Flag)
+			return bEnableInPlay;
+	}
+	return false;
+}
+
+void FCsDebugDrawTraceSphere::Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const FHitResult& Hit) const
+{
+	if (CanDraw(World))
+	{
+		NCsDebug::NDraw::FLibrary::SphereTraceSingle(World, Start, End, Radius, EDrawDebugTrace::ForDuration, Hit.bBlockingHit, Hit, Color, HitColor, LifeTime);
+	}
+}
+
+#pragma endregion FCsDebugDrawTraceSphere
+
+// FCsDebugDrawTraceCapsule
+#pragma region
+
+bool FCsDebugDrawTraceCapsule::CanDraw(UWorld* World) const
+{
+	if (!World)
+		return false;
+
+	// Preview
+	if (World->WorldType == EWorldType::Editor ||
+		World->WorldType == EWorldType::EditorPreview)
+	{
+		return bEnableInPreview;
+	}
+	// Play
+	if (World->WorldType == EWorldType::Game ||
+		World->WorldType == EWorldType::PIE)
+	{
+		// Any
+		if (PriorityInPlay == ECsDebugDrawPriority::Any)
+			return bEnableInPlay || FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// CVar
+		if (PriorityInPlay == ECsDebugDrawPriority::CVar)
+			return FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// Flag
+		if (PriorityInPlay == ECsDebugDrawPriority::Flag)
+			return bEnableInPlay;
+	}
+	return false;
+}
+
+void FCsDebugDrawTraceCapsule::Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const float& HalfHeight, const FHitResult& Hit) const
+{
+	if (CanDraw(World))
+	{
+		NCsDebug::NDraw::FLibrary::CapsuleTraceSingle(World, Start, End, Radius, HalfHeight, EDrawDebugTrace::ForDuration, Hit.bBlockingHit, Hit, Color, HitColor, LifeTime);
+	}
+}
+
+#pragma endregion FCsDebugDrawTraceCapsule
+
+// FCsDebugDrawTraceShape
+#pragma region
+
+bool FCsDebugDrawTraceShape::CanDraw(UWorld* World) const
+{
+	if (!World)
+		return false;
+
+	// Preview
+	if (World->WorldType == EWorldType::Editor ||
+		World->WorldType == EWorldType::EditorPreview)
+	{
+		return bEnableInPreview;
+	}
+	// Play
+	if (World->WorldType == EWorldType::Game ||
+		World->WorldType == EWorldType::PIE)
+	{
+		// Any
+		if (PriorityInPlay == ECsDebugDrawPriority::Any)
+			return bEnableInPlay || FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// CVar
+		if (PriorityInPlay == ECsDebugDrawPriority::CVar)
+			return FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// Flag
+		if (PriorityInPlay == ECsDebugDrawPriority::Flag)
+			return bEnableInPlay;
+	}
+	return false;
+}
+
+void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVector& End, const FHitResult& Hit) const
+{
+	if (CanDraw(World))
+	{
+		NCsDebug::NDraw::FLibrary::LineTraceSingle(World, Start, End, EDrawDebugTrace::ForDuration, Hit.bBlockingHit, Hit, Color, HitColor, LifeTime);
+	}
+}
+
+void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVector& End, const FVector& HalfSize, const FRotator& Rotation, const FHitResult& Hit) const
+{
+	if (CanDraw(World))
+	{
+		NCsDebug::NDraw::FLibrary::BoxTraceSingle(World, Start, End, HalfSize, Rotation, EDrawDebugTrace::ForDuration, Hit.bBlockingHit, Hit, Color, HitColor, LifeTime);
+	}
+}
+
+void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const FHitResult& Hit) const
+{
+	if (CanDraw(World))
+	{
+		NCsDebug::NDraw::FLibrary::SphereTraceSingle(World, Start, End, Radius, EDrawDebugTrace::ForDuration, Hit.bBlockingHit, Hit, Color, HitColor, LifeTime);
+	}
+}
+
+void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const float& HalfHeight, const FHitResult& Hit) const
+{
+	if (CanDraw(World))
+	{
+		NCsDebug::NDraw::FLibrary::CapsuleTraceSingle(World, Start, End, Radius, HalfHeight, EDrawDebugTrace::ForDuration, Hit.bBlockingHit, Hit, Color, HitColor, LifeTime);
+	}
+}
+
+void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVector& End, const FCollisionShape* Shape, const FHitResult& Hit) const
+{
+	// Line
+	if (!Shape)
+	{
+		Draw(World, Start, End, Hit);
+	}
+	else
+	{
+		// Line
+		if (Shape->IsLine())
+			Draw(World, Start, End, Hit);
+		// Box
+		else
+		if (Shape->IsBox())
+			Draw(World, Start, End, Shape->GetExtent(), FRotator::ZeroRotator, Hit);
+		// Sphere
+		else
+		if (Shape->IsSphere())
+			Draw(World, Start, End, Shape->Sphere.Radius, Hit);
+		// Capsule
+		else
+		if (Shape->IsCapsule())
+			Draw(World, Start, End, Shape->Capsule.Radius, Shape->Capsule.HalfHeight, Hit);
+	}
+}
+
+void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVector& End, const FCollisionShape* Shape) const
+{
+	Draw(World, Start, End, Shape, NCsCollision::NHit::Default);
+}
+
+#pragma endregion FCsDebugDrawTraceShape

@@ -28,10 +28,9 @@ namespace NCsWeapon
 					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
 					// ITrace
-					Location(nullptr),
-					Direction(nullptr),
-					DirectionRules(nullptr),
-					ObjectType(ECollisionChannel::ECC_MAX),
+					LocationInfo(),
+					DirectionInfo(),
+					ObjectTypes(),
 					Shape(),
 					Distance(nullptr)
 				{
@@ -56,10 +55,9 @@ namespace NCsWeapon
 					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
 					// ITrace
-					Location(nullptr),
-					Direction(nullptr),
-					DirectionRules(nullptr),
-					ObjectType(ECollisionChannel::ECC_MAX),
+					LocationInfo(),
+					DirectionInfo(),
+					ObjectTypes(),
 					Shape(),
 					Distance(nullptr)
 				{
@@ -92,10 +90,9 @@ namespace NCsWeapon
 					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
 					// ITrace
-					Location(nullptr),
-					Direction(nullptr),
-					DirectionRules(nullptr),
-					ObjectType(ECollisionChannel::ECC_MAX),
+					LocationInfo(),
+					DirectionInfo(),
+					ObjectTypes(),
 					Shape(),
 					Distance(nullptr)
 				{
@@ -126,10 +123,9 @@ namespace NCsWeapon
 					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
 					// ITrace
-					Location(nullptr),
-					Direction(nullptr),
-					DirectionRules(nullptr),
-					ObjectType(ECollisionChannel::ECC_MAX),
+					LocationInfo(),
+					DirectionInfo(),
+					ObjectTypes(),
 					Shape(),
 					Distance(nullptr)
 				{

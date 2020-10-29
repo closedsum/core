@@ -13,12 +13,13 @@ namespace NCsProjectile
 	namespace NCache
 	{
 		FImplPooled::FImplPooled() :
+			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
 			Index(INDEX_NONE),
 			bAllocated(false),
 			bQueueDeallocate(false),
 			State(ECsPooledObjectState::Inactive),
-			UpdateType(ECsPooledObjectUpdate::Manager),
+			UpdateType(NCsPooledObject::EUpdate::Manager),
 			Instigator(),
 			Owner(),
 			Parent(),

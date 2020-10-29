@@ -59,17 +59,12 @@ UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
 /*static*/ UCsManager_Level* UCsManager_Level::Get(UObject* InRoot /*= nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerLevel(InRoot)->GetManager_Level();
-#else
-	if (s_bShutdown)
-		return nullptr;
-
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_Level::Init(UObject* InRoot, TSubclassOf<UCsManager_Level> ManageLevelClass, UObject* InOuter /*= nullptr*/)
 {

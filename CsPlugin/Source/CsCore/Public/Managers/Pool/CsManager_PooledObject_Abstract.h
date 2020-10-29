@@ -1273,7 +1273,7 @@ namespace NCsPooledObject
 
 					checkf(Cache, TEXT("%s::Update: Cache is NULL."), *Name);
 
-					if (Cache->GetUpdateType() == ECsPooledObjectUpdate::Manager)
+					if (Cache->GetUpdateType() == NCsPooledObject::EUpdate::Manager)
 					{
 						O->Update(DeltaTime);
 					}

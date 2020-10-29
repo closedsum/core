@@ -9,9 +9,6 @@
 
 #include "CsManager_Trace.generated.h"
 
-#define CS_POOLED_TRACE_REQUEST_SIZE 255
-#define CS_POOLED_TRACE_RESPONSE_SIZE 255
-
 // Structs
 #pragma region
 
@@ -50,8 +47,15 @@ public:
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsManager_Trace* Get(UObject* InRoot = nullptr);
-	
+#else
+	static UCsManager_Trace* Get(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
 	template<typename T>
 	static T* Get(UObject* InRoot = nullptr)
 	{
@@ -132,6 +136,8 @@ public:
 
 	void Update(const FCsDeltaTime& DeltaTime);
 
+protected:
+
 	int32 MaxRequestsProcessedPerTick;
 
 	/** */
@@ -161,6 +167,8 @@ private:
 
 	bool ProcessAsyncRequest(FCsTraceRequest* Request);
 
+	void DrawRequest(const FCsTraceRequest* Request) const;
+
 #pragma endregion Request
 
 // Response
@@ -187,11 +195,15 @@ private:
 	void OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& Datum);
 	void OnOverlapResponse(const FTraceHandle& Handle, FOverlapDatum& Datum);
 
+	void DrawResponse(const FCsTraceRequest* Request, const FCsTraceResponse* Response) const;
+
 #pragma endregion Response
 
 public:
 
 	FCsTraceResponse* Trace(FCsTraceRequest* Request);
 
-	virtual void LogTransaction(const FString& Context, const ECsTraceTransaction& Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response);
+protected:
+
+	void LogTransaction(const FString& Context, const ECsTraceTransaction& Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response);
 };

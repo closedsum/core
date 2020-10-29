@@ -163,8 +163,9 @@ void UCsFXActorPooledImpl::Allocate(PayloadType* Payload)
 	CacheImpl->SetFXComponent(FXComponent);
 
 	typedef NCsFX::NPayload::IPayload FXPayloadType;
+	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
 
-	FXPayloadType* FXPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<FXPayloadType>(Str::Allocate, Payload);
+	FXPayloadType* FXPayload = PooledPayloadLibrary::GetInterfaceChecked<FXPayloadType>(Str::Allocate, Payload);
 
 	// If the Parent is set, attach the FX to the Parent
 	if (USceneComponent* Parent = Cast<USceneComponent>(Payload->GetParent()))

@@ -177,6 +177,8 @@ UENUM(BlueprintType)
 enum class ECsPooledObjectUpdate : uint8
 {
 	/** */
+	None						UMETA(DisplayName = "None"),
+	/** */
 	Self						UMETA(DisplayName = "Self"),
 	/** */
 	Manager						UMETA(DisplayName = "Manager"),
@@ -198,6 +200,7 @@ namespace NCsPooledObjectUpdate
 
 	namespace Ref
 	{
+		extern CSCORE_API const Type None;
 		extern CSCORE_API const Type Self;
 		extern CSCORE_API const Type Manager;
 		extern CSCORE_API const Type Owner;
@@ -206,6 +209,25 @@ namespace NCsPooledObjectUpdate
 	}
 
 	extern CSCORE_API const uint8 MAX;
+}
+
+namespace NCsPooledObject
+{
+	/**
+	*/
+	enum class EUpdate : uint8 
+	{
+		/** */
+		None,
+		/** */
+		Self,
+		/** */
+		Manager,
+		/** */
+		Owner,
+		/** */
+		Instigator
+	};
 }
 
 #pragma endregion PooledObjectUpdate

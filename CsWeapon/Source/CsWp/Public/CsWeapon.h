@@ -4,6 +4,7 @@
 #include "UObject/Interface.h"
 #include "Containers/CsInterfaceObject.h"
 // Types
+#include "Types/CsTypes_Macro.h"
 #include "CsTypes_Weapon.h"
 #include "CsWeapon.generated.h"
 
@@ -14,9 +15,7 @@ class CSWP_API UCsWeapon : public UInterface
 };
 
 // NCsWeapon::NData::IData
-namespace NCsWeapon {
-	namespace NData {
-		struct IData; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
 
 class CSWP_API ICsWeapon
 {
@@ -45,6 +44,9 @@ public:
 
 // FCsWeapon
 #pragma region
+
+// NCsWeapon::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
 
 struct CSWP_API FCsWeapon : public TCsInterfaceObject<ICsWeapon>
 {

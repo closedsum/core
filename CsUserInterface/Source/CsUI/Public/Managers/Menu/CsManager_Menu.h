@@ -17,7 +17,11 @@ public:
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsManager_Menu* Get(UObject* InRoot = nullptr);
+#else
+	static UCsManager_Menu* Get(UObject* InRoot = nullptr);
+#endif // #if WITH_EDITOR
 
 	template<typename T>
 	static T* Get(UObject* InRoot = nullptr)

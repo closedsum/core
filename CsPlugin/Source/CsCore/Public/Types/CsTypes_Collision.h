@@ -237,3 +237,17 @@ struct FCsOnComponentBeginOverlapInfo
 };
 
 #pragma endregion FCsOnComponentBeginOverlapInfo
+
+
+// Collision
+#pragma region
+
+namespace NCsCollision
+{
+	namespace NHit
+	{
+		extern CSCORE_API const FHitResult Default;
+	}
+}
+
+#pragma endregion Collision

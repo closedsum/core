@@ -19,7 +19,7 @@ struct CSCORE_API FCsTraceResponse
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bDeallocate;
 
-	/** */
+	/** Whether the trace successful hit something. */
 	UPROPERTY(BlueprintReadOnly)
 	bool bResult;
 
@@ -27,11 +27,11 @@ struct CSCORE_API FCsTraceResponse
 	UPROPERTY(BlueprintReadOnly)
 	float ElapsedTime;
 
-	/** */
+	/** All hit results as a result of the trace. */
 	UPROPERTY(BlueprintReadOnly)
 	TArray<FHitResult> OutHits;
 
-	/** */
+	/** All overlap results as a result of the trace. */
 	UPROPERTY()
 	TArray<FOverlapResult> OutOverlaps;
 

@@ -5,24 +5,35 @@
 // Data
 #include "Projectile/Data/CsData_ProjectileWeapon.h"
 
-#define DataType NCsWeapon::NProjectile::NData::IData
-bool FCsLibrary_Data_ProjectileWeapon::IsValidChecked(const FString& Context, DataType* Data)
+namespace NCsWeapon
 {
-#undef DataType
-
-	checkf(Data, TEXT("%s: Data is NULL."), *Context);
-
-	// Check MaxAmmo is a valid value
-	if (!Data->HasInfiniteAmmo())
+	namespace NProjectile
 	{
-		checkf(Data->GetMaxAmmo() > 0, TEXT("%s: MaxAmmo must be > 0."), *Context);
+		namespace NData
+		{
+			#define DataType NCsWeapon::NProjectile::NData::IData
+			bool FLibrary::IsValidChecked(const FString& Context, DataType* Data)
+			{
+			#undef DataType
+
+				checkf(Data, TEXT("%s: Data is NULL."), *Context);
+
+				// Check MaxAmmo is a valid value
+				if (!Data->HasInfiniteAmmo())
+				{
+					checkf(Data->GetMaxAmmo() > 0, TEXT("%s: MaxAmmo must be > 0."), *Context);
+				}
+				// Check TimeBetweenShots > 0.0f
+				checkf(Data->GetTimeBetweenShots() > 0.0f, TEXT("%s: TimeBetweenShots must be > 0.0f."), *Context);
+				// Check ProjectilesPerShot >= 1
+				checkf(Data->GetProjectilesPerShot() >= 1, TEXT("%s: ProjectilesPerShot must be >= 1."), *Context);
+				// Check TimeBetweenProjectilesPerShot is valid when ProjectilesPerShot > 1
+				if (Data->GetProjectilesPerShot() > 1)
+				{
+					checkf(Data->GetTimeBetweenProjectilesPerShot() > 0.0f, TEXT("%s: TimeBetweenProjectilesPerShot must be > 0.0f when ProjectilesPerShot > 1."), *Context);
+				}
+				return true;
+			}
+		}
 	}
-	// Check ProjectilesPerShot >= 1
-	checkf(Data->GetProjectilesPerShot() >= 1, TEXT("%s: ProjectilesPerShot must be >= 1."), *Context);
-	// Check TimeBetweenProjectilesPerShot is valid when ProjectilesPerShot > 1
-	if (Data->GetProjectilesPerShot() > 1)
-	{
-		checkf(Data->GetTimeBetweenProjectilesPerShot() > 0.0f, TEXT("%s: TimeBetweenProjectilesPerShot must be > 0.0f when ProjectilesPerShot > 1."), *Context);
-	}
-	return true;
 }

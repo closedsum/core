@@ -98,6 +98,7 @@ namespace NCsPooledObjectUpdate
 	{
 		typedef EMCsPooledObjectUpdate EnumMapType;
 
+		CSCORE_API CS_ADD_TO_ENUM_MAP(None);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Self);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Manager);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Owner);

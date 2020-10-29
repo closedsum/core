@@ -146,8 +146,9 @@ void UCsUserWidgetPooledImpl::Allocate(PayloadType* Payload)
 	CacheImpl->Allocate(Payload);
 
 	typedef NCsUserWidget::NPayload::IPayload UserWidgetPayloadType;
+	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
 
-	UserWidgetPayloadType* UserWidgetPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<UserWidgetPayloadType>(Context, Payload);
+	UserWidgetPayloadType* UserWidgetPayload = PooledPayloadLibrary::GetInterfaceChecked<UserWidgetPayloadType>(Context, Payload);
 
 	UserWidget->SetVisibility(UserWidgetPayload->GetVisibility());
 	UserWidget->SetIsEnabled(true);

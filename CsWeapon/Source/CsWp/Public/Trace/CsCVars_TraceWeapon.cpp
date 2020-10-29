@@ -59,6 +59,13 @@ TAutoConsoleVariable<int32> CsCVarLogWeaponTraceScopedTimerTrace(
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<int32> CsCVarLogWeaponTraceScopedTimerLineTrace(
+	TEXT("log.weapon.trace.scopedtimer.linetrace"),
+	0,
+	TEXT("Log Weapon Trace Scoped Timer LineTrace()."),
+	ECVF_SetByConsole
+);
+
 // CVarLog
 #pragma region
 
@@ -73,6 +80,7 @@ namespace NCsCVarLog
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponTraceScopedTimerTraceGetLocation, "Log Weapon Trace Scoped Timer TraceImpl.GetLocation()");
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponTraceScopedTimerTraceGetDirection, "Log Weapon Trace Scoped Timer TraceImpl.GetDirection()");
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponTraceScopedTimerTrace, "Log Weapon Trace Scoped Timer Trace()");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponTraceScopedTimerLineTrace, "Log Weapon Trace Scoped Timer LineTrace()");
 
 	namespace Map
 	{
@@ -85,10 +93,42 @@ namespace NCsCVarLog
 		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimerTraceGetLocation, CsCVarLogWeaponTraceScopedTimerTraceGetLocation);
 		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimerTraceGetDirection, CsCVarLogWeaponTraceScopedTimerTraceGetDirection);
 		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimerTrace, CsCVarLogWeaponTraceScopedTimerTrace);
+		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimerLineTrace, CsCVarLogWeaponTraceScopedTimerLineTrace);
 	}
 }
 
 #pragma endregion CVarLog
+
+TAutoConsoleVariable<int32> CsCVarDrawWeaponTraceTrace(
+	TEXT("draw.weapon.trace.trace"),
+	0,
+	TEXT("Draw TraceWeapon Trace()"),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarDrawWeaponTraceLineTrace(
+	TEXT("draw.weapon.trace.linetrace"),
+	0,
+	TEXT("Draw TraceWeapon LineTrace()"),
+	ECVF_SetByConsole
+);
+
+// CVarDraw
+#pragma region
+
+namespace NCsCVarDraw
+{
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(DrawWeaponTraceTrace, "Draw TraceWeapon Trace()");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(DrawWeaponTraceLineTrace, "Draw TraceWeapon LineTrace()");
+
+	namespace Map
+	{
+		CSWP_API CS_ADD_TO_CVAR_MAP(DrawWeaponTraceTrace, CsCVarDrawWeaponTraceTrace);
+		CSWP_API CS_ADD_TO_CVAR_MAP(DrawWeaponTraceLineTrace, CsCVarDrawWeaponTraceLineTrace);
+	}
+}
+
+#pragma endregion CVarDraw
 
 // ScopedGroup
 #pragma region

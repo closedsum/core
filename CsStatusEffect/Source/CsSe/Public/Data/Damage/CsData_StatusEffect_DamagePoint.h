@@ -73,7 +73,7 @@ namespace NCsStatusEffect
 
 				FORCEINLINE void SetOuter(UObject* InOuter) { Outer = InOuter; }
 
-				FORCEINLINE UObject* _getUObject() const { return nullptr; }
+				FORCEINLINE UObject* _getUObject() const { return Outer; }
 
 			// ICsGetInterfaceMap
 			#pragma region

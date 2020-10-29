@@ -3,6 +3,43 @@
 
 #include "UniqueObject/CsUniqueObject.h"
 
+namespace NCsTraceRequest
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_STRING(Type, "Type");
+			CS_DEFINE_CACHED_STRING(Method, "Method");
+			CS_DEFINE_CACHED_STRING(Query, "Query");
+		}
+	}
+}
+
+bool FCsTraceRequest::IsValidChecked(const FString& Context) const
+{
+	using namespace NCsTraceRequest::NCached;
+
+	// Check Type is Valid
+	check(EMCsTraceType::Get().IsValidEnumChecked(Context, Str::Type, Type));
+	// Check Method is Valid
+	check(EMCsTraceMethod::Get().IsValidEnumChecked(Context, Str::Method, Method));
+	// Check Query is Valid
+	check(EMCsTraceQuery::Get().IsValidEnumChecked(Context, Str::Query, Query));
+
+	// Check Shape
+	if (Type == ECsTraceType::Sweep)
+	{
+		checkf(!Shape.IsLine(), TEXT("%s: Shape should be Box, Sphere, or Capsule"), *Context);
+	}
+	// Check ObjectParams
+	if (Query == ECsTraceQuery::ObjectType)
+	{
+		checkf(ObjectParams.IsValid(), TEXT("%s: ObjectParams is NOT Valid."), *Context);
+	}
+	return true;
+}
+
 void FCsTraceRequest::SetCaller(UObject* InCaller)
 {
 	Caller = InCaller;

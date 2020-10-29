@@ -128,6 +128,16 @@ public:
 
 #pragma endregion ICsTraceWeapon
 
+// Components
+#pragma region
+protected:
+
+	USceneComponent* RootComponent;
+
+#pragma endregion Components
+
+// Owner
+#pragma region
 protected:
 
 	UObject* MyOwner;
@@ -139,6 +149,10 @@ public:
 	{
 		return MyOwner;
 	}
+
+#pragma endregion Owner
+
+public:
 
 	virtual void Init();
 
@@ -291,11 +305,33 @@ public:
 
 		USceneComponent* TraceComponentTransform;
 
+		/**
+ 		* Delegate type for custom implementation of GetStart().
+		*
+		* return Start Location 
+		*/
+		DECLARE_DELEGATE_RetVal(FVector, FGetStart);
+
+		/**  Delegate for custom implementation of GetStart(). */
+		FGetStart GetStartImpl;
+
+		/**
+		* Delegate type for custom implementation of GetDirection().
+		*
+		* return Direction 
+		*/
+		DECLARE_DELEGATE_RetVal(FVector, FGetDirection);
+
+		/** Delegate for custom implementation of GetDirection(). */
+		FGetDirection GetDirectionImpl;
+
 	public:
 
 		FTraceImpl() :
 			Outer(nullptr),
-			TraceComponentTransform(nullptr)
+			TraceComponentTransform(nullptr),
+			GetStartImpl(),
+			GetDirectionImpl()
 		{
 		}
 
@@ -308,9 +344,9 @@ public:
 
 	protected:
 
-		virtual FVector GetLocation();
-
-		virtual FVector GetDirection();
+		FVector GetStart();
+		FVector GetDirection();
+		FVector GetEnd(const FVector& Start);
 	};
 
 	FTraceImpl* TraceImpl;
@@ -469,6 +505,8 @@ protected:
 	USkeletalMeshComponent* SkeletalMeshComponent;
 
 public:
+
+	void ConstructSkeletalMeshComponent();
 
 	FORCEINLINE USkeletalMeshComponent* GetSkeletalMeshComponent() const
 	{

@@ -47,7 +47,7 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (DisplayName = "ECsWeapon - Populate Enum Map Method"))
 	ECsPopulateEnumMapMethod ECsWeapon_PopulateEnumMapMethod;
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (DisplayName = "ECsWeapon"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (TitleProperty = "Name", DisplayName = "ECsWeapon"))
 	TArray<FCsSettings_Enum> ECsWeapon;
 
 	template<>
@@ -67,7 +67,7 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (DisplayName = "ECsWeaponClass - Populate Enum Map Method"))
 	ECsPopulateEnumMapMethod ECsWeaponClass_PopulateEnumMapMethod;
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (DisplayName = "ECsWeaponClass"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (TitleProperty = "Name", DisplayName = "ECsWeaponClass"))
 	TArray<FCsSettings_Enum> ECsWeaponClass;
 
 	template<>
@@ -84,7 +84,7 @@ public:
 
 	// WeaponState
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (DisplayName = "ECsWeaponState"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum", meta = (TitleProperty = "Name", DisplayName = "ECsWeaponState"))
 	TArray<FCsSettings_Enum> ECsWeaponState;
 
 	template<>
@@ -119,6 +119,9 @@ public:
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Implementation")
 	FCsWeaponSettings_ProjectileWeaponImpl ProjectileWeaponImpl;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Implementation")
+	FCsWeaponSettings_TraceWeaponImpl TraceWeaponImpl;
 
 #pragma endregion Implementation
 };

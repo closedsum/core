@@ -66,7 +66,7 @@ void FCsPooledObject::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsPooledObject:SetObject: Object: %s with Class; %s does NOT implement the interface: ICsPooledObject."), *(Object->GetName()));
+				checkf(false, TEXT("FCsPooledObject:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsPooledObject."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 			}
 		}
 		// ICsUpdate

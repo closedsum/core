@@ -614,8 +614,9 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 
 	// Get Projectile Payload
 	typedef NCsProjectile::NPayload::IPayload PayloadType;
+	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
 
-	PayloadType* ProjectilePayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<PayloadType>(Context, Payload);
+	PayloadType* ProjectilePayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	// Get Projectile Cache
 	typedef NCsProjectile::NCache::ICache CacheType;

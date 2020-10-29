@@ -33,15 +33,17 @@ namespace NCsWeapon
 
 					FCsInterfaceMap* InterfaceMap;
 
+				public:
+
 					// ITrace
 
-					ELocation* Location;
+					FLocationInfo LocationInfo;
 
-					EDirection* Direction;
+					FDirectionInfo DirectionInfo;
 
-					int32* DirectionRules;
+				private:
 
-					ECollisionChannel ObjectType;
+					TArray<ECollisionChannel> ObjectTypes;
 
 					FCollisionShape Shape;
 
@@ -62,20 +64,24 @@ namespace NCsWeapon
 
 				#pragma endregion ICsGetInterfaceMap
 
-					FORCEINLINE void SetLocationType(ELocation* Value) { Location = Value; }
-					FORCEINLINE void SetDirectionType(EDirection* Value) { Direction = Value; }
-					FORCEINLINE void SetDirectionRules(int32* Value) { DirectionRules = Value; }
-					FORCEINLINE void SetObjectType(TEnumAsByte<ECollisionChannel>& Value) { ObjectType = Value.GetValue(); }
+					FORCEINLINE void SetObjectTypes(TArray<TEnumAsByte<ECollisionChannel>>& Value) 
+					{ 
+						ObjectTypes.Reset(Value.Num());
+
+						for (const TEnumAsByte<ECollisionChannel>& Enum : Value)
+						{
+							ObjectTypes.Add((ECollisionChannel)Enum.GetValue());
+						}
+					}
 					FORCEINLINE void SetDistance(float* Value) { Distance = Value; }
 
 				// ITrace
 				#pragma region
 				public:
 
-					FORCEINLINE const ELocation& GetLocationType() const { return *Location; }
-					FORCEINLINE const EDirection& GetDirectionType() const { return *Direction; }
-					FORCEINLINE const int32& GetDirectionRules() const { return *DirectionRules; }
-					FORCEINLINE const ECollisionChannel& GetObjectType() const { return ObjectType; }
+					FORCEINLINE const FLocationInfo& GetLocationInfo() const { return LocationInfo; }
+					FORCEINLINE const FDirectionInfo& GetDirectionInfo() const { return DirectionInfo; }
+					FORCEINLINE const TArray<ECollisionChannel>& GetObjectTypes() const { return ObjectTypes; }
 					FORCEINLINE const FCollisionShape& GetShape() const { return Shape; }
 					FORCEINLINE const float& GetDistance() const { return *Distance; }
 
@@ -99,15 +105,17 @@ namespace NCsWeapon
 
 					FCsInterfaceMap* InterfaceMap;
 
+				public:
+
 					// ITrace
 
-					ELocation* Location; 
+					FLocationInfo LocationInfo; 
 
-					EDirection* Direction;
+					FDirectionInfo DirectionInfo;
 
-					int32* DirectionRules;
+				private:
 
-					ECollisionChannel ObjectType;
+					TArray<ECollisionChannel> ObjectTypes;
 
 					FCollisionShape Shape;
 
@@ -128,10 +136,15 @@ namespace NCsWeapon
 
 				#pragma endregion ICsGetInterfaceMap
 
-					FORCEINLINE void SetLocationType(ELocation* Value) { Location = Value; }
-					FORCEINLINE void SetDirectionType(EDirection* Value) { Direction = Value; }
-					FORCEINLINE void SetDirectionRules(int32* Value) { DirectionRules = Value; }
-					FORCEINLINE void SetObjectType(TEnumAsByte<ECollisionChannel>& Value) { ObjectType = Value.GetValue(); }
+					FORCEINLINE void SetObjectTypes(TArray<TEnumAsByte<ECollisionChannel>>& Value)
+					{
+						ObjectTypes.Reset(Value.Num());
+
+						for (const TEnumAsByte<ECollisionChannel>& Enum : Value)
+						{
+							ObjectTypes.Add((ECollisionChannel)Enum.GetValue());
+						}
+					}
 					void SetShape(FCsTraceCollisionBox* Value);
 					FORCEINLINE void SetDistance(float* Value) { Distance = Value; }
 
@@ -139,10 +152,9 @@ namespace NCsWeapon
 				#pragma region
 				public:
 
-					FORCEINLINE const ELocation& GetLocationType() const { return *Location; }
-					FORCEINLINE const EDirection& GetDirectionType() const { return *Direction; }
-					FORCEINLINE const int32& GetDirectionRules() const { return *DirectionRules; }
-					FORCEINLINE const ECollisionChannel& GetObjectType() const { return ObjectType; }
+					FORCEINLINE const FLocationInfo& GetLocationInfo() const { return LocationInfo; }
+					FORCEINLINE const FDirectionInfo& GetDirectionInfo() const { return DirectionInfo; }
+					FORCEINLINE const TArray<ECollisionChannel>& GetObjectTypes() const { return ObjectTypes; }
 					FORCEINLINE const FCollisionShape& GetShape() const { return Shape; }
 					FORCEINLINE const float& GetDistance() const { return *Distance; }
 
@@ -166,15 +178,17 @@ namespace NCsWeapon
 
 					FCsInterfaceMap* InterfaceMap;
 
+				public:
+
 					// ITrace
 
-					ELocation* Location; 
+					FLocationInfo LocationInfo; 
 
-					EDirection* Direction;
+					FDirectionInfo DirectionInfo;
 
-					int32* DirectionRules;
+				private:
 
-					ECollisionChannel ObjectType;
+					TArray<ECollisionChannel> ObjectTypes;
 
 					FCollisionShape Shape;
 
@@ -195,10 +209,15 @@ namespace NCsWeapon
 
 				#pragma endregion ICsGetInterfaceMap
 
-					FORCEINLINE void SetLocationType(ELocation* Value) { Location = Value; }
-					FORCEINLINE void SetDirectionType(EDirection* Value) { Direction = Value; }
-					FORCEINLINE void SetDirectionRules(int32* Value) { DirectionRules = Value; }
-					FORCEINLINE void SetObjectType(TEnumAsByte<ECollisionChannel>& Value) { ObjectType = Value.GetValue(); }
+					FORCEINLINE void SetObjectTypes(TArray<TEnumAsByte<ECollisionChannel>>& Value)
+					{
+						ObjectTypes.Reset(Value.Num());
+
+						for (const TEnumAsByte<ECollisionChannel>& Enum : Value)
+						{
+							ObjectTypes.Add((ECollisionChannel)Enum.GetValue());
+						}
+					}
 					void SetShape(FCsTraceCollisionSphere* Value);
 					FORCEINLINE void SetDistance(float* Value) { Distance = Value; }
 
@@ -206,10 +225,9 @@ namespace NCsWeapon
 				#pragma region
 				public:
 
-					FORCEINLINE const ELocation& GetLocationType() const { return *Location; }
-					FORCEINLINE const EDirection& GetDirectionType() const { return *Direction; }
-					FORCEINLINE const int32& GetDirectionRules() const { return *DirectionRules; }
-					FORCEINLINE const ECollisionChannel& GetObjectType() const { return ObjectType; }
+					FORCEINLINE const FLocationInfo& GetLocationInfo() const { return LocationInfo; }
+					FORCEINLINE const FDirectionInfo& GetDirectionInfo() const { return DirectionInfo; }
+					FORCEINLINE const TArray<ECollisionChannel>& GetObjectTypes() const { return ObjectTypes; }
 					FORCEINLINE const FCollisionShape& GetShape() const { return Shape; }
 					FORCEINLINE const float& GetDistance() const { return *Distance; }
 
@@ -233,15 +251,17 @@ namespace NCsWeapon
 
 					FCsInterfaceMap* InterfaceMap;
 
+				public:
+
 					// ITrace
 
-					ELocation* Location; 
+					FLocationInfo LocationInfo; 
 
-					EDirection* Direction;
+					FDirectionInfo DirectionInfo;
 
-					int32* DirectionRules;
+				private:
 
-					ECollisionChannel ObjectType;
+					TArray<ECollisionChannel> ObjectTypes;
 
 					FCollisionShape Shape;
 
@@ -262,10 +282,15 @@ namespace NCsWeapon
 
 				#pragma endregion ICsGetInterfaceMap
 
-					FORCEINLINE void SetLocationType(ELocation* Value) { Location = Value; }
-					FORCEINLINE void SetDirectionType(EDirection* Value) { Direction = Value; }
-					FORCEINLINE void SetDirectionRules(int32* Value) { DirectionRules = Value; }
-					FORCEINLINE void SetObjectType(TEnumAsByte<ECollisionChannel>& Value) { ObjectType = Value.GetValue(); }
+					FORCEINLINE void SetObjectTypes(TArray<TEnumAsByte<ECollisionChannel>>& Value)
+					{
+						ObjectTypes.Reset(Value.Num());
+
+						for (const TEnumAsByte<ECollisionChannel>& Enum : Value)
+						{
+							ObjectTypes.Add((ECollisionChannel)Enum.GetValue());
+						}
+					}
 					void SetShape(FCsTraceCollisionCapsule* Value);
 					FORCEINLINE void SetDistance(float* Value) { Distance = Value; }
 
@@ -273,10 +298,9 @@ namespace NCsWeapon
 				#pragma region
 				public:
 
-					FORCEINLINE const ELocation& GetLocationType() const { return *Location; }
-					FORCEINLINE const EDirection& GetDirectionType() const { return *Direction; }
-					FORCEINLINE const int32& GetDirectionRules() const { return *DirectionRules; }
-					FORCEINLINE const ECollisionChannel& GetObjectType() const { return ObjectType; }
+					FORCEINLINE const FLocationInfo& GetLocationInfo() const { return LocationInfo; }
+					FORCEINLINE const FDirectionInfo& GetDirectionInfo() const { return DirectionInfo; }
+					FORCEINLINE const TArray<ECollisionChannel>& GetObjectTypes() const { return ObjectTypes; }
 					FORCEINLINE const FCollisionShape& GetShape() const { return Shape; }
 					FORCEINLINE const float& GetDistance() const { return *Distance; }
 

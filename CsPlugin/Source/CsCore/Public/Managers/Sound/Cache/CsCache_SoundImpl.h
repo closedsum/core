@@ -55,7 +55,7 @@ namespace NCsSound
 
 			ECsPooledObjectState State;
 
-			ECsPooledObjectUpdate UpdateType;
+			NCsPooledObject::EUpdate UpdateType;
 
 			TCsWeakObjectPtr<UObject> Instigator;
 
@@ -100,22 +100,12 @@ namespace NCsSound
 		#pragma region
 		public:
 
-			FORCEINLINE void Init(const int32& InIndex)
-			{
-				Index = InIndex;
-			}
-
-			FORCEINLINE const int32& GetIndex() const
-			{
-				return Index;
-			}
+			FORCEINLINE void Init(const int32& InIndex) { Index = InIndex; }
+			FORCEINLINE const int32& GetIndex() const { return Index; }
 
 			void Allocate(PayloadType* Payload);
 
-			FORCEINLINE const bool& IsAllocated() const
-			{
-				return bAllocated;
-			}
+			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
 
 			void Deallocate();
 
@@ -123,50 +113,15 @@ namespace NCsSound
 
 			bool ShouldDeallocate() const;
 
-			FORCEINLINE const ECsPooledObjectState& GetState() const
-			{
-				return State;
-			}
-
-			FORCEINLINE const ECsPooledObjectUpdate& GetUpdateType() const
-			{
-				return UpdateType;
-			}
-
-			FORCEINLINE UObject* GetInstigator() const
-			{
-				return Instigator.Get();
-			}
-
-			FORCEINLINE UObject* GetOwner() const
-			{
-				return Owner.Get();
-			}
-
-			FORCEINLINE UObject* GetParent() const
-			{
-				return Parent.Get();
-			}
-
-			FORCEINLINE const float& GetWarmUpTime() const
-			{
-				return WarmUpTime;
-			}
-
-			FORCEINLINE const float& GetLifeTime() const
-			{
-				return LifeTime;
-			}
-
-			FORCEINLINE const FCsTime& GetStartTime() const
-			{
-				return StartTime;
-			}
-
-			FORCEINLINE const FCsDeltaTime& GetElapsedTime() const
-			{
-				return ElapsedTime;
-			}
+			FORCEINLINE const ECsPooledObjectState& GetState() const { return State; }
+			FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
+			FORCEINLINE UObject* GetInstigator() const { return Instigator.Get(); }
+			FORCEINLINE UObject* GetOwner() const { return Owner.Get(); }
+			FORCEINLINE UObject* GetParent() const { return Parent.Get(); }
+			FORCEINLINE const float& GetWarmUpTime() const { return WarmUpTime; }
+			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
+			FORCEINLINE const FCsTime& GetStartTime() const { return StartTime; }
+			FORCEINLINE const FCsDeltaTime& GetElapsedTime() const { return ElapsedTime; }
 
 			bool HasLifeTimeExpired();
 
@@ -176,28 +131,19 @@ namespace NCsSound
 
 		public:
 
-			FORCEINLINE void SetLifeTime(const float& InLifeTime)
-			{
-				LifeTime = InLifeTime;
-			}
+			FORCEINLINE void SetLifeTime(const float& InLifeTime) { LifeTime = InLifeTime; }
 
 		// SoundCacheType (NCsSound::NCache::ICache)
 		#pragma region
 		public:
 
-			FORCEINLINE UAudioComponent* GetAudioComponent() const
-			{
-				return AudioComponent;
-			}
+			FORCEINLINE UAudioComponent* GetAudioComponent() const { return AudioComponent; }
 
 		#pragma endregion SoundCacheType (NCsSound::NCache::ICache)
 
 		public:
 
-			FORCEINLINE void SetAudioComponent(UAudioComponent* InAudioComponent)
-			{
-				AudioComponent = InAudioComponent;
-			}
+			FORCEINLINE void SetAudioComponent(UAudioComponent* InAudioComponent) { AudioComponent = InAudioComponent; }
 
 		public:
 

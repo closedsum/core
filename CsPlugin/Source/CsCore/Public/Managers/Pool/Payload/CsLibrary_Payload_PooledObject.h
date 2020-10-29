@@ -4,6 +4,16 @@
 
 #pragma once
 
-struct CSCORE_API FCsLibrary_Payload_PooledObject : public TCsLibrary_InterfaceMap<NCsPooledObject::NPayload::IPayload>
+namespace NCsPooledObject
 {
-};
+	namespace NPayload
+	{
+	#define PayloadType NCsPooledObject::NPayload::IPayload
+
+		struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<PayloadType>
+		{
+		};
+
+	#undef PayloadType
+	}
+}

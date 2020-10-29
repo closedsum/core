@@ -125,3 +125,10 @@ void FCsCollisionPreset::Apply(USkeletalMeshComponent* Mesh) const
 }
 
 #pragma endregion FCsCollisionPreset
+
+// Collision
+#pragma region
+
+CSCORE_API const FHitResult NCsCollision::NHit::Default = FHitResult();
+
+#pragma endregion Collision

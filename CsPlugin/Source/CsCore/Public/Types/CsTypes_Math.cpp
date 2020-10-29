@@ -2,7 +2,9 @@
 #include "Types/CsTypes_Math.h"
 
 #include "GameFramework/Actor.h"
+// Components
 #include "Components/SceneComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 // ParametricFunctionType
 #pragma region
@@ -88,6 +90,14 @@ namespace NCsRotationRules
 	CSCORE_API const int32 None = 0;
 	CSCORE_API const int32 All = 7; // 1 + 2 + 4
 
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsRotationRules, GetRotation);
+		}
+	}
+
 	FRotator GetRotation(FRotator Rotation, const int32& Rules)
 	{
 		if (Rules == None)
@@ -105,12 +115,37 @@ namespace NCsRotationRules
 
 	FRotator GetRotation(AActor* Actor, const int32& Rules)
 	{
+		using namespace NCached;
+
+		const FString& Context = Str::GetRotation;
+
+		checkf(Actor, TEXT("%s: Actor is NULL"), *Context);
+
 		return GetRotation(Actor->GetActorRotation(), Rules);
 	}
 
 	FRotator GetRotation(USceneComponent* Component, const int32& Rules)
 	{
+		using namespace NCached;
+
+		const FString& Context = Str::GetRotation;
+
+		checkf(Component, TEXT("%s: Component is NULL"), *Context);
+
 		return GetRotation(Component->GetComponentRotation(), Rules);
+	}
+
+	FRotator GetRotation(USkeletalMeshComponent* Component, const FName& Bone, const int32& Rules)
+	{
+		using namespace NCached;
+
+		const FString& Context = Str::GetRotation;
+
+		checkf(Component, TEXT("%s: Component is NULL"), *Context);
+
+		checkf(Bone != NAME_None, TEXT("%s: Bone: None is NOT Valid."), *Context);
+
+		return GetRotation(Component->GetBoneQuaternion(Bone).Rotator(), Rules);
 	}
 }
 

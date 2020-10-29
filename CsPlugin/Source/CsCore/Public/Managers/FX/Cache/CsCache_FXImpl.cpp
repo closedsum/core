@@ -26,12 +26,14 @@ namespace NCsFX
 		}
 
 		FImpl::FImpl() :
+			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
+			// PooledCacheType (NCsPooledObject::NCache::ICache)
 			Index(INDEX_NONE),
 			bAllocated(false),
 			bQueueDeallocate(false),
 			State(ECsPooledObjectState::Inactive),
-			UpdateType(ECsPooledObjectUpdate::Manager),
+			UpdateType(NCsPooledObject::EUpdate::Manager),
 			Instigator(),
 			Owner(),
 			Parent(),
@@ -39,6 +41,7 @@ namespace NCsFX
 			LifeTime(0.0f),
 			StartTime(),
 			ElapsedTime(),
+			// FXCacheType (NCsFX::NCache::ICache)
 			FXComponent(nullptr),
 			DeallocateMethod(ECsFXDeallocateMethod::Complete),
 			QueuedLifeTime(0.0f)
@@ -47,8 +50,11 @@ namespace NCsFX
 
 			InterfaceMap->SetRootName(FImpl::Name);
 
-			InterfaceMap->Add<NCsPooledObject::NCache::ICache>(static_cast<NCsPooledObject::NCache::ICache*>(this));
-			InterfaceMap->Add<NCsFX::NCache::ICache>(static_cast<NCsFX::NCache::ICache*>(this));
+			typedef NCsPooledObject::NCache::ICache PooledCacheType;
+			typedef NCsFX::NCache::ICache FXCacheType;
+
+			InterfaceMap->Add<PooledCacheType>(static_cast<PooledCacheType*>(this));
+			InterfaceMap->Add<FXCacheType>(static_cast<FXCacheType*>(this));
 		}
 
 		FImpl::~FImpl()
@@ -58,9 +64,12 @@ namespace NCsFX
 
 		// NCsPooledObject::NCache::ICache
 		#pragma region
-
-		void FImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
+		
+		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+		void FImpl::Allocate(PooledPayloadType* Payload)
 		{
+		#undef PooledPayloadType
+
 			using namespace NImplCached;
 
 			// NCsPooledObject::NCache::ICache
@@ -72,7 +81,10 @@ namespace NCsFX
 			StartTime  = Payload->GetTime();
 
 			// NCsFX::NCache::ICache
-			NCsFX::NPayload::IPayload* FXPayload = FCsLibrary_Payload_PooledObject::GetInterfaceChecked<NCsFX::NPayload::IPayload>(Str::Allocate, Payload);
+			typedef NCsFX::NPayload::IPayload FXPayloadType;
+			typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
+
+			FXPayloadType* FXPayload = PooledPayloadLibrary::GetInterfaceChecked<FXPayloadType>(Str::Allocate, Payload);
 
 			DeallocateMethod = FXPayload->GetDeallocateMethod();
 			QueuedLifeTime   = FXPayload->GetLifeTime();

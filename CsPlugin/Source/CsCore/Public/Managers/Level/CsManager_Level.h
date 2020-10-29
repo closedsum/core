@@ -22,7 +22,14 @@ public:
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsManager_Level* Get(UObject* InRoot = nullptr);
+#else
+	static UCsManager_Level* Get(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
 
 	template<typename T>
 	static T* Get(UObject* InRoot = nullptr)
@@ -154,9 +161,11 @@ public:
 	template<typename T>
 	FORCEINLINE T* GetPersistentLevelScriptActorChecked(const FString& Context) const
 	{
-		checkf(Cast<T>(GetPersistentLevelScriptActorChecked(Context)), TEXT("%s: Failed to cast LevelScriptActor to type: T."), *Context);
+		T* Slice = Cast<T>(GetPersistentLevelScriptActorChecked(Context));
 
-		return Cast<T>(GetPersistentLevelScriptActorChecked(Context));
+		checkf(Slice, TEXT("%s: Failed to cast LevelScriptActor to type: T."), *Context);
+
+		return Slice;
 	}
 
 #pragma endregion Persistent Level

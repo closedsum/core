@@ -23,10 +23,10 @@ namespace NCsDamage
 				FEmu::FEmu() :
 					// ICsGetInterfaceMap
 					InterfaceMap(),
-					// ICsData_Damage
+					// DataType (NCsDamage::NData::IData)
 					DamageValue(nullptr),
 					Type(nullptr),
-					// ICsData_DamageShape
+					// ShapeDataType (NCsDamage::NData::NShape::IShape)
 					DamageRange(nullptr),
 					MinDamage(nullptr),
 					MaxDamage(nullptr),
@@ -35,7 +35,7 @@ namespace NCsDamage
 					InterpolationMethod(nullptr),
 					EasingType(nullptr),
 					Curve(nullptr),
-					// ICsData_DamageCollision
+					// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
 					bIgnoreHitResultObject(nullptr)
 				{
 					// ICsGetInterfaceMap
@@ -64,7 +64,7 @@ namespace NCsDamage
 					delete InterfaceMap;
 				}
 
-				// ICsDamageShape
+				// ShapeDataType (NCsDamage::NData::NShape::IShape)
 				#pragma region
 
 				float FEmu::CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector& Origin, const FVector& Point) const
@@ -77,7 +77,7 @@ namespace NCsDamage
 					return false;
 				}
 
-				#pragma endregion ICsDamageSphere
+				#pragma endregion ShapeDataType (NCsDamage::NData::NShape::IShape)
 
 				void FEmu::SetMinDamage(float* Value)
 				{

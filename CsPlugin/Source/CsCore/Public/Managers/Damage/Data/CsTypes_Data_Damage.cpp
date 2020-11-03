@@ -3,13 +3,13 @@
 
 #include "Managers/Damage/Data/CsData_DamagePointEmu.h"
 
-// FCsScriptData_DamagePoint
+// FCsData_DamagePoint
 #pragma region
 
-void FCsScriptData_DamagePoint::SetData(PointDataEmuType* Data)
+void FCsData_DamagePoint::SetData(PointDataEmuType* Data)
 {
 	Data->SetValue(&Damage);
 	Data->SetType(&Type);
 }
 
-#pragma endregion FCsScriptData_DamagePoint
+#pragma endregion FCsData_DamagePoint

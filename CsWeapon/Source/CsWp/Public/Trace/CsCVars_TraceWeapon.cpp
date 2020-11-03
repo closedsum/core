@@ -22,6 +22,13 @@ TAutoConsoleVariable<int32> CsCVarLogWeaponTraceCanFire(
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<int32> CsCVarLogWeaponTraceTraceCollision(
+	TEXT("log.weapon.trace.trace.collision"),
+	0,
+	TEXT("Log TraceWeapon Trace() Collision."),
+	ECVF_SetByConsole
+);
+
 // Scoped Timer
 
 TAutoConsoleVariable<int32> CsCVarLogWeaponTraceScopedTimer(
@@ -74,6 +81,7 @@ namespace NCsCVarLog
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponTraceState, "Log TraceWeapon Current State");
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponTraceStateTransition, "Log TraceWeapon State Transition");
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponTraceCanFire, "Log TraceWeapon CanFire()");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponTraceTraceCollision, "Log TraceWeapon Trace() Collision");
 	// Scoped Timers
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponTraceScopedTimer, "Log Weapon Trace Scoped Timer");
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogWeaponTraceScopedTimerFire, "Log Weapon Trace Scoped Timer Fire()");
@@ -87,6 +95,7 @@ namespace NCsCVarLog
 		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceState, CsCVarLogWeaponTraceState);
 		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceStateTransition, CsCVarLogWeaponTraceStateTransition);
 		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceCanFire, CsCVarLogWeaponTraceCanFire);
+		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceTraceCollision, CsCVarLogWeaponTraceTraceCollision);
 		// Scoped Timers
 		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimer, CsCVarLogWeaponTraceScopedTimer);
 		CSWP_API CS_ADD_TO_CVAR_MAP(LogWeaponTraceScopedTimerFire, CsCVarLogWeaponTraceScopedTimerFire);

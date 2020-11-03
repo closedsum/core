@@ -421,7 +421,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			Payload->Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
 
 			Payload->FXSystem		  = FXSystem;
-			Payload->DeallocateMethod = ImpactFX.DeallocateMethod;
+			Payload->DeallocateMethod = ImpactFX.GetDeallocateMethod();
 			Payload->LifeTime		  = ImpactFX.LifeTime;
 			// Spawn FX
 			Manager_FX_Actor->Spawn(ImpactFX.Type, Payload);
@@ -701,7 +701,7 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 			FXPayload->Owner					= this;
 			FXPayload->Parent					= MeshComponent;
 			FXPayload->FXSystem					= FXSystem;
-			FXPayload->DeallocateMethod			= TrailFX.DeallocateMethod;
+			FXPayload->DeallocateMethod			= TrailFX.GetDeallocateMethod();
 			FXPayload->LifeTime					= TrailFX.LifeTime;
 			FXPayload->AttachmentTransformRules = TrailFX.AttachmentTransformRules;
 			FXPayload->Transform				= TrailFX.Transform;
@@ -710,7 +710,7 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 		}
 	}
 
-	// ICollisionDataType (NCsProjectile::NData::NCollision::ICollision)
+	// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
 	{
 		const FString& ScopeName		   = ScopedTimer::SetCollision;
 		const FECsScopedGroup& ScopedGroup = NCsScopedGroup::Projectile;

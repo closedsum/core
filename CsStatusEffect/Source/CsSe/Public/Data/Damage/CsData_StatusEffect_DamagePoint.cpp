@@ -9,6 +9,9 @@
 // Damage
 #include "Managers/Damage/Data/CsData_DamagePointEmu.h"
 
+// FPointEmu
+#pragma region
+
 const FName NCsStatusEffect::NData::NDamage::FPointEmu::Name = FName("NCsStatusEffect::NData::NDamage::FPointEmu");
 
 namespace NCsStatusEffect
@@ -21,12 +24,12 @@ namespace NCsStatusEffect
 				Outer(nullptr),
 				// ICsGetInterfaceMap
 				InterfaceMap(nullptr),
-				// NCsStatusEffect::NData::IData
+				// StatusEffectDataType (NCsStatusEffect::NData::IData)
 				TriggerCondition(nullptr),
 				TriggerFrequencyParams(nullptr),
 				TransferFrequencyParams(nullptr),
 				Children(nullptr),
-				// NCsStatusEffect::NData::NDamage::IDamage
+				// StatusEffectDamageDataType (NCsStatusEffect::NData::NDamage::IDamage)
 				DamageData(nullptr)
 			{
 				InterfaceMap = new FCsInterfaceMap();
@@ -49,6 +52,8 @@ namespace NCsStatusEffect
 		}
 	}
 }
+
+#pragma endregion FPointEmu
 
 const FName UCsData_StatusEffect_DamagePoint::Name = FName("UCsData_StatusEffect_DamagePoint");
 

@@ -3,6 +3,8 @@
 
 // Settings
 #include "PhysicsEngine/PhysicsSettings.h"
+// Debug
+#include "DrawDebugHelpers.h"
 
 const float NCsDebug::NDraw::FLibrary::DEBUG_IMPACTPOINT_SIZE = 16.f;
 

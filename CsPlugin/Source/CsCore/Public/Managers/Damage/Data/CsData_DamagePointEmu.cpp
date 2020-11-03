@@ -20,7 +20,7 @@ namespace NCsDamage
 			FEmu::FEmu() :
 				// ICsInterfaceMap
 				InterfaceMap(nullptr),
-				// NCsDamage::NData::IData
+				// DataType (NCsDamage::NData::IData)
 				Value(nullptr),
 				Type(nullptr)
 			{
@@ -43,17 +43,9 @@ namespace NCsDamage
 			FEmu::~FEmu()
 			{
 				// ICsInterfaceMap
-				if (InterfaceMap)
-				{
-					delete InterfaceMap;
-					InterfaceMap = nullptr;
-				}
-				// NCsDamage::NData::IData
-				if (Value)
-				{
-					delete Value;
-					Value = nullptr;
-				}
+				delete InterfaceMap;
+				// DataType (NCsDamage::NData::IData)
+				delete Value;
 			}
 
 			void FEmu::SetValue(float* InValue)

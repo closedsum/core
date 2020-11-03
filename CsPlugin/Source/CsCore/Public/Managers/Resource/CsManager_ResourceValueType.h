@@ -682,6 +682,35 @@ public:
 	}
 
 	/**
+	* Deallocate a ResourceType and remove the corresponding linked list element from the
+	*  allocated linked list.
+	*
+	* @param Resource	ResourceType to deallocate.
+	* @param Index		Index of the ResourceType to deallocate
+	* return Success
+	*/
+	bool DeallocateAt(ResourceType* Resource, const int32& Index)
+	{
+		checkf(Resource, TEXT("%s::Deallocate: Resource is NULL."), *Name);
+
+		checkf(Index >= 0 && Index < PoolSize, TEXT("%s::DeallocateAt: Index: %d (< 0 or >= %d) is NOT Valid."), *Name, Index, PoolSize);
+
+		ResourceContainerType* M = Pool[Index];
+
+		if (!M->IsAllocated())
+			return false;
+
+		checkf(M->Get(), TEXT("%s::DeallocateAt: Resource is NULL."), *Name);
+
+		checkf(Resource == M->Get(), TEXT("%s::DeallocateAt: Resource at Index: %d is NOT contained in Pool."), *Name, Index);
+
+		M->Deallocate();
+		RemoveActiveLink(&(Links[Index]));
+		--AllocatedSize;
+		return true;
+	}
+
+	/**
 	*
 	*
 	* return

@@ -1,15 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+#include "Types/CsTypes_Macro.h"
 #pragma once
 
 class UObject;
 
-namespace NCsDamage {
-	namespace NEvent {
-		struct FResource; } }
-
-namespace NCsDamage {
-	namespace NEvent { 
-		struct IEvent; } }
+// NCsDamage::NEvent::FResource
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, FResource)
+// NCsDamage::NEvent::IEvent
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, IEvent)
 
 namespace NCsDamage
 {

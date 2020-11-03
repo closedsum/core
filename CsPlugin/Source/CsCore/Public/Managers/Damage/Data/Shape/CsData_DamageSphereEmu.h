@@ -7,14 +7,9 @@
 struct FCsInterfaceMap;
 
 // NCsDamage::NValue::IValue
-namespace NCsDamage {
-	namespace NValue {
-		struct IValue; } }
-
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 // NCsDamage::NRange::IRange
-namespace NCsDamage {
-	namespace NRange {
-		struct IRange; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 
 namespace NCsDamage
 {
@@ -48,12 +43,12 @@ namespace NCsDamage
 
 				public:
 
-					// ICsData_Damage
+					// DataType (NCsDamage::NData::IData)
 					ValueType* DamageValue;
 
 					FECsDamageType* Type;
 
-					// ICsData_DamageShape
+					// ShapeDataType (NCsDamage::NData::NShape::IShape)
 
 					RangeType* DamageRange;
 
@@ -71,7 +66,7 @@ namespace NCsDamage
 
 					FCsCurveFloat* Curve;
 
-					// ICsData_DamageCollision
+					// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
 
 					bool* bIgnoreHitResultObject;
 
@@ -86,93 +81,56 @@ namespace NCsDamage
 				#pragma region
 				public:
 
-					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-					{
-						return InterfaceMap;
-					}
+					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 				#pragma endregion ICsGetInterfaceMap
 
-				// ICsData_Damage
+				public:
+
+					FORCEINLINE void SetType(FECsDamageType* Value) { Type = Value; }
+
+				// DataType (NCsDamage::NData::IData)
 				#pragma region
 				public:
 
-					FORCEINLINE const ValueType* GetValue() const
-					{
-						return DamageValue;
-					}
+					FORCEINLINE const ValueType* GetValue() const { return DamageValue; }
+					FORCEINLINE const FECsDamageType& GetType() const { return const_cast<FECsDamageType&>(*Type); }
 
-					FORCEINLINE const FECsDamageType& GetType() const
-					{
-						return const_cast<FECsDamageType&>(*Type);
-					}
-
-				#pragma endregion ICsData_Damage
+				#pragma endregion DataType (NCsDamage::NData::IData)
 
 				public:
 
-					void SetType(FECsDamageType* Value)
-					{
-						Type = Value;
-					}
+					void SetMinDamage(float* Value);
+					void SetMaxDamage(float* Value);
+					void SetMinRadius(float* Value);
+					void SetMaxRadius(float* Value);
+					FORCEINLINE void SetInterpoloationMethod(ECsInterpolatingMethod* Value) { InterpolationMethod = Value; }
+					FORCEINLINE void SetEasingType(ECsEasingType* Value) { EasingType = Value; }
+					FORCEINLINE void SetCurve(FCsCurveFloat* Value) { Curve = Value; }
 
-				// ICsData_DamageShape
+				// ShapeDataType (NCsDamage::NData::NShape::IShape)
 				#pragma region
 				public:
 
-					FORCEINLINE const RangeType* GetRange() const
-					{
-						return DamageRange;
-					}
+					FORCEINLINE const RangeType* GetRange() const { return DamageRange; }
 
 					float CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector& Origin, const FVector& Point) const;
 
 					bool IsInBounds(const FVector& Origin, const FVector& Point) const;
 
-				#pragma endregion ICsData_DamageShape
+				#pragma endregion ShapeDataType (NCsDamage::NData::NShape::IShape)
 
 				public:
 
-					void SetMinDamage(float* Value);
+					FORCEINLINE void SetIgnoreHitResultObject(bool* Value) { bIgnoreHitResultObject = Value; }
 
-					void SetMaxDamage(float* Value);
-
-					void SetMinRadius(float* Value);
-
-					void SetMaxRadius(float* Value);
-
-					void SetInterpoloationMethod(ECsInterpolatingMethod* Value)
-					{
-						InterpolationMethod = Value;
-					}
-
-					void SetEasingType(ECsEasingType* Value)
-					{
-						EasingType = Value;
-					}
-
-					void SetCurve(FCsCurveFloat* Value)
-					{
-						Curve = Value;
-					}
-
-				// ICsData_DamageCollision
+				// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
 				#pragma region
 				public:
 
-					FORCEINLINE bool IgnoreHitResultObject() const
-					{
-						return *bIgnoreHitResultObject;
-					}
+					FORCEINLINE bool IgnoreHitResultObject() const { return *bIgnoreHitResultObject; }
 
-				#pragma endregion ICsData_DamageCollision
-
-				public:
-
-					void SetIgnoreHitResultObject(bool* Value)
-					{
-						bIgnoreHitResultObject = Value;
-					}
+				#pragma endregion CollisionDataType (NCsDamage::NData::NCollision::ICollision)
 				};
 
 #undef DataType

@@ -69,6 +69,33 @@ namespace NCsTransformRules
 			}
 		}
 	}
+
+	void SetTransform(AActor* Actor, const FTransform& Transform, const int32& Rules)
+	{
+		// Location | Rotation | Scale
+		if (Rules == All)
+		{
+			Actor->SetActorTransform(Transform);
+		}
+		else
+		{
+			// Location
+			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Location))
+			{
+				Actor->SetActorLocation(Transform.GetLocation());
+			}
+			// Rotation
+			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Rotation))
+			{
+				Actor->SetActorRotation(Transform.GetRotation().Rotator());
+			}
+			// Scale
+			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Scale))
+			{
+				Actor->SetActorScale3D(Transform.GetScale3D());
+			}
+		}
+	}
 }
 
 #pragma endregion TransformRules
@@ -113,6 +140,20 @@ namespace NCsRotationRules
 		return Rotation;
 	}
 
+	FRotator GetRotationChecked(const FString& Context, FRotator Rotation, const int32& Rules)
+	{
+		checkf(Rules != None, TEXT("%s: Rules == 0. No bit flags set."), *Context);
+
+		if (Rules == All)
+			return Rotation;
+
+		Rotation.Pitch = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Pitch) ? Rotation.Pitch : 0.0f;
+		Rotation.Yaw = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Yaw) ? Rotation.Yaw : 0.0f;
+		Rotation.Roll = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Roll) ? Rotation.Roll : 0.0f;
+
+		return Rotation;
+	}
+
 	FRotator GetRotation(AActor* Actor, const int32& Rules)
 	{
 		using namespace NCached;
@@ -133,19 +174,6 @@ namespace NCsRotationRules
 		checkf(Component, TEXT("%s: Component is NULL"), *Context);
 
 		return GetRotation(Component->GetComponentRotation(), Rules);
-	}
-
-	FRotator GetRotation(USkeletalMeshComponent* Component, const FName& Bone, const int32& Rules)
-	{
-		using namespace NCached;
-
-		const FString& Context = Str::GetRotation;
-
-		checkf(Component, TEXT("%s: Component is NULL"), *Context);
-
-		checkf(Bone != NAME_None, TEXT("%s: Bone: None is NOT Valid."), *Context);
-
-		return GetRotation(Component->GetBoneQuaternion(Bone).Rotator(), Rules);
 	}
 }
 

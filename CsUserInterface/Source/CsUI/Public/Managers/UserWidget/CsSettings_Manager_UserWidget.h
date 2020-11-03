@@ -34,7 +34,7 @@ public:
 	}
 };
 
-#pragma endregion FCsSettings_Manager_FX_Actor_PoolParams
+#pragma endregion FCsSettings_Manager_UserWidget_PoolParams
 
 // FCsSettings_Manager_UserWidget
 #pragma region

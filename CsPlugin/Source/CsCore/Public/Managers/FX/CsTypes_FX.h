@@ -76,7 +76,7 @@ public:
 
 #pragma endregion FCsParticleSystem
 
-// FxPriority
+// FXPriority
 #pragma region
 
 /**
@@ -110,7 +110,7 @@ namespace NCsFXPriority
 	extern CSCORE_API const uint8 MAX;
 }
 
-#pragma endregion FxPriority
+#pragma endregion FXPriority
 
 // FCsFxElement_DEPRECATED
 #pragma region
@@ -319,6 +319,25 @@ namespace NCsFXDeallocateMethod
 	extern CSCORE_API const uint8 MAX;
 }
 
+namespace NCsFX
+{
+	enum class EDeallocateMethod : uint8
+	{
+		/** If an FX is attached to a parent object,
+		  LifeTime == 0.of means the FX object will be deallocated immediately
+		   when the parent has been destroyed / deallocated.
+		  LifeTime > 0.0f will be the time after the parent object has been
+		   destroyed / deallocated to deallocate the FX object.
+		If an FX is NOT attached to a parent object,
+		  LifeTime == 0.0f means the FX object will stay active forever.
+		  LifeTime > 0.0f means the FX will be deallocated after LifeTime amount of time after
+		   the FX object has been allocated. */
+		LifeTime,
+		/** */
+		Complete
+	};
+}
+
 #pragma endregion FXDeallocateMethod
 
 // FCsNiagaraSystem
@@ -368,6 +387,47 @@ public:
 
 #pragma endregion FCsNiagaraSystem
 
+// FXAttachPoint
+#pragma region
+
+/**
+* Type for where the FX object should be attached to on a Parent object.
+*/
+UENUM(BlueprintType)
+enum class ECsFXAttachPoint : uint8
+{
+	/** If the Parent object is of type: USkeletalMeshComponent then attach to the 
+		root bone, otherwise attach to the object normally. */
+	None				UMETA(DisplayName = "None"),
+	/** Valid only when the Parent object to attach to is of type: USkeletalMeshComponent. */
+	Bone				UMETA(DisplayName = "Bone"),
+	/** Valid only when the Parent object to attach to is of type: USkeletalMeshComponent. */
+	Socket				UMETA(DisplayName = "Socket"),
+	ECsFXAttachPoint_MAX UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsFXAttachPoint final : public TCsEnumMap<ECsFXAttachPoint>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsFXAttachPoint, ECsFXAttachPoint)
+};
+
+namespace NCsFXAttachPoint
+{
+	typedef ECsFXAttachPoint Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type None;
+		extern CSCORE_API const Type Bone;
+		extern CSCORE_API const Type Socket;
+		extern CSCORE_API const Type ECsFXAttachPoint_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+}
+
+#pragma endregion FXAttachPoint
+
 // FCsFX
 #pragma region
 
@@ -381,6 +441,8 @@ USTRUCT(BlueprintType)
 struct CSCORE_API FCsFX
 {
 	GENERATED_USTRUCT_BODY()
+
+public:
 
 	/** Soft reference to an FX System. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -403,6 +465,12 @@ struct CSCORE_API FCsFX
 	/** Condition to determine when to deallocate the FX object. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsFXDeallocateMethod DeallocateMethod;
+
+private:
+
+	NCsFX::EDeallocateMethod* DeallocateMethod_Internal;
+
+public:
 
 	/** Valid if the DeallocateMethod == ECsFXDeallocateMethod::LifeTime.
 		- If an FX IS attached to a Parent object, 
@@ -447,24 +515,33 @@ public:
 		FX_Internal(nullptr),
 		Type(),
 		DeallocateMethod(ECsFXDeallocateMethod::Complete),
+		DeallocateMethod_Internal(nullptr),
 		LifeTime(0.0f),
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
 		Transform(FTransform::Identity)
 	{
-		//CS_SET_BLUEPRINT_BITFLAG(Particle_LoadFlags, ECsLoadFlags::Game);
+		DeallocateMethod_Internal = (NCsFX::EDeallocateMethod*)&DeallocateMethod;
 	}
 	
+	FORCEINLINE void UpdateInternalPtrs()
+	{
+		UpdateDeallocateMethodPtr();
+	}
+
+	FORCEINLINE void UpdateDeallocateMethodPtr() { DeallocateMethod_Internal = (NCsFX::EDeallocateMethod*)&DeallocateMethod; }
+
+	#define DeallocateMethodType NCsFX::EDeallocateMethod
+	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *DeallocateMethod_Internal; }
+	#undef DeallocateMethodType
+
 	/**
 	* Get the Hard reference to the FX System.
 	*
 	* return FX System
 	*/
-	FORCEINLINE UNiagaraSystem* Get() const
-	{
-		return FX_Internal;
-	}
+	FORCEINLINE UNiagaraSystem* Get() const { return FX_Internal; }
 
 	/**
 	* Get the Hard reference to the FX System.

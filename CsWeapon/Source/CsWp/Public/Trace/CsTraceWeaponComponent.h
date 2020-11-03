@@ -6,9 +6,6 @@
 #include "Trace/CsTraceWeapon.h"
 // Types
 #include "Coroutine/CsTypes_Coroutine.h"
-#include "Managers/Projectile/CsTypes_Projectile.h"
-#include "Managers/Sound/CsTypes_Sound.h"
-#include "Managers/FX/CsTypes_FX.h"
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 
 #include "CsTraceWeaponComponent.generated.h"
@@ -25,14 +22,12 @@ struct FCsRoutine;
 
 // NCsWeapon::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
-// NCsProjectile::NPayload::IPayload
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
-// NCsSound::NPayload::IPayload
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, IPayload)
-// NCsFX::NPayload::IPayload
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, IPayload)
-// NCsWeapon::NTrace::NData::NVisual::NFire::IFire
-CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NTrace, NData, NVisual, NFire, IFire)
+// NCsWeapon::NTrace::NImpl::NTrace::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NImpl, NTrace, FImpl)
+// NCsWeapon::NTrace::NImpl::NFX::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NImpl, NFX, FImpl)
+// NCsWeapon::NTrace::NImpl::NSound::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NImpl, NSound, FImpl)
 
 class USceneComponent;
 class UStaticMeshComponent;
@@ -48,8 +43,9 @@ class CSWP_API UCsTraceWeaponComponent : public UActorComponent,
 
 #define DataType NCsWeapon::NData::IData
 #define ProjectilePayloadType NCsProjectile::NPayload::IPayload
-#define SoundPayloadType NCsSound::NPayload::IPayload
-#define FXPayloadType NCsFX::NPayload::IPayload
+#define TraceImplType NCsWeapon::NTrace::NImpl::NTrace::FImpl
+#define FXImplType NCsWeapon::NTrace::NImpl::NFX::FImpl
+#define SoundImplType NCsWeapon::NTrace::NImpl::NSound::FImpl
 
 // UObject Interface
 #pragma region
@@ -293,71 +289,11 @@ public:
 #pragma region
 public:
 
-	/**
-	*/
-	struct CSWP_API FTraceImpl
-	{
-		friend class UCsTraceWeaponComponent;
-
-	protected:
-
-		UCsTraceWeaponComponent* Outer;
-
-		USceneComponent* TraceComponentTransform;
-
-		/**
- 		* Delegate type for custom implementation of GetStart().
-		*
-		* return Start Location 
-		*/
-		DECLARE_DELEGATE_RetVal(FVector, FGetStart);
-
-		/**  Delegate for custom implementation of GetStart(). */
-		FGetStart GetStartImpl;
-
-		/**
-		* Delegate type for custom implementation of GetDirection().
-		*
-		* return Direction 
-		*/
-		DECLARE_DELEGATE_RetVal(FVector, FGetDirection);
-
-		/** Delegate for custom implementation of GetDirection(). */
-		FGetDirection GetDirectionImpl;
-
-	public:
-
-		FTraceImpl() :
-			Outer(nullptr),
-			TraceComponentTransform(nullptr),
-			GetStartImpl(),
-			GetDirectionImpl()
-		{
-		}
-
-	public:
-
-		FORCEINLINE void SetTraceComponentTransform(USceneComponent* Component)
-		{
-			TraceComponentTransform = Component;
-		}
-
-	protected:
-
-		FVector GetStart();
-		FVector GetDirection();
-		FVector GetEnd(const FVector& Start);
-	};
-
-	FTraceImpl* TraceImpl;
+	TraceImplType* TraceImpl;
 
 protected:
 
-	virtual FTraceImpl* ConstructTraceImpl();
-
-	FCsScopedTimerHandle TraceScopedHandle;
-
-	void Trace();
+	virtual TraceImplType* ConstructTraceImpl();
 
 #pragma endregion Trace
 	
@@ -365,53 +301,11 @@ protected:
 #pragma region
 public:
 
-	struct CSWP_API FSoundImpl
-	{
-		friend class UCsTraceWeaponComponent;
-
-	protected:
-
-		UCsTraceWeaponComponent* Weapon;
-
-		USceneComponent* Component;
-
-	public:
-
-		FSoundImpl() :
-			Weapon(nullptr),
-			Component(nullptr)
-		{
-		}
-
-	public:
-
-		FORCEINLINE void SetComponent(USceneComponent* InComponent)
-		{
-			Component = InComponent;
-		}
-
-	protected:
-
-		/**
-		*/
-		void Play();
-
-	public:
-
-		/**
-		*
-		*
-		* @param Payload
-		* @param Sound
-		*/
-		void SetPayload(SoundPayloadType* Payload, const FCsSound& Sound);
-	};
-
-	FSoundImpl* SoundImpl;
+	SoundImplType* SoundImpl;
 
 protected:
 
-	virtual FSoundImpl* ConstructSoundImpl();
+	virtual SoundImplType* ConstructSoundImpl();
 
 #pragma endregion Sound
 
@@ -419,62 +313,11 @@ protected:
 #pragma region
 public:
 
-	struct CSWP_API FFXImpl
-	{
-		friend class UCsTraceWeaponComponent;
-
-	protected:
-
-		UCsTraceWeaponComponent* Weapon;
-
-		USceneComponent* Component;
-
-	public:
-
-		FFXImpl() :
-			Weapon(nullptr),
-			Component(nullptr)
-		{
-		}
-
-		FORCEINLINE void SetComponent(USceneComponent* InComponent)
-		{
-			Component = InComponent;
-		}
-
-	protected:
-
-		/**
-		*/
-		void Play();
-	
-	public:
-
-		/**
-		*
-		*
-		* @param Payload
-		* @param FX
-		*/
-		void SetPayload(FXPayloadType* Payload, const FCsFX& FX);
-
-#define FXDataType NCsWeapon::NTrace::NData::NVisual::NFire::IFire
-		/**
-		*
-		*
-		* @param Payload
-		* @param FXData
-		*/
-		void SetPayload(FXPayloadType* Payload, FXDataType* FXData);
-
-#undef FXDataType
-	};
-
-	FFXImpl* FXImpl;
+	FXImplType* FXImpl;
 
 protected:
 
-	virtual FFXImpl* ConstructFXImpl();
+	virtual FXImplType* ConstructFXImpl();
 
 #pragma endregion FX
 
@@ -534,6 +377,7 @@ public:
 
 #undef DataType
 #undef ProjectilePayloadType
-#undef SoundPayloadType
-#undef FXPayloadType
+#undef TraceImplType
+#undef FXImplType
+#undef SoundImplType
 };

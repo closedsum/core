@@ -25,6 +25,8 @@ namespace NCsFX
 			}
 		}
 
+		#define DeallocateMethodType NCsFX::EDeallocateMethod
+
 		FImpl::FImpl() :
 			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
@@ -43,7 +45,7 @@ namespace NCsFX
 			ElapsedTime(),
 			// FXCacheType (NCsFX::NCache::ICache)
 			FXComponent(nullptr),
-			DeallocateMethod(ECsFXDeallocateMethod::Complete),
+			DeallocateMethod(DeallocateMethodType::Complete),
 			QueuedLifeTime(0.0f)
 		{
 			InterfaceMap = new FCsInterfaceMap();
@@ -56,6 +58,8 @@ namespace NCsFX
 			InterfaceMap->Add<PooledCacheType>(static_cast<PooledCacheType*>(this));
 			InterfaceMap->Add<FXCacheType>(static_cast<FXCacheType*>(this));
 		}
+
+		#undef DeallocateMethodType
 
 		FImpl::~FImpl()
 		{
@@ -104,7 +108,9 @@ namespace NCsFX
 			FXComponent->Deactivate();
 
 			// LifeTime
-			if (DeallocateMethod == ECsFXDeallocateMethod::LifeTime)
+			typedef NCsFX::EDeallocateMethod DeallocateMethodType;
+
+			if (DeallocateMethod == DeallocateMethodType::LifeTime)
 			{
 				// Reset ElapsedTime
 				ElapsedTime.Reset();
@@ -117,13 +123,15 @@ namespace NCsFX
 		{
 			if (bQueueDeallocate)
 			{
+				typedef NCsFX::EDeallocateMethod DeallocateMethodType;
+
 				// LifeTime, let HasLifeTimeExpired handle deallocation
-				if (DeallocateMethod == ECsFXDeallocateMethod::LifeTime)
+				if (DeallocateMethod == DeallocateMethodType::LifeTime)
 				{
 					return false;
 				}
 				// Complete
-				if (DeallocateMethod == ECsFXDeallocateMethod::Complete)
+				if (DeallocateMethod == DeallocateMethodType::Complete)
 				{ 
 					checkf(FXComponent, TEXT("NCsFX::NCache::FImpl::ShouldDeallocate: FXComponent is NULL."));
 

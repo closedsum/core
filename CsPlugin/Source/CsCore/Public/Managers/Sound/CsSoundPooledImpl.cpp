@@ -10,13 +10,16 @@
 // Cached
 #pragma region
 
-namespace NCsSoundPooledImplCached
+namespace NCsSoundPooledImpl
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Update);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Allocate);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Play);
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Update);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Allocate);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Play);
+		}
 	}
 }
 
@@ -93,13 +96,13 @@ void ACsSoundPooledImpl::OutsideWorldBounds()
 
 void ACsSoundPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
-	using namespace NCsSoundPooledImplCached;
+	using namespace NCsSoundPooledImpl::NCached;
 
 	// TODO: This should be opaque
 	
-	typedef NCsSound::NCache::FImpl CacheType;
+	typedef NCsSound::NCache::FImpl CacheImplType;
 
-	CacheType* CacheImpl = NCsInterfaceMap::PureStaticCastChecked<CacheType>(Str::Update, Cache);
+	CacheImplType* CacheImpl = NCsInterfaceMap::PureStaticCastChecked<CacheImplType>(Str::Update, Cache);
 
 	CacheImpl->Update(DeltaTime);
 }
@@ -108,26 +111,33 @@ void ACsSoundPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 void ACsSoundPooledImpl::ConstructCache()
 {
-	Cache = new NCsSound::NCache::FImpl();
+	typedef NCsSound::NCache::FImpl CacheImplType;
+
+	Cache = new CacheImplType();
 }
 
 // ICsPooledObject
 #pragma region
 
-NCsPooledObject::NCache::ICache* ACsSoundPooledImpl::GetCache() const
+#define CacheType NCsPooledObject::NCache::ICache
+CacheType* ACsSoundPooledImpl::GetCache() const
 {
+#undef CacheType
 	return Cache;
 }
 
-void ACsSoundPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+void ACsSoundPooledImpl::Allocate(PooledPayloadType* Payload)
 {
-	using namespace NCsSoundPooledImplCached;
+#undef PooledPayloadType
+
+	using namespace NCsSoundPooledImpl::NCached;
 
 	Cache->Allocate(Payload);
 
-	typedef NCsSound::NPayload::IPayload PayloadInterfaceType;
+	typedef NCsSound::NPayload::IPayload SoundPayloadType;
 
-	PayloadInterfaceType* SoundPayload = NCsInterfaceMap::GetInterfaceChecked<PayloadInterfaceType>(Str::Allocate, Payload);
+	SoundPayloadType* SoundPayload = NCsInterfaceMap::GetInterfaceChecked<SoundPayloadType>(Str::Allocate, Payload);
 
 	Play(SoundPayload);
 }
@@ -141,9 +151,12 @@ void ACsSoundPooledImpl::Deallocate()
 
 #pragma endregion ICsPooledObject
 
-void ACsSoundPooledImpl::Play(NCsSound::NPayload::IPayload* Payload)
+#define SoundPayloadType NCsSound::NPayload::IPayload
+void ACsSoundPooledImpl::Play(SoundPayloadType* Payload)
 {
-	using namespace NCsSoundPooledImplCached;
+#undef SoundPayloadType
+
+	using namespace NCsSoundPooledImpl::NCached;
 
 	checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Play: AudioComponent is NULL."));
 	
@@ -153,12 +166,24 @@ void ACsSoundPooledImpl::Play(NCsSound::NPayload::IPayload* Payload)
 
 	SetActorTickEnabled(true);
 
-	typedef NCsPooledObject::NPayload::IPayload PayloadInterfaceType;
+	typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
 
-	PayloadInterfaceType* ObjectPayload = NCsInterfaceMap::GetInterfaceChecked<PayloadInterfaceType>(Str::Play, Payload);
+	PooledPayloadType* PooledPayload = NCsInterfaceMap::GetInterfaceChecked<PooledPayloadType>(Str::Play, Payload);
 
 	// If the Parent is set, attach the Sound to the Parent
-	if (USceneComponent* Parent = Cast<USceneComponent>(ObjectPayload->GetParent()))
+	USceneComponent* Parent = nullptr;
+
+	UObject* Object = PooledPayload->GetParent();
+
+		// SceneComponent
+	if (USceneComponent* Component = Cast<USceneComponent>(Object))
+		Parent = Component;
+		// Actor -> Get RootComponent
+	else
+	if (AActor* Actor = Cast<AActor>(Object))
+		Parent = Actor->GetRootComponent();
+
+	if (Parent)
 	{
 		AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Payload->GetAttachmentTransformRule()), Payload->GetBone());
 

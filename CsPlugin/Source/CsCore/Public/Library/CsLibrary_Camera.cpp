@@ -14,13 +14,16 @@
 #include "Camera/CsGetCameraComponent.h"
 #include "Camera/CameraComponent.h"
 
-namespace NCsLibraryCameraCached
+namespace NCsLibraryCamera
 {
-	namespace Str
+	namespace NCached
 	{
-		CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Camera, GetLocationChecked);
-		CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetRotationChecked);
-		CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetDirectionChecked);
+		namespace Str
+		{
+			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Camera, GetLocationChecked);
+			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetRotationChecked);
+			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetDirectionChecked);
+		}
 	}
 }
 
@@ -102,7 +105,7 @@ FVector FCsLibrary_Camera::GetLocationChecked(const FString& Context, UObject* O
 
 FVector FCsLibrary_Camera::GetLocationChecked(UObject* Object)
 {
-	using namespace NCsLibraryCameraCached;
+	using namespace NCsLibraryCamera::NCached;
 
 	const FString& Context = Str::GetLocationChecked;
 
@@ -188,7 +191,7 @@ FRotator FCsLibrary_Camera::GetRotationChecked(const FString& Context, UObject* 
 
 FRotator FCsLibrary_Camera::GetRotationChecked(UObject* Object)
 {
-	using namespace NCsLibraryCameraCached;
+	using namespace NCsLibraryCamera::NCached;
 
 	const FString& Context = Str::GetRotationChecked;
 
@@ -197,12 +200,12 @@ FRotator FCsLibrary_Camera::GetRotationChecked(UObject* Object)
 
 FRotator FCsLibrary_Camera::GetRotationChecked(const FString& Context, UObject* Object, const int32& Rules)
 {
-	return NCsRotationRules::GetRotation(GetRotationChecked(Context, Object), Rules);
+	return NCsRotationRules::GetRotationChecked(Context, GetRotationChecked(Context, Object), Rules);
 }
 
 FRotator FCsLibrary_Camera::GetRotationChecked(UObject* Object, const int32& Rules)
 {
-	using namespace NCsLibraryCameraCached;
+	using namespace NCsLibraryCamera::NCached;
 
 	const FString& Context = Str::GetRotationChecked;
 

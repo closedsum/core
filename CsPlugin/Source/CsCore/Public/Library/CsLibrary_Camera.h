@@ -3,13 +3,16 @@
 
 class UObject;
 
-namespace NCsLibraryCameraCached
+namespace NCsLibraryCamera
 {
-	namespace Str
+	namespace NCached
 	{
-		extern CSCORE_API const FString GetLocationChecked;
-		extern CSCORE_API const FString GetRotationChecked;
-		extern CSCORE_API const FString GetDirectionChecked;
+		namespace Str
+		{
+			extern CSCORE_API const FString GetLocationChecked;
+			extern CSCORE_API const FString GetRotationChecked;
+			extern CSCORE_API const FString GetDirectionChecked;
+		}
 	}
 }
 
@@ -142,7 +145,7 @@ public:
 	*/
 	FORCEINLINE static FVector GetDirectionChecked(UObject* Object)
 	{
-		using namespace NCsLibraryCameraCached;
+		using namespace NCsLibraryCamera::NCached;
 
 		const FString& Context = Str::GetDirectionChecked;
 
@@ -160,7 +163,7 @@ public:
 	*/
 	FORCEINLINE static FVector GetDirectionChecked(UObject* Object, const int32& Rules)
 	{
-		using namespace NCsLibraryCameraCached;
+		using namespace NCsLibraryCamera::NCached;
 
 		const FString& Context = Str::GetDirectionChecked;
 

@@ -14,9 +14,7 @@
 #pragma region
 
 // NCsDamage::NData::IData
-namespace NCsDamage {
-	namespace NData {
-		struct IData; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 
 namespace NCsStatusEffect
 {
@@ -40,11 +38,11 @@ namespace NCsStatusEffect
 
 				static const FName Name;
 
-			private:
+			#define TriggerFrequencyParamsType NCsStatusEffect::NTrigger::FFrequencyParams
+			#define TransferFrequencyParamsType NCsStatusEffect::NTransfer::FFrequencyParams
+			#define DamageDataType NCsDamage::NData::IData
 
-				typedef NCsStatusEffect::NTrigger::FFrequencyParams TriggerFrequencyParamsType;
-				typedef NCsStatusEffect::NTransfer::FFrequencyParams TransferFrequencyParamsType;
-				typedef NCsDamage::NData::IData DamageDataType;
+			private:
 
 				UObject* Outer;
 
@@ -52,7 +50,7 @@ namespace NCsStatusEffect
 
 				FCsInterfaceMap* InterfaceMap;
 
-				// NCsStatusEffect::NData::IData
+				// StatusEffectDataType (NCsStatusEffect::NData::IData)
 
 				FECsStatusEffectTriggerCondition* TriggerCondition;
 
@@ -62,7 +60,7 @@ namespace NCsStatusEffect
 
 				TArray<StatusEffectDataType*>* Children;
 
-				// NCsStatusEffect::NData::NDamage::IDamage
+				// StatusEffectDamageDataType (NCsStatusEffect::NData::NDamage::IDamage)
 
 				DamageDataType* DamageData;
 
@@ -90,7 +88,7 @@ namespace NCsStatusEffect
 				FORCEINLINE void SetTransferFrequencyParams(TransferFrequencyParamsType* Value) { TransferFrequencyParams = Value; }
 				FORCEINLINE void SetChildren(TArray<StatusEffectDataType*>* Value) { Children = Value; }
 
-			// NCsStatusEffect::NData::IData
+			// StatusEffectDataType (NCsStatusEffect::NData::IData)
 			#pragma region
 			public:
 
@@ -99,19 +97,23 @@ namespace NCsStatusEffect
 				FORCEINLINE const TransferFrequencyParamsType& GetTransferFrequencyParams() const { return *TransferFrequencyParams; }
 				FORCEINLINE const TArray<StatusEffectDataType*>& GetChildren() const { return *Children; }
 
-			#pragma endregion NCsStatusEffect::NData::IData
+			#pragma endregion StatusEffectDataType (NCsStatusEffect::NData::IData)
 
 			public:
 
 				FORCEINLINE void SetDamageData(DamageDataType* Value) { DamageData = Value; }
 
-			// NCsStatusEffect::NData::NDamage::IDamage
+			// StatusEffectDamageDataType (NCsStatusEffect::NData::NDamage::IDamage)
 			#pragma region
 			public:
 
 				FORCEINLINE DamageDataType* GetDamageData() const { return DamageData; }
 
-			#pragma endregion NCsStatusEffect::NData::NDamage::IDamage
+			#pragma endregion StatusEffectDamageDataType (NCsStatusEffect::NData::NDamage::IDamage)
+
+			#undef TriggerFrequencyParamsType
+			#undef TransferFrequencyParamsType
+			#undef DamageDataType
 			};
 
 #undef DataType
@@ -124,7 +126,9 @@ namespace NCsStatusEffect
 #pragma endregion Emu
 
 struct FCsInterfaceMap;
-class ICsData_Damage;
+
+// NCsDamage::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 
 UCLASS(BlueprintType, Blueprintable)
 class CSSE_API UCsData_StatusEffect_DamagePoint : public UObject,
@@ -138,10 +142,10 @@ public:
 
 	static const FName Name;
 
-private:
+#define DataType NCsData::IData
+#define DamageDataType NCsDamage::NData::IData
 
-	typedef NCsData::IData DataType;
-	typedef NCsDamage::NData::IData DamageDataType;
+private:
 
 	DataType* DataEmu;
 
@@ -165,10 +169,7 @@ private:
 #pragma region
 public:
 
-	FCsInterfaceMap* GetInterfaceMap() const
-	{
-		return InterfaceMap;
-	}
+	FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 #pragma endregion ICsGetInterfaceMap
 
@@ -180,10 +181,7 @@ protected:
 #pragma region
 public:
 
-	FORCEINLINE DataType* _getIData() const
-	{
-		return DataEmu;
-	}
+	FORCEINLINE DataType* _getIData() const { return DataEmu; }
 
 	bool IsValid(const int32& LoadFlags);
 
@@ -216,32 +214,17 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE const FECsStatusEffectTriggerCondition& GetTriggerCondition() const
-	{
-		return TriggerCondition;
-	}
-
-	FORCEINLINE const FCsStatusEffectTriggerFrequencyParams& GetTriggerFrequencyParams() const
-	{
-		return TriggerFrequencyParams;
-	}
-
-	FORCEINLINE const FCsStatusEffectTransferFrequencyParams& GetTransferFrequencyParams() const
-	{
-		return TransferFrequencyParams;
-	}
-
-	FORCEINLINE const TArray<ICsData_StatusEffect*>& GetChildren() const
-	{
-		return Children;
-	}
+	FORCEINLINE const FECsStatusEffectTriggerCondition& GetTriggerCondition() const { return TriggerCondition; }
+	FORCEINLINE const FCsStatusEffectTriggerFrequencyParams& GetTriggerFrequencyParams() const { return TriggerFrequencyParams; }
+	FORCEINLINE const FCsStatusEffectTransferFrequencyParams& GetTransferFrequencyParams() const { return TransferFrequencyParams; }
+	FORCEINLINE const TArray<ICsData_StatusEffect*>& GetChildren() const { return Children; }
 
 #pragma endregion ICsStatusEffect
 
 public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FCsScriptData_DamagePoint DamagePoint;
+	FCsData_DamagePoint DamagePoint;
 
 	DamageDataType* DamagePointEmu;
 
@@ -249,10 +232,10 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE DamageDataType* GetDamageData() const
-	{
-		return DamagePointEmu;
-	}
+	FORCEINLINE DamageDataType* GetDamageData() const { return DamagePointEmu; }
 
 #pragma endregion ICsStatusEffect_Damage
+
+#undef DataType
+#undef DamageDataType
 };

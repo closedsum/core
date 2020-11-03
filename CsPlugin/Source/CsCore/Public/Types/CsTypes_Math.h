@@ -392,20 +392,45 @@ namespace NCsRotationRules
 	extern CSCORE_API const int32 All;
 
 	/**
+	* Get the Rotation filtered by the bit mask, Rules.
+	*
+	* @param Rotation
+	* @param Rules		 Bit mask for which components of the Rotation to return.
+	*
+	* return			Rotation filtered by the bit mask, Rules.
 	*/
 	CSCORE_API FRotator GetRotation(FRotator Rotation, const int32& Rules);
 
 	/**
+	* Get the Rotation filtered by the bit mask, Rules.
+	* Check Rules has at least 1 bit flag set.
+	* 
+	* @param Rotation
+	* @param Rules		 Bit mask for which components of the Rotation to return.
+	*
+	* return			Rotation filtered by the bit mask, Rules.
+	*/
+	CSCORE_API FRotator GetRotationChecked(const FString& Context, FRotator Rotation, const int32& Rules);
+
+	/**
+	* Get the rotation of Actor filtered by the bit mask, Rules. 
+	*
+	* @param Actor
+	* @param Rules	Bit mask for which components of the Actor's rotation to return.
+	*
+	* return		Actor's rotation filtered by the bit mask, Rules. 
 	*/
 	CSCORE_API FRotator GetRotation(AActor* Actor, const int32& Rules);
 
 	/**
+	* Get the rotation of Component filtered by the bit mask, Rules.
+	*
+	* @param Component
+	* @param Rules		Bit mask for which components of the Component's rotation to return.
+	*
+	* return			Component's rotation filtered by the bit mask, Rules.
 	*/
 	CSCORE_API FRotator GetRotation(USceneComponent* Component, const int32& Rules);
-
-	/**
-	*/
-	CSCORE_API FRotator GetRotation(USkeletalMeshComponent* Component, const FName& Bone, const int32& Rules);
 }
 
 #define CS_ROTATION_FLAGS_NONE 0
@@ -449,8 +474,26 @@ namespace NCsTransformRules
 	extern CSCORE_API const int32 All;
 
 	/**
+	* Set the relative transform of an Actor to Transform based on some Rules,
+	* which determine which component of the Transform to use.
+	* See ECsTransformRules. 
+	* 
+	* @param Actor
+	* @param Transform
+	* @param Rules		Bit mask using the bit flag ECsTransformRules.
 	*/
 	CSCORE_API void SetRelativeTransform(AActor* Actor, const FTransform& Transform, const int32& Rules);
+
+	/**
+	* Set the transform of an Actor to Transform based on some Rules,
+	* which determine which component of the Transform to use.
+	* See ECsTransformRules.
+	*
+	* @param Actor
+	* @param Transform
+	* @param Rules		Bit mask using the bit flag ECsTransformRules.
+	*/
+	CSCORE_API void SetTransform(AActor* Actor, const FTransform& Transform, const int32& Rules);
 }
 
 #define CS_TRANSFORM_FLAGS_NONE 0

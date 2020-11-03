@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Cache/CsCache_PooledObject.h"
 #include "Managers/FX/Cache/CsCache_FX.h"
+#include "Managers/FX/CsTypes_FX.h"
 #include "Containers/CsWeakObjectPtr.h"
 
 #pragma once
@@ -8,9 +9,8 @@
 class UObject;
 struct FCsInterfaceMap;
 
-namespace NCsPooledObject {
-	namespace NPayload {
-		struct IPayload; } }
+// NCsPooledObject::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
 namespace NCsFX
 {
@@ -34,6 +34,7 @@ namespace NCsFX
 			static const FName Name;
 
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+		#define DeallocateMethodType NCsFX::EDeallocateMethod
 
 		private:
 
@@ -71,7 +72,7 @@ namespace NCsFX
 
 			UNiagaraComponent* FXComponent;
 
-			ECsFXDeallocateMethod DeallocateMethod;
+			DeallocateMethodType DeallocateMethod;
 
 			float QueuedLifeTime;
 
@@ -146,6 +147,7 @@ namespace NCsFX
 			//void SetData(ICsData_Projectile* InData);
 
 		#undef PooledPayloadType
+		#undef DeallocateMethodType
 		};
 
 	#undef PooledCacheType

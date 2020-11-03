@@ -22,9 +22,7 @@ namespace NCsDamage
 
 			static const FName Name;
 
-		private:
-
-			typedef NCsDamage::NValue::IValue ValueType;
+		#define ValueType NCsDamage::NValue::IValue
 
 		public:
 
@@ -43,6 +41,8 @@ namespace NCsDamage
 			* return Damage Type.
 			*/
 			virtual const FECsDamageType& GetType() const = 0;
+
+		#undef ValueType
 		};
 	}
 }
@@ -53,9 +53,8 @@ class CSCORE_API UCsData_Damage : public UCsGetInterfaceMap
 	GENERATED_UINTERFACE_BODY()
 };
 
-namespace NCsDamage {
-	namespace NValue {
-		struct IValue; } }
+// NCsDamage::NValue::IValue
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 
 /**
 * Interface to describe Damage. Other interfaces can be "added" on top of this to 
@@ -69,9 +68,7 @@ public:
 
 	static const FName Name;
 
-private:
-
-	typedef NCsDamage::NValue::IValue ValueType;
+#define ValueType NCsDamage::NValue::IValue
 
 public:
 
@@ -88,4 +85,6 @@ public:
 	* return Damage Type.
 	*/
 	virtual const FECsDamageType& GetType() const = 0;
+
+#undef ValueType
 };

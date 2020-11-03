@@ -3,10 +3,10 @@
 
 #include "Managers/Damage/Data/Shape/CsData_DamageSphereEmu.h"
 
-// FCsScriptData_DamageSphere
+// FCsData_DamageSphere
 #pragma region
 
-void FCsScriptData_DamageSphere::SetData(SphereDataEmuType* Data)
+void FCsData_DamageSphere::SetData(SphereDataEmuType* Data)
 {
 	// ICsData_Damage
 	Data->SetType(&Type);
@@ -22,4 +22,4 @@ void FCsScriptData_DamageSphere::SetData(SphereDataEmuType* Data)
 	Data->SetIgnoreHitResultObject(&bIgnoreHitResultObject);
 }
 
-#pragma endregion FCsScriptData_DamageSphere
+#pragma endregion FCsData_DamageSphere

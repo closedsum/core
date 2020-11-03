@@ -30,17 +30,13 @@ namespace NCsDamage
 		* Container for holding a reference to an object that implements the interface: NCsDamage::NEvent::IEvent.
 		* This serves as an easy way for a Manager Resource to keep track of the resource.
 		*/
-		struct CSCORE_API FResource : public TCsResourceContainer<IEvent>
-		{
-		};
+		struct CSCORE_API FResource : public TCsResourceContainer<IEvent> {};
 
 		/**
 		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NEvent::IEvent and
 		* are wrapped in the container: NCsDamage::NEvent::FResource.
 		*/
-		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Abstract_Fixed<IEvent, FResource, 0>
-		{
-		};
+		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Abstract_Fixed<IEvent, FResource, 0> {};
 	}
 
 	namespace NValue
@@ -51,17 +47,13 @@ namespace NCsDamage
 		* Container for holding a reference to an object that implements the interface: NCsDamage::NValue::IValue.
 		* This serves as an easy way for a Manager Resource to keep track of the resource.
 		*/
-		struct CSCORE_API FResource : public TCsResourceContainer<IValue>
-		{
-		};
+		struct CSCORE_API FResource : public TCsResourceContainer<IValue> {};
 
 		/**
 		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NValue::IValue and
 		* are wrapped in the container: NCsDamage:;NValue::FResource.
 		*/
-		struct CSCORE_API FManager : public TCsManager_ResourcePointerType_Fixed<IValue, FResource, 0>
-		{
-		};
+		struct CSCORE_API FManager : public TCsManager_ResourcePointerType_Fixed<IValue, FResource, 0> {};
 	}
 
 	namespace NRange
@@ -72,17 +64,13 @@ namespace NCsDamage
 		* Container for holding a reference to an object that implements the interface: NCsDamage::NRange::IRange.
 		* This serves as an easy way for a Manager Resource to keep track of the resource.
 		*/
-		struct CSCORE_API FResource : public TCsResourceContainer<IRange>
-		{
-		};
+		struct CSCORE_API FResource : public TCsResourceContainer<IRange> {};
 
 		/**
 		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NRange::IRange and
 		* are wrapped in the container: NCsDamage::NRange::FResource.
 		*/
-		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Abstract_Fixed<IRange, FResource, 0>
-		{
-		};
+		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Abstract_Fixed<IRange, FResource, 0> {};
 	}
 
 	namespace NModifier
@@ -93,18 +81,13 @@ namespace NCsDamage
 		* Container for holding a reference to an object that implements the interface: NCsDamage::NModifier::IModifier.
 		* This serves as an easy way for a Manager Resource to keep track of the resource.
 		*/
-		struct CSCORE_API FResource : public TCsResourceContainer<IModifier>
-		{
-
-		};
+		struct CSCORE_API FResource : public TCsResourceContainer<IModifier> {};
 
 		/**
 		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NModifier::IModifier and
 		* are wrapped in the container: NCsDamage::NModifer::FResource.
 		*/
-		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Abstract_Fixed<IModifier, FResource, 0>
-		{
-		};
+		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Abstract_Fixed<IModifier, FResource, 0> {};
 	}
 }
 
@@ -112,9 +95,8 @@ namespace NCsDamage
 
 class ICsGetManagerDamage;
 
-namespace NCsDamage {
-	namespace NData {
-		struct IData; } }
+// NCsDamage::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 
 UCLASS()
 class CSCORE_API UCsManager_Damage : public UObject

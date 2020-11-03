@@ -1091,8 +1091,9 @@ void UCsProjectileWeaponComponent::FSoundImpl::SetPayload(SoundPayloadType* Payl
 	const FString& Context = Str::SetPayload;
 
 	typedef NCsSound::NPayload::FImpl PayloadImplType;
+	typedef NCsSound::NPayload::FLibrary PayloadLibrary;
 
-	PayloadImplType* PayloadImpl = FCsLibrary_Payload_Sound::PureStaticCastChecked<PayloadImplType>(Context, Payload);
+	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
 
 	PayloadImpl->Instigator					= Weapon;
 	PayloadImpl->Owner						= Weapon->GetMyOwner();
@@ -1159,13 +1160,14 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, c
 	const FString& Context = Str::SetPayload;
 
 	typedef NCsFX::NPayload::FImpl PayloadImplType;
+	typedef NCsFX::NPayload::FLibrary PayloadLibrary;
 
-	PayloadImplType* PayloadImpl = FCsLibrary_Payload_FX::PureStaticCastChecked<PayloadImplType>(Context, Payload);
+	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
 
 	PayloadImpl->Instigator					= Weapon;
 	PayloadImpl->Owner						= Weapon->GetMyOwner();
 	PayloadImpl->FXSystem					= FX.GetChecked(Context);
-	PayloadImpl->DeallocateMethod			= FX.DeallocateMethod;
+	PayloadImpl->DeallocateMethod			= FX.GetDeallocateMethod();
 	PayloadImpl->LifeTime					= FX.LifeTime;
 	PayloadImpl->AttachmentTransformRules	= FX.AttachmentTransformRules;
 	PayloadImpl->Bone						= FX.Bone;
@@ -1229,8 +1231,9 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, F
 	const AttachType& Type = Params.GetAttachType();
 
 	typedef NCsFX::NPayload::FImpl PayloadImplType;
+	typedef NCsFX::NPayload::FLibrary PayloadLibrary;
 
-	PayloadImplType* PayloadImpl = FCsLibrary_Payload_FX::PureStaticCastChecked<PayloadImplType>(Context, Payload);
+	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
 
 	// None
 	if (Type == AttachType::None)

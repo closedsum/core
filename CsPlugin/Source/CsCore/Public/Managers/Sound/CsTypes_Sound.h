@@ -382,7 +382,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsSoundDeallocateMethod DeallocateMethod;
 
-	DeallocateMethodType* DeallocateMethodEmu;
+private:
+
+	DeallocateMethodType* DeallocateMethod_Internal;
+
+public:
 
 	/** Valid if the DeallocateMethod == ECsSoundDeallocateMethod::LifeTime.
 		- If a Sound IS attached to a Parent object, 
@@ -430,30 +434,24 @@ public:
 		Attenuation_LoadFlags(0),
 		Attenuation_Internal(nullptr),
 		DeallocateMethod(ECsSoundDeallocateMethod::Complete),
-		DeallocateMethodEmu(nullptr),
+		DeallocateMethod_Internal(nullptr),
 		LifeTime(0.0f),
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
 		Transform(FTransform::Identity)
 	{
-		DeallocateMethodEmu = (DeallocateMethodType*)(&DeallocateMethod);
+		DeallocateMethod_Internal = (DeallocateMethodType*)(&DeallocateMethod);
 	}
 	
-	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const
-	{
-		return *DeallocateMethodEmu;
-	}
+	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *DeallocateMethod_Internal; }
 
 	/**
 	* Get the Hard reference to the Sound Asset.
 	*
 	* return Sound Asset
 	*/
-	FORCEINLINE USoundBase* Get() const
-	{
-		return Sound_Internal;
-	}
+	FORCEINLINE USoundBase* Get() const { return Sound_Internal; }
 
 	/**
 	* Get the Hard reference to the Sound Asset.

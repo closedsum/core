@@ -105,16 +105,9 @@ public:
 	TArray<FCsSettings_Enum> ECsInputActionMap;
 
 	template<>
-	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsInputActionMap>() const
-	{
-		return ECsInputActionMap;
-	}
-
+	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsInputActionMap>() const { return ECsInputActionMap; }
 	template<>
-	const FString& GetSettingsEnumPath<FECsInputActionMap>() const
-	{
-		return NCsDeveloperSettings::Str::InputActionMap;
-	}
+	const FString& GetSettingsEnumPath<FECsInputActionMap>() const { return NCsDeveloperSettings::Str::InputActionMap; }
 
 	// Game Event
 
@@ -122,16 +115,9 @@ public:
 	TArray<FCsSettings_Enum> ECsGameEvent;
 
 	template<>
-	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsGameEvent>() const
-	{
-		return ECsGameEvent;
-	}
-
+	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsGameEvent>() const { return ECsGameEvent; }
 	template<>
-	const FString& GetSettingsEnumPath<FECsGameEvent>() const
-	{
-		return NCsDeveloperSettings::Str::GameEvent;
-	}
+	const FString& GetSettingsEnumPath<FECsGameEvent>() const { return NCsDeveloperSettings::Str::GameEvent; }
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input")
 	FCsSettings_Input Input;
@@ -157,22 +143,15 @@ public:
 	TArray<FCsSettings_Enum> ECsFX;
 
 	template<>
-	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsFX>() const
-	{
-		return ECsFX;
-	}
-
+	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsFX>() const { return ECsFX; }
 	template<>
-	const FString& GetSettingsEnumPath<FECsFX>() const
-	{
-		return NCsDeveloperSettings::Str::FX;
-	}
+	const FString& GetSettingsEnumPath<FECsFX>() const { return NCsDeveloperSettings::Str::FX; }
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|FX")
 	TArray<TSoftObjectPtr<UDataTable>> FXs;
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|FX", meta = (DisplayName = "Manager FX Actor"))
-	FCsSettings_Manager_FX_Actor Manager_FX_Actor;
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|FX", meta = (DisplayName = "Manager FX"))
+	FCsSettings_Manager_FX Manager_FX;
 
 	// Unit Test
 #pragma region
@@ -192,16 +171,9 @@ public:
 	TArray<FCsSettings_Enum> ECsSound;
 
 	template<>
-	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsSound>() const
-	{
-		return ECsSound;
-	}
-
+	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsSound>() const { return ECsSound; }
 	template<>
-	const FString& GetSettingsEnumPath<FECsSound>() const
-	{
-		return NCsDeveloperSettings::Str::Sound;
-	}
+	const FString& GetSettingsEnumPath<FECsSound>() const { return NCsDeveloperSettings::Str::Sound; }
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound")
 	TArray<TSoftObjectPtr<UDataTable>> Sounds;

@@ -1,6 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Containers/CsGetInterfaceMap.h"
-#include "Managers/FX/CsTypes_FX.h"
 
 #pragma once
 

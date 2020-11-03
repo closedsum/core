@@ -32,7 +32,6 @@ void FCsProjectileWeaponVisualFireParams::CopyParams(ParamsType* Params)
 {
 #undef ParamsType
 
-	Params->SetEmulate();
 	Params->SetFX(&FX);
 	Params->SetAttachType(&Attach);
 }

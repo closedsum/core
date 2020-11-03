@@ -158,3 +158,23 @@ namespace NCsFXDeallocateMethod
 }
 
 #pragma endregion FXDeallocateMethod
+
+// FXAttachPoint
+#pragma region
+
+namespace NCsFXAttachPoint
+{
+	namespace Ref
+	{
+		typedef EMCsFXAttachPoint EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(None);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Bone);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Socket);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsFXAttachPoint_MAX, "MAX");
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsFXAttachPoint_MAX;
+}
+
+#pragma endregion FXAttachPoint

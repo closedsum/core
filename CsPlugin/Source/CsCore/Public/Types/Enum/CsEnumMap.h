@@ -123,7 +123,7 @@ public:
 
 	FORCEINLINE bool IsValidEnum(const EnumType& Enum) const
 	{
-		return EnumSet.Find(Enum) != nullptr;
+		return (!bExplicitMAX || Enum != MAX) && EnumSet.Find(Enum) != nullptr;
 	}
 
 	FORCEINLINE bool IsValidEnum(const FString& Name) const

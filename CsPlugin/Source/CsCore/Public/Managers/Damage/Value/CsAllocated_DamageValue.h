@@ -4,13 +4,11 @@
 
 class UObject;
 
-namespace NCsDamage {
-	namespace NValue {
-		struct FResource; } }
+// NCsDamage::NValue::FResource
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, FResource)
+// NCsDamage::NValue::IValue
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 
-namespace NCsDamage {
-	namespace NValue {
-		struct IValue; } }
 
 namespace NCsDamage
 {
@@ -18,19 +16,24 @@ namespace NCsDamage
 	{
 		/**
 		* Container for an allocated object which implements the interface
-		* NCsDamage::NValue::IValue. This container is used to some what cleanly free
+		* ValueType (NCsDamage::NValue::IValue). This container is used to some what cleanly free
 		* the object after use.
 		*/
 		struct CSCORE_API FAllocated
 		{
 		public:
 
+			/** The Root for UCsManager_Damage. */
 			UObject* Root;
 
+			/** Container holding a reference to Value (a Damage Value). */
 			FResource* Container;
 
+			/** Damage Value */
 			IValue* Value;
 
+			/** The Type (or struct / class) of Value. This is used for 
+				quicker deallocation from UCsManager_Damage. */
 			FECsDamageValue Type;
 
 			FAllocated() :
@@ -41,10 +44,7 @@ namespace NCsDamage
 			{
 			}
 
-			FORCEINLINE const IValue* GetValue() const
-			{
-				return Value;
-			}
+			FORCEINLINE const IValue* GetValue() const { return Value; }
 
 			void CopyFrom(UObject* InRoot, const IValue* From);
 

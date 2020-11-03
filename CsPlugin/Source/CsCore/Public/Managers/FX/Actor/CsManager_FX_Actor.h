@@ -2,12 +2,19 @@
 #pragma once
 
 #include "UObject/Object.h"
-#include "Managers/Pool/CsManager_PooledObject_Map.h"
+// Resource
 #include "Managers/Resource/CsManager_ResourceValueType.h"
+#include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
+// Managers
+#include "Managers/Pool/CsManager_PooledObject_Map.h"
+// Types
 #include "Managers/FX/CsTypes_FX.h"
+// FX
 #include "Managers/FX/Payload/CsPayload_FX.h"
 #include "Managers/FX/Actor/CsFXActorPooled.h"
 #include "Managers/FX/Actor/CsSettings_Manager_FX_Actor.h"
+#include "Managers/FX/Params/CsParams_FX.h"
+
 #include "CsManager_FX_Actor.generated.h"
 
 // Delegates
@@ -16,6 +23,51 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerFXActor_OnSpawn, const FECsFX&, Type, TScriptInterface<ICsFXActorPooled>, FXActor);
 
 #pragma endregion Delegates
+
+// Structs
+#pragma region
+
+namespace NCsFX
+{
+	namespace NParameter
+	{
+		namespace NFloat
+		{
+			// FFloatType (NCsFX::NParamter::NFloat::FFloatType)
+
+			/**
+			* Container for holding a reference to the object FFloatType (NCsFX::NParamter::NFloat::FFloatType).
+			* This serves as an easy way for a Manager Resource to keep track of the resource.
+			*/
+			struct CSCORE_API FResource : public TCsResourceContainer<FFloatType> {};
+
+			/**
+			* A manager handling allocating and deallocating the object FVectorType (NCsFX::NParamter::NFloat::FFloatType) and
+			* are wrapped in the container: NCsFX::NParameter::NFloat::FResource.
+			*/
+			struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FFloatType, FResource, 0> {};
+		}
+
+		namespace NVector
+		{
+			// FVectorType (NCsFX::NParamter::NVector::FVectorType)
+
+			/**
+			* Container for holding a reference to the object FVectorType (NCsFX::NParamter::NVector::FVectorType).
+			* This serves as an easy way for a Manager Resource to keep track of the resource.
+			*/
+			struct CSCORE_API FResource : public TCsResourceContainer<FVectorType> {};
+
+			/**
+			* A manager handling allocating and deallocating the object FVectorType (NCsFX::NParamter::NVector::FVectorType) and
+			* are wrapped in the container: NCsFX::NParameter::NVector::FResource.
+			*/
+			struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FVectorType, FResource, 0> {};
+		}
+	}
+}
+
+#pragma endregion Structs
 
 // Internal
 #pragma region
@@ -138,11 +190,11 @@ public:
 #pragma region
 protected:
 
-	FCsSettings_Manager_FX_Actor Settings;
+	FCsSettings_Manager_FX Settings;
 
 public:
 
-	FORCEINLINE void SetSettings(const FCsSettings_Manager_FX_Actor& InSettings)
+	FORCEINLINE void SetSettings(const FCsSettings_Manager_FX& InSettings)
 	{
 		Settings = InSettings;
 	}
@@ -651,6 +703,74 @@ private:
 	TArray<UDataTable*> DataTables;
 
 #pragma endregion Data
+
+// Params
+#pragma region
+public:
+
+	template<typename ParameterValueType>
+	ParameterValueType* AllocateValue();
+
+#define ParameterType NCsFX::NParameter::IParameter
+
+	/**
+	*
+	*
+	* @param Value 
+	*/
+	void DeallocateValue(ParameterType* Value);
+
+#undef ParameterType
+
+	// Float
+#pragma region
+
+#define ParameterFloatType NCsFX::NParameter::NFloat::FFloatType
+#define ParameterFloatManagerType NCsFX::NParameter::NFloat::FManager
+
+private:
+
+	ParameterFloatManagerType Manager_ParameterFloat;
+
+public:
+
+	template<>
+	FORCEINLINE ParameterFloatType* AllocateValue<ParameterFloatType>() { return Manager_ParameterFloat.AllocateResource(); }
+
+private:
+
+	FORCEINLINE void DeallocateValue(ParameterFloatType* Value) { Manager_ParameterFloat.DeallocateAt(Value, Value->GetIndex()); }
+
+#undef ParameterVectorType
+#undef ParameterFloatManagerType
+
+#pragma endregion Float
+
+	// Vector
+#pragma region
+
+#define ParameterVectorType NCsFX::NParameter::NVector::FVectorType
+#define ParameterVectorManagerType NCsFX::NParameter::NVector::FManager
+
+private:
+
+	ParameterVectorManagerType Manager_ParameterVector;
+
+public:
+
+	template<>
+	FORCEINLINE ParameterVectorType* AllocateValue<ParameterVectorType>() { return Manager_ParameterVector.AllocateResource(); }
+
+private:
+
+	FORCEINLINE void DeallocateValue(ParameterVectorType* Value){ Manager_ParameterVector.DeallocateAt(Value, Value->GetIndex()); }
+
+#undef ParameterVectorType
+#undef ParameterVectorManagerType
+
+#pragma endregion Vector
+
+#pragma endregion Params
 
 #undef ManagerType
 #undef PayloadType

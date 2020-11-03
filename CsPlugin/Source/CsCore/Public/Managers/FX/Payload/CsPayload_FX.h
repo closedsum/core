@@ -1,10 +1,15 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Interfaces
 #include "Containers/CsGetInterfaceMap.h"
+// Types
 #include "Managers/FX/CsTypes_FX.h"
 #include "Types/CsTypes_AttachDetach.h"
 #pragma once
 
 class UNiagaraSystem;
+
+// NCsFX::NParameter::IParameter
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NParameter, IParameter)
 
 namespace NCsFX
 {
@@ -17,6 +22,9 @@ namespace NCsFX
 		public:
 
 			static const FName Name;
+
+		#define DeallocateMethodType NCsFX::EDeallocateMethod
+		#define ParameterType NCsFX::NParameter::IParameter
 
 		public:
 
@@ -35,10 +43,10 @@ namespace NCsFX
 			* 
 			* return Deallocate Method
 			*/
-			virtual const ECsFXDeallocateMethod& GetDeallocateMethod() const = 0;
+			virtual const DeallocateMethodType& GetDeallocateMethod() const = 0;
 
 			/**
-			* Relevant if the DeallocateMethod == ECsFXDeallocateMethod::LifeTime.
+			* Relevant if the DeallocateMethod == DeallocateMethodType::LifeTime.
 			* - If an FX IS attached to a Parent object, 
 			*	 LifeTime == 0.0f means the FX object will be deallocated immediately
 			*     when the Parent object has been destroyed / deallocated.
@@ -86,6 +94,13 @@ namespace NCsFX
 			* return Transform
 			*/
 			virtual const FTransform& GetTransform() const = 0;
+
+			/**
+			*/
+			virtual const TArray<ParameterType*>& GetParameters() const = 0;
+
+		#undef DeallocateMethodType
+		#undef ParameterType
 		};
 	}
 }

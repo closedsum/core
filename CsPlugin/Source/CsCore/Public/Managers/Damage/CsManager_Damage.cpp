@@ -41,13 +41,16 @@
 // Cached
 #pragma region
 
-namespace NCsManagerDamageCached
+namespace NCsManagerDamage
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, ProcessDamageEvent);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, ProcessDamageEventContainer);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, LogEvent);
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, ProcessDamageEvent);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, ProcessDamageEventContainer);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, LogEvent);
+		}
 	}
 }
 
@@ -442,7 +445,7 @@ void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 {
 #undef EventType
 
-	using namespace NCsManagerDamageCached;
+	using namespace NCsManagerDamage::NCached;
 
 	const FString& Context = Str::ProcessDamageEvent;
 
@@ -542,9 +545,7 @@ void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 #define EventResourceType NCsDamage::NEvent::FResource
 void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Event)
 {
-
-
-	using namespace NCsManagerDamageCached;
+	using namespace NCsManagerDamage::NCached;
 
 	const FString& Context = Str::ProcessDamageEventContainer;
 
@@ -831,7 +832,7 @@ void UCsManager_Damage::LogEvent(const EventType* Event)
 {
 #undef EventType
 
-	using namespace NCsManagerDamageCached;
+	using namespace NCsManagerDamage::NCached;
 
 	const FString& Context = Str::LogEvent;
 

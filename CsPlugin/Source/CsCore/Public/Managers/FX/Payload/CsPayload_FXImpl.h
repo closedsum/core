@@ -8,6 +8,9 @@ class UObject;
 struct FCsInterfaceMap;
 class UNiagaraSystem;
 
+// NCsFX::NParameter::IParameter
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NParameter, IParameter)
+
 namespace NCsFX
 {
 	namespace NPayload
@@ -24,15 +27,22 @@ namespace NCsFX
 
 			static const FName Name;
 
+		#define DeallocateMethodType NCsFX::EDeallocateMethod
+		#define ParameterType NCsFX::NParameter::IParameter
+
 		private:
 
+			UObject* Root;
+
+			// ICsGetInterfaceMap
+
 			FCsInterfaceMap* InterfaceMap;
+
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
 			bool bAllocated;
 
 		public:
-
-			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
 			UObject* Instigator;
 
@@ -46,7 +56,7 @@ namespace NCsFX
 
 			UNiagaraSystem* FXSystem;
 
-			ECsFXDeallocateMethod DeallocateMethod;
+			DeallocateMethodType DeallocateMethod;
 
 			float LifeTime;
 	
@@ -58,19 +68,23 @@ namespace NCsFX
 
 			FTransform Transform;
 
+			TArray<ParameterType*> Parameters;
+
 		public:
 
 			FImpl();
 			~FImpl();
 
+			FORCEINLINE void SetRoot(UObject* InRoot){ Root = InRoot; }
+			FORCEINLINE UObject* GetRoot() const { return Root; }
+
+			FORCEINLINE UObject* _getUObject() const { return nullptr; }
+
 		// ICsGetInterfaceMap
 		#pragma region
 		public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return InterfaceMap;
-			}
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
 
@@ -105,14 +119,18 @@ namespace NCsFX
 		public:
 
 			FORCEINLINE UNiagaraSystem* GetFXSystem() const { return FXSystem; }
-			FORCEINLINE const ECsFXDeallocateMethod& GetDeallocateMethod() const { return DeallocateMethod; }
+			FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return DeallocateMethod; }
 			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
 			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
 			FORCEINLINE const FName& GetBone() const { return Bone; }
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
 			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
+			FORCEINLINE const TArray<ParameterType*>& GetParameters() const { return Parameters; }
 
 		#pragma endregion FXPayloadType (NCsFX::Payload::IPayload)
+
+		#undef DeallocateMethodType
+		#undef ParameterType
 		};
 
 #undef PooledPayloadType

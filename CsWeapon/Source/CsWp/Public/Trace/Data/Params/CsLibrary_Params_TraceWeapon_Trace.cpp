@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Trace/Data/Params/CsLibrary_Params_TraceWeapon_Trace.h"
 
+#include "Types/CsTypes_Macro.h"
+
 namespace NCsWeapon
 {
 	namespace NTrace

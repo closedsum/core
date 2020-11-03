@@ -245,7 +245,7 @@ public:
 public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FCsScriptData_DamageSphere DamageSphere;
+	FCsData_DamageSphere DamageSphere;
 
 	DamageDataType* DamageSphereEmu;
 

@@ -5,18 +5,14 @@
 #include "CsTypes_Data_DamageShape.generated.h"
 #pragma once
 
-// FCsScriptData_DamageSphere
+// FCsData_DamageSphere
 #pragma region
 
 // NCsDamage::NData::NShape::NSphere::FEmu
-namespace NCsDamage {
-	namespace NData {
-		namespace NShape {
-			namespace NSphere {
-				struct FEmu; } } } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NData, NShape, NSphere, FEmu)
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsScriptData_DamageSphere
+struct CSCORE_API FCsData_DamageSphere
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -52,7 +48,7 @@ struct CSCORE_API FCsScriptData_DamageSphere
 
 public:
 
-	FCsScriptData_DamageSphere() :
+	FCsData_DamageSphere() :
 		Type(),
 		MinDamage(0.0f),
 		MaxDamage(0.0f),
@@ -74,4 +70,4 @@ public:
 	void SetData(SphereDataEmuType* Data);
 };
 
-#pragma endregion FCsScriptData_DamageSphere
+#pragma endregion FCsData_DamageSphere

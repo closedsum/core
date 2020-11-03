@@ -3,10 +3,16 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
-#define PayloadType NCsFX::NPayload::IPayload
-
-struct CSCORE_API FCsLibrary_Payload_FX : public TCsLibrary_InterfaceMap<PayloadType>
+namespace NCsFX
 {
-};
+	namespace NPayload
+	{
+		#define PayloadType NCsFX::NPayload::IPayload
 
-#undef PayloadType
+		struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<PayloadType>
+		{
+		};
+
+		#undef PayloadType
+	}
+}

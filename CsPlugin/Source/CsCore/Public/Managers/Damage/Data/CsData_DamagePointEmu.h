@@ -4,9 +4,8 @@
 
 struct FCsInterfaceMap;
 
-namespace NCsDamage {
-	namespace NValue {
-		struct IValue; } }
+// NCsDamage::NValue::IValue
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 
 namespace NCsDamage
 {
@@ -25,9 +24,7 @@ namespace NCsDamage
 
 				static const FName Name;
 
-			private:
-
-				typedef NCsDamage::NValue::IValue ValueType;
+			#define ValueType NCsDamage::NValue::IValue
 
 				// ICsGetInterfaceMap
 
@@ -52,37 +49,26 @@ namespace NCsDamage
 			#pragma region
 			public:
 
-				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-				{
-					return InterfaceMap;
-				}
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 			#pragma endregion ICsGetInterfaceMap
-
-			// ICsData_Damage
-			#pragma region
-			public:
-
-				FORCEINLINE const ValueType* GetValue() const
-				{
-					return Value;
-				}
-
-				FORCEINLINE const FECsDamageType& GetType() const
-				{
-					return const_cast<FECsDamageType&>(*Type);
-				}
-
-			#pragma endregion ICsData_Damage
 
 			public:
 
 				void SetValue(float* InValue);
 
-				void SetType(FECsDamageType* InValue)
-				{
-					Type = InValue;
-				}
+				void SetType(FECsDamageType* InValue) { Type = InValue; }
+
+			// ICsData_Damage
+			#pragma region
+			public:
+
+				FORCEINLINE const ValueType* GetValue() const { return Value; }
+				FORCEINLINE const FECsDamageType& GetType() const { return const_cast<FECsDamageType&>(*Type); }
+
+			#pragma endregion ICsData_Damage
+
+			#undef ValueType
 			};
 
 #undef DataType

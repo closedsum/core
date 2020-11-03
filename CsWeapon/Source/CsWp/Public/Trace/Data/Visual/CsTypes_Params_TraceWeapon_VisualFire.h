@@ -41,7 +41,7 @@ namespace NCsTraceWeaponVisualFireAttach
 	extern CSWP_API const uint8 MAX;
 }
 
-#pragma endregion TraceWeaponLaunchTraceStart
+#pragma endregion TraceWeaponVisualFireAttach
 
 // FCsTraceWeaponVisualFireParams
 #pragma region

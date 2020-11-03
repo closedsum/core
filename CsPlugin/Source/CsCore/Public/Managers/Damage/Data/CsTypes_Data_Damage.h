@@ -3,17 +3,14 @@
 #include "CsTypes_Data_Damage.generated.h"
 #pragma once
 
-// FCsScriptData_DamagePoint
+// FCsData_DamagePoint
 #pragma region
 
 // NCsDamage::NData::NPoint::FEmu
-namespace NCsDamage {
-	namespace NData {
-		namespace NPoint {
-			struct FEmu; } } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NData, NPoint, FEmu)
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsScriptData_DamagePoint
+struct CSCORE_API FCsData_DamagePoint
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -23,7 +20,7 @@ struct CSCORE_API FCsScriptData_DamagePoint
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Damage;
 
-	FCsScriptData_DamagePoint() :
+	FCsData_DamagePoint() :
 		Type(),
 		Damage(0.0f)
 	{
@@ -38,4 +35,4 @@ public:
 	void SetData(PointDataEmuType* Data);
 };
 
-#pragma endregion FCsScriptDamagePoint
+#pragma endregion FCsData_DamagePoint

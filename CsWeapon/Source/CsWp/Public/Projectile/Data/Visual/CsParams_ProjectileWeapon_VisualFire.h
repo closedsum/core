@@ -36,55 +36,33 @@ namespace NCsWeapon
 					{
 					private:
 
-						bool bEmulate;
-
 						FCsFX FX;
 
-						FCsFX* Emu_FX;
+						FCsFX* FX_Emu;
 
 						EAttach Attach;
 
-						EAttach* Emu_Attach;
+						EAttach* Attach_Emu;
 
 					public:
 
 						FParams() :
-							bEmulate(false),
 							FX(),
-							Emu_FX(nullptr),
+							FX_Emu(nullptr),
 							Attach(EAttach::None),
-							Emu_Attach(nullptr)
+							Attach_Emu(nullptr)
 						{
-							Emu_FX = &FX;
-							Emu_Attach = &Attach;
+							FX_Emu = &FX;
+							Attach_Emu = &Attach;
 						}
 
 					public:
 
-						FORCEINLINE void SetEmulate()
-						{
-							bEmulate = true;
-						}
+						FORCEINLINE void SetFX(FCsFX* Value) { FX_Emu = Value; }
+						FORCEINLINE void SetAttachType(ECsProjectileWeaponVisualFireAttach* Value) { Attach_Emu = (EAttach*)Value; }
 
-						FORCEINLINE const FCsFX& GetFX() const 
-						{
-							return *Emu_FX;
-						}
-
-						FORCEINLINE const EAttach& GetAttachType() const
-						{
-							return *Emu_Attach;
-						}
-
-						FORCEINLINE void SetFX(FCsFX* InFX)
-						{
-							Emu_FX = InFX;
-						}
-
-						FORCEINLINE void SetAttachType(ECsProjectileWeaponVisualFireAttach* InAttach)
-						{
-							Emu_Attach = (EAttach*)InAttach;
-						}
+						FORCEINLINE const FCsFX& GetFX() const { return *FX_Emu; }
+						FORCEINLINE const EAttach& GetAttachType() const { return *Attach_Emu; }
 					};
 				}
 			}

@@ -266,6 +266,8 @@ void UCsManager_FX_Actor::CleanUp()
 		Pair.Value = nullptr;
 	}
 	DataMap.Reset();
+	// Params
+	Manager_ParameterVector.Shutdown();
 
 	bInitialized = false;
 }
@@ -330,11 +332,62 @@ void UCsManager_FX_Actor::SetupInternal()
 	{
 		UCsDeveloperSettings* ModuleSettings = GetMutableDefault<UCsDeveloperSettings>();
 
-		checkf(ModuleSettings, TEXT("UCsManager_FX_Actor::SetupInternal: Failed to get settings of type: UCsDeveloperSettings."));
+		checkf(ModuleSettings, TEXT("%s: Failed to get settings of type: UCsDeveloperSettings."), *Context);
 
-		Settings = ModuleSettings->Manager_FX_Actor;
+		Settings = ModuleSettings->Manager_FX;
 
 		InitInternalFromSettings();
+	}
+	// Params
+	{
+		UCsDeveloperSettings* ModuleSettings = GetMutableDefault<UCsDeveloperSettings>();
+
+		checkf(ModuleSettings, TEXT("%s: Failed to get settings of type: UCsDeveloperSettings."), *Context);
+
+		const int32 (&PoolSizes)[(uint8)ECsFXParameterValue::ECsFXParameterValue_MAX] = ModuleSettings->Manager_FX.Parameters.PoolSizes;
+		
+		// Float
+		{
+			const int32& Size = PoolSizes[(uint8)ECsFXParameterValue::Float];
+
+			checkf(Size > 0, TEXT("%s: UCsDeveloperSettings->Manager_FX.Parameters.PoolSizes[Float] is NOT > 0."), *Context);
+
+			Manager_ParameterFloat.CreatePool(Size);
+
+			typedef NCsFX::NParameter::NFloat::FResource ResourceContainerType;
+			typedef NCsFX::NParameter::NFloat::FFloatType ResourceType;
+
+			const TArray<ResourceContainerType*>& ParamPool = Manager_ParameterFloat.GetPool();
+	
+			const int32 Count = ParamPool.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				ResourceType* R = ParamPool[I]->Get();
+				R->SetIndex(I);
+			}
+		}
+		// Vector
+		{
+			const int32& Size = PoolSizes[(uint8)ECsFXParameterValue::Float];
+
+			checkf(Size > 0, TEXT("%s: UCsDeveloperSettings->Manager_FX.Parameters.PoolSizes[Vector] is NOT > 0."), *Context);
+
+			Manager_ParameterVector.CreatePool(Size);
+
+			typedef NCsFX::NParameter::NVector::FResource ResourceContainerType;
+			typedef NCsFX::NParameter::NVector::FVectorType ResourceType;
+
+			const TArray<ResourceContainerType*>& ParamPool = Manager_ParameterVector.GetPool();
+
+			const int32 Count = ParamPool.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				ResourceType* R = ParamPool[I]->Get();
+				R->SetIndex(I);
+			}
+		}
 	}
 }
 
@@ -351,10 +404,10 @@ void UCsManager_FX_Actor::InitInternalFromSettings()
 		ManagerParams.Name  = TEXT("UCsManager_FX_Actor::NCsFX::FManager");
 		ManagerParams.World = MyRoot->GetWorld();
 
-		for (const TPair<FECsFX, FCsSettings_Manager_FX_Actor_PoolParams>& Pair : Settings.PoolParams)
+		for (const TPair<FECsFX, FCsSettings_Manager_FX_PoolParams>& Pair : Settings.PoolParams)
 		{
-			const FECsFX& Type									  = Pair.Key;
-			const FCsSettings_Manager_FX_Actor_PoolParams& Params = Pair.Value;
+			const FECsFX& Type								= Pair.Key;
+			const FCsSettings_Manager_FX_PoolParams& Params = Pair.Value;
 
 			typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
@@ -610,7 +663,11 @@ PayloadType* UCsManager_FX_Actor::ConstructPayload(const FECsFX& Type)
 
 	typedef NCsFX::NPayload::FImpl PayloadImplType;
 
-	return new PayloadImplType();
+	PayloadImplType* Payload = new PayloadImplType();
+
+	Payload->SetRoot(MyRoot);
+
+	return Payload;
 }
 
 #define PayloadType NCsFX::NPayload::IPayload
@@ -824,3 +881,26 @@ ICsData_FX* UCsManager_FX_Actor::GetData(const FName& Name)
 }
 
 #pragma endregion Data
+
+// Params
+#pragma region
+
+#define ParameterType NCsFX::NParameter::IParameter
+void UCsManager_FX_Actor::DeallocateValue(ParameterType* Value)
+{
+#undef ParameterType
+	checkf(Value, TEXT("UCsManager_FX_Actor::DeallocateValue: Value is NULL."));
+
+	typedef NCsFX::NParameter::EValue ParameterValueType;
+
+	const ParameterValueType& ValueType = Value->GetValueType();
+	// Float
+	if (ValueType == ParameterValueType::Float)
+		DeallocateValue((NCsFX::NParameter::NFloat::FFloatType*)Value);
+	// Vector
+	else
+	if (ValueType == ParameterValueType::Vector)
+		DeallocateValue((NCsFX::NParameter::NVector::FVectorType*)Value);
+}
+
+#pragma endregion Params

@@ -11,6 +11,7 @@
 // Library
 #include "Managers/Pool/Cache/CsLibrary_PooledObjectCache.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+#include "Managers/FX/CsLibrary_FX.h"
 // Managers
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
 // Pooled Object
@@ -18,6 +19,7 @@
 // FX
 #include "Managers/FX/Cache/CsCache_FXImpl.h"
 #include "Managers/FX/Payload/CsPayload_FX.h"
+#include "Managers/FX/Params/CsParams_FX.h"
 #include "NiagaraActor.h"
 #include "NiagaraComponent.h"
 // Scoped
@@ -150,62 +152,68 @@ void UCsFXActorPooledImpl::Allocate(PayloadType* Payload)
 
 	using namespace NCsFXActorPooledImpl::NCached;
 
+	const FString& Context = Str::Allocate;
+
 	typedef NCsFX::NCache::FImpl CacheImplType;
 
-	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Str::Allocate, Cache);
+	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Allocate(Payload);
 
 	UNiagaraComponent* FXComponent = FX->GetNiagaraComponent();
 
-	checkf(FXComponent, TEXT("%s: NiagaraComponent is NULL for FX Actor: %s."), *(Str::Allocate), *(FX->GetName()));
+	checkf(FXComponent, TEXT("%s: NiagaraComponent is NULL for FX Actor: %s."), *Context, *(FX->GetName()));
 
 	CacheImpl->SetFXComponent(FXComponent);
 
 	typedef NCsFX::NPayload::IPayload FXPayloadType;
 	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
 
-	FXPayloadType* FXPayload = PooledPayloadLibrary::GetInterfaceChecked<FXPayloadType>(Str::Allocate, Payload);
+	FXPayloadType* FXPayload = PooledPayloadLibrary::GetInterfaceChecked<FXPayloadType>(Context, Payload);
 
 	// If the Parent is set, attach the FX to the Parent
-	if (USceneComponent* Parent = Cast<USceneComponent>(Payload->GetParent()))
+	USceneComponent* Parent = nullptr;
+
+	UObject* Object = Payload->GetParent();
+
+		// SceneComponent
+	if (USceneComponent* Component = Cast<USceneComponent>(Object))
+		Parent = Component;
+		// Actor -> Get RootComponent
+	else
+	if (AActor* Actor = Cast<AActor>(Object))
+		Parent = Actor->GetRootComponent();
+
+	const FTransform& Transform = FXPayload->GetTransform();
+	const int32& TransformRules = FXPayload->GetTransformRules();
+
+	if (Parent)
 	{
+		// TODO: Add check if Bone is Valid for SkeletalMeshComponent
 		FX->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(FXPayload->GetAttachmentTransformRule()), FXPayload->GetBone());
 
-		const FTransform& Transform = FXPayload->GetTransform();
-		const int32& TransformRules = FXPayload->GetTransformRules();
-		
-		// Location | Rotation | Scale
-		if (TransformRules == NCsTransformRules::All)
-		{
-			FX->SetActorRelativeTransform(Transform);
-		}
-		else
-		{
-			// Location
-			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Location))
-			{
-				FX->SetActorRelativeLocation(Transform.GetLocation());
-			}
-			// Rotation
-			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Rotation))
-			{
-				FX->SetActorRelativeRotation(Transform.GetRotation().Rotator());
-			}
-			// Scale
-			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Scale))
-			{
-				FX->SetActorRelativeScale3D(Transform.GetScale3D());
-			}
-		}
+		NCsTransformRules::SetRelativeTransform(FX, Transform, TransformRules);
 	}
 	// NO Parent, set the World Transform of the FX
 	else
 	{
-		FX->SetActorTransform(FXPayload->GetTransform());
+		NCsTransformRules::SetTransform(FX, Transform, TransformRules);
 	}
 
-	FXComponent->SetAsset(FXPayload->GetFXSystem());
+	UNiagaraSystem* FXSystem = FXPayload->GetFXSystem();
+
+	FXComponent->SetAsset(FXSystem);
+
+	// Set Parameters
+	typedef NCsFX::NParameter::IParameter ParameterType;
+	typedef NCsFX::FLibrary FXLibrary;
+
+	const TArray<ParameterType*>& Parameters = FXPayload->GetParameters();
+
+	for (const ParameterType* Param : Parameters)
+	{
+		FXLibrary::SetParameterChecked(Context, FXComponent, Param);
+	}
 
 	FX->SetActorTickEnabled(true);
 	FX->SetActorHiddenInGame(false);

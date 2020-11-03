@@ -5,22 +5,18 @@
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/Sound/CsSoundPooled.h"
 #include "Managers/Sound/CsTypes_Sound.h"
+
 #include "CsSoundPooledImpl.generated.h"
 
 class UAudioComponent;
 class UDamageType;
 
-namespace NCsPooledObject {
-	namespace NCache {
-		struct ICache; } }
-
-namespace NCsPooledObject {
-	namespace NPayload {
-		struct IPayload; } }
-
-namespace NCsSound {
-	namespace NPayload {
-		struct IPayload; } }
+// NCsPooledObject::NCache::ICache
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
+// NCsPooledObject::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
+// NCsSound::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, IPayload)
 
 /**
 * 
@@ -32,6 +28,10 @@ class CSCORE_API ACsSoundPooledImpl : public AActor,
 									  public ICsSoundPooled
 {
 	GENERATED_UCLASS_BODY()
+
+#define CacheType NCsPooledObject::NCache::ICache
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+#define SoundPayloadType NCsSound::NPayload::IPayload
 
 public:
 
@@ -68,7 +68,7 @@ public:
 
 protected:
 
-	NCsPooledObject::NCache::ICache* Cache;
+	CacheType* Cache;
 
 	void ConstructCache();
 
@@ -76,9 +76,9 @@ protected:
 #pragma region
 public:
 
-	NCsPooledObject::NCache::ICache* GetCache() const;
+	CacheType* GetCache() const;
 
-	void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
+	void Allocate(PooledPayloadType* Payload);
 
 	void Deallocate();
 
@@ -100,6 +100,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Sound")
 	FECsSound Type;
 
-	void Play(NCsSound::NPayload::IPayload* Payload);
+	void Play(SoundPayloadType* Payload);
 	void Stop();
+
+#undef CacheType
+#undef PooledPayloadType
+#undef SoundPayloadType
 };

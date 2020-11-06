@@ -27,6 +27,8 @@ namespace NCsAnim2DPlayRate
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_60Fps, "60 fps");
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_120Fps, "120 fps");
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_Custom, "Custom");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_CustomDeltaTime, "Custom DeltaTime");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_CustomTotalTime, "Custom TotalTime");
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsAnim2DPlayRate_MAX, "MAX");
 	}
 
@@ -39,6 +41,34 @@ namespace NCsAnim
 	{
 		namespace NPlayRate
 		{
+			namespace Ref
+			{
+				typedef EMPlayRate EnumMapType;
+
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_0_001, "0.001s");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_0_01, "0.01s");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_0_1, "0.1s");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_1, "1s");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_10, "10s");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_100, "100s");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_15Fps, "15 fps");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_24Fps, "24 fps (film)");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_25Fps, "25 fps (PAL/25)");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_29_97Fps, "29.97 fps (NTSC/30)");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_30Fps, "30 fps");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_48Fps, "48 fps");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_50Fps, "50 fps (PAL/50)");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_59_94Fps, "59.94 fps (NTSC/60)");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_60Fps, "60 fps");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_120Fps, "120 fps");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_Custom, "Custom");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_CustomDeltaTime, "Custom DeltaTime");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_CustomTotalTime, "Custom TotalTime");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EPlayRate_MAX, "MAX");
+			}
+
+			CSCORE_API const uint8 MAX = (uint8)Type::EPlayRate_MAX;
+
 			float GetDeltaTime(const EPlayRate& PlayRate)
 			{
 				if (PlayRate == EPlayRate::PR_0_001){ return 0.001f; }
@@ -87,6 +117,31 @@ namespace NCsAnim2DPlayback
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsAnim2DPlayback_MAX;
 }
 
+namespace NCsAnim
+{
+	namespace N2D
+	{
+		namespace NPlayback
+		{
+			namespace Ref
+			{
+				typedef EMPlayback EnumMapType;
+
+				CSCORE_API CS_ADD_TO_ENUM_MAP(Forward);
+				CSCORE_API CS_ADD_TO_ENUM_MAP(Reverse);
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PingPong, "Ping Pong");
+				CSCORE_API CS_ADD_TO_ENUM_MAP(Loop);
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(LoopReverse, "Loop Reverse");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(LoopPingPong, "Loop Ping Pong");
+				CSCORE_API CS_ADD_TO_ENUM_MAP(Custom);
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EPlayback_MAX, "MAX");
+			}
+
+			CSCORE_API const uint8 MAX = (uint8)Type::EPlayback_MAX;
+		}
+	}
+}
+
 #pragma endregion Anim2DPlayback
 
 // FCsAnim2DFlipbookTextureFrame
@@ -118,6 +173,52 @@ void FCsAnim2DFlipbookTexture::CopyFlipbook(FlipbookType* Flipbook)
 	Flipbook->SetPlayRate((PlayRateType*)&PlayRate);
 	Flipbook->SetDeltaTime(&DeltaTime);
 	Flipbook->SetTotalTime(&TotalTime);
+}
+
+namespace NCsAnim
+{
+	namespace N2D
+	{
+		namespace NFlipbook
+		{
+			namespace NTexture
+			{
+				bool FFlipbook::IsValidChecked(const FString& Context) const
+				{
+					// Check Playback is Valid.
+					typedef NCsAnim::N2D::EMPlayback PlaybackMapType;
+					check(PlaybackMapType::Get().IsValidEnumChecked(Context, GetPlayback()));
+					// Check PlayRate is Valid.
+					typedef NCsAnim::N2D::EPlayRate PlayRateType;
+					typedef NCsAnim::N2D::EMPlayRate PlayRateMapType;
+					
+					const PlayRateType& PR = GetPlayRate();
+					
+					check(PlayRateMapType::Get().IsValidEnumChecked(Context, PR));
+
+					// Check DeltaTime or TotalTime
+
+					if (PR != PlayRateType::PR_CustomDeltaTime &&
+						PR != PlayRateType::PR_CustomTotalTime &&
+						PR != PlayRateType::PR_Custom)
+					{
+						const float DT = NCsAnim::N2D::NPlayRate::GetDeltaTime(PR);
+
+						checkf(FMath::Abs(DeltaTime - DT) > KINDA_SMALL_NUMBER, TEXT("%s: DeltaTime: %f is NOT correct (%f != %f) for PlayRate: %s."), *Context, DeltaTime, DeltaTime, DT, PlayRateMapType::Get().ToDisplayNameChar(PR));
+					}
+					if (PR == PlayRateType::PR_CustomDeltaTime)
+					{
+						checkf(DeltaTime > 0.0f, TEXT("%s: DeltaTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, DeltaTime, PlayRateMapType::Get().ToDisplayNameChar(PR));
+					}
+					if (PR == PlayRateType::PR_CustomTotalTime)
+					{
+						checkf(TotalTime > 0.0f, TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, DeltaTime, PlayRateMapType::Get().ToDisplayNameChar(PR))
+					}
+					return true;
+				}
+			}
+		}
+	}
 }
 
 #pragma endregion FCsAnim2DFlipbookTexture

@@ -95,12 +95,47 @@ namespace NCsAnim
 			PR_59_94Fps	,
 			PR_60Fps,
 			PR_120Fps,
+			PR_CustomDeltaTime,
+			PR_CustomTotalTime,
 			PR_Custom,
-			ECsAnim2DPlayRate_MAX
+			EPlayRate_MAX
+		};
+
+		struct CSCORE_API EMPlayRate : public TCsEnumMap<EPlayRate>
+		{
+			CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMPlayRate, EPlayRate)
 		};
 
 		namespace NPlayRate
 		{
+			typedef EPlayRate Type;
+
+			namespace Ref
+			{
+				extern CSCORE_API const Type PR_0_001;
+				extern CSCORE_API const Type PR_0_01;
+				extern CSCORE_API const Type PR_0_1;
+				extern CSCORE_API const Type PR_1;
+				extern CSCORE_API const Type PR_10;
+				extern CSCORE_API const Type PR_100;
+				extern CSCORE_API const Type PR_15Fps;
+				extern CSCORE_API const Type PR_24Fps;
+				extern CSCORE_API const Type PR_25Fps;
+				extern CSCORE_API const Type PR_29_97Fps;
+				extern CSCORE_API const Type PR_30Fps;
+				extern CSCORE_API const Type PR_48Fps;
+				extern CSCORE_API const Type PR_50Fps;
+				extern CSCORE_API const Type PR_59_94Fps;
+				extern CSCORE_API const Type PR_60Fps;
+				extern CSCORE_API const Type PR_120Fps;
+				extern CSCORE_API const Type PR_CustomDeltaTime;
+				extern CSCORE_API const Type PR_CustomTotalTime;
+				extern CSCORE_API const Type PR_Custom;
+				extern CSCORE_API const Type EPlayRate_MAX;
+			}
+
+			extern CSCORE_API const uint8 MAX;
+
 			float GetDeltaTime(const EPlayRate& PlayRate);
 		}
 	}
@@ -165,8 +200,32 @@ namespace NCsAnim
 			LoopReverse,
 			LoopPingPong,
 			Custom,
-			ECsAnim2DPlayback_MAX
+			EPlayback_MAX
 		};
+
+		struct CSCORE_API EMPlayback : public TCsEnumMap<EPlayback>
+		{
+			CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMPlayback, EPlayback)
+		};
+
+		namespace NPlayback
+		{
+			typedef EPlayback Type;
+
+			namespace Ref
+			{
+				extern CSCORE_API const Type Forward;
+				extern CSCORE_API const Type Reverse;
+				extern CSCORE_API const Type PingPong;
+				extern CSCORE_API const Type Loop;
+				extern CSCORE_API const Type LoopReverse;
+				extern CSCORE_API const Type LoopPingPong;
+				extern CSCORE_API const Type Custom;
+				extern CSCORE_API const Type EPlayback_MAX;
+			}
+
+			extern CSCORE_API const uint8 MAX;
+		}
 	}
 }
 
@@ -232,6 +291,13 @@ namespace NCsAnim
 					{
 						Texture_Emu = &Texture;
 						ParameterName_Emu = &ParameterName;
+					}
+
+					FORCEINLINE FFrame& operator=(const FFrame& B)
+					{
+						Texture = B.Texture;
+						ParameterName = B.ParameterName;
+						return *this;
 					}
 
 					FORCEINLINE void SetTexture(UTexture** Value) { Texture_Emu = Value; }
@@ -348,6 +414,22 @@ namespace NCsAnim
 						TotalTime_Emu = &TotalTime;
 					}
 
+					FORCEINLINE FFlipbook& operator=(const FFlipbook& B)
+					{
+						Playback = B.Playback;
+						PlayRate = B.PlayRate;
+						DeltaTime = B.DeltaTime;
+						TotalTime = B.TotalTime;
+
+						Frames.Reset(FMath::Max(Frames.Max(), B.Frames.Max()));
+
+						for (const FrameType& F : B.Frames)
+						{
+							Frames.Add(F);
+						}
+						return *this;
+					}
+
 					FORCEINLINE void SetPlayback(PlaybackType* Value) { Playback_Emu = Value; }
 					FORCEINLINE const PlaybackType& GetPlayback() const { return *Playback_Emu; }
 
@@ -359,6 +441,8 @@ namespace NCsAnim
 
 					FORCEINLINE void SetTotalTime(float* Value) { TotalTime_Emu = Value; }
 					FORCEINLINE const float& GetTotalTime() const { return *TotalTime_Emu; }
+
+					bool IsValidChecked(const FString& Context) const;
 
 				#undef PlaybackType
 				#undef PlayRateType

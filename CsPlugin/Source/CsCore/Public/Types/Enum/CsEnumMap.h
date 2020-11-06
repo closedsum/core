@@ -246,6 +246,11 @@ public:
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
+	FORCEINLINE const TCHAR* ToDisplayNameChar(const EnumType& Enum)
+	{
+		return *ToDisplayName(Enum);
+	}
+
 	FORCEINLINE const EnumType& ToType(const FString& Name)
 	{
 		if (EnumType* Enum = FromNameMap.Find(Name))

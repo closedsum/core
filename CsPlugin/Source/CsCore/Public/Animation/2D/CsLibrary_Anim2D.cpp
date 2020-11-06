@@ -23,12 +23,27 @@ namespace NCsAnim
 			}
 		}
 
-		#define ParamsType NCsAnim::N2D::NPlay::NStaticMesh::FParams
+		FLibrary::FLibrary() :
+			Manager_StaticMeshParams()
+		{
+		}
+
+		FLibrary::~FLibrary()
+		{
+			Manager_StaticMeshParams.Shutdown();
+		}
+
+		#define ParamsType NCsAnim::N2D::NPlay::NStaticMesh::NParams::FParams
 		const FCsRoutineHandle& FLibrary::Play(const ParamsType& Params)
 		{
 		#undef ParamsType
 
 			using namespace NCached;
+
+			
+			checkf(Params.Component, TEXT("%s: Params.Component is NULL."));
+
+
 
 			UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(Params.Context);
 			const FECsUpdateGroup UpdateGroup = Params.UpdateGroup;
@@ -43,14 +58,42 @@ namespace NCsAnim
 			Payload->SetName(Str::Play_Internal);
 			Payload->SetFName(Name::Play_Internal);
 
+			typedef NCsCoroutine::FOnEnd FOnEnd;
+
+			Payload->OnEnds.AddDefaulted();
+			FOnEnd& OnEnd = Payload->OnEnds.Last();
+			OnEnd.BindStatic(&FLibrary::Play_Internal_OnEnd);
+
+			typedef NCsAnim::N2D::NPlay::NStaticMesh::NParams::FResource ParamsResourceType;
+
+			ParamsResourceType* R = Get().Manager_StaticMeshParams.Allocate();
+
+			static const int32 RESOURCE = 0;
+			Payload->SetValue_Void(RESOURCE, R);
+
 			return Scheduler->Start(Payload);
 		}
 
 		char FLibrary::Play_Internal(FCsRoutine* R)
 		{
+			typedef NCsAnim::N2D::NPlay::NStaticMesh::NParams::FResource ParamsResourceType;
+
+			static const int32 RESOURCE = 0;
+			ParamsResourceType* Resource = R->GetValue_Void<ParamsResourceType>(RESOURCE);
+
 			CS_COROUTINE_BEGIN(R);
 
 			CS_COROUTINE_END(R);
+		}
+
+		void FLibrary::Play_Internal_OnEnd(FCsRoutine* R)
+		{
+			typedef NCsAnim::N2D::NPlay::NStaticMesh::NParams::FResource ParamsResourceType;
+
+			static const int32 RESOURCE = 0;
+			ParamsResourceType* Resource = R->GetValue_Void<ParamsResourceType>(RESOURCE);
+
+			Get().Manager_StaticMeshParams.Deallocate(Resource);
 		}
 	}
 }

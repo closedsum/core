@@ -234,6 +234,68 @@ namespace NCsInputCompletedValueReturnType
 // FCsInputWord
 #pragma region
 
+void FCsInputWord::AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector& Location, const FRotator& Rotation)
+{
+	AndInputs.AddDefaulted();
+	const int32 Index = AndInputs.Num() - 1;
+	AndInputs[Index].Action = Action;
+	AndInputs[Index].Event = Event;
+	AndInputs[Index].CompareValue.Value = Value;
+	AndInputs[Index].CompareValue.Location = Location;
+	AndInputs[Index].CompareValue.Rotation = Rotation;
+}
+
+void FCsInputWord::AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event)
+{
+	AddAndInput(Action, Event, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
+}
+
+void FCsInputWord::AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value)
+{
+	AddAndInput(Action, Event, Value, FVector::ZeroVector, FRotator::ZeroRotator);
+}
+
+void FCsInputWord::AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FVector& Location)
+{
+	AddAndInput(Action, Event, 0.0f, Location, FRotator::ZeroRotator);
+}
+
+void FCsInputWord::AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FRotator& Rotation)
+{
+	AddAndInput(Action, Event, 0.0f, FVector::ZeroVector, Rotation);
+}
+
+void FCsInputWord::AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector& Location, const FRotator& Rotation)
+{
+	OrInputs.AddDefaulted();
+	const int32 Index = OrInputs.Num() - 1;
+	OrInputs[Index].Action = Action;
+	OrInputs[Index].Event = Event;
+	OrInputs[Index].CompareValue.Value = Value;
+	OrInputs[Index].CompareValue.Location = Location;
+	OrInputs[Index].CompareValue.Rotation = Rotation;
+}
+
+void FCsInputWord::AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event)
+{
+	AddOrInput(Action, Event, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
+}
+
+void FCsInputWord::AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value)
+{
+	AddOrInput(Action, Event, Value, FVector::ZeroVector, FRotator::ZeroRotator);
+}
+
+void FCsInputWord::AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FVector& Location)
+{
+	AddOrInput(Action, Event, 0.0f, Location, FRotator::ZeroRotator);
+}
+
+void FCsInputWord::AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FRotator& Rotation)
+{
+	AddOrInput(Action, Event, 0.0f, FVector::ZeroVector, Rotation);
+}
+
 void FCsInputWord::ProcessInput(FCsInputFrame* InputFrame)
 {
 	int32 And = 0;
@@ -297,6 +359,34 @@ void FCsInputWord::ProcessInput(FCsInputFrame* InputFrame)
 
 // FCsInputPhrase
 #pragma region
+
+void FCsInputPhrase::AddAndInputToWord(const int32& Index, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*=0.0f*/, const FVector& Location /*=FVector::ZeroVector*/, const FRotator& Rotation /*=FRotator::ZeroRotator*/)
+{
+	const int32 Count = Words.Num();
+
+	if (Index >= Count)
+	{
+		for (int32 I = 0; I < Index - Count + 1; ++I)
+		{
+			Words.AddDefaulted();
+		}
+	}
+	Words[Index].AddAndInput(Action, Event, Value, Location, Rotation);
+}
+
+void FCsInputPhrase::AddOrInputToWord(const int32& Index, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*=0.0f*/, const FVector& Location /*=FVector::ZeroVector*/, const FRotator& Rotation /*=FRotator::ZeroRotator*/)
+{
+	const int32 Count = Words.Num();
+
+	if (Index >= Count)
+	{
+		for (int32 I = 0; I < Index - Count + 1; ++I)
+		{
+			Words.AddDefaulted();
+		}
+	}
+	Words[Index].AddOrInput(Action, Event, Value, Location, Rotation);
+}
 
 void FCsInputPhrase::ProcessInput(FCsInputFrame* InputFrame)
 {

@@ -951,12 +951,9 @@ public:
 		return EMCsInputAction::Get().IsValidEnum(Action) && (bAnyEvent || Event != ECsInputEvent::ECsInputEvent_MAX);
 	}
 
-	FORCEINLINE bool HasPassed() const
-	{
-		return bPass;
-	}
+	FORCEINLINE bool HasPassed() const { return bPass; }
 
-	bool Pass(const FCsInput& Input)
+	FORCEINLINE bool Pass(const FCsInput& Input)
 	{
 		bPass = false;
 
@@ -974,10 +971,12 @@ public:
 		return bPass;
 	}
 
-	void Reset()
+	FORCEINLINE bool HasPassedWith(const ECsInputEvent& InEvent) const
 	{
-		bPass = false;
+		return HasPassed() && InEvent == Event;
 	}
+
+	FORCEINLINE void Reset() { bPass = false; }
 };
 
 #pragma endregion FCsInputDescription
@@ -1069,72 +1068,18 @@ struct CSCORE_API FCsInputWord
 		return !(*this == B);
 	}
 
-	FORCEINLINE bool IsCompleted() const
-	{
-		return bCompleted;
-	}
+	FORCEINLINE bool IsCompleted() const { return bCompleted; }
 
-	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector& Location, const FRotator& Rotation)
-	{
-		AndInputs.AddDefaulted();
-		const int32 Index = AndInputs.Num() - 1;
-		AndInputs[Index].Action = Action;
-		AndInputs[Index].Event = Event;
-		AndInputs[Index].CompareValue.Value = Value;
-		AndInputs[Index].CompareValue.Location = Location;
-		AndInputs[Index].CompareValue.Rotation = Rotation;
-	}
-
-	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event)
-	{
-		AddAndInput(Action, Event, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
-	}
-
-	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value)
-	{
-		AddAndInput(Action, Event, Value, FVector::ZeroVector, FRotator::ZeroRotator);
-	}
-
-	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FVector& Location)
-	{
-		AddAndInput(Action, Event, 0.0f, Location, FRotator::ZeroRotator);
-	}
-
-	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FRotator& Rotation)
-	{
-		AddAndInput(Action, Event, 0.0f, FVector::ZeroVector, Rotation);
-	}
-
-	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector& Location, const FRotator& Rotation)
-	{
-		OrInputs.AddDefaulted();
-		const int32 Index = OrInputs.Num() - 1;
-		OrInputs[Index].Action = Action;
-		OrInputs[Index].Event = Event;
-		OrInputs[Index].CompareValue.Value = Value;
-		OrInputs[Index].CompareValue.Location = Location;
-		OrInputs[Index].CompareValue.Rotation = Rotation;
-	}
-
-	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event)
-	{
-		AddOrInput(Action, Event, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
-	}
-
-	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value)
-	{
-		AddOrInput(Action, Event, Value, FVector::ZeroVector, FRotator::ZeroRotator);
-	}
-
-	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FVector& Location)
-	{
-		AddOrInput(Action, Event, 0.0f, Location, FRotator::ZeroRotator);
-	}
-
-	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FRotator& Rotation)
-	{
-		AddOrInput(Action, Event, 0.0f, FVector::ZeroVector, Rotation);
-	}
+	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector& Location, const FRotator& Rotation);
+	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event);
+	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value);
+	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FVector& Location);
+	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FRotator& Rotation);
+	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector& Location, const FRotator& Rotation);
+	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event);
+	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value);
+	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FVector& Location);
+	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FRotator& Rotation);
 
 	FORCEINLINE void Reset()
 	{
@@ -1144,26 +1089,46 @@ struct CSCORE_API FCsInputWord
 
 	void ProcessInput(FCsInputFrame* InputFrame);
 
-	bool IsValid() const
+	FORCEINLINE bool IsValid() const
 	{
 		if (AndInputs.Num() == CS_EMPTY &&
 			OrInputs.Num() == CS_EMPTY) 
 		{ 
 			return false; 
 		}
-
+		// And
 		for (const FCsInputDescription& Input : AndInputs)
 		{
 			if (!Input.IsValid())
 				return false;
 		}
-
+		// Or
 		for (const FCsInputDescription& Input : OrInputs)
 		{
 			if (!Input.IsValid())
 				return false;
 		}
 		return true;
+	}
+
+	FORCEINLINE bool HasPassedWith(const ECsInputEvent& Event) const
+	{
+		if (!bCompleted)
+			return false;
+
+		// And
+		for (const FCsInputDescription& Input : AndInputs)
+		{
+			if (Input.HasPassedWith(Event))
+				return true;
+		}
+		// Or
+		for (const FCsInputDescription& Input : OrInputs)
+		{
+			if (Input.HasPassedWith(Event))
+				return true;
+		}
+		return false;
 	}
 };
 
@@ -1256,38 +1221,10 @@ struct CSCORE_API FCsInputPhrase
 		return !(*this == B);
 	}
 
-	FORCEINLINE bool IsCompleted() const
-	{
-		return bCompleted;
-	}
+	FORCEINLINE bool IsCompleted() const { return bCompleted; }
 
-	void AddAndInputToWord(const int32& Index, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator)
-	{
-		const int32 Count = Words.Num();
-
-		if (Index >= Count)
-		{
-			for (int32 I = 0; I < Index - Count + 1; ++I)
-			{
-				Words.AddDefaulted();
-			}
-		}
-		Words[Index].AddAndInput(Action, Event, Value, Location, Rotation);
-	}
-
-	void AddOrInputToWord(const int32& Index, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator)
-	{
-		const int32 Count = Words.Num();
-
-		if (Index >= Count)
-		{
-			for (int32 I = 0; I < Index - Count + 1; ++I)
-			{
-				Words.AddDefaulted();
-			}
-		}
-		Words[Index].AddOrInput(Action, Event, Value, Location, Rotation);
-	}
+	void AddAndInputToWord(const int32& Index, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator);
+	void AddOrInputToWord(const int32& Index, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator);
 
 	FORCEINLINE void Reset()
 	{
@@ -1301,6 +1238,19 @@ struct CSCORE_API FCsInputPhrase
 	}
 
 	void ProcessInput(FCsInputFrame* InputFrame);
+
+	FORCEINLINE bool HasPassedWith(const ECsInputEvent& Event) const
+	{
+		if (!bCompleted)
+			return false;
+
+		for (const FCsInputWord& Word : Words)
+		{
+			if (Word.HasPassedWith(Event))
+				return true;
+		}
+		return false;
+	}
 
 	bool IsValid() const
 	{
@@ -1416,15 +1366,9 @@ public:
 		return !(*this == B);
 	}
 
-	FORCEINLINE bool IsCompleted() const
-	{
-		return bCompleted;
-	}
+	FORCEINLINE bool IsCompleted() const { return bCompleted; }
 
-	FORCEINLINE const TArray<FCsInputCompletedValue>& GetCompletedValues() const 
-	{
-		return CompletedValues;
-	}
+	FORCEINLINE const TArray<FCsInputCompletedValue>& GetCompletedValues() const { return CompletedValues; }
 
 	bool IsValid() const
 	{
@@ -1439,6 +1383,19 @@ public:
 	}
 
 	void ProcessInput(FCsInputFrame* InputFrame);
+
+	FORCEINLINE bool HasPassedWith(const ECsInputEvent& Event) const
+	{
+		if (!bCompleted)
+			return false;
+
+		for (const FCsInputPhrase& Phrase : Phrases)
+		{
+			if (Phrase.HasPassedWith(Event))
+				return true;
+		}
+		return false;
+	}
 
 	FORCEINLINE void Reset()
 	{
@@ -1723,6 +1680,8 @@ typedef ECsRep_GameEvent::BitMask TCsRep_GameEvent;
 	// FCsGameEventInfo
 #pragma region
 
+struct FCsGameEventDefinition;
+
 /**
 *
 */
@@ -1730,6 +1689,8 @@ USTRUCT(BlueprintType)
 struct FCsGameEventInfo
 {
 	GENERATED_USTRUCT_BODY()
+
+public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FECsGameEvent Event;
@@ -1740,10 +1701,17 @@ struct FCsGameEventInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector Location;
 
+private:
+
+	FCsGameEventDefinition* Definition;
+
+public:
+
 	FCsGameEventInfo() :
 		Event(),
 		Value(0.0f),
-		Location(0.0f)
+		Location(0.0f),
+		Definition(nullptr)
 	{
 	}
 
@@ -1755,11 +1723,15 @@ struct FCsGameEventInfo
 		return *this;
 	}
 
+	FORCEINLINE void SetDefinition(FCsGameEventDefinition* InDefinition){ Definition = InDefinition; }
+	FORCEINLINE const FCsGameEventDefinition* GetDefinition() const { return Definition; }
+
 	FORCEINLINE void Reset()
 	{
 		Event = EMCsGameEvent::Get().GetMAX();
 		Value = 0.0f;
 		Location = FVector::ZeroVector;
+		Definition = nullptr;
 	}
 
 	FORCEINLINE bool IsValid() const

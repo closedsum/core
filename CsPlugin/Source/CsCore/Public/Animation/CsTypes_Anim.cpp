@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Anim.h"
+#include "Animation/CsTypes_Anim.h"
 
 namespace NCsAnimCached
 {

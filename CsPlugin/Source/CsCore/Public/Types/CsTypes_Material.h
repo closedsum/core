@@ -261,3 +261,49 @@ public:
 };
 
 #pragma endregion FCsFpsTArrayMaterialInstanceConstant
+
+// FCsMaterialParameterFloat
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsMaterialParameterFloat
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Value;
+
+	FCsMaterialParameterFloat() :
+		Name(NAME_None),
+		Value(0.0f)
+	{
+	}
+};
+
+#pragma endregion FCsMaterialParameterFloat
+
+// FCsMaterialParameterColor
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsMaterialParameterColor
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FColor Value;
+
+	FCsMaterialParameterColor() :
+		Name(NAME_None),
+		Value(FColor::White)
+	{
+	}
+};
+
+#pragma endregion FCsMaterialParameterColor

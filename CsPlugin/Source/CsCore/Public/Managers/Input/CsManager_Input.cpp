@@ -439,35 +439,28 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		// Action
 		if (Type == ECsInputType::Action)
 		{
-			if (Info.HasEventChanged())
-			{
 #if !UE_BUILD_SHIPPING
-				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRaw) ||
-					FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRawAction))
+			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRaw) ||
+				FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRawAction))
+			{
+				const float& Time			= CurrentInputFrame->Time.Time;
+				const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
+
+				if (Info.HasEventChanged())
 				{
-					const float& Time			= CurrentInputFrame->Time.Time;
-					const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
-					const FString& LastEvent	= EMCsInputEvent::Get().ToString(Info.Last_Event);
+					const FString& LastEvent = EMCsInputEvent::Get().ToString(Info.Last_Event);
 
 					UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s. Event: %s -> %s."), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *LastEvent, *CurrentEvent);
 				}
-#endif // #if !UE_BUILD_SHIPPING
-
-				TryAddInput(Type, Action, Event);
-			}
-#if !UE_BUILD_SHIPPING
-			else
-			{
-				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRaw) ||
-					FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRawAction))
+				else
 				{
-					const float& Time			= CurrentInputFrame->Time.Time;
-					const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
-
 					UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s. Event: %s."), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *CurrentEvent);
 				}
 			}
-#endif // #if !UE_BUILD_SHIPPING
+#endif // #if !UE_BUILD_SHIPPING	
+
+			TryAddInput(Type, Action, Event);
+
 			Info.FlushEvent();
 		}
 		// Axis
@@ -583,6 +576,8 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		{
 			const int32& Index					= GameEventPriorityMap[Event.GetValue()];
 			CurrentGameEventInfos[Index].Event  = Event;
+
+			CurrentGameEventInfos[Index].SetDefinition(&Def);
 
 			// TODO: FUTURE: Handle multiple values. Only handle the FIRST value.
 			const TArray<FCsInputCompletedValue>& CompletedValues = Sentence.GetCompletedValues();

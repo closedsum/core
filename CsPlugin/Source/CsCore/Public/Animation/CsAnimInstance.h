@@ -4,7 +4,7 @@
 // Types
 #include "Types/Property/Ref/CsProperty_Ref_bool.h"
 #include "Types/Property/Ref/CsProperty_Ref_float.h"
-#include "Types/CsTypes_Anim.h"
+#include "Animation/CsTypes_Anim.h"
 #include "Types/CsTypes_AnimInstance.h"
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "CsAnimInstance.generated.h"

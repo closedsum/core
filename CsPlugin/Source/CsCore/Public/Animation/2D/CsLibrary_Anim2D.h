@@ -1,7 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Animation/2D/CsTypes_Anim2D.h"
+#include "Animation/2D/CsTypes_Library_Anim2D.h"
+#include "Coroutine/CsTypes_Coroutine.h"
 
 #pragma once
+
+struct FCsRoutine;
 
 namespace NCsAnim
 {
@@ -9,8 +12,13 @@ namespace NCsAnim
 	{
 		struct CSCORE_API FLibrary
 		{
-			//#define ParamsType
-			//static Play(const ParamsType& Params);
+			#define ParamsType NCsAnim::N2D::NPlay::NStaticMesh::FParams
+			/**
+			*/
+			static const FCsRoutineHandle& Play(const ParamsType& Params);
+			#undef ParamsType
+
+			static char Play_Internal(FCsRoutine* R);
 		};
 	}
 }

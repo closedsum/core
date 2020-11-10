@@ -24,6 +24,11 @@ public:
 
 private:
 
+	typedef NCsCoroutine::FImpl CoroutineImplType;
+	typedef NCsCoroutine::FAbortConditionImpl AbortConditionImplType;
+	typedef NCsCoroutine::FOnAbort OnAbortType;
+	typedef NCsCoroutine::FOnEnd OnEndType;
+
 	typedef NCsCoroutine::EState StateType;
 	typedef NCsCoroutine::EMessage MessageType;
 	typedef NCsCoroutine::EEndReason EndReasonType;
@@ -32,11 +37,13 @@ private:
 
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
+	typedef NCsCoroutine::FOwner OwnerType;
+
 public:
 
 	struct pt pt;
 
-	NCsCoroutine::FImpl CoroutineImpl;
+	CoroutineImplType CoroutineImpl;
 
 	// Time
 #pragma region
@@ -48,21 +55,15 @@ public:
 
 	void SetGroup(const FECsUpdateGroup& InGroup);
 
-	FORCEINLINE const FECsUpdateGroup& GetGroup() const 
-	{
-		return Group;
-	}
+	FORCEINLINE const FECsUpdateGroup& GetGroup() const { return Group; }
 
-protected:
+private:
 
 	FString ScopeName;
 
 public:
 
-	FORCEINLINE const FString& GetScopeName() const
-	{
-		return ScopeName;
-	}
+	FORCEINLINE const FString& GetScopeName() const { return ScopeName; }
 
 	FCsTime StartTime;
 	FCsDeltaTime ElapsedTime;
@@ -85,9 +86,9 @@ public:
 
 	FORCEINLINE const FCsRoutineHandle& GetHandle() const { return Handle; }
 
-	TArray<NCsCoroutine::FAbortConditionImpl> AbortImpls;
+	TArray<AbortConditionImplType> AbortImpls;
 
-	TArray<NCsCoroutine::FOnAbort> OnAborts;
+	TArray<OnAbortType> OnAborts;
 
 
 
@@ -105,10 +106,7 @@ public:
 
 	void SetIndex(const int32& InIndex);
 
-	FORCEINLINE const int32& GetIndex() const
-	{
-		return Index;
-	}
+	FORCEINLINE const int32& GetIndex() const { return Index; }
 
 #pragma endregion Index
 
@@ -122,25 +120,13 @@ private:
 
 public:
 
-	FORCEINLINE void SetName(const FString* InName)
-	{
-		Name = const_cast<FString*>(InName);
-	}
+	FORCEINLINE void SetName(const FString* InName) { Name = const_cast<FString*>(InName); }
 
-	FORCEINLINE void SetFName(const FName& InName)
-	{
-		Name_Internal = InName;
-	}
+	FORCEINLINE void SetFName(const FName& InName) { Name_Internal = InName; }
 
-	FORCEINLINE const FString* GetName()
-	{
-		return Name;
-	}
+	FORCEINLINE const FString* GetName() { return Name; }
 
-	FORCEINLINE const FName& GetFName()
-	{
-		return Name_Internal;
-	}
+	FORCEINLINE const FName& GetFName() { return Name_Internal; }
 
 #pragma endregion Name
 
@@ -152,10 +138,7 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE void StartUpdate()
-	{
-		State = StateType::Update;
-	}
+	FORCEINLINE void StartUpdate() { State = StateType::Update; }
 
 	void Update(const FCsDeltaTime& InDeltaTime);
 
@@ -167,7 +150,7 @@ public:
 
 	EndReasonType EndReason;
 
-	TArray<NCsCoroutine::FOnEnd> OnEnds;
+	TArray<OnEndType> OnEnds;
 
 	void End(const EndReasonType& InEndReason);
 
@@ -186,34 +169,19 @@ public:
 #pragma region
 public:
 
-	NCsCoroutine::FOwner Owner;
+	OwnerType Owner;
 
-	FORCEINLINE void* GetOwner()
-	{
-		return Owner.GetOwner();
-	}
+	FORCEINLINE void* GetOwner() { return Owner.GetOwner(); }
 
 	template<typename T>
-	FORCEINLINE T* GetOwner()
-	{
-		return (T*)GetOwner();
-	}
+	FORCEINLINE T* GetOwner() { return (T*)GetOwner(); }
 
-	FORCEINLINE UObject* GetOwnerAsObject()
-	{
-		return Owner.GetObject();
-	}
+	FORCEINLINE UObject* GetOwnerAsObject() { return Owner.GetObject(); }
 
 	template<typename T>
-	FORCEINLINE T* GetOwnerAsObject()
-	{
-		return Cast<T>(GetOwnerAsObject());
-	}
+	FORCEINLINE T* GetOwnerAsObject() { return Cast<T>(GetOwnerAsObject()); }
 
-	FORCEINLINE AActor* GetOwnerAsActor()
-	{
-		return Owner.GetActor();
-	}
+	FORCEINLINE AActor* GetOwnerAsActor() { return Owner.GetActor(); }
 
 #pragma endregion Owner
 

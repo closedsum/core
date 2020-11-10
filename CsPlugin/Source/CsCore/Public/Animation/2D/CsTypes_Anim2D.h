@@ -13,26 +13,27 @@
 UENUM(BlueprintType)
 enum class ECsAnim2DPlayRate : uint8
 {
-	PR_0_001				UMETA(DisplayName = "0.001s"),
-	PR_0_01					UMETA(DisplayName = "0.01s"),
-	PR_0_1					UMETA(DisplayName = "0.1s"),
-	PR_1					UMETA(DisplayName = "1s"),
-	PR_10					UMETA(DisplayName = "10s"),
-	PR_100					UMETA(DisplayName = "100s"),
-	PR_15Fps				UMETA(DisplayName = "15 fps"),
-	PR_24Fps				UMETA(DisplayName = "24 fps (film)"),
-	PR_25Fps				UMETA(DisplayName = "25 fps (PAL/25)"),
-	PR_29_97Fps				UMETA(DisplayName = "29.97 fps (NTSC/30)"),
-	PR_30Fps				UMETA(DisplayName = "30 fps"),
-	PR_48Fps				UMETA(DisplayName = "48 fps"),
-	PR_50Fps				UMETA(DisplayName = "50 fps (PAL/50)"),
-	PR_59_94Fps				UMETA(DisplayName = "59.94 fps (NTSC/60)"),
-	PR_60Fps				UMETA(DisplayName = "60 fps"),
-	PR_120Fps				UMETA(DisplayName = "120 fps"),
-	PR_CustomDeltaTime		UMETA(DisplayName = "Custom DeltaTime"),
-	PR_CustomTotalTime		UMETA(DisplayName = "Custom Total Time"),
-	PR_Custom				UMETA(DisplayName = "Custom"),
-	ECsAnim2DPlayRate_MAX	UMETA(Hidden),
+	PR_0_001						UMETA(DisplayName = "0.001s"),
+	PR_0_01							UMETA(DisplayName = "0.01s"),
+	PR_0_1							UMETA(DisplayName = "0.1s"),
+	PR_1							UMETA(DisplayName = "1s"),
+	PR_10							UMETA(DisplayName = "10s"),
+	PR_100							UMETA(DisplayName = "100s"),
+	PR_15Fps						UMETA(DisplayName = "15 fps"),
+	PR_24Fps						UMETA(DisplayName = "24 fps (film)"),
+	PR_25Fps						UMETA(DisplayName = "25 fps (PAL/25)"),
+	PR_29_97Fps						UMETA(DisplayName = "29.97 fps (NTSC/30)"),
+	PR_30Fps						UMETA(DisplayName = "30 fps"),
+	PR_48Fps						UMETA(DisplayName = "48 fps"),
+	PR_50Fps						UMETA(DisplayName = "50 fps (PAL/50)"),
+	PR_59_94Fps						UMETA(DisplayName = "59.94 fps (NTSC/60)"),
+	PR_60Fps						UMETA(DisplayName = "60 fps"),
+	PR_120Fps						UMETA(DisplayName = "120 fps"),
+	PR_CustomDeltaTime				UMETA(DisplayName = "Custom Delta Time"),
+	PR_CustomTotalTime				UMETA(DisplayName = "Custom Total Time"),
+	PR_CustomDeltaTimeAndTotalTime	UMETA(DisplayName = "Custom Delta Time and Total Time"),
+	PR_Custom						UMETA(DisplayName = "Custom"),
+	ECsAnim2DPlayRate_MAX			UMETA(Hidden),
 };
 
 struct CSCORE_API EMCsAnim2DPlayRate : public TCsEnumMap<ECsAnim2DPlayRate>
@@ -64,6 +65,7 @@ namespace NCsAnim2DPlayRate
 		extern CSCORE_API const Type PR_120Fps;
 		extern CSCORE_API const Type PR_CustomDeltaTime;
 		extern CSCORE_API const Type PR_CustomTotalTime;
+		extern CSCORE_API const Type PR_CustomDeltaTimeAndTotalTime;
 		extern CSCORE_API const Type PR_Custom;
 		extern CSCORE_API const Type ECsAnim2DPlayRate_MAX;
 	}
@@ -97,6 +99,7 @@ namespace NCsAnim
 			PR_120Fps,
 			PR_CustomDeltaTime,
 			PR_CustomTotalTime,
+			PR_CustomDeltaTimeAndTotalTime,
 			PR_Custom,
 			EPlayRate_MAX
 		};
@@ -130,6 +133,7 @@ namespace NCsAnim
 				extern CSCORE_API const Type PR_120Fps;
 				extern CSCORE_API const Type PR_CustomDeltaTime;
 				extern CSCORE_API const Type PR_CustomTotalTime;
+				extern CSCORE_API const Type PR_CustomDeltaTimeAndTotalTime;
 				extern CSCORE_API const Type PR_Custom;
 				extern CSCORE_API const Type EPlayRate_MAX;
 			}
@@ -305,6 +309,8 @@ namespace NCsAnim
 
 					FORCEINLINE void SetParameterName(FName* Value) { ParameterName_Emu = Value; }
 					FORCEINLINE const FName& GetParameterName() const { return *ParameterName_Emu; }
+
+					bool IsValidChecked(const FString& Context) const;
 				};
 			}
 		}
@@ -329,39 +335,54 @@ struct CSCORE_API FCsAnim2DFlipbookTexture
 	GENERATED_USTRUCT_BODY()
 
 	/** Describes how the Frames will be played. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsAnim2DPlayback Playback;
 
 	/** Describes the time between each Frame. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsAnim2DPlayRate PlayRate;
 
 	/** Time between each Frame.
 		Only Valid if PlayRate == ECsAnim2DPlayRate::CustomDeltaTime. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float DeltaTime;
 
 	/** Total time to play all Frames. The time between each Frame will be
 		TotalTime / Number of Frames. 
 		Only Valid if PlayRate == ECsAnim2DPlayRate::CustomTotalTime. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TotalTime;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FCsAnim2DFlipbookTextureFrame> Frames;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 TotalCount;
 
 	FCsAnim2DFlipbookTexture() :
 		Playback(ECsAnim2DPlayback::Forward),
 		PlayRate(ECsAnim2DPlayRate::PR_60Fps),
 		DeltaTime(0.0f),
 		TotalTime(0.0f),
-		Frames()
+		Frames(),
+		TotalCount(0)
 	{
 	}
+
+	FORCEINLINE bool IsLooping() const
+	{
+		return Playback == ECsAnim2DPlayback::Loop ||
+			   Playback == ECsAnim2DPlayback::LoopReverse ||
+			   Playback == ECsAnim2DPlayback::LoopPingPong;
+	}
+
+	FORCEINLINE bool IsLoopingForever() const { return IsLooping() && TotalTime == 0.0f; }
 
 #define FlipbookType NCsAnim::N2D::NFlipbook::NTexture::FFlipbook
 	void CopyFlipbook(FlipbookType* Flipbook);
 #undef FlipbookType
+
+	void OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName);
 
 private:
 
@@ -398,6 +419,9 @@ namespace NCsAnim
 
 					TArray<FrameType> Frames;
 
+					int32 TotalCount;
+					int32* TotalCount_Emu;
+
 					FFlipbook() :
 						Playback(PlaybackType::Forward),
 						Playback_Emu(nullptr),
@@ -406,20 +430,27 @@ namespace NCsAnim
 						DeltaTime(0.0f),
 						DeltaTime_Emu(nullptr),
 						TotalTime(0.0f),
-						TotalTime_Emu(nullptr)
+						TotalTime_Emu(nullptr),
+						TotalCount(0),
+						TotalCount_Emu(nullptr)
 					{
 						Playback_Emu = &Playback;
 						PlayRate_Emu = &PlayRate;
 						DeltaTime_Emu = &DeltaTime;
 						TotalTime_Emu = &TotalTime;
+						TotalCount_Emu = &TotalCount;
 					}
 
 					FORCEINLINE FFlipbook& operator=(const FFlipbook& B)
 					{
-						Playback = B.Playback;
-						PlayRate = B.PlayRate;
-						DeltaTime = B.DeltaTime;
-						TotalTime = B.TotalTime;
+						Playback = B.GetPlayback();
+						SetPlayback(&Playback);
+						PlayRate = B.GetPlayRate();
+						SetPlayRate(&PlayRate);
+						DeltaTime = B.GetDeltaTime();
+						SetDeltaTime(&DeltaTime);
+						TotalTime = B.GetTotalTime();
+						SetTotalTime(&TotalTime);
 
 						Frames.Reset(FMath::Max(Frames.Max(), B.Frames.Max()));
 
@@ -427,6 +458,9 @@ namespace NCsAnim
 						{
 							Frames.Add(F);
 						}
+
+						TotalCount = B.GetTotalCount();
+						SetTotalCount(&TotalCount);
 						return *this;
 					}
 
@@ -442,7 +476,42 @@ namespace NCsAnim
 					FORCEINLINE void SetTotalTime(float* Value) { TotalTime_Emu = Value; }
 					FORCEINLINE const float& GetTotalTime() const { return *TotalTime_Emu; }
 
+					FORCEINLINE void SetTotalCount(int32* Value) { TotalCount_Emu = Value; }
+					FORCEINLINE const int32& GetTotalCount() const { return *TotalCount_Emu; }
+
+					FORCEINLINE bool IsLooping() const
+					{
+						return GetPlayback() == EPlayback::Loop ||
+							   GetPlayback() == EPlayback::LoopReverse ||
+							   GetPlayback() == EPlayback::LoopPingPong;
+					}
+
+					FORCEINLINE bool IsLoopingForever() const { return IsLooping() && GetTotalTime() == 0.0f; }
+
+					FORCEINLINE bool ShouldStartReverse() const
+					{
+						return GetPlayback() == EPlayback::Reverse ||
+							   GetPlayback() == EPlayback::LoopReverse;
+					}
+
 					bool IsValidChecked(const FString& Context) const;
+
+					void Reset()
+					{
+						Playback = PlaybackType::Forward;
+						SetPlayback(&Playback);
+						PlayRate = PlayRateType::PR_60Fps;
+						SetPlayRate(&PlayRate);
+						DeltaTime = 0.0f;
+						SetDeltaTime(&DeltaTime);
+						TotalTime = 0.0f;
+						SetTotalTime(&TotalTime);
+
+						Frames.Reset(Frames.Max());
+
+						TotalCount = 0;
+						SetTotalCount(&TotalCount);
+					}
 
 				#undef PlaybackType
 				#undef PlayRateType

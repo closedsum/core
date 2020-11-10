@@ -3,6 +3,8 @@
 #include "CsEditor.h"
 #include "CsCVars.h"
 
+// Coroutine
+#include "Coroutine/CsCoroutineScheduler.h"
 // Type
 #include "Types/CsTypes_Load.h"
 #include "Managers/Input/CsTypes_Input.h"
@@ -14,6 +16,8 @@
 #include "Library/CsLibrary_Asset.h"
 #include "Library/CsLibrary_String.h"
 #include "Library/Load/CsLibrary_Load.h"
+// Managers
+#include "Managers/Time/CsManager_Time.h"
 // Asset Registry
 #include "AssetRegistryModule.h"
 #include "Developer/AssetTools/Public/AssetToolsModule.h"
@@ -62,16 +66,32 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 
 	FEditorDelegates::BeginPIE.AddUObject(this, &UCsEdEngine::OnBeginPIE);
 	FCoreUObjectDelegates::OnObjectSaved.AddUObject(this, &UCsEdEngine::OnObjectSaved);
+
+	ConstructManagerSingleton();
+
+	UCsManager_Time::Init(this);
+	UCsCoroutineScheduler::Init(this);
 }
 
 void UCsEdEngine::PreExit()
 {
 	Super::PreExit();
+
+	UCsManager_Time::Shutdown(this);
+	UCsCoroutineScheduler::Shutdown(this);
 }
 
 void UCsEdEngine::Tick(float DeltaSeconds, bool bIdleMode)
 {
 	Super::Tick(DeltaSeconds, bIdleMode);
+
+	const FECsUpdateGroup& Group = NCsUpdateGroup::EditorEngine;
+
+	UCsManager_Time::Get(this)->Update(Group, DeltaSeconds);
+
+	const FCsDeltaTime& DeltaTime = UCsManager_Time::Get(this)->GetScaledDeltaTime(Group);
+
+	UCsCoroutineScheduler::Get(this)->Update(Group, DeltaTime);
 }
 
 #pragma endregion UEngine Interface

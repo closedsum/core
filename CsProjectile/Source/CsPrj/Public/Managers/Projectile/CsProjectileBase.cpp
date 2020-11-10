@@ -446,7 +446,9 @@ void ACsProjectileBase::DeAllocate()
 	}
 
 	// Mesh
-	FCsLibrary_Material::ClearOverrideMaterials(MeshComponent);
+	typedef NCsMaterial::FLibrary MaterialLibrary;
+
+	MaterialLibrary::ClearOverrideMaterials(MeshComponent);
 	MeshComponent->SetStaticMesh(nullptr);
 	MeshComponent->SetVisibility(false);
 	MeshComponent->SetHiddenInGame(true);

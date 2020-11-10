@@ -29,17 +29,27 @@ namespace NCsAnim
 			}
 
 		private:
-		#define StaticMeshParamsType NCsAnim::N2D::NPlay::NStaticMesh::NParams::FManager
-			StaticMeshParamsType Manager_StaticMeshParams;
-		#undef StaticMeshParamsType
+		#define ParamsManagerType NCsAnim::N2D::NPlay::NParams::FManager
+			ParamsManagerType Manager_PlayParams;
+		#undef ParamsManagerType
 
 		public:
 
-			#define ParamsType NCsAnim::N2D::NPlay::NStaticMesh::NParams::FParams
+		#define ParamsResourceType NCsAnim::N2D::NPlay::NParams::FResource
+		
+			FORCEINLINE ParamsResourceType* AllocatePlayParams() { return Manager_PlayParams.Allocate(); }
+		
+			FORCEINLINE void DeallocatePlayParams(ParamsResourceType* Resource) { Manager_PlayParams.Deallocate(Resource); }
+
+		#undef ParamsResourceType
+
+			#define ParamsType NCsAnim::N2D::NPlay::NParams::FParams
 			/**
 			*/
 			static const FCsRoutineHandle& Play(const ParamsType& Params);
 			#undef ParamsType
+
+		private:
 
 			static char Play_Internal(FCsRoutine* R);
 

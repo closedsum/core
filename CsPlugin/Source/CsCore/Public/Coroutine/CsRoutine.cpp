@@ -67,17 +67,17 @@ void FCsRoutine::Init(PayloadType* Payload)
 		Messages[(uint8)MessageType::Abort].Add(Message);
 	}
 
-	for (const NCsCoroutine::FAbortConditionImpl& AbortImpl : Payload->AbortImpls)
+	for (const AbortConditionImplType& AbortImpl : Payload->AbortImpls)
 	{
 		AbortImpls.AddDefaulted();
-		NCsCoroutine::FAbortConditionImpl& Last = AbortImpls.Last();
+		AbortConditionImplType& Last = AbortImpls.Last();
 		Last = AbortImpl;
 	}
 
-	for (const NCsCoroutine::FOnEnd& OnEnd : Payload->OnEnds)
+	for (const OnEndType& OnEnd : Payload->OnEnds)
 	{
 		OnEnds.AddDefaulted();
-		NCsCoroutine::FOnEnd& Last = OnEnds.Last();
+		OnEndType& Last = OnEnds.Last();
 		Last = OnEnd;
 	}
 
@@ -158,11 +158,11 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 		}
 	}
 	// Check if Coroutine should be aborted
-	for (NCsCoroutine::FAbortConditionImpl& AbortImpl : AbortImpls)
+	for (AbortConditionImplType& AbortImpl : AbortImpls)
 	{
 		if (AbortImpl.Execute(this))
 		{
-			for (NCsCoroutine::FOnAbort& OnAbort : OnAborts)
+			for (OnAbortType& OnAbort : OnAborts)
 			{
 				OnAbort.Execute(this);
 			}
@@ -202,10 +202,11 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 void FCsRoutine::End(const EndReasonType& InEndReason)
 {
 	EndChildren();
-	State = StateType::End;
+
+	State	  = StateType::End;
 	EndReason = InEndReason;
 
-	for (NCsCoroutine::FOnEnd& OnEnd : OnEnds)
+	for (OnEndType& OnEnd : OnEnds)
 	{
 		OnEnd.Execute(this);
 	}

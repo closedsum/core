@@ -59,7 +59,7 @@ public:
 
 	FORCEINLINE void New()
 	{
-		Handle.NewGuid();
+		Handle = FGuid::NewGuid();
 	}
 
 	FORCEINLINE void Reset()
@@ -285,15 +285,9 @@ namespace NCsCoroutine
 		{
 		}
 
-		void SetOwner(void* InOwner)
-		{
-			Owner = InOwner;
-		}
+		FORCEINLINE void SetOwner(void* InOwner) { Owner = InOwner; }
 
-		FORCEINLINE void* GetOwner()
-		{
-			return Owner;
-		}
+		FORCEINLINE void* GetOwner() { return Owner; }
 
 		void SetObject(UObject* InObject)
 		{
@@ -303,16 +297,10 @@ namespace NCsCoroutine
 			Actor = Cast<AActor>(Object);
 		}
 
-		FORCEINLINE UObject* GetObject()
-		{
-			return Object;
-		}
+		FORCEINLINE UObject* GetObject() { return Object; }
 
 		template<typename T>
-		FORCEINLINE T* GetObject()
-		{
-			return Cast<T>(GetObject());
-		}
+		FORCEINLINE T* GetObject() { return Cast<T>(GetObject()); }
 
 		FORCEINLINE UObject* GetSafeObject()
 		{
@@ -320,20 +308,11 @@ namespace NCsCoroutine
 		}
 
 		template<typename T>
-		FORCEINLINE T* GetSafeObject()
-		{
-			return Cast<T>(GetSafeObject());
-		}
+		FORCEINLINE T* GetSafeObject() { return Cast<T>(GetSafeObject()); }
 
-		FORCEINLINE bool IsObject() const
-		{
-			return bObject;
-		}
+		FORCEINLINE bool IsObject() const { return bObject; }
 
-		FORCEINLINE AActor* GetActor()
-		{
-			return Actor;
-		}
+		FORCEINLINE AActor* GetActor() { return Actor; }
 
 		void Reset()
 		{

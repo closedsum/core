@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Editor/UnrealEdEngine.h"
+// Interfaces
+#include "Managers/Singleton/CsGetManagerSingleton.h"
 // Types
 #include "Types/Property/Ref/CsProperty_Ref_bool.h"
 #include "Types/CsTypes_Load.h"
@@ -12,7 +14,8 @@ class UCsDataMapping;
 class UCsEnumStructUserDefinedEnumMap;
 
 UCLASS()
-class CSEDITOR_API UCsEdEngine : public UUnrealEdEngine
+class CSEDITOR_API UCsEdEngine : public UUnrealEdEngine,
+								 public ICsGetManagerSingleton
 {
 public:
 	GENERATED_BODY()
@@ -35,6 +38,24 @@ public:
 
 #pragma endregion FExec Interface
 
+// Managers
+#pragma region
+protected:
+
+	UPROPERTY()
+	UCsManager_Singleton* Manager_Singleton;
+
+	virtual void ConstructManagerSingleton(){}
+
+#pragma endregion Managers
+
+// ICsGetManagerSingleton
+#pragma region
+public:
+
+	FORCEINLINE UCsManager_Singleton* GetManager_Singleton() const { return Manager_Singleton; }
+
+#pragma endregion ICsGetManagerSingleton
 
 // Save
 #pragma region

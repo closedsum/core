@@ -1165,16 +1165,18 @@ void UCsLibrary_Common::DisableComponent(USceneComponent* Component, const bool 
 
 void UCsLibrary_Common::ClearComponent(USceneComponent* Component)
 {
+	typedef NCsMaterial::FLibrary MaterialLibrary;
+
 	// Mesh Component
 	if (UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(Component))
 	{
-		FCsLibrary_Material::ClearOverrideMaterials(Mesh);
+		MaterialLibrary::ClearOverrideMaterials(Mesh);
 		Mesh->SetStaticMesh(nullptr);
 	}
 	// Skeletal Mesh Component
 	if (USkeletalMeshComponent* Mesh = Cast<USkeletalMeshComponent>(Component))
 	{
-		FCsLibrary_Material::ClearOverrideMaterials(Mesh);
+		MaterialLibrary::ClearOverrideMaterials(Mesh);
 		Mesh->SetSkeletalMesh(nullptr);
 	}
 }

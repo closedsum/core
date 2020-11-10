@@ -572,7 +572,9 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	// Deallocate attachments
 
 	// Mesh
-	FCsLibrary_Material::ClearOverrideMaterials(MeshComponent);
+	typedef NCsMaterial::FLibrary MaterialLibrary;
+
+	MaterialLibrary::ClearOverrideMaterials(MeshComponent);
 	MeshComponent->SetStaticMesh(nullptr);
 	MeshComponent->SetVisibility(false);
 	MeshComponent->SetHiddenInGame(true);
@@ -652,7 +654,7 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 
 			UStaticMesh* Mesh = VisualData->GetStaticMesh().Get();
 
-			checkf(Mesh, TEXT("%s: Mesh is NULL from Visual Data interface: ICsData_Projectile_VisualStaticMesh"), *(Str::Launch));
+			checkf(Mesh, TEXT("%s: Mesh is NULL from Visual Data interface: ICsData_Projectile_VisualStaticMesh"), *Context);
 
 			MeshComponent->SetStaticMesh(Mesh);
 			MeshComponent->SetWorldScale3D(VisualData->GetStaticMesh().Scale);

@@ -5,10 +5,12 @@
 // Types
 #include "Animation/2D/CsTypes_Anim2D.h"
 #include "Managers/Time/CsTypes_Update.h"
+#include "Coroutine/CsTypes_Coroutine.h"
 
 #pragma once
 
 class UObject;
+class UMaterialInstanceDynamic;
 class UStaticMeshComponent;
 
 namespace NCsAnim
@@ -17,54 +19,74 @@ namespace NCsAnim
 	{
 		namespace NPlay
 		{
-			namespace NStaticMesh
+			namespace NParams
 			{
-				namespace NParams
+				/**
+				*/
+				struct CSCORE_API FParams
 				{
-					/**
-					*/
-					struct CSCORE_API FParams
-					{
-					#define AnimType NCsAnim::N2D::NFlipbook::NTexture::FFlipbook
+				#define OnAbortType NCsCoroutine::FOnAbort
+				#define OnEndType NCsCoroutine::FOnEnd
+				#define AnimType NCsAnim::N2D::NFlipbook::NTexture::FFlipbook
 
-					public:
+				public:
 
-						/** Context for the Coroutine Scheduler. This is 
-							usually a reference to the GameInstance. */
-						UObject* Context;
+					/** Context for the Coroutine Scheduler. This is 
+						usually a reference to the GameInstance. */
+					UObject* Context;
 		
-						FECsUpdateGroup UpdateGroup;
+					FECsUpdateGroup UpdateGroup;
 
-						UObject* Owner;
+					UObject* Owner;
 
-						UStaticMeshComponent* Component;
+					OnAbortType OnAbort;
 
-						AnimType Anim;
+					OnEndType OnEnd;
 
-						FParams() :
-							Context(nullptr),
-							UpdateGroup(),
-							Owner(nullptr),
-							Component(nullptr),
-							Anim()
-						{
-						}
+					TWeakObjectPtr<UMaterialInstanceDynamic> MID;
 
-					#undef AnimType
-					};
+					AnimType Anim;
 
-					struct CSCORE_API FResource : public TCsResourceContainer<FParams>
+					FParams() :
+						Context(nullptr),
+						UpdateGroup(),
+						Owner(nullptr),
+						OnAbort(),
+						OnEnd(),
+						MID(nullptr),
+						Anim()
 					{
-					};
+					}
 
-					#define CS_PARAMS_PAYLOAD_SIZE 16
+					bool IsValidChecked(const FString& ContextName) const;
 
-					struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FParams, FResource, CS_PARAMS_PAYLOAD_SIZE>
+					void Reset()
 					{
-					};
+						Context = nullptr;
+						UpdateGroup = EMCsUpdateGroup::Get().GetMAX();
+						Owner = nullptr;
+						OnAbort.Unbind();
+						OnEnd.Unbind();
+						MID = nullptr;
+						Anim.Reset();
+					}
 
-					#undef CS_PARAMS_PAYLOAD_SIZE
-				}
+				#undef OnAbortType
+				#undef OnEndType
+				#undef AnimType
+				};
+
+				struct CSCORE_API FResource : public TCsResourceContainer<FParams>
+				{
+				};
+
+				#define CS_PARAMS_PAYLOAD_SIZE 64
+
+				struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FParams, FResource, CS_PARAMS_PAYLOAD_SIZE>
+				{
+				};
+
+				#undef CS_PARAMS_PAYLOAD_SIZE
 			}
 		}
 	}

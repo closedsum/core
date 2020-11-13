@@ -25,6 +25,10 @@ namespace NCsSkin
 
 			struct CSCORE_API FLibrary : TCsLibrary_InterfaceMap<SkinType>
 			{
+				/**
+				*/
+				static bool IsValidChecked(const FString& Context, SkinType* Skin);
+
 			// Static Mesh
 			#pragma region
 

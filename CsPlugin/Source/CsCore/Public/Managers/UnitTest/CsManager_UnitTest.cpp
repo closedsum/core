@@ -209,7 +209,7 @@ void UCsManager_UnitTest::Start()
 
 char UCsManager_UnitTest::Start_Internal(FCsRoutine* R)
 {
-	int32& PlanIndex	  = R->GetValue_Indexer(CS_FIRST);
+	int32& PlanIndex	  = R->GetValue_Int(CS_FIRST);
 	ICsUnitTestPlan* Plan = Plans[PlanIndex];
 
 	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(R->GetGroup());

@@ -2,6 +2,8 @@
 #include "Library/CsLibrary_Material.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Mesh
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -11,6 +13,19 @@
 
 namespace NCsMaterial
 {
+	bool FLibrary::IsValidChecked(const FString& Context, const TArray<UMaterialInterface*>& Materials)
+	{
+		checkf(Materials.Num() > CS_EMPTY, TEXT("%s: Materials.Num() is NOT > 0."), *Context);
+
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			checkf(Materials[I], TEXT("%s: Materials[%d] is NULL."), *Context, I);
+		}
+		return true;
+	}
+
 	void FLibrary::SetMaterials(UStaticMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
 	{
 		checkf(Mesh, TEXT("NCsMaterial::FLibrary::SetMaterials: Mesh is NULL."));

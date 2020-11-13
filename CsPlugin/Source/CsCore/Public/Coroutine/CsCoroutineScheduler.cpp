@@ -15,13 +15,16 @@ bool UCsCoroutineScheduler::s_bShutdown = false;
 // Cache
 #pragma region
 
-namespace NCsCoroutineCached
+namespace NCsCoroutineScheduler
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, Allocate);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, Start);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, Update);
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, Allocate);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, Start);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, Update);
+		}
 	}
 }
 
@@ -34,17 +37,12 @@ UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectIni
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
 /*static*/ UCsCoroutineScheduler* UCsCoroutineScheduler::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetCoroutineScheduler(InRoot)->GetCoroutineScheduler();
-#else
-	if (s_bShutdown)
-		return nullptr;
-
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
 /*static*/ void UCsCoroutineScheduler::Init(UObject* InRoot)
 {

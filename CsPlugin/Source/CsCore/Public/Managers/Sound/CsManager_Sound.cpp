@@ -70,19 +70,12 @@ UCsManager_Sound::UCsManager_Sound(const FObjectInitializer& ObjectInitializer)
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
 /*static*/ UCsManager_Sound* UCsManager_Sound::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerSound(InRoot)->GetManager_Sound();
-#else
-	if (s_bShutdown)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Sound::Get: Manager has already shutdown."));
-		return nullptr;
-	}
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
 /*static*/ bool UCsManager_Sound::IsValid(UObject* InRoot /*=nullptr*/)
 {

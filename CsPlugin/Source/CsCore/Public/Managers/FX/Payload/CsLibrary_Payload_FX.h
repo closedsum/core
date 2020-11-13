@@ -3,6 +3,9 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
+// NCsFX::NPayload::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, FImpl)
+
 namespace NCsFX
 {
 	namespace NPayload
@@ -11,6 +14,13 @@ namespace NCsFX
 
 		struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<PayloadType>
 		{
+		#define PayloadImplType NCsFX::NPayload::FImpl
+
+			/**
+			*/
+			static void SetPayload(const FString& Context, PayloadImplType* Payload, const FCsFX& FX);
+
+		#undef PayloadImplType
 		};
 
 		#undef PayloadType

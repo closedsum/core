@@ -16,6 +16,8 @@ namespace NCsMaterial
 	{
 	public:
 
+		static bool IsValidChecked(const FString& Context, const TArray<UMaterialInterface*>& Materials);
+
 		/**
 		* Set the materials on a StaticMeshComponent.
 		* 

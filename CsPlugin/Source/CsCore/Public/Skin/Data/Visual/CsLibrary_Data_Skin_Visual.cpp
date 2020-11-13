@@ -16,6 +16,39 @@ namespace NCsSkin
 		{
 		#define SkinType NCsSkin::NData::NVisual::IVisual
 
+			bool FLibrary::IsValidChecked(const FString& Context, SkinType* Skin)
+			{
+				// MaterialSkinType
+				{
+					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
+					typedef NCsMaterial::FLibrary MaterialLibrary;
+
+					if (MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin))
+					{
+						check(MaterialLibrary::IsValidChecked(Context, MaterialSkin->GetMaterials()));
+					}
+				}
+				// StaticMeshSkin
+				{
+					typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshSkinType;
+
+					if (StaticMeshSkinType* StaticMeshSkin = GetSafeInterfaceChecked<StaticMeshSkinType>(Context, Skin))
+					{
+						checkf(StaticMeshSkin->GetStaticMesh(), TEXT("%s: Skin->GetStaticMesh() is NULL for Skin implementing interface: %s."), *(StaticMeshSkinType::Name.ToString()));
+					}
+				}
+				// SkeletalMeshSkin
+				{
+					typedef NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh SkeletalMeshSkinType;
+
+					if (SkeletalMeshSkinType* SkeletalMeshSkin = GetSafeInterfaceChecked<SkeletalMeshSkinType>(Context, Skin))
+					{
+						checkf(SkeletalMeshSkin->GetSkeletalMesh(), TEXT("%s: Skin->GetSkeletalMesh() is NULL for Skin implementing interface: %s."), *(SkeletalMeshSkinType::Name.ToString()));
+					}
+				}
+				return true;
+			}
+
 		// Static Mesh
 		#pragma region
 

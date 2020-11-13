@@ -4,13 +4,16 @@
 #include "Coroutine/CsCoroutineSchedule.h"
 #include "CsCoroutineScheduler.generated.h"
 
-namespace NCsCoroutineCached
+namespace NCsCoroutineScheduler
 {
-	namespace Str
+	namespace NCached
 	{
-		extern const FString Allocate;// = TEXT("UCsCoroutineScheduler::Allocate");
-		extern const FString Start;// = TEXT("UCsCoroutineScheduler::Start");
-		extern const FString Update;// = TEXT("UCsCoroutineScheduler::Update");
+		namespace Str
+		{
+			extern const FString Allocate;
+			extern const FString Start;
+			extern const FString Update;
+		}
 	}
 }
 
@@ -31,7 +34,15 @@ private:
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsCoroutineScheduler* Get(UObject* InRoot = nullptr);
+#else
+	static UCsCoroutineScheduler* Get(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
 	static void Init(UObject* InRoot);
 	static void Shutdown(UObject* InRoot = nullptr);
 

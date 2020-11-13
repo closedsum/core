@@ -17,7 +17,14 @@ class CSCORE_API UCsCoordinator_GameEvent : public UObject
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsCoordinator_GameEvent* Get(UObject* InRoot = nullptr);
+#else
+	static UCsCoordinator_GameEvent* Get(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
 	
 	template<typename T>
 	static T* Get(UObject* InRoot = nullptr)

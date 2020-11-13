@@ -336,8 +336,6 @@ namespace NCsCoroutine
 		*/
 		enum class EValueType : uint8
 		{
-			Indexer,
-			Counter,
 			Flag,
 			Timer,
 			DeltaTime,
@@ -366,8 +364,6 @@ namespace NCsCoroutine
 
 			namespace Ref
 			{
-				extern CSCORE_API const Type Indexer;
-				extern CSCORE_API const Type Counter;
 				extern CSCORE_API const Type Flag;
 				extern CSCORE_API const Type Timer;
 				extern CSCORE_API const Type DeltaTime;
@@ -424,13 +420,10 @@ namespace NCsCoroutine
 
 		#pragma endregion FInfo
 
-
-#define CS_ROUTINE_INDEXER_SIZE 4
-#define CS_ROUTINE_COUNTER_SIZE 4
 #define CS_ROUTINE_FLAG_SIZE 4
 #define CS_ROUTINE_TIMER_SIZE 4
 #define CS_ROUTINE_DELTA_TIME_SIZE 4
-#define CS_ROUTINE_INT_SIZE 4
+#define CS_ROUTINE_INT_SIZE 16
 #define CS_ROUTINE_FLOAT_SIZE 4
 #define CS_ROUTINE_DOUBLE_SIZE 4
 #define CS_ROUTINE_VECTOR_SIZE 4
@@ -456,8 +449,6 @@ namespace NCsCoroutine
 
 			TArray<TArray<bool>> UsedValues;
 
-			TArray<int32, TFixedAllocator<CS_ROUTINE_INDEXER_SIZE>> Indexers;
-			TArray<int32, TFixedAllocator<CS_ROUTINE_COUNTER_SIZE>> Counters;
 			TArray<bool, TFixedAllocator<CS_ROUTINE_FLAG_SIZE>> Flags;
 			TArray<FCsTime, TFixedAllocator<CS_ROUTINE_TIMER_SIZE>> Timers;
 			TArray<FCsDeltaTime, TFixedAllocator<CS_ROUTINE_DELTA_TIME_SIZE>> DeltaTimes;
@@ -493,18 +484,6 @@ namespace NCsCoroutine
 
 					UsedValues[(uint8)Type][InIndex] = true;
 				}
-			}
-
-			FORCEINLINE void SetValue_Indexer(const int32& InIndex, const int32& Value)
-			{
-				SetUsedValue(EValueType::Indexer, InIndex);
-				Indexers[InIndex] = Value;
-			}
-
-			FORCEINLINE void SetValue_Counter(const int32& InIndex, const int32& Value)
-			{
-				SetUsedValue(EValueType::Counter, InIndex);
-				Counters[InIndex] = Value;
 			}
 
 			FORCEINLINE void SetValue_Flag(const int32& InIndex, const bool& Value)
@@ -595,18 +574,6 @@ namespace NCsCoroutine
 			// Get
 			#pragma region
 			public:
-
-				FORCEINLINE int32& GetValue_Indexer(const int32& InIndex)
-				{
-					SetUsedValue(EValueType::Indexer, InIndex);
-					return Indexers[InIndex];
-				}
-	
-				FORCEINLINE int32& GetValue_Counter(const int32& InIndex)
-				{
-					SetUsedValue(EValueType::Counter, InIndex);
-					return Counters[InIndex];
-				}
 	
 				FORCEINLINE bool& GetValue_Flag(const int32& InIndex)
 				{
@@ -778,8 +745,6 @@ namespace NCsCoroutine
 		#pragma region
 		public:
 
-			FORCEINLINE void SetValue_Indexer(const int32& InIndex, const int32& Value){			RegisterMap.SetValue_Indexer(InIndex, Value); }
-			FORCEINLINE void SetValue_Counter(const int32& InIndex, const int32& Value){			RegisterMap.SetValue_Counter(InIndex, Value); }
 			FORCEINLINE void SetValue_Flag(const int32& InIndex, const bool& Value){				RegisterMap.SetValue_Flag(InIndex, Value); }
 			FORCEINLINE void SetValue_Timer(const int32& InIndex, const FCsTime& Value){			RegisterMap.SetValue_Timer(InIndex, Value); }
 			FORCEINLINE void SetValue_DeltaTime(const int32& InIndex, const FCsDeltaTime& Value){	RegisterMap.SetValue_DeltaTime(InIndex, Value); }

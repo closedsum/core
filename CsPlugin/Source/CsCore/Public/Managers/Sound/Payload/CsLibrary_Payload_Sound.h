@@ -3,6 +3,9 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
+// NCsSound::NPayload::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, FImpl)
+
 namespace NCsSound
 {
 	namespace NPayload
@@ -11,6 +14,13 @@ namespace NCsSound
 
 		struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<PayloadType>
 		{
+		#define PayloadImplType NCsSound::NPayload::FImpl
+
+			/**
+			*/
+			static void SetPayload(const FString& Context, PayloadImplType* Payload, const FCsSound& Sound);
+
+		#undef PayloadImplType
 		};
 
 		#undef PayloadType

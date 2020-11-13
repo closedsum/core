@@ -104,7 +104,7 @@ void FCsUnitTestPlan_Impl::Start()
 
 char FCsUnitTestPlan_Impl::Start_Internal(FCsRoutine* R)
 {
-	int32& TestIndex  = R->GetValue_Indexer(CS_FIRST);
+	int32& TestIndex  = R->GetValue_Int(CS_FIRST);
 	ICsUnitTest* Test = Tests[TestIndex];
 
 	const FCsTime& CurrentTime = UCsManager_Time::Get(MyRoot)->GetTime(R->GetGroup());

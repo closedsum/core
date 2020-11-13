@@ -225,3 +225,7 @@ public:
 			static EnumMap Instance; \
 			return Instance; \
 		}
+
+// Assume typedef "EnumType" Type and typedef "EnumMapType" EnumMapType
+#define CS_ADD_TO_ENUM_MASK_MAP(EnumElementName) const Type EnumElementName = EnumMapType::Get().Add(Type::EnumElementName, #EnumElementName)
+#define CS_ADD_TO_ENUM_MASK_MAP_CUSTOM(EnumElementName, DisplayName) const Type EnumElementName = EnumMapType::Get().Add(Type::EnumElementName, #EnumElementName, TEXT(DisplayName))

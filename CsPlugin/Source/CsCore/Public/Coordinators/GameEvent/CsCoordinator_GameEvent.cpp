@@ -46,19 +46,12 @@ UCsCoordinator_GameEvent::UCsCoordinator_GameEvent(const FObjectInitializer& Obj
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
 /*static*/ UCsCoordinator_GameEvent* UCsCoordinator_GameEvent::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetCoordinatorGameEvent(InRoot)->GetCoordinator_GameEvent();
-#else
-	if (s_bShutdown)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsCoordinator_GameEvent::Get: Coordinator has already shutdown."));
-		return nullptr;
-	}
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
 /*static*/ bool UCsCoordinator_GameEvent::IsValid(UObject* InRoot /*=nullptr*/)
 {

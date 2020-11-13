@@ -216,8 +216,6 @@ protected:
 #pragma region
 public:
 
-	FORCEINLINE void SetValue_Indexer(const int32& InIndex, const int32& Value){			RegisterMap.SetValue_Indexer(InIndex, Value); }
-	FORCEINLINE void SetValue_Counter(const int32& InIndex, const int32& Value){			RegisterMap.SetValue_Counter(InIndex, Value); }
 	FORCEINLINE void SetValue_Flag(const int32& InIndex, const bool& Value){				RegisterMap.SetValue_Flag(InIndex, Value); }
 	FORCEINLINE void SetValue_Timer(const int32& InIndex, const FCsTime& Value){			RegisterMap.SetValue_Timer(InIndex, Value); }
 	FORCEINLINE void SetValue_DeltaTime(const int32& InIndex, const FCsDeltaTime& Value){	RegisterMap.SetValue_DeltaTime(InIndex, Value); }
@@ -239,8 +237,6 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE int32& GetValue_Indexer(const int32& InIndex){						return RegisterMap.GetValue_Indexer(InIndex); }
-	FORCEINLINE int32& GetValue_Counter(const int32& InIndex){						return RegisterMap.GetValue_Counter(InIndex); }
 	FORCEINLINE bool& GetValue_Flag(const int32& InIndex){							return RegisterMap.GetValue_Flag(InIndex); }
 	FORCEINLINE FCsTime& GetValue_Timer(const int32& InIndex){						return RegisterMap.GetValue_Timer(InIndex); }
 	FORCEINLINE FCsDeltaTime& GetValue_DeltaTime(const int32& InIndex){				return RegisterMap.GetValue_DeltaTime(InIndex); }

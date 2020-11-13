@@ -68,7 +68,14 @@ public:
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsManager_Sound* Get(UObject* InRoot = nullptr);
+#else
+	static UCsManager_Sound* Get(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
 	
 	template<typename T>
 	static T* Get(UObject* InRoot = nullptr)

@@ -107,8 +107,6 @@ namespace NCsCoroutine
 			{
 				typedef EMValueType EnumMapType;
 
-				extern CSCORE_API CS_ADD_TO_ENUM_MAP(Indexer);
-				extern CSCORE_API CS_ADD_TO_ENUM_MAP(Counter);
 				extern CSCORE_API CS_ADD_TO_ENUM_MAP(Flag);
 				extern CSCORE_API CS_ADD_TO_ENUM_MAP(Timer);
 				extern CSCORE_API CS_ADD_TO_ENUM_MAP(DeltaTime);
@@ -130,21 +128,7 @@ namespace NCsCoroutine
 
 			void SetDefaultValue(const Type& ValueType, void* Ptr)
 			{
-				// Indexer
-				if (ValueType == Type::Indexer)
-				{
-					int32* V = (int32*)Ptr;
-					*V		 = 0;
-				}
-				// Counter
-				else
-				if (ValueType == Type::Counter)
-				{
-					int32* V = (int32*)Ptr;
-					*V		 = 0;
-				}
 				// Flag
-				else
 				if (ValueType == Type::Flag)
 				{
 					bool* V = (bool*)Ptr;
@@ -238,19 +222,7 @@ namespace NCsCoroutine
 
 			void SetValue(const Type& ValueType, void* From, void* To)
 			{
-				// Indexer
-				if (ValueType == Type::Indexer)
-				{
-					SetValue_Internal<int32>(From, To);
-				}
-				// Counter
-				else
-				if (ValueType == Type::Counter)
-				{
-					SetValue_Internal<int32>(From, To);
-				}
 				// Flag
-				else
 				if (ValueType == Type::Flag)
 				{
 					SetValue_Internal<bool>(From, To);
@@ -347,30 +319,6 @@ namespace NCsCoroutine
 		{
 			Values.Reset((uint8)EValueType::EValueType_MAX);
 			UsedValues.Reset((uint8)EValueType::EValueType_MAX);
-
-				// Indexers
-			Values.AddDefaulted();
-			UsedValues.AddDefaulted();
-			Indexers.AddDefaulted(CS_ROUTINE_INDEXER_SIZE);
-			UsedValues[(uint8)EValueType::Indexer].AddDefaulted(Indexers.Max());
-
-			for (int32& I : Indexers)
-			{
-				I = 0;
-				Values[(uint8)EValueType::Indexer].Add(&I);
-			}
-
-				// Counter
-			Values.AddDefaulted();
-			UsedValues.AddDefaulted();
-			Counters.AddDefaulted(CS_ROUTINE_COUNTER_SIZE);
-			UsedValues[(uint8)EValueType::Counter].AddDefaulted(Counters.Max());
-
-			for (int32& I : Counters)
-			{
-				I = 0;
-				Values[(uint8)EValueType::Counter].Add(&I);
-			}
 
 				// Flags
 			Values.AddDefaulted();

@@ -160,3 +160,22 @@ namespace NCsSoundDeallocateMethod
 }
 
 #pragma endregion SoundDeallocateMethod
+
+// FCsSound
+#pragma region
+
+bool FCsSound::IsValidChecked(const FString& Context) const
+{
+	// Check Sound is Valid.
+	check(GetChecked(Context));
+	// Check Type is Valid
+	check(EMCsSound::Get().IsValidEnumChecked(Context, Type));
+	
+	if (!Transform.Equals(FTransform::Identity))
+	{
+		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
+	}
+	return true;
+}
+
+#pragma endregion FCsSound

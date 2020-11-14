@@ -390,7 +390,7 @@ public:
 
 	/** Valid if the DeallocateMethod == ECsSoundDeallocateMethod::LifeTime.
 		- If a Sound IS attached to a Parent object, 
-		   LifeTime == 0.of means the Sound object will be deallocated immediately
+		   LifeTime == 0.0f means the Sound object will be deallocated immediately
 	        when the Parent object has been destroyed / deallocated.
 		   LifeTime > 0.0f will be the time after the Parent object has been 
 		    destroyed / deallocated to deallocate the Sound object.
@@ -487,6 +487,8 @@ public:
 	{
 		return Attenuation_Internal;
 	}
+
+	bool IsValidChecked(const FString& Context) const;
 };
 
 #pragma endregion FCsSound

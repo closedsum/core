@@ -195,8 +195,10 @@ const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(PayloadType* Payload)
 // End
 #pragma region
 
-void FCsCoroutineSchedule::End()
+bool FCsCoroutineSchedule::End()
 {
+	bool Result = false;
+
 	TCsDoubleLinkedList<FCsResource_Routine*>* Current = Manager_Routine.GetAllocatedHead();
 	TCsDoubleLinkedList<FCsResource_Routine*>* Next	   = Current;
 
@@ -216,10 +218,13 @@ void FCsCoroutineSchedule::End()
 
 		R->Reset();
 		Manager_Routine.Deallocate(RoutineContainer);
+
+		Result = true;
 	}
+	return Result;
 }
 
-void FCsCoroutineSchedule::End(const FCsRoutineHandle& Handle)
+bool FCsCoroutineSchedule::End(const FCsRoutineHandle& Handle)
 {
 	if (FCsResource_Routine* Container = GetRoutineContainer(Handle))
 	{
@@ -233,7 +238,9 @@ void FCsCoroutineSchedule::End(const FCsRoutineHandle& Handle)
 
 		R->Reset();
 		Manager_Routine.Deallocate(Container);
+		return true;
 	}
+	return false;
 }
 
 #pragma endregion End

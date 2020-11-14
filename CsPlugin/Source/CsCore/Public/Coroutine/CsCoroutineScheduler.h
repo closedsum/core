@@ -191,9 +191,9 @@ public:
 	*
 	* @param Group
 	*/
-	FORCEINLINE void End(const FECsUpdateGroup& Group)
+	FORCEINLINE bool End(const FECsUpdateGroup& Group)
 	{
-		Schedules[Group.GetValue()].End();
+		return Schedules[Group.GetValue()].End();
 	}
 
 	/**
@@ -202,9 +202,9 @@ public:
 	* @param Group
 	* @param Handle
 	*/
-	FORCEINLINE void End(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
+	FORCEINLINE bool End(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
 	{
-		Schedules[Group.GetValue()].End(Handle);
+		return Schedules[Group.GetValue()].End(Handle);
 	}
 
 
@@ -253,6 +253,24 @@ public:
 	}
 
 #pragma endregion Handle
+
+	// Routine
+#pragma region
+
+public:
+
+	/**
+	*
+	*
+	* @param Handle
+	* return
+	*/
+	FORCEINLINE FCsRoutine* GetRoutine(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle) const
+	{
+		return Schedules[Group.GetValue()].GetRoutine(Handle);
+	}
+
+#pragma endregion Routine
 
 // Message
 #pragma region

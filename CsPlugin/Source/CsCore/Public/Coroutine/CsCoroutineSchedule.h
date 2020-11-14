@@ -155,14 +155,14 @@ public:
 	/**
 	*
 	*/
-	void End();
+	bool End();
 
 	/**
 	*
 	*
 	* @param Handle
 	*/
-	void End(const FCsRoutineHandle& Handle);
+	bool End(const FCsRoutineHandle& Handle);
 
 #pragma endregion End
 

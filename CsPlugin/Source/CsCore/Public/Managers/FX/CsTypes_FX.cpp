@@ -178,3 +178,22 @@ namespace NCsFXAttachPoint
 }
 
 #pragma endregion FXAttachPoint
+
+// FCsFX
+#pragma region
+
+bool FCsFX::IsValidChecked(const FString& Context) const
+{
+	// Check FX is Valid.
+	check(GetChecked(Context));
+	// Check Type is Valid
+	check(EMCsFX::Get().IsValidEnumChecked(Context, Type));
+
+	if (!Transform.Equals(FTransform::Identity))
+	{
+		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
+	}
+	return true;
+}
+
+#pragma endregion FCsFX

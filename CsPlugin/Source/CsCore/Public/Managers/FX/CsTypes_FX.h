@@ -567,6 +567,8 @@ public:
 
 		return FX_Internal;
 	}
+
+	bool IsValidChecked(const FString& Context) const;
 };
 
 #pragma endregion FCsFX

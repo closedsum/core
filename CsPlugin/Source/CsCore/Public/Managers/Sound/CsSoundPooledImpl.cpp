@@ -160,6 +160,8 @@ void ACsSoundPooledImpl::Play(SoundPayloadType* Payload)
 
 	checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Play: AudioComponent is NULL."));
 	
+	// TODO: Add IsValidChecked in PayloadLibrary
+
 	USoundBase* Sound = Payload->GetSound();
 
 	checkf(Sound, TEXT("ACsSoundPooledImpl::Play: Sound is NULL."));

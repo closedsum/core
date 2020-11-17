@@ -156,6 +156,8 @@ void UCsFXActorPooledImpl::Allocate(PayloadType* Payload)
 
 	typedef NCsFX::NCache::FImpl CacheImplType;
 
+	// TODO: Add IsValidChecked in PayloadLibrary
+
 	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Allocate(Payload);

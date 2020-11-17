@@ -127,6 +127,57 @@ public:
 	/**
 	*/
 	template<typename EnumMap>
+	static void FromDataTable(const FString& Context, UObject* ContextRoot, UDataTable* DataTable, const FString& EnumName, void(*Log)(const FString&))
+	{
+		const UScriptStruct* RowStruct	  = DataTable->GetRowStruct();
+		const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+		{
+			// Set if the Row Struct has the properties Name and DisplayName
+
+			FStrProperty* NameProperty		  = CastField<FStrProperty>(RowStruct->FindPropertyByName(NamePropertyName));
+			NameProperty					  = NameProperty ? NameProperty : CastField<FStrProperty>(RowStruct->CustomFindProperty(NamePropertyName));
+			FStrProperty* DisplayNameProperty = CastField<FStrProperty>(RowStruct->FindPropertyByName(DisplayNamePropertyName));
+			DisplayNameProperty				  = DisplayNameProperty ? DisplayNameProperty : CastField<FStrProperty>(RowStruct->CustomFindProperty(DisplayNamePropertyName));
+
+			if (NameProperty &&
+				DisplayNameProperty)
+			{
+				for (const TPair<FName, uint8*>& Pair : RowMap)
+				{
+					const FName& RowName = Pair.Key;
+					const uint8* RowPtr  = Pair.Value;
+
+					const FString& Name		   = NameProperty->GetPropertyValue_InContainer(RowPtr);
+					const FString& DisplayName = DisplayNameProperty->GetPropertyValue_InContainer(RowPtr);
+
+					checkf(Name.Compare(RowName.ToString(), ESearchCase::IgnoreCase) == 0, TEXT("%s: Row Name != %s Name (%s != %s)."), *Context, *EnumName, *(RowName.ToString()), *Name);
+
+					checkf(!EnumMap::Get().IsValidEnum(Name), TEXT("%s: %s (Name): %s already exists (declared in native)."), *Context, *EnumName, *Name);
+
+					if (!DisplayName.IsEmpty())
+					{
+						checkf(!EnumMap::Get().IsValidEnumByDisplayName(DisplayName), TEXT("%s: %s (DisplayName): %s already exists (declared in native)."), *Context, *EnumName, *DisplayName);
+
+						EnumMap::Get().Create(Name, DisplayName, true);
+					}
+					else
+					{
+						EnumMap::Get().Create(Name, true);
+					}
+				}
+			}
+			else
+			{
+#if !UE_BUILD_SHIPPING
+				Log(FString::Printf(TEXT("%s: Failed to find properties with name: Name and Display for struct: %s."), *Context, *(RowStruct->GetName())));
+#endif // #if !UE_BUILD_SHIPPING
+			}
+		}
+	}
+
+	/**
+	*/
+	template<typename EnumMap>
 	static void FromDataTable(const FString& Context, UObject* ContextRoot, TSoftObjectPtr<UDataTable> DT_SoftObject, const FString& EnumName, void(*Log)(const FString&))
 	{
 		UDataTable* DT = nullptr;
@@ -144,50 +195,7 @@ public:
 
 		if (DT)
 		{
-			const UScriptStruct* RowStruct	  = DT->GetRowStruct();
-			const TMap<FName, uint8*>& RowMap = DT->GetRowMap();
-			{
-				// Set if the Row Struct has the properties Name and DisplayName
-
-				FStrProperty* NameProperty		  = CastField<FStrProperty>(RowStruct->FindPropertyByName(NamePropertyName));
-				NameProperty					  = NameProperty ? NameProperty : CastField<FStrProperty>(RowStruct->CustomFindProperty(NamePropertyName));
-				FStrProperty* DisplayNameProperty = CastField<FStrProperty>(RowStruct->FindPropertyByName(DisplayNamePropertyName));
-				DisplayNameProperty				  = DisplayNameProperty ? DisplayNameProperty : CastField<FStrProperty>(RowStruct->CustomFindProperty(DisplayNamePropertyName));
-
-				if (NameProperty &&
-					DisplayNameProperty)
-				{
-					for (const TPair<FName, uint8*>& Pair : RowMap)
-					{
-						const FName& RowName = Pair.Key;
-						const uint8* RowPtr  = Pair.Value;
-
-						const FString& Name		   = NameProperty->GetPropertyValue_InContainer(RowPtr);
-						const FString& DisplayName = DisplayNameProperty->GetPropertyValue_InContainer(RowPtr);
-
-						checkf(Name.Compare(RowName.ToString(), ESearchCase::IgnoreCase) == 0, TEXT("%s: Row Name != %s Name (%s != %s)."), *Context, *EnumName, *(RowName.ToString()), *Name);
-
-						checkf(!EnumMap::Get().IsValidEnum(Name), TEXT("%s: %s (Name): %s already exists (declared in native)."), *Context, *EnumName, *Name);
-
-						if (!DisplayName.IsEmpty())
-						{
-							checkf(!EnumMap::Get().IsValidEnumByDisplayName(DisplayName), TEXT("%s: %s (DisplayName): %s already exists (declared in native)."), *Context, *EnumName, *DisplayName);
-
-							EnumMap::Get().Create(Name, DisplayName, true);
-						}
-						else
-						{
-							EnumMap::Get().Create(Name, true);
-						}
-					}
-				}
-				else
-				{
-#if !UE_BUILD_SHIPPING
-					Log(FString::Printf(TEXT("%s: Failed to find properties with name: Name and Display for struct: %s."), *Context, *(RowStruct->GetName())));
-#endif // #if !UE_BUILD_SHIPPING
-				}
-			}
+			FromDataTable<EnumMap>(Context, ContextRoot, DT, EnumName, Log);
 		}
 		else
 		{

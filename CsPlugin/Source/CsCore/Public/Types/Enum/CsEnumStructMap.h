@@ -249,6 +249,20 @@ public:
 		return Result;
 	}
 
+	FORCEINLINE bool IsValidEnumChecked(const FString& Context, const FString& Name) const
+	{
+		checkf(IsValidEnum(Name), TEXT("%s: There is NO Enum with Name: %s."), *Context, *Name);
+
+		return true;
+	}
+
+	FORCEINLINE bool IsValidEnumChecked(const FString& Context, const FName& Name) const
+	{
+		checkf(IsValidEnum(Name), TEXT("%s: There is NO Enum with Name: %s."), *Context, *(Name.ToString()));
+
+		return true;
+	}
+
 	FORCEINLINE bool IsValidEnumByDisplayName(const FString& Name) const
 	{
 		return DisplayNameMap.Find(Name) != nullptr;
@@ -269,6 +283,13 @@ public:
 		return NameMap[Name];
 	}
 
+	FORCEINLINE const EnumStruct& GetEnumChecked(const FString& Context, const FString& Name) const
+	{
+		check(IsValidEnumChecked(Context, Name));
+
+		return GetEnum(Name);
+	}
+
 	FORCEINLINE const EnumStruct& GetSafeEnum(const FString& Name) const
 	{
 		return IsValidEnum(Name) ? NameMap[Name] : MAX;
@@ -277,6 +298,13 @@ public:
 	FORCEINLINE const EnumStruct& GetEnum(const FName& Name) const
 	{
 		return NameInternalMap[Name];
+	}
+
+	FORCEINLINE const EnumStruct& GetEnumChecked(const FString& Context, const FName& Name) const
+	{
+		check(IsValidEnumChecked(Context, Name));
+
+		return GetEnum(Name);
 	}
 
 	FORCEINLINE const EnumStruct& GetSafeEnum(const FName& Name) const

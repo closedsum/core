@@ -77,7 +77,7 @@ void UCsData_Skin_VisualStaticMeshAndMaterialImpl::PostLoad()
 
 	if (this == GetClass()->GetDefaultObject<UCsData_Skin_VisualStaticMeshAndMaterialImpl>())
 	{
-		Init();
+		//Init();
 		bLoaded = false;
 	}
 }
@@ -93,9 +93,7 @@ void UCsData_Skin_VisualStaticMeshAndMaterialImpl::BeginDestroy()
 
 void UCsData_Skin_VisualStaticMeshAndMaterialImpl::Init()
 {
-#if WITH_EDITOR
 	Reset();
-#endif // #if WITH_EDITOR
 
 	// ICsGetInterfaceMap
 	if (!InterfaceMap)
@@ -157,9 +155,8 @@ void UCsData_Skin_VisualStaticMeshAndMaterialImpl::Load(const int32& LoadFlags)
 {
 	UCsLibrary_Load::LoadStruct(this, GetClass(), LoadFlags, NCsLoadCodes::All);
 
-#if WITH_EDITOR
 	Init();
-#endif // #if WITH_EDITOR
+
 	bLoaded = true;
 }
 

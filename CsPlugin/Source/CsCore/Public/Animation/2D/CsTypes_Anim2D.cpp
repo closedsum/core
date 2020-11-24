@@ -190,15 +190,31 @@ void FCsAnim2DFlipbookTexture::OnPostEditChange(const TSet<FString>& PropertyNam
 	// CustomDeltaTime
 	if (PlayRate == ECsAnim2DPlayRate::PR_CustomDeltaTime)
 	{
-		TotalTime = Frames.Num() * DeltaTime;
-		TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+		if (Playback == ECsAnim2DPlayback::PingPong)
+		{
+			TotalTime = (2 * Frames.Num() - 1) * DeltaTime;
+			TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+		}
+		else
+		{
+			TotalTime = Frames.Num() * DeltaTime;
+			TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+		}
 	}
 	// CustomTotalTime
 	else
 	if (PlayRate == ECsAnim2DPlayRate::PR_CustomTotalTime)
 	{
-		DeltaTime  = TotalTime > 0.0f && Frames.Num() > 0 ? TotalTime / Frames.Num() : 0.0f;
-		TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+		if (Playback == ECsAnim2DPlayback::PingPong)
+		{
+			DeltaTime = TotalTime > 0.0f && (2 * Frames.Num() - 1) > 0 ? TotalTime / (2 * Frames.Num() - 1) : 0.0f;
+			TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+		}
+		else
+		{
+			DeltaTime = TotalTime > 0.0f && Frames.Num() > 0 ? TotalTime / Frames.Num() : 0.0f;
+			TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+		}
 	}
 	// CustomDeltaTimeAndTotalTime | Custom
 	else
@@ -218,9 +234,18 @@ void FCsAnim2DFlipbookTexture::OnPostEditChange(const TSet<FString>& PropertyNam
 	}
 	else
 	{
-		DeltaTime = NPlayRate::GetDeltaTime((EPlayRate)PlayRate);
-		TotalTime = Frames.Num() * DeltaTime;
-		TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+		if (Playback == ECsAnim2DPlayback::PingPong)
+		{
+			DeltaTime = NPlayRate::GetDeltaTime((EPlayRate)PlayRate);
+			TotalTime = (2 * Frames.Num() - 1) * DeltaTime;
+			TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+		}
+		else
+		{
+			DeltaTime = NPlayRate::GetDeltaTime((EPlayRate)PlayRate);
+			TotalTime = Frames.Num() * DeltaTime;
+			TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+		}
 	}
 }
 

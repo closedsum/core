@@ -74,6 +74,49 @@ public:
 	*
 	*
 	* @param Context
+	* @param ContextRoot
+	* return
+	*/
+	template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType& (GetDataRootSetType::* GetDataRootSetFn)() const>
+	static const DataRootSetType* GetDataRootSet(const FString& Context, UObject* ContextRoot, UObject*& OutDataRootSetImpl)
+	{
+		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
+
+		// Get DataRootSet
+		OutDataRootSetImpl = nullptr;
+
+		// Check context to determine how to load DataRootSetImpl
+		if (ContextRoot &&
+			Cast<UGameInstance>(ContextRoot))
+		{
+			OutDataRootSetImpl = UCsManager_Data::Get(ContextRoot)->DataRootSet.GetObject();
+		}
+		else
+		{
+			TSoftClassPtr<UObject> SoftObject = Settings->DataRootSet;
+			UClass* Class					  = SoftObject.LoadSynchronous();
+			OutDataRootSetImpl				  = Class->GetDefaultObject();
+		}
+
+		if (!OutDataRootSetImpl)
+			return nullptr;
+
+		GetDataRootSetType* GetDataRootSet = Cast<GetDataRootSetType>(OutDataRootSetImpl);
+
+		if (!GetDataRootSet)
+			return nullptr;
+
+		const DataRootSetType& DataRootSet = (GetDataRootSet->*GetDataRootSetFn)();
+
+		return &DataRootSet;
+	}
+
+	/**
+	*
+	*
+	* @param Context
 	* @param EnumName
 	* @param Log
 	*/

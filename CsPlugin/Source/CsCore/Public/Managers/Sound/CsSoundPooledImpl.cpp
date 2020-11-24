@@ -7,6 +7,11 @@
 #include "Managers/Sound/Cache/CsCache_SoundImpl.h"
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 
+#if WITH_EDITOR
+// Library
+#include "Library/CsLibrary_World.h"
+#endif // #if WITH_EDITOR
+
 // Cached
 #pragma region
 
@@ -79,6 +84,19 @@ void ACsSoundPooledImpl::BeginPlay()
 	ConstructCache();
 }
 
+void ACsSoundPooledImpl::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+#if WITH_EDITOR
+	if (FCsLibrary_World::IsPlayInEditor(GetWorld()) ||
+		FCsLibrary_World::IsPlayInEditorPreview(GetWorld()))
+	{
+		ConstructCache();
+	}
+#endif // #if WITH_EDITOR
+
+}
 void ACsSoundPooledImpl::FellOutOfWorld(const UDamageType& DmgType)
 {
 	Cache->QueueDeallocate();

@@ -20,17 +20,12 @@ UCsManager_Time::UCsManager_Time(const FObjectInitializer& ObjectInitializer)
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
 /*static*/ UCsManager_Time* UCsManager_Time::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerTime(InRoot)->GetManager_Time();
-#else
-	if (s_bShutdown)
-		return nullptr;
-
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_Time::Init(UObject* InRoot)
 {

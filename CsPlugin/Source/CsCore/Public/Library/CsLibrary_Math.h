@@ -187,4 +187,10 @@ public:
 	}
 	*/
 #pragma endregion Easing
+
+	FORCEINLINE static int32 Mod(const int32& A, const int32& B)
+	{
+		const int32 C = A % B;
+		return C < 0 ? C + B : C;
+	}
 };

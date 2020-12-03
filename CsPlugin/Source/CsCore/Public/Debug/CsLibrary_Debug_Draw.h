@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Kismet/KismetSystemLibrary.h"
+#include "CollisionQueryParams.h"
 #pragma once
+
+class UWorld;
+class AActor;
 
 namespace NCsDebug
 {
@@ -28,6 +31,8 @@ namespace NCsDebug
 
 			static void CapsuleTraceSingle(const UWorld* World, const FVector& Start, const FVector& End, float Radius, float HalfHeight, EDrawDebugTrace::Type DrawDebugType, bool bHit, const FHitResult& OutHit, FLinearColor TraceColor, FLinearColor TraceHitColor, float DrawTime);
 			static void CapsuleTraceMulti(const UWorld* World, const FVector& Start, const FVector& End, float Radius, float HalfHeight, EDrawDebugTrace::Type DrawDebugType, bool bHit, const TArray<FHitResult>& OutHits, FLinearColor TraceColor, FLinearColor TraceHitColor, float DrawTime);
+
+			static void String(const UWorld* InWorld, FVector const& TextLocation, const FString& Text, AActor* TestBaseActor = NULL, FColor const& TextColor = FColor::White, float Duration = -1.000000, bool bDrawShadow = false, float FontScale = 1.f);
 		};
 	}
 }

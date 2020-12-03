@@ -674,3 +674,44 @@ void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVe
 }
 
 #pragma endregion FCsDebugDrawTraceShape
+
+// FCsDebugDrawString
+#pragma region
+
+bool FCsDebugDrawString::CanDraw(UWorld* World) const
+{
+	if (!World)
+		return false;
+
+	// Preview
+	if (World->WorldType == EWorldType::Editor ||
+		World->WorldType == EWorldType::EditorPreview)
+	{
+		return bEnableInPreview;
+	}
+	// Play
+	if (World->WorldType == EWorldType::Game ||
+		World->WorldType == EWorldType::PIE)
+	{
+		// Any
+		if (PriorityInPlay == ECsDebugDrawPriority::Any)
+			return bEnableInPlay || FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// CVar
+		if (PriorityInPlay == ECsDebugDrawPriority::CVar)
+			return FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// Flag
+		if (PriorityInPlay == ECsDebugDrawPriority::Flag)
+			return bEnableInPlay;
+	}
+	return false;
+}
+
+void FCsDebugDrawString::Draw(UWorld* World, const FVector& Location, const FString& Text) const
+{
+	if (CanDraw(World))
+	{
+		NCsDebug::NDraw::FLibrary::String(World, Location, Text, nullptr, Color, LifeTime, bDropShadow, FontScale);
+	}
+}
+
+#pragma endregion FCsDebugDrawString

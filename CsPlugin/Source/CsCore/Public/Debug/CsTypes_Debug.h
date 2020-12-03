@@ -856,3 +856,58 @@ public:
 };
 
 #pragma endregion FCsDebugDrawTraceShape
+
+// FCsDebugDrawString
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDebugDrawString
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsCVarDraw CVar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPreview;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsDebugDrawPriority PriorityInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FColor Color;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float LifeTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bDropShadow;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float FontScale;
+
+	FCsDebugDrawString() :
+		CVar(),
+		bEnableInPreview(false),
+		PriorityInPlay(ECsDebugDrawPriority::Any),
+		bEnableInPlay(false),
+		Color(FColor::Red),
+		LifeTime(0.1f),
+		bDropShadow(false),
+		FontScale(1.0f)
+	{
+	}
+
+	bool CanDraw(UWorld* World) const;
+
+	void Draw(UWorld* World, const FVector& Location, const FString& Text) const;
+};
+
+#pragma endregion FCsDebugDrawString

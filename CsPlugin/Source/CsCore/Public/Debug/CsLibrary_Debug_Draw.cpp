@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Debug/CsLibrary_Debug_Draw.h"
 
+// Player
+#include "GameFramework/PlayerController.h"
 // Settings
 #include "PhysicsEngine/PhysicsSettings.h"
 // Debug
@@ -328,6 +330,26 @@ namespace NCsDebug
 				{
 					FHitResult const& Hit = OutHits[HitIdx];
 					::DrawDebugPoint(World, Hit.ImpactPoint, DEBUG_IMPACTPOINT_SIZE, (Hit.bBlockingHit ? TraceColor.ToFColor(true) : TraceHitColor.ToFColor(true)), bPersistent, LifeTime);
+				}
+			}
+		}
+
+		void FLibrary::String(const UWorld* InWorld, FVector const& TextLocation, const FString& Text, AActor* TestBaseActor /*=NULL*/, FColor const& TextColor /*=FColor::White*/, float Duration /*= -1.000000*/, bool bDrawShadow /*=false*/, float FontScale /*=1.f*/)
+		{
+			// no debug line drawing on dedicated server
+			if (GEngine->GetNetMode(InWorld) != NM_DedicatedServer)
+			{
+				check(TestBaseActor == NULL || TestBaseActor->GetWorld() == InWorld);
+				AActor* BaseAct = (TestBaseActor != NULL) ? TestBaseActor : InWorld->GetWorldSettings();
+
+				// iterate through the player controller list
+				for (FConstPlayerControllerIterator Iterator = InWorld->GetPlayerControllerIterator(); Iterator; ++Iterator)
+				{
+					APlayerController* PlayerController = Iterator->Get();
+					if (PlayerController && PlayerController->MyHUD && PlayerController->Player)
+					{
+						PlayerController->MyHUD->AddDebugText(Text, BaseAct, Duration, TextLocation, TextLocation, TextColor, true, (TestBaseActor == NULL), false, nullptr, FontScale, bDrawShadow);
+					}
 				}
 			}
 		}

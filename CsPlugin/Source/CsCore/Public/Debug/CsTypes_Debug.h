@@ -882,6 +882,9 @@ public:
 	bool bEnableInPlay;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector LocationOffset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FColor Color;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
@@ -898,6 +901,7 @@ public:
 		bEnableInPreview(false),
 		PriorityInPlay(ECsDebugDrawPriority::Any),
 		bEnableInPlay(false),
+		LocationOffset(FVector::ZeroVector),
 		Color(FColor::Red),
 		LifeTime(0.1f),
 		bDropShadow(false),

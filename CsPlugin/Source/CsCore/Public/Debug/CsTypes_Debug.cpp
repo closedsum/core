@@ -710,7 +710,7 @@ void FCsDebugDrawString::Draw(UWorld* World, const FVector& Location, const FStr
 {
 	if (CanDraw(World))
 	{
-		NCsDebug::NDraw::FLibrary::String(World, Location, Text, nullptr, Color, LifeTime, bDropShadow, FontScale);
+		NCsDebug::NDraw::FLibrary::String(World, Location + LocationOffset, Text, nullptr, Color, LifeTime, bDropShadow, FontScale);
 	}
 }
 

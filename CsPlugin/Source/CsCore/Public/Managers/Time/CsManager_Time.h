@@ -188,4 +188,25 @@ public:
 	{
 		return UpdateGroups[Group.GetValue()].GetScaledDeltaTime(ScaleName);
 	}
+
+	/**
+	*
+	* 
+	* @param Group
+	* @param Scale
+	*/
+	FORCEINLINE void SetScaledDeltaTime(const FECsUpdateGroup& Group, const float& Scale)
+	{
+		UpdateGroups[Group.GetValue()].SetScale(Scale);
+	}
+
+	/**
+	* Resets the Scale (to 1.0f) applied to the delta time for the specified Group.
+	*
+	* @param Group
+	*/
+	FORCEINLINE void ResetScaledDeltaTime(const FECsUpdateGroup& Group)
+	{
+		UpdateGroups[Group.GetValue()].ResetScale();
+	}
 };

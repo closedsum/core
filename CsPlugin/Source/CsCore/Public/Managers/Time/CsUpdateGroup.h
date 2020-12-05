@@ -71,7 +71,7 @@ public:
 		TimePaused.Reset();
 	}
 
-	void Unpause()
+	FORCEINLINE void Unpause()
 	{
 		bPause = false;
 	}
@@ -80,6 +80,13 @@ public:
 	{
 		return bPause;
 	}
+
+	FORCEINLINE void SetScale(const float& InScale)
+	{
+		Scale = InScale;
+	}
+
+	FORCEINLINE void ResetScale() { Scale = 1.0f; }
 
 	void Update(const float& InDeltaTime)
 	{

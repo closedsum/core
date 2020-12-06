@@ -190,6 +190,7 @@ public:
 	*
 	*
 	* @param Group
+	* return
 	*/
 	FORCEINLINE bool End(const FECsUpdateGroup& Group)
 	{
@@ -201,6 +202,7 @@ public:
 	*
 	* @param Group
 	* @param Handle
+	* return
 	*/
 	FORCEINLINE bool End(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
 	{
@@ -212,6 +214,31 @@ public:
 	*
 	*/
 	void EndAll();
+
+	/**
+	* Check if a routine associated with the Group and Handle has already ended.
+	* NOTE: This returns True if Handle is NOT Valid.
+	* 
+	* @param Group
+	* @param Handle		Handle to a routine.
+	* return			Whether the routine has already ended.
+	*/
+	FORCEINLINE bool HasEnded(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle) const
+	{
+		return Schedules[Group.GetValue()].HasEnded(Handle);
+	}
+
+	/**
+	* Check if a routine associated with the Group and Handle has just ended.
+	*
+	* @param Group
+	* @param Handle		Handle to a routine.
+	* return			Whether the routine has just ended.
+	*/
+	FORCEINLINE bool HasJustEnded(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle) const
+	{
+		return Schedules[Group.GetValue()].HasJustEnded(Handle);
+	}
 
 #pragma endregion End
 
@@ -247,9 +274,28 @@ public:
 #pragma region
 public:
 
+	/**
+	* 
+	* 
+	* @param Group
+	* @param Handle
+	* return
+	*/
 	FORCEINLINE bool IsHandleValid(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle) const
 	{
 		return Schedules[Group.GetValue()].GetRoutineContainer(Handle) != nullptr;
+	}
+
+	/**
+	* 
+	* 
+	* @param Group
+	* @param Handle
+	* return
+	*/
+	FORCEINLINE bool IsRunning(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle) const
+	{
+		return Schedules[Group.GetValue()].IsRunning(Handle);
 	}
 
 #pragma endregion Handle

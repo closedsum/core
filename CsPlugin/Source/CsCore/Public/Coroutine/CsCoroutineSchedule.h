@@ -108,6 +108,8 @@ public:
 		return GetRoutineContainer(Handle) != nullptr;
 	}
 
+	bool IsRunning(const FCsRoutineHandle& Handle) const;
+
 #pragma endregion Handle
 
 // Start
@@ -158,11 +160,30 @@ public:
 	bool End();
 
 	/**
+	* End the routine associated with the Handle.
 	*
-	*
-	* @param Handle
+	* @param Handle		Handle to a routine.
+	* return			Whether the routine has successful ended.
+	*					NOTE: If the routine has already ended, this will return false.
 	*/
 	bool End(const FCsRoutineHandle& Handle);
+
+	/**
+	* Check if a routine associated with the Handle has already ended.
+	* NOTE: This returns True if Handle is NOT Valid.
+	* 
+	* @param Handle		Handle to a routine.
+	* return			Whether the routine has already ended.
+	*/
+	bool HasEnded(const FCsRoutineHandle& Handle) const;
+
+	/**
+	* Check if a routine associated with the Handle has just ended.
+	*
+	* @param Handle		Handle to a routine.
+	* return			Whether the routine has just ended.
+	*/
+	bool HasJustEnded(const FCsRoutineHandle& Handle) const;
 
 #pragma endregion End
 

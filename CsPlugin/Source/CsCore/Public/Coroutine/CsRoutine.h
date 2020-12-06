@@ -142,6 +142,8 @@ public:
 
 	void Update(const FCsDeltaTime& InDeltaTime);
 
+	FORCEINLINE bool IsRunning() const { return State == StateType::Update; }
+
 #pragma endregion Run
 
 // End
@@ -154,6 +156,7 @@ public:
 
 	void End(const EndReasonType& InEndReason);
 
+	FORCEINLINE bool HasJustEnded() const { return State == StateType::End; }
 	FORCEINLINE bool HasEnded() const
 	{
 		return State == StateType::End || State == StateType::Free;

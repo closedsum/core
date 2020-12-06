@@ -103,6 +103,18 @@ FCsRoutine* FCsCoroutineSchedule::GetRoutine(const FCsRoutineHandle& Handle) con
 
 #pragma endregion Routine
 
+// Handle
+#pragma region
+
+bool FCsCoroutineSchedule::IsRunning(const FCsRoutineHandle& Handle) const
+{
+	if (FCsRoutine* R = GetRoutine(Handle))
+		return R->IsRunning();
+	return false;
+}
+
+#pragma endregion Handle
+
 // Start
 #pragma region
 
@@ -241,6 +253,20 @@ bool FCsCoroutineSchedule::End(const FCsRoutineHandle& Handle)
 		return true;
 	}
 	return false;
+}
+
+bool FCsCoroutineSchedule::HasEnded(const FCsRoutineHandle& Handle) const
+{
+	if (FCsRoutine* R = GetRoutine(Handle))
+		return R->HasEnded();
+	return true;
+}
+
+bool FCsCoroutineSchedule::HasJustEnded(const FCsRoutineHandle& Handle) const
+{
+	if (FCsRoutine* R = GetRoutine(Handle))
+		return R->HasJustEnded();
+	return true;
 }
 
 #pragma endregion End

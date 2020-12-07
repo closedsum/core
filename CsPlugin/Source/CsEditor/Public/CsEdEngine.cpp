@@ -412,7 +412,9 @@ bool UCsEdEngine::Check_PrintBlueprintReferencesReport(const TCHAR* Stream)
 
 	if (FParse::Command(&Stream, *Command))
 	{
-		const FName AssetName = UCsLibrary_String::Stream_GetName(Stream);
+		typedef NCsString::FLibrary StringLibrary;
+
+		const FName AssetName = StringLibrary::Stream_GetName(Stream);
 
 		if (AssetName == NAME_None)
 		{

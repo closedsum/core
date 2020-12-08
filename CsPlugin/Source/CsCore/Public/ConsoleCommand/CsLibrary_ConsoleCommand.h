@@ -5,6 +5,10 @@ namespace NCsConsoleCommand
 {
 	namespace NLibrary
 	{
+		/**
+		* Template for params used in Stream_GetValue or any other GetValue methods in 
+		* FLibrary (NCsConsoleCommand::NLibrary::FLibrary)
+		*/
 		template<typename ValueType>
 		struct TParams_GetValue
 		{
@@ -73,6 +77,9 @@ namespace NCsConsoleCommand
 			FORCEINLINE const TCHAR* DefinitionToChar() const { return **Definition; }
 		};
 
+		/**
+		* int32 specialization
+		*/
 		struct FParams_GetValue_int32 : public TParams_GetValue<int32>
 		{
 		private:
@@ -96,14 +103,19 @@ namespace NCsConsoleCommand
 			/**
 			* 
 			* 
-			* @param Context
-			* @param Str
-			* @param Definition
+			* @param Context		The calling context.
+			* @param Str			String from which to consume char.
+			* @param Definition		Console command definition.
 			*/
 			static bool ConsumeNextCharAndCheckNotEmpty(const FString& Context, FString& Str, const FString& Definition);
 
-
-
+			/**
+			* 
+			* 
+			* @param Context	The calling context.
+			* @param Str		String from which to get value.
+			* @param Params
+			*/
 			static bool Stream_GetValue(const FString& Context, const TCHAR*& Str, FParams_GetValue_int32& Params);
 		};
 	}

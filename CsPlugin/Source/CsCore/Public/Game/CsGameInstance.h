@@ -17,6 +17,7 @@ class CSCORE_API UCsGameInstance : public UGameInstance, public ICsGetManagerSin
 	GENERATED_UCLASS_BODY()
 
 // UGameInstance Interface
+#pragma region
 public:
 
 	virtual void Init() override;
@@ -31,6 +32,13 @@ public:
 #endif // #if WITH_EDITOR
 
 #pragma endregion UGameInstance Interface
+
+// FExec Interface
+#pragma region
+
+	virtual bool Exec(UWorld* InWorld, const TCHAR* Cmd, FOutputDevice& Out = *GLog) override;
+
+#pragma endregion FExec Interface
 
 // Tick
 #pragma region

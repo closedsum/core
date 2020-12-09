@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "CollisionQueryParams.h"
+#include "Kismet/KismetSystemLibrary.h"
 #pragma once
 
 class UWorld;

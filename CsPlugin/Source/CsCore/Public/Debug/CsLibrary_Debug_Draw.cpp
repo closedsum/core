@@ -5,6 +5,8 @@
 #include "GameFramework/PlayerController.h"
 // Settings
 #include "PhysicsEngine/PhysicsSettings.h"
+// UI
+#include "GameFramework/HUD.h"
 // Debug
 #include "DrawDebugHelpers.h"
 

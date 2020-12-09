@@ -1,4 +1,7 @@
 #pragma once
+// Types
+#include "Types/CsTypes_Macro.h"
+
 #include "CsTypes_Data_Skin_Visual.generated.h"
 
 // FCsData_Skin_Visual

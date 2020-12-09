@@ -3,6 +3,7 @@
 #include "CsCore.h"
 
 // Types
+#include "Types/CsTypes_Macro.h"
 #include "Types/CsCached.h"
 
 namespace NCsString

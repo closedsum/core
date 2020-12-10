@@ -244,6 +244,19 @@ public:
 		}
 	}
 
+	template<typename T>
+	static void GetIntersecting(const TArray<T*>& A, const TArray<T*>& B, TArray<T*>& Out)
+	{
+		for (T* _A : A)
+		{
+			for (T* _B : B)
+			{
+				if (_A == _B)
+					Out.Add(_A);
+			}
+		}
+	}
+
 #pragma endregion TArray
 
 // Fixed Array

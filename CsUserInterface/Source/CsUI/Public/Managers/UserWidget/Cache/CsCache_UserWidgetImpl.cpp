@@ -43,8 +43,11 @@ namespace NCsUserWidget
 
 			InterfaceMap->SetRootName(FImpl::Name);
 
-			InterfaceMap->Add<NCsPooledObject::NCache::ICache>(static_cast<NCsPooledObject::NCache::ICache*>(this));
-			InterfaceMap->Add<NCsUserWidget::NCache::ICache>(static_cast<NCsUserWidget::NCache::ICache*>(this));
+			typedef NCsPooledObject::NCache::ICache PooledCacheType;
+			typedef NCsUserWidget::NCache::ICache WidgetCacheType;
+
+			InterfaceMap->Add<PooledCacheType>(static_cast<PooledCacheType*>(this));
+			InterfaceMap->Add<WidgetCacheType>(static_cast<WidgetCacheType*>(this));
 		}
 
 		FImpl::~FImpl()

@@ -8,22 +8,25 @@
 class UObject;
 struct FCsInterfaceMap;
 
-namespace NCsPooledObject {
-	namespace NPayload {
-		struct IPayload; } }
+// NCsPooledObject::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
 namespace NCsUserWidget
 {
 	namespace NCache
 	{
+	#define PooledCacheType NCsPooledObject::NCache::ICache
+	#define WidgetCacheType NCsUserWidget::NCache::ICache
+
 		/**
 		* Basic implementation for Cache implementing the interfaces:
-		* NCsPooledObject::NCache::ICache and NCsUserWidget::NCache::ICache. This only supports 
+		* PooledCacheType (NCsPooledObject::NCache::ICache) and 
+		* WidgetCacheType (NCsUserWidget::NCache::ICache). This only supports 
 		* a bare minimum functionality. For custom functionality create
 		* another implementation
 		*/
-		struct CSUI_API FImpl final : public NCsPooledObject::NCache::ICache,
-									  public NCsUserWidget::NCache::ICache
+		struct CSUI_API FImpl final : public PooledCacheType,
+									  public WidgetCacheType
 		{
 		public:
 
@@ -126,5 +129,8 @@ namespace NCsUserWidget
 
 			//void SetData(ICsData_Projectile* InData);
 		};
+
+	#undef PooledCacheType
+	#undef WidgetCacheType
 	}
 }

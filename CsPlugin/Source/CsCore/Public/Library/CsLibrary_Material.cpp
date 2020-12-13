@@ -195,19 +195,6 @@ namespace NCsMaterial
 	// MID
 	#pragma region
 
-	void FLibrary::DestroyMIDs(TArray<UMaterialInstanceDynamic*>& MIDs)
-	{
-		for (UMaterialInstanceDynamic* MID : MIDs)
-		{
-			if (MID &&
-				!MID->IsPendingKill())
-			{
-				MID->MarkPendingKill();
-			}
-		}
-		MIDs.SetNum(0, true);
-	}
-
 	void FLibrary::SetMIDs(UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials)
 	{
 		ClearOverrideMaterials(Mesh);
@@ -284,6 +271,20 @@ namespace NCsMaterial
 			MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
 		}
 	}
+
+	void FLibrary::DestroyMIDs(TArray<UMaterialInstanceDynamic*>& MIDs)
+	{
+		for (UMaterialInstanceDynamic* MID : MIDs)
+		{
+			if (MID &&
+				!MID->IsPendingKill())
+			{
+				MID->MarkPendingKill();
+			}
+		}
+		MIDs.SetNum(0, true);
+	}
+
 
 	void FLibrary::MIDs_SetScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float &Value)
 	{

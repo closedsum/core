@@ -88,10 +88,6 @@ namespace NCsMaterial
 
 		/**
 		*/
-		static void DestroyMIDs(TArray<UMaterialInstanceDynamic*>& MIDs);
-
-		/**
-		*/
 		static void SetMIDs(UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
 
 		/**
@@ -109,6 +105,10 @@ namespace NCsMaterial
 		/**
 		*/
 		static void SetMIDs(USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
+
+		/**
+		*/
+		static void DestroyMIDs(TArray<UMaterialInstanceDynamic*>& MIDs);
 
 		/**
 		*/

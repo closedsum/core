@@ -83,28 +83,19 @@ UCsManager_UserWidget::UCsManager_UserWidget(const FObjectInitializer& ObjectIni
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
 /*static*/ UCsManager_UserWidget* UCsManager_UserWidget::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerUserWidget(InRoot)->GetManager_UserWidget();
-#else
-	if (s_bShutdown)
-	{
-		UE_LOG(LogCsUI, Warning, TEXT("UCsManager_UserWidget::Get: Manager has already shutdown."));
-		return nullptr;
-	}
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
+#if WITH_EDITOR
 /*static*/ bool UCsManager_UserWidget::IsValid(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerUserWidget(InRoot)->GetManager_UserWidget() != nullptr;
-#else
-	return s_Instance != nullptr;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_UserWidget::Init(UObject* InRoot, TSubclassOf<UCsManager_UserWidget> ManagerUserWidgetClass, UObject* InOuter /*=nullptr*/)
 {
@@ -165,14 +156,12 @@ UCsManager_UserWidget::UCsManager_UserWidget(const FObjectInitializer& ObjectIni
 #endif // #if WITH_EDITOR
 }
 
+#if WITH_EDITOR
 /*static*/ bool UCsManager_UserWidget::HasShutdown(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerUserWidget(InRoot)->GetManager_UserWidget() == nullptr;
-#else
-	return s_bShutdown;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
 #if WITH_EDITOR
 

@@ -119,8 +119,9 @@ void UCsUserWidgetPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 	const FString& Context = Str::Update;
 
 	typedef NCsUserWidget::NCache::FImpl CacheImplType;
+	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
 
-	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, Cache);
+	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Update(DeltaTime);
 }
@@ -140,8 +141,9 @@ void UCsUserWidgetPooledImpl::Allocate(PayloadType* Payload)
 	const FString& Context = Str::Allocate;
 
 	typedef NCsUserWidget::NCache::FImpl CacheImplType;
+	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
 
-	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, Cache);
+	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Allocate(Payload);
 

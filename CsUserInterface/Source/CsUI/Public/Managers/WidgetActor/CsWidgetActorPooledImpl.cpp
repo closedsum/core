@@ -121,8 +121,9 @@ void ACsWidgetActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 	const FString& Context = Str::Update;
 
 	typedef NCsWidgetActor::NCache::FImpl CacheImplType;
+	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
 
-	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, Cache);
+	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Update(DeltaTime);
 }
@@ -175,8 +176,9 @@ void ACsWidgetActorPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Pay
 	}
 
 	typedef NCsWidgetActor::NCache::FImpl CacheImplType;
+	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
 
-	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, Cache);
+	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Allocate(Payload);
 

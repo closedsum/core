@@ -2620,3 +2620,45 @@ void UCsLibrary_Load::GetReferencesReport(const void* StructValue, UStruct* cons
 }
 
 #pragma endregion References
+
+// Default Object
+#pragma region
+
+UObject* UCsLibrary_Load::GetDefaultObjectChecked(const FString& Context, const TSubclassOf<UObject>& SubclassOf)
+{
+	UObject* O = SubclassOf.Get();
+
+	checkf(O, TEXT("%s: SubclassOf is NULL."), *Context);
+
+	// Blueprint
+	if (UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O))
+	{
+		if (UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy))
+		{
+			if (UClass* Class = BpC->GeneratedClass.Get())
+			{
+				UObject* DOb = Class->GetDefaultObject();
+
+				checkf(DOb, TEXT("%s: Failed to get DefaultObject from Object: %s with Class: %s."), *Context, *(O->GetName()), *(Class->GetName()));
+
+				return DOb;
+			}
+		}
+	}
+	else
+	{
+		UClass* Class = O->GetClass();
+
+		checkf(Class, TEXT("%s: Failed to Class from Object: %s."), *Context, *(O->GetName()));
+
+		UObject* DOb = Class->GetDefaultObject();
+
+		checkf(DOb, TEXT("%s: Failed to get DefaultObject from Object: %s with Class: %s."), *Context, *(O->GetName()), *(Class->GetName()));
+
+		return DOb;
+	}
+	checkf(0, TEXT("%s: Failed to get DefaultObject from Object: %s."), *Context, *(O->GetName()))
+	return nullptr;
+}
+
+#pragma endregion Default Object

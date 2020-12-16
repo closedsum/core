@@ -4,6 +4,16 @@
 
 #pragma once
 
-struct CSCORE_API FCsLibrary_PooledObjectCache : public TCsLibrary_InterfaceMap<NCsPooledObject::NCache::ICache>
+namespace NCsPooledObject
 {
-};
+	namespace NCache
+	{
+	#define CacheType NCsPooledObject::NCache::ICache
+
+		struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<CacheType>
+		{
+		};
+
+	#undef CacheType
+	}
+}

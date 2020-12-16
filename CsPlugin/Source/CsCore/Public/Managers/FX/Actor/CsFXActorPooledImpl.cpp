@@ -126,8 +126,9 @@ void UCsFXActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 	using namespace NCsFXActorPooledImpl::NCached;
 
 	typedef NCsFX::NCache::FImpl CacheImplType;
+	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
 
-	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Str::Update, Cache);
+	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Str::Update, Cache);
 
 	CacheImpl->Update(DeltaTime);
 }
@@ -155,10 +156,11 @@ void UCsFXActorPooledImpl::Allocate(PayloadType* Payload)
 	const FString& Context = Str::Allocate;
 
 	typedef NCsFX::NCache::FImpl CacheImplType;
+	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
 
 	// TODO: Add IsValidChecked in PayloadLibrary
 
-	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, Cache);
+	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Allocate(Payload);
 

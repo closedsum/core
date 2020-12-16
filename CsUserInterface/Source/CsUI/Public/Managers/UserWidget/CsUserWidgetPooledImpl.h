@@ -58,10 +58,7 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE CacheType* GetCache() const
-	{
-		return Cache;
-	}
+	FORCEINLINE CacheType* GetCache() const { return Cache; }
 	
 	void Allocate(PayloadType* Payload);
 
@@ -79,12 +76,14 @@ protected:
 #pragma region
 public:
 
-	FORCEINLINE UUserWidget* GetUserWidget() const 
-	{
-		return UserWidget;
-	}
+	FORCEINLINE UUserWidget* GetUserWidget() const { return UserWidget; }
 
 #pragma endregion ICsUserWidgetPooled
+
+public:
+
+	template<typename T>
+	FORCEINLINE T* GetUserWidget() const { return Cast<T>(GetUserWidget()); }
 
 protected:
 

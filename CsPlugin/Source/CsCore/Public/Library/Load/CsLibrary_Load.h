@@ -347,4 +347,23 @@ public:
 	static void GetReferencesReport(const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport, int32 Depth);
 
 #pragma endregion References
+
+// Default Object
+#pragma region
+
+	static UObject* GetDefaultObjectChecked(const FString& Context, const TSubclassOf<UObject>& SubclassOf);
+
+	template<typename T>
+	static T* GetDefaultObjectChecked(const FString& Context, const TSubclassOf<UObject>& SubclassOf)
+	{
+		UObject* DOb = GetDefaultObjectChecked(Context, SubclassOf);
+
+		T* O = Cast<T>(DOb);
+
+		checkf(O, TEXT("%s: Failed to cast DefaultObject: %s to type T."), *Context, *(DOb->GetName()));
+
+		return O;
+	}
+
+#pragma endregion Default Object
 };

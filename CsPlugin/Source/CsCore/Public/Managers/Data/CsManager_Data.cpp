@@ -57,17 +57,12 @@ UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
 /*static*/ UCsManager_Data* UCsManager_Data::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerData(InRoot)->GetManager_Data();
-#else
-	if (s_bShutdown)
-		return nullptr;
-
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_Data::Init(UObject* InRoot)
 {

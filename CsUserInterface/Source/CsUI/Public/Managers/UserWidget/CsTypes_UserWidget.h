@@ -477,4 +477,4 @@ struct CSUI_API FCsUserWidgetPooledEntry : public FTableRowBase
 	}
 };
 
-#pragma endregion FCsUserWidgetEntry
+#pragma endregion FCsUserWidgetPooledEntry

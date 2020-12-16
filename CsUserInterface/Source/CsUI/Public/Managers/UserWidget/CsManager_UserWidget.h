@@ -89,20 +89,42 @@ public:
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsManager_UserWidget* Get(UObject* InRoot = nullptr);
-	
+#else
+	static UCsManager_UserWidget* Get(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
 	template<typename T>
 	static T* Get(UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
 
+#if WITH_EDITOR
 	static bool IsValid(UObject* InRoot = nullptr);
+#else
+	static bool IsValid(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? false : s_Instance != nullptr;
+	}
+#endif // #if WITH_EDITOR
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_UserWidget> ManagerFXActorClass, UObject* InOuter = nullptr);
 	
 	static void Shutdown(UObject* InRoot = nullptr);
+
+#if WITH_EDITOR
 	static bool HasShutdown(UObject* InRoot = nullptr);
+#else
+	static bool HasShutdown(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? true : s_Instance == nullptr;
+	}
+#endif // #if WITH_EDITOR
 
 #if WITH_EDITOR
 protected:

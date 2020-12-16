@@ -4,7 +4,6 @@
 #pragma once
 
 class UObject;
-class AActor;
 
 namespace NCsCoroutine
 {
@@ -17,10 +16,10 @@ namespace NCsCoroutine
 			/**
 			* Get the Context (Root) for UCsCoroutineScheduler from an Actor.
 			*
-			* @oaram Actor
+			* @oaram Object
 			* return		Context for CoroutineScheduler
 			*/
-			static UObject* GetContextRoot(AActor* Actor);
+			static UObject* GetContextRoot(UObject* Object);
 		};
 	}
 }

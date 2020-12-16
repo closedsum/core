@@ -1,8 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 
-// Actor
-#include "GameFramework/Actor.h"
 // World
 #include "Engine/World.h"
 
@@ -17,20 +15,20 @@ namespace NCsCoroutine
 {
 	namespace NScheduler
 	{
-		UObject* FLibrary::GetContextRoot(AActor* Actor)
+		UObject* FLibrary::GetContextRoot(UObject* Object)
 		{
-			checkf(Actor, TEXT("FLibrary::GetContextRoot: Actor is NULL."));
+			checkf(Object, TEXT("FLibrary::GetContextRoot: Object is NULL."));
 
 #if WITH_EDITOR
-			if (FCsLibrary_World::IsPlayInEditor(Actor->GetWorld()) ||
-				FCsLibrary_World::IsPlayInEditorPreview(Actor->GetWorld()))
+			if (FCsLibrary_World::IsPlayInEditor(Object->GetWorld()) ||
+				FCsLibrary_World::IsPlayInEditorPreview(Object->GetWorld()))
 			{
 				return GEngine;
 			}
 			else
 #endif // #if WITH_EDITOR
 			{
-				return Actor->GetWorld()->GetGameInstance();
+				return Object->GetWorld()->GetGameInstance();
 			}
 		}
 	}

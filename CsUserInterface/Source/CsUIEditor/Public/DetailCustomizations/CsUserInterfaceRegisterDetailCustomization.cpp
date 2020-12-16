@@ -22,23 +22,27 @@ void FCsUserInterfaceRegisterDetailCustomization::Register()
 
 	// EnumStruct
 	{
+#define CS_TEMP_REGISTER(EnumShortName, EnumName) PropertyModule.RegisterCustomPropertyTypeLayout(EnumShortName, FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(EnumName##Customization::MakeInstance)))
+
 		// WidgetActor
 		{
 			// ECsWidgetActor
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsWidgetActor", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWidgetActorCustomization::MakeInstance));
+			CS_TEMP_REGISTER("ECsWidgetActor", FECsWidgetActor);
 			// ECsWidgetActorCLass
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsWidgetActorClass", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWidgetActorClassCustomization::MakeInstance));
+			CS_TEMP_REGISTER("ECsWidgetActorClass", FECsWidgetActorClass);
 		}
 		// UserWidget
 		{
 			// ECsUserWidget
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsUserWidget", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsUserWidgetCustomization::MakeInstance));
+			CS_TEMP_REGISTER("ECsUserWidget", FECsUserWidget);
 			// ECsUserWidgetCLass
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsUserWidgetClass", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsUserWidgetClassCustomization::MakeInstance));
+			CS_TEMP_REGISTER("ECsUserWidgetClass", FECsUserWidgetClass);
 			// ECsUserWidgetPooled
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsUserWidgetPooled", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsUserWidgetPooledCustomization::MakeInstance));
-			// ECsUserWidgetPooledCLass
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsUserWidgetPooledClass", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsUserWidgetPooledClassCustomization::MakeInstance));
+			CS_TEMP_REGISTER("ECsUserWidgetPooled", FECsUserWidgetPooled);
+			// ECsUserWidgetPooledClass
+			CS_TEMP_REGISTER("ECsUserWidgetPooledClass", FECsUserWidgetPooledClass);
 		}
+
+#undef CS_TEMP_REGISTER
 	}
 }

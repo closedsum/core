@@ -23,24 +23,29 @@ TSharedPtr<SGraphPin> FCsUserInterfacePanelGraphPinFactory::CreatePin(UEdGraphPi
 	Check if pin is struct, and then check if that pin is of struct type we want customize
 	*/
 
+#define CS_TEMP_CREATE(EnumName, EnumShortName) if (DoesPinUseScriptStruct<EnumName>(InPin, K2Schema)) { return SNew(SCsGraphPin_##EnumShortName, InPin); }
+
 	// WidgetActor
 	{
 		// FECsWidgetActor
-		if (DoesPinUseScriptStruct<FECsWidgetActor>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWidgetActor, InPin); }
+		CS_TEMP_CREATE(FECsWidgetActor, ECsWidgetActor)
 		// FECsWidgetActorClass
-		if (DoesPinUseScriptStruct<FECsWidgetActorClass>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWidgetActorClass, InPin); }
+		CS_TEMP_CREATE(FECsWidgetActorClass, ECsWidgetActorClass)
 	}
 	// UserWidget
 	{
 		// FECsUserWidget
-		if (DoesPinUseScriptStruct<FECsUserWidget>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsUserWidget, InPin); }
+		CS_TEMP_CREATE(FECsUserWidget, ECsUserWidget)
 		// FECsUserWidgetClass
-		if (DoesPinUseScriptStruct<FECsUserWidgetClass>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsUserWidgetClass, InPin); }
+		CS_TEMP_CREATE(FECsUserWidgetClass, ECsUserWidgetClass)
 		// FECsUserWidgetPooled
-		if (DoesPinUseScriptStruct<FECsUserWidgetPooled>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsUserWidgetPooled, InPin); }
+		CS_TEMP_CREATE(FECsUserWidgetPooled, ECsUserWidgetPooled)
 		// FECsUserWidgetPooledClass
-		if (DoesPinUseScriptStruct<FECsUserWidgetPooledClass>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsUserWidgetPooledClass, InPin); }
+		CS_TEMP_CREATE(FECsUserWidgetPooledClass, ECsUserWidgetPooledClass)
 	}
+
+#undef CS_TEMP_CREATE
+
 	return nullptr;
 }
 

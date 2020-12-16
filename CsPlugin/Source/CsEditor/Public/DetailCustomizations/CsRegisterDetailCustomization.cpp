@@ -14,6 +14,8 @@
 		// Asset
 #include "DetailCustomizations/EnumStruct/ECsAssetTypeCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsLoadAssetsTypeCustomization.h"
+		// Update
+#include "DetailCustomizations/EnumStruct/Update/ECsUpdateGroupCustomization.h"
 		// Input
 #include "DetailCustomizations/EnumStruct/Input/ECsInputActionCustomization.h"
 #include "DetailCustomizations/EnumStruct/Input/ECsInputActionMapCustomization.h"
@@ -39,33 +41,39 @@ void FCsRegisterDetailCustomization::Register()
 
 	// EnumStruct
 	{
+#define CS_TEMP_REGISTER(EnumShortName, EnumName) PropertyModule.RegisterCustomPropertyTypeLayout(EnumShortName, FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(EnumName##Customization::MakeInstance)))
+
 		// CVar
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsCVarLog", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCVarLogCustomization::MakeInstance));
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsCVarToggle", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCVarToggleCustomization::MakeInstance));
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsCVarDraw", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCVarDrawCustomization::MakeInstance));
+		CS_TEMP_REGISTER("ECsCVarLog", FECsCVarLog);
+		CS_TEMP_REGISTER("ECsCVarToggle", FECsCVarToggle);
+		CS_TEMP_REGISTER("ECsCVarDraw", FECsCVarDraw);
 		// Asset
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsAssetType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsAssetTypeCustomization::MakeInstance));
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsLoadAssetsType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsLoadAssetsTypeCustomization::MakeInstance));
+		CS_TEMP_REGISTER("ECsAssetType", FECsAssetType);
+		CS_TEMP_REGISTER("ECsLoadAssetsType", FECsLoadAssetsType);
+		// Update
+		CS_TEMP_REGISTER("ECsUpdateGroup", FECsUpdateGroup);
 		// Input
 		{
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsInputAction", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsInputActionCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsInputActionMap", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsInputActionMapCustomization::MakeInstance));
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsGameEvent", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGameEventCustomization::MakeInstance));
+			CS_TEMP_REGISTER("ECsInputAction", FECsInputAction);
+			CS_TEMP_REGISTER("ECsInputActionMap", FECsInputActionMap);
+			CS_TEMP_REGISTER("ECsGameEvent", FECsGameEvent);
 			// GestureType
-			PropertyModule.RegisterCustomPropertyTypeLayout("ECsGestureType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGestureTypeCustomization::MakeInstance));
+			CS_TEMP_REGISTER("ECsGestureType", FECsGestureType);
 		}
 		// SurfaceType
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsSurfaceType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSurfaceTypeCustomization::MakeInstance));
+		CS_TEMP_REGISTER("ECsSurfaceType", FECsSurfaceType);
 		// Process
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProcess", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProcessCustomization::MakeInstance));
+		CS_TEMP_REGISTER("ECsProcess", FECsProcess);
 		// FX
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsFX", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsFXCustomization::MakeInstance));
+		CS_TEMP_REGISTER("ECsFX", FECsFX);
 		// Damage
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsDamageType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsDamageTypeCustomization::MakeInstance));
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsHitType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsHitTypeCustomization::MakeInstance));
+		CS_TEMP_REGISTER("ECsDamageType", FECsDamageType);
+		CS_TEMP_REGISTER("ECsHitType", FECsHitType);
 		// Sound
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsSound", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSoundCustomization::MakeInstance));
+		CS_TEMP_REGISTER("ECsSound", FECsSound);
 		// Sense
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsSenseActorType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSenseActorTypeCustomization::MakeInstance));
+		CS_TEMP_REGISTER("ECsSenseActorType", FECsSenseActorType);
+
+#undef CS_TEMP_REGISTER
 	}
 }

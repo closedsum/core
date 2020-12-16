@@ -66,6 +66,10 @@ public:
 		return GetFirstLocalPlayerControllerChecked<T>(Str::GetFirstLocalPlayerControllerChecked, World);
 	}
 
+	static APlayerController* GetFirstLocalPlayerControllerChecked(const FString& Context, UObject* WorldContext);
+
+	static APlayerController* GetPlayerControllerOrFirstLocalChecked(const FString& Context, APawn* Pawn);
+
 #pragma endregion PlayerController
 
 // PlayerState

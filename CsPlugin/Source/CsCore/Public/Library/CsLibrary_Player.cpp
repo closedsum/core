@@ -30,6 +30,26 @@ APlayerController* FCsLibrary_Player::GetFirstLocalPlayerController(UWorld* Worl
 	return GEngine->GetFirstLocalPlayerController(World);
 }
 
+APlayerController* FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(const FString& Context, UObject* WorldContext)
+{
+	checkf(WorldContext, TEXT("%s: WorldContext is NULL."));
+
+	UWorld* World = WorldContext->GetWorld();
+
+	checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+
+	return GetFirstLocalPlayerControllerChecked(Context, World);
+}
+
+APlayerController* FCsLibrary_Player::GetPlayerControllerOrFirstLocalChecked(const FString& Context, APawn* Pawn)
+{
+	checkf(Pawn, TEXT("%s: Pawn is NULL."));
+
+	if (APlayerController* PC = Cast<APlayerController>(Pawn->Controller))
+		return PC;
+	return GetFirstLocalPlayerControllerChecked(Context, Pawn);
+}
+
 #pragma endregion PlayerController
 
 // PlayerState

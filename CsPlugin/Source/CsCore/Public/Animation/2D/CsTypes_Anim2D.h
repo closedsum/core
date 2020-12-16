@@ -327,7 +327,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsAnim, N2D, NFlipbook, NTexture, FFlipbook)
 
 /**
 * Describes a 2D Animation "flipbook" made up of Textures.
-* The texture are meant to swapped on a Material.
+* The texture are meant to swapped on a Material (i.e. UMaterialInstanceDynamic) 
+* or UI object (i.e. UImage).
 */
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnim2DFlipbookTexture

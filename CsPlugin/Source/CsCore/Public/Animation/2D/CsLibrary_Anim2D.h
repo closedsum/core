@@ -30,30 +30,33 @@ namespace NCsAnim
 
 		private:
 		#define ParamsManagerType NCsAnim::N2D::NPlay::NParams::FManager
-			ParamsManagerType Manager_PlayParams;
-		#undef ParamsManagerType
-
-		public:
-
 		#define ParamsResourceType NCsAnim::N2D::NPlay::NParams::FResource
+		#define ParamsType NCsAnim::N2D::NPlay::NParams::FParams
+
+			ParamsManagerType Manager_PlayParams;
+		public:
 		
 			FORCEINLINE ParamsResourceType* AllocatePlayParams() { return Manager_PlayParams.Allocate(); }
 		
 			FORCEINLINE void DeallocatePlayParams(ParamsResourceType* Resource) { Manager_PlayParams.Deallocate(Resource); }
 
-		#undef ParamsResourceType
-
-			#define ParamsType NCsAnim::N2D::NPlay::NParams::FParams
 			/**
 			*/
 			static const FCsRoutineHandle& Play(const ParamsType& Params);
-			#undef ParamsType
+
+			/**
+			*/
+			static const FCsRoutineHandle& Play(ParamsResourceType* Params);
 
 		private:
 
 			static char Play_Internal(FCsRoutine* R);
 
 			static void Play_Internal_OnEnd(FCsRoutine* R);
+
+		#undef ParamsManagerType
+		#undef ParamsResourceType
+		#undef ParamsType
 		};
 	}
 }

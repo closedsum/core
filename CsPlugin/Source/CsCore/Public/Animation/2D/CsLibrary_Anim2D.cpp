@@ -100,6 +100,18 @@ namespace NCsAnim
 		}
 		#undef ParamsType
 
+		#define ParamsResourceType NCsAnim::N2D::NPlay::NParams::FResource
+		const FCsRoutineHandle& FLibrary::Play(ParamsResourceType* Params)
+		{
+		#undef ParamsResourceType
+
+			const FCsRoutineHandle& Handle = Play(*(Params->Get()));
+
+			Get().DeallocatePlayParams(Params);
+
+			return Handle;
+		}
+
 		char FLibrary::Play_Internal(FCsRoutine* R)
 		{
 			// Cache appropriate references

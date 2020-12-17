@@ -257,6 +257,26 @@ public:
 		}
 	}
 
+	template<typename T>
+	static void KeepExclusiveToA(TArray<T*>& A, const TArray<T*>& B)
+	{
+		const int32 Count = A.Num();
+
+		for (int32 I = Count - 1; I >= 0; --I)
+		{
+			T* _A = A[I];
+
+			for (T* _B : B)
+			{
+				if (_A == _B)
+				{
+					A.RemoveAt(I, 1, false);
+					break;
+				}
+			}
+		}
+	}
+
 #pragma endregion TArray
 
 // Fixed Array

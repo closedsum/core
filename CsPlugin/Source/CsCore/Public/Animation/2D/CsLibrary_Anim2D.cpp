@@ -107,6 +107,7 @@ namespace NCsAnim
 
 			const FCsRoutineHandle& Handle = Play(*(Params->Get()));
 
+			Params->Get()->Reset();
 			Get().DeallocatePlayParams(Params);
 
 			return Handle;

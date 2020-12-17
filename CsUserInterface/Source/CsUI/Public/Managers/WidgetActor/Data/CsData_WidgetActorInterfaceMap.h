@@ -6,34 +6,40 @@
 struct FCsInterfaceMap;
 class UObject;
 
-/**
-*/
-struct CSUI_API FCsData_WidgetActorInterfaceMap final : public ICsGetInterfaceMap
+namespace NCsWidgetActor
 {
-public:
-
-	static const FName Name;
-
-private:
-
-	FCsInterfaceMap* InterfaceMap;
-
-public:
-
-	FCsData_WidgetActorInterfaceMap();
-	~FCsData_WidgetActorInterfaceMap();
-
-
-	FORCEINLINE UObject* _getUObject() const { return nullptr; }
-
-// ICsGetInterfaceMap
-#pragma region
-public:
-
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+	namespace NData
 	{
-		return InterfaceMap;
-	}
+		/**
+		*/
+		struct CSUI_API FInterfaceMap final : public ICsGetInterfaceMap
+		{
+		public:
 
-#pragma endregion ICsGetInterfaceMap
-};
+			static const FName Name;
+
+		private:
+
+			FCsInterfaceMap* InterfaceMap;
+
+		public:
+
+			FInterfaceMap();
+			~FInterfaceMap();
+
+
+			FORCEINLINE UObject* _getUObject() const { return nullptr; }
+
+		// ICsGetInterfaceMap
+		#pragma region
+		public:
+
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+			{
+				return InterfaceMap;
+			}
+
+		#pragma endregion ICsGetInterfaceMap
+		};
+	}
+}

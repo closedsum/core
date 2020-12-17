@@ -3,18 +3,24 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsData_UserWidgetInterfaceMap::Name = FName("FCsData_UserWidgetInterfaceMap");
+const FName NCsUserWidget::NData::FInterfaceMap::Name = FName("NCsUserWidget::NData::FInterfaceMap");
 
-FCsData_UserWidgetInterfaceMap::FCsData_UserWidgetInterfaceMap() :
-		InterfaceMap(nullptr)
+namespace NCsUserWidget
 {
-	InterfaceMap = new FCsInterfaceMap();
+	namespace NData
+	{
+		FInterfaceMap::FInterfaceMap() :
+				InterfaceMap(nullptr)
+		{
+			InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsData_UserWidgetInterfaceMap::Name);
-	InterfaceMap->SetUniqueBasedSlices();
-}
+			InterfaceMap->SetRootName(FInterfaceMap::Name);
+			InterfaceMap->SetUniqueBasedSlices();
+		}
 
-FCsData_UserWidgetInterfaceMap::~FCsData_UserWidgetInterfaceMap()
-{
-	delete InterfaceMap;
+		FInterfaceMap::~FInterfaceMap()
+		{
+			delete InterfaceMap;
+		}
+	}
 }

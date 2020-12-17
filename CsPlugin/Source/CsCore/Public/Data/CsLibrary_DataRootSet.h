@@ -5,25 +5,30 @@
 
 class UObject;
 
-/**
-*/
-class CSCORE_API FCsLibrary_DataRootSet
+namespace NCsDataRootSet
 {
-public:
-
-	static UObject* GetImplChecked(const FString& Context, UObject* ContextRoot);
-
-	template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType&(GetDataRootSetType::*GetDataRootSetFn)() const>
-	static const DataRootSetType& GetChecked(const FString& Context, UObject* ContextRoot)
+	/**
+	*/
+	class CSCORE_API FLibrary
 	{
-		// Get DataRootSetImpl
-		UObject* DataRootSetImpl = GetImplChecked(Context, ContextRoot);
+	public:
 
-		// Get DataRootSet for this Module
-		GetDataRootSetType* GetDataRootSet = Cast<GetDataRootSetType>(DataRootSetImpl);
+		static UObject* GetImplChecked(const FString& Context, UObject* ContextRoot);
 
-		checkf(GetDataRootSet, TEXT("%s: DataRootSet: %s with Class: %s does NOT implement interface: GetDataRootSetType."), *Context, *(DataRootSetImpl->GetName()), *(DataRootSetImpl->GetClass()->GetName()));
+		template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType&(GetDataRootSetType::*GetDataRootSetFn)() const>
+		static const DataRootSetType& GetChecked(const FString& Context, UObject* ContextRoot)
+		{
+			// Get DataRootSetImpl
+			UObject* DataRootSetImpl = GetImplChecked(Context, ContextRoot);
 
-		return (GetDataRootSet->*GetDataRootSetFn)();
-	}
-};
+			// Get DataRootSet for this Module
+			GetDataRootSetType* GetDataRootSet = Cast<GetDataRootSetType>(DataRootSetImpl);
+
+			checkf(GetDataRootSet, TEXT("%s: DataRootSet: %s with Class: %s does NOT implement interface: GetDataRootSetType."), *Context, *(DataRootSetImpl->GetName()), *(DataRootSetImpl->GetClass()->GetName()));
+
+			return (GetDataRootSet->*GetDataRootSetFn)();
+		}
+
+		static UDataTable* GetSafeDataTable(const FString& Context, UObject* Object, const FString& InterfaceGetName, TSoftObjectPtr<UDataTable> DataTableSoftPath, const FString& DataTableName);
+	};
+}

@@ -14,14 +14,16 @@ namespace NCsWidgetActor
 		namespace NHandler
 		{
 #define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define DataType NCsWidgetActor::NData::IData
+#define DataInterfaceMapType NCsWidgetActor::NData::FInterfaceMap
 
 			/**
 			*/
-			class CSUI_API FData : public DataHandlerType<ICsData_WidgetActor, FCsData_WidgetActorPtr, FCsData_WidgetActorInterfaceMap>
+			class CSUI_API FData : public DataHandlerType<DataType, FCsData_WidgetActorPtr, DataInterfaceMapType>
 			{
 			private:
 
-				typedef DataHandlerType<ICsData_WidgetActor, FCsData_WidgetActorPtr, FCsData_WidgetActorInterfaceMap> Super;
+				typedef DataHandlerType<DataType, FCsData_WidgetActorPtr, DataInterfaceMapType> Super;
 
 			public:
 
@@ -37,6 +39,8 @@ namespace NCsWidgetActor
 			};
 
 #undef DataHandlerType
+#undef DataType
+#undef DataInterfaceMapType
 		}
 	}
 }

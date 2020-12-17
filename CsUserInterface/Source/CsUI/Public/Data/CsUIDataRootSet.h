@@ -28,10 +28,10 @@ public:
 	TSoftObjectPtr<UDataTable> UserWidgetPooledClasses;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSoftObjectPtr<UDataTable> UserWidgetPooleds;
+	TSoftObjectPtr<UDataTable> UserWidgetPooled;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	bool bUserWidgetPooledsHasData;
+	bool bUserWidgetPooledHasData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftObjectPtr<UDataTable> UserWidgetClasses;
@@ -47,11 +47,42 @@ public:
 		WidgetActors(nullptr),
 		bWidgetActorsHasData(false),
 		UserWidgetPooledClasses(nullptr),
-		UserWidgetPooleds(nullptr),
-		bUserWidgetPooledsHasData(false),
+		UserWidgetPooled(nullptr),
+		bUserWidgetPooledHasData(false),
 		UserWidgetClasses(nullptr),
 		UserWidgets(nullptr),
 		bUserWidgetsHasData(false)
 	{
+	}
+
+	enum class EMember : uint8
+	{
+		_WidgetActorClasses,
+		_WidgetActors,
+		_UserWidgetPooledClasses,
+		_UserWidgetPooled,
+		_UserWidgetClasses,
+		_UserWidgets
+	};
+
+	bool IsValidChecked(const FString& Context, UObject* Object, const EMember& MemberType) const;
+
+	UDataTable* GetSafeDataTable(const FString& Context, UObject* Object, const EMember& MemberType) const;
+
+	template<typename RowStructType>
+	RowStructType* GetSafeDataTableRow(const FString& Context, UObject* Object, const EMember& MemberType, const FName& RowName, void(*Log)(const FString&)) const
+	{
+		if (UDataTable* DataTable = GetSafeDataTable(Context, Object, MemberType))
+		{
+			if (RowStructType* RowPtr = DataTable->FindRow<RowStructType>(RowName, Context))
+			{
+				return RowPtr;
+			}
+			else
+			{
+				Log(FString::Printf(TEXT("%s: Failed to find Row: %s from DataTable: %s."), *Context, *(RowName.ToString()), *(DataTable->GetName())));
+			}
+		}
+		return nullptr;
 	}
 };

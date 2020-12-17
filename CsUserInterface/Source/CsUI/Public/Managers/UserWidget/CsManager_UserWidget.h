@@ -67,9 +67,12 @@ namespace NCsPooledObject {
 			class TData; } } }
 
 struct FCsUserWidgetPtr;
-class ICsData_UserWidget;
 struct FCsData_UserWidgetPtr;
-struct FCsData_UserWidgetInterfaceMap;
+
+// NCsUserWidget::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NData, IData)
+// NCsUserWidget::NData::FInterfaceMap
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NData, FInterfaceMap)
 
 UCLASS()
 class CSUI_API UCsManager_UserWidget : public UObject
@@ -82,6 +85,8 @@ class CSUI_API UCsManager_UserWidget : public UObject
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 #define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
 #define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define DataType NCsUserWidget::NData::IData
+#define DataInterfaceMapType NCsUserWidget::NData::FInterfaceMap
 
 public:	
 
@@ -783,7 +788,7 @@ public:
 #pragma region
 protected:
 
-	DataHandlerType<ICsData_UserWidget, FCsData_UserWidgetPtr, FCsData_UserWidgetInterfaceMap>* DataHandler;
+	DataHandlerType<DataType, FCsData_UserWidgetPtr, DataInterfaceMapType>* DataHandler;
 
 	virtual void ConstructDataHandler();
 
@@ -795,35 +800,55 @@ public:
 	* @param Name	Name of the UserWidget.
 	* return		Data that implements the interface: ICsData_UserWidget.
 	*/
-	ICsData_UserWidget* GetData(const FName& Name);
+	DataType* GetData(const FName& Name);
 
 	/**
-	* Get the Data (implements interface: ICsData_UserWidget) associated with Type.
+	* Get the Data (implements interface: DataType (NCsUserWidget::NData::IData)) associated with Type.
 	*
 	* @param Type	UserWidget type.
-	* return		Data that implements the interface: ICsData_UserWidget.
+	* return		Data that implements the interface: DataType (NCsUserWidget::NData::IData).
 	*/
-	ICsData_UserWidget* GetData(const FECsUserWidget& Type);
+	DataType* GetData(const FECsUserWidget& Type);
+
+	// TODO: Need to think about / look into mapping of FECsUserWidgetPooled to data
+	/**
+	* Get the Data (implements interface: DataType (NCsUserWidget::NData::IData)) associated with Type.
+	*
+	* @param Type	UserWidgetPooled type.
+	* return		Data that implements the interface: DataType (NCsUserWidget::NData::IData).
+	*/
+	DataType* GetData(const FECsUserWidgetPooled& Type);
 
 	/**
-	* Get the Data (implements interface: ICsData_UserWidget) associated with Name of the character type.
+	* Get the Data (implements interface: DataType (NCsUserWidget::NData::IData)) associated with Name of the character type.
 	* "Checked" in regards to returning a valid pointer.
 	*
 	* @param Context	The calling context.
 	* @param Name		Name of the UserWidget.
-	* return			Data that implements the interface: ICsData_UserWidget.
+	* return			Data that implements the interface: DataType (NCsUserWidget::NData::IData).
 	*/
-	ICsData_UserWidget* GetDataChecked(const FString& Context, const FName& Name);
+	DataType* GetDataChecked(const FString& Context, const FName& Name);
 
 	/**
-	* Get the Data (implements interface: ICsData_UserWidget) associated with Type.
+	* Get the Data (implements interface: DataType (NCsUserWidget::NData::IData)) associated with Type.
 	* "Checked" in regards to returning a valid pointer.
 	*
 	* @param Context	The calling context.
 	* @param Type		UserWidget type.
-	* return			Data that implements the interface: ICsData_UserWidget.
+	* return			Data that implements the interface: DataType (NCsUserWidget::NData::IData).
 	*/
-	ICsData_UserWidget* GetDataChecked(const FString& Context, const FECsUserWidget& Type);
+	DataType* GetDataChecked(const FString& Context, const FECsUserWidget& Type);
+
+	// TODO: Need to think about / look into mapping of FECsUserWidgetPooled to data
+	/**
+	* Get the Data (implements interface: DataType (NCsUserWidget::NData::IData)) associated with Type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Type		UserWidgetPooled type.
+	* return			Data that implements the interface: DataType (NCsUserWidget::NData::IData).
+	*/
+	DataType* GetDataChecked(const FString& Context, const FECsUserWidgetPooled& Type);
 
 #pragma endregion Data
 
@@ -833,4 +858,6 @@ public:
 #undef ConstructParamsType
 #undef ClassHandlerType
 #undef DataHandlerType
+#undef DataType
+#undef DataInterfaceMapType
 };

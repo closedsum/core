@@ -3,18 +3,24 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsData_WidgetActorInterfaceMap::Name = FName("FCsData_WidgetActorInterfaceMap");
+const FName NCsWidgetActor::NData::FInterfaceMap::Name = FName("NCsWidgetActor::NData::FInterfaceMap");
 
-FCsData_WidgetActorInterfaceMap::FCsData_WidgetActorInterfaceMap() :
-		InterfaceMap(nullptr)
+namespace NCsWidgetActor
 {
-	InterfaceMap = new FCsInterfaceMap();
+	namespace NData
+	{
+		FInterfaceMap::FInterfaceMap() :
+				InterfaceMap(nullptr)
+		{
+			InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsData_WidgetActorInterfaceMap::Name);
-	InterfaceMap->SetUniqueBasedSlices();
-}
+			InterfaceMap->SetRootName(FInterfaceMap::Name);
+			InterfaceMap->SetUniqueBasedSlices();
+		}
 
-FCsData_WidgetActorInterfaceMap::~FCsData_WidgetActorInterfaceMap()
-{
-	delete InterfaceMap;
+		FInterfaceMap::~FInterfaceMap()
+		{
+			delete InterfaceMap;
+		}
+	}
 }

@@ -6,6 +6,26 @@
 
 #include "CsData_WidgetActor.generated.h"
 
+namespace NCsWidgetActor
+{
+	namespace NData
+	{
+		/**
+		*
+		*/
+		struct CSUI_API IData : public ICsGetInterfaceMap
+		{
+		public:
+
+			static const FName Name;
+
+		public:
+
+			virtual ~IData() {}
+		};
+	}
+}
+
 UINTERFACE(BlueprintType)
 class CSUI_API UCsData_WidgetActor : public UCsGetInterfaceMap
 {

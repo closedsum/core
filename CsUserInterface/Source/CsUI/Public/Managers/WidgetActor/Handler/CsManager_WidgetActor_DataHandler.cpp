@@ -21,8 +21,8 @@ namespace NCsWidgetActor
 
 			void FData::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 			{
-				UObject* DataRootSetImpl			= FCsLibrary_DataRootSet::GetImplChecked(Context, MyRoot);
-				const FCsUIDataRootSet& DataRootSet = FCsUILibrary_DataRootSet::GetChecked(Context, MyRoot);
+				UObject* DataRootSetImpl			= NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
+				const FCsUIDataRootSet& DataRootSet = NCsUIDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
 				TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSet.WidgetActors;
 
@@ -31,9 +31,7 @@ namespace NCsWidgetActor
 				UWorld* World				  = MyRoot->GetWorld();
 				UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
 
-				UDataTable* DataTable = Manager_Data->GetDataTable(DataTableSoftObject);
-
-				checkf(DataTable, TEXT("%s: Failed to get DataTable @ %s."), *Context, *(DataTableSoftObject.ToSoftObjectPath().ToString()));
+				UDataTable* DataTable = Manager_Data->GetDataTableChecked(Context, DataTableSoftObject);
 
 				OutDataTables.Add(DataTable);
 				OutDataTableSoftObjects.Add(DataTableSoftObject);

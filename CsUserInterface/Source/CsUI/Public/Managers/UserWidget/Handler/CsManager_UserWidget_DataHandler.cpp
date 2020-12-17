@@ -25,19 +25,17 @@ namespace NCsUserWidget
 
 			void FData::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 			{
-				UObject* DataRootSetImpl			= FCsLibrary_DataRootSet::GetImplChecked(Context, MyRoot);
-				const FCsUIDataRootSet& DataRootSet = FCsUILibrary_DataRootSet::GetChecked(Context, MyRoot);
+				UObject* DataRootSetImpl			= NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
+				const FCsUIDataRootSet& DataRootSet = NCsUIDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
 				TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSet.UserWidgets;
 
-				checkf(DataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsPrjDataRootSet().Projectiles is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
+				checkf(DataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsUIDataRootSet().Projectiles is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
 
 				UWorld* World				  = MyRoot->GetWorld();
 				UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
 
-				UDataTable* DataTable = Manager_Data->GetDataTable(DataTableSoftObject);
-
-				checkf(DataTable, TEXT("%s: Failed to get DataTable @ %s."), *Context, *(DataTableSoftObject.ToSoftObjectPath().ToString()));
+				UDataTable* DataTable = Manager_Data->GetDataTableChecked(Context, DataTableSoftObject);
 
 				OutDataTables.Add(DataTable);
 				OutDataTableSoftObjects.Add(DataTableSoftObject);
@@ -46,8 +44,8 @@ namespace NCsUserWidget
 			/*
 			bool FData::HasEmulatedDataInterfaces(const FString& Context, const int32& Index) const
 			{
-				UObject* DataRootSetImpl			 = FCsLibrary_DataRootSet::GetImplChecked(Context, MyRoot);
-				const FCsPrjDataRootSet& DataRootSet = FCsPrjLibrary_DataRootSet::GetChecked(Context, MyRoot);
+				UObject* DataRootSetImpl			 = NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
+				const FCsPrjDataRootSet& DataRootSet = NCsUIDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
 				checkf(Index < DataRootSet.Projectiles.Num(), TEXT("%s: Index < %s.GetCsPrjDataRootSet().Projectiles.Num() (%d >= %d)."), *Context, *(DataRootSetImpl->GetName()), DataRootSet.Projectiles.Num());
 
@@ -94,7 +92,9 @@ namespace NCsUserWidget
 
 						EmulatedDataMap.Add(Name, Data);
 
-						FCsData_UserWidgetInterfaceMap* EmulatedInterfaceMap = new FCsData_UserWidgetInterfaceMap();
+						typedef NCsUserWidget::NData::FInterfaceMap InterfaceMapType;
+
+						InterfaceMapType* EmulatedInterfaceMap = new InterfaceMapType();
 
 						checkf(EmulatedDataInterfaceMap.Find(Name) == nullptr, TEXT("%s: Emulated Interface Map has already been created for Row: %s."), *Context, *(Name.ToString()));
 
@@ -133,8 +133,8 @@ namespace NCsUserWidget
 			/*
 			const TSet<FECsUserWidgetData>& FData::GetEmulatedDataInterfaces(const FString& Context, const int32& Index)
 			{
-				UObject* DataRootSetImpl			= FCsLibrary_DataRootSet::GetImplChecked(Context, MyRoot);
-				const FCsUIDataRootSet& DataRootSet = FCsUILibrary_DataRootSet::GetChecked(Context, MyRoot);
+				UObject* DataRootSetImpl			= NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
+				const FCsUIDataRootSet& DataRootSet = NCsUIDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
 				return DataRootSet.UserWidgets[Index].EmulatedDataInterfaces;
 			}

@@ -66,8 +66,10 @@ namespace NCsPooledObject {
 			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
 			class TData; } } }
 
-class ICsData_WidgetActor;
-struct FCsData_WidgetActorInterfaceMap;
+// NCsWidgetActor::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWidgetActor, NData, IData)
+// NCsWidgetActor::NData::FInterfaceMap
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWidgetActor, NData, FInterfaceMap)
 
 UCLASS()
 class CSUI_API UCsManager_WidgetActor : public UObject
@@ -80,6 +82,8 @@ class CSUI_API UCsManager_WidgetActor : public UObject
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 #define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
 #define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define DataType NCsWidgetActor::NData::IData
+#define DataInterfaceMapType NCsWidgetActor::NData::FInterfaceMap
 
 public:	
 
@@ -87,20 +91,42 @@ public:
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsManager_WidgetActor* Get(UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static UCsManager_WidgetActor* Get(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
 	
 	template<typename T>
-	static T* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static T* Get(UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
 
+#if WITH_EDITOR
 	static bool IsValid(UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static bool IsValid(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? false : s_Instance != nullptr;
+	}
+#endif // #if WITH_EDITOR
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_WidgetActor> ManagerWidgetActorClass, UObject* InOuter = nullptr);
 	
 	static void Shutdown(UObject* InRoot = nullptr);
+
+#if WITH_EDITOR
 	static bool HasShutdown(UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static bool HasShutdown(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? true : s_Instance == nullptr;
+	}
+#endif // #if WITH_EDITOR
 
 #if WITH_EDITOR
 protected:
@@ -707,47 +733,47 @@ public:
 #pragma region
 protected:
 
-	DataHandlerType<ICsData_WidgetActor, FCsData_WidgetActorPtr, FCsData_WidgetActorInterfaceMap>* DataHandler;
+	DataHandlerType<DataType, FCsData_WidgetActorPtr, DataInterfaceMapType>* DataHandler;
 
 	virtual void ConstructDataHandler();
 
 public:
 
 	/**
-	* Get the Data (implements interface: ICsData_WidgetActor) associated with Name of the character type.
+	* Get the Data (implements interface: DataType (NCsWidgetActor::NData::IData)) associated with Name of the character type.
 	*
 	* @param Name	Name of the WidgetActor.
-	* return		Data that implements the interface: ICsData_WidgetActor.
+	* return		Data that implements the interface: DataType (NCsWidgetActor::NData::IData).
 	*/
-	ICsData_WidgetActor* GetData(const FName& Name);
+	DataType* GetData(const FName& Name);
 
 	/**
-	* Get the Data (implements interface: ICsData_WidgetActor) associated with Type.
+	* Get the Data (implements interface: DataType (NCsWidgetActor::NData::IData)) associated with Type.
 	*
 	* @param Type	WidgetActor type.
-	* return		Data that implements the interface: ICsData_WidgetActor.
+	* return		Data that implements the interface: DataType (NCsWidgetActor::NData::IData).
 	*/
-	ICsData_WidgetActor* GetData(const FECsWidgetActor& Type);
+	DataType* GetData(const FECsWidgetActor& Type);
 
 	/**
-	* Get the Data (implements interface: ICsData_WidgetActor) associated with Name of the character type.
+	* Get the Data (implements interface: DataType (NCsWidgetActor::NData::IData)) associated with Name of the character type.
 	* "Checked" in regards to returning a valid pointer.
 	*
 	* @param Context	The calling context.
 	* @param Name		Name of the WidgetActor.
-	* return			Data that implements the interface: ICsData_WidgetActor.
+	* return			Data that implements the interface: DataType (NCsWidgetActor::NData::IData).
 	*/
-	ICsData_WidgetActor* GetDataChecked(const FString& Context, const FName& Name);
+	DataType* GetDataChecked(const FString& Context, const FName& Name);
 
 	/**
-	* Get the Data (implements interface: ICsData_WidgetActor) associated with Type.
+	* Get the Data (implements interface: DataType (NCsWidgetActor::NData::IData)) associated with Type.
 	* "Checked" in regards to returning a valid pointer.
 	*
 	* @param Context	The calling context.
 	* @param Type		Character type.
-	* return			Data that implements the interface: ICsData_WidgetActor.
+	* return			Data that implements the interface: DataType (NCsWidgetActor::NData::IData).
 	*/
-	ICsData_WidgetActor* GetDataChecked(const FString& Context, const FECsWidgetActor& Type);
+	DataType* GetDataChecked(const FString& Context, const FECsWidgetActor& Type);
 
 #pragma endregion Data
 
@@ -757,4 +783,6 @@ public:
 #undef ConstructParamsType
 #undef ClassHandlerType
 #undef DataHandlerType
+#undef DataType
+#undef DataInterfaceMapType
 };

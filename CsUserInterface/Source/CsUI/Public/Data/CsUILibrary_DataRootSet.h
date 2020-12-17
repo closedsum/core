@@ -5,11 +5,14 @@
 
 class UObject;
 
-/**
-*/
-class CSUI_API FCsUILibrary_DataRootSet
+namespace NCsUIDataRootSet
 {
-public:
+	/**
+	*/
+	class CSUI_API FLibrary
+	{
+	public:
 
-	static const FCsUIDataRootSet& GetChecked(const FString& Context, UObject* ContextRoot);
-};
+		static const FCsUIDataRootSet& GetChecked(const FString& Context, UObject* ContextRoot);
+	};
+}

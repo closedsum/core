@@ -84,28 +84,19 @@ UCsManager_WidgetActor::UCsManager_WidgetActor(const FObjectInitializer& ObjectI
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
 /*static*/ UCsManager_WidgetActor* UCsManager_WidgetActor::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerWidgetActor(InRoot)->GetManager_WidgetActor();
-#else
-	if (s_bShutdown)
-	{
-		UE_LOG(LogCsUI, Warning, TEXT("UCsManager_WidgetActor::Get: Manager has already shutdown."));
-		return nullptr;
-	}
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
+#if WITH_EDITOR
 /*static*/ bool UCsManager_WidgetActor::IsValid(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerWidgetActor(InRoot)->GetManager_WidgetActor() != nullptr;
-#else
-	return s_Instance != nullptr;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_WidgetActor::Init(UObject* InRoot, TSubclassOf<UCsManager_WidgetActor> ManagerWidgetActorClass, UObject* InOuter /*=nullptr*/)
 {
@@ -166,14 +157,12 @@ UCsManager_WidgetActor::UCsManager_WidgetActor(const FObjectInitializer& ObjectI
 #endif // #if WITH_EDITOR
 }
 
+#if WITH_EDITOR
 /*static*/ bool UCsManager_WidgetActor::HasShutdown(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerWidgetActor(InRoot)->GetManager_WidgetActor() == nullptr;
-#else
-	return s_bShutdown;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
 #if WITH_EDITOR
 
@@ -382,7 +371,7 @@ void UCsManager_WidgetActor::InitInternalFromSettings()
 
 	ClassHandler->PopulateClassMapFromSettings(Context);
 
-	const FCsUIDataRootSet& DataRootSet = FCsUILibrary_DataRootSet::GetChecked(Context, MyRoot);
+	const FCsUIDataRootSet& DataRootSet = NCsUIDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
 	if (DataRootSet.bWidgetActorsHasData)
 		DataHandler->PopulateDataMapFromSettings(Context);
@@ -783,8 +772,11 @@ void UCsManager_WidgetActor::ConstructDataHandler()
 	DataHandler->Log = &FCsUILog::Warning;
 }
 
-ICsData_WidgetActor* UCsManager_WidgetActor::GetData(const FName& Name)
+#define DataType NCsWidgetActor::NData::IData
+DataType* UCsManager_WidgetActor::GetData(const FName& Name)
 {
+#undef DataType
+
 	using namespace NCsManagerWidgetActor::NCached;
 
 	const FString& Context = Str::GetData;
@@ -792,18 +784,27 @@ ICsData_WidgetActor* UCsManager_WidgetActor::GetData(const FName& Name)
 	return DataHandler->GetData(Context, Name);
 }
 
-ICsData_WidgetActor* UCsManager_WidgetActor::GetData(const FECsWidgetActor& Type)
+#define DataType NCsWidgetActor::NData::IData
+DataType* UCsManager_WidgetActor::GetData(const FECsWidgetActor& Type)
 {
+#undef DataType
+
 	return GetData(Type.GetFName());
 }
 
-ICsData_WidgetActor* UCsManager_WidgetActor::GetDataChecked(const FString& Context, const FName& Name)
+#define DataType NCsWidgetActor::NData::IData
+DataType* UCsManager_WidgetActor::GetDataChecked(const FString& Context, const FName& Name)
 {
+#undef DataType
+
 	return DataHandler->GetData(Context, Name);
 }
 
-ICsData_WidgetActor* UCsManager_WidgetActor::GetDataChecked(const FString& Context, const FECsWidgetActor& Type)
+#define DataType NCsWidgetActor::NData::IData
+DataType* UCsManager_WidgetActor::GetDataChecked(const FString& Context, const FECsWidgetActor& Type)
 {
+#undef DataType
+
 	return GetDataChecked(Context, Type.GetFName());
 }
 

@@ -6,7 +6,10 @@
 #include "Data/CsUIGetDataRootSet.h"
 #include "Data/CsUIDataRootSet.h"
 
-const FCsUIDataRootSet& FCsUILibrary_DataRootSet::GetChecked(const FString& Context, UObject* ContextRoot)
+namespace NCsUIDataRootSet
 {
-	return FCsLibrary_DataRootSet::GetChecked<FCsUIDataRootSet, ICsUIGetDataRootSet, &ICsUIGetDataRootSet::GetCsUIDataRootSet>(Context, ContextRoot);
+	const FCsUIDataRootSet& FLibrary::GetChecked(const FString& Context, UObject* ContextRoot)
+	{
+		return NCsDataRootSet::FLibrary::GetChecked<FCsUIDataRootSet, ICsUIGetDataRootSet, &ICsUIGetDataRootSet::GetCsUIDataRootSet>(Context, ContextRoot);
+	}
 }

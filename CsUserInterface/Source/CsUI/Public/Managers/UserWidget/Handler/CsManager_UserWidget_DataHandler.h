@@ -14,14 +14,16 @@ namespace NCsUserWidget
 		namespace NHandler
 		{
 #define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define DataType NCsUserWidget::NData::IData
+#define DataInterfaceMapType NCsUserWidget::NData::FInterfaceMap
 
 			/**
 			*/
-			class CSUI_API FData : public DataHandlerType<ICsData_UserWidget, FCsData_UserWidgetPtr, FCsData_UserWidgetInterfaceMap>
+			class CSUI_API FData : public DataHandlerType<DataType, FCsData_UserWidgetPtr, DataInterfaceMapType>
 			{
 			private:
 
-				typedef DataHandlerType<ICsData_UserWidget, FCsData_UserWidgetPtr, FCsData_UserWidgetInterfaceMap> Super;
+				typedef DataHandlerType<DataType, FCsData_UserWidgetPtr, DataInterfaceMapType> Super;
 
 			public:
 
@@ -47,6 +49,8 @@ namespace NCsUserWidget
 			};
 
 #undef DataHandlerType
+#undef DataType
+#undef DataInterfaceMapType
 		}
 	}
 }

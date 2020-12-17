@@ -446,6 +446,8 @@ struct CSUI_API FCsUserWidgetPooledClassEntry : public FTableRowBase
 #pragma region
 
 /**
+* Row struct / entry in a DataTable that contains information related
+* to a Pooled UserWidget of type: UUserWidget. 
 */
 USTRUCT(BlueprintType)
 struct CSUI_API FCsUserWidgetPooledEntry : public FTableRowBase
@@ -460,11 +462,15 @@ struct CSUI_API FCsUserWidgetPooledEntry : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString DisplayName;
 
-	/** */
+	/** The class type associated with this entry.
+		If populated from a DataTable, the DataTable row struct will usually be 
+		FCsUserWidgetPooledClassEntry or something similar. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FECsUserWidgetPooledClass Class;
 
-	/** */
+	/** The widget type associated with this entry.
+		If populated from a DataTable, the DataTable row struct will usually be 
+		FCsUserWidgetEntry or something similar. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FECsUserWidget UserWidget;
 

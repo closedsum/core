@@ -3,8 +3,18 @@
 #include "Containers/CsInterfaceMap.h"
 #pragma once
 
-/**
-*/
-struct CSUI_API FCsLibrary_Data_UserWidget : public TCsLibrary_InterfaceMap<ICsData_UserWidget>
+namespace NCsUserWidget
 {
-};
+	namespace NData
+	{
+	#define DataType NCsUserWidget::NData::IData
+
+		/**
+		*/
+		struct CSUI_API FLibrary : public TCsLibrary_InterfaceMap<DataType>
+		{
+		};
+
+	#undef DataType
+	}
+}

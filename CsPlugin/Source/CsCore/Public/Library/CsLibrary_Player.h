@@ -68,6 +68,10 @@ public:
 
 	static APlayerController* GetFirstLocalPlayerControllerChecked(const FString& Context, UObject* WorldContext);
 
+	static APlayerController* GetLocalPlayerController(const FString& Context, UWorld* World, const int32& ControllerId);
+
+	static APlayerController* GetLocalPlayerControllerChecked(const FString& Context, UWorld* World, const int32& ControllerId);
+
 	static APlayerController* GetPlayerControllerOrFirstLocalChecked(const FString& Context, APawn* Pawn);
 
 #pragma endregion PlayerController

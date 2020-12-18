@@ -2644,6 +2644,23 @@ UObject* UCsLibrary_Load::GetDefaultObjectChecked(const FString& Context, const 
 				return DOb;
 			}
 		}
+		else
+		if (UClass* Class = Cast<UClass>(BpGC->ClassGeneratedBy))
+		{
+			UObject* DOb = Class->GetDefaultObject();
+
+			checkf(DOb, TEXT("%s: Failed to get DefaultObject from Object: %s with Class: %s."), *Context, *(O->GetName()), *(Class->GetName()));
+
+			return DOb;
+		}
+		else
+		{
+			UObject* DOb = BpGC->GetDefaultObject();
+
+			checkf(DOb, TEXT("%s: Failed to get DefaultObject from Object: %s with Class: %s."), *Context, *(O->GetName()), *(BpGC->GetName()));
+
+			return DOb;
+		}
 	}
 	else
 	{

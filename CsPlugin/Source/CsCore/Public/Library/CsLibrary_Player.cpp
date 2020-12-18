@@ -5,6 +5,7 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 // Player
+#include "Engine/LocalPlayer.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/PlayerState.h"
 // Pawn
@@ -39,6 +40,34 @@ APlayerController* FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(const
 	checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
 
 	return GetFirstLocalPlayerControllerChecked(Context, World);
+}
+
+APlayerController* FCsLibrary_Player::GetLocalPlayerController(const FString& Context, UWorld* World, const int32& ControllerId)
+{
+	checkf(World, TEXT("%s: World is NULL."), *Context);
+
+	checkf(ControllerId > INDEX_NONE, TEXT("%s: ControllerId: %d is NOT Valid. ControllerId must be >= 0."), *Context, ControllerId);
+
+	if (ULocalPlayer* Player = GEngine->GetLocalPlayerFromControllerId(World, ControllerId))
+		return Player->PlayerController;
+	return nullptr;
+}
+
+APlayerController* FCsLibrary_Player::GetLocalPlayerControllerChecked(const FString& Context, UWorld* World, const int32& ControllerId)
+{
+	checkf(World, TEXT("%s: World is NULL."), *Context);
+
+	checkf(ControllerId > INDEX_NONE, TEXT("%s: ControllerId: %d is NOT Valid. ControllerId must be >= 0."), *Context, ControllerId);
+
+	ULocalPlayer* Player = GEngine->GetLocalPlayerFromControllerId(World, ControllerId);
+
+	checkf(Player, TEXT("%s: Failed to get Local Player with ControllerId: %d."), *Context, ControllerId);
+
+	APlayerController* PC = Player->PlayerController;
+
+	checkf(PC, TEXT("%s: Failed to get PlayerController from Local Player: %s with ControllerId: %d."), *Context, *(Player->GetName()), ControllerId);
+
+	return PC;
 }
 
 APlayerController* FCsLibrary_Player::GetPlayerControllerOrFirstLocalChecked(const FString& Context, APawn* Pawn)

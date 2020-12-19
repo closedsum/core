@@ -12,7 +12,7 @@ public:
 
 	TCsProperty_Multi_FString_Enum_ThreeParams()
 	{
-		DefaultValue.Empty();
+		//DefaultValue.Empty();
 	}
 	~TCsProperty_Multi_FString_Enum_ThreeParams(){}
 

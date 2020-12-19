@@ -212,7 +212,7 @@ namespace NCsString
 		int32 Count		= 0;
 		const int32 Len = Bitfield.Len();
 
-		for (int32 I = 0; Len; ++I)
+		for (int32 I = 0; I < Len; ++I)
 		{
 			if (Bitfield[I] == '0')
 				++Count;
@@ -225,7 +225,7 @@ namespace NCsString
 		int32 Count		= 0;
 		const int32 Len = Bitfield.Len();
 
-		for (uint32 I = 0; Len; ++I)
+		for (int32 I = 0; I < Len; ++I)
 		{
 			if (Bitfield[I] == '0' || Bitfield[I] == '1')
 				++Count;

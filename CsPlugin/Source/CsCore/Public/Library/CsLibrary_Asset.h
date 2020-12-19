@@ -9,7 +9,7 @@
 #include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
 
 #include "Factories/BlueprintFactory.h"
-#endif WITH_EDITOR
+#endif // #if WITH_EDITOR
 
 #include "CsLibrary_Asset.generated.h"
 

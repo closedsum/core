@@ -127,8 +127,8 @@ public:
 
 		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: ModuleSettingsType."), *Context);
 
-		const TArray<FCsSettings_Enum>& Enums = ModuleSettings->GetSettingsEnum<EnumType>();
-		const FString& EnumSettingsPath		  = ModuleSettings->GetSettingsEnumPath<EnumType>();
+		const TArray<FCsSettings_Enum>& Enums = ModuleSettings->template GetSettingsEnum<EnumType>();
+		const FString& EnumSettingsPath		  = ModuleSettings->template GetSettingsEnumPath<EnumType>();
 
 		if (Enums.Num() > CS_EMPTY)
 		{

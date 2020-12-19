@@ -461,7 +461,7 @@ UActorComponent* FCsClassInstancePropertyMap::GetSafeValue_ActorComponent(const 
 		return (*Value)->Get();
 
 	Success = false;
-	return false;
+	return nullptr;
 }
 
 USceneComponent* FCsClassInstancePropertyMap::GetValue_SceneComponent(const FName& PropertyName)
@@ -477,7 +477,7 @@ USceneComponent* FCsClassInstancePropertyMap::GetSafeValue_SceneComponent(const 
 		return (*Value)->Get();
 
 	Success = false;
-	return false;
+	return nullptr;
 }
 
 UPrimitiveComponent* FCsClassInstancePropertyMap::GetValue_PrimitiveComponent(const FName& PropertyName)
@@ -493,7 +493,7 @@ UPrimitiveComponent* FCsClassInstancePropertyMap::GetSafeValue_PrimitiveComponen
 		return (*Value)->Get();
 
 	Success = false;
-	return false;
+	return nullptr;
 }
 
 UStaticMeshComponent* FCsClassInstancePropertyMap::GetValue_StaticMeshComponent(const FName& PropertyName)
@@ -509,7 +509,7 @@ UStaticMeshComponent* FCsClassInstancePropertyMap::GetSafeValue_StaticMeshCompon
 		return (*Value)->Get();
 
 	Success = false;
-	return false;
+	return nullptr;
 }
 
 USkeletalMeshComponent* FCsClassInstancePropertyMap::GetValue_SkeletalMeshComponent(const FName& PropertyName)
@@ -525,7 +525,7 @@ USkeletalMeshComponent* FCsClassInstancePropertyMap::GetSafeValue_SkeletalMeshCo
 		return (*Value)->Get();
 
 	Success = false;
-	return false;
+	return nullptr;
 }
 
 #pragma endregion Get

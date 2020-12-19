@@ -26,7 +26,7 @@ public:
 
 	FCsRunnableTaskInfo() :
 		Index(INDEX_NONE),
-		Name(false),
+		Name(nullptr),
 		Owner(nullptr),
 		Task(nullptr),
 		Handle()

@@ -249,9 +249,8 @@ void UCsCoordinator_ConsoleCommand::OnDeconstructManager(ManagerType* Manager, c
 #undef HandleType
 #undef ManagerType
 
-#if WITH_EDITOR
+	// TODO: HACK: Need look into why this needs to be checked
 	if (this)
-#endif // #if WITH_EDITOR
 	{
 		RemoveManager(Handle);
 	}

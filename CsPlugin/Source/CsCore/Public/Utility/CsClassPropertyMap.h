@@ -143,8 +143,8 @@ public:
 	template<typename EnumType>
 	EnumType GetValue_EnumClass(const FName& PropertyName)
 	{
-		ICsProperty* Ref = Map_EnumClass.Find(PropertyName);
-		TCsProperty_Ref<EnumType>* Enum_Ref = (TCsProperty_Ref<EnumType>*)(Ref);
+		ICsProperty** Ref					= Map_EnumClass.Find(PropertyName);
+		TCsProperty_Ref<EnumType>* Enum_Ref = (TCsProperty_Ref<EnumType>*)(*Ref);
 		return Enum_Ref->Get();
 	}
 
@@ -199,8 +199,8 @@ public:
 	template<typename EnumType>
 	void SetValue_EnumClass(const FName& PropertyName, const EnumType& Value)
 	{
-		ICsProperty* Ref = Map_EnumClass.Find(PropertyName);
-		TCsProperty_Ref<EnumType>* Enum_Ref = (TCsProperty_Ref<EnumType>*)(Ref);
+		ICsProperty** Ref				    = Map_EnumClass.Find(PropertyName);
+		TCsProperty_Ref<EnumType>* Enum_Ref = (TCsProperty_Ref<EnumType>*)(*Ref);
 
 		*(Enum_Ref) = Value;
 	}

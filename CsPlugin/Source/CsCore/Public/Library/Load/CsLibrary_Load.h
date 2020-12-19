@@ -29,7 +29,7 @@ class CSCORE_API UCsLibrary_Load : public UObject
 			return Class;
 		}
 
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::GetAssetClass: Failed to find Asset at: %s. It is possible it was deleted or moved."), *AssetPath);
+		//UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Load::GetAssetClass: Failed to find Asset at: %s. It is possible it was deleted or moved."), *AssetPath);
 		return nullptr;
 	}
 

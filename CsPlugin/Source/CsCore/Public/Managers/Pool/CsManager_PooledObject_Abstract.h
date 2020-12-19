@@ -420,7 +420,7 @@ namespace NCsPooledObject
 				// Actor
 				if (Params.ConstructionType == ECsPooledObjectConstruction::Actor)
 				{
-					AActor* Actor = GetCurrentWorld()->SpawnActor<AActor>(Class, Params.ConstructionInfo);
+					AActor* Actor = GetCurrentWorld()->template SpawnActor<AActor>(Class, Params.ConstructionInfo);
 
 					if (!Params.bReplicates)
 					{
@@ -1748,7 +1748,7 @@ namespace NCsPooledObject
 		#endif // #if !UE_BUILD_SHIPPING
 
 				// Get PooledObjectPayload
-				PooledPayloadType* PooledObjectPayload = InterfaceMap->Get<PooledPayloadType>();
+				PooledPayloadType* PooledObjectPayload = NCsInterfaceMap::GetInterfaceChecked<PooledPayloadType, PayloadType>(Context, P);
 		
 				PooledObjectPayload->Reset();
 

@@ -561,7 +561,7 @@ struct CSCORE_API FCsDataMappingEntry
 	int32 Data_LoadFlags;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "Data")
-	FCsTArrayStringAssetReference AssetReferences[ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX];
+	FCsTArrayStringAssetReference AssetReferences[(uint8)ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX];
 
 	FCsDataMappingEntry() :
 		ShortCode(NAME_None),

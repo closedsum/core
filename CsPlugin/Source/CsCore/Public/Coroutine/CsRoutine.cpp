@@ -38,7 +38,7 @@ void FCsRoutine::SetGroup(const FECsUpdateGroup& InGroup)
 	Group = InGroup;
 #if !UE_BUILD_SHIPPING
 	ScopeName = FString::Printf(TEXT("Routine_%d_%s"), Index, *(Group.GetName()));
-#endif !UE_BUILD_SHIPPING
+#endif // #if !UE_BUILD_SHIPPING
 }
 
 #pragma endregion Time

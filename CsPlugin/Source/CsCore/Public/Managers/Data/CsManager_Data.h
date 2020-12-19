@@ -508,7 +508,7 @@ public:
 	template<typename T>
 	FORCEINLINE T* GetDataObject(const FSoftObjectPath& Path)
 	{
-		return Cast<T>(GetDataObject(EntryName));
+		return Cast<T>(GetDataObject(Path));
 	}
 
 	/**

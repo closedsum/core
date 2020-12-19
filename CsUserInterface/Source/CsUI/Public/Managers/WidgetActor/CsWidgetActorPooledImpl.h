@@ -8,11 +8,10 @@
 #include "Managers/WidgetActor/CsWidgetActor.h"
 #include "CsWidgetActorPooledImpl.generated.h"
 
-struct NCsPooledObject::NCache::ICache;
-
-namespace NCsPooledObject {
-	namespace NPayload {
-		struct IPayload; } }
+// NCsPooledObject::NCache::ICache
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
+// NCsPooledObject::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
 class UCsWidgetComponent;
 struct FCsUserWidgetPooled;

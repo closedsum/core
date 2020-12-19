@@ -1004,7 +1004,7 @@ namespace NCsPooledObject
 			template<typename PayloadImplType>
 			FORCEINLINE PayloadImplType* AllocatePayload(const FString& Context, const KeyType& Type)
 			{
-				return GetManagerPooledObjects(Type)->AllocatePayload<PayloadImplType>(Context);
+				return GetManagerPooledObjects(Type)->template AllocatePayload<PayloadImplType>(Context);
 			}
 
 			/**
@@ -1018,7 +1018,7 @@ namespace NCsPooledObject
 			template<typename PayloadImplType>
 			FORCEINLINE PayloadImplType* AllocatePayload(const KeyType& Type)
 			{
-				return GetManagerPooledObjects(Type)->AllocatePayload<PayloadImplType>();
+				return GetManagerPooledObjects(Type)->template AllocatePayload<PayloadImplType>();
 			}
 
 			/**
@@ -1072,7 +1072,7 @@ namespace NCsPooledObject
 			template<typename OtherContainerType, typename OtherPayloadType>
 			FORCEINLINE const OtherContainerType* Spawn(const KeyType& Type, OtherPayloadType* Payload)
 			{
-				const OtherContainerType* Object = GetManagerPooledObjects(Type)->Spawn<OtherContainerType, OtherPayloadType>(Payload);
+				const OtherContainerType* Object = GetManagerPooledObjects(Type)->template Spawn<OtherContainerType, OtherPayloadType>(Payload);
 
 				OnSpawn_Event.Broadcast(Type, static_cast<const InterfaceContainerType*>(Object));
 				return Object;

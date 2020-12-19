@@ -1522,7 +1522,7 @@ struct CSCORE_API FCsInputProfile
 	uint8 Player;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "Input")
-	FCsInputActionMappings DeviceMappings[ECsInputDevice::ECsInputDevice_MAX];
+	FCsInputActionMappings DeviceMappings[(uint8)ECsInputDevice::ECsInputDevice_MAX];
 
 	FCsInputProfile()
 	{

@@ -6,8 +6,6 @@
 #include "Types/CsTypes_Macro.h"
 // Library
 #include "Data/CsLibrary_DataRootSet.h"
-// DataTable
-#include "Engine/DataTable.h"
 
 // Cached
 #pragma region

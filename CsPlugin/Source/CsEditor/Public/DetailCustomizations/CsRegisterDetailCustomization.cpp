@@ -20,6 +20,7 @@
 #include "DetailCustomizations/EnumStruct/Input/ECsInputActionCustomization.h"
 #include "DetailCustomizations/EnumStruct/Input/ECsInputActionMapCustomization.h"
 #include "DetailCustomizations/EnumStruct/Input/ECsGameEventCustomization.h"
+#include "DetailCustomizations/EnumStruct/Input/ECsGameEventCoordinatorGroupCustomization.h"
 #include "DetailCustomizations/EnumStruct/Input/ECsGestureTypeCustomization.h"
 		// Process
 #include "DetailCustomizations/EnumStruct/ECsProcessCustomization.h"
@@ -57,6 +58,7 @@ void FCsRegisterDetailCustomization::Register()
 			CS_TEMP_REGISTER("ECsInputAction", FECsInputAction);
 			CS_TEMP_REGISTER("ECsInputActionMap", FECsInputActionMap);
 			CS_TEMP_REGISTER("ECsGameEvent", FECsGameEvent);
+			CS_TEMP_REGISTER("ECsGameEventCoordinatorGroup", FECsGameEventCoordinatorGroup);
 			// GestureType
 			CS_TEMP_REGISTER("ECsGestureType", FECsGestureType);
 		}

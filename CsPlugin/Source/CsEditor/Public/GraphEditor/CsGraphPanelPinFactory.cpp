@@ -8,6 +8,7 @@
 #include "Types/CsTypes.h"
 #include "Managers/Time/CsTypes_Update.h"
 #include "Managers/Input/CsTypes_Input.h"
+#include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
 #include "Managers/FX/CsTypes_FX.h"
 //#include "Types/CsTypes_Item.h"
 //#include "Types/CsTypes_Recipe.h"
@@ -33,6 +34,7 @@
 #include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsInputAction.h"
 #include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsInputActionMap.h"
 #include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsGameEvent.h"
+#include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsGameEventCoordinatorGroup.h"
 #include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsGestureType.h"
 	// FX
 #include "GraphEditor/EnumStruct/FX/SCsGraphPin_ECsFX.h"
@@ -101,6 +103,8 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 		CS_TEMP_CREATE(FECsInputActionMap, ECsInputActionMap)
 		// FECsGameEvent
 		CS_TEMP_CREATE(FECsGameEvent, ECsGameEvent)
+		// FECsGameEventCoordinatorGroup
+		CS_TEMP_CREATE(FECsGameEventCoordinatorGroup, ECsGameEventCoordinatorGroup)
 		// FECsGestureType
 		CS_TEMP_CREATE(FECsGestureType, ECsGestureType)
 	}

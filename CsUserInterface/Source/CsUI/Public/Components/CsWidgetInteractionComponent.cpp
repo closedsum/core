@@ -27,20 +27,26 @@
 
 namespace NCsWidgetInteractionComponent
 {
-	namespace Str
+	namespace NCached
 	{
+		namespace Str
+		{
 
-	}
+		}
 
-	namespace Name
-	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsWidgetInteractionComponent, OnProcessGameEventInfo);
+		namespace Name
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsWidgetInteractionComponent, OnProcessGameEventInfo);
+		}
 	}
 }
 
 #pragma endregion Cached
 
-UCsWidgetInteractionComponent::UCsWidgetInteractionComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsWidgetInteractionComponent::UCsWidgetInteractionComponent(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	OnProcessGameEventInfoHandleMap(),
+	Internal_ComponentsToIgnoreOnTrace()
 {
 }
 
@@ -54,7 +60,21 @@ void UCsWidgetInteractionComponent::BeginDestroy()
 	if (GetWorld() &&
 		GetWorld()->GetGameInstance())
 	{
-		UCsCoordinator_GameEvent::Get(GetWorld()->GetGameInstance())->OnProcessGameEventInfo_Event.Remove(OnProcessGameEventInfoHandle);
+		UCsCoordinator_GameEvent* Coordinator_GameEvent = UCsCoordinator_GameEvent::Get(GetWorld()->GetGameInstance());
+
+		typedef UCsCoordinator_GameEvent::FOnProcessGameEventInfo DelegateType;
+		typedef EMCsGameEventCoordinatorGroup GroupMapType;
+		typedef FECsGameEventCoordinatorGroup GroupType;
+
+		for (const TPair<GroupType, FDelegateHandle>& Pair : OnProcessGameEventInfoHandleMap)
+		{
+			const GroupType& Group		  = Pair.Key;
+			const FDelegateHandle& Handle = Pair.Value;
+
+			DelegateType& Delegate = Coordinator_GameEvent->GetOnProcessGameEventInfo_Event(Group);
+
+			Delegate.Remove(Handle);
+		}
 	}
 }
 
@@ -70,15 +90,26 @@ void UCsWidgetInteractionComponent::BeginPlay()
 	if (GetWorld() &&
 		GetWorld()->GetGameInstance())
 	{
-		OnProcessGameEventInfoHandle = UCsCoordinator_GameEvent::Get(GetWorld()->GetGameInstance())->OnProcessGameEventInfo_Event.AddUObject(this, &UCsWidgetInteractionComponent::OnProcessGameEventInfo);
+		UCsCoordinator_GameEvent* Coordinator_GameEvent = UCsCoordinator_GameEvent::Get(GetWorld()->GetGameInstance());
+
+		typedef UCsCoordinator_GameEvent::FOnProcessGameEventInfo DelegateType;
+		typedef EMCsGameEventCoordinatorGroup GroupMapType;
+		typedef FECsGameEventCoordinatorGroup GroupType;
+
+		for (const GroupType& Group : GroupMapType::Get())
+		{
+			DelegateType& Delegate = Coordinator_GameEvent->GetOnProcessGameEventInfo_Event(Group);
+
+			OnProcessGameEventInfoHandleMap.Add(Group, Delegate.AddUObject(this, &UCsWidgetInteractionComponent::OnProcessGameEventInfo));
+		}
 	}
 }
 
 #pragma endregion UActorComponent Interface
 
-void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FCsGameEventInfo& Info)
+void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info)
 {
-	using namespace NCsWidgetInteractionComponent;
+	using namespace NCsWidgetInteractionComponent::NCached;
 
 	// Check to forward input to Widget Interaction Component
 

@@ -3,6 +3,7 @@
 #include "Components/WidgetInteractionComponent.h"
 // Types
 #include "Managers/Input/CsTypes_Input.h"
+#include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
 
 #include "CsWidgetInteractionComponent.generated.h"
 
@@ -31,9 +32,9 @@ public:
 
 protected:
 
-	FDelegateHandle OnProcessGameEventInfoHandle;
+	TMap<FECsGameEventCoordinatorGroup, FDelegateHandle> OnProcessGameEventInfoHandleMap;
 
 	TArray<UPrimitiveComponent*> Internal_ComponentsToIgnoreOnTrace;
 
-	void OnProcessGameEventInfo(const FCsGameEventInfo& Infos);
+	void OnProcessGameEventInfo(const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Infos);
 };

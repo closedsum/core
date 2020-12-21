@@ -40,6 +40,7 @@ UCsManager_Input::UCsManager_Input(const FObjectInitializer& ObjectInitializer) 
 	// Owner
 	OwnerAsController(nullptr),
 	ControllerId(INDEX_NONE),
+	OnPostProcessInput_Event(),
 	CurrentDeltaTime(0.0f),
 	Manager_Inputs(),
 	QueuedInputsForNextFrame(),
@@ -52,7 +53,7 @@ UCsManager_Input::UCsManager_Input(const FObjectInitializer& ObjectInitializer) 
 	PressedKeys(),
 	// Events
 	GameEventDefinitions(),
-	GameEventDefinitionMap(),
+	InputSentenceByGameEventMap(),
 	GameEventPriorityList(),
 	GameEventPriorityMap(),
 	QueuedGameEventInfosForNextFrame(),
@@ -639,6 +640,8 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 	if (CurrentValidGameEventInfos.Num() > CS_EMPTY)
 		OnGameEventInfos_Event.Broadcast(CurrentValidGameEventInfos);
+
+	OnPostProcessInput_Event.Broadcast(DeltaTime, bGamePaused);
 }
 
 FCsInput* UCsManager_Input::AllocateInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*=0.0f*/, const FVector& Location /*=FVector::ZeroVector*/, const FRotator& Rotation /*=FRotator::ZeroRotator*/)
@@ -904,7 +907,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 
 		const FCsInputSentence& Sentence = Def.Sentence;
 
-		GameEventDefinitionMap.Add(Event, Sentence);
+		InputSentenceByGameEventMap.Add(Event, Sentence);
 	}
 
 	const TSet<FCsGameEventDefinitionSimple>& GameEventDefinitionsSimple = InputSettings.GameEventDefinitionsSimple;
@@ -923,7 +926,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 			continue;
 		}
 
-		if (GameEventDefinitionMap.Find(GameEvent))
+		if (InputSentenceByGameEventMap.Find(GameEvent))
 		{
 #if WITH_EDITOR
 			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupGameEventDefinitions (%s): GameEventDefinitionSimple set with GameEvent: %s is already Set in GameEventDefinitions."), *(GetOwner()->GetName()), GameEvent.ToChar());
@@ -936,7 +939,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 		Sentence.Phrases.AddDefaulted();
 		Sentence.Phrases[CS_FIRST].AddAndInputToWord(CS_FIRST, Action, Event);
 
-		GameEventDefinitionMap.Add(GameEvent, Sentence);
+		InputSentenceByGameEventMap.Add(GameEvent, Sentence);
 
 		FCsGameEventDefinition GameEventDefinition;
 		GameEventDefinition.Event	 = GameEvent;
@@ -951,7 +954,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 	{
 		const FECsGameEvent& Event = NCsGameEvent::Default__MousePositionXY__;
 
-		if (!GameEventDefinitionMap.Find(Event))
+		if (!InputSentenceByGameEventMap.Find(Event))
 		{
 			FCsGameEventDefinition Def;
 			Def.Event = Event;
@@ -969,7 +972,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 			Desc.CompletedValue.ValueType = ECsInputValue::Vector;
 			Desc.CompletedValue.ReturnType = ECsInputCompletedValueReturnType::PassThrough;
 
-			GameEventDefinitionMap.Add(Event, Sentence);
+			InputSentenceByGameEventMap.Add(Event, Sentence);
 			GameEventDefinitions.Add(Def);
 		} 
 	}
@@ -977,7 +980,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 	{
 		const FECsGameEvent& Event = NCsGameEvent::Default__MouseLeftButtonPressed__;
 
-		if (!GameEventDefinitionMap.Find(Event))
+		if (!InputSentenceByGameEventMap.Find(Event))
 		{
 			FCsGameEventDefinition Def;
 			Def.Event = Event;
@@ -994,7 +997,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 			Desc.CompareValue.ValueType = ECsInputValue::Void;
 			Desc.CompletedValue.ValueType = ECsInputValue::Void;
 
-			GameEventDefinitionMap.Add(Event, Sentence);
+			InputSentenceByGameEventMap.Add(Event, Sentence);
 			GameEventDefinitions.Add(Def);
 		}
 	}
@@ -1002,7 +1005,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 	{
 		const FECsGameEvent& Event = NCsGameEvent::Default__MouseRightButtonPressed__;
 
-		if (!GameEventDefinitionMap.Find(Event))
+		if (!InputSentenceByGameEventMap.Find(Event))
 		{
 			FCsGameEventDefinition Def;
 			Def.Event = Event;
@@ -1019,7 +1022,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 			Desc.CompareValue.ValueType = ECsInputValue::Void;
 			Desc.CompletedValue.ValueType = ECsInputValue::Void;
 
-			GameEventDefinitionMap.Add(Event, Sentence);
+			InputSentenceByGameEventMap.Add(Event, Sentence);
 			GameEventDefinitions.Add(Def);
 		}
 	}
@@ -1028,7 +1031,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 #if WITH_EDITOR
 	for (const FECsGameEvent& Event : EMCsGameEvent::Get())
 	{
-		if (!GameEventDefinitionMap.Find(Event))
+		if (!InputSentenceByGameEventMap.Find(Event))
 		{
 			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupGameEventDefinitions (%s): No GameEventDefinition set for GameEvent: %s."), *(GetOwner()->GetName()), Event.ToChar());
 		}

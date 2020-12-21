@@ -28,10 +28,21 @@ namespace NCsGameEventCoordinatorGroup
 	typedef FECsGameEventCoordinatorGroup Type;
 	typedef EMCsGameEventCoordinatorGroup EnumMapType;
 
+	/** Broadcast GameEvents Immediately */
+	extern CSCORE_API const Type None;
+	/** Broadcast GameEvents during GameInstance->Tick() */
 	extern CSCORE_API const Type GameInstance;
+	/** Broadcast GameEvents during GameState->Update() */
 	extern CSCORE_API const Type GameState;
-	extern CSCORE_API const Type InputManager0;
-	extern CSCORE_API const Type InputManager1;
+	/** Broadcast GameEvents during ControllerId 0's ManagerInput->PostProcessInput. */
+	extern CSCORE_API const Type ManagerInput0;
+	/** Broadcast GameEvents during ControllerId 1's ManagerInput->PostProcessInput. */
+	extern CSCORE_API const Type ManagerInput1;
+
+	FORCEINLINE static bool IsManagerInput(const Type& Group)
+	{
+		return Group == ManagerInput0 || ManagerInput1;
+	}
 }
 
 #pragma endregion GameEventCoordinatorGroup

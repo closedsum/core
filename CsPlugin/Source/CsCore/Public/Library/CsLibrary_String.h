@@ -86,6 +86,14 @@ namespace NCsString
 		*
 		* @param Str
 		* @param OutValue
+		*/
+		static bool Stream_GetValue(const TCHAR*& Str, FVector& OutValue);
+
+		/**
+		*
+		*
+		* @param Str
+		* @param OutValue
 		* return
 		*/
 		static bool Stream_Get_bool_as_int32(const TCHAR*& Str, int32& OutValue);

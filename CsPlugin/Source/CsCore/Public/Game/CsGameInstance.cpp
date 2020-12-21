@@ -133,14 +133,17 @@ bool UCsGameInstance::Exec(UWorld* InWorld, const TCHAR* Cmd, FOutputDevice& Out
 
 bool UCsGameInstance::Tick(float DeltaSeconds)
 {
-	const FECsUpdateGroup& Group = NCsUpdateGroup::GameInstance;
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	UCsManager_Time::Get(this)->Update(Group, DeltaSeconds);
+	UCsManager_Time::Get(this)->Update(UpdateGroup, DeltaSeconds);
 
-	const FCsDeltaTime& DeltaTime = UCsManager_Time::Get(this)->GetScaledDeltaTime(Group);
+	const FCsDeltaTime& DeltaTime = UCsManager_Time::Get(this)->GetScaledDeltaTime(UpdateGroup);
 
+	const FECsGameEventCoordinatorGroup& EventGroup = NCsGameEventCoordinatorGroup::GameInstance;
+
+	UCsCoordinator_GameEvent::Get(this)->ProcessQueuedGameEventInfos(EventGroup);
 	FCsManager_ScopedTimer::Get().Update(DeltaTime);
-	UCsCoroutineScheduler::Get(this)->Update(Group, DeltaTime);
+	UCsCoroutineScheduler::Get(this)->Update(UpdateGroup, DeltaTime);
 	UCsManager_Load::Get(this)->Update(DeltaTime);
 	UCsManager_Runnable::Get(this)->Update(DeltaTime);
 	return true;

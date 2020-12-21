@@ -7,10 +7,11 @@
 
 namespace NCsGameEventCoordinatorGroup
 {
+	CSCORE_API CS_CREATE_ENUM_STRUCT(None);
 	CSCORE_API CS_CREATE_ENUM_STRUCT(GameInstance);
 	CSCORE_API CS_CREATE_ENUM_STRUCT(GameState);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(InputManager0);
-	CSCORE_API CS_CREATE_ENUM_STRUCT(InputManager1);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(ManagerInput0);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(ManagerInput1);
 }
 
 #pragma endregion GameEventCoordinatorGroup

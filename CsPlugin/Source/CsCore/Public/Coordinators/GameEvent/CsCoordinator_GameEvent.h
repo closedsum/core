@@ -3,15 +3,21 @@
 #include "UObject/Object.h"
 // Types
 #include "Managers/Input/CsTypes_Input.h"
+#include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
 
 #include "CsCoordinator_GameEvent.generated.h"
 
 class ICsGetCoordinatorGameEvent;
 
+// NCsGameEvent::NCoordinator::FConsoleCommand
+CS_FWD_DECLARE_CLASS_NAMESPACE_2(NCsGameEvent, NCoordinator, FConsoleCommand)
+
 UCLASS()
 class CSCORE_API UCsCoordinator_GameEvent : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+#define ConsoleCommandManagerType NCsGameEvent::NCoordinator::FConsoleCommand
 
 // Singleton
 #pragma region
@@ -91,13 +97,48 @@ public:
 
 #pragma endregion Singleton
 
+// Console Command
+#pragma region
+private:
+
+	ConsoleCommandManagerType* Manager_ConsoleCommand;
+
+#pragma endregion Console Command
+
 public:
 
-	void OnGameEventInfo(const FCsGameEventInfo& Info);
+	void OnGameEventInfo_ManagerInput0(const FCsGameEventInfo& Info);
+	void OnGameEventInfo_ManagerInput1(const FCsGameEventInfo& Info);
 
-	void ProcessGameEventInfo(const FCsGameEventInfo& Info);
+	void ProcessGameEventInfo(const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info);
 
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnProcessGameEventInfo, const FCsGameEventInfo& /*Info*/);
+	/**
+	*/
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnProcessGameEventInfo, const FECsGameEventCoordinatorGroup& /*Group*/, const FCsGameEventInfo& /*Info*/);
 
-	FOnProcessGameEventInfo OnProcessGameEventInfo_Event;
+private:
+
+	TArray<FOnProcessGameEventInfo> OnProcessGameEventInfo_Events;
+
+public:
+
+	FORCEINLINE FOnProcessGameEventInfo& GetOnProcessGameEventInfo_Event(const FECsGameEventCoordinatorGroup& Group) 
+	{
+		return OnProcessGameEventInfo_Events[Group.GetValue()];
+	}
+
+private:
+
+	TMap<FECsGameEventCoordinatorGroup, TArray<FCsGameEventInfo>> QueuedGameEventInfosByGroupMap;
+
+public:
+
+	void QueueGameEventInfo(const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info);
+
+	void OnPostProcessInput_ManagerInput0(const float& DeltaTime, const bool bGamePaused);
+	void OnPostProcessInput_ManagerInput1(const float& DeltaTime, const bool bGamePaused);
+
+	void ProcessQueuedGameEventInfos(const FECsGameEventCoordinatorGroup& Group);
+
+#undef ConsoleCommandManagerType
 };

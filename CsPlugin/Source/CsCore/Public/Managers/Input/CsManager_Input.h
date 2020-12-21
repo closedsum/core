@@ -65,6 +65,10 @@ public:
 	void PreProcessInput(const float DeltaTime, const bool bGamePaused);
 	void PostProcessInput(const float DeltaTime, const bool bGamePaused);
 
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPostProcessInput, const float& /*DeltaTime*/, const bool /*bGamePaused*/);
+
+	FOnPostProcessInput OnPostProcessInput_Event;
+
 	float CurrentDeltaTime;
 
 	FCsManager_Input Manager_Inputs;
@@ -155,7 +159,21 @@ private:
 
 	TSet<FCsGameEventDefinition> GameEventDefinitions;
 
-	TMap<FECsGameEvent, FCsInputSentence> GameEventDefinitionMap;
+public:
+
+	FORCEINLINE const FCsGameEventDefinition* GetGameEventDefinition(const FECsGameEvent& GameEvent) const
+	{
+		for (const FCsGameEventDefinition& Def : GameEventDefinitions)
+		{
+			if (Def.Event == GameEvent)
+				return &Def;
+		}
+		return nullptr;
+	}
+
+private:
+
+	TMap<FECsGameEvent, FCsInputSentence> InputSentenceByGameEventMap;
 
 	TArray<FECsGameEvent> GameEventPriorityList;
 
@@ -171,10 +189,7 @@ private:
 
 public:
 
-	FORCEINLINE const TArray<FCsGameEventInfo>& GetCurrentGameEventInfos() const
-	{
-		return CurrentGameEventInfos;
-	}
+	FORCEINLINE const TArray<FCsGameEventInfo>& GetCurrentGameEventInfos() const { return CurrentGameEventInfos; }
 
 private:
 
@@ -183,10 +198,7 @@ private:
 
 public:
 
-	FORCEINLINE const TArray<FCsGameEventInfo>& GetCurrentValidGameEventInfos() const
-	{
-		return CurrentValidGameEventInfos;
-	}
+	FORCEINLINE const TArray<FCsGameEventInfo>& GetCurrentValidGameEventInfos() const { return CurrentValidGameEventInfos; }
 
 private:
 

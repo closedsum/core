@@ -4,6 +4,8 @@
 
 // CVar
 #include "Coordinators/GameEvent/CsCVars_Coordinator_GameEvent.h"
+// Console Command
+#include "Coordinators/GameEvent/CsConsoleCommand_Coordinator_GameEvent.h"
 // Library
 #include "Library/CsLibrary_Common.h"
 
@@ -23,13 +25,15 @@
 // Cached
 #pragma region
 
-namespace NCsStatusEffectCoordinatorCached
+namespace NCsCoordinatorGameEvent
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsStatusEffectCoordinator, GetTypeFromEvent);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsStatusEffectCoordinator, ProcessStatusEffectEvent);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsStatusEffectCoordinator, ProcessStatusEffectEventContainer);
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_GameEvent, ProcessGameEventInfo);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_GameEvent, QueueGameEventInfo);
+		}
 	}
 }
 
@@ -39,7 +43,11 @@ namespace NCsStatusEffectCoordinatorCached
 UCsCoordinator_GameEvent* UCsCoordinator_GameEvent::s_Instance;
 bool UCsCoordinator_GameEvent::s_bShutdown = false;
 
-UCsCoordinator_GameEvent::UCsCoordinator_GameEvent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsCoordinator_GameEvent::UCsCoordinator_GameEvent(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	// Console Command
+	Manager_ConsoleCommand(nullptr),
+	OnProcessGameEventInfo_Events()
 {
 }
 
@@ -207,6 +215,27 @@ UCsCoordinator_GameEvent::UCsCoordinator_GameEvent(const FObjectInitializer& Obj
 
 void UCsCoordinator_GameEvent::Initialize()
 {
+	typedef NCsGameEvent::NCoordinator::FConsoleCommand ConsoleCommandManagerType;
+
+	Manager_ConsoleCommand = new ConsoleCommandManagerType(MyRoot);
+
+	// OnProcessGameEventInfo_Events
+	{
+		const int32& Count = EMCsGameEventCoordinatorGroup::Get().Num();
+
+		OnProcessGameEventInfo_Events.Reset(Count);
+		OnProcessGameEventInfo_Events.AddDefaulted(Count);
+	}
+	// QueuedGameEventInfosByGroupMap
+	{
+		typedef EMCsGameEventCoordinatorGroup GroupMapType;
+		typedef FECsGameEventCoordinatorGroup GroupType;
+
+		for (const GroupType& Group : GroupMapType::Get())
+		{
+			QueuedGameEventInfosByGroupMap.Add(Group);
+		}
+	}
 }
 
 /*static*/ bool UCsCoordinator_GameEvent::HasInitialized(UObject* InRoot)
@@ -218,6 +247,9 @@ void UCsCoordinator_GameEvent::Initialize()
 
 void UCsCoordinator_GameEvent::CleanUp()
 {
+	delete Manager_ConsoleCommand;
+	Manager_ConsoleCommand = nullptr;
+
 	bInitialized = false;
 }
 
@@ -233,12 +265,55 @@ void UCsCoordinator_GameEvent::SetMyRoot(UObject* InRoot)
 
 #pragma endregion Singleton
 
-void UCsCoordinator_GameEvent::OnGameEventInfo(const FCsGameEventInfo& Info)
+void UCsCoordinator_GameEvent::OnGameEventInfo_ManagerInput0(const FCsGameEventInfo& Info)
 {
-	ProcessGameEventInfo(Info);
+	ProcessGameEventInfo(NCsGameEventCoordinatorGroup::ManagerInput0, Info);
 }
 
-void UCsCoordinator_GameEvent::ProcessGameEventInfo(const FCsGameEventInfo& Info)
+void UCsCoordinator_GameEvent::OnGameEventInfo_ManagerInput1(const FCsGameEventInfo& Info)
 {
-	OnProcessGameEventInfo_Event.Broadcast(Info);
+	ProcessGameEventInfo(NCsGameEventCoordinatorGroup::ManagerInput1, Info);
+}
+
+void UCsCoordinator_GameEvent::ProcessGameEventInfo(const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info)
+{
+	using namespace NCsCoordinatorGameEvent::NCached;
+
+	const FString& Context = Str::ProcessGameEventInfo;
+
+	check(EMCsGameEventCoordinatorGroup::Get().IsValidEnumChecked(Context, Group));
+
+	OnProcessGameEventInfo_Events[Group.GetValue()].Broadcast(Group, Info);
+}
+
+void UCsCoordinator_GameEvent::QueueGameEventInfo(const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info)
+{
+	using namespace NCsCoordinatorGameEvent::NCached;
+
+	const FString& Context = Str::QueueGameEventInfo;
+
+	check(EMCsGameEventCoordinatorGroup::Get().IsValidEnumChecked(Context, Group));
+
+	QueuedGameEventInfosByGroupMap[Group].Add(Info);
+}
+
+void UCsCoordinator_GameEvent::OnPostProcessInput_ManagerInput0(const float& DeltaTime, const bool bGamePaused)
+{
+	ProcessQueuedGameEventInfos(NCsGameEventCoordinatorGroup::ManagerInput0);
+}
+
+void UCsCoordinator_GameEvent::OnPostProcessInput_ManagerInput1(const float& DeltaTime, const bool bGamePaused)
+{
+	ProcessQueuedGameEventInfos(NCsGameEventCoordinatorGroup::ManagerInput1);
+}
+
+void UCsCoordinator_GameEvent::ProcessQueuedGameEventInfos(const FECsGameEventCoordinatorGroup& Group)
+{
+	TArray<FCsGameEventInfo>& Infos = QueuedGameEventInfosByGroupMap[Group];
+
+	for (const FCsGameEventInfo& Info : Infos)
+	{
+		ProcessGameEventInfo(Group, Info);
+	}
+	Infos.Reset(Infos.Max());
 }

@@ -169,6 +169,11 @@ namespace NCsString
 		return false;
 	}
 
+	bool FLibrary::Stream_GetValue(const TCHAR*& Str, FVector& OutValue)
+	{
+		return OutValue.InitFromString(FString(Str));
+	}
+
 	bool FLibrary::Stream_Get_bool_as_int32(const TCHAR*& Str, int32& OutValue)
 	{
 		FString OutString;

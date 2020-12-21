@@ -53,7 +53,7 @@ public:
 	{
 		T* PC = Cast<T>(GetFirstLocalPlayerControllerChecked(Context, World));
 
-		checkf(PC, TEXT("%s: Failed to cast PlayerController to type: %s."), *Context, (T::StaticClass()->GetName()));
+		checkf(PC, TEXT("%s: Failed to cast PlayerController to type: %s."), *Context, *(T::StaticClass()->GetName()));
 
 		return PC;
 	}

@@ -4,6 +4,8 @@
 
 // Managers
 #include "Managers/Data/CsManager_Data.h"
+// Interfaces
+#include "Data/CsGetDataRootSet.h"
 // Game
 #include "Engine/GameInstance.h"
 // World
@@ -11,17 +13,37 @@
 
 namespace NCsDataRootSet
 {
-	UObject* FLibrary::GetImplChecked(const FString& Context, UObject* ContextRoot)
+	UObject* FLibrary::GetImplChecked(const FString& Context, UGameInstance* GameInstance)
 	{
-		checkf(ContextRoot, TEXT("%s: ContextRoot is NULL."), *Context);
+		checkf(GameInstance, TEXT("%s: GameInstance is NULL."), *Context);
 
-		UWorld* World				  = ContextRoot->GetWorld();
-		UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+		UCsManager_Data* Manager_Data = UCsManager_Data::Get(GameInstance);
 		UObject* DataRootSetImpl	  = Manager_Data->DataRootSet.GetObject();
 
 		checkf(DataRootSetImpl, TEXT("%s: DataRootSetImpl is NULL. Failed to find DataRootSet."), *Context);
 
 		return DataRootSetImpl;
+	}
+
+	UObject* FLibrary::GetImplChecked(const FString& Context, UObject* WorldContext)
+	{
+		checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+
+		UWorld* World = WorldContext->GetWorld();
+
+		checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+
+		return GetImplChecked(Context, World->GetGameInstance());
+	}
+
+	const FCsDataRootSet& FLibrary::GetChecked(const FString& Context, UGameInstance* GameInstance)
+	{
+		return GetChecked<FCsDataRootSet, ICsGetDataRootSet, &ICsGetDataRootSet::GetCsDataRootSet>(Context, GameInstance);
+	}
+
+	const FCsDataRootSet& FLibrary::GetChecked(const FString& Context, UObject* WorldContext)
+	{
+		return GetChecked<FCsDataRootSet, ICsGetDataRootSet, &ICsGetDataRootSet::GetCsDataRootSet>(Context, WorldContext);
 	}
 
 	UDataTable* FLibrary::GetSafeDataTable(const FString& Context, UObject* Object, const FString& InterfaceGetName, TSoftObjectPtr<UDataTable> DataTableSoftObject, const FString& DataTableName)

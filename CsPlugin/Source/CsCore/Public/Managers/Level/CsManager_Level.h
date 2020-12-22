@@ -180,12 +180,24 @@ protected:
 
 public:
 
-	FORCEINLINE bool HasChangeMapCompleted() const
-	{
-		return bChangeMapCompleted;
-	}
+	FORCEINLINE bool HasChangeMapCompleted() const { return bChangeMapCompleted; }
 
-	void ChangeMap(const FCsManagerLevelChangeMap& Params);
+	struct FChangeMapParams
+	{
+	public:
+
+		FString Map;
+
+		FString TransitionMap;
+
+		FChangeMapParams() :
+			Map(),
+			TransitionMap()
+		{
+		}
+	};
+
+	void ChangeMap(const FChangeMapParams& Params);
 
 protected:
 

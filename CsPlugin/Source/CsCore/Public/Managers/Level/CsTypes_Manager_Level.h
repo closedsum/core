@@ -4,7 +4,7 @@
 #include "CsTypes_Manager_Level.generated.h"
 
 USTRUCT(BlueprintType)
-struct FCsManagerLevelChangeMap
+struct FCsManagerLevelChangeMapParams
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -14,7 +14,7 @@ struct FCsManagerLevelChangeMap
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString TransitionMap;
 
-	FCsManagerLevelChangeMap()
+	FCsManagerLevelChangeMapParams()
 	{
 	}
 };

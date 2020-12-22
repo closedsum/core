@@ -30,18 +30,21 @@
 // Cached
 #pragma region
 
-namespace NCsManagerLevelCached
+namespace NCsManagerLevel
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Check_FinishedLoadingPersistentLevel_Internal);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, ChangeMap_Internal);
-	}
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Check_FinishedLoadingPersistentLevel_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, ChangeMap_Internal);
+		}
 
-	namespace Name
-	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Level, Check_FinishedLoadingPersistentLevel_Internal);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Level, ChangeMap_Internal);
+		namespace Name
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Level, Check_FinishedLoadingPersistentLevel_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Level, ChangeMap_Internal);
+		}
 	}
 }
 
@@ -207,12 +210,15 @@ void UCsManager_Level::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Level::Check_FinishedLoadingPersistentLevel()
 {
-	using namespace NCsManagerLevelCached;
+	using namespace NCsManagerLevel::NCached;
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get(MyRoot);
-	NCsCoroutine::NPayload::FImpl* Payload	= Scheduler->AllocatePayload(UpdateGroup);
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
+
+	typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
+
+	PayloadImplType* Payload = Scheduler->AllocatePayload(UpdateGroup);
 
 	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal);
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
@@ -229,12 +235,15 @@ void UCsManager_Level::Check_FinishedLoadingPersistentLevel()
 
 void UCsManager_Level::Check_FinishedLoadingPersistentLevel(const FString& MapPackageName)
 {
-	using namespace NCsManagerLevelCached;
+	using namespace NCsManagerLevel::NCached;
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get(MyRoot);
-	NCsCoroutine::NPayload::FImpl* Payload	= Scheduler->AllocatePayload(UpdateGroup);
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
+
+	typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
+
+	PayloadImplType* Payload = Scheduler->AllocatePayload(UpdateGroup);
 
 	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal);
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
@@ -370,20 +379,25 @@ ALevelScriptActor* UCsManager_Level::GetPersistentLevelScriptActorChecked(const 
 
 // TODO: Add ChangeMap Params
 
-void UCsManager_Level::ChangeMap(const FCsManagerLevelChangeMap& Params)
+void UCsManager_Level::ChangeMap(const FChangeMapParams& Params)
 {
+	using namespace NCsManagerLevel::NCached;
+
 	checkf(!Params.Map.IsEmpty(), TEXT("UCsManager_Level::ChangeMap: Params.Map is Empty."));
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get(MyRoot);
-	NCsCoroutine::NPayload::FImpl* Payload	= Scheduler->AllocatePayload(UpdateGroup);
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
+
+	typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
+
+	PayloadImplType* Payload = Scheduler->AllocatePayload(UpdateGroup);
 
 	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Level::ChangeMap_Internal);
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
-	Payload->SetName(NCsManagerLevelCached::Str::ChangeMap_Internal);
-	Payload->SetFName(NCsManagerLevelCached::Name::ChangeMap_Internal);
+	Payload->SetName(Str::ChangeMap_Internal);
+	Payload->SetFName(Name::ChangeMap_Internal);
 
 	static const int32 MAP_INDEX = 0;
 	Payload->SetValue_String(MAP_INDEX, Params.Map);
@@ -392,6 +406,8 @@ void UCsManager_Level::ChangeMap(const FCsManagerLevelChangeMap& Params)
 	Payload->SetValue_String(TRANSITION_MAP_INDEX, Params.TransitionMap);
 
 	CurrentMap = GetPersistentLevelName();
+
+	bChangeMapCompleted = false;
 
 	Scheduler->Start(Payload);
 }
@@ -427,6 +443,8 @@ char UCsManager_Level::ChangeMap_Internal(FCsRoutine* R)
 
 	// Wait until the New Map is loaded
 	CS_COROUTINE_WAIT_UNTIL(R, HasFinishedLoadingPersistentLevel());
+
+	bChangeMapCompleted = true;
 
 	OnChangeMapComplete_Event.Broadcast(CurrentMap, NewMap);
 

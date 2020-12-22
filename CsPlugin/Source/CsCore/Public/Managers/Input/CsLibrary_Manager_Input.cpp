@@ -13,210 +13,243 @@
 // Input
 #include "Managers/Input/CsGetManagerInput.h"
 
-namespace NCsLibraryManagerInputCached
+namespace NCsInput
 {
-	namespace Str
+	namespace NManager
 	{
-		CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Manager_Input, GetFirstLocalManagerInputChecked);
-		CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Manager_Input, SetFirstLocalCurrentInputActionMapChecked);
-		CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Manager_Input, ClearFirstLocalCurrentInputActionMapChecked);
-	}
-}
-
-UCsManager_Input* FCsLibrary_Manager_Input::GetFirstLocalManagerInput(UWorld* World)
-{
-	if (APlayerController* PC = FCsLibrary_Player::GetFirstLocalPlayerController(World))
-	{
-		if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
+		namespace NCached
 		{
-			return GetManagerInput->GetManager_Input();
-		}
-	}
-	return nullptr;
-}
-
-UCsManager_Input* FCsLibrary_Manager_Input::GetFirstLocalManagerInputChecked(const FString& Context, UWorld* World)
-{
-	APlayerController* PC				= FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(Context, World);
-	ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC);
-
-	checkf(GetManagerInput, TEXT("%s: PlayerController: %s with Class: %s does NOT implement interface: ICsGetManagerInput"), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
-
-	UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
-
-	checkf(Manager_Input, TEXT("%s: Failed to get Manager_Input from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
-
-	return Manager_Input;
-}
-
-UCsManager_Input* FCsLibrary_Manager_Input::GetFirstLocalManagerInputChecked(UWorld* World)
-{
-	using namespace NCsLibraryManagerInputCached;
-
-	const FString& Context = Str::GetFirstLocalManagerInputChecked;
-
-	return GetFirstLocalManagerInputChecked(Context, World);
-}
-
-// InputActionMap
-#pragma region
-
-	// Set
-#pragma region
-
-void FCsLibrary_Manager_Input::SetFirstLocalCurrentInputActionMap(UWorld* World, const FECsInputActionMap& Map)
-{
-	if (APlayerController* PC = FCsLibrary_Player::GetFirstLocalPlayerController(World))
-	{
-		if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
-		{
-			if (UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input())
+			namespace Str
 			{
-				Manager_Input->SetCurrentInputActionMap(Map);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NManager::FLibrary, GetFirstLocalManagerInputChecked);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NManager::FLibrary, SetFirstLocalCurrentInputActionMapChecked);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NManager::FLibrary, ClearFirstLocalCurrentInputActionMapChecked);
 			}
 		}
-	}
-}
 
-void FCsLibrary_Manager_Input::SetFirstLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map)
-{
-	APlayerController* PC				= FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(Context, World);
-	ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC);
-
-	checkf(GetManagerInput, TEXT("%s: PlayerController: %s with Class: %s does NOT implement interface: ICsGetManagerInput"), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
-
-	UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
-
-	checkf(Manager_Input, TEXT("%s: Failed to get Manager_Input from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
-
-	Manager_Input->SetCurrentInputActionMap(Map);
-}
-
-void FCsLibrary_Manager_Input::SetFirstLocalCurrentInputActionMapChecked(UWorld* World, const FECsInputActionMap& Map)
-{
-	using namespace NCsLibraryManagerInputCached;
-
-	const FString& Context = Str::SetFirstLocalCurrentInputActionMapChecked;
-
-	SetFirstLocalCurrentInputActionMapChecked(Context, World, Map);
-}
-
-void FCsLibrary_Manager_Input::SetFirstLocalCurrentInputActionMap(UWorld* World, const int32& Map)
-{
-	if (APlayerController* PC = FCsLibrary_Player::GetFirstLocalPlayerController(World))
-	{
-		if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
+		UCsManager_Input* FLibrary::GetFirstLocalManagerInput(UWorld* World)
 		{
-			if (UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input())
+			if (APlayerController* PC = FCsLibrary_Player::GetFirstLocalPlayerController(World))
 			{
-				Manager_Input->SetCurrentInputActionMap(Map);
+				if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
+				{
+					return GetManagerInput->GetManager_Input();
+				}
+			}
+			return nullptr;
+		}
+
+		UCsManager_Input* FLibrary::GetFirstLocalManagerInputChecked(const FString& Context, UWorld* World)
+		{
+			APlayerController* PC				= FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(Context, World);
+			ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC);
+
+			checkf(GetManagerInput, TEXT("%s: PlayerController: %s with Class: %s does NOT implement interface: ICsGetManagerInput"), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
+
+			UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
+
+			checkf(Manager_Input, TEXT("%s: Failed to get Manager_Input from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
+
+			return Manager_Input;
+		}
+
+		UCsManager_Input* FLibrary::GetFirstLocalManagerInputChecked(UWorld* World)
+		{
+			using namespace NCached;
+
+			const FString& Context = Str::GetFirstLocalManagerInputChecked;
+
+			return GetFirstLocalManagerInputChecked(Context, World);
+		}
+
+		// InputActionMap
+		#pragma region
+
+			// Set
+		#pragma region
+
+		void FLibrary::SetFirstLocalCurrentInputActionMap(UWorld* World, const FECsInputActionMap& Map)
+		{
+			if (APlayerController* PC = FCsLibrary_Player::GetFirstLocalPlayerController(World))
+			{
+				if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
+				{
+					if (UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input())
+					{
+						Manager_Input->SetCurrentInputActionMap(Map);
+					}
+				}
 			}
 		}
-	}
-}
 
-void FCsLibrary_Manager_Input::SetFirstLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map)
-{
-	APlayerController* PC				= FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(Context, World);
-	ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC);
-
-	checkf(GetManagerInput, TEXT("%s: PlayerController: %s with Class: %s does NOT implement interface: ICsGetManagerInput"), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
-
-	UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
-
-	checkf(Manager_Input, TEXT("%s: Failed to get Manager_Input from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
-
-	Manager_Input->SetCurrentInputActionMap(Map);
-}
-
-void FCsLibrary_Manager_Input::SetFirstLocalCurrentInputActionMapChecked(UWorld* World, const int32& Map)
-{
-	using namespace NCsLibraryManagerInputCached;
-
-	const FString& Context = Str::SetFirstLocalCurrentInputActionMapChecked;
-
-	SetFirstLocalCurrentInputActionMapChecked(Context, World, Map);
-}
-
-#pragma endregion Set
-
-	// Clear
-#pragma region
-
-void FCsLibrary_Manager_Input::ClearFirstLocalCurrentInputActionMap(UWorld* World, const FECsInputActionMap& Map)
-{
-	if (APlayerController* PC = FCsLibrary_Player::GetFirstLocalPlayerController(World))
-	{
-		if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
+		void FLibrary::SetFirstLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map)
 		{
-			if (UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input())
+			APlayerController* PC				= FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(Context, World);
+			ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC);
+
+			checkf(GetManagerInput, TEXT("%s: PlayerController: %s with Class: %s does NOT implement interface: ICsGetManagerInput"), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
+
+			UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
+
+			checkf(Manager_Input, TEXT("%s: Failed to get Manager_Input from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
+
+			Manager_Input->SetCurrentInputActionMap(Map);
+		}
+
+		void FLibrary::SetFirstLocalCurrentInputActionMapChecked(UWorld* World, const FECsInputActionMap& Map)
+		{
+			using namespace NCached;
+
+			const FString& Context = Str::SetFirstLocalCurrentInputActionMapChecked;
+
+			SetFirstLocalCurrentInputActionMapChecked(Context, World, Map);
+		}
+
+		void FLibrary::SetFirstLocalCurrentInputActionMap(UWorld* World, const int32& Map)
+		{
+			if (APlayerController* PC = FCsLibrary_Player::GetFirstLocalPlayerController(World))
 			{
+				if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
+				{
+					if (UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input())
+					{
+						Manager_Input->SetCurrentInputActionMap(Map);
+					}
+				}
+			}
+		}
+
+		void FLibrary::SetFirstLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map)
+		{
+			APlayerController* PC				= FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(Context, World);
+			ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC);
+
+			checkf(GetManagerInput, TEXT("%s: PlayerController: %s with Class: %s does NOT implement interface: ICsGetManagerInput"), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
+
+			UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
+
+			checkf(Manager_Input, TEXT("%s: Failed to get Manager_Input from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
+
+			Manager_Input->SetCurrentInputActionMap(Map);
+		}
+
+		void FLibrary::SetFirstLocalCurrentInputActionMapChecked(UWorld* World, const int32& Map)
+		{
+			using namespace NCached;
+
+			const FString& Context = Str::SetFirstLocalCurrentInputActionMapChecked;
+
+			SetFirstLocalCurrentInputActionMapChecked(Context, World, Map);
+		}
+
+		#pragma endregion Set
+
+			// Clear
+		#pragma region
+
+		void FLibrary::ClearFirstLocalCurrentInputActionMap(UWorld* World, const FECsInputActionMap& Map)
+		{
+			if (APlayerController* PC = FCsLibrary_Player::GetFirstLocalPlayerController(World))
+			{
+				if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
+				{
+					if (UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input())
+					{
+						Manager_Input->ClearCurrentInputActionMap(Map);
+					}
+				}
+			}
+		}
+
+		void FLibrary::ClearFirstLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map)
+		{
+			APlayerController* PC				= FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(Context, World);
+			ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC);
+
+			checkf(GetManagerInput, TEXT("%s: PlayerController: %s with Class: %s does NOT implement interface: ICsGetManagerInput"), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
+
+			UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
+
+			checkf(Manager_Input, TEXT("%s: Failed to get Manager_Input from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
+
+			Manager_Input->ClearCurrentInputActionMap(Map);
+		}
+
+		void FLibrary::ClearFirstLocalCurrentInputActionMapChecked(UWorld* World, const FECsInputActionMap& Map)
+		{
+			using namespace NCached;
+
+			const FString& Context = Str::ClearFirstLocalCurrentInputActionMapChecked;
+
+			ClearFirstLocalCurrentInputActionMapChecked(Context, World, Map);
+		}
+
+		void FLibrary::ClearFirstLocalCurrentInputActionMap(UWorld* World, const int32& Map)
+		{
+			if (APlayerController* PC = FCsLibrary_Player::GetFirstLocalPlayerController(World))
+			{
+				if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
+				{
+					if (UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input())
+					{
+						Manager_Input->ClearCurrentInputActionMap(Map);
+					}
+				}
+			}
+		}
+
+		void FLibrary::ClearFirstLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map)
+		{
+			APlayerController* PC				= FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(Context, World);
+			ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC);
+
+			checkf(GetManagerInput, TEXT("%s: PlayerController: %s with Class: %s does NOT implement interface: ICsGetManagerInput"), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
+
+			UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
+
+			checkf(Manager_Input, TEXT("%s: Failed to get Manager_Input from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
+
+			Manager_Input->ClearCurrentInputActionMap(Map);
+		}
+
+		void FLibrary::ClearFirstLocalCurrentInputActionMapChecked(UWorld* World, const int32& Map)
+		{
+			using namespace NCached;
+
+			const FString& Context = Str::ClearFirstLocalCurrentInputActionMapChecked;
+
+			ClearFirstLocalCurrentInputActionMapChecked(Context, World, Map);
+		}
+
+		void FLibrary::ClearLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map)
+		{
+			TArray<APlayerController*> PlayerControllers;
+
+			FCsLibrary_Player::GetAllLocalPlayerControllersChecked(Context, World, PlayerControllers);
+
+			for (APlayerController* PC : PlayerControllers)
+			{
+				ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC);
+
+				checkf(GetManagerInput, TEXT("%s: PlayerController: %s with Class: %s does NOT implement interface: ICsGetManagerInput"), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
+
+				UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
+
+				checkf(Manager_Input, TEXT("%s: Failed to get Manager_Input from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
+
 				Manager_Input->ClearCurrentInputActionMap(Map);
 			}
 		}
-	}
-}
 
-void FCsLibrary_Manager_Input::ClearFirstLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map)
-{
-	APlayerController* PC				= FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(Context, World);
-	ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC);
-
-	checkf(GetManagerInput, TEXT("%s: PlayerController: %s with Class: %s does NOT implement interface: ICsGetManagerInput"), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
-
-	UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
-
-	checkf(Manager_Input, TEXT("%s: Failed to get Manager_Input from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
-
-	Manager_Input->ClearCurrentInputActionMap(Map);
-}
-
-void FCsLibrary_Manager_Input::ClearFirstLocalCurrentInputActionMapChecked(UWorld* World, const FECsInputActionMap& Map)
-{
-	using namespace NCsLibraryManagerInputCached;
-
-	const FString& Context = Str::ClearFirstLocalCurrentInputActionMapChecked;
-
-	ClearFirstLocalCurrentInputActionMapChecked(Context, World, Map);
-}
-
-void FCsLibrary_Manager_Input::ClearFirstLocalCurrentInputActionMap(UWorld* World, const int32& Map)
-{
-	if (APlayerController* PC = FCsLibrary_Player::GetFirstLocalPlayerController(World))
-	{
-		if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
+		void FLibrary::ClearLocalCurrentInputActionMapChecked(const FString& Context, UObject* WorldContext, const int32& Map)
 		{
-			if (UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input())
-			{
-				Manager_Input->ClearCurrentInputActionMap(Map);
-			}
+			checkf(WorldContext, TEXT("%s: WorldContext is NULL."));
+
+			ClearLocalCurrentInputActionMapChecked(Context, WorldContext->GetWorld(), Map);
 		}
+
+		#pragma endregion Clear
+
+		#pragma endregion InputActionMap
 	}
 }
-
-void FCsLibrary_Manager_Input::ClearFirstLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map)
-{
-	APlayerController* PC				= FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(Context, World);
-	ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC);
-
-	checkf(GetManagerInput, TEXT("%s: PlayerController: %s with Class: %s does NOT implement interface: ICsGetManagerInput"), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
-
-	UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
-
-	checkf(Manager_Input, TEXT("%s: Failed to get Manager_Input from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
-
-	Manager_Input->ClearCurrentInputActionMap(Map);
-}
-
-void FCsLibrary_Manager_Input::ClearFirstLocalCurrentInputActionMapChecked(UWorld* World, const int32& Map)
-{
-	using namespace NCsLibraryManagerInputCached;
-
-	const FString& Context = Str::ClearFirstLocalCurrentInputActionMapChecked;
-
-	ClearFirstLocalCurrentInputActionMapChecked(Context, World, Map);
-}
-
-#pragma endregion Clear
-
-#pragma endregion InputActionMap

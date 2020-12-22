@@ -396,10 +396,14 @@ void UCsManager_Data::GenerateMaps()
 			const FName& RowName	  = Pair.Key;
 			FCsDataEntry_Data* RowPtr = reinterpret_cast<FCsDataEntry_Data*>(Pair.Value);
 
-			checkf(RowPtr->Data.ToSoftObjectPath().IsValid(), TEXT("%s: Data at Row: %s for Datas: %s is NOT Valid."), *Context, *(RowName.ToString()), *(Datas->GetName()));
+			const FSoftObjectPath& Path = RowPtr->Data.ToSoftObjectPath();
+
+			checkf(Path.IsValid(), TEXT("%s: Data at Row: %s for Datas: %s is NOT Valid."), *Context, *(RowName.ToString()), *(Datas->GetName()));
+
+			RowPtr->BuildFromPaths();
 
 			DataEntryMap.Add(RowName, RowPtr);
-			DataEntryByPathMap.Add(RowPtr->Data.ToSoftObjectPath(), RowPtr);
+			DataEntryByPathMap.Add(Path, RowPtr);
 		}
 	}
 	// DataTables

@@ -74,6 +74,8 @@ public:
 
 	static APlayerController* GetPlayerControllerOrFirstLocalChecked(const FString& Context, APawn* Pawn);
 
+	static void GetAllLocalPlayerControllersChecked(const FString& Context, UWorld* World, TArray<APlayerController*>& OutControllers);
+
 #pragma endregion PlayerController
 
 // PlayerState

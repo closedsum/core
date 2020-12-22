@@ -79,6 +79,21 @@ APlayerController* FCsLibrary_Player::GetPlayerControllerOrFirstLocalChecked(con
 	return GetFirstLocalPlayerControllerChecked(Context, Pawn);
 }
 
+void FCsLibrary_Player::GetAllLocalPlayerControllersChecked(const FString& Context, UWorld* World, TArray<APlayerController*>& OutControllers)
+{
+	checkf(World, TEXT("%s: World is NULL."), *Context);
+
+	for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* PC = Iterator->Get();
+
+		if (PC && PC->GetLocalPlayer())
+		{
+			OutControllers.Add(PC);
+		}
+	}
+}
+
 #pragma endregion PlayerController
 
 // PlayerState

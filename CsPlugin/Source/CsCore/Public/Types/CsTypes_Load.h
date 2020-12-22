@@ -1206,6 +1206,11 @@ public:
 
 	FORCEINLINE UClass* GetClass() { return Data_Class; }
 
+	void BuildFromPaths()
+	{
+		Paths.BuildFromPaths();
+	}
+
 #if WITH_EDITOR
 
 	/**

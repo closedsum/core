@@ -42,39 +42,39 @@ void FCsRegisterDetailCustomization::Register()
 
 	// EnumStruct
 	{
-#define CS_TEMP_REGISTER(EnumShortName, EnumName) PropertyModule.RegisterCustomPropertyTypeLayout(EnumShortName, FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(EnumName##Customization::MakeInstance)))
+#define CS_TEMP_REGISTER(EnumName) PropertyModule.RegisterCustomPropertyTypeLayout(#EnumName, FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(F##EnumName##Customization::MakeInstance)))
 
 		// CVar
-		CS_TEMP_REGISTER("ECsCVarLog", FECsCVarLog);
-		CS_TEMP_REGISTER("ECsCVarToggle", FECsCVarToggle);
-		CS_TEMP_REGISTER("ECsCVarDraw", FECsCVarDraw);
+		CS_TEMP_REGISTER(ECsCVarLog);
+		CS_TEMP_REGISTER(ECsCVarToggle);
+		CS_TEMP_REGISTER(ECsCVarDraw);
 		// Asset
-		CS_TEMP_REGISTER("ECsAssetType", FECsAssetType);
-		CS_TEMP_REGISTER("ECsLoadAssetsType", FECsLoadAssetsType);
+		CS_TEMP_REGISTER(ECsAssetType);
+		CS_TEMP_REGISTER(ECsLoadAssetsType);
 		// Update
-		CS_TEMP_REGISTER("ECsUpdateGroup", FECsUpdateGroup);
+		CS_TEMP_REGISTER(ECsUpdateGroup);
 		// Input
 		{
-			CS_TEMP_REGISTER("ECsInputAction", FECsInputAction);
-			CS_TEMP_REGISTER("ECsInputActionMap", FECsInputActionMap);
-			CS_TEMP_REGISTER("ECsGameEvent", FECsGameEvent);
-			CS_TEMP_REGISTER("ECsGameEventCoordinatorGroup", FECsGameEventCoordinatorGroup);
+			CS_TEMP_REGISTER(ECsInputAction);
+			CS_TEMP_REGISTER(ECsInputActionMap);
+			CS_TEMP_REGISTER(ECsGameEvent);
+			CS_TEMP_REGISTER(ECsGameEventCoordinatorGroup);
 			// GestureType
-			CS_TEMP_REGISTER("ECsGestureType", FECsGestureType);
+			CS_TEMP_REGISTER(ECsGestureType);
 		}
 		// SurfaceType
-		CS_TEMP_REGISTER("ECsSurfaceType", FECsSurfaceType);
+		CS_TEMP_REGISTER(ECsSurfaceType);
 		// Process
-		CS_TEMP_REGISTER("ECsProcess", FECsProcess);
+		CS_TEMP_REGISTER(ECsProcess);
 		// FX
-		CS_TEMP_REGISTER("ECsFX", FECsFX);
+		CS_TEMP_REGISTER(ECsFX);
 		// Damage
-		CS_TEMP_REGISTER("ECsDamageType", FECsDamageType);
-		CS_TEMP_REGISTER("ECsHitType", FECsHitType);
+		CS_TEMP_REGISTER(ECsDamageType);
+		CS_TEMP_REGISTER(ECsHitType);
 		// Sound
-		CS_TEMP_REGISTER("ECsSound", FECsSound);
+		CS_TEMP_REGISTER(ECsSound);
 		// Sense
-		CS_TEMP_REGISTER("ECsSenseActorType", FECsSenseActorType);
+		CS_TEMP_REGISTER(ECsSenseActorType);
 
 #undef CS_TEMP_REGISTER
 	}

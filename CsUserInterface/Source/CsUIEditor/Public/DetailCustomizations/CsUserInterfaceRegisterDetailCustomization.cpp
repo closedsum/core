@@ -7,6 +7,8 @@
 
 // DetailCustomizations
 	// EnumStruct
+		// Menu
+#include "DetailCustomizations/EnumStruct/Menu/ECsMenuCustomization.h"
 		// WidgetActpr
 #include "DetailCustomizations/EnumStruct/WidgetActor/ECsWidgetActorCustomization.h"
 #include "DetailCustomizations/EnumStruct/WidgetActor/ECsWidgetActorClassCustomization.h"
@@ -22,25 +24,30 @@ void FCsUserInterfaceRegisterDetailCustomization::Register()
 
 	// EnumStruct
 	{
-#define CS_TEMP_REGISTER(EnumShortName, EnumName) PropertyModule.RegisterCustomPropertyTypeLayout(EnumShortName, FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(EnumName##Customization::MakeInstance)))
+#define CS_TEMP_REGISTER(EnumName) PropertyModule.RegisterCustomPropertyTypeLayout(#EnumName, FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(F##EnumName##Customization::MakeInstance)))
 
+		// Menu
+		{
+			// ECsMenu
+			CS_TEMP_REGISTER(ECsWidgetActor);
+		}
 		// WidgetActor
 		{
 			// ECsWidgetActor
-			CS_TEMP_REGISTER("ECsWidgetActor", FECsWidgetActor);
+			CS_TEMP_REGISTER(ECsWidgetActor);
 			// ECsWidgetActorCLass
-			CS_TEMP_REGISTER("ECsWidgetActorClass", FECsWidgetActorClass);
+			CS_TEMP_REGISTER(ECsWidgetActorClass);
 		}
 		// UserWidget
 		{
 			// ECsUserWidget
-			CS_TEMP_REGISTER("ECsUserWidget", FECsUserWidget);
+			CS_TEMP_REGISTER(ECsUserWidget);
 			// ECsUserWidgetCLass
-			CS_TEMP_REGISTER("ECsUserWidgetClass", FECsUserWidgetClass);
+			CS_TEMP_REGISTER(ECsUserWidgetClass);
 			// ECsUserWidgetPooled
-			CS_TEMP_REGISTER("ECsUserWidgetPooled", FECsUserWidgetPooled);
+			CS_TEMP_REGISTER(ECsUserWidgetPooled);
 			// ECsUserWidgetPooledClass
-			CS_TEMP_REGISTER("ECsUserWidgetPooledClass", FECsUserWidgetPooledClass);
+			CS_TEMP_REGISTER(ECsUserWidgetPooledClass);
 		}
 
 #undef CS_TEMP_REGISTER

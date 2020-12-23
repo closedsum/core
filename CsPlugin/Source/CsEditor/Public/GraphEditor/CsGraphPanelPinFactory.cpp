@@ -72,51 +72,51 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	Check if pin is struct, and then check if that pin is of struct type we want customize
 	*/
 
-#define CS_TEMP_CREATE(EnumName, EnumShortName) if (DoesPinUseScriptStruct<EnumName>(InPin, K2Schema)) { return SNew(SCsGraphPin_##EnumShortName, InPin); }
+#define CS_TEMP_CREATE(EnumName) if (DoesPinUseScriptStruct<F##EnumName>(InPin, K2Schema)) { return SNew(SCsGraphPin_##EnumName, InPin); }
 
 	// CVar
 	{
 		// FECsCVarLog
-		CS_TEMP_CREATE(FECsCVarLog, ECsCVarLog)
+		CS_TEMP_CREATE(ECsCVarLog)
 		// FECsCVarToggle
-		CS_TEMP_CREATE(FECsCVarToggle, ECsCVarToggle)
+		CS_TEMP_CREATE(ECsCVarToggle)
 		// FECsCVarDraw
-		CS_TEMP_CREATE(FECsCVarDraw, ECsCVarDraw)
+		CS_TEMP_CREATE(ECsCVarDraw)
 	}
 	// Asset
 	{
 		// FECsAssetType
-		CS_TEMP_CREATE(FECsAssetType, ECsAssetType)
+		CS_TEMP_CREATE(ECsAssetType)
 		// FECsLoadAssetsType
-		CS_TEMP_CREATE(FECsLoadAssetsType, ECsLoadAssetsType)
+		CS_TEMP_CREATE(ECsLoadAssetsType)
 	}
 	// Update
 	{
 		// FECsUpdateGroup
-		CS_TEMP_CREATE(FECsUpdateGroup, ECsUpdateGroup)
+		CS_TEMP_CREATE(ECsUpdateGroup)
 	}
 	// Input
 	{
 		// FECsInputAction
-		CS_TEMP_CREATE(FECsInputAction, ECsInputAction)
+		CS_TEMP_CREATE(ECsInputAction)
 		// FECsInputActionMap
-		CS_TEMP_CREATE(FECsInputActionMap, ECsInputActionMap)
+		CS_TEMP_CREATE(ECsInputActionMap)
 		// FECsGameEvent
-		CS_TEMP_CREATE(FECsGameEvent, ECsGameEvent)
+		CS_TEMP_CREATE(ECsGameEvent)
 		// FECsGameEventCoordinatorGroup
-		CS_TEMP_CREATE(FECsGameEventCoordinatorGroup, ECsGameEventCoordinatorGroup)
+		CS_TEMP_CREATE(ECsGameEventCoordinatorGroup)
 		// FECsGestureType
-		CS_TEMP_CREATE(FECsGestureType, ECsGestureType)
+		CS_TEMP_CREATE(ECsGestureType)
 	}
 	// FECsSurfaceType
-	CS_TEMP_CREATE(FECsSurfaceType, ECsSurfaceType)
+	CS_TEMP_CREATE(ECsSurfaceType)
 	// FX
 	{
 		// FECsFX
-		CS_TEMP_CREATE(FECsFX, ECsFX)
+		CS_TEMP_CREATE(ECsFX)
 	}
 	// FECsProcess
-	CS_TEMP_CREATE(FECsProcess, ECsProcess)
+	CS_TEMP_CREATE(ECsProcess)
 	// Item
 	{
 		// FECsItemType
@@ -134,9 +134,9 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	// Damage
 	{
 		// FECsDamageType
-		CS_TEMP_CREATE(FECsDamageType, ECsDamageType)
+		CS_TEMP_CREATE(ECsDamageType)
 		// FECsHitType
-		CS_TEMP_CREATE(FECsHitType, ECsHitType)
+		CS_TEMP_CREATE(ECsHitType)
 	}
 	// Interactive
 	{
@@ -144,7 +144,7 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 		//if (DoesPinUseScriptStruct<FECsInteractiveType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsInteractiveType, InPin); }
 	}
 	// FECsSound
-	CS_TEMP_CREATE(FECsSound, ECsSound)
+	CS_TEMP_CREATE(ECsSound)
 	// AI
 	{
 		// FECsAIType
@@ -157,7 +157,7 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	// Sense
 	{
 		// FECsSenseActorType
-		CS_TEMP_CREATE(FECsSenseActorType, ECsSenseActorType)
+		CS_TEMP_CREATE(ECsSenseActorType)
 	}
 
 #undef CS_TEMP_CREATE

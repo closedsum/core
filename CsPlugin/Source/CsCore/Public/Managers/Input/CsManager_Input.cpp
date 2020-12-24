@@ -25,11 +25,17 @@
 // Cached
 #pragma region
 
-namespace NCsManagerInputCached
+namespace NCsManagerInput
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, PostProcessInput);
+		namespace Str
+		{
+			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, SetCurrentInputActionMap);
+			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, ClearCurrentInputActionMap);
+
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, PostProcessInput);
+		}
 	}
 }
 
@@ -225,7 +231,7 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 
 void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGamePaused)
 {
-	using namespace NCsManagerInputCached;
+	using namespace NCsManagerInput::NCached;
 
 	const FString& Context = Str::PostProcessInput;
 
@@ -825,26 +831,6 @@ void UCsManager_Input::SetInputActionMappingByMap(FECsInputActionMap Map)
 	CurrentInputActionMap |= 1 << static_cast<int32>(Map);
 }
 */
-
-void UCsManager_Input::SetCurrentInputActionMap(const FECsInputActionMap& Map)
-{
-	CS_SET_BITFLAG(CurrentInputActionMap, Map.Mask);
-}
-
-void UCsManager_Input::SetCurrentInputActionMap(const int32& Map)
-{
-	CS_SET_BITFLAG(CurrentInputActionMap, Map);
-}
-
-void UCsManager_Input::ClearCurrentInputActionMap(const FECsInputActionMap& Map)
-{
-	CS_CLEAR_BITFLAG(CurrentInputActionMap, Map.Mask);
-}
-
-void UCsManager_Input::ClearCurrentInputActionMap(const int32& Map)
-{
-	CS_CLEAR_BITFLAG(CurrentInputActionMap, Map);
-}
 
 #pragma endregion Action Map
 

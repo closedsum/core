@@ -23,6 +23,23 @@ struct CSCORE_API FCsManager_Input : public TCsManager_ResourceValueType_Fixed<F
 
 #pragma endregion Structs
 
+// Cached
+#pragma region
+
+namespace NCsManagerInput
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			extern CSCORE_API const FString SetCurrentInputActionMap;
+			extern CSCORE_API const FString ClearCurrentInputActionMap;
+		}
+	}
+}
+
+#pragma endregion Cached
+
 class AActor;
 class APlayerController;
 class UCsInputListener;
@@ -109,38 +126,95 @@ private:
 
 	void SetupInputActionMapping();
 
-public:
-
 	/** Bit mask of current active InputActionMaps */
 	int32 CurrentInputActionMap;
+
+public:
+
+	/**
+	* Sets the bit (Map) in CurrentInputActionMap.
+	*
+	* @param Context	The calling context.
+	* @param Map		A EnumStructFlag (contains a bit flag).
+	*/
+	FORCEINLINE void SetCurrentInputActionMap(const FString& Context, const FECsInputActionMap& Map) 
+	{
+		check(EMCsInputActionMap::Get().IsValidEnumChecked(Context, Map));
+
+		CS_SET_BITFLAG(CurrentInputActionMap, Map.Mask); 
+	}
 
 	/**
 	* Sets the bit (Map) in CurrentInputActionMap.
 	*
 	* @param Map	A EnumStructFlag (contains a bit flag).
 	*/
-	void SetCurrentInputActionMap(const FECsInputActionMap& Map);
+	FORCEINLINE void SetCurrentInputActionMap(const FECsInputActionMap& Map) { SetCurrentInputActionMap(NCsManagerInput::NCached::Str::SetCurrentInputActionMap, Map); }
 	
 	/**
 	* Sets the bit (Map) in CurrentInputActionMap.
 	*
+	* @param Context	The calling context.
+	* @param Map		A bit flag.
+	*/
+	FORCEINLINE void SetCurrentInputActionMap(const FString& Context, const int32& Map) 
+	{ 
+		checkf(Map >= 0, TEXT("%s: Map: %s is NOT Valid."), *Context, Map);
+
+		CS_SET_BITFLAG(CurrentInputActionMap, Map); 
+	}
+
+	/**
+	* Sets the bit (Map) in CurrentInputActionMap.
+	*
 	* @param Map	A bit flag.
 	*/
-	void SetCurrentInputActionMap(const int32& Map);
+	FORCEINLINE void SetCurrentInputActionMap(const int32& Map) { SetCurrentInputActionMap(NCsManagerInput::NCached::Str::SetCurrentInputActionMap, Map); }
+
+	/**
+	* Clears the bit (Map) in CurrentInputActionMap.
+	*
+	* @param Context	The calling context.
+	* @param Map		A EnumStructFlag (contains a bit flag).
+	*/
+	FORCEINLINE void ClearCurrentInputActionMap(const FString& Context, const FECsInputActionMap& Map)
+	{
+		checkf(EMCsInputActionMap::Get().IsValidEnum(Map), TEXT("%s: Map: %s is NOT Valid."), *Context, Map.ToChar());
+
+		CS_CLEAR_BITFLAG(CurrentInputActionMap, Map.Mask);
+	}
 
 	/**
 	* Clears the bit (Map) in CurrentInputActionMap.
 	*
 	* @param Map	A EnumStructFlag (contains a bit flag).
 	*/
-	void ClearCurrentInputActionMap(const FECsInputActionMap& Map);
+	FORCEINLINE void ClearCurrentInputActionMap(const FECsInputActionMap& Map) { ClearCurrentInputActionMap(NCsManagerInput::NCached::Str::ClearCurrentInputActionMap, Map); }
+
+	/**
+	* Clears the bit (Map) in CurrentInputActionMap.
+	*
+	* @param Context	The calling context.
+	* @param Map		A bit flag.
+	*/
+	FORCEINLINE void ClearCurrentInputActionMap(const FString& Context, const int32& Map) 
+	{
+		checkf(Map >= 0, TEXT("%s: Map: %s is NOT Valid."), *Context, Map);
+
+		CS_CLEAR_BITFLAG(CurrentInputActionMap, Map); 
+	}
 
 	/**
 	* Clears the bit (Map) in CurrentInputActionMap.
 	*
 	* @param Map	A bit flag.
 	*/
-	void ClearCurrentInputActionMap(const int32& Map);
+	FORCEINLINE void ClearCurrentInputActionMap(const int32& Map) { ClearCurrentInputActionMap(NCsManagerInput::NCached::Str::ClearCurrentInputActionMap, Map); }
+
+	/**
+	* Sets CurrentInputActionMap to 0.
+	*/
+	FORCEINLINE void ResetCurrentInputActionMap(){ CurrentInputActionMap = 0; }
 
 #pragma endregion Action Map
 

@@ -5,6 +5,7 @@
 // Types
 #include "Managers/Time/CsTypes_Time.h"
 #include "Containers/CsInterfaceObject.h"
+
 #include "CsUpdate.generated.h"
 
 UINTERFACE(BlueprintType, meta = (CannotImplementInterfaceInBlueprint))

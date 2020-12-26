@@ -35,7 +35,7 @@ void FCsUpdate::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsUpdate:SetObject: Object: %s with Class; %s does NOT implement the interface: ICsUpdate."), *(Object->GetName()));
+				checkf(false, TEXT("FCsUpdate:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsUpdate."), *(Object->GetName()));
 			}
 		}
 	}

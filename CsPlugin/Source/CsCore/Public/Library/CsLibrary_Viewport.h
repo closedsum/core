@@ -2,6 +2,7 @@
 #pragma once
 
 class UObject;
+class FSceneViewport;
 
 namespace NCsViewport
 {
@@ -9,6 +10,20 @@ namespace NCsViewport
 	{
 	public:
 
+		/**
+		* 
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		*/
 		static bool CanProjectWorldToScreenChecked(const FString& Context, UObject* WorldContext);
+
+		/**
+		* 
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		*/
+		static FSceneViewport* GetLocalPlayerViewportChecked(const FString& Context, UObject* WorldContext);
 	};
 }

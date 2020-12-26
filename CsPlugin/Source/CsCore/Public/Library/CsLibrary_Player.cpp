@@ -10,7 +10,9 @@
 #include "GameFramework/PlayerState.h"
 // Pawn
 #include "GameFramework/Pawn.h"
-
+// Game
+#include "Engine/GameInstance.h"
+// Engine
 #include "Engine/Engine.h"
 
 namespace NCsLibraryPlayer
@@ -25,6 +27,30 @@ namespace NCsLibraryPlayer
 		}
 	}
 }
+
+// Player
+#pragma region
+
+ULocalPlayer* FCsLibrary_Player::GetFirstLocalPlayerChecked(const FString& Context, UObject* WorldContext)
+{
+	checkf(WorldContext, TEXT("%s: WorldContext is NULL."));
+
+	UWorld* World = WorldContext->GetWorld();
+
+	checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+
+	UGameInstance* GameInstance = World->GetGameInstance();
+
+	checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName()));
+
+	ULocalPlayer* LocalPlayer = GameInstance->GetFirstGamePlayer();
+
+	checkf(LocalPlayer, TEXT("%s: Failed to get LocalPlayer from GameInstance: %s."), *Context, *(GameInstance->GetName()));
+
+	return LocalPlayer;
+}
+
+#pragma endregion Player
 
 // PlayerController
 #pragma region
@@ -170,23 +196,3 @@ AHUD* FCsLibrary_Player::GetFirstLocalHUD(UWorld* World)
 		return PC->MyHUD;
 	return nullptr;
 }
-
-// Cursor
-#pragma region
-
-
-void FCsLibrary_Player::ShowMouseCursorChecked(const FString& Context, UObject* WorldContext)
-{
-	APlayerController* PC = GetFirstLocalPlayerControllerChecked(Context, WorldContext);
-
-	PC->bShowMouseCursor = true;
-}
-
-void FCsLibrary_Player::HideMouseCursorChecked(const FString& Context, UObject* WorldContext)
-{
-	APlayerController* PC = GetFirstLocalPlayerControllerChecked(Context, WorldContext);
-
-	PC->bShowMouseCursor = false;
-}
-
-#pragma endregion Cursor

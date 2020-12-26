@@ -23,6 +23,21 @@ namespace NCsLibraryPlayer
 
 class CSCORE_API FCsLibrary_Player
 {
+
+// Player
+#pragma region
+public:
+
+	/**
+	* 
+	* 
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	*/
+	static ULocalPlayer* GetFirstLocalPlayerChecked(const FString& Context, UObject* WorldContext);
+
+#pragma endregion Player
+
 // PlayerController
 #pragma region
 public:
@@ -158,26 +173,4 @@ public:
 	{
 		return Cast<T>(GetFirstLocalHUD(World));
 	}
-
-// Cursor
-#pragma region
-public:
-
-	/**
-	*
-	*
-	* @param Context		The calling context.
-	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-	*/
-	static void ShowMouseCursorChecked(const FString& Context, UObject* WorldContext);
-
-	/**
-	*
-	*
-	* @param Context		The calling context.
-	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-	*/
-	static void HideMouseCursorChecked(const FString& Context, UObject* WorldContext);
-
-#pragma endregion Cursor
 };

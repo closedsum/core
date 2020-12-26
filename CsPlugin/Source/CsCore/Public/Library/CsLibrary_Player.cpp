@@ -13,13 +13,16 @@
 
 #include "Engine/Engine.h"
 
-namespace NCsLibraryPlayerCached
+namespace NCsLibraryPlayer
 {
-	namespace Str
+	namespace NCached
 	{
-		CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetFirstLocalPlayerControllerChecked);
-		CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetFirstLocalPlayerStateChecked);
-		CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetFirstLocalPawnChecked);
+		namespace Str
+		{
+			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetFirstLocalPlayerControllerChecked);
+			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetFirstLocalPlayerStateChecked);
+			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetFirstLocalPawnChecked);
+		}
 	}
 }
 
@@ -167,3 +170,23 @@ AHUD* FCsLibrary_Player::GetFirstLocalHUD(UWorld* World)
 		return PC->MyHUD;
 	return nullptr;
 }
+
+// Cursor
+#pragma region
+
+
+void FCsLibrary_Player::ShowMouseCursorChecked(const FString& Context, UObject* WorldContext)
+{
+	APlayerController* PC = GetFirstLocalPlayerControllerChecked(Context, WorldContext);
+
+	PC->bShowMouseCursor = true;
+}
+
+void FCsLibrary_Player::HideMouseCursorChecked(const FString& Context, UObject* WorldContext)
+{
+	APlayerController* PC = GetFirstLocalPlayerControllerChecked(Context, WorldContext);
+
+	PC->bShowMouseCursor = false;
+}
+
+#pragma endregion Cursor

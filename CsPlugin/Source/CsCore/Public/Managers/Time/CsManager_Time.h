@@ -89,14 +89,20 @@ public:
 	*
 	* @param Group
 	*/
-	void Pause(const FECsUpdateGroup& Group);
+	FORCEINLINE void Pause(const FECsUpdateGroup& Group)
+	{
+		UpdateGroups[Group.GetValue()].Pause();
+	}
 
 	/**
 	*
 	*
 	* @param Group
 	*/
-	void Unpause(const FECsUpdateGroup& Group);
+	FORCEINLINE void Unpause(const FECsUpdateGroup& Group)
+	{
+		UpdateGroups[Group.GetValue()].Unpause();
+	}
 
 	/**
 	*

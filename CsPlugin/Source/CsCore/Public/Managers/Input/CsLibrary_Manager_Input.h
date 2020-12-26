@@ -18,6 +18,8 @@ namespace NCsInput
 
 			static UCsManager_Input* GetFirstLocalManagerInputChecked(const FString& Context, UWorld* World);
 
+			static UCsManager_Input* GetFirstLocalManagerInputChecked(const FString& Context, UObject* WorldContext);
+
 			static UCsManager_Input* GetFirstLocalManagerInputChecked(UWorld* World);
 
 			static UCsManager_Input* GetManagerInputChecked(const FString& Context, APlayerController* PC);
@@ -111,6 +113,15 @@ namespace NCsInput
 			/**
 			* Clears the bit (Map) in CurrentInputActionMap for the first local player controller.
 			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Map			A EnumStructFlag (contains a bit flag).
+			*/
+			static void ClearFirstLocalCurrentInputActionMapChecked(const FString& Context, UObject* WorldContext, const FECsInputActionMap& Map);
+
+			/**
+			* Clears the bit (Map) in CurrentInputActionMap for the first local player controller.
+			*
 			* @param World
 			* @param Map	A EnumStructFlag (contains a bit flag).
 			*/
@@ -132,6 +143,15 @@ namespace NCsInput
 			* @param Map		A bit flag. See FECsInputActionMap.
 			*/
 			static void ClearFirstLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map);
+
+			/**
+			* Clears the bit (Map) in CurrentInputActionMap for the first local player controller.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Map			A bit flag. See FECsInputActionMap.
+			*/
+			static void ClearFirstLocalCurrentInputActionMapChecked(const FString& Context, UObject* WorldContext, const int32& Map);
 
 			/**
 			* Clears the bit (Map) in CurrentInputActionMap for the first local player controller.

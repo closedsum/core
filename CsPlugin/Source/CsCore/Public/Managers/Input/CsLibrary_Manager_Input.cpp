@@ -46,6 +46,13 @@ namespace NCsInput
 			return GetManagerInputChecked(Context, PC);
 		}
 
+		UCsManager_Input* FLibrary::GetFirstLocalManagerInputChecked(const FString& Context, UObject* WorldContext)
+		{
+			APlayerController* PC = FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(Context, WorldContext);
+
+			return GetManagerInputChecked(Context, PC);
+		}
+
 		UCsManager_Input* FLibrary::GetFirstLocalManagerInputChecked(UWorld* World)
 		{
 			using namespace NCached;
@@ -151,6 +158,13 @@ namespace NCsInput
 			Manager_Input->ClearCurrentInputActionMap(Context, Map);
 		}
 
+		void FLibrary::ClearFirstLocalCurrentInputActionMapChecked(const FString& Context, UObject* WorldContext, const FECsInputActionMap& Map)
+		{
+			UCsManager_Input* Manager_Input = GetFirstLocalManagerInputChecked(Context, WorldContext);
+
+			Manager_Input->ClearCurrentInputActionMap(Context, Map);
+		}
+
 		void FLibrary::ClearFirstLocalCurrentInputActionMapChecked(UWorld* World, const FECsInputActionMap& Map)
 		{
 			using namespace NCached;
@@ -171,6 +185,13 @@ namespace NCsInput
 		void FLibrary::ClearFirstLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map)
 		{
 			UCsManager_Input* Manager_Input = GetFirstLocalManagerInputChecked(Context, World);
+
+			Manager_Input->ClearCurrentInputActionMap(Context, Map);
+		}
+
+		void FLibrary::ClearFirstLocalCurrentInputActionMapChecked(const FString& Context, UObject* WorldContext, const int32& Map)
+		{
+			UCsManager_Input* Manager_Input = GetFirstLocalManagerInputChecked(Context, WorldContext);
 
 			Manager_Input->ClearCurrentInputActionMap(Context, Map);
 		}

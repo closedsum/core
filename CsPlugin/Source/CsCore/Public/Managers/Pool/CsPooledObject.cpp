@@ -2,8 +2,10 @@
 #include "Managers/Pool/CsPooledObject.h"
 #include "CsCore.h"
 
+// Interfaces
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Pool/CsOnConstructObject.h"
+#include "Managers/Time/CsPause.h"
 
 UCsPooledObject::UCsPooledObject(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -16,15 +18,26 @@ const FCsPooledObject FCsPooledObject::Empty;
 
 FCsPooledObject::FCsPooledObject() :
 	Super(),
+	// ICsUpdate
 	_Update(nullptr),
 	bScriptUpdate(false),
+	// ICsOnContructObject
 	_OnConstructObject(nullptr),
 	bScriptOnConstructObject(false),
+	// ICsPause
+	_Pause(nullptr),
+	bScriptPause(false),
+	// Script
+		// ICsPooledObject
 	Script_GetCache_Impl(),
 	Script_Allocate_Impl(),
 	Script_Deallocate_Impl(),
+		// ICsUpdate
 	Script_Update_Impl(),
-	Script_OnConstructObject_Impl()
+		// ICsOnConstructObject
+	Script_OnConstructObject_Impl(),
+		// ICsPause
+	Script_Pause_Impl()
 {
 }
 
@@ -37,11 +50,7 @@ void FCsPooledObject::SetInterface(ICsPooledObject* InInterface)
 
 	if (!Object)
 	{
-#if UE_BUILD_SHIPPING
-		SetUpdate((ICsUpdate*)InInterface);
-#else
-		SetUpdate(dynamic_cast<ICsUpdate*>(InInterface));
-#endif // #if UE_BUILD_SHIPPING
+		checkf(0, TEXT("FCsPooledObject::SetInterface: This is NOT supported. InInterface must be a UObject."))
 	}
 }
 
@@ -97,6 +106,20 @@ void FCsPooledObject::SetObject(UObject* InObject)
 				SetScriptOnConstructObject();
 			}
 		}
+		// ICsPause
+		{
+			// Interface
+			if (ICsPause* U = Cast<ICsPause>(Object))
+			{
+				SetPause(U);
+			}
+			// Script Interface
+			else
+			if (Class->ImplementsInterface(UCsPause::StaticClass()))
+			{
+				SetScriptPause();
+			}
+		}
 	}
 }
 
@@ -108,12 +131,15 @@ void FCsPooledObject::Reset()
 	bScriptUpdate = false;
 	_OnConstructObject = nullptr;
 	bScriptOnConstructObject = false;
+	_Pause = nullptr;
+	bScriptPause = false;
 
 	Script_GetCache_Impl.Unbind();
 	Script_Allocate_Impl.Unbind();
 	Script_Deallocate_Impl.Unbind();
 	Script_Update_Impl.Unbind();
 	Script_OnConstructObject_Impl.Unbind();
+	Script_Pause_Impl.Unbind();
 }
 
 #pragma endregion TCsInterfaceObject
@@ -146,5 +172,18 @@ void FCsPooledObject::OnConstructObject(const ConstructParamsType& Params)
 }
 
 #pragma endregion ICsOnConstructObject
+
+// ICsPause
+#pragma region
+
+void FCsPooledObject::Pause(bool bPaused)
+{
+	if (bScriptPause)
+		Script_Pause_Impl.Execute(Object, bPaused);
+	else
+		_Pause->Pause(bPaused);
+}
+
+#pragma endregion ICsPause
 
 #pragma endregion FCsPooledObject

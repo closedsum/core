@@ -58,6 +58,7 @@ public:
 
 class ICsUpdate;
 class ICsOnConstructObject;
+class ICsPause;
 
 struct CSCORE_API FCsPooledObject : public TCsInterfaceObject<ICsPooledObject>
 {
@@ -86,6 +87,12 @@ protected:
 
 	/** Does the object implements a script interface of type: ICsOnConstructObject. */
 	bool bScriptOnConstructObject;
+
+	/** Reference to interface of type: ICsPause. */
+	ICsPause* _Pause;
+
+	/** Does the object implements a script interface of type: ICsPause. */
+	bool bScriptPause;
 
 // Script
 #pragma region
@@ -172,6 +179,26 @@ public:
 
 #pragma endregion ICsOnConstructObject
 
+	// ICsPause
+#pragma region
+public:
+
+	/**
+	* Delegate type for pausing.
+	*  The object implements a script interface of type: ICsPause.
+	*
+	* @param Object		An object of type: ICsPause.
+	* @param bPaused	Set whether to pause or un-pause.
+	*/
+	DECLARE_DELEGATE_TwoParams(FScript_Pause, UObject* /*Object*/, bool /*bPaused*/);
+
+	/** Delegate for pausing.
+		  The object implements a script interface of type: ICsPause. */
+	FScript_Pause Script_Pause_Impl;
+
+
+#pragma endregion ICsPause
+
 #pragma endregion Script
 
 public:
@@ -188,7 +215,11 @@ public:
 			   bObject == B.bObject &&
 			   bScript == B.bScript &&
 			   _Update == B._Update &&
-			   bScriptUpdate == B.bScriptUpdate;
+			   bScriptUpdate == B.bScriptUpdate &&
+			   _OnConstructObject == B._OnConstructObject &&
+			   bScriptOnConstructObject == B.bScriptOnConstructObject &&
+			   _Pause == B._Pause &&
+			   bScriptPause == B.bScriptPause;
 	}
 
 	FORCEINLINE bool operator!=(const FCsPooledObject& B) const
@@ -247,30 +278,15 @@ public:
 
 public:
 
-	FORCEINLINE bool Implements_ICsUpdate() const
-	{
-		return _Update != nullptr || bScriptUpdate;
-	}
+	FORCEINLINE bool Implements_ICsUpdate() const { return _Update != nullptr || bScriptUpdate; }
 
-	FORCEINLINE void SetScriptUpdate()
-	{
-		bScriptUpdate = true;
-	}
+	FORCEINLINE void SetScriptUpdate() { bScriptUpdate = true; }
 
-	FORCEINLINE const bool& IsScriptUpdate() const
-	{
-		return bScriptUpdate;
-	}
+	FORCEINLINE const bool& IsScriptUpdate() const { return bScriptUpdate; }
 
-	FORCEINLINE void SetUpdate(ICsUpdate* InUpdate)
-	{
-		_Update = InUpdate;
-	}
+	FORCEINLINE void SetUpdate(ICsUpdate* InUpdate) { _Update = InUpdate; }
 
-	FORCEINLINE ICsUpdate* GetUpdate() const 
-	{
-		return _Update;
-	}
+	FORCEINLINE ICsUpdate* GetUpdate() const { return _Update; }
 
 // ICsOnConstructObject
 #pragma region
@@ -282,30 +298,35 @@ public:
 
 public:
 
-	FORCEINLINE bool Implements_ICsOnConstructObject() const
-	{
-		return _OnConstructObject != nullptr || bScriptOnConstructObject;
-	}
+	FORCEINLINE bool Implements_ICsOnConstructObject() const { return _OnConstructObject != nullptr || bScriptOnConstructObject; }
 
-	FORCEINLINE void SetScriptOnConstructObject()
-	{
-		bScriptOnConstructObject = true;
-	}
+	FORCEINLINE void SetScriptOnConstructObject() { bScriptOnConstructObject = true; }
 
-	FORCEINLINE const bool& IsScriptOnConstructObject() const
-	{
-		return bScriptOnConstructObject;
-	}
+	FORCEINLINE const bool& IsScriptOnConstructObject() const { return bScriptOnConstructObject; }
 
-	FORCEINLINE ICsOnConstructObject* GetOnConstructObject() const
-	{
-		return _OnConstructObject;
-	}
+	FORCEINLINE ICsOnConstructObject* GetOnConstructObject() const { return _OnConstructObject; }
 
-	FORCEINLINE void SetOnConstructObject(ICsOnConstructObject* O)
-	{
-		_OnConstructObject = O;
-	}
+	FORCEINLINE void SetOnConstructObject(ICsOnConstructObject* O) { _OnConstructObject = O; }
+
+// ICsPause
+#pragma region
+public:
+
+	void Pause(bool bPaused);
+
+#pragma endregion Pause
+
+public:
+
+	FORCEINLINE bool Implements_ICsPause() const { return _Pause != nullptr || bScriptPause; }
+
+	FORCEINLINE void SetScriptPause() { bScriptPause = true; }
+
+	FORCEINLINE const bool& IsScriptPause() const { return bScriptPause; }
+
+	FORCEINLINE void SetPause(ICsPause* InPause) { _Pause = InPause; }
+
+	FORCEINLINE ICsPause* GetPause() const { return _Pause; }
 
 #undef CacheType
 #undef PayloadType

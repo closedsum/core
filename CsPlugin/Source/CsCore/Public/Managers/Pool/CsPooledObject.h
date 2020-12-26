@@ -2,9 +2,12 @@
 #pragma once
 
 #include "UObject/Interface.h"
+// Containers
 #include "Containers/CsInterfaceObject.h"
+// Types
 #include "Managers/Time/CsTypes_Time.h"
 #include "Managers/Pool/CsTypes_Manager_PooledObject.h"
+
 #include "CsPooledObject.generated.h"
 
 UINTERFACE(Blueprintable)
@@ -243,6 +246,11 @@ public:
 #pragma endregion ICsUpdate
 
 public:
+
+	FORCEINLINE bool Implements_ICsUpdate() const
+	{
+		return _Update != nullptr || bScriptUpdate;
+	}
 
 	FORCEINLINE void SetScriptUpdate()
 	{

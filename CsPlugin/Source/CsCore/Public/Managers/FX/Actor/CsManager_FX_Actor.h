@@ -9,6 +9,7 @@
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
 // Types
 #include "Managers/FX/CsTypes_FX.h"
+#include "Managers/Time/CsUpdateGroup.h"
 // FX
 #include "Managers/FX/Payload/CsPayload_FX.h"
 #include "Managers/FX/Actor/CsFXActorPooled.h"
@@ -511,6 +512,28 @@ protected:
 	void OnPostUpdate_Pool(const FECsFX& Type);
 
 #pragma endregion Update
+
+	// Pause
+#pragma region
+public:
+
+	/**
+	*/
+	void Pause(bool bPaused);
+
+	/**
+	*/
+	void Pause(const FECsFX& Type, bool bPaused);
+
+private:
+
+	TMap<FECsUpdateGroup, FDelegateHandle> OnPauseHandleByGroupMap;
+
+public:
+
+	void BindToOnPause(const FECsUpdateGroup& Group);
+
+#pragma endregion Pause
 
 	// Payload
 #pragma region

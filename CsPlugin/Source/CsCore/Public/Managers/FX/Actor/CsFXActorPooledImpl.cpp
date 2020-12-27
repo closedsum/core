@@ -135,6 +135,20 @@ void UCsFXActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 #pragma endregion ICsUpdate
 
+// ICsPause
+#pragma region
+
+void UCsFXActorPooledImpl::Pause(bool bPaused)
+{
+	UNiagaraComponent* FXComponent = FX->GetNiagaraComponent();
+
+	checkf(FXComponent, TEXT("UCsFXActorPooledImpl::Pause: NiagaraComponent is NULL for FX Actor: %s."), *(FX->GetName()));
+
+	FXComponent->SetPaused(bPaused);
+}
+
+#pragma endregion ICsPause
+
 // ICsPooledObject
 #pragma region
 

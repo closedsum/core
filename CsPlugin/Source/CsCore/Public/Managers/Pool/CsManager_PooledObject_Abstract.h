@@ -1344,6 +1344,32 @@ namespace NCsPooledObject
 
 		#pragma endregion Update
 
+		// Pause
+		#pragma region
+		public:
+
+			/**
+			* 
+			* 
+			* @param bPaused	Whether to pause or un-pause
+			*/
+			void Pause(bool bPaused)
+			{
+				TCsDoubleLinkedList<InterfaceContainerType*>* Current = AllocatedHead;
+				TCsDoubleLinkedList<InterfaceContainerType*>* Next    = Current;
+
+				while (Next)
+				{
+					Current					  = Next;
+					InterfaceContainerType* O = **Current;
+					Next					  = Current->GetNextLink();
+
+					O->Pause(bPaused);
+				}
+			}
+
+		#pragma endregion Pause
+
 		// Allocate / Deallocate
 		#pragma region
 		protected:

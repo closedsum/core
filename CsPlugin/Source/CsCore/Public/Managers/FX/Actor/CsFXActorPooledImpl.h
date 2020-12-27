@@ -5,6 +5,7 @@
 // Interfaces
 #include "Managers/Pool/CsOnConstructObject.h"
 #include "Managers/Time/CsUpdate.h"
+#include "Managers/Time/CsPause.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/FX/Actor/CsFXActorPooled.h"
 
@@ -24,6 +25,7 @@ UCLASS()
 class CSCORE_API UCsFXActorPooledImpl : public UObject,
 										public ICsOnConstructObject,
 										public ICsUpdate,
+										public ICsPause,
 										public ICsPooledObject,
 										public ICsFXActorPooled
 {
@@ -56,6 +58,14 @@ public:
 	void Update(const FCsDeltaTime& DeltaTime);
 
 #pragma endregion ICsUpdate
+
+// ICsPause
+#pragma region
+public:
+
+	void Pause(bool bPaused);
+
+#pragma endregion ICsPause
 
 // ICsPooledObject
 #pragma region

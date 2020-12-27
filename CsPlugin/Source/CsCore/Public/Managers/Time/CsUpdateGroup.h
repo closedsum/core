@@ -11,6 +11,14 @@ private:
 	/** Is the group paused. */
 	bool bPause;
 
+public:
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPause, bool /*bPaused*/);
+
+private:
+
+	FOnPause OnPause_Event;
+
 	/** The current multiplier to delta time. Defaults to 1.0. */
 	float Scale;
 
@@ -45,6 +53,7 @@ public:
 
 	FCsUpdateGroup() :
 		bPause(false),
+		OnPause_Event(),
 		Scale(1.0f),
 		Scales(),
 		StartTime(),
@@ -69,16 +78,33 @@ public:
 		DeltaTime.Reset();
 		ScaledDeltaTime.Reset();
 		TimePaused.Reset();
+
+		OnPause_Event.Broadcast(bPause);
 	}
 
 	FORCEINLINE void Unpause()
 	{
 		bPause = false;
+		OnPause_Event.Broadcast(bPause);
 	}
 
 	FORCEINLINE bool IsPaused() const
 	{
 		return bPause;
+	}
+
+	FORCEINLINE FOnPause& GetOnPause_Event() { return OnPause_Event; }
+
+	FORCEINLINE FDelegateHandle AddOnPause(FOnPause::FDelegate& OnPause)
+	{
+		OnPause_Event.Add(OnPause);
+
+		return OnPause.GetHandle();
+	}
+
+	FORCEINLINE void RemoveOnPause(const FDelegateHandle& Handle)
+	{
+		OnPause_Event.Remove(Handle);
 	}
 
 	FORCEINLINE void SetScale(const float& InScale)

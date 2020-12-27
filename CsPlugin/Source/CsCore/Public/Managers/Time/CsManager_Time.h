@@ -115,6 +115,27 @@ public:
 		return UpdateGroups[Group.GetValue()].IsPaused();
 	}
 
+#define OnPauseType FCsUpdateGroup::FOnPause
+#define OnPauseDelegateType FCsUpdateGroup::FOnPause::FDelegate
+
+	FORCEINLINE OnPauseType& GetOnPause_Event(const FECsUpdateGroup& Group)
+	{
+		return UpdateGroups[Group.GetValue()].GetOnPause_Event();
+	}
+
+	FORCEINLINE FDelegateHandle AddOnPause(const FECsUpdateGroup& Group, OnPauseDelegateType& OnPause)
+	{
+		return UpdateGroups[Group.GetValue()].AddOnPause(OnPause);
+	}
+
+	FORCEINLINE void RemoveOnPause(const FECsUpdateGroup& Group, const FDelegateHandle& Handle)
+	{
+		UpdateGroups[Group.GetValue()].RemoveOnPause(Handle);
+	}
+
+#undef OnPauseType
+#undef OnPauseDelegateType
+
 #pragma endregion Pause
 
 	// Update

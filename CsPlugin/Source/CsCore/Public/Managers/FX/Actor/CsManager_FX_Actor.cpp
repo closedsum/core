@@ -9,6 +9,8 @@
 #include "Library/CsLibrary_Property.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
+// Managers
+#include "Managers/Time/CsManager_Time.h"
 // Data
 #include "Managers/FX/Data/CsData_FX.h"
 #include "Managers/FX/Data/CsData_FXImpl.h"
@@ -256,6 +258,22 @@ void UCsManager_FX_Actor::Initialize()
 
 void UCsManager_FX_Actor::CleanUp()
 {
+	for (const TPair<FECsUpdateGroup, FDelegateHandle>& Pair : OnPauseHandleByGroupMap)
+	{
+		const FECsUpdateGroup& Group  = Pair.Key;
+		const FDelegateHandle& Handle = Pair.Value;
+
+#if WITH_EDITOR
+		if (UCsManager_Time* Manager_Time = UCsManager_Time::Get(GetOuter()))
+		{
+			Manager_Time->RemoveOnPause(Group, Handle);
+		}
+#else
+		UCsManager_Time::Get(GetOuter())->RemoveOnPause(Group, Handle);
+#endif // #if WITH_EDITOR
+	}
+	OnPauseHandleByGroupMap.Reset();
+
 	Internal.Shutdown();
 	Pool.Reset();
 
@@ -647,6 +665,28 @@ void UCsManager_FX_Actor::OnPostUpdate_Pool(const FECsFX& Type)
 }
 
 #pragma endregion Update
+
+	// Pause
+#pragma region
+
+void UCsManager_FX_Actor::Pause(bool bPaused)
+{
+	Internal.Pause(bPaused);
+}
+
+void UCsManager_FX_Actor::Pause(const FECsFX& Type, bool bPaused)
+{
+	Internal.Pause(Type, bPaused);
+}
+
+void UCsManager_FX_Actor::BindToOnPause(const FECsUpdateGroup& Group)
+{
+	FDelegateHandle Handle = UCsManager_Time::Get(GetOuter())->GetOnPause_Event(Group).AddUObject(this, &UCsManager_FX_Actor::Pause);
+
+	OnPauseHandleByGroupMap.Add(Group, Handle);
+}
+
+#pragma endregion Pause
 
 	// Payload
 #pragma region

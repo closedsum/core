@@ -930,6 +930,25 @@ namespace NCsPooledObject
 
 		#pragma endregion Update
 
+		// Pause
+		#pragma region
+		public:
+
+			void Pause(bool bPaused)
+			{
+				for (TPair<KeyType, ManagerAbstractType*>& Pair : Pools)
+				{
+					Pair.Value->Pause(bPaused);
+				}
+			}
+
+			void Pause(const KeyType& Type, bool bPaused)
+			{
+				GetManagerPooledObjects(Type)->Pause(bPaused);
+			}
+
+		#pragma endregion Pause
+
 		// Payload
 		#pragma region
 		private:

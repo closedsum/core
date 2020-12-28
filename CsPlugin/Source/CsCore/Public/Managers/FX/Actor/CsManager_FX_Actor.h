@@ -9,7 +9,7 @@
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
 // Types
 #include "Managers/FX/CsTypes_FX.h"
-#include "Managers/Time/CsUpdateGroup.h"
+#include "Managers/Time/CsTypes_Update.h"
 // FX
 #include "Managers/FX/Payload/CsPayload_FX.h"
 #include "Managers/FX/Actor/CsFXActorPooled.h"
@@ -699,7 +699,7 @@ public:
 		 The object implements a script interface of type: ICsOnConstructObject. */
 	FCsPooledObject::FScript_OnConstructObject Script_OnConstructObject_Impl;
 
-#pragma endregion 
+#pragma endregion ICsOnConstructObject
 
 #pragma endregion Script
 

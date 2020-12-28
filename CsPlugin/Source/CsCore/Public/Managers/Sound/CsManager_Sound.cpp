@@ -9,6 +9,8 @@
 #include "Library/CsLibrary_Property.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
+// Managers
+#include "Managers/Time/CsManager_Time.h"
 // Data
 #include "Managers/Sound/Data/CsData_Sound.h"
 #include "Managers/Sound/Data/CsData_SoundImpl.h"
@@ -63,7 +65,36 @@ UCsManager_Sound* UCsManager_Sound::s_Instance;
 bool UCsManager_Sound::s_bShutdown = false;
 
 UCsManager_Sound::UCsManager_Sound(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer),
+	// Singleton
+	bInitialized(false),
+	MyRoot(nullptr),
+	// Settings
+	Settings(),
+	// Internal
+	Internal(),
+		// Pool
+	CurrentUpdatePoolType(),
+	CurrentUpdatePoolObjectIndex(0),
+		// Pause
+	OnPauseHandleByGroupMap(),
+		// Spawn
+	OnSpawn_Event(),
+	OnSpawn_ScriptEvent(),
+		// Destroy
+	OnDestroy_Event(),
+	// Pool
+	Pool(),
+	// Script
+	Script_GetCache_Impl(),
+	Script_Allocate_Impl(),
+	Script_Deallocate_Impl(),
+	Script_Update_Impl(),
+	Script_OnConstructObject_Impl(),
+	// Data
+	DataMap(),
+	ClassMap(),
+	DataTables()
 {
 }
 
@@ -245,6 +276,18 @@ void UCsManager_Sound::Initialize()
 
 void UCsManager_Sound::CleanUp()
 {
+	for (const TPair<FECsUpdateGroup, FDelegateHandle>& Pair : OnPauseHandleByGroupMap)
+	{
+		const FECsUpdateGroup& Group  = Pair.Key;
+		const FDelegateHandle& Handle = Pair.Value;
+
+		if (UCsManager_Time* Manager_Time = UCsManager_Time::Get(GetOuter()))
+		{
+			Manager_Time->RemoveOnPause(Group, Handle);
+		}
+	}
+	OnPauseHandleByGroupMap.Reset();
+
 	Internal.Shutdown();
 	Pool.Reset();
 
@@ -574,6 +617,28 @@ void UCsManager_Sound::OnPostUpdate_Pool(const FECsSound& Type)
 }
 
 #pragma endregion Update
+
+	// Pause
+#pragma region
+
+void UCsManager_Sound::Pause(bool bPaused)
+{
+	Internal.Pause(bPaused);
+}
+
+void UCsManager_Sound::Pause(const FECsSound& Type, bool bPaused)
+{
+	Internal.Pause(Type, bPaused);
+}
+
+void UCsManager_Sound::BindToOnPause(const FECsUpdateGroup& Group)
+{
+	FDelegateHandle Handle = UCsManager_Time::Get(GetOuter())->GetOnPause_Event(Group).AddUObject(this, &UCsManager_Sound::Pause);
+
+	OnPauseHandleByGroupMap.Add(Group, Handle);
+}
+
+#pragma endregion Pause
 
 	// Payload
 #pragma region

@@ -127,6 +127,18 @@ void ACsSoundPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 #pragma endregion ICsUpdate
 
+// ICsPause
+#pragma region
+
+void ACsSoundPooledImpl::Pause(bool bPaused)
+{
+	checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Pause: AudioComponent is NULL."));
+
+	AudioComponent->SetPaused(bPaused);
+}
+
+#pragma endregion ICsPause
+
 void ACsSoundPooledImpl::ConstructCache()
 {
 	typedef NCsSound::NCache::FImpl CacheImplType;

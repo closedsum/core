@@ -2,12 +2,18 @@
 #pragma once
 
 #include "UObject/Object.h"
+// Managers
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
+// Resource
 #include "Managers/Resource/CsManager_ResourceValueType.h"
+// Types
 #include "Managers/Sound/CsTypes_Sound.h"
+#include "Managers/Time/CsTypes_Update.h"
+// Sound
 #include "Managers/Sound/Payload/CsPayload_Sound.h"
 #include "Managers/Sound/CsSoundPooled.h"
 #include "Managers/Sound/CsSettings_Manager_Sound.h"
+
 #include "CsManager_Sound.generated.h"
 
 // Delegates
@@ -468,6 +474,28 @@ protected:
 
 #pragma endregion Update
 
+	// Pause
+#pragma region
+public:
+
+	/**
+	*/
+	void Pause(bool bPaused);
+
+	/**
+	*/
+	void Pause(const FECsSound& Type, bool bPaused);
+
+private:
+
+	TMap<FECsUpdateGroup, FDelegateHandle> OnPauseHandleByGroupMap;
+
+public:
+
+	void BindToOnPause(const FECsUpdateGroup& Group);
+
+#pragma endregion Pause
+
 	// Payload
 #pragma region
 public:
@@ -637,7 +665,7 @@ public:
 		 The object implements a script interface of type: ICsOnConstructObject. */
 	FCsPooledObject::FScript_OnConstructObject Script_OnConstructObject_Impl;
 
-#pragma endregion 
+#pragma endregion ICsOnConstructObject
 
 #pragma endregion Script
 

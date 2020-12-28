@@ -77,6 +77,32 @@ namespace NCsInput
 			return Manager_Input;
 		}
 
+		bool FLibrary::HaveAllLocalManagerInputBeenCreated(UObject* WorldContext, const int32& NumLocalPlayers)
+		{
+			checkf(NumLocalPlayers > 0, TEXT("FLibrary::HaveAllLocalManagerInputBeenCreated: NumLocalPlayer: %d is NOT > 0."), NumLocalPlayers);
+
+			TArray<APlayerController*> PlayerControllers;
+
+			FCsLibrary_Player::GetAllLocalPlayerControllers(WorldContext, PlayerControllers);
+
+			int32 Count = 0;
+
+			for (APlayerController* PC : PlayerControllers)
+			{
+				ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC);
+
+				if (!GetManagerInput)
+					return false;
+
+				UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
+
+				if (!Manager_Input)
+					return false;
+				++Count;
+			}
+			return Count == NumLocalPlayers;
+		}
+
 		// InputActionMap
 		#pragma region
 
@@ -136,6 +162,27 @@ namespace NCsInput
 			const FString& Context = Str::SetFirstLocalCurrentInputActionMapChecked;
 
 			SetFirstLocalCurrentInputActionMapChecked(Context, World, Map);
+		}
+
+		void FLibrary::SetLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map)
+		{
+			TArray<APlayerController*> PlayerControllers;
+
+			FCsLibrary_Player::GetAllLocalPlayerControllersChecked(Context, World, PlayerControllers);
+
+			for (APlayerController* PC : PlayerControllers)
+			{
+				UCsManager_Input* Manager_Input = GetManagerInputChecked(Context, PC);
+
+				Manager_Input->SetCurrentInputActionMap(Context, Map);
+			}
+		}
+
+		void FLibrary::SetLocalCurrentInputActionMapChecked(const FString& Context, UObject* WorldContext, const FECsInputActionMap& Map)
+		{
+			checkf(WorldContext, TEXT("%s: WorldContext is NULL."));
+
+			SetLocalCurrentInputActionMapChecked(Context, WorldContext->GetWorld(), Map);
 		}
 
 		#pragma endregion Set

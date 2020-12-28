@@ -69,7 +69,36 @@ UCsManager_FX_Actor* UCsManager_FX_Actor::s_Instance;
 bool UCsManager_FX_Actor::s_bShutdown = false;
 
 UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer),
+	// Singleton
+	bInitialized(false),
+	MyRoot(nullptr),
+	// Settings
+	Settings(),
+	// Internal
+	Internal(),
+		// Pool
+	CurrentUpdatePoolType(),
+	CurrentUpdatePoolObjectIndex(0),
+		// Pause
+	OnPauseHandleByGroupMap(),
+		// Spawn
+	OnSpawn_Event(),
+	OnSpawn_ScriptEvent(),
+		// Destroy
+	OnDestroy_Event(),
+	// Pool
+	Pool(),
+	// Script
+	Script_GetCache_Impl(),
+	Script_Allocate_Impl(),
+	Script_Deallocate_Impl(),
+	Script_Update_Impl(),
+	Script_OnConstructObject_Impl(),
+	// Data
+	DataMap(),
+	ClassMap(),
+	DataTables()
 {
 }
 
@@ -263,14 +292,10 @@ void UCsManager_FX_Actor::CleanUp()
 		const FECsUpdateGroup& Group  = Pair.Key;
 		const FDelegateHandle& Handle = Pair.Value;
 
-#if WITH_EDITOR
 		if (UCsManager_Time* Manager_Time = UCsManager_Time::Get(GetOuter()))
 		{
 			Manager_Time->RemoveOnPause(Group, Handle);
 		}
-#else
-		UCsManager_Time::Get(GetOuter())->RemoveOnPause(Group, Handle);
-#endif // #if WITH_EDITOR
 	}
 	OnPauseHandleByGroupMap.Reset();
 

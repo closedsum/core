@@ -24,6 +24,8 @@ namespace NCsInput
 
 			static UCsManager_Input* GetManagerInputChecked(const FString& Context, APlayerController* PC);
 
+			static bool HaveAllLocalManagerInputBeenCreated(UObject* WorldContext, const int32& NumLocalPlayers);
+
 		// InputActionMap
 		#pragma region
 
@@ -87,6 +89,24 @@ namespace NCsInput
 			* @param Map	A bit flag. See FECsInputActionMap.
 			*/
 			static void SetFirstLocalCurrentInputActionMapChecked(UWorld* World, const int32& Map);
+
+			/**
+			* Sets the bit (Map) in CurrentInputActionMap for all local player controllers.
+			*
+			* @param Context		The calling context.
+			* @param World
+			* @param Map			A EnumStructFlag (contains a bit flag).
+			*/
+			static void SetLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map);
+
+			/**
+			* Sets the bit (Map) in CurrentInputActionMap for all local player controllers.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Map			A EnumStructFlag (contains a bit flag).
+			*/
+			static void SetLocalCurrentInputActionMapChecked(const FString& Context, UObject* WorldContext, const FECsInputActionMap& Map);
 
 		#pragma endregion Set
 

@@ -22,6 +22,9 @@ namespace NCsLibraryPlayer
 		namespace Str
 		{
 			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetFirstLocalPlayerControllerChecked);
+			
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetAllLocalPlayerControllers);
+			
 			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetFirstLocalPlayerStateChecked);
 			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetFirstLocalPawnChecked);
 		}
@@ -108,6 +111,26 @@ APlayerController* FCsLibrary_Player::GetPlayerControllerOrFirstLocalChecked(con
 	return GetFirstLocalPlayerControllerChecked(Context, Pawn);
 }
 
+void FCsLibrary_Player::GetAllLocalPlayerControllers(UWorld* World, TArray<APlayerController*>& OutControllers)
+{
+	using namespace NCsLibraryPlayer::NCached;
+
+	const FString& Context = Str::GetAllLocalPlayerControllers;
+
+	if (!World)
+		return;
+
+	GetAllLocalPlayerControllersChecked(Context, World, OutControllers);
+}
+
+void FCsLibrary_Player::GetAllLocalPlayerControllers(UObject* WorldContext, TArray<APlayerController*>& OutControllers)
+{
+	if (!WorldContext)
+		return;
+
+	GetAllLocalPlayerControllers(WorldContext->GetWorld(), OutControllers);
+}
+
 void FCsLibrary_Player::GetAllLocalPlayerControllersChecked(const FString& Context, UWorld* World, TArray<APlayerController*>& OutControllers)
 {
 	checkf(World, TEXT("%s: World is NULL."), *Context);
@@ -121,6 +144,13 @@ void FCsLibrary_Player::GetAllLocalPlayerControllersChecked(const FString& Conte
 			OutControllers.Add(PC);
 		}
 	}
+}
+
+void FCsLibrary_Player::GetAllLocalPlayerControllersChecked(const FString& Context, UObject* WorldContext, TArray<APlayerController*>& OutControllers)
+{
+	checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+
+	GetAllLocalPlayerControllersChecked(Context, WorldContext->GetWorld(), OutControllers);
 }
 
 #pragma endregion PlayerController

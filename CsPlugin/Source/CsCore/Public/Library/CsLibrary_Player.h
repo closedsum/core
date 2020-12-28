@@ -92,7 +92,13 @@ public:
 
 	static APlayerController* GetPlayerControllerOrFirstLocalChecked(const FString& Context, APawn* Pawn);
 
+	static void GetAllLocalPlayerControllers(UWorld* World, TArray<APlayerController*>& OutControllers);
+
+	static void GetAllLocalPlayerControllers(UObject* WorldContext, TArray<APlayerController*>& OutControllers);
+
 	static void GetAllLocalPlayerControllersChecked(const FString& Context, UWorld* World, TArray<APlayerController*>& OutControllers);
+
+	static void GetAllLocalPlayerControllersChecked(const FString& Context, UObject* WorldContext, TArray<APlayerController*>& OutControllers);
 
 #pragma endregion PlayerController
 

@@ -1,8 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "GameFramework/Actor.h"
+// Interfaces
 #include "Managers/Time/CsUpdate.h"
+#include "Managers/Time/CsPause.h"
 #include "Managers/Pool/CsPooledObject.h"
+// Types
 #include "Managers/Sound/CsSoundPooled.h"
 #include "Managers/Sound/CsTypes_Sound.h"
 
@@ -24,6 +27,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, IPayload)
 UCLASS()
 class CSCORE_API ACsSoundPooledImpl : public AActor,
 									  public ICsUpdate,
+									  public ICsPause,
 									  public ICsPooledObject,
 									  public ICsSoundPooled
 {
@@ -64,6 +68,14 @@ public:
 	void Update(const FCsDeltaTime& DeltaTime);
 
 #pragma endregion ICsUpdate
+
+// ICsPause
+#pragma region
+public:
+
+	void Pause(bool bPaused);
+
+#pragma endregion ICsPause
 
 protected:
 

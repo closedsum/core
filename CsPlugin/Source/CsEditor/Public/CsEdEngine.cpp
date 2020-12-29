@@ -96,6 +96,17 @@ void UCsEdEngine::Tick(float DeltaSeconds, bool bIdleMode)
 
 #pragma endregion UEngine Interface
 
+
+// UEditorEngine Interface
+#pragma region
+
+void UCsEdEngine::LaunchNewProcess(const FRequestPlaySessionParams& InParams, const int32 InInstanceNum, EPlayNetMode NetMode, bool bIsDedicatedServer)
+{
+	Super::LaunchNewProcess(InParams, InInstanceNum, NetMode, bIsDedicatedServer);
+}
+
+#pragma endregion UUEditorEngine Interface
+
 // FExec Interface
 #pragma region
 

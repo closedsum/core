@@ -31,6 +31,10 @@ public:
 	FGameInstancePIEParameters GameInstancePIEParametersCache;
 #endif // #if WITH_EDITOR
 
+protected:
+
+	virtual void OnStart() override;
+
 #pragma endregion UGameInstance Interface
 
 // FExec Interface

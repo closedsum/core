@@ -26,17 +26,22 @@
 // Cached
 #pragma region
 
-namespace NCsGameInstanceCached
+namespace NCsGameInstance
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsGameInstance, Init);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsGameInstance, Check_FinishedLoadingPersistentLevel_Internal);
-	}
+		namespace Str
+		{
+			const FString StandaloneFromEditor = TEXT("StandaloneFromEditor");
 
-	namespace Name
-	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsGameInstance, Check_FinishedLoadingPersistentLevel_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsGameInstance, Init);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsGameInstance, Check_FinishedLoadingPersistentLevel_Internal);
+		}
+
+		namespace Name
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsGameInstance, Check_FinishedLoadingPersistentLevel_Internal);
+		}
 	}
 }
 
@@ -54,7 +59,7 @@ void UCsGameInstance::Init()
 {
 	Super::Init();
 
-	using namespace NCsGameInstanceCached;
+	using namespace NCsGameInstance::NCached;
 
 	const FString& Context = Str::Init;
 
@@ -111,6 +116,17 @@ FGameInstancePIEResult UCsGameInstance::StartPlayInEditorGameInstance(ULocalPlay
 }
 
 #endif // #if WITH_EDITOR
+
+void UCsGameInstance::OnStart()
+{
+	using namespace NCsGameInstance::NCached;
+
+	Super::OnStart();
+
+	// Check if Standalone was launched from editor
+	if (FParse::Param(FCommandLine::Get(), *Str::StandaloneFromEditor))
+		Init();
+}
 
 #pragma endregion UGameInstance Interface
 

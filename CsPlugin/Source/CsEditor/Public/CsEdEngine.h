@@ -30,6 +30,14 @@ public:
 
 #pragma endregion UEngine Interface
 
+// UEditorEngine Interface
+#pragma region
+public:
+
+	virtual void LaunchNewProcess(const FRequestPlaySessionParams& InParams, const int32 InInstanceNum, EPlayNetMode NetMode, bool bIsDedicatedServer) override;
+
+#pragma endregion UUEditorEngine Interface
+
 // FExec Interface
 #pragma region
 public:

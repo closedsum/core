@@ -12,6 +12,16 @@ namespace NCsData
 	public:
 
 		/**
+		* Get the Root for Manager_Data.
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		*						Used to route to Manager_Data.
+		* return				Root for Manager_Data
+		*/
+		static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
+
+		/**
 		* Get Data with name DataName which implements the interface: NCsData::IData.
 		* 
 		* @param Context		The calling context.

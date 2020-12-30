@@ -2,12 +2,12 @@
 #pragma once
 
 #include "UObject/Object.h"
-#include "CsLibrary_Manager_Data.generated.h"
+#include "CsScriptLibrary_Manager_Data.generated.h"
 
 class UDataTable;
 
 UCLASS()
-class CSCORE_API UCsLibrary_Manager_Data : public UObject
+class CSCORE_API UCsScriptLibrary_Manager_Data : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

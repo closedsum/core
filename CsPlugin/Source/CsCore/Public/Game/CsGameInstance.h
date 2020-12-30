@@ -89,4 +89,16 @@ public:
 	}
 
 #pragma endregion ICsGetManagerSingleton
+
+// Editor
+#pragma region
+private:
+
+	bool bStandaloneFromEditor;
+
+public:
+
+	FORCEINLINE bool IsStandaloneFromEditor() const { return bStandaloneFromEditor; }
+
+#pragma endregion Editor
 };

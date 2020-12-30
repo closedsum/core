@@ -2,12 +2,13 @@
 #include "Managers/Playback/CsManager_Playback.h"
 #include "CsPlayback.h"
 
+// Library
+#include "Level/CsLibrary_Level.h"
 // Settings
 //#include "Settings/CsDeveloperSettings.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 #include "Managers/Runnable/CsManager_Runnable.h"
-#include "Managers/Level/CsManager_Level.h"
 // Json
 #include  "JsonObjectConverter.h"
 
@@ -23,6 +24,22 @@
 
 #include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
+
+// Cached
+#pragma region
+
+ namespace NCsManagerPlayback
+ {
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback, SetPlaybackState);
+		}
+	}
+ }
+
+#pragma endregion Cached
 
 // static initializations
 UCsManager_Playback* UCsManager_Playback::s_Instance;
@@ -264,6 +281,10 @@ void UCsManager_Playback::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Playback::SetPlaybackState(const EPlaybackState& NewState)
 {
+	using namespace NCsManagerPlayback::NCached;
+
+	const FString& Context = Str::SetPlaybackState;
+
 	if (PlaybackState == NewState)
 	{
 		UE_LOG(LogCsPlayback, Warning, TEXT(""));
@@ -275,7 +296,9 @@ void UCsManager_Playback::SetPlaybackState(const EPlaybackState& NewState)
 	// Record
 	if (PlaybackState == EPlaybackState::Record)
 	{
-		FSoftObjectPath LevelPath(UCsManager_Level::Get(MyRoot)->GetPersistentLevelName());
+		typedef NCsLevel::FLibrary LevelLibrary;
+
+		FSoftObjectPath LevelPath(LevelLibrary::GetPersistentLevelNameChecked(Context, MyRoot));
 
 		Record.Start(LevelPath);
 	}	

@@ -8,6 +8,8 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
 #include "Managers/Time/CsTypes_Update.h"
+// Library
+#include "Level/CsLibrary_Level.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 // Game
@@ -300,81 +302,6 @@ char UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal(FCsRoutine*
 	CS_COROUTINE_END(R);
 }
 
-ULevel* UCsManager_Level::GetPersistentLevel() const
-{
-	if (UWorld* World = MyRoot->GetWorld())
-	{
-		const TArray<ULevel*>& Levels = World->GetLevels();
-
-		for (ULevel* Level : Levels)
-		{
-			if (Level->IsPersistentLevel())
-			{
-				return Level;
-			}
-		}
-	}
-	return nullptr;
-}
-
-ULevel* UCsManager_Level::GetPersistentLevelChecked(const FString& Context) const
-{
-	UWorld* World = MyRoot->GetWorld();
-
-	checkf(World, TEXT("%s: Failed to get a UWorld from MyRoot: %s."), *Context, *(MyRoot->GetName()));
-
-	const TArray<ULevel*>& Levels = World->GetLevels();
-
-	for (ULevel* Level : Levels)
-	{
-		if (Level->IsPersistentLevel())
-		{
-			return Level;
-		}
-	}
-	checkf(0, TEXT("%s: Failed to get the Persistent Level from World: %s."), *(World->GetName()))
-	return nullptr;
-}
-
-FString UCsManager_Level::GetPersistentLevelName() const
-{
-	if (UWorld* World = MyRoot->GetWorld())
-	{
-		return UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
-	}
-	return FString();
-}
-
-FName UCsManager_Level::GetPersistentLevelFName() const
-{
-	if (UWorld* World = MyRoot->GetWorld())
-	{
-		const FString Name = UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
-
-		return FName(*Name);
-	}
-	return NAME_None;
-}
-
-bool UCsManager_Level::IsPersistentLevelName(const FString& MapPackageName) const
-{
-	if (UWorld* World = MyRoot->GetWorld())
-		return MapPackageName == UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
-	return false;
-}
-
-ALevelScriptActor* UCsManager_Level::GetPersistentLevelScriptActor() const
-{
-	return GetPersistentLevel()->LevelScriptActor;
-}
-
-ALevelScriptActor* UCsManager_Level::GetPersistentLevelScriptActorChecked(const FString& Context) const
-{
-	checkf(GetPersistentLevelChecked(Context)->LevelScriptActor, TEXT("%s: No LevelScriptActor found for the PersistentLevel."), *Context);
-
-	return GetPersistentLevelChecked(Context)->LevelScriptActor;
-}
-
 #pragma endregion Persistent Level
 
 // TODO: Add ChangeMap Params
@@ -405,7 +332,9 @@ void UCsManager_Level::ChangeMap(const FChangeMapParams& Params)
 	static const int32 TRANSITION_MAP_INDEX = 1;
 	Payload->SetValue_String(TRANSITION_MAP_INDEX, Params.TransitionMap);
 
-	CurrentMap = GetPersistentLevelName();
+	typedef NCsLevel::FLibrary LevelLibrary;
+
+	CurrentMap = LevelLibrary::GetPersistentLevelName(MyRoot);
 
 	bChangeMapCompleted = false;
 

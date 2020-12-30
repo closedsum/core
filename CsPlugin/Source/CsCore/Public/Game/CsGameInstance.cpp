@@ -48,7 +48,14 @@ namespace NCsGameInstance
 #pragma endregion Cached
 
 UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer) : 
-	Super(ObjectInitializer)
+	Super(ObjectInitializer),
+	// Tick
+	TickDelegate(),
+	TickDelegateHandle(),
+	// Managers
+	Manager_Singleton(nullptr),
+	// Editor
+	bStandaloneFromEditor(false)
 {
 }
 
@@ -125,7 +132,11 @@ void UCsGameInstance::OnStart()
 
 	// Check if Standalone was launched from editor
 	if (FParse::Param(FCommandLine::Get(), *Str::StandaloneFromEditor))
+	{
+		bStandaloneFromEditor = true;
+
 		Init();
+	}
 }
 
 #pragma endregion UGameInstance Interface
@@ -179,7 +190,10 @@ bool UCsGameInstance::IsSimulateInEditor()
 void UCsGameInstance::ExitGame()
 {
 #if WITH_EDITOR
-	GEditor->RequestEndPlayMap();
+	if (bStandaloneFromEditor)
+		FGenericPlatformMisc::RequestExit(false);
+	else
+		GEditor->RequestEndPlayMap();
 #else
 	FGenericPlatformMisc::RequestExit(false);
 #endif // #if WITH_EDITOR

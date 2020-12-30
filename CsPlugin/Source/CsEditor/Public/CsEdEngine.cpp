@@ -43,13 +43,18 @@
 // Cache
 #pragma region
 
-namespace NCsEdEngineCached
+namespace NCsEdEngine
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString OnObjectSaved_Update_DataRootSet_DataTables = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_DataTables");
-		const FString OnObjectSaved_Update_DataRootSet_Payloads = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payloads");
-		const FString OnObjectSaved_Update_DataRootSet_Payload = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payload");
+		namespace Str
+		{
+			const FString StandaloneFromEditor = TEXT("StandaloneFromEditor");
+
+			const FString OnObjectSaved_Update_DataRootSet_DataTables = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_DataTables");
+			const FString OnObjectSaved_Update_DataRootSet_Payloads = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payloads");
+			const FString OnObjectSaved_Update_DataRootSet_Payload = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payload");
+		}
 	}
 }
 
@@ -102,6 +107,25 @@ void UCsEdEngine::Tick(float DeltaSeconds, bool bIdleMode)
 
 void UCsEdEngine::LaunchNewProcess(const FRequestPlaySessionParams& InParams, const int32 InInstanceNum, EPlayNetMode NetMode, bool bIsDedicatedServer)
 {
+	using namespace NCsEdEngine::NCached;
+
+	// if "-StandaloneFromEditor" does NOT exist, add it.
+	FRequestPlaySessionParams& Params   = const_cast<FRequestPlaySessionParams&>(InParams);
+	TOptional<FString>& OpCmdParams		= Params.AdditionalStandaloneCommandLineParameters;
+
+	if (!OpCmdParams.IsSet())
+		OpCmdParams = TEXT("");
+
+	if (OpCmdParams.IsSet())
+	{
+		FString& CmdParams = OpCmdParams.GetValue();
+
+		if (!CmdParams.Contains(Str::StandaloneFromEditor))
+		{
+			CmdParams += (CmdParams.IsEmpty() ? TEXT("-") : TEXT(" -")) + Str::StandaloneFromEditor;
+		}
+	}
+
 	Super::LaunchNewProcess(InParams, InInstanceNum, NetMode, bIsDedicatedServer);
 }
 
@@ -133,7 +157,8 @@ bool UCsEdEngine::Exec(UWorld* InWorld, const TCHAR* Stream, FOutputDevice& Ar)
 void UCsEdEngine::OnBeginPIE(bool IsSimulating)
 {
 	FCsCVarLogMap::Get().ResetDirty();
-	//FCsCVarToggleMap::Get().ResetDirty();
+	FCsCVarToggleMap::Get().ResetDirty();
+	FCsCVarDrawMap::Get().ResetDirty();
 }
 
 // Save
@@ -349,7 +374,7 @@ void UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payloads(UDataTable* DataTabl
 
 void UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payload(FCsPayload& Payload)
 {
-	using namespace NCsEdEngineCached;
+	using namespace NCsEdEngine::NCached;
 
 	const FString& Context = Str::OnObjectSaved_Update_DataRootSet_Payload;
 

@@ -75,7 +75,35 @@ namespace NCsDataRootSet
 		}
 
 		/**
+		* 
+		* 
+		* @param Context			The calling context.
+		* @param WorldContext		Object that has reference to a World (GetWorld() is Valid).
+		* @param InterfaceGetName
+		* @param DataTableSoftPath
+		* @param DataTableName
+		* return
 		*/
-		static UDataTable* GetSafeDataTable(const FString& Context, UObject* Object, const FString& InterfaceGetName, TSoftObjectPtr<UDataTable> DataTableSoftPath, const FString& DataTableName);
+		static UDataTable* GetSafeDataTable(const FString& Context, UObject* WorldContext, const FString& InterfaceGetName, TSoftObjectPtr<UDataTable> DataTableSoftPath, const FString& DataTableName);
+
+		/**
+		* 
+		* 
+		* @param Context			The calling context.
+		* @param WorldContext		Object that has reference to a World (GetWorld() is Valid).
+		* @param DataTableSoftPath
+		* return
+		*/
+		static UDataTable* GetDataTableChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftPath);
+
+		/**
+		* 
+		* 
+		* @param Context			The calling context.
+		* @param WorldContext		Object that has reference to a World (GetWorld() is Valid).
+		* @param DataTableSoftPath
+		* @param RowName
+		*/
+		static uint8* GetDataTableRowChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftPath, const FName& RowName);
 	};
 }

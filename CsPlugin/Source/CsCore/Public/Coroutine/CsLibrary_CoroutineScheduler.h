@@ -16,10 +16,10 @@ namespace NCsCoroutine
 			/**
 			* Get the Context (Root) for UCsCoroutineScheduler from an Actor.
 			*
-			* @oaram Object
-			* return		Context for CoroutineScheduler
+			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Context for CoroutineScheduler
 			*/
-			static UObject* GetContextRoot(UObject* Object);
+			static UObject* GetContextRoot(UObject* WorldContext);
 		};
 	}
 }

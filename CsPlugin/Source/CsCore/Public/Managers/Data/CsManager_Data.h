@@ -913,6 +913,26 @@ public:
 		return GetDataTableRowChecked(Context, SoftObject.ToSoftObjectPath(), RowName);
 	}
 
+	/**
+	* Get a pointer to the row in a data table by the data table's Soft Object
+	* and Row Name.
+	* Check against the current loaded data tables.
+	*
+	* @param Context	The calling context.
+	* @param SoftObject	Soft Object to the data table.
+	* @param RowName	Row Name is retrieved data table.
+	* return			Pointer to the row.
+	*/
+	template<typename RowStructType>
+	FORCEINLINE RowStructType* GetDataTableRowChecked(const FString& Context, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName)
+	{
+		RowStructType* Row = reinterpret_cast<RowStructType>(GetDataTableRowChecked(Context, SoftObject, RowName));
+
+		checkf(Row, TEXT("%s: Failed in casting Row to RowStructType."), *Context);
+
+		return Row;
+	}
+
 		// Entry
 #pragma region
 public:

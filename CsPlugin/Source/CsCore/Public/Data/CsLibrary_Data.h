@@ -3,6 +3,8 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
+class ICsData;
+
 namespace NCsData
 {
 	/**
@@ -33,11 +35,40 @@ namespace NCsData
 		static IData* GetDataChecked(const FString& Context, UObject* WorldContext, const FName& DataName);
 
 		/**
+		* 
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that has a reference to a UWorld (GetWorld() is Valid).
+		*						Used to route to Manager_Data.
+		* @param DataName		Name of the data to get. This is the EntryName in Manager_Data.
+		* return
 		*/
 		template<typename InterfaceType>
 		static InterfaceType* GetDataChecked(const FString& Context, UObject* WorldContext, const FName& DataName)
 		{
 			IData* Data = GetDataChecked(Context, WorldContext, DataName);
+
+			return GetInterfaceChecked<InterfaceType>(Context, Data);
+		}
+
+		/**
+		*
+		* 
+		* @param Context	The calling context.
+		* @param Data
+		*/
+		static IData* GetDataChecked(const FString& Context, ICsData* UData);
+
+		/**
+		*
+		*
+		* @param Context	The calling context.
+		* @param Data
+		*/
+		template<typename InterfaceType>
+		static InterfaceType* GetDataChecked(const FString& Context, ICsData* UData)
+		{
+			IData* Data = GetDataChecked(Context, UData);
 
 			return GetInterfaceChecked<InterfaceType>(Context, Data);
 		}

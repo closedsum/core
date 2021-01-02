@@ -34,4 +34,15 @@ namespace NCsData
 
 		return Data;
 	}
+
+	IData* FLibrary::GetDataChecked(const FString& Context, ICsData* UData)
+	{
+		checkf(UData, TEXT("%s: UData is NULL."), *Context);
+
+		IData* Data = UData->_getIData();
+
+		checkf(Data, TEXT("%s: Failed to get data of type: IData from Object: %s with Class: %s."), *Context, *(UData->_getUObject()->GetName()), *(UData->_getUObject()->GetClass()->GetName()));
+
+		return Data;
+	}
 }

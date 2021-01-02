@@ -2,6 +2,8 @@
 #include "Data/CsLibrary_DataRootSet.h"
 #include "CsCore.h"
 
+// Library
+#include "Managers/Data/CsLibrary_Manager_Data.h"
 // Managers
 #include "Managers/Data/CsManager_Data.h"
 // Interfaces
@@ -46,8 +48,9 @@ namespace NCsDataRootSet
 		return GetChecked<FCsDataRootSet, ICsGetDataRootSet, &ICsGetDataRootSet::GetCsDataRootSet>(Context, WorldContext);
 	}
 
-	UDataTable* FLibrary::GetSafeDataTable(const FString& Context, UObject* Object, const FString& InterfaceGetName, TSoftObjectPtr<UDataTable> DataTableSoftObject, const FString& DataTableName)
+	UDataTable* FLibrary::GetSafeDataTable(const FString& Context, UObject* WorldContext, const FString& InterfaceGetName, TSoftObjectPtr<UDataTable> DataTableSoftObject, const FString& DataTableName)
 	{
+#if WITH_EDITOR
 		const FSoftObjectPath& Path = DataTableSoftObject.ToSoftObjectPath();
 
 		if (Path.IsValid())
@@ -58,13 +61,61 @@ namespace NCsDataRootSet
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("%s: Failed to Load %s.%s.%s @ %s."), *Context, *(Object->GetName()), *InterfaceGetName, *DataTableName, *(Path.ToString()));
+				UE_LOG(LogCs, Warning, TEXT("%s: Failed to Load %s.%s.%s @ %s."), *Context, *(WorldContext->GetName()), *InterfaceGetName, *DataTableName, *(Path.ToString()));
 			}
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s.%s.%s is NOT Valid."), *Context, *(Object->GetName()), *InterfaceGetName, *DataTableName);
+			UE_LOG(LogCs, Warning, TEXT("%s: %s.%s.%s is NOT Valid."), *Context, *(WorldContext->GetName()), *InterfaceGetName, *DataTableName);
 		}
 		return nullptr;
+#else
+		typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+		UObject* ContextRoot = DataManagerLibrary::GetContextRoot(Context, WorldContext);
+
+		if (!ContextRoot)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: Failed to get ContextRoot for UCsManager_Data."), *Context);
+			return nullptr;
+		}
+
+		const FSoftObjectPath& Path = DataTableSoftObject.ToSoftObjectPath();
+
+		if (Path.IsValid())
+		{
+			if (UDataTable* DataTable = UCsManager_Data::Get(ContextRoot)->GetDataTable(DataTableSoftObject))
+			{
+				return DataTable;
+			}
+			else
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s: Failed to Load %s.%s.%s @ %s."), *Context, *(WorldContext->GetName()), *InterfaceGetName, *DataTableName, *(Path.ToString()));
+			}
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s.%s.%s is NOT Valid."), *Context, *(WorldContext->GetName()), *InterfaceGetName, *DataTableName);
+		}
+		return nullptr;
+#endif // #if WITH_EDITOR
+	}
+
+	UDataTable* FLibrary::GetDataTableChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftPath)
+	{
+		typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+		UObject* ContextRoot = DataManagerLibrary::GetContextRootChecked(Context, WorldContext);
+
+		return UCsManager_Data::Get(ContextRoot)->GetDataTableChecked(Context, DataTableSoftPath);
+	}
+
+	uint8* FLibrary::GetDataTableRowChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftPath, const FName& RowName)
+	{
+		typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+		UObject* ContextRoot = DataManagerLibrary::GetContextRootChecked(Context, WorldContext);
+
+		return UCsManager_Data::Get(ContextRoot)->GetDataTableRowChecked(Context, DataTableSoftPath, RowName);
 	}
 }

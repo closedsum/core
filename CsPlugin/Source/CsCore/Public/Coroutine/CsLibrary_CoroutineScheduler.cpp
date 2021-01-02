@@ -15,20 +15,20 @@ namespace NCsCoroutine
 {
 	namespace NScheduler
 	{
-		UObject* FLibrary::GetContextRoot(UObject* Object)
+		UObject* FLibrary::GetContextRoot(UObject* WorldContext)
 		{
-			checkf(Object, TEXT("FLibrary::GetContextRoot: Object is NULL."));
+			checkf(WorldContext, TEXT("FLibrary::GetContextRoot: WorldContext is NULL."));
 
 #if WITH_EDITOR
-			if (FCsLibrary_World::IsPlayInEditor(Object->GetWorld()) ||
-				FCsLibrary_World::IsPlayInEditorPreview(Object->GetWorld()))
+			if (FCsLibrary_World::IsPlayInEditor(WorldContext->GetWorld()) ||
+				FCsLibrary_World::IsPlayInEditorPreview(WorldContext->GetWorld()))
 			{
 				return GEngine;
 			}
 			else
 #endif // #if WITH_EDITOR
 			{
-				return Object->GetWorld()->GetGameInstance();
+				return WorldContext->GetWorld()->GetGameInstance();
 			}
 		}
 	}

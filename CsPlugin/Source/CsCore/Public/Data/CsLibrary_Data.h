@@ -24,6 +24,12 @@ namespace NCsData
 		static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
 
 		/**
+		*/
+		static FString PrintObjectAndClass(ICsData* Data, const FString& MemberName);
+
+		static FString PrintObjectAndClass(ICsData* Data);
+
+		/**
 		* Get Data with name DataName which implements the interface: NCsData::IData.
 		* 
 		* @param Context		The calling context.

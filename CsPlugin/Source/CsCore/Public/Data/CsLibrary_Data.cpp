@@ -25,12 +25,22 @@ namespace NCsData
 		return GameInstance;
 	}
 
+	FString FLibrary::PrintObjectAndClass(ICsData* Data, const FString& MemberName)
+	{
+		return FString::Printf(TEXT("%s: %s with Class: %s"), *MemberName, *(Data->_getUObject()->GetName()), *(Data->_getUObject()->GetClass()->GetName()));
+	}
+
+	FString FLibrary::PrintObjectAndClass(ICsData* Data)
+	{
+		return FString::Printf(TEXT("Object: %s with Class: %s"), *(Data->_getUObject()->GetName()), *(Data->_getUObject()->GetClass()->GetName()));
+	}
+
 	IData* FLibrary::GetDataChecked(const FString& Context, UObject* WorldContext, const FName& DataName)
 	{
 		ICsData* UData = UCsManager_Data::Get(GetContextRootChecked(Context, WorldContext))->GetDataChecked(Context, DataName);
 		IData* Data	   = UData->_getIData();
 
-		checkf(Data, TEXT("%s: Failed to get data of type: IData from Object: %s with Class: %s."), *Context, *(Data->_getUObject()->GetName()), *(Data->_getUObject()->GetClass()->GetName()));
+		checkf(Data, TEXT("%s: Failed to get data of type: IData from %s."), *Context, *(PrintObjectAndClass(UData)));
 
 		return Data;
 	}
@@ -41,7 +51,7 @@ namespace NCsData
 
 		IData* Data = UData->_getIData();
 
-		checkf(Data, TEXT("%s: Failed to get data of type: IData from Object: %s with Class: %s."), *Context, *(UData->_getUObject()->GetName()), *(UData->_getUObject()->GetClass()->GetName()));
+		checkf(Data, TEXT("%s: Failed to get data of type: IData from %s."), *Context, *(PrintObjectAndClass(UData)));
 
 		return Data;
 	}

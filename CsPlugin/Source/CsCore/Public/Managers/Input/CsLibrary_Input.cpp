@@ -28,9 +28,9 @@ namespace NCsInput
 
 	void FLibrary::SetMouseCenterOfViewportChecked(const FString& Context, UObject* WorldContext)
 	{
-		typedef NCsViewport::FLibrary ViewportLibrary;
+		typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
 
-		FSceneViewport* SV = ViewportLibrary::GetLocalPlayerViewportChecked(Context, WorldContext);
+		FSceneViewport* SV = ViewportLibrary::GetViewportChecked(Context, WorldContext);
 
 		const FIntPoint Size = SV->GetSizeXY();
 

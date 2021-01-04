@@ -6,24 +6,42 @@ class FSceneViewport;
 
 namespace NCsViewport
 {
-	class CSCORE_API FLibrary
+	namespace NLocal
 	{
-	public:
+		namespace NPlayer
+		{
+			class CSCORE_API FLibrary
+			{
+			public:
 
-		/**
-		* 
-		* 
-		* @param Context		The calling context.
-		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		*/
-		static bool CanProjectWorldToScreenChecked(const FString& Context, UObject* WorldContext);
+				/**
+				* Check whether the First Local Player's Viewport can project a world location to a screen
+				* position.
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* return				Whether the projection is possible or not.
+				*/
+				static bool CanProjectWorldToScreenChecked(const FString& Context, UObject* WorldContext);
 
-		/**
-		* 
-		* 
-		* @param Context		The calling context.
-		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		*/
-		static FSceneViewport* GetLocalPlayerViewportChecked(const FString& Context, UObject* WorldContext);
-	};
+				/**
+				* Get the Viewport associated with the First Local Player.
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* return				Viewport
+				*/
+				static FSceneViewport* GetViewportChecked(const FString& Context, UObject* WorldContext);
+
+				/**
+				* Get the current Size (GetSizeXY()) of the Viewport associated with the First Local Player.
+				* 
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* return				Size of the viewport.
+				*/
+				static FIntPoint GetSizeChecked(const FString& Context, UObject* WorldContext);
+			};
+		}
+	}
 }

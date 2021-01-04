@@ -11,29 +11,43 @@
 #include "Engine/World.h"
 // View
 #include "Engine/GameViewportClient.h"
+#include "Slate/SceneViewport.h"
 
 namespace NCsViewport
 {
-	bool FLibrary::CanProjectWorldToScreenChecked(const FString& Context, UObject* WorldContext)
+	namespace NLocal
 	{
-		ULocalPlayer* LocalPlayer = FCsLibrary_Player::GetFirstLocalPlayerChecked(Context, WorldContext);
+		namespace NPlayer
+		{
+			bool FLibrary::CanProjectWorldToScreenChecked(const FString& Context, UObject* WorldContext)
+			{
+				ULocalPlayer* LocalPlayer = FCsLibrary_Player::GetFirstLocalPlayerChecked(Context, WorldContext);
 
-		checkf(LocalPlayer->ViewportClient, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
+				checkf(LocalPlayer->ViewportClient, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
 
-		return true;
-	}
+				return true;
+			}
 
-	FSceneViewport* FLibrary::GetLocalPlayerViewportChecked(const FString& Context, UObject* WorldContext)
-	{
-		ULocalPlayer* LocalPlayer = FCsLibrary_Player::GetFirstLocalPlayerChecked(Context, WorldContext);
-		UGameViewportClient* GVC  = LocalPlayer->ViewportClient;
+			FSceneViewport* FLibrary::GetViewportChecked(const FString& Context, UObject* WorldContext)
+			{
+				ULocalPlayer* LocalPlayer = FCsLibrary_Player::GetFirstLocalPlayerChecked(Context, WorldContext);
+				UGameViewportClient* GVC  = LocalPlayer->ViewportClient;
 
-		checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
+				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
 
-		FSceneViewport* SV = GVC->GetGameViewport();
+				FSceneViewport* SV = GVC->GetGameViewport();
 
-		checkf(SV, TEXT("%s: Failed get Viewport from LocalPlayer: %s with ViewportClient: %s."), *Context, *(LocalPlayer->GetName()), *(GVC->GetName()));
+				checkf(SV, TEXT("%s: Failed get Viewport from LocalPlayer: %s with ViewportClient: %s."), *Context, *(LocalPlayer->GetName()), *(GVC->GetName()));
 		
-		return SV;
+				return SV;
+			}
+
+			FIntPoint FLibrary::GetSizeChecked(const FString& Context, UObject* WorldContext)
+			{
+				FSceneViewport* SV = GetViewportChecked(Context, WorldContext);
+
+				return SV->GetSizeXY();
+			}
+		}
 	}
 }

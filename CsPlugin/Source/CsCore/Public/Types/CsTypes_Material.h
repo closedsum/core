@@ -119,10 +119,10 @@ public:
 	{
 	}
 
-	FORCEINLINE const TArray<UMaterialInterface*>& Get() const
-	{
-		return Materials_Internal;
-	}
+	FORCEINLINE const TArray<UMaterialInterface*>& Get() const { return Materials_Internal; }
+
+	FORCEINLINE TArray<UMaterialInterface*>* GetPtr() { return &Materials_Internal; }
+	FORCEINLINE const TArray<UMaterialInterface*>* GetPtr() const { return &Materials_Internal; }
 };
 
 #pragma endregion FCsTArrayMaterialnterface
@@ -155,10 +155,10 @@ public:
 	{
 	}
 
-	FORCEINLINE const TArray<UMaterialInstanceConstant*>& Get()
-	{
-		return Materials_Internal;
-	}
+	FORCEINLINE const TArray<UMaterialInstanceConstant*>& Get() const { return Materials_Internal; }
+
+	FORCEINLINE TArray<UMaterialInstanceConstant*>* GetPtr() { return &Materials_Internal; }
+	FORCEINLINE const TArray<UMaterialInstanceConstant*>* GetPtr() const { return &Materials_Internal; }
 
 	FORCEINLINE UMaterialInstanceConstant* Get(const int32 Index)
 	{

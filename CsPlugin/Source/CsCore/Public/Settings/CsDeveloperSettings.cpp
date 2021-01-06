@@ -21,3 +21,31 @@ namespace NCsDeveloperSettings
 UCsDeveloperSettings::UCsDeveloperSettings(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
+
+UObject* UCsDeveloperSettings::SafeLoadDataRootSet(const FString& Context)
+{
+	const FSoftObjectPath& SoftPath = DataRootSet.ToSoftObjectPath();
+
+	if (!SoftPath.IsValid())
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: DataRootSet's Path is NOT Valid."), *Context);
+		return nullptr;
+	}
+
+	UClass* Class = DataRootSet.LoadSynchronous();
+
+	if (!Class)
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Failed to load DataRootSet @ Path: %s."), *Context, *(SoftPath.ToString()));
+		return nullptr;
+	}
+
+	UObject* DOb = Class->GetDefaultObject();
+
+	if (!DOb)
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Failed to get Default Object from DataRootSet @ Path: %s with Class: %s."), *Context, *(SoftPath.ToString()), *(Class->GetName()));
+		return nullptr;
+	}
+	return DOb;
+}

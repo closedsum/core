@@ -26,6 +26,10 @@ namespace NCsSkin
 			struct CSCORE_API FLibrary : TCsLibrary_InterfaceMap<SkinType>
 			{
 				/**
+				* 
+				* 
+				* @param Context	The calling context.
+				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
 				*/
 				static bool IsValidChecked(const FString& Context, SkinType* Skin);
 

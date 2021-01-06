@@ -8,49 +8,8 @@
 #include "Library/Load/CsLibrary_Load.h"
 // DataTable
 #include "Engine/DataTable.h"
-
-const FName NCsSkin::NData::NVisual::NStaticMeshAndMaterial::FEmu::Name = FName("NCsSkin::NData::NVisual::NStaticMeshAndMaterial::FEmu");
-
-namespace NCsSkin
-{
-	namespace NData
-	{
-		namespace NVisual
-		{
-			namespace NStaticMeshAndMaterial
-			{
-				FEmu::FEmu() :
-					Outer(nullptr),
-					// ICsGetInterfaceMap
-					InterfaceMap(nullptr),
-					// StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
-					Mesh(nullptr),
-					// MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
-					Materials(nullptr)
-				{
-					InterfaceMap = new FCsInterfaceMap();
-
-					InterfaceMap->SetRootName(FEmu::Name);
-
-					typedef NCsData::IData DataType;
-					typedef NCsSkin::NData::NVisual::IVisual SkinDataType;
-					typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshSkinDataType;
-					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinDataType;
-
-					InterfaceMap->Add<DataType>(static_cast<DataType*>(this));
-					InterfaceMap->Add<SkinDataType>(static_cast<SkinDataType*>(this));
-					InterfaceMap->Add<StaticMeshSkinDataType>(static_cast<StaticMeshSkinDataType*>(this));
-					InterfaceMap->Add<MaterialSkinDataType>(static_cast<MaterialSkinDataType*>(this));
-				}
-
-				FEmu::~FEmu()
-				{
-					delete InterfaceMap;
-				}
-			}
-		}
-	}
-}
+// Emu
+#include "Skin/Data/Visual/CsData_Skin_VisualStaticMeshAndMaterialEmu.h"
 
 const FName UCsData_Skin_VisualStaticMeshAndMaterialImpl::Name = FName("UCsData_Skin_VisualStaticMeshAndMaterialImpl");
 
@@ -122,9 +81,9 @@ void UCsData_Skin_VisualStaticMeshAndMaterialImpl::Init()
 		DataEmuType* Emu = (DataEmuType*)DataEmu;
 		Emu->SetOuter(this);
 		// SkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
-		Emu->SetStaticMesh(&(Mesh.Mesh_Internal));
+		Emu->SetStaticMesh(Mesh.Get());
 		// MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
-		Emu->SetMaterials(&(Materials.Materials_Internal));
+		Emu->SetMaterials(Materials.GetPtr());
 	}
 }
 

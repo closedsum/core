@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/CsLibrary_Data.h"
+#include "CsCore.h"
 
 // Managers
 #include "Managers/Data/CsManager_Data.h"
@@ -25,6 +26,11 @@ namespace NCsData
 		return GameInstance;
 	}
 
+	FString FLibrary::PrintObjectAndClass(UObject* Object)
+	{
+		return FString::Printf(TEXT("Object: %s with Class: %s"), *(Object->GetName()), *(Object->GetClass()->GetName()));
+	}
+
 	FString FLibrary::PrintObjectAndClass(ICsData* Data, const FString& MemberName)
 	{
 		return FString::Printf(TEXT("%s: %s with Class: %s"), *MemberName, *(Data->_getUObject()->GetName()), *(Data->_getUObject()->GetClass()->GetName()));
@@ -32,7 +38,35 @@ namespace NCsData
 
 	FString FLibrary::PrintObjectAndClass(ICsData* Data)
 	{
-		return FString::Printf(TEXT("Object: %s with Class: %s"), *(Data->_getUObject()->GetName()), *(Data->_getUObject()->GetClass()->GetName()));
+		if (UObject* O = Data->_getUObject())
+			return PrintObjectAndClass(O);
+		return FString::Printf(TEXT("INVALID (Non-UObject)"));
+	}
+
+	IData* FLibrary::GetSafeData(const FString& Context, UObject* Object)
+	{
+		if (!Object)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: Object is NULL."), *Context);
+			return nullptr;
+		}
+
+		ICsData* UData = Cast<ICsData>(Object);
+
+		if (!UData)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s does NOT implement interface: ICsData."), *Context, *PrintObjectAndClass(Object));
+			return nullptr;
+		}
+
+		IData* Data = UData->_getIData();
+
+		if (!Data)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: Failed to get data of type: IData from %s."), *Context, *(PrintObjectAndClass(UData)));
+			return nullptr;
+		}
+		return Data;
 	}
 
 	IData* FLibrary::GetDataChecked(const FString& Context, UObject* WorldContext, const FName& DataName)
@@ -43,6 +77,17 @@ namespace NCsData
 		checkf(Data, TEXT("%s: Failed to get data of type: IData from %s."), *Context, *(PrintObjectAndClass(UData)));
 
 		return Data;
+	}
+
+	IData* FLibrary::GetDataChecked(const FString& Context, UObject* Object)
+	{
+		checkf(Object, TEXT("%s: Object is NULL."), *Context);
+
+		ICsData* UData = Cast<ICsData>(Object);
+
+		checkf(UData, TEXT("%s: Object: %s does NOT implement the interface: ICsData."), *Context, *(Object->GetName()));
+
+		return GetDataChecked(Context, UData);
 	}
 
 	IData* FLibrary::GetDataChecked(const FString& Context, ICsData* UData)

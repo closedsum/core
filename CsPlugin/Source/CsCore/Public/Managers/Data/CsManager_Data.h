@@ -50,6 +50,7 @@ struct CSCORE_API FCsManager_DataEntry_DataTable : public TCsManager_ResourceVal
 class ICsGetManagerData;
 class UDataTable;
 class ICsData;
+class UScriptStruct;
 
 UCLASS(transient)
 class CSCORE_API UCsManager_Data : public UObject
@@ -886,6 +887,30 @@ public:
 	}
 
 	/**
+	* Get a pointer to the row in a data table by the data table's Path
+	* and Row Name.
+	* Check against the current loaded data tables.
+	*
+	* @param Context	The calling context.
+	* @param Path		Soft Path to the data table.
+	* @param RowStruct	ScriptStruct associated with the row.
+	* @param RowName	Row Name in the retrieved data table.
+	* return			Pointer to the row.
+	*/
+	FORCEINLINE uint8* GetDataTableRowChecked(const FString& Context, const FSoftObjectPath& Path, const UScriptStruct* RowStruct, const FName& RowName)
+	{
+		checkf(RowStruct, TEXT("%s: RowStruct is NULL."), *Context);
+
+	#if !UE_BUILD_SHIPPING
+		UDataTable* DT = GetDataTableChecked(Context, Path);
+
+		checkf(DT->GetRowStruct() == RowStruct, TEXT("%s: DataTable: %s Row Struct: %s != %s."), *Context, *(DT->GetRowStruct()->GetName()), *(RowStruct->GetName()));
+	#endif // #if !UE_BUILD_SHIPPING
+
+		return GetDataTableRowChecked(Context, Path, RowName);
+	}
+
+	/**
 	* Get a pointer to the row in a data table by the data table's Soft Object
 	* and Row Name.
 	*
@@ -920,15 +945,31 @@ public:
 	*
 	* @param Context	The calling context.
 	* @param SoftObject	Soft Object to the data table.
+	* @param RowStruct	ScriptStruct associated with the row.
+	* @param RowName	Row Name is retrieved data table.
+	* return			Pointer to the row.
+	*/
+	FORCEINLINE uint8* GetDataTableRowChecked(const FString& Context, const TSoftObjectPtr<UDataTable>& SoftObject, const UScriptStruct* RowStruct, const FName& RowName)
+	{
+		return GetDataTableRowChecked(Context, SoftObject.ToSoftObjectPath(), RowStruct, RowName);
+	}
+
+	/**
+	* Get a pointer to the row in a data table by the data table's Soft Object
+	* and Row Name.
+	* Check against the current loaded data tables.
+	*
+	* @param Context	The calling context.
+	* @param SoftObject	Soft Object to the data table.
 	* @param RowName	Row Name is retrieved data table.
 	* return			Pointer to the row.
 	*/
 	template<typename RowStructType>
 	FORCEINLINE RowStructType* GetDataTableRowChecked(const FString& Context, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName)
 	{
-		RowStructType* Row = reinterpret_cast<RowStructType>(GetDataTableRowChecked(Context, SoftObject, RowName));
+		RowStructType* Row = reinterpret_cast<RowStructType>(GetDataTableRowChecked(Context, SoftObject, RowStructType::StaticStruct(), RowName));
 
-		checkf(Row, TEXT("%s: Failed in casting Row to RowStructType."), *Context);
+		checkf(Row, TEXT("%s: Failed in casting Row Pointer to RowStructType."), *Context);
 
 		return Row;
 	}

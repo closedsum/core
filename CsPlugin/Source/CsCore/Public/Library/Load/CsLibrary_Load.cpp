@@ -1245,6 +1245,11 @@ void UCsLibrary_Load::GetObjectPaths(UObject* StructValue, UStruct* const& Struc
 
 bool UCsLibrary_Load::CanLoad(void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& LoadFlags, const int32& LoadCodes)
 {
+	return true;
+
+	// DEPRECATED: LoadFlags currently not used.
+
+	/*
 								// MemberName + TEXT("_LoadFlags")
 	const FString FlagMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;
 
@@ -1273,6 +1278,7 @@ bool UCsLibrary_Load::CanLoad(void* StructValue, UStruct* const& Struct, const F
 		}
 	}
 	return true;
+	*/
 }
 
 void UCsLibrary_Load::LoadSoftClassProperty(FSoftClassProperty* SoftClassProperty, void* StructValue, UStruct* const& Struct, const FString& MemberName, const int32& LoadFlags, const int32& LoadCodes)

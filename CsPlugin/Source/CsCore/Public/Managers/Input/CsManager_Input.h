@@ -2,8 +2,12 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+// Resource
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
+// Types
 #include "Managers/Input/CsInputFrame.h"
+#include "InputCoreTypes.h"
+
 #include "CsManager_Input.generated.h"
 
 #define CS_MAX_INPUT_FRAMES 32
@@ -85,6 +89,8 @@ public:
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPostProcessInput, const float& /*DeltaTime*/, const bool /*bGamePaused*/);
 
 	FOnPostProcessInput OnPostProcessInput_Event;
+
+	void OnPostProcessInput_CaptureMouseInput(const float& DeltaTime, const bool bGamePaused);
 
 	float CurrentDeltaTime;
 
@@ -326,6 +332,10 @@ public:
 
 	void OnAction_Released(const FECsInputAction& Action);
 
+	void OnTouchAction_Pressed(ETouchIndex::Type Index, FVector Location);
+
+	void OnTouchAction_Released(ETouchIndex::Type Index, FVector Location);
+
 	void OnAxis(const FECsInputAction& Action, const float& Value);
 
 #pragma endregion Listener
@@ -406,6 +416,13 @@ public:
 	FVector CurrentMousePosition;
 
 #pragma endregion Location Events
+
+	// Touch
+#pragma region
+
+	TArray<FECsInputAction> TouchActions;
+
+#pragma endregion Touch
 
 #pragma endregion Actions
 

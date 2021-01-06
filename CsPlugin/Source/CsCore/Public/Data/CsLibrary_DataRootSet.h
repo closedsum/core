@@ -17,6 +17,15 @@ namespace NCsDataRootSet
 	public:
 
 		/**
+		* Safely get the UObject implementation of the DataRootSet.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that has reference to a World (GetWorld() is Valid).
+		* return				UObject for the DataRootSet
+		*/
+		static UObject* GetSafeImpl(const FString& Context, UObject* WorldContext);
+		
+		/**
 		* Get the UObject implementation of the DataRootSet.
 		* 
 		* @param Context		The calling context.
@@ -35,10 +44,49 @@ namespace NCsDataRootSet
 		static UObject* GetImplChecked(const FString& Context, UObject* WorldContext);
 
 		/**
+		* 
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that has reference to a World (GetWorld() is Valid).
+		*/
+		static const FCsDataRootSet* GetSafe(const FString& Context, UObject* WorldContext);
+
+		/**
+		*/
+		template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType& (GetDataRootSetType::* GetDataRootSetFn)() const>
+		static const DataRootSetType* GetSafe(const FString& Context, UObject* WorldContext, void(*Log)(const FString&))
+		{
+			// Get DataRootSetImpl
+			UObject* DataRootSetImpl = GetSafeImpl(Context, WorldContext);
+
+			if (!DataRootSetImpl)
+				return nullptr;
+
+			// Get DataRootSet for this Module
+			GetDataRootSetType* GetDataRootSet = Cast<GetDataRootSetType>(DataRootSetImpl);
+
+			if (!GetDataRootSet)
+			{
+				Log(FString::Printf(TEXT("%s: DataRootSet: %s with Class: %s does NOT implement interface: GetDataRootSetType."), *Context, *(DataRootSetImpl->GetName()), *(DataRootSetImpl->GetClass()->GetName())));
+				return nullptr;
+			}
+			return &(GetDataRootSet->*GetDataRootSetFn)();
+		}
+
+		/**
+		* 
+		* 
+		* @param Context		The calling context.
+		* @param GameInstance
+		* return
 		*/
 		static const FCsDataRootSet& GetChecked(const FString& Context, UGameInstance* GameInstance);
 
 		/**
+		* 
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that has reference to a World (GetWorld() is Valid).
 		*/
 		static const FCsDataRootSet& GetChecked(const FString& Context, UObject* WorldContext);
 
@@ -77,33 +125,46 @@ namespace NCsDataRootSet
 		/**
 		* 
 		* 
-		* @param Context			The calling context.
-		* @param WorldContext		Object that has reference to a World (GetWorld() is Valid).
+		* @param Context				The calling context.
+		* @param WorldContext			Object that has reference to a World (GetWorld() is Valid).
 		* @param InterfaceGetName
-		* @param DataTableSoftPath
+		* @param DataTableSoftObject
 		* @param DataTableName
-		* return
+		* return						DataTable
 		*/
-		static UDataTable* GetSafeDataTable(const FString& Context, UObject* WorldContext, const FString& InterfaceGetName, TSoftObjectPtr<UDataTable> DataTableSoftPath, const FString& DataTableName);
+		static UDataTable* GetSafeDataTable(const FString& Context, UObject* WorldContext, const FString& InterfaceGetName, TSoftObjectPtr<UDataTable> DataTableSoftObject, const FString& DataTableName);
 
 		/**
 		* 
 		* 
-		* @param Context			The calling context.
-		* @param WorldContext		Object that has reference to a World (GetWorld() is Valid).
-		* @param DataTableSoftPath
-		* return
+		* @param Context				The calling context.
+		* @param WorldContext			Object that has reference to a World (GetWorld() is Valid).
+		* @param DataTableSoftObject
+		* return						DataTable
 		*/
-		static UDataTable* GetDataTableChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftPath);
+		static UDataTable* GetDataTableChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject);
 
 		/**
 		* 
 		* 
-		* @param Context			The calling context.
-		* @param WorldContext		Object that has reference to a World (GetWorld() is Valid).
-		* @param DataTableSoftPath
-		* @param RowName
+		* @param Context				The calling context.
+		* @param WorldContext			Object that has reference to a World (GetWorld() is Valid).
+		* @param DataTableSoftObject
+		* @param RowName				DataTable
+		* return						Pointer to row.
 		*/
-		static uint8* GetDataTableRowChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftPath, const FName& RowName);
+		static uint8* GetDataTableRowChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const FName& RowName);
+
+		/**
+		*
+		*
+		* @param Context				The calling context.
+		* @param WorldContext			Object that has reference to a World (GetWorld() is Valid).
+		* @param DataTableSoftObject
+		* @param RowStruct				ScriptStruct associated with the row.
+		* @param RowName				DataTable
+		* return						Pointer to row.
+		*/
+		static uint8* GetDataTableRowChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const UScriptStruct* RowStruct, const FName& RowName);
 	};
 }

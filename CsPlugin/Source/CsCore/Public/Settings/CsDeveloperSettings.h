@@ -72,6 +72,8 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Data", meta = (MustImplement = "CsDataRootSet"))
 	TSoftClassPtr<UObject> DataRootSet;
 
+	UObject* SafeLoadDataRootSet(const FString& Context);
+
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Data", meta = (DisplayName = "Manager Data"))
 	FCsSettings_Manager_Data Manager_Data;
 

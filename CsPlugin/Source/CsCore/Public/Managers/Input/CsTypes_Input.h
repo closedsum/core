@@ -242,9 +242,33 @@ namespace NCsInputAction
 	typedef FECsInputAction Type;
 	typedef EMCsInputAction EnumMapType;
 
+	// Mouse
 	extern CSCORE_API const Type Default__MousePositionXY__;
 	extern CSCORE_API const Type Default__MouseLeftButton__;
 	extern CSCORE_API const Type Default__MouseRightButton__;
+	// Touch
+		// Action
+	extern CSCORE_API const Type Default__Touch_0__;
+	extern CSCORE_API const Type Default__Touch_1__;
+	extern CSCORE_API const Type Default__Touch_2__;
+	extern CSCORE_API const Type Default__Touch_3__;
+	extern CSCORE_API const Type Default__Touch_4__;
+	extern CSCORE_API const Type Default__Touch_5__;
+	extern CSCORE_API const Type Default__Touch_6__;
+	extern CSCORE_API const Type Default__Touch_7__;
+	extern CSCORE_API const Type Default__Touch_8__;
+	extern CSCORE_API const Type Default__Touch_9__;
+		// Location
+	extern CSCORE_API const Type Default__TouchPositionXY_0__;
+	extern CSCORE_API const Type Default__TouchPositionXY_1__;
+	extern CSCORE_API const Type Default__TouchPositionXY_2__;
+	extern CSCORE_API const Type Default__TouchPositionXY_3__;
+	extern CSCORE_API const Type Default__TouchPositionXY_4__;
+	extern CSCORE_API const Type Default__TouchPositionXY_5__;
+	extern CSCORE_API const Type Default__TouchPositionXY_6__;
+	extern CSCORE_API const Type Default__TouchPositionXY_7__;
+	extern CSCORE_API const Type Default__TouchPositionXY_8__;
+	extern CSCORE_API const Type Default__TouchPositionXY_9__;
 
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }

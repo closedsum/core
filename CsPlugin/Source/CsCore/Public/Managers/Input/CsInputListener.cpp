@@ -10,7 +10,13 @@
 #include "GameFramework/PlayerController.h"
 
 
-UCsInputListener::UCsInputListener(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsInputListener::UCsInputListener(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	Action(),
+	Type(ECsInputType::ECsInputType_MAX),
+	OnAction_Pressed_Event(),
+	OnAction_Released_Event(),
+	OnAxis_Event()
 {
 }
 

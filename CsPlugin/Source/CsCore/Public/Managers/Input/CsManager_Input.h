@@ -38,6 +38,8 @@ namespace NCsManagerInput
 		{
 			extern CSCORE_API const FString SetCurrentInputActionMap;
 			extern CSCORE_API const FString ClearCurrentInputActionMap;
+			extern CSCORE_API const FString SetCurrentInputMode;
+			extern CSCORE_API const FString ClearCurrentInputMode;
 		}
 	}
 }
@@ -340,6 +342,124 @@ public:
 
 #pragma endregion Listener
 
+// Actions
+#pragma region
+protected:
+
+	TArray<FCsInputInfo*> Infos;
+
+	TArray<ECsInputEvent*> Actions;
+	TArray<ECsInputEvent*> Last_Actions;
+
+	// Location Events
+#pragma region
+public:
+
+	// Mouse
+
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	FVector CurrentMousePosition;
+
+#pragma endregion Location Events
+
+	// Touch
+#pragma region
+
+	TArray<FECsInputAction> TouchActions;
+
+#pragma endregion Touch
+
+#pragma endregion Actions
+
+// Game Events
+#pragma region
+
+	void CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition>& Definitions, const FECsGameEvent& GameEvent, const FECsInputAction& Action, const ECsInputEvent& Event);
+
+#pragma endregion Game Events
+
+// Mode
+#pragma region
+private:
+
+	/** Bit mask of current InputMode */
+	int32 CurrentInputMode;
+
+public:
+
+	FORCEINLINE const int32& GetCurrentInputMode() const { return CurrentInputMode; }
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnInputModeChange, const int32& /*PreviousMode*/, const int32& /*CurrentMode*/);
+
+	FOnInputModeChange OnInputModeChange_Event;
+
+	/**
+	* Sets the bit in CurrentInputMode.
+	*
+	* @param Context	The calling context.
+	* @param Mode		A BlueprintFlag (value will get bit shifted).
+	*/
+	void SetCurrentInputMode(const FString& Context, const ECsInputMode& Mode);
+
+	/**
+	* Sets the bit in CurrentInputMode.
+	*
+	* @param Mode	A BlueprintFlag (value will get bit shifted).
+	*/
+	FORCEINLINE void SetCurrentInputMode(const ECsInputMode& Mode) { SetCurrentInputMode(NCsManagerInput::NCached::Str::SetCurrentInputMode, Mode); }
+
+	/**
+	* Sets the bit in CurrentInputMode.
+	*
+	* @param Context	The calling context.
+	* @param Mode		A bit flag.
+	*/
+	void SetCurrentInputMode(const FString& Context, const int32& Mode);
+
+	/**
+	* Sets the bit in CurrentInputMode.
+	*
+	* @param Mode	A bit flag.
+	*/
+	FORCEINLINE void SetCurrentInputMode(const int32& Mode) { SetCurrentInputMode(NCsManagerInput::NCached::Str::SetCurrentInputMode, Mode); }
+
+	/**
+	* Clears the bit in CurrentInputMode.
+	*
+	* @param Context	The calling context.
+	* @param Mode		A BlueprintFlag (value will get bit shifted).
+	*/
+	void ClearCurrentInputMode(const FString& Context, const ECsInputMode& Mode);
+
+	/**
+	* Clears the bit in CurrentInputMode.
+	*
+	* @param Mode	A BlueprintFlag (value will get bit shifted).
+	*/
+	FORCEINLINE void ClearCurrentInputMode(const ECsInputMode& Mode) { ClearCurrentInputMode(NCsManagerInput::NCached::Str::ClearCurrentInputMode, Mode); }
+
+	/**
+	* Clears the bit in CurrentInputMode.
+	*
+	* @param Context	The calling context.
+	* @param Mode		A bit flag.
+	*/
+	void ClearCurrentInputMode(const FString& Context, const int32& Mode);
+
+	/**
+	* Clears the bit in CurrentInputMode.
+	*
+	* @param Mode	A bit flag.
+	*/
+	FORCEINLINE void ClearCurrentInputMode(const int32& Mode) { ClearCurrentInputMode(NCsManagerInput::NCached::Str::ClearCurrentInputMode, Mode); }
+
+	/**
+	* Sets CurrentInputMode to 0.
+	*/
+	FORCEINLINE void ResetCurrentInputMode() { CurrentInputMode = 0; }
+
+#pragma endregion Mode
+
 // Profile
 #pragma region
 public:
@@ -396,40 +516,4 @@ public:
 #pragma endregion Editor Game
 
 #endif // #if WITH_EDITOR
-
-// Actions
-#pragma region
-protected:
-
-	TArray<FCsInputInfo*> Infos;
-
-	TArray<ECsInputEvent*> Actions;
-	TArray<ECsInputEvent*> Last_Actions;
-
-	// Location Events
-#pragma region
-public:
-
-	// Mouse
-
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
-	FVector CurrentMousePosition;
-
-#pragma endregion Location Events
-
-	// Touch
-#pragma region
-
-	TArray<FECsInputAction> TouchActions;
-
-#pragma endregion Touch
-
-#pragma endregion Actions
-
-// Game Events
-#pragma region
-
-	void CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition>& Definitions, const FECsGameEvent& GameEvent, const FECsInputAction& Action, const ECsInputEvent& Event);
-
-#pragma endregion Game Events
 };

@@ -1,9 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+
+// Types
 #include "Types/CsTypes_Primitive.h"
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/Enum/CsEnumMask_int32.h"
 #include "Types/Enum/CsEnumStructMaskMap.h"
-// Types
+#include "Types/Enum/CsEnumFlagMap.h"
 #include "InputCoreTypes.h"
 
 #include "CsTypes_Input.generated.h"
@@ -45,6 +47,45 @@ namespace NCsInputDevice
 #define ECS_INPUT_DEVICE_MAX (uint8)ECsInputDevice::ECsInputDevice_MAX
 
 #pragma endregion InputDevice
+
+	// InputMode
+#pragma region
+
+UENUM(BlueprintType, meta = (Bitflags))
+enum class ECsInputMode : uint8
+{
+	Mouse				UMETA(DisplayName = "Mouse"),				// 0
+	Keyboard			UMETA(DisplayName = "Keyboard"),			// 1
+	Gamepad				UMETA(DisplayName = "Gamepad"),				// 2
+	Touch				UMETA(DisplayName = "Touch"),				// 3
+	MotionController	UMETA(DisplayName = "Motion Controller"),	// 4
+};
+
+struct CSCORE_API EMCsInputMode : public TCsEnumFlagMap<ECsInputMode>
+{
+	CS_ENUM_FLAG_MAP_BODY(EMCsInputMode, ECsInputMode)
+};
+
+namespace NCsInputMode
+{
+	typedef ECsInputMode Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Mouse;
+		extern CSCORE_API const Type Keyboard;
+		extern CSCORE_API const Type Gamepad;
+		extern CSCORE_API const Type Touch;
+		extern CSCORE_API const Type MotionController;
+	}
+
+	extern CSCORE_API const int32 None;
+	extern CSCORE_API const int32 All;
+}
+
+#define CS_INPUT_MODE_NONE 0
+
+#pragma endregion InputMode
 
 	// InputType
 #pragma region
@@ -383,6 +424,12 @@ public:
 	{
 		return Type != ECsInputType::ECsInputType_MAX && ValueType != ECsInputValue::ECsInputValue_MAX;
 	}
+
+	FORCEINLINE void ResetValue(){ Value = Last_Value = 0.0f; }
+
+	FORCEINLINE void ResetLocation() { Location = Last_Location = FVector::ZeroVector; }
+
+	FORCEINLINE void ResetRotation() { Rotation = FRotator::ZeroRotator; }
 };
 
 #pragma endregion FCsInputInfo

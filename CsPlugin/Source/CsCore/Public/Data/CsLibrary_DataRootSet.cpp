@@ -37,17 +37,16 @@ namespace NCsDataRootSet
 			return nullptr;
 		}
 
+		if (World->IsGameWorld())
+		{
+			// TODO:
+		}
 		// Check if Editor World
-		if (FCsLibrary_World::IsPlayInEditor(World) ||
-			FCsLibrary_World::IsPlayInEditorPreview(World))
+		else
 		{
 			UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
 
 			return Settings->SafeLoadDataRootSet(Context);
-		}
-		else
-		{
-			// TODO:
 		}
 		return nullptr;
 	}
@@ -106,28 +105,7 @@ namespace NCsDataRootSet
 			return nullptr;
 		}
 
-		if (FCsLibrary_World::IsPlayInEditor(World) ||
-			FCsLibrary_World::IsPlayInEditorPreview(World))
-		{
-			const FSoftObjectPath& Path = DataTableSoftObject.ToSoftObjectPath();
-
-			if (Path.IsValid())
-			{
-				if (UDataTable* DataTable = DataTableSoftObject.LoadSynchronous())
-				{
-					return DataTable;
-				}
-				else
-				{
-					UE_LOG(LogCs, Warning, TEXT("%s: Failed to Load %s.%s.%s @ %s."), *Context, *(WorldContext->GetName()), *InterfaceGetName, *DataTableName, *(Path.ToString()));
-				}
-			}
-			else
-			{
-				UE_LOG(LogCs, Warning, TEXT("%s: %s.%s.%s is NOT Valid."), *Context, *(WorldContext->GetName()), *InterfaceGetName, *DataTableName);
-			}
-		}
-		else
+		if (World->IsGameWorld())
 		{
 			typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
@@ -144,6 +122,26 @@ namespace NCsDataRootSet
 			if (Path.IsValid())
 			{
 				if (UDataTable* DataTable = UCsManager_Data::Get(ContextRoot)->GetDataTable(DataTableSoftObject))
+				{
+					return DataTable;
+				}
+				else
+				{
+					UE_LOG(LogCs, Warning, TEXT("%s: Failed to Load %s.%s.%s @ %s."), *Context, *(WorldContext->GetName()), *InterfaceGetName, *DataTableName, *(Path.ToString()));
+				}
+			}
+			else
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s: %s.%s.%s is NOT Valid."), *Context, *(WorldContext->GetName()), *InterfaceGetName, *DataTableName);
+			}
+		}
+		else
+		{
+			const FSoftObjectPath& Path = DataTableSoftObject.ToSoftObjectPath();
+
+			if (Path.IsValid())
+			{
+				if (UDataTable* DataTable = DataTableSoftObject.LoadSynchronous())
 				{
 					return DataTable;
 				}

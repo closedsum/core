@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 
-#include "Managers/Trace/CsScriptLibrary_Manager_Trace.h"
+#include "Managers/Trace/Script/CsScriptLibrary_Manager_Trace.h"
 #include "CsCore.h"
 
 // Managers

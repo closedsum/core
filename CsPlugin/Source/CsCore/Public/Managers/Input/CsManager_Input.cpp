@@ -33,6 +33,8 @@ namespace NCsManagerInput
 		{
 			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, SetCurrentInputActionMap);
 			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, ClearCurrentInputActionMap);
+			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, SetCurrentInputMode);
+			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, ClearCurrentInputMode);
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, PostProcessInput);
 		}
@@ -69,9 +71,6 @@ UCsManager_Input::UCsManager_Input(const FObjectInitializer& ObjectInitializer) 
 	OnGameEventInfo_Event(),
 	// Listener
 	Listeners(),
-	// Profile
-	InputProfile(),
-	AllKeys(),
 	// Actions
 	Infos(),
 	Actions(),
@@ -79,8 +78,14 @@ UCsManager_Input::UCsManager_Input(const FObjectInitializer& ObjectInitializer) 
 	// Location Events
 		// Mouse
 	CurrentMousePosition(FVector::ZeroVector),
-		// Touch
-	TouchActions()
+	// Touch
+	TouchActions(),
+	// Mode
+	CurrentInputMode(0),
+	OnInputModeChange_Event(),
+	// Profile
+	InputProfile(),
+	AllKeys()
 {
 }
 
@@ -368,7 +373,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 			}
 #endif // #if !UE_BUILD_SHIPPING	
 
-			TryAddInput(Type, Action, Event);
+			TryAddInput(Type, Action, Event, Info.Value, Info.Location);
 
 			Info.FlushEvent();
 		}
@@ -398,7 +403,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			TryAddInput(Type, Action, Event, Value);
+			TryAddInput(Type, Action, Event, Value, Info.Location);
 
 			Info.FlushEvent();
 		}
@@ -429,7 +434,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			TryAddInput(Type, Action, Event, 0.0f, Info.Location);
+			TryAddInput(Type, Action, Event, Info.Value, Info.Location);
 
 			Info.FlushEvent();
 		}
@@ -488,12 +493,13 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 			CurrentGameEventInfos[Index].SetDefinition(&Def);
 
-			// TODO: FUTURE: Handle multiple values. Only handle the FIRST value.
+			// TODO: FUTURE: Handle multiple values properly. Multiple MAY STOMP over each other.
 			const TArray<FCsInputCompletedValue>& CompletedValues = Sentence.GetCompletedValues();
-			const FCsInputCompletedValue& CompletedValue		  = CompletedValues[CS_FIRST];
-			
-			CurrentGameEventInfos[Index].ApplyInputCompletedValue(CompletedValue);
 
+			for (const FCsInputCompletedValue& CompletedValue : CompletedValues)
+			{
+				CurrentGameEventInfos[Index].ApplyInputCompletedValue(CompletedValue);
+			}
 #if !UE_BUILD_SHIPPING
 			LogProcessGameEventDefinition(Context, Event, Sentence);
 #endif // #if !UE_BUILD_SHIPPING
@@ -608,6 +614,8 @@ void UCsManager_Input::OnPostProcessInput_CaptureMouseInput(const float& DeltaTi
 		{
 			FCsInputInfo& Info = InputActionEventInfos[NCsInputAction::Default__MouseLeftButton__.GetValue()];
 
+			Info.ResetLocation();
+
 			const ECsInputEvent& Last_Event = Info.Last_Event;
 
 			// FirstReleased | Released -> FirstPressed
@@ -616,7 +624,8 @@ void UCsManager_Input::OnPostProcessInput_CaptureMouseInput(const float& DeltaTi
 				if (Last_Event == ECsInputEvent::FirstReleased ||
 					Last_Event == ECsInputEvent::Released)
 				{
-					Info.Event = ECsInputEvent::FirstPressed;
+					Info.Event	  = ECsInputEvent::FirstPressed;
+					Info.Location = CurrentMousePosition;
 				}
 			}
 			// FirstPressed | Pressed -> FirstReleased
@@ -625,13 +634,16 @@ void UCsManager_Input::OnPostProcessInput_CaptureMouseInput(const float& DeltaTi
 				if (Last_Event == ECsInputEvent::FirstPressed ||
 					Last_Event == ECsInputEvent::Pressed)
 				{
-					Info.Event = ECsInputEvent::FirstReleased;
+					Info.Event	  = ECsInputEvent::FirstReleased;
+					Info.Location = CurrentMousePosition;
 				}
 			}
 		}
 		// Default__MouseRightButton__
 		{
 			FCsInputInfo& Info = InputActionEventInfos[NCsInputAction::Default__MouseRightButton__.GetValue()];
+
+			Info.ResetLocation();
 
 			const ECsInputEvent& Last_Event = Info.Last_Event;
 
@@ -641,7 +653,8 @@ void UCsManager_Input::OnPostProcessInput_CaptureMouseInput(const float& DeltaTi
 				if (Last_Event == ECsInputEvent::FirstReleased ||
 					Last_Event == ECsInputEvent::Released)
 				{
-					Info.Event = ECsInputEvent::FirstPressed;
+					Info.Event	  = ECsInputEvent::FirstPressed;
+					Info.Location = CurrentMousePosition;
 				}
 			}
 			// FirstPressed | Pressed -> FirstReleased
@@ -650,7 +663,8 @@ void UCsManager_Input::OnPostProcessInput_CaptureMouseInput(const float& DeltaTi
 				if (Last_Event == ECsInputEvent::FirstPressed ||
 					Last_Event == ECsInputEvent::Pressed)
 				{
-					Info.Event = ECsInputEvent::FirstReleased;
+					Info.Event	  = ECsInputEvent::FirstReleased;
+					Info.Location = CurrentMousePosition;
 				}
 			}
 		}
@@ -1191,6 +1205,10 @@ void UCsManager_Input::OnTouchAction_Pressed(ETouchIndex::Type Index, FVector Lo
 	FCsInputInfo& Info   = InputActionEventInfos[Action.GetValue()];
 	ECsInputEvent& Event = Info.Event;
 
+	Info.ResetLocation();
+
+	Info.Location = Location;
+
 	Event = ECsInputEvent::FirstPressed;
 }
 
@@ -1200,6 +1218,10 @@ void UCsManager_Input::OnTouchAction_Released(ETouchIndex::Type Index, FVector L
 
 	FCsInputInfo& Info	 = InputActionEventInfos[Action.GetValue()];
 	ECsInputEvent& Event = Info.Event;
+
+	Info.ResetLocation();
+
+	Info.Location = Location;
 
 	Event = ECsInputEvent::FirstReleased;
 }
@@ -1247,6 +1269,87 @@ void UCsManager_Input::OnAxis(const FECsInputAction& Action, const float& Value)
 }
 
 #pragma endregion Listener
+
+// Actions
+#pragma region
+
+#pragma endregion Actions
+
+// Game Events
+#pragma region
+
+void UCsManager_Input::CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition>& Definitions, const FECsGameEvent& GameEvent, const FECsInputAction& Action, const ECsInputEvent& Event)
+{
+	Definitions.AddDefaulted();
+	FCsGameEventDefinition& Def = Definitions[Definitions.Num() - 1];
+	Def.Event = GameEvent;
+	// Sentence
+	{
+		FCsInputSentence& Sentence = Def.Sentence;
+		Sentence.Phrases.AddDefaulted();
+		// Phrase
+		{
+			FCsInputPhrase& Phrase = Sentence.Phrases[Sentence.Phrases.Num() - 1];
+			Phrase.Words.AddDefaulted();
+			// Word
+			{
+				FCsInputWord& Word = Phrase.Words[Phrase.Words.Num() - 1];
+				Word.AddOrInput(Action, Event);
+			}
+		}
+	}
+}
+
+#pragma endregion Game Events
+
+// Mode
+#pragma region
+
+void UCsManager_Input::SetCurrentInputMode(const FString& Context, const ECsInputMode& Mode)
+{
+	int32 Previous = CurrentInputMode;
+
+	CS_SET_BLUEPRINT_BITFLAG(CurrentInputMode, Mode);
+
+	if (Previous != CurrentInputMode)
+		OnInputModeChange_Event.Broadcast(Previous, CurrentInputMode);
+}
+
+void UCsManager_Input::SetCurrentInputMode(const FString& Context, const int32& Mode)
+{
+	checkf(Mode >= 0, TEXT("%s: Mode: %s is NOT Valid."), *Context, Mode);
+
+	int32 Previous = CurrentInputMode;
+
+	CS_SET_BLUEPRINT_BITFLAG(CurrentInputMode, Mode);
+
+	if (Previous != CurrentInputMode)
+		OnInputModeChange_Event.Broadcast(Previous, CurrentInputMode);
+}
+
+void UCsManager_Input::ClearCurrentInputMode(const FString& Context, const ECsInputMode& Mode)
+{
+	int32 Previous = CurrentInputMode;
+
+	CS_CLEAR_BLUEPRINT_BITFLAG(CurrentInputMode, Mode);
+
+	if (Previous != CurrentInputMode)
+		OnInputModeChange_Event.Broadcast(Previous, CurrentInputMode);
+}
+
+void UCsManager_Input::ClearCurrentInputMode(const FString& Context, const int32& Mode)
+{
+	checkf(Mode >= 0, TEXT("%s: Mode: %s is NOT Valid."), *Context, Mode);
+
+	int32 Previous = CurrentInputMode;
+
+	CS_CLEAR_BLUEPRINT_BITFLAG(CurrentInputMode, Mode);
+
+	if (Previous != CurrentInputMode)
+		OnInputModeChange_Event.Broadcast(Previous, CurrentInputMode);
+}
+
+#pragma endregion Mode
 
 // Profile
 #pragma region
@@ -1699,35 +1802,3 @@ void UCsManager_Input::RunEditorGameJavascriptFile_FirstPressed()
 #pragma endregion Editor Game
 
 #endif // #if WITH_EDITOR
-
-// Actions
-#pragma region
-
-#pragma endregion Actions
-
-// Game Events
-#pragma region
-
-void UCsManager_Input::CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition>& Definitions, const FECsGameEvent& GameEvent, const FECsInputAction& Action, const ECsInputEvent& Event)
-{
-	Definitions.AddDefaulted();
-	FCsGameEventDefinition& Def = Definitions[Definitions.Num() - 1];
-	Def.Event = GameEvent;
-	// Sentence
-	{
-		FCsInputSentence& Sentence = Def.Sentence;
-		Sentence.Phrases.AddDefaulted();
-		// Phrase
-		{
-			FCsInputPhrase& Phrase = Sentence.Phrases[Sentence.Phrases.Num() - 1];
-			Phrase.Words.AddDefaulted();
-			// Word
-			{
-				FCsInputWord& Word = Phrase.Words[Phrase.Words.Num() - 1];
-				Word.AddOrInput(Action, Event);
-			}
-		}
-	}
-}
-
-#pragma endregion Game Events

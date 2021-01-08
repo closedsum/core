@@ -29,6 +29,28 @@ namespace NCsInputDevice
 
 #pragma endregion InputDevice
 
+// InputMode
+#pragma region
+
+namespace NCsInputMode
+{
+	namespace Ref
+	{
+		typedef EMCsInputMode EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Mouse);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Keyboard);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Gamepad);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Touch);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(MotionController, "Motion Controller");
+	}
+
+	CSCORE_API const int32 None = 0;
+	CSCORE_API const int32 All = 31; // 1 + 2 + 4 + 8 + 16
+}
+
+#pragma endregion InputMode
+
 // InputType
 #pragma region
 
@@ -352,7 +374,10 @@ void FCsInputWord::ProcessInput(FCsInputFrame* InputFrame)
 				break;
 		}
 
-		bCompleted = (And > 0 && And == AndCount) || Or;
+		const bool PassAnd = AndCount == 0 || (And > 0 && And == AndCount);
+		const bool PassOr  = OrCount == 0 || Or;
+
+		bCompleted = PassAnd && PassOr;
 
 		if (bCompleted)
 		{

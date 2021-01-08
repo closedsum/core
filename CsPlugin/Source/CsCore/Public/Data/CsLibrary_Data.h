@@ -33,6 +33,23 @@ namespace NCsData
 		*/
 		static FString PrintObjectAndClass(ICsData* Data);
 
+		static IData* SafeLoadData(const FString& Context, UObject* Object);
+
+		/**
+		*
+		*
+		* @param Context	The calling context.
+		* @param Object		UObject that SHOULD implement the interface: ICsData.
+		* return
+		*/
+		template<typename InterfaceType>
+		FORCEINLINE static InterfaceType* SafeLoadData(const FString& Context, UObject* Object)
+		{
+			IData* Data = SafeLoadData(Context, Object);
+
+			return Data ? GetSafeInterfaceChecked<InterfaceType>(Context, Data) : nullptr;
+		}
+
 		/**
 		*
 		*
@@ -54,7 +71,7 @@ namespace NCsData
 		{
 			IData* Data = GetSafeData(Context, Object);
 
-			return GetSafeInterfaceChecked<InterfaceType>(Context, Data);
+			return Data ? GetSafeInterfaceChecked<InterfaceType>(Context, Data) : nullptr;
 		}
 
 		/**

@@ -43,6 +43,34 @@ namespace NCsData
 		return FString::Printf(TEXT("INVALID (Non-UObject)"));
 	}
 
+	IData* FLibrary::SafeLoadData(const FString& Context, UObject* Object)
+	{
+		if (!Object)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: Object is NULL."), *Context);
+			return nullptr;
+		}
+
+		ICsData* UData = Cast<ICsData>(Object);
+
+		if (!UData)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s does NOT implement interface: ICsData."), *Context, *PrintObjectAndClass(Object));
+			return nullptr;
+		}
+
+		UData->Load(NCsLoadFlags::All);
+
+		IData* Data = UData->_getIData();
+
+		if (!Data)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: Failed to get data of type: IData from %s."), *Context, *(PrintObjectAndClass(UData)));
+			return nullptr;
+		}
+		return Data;
+	}
+
 	IData* FLibrary::GetSafeData(const FString& Context, UObject* Object)
 	{
 		if (!Object)

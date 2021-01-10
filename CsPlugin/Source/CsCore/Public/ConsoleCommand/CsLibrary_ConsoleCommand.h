@@ -157,6 +157,56 @@ namespace NCsConsoleCommand
 		struct CSCORE_API FLibrary
 		{
 			/**
+			* Get a value of type: EnumType from the CHAR ptr / string Str.
+			* 
+			* @param Context		The calling context.
+			* @param Str			The string / CHAR ptr to get an EnumType from.
+			* @param OutValue		The EnumStructType to get from Str.
+			* @param EnumName		Name of the OutValue.
+			* @param Definition		The definition of the Command.
+			* @param Log			Log function for printing any warnings.
+			*/
+			template<typename EnumMapType, typename EnumType>
+			static bool GetEnum(const FString& Context, const TCHAR*& Str, EnumType& OutValue, const FString& EnumName, const FString& Definition, void(*Log)(const FString&))
+			{
+				typedef NCsString::FLibrary StringLibrary;
+
+				FString OutString;
+
+				StringLibrary::Stream_GetValue(Str, OutString, true);
+
+				if (OutString.IsEmpty())
+				{
+					Log(FString::Printf(TEXT("%s: %s: %s is NOT Valid. Command:"), *Context, *EnumName, *OutString));
+					Log(FString::Printf(TEXT("%s"), *Definition));
+					return false;
+				}
+
+				FName StringAsName = FName(*OutString);
+
+				// Try a string conversion
+				OutValue = EnumMapType::Get().GetSafeEnum(StringAsName);
+
+				if (OutValue == EnumMapType::Get().GetMAX())
+				{
+					// Try int32
+					int32 Value = FCString::Atoi(*OutString);
+
+					if (Value >= 0 ||
+						Value < EnumMapType::Get().Num())
+					{
+						OutValue = EnumMapType::Get().GetSafeEnumAt(Value);
+					}
+				}
+
+				if (OutValue == EnumMapType::Get().GetMAX())
+				{
+					return false;
+				}
+				return true;
+			}
+
+			/**
 			* Get a value of type: EnumStructType from the CHAR ptr / string Str.
 			* 
 			* @param Context		The calling context.

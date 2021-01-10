@@ -8,175 +8,208 @@ class APawn;
 class UPlayerInput;
 class AHUD;
 
-namespace NCsLibraryPlayer
+namespace NCsPlayer
 {
-	namespace NCached
+	struct CSCORE_API FLibrary
 	{
-		namespace Str
+	public:
+
+		/**
+		*
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		*/
+		static ULocalPlayer* GetFirstLocalChecked(const FString& Context, UObject* WorldContext);
+	};
+
+	namespace NController
+	{
+		namespace NCached
 		{
-			extern CSCORE_API const FString GetFirstLocalPlayerControllerChecked;
-			extern CSCORE_API const FString GetFirstLocalPlayerStateChecked;
-			extern CSCORE_API const FString GetFirstLocalPawnChecked;
+			namespace Str
+			{
+				extern CSCORE_API const FString GetFirstLocalChecked;
+			}
 		}
+
+		struct CSCORE_API FLibrary
+		{
+		public:
+
+			static APlayerController* GetFirstLocal(UWorld* World);
+
+			template<typename T>
+			FORCEINLINE static T* GetFirstLocal(UWorld* World)
+			{
+				return Cast<T>(GetFirstLocal(World));
+			}
+
+			FORCEINLINE static APlayerController* GetFirstLocalChecked(const FString& Context, UWorld* World)
+			{
+				APlayerController* PC = GetFirstLocal(World);
+
+				checkf(PC, TEXT("%s: Failed to get PlayerController from World."), *Context);
+
+				return PC;
+			}
+
+			FORCEINLINE static APlayerController* GetFirstLocalChecked(UWorld* World)
+			{
+				using namespace NCsPlayer::NController::NCached;
+
+				return GetFirstLocalChecked(Str::GetFirstLocalChecked, World);
+			}
+
+			template<typename T>
+			FORCEINLINE static T* GetFirstLocalChecked(const FString& Context, UWorld* World)
+			{
+				T* PC = Cast<T>(GetFirstLocalChecked(Context, World));
+
+				checkf(PC, TEXT("%s: Failed to cast PlayerController to type: %s."), *Context, *(T::StaticClass()->GetName()));
+
+				return PC;
+			}
+
+			template<typename T>
+			FORCEINLINE static T* GetFirstLocalChecked(UWorld* World)
+			{
+				using namespace NCsPlayer::NController::NCached;
+
+				return GetFirstLocalChecked<T>(Str::GetFirstLocalChecked, World);
+			}
+
+			static APlayerController* GetFirstLocalChecked(const FString& Context, UObject* WorldContext);
+
+			static APlayerController* GetLocal(const FString& Context, UWorld* World, const int32& ControllerId);
+
+			static APlayerController* GetLocalChecked(const FString& Context, UWorld* World, const int32& ControllerId);
+
+			static APlayerController* GetLocalChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId);
+
+			static APlayerController* GetOrFirstLocalChecked(const FString& Context, APawn* Pawn);
+
+			static void GetAllLocal(UWorld* World, TArray<APlayerController*>& OutControllers);
+
+			static void GetAllLocal(UObject* WorldContext, TArray<APlayerController*>& OutControllers);
+
+			static void GetAllLocalChecked(const FString& Context, UWorld* World, TArray<APlayerController*>& OutControllers);
+
+			static void GetAllLocalChecked(const FString& Context, UObject* WorldContext, TArray<APlayerController*>& OutControllers);
+		};
+	}
+
+	namespace NState
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				extern CSCORE_API const FString GetFirstLocalChecked;
+			}
+		}
+
+		struct CSCORE_API FLibrary
+		{
+		public:
+
+			static APlayerState* GetFirstLocal(UWorld* World);
+
+			template<typename T>
+			FORCEINLINE static T* GetFirstLocal(UWorld* World)
+			{
+				return Cast<T>(GetFirstLocal(World));
+			}
+
+			static APlayerState* GetFirstLocalChecked(const FString& Context, UWorld* World);
+
+			FORCEINLINE static APlayerState* GetFirstLocalChecked(UWorld* World)
+			{
+				using namespace NCsPlayer::NState::NCached;
+
+				return GetFirstLocalChecked(Str::GetFirstLocalChecked, World);
+			}
+
+			template<typename T>
+			FORCEINLINE static T* GetFirstLocalChecked(const FString& Context, UWorld* World)
+			{
+				T* PS = Cast<T>(GetFirstLocalChecked(Context, World));
+
+				checkf(PS, TEXT("%s: Failed to cast PlayerState to type: %s."), *Context, (T::StaticClass()->GetName()));
+
+				return PS;
+			}
+
+			template<typename T>
+			FORCEINLINE static T* GetFirstLocalChecked(UWorld* World)
+			{
+				using namespace NCsPlayer::NState::NCached;
+
+				return GetFirstLocalChecked<T>(Str::GetFirstLocalChecked, World);
+			}
+
+			static bool IsFirstLocal(UWorld* World, APlayerState* PlayerState);
+		};
+	}
+
+	namespace NPawn
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				extern CSCORE_API const FString GetFirstLocalChecked;
+			}
+		}
+
+		struct CSCORE_API FLibrary
+		{
+		public:
+
+			static APawn* GetFirstLocal(UWorld* World);
+
+			template<typename T>
+			FORCEINLINE static T* GetFirstLocal(UWorld* World)
+			{
+				return Cast<T>(GetFirstLocal(World));
+			}
+
+			static APawn* GetFirstLocalChecked(const FString& Context, UWorld* World);
+
+			FORCEINLINE static APawn* GetFirstLocalChecked(UWorld* World)
+			{
+				using namespace NCsPlayer::NPawn::NCached;
+
+				return GetFirstLocalChecked(Str::GetFirstLocalChecked, World);
+			}
+
+			static bool IsFirstLocal(UWorld* World, APawn* Pawn);
+		};
+	}
+
+	namespace NInput
+	{
+		struct CSCORE_API FLibrary
+		{
+		public:
+
+			static UPlayerInput* GetFirstLocal(UWorld* World);
+		};
+	}
+
+	namespace NHud
+	{
+		struct CSCORE_API FLibrary
+		{
+		public:
+
+			static AHUD* GetFirstLocal(UWorld* World);
+
+			template<typename T>
+			FORCEINLINE static T* GetFirstLocal(UWorld* World)
+			{
+				return Cast<T>(GetFirstLocal(World));
+			}
+		};
 	}
 }
-
-class CSCORE_API FCsLibrary_Player
-{
-
-// Player
-#pragma region
-public:
-
-	/**
-	* 
-	* 
-	* @param Context		The calling context.
-	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-	*/
-	static ULocalPlayer* GetFirstLocalPlayerChecked(const FString& Context, UObject* WorldContext);
-
-#pragma endregion Player
-
-// PlayerController
-#pragma region
-public:
-
-	static APlayerController* GetFirstLocalPlayerController(UWorld* World);
-
-	template<typename T>
-	FORCEINLINE static T* GetFirstLocalPlayerController(UWorld* World)
-	{
-		return Cast<T>(GetFirstLocalPlayerController(World));
-	}
-
-	FORCEINLINE static APlayerController* GetFirstLocalPlayerControllerChecked(const FString& Context, UWorld* World)
-	{
-		APlayerController* PC = GetFirstLocalPlayerController(World);
-
-		checkf(PC, TEXT("%s: Failed to get PlayerController from World."), *Context);
-
-		return PC;
-	}
-
-	FORCEINLINE static APlayerController* GetFirstLocalPlayerControllerChecked(UWorld* World)
-	{
-		using namespace NCsLibraryPlayer::NCached;
-
-		return GetFirstLocalPlayerControllerChecked(Str::GetFirstLocalPlayerControllerChecked, World);
-	}
-
-	template<typename T>
-	FORCEINLINE static T* GetFirstLocalPlayerControllerChecked(const FString& Context, UWorld* World)
-	{
-		T* PC = Cast<T>(GetFirstLocalPlayerControllerChecked(Context, World));
-
-		checkf(PC, TEXT("%s: Failed to cast PlayerController to type: %s."), *Context, *(T::StaticClass()->GetName()));
-
-		return PC;
-	}
-
-	template<typename T>
-	FORCEINLINE static T* GetFirstLocalPlayerControllerChecked(UWorld* World)
-	{
-		using namespace NCsLibraryPlayer::NCached;
-
-		return GetFirstLocalPlayerControllerChecked<T>(Str::GetFirstLocalPlayerControllerChecked, World);
-	}
-
-	static APlayerController* GetFirstLocalPlayerControllerChecked(const FString& Context, UObject* WorldContext);
-
-	static APlayerController* GetLocalPlayerController(const FString& Context, UWorld* World, const int32& ControllerId);
-
-	static APlayerController* GetLocalPlayerControllerChecked(const FString& Context, UWorld* World, const int32& ControllerId);
-
-	static APlayerController* GetPlayerControllerOrFirstLocalChecked(const FString& Context, APawn* Pawn);
-
-	static void GetAllLocalPlayerControllers(UWorld* World, TArray<APlayerController*>& OutControllers);
-
-	static void GetAllLocalPlayerControllers(UObject* WorldContext, TArray<APlayerController*>& OutControllers);
-
-	static void GetAllLocalPlayerControllersChecked(const FString& Context, UWorld* World, TArray<APlayerController*>& OutControllers);
-
-	static void GetAllLocalPlayerControllersChecked(const FString& Context, UObject* WorldContext, TArray<APlayerController*>& OutControllers);
-
-#pragma endregion PlayerController
-
-// PlayerState
-#pragma region
-public:
-
-	static APlayerState* GetFirstLocalPlayerState(UWorld* World);
-
-	template<typename T>
-	FORCEINLINE static T* GetFirstLocalPlayerState(UWorld* World)
-	{
-		return Cast<T>(GetFirstLocalPlayerState(World));
-	}
-
-	static APlayerState* GetFirstLocalPlayerStateChecked(const FString& Context, UWorld* World);
-
-	FORCEINLINE static APlayerState* GetFirstLocalPlayerStateChecked(UWorld* World)
-	{
-		using namespace NCsLibraryPlayer::NCached;
-
-		return GetFirstLocalPlayerStateChecked(Str::GetFirstLocalPlayerStateChecked, World);
-	}
-
-	template<typename T>
-	FORCEINLINE static T* GetFirstLocalPlayerStateChecked(const FString& Context, UWorld* World)
-	{
-		T* PS = Cast<T>(GetFirstLocalPlayerStateChecked(Context, World));
-		
-		checkf(PS, TEXT("%s: Failed to cast PlayerState to type: %s."), *Context, (T::StaticClass()->GetName()));
-
-		return PS;
-	}
-
-	template<typename T>
-	FORCEINLINE static T* GetFirstLocalPlayerStateChecked(UWorld* World)
-	{
-		using namespace NCsLibraryPlayer::NCached;
-
-		return GetFirstLocalPlayerStateChecked<T>(Str::GetFirstLocalPlayerStateChecked, World);
-	}
-
-	static bool IsFirstLocalPlayerState(UWorld* World, APlayerState* PlayerState);
-
-#pragma endregion PlayerState
-
-// Pawn
-#pragma region
-public:
-
-	static APawn* GetFirstLocalPawn(UWorld* World);
-
-	template<typename T>
-	FORCEINLINE static T* GetFirstLocalPawn(UWorld* World)
-	{
-		return Cast<T>(GetFirstLocalPawn(World));
-	}
-
-	static APawn* GetFirstLocalPawnChecked(const FString& Context, UWorld* World);
-
-	FORCEINLINE static APawn* GetFirstLocalPawnChecked(UWorld* World)
-	{
-		using namespace NCsLibraryPlayer::NCached;
-
-		return GetFirstLocalPawnChecked(Str::GetFirstLocalPawnChecked, World);
-	}
-
-	static bool IsFirstLocalPawn(UWorld* World, APawn* Pawn);
-
-#pragma endregion Pawn
-
-	static UPlayerInput* GetFirstLocalPlayerInput(UWorld* World);
-
-	static AHUD* GetFirstLocalHUD(UWorld* World);
-
-	template<typename T>
-	FORCEINLINE static T* GetFirstLocalHUD(UWorld* World)
-	{
-		return Cast<T>(GetFirstLocalHUD(World));
-	}
-};

@@ -1557,7 +1557,9 @@ const FKey& UCsManager_Input::GetKeyFromAction(const ECsInputDevice& Device, con
 
 const FKey& UCsManager_Input::GetKeyFromAction(const FECsInputAction& Action)
 {
-	UPlayerInput* PlayerInput = FCsLibrary_Player::GetFirstLocalPlayerInput(GetWorld());
+	typedef NCsPlayer::NInput::FLibrary PlayerInputLibrary;
+
+	UPlayerInput* PlayerInput = PlayerInputLibrary::GetFirstLocal(GetWorld());
 
 	const FString& ActionAsString = Action.GetName();
 	const FName& ActionName		  = Action.GetFName();

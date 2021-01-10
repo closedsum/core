@@ -21,8 +21,8 @@ namespace NCsLibraryCamera
 		namespace Str
 		{
 			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Camera, GetLocationChecked);
-			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetRotationChecked);
-			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetDirectionChecked);
+			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Camera, GetRotationChecked);
+			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Camera, GetDirectionChecked);
 		}
 	}
 }

@@ -21,7 +21,9 @@ namespace NCsViewport
 		{
 			bool FLibrary::CanProjectWorldToScreenChecked(const FString& Context, UObject* WorldContext)
 			{
-				ULocalPlayer* LocalPlayer = FCsLibrary_Player::GetFirstLocalPlayerChecked(Context, WorldContext);
+				typedef NCsPlayer::FLibrary PlayerLibrary;
+
+				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 
 				checkf(LocalPlayer->ViewportClient, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
 
@@ -30,7 +32,9 @@ namespace NCsViewport
 
 			bool FLibrary::CanDeprojectScreenToWorldChecked(const FString& Context, UObject* WorldContext)
 			{
-				ULocalPlayer* LocalPlayer = FCsLibrary_Player::GetFirstLocalPlayerChecked(Context, WorldContext);
+				typedef NCsPlayer::FLibrary PlayerLibrary;
+
+				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 
 				checkf(LocalPlayer->ViewportClient, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
 
@@ -41,7 +45,9 @@ namespace NCsViewport
 			{
 				check(CanDeprojectScreenToWorldChecked(Context, WorldContext));
 
-				ULocalPlayer* LocalPlayer = FCsLibrary_Player::GetFirstLocalPlayerChecked(Context, WorldContext);
+				typedef NCsPlayer::FLibrary PlayerLibrary;
+
+				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 
 				UGameViewportClient* GVC = LocalPlayer->ViewportClient;
 
@@ -68,7 +74,9 @@ namespace NCsViewport
 
 			FSceneViewport* FLibrary::GetViewportChecked(const FString& Context, UObject* WorldContext)
 			{
-				ULocalPlayer* LocalPlayer = FCsLibrary_Player::GetFirstLocalPlayerChecked(Context, WorldContext);
+				typedef NCsPlayer::FLibrary PlayerLibrary;
+
+				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 				UGameViewportClient* GVC  = LocalPlayer->ViewportClient;
 
 				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));

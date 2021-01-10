@@ -15,214 +15,245 @@
 // Engine
 #include "Engine/Engine.h"
 
-namespace NCsLibraryPlayer
+namespace NCsPlayer
 {
-	namespace NCached
+	ULocalPlayer* FLibrary::GetFirstLocalChecked(const FString& Context, UObject* WorldContext)
 	{
-		namespace Str
+		checkf(WorldContext, TEXT("%s: WorldContext is NULL."));
+
+		UWorld* World = WorldContext->GetWorld();
+
+		checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+
+		UGameInstance* GameInstance = World->GetGameInstance();
+
+		checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName()));
+
+		ULocalPlayer* LocalPlayer = GameInstance->GetFirstGamePlayer();
+
+		checkf(LocalPlayer, TEXT("%s: Failed to get LocalPlayer from GameInstance: %s."), *Context, *(GameInstance->GetName()));
+
+		return LocalPlayer;
+	}
+
+	namespace NController
+	{
+		namespace NCached
 		{
-			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetFirstLocalPlayerControllerChecked);
-			
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetAllLocalPlayerControllers);
-			
-			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetFirstLocalPlayerStateChecked);
-			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsLibrary_Player, GetFirstLocalPawnChecked);
+			namespace Str
+			{
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetFirstLocalChecked);
+
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetAllLocal);
+			}
+		}
+
+		APlayerController* FLibrary::GetFirstLocal(UWorld* World)
+		{
+			return GEngine->GetFirstLocalPlayerController(World);
+		}
+
+		APlayerController* FLibrary::GetFirstLocalChecked(const FString& Context, UObject* WorldContext)
+		{
+			checkf(WorldContext, TEXT("%s: WorldContext is NULL."));
+
+			UWorld* World = WorldContext->GetWorld();
+
+			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+
+			return GetFirstLocalChecked(Context, World);
+		}
+
+		APlayerController* FLibrary::GetLocal(const FString& Context, UWorld* World, const int32& ControllerId)
+		{
+			checkf(World, TEXT("%s: World is NULL."), *Context);
+
+			checkf(ControllerId > INDEX_NONE, TEXT("%s: ControllerId: %d is NOT Valid. ControllerId must be >= 0."), *Context, ControllerId);
+
+			if (ULocalPlayer* Player = GEngine->GetLocalPlayerFromControllerId(World, ControllerId))
+				return Player->PlayerController;
+			return nullptr;
+		}
+
+		APlayerController* FLibrary::GetLocalChecked(const FString& Context, UWorld* World, const int32& ControllerId)
+		{
+			checkf(World, TEXT("%s: World is NULL."), *Context);
+
+			checkf(ControllerId > INDEX_NONE, TEXT("%s: ControllerId: %d is NOT Valid. ControllerId must be >= 0."), *Context, ControllerId);
+
+			ULocalPlayer* Player = GEngine->GetLocalPlayerFromControllerId(World, ControllerId);
+
+			checkf(Player, TEXT("%s: Failed to get Local Player with ControllerId: %d."), *Context, ControllerId);
+
+			APlayerController* PC = Player->PlayerController;
+
+			checkf(PC, TEXT("%s: Failed to get PlayerController from Local Player: %s with ControllerId: %d."), *Context, *(Player->GetName()), ControllerId);
+
+			return PC;
+		}
+
+		APlayerController* FLibrary::GetLocalChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId)
+		{
+			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+
+			UWorld* World = WorldContext->GetWorld();
+
+			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+
+			return GetLocalChecked(Context, World, ControllerId);
+		}
+
+		APlayerController* FLibrary::GetOrFirstLocalChecked(const FString& Context, APawn* Pawn)
+		{
+			checkf(Pawn, TEXT("%s: Pawn is NULL."));
+
+			if (APlayerController* PC = Cast<APlayerController>(Pawn->Controller))
+				return PC;
+			return GetFirstLocalChecked(Context, Pawn);
+		}
+
+		void FLibrary::GetAllLocal(UWorld* World, TArray<APlayerController*>& OutControllers)
+		{
+			using namespace NCsPlayer::NController::NCached;
+
+			const FString& Context = Str::GetAllLocal;
+
+			if (!World)
+				return;
+
+			GetAllLocalChecked(Context, World, OutControllers);
+		}
+
+		void FLibrary::GetAllLocal(UObject* WorldContext, TArray<APlayerController*>& OutControllers)
+		{
+			if (!WorldContext)
+				return;
+
+			GetAllLocal(WorldContext->GetWorld(), OutControllers);
+		}
+
+		void FLibrary::GetAllLocalChecked(const FString& Context, UWorld* World, TArray<APlayerController*>& OutControllers)
+		{
+			checkf(World, TEXT("%s: World is NULL."), *Context);
+
+			for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
+			{
+				APlayerController* PC = Iterator->Get();
+
+				if (PC && PC->GetLocalPlayer())
+				{
+					OutControllers.Add(PC);
+				}
+			}
+		}
+
+		void FLibrary::GetAllLocalChecked(const FString& Context, UObject* WorldContext, TArray<APlayerController*>& OutControllers)
+		{
+			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+
+			GetAllLocalChecked(Context, WorldContext->GetWorld(), OutControllers);
 		}
 	}
-}
 
-// Player
-#pragma region
-
-ULocalPlayer* FCsLibrary_Player::GetFirstLocalPlayerChecked(const FString& Context, UObject* WorldContext)
-{
-	checkf(WorldContext, TEXT("%s: WorldContext is NULL."));
-
-	UWorld* World = WorldContext->GetWorld();
-
-	checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
-
-	UGameInstance* GameInstance = World->GetGameInstance();
-
-	checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName()));
-
-	ULocalPlayer* LocalPlayer = GameInstance->GetFirstGamePlayer();
-
-	checkf(LocalPlayer, TEXT("%s: Failed to get LocalPlayer from GameInstance: %s."), *Context, *(GameInstance->GetName()));
-
-	return LocalPlayer;
-}
-
-#pragma endregion Player
-
-// PlayerController
-#pragma region
-
-APlayerController* FCsLibrary_Player::GetFirstLocalPlayerController(UWorld* World)
-{
-	return GEngine->GetFirstLocalPlayerController(World);
-}
-
-APlayerController* FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(const FString& Context, UObject* WorldContext)
-{
-	checkf(WorldContext, TEXT("%s: WorldContext is NULL."));
-
-	UWorld* World = WorldContext->GetWorld();
-
-	checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
-
-	return GetFirstLocalPlayerControllerChecked(Context, World);
-}
-
-APlayerController* FCsLibrary_Player::GetLocalPlayerController(const FString& Context, UWorld* World, const int32& ControllerId)
-{
-	checkf(World, TEXT("%s: World is NULL."), *Context);
-
-	checkf(ControllerId > INDEX_NONE, TEXT("%s: ControllerId: %d is NOT Valid. ControllerId must be >= 0."), *Context, ControllerId);
-
-	if (ULocalPlayer* Player = GEngine->GetLocalPlayerFromControllerId(World, ControllerId))
-		return Player->PlayerController;
-	return nullptr;
-}
-
-APlayerController* FCsLibrary_Player::GetLocalPlayerControllerChecked(const FString& Context, UWorld* World, const int32& ControllerId)
-{
-	checkf(World, TEXT("%s: World is NULL."), *Context);
-
-	checkf(ControllerId > INDEX_NONE, TEXT("%s: ControllerId: %d is NOT Valid. ControllerId must be >= 0."), *Context, ControllerId);
-
-	ULocalPlayer* Player = GEngine->GetLocalPlayerFromControllerId(World, ControllerId);
-
-	checkf(Player, TEXT("%s: Failed to get Local Player with ControllerId: %d."), *Context, ControllerId);
-
-	APlayerController* PC = Player->PlayerController;
-
-	checkf(PC, TEXT("%s: Failed to get PlayerController from Local Player: %s with ControllerId: %d."), *Context, *(Player->GetName()), ControllerId);
-
-	return PC;
-}
-
-APlayerController* FCsLibrary_Player::GetPlayerControllerOrFirstLocalChecked(const FString& Context, APawn* Pawn)
-{
-	checkf(Pawn, TEXT("%s: Pawn is NULL."));
-
-	if (APlayerController* PC = Cast<APlayerController>(Pawn->Controller))
-		return PC;
-	return GetFirstLocalPlayerControllerChecked(Context, Pawn);
-}
-
-void FCsLibrary_Player::GetAllLocalPlayerControllers(UWorld* World, TArray<APlayerController*>& OutControllers)
-{
-	using namespace NCsLibraryPlayer::NCached;
-
-	const FString& Context = Str::GetAllLocalPlayerControllers;
-
-	if (!World)
-		return;
-
-	GetAllLocalPlayerControllersChecked(Context, World, OutControllers);
-}
-
-void FCsLibrary_Player::GetAllLocalPlayerControllers(UObject* WorldContext, TArray<APlayerController*>& OutControllers)
-{
-	if (!WorldContext)
-		return;
-
-	GetAllLocalPlayerControllers(WorldContext->GetWorld(), OutControllers);
-}
-
-void FCsLibrary_Player::GetAllLocalPlayerControllersChecked(const FString& Context, UWorld* World, TArray<APlayerController*>& OutControllers)
-{
-	checkf(World, TEXT("%s: World is NULL."), *Context);
-
-	for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	namespace NState
 	{
-		APlayerController* PC = Iterator->Get();
-
-		if (PC && PC->GetLocalPlayer())
+		namespace NCached
 		{
-			OutControllers.Add(PC);
+			namespace Str
+			{
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NState::FLibrary, GetFirstLocalChecked);
+			}
+		}
+
+		APlayerState* FLibrary::GetFirstLocal(UWorld* World)
+		{
+			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+			if (APlayerController* PC = PlayerControllerLibrary::GetFirstLocal(World))
+				return PC->PlayerState;
+			return nullptr;
+		}
+
+		APlayerState* FLibrary::GetFirstLocalChecked(const FString& Context, UWorld* World)
+		{
+			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+			APlayerController* PC = PlayerControllerLibrary::GetFirstLocalChecked(Context, World);
+			APlayerState* PS	  = PC->PlayerState;
+
+			checkf(PS, TEXT("%s: Failed to get PlayerState from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
+
+			return PS;
+		}
+
+		bool FLibrary::IsFirstLocal(UWorld* World, APlayerState* PlayerState)
+		{
+			if (!PlayerState)
+				return false;
+			return PlayerState == GetFirstLocal(World);
 		}
 	}
-}
+	
+	namespace NPawn
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::P::FLibrary, GetFirstLocalChecked);
+			}
+		}
 
-void FCsLibrary_Player::GetAllLocalPlayerControllersChecked(const FString& Context, UObject* WorldContext, TArray<APlayerController*>& OutControllers)
-{
-	checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+		APawn* FLibrary::GetFirstLocal(UWorld* World)
+		{
+			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
 
-	GetAllLocalPlayerControllersChecked(Context, WorldContext->GetWorld(), OutControllers);
-}
+			if (APlayerController* PC = PlayerControllerLibrary::GetFirstLocal(World))
+				return PC->GetPawn();
+			return nullptr;
+		}
 
-#pragma endregion PlayerController
+		APawn* FLibrary::GetFirstLocalChecked(const FString& Context, UWorld* World)
+		{
+			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
 
-// PlayerState
-#pragma region
+			APlayerController* PC = PlayerControllerLibrary::GetFirstLocalChecked(Context, World);
+			APawn* P			  = PC->GetPawn();
 
-APlayerState* FCsLibrary_Player::GetFirstLocalPlayerState(UWorld* World)
-{
-	if (APlayerController* PC = GetFirstLocalPlayerController(World))
-		return PC->PlayerState;
-	return nullptr;
-}
+			checkf(P, TEXT("%s: Failed to get Pawn from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
 
-APlayerState* FCsLibrary_Player::GetFirstLocalPlayerStateChecked(const FString& Context, UWorld* World)
-{
-	APlayerController* PC = GetFirstLocalPlayerControllerChecked(Context, World);
-	APlayerState* PS	  = PC->PlayerState;
+			return P;
+		}
 
-	checkf(PS, TEXT("%s: Failed to get PlayerState from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
+		bool FLibrary::IsFirstLocal(UWorld* World, APawn* Pawn)
+		{
+			if (!Pawn)
+				return false;
+			return Pawn == GetFirstLocal(World);
+		}
+	}
 
-	return PS;
-}
+	namespace NInput
+	{
+		UPlayerInput* FLibrary::GetFirstLocal(UWorld* World)
+		{
+			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
 
-bool FCsLibrary_Player::IsFirstLocalPlayerState(UWorld* World, APlayerState* PlayerState)
-{
-	if (!PlayerState)
-		return false;
-	return PlayerState == GetFirstLocalPlayerState(World);
-}
+			if (APlayerController* PC = PlayerControllerLibrary::GetFirstLocal(World))
+				return PC->PlayerInput;
+			return nullptr;
+		}
+	}
+	
+	namespace NHud
+	{
+		AHUD* FLibrary::GetFirstLocal(UWorld* World)
+		{
+			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
 
-#pragma endregion PlayerState
-
-// Pawn
-#pragma region
-
-APawn* FCsLibrary_Player::GetFirstLocalPawn(UWorld* World)
-{
-	if (APlayerController* PC = GetFirstLocalPlayerController(World))
-		return PC->GetPawn();
-	return nullptr;
-}
-
-APawn* FCsLibrary_Player::GetFirstLocalPawnChecked(const FString& Context, UWorld* World)
-{
-	APlayerController* PC = GetFirstLocalPlayerControllerChecked(Context, World);
-	APawn* P			  = PC->GetPawn();
-
-	checkf(P, TEXT("%s: Failed to get Pawn from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
-
-	return P;
-}
-
-bool FCsLibrary_Player::IsFirstLocalPawn(UWorld* World, APawn* Pawn)
-{
-	if (!Pawn)
-		return false;
-	return Pawn == GetFirstLocalPawn(World);
-}
-
-#pragma endregion Pawn
-
-UPlayerInput* FCsLibrary_Player::GetFirstLocalPlayerInput(UWorld* World)
-{
-	if (APlayerController* PC = GetFirstLocalPlayerController(World))
-		return PC->PlayerInput;
-	return nullptr;
-}
-
-AHUD* FCsLibrary_Player::GetFirstLocalHUD(UWorld* World)
-{
-	if (APlayerController* PC = GetFirstLocalPlayerController(World))
-		return PC->MyHUD;
-	return nullptr;
+			if (APlayerController* PC = PlayerControllerLibrary::GetFirstLocal(World))
+				return PC->MyHUD;
+			return nullptr;
+		}
+	}
 }

@@ -37,7 +37,7 @@ struct CSCORE_API FCsInputFrame
 		return *this;
 	}
 
-	FORCEINLINE void Init(const FCsTime& InTime)
+	void Init(const FCsTime& InTime)
 	{
 		Time = InTime;
 

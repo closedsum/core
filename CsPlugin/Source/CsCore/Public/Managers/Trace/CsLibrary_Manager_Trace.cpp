@@ -39,13 +39,15 @@ namespace NCsTrace
 		{
 			using namespace NCached;
 
-			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
-
 			checkf(Distance > 0.0f, TEXT("%s: Distance: %f is NOT > 0.0f."), *Context, Distance);
 
 			checkf(Channel != ECollisionChannel::ECC_MAX, TEXT("%s: Channel: ECC_MAX is NOT Valid."), *Context);
 
-			APlayerController* PC = FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(Context, WorldContext);
+			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+			APlayerController* PC = PlayerControllerLibrary::GetFirstLocalChecked(Context, WorldContext);
+
+			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
 
 			FVector WorldOrigin;
 			FVector WorldDirection;

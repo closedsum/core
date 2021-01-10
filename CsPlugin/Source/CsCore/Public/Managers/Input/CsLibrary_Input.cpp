@@ -14,14 +14,18 @@ namespace NCsInput
 {
 	void FLibrary::ShowMouseCursorChecked(const FString& Context, UObject* WorldContext)
 	{
-		APlayerController* PC = FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(Context, WorldContext);
+		typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+		APlayerController* PC = PlayerControllerLibrary::GetFirstLocalChecked(Context, WorldContext);
 
 		PC->bShowMouseCursor = true;
 	}
 
 	void FLibrary::HideMouseCursorChecked(const FString& Context, UObject* WorldContext)
 	{
-		APlayerController* PC = FCsLibrary_Player::GetFirstLocalPlayerControllerChecked(Context, WorldContext);
+		typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+		APlayerController* PC = PlayerControllerLibrary::GetFirstLocalChecked(Context, WorldContext);
 
 		PC->bShowMouseCursor = false;
 	}

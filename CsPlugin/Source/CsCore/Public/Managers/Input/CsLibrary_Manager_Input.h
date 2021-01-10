@@ -14,17 +14,17 @@ namespace NCsInput
 		{
 		public:
 
-			static UCsManager_Input* GetFirstLocalManagerInput(UWorld* World);
+			static UCsManager_Input* GetFirst(UWorld* World);
 
-			static UCsManager_Input* GetFirstLocalManagerInputChecked(const FString& Context, UWorld* World);
+			static UCsManager_Input* GetFirstChecked(const FString& Context, UWorld* World);
 
-			static UCsManager_Input* GetFirstLocalManagerInputChecked(const FString& Context, UObject* WorldContext);
+			static UCsManager_Input* GetFirstChecked(const FString& Context, UObject* WorldContext);
 
-			static UCsManager_Input* GetFirstLocalManagerInputChecked(UWorld* World);
+			static UCsManager_Input* GetFirstChecked(UWorld* World);
 
-			static UCsManager_Input* GetManagerInputChecked(const FString& Context, APlayerController* PC);
+			static UCsManager_Input* GetChecked(const FString& Context, APlayerController* PC);
 
-			static bool HaveAllLocalManagerInputBeenCreated(UObject* WorldContext, const int32& NumLocalPlayers);
+			static bool HaveAllBeenCreated(UObject* WorldContext, const int32& NumLocalPlayers);
 
 		// InputActionMap
 		#pragma region
@@ -38,7 +38,7 @@ namespace NCsInput
 			* @param World
 			* @param Map	A EnumStructFlag (contains a bit flag).
 			*/
-			static void SetFirstLocalCurrentInputActionMap(UWorld* World, const FECsInputActionMap& Map);
+			static void SetFirstInputActionMap(UWorld* World, const FECsInputActionMap& Map);
 	
 			/**
 			* Sets the bit (Map) in CurrentInputActionMap for the first local player controller.
@@ -47,7 +47,7 @@ namespace NCsInput
 			* @param World
 			* @param Map		A EnumStructFlag (contains a bit flag).
 			*/
-			static void SetFirstLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map);
+			static void SetFirstInputActionMapChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map);
 
 			/**
 			* Sets the bit (Map) in CurrentInputActionMap for the first local player controller.
@@ -56,7 +56,7 @@ namespace NCsInput
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Map			A EnumStructFlag (contains a bit flag).
 			*/
-			static void SetFirstLocalCurrentInputActionMapChecked(const FString& Context, UObject* WorldContext, const FECsInputActionMap& Map);
+			static void SetFirstInputActionMapChecked(const FString& Context, UObject* WorldContext, const FECsInputActionMap& Map);
 
 			/**
 			* Sets the bit (Map) in CurrentInputActionMap for the first local player controller.
@@ -64,7 +64,7 @@ namespace NCsInput
 			* @param World
 			* @param Map	A EnumStructFlag (contains a bit flag).
 			*/
-			static void SetFirstLocalCurrentInputActionMapChecked(UWorld* World, const FECsInputActionMap& Map);
+			static void SetFirstInputActionMapChecked(UWorld* World, const FECsInputActionMap& Map);
 	
 			/**
 			* Sets the bit (Map) in CurrentInputActionMap for the first local player controller.
@@ -72,7 +72,7 @@ namespace NCsInput
 			* @param World
 			* @param Map	A bit flag. See FECsInputActionMap.
 			*/
-			static void SetFirstLocalCurrentInputActionMap(UWorld* World, const int32& Map);
+			static void SetFirstInputActionMap(UWorld* World, const int32& Map);
 
 			/**
 			* Sets the bit (Map) in CurrentInputActionMap for the first local player controller.
@@ -80,7 +80,7 @@ namespace NCsInput
 			* @param World
 			* @param Map	A bit flag. See FECsInputActionMap.
 			*/
-			static void SetFirstLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map);
+			static void SetFirstInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map);
 
 			/**
 			* Sets the bit (Map) in CurrentInputActionMap for the first local player controller.
@@ -88,7 +88,16 @@ namespace NCsInput
 			* @param World
 			* @param Map	A bit flag. See FECsInputActionMap.
 			*/
-			static void SetFirstLocalCurrentInputActionMapChecked(UWorld* World, const int32& Map);
+			static void SetFirstInputActionMapChecked(UWorld* World, const int32& Map);
+
+			/**
+			* Sets the bit (Map) in CurrentInputActionMap for all local player controllers.
+			*
+			* @param Context			The calling context.
+			* @param PlayerController
+			* @param Map				A EnumStructFlag (contains a bit flag).
+			*/
+			static void SetInputActionMapChecked(const FString& Context, APlayerController* PC, const FECsInputActionMap& Map);
 
 			/**
 			* Sets the bit (Map) in CurrentInputActionMap for all local player controllers.
@@ -97,7 +106,7 @@ namespace NCsInput
 			* @param World
 			* @param Map			A EnumStructFlag (contains a bit flag).
 			*/
-			static void SetLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map);
+			static void SetInputActionMapChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map);
 
 			/**
 			* Sets the bit (Map) in CurrentInputActionMap for all local player controllers.
@@ -106,7 +115,17 @@ namespace NCsInput
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Map			A EnumStructFlag (contains a bit flag).
 			*/
-			static void SetLocalCurrentInputActionMapChecked(const FString& Context, UObject* WorldContext, const FECsInputActionMap& Map);
+			static void SetInputActionMapChecked(const FString& Context, UObject* WorldContext, const FECsInputActionMap& Map);
+
+			/**
+			*
+			
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ControllerId
+			* @param Map			A EnumStructFlag (contains a bit flag).
+			*/
+			static void SetInputActionMapChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, const FECsInputActionMap& Map);
 
 		#pragma endregion Set
 
@@ -119,7 +138,7 @@ namespace NCsInput
 			* @param World
 			* @param Map	A EnumStructFlag (contains a bit flag). 
 			*/
-			static void ClearFirstLocalCurrentInputActionMap(UWorld* World, const FECsInputActionMap& Map);
+			static void ClearFirstInputActionMap(UWorld* World, const FECsInputActionMap& Map);
 
 			/**
 			* Clears the bit (Map) in CurrentInputActionMap for the first local player controller.
@@ -128,7 +147,7 @@ namespace NCsInput
 			* @param World
 			* @param Map		A EnumStructFlag (contains a bit flag).
 			*/
-			static void ClearFirstLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map);
+			static void ClearFirstInputActionMapChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map);
 
 			/**
 			* Clears the bit (Map) in CurrentInputActionMap for the first local player controller.
@@ -137,7 +156,7 @@ namespace NCsInput
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Map			A EnumStructFlag (contains a bit flag).
 			*/
-			static void ClearFirstLocalCurrentInputActionMapChecked(const FString& Context, UObject* WorldContext, const FECsInputActionMap& Map);
+			static void ClearFirstInputActionMapChecked(const FString& Context, UObject* WorldContext, const FECsInputActionMap& Map);
 
 			/**
 			* Clears the bit (Map) in CurrentInputActionMap for the first local player controller.
@@ -145,7 +164,7 @@ namespace NCsInput
 			* @param World
 			* @param Map	A EnumStructFlag (contains a bit flag).
 			*/
-			static void ClearFirstLocalCurrentInputActionMapChecked(UWorld* World, const FECsInputActionMap& Map);
+			static void ClearFirstInputActionMapChecked(UWorld* World, const FECsInputActionMap& Map);
 
 			/**
 			* Clears the bit (Map) in CurrentInputActionMap for the first local player controller.
@@ -153,7 +172,7 @@ namespace NCsInput
 			* @param World
 			* @param Map	A bit flag. See FECsInputActionMap.
 			*/
-			static void ClearFirstLocalCurrentInputActionMap(UWorld* World, const int32& Map);
+			static void ClearFirstInputActionMap(UWorld* World, const int32& Map);
 
 			/**
 			* Clears the bit (Map) in CurrentInputActionMap for the first local player controller.
@@ -162,7 +181,7 @@ namespace NCsInput
 			* @param World
 			* @param Map		A bit flag. See FECsInputActionMap.
 			*/
-			static void ClearFirstLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map);
+			static void ClearFirstInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map);
 
 			/**
 			* Clears the bit (Map) in CurrentInputActionMap for the first local player controller.
@@ -171,7 +190,7 @@ namespace NCsInput
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Map			A bit flag. See FECsInputActionMap.
 			*/
-			static void ClearFirstLocalCurrentInputActionMapChecked(const FString& Context, UObject* WorldContext, const int32& Map);
+			static void ClearFirstInputActionMapChecked(const FString& Context, UObject* WorldContext, const int32& Map);
 
 			/**
 			* Clears the bit (Map) in CurrentInputActionMap for the first local player controller.
@@ -179,7 +198,16 @@ namespace NCsInput
 			* @param World
 			* @param Map	A bit flag. See FECsInputActionMap.
 			*/
-			static void ClearFirstLocalCurrentInputActionMapChecked(UWorld* World, const int32& Map);
+			static void ClearFirstInputActionMapChecked(UWorld* World, const int32& Map);
+
+			/**
+			* Clears the bit (Map) in CurrentInputActionMap for all local player controllers.
+			*
+			* @param Context			The calling context.
+			* @param PlayerController
+			* @param Map				A EnumStructFlag (contains a bit flag).
+			*/
+			static void ClearInputActionMapChecked(const FString& Context, APlayerController* PC, const FECsInputActionMap& Map);
 
 			/**
 			* Clears the bit (Map) in CurrentInputActionMap for all local player controllers.
@@ -188,7 +216,7 @@ namespace NCsInput
 			* @param World
 			* @param Map		A bit flag. See FECsInputActionMap.
 			*/
-			static void ClearLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map);
+			static void ClearInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map);
 
 			/**
 			* Clears the bit (Map) in CurrentInputActionMap for all local player controllers.
@@ -197,7 +225,17 @@ namespace NCsInput
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Map			A bit flag. See FECsInputActionMap.
 			*/
-			static void ClearLocalCurrentInputActionMapChecked(const FString& Context, UObject* WorldContext, const int32& Map);
+			static void ClearInputActionMapChecked(const FString& Context, UObject* WorldContext, const int32& Map);
+
+			/**
+			* Clears the bit (Map) in CurrentInputActionMap for the player controller with ControllerId.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ControllerId
+			* @param Map			A bit flag. See FECsInputActionMap.
+			*/
+			static void ClearInputActionMapChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, const int32& Map);
 
 		#pragma endregion Clear
 
@@ -210,7 +248,7 @@ namespace NCsInput
 			* @param Context	The calling context.
 			* @param World
 			*/
-			static void ResetFirstLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World);
+			static void ResetFirstInputActionMapChecked(const FString& Context, UWorld* World);
 
 			/**
 			* Resets the CurrentInputActionMap to 0 for the first local player controller.
@@ -218,7 +256,15 @@ namespace NCsInput
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			*/
-			static void ResetFirstLocalCurrentInputActionMapChecked(const FString& Context, UObject* WorldContext);
+			static void ResetFirstInputActionMapChecked(const FString& Context, UObject* WorldContext);
+
+			/**
+			* Resets the CurrentInputActionMap to 0 for the Player Controller.
+			*
+			* @param Context			The calling context.
+			* @param PlayerController
+			*/
+			static void ResetInputActionMapChecked(const FString& Context, APlayerController* PC);
 
 			/**
 			* Resets the CurrentInputActionMap to 0 for all local player controllers.
@@ -226,7 +272,7 @@ namespace NCsInput
 			* @param Context	The calling context.
 			* @param World
 			*/
-			static void ResetLocalCurrentInputActionMapChecked(const FString& Context, UWorld* World);
+			static void ResetInputActionMapChecked(const FString& Context, UWorld* World);
 
 			/**
 			* Resets the CurrentInputActionMap to 0 for all local player controllers.
@@ -234,7 +280,16 @@ namespace NCsInput
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			*/
-			static void ResetLocalCurrentInputActionMapChecked(const FString& Context, UObject* WorldContext);
+			static void ResetInputActionMapChecked(const FString& Context, UObject* WorldContext);
+
+			/**
+			* Resets the CurrentInputActionMap to 0 for all local player controllers.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ControllerId
+			*/
+			static void ResetInputActionMapChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId);
 
 		#pragma endregion Reset
 

@@ -56,14 +56,14 @@ void UCsInputListener::Init(const FECsInputAction& InAction, const ECsInputType&
 	}
 }
 
-void UCsInputListener::OnAction_Pressed()
+void UCsInputListener::OnAction_Pressed(FKey Key)
 {
-	OnAction_Pressed_Event.Execute(Action);
+	OnAction_Pressed_Event.Execute(Action, Key);
 }
 
-void UCsInputListener::OnAction_Released()
+void UCsInputListener::OnAction_Released(FKey Key)
 {
-	OnAction_Released_Event.Execute(Action);
+	OnAction_Released_Event.Execute(Action, Key);
 }
 
 void UCsInputListener::OnAxis(float Value)

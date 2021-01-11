@@ -78,6 +78,13 @@ TAutoConsoleVariable<int32> CsCVarLogInputGameEventDefinition(
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<int32> CsCVarLogInputActiveMode(
+	TEXT("log.input.activemode"),
+	0,
+	TEXT("Log Input - ActiveInputMode"),
+	ECVF_SetByConsole
+);
+
 // CVarLog
 #pragma region
 
@@ -97,6 +104,8 @@ namespace NCsCVarLog
 	CSCORE_API CS_CREATE_ENUM_STRUCT(LogInputGameEvent);
 	CSCORE_API CS_CREATE_ENUM_STRUCT(LogInputGameEventDefinition);
 
+	CSCORE_API CS_CREATE_ENUM_STRUCT(LogInputActiveMode);
+
 	namespace Map
 	{
 		CSCORE_API CS_ADD_TO_CVAR_MAP(LogInputRaw, CsCVarLogInputRaw);
@@ -112,6 +121,8 @@ namespace NCsCVarLog
 
 		CSCORE_API CS_ADD_TO_CVAR_MAP(LogInputGameEvent, CsCVarLogInputGameEvent);
 		CSCORE_API CS_ADD_TO_CVAR_MAP(LogInputGameEventDefinition, CsCVarLogInputGameEventDefinition);
+
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogInputActiveMode, CsCVarLogInputActiveMode);
 	}
 }
 

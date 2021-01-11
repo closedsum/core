@@ -38,8 +38,18 @@ namespace NCsManagerInput
 		{
 			extern CSCORE_API const FString SetCurrentInputActionMap;
 			extern CSCORE_API const FString ClearCurrentInputActionMap;
-			extern CSCORE_API const FString SetCurrentInputMode;
-			extern CSCORE_API const FString ClearCurrentInputMode;
+		}
+	}
+
+	namespace NCurrentMode
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				extern CSCORE_API const FString SetValue;
+				extern CSCORE_API const FString ClearValue;
+			}
 		}
 	}
 }
@@ -94,6 +104,8 @@ public:
 
 	void OnPostProcessInput_CaptureMouseInput(const float& DeltaTime, const bool bGamePaused);
 
+	void OnPostProcessInput_UpdateActiveInputMode(const float& DeltaTime, const bool bGamePaused);
+
 	float CurrentDeltaTime;
 
 	FCsManager_Input Manager_Inputs;
@@ -126,6 +138,12 @@ private:
 
 	/** */
 	TArray<FCsInputInfo> InputActionEventInfos;
+
+public:
+
+	FORCEINLINE const TArray<FCsInputInfo>& GetInputActionEventInfos() const { return InputActionEventInfos; }
+
+private:
 
 	void SetupInputActionEventInfos();
 
@@ -330,9 +348,9 @@ private:
 
 public:
 
-	void OnAction_Pressed(const FECsInputAction& Action);
+	void OnAction_Pressed(const FECsInputAction& Action, const FKey& Key);
 
-	void OnAction_Released(const FECsInputAction& Action);
+	void OnAction_Released(const FECsInputAction& Action, const FKey& Key);
 
 	void OnTouchAction_Pressed(ETouchIndex::Type Index, FVector Location);
 
@@ -380,83 +398,151 @@ public:
 
 // Mode
 #pragma region
-private:
+public:
+
+	struct FMode
+	{
+		friend class UCsManager_Input;
+
+	protected:
+
+		UCsManager_Input* Outer;
+
+		int32 Value;
+
+		int32 Last_Value;
+
+	public:
+
+		DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChange, const int32& /*Previous*/, const int32& /*Current*/);
+
+		FOnChange OnChange_Event;
+
+		FMode() :
+			Outer(nullptr),
+			Value(0),
+			Last_Value(0),
+			OnChange_Event()
+		{
+		}
+
+		FORCEINLINE const int32& GetValue() const { return Value; }
+
+		/**
+		* Sets Value to 0.
+		*/
+		FORCEINLINE void ResetValue() { Value = 0; }
+	};
+
+	struct FCurrentMode : public FMode
+	{
+	private:
+
+		typedef FMode _Super;
+
+	public:
+
+		FCurrentMode() :
+			_Super()
+		{
+		}
+
+		/**
+		* Sets the bit in Value.
+		*
+		* @param Context	The calling context.
+		* @param Mode		A BlueprintFlag (value will get bit shifted).
+		*/
+		void SetValue(const FString& Context, const ECsInputMode& Mode);
+
+		/**
+		* Sets the bit in Value.
+		*
+		* @param Mode	A BlueprintFlag (value will get bit shifted).
+		*/
+		FORCEINLINE void SetValue(const ECsInputMode& Mode) { SetValue(NCsManagerInput::NCurrentMode::NCached::Str::SetValue, Mode); }
+
+		/**
+		* Sets the bit in Value.
+		*
+		* @param Context	The calling context.
+		* @param Mode		A bit flag.
+		*/
+		void SetValue(const FString& Context, const int32& Mode);
+
+		/**
+		* Sets the bit in Value.
+		*
+		* @param Mode	A bit flag.
+		*/
+		FORCEINLINE void SetValue(const int32& Mode) { SetValue(NCsManagerInput::NCurrentMode::NCached::Str::SetValue, Mode); }
+
+		/**
+		* Clears the bit in Value.
+		*
+		* @param Context	The calling context.
+		* @param Mode		A BlueprintFlag (value will get bit shifted).
+		*/
+		void ClearValue(const FString& Context, const ECsInputMode& Mode);
+
+		/**
+		* Clears the bit in Value.
+		*
+		* @param Mode	A BlueprintFlag (value will get bit shifted).
+		*/
+		FORCEINLINE void ClearValue(const ECsInputMode& Mode) { ClearValue(NCsManagerInput::NCurrentMode::NCached::Str::ClearValue, Mode); }
+
+		/**
+		* Clears the bit in Value.
+		*
+		* @param Context	The calling context.
+		* @param Mode		A bit flag.
+		*/
+		void ClearValue(const FString& Context, const int32& Mode);
+
+		/**
+		* Clears the bit in Value.
+		*
+		* @param Mode	A bit flag.
+		*/
+		FORCEINLINE void ClearValue(const int32& Mode) { ClearValue(NCsManagerInput::NCurrentMode::NCached::Str::ClearValue, Mode); }
+	};
 
 	/** Bit mask of current InputMode */
-	int32 CurrentInputMode;
+	FCurrentMode CurrentMode;
+
+	struct FActiveMode : public FMode
+	{
+	private:
+
+		typedef FMode _Super;
+
+	public:
+
+		FActiveMode() :
+			_Super()
+		{
+		}
+
+		void OnPostProcessInput(const float& DeltaTime, const bool bGamePaused);
+
+		void PrintSet(const FString& Context, const FECsInputAction& Action, const FCsInputInfo& Info, const ECsInputMode& Mode);
+		void PrintSummary(const FString& Context);
+	};
+
+	FActiveMode ActiveMode;
+
+private:
+
+	int32 ActiveInputMode;
+
+	int32 Last_ActiveInputMode;
 
 public:
 
-	FORCEINLINE const int32& GetCurrentInputMode() const { return CurrentInputMode; }
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnActiveInputModeChange, const int32& /*PreviousMode*/, const int32& /*CurrentMode*/);
 
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnInputModeChange, const int32& /*PreviousMode*/, const int32& /*CurrentMode*/);
-
-	FOnInputModeChange OnInputModeChange_Event;
-
-	/**
-	* Sets the bit in CurrentInputMode.
-	*
-	* @param Context	The calling context.
-	* @param Mode		A BlueprintFlag (value will get bit shifted).
-	*/
-	void SetCurrentInputMode(const FString& Context, const ECsInputMode& Mode);
-
-	/**
-	* Sets the bit in CurrentInputMode.
-	*
-	* @param Mode	A BlueprintFlag (value will get bit shifted).
-	*/
-	FORCEINLINE void SetCurrentInputMode(const ECsInputMode& Mode) { SetCurrentInputMode(NCsManagerInput::NCached::Str::SetCurrentInputMode, Mode); }
-
-	/**
-	* Sets the bit in CurrentInputMode.
-	*
-	* @param Context	The calling context.
-	* @param Mode		A bit flag.
-	*/
-	void SetCurrentInputMode(const FString& Context, const int32& Mode);
-
-	/**
-	* Sets the bit in CurrentInputMode.
-	*
-	* @param Mode	A bit flag.
-	*/
-	FORCEINLINE void SetCurrentInputMode(const int32& Mode) { SetCurrentInputMode(NCsManagerInput::NCached::Str::SetCurrentInputMode, Mode); }
-
-	/**
-	* Clears the bit in CurrentInputMode.
-	*
-	* @param Context	The calling context.
-	* @param Mode		A BlueprintFlag (value will get bit shifted).
-	*/
-	void ClearCurrentInputMode(const FString& Context, const ECsInputMode& Mode);
-
-	/**
-	* Clears the bit in CurrentInputMode.
-	*
-	* @param Mode	A BlueprintFlag (value will get bit shifted).
-	*/
-	FORCEINLINE void ClearCurrentInputMode(const ECsInputMode& Mode) { ClearCurrentInputMode(NCsManagerInput::NCached::Str::ClearCurrentInputMode, Mode); }
-
-	/**
-	* Clears the bit in CurrentInputMode.
-	*
-	* @param Context	The calling context.
-	* @param Mode		A bit flag.
-	*/
-	void ClearCurrentInputMode(const FString& Context, const int32& Mode);
-
-	/**
-	* Clears the bit in CurrentInputMode.
-	*
-	* @param Mode	A bit flag.
-	*/
-	FORCEINLINE void ClearCurrentInputMode(const int32& Mode) { ClearCurrentInputMode(NCsManagerInput::NCached::Str::ClearCurrentInputMode, Mode); }
-
-	/**
-	* Sets CurrentInputMode to 0.
-	*/
-	FORCEINLINE void ResetCurrentInputMode() { CurrentInputMode = 0; }
+	FOnActiveInputModeChange OnActiveInputModeChange_Event;
 
 #pragma endregion Mode
 

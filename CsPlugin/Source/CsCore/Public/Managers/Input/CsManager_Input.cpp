@@ -33,10 +33,31 @@ namespace NCsManagerInput
 		{
 			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, SetCurrentInputActionMap);
 			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, ClearCurrentInputActionMap);
-			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, SetCurrentInputMode);
-			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, ClearCurrentInputMode);
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, PostProcessInput);
+		}
+	}
+
+	namespace NCurrentMode
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input::FCurrentMode, SetValue);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input::FCurrentMode, ClearValue);
+			}
+		}
+	}
+
+	namespace NActiveMode
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input::FActiveMode, OnPostProcessInput);
+			}
 		}
 	}
 }
@@ -81,8 +102,8 @@ UCsManager_Input::UCsManager_Input(const FObjectInitializer& ObjectInitializer) 
 	// Touch
 	TouchActions(),
 	// Mode
-	CurrentInputMode(0),
-	OnInputModeChange_Event(),
+	CurrentMode(),
+	ActiveMode(),
 	// Profile
 	InputProfile(),
 	AllKeys()
@@ -91,6 +112,9 @@ UCsManager_Input::UCsManager_Input(const FObjectInitializer& ObjectInitializer) 
 
 void UCsManager_Input::Init() 
 {
+	CurrentMode.Outer = this;
+	ActiveMode.Outer = this;
+
 	EKeys::GetAllKeys(AllKeys);
 
 	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
@@ -210,6 +234,8 @@ void UCsManager_Input::SetupInputComponent()
 
 void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePaused)
 {
+	ActiveMode.ResetValue();
+
 	// Update Event "state" for Actions
 	for (const FECsInputAction& Action : EMCsInputAction::Get())
 	{
@@ -309,6 +335,9 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		//	RightHand_Location_Raw.ExecuteIfBound(Location);
 		}
 	}
+
+	// Handle any changes to ActiveMode
+	ActiveMode.OnPostProcessInput(DeltaTime, bGamePaused);
 
 	// Handle any Inputs that need to deallocated
 	TCsDoubleLinkedList<FCsResource_Input*>* Current = Manager_Inputs.GetAllocatedHead();
@@ -806,6 +835,8 @@ void UCsManager_Input::SetupInputActionEventInfos()
 			Info.ValueType	= ECsInputValue::Vector;
 			Info.Event		= ECsInputEvent::Stationary;
 			Info.Last_Event = ECsInputEvent::Stationary;
+			//Info.Key		= EKeys::MouseX;
+			//Info.Key		= EKeys::MouseY;
 			continue;
 		}
 		// Default__MouseLeftButton__
@@ -815,6 +846,7 @@ void UCsManager_Input::SetupInputActionEventInfos()
 			Info.ValueType	= ECsInputValue::Void;
 			Info.Event		= ECsInputEvent::Released;
 			Info.Last_Event = ECsInputEvent::Released;
+			Info.Key		= EKeys::LeftMouseButton;
 			continue;
 		}
 		// Default__MouseRightButton__
@@ -824,6 +856,7 @@ void UCsManager_Input::SetupInputActionEventInfos()
 			Info.ValueType	= ECsInputValue::Void;
 			Info.Event		= ECsInputEvent::Released;
 			Info.Last_Event = ECsInputEvent::Released;
+			Info.Key		= EKeys::RightMouseButton;
 			continue;
 		}
 
@@ -876,6 +909,12 @@ void UCsManager_Input::SetupInputActionMapping()
 	{
 		const int32& Mask			 = Map.Mask;
 		const FCsInputActionSet& Set = InputActionMappings[Map];
+
+		// HACK: TODO: Investigate and fox
+		{
+			FCsInputActionSet& FixSet = const_cast<FCsInputActionSet&>(Set);
+			FixSet.ConditionalRebuild();
+		}
 
 		// Initialize InputActionMapping
 		for (const FECsInputAction& Action : Set.Actions)
@@ -1182,15 +1221,17 @@ float UCsManager_Input::GetInputDuration(const FECsInputAction& Action)
 // Listener
 #pragma region
 
-void UCsManager_Input::OnAction_Pressed(const FECsInputAction& Action)
+void UCsManager_Input::OnAction_Pressed(const FECsInputAction& Action, const FKey& Key)
 {
 	FCsInputInfo& Info   = InputActionEventInfos[Action.GetValue()];
 	ECsInputEvent& Event = Info.Event;
 
 	Event = ECsInputEvent::FirstPressed;
+
+	Info.Key = Key;
 }
 
-void UCsManager_Input::OnAction_Released(const FECsInputAction& Action)
+void UCsManager_Input::OnAction_Released(const FECsInputAction& Action, const FKey& Key)
 {
 	FCsInputInfo& Info	 = InputActionEventInfos[Action.GetValue()];
 	ECsInputEvent& Event = Info.Event;
@@ -1305,49 +1346,173 @@ void UCsManager_Input::CreateGameEventDefinitionSimple(TArray<FCsGameEventDefini
 // Mode
 #pragma region
 
-void UCsManager_Input::SetCurrentInputMode(const FString& Context, const ECsInputMode& Mode)
+	// Current
+#pragma region
+
+void UCsManager_Input::FCurrentMode::SetValue(const FString& Context, const ECsInputMode& Mode)
 {
-	int32 Previous = CurrentInputMode;
+	Last_Value = Value;
 
-	CS_SET_BLUEPRINT_BITFLAG(CurrentInputMode, Mode);
+	CS_SET_BLUEPRINT_BITFLAG(Value, Mode);
 
-	if (Previous != CurrentInputMode)
-		OnInputModeChange_Event.Broadcast(Previous, CurrentInputMode);
+	if (Last_Value != Value)
+		OnChange_Event.Broadcast(Last_Value, Value);
 }
 
-void UCsManager_Input::SetCurrentInputMode(const FString& Context, const int32& Mode)
-{
-	checkf(Mode >= 0, TEXT("%s: Mode: %s is NOT Valid."), *Context, Mode);
-
-	int32 Previous = CurrentInputMode;
-
-	CS_SET_BLUEPRINT_BITFLAG(CurrentInputMode, Mode);
-
-	if (Previous != CurrentInputMode)
-		OnInputModeChange_Event.Broadcast(Previous, CurrentInputMode);
-}
-
-void UCsManager_Input::ClearCurrentInputMode(const FString& Context, const ECsInputMode& Mode)
-{
-	int32 Previous = CurrentInputMode;
-
-	CS_CLEAR_BLUEPRINT_BITFLAG(CurrentInputMode, Mode);
-
-	if (Previous != CurrentInputMode)
-		OnInputModeChange_Event.Broadcast(Previous, CurrentInputMode);
-}
-
-void UCsManager_Input::ClearCurrentInputMode(const FString& Context, const int32& Mode)
+void UCsManager_Input::FCurrentMode::SetValue(const FString& Context, const int32& Mode)
 {
 	checkf(Mode >= 0, TEXT("%s: Mode: %s is NOT Valid."), *Context, Mode);
 
-	int32 Previous = CurrentInputMode;
+	Last_Value = Value;
 
-	CS_CLEAR_BLUEPRINT_BITFLAG(CurrentInputMode, Mode);
+	CS_SET_BLUEPRINT_BITFLAG(Value, Mode);
 
-	if (Previous != CurrentInputMode)
-		OnInputModeChange_Event.Broadcast(Previous, CurrentInputMode);
+	if (Last_Value != Value)
+		OnChange_Event.Broadcast(Last_Value, Value);
 }
+
+void UCsManager_Input::FCurrentMode::ClearValue(const FString& Context, const ECsInputMode& Mode)
+{
+	Last_Value = Value;
+
+	CS_CLEAR_BLUEPRINT_BITFLAG(Value, Mode);
+
+	if (Last_Value != Value)
+		OnChange_Event.Broadcast(Last_Value, Value);
+}
+
+void UCsManager_Input::FCurrentMode::ClearValue(const FString& Context, const int32& Mode)
+{
+	checkf(Mode >= 0, TEXT("%s: Mode: %s is NOT Valid."), *Context, Mode);
+
+	Last_Value = Value;
+
+	CS_CLEAR_BLUEPRINT_BITFLAG(Value, Mode);
+
+	if (Last_Value != Value)
+		OnChange_Event.Broadcast(Last_Value, Value);
+}
+
+#pragma endregion Current
+
+	// Active
+#pragma region
+
+void UCsManager_Input::FActiveMode::OnPostProcessInput(const float& DeltaTime, const bool bGamePaused)
+{
+	using namespace NCsManagerInput::NActiveMode::NCached;
+
+	const FString& Context = Str::OnPostProcessInput;
+
+	const TArray<FCsInputInfo>& _Infos = Outer->GetInputActionEventInfos();
+
+	for (const FECsInputAction& Action : EMCsInputAction::Get())
+	{
+		const FCsInputInfo& Info   = _Infos[Action.GetValue()];
+		const ECsInputEvent& Event = Info.Event;
+		const FKey& Key			   = Info.Key;
+
+		const ECsInputType& Type = Info.Type;
+
+		// Action
+		if (Type == ECsInputType::Action)
+		{
+			if (Event == ECsInputEvent::FirstPressed ||
+				Event == ECsInputEvent::FirstReleased)
+			{
+				// Mouse
+				if (Key.IsMouseButton())
+				{
+					NON_SHIPPING_EXPR(PrintSet(Context, Action, Info, ECsInputMode::Mouse));
+					CS_SET_BLUEPRINT_BITFLAG(Value, ECsInputMode::Mouse);
+				}
+				// Gamepad
+				else
+				if (Key.IsGamepadKey())
+				{
+					NON_SHIPPING_EXPR(PrintSet(Context, Action, Info, ECsInputMode::Gamepad));
+					CS_SET_BLUEPRINT_BITFLAG(Value, ECsInputMode::Gamepad);
+				}
+				// Touch
+				else
+				if (Key.IsTouch())
+				{
+					NON_SHIPPING_EXPR(PrintSet(Context, Action, Info, ECsInputMode::Touch));
+					CS_SET_BLUEPRINT_BITFLAG(Value, ECsInputMode::Touch);
+				}
+				// Keyboard - DEFAULT
+				else
+				if (Key != EKeys::AnyKey)
+				{
+					NON_SHIPPING_EXPR(PrintSet(Context, Action, Info, ECsInputMode::Keyboard));
+					CS_SET_BLUEPRINT_BITFLAG(Value, ECsInputMode::Keyboard);
+				}
+			}
+		}
+		// Axis TODO: Handle Properly
+		else
+		if (Type == ECsInputType::Axis)
+		{
+			if (Event == ECsInputEvent::FirstMoved ||
+				Event == ECsInputEvent::Moved)
+			{
+			}
+		}
+		// Location
+		else
+		if (Type == ECsInputType::Location)
+		{
+			if (Event == ECsInputEvent::FirstMoved ||
+				Event == ECsInputEvent::Moved)
+			{
+				if (Action == NCsInputAction::Default__MousePositionXY__)
+				{
+					NON_SHIPPING_EXPR(PrintSet(Context, Action, Info, ECsInputMode::Mouse));
+					CS_SET_BLUEPRINT_BITFLAG(Value, ECsInputMode::Mouse);
+				}
+			}
+		}
+	}
+
+	if (Value != Last_Value)
+	{
+		NON_SHIPPING_EXPR(PrintSummary(Context));
+		OnChange_Event.Broadcast(Last_Value, Value);
+	}
+
+	Last_Value = Value;
+}
+
+void UCsManager_Input::FActiveMode::PrintSet(const FString& Context, const FECsInputAction& Action, const FCsInputInfo& Info, const ECsInputMode& Mode)
+{
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputActiveMode))
+	{
+		const ECsInputType& Type   = Info.Type;
+		const ECsInputEvent& Event = Info.Event;
+		const FKey& Key			   = Info.Key;
+		
+
+		UE_LOG(LogCs, Warning, TEXT("%s: Action: %s Type: %s Event: %s Key: %s"), *Context, Action.ToChar(), EMCsInputType::Get().ToChar(Type), EMCsInputEvent::Get().ToChar(Event), *(Key.ToString()));
+		UE_LOG(LogCs, Warning, TEXT(" Setting Mode: %s."), EMCsInputMode::Get().ToChar(Mode));
+
+		int32 Previous = Value;
+		int32 New	   = Previous;
+
+		CS_SET_BLUEPRINT_BITFLAG(New, Mode);
+
+		UE_LOG(LogCs, Warning, TEXT(" Value (%s) -> (%s)"), *(EMCsInputMode::Get().MaskToString(Previous)), *(EMCsInputMode::Get().MaskToString(New)));
+	}
+}
+
+void UCsManager_Input::FActiveMode::PrintSummary(const FString& Context)
+{
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputActiveMode))
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Value (%s) -> (%s)"), *Context, *(EMCsInputMode::Get().MaskToString(Last_Value)), *(EMCsInputMode::Get().MaskToString(Value)));
+	}
+}
+
+#pragma endregion Active
 
 #pragma endregion Mode
 

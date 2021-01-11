@@ -24,15 +24,15 @@ public:
 
 	// Action
 
-	void OnAction_Pressed();
+	void OnAction_Pressed(FKey Key);
 
-	DECLARE_DELEGATE_OneParam(FOnAction_Pressed, const FECsInputAction& /*Action*/);
+	DECLARE_DELEGATE_TwoParams(FOnAction_Pressed, const FECsInputAction& /*Action*/, const FKey& /*Key*/);
 
 	FOnAction_Pressed OnAction_Pressed_Event;
 
-	void OnAction_Released();
+	void OnAction_Released(FKey Key);
 
-	DECLARE_DELEGATE_OneParam(FOnAction_Released, const FECsInputAction& /*Action*/);
+	DECLARE_DELEGATE_TwoParams(FOnAction_Released, const FECsInputAction& /*Action*/, const FKey& /*Key*/);
 
 	FOnAction_Released OnAction_Released_Event;
 

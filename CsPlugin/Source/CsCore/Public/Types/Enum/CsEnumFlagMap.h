@@ -186,6 +186,16 @@ public:
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
+	FORCEINLINE const TCHAR* ToChar(const EnumType& Enum)
+	{
+		return *ToString(Enum);
+	}
+
+	FORCEINLINE const TCHAR* ToChar(const int32& Index)
+	{
+		return *ToString(Index);
+	}
+
 	FORCEINLINE FString MaskToString(const uint32& Mask)
 	{
 		//  TEXT("")

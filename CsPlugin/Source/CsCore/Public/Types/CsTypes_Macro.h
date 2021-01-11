@@ -22,6 +22,12 @@
 #define CS_SET_BITFLAG(Bitmask, Bit) (Bitmask |= static_cast<uint32>(Bit))
 #define CS_CLEAR_BITFLAG(Bitmask, Bit) (Bitmask &= ~static_cast<uint32>(Bit))
 
+#if !UE_BUILD_SHIPPING
+#define NON_SHIPPING_EXPR(__Expr) __Expr
+#else
+#define NON_SHIPPING_EXPR(__Expr)
+#endif #if !UE_BUILD_SHIPPING
+
 #define CS_STRINGIFY(x) #x
 
 #define CS_DEFINE_FUNCTION_NAME_AS_STRING(ClassName, FunctionName) const FString FunctionName = CS_STRINGIFY(ClassName::FunctionName) 

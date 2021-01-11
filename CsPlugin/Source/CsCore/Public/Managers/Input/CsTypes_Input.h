@@ -330,7 +330,34 @@ struct CSCORE_API FCsInputActionSet
 	FCsInputActionSet() :
 		Actions()
 	{
+	}
 
+	void ConditionalRebuild()
+	{
+		TArray<FECsInputAction> ToRemove;
+		TArray<FECsInputAction> ToAdd;
+
+		for (const FECsInputAction& Action : Actions)
+		{
+			const FECsInputAction& ByName = EMCsInputAction::Get().GetEnum(Action.GetFName());
+			const FECsInputAction& ByValue = EMCsInputAction::Get().GetEnum(Action.GetValue());
+
+			if (ByValue != Action)
+			{
+				ToRemove.Add(Action);
+				ToAdd.Add(ByName);
+			}
+		}
+
+		for (const FECsInputAction& Action : ToRemove)
+		{
+			Actions.Remove(Action);
+		}
+
+		for (const FECsInputAction& Action : ToAdd)
+		{
+			Actions.Add(Action);
+		}
 	}
 };
 
@@ -361,6 +388,9 @@ public:
 	ECsInputEvent Last_Event;
 
 	UPROPERTY(BlueprintReadOnly)
+	FKey Key;
+
+	UPROPERTY(BlueprintReadOnly)
 	float Value;
 
 	UPROPERTY(BlueprintReadOnly)
@@ -383,6 +413,7 @@ public:
 		ValueType(ECsInputValue::ECsInputValue_MAX),
 		Event(ECsInputEvent::ECsInputEvent_MAX),
 		Last_Event(ECsInputEvent::ECsInputEvent_MAX),
+		Key(EKeys::AnyKey),
 		Value(0.0f),
 		Last_Value(0.0f),
 		Location(0.0f),

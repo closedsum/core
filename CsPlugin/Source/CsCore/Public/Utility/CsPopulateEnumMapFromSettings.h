@@ -116,7 +116,7 @@ public:
 	/**
 	*
 	*
-	* @param Context
+	* @param Context	The calling context.
 	* @param EnumName
 	* @param Log
 	*/
@@ -168,6 +168,13 @@ public:
 	}
 
 	/**
+	* 
+	* 
+	* @param Context		The calling context.
+	* @param ContextRoot
+	* @param DataTable
+	* @param EnumName
+	* @param Log
 	*/
 	template<typename EnumMap>
 	static void FromDataTable(const FString& Context, UObject* ContextRoot, UDataTable* DataTable, const FString& EnumName, void(*Log)(const FString&))
@@ -219,6 +226,13 @@ public:
 	}
 
 	/**
+	* 
+	* 
+	* @param Context		The calling context.
+	* @param ContextRoot
+	* @param DT_SoftObject
+	* @param EnumName
+	* @param Log
 	*/
 	template<typename EnumMap>
 	static void FromDataTable(const FString& Context, UObject* ContextRoot, TSoftObjectPtr<UDataTable> DT_SoftObject, const FString& EnumName, void(*Log)(const FString&))

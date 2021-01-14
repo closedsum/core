@@ -5,13 +5,34 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
+// Game
+#include "Engine/GameInstance.h"
+// World
+#include "Engine/World.h"
 
 namespace NCsTime
 {
 	namespace NManager
 	{
-		void FLibrary::UpdateTimeAndCoroutineScheduler(UObject* ContextRoot, const FECsUpdateGroup& Group, const float& DeltaTime)
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
 		{
+			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+
+			UWorld* World = WorldContext->GetWorld();
+
+			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+
+			UGameInstance* GameInstance = World->GetGameInstance();
+
+			checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, GameInstance);
+
+			return GameInstance;
+		}
+
+		void FLibrary::UpdateTimeAndCoroutineScheduler(const FString& Context, UObject* WorldContext, const FECsUpdateGroup& Group, const float& DeltaTime)
+		{
+			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+
 			UCsManager_Time* Manager_Time = UCsManager_Time::Get(ContextRoot);
 
 			Manager_Time->Update(Group, DeltaTime);

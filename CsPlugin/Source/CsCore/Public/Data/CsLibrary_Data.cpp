@@ -43,7 +43,8 @@ namespace NCsData
 		return FString::Printf(TEXT("INVALID (Non-UObject)"));
 	}
 
-	IData* FLibrary::SafeLoadData(const FString& Context, UObject* Object)
+	#define DataType NCsData::IData
+	DataType* FLibrary::SafeLoadData(const FString& Context, UObject* Object)
 	{
 		if (!Object)
 		{
@@ -61,17 +62,19 @@ namespace NCsData
 
 		UData->Load(NCsLoadFlags::All);
 
-		IData* Data = UData->_getIData();
+		DataType* Data = UData->_getIData();
 
 		if (!Data)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: Failed to get data of type: IData from %s."), *Context, *(PrintObjectAndClass(UData)));
+			UE_LOG(LogCs, Warning, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
 			return nullptr;
 		}
 		return Data;
 	}
+	#undef DataType
 
-	IData* FLibrary::GetSafeData(const FString& Context, UObject* Object)
+	#define DataType NCsData::IData
+	DataType* FLibrary::GetSafeData(const FString& Context, UObject* Object)
 	{
 		if (!Object)
 		{
@@ -87,28 +90,34 @@ namespace NCsData
 			return nullptr;
 		}
 
-		IData* Data = UData->_getIData();
+		DataType* Data = UData->_getIData();
 
 		if (!Data)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: Failed to get data of type: IData from %s."), *Context, *(PrintObjectAndClass(UData)));
+			UE_LOG(LogCs, Warning, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
 			return nullptr;
 		}
 		return Data;
 	}
+	#undef DataType
 
-	IData* FLibrary::GetDataChecked(const FString& Context, UObject* WorldContext, const FName& DataName)
+	#define DataType NCsData::IData
+	DataType* FLibrary::GetDataChecked(const FString& Context, UObject* WorldContext, const FName& DataName)
 	{
 		ICsData* UData = UCsManager_Data::Get(GetContextRootChecked(Context, WorldContext))->GetDataChecked(Context, DataName);
-		IData* Data	   = UData->_getIData();
+		DataType* Data = UData->_getIData();
 
-		checkf(Data, TEXT("%s: Failed to get data of type: IData from %s."), *Context, *(PrintObjectAndClass(UData)));
+		checkf(Data, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
 
 		return Data;
 	}
+	#undef DataType
 
-	IData* FLibrary::GetDataChecked(const FString& Context, UObject* Object)
+	#define DataType NCsData::IData
+	DataType* FLibrary::GetDataChecked(const FString& Context, UObject* Object)
 	{
+	#undef DataType
+
 		checkf(Object, TEXT("%s: Object is NULL."), *Context);
 
 		ICsData* UData = Cast<ICsData>(Object);
@@ -118,14 +127,16 @@ namespace NCsData
 		return GetDataChecked(Context, UData);
 	}
 
-	IData* FLibrary::GetDataChecked(const FString& Context, ICsData* UData)
+	#define DataType NCsData::IData
+	DataType* FLibrary::GetDataChecked(const FString& Context, ICsData* UData)
 	{
 		checkf(UData, TEXT("%s: UData is NULL."), *Context);
 
-		IData* Data = UData->_getIData();
+		DataType* Data = UData->_getIData();
 
-		checkf(Data, TEXT("%s: Failed to get data of type: IData from %s."), *Context, *(PrintObjectAndClass(UData)));
+		checkf(Data, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
 
 		return Data;
 	}
+	#undef DataType
 }

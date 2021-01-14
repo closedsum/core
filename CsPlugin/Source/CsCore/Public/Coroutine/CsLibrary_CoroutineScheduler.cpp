@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 
+// Game
+#include "Engine/GameInstance.h"
 // World
 #include "Engine/World.h"
 
@@ -30,6 +32,21 @@ namespace NCsCoroutine
 			{
 				return WorldContext->GetWorld()->GetGameInstance();
 			}
+		}
+
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
+		{
+			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+
+			UWorld* World = WorldContext->GetWorld();
+
+			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+
+			UGameInstance* GameInstance = World->GetGameInstance();
+
+			checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, GameInstance);
+
+			return GameInstance;
 		}
 	}
 }

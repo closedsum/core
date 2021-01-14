@@ -93,8 +93,27 @@ namespace NCsDataRootSet
 	{
 		if (!WorldContext)
 		{
+#if WITH_EDITOR
+			const FSoftObjectPath& Path = DataTableSoftObject.ToSoftObjectPath();
+
+			if (!Path.IsValid())
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s: Path for %s.%s is NOT Valid."), *Context, *InterfaceGetName, *DataTableName);
+				return nullptr;
+			}
+
+			if (UDataTable* DT = DataTableSoftObject.LoadSynchronous())
+			{
+				return DT;
+			}
+			else
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s: Failed to Load %s.%s @ %s."), *Context, *InterfaceGetName, *DataTableName, *(Path.ToString()));
+			}
+#else
 			UE_LOG(LogCs, Warning, TEXT("%s: WorldContext is NULL."), *Context);
 			return nullptr;
+#endif // #if WITH_EDITOR
 		}
 
 		UWorld* World = WorldContext->GetWorld();
@@ -127,7 +146,7 @@ namespace NCsDataRootSet
 				}
 				else
 				{
-					UE_LOG(LogCs, Warning, TEXT("%s: Failed to Load %s.%s.%s @ %s."), *Context, *(WorldContext->GetName()), *InterfaceGetName, *DataTableName, *(Path.ToString()));
+					UE_LOG(LogCs, Warning, TEXT("%s: Failed to Load %s.%s @ %s."), *Context, *InterfaceGetName, *DataTableName, *(Path.ToString()));
 				}
 			}
 			else

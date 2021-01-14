@@ -14,12 +14,21 @@ namespace NCsTime
 		public:
 
 			/**
+			* Get the Context (Root) for UCsManager_Time from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Context for UCsManager_Time
+			*/
+			static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
+
+			/**
 			* 
-			* 
-			* @param ContextRoot
+			* @param Context		The calling context.
+			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Group
 			*/
-			static void UpdateTimeAndCoroutineScheduler(UObject* ContextRoot, const FECsUpdateGroup& Group, const float& DeltaTime);
+			static void UpdateTimeAndCoroutineScheduler(const FString& Context, UObject* WorldContext, const FECsUpdateGroup& Group, const float& DeltaTime);
 		};
 	}
 }

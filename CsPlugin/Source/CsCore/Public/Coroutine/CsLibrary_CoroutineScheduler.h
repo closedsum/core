@@ -14,12 +14,21 @@ namespace NCsCoroutine
 		public:
 
 			/**
-			* Get the Context (Root) for UCsCoroutineScheduler from an Actor.
+			* Get the Context (Root) for UCsCoroutineScheduler from a WorldContext.
 			*
 			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for CoroutineScheduler
 			*/
 			static UObject* GetContextRoot(UObject* WorldContext);
+
+			/**
+			* Get the Context (Root) for UCsCoroutineScheduler from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Context for CoroutineScheduler
+			*/
+			static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
 		};
 	}
 }

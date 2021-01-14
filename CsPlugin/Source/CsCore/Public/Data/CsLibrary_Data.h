@@ -3,13 +3,13 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
-class ICsData;
-
 namespace NCsData
 {
+#define DataType NCsData::IData
+
 	/**
 	*/
-	struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<IData>
+	struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<DataType>
 	{
 	public:
 
@@ -33,7 +33,7 @@ namespace NCsData
 		*/
 		static FString PrintObjectAndClass(ICsData* Data);
 
-		static IData* SafeLoadData(const FString& Context, UObject* Object);
+		static DataType* SafeLoadData(const FString& Context, UObject* Object);
 
 		/**
 		*
@@ -45,7 +45,7 @@ namespace NCsData
 		template<typename InterfaceType>
 		FORCEINLINE static InterfaceType* SafeLoadData(const FString& Context, UObject* Object)
 		{
-			IData* Data = SafeLoadData(Context, Object);
+			DataType* Data = SafeLoadData(Context, Object);
 
 			return Data ? GetSafeInterfaceChecked<InterfaceType>(Context, Data) : nullptr;
 		}
@@ -57,19 +57,19 @@ namespace NCsData
 		* @param Object		UObject that SHOULD implement the interface: ICsData.
 		* return			Object that implements the interface: NCsData::IData.
 		*/
-		static IData* GetSafeData(const FString& Context, UObject* Object);
+		static DataType* GetSafeData(const FString& Context, UObject* Object);
 
 		/**
 		*
 		*
-		* @param Context		The calling context.
+		* @param Context	The calling context.
 		* @param Object		UObject that SHOULD implement the interface: ICsData.
 		* return
 		*/
 		template<typename InterfaceType>
 		FORCEINLINE static InterfaceType* GetSafeData(const FString& Context, UObject* Object)
 		{
-			IData* Data = GetSafeData(Context, Object);
+			DataType* Data = GetSafeData(Context, Object);
 
 			return Data ? GetSafeInterfaceChecked<InterfaceType>(Context, Data) : nullptr;
 		}
@@ -83,7 +83,7 @@ namespace NCsData
 		* @param DataName		Name of the data to get. This is the EntryName in Manager_Data.
 		* return
 		*/
-		static IData* GetDataChecked(const FString& Context, UObject* WorldContext, const FName& DataName);
+		static DataType* GetDataChecked(const FString& Context, UObject* WorldContext, const FName& DataName);
 
 		/**
 		* 
@@ -97,7 +97,7 @@ namespace NCsData
 		template<typename InterfaceType>
 		FORCEINLINE static InterfaceType* GetDataChecked(const FString& Context, UObject* WorldContext, const FName& DataName)
 		{
-			IData* Data = GetDataChecked(Context, WorldContext, DataName);
+			DataType* Data = GetDataChecked(Context, WorldContext, DataName);
 
 			return GetInterfaceChecked<InterfaceType>(Context, Data);
 		}
@@ -109,7 +109,7 @@ namespace NCsData
 		* @param Object		UObject that SHOULD implement the interface: ICsData.
 		* return			Object that implements the interface: NCsData::IData.
 		*/
-		static IData* GetDataChecked(const FString& Context, UObject* Object);
+		static DataType* GetDataChecked(const FString& Context, UObject* Object);
 
 		/**
 		*
@@ -121,7 +121,7 @@ namespace NCsData
 		template<typename InterfaceType>
 		FORCEINLINE static InterfaceType* GetDataChecked(const FString& Context, UObject* Object)
 		{
-			IData* Data = GetDataChecked(Context, Object);
+			DataType* Data = GetDataChecked(Context, Object);
 
 			return GetInterfaceChecked<InterfaceType>(Context, Data);
 		}
@@ -134,7 +134,7 @@ namespace NCsData
 		* @param Data		UObject that implements the interface: ICsData.
 		* return			Object that implements the interface: NCsData::IData.
 		*/
-		static IData* GetDataChecked(const FString& Context, ICsData* UData);
+		static DataType* GetDataChecked(const FString& Context, ICsData* UData);
 
 		/**
 		*
@@ -145,9 +145,10 @@ namespace NCsData
 		template<typename InterfaceType>
 		FORCEINLINE static InterfaceType* GetDataChecked(const FString& Context, ICsData* UData)
 		{
-			IData* Data = GetDataChecked(Context, UData);
+			DataType* Data = GetDataChecked(Context, UData);
 
 			return GetInterfaceChecked<InterfaceType>(Context, Data);
 		}
 	};
+#undef DataType
 }

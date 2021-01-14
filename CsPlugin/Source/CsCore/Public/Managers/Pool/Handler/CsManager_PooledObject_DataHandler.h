@@ -3,12 +3,9 @@
 // Library
 #include "Library/CsLibrary_Property.h"
 #include "Data/CsLibrary_Data.h"
+#include "Managers/Data/CsLibrary_Manager_Data.h"
 // Managers
 #include "Managers/Data/CsManager_Data.h"
-// Game
-#include "Engine/GameInstance.h"
-// World
-#include "Engine/World.h"
 #pragma once
 
 class UObject;
@@ -96,7 +93,7 @@ namespace NCsPooledObject
 				/**
 				*
 				*
-				* @param Context
+				* @param Context	The calling context.
 				*/
 				virtual void PopulateDataMapFromSettings(const FString& Context)
 				{
@@ -132,6 +129,11 @@ namespace NCsPooledObject
 
 			protected:
 
+				/**
+				* 
+				* 
+				* @param Context	The calling context.
+				*/
 				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 				{
 					checkf(0, TEXT("%s::GetDatasDataTablesChecked: Failed to implement method."), *(Outer->GetName()));
@@ -181,9 +183,10 @@ namespace NCsPooledObject
 					}
 
 					// Check which rows from the DataTable have been loaded
+					typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-					UWorld* World				  = MyRoot->GetWorld();
-					UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+					UObject* ContextRoot		  = DataManagerLibrary::GetContextRootChecked(Context, MyRoot);
+					UCsManager_Data* Manager_Data = UCsManager_Data::Get(ContextRoot);
 
 					const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
@@ -207,11 +210,9 @@ namespace NCsPooledObject
 
 							checkf(O, TEXT("%s: Failed to get data from DataTable: %s Row: %s."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
 
-							ICsData* Data = Cast<ICsData>(O);
+							typedef NCsData::FLibrary DataLibrary;
 
-							checkf(Data, TEXT("%s: Data: %s with Class: %s does NOT implement interface: ICsData."), *Context, *(O->GetName()), *(O->GetClass()->GetName()));
-
-							InterfaceDataType* IData = NCsData::FLibrary::GetInterfaceChecked<InterfaceDataType>(Context, Data->_getIData());
+							InterfaceDataType* IData = DataLibrary::GetDataChecked<InterfaceDataType>(Context, O);
 
 							DataMap.Add(RowName, IData);
 						}

@@ -48,10 +48,17 @@ namespace NCsDataRootSet
 		* 
 		* @param Context		The calling context.
 		* @param WorldContext	Object that has reference to a World (GetWorld() is Valid).
+		* return
 		*/
 		static const FCsDataRootSet* GetSafe(const FString& Context, UObject* WorldContext);
 
 		/**
+		* 
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that has reference to a World (GetWorld() is Valid).
+		* @param Log
+		* return
 		*/
 		template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType& (GetDataRootSetType::* GetDataRootSetFn)() const>
 		static const DataRootSetType* GetSafe(const FString& Context, UObject* WorldContext, void(*Log)(const FString&))
@@ -77,7 +84,7 @@ namespace NCsDataRootSet
 		* 
 		* 
 		* @param Context		The calling context.
-		* @param GameInstance
+		* @param GameInstance	Root for UCsManager_Data.
 		* return
 		*/
 		static const FCsDataRootSet& GetChecked(const FString& Context, UGameInstance* GameInstance);
@@ -91,6 +98,11 @@ namespace NCsDataRootSet
 		static const FCsDataRootSet& GetChecked(const FString& Context, UObject* WorldContext);
 
 		/**
+		* 
+		* 
+		* @param Context		The calling context.
+		* @param GameInstance	Root for UCsManager_Data.
+		* return
 		*/
 		template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType& (GetDataRootSetType::* GetDataRootSetFn)() const>
 		static const DataRootSetType& GetChecked(const FString& Context, UGameInstance* GameInstance)
@@ -107,6 +119,11 @@ namespace NCsDataRootSet
 		}
 
 		/**
+		* 
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that has reference to a World (GetWorld() is Valid).
+		* return
 		*/
 		template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType&(GetDataRootSetType::*GetDataRootSetFn)() const>
 		static const DataRootSetType& GetChecked(const FString& Context, UObject* WorldContext)
@@ -128,8 +145,8 @@ namespace NCsDataRootSet
 		* @param Context				The calling context.
 		* @param WorldContext			Object that has reference to a World (GetWorld() is Valid).
 		* @param InterfaceGetName
-		* @param DataTableSoftObject
-		* @param DataTableName
+		* @param DataTableSoftObject	FSoftObjectPtr to a DataTable.
+		* @param DataTableName			Name of the DataTable.
 		* return						DataTable
 		*/
 		static UDataTable* GetSafeDataTable(const FString& Context, UObject* WorldContext, const FString& InterfaceGetName, TSoftObjectPtr<UDataTable> DataTableSoftObject, const FString& DataTableName);
@@ -139,7 +156,7 @@ namespace NCsDataRootSet
 		* 
 		* @param Context				The calling context.
 		* @param WorldContext			Object that has reference to a World (GetWorld() is Valid).
-		* @param DataTableSoftObject
+		* @param DataTableSoftObject	FSoftObjectPtr to a DataTable.
 		* return						DataTable
 		*/
 		static UDataTable* GetDataTableChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject);
@@ -149,8 +166,8 @@ namespace NCsDataRootSet
 		* 
 		* @param Context				The calling context.
 		* @param WorldContext			Object that has reference to a World (GetWorld() is Valid).
-		* @param DataTableSoftObject
-		* @param RowName				DataTable
+		* @param DataTableSoftObject	FSoftObjectPtr to a DataTable.
+		* @param RowName				Name of the row in the DataTable.
 		* return						Pointer to row.
 		*/
 		static uint8* GetDataTableRowChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const FName& RowName);
@@ -160,9 +177,9 @@ namespace NCsDataRootSet
 		*
 		* @param Context				The calling context.
 		* @param WorldContext			Object that has reference to a World (GetWorld() is Valid).
-		* @param DataTableSoftObject
+		* @param DataTableSoftObject	FSoftObjectPtr to a DataTable.
 		* @param RowStruct				ScriptStruct associated with the row.
-		* @param RowName				DataTable
+		* @param RowName				Name of the row in the DataTable.
 		* return						Pointer to row.
 		*/
 		static uint8* GetDataTableRowChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const UScriptStruct* RowStruct, const FName& RowName);

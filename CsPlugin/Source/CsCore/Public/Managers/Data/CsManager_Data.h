@@ -768,12 +768,36 @@ public:
 	* Check against the current loaded data tables.
 	*
 	* @param Context		The calling context.
-	* @param SoftObject
-	* return				DataTable
+	* @param SoftObject		Soft Reference to a data table.
+	* return				DataTable.
 	*/
 	FORCEINLINE UDataTable* GetDataTableChecked(const FString& Context, const TSoftObjectPtr<UDataTable>& SoftObject)
 	{
 		return GetDataTableChecked(Context, SoftObject.ToSoftObjectPath());
+	}
+
+	/**
+	* Get a pointer to the row map for a data table by the data table's Path
+	*
+	* @param Path		Soft Path to the data table.
+	* return			Pointer to the row map.
+	*/
+	FORCEINLINE const TMap<FName, uint8*>* GetDataTableRowMap(const FSoftObjectPath& Path)
+	{
+		checkf(Path.IsValid(), TEXT("UCsManager_Data::GetDataTableRow: Path is NOT Valid."));
+
+		return DataTableRowByPathMap_Loaded.Find(Path);
+	}
+
+	/**
+	* Get a pointer to the row map for a data table by the data table's Path
+	*
+	* @param SoftObject	Soft Reference to the data table.
+	* return			Pointer to the row map.
+	*/
+	FORCEINLINE const TMap<FName, uint8*>* GetDataTableRowMap(const TSoftObjectPtr<UDataTable>& SoftObject)
+	{
+		return GetDataTableRowMap(SoftObject.ToSoftObjectPath());
 	}
 
 	/**

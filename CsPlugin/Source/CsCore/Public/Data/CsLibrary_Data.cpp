@@ -44,7 +44,7 @@ namespace NCsData
 	}
 
 	#define DataType NCsData::IData
-	DataType* FLibrary::SafeLoadData(const FString& Context, UObject* Object)
+	DataType* FLibrary::SafeLoad(const FString& Context, UObject* Object)
 	{
 		if (!Object)
 		{
@@ -74,7 +74,7 @@ namespace NCsData
 	#undef DataType
 
 	#define DataType NCsData::IData
-	DataType* FLibrary::GetSafeData(const FString& Context, UObject* Object)
+	DataType* FLibrary::GetSafe(const FString& Context, UObject* Object)
 	{
 		if (!Object)
 		{
@@ -102,7 +102,7 @@ namespace NCsData
 	#undef DataType
 
 	#define DataType NCsData::IData
-	DataType* FLibrary::GetDataChecked(const FString& Context, UObject* WorldContext, const FName& DataName)
+	DataType* FLibrary::GetChecked(const FString& Context, UObject* WorldContext, const FName& DataName)
 	{
 		ICsData* UData = UCsManager_Data::Get(GetContextRootChecked(Context, WorldContext))->GetDataChecked(Context, DataName);
 		DataType* Data = UData->_getIData();
@@ -114,7 +114,7 @@ namespace NCsData
 	#undef DataType
 
 	#define DataType NCsData::IData
-	DataType* FLibrary::GetDataChecked(const FString& Context, UObject* Object)
+	DataType* FLibrary::GetChecked(const FString& Context, UObject* Object)
 	{
 	#undef DataType
 
@@ -124,11 +124,11 @@ namespace NCsData
 
 		checkf(UData, TEXT("%s: Object: %s does NOT implement the interface: ICsData."), *Context, *(Object->GetName()));
 
-		return GetDataChecked(Context, UData);
+		return GetChecked(Context, UData);
 	}
 
 	#define DataType NCsData::IData
-	DataType* FLibrary::GetDataChecked(const FString& Context, ICsData* UData)
+	DataType* FLibrary::GetChecked(const FString& Context, ICsData* UData)
 	{
 		checkf(UData, TEXT("%s: UData is NULL."), *Context);
 

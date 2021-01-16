@@ -175,7 +175,9 @@ namespace NCsPooledObject
 					const UScriptStruct* RowStruct = DataTable->GetRowStruct();
 
 					// Data
-					FStructProperty* DataProperty = FCsLibrary_Property::FindStructPropertyByName<DataContainerType>(RowStruct, Name::Data);
+					typedef NCsProperty::FLibrary PropertyLibrary;
+
+					FStructProperty* DataProperty = PropertyLibrary::FindStructPropertyByName<DataContainerType>(RowStruct, Name::Data);
 
 					if (!DataProperty)
 					{
@@ -212,7 +214,7 @@ namespace NCsPooledObject
 
 							typedef NCsData::FLibrary DataLibrary;
 
-							InterfaceDataType* IData = DataLibrary::GetDataChecked<InterfaceDataType>(Context, O);
+							InterfaceDataType* IData = DataLibrary::GetChecked<InterfaceDataType>(Context, O);
 
 							DataMap.Add(RowName, IData);
 						}

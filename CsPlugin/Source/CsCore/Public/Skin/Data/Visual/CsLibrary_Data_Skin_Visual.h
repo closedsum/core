@@ -26,6 +26,10 @@ namespace NCsSkin
 			struct CSCORE_API FLibrary : TCsLibrary_InterfaceMap<SkinType>
 			{
 				/**
+				*/
+				static FString PrintObjectAndClass(SkinType* Skin);
+
+				/**
 				* 
 				* 
 				* @param Context	The calling context.

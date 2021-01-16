@@ -16,8 +16,18 @@ namespace NCsSkin
 		{
 		#define SkinType NCsSkin::NData::NVisual::IVisual
 
+			FString FLibrary::PrintObjectAndClass(SkinType* Skin)
+			{
+
+				if (UObject* O = Skin->_getUObject())
+					return FString::Printf(TEXT("Object: %s with Class: %s"), *(O->GetName()), *(O->GetClass()->GetName()));
+				return FString::Printf(TEXT("INVALID (Non-UObject)"));
+			}
+
 			bool FLibrary::IsValidChecked(const FString& Context, SkinType* Skin)
 			{
+				checkf(Skin, TEXT("%s: Skin is NULL."), *Context);
+
 				// MaterialSkinType
 				{
 					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
@@ -34,7 +44,7 @@ namespace NCsSkin
 
 					if (StaticMeshSkinType* StaticMeshSkin = GetSafeInterfaceChecked<StaticMeshSkinType>(Context, Skin))
 					{
-						checkf(StaticMeshSkin->GetStaticMesh(), TEXT("%s: Skin->GetStaticMesh() is NULL for Skin implementing interface: %s."), *(StaticMeshSkinType::Name.ToString()));
+						checkf(StaticMeshSkin->GetStaticMesh(), TEXT("%s: Skin->GetStaticMesh() is NULL for Skin implementing interface: %s."), *Context, *(StaticMeshSkinType::Name.ToString()));
 					}
 				}
 				// SkeletalMeshSkin
@@ -43,7 +53,7 @@ namespace NCsSkin
 
 					if (SkeletalMeshSkinType* SkeletalMeshSkin = GetSafeInterfaceChecked<SkeletalMeshSkinType>(Context, Skin))
 					{
-						checkf(SkeletalMeshSkin->GetSkeletalMesh(), TEXT("%s: Skin->GetSkeletalMesh() is NULL for Skin implementing interface: %s."), *(SkeletalMeshSkinType::Name.ToString()));
+						checkf(SkeletalMeshSkin->GetSkeletalMesh(), TEXT("%s: Skin->GetSkeletalMesh() is NULL for Skin implementing interface: %s."), *Context, *(SkeletalMeshSkinType::Name.ToString()));
 					}
 				}
 				return true;

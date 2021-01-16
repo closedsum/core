@@ -95,7 +95,9 @@ namespace NCsPooledObject
 						const UScriptStruct* RowStruct = DataTable->GetRowStruct();
 
 						// Get the Property named "Class" if it exists.
-						FStructProperty* ClassProperty = FCsLibrary_Property::FindStructPropertyByName<InterfaceUStructContainerType>(RowStruct, Name::Class);
+						typedef NCsProperty::FLibrary PropertyLibrary;
+
+						FStructProperty* ClassProperty = PropertyLibrary::FindStructPropertyByName<InterfaceUStructContainerType>(RowStruct, Name::Class);
 
 						if (!ClassProperty)
 						{
@@ -153,7 +155,9 @@ namespace NCsPooledObject
 							const UScriptStruct* RowStruct = DataTable->GetRowStruct();
 
 							// Get the Property named "Class" if it exists.
-							FStructProperty* ClassProperty = FCsLibrary_Property::FindStructPropertyByName<EnumClassType>(RowStruct, Name::Class);
+							typedef NCsProperty::FLibrary PropertyLibrary;
+
+							FStructProperty* ClassProperty = PropertyLibrary::FindStructPropertyByName<EnumClassType>(RowStruct, Name::Class);
 
 							if (!ClassProperty)
 							{

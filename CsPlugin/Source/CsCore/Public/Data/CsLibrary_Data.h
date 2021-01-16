@@ -23,129 +23,157 @@ namespace NCsData
 		*/
 		static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
 
+		/**
+		* Print out Object as 'Object: %s with Class: %s'.
+		* 
+		* @param Object	Object to print.
+		* return		String in the format: 'Object: %s with Class: %s'.
+		*/
 		static FString PrintObjectAndClass(UObject* Object);
 
 		/**
+		* Print out Data as '[MemberName]: %s with Class: %s'.
+		* 
+		* @param Data		Data to print.
+		* @param MemberName	Name of the Data.
+		* return			String in the format: '[MemberName]: %s with Class: %s'.
 		*/
 		static FString PrintObjectAndClass(ICsData* Data, const FString& MemberName);
 		
 		/**
+		* Print out Data as 'Object: %s with Class: %s'.
+		* 
+		* @param Data	Data to print.
+		* return		String in the formate: 'Object: %s with Class: %s'.
 		*/
 		static FString PrintObjectAndClass(ICsData* Data);
 
-		static DataType* SafeLoadData(const FString& Context, UObject* Object);
+		/**
+		* Safely load the Data from Object.
+		*  Data implements the interface: DataType (NCsData::IData).
+		* 
+		* @param Context	The calling context.
+		* @param Object		UObject that SHOULD implement the interface: ICsData.
+		* return			Loaded object of type: DataType (NCsData::IData).
+		*/
+		static DataType* SafeLoad(const FString& Context, UObject* Object);
 
 		/**
-		*
+		* Safely load the Data from Object.
+		*  Data implements the interface: InterfaceType.
 		*
 		* @param Context	The calling context.
 		* @param Object		UObject that SHOULD implement the interface: ICsData.
-		* return
+		* return			Loaded object of type: InterfaceType.
 		*/
 		template<typename InterfaceType>
-		FORCEINLINE static InterfaceType* SafeLoadData(const FString& Context, UObject* Object)
+		FORCEINLINE static InterfaceType* SafeLoad(const FString& Context, UObject* Object)
 		{
-			DataType* Data = SafeLoadData(Context, Object);
+			DataType* Data = SafeLoad(Context, Object);
 
 			return Data ? GetSafeInterfaceChecked<InterfaceType>(Context, Data) : nullptr;
 		}
 
 		/**
-		*
+		* Safely get the Data from Object.
+		*  Data implements the interface: DataType (NCsData::IData).
 		*
 		* @param Context	The calling context.
 		* @param Object		UObject that SHOULD implement the interface: ICsData.
-		* return			Object that implements the interface: NCsData::IData.
+		* return			Data that implements the interface: DataType (NCsData::IData).
 		*/
-		static DataType* GetSafeData(const FString& Context, UObject* Object);
+		static DataType* GetSafe(const FString& Context, UObject* Object);
 
 		/**
-		*
+		* Safely get the Data from Object.
+		*  Data implements the interface: InterfaceType.
 		*
 		* @param Context	The calling context.
 		* @param Object		UObject that SHOULD implement the interface: ICsData.
-		* return
+		* return			Data that implements the interface: InterfaceType.
 		*/
 		template<typename InterfaceType>
-		FORCEINLINE static InterfaceType* GetSafeData(const FString& Context, UObject* Object)
+		FORCEINLINE static InterfaceType* GetSafe(const FString& Context, UObject* Object)
 		{
-			DataType* Data = GetSafeData(Context, Object);
+			DataType* Data = GetSafe(Context, Object);
 
 			return Data ? GetSafeInterfaceChecked<InterfaceType>(Context, Data) : nullptr;
 		}
 
 		/**
-		* Get Data with name DataName which implements the interface: NCsData::IData.
+		* Get Data with name DataName which implements the interface: DataType (NCsData::IData).
 		* 
 		* @param Context		The calling context.
 		* @param WorldContext	Object that has a reference to a UWorld (GetWorld() is Valid).
 		*						Used to route to Manager_Data.
 		* @param DataName		Name of the data to get. This is the EntryName in Manager_Data.
-		* return
+		* return				Data which implements the interface: DataType (NCsData::IData).	
 		*/
-		static DataType* GetDataChecked(const FString& Context, UObject* WorldContext, const FName& DataName);
+		static DataType* GetChecked(const FString& Context, UObject* WorldContext, const FName& DataName);
 
 		/**
-		* 
+		* Get Data with name DataName which implements the interface: InterfaceType.
 		* 
 		* @param Context		The calling context.
 		* @param WorldContext	Object that has a reference to a UWorld (GetWorld() is Valid).
 		*						Used to route to Manager_Data.
 		* @param DataName		Name of the data to get. This is the EntryName in Manager_Data.
-		* return
+		* return				Data which implements the interface: InterfaceType.	
 		*/
 		template<typename InterfaceType>
-		FORCEINLINE static InterfaceType* GetDataChecked(const FString& Context, UObject* WorldContext, const FName& DataName)
+		FORCEINLINE static InterfaceType* GetChecked(const FString& Context, UObject* WorldContext, const FName& DataName)
 		{
-			DataType* Data = GetDataChecked(Context, WorldContext, DataName);
+			DataType* Data = GetChecked(Context, WorldContext, DataName);
 
 			return GetInterfaceChecked<InterfaceType>(Context, Data);
 		}
 
 		/**
-		* 
+		* Get Data from Object which implements the interface: DataType (NCsData::IData).
 		* 
 		* @param Context	The calling context.
 		* @param Object		UObject that SHOULD implement the interface: ICsData.
-		* return			Object that implements the interface: NCsData::IData.
+		* return			Object that implements the interface: DataType (NCsData::IData).
 		*/
-		static DataType* GetDataChecked(const FString& Context, UObject* Object);
+		static DataType* GetChecked(const FString& Context, UObject* Object);
 
 		/**
-		*
+		* Get Data from Object which implements the interface: InterfaceType.
 		*
 		* @param Context	The calling context.
 		* @param Data		UObject that SHOULD implement the interface: ICsData.
 		* return			Object that implements the interface: InterfaceType.
 		*/
 		template<typename InterfaceType>
-		FORCEINLINE static InterfaceType* GetDataChecked(const FString& Context, UObject* Object)
+		FORCEINLINE static InterfaceType* GetChecked(const FString& Context, UObject* Object)
 		{
-			DataType* Data = GetDataChecked(Context, Object);
+			DataType* Data = GetChecked(Context, Object);
 
 			return GetInterfaceChecked<InterfaceType>(Context, Data);
 		}
 
 		/**
-		* Get the underlying data that implements the interface: NCsData::IData
+		* Get the underlying data that implements the interface: DataType (NCsData::IData)
 		* from the UObject, UData, which implements the interface: ICsData.
 		* 
 		* @param Context	The calling context.
 		* @param Data		UObject that implements the interface: ICsData.
-		* return			Object that implements the interface: NCsData::IData.
+		* return			Object that implements the interface: DataType (NCsData::IData).
 		*/
-		static DataType* GetDataChecked(const FString& Context, ICsData* UData);
+		static DataType* GetChecked(const FString& Context, ICsData* UData);
 
 		/**
-		*
+		* Get the underlying data that implements the interface: InterfaceType
+		* from the UObject, UData, which implements the interface: ICsData.
 		*
 		* @param Context	The calling context.
-		* @param Data
+		* @param Data		UObject that implements the interface: ICsData.
+		* return			Object that implements the interface: InterfaceType.
 		*/
 		template<typename InterfaceType>
-		FORCEINLINE static InterfaceType* GetDataChecked(const FString& Context, ICsData* UData)
+		FORCEINLINE static InterfaceType* GetChecked(const FString& Context, ICsData* UData)
 		{
-			DataType* Data = GetDataChecked(Context, UData);
+			DataType* Data = GetChecked(Context, UData);
 
 			return GetInterfaceChecked<InterfaceType>(Context, Data);
 		}

@@ -25,8 +25,14 @@ namespace NCsDataRootSet
 		// Check WorldContext is Valid.
 		if (!WorldContext)
 		{
+#if WITH_EDITOR
+			UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+			return Settings->SafeLoadDataRootSet(Context);
+#else
 			UE_LOG(LogCs, Warning, TEXT("%s: WorldContext is NULL."), *Context);
 			return nullptr;
+#endif // #if WITH_EDITOR
 		}
 		// Check if World from WorldContext is Valid.
 		UWorld* World = WorldContext->GetWorld();
@@ -39,7 +45,20 @@ namespace NCsDataRootSet
 
 		if (World->IsGameWorld())
 		{
-			// TODO:
+			typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+			UObject* ContextRoot = DataManagerLibrary::GetContextRoot(Context, WorldContext);
+
+			if (!ContextRoot)
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s: Failed to get ContextRoot for UCsManager_Data."), *Context);
+				return nullptr;
+			}
+
+			UCsManager_Data* Manager_Data = UCsManager_Data::Get(ContextRoot);
+			UObject* DataRootSetImpl	  = Manager_Data->DataRootSet.GetObject();
+
+			return DataRootSetImpl;
 		}
 		// Check if Editor World
 		else
@@ -102,9 +121,9 @@ namespace NCsDataRootSet
 				return nullptr;
 			}
 
-			if (UDataTable* DT = DataTableSoftObject.LoadSynchronous())
+			if (UDataTable* DataTable = DataTableSoftObject.LoadSynchronous())
 			{
-				return DT;
+				return DataTable;
 			}
 			else
 			{

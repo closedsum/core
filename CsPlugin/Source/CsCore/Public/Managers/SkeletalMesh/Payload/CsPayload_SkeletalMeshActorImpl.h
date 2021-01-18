@@ -1,28 +1,32 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
-#include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActor.h"
+#include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActor.h"
 
 #pragma once
 
 class UObject;
 struct FCsInterfaceMap;
-class UStaticMesh;
+class USkeletalMesh;
 
-namespace NCsStaticMeshActor
+// NCsSkeletalMeshActor::NParams::IParams
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSkeletalMeshActor, NParams, IParams)
+
+namespace NCsSkeletalMeshActor
 {
 	namespace NPayload
 	{
 	#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-	#define StaticMeshPayloadType NCsStaticMeshActor::NPayload::IPayload
+	#define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
 
 		struct CSCORE_API FImpl final : public PooledPayloadType,
-										public StaticMeshPayloadType
+										public SkeletalMeshPayloadType
 		{
 		public:
 
 			static const FName Name;
 
-		#define DeallocateMethodType NCsStaticMeshActor::EDeallocateMethod
+		#define DeallocateMethodType NCsSkeletalMeshActor::EDeallocateMethod
+		#define ParamsType NCsSkeletalMeshActor::NParams::IParams
 
 		private:
 
@@ -42,9 +46,9 @@ namespace NCsStaticMeshActor
 	
 			FCsTime Time;
 
-			// StaticMeshPayloadType (NCsStaticMeshActor::NPayload::IPayload)
+			// SkeletalMeshPayloadType (NCsSkeletalMeshActor::NPayload::IPayload)
 
-			UStaticMesh* Mesh;
+			USkeletalMesh* Mesh;
 
 			DeallocateMethodType DeallocateMethod;
 
@@ -57,6 +61,8 @@ namespace NCsStaticMeshActor
 			int32 TransformRules;
 
 			FTransform Transform;
+
+			ParamsType* Params;
 
 		public:
 
@@ -97,24 +103,26 @@ namespace NCsStaticMeshActor
 			template<typename T>
 			FORCEINLINE T* GetParent() const { return Cast<T>(GetParent()); }
 
-		// StaticMeshPayloadType (NCsStaticMeshActor::NPayload::IPayload)
+		// SkeletalMeshPayloadType (NCsSkeletalMeshActor::NPayload::IPayload)
 		#pragma region
 		public:
 
-			FORCEINLINE UStaticMesh* GetStaticMesh() const { return Mesh; }
+			FORCEINLINE USkeletalMesh* GetSkeletalMesh() const { return Mesh; }
 			FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return DeallocateMethod; }
 			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
 			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
 			FORCEINLINE const FName& GetBone() const { return Bone; }
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
 			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
+			FORCEINLINE ParamsType* GetParams() const { return Params; }
 
-		#pragma endregion StaticMeshPayloadType (NCsStaticMeshActor::NPayload::IPayload)
+		#pragma endregion SkeletalMeshPayloadType (NCsSkeletalMeshActor::NPayload::IPayload)
 
 		#undef DeallocateMethodType
+		#undef ParamsType
 		};
 
 	#undef PooledPayloadType
-	#undef StaticMeshPayloadType
+	#undef SkeletalMeshPayloadType
 	}
 }

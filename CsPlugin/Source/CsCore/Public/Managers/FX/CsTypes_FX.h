@@ -551,7 +551,9 @@ public:
 	*/
 	FORCEINLINE UNiagaraSystem* GetChecked(const FString& Context) const
 	{
-		checkf(FX_Internal, TEXT("%s: FX_Internal is NULL."), *Context);
+		checkf(FX.ToSoftObjectPath().IsValid(), TEXT("%s: FX is NULL."), *Context);
+
+		checkf(FX_Internal, TEXT("%s: FX has NOT been loaded from Path @ %s."), *Context, *(FX.ToSoftObjectPath().ToString()));
 
 		return FX_Internal;
 	}
@@ -563,7 +565,9 @@ public:
 	*/
 	FORCEINLINE UNiagaraSystem* GetChecked() const
 	{
-		checkf(FX_Internal, TEXT("FCsFX::GetChecked: FX_Internal is NULL."));
+		checkf(FX.ToSoftObjectPath().IsValid(), TEXT("FCsFX::GetChecked: FX is NULL."));
+
+		checkf(FX_Internal, TEXT("FCsFX::GetChecked: FX has NOT been loaded from Path @ %s."), *(FX.ToSoftObjectPath().ToString()));
 
 		return FX_Internal;
 	}

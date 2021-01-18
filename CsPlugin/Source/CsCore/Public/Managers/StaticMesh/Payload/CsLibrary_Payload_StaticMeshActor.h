@@ -3,6 +3,10 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
-struct CSCORE_API FCsLibrary_Payload_StaticMeshActor : public TCsLibrary_InterfaceMap<NCsStaticMeshActor::NPayload::IPayload>
+#define PayloadType NCsStaticMeshActor::NPayload::IPayload
+
+struct CSCORE_API FCsLibrary_Payload_StaticMeshActor : public TCsLibrary_InterfaceMap<PayloadType>
 {
 };
+
+#undef PayloadType

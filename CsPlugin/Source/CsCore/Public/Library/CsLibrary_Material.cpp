@@ -13,6 +13,19 @@
 
 namespace NCsMaterial
 {
+	void FLibrary::SetMaterialChecked(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index)
+	{
+		checkf(Component, TEXT("%s: Component is NULL."), *Context);
+
+		checkf(Material, TEXT("%s: Material is NULL."), *Context);
+
+		checkf(Index > INDEX_NONE, TEXT("%s: Index: %d is NOT >= 0."), *Context, Index);
+
+		checkf(Index < Component->GetNumMaterials(), TEXT("%s: Index: %d is NOT Valid for Component: %s with %d Material Slots."), *Context, Index, *(Component->GetName()), Component->GetNumMaterials());
+
+		Component->SetMaterial(Index, Material);
+	}
+
 	bool FLibrary::IsValidChecked(const FString& Context, const TArray<UMaterialInterface*>& Materials)
 	{
 		checkf(Materials.Num() > CS_EMPTY, TEXT("%s: Materials.Num() is NOT > 0."), *Context);

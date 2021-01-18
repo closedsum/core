@@ -26,7 +26,7 @@
 #define NON_SHIPPING_EXPR(__Expr) __Expr
 #else
 #define NON_SHIPPING_EXPR(__Expr)
-#endif #if !UE_BUILD_SHIPPING
+#endif //#if !UE_BUILD_SHIPPING
 
 #define CS_STRINGIFY(x) #x
 

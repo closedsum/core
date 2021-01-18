@@ -1,32 +1,32 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Engine/StaticMeshActor.h"
+#include "Animation/SkeletalMeshActor.h"
 // Interfaces
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Pool/CsPooledObject.h"
-#include "Managers/StaticMesh/CsStaticMeshActor.h"
+#include "Managers/SkeletalMesh/CsSkeletalMeshActor.h"
 // Types
-#include "Managers/StaticMesh/CsStaticMeshActorPooled.h"
-#include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
+#include "Managers/SkeletalMesh/CsSkeletalMeshActorPooled.h"
+#include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"
 
-#include "CsStaticMeshActorPooledImpl.generated.h"
+#include "CsSkeletalMeshActorPooledImpl.generated.h"
 
 class UAudioComponent;
 class UDamageType;
 
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
-// NCsStaticMeshActor::NPayload::IPayload
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStaticMeshActor, NPayload, IPayload)
+// NCsSkeletalMeshActor::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSkeletalMeshActor, NPayload, IPayload)
 
 /**
 * 
 */
 UCLASS()
-class CSCORE_API ACsStaticMeshActorPooledImpl : public AStaticMeshActor,
-											    public ICsUpdate,
-												public ICsPooledObject,
-												public ICsStaticMeshActor
+class CSCORE_API ACsSkeletalMeshActorPooledImpl : public ASkeletalMeshActor,
+											      public ICsUpdate,
+												  public ICsPooledObject,
+												  public ICsSkeletalMeshActor
 {
 	GENERATED_UCLASS_BODY()
 
@@ -79,16 +79,16 @@ public:
 
 #pragma endregion ICsPooledObject
 
-// ICsStaticMeshActor
+// ICsSkeletalMeshActor
 #pragma region
 public:
 
-	FORCEINLINE UStaticMeshComponent* GetMeshComponent() const
+	FORCEINLINE USkeletalMeshComponent* GetMeshComponent() const
 	{
-		return GetStaticMeshComponent();
+		return GetSkeletalMeshComponent();
 	}
 
-#pragma endregion ICsStaticMeshActor
+#pragma endregion ICsSkeletalMeshActor
 
 protected:
 

@@ -22,6 +22,7 @@ struct CSCORE_API FCsSkeletalMesh
 	USkeletalMesh* Mesh_Internal;
 
 public:
+
 	FCsSkeletalMesh() :
 		Mesh(nullptr),
 		Mesh_LoadFlags(0),
@@ -29,18 +30,39 @@ public:
 	{
 	}
 
-	FORCEINLINE bool operator==(const FCsSkeletalMesh& B) const
-	{
-		return Mesh == B.Mesh && Mesh_LoadFlags == B.Mesh_LoadFlags && Mesh_Internal == B.Mesh_Internal;
+	/**
+	* Get the Hard reference to the USkeletalMesh asset.
+	*
+	* return Skeletal Mesh
+	*/
+	FORCEINLINE USkeletalMesh* Get() const { return Mesh_Internal; }
+
+	/**
+	* Get the Hard reference to the USkeletalMesh asset.
+	*
+	* @param Context	The calling context.
+	* return			Skeletal Mesh
+	*/
+	FORCEINLINE USkeletalMesh* GetChecked(const FString& Context) const
+	{ 
+		checkf(Mesh.ToSoftObjectPath().IsValid(), TEXT("%s: Mesh is NULL."), *Context);
+
+		checkf(Mesh_Internal, TEXT("%s: Mesh has NOT been loaded from Path @ %s."), *Context, *(Mesh.ToSoftObjectPath().ToString()));
+
+		return Mesh_Internal; 
 	}
 
-	FORCEINLINE bool operator!=(const FCsSkeletalMesh& B) const
+	/**
+	* Get the Hard reference to the USkeletalMesh asset.
+	*
+	* return Skeletal Mesh
+	*/
+	FORCEINLINE USkeletalMesh* GetChecked() const
 	{
-		return !(*this == B);
-	}
+		checkf(Mesh.ToSoftObjectPath().IsValid(), TEXT("FCsSkeletalMesh::GetChecked: Mesh is NULL."));
 
-	FORCEINLINE USkeletalMesh* Get() const
-	{
+		checkf(Mesh_Internal, TEXT("FCsSkeletalMesh::GetChecked: Mesh has NOT been loaded from Path @ %s."), *(Mesh.ToSoftObjectPath().ToString()));
+
 		return Mesh_Internal;
 	}
 };

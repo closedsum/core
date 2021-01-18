@@ -72,6 +72,8 @@ namespace NCsFpvAnimMember
 // FCsAnimSequence
 #pragma region
 
+class UAnimSequence;
+
 /**
 */
 USTRUCT(BlueprintType)
@@ -81,7 +83,6 @@ struct CSCORE_API FCsAnimSequence
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UAnimSequence> Anim;
-
 
 	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Anim_LoadFlags;
@@ -98,17 +99,26 @@ public:
 	{
 	}
 
-	FORCEINLINE UAnimSequence* Get() const
-	{
-		return Anim_Internal;
-	}
+	/**
+	* Get the Hard reference to the Anim.
+	*
+	* return Anim
+	*/
+	FORCEINLINE UAnimSequence* Get() const { return Anim_Internal; }
 
-	FORCEINLINE FCsAnimSequence& operator=(const FCsAnimSequence& B)
+	/**
+	* Get the Hard reference to the Anim.
+	*
+	* @param Context	The calling context.
+	* return			Anim
+	*/
+	FORCEINLINE UAnimSequence* GetChecked(const FString& Context) const
 	{
-		Anim = B.Anim;
-		Anim_LoadFlags = B.Anim_LoadFlags;
-		Anim_Internal = B.Anim_Internal;
-		return *this;
+		checkf(Anim.ToSoftObjectPath().IsValid(), TEXT("%s: Anim is NULL."), *Context);
+
+		checkf(Anim_Internal, TEXT("%s: Anim has NOT been loaded from Path @ %s."), *Context, *(Anim.ToSoftObjectPath().ToString()));
+
+		return Anim_Internal;
 	}
 };
 

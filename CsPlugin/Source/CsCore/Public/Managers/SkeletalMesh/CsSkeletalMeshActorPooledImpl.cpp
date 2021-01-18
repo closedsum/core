@@ -1,30 +1,30 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/StaticMesh/CsStaticMeshActorPooledImpl.h"
+#include "Managers/SkeletalMesh/CsSkeletalMeshActorPooledImpl.h"
 #include "CsCore.h"
 
 #include "Library/CsLibrary_Common.h"
 // Sound
-#include "Managers/StaticMesh/Cache/CsCache_StaticMeshActorImpl.h"
-#include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"
+#include "Managers/SkeletalMesh/Cache/CsCache_SkeletalMeshActorImpl.h"
+#include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"
 
 // Cached
 #pragma region
 
-namespace NCsStaticMeshActorImpl
+namespace NCsSkeletalMeshActorImpl
 {
 	namespace NCached
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsStaticMeshActorPooledImpl, Update);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsStaticMeshActorPooledImpl, Allocate);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSkeletalMeshActorPooledImpl, Update);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSkeletalMeshActorPooledImpl, Allocate);
 		}
 	}
 }
 
 #pragma endregion Cached
 
-ACsStaticMeshActorPooledImpl::ACsStaticMeshActorPooledImpl(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+ACsSkeletalMeshActorPooledImpl::ACsSkeletalMeshActorPooledImpl(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick		   = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
@@ -33,7 +33,7 @@ ACsStaticMeshActorPooledImpl::ACsStaticMeshActorPooledImpl(const FObjectInitiali
 // UObject Interface
 #pragma region
 
-void ACsStaticMeshActorPooledImpl::BeginDestroy()
+void ACsSkeletalMeshActorPooledImpl::BeginDestroy()
 {
 	Super::BeginDestroy();
 	
@@ -49,23 +49,23 @@ void ACsStaticMeshActorPooledImpl::BeginDestroy()
 // AActor Interface
 #pragma region
 
-void ACsStaticMeshActorPooledImpl::BeginPlay()
+void ACsSkeletalMeshActorPooledImpl::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetStaticMeshComponent()->SetComponentTickEnabled(false);
+	GetSkeletalMeshComponent()->SetComponentTickEnabled(false);
 
 	SetActorTickEnabled(false);
 
 	ConstructCache();
 }
 
-void ACsStaticMeshActorPooledImpl::FellOutOfWorld(const UDamageType& DmgType)
+void ACsSkeletalMeshActorPooledImpl::FellOutOfWorld(const UDamageType& DmgType)
 {
 	Cache->QueueDeallocate();
 }
 
-void ACsStaticMeshActorPooledImpl::OutsideWorldBounds()
+void ACsSkeletalMeshActorPooledImpl::OutsideWorldBounds()
 {
 	Cache->QueueDeallocate();
 }
@@ -75,15 +75,15 @@ void ACsStaticMeshActorPooledImpl::OutsideWorldBounds()
 // ICsUpdate
 #pragma region
 
-void ACsStaticMeshActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
+void ACsSkeletalMeshActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
-	using namespace NCsStaticMeshActorImpl::NCached;
+	using namespace NCsSkeletalMeshActorImpl::NCached;
 
 	const FString& Context = Str::Update;
 
 	// TODO: This should be opaque
 	
-	typedef NCsStaticMeshActor::NCache::FImpl CacheImplType;
+	typedef NCsSkeletalMeshActor::NCache::FImpl CacheImplType;
 
 	CacheImplType* CacheImpl = NCsInterfaceMap::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
@@ -92,9 +92,9 @@ void ACsStaticMeshActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 #pragma endregion ICsUpdate
 
-void ACsStaticMeshActorPooledImpl::ConstructCache()
+void ACsSkeletalMeshActorPooledImpl::ConstructCache()
 {
-	typedef NCsStaticMeshActor::NCache::FImpl CacheImplType;
+	typedef NCsSkeletalMeshActor::NCache::FImpl CacheImplType;
 
 	Cache = new CacheImplType();
 }
@@ -103,19 +103,19 @@ void ACsStaticMeshActorPooledImpl::ConstructCache()
 #pragma region
 
 #define PayloadType NCsPooledObject::NPayload::IPayload
-void ACsStaticMeshActorPooledImpl::Allocate(PayloadType* Payload)
+void ACsSkeletalMeshActorPooledImpl::Allocate(PayloadType* Payload)
 {
 #undef PayloadType
 
-	using namespace NCsStaticMeshActorImpl::NCached;
+	using namespace NCsSkeletalMeshActorImpl::NCached;
 
 	const FString& Context = Str::Allocate;
 
 	Cache->Allocate(Payload);
 
-	typedef NCsStaticMeshActor::NPayload::IPayload PayloadType;
+	typedef NCsSkeletalMeshActor::NPayload::IPayload PayloadType;
 
-	PayloadType* StaticMeshPayload = NCsInterfaceMap::GetInterfaceChecked<PayloadType>(Context, Payload);
+	PayloadType* SkeletalMeshPayload = NCsInterfaceMap::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	/*
 	checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Play: AudioComponent is NULL."));
@@ -173,7 +173,7 @@ void ACsStaticMeshActorPooledImpl::Allocate(PayloadType* Payload)
 	*/
 }
 
-void ACsStaticMeshActorPooledImpl::Deallocate()
+void ACsSkeletalMeshActorPooledImpl::Deallocate()
 {
 	Deallocate_Internal();
 	Cache->Deallocate();
@@ -181,15 +181,15 @@ void ACsStaticMeshActorPooledImpl::Deallocate()
 
 #pragma endregion ICsPooledObject
 
-void ACsStaticMeshActorPooledImpl::Deallocate_Internal()
+void ACsSkeletalMeshActorPooledImpl::Deallocate_Internal()
 {
-	UStaticMeshComponent* Component = GetStaticMeshComponent();
+	USkeletalMeshComponent* Component = GetSkeletalMeshComponent();
 
-	checkf(Component, TEXT("ACsStaticMeshActorPooledImpl::Deallocate_Internal: GetStaticMeshComponent() is NULL."));
+	checkf(Component, TEXT("ACsSkeletalMeshActorPooledImpl::Deallocate_Internal: GetSkeletalMeshComponent() is NULL."));
 
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
-	Component->SetStaticMesh(nullptr);
+	Component->SetSkeletalMesh(nullptr);
 	Component->SetHiddenInGame(true);
 	Component->SetComponentTickEnabled(false);
 

@@ -11,82 +11,161 @@
 
 class UObject;
 class UMaterialInstanceDynamic;
-class UStaticMeshComponent;
+class UPrimitiveComponent;
 
 namespace NCsAnim
 {
 	namespace N2D
 	{
-		namespace NPlay
+		namespace NTexture
 		{
-			namespace NParams
+			namespace NPlay
 			{
-				/**
-				*/
-				struct CSCORE_API FParams
+				namespace NParams
 				{
-				#define OnAbortType NCsCoroutine::FOnAbort
-				#define OnEndType NCsCoroutine::FOnEnd
-				#define AnimType NCsAnim::N2D::NFlipbook::NTexture::FFlipbook
+					/**
+					*/
+					struct CSCORE_API FParams
+					{
+					#define OnAbortType NCsCoroutine::FOnAbort
+					#define OnEndType NCsCoroutine::FOnEnd
+					#define AnimType NCsAnim::N2D::NTexture::NFlipbook::FFlipbook
 
-				public:
+					public:
 
-					/** Context for the Coroutine Scheduler. This is 
-						usually a reference to the GameInstance. */
-					UObject* Context;
+						/** ContextRoot for the Coroutine Scheduler. This is 
+							usually a reference to the GameInstance. */
+						UObject* ContextRoot;
 		
-					FECsUpdateGroup UpdateGroup;
+						FECsUpdateGroup UpdateGroup;
 
-					UObject* Owner;
+						UObject* Owner;
 
-					OnAbortType OnAbort;
+						OnAbortType OnAbort;
 
-					OnEndType OnEnd;
+						OnEndType OnEnd;
 
-					TWeakObjectPtr<UMaterialInstanceDynamic> MID;
+						TWeakObjectPtr<UMaterialInstanceDynamic> MID;
 
-					AnimType Anim;
+						AnimType Anim;
 
-					FParams() :
-						Context(nullptr),
-						UpdateGroup(),
-						Owner(nullptr),
-						OnAbort(),
-						OnEnd(),
-						MID(nullptr),
-						Anim()
+						FParams() :
+							ContextRoot(nullptr),
+							UpdateGroup(),
+							Owner(nullptr),
+							OnAbort(),
+							OnEnd(),
+							MID(nullptr),
+							Anim()
+						{
+						}
+
+						bool IsValidChecked(const FString& ContextName) const;
+
+						void Reset()
+						{
+							ContextRoot = nullptr;
+							UpdateGroup = EMCsUpdateGroup::Get().GetMAX();
+							Owner = nullptr;
+							OnAbort.Unbind();
+							OnEnd.Unbind();
+							MID = nullptr;
+							Anim.Reset();
+						}
+
+					#undef OnAbortType
+					#undef OnEndType
+					#undef AnimType
+					};
+
+					struct CSCORE_API FResource : public TCsResourceContainer<FParams>
 					{
-					}
+					};
 
-					bool IsValidChecked(const FString& ContextName) const;
+					#define CS_PARAMS_PAYLOAD_SIZE 256
 
-					void Reset()
+					struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FParams, FResource, CS_PARAMS_PAYLOAD_SIZE>
 					{
-						Context = nullptr;
-						UpdateGroup = EMCsUpdateGroup::Get().GetMAX();
-						Owner = nullptr;
-						OnAbort.Unbind();
-						OnEnd.Unbind();
-						MID = nullptr;
-						Anim.Reset();
-					}
+					};
 
-				#undef OnAbortType
-				#undef OnEndType
-				#undef AnimType
-				};
+					#undef CS_PARAMS_PAYLOAD_SIZE
+				}
+			}
+		}
 
-				struct CSCORE_API FResource : public TCsResourceContainer<FParams>
+		namespace NMaterial
+		{
+			namespace NPlay
+			{
+				namespace NParams
 				{
-				};
+					/**
+					*/
+					struct CSCORE_API FParams
+					{
+					#define OnAbortType NCsCoroutine::FOnAbort
+					#define OnEndType NCsCoroutine::FOnEnd
+					#define AnimType NCsAnim::N2D::NMaterial::NFlipbook::FFlipbook
 
-				#define CS_PARAMS_PAYLOAD_SIZE 256
+					public:
 
-				struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FParams, FResource, CS_PARAMS_PAYLOAD_SIZE>
-				{
-				};
+						/** ContextRoot for the Coroutine Scheduler. This is 
+							usually a reference to the GameInstance. */
+						UObject* ContextRoot;
+		
+						FECsUpdateGroup UpdateGroup;
 
-				#undef CS_PARAMS_PAYLOAD_SIZE
+						UObject* Owner;
+
+						OnAbortType OnAbort;
+
+						OnEndType OnEnd;
+
+						TWeakObjectPtr<UPrimitiveComponent> Component;
+
+						AnimType Anim;
+
+						FParams() :
+							ContextRoot(nullptr),
+							UpdateGroup(),
+							Owner(nullptr),
+							OnAbort(),
+							OnEnd(),
+							Component(nullptr),
+							Anim()
+						{
+						}
+
+						bool IsValidChecked(const FString& ContextName) const;
+
+						void Reset()
+						{
+							ContextRoot = nullptr;
+							UpdateGroup = EMCsUpdateGroup::Get().GetMAX();
+							Owner = nullptr;
+							OnAbort.Unbind();
+							OnEnd.Unbind();
+							Component = nullptr;
+							Anim.Reset();
+						}
+
+					#undef OnAbortType
+					#undef OnEndType
+					#undef AnimType
+					};
+
+					struct CSCORE_API FResource : public TCsResourceContainer<FParams>
+					{
+					};
+
+					#define CS_PARAMS_PAYLOAD_SIZE 256
+
+					struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FParams, FResource, CS_PARAMS_PAYLOAD_SIZE>
+					{
+					};
+
+					#undef CS_PARAMS_PAYLOAD_SIZE
+				}
 			}
 		}
 	}

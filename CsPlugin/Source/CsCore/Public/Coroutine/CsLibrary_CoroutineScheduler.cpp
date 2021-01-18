@@ -42,6 +42,14 @@ namespace NCsCoroutine
 
 			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
 
+#if WITH_EDITOR
+			if (FCsLibrary_World::IsPlayInEditor(World) ||
+				FCsLibrary_World::IsPlayInEditorPreview(World))
+			{
+				return GEngine;
+			}
+#endif // #if WITH_EDITOR
+
 			UGameInstance* GameInstance = World->GetGameInstance();
 
 			checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, GameInstance);

@@ -1,15 +1,15 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"
+#include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName NCsStaticMeshActor::NPayload::FImpl::Name = FName("NCsStaticMeshActor::NPayload::FImpl");;
+const FName NCsSkeletalMeshActor::NPayload::FImpl::Name = FName("NCsSkeletalMeshActor::NPayload::FImpl");;
 
-namespace NCsStaticMeshActor
+namespace NCsSkeletalMeshActor
 {
 	namespace NPayload
 	{
-		#define DeallocateMethodType NCsStaticMeshActor::EDeallocateMethod
+		#define DeallocateMethodType NCsSkeletalMeshActor::EDeallocateMethod
 
 		FImpl::FImpl() :
 			InterfaceMap(nullptr),
@@ -19,24 +19,25 @@ namespace NCsStaticMeshActor
 			Owner(nullptr),
 			Parent(nullptr),
 			Time(),
-			// StaticMeshPayloadType (NCsStaticMeshActor::NPayload::IPayload)
+			// SkeletalMeshPayloadType (NCsSkeletalMeshActor::NPayload::IPayload)
 			Mesh(nullptr),
 			DeallocateMethod(DeallocateMethodType::Complete),
 			LifeTime(0.0f),
 			AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Bone(NAME_None),
 			TransformRules(0),
-			Transform(FTransform::Identity)
+			Transform(FTransform::Identity),
+			Params(nullptr)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
 			InterfaceMap->SetRootName(FImpl::Name);
 
 			typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
-			typedef NCsStaticMeshActor::NPayload::IPayload StaticMeshPayloadType;
+			typedef NCsSkeletalMeshActor::NPayload::IPayload SkeletalMeshPayloadType;
 
 			InterfaceMap->Add<PooledPayloadType>(static_cast<PooledPayloadType*>(this));
-			InterfaceMap->Add<StaticMeshPayloadType>(static_cast<StaticMeshPayloadType*>(this));
+			InterfaceMap->Add<SkeletalMeshPayloadType>(static_cast<SkeletalMeshPayloadType*>(this));
 		}
 
 		FImpl::~FImpl()
@@ -57,7 +58,7 @@ namespace NCsStaticMeshActor
 
 			Time.Reset();
 
-			// StaticMeshPayloadType (NCsStaticMeshActor::NPayload::IPayload)
+			// SkeletalMeshPayloadType (NCsSkeletalMeshActor::NPayload::IPayload)
 			Mesh = nullptr;
 			DeallocateMethod = DeallocateMethodType::Complete;
 			LifeTime = 0.0f;
@@ -65,6 +66,7 @@ namespace NCsStaticMeshActor
 			Bone = NAME_None;
 			TransformRules = 0;
 			Transform = FTransform::Identity;
+			Params = nullptr;
 		}
 
 		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)

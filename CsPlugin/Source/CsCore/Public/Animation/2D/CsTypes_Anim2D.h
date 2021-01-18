@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/CsTypes_Texture.h"
+#include "Types/CsTypes_Material.h"
 
 #include "CsTypes_Anim2D.generated.h"
 #pragma once
@@ -238,8 +239,8 @@ namespace NCsAnim
 // FCsAnim2DFlipbookTextureFrame
 #pragma region
 
-// NCsAnim::N2D::NFlipbook::NTexture::FFrame
-CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsAnim, N2D, NFlipbook, NTexture, FFrame)
+// NCsAnim::N2D::NTexture::NFlipbook::FFrame
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsAnim, N2D, NTexture, NFlipbook, FFrame)
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnim2DFlipbookTextureFrame
@@ -258,7 +259,7 @@ struct CSCORE_API FCsAnim2DFlipbookTextureFrame
 	{
 	}
 
-#define FrameType NCsAnim::N2D::NFlipbook::NTexture::FFrame
+#define FrameType NCsAnim::N2D::NTexture::NFlipbook::FFrame
 	void CopyFrame(FrameType* Frame);
 #undef FrameType
 
@@ -273,9 +274,9 @@ namespace NCsAnim
 {
 	namespace N2D
 	{
-		namespace NFlipbook
+		namespace NTexture
 		{
-			namespace NTexture
+			namespace NFlipbook
 			{
 				struct CSCORE_API FFrame
 				{
@@ -322,12 +323,12 @@ namespace NCsAnim
 // FCsAnim2DFlipbookTexture
 #pragma region
 
-// NCsAnim::N2D::NFlipbook::NTexture::FFlipbook
-CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsAnim, N2D, NFlipbook, NTexture, FFlipbook)
+// NCsAnim::N2D::NTexture::NFlipbook::FFlipbook
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsAnim, N2D, NTexture, NFlipbook, FFlipbook)
 
 /**
 * Describes a 2D Animation "flipbook" made up of Textures.
-* The texture are meant to swapped on a Material (i.e. UMaterialInstanceDynamic) 
+* The textures are meant to swapped on a Material (i.e. UMaterialInstanceDynamic) 
 * or UI object (i.e. UImage).
 */
 USTRUCT(BlueprintType)
@@ -379,30 +380,26 @@ struct CSCORE_API FCsAnim2DFlipbookTexture
 
 	FORCEINLINE bool IsLoopingForever() const { return IsLooping() && TotalTime == 0.0f; }
 
-#define FlipbookType NCsAnim::N2D::NFlipbook::NTexture::FFlipbook
+#define FlipbookType NCsAnim::N2D::NTexture::NFlipbook::FFlipbook
 	void CopyFlipbook(FlipbookType* Flipbook);
 #undef FlipbookType
 
 	void OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName);
-
-private:
-
-	FORCEINLINE void __Nothing() const {}
 };
 
 namespace NCsAnim
 {
 	namespace N2D
 	{
-		namespace NFlipbook
+		namespace NTexture
 		{
-			namespace NTexture
+			namespace NFlipbook
 			{
 				struct CSCORE_API FFlipbook
 				{
 				#define PlaybackType NCsAnim::N2D::EPlayback
 				#define PlayRateType NCsAnim::N2D::EPlayRate
-				#define FrameType NCsAnim::N2D::NFlipbook::NTexture::FFrame
+				#define FrameType NCsAnim::N2D::NTexture::NFlipbook::FFrame
 
 				public:
 
@@ -523,3 +520,287 @@ namespace NCsAnim
 	}
 }
 #pragma endregion FCsAnim2DFlipbookTexture
+
+// FCsAnim2DMaterialFlipbookFrame
+#pragma region
+
+// NCsAnim::N2D::NMaterial::NFlipbook::FFrame
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsAnim, N2D, NMaterial, NFlipbook, FFrame)
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsAnim2DMaterialFlipbookFrame
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FCsMaterialInterface Material;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (UIMin = "0", ClampMin= "0"))
+	int32 Index;
+
+	FCsAnim2DMaterialFlipbookFrame() :
+		Material(),
+		Index(0)
+	{
+	}
+
+#define FrameType NCsAnim::N2D::NMaterial::NFlipbook::FFrame
+	void CopyFrame(FrameType* Frame);
+#undef FrameType
+
+private:
+
+	FORCEINLINE void __Nothing() const {}
+};
+
+class UMaterialInterface;
+
+namespace NCsAnim
+{
+	namespace N2D
+	{
+		namespace NMaterial
+		{
+			namespace NFlipbook
+			{
+				struct CSCORE_API FFrame
+				{
+				public:
+
+					UMaterialInterface* Material;
+					UMaterialInterface** Material_Emu;
+
+					int32 Index;
+					int32* Index_Emu;
+
+					FFrame() :
+						Material(nullptr),
+						Material_Emu(nullptr),
+						Index(NAME_None),
+						Index_Emu(nullptr)
+					{
+						Material_Emu = &Material;
+						Index_Emu = &Index;
+					}
+
+					FORCEINLINE FFrame& operator=(const FFrame& B)
+					{
+						Material = B.Material;
+						Index = B.Index;
+						return *this;
+					}
+
+					FORCEINLINE void SetMaterial(UMaterialInterface** Value) { Material_Emu = Value; }
+					FORCEINLINE UMaterialInterface* GetMaterial() const { return *Material_Emu; }
+
+					FORCEINLINE void SetIndex(int32* Value) { Index_Emu = Value; }
+					FORCEINLINE const int32& GetIndex() const { return *Index_Emu; }
+
+					bool IsValidChecked(const FString& Context) const;
+				};
+			}
+		}
+	}
+}
+
+#pragma endregion FCsAnim2DMaterialFlipbookFrame
+
+// FCsAnim2DMaterialFlipbook
+#pragma region
+
+// NCsAnim::N2D::NMaterial::NFlipbook::FFlipbook
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsAnim, N2D, NMaterial, NFlipbook, FFlipbook)
+
+/**
+* Describes a 2D Animation "flipbook" made up of Materials.
+* The materials are meant to swapped on a StaticMesh or SkeletalMesh.
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsAnim2DMaterialFlipbook
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Describes how the Frames will be played. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ECsAnim2DPlayback Playback;
+
+	/** Describes the time between each Frame. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ECsAnim2DPlayRate PlayRate;
+
+	/** Time between each Frame.
+		Only Valid if PlayRate == ECsAnim2DPlayRate::CustomDeltaTime. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float DeltaTime;
+
+	/** Total time to play all Frames. The time between each Frame will be
+		TotalTime / Number of Frames. 
+		Only Valid if PlayRate == ECsAnim2DPlayRate::CustomTotalTime. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float TotalTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FCsAnim2DMaterialFlipbookFrame> Frames;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 TotalCount;
+
+	FCsAnim2DMaterialFlipbook() :
+		Playback(ECsAnim2DPlayback::Forward),
+		PlayRate(ECsAnim2DPlayRate::PR_60Fps),
+		DeltaTime(0.0f),
+		TotalTime(0.0f),
+		Frames(),
+		TotalCount(0)
+	{
+	}
+
+	FORCEINLINE bool IsLooping() const
+	{
+		return Playback == ECsAnim2DPlayback::Loop ||
+			   Playback == ECsAnim2DPlayback::LoopReverse ||
+			   Playback == ECsAnim2DPlayback::LoopPingPong;
+	}
+
+	FORCEINLINE bool IsLoopingForever() const { return IsLooping() && TotalTime == 0.0f; }
+
+#define FlipbookType NCsAnim::N2D::NMaterial::NFlipbook::FFlipbook
+	void CopyFlipbook(FlipbookType* Flipbook);
+#undef FlipbookType
+
+	void OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName);
+};
+
+namespace NCsAnim
+{
+	namespace N2D
+	{
+		namespace NMaterial
+		{
+			namespace NFlipbook
+			{
+				struct CSCORE_API FFlipbook
+				{
+				#define PlaybackType NCsAnim::N2D::EPlayback
+				#define PlayRateType NCsAnim::N2D::EPlayRate
+				#define FrameType NCsAnim::N2D::NMaterial::NFlipbook::FFrame
+
+				public:
+
+					PlaybackType Playback;
+					PlaybackType* Playback_Emu;
+
+					PlayRateType PlayRate;
+					PlayRateType* PlayRate_Emu;
+
+					float DeltaTime;
+					float* DeltaTime_Emu;
+
+					float TotalTime;
+					float* TotalTime_Emu;
+
+					TArray<FrameType> Frames;
+
+					int32 TotalCount;
+					int32* TotalCount_Emu;
+
+					FFlipbook() :
+						Playback(PlaybackType::Forward),
+						Playback_Emu(nullptr),
+						PlayRate(PlayRateType::PR_60Fps),
+						PlayRate_Emu(nullptr),
+						DeltaTime(0.0f),
+						DeltaTime_Emu(nullptr),
+						TotalTime(0.0f),
+						TotalTime_Emu(nullptr),
+						TotalCount(0),
+						TotalCount_Emu(nullptr)
+					{
+						Playback_Emu = &Playback;
+						PlayRate_Emu = &PlayRate;
+						DeltaTime_Emu = &DeltaTime;
+						TotalTime_Emu = &TotalTime;
+						TotalCount_Emu = &TotalCount;
+					}
+
+					FORCEINLINE FFlipbook& operator=(const FFlipbook& B)
+					{
+						Playback = B.GetPlayback();
+						SetPlayback(&Playback);
+						PlayRate = B.GetPlayRate();
+						SetPlayRate(&PlayRate);
+						DeltaTime = B.GetDeltaTime();
+						SetDeltaTime(&DeltaTime);
+						TotalTime = B.GetTotalTime();
+						SetTotalTime(&TotalTime);
+
+						Frames.Reset(FMath::Max(Frames.Max(), B.Frames.Max()));
+
+						for (const FrameType& F : B.Frames)
+						{
+							Frames.Add(F);
+						}
+
+						TotalCount = B.GetTotalCount();
+						SetTotalCount(&TotalCount);
+						return *this;
+					}
+
+					FORCEINLINE void SetPlayback(PlaybackType* Value) { Playback_Emu = Value; }
+					FORCEINLINE const PlaybackType& GetPlayback() const { return *Playback_Emu; }
+
+					FORCEINLINE void SetPlayRate(PlayRateType* Value) { PlayRate_Emu = Value; }
+					FORCEINLINE const PlayRateType& GetPlayRate() const { return *PlayRate_Emu; }
+
+					FORCEINLINE void SetDeltaTime(float* Value) { DeltaTime_Emu = Value; }
+					FORCEINLINE const float& GetDeltaTime() const { return *DeltaTime_Emu; }
+
+					FORCEINLINE void SetTotalTime(float* Value) { TotalTime_Emu = Value; }
+					FORCEINLINE const float& GetTotalTime() const { return *TotalTime_Emu; }
+
+					FORCEINLINE void SetTotalCount(int32* Value) { TotalCount_Emu = Value; }
+					FORCEINLINE const int32& GetTotalCount() const { return *TotalCount_Emu; }
+
+					FORCEINLINE bool IsLooping() const
+					{
+						return GetPlayback() == EPlayback::Loop ||
+							   GetPlayback() == EPlayback::LoopReverse ||
+							   GetPlayback() == EPlayback::LoopPingPong;
+					}
+
+					FORCEINLINE bool IsLoopingForever() const { return IsLooping() && GetTotalTime() == 0.0f; }
+
+					FORCEINLINE bool ShouldStartReverse() const
+					{
+						return GetPlayback() == EPlayback::Reverse ||
+							   GetPlayback() == EPlayback::LoopReverse;
+					}
+
+					bool IsValidChecked(const FString& Context) const;
+
+					void Reset()
+					{
+						Playback = PlaybackType::Forward;
+						SetPlayback(&Playback);
+						PlayRate = PlayRateType::PR_60Fps;
+						SetPlayRate(&PlayRate);
+						DeltaTime = 0.0f;
+						SetDeltaTime(&DeltaTime);
+						TotalTime = 0.0f;
+						SetTotalTime(&TotalTime);
+
+						Frames.Reset(Frames.Max());
+
+						TotalCount = 0;
+						SetTotalCount(&TotalCount);
+					}
+
+				#undef PlaybackType
+				#undef PlayRateType
+				#undef FrameType
+				};
+			}
+		}
+	}
+}
+#pragma endregion FCsAnim2DMaterialFlipbook

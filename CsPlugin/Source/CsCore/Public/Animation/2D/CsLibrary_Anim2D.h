@@ -12,51 +12,104 @@ namespace NCsAnim
 {
 	namespace N2D
 	{
-		struct CSCORE_API FLibrary final
+		namespace NTexture
 		{
-		private:
-			FLibrary();
-
-			FLibrary(const FLibrary&) = delete;
-			FLibrary(FLibrary&&) = delete;
-		public:
-			~FLibrary();
-
-			FORCEINLINE static FLibrary& Get()
+			struct CSCORE_API FLibrary final
 			{
-				static FLibrary Instance;
-				return Instance;
-			}
+			private:
+				FLibrary();
 
-		private:
-		#define ParamsManagerType NCsAnim::N2D::NPlay::NParams::FManager
-		#define ParamsResourceType NCsAnim::N2D::NPlay::NParams::FResource
-		#define ParamsType NCsAnim::N2D::NPlay::NParams::FParams
+				FLibrary(const FLibrary&) = delete;
+				FLibrary(FLibrary&&) = delete;
+			public:
+				~FLibrary();
 
-			ParamsManagerType Manager_PlayParams;
-		public:
+				FORCEINLINE static FLibrary& Get()
+				{
+					static FLibrary Instance;
+					return Instance;
+				}
+
+			private:
+			#define ParamsManagerType NCsAnim::N2D::NTexture::NPlay::NParams::FManager
+			#define ParamsResourceType NCsAnim::N2D::NTexture::NPlay::NParams::FResource
+			#define ParamsType NCsAnim::N2D::NTexture::NPlay::NParams::FParams
+
+				ParamsManagerType Manager_PlayParams;
+			public:
 		
-			FORCEINLINE ParamsResourceType* AllocatePlayParams() { return Manager_PlayParams.Allocate(); }
+				FORCEINLINE ParamsResourceType* AllocatePlayParams() { return Manager_PlayParams.Allocate(); }
 		
-			FORCEINLINE void DeallocatePlayParams(ParamsResourceType* Resource) { Manager_PlayParams.Deallocate(Resource); }
+				FORCEINLINE void DeallocatePlayParams(ParamsResourceType* Resource) { Manager_PlayParams.Deallocate(Resource); }
 
-			/**
-			*/
-			static const FCsRoutineHandle& Play(const ParamsType& Params);
+				/**
+				*/
+				static const FCsRoutineHandle& Play(const ParamsType& Params);
 
-			/**
-			*/
-			static const FCsRoutineHandle& Play(ParamsResourceType* Params);
+				/**
+				*/
+				static const FCsRoutineHandle& Play(ParamsResourceType* Params);
 
-		private:
+			private:
 
-			static char Play_Internal(FCsRoutine* R);
+				static char Play_Internal(FCsRoutine* R);
 
-			static void Play_Internal_OnEnd(FCsRoutine* R);
+				static void Play_Internal_OnEnd(FCsRoutine* R);
 
-		#undef ParamsManagerType
-		#undef ParamsResourceType
-		#undef ParamsType
-		};
+			#undef ParamsManagerType
+			#undef ParamsResourceType
+			#undef ParamsType
+			};
+		}
+
+		namespace NMaterial
+		{
+			struct CSCORE_API FLibrary final
+			{
+			private:
+				FLibrary();
+
+				FLibrary(const FLibrary&) = delete;
+				FLibrary(FLibrary&&) = delete;
+			public:
+				~FLibrary();
+
+				FORCEINLINE static FLibrary& Get()
+				{
+					static FLibrary Instance;
+					return Instance;
+				}
+
+			private:
+			#define ParamsManagerType NCsAnim::N2D::NMaterial::NPlay::NParams::FManager
+			#define ParamsResourceType NCsAnim::N2D::NMaterial::NPlay::NParams::FResource
+			#define ParamsType NCsAnim::N2D::NMaterial::NPlay::NParams::FParams
+
+				ParamsManagerType Manager_PlayParams;
+			public:
+		
+				FORCEINLINE ParamsResourceType* AllocatePlayParams() { return Manager_PlayParams.Allocate(); }
+		
+				FORCEINLINE void DeallocatePlayParams(ParamsResourceType* Resource) { Manager_PlayParams.Deallocate(Resource); }
+
+				/**
+				*/
+				static const FCsRoutineHandle& Play(const ParamsType& Params);
+
+				/**
+				*/
+				static const FCsRoutineHandle& Play(ParamsResourceType* Params);
+
+			private:
+
+				static char Play_Internal(FCsRoutine* R);
+
+				static void Play_Internal_OnEnd(FCsRoutine* R);
+
+			#undef ParamsManagerType
+			#undef ParamsResourceType
+			#undef ParamsType
+			};
+		}
 	}
 }

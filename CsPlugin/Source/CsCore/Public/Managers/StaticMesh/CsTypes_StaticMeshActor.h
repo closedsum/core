@@ -112,6 +112,26 @@ namespace NCsStaticMeshActorDeallocateMethod
 	extern CSCORE_API const uint8 MAX;
 }
 
+namespace NCsStaticMeshActor
+{
+	enum class EDeallocateMethod : uint8
+	{
+		/** If a StaticMeshActor is attached to a parent object,
+			  LifeTime == 0.of means the StaticMeshActor will be deallocated immediately
+			   when the parent has been destroyed / deallocated.
+			  LifeTime > 0.0f will be the time after the parent object has been
+			   destroyed / deallocated to deallocate the StaticMeshActor.
+			If a StaticMeshActor is NOT attached to a parent object,
+			  LifeTime == 0.0f means the StaticMeshActor will stay active forever.
+			  LifeTime > 0.0f means the StaticMeshActor will be deallocated after LifeTime amount of time after
+			   the StaticMeshActor has been allocated. */
+		LifeTime,
+		/** */
+		Complete,
+		EDeallocateMethod_MAX
+	};
+}
+
 #pragma endregion StaticMeshActorDeallocateMethod
 
 // FCsStaticMeshActorPooledInfo
@@ -152,6 +172,12 @@ struct CSCORE_API FCsStaticMeshActorPooledInfo
 	/** Condition to determine when to deallocate the StaticMeshActor. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsStaticMeshActorDeallocateMethod DeallocateMethod;
+
+private:
+
+	NCsStaticMeshActor::EDeallocateMethod* DeallocateMethod_Internal;
+
+public:
 
 	/** Valid if the DeallocateMethod == ECsSoundDeallocateMethod::LifeTime.
 		- If a Sound IS attached to a Parent object, 
@@ -196,6 +222,7 @@ public:
 		Mesh_Internal(nullptr),
 		Type(),
 		DeallocateMethod(ECsStaticMeshActorDeallocateMethod::Complete),
+		DeallocateMethod_Internal(nullptr),
 		LifeTime(0.0f),
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
@@ -204,15 +231,54 @@ public:
 	{
 	}
 	
+	FORCEINLINE void UpdateInternalPtrs()
+	{
+		UpdateDeallocateMethodPtr();
+	}
+
+	FORCEINLINE void UpdateDeallocateMethodPtr() { DeallocateMethod_Internal = (NCsStaticMeshActor::EDeallocateMethod*)&DeallocateMethod; }
+
+#define DeallocateMethodType NCsStaticMeshActor::EDeallocateMethod
+	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *DeallocateMethod_Internal; }
+#undef DeallocateMethodType
+
 	/**
 	* Get the Hard reference to the UStaticMesh asset.
 	*
 	* return Static Mesh
 	*/
-	FORCEINLINE UStaticMesh* Get() const
+	FORCEINLINE UStaticMesh* Get() const { return Mesh_Internal; }
+
+	/**
+	* Get the Hard reference to the UStaticMesh asset.
+	*
+	* @param Context	The calling context.
+	* return			Static Mesh
+	*/
+	FORCEINLINE UStaticMesh* GetChecked(const FString& Context) const 
+	{ 
+		checkf(Mesh.ToSoftObjectPath().IsValid(), TEXT("%s: Mesh is NULL."), *Context);
+
+		checkf(Mesh_Internal, TEXT("%s: Mesh has NOT been loaded from Path @ %s."), *Context, *(Mesh.ToSoftObjectPath().ToString()));
+
+		return Mesh_Internal; 
+	}
+
+	/**
+	* Get the Hard reference to the UStaticMesh asset.
+	*
+	* return Static Mesh
+	*/
+	FORCEINLINE UStaticMesh* GetChecked() const
 	{
+		checkf(Mesh.ToSoftObjectPath().IsValid(), TEXT("FCsStaticMeshActorPooledInfo::GetChecked: Mesh is NULL."));
+
+		checkf(Mesh_Internal, TEXT("FCsStaticMeshActorPooledInfo::GetChecked: Mesh has NOT been loaded from Path @ %s."), *(Mesh.ToSoftObjectPath().ToString()));
+
 		return Mesh_Internal;
 	}
+
+	bool IsValidChecked(const FString& Context) const;
 };
 
 #pragma endregion FCsStaticMeshActorPooledInfo

@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
+class UPrimitiveComponent;
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
 class UMaterialInterface;
@@ -15,6 +16,16 @@ namespace NCsMaterial
 	class CSCORE_API FLibrary
 	{
 	public:
+
+		/**
+		* 
+		* 
+		* @param Context	The calling context
+		* @param Component
+		* @param Material
+		* @param Index
+		*/
+		static void SetMaterialChecked(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index);
 
 		static bool IsValidChecked(const FString& Context, const TArray<UMaterialInterface*>& Materials);
 

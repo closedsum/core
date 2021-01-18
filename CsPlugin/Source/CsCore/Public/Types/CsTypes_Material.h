@@ -4,6 +4,56 @@
 #include "CsTypes_Material.generated.h"
 #pragma once
 
+// FCsMaterialInterface
+#pragma region
+
+class UMaterialInterface;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsMaterialInterface
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftObjectPtr<UMaterialInterface> Material;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Material_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	UMaterialInterface* Material_Internal;
+
+public:
+
+	FCsMaterialInterface() :
+		Material(nullptr),
+		Material_LoadFlags(0),
+		Material_Internal(nullptr)
+	{
+	}
+
+	FORCEINLINE UMaterialInterface* Get() const
+	{
+		return Material_Internal;
+	}
+
+	FORCEINLINE UMaterialInterface* GetChecked() const
+	{
+		checkf(Material_Internal, TEXT("FCsMaterialInterface::GetChecked: Material_Internal is NULL."));
+
+		return Material_Internal;
+	}
+
+	FORCEINLINE UMaterialInterface* GetChecked(const FString& Context) const
+	{
+		checkf(Material_Internal, TEXT("%s: Material_Internal is NULL."), *Context);
+
+		return Material_Internal;
+	}
+};
+
+#pragma endregion FCsMaterialInterface
+
 // FCsMaterialInstance
 #pragma region
 

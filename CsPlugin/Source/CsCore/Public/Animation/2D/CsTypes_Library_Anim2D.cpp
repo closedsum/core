@@ -5,23 +5,50 @@ namespace NCsAnim
 {
 	namespace N2D
 	{
-		namespace NPlay
+		namespace NTexture
 		{
-			namespace NParams
+			namespace NPlay
 			{
-				bool FParams::IsValidChecked(const FString& ContextName) const
+				namespace NParams
 				{
-					// Check Context is Valid.
-					checkf(Context, TEXT("%s: Context for UCsCoroutineScheduler and UCsManager_Time is NULL."), *ContextName);
-					// Check UpdateGroup is Valid.
-					checkf(EMCsUpdateGroup::Get().IsValidEnumChecked(ContextName, UpdateGroup), TEXT("%s: UpdateGroup: %s is NOT Valid."), *ContextName, UpdateGroup.ToChar());
-					// Check Owner is Valid.
-					checkf(Owner, TEXT("%s: Owner is NULL."));
-					// Check MID is Valid.
-					checkf(MID.IsValid() && MID.Get(), TEXT("%s: MID is NULL."));
-					// Check Anim is Valid.
-					check(Anim.IsValidChecked(ContextName));
-					return true;
+					bool FParams::IsValidChecked(const FString& ContextName) const
+					{
+						// Check Context is Valid.
+						checkf(ContextRoot, TEXT("%s: ContextRoot for UCsCoroutineScheduler and UCsManager_Time is NULL."), *ContextName);
+						// Check UpdateGroup is Valid.
+						checkf(EMCsUpdateGroup::Get().IsValidEnumChecked(ContextName, UpdateGroup), TEXT("%s: UpdateGroup: %s is NOT Valid."), *ContextName, UpdateGroup.ToChar());
+						// Check Owner is Valid.
+						checkf(Owner, TEXT("%s: Owner is NULL."));
+						// Check MID is Valid.
+						checkf(MID.IsValid() && MID.Get(), TEXT("%s: MID is NULL."));
+						// Check Anim is Valid.
+						check(Anim.IsValidChecked(ContextName));
+						return true;
+					}
+				}
+			}
+		}
+
+		namespace NMaterial
+		{
+			namespace NPlay
+			{
+				namespace NParams
+				{
+					bool FParams::IsValidChecked(const FString& ContextName) const
+					{
+						// Check Context is Valid.
+						checkf(ContextRoot, TEXT("%s: ContextRoot for UCsCoroutineScheduler and UCsManager_Time is NULL."), *ContextName);
+						// Check UpdateGroup is Valid.
+						checkf(EMCsUpdateGroup::Get().IsValidEnumChecked(ContextName, UpdateGroup), TEXT("%s: UpdateGroup: %s is NOT Valid."), *ContextName, UpdateGroup.ToChar());
+						// Check Owner is Valid.
+						checkf(Owner, TEXT("%s: Owner is NULL."));
+						// Check Component is Valid.
+						checkf(Component.IsValid() && Component.Get(), TEXT("%s: Component is NULL."));
+						// Check Anim is Valid.
+						check(Anim.IsValidChecked(ContextName));
+						return true;
+					}
 				}
 			}
 		}

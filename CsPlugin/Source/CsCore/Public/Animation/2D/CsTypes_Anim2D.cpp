@@ -149,7 +149,7 @@ namespace NCsAnim
 // FCsAnim2DFlipbookTextureFrame
 #pragma region
 
-#define FrameType NCsAnim::N2D::NFlipbook::NTexture::FFrame
+#define FrameType NCsAnim::N2D::NTexture::NFlipbook::FFrame
 void FCsAnim2DFlipbookTextureFrame::CopyFrame(FrameType* Frame)
 {
 #undef FrameType
@@ -162,9 +162,9 @@ namespace NCsAnim
 {
 	namespace N2D
 	{
-		namespace NFlipbook
+		namespace NTexture
 		{
-			namespace NTexture
+			namespace NFlipbook
 			{
 				bool FFrame::IsValidChecked(const FString& Context) const
 				{
@@ -249,7 +249,7 @@ void FCsAnim2DFlipbookTexture::OnPostEditChange(const TSet<FString>& PropertyNam
 	}
 }
 
-#define FlipbookType NCsAnim::N2D::NFlipbook::NTexture::FFlipbook
+#define FlipbookType NCsAnim::N2D::NTexture::NFlipbook::FFlipbook
 void FCsAnim2DFlipbookTexture::CopyFlipbook(FlipbookType* Flipbook)
 {
 #undef FlipbookType
@@ -268,7 +268,7 @@ void FCsAnim2DFlipbookTexture::CopyFlipbook(FlipbookType* Flipbook)
 	{
 		Flipbook->Frames.AddDefaulted();
 		
-		typedef NCsAnim::N2D::NFlipbook::NTexture::FFrame FrameType;
+		typedef NCsAnim::N2D::NTexture::NFlipbook::FFrame FrameType;
 
 		FrameType& F = Flipbook->Frames.Last();
 
@@ -281,9 +281,9 @@ namespace NCsAnim
 {
 	namespace N2D
 	{
-		namespace NFlipbook
+		namespace NTexture
 		{
-			namespace NTexture
+			namespace NFlipbook
 			{
 				bool FFlipbook::IsValidChecked(const FString& Context) const
 				{
@@ -332,7 +332,7 @@ namespace NCsAnim
 					// Check Frames
 					checkf(Frames.Num() > CS_EMPTY, TEXT("%s: No Frames set."));
 
-					typedef NCsAnim::N2D::NFlipbook::NTexture::FFrame FrameType;
+					typedef NCsAnim::N2D::NTexture::NFlipbook::FFrame FrameType;
 
 					for (const FrameType& Frame : Frames)
 					{
@@ -346,3 +346,204 @@ namespace NCsAnim
 }
 
 #pragma endregion FCsAnim2DFlipbookTexture
+
+// FCsAnim2DMaterialFlipbookFrame
+#pragma region
+
+#define FrameType NCsAnim::N2D::NMaterial::NFlipbook::FFrame
+void FCsAnim2DMaterialFlipbookFrame::CopyFrame(FrameType* Frame)
+{
+#undef FrameType
+
+	Frame->SetMaterial(&(Material.Material_Internal));
+	Frame->SetIndex(&Index);
+}
+
+namespace NCsAnim
+{
+	namespace N2D
+	{
+		namespace NMaterial
+		{
+			namespace NFlipbook
+			{
+				bool FFrame::IsValidChecked(const FString& Context) const
+				{
+					checkf(GetMaterial(), TEXT("%s: Material is NULL."), *Context);
+
+					checkf(GetIndex() >= 0, TEXT("%s: Index: %d is NOT > 0."), *Context, GetIndex());
+					return true;
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion FCsAnim2DMaterialFlipbookFrame
+
+// FCsAnim2DMaterialFlipbook
+#pragma region
+
+void FCsAnim2DMaterialFlipbook::OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName)
+{
+	using namespace NCsAnim::N2D;
+
+	// CustomDeltaTime
+	if (PlayRate == ECsAnim2DPlayRate::PR_CustomDeltaTime)
+	{
+		if (Playback == ECsAnim2DPlayback::PingPong)
+		{
+			TotalTime = (2 * Frames.Num() - 1) * DeltaTime;
+			TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+		}
+		else
+		{
+			TotalTime = Frames.Num() * DeltaTime;
+			TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+		}
+	}
+	// CustomTotalTime
+	else
+	if (PlayRate == ECsAnim2DPlayRate::PR_CustomTotalTime)
+	{
+		if (Playback == ECsAnim2DPlayback::PingPong)
+		{
+			DeltaTime = TotalTime > 0.0f && (2 * Frames.Num() - 1) > 0 ? TotalTime / (2 * Frames.Num() - 1) : 0.0f;
+			TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+		}
+		else
+		{
+			DeltaTime = TotalTime > 0.0f && Frames.Num() > 0 ? TotalTime / Frames.Num() : 0.0f;
+			TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+		}
+	}
+	// CustomDeltaTimeAndTotalTime | Custom
+	else
+	if  (PlayRate == ECsAnim2DPlayRate::PR_CustomDeltaTimeAndTotalTime)
+	{
+		if (DeltaTime > 0.0f &&
+			TotalTime > 0.0f &&
+			!IsLoopingForever())
+		{
+			TotalCount = FMath::FloorToInt(TotalTime / DeltaTime);
+		}
+	}
+	else
+	if (PlayRate == ECsAnim2DPlayRate::PR_Custom)
+	{
+		// Do Nothing
+	}
+	else
+	{
+		if (Playback == ECsAnim2DPlayback::PingPong)
+		{
+			DeltaTime = NPlayRate::GetDeltaTime((EPlayRate)PlayRate);
+			TotalTime = (2 * Frames.Num() - 1) * DeltaTime;
+			TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+		}
+		else
+		{
+			DeltaTime = NPlayRate::GetDeltaTime((EPlayRate)PlayRate);
+			TotalTime = Frames.Num() * DeltaTime;
+			TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+		}
+	}
+}
+
+#define FlipbookType NCsAnim::N2D::NMaterial::NFlipbook::FFlipbook
+void FCsAnim2DMaterialFlipbook::CopyFlipbook(FlipbookType* Flipbook)
+{
+#undef FlipbookType
+
+	typedef NCsAnim::N2D::EPlayback PlaybackType;
+	typedef NCsAnim::N2D::EPlayRate PlayRateType;
+
+	Flipbook->SetPlayback((PlaybackType*)&Playback);
+	Flipbook->SetPlayRate((PlayRateType*)&PlayRate);
+	Flipbook->SetDeltaTime(&DeltaTime);
+	Flipbook->SetTotalTime(&TotalTime);
+
+	Flipbook->Frames.Reset(Frames.Num());
+
+	for (FCsAnim2DMaterialFlipbookFrame& Frame : Frames)
+	{
+		Flipbook->Frames.AddDefaulted();
+		
+		typedef NCsAnim::N2D::NMaterial::NFlipbook::FFrame FrameType;
+
+		FrameType& F = Flipbook->Frames.Last();
+
+		Frame.CopyFrame(&F);
+	}
+	Flipbook->SetTotalCount(&TotalCount);
+}
+
+namespace NCsAnim
+{
+	namespace N2D
+	{
+		namespace NMaterial
+		{
+			namespace NFlipbook
+			{
+				bool FFlipbook::IsValidChecked(const FString& Context) const
+				{
+					// Check Playback is Valid.
+					typedef NCsAnim::N2D::EMPlayback PlaybackMapType;
+					check(PlaybackMapType::Get().IsValidEnumChecked(Context, GetPlayback()));
+					// Check PlayRate is Valid.
+					typedef NCsAnim::N2D::EPlayRate PlayRateType;
+					typedef NCsAnim::N2D::EMPlayRate PlayRateMapType;
+					
+					const PlayRateType& PR = GetPlayRate();
+					
+					check(PlayRateMapType::Get().IsValidEnumChecked(Context, PR));
+
+					// Check DeltaTime or TotalTime
+
+					if (PR != PlayRateType::PR_CustomDeltaTime &&
+						PR != PlayRateType::PR_CustomTotalTime &&
+						PR != PlayRateType::PR_CustomDeltaTimeAndTotalTime &&
+						PR != PlayRateType::PR_Custom)
+					{
+						const float DT = NCsAnim::N2D::NPlayRate::GetDeltaTime(PR);
+
+						checkf(FMath::Abs(GetDeltaTime() - DT) <= KINDA_SMALL_NUMBER, TEXT("%s: DeltaTime: %f is NOT correct (%f != %f) for PlayRate: %s."), *Context, GetDeltaTime(), GetDeltaTime(), DT, PlayRateMapType::Get().ToDisplayNameChar(PR));
+
+						checkf(GetTotalTime() > 0.0f, TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, GetTotalTime(), PlayRateMapType::Get().ToDisplayNameChar(PR));
+						
+						if (!IsLoopingForever())
+						{
+							checkf(GetTotalCount() > 0, TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, GetTotalCount(), PlayRateMapType::Get().ToDisplayNameChar(PR));
+						}
+					}
+					if (PR == PlayRateType::PR_CustomDeltaTime ||
+						PR == PlayRateType::PR_CustomTotalTime ||
+						PR == PlayRateType::PR_CustomDeltaTimeAndTotalTime)
+					{
+						checkf(GetDeltaTime() > 0.0f, TEXT("%s: DeltaTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, GetDeltaTime(), PlayRateMapType::Get().ToDisplayNameChar(PR));
+						checkf(GetTotalTime() > 0.0f, TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, GetTotalTime(), PlayRateMapType::Get().ToDisplayNameChar(PR));
+
+						if (!IsLoopingForever())
+						{
+							checkf(GetTotalCount() > 0, TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, GetTotalCount(), PlayRateMapType::Get().ToDisplayNameChar(PR));
+						}
+					}
+
+					// Check Frames
+					checkf(Frames.Num() > CS_EMPTY, TEXT("%s: No Frames set."));
+
+					typedef NCsAnim::N2D::NMaterial::NFlipbook::FFrame FrameType;
+
+					for (const FrameType& Frame : Frames)
+					{
+						check(Frame.IsValidChecked(Context));
+					}
+					return true;
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion FCsAnim2DMaterialFlipbook

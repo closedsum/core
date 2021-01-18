@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Cache/CsCache_PooledObject.h"
-#include "Managers/StaticMesh/Cache/CsCache_StaticMeshActor.h"
+#include "Managers/SkeletalMesh/Cache/CsCache_SkeletalMeshActor.h"
 #include "Containers/CsWeakObjectPtr.h"
 
 #pragma once
@@ -11,22 +11,22 @@ struct FCsInterfaceMap;
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
-namespace NCsStaticMeshActor
+namespace NCsSkeletalMeshActor
 {
 	namespace NCache
 	{
 	#define PooledCacheType NCsPooledObject::NCache::ICache
-	#define StaticMeshCacheType NCsStaticMeshActor::NCache::ICache
+	#define SkeletalMeshCacheType NCsSkeletalMeshActor::NCache::ICache
 
 		/**
 		* Basic implementation for Cache implementing the interfaces:
 		* PooledCacheType (NCsPooledObject::NCache::ICache) and 
-		* StaticMeshCacheType (NCsStaticMeshActor::NCache::ICache). This only supports 
+		* SkeletalMeshCacheType (NCsSkeletalMeshActor::NCache::ICache). This only supports 
 		* a bare minimum functionality. For custom functionality create
 		* another implementation
 		*/
 		struct CSCORE_API FImpl final : public PooledCacheType,
-										public StaticMeshCacheType
+										public SkeletalMeshCacheType
 		{
 		public:
 
@@ -64,7 +64,7 @@ namespace NCsStaticMeshActor
 
 			FCsDeltaTime ElapsedTime;
 
-			// StaticMeshCacheType (NCsStaticMeshActor::NCache::ICache)
+			// SkeletalMeshCacheType (NCsSkeletalMeshActor::NCache::ICache)
 
 		public:
 
@@ -118,11 +118,11 @@ namespace NCsStaticMeshActor
 
 			FORCEINLINE void SetLifeTime(const float& InLifeTime) { LifeTime = InLifeTime; }
 
-		// StaticMeshCacheType (NCsStaticMeshActor::NCache::ICache)
+		// SkeletalMeshCacheType (NCsSkeletalMeshActor::NCache::ICache)
 		#pragma region
 		public:
 
-		#pragma endregion StaticMeshCacheType (NCsStaticMeshActor::NCache::ICache)
+		#pragma endregion SkeletalMeshCacheType (NCsSkeletalMeshActor::NCache::ICache)
 
 		public:
 
@@ -130,6 +130,6 @@ namespace NCsStaticMeshActor
 		};
 
 	#undef PooledCacheType
-	#undef StaticMeshCacheType
+	#undef SkeletalMeshCacheType
 	}
 }

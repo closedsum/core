@@ -18,8 +18,6 @@ namespace NCsSkeletalMeshActor
 
 				FOneShot::FOneShot() :
 					InterfaceMap(nullptr),
-					Mesh(nullptr),
-					Mesh_Emu(nullptr),
 					Materials(),
 					Materials_Emu(nullptr),
 					Anim(nullptr),
@@ -33,7 +31,6 @@ namespace NCsSkeletalMeshActor
 
 					InterfaceMap->Add<ParamsType>(static_cast<ParamsType*>(this));
 
-					Mesh_Emu = &Mesh;
 					Materials_Emu = &Materials;
 					Anim_Emu = &Anim;
 				}
@@ -42,6 +39,38 @@ namespace NCsSkeletalMeshActor
 				{
 					delete InterfaceMap;
 				}
+
+				bool FOneShot::IsValidChecked(const FString& Context) const
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	namespace NAnim
+	{
+		namespace NSequence
+		{
+			bool FOneShot::IsValidChecked(const FString& Context) const
+			{
+				// Check Mesh is Valid
+				checkf(GetMesh(), TEXT("%s: Mesh is NULL."), *Context);
+				// Check Type is Valid
+				check(EMCsSkeletalMeshActor::Get().IsValidEnumChecked(Context, GetType()));
+				// Check DeallocateMethod is Valid
+				typedef NCsSkeletalMeshActor::EDeallocateMethod DeallocateMethodType;
+
+				checkf(GetDeallocateMethod() != DeallocateMethodType::EDeallocateMethod_MAX, TEXT("%s: DeallocateMethod: DeallocateMethodType::EDeallocateMethod_MAX is NOT Valid."));
+
+				// Check LifeTime is Valid
+				if (GetDeallocateMethod() == DeallocateMethodType::LifeTime)
+				{
+					checkf(GetLifeTime() > 0.0f, TEXT("%s: LifeTime: %f is NOT > 0.0f if DeallocateMethod == DeallocateMethodType::LifeTime."), *Context, GetLifeTime());
+				}
+				// Check Params is Valid
+				check(Params.IsValidChecked(Context));
+				return true;
 			}
 		}
 	}
@@ -50,14 +79,27 @@ namespace NCsSkeletalMeshActor
 // FCsSkeletalMeshAnimSequenceOneShot
 #pragma region
 
-#define ParamsType NCsSkeletalMeshActor::NParams::NAnim::NSequence::FOneShot
-void FCsSkeletalMeshAnimSequenceOneShot::CopyParams(ParamsType* Params)
+#define ShotType NCsSkeletalMeshActor::NAnim::NSequence::FOneShot
+void FCsSkeletalMeshAnimSequenceOneShot::CopyShot(ShotType* Shot)
 {
-#undef ParamsType
+#undef ShotType
 
-	Params->SetMesh(&(Mesh.Mesh_Internal));
-	Params->SetMaterials(Materials.GetPtr());
-	Params->SetAnim(&(Anim.Anim_Internal));
+	Shot->SetMesh(&(Mesh.Mesh_Internal));
+	Shot->SetType(&(Mesh.Type));
+	Shot->SetDeallocateMethod(Mesh.GetDeallocateMethodPtr());
+	Shot->SetLifeTime(&(Mesh.LifeTime));
+	Shot->SetAttachmentTransformRules(&(Mesh.AttachmentTransformRules));
+	Shot->SetBone(&(Mesh.Bone));
+	Shot->SetTransformRules(&(Mesh.TransformRules));
+	Shot->SetTransform(&(Mesh.Transform));
+	Shot->Params.SetMaterials(&(Materials.Materials_Internal));
+	Shot->Params.SetAnim(&(Anim.Anim_Internal));
+}
+
+bool FCsSkeletalMeshAnimSequenceOneShot::IsValidChecked(const FString& Context) const
+{
+	check(Mesh.IsValidChecked(Context));
+	return true;
 }
 
 #pragma endregion FCsSkeletalMeshAnimSequenceOneShot

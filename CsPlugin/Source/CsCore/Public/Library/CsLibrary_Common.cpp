@@ -1906,33 +1906,6 @@ char UCsLibrary_Common::FadeCameraOverTime_Internal(FCsRoutine* R)
 
 	CS_COROUTINE_END(R);
 }
-/*
-FCsRoutine* UCsLibrary_Common::AllocateAndActivateEmitter(ACsCoroutineScheduler* ScheduleType, const ECsCoroutineSchedule &CoroutineSchedule, FEffectsElement* InEffectsElement, FVector Location, float Delay)
-{
-	if (!CoroutineScheduler)
-		return nullptr;
-
-	FRoutine* R = nullptr;
-
-	Coroutine Function = &UShooterStatics::AllocateAndActivateEmitter_Internal;
-
-	R = CoroutineScheduler->Allocate(ScheduleType, Function, true, false);
-
-	R->timers[0] = CoroutineScheduler->GetWorld()->TimeSeconds;
-	R->delay = Delay;
-
-	CoroutineScheduler->StartRoutine(ScheduleType, R);
-	return R;
-}
-*/
-/*
-PT_THREAD(UCsLibrary_Common::AllocateAndActivateEmitter_Internal(struct FCsRoutine* r))
-{
-	CS_COROUTINE_BEGIN(r);
-
-	CS_COROUTINE_END(r);
-}
-*/
 
 #pragma endregion Coroutine
 

@@ -14,6 +14,7 @@
 //#include "Types/CsTypes_Recipe.h"
 #include "Managers/Damage/CsTypes_Damage.h"
 #include "Managers/Sound/CsTypes_Sound.h"
+#include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"
 //#include "Types/CsTypes_Interactive.h"
 //#include "AI/CsTypes_AI.h"
 #include "Managers/Sense/CsTypes_Sense.h"
@@ -53,6 +54,8 @@
 //#include "GraphEditor/EnumStruct/Interactive/SCsGraphPin_ECsInteractiveType.h"
 	// Sound
 #include "GraphEditor/EnumStruct/Sound/SCsGraphPin_ECsSound.h"
+	// SkeletalMesh
+#include "GraphEditor/EnumStruct/SkeletalMesh/SCsGraphPin_ECsSkeletalMeshActor.h"
 	// AI
 //#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAIType.h"
 //#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAIState.h"
@@ -143,8 +146,16 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 		// FECsInteractiveType
 		//if (DoesPinUseScriptStruct<FECsInteractiveType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsInteractiveType, InPin); }
 	}
-	// FECsSound
-	CS_TEMP_CREATE(ECsSound)
+	// Sound
+	{
+		// FECsSound
+		CS_TEMP_CREATE(ECsSound)
+	}
+	// SkeletalMesh
+	{
+		// FECsSkeletalMeshActor
+		CS_TEMP_CREATE(ECsSkeletalMeshActor)
+	}
 	// AI
 	{
 		// FECsAIType

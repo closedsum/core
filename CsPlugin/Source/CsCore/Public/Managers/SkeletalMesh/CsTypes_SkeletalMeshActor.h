@@ -237,7 +237,11 @@ public:
 	FORCEINLINE void UpdateDeallocateMethodPtr() { DeallocateMethod_Internal = (NCsSkeletalMeshActor::EDeallocateMethod*)&DeallocateMethod; }
 
 #define DeallocateMethodType NCsSkeletalMeshActor::EDeallocateMethod
+
 	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *DeallocateMethod_Internal; }
+
+	FORCEINLINE DeallocateMethodType* GetDeallocateMethodPtr() const { return DeallocateMethod_Internal; }
+
 #undef DeallocateMethodType
 
 	/**

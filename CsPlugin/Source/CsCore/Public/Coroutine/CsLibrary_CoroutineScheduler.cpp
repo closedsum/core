@@ -52,7 +52,7 @@ namespace NCsCoroutine
 
 			UGameInstance* GameInstance = World->GetGameInstance();
 
-			checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, GameInstance);
+			checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName()));
 
 			return GameInstance;
 		}

@@ -312,7 +312,7 @@ void UCsManager_SkeletalMeshActor::SetupInternal()
 
 		checkf(ModuleSettings, TEXT("UCsManager_SkeletalMeshActor::SetupInternal: Failed to get settings of type: UCsDeveloperSettings."));
 
-		//Settings = ModuleSettings->Manager_SkeletalMeshActor;
+		Settings = ModuleSettings->Manager_SkeletalMeshActor;
 
 		InitInternalFromSettings();
 	}

@@ -1,13 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-//#ifndef __CS_MANAGER_RESOURCE_POINTER_TYPE_FIXED_H__
-//#define __CS_MANAGER_RESOURCE_POINTER_TYPE_FIXED_H__
-
 #pragma once
-
+// Types
+#include "Types/CsTypes_Macro.h"
+// Resource
 #include "Managers/Resource/CsManager_Resource.h"
 #include "Managers/Resource/CsResourceContainer.h"
-#include "Types/CsTypes_Macro.h"
-#include "Containers/CsDoubleLinkedList.h"
+// Utility
+#include "Utility/CsAllocationOrder.h"
 
 template<typename ResourceType, typename ResourceContainerType = TCsResourceContainer<ResourceType>, uint32 BUCKET_SIZE = 128>
 class TCsManager_ResourceValueType_Abstract_Fixed : public ICsManager_Resource
@@ -27,14 +26,18 @@ public:
 		PoolSize(0),
 		PoolSizeMinusOne(0),
 		PoolIndex(0),
+		AdvancePoolIndex(),
 		Links(),
 		AllocatedHead(nullptr),
 		AllocatedTail(nullptr),
 		AllocatedSize(0),
+		AllocationOrder(),
 		ConstructResourceType_Impl()
 	{
 		Name		  = TEXT("TCsManager_ResourceValueType_Abstract_Fixed");
 		Name_Internal = FName(*Name);
+
+		AdvancePoolIndex = &TCsManager_ResourceValueType_Abstract_Fixed<ResourceType, ResourceContainerType, BUCKET_SIZE>::AdvancePoolIndexByOrder;
 
 		if (BUCKET_SIZE > 0)
 			CreatePool(BUCKET_SIZE);
@@ -67,6 +70,9 @@ private:
 	/** Index of the last allocated ResourceContainerType in Pool. */
 	uint32 PoolIndex;
 
+	/** Function pointer to "advance" / choose the next Index used to allocate from the Pool. */
+	void (TCsManager_ResourceValueType_Abstract_Fixed<ResourceType, ResourceContainerType, BUCKET_SIZE>::* AdvancePoolIndex)();
+
 	/** List of LinkedList elements storing references to ResourceContainerTypes */
 	TArray<TCsDoubleLinkedList<ResourceContainerType*>> Links;
 
@@ -76,6 +82,8 @@ private:
 	TCsDoubleLinkedList<ResourceContainerType*>* AllocatedTail;
 	/** The current number of allocated ResourceContainerTypes */
 	int32 AllocatedSize;
+
+	FCsAllocationOrder AllocationOrder;
 
 public:
 
@@ -172,6 +180,8 @@ public:
 		AllocatedTail = nullptr;
 		AllocatedSize = 0;
 
+		AllocationOrder.Shutdown();
+
 		ResourceContainers.Reset();
 	}
 
@@ -216,6 +226,8 @@ public:
 
 		Links.Reset(PoolSize);
 		Links.AddDefaulted(PoolSize);
+
+		AllocationOrder.Create(PoolSize);
 
 		for (int32 I = 0; I < PoolSize; ++I)
 		{
@@ -278,6 +290,10 @@ public:
 		return PoolSize == AllocatedSize;
 	}
 
+	FORCEINLINE void AdvancePoolIndexByIncrement() { PoolIndex = (PoolIndex + 1) & PoolSizeMinusOne; }
+
+	FORCEINLINE void AdvancePoolIndexByOrder() { PoolIndex = AllocationOrder.Advance(); }
+
 	/**
 	* Get the container of type: ResourceContainerType holding a 
 	* resource of type: ResourceType at the specified Index.
@@ -312,7 +328,37 @@ public:
 	* @param Resource	Resource to find the associated container for.
 	* return			Resource Container associated with the Resource.
 	*/
-	ResourceContainerType* GetContainer(ResourceType* Resource)
+	ResourceContainerType* GetContainer(ResourceType* Resource) const
+	{
+		checkf(Resource, TEXT("%s::GetContainer: Resource is NULL."), *Name);
+
+		TCsDoubleLinkedList<ResourceContainerType*>* Current = AllocatedHead;
+		TCsDoubleLinkedList<ResourceContainerType*>* Next    = Current;
+
+		while (Next)
+		{
+			Current					 = Next;
+			ResourceContainerType* M = **Current;
+			Next					 = Current->GetNextLink();
+
+			ResourceType* R = M->Get();
+
+			if (R == Resource)
+			{
+				return M;
+			}
+		}
+		return nullptr;
+	}
+
+	/**
+	* Get the container that holds the Resource of type: ResourceType.
+	* NOTE: This process is O(n). 
+	* 
+	* @param Resource	Resource to find the associated container for.
+	* return			Resource Container associated with the Resource.
+	*/
+	const ResourceContainerType* GetContainer(const ResourceType* Resource) const
 	{
 		checkf(Resource, TEXT("%s::GetContainer: Resource is NULL."), *Name);
 
@@ -499,7 +545,9 @@ public:
 
 		for (int32 I = 0; I < PoolSize; ++I)
 		{
-			PoolIndex				 = (PoolIndex + 1) & PoolSizeMinusOne;
+			//PoolIndex				 = (PoolIndex + 1) & PoolSizeMinusOne;
+			((*this).*AdvancePoolIndex)();
+			
 			ResourceContainerType* M = Pool[PoolIndex];
 
 			if (!M->IsAllocated())
@@ -538,7 +586,9 @@ public:
 		
 		for (int32 I = 0; I < PoolSize; ++I)
 		{
-			PoolIndex				 = (PoolIndex + 1) & PoolSizeMinusOne;
+			//PoolIndex				 = (PoolIndex + 1) & PoolSizeMinusOne;
+			((*this).*AdvancePoolIndex)();
+
 			ResourceContainerType* M = Pool[PoolIndex];
 
 			if (!M->IsAllocated())
@@ -595,7 +645,9 @@ public:
 		
 		for (int32 I = 0; I < PoolSize; ++I)
 		{
-			PoolIndex				 = (PoolIndex + 1) & PoolSizeMinusOne;
+			//PoolIndex				 = (PoolIndex + 1) & PoolSizeMinusOne;
+			((*this).*AdvancePoolIndex)();
+
 			ResourceContainerType* M = Pool[PoolIndex];
 
 			if (!M->IsAllocated())
@@ -662,6 +714,7 @@ public:
 
 		M->Deallocate();
 		RemoveActiveLink(&(Links[Index]));
+		AllocationOrder.Promote(Index);
 		--AllocatedSize;
 		return true;
 	}
@@ -702,6 +755,7 @@ public:
 
 		M->Deallocate();
 		RemoveActiveLink(&(Links[Index]));
+		AllocationOrder.Promote(Index);
 		--AllocatedSize;
 		return true;
 	}
@@ -731,6 +785,7 @@ public:
 
 		M->Deallocate();
 		RemoveActiveLink(&(Links[Index]));
+		AllocationOrder.Promote(Index);
 		--AllocatedSize;
 		return true;
 	}
@@ -766,6 +821,7 @@ public:
 			RemoveActiveLink(&(Links[Index]));
 			--AllocatedSize;
 		}
+		AllocationOrder.Reset();
 	}
 
 #pragma endregion Deallocate
@@ -836,5 +892,3 @@ public:
 
 #pragma endregion Stack
 };
-
-//#endif // #ifndef __CS_MANAGER_RESOURCE_POINTER_TYPE_FIXED_H__

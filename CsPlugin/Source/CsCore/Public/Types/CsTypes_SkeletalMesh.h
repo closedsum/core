@@ -38,6 +38,13 @@ public:
 	FORCEINLINE USkeletalMesh* Get() const { return Mesh_Internal; }
 
 	/**
+	* Get the pointer to the Hard reference to the USkeletalMesh asset.
+	*
+	* return Skeletal Mesh
+	*/
+	FORCEINLINE USkeletalMesh** GetPtr() { return &Mesh_Internal; }
+
+	/**
 	* Get the Hard reference to the USkeletalMesh asset.
 	*
 	* @param Context	The calling context.
@@ -64,6 +71,12 @@ public:
 		checkf(Mesh_Internal, TEXT("FCsSkeletalMesh::GetChecked: Mesh has NOT been loaded from Path @ %s."), *(Mesh.ToSoftObjectPath().ToString()));
 
 		return Mesh_Internal;
+	}
+
+	bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
 	}
 };
 #pragma endregion FCsSkeletalMesh

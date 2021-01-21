@@ -7,6 +7,7 @@
 #include "Managers/SkeletalMesh/CsCVars_Manager_SkeletalMeshActor.h"
 // Library
 #include "Library/CsLibrary_Property.h"
+#include "Managers/SkeletalMesh/Payload/CsLibrary_Payload_SkeletalMeshActor.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Managers
@@ -34,13 +35,18 @@
 
 namespace NCsManagerSkeletalMeshActor
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_SkeletalMeshActor, InitInternalFromSettings);
-	}
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_SkeletalMeshActor, SetupInternal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_SkeletalMeshActor, Spawn);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_SkeletalMeshActor, InitInternalFromSettings);
+		}
 
-	namespace Name
-	{
+		namespace Name
+		{
+		}
 	}
 }
 
@@ -276,6 +282,16 @@ void UCsManager_SkeletalMeshActor::SetMyRoot(UObject* InRoot)
 
 void UCsManager_SkeletalMeshActor::SetupInternal()
 {
+	using namespace NCsManagerSkeletalMeshActor::NCached;
+
+	const FString& Context = Str::SetupInternal;
+
+	// Populate EnumMaps
+	UWorld* World				= MyRoot->GetWorld();
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+
+	NCsSkeletalMeshActor::PopulateEnumMapFromSettings(Context, GameInstance);
+
 	// Delegates
 	{
 		// Log
@@ -320,7 +336,7 @@ void UCsManager_SkeletalMeshActor::SetupInternal()
 
 void UCsManager_SkeletalMeshActor::InitInternalFromSettings()
 {
-	using namespace NCsManagerSkeletalMeshActor;
+	using namespace NCsManagerSkeletalMeshActor::NCached;
 
 	const FString& Context = Str::InitInternalFromSettings;
 
@@ -624,19 +640,15 @@ PayloadType* UCsManager_SkeletalMeshActor::AllocatePayload(const FECsSkeletalMes
 const FCsSkeletalMeshActorPooled* UCsManager_SkeletalMeshActor::Spawn(const FECsSkeletalMeshActor& Type, PayloadType* Payload)
 {
 #undef PayloadType
-	if (Internal.IsExhausted(Type))
-	{
-		const FCsSkeletalMeshActorPooled* AllocatedHead = Internal.GetAllocatedHeadObject(Type);
+	
+	using namespace NCsManagerSkeletalMeshActor::NCached;
 
-#if !UE_BUILD_SHIPPING
-		if (UObject* Object = AllocatedHead->GetObject())
-		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_SkeletalMeshActor::Spawn: Deallocating object: %s as pool for Type: %s is exhausted."), *(Object->GetName()), Type.ToChar());
-		}
-#endif // #if !UE_BUILD_SHIPPING
+	const FString& Context = Str::Spawn;
 
-		Internal.Destroy(Type, AllocatedHead);
-	}
+	typedef NCsSkeletalMeshActor::NPayload::FLibrary PayloadLibrary;
+
+	check(PayloadLibrary::IsValidChecked(Context, Payload));
+
 	return Internal.Spawn(Type, Payload);
 }
 

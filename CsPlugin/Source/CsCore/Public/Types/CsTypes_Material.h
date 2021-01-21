@@ -173,6 +173,81 @@ public:
 
 	FORCEINLINE TArray<UMaterialInterface*>* GetPtr() { return &Materials_Internal; }
 	FORCEINLINE const TArray<UMaterialInterface*>* GetPtr() const { return &Materials_Internal; }
+
+	/**
+	* Get the Hard references to the array of Materials of type: UMaterialInterface.
+	*
+	* @param Context	The calling context.
+	* return			Materials
+	*/
+	FORCEINLINE const TArray<UMaterialInterface*>& GetChecked(const FString& Context) const
+	{ 
+		checkf(Materials.Num() > CS_EMPTY, TEXT("%s: No Materials set."), *Context);
+
+		checkf(Materials.Num() == Materials_Internal.Num(), TEXT("%s: Mismatch between Soft and Hard references to materials, %d != %d."), *Context, Materials.Num(), Materials_Internal.Num());
+
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UMaterialInterface>& SoftObject = Materials[I];
+
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: Materials[%d] is NULL."), *Context, I);
+
+			UMaterialInterface* Material = Materials_Internal[I];
+	
+			checkf(Material, TEXT("%s: Materials[%d] has NOT been loaded from Path @ %s."), *Context, I, *(SoftObject.ToSoftObjectPath().ToString()));
+		}
+		return Materials_Internal; 
+	}
+
+	/**
+	* Get the Hard references to the array of Materials of type: UMaterialInterface.
+	*
+	* @param Context	The calling context.
+	* return			Materials
+	*/
+	FORCEINLINE const TArray<UMaterialInterface*>& GetChecked() const
+	{
+		checkf(Materials.Num() > CS_EMPTY, TEXT("FCsTArrayMaterialnterface::GetChecked: No Materials set."));
+
+		checkf(Materials.Num() == Materials_Internal.Num(), TEXT("FCsTArrayMaterialnterface::GetChecked: Mismatch between Soft and Hard references to materials, %d != %d."), Materials.Num(), Materials_Internal.Num());
+
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UMaterialInterface>& SoftObject = Materials[I];
+
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("FCsTArrayMaterialnterface::GetChecked: Materials[%d] is NULL."), I);
+
+			UMaterialInterface* Material = Materials_Internal[I];
+
+			checkf(Material, TEXT("FCsTArrayMaterialnterface::GetChecked: Materials[%d] has NOT been loaded from Path @ %s."), I, *(SoftObject.ToSoftObjectPath().ToString()));
+		}
+		return Materials_Internal;
+	}
+
+	bool IsValidChecked(const FString& Context) const
+	{
+		checkf(Materials.Num() > CS_EMPTY, TEXT("%s: No Materials set."), *Context);
+
+		checkf(Materials.Num() == Materials_Internal.Num(), TEXT("%s: Mismatch between Soft and Hard references to materials, %d != %d."), *Context, Materials.Num(), Materials_Internal.Num());
+
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UMaterialInterface>& SoftObject = Materials[I];
+
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: Materials[%d] is NULL."), *Context, I);
+
+			UMaterialInterface* Material = Materials_Internal[I];
+
+			checkf(Material, TEXT("%s: Materials[%d] has NOT been loaded from Path @ %s."), *Context, I, *(SoftObject.ToSoftObjectPath().ToString()));
+		}
+		return true;
+	}
 };
 
 #pragma endregion FCsTArrayMaterialnterface

@@ -18,6 +18,8 @@ class UDamageType;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 // NCsSkeletalMeshActor::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSkeletalMeshActor, NPayload, IPayload)
+// NCsSkeletalMeshActor::NCache::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSkeletalMeshActor, NCache, FImpl)
 
 /**
 * 
@@ -31,6 +33,7 @@ class CSCORE_API ACsSkeletalMeshActorPooledImpl : public ASkeletalMeshActor,
 	GENERATED_UCLASS_BODY()
 
 #define CacheType NCsPooledObject::NCache::ICache
+#define CacheImplType NCsSkeletalMeshActor::NCache::FImpl
 #define PayloadType NCsPooledObject::NPayload::IPayload
 
 // UObject Interface
@@ -64,6 +67,7 @@ public:
 protected:
 
 	CacheType* Cache;
+	CacheImplType* CacheImpl;
 
 	void ConstructCache();
 
@@ -95,5 +99,6 @@ protected:
 	void Deallocate_Internal();
 
 #undef CacheType
+#undef CacheImplType
 #undef PayloadType
 };

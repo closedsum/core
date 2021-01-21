@@ -4,6 +4,7 @@
 #pragma once
 
 class USkeletalMesh;
+class UMaterialInterface;
 
 // NCsSkeletalMeshActor::NParams::IParams
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSkeletalMeshActor, NParams, IParams)
@@ -33,6 +34,13 @@ namespace NCsSkeletalMeshActor
 			* return SkeletalMesh Asset
 			*/
 			virtual USkeletalMesh* GetSkeletalMesh() const = 0;
+
+			/**
+			* Get the Materials to apply to the SkeletalMesh asset.
+			* 
+			* return Materials
+			*/
+			virtual const TArray<UMaterialInterface*>& GetMaterials() const = 0;
 
 			/**
 			* Get the Deallocate Method. Used to determine the conditions

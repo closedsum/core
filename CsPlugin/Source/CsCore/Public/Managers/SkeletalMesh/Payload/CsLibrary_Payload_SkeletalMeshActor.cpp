@@ -45,7 +45,10 @@ namespace NCsSkeletalMeshActor
 
 			check(Shot.IsValidChecked(Context));
 
-			Payload->Mesh					  = Shot.GetMesh();
+			Payload->Mesh = Shot.GetMesh();
+
+			Payload->SetMaterials(Shot.GetMaterials());
+
 			Payload->DeallocateMethod		  = Shot.GetDeallocateMethod();
 			Payload->LifeTime				  = Shot.GetLifeTime();
 			Payload->AttachmentTransformRules = Shot.GetAttachmentTransformRules();

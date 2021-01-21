@@ -457,6 +457,7 @@ struct CSCORE_API EMCsTransformRules : public TCsEnumFlagMap<ECsTransformRules>
 	CS_ENUM_FLAG_MAP_BODY(EMCsTransformRules, ECsTransformRules)
 };
 
+class USceneComponent;
 class AActor;
 
 namespace NCsTransformRules
@@ -474,6 +475,17 @@ namespace NCsTransformRules
 	extern CSCORE_API const int32 All;
 
 	/**
+	* Set the relative transform of a SceneComponent to Transform based on some Rules,
+	* which determine which component of the Transform to use.
+	* See ECsTransformRules.
+	*
+	* @param Component
+	* @param Transform
+	* @param Rules		Bit mask using the bit flag ECsTransformRules.
+	*/
+	CSCORE_API void SetRelativeTransform(USceneComponent* Component, const FTransform& Transform, const int32& Rules);
+
+	/**
 	* Set the relative transform of an Actor to Transform based on some Rules,
 	* which determine which component of the Transform to use.
 	* See ECsTransformRules. 
@@ -483,6 +495,17 @@ namespace NCsTransformRules
 	* @param Rules		Bit mask using the bit flag ECsTransformRules.
 	*/
 	CSCORE_API void SetRelativeTransform(AActor* Actor, const FTransform& Transform, const int32& Rules);
+
+	/**
+	* Set the transform of a SceneComponent to Transform based on some Rules,
+	* which determine which component of the Transform to use.
+	* See ECsTransformRules.
+	*
+	* @param Component
+	* @param Transform
+	* @param Rules		Bit mask using the bit flag ECsTransformRules.
+	*/
+	CSCORE_API void SetTransform(USceneComponent* Component, const FTransform& Transform, const int32& Rules);
 
 	/**
 	* Set the transform of an Actor to Transform based on some Rules,

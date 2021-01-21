@@ -18,8 +18,6 @@ namespace NCsSkeletalMeshActor
 
 				FOneShot::FOneShot() :
 					InterfaceMap(nullptr),
-					Materials(),
-					Materials_Emu(nullptr),
 					Anim(nullptr),
 					Anim_Emu(nullptr)
 				{
@@ -31,7 +29,6 @@ namespace NCsSkeletalMeshActor
 
 					InterfaceMap->Add<ParamsType>(static_cast<ParamsType*>(this));
 
-					Materials_Emu = &Materials;
 					Anim_Emu = &Anim;
 				}
 
@@ -84,7 +81,8 @@ void FCsSkeletalMeshAnimSequenceOneShot::CopyShot(ShotType* Shot)
 {
 #undef ShotType
 
-	Shot->SetMesh(&(Mesh.Mesh_Internal));
+	Shot->SetMesh(Mesh.Mesh.GetPtr());
+	Shot->SetMaterials(Mesh.Materials.GetPtr());
 	Shot->SetType(&(Mesh.Type));
 	Shot->SetDeallocateMethod(Mesh.GetDeallocateMethodPtr());
 	Shot->SetLifeTime(&(Mesh.LifeTime));
@@ -92,7 +90,6 @@ void FCsSkeletalMeshAnimSequenceOneShot::CopyShot(ShotType* Shot)
 	Shot->SetBone(&(Mesh.Bone));
 	Shot->SetTransformRules(&(Mesh.TransformRules));
 	Shot->SetTransform(&(Mesh.Transform));
-	Shot->Params.SetMaterials(&(Materials.Materials_Internal));
 	Shot->Params.SetAnim(&(Anim.Anim_Internal));
 }
 

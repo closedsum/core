@@ -23,9 +23,9 @@
 #define CS_CLEAR_BITFLAG(Bitmask, Bit) (Bitmask &= ~static_cast<uint32>(Bit))
 
 #if !UE_BUILD_SHIPPING
-#define NON_SHIPPING_EXPR(__Expr) __Expr
+#define CS_NON_SHIPPING_EXPR(__Expr) __Expr
 #else
-#define NON_SHIPPING_EXPR(__Expr)
+#define CS_NON_SHIPPING_EXPR(__Expr)
 #endif //#if !UE_BUILD_SHIPPING
 
 #define CS_STRINGIFY(x) #x

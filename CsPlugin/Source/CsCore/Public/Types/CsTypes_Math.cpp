@@ -43,6 +43,33 @@ namespace NCsTransformRules
 	CSCORE_API const int32 None = 0;
 	CSCORE_API const int32 All = 7; // 1 + 2 + 4
 
+	void SetRelativeTransform(USceneComponent* Component, const FTransform& Transform, const int32& Rules)
+	{
+		// Location | Rotation | Scale
+		if (Rules == All)
+		{
+			Component->SetRelativeTransform(Transform);
+		}
+		else
+		{
+			// Location
+			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Location))
+			{
+				Component->SetRelativeLocation(Transform.GetLocation());
+			}
+			// Rotation
+			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Rotation))
+			{
+				Component->SetRelativeRotation(Transform.GetRotation().Rotator());
+			}
+			// Scale
+			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Scale))
+			{
+				Component->SetRelativeScale3D(Transform.GetScale3D());
+			}
+		}
+	}
+
 	void SetRelativeTransform(AActor* Actor, const FTransform& Transform, const int32& Rules)
 	{
 		// Location | Rotation | Scale
@@ -66,6 +93,33 @@ namespace NCsTransformRules
 			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Scale))
 			{
 				Actor->SetActorRelativeScale3D(Transform.GetScale3D());
+			}
+		}
+	}
+
+	void SetTransform(USceneComponent* Component, const FTransform& Transform, const int32& Rules)
+	{
+		// Location | Rotation | Scale
+		if (Rules == All)
+		{
+			Component->SetWorldTransform(Transform);
+		}
+		else
+		{
+			// Location
+			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Location))
+			{
+				Component->SetWorldLocation(Transform.GetLocation());
+			}
+			// Rotation
+			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Rotation))
+			{
+				Component->SetWorldRotation(Transform.GetRotation().Rotator());
+			}
+			// Scale
+			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Scale))
+			{
+				Component->SetWorldScale3D(Transform.GetScale3D());
 			}
 		}
 	}

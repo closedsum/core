@@ -2,10 +2,17 @@
 #include "Managers/SkeletalMesh/CsSkeletalMeshActorPooledImpl.h"
 #include "CsCore.h"
 
-#include "Library/CsLibrary_Common.h"
-// Sound
+// Types
+#include "Types/CsTypes_AttachDetach.h"
+#include "Types/CsTypes_Math.h"
+// Library
+#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+#include "Managers/SkeletalMesh/Payload/CsLibrary_Payload_SkeletalMeshActor.h"
+#include "Library/CsLibrary_Material.h"
+// SkeletalMesh
 #include "Managers/SkeletalMesh/Cache/CsCache_SkeletalMeshActorImpl.h"
 #include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"
+#include "Managers/SkeletalMesh/Params/CsParams_SkeletalMeshActor.h"
 
 // Cached
 #pragma region
@@ -24,10 +31,23 @@ namespace NCsSkeletalMeshActorImpl
 
 #pragma endregion Cached
 
-ACsSkeletalMeshActorPooledImpl::ACsSkeletalMeshActorPooledImpl(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+ACsSkeletalMeshActorPooledImpl::ACsSkeletalMeshActorPooledImpl(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	Cache(nullptr),
+	CacheImpl(nullptr)
 {
 	PrimaryActorTick.bCanEverTick		   = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
+
+	GetSkeletalMeshComponent()->SetNotifyRigidBodyCollision(false);
+	GetSkeletalMeshComponent()->SetGenerateOverlapEvents(false);
+	GetSkeletalMeshComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetSkeletalMeshComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	GetSkeletalMeshComponent()->SetHiddenInGame(true);
+	GetSkeletalMeshComponent()->SetComponentTickEnabled(false);
+	GetSkeletalMeshComponent()->bNoSkeletonUpdate = true;
+	GetSkeletalMeshComponent()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
+	GetSkeletalMeshComponent()->KinematicBonesUpdateType = EKinematicBonesUpdateToPhysics::SkipAllBones;
 }
 
 // UObject Interface
@@ -41,6 +61,7 @@ void ACsSkeletalMeshActorPooledImpl::BeginDestroy()
 	{
 		delete Cache;
 		Cache = nullptr;
+		CacheImpl = nullptr;
 	}
 }
 
@@ -82,11 +103,6 @@ void ACsSkeletalMeshActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 	const FString& Context = Str::Update;
 
 	// TODO: This should be opaque
-	
-	typedef NCsSkeletalMeshActor::NCache::FImpl CacheImplType;
-
-	CacheImplType* CacheImpl = NCsInterfaceMap::PureStaticCastChecked<CacheImplType>(Context, Cache);
-
 	CacheImpl->Update(DeltaTime);
 }
 
@@ -97,6 +113,7 @@ void ACsSkeletalMeshActorPooledImpl::ConstructCache()
 	typedef NCsSkeletalMeshActor::NCache::FImpl CacheImplType;
 
 	Cache = new CacheImplType();
+	CacheImpl = (CacheImplType*)Cache;
 }
 
 // ICsPooledObject
@@ -113,64 +130,72 @@ void ACsSkeletalMeshActorPooledImpl::Allocate(PayloadType* Payload)
 
 	Cache->Allocate(Payload);
 
-	typedef NCsSkeletalMeshActor::NPayload::IPayload PayloadType;
+	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
+	typedef NCsSkeletalMeshActor::NPayload::IPayload SkeletalMeshPayloadType;
 
-	PayloadType* SkeletalMeshPayload = NCsInterfaceMap::GetInterfaceChecked<PayloadType>(Context, Payload);
+	SkeletalMeshPayloadType* SkeletalMeshPayload = PooledPayloadLibrary::GetInterfaceChecked<SkeletalMeshPayloadType>(Context, Payload);
 
-	/*
-	checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Play: AudioComponent is NULL."));
+	// Set SkeletalMesh
+	GetMeshComponent()->SetSkeletalMesh(SkeletalMeshPayload->GetSkeletalMesh());
+	// Set Materials
+	typedef NCsMaterial::FLibrary MaterialLibrary;
 
-	USoundBase* Sound = Payload->GetSound();
+	MaterialLibrary::SetMaterialsChecked(Context, GetMeshComponent(), SkeletalMeshPayload->GetMaterials());
 
-	checkf(Sound, TEXT("ACsSoundPooledImpl::Play: Sound is NULL."));
+	// If the Parent is set, attach the SkeletalMeshActor to the Parent
+	USceneComponent* Parent = nullptr;
+
+	UObject* Object = Payload->GetParent();
+
+	// SceneComponent
+	if (USceneComponent* Component = Cast<USceneComponent>(Object))
+		Parent = Component;
+	// Actor -> Get RootComponent
+	else
+	if (AActor* Actor = Cast<AActor>(Object))
+		Parent = Actor->GetRootComponent();
+
+	const FTransform& Transform = SkeletalMeshPayload->GetTransform();
+	const int32& TransformRules = SkeletalMeshPayload->GetTransformRules();
+
+	if (Parent)
+	{
+		// TODO: Add check if Bone is Valid for SkeletalMeshComponent
+		GetMeshComponent()->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(SkeletalMeshPayload->GetAttachmentTransformRule()), SkeletalMeshPayload->GetBone());
+
+		NCsTransformRules::SetRelativeTransform(GetMeshComponent(), Transform, TransformRules);
+	}
+	// NO Parent, set the World Transform of the SkeletalMeshComponent
+	else
+	{
+		NCsTransformRules::SetTransform(this, Transform, TransformRules);
+	}
 
 	SetActorTickEnabled(true);
 
-	typedef NCsPooledObject::NPayload::IPayload PayloadInterfaceType;
+	GetMeshComponent()->bNoSkeletonUpdate		 = false;
+	GetMeshComponent()->KinematicBonesUpdateType = EKinematicBonesUpdateToPhysics::SkipSimulatingBones;
 
-	PayloadInterfaceType* ObjectPayload = NCsInterfaceMap::GetInterfaceChecked<PayloadInterfaceType>(Str::Play, Payload);
+	GetMeshComponent()->SetHiddenInGame(false);
+	GetMeshComponent()->SetComponentTickEnabled(true);
 
-	// If the Parent is set, attach the Sound to the Parent
-	if (USceneComponent* Parent = Cast<USceneComponent>(ObjectPayload->GetParent()))
+	// Evaluate any Params
+	typedef NCsSkeletalMeshActor::NParams::IParams ParamsType;
+
+	if (ParamsType* Params = SkeletalMeshPayload->GetParams())
 	{
-		AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Payload->GetAttachmentTransformRule()), Payload->GetBone());
-
-		const FTransform& Transform = Payload->GetTransform();
-		const int32& TransformRules = Payload->GetTransformRules();
-
-		// Location | Rotation | Scale
-		if (TransformRules == NCsTransformRules::All)
+		// OneShot
 		{
-			SetActorRelativeTransform(Transform);
-		}
-		else
-		{
-			// Location
-			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Location))
+			typedef NCsSkeletalMeshActor::NParams::NAnim::NSequence::FOneShot ShotType;
+
+			if (ShotType* Shot = NCsInterfaceMap::SafePureStaticCastChecked<ShotType, ParamsType>(Context, Params))
 			{
-				SetActorRelativeLocation(Transform.GetLocation());
-			}
-			// Rotation
-			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Rotation))
-			{
-				SetActorRelativeRotation(Transform.GetRotation().Rotator());
-			}
-			// Scale
-			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Scale))
-			{
-				SetActorRelativeScale3D(Transform.GetScale3D());
+				UAnimSequence* Anim = Shot->GetAnim();
+
+				GetMeshComponent()->PlayAnimation(Anim, false);
 			}
 		}
 	}
-	// NO Parent, set the World Transform of the Sound
-	else
-	{
-		SetActorTransform(Payload->GetTransform());
-	}
-
-	AudioComponent->SetSound(Sound);
-	AudioComponent->Activate(true);
-	*/
 }
 
 void ACsSkeletalMeshActorPooledImpl::Deallocate()
@@ -188,7 +213,10 @@ void ACsSkeletalMeshActorPooledImpl::Deallocate_Internal()
 	checkf(Component, TEXT("ACsSkeletalMeshActorPooledImpl::Deallocate_Internal: GetSkeletalMeshComponent() is NULL."));
 
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	SetActorRelativeTransform(FTransform::Identity);
 
+	Component->bNoSkeletonUpdate = true;
+	Component->KinematicBonesUpdateType = EKinematicBonesUpdateToPhysics::SkipAllBones;
 	Component->SetSkeletalMesh(nullptr);
 	Component->SetHiddenInGame(true);
 	Component->SetComponentTickEnabled(false);

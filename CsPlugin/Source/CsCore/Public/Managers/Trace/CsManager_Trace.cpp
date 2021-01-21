@@ -394,15 +394,11 @@ void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 			// If COMPLETED, Remove
 			if (Request->bCompleted)
 			{
-#if !UE_BUILD_SHIPPING
-				LogTransaction(Context, ECsTraceTransaction::Complete, Request, Request->Response);
-#endif // #if !UE_BUILD_SHIPPING
+				CS_NON_SHIPPING_EXPR(LogTransaction(Context, ECsTraceTransaction::Complete, Request, Request->Response));
 
 				if (FCsTraceResponse* Response = Request->Response)
 				{
-#if !UE_BUILD_SHIPPING
-					DrawResponse(Request, Response);
-#endif // #if !UE_BUILD_SHIPPING
+					CS_NON_SHIPPING_EXPR(DrawResponse(Request, Response));
 					Request->OnResponse_Event.Broadcast(Response);
 				}
 				PendingRequests.Remove(Request);
@@ -412,9 +408,7 @@ void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 			// Check to remove STALE Request
 			if (Request->HasExpired())
 			{
-#if !UE_BUILD_SHIPPING
-				LogTransaction(Context, ECsTraceTransaction::Discard, Request, Request->Response);
-#endif // #if !UE_BUILD_SHIPPING
+				CS_NON_SHIPPING_EXPR(LogTransaction(Context, ECsTraceTransaction::Discard, Request, Request->Response));
 
 				PendingRequests.Remove(Request);
 				DeallocateRequest(Request);
@@ -495,13 +489,8 @@ bool UCsManager_Trace::ProcessAsyncRequest(FCsTraceRequest* Request)
 
 	checkf(Request->IsValid(), TEXT("%s: Request is NOT Valid."), *Context);
 
-#if !UE_BUILD_SHIPPING
-	LogTransaction(Context, ECsTraceTransaction::Process, Request, nullptr);
-#endif // #if !UE_BUILD_SHIPPING
-
-#if !UE_BUILD_SHIPPING
-	DrawRequest(Request);
-#endif // #if !UE_BUILD_SHIPPING
+	CS_NON_SHIPPING_EXPR(LogTransaction(Context, ECsTraceTransaction::Process, Request, nullptr));
+	CS_NON_SHIPPING_EXPR(DrawRequest(Request));
 
 	Request->bProcessing = true;
 
@@ -558,10 +547,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(FCsTraceRequest* Request)
 		{
 			UE_LOG(LogCs, Warning, TEXT("%s: There is NO Async Line Trace %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *Context, *TraceMethodAsString);
 
-#if !UE_BUILD_SHIPPING
-			LogTransaction(Context, ECsTraceTransaction::Discard, Request, nullptr);
-#endif // #if !UE_BUILD_SHIPPING
-
+			CS_NON_SHIPPING_EXPR(LogTransaction(Context, ECsTraceTransaction::Discard, Request, nullptr));
 			DeallocateRequest(Request);
 			return false;
 		}
@@ -583,10 +569,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(FCsTraceRequest* Request)
 		{
 			UE_LOG(LogCs, Warning, TEXT("%s: There is NO Async Sweep %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *Context, *TraceMethodAsString);
 
-#if !UE_BUILD_SHIPPING
-			LogTransaction(Context, ECsTraceTransaction::Discard, Request, nullptr);
-#endif // #if !UE_BUILD_SHIPPING
-
+			CS_NON_SHIPPING_EXPR(LogTransaction(Context, ECsTraceTransaction::Discard, Request, nullptr));
 			DeallocateRequest(Request);
 			return false;
 		}
@@ -610,10 +593,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(FCsTraceRequest* Request)
 		{
 			UE_LOG(LogCs, Warning, TEXT("%s: There is NO Async Overlap %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *Context, *TraceMethodAsString);
 
-#if !UE_BUILD_SHIPPING
-			LogTransaction(Context, ECsTraceTransaction::Discard, Request, nullptr);
-#endif // #if !UE_BUILD_SHIPPING
-
+			CS_NON_SHIPPING_EXPR(LogTransaction(Context, ECsTraceTransaction::Discard, Request, nullptr));
 			DeallocateRequest(Request);
 			return false;
 		}
@@ -624,10 +604,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(FCsTraceRequest* Request)
 	{
 		UE_LOG(LogCs, Warning, TEXT("%s: There is NO Async Overap Blocking Method."), *Context);
 
-#if !UE_BUILD_SHIPPING
-		LogTransaction(Context, ECsTraceTransaction::Discard, Request, nullptr);
-#endif // #if !UE_BUILD_SHIPPING
-
+		CS_NON_SHIPPING_EXPR(LogTransaction(Context, ECsTraceTransaction::Discard, Request, nullptr));
 		DeallocateRequest(Request);
 		return false;
 	}
@@ -635,10 +612,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(FCsTraceRequest* Request)
 	{
 		UE_LOG(LogCs, Warning, TEXT("%s: Type: %s is NOT Valid. Discarding Request."), *Context, EMCsTraceType::Get().ToChar(Type));
 
-#if !UE_BUILD_SHIPPING
-		LogTransaction(Context, ECsTraceTransaction::Discard, Request, nullptr);
-#endif // #if !UE_BUILD_SHIPPING
-
+		CS_NON_SHIPPING_EXPR(LogTransaction(Context, ECsTraceTransaction::Discard, Request, nullptr));
 		DeallocateRequest(Request);
 		return false;
 	}
@@ -793,9 +767,7 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 
 	Request->StartTime = CurrentWorld->GetTimeSeconds();
 
-#if !UE_BUILD_SHIPPING
-	LogTransaction(Context, ECsTraceTransaction::Receive, Request, nullptr);
-#endif // #if !UE_BUILD_SHIPPING
+	CS_NON_SHIPPING_EXPR(LogTransaction(Context, ECsTraceTransaction::Receive, Request, nullptr));
 
 	bool AddPending = !Request->bForce && ThisFrameCountInfo.TotalCount >= MaxRequestsProcessedPerTick;
 
@@ -830,9 +802,7 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 	// Normal
 	else
 	{
-#if !UE_BUILD_SHIPPING
-		DrawRequest(Request);
-#endif // #if !UE_BUILD_SHIPPING
+		CS_NON_SHIPPING_EXPR(DrawRequest(Request));
 
 		FCsTraceResponse* Response = AllocateResponse();
 		Response->QueueDeallocate();
@@ -1050,13 +1020,8 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 
 		IncrementTraceCount(Request);
 
-#if !UE_BUILD_SHIPPING
-		LogTransaction(Context, ECsTraceTransaction::Complete, Request, Response);
-#endif // #if !UE_BUILD_SHIPPING
-
-#if !UE_BUILD_SHIPPING
-		DrawResponse(Request, Response);
-#endif // #if !UE_BUILD_SHIPPING
+		CS_NON_SHIPPING_EXPR(LogTransaction(Context, ECsTraceTransaction::Complete, Request, Response));
+		CS_NON_SHIPPING_EXPR(DrawResponse(Request, Response));
 
 		DeallocateRequest(Request);
 		return Response;

@@ -7,6 +7,7 @@
 class UObject;
 struct FCsInterfaceMap;
 class USkeletalMesh;
+class UMaterialInterface;
 
 // NCsSkeletalMeshActor::NParams::IParams
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSkeletalMeshActor, NParams, IParams)
@@ -49,6 +50,8 @@ namespace NCsSkeletalMeshActor
 			// SkeletalMeshPayloadType (NCsSkeletalMeshActor::NPayload::IPayload)
 
 			USkeletalMesh* Mesh;
+
+			TArray<UMaterialInterface*> Materials;
 
 			DeallocateMethodType DeallocateMethod;
 
@@ -103,11 +106,24 @@ namespace NCsSkeletalMeshActor
 			template<typename T>
 			FORCEINLINE T* GetParent() const { return Cast<T>(GetParent()); }
 
+			FORCEINLINE void SetMaterials(const TArray<UMaterialInterface*>& InMaterials)
+			{
+				const int32 Count = InMaterials.Num();
+
+				Materials.Reset(FMath::Max(Materials.Max(), Count));
+
+				for (UMaterialInterface* Material : InMaterials)
+				{
+					Materials.Add(Material);
+				}
+			}
+
 		// SkeletalMeshPayloadType (NCsSkeletalMeshActor::NPayload::IPayload)
 		#pragma region
 		public:
 
 			FORCEINLINE USkeletalMesh* GetSkeletalMesh() const { return Mesh; }
+			FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return Materials; }
 			FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return DeallocateMethod; }
 			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
 			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }

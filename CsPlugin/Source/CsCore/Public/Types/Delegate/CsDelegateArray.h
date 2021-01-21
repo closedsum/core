@@ -158,6 +158,6 @@ public:
 				IndexByOrder[I] = INDEX_NONE;
 			}
 		}
-		EndPosition = 0;
+		EndPosition = Count;
 	}
 };

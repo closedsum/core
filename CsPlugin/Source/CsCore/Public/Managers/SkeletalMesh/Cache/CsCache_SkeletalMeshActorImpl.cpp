@@ -5,11 +5,11 @@
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
-// Sound
+// SkeletalMesh
 #include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActor.h"
-//#include "Components/AudioComponent.h"
-// Component
-//#include "Components/SceneComponent.h"
+#include "Managers/SkeletalMesh/Params/CsParams_SkeletalMeshActor.h"
+// Anim
+#include "Animation/AnimSequence.h"
 
 const FName NCsSkeletalMeshActor::NCache::FImpl::Name = FName("NCsSkeletalMeshActor::NCache::FImpl");
 
@@ -17,17 +17,20 @@ namespace NCsSkeletalMeshActor
 {
 	namespace NCache
 	{
-		namespace NImplCached
+		namespace NImpl
 		{
-			namespace Str
+			namespace NCached
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSkeletalMeshActor::NCache::FImpl, Allocate);
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSkeletalMeshActor::NCache::FImpl, Allocate);
+				}
 			}
 		}
 
 		FImpl::FImpl() :
 			InterfaceMap(nullptr),
-			// NCsPooledObject::NCache::ICache
+			// PooledCacheType (NCsPooledObject::NCache::ICache)
 			Index(INDEX_NONE),
 			bAllocated(false),
 			bQueueDeallocate(false),
@@ -40,14 +43,17 @@ namespace NCsSkeletalMeshActor
 			LifeTime(0.0f),
 			StartTime(),
 			ElapsedTime()
-			// NCsSkeletalMeshActor::NCache::ICache
+			// SkeletalMeshCacheType (NCsSkeletalMeshActor::NCache::ICache)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
 			InterfaceMap->SetRootName(FImpl::Name);
 
-			InterfaceMap->Add<NCsPooledObject::NCache::ICache>(static_cast<NCsPooledObject::NCache::ICache*>(this));
-			InterfaceMap->Add<NCsSkeletalMeshActor::NCache::ICache>(static_cast<NCsSkeletalMeshActor::NCache::ICache*>(this));
+			typedef NCsPooledObject::NCache::ICache PooledCacheType;
+			typedef NCsSkeletalMeshActor::NCache::ICache SkeletalMeshCacheType;
+
+			InterfaceMap->Add<PooledCacheType>(static_cast<PooledCacheType*>(this));
+			InterfaceMap->Add<SkeletalMeshCacheType>(static_cast<SkeletalMeshCacheType*>(this));
 		}
 
 		FImpl::~FImpl()
@@ -55,14 +61,19 @@ namespace NCsSkeletalMeshActor
 			delete InterfaceMap;
 		}
 
-		// NCsPooledObject::NCache::ICache
+		// PooledCacheType (NCsPooledObject::NCache::ICache)
 		#pragma region
 
-		void FImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
+		#define PayloadType NCsPooledObject::NPayload::IPayload
+		void FImpl::Allocate(PayloadType* Payload)
 		{
-			using namespace NImplCached;
+		#undef PayloadType
 
-			// NCsPooledObject::NCache::ICache
+			using namespace NImpl::NCached;
+
+			const FString& Context = Str::Allocate;
+
+			// PooledCacheType (NCsPooledObject::NCache::ICache)
 			bAllocated = true;
 			State	   = ECsPooledObjectState::Active;
 			Instigator = Payload->GetInstigator();
@@ -70,9 +81,28 @@ namespace NCsSkeletalMeshActor
 			Parent	   = Payload->GetParent();
 			StartTime  = Payload->GetTime();
 
-			// NCsSkeletalMeshActor::NCache::ICache
-			/*
-			*/
+			// SkeletalMeshCacheType (NCsSkeletalMeshActor::NCache::ICache)
+			typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
+			typedef NCsSkeletalMeshActor::NPayload::IPayload SkeletalMeshPayloadType;
+
+			SkeletalMeshPayloadType* SkeletalMeshPayload = PooledPayloadLibrary::GetInterfaceChecked<SkeletalMeshPayloadType>(Context, Payload);
+
+			typedef NCsSkeletalMeshActor::NParams::IParams ParamsType;
+
+			if (ParamsType* Params = SkeletalMeshPayload->GetParams())
+			{
+				// OneShot
+				{
+					typedef NCsSkeletalMeshActor::NParams::NAnim::NSequence::FOneShot ShotType;
+
+					if (ShotType* Shot = NCsInterfaceMap::SafePureStaticCastChecked<ShotType, ParamsType>(Context, Params))
+					{
+						UAnimSequence* Anim = Shot->GetAnim();
+
+						LifeTime = Anim->RateScale * Anim->SequenceLength;
+					}
+				}
+			}
 		}
 
 		void FImpl::Deallocate()
@@ -82,52 +112,12 @@ namespace NCsSkeletalMeshActor
 
 		void FImpl::QueueDeallocate()
 		{
-			//bQueueDeallocate = true;
-			// Deactivate Audio Component
-			//checkf(AudioComponent, TEXT("NCsSkeletalMeshActor::NCache::FImpl::QueueDeallocate: AudioComponent is NULL."));
-
-			/*
-			AudioComponent->Deactivate();
-
-			// LifeTime
-			if (DeallocateMethod == ECsSoundDeallocateMethod::LifeTime)
-			{
-				// Reset ElapsedTime
-				ElapsedTime.Reset();
-				// Set LifeTime
-				LifeTime = QueuedLifeTime;
-			}
-			*/
+			bQueueDeallocate = true;
 		}
 
 		bool FImpl::ShouldDeallocate() const
 		{
-			//if (bQueueDeallocate)
-			{
-				// LifeTime, let HasLifeTimeExpired handle deallocation
-				//if (DeallocateMethod == ECsSoundDeallocateMethod::LifeTime)
-				{
-					return false;
-				}
-				// Complete
-				//if (DeallocateMethod == ECsSoundDeallocateMethod::Complete)
-				{ 
-					/*
-					checkf(SoundComponent, TEXT("NCsSkeletalMeshActor::NCache::FImpl::ShouldDeallocate: SoundComponent is NULL."));
-
-					FNiagaraSystemInstance* SystemInstance = FXComponent->GetSystemInstance();
-
-					checkf(SystemInstance, TEXT("NCsSkeletalMeshActor::NCache::FImpl::ShouldDeallocate: SystemInstance is NULL on FXComponent: %s."), *(FXComponent->GetName()));
-
-					const ENiagaraExecutionState ExecutionState = SystemInstance->GetActualExecutionState();
-
-					return ExecutionState == ENiagaraExecutionState::Inactive ||
-						   ExecutionState == ENiagaraExecutionState::Complete ||
-						   ExecutionState == ENiagaraExecutionState::Disabled;
-						   */
-				}
-			}
-			return false;
+			return bQueueDeallocate;
 		}
 
 		bool FImpl::HasLifeTimeExpired()
@@ -137,7 +127,7 @@ namespace NCsSkeletalMeshActor
 
 		void FImpl::Reset()
 		{
-			// NCsPooledObject::NCache::ICache
+			// PooledCacheType (NCsPooledObject::NCache::ICache)
 			bAllocated = false;
 			bQueueDeallocate = false;
 			State = ECsPooledObjectState::Inactive;
@@ -148,13 +138,10 @@ namespace NCsSkeletalMeshActor
 			LifeTime = 0.0f;
 			StartTime.Reset();
 			ElapsedTime.Reset();
-			// NCsSkeletalMeshActor::NCache::ICache
-			//AudioComponent = nullptr;
-			//DeallocateMethod = ECsSoundDeallocateMethod::Complete;
-			//QueuedLifeTime = 0.0f;
+			// SkeletalMeshCacheType (NCsSkeletalMeshActor::NCache::ICache)
 		}
 
-		#pragma endregion NCsPooledObject::NCache::ICache
+		#pragma endregion PooledCacheType (NCsPooledObject::NCache::ICache)
 
 		void FImpl::Update(const FCsDeltaTime& DeltaTime)
 		{

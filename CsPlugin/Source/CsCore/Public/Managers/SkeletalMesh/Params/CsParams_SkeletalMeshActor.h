@@ -44,13 +44,12 @@ namespace NCsSkeletalMeshActor
 
 					FCsInterfaceMap* InterfaceMap;
 
-				public:
-
-					TArray<UMaterialInterface*> Materials;
-					TArray<UMaterialInterface*>* Materials_Emu;
+				private:
 
 					UAnimSequence* Anim;
 					UAnimSequence** Anim_Emu;
+
+				public:
 
 					FOneShot();
 					~FOneShot();
@@ -63,9 +62,11 @@ namespace NCsSkeletalMeshActor
 
 				#pragma endregion ICsGetInterfaceMap
 
-					FORCEINLINE void SetMaterials(TArray<UMaterialInterface*>* Value) { Materials_Emu = Value; }
-					FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return *Materials_Emu; }
-
+					FORCEINLINE void SetAnim(UAnimSequence* Value)
+					{
+						Anim = Value;
+						Anim_Emu = &Anim;
+					}
 					FORCEINLINE void SetAnim(UAnimSequence** Value) { Anim_Emu = Value; }
 					FORCEINLINE UAnimSequence* GetAnim() const { return *Anim_Emu; }
 
@@ -86,8 +87,13 @@ namespace NCsSkeletalMeshActor
 			#define DeallocateMethodType NCsSkeletalMeshActor::EDeallocateMethod
 			#define ParamsType NCsSkeletalMeshActor::NParams::NAnim::NSequence::FOneShot
 
+			private:
+
 				USkeletalMesh* Mesh;
 				USkeletalMesh** Mesh_Emu;
+
+				TArray<UMaterialInterface*> Materials;
+				TArray<UMaterialInterface*>* Materials_Emu;
 
 				FECsSkeletalMeshActor Type;
 				FECsSkeletalMeshActor* Type_Emu;
@@ -110,11 +116,17 @@ namespace NCsSkeletalMeshActor
 				FTransform Transform;
 				FTransform* Transform_Emu;
 
+			public:
+
 				ParamsType Params;
+
+			public:
 
 				FOneShot() :
 					Mesh(nullptr),
 					Mesh_Emu(nullptr),
+					Materials(),
+					Materials_Emu(nullptr),
 					Type(),
 					Type_Emu(nullptr),
 					DeallocateMethod(DeallocateMethodType::LifeTime),
@@ -132,6 +144,7 @@ namespace NCsSkeletalMeshActor
 					Params()
 				{
 					Mesh_Emu = &Mesh;
+					Materials_Emu = &Materials;
 					Type_Emu = &Type;
 					DeallocateMethod_Emu = &DeallocateMethod;
 					LifeTime_Emu = &LifeTime;
@@ -141,27 +154,80 @@ namespace NCsSkeletalMeshActor
 					Transform_Emu = &Transform;
 				}
 
+				FORCEINLINE void SetMesh(USkeletalMesh* Value)
+				{
+					Mesh = Value;
+					Mesh_Emu = &Mesh;
+				}
 				FORCEINLINE void SetMesh(USkeletalMesh** Value) { Mesh_Emu = Value; }
 				FORCEINLINE USkeletalMesh* GetMesh() const { return *Mesh_Emu; }
 
+				FORCEINLINE void SetMaterials(const TArray<UMaterialInterface*>& Value)
+				{
+					Materials.Reset(Value.Num());
+
+					for (UMaterialInterface* Material : Value)
+					{
+						Materials.Add(Material);
+					}
+					Materials_Emu = &Materials;
+				}
+				FORCEINLINE void SetMaterials(TArray<UMaterialInterface*>* Value) { Materials_Emu = Value; }
+				FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return *Materials_Emu; }
+
+				FORCEINLINE void SetType(const FECsSkeletalMeshActor& Value)
+				{
+					Type = Value;
+					Type_Emu = &Type;
+				}
 				FORCEINLINE void SetType(FECsSkeletalMeshActor* Value) { Type_Emu = Value; }
 				FORCEINLINE const FECsSkeletalMeshActor& GetType() const { return *Type_Emu; }
 
+				FORCEINLINE void SetDeallocateMethod(const DeallocateMethodType& Value)
+				{
+					DeallocateMethod = Value;
+					DeallocateMethod_Emu = &DeallocateMethod;
+				}
 				FORCEINLINE void SetDeallocateMethod(DeallocateMethodType* Value) { DeallocateMethod_Emu = Value; }
 				FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *DeallocateMethod_Emu; }
 
+				FORCEINLINE void SetLifeTime(const float& Value)
+				{
+					LifeTime = Value;
+					LifeTime_Emu = &LifeTime;
+				}
 				FORCEINLINE void SetLifeTime(float* Value) { LifeTime_Emu = Value; }
 				FORCEINLINE const float& GetLifeTime() const { return *LifeTime_Emu; }
 
+				FORCEINLINE void SetAttachmentTransformRules(const ECsAttachmentTransformRules& Value)
+				{
+					AttachmentTransformRules = Value;
+					AttachementTransformRules_Emu = &AttachmentTransformRules;
+				}
 				FORCEINLINE void SetAttachmentTransformRules(ECsAttachmentTransformRules* Value) { AttachementTransformRules_Emu = Value; }
 				FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRules() const { return *AttachementTransformRules_Emu; }
 
+				FORCEINLINE void SetBone(const FName& Value)
+				{
+					Bone = Value;
+					Bone_Emu = &Bone;
+				}
 				FORCEINLINE void SetBone(FName* Value) { Bone_Emu = Value; }
 				FORCEINLINE const FName& GetBone() const { return *Bone_Emu; }
 
+				FORCEINLINE void SetTransformRules(const int32& Value)
+				{
+					TransformRules = Value;
+					TransformRules_Emu = &TransformRules;
+				}
 				FORCEINLINE void SetTransformRules(int32* Value) { TransformRules_Emu = Value; }
 				FORCEINLINE const int32& GetTransformRules() const { return *TransformRules_Emu; }
 
+				FORCEINLINE void SetTransform(const FTransform& Value)
+				{
+					Transform = Value;
+					Transform_Emu = &Transform;
+				}
 				FORCEINLINE void SetTransform(FTransform* Value) { Transform_Emu = Value; }
 				FORCEINLINE const FTransform& GetTransform() const { return *Transform_Emu; }
 
@@ -192,14 +258,10 @@ public:
 	FCsSkeletalMeshActorPooledInfo Mesh;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FCsTArrayMaterialnterface Materials;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FCsAnimSequence Anim;
 
 	FCsSkeletalMeshAnimSequenceOneShot() :
 		Mesh(),
-		Materials(),
 		Anim()
 	{
 	}

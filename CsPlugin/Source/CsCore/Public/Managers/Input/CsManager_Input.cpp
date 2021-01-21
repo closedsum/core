@@ -1423,28 +1423,28 @@ void UCsManager_Input::FActiveMode::OnPostProcessInput(const float& DeltaTime, c
 				// Mouse
 				if (Key.IsMouseButton())
 				{
-					NON_SHIPPING_EXPR(PrintSet(Context, Action, Info, ECsInputMode::Mouse));
+					CS_NON_SHIPPING_EXPR(PrintSet(Context, Action, Info, ECsInputMode::Mouse));
 					CS_SET_BLUEPRINT_BITFLAG(Value, ECsInputMode::Mouse);
 				}
 				// Gamepad
 				else
 				if (Key.IsGamepadKey())
 				{
-					NON_SHIPPING_EXPR(PrintSet(Context, Action, Info, ECsInputMode::Gamepad));
+					CS_NON_SHIPPING_EXPR(PrintSet(Context, Action, Info, ECsInputMode::Gamepad));
 					CS_SET_BLUEPRINT_BITFLAG(Value, ECsInputMode::Gamepad);
 				}
 				// Touch
 				else
 				if (Key.IsTouch())
 				{
-					NON_SHIPPING_EXPR(PrintSet(Context, Action, Info, ECsInputMode::Touch));
+					CS_NON_SHIPPING_EXPR(PrintSet(Context, Action, Info, ECsInputMode::Touch));
 					CS_SET_BLUEPRINT_BITFLAG(Value, ECsInputMode::Touch);
 				}
 				// Keyboard - DEFAULT
 				else
 				if (Key != EKeys::AnyKey)
 				{
-					NON_SHIPPING_EXPR(PrintSet(Context, Action, Info, ECsInputMode::Keyboard));
+					CS_NON_SHIPPING_EXPR(PrintSet(Context, Action, Info, ECsInputMode::Keyboard));
 					CS_SET_BLUEPRINT_BITFLAG(Value, ECsInputMode::Keyboard);
 				}
 			}
@@ -1467,7 +1467,7 @@ void UCsManager_Input::FActiveMode::OnPostProcessInput(const float& DeltaTime, c
 			{
 				if (Action == NCsInputAction::Default__MousePositionXY__)
 				{
-					NON_SHIPPING_EXPR(PrintSet(Context, Action, Info, ECsInputMode::Mouse));
+					CS_NON_SHIPPING_EXPR(PrintSet(Context, Action, Info, ECsInputMode::Mouse));
 					CS_SET_BLUEPRINT_BITFLAG(Value, ECsInputMode::Mouse);
 				}
 			}
@@ -1476,7 +1476,7 @@ void UCsManager_Input::FActiveMode::OnPostProcessInput(const float& DeltaTime, c
 
 	if (Value != Last_Value)
 	{
-		NON_SHIPPING_EXPR(PrintSummary(Context));
+		CS_NON_SHIPPING_EXPR(PrintSummary(Context));
 		OnChange_Event.Broadcast(Last_Value, Value);
 	}
 

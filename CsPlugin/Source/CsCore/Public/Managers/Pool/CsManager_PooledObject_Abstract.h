@@ -1,12 +1,15 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
+// PooledObject
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/Pool/Cache/CsCache_PooledObject.h"
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Managers/Pool/CsTypes_Manager_PooledObject.h"
-#include "Containers/CsDoubleLinkedList.h"
+// Actor
 #include "GameFramework/Actor.h"
+// Utility
+#include "Utility/CsAllocationOrder.h"
+// Timer
 #include "Managers/ScopedTimer/CsManager_ScopedTimer.h"
 
 class UWorld;
@@ -155,10 +158,12 @@ namespace NCsPooledObject
 				Links(),
 				PoolSize(0),
 				PoolIndex(0),
+				AdvancePoolIndex(nullptr),
 				AllocatedObjects(),
 				AllocatedHead(nullptr),
 				AllocatedTail(nullptr),
 				AllocatedObjectsSize(0),
+				AllocationOrder(),
 				OnAddToPool_Event(),
 				OnAddToPool_UpdateScriptDelegates_Impl(),
 				OnUpdate_Object_Event(),
@@ -184,6 +189,8 @@ namespace NCsPooledObject
 				OnDeallocate_Event.Clear();
 
 				Pool.Reset();
+
+				AdvancePoolIndex = &TAbstract<InterfaceType, InterfaceContainerType, PayloadType>::AdvancePoolIndexByOrder;
 
 				ConstructContainer_Impl.BindRaw(this, &TAbstract<InterfaceType, InterfaceContainerType, PayloadType>::ConstructContainer);
 				ConstructObject_Impl.BindRaw(this, &TAbstract<InterfaceType, InterfaceContainerType, PayloadType>::ConstructObject);
@@ -308,6 +315,7 @@ namespace NCsPooledObject
 				Pool.Reset();
 				PoolSize = 0;
 				AllocatedObjects.Reset();
+				AllocationOrder.Shutdown();
 
 				for (PooledPayloadType* P : PooledObjectPayloads)
 				{
@@ -554,6 +562,8 @@ namespace NCsPooledObject
 			/** */
 			int32 PoolIndex;
 
+			void (TAbstract<InterfaceType, InterfaceContainerType, PayloadType>::*AdvancePoolIndex)();
+
 			/** */
 			TArray<InterfaceContainerType*> AllocatedObjects;
 			/** */
@@ -562,6 +572,8 @@ namespace NCsPooledObject
 			TCsDoubleLinkedList<InterfaceContainerType*>* AllocatedTail;
 			/** */
 			int32 AllocatedObjectsSize;
+
+			FCsAllocationOrder AllocationOrder;
 
 		public:
 
@@ -581,6 +593,7 @@ namespace NCsPooledObject
 				Pool.Reset(PoolSize);
 				Links.Reset(PoolSize);
 				AllocatedObjects.Reset(PoolSize);
+				AllocationOrder.Create(PoolSize);
 
 				for (int32 I = 0; I < Size; ++I)
 				{
@@ -715,6 +728,8 @@ namespace NCsPooledObject
 				TCsDoubleLinkedList<InterfaceContainerType*>* Link = Links.Last();
 				(**Link) = O;
 
+				AllocationOrder.Add();
+
 				++PoolSize;
 
 				OnAddToPool_UpdateScriptDelegates_Impl.ExecuteIfBound(O);
@@ -803,7 +818,7 @@ namespace NCsPooledObject
 
 		#pragma endregion Pool
 
-			// Allocated Objects
+				// Allocated Objects
 		#pragma region
 
 			/**
@@ -1073,6 +1088,10 @@ namespace NCsPooledObject
 				return AllocatedObjectsSize == PoolSize;
 			}
 
+			FORCEINLINE void AdvancePoolIndexByIncrement() { PoolIndex = (PoolIndex + 1) % PoolSize; }
+
+			FORCEINLINE void AdvancePoolIndexByOrder() { PoolIndex = AllocationOrder.Advance(); }
+
 			// Find
 		#pragma region
 		public:
@@ -1281,14 +1300,13 @@ namespace NCsPooledObject
 					// Check if PooledObject is queued for Deallocation
 					if (Cache->ShouldDeallocate())
 					{
-		#if !UE_BUILD_SHIPPING
-						LogTransaction_Impl.Execute(Context, ECsPoolTransaction::DeallocateByQueue, O);
-		#endif // #if !UE_BUILD_SHIPPING
+						CS_NON_SHIPPING_EXPR(LogTransaction_Impl.Execute(Context, ECsPoolTransaction::DeallocateByQueue, O));
 						O->Deallocate();
 
 						checkf(!Cache->IsAllocated(), TEXT("%s: Failed to deallocate object."), *Context);
 
 						RemoveAllocatedLink(Current);
+						AllocationOrder.Promote(Cache->GetIndex());
 
 						OnDeallocate_Event.Broadcast(O);
 						continue;
@@ -1297,24 +1315,22 @@ namespace NCsPooledObject
 					// Check if PooledObject was Deallocated NOT in a normal way (i.e. Out of Bounds)
 					if (!Cache->IsAllocated())
 					{
-		#if !UE_BUILD_SHIPPING
-						LogTransaction_Impl.Execute(Context, ECsPoolTransaction::DeallocateByUnknown, O);
-		#endif // #if !UE_BUILD_SHIPPING
+						CS_NON_SHIPPING_EXPR(LogTransaction_Impl.Execute(Context, ECsPoolTransaction::DeallocateByUnknown, O));
 						RemoveAllocatedLink(Current);
+						AllocationOrder.Promote(Cache->GetIndex());
 						continue;
 					}
 
 					// Check if PooledObject LifeTime has expired.
 					if (Cache->HasLifeTimeExpired())
 					{
-		#if !UE_BUILD_SHIPPING
-						LogTransaction_Impl.Execute(Context, ECsPoolTransaction::DeallocateByLifeTime, O);
-		#endif // #if !UE_BUILD_SHIPPING
+						CS_NON_SHIPPING_EXPR(LogTransaction_Impl.Execute(Context, ECsPoolTransaction::DeallocateByLifeTime, O));
 						O->Deallocate();
 
 						checkf(!Cache->IsAllocated(), TEXT("%s: Failed to deallocate object."), *Context);
 
 						RemoveAllocatedLink(Current);
+						AllocationOrder.Promote(Cache->GetIndex());
 
 						OnDeallocate_Event.Broadcast(O);
 						continue;
@@ -1394,7 +1410,9 @@ namespace NCsPooledObject
 
 				for (int32 I = 0; I < PoolSize; ++I)
 				{
-					PoolIndex				  = (PoolIndex + 1) % PoolSize;
+					//PoolIndex				  = (PoolIndex + 1) % PoolSize;
+					((*this).*AdvancePoolIndex)();
+
 					InterfaceContainerType* O = Pool[PoolIndex];
 
 					CacheType* Cache = O->GetCache();
@@ -1458,9 +1476,7 @@ namespace NCsPooledObject
 				TCsDoubleLinkedList<InterfaceContainerType*>* Link = Links[Index];
 				InterfaceContainerType* O						   = **Link;
 
-		#if !UE_BUILD_SHIPPING
-				LogTransaction_Impl.Execute(Context, ECsPoolTransaction::Deallocate, O);
-		#endif // #if !UE_BUILD_SHIPPING
+				CS_NON_SHIPPING_EXPR(LogTransaction_Impl.Execute(Context, ECsPoolTransaction::Deallocate, O));
 
 				// Deallocate Object
 				{
@@ -1468,6 +1484,7 @@ namespace NCsPooledObject
 					O->Deallocate();
 				}
 				RemoveAllocatedLink(Link);
+				AllocationOrder.Promote(Index);
 
 				// Update AllocatedObjects
 				TCsDoubleLinkedList<InterfaceContainerType*>* Current = AllocatedHead;
@@ -1541,9 +1558,7 @@ namespace NCsPooledObject
 
 				for (InterfaceContainerType& O : AllocatedObjects)
 				{
-		#if !UE_BUILD_SHIPPING
-					LogTransaction_Impl.Execute(Context, ECsPoolTransaction::Deallocate, O);
-		#endif // #if !UE_BUILD_SHIPPING
+					CS_NON_SHIPPING_EXPR(LogTransaction_Impl.Execute(Context, ECsPoolTransaction::Deallocate, O));
 					O.Deallocate();
 					OnDeallocate_Event.Broadcast(O);
 				}
@@ -1563,6 +1578,8 @@ namespace NCsPooledObject
 
 				AllocatedHead = nullptr;
 				AllocatedTail = nullptr;
+
+				AllocationOrder.Reset();
 			}
 
 		#pragma endregion Allocate / Deallocate

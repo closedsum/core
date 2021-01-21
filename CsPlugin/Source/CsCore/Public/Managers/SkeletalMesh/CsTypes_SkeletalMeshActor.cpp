@@ -121,7 +121,9 @@ namespace NCsSkeletalMeshActorDeallocateMethod
 bool FCsSkeletalMeshActorPooledInfo::IsValidChecked(const FString& Context) const
 {
 	// Check Mesh is Valid.
-	check(GetChecked(Context));
+	check(Mesh.IsValidChecked(Context));
+	// Check Materials is Valid
+	check(Materials.IsValidChecked(Context));
 	// Check Type is Valid
 	check(EMCsSkeletalMeshActor::Get().IsValidEnumChecked(Context, Type));
 

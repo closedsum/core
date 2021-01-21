@@ -88,7 +88,9 @@ namespace NCsSkeletalMeshActor
 			FORCEINLINE void Init(const int32& InIndex) { Index = InIndex; }
 			FORCEINLINE const int32& GetIndex() const { return Index; }
 
-			void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
+		#define PayloadType NCsPooledObject::NPayload::IPayload
+			void Allocate(PayloadType* Payload);
+		#undef PayloadType
 
 			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
 

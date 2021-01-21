@@ -21,6 +21,7 @@ namespace NCsSkeletalMeshActor
 			Time(),
 			// SkeletalMeshPayloadType (NCsSkeletalMeshActor::NPayload::IPayload)
 			Mesh(nullptr),
+			Materials(),
 			DeallocateMethod(DeallocateMethodType::Complete),
 			LifeTime(0.0f),
 			AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
@@ -60,6 +61,7 @@ namespace NCsSkeletalMeshActor
 
 			// SkeletalMeshPayloadType (NCsSkeletalMeshActor::NPayload::IPayload)
 			Mesh = nullptr;
+			Materials.Reset(Materials.Max());
 			DeallocateMethod = DeallocateMethodType::Complete;
 			LifeTime = 0.0f;
 			AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;

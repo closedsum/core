@@ -3,6 +3,8 @@
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/CsTypes_AttachDetach.h"
+#include "Types/CsTypes_SkeletalMesh.h"
+#include "Types/CsTypes_Material.h"
 
 #include "CsTypes_SkeletalMeshActor.generated.h"
 #pragma once
@@ -146,17 +148,13 @@ struct CSCORE_API FCsSkeletalMeshActorPooledInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-	/** Soft reference to a USkeletalMesh asset. */
+	/** Mesh */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSoftObjectPtr<USkeletalMesh> Mesh;
+	FCsSkeletalMesh Mesh;
 
-	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
-	int32 Mesh_LoadFlags;
-
-	/** Hard reference to a USkeletalMesh asset. */
-	UPROPERTY(Transient, BlueprintReadOnly)
-	USkeletalMesh* Mesh_Internal;
+	/** Materials */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FCsTArrayMaterialnterface Materials;
 
 	/** The SkeletalMeshActor Type. This is used to group SkeletalMeshActors into different categories 
 	    and can be used by a Manager pooling SkeletalMeshActors to Spawn the correct
@@ -215,9 +213,8 @@ public:
 public:
 
 	FCsSkeletalMeshActorPooledInfo() :
-		Mesh(nullptr),
-		Mesh_LoadFlags(0),
-		Mesh_Internal(nullptr),
+		Mesh(),
+		Materials(),
 		Type(),
 		DeallocateMethod(ECsSkeletalMeshActorDeallocateMethod::Complete),
 		DeallocateMethod_Internal(nullptr),
@@ -243,42 +240,6 @@ public:
 	FORCEINLINE DeallocateMethodType* GetDeallocateMethodPtr() const { return DeallocateMethod_Internal; }
 
 #undef DeallocateMethodType
-
-	/**
-	* Get the Hard reference to the USkeletalMesh asset.
-	*
-	* return Static Mesh
-	*/
-	FORCEINLINE USkeletalMesh* Get() const { return Mesh_Internal; }
-
-	/**
-	* Get the Hard reference to the USkeletalMesh asset.
-	*
-	* @param Context	The calling context.
-	* return			Static Mesh
-	*/
-	FORCEINLINE USkeletalMesh* GetChecked(const FString& Context) const 
-	{ 
-		checkf(Mesh.ToSoftObjectPath().IsValid(), TEXT("%s: Mesh is NULL."), *Context);
-
-		checkf(Mesh_Internal, TEXT("%s: Mesh has NOT been loaded from Path @ %s."), *Context, *(Mesh.ToSoftObjectPath().ToString()));
-
-		return Mesh_Internal; 
-	}
-
-	/**
-	* Get the Hard reference to the USkeletalMesh asset.
-	*
-	* return Static Mesh
-	*/
-	FORCEINLINE USkeletalMesh* GetChecked() const
-	{
-		checkf(Mesh.ToSoftObjectPath().IsValid(), TEXT("FCsSkeletalMeshActorPooledInfo::GetChecked: Mesh is NULL."));
-
-		checkf(Mesh_Internal, TEXT("FCsSkeletalMeshActorPooledInfo::GetChecked: Mesh has NOT been loaded from Path @ %s."), *(Mesh.ToSoftObjectPath().ToString()));
-
-		return Mesh_Internal;
-	}
 
 	bool IsValidChecked(const FString& Context) const;
 };

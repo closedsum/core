@@ -34,11 +34,23 @@ namespace NCsSkin
 				* 
 				* @param Context	The calling context.
 				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* return
 				*/
 				static bool IsValidChecked(const FString& Context, SkinType* Skin);
 
 			// Static Mesh
 			#pragma region
+
+				/**
+				* Check whether Skin implements the interface: 
+				* StaticMeshSkinType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh).
+				* 
+				* @param Context	The calling context.
+				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* return			Whether the Skin implements the interface:
+				*					StaticMeshSkinType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh).
+				*/
+				static bool ImplementsStaticMeshSkinType(const FString& Context, SkinType* Skin);
 
 				/**
 				* Set the Static Mesh and Materials on a StaticMeshComponent (Component)
@@ -129,6 +141,17 @@ namespace NCsSkin
 			#pragma region
 
 				/**
+				* Check whether Skin implements the interface:
+				* SkeletalMeshSkinType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh).
+				*
+				* @param Context	The calling context.
+				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* return			Whether the Skin implements the interface:
+				*					SkeletalMeshSkinType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh).
+				*/
+				static bool ImplementsSkeletalMeshSkinType(const FString& Context, SkinType* Skin);
+
+				/**
 				* Set the Skeletal Mesh and Materials on a SkeletalMeshComponent (Component)
 				* from the given Skin
 				*
@@ -151,6 +174,32 @@ namespace NCsSkin
 				* @param Component	SkeletalMeshComponent
 				*/
 				static void SetSafeSkeletalMeshAndMaterials(const FString& Context, SkinType* Skin, USkeletalMeshComponent* Component);
+
+				/**
+				* Set the Skeletal Mesh and Materials on a SkeletalMeshComponent (Component)
+				* from the given Skin
+				*
+				* @param Context	The calling context.
+				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Component	SkeletalMeshComponent
+				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
+				*/
+				static void SetSkeletalMeshAndMIDs(const FString& Context, SkinType* Skin, USkeletalMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs);
+
+				/**
+				* Safely set the Skeletal Mesh and Materials on a SkeletalMeshComponent (Component)
+				* from the given Skin with checks.
+				*  Check: Skin is NOT NULL
+				*  Check: Component is NOT NULL for appropriate interface slice.
+				*  Check: SkeletalMesh is NOT NULL for appropriate interface slice.
+				*  Check: Materials count > 0 and Materials are NOT NULL for appropriate interface slice. 
+				*
+				* @param Context	The calling context.
+				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Component	SkeletalMeshComponent
+				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
+				*/
+				static void SetSafeSkeletalMeshAndMIDs(const FString& Context, SkinType* Skin, USkeletalMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs);
 
 				/**
 				* Set the Skeletal Mesh on a SkeletalMeshComponent (Component)
@@ -186,6 +235,23 @@ namespace NCsSkin
 				static void SetSafeSkeletalMesh(const FString& Context, SkinType* Skin, USkeletalMeshComponent* Component);
 
 			#pragma endregion Skeletal Mesh
+
+			// Mesh
+			#pragma region
+			public:
+
+				/**
+				* Set the Mesh (Static or Skeletal) and Materials on a MeshComponent (Component)
+				* from the given Skin
+				*
+				* @param Context	The calling context.
+				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Component	SceneComponent (SHOULD be StaticMeshComponent or SkeletalMeshComponent).
+				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
+				*/
+				static void SetMeshAndMIDs(const FString& Context, SkinType* Skin, USceneComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs);
+
+			#pragma endregion Mesh
 			};
 
 		#undef SkinType

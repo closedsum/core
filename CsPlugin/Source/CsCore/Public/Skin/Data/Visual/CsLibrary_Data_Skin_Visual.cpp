@@ -7,6 +7,9 @@
 #include "Skin/Data/Visual/CsData_Skin_VisualStaticMesh.h"
 #include "Skin/Data/Visual/CsData_Skin_VisualSkeletalMesh.h"
 #include "Skin/Data/Visual/CsData_Skin_VisualMaterial.h"
+// Components
+#include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 namespace NCsSkin
 {
@@ -61,6 +64,15 @@ namespace NCsSkin
 
 		// Static Mesh
 		#pragma region
+
+			bool FLibrary::ImplementsStaticMeshSkinType(const FString& Context, SkinType* Skin)
+			{
+				typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshSkinType;
+
+				if (GetSafeInterfaceChecked<StaticMeshSkinType>(Context, Skin))
+					return true;
+				return false;
+			}
 
 			void FLibrary::SetStaticMeshAndMaterials(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component)
 			{
@@ -165,6 +177,15 @@ namespace NCsSkin
 		// Skeletal Mesh
 		#pragma region
 
+			bool FLibrary::ImplementsSkeletalMeshSkinType(const FString& Context, SkinType* Skin)
+			{
+				typedef NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh SkeletalMeshSkinType;
+
+				if (GetSafeInterfaceChecked<SkeletalMeshSkinType>(Context, Skin))
+					return true;
+				return false;
+			}
+
 			void FLibrary::SetSkeletalMeshAndMaterials(const FString& Context, SkinType* Skin, USkeletalMeshComponent* Component)
 			{	
 				SetSkeletalMesh(Context, Skin, Component);
@@ -193,6 +214,38 @@ namespace NCsSkin
 					if (MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin))
 					{
 						MaterialLibrary::SetMaterialsChecked(Context, Component, MaterialSkin->GetMaterials());
+					}
+				}
+			}
+
+			void FLibrary::SetSkeletalMeshAndMIDs(const FString& Context, SkinType* Skin, USkeletalMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs)
+			{
+				SetSkeletalMesh(Context, Skin, Component);
+
+				// Materials
+				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
+				typedef NCsMaterial::FLibrary MaterialLibrary;
+
+				MaterialSkinType* MaterialSkin = GetInterfaceChecked<MaterialSkinType>(Context, Skin);
+
+				MaterialLibrary::SetMIDsChecked(Context, Component, MIDs, MaterialSkin->GetMaterials());
+			}
+
+			void FLibrary::SetSafeSkeletalMeshAndMIDs(const FString& Context, SkinType* Skin, USkeletalMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs)
+			{
+				typedef NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh SkeletalMeshSkinType;
+
+				if (SkeletalMeshSkinType* SkeletalMeshSkin = GetSafeInterfaceChecked<SkeletalMeshSkinType>(Context, Skin))
+				{
+					SetSkeletalMesh(Context, SkeletalMeshSkin, Component);
+
+					// Materials
+					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
+					typedef NCsMaterial::FLibrary MaterialLibrary;
+
+					if (MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin))
+					{
+						MaterialLibrary::SetMIDsChecked(Context, Component, MIDs, MaterialSkin->GetMaterials());
 					}
 				}
 			}
@@ -232,6 +285,30 @@ namespace NCsSkin
 			}
 
 		#pragma endregion Skeletal Mesh
+
+		// Mesh
+		#pragma region
+
+			void FLibrary::SetMeshAndMIDs(const FString& Context, SkinType* Skin, USceneComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs)
+			{
+				// StaticMesh
+				if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Component))
+				{
+					SetStaticMeshAndMIDs(Context, Skin, StaticMeshComponent, MIDs);
+				}
+				// SkeletalMesh
+				else
+				if (USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(Component))
+				{
+					SetSkeletalMeshAndMIDs(Context, Skin, SkeletalMeshComponent, MIDs);
+				}
+				else
+				{
+					checkf(0, TEXT("%s: Component: %s with Class: %s is NOT supported."), *Context, *(Component->GetName()), *(Component->GetClass()->GetName()));
+				}
+			}
+
+		#pragma endregion Mesh
 
 		#undef SkinType
 		}

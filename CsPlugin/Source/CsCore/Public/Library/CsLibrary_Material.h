@@ -103,10 +103,6 @@ namespace NCsMaterial
 
 		/**
 		*/
-		static void SetMIDsChecked(const FString& Context, UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
-
-		/**
-		*/
 		static void SetMIDs(USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<FSkeletalMaterial>& Materials);
 	
 		/**
@@ -116,6 +112,14 @@ namespace NCsMaterial
 		/**
 		*/
 		static void SetMIDs(USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
+
+		/**
+		*/
+		static void SetMIDsChecked(const FString& Context, UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
+
+		/**
+		*/
+		static void SetMIDsChecked(const FString& Context, USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
 
 		/**
 		*/

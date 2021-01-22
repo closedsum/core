@@ -3,7 +3,7 @@
 // Interfaces
 #include "Data/CsData.h"
 #include "Skin/Data/Visual/CsData_Skin_Visual.h"
-#include "Skin/Data/Visual/CsData_Skin_VisualStaticMesh.h"
+#include "Skin/Data/Visual/CsData_Skin_VisualSkeletalMesh.h"
 #include "Skin/Data/Visual/CsData_Skin_VisualMaterial.h"
 // Types
 #include "Types/CsTypes_StaticMesh.h"
@@ -11,7 +11,7 @@
 
 class UObject;
 struct FCsInterfaceMap;
-class UStaticMesh;
+class USkeletalMesh;
 class UMaterialInterface;
 
 namespace NCsSkin
@@ -20,11 +20,11 @@ namespace NCsSkin
 	{
 		namespace NVisual
 		{
-			namespace NStaticMeshAndMaterial
+			namespace NSkeletalMeshAndMaterial
 			{
 #define DataType NCsData::IData
 #define SkinDataType IVisual
-#define StaticMeshSkinDataType NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh
+#define SkeletalMeshSkinDataType NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh
 #define MaterialSkinDataType NCsSkin::NData::NVisual::NMaterial::IMaterial
 
 				/**
@@ -33,7 +33,7 @@ namespace NCsSkin
 				*/
 				struct CSCORE_API FEmu : public DataType,
 										 public SkinDataType,
-										 public StaticMeshSkinDataType,
+										 public SkeletalMeshSkinDataType,
 										 public MaterialSkinDataType
 				{
 				public:
@@ -48,9 +48,9 @@ namespace NCsSkin
 
 					FCsInterfaceMap* InterfaceMap;
 
-					// StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+					// SkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
 
-					UStaticMesh** Mesh;
+					USkeletalMesh** Mesh;
 
 					// MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 
@@ -75,14 +75,14 @@ namespace NCsSkin
 
 				public:
 
-					FORCEINLINE void SetStaticMesh(UStaticMesh** Value) { Mesh = Value; }
+					FORCEINLINE void SetSkeletalMesh(USkeletalMesh** Value) { Mesh = Value; }
 
-				// StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+				// SkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
 				#pragma region
 
-					FORCEINLINE UStaticMesh* GetStaticMesh() const { return *Mesh; }
+					FORCEINLINE USkeletalMesh* GetSkeletalMesh() const { return *Mesh; }
 
-				#pragma endregion StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+				#pragma endregion SkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
 
 				public:
 
@@ -98,7 +98,7 @@ namespace NCsSkin
 
 #undef DataType
 #undef SkinDataType
-#undef StaticMeshSkinDataType
+#undef SkeletalMeshSkinDataType
 #undef MaterialSkinDataType
 			}
 		}

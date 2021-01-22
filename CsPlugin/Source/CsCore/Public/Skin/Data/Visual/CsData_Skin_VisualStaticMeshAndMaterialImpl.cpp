@@ -81,7 +81,7 @@ void UCsData_Skin_VisualStaticMeshAndMaterialImpl::Init()
 		DataEmuType* Emu = (DataEmuType*)DataEmu;
 		Emu->SetOuter(this);
 		// SkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
-		Emu->SetStaticMesh(Mesh.Get());
+		Emu->SetStaticMesh(Mesh.GetPtr());
 		// MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 		Emu->SetMaterials(Materials.GetPtr());
 	}

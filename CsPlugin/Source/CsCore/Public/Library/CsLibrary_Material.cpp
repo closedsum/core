@@ -223,23 +223,6 @@ namespace NCsMaterial
 		}
 	}
 
-	void FLibrary::SetMIDsChecked(const FString& Context, UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials)
-	{
-		ClearOverrideMaterials(Mesh);
-		DestroyMIDs(MIDs);
-
-		const int32 Count = Materials.Num();
-
-		MIDs.Reset(Count);
-
-		for (int32 Index = 0; Index < Count; ++Index)
-		{
-			checkf(Materials[Index], TEXT("%s: Materials[%d] is NULL."), *Context, Index);
-
-			MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
-		}
-	}
-
 	void FLibrary::SetMIDs(USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<FSkeletalMaterial>& Materials)
 	{
 		ClearOverrideMaterials(Mesh);
@@ -285,6 +268,40 @@ namespace NCsMaterial
 		}
 	}
 
+	void FLibrary::SetMIDsChecked(const FString& Context, UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials)
+	{
+		ClearOverrideMaterials(Mesh);
+		DestroyMIDs(MIDs);
+
+		const int32 Count = Materials.Num();
+
+		MIDs.Reset(Count);
+
+		for (int32 Index = 0; Index < Count; ++Index)
+		{
+			checkf(Materials[Index], TEXT("%s: Materials[%d] is NULL."), *Context, Index);
+
+			MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
+		}
+	}
+
+	void FLibrary::SetMIDsChecked(const FString& Context, USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials)
+	{
+		ClearOverrideMaterials(Mesh);
+		DestroyMIDs(MIDs);
+
+		const int32 Count = Materials.Num();
+
+		MIDs.Reset(Count);
+
+		for (int32 Index = 0; Index < Count; ++Index)
+		{
+			checkf(Materials[Index], TEXT("%s: Materials[%d] is NULL."), *Context, Index);
+
+			MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
+		}
+	}
+
 	void FLibrary::DestroyMIDs(TArray<UMaterialInstanceDynamic*>& MIDs)
 	{
 		for (UMaterialInstanceDynamic* MID : MIDs)
@@ -297,7 +314,6 @@ namespace NCsMaterial
 		}
 		MIDs.SetNum(0, true);
 	}
-
 
 	void FLibrary::MIDs_SetScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float &Value)
 	{

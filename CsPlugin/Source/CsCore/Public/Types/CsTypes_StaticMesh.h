@@ -39,10 +39,9 @@ public:
 		return !(*this == B);
 	}
 
-	FORCEINLINE UStaticMesh* Get() const
-	{
-		return Mesh_Internal;
-	}
+	FORCEINLINE UStaticMesh* Get() const { return Mesh_Internal; }
+
+	FORCEINLINE UStaticMesh** GetPtr() { return &Mesh_Internal; }
 
 	FORCEINLINE UStaticMesh* GetChecked(const FString& Context) const 
 	{

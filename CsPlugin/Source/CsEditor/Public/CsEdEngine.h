@@ -3,19 +3,17 @@
 #include "Editor/UnrealEdEngine.h"
 // Interfaces
 #include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Object/CsGetCreatedObjects.h"
 // Types
-#include "Types/Property/Ref/CsProperty_Ref_bool.h"
+#include "Object/CsTypes_Object.h"
 #include "Types/CsTypes_Load.h"
-#include "Types/CsTypes_Async.h"
-#include "Types/Enum/CsUserDefinedEnum.h"
-#include "CsEdEngine.generated.h"
 
-class UCsDataMapping;
-class UCsEnumStructUserDefinedEnumMap;
+#include "CsEdEngine.generated.h"
 
 UCLASS()
 class CSEDITOR_API UCsEdEngine : public UUnrealEdEngine,
-								 public ICsGetManagerSingleton
+								 public ICsGetManagerSingleton,
+								 public ICsGetCreatedObjects
 {
 public:
 	GENERATED_BODY()
@@ -46,17 +44,6 @@ public:
 
 #pragma endregion FExec Interface
 
-// Managers
-#pragma region
-protected:
-
-	UPROPERTY()
-	UCsManager_Singleton* Manager_Singleton;
-
-	virtual void ConstructManagerSingleton(){}
-
-#pragma endregion Managers
-
 // ICsGetManagerSingleton
 #pragma region
 public:
@@ -64,6 +51,49 @@ public:
 	FORCEINLINE UCsManager_Singleton* GetManager_Singleton() const { return Manager_Singleton; }
 
 #pragma endregion ICsGetManagerSingleton
+
+// Managers
+#pragma region
+protected:
+
+	UPROPERTY()
+	UCsManager_Singleton* Manager_Singleton;
+
+	virtual void ConstructManagerSingleton() {}
+
+#pragma endregion Managers
+
+// World
+#pragma region
+protected:
+
+	void OnWorldContextDestroyed_Internal(FWorldContext& WorldContext);
+
+#pragma endregion World
+
+// ICsGetCreatedObjects
+#pragma region
+public:
+
+#define CreatedObjectsType NCsObject::NCreate::FCreated
+
+	FORCEINLINE CreatedObjectsType* GetCreatedObjects() { return &CreatedObjects; }
+
+#undef CreatedObjectsType
+
+#pragma endregion ICsGetCreatedObjects
+
+// Object
+#pragma region
+public:
+
+#define CreatedObjectsType NCsObject::NCreate::FCreated
+
+	CreatedObjectsType CreatedObjects;
+
+#undef CreatedObjectsType
+
+#pragma endregion Object
 
 // Save
 #pragma region

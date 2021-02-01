@@ -63,9 +63,6 @@ public:
 	template<typename EnumType>
 	const FString& GetSettingsEnumPath() const;
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum")
-	FCsUserDefinedEnum InputAction;
-
 #pragma endregion Enum
 
 // Data
@@ -106,21 +103,27 @@ public:
 
 	// InputActionMap
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsInputActionMap", TitleProperty = "Name"))
-	TArray<FCsSettings_Enum> ECsInputActionMap;
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsInputActionMap", MultiLine = true))
+	FString ECsInputActionMap;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsInputActionMap: Internal", TitleProperty = "Name"))
+	TArray<FCsSettings_Enum> ECsInputActionMap_Internal;
 
 	template<>
-	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsInputActionMap>() const { return ECsInputActionMap; }
+	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsInputActionMap>() const { return ECsInputActionMap_Internal; }
 	template<>
 	const FString& GetSettingsEnumPath<FECsInputActionMap>() const { return NCsDeveloperSettings::Str::InputActionMap; }
 
 	// Game Event
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsGameEvent", TitleProperty = "Name"))
-	TArray<FCsSettings_Enum> ECsGameEvent;
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsGameEvent", MultiLine = true))
+	FString ECsGameEvent;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsGameEvent: Internal", TitleProperty = "Name"))
+	TArray<FCsSettings_Enum> ECsGameEvent_Internal;
 
 	template<>
-	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsGameEvent>() const { return ECsGameEvent; }
+	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsGameEvent>() const { return ECsGameEvent_Internal; }
 	template<>
 	const FString& GetSettingsEnumPath<FECsGameEvent>() const { return NCsDeveloperSettings::Str::GameEvent; }
 
@@ -235,4 +238,18 @@ public:
 #pragma endregion Unit Test
 
 #pragma endregion SkeletalMesh
+
+// Editor
+#pragma region
+public:
+
+#if WITH_EDITOR
+
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
+
+	virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& e) override;
+
+#endif // #if WITH_EDITOR
+
+#pragma endregion Editor
 };

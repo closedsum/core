@@ -1,19 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_View.h"
-#include "Types/CsTypes_Load.h"
-
-#include "Animation/AnimSequence.h"
-#include "Animation/AnimMontage.h"
-#include "Animation/AnimBlueprint.h"
-#include "Animation/BlendSpace.h"
-#include "Animation/BlendSpace1D.h"
-#include "Animation/AimOffsetBlendSpace.h"
+//#include "Types/Enum/.h"
 
 #include "CsTypes_AnimInstance.generated.h"
 #pragma once
 
 // FCsAnimInstance_AnimSequence
 #pragma region
+
+class UAnimSequence;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnimInstance_AnimSequence
@@ -33,32 +27,17 @@ struct CSCORE_API FCsAnimInstance_AnimSequence
 
 public:
 
-	FCsAnimInstance_AnimSequence()
+	FCsAnimInstance_AnimSequence() :
+		Anim(nullptr),
+		Last_Anim(nullptr),
+		Anim_Internal(nullptr),
+		UseDataValueAsDefault(true)
 	{
-		UseDataValueAsDefault = true;
 	}
 
 	FORCEINLINE UAnimSequence* Get() const
 	{
 		return Anim_Internal.IsValid() ? Anim_Internal.Get() : nullptr;
-	}
-
-	FORCEINLINE FCsAnimInstance_AnimSequence& operator=(const FCsAnimInstance_AnimSequence& B)
-	{
-		Anim = B.Anim;
-		Anim_Internal = B.Anim_Internal;
-		UseDataValueAsDefault = B.UseDataValueAsDefault;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsAnimInstance_AnimSequence& B) const
-	{
-		return Anim == B.Anim && Anim_Internal == B.Anim_Internal && UseDataValueAsDefault == B.UseDataValueAsDefault;
-	}
-
-	FORCEINLINE bool operator!=(const FCsAnimInstance_AnimSequence& B) const
-	{
-		return !(*this == B);
 	}
 
 	FORCEINLINE bool HasChanged() { return Anim != Last_Anim; }
@@ -69,6 +48,8 @@ public:
 
 // FCsAnimInstance_AnimMontage
 #pragma region
+
+class UAnimMontage;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnimInstance_AnimMontage
@@ -88,32 +69,17 @@ struct CSCORE_API FCsAnimInstance_AnimMontage
 
 public:
 
-	FCsAnimInstance_AnimMontage()
+	FCsAnimInstance_AnimMontage() :
+		Anim(nullptr),
+		Last_Anim(nullptr),
+		Anim_Internal(nullptr),
+		UseDataValueAsDefault(true)
 	{
-		UseDataValueAsDefault = true;
 	}
 
 	FORCEINLINE UAnimMontage* Get() const
 	{
 		return Anim_Internal.IsValid() ? Anim_Internal.Get() : nullptr;
-	}
-
-	FORCEINLINE FCsAnimInstance_AnimMontage& operator=(const FCsAnimInstance_AnimMontage& B)
-	{
-		Anim = B.Anim;
-		Anim_Internal = B.Anim_Internal;
-		UseDataValueAsDefault = B.UseDataValueAsDefault;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsAnimInstance_AnimMontage& B) const
-	{
-		return Anim == B.Anim && Anim_Internal == B.Anim_Internal && UseDataValueAsDefault == B.UseDataValueAsDefault;
-	}
-
-	FORCEINLINE bool operator!=(const FCsAnimInstance_AnimMontage& B) const
-	{
-		return !(*this == B);
 	}
 
 	FORCEINLINE bool HasChanged() { return Anim != Last_Anim; }
@@ -124,6 +90,8 @@ public:
 
 // FCsAnimInstance_BlendSpace1D
 #pragma region
+
+class UBlendSpace1D;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnimInstance_BlendSpace1D
@@ -143,33 +111,17 @@ struct CSCORE_API FCsAnimInstance_BlendSpace1D
 
 public:
 
-	FCsAnimInstance_BlendSpace1D()
+	FCsAnimInstance_BlendSpace1D() :
+		Blend(nullptr),
+		Last_Blend(nullptr),
+		Blend_Internal(nullptr),
+		UseDataValueAsDefault(true)
 	{
-		UseDataValueAsDefault = true;
 	}
 
 	FORCEINLINE UBlendSpace1D* Get() const
 	{
 		return Blend_Internal.IsValid() ? Blend_Internal.Get() : nullptr;
-	}
-
-	FORCEINLINE FCsAnimInstance_BlendSpace1D& operator=(const FCsAnimInstance_BlendSpace1D& B)
-	{
-		Blend = B.Blend;
-		Last_Blend = B.Last_Blend;
-		Blend_Internal = B.Blend_Internal;
-		UseDataValueAsDefault = B.UseDataValueAsDefault;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsAnimInstance_BlendSpace1D& B) const
-	{
-		return Blend == B.Blend && Last_Blend == B.Last_Blend && Blend_Internal == B.Blend_Internal && UseDataValueAsDefault == B.UseDataValueAsDefault;
-	}
-
-	FORCEINLINE bool operator!=(const FCsAnimInstance_BlendSpace1D& B) const
-	{
-		return !(*this == B);
 	}
 
 	FORCEINLINE bool HasChanged() { return Blend != Last_Blend; }
@@ -180,6 +132,8 @@ public:
 
 // FCsAnimInstance_BlendSpace
 #pragma region
+
+class UBlendSpace;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnimInstance_BlendSpace
@@ -199,33 +153,17 @@ struct CSCORE_API FCsAnimInstance_BlendSpace
 
 public:
 
-	FCsAnimInstance_BlendSpace()
+	FCsAnimInstance_BlendSpace() :
+		Blend(nullptr),
+		Last_Blend(nullptr),
+		Blend_Internal(nullptr),
+		UseDataValueAsDefault(true)
 	{
-		UseDataValueAsDefault = true;
 	}
 
 	FORCEINLINE UBlendSpace* Get() const
 	{
 		return Blend_Internal.IsValid() ? Blend_Internal.Get() : nullptr;
-	}
-
-	FORCEINLINE FCsAnimInstance_BlendSpace& operator=(const FCsAnimInstance_BlendSpace& B)
-	{
-		Blend = B.Blend;
-		Last_Blend = B.Last_Blend;
-		Blend_Internal = B.Blend_Internal;
-		UseDataValueAsDefault = B.UseDataValueAsDefault;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsAnimInstance_BlendSpace& B) const
-	{
-		return Blend == B.Blend && Last_Blend == B.Last_Blend && Blend_Internal == B.Blend_Internal && UseDataValueAsDefault == B.UseDataValueAsDefault;
-	}
-
-	FORCEINLINE bool operator!=(const FCsAnimInstance_BlendSpace& B) const
-	{
-		return !(*this == B);
 	}
 
 	FORCEINLINE bool HasChanged() { return Blend != Last_Blend; }
@@ -237,6 +175,8 @@ public:
 
 // FCsAnimInstance_AimOffset
 #pragma region
+
+class UAimOffsetBlendSpace;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnimInstance_AimOffset
@@ -256,33 +196,17 @@ struct CSCORE_API FCsAnimInstance_AimOffset
 
 public:
 
-	FCsAnimInstance_AimOffset()
+	FCsAnimInstance_AimOffset() :
+		Blend(nullptr),
+		Last_Blend(nullptr),
+		Blend_Internal(nullptr),
+		UseDataValueAsDefault(true)
 	{
-		UseDataValueAsDefault = true;
 	}
 
 	FORCEINLINE UAimOffsetBlendSpace* Get() const
 	{
 		return Blend_Internal.IsValid() ? Blend_Internal.Get() : nullptr;
-	}
-
-	FORCEINLINE FCsAnimInstance_AimOffset& operator=(const FCsAnimInstance_AimOffset& B)
-	{
-		Blend = B.Blend;
-		Last_Blend = B.Last_Blend;
-		Blend_Internal = B.Blend_Internal;
-		UseDataValueAsDefault = B.UseDataValueAsDefault;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsAnimInstance_AimOffset& B) const
-	{
-		return Blend == B.Blend && Last_Blend == B.Last_Blend && Blend_Internal == B.Blend_Internal && UseDataValueAsDefault == B.UseDataValueAsDefault;
-	}
-
-	FORCEINLINE bool operator!=(const FCsAnimInstance_AimOffset& B) const
-	{
-		return !(*this == B);
 	}
 
 	FORCEINLINE bool HasChanged() { return Blend != Last_Blend; }
@@ -310,27 +234,20 @@ struct CSCORE_API FCsAnimInstance_Blueprint
 
 public:
 
-	UBlueprintGeneratedClass* Get() const
-	{
-		return Blueprint_Internal;
-	}
-
-	FCsAnimInstance_Blueprint& operator=(const FCsAnimInstance_Blueprint& B)
-	{
-		Blueprint = B.Blueprint;
-		Blueprint_Internal = B.Blueprint_Internal;
-		return *this;
-	}
-
-	bool operator==(const FCsAnimInstance_Blueprint& B) const
-	{
-		return Blueprint == B.Blueprint && Blueprint_Internal == B.Blueprint_Internal;
-	}
-
-	bool operator!=(const FCsAnimInstance_Blueprint& B) const
-	{
-		return !(*this == B);
-	}
+	FORCEINLINE UBlueprintGeneratedClass* Get() const { return Blueprint_Internal; }
 };
 
 #pragma endregion FCsAnimInstance_Blueprint
+
+// NCsAnim::NInstance::ERoutine
+#pragma region
+
+namespace NCsAnim
+{
+	namespace NInstance
+	{
+
+	}
+}
+
+#pragma endregion NCsAnim::NInstance::ERoutine

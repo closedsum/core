@@ -104,6 +104,14 @@ public:
 
 	void OnPostProcessInput_CaptureMouseInput(const float& DeltaTime, const bool bGamePaused);
 
+	void OnPostProcessInput_CaptureVRInput();
+
+	void OnPostProcessInput_LogInputAction(const FECsInputAction& Action);
+	void OnPostProcessInput_LogInputAxis(const FECsInputAction& Action);
+	void OnPostProcessInput_LogInputLocation(const FECsInputAction& Action);
+	void OnPostProcessInput_LogCurrentInputFrame();
+	void OnPostProcessInput_LogGameEventInfo(const FCsGameEventInfo& Info);
+
 	void OnPostProcessInput_UpdateActiveInputMode(const float& DeltaTime, const bool bGamePaused);
 
 	float CurrentDeltaTime;

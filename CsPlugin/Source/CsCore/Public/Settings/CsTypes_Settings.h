@@ -25,6 +25,19 @@ struct CSCORE_API FCsSettings_Enum
 	}
 };
 
+namespace NCsEnum
+{
+	namespace NSettings
+	{
+		struct CSCORE_API FLibrary
+		{
+		public:
+
+			static void PopulateArrayFromString(TArray<FCsSettings_Enum>& Enums, const FString& Str, const FString& EnumTypeName);
+		};
+	}
+}
+
 #pragma endregion FCsSettings_Enum
 
 // PopulateEnumMapMethod

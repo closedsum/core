@@ -6,6 +6,11 @@
 #include "Engine/World.h"
 #include "Engine/Engine.h"
 
+#if WITH_EDITOR
+#include "Editor.h"
+#include "EditorViewportClient.h"
+#endif // #if WITH_EDITOR
+
 bool FCsLibrary_World::IsPlayInGame(UWorld* World)
 {
 	return World && World->WorldType == EWorldType::Game;
@@ -42,6 +47,29 @@ bool FCsLibrary_World::IsAnyWorldContextEditorOrEditorPreview()
 		{
 			return true;
 		}
+	}
+	return false;
+}
+
+bool FCsLibrary_World::IsEditorPreviewOrphaned(UObject* WorldContext)
+{
+	if (UWorld* World = WorldContext->GetWorld())
+	{
+#if WITH_EDITOR
+		if (GEditor)
+		{
+			const TArray<FEditorViewportClient*>& ViewportClients = GEditor->GetAllViewportClients();
+
+			for (FEditorViewportClient* VC : ViewportClients)
+			{
+				if (VC->GetWorld() == World)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+#endif // #if WITH_EDITOR
 	}
 	return false;
 }

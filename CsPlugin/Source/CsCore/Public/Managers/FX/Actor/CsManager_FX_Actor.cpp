@@ -300,6 +300,16 @@ void UCsManager_FX_Actor::CleanUp()
 	OnPauseHandleByGroupMap.Reset();
 
 	Internal.Shutdown();
+	
+	// TODO: May need to call Destroy on Actors when spawned in Editor Preview
+	for (UObject* O : Pool)
+	{
+		if (O &&
+			!O->IsPendingKill())
+		{
+			O->MarkPendingKill();
+		}
+	}
 	Pool.Reset();
 
 	for (TPair<FName, ICsData_FX*>& Pair : DataMap)

@@ -1860,38 +1860,6 @@ public:
 
 #pragma endregion FCsGameEventInfo
 
-	// FCsGameEventDefinitionSimpleInfo
-#pragma region
-
-/**
-*
-*/
-USTRUCT(BlueprintType)
-struct FCsGameEventDefinitionSimpleInfo
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FECsInputAction Action;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECsInputEvent Event;
-
-	FCsGameEventDefinitionSimpleInfo() :
-		Action(),
-		Event(ECsInputEvent::ECsInputEvent_MAX)
-	{
-		Action = EMCsInputAction::Get().GetMAX();
-	}
-
-	bool IsValid() const
-	{
-		return EMCsInputAction::Get().IsValidEnum(Action) && Event != ECsInputEvent::ECsInputEvent_MAX;
-	}
-};
-
-#pragma endregion FCsGameEventDefinitionSimpleInfo
-
 	// FCsGameEventDefinitionSimple
 #pragma region
 
@@ -1967,6 +1935,8 @@ struct FCsGameEventDefinition
 	{
 		return EMCsGameEvent::Get().IsValidEnum(Event) && Sentence.IsValid();
 	}
+
+	FString PrintSummary() const;
 };
 
 FORCEINLINE uint32 GetTypeHash(const FCsGameEventDefinition& b)
@@ -1975,6 +1945,157 @@ FORCEINLINE uint32 GetTypeHash(const FCsGameEventDefinition& b)
 }
 
 #pragma endregion FCsGameEventDefinition
+
+	// FCsGameEventDefinitionActionOneOrWordNoCompletedValue
+#pragma region
+
+/**
+* This is a simplified GameEvent (FECsGameEvent) definition based on an 
+* Action type action (FECsInputAction).
+*  One Word with one or more "Or" Input Words.
+*  No Completed Value
+*	- No additional value is passed through when the definition is completed.
+*	  Usually for Actions, there is NO value.
+*/
+USTRUCT(BlueprintType)
+struct FCsGameEventDefinitionActionOneOrWordNoCompletedValue
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsGameEvent GameEvent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FECsInputAction> Actions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsInputEvent Event;
+
+	FCsGameEventDefinitionActionOneOrWordNoCompletedValue() :
+		GameEvent(),
+		Actions(),
+		Event()
+	{
+	}
+
+	FORCEINLINE bool operator==(const FCsGameEventDefinitionActionOneOrWordNoCompletedValue& B) const
+	{
+		if (GameEvent != B.GameEvent)
+			return false;
+		if (Event != B.Event)
+			return false;
+
+		if (Actions.Num() != B.Actions.Num())
+			return false;
+
+		const int32 Count = Actions.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (Actions[I] != B.Actions[I])
+				return false;
+		}
+		return true;
+	}
+
+	bool IsValid() const
+	{
+		if (!EMCsGameEvent::Get().IsValidEnum(GameEvent))
+			return false;
+
+		for (const FECsInputAction& Action : Actions)
+		{
+			if (!EMCsInputAction::Get().IsValidEnum(Action))
+				return false;
+		}
+
+		return Event != ECsInputEvent::ECsInputEvent_MAX;
+	}
+
+	void AddDefinition(TSet<FCsGameEventDefinition>& GameEventDefinitions, TMap<FECsGameEvent, FCsInputSentence>& InputSentenceByGameEventMap) const;
+
+	FString PrintOneLineSummary() const;
+};
+
+FORCEINLINE uint32 GetTypeHash(const FCsGameEventDefinitionActionOneOrWordNoCompletedValue& b)
+{
+	return GetTypeHash(b.GameEvent);
+}
+
+#pragma endregion FCsGameEventDefinitionActionOneOrWordNoCompletedValue
+
+	// FCsGameEventDefinitionAxisOneOrWordNoComparePassThroughValue
+#pragma region
+
+/**
+* This is a simplified GameEvent (FECsGameEvent) definition based on an
+* Axis type action (FECsInputAction).
+*  One Word with one or more "Or" Input Words.
+*  No Compare Value
+*   - No value is used to determine whether the raw input value should be
+*	  accepted.
+*  Pass Through Value
+*	- The raw input value "passes through" unaltered.
+*/
+USTRUCT(BlueprintType)
+struct FCsGameEventDefinitionAxisOneOrWordNoComparePassThroughValue
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsGameEvent GameEvent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FECsInputAction> Actions;
+
+	FCsGameEventDefinitionAxisOneOrWordNoComparePassThroughValue() :
+		GameEvent(),
+		Actions()
+	{
+	}
+
+	FORCEINLINE bool operator==(const FCsGameEventDefinitionAxisOneOrWordNoComparePassThroughValue& B) const
+	{
+		if (GameEvent != B.GameEvent)
+			return false;
+
+		if (Actions.Num() != B.Actions.Num())
+			return false;
+
+		const int32 Count = Actions.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (Actions[I] != B.Actions[I])
+				return false;
+		}
+		return true;
+	}
+
+	bool IsValid() const
+	{
+		if (!EMCsGameEvent::Get().IsValidEnum(GameEvent))
+			return false;
+
+		for (const FECsInputAction& Action : Actions)
+		{
+			if (!EMCsInputAction::Get().IsValidEnum(Action))
+				return false;
+		}
+		return true;
+	}
+
+	void AddDefinition(TSet<FCsGameEventDefinition>& GameEventDefinitions, TMap<FECsGameEvent, FCsInputSentence>& InputSentenceByGameEventMap) const;
+
+	FString PrintOneLineSummary() const;
+};
+
+FORCEINLINE uint32 GetTypeHash(const FCsGameEventDefinitionAxisOneOrWordNoComparePassThroughValue& b)
+{
+	return GetTypeHash(b.GameEvent);
+}
+
+#pragma endregion FCsGameEventDefinitionAxisOneOrWordNoComparePassThroughValue
 
 #define CS_GAME_EVENT_DEFINITION_START(Definitions, EVENT)	{ \
 																Definitions.AddDefaulted(); \

@@ -2,6 +2,11 @@
 #include "Settings/CsDeveloperSettings.h"
 #include "CsCore.h"
 
+#if WITH_EDITOR
+// Library
+#include "Library/CsLibrary_Property.h"
+#endif // #if WITH_EDITOR
+
 // Cached
 #pragma region
 
@@ -50,3 +55,52 @@ UObject* UCsDeveloperSettings::SafeLoadDataRootSet(const FString& Context)
 	}
 	return DOb;
 }
+
+#if WITH_EDITOR
+
+void UCsDeveloperSettings::PostEditChangeProperty(struct FPropertyChangedEvent& e)
+{
+	const FName PropertyName	   = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+	const FName MemberPropertyName = (e.MemberProperty != NULL) ? e.MemberProperty->GetFName() : NAME_None;
+
+	Super::PostEditChangeProperty(e);
+}
+
+void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEvent& e)
+{
+	const FName PropertyFName	   = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+	const FString PropertyName	   = (e.Property != NULL) ? e.Property->GetName() : TEXT("");
+	const FName MemberPropertyName = (e.MemberProperty != NULL) ? e.MemberProperty->GetFName() : NAME_None;
+
+	//int32 Index;
+
+	typedef NCsProperty::FLibrary PropertyLibrary;
+
+	TSet<FString> PropertyNames;
+	PropertyLibrary::GetPropertyNamesInChain(e, PropertyNames);
+
+	typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
+
+	// Input
+	{
+		// ECsInputActionMap
+		if (PropertyName == TEXT("ECsInputActionMap"))
+		{
+			EnumSettingsLibrary::PopulateArrayFromString(ECsInputActionMap_Internal, ECsInputActionMap, EMCsInputActionMap::Get().GetEnumName());
+		}
+		// ECsGameEvent
+		if (PropertyName == TEXT("ECsGameEvent"))
+		{
+			EnumSettingsLibrary::PopulateArrayFromString(ECsGameEvent_Internal, ECsGameEvent, EMCsGameEvent::Get().GetEnumName());
+		}
+		// Input
+		if (PropertyNames.Contains("Input"))
+		{
+			Input.OnPostEditChange(PropertyName, PropertyNames);
+		}
+	}
+
+	Super::PostEditChangeChainProperty(e);
+}
+
+#endif // #if WITH_EDITOR

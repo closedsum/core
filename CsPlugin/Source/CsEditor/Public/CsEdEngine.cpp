@@ -72,6 +72,8 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 	FEditorDelegates::BeginPIE.AddUObject(this, &UCsEdEngine::OnBeginPIE);
 	FCoreUObjectDelegates::OnObjectSaved.AddUObject(this, &UCsEdEngine::OnObjectSaved);
 
+	OnWorldContextDestroyed().AddUObject(this, &UCsEdEngine::OnWorldContextDestroyed_Internal);
+
 	ConstructManagerSingleton();
 
 	UCsManager_Time::Init(this);
@@ -100,7 +102,6 @@ void UCsEdEngine::Tick(float DeltaSeconds, bool bIdleMode)
 }
 
 #pragma endregion UEngine Interface
-
 
 // UEditorEngine Interface
 #pragma region
@@ -160,6 +161,16 @@ void UCsEdEngine::OnBeginPIE(bool IsSimulating)
 	FCsCVarToggleMap::Get().ResetDirty();
 	FCsCVarDrawMap::Get().ResetDirty();
 }
+
+// World
+#pragma region
+
+void UCsEdEngine::OnWorldContextDestroyed_Internal(FWorldContext& WorldContext)
+{
+	CreatedObjects.DestroyByWorld(WorldContext.World());
+}
+
+#pragma endregion World
 
 // Save
 #pragma region

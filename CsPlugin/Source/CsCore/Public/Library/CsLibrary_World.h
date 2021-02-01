@@ -2,6 +2,7 @@
 #pragma once
 
 class UWorld;
+class UObject;
 
 class CSCORE_API FCsLibrary_World
 {
@@ -18,4 +19,6 @@ public:
 	static bool IsPlayInGameOrPIE(UWorld* World);
 
 	static bool IsAnyWorldContextEditorOrEditorPreview();
+
+	static bool IsEditorPreviewOrphaned(UObject* WorldContext);
 };

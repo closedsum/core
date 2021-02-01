@@ -17,21 +17,52 @@ public:
 	TMap<FECsInputActionMap, FCsInputActionSet> InputActionMappings;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSet<FCsGameEventDefinitionSimple> GameEventDefinitionsSimple;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSet<FCsGameEventDefinition> GameEventDefinitions;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<FECsGameEvent> GameEventPriorityList;
+	/** This is a simplified GameEvent (FECsGameEvent) definition based on an
+		Action type action (FECsInputAction).
+		 One Word with one or more "Or" Input Words.
+		 No Completed Value
+		 - No additional value is passed through when the definition is completed.
+		  Usually for Actions, there is NO value. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (DisplayName = "GameEventDefintions: Action - 1 Or Word, No Complete Value"))
+	TSet<FCsGameEventDefinitionActionOneOrWordNoCompletedValue> GameEventDefinitions_ActionOneOrWordNoCompleteValue;
+
+	/** This is a simplified GameEvent (FECsGameEvent) definition based on an
+		Axis type action (FECsInputAction).
+		 One Word with one or more "Or" Input Words.
+		 No Compare Value
+		  - No value is used to determine whether the raw input value should be
+		    accepted.
+		 Pass Through Value
+		  - The raw input value "passes through" unaltered. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (DisplayName = "GameEventDefintions: Axis - 1 Or Word, No Compare, Pass Through Value"))
+	TSet<FCsGameEventDefinitionAxisOneOrWordNoComparePassThroughValue> GameEventDefinitions_AxisOneOrWordNoComparePassThroughValue;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<FString> GameEventDefinitionSummary;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,meta = (DisplayName = "GameEventPriorityList", MultiLine = true))
+	FString GameEventPriorityList;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TArray<FECsGameEvent> GameEventPriorityList_Internal;
 
 	FCsSettings_Input() :
 		InputActionMappings(),
-		GameEventDefinitionsSimple(),
 		GameEventDefinitions(),
-		GameEventPriorityList()
+		GameEventDefinitions_ActionOneOrWordNoCompleteValue(),
+		GameEventDefinitions_AxisOneOrWordNoComparePassThroughValue(),
+		GameEventPriorityList(),
+		GameEventPriorityList_Internal()
 	{
 	}
+
+	void PopulateGameEventDefintionSummary();
+
+	void PopulateGameEventPriorityList();
+
+	void OnPostEditChange(const FString& PropertyName, const TSet<FString>& PropertyNames);
 };
 
 #pragma endregion FCsSettings_Input

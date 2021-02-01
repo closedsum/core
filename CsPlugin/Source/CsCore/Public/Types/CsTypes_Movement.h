@@ -38,6 +38,35 @@ namespace NCsSpeedFormat
 	extern CSCORE_API const uint8 MAX;
 }
 
+namespace NCsSpeed
+{
+	enum class EFormat : uint8 
+	{
+		// Unreal Units per Second
+		UUpS,
+		// Miles per Hour
+		MpH,
+		// Kilometers per Hour
+		KpH,
+		EFormat_MAX
+	};
+
+	struct CSCORE_API EMFormat final : public TCsEnumMap<EFormat>
+	{
+		CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMFormat, EFormat)
+	};
+
+	namespace NFormat
+	{
+		typedef EFormat Type;
+
+		extern CSCORE_API const Type UUpS;
+		extern CSCORE_API const Type MpH;
+		extern CSCORE_API const Type KpH;
+		extern CSCORE_API const Type EFormat_MAX;
+	}
+}
+
 #pragma endregion SpeedFormat
 
 // 1 uu = ~ 0.00000621372 mi
@@ -106,6 +135,10 @@ struct CSCORE_API FCsSpeed
 #if WITH_EDITOR
 	void OnPostEditChange(const FName& PropertyName);
 #endif // #if WITH_EDITOR
+
+private:
+
+	FORCEINLINE void __Nothing() const {}
 };
 
 #pragma endregion FCsSpeed
@@ -152,6 +185,43 @@ namespace NCsSpeedInterpMethod
 	extern CSCORE_API const uint8 MAX;
 }
 
+namespace NCsSpeed
+{
+	namespace NInterp
+	{
+		enum class EMethod : uint8
+		{
+			/** Apply the Acceleration as a Delta.
+			 Usually in the form of sf = so + a * dt.
+			  sf = Final Speed
+			  so = Initial Speed
+			  a = Acceleration
+			  dt = Delta Time */
+			Acceleration,
+			/** Using a Duration and Easing Type, determine the Speed. */
+			Easing,
+			/** Using a Duration and Curve, determine the Speed. */
+			Curve,
+			EMethod_MAX
+		};
+
+		struct CSCORE_API EMMethod final : public TCsEnumMap<EMethod>
+		{
+			CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMMethod, EMethod)
+		};
+
+		namespace NMethod
+		{
+			typedef EMethod Type;
+
+			extern CSCORE_API const Type Acceleration;
+			extern CSCORE_API const Type Easing;
+			extern CSCORE_API const Type Curve;
+			extern CSCORE_API const Type EMethod_MAX;
+		}
+	}
+}
+
 #pragma endregion SpeedInterpMethod
 
 // SpeedInterpDirection
@@ -186,6 +256,35 @@ namespace NCsSpeedInterpDirection
 	}
 
 	extern CSCORE_API const uint8 MAX;
+}
+
+namespace NCsSpeed
+{
+	namespace NInterp
+	{
+		enum class EDirection : uint8 
+		{
+			/** Increasing toward the Target Speed. */
+			Increasing,
+			/** Decreasing toward the Target Speed. */
+			Decreasing,
+			EDirection_MAX
+		};
+
+		struct CSCORE_API EMDirection final : public TCsEnumMap<EDirection>
+		{
+			CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMDirection, EDirection)
+		};
+
+		namespace NDirection
+		{
+			typedef EDirection Type;
+
+			extern CSCORE_API const Type Increasing;
+			extern CSCORE_API const Type Decreasing;
+			extern CSCORE_API const Type EDirection_MAX;
+		}
+	}
 }
 
 #pragma endregion SpeedInterpDirection
@@ -247,16 +346,19 @@ struct CSCORE_API FCsAcceleration
 
 #pragma endregion FCsAcceleration
 
-// FCsSpeedInterp
+// FCsSpeedInterpInfo
 #pragma region
 
 class UCurveFloat;
+
+// NCsSpeed:NInterp::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpeed, NInterp, FInfo)
 
 /**
 * Describes how speed should be interpolated.
 */
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsSpeedInterp
+struct CSCORE_API FCsSpeedInterpInfo
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -287,7 +389,7 @@ struct CSCORE_API FCsSpeedInterp
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCsAcceleration Acceleration;
 
-	FCsSpeedInterp() :
+	FCsSpeedInterpInfo() :
 		Method(ECsSpeedInterpMethod::Acceleration),
 		Direction(ECsSpeedInterpDirection::Increasing),
 		Easing(ECsEasingType::Linear),
@@ -299,110 +401,252 @@ struct CSCORE_API FCsSpeedInterp
 
 	bool IsValidChecked() const;
 
+#define InfoType NCsSpeed::NInterp::FInfo
+	void SetInfo(InfoType* Info);
+#undef InfoType
+
+private:
+
+	FORCEINLINE void __Nothing() const {}
+
+public:
+
 #if WITH_EDITOR
 	void OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName);
 #endif // #if WITH_EDITOR
 };
 
-#pragma endregion FCsSpeedInterp
+namespace NCsSpeed
+{
+	namespace NInterp
+	{
+		struct CSCORE_API FInfo
+		{
+		#define MethodType NCsSpeed::NInterp::EMethod
+		#define DirectionType NCsSpeed::NInterp::EDirection
 
-// FCsSpeedInterpHelper
+		private:
+
+			MethodType Method;
+			MethodType* Method_Emu;
+
+			DirectionType Direction;
+			DirectionType* Direction_Emu;
+
+			ECsEasingType Easing;
+			ECsEasingType* Easing_Emu;
+			
+			UCurveFloat* Curve;
+			UCurveFloat** Curve_Emu;
+
+			float Time;
+			float* Time_Emu;
+
+			FCsAcceleration Acceleration;
+			FCsAcceleration* Acceleration_Emu;
+
+		public:
+
+			FInfo() :
+				Method(MethodType::Acceleration),
+				Method_Emu(nullptr),
+				Direction(DirectionType::Increasing),
+				Direction_Emu(nullptr),
+				Easing(ECsEasingType::Linear),
+				Easing_Emu(nullptr),
+				Curve(nullptr),
+				Curve_Emu(nullptr),
+				Time(0.0f),
+				Time_Emu(nullptr),
+				Acceleration(),
+				Acceleration_Emu(nullptr)
+			{
+				Method_Emu = &Method;
+				Direction_Emu = &Direction;
+				Easing_Emu = &Easing;
+				Curve_Emu = &Curve;
+				Time_Emu = &Time;
+				Acceleration_Emu = &Acceleration;
+			}
+
+			FORCEINLINE void SetMethod(const MethodType& Value)
+			{
+				Method = Value;
+				Method_Emu = &Method;
+			}
+			FORCEINLINE void SetMethod(MethodType* Value) { Method_Emu = Value; }
+			FORCEINLINE const MethodType& GetMethod() const { return *Method_Emu; }
+
+			FORCEINLINE void SetDirection(const DirectionType& Value)
+			{
+				Direction = Value;
+				Direction_Emu = &Direction;
+			}
+			FORCEINLINE void SetDirection(DirectionType* Value) { Direction_Emu = Value; }
+			FORCEINLINE const DirectionType& GetDirection() const { return *Direction_Emu; }
+
+			FORCEINLINE void SetEasing(const ECsEasingType& Value)
+			{
+				Easing = Value;
+				Easing_Emu = &Easing;
+			}
+			FORCEINLINE void SetEasing(ECsEasingType* Value) { Easing_Emu = Value; }
+			FORCEINLINE const ECsEasingType& GetEasing() const { return *Easing_Emu; }
+
+			FORCEINLINE void SetCurve(UCurveFloat* Value)
+			{
+				Curve = Value;
+				Curve_Emu = &Curve;
+			}
+			FORCEINLINE void SetCurve(UCurveFloat** Value) { Curve_Emu = Value; }
+			FORCEINLINE UCurveFloat* GetCurve() const { return *Curve_Emu; }
+
+			FORCEINLINE void SetTime(const float& Value)
+			{
+				Time = Value;
+				Time_Emu = &Time;
+			}
+			FORCEINLINE void SetTime(float* Value) { Time_Emu = Value; }
+			FORCEINLINE const float& GetTime() const { return *Time_Emu; }
+
+			FORCEINLINE void SetAcceleration(const FCsAcceleration& Value)
+			{
+				Acceleration = Value;
+				Acceleration_Emu = &Acceleration;
+			}
+			FORCEINLINE void SetAcceleration(FCsAcceleration* Value) { Acceleration_Emu = Value; }
+			FORCEINLINE const FCsAcceleration& GetAcceleration() const { return *Acceleration_Emu; }
+
+			bool IsValidChecked(const FString& Context) const { return true; }
+
+		#undef MethodType
+		#undef DirectionType
+		};
+	}
+}
+
+#pragma endregion FCsSpeedInterpInfo
+
+// NCsSpeed::NInterp::FInterp
 #pragma region
 
-struct FCsSpeedInterp;
+// NCsSpeed::NInterp::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpeed, NInterp, FInfo)
 
-/**
-*
-*/
-struct CSCORE_API FCsSpeedInterpHelper
+namespace NCsSpeed
 {
-public:
-
-	bool bMinBound;
-
-	/** Usually the same as MinSpeedAsPercent.
-		[-1.0f, 1.0f] inclusive. */
-	float MinBound;
-
-	bool bMaxBound;
-
-	/** Usually 1.0f.
-		[-1.0f, 1.0f] inclusive. */
-	float MaxBound;;
-
-	/** Max Speed in UUpS (Unreal Units per Second). 
-		This is considered be a value of 1.9f on a normalized scale. */
-	float MaxSpeed;
-
-	/** Minimum Speed in UUpS (Unreal Units per Second). */
-	float MinSpeed;
-
-	/** Minimum Speed as a percent. 
-		 MinSpeed / MaxSpeed. 
-		 [0.0f, 1.0f] inclusive. */
-	float MinSpeedAsPercent;
-
-	/** The desired speed to reach in UUpS (Unreal Units per Second). 
-		Should be <= MaxSpeed. */
-	float TargetSpeed;
-
-	/** Target Speed as a percent. 
-		 TargetSpeed / MaxSpeed. */
-	float TargetSpeedAsPercent;
-
-	/** Describes how to interpolate Speed over time. */
-	FCsSpeedInterp* Interp;
-
-	/** Sign 1 or -1 to indicate whether Speed is increasing (1) or 
-	    decreasing (-1) to TargetSpeedAsPercent */
-	float DirectionSign;
-
-	/** Interp's Acceleration as a percent. 
-		 Interp->Acceleration.UUpSS / MaxSpeed.
-		 [0.0f , 1.0f] inclusive. 
-		 Only Valid if Interp->Method == Acceleration (ECsSpeedInterpMethod::Acceleration) */
-	float AccelerationAsPercent;
-
-	float CurrentSpeedAsPercent;
-
-	float CurrentAlpha;
-
-	FCsSpeedInterpHelper() :
-		bMinBound(true),
-		MinBound(0.0f),
-		bMaxBound(true),
-		MaxBound(1.0f),
-		MaxSpeed(0.0f),
-		MinSpeed(0.0f),
-		MinSpeedAsPercent(0.0f),
-		TargetSpeed(0.0f),
-		TargetSpeedAsPercent(0.0f),
-		Interp(nullptr),
-		DirectionSign(1.0f),
-		AccelerationAsPercent(0.0f),
-		CurrentSpeedAsPercent(0.0f),
-		CurrentAlpha(0.0f)
+	namespace NInterp
 	{
+		/**
+		*
+		*/
+		struct CSCORE_API FInterp
+		{
+		#define InfoType NCsSpeed::NInterp::FInfo
+
+		public:
+
+			bool bMinBound;
+
+			/** Usually the same as MinSpeedAsPercent.
+				[-1.0f, 1.0f] inclusive. */
+			float MinBound;
+
+			bool bMaxBound;
+
+			/** Usually 1.0f.
+				[-1.0f, 1.0f] inclusive. */
+			float MaxBound;;
+
+			/** Max Speed in UUpS (Unreal Units per Second). 
+				This is usually considered to be a value of 1.0f on a normalized scale. 
+				If MaxSpeedAsPercent is altered 1.0f to something < 1.0f, the Speed will
+				be clamped to PercentOfMaxSpeed * MaxSpeed. */
+			float MaxSpeed;
+
+			/** Maximum Speed as a percent.
+				 % of MaxSpeed.
+				 [0.0f, 1.0f] inclusive. */
+			float PercentOfMaxSpeed;
+
+			/** Minimum Speed in UUpS (Unreal Units per Second). */
+			float MinSpeed;
+
+			/** Minimum Speed as a percent. 
+				 MinSpeed / MaxSpeed. 
+				 [0.0f, 1.0f] inclusive. */
+			float MinSpeedAsPercent;
+
+			/** Describes how to interpolate Speed over time. */
+			InfoType* Info;
+
+			/** The desired speed to reach in UUpS (Unreal Units per Second). 
+				Should be <= MaxSpeed. */
+			float TargetSpeed;
+
+			/** Target Speed as a percent. 
+				 TargetSpeed / MaxSpeed. */
+			float TargetSpeedAsPercent;
+
+			/** Sign 1 or -1 to indicate whether Speed is increasing (1) or 
+				decreasing (-1) to TargetSpeedAsPercent */
+			float DirectionSign;
+
+			/** Interp's Acceleration as a percent. 
+				 Interp->Acceleration.UUpSS / MaxSpeed.
+				 [0.0f , 1.0f] inclusive. 
+				 Only Valid if Interp->Method == Acceleration (ECsSpeedInterpMethod::Acceleration) */
+			float AccelerationAsPercent;
+
+			float CurrentSpeedAsPercent;
+
+			float CurrentAlpha;
+
+			FInterp() :
+				bMinBound(true),
+				MinBound(0.0f),
+				bMaxBound(true),
+				MaxBound(1.0f),
+				MaxSpeed(0.0f),
+				PercentOfMaxSpeed(1.0f),
+				MinSpeed(0.0f),
+				MinSpeedAsPercent(0.0f),
+				Info(nullptr),
+				TargetSpeed(0.0f),
+				TargetSpeedAsPercent(0.0f),
+				DirectionSign(1.0f),
+				AccelerationAsPercent(0.0f),
+				CurrentSpeedAsPercent(0.0f),
+				CurrentAlpha(0.0f)
+			{
+			}
+
+			void SetMaxSpeed(const float& Speed);
+			
+			void SetPercentOfMaxSpeed(const float& Percent);
+
+			void SetMinSpeed(const float& Speed);
+
+			void SetInfo(InfoType* InInfo);
+
+			void SetTargetSpeed(const float& Speed);
+
+			void SetTargetSpeedAsPercent(const float& Percent);
+
+			/**
+			*
+			*
+			* @param Percent Value [0.0f, 1.0f] Inclusive.
+			*/
+			void SetCurrentSpeedAsPercent(const float& Percent);
+
+			void Update(const float& DeltaTime);
+
+			float RemapValue(const float& Value) const;
+
+		#undef InfoType
+		};
 	}
+}
 
-	void SetMinSpeed(const float& Speed);
-
-	void SetTargetSpeed(const float& Speed);
-
-	void SetTargetSpeedAsPercent(const float& Percent);
-
-	void SetInterp(FCsSpeedInterp* InInterp);
-
-	/**
-	*
-	*
-	* @param Percent Value [0.0f, 1.0f] Inclusive.
-	*/
-	void SetCurrentSpeedAsPercent(const float& Percent);
-
-	float GetCurrentSpeedAsPercent(const float& DeltaTime) const;
-
-	void Update(const float& DeltaTime);
-};
-
-#pragma endregion FCsSpeedInterpHelper
+#pragma endregion NCsSpeed::NInterp::FInterp

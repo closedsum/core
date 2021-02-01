@@ -30,8 +30,10 @@ public:
 	/**
 	*
 	*
-	* @param Context
-	* @param ContextRoot
+	* @param Context		The calling context.
+	* @param ContextRoot	Context (Root) to route to the UCsManager_Data. This is
+	*						usually a reference to the GameInstance.
+	*						TODO: Eventually change to WorldContext.
 	* return
 	*/
 	template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType&(GetDataRootSetType::*GetDataRootSetFn)() const>
@@ -73,8 +75,10 @@ public:
 	/**
 	*
 	*
-	* @param Context
-	* @param ContextRoot
+	* @param Context		The calling context.
+	* @param ContextRoot	Context (Root) to route to the UCsManager_Data. This is
+	*						usually a reference to the GameInstance.
+	*						TODO: Eventually change to WorldContext.
 	* return
 	*/
 	template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType& (GetDataRootSetType::* GetDataRootSetFn)() const>
@@ -139,9 +143,7 @@ public:
 
 				if (Name.IsEmpty())
 				{
-#if !UE_BUILD_SHIPPING
-					Log(FString::Printf(TEXT("%s: Empty Enum listed in %s."), *Context, *EnumSettingsPath));
-#endif // #if !UE_BUILD_SHIPPING
+					CS_NON_SHIPPING_EXPR(Log(FString::Printf(TEXT("%s: Empty Enum listed in %s."), *Context, *EnumSettingsPath)));
 					return;
 				}
 
@@ -161,9 +163,7 @@ public:
 		}
 		else
 		{
-#if !UE_BUILD_SHIPPING
-			Log(FString::Printf(TEXT("%s: Enum Setting @ %s is empty."), *Context, *EnumSettingsPath));
-#endif // #if !UE_BUILD_SHIPPING
+			CS_NON_SHIPPING_EXPR(Log(FString::Printf(TEXT("%s: Enum Setting @ %s is empty."), *Context, *EnumSettingsPath)));
 		}
 	}
 
@@ -171,7 +171,9 @@ public:
 	* 
 	* 
 	* @param Context		The calling context.
-	* @param ContextRoot
+	* @param ContextRoot	Context (Root) to route to the UCsManager_Data. This is 
+	*						usually a reference to the GameInstance.
+	*						TODO: Eventually change to WorldContext.
 	* @param DataTable
 	* @param EnumName
 	* @param Log
@@ -218,9 +220,7 @@ public:
 			}
 			else
 			{
-#if !UE_BUILD_SHIPPING
-				Log(FString::Printf(TEXT("%s: Failed to find properties with name: Name and Display for struct: %s."), *Context, *(RowStruct->GetName())));
-#endif // #if !UE_BUILD_SHIPPING
+				CS_NON_SHIPPING_EXPR(Log(FString::Printf(TEXT("%s: Failed to find properties with name: Name and Display for struct: %s."), *Context, *(RowStruct->GetName()))));
 			}
 		}
 	}
@@ -229,7 +229,9 @@ public:
 	* 
 	* 
 	* @param Context		The calling context.
-	* @param ContextRoot
+	* @param ContextRoot	Context (Root) to route to the UCsManager_Data. This is
+	*						usually a reference to the GameInstance.
+	*						TODO: Eventually change to WorldContext.
 	* @param DT_SoftObject
 	* @param EnumName
 	* @param Log
@@ -256,9 +258,7 @@ public:
 		}
 		else
 		{
-#if !UE_BUILD_SHIPPING
-			Log(FString::Printf(TEXT("%s: Failed to Load DataTable @ %s."), *Context, *(DT_SoftObject.ToSoftObjectPath().ToString())));
-#endif // #if !UE_BUILD_SHIPPING
+			CS_NON_SHIPPING_EXPR(Log(FString::Printf(TEXT("%s: Failed to Load DataTable @ %s."), *Context, *(DT_SoftObject.ToSoftObjectPath().ToString()))));
 		}
 	}
 };

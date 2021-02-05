@@ -301,15 +301,25 @@ void UCsManager_FX_Actor::CleanUp()
 
 	Internal.Shutdown();
 	
-	// TODO: May need to call Destroy on Actors when spawned in Editor Preview
-	for (UObject* O : Pool)
+	// Editor Preview - Make sure to mark pending kill or destroy objects
+#if WITH_EDITOR
+	if (UWorld* World = MyRoot->GetWorld())
 	{
-		if (O &&
-			!O->IsPendingKill())
+		if (World->WorldType == EWorldType::EditorPreview)
 		{
-			O->MarkPendingKill();
+			for (UObject* O : Pool)
+			{
+				if (O && !O->IsPendingKill())
+				{
+					if (AActor* A = Cast<AActor>(O))
+						A->Destroy();
+					else
+						O->MarkPendingKill();
+				}
+			}
 		}
 	}
+#endif // #if WITH_EDITOR
 	Pool.Reset();
 
 	for (TPair<FName, ICsData_FX*>& Pair : DataMap)

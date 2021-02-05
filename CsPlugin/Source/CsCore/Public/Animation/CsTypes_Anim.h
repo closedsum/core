@@ -460,8 +460,23 @@ public:
 	{
 	}
 
-	FORCEINLINE UAnimBlueprintGeneratedClass* Get() const
+	FORCEINLINE UAnimBlueprintGeneratedClass* Get() const { return Blueprint_Internal; }
+
+	FORCEINLINE UAnimBlueprintGeneratedClass* GetChecked(const FString& Context) const
 	{
+		checkf(Blueprint.ToSoftObjectPath().IsValid(), TEXT("%s: Blueprint is NULL or the Path is NOT Valid."), *Context);
+
+		checkf(Blueprint_Internal, TEXT("%s: Failed to load Blueprint @ %s."), *Context, *(Blueprint.ToSoftObjectPath().ToString()));
+
+		return Blueprint_Internal;
+	}
+
+	FORCEINLINE UAnimBlueprintGeneratedClass* GetChecked() const
+	{
+		checkf(Blueprint.ToSoftObjectPath().IsValid(), TEXT("FCsAnimBlueprint::GetChecked: Blueprint is NULL or the Path is NOT Valid."));
+
+		checkf(Blueprint_Internal, TEXT("FCsAnimBlueprint::GetChecked: Failed to load Blueprint @ %s."), *(Blueprint.ToSoftObjectPath().ToString()));
+
 		return Blueprint_Internal;
 	}
 };
@@ -620,8 +635,23 @@ public:
 	{
 	}
 
-	FORCEINLINE UBlendSpace1D* Get()
+	FORCEINLINE UBlendSpace1D* Get() const { return Blend_Internal; }
+
+	FORCEINLINE UBlendSpace1D* GetChecked(const FString& Context) const
 	{
+		checkf(Blend.ToSoftObjectPath().IsValid(), TEXT("%s: Blend is NULL or the Path is NOT Valid."), *Context);
+
+		checkf(Blend_Internal, TEXT("%s: Failed to load Blend @ %s."), *Context, *(Blend.ToSoftObjectPath().ToString()));
+
+		return Blend_Internal;
+	}
+
+	FORCEINLINE UBlendSpace1D* GetChecked() const
+	{
+		checkf(Blend.ToSoftObjectPath().IsValid(), TEXT("FCsBlendSpace1D::GetChecked: Blend is NULL or the Path is NOT Valid."));
+
+		checkf(Blend_Internal, TEXT("FCsBlendSpace1D::GetChecked: Failed to load Blend @ %s."), *(Blend.ToSoftObjectPath().ToString()));
+
 		return Blend_Internal;
 	}
 };
@@ -743,8 +773,23 @@ public:
 	{
 	}
 
-	FORCEINLINE UBlendSpace* Get()
+	FORCEINLINE UBlendSpace* Get() const { return Blend_Internal; }
+
+	FORCEINLINE UBlendSpace* GetChecked(const FString& Context) const
 	{
+		checkf(Blend.ToSoftObjectPath().IsValid(), TEXT("%s: Blend is NULL or the Path is NOT Valid."), *Context);
+
+		checkf(Blend_Internal, TEXT("%s: Failed to load Blend @ %s."), *Context, *(Blend.ToSoftObjectPath().ToString()));
+
+		return Blend_Internal;
+	}
+
+	FORCEINLINE UBlendSpace* GetChecked() const
+	{
+		checkf(Blend.ToSoftObjectPath().IsValid(), TEXT("FCsBlendSpace1D::GetChecked: Blend is NULL or the Path is NOT Valid."));
+
+		checkf(Blend_Internal, TEXT("FCsBlendSpace1D::GetChecked: Failed to load Blend @ %s."), *(Blend.ToSoftObjectPath().ToString()));
+
 		return Blend_Internal;
 	}
 };

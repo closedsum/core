@@ -53,9 +53,12 @@ bool FCsLibrary_World::IsAnyWorldContextEditorOrEditorPreview()
 
 bool FCsLibrary_World::IsEditorPreviewOrphaned(UObject* WorldContext)
 {
+	if (!WorldContext)
+		return false;
+
+#if WITH_EDITOR
 	if (UWorld* World = WorldContext->GetWorld())
 	{
-#if WITH_EDITOR
 		if (GEditor)
 		{
 			const TArray<FEditorViewportClient*>& ViewportClients = GEditor->GetAllViewportClients();
@@ -69,7 +72,7 @@ bool FCsLibrary_World::IsEditorPreviewOrphaned(UObject* WorldContext)
 			}
 			return true;
 		}
-#endif // #if WITH_EDITOR
 	}
+#endif // #if WITH_EDITOR
 	return false;
 }

@@ -17,7 +17,6 @@
 UCsAnimInstance::UCsAnimInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-#if WITH_EDITOR
 	bSetupInGameSimulationHandle.Set(&bSetupInGameSimulation);
 	ShowEmitterEditorIconsHandle.Set(&ShowEmitterEditorIcons);
 	ShowSoundEditorIconsHandle.Set(&ShowSoundEditorIcons);
@@ -25,7 +24,6 @@ UCsAnimInstance::UCsAnimInstance(const FObjectInitializer& ObjectInitializer)
 	GlobalPlayRate = 1.0f;
 
 	GlobalPlayRateHandle.Set(&GlobalPlayRate);
-#endif // #if WITH_EDITOR
 }
 
 // UObject Interface
@@ -46,11 +44,9 @@ void UCsAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-#if WITH_EDITOR 
 	bSetupInGameSimulation = false;
-#endif // #if WITH_EDITOR
 
-	OwningPawn = TryGetPawnOwner();
+	OwningPawn    = TryGetPawnOwner();
 	MyOwningActor = GetOwningActor();
 }
 

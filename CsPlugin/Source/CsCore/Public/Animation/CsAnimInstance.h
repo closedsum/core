@@ -40,6 +40,8 @@ public:
 
 #pragma endregion UAnimInstance Interface
 
+// Owner
+#pragma region
 public:
 
 	TWeakObjectPtr<APawn> OwningPawn;
@@ -57,6 +59,8 @@ public:
 	T* GetMyOwningActor() { return Cast<T>(GetMyOwningActor()); }
 
 	USkeletalMeshComponent* GetSkeletalMeshComponent();
+
+#pragma endregion Owner
 
 // Manager Singleton
 #pragma region
@@ -103,8 +107,6 @@ public:
 	float GlobalPlayRate;
 
 	TCsFloat_Ref GlobalPlayRateHandle;
-
-	float Last_GlobalPlayRate;
 
 	virtual void OnTick_Handle_GlobalPlayRate();
 

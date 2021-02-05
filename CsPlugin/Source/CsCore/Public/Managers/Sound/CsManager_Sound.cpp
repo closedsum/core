@@ -289,6 +289,26 @@ void UCsManager_Sound::CleanUp()
 	OnPauseHandleByGroupMap.Reset();
 
 	Internal.Shutdown();
+
+	// Editor Preview - Make sure to mark pending kill or destroy objects
+#if WITH_EDITOR
+	if (UWorld* World = MyRoot->GetWorld())
+	{
+		if (World->WorldType == EWorldType::EditorPreview)
+		{
+			for (UObject* O : Pool)
+			{
+				if (O && !O->IsPendingKill())
+				{
+					if (AActor* A = Cast<AActor>(O))
+						A->Destroy();
+					else
+						O->MarkPendingKill();
+				}
+			}
+		}
+	}
+#endif // #if WITH_EDITOR
 	Pool.Reset();
 
 	for (TPair<FName, ICsData_Sound*>& Pair : DataMap)

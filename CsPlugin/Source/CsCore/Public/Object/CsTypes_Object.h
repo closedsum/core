@@ -95,10 +95,29 @@ namespace NCsObject
 
 			FORCEINLINE TArray<HandleType>& GetToRemove() { return ToRemove; }
 
-			FORCEINLINE ObjectType* Get(const HandleType& Handle) { return Map.Find(Handle); }
+			FORCEINLINE ObjectType* Find(const HandleType& Handle) { return Map.Find(Handle); }
 
-			FORCEINLINE void Get(UObject* Owner, TArray<HandleType>& OutHandles, TArray<ObjectType>& OutObjects)
+			FORCEINLINE ObjectType* FindByObject(UObject* Object)
 			{
+				checkf(Object, TEXT("NCsObject::NCreate::FCreated::FindByOwner: Object is NULL."));
+
+				for (TPair<HandleType, ObjectType>& Pair : Map)
+				{
+					HandleType& Handle = Pair.Key;
+					ObjectType& O	   = Pair.Value;
+
+					if (O.GetObject() == Object)
+					{
+						return &O;
+					}
+				}
+				return nullptr;
+			}
+
+			FORCEINLINE void FindByOwner(UObject* Owner, TArray<HandleType>& OutHandles, TArray<ObjectType>& OutObjects)
+			{
+				checkf(Owner, TEXT("NCsObject::NCreate::FCreated::FindByOwner: Owner is NULL."));
+
 				for (TPair<HandleType, ObjectType>& Pair : Map)
 				{
 					HandleType& Handle = Pair.Key;
@@ -114,6 +133,10 @@ namespace NCsObject
 
 			FORCEINLINE HandleType Add(UObject* Object, UObject* Owner)
 			{
+				checkf(Object, TEXT("NCsObject::NCreate::FCreated::Add: Object is NULL."));
+
+				checkf(Owner, TEXT("NCsObject::NCreate::FCreated::Add: Owner is NULL."));
+
 				HandleType Handle;
 				Handle.New();
 
@@ -139,6 +162,8 @@ namespace NCsObject
 
 			FORCEINLINE void RemoveByOwner(UObject* Owner)
 			{
+				checkf(Owner, TEXT("NCsObject::NCreate::FCreated::RemoveByOwner: Owner is NULL."));
+
 				for (TPair<HandleType, ObjectType>& Pair : Map)
 				{
 					ObjectType& O = Pair.Value;

@@ -10,6 +10,8 @@ namespace NCsObject
 	{
 		void FCreated::DestroyByOwner(UObject* Owner)
 		{
+			checkf(Owner, TEXT("NCsObject::NCreate::FCreated::DestroyByOwner: Owner is NULL."));
+
 			typedef NCsObject::NCreate::FHandle HandleType;
 			typedef NCsObject::NCreate::FObject ObjectType;
 
@@ -42,6 +44,8 @@ namespace NCsObject
 
 		void FCreated::DestroyByWorld(UWorld* World)
 		{
+			checkf(World, TEXT("NCsObject::NCreate::FCreated::DestroyByWorld: Owner is NULL."));
+
 			typedef NCsObject::NCreate::FHandle HandleType;
 			typedef NCsObject::NCreate::FObject ObjectType;
 

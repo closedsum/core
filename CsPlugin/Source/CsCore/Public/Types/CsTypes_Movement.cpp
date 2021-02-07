@@ -177,6 +177,60 @@ void FCsSpeedInterpInfo::SetInfo(InfoType* Info)
 	Info->SetAcceleration(&Acceleration);
 }
 
+FString FCsSpeedInterpInfo::PrintSummary(const int32& IndentSpaces /*=0*/)
+{
+	FString Spaces = TEXT("");
+
+	int32 Count = 0;
+
+	while (Count < IndentSpaces)
+	{
+		Spaces += TEXT(" ");
+		++Count;
+	}
+
+	FString Summary;
+	// Method
+
+		// Acceleration
+	if (Method == ECsSpeedInterpMethod::Acceleration)
+	{
+		Summary += FString::Printf(TEXT("%sMethod: %s"), *Spaces, EMCsSpeedInterpMethod::Get().ToChar(Method));
+	}
+		// Easing
+	else
+	if (Method == ECsSpeedInterpMethod::Easing)
+	{
+		Summary += FString::Printf(TEXT("%sMethod: %s - %s"), *Spaces, EMCsSpeedInterpMethod::Get().ToChar(Method), EMCsEasingType::Get().ToChar(Easing));
+	}
+		// Curve
+	else
+	if (Method == ECsSpeedInterpMethod::Curve)
+	{
+		FString Path = TEXT("None");
+
+		if (Curve)
+		{
+			TSoftObjectPtr<UCurveFloat> SoftObject = TSoftObjectPtr<UCurveFloat>(Curve);
+			Path								   = SoftObject.ToSoftObjectPath().ToString();
+		}
+
+		Summary += FString::Printf(TEXT("%sCurve: %s - %s"), *Spaces, EMCsSpeedInterpMethod::Get().ToChar(Method), *Path);
+	}
+
+	Summary += TEXT("\n");
+	// Direction
+	Summary += FString::Printf(TEXT("%sDirection: %s"), *Spaces, EMCsSpeedInterpDirection::Get().ToChar(Direction));
+	Summary += TEXT("\n");
+	// Time
+	Summary += FString::Printf(TEXT("%sTime: %f"), *Spaces, Time);
+	Summary += TEXT("\n");
+	// Acceleration
+	Summary += FString::Printf(TEXT("%sAcceleration: %s"), *Spaces, *(Acceleration.ToString()));
+
+	return Summary;
+}
+
 #if WITH_EDITOR
 
 void FCsSpeedInterpInfo::OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName)
@@ -435,4 +489,5 @@ namespace NCsSpeed
 		}
 	}
 }
+
 #pragma endregion NCsSpeed::NInterp::FInterp

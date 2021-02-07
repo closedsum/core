@@ -132,6 +132,8 @@ struct CSCORE_API FCsSpeed
 		MpH = CS_KILOMETERS_PER_HOUR_TO_MILES_PER_HOUR * KpH;
 	}
 
+	FORCEINLINE FString ToString() const { return FString::Printf(TEXT("%f UUpS %f MpH %f KpH"), UUpS, MpH, KpH); }
+
 #if WITH_EDITOR
 	void OnPostEditChange(const FName& PropertyName);
 #endif // #if WITH_EDITOR
@@ -339,6 +341,8 @@ struct CSCORE_API FCsAcceleration
 		MpHS = CS_KILOMETERS_PER_HOUR_TO_MILES_PER_HOUR * KpHS;
 	}
 
+	FORCEINLINE FString ToString() const { return FString::Printf(TEXT("%f UUpSS %f MpHS %f KpHS"), UUpSS, MpHS, KpHS); }
+
 #if WITH_EDITOR
 	void OnPostEditChange(const FName& PropertyName);
 #endif // #if WITH_EDITOR
@@ -404,6 +408,8 @@ struct CSCORE_API FCsSpeedInterpInfo
 #define InfoType NCsSpeed::NInterp::FInfo
 	void SetInfo(InfoType* Info);
 #undef InfoType
+
+	FString PrintSummary(const int32& IndentSpaces = 0);
 
 private:
 

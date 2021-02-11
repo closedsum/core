@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 
-#include "UObject/NameTypes.h"
+#include "Containers/CsGetInterfaceMap.h"
 
 #pragma once
 

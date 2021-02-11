@@ -320,7 +320,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetMaterials(SkeletalMeshPayloadType
 			if (Component->GetMaterial(I) != Materials[I])
 			{
 				Different = true;
-				false;
+				break;
 			}
 		}
 
@@ -390,7 +390,7 @@ void ACsSkeletalMeshActorPooledImpl::LogSetMaterials(SkeletalMeshPayloadType* Pa
 					if (Component->GetMaterial(I) != Materials[I])
 					{
 						Different = true;
-						false;
+						break;
 					}
 				}
 				

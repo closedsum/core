@@ -24,6 +24,7 @@ namespace NCsFX
 			Owner(nullptr),
 			Parent(nullptr),
 			Time(),
+			PreserveChangesFromDefaultMask(0),
 			// FXPayloadType (NCsFX::Payload::IPayload)
 			FXSystem(nullptr),
 			DeallocateMethod(DeallocateMethodType::Complete),
@@ -64,6 +65,8 @@ namespace NCsFX
 			Parent = nullptr;
 
 			Time.Reset();
+
+			PreserveChangesFromDefaultMask = 0;
 
 			// FXPayloadType (NCsFX::NPayload::IPayload)
 			typedef NCsFX::EDeallocateMethod DeallocateMethodType;

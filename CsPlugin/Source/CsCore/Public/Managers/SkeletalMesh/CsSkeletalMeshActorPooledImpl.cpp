@@ -2,6 +2,8 @@
 #include "Managers/SkeletalMesh/CsSkeletalMeshActorPooledImpl.h"
 #include "CsCore.h"
 
+// CVars
+#include "Managers/SkeletalMesh/CsCVars_SkeletalMeshActor.h"
 // Types
 #include "Types/CsTypes_AttachDetach.h"
 #include "Types/CsTypes_Math.h"
@@ -25,6 +27,8 @@ namespace NCsSkeletalMeshActorImpl
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSkeletalMeshActorPooledImpl, Update);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSkeletalMeshActorPooledImpl, Allocate);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSkeletalMeshActorPooledImpl, Handle_SetSkeletalMesh);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSkeletalMeshActorPooledImpl, Handle_SetMaterials);
 		}
 	}
 }
@@ -34,7 +38,11 @@ namespace NCsSkeletalMeshActorImpl
 ACsSkeletalMeshActorPooledImpl::ACsSkeletalMeshActorPooledImpl(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
 	Cache(nullptr),
-	CacheImpl(nullptr)
+	CacheImpl(nullptr),
+	PreserveChangesToDefaultMask(0),
+	ChangesToDefaultMask(0),
+	ChangesFromLastMask(0),
+	AttachToBone(NAME_None)
 {
 	PrimaryActorTick.bCanEverTick		   = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
@@ -130,46 +138,19 @@ void ACsSkeletalMeshActorPooledImpl::Allocate(PayloadType* Payload)
 
 	Cache->Allocate(Payload);
 
+	PreserveChangesToDefaultMask = Payload->GetPreserveChangesFromDefaultMask();
+
 	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
 	typedef NCsSkeletalMeshActor::NPayload::IPayload SkeletalMeshPayloadType;
 
 	SkeletalMeshPayloadType* SkeletalMeshPayload = PooledPayloadLibrary::GetInterfaceChecked<SkeletalMeshPayloadType>(Context, Payload);
 
 	// Set SkeletalMesh
-	GetMeshComponent()->SetSkeletalMesh(SkeletalMeshPayload->GetSkeletalMesh());
+	Handle_SetSkeletalMesh(SkeletalMeshPayload);
 	// Set Materials
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
-	MaterialLibrary::SetMaterialsChecked(Context, GetMeshComponent(), SkeletalMeshPayload->GetMaterials());
-
-	// If the Parent is set, attach the SkeletalMeshActor to the Parent
-	USceneComponent* Parent = nullptr;
-
-	UObject* Object = Payload->GetParent();
-
-	// SceneComponent
-	if (USceneComponent* Component = Cast<USceneComponent>(Object))
-		Parent = Component;
-	// Actor -> Get RootComponent
-	else
-	if (AActor* Actor = Cast<AActor>(Object))
-		Parent = Actor->GetRootComponent();
-
-	const FTransform& Transform = SkeletalMeshPayload->GetTransform();
-	const int32& TransformRules = SkeletalMeshPayload->GetTransformRules();
-
-	if (Parent)
-	{
-		// TODO: Add check if Bone is Valid for SkeletalMeshComponent
-		GetMeshComponent()->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(SkeletalMeshPayload->GetAttachmentTransformRule()), SkeletalMeshPayload->GetBone());
-
-		NCsTransformRules::SetRelativeTransform(GetMeshComponent(), Transform, TransformRules);
-	}
-	// NO Parent, set the World Transform of the SkeletalMeshComponent
-	else
-	{
-		NCsTransformRules::SetTransform(this, Transform, TransformRules);
-	}
+	Handle_SetMaterials(SkeletalMeshPayload);
+	// Attach and set Transform
+	Handle_AttachAndSetTransform(Payload, SkeletalMeshPayload);
 
 	SetActorTickEnabled(true);
 
@@ -212,14 +193,420 @@ void ACsSkeletalMeshActorPooledImpl::Deallocate_Internal()
 
 	checkf(Component, TEXT("ACsSkeletalMeshActorPooledImpl::Deallocate_Internal: GetSkeletalMeshComponent() is NULL."));
 
-	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	SetActorRelativeTransform(FTransform::Identity);
+	Handle_ClearAttachAndTransform();
 
 	Component->bNoSkeletonUpdate = true;
 	Component->KinematicBonesUpdateType = EKinematicBonesUpdateToPhysics::SkipAllBones;
-	Component->SetSkeletalMesh(nullptr);
+
+	Handle_ClearSkeletalMesh();
+
 	Component->SetHiddenInGame(true);
 	Component->SetComponentTickEnabled(false);
 
 	SetActorTickEnabled(false);
+
+	PreserveChangesToDefaultMask = 0;
+	ChangesFromLastMask = 0;
+}
+
+#define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
+void ACsSkeletalMeshActorPooledImpl::Handle_SetSkeletalMesh(SkeletalMeshPayloadType* Payload)
+{
+#undef SkeletalMeshPayloadType
+
+	CS_NON_SHIPPING_EXPR(LogSetSkeletalMesh(Payload));
+
+	USkeletalMesh* Mesh = Payload->GetSkeletalMesh();
+
+	typedef NCsSkeletalMeshActor::NPayload::EChange ChangeType;
+	typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
+
+	// If ALREADY set SkeletalMesh and the trying to the SAME SkeletalMesh, Do Nothing
+	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::SkeletalMesh) &&
+		CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::SkeletalMesh))
+	{
+		if (GetMeshComponent()->SkeletalMesh != Mesh)
+		{
+			GetMeshComponent()->SetSkeletalMesh(Mesh);
+
+			CS_SET_BITFLAG(ChangesFromLastMask, ChangeType::SkeletalMesh);
+
+			ChangeCounter::Get().AddChanged();
+		}
+		else
+		{
+			ChangeCounter::Get().AddPreserved();
+		}
+	}
+	else
+	{
+		GetMeshComponent()->SetSkeletalMesh(Mesh);
+		ChangeCounter::Get().AddChanged();
+	}
+	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::SkeletalMesh);
+}
+
+#define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
+void ACsSkeletalMeshActorPooledImpl::LogSetSkeletalMesh(SkeletalMeshPayloadType* Payload)
+{
+#undef SkeletalMeshPayloadType
+
+	using namespace NCsSkeletalMeshActorImpl::NCached;
+
+	const FString& Context = Str::Handle_SetSkeletalMesh;
+
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSkeletalMeshActorPooledChange) ||
+		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSkeletalMeshActorPooledChangeSet))
+	{
+		USkeletalMesh* Mesh = Payload->GetSkeletalMesh();
+
+		typedef NCsSkeletalMeshActor::NPayload::EChange ChangeType;
+		typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
+
+		// Check if SkeletalMesh should be PRESERVED
+		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::SkeletalMesh))
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s"), *Context, *(ChangeCounter::Get().ToString()));
+
+			// Check if the SkeletalMesh changed
+			if (GetMeshComponent()->SkeletalMesh != Mesh)
+			{
+				if (CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::SkeletalMesh))
+				{
+					UE_LOG(LogCs, Warning, TEXT(" %s -> %s."), *(GetMeshComponent()->SkeletalMesh ->GetName()), *(Mesh->GetName()));
+				}
+				else
+				{
+					UE_LOG(LogCs, Warning, TEXT(" NULL -> %s."), *(Mesh->GetName()));
+				}
+			}
+			else
+			{
+				UE_LOG(LogCs, Warning, TEXT(" (PRESERVED) %s."), *(GetMeshComponent()->SkeletalMesh->GetName()));
+			}
+		}
+	}
+}
+
+#define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
+void ACsSkeletalMeshActorPooledImpl::Handle_SetMaterials(SkeletalMeshPayloadType* Payload)
+{
+#undef SkeletalMeshPayloadType
+
+	using namespace NCsSkeletalMeshActorImpl::NCached;
+
+	const FString& Context = Str::Handle_SetMaterials;
+
+	CS_NON_SHIPPING_EXPR(LogSetMaterials(Payload));
+
+	typedef NCsSkeletalMeshActor::NPayload::EChange ChangeType;
+	typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
+	typedef NCsMaterial::FLibrary MaterialLibrary;
+
+	USkeletalMeshComponent* Component			 = GetMeshComponent();
+	const TArray<UMaterialInterface*>& Materials = Payload->GetMaterials();
+
+	// If SkeletalMesh has NOT changed and Materials are the SAME, Do Nothing
+	if (!CS_TEST_BITFLAG(ChangesFromLastMask, ChangeType::SkeletalMesh) &&
+		CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::Materials) &&
+		CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::Materials))
+	{
+		bool Different = false;
+
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (Component->GetMaterial(I) != Materials[I])
+			{
+				Different = true;
+				false;
+			}
+		}
+
+		if (Different)
+		{
+			MaterialLibrary::SetMaterialsChecked(Context, Component, Materials);
+			ChangeCounter::Get().AddChanged();
+		}
+		else
+		{
+			ChangeCounter::Get().AddPreserved();
+		}
+	}
+	else
+	{
+		MaterialLibrary::SetMaterialsChecked(Context, GetMeshComponent(), Materials);
+		ChangeCounter::Get().AddChanged();
+	}
+	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Materials);
+}
+
+#define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
+void ACsSkeletalMeshActorPooledImpl::LogSetMaterials(SkeletalMeshPayloadType* Payload)
+{
+#undef SkeletalMeshPayloadType
+
+	using namespace NCsSkeletalMeshActorImpl::NCached;
+
+	const FString& Context = Str::Handle_SetMaterials;
+
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSkeletalMeshActorPooledChange) ||
+		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSkeletalMeshActorPooledChangeSet))
+	{
+		typedef NCsSkeletalMeshActor::NPayload::EChange ChangeType;
+		typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
+		typedef NCsMaterial::FLibrary MaterialLibrary;
+
+		USkeletalMeshComponent* Component			 = GetMeshComponent();
+		const TArray<UMaterialInterface*>& Materials = Payload->GetMaterials();
+		
+		const int32 Count = Materials.Num();
+
+		// Check if Materials should be PRESERVED
+		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::Materials))
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s"), *Context, *(ChangeCounter::Get().ToString()));
+
+			// Check if the SkeletalMesh changed
+			if (CS_TEST_BITFLAG(ChangesFromLastMask, ChangeType::SkeletalMesh))
+			{
+				UE_LOG(LogCs, Warning, TEXT(" (CHANGED) SkeletalMesh"));
+				UE_LOG(LogCs, Warning, TEXT(" Materials [%d]"), Count);
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					UE_LOG(LogCs, Warning, TEXT("  [%d] %s"), I, *(Materials[I]->GetName()));
+				}
+			}
+			// Check if the previous Materials are the SAME as the Materials to be SET
+			else
+			if (CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::Materials))
+			{
+				bool Different = false;
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					if (Component->GetMaterial(I) != Materials[I])
+					{
+						Different = true;
+						false;
+					}
+				}
+				
+				if (Different)
+				{
+					UE_LOG(LogCs, Warning, TEXT(" (CHANGED) Materials [%d]"), Count);
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						UE_LOG(LogCs, Warning, TEXT("  [%d] %s -> %s"), I, *(Component->GetMaterial(I)->GetName()), *(Materials[I]->GetName()));
+					}
+				}
+				else
+				{
+					UE_LOG(LogCs, Warning, TEXT(" (PRESERVED) Materials [%d]"), Count);
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						UE_LOG(LogCs, Warning, TEXT("  [%d] %s"), I, *(Materials[I]->GetName()));
+					}
+				}
+			}
+			// Default -> SET
+			else
+			{
+				UE_LOG(LogCs, Warning, TEXT(" DEFAULT -> Materials [%d]"), Count);
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					UE_LOG(LogCs, Warning, TEXT("  [%d] %s"), I, *(Materials[I]->GetName()));
+				}
+			}
+		}
+	}
+}
+
+#define PayloadType NCsPooledObject::NPayload::IPayload
+#define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
+void ACsSkeletalMeshActorPooledImpl::Handle_AttachAndSetTransform(PayloadType* Payload, SkeletalMeshPayloadType* SkeletalMeshPayload)
+{
+#undef PayloadType
+#undef SkeletalMeshPayloadType
+
+	CS_NON_SHIPPING_EXPR(LogAttachAndSetTransform(Payload, SkeletalMeshPayload));
+
+	// If the Parent is set, attach the SkeletalMeshActor to the Parent
+	USceneComponent* Parent = nullptr;
+
+	UObject* Object = Payload->GetParent();
+
+	// SceneComponent
+	if (USceneComponent* Component = Cast<USceneComponent>(Object))
+		Parent = Component;
+	// Actor -> Get RootComponent
+	else
+	if (AActor* Actor = Cast<AActor>(Object))
+		Parent = Actor->GetRootComponent();
+
+	const FTransform& Transform = SkeletalMeshPayload->GetTransform();
+	const int32& TransformRules = SkeletalMeshPayload->GetTransformRules();
+
+	typedef NCsSkeletalMeshActor::NPayload::EChange ChangeType;
+	typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
+	#define ChangeHelper NCsSkeletalMeshActor::NPayload::NChange
+
+	if (Parent)
+	{
+		const ECsAttachmentTransformRules& Rule = SkeletalMeshPayload->GetAttachmentTransformRule();
+		const FName& Bone						= SkeletalMeshPayload->GetBone();
+
+		bool PerformAttach = true;
+		bool IsPreserved = false;
+
+		// If Attach and Transform are the SAME, Do Nothing
+		if (GetMeshComponent()->GetAttachParent() == Parent &&
+			AttachToBone == Bone)
+		{
+			// Check Attachment Rule
+			IsPreserved   = ChangeHelper::HasAttach(PreserveChangesToDefaultMask & ChangesToDefaultMask, Rule);
+			PerformAttach = !IsPreserved;
+
+			if (IsPreserved)
+				ChangeCounter::Get().AddPreserved();
+		}
+
+		// Attach
+		if (PerformAttach)
+		{
+			GetMeshComponent()->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Rule), SkeletalMeshPayload->GetBone());
+			ChangeCounter::Get().AddChanged();
+		}
+
+		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeHelper::FromTransformAttachmentRule(Rule));
+
+		bool PerformTransform = true;
+		IsPreserved			  = false;
+
+		// If Transform has NOT changed, don't update it.
+		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::Transform) &&
+			CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::Transform))
+		{
+			IsPreserved		 = NCsTransformRules::AreTransformsEqual(GetMeshComponent()->GetRelativeTransform(), Transform, TransformRules);
+			PerformTransform = !IsPreserved;
+
+			if (IsPreserved)
+				ChangeCounter::Get().AddPreserved();
+		}
+
+		// Set Transform
+		if (PerformTransform)
+		{
+			NCsTransformRules::SetRelativeTransform(GetMeshComponent(), Transform, TransformRules);
+			ChangeCounter::Get().AddChanged();
+		}
+		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
+	}
+	// NO Parent, set the World Transform of the SkeletalMeshComponent
+	else
+	{
+		bool PerformTransform = true;
+		bool IsPreserved	  = false;
+
+		// If Transform has NOT changed, don't update it.
+		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::Transform) &&
+			CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::Transform))
+		{
+			IsPreserved		 = NCsTransformRules::AreTransformsEqual(GetMeshComponent()->GetRelativeTransform(), Transform, TransformRules);
+			PerformTransform = !IsPreserved;
+
+			if (IsPreserved)
+				ChangeCounter::Get().AddPreserved();
+		}
+
+		if (PerformTransform)
+		{
+			NCsTransformRules::SetTransform(this, Transform, TransformRules);
+			ChangeCounter::Get().AddChanged();
+		}
+	}
+	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
+
+	#undef ChangeHelper
+}
+
+#define PayloadType NCsPooledObject::NPayload::IPayload
+#define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
+void ACsSkeletalMeshActorPooledImpl::LogAttachAndSetTransform(PayloadType* Payload, SkeletalMeshPayloadType* SkeletalMeshPayload)
+{
+#undef PayloadType
+#undef SkeletalMeshPayloadType
+
+}
+
+void ACsSkeletalMeshActorPooledImpl::Handle_ClearSkeletalMesh()
+{
+	typedef NCsSkeletalMeshActor::NPayload::EChange ChangeType;
+	typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
+
+	// If SkeletalMesh is SET and meant to be PRESERVED, Do Nothing
+	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::SkeletalMesh) &&
+		CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::SkeletalMesh))
+	{
+		// Do Nothing
+		ChangeCounter::Get().AddPreserved();
+		ChangeCounter::Get().AddPreserved();
+	}
+	else
+	{
+		GetMeshComponent()->SetSkeletalMesh(nullptr);
+		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::SkeletalMesh);
+		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Materials);
+		ChangeCounter::Get().AddCleared();
+		ChangeCounter::Get().AddCleared();
+	}
+}
+
+void ACsSkeletalMeshActorPooledImpl::Handle_ClearAttachAndTransform()
+{
+	typedef NCsSkeletalMeshActor::NPayload::EChange ChangeType;
+	typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
+	#define ChangeHelper NCsSkeletalMeshActor::NPayload::NChange
+	
+	const uint32 Mask = PreserveChangesToDefaultMask & ChangesToDefaultMask;
+
+	// If Attached, check if the Attach should be PERSERVED
+	if (GetMeshComponent()->GetAttachParent())
+	{
+		if (ChangeHelper::HasAttach(Mask))
+		{
+			// Do Nothing
+			ChangeCounter::Get().AddPreserved();
+			ChangeCounter::Get().AddPreserved();
+		}
+		else
+		{
+			DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			SetActorRelativeTransform(FTransform::Identity);
+			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeHelper::GetAttachAsMask(Mask));
+			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
+			ChangeCounter::Get().AddCleared();
+			ChangeCounter::Get().AddCleared();
+		}
+	}
+	// If NOT Attached, check if Transform should be PRESERVED
+	else
+	if (CS_TEST_BITFLAG(Mask, ChangeType::Transform))
+	{
+		// Do Nothing	
+		ChangeCounter::Get().AddPreserved();
+	}
+	else
+	{
+		SetActorRelativeTransform(FTransform::Identity);
+		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
+		ChangeCounter::Get().AddCleared();
+	}
+
+	#undef ChangeHelper
 }

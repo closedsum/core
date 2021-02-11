@@ -22,6 +22,15 @@ void FCsSettings_Input::PopulateGameEventDefintionSummary()
 
 		for (const DefinitionType& Def : GameEventDefinitions_ActionOneOrWordNoCompleteValue)
 		{
+			Summary.Add(Def.PrintSummary());
+		}
+	}
+	// GameEventDefinitions_ActionOneOrWordOneEventNoCompleteValue
+	{
+		typedef FCsGameEventDefinitionActionOneOrWordOneEventNoCompletedValue DefinitionType;
+
+		for (const DefinitionType& Def : GameEventDefinitions_ActionOneOrWordOneEventNoCompleteValue)
+		{
 			Summary.Add(Def.PrintOneLineSummary());
 		}
 	}
@@ -78,6 +87,7 @@ void FCsSettings_Input::OnPostEditChange(const FString& PropertyName, const TSet
 	// GameEventDefinitionSummary
 	if (PropertyName == TEXT("GameEventDefinitions") ||
 		PropertyName == TEXT("GameEventDefinitions_ActionOneOrWordNoCompleteValue") ||
+		PropertyName == TEXT("GameEventDefinitions_ActionOneOrWordOneEventNoCompleteValue") ||
 		PropertyName == TEXT("GameEventDefinitions_AxisOneOrWordNoComparePassThroughValue"))
 	{
 		PopulateGameEventDefintionSummary();
@@ -86,6 +96,7 @@ void FCsSettings_Input::OnPostEditChange(const FString& PropertyName, const TSet
 	else
 	if (PropertyNames.Contains("GameEventDefinitions") ||
 		PropertyNames.Contains("GameEventDefinitions_ActionOneOrWordNoCompleteValue") ||
+		PropertyNames.Contains("GameEventDefinitions_ActionOneOrWordOneEventNoCompleteValue") ||
 		PropertyNames.Contains("GameEventDefinitions_AxisOneOrWordNoComparePassThroughValue"))
 	{
 		PopulateGameEventDefintionSummary();

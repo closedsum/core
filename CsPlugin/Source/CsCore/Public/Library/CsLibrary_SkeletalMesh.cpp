@@ -12,24 +12,31 @@ namespace NCsSkeletalMesh
 	// Bone
 	#pragma region
 
-	FVector FLibrary::GetBoneLocationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Bone)
+	bool FLibrary::IsBoneValidChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Bone)
 	{
 		checkf(Component, TEXT("%s: Component is NULL."), *Context);
 
 		checkf(Bone != NAME_None, TEXT("%s: Bone: None is NOT Valid."), *Context);
 
-		checkf(Component->GetBoneIndex(Bone) != INDEX_NONE, TEXT("%s: Bone: %s does NOT exist on SkeletalMesh: %s."), *Context, *(Bone.ToString()), *(Component->SkeletalMesh->GetName()));
+		USkeletalMesh* Mesh = Component->SkeletalMesh;
+
+		checkf(Mesh, TEXT("%s: SkeletalMesh is NULL for Component: %s."), *Context, *(Component->GetName()));
+
+		checkf(Component->GetBoneIndex(Bone) != INDEX_NONE, TEXT("%s: Bone: %s does NOT exist on Component: %s with SkeletalMesh: %s."), *Context, *(Bone.ToString()), *(Component->GetName()), *(Mesh->GetName()));
+
+		return true;
+	}
+
+	FVector FLibrary::GetBoneLocationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Bone)
+	{
+		check(IsBoneValidChecked(Context, Component, Bone));
 
 		return Component->GetBoneLocation(Bone);
 	}
 
 	FRotator FLibrary::GetBoneRotationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Bone, const int32& Rules)
 	{
-		checkf(Component, TEXT("%s: Component is NULL."), *Context);
-
-		checkf(Bone != NAME_None, TEXT("%s: Bone: None is NOT Valid."), *Context);
-
-		checkf(Component->GetBoneIndex(Bone) != INDEX_NONE, TEXT("%s: Bone: %s does NOT exist on SkeletalMesh: %s."), *Context, *(Bone.ToString()), *(Component->SkeletalMesh->GetName()));
+		check(IsBoneValidChecked(Context, Component, Bone));
 
 		FRotator Rotation = Component->GetBoneQuaternion(Bone).Rotator();
 
@@ -46,13 +53,24 @@ namespace NCsSkeletalMesh
 	// Socket
 	#pragma region
 
-	FVector FLibrary::GetSocketLocationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Socket)
+	bool FLibrary::IsSocketValidChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Socket)
 	{
 		checkf(Component, TEXT("%s: Component is NULL."), *Context);
 
 		checkf(Socket != NAME_None, TEXT("%s: Socket: None is NOT Valid."), *Context);
 
-		checkf(Component->DoesSocketExist(Socket), TEXT("%s: Socket: %s does NOT exist on SkeletalMesh: %s."), *Context, *(Component->SkeletalMesh->GetName()));
+		USkeletalMesh* Mesh = Component->SkeletalMesh;
+
+		checkf(Mesh, TEXT("%s: SkeletalMesh is NULL for Component: %s."), *Context, *(Component->GetName()));
+
+		checkf(Component->DoesSocketExist(Socket), TEXT("%s: Socket: %s does NOT exist on Component: %s with SkeletalMesh: %s."), *Context, *(Socket.ToString()), *(Component->GetName()), *(Mesh->GetName()));
+
+		return true;
+	}
+
+	FVector FLibrary::GetSocketLocationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Socket)
+	{
+		check(IsSocketValidChecked(Context, Component, Socket));
 
 		const FTransform Transform = Component->GetSocketTransform(Socket);
 
@@ -61,11 +79,7 @@ namespace NCsSkeletalMesh
 
 	FRotator FLibrary::GetSocketRotationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Socket, const int32& Rules)
 	{
-		checkf(Component, TEXT("%s: Component is NULL."), *Context);
-
-		checkf(Socket != NAME_None, TEXT("%s: Socket: None is NOT Valid."), *Context);
-
-		checkf(Component->GetBoneIndex(Socket) != INDEX_NONE, TEXT("%s: Bone: %s Socket NOT exist on SkeletalMesh: %s."), *Context, *(Socket.ToString()), *(Component->SkeletalMesh->GetName()));
+		check(IsSocketValidChecked(Context, Component, Socket));
 
 		const FTransform Transform = Component->GetSocketTransform(Socket);
 

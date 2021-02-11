@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/SkeletalMesh/Payload/CsLibrary_Payload_SkeletalMeshActor.h"
 
+// Library
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
+#include "Library/CsLibrary_SkeletalMesh.h"
 // StaticMesh
 #include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"
 #include "Managers/SkeletalMesh/Params/CsParams_SkeletalMeshActor.h"
@@ -16,6 +19,23 @@ namespace NCsSkeletalMeshActor
 
 			// Check SkeletalMesh is Valid
 			checkf(Payload->GetSkeletalMesh(), TEXT("%s: SkeletalMesh is NULL."), *Context);
+
+			// Check Bone is Valid
+			// TODO: Need to have support for Socket
+			typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
+
+			PooledPayloadType* PooledPayload = GetInterfaceChecked<PooledPayloadType>(Context, Payload);
+
+			if (USkeletalMeshComponent* Component = Cast<USkeletalMeshComponent>(PooledPayload->GetParent()))
+			{
+				if (USkeletalMesh* Mesh = Component->SkeletalMesh)
+				{
+					typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
+
+					SkeletalMeshLibrary::IsBoneValidChecked(Context, Component, Payload->GetBone());
+				}
+			}
+
 			// Params
 			typedef NCsSkeletalMeshActor::NParams::IParams ParamsType;
 

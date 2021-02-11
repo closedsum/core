@@ -150,6 +150,28 @@ namespace NCsTransformRules
 			}
 		}
 	}
+
+	bool AreTransformsEqual(const FTransform& A, const FTransform& B, const int32& Rules)
+	{
+		bool Equal = true;
+
+		// Location
+		if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Location))
+		{
+			Equal &= A.GetLocation() == B.GetLocation();
+		}
+		// Rotation
+		if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Rotation))
+		{
+			Equal &= A.GetRotation() == B.GetRotation();
+		}
+		// Scale
+		if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Scale))
+		{
+			Equal &= A.GetScale3D() == B.GetScale3D();
+		}
+		return Equal;
+	}
 }
 
 #pragma endregion TransformRules

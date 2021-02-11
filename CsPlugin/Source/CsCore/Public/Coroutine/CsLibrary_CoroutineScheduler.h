@@ -29,6 +29,14 @@ namespace NCsCoroutine
 			* return				Context for CoroutineScheduler
 			*/
 			static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
+
+			/**
+			* Safely get the Context (Root) for UCsCoroutineScheduler from a WorldContext.
+			*
+			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Context for CoroutineScheduler
+			*/
+			static UObject* GetSafeContextRoot(UObject* WorldContext);
 		};
 	}
 }

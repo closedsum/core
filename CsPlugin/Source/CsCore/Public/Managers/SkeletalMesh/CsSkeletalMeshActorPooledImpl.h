@@ -35,6 +35,7 @@ class CSCORE_API ACsSkeletalMeshActorPooledImpl : public ASkeletalMeshActor,
 #define CacheType NCsPooledObject::NCache::ICache
 #define CacheImplType NCsSkeletalMeshActor::NCache::FImpl
 #define PayloadType NCsPooledObject::NPayload::IPayload
+#define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
 
 // UObject Interface
 #pragma region
@@ -71,6 +72,10 @@ protected:
 
 	void ConstructCache();
 
+	uint32 PreserveChangesToDefaultMask;
+	uint32 ChangesToDefaultMask;
+	uint32 ChangesFromLastMask;
+
 // ICsPooledObject
 #pragma region
 public:
@@ -98,7 +103,22 @@ protected:
 
 	void Deallocate_Internal();
 
+	void Handle_SetSkeletalMesh(SkeletalMeshPayloadType* Payload);
+	void LogSetSkeletalMesh(SkeletalMeshPayloadType* Payload);
+
+	void Handle_SetMaterials(SkeletalMeshPayloadType* Payload);
+	void LogSetMaterials(SkeletalMeshPayloadType* Payload);
+
+	FName AttachToBone;
+
+	void Handle_AttachAndSetTransform(PayloadType* Payload, SkeletalMeshPayloadType* SkeletalMeshPayload);
+	void LogAttachAndSetTransform(PayloadType* Payload, SkeletalMeshPayloadType* SkeletalMeshPayload);
+
+	void Handle_ClearSkeletalMesh();
+	void Handle_ClearAttachAndTransform();
+
 #undef CacheType
 #undef CacheImplType
 #undef PayloadType
+#undef SkeletalMeshPayloadType
 };

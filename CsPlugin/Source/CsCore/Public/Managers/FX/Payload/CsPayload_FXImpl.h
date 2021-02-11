@@ -52,6 +52,8 @@ namespace NCsFX
 	
 			FCsTime Time;
 
+			uint32 PreserveChangesFromDefaultMask;
+
 			// FXPayloadType (NCsFX::Payload::IPayload)
 
 			UNiagaraSystem* FXSystem;
@@ -100,6 +102,8 @@ namespace NCsFX
 			FORCEINLINE void Allocate(){ bAllocated = true; }
 
 			void Reset();
+
+			FORCEINLINE const uint32& GetPreserveChangesFromDefaultMask() const { return PreserveChangesFromDefaultMask; }
 
 		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 

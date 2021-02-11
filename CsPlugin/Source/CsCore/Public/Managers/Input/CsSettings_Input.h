@@ -29,6 +29,15 @@ public:
 	TSet<FCsGameEventDefinitionActionOneOrWordNoCompletedValue> GameEventDefinitions_ActionOneOrWordNoCompleteValue;
 
 	/** This is a simplified GameEvent (FECsGameEvent) definition based on an
+		Action type action (FECsInputAction).
+		 One Word with one or more "Or" Input Words all with the SAME InputEvent.
+		 No Completed Value
+		 - No additional value is passed through when the definition is completed.
+		  Usually for Actions, there is NO value. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (DisplayName = "GameEventDefintions: Action - 1 Or Word, 1 InputEvent, No Complete Value"))
+	TSet<FCsGameEventDefinitionActionOneOrWordOneEventNoCompletedValue> GameEventDefinitions_ActionOneOrWordOneEventNoCompleteValue;
+
+	/** This is a simplified GameEvent (FECsGameEvent) definition based on an
 		Axis type action (FECsInputAction).
 		 One Word with one or more "Or" Input Words.
 		 No Compare Value
@@ -52,6 +61,7 @@ public:
 		InputActionMappings(),
 		GameEventDefinitions(),
 		GameEventDefinitions_ActionOneOrWordNoCompleteValue(),
+		GameEventDefinitions_ActionOneOrWordOneEventNoCompleteValue(),
 		GameEventDefinitions_AxisOneOrWordNoComparePassThroughValue(),
 		GameEventPriorityList(),
 		GameEventPriorityList_Internal()

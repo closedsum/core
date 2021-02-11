@@ -18,15 +18,20 @@ namespace NCsUserWidget
 			Owner(nullptr),
 			Parent(nullptr),
 			Time(),
+			PreserveChangesFromDefaultMask(0),
 			// NCsUserWidget::NPayload::IPayload
-			Visibility(ESlateVisibility::SelfHitTestInvisible)
+			Visibility(ESlateVisibility::SelfHitTestInvisible),
+			bAddToViewport(false)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
 			InterfaceMap->SetRootName(FImpl::Name);
 
-			InterfaceMap->Add<NCsPooledObject::NPayload::IPayload>(static_cast<NCsPooledObject::NPayload::IPayload*>(this));
-			InterfaceMap->Add<NCsUserWidget::NPayload::IPayload>(static_cast<NCsUserWidget::NPayload::IPayload*>(this));
+			typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
+			typedef NCsUserWidget::NPayload::IPayload WidgetPayloadType;
+
+			InterfaceMap->Add<PooledPayloadType>(static_cast<PooledPayloadType*>(this));
+			InterfaceMap->Add<WidgetPayloadType>(static_cast<WidgetPayloadType*>(this));
 		}
 
 		FImpl::~FImpl()
@@ -44,10 +49,12 @@ namespace NCsUserWidget
 			Instigator = nullptr;
 			Owner = nullptr;
 			Parent = nullptr;
+			PreserveChangesFromDefaultMask = 0;
 
 			Time.Reset();
 			// NCsUserWidget::NPayload::IPayload
 			Visibility = ESlateVisibility::SelfHitTestInvisible;
+			bAddToViewport = false;
 		}
 
 		#pragma endregion NCsPooledObject::NPayload::IPayload

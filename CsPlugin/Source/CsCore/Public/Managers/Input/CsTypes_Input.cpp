@@ -885,6 +885,82 @@ void FCsGameEventDefinitionActionOneOrWordNoCompletedValue::AddDefinition(TSet<F
 			// Word
 	FCsInputWord& Word = Phrase.Words.Last();
 
+	for (const FCsInputActionAndEvent& Pair : Words)
+	{
+		Word.OrInputs.AddDefaulted();
+		// Description
+		FCsInputDescription& Description = Word.OrInputs.Last();
+		Description.Action = Pair.Action;
+		Description.Event  = Pair.Event;
+			// CompareValue
+		FCsInputCompareValue& CompareValue = Description.CompareValue;
+		CompareValue.ValueType = ECsInputValue::Void;
+		CompareValue.ValueRule = ECsInputValueRule::None;
+			// CompletedValue
+		FCsInputCompletedValue& CompletedValue = Description.CompletedValue;
+		CompletedValue.ValueType  = ECsInputValue::Void;
+		CompletedValue.ReturnType = ECsInputCompletedValueReturnType::PassThrough;
+	}
+
+	FCsGameEventDefinition GameEventDefinition;
+	GameEventDefinition.Event	 = GameEvent;
+	GameEventDefinition.Sentence = Sentence;
+
+	GameEventDefinitions.Add(GameEventDefinition);
+
+	InputSentenceByGameEventMap.Add(GameEvent, Sentence);
+}
+
+FString FCsGameEventDefinitionActionOneOrWordNoCompletedValue::PrintSummary() const
+{
+	FString Summary;
+
+	if (!IsValid())
+		return Summary;
+
+	// GameEvent
+	//  Action Event
+	//  Action Event
+	//  ...
+	Summary += GameEvent.GetName();
+	Summary += TEXT("\n");
+
+	const int32 Count = Words.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		const FCsInputActionAndEvent& Word = Words[I];
+
+		Summary += TEXT(" ") + Word.Action.GetName() + TEXT(" ") + EMCsInputEvent::Get().ToString(Word.Event);
+
+		if (I < Count - 1)
+			Summary += TEXT("\n");
+	}
+
+	return Summary;
+}
+
+#pragma endregion FCsGameEventDefinitionActionOneOrWordNoCompletedValue
+
+// FCsGameEventDefinitionActionOneOrWordOneEventNoCompletedValue
+#pragma region
+
+void FCsGameEventDefinitionActionOneOrWordOneEventNoCompletedValue::AddDefinition(TSet<FCsGameEventDefinition>& GameEventDefinitions, TMap<FECsGameEvent, FCsInputSentence>& InputSentenceByGameEventMap) const
+{
+	check(IsValid());
+	// Check if a sentence has ALREADY been added to InputSentenceByGameEventMap.
+	checkf(!InputSentenceByGameEventMap.Find(GameEvent), TEXT("GameEvent: %s is already Set in GameEventDefintions and InputSentenceByGameEventMap."), GameEvent.ToChar());
+
+	// Sentence
+	FCsInputSentence Sentence;
+	Sentence.Reset();
+	Sentence.Phrases.AddDefaulted();
+		// Phrase
+	FCsInputPhrase& Phrase = Sentence.Phrases.Last();
+	Phrase.Words.AddDefaulted();
+			// Word
+	FCsInputWord& Word = Phrase.Words.Last();
+
 	for (const FECsInputAction& Action : Actions)
 	{
 		Word.OrInputs.AddDefaulted();
@@ -911,7 +987,7 @@ void FCsGameEventDefinitionActionOneOrWordNoCompletedValue::AddDefinition(TSet<F
 	InputSentenceByGameEventMap.Add(GameEvent, Sentence);
 }
 
-FString FCsGameEventDefinitionActionOneOrWordNoCompletedValue::PrintOneLineSummary() const
+FString FCsGameEventDefinitionActionOneOrWordOneEventNoCompletedValue::PrintOneLineSummary() const
 {
 	FString Summary;
 
@@ -936,7 +1012,7 @@ FString FCsGameEventDefinitionActionOneOrWordNoCompletedValue::PrintOneLineSumma
 	return Summary;
 }
 
-#pragma endregion FCsGameEventDefinitionActionOneOrWordNoCompletedValue
+#pragma endregion FCsGameEventDefinitionActionOneOrWordOneEventNoCompletedValue
 
 // FCsGameEventDefinitionAxisOneOrWordNoComparePassThroughValue
 #pragma region

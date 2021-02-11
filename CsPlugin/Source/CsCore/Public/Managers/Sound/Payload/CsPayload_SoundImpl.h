@@ -42,6 +42,8 @@ namespace NCsSound
 	
 			FCsTime Time;
 
+			uint32 PreserveChangesFromDefaultMask;
+
 			// SoundPayloadType (NCsSound::NPayload::IPayload)
 
 			USoundBase* Sound;
@@ -69,10 +71,7 @@ namespace NCsSound
 		#pragma region
 		public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return InterfaceMap;
-			}
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
 
@@ -88,6 +87,8 @@ namespace NCsSound
 			FORCEINLINE void Allocate(){ bAllocated = true; }
 
 			void Reset();
+
+			FORCEINLINE const uint32& GetPreserveChangesFromDefaultMask() const { return PreserveChangesFromDefaultMask; }
 
 		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 

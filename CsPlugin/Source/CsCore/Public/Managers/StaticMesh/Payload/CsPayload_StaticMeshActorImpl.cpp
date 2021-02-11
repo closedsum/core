@@ -19,6 +19,7 @@ namespace NCsStaticMeshActor
 			Owner(nullptr),
 			Parent(nullptr),
 			Time(),
+			PreserveChangesFromDefaultMask(0),
 			// StaticMeshPayloadType (NCsStaticMeshActor::NPayload::IPayload)
 			Mesh(nullptr),
 			DeallocateMethod(DeallocateMethodType::Complete),
@@ -56,6 +57,8 @@ namespace NCsStaticMeshActor
 			Parent = nullptr;
 
 			Time.Reset();
+
+			PreserveChangesFromDefaultMask = 0;
 
 			// StaticMeshPayloadType (NCsStaticMeshActor::NPayload::IPayload)
 			Mesh = nullptr;

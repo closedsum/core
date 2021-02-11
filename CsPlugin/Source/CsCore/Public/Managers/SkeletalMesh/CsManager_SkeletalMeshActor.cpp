@@ -332,6 +332,10 @@ void UCsManager_SkeletalMeshActor::SetupInternal()
 
 		InitInternalFromSettings();
 	}
+
+	typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
+
+	ChangeCounter::Get().Reset();
 }
 
 void UCsManager_SkeletalMeshActor::InitInternalFromSettings()

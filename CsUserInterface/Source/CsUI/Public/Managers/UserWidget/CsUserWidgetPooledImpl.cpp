@@ -36,7 +36,12 @@ namespace NCsUserWidgetPooledImpl
 
 #pragma endregion Cached
 
-UCsUserWidgetPooledImpl::UCsUserWidgetPooledImpl(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsUserWidgetPooledImpl::UCsUserWidgetPooledImpl(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	Cache(nullptr),
+	PreserveChangesToDefaultMask(0),
+	ChangesToDefaultMask(0),
+	UserWidget(nullptr)
 {
 }
 
@@ -50,6 +55,12 @@ void UCsUserWidgetPooledImpl::BeginDestroy()
 	{
 		delete Cache;
 		Cache = nullptr;
+	}
+
+	if (UserWidget)
+	{
+		UserWidget->MarkPendingKill();
+		UserWidget = nullptr;
 	}
 }
 
@@ -147,6 +158,8 @@ void UCsUserWidgetPooledImpl::Allocate(PayloadType* Payload)
 
 	CacheImpl->Allocate(Payload);
 
+	PreserveChangesToDefaultMask = Payload->GetPreserveChangesFromDefaultMask();
+
 	typedef NCsUserWidget::NPayload::IPayload UserWidgetPayloadType;
 	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
 
@@ -154,12 +167,29 @@ void UCsUserWidgetPooledImpl::Allocate(PayloadType* Payload)
 
 	UserWidget->SetVisibility(UserWidgetPayload->GetVisibility());
 	UserWidget->SetIsEnabled(true);
+
+	Handle_AddToViewport(UserWidgetPayload);
 }
 
 void UCsUserWidgetPooledImpl::Deallocate()
 {
 	UserWidget->SetVisibility(ESlateVisibility::Collapsed);
 	UserWidget->SetIsEnabled(false);
+
+	typedef NCsUserWidget::NPayload::EChange ChangeType;
+
+	// Keep in viewport
+	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::AddedToViewport) &&
+		CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::AddedToViewport))
+	{
+		// Do Nothing
+	}
+	else
+	{
+		UserWidget->RemoveFromViewport();
+	}
+
+	PreserveChangesToDefaultMask = 0;
 
 	Cache->Deallocate();
 }
@@ -172,4 +202,34 @@ void UCsUserWidgetPooledImpl::ConstructCache()
 	typedef NCsUserWidget::NCache::FImpl CacheImplType;
 
 	Cache = new CacheImplType();
+}
+
+#define UserWidgetPayloadType NCsUserWidget::NPayload::IPayload
+void UCsUserWidgetPooledImpl::Handle_AddToViewport(UserWidgetPayloadType* Payload)
+{
+#undef UserWidgetPayloadType
+
+	typedef NCsUserWidget::NPayload::EChange ChangeType;
+
+	// If ADD to viewport, Mark the change
+	if (Payload->ShouldAddToViewport())
+	{
+		// If ALREADY added to viewport, Do Nothing
+		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::AddedToViewport) &&
+			CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::AddedToViewport))
+		{
+			// Do Nothing
+		}
+		else
+		{
+			UserWidget->AddToViewport();
+		}
+		// Mark the change
+		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::AddedToViewport);
+	}
+	// Clear change
+	else
+	{
+		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::AddedToViewport);
+	}
 }

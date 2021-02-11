@@ -21,6 +21,7 @@ namespace NCsPooledObject
 			Owner(nullptr),
 			Parent(nullptr),
 			Time(),
+			PreserveChangesFromDefaultMask(0),
 			Resets()
 		{
 		}

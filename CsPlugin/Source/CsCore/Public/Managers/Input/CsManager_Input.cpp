@@ -142,6 +142,8 @@ void UCsManager_Input::Init()
 		EventsFound[I] = false;
 	}
 
+	GameEventPriorityList.Reset(EventCount);
+
 	for (const FECsGameEvent& Event : InputSettings.GameEventPriorityList_Internal)
 	{
 		EventsFound[Event.GetValue()] = true;
@@ -443,7 +445,9 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 void UCsManager_Input::OnPostProcessInput_CaptureMouseInput(const float& DeltaTime, const bool bGamePaused)
 {
+#if !PLATFORM_WINDOWS
 	if (OwnerAsController->bShowMouseCursor)
+#endif // #if !PLATFORM_WINDOWS
 	{
 		// Default__MousePositionXY__
 		{
@@ -927,6 +931,8 @@ void UCsManager_Input::SetupInputActionMapping()
 
 	const TMap<FECsInputActionMap, FCsInputActionSet>& InputActionMappings = InputSettings.InputActionMappings;
 
+	InputActionMapping.Reset();
+
 	for (const FECsInputActionMap& Map : EMCsInputActionMap::Get())
 	{
 		const int32& Mask			 = Map.Mask;
@@ -1003,6 +1009,9 @@ void UCsManager_Input::SetupGameEventDefinitions()
 	UCsDeveloperSettings* Settings		   = GetMutableDefault<UCsDeveloperSettings>();
 	const FCsSettings_Input& InputSettings = Settings->Input;
 
+	GameEventDefinitions.Reset();
+	InputSentenceByGameEventMap.Reset();
+
 	for (const FCsGameEventDefinition& Def : InputSettings.GameEventDefinitions)
 	{
 		GameEventDefinitions.Add(Def);
@@ -1028,7 +1037,16 @@ void UCsManager_Input::SetupGameEventDefinitions()
 			Def.AddDefinition(GameEventDefinitions, InputSentenceByGameEventMap);
 		}
 	}
-	//GameEventDefinitions_AxisOneOrWordNoComparePassThroughValue
+	// GameEventDefinitions_ActionOneOrWordOneEventNoCompleteValue
+	{
+		typedef FCsGameEventDefinitionActionOneOrWordOneEventNoCompletedValue DefinitionType;
+
+		for (const DefinitionType& Def : InputSettings.GameEventDefinitions_ActionOneOrWordOneEventNoCompleteValue)
+		{
+			Def.AddDefinition(GameEventDefinitions, InputSentenceByGameEventMap);
+		}
+	}
+	// GameEventDefinitions_AxisOneOrWordNoComparePassThroughValue
 	{
 		typedef FCsGameEventDefinitionAxisOneOrWordNoComparePassThroughValue DefinitionType;
 

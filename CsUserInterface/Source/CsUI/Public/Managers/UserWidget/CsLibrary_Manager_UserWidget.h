@@ -20,6 +20,14 @@ namespace NCsUserWidget
 		public:
 
 			/**
+			* Safely get the Context (Root) for UCsManager_UserWidget from a WorldContext.
+			*
+			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Context for UCsManager_UserWidget
+			*/
+			static UObject* GetSafeContextRoot(UObject* WorldContext);
+
+			/**
 			*/
 			template<typename InterfaceType>
 			static InterfaceType* GetDataChecked(const FString& Context, UObject* ContextRoot, const FECsUserWidgetPooled& Type)

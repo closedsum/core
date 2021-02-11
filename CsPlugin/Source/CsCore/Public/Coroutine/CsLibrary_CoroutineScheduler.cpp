@@ -56,5 +56,28 @@ namespace NCsCoroutine
 
 			return GameInstance;
 		}
+
+		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
+		{
+			if (!WorldContext)
+				return nullptr;
+
+			UWorld* World = WorldContext->GetWorld();
+
+			if (!World)
+				return nullptr;
+
+#if WITH_EDITOR
+			if (FCsLibrary_World::IsPlayInEditor(WorldContext->GetWorld()) ||
+				FCsLibrary_World::IsPlayInEditorPreview(WorldContext->GetWorld()))
+			{
+				return GEngine;
+			}
+			else
+#endif // #if WITH_EDITOR
+			{
+				return World->GetGameInstance();
+			}
+		}
 	}
 }

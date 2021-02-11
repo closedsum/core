@@ -2,9 +2,6 @@
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/Property/Multi/CsProperty_Multi_FString_Enum_ThreeParams.h"
 
-#include "Containers/CsGetInterfaceMap.h"
-#include "Containers/CsInterfaceMap.h"
-
 #include "CsTypes_Pool.generated.h"
 #pragma once
 

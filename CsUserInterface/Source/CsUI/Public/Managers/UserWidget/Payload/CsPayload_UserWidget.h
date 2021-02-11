@@ -21,6 +21,8 @@ namespace NCsUserWidget
 			virtual ~IPayload(){}
 
 			virtual const ESlateVisibility& GetVisibility() const = 0;
+
+			virtual bool ShouldAddToViewport() const = 0;
 		};
 	}
 }

@@ -40,9 +40,21 @@ public:
 		return Object;
 	}
 
+	template<typename T>
+	FORCEINLINE T* Get() const
+	{
+		return Cast<T>(Get());
+	}
+
 	FORCEINLINE ObjectType* GetSafe() const
 	{
 		return WeakObject.IsValid() ? WeakObject.Get() : nullptr;
+	}
+
+	template<typename T>
+	FORCEINLINE T* GetSafe() const
+	{
+		return Cast<T>(GetSafe());
 	}
 
 	void Reset()

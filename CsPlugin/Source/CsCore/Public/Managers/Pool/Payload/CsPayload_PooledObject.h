@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Containers/CsGetInterfaceMap.h"
+// Types
 #include "Managers/Time/CsTypes_Time.h"
 
 #pragma once
@@ -69,6 +70,21 @@ namespace NCsPooledObject
 			* Reset the contents of the payload to the default values.
 			*/
 			virtual void Reset() = 0;
+
+			/**
+			* Get the mask that dictates what changes should be preserved when an object
+			* that implements the interface: ICsPooledObject is allocated and deallocated.
+			* Usually, on deallocate the pooled object is "cleared" and put back in
+			* an initial state. There are cases when references on an object should be
+			* kept (and put in a "dormant" state) as an optimization.
+			* 
+			* Allocate: Check if any of the kept changes from a previous allocation are the SAME.
+			*			If SAME, don't update.
+			* Deallocate: Check if any of the changes should be KEPT and NOT cleared.
+			* 
+			* return Mask 
+			*/
+			virtual const uint32& GetPreserveChangesFromDefaultMask() const = 0;
 		};
 	}
 }

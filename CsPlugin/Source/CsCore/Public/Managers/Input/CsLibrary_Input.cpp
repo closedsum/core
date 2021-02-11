@@ -30,6 +30,25 @@ namespace NCsInput
 		PC->bShowMouseCursor = false;
 	}
 
+	void FLibrary::GetMousePositionChecked(const FString& Context, UObject* WorldContext, FIntPoint& Position)
+	{
+		typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
+
+		FSceneViewport* SV = ViewportLibrary::GetViewportChecked(Context, WorldContext);
+
+		SV->GetMousePos(Position);
+	}
+
+
+	void FLibrary::SetMousePositionChecked(const FString& Context, UObject* WorldContext, const int32& X, const int32& Y)
+	{
+		typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
+
+		FSceneViewport* SV = ViewportLibrary::GetViewportChecked(Context, WorldContext);
+
+		SV->SetMouse(X, Y);
+	}
+
 	void FLibrary::SetMouseCenterOfViewportChecked(const FString& Context, UObject* WorldContext)
 	{
 		typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;

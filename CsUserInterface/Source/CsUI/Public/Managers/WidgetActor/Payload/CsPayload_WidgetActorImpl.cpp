@@ -18,6 +18,7 @@ namespace NCsWidgetActor
 			Owner(nullptr),
 			Parent(nullptr),
 			Time(),
+			PreserveChangesFromDefaultMask(0),
 			// NCsWidgetActor::NPayload::IPayload
 			UserWidget(nullptr),
 			DeallocateMethod(ECsWidgetActorDeallocateMethod::Complete),
@@ -34,9 +35,13 @@ namespace NCsWidgetActor
 
 			InterfaceMap->SetRootName(FImpl::Name);
 
-			InterfaceMap->Add<NCsPooledObject::NPayload::IPayload>(static_cast<NCsPooledObject::NPayload::IPayload*>(this));
-			InterfaceMap->Add<NCsWidgetActor::NPayload::IPayload>(static_cast<NCsWidgetActor::NPayload::IPayload*>(this));
-			InterfaceMap->Add<NCsWidgetActor::NPayload::IUserWidget>(static_cast<NCsWidgetActor::NPayload::IUserWidget*>(this));
+			typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
+			typedef NCsWidgetActor::NPayload::IPayload WidgetPayloadType;
+			typedef NCsWidgetActor::NPayload::IUserWidget UserWidgetType;
+
+			InterfaceMap->Add<PooledPayloadType>(static_cast<PooledPayloadType*>(this));
+			InterfaceMap->Add<WidgetPayloadType>(static_cast<WidgetPayloadType*>(this));
+			InterfaceMap->Add<UserWidgetType>(static_cast<UserWidgetType*>(this));
 		}
 
 		FImpl::~FImpl()
@@ -56,6 +61,8 @@ namespace NCsWidgetActor
 			Parent = nullptr;
 
 			Time.Reset();
+
+			PreserveChangesFromDefaultMask = 0;
 
 			// NCsWidgetActor::NPayload::IPayload
 			UserWidget = nullptr;

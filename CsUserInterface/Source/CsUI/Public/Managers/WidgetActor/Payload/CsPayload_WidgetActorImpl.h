@@ -18,13 +18,13 @@ namespace NCsWidgetActor
 {
 	namespace NPayload
 	{
-#define PayloadType NCsPooledObject::NPayload::IPayload
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 #define WidgetPayloadType NCsWidgetActor::NPayload::IPayload
 #define UserWidgetType NCsWidgetActor::NPayload::IUserWidget
 
 		/**
 		*/
-		struct CSUI_API FImpl final : public PayloadType,
+		struct CSUI_API FImpl final : public PooledPayloadType,
 									  public WidgetPayloadType,
 									  public UserWidgetType
 		{
@@ -51,6 +51,8 @@ namespace NCsWidgetActor
 			UObject* Parent;
 	
 			FCsTime Time;
+
+			uint32 PreserveChangesFromDefaultMask;
 
 			// NCsWidgetActor::NPayload::IPayload
 
@@ -83,10 +85,7 @@ namespace NCsWidgetActor
 		#pragma region
 		public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return InterfaceMap;
-			}
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
 
@@ -94,98 +93,41 @@ namespace NCsWidgetActor
 		#pragma region
 		public:
 
-			FORCEINLINE const bool& IsAllocated() const
-			{
-				return bAllocated;
-			}
-
-			FORCEINLINE UObject* GetInstigator() const
-			{
-				return Instigator;
-			}
-
-			FORCEINLINE UObject* GetOwner() const
-			{
-				return Owner;
-			}
-
-			FORCEINLINE UObject* GetParent() const
-			{
-				return Parent;
-			}
-
-			FORCEINLINE const FCsTime& GetTime() const
-			{
-				return Time;
-			}
-
-			FORCEINLINE void Allocate()
-			{
-				bAllocated = true;
-			}
+			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
+			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
+			FORCEINLINE UObject* GetOwner() const { return Owner; }
+			FORCEINLINE UObject* GetParent() const { return Parent; }
+			FORCEINLINE const FCsTime& GetTime() const { return Time; }
+			FORCEINLINE void Allocate() { bAllocated = true; }
 
 			void Reset();
+
+			FORCEINLINE const uint32& GetPreserveChangesFromDefaultMask() const { return PreserveChangesFromDefaultMask; }
 
 		#pragma endregion NCsPooledObject::NPayload::IPayload
 
 		public:
 
 			template<typename T>
-			FORCEINLINE T* GetInstigator() const
-			{
-				return Cast<T>(GetInstigator());
-			}
+			FORCEINLINE T* GetInstigator() const { return Cast<T>(GetInstigator()); }
 
 			template<typename T>
-			FORCEINLINE T* GetOwner() const
-			{
-				return Cast<T>(GetOwner());
-			}
+			FORCEINLINE T* GetOwner() const { return Cast<T>(GetOwner()); }
 
 			template<typename T>
-			FORCEINLINE T* GetParent() const
-			{
-				return Cast<T>(GetParent());
-			}
+			FORCEINLINE T* GetParent() const { return Cast<T>(GetParent()); }
 
 		// NCsWidgetActor::NPayload::IPayload
 		#pragma region
 		public:
 
-			FORCEINLINE UUserWidget* GetUserWidget() const
-			{
-				return UserWidget;
-			}
-
-			FORCEINLINE const ECsWidgetActorDeallocateMethod& GetDeallocateMethod() const
-			{
-				return DeallocateMethod;
-			}
-
-			FORCEINLINE const float& GetLifeTime() const
-			{
-				return LifeTime;
-			}
-
-			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const
-			{
-				return AttachmentTransformRules;
-			}
-
-			FORCEINLINE const FName& GetBone() const
-			{
-				return Bone;
-			}
-
-			FORCEINLINE const int32& GetTransformRules() const
-			{
-				return TransformRules;
-			}
-
-			FORCEINLINE const FTransform& GetTransform() const
-			{
-				return Transform;
-			}
+			FORCEINLINE UUserWidget* GetUserWidget() const { return UserWidget; }
+			FORCEINLINE const ECsWidgetActorDeallocateMethod& GetDeallocateMethod() const { return DeallocateMethod; }
+			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
+			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
+			FORCEINLINE const FName& GetBone() const { return Bone; }
+			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
+			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
 
 		#pragma endregion NCsWidgetActor::NPayload::IPayload
 
@@ -193,20 +135,13 @@ namespace NCsWidgetActor
 		#pragma region
 		public:
 
-			FORCEINLINE const FECsUserWidgetPooled& GetUserWidgetPooledType() const
-			{
-				return UserWidgetPooledType;
-			}
-
-			FORCEINLINE UserWidgetPayloadType* GetUserWidgetPayload() const
-			{
-				return UserWidgetPayload;
-			}
+			FORCEINLINE const FECsUserWidgetPooled& GetUserWidgetPooledType() const { return UserWidgetPooledType; }
+			FORCEINLINE UserWidgetPayloadType* GetUserWidgetPayload() const { return UserWidgetPayload; }
 
 		#pragma endregion NCsWidgetActor::NPayload::IUserWidget
 		};
 
-#undef PayloadType
+#undef PooledPayloadType
 #undef WidgetPayloadType
 #undef UserWidgetType
 	}

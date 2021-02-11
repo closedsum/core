@@ -484,3 +484,19 @@ struct CSUI_API FCsUserWidgetPooledEntry : public FTableRowBase
 };
 
 #pragma endregion FCsUserWidgetPooledEntry
+
+// NCsUserWidget::NPayload::EChange
+#pragma region
+
+namespace NCsUserWidget
+{
+	namespace NPayload
+	{
+		enum class EChange : uint32
+		{
+			AddedToViewport = 1<<0
+		};
+	}
+}
+
+#pragma endregion NCsUserWidget::NPayload::EChange

@@ -18,6 +18,18 @@ namespace NCsSkeletalMesh
 	public:
 
 		/**
+		* Check if the Bone is valid for given SkeletalMeshComponent.
+		* 
+		* @param Context	The calling Context.
+		* @param Component	SkeletalMeshComponent.
+		* @param Bone		Bone to check exists for SkeletalMesh on SkeletalMeshComponent.
+		* 
+		* return			Whether the Bone is valid.
+		*/
+		static bool IsBoneValidChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Bone);
+
+
+		/**
 		* Get the Bone's location from a SkeletalMeshComponent.
 		* Check the Component and Bone are valid.
 		*
@@ -68,6 +80,17 @@ namespace NCsSkeletalMesh
 	// Socket
 	#pragma region
 	public:
+
+		/**
+		* Check if the Socket is valid for given SkeletalMeshComponent.
+		*
+		* @param Context	The calling Context.
+		* @param Component	SkeletalMeshComponent.
+		* @param Socket		Socket to check exists for SkeletalMesh on SkeletalMeshComponent.
+		*
+		* return			Whether the Socket is valid.
+		*/
+		static bool IsSocketValidChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Socket);
 
 		/**
 		* Get the Socket's location from a SkeletalMeshComponent.

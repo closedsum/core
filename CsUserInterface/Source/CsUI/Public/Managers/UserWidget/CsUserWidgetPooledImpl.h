@@ -14,6 +14,8 @@
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
+// NCsUserWidget::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NPayload, IPayload)
 
 class UUserWidget;
 
@@ -29,6 +31,7 @@ class CSUI_API UCsUserWidgetPooledImpl : public UObject,
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 #define CacheType NCsPooledObject::NCache::ICache
 #define PayloadType NCsPooledObject::NPayload::IPayload
+#define UserWidgetPayloadType NCsUserWidget::NPayload::IPayload
 
 // UObject Interface
 #pragma region
@@ -72,6 +75,9 @@ protected:
 
 	void ConstructCache();
 
+	uint32 PreserveChangesToDefaultMask;
+	uint32 ChangesToDefaultMask;
+
 // ICsUserWidgetPooled
 #pragma region
 public:
@@ -90,7 +96,10 @@ protected:
 	UPROPERTY()
 	UUserWidget* UserWidget;
 
+	void Handle_AddToViewport(UserWidgetPayloadType* Payload);
+
 #undef ConstructParamsType
 #undef CacheType
 #undef PayloadType
+#undef UserWidgetPayloadType
 };

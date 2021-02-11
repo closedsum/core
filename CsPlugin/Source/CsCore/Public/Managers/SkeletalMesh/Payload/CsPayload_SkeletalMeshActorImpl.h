@@ -47,6 +47,8 @@ namespace NCsSkeletalMeshActor
 	
 			FCsTime Time;
 
+			uint32 PreserveChangesFromDefaultMask;
+
 			// SkeletalMeshPayloadType (NCsSkeletalMeshActor::NPayload::IPayload)
 
 			USkeletalMesh* Mesh;
@@ -92,6 +94,8 @@ namespace NCsSkeletalMeshActor
 			FORCEINLINE void Allocate() { bAllocated = true; }
 
 			void Reset();
+
+			FORCEINLINE const uint32& GetPreserveChangesFromDefaultMask() const { return PreserveChangesFromDefaultMask; }
 
 		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 

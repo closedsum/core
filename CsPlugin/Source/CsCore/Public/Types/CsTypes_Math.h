@@ -495,7 +495,7 @@ namespace NCsTransformRules
 	* @param Rules		Bit mask using the bit flag ECsTransformRules.
 	*/
 	CSCORE_API void SetRelativeTransform(AActor* Actor, const FTransform& Transform, const int32& Rules);
-
+	 
 	/**
 	* Set the transform of a SceneComponent to Transform based on some Rules,
 	* which determine which component of the Transform to use.
@@ -517,6 +517,16 @@ namespace NCsTransformRules
 	* @param Rules		Bit mask using the bit flag ECsTransformRules.
 	*/
 	CSCORE_API void SetTransform(AActor* Actor, const FTransform& Transform, const int32& Rules);
+
+	/**
+	* Compare transforms A and B with Rules to determine which components are equal.
+	* 
+	* @param A
+	* @oaran B
+	* @param Rules		Bit mask using the bit flag ECsTransformRules.
+	* return
+	*/
+	CSCORE_API bool AreTransformsEqual(const FTransform& A, const FTransform& B, const int32& Rules);
 }
 
 #define CS_TRANSFORM_FLAGS_NONE 0

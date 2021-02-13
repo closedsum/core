@@ -6,7 +6,7 @@
 // CVars
 #include "Managers/FX/Actor/CsCVars_Manager_FX_Actor.h"
 // Library
-#include "Library/CsLibrary_Property.h"
+#include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Managers
@@ -35,12 +35,13 @@
 
 namespace NCsManagerFXActor
 {
-	namespace Cached
+	namespace NCached
 	{
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, PopulateDataMapFromSettings);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, Spawn);
 		}
 
 		namespace Name
@@ -352,7 +353,7 @@ void UCsManager_FX_Actor::SetMyRoot(UObject* InRoot)
 
 void UCsManager_FX_Actor::SetupInternal()
 {
-	using namespace NCsManagerFXActor::Cached;
+	using namespace NCsManagerFXActor::NCached;
 
 	const FString& Context = Str::SetupInternal;
 
@@ -452,6 +453,10 @@ void UCsManager_FX_Actor::SetupInternal()
 			}
 		}
 	}
+
+	typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
+
+	ChangeCounter::Get().Reset();
 }
 
 void UCsManager_FX_Actor::InitInternalFromSettings()
@@ -771,6 +776,15 @@ PayloadType* UCsManager_FX_Actor::AllocatePayload(const FECsFX& Type)
 const FCsFXActorPooled* UCsManager_FX_Actor::Spawn(const FECsFX& Type, PayloadType* Payload)
 {
 #undef PayloadType
+
+	using namespace NCsManagerFXActor::NCached;
+
+	const FString& Context = Str::Spawn;
+
+	typedef NCsFX::NPayload::FLibrary FXPayloadLibrary;
+
+	check(FXPayloadLibrary::IsValidChecked(Context, Payload));
+
 	return Internal.Spawn(Type, Payload);
 }
 
@@ -844,7 +858,7 @@ void UCsManager_FX_Actor::LogTransaction(const FString& Context, const ECsPoolTr
 
 void UCsManager_FX_Actor::PopulateDataMapFromSettings()
 {
-	using namespace NCsManagerFXActor::Cached;
+	using namespace NCsManagerFXActor::NCached;
 
 	if (UCsDeveloperSettings* ModuleSettings = GetMutableDefault<UCsDeveloperSettings>())
 	{

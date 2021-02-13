@@ -2,6 +2,9 @@
 #include "Managers/Sound/CsSoundPooledImpl.h"
 #include "CsCore.h"
 
+// CVars
+#include "Managers/Sound/CsCVars_Sound.h"
+// Library
 #include "Library/CsLibrary_Common.h"
 // Sound
 #include "Managers/Sound/Cache/CsCache_SoundImpl.h"
@@ -30,7 +33,15 @@ namespace NCsSoundPooledImpl
 
 #pragma endregion Cached
 
-ACsSoundPooledImpl::ACsSoundPooledImpl(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+ACsSoundPooledImpl::ACsSoundPooledImpl(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	AudioComponent(nullptr),
+	Cache(nullptr),
+	CacheImpl(nullptr),
+	PreserveChangesToDefaultMask(0),
+	ChangesToDefaultMask(0),
+	Type(),
+	AttachToBone(NAME_None)
 {
 	AudioComponent = ObjectInitializer.CreateDefaultSubobject<UAudioComponent>(this, TEXT("AudioComponent"));
 
@@ -117,11 +128,6 @@ void ACsSoundPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 	using namespace NCsSoundPooledImpl::NCached;
 
 	// TODO: This should be opaque
-	
-	typedef NCsSound::NCache::FImpl CacheImplType;
-
-	CacheImplType* CacheImpl = NCsInterfaceMap::PureStaticCastChecked<CacheImplType>(Str::Update, Cache);
-
 	CacheImpl->Update(DeltaTime);
 }
 
@@ -143,7 +149,8 @@ void ACsSoundPooledImpl::ConstructCache()
 {
 	typedef NCsSound::NCache::FImpl CacheImplType;
 
-	Cache = new CacheImplType();
+	Cache	  = new CacheImplType();
+	CacheImpl = (CacheImplType*)Cache;
 }
 
 // ICsPooledObject
@@ -164,6 +171,8 @@ void ACsSoundPooledImpl::Allocate(PooledPayloadType* Payload)
 	using namespace NCsSoundPooledImpl::NCached;
 
 	Cache->Allocate(Payload);
+
+	PreserveChangesToDefaultMask = Payload->GetPreserveChangesFromDefaultMask();
 
 	typedef NCsSound::NPayload::IPayload SoundPayloadType;
 
@@ -202,56 +211,6 @@ void ACsSoundPooledImpl::Play(SoundPayloadType* Payload)
 
 	PooledPayloadType* PooledPayload = NCsInterfaceMap::GetInterfaceChecked<PooledPayloadType>(Str::Play, Payload);
 
-	// If the Parent is set, attach the Sound to the Parent
-	USceneComponent* Parent = nullptr;
-
-	UObject* Object = PooledPayload->GetParent();
-
-		// SceneComponent
-	if (USceneComponent* Component = Cast<USceneComponent>(Object))
-		Parent = Component;
-		// Actor -> Get RootComponent
-	else
-	if (AActor* Actor = Cast<AActor>(Object))
-		Parent = Actor->GetRootComponent();
-
-	if (Parent)
-	{
-		AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Payload->GetAttachmentTransformRule()), Payload->GetBone());
-
-		const FTransform& Transform = Payload->GetTransform();
-		const int32& TransformRules = Payload->GetTransformRules();
-
-		// Location | Rotation | Scale
-		if (TransformRules == NCsTransformRules::All)
-		{
-			SetActorRelativeTransform(Transform);
-		}
-		else
-		{
-			// Location
-			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Location))
-			{
-				SetActorRelativeLocation(Transform.GetLocation());
-			}
-			// Rotation
-			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Rotation))
-			{
-				SetActorRelativeRotation(Transform.GetRotation().Rotator());
-			}
-			// Scale
-			if (CS_TEST_BLUEPRINT_BITFLAG(TransformRules, ECsTransformRules::Scale))
-			{
-				SetActorRelativeScale3D(Transform.GetScale3D());
-			}
-		}
-	}
-	// NO Parent, set the World Transform of the Sound
-	else
-	{
-		SetActorTransform(Payload->GetTransform());
-	}
-
 	AudioComponent->SetSound(Sound);
 	AudioComponent->AttenuationSettings = Payload->GetSoundAttenuation();
 
@@ -270,15 +229,23 @@ void ACsSoundPooledImpl::Play(SoundPayloadType* Payload)
 			AudioComponent->bAllowSpatialization = AttenuationSettings->bSpatialize;
 		}
 	}
+
+	// Attach and set Transform
+	if (AudioComponent->bAllowSpatialization)
+		Handle_AttachAndSetTransform(PooledPayload, Payload);
+
 	AudioComponent->Activate(true);
 	AudioComponent->Play();
+
+	CS_NON_SHIPPING_EXPR(LogChangeCounter());
 }
 
 void ACsSoundPooledImpl::Stop()
 {
 	checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Stop: AudioComponent is NULL."));
 
-	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	if (AudioComponent->bAllowSpatialization)
+		Handle_ClearAttachAndTransform();
 
 	AudioComponent->Deactivate();
 	AudioComponent->Stop();
@@ -292,4 +259,182 @@ void ACsSoundPooledImpl::Stop()
 	SetActorTickEnabled(false);
 
 	AudioComponent->bAllowSpatialization = false;
+
+	CS_NON_SHIPPING_EXPR(LogChangeCounter());
+}
+
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+#define SoundPayloadType NCsSound::NPayload::IPayload
+void ACsSoundPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload, SoundPayloadType* SoundPayload)
+{
+#undef PooledPayloadType
+#undef SoundPayloadType
+
+	CS_NON_SHIPPING_EXPR(Log_AttachAndSetTransform(Payload, SoundPayload));
+
+	// If the Parent is set, attach the SkeletalMeshActor to the Parent
+	USceneComponent* Parent = nullptr;
+
+	UObject* Object = Payload->GetParent();
+
+	// SceneComponent
+	if (USceneComponent* Component = Cast<USceneComponent>(Object))
+		Parent = Component;
+	// Actor -> Get RootComponent
+	else
+	if (AActor* Actor = Cast<AActor>(Object))
+		Parent = Actor->GetRootComponent();
+
+	const FTransform& Transform = SoundPayload->GetTransform();
+	const int32& TransformRules = SoundPayload->GetTransformRules();
+
+	typedef NCsSound::NPayload::EChange ChangeType;
+	typedef NCsSound::NPayload::NChange::FCounter ChangeCounter;
+	#define ChangeHelper NCsSound::NPayload::NChange
+
+	if (Parent)
+	{
+		const ECsAttachmentTransformRules& Rule = SoundPayload->GetAttachmentTransformRule();
+		const FName& Bone						= SoundPayload->GetBone();
+
+		bool PerformAttach = true;
+		bool IsPreserved = false;
+
+		// If Attach and Transform are the SAME, Do Nothing
+		if (GetRootComponent()->GetAttachParent() == Parent &&
+			AttachToBone == Bone)
+		{
+			// Check Attachment Rule
+			IsPreserved   = ChangeHelper::HasAttach(PreserveChangesToDefaultMask & ChangesToDefaultMask, Rule);
+			PerformAttach = !IsPreserved;
+
+			if (IsPreserved)
+				ChangeCounter::Get().AddPreserved();
+		}
+
+		// Attach
+		if (PerformAttach)
+		{
+			AttachToBone = Bone;
+
+			GetRootComponent()->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Rule), Bone);
+			ChangeCounter::Get().AddChanged();
+		}
+
+		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeHelper::FromTransformAttachmentRule(Rule));
+
+		bool PerformTransform = true;
+		IsPreserved			  = false;
+
+		// If Transform has NOT changed, don't update it.
+		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::Transform) &&
+			CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::Transform))
+		{
+			IsPreserved		 = NCsTransformRules::AreTransformsEqual(GetRootComponent()->GetRelativeTransform(), Transform, TransformRules);
+			PerformTransform = !IsPreserved;
+
+			if (IsPreserved)
+				ChangeCounter::Get().AddPreserved();
+		}
+
+		// Set Transform
+		if (PerformTransform)
+		{
+			NCsTransformRules::SetRelativeTransform(GetRootComponent(), Transform, TransformRules);
+			ChangeCounter::Get().AddChanged();
+		}
+		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
+	}
+	// NO Parent, set the World Transform of the SkeletalMeshComponent
+	else
+	{
+		bool PerformTransform = true;
+		bool IsPreserved	  = false;
+
+		// If Transform has NOT changed, don't update it.
+		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::Transform) &&
+			CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::Transform))
+		{
+			IsPreserved		 = NCsTransformRules::AreTransformsEqual(GetRootComponent()->GetRelativeTransform(), Transform, TransformRules);
+			PerformTransform = !IsPreserved;
+
+			if (IsPreserved)
+				ChangeCounter::Get().AddPreserved();
+		}
+
+		if (PerformTransform)
+		{
+			NCsTransformRules::SetTransform(this, Transform, TransformRules);
+			ChangeCounter::Get().AddChanged();
+		}
+
+		AttachToBone = NAME_None;
+	}
+	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
+
+	#undef ChangeHelper
+}
+
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+#define SoundPayloadType NCsSound::NPayload::IPayload
+void ACsSoundPooledImpl::Log_AttachAndSetTransform(PooledPayloadType* Payload, SoundPayloadType* SoundPayload)
+{
+#undef PooledPayloadType
+#undef SoundPayloadType
+
+}
+
+void ACsSoundPooledImpl::Handle_ClearAttachAndTransform()
+{
+	typedef NCsSound::NPayload::EChange ChangeType;
+	typedef NCsSound::NPayload::NChange::FCounter ChangeCounter;
+	#define ChangeHelper NCsSound::NPayload::NChange
+	
+	const uint32 Mask = PreserveChangesToDefaultMask & ChangesToDefaultMask;
+
+	// If Attached, check if the Attach should be PERSERVED
+	if (GetRootComponent()->GetAttachParent())
+	{
+		if (ChangeHelper::HasAttach(Mask))
+		{
+			// Do Nothing
+			ChangeCounter::Get().AddPreserved();
+			ChangeCounter::Get().AddPreserved();
+		}
+		else
+		{
+			DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			SetActorRelativeTransform(FTransform::Identity);
+			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeHelper::GetAttachAsMask(Mask));
+			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
+			AttachToBone = NAME_None;
+			ChangeCounter::Get().AddCleared();
+			ChangeCounter::Get().AddCleared();
+		}
+	}
+	// If NOT Attached, check if Transform should be PRESERVED
+	else
+	if (CS_TEST_BITFLAG(Mask, ChangeType::Transform))
+	{
+		// Do Nothing	
+		ChangeCounter::Get().AddPreserved();
+	}
+	else
+	{
+		SetActorRelativeTransform(FTransform::Identity);
+		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
+		ChangeCounter::Get().AddCleared();
+	}
+
+	#undef ChangeHelper
+}
+
+void ACsSoundPooledImpl::LogChangeCounter()
+{
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSoundPooledChangeCounter))
+	{
+		typedef NCsSound::NPayload::NChange::FCounter ChangeCounter;
+
+		UE_LOG(LogCs, Warning, TEXT("ACsSoundPooledImpl::LogChangeCounter: %s."), *(ChangeCounter::Get().ToString()));
+	}
 }

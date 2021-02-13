@@ -10,6 +10,18 @@ namespace NCsSound
 {
 	namespace NPayload
 	{
+		#define PayloadType NCsSound::NPayload::IPayload
+		bool FLibrary::IsValidChecked(const FString& Context, PayloadType* Payload)
+		{
+		#undef PayloadType
+			
+			// Check Sound is Valid
+			checkf(Payload->GetSound(), TEXT("%s: Sound is NULL."), *Context);
+
+			return true;
+		}
+
+
 		#define PayloadImplType NCsSound::NPayload::FImpl
 		void FLibrary::SetPayload(const FString& Context, PayloadImplType* Payload, const FCsSound& Sound)
 		{

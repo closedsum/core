@@ -10,6 +10,17 @@ namespace NCsFX
 {
 	namespace NPayload
 	{
+		#define PayloadType NCsFX::NPayload::IPayload
+		bool FLibrary::IsValidChecked(const FString& Context, PayloadType* Payload)
+		{
+		#undef PayloadType
+
+			// Check FX System is Valid.
+			checkf(Payload->GetFXSystem(), TEXT("%s: FX System is NULL."), *Context);
+
+			return true;
+		}
+
 		#define PayloadImplType NCsFX::NPayload::FImpl
 		void FLibrary::SetPayload(const FString& Context, PayloadImplType* Payload, const FCsFX& FX)
 		{

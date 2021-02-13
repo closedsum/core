@@ -127,10 +127,10 @@ void ACsSkeletalMeshActorPooledImpl::ConstructCache()
 // ICsPooledObject
 #pragma region
 
-#define PayloadType NCsPooledObject::NPayload::IPayload
-void ACsSkeletalMeshActorPooledImpl::Allocate(PayloadType* Payload)
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+void ACsSkeletalMeshActorPooledImpl::Allocate(PooledPayloadType* Payload)
 {
-#undef PayloadType
+#undef PooledPayloadType
 
 	using namespace NCsSkeletalMeshActorImpl::NCached;
 
@@ -214,7 +214,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetSkeletalMesh(SkeletalMeshPayloadT
 {
 #undef SkeletalMeshPayloadType
 
-	CS_NON_SHIPPING_EXPR(LogSetSkeletalMesh(Payload));
+	CS_NON_SHIPPING_EXPR(Log_SetSkeletalMesh(Payload));
 
 	USkeletalMesh* Mesh = Payload->GetSkeletalMesh();
 
@@ -247,7 +247,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetSkeletalMesh(SkeletalMeshPayloadT
 }
 
 #define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
-void ACsSkeletalMeshActorPooledImpl::LogSetSkeletalMesh(SkeletalMeshPayloadType* Payload)
+void ACsSkeletalMeshActorPooledImpl::Log_SetSkeletalMesh(SkeletalMeshPayloadType* Payload)
 {
 #undef SkeletalMeshPayloadType
 
@@ -297,7 +297,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetMaterials(SkeletalMeshPayloadType
 
 	const FString& Context = Str::Handle_SetMaterials;
 
-	CS_NON_SHIPPING_EXPR(LogSetMaterials(Payload));
+	CS_NON_SHIPPING_EXPR(Log_SetMaterials(Payload));
 
 	typedef NCsSkeletalMeshActor::NPayload::EChange ChangeType;
 	typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
@@ -343,7 +343,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetMaterials(SkeletalMeshPayloadType
 }
 
 #define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
-void ACsSkeletalMeshActorPooledImpl::LogSetMaterials(SkeletalMeshPayloadType* Payload)
+void ACsSkeletalMeshActorPooledImpl::Log_SetMaterials(SkeletalMeshPayloadType* Payload)
 {
 #undef SkeletalMeshPayloadType
 
@@ -427,14 +427,14 @@ void ACsSkeletalMeshActorPooledImpl::LogSetMaterials(SkeletalMeshPayloadType* Pa
 	}
 }
 
-#define PayloadType NCsPooledObject::NPayload::IPayload
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 #define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
-void ACsSkeletalMeshActorPooledImpl::Handle_AttachAndSetTransform(PayloadType* Payload, SkeletalMeshPayloadType* SkeletalMeshPayload)
+void ACsSkeletalMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload, SkeletalMeshPayloadType* SkeletalMeshPayload)
 {
-#undef PayloadType
+#undef PooledPayloadType
 #undef SkeletalMeshPayloadType
 
-	CS_NON_SHIPPING_EXPR(LogAttachAndSetTransform(Payload, SkeletalMeshPayload));
+	CS_NON_SHIPPING_EXPR(Log_AttachAndSetTransform(Payload, SkeletalMeshPayload));
 
 	// If the Parent is set, attach the SkeletalMeshActor to the Parent
 	USceneComponent* Parent = nullptr;
@@ -479,7 +479,9 @@ void ACsSkeletalMeshActorPooledImpl::Handle_AttachAndSetTransform(PayloadType* P
 		// Attach
 		if (PerformAttach)
 		{
-			GetMeshComponent()->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Rule), SkeletalMeshPayload->GetBone());
+			AttachToBone = Bone;
+
+			GetMeshComponent()->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Rule), Bone);
 			ChangeCounter::Get().AddChanged();
 		}
 
@@ -529,17 +531,19 @@ void ACsSkeletalMeshActorPooledImpl::Handle_AttachAndSetTransform(PayloadType* P
 			NCsTransformRules::SetTransform(this, Transform, TransformRules);
 			ChangeCounter::Get().AddChanged();
 		}
+
+		AttachToBone = NAME_None;
 	}
 	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 
 	#undef ChangeHelper
 }
 
-#define PayloadType NCsPooledObject::NPayload::IPayload
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 #define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
-void ACsSkeletalMeshActorPooledImpl::LogAttachAndSetTransform(PayloadType* Payload, SkeletalMeshPayloadType* SkeletalMeshPayload)
+void ACsSkeletalMeshActorPooledImpl::Log_AttachAndSetTransform(PooledPayloadType* Payload, SkeletalMeshPayloadType* SkeletalMeshPayload)
 {
-#undef PayloadType
+#undef PooledPayloadType
 #undef SkeletalMeshPayloadType
 
 }
@@ -590,6 +594,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_ClearAttachAndTransform()
 			SetActorRelativeTransform(FTransform::Identity);
 			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeHelper::GetAttachAsMask(Mask));
 			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
+			AttachToBone = NAME_None;
 			ChangeCounter::Get().AddCleared();
 			ChangeCounter::Get().AddCleared();
 		}

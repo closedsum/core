@@ -18,6 +18,10 @@ namespace NCsFX
 
 			/**
 			*/
+			static bool IsValidChecked(const FString& Context, PayloadType* Payload);
+
+			/**
+			*/
 			static void SetPayload(const FString& Context, PayloadImplType* Payload, const FCsFX& FX);
 
 		#undef PayloadImplType

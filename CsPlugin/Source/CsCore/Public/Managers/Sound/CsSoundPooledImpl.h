@@ -20,6 +20,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 // NCsSound::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, IPayload)
+// NCsSound::NCache::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NCache, FImpl)
 
 /**
 * 
@@ -34,6 +36,7 @@ class CSCORE_API ACsSoundPooledImpl : public AActor,
 	GENERATED_UCLASS_BODY()
 
 #define CacheType NCsPooledObject::NCache::ICache
+#define CacheImplType NCsSound::NCache::FImpl
 #define PooledPayloadType NCsPooledObject::NPayload::IPayload
 #define SoundPayloadType NCsSound::NPayload::IPayload
 
@@ -80,8 +83,12 @@ public:
 protected:
 
 	CacheType* Cache;
+	CacheImplType* CacheImpl;
 
 	void ConstructCache();
+
+	uint32 PreserveChangesToDefaultMask;
+	uint32 ChangesToDefaultMask;
 
 // ICsPooledObject
 #pragma region
@@ -99,10 +106,7 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE UAudioComponent* GetAudioComponent() const
-	{
-		return AudioComponent;
-	}
+	FORCEINLINE UAudioComponent* GetAudioComponent() const { return AudioComponent; }
 
 #pragma endregion ICsSoundPooled
 
@@ -114,7 +118,17 @@ public:
 	void Play(SoundPayloadType* Payload);
 	void Stop();
 
+	FName AttachToBone;
+
+	void Handle_AttachAndSetTransform(PooledPayloadType* Payload, SoundPayloadType* SoundPayload);
+	void Log_AttachAndSetTransform(PooledPayloadType* Payload, SoundPayloadType* SoundPayload);
+
+	void Handle_ClearAttachAndTransform();
+
+	void LogChangeCounter();
+
 #undef CacheType
+#undef CacheImplType
 #undef PooledPayloadType
 #undef SoundPayloadType
 };

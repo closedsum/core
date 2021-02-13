@@ -576,3 +576,156 @@ public:
 };
 
 #pragma endregion FCsFX
+
+// NCsFX::NPayload::EChange
+#pragma region
+
+namespace NCsFX
+{
+	namespace NPayload
+	{
+		enum class EChange : uint32
+		{
+			FXSystem						= 1 << 0,
+			KeepRelativeTransform			= 1 << 1,
+			KeepWorldTransform				= 1 << 2,
+			SnapToTargetNotIncludingScale	= 1 << 3,
+			SnapToTargetIncludingScale		= 1 << 4,
+			Transform						= 1 << 5,
+			Parameter						= 1 << 6
+		};
+
+		namespace NChange
+		{
+			FORCEINLINE bool HasAttach(const uint32& Mask)
+			{
+				if (CS_TEST_BITFLAG(Mask, EChange::KeepRelativeTransform))
+					return true;
+				if (CS_TEST_BITFLAG(Mask, EChange::KeepWorldTransform))
+					return true;
+				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetNotIncludingScale))
+					return true;
+				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetIncludingScale))
+					return true;
+				return false;
+			}
+
+			FORCEINLINE bool HasAttach(const uint32& Mask, const ECsAttachmentTransformRules& Rules)
+			{
+				if (CS_TEST_BITFLAG(Mask, EChange::KeepRelativeTransform) &&
+					Rules == ECsAttachmentTransformRules::KeepRelativeTransform)
+					return true;
+				if (CS_TEST_BITFLAG(Mask, EChange::KeepWorldTransform) &&
+					Rules == ECsAttachmentTransformRules::KeepWorldTransform)
+					return true;
+				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetNotIncludingScale) &&
+					Rules == ECsAttachmentTransformRules::SnapToTargetNotIncludingScale)
+					return true;
+				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetIncludingScale) &&
+					Rules == ECsAttachmentTransformRules::SnapToTargetIncludingScale)
+					return true;
+				return false;
+			}
+
+			FORCEINLINE uint32 GetAttachAsMask(const uint32& Mask)
+			{
+				if (CS_TEST_BITFLAG(Mask, EChange::KeepRelativeTransform))
+					return (uint32)EChange::KeepRelativeTransform;
+				if (CS_TEST_BITFLAG(Mask, EChange::KeepWorldTransform))
+					return (uint32)EChange::KeepWorldTransform;
+				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetNotIncludingScale))
+					return (uint32)EChange::SnapToTargetNotIncludingScale;
+				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetIncludingScale))
+					return (uint32)EChange::SnapToTargetIncludingScale;
+				return 0;
+			}
+
+			FORCEINLINE EChange FromTransformAttachmentRule(const ECsAttachmentTransformRules& Rules)
+			{
+				if (Rules == ECsAttachmentTransformRules::KeepRelativeTransform)
+					return EChange::KeepRelativeTransform;
+				if (Rules == ECsAttachmentTransformRules::KeepWorldTransform)
+					return EChange::KeepWorldTransform;
+				if (Rules == ECsAttachmentTransformRules::SnapToTargetNotIncludingScale)
+					return EChange::SnapToTargetNotIncludingScale;
+				if (Rules == ECsAttachmentTransformRules::SnapToTargetIncludingScale)
+					return EChange::SnapToTargetIncludingScale;
+				return EChange::KeepRelativeTransform;
+			}
+
+			struct CSCORE_API FCounter
+			{
+			protected:
+				FCounter() :
+					Preserved(0),
+					PreservedPercent(0.0f),
+					Changed(0),
+					ChangedPercent(0.0f),
+					Cleared(0),
+					ClearedPercent(0.0f),
+					Total(0)
+				{
+				}
+				FCounter(const FCounter&) = delete;
+				FCounter(FCounter&&) = delete;
+			public:
+				virtual ~FCounter() {}
+			private:
+				uint32 Preserved;
+				float PreservedPercent;
+				uint32 Changed;
+				float ChangedPercent;
+				uint32 Cleared;
+				float ClearedPercent;
+				uint32 Total;
+			public:
+				static FCounter& Get()
+				{
+					static FCounter Instance;
+					return Instance;
+				}
+
+			public:
+
+				FORCEINLINE void AddPreserved()
+				{
+					++Preserved;
+					++Total;
+					PreservedPercent = (float)Preserved/(float)Total;
+				}
+
+				FORCEINLINE void AddChanged()
+				{
+					++Changed;
+					++Total;
+					ChangedPercent = (float)Changed/(float)Total;
+				}
+
+				FORCEINLINE void AddCleared()
+				{
+					++Cleared;
+					++Total;
+					ClearedPercent = (float)Cleared/(float)Total;
+				}
+
+				void Reset()
+				{
+					Preserved = 0;
+					PreservedPercent = 0.0f;
+					Changed = 0;
+					ChangedPercent = 0.0f;
+					Cleared = 0;
+					ClearedPercent = 0.0f;
+					Total = 0;
+				}
+
+				FORCEINLINE FString ToString() const
+				{
+					return FString::Printf(TEXT("Preserved: (%3.3f = %d/%d) Changed: (%3.3f = %d/%d) Cleared: (%3.3f = %d/%d)"), PreservedPercent, Preserved, Total, ChangedPercent, Changed, Total, ClearedPercent, Cleared, Total);
+				}
+			};
+		}
+	}
+}
+
+#pragma endregion NCsFX::NPayload::EChange

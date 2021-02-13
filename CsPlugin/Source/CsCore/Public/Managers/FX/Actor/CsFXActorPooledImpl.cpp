@@ -37,6 +37,7 @@ namespace NCsFXActorPooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, OnConstructObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Update);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Allocate);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Handle_SetFXSystem);
 		}
 
 		namespace Name
@@ -53,7 +54,15 @@ namespace NCsFXActorPooledImpl
 
 #pragma endregion Cached
 
-UCsFXActorPooledImpl::UCsFXActorPooledImpl(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsFXActorPooledImpl::UCsFXActorPooledImpl(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	Cache(nullptr),
+	CacheImpl(nullptr),
+	PreserveChangesToDefaultMask(0),
+	ChangesToDefaultMask(0),
+	FX(nullptr),
+	AssetPropertyPtr(nullptr),
+	AttachToBone(NAME_None)
 {
 }
 
@@ -67,6 +76,7 @@ void UCsFXActorPooledImpl::BeginDestroy()
 	{
 		delete Cache;
 		Cache = nullptr;
+		CacheImpl = nullptr;
 	}
 }
 
@@ -125,11 +135,6 @@ void UCsFXActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
 	using namespace NCsFXActorPooledImpl::NCached;
 
-	typedef NCsFX::NCache::FImpl CacheImplType;
-	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
-
-	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Str::Update, Cache);
-
 	CacheImpl->Update(DeltaTime);
 }
 
@@ -152,18 +157,10 @@ void UCsFXActorPooledImpl::Pause(bool bPaused)
 // ICsPooledObject
 #pragma region
 
-#define CacheType NCsPooledObject::NCache::ICache
-CacheType* UCsFXActorPooledImpl::GetCache() const
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 {
-#undef CacheType
-
-	return Cache;
-}
-
-#define PayloadType NCsPooledObject::NPayload::IPayload
-void UCsFXActorPooledImpl::Allocate(PayloadType* Payload)
-{
-#undef PayloadType
+#undef PooledPayloadType
 
 	using namespace NCsFXActorPooledImpl::NCached;
 
@@ -173,9 +170,6 @@ void UCsFXActorPooledImpl::Allocate(PayloadType* Payload)
 	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
 
 	// TODO: Add IsValidChecked in PayloadLibrary
-
-	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
-
 	CacheImpl->Allocate(Payload);
 
 	UNiagaraComponent* FXComponent = FX->GetNiagaraComponent();
@@ -184,43 +178,19 @@ void UCsFXActorPooledImpl::Allocate(PayloadType* Payload)
 
 	CacheImpl->SetFXComponent(FXComponent);
 
+	PreserveChangesToDefaultMask = Payload->GetPreserveChangesFromDefaultMask();
+
 	typedef NCsFX::NPayload::IPayload FXPayloadType;
 	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
 
 	FXPayloadType* FXPayload = PooledPayloadLibrary::GetInterfaceChecked<FXPayloadType>(Context, Payload);
 
-	// If the Parent is set, attach the FX to the Parent
-	USceneComponent* Parent = nullptr;
+	// Attach and set Transform
+	Handle_AttachAndSetTransform(Payload, FXPayload);
+	// Set FX System
+	Handle_SetFXSystem(FXPayload);
 
-	UObject* Object = Payload->GetParent();
-
-		// SceneComponent
-	if (USceneComponent* Component = Cast<USceneComponent>(Object))
-		Parent = Component;
-		// Actor -> Get RootComponent
-	else
-	if (AActor* Actor = Cast<AActor>(Object))
-		Parent = Actor->GetRootComponent();
-
-	const FTransform& Transform = FXPayload->GetTransform();
-	const int32& TransformRules = FXPayload->GetTransformRules();
-
-	if (Parent)
-	{
-		// TODO: Add check if Bone is Valid for SkeletalMeshComponent
-		FX->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(FXPayload->GetAttachmentTransformRule()), FXPayload->GetBone());
-
-		NCsTransformRules::SetRelativeTransform(FX, Transform, TransformRules);
-	}
-	// NO Parent, set the World Transform of the FX
-	else
-	{
-		NCsTransformRules::SetTransform(FX, Transform, TransformRules);
-	}
-
-	UNiagaraSystem* FXSystem = FXPayload->GetFXSystem();
-
-	FXComponent->SetAsset(FXSystem);
+	// TODO: Change for Parameters
 
 	// Set Parameters
 	typedef NCsFX::NParameter::IParameter ParameterType;
@@ -245,37 +215,319 @@ void UCsFXActorPooledImpl::Allocate(PayloadType* Payload)
 
 		FXComponent->Activate();
 	}
+
+	CS_NON_SHIPPING_EXPR(LogChangeCounter());
 }
 
 void UCsFXActorPooledImpl::Deallocate()
 {
 	using namespace NCsFXActorPooledImpl::NCached;
 
-	FX->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	Handle_ClearAttachAndTransform();
 
 	FX->SetActorTickEnabled(false);
 	FX->SetActorHiddenInGame(true);
 
-	// NOTE: 4.25. Currently there is a BUG at Runtime when calling UNiagaraComponent->SetAsset(nullptr) where
-	//			   some code runs assuming the Asset is valid. The work around is to manually
-	//			   call DestroyInstanc() and then "null" out the Asset member on UNiagaraComponent.
-#if WITH_EDITOR
-	FX->GetNiagaraComponent()->SetAsset(nullptr);
-#else
-	*AssetPropertyPtr = nullptr;
+	Handle_ClearFXSystem();
 
-	FX->GetNiagaraComponent()->DestroyInstance();
-#endif // #if WITH_EDITOR
+	PreserveChangesToDefaultMask = 0;
+
+	CS_NON_SHIPPING_EXPR(LogChangeCounter());
 
 	Cache->Deallocate();
 }
 
 #pragma endregion ICsPooledObject
 
-
 void UCsFXActorPooledImpl::ConstructCache()
 {
 	typedef NCsFX::NCache::FImpl CacheImplType;
 
-	Cache = new CacheImplType();
+	Cache	  = new CacheImplType();
+	CacheImpl = (CacheImplType*)Cache;
+}
+
+#define FXPayloadType NCsFX::NPayload::IPayload
+void UCsFXActorPooledImpl::Handle_SetFXSystem(FXPayloadType* Payload)
+{
+#undef FXPayloadType
+
+	CS_NON_SHIPPING_EXPR(Log_SetFXSystem(Payload));
+
+	UNiagaraComponent* FXComponent = FX->GetNiagaraComponent();
+	UNiagaraSystem* FXSystem	   = Payload->GetFXSystem();
+
+	typedef NCsFX::NPayload::EChange ChangeType;
+	typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
+
+	// If ALREADY set FXSystem and the trying to the SAME FXSystem, Do Nothing
+	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::FXSystem) &&
+		CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::FXSystem))
+	{
+		if (FXComponent->GetAsset() != FXSystem)
+		{
+			FXComponent->SetAsset(FXSystem);
+			ChangeCounter::Get().AddChanged();
+		}
+		else
+		{
+			ChangeCounter::Get().AddPreserved();
+		}
+	}
+	else
+	{
+		FXComponent->SetAsset(FXSystem);
+		ChangeCounter::Get().AddChanged();
+	}
+	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::FXSystem);
+}
+
+#define FXPayloadType NCsFX::NPayload::IPayload
+void UCsFXActorPooledImpl::Log_SetFXSystem(FXPayloadType* Payload)
+{
+#undef FXPayloadType
+
+	using namespace NCsFXActorPooledImpl::NCached;
+
+	const FString& Context = Str::Handle_SetFXSystem;
+
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogFXPooledChange) ||
+		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogFXPooledChangeSet))
+	{
+		UNiagaraComponent* FXComponent = FX->GetNiagaraComponent();
+		UNiagaraSystem* FXSystem	   = Payload->GetFXSystem();
+
+		typedef NCsFX::NPayload::EChange ChangeType;
+		typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
+
+		// Check if FX System should be PRESERVED
+		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::FXSystem))
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s"), *Context, *(ChangeCounter::Get().ToString()));
+
+			// Check if the FX System changed
+			if (FXComponent->GetAsset() != FXSystem)
+			{
+				if (CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::FXSystem))
+				{
+					UE_LOG(LogCs, Warning, TEXT(" %s -> %s."), *(FXComponent->GetAsset()->GetName()), *(FXSystem->GetName()));
+				}
+				else
+				{
+					UE_LOG(LogCs, Warning, TEXT(" NULL -> %s."), *(FXSystem->GetName()));
+				}
+			}
+			else
+			{
+				UE_LOG(LogCs, Warning, TEXT(" (PRESERVED) %s."), *(FXComponent->GetAsset()->GetName()));
+			}
+		}
+	}
+}
+
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+#define FXPayloadType NCsFX::NPayload::IPayload
+void UCsFXActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload, FXPayloadType* FXPayload)
+{
+#undef PooledPayloadType
+#undef FXPayloadType
+
+	CS_NON_SHIPPING_EXPR(Log_AttachAndSetTransform(Payload, FXPayload));
+
+	UNiagaraComponent* FXComponent = FX->GetNiagaraComponent();
+
+	// If the Parent is set, attach the FX to the Parent
+	USceneComponent* Parent = nullptr;
+
+	UObject* Object = Payload->GetParent();
+
+	// SceneComponent
+	if (USceneComponent* Component = Cast<USceneComponent>(Object))
+		Parent = Component;
+	// Actor -> Get RootComponent
+	else
+	if (AActor* Actor = Cast<AActor>(Object))
+		Parent = Actor->GetRootComponent();
+
+	const FTransform& Transform = FXPayload->GetTransform();
+	const int32& TransformRules = FXPayload->GetTransformRules();
+	
+	typedef NCsFX::NPayload::EChange ChangeType;
+	typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
+	#define ChangeHelper NCsFX::NPayload::NChange
+
+	if (Parent)
+	{
+		const ECsAttachmentTransformRules& Rule = FXPayload->GetAttachmentTransformRule();
+		const FName& Bone						= FXPayload->GetBone();
+
+		bool PerformAttach = true;
+		bool IsPreserved = false;
+
+		// If Attach and Transform are the SAME, Do Nothing
+		if (FXComponent->GetAttachParent() == Parent &&
+			AttachToBone == Bone)
+		{
+			// Check Attachment Rule
+			IsPreserved   = ChangeHelper::HasAttach(PreserveChangesToDefaultMask & ChangesToDefaultMask, Rule);
+			PerformAttach = !IsPreserved;
+
+			if (IsPreserved)
+				ChangeCounter::Get().AddPreserved();
+		}
+
+		// Attach
+		if (PerformAttach)
+		{
+			AttachToBone = Bone;
+
+			FXComponent->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Rule), Bone);
+			ChangeCounter::Get().AddChanged();
+		}
+
+		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeHelper::FromTransformAttachmentRule(Rule));
+
+		bool PerformTransform = true;
+		IsPreserved			  = false;
+
+		// If Transform has NOT changed, don't update it.
+		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::Transform) &&
+			CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::Transform))
+		{
+			IsPreserved		 = NCsTransformRules::AreTransformsEqual(FXComponent->GetRelativeTransform(), Transform, TransformRules);
+			PerformTransform = !IsPreserved;
+
+			if (IsPreserved)
+				ChangeCounter::Get().AddPreserved();
+		}
+
+		// Set Transform
+		if (PerformTransform)
+		{
+			NCsTransformRules::SetRelativeTransform(FXComponent, Transform, TransformRules);
+			ChangeCounter::Get().AddChanged();
+		}
+		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
+	}
+	// NO Parent, set the World Transform of the FX Component
+	else
+	{
+		bool PerformTransform = true;
+		bool IsPreserved	  = false;
+
+		// If Transform has NOT changed, don't update it.
+		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::Transform) &&
+			CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::Transform))
+		{
+			IsPreserved		 = NCsTransformRules::AreTransformsEqual(FXComponent->GetRelativeTransform(), Transform, TransformRules);
+			PerformTransform = !IsPreserved;
+
+			if (IsPreserved)
+				ChangeCounter::Get().AddPreserved();
+		}
+
+		if (PerformTransform)
+		{
+			NCsTransformRules::SetTransform(FX, Transform, TransformRules);
+			ChangeCounter::Get().AddChanged();
+		}
+
+		AttachToBone = NAME_None;
+	}
+	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
+
+	#undef ChangeHelper
+}
+
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+#define FXPayloadType NCsFX::NPayload::IPayload
+void UCsFXActorPooledImpl::Log_AttachAndSetTransform(PooledPayloadType* Payload, FXPayloadType* SkeletalMeshPayload)
+{
+#undef PooledPayloadType
+#undef FXPayloadType
+
+}
+
+void UCsFXActorPooledImpl::Handle_ClearFXSystem()
+{
+	typedef NCsFX::NPayload::EChange ChangeType;
+	typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
+
+	// If FX System is SET and meant to be PRESERVED, Do Nothing
+	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::FXSystem) &&
+		CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::FXSystem))
+	{
+		// Do Nothing
+		ChangeCounter::Get().AddPreserved();
+	}
+	else
+	{
+		// NOTE: 4.25. Currently there is a BUG at Runtime when calling UNiagaraComponent->SetAsset(nullptr) where
+		//			   some code runs assuming the Asset is valid. The work around is to manually
+		//			   call DestroyInstanc() and then "null" out the Asset member on UNiagaraComponent.
+#if WITH_EDITOR
+		FX->GetNiagaraComponent()->SetAsset(nullptr);
+#else
+		*AssetPropertyPtr = nullptr;
+
+		FX->GetNiagaraComponent()->DestroyInstance();
+#endif // #if WITH_EDITOR
+		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::FXSystem);
+		ChangeCounter::Get().AddCleared();
+	}
+}
+
+void UCsFXActorPooledImpl::Handle_ClearAttachAndTransform()
+{
+	typedef NCsFX::NPayload::EChange ChangeType;
+	typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
+	#define ChangeHelper NCsFX::NPayload::NChange
+	
+	const uint32 Mask = PreserveChangesToDefaultMask & ChangesToDefaultMask;
+
+	// If Attached, check if the Attach should be PERSERVED
+	if (FX->GetNiagaraComponent()->GetAttachParent())
+	{
+		if (ChangeHelper::HasAttach(Mask))
+		{
+			// Do Nothing
+			ChangeCounter::Get().AddPreserved();
+			ChangeCounter::Get().AddPreserved();
+		}
+		else
+		{
+			FX->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			FX->SetActorRelativeTransform(FTransform::Identity);
+			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeHelper::GetAttachAsMask(Mask));
+			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
+			AttachToBone = NAME_None;
+			ChangeCounter::Get().AddCleared();
+			ChangeCounter::Get().AddCleared();
+		}
+	}
+	// If NOT Attached, check if Transform should be PRESERVED
+	else
+	if (CS_TEST_BITFLAG(Mask, ChangeType::Transform))
+	{
+		// Do Nothing	
+		ChangeCounter::Get().AddPreserved();
+	}
+	else
+	{
+		FX->SetActorRelativeTransform(FTransform::Identity);
+		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
+		ChangeCounter::Get().AddCleared();
+	}
+
+	#undef ChangeHelper
+}
+
+void UCsFXActorPooledImpl::LogChangeCounter()
+{
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogFXPooledChangeCounter))
+	{
+		typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
+
+		UE_LOG(LogCs, Warning, TEXT("UCsFXActorPooledImpl::LogChangeCounter: %s."), *(ChangeCounter::Get().ToString()));
+	}
 }

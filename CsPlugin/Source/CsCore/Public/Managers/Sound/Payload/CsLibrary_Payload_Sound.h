@@ -10,11 +10,15 @@ namespace NCsSound
 {
 	namespace NPayload
 	{
-		#define PayloadType NCsSound::NPayload::IPayload
+	#define PayloadType NCsSound::NPayload::IPayload
 
 		struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<PayloadType>
 		{
 		#define PayloadImplType NCsSound::NPayload::FImpl
+
+			/**
+			*/
+			static bool IsValidChecked(const FString& Context, PayloadType* Payload);
 
 			/**
 			*/
@@ -23,6 +27,6 @@ namespace NCsSound
 		#undef PayloadImplType
 		};
 
-		#undef PayloadType
+	#undef PayloadType
 	}
 }

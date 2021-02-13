@@ -6,7 +6,7 @@
 // CVars
 #include "Managers/Sound/CsCVars_Manager_Sound.h"
 // Library
-#include "Library/CsLibrary_Property.h"
+#include "Managers/Sound/Payload/CsLibrary_Payload_Sound.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Managers
@@ -35,13 +35,16 @@
 
 namespace NCsManagerSound
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, PopulateDataMapFromSettings);
-	}
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, Spawn);
+		}
 
-	namespace Name
-	{
+		namespace Name
+		{
+		}
 	}
 }
 
@@ -379,6 +382,10 @@ void UCsManager_Sound::SetupInternal()
 
 		InitInternalFromSettings();
 	}
+
+	typedef NCsSound::NPayload::NChange::FCounter ChangeCounter;
+
+	ChangeCounter::Get().Reset();
 }
 
 void UCsManager_Sound::InitInternalFromSettings()
@@ -695,6 +702,10 @@ const FCsSoundPooled* UCsManager_Sound::Spawn(const FECsSound& Type, PayloadType
 {
 #undef PayloadType
 
+	using namespace NCsManagerSound::NCached;
+
+	const FString& Context = Str::Spawn;
+
 	if (Internal.IsExhausted(Type))
 	{
 		const FCsSoundPooled* AllocatedHead = Internal.GetAllocatedHeadObject(Type);
@@ -708,6 +719,11 @@ const FCsSoundPooled* UCsManager_Sound::Spawn(const FECsSound& Type, PayloadType
 
 		Internal.Destroy(Type, AllocatedHead);
 	}
+
+	typedef NCsSound::NPayload::FLibrary PayloadLibrary;
+
+	check(PayloadLibrary::IsValidChecked(Context, Payload));
+
 	return Internal.Spawn(Type, Payload);
 }
 

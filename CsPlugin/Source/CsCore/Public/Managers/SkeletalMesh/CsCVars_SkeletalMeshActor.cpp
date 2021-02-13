@@ -2,21 +2,21 @@
 #include "Managers/SkeletalMesh/CsCVars_SkeletalMeshActor.h"
 
 TAutoConsoleVariable<int32> CsCVarLogSkeletalMeshActorPooledChange(
-	TEXT("log.SkeletalMeshactor.pooled.change"),
+	TEXT("log.skeletalmeshactor.pooled.change"),
 	0,
 	TEXT("Log SkeletalMeshActor Pooled Changes (Preserved between Allocate and Deallocate)."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogSkeletalMeshActorPooledChangeSet(
-	TEXT("log.SkeletalMeshactor.pooled.change.set"),
+	TEXT("log.skeletalmeshactor.pooled.change.set"),
 	0,
 	TEXT("Log SkeletalMeshActor Pooled Changes Set (Between Allocate and Deallocate)."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogSkeletalMeshActorPooledChangeClear(
-	TEXT("log.SkeletalMeshactor.pooled.change.clear"),
+	TEXT("log.skeletalmeshactor.pooled.change.clear"),
 	0,
 	TEXT("Log SkeletalMeshActor Pooled Changes Clear (Between Allocate and Deallocate)."),
 	ECVF_SetByConsole

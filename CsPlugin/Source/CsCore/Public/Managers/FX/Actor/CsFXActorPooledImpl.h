@@ -15,8 +15,12 @@ struct FCsFXActorPooled;
 
 // NCsPooledObject::NCache::ICache
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
+// NCsFX::NCache::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NCache, FImpl)
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
+// NCsFX::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, IPayload)
 
 class ANiagaraActor;
 class UNiagaraSystem;
@@ -32,7 +36,9 @@ class CSCORE_API UCsFXActorPooledImpl : public UObject,
 	GENERATED_UCLASS_BODY()
 
 #define CacheType NCsPooledObject::NCache::ICache
-#define PayloadType NCsPooledObject::NPayload::IPayload
+#define CacheImplType NCsFX::NCache::FImpl
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+#define FXPayloadType NCsFX::NPayload::IPayload
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 
 // UObject Interface
@@ -71,9 +77,9 @@ public:
 #pragma region
 public:
 
-	CacheType* GetCache() const;
+	FORCEINLINE CacheType* GetCache() const { return Cache; }
 	
-	void Allocate(PayloadType* Payload);
+	void Allocate(PooledPayloadType* Payload);
 
 	void Deallocate();
 
@@ -82,17 +88,18 @@ public:
 protected:
 
 	CacheType* Cache;
+	CacheImplType* CacheImpl;
 
 	void ConstructCache();
+
+	uint32 PreserveChangesToDefaultMask;
+	uint32 ChangesToDefaultMask;
 
 // ICsFXActorPooled
 #pragma region
 public:
 
-	FORCEINLINE ANiagaraActor* GetFX() const 
-	{
-		return FX;
-	}
+	FORCEINLINE ANiagaraActor* GetFX() const { return FX; }
 
 #pragma endregion ICsFXActorPooled
 
@@ -103,7 +110,22 @@ protected:
 
 	UNiagaraSystem** AssetPropertyPtr;
 
+	void Handle_SetFXSystem(FXPayloadType* Payload);
+	void Log_SetFXSystem(FXPayloadType* Payload);
+
+	FName AttachToBone;
+
+	void Handle_AttachAndSetTransform(PooledPayloadType* Payload, FXPayloadType* FXPayload);
+	void Log_AttachAndSetTransform(PooledPayloadType* Payload, FXPayloadType* FXPayload);
+
+	void Handle_ClearFXSystem();
+	void Handle_ClearAttachAndTransform();
+
+	void LogChangeCounter();
+
 #undef CacheType
-#undef PayloadType
+#undef CacheImplType
+#undef PooledPayloadType
+#undef FXPayloadType
 #undef ConstructParamsType
 };

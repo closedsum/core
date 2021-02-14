@@ -106,6 +106,8 @@ public:
 	*/
 	FORCEINLINE UAnimSequence* Get() const { return Anim_Internal; }
 
+	FORCEINLINE UAnimSequence** GetPtr() { return &Anim_Internal; }
+
 	/**
 	* Get the Hard reference to the Anim.
 	*
@@ -241,10 +243,9 @@ public:
 	{
 	}
 
-	FORCEINLINE UAnimMontage* Get()
-	{
-		return Anim_Internal;
-	}
+	FORCEINLINE UAnimMontage* Get() { return Anim_Internal; }
+
+	FORCEINLINE UAnimMontage** GetPtr() { return &Anim_Internal; }
 };
 
 #pragma endregion FCsAnimMontage
@@ -461,6 +462,8 @@ public:
 	}
 
 	FORCEINLINE UAnimBlueprintGeneratedClass* Get() const { return Blueprint_Internal; }
+
+	FORCEINLINE UAnimBlueprintGeneratedClass** GetPtr() { return &Blueprint_Internal; }
 
 	FORCEINLINE UAnimBlueprintGeneratedClass* GetChecked(const FString& Context) const
 	{

@@ -15,6 +15,8 @@
 #include "Managers/SkeletalMesh/Cache/CsCache_SkeletalMeshActorImpl.h"
 #include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"
 #include "Managers/SkeletalMesh/Params/CsParams_SkeletalMeshActor.h"
+// Animation
+#include "Animation/AnimInstance.h"
 
 // Cached
 #pragma region
@@ -29,6 +31,7 @@ namespace NCsSkeletalMeshActorImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSkeletalMeshActorPooledImpl, Allocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSkeletalMeshActorPooledImpl, Handle_SetSkeletalMesh);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSkeletalMeshActorPooledImpl, Handle_SetMaterials);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSkeletalMeshActorPooledImpl, Handle_SetAnimInstance);
 		}
 	}
 }
@@ -165,7 +168,7 @@ void ACsSkeletalMeshActorPooledImpl::Allocate(PooledPayloadType* Payload)
 
 	if (ParamsType* Params = SkeletalMeshPayload->GetParams())
 	{
-		// OneShot
+		// OneShot - Anim Sequence
 		{
 			typedef NCsSkeletalMeshActor::NParams::NAnim::NSequence::FOneShot ShotType;
 
@@ -176,7 +179,22 @@ void ACsSkeletalMeshActorPooledImpl::Allocate(PooledPayloadType* Payload)
 				GetMeshComponent()->PlayAnimation(Anim, false);
 			}
 		}
+		// One Shot - Anim Montage
+		{
+			typedef NCsSkeletalMeshActor::NParams::NAnim::NMontage::FOneShot ShotType;
+
+			if (ShotType* Shot = NCsInterfaceMap::SafePureStaticCastChecked<ShotType, ParamsType>(Context, Params))
+			{
+				Handle_SetAnimInstance(Shot);
+
+				UAnimMontage* Anim			= Shot->GetAnim();
+				UAnimInstance* AnimInstance = GetMeshComponent()->GetAnimInstance();
+
+				AnimInstance->Montage_Play(Anim, Shot->GetPlayRate());
+			}
+		}
 	}
+	CS_NON_SHIPPING_EXPR(LogChangeCounter());
 }
 
 void ACsSkeletalMeshActorPooledImpl::Deallocate()
@@ -207,6 +225,8 @@ void ACsSkeletalMeshActorPooledImpl::Deallocate_Internal()
 
 	PreserveChangesToDefaultMask = 0;
 	ChangesFromLastMask = 0;
+
+	CS_NON_SHIPPING_EXPR(LogChangeCounter());
 }
 
 #define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
@@ -228,9 +248,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetSkeletalMesh(SkeletalMeshPayloadT
 		if (GetMeshComponent()->SkeletalMesh != Mesh)
 		{
 			GetMeshComponent()->SetSkeletalMesh(Mesh);
-
 			CS_SET_BITFLAG(ChangesFromLastMask, ChangeType::SkeletalMesh);
-
 			ChangeCounter::Get().AddChanged();
 		}
 		else
@@ -241,6 +259,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetSkeletalMesh(SkeletalMeshPayloadT
 	else
 	{
 		GetMeshComponent()->SetSkeletalMesh(Mesh);
+		CS_SET_BITFLAG(ChangesFromLastMask, ChangeType::SkeletalMesh);
 		ChangeCounter::Get().AddChanged();
 	}
 	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::SkeletalMesh);
@@ -548,6 +567,99 @@ void ACsSkeletalMeshActorPooledImpl::Log_AttachAndSetTransform(PooledPayloadType
 
 }
 
+#define ShotType NCsSkeletalMeshActor::NParams::NAnim::NMontage::FOneShot
+void ACsSkeletalMeshActorPooledImpl::Handle_SetAnimInstance(ShotType* Shot)
+{
+#undef ShotType
+
+	using namespace NCsSkeletalMeshActorImpl::NCached;
+
+	const FString& Context = Str::Handle_SetAnimInstance;
+
+	CS_NON_SHIPPING_EXPR(Log_SetAnimInstance(Shot));
+
+	UClass* Class = Shot->GetClass();
+
+	typedef NCsSkeletalMeshActor::NPayload::EChange ChangeType;
+	typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
+
+	bool SetAnimInstance = true;
+
+	// If ALREADY set AnimInstance and trying to the SAME AnimInstance, Do Nothing
+	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::AnimInstance) &&
+		CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::AnimInstance))
+	{
+		// Check if the AnimInstance has changed
+		if (CS_TEST_BITFLAG(ChangesFromLastMask, ChangeType::SkeletalMesh))
+		{
+			if (UAnimInstance* AnimInstance = GetMeshComponent()->GetAnimInstance())
+			{
+				if (AnimInstance->GetName() == Class->GetName())
+				{
+					SetAnimInstance = false;
+				}
+			}
+		}
+		else
+		{
+			SetAnimInstance = false;
+		}
+	}
+	
+	if (SetAnimInstance)
+	{
+		GetMeshComponent()->SetAnimInstanceClass(Class);
+		ChangeCounter::Get().AddChanged();
+	}
+	checkf(GetMeshComponent()->GetAnimInstance(), TEXT("%s: Failed to set AnimInstance with Class: %s."), *Context, *(Shot->GetClass()->GetName()));
+	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::AnimInstance);
+}
+
+#define ShotType NCsSkeletalMeshActor::NParams::NAnim::NMontage::FOneShot
+void ACsSkeletalMeshActorPooledImpl::Log_SetAnimInstance(ShotType* Shot)
+{
+#undef ShotType
+
+	using namespace NCsSkeletalMeshActorImpl::NCached;
+
+	const FString& Context = Str::Handle_SetAnimInstance;
+
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSkeletalMeshActorPooledChange) ||
+		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSkeletalMeshActorPooledChangeSet))
+	{
+		UClass* Class = Shot->GetClass();
+
+		typedef NCsSkeletalMeshActor::NPayload::EChange ChangeType;
+		typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
+
+		// If ALREADY set AnimInstance and trying to the SAME AnimInstance, Do Nothing
+		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::AnimInstance))
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s"), *Context, *(ChangeCounter::Get().ToString()));
+
+			// Check if the AnimInstance changed
+			if (UAnimInstance* AnimInstance = GetMeshComponent()->GetAnimInstance())
+			{
+				if (AnimInstance->GetName() != Class->GetName())
+				{
+					if (CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::AnimInstance))
+					{
+						UE_LOG(LogCs, Warning, TEXT(" %s -> %s."), *(AnimInstance->GetName()), *(Class->GetName()));
+					}
+				}
+				else
+				{
+					UE_LOG(LogCs, Warning, TEXT(" (PRESERVED) %s."), *(AnimInstance->GetName()));
+				}
+			}
+			else
+			{
+				UE_LOG(LogCs, Warning, TEXT(" NULL -> %s."), *(Class->GetName()));
+			}
+		}
+	}
+}
+
 void ACsSkeletalMeshActorPooledImpl::Handle_ClearSkeletalMesh()
 {
 	typedef NCsSkeletalMeshActor::NPayload::EChange ChangeType;
@@ -560,12 +672,15 @@ void ACsSkeletalMeshActorPooledImpl::Handle_ClearSkeletalMesh()
 		// Do Nothing
 		ChangeCounter::Get().AddPreserved();
 		ChangeCounter::Get().AddPreserved();
+		ChangeCounter::Get().AddPreserved();
 	}
 	else
 	{
 		GetMeshComponent()->SetSkeletalMesh(nullptr);
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::SkeletalMesh);
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Materials);
+		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::AnimInstance);
+		ChangeCounter::Get().AddCleared();
 		ChangeCounter::Get().AddCleared();
 		ChangeCounter::Get().AddCleared();
 	}
@@ -614,4 +729,23 @@ void ACsSkeletalMeshActorPooledImpl::Handle_ClearAttachAndTransform()
 	}
 
 	#undef ChangeHelper
+}
+
+void ACsSkeletalMeshActorPooledImpl::Handle_ClearAnimInstance()
+{
+	if (UAnimInstance* AnimInstance = GetMeshComponent()->GetAnimInstance())
+	{
+		AnimInstance->StopAllMontages(0.0f);
+	}
+	GetMeshComponent()->Stop();
+}
+
+void ACsSkeletalMeshActorPooledImpl::LogChangeCounter()
+{
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSkeletalMeshActorPooledChangeCounter))
+	{
+		typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
+
+		UE_LOG(LogCs, Warning, TEXT("ACsSkeletalMeshActorPooledImpl::LogChangeCounter: %s."), *(ChangeCounter::Get().ToString()));
+	}
 }

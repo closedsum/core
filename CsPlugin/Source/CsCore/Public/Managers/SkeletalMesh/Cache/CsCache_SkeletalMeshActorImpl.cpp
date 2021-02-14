@@ -10,6 +10,7 @@
 #include "Managers/SkeletalMesh/Params/CsParams_SkeletalMeshActor.h"
 // Anim
 #include "Animation/AnimSequence.h"
+#include "Animation/AnimMontage.h"
 
 const FName NCsSkeletalMeshActor::NCache::FImpl::Name = FName("NCsSkeletalMeshActor::NCache::FImpl");
 
@@ -91,7 +92,7 @@ namespace NCsSkeletalMeshActor
 
 			if (ParamsType* Params = SkeletalMeshPayload->GetParams())
 			{
-				// OneShot
+				// OneShot - Anim Sequence
 				{
 					typedef NCsSkeletalMeshActor::NParams::NAnim::NSequence::FOneShot ShotType;
 
@@ -100,6 +101,17 @@ namespace NCsSkeletalMeshActor
 						UAnimSequence* Anim = Shot->GetAnim();
 
 						LifeTime = Anim->RateScale * Anim->SequenceLength;
+					}
+				}
+				// OneShot - Anim Montage
+				{
+					typedef NCsSkeletalMeshActor::NParams::NAnim::NMontage::FOneShot ShotType;
+
+					if (ShotType* Shot = NCsInterfaceMap::SafePureStaticCastChecked<ShotType, ParamsType>(Context, Params))
+					{
+						UAnimMontage* Anim = Shot->GetAnim();
+
+						LifeTime = Shot->GetPlayRate() * Anim->GetSectionLength(0);
 					}
 				}
 			}

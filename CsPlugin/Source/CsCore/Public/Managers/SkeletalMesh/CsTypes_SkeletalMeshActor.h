@@ -235,9 +235,14 @@ public:
 
 #define DeallocateMethodType NCsSkeletalMeshActor::EDeallocateMethod
 
+	FORCEINLINE FECsSkeletalMeshActor* GetTypePtr() { return &Type; }
 	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *DeallocateMethod_Internal; }
-
 	FORCEINLINE DeallocateMethodType* GetDeallocateMethodPtr() const { return DeallocateMethod_Internal; }
+	FORCEINLINE float* GetLifeTimePtr() { return &LifeTime; }
+	FORCEINLINE ECsAttachmentTransformRules* GetAttachmentTransformRulesPtr() { return &AttachmentTransformRules; }
+	FORCEINLINE FName* GetBonePtr() { return &Bone; }
+	FORCEINLINE int32* GetTransformRulesPtr() { return &TransformRules; }
+	FORCEINLINE FTransform* GetTransformPtr() { return &Transform; }
 
 #undef DeallocateMethodType
 

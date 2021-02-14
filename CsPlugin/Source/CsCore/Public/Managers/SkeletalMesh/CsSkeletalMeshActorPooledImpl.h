@@ -20,6 +20,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSkeletalMeshActor, NPayload, IPayload)
 // NCsSkeletalMeshActor::NCache::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSkeletalMeshActor, NCache, FImpl)
+// NCsSkeletalMeshActor::NParams::NAnim::NMontage::FOneShot
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkeletalMeshActor, NParams, NAnim, NMontage, FOneShot)
 
 /**
 * 
@@ -114,8 +116,16 @@ protected:
 	void Handle_AttachAndSetTransform(PooledPayloadType* Payload, SkeletalMeshPayloadType* SkeletalMeshPayload);
 	void Log_AttachAndSetTransform(PooledPayloadType* Payload, SkeletalMeshPayloadType* SkeletalMeshPayload);
 
+	#define ShotType NCsSkeletalMeshActor::NParams::NAnim::NMontage::FOneShot
+	void Handle_SetAnimInstance(ShotType* Shot);
+	void Log_SetAnimInstance(ShotType* Shot);
+	#undef ShotType
+
 	void Handle_ClearSkeletalMesh();
 	void Handle_ClearAttachAndTransform();
+	void Handle_ClearAnimInstance();
+
+	void LogChangeCounter();
 
 #undef CacheType
 #undef CacheImplType

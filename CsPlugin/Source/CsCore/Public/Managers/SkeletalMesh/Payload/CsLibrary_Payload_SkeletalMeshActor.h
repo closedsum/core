@@ -7,6 +7,8 @@
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSkeletalMeshActor, NPayload, FImpl)
 // NCsSkeletalMeshActor::NAnim::NSequence::FOneShot
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsSkeletalMeshActor, NAnim, NSequence, FOneShot)
+// NCsSkeletalMeshActor::NAnim::NMontage::FOneShot
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsSkeletalMeshActor, NAnim, NMontage, FOneShot)
 
 namespace NCsSkeletalMeshActor
 {
@@ -19,11 +21,12 @@ namespace NCsSkeletalMeshActor
 		public:
 
 		#define PayloadImplType NCsSkeletalMeshActor::NPayload::FImpl
-		#define ShotType NCsSkeletalMeshActor::NAnim::NSequence::FOneShot
-			
+		
 			/**
 			*/
 			static bool IsValidChecked(const FString& Context, PayloadType* Payload);
+
+		#define ShotType NCsSkeletalMeshActor::NAnim::NSequence::FOneShot
 
 			/**
 			* 
@@ -34,8 +37,22 @@ namespace NCsSkeletalMeshActor
 			*/
 			static void SetPayload(const FString& Context, PayloadImplType* Payload, const ShotType& Shot);
 
-		#undef PayloadImplType
 		#undef ShotType
+
+		#define ShotType NCsSkeletalMeshActor::NAnim::NMontage::FOneShot
+
+			/**
+			* 
+			* 
+			* @param Context	The calling context.
+			* @param Payload
+			* @parma Shot
+			*/
+			static void SetPayload(const FString& Context, PayloadImplType* Payload, const ShotType& Shot);
+
+		#undef ShotType
+
+		#undef PayloadImplType
 		};
 
 	#undef PayloadType

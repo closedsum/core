@@ -4,6 +4,8 @@
 #include "Managers/UserWidget/Data/CsLibrary_Data_UserWidget.h"
 // Managers
 #include "Managers/UserWidget/CsManager_UserWidget.h"
+// Data
+#include "Managers/UserWidget/Data/CsData_UserWidget.h"
 #pragma once
 
 class UObject;

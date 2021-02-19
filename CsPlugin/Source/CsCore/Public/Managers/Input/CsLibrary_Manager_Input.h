@@ -5,6 +5,7 @@
 class UWorld;
 class UCsManager_Input;
 class APlayerController;
+class APawn;
 
 namespace NCsInput
 {
@@ -23,6 +24,8 @@ namespace NCsInput
 			static UCsManager_Input* GetFirstChecked(UWorld* World);
 
 			static UCsManager_Input* GetChecked(const FString& Context, APlayerController* PC);
+
+			static UCsManager_Input* GetSafe(APawn* Pawn);
 
 			static bool HaveAllBeenCreated(UObject* WorldContext, const int32& NumLocalPlayers);
 

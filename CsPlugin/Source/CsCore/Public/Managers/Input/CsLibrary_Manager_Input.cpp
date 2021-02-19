@@ -10,6 +10,8 @@
 #include "Managers/Input/CsManager_Input.h"
 // Player
 #include "GameFramework/PlayerController.h"
+// Pawn
+#include "GameFramework/Pawn.h"
 // Input
 #include "Managers/Input/CsGetManagerInput.h"
 
@@ -81,6 +83,21 @@ namespace NCsInput
 			checkf(Manager_Input, TEXT("%s: Failed to get Manager_Input from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
 
 			return Manager_Input;
+		}
+
+		UCsManager_Input* FLibrary::GetSafe(APawn* Pawn)
+		{
+			if (!Pawn)
+				return nullptr;
+
+			if (APlayerController* PC = Cast<APlayerController>(Pawn->Controller))
+			{
+				if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
+				{
+					return GetManagerInput->GetManager_Input();
+				}
+			}
+			return nullptr;
 		}
 
 		bool FLibrary::HaveAllBeenCreated(UObject* WorldContext, const int32& NumLocalPlayers)

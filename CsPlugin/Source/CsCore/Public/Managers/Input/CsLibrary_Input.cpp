@@ -9,6 +9,8 @@
 #include "GameFramework/PlayerController.h"
 // UI
 #include "Slate/SceneViewport.h"
+// Input
+#include "GameFramework/PlayerInput.h"
 
 namespace NCsInput
 {
@@ -58,5 +60,35 @@ namespace NCsInput
 		const FIntPoint Size = SV->GetSizeXY();
 
 		SV->SetMouse(Size.X / 2, Size.Y / 2);
+	}
+
+	bool FLibrary::GetTouchPositionChecked(const FString& Context, UObject* WorldContext, const ETouchIndex::Type& FingerIndex, FIntPoint& Position)
+	{
+		checkf((int32)FingerIndex < EKeys::NUM_TOUCH_KEYS, TEXT("%s: FingerIndex is NOT Valid."), *Context);
+
+		typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+		APlayerController* PC = PlayerControllerLibrary::GetFirstLocalChecked(Context, WorldContext);
+
+		UPlayerInput* PlayerInput = PC->PlayerInput;
+
+		checkf(PlayerInput, TEXT("%s: PlayerInput is NULL for PlayerController: %s."), *Context, *(PC->GetName()));
+
+		Position = FIntPoint::NoneValue;
+
+		if (PlayerInput->Touches[(uint8)FingerIndex].Z != 0.0f)
+		{
+			const float& X = PlayerInput->Touches[FingerIndex].X;
+			const float& Y = PlayerInput->Touches[FingerIndex].Y;
+
+			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
+
+			const FIntPoint Size = ViewportLibrary::GetSizeChecked(Context, WorldContext);
+
+			Position.X = FMath::FloorToInt(X * Size.X);
+			Position.Y = FMath::FloorToInt(Y * Size.Y);
+			return true;
+		}
+		return false;
 	}
 }

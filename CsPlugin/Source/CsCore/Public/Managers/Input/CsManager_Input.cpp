@@ -8,6 +8,7 @@
 #include "Library/CsLibrary_Common.h"
 #include "Library/Load/CsLibrary_Load.h"
 #include "Library/CsLibrary_Player.h"
+#include "Library/CsLibrary_Viewport.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Managers
@@ -35,6 +36,8 @@ namespace NCsManagerInput
 			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, ClearCurrentInputActionMap);
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, PostProcessInput);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, OnPostProcessInput_CaptureMouseInput);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Input, OnPostProcessInput_CaptureTouchInput);
 		}
 	}
 
@@ -96,11 +99,12 @@ UCsManager_Input::UCsManager_Input(const FObjectInitializer& ObjectInitializer) 
 	Infos(),
 	Actions(),
 	Last_Actions(),
-	// Location Events
 		// Mouse
+	MouseActions(),
 	CurrentMousePosition(FVector::ZeroVector),
-	// Touch
+		// Touch
 	TouchActions(),
+	TouchAxisActions(),
 	// Mode
 	CurrentMode(),
 	ActiveMode(),
@@ -272,6 +276,8 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 	// Capture Mouse Inputs
 	OnPostProcessInput_CaptureMouseInput(DeltaTime, bGamePaused);
+	// Capture Touch Inputs
+	OnPostProcessInput_CaptureTouchInput(DeltaTime, bGamePaused);
 
 	// Capture VR related Input
 	OnPostProcessInput_CaptureVRInput();
@@ -312,6 +318,8 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		CurrentInputFrame->Init(Time);
 	}
 
+	CS_NON_SHIPPING_EXPR(OnPostProcessInput_LogInputAction());
+
 	for (const FECsInputAction& Action : EMCsInputAction::Get())
 	{
 		FCsInputInfo& Info	 = InputActionEventInfos[Action.GetValue()];
@@ -322,8 +330,6 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		// Action
 		if (Type == ECsInputType::Action)
 		{
-			CS_NON_SHIPPING_EXPR(OnPostProcessInput_LogInputAction(Action));
-
 			TryAddInput(Type, Action, Event, Info.Value, Info.Location);
 
 			Info.FlushEvent();
@@ -332,8 +338,6 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		else
 		if (Type == ECsInputType::Axis)
 		{
-			CS_NON_SHIPPING_EXPR(OnPostProcessInput_LogInputAxis(Action));
-
 			float Value = Info.Value;
 
 			TryAddInput(Type, Action, Event, Value, Info.Location);
@@ -344,8 +348,6 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		else
 		if (Type == ECsInputType::Location)
 		{
-			CS_NON_SHIPPING_EXPR(OnPostProcessInput_LogInputLocation(Action));
-
 			const FVector& Location = Info.Location;
 
 			TryAddInput(Type, Action, Event, Info.Value, Info.Location);
@@ -394,9 +396,10 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 			{
 				CurrentGameEventInfos[Index].ApplyInputCompletedValue(CompletedValue);
 			}
-			CS_NON_SHIPPING_EXPR(LogProcessGameEventDefinition(Context, Event, Sentence));
 		}
 	}
+
+	CS_NON_SHIPPING_EXPR(LogProcessGameEventDefinition(Context));
 
 	// Process Queue GameEvents
 	for (const FCsGameEventInfo& Info : QueuedGameEventInfosForNextFrame)
@@ -407,6 +410,8 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		CurrentGameEventInfos[Index] = Info;
 	}
 	QueuedGameEventInfosForNextFrame.Reset(QueuedGameEventInfosForNextFrame.Max());
+
+	CS_NON_SHIPPING_EXPR(OnPostProcessInput_LogGameEventInfo());
 
 	for (FCsGameEventInfo& Info : CurrentGameEventInfos)
 	{
@@ -431,8 +436,6 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 			CurrentValidGameEventInfos.Add(Info);
 
-			CS_NON_SHIPPING_EXPR(OnPostProcessInput_LogGameEventInfo(Info));
-
 			OnGameEventInfo_Event.Broadcast(Info);
 		}
 	}
@@ -445,36 +448,163 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 void UCsManager_Input::OnPostProcessInput_CaptureMouseInput(const float& DeltaTime, const bool bGamePaused)
 {
-#if !PLATFORM_WINDOWS
-	if (OwnerAsController->bShowMouseCursor)
-#endif // #if !PLATFORM_WINDOWS
+	// TODO: Add Logging of Actions
+#if PLATFORM_WINDOWS
+
+	CS_NON_SHIPPING_EXPR(OnPostProcessInput_LogCaptureMouseInput());
+
+	// Default__MousePositionXY__
 	{
+		CurrentMousePosition = FVector::ZeroVector;
+			
+		if (OwnerAsController->GetMousePosition(CurrentMousePosition.X, CurrentMousePosition.Y))
+		{
+			FCsInputInfo& Info = InputActionEventInfos[NCsInputAction::Default__MousePositionXY__.GetValue()];
+
+			ECsInputEvent& Event = Info.Event;
+
+			Info.Last_Location = Info.Location;
+
+			// Change
+			if (Info.Location != CurrentMousePosition)
+			{
+				// FirstStationary | Stationary -> FirstMoved
+				if (Event == ECsInputEvent::FirstStationary ||
+					Event == ECsInputEvent::Stationary)
+				{
+					Event = ECsInputEvent::FirstMoved;
+				}
+				// FirstMoved -> Moved
+				else
+				if (Event == ECsInputEvent::FirstMoved)
+				{
+					Event = ECsInputEvent::Moved;
+				}
+			}
+			// No Change
+			else
+			{
+				// FirstMoved | Moved -> FirstStationary
+				if (Event == ECsInputEvent::FirstMoved ||
+					Event == ECsInputEvent::Moved)
+				{
+					Event = ECsInputEvent::FirstStationary;
+				}
+				// FirstStationary -> Stationary
+				else
+				if (Event == ECsInputEvent::FirstStationary)
+				{
+					Event = ECsInputEvent::Stationary;
+				}
+			}
+
+			Info.Location = CurrentMousePosition;
+		}
+	}
+	// TODO: Need to eventually bind Mouse Button events like Touch Pressed events
+
+	// Default__MouseLeftButton__ | // Default__MouseRightButton__
+	for (const FECsInputAction& Action : MouseActions)
+	{
+		FCsInputInfo& Info = InputActionEventInfos[Action.GetValue()];
+
+		Info.Last_Location = Info.Location;
+		Info.Location	   = CurrentMousePosition;
+
+		const ECsInputEvent& Last_Event = Info.Last_Event;
+
+		const FKey& Key = Action == NCsInputAction::Default__MouseLeftButton__ ? EKeys::LeftMouseButton : EKeys::RightMouseButton;
+
+		// FirstReleased | Released -> FirstPressed
+		// FirstPressed -> Pressed
+		if (OwnerAsController->PlayerInput->IsPressed(Key))
+		{
+			if (Last_Event == ECsInputEvent::FirstReleased ||
+				Last_Event == ECsInputEvent::Released)
+			{
+				Info.Event = ECsInputEvent::FirstPressed;
+			}
+			else
+			if (Last_Event == ECsInputEvent::FirstPressed)
+			{
+				Info.Event = ECsInputEvent::Pressed;
+			}
+		}
+		// FirstPressed | Pressed -> FirstReleased
+		// FirstReleased -> Released
+		else
+		{
+			// FirstPressed | Pressed -> FirstReleased
+			if (Last_Event == ECsInputEvent::FirstPressed ||
+				Last_Event == ECsInputEvent::Pressed)
+			{
+				Info.Event = ECsInputEvent::FirstReleased;
+			}
+			// FirstReleased -> Released
+			else
+			if (Last_Event == ECsInputEvent::FirstReleased)
+			{
+				Info.Event = ECsInputEvent::Released;
+			}
+			// Released
+			else
+			{
+				Info.ResetLocation();
+			}
+		}
+	}
+#endif // #if PLATFORM_WINDOWS
+}
+
+void UCsManager_Input::OnPostProcessInput_LogCaptureMouseInput()
+{
+	using namespace NCsManagerInput::NCached;
+
+	const FString& Context = Str::OnPostProcessInput_CaptureMouseInput;
+
+	FVector MousePosition = FVector::ZeroVector;
+
+	// Location | Location Event Change
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseLocation) ||
+		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseLocationEventChange))
+	{
+		const bool LogLocation			  = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseLocation);
+		const bool LogLocationEventChange = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseLocationEventChange);
+
 		// Default__MousePositionXY__
 		{
-			CurrentMousePosition = FVector::ZeroVector;
-			
-			if (OwnerAsController->GetMousePosition(CurrentMousePosition.X, CurrentMousePosition.Y))
+			if (OwnerAsController->GetMousePosition(MousePosition.X, MousePosition.Y))
 			{
-				FCsInputInfo& Info = InputActionEventInfos[NCsInputAction::Default__MousePositionXY__.GetValue()];
+				const FECsInputAction& Action = NCsInputAction::Default__MousePositionXY__;
+				FCsInputInfo& Info			  = InputActionEventInfos[Action.GetValue()];
+				const ECsInputEvent& Event	  = Info.Event;
 
-				ECsInputEvent& Event = Info.Event;
+				const FVector& Location = Info.Location;
 
-				Info.Last_Location = Info.Location;
+				const float& Time = CurrentInputFrame->Time.Time;
+
+				if (LogLocation)
+				{
+					UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f."), *Context, ControllerId, Time);
+					UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s. Location: (%3.3f, %3.3f)"), Action.ToChar(), EMCsInputEvent::Get().ToChar(Event), MousePosition.X, MousePosition.Y);
+				}
 
 				// Change
-				if (Info.Location != CurrentMousePosition)
+				if (Info.Location != MousePosition)
 				{
 					// FirstStationary | Stationary -> FirstMoved
 					if (Event == ECsInputEvent::FirstStationary ||
 						Event == ECsInputEvent::Stationary)
 					{
-						Event = ECsInputEvent::FirstMoved;
+						UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f."), *Context, ControllerId, Time);
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s -> FirstMoved. Location: (%3.3f, %3.3f) -> (%3.3f, %3.3f)"), Action.ToChar(), EMCsInputEvent::Get().ToChar(Event), Location.X, Location.Y, MousePosition.X, MousePosition.Y);
 					}
 					// FirstMoved -> Moved
 					else
 					if (Event == ECsInputEvent::FirstMoved)
 					{
-						Event = ECsInputEvent::Moved;
+						UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f."), *Context, ControllerId, Time);
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: FirstMoved -> Moved. Location: (%3.3f, %3.3f) -> (%3.3f, %3.3f)"), Action.ToChar(), Location.X, Location.Y, MousePosition.X, MousePosition.Y);
 					}
 				}
 				// No Change
@@ -484,74 +614,417 @@ void UCsManager_Input::OnPostProcessInput_CaptureMouseInput(const float& DeltaTi
 					if (Event == ECsInputEvent::FirstMoved ||
 						Event == ECsInputEvent::Moved)
 					{
-						Event = ECsInputEvent::FirstStationary;
+						UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f."), *Context, ControllerId, Time);
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s -> FirstStationary. Location: (%3.3f, %3.3f)"), Action.ToChar(), EMCsInputEvent::Get().ToChar(Event), MousePosition.X, MousePosition.Y);
 					}
 					// FirstStationary -> Stationary
 					else
 					if (Event == ECsInputEvent::FirstStationary)
 					{
-						Event = ECsInputEvent::Stationary;
+						UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f."), *Context, ControllerId, Time);
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: FirstStationary -> Stationary. Location: (%3.3f, %3.3f)"), Action.ToChar(), MousePosition.X, MousePosition.Y);
 					}
 				}
-
-				Info.Location = CurrentMousePosition;
 			}
 		}
-		// Default__MouseLeftButton__
+	}
+	// Action | Action Event Changed
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseAction) ||
+		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseActionEventChange))
+	{ 
+		const bool LogAction			= FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseAction);
+		const bool LogActionEventChange = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseActionEventChange);
+
+		const float& Time = CurrentInputFrame->Time.Time;
+
+		if (LogAction)
 		{
-			FCsInputInfo& Info = InputActionEventInfos[NCsInputAction::Default__MouseLeftButton__.GetValue()];
+			UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f."), *Context, ControllerId, Time);
+		}
 
-			Info.ResetLocation();
+		// Default__MouseLeftButton__ | Default__MouseRightButton__
+		for (const FECsInputAction& Action : MouseActions)
+		{
+			FCsInputInfo& Info = InputActionEventInfos[Action.GetValue()];
 
+			const ECsInputEvent& Event		= Info.Event;
 			const ECsInputEvent& Last_Event = Info.Last_Event;
 
-			// FirstReleased | Released -> FirstPressed
-			if (OwnerAsController->PlayerInput->IsPressed(EKeys::LeftMouseButton))
+			const FKey& Key = Action == NCsInputAction::Default__MouseLeftButton__ ? EKeys::LeftMouseButton : EKeys::RightMouseButton;
+
+			if (LogAction)
 			{
+				UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s. Location: (%3.3f, %3.3f)"), Action.ToChar(), MousePosition.X, MousePosition.Y);
+			}
+
+			// FirstReleased | Released -> FirstPressed
+			// FirstPressed -> Pressed
+			if (OwnerAsController->PlayerInput->IsPressed(Key))
+			{
+				// FirstReleased | Released -> FirstPressed
 				if (Last_Event == ECsInputEvent::FirstReleased ||
 					Last_Event == ECsInputEvent::Released)
 				{
-					Info.Event	  = ECsInputEvent::FirstPressed;
-					Info.Location = CurrentMousePosition;
+					if (LogActionEventChange)
+					{
+						UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f."), *Context, ControllerId, Time);
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s -> FirstPressed. Location: (%3.3f, %3.3f)"), Action.ToChar(), EMCsInputEvent::Get().ToChar(Event), MousePosition.X, MousePosition.Y);
+					}
+				}
+				// FirstPressed -> Pressed
+				else
+				if (Last_Event == ECsInputEvent::FirstPressed)
+				{
+					if (LogActionEventChange)
+					{
+						UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f."), *Context, ControllerId, Time);
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: FirstPressed -> Pressed. Location: (%3.3f, %3.3f)"), Action.ToChar(), MousePosition.X, MousePosition.Y);
+					}
 				}
 			}
 			// FirstPressed | Pressed -> FirstReleased
+			// FirstReleased -> Released
 			else
 			{
+				// FirstPressed | Pressed -> FirstReleased
 				if (Last_Event == ECsInputEvent::FirstPressed ||
 					Last_Event == ECsInputEvent::Pressed)
 				{
-					Info.Event	  = ECsInputEvent::FirstReleased;
-					Info.Location = CurrentMousePosition;
+					if (LogActionEventChange)
+					{
+						UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f."), *Context, ControllerId, Time);
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s -> FirstReleased. Location: (%3.3f, %3.3f)"), Action.ToChar(), EMCsInputEvent::Get().ToChar(Event), MousePosition.X, MousePosition.Y);
+					}
+				}
+				// FirstReleased -> Released
+				else
+				if (Last_Event == ECsInputEvent::FirstReleased)
+				{
+					if (LogActionEventChange)
+					{
+						UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f."), *Context, ControllerId, Time);
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: FirstReleased -> Released. Location: (%3.3f, %3.3f)"), Action.ToChar(), MousePosition.X, MousePosition.Y);
+					}
 				}
 			}
 		}
-		// Default__MouseRightButton__
+	}
+}
+
+void UCsManager_Input::OnPostProcessInput_CaptureTouchInput(const float& DeltaTime, const bool bGamePaused)
+{
+	using namespace NCsManagerInput::NCached;
+
+	const FString& Context = Str::OnPostProcessInput_CaptureTouchInput;
+	
+	CS_NON_SHIPPING_EXPR(OnPostProcessInput_LogCaptureTouchInput());
+
+	// TODO: See if there is a check if Touch is even a viable input
+
+	UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
+
+	// Get Viewport Size
+	// TODO: CHECK: On Android it seems PlayerInput->Touches (X,Y) are NOT in the range [0,0] -> [1,1]
+	/*
+	typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
+
+	const FIntPoint Size = ViewportLibrary::GetSizeChecked(Context, this);
+	*/
+	// Check if any Touch Locations have been updated
+	const int32 Count = TouchAxisActions.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		const FECsInputAction& Action = TouchAxisActions[I];
+		FCsInputInfo& Info			  = InputActionEventInfos[Action.GetValue()];
+
+		FVector CurrentPosition = Info.Location;
+
+		const FVector& Touch = PlayerInput->Touches[I];
+		const bool IsPressed = Touch.Z != 0.0f;
+
+		if (IsPressed)
 		{
-			FCsInputInfo& Info = InputActionEventInfos[NCsInputAction::Default__MouseRightButton__.GetValue()];
+			// TODO: CHECK: On Android it seems PlayerInput->Touches (X,Y) are NOT in the range [0,0] -> [1,1]
+			//CurrentPosition.X = FMath::FloorToFloat(Touch.X * Size.X);
+			//CurrentPosition.Y = FMath::FloorToFloat(Touch.Y * Size.Y);
+			CurrentPosition.X = Touch.X;
+			CurrentPosition.Y = Touch.Y;		
+		}
 
-			Info.ResetLocation();
+		ECsInputEvent& Event = Info.Event;
 
-			const ECsInputEvent& Last_Event = Info.Last_Event;
+		Info.Last_Location = Info.Location;
 
-			// FirstReleased | Released -> FirstPressed
-			if (OwnerAsController->PlayerInput->IsPressed(EKeys::RightMouseButton))
+		// Change
+		if (Info.Location != CurrentPosition)
+		{
+			// FirstStationary | Stationary -> FirstMoved
+			if (Event == ECsInputEvent::FirstStationary ||
+				Event == ECsInputEvent::Stationary)
 			{
-				if (Last_Event == ECsInputEvent::FirstReleased ||
-					Last_Event == ECsInputEvent::Released)
+				Event = ECsInputEvent::FirstMoved;
+			}
+			// FirstMoved -> Moved
+			else
+			if (Event == ECsInputEvent::FirstMoved)
+			{
+				Event = ECsInputEvent::Moved;
+			}
+	}
+		// No Change
+		else
+		{
+			// FirstMoved | Moved -> FirstStationary
+			if (Event == ECsInputEvent::FirstMoved ||
+				Event == ECsInputEvent::Moved)
+			{
+				Event = ECsInputEvent::FirstStationary;
+			}
+			// FirstStationary -> Stationary
+			else
+			if (Event == ECsInputEvent::FirstStationary)
+			{
+				Event = ECsInputEvent::Stationary;
+			}
+		}
+
+		Info.Location = CurrentPosition;
+	}
+}
+
+void UCsManager_Input::OnPostProcessInput_LogCaptureTouchInput()
+{
+	using namespace NCsManagerInput::NCached;
+
+	const FString& Context = Str::OnPostProcessInput_CaptureTouchInput;
+
+	// Action | Action Event Change
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputTouchAction) ||
+		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputTouchActionEventChange))
+	{
+		TArray<FECsInputAction> ActionsToPrint;
+		ActionsToPrint.Reset(TouchActions.Num());
+
+		const bool LogAction			= FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputTouchAction);
+		const bool LogActionEventChange = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputTouchActionEventChange);
+
+		for (const FECsInputAction& Action : TouchActions)
+		{
+			FCsInputInfo& Info		 = InputActionEventInfos[Action.GetValue()];
+			const ECsInputType& Type = Info.Type;
+
+			// Action
+			if (Type == ECsInputType::Action)
+			{
+				if (Info.HasEventChanged() &&
+					(LogAction ||
+					 LogActionEventChange))
 				{
-					Info.Event	  = ECsInputEvent::FirstPressed;
-					Info.Location = CurrentMousePosition;
+					ActionsToPrint.Add(Action);
+				}
+				else
+				if (LogAction)
+				{
+					ActionsToPrint.Add(Action);
 				}
 			}
-			// FirstPressed | Pressed -> FirstReleased
+		}
+
+		if (ActionsToPrint.Num() > CS_EMPTY)
+		{
+			const float& Time = CurrentInputFrame->Time.Time;
+
+			UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f."), *Context, ControllerId, Time);
+
+			for (const FECsInputAction& Action : ActionsToPrint)
+			{
+				FCsInputInfo& Info			= InputActionEventInfos[Action.GetValue()];
+				const ECsInputType& Type	= Info.Type;
+				ECsInputEvent& Event		= Info.Event;
+				const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Event);
+				const FVector& Location		= Info.Location;
+
+				// Action
+				if (Type == ECsInputType::Action)
+				{
+					if (Info.HasEventChanged() &&
+						(LogAction ||
+						 LogActionEventChange))
+					{
+						const FString& LastEvent = EMCsInputEvent::Get().ToString(Info.Last_Event);
+
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s -> %s. Location: (%3.3f, %3.3f)"), Action.ToChar(), *LastEvent, *CurrentEvent, Location.X, Location.Y);
+					}
+					else
+					if (LogAction)
+					{
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s. Location: (%3.3f, %3.3f)"), Action.ToChar(), *CurrentEvent, Location.X, Location.Y);
+					}
+				}
+			}
+		}
+	}
+	// Location
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputTouchLocation))
+	{
+		UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
+
+		const int32 Count = TouchAxisActions.Num();
+
+		TArray<int32> Indices;
+		Indices.Reset(Count);
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const FECsInputAction& Action = TouchAxisActions[I];
+			const FVector& Touch		  = PlayerInput->Touches[I];
+
+			const bool IsPressed = Touch.Z != 0.0f;
+
+			if (IsPressed)
+			{
+				Indices.Add(I);
+			}
+		}
+
+		if (Indices.Num() > CS_EMPTY)
+		{
+			const float& Time = CurrentInputFrame->Time.Time;
+
+			UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f."), *Context, ControllerId, Time);
+
+			for (const int32& I : Indices)
+			{
+				const FECsInputAction& Action = TouchAxisActions[I];
+				const FVector& Touch		  = PlayerInput->Touches[I];
+
+				const bool IsPressed = Touch.Z != 0.0f;
+
+				if (IsPressed)
+				{
+					UE_LOG(LogCs, Warning, TEXT(" Action: %s. Location: (%3.3f, %3.3f)"), Action.ToChar(), Touch.X, Touch.Y);
+				}
+			}
+		}
+	}
+	// Location Event Change
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputTouchLocationEventChange))
+	{
+		UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
+
+		const int32 Count = TouchAxisActions.Num();
+
+		TArray<int32> Indices;
+		Indices.Reset(Count);
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const FECsInputAction& Action = TouchAxisActions[I];
+			FCsInputInfo& Info			  = InputActionEventInfos[Action.GetValue()];
+
+			FVector CurrentPosition = Info.Location;
+
+			const FVector& Touch = PlayerInput->Touches[I];
+			const bool IsPressed = Touch.Z != 0.0f;
+
+			if (IsPressed)
+			{
+				CurrentPosition.X = Touch.X;
+				CurrentPosition.Y = Touch.Y;		
+			}
+
+			const ECsInputEvent& Event = Info.Event;
+
+			// Change
+			if (Info.Location != CurrentPosition)
+			{
+				// FirstStationary | Stationary -> FirstMoved
+				if (Event == ECsInputEvent::FirstStationary ||
+					Event == ECsInputEvent::Stationary)
+				{
+					Indices.Add(I);
+				}
+				// FirstMoved -> Moved
+				else
+				if (Event == ECsInputEvent::FirstMoved)
+				{
+					Indices.Add(I);
+				}
+			}
+			// No Change
 			else
 			{
-				if (Last_Event == ECsInputEvent::FirstPressed ||
-					Last_Event == ECsInputEvent::Pressed)
+				// FirstMoved | Moved -> FirstStationary
+				if (Event == ECsInputEvent::FirstMoved ||
+					Event == ECsInputEvent::Moved)
 				{
-					Info.Event	  = ECsInputEvent::FirstReleased;
-					Info.Location = CurrentMousePosition;
+					Indices.Add(I);
+				}
+				// FirstStationary -> Stationary
+				else
+				if (Event == ECsInputEvent::FirstStationary)
+				{
+					Indices.Add(I);
+				}
+			}
+		}
+
+		if (Indices.Num() > CS_EMPTY)
+		{
+			const float& Time = CurrentInputFrame->Time.Time;
+
+			UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f."), *Context, ControllerId, Time);
+
+			for (const int32& I : Indices)
+			{
+				const FECsInputAction& Action = TouchAxisActions[I];
+				FCsInputInfo& Info			  = InputActionEventInfos[Action.GetValue()];
+
+				FVector CurrentPosition = Info.Location;
+
+				const FVector& Touch = PlayerInput->Touches[I];
+				const bool IsPressed = Touch.Z != 0.0f;
+
+				if (IsPressed)
+				{
+					CurrentPosition.X = Touch.X;
+					CurrentPosition.Y = Touch.Y;
+				}
+
+				const ECsInputEvent& Event = Info.Event;
+
+				// Change
+				if (Info.Location != CurrentPosition)
+				{
+					// FirstStationary | Stationary -> FirstMoved
+					if (Event == ECsInputEvent::FirstStationary ||
+						Event == ECsInputEvent::Stationary)
+					{
+						UE_LOG(LogCs, Warning, TEXT(" %s: %s -> FirstMoved. Location: (%3.3f, %3.3f)"), Action.ToChar(), EMCsInputEvent::Get().ToChar(Event), Touch.X, Touch.Y);
+					}
+					// FirstMoved -> Moved
+					else
+					if (Event == ECsInputEvent::FirstMoved)
+					{
+						UE_LOG(LogCs, Warning, TEXT(" %s: FirstMoved -> Moved. Location: (%3.3f, %3.3f)"), Action.ToChar(), Touch.X, Touch.Y);
+					}
+				}
+				// No Change
+				else
+				{
+					// FirstMoved | Moved -> FirstStationary
+					if (Event == ECsInputEvent::FirstMoved ||
+						Event == ECsInputEvent::Moved)
+					{
+						UE_LOG(LogCs, Warning, TEXT(" %s: %s -> FirstStationary. Location: (%3.3f, %3.3f)"), Action.ToChar(), EMCsInputEvent::Get().ToChar(Event), Touch.X, Touch.Y);
+					}
+					// FirstStationary -> Stationary
+					else
+					if (Event == ECsInputEvent::FirstStationary)
+					{
+						UE_LOG(LogCs, Warning, TEXT(" %s: FirstStationary -> Stationary. Location: (%3.3f, %3.3f)"), Action.ToChar(), Touch.X, Touch.Y);
+					}
 				}
 			}
 		}
@@ -601,86 +1074,186 @@ void UCsManager_Input::OnPostProcessInput_CaptureVRInput()
 	}
 }
 
-void UCsManager_Input::OnPostProcessInput_LogInputAction(const FECsInputAction& Action)
+void UCsManager_Input::OnPostProcessInput_LogInputAction()
 {
 	using namespace NCsManagerInput::NCached;
 
 	const FString& Context = Str::PostProcessInput;
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRaw) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRawAction))
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInput) ||
+		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputEventChange) ||
+		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAction) ||
+		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputActionEventChange) ||
+		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAxis) ||
+		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAxisEventChange) ||
+		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputLocation) ||
+		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputLocationEventChange))
 	{
-		FCsInputInfo& Info = InputActionEventInfos[Action.GetValue()];
+		TArray<FECsInputAction> ActionsToPrint;
 
-		const float& Time			= CurrentInputFrame->Time.Time;
-		const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
+		ActionsToPrint.Reset(EMCsInputAction::Get().Num());
+		
+		const bool LogAll			 = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInput);
+		const bool LogAllEventChange = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputEventChange);
+		// Action
+		const bool LogAction			= FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAction);
+		const bool LogActionEventChange = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputActionEventChange);
+		// Axis
+		const bool LogAxis			  = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAxis);
+		const bool LogAxisEventChange = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAxisEventChange);
+		// Location
+		const bool LogLocation			  = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputLocation);
+		const bool LogLocationEventChange = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputLocationEventChange);
 
-		if (Info.HasEventChanged())
+		
+		for (const FECsInputAction& Action : EMCsInputAction::Get())
 		{
-			const FString& LastEvent = EMCsInputEvent::Get().ToString(Info.Last_Event);
+			FCsInputInfo& Info			= InputActionEventInfos[Action.GetValue()];
+			const ECsInputType& Type	= Info.Type;
 
-			UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s. Event: %s -> %s."), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *LastEvent, *CurrentEvent);
+			// Action
+			if (Type == ECsInputType::Action)
+			{
+				if (Info.HasEventChanged() &&
+					(LogAll ||
+					 LogAllEventChange ||
+					 LogAction ||
+					 LogActionEventChange))
+				{
+					ActionsToPrint.Add(Action);
+				}
+				else
+				if (LogAll ||
+				    LogAction)
+				{
+					ActionsToPrint.Add(Action);
+				}
+			}
+			// Axis
+			else
+			if (Type == ECsInputType::Axis)
+			{
+				const float& Value = Info.Value;
+
+				if (Info.HasEventChanged() &&
+					(LogAll ||
+					 LogAllEventChange ||
+					 LogAxis ||
+					 LogAxisEventChange))
+				{
+					ActionsToPrint.Add(Action);
+				}
+				else
+				if (LogAll ||
+					LogAxis)
+				{
+					ActionsToPrint.Add(Action);
+				}
+			}
+			// Location
+			else
+			if (Type == ECsInputType::Location)
+			{
+				const FVector& Location = Info.Location;
+
+				if (Info.HasEventChanged() &&
+					(LogAll ||
+					 LogAllEventChange ||
+					 LogLocation ||
+					 LogLocationEventChange))
+				{
+					ActionsToPrint.Add(Action);
+				}
+				else
+				if (LogAll ||
+					LogLocation)
+				{
+					ActionsToPrint.Add(Action);
+				}
+			}
 		}
-		else
+
+		if (ActionsToPrint.Num() > CS_EMPTY)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s. Event: %s."), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *CurrentEvent);
-		}
-	}
-}
+			const float& Time = CurrentInputFrame->Time.Time;
 
-void UCsManager_Input::OnPostProcessInput_LogInputAxis(const FECsInputAction& Action)
-{
-	using namespace NCsManagerInput::NCached;
+			UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f."), *Context, ControllerId, Time);
 
-	const FString& Context = Str::PostProcessInput;
+			for (const FECsInputAction& Action : ActionsToPrint)
+			{
+				FCsInputInfo& Info			= InputActionEventInfos[Action.GetValue()];
+				const ECsInputType& Type	= Info.Type;
+				ECsInputEvent& Event		= Info.Event;
+				const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Event);
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRaw) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRawAxis))
-	{
-		FCsInputInfo& Info = InputActionEventInfos[Action.GetValue()];
+				// Action
+				if (Type == ECsInputType::Action)
+				{
+					if (Info.HasEventChanged() &&
+						(LogAll ||
+						 LogAllEventChange ||
+						 LogAction ||
+						 LogActionEventChange))
+					{
+						const FString& LastEvent = EMCsInputEvent::Get().ToString(Info.Last_Event);
 
-		float Value					= Info.Value;
-		const float& Time			= CurrentInputFrame->Time.Time;
-		const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s -> %s."), Action.ToChar(), *LastEvent, *CurrentEvent);
+					}
+					else
+					if (LogAll ||
+						LogAction)
+					{
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s."), Action.ToChar(), *CurrentEvent);
+					}
+				}
+				// Axis
+				else
+				if (Type == ECsInputType::Axis)
+				{
+					const float& Value = Info.Value;
 
-		if (Info.HasEventChanged())
-		{
-			const FString& LastEvent = EMCsInputEvent::Get().ToString(Info.Last_Event);
+					if (Info.HasEventChanged() &&
+						(LogAll ||
+						 LogAllEventChange ||
+						 LogAxis ||
+						 LogAxisEventChange))
+					{
+						const FString& LastEvent = EMCsInputEvent::Get().ToString(Info.Last_Event);
 
-			UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s. Event: %s -> %s. Value: %f -> %f."), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *LastEvent, *CurrentEvent, Info.Last_Value, Value);
-		}
-		else
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s. Event: %s. Value: %f."), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *CurrentEvent, Value);
-		}
-	}
-}
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s -> %s. Value: %f -> %f."), Action.ToChar(), *LastEvent, *CurrentEvent, Info.Last_Value, Value);
+					}
+					else
+					if (LogAll ||
+						LogAxis)
+					{
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s. Value: %f."), Action.ToChar(), *CurrentEvent, Value);
+					}
+				}
+				// Location
+				else
+				if (Type == ECsInputType::Location)
+				{
+					const FVector& Location = Info.Location;
 
-void UCsManager_Input::OnPostProcessInput_LogInputLocation(const FECsInputAction& Action)
-{
-	using namespace NCsManagerInput::NCached;
+					if (Info.HasEventChanged() &&
+						(LogAll ||
+						 LogAllEventChange ||
+						 LogLocation ||
+						 LogLocationEventChange))
+					{
+						const FString& LastEvent   = EMCsInputEvent::Get().ToString(Info.Last_Event);
+						const FString LastLocation = Info.Last_Location.ToString();
 
-	const FString& Context = Str::PostProcessInput;
-
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputRaw) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputLocation))
-	{
-		FCsInputInfo& Info = InputActionEventInfos[Action.GetValue()];
-
-		const FVector& Location		= Info.Location;
-		const float& Time			= CurrentInputFrame->Time.Time;
-		const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Info.Event);
-
-		if (Info.HasEventChanged())
-		{
-			const FString& LastEvent = EMCsInputEvent::Get().ToString(Info.Last_Event);
-			const FString LastLocation = Info.Last_Location.ToString();
-
-			UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s. Event: %s -> %s. Location: %s -> %s."), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *LastEvent, *CurrentEvent, *LastLocation, *(Location.ToString()));
-		}
-		else
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s. Event: %s. Location: %s."), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *CurrentEvent, *(Location.ToString()));
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s -> %s. Location: %s -> %s."), Action.ToChar(), *LastEvent, *CurrentEvent, *LastLocation, *(Location.ToString()));
+					}
+					else
+					if (LogAll ||
+						LogLocation)
+					{
+						UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s. Location: %s."), Action.ToChar(), *CurrentEvent, *(Location.ToString()));
+					}
+				}
+			}
 		}
 	}
 }
@@ -691,28 +1264,32 @@ void UCsManager_Input::OnPostProcessInput_LogCurrentInputFrame()
 
 	const FString& Context = Str::PostProcessInput;
 
-	for (const FCsInput* Input : CurrentInputFrame->Inputs)
+	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputFrame))
 	{
-		const FECsInputAction& Action = Input->Action;
-		const ECsInputEvent& Event	  = Input->Event;
-		const FCsInputInfo& Info	  = InputActionEventInfos[Action.GetValue()];
-		const ECsInputType& Type	  = Info.Type;
+		const int32 Count = CurrentInputFrame->Inputs.Num();
 
-		const bool ShowLog = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInput) ||
-							(Type == ECsInputType::Action && FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAction)) ||
-							(Type == ECsInputType::Axis && FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAxis));
-
-		if (ShowLog)
+		if (Count > CS_EMPTY)
 		{
-			const float& Time			 = CurrentInputFrame->Time.Time;
-			const FString& EventAsString = EMCsInputEvent::Get().ToString(Input->Event);
+			UE_LOG(LogCs, Warning, TEXT("%s (%d): %d Inputs. Time: %f."), *Context, ControllerId, Count);
 
-			UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Action: %s Event: %s."), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *EventAsString);
+			for (int32 I = 0; I < Count; ++I)
+			{
+				const FCsInput* Input		  = CurrentInputFrame->Inputs[I];
+				const FECsInputAction& Action = Input->Action;
+				const ECsInputEvent& Event	  = Input->Event;
+				const FCsInputInfo& Info	  = InputActionEventInfos[Action.GetValue()];
+				const ECsInputType& Type	  = Info.Type;
+
+				const float& Time			 = CurrentInputFrame->Time.Time;
+				const FString& EventAsString = EMCsInputEvent::Get().ToString(Input->Event);
+
+				UE_LOG(LogCs, Warning, TEXT(" [%d] Action: %s Event: %s."), I, Action.ToChar(), *EventAsString);
+			}
 		}
 	}
 }
 
-void UCsManager_Input::OnPostProcessInput_LogGameEventInfo(const FCsGameEventInfo& Info)
+void UCsManager_Input::OnPostProcessInput_LogGameEventInfo()
 {
 	using namespace NCsManagerInput::NCached;
 
@@ -720,9 +1297,33 @@ void UCsManager_Input::OnPostProcessInput_LogGameEventInfo(const FCsGameEventInf
 
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputGameEvent))
 	{
-		const float& Time = CurrentInputFrame->Time.Time;
+		int32 Count = 0;
 
-		UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. Event: %s."), *Context, *(GetOwner()->GetName()), Time, Info.Event.ToChar());
+		for (FCsGameEventInfo& Info : CurrentGameEventInfos)
+		{
+			if (Info.IsValid())
+			{
+				++Count;
+				break;
+			}
+		}
+
+		if (Count > CS_EMPTY)
+		{
+			const float& Time = CurrentInputFrame->Time.Time;
+
+			UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f."), *Context, ControllerId, Time);
+
+			for (FCsGameEventInfo& Info : CurrentGameEventInfos)
+			{
+				if (Info.IsValid())
+				{
+					const FECsGameEvent& Event = Info.Event;
+
+					UE_LOG(LogCs, Warning, TEXT(" Event: %s."), Event.ToChar());
+				}
+			}
+		}
 	}
 }
 
@@ -802,49 +1403,119 @@ void UCsManager_Input::SetupInputActionEventInfos()
 	Listeners.Reset(ActionCount);
 	Listeners.AddDefaulted(ActionCount);
 
-	// Touch
+	// AnyKey
 	{
-		const int32 Count = EKeys::NUM_TOUCH_KEYS - 1;
+		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
 
-		// Add Action Mappings for Touch Events (Pressed / Released)
-		TArray<FInputActionKeyMapping> ActionKeyMappings;
-		ActionKeyMappings.Reset(Count);
-		ActionKeyMappings.AddDefaulted(Count);
+		const FECsInputAction& AnyKeyAction = Settings->Input.AnyKeyAction;
 
-		TouchActions.Reset(Count);
-		TouchActions.Add(NCsInputAction::Default__Touch_0__);
-		TouchActions.Add(NCsInputAction::Default__Touch_1__);
-		TouchActions.Add(NCsInputAction::Default__Touch_2__);
-		TouchActions.Add(NCsInputAction::Default__Touch_3__);
-		TouchActions.Add(NCsInputAction::Default__Touch_4__);
-		TouchActions.Add(NCsInputAction::Default__Touch_5__);
-		TouchActions.Add(NCsInputAction::Default__Touch_6__);
-		TouchActions.Add(NCsInputAction::Default__Touch_7__);
-		TouchActions.Add(NCsInputAction::Default__Touch_8__);
-		TouchActions.Add(NCsInputAction::Default__Touch_9__);
+		// Check AnyKeyAction is actually bound to EKeys::AnyKey
+		bool Found = false;
 
-		for (int32 I = 0; I < Count; ++I)
+		for (const FInputActionKeyMapping& Mapping : PlayerInput->ActionMappings)
 		{
-			FInputActionKeyMapping& Mapping = ActionKeyMappings[I];
-			const FECsInputAction& Action   = TouchActions[I];
-
-			Mapping.ActionName = Action.GetFName();
-			Mapping.Key		   = EKeys::TouchKeys[I];
-
-			PlayerInput->AddActionMapping(Mapping);
+			if (Mapping.ActionName == AnyKeyAction.GetFName() &&
+				Mapping.Key == EKeys::AnyKey)
+			{
+				Found = true;
+			}
 		}
+
+		checkf(Found, TEXT("UCsManager_Input::SetupInputActionEventInfos: UCsDeveloperSettings->Input.AnyKeyAction: %s is NOT bound to the Key: AnyKey."), AnyKeyAction.ToChar());
 
 		UInputComponent* InputComponent = OwnerAsController->InputComponent;
 
 		// Pressed
 		{
-			FInputTouchBinding& Binding = InputComponent->BindTouch<UCsManager_Input>(EInputEvent::IE_Pressed, this, &UCsManager_Input::OnTouchAction_Pressed);
-			Binding.bConsumeInput		= false;
+			FInputActionBinding& Binding = InputComponent->BindAction<UCsManager_Input>(AnyKeyAction.GetFName(), EInputEvent::IE_Pressed, this, &UCsManager_Input::OnAnyKey_Pressed);
+			Binding.bConsumeInput = false;
 		}
-		// Released
+	}
+	// Mouse
+	{
+		MouseActions.Reset(2);
+		MouseActions.Add(NCsInputAction::Default__MouseLeftButton__);
+		MouseActions.Add(NCsInputAction::Default__MouseRightButton__);
+	}
+	// Touch
+	{
+		const int32 Count = EKeys::NUM_TOUCH_KEYS - 1;
+
+		// Add Action Mappings for Touch Events (Pressed / Released)
 		{
-			FInputTouchBinding& Binding = InputComponent->BindTouch<UCsManager_Input>(EInputEvent::IE_Released, this, &UCsManager_Input::OnTouchAction_Pressed);
-			Binding.bConsumeInput		= false;
+			TArray<FInputActionKeyMapping> ActionKeyMappings;
+			ActionKeyMappings.Reset(Count);
+			ActionKeyMappings.AddDefaulted(Count);
+
+			TouchActions.Reset(Count);
+			TouchActions.Add(NCsInputAction::Default__Touch_0__);
+			TouchActions.Add(NCsInputAction::Default__Touch_1__);
+			TouchActions.Add(NCsInputAction::Default__Touch_2__);
+			TouchActions.Add(NCsInputAction::Default__Touch_3__);
+			TouchActions.Add(NCsInputAction::Default__Touch_4__);
+			TouchActions.Add(NCsInputAction::Default__Touch_5__);
+			TouchActions.Add(NCsInputAction::Default__Touch_6__);
+			TouchActions.Add(NCsInputAction::Default__Touch_7__);
+			TouchActions.Add(NCsInputAction::Default__Touch_8__);
+			TouchActions.Add(NCsInputAction::Default__Touch_9__);
+
+			for (const FECsInputAction& Action : TouchActions)
+			{
+				FCsInputInfo& Info = InputActionEventInfos[Action.GetValue()];
+
+				Info.Type		= ECsInputType::Action;
+				Info.ValueType	= ECsInputValue::Void;
+				Info.Event		= ECsInputEvent::Released;
+				Info.Last_Event = ECsInputEvent::Released;
+			}
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				FInputActionKeyMapping& Mapping = ActionKeyMappings[I];
+				const FECsInputAction& Action   = TouchActions[I];
+
+				Mapping.ActionName = Action.GetFName();
+				Mapping.Key		   = EKeys::TouchKeys[I];
+
+				PlayerInput->AddActionMapping(Mapping);
+			}
+
+			UInputComponent* InputComponent = OwnerAsController->InputComponent;
+
+			// Pressed
+			{
+				FInputTouchBinding& Binding = InputComponent->BindTouch<UCsManager_Input>(EInputEvent::IE_Pressed, this, &UCsManager_Input::OnTouchAction_Pressed);
+				Binding.bConsumeInput		= false;
+			}
+			// Released
+			{
+				FInputTouchBinding& Binding = InputComponent->BindTouch<UCsManager_Input>(EInputEvent::IE_Released, this, &UCsManager_Input::OnTouchAction_Released);
+				Binding.bConsumeInput		= false;
+			}
+		}
+		// Add Axis Actions
+		{
+			TouchAxisActions.Reset(Count);
+			TouchAxisActions.Add(NCsInputAction::Default__TouchPositionXY_0__);
+			TouchAxisActions.Add(NCsInputAction::Default__TouchPositionXY_1__);
+			TouchAxisActions.Add(NCsInputAction::Default__TouchPositionXY_2__);
+			TouchAxisActions.Add(NCsInputAction::Default__TouchPositionXY_3__);
+			TouchAxisActions.Add(NCsInputAction::Default__TouchPositionXY_4__);
+			TouchAxisActions.Add(NCsInputAction::Default__TouchPositionXY_5__);
+			TouchAxisActions.Add(NCsInputAction::Default__TouchPositionXY_6__);
+			TouchAxisActions.Add(NCsInputAction::Default__TouchPositionXY_7__);
+			TouchAxisActions.Add(NCsInputAction::Default__TouchPositionXY_8__);
+			TouchAxisActions.Add(NCsInputAction::Default__TouchPositionXY_9__);
+
+			for (const FECsInputAction& Action : TouchAxisActions)
+			{
+				FCsInputInfo& Info = InputActionEventInfos[Action.GetValue()];
+
+				Info.Type		= ECsInputType::Location;
+				Info.ValueType	= ECsInputValue::Vector;
+				Info.Event		= ECsInputEvent::Stationary;
+				Info.Last_Event = ECsInputEvent::Stationary;
+			}
 		}
 	}
 
@@ -885,6 +1556,13 @@ void UCsManager_Input::SetupInputActionEventInfos()
 			Info.Key		= EKeys::RightMouseButton;
 			continue;
 		}
+
+		// Ignore Touch Actions
+		if (TouchActions.Contains(Action))
+			continue;
+		// Ignore Touch Axis Actions
+		if (TouchAxisActions.Contains(Action))
+			continue;
 
 		Listeners[Action.GetValue()] = NewObject<UCsInputListener>(this);
 
@@ -1057,7 +1735,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 	}
 
 	// Setup default game events for "default" mouse related actions
-
+#if PLATFORM_WINDOWS
 	// Default__MousePositionXY__
 	{
 		const FECsGameEvent& Event = NCsGameEvent::Default__MousePositionXY__;
@@ -1134,6 +1812,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 			GameEventDefinitions.Add(Def);
 		}
 	}
+#endif // #if PLATFORM_WINDOWS
 
 
 #if WITH_EDITOR
@@ -1147,23 +1826,48 @@ void UCsManager_Input::SetupGameEventDefinitions()
 #endif // #if WITH_EDITOR
 }
 
-void UCsManager_Input::LogProcessGameEventDefinition(const FString& Context, const FECsGameEvent& Event, const FCsInputSentence& Sentence)
+void UCsManager_Input::LogProcessGameEventDefinition(const FString& Context)
 {
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputGameEventDefinition))
 	{
-		// For now handle a simple definition
+		int32 Count = 0;
 
-		if (Sentence.Phrases.Num() > CS_EMPTY &&
-			Sentence.Phrases[CS_FIRST].Words.Num() > CS_EMPTY &&
-			Sentence.Phrases[CS_FIRST].Words[CS_FIRST].AndInputs.Num() > CS_EMPTY)
+		for (FCsGameEventDefinition& Def : GameEventDefinitions)
 		{
-			const FCsInputDescription& Input  = Sentence.Phrases[CS_FIRST].Words[CS_FIRST].AndInputs[CS_FIRST];
-			const FECsInputAction& Action	  = Input.Action;
-			const FString& InputEventAsString = EMCsInputEvent::Get().ToString(Input.Event);
+			FCsInputSentence& Sentence = Def.Sentence;
 
+			if (Sentence.IsCompleted())
+			{
+				++Count;
+			}
+		}
+
+		if (Count > CS_EMPTY)
+		{
 			const float& Time = CurrentInputFrame->Time.Time;
 
-			UE_LOG(LogCs, Warning, TEXT("%s (%s): Time: %f. (%s, %s) -> %s."), *Context, *(GetOwner()->GetName()), Time, Action.ToChar(), *InputEventAsString, Event.ToChar());
+			UE_LOG(LogCs, Warning, TEXT("%s (%d): Time: %f.."), *Context, ControllerId, Time);
+
+			for (FCsGameEventDefinition& Def : GameEventDefinitions)
+			{
+				const FECsGameEvent& Event = Def.Event;
+				FCsInputSentence& Sentence = Def.Sentence;
+
+				if (Sentence.IsCompleted())
+				{
+					// For now handle a simple definition
+					if (Sentence.Phrases.Num() > CS_EMPTY &&
+						Sentence.Phrases[CS_FIRST].Words.Num() > CS_EMPTY &&
+						Sentence.Phrases[CS_FIRST].Words[CS_FIRST].AndInputs.Num() > CS_EMPTY)
+					{
+						const FCsInputDescription& Input = Sentence.Phrases[CS_FIRST].Words[CS_FIRST].AndInputs[CS_FIRST];
+						const FECsInputAction& Action = Input.Action;
+						const FString& InputEventAsString = EMCsInputEvent::Get().ToString(Input.Event);
+
+						UE_LOG(LogCs, Warning, TEXT(" (%s, %s) -> %s."), Action.ToChar(), *InputEventAsString, Event.ToChar());
+					}
+				}
+			}
 		}
 	}
 }
@@ -1236,6 +1940,11 @@ float UCsManager_Input::GetInputDuration(const FECsInputAction& Action)
 
 // Listener
 #pragma region
+
+void UCsManager_Input::OnAnyKey_Pressed(FKey Key)
+{
+	OnAnyKey_Pressed_Event.Broadcast(Key);
+}
 
 void UCsManager_Input::OnAction_Pressed(const FECsInputAction& Action, const FKey& Key)
 {

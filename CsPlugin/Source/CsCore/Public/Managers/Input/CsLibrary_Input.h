@@ -1,5 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Types
+#include "InputCoreTypes.h"
 
 class UObject;
 
@@ -37,7 +39,7 @@ namespace NCsInput
 		/**
 		* 
 		* 
-		* @param Context		The calling context
+		* @param Context		The calling context.
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 		* @param X
 		* @param Y
@@ -47,9 +49,19 @@ namespace NCsInput
 		/**
 		* 
 		* 
-		* @param Context		The calling context
+		* @param Context		The calling context.
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 		*/
 		static void SetMouseCenterOfViewportChecked(const FString& Context, UObject* WorldContext);
+
+		/**
+		*
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param FingerIndex
+		* @param [out] Position
+		*/
+		static bool GetTouchPositionChecked(const FString& Context, UObject* WorldContext, const ETouchIndex::Type& FingerIndex, FIntPoint& Position);
 	};
 }

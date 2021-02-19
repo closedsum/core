@@ -103,14 +103,16 @@ public:
 	FOnPostProcessInput OnPostProcessInput_Event;
 
 	void OnPostProcessInput_CaptureMouseInput(const float& DeltaTime, const bool bGamePaused);
+	void OnPostProcessInput_LogCaptureMouseInput();
+
+	void OnPostProcessInput_CaptureTouchInput(const float& DeltaTime, const bool bGamePaused);
+	void OnPostProcessInput_LogCaptureTouchInput();
 
 	void OnPostProcessInput_CaptureVRInput();
 
-	void OnPostProcessInput_LogInputAction(const FECsInputAction& Action);
-	void OnPostProcessInput_LogInputAxis(const FECsInputAction& Action);
-	void OnPostProcessInput_LogInputLocation(const FECsInputAction& Action);
+	void OnPostProcessInput_LogInputAction();
 	void OnPostProcessInput_LogCurrentInputFrame();
-	void OnPostProcessInput_LogGameEventInfo(const FCsGameEventInfo& Info);
+	void OnPostProcessInput_LogGameEventInfo();
 
 	void OnPostProcessInput_UpdateActiveInputMode(const float& DeltaTime, const bool bGamePaused);
 
@@ -310,7 +312,7 @@ public:
 
 private:
 
-	void LogProcessGameEventDefinition(const FString& Context, const FECsGameEvent& Event, const FCsInputSentence& Sentence);
+	void LogProcessGameEventDefinition(const FString& Context);
 
 public:
 
@@ -356,6 +358,12 @@ private:
 
 public:
 
+	void OnAnyKey_Pressed(FKey Key);
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAnyKey_Pressed, const FKey& /*Key*/);
+
+	FOnAnyKey_Pressed OnAnyKey_Pressed_Event;
+
 	void OnAction_Pressed(const FECsInputAction& Action, const FKey& Key);
 
 	void OnAction_Released(const FECsInputAction& Action, const FKey& Key);
@@ -377,21 +385,22 @@ protected:
 	TArray<ECsInputEvent*> Actions;
 	TArray<ECsInputEvent*> Last_Actions;
 
-	// Location Events
+	// Mouse
 #pragma region
 public:
 
-	// Mouse
-
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	TArray<FECsInputAction> MouseActions;
+	
 	FVector CurrentMousePosition;
 
-#pragma endregion Location Events
+#pragma endregion Mouse
 
 	// Touch
 #pragma region
+private:
 
 	TArray<FECsInputAction> TouchActions;
+	TArray<FECsInputAction> TouchAxisActions;
 
 #pragma endregion Touch
 

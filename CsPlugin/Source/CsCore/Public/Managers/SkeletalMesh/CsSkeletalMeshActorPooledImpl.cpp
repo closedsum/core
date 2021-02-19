@@ -589,18 +589,34 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetAnimInstance(ShotType* Shot)
 	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::AnimInstance) &&
 		CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::AnimInstance))
 	{
+		UAnimInstance* AnimInstance = GetMeshComponent()->GetAnimInstance();
+
 		// Check if the AnimInstance has changed
 		if (CS_TEST_BITFLAG(ChangesFromLastMask, ChangeType::SkeletalMesh))
 		{
-			if (UAnimInstance* AnimInstance = GetMeshComponent()->GetAnimInstance())
+			if (AnimInstance &&
+				AnimInstance->GetClass()->GetName() == Class->GetName())
 			{
-				if (AnimInstance->GetName() == Class->GetName())
+				// Check Skeletons
+				// NOTE: Not sure if this is necessary
+				USkeleton* Skeleton = nullptr;
+
+				// AnimBlueprintGeneratedClass
+				if (UAnimBlueprintGeneratedClass* ABpGC = Cast<UAnimBlueprintGeneratedClass>(Class))
+					Skeleton = ABpGC->GetTargetSkeleton();
+				// AnimInstance
+				else
+				if (UAnimInstance* NewAnimInstance = Cast<UAnimInstance>(Class))
+					Skeleton = NewAnimInstance->CurrentSkeleton;
+
+				if (AnimInstance->CurrentSkeleton == Skeleton)
 				{
 					SetAnimInstance = false;
 				}
 			}
 		}
 		else
+		if (AnimInstance->GetClass()->GetName() == Class->GetName())
 		{
 			SetAnimInstance = false;
 		}

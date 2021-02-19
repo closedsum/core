@@ -57,6 +57,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<FECsGameEvent> GameEventPriorityList_Internal;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FECsInputAction AnyKeyAction;
+
 	FCsSettings_Input() :
 		InputActionMappings(),
 		GameEventDefinitions(),
@@ -64,7 +67,8 @@ public:
 		GameEventDefinitions_ActionOneOrWordOneEventNoCompleteValue(),
 		GameEventDefinitions_AxisOneOrWordNoComparePassThroughValue(),
 		GameEventPriorityList(),
-		GameEventPriorityList_Internal()
+		GameEventPriorityList_Internal(),
+		AnyKeyAction()
 	{
 	}
 

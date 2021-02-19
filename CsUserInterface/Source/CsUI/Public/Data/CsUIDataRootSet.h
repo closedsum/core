@@ -6,6 +6,7 @@
 #include "CsUIDataRootSet.generated.h"
 
 class UDataTable;
+class UCsUserWidget_Fade;
 
 USTRUCT(BlueprintType)
 struct CSUI_API FCsUIDataRootSet
@@ -13,6 +14,11 @@ struct CSUI_API FCsUIDataRootSet
 	GENERATED_USTRUCT_BODY()
 
 public:
+
+	// Fade
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UCsUserWidget_Fade> FadeWidget;
 
 	// Widget Actor
 
@@ -46,6 +52,7 @@ public:
 	bool bUserWidgetsHasData;
 
 	FCsUIDataRootSet() :
+		FadeWidget(nullptr),
 		WidgetActorClasses(nullptr),
 		WidgetActors(nullptr),
 		bWidgetActorsHasData(false),

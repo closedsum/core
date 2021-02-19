@@ -21,7 +21,7 @@ namespace NCsProperty
 		static T* FindPropertyByName(const UStruct* Struct, const FName& PropertyName)
 		{
 			T* Property = CastField<T>(Struct->FindPropertyByName(PropertyName));
-			Property	= Property ? Property : Cast<T>(Struct->CustomFindProperty(PropertyName));
+			Property	= Property ? Property : CastField<T>(Struct->CustomFindProperty(PropertyName));
 
 			return Property;
 		}
@@ -103,6 +103,16 @@ namespace NCsProperty
 			checkf(ValuePtr, TEXT("%s: Failed get Value Ptr from %s: %s."), *Context, *(Property->GetClass()->GetName()), *(Property->GetName()));
 
 			return ValuePtr;
+		}
+
+		template<typename T>
+		static T* GetObjectPropertyValue(void* StructValue, UStruct* const& Struct, const FName& PropertyName)
+		{
+			if (FObjectProperty* ObjectProperty = FindPropertyByName<FObjectProperty>(Struct, PropertyName))
+			{
+				return Cast<T>(ObjectProperty->GetObjectPropertyValue_InContainer(StructValue));
+			}
+			return nullptr;
 		}
 
 		/**

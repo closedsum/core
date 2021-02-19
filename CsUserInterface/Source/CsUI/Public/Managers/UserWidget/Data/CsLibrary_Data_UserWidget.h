@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/UserWidget/Data/CsData_UserWidget.h"
-#include "Containers/CsInterfaceMap.h"
+// Library
+#include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
 namespace NCsUserWidget

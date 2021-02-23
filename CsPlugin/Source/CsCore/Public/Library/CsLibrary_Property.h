@@ -105,6 +105,13 @@ namespace NCsProperty
 			return ValuePtr;
 		}
 
+		/**
+		* 
+		* 
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		*/
 		template<typename T>
 		static T* GetObjectPropertyValue(void* StructValue, UStruct* const& Struct, const FName& PropertyName)
 		{
@@ -113,6 +120,38 @@ namespace NCsProperty
 				return Cast<T>(ObjectProperty->GetObjectPropertyValue_InContainer(StructValue));
 			}
 			return nullptr;
+		}
+
+		/**
+		*
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		*/
+		template<typename T>
+		static T* GetObjectPropertyValueChecked(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName)
+		{
+			checkf(StructValue, TEXT("%s: StructValue is NULL."), *Context);
+
+			checkf(Struct, TEXT("%s: Struct is NULL."), *Context);
+
+			checkf(PropertyName != NAME_None, TEXT("%s: PropertyName: None is NOT Valid."), *Context);
+
+			FObjectProperty* ObjectProperty = FindPropertyByName<FObjectProperty>(Struct, PropertyName);
+
+			checkf(ObjectProperty, TEXT("%s: Failed to find ObjectProperty with Name: %s from Struct: %s."), *Context, *(PropertyName.ToString()), *(Struct->GetName()));
+	
+			UObject* O = ObjectProperty->GetObjectPropertyValue_InContainer(StructValue);
+
+			checkf(O, TEXT("%s: StructValue's (Class: %s) Property: %s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+
+			T* Ptr = Cast<T>(ObjectProperty->GetObjectPropertyValue_InContainer(StructValue));
+			
+			checkf(Ptr, TEXT("%s: Failed to cast Object: %s with Class: %s to type: T."), *Context, *(O->GetName()), *(O->GetClass()->GetName()));
+
+			return Ptr;
 		}
 
 		/**

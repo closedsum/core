@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Level/CsLibrary_Level.h"
 
+// Level
+#include "Engine/LevelScriptActor.h"
+// World
 #include "Engine/World.h"
 
 namespace NCsLevel

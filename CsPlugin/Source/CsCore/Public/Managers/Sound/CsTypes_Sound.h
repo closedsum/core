@@ -103,9 +103,193 @@ struct CSCORE_API FCsSoundCue
 	}
 
 	FORCEINLINE USoundCue* Get() const { return Sound_Internal; }
+
+	FORCEINLINE USoundCue* GetChecked() const
+	{
+		checkf(Sound.ToSoftObjectPath().IsValid(), TEXT("FCsSoundCue::GetChecked: Sound is NULL."));
+
+		checkf(Sound_Internal, TEXT("FCsSoundCue::GetChecked: Sound is NULL. Sound @ %s is NOT Loaded."), *(Sound.ToSoftObjectPath().ToString()));
+
+		return Sound_Internal;
+	}
+
+	FORCEINLINE USoundCue* GetChecked(const FString& Context) const
+	{
+		checkf(Sound.ToSoftObjectPath().IsValid(), TEXT("%s: Sound is NULL."), *Context);
+
+		checkf(Sound_Internal, TEXT("%s: Sound is NULL. Sound @ %s is NOT Loaded."), *Context, *(Sound.ToSoftObjectPath().ToString()));
+
+		return Sound_Internal;
+	}
 };
 
 #pragma endregion FCsSoundCue
+
+// FCsSoundBase
+#pragma region
+
+class USoundBase;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsSoundBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Soft reference to a Sound Asset. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftObjectPtr<USoundBase> Sound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Sound_LoadFlags;
+
+	/** Hard reference to a Sound Asset. */
+	UPROPERTY(Transient, BlueprintReadOnly)
+	USoundBase* Sound_Internal;
+
+	FCsSoundBase() :
+		Sound(),
+		Sound_LoadFlags(0),
+		Sound_Internal(nullptr)
+	{
+	}
+
+	FORCEINLINE USoundBase* Get() const { return Sound_Internal; }
+
+	FORCEINLINE USoundBase** GetPtr() { return &Sound_Internal; }
+
+	FORCEINLINE USoundBase* GetChecked() const
+	{
+		checkf(Sound.ToSoftObjectPath().IsValid(), TEXT("FCsSoundBase::GetChecked: Sound is NULL."));
+
+		checkf(Sound_Internal, TEXT("FCsSoundBase::GetChecked: Sound is NULL. Sound @ %s is NOT Loaded."), *(Sound.ToSoftObjectPath().ToString()));
+
+		return Sound_Internal;
+	}
+
+	FORCEINLINE USoundBase* GetChecked(const FString& Context) const
+	{
+		checkf(Sound.ToSoftObjectPath().IsValid(), TEXT("%s: Sound is NULL."), *Context);
+
+		checkf(Sound_Internal, TEXT("%s: Sound is NULL. Sound @ %s is NOT Loaded."), *Context, *(Sound.ToSoftObjectPath().ToString()));
+
+		return Sound_Internal;
+	}
+};
+
+#pragma endregion FCsSoundCue
+
+// FCsTArraySoundBase
+#pragma region
+
+class USoundBase;
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsTArraySoundBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<TSoftObjectPtr<USoundBase>> Sounds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Sounds_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	TArray<USoundBase*> Sounds_Internal;
+
+public:
+
+	FCsTArraySoundBase() :
+		Sounds(),
+		Sounds_LoadFlags(0),
+		Sounds_Internal()
+	{
+	}
+
+	FORCEINLINE const TArray<USoundBase*>& Get() const { return Sounds_Internal; }
+
+	FORCEINLINE TArray<USoundBase*>* GetPtr() { return &Sounds_Internal; }
+	FORCEINLINE const TArray<USoundBase*>* GetPtr() const { return &Sounds_Internal; }
+
+	/**
+	* Get the Hard references to the array of Sounds of type: USoundBase.
+	*
+	* @param Context	The calling context.
+	* return			Sounds
+	*/
+	FORCEINLINE const TArray<USoundBase*>& GetChecked(const FString& Context) const
+	{ 
+		checkf(Sounds.Num() > CS_EMPTY, TEXT("%s: No Materials set."), *Context);
+
+		checkf(Sounds.Num() == Sounds_Internal.Num(), TEXT("%s: Mismatch between Soft and Hard references to sounds, %d != %d."), *Context, Sounds.Num(), Sounds_Internal.Num());
+
+		const int32 Count = Sounds.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<USoundBase>& SoftObject = Sounds[I];
+
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: USoundBase[%d] is NULL."), *Context, I);
+
+			USoundBase* Sound = Sounds_Internal[I];
+	
+			checkf(Sound, TEXT("%s: Sounds[%d] has NOT been loaded from Path @ %s."), *Context, I, *(SoftObject.ToSoftObjectPath().ToString()));
+		}
+		return Sounds_Internal;
+	}
+
+	/**
+	* Get the Hard references to the array of Sounds of type: USoundInterface.
+	*
+	* @param Context	The calling context.
+	* return			Sounds
+	*/
+	FORCEINLINE const TArray<USoundBase*>& GetChecked() const
+	{
+		checkf(Sounds.Num() > CS_EMPTY, TEXT("FCsTArraySoundBase::GetChecked: No Sounds set."));
+
+		checkf(Sounds.Num() == Sounds_Internal.Num(), TEXT("FCsTArraySoundBase::GetChecked: Mismatch between Soft and Hard references to sounds, %d != %d."), Sounds.Num(), Sounds_Internal.Num());
+
+		const int32 Count = Sounds.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<USoundBase>& SoftObject = Sounds[I];
+
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("FCsTArraySoundBase::GetChecked: Sounds[%d] is NULL."), I);
+
+			USoundBase* Sound = Sounds_Internal[I];
+
+			checkf(Sound, TEXT("FCsTArraySoundBase::GetChecked: Sounds[%d] has NOT been loaded from Path @ %s."), I, *(SoftObject.ToSoftObjectPath().ToString()));
+		}
+		return Sounds_Internal;
+	}
+
+	bool IsValidChecked(const FString& Context) const
+	{
+		checkf(Sounds.Num() > CS_EMPTY, TEXT("%s: No Sounds set."), *Context);
+
+		checkf(Sounds.Num() == Sounds_Internal.Num(), TEXT("%s: Mismatch between Soft and Hard references to sounds, %d != %d."), *Context, Sounds.Num(), Sounds_Internal.Num());
+
+		const int32 Count = Sounds.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<USoundBase>& SoftObject = Sounds[I];
+
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: Sounds[%d] is NULL."), *Context, I);
+
+			USoundBase* Sound = Sounds_Internal[I];
+
+			checkf(Sound, TEXT("%s: Sounds[%d] has NOT been loaded from Path @ %s."), *Context, I, *(SoftObject.ToSoftObjectPath().ToString()));
+		}
+		return true;
+	}
+};
+
+#pragma endregion FCsTArraySoundBase
 
 // SoundDeallocateMethod
 #pragma region
@@ -444,6 +628,13 @@ public:
 		DeallocateMethod_Internal = (DeallocateMethodType*)(&DeallocateMethod);
 	}
 	
+	FORCEINLINE void UpdateInternalPtrs()
+	{
+		UpdateDeallocateMethodPtr();
+	}
+
+	FORCEINLINE void UpdateDeallocateMethodPtr() { DeallocateMethod_Internal = (DeallocateMethodType*)&DeallocateMethod; }
+
 	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *DeallocateMethod_Internal; }
 
 	/**

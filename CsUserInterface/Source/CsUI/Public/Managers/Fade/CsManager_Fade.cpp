@@ -43,6 +43,7 @@ namespace NCsManagerFade
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, CreateFadeWidget);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, Fade);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, Fade_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, StopFade);
 		}
 
 		namespace Name
@@ -335,8 +336,16 @@ char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 
 void UCsManager_Fade::StopFade()
 {
+	using namespace NCsManagerFade::NCached;
+
+	const FString& Context = Str::StopFade;
+
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	UObject* ContextRoot = CoroutineSchedulerLibrary::GetContextRootChecked(Context, MyRoot);
+
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(this);
+	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(ContextRoot);
 
 	Scheduler->End(UpdateGroup, FadeHandle);
 }

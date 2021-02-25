@@ -221,6 +221,8 @@ public:
 	template<typename T>
 	FORCEINLINE T* GetClass() const { return Cast<T>(GetClass()); }
 
+	FORCEINLINE UClass** GetClassPtr() { return &Widget_Class; }
+
 	FORCEINLINE TSubclassOf<UUserWidget> GetSubclassOf() const { return Widget_SubclassOf; }
 
 	bool IsValidChecked(const FString& Context)

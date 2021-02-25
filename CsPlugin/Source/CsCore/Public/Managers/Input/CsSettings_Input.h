@@ -54,7 +54,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly,meta = (DisplayName = "GameEventPriorityList", MultiLine = true))
 	FString GameEventPriorityList;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FECsGameEvent> GameEventPriorityList_Internal;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

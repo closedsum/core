@@ -3,6 +3,9 @@
 // Library
 #include "Library/CsLibrary_String.h"
 
+class UWorld;
+class UObject;
+
 namespace NCsConsoleCommand
 {
 	namespace NLibrary
@@ -156,6 +159,29 @@ namespace NCsConsoleCommand
 		*/
 		struct CSCORE_API FLibrary
 		{
+			/**
+			* Execute a console command. The command is first routed through the FIRST Player Controller,
+			* if it exists. If the FIRST Player Controller does NOT exist, the command is routed through
+			* the Engine.
+			* 
+			* @param World
+			* @param Cmd	Console Command
+			* @param Out
+			* return		Whether the console command was executed.
+			*/
+			static bool Exec(UWorld* World, const TCHAR* Cmd, FOutputDevice& Out = *GLog);
+
+			/**
+			* Execute a console command. The command is first routed through the FIRST Player Controller,
+			* if it exists. If the FIRST Player Controller does NOT exist, the command is routed through
+			* the Engine.
+			*
+			* @param WorldContext	Object that has a reference to a UWorld (GetWorld() is Valid).
+			* @param Cmd			Console Command
+			* return				Whether the console command was executed.
+			*/
+			static bool Exec(UObject* WorldContext, const FString& Cmd);
+
 			/**
 			* Get a value of type: EnumType from the CHAR ptr / string Str.
 			* 

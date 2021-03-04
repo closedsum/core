@@ -14,9 +14,7 @@ namespace NCsSound
 	{
 		if (UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>())
 		{
-#if WITH_EDITOR
 			EMCsSound::Get().ClearUserDefinedEnums();
-#endif // #if WITH_EDITOR
 
 			// Enum Settings
 			if (Settings->ECsSound_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
@@ -58,7 +56,7 @@ namespace NCsSound
 			}
 
 			// DataTable
-			if (Settings->ECsFX_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::DataTable)
+			if (Settings->ECsSound_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::DataTable)
 			{
 				for (TSoftObjectPtr<UDataTable>& SoftObjectPtr : Settings->Sounds)
 				{

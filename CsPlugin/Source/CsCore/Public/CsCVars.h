@@ -408,6 +408,8 @@ namespace NCsCVarLog
 	}
 }
 
+#define CS_CVAR_LOG_IS_SHOWING(__Log) FCsCVarLogMap::Get().IsShowing(NCsCVarLog::__Log)
+
 #pragma endregion CVarLog
 
 // CVarToggle
@@ -529,6 +531,8 @@ namespace NCsCVarToggle
 		typedef FCsCVarToggleMap CVarMapType;
 	}
 }
+
+#define CS_CVAR_TOGGLE_IS_ENABLED(__Toggle) FCsCVarToggleMap::Get().IsEnabled(NCsCVarToggle::__Toggle)
 
 #pragma endregion CVarToggle
 

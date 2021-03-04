@@ -61,4 +61,12 @@ public:
 	void AddDataTable(const FName& Entryname, const TSoftObjectPtr<UDataTable>& DataTable, const TSet<FName>& RowNames);
 
 #endif // #if WITH_EDITOR
+
+	enum class EMap : uint8
+	{
+		Entry,
+		Main
+	};
+
+	bool IsPersistentLevel(UObject* WorldContext, const EMap& Type) const;
 };

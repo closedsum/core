@@ -29,6 +29,25 @@ namespace NCsTime
 			* @param Group
 			*/
 			static void UpdateTimeAndCoroutineScheduler(const FString& Context, UObject* WorldContext, const FECsUpdateGroup& Group, const float& DeltaTime);
+
+			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Group
+			* @param Scale
+			*/
+			static void SetScaledDeltaTime(const FString& Context, UObject* WorldContext, const FECsUpdateGroup& Group, const float& Scale);
+
+			/**
+			* Resets the Scale (to 1.0f) applied to the delta time for the specified Group.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Group
+			*/
+			static void ResetScaledDeltaTime(const FString& Context, UObject* WorldContext, const FECsUpdateGroup& Group);
 		};
 	}
 }

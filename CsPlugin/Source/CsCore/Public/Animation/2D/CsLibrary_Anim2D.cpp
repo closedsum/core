@@ -408,7 +408,7 @@ namespace NCsAnim
 					{
 						typedef NCsMaterial::FLibrary MaterialLibrary;
 
-						MaterialLibrary::SetMaterialChecked(Context, Component, Frame.GetMaterial(), Frame.GetIndex());
+						MaterialLibrary::SetChecked(Context, Component, Frame.GetMaterial(), Frame.GetIndex());
 
 						CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= DeltaTime);
 

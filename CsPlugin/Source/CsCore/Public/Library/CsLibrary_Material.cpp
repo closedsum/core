@@ -13,19 +13,6 @@
 
 namespace NCsMaterial
 {
-	void FLibrary::SetMaterialChecked(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index)
-	{
-		checkf(Component, TEXT("%s: Component is NULL."), *Context);
-
-		checkf(Material, TEXT("%s: Material is NULL."), *Context);
-
-		checkf(Index > INDEX_NONE, TEXT("%s: Index: %d is NOT >= 0."), *Context, Index);
-
-		checkf(Index < Component->GetNumMaterials(), TEXT("%s: Index: %d is NOT Valid for Component: %s with %d Material Slots."), *Context, Index, *(Component->GetName()), Component->GetNumMaterials());
-
-		Component->SetMaterial(Index, Material);
-	}
-
 	bool FLibrary::IsValidChecked(const FString& Context, const TArray<UMaterialInterface*>& Materials)
 	{
 		checkf(Materials.Num() > CS_EMPTY, TEXT("%s: Materials.Num() is NOT > 0."), *Context);
@@ -39,20 +26,33 @@ namespace NCsMaterial
 		return true;
 	}
 
-	void FLibrary::SetMaterials(UStaticMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
+	void FLibrary::SetChecked(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index)
 	{
-		checkf(Mesh, TEXT("NCsMaterial::FLibrary::SetMaterials: Mesh is NULL."));
+		checkf(Component, TEXT("%s: Component is NULL."), *Context);
+
+		checkf(Material, TEXT("%s: Material is NULL."), *Context);
+
+		checkf(Index > INDEX_NONE, TEXT("%s: Index: %d is NOT >= 0."), *Context, Index);
+
+		checkf(Index < Component->GetNumMaterials(), TEXT("%s: Index: %d is NOT Valid for Component: %s with %d Material Slots."), *Context, Index, *(Component->GetName()), Component->GetNumMaterials());
+
+		Component->SetMaterial(Index, Material);
+	}
+
+	void FLibrary::Set(UStaticMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
+	{
+		checkf(Mesh, TEXT("NCsMaterial::FLibrary::Set: Mesh is NULL."));
 
 		const int32 Count		  = Mesh->GetStaticMesh()->StaticMaterials.Num();
 		const int32 MaterialCount = Materials.Num();
 
 		if (Count != MaterialCount)
 		{
-			UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::SetMaterials: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Mesh->GetStaticMesh()->GetName(), Count, MaterialCount);
+			UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::Set: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Mesh->GetStaticMesh()->GetName(), Count, MaterialCount);
 			return;
 		}
 
-		ClearOverrideMaterials(Mesh);
+		ClearOverride(Mesh);
 
 		for (int32 Index = 0; Index < Count; ++Index)
 		{
@@ -65,33 +65,33 @@ namespace NCsMaterial
 		}
 	}
 
-	void FLibrary::SetMaterials(UStaticMeshComponent* Mesh, const TArray<UMaterialInstanceConstant*>& Materials)
+	void FLibrary::Set(UStaticMeshComponent* Mesh, const TArray<UMaterialInstanceConstant*>& Materials)
 	{
-		checkf(Mesh, TEXT("NCsMaterial::FLibrary::SetMaterials: Mesh is NULL."));
+		checkf(Mesh, TEXT("NCsMaterial::FLibrary::Set: Mesh is NULL."));
 
 		const int32 Count		  = Mesh->GetStaticMesh()->StaticMaterials.Num();
 		const int32 MaterialCount = Materials.Num();
 
 		if (Count != MaterialCount)
 		{
-			UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::SetMaterials: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Mesh->GetStaticMesh()->GetName(), Count, MaterialCount);
+			UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::Set: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Mesh->GetStaticMesh()->GetName(), Count, MaterialCount);
 			return;
 		}
 
-		ClearOverrideMaterials(Mesh);
+		ClearOverride(Mesh);
 
 		for (int32 Index = 0; Index < Count; ++Index)
 		{
 			if (!Materials[Index])
 			{
-				UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::SetMaterials: Materials[%d] is NULL."), Index);
+				UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::Set: Materials[%d] is NULL."), Index);
 			}
 
 			Mesh->SetMaterial(Index, Materials[Index]);
 		}
 	}
 
-	void FLibrary::SetMaterialsChecked(const FString& Context, UStaticMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
+	void FLibrary::SetChecked(const FString& Context, UStaticMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
 	{
 		checkf(Mesh, TEXT("%s: Mesh is NULL."), *Context);
 
@@ -100,7 +100,7 @@ namespace NCsMaterial
 
 		checkf(Count == MaterialCount, TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *Mesh->GetStaticMesh()->GetName(), Count, MaterialCount);
 
-		ClearOverrideMaterials(Mesh);
+		ClearOverride(Mesh);
 
 		for (int32 Index = 0; Index < Count; ++Index)
 		{
@@ -110,20 +110,20 @@ namespace NCsMaterial
 		}
 	}
 
-	void FLibrary::SetMaterials(USkeletalMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
+	void FLibrary::Set(USkeletalMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
 	{
-		checkf(Mesh, TEXT("NCsMaterial::FLibrary::SetMaterials: Mesh is NULL."));
+		checkf(Mesh, TEXT("NCsMaterial::FLibrary::Set: Mesh is NULL."));
 
 		const int32 Count		  = Mesh->SkeletalMesh->Materials.Num();
 		const int32 MaterialCount = Materials.Num();
 
 		if (Count != MaterialCount)
 		{
-			UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::SetMaterials: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Mesh->SkeletalMesh->GetName(), Count, MaterialCount);
+			UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::Set: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Mesh->SkeletalMesh->GetName(), Count, MaterialCount);
 			return;
 		}
 
-		ClearOverrideMaterials(Mesh);
+		ClearOverride(Mesh);
 
 		for (int32 Index = 0; Index < Count; ++Index)
 		{
@@ -131,20 +131,20 @@ namespace NCsMaterial
 		}
 	}
 
-	void FLibrary::SetMaterials(USkeletalMeshComponent* Mesh, const TArray<UMaterialInstanceConstant*>& Materials)
+	void FLibrary::Set(USkeletalMeshComponent* Mesh, const TArray<UMaterialInstanceConstant*>& Materials)
 	{
-		checkf(Mesh, TEXT("NCsMaterial::FLibrary::SetMaterials: Mesh is NULL."));
+		checkf(Mesh, TEXT("NCsMaterial::FLibrary::Set: Mesh is NULL."));
 
 		const int32 Count		  = Mesh->SkeletalMesh->Materials.Num();
 		const int32 MaterialCount = Materials.Num();
 
 		if (Count != MaterialCount)
 		{
-			UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::SetMaterials: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Mesh->SkeletalMesh->GetName(), Count, MaterialCount);
+			UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::Set: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Mesh->SkeletalMesh->GetName(), Count, MaterialCount);
 			return;
 		}
 
-		ClearOverrideMaterials(Mesh);
+		ClearOverride(Mesh);
 
 		for (int32 Index = 0; Index < Count; ++Index)
 		{
@@ -152,7 +152,7 @@ namespace NCsMaterial
 		}
 	}
 
-	void FLibrary::SetMaterialsChecked(const FString& Context, USkeletalMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
+	void FLibrary::SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
 	{
 		checkf(Mesh, TEXT("%s: Mesh is NULL."), *Context);
 
@@ -161,7 +161,7 @@ namespace NCsMaterial
 
 		checkf(Count == MaterialCount, TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *Mesh->SkeletalMesh->GetName(), Count, MaterialCount);
 
-		ClearOverrideMaterials(Mesh);
+		ClearOverride(Mesh);
 
 		for (int32 Index = 0; Index < Count; ++Index)
 		{
@@ -171,9 +171,9 @@ namespace NCsMaterial
 		}
 	}
 
-	void FLibrary::ClearOverrideMaterials(UStaticMeshComponent* Mesh)
+	void FLibrary::ClearOverride(UStaticMeshComponent* Mesh)
 	{
-		checkf(Mesh, TEXT("NCsMaterial::FLibrary::ClearOverrideMaterials: Mesh is NULL."));
+		checkf(Mesh, TEXT("NCsMaterial::FLibrary::ClearOverride: Mesh is NULL."));
 
 		int32 Count = Mesh->GetNumOverrideMaterials();
 
@@ -188,9 +188,9 @@ namespace NCsMaterial
 		Mesh->EmptyOverrideMaterials();
 	}
 
-	void FLibrary::ClearOverrideMaterials(USkeletalMeshComponent* Mesh)
+	void FLibrary::ClearOverride(USkeletalMeshComponent* Mesh)
 	{
-		checkf(Mesh, TEXT("NCsMaterial::FLibrary::ClearOverrideMaterials: Mesh is NULL."));
+		checkf(Mesh, TEXT("NCsMaterial::FLibrary::ClearOverride: Mesh is NULL."));
 
 		int32 Count = Mesh->GetNumOverrideMaterials();
 
@@ -205,147 +205,240 @@ namespace NCsMaterial
 		Mesh->EmptyOverrideMaterials();
 	}
 
-	// MID
-	#pragma region
-
-	void FLibrary::SetMIDs(UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials)
+	namespace NMID
 	{
-		ClearOverrideMaterials(Mesh);
-		DestroyMIDs(MIDs);
-
-		const int32 Count = Materials.Num();
-
-		MIDs.Reset(Count);
-
-		for (int32 Index = 0; Index < Count; ++Index)
+		bool FLibrary::IsValidChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs)
 		{
-			MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
+			const int32 Count = MIDs.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				checkf(MIDs[I] && !MIDs[I]->IsPendingKill(), TEXT("%s: MIDs[%d] is NULL or IsPendingKill."), *Context, I);
+			}
+			return true;
 		}
-	}
 
-	void FLibrary::SetMIDs(USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<FSkeletalMaterial>& Materials)
-	{
-		ClearOverrideMaterials(Mesh);
-		DestroyMIDs(MIDs);
-
-		const int32 Count = Materials.Num();
-
-		MIDs.Reset(Count);
-
-		for (int32 Index = 0; Index < Count; ++Index)
+		void FLibrary::Set(UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials)
 		{
-			MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index].MaterialInterface));
+			typedef NCsMaterial::FLibrary MaterialLibrary;
+
+			MaterialLibrary::ClearOverride(Mesh);
+			Destroy(MIDs);
+
+			const int32 Count = Materials.Num();
+
+			MIDs.Reset(Count);
+
+			for (int32 Index = 0; Index < Count; ++Index)
+			{
+				MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
+			}
 		}
-	}
 
-	void FLibrary::SetMIDs(USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInstanceConstant*>& Materials)
-	{
-		ClearOverrideMaterials(Mesh);
-		DestroyMIDs(MIDs);
-
-		const int32 Count = Materials.Num();
-
-		MIDs.Reset(Count);
-
-		for (int32 Index = 0; Index < Count; ++Index)
+		void FLibrary::Set(USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<FSkeletalMaterial>& Materials)
 		{
-			MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
+			typedef NCsMaterial::FLibrary MaterialLibrary;
+
+			MaterialLibrary::ClearOverride(Mesh);
+			Destroy(MIDs);
+
+			const int32 Count = Materials.Num();
+
+			MIDs.Reset(Count);
+
+			for (int32 Index = 0; Index < Count; ++Index)
+			{
+				MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index].MaterialInterface));
+			}
 		}
-	}
 
-	void FLibrary::SetMIDs(USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials)
-	{
-		ClearOverrideMaterials(Mesh);
-		DestroyMIDs(MIDs);
+		void FLibrary::Set(USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInstanceConstant*>& Materials)
+		{
+			typedef NCsMaterial::FLibrary MaterialLibrary;
 
-		const int32 Count = Materials.Num();
+			MaterialLibrary::ClearOverride(Mesh);
+			Destroy(MIDs);
+
+			const int32 Count = Materials.Num();
+
+			MIDs.Reset(Count);
+
+			for (int32 Index = 0; Index < Count; ++Index)
+			{
+				MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
+			}
+		}
+
+		void FLibrary::Set(USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials)
+		{
+			typedef NCsMaterial::FLibrary MaterialLibrary;
+
+			MaterialLibrary::ClearOverride(Mesh);
+			Destroy(MIDs);
+
+			const int32 Count = Materials.Num();
 	
-		MIDs.Reset(Count);
+			MIDs.Reset(Count);
 
-		for (int32 Index = 0; Index < Count; ++Index)
-		{
-			MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
-		}
-	}
-
-	void FLibrary::SetMIDsChecked(const FString& Context, UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials)
-	{
-		ClearOverrideMaterials(Mesh);
-		DestroyMIDs(MIDs);
-
-		const int32 Count = Materials.Num();
-
-		MIDs.Reset(Count);
-
-		for (int32 Index = 0; Index < Count; ++Index)
-		{
-			checkf(Materials[Index], TEXT("%s: Materials[%d] is NULL."), *Context, Index);
-
-			MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
-		}
-	}
-
-	void FLibrary::SetMIDsChecked(const FString& Context, USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials)
-	{
-		ClearOverrideMaterials(Mesh);
-		DestroyMIDs(MIDs);
-
-		const int32 Count = Materials.Num();
-
-		MIDs.Reset(Count);
-
-		for (int32 Index = 0; Index < Count; ++Index)
-		{
-			checkf(Materials[Index], TEXT("%s: Materials[%d] is NULL."), *Context, Index);
-
-			MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
-		}
-	}
-
-	void FLibrary::DestroyMIDs(TArray<UMaterialInstanceDynamic*>& MIDs)
-	{
-		for (UMaterialInstanceDynamic* MID : MIDs)
-		{
-			if (MID &&
-				!MID->IsPendingKill())
+			for (int32 Index = 0; Index < Count; ++Index)
 			{
-				MID->MarkPendingKill();
+				MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
 			}
 		}
-		MIDs.SetNum(0, true);
-	}
 
-	void FLibrary::MIDs_SetScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float &Value)
-	{
-		for (UMaterialInstanceDynamic* MID : MIDs)
+		void FLibrary::SetChecked(const FString& Context, UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials)
 		{
-			check(MID);
+			typedef NCsMaterial::FLibrary MaterialLibrary;
 
-			MID->SetScalarParameterValue(ParamName, Value);
+			MaterialLibrary::ClearOverride(Mesh);
+			Destroy(MIDs);
+
+			const int32 Count = Materials.Num();
+
+			MIDs.Reset(Count);
+
+			for (int32 Index = 0; Index < Count; ++Index)
+			{
+				checkf(Materials[Index], TEXT("%s: Materials[%d] is NULL."), *Context, Index);
+
+				MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
+			}
+		}
+
+		void FLibrary::SetChecked(const FString& Context, UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs)
+		{
+			checkf(Mesh, TEXT("%s: Mesh is NULL."), *Context);
+
+			check(IsValidChecked(Context, MIDs));
+
+			const int32 Count = MIDs.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				Mesh->SetMaterial(I, MIDs[I]);
+			}
+		}
+
+		void FLibrary::SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials)
+		{
+			typedef NCsMaterial::FLibrary MaterialLibrary;
+
+			MaterialLibrary::ClearOverride(Mesh);
+			Destroy(MIDs);
+
+			const int32 Count = Materials.Num();
+
+			MIDs.Reset(Count);
+
+			for (int32 Index = 0; Index < Count; ++Index)
+			{
+				UMaterialInterface* Material = Materials[Index];
+
+				checkf(Material, TEXT("%s: Materials[%d] is NULL."), *Context, Index);
+
+				MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Material));
+			}
+		}
+
+		void FLibrary::SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs)
+		{
+			checkf(Mesh, TEXT("%s: Mesh is NULL."), *Context);
+
+			check(IsValidChecked(Context, MIDs));
+
+			const int32 Count = MIDs.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				Mesh->SetMaterial(I, MIDs[I]);
+			}
+		}
+
+		void FLibrary::Destroy(TArray<UMaterialInstanceDynamic*>& MIDs)
+		{
+			for (UMaterialInstanceDynamic* MID : MIDs)
+			{
+				if (MID &&
+					!MID->IsPendingKill())
+				{
+					MID->MarkPendingKill();
+				}
+			}
+			MIDs.SetNum(0, true);
+		}
+
+		bool FLibrary::IsVectorParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
+		{
+			checkf(MID, TEXT("%s: MIDs[%d] is NULL."), *Context);
+
+			checkf(ParamName != NAME_None, TEXT("%s: ParamName: None is NOT Valid."), *Context);
+
+			if (UMaterialInstance* MI = Cast<UMaterialInstance>(MID->Parent))
+			{
+				bool Found = false;
+
+				for (const FVectorParameterValue& Value : MI->VectorParameterValues)
+				{
+					if (Value.ParameterInfo.Name == ParamName)
+					{
+						Found = true;
+						break;
+					}
+				}
+
+				checkf(Found, TEXT("%s: Failed to find ParamName: %s in MID: %s."), *Context, *(ParamName.ToString()), *(MID->GetName()));
+			}
+			return true;
+		}
+
+		void FLibrary::SetScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float &Value)
+		{
+			for (UMaterialInstanceDynamic* MID : MIDs)
+			{
+				check(MID);
+
+				MID->SetScalarParameterValue(ParamName, Value);
+			}
+		}
+
+		void FLibrary::SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector &Value)
+		{
+			for (UMaterialInstanceDynamic* MID : MIDs)
+			{
+				check(MID);
+
+				MID->SetVectorParameterValue(ParamName, Value);
+			}
+		}
+
+		void FLibrary::SetVectorParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
+		{
+			checkf(MIDs.Num() > CS_EMPTY, TEXT("%s: MIDs is EMPTY."), *Context);
+
+			checkf(ParamName != NAME_None, TEXT("%s: ParamName: None is NOT Valid."), *Context);
+
+			const int32 Count = MIDs.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				UMaterialInstanceDynamic* MID = MIDs[I];
+
+				check(IsVectorParameterValidChecked(Context, MID, ParamName));
+
+				MID->SetVectorParameterValue(ParamName, Value);
+			}
+		}
+
+		void FLibrary::SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor &Value)
+		{
+			const int32 Count = MIDs.Num();
+
+			for (UMaterialInstanceDynamic* MID : MIDs)
+			{
+				check(MID);
+
+				MID->SetVectorParameterValue(ParamName, Value);
+			}
 		}
 	}
-
-	void FLibrary::MIDs_SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector &Value)
-	{
-		for (UMaterialInstanceDynamic* MID : MIDs)
-		{
-			check(MID);
-
-			MID->SetVectorParameterValue(ParamName, Value);
-		}
-	}
-
-	void FLibrary::MIDs_SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor &Value)
-	{
-		const int32 Count = MIDs.Num();
-
-		for (UMaterialInstanceDynamic* MID : MIDs)
-		{
-			check(MID);
-
-			MID->SetVectorParameterValue(ParamName, Value);
-		}
-	}
-
-	#pragma endregion MID
 }

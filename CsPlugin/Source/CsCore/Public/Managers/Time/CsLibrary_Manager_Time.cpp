@@ -42,5 +42,15 @@ namespace NCsTime
 			// Update CoroutineScheduler
 			UCsCoroutineScheduler::Get(ContextRoot)->Update(Group, ScaledDeltaTime);
 		}
+
+		void FLibrary::SetScaledDeltaTime(const FString& Context, UObject* WorldContext, const FECsUpdateGroup& Group, const float& Scale)
+		{
+			UCsManager_Time::Get(GetContextRootChecked(Context, WorldContext))->SetScaledDeltaTime(Group, Scale);
+		}
+
+		void FLibrary::ResetScaledDeltaTime(const FString& Context, UObject* WorldContext, const FECsUpdateGroup& Group)
+		{
+			UCsManager_Time::Get(GetContextRootChecked(Context, WorldContext))->ResetScaledDeltaTime(Group);
+		}
 	}
 }

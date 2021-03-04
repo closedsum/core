@@ -4,6 +4,8 @@
 
 // Types
 #include "Types/CsTypes_Load.h"
+// Library
+#include "Level/CsLibrary_Level.h"
 
 // Cached
 #pragma region
@@ -118,3 +120,22 @@ void FCsDataRootSet::AddDataTable(const FName& EntryName, const TSoftObjectPtr<U
 }
 
 #endif // #if WITH_EDITOR
+
+#define MapType FCsDataRootSet::EMap
+bool FCsDataRootSet::IsPersistentLevel(UObject* WorldContext, const MapType& Type) const
+{
+	FString MapName;
+
+	// Entry
+	if (Type == MapType::Entry)
+		MapName = EntryMap.GetLongPackageName();
+	// Main
+	else
+	if (Type == MapType::Main)
+		MapName = MainMap.GetLongPackageName();
+		
+	typedef NCsLevel::FLibrary LevelLibrary;
+
+	return LevelLibrary::IsPersistentLevelName(WorldContext, MapName);
+}
+#undef MapType

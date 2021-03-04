@@ -66,4 +66,19 @@ namespace NCsSound
 
 		AudioDevice->PushSoundMixModifier(SoundMix);
 	}
+		
+	void FLibrary::SetAndPushMixClassOverrideChecked(const FString& Context, UObject* WorldContext, USoundMix* SoundMix, USoundClass* SoundClass, const float& Volume /*=1.0f*/, const float& Pitch /*=1.0f*/, const float& FadeInTime /*=1.0f*/, bool bApplyToChildren /*=true*/)
+	{
+		check(CanPlayChecked(Context, WorldContext));
+
+		checkf(SoundMix, TEXT("%s: SoundMix is NULL."), *Context);
+
+		checkf(SoundClass, TEXT("%s: SoundClass is NULL."), *Context);
+
+		UWorld* World				   = WorldContext->GetWorld();
+		FAudioDeviceHandle AudioDevice = World->GetAudioDevice();
+
+		AudioDevice->SetSoundMixClassOverride(SoundMix, SoundClass, Volume, Pitch, FadeInTime, bApplyToChildren);
+		AudioDevice->PushSoundMixModifier(SoundMix);
+	}
 }

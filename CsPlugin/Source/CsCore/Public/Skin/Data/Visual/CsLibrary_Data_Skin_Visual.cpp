@@ -84,7 +84,7 @@ namespace NCsSkin
 
 				MaterialSkinType* MaterialSkin = GetInterfaceChecked<MaterialSkinType>(Context, Skin);
 
-				MaterialLibrary::SetMaterialsChecked(Context, Component, MaterialSkin->GetMaterials());
+				MaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
 			}
 
 			void FLibrary::SetSafeStaticMeshAndMaterials(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component)
@@ -101,7 +101,7 @@ namespace NCsSkin
 
 					if (MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin))
 					{
-						MaterialLibrary::SetMaterialsChecked(Context, Component, MaterialSkin->GetMaterials());
+						MaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
 					}
 				}
 			}
@@ -112,11 +112,11 @@ namespace NCsSkin
 
 				// Materials
 				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
-				typedef NCsMaterial::FLibrary MaterialLibrary;
+				typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
 				MaterialSkinType* MaterialSkin = GetInterfaceChecked<MaterialSkinType>(Context, Skin);
 
-				MaterialLibrary::SetMIDsChecked(Context, Component, MIDs, MaterialSkin->GetMaterials());
+				MIDLibrary::SetChecked(Context, Component, MIDs, MaterialSkin->GetMaterials());
 			}
 
 			void FLibrary::SetSafeStaticMeshAndMIDs(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs)
@@ -129,11 +129,11 @@ namespace NCsSkin
 
 					// Materials
 					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
-					typedef NCsMaterial::FLibrary MaterialLibrary;
+					typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
 					if (MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin))
 					{
-						MaterialLibrary::SetMIDsChecked(Context, Component, MIDs, MaterialSkin->GetMaterials());
+						MIDLibrary::SetChecked(Context, Component, MIDs, MaterialSkin->GetMaterials());
 					}
 				}
 			}
@@ -196,7 +196,7 @@ namespace NCsSkin
 
 				MaterialSkinType* MaterialSkin = GetInterfaceChecked<MaterialSkinType>(Context, Skin);
 
-				MaterialLibrary::SetMaterialsChecked(Context, Component, MaterialSkin->GetMaterials());
+				MaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
 			}
 
 			void FLibrary::SetSafeSkeletalMeshAndMaterials(const FString& Context, SkinType* Skin, USkeletalMeshComponent* Component)
@@ -213,7 +213,7 @@ namespace NCsSkin
 
 					if (MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin))
 					{
-						MaterialLibrary::SetMaterialsChecked(Context, Component, MaterialSkin->GetMaterials());
+						MaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
 					}
 				}
 			}
@@ -224,11 +224,11 @@ namespace NCsSkin
 
 				// Materials
 				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
-				typedef NCsMaterial::FLibrary MaterialLibrary;
+				typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
 				MaterialSkinType* MaterialSkin = GetInterfaceChecked<MaterialSkinType>(Context, Skin);
 
-				MaterialLibrary::SetMIDsChecked(Context, Component, MIDs, MaterialSkin->GetMaterials());
+				MIDLibrary::SetChecked(Context, Component, MIDs, MaterialSkin->GetMaterials());
 			}
 
 			void FLibrary::SetSafeSkeletalMeshAndMIDs(const FString& Context, SkinType* Skin, USkeletalMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs)
@@ -241,11 +241,11 @@ namespace NCsSkin
 
 					// Materials
 					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
-					typedef NCsMaterial::FLibrary MaterialLibrary;
+					typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
 					if (MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin))
 					{
-						MaterialLibrary::SetMIDsChecked(Context, Component, MIDs, MaterialSkin->GetMaterials());
+						MIDLibrary::SetChecked(Context, Component, MIDs, MaterialSkin->GetMaterials());
 					}
 				}
 			}

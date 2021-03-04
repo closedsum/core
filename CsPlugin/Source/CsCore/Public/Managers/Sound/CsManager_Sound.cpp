@@ -16,6 +16,8 @@
 #include "Managers/Sound/Data/CsData_SoundImpl.h"
 // FX
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
+// World
+#include "Engine/World.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -24,7 +26,6 @@
 
 #include "Library/CsLibrary_Common.h"
 
-#include "Engine/World.h"
 #include "Engine/Engine.h"
 
 #include "GameFramework/GameStateBase.h"
@@ -39,6 +40,7 @@ namespace NCsManagerSound
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, Spawn);
 		}
 
@@ -342,6 +344,16 @@ void UCsManager_Sound::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Sound::SetupInternal()
 {
+	using namespace NCsManagerSound::NCached;
+
+	const FString& Context = Str::SetupInternal;
+
+	// Populate EnumMaps
+	UWorld* World				= MyRoot->GetWorld();
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+
+	NCsSound::PopulateEnumMapFromSettings(Context, GameInstance);
+
 	// Delegates
 	{
 		// Log

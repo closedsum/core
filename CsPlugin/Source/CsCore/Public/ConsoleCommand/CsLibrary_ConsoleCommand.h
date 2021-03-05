@@ -227,6 +227,7 @@ namespace NCsConsoleCommand
 
 				if (OutValue == EnumMapType::Get().GetMAX())
 				{
+					Log(FString::Printf(TEXT("%s: Failed to get %s from %s."), *Context, *EnumName, *OutString));
 					return false;
 				}
 				return true;
@@ -277,6 +278,7 @@ namespace NCsConsoleCommand
 
 				if (OutValue == EnumMapType::Get().GetMAX())
 				{
+					Log(FString::Printf(TEXT("%s: Failed to get %s from %s."), *Context, *EnumName, *OutString));
 					return false;
 				}
 				return true;

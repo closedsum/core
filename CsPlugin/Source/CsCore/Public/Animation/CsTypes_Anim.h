@@ -246,9 +246,51 @@ public:
 	FORCEINLINE UAnimMontage* Get() { return Anim_Internal; }
 
 	FORCEINLINE UAnimMontage** GetPtr() { return &Anim_Internal; }
+
+	FORCEINLINE UAnimMontage* GetChecked(const FString& Context) const
+	{
+		checkf(Anim.ToSoftObjectPath().IsValid(), TEXT("%s: Anim is NULL or the Path is NOT Valid."), *Context);
+
+		checkf(Anim_Internal, TEXT("%s: Failed to load Blueprint @ %s."), *Context, *(Anim.ToSoftObjectPath().ToString()));
+
+		return Anim_Internal;
+	}
+
+	FORCEINLINE UAnimMontage* GetChecked() const
+	{
+		checkf(Anim.ToSoftObjectPath().IsValid(), TEXT("FCsAnimMontage::GetChecked: Anim is NULL or the Path is NOT Valid."));
+
+		checkf(Anim_Internal, TEXT("FCsAnimMontage::GetChecked: Failed to load Anim @ %s."), *(Anim.ToSoftObjectPath().ToString()));
+
+		return Anim_Internal;
+	}
 };
 
 #pragma endregion FCsAnimMontage
+
+
+// FCsAnimMontageInfo
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsAnimMontageInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FCsAnimMontage Anim;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float PlayRate;
+
+	FCsAnimMontageInfo() :
+		Anim(),
+		PlayRate(1.0f)
+	{
+	}
+};
+
+#pragma endregion FCsAnimMontageInfo
 
 // FCsFpvAnimMontage
 #pragma region

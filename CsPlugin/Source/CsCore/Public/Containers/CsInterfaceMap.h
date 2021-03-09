@@ -231,11 +231,9 @@ public:
 	}
 
 	/**
-	* Check whether the object implements the interface with
-	* name: InterfaceName
+	* Check whether the object implements the interface: InterfaceType
 	*
-	* @param InterfaceName
-	* return				Whether the objects implements the interface with the given name.
+	* return Whether the objects implements the interface: InterfaceType.
 	*/
 	template<typename InterfaceType>
 	FORCEINLINE bool Implements() const
@@ -257,6 +255,22 @@ public:
 		checkf(InterfaceName != NAME_None, TEXT("FCsInterfaceMap::Implements: InterfaceName: None is NOT Valid."));
 
 		return Interfaces.Find(InterfaceName) != nullptr;
+	}
+
+	/**
+	* Check whether the object implements the interface: InterfaceType
+	*
+	* @param Context	The calling context.
+	* return			Whether the objects implements the interface: InterfaceType.
+	*/
+	template<typename InterfaceType>
+	FORCEINLINE bool ImplementsChecked(const FString& Context) const
+	{
+		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::Implements: InterfaceType is NOT abstract.");
+
+		checkf(Interfaces.Find(InterfaceType::Name) != nullptr, TEXT("%s: %s does NOT implement interface: %s."), *(RootName.ToString()), *(InterfaceType::Name.ToString()));
+
+		return true;
 	}
 
 	/**
@@ -1656,6 +1670,11 @@ namespace NCsInterfaceMap
 	}
 
 	/**
+	* Check whether the Interface implements the interface: OtherInterfaceType.
+	*
+	* @param Context	The calling context.
+	* @param Interface	Interface that implements the interface: ICsGetInterfaceMap
+	* return			Whether the Interface implements the interface: OtherInterfaceType.
 	*/
 	template<typename OtherInterfaceType, typename InterfaceType>
 	FORCEINLINE bool Implements(const FString& Context, const InterfaceType* Interface)
@@ -1663,6 +1682,23 @@ namespace NCsInterfaceMap
 		FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked<InterfaceType>(Context, Interface);
 
 		return InterfaceMap->Implements<OtherInterfaceType>();
+	}
+
+	/**
+	* Check whether the Interface implements the interface: OtherInterfaceType.
+	*
+	* @param Context	The calling context.
+	* @param Interface	Interface that implements the interface: ICsGetInterfaceMap
+	* return			Whether the Interface implements the interface: OtherInterfaceType.
+	*/
+	template<typename OtherInterfaceType, typename InterfaceType>
+	FORCEINLINE bool ImplementsChecked(const FString& Context, const InterfaceType* Interface)
+	{
+		FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked<InterfaceType>(Context, Interface);
+
+		check(InterfaceMap->ImplementsChecked<OtherInterfaceType>(Context));
+
+		return true;
 	}
 
 	/**

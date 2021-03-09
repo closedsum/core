@@ -32,32 +32,53 @@ namespace NCsSkin
 				checkf(Skin, TEXT("%s: Skin is NULL."), *Context);
 
 				// MaterialSkinType
-				{
-					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
-					typedef NCsMaterial::FLibrary MaterialLibrary;
+				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
+				typedef NCsMaterial::FLibrary MaterialLibrary;
 
-					if (MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin))
-					{
-						check(MaterialLibrary::IsValidChecked(Context, MaterialSkin->GetMaterials()));
-					}
+				MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin);
+
+				if (MaterialSkin)
+				{
+					check(MaterialLibrary::IsValidChecked(Context, MaterialSkin->GetMaterials()));
 				}
 				// StaticMeshSkin
-				{
-					typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshSkinType;
 
-					if (StaticMeshSkinType* StaticMeshSkin = GetSafeInterfaceChecked<StaticMeshSkinType>(Context, Skin))
-					{
-						checkf(StaticMeshSkin->GetStaticMesh(), TEXT("%s: Skin->GetStaticMesh() is NULL for Skin implementing interface: %s."), *Context, *(StaticMeshSkinType::Name.ToString()));
-					}
+				typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshSkinType;
+
+				StaticMeshSkinType* StaticMeshSkin = GetSafeInterfaceChecked<StaticMeshSkinType>(Context, Skin);
+
+				if (StaticMeshSkin)
+				{
+					checkf(StaticMeshSkin->GetStaticMesh(), TEXT("%s: Skin->GetStaticMesh() is NULL for Skin implementing interface: %s."), *Context, *(StaticMeshSkinType::Name.ToString()));
 				}
 				// SkeletalMeshSkin
-				{
-					typedef NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh SkeletalMeshSkinType;
+				typedef NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh SkeletalMeshSkinType;
 
-					if (SkeletalMeshSkinType* SkeletalMeshSkin = GetSafeInterfaceChecked<SkeletalMeshSkinType>(Context, Skin))
-					{
-						checkf(SkeletalMeshSkin->GetSkeletalMesh(), TEXT("%s: Skin->GetSkeletalMesh() is NULL for Skin implementing interface: %s."), *Context, *(SkeletalMeshSkinType::Name.ToString()));
-					}
+				SkeletalMeshSkinType* SkeletalMeshSkin = GetSafeInterfaceChecked<SkeletalMeshSkinType>(Context, Skin);
+
+				if (SkeletalMeshSkin)
+				{
+					checkf(SkeletalMeshSkin->GetSkeletalMesh(), TEXT("%s: Skin->GetSkeletalMesh() is NULL for Skin implementing interface: %s."), *Context, *(SkeletalMeshSkinType::Name.ToString()));
+				}
+
+				// NOTE: For now this seems reasonable to check
+				if (MaterialSkin &&
+					StaticMeshSkin)
+				{
+					UStaticMesh* Mesh							 = StaticMeshSkin->GetStaticMesh();
+					const TArray<UMaterialInterface*>& Materials = MaterialSkin->GetMaterials();
+
+					checkf(Materials.Num() == Mesh->StaticMaterials.Num(), TEXT("%s: Skin->GetMaterials().Num() != Skin->GetStaticMesh()->StaticMaterials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->StaticMaterials.Num());
+				}
+
+				// NOTE: For now this seems reasonable to check
+				if (MaterialSkin &&
+					SkeletalMeshSkin)
+				{
+					USkeletalMesh* Mesh							 = SkeletalMeshSkin->GetSkeletalMesh();
+					const TArray<UMaterialInterface*>& Materials = MaterialSkin->GetMaterials();
+
+					checkf(Materials.Num() == Mesh->Materials.Num(), TEXT("%s: Skin->GetMaterials().Num() != Skin->GetSkeletalMesh()->Materials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->Materials.Num());
 				}
 				return true;
 			}

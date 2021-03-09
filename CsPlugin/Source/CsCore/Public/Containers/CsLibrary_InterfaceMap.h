@@ -239,7 +239,7 @@ public:
 	* OtherInterfaceType IS abstract.
 	*
 	* @param Context	The calling context
-	* @param Interface	Interface that implements the interface: InterfaceType.
+	* @param Interface	Interface that implements the interface: ICsGetInterfaceMap.
 	* return			Interface casted to OtherInterfaceType (static_cast<OtherInterfaceType*>(Interface))
 	*/
 	template<typename OtherInterfaceType>
@@ -254,7 +254,7 @@ public:
 	* OtherInterfaceType IS abstract.
 	*
 	* @param Context	The calling context
-	* @param Interface	Interface that implements the interface: InterfaceType.
+	* @param Interface	Interface that implements the interface: ICsGetInterfaceMap.
 	* return			Interface casted to OtherInterfaceType (static_cast<OtherInterfaceType*>(Interface))
 	*/
 	template<typename OtherInterfaceType>
@@ -266,9 +266,9 @@ public:
 	/**
 	* Check whether the Interface implements the interface: OtherInterfaceType
 	*
-	* @param Context		The calling context.
-	* @param Interface
-	* return				Whether the Interface implements the interface: OtherInterfaceType.
+	* @param Context	The calling context.
+	* @param Interface	Interface that implements the interface: ICsGetInterfaceMap.
+	* return			Whether the Interface implements the interface: OtherInterfaceType.
 	*/
 	template<typename OtherInterfaceType>
 	FORCEINLINE static bool Implements(const FString& Context, const InterfaceType* Interface)
@@ -276,6 +276,23 @@ public:
 		const FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked(Context, Interface);
 
 		return InterfaceMap->Implements<OtherInterfaceType>();
+	}
+
+	/**
+	* Check whether the Interface implements the interface: OtherInterfaceType
+	*
+	* @param Context	The calling context.
+	* @param Interface	Interface that implements the interface: ICsGetInterfaceMap.
+	* return			Whether the Interface implements the interface: OtherInterfaceType.
+	*/
+	template<typename OtherInterfaceType>
+	FORCEINLINE static bool ImplementsChecked(const FString& Context, const InterfaceType* Interface)
+	{
+		const FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked(Context, Interface);
+
+		check(InterfaceMap->ImplementsChecked<OtherInterfaceType>(Context));
+
+		return true;
 	}
 
 	/**

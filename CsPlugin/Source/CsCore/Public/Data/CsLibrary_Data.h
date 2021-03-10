@@ -1,10 +1,19 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/CsData.h"
 #include "Containers/CsLibrary_InterfaceMap.h"
+#include "Utility/CsLog.h"
 #pragma once
 
 namespace NCsData
 {
+	namespace NCached
+	{
+		namespace Str
+		{
+			extern CSCORE_API const FString SafeLoad;
+		}
+	}
+
 #define DataType NCsData::IData
 
 	/**
@@ -54,9 +63,10 @@ namespace NCsData
 		* 
 		* @param Context	The calling context.
 		* @param Object		UObject that SHOULD implement the interface: ICsData.
+		* @param Log		Log function.
 		* return			Loaded object of type: DataType (NCsData::IData).
 		*/
-		static DataType* SafeLoad(const FString& Context, UObject* Object);
+		static DataType* SafeLoad(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Safely load the Data from Object.
@@ -64,12 +74,41 @@ namespace NCsData
 		*
 		* @param Context	The calling context.
 		* @param Object		UObject that SHOULD implement the interface: ICsData.
+		* @param Log		Log function.
 		* return			Loaded object of type: InterfaceType.
 		*/
 		template<typename InterfaceType>
-		FORCEINLINE static InterfaceType* SafeLoad(const FString& Context, UObject* Object)
+		FORCEINLINE static InterfaceType* SafeLoad(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning)
 		{
-			DataType* Data = SafeLoad(Context, Object);
+			DataType* Data = SafeLoad(Context, Object, Log);
+
+			return Data ? GetSafeInterfaceChecked<InterfaceType>(Context, Data) : nullptr;
+		}
+
+		/**
+		* Safely load the Data from Object.
+		*  Data implements the interface: DataType (NCsData::IData).
+		*
+		* @param Object		UObject that SHOULD implement the interface: ICsData.
+		* return			Loaded object of type: DataType (NCsData::IData).
+		*/
+		static DataType* SafeLoad(UObject* Object);
+
+		/**
+		* Safely load the Data from Object.
+		*  Data implements the interface: InterfaceType.
+		*
+		* @param Object		UObject that SHOULD implement the interface: ICsData.
+		* return			Loaded object of type: InterfaceType.
+		*/
+		template<typename InterfaceType>
+		FORCEINLINE static InterfaceType* SafeLoad(UObject* Object)
+		{
+			using namespace NCached;
+
+			const FString& Context = Str::SafeLoad;
+
+			DataType* Data = SafeLoad(Object);
 
 			return Data ? GetSafeInterfaceChecked<InterfaceType>(Context, Data) : nullptr;
 		}

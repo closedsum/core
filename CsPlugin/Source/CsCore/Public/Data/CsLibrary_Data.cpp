@@ -11,6 +11,14 @@
 
 namespace NCsData
 {
+	namespace NCached
+	{
+		namespace Str
+		{
+			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsData::FLibrary, SafeLoad);
+		}
+	}
+
 	UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
 	{
 		checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
@@ -44,11 +52,12 @@ namespace NCsData
 	}
 
 	#define DataType NCsData::IData
-	DataType* FLibrary::SafeLoad(const FString& Context, UObject* Object)
+	DataType* FLibrary::SafeLoad(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		if (!Object)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: Object is NULL."), *Context);
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Object is NULL."), *Context));
 			return nullptr;
 		}
 
@@ -56,7 +65,8 @@ namespace NCsData
 
 		if (!UData)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s does NOT implement interface: ICsData."), *Context, *PrintObjectAndClass(Object));
+			if (Log)
+				Log(FString::Printf(TEXT("%s: %s does NOT implement interface: ICsData."), *Context, *PrintObjectAndClass(Object)));
 			return nullptr;
 		}
 
@@ -66,12 +76,25 @@ namespace NCsData
 
 		if (!Data)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
 			return nullptr;
 		}
 		return Data;
 	}
 	#undef DataType
+
+	#define DataType NCsData::IData
+	DataType* FLibrary::SafeLoad(UObject* Object)
+	{
+	#undef DataType
+
+		using namespace NCached;
+
+		const FString& Context = Str::SafeLoad;
+
+		return SafeLoad(Context, Object, nullptr);
+	}
 
 	#define DataType NCsData::IData
 	DataType* FLibrary::GetSafe(const FString& Context, UObject* Object)

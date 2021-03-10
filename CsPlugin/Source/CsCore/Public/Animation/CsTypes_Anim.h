@@ -122,9 +122,41 @@ public:
 
 		return Anim_Internal;
 	}
+
+	FORCEINLINE UAnimSequence* GetChecked() const
+	{
+		checkf(Anim.ToSoftObjectPath().IsValid(), TEXT("FCsAnimSequence::GetChecked: Anim is NULL or the Path is NOT Valid."));
+
+		checkf(Anim_Internal, TEXT("FCsAnimSequence::GetChecked: Failed to load Anim @ %s."), *(Anim.ToSoftObjectPath().ToString()));
+
+		return Anim_Internal;
+	}
 };
 
 #pragma endregion FCsAnimSequence
+
+// FCsAnimSequenceInfo
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsAnimSequenceInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FCsAnimSequence Anim;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float PlayRate;
+
+	FCsAnimSequenceInfo() :
+		Anim(),
+		PlayRate(1.0f)
+	{
+	}
+};
+
+#pragma endregion FCsAnimSequenceInfo
 
 // FCsFpvAnimSequence
 #pragma region
@@ -267,7 +299,6 @@ public:
 };
 
 #pragma endregion FCsAnimMontage
-
 
 // FCsAnimMontageInfo
 #pragma region

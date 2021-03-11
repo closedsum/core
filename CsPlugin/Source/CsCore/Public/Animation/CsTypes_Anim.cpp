@@ -39,6 +39,34 @@ namespace NCsFpvAnimMember
 
 #pragma endregion EMCsFpvAnimMember
 
+// FCsAnimSequenceInfo
+#pragma region
+
+#define InfoType NCsAnim::NSequence::FInfo
+void FCsAnimSequenceInfo::CopyInfo(InfoType* Info)
+{
+#undef InfoType
+
+	Info->SetAnim(Anim.GetPtr());
+	Info->SetPlayRate(&PlayRate);
+}
+
+#pragma endregion FCsAnimSequenceInfo
+
+// FCsAnimMontageInfo
+#pragma region
+
+#define InfoType NCsAnim::NMontage::FInfo
+void FCsAnimMontageInfo::CopyInfo(InfoType* Info)
+{
+#undef InfoType
+
+	Info->SetAnim(Anim.GetPtr());
+	Info->SetPlayRate(&PlayRate);
+}
+
+#pragma endregion FCsAnimMontageInfo
+
 // FpvAnimBlueprintMember
 CS_DEFINE_ENUM_MAP_BODY(EMCsFpvAnimBlueprintMember)
 

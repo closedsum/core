@@ -55,7 +55,9 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer) :
 	// Managers
 	Manager_Singleton(nullptr),
 	// Editor
-	bStandaloneFromEditor(false)
+	bPIE(false),
+	bStandaloneFromEditor(false),
+	bOnStart(false)
 {
 }
 
@@ -73,6 +75,16 @@ void UCsGameInstance::Init()
 	// Register delegate for ticker callback
 	TickDelegate	   = FTickerDelegate::CreateUObject(this, &UCsGameInstance::Tick);
 	TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
+
+#if WITH_EDITOR
+	bPIE = true;
+
+	// Check if Standalone was launched from editor
+	if (FParse::Param(FCommandLine::Get(), *Str::StandaloneFromEditor))
+	{
+		bStandaloneFromEditor = true;
+	}
+#endif // #if WITH_EDITOR
 
 	// Populate Enum Maps
 	
@@ -130,13 +142,7 @@ void UCsGameInstance::OnStart()
 
 	Super::OnStart();
 
-	// Check if Standalone was launched from editor
-	if (FParse::Param(FCommandLine::Get(), *Str::StandaloneFromEditor))
-	{
-		bStandaloneFromEditor = true;
-
-		Init();
-	}
+	bOnStart = true;
 }
 
 #pragma endregion UGameInstance Interface

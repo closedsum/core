@@ -138,10 +138,15 @@ public:
 // FCsAnimSequenceInfo
 #pragma region
 
+// NCsAnim::NSequence::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsAnim, NSequence, FInfo)
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnimSequenceInfo
 {
 	GENERATED_USTRUCT_BODY()
+
+public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FCsAnimSequence Anim;
@@ -154,7 +159,64 @@ struct CSCORE_API FCsAnimSequenceInfo
 		PlayRate(1.0f)
 	{
 	}
+
+#define InfoType NCsAnim::NSequence::FInfo
+	void CopyInfo(InfoType* Info);
+#undef InfoType
+
+private:
+
+	FORCEINLINE void __Nothing() const {}
 };
+
+class UAnimSequence;
+
+namespace NCsAnim
+{
+	namespace NSequence
+	{
+		struct CSCORE_API FInfo
+		{
+		private:
+
+			UAnimSequence* Anim;
+			UAnimSequence** Anim_Emu;
+
+			float PlayRate;
+			float* PlayRate_Emu;
+
+		public:
+
+			FInfo() :
+				Anim(nullptr),
+				Anim_Emu(nullptr),
+				PlayRate(1.0f),
+				PlayRate_Emu(nullptr)
+			{
+				Anim_Emu = &Anim;
+				PlayRate_Emu = &PlayRate;
+			}
+
+			FORCEINLINE void SetAnim(UAnimSequence** Value) { Anim_Emu = Value; }
+			FORCEINLINE void SetAnim(UAnimSequence* Value)
+			{
+				Anim	 = Value;
+				Anim_Emu = &Anim;
+			}
+
+			FORCEINLINE UAnimSequence* GetAnim() const { return *Anim_Emu; }
+
+			FORCEINLINE void SetPlayRate(float* Value) { PlayRate_Emu = Value; }
+			FORCEINLINE void SetPlayRate(const float& Value)
+			{
+				PlayRate	 = Value;
+				PlayRate_Emu = &PlayRate;
+			}
+
+			FORCEINLINE const float& GetPlayRate() const { return *PlayRate_Emu; }
+		};
+	}
+}
 
 #pragma endregion FCsAnimSequenceInfo
 
@@ -303,6 +365,9 @@ public:
 // FCsAnimMontageInfo
 #pragma region
 
+// NCsAnim::NMontage::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsAnim, NMontage, FInfo)
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnimMontageInfo
 {
@@ -319,7 +384,64 @@ struct CSCORE_API FCsAnimMontageInfo
 		PlayRate(1.0f)
 	{
 	}
+
+#define InfoType NCsAnim::NMontage::FInfo
+	void CopyInfo(InfoType* Info);
+#undef InfoType
+
+private:
+
+	FORCEINLINE void __Nothing() const {}
 };
+
+class UAnimMontage;
+
+namespace NCsAnim
+{
+	namespace NMontage
+	{
+		struct CSCORE_API FInfo
+		{
+		private:
+
+			UAnimMontage* Anim;
+			UAnimMontage** Anim_Emu;
+
+			float PlayRate;
+			float* PlayRate_Emu;
+
+		public:
+
+			FInfo() :
+				Anim(nullptr),
+				Anim_Emu(nullptr),
+				PlayRate(1.0f),
+				PlayRate_Emu(nullptr)
+			{
+				Anim_Emu = &Anim;
+				PlayRate_Emu = &PlayRate;
+			}
+
+			FORCEINLINE void SetAnim(UAnimMontage** Value) { Anim_Emu = Value; }
+			FORCEINLINE void SetAnim(UAnimMontage* Value)
+			{
+				Anim	 = Value;
+				Anim_Emu = &Anim;
+			}
+
+			FORCEINLINE UAnimMontage* GetAnim() const { return *Anim_Emu; }
+
+			FORCEINLINE void SetPlayRate(float* Value) { PlayRate_Emu = Value; }
+			FORCEINLINE void SetPlayRate(const float& Value)
+			{
+				PlayRate	 = Value;
+				PlayRate_Emu = &PlayRate;
+			}
+
+			FORCEINLINE const float& GetPlayRate() const { return *PlayRate_Emu; }
+		};
+	}
+}
 
 #pragma endregion FCsAnimMontageInfo
 

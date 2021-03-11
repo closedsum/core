@@ -23,6 +23,14 @@ namespace NCsTime
 			static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
 
 			/**
+			* Safely get the Context (Root) for UCsManager_Time from a WorldContext.
+			*
+			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Context for UCsManager_Time
+			*/
+			static UObject* GetSafeContextRoot(UObject* WorldContext);
+
+			/**
 			* 
 			* @param Context		The calling context.
 			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).

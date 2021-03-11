@@ -18,15 +18,18 @@
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 
 #if WITH_EDITOR
+// Library
+#include "Library/CsLibrary_Common.h"
+#include "Managers/Time/CsLibrary_Manager_Time.h"
+// Managers
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/FX/Actor/CsGetManagerFXActor.h"
-
-#include "Library/CsLibrary_Common.h"
-
+// World
 #include "Engine/World.h"
+// Engine
 #include "Engine/Engine.h"
-
+// Game
 #include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
@@ -288,17 +291,31 @@ void UCsManager_FX_Actor::Initialize()
 
 void UCsManager_FX_Actor::CleanUp()
 {
-	for (const TPair<FECsUpdateGroup, FDelegateHandle>& Pair : OnPauseHandleByGroupMap)
+	// Unbind delegates for Time related events
 	{
-		const FECsUpdateGroup& Group  = Pair.Key;
-		const FDelegateHandle& Handle = Pair.Value;
+#if WITH_EDITOR
+		typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
-		if (UCsManager_Time* Manager_Time = UCsManager_Time::Get(GetOuter()))
+		UObject* ContextRoot = TimeManagerLibrary::GetSafeContextRoot(this);
+
+		if (ContextRoot)
+#else
+		UObject* ContextRoot = nullptr;
+#endif // #if WITH_EDITOR
 		{
-			Manager_Time->RemoveOnPause(Group, Handle);
+			if (UCsManager_Time* Manager_Time = UCsManager_Time::Get(ContextRoot))
+			{
+				for (const TPair<FECsUpdateGroup, FDelegateHandle>& Pair : OnPauseHandleByGroupMap)
+				{
+					const FECsUpdateGroup& Group = Pair.Key;
+					const FDelegateHandle& Handle = Pair.Value;
+
+					Manager_Time->RemoveOnPause(Group, Handle);
+				}
+			}
 		}
+		OnPauseHandleByGroupMap.Reset();
 	}
-	OnPauseHandleByGroupMap.Reset();
 
 	Internal.Shutdown();
 	

@@ -94,11 +94,15 @@ public:
 #pragma region
 private:
 
+	bool bPIE;
 	bool bStandaloneFromEditor;
+	bool bOnStart;
 
 public:
 
+	FORCEINLINE bool IsPIE() const { return bPIE; }
 	FORCEINLINE bool IsStandaloneFromEditor() const { return bStandaloneFromEditor; }
+	FORCEINLINE bool HasOnStart() const { return bOnStart; }
 
 #pragma endregion Editor
 };

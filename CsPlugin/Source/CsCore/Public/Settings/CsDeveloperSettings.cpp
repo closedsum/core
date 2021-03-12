@@ -5,6 +5,8 @@
 #if WITH_EDITOR
 // Library
 #include "Library/CsLibrary_Property.h"
+// Settings
+#include "Settings/ProjectPackagingSettings.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -81,6 +83,33 @@ void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEven
 
 	typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
 
+	// Data
+	{
+		if (PropertyNames.Contains("DataRootSets") ||
+			PropertyNames.Contains("bApply"))
+		{
+			UProjectPackagingSettings* PackageSettings = GetMutableDefault< UProjectPackagingSettings>();
+
+			const int32 Count = (int32)ECsPlatform::ECsPlatform_MAX;
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				if (DataRootSets[I].bApply)
+				{
+					DataRootSet = DataRootSets[I].DataRootSet;
+
+					if (PackageSettings->DirectoriesToAlwaysCook.Num() == CS_EMPTY)
+					{
+						PackageSettings->DirectoriesToAlwaysCook.AddDefaulted();
+					}
+					PackageSettings->DirectoriesToAlwaysCook[CS_FIRST] = DataRootSets[I].DirectoryToAlwaysCook;
+
+					DataRootSets[I].bApply = false;
+					break;
+				}
+			}
+		}
+	}
 	// Input
 	{
 		// ECsInputActionMap

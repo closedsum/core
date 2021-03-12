@@ -10,6 +10,8 @@
 
 #include "CsEdEngine.generated.h"
 
+struct FCsRoutine;
+
 UCLASS()
 class CSEDITOR_API UCsEdEngine : public UUnrealEdEngine,
 								 public ICsGetManagerSingleton,
@@ -147,4 +149,43 @@ public:
 	void PrintBlueprintReferencesReport(const FName& AssetName);
 
 #pragma endregion References
+
+// Standalone
+#pragma region
+protected:
+
+	struct FStandalone
+	{
+		friend class UCsEdEngine;
+
+	public:
+
+		UCsEdEngine* Outer;
+
+		bool bActive;
+
+		uint32 ProcessID;
+
+		FStandalone() :
+			Outer(nullptr),
+			bActive(false),
+			ProcessID(0)
+		{
+		}
+
+		void Reset()
+		{
+			bActive   = false;
+			ProcessID = 0;
+		}
+
+		void Monitor();
+		char Monitor_Internal(FCsRoutine* R);
+	};
+
+	FStandalone Standalone;
+
+	void OnStandaloneLocalPlayEvent(uint32 ProcessID);
+	
+#pragma endregion Standalone
 };

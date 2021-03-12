@@ -25,11 +25,10 @@
 
 #include "Factories/BlueprintFactory.h"
 // Data
-//#include "Data/CsDataMapping.h"
-//#include "Data/CsData.h"
 #include "Data/CsGetDataRootSet.h"
 // Setting
 #include "Settings/CsDeveloperSettings.h"
+#include "Settings/ProjectPackagingSettings.h"
 // Property
 #include "DetailCustomizations/CsRegisterDetailCustomization.h"
 // Level
@@ -56,6 +55,22 @@ namespace NCsEdEngine
 			const FString OnObjectSaved_Update_DataRootSet_Payload = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payload");
 		}
 	}
+
+	namespace NStandalone
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsEdEngine::FStandalone, Monitor_Internal);
+			}
+
+			namespace Name
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsEdEngine::FStandalone, Monitor_Internal);
+			}
+		}
+	}
 }
 
 #pragma endregion Cache
@@ -67,9 +82,12 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 {
 	Super::Init(InEngineLoop);
 
+	Standalone.Outer = this;
+
 	FCsRegisterDetailCustomization::Register();
 
 	FEditorDelegates::BeginPIE.AddUObject(this, &UCsEdEngine::OnBeginPIE);
+	FEditorDelegates::BeginStandaloneLocalPlay.AddUObject(this, &UCsEdEngine::OnStandaloneLocalPlayEvent);
 	FCoreUObjectDelegates::OnObjectSaved.AddUObject(this, &UCsEdEngine::OnObjectSaved);
 
 	OnWorldContextDestroyed().AddUObject(this, &UCsEdEngine::OnWorldContextDestroyed_Internal);
@@ -127,7 +145,29 @@ void UCsEdEngine::LaunchNewProcess(const FRequestPlaySessionParams& InParams, co
 		}
 	}
 
+	Standalone.bActive = true;
+
+	// If Mobile, set the appropriate DataRootSet
+	if (Params.SessionPreviewTypeOverride.IsSet() &&
+		Params.SessionPreviewTypeOverride == EPlaySessionPreviewType::MobilePreview)
+	{
+		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+		Settings->DataRootSet = Settings->GetDataRootSet(ECsPlatform::Android);
+
+		UProjectPackagingSettings* PackageSettings = GetMutableDefault< UProjectPackagingSettings>();
+
+		if (PackageSettings->DirectoriesToAlwaysCook.Num() == CS_EMPTY)
+		{
+			PackageSettings->DirectoriesToAlwaysCook.AddDefaulted();
+		}
+
+		PackageSettings->DirectoriesToAlwaysCook[CS_FIRST] = Settings->GetDirectoryToAlwaysCook(ECsPlatform::Android);
+	}
+
 	Super::LaunchNewProcess(InParams, InInstanceNum, NetMode, bIsDedicatedServer);
+
+	Standalone.Monitor();
 }
 
 #pragma endregion UUEditorEngine Interface
@@ -547,3 +587,60 @@ void UCsEdEngine::PrintBlueprintReferencesReport(const FName& AssetName)
 }
 
 #pragma endregion References
+
+// Standalone
+#pragma region
+
+void UCsEdEngine::FStandalone::Monitor()
+{
+	using namespace NCsEdEngine::NStandalone::NCached;
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::EditorEngine;
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(Outer);
+
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+
+	#define COROUTINE Monitor_Internal
+
+	Payload->CoroutineImpl.BindRaw(this, &UCsEdEngine::FStandalone::COROUTINE);
+	Payload->StartTime = UCsManager_Time::Get(Outer)->GetTime(UpdateGroup);
+	Payload->Owner.SetObject(Outer);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
+
+	#undef COROUTINE
+
+	Scheduler->Start(Payload);
+}
+
+char UCsEdEngine::FStandalone::Monitor_Internal(FCsRoutine* R)
+{
+	CS_COROUTINE_BEGIN(R);
+
+	CS_COROUTINE_WAIT_UNTIL(R, !FPlatformProcess::IsApplicationRunning(ProcessID));
+
+	// Set DataRootSet back to Windows
+	{
+		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+		Settings->DataRootSet		   = Settings->GetDataRootSet(ECsPlatform::Windows);
+
+		UProjectPackagingSettings* PackageSettings		   = GetMutableDefault< UProjectPackagingSettings>();
+		PackageSettings->DirectoriesToAlwaysCook[CS_FIRST] = Settings->GetDirectoryToAlwaysCook(ECsPlatform::Windows);
+	}
+	Reset();
+
+	CS_COROUTINE_END(R);
+}
+
+void UCsEdEngine::OnStandaloneLocalPlayEvent(uint32 ProcessID)
+{
+	if (Standalone.bActive)
+	{
+		Standalone.ProcessID = ProcessID;
+	}
+}
+
+#pragma endregion Standalone

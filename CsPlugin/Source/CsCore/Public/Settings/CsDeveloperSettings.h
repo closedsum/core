@@ -6,6 +6,8 @@
 #include "Types/CsTypes_Load.h"
 #include "Types/Enum/CsUserDefinedEnum.h"
 #include "Settings/CsTypes_Settings.h"
+#include "Data/CsTypes_DataRootSet.h"
+#include "Types/CsTypes_Platform.h"
 // Data
 #include "Managers/Data/CsSettings_Manager_Data.h"
 // Load
@@ -73,6 +75,19 @@ public:
 	TSoftClassPtr<UObject> DataRootSet;
 
 	UObject* SafeLoadDataRootSet(const FString& Context);
+
+	UPROPERTY(config, EditAnywhere, Category = "Settings|Data", meta = (MustImplement = "CsDataRootSet"))
+	FCsSettings_DataRootSet DataRootSets[ECsPlatform::ECsPlatform_MAX];
+
+	FORCEINLINE const TSoftClassPtr<UObject>& GetDataRootSet(const ECsPlatform& Platform) const
+	{
+		return DataRootSets[(uint8)Platform].DataRootSet;
+	}
+
+	FORCEINLINE const FDirectoryPath& GetDirectoryToAlwaysCook(const ECsPlatform& Platform) const
+	{
+		return DataRootSets[(uint8)Platform].DirectoryToAlwaysCook;
+	}
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Data", meta = (DisplayName = "Manager Data"))
 	FCsSettings_Manager_Data Manager_Data;

@@ -77,7 +77,7 @@ public:
 	UObject* SafeLoadDataRootSet(const FString& Context);
 
 	UPROPERTY(config, EditAnywhere, Category = "Settings|Data", meta = (MustImplement = "CsDataRootSet"))
-	FCsSettings_DataRootSet DataRootSets[ECsPlatform::ECsPlatform_MAX];
+	FCsSettings_DataRootSet DataRootSets[(uint8)ECsPlatform::ECsPlatform_MAX];
 
 	FORCEINLINE const TSoftClassPtr<UObject>& GetDataRootSet(const ECsPlatform& Platform) const
 	{

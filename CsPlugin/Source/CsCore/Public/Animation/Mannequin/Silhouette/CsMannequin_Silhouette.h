@@ -191,14 +191,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component|Controls", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* hand_l_ctrl;
 
-	UPROPERTY()
-	FCsMannequinSilhouette_BoneControlInfo hand_l_ctrl_info;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component|Controls", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* hand_r_ctrl;
-
-	UPROPERTY()
-	FCsMannequinSilhouette_BoneControlInfo hand_r_ctrl_info;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component|Controls", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* neck_01_ctrl;
@@ -208,9 +202,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component|Controls", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* head_ctrl;
-
-	UPROPERTY()
-	FCsMannequinSilhouette_BoneControlInfo head_ctrl_info;
 
 #define BoneControlInfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
 #define BoneType NCsAnimation::NMannequin::NSilhouette::EBone
@@ -259,17 +250,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bone|Controls", meta = (DisplayName = "Chest"))
 	FCsMannequinSilhouette_BoneControl_Core ChestControl;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bone|Controls")
-	float HeadHeight;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bone|Controls")
-	float HeadDepth;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bone|Controls")
-	float HeadWidth;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bone|Controls")
-	float HeadScale;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bone|Controls", meta = (DisplayName = "Head"))
+	FCsMannequinSilhouette_BoneControl_Head HeadControl;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bone|Controls")
 	float LatSize;
@@ -283,8 +265,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bone|Controls", meta = (DisplayName = "Lowerarm"))
 	FCsMannequinSilhouette_BoneControl_Limb LowerarmControl;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bone|Controls")
-	float HandSize;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bone|Controls", meta = (DisplayName = "Hand"))
+	FCsMannequinSilhouette_BoneControl_Hand HandControl;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bone|Controls", meta = (DisplayName = "Thigh"))
 	FCsMannequinSilhouette_BoneControl_Limb ThighControl;

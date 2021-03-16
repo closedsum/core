@@ -184,6 +184,8 @@ public:
 	template<typename T>
 	FORCEINLINE T* GetOwnerAsObject() { return Cast<T>(GetOwnerAsObject()); }
 
+	FORCEINLINE UObject* GetSafeOwnerAsObject() { return Owner.GetSafeObject(); }
+
 	FORCEINLINE AActor* GetOwnerAsActor() { return Owner.GetActor(); }
 
 #pragma endregion Owner

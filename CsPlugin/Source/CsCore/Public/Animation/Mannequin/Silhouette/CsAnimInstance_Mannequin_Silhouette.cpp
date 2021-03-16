@@ -44,10 +44,10 @@ void UCsAnimInstance_Mannequin_Silhouette::NativeUpdateAnimation(float DeltaTime
 	ChestHeight				= MyOwner->ChestControl.Height;
 	ChestDepth				= MyOwner->ChestControl.Depth;
 	ChestWidth				= MyOwner->ChestControl.Width;
-	HeadHeight				= MyOwner->HeadHeight;
-	HeadDepth				= MyOwner->HeadDepth;
-	HeadWidth				= MyOwner->HeadWidth;
-	HeadScale				= MyOwner->HeadScale;
+	HeadHeight				= MyOwner->HeadControl.Height;
+	HeadDepth				= MyOwner->HeadControl.Depth;
+	HeadWidth				= MyOwner->HeadControl.Width;
+	HeadScale				= MyOwner->HeadControl.Scale;
 	LatSize					= MyOwner->LatSize;
 	LatHeightOffset			= MyOwner->LatHeightOffset;
 	UpperarmLength			= MyOwner->UpperarmControl.Length;
@@ -58,7 +58,10 @@ void UCsAnimInstance_Mannequin_Silhouette::NativeUpdateAnimation(float DeltaTime
 	LowerarmThickness		= MyOwner->LowerarmControl.Thickness;
 	LowerarmThickness_Depth = MyOwner->LowerarmControl.Depth;
 	LowerarmThickness_Width = MyOwner->LowerarmControl.Width;
-	HandSize				= MyOwner->HandSize;
+	HandLength				= MyOwner->HandControl.Length;
+	HandThickness			= MyOwner->HandControl.Thickness;
+	HandWidth				= MyOwner->HandControl.Width;
+	HandScale				= MyOwner->HandControl.Scale;
 	ThighLength				= MyOwner->ThighControl.Length;
 	ThighThickness			= MyOwner->ThighControl.Thickness;
 	ThighThickness_Depth	= MyOwner->ThighControl.Depth;

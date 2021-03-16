@@ -55,7 +55,6 @@ ACsMannequin_Silhouette::ACsMannequin_Silhouette(const FObjectInitializer& Objec
 	upperarm_r = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("upperarm_r")); CS_TEMP_SET_BONE(upperarm_r);
 	lowerarm_l = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("lowerarm_l")); CS_TEMP_SET_BONE(lowerarm_l);
 	lowerarm_r = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("lowerarm_r")); CS_TEMP_SET_BONE(lowerarm_r);
-	lowerarm_r->SetupAttachment(RootComponent, FName("lowerarm_r"));
 	hand_r = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("hand_r")); CS_TEMP_SET_BONE(hand_r);
 	hand_l = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("hand_l")); CS_TEMP_SET_BONE(hand_l);
 	neck_01 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("neck_01")); CS_TEMP_SET_BONE(neck_01);
@@ -303,44 +302,12 @@ void ACsMannequin_Silhouette::TickInEditor(const float& DeltaSeconds)
 		}
 		// Hand (hand_l | hand_r)
 		{
-			FTransform Transform_L = hand_l_ctrl->GetRelativeTransform();
-			FTransform Transform_R = hand_r_ctrl->GetRelativeTransform();
+			BoneControlInfoType& LeftDOb  = DOb->GetBoneControlInfo(BoneType::hand_l);
+			BoneControlInfoType& Left	  = GetBoneControlInfo(BoneType::hand_l);
+			BoneControlInfoType& RightDOb = DOb->GetBoneControlInfo(BoneType::hand_r);
+			BoneControlInfoType& Right	  = GetBoneControlInfo(BoneType::hand_r);
 
-			hand_l_ctrl_info.Transform = Transform_L;
-			hand_r_ctrl_info.Transform = Transform_R;
-
-			// Left (hand_l) Changed
-			if (hand_l_ctrl_info.HasChanged())
-			{
-				const FVector Scale = Transform_L.GetScale3D();
-
-				HandSize = FMath::Max3(Scale.X, Scale.Y, Scale.Z);
-
-				Transform_L.SetScale3D(HandSize * FVector::OneVector);
-
-				hand_l_ctrl_info.Transform = Transform_L;
-				hand_r_ctrl_info.Transform = Transform_L;
-
-				hand_l_ctrl->SetRelativeTransform(Transform_L);
-				hand_r_ctrl->SetRelativeTransform(Transform_L);
-			}
-			// Right (hand_r) Changed
-			if (hand_r_ctrl_info.HasChanged())
-			{
-				const FVector Scale = Transform_R.GetScale3D();
-
-				HandSize = FMath::Max3(Scale.X, Scale.Y, Scale.Z);
-
-				Transform_R.SetScale3D(HandSize * FVector::OneVector);
-
-				hand_l_ctrl_info.Transform = Transform_R;
-				hand_r_ctrl_info.Transform = Transform_R;
-
-				hand_l_ctrl->SetRelativeTransform(Transform_R);
-				hand_r_ctrl->SetRelativeTransform(Transform_R);
-			}
-			hand_l_ctrl_info.Resolve();
-			hand_r_ctrl_info.Resolve();
+			HandControl.OnUpdateByComponent(DOb->HandControl, LeftDOb, Left, RightDOb, Right);
 		}
 		// Neck (neck_01)
 		{
@@ -348,17 +315,9 @@ void ACsMannequin_Silhouette::TickInEditor(const float& DeltaSeconds)
 		}
 		// Head (head)
 		{
-			const FTransform Transform = head_ctrl->GetRelativeTransform();
+			BoneControlInfoType& Head = GetBoneControlInfo(BoneType::head);
 
-			head_ctrl_info.Transform = Transform;
-
-			const FVector Scale = Transform.GetScale3D();
-
-			HeadHeight = Scale.X;
-			HeadDepth  = Scale.Y;
-			HeadWidth  = Scale.Z;
-
-			head_ctrl_info.Resolve();
+			HeadControl.OnUpdateByComponent(DOb->HeadControl, Head);
 		}
 	}
 	// Member
@@ -460,16 +419,12 @@ void ACsMannequin_Silhouette::TickInEditor(const float& DeltaSeconds)
 		}
 		// Hand (hand_l | hand_r)
 		{
-			const FVector Scale = HandSize * FVector::OneVector;
+			BoneControlInfoType& LeftDOb  = DOb->GetBoneControlInfo(BoneType::hand_l);
+			BoneControlInfoType& Left	  = GetBoneControlInfo(BoneType::hand_l);
+			BoneControlInfoType& RightDOb = DOb->GetBoneControlInfo(BoneType::hand_r);
+			BoneControlInfoType& Right	  = GetBoneControlInfo(BoneType::hand_r);
 
-			hand_l_ctrl->SetRelativeScale3D(Scale);
-			hand_r_ctrl->SetRelativeScale3D(Scale);
-
-			hand_l_ctrl_info.Transform = hand_l_ctrl->GetRelativeTransform();
-			hand_r_ctrl_info.Transform = hand_r_ctrl->GetRelativeTransform();
-
-			hand_l_ctrl_info.Resolve();
-			hand_r_ctrl_info.Resolve();
+			HandControl.OnUpdateByMember(LeftDOb, Left, RightDOb, Right);
 		}
 		// Neck (neck_01)
 		{
@@ -477,16 +432,10 @@ void ACsMannequin_Silhouette::TickInEditor(const float& DeltaSeconds)
 		}
 		// Head (head)
 		{
-			FVector Scale;
-
-			Scale.X = HeadHeight;
-			Scale.Y = HeadDepth;
-			Scale.Z = HeadWidth;
-
-			head_ctrl->SetRelativeScale3D(Scale);
-
-			head_ctrl_info.Transform = head_ctrl->GetRelativeTransform();
-			head_ctrl_info.Resolve();
+			BoneControlInfoType& HeadDOb = DOb->GetBoneControlInfo(BoneType::head);
+			BoneControlInfoType& Head	   = GetBoneControlInfo(BoneType::head);
+			
+			HeadControl.OnUpdateByMember(HeadDOb, Head);
 		}
 	}
 }
@@ -553,6 +502,8 @@ void ACsMannequin_Silhouette::PreEditChange(FEditPropertyChain& e)
 	CS_TEMP_CHECK_IS_MODIFIED(ChestControl)
 	CS_TEMP_CHECK_IS_MODIFIED(UpperarmControl)
 	CS_TEMP_CHECK_IS_MODIFIED(LowerarmControl)
+	CS_TEMP_CHECK_IS_MODIFIED(HandControl)
+	CS_TEMP_CHECK_IS_MODIFIED(HeadControl)
 
 	#undef CS_TEMP_CHECK_IS_MODIFIED
 
@@ -591,6 +542,8 @@ void ACsMannequin_Silhouette::PostEditChangeChainProperty(FPropertyChangedChainE
 	CS_TEMP_CHECK_IS_MODIFIED(ChestControl)
 	CS_TEMP_CHECK_IS_MODIFIED(UpperarmControl)
 	CS_TEMP_CHECK_IS_MODIFIED(LowerarmControl)
+	CS_TEMP_CHECK_IS_MODIFIED(HandControl)
+	CS_TEMP_CHECK_IS_MODIFIED(HeadControl)
 
 	#undef CS_TEMP_CHECK_IS_MODIFIED
 

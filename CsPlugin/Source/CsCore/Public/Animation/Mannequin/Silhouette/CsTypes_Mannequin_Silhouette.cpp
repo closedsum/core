@@ -195,3 +195,106 @@ void FCsMannequinSilhouette_BoneControl_Foot::OnUpdateByMember(InfoType& LeftDOb
 	Left.Resolve();
 	Right.Resolve();
 }
+
+#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
+void FCsMannequinSilhouette_BoneControl_Hand::OnUpdateByComponent(FCsMannequinSilhouette_BoneControl_Hand& DOb, InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right)
+{
+#undef InfoType
+
+	const FTransform Transform_L = Left.Control->GetRelativeTransform();
+	const FTransform Transform_R = Right.Control->GetRelativeTransform();
+
+	Left.Transform  = Transform_L;
+	Right.Transform = Transform_R;
+
+	// Left Changed
+	if (Left.HasChanged())
+	{
+		Right.Transform = Transform_L;
+
+		const FVector _Scale = Transform_L.GetScale3D();
+
+		SetFromScale(_Scale);
+		DOb.SetFromScale(_Scale);
+
+		RightDOb.Control->SetRelativeTransform(Transform_L);
+		Right.Control->SetRelativeTransform(Transform_L);
+	}
+	// Right Changed
+	else
+	if (Right.HasChanged())
+	{
+		Left.Transform = Transform_R;
+
+		const FVector _Scale = Transform_R.GetScale3D();
+
+		SetFromScale(_Scale);
+		DOb.SetFromScale(_Scale);
+
+		LeftDOb.Control->SetRelativeTransform(Transform_R);
+		Left.Control->SetRelativeTransform(Transform_R);
+	}
+	Left.Resolve();
+	Right.Resolve();
+}
+
+#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
+void FCsMannequinSilhouette_BoneControl_Hand::OnUpdateByMember(InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right)
+{
+#undef InfoType
+
+	const FVector _Scale = GetScale();
+
+	LeftDOb.Control->SetRelativeScale3D(_Scale);
+	Left.Control->SetRelativeScale3D(_Scale);
+	RightDOb.Control->SetRelativeScale3D(_Scale);
+	Right.Control->SetRelativeScale3D(_Scale);
+
+	Left.Transform  = Left.Control->GetRelativeTransform();
+	Right.Transform = Right.Control->GetRelativeTransform();
+
+	Left.Resolve();
+	Right.Resolve();
+}
+
+#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
+void FCsMannequinSilhouette_BoneControl_Head::OnUpdateByComponent(FCsMannequinSilhouette_BoneControl_Head& DOb, InfoType& Info)
+{
+#undef InfoType
+
+	const FTransform Transform = Info.Control->GetRelativeTransform();
+	Info.Transform			   = Transform;
+
+	FVector _Scale = Transform.GetScale3D();
+
+	SetFromScale(_Scale);
+	DOb.SetFromScale(_Scale);
+
+	const FVector Location = Transform.GetLocation();
+
+	HeightOffset	 = Location.Z;
+	DOb.HeightOffset = Location.Z;
+
+	Info.Resolve();
+}
+
+#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
+void FCsMannequinSilhouette_BoneControl_Head::OnUpdateByMember(InfoType& DObInfo, InfoType& Info)
+{
+#undef InfoType
+
+	const FVector _Scale = GetScale();
+
+	Info.Control->SetRelativeScale3D(_Scale);
+	DObInfo.Control->SetRelativeScale3D(_Scale);
+
+	FVector Location = FVector::ZeroVector;
+
+	Location.Z = HeightOffset;
+
+	Info.Control->SetRelativeLocation(Location);
+	DObInfo.Control->SetRelativeLocation(Location);
+
+	Info.Transform = Info.Control->GetRelativeTransform();
+	Info.Resolve();
+}

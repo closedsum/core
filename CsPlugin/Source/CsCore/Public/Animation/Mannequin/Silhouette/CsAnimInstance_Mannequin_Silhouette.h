@@ -120,7 +120,16 @@ public:
 	float LowerarmThickness_Width;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls", meta = (UIMin = "0.01", ClampMin = "0.01"))
-	float HandSize;
+	float HandLength;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls", meta = (UIMin = "0.01", ClampMin = "0.01"))
+	float HandThickness;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls", meta = (UIMin = "0.01", ClampMin = "0.01"))
+	float HandWidth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls", meta = (UIMin = "0.01", ClampMin = "0.01"))
+	float HandScale;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float ThighLength;

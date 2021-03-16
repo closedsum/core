@@ -12,6 +12,8 @@ namespace NCsFade
 {
 	namespace NManager
 	{
+	#if WITH_EDITOR
+
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
 		{
 			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
@@ -26,6 +28,21 @@ namespace NCsFade
 
 			return GameInstance;
 		}
+
+		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
+		{
+			if (!WorldContext)
+				return nullptr;
+
+			UWorld* World = WorldContext->GetWorld();
+
+			if (!World)
+				return nullptr;
+
+			return World->GetGameInstance();
+		}
+
+	#endif // #if WITH_EDITOR
 
 		void FLibrary::CreateFadeWidget(const FString& Context, UObject* WorldContext)
 		{
@@ -42,6 +59,21 @@ namespace NCsFade
 			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
 
 			UCsManager_Fade::Get(ContextRoot)->Fade(Params);
+		}
+
+		#define ParamsType NCsFade::FParams
+		void FLibrary::SafeFade(UObject* WorldContext, const ParamsType& Params)
+		{
+		#undef ParamsType
+
+		#if WITH_EDITOR
+			if (UObject* ContextRoot = GetSafeContextRoot(WorldContext))
+			{
+				UCsManager_Fade::Get(ContextRoot)->SafeFade(Params);
+			}
+		#else
+			UCsManager_Fade::Get()->SafeFade(Params);
+		#endif // #if WITH_EDITOR
 		}
 
 		void FLibrary::StopFadeChecked(const FString& Context, UObject* WorldContext)

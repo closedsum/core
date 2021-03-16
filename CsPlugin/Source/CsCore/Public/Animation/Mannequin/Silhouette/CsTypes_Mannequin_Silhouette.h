@@ -99,8 +99,6 @@ namespace NCsAnimation
 	}
 }
 
-class ACsMannequin_Silhouette;
-
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsMannequinSilhouette_BoneControl_Core
 {
@@ -265,6 +263,125 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Foot
 			 PropertyNames.Contains("Length") ||
 			 PropertyNames.Contains("Width") ||
 			 PropertyNames.Contains("Scale")))
+		{
+			return true;
+		}
+		return false;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsMannequinSilhouette_BoneControl_Hand
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	float Length;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	float Thickness;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	float Width;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	float Scale;
+
+	FCsMannequinSilhouette_BoneControl_Hand() :
+		Length(1.0f),
+		Thickness(1.0f),
+		Width(1.0f),
+		Scale(1.0f)
+	{
+	}
+
+	FORCEINLINE void SetFromScale(const FVector& InScale)
+	{
+		static const float MIN = 0.01f;
+
+		Length	  = FMath::Max(MIN, InScale.X);
+		Thickness = FMath::Max(MIN, InScale.Y);
+		Width	  = FMath::Max(MIN, InScale.Z);
+	}
+
+	FORCEINLINE FVector GetScale() const { return FVector(Length, Thickness, Width); }
+
+#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
+
+	void OnUpdateByComponent(FCsMannequinSilhouette_BoneControl_Hand& DOb, InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right);
+	void OnUpdateByMember(InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right);
+
+#undef InfoType
+
+	FORCEINLINE bool IsModified(const FString& MemberName, const TSet<FString>& PropertyNames)
+	{
+		if (PropertyNames.Contains(MemberName) &&
+			(PropertyNames.Contains("Length") ||
+			 PropertyNames.Contains("Thickness") ||
+			 PropertyNames.Contains("Width") ||
+			 PropertyNames.Contains("Scale")))
+		{
+			return true;
+		}
+		return false;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsMannequinSilhouette_BoneControl_Head
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	float Height;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	float Depth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	float Width;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	float Scale;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HeightOffset;
+
+	FCsMannequinSilhouette_BoneControl_Head() :
+		Height(1.0f),
+		Depth(1.0f),
+		Width(1.0f),
+		Scale(1.0f),
+		HeightOffset(0.0f)
+	{
+	}
+
+	FORCEINLINE void SetFromScale(const FVector& InScale)
+	{
+		static const float MIN = 0.01f;
+
+		Height = FMath::Max(MIN, InScale.X);
+		Depth  = FMath::Max(MIN, InScale.Y);
+		Width  = FMath::Max(MIN, InScale.Z);
+	}
+
+	FORCEINLINE FVector GetScale() const { return FVector(Height, Depth, Width); }
+
+#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
+
+	void OnUpdateByComponent(FCsMannequinSilhouette_BoneControl_Head& DOb, InfoType& Info);
+	void OnUpdateByMember(InfoType& DObInfo, InfoType& Info);
+
+#undef InfoType
+
+	FORCEINLINE bool IsModified(const FString& MemberName, const TSet<FString>& PropertyNames)
+	{
+		if (PropertyNames.Contains(MemberName) &&
+			(PropertyNames.Contains("Height") ||
+			 PropertyNames.Contains("Depth") ||
+			 PropertyNames.Contains("Width") ||
+			 PropertyNames.Contains("Scale") ||
+			 PropertyNames.Contains("HeightOffset")))
 		{
 			return true;
 		}

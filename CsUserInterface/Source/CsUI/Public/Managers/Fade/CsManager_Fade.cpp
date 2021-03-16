@@ -334,6 +334,26 @@ char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 	CS_COROUTINE_END(R);
 }
 
+#define ParamsType NCsFade::FParams
+void UCsManager_Fade::SafeFade(const ParamsType& Params)
+{
+#undef ParamsType
+
+	if (!FadeWidget ||
+		FadeWidget->IsPendingKill())
+	{
+		CreateFadeWidget();
+	}
+
+	if (!FadeWidget->IsInViewport())
+	{
+		static const int32 ZOrder = 1000;
+		FadeWidget->AddToViewport(ZOrder);
+	}
+
+	Fade(Params);
+}
+
 void UCsManager_Fade::StopFade()
 {
 	using namespace NCsManagerFade::NCached;

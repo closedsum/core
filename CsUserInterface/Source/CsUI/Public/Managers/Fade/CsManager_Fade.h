@@ -95,6 +95,8 @@ public:
 
 	FCsRoutineHandle FadeHandle;
 
+	void SafeFade(const ParamsType& Params);
+
 	void StopFade();
 	void ClearFade();
 

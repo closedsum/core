@@ -454,9 +454,38 @@ public:
 
 	// Update
 #pragma region
+private:
+
+	/** Whether TypesByUpdateGroup is used or not. */
+	bool bTypesByUpdateGroup;
+
+	TArray<TArray<FECsSound>> TypesByUpdateGroup;
+
 public:
 
-	virtual void Update(const FCsDeltaTime& DeltaTime);
+	/**
+	* Update ALL sounds of ALL types (FECsSound) with DeltaTime.
+	* 
+	* @param DeltaTime
+	*/
+	void Update(const FCsDeltaTime& DeltaTime);
+
+	/**
+	* Update ALL sounds associated with Group (TypesByUpdateGroup[Group.GetValue()])
+	* with DeltaTime
+	* 
+	* @param Group		UpdateGroup sounds are associated with.
+	* @param DeltaTime
+	*/
+	void Update(const FECsUpdateGroup& Group, const FCsDeltaTime& DeltaTime);
+
+	/**
+	* Update ALL sounds of Type (FECsSound) with DeltaTime.
+	* 
+	* @param Type
+	* @param DeltaTime
+	*/
+	void Update(const FECsSound& Type, const FCsDeltaTime& DeltaTime);
 
 private:
 
@@ -479,10 +508,18 @@ protected:
 public:
 
 	/**
+	* Set the pause flag for ALL sounds associated with the Group (TypesByUpdateGroup[Group.GetValue()]).
+	* 
+	* @param Group
+	* @param bPaused	True = pause. False = un-pause.
 	*/
-	void Pause(bool bPaused);
+	void Pause(const FECsUpdateGroup& Group, bool bPaused);
 
 	/**
+	* Set th pause flag for ALL sounds associated with Type: (FECsSound).
+	* 
+	* @param Type
+	* @param bPaused	True = pause. False = un-pause.
 	*/
 	void Pause(const FECsSound& Type, bool bPaused);
 

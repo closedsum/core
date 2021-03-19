@@ -1,5 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Types
 #include "Managers/Sound/CsTypes_Sound.h"
+#include "Managers/Time/CsTypes_Update.h"
+
 #include "CsSettings_Manager_Sound.generated.h"
 #pragma once
 
@@ -32,6 +35,27 @@ public:
 
 #pragma endregion FCsSettings_Manager_Sound_PoolParams
 
+// FCsSettings_Manager_Sound_TypeArray
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsSettings_Manager_Sound_TypeArray
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FECsSound> Types;
+
+	FCsSettings_Manager_Sound_TypeArray() :
+		Types()
+	{
+	}
+};
+
+#pragma endregion FCsSettings_Manager_Sound_TypeArray
+
 // FCsSettings_Manager_Sound
 #pragma region
 
@@ -46,9 +70,13 @@ struct CSCORE_API FCsSettings_Manager_Sound
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TMap<FECsUpdateGroup, FCsSettings_Manager_Sound_TypeArray> TypesByUpdateGroupMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsSound, FCsSettings_Manager_Sound_PoolParams> PoolParams;
 
 	FCsSettings_Manager_Sound() :
+		TypesByUpdateGroupMap(),
 		PoolParams()
 	{
 	}

@@ -106,6 +106,13 @@ void UCsManager_Time::Initialize()
 			UpdateGroups.AddDefaulted();
 		}
 	}
+	// Pause
+	{
+		const int32& Count = EMCsUpdateGroup::Get().Num();
+
+		OnPause_Events.Reset(Count);
+		OnPause_Events.AddDefaulted(Count);
+	}
 }
 
 void UCsManager_Time::CleanUp()

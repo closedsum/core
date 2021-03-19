@@ -883,7 +883,7 @@ namespace NCsPooledObject
 		#pragma region
 		public:
 
-			virtual void Update(const FCsDeltaTime& DeltaTime)
+			void Update(const FCsDeltaTime& DeltaTime)
 			{
 				for (TPair<KeyType, ManagerAbstractType*>& Pair : Pools)
 				{
@@ -895,6 +895,15 @@ namespace NCsPooledObject
 
 					OnPostUpdate_Pool_Impl.ExecuteIfBound(CurrentUpdatePoolType);
 				}
+			}
+
+			void Update(const KeyType& Type, const FCsDeltaTime& DeltaTime)
+			{
+				OnPreUpdate_Pool_Impl.ExecuteIfBound(Type);
+
+				GetManagerPooledObjects(Type)->Update(DeltaTime);
+
+				OnPostUpdate_Pool_Impl.ExecuteIfBound(Type);
 			}
 
 			/**

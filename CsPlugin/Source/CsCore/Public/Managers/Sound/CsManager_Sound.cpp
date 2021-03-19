@@ -78,7 +78,9 @@ UCsManager_Sound::UCsManager_Sound(const FObjectInitializer& ObjectInitializer)
 	Settings(),
 	// Internal
 	Internal(),
-		// Pool
+		// Update
+	bTypesByUpdateGroup(false),
+	TypesByUpdateGroup(),
 	CurrentUpdatePoolType(),
 	CurrentUpdatePoolObjectIndex(0),
 		// Pause
@@ -384,7 +386,7 @@ void UCsManager_Sound::SetupInternal()
 	//}
 	//else
 #endif // #if !UE_BUILD_SHIPPING
-		// If any settings have been set for Manager_Creep, apply them
+		// If any settings have been set for Manager_Sound, apply them
 	{
 		UCsDeveloperSettings* ModuleSettings = GetMutableDefault<UCsDeveloperSettings>();
 
@@ -392,6 +394,23 @@ void UCsManager_Sound::SetupInternal()
 
 		Settings = ModuleSettings->Manager_Sound;
 
+		// Populate TypesByUpdateGroup
+		{
+			TypesByUpdateGroup.Reset(EMCsUpdateGroup::Get().Num());
+			TypesByUpdateGroup.AddDefaulted(EMCsUpdateGroup::Get().Num());
+
+			for (TPair<FECsUpdateGroup, FCsSettings_Manager_Sound_TypeArray>& Pair : Settings.TypesByUpdateGroupMap)
+			{
+				const FECsUpdateGroup& Group					 = Pair.Key;
+				const FCsSettings_Manager_Sound_TypeArray& Array = Pair.Value;
+
+				checkf(Array.Types.Num() > CS_EMPTY, TEXT("%s: No Types added for UCsDeveloperSettings.Manager_Sound.TypesByUpdateGroupMap[%s]."), *Context, Group.ToChar());
+
+				TypesByUpdateGroup[Group.GetValue()].Append(Array.Types);
+
+				bTypesByUpdateGroup = true;
+			}
+		}
 		InitInternalFromSettings();
 	}
 
@@ -640,6 +659,21 @@ void UCsManager_Sound::Update(const FCsDeltaTime& DeltaTime)
 	Internal.Update(DeltaTime);
 }
 
+void UCsManager_Sound::Update(const FECsUpdateGroup& Group, const FCsDeltaTime& DeltaTime)
+{
+	checkf(TypesByUpdateGroup[Group.GetValue()].Num() > CS_EMPTY, TEXT("UCsManager_Sound::Update: No Types associated with Group: %s."), Group.ToChar());
+
+	for (const FECsSound& Type : TypesByUpdateGroup[Group.GetValue()])
+	{
+		Internal.Update(Type, DeltaTime);
+	}
+}
+
+void UCsManager_Sound::Update(const FECsSound& Type, const FCsDeltaTime& DeltaTime)
+{
+	Internal.Update(Type, DeltaTime);
+}
+
 void UCsManager_Sound::OnPreUpdate_Pool(const FECsSound& Type)
 {
 	CurrentUpdatePoolType		 = Type;
@@ -660,9 +694,21 @@ void UCsManager_Sound::OnPostUpdate_Pool(const FECsSound& Type)
 	// Pause
 #pragma region
 
-void UCsManager_Sound::Pause(bool bPaused)
+void UCsManager_Sound::Pause(const FECsUpdateGroup& Group, bool bPaused)
 {
-	Internal.Pause(bPaused);
+	if (bTypesByUpdateGroup)
+	{
+		checkf(TypesByUpdateGroup[Group.GetValue()].Num() > CS_EMPTY, TEXT("UCsManager_Sound::Update: No Types associated with Group: %s."), Group.ToChar());
+
+		for (const FECsSound& Type : TypesByUpdateGroup[Group.GetValue()])
+		{
+			Internal.Pause(Type, bPaused);
+		}
+	}
+	else
+	{
+		Internal.Pause(bPaused);
+	}
 }
 
 void UCsManager_Sound::Pause(const FECsSound& Type, bool bPaused)
@@ -777,7 +823,7 @@ void UCsManager_Sound::LogTransaction(const FString& Context, const ECsPoolTrans
 		const FString OwnerName		= ObjectOwner ? ObjectOwner->GetName() : NCsCached::Str::None;
 		const UObject* Parent		= Interface->GetCache()->GetParent();
 		const FString ParentName	= Parent ? Parent->GetName() : NCsCached::Str::None;
-		const float CurrentTime		= GetWorld()->GetTimeSeconds();
+		const float CurrentTime		= MyRoot->GetWorld()->GetTimeSeconds();
 
 		if (ObjectOwner && Parent)
 		{

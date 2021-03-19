@@ -226,50 +226,61 @@ void UCsEdEngine::OnObjectSaved(UObject* Object)
 		// Settings
 		if (UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>())
 		{
-			TSoftClassPtr<UObject> SoftClass  = Settings->DataRootSet;
-			UClass* Class					  = SoftClass.LoadSynchronous();
-			UObject* O						  = Class ? Class->GetDefaultObject<UObject>() : nullptr;
-			ICsGetDataRootSet* GetDataRootSet = O ? Cast<ICsGetDataRootSet>(O) : nullptr;
+			TSet<TSoftClassPtr<UObject>> DataRootSets;
 
-			// DataRootSet
-			if (GetDataRootSet)
+			const int32 Count = (int32)ECsPlatform::ECsPlatform_MAX;
+
+			for (int32 I = 0; I < Count; ++I)
 			{
-				const FCsDataRootSet& DataRootSet = GetDataRootSet->GetCsDataRootSet();
+				DataRootSets.Add(Settings->DataRootSets[I].DataRootSet);
+			}
 
-				// Datas
-				if (DataTable == DataRootSet.Datas)
+			for (TSoftClassPtr<UObject> SoftClass : DataRootSets)
+			{
+				UClass* Class					  = SoftClass.LoadSynchronous();
+				UObject* O						  = Class ? Class->GetDefaultObject<UObject>() : nullptr;
+				ICsGetDataRootSet* GetDataRootSet = O ? Cast<ICsGetDataRootSet>(O) : nullptr;
+
+				// DataRootSet
+				if (GetDataRootSet)
 				{
-					if (FCsDataEntry_Data::StaticStruct() == DataTable->GetRowStruct())
+					const FCsDataRootSet& DataRootSet = GetDataRootSet->GetCsDataRootSet();
+
+					// Datas
+					if (DataTable == DataRootSet.Datas)
 					{
-						OnObjectSaved_Update_DataRootSet_Datas(DataTable);
+						if (FCsDataEntry_Data::StaticStruct() == DataTable->GetRowStruct())
+						{
+							OnObjectSaved_Update_DataRootSet_Datas(DataTable);
+						}
+						else
+						{
+							UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s DataTables: %s RowStruct: %s != FCsDataEntry_Data."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+						}
 					}
-					else
+					// DataTables
+					if (DataTable == DataRootSet.DataTables)
 					{
-						UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s DataTables: %s RowStruct: %s != FCsDataEntry_Data."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+						if (FCsDataEntry_DataTable::StaticStruct() == DataTable->GetRowStruct())
+						{
+							OnObjectSaved_Update_DataRootSet_DataTables(DataTable);
+						}
+						else
+						{
+							UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s DataTables: %s RowStruct: %s != FCsDataEntry_DataTable."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+						}
 					}
-				}
-				// DataTables
-				if (DataTable == DataRootSet.DataTables)
-				{
-					if (FCsDataEntry_DataTable::StaticStruct() == DataTable->GetRowStruct())
+					// Payloads
+					if (DataTable == DataRootSet.Payloads)
 					{
-						OnObjectSaved_Update_DataRootSet_DataTables(DataTable);
-					}
-					else
-					{
-						UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s DataTables: %s RowStruct: %s != FCsDataEntry_DataTable."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
-					}
-				}
-				// Payloads
-				if (DataTable == DataRootSet.Payloads)
-				{
-					if (FCsPayload::StaticStruct() == DataTable->GetRowStruct())
-					{
-						OnObjectSaved_Update_DataRootSet_Payloads(DataTable);
-					}
-					else
-					{
-						UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s Payloads: %s RowStruct: %s != FCsPayload."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+						if (FCsPayload::StaticStruct() == DataTable->GetRowStruct())
+						{
+							OnObjectSaved_Update_DataRootSet_Payloads(DataTable);
+						}
+						else
+						{
+							UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s Payloads: %s RowStruct: %s != FCsPayload."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+						}
 					}
 				}
 			}

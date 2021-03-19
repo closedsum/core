@@ -736,7 +736,7 @@ void UCsManager_FX_Actor::OnPostUpdate_Pool(const FECsFX& Type)
 	// Pause
 #pragma region
 
-void UCsManager_FX_Actor::Pause(bool bPaused)
+void UCsManager_FX_Actor::Pause(const FECsUpdateGroup& Group, bool bPaused)
 {
 	Internal.Pause(bPaused);
 }

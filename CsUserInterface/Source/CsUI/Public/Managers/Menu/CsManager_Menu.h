@@ -74,4 +74,8 @@ public:
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+public:
+
+	void Update(const float& DeltaSeconds);
 };

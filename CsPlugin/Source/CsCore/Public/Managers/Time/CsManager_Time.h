@@ -84,57 +84,65 @@ public:
 #pragma region
 public:
 
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPause, const FECsUpdateGroup& /*Group*/, bool /*bPaused*/);
+
+private:
+
+	TArray<FOnPause> OnPause_Events;
+
+public:
+
+	FORCEINLINE FOnPause& GetOnPause_Event(const FECsUpdateGroup& Group)
+	{
+		return OnPause_Events[Group.GetValue()];
+	}
+
+#define OnPauseDelegateType FOnPause::FDelegate
+
+	FORCEINLINE FDelegateHandle AddOnPause(const FECsUpdateGroup& Group, OnPauseDelegateType& OnPause)
+	{
+		return OnPause_Events[Group.GetValue()].Add(OnPause);
+	}
+
+#undef OnPauseDelegateType
+
+	FORCEINLINE void RemoveOnPause(const FECsUpdateGroup& Group, const FDelegateHandle& Handle)
+	{
+		OnPause_Events[Group.GetValue()].Remove(Handle);
+	}
+
 	/**
-	*
+	* Pause updates for the specified Group
 	*
 	* @param Group
 	*/
 	FORCEINLINE void Pause(const FECsUpdateGroup& Group)
 	{
 		UpdateGroups[Group.GetValue()].Pause();
+		OnPause_Events[Group.GetValue()].Broadcast(Group, true);
 	}
 
 	/**
-	*
+	* Unpause updates for the specified Group
 	*
 	* @param Group
 	*/
 	FORCEINLINE void Unpause(const FECsUpdateGroup& Group)
 	{
 		UpdateGroups[Group.GetValue()].Unpause();
+		OnPause_Events[Group.GetValue()].Broadcast(Group, false);
 	}
 
 	/**
-	*
+	* Check if updates are paused for the specified Group
 	*
 	* @param Group
-	* return
+	* return		Whether updating is paused or not.
 	*/
 	FORCEINLINE bool IsPaused(const FECsUpdateGroup& Group)
 	{
 		return UpdateGroups[Group.GetValue()].IsPaused();
 	}
-
-#define OnPauseType FCsUpdateGroup::FOnPause
-#define OnPauseDelegateType FCsUpdateGroup::FOnPause::FDelegate
-
-	FORCEINLINE OnPauseType& GetOnPause_Event(const FECsUpdateGroup& Group)
-	{
-		return UpdateGroups[Group.GetValue()].GetOnPause_Event();
-	}
-
-	FORCEINLINE FDelegateHandle AddOnPause(const FECsUpdateGroup& Group, OnPauseDelegateType& OnPause)
-	{
-		return UpdateGroups[Group.GetValue()].AddOnPause(OnPause);
-	}
-
-	FORCEINLINE void RemoveOnPause(const FECsUpdateGroup& Group, const FDelegateHandle& Handle)
-	{
-		UpdateGroups[Group.GetValue()].RemoveOnPause(Handle);
-	}
-
-#undef OnPauseType
-#undef OnPauseDelegateType
 
 #pragma endregion Pause
 
@@ -159,6 +167,27 @@ public:
 	* @param RealTime
 	*/
 	void Update(const FECsUpdateGroup& Group, const float& DeltaTime, const float& Time, const float& RealTime);
+
+#define OnUpdateType FCsUpdateGroup::FOnUpdate
+#define OnUpdateDelegateType FCsUpdateGroup::FOnUpdate::FDelegate
+
+	FORCEINLINE OnUpdateType& GetOnUpdate_Event(const FECsUpdateGroup& Group)
+	{
+		return UpdateGroups[Group.GetValue()].GetOnUpdate_Event();
+	}
+
+	FORCEINLINE FDelegateHandle AddOnUpdate(const FECsUpdateGroup& Group, OnUpdateDelegateType& OnUpdate)
+	{
+		return UpdateGroups[Group.GetValue()].AddOnUpdate(OnUpdate);
+	}
+
+	FORCEINLINE void RemoveOnUpdate(const FECsUpdateGroup& Group, const FDelegateHandle& Handle)
+	{
+		UpdateGroups[Group.GetValue()].RemoveOnUpdate(Handle);
+	}
+
+#undef OnUpdateType
+#undef OnUpdateDelegateType
 
 #pragma endregion Update
 

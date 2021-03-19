@@ -4,6 +4,8 @@
 
 // CVar
 //#include "CsCVars_Manager_Data.h"
+// Managers
+#include "Managers/Time/CsManager_Time.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -175,3 +177,13 @@ void UCsManager_Menu::SetMyRoot(UObject* InRoot)
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+void UCsManager_Menu::Update(const float& DeltaSeconds)
+{
+	// Update Time
+	UCsManager_Time* Manager_Time = UCsManager_Time::Get(GetOuter());
+
+	const FECsUpdateGroup& Group = NCsUpdateGroup::Menu;
+
+	Manager_Time->Update(Group, DeltaSeconds);
+}

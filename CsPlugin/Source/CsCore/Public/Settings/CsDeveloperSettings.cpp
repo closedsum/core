@@ -92,9 +92,14 @@ void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEven
 
 			const int32 Count = (int32)ECsPlatform::ECsPlatform_MAX;
 
+			int32 Index = INDEX_NONE;
+
+			// Add to DirectoriesToAlwaysCook
 			for (int32 I = 0; I < Count; ++I)
 			{
-				if (DataRootSets[I].bApply)
+				FCsSettings_DataRootSet& Set = DataRootSets[I];
+
+				if (Set.bApply)
 				{
 					DataRootSet = DataRootSets[I].DataRootSet;
 
@@ -104,10 +109,68 @@ void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEven
 					}
 					PackageSettings->DirectoriesToAlwaysCook[CS_FIRST] = DataRootSets[I].DirectoryToAlwaysCook;
 
-					DataRootSets[I].bApply = false;
+					Index = I;
 					break;
 				}
 			}
+			// Add to DirectoriesToNeverCook
+
+				// First remove all directories in DataRootSets
+			for (int32 I = 0; I < Count; ++I)
+			{
+				const FDirectoryPath& D1 = DataRootSets[I].DirectoryToAlwaysCook;
+
+				int32 Num = PackageSettings->DirectoriesToNeverCook.Num();
+
+				for (int32 J = Num - 1; J >= 0; --J)
+				{
+					FDirectoryPath& D2 = PackageSettings->DirectoriesToNeverCook[J];
+
+					if (D2.Path == D1.Path)
+					{
+						PackageSettings->DirectoriesToNeverCook.RemoveAt(J);
+					}
+				}
+			}
+				// Get all directories to add to DirectoriesToNeverCook
+			TArray<int32> PathsToAdd;
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				if (DataRootSets[I].bApply)
+					continue;
+
+				if (PathsToAdd.Num() == CS_EMPTY)
+				{
+					PathsToAdd.Add(I);
+				}
+				else
+				{
+					bool Add = true;
+
+					for (const int32& J : PathsToAdd)
+					{	
+						const FString& P  = DataRootSets[Index].DirectoryToAlwaysCook.Path;
+						const FString& P1 = DataRootSets[I].DirectoryToAlwaysCook.Path;
+						const FString& P2 = DataRootSets[J].DirectoryToAlwaysCook.Path;
+
+						if (P1 == P ||
+							P1 == P2)
+						{
+							Add = false;
+						}
+					}
+
+					if (Add)
+						PathsToAdd.Add(I);
+				}
+			}
+				// Add directors to DirectoriesToNeverCook
+			for (const int32& I : PathsToAdd)
+			{
+				PackageSettings->DirectoriesToNeverCook.Add(DataRootSets[I].DirectoryToAlwaysCook);
+			}
+			DataRootSets[Index].bApply = false;
 		}
 	}
 	// Input

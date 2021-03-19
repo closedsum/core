@@ -519,7 +519,7 @@ public:
 
 	/**
 	*/
-	void Pause(bool bPaused);
+	void Pause(const FECsUpdateGroup& Group, bool bPaused);
 
 	/**
 	*/

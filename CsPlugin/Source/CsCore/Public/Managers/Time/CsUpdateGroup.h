@@ -43,6 +43,14 @@ private:
 	/** The scaled version of DeltaTime for additional scales (Scale * Scales[Name] * DeltaTime). */
 	TMap<FName, FCsDeltaTime> ScaledDeltaTimes;
 
+public:
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdate, const FCsDeltaTime& /*DeltaTime*/);
+
+private:
+
+	FOnUpdate OnUpdate_Event;
+
 	/** The time elapsed since the group as started. */
 	FCsDeltaTime TimeSinceStart;
 
@@ -60,7 +68,11 @@ public:
 		LastTime(),
 		Time(),
 		DeltaTime(),
-		ScaledDeltaTime()
+		ScaledDeltaTime(),
+		ScaledDeltaTimes(),
+		OnUpdate_Event(),
+		TimeSinceStart(),
+		TimePaused()
 	{
 	}
 
@@ -97,9 +109,7 @@ public:
 
 	FORCEINLINE FDelegateHandle AddOnPause(FOnPause::FDelegate& OnPause)
 	{
-		OnPause_Event.Add(OnPause);
-
-		return OnPause.GetHandle();
+		return OnPause_Event.Add(OnPause);
 	}
 
 	FORCEINLINE void RemoveOnPause(const FDelegateHandle& Handle)
@@ -152,6 +162,8 @@ public:
 		TimeSinceStart.Frame    += Time.Frame - LastTime.Frame;
 
 		LastTime = Time;
+
+		OnUpdate_Event.Broadcast(ScaledDeltaTime);
 	}
 
 	void Update(const float& InDeltaTime, const float& InTime, const float& InRealTime)
@@ -194,6 +206,20 @@ public:
 		TimeSinceStart.Frame	+= Time.Frame - LastTime.Frame;
 
 		LastTime = Time;
+
+		OnUpdate_Event.Broadcast(ScaledDeltaTime);
+	}
+
+	FORCEINLINE FOnUpdate& GetOnUpdate_Event() { return OnUpdate_Event; }
+
+	FORCEINLINE FDelegateHandle AddOnUpdate(FOnUpdate::FDelegate& OnUpdate)
+	{
+		return OnUpdate_Event.Add(OnUpdate);
+	}
+
+	FORCEINLINE void RemoveOnUpdate(const FDelegateHandle& Handle)
+	{
+		OnUpdate_Event.Remove(Handle);
 	}
 
 	FORCEINLINE const FCsTime& GetTime() const

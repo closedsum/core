@@ -21,6 +21,8 @@ namespace NCsGameEvent
 			{
 				namespace Str
 				{
+					CSCORE_API const FString CategoryName = TEXT("Coordinator_GameEvent");
+
 					CS_DEFINE_FUNCTION_NAME_AS_STRING(NCsGameEvent::NCoordinator::FConsoleCommand, Exec_BroadcastGameEvent);
 					
 					const FString GameEventCoordinatorGroup = TEXT("GameEventCoordinatorGroup");
@@ -67,35 +69,87 @@ namespace NCsGameEvent
 					CommandInfos.AddDefaulted();
 					InfoType& Info = CommandInfos.Last();
 
+					Info.PrimaryDefinitionIndex = 1;
+
+					// Params
+					{
+						typedef NCsConsoleCommand::NParam::FInfo ParamInfoType;
+						typedef NCsConsoleCommand::NParam::EValue ParamValueType;
+
+						TArray<ParamInfoType>& ParamInfos = Info.ParamInfos;
+
+						ParamInfos.AddDefaulted(4);
+
+						// Group
+						{
+							static const int32 GROUP = 0;
+							ParamInfoType& ParamInfo = ParamInfos[GROUP];
+
+							ParamInfo.SetEnumStruct<EMCsGameEventCoordinatorGroup, FECsGameEventCoordinatorGroup>(TEXT("Group"));
+						}
+						// GameEvent
+						{
+							static const int32 GAME_EVENT = 1;
+							ParamInfoType& ParamInfo = ParamInfos[GAME_EVENT];
+
+							ParamInfo.SetEnumStruct<EMCsGameEvent, FECsGameEvent>(TEXT("GameEvent"));
+						}
+						// Value
+						{
+							static const int32 VALUE = 2;
+							ParamInfoType& ParamInfo = ParamInfos[VALUE];
+
+							ParamInfo.SetInteger(TEXT("Value"), 0.0f);
+						}
+						// Location
+						{
+							static const int32 LOCATION = 3;
+							ParamInfoType& ParamInfo = ParamInfos[LOCATION];
+
+							ParamInfo.SetString(TEXT("Location"));
+						}
+					}
+
+					TArray<FString> Base;
+					Base.Add(TEXT("BroadcastGameEvent"));
+					Base.Add(TEXT("Broadcast GameEvent"));
+					Base.Add(TEXT("Broadcast Game Event"));
+
 					// Commands
 					{
 						TArray<FString>& Commands = Info.Commands;
-						Commands.Add(TEXT("broadcastgameevent"));
-						Commands.Add(TEXT("broadcast gameevent"));
-						Commands.Add(TEXT("broadcast game event"));
+						Commands.Reset(Base.Num());
+
+						for (FString& Str : Base)
+						{
+							Commands.Add(Str.ToLower());
+						}
 					}
 					// Definitions
 					{
 						TArray<FString>& Definitions = Info.Definitions;
-						Definitions.Add(TEXT("BroadcastGameEvent [Group] [GameEvent] [Value(optional | default = 0)] [Location(optional | default = X = 0Y = 0Z = 0)]"));
-						Definitions.Add(TEXT("Broadcast GameEvent [Group] [GameEvent] [Value(optional | default = 0)] [Location(optional | default = X = 0Y = 0Z = 0)]"));
-						Definitions.Add(TEXT("Broadcast Game Event [Group] [GameEvent] [Value(optional | default = 0)] [Location(optional | default = X = 0Y = 0Z = 0)]"));
+						Definitions.Reset(Base.Num());
+
+						for (FString& Str : Base)
+						{
+							Definitions.Add(Str + TEXT(" [Group] [GameEvent] [Value(optional|default=0)] [Location(optional|default=X=0Y=0Z=0)]"));
+						}
 					}
 					// Description
 					{
 						FString& Description = Info.Description;
 						Description += TEXT("Call the command BroadcastGameEvent.\n");
 						Description += TEXT("- Checks for the following console commands:\n");
-						Description += TEXT("-- BroadcastGameEvent [Group] [GameEvent] [Value (optional|default=0)] [Location (optional|default=X=0Y=0Z=0)]\n");
-						Description += TEXT("-- BroadcastGameEvent [Group] [GameEvent] [Location (optional|default=X=0Y=0Z=0)]\n");
-						Description += TEXT("-- Broadcast GameEvent [Group] [GameEvent] [Value (optional|default=0)] [Location (optional|default=X=0Y=0Z=0)]\n");
-						Description += TEXT("-- Broadcast GameEvent [Group] [GameEvent] [Location (optional|default=X=0Y=0Z=0)]\n");
-						Description += TEXT("-- Broadcast Game Event [Group] [GameEvent] [Value (optional|default=0)] [Location (optional|default=X=0Y=0Z=0)]\n");
-						Description += TEXT("-- Broadcast Game Event [Group] [GameEvent] [Location (optional|default=X=0Y=0Z=0)]\n");
+
+						for (FString& Str : Info.Definitions)
+						{
+							Description += TEXT("-- ") + Str + TEXT("\n");
+						}
+
 						Description += TEXT("\n");
 						Description += TEXT("[Group]	  = The route / 'group' to direct the GameEvent. See FECsGameEventCoordinatorGroup.\n");
 						Description += TEXT("[GameEvent] = The type of GameEvent. See FECsGameEvent.\n");
-						Description += TEXT("[Value]	  = Optional float value. Defaults to 0.0f.");
+						Description += TEXT("[Value]	  = Optional float value. Defaults to 0.0f.\n");
 						Description += TEXT("[Location]  = Optional FVector value. Defaults to FVector::ZeroVector or FVector(0.0f, 0.0f, 0.0f).");
 					}
 				}
@@ -136,6 +190,19 @@ namespace NCsGameEvent
 			return ConsoleCommandLibrary::GetEnumStruct<_EnumMapType, EnumType>(Context, Str, OutValue, EnumName, Definition, &FCsLog::Warning);
 		}
 
+		bool FConsoleCommand::GetGameEventCoordinatorGroupAndAdvance(const FString& Context, const TCHAR*& StrAsChar, FString& Str, FECsGameEventCoordinatorGroup& OutValue, const FString& Definition)
+		{
+			if (!GetGameEventCoordinatorGroup(Context, StrAsChar, OutValue, Definition))
+				return false;
+
+			// Remove blank space ' '
+			typedef NCsConsoleCommand::NLibrary::FLibrary ConsoleCommandLibrary;
+
+			if (!ConsoleCommandLibrary::ConsumeNextCharAndCheckNotEmpty(Context, Str, Definition))
+				return false;
+			return true;
+		}
+
 		bool FConsoleCommand::GetGameEvent(const FString& Context, const TCHAR*& Str, FECsGameEvent& OutValue, const FString& Definition)
 		{
 			typedef NCsConsoleCommand::NLibrary::FLibrary ConsoleCommandLibrary;
@@ -145,6 +212,19 @@ namespace NCsGameEvent
 			const FString& EnumName = NConsoleCommand::NCached::Str::GameEvent;
 
 			return ConsoleCommandLibrary::GetEnumStruct<_EnumMapType, EnumType>(Context, Str, OutValue, EnumName, Definition, &FCsLog::Warning);
+		}
+
+		bool FConsoleCommand::GetGameEventAndAdvance(const FString& Context, const TCHAR*& StrAsChar, FString& Str, FECsGameEvent& OutValue, const FString& Definition)
+		{
+			if (!GetGameEvent(Context, StrAsChar, OutValue, Definition))
+				return false;
+
+			// Remove blank space ' '
+			typedef NCsConsoleCommand::NLibrary::FLibrary ConsoleCommandLibrary;
+
+			if (!ConsoleCommandLibrary::ConsumeNextCharAndCheckNotEmpty(Context, Str, Definition))
+				return false;
+			return true;
 		}
 
 		bool FConsoleCommand::GetValue(const FString& Context, const TCHAR*& Str, float& OutValue, const FString& Definition)
@@ -215,24 +295,16 @@ namespace NCsGameEvent
 					// Get GameEventCoordinatorGroup
 					FECsGameEventCoordinatorGroup Group;
 
-					if (!GetGameEventCoordinatorGroup(Context, StrAsChar, Group, Definition))
-						return false;
-
-					// Remove blank space ' '
-					if (!ConsoleCommandLibrary::ConsumeNextCharAndCheckNotEmpty(Context, OutString, Definition))
+					if (!GetGameEventCoordinatorGroupAndAdvance(Context, StrAsChar, OutString, Group, Definition))
 						return false;
 
 					// Get GameEvent
 					FECsGameEvent GameEvent;
 					
-					if (!GetGameEvent(Context, StrAsChar, GameEvent, Definition))
+					if (!GetGameEventAndAdvance(Context, StrAsChar, OutString, GameEvent, Definition))
 						return false;
 
-					// Remove blank space ' '
-					if (!ConsoleCommandLibrary::ConsumeNextCharAndCheckNotEmpty(Context, OutString, Definition))
-						return false;
-
-					// TODO: Look into Queueing GameEvent so its processing inlined with other events
+					// TODO: Look into Queuing GameEvent so its processing inline with other events
 
 					typedef NCsGameEvent::NCoordinator::FLibrary GameEventCoordinatorLibrary;
 

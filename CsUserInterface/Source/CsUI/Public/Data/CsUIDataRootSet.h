@@ -7,6 +7,7 @@
 
 class UDataTable;
 class UCsUserWidget_Fade;
+class UCsWidget_ConsoleCommand;
 
 USTRUCT(BlueprintType)
 struct CSUI_API FCsUIDataRootSet
@@ -19,6 +20,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UCsUserWidget_Fade> FadeWidget;
+
+	// Console Command
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UCsWidget_ConsoleCommand> ConsoleCommandWidget;
 
 	// Widget Actor
 
@@ -53,6 +59,7 @@ public:
 
 	FCsUIDataRootSet() :
 		FadeWidget(nullptr),
+		ConsoleCommandWidget(nullptr),
 		WidgetActorClasses(nullptr),
 		WidgetActors(nullptr),
 		bWidgetActorsHasData(false),

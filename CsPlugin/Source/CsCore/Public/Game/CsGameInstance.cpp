@@ -197,11 +197,11 @@ void UCsGameInstance::ExitGame()
 {
 #if WITH_EDITOR
 	if (bStandaloneFromEditor)
-		FGenericPlatformMisc::RequestExit(false);
+		FPlatformMisc::RequestExit(false);
 	else
 		GEditor->RequestEndPlayMap();
 #else
-	FGenericPlatformMisc::RequestExit(false);
+	FPlatformMisc::RequestExit(false);
 #endif // #if WITH_EDITOR
 }
 

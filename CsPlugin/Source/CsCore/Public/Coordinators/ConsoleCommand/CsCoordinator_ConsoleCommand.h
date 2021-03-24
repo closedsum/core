@@ -108,6 +108,7 @@ public:
 
 #define HandleType NCsConsoleCommand::NManager::FHandle
 #define ManagerType NCsConsoleCommand::NManager::IManager
+#define InfoType NCsConsoleCommand::FInfo
 
 private:
 
@@ -121,6 +122,11 @@ public:
 
 	void RemoveManager(const HandleType& Handle);
 
+	void GetCategories(TArray<FString>& OutCategories);
+
+	const TArray<InfoType>* GetConsoleCommandInfos(const FString& Category);
+
 #undef HandleType
 #undef ManagerType
+#undef InfoType
 };

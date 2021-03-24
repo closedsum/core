@@ -3,7 +3,6 @@
 // Interfaces
 #include "Managers/ConsoleCommand/CsManager_ConsoleCommand.h"
 // Types
-#include "ConsoleCommand/CsTypes_ConsoleCommand.h"
 #include "Managers/Input/CsTypes_Input.h"
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
 #pragma once
@@ -15,6 +14,17 @@ namespace NCsGameEvent
 {
 	namespace NCoordinator
 	{
+		namespace NConsoleCommand
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					extern CSCORE_API const FString CategoryName;
+				}
+			}
+		}
+
 	#define ConsoleCommandManagerType NCsConsoleCommand::NManager::IManager
 	
 		class CSCORE_API FConsoleCommand : ConsoleCommandManagerType
@@ -30,6 +40,10 @@ namespace NCsGameEvent
 		// ConsoleCommandManagerType (NCsConsoleCommand::NManager::IManager)
 		#pragma region
 		public:
+
+			FORCEINLINE const TArray<InfoType>& GetCommandInfos() const { return CommandInfos; }
+
+			FORCEINLINE const FString& GetCategoryName() const { return NConsoleCommand::NCached::Str::CategoryName; }
 
 			bool Exec(UWorld* InWorld, const TCHAR* Cmd, FOutputDevice& Out = *GLog);
 
@@ -48,23 +62,12 @@ namespace NCsGameEvent
 
 			TArray<InfoType> CommandInfos;
 
-			/**
-			* 
-			* 
-			* 
-			*/
-			bool GetGameEventCoordinatorGroup(const FString& Context, const TCHAR*& Str, FECsGameEventCoordinatorGroup& OutValue, const FString& Definition);
 
-			/**
-			*
-			*
-			* @param Context	The calling context.
-			* @param Str
-			* @param OutValue
-			* @param OutString
-			* return
-			*/
+			bool GetGameEventCoordinatorGroup(const FString& Context, const TCHAR*& Str, FECsGameEventCoordinatorGroup& OutValue, const FString& Definition);
+			bool GetGameEventCoordinatorGroupAndAdvance(const FString& Context, const TCHAR*& StrAsChar, FString& Str, FECsGameEventCoordinatorGroup& OutValue, const FString& Definition);
+
 			bool GetGameEvent(const FString& Context, const TCHAR*& Str, FECsGameEvent& OutValue, const FString& Definition);
+			bool GetGameEventAndAdvance(const FString& Context, const TCHAR*& StrAsChar, FString& Str, FECsGameEvent& OutValue, const FString& Definition);
 
 			bool GetValue(const FString& Context, const TCHAR*&Str, float& OutValue, const FString& Definition);
 			bool GetLocation(const FString& Context, const TCHAR*& Str, FVector& OutLocation, const FString& Definition);

@@ -26,7 +26,14 @@
 #define CS_NON_SHIPPING_EXPR(__Expr) __Expr
 #else
 #define CS_NON_SHIPPING_EXPR(__Expr)
-#endif //#if !UE_BUILD_SHIPPING
+#endif // #if !UE_BUILD_SHIPPING
+
+#if !UE_BUILD_SHIPPING
+#define CS_CONDITIONAL_LOG(__Str) if (Log) \
+	Log(__Str);
+#else
+#define CS_CONDITIONAL_LOG(__Str)
+#endif // #if !UE_BUILD_SHIPPING
 
 #define CS_STRINGIFY(x) #x
 
@@ -128,3 +135,10 @@
 				namespace __Ns5 { \
 					namespace __Ns6 { \
 						enum class __Enum : uint8; } } } } } }
+
+#define CS_SAFE_DELETE_PTR(__ptr) \
+	if (__ptr) \
+	{ \
+		delete __ptr; \
+		__ptr = nullptr; \
+	}

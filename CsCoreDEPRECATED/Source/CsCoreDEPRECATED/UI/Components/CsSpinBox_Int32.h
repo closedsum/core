@@ -15,7 +15,7 @@
  * A numerical entry box that allows for direct entry of the number or allows the user to click and slide the number.
  */
 UCLASS()
-class CSCOREDEPRECATED_API UCsSpinBox_Int32 : public UWidget
+class CSUI_API UCsSpinBox_Int32 : public UWidget
 {
 	GENERATED_UCLASS_BODY()
 
@@ -38,7 +38,7 @@ public:
 	/** The Style */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Style", meta=( DisplayName="Style" ))
 	FSpinBoxStyle WidgetStyle;
-
+	
 	UPROPERTY()
 	USlateWidgetStyleAsset* Style_DEPRECATED;
 

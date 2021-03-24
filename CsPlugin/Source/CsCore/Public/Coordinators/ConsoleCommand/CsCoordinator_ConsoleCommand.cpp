@@ -262,3 +262,38 @@ void UCsCoordinator_ConsoleCommand::RemoveManager(const HandleType& Handle)
 #undef HandleType
 	ManagerMap.Remove(Handle);
 }
+
+void UCsCoordinator_ConsoleCommand::GetCategories(TArray<FString>& OutCategories)
+{
+	typedef NCsConsoleCommand::NManager::FHandle HandleType;
+	typedef NCsConsoleCommand::NManager::IManager ManagerType;
+
+	OutCategories.Reset(ManagerMap.Num());
+
+	for (TPair<HandleType, ManagerType*>& Pair : ManagerMap)
+	{
+		ManagerType* Manager = Pair.Value;
+
+		OutCategories.Add(Manager->GetCategoryName());
+	}
+}
+
+#define InfoType NCsConsoleCommand::FInfo
+const TArray<InfoType>* UCsCoordinator_ConsoleCommand::GetConsoleCommandInfos(const FString& Category)
+{
+#undef InfoType
+
+	typedef NCsConsoleCommand::NManager::FHandle HandleType;
+	typedef NCsConsoleCommand::NManager::IManager ManagerType;
+
+	for (TPair<HandleType, ManagerType*>& Pair : ManagerMap)
+	{
+		ManagerType* Manager = Pair.Value;
+
+		if (Category == Manager->GetCategoryName())
+		{
+			return &(Manager->GetCommandInfos());
+		}
+	}
+	return nullptr;
+}

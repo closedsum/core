@@ -17,7 +17,8 @@ public class CsUI : ModuleRules
                     "AssetRegistry",
                     "CsCore",
                     "UMG",
-                }
+                    "SlateCore"
+,                }
             );
 
        PrivateDependencyModuleNames.AddRange(

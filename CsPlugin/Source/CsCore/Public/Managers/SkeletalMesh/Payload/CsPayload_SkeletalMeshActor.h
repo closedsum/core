@@ -101,6 +101,28 @@ namespace NCsSkeletalMeshActor
 			virtual const FTransform& GetTransform() const = 0;
 
 			/**
+			* Controls whether the SkeletalMeshActor should cast an shadow or not.
+			* 
+			* return
+			*/
+			virtual const bool& CastShadow() const = 0;
+
+			/**
+			* Whether the SkeletalMeshActor receives decals.
+			* 
+			* return
+			*/
+			virtual const bool& ReceivesDecals() const = 0;
+
+			/** 
+			 * Whether to render the SkeletalMeshActor in the depth only pass.  
+			 * This should generally be true for all objects, and let the renderer make decisions about whether to render objects in the depth only pass.
+			 * 
+			 * return
+			 */
+			virtual const bool& UseAsOccluder() const = 0;
+
+			/**
 			*/
 			virtual ParamsType* GetParams() const = 0;
 

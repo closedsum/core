@@ -67,6 +67,12 @@ namespace NCsSkeletalMeshActor
 
 			FTransform Transform;
 
+			bool bCastShadow;
+
+			bool bReceivesDecals;
+
+			bool bUseAsOccluder;
+
 			ParamsType* Params;
 
 		public:
@@ -134,6 +140,9 @@ namespace NCsSkeletalMeshActor
 			FORCEINLINE const FName& GetBone() const { return Bone; }
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
 			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
+			FORCEINLINE const bool& CastShadow() const { return bCastShadow; }
+			FORCEINLINE const bool& ReceivesDecals() const { return bReceivesDecals; }
+			FORCEINLINE const bool& UseAsOccluder() const { return bUseAsOccluder; }
 			FORCEINLINE ParamsType* GetParams() const { return Params; }
 
 		#pragma endregion SkeletalMeshPayloadType (NCsSkeletalMeshActor::NPayload::IPayload)

@@ -29,6 +29,7 @@
 // Setting
 #include "Settings/CsDeveloperSettings.h"
 #include "Settings/ProjectPackagingSettings.h"
+#include "Settings/LevelEditorPlaySettings.h"
 // Property
 #include "DetailCustomizations/CsRegisterDetailCustomization.h"
 // Level
@@ -53,6 +54,11 @@ namespace NCsEdEngine
 			const FString OnObjectSaved_Update_DataRootSet_DataTables = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_DataTables");
 			const FString OnObjectSaved_Update_DataRootSet_Payloads = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payloads");
 			const FString OnObjectSaved_Update_DataRootSet_Payload = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payload");
+		}
+
+		namespace Name
+		{
+			const FName LastExecutedPlayModeType = FName("LastExecutedPlayModeType");
 		}
 	}
 
@@ -87,8 +93,10 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 	FCsRegisterDetailCustomization::Register();
 
 	FEditorDelegates::BeginPIE.AddUObject(this, &UCsEdEngine::OnBeginPIE);
+	FEditorDelegates::EndPIE.AddUObject(this, &UCsEdEngine::OnEndPIE);
 	FEditorDelegates::BeginStandaloneLocalPlay.AddUObject(this, &UCsEdEngine::OnStandaloneLocalPlayEvent);
 	FCoreUObjectDelegates::OnObjectSaved.AddUObject(this, &UCsEdEngine::OnObjectSaved);
+	FCoreUObjectDelegates::OnObjectPropertyChanged.AddUObject(this, &UCsEdEngine::OnObjectPropertyChanged);
 
 	OnWorldContextDestroyed().AddUObject(this, &UCsEdEngine::OnWorldContextDestroyed_Internal);
 
@@ -155,6 +163,10 @@ void UCsEdEngine::LaunchNewProcess(const FRequestPlaySessionParams& InParams, co
 
 		Settings->DataRootSet = Settings->GetDataRootSet(ECsPlatform::Android);
 
+		FPropertyChangedEvent PropChangeEvent(UCsDeveloperSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDeveloperSettings, DataRootSet)));
+		Settings->PostEditChangeProperty(PropChangeEvent);
+		Settings->UpdateDefaultConfigFile();
+
 		UProjectPackagingSettings* PackageSettings = GetMutableDefault< UProjectPackagingSettings>();
 
 		if (PackageSettings->DirectoriesToAlwaysCook.Num() == CS_EMPTY)
@@ -163,8 +175,9 @@ void UCsEdEngine::LaunchNewProcess(const FRequestPlaySessionParams& InParams, co
 		}
 
 		PackageSettings->DirectoriesToAlwaysCook[CS_FIRST] = Settings->GetDirectoryToAlwaysCook(ECsPlatform::Android);
+		PackageSettings->UpdateDefaultConfigFile();
 	}
-
+	
 	Super::LaunchNewProcess(InParams, InInstanceNum, NetMode, bIsDedicatedServer);
 
 	Standalone.Monitor();
@@ -202,6 +215,28 @@ void UCsEdEngine::OnBeginPIE(bool IsSimulating)
 	FCsCVarDrawMap::Get().ResetDirty();
 }
 
+void UCsEdEngine::OnEndPIE(bool IsSimulating)
+{
+	UCsDeveloperSettings* ModuleSettings   = GetMutableDefault<UCsDeveloperSettings>();
+	ULevelEditorPlaySettings* PlaySettings = GetMutableDefault<ULevelEditorPlaySettings>();
+
+	const EPlayModeType PlayMode = PlaySettings->LastExecutedPlayModeType;
+
+	// PIE
+	if (PlayMode == EPlayModeType::PlayMode_InEditorFloating)
+	{
+		// Mobile
+		if (ModuleSettings->bPIE_Mobile)
+		{
+			ModuleSettings->DataRootSet = ModuleSettings->GetDataRootSet(ECsPlatform::Windows);
+
+			FPropertyChangedEvent PropChangeEvent(UCsDeveloperSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDeveloperSettings, DataRootSet)));
+			ModuleSettings->PostEditChangeProperty(PropChangeEvent);
+			ModuleSettings->UpdateDefaultConfigFile();
+		}
+	}
+}
+
 // World
 #pragma region
 
@@ -211,6 +246,70 @@ void UCsEdEngine::OnWorldContextDestroyed_Internal(FWorldContext& WorldContext)
 }
 
 #pragma endregion World
+
+// PropertyChange
+#pragma region
+
+void UCsEdEngine::OnObjectPropertyChanged(UObject* Object, FPropertyChangedEvent& e)
+{
+	using namespace NCsEdEngine::NCached;
+
+	const FName PropertyName	   = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+	const FName MemberPropertyName = (e.MemberProperty != NULL) ? e.MemberProperty->GetFName() : NAME_None;
+
+	UCsDeveloperSettings* ModuleSettings   = GetMutableDefault<UCsDeveloperSettings>();
+	ULevelEditorPlaySettings* PlaySettings = GetMutableDefault<ULevelEditorPlaySettings>();
+
+	// "Capture" Play button press in editor and alter settings
+	if (Object == PlaySettings)
+	{
+		if (PropertyName == Name::LastExecutedPlayModeType)
+		{
+			if (ModuleSettings->bOverridePIESettings)
+			{
+				const EPlayModeType PlayMode = PlaySettings->LastExecutedPlayModeType;
+
+				// PIE
+				if (PlayMode == EPlayModeType::PlayMode_InEditorFloating)
+				{
+					// Mobile
+					if (ModuleSettings->bPIE_Mobile)
+					{
+						ModuleSettings->DataRootSet = ModuleSettings->GetDataRootSet(ECsPlatform::Android);
+
+						FPropertyChangedEvent PropChangeEvent(UCsDeveloperSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDeveloperSettings, DataRootSet)));
+						ModuleSettings->PostEditChangeProperty(PropChangeEvent);
+						ModuleSettings->UpdateDefaultConfigFile();
+
+						PlaySettings->NewWindowWidth  = ModuleSettings->PIE_Mobile.NewWindowWidth;
+						PlaySettings->NewWindowHeight = ModuleSettings->PIE_Mobile.NewWindowHeight;
+					}
+					else
+					{
+						PlaySettings->NewWindowWidth  = ModuleSettings->PIE.NewWindowWidth;
+						PlaySettings->NewWindowHeight = ModuleSettings->PIE.NewWindowHeight;
+					}
+				}
+				// Standalone Mobile
+				else
+				if (PlayMode == EPlayModeType::PlayMode_InMobilePreview)
+				{
+					PlaySettings->NewWindowWidth  = ModuleSettings->Standalone_Mobile.NewWindowWidth;
+					PlaySettings->NewWindowHeight = ModuleSettings->Standalone_Mobile.NewWindowHeight;
+				}
+				// Standalone
+				else
+				if (PlayMode == EPlayModeType::PlayMode_InNewProcess)
+				{
+					PlaySettings->NewWindowWidth  = ModuleSettings->Standalone.NewWindowWidth;
+					PlaySettings->NewWindowHeight = ModuleSettings->Standalone.NewWindowHeight;
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion PropertyChange
 
 // Save
 #pragma region
@@ -638,8 +737,13 @@ char UCsEdEngine::FStandalone::Monitor_Internal(FCsRoutine* R)
 		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
 		Settings->DataRootSet		   = Settings->GetDataRootSet(ECsPlatform::Windows);
 
+		FPropertyChangedEvent PropChangeEvent(UCsDeveloperSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDeveloperSettings, DataRootSet)));
+		Settings->PostEditChangeProperty(PropChangeEvent);
+		Settings->UpdateDefaultConfigFile();
+
 		UProjectPackagingSettings* PackageSettings		   = GetMutableDefault< UProjectPackagingSettings>();
 		PackageSettings->DirectoriesToAlwaysCook[CS_FIRST] = Settings->GetDirectoryToAlwaysCook(ECsPlatform::Windows);
+		PackageSettings->UpdateDefaultConfigFile();
 	}
 	Reset();
 

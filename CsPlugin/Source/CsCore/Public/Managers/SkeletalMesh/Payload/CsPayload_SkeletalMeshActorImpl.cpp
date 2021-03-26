@@ -28,6 +28,9 @@ namespace NCsSkeletalMeshActor
 			Bone(NAME_None),
 			TransformRules(0),
 			Transform(FTransform::Identity),
+			bCastShadow(false),
+			bReceivesDecals(false),
+			bUseAsOccluder(false),
 			Params(nullptr)
 		{
 			InterfaceMap = new FCsInterfaceMap();
@@ -68,6 +71,9 @@ namespace NCsSkeletalMeshActor
 			Bone = NAME_None;
 			TransformRules = 0;
 			Transform = FTransform::Identity;
+			bCastShadow = false;
+			bReceivesDecals = false;
+			bUseAsOccluder = false;
 			Params = nullptr;
 		}
 

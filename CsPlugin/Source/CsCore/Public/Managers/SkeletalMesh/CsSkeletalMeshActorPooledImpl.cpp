@@ -55,6 +55,9 @@ ACsSkeletalMeshActorPooledImpl::ACsSkeletalMeshActorPooledImpl(const FObjectInit
 	GetSkeletalMeshComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetSkeletalMeshComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	GetSkeletalMeshComponent()->SetHiddenInGame(true);
+	GetSkeletalMeshComponent()->SetCastShadow(false);
+	GetSkeletalMeshComponent()->SetReceivesDecals(false);
+	GetSkeletalMeshComponent()->bUseAsOccluder = false;
 	GetSkeletalMeshComponent()->SetComponentTickEnabled(false);
 	GetSkeletalMeshComponent()->bNoSkeletonUpdate = true;
 	GetSkeletalMeshComponent()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;

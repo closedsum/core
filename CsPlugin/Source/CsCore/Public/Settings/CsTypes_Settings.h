@@ -75,3 +75,41 @@ namespace NCsPopulateEnumMapMethod
 #define ECS_POPULATE_ENUM_MAP_METHOD_MAX (uint8)ECsPopulateEnumMapMethod::ECsPopulateEnumMapMethod_MAX
 
 #pragma endregion PopulateEnumMapMethod
+
+// FCsSettings_PIE
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsSettings_PIE
+{
+	GENERATED_USTRUCT_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bSwapViewportDimensions;
+
+	/** The width of the new view port window in pixels (0 = use the desktop's screen resolution). */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 0))
+	int32 NewWindowWidth;
+
+	/** The height of the new view port window in pixels (0 = use the desktop's screen resolution). */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 0))
+	int32 NewWindowHeight;
+
+	FCsSettings_PIE() :
+		bSwapViewportDimensions(false),
+		NewWindowWidth(1280),
+		NewWindowHeight(720)
+	{
+	}
+
+	void SwapViewportDimensions()
+	{
+		int32 Temp	    = NewWindowWidth;
+		NewWindowWidth  = NewWindowHeight;
+		NewWindowHeight = Temp;
+
+		bSwapViewportDimensions = false;
+	}
+};
+
+#pragma endregion FCsSettings_PIE

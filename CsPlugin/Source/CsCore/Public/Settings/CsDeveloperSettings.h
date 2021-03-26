@@ -254,6 +254,30 @@ public:
 
 #pragma endregion SkeletalMesh
 
+// PIE
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")
+	bool bOverridePIESettings;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")
+	bool bPIE_Mobile;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")
+	FCsSettings_PIE PIE;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")
+	FCsSettings_PIE PIE_Mobile;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")
+	FCsSettings_PIE Standalone;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")
+	FCsSettings_PIE Standalone_Mobile;
+
+#pragma endregion PIE
+
 // Editor
 #pragma region
 public:

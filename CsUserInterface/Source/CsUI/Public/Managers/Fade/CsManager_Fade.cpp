@@ -3,7 +3,7 @@
 #include "CsUI.h"
 
 // CVar
-
+#include "Managers/Fade/CsCVars_Manager_Fade.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
@@ -43,6 +43,7 @@ namespace NCsManagerFade
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, CreateFadeWidget);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, Fade);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, Fade_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, SafeFade);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, StopFade);
 		}
 
@@ -225,8 +226,16 @@ void UCsManager_Fade::CreateFadeWidget()
 	if (FadeWidget &&
 		!FadeWidget->IsPendingKill())
 	{
+		FadeWidget->SetVisibility(ESlateVisibility::Collapsed);
 		FadeWidget->MarkPendingKill();
 		FadeWidget = nullptr;
+
+#if !UE_BUILD_SHIPPING
+		if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
+		{
+			UE_LOG(LogCsUI, Warning, TEXT("%s: Marking FadeWidget to be destroyed."), *Context);
+		}
+#endif // #if !UE_BUILD_SHIPPING
 	}
 
 	typedef NCsUIDataRootSet::FLibrary DataRootSetLibrary;
@@ -243,6 +252,13 @@ void UCsManager_Fade::CreateFadeWidget()
 	static const int32 ZOrder = 1000;
 	FadeWidget->AddToViewport(ZOrder);
 	FadeWidget->SetVisibility(ESlateVisibility::Collapsed);
+
+#if !UE_BUILD_SHIPPING
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
+	{
+		UE_LOG(LogCsUI, Warning, TEXT("%s: Creating FadeWidget and adding to viewport."), *Context);
+	}
+#endif // #if !UE_BUILD_SHIPPING
 }
 
 #define ParamsType NCsFade::FParams
@@ -290,11 +306,26 @@ void UCsManager_Fade::Fade(const ParamsType& Params)
 	static const int32 COLLAPSE = 0;
 	Payload->SetValue_Flag(COLLAPSE, Params.bCollapseOnEnd);
 
+#if !UE_BUILD_SHIPPING
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
+	{
+		UE_LOG(LogCsUI, Warning, TEXT("%s: Starting Fade"), *Context);
+		UE_LOG(LogCsUI, Warning, TEXT(" From: %s"), *(Params.From.ToString()));
+		UE_LOG(LogCsUI, Warning, TEXT(" To: %s"), *(Params.To.ToString()));
+		UE_LOG(LogCsUI, Warning, TEXT(" Time: %f"), Params.Time);
+		UE_LOG(LogCsUI, Warning, TEXT(" bCollapseOnEnd: %s"), Params.bCollapseOnEnd ? TEXT("True") : TEXT("False"));
+	}
+#endif // #if !UE_BUILD_SHIPPING
+
 	FadeHandle = Scheduler->Start(Payload);
 }
 
 char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 {
+	using namespace NCsManagerFade::NCached;
+
+	const FString& Context = Str::Fade_Internal;
+
 	// From
 	static const int32 FROM = 0;
 	const FLinearColor& From = R->GetValue_Color(FROM);
@@ -320,11 +351,30 @@ char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 		{
 			FadeWidget->SetColorAndOpacity(FLinearColor::LerpUsingHSV(From, To, Percent));
 
+#if !UE_BUILD_SHIPPING
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
+			{
+				UE_LOG(LogCsUI, Warning, TEXT("%s: Performing Fade"), *Context);
+				UE_LOG(LogCsUI, Warning, TEXT(" From: %s"), *(From.ToString()));
+				UE_LOG(LogCsUI, Warning, TEXT(" To: %s"), *(To.ToString()));
+				UE_LOG(LogCsUI, Warning, TEXT(" Percent: %f"), Percent);
+				UE_LOG(LogCsUI, Warning, TEXT(" ElapsedTime: %f"), R->ElapsedTime.Time);
+			}
+#endif // #if !UE_BUILD_SHIPPING
+
 			CS_COROUTINE_YIELD(R);
 		}
 	} while (R->ElapsedTime.Time < Time);
 
 	FadeWidget->SetColorAndOpacity(To);
+
+#if !UE_BUILD_SHIPPING
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
+	{
+		UE_LOG(LogCsUI, Warning, TEXT("%s: Ending Fade"), *Context);
+		UE_LOG(LogCsUI, Warning, TEXT(" To: %s"), *(To.ToString()));
+	}
+#endif // #if !UE_BUILD_SHIPPING
 
 	if (bCollapseOnEnd)
 	{
@@ -339,14 +389,32 @@ void UCsManager_Fade::SafeFade(const ParamsType& Params)
 {
 #undef ParamsType
 
+	using namespace NCsManagerFade::NCached;
+
+	const FString& Context = Str::SafeFade;
+
 	if (!FadeWidget ||
 		FadeWidget->IsPendingKill())
 	{
+#if !UE_BUILD_SHIPPING
+		if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
+		{
+			UE_LOG(LogCsUI, Warning, TEXT("%s: CreateFadeWidget."), *Context);
+		}
+#endif // #if !UE_BUILD_SHIPPING
+
 		CreateFadeWidget();
 	}
 
 	if (!FadeWidget->IsInViewport())
 	{
+#if !UE_BUILD_SHIPPING
+		if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
+		{
+			UE_LOG(LogCsUI, Warning, TEXT("%s: FadeWidget is NOT in the viewport. Adding to viewport."), *Context);
+		}
+#endif // #if !UE_BUILD_SHIPPING
+
 		static const int32 ZOrder = 1000;
 		FadeWidget->AddToViewport(ZOrder);
 	}
@@ -366,6 +434,13 @@ void UCsManager_Fade::StopFade()
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(ContextRoot);
+
+#if !UE_BUILD_SHIPPING
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
+	{
+		UE_LOG(LogCsUI, Warning, TEXT("%s: Stopping Fade"), *Context);
+	}
+#endif // #if !UE_BUILD_SHIPPING
 
 	Scheduler->End(UpdateGroup, FadeHandle);
 }

@@ -191,6 +191,32 @@ void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEven
 			Input.OnPostEditChange(PropertyName, PropertyNames);
 		}
 	}
+	// PIE
+	{
+		if (PropertyNames.Contains("PIE") &&
+			PropertyNames.Contains("bSwapViewportDimensions"))
+		{
+			PIE.SwapViewportDimensions();
+		}
+		else
+		if (PropertyNames.Contains("PIE_Mobile") &&
+			PropertyNames.Contains("bSwapViewportDimensions"))
+		{
+			PIE_Mobile.SwapViewportDimensions();
+		}
+		else
+		if (PropertyNames.Contains("Standalone") &&
+			PropertyNames.Contains("bSwapViewportDimensions"))
+		{
+			Standalone.SwapViewportDimensions();
+		}
+		else
+		if (PropertyNames.Contains("Standalone_Mobile") &&
+			PropertyNames.Contains("bSwapViewportDimensions"))
+		{
+			Standalone_Mobile.SwapViewportDimensions();
+		}
+	}
 
 	Super::PostEditChangeChainProperty(e);
 }

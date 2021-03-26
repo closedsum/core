@@ -97,6 +97,14 @@ public:
 
 #pragma endregion Object
 
+// PropertyChange
+#pragma region
+public:
+
+void OnObjectPropertyChanged(UObject* Object, FPropertyChangedEvent& e);
+
+#pragma endregion PropertyChange
+
 // Save
 #pragma region
 public:
@@ -105,9 +113,14 @@ public:
 
 #pragma endregion Save
 
+// PIE
+#pragma region
 public:
 
 	void OnBeginPIE(bool IsSimulating);
+	void OnEndPIE(bool IsSimulating);
+
+#pragma endregion PIE
 
 // Stream
 #pragma region

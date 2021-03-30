@@ -4,21 +4,40 @@
 #include "CsCore.h"
 
 // Library
-#include "Library/CsLibrary_Common.h"
-#include "Library/CsLibrary_World.h"
-
+#include "Managers/Sound/CsLibrary_Manager_Sound.h"
+// Pool
+#include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
+// Components
 #include "Components/SkeletalMeshComponent.h"
+// Sound
+#include "Sound/SoundBase.h"
+
+#if WITH_EDITOR
+// Library
+#include "Library/CsLibrary_World.h"
 #include "Kismet/GameplayStatics.h"
-#include "Sound/SoundCue.h"
+#endif // #if WITH_EDITOR
 
-// Manager
-#include "Managers/Sound/CsManager_Sound.h"
+// Cached
+#pragma region
 
-/////////////////////////////////////////////////////
-// UCsAnimNotify_PlaySound
+namespace NCsAnimNotifyPlaySound
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsAnimNotify_PlaySound, GetNotifyName_Implementation);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsAnimNotify_PlaySound, Notify);
+		}
+	}
+}
 
-UCsAnimNotify_PlaySound::UCsAnimNotify_PlaySound()
-	: Super()
+#pragma endregion Cached
+
+UCsAnimNotify_PlaySound::UCsAnimNotify_PlaySound() : 
+	Super(),
+	Sound()
 {
 #if WITH_EDITORONLY_DATA
 	NotifyColor = FColor(196, 142, 255, 255);
@@ -27,9 +46,13 @@ UCsAnimNotify_PlaySound::UCsAnimNotify_PlaySound()
 
 FString UCsAnimNotify_PlaySound::GetNotifyName_Implementation() const
 {
-	if (Sound.Sound)
+	using namespace NCsAnimNotifyPlaySound::NCached;
+
+	const FString& Context = Str::GetNotifyName_Implementation;
+
+	if (USoundBase* S = Sound.SafeLoad(Context))
 	{
-		return Sound.Sound->GetName();
+		return S->GetName();
 	}
 	else
 	{
@@ -39,51 +62,47 @@ FString UCsAnimNotify_PlaySound::GetNotifyName_Implementation() const
 
 void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation)
 {
-	if (!Sound.Sound)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsAnimNotify_PlaySound::Notify (%s): No Sound set on Notify for Animation: %s"), *(MeshComp->SkeletalMesh->GetName()), *(Animation->GetName()));
-		return;
-	}
+	using namespace NCsAnimNotifyPlaySound::NCached;
 
+	const FString& Context = Str::Notify;
+
+	typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
+	typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadImplType;
+
+#if WITH_EDITOR
 	UWorld* CurrentWorld = MeshComp->GetWorld();
 
-	// TODO: need to check case of AnimInstance
-
-	const bool InGame = FCsLibrary_World::IsPlayInGame(CurrentWorld) || FCsLibrary_World::IsPlayInPIE(CurrentWorld);
-
-	// Use Sound Manager
-	/*
-	if (InGame)
+	if (FCsLibrary_World::IsPlayInGame(CurrentWorld) || 
+		FCsLibrary_World::IsPlayInPIE(CurrentWorld))
 	{
-		AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(CurrentWorld);
+		PooledPayloadImplType PooledPayload;
+		PooledPayload.Instigator = MeshComp;
+		PooledPayload.Owner		 = MeshComp->GetOwner() ? Cast<UObject>(MeshComp->GetOwner()) : Cast<UObject>(MeshComp->GetAttachParent());
+		PooledPayload.Parent	 = MeshComp;
 
-		SoundElement.Set(Sound.Sound);
-		SoundElement.Type = Sound.Type;
-		SoundElement.Priority = Sound.Priority;
-		SoundElement.Duration = Sound.Sound->GetDuration();
-		SoundElement.IsLooping = false;
-		SoundElement.VolumeMultiplier = Sound.VolumeMultiplier;
-		SoundElement.PitchMultiplier = Sound.PitchMultiplier;
-		SoundElement.Bone = Sound.Bone;
-
-		FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();
-		Payload->Set(&SoundElement);
-		Payload->Owner = MeshComp->GetOwner() ? Cast<UObject>(MeshComp->GetOwner()) : Cast<UObject>(MeshComp->GetAttachParent());
-		Payload->Parent = MeshComp;
-
-		Manager_Sound->Play(Payload);
+		SoundManagerLibrary::SpawnChecked(Context, MeshComp, &PooledPayload, Sound);
 	}
-	// Editor
 	else
 	{
-		if (Sound.Bone != NAME_None)
+		if (USoundBase* S = Sound.SafeLoad(Context))
 		{
-			UGameplayStatics::SpawnSoundAttached(Sound.Sound, MeshComp, Sound.Bone, FVector(ForceInit), EAttachLocation::KeepRelativeOffset, false, Sound.VolumeMultiplier, Sound.PitchMultiplier);
-		}
-		else
-		{
-			UGameplayStatics::PlaySoundAtLocation(CurrentWorld, Sound.Sound, MeshComp->GetComponentLocation(), Sound.VolumeMultiplier, Sound.PitchMultiplier);
+			if (Sound.Bone != NAME_None)
+			{
+				UGameplayStatics::SpawnSoundAttached(S, MeshComp, Sound.Bone, Sound.Transform.GetLocation(), EAttachLocation::KeepRelativeOffset, false, 1.0f, 1.0f);
+			}
+			else
+			{
+				UGameplayStatics::PlaySoundAtLocation(CurrentWorld,S, MeshComp->GetComponentLocation(), 1.0f, 1.0f);
+			}
 		}
 	}
-	*/
+#else
+	PooledPayloadImplType PooledPayload;
+	PooledPayload.Instigator = MeshComp;
+	PooledPayload.Owner		 = MeshComp->GetOwner() ? Cast<UObject>(MeshComp->GetOwner()) : Cast<UObject>(MeshComp->GetAttachParent());
+	PooledPayload.Parent	 = MeshComp;
+
+	SoundManagerLibrary::SpawnChecked(Context, MeshComp, &PooledPayload, Sound);
+#endif // #if WITH_EDITOR
+
 }

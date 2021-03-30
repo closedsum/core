@@ -162,6 +162,25 @@ namespace NCsSoundDeallocateMethod
 // FCsSound
 #pragma region
 
+USoundBase* FCsSound::SafeLoad(const FString& Context) const
+{
+	if (!Sound.ToSoftObjectPath().IsValid())
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Sound is NULL or the Path is NOT Valid."), *Context);
+		return nullptr;
+	}
+
+	TSoftObjectPtr<USoundBase> SoftObject = Sound;
+
+	USoundBase* S = SoftObject.LoadSynchronous();
+
+	if (!S)
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Failed to load Sound @ %s."), *Context, *(Sound.ToSoftObjectPath().ToString()));
+	}
+	return S;
+}
+
 bool FCsSound::IsValidChecked(const FString& Context) const
 {
 	// Check Sound is Valid.

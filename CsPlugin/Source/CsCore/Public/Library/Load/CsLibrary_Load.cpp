@@ -13,6 +13,8 @@
 #include "Materials/Material.h"
 #include "Materials/MaterialExpression.h"
 #include "Materials/MaterialFunction.h"
+// Animation
+#include "Animation/AnimNotifies/AnimNotify.h"
 // Graph
 #include "EdGraph/EdGraphNode.h"
 // Blueprint
@@ -667,6 +669,7 @@ void UCsLibrary_Load::GetObjectPaths_ObjectProperty_Internal(UClass* PropertyCla
 	const bool ValidClass = PropertyClass->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint) ||
 							PropertyClass == UDataTable::StaticClass() ||
 							PropertyClass->IsChildOf<USoundBase>() ||
+							PropertyClass->IsChildOf<UAnimNotify>() ||
 							PropertyClass->ImplementsInterface(UInterface_AssetUserData::StaticClass());
 		
 	if (ValidClass)
@@ -1767,6 +1770,17 @@ void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct, cons
 				if (*DataTable)
 				{
 					LoadDataTable(*DataTable, LoadFlags, LoadCodes);
+				}
+			}
+			// Anim Notifies
+			else
+			if (ObjectProperty->PropertyClass == UAnimNotify::StaticClass())
+			{
+				UAnimNotify** Notify = ObjectProperty->ContainerPtrToValuePtr<UAnimNotify*>(StructValue);
+
+				if (*Notify)
+				{
+					LoadStruct(*Notify, (*Notify)->GetClass(), LoadFlags, LoadCodes);
 				}
 			}
 			continue;

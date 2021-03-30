@@ -336,151 +336,6 @@ namespace NCsSoundDeallocateMethod
 
 #pragma endregion SoundDeallocateMethod
 
-// FCsSoundElement
-#pragma region
-
-class USoundCue;
-
-/**
-*/
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsSoundElement
-{
-	GENERATED_USTRUCT_BODY()
-
-	/** Soft reference to a Sound Asset. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	TSoftObjectPtr<USoundCue> Sound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
-	int32 Sound_LoadFlags;
-
-	UPROPERTY(Transient)
-	USoundCue* Sound_Internal;
-
-	/** Hard reference to a Sound Asset. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	FECsSound Type;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	ECsSoundPriority Priority;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	bool bSpatialize;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (ClampMin = "0.05", UIMin = "0.05"))
-	float Duration;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	bool IsLooping;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	float VolumeMultiplier;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	float PitchMultiplier;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	FName Bone;
-
-public:
-
-	FCsSoundElement() :
-		Sound_LoadFlags(0),
-		Sound_Internal(nullptr),
-		bSpatialize(false),
-		IsLooping(false)
-	{
-		Type = EMCsSound::Get().GetMAX();
-		Priority = ECsSoundPriority::Medium;
-		Duration = 0.05f;
-		VolumeMultiplier = 1.0f;
-		PitchMultiplier = 1.0f;
-		Bone = NAME_None;
-	}
-
-	FORCEINLINE bool operator==(const FCsSoundElement& B) const
-	{
-		return Sound == B.Sound &&
-				Sound_LoadFlags == B.Sound_LoadFlags &&
-				Type == B.Type &&
-				Priority == B.Priority &&
-				Duration == B.Duration &&
-				IsLooping == B.IsLooping &&
-				VolumeMultiplier == B.VolumeMultiplier &&
-				PitchMultiplier == B.PitchMultiplier &&
-				Bone == B.Bone;
-	}
-
-	FORCEINLINE bool operator!=(const FCsSoundElement& B) const
-	{
-		return !(*this == B);
-	}
-
-	FORCEINLINE USoundCue* Get() const
-	{
-		return Sound_Internal;
-	}
-};
-
-#pragma endregion FCsSoundElement
-
-// FCsFpvSoundElement
-#pragma region
-
-/**
-*/
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsFpvSoundElement
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, Category = "Sound")
-	FCsSoundElement Sound1P;
-
-	UPROPERTY(EditAnywhere, Category = "Sound")
-	FCsSoundElement Sound3P;
-
-public:
-
-	FORCEINLINE FCsFpvSoundElement& operator=(const FCsFpvSoundElement& B)
-	{
-		Sound1P = B.Sound1P;
-		Sound3P = B.Sound3P;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsFpvSoundElement& B) const
-	{
-		return Sound1P == B.Sound1P && Sound3P == B.Sound3P;
-	}
-
-	FORCEINLINE bool operator!=(const FCsFpvSoundElement& B) const
-	{
-		return !(*this == B);
-	}
-
-	FORCEINLINE FCsSoundElement* Get(const ECsViewType& ViewType)
-	{
-		if (ViewType == ECsViewType::FirstPerson || ViewType == ECsViewType::VR)
-			return &Sound1P;
-		if (ViewType == ECsViewType::ThirdPerson)
-			return &Sound3P;
-		return nullptr;
-	}
-
-	FORCEINLINE USoundCue* GetCue(const ECsViewType& ViewType)
-	{
-		if (ViewType == ECsViewType::FirstPerson || ViewType == ECsViewType::VR)
-			return Sound1P.Get();
-		if (ViewType == ECsViewType::ThirdPerson)
-			return Sound3P.Get();
-		return nullptr;
-	}
-};
-
-#pragma endregion FCsFpvSoundElement
-
 // NoiseEvent
 #pragma region
 
@@ -652,7 +507,9 @@ public:
 	*/
 	FORCEINLINE USoundBase* GetChecked(const FString& Context) const
 	{
-		checkf(Sound_Internal, TEXT("%s: Sound_Internal is NULL."), *Context);
+		checkf(Sound.ToSoftObjectPath().IsValid(), TEXT("%s: Sound is NULL or the Path is NOT Valid."), *Context);
+
+		checkf(Sound_Internal, TEXT("%s: Failed to load Sound @ %s."), *Context, *(Sound.ToSoftObjectPath().ToString()));
 
 		return Sound_Internal;
 	}
@@ -664,10 +521,14 @@ public:
 	*/
 	FORCEINLINE USoundBase* GetChecked() const
 	{
-		checkf(Sound_Internal, TEXT("FCsSound::GetChecked: Sound_Internal is NULL."));
+		checkf(Sound.ToSoftObjectPath().IsValid(), TEXT("FCsSound::GetChecked: Sound is NULL or the Path is NOT Valid."));
+
+		checkf(Sound_Internal, TEXT("FCsSound::GetChecked: Failed to load Sound @ %s."), *(Sound.ToSoftObjectPath().ToString()));
 
 		return Sound_Internal;
 	}
+
+	USoundBase* SafeLoad(const FString& Context) const;
 
 	/**
 	* Get the Hard reference to the Sound Attenuation Asset.

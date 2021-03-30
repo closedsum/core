@@ -163,6 +163,18 @@ public:
 
 #pragma endregion References
 
+// Asset
+#pragma region
+public:
+
+	bool Check_GetObjectPaths(const TCHAR* Stream);
+	void GetObjectPaths(const FString& AssetPath);
+
+	bool Check_LoadObject(const TCHAR* Stream);
+	void LoadObject(const FString& AssetPath);
+
+#pragma endregion Asset
+
 // Standalone
 #pragma region
 protected:

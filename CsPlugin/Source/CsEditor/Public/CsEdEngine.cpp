@@ -203,6 +203,10 @@ bool UCsEdEngine::Exec(UWorld* InWorld, const TCHAR* Stream, FOutputDevice& Ar)
 		if (Check_PrintBlueprintReferencesReport(Stream))
 			return true;
 	}
+	if (Check_GetObjectPaths(Stream))
+		return true;
+	if (Check_LoadObject(Stream))
+		return true;
 	return true;
 }
 
@@ -697,6 +701,73 @@ void UCsEdEngine::PrintBlueprintReferencesReport(const FName& AssetName)
 }
 
 #pragma endregion References
+
+// Asset
+#pragma region
+
+bool UCsEdEngine::Check_GetObjectPaths(const TCHAR* Stream)
+{
+	const FString Command	 = TEXT("GetObjectPaths");
+	const FString Parameters = TEXT("[path]");
+	const FString Format	 = Command + TEXT(" ") + Parameters;
+
+	if (FParse::Command(&Stream, *Command))
+	{
+		const FString AssetPath = UCsLibrary_Common::Stream_GetString(Stream, false);
+
+		if (!AssetPath.IsEmpty())
+		{
+			GetObjectPaths(AssetPath);
+			return true;
+		}
+	}
+	return false;
+}
+
+void UCsEdEngine::GetObjectPaths(const FString& AssetPath)
+{
+	FSoftObjectPath Path(AssetPath);
+
+	if (UObject* Object = Path.TryLoad())
+	{
+		FCsLibraryLoad_GetObjectPaths Result;
+
+		UCsLibrary_Load::GetObjectPaths(Object, Object->GetClass(), Result);
+
+		Result.Print();
+	}
+}
+
+bool UCsEdEngine::Check_LoadObject(const TCHAR* Stream)
+{
+	const FString Command	 = TEXT("LoadObject");
+	const FString Parameters = TEXT("[path]");
+	const FString Format	 = Command + TEXT(" ") + Parameters;
+
+	if (FParse::Command(&Stream, *Command))
+	{
+		const FString AssetPath = UCsLibrary_Common::Stream_GetString(Stream, false);
+
+		if (!AssetPath.IsEmpty())
+		{
+			LoadObject(AssetPath);
+			return true;
+		}
+	}
+	return false;
+}
+
+void UCsEdEngine::LoadObject(const FString& AssetPath)
+{
+	FSoftObjectPath Path(AssetPath);
+
+	if (UObject* Object = Path.TryLoad())
+	{
+		UCsLibrary_Load::LoadStruct(Object, Object->GetClass(), NCsLoadFlags::All, NCsLoadCodes::All);
+	}
+}
+
+#pragma endregion Asset
 
 // Standalone
 #pragma region

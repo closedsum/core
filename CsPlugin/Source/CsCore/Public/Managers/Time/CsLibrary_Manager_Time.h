@@ -13,6 +13,7 @@ namespace NCsTime
 		{
 		public:
 
+		#if WITH_EDITOR
 			/**
 			* Get the Context (Root) for UCsManager_Time from a WorldContext.
 			*
@@ -21,7 +22,11 @@ namespace NCsTime
 			* return				Context for UCsManager_Time
 			*/
 			static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
+		#else
+			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext) { return nullptr; }
+		#endif // #if WITH_EDITOR
 
+		#if WITH_EDITOR
 			/**
 			* Safely get the Context (Root) for UCsManager_Time from a WorldContext.
 			*
@@ -29,6 +34,9 @@ namespace NCsTime
 			* return				Context for UCsManager_Time
 			*/
 			static UObject* GetSafeContextRoot(UObject* WorldContext);
+		#else
+			FORCEINLINE static UObject* GetSafeContextRoot(UObject* WorldContext) { return nullptr; }
+		#endif // #if WITH_EDITOR
 
 			/**
 			* 

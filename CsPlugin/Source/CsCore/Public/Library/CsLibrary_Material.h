@@ -154,23 +154,97 @@ namespace NCsMaterial
 			*/
 			static void Destroy(TArray<UMaterialInstanceDynamic*>& MIDs);
 
+			/**
+			* Check whether there is a Scalar Parameter Value with name: ParamName for MID.
+			*
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Scalar Parameter Value.
+			* return			Whether there IS a Scalar Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsScalarParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName);
+
+			/**
+			* Check whether there is a Vector Parameter Value with name: ParamName for MID.
+			* 
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value.
+			* return			Whether there IS a Vector Parameter Value with name: ParamName or NOT.
+			*/
 			static bool IsVectorParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName);
 
 			/**
+			* Set the Scalar Parameter Value with name: ParamName with value: Value on MID.
+			*
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Scalar Parameter Value to set.
+			* @param Value		The value to set.
 			*/
-			static void SetScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float &Value);
+			static void SetScalarParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const float& Value);
 
 			/**
+			* Set the Scalar Parameter Value with name: ParamName with value: Value on MIDs.
+			*
+			* @param Context	The calling context.
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Scalar Parameter Value to set.
+			* @param Value		The value to set.
 			*/
-			static void SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector &Value);
+			static void SetScalarParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*> MIDs, const FName& ParamName, const float& Value);
 
 			/**
+			* Set the Scalar Parameter Value with name: ParamName with value Value on MIDs.
+			* 
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Scalar Parameter Value to set.
+			* @param Value		The value to set.
+			*/
+			static void SetScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value);
+
+			/**
+			* Set the Vector Parameter Value with name: ParamName with value: Value on MID.
+			*
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			*/
+			static void SetVectorParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value);
+
+			/**
+			* Set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
+			*
+			* @param Context	The calling context.
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
 			*/
 			static void SetVectorParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
 
 			/**
+			* Set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
+			* 
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
 			*/
-			static void SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor &Value);
+			static void SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
+
+			/**
+			*/
+			static void SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value);
+
+			/**
+			* Get the value of the Scalar Parameter Value with name: ParamName on MID.
+			* 
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Scalar Parameter Value.
+			* return			The value of the Scalar Parameter Value with name: ParamName.
+			*/
+			static float GetScalarParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName);
 		};
 	}
 }

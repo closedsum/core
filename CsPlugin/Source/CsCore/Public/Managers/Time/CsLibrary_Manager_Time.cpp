@@ -19,6 +19,8 @@ namespace NCsTime
 {
 	namespace NManager
 	{
+	#if WITH_EDITOR
+
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
 		{
 			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
@@ -27,13 +29,11 @@ namespace NCsTime
 
 			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
 
-#if WITH_EDITOR
 			if (FCsLibrary_World::IsPlayInEditor(World) ||
 				FCsLibrary_World::IsPlayInEditorPreview(World))
 			{
 				return GEngine;
 			}
-#endif // #if WITH_EDITOR
 
 			UGameInstance* GameInstance = World->GetGameInstance();
 
@@ -52,18 +52,18 @@ namespace NCsTime
 			if (!World)
 				return nullptr;
 
-#if WITH_EDITOR
 			if (FCsLibrary_World::IsPlayInEditor(WorldContext->GetWorld()) ||
 				FCsLibrary_World::IsPlayInEditorPreview(WorldContext->GetWorld()))
 			{
 				return GEngine;
 			}
 			else
-#endif // #if WITH_EDITOR
 			{
 				return World->GetGameInstance();
 			}
 		}
+
+	#endif // #if WITH_EDITOR
 
 		void FLibrary::UpdateTimeAndCoroutineScheduler(const FString& Context, UObject* WorldContext, const FECsUpdateGroup& Group, const float& DeltaTime)
 		{

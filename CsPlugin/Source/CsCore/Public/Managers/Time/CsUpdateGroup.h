@@ -147,6 +147,11 @@ public:
 				Pair.Value.Time		*= Scale;
 				Pair.Value.RealTime *= Scale;
 			}
+
+			TimeSinceStart.Time     += InDeltaTime;
+			TimeSinceStart.Timespan += Time.DateTime - LastTime.DateTime;
+			TimeSinceStart.RealTime  = (float)TimeSinceStart.Timespan.GetTotalSeconds();
+			TimeSinceStart.Frame    += Time.Frame - LastTime.Frame;
 		}
 		else
 		{
@@ -155,11 +160,6 @@ public:
 			TimePaused.RealTime  = (float)TimePaused.Timespan.GetTotalSeconds();
 			TimePaused.Frame	+= Time.Frame - LastTime.Frame;
 		}
-
-		TimeSinceStart.Time     += InDeltaTime;
-		TimeSinceStart.Timespan += Time.DateTime - LastTime.DateTime;
-		TimeSinceStart.RealTime  = (float)TimeSinceStart.Timespan.GetTotalSeconds();
-		TimeSinceStart.Frame    += Time.Frame - LastTime.Frame;
 
 		LastTime = Time;
 
@@ -191,6 +191,11 @@ public:
 				Pair.Value.Time		*= Scale;
 				Pair.Value.RealTime *= Scale;
 			}
+
+			TimeSinceStart.Time		+= InDeltaTime;
+			TimeSinceStart.Timespan += Time.DateTime - LastTime.DateTime;
+			TimeSinceStart.RealTime += InRealTime;
+			TimeSinceStart.Frame	+= Time.Frame - LastTime.Frame;
 		}
 		else
 		{
@@ -199,11 +204,6 @@ public:
 			TimePaused.RealTime  = InRealTime;
 			TimePaused.Frame	+= Time.Frame - LastTime.Frame;
 		}
-
-		TimeSinceStart.Time		+= InDeltaTime;
-		TimeSinceStart.Timespan += Time.DateTime - LastTime.DateTime;
-		TimeSinceStart.RealTime += InRealTime;
-		TimeSinceStart.Frame	+= Time.Frame - LastTime.Frame;
 
 		LastTime = Time;
 

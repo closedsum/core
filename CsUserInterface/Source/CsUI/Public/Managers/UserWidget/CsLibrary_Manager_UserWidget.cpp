@@ -12,6 +12,23 @@ namespace NCsUserWidget
 {
 	namespace NManager
 	{
+	#if WITH_EDITOR
+
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
+		{
+			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+
+			UWorld* World = WorldContext->GetWorld();
+
+			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+
+			AGameStateBase* GameState = World->GetGameState();
+
+			checkf(GameState, TEXT("%s: Failed to get GameState from World: %s."), *Context, *(World->GetName()));
+
+			return GameState;
+		}
+
 		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
 		{
 			if (!WorldContext)
@@ -24,5 +41,7 @@ namespace NCsUserWidget
 
 			return World->GetGameState();
 		}
+
+	#endif // #if WITH_EDITOR
 	}
 }

@@ -13,6 +13,7 @@ namespace NCsCoroutine
 		{
 		public:
 
+		#if WITH_EDITOR
 			/**
 			* Get the Context (Root) for UCsCoroutineScheduler from a WorldContext.
 			*
@@ -20,7 +21,11 @@ namespace NCsCoroutine
 			* return				Context for CoroutineScheduler
 			*/
 			static UObject* GetContextRoot(UObject* WorldContext);
+		#else
+			FORCEINLINE static UObject* GetContextRoot(UObject* WorldContext) { return nullptr; }
+		#endif // #if WITH_EDITOR
 
+		#if WITH_EDITOR
 			/**
 			* Get the Context (Root) for UCsCoroutineScheduler from a WorldContext.
 			*
@@ -29,7 +34,11 @@ namespace NCsCoroutine
 			* return				Context for CoroutineScheduler
 			*/
 			static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
+		#else
+			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext) { return nullptr; }
+		#endif // #if WITH_EDITOR
 
+		#if WITH_EDITOR
 			/**
 			* Safely get the Context (Root) for UCsCoroutineScheduler from a WorldContext.
 			*
@@ -37,6 +46,9 @@ namespace NCsCoroutine
 			* return				Context for CoroutineScheduler
 			*/
 			static UObject* GetSafeContextRoot(UObject* WorldContext);
+		#else
+			FORCEINLINE static UObject* GetSafeContextRoot(UObject* WorldContext) { return nullptr; }
+		#endif // #if WITH_EDITOR
 		};
 	}
 }

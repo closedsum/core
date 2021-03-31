@@ -2,7 +2,7 @@
 
 // Types
 #include "Animation/2D/CsTypes_Library_Anim2D.h"
-#include "Coroutine/CsTypes_Coroutine.h"
+#include "Coroutine/CsRoutineHandle.h"
 
 #pragma once
 

@@ -653,6 +653,23 @@ namespace NCsMaterial
 			}
 		}
 
+		void FLibrary::SetSafeVectorParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (IsVectorParameterValid(Context, MID, ParamName, Log))
+			{
+				MID->SetVectorParameterValue(ParamName, Value);
+			}
+		}
+
+		void FLibrary::SetSafeVectorParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value)
+		{
+			using namespace NCached;
+
+			const FString& Context = Str::SetSafeVectorParameterValue;
+
+			SetSafeVectorParameterValue(Context, MID, ParamName, Value, nullptr);
+		}
+
 		void FLibrary::SetSafeVectorParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			if (MIDs.Num() == CS_EMPTY)
@@ -663,7 +680,7 @@ namespace NCsMaterial
 
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
-				MID->SetVectorParameterValue(ParamName, Value);
+				SetSafeVectorParameterValue(Context, MID, ParamName, Value, Log);
 			}
 		}
 
@@ -676,6 +693,23 @@ namespace NCsMaterial
 			SetSafeVectorParameterValue(Context, MIDs, ParamName, Value, nullptr);
 		}
 
+		void FLibrary::SetSafeVectorParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (IsVectorParameterValid(Context, MID, ParamName, Log))
+			{
+				MID->SetVectorParameterValue(ParamName, Value);
+			}
+		}
+
+		void FLibrary::SetSafeVectorParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value)
+		{
+			using namespace NCached;
+
+			const FString& Context = Str::SetSafeVectorParameterValue;
+
+			SetSafeVectorParameterValue(Context, MID, ParamName, Value, nullptr);
+		}
+
 		void FLibrary::SetSafeVectorParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			if (MIDs.Num() == CS_EMPTY)
@@ -686,7 +720,7 @@ namespace NCsMaterial
 
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
-				MID->SetVectorParameterValue(ParamName, Value);
+				SetSafeVectorParameterValue(Context, MID, ParamName, Value, Log);
 			}
 		}
 

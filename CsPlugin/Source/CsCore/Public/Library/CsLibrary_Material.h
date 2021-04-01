@@ -317,6 +317,26 @@ namespace NCsMaterial
 			static void SetVectorParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
 
 			/**
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MID.
+			*
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			* @param Log
+			*/
+			static void SetSafeVectorParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MID.
+			*
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			*/
+			static void SetSafeVectorParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value);
+
+			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
 			*
 			* @param Context	The calling context.
@@ -335,6 +355,26 @@ namespace NCsMaterial
 			* @param Value		The value to set.
 			*/
 			static void SetSafeVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
+
+			/**
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MID.
+			*
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			* @param Log
+			*/
+			static void SetSafeVectorParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MID.
+			*
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			*/
+			static void SetSafeVectorParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value);
 
 			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.

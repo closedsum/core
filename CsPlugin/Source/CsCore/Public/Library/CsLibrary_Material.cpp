@@ -207,6 +207,17 @@ namespace NCsMaterial
 
 	namespace NMID
 	{
+		namespace NCached 
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, IsScalarParameterValid);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, IsVectorParameterValid);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, SetSafeScalarParameterValue);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, SetSafeVectorParameterValue);
+			}
+		}
+
 		bool FLibrary::IsValidChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs)
 		{
 			const int32 Count = MIDs.Num();
@@ -367,6 +378,9 @@ namespace NCsMaterial
 			MIDs.SetNum(0, true);
 		}
 
+	// Scalar
+	#pragma region
+
 		bool FLibrary::IsScalarParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
 		{
 			checkf(MID, TEXT("%s: MID is NULL."), *Context);
@@ -404,6 +418,130 @@ namespace NCsMaterial
 			checkf(0, TEXT("%s: Failed to find ParamName: %s in MID: %s."), *Context, *(ParamName.ToString()), *(MID->GetName()));
 			return false;
 		}
+
+		bool FLibrary::IsScalarParameterValid(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (!MID)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: MID is NULL."), *Context));
+				return false;
+			}
+
+			if (ParamName == NAME_None)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ParamName: None is NOT Valid."), *Context));
+				return false;
+			}
+
+			// MaterialInstance
+			if (UMaterialInstance* MI = Cast<UMaterialInstance>(MID->Parent))
+			{
+				for (const FScalarParameterValue& Value : MI->ScalarParameterValues)
+				{
+					if (Value.ParameterInfo.Name == ParamName)
+					{
+						return true;
+					}
+				}
+			}
+			// Material
+			if (UMaterial* M = Cast<UMaterial>(MID->Parent))
+			{
+				TArray<FMaterialParameterInfo> Infos;
+				TArray<FGuid> Ids;
+
+				M->GetAllScalarParameterInfo(Infos, Ids);
+
+				for (const FMaterialParameterInfo& Info : Infos)
+				{
+					if (Info.Name == ParamName)
+					{
+						return true;
+					}
+				}
+			}
+
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find ParamName: %s in MID: %s."), *Context, *(ParamName.ToString()), *(MID->GetName())));
+			return false;
+		}
+
+		bool FLibrary::IsScalarParameterValid(UMaterialInstanceDynamic* MID, const FName& ParamName)
+		{
+			using namespace NCached;
+
+			const FString& Context = Str::IsScalarParameterValid;
+
+			return IsScalarParameterValid(Context, MID, ParamName, nullptr);
+		}
+
+		void FLibrary::SetScalarParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const float& Value)
+		{
+			check(IsScalarParameterValidChecked(Context, MID, ParamName));
+
+			MID->SetScalarParameterValue(ParamName, Value);
+		}
+
+		void FLibrary::SetScalarParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*> MIDs, const FName& ParamName, const float& Value)
+		{
+			checkf(MIDs.Num() > CS_EMPTY, TEXT("%s: MIDs is EMPTY."), *Context);
+
+			for (UMaterialInstanceDynamic* MID : MIDs)
+			{
+				SetScalarParameterValueChecked(Context, MID, ParamName, Value);
+			}
+		}
+
+		void FLibrary::SetSafeScalarParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const float& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (IsScalarParameterValid(Context, MID, ParamName, Log))
+			{
+				MID->SetScalarParameterValue(ParamName, Value);
+			}
+		}
+
+		void FLibrary::SetSafeScalarParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, const float& Value)
+		{
+			using namespace NCached;
+
+			const FString& Context = Str::SetSafeScalarParameterValue;
+
+			SetSafeScalarParameterValue(Context, MID, ParamName, Value, nullptr);
+		}
+
+		void FLibrary::SetSafeScalarParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (MIDs.Num() == CS_EMPTY)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: MIDs is EMPTY."), *Context));
+				return;
+			}
+
+			for (UMaterialInstanceDynamic* MID : MIDs)
+			{
+				SetSafeScalarParameterValue(Context, MID, ParamName, Value, Log);
+			}
+		}
+
+		void FLibrary::SetSafeScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value)
+		{
+			using namespace NCached;
+
+			const FString& Context = Str::SetSafeScalarParameterValue;
+
+			SetSafeScalarParameterValue(Context, MIDs, ParamName, Value, nullptr);
+		}
+
+		float FLibrary::GetScalarParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
+		{
+			check(IsScalarParameterValidChecked(Context, MID, ParamName));
+
+			return MID->K2_GetScalarParameterValue(ParamName);
+		}
+
+	#pragma endregion Scalar
+
+	// Vector
+	#pragma region
 
 		bool FLibrary::IsVectorParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
 		{
@@ -443,31 +581,59 @@ namespace NCsMaterial
 			return false;
 		}
 
-		void FLibrary::SetScalarParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const float& Value)
+		bool FLibrary::IsVectorParameterValid(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			check(IsScalarParameterValidChecked(Context, MID, ParamName));
+			if (!MID)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: MID is NULL."), *Context));
+				return false;
+			}
 
-			MID->SetScalarParameterValue(ParamName, Value);
+			if (ParamName == NAME_None)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ParamName: None is NOT Valid."), *Context));
+				return false;
+			}
+
+			// MaterialInstance
+			if (UMaterialInstance* MI = Cast<UMaterialInstance>(MID->Parent))
+			{
+				for (const FVectorParameterValue& Value : MI->VectorParameterValues)
+				{
+					if (Value.ParameterInfo.Name == ParamName)
+					{
+						return true;
+					}
+				}
+			}
+			// Material
+			if (UMaterial* M = Cast<UMaterial>(MID->Parent))
+			{
+				TArray<FMaterialParameterInfo> Infos;
+				TArray<FGuid> Ids;
+
+				M->GetAllVectorParameterInfo(Infos, Ids);
+
+				for (const FMaterialParameterInfo& Info : Infos)
+				{
+					if (Info.Name == ParamName)
+					{
+						return true;
+					}
+				}
+
+			}
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find ParamName: %s in MID: %s."), *Context, *(ParamName.ToString()), *(MID->GetName())));
+			return false;
 		}
 
-		void FLibrary::SetScalarParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*> MIDs, const FName& ParamName, const float& Value)
+		bool FLibrary::IsVectorParameterValid(UMaterialInstanceDynamic* MID, const FName& ParamName)
 		{
-			checkf(MIDs.Num() > CS_EMPTY, TEXT("%s: MIDs is EMPTY."), *Context);
+			using namespace NCached;
 
-			for (UMaterialInstanceDynamic* MID : MIDs)
-			{
-				SetScalarParameterValueChecked(Context, MID, ParamName, Value);
-			}
-		}
+			const FString& Context = Str::IsVectorParameterValid;
 
-		void FLibrary::SetScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float &Value)
-		{
-			for (UMaterialInstanceDynamic* MID : MIDs)
-			{
-				check(MID);
-
-				MID->SetScalarParameterValue(ParamName, Value);
-			}
+			return IsVectorParameterValid(Context, MID, ParamName, nullptr);
 		}
 
 		void FLibrary::SetVectorParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value)
@@ -487,33 +653,52 @@ namespace NCsMaterial
 			}
 		}
 
-		void FLibrary::SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector &Value)
+		void FLibrary::SetSafeVectorParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
+			if (MIDs.Num() == CS_EMPTY)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: MIDs is EMPTY."), *Context));
+				return;
+			}
+
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
-				check(MID);
-
 				MID->SetVectorParameterValue(ParamName, Value);
 			}
 		}
 
-		void FLibrary::SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor &Value)
+		void FLibrary::SetSafeVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
 		{
-			const int32 Count = MIDs.Num();
+			using namespace NCached;
+
+			const FString& Context = Str::SetSafeVectorParameterValue;
+
+			SetSafeVectorParameterValue(Context, MIDs, ParamName, Value, nullptr);
+		}
+
+		void FLibrary::SetSafeVectorParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (MIDs.Num() == CS_EMPTY)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: MIDs is EMPTY."), *Context));
+				return;
+			}
 
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
-				check(MID);
-
 				MID->SetVectorParameterValue(ParamName, Value);
 			}
 		}
 
-		float FLibrary::GetScalarParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
+		void FLibrary::SetSafeVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value)
 		{
-			check(IsScalarParameterValidChecked(Context, MID, ParamName));
+			using namespace NCached;
 
-			return MID->K2_GetScalarParameterValue(ParamName);
+			const FString& Context = Str::SetSafeVectorParameterValue;
+
+			SetSafeVectorParameterValue(Context, MIDs, ParamName, Value, nullptr);
 		}
+
+	#pragma endregion Vector
 	}
 }

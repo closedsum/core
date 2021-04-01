@@ -1,5 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Log
+#include "Utility/CsLog.h"
 
 class UPrimitiveComponent;
 class UStaticMeshComponent;
@@ -154,6 +156,10 @@ namespace NCsMaterial
 			*/
 			static void Destroy(TArray<UMaterialInstanceDynamic*>& MIDs);
 
+		// Scalar
+		#pragma region
+		public:
+
 			/**
 			* Check whether there is a Scalar Parameter Value with name: ParamName for MID.
 			*
@@ -165,14 +171,24 @@ namespace NCsMaterial
 			static bool IsScalarParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName);
 
 			/**
-			* Check whether there is a Vector Parameter Value with name: ParamName for MID.
-			* 
+			* Check whether there is a Scalar Parameter Value with name: ParamName for MID.
+			*
 			* @param Context	The calling context.
 			* @param MID		Material Instance Dynamic.
-			* @param ParamName	Name of the Vector Parameter Value.
-			* return			Whether there IS a Vector Parameter Value with name: ParamName or NOT.
+			* @param ParamName	Name of the Scalar Parameter Value.
+			* @param Log
+			* return			Whether there IS a Scalar Parameter Value with name: ParamName or NOT.
 			*/
-			static bool IsVectorParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName);
+			static bool IsScalarParameterValid(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Check whether there is a Scalar Parameter Value with name: ParamName for MID.
+			*
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Scalar Parameter Value.
+			* return			Whether there IS a Scalar Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsScalarParameterValid(UMaterialInstanceDynamic* MID, const FName& ParamName);
 
 			/**
 			* Set the Scalar Parameter Value with name: ParamName with value: Value on MID.
@@ -195,13 +211,90 @@ namespace NCsMaterial
 			static void SetScalarParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*> MIDs, const FName& ParamName, const float& Value);
 
 			/**
-			* Set the Scalar Parameter Value with name: ParamName with value Value on MIDs.
-			* 
+			* Safely set the Scalar Parameter Value with name: ParamName with value Value on MID.
+			*
+			* @param Context	The calling context.
+			* @param MIDs		Material Instance Dynamic.
+			* @param ParamName	Name of the Scalar Parameter Value to set.
+			* @param Value		The value to set.
+			* @param Log
+			*/
+			static void SetSafeScalarParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const float& Value, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely set the Scalar Parameter Value with name: ParamName with value Value on MID.
+			*
 			* @param MIDs		Array of Material Instance Dynamic.
 			* @param ParamName	Name of the Scalar Parameter Value to set.
 			* @param Value		The value to set.
 			*/
-			static void SetScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value);
+			static void SetSafeScalarParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, const float& Value);
+
+			/**
+			* Safely set the Scalar Parameter Value with name: ParamName with value Value on MIDs.
+			*
+			* @param Context	The calling context.
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Scalar Parameter Value to set.
+			* @param Value		The value to set.
+			* @param Log
+			*/
+			static void SetSafeScalarParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely set the Scalar Parameter Value with name: ParamName with value Value on MIDs.
+			*
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Scalar Parameter Value to set.
+			* @param Value		The value to set.
+			*/
+			static void SetSafeScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value);
+
+			/**
+			* Get the value of the Scalar Parameter Value with name: ParamName on MID.
+			*
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Scalar Parameter Value.
+			* return			The value of the Scalar Parameter Value with name: ParamName.
+			*/
+			static float GetScalarParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName);
+
+		#pragma endregion Scalar
+
+		// Vector
+		#pragma region
+		public:
+
+			/**
+			* Check whether there is a Vector Parameter Value with name: ParamName for MID.
+			* 
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value.
+			* return			Whether there IS a Vector Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsVectorParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName);
+
+			/**
+			* Check whether there is a Vector Parameter Value with name: ParamName for MID.
+			*
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value.
+			* @param Log
+			* return			Whether there IS a Vector Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsVectorParameterValid(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Check whether there is a Vector Parameter Value with name: ParamName for MID.
+			*
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value.
+			* return			Whether there IS a Vector Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsVectorParameterValid(UMaterialInstanceDynamic* MID, const FName& ParamName);
 
 			/**
 			* Set the Vector Parameter Value with name: ParamName with value: Value on MID.
@@ -224,27 +317,46 @@ namespace NCsMaterial
 			static void SetVectorParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
 
 			/**
-			* Set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
-			* 
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
+			*
+			* @param Context	The calling context.
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			* @param Log
+			*/
+			static void SetSafeVectorParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
+			*
 			* @param MIDs		Array of Material Instance Dynamic.
 			* @param ParamName	Name of the Vector Parameter Value to set.
 			* @param Value		The value to set.
 			*/
-			static void SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
+			static void SetSafeVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
 
 			/**
-			*/
-			static void SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value);
-
-			/**
-			* Get the value of the Scalar Parameter Value with name: ParamName on MID.
-			* 
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
+			*
 			* @param Context	The calling context.
-			* @param MID		Material Instance Dynamic.
-			* @param ParamName	Name of the Scalar Parameter Value.
-			* return			The value of the Scalar Parameter Value with name: ParamName.
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			* @param Log
 			*/
-			static float GetScalarParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName);
+			static void SetSafeVectorParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
+			*
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			*/
+			static void SetSafeVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value);
+
+		#pragma endregion Vector
 		};
 	}
 }

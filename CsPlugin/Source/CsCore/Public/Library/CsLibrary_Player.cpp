@@ -231,6 +231,15 @@ namespace NCsPlayer
 				return false;
 			return Pawn == GetFirstLocal(World);
 		}
+
+		bool FLibrary::IsHuman(APawn* Pawn)
+		{
+			if (!Pawn)
+				return false;
+			if (APlayerController* PC = Pawn->GetController<APlayerController>())
+				return true;
+			return false;
+		}
 	}
 
 	namespace NInput

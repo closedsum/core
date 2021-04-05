@@ -184,6 +184,8 @@ namespace NCsPlayer
 			}
 
 			static bool IsFirstLocal(UWorld* World, APawn* Pawn);
+
+			static bool IsHuman(APawn* Pawn);
 		};
 	}
 

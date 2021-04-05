@@ -47,11 +47,17 @@ namespace NCsUserWidget
 		#endif // #if WITH_EDITOR
 
 			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* return
 			*/
 			template<typename InterfaceType>
-			static InterfaceType* GetDataChecked(const FString& Context, UObject* ContextRoot, const FECsUserWidgetPooled& Type)
+			static InterfaceType* GetDataChecked(const FString& Context, UObject* WorldContext, const FECsUserWidgetPooled& Type)
 			{
-				checkf(ContextRoot, TEXT("%s: ContextRoot is NULL"), *Context);
+				UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
 
 				UCsManager_UserWidget* Manager_UserWidget = UCsManager_UserWidget::Get(ContextRoot);
 

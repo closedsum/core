@@ -13,8 +13,10 @@ namespace NCsAnim
 				{
 					bool FParams::IsValidChecked(const FString& ContextName) const
 					{
+					#if WITH_EDITOR
 						// Check Context is Valid.
 						checkf(ContextRoot, TEXT("%s: ContextRoot for UCsCoroutineScheduler and UCsManager_Time is NULL."), *ContextName);
+					#endif // #if WITH_EDITOR
 						// Check UpdateGroup is Valid.
 						checkf(EMCsUpdateGroup::Get().IsValidEnumChecked(ContextName, UpdateGroup), TEXT("%s: UpdateGroup: %s is NOT Valid."), *ContextName, UpdateGroup.ToChar());
 						// Check Owner is Valid.
@@ -37,8 +39,10 @@ namespace NCsAnim
 				{
 					bool FParams::IsValidChecked(const FString& ContextName) const
 					{
+					#if WITH_EDITOR
 						// Check Context is Valid.
 						checkf(ContextRoot, TEXT("%s: ContextRoot for UCsCoroutineScheduler and UCsManager_Time is NULL."), *ContextName);
+					#endif // #if WITH_EDITOR
 						// Check UpdateGroup is Valid.
 						checkf(EMCsUpdateGroup::Get().IsValidEnumChecked(ContextName, UpdateGroup), TEXT("%s: UpdateGroup: %s is NOT Valid."), *ContextName, UpdateGroup.ToChar());
 						// Check Owner is Valid.

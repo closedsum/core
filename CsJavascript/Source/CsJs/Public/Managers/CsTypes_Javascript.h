@@ -25,6 +25,16 @@ public:
 		Context(nullptr)
 	{
 	}
+
+	FORCEINLINE bool IsValidChecked(const FString& Ctxt) const
+	{
+		checkf(Isolate, TEXT("%s: Isloate is NULL."), *Ctxt);
+
+		checkf(Context, TEXT("%s: Context is NULL."), *Ctxt);
+		return true;
+	}
+
+	void Shutdown();
 };
 
 #pragma endregion FCsJavascriptFileObjects

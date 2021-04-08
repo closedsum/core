@@ -117,8 +117,8 @@ public:
 #pragma region
 public:
 
-	void OnBeginPIE(bool IsSimulating);
-	void OnEndPIE(bool IsSimulating);
+	virtual void OnBeginPIE(bool IsSimulating);
+	virtual void OnEndPIE(bool IsSimulating);
 
 #pragma endregion PIE
 

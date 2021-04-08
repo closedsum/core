@@ -1,7 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UObject/Object.h"
+// Types
 #include "CsTypes_Javascript.h"
+
 #include "CsManager_Javascript.generated.h"
 
 // Delegates
@@ -13,6 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerJavascript_OnShutdown);
 
 class ICsGetManagerJavascript;
 struct FCsRoutine;
+class UGameInstance;
 
 UCLASS()
 class CSJS_API UCsManager_Javascript : public UObject
@@ -91,7 +94,12 @@ private:
 	UPROPERTY(Transient)
 	FCsJavascriptFileObjects GameInstanceEntryPoint;
 
+public:
+
 	void SetupAndRunGameInstanceEntryPoint();
+
+private:
+
 	char SetupAndRunGameInstanceEntryPoint_Internal(FCsRoutine* R);
 
 public:
@@ -105,7 +113,22 @@ private:
 
 public:
 
-	void SetupAndRunGameStateEntryPoint();
+	void CreateGameStateEntryPoint();
+	void SetupGameStateEntryPoint(UGameInstance* GameInstance = nullptr);
+
+private:
+
+	char SetupGameStateEntryPoint_Internal(FCsRoutine* R);
+
+	bool bSetupGameStateEntryPointComplete;
+
+public:
+	
+	FORCEINLINE bool IsSetupGameStateEntryPointComplete() const { return bSetupGameStateEntryPointComplete; }
+
+public:
+
+	void SetupAndRunGameStateEntryPoint(UGameInstance* GameInstance = nullptr);
 
 private:
 
@@ -114,6 +137,7 @@ private:
 public:
 
 	void RunGameStateEntryPoint();
+	void ShutdownGameStateEntryPoint();
 
 #pragma endregion Entry Point
 };

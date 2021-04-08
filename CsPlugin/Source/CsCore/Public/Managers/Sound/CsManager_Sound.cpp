@@ -7,6 +7,7 @@
 #include "Managers/Sound/CsCVars_Manager_Sound.h"
 // Library
 #include "Managers/Sound/Payload/CsLibrary_Payload_Sound.h"
+#include "Managers/Time/CsLibrary_Manager_Time.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Managers
@@ -283,14 +284,25 @@ void UCsManager_Sound::Initialize()
 
 void UCsManager_Sound::CleanUp()
 {
-	for (const TPair<FECsUpdateGroup, FDelegateHandle>& Pair : OnPauseHandleByGroupMap)
-	{
-		const FECsUpdateGroup& Group  = Pair.Key;
-		const FDelegateHandle& Handle = Pair.Value;
+#if WITH_EDITOR
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
-		if (UCsManager_Time* Manager_Time = UCsManager_Time::Get(GetOuter()))
+	UObject* ContextRoot = TimeManagerLibrary::GetSafeContextRoot(this);
+
+	if (ContextRoot)
+#else
+	UObject* ContextRoot = nullptr;
+#endif // #if WITH_EDITOR
+	{
+		for (const TPair<FECsUpdateGroup, FDelegateHandle>& Pair : OnPauseHandleByGroupMap)
 		{
-			Manager_Time->RemoveOnPause(Group, Handle);
+			const FECsUpdateGroup& Group  = Pair.Key;
+			const FDelegateHandle& Handle = Pair.Value;
+
+			if (UCsManager_Time* Manager_Time = UCsManager_Time::Get(ContextRoot))
+			{
+				Manager_Time->RemoveOnPause(Group, Handle);
+			}
 		}
 	}
 	OnPauseHandleByGroupMap.Reset();

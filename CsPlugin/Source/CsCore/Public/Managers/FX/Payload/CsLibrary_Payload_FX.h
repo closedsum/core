@@ -17,12 +17,22 @@ namespace NCsFX
 		#define PayloadImplType NCsFX::NPayload::FImpl
 
 			/**
+			* 
+			* 
+			* @param Context	The calling context.
+			* @param Payload
+			* return
 			*/
 			static bool IsValidChecked(const FString& Context, PayloadType* Payload);
 
 			/**
+			* 
+			* 
+			* @param Context	The calling context.
+			* @param Payload
+			* @param FX
 			*/
-			static void SetPayload(const FString& Context, PayloadImplType* Payload, const FCsFX& FX);
+			static void SetChecked(const FString& Context, PayloadImplType* Payload, const FCsFX& FX);
 
 		#undef PayloadImplType
 		};

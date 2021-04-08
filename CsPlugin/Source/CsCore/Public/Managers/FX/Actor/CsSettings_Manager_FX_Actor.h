@@ -1,6 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/FX/CsTypes_FX.h"
-#include "Managers/FX/Params/CsTypes_Params_FX.h"
 
 #include "CsSettings_Manager_FX_Actor.generated.h"
 #pragma once

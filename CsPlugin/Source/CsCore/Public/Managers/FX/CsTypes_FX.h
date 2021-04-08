@@ -428,6 +428,163 @@ namespace NCsFXAttachPoint
 
 #pragma endregion FXAttachPoint
 
+// FXParameterValue
+#pragma region
+
+/**
+*/
+UENUM(BlueprintType)
+enum class ECsFXParameterValue : uint8
+{
+	Int						UMETA(DisplayName = "Int"),
+	Float					UMETA(DisplayName = "Float"),
+	Vector					UMETA(DisplayName = "Vector"),
+	ECsFXParameterValue_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsFXParameterValue final : public TCsEnumMap<ECsFXParameterValue>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsFXParameterValue, ECsFXParameterValue)
+};
+
+namespace NCsFXParameterValue
+{
+	typedef ECsFXParameterValue Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Int;
+		extern CSCORE_API const Type Float;
+		extern CSCORE_API const Type Vector;
+		extern CSCORE_API const Type ECsFXParameterValue_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+}
+
+#pragma endregion FXParameterValue
+
+// FCsFXParameterInt
+#pragma region
+
+// NCsFX::NParameter::NInt::FIntType
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NInt, FIntType)
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsFXParameterInt
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Name of the Niagara Int Parameter. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName Name;
+
+	/** Value to set for the Niagara Int Parameter with Name. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 Value;
+
+	FCsFXParameterInt() :
+		Name(NAME_None),
+		Value(0)
+	{
+	}
+
+#define ParameterType NCsFX::NParameter::NInt::FIntType
+	void CopyParams(ParameterType* Params);
+#undef ParameterType
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+		return true;
+	}
+};
+
+#pragma endregion FCsFXParameterInt
+
+// FCsFXParameterFloat
+#pragma region
+
+// NCsFX::NParameter::NFloat::FFloatType
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NFloat, FFloatType)
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsFXParameterFloat
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Name of the Niagara Int Parameter. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName Name;
+
+	/** Value to set for the Niagara Float Parameter with Name. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Value;
+
+	FCsFXParameterFloat() :
+		Name(NAME_None),
+		Value(0)
+	{
+	}
+
+#define ParameterType NCsFX::NParameter::NFloat::FFloatType
+	void CopyParams(ParameterType* Params);
+#undef ParameterType
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+		return true;
+	}
+};
+
+#pragma endregion FCsFXParameterFloat
+
+// FCsFXParameterVector
+#pragma region
+
+// NCsFX::NParameter::NVector::FVectorType
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NVector, FVectorType)
+
+/**
+* Container holding information for Niagara Vector Parameter
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsFXParameterVector
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FVector Value;
+
+public:
+
+	FCsFXParameterVector() :
+		Name(NAME_None),
+		Value(0.0f)
+	{
+	}
+
+#define ParameterType NCsFX::NParameter::NVector::FVectorType
+	void CopyParams(ParameterType* Params);
+#undef ParameterType
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+		return true;
+	}
+};
+
+#pragma endregion FCsFXParameterVector
+
 // FCsFX
 #pragma region
 
@@ -507,6 +664,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FTransform Transform;
 
+	/** List of all Niagara Int Parameters to change on the FX System. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FCsFXParameterInt> IntParameters;
+
+	/** List of all Niagara Float Parameters to change on the FX System. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FCsFXParameterFloat> FloatParameters;
+
+	/** List of all Niagara Vector Parameters to change on the FX System. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FCsFXParameterVector> VectorParameters;
+
 public:
 
 	FCsFX() :
@@ -520,7 +689,10 @@ public:
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
-		Transform(FTransform::Identity)
+		Transform(FTransform::Identity),
+		IntParameters(),
+		FloatParameters(),
+		VectorParameters()
 	{
 		DeallocateMethod_Internal = (NCsFX::EDeallocateMethod*)&DeallocateMethod;
 	}

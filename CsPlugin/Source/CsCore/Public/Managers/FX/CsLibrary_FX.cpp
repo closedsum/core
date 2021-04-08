@@ -41,11 +41,11 @@ namespace NCsFX
 
 		checkf(System, TEXT("%s: System is NULL."), *Context);
 
-		checkf(Parameter, TEXT("%s: Parameter is NULL."), *Context);
+		typedef NCsFX::NParameter::FLibrary ParameterLibrary;
+
+		check(ParameterLibrary::IsValidChecked(Context, Parameter));
 
 		const FName& Name = Parameter->GetName();
-
-		checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
 
 		static TArray<FNiagaraVariable> Parameters;
 
@@ -84,14 +84,15 @@ namespace NCsFX
 
 		const ParameterValueType& ValueType = Parameter->GetValueType();
 
-		check(ParameterValueMapType::Get().IsValidEnumChecked(Context, ValueType));
-
+		// Int
+		if (ValueType == ParameterValueType::Int)
+			Component->SetVariableInt(Parameter->GetName(), ParameterLibrary::GetIntChecked(Context, Parameter));
 		// Float
 		if (ValueType == ParameterValueType::Float)
-			Component->SetVariableFloat(Parameter->GetName(), ParameterLibrary::GetFloat(Context, Parameter));
+			Component->SetVariableFloat(Parameter->GetName(), ParameterLibrary::GetFloatChecked(Context, Parameter));
 		// Vector
 		else
 		if (ValueType == ParameterValueType::Vector)
-			Component->SetVariableVec3(Parameter->GetName(), ParameterLibrary::GetVector(Context, Parameter));
+			Component->SetVariableVec3(Parameter->GetName(), ParameterLibrary::GetVectorChecked(Context, Parameter));
 	}
 }

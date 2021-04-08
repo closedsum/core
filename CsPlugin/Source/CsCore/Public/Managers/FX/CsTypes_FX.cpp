@@ -4,6 +4,8 @@
 
 // Settings
 #include "Settings/CsDeveloperSettings.h"
+// Param
+#include "Managers/FX/Params/CsParams_FX.h"
 
 // FX
 #pragma region
@@ -179,6 +181,68 @@ namespace NCsFXAttachPoint
 
 #pragma endregion FXAttachPoint
 
+// FXParameterValue
+#pragma region
+
+namespace NCsFXParameterValue
+{
+	namespace Ref
+	{
+		typedef EMCsFXParameterValue EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Int);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Float);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Vector);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsFXParameterValue_MAX, "MAX");
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsFXParameterValue_MAX;
+}
+
+#pragma endregion FXParameterValue
+
+// FCsFXParameterInt
+#pragma region
+
+#define ParameterType NCsFX::NParameter::NInt::FIntType
+void FCsFXParameterInt::CopyParams(ParameterType* Params)
+{
+#undef ParameterType
+
+	Params->SetName(&Name);
+	Params->SetValue(&Value);
+}
+
+#pragma endregion FCsFXParameterInt
+
+// FCsFXParameterFloat
+#pragma region
+
+#define ParameterType NCsFX::NParameter::NFloat::FFloatType
+void FCsFXParameterFloat::CopyParams(ParameterType* Params)
+{
+#undef ParameterType
+
+	Params->SetName(&Name);
+	Params->SetValue(&Value);
+}
+
+#pragma endregion FCsFXParameterFloat
+
+// FCsFXParameterVector
+#pragma region
+
+#define ParameterType NCsFX::NParameter::NVector::FVectorType
+void FCsFXParameterVector::CopyParams(ParameterType* Params)
+{
+#undef ParameterType
+
+	Params->SetName(&Name);
+	Params->SetValue(&Value);
+}
+
+#pragma endregion FCsFXParameterVector
+
 // FCsFX
 #pragma region
 
@@ -192,6 +256,22 @@ bool FCsFX::IsValidChecked(const FString& Context) const
 	if (!Transform.Equals(FTransform::Identity))
 	{
 		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
+	}
+	// Character Parameters are Valid.
+		// Int
+	for (const FCsFXParameterInt& Param : IntParameters)
+	{
+		check(Param.IsValidChecked(Context));
+	}
+		// Float
+	for (const FCsFXParameterFloat& Param : FloatParameters)
+	{
+		check(Param.IsValidChecked(Context));
+	}
+		// Vector
+	for (const FCsFXParameterVector& Param : VectorParameters)
+	{
+		check(Param.IsValidChecked(Context));
 	}
 	return true;
 }

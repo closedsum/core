@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 
+// Library
+#include "Managers/FX/Params/CsLibrary_Params_FX.h"
 // Types
 #include "Managers/FX/CsTypes_FX.h"
 // FX
@@ -17,16 +19,31 @@ namespace NCsFX
 
 			// Check FX System is Valid.
 			checkf(Payload->GetFXSystem(), TEXT("%s: FX System is NULL."), *Context);
+			// Check Parameters are Valid.
+			typedef NCsFX::NParameter::IParameter ParameterType;
 
+			const TArray<ParameterType*>& Parameters = Payload->GetParameters();
+
+			if (Parameters.Num() > CS_EMPTY)
+			{
+				typedef NCsFX::NParameter::FLibrary ParameterLibrary;
+
+				for (ParameterType* Param : Parameters)
+				{
+					check(ParameterLibrary::IsValidChecked(Context, Param));
+				}
+			}
 			return true;
 		}
 
 		#define PayloadImplType NCsFX::NPayload::FImpl
-		void FLibrary::SetPayload(const FString& Context, PayloadImplType* Payload, const FCsFX& FX)
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, const FCsFX& FX)
 		{
 		#undef PayloadImplType
 
 			checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
+
+			check(FX.IsValidChecked(Context));
 
 			Payload->FXSystem				  = FX.GetChecked(Context);
 			Payload->DeallocateMethod		  = FX.GetDeallocateMethod();

@@ -19,8 +19,8 @@
 // Settings
 #include "Settings/CsJsSettings.h"
 
-#include "Classes/Engine/World.h"
-#include "Classes/Engine/Engine.h"
+#include "Engine/World.h"
+#include "Engine/Engine.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -34,21 +34,25 @@
 // Cache
 #pragma region
 
-namespace NCsManagerJavascriptCached
+namespace NCsManagerJavascript
 {
-	namespace Name
+	namespace NCached
 	{
-		// Functions
-		const FName SetupAndRunGameInstanceEntryPoint_Internal = FName("UCsManager_Javascript::SetupAndRunGameInstanceEntryPoint_Internal");
-		const FName SetupAndRunGameStateEntryPoint_Internal = FName("UCsManager_Javascript::SetupAndRunGameStateEntryPoint_Internal");
-	};
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupAndRunGameInstanceEntryPoint_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupGameStateEntryPoint);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupGameStateEntryPoint_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupAndRunGameStateEntryPoint_Internal);
+		}
 
-	namespace Str
-	{
-		// Functions
-		const FString SetupAndRunGameInstanceEntryPoint_Internal = TEXT("UCsManager_Javascript::SetupAndRunGameInstanceEntryPoint_Internal");
-		const FString SetupAndRunGameStateEntryPoint_Internal = TEXT("UCsManager_Javascript::SetupAndRunGameStateEntryPoint_Internal");
-	};
+		namespace Name
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, SetupAndRunGameInstanceEntryPoint_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, SetupGameStateEntryPoint_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, SetupAndRunGameStateEntryPoint_Internal);
+		}
+	}
 }
 
 #pragma endregion Cache
@@ -57,7 +61,8 @@ namespace NCsManagerJavascriptCached
 UCsManager_Javascript* UCsManager_Javascript::s_Instance;
 bool UCsManager_Javascript::s_bShutdown = false;
 
-UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer)
 {
 	//EditorFile = TEXT("Cs/EntryPoint_Game.js");
 }
@@ -234,15 +239,19 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 
 void UCsManager_Javascript::Initialize()
 {
+/*
 	if (Cast<UGameInstance>(MyRoot))
 	{
 		SetupAndRunGameInstanceEntryPoint();
 		SetupAndRunGameStateEntryPoint();
 	}
+*/
 }
 
 void UCsManager_Javascript::CleanUp()
 {
+	GameInstanceEntryPoint.Shutdown();
+	GameStateEntryPoint.Shutdown();
 }
 
 	// Root
@@ -259,19 +268,24 @@ void UCsManager_Javascript::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Javascript::SetupAndRunGameInstanceEntryPoint()
 {
-	using namespace NCsManagerJavascriptCached;
+	using namespace NCsManagerJavascript::NCached;
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(MyRoot);
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(UpdateGroup);
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
-	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Javascript::SetupAndRunGameInstanceEntryPoint_Internal);
+	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+
+	#define COROUTINE SetupAndRunGameInstanceEntryPoint_Internal
+
+	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Javascript::COROUTINE);
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
 
-	Payload->SetName(Str::SetupAndRunGameInstanceEntryPoint_Internal);
-	Payload->SetFName(Name::SetupAndRunGameInstanceEntryPoint_Internal);
+	#undef COROUTINE
 
 	Scheduler->Start(Payload);
 }
@@ -282,11 +296,13 @@ char UCsManager_Javascript::SetupAndRunGameInstanceEntryPoint_Internal(FCsRoutin
 
 	CS_COROUTINE_BEGIN(R);
 
+	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
+
 	// Setup Isolate and Context
-	FCsJsLibrary_Common::SetupIsolateAndContext(this, GameInstanceEntryPoint.Isolate, GameInstanceEntryPoint.Context, false);
+	JavascriptCommonLibrary::SetupIsolateAndContext(this, GameInstanceEntryPoint.Isolate, GameInstanceEntryPoint.Context, false);
 
 	// GameInstance
-	FCsJsLibrary_Common::ExposeObject(GameInstanceEntryPoint.Context, TEXT("GameInstance"), GameInstance);
+	JavascriptCommonLibrary::ExposeObject(GameInstanceEntryPoint.Context, TEXT("GameInstance"), GameInstance);
 
 	// Run Javascript
 	{
@@ -298,7 +314,7 @@ char UCsManager_Javascript::SetupAndRunGameInstanceEntryPoint_Internal(FCsRoutin
 
 		checkf(!FileName.IsEmpty(), TEXT("UCsManager_Javascript::SetupAndRunGameInstanceEntryPoint_Internal: FileName is Empty."));
 
-		FCsJsLibrary_Common::RunFile(GameInstanceEntryPoint.Context, FileName);
+		JavascriptCommonLibrary::RunFile(GameInstanceEntryPoint.Context, FileName);
 	}
 
 	CS_COROUTINE_END(R);
@@ -316,31 +332,60 @@ void UCsManager_Javascript::RunGameInstanceEntryPoint()
 
 	checkf(!FileName.IsEmpty(), TEXT("UCsManager_Javascript::RunGameInstanceEntryPoint: FileName is Empty."));
 
-	FCsJsLibrary_Common::RunFile(GameInstanceEntryPoint.Context, FileName);
+	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
+
+	JavascriptCommonLibrary::RunFile(GameInstanceEntryPoint.Context, FileName);
 }
 
-void UCsManager_Javascript::SetupAndRunGameStateEntryPoint()
+void UCsManager_Javascript::CreateGameStateEntryPoint()
 {
-	using namespace NCsManagerJavascriptCached;
+	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
+
+	// Setup Isolate and Context
+	JavascriptCommonLibrary::SetupIsolateAndContext(this, GameStateEntryPoint.Isolate, GameStateEntryPoint.Context, false);
+}
+
+void UCsManager_Javascript::SetupGameStateEntryPoint(UGameInstance* GameInstance /*=nullptr*/)
+{
+	using namespace NCsManagerJavascript::NCached;
+
+	const FString& Context = Str::SetupGameStateEntryPoint;
+
+	check(GameStateEntryPoint.IsValidChecked(Context));
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(MyRoot);
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
-	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload(UpdateGroup);
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
-	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Javascript::SetupAndRunGameStateEntryPoint_Internal);
+	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+
+	#define COROUTINE SetupGameStateEntryPoint_Internal
+
+	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Javascript::COROUTINE);
 	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
 
-	Payload->SetName(Str::SetupAndRunGameStateEntryPoint_Internal);
-	Payload->SetFName(Name::SetupAndRunGameStateEntryPoint_Internal);
+	#undef COROUTINE
+
+	static const int32 GAME_INSTANCE = 0;
+	Payload->SetValue_Void(GAME_INSTANCE, GameInstance);
+
+	bSetupGameStateEntryPointComplete = false;
 
 	Scheduler->Start(Payload);
 }
 
-char UCsManager_Javascript::SetupAndRunGameStateEntryPoint_Internal(FCsRoutine* R)
+char UCsManager_Javascript::SetupGameStateEntryPoint_Internal(FCsRoutine* R)
 {
-	UGameInstance* GameInstance			= Cast<UGameInstance>(MyRoot);
+	static const int32 GAME_INSTANCE = 0;
+	UGameInstance* GameInstance	= R->GetValue_Void<UGameInstance>(GAME_INSTANCE);
+
+	if (!GameInstance)
+		GameInstance = Cast<UGameInstance>(MyRoot);
+
 	UWorld* World						= GameInstance->GetWorld();
 	AGameStateBase* GameState			= World ? World->GetGameState() : nullptr;
 	APlayerController* PlayerController = World ? GEngine->GetFirstLocalPlayerController(World) : nullptr;
@@ -349,49 +394,90 @@ char UCsManager_Javascript::SetupAndRunGameStateEntryPoint_Internal(FCsRoutine* 
 
 	CS_COROUTINE_BEGIN(R);
 
-	// Setup Isolate and Context
-	FCsJsLibrary_Common::SetupIsolateAndContext(this, GameStateEntryPoint.Isolate, GameStateEntryPoint.Context, false);
+	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
 
 	// GameInstance
-	FCsJsLibrary_Common::ExposeObject(GameStateEntryPoint.Context, TEXT("GameInstance"), GameInstance);
+	JavascriptCommonLibrary::ExposeObject(GameStateEntryPoint.Context, TEXT("GameInstance"), GameInstance);
 
 	// World
 	CS_COROUTINE_WAIT_UNTIL(R, World);
 
-	FCsJsLibrary_Common::ExposeObject(GameStateEntryPoint.Context, TEXT("World"), World);
+	JavascriptCommonLibrary::ExposeObject(GameStateEntryPoint.Context, TEXT("World"), World);
 
 	// Game State
 	CS_COROUTINE_WAIT_UNTIL(R, GameState);
 
-	FCsJsLibrary_Common::ExposeObject(GameStateEntryPoint.Context, TEXT("GameState"), GameState);
+	JavascriptCommonLibrary::ExposeObject(GameStateEntryPoint.Context, TEXT("GameState"), GameState);
 
 	// Player Controller
 	CS_COROUTINE_WAIT_UNTIL(R, PlayerController);
 
-	FCsJsLibrary_Common::ExposeObject(GameStateEntryPoint.Context, TEXT("PlayerController"), PlayerController);
+	JavascriptCommonLibrary::ExposeObject(GameStateEntryPoint.Context, TEXT("PlayerController"), PlayerController);
 
 	// Player State
 	CS_COROUTINE_WAIT_UNTIL(R, PlayerState);
 
-	FCsJsLibrary_Common::ExposeObject(GameStateEntryPoint.Context, TEXT("PlayerState"), PlayerState);
+	JavascriptCommonLibrary::ExposeObject(GameStateEntryPoint.Context, TEXT("PlayerState"), PlayerState);
 
 	// Player Pawn
 	CS_COROUTINE_WAIT_UNTIL(R, PlayerPawn);
 
-	FCsJsLibrary_Common::ExposeObject(GameStateEntryPoint.Context, TEXT("PlayerPawn"), PlayerPawn);
+	JavascriptCommonLibrary::ExposeObject(GameStateEntryPoint.Context, TEXT("PlayerPawn"), PlayerPawn);
+
+	bSetupGameStateEntryPointComplete = true;
+
+	CS_COROUTINE_END(R);
+}
+
+void UCsManager_Javascript::SetupAndRunGameStateEntryPoint(UGameInstance* GameInstance /*=nullptr*/)
+{
+	using namespace NCsManagerJavascript::NCached;
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(MyRoot);
+
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+
+	#define COROUTINE SetupAndRunGameStateEntryPoint_Internal
+
+	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Javascript::COROUTINE);
+	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
+	Payload->Owner.SetObject(this);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
+
+	#undef COROUTINE
+
+	static const int32 GAME_INSTANCE = 0;
+	Payload->SetValue_Void(GAME_INSTANCE, GameInstance);
+
+	Scheduler->Start(Payload);
+}
+
+char UCsManager_Javascript::SetupAndRunGameStateEntryPoint_Internal(FCsRoutine* R)
+{
+	static const int32 GAME_INSTANCE = 0;
+	UGameInstance* GameInstance	= R->GetValue_Void<UGameInstance>(GAME_INSTANCE);
+
+	if (!GameInstance)
+		GameInstance = Cast<UGameInstance>(MyRoot);
+
+	CS_COROUTINE_BEGIN(R);
+
+	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
+
+	// Setup Isolate and Context
+	CreateGameStateEntryPoint();
+	// Expose Objects
+	SetupGameStateEntryPoint(GameInstance);
+
+	// Wait until SetupGameStateEntryPoint is complete.
+	CS_COROUTINE_WAIT_UNTIL(R, bSetupGameStateEntryPointComplete);
 
 	// Run Javascript
-	{
-		UCsJsSettings* Settings = GetMutableDefault<UCsJsSettings>();
-
-		checkf(Settings, TEXT("UCsManager_Javascript::SetupAndRunGameStateEntryPoint_Internal: Failed to find Settings of type: UCsJsSettings."));
-
-		const FString& FileName = Settings->GameStateEntryPointFileName;
-
-		checkf(!FileName.IsEmpty(), TEXT("UCsManager_Javascript::SetupAndRunGameStateEntryPoint_Internal: FileName is Empty."));
-
-		FCsJsLibrary_Common::RunFile(GameStateEntryPoint.Context, FileName);
-	}
+	RunGameStateEntryPoint();
 
 	CS_COROUTINE_END(R);
 }
@@ -408,5 +494,12 @@ void UCsManager_Javascript::RunGameStateEntryPoint()
 
 	checkf(!FileName.IsEmpty(), TEXT("UCsManager_Javascript::RunGameStateEntryPoint: FileName is Empty."));
 
-	FCsJsLibrary_Common::RunFile(GameStateEntryPoint.Context, FileName);
+	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
+
+	JavascriptCommonLibrary::RunFile(GameStateEntryPoint.Context, FileName);
+}
+
+void UCsManager_Javascript::ShutdownGameStateEntryPoint()
+{
+	GameStateEntryPoint.Shutdown();
 }

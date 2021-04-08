@@ -11,6 +11,7 @@ namespace NCsFX
 		*/
 		enum class EValue : uint8 
 		{
+			Int,
 			Float,
 			Vector,
 			EValue_MAX
@@ -27,6 +28,7 @@ namespace NCsFX
 
 			namespace Ref
 			{
+				extern CSCORE_API const Type Int;
 				extern CSCORE_API const Type Float;
 				extern CSCORE_API const Type Vector;
 				extern CSCORE_API const Type EValue_MAX;
@@ -52,6 +54,83 @@ namespace NCsFX
 			virtual void* GetValuePtr() const = 0;
 		};
 
+		namespace NInt
+		{
+			/**
+			* Container holding information for Niagara Int Parameter
+			*/
+			struct CSCORE_API FIntType : IParameter
+			{
+			private:
+
+				int32 Index;
+
+				FName Name;
+				FName* Name_Emu;
+
+			public:
+
+				EValue ValueType;
+
+			private:
+
+				int32 Value;
+				int32* Value_Emu;
+
+			public:
+
+				FIntType() :
+					Index(INDEX_NONE),
+					Name(NAME_None),
+					Name_Emu(nullptr),
+					ValueType(EValue::Float),
+					Value(0),
+					Value_Emu(nullptr)
+				{
+					Name_Emu  = &Name;
+					Value_Emu = &Value;
+				}
+
+				FORCEINLINE void SetIndex(const int32& InIndex) { Index = InIndex; }
+
+				FORCEINLINE void SetName(const FName& InName)
+				{
+					Name	 = InName;
+					Name_Emu = &Name;
+				}
+				FORCEINLINE void SetName(FName* InName) { Name_Emu = InName; }
+
+				FORCEINLINE void SetValue(const int32& InValue)
+				{
+					Value	  = InValue;
+					Value_Emu = &Value;
+				}
+				FORCEINLINE void SetValue(int32* InValue) { Value_Emu = InValue; }
+
+			// IParameter
+			#pragma region
+			public:
+
+				FORCEINLINE const int32& GetIndex() const { return Index; }
+				FORCEINLINE const FName& GetName() const { return *Name_Emu; }
+				FORCEINLINE const EValue& GetValueType() const { return ValueType; }
+				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<int32*>(Value_Emu); }
+
+			#pragma endregion IParameter
+
+				FORCEINLINE const int32& GetValue() const { return *Value_Emu; }
+
+				FORCEINLINE bool IsValidChecked(const FString& Context) const
+				{
+					// Check Name is Valid
+					checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+					// Check ValueType is Valid
+					checkf(ValueType == EValue::Int, TEXT("%s: ValueType: %s is NOT Int."), *Context, EMValue::Get().ToChar(ValueType));
+					return true;
+				}
+			};
+		}
+
 		namespace NFloat
 		{
 			/**
@@ -63,84 +142,69 @@ namespace NCsFX
 
 				int32 Index;
 
-			public:
-
 				FName Name;
+				FName* Name_Emu;
 
-			private:
+			public:
 
 				EValue ValueType;
 
-			public:
+			private:
 
 				float Value;
+				float* Value_Emu;
+
+			public:
 
 				FFloatType() :
 					Index(INDEX_NONE),
 					Name(NAME_None),
+					Name_Emu(nullptr),
 					ValueType(EValue::Float),
-					Value(0.0f)
+					Value(0.0f),
+					Value_Emu(nullptr)
 				{
+					Name_Emu  = &Name;
+					Value_Emu = &Value;
 				}
 
 				FORCEINLINE void SetIndex(const int32& InIndex) { Index = InIndex; }
 
-			// IParameter
-			#pragma region
-			public:
-
-				FORCEINLINE const int32& GetIndex() const { return Index; }
-				FORCEINLINE const FName& GetName() const { return Name; }
-				FORCEINLINE const EValue& GetValueType() const { return ValueType; }
-				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<float*>(&Value); }
-
-			#pragma endregion IParameter
-
-				FORCEINLINE const float& GetValue() const { return Value; }
-			};
-
-			/**
-			* Container "emulating" a container holding information for Niagara Float Parameter
-			* and has pointers to the appropriate members of the emulated container.
-			*/
-			struct CSCORE_API FFloatTypeEmu : IParameter
-			{
-			private:
-
-				int32 Index;
-
-				FName* Name;
-
-				EValue ValueType;
-
-				float* Value;
-
-			public:
-
-				FFloatTypeEmu() :
-					Index(INDEX_NONE),
-					Name(nullptr),
-					ValueType(EValue::Float),
-					Value(nullptr)
+				FORCEINLINE void SetName(const FName& InName)
 				{
+					Name	 = InName;
+					Name_Emu = &Name;
 				}
+				FORCEINLINE void SetName(FName* InName) { Name_Emu = InName; }
 
-			
-				FORCEINLINE void SetName(FName* InValue) { Name = InValue; }
-				FORCEINLINE void SetValue(float* InValue) { Value = InValue; }
+				FORCEINLINE void SetValue(const float& InValue)
+				{
+					Value	  = InValue;
+					Value_Emu = &Value;
+				}
+				FORCEINLINE void SetValue(float* InValue) { Value_Emu = InValue; }
 
 			// IParameter
 			#pragma region
 			public:
 
 				FORCEINLINE const int32& GetIndex() const { return Index; }
-				FORCEINLINE const FName& GetName() const { return *Name; }
+				FORCEINLINE const FName& GetName() const { return *Name_Emu; }
 				FORCEINLINE const EValue& GetValueType() const { return ValueType; }
-				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<float*>(Value); }
+				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<float*>(Value_Emu); }
 
 			#pragma endregion IParameter
 
-				FORCEINLINE const float& GetValue() const { return *Value; }
+				FORCEINLINE const float& GetValue() const { return *Value_Emu; }
+
+				FORCEINLINE bool IsValidChecked(const FString& Context) const
+				{
+					// Check Name is Valid
+					checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+					// Check ValueType is Valid
+					checkf(ValueType == EValue::Float, TEXT("%s: ValueType: %s is NOT Float."), *Context, EMValue::Get().ToChar(ValueType));
+					return true;
+				}
 			};
 		}
 
@@ -155,84 +219,69 @@ namespace NCsFX
 
 				int32 Index;
 
-			public:
-
 				FName Name;
+				FName* Name_Emu;
 
-			private:
+			public:
 
 				EValue ValueType;
 
-			public:
+			private:
 
 				FVector Value;
+				FVector* Value_Emu;
+
+			public:
 
 				FVectorType() :
 					Index(INDEX_NONE),
 					Name(NAME_None),
+					Name_Emu(nullptr),
 					ValueType(EValue::Vector),
-					Value(0.0f)
+					Value(0.0f),
+					Value_Emu(nullptr)
 				{
+					Name_Emu  = &Name;
+					Value_Emu = &Value;
 				}
 
 				FORCEINLINE void SetIndex(const int32& InIndex) { Index = InIndex; }
 
-			// IParameter
-			#pragma region
-			public:
-
-				FORCEINLINE const int32& GetIndex() const { return Index; }
-				FORCEINLINE const FName& GetName() const { return Name; }
-				FORCEINLINE const EValue& GetValueType() const { return ValueType; }
-				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<FVector*>(&Value); }
-
-			#pragma endregion IParameter
-
-				FORCEINLINE const FVector& GetValue() const { return Value; }
-			};
-
-			/**
-			* Container "emulating" a container holding information for Niagara Vector Parameter
-			* and has pointers to the appropriate members of the emulated container.
-			*/
-			struct CSCORE_API FVectorTypeEmu : IParameter
-			{
-			private:
-
-				int32 Index;
-
-				FName* Name;
-
-				EValue ValueType;
-
-				FVector* Value;
-
-			public:
-
-				FVectorTypeEmu() :
-					Index(INDEX_NONE),
-					Name(nullptr),
-					ValueType(EValue::Vector),
-					Value(nullptr)
+				FORCEINLINE void SetName(const FName& InName)
 				{
+					Name	 = InName;
+					Name_Emu = &Name;
 				}
+				FORCEINLINE void SetName(FName* InName) { Name_Emu = InName; }
 
-			
-				FORCEINLINE void SetName(FName* InValue) { Name = InValue; }
-				FORCEINLINE void SetValue(FVector* InValue) { Value = InValue; }
+				FORCEINLINE void SetValue(const FVector& InValue)
+				{
+					Value	  = InValue;
+					Value_Emu = &Value;
+				}
+				FORCEINLINE void SetValue(FVector* InValue) { Value_Emu = InValue; }
 
 			// IParameter
 			#pragma region
 			public:
 
 				FORCEINLINE const int32& GetIndex() const { return Index; }
-				FORCEINLINE const FName& GetName() const { return *Name; }
+				FORCEINLINE const FName& GetName() const { return *Name_Emu; }
 				FORCEINLINE const EValue& GetValueType() const { return ValueType; }
-				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<FVector*>(Value); }
+				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<FVector*>(Value_Emu); }
 
 			#pragma endregion IParameter
 
-				FORCEINLINE const FVector& GetValue() const { return *Value; }
+				FORCEINLINE const FVector& GetValue() const { return *Value_Emu; }
+
+				FORCEINLINE bool IsValidChecked(const FString& Context) const
+				{
+					// Check Name is Valid
+					checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+					// Check ValueType is Valid
+					checkf(ValueType == EValue::Vector, TEXT("%s: ValueType: %s is NOT Vector."), *Context, EMValue::Get().ToChar(ValueType));
+					return true;
+				}
 			};
 		}
 	}

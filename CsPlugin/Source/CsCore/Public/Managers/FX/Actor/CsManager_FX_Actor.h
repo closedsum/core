@@ -32,6 +32,23 @@ namespace NCsFX
 {
 	namespace NParameter
 	{
+		namespace NInt
+		{
+			// FIntType (NCsFX::NParamter::NInt::FIntType)
+
+			/**
+			* Container for holding a reference to the object FIntType (NCsFX::NParamter::NInt::FIntType).
+			* This serves as an easy way for a Manager Resource to keep track of the resource.
+			*/
+			struct CSCORE_API FResource : public TCsResourceContainer<FIntType> {};
+
+			/**
+			* A manager handling allocating and deallocating the object FIntType (NCsFX::NParamter::NFloat::FIntType) and
+			* are wrapped in the container: NCsFX::NParameter::NInt::FResource.
+			*/
+			struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FIntType, FResource, 0> {};
+		}
+
 		namespace NFloat
 		{
 			// FFloatType (NCsFX::NParamter::NFloat::FFloatType)
@@ -43,7 +60,7 @@ namespace NCsFX
 			struct CSCORE_API FResource : public TCsResourceContainer<FFloatType> {};
 
 			/**
-			* A manager handling allocating and deallocating the object FVectorType (NCsFX::NParamter::NFloat::FFloatType) and
+			* A manager handling allocating and deallocating the object FFloatType (NCsFX::NParamter::NFloat::FFloatType) and
 			* are wrapped in the container: NCsFX::NParameter::NFloat::FResource.
 			*/
 			struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FFloatType, FResource, 0> {};
@@ -745,6 +762,30 @@ public:
 
 #undef ParameterType
 
+	// Int
+#pragma region
+
+#define ParameterIntType NCsFX::NParameter::NInt::FIntType
+#define ParameterIntManagerType NCsFX::NParameter::NInt::FManager
+
+private:
+
+	ParameterIntManagerType Manager_ParameterInt;
+
+public:
+
+	template<>
+	FORCEINLINE ParameterIntType* AllocateValue<ParameterIntType>() { return Manager_ParameterInt.AllocateResource(); }
+
+private:
+
+	FORCEINLINE void DeallocateValue(ParameterIntType* Value) { Manager_ParameterInt.DeallocateAt(Value, Value->GetIndex()); }
+
+#undef ParameterIntType
+#undef ParameterIntManagerType
+
+#pragma endregion Float
+
 	// Float
 #pragma region
 
@@ -764,7 +805,7 @@ private:
 
 	FORCEINLINE void DeallocateValue(ParameterFloatType* Value) { Manager_ParameterFloat.DeallocateAt(Value, Value->GetIndex()); }
 
-#undef ParameterVectorType
+#undef ParameterFloatType
 #undef ParameterFloatManagerType
 
 #pragma endregion Float

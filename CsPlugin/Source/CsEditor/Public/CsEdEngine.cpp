@@ -212,11 +212,19 @@ bool UCsEdEngine::Exec(UWorld* InWorld, const TCHAR* Stream, FOutputDevice& Ar)
 
 #pragma endregion FExec Interface
 
+// PIE
+#pragma region
+
 void UCsEdEngine::OnBeginPIE(bool IsSimulating)
 {
 	FCsCVarLogMap::Get().ResetDirty();
 	FCsCVarToggleMap::Get().ResetDirty();
 	FCsCVarDrawMap::Get().ResetDirty();
+
+	UCsDeveloperSettings* ModuleSettings   = GetMutableDefault<UCsDeveloperSettings>();
+	ULevelEditorPlaySettings* PlaySettings = GetMutableDefault<ULevelEditorPlaySettings>();
+
+	const EPlayModeType PlayMode = PlaySettings->LastExecutedPlayModeType;
 }
 
 void UCsEdEngine::OnEndPIE(bool IsSimulating)
@@ -240,6 +248,8 @@ void UCsEdEngine::OnEndPIE(bool IsSimulating)
 		}
 	}
 }
+
+#pragma endregion PIE
 
 // World
 #pragma region

@@ -7,6 +7,7 @@ public class CsJs : ModuleRules
     public CsJs(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        bLegacyPublicIncludePaths = false;
 
         PublicDependencyModuleNames.AddRange(
                 new string[] {
@@ -15,7 +16,6 @@ public class CsJs : ModuleRules
                     "Engine",
                     "AssetRegistry",
                     "CsCore",
-                    "V8",
                 }
             );
 
@@ -34,6 +34,7 @@ public class CsJs : ModuleRules
         {
             PublicDependencyModuleNames.AddRange(
                 new string[] {
+                    "V8",
                 }
             );
 
@@ -43,13 +44,6 @@ public class CsJs : ModuleRules
                 }
             );
             */
-        }
-        else
-        {
-            PublicDependencyModuleNames.AddRange(
-                new string[] {
-                }
-            );
         }
     }
 }

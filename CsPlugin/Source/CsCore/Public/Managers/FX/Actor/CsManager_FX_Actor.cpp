@@ -102,7 +102,11 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 	// Data
 	DataMap(),
 	ClassMap(),
-	DataTables()
+	DataTables(),
+	// Params
+	Manager_ParameterInt(),
+	Manager_ParameterFloat(),
+	Manager_ParameterVector()
 {
 }
 
@@ -348,6 +352,8 @@ void UCsManager_FX_Actor::CleanUp()
 	}
 	DataMap.Reset();
 	// Params
+	Manager_ParameterInt.Shutdown();
+	Manager_ParameterFloat.Shutdown();
 	Manager_ParameterVector.Shutdown();
 
 	bInitialized = false;
@@ -427,6 +433,27 @@ void UCsManager_FX_Actor::SetupInternal()
 
 		const int32 (&PoolSizes)[(uint8)ECsFXParameterValue::ECsFXParameterValue_MAX] = ModuleSettings->Manager_FX.Parameters.PoolSizes;
 		
+		// Int
+		{
+			const int32& Size = PoolSizes[(uint8)ECsFXParameterValue::Int];
+
+			checkf(Size > 0, TEXT("%s: UCsDeveloperSettings->Manager_FX.Parameters.PoolSizes[Int] is NOT > 0."), *Context);
+
+			Manager_ParameterInt.CreatePool(Size);
+
+			typedef NCsFX::NParameter::NInt::FResource ResourceContainerType;
+			typedef NCsFX::NParameter::NInt::FIntType ResourceType;
+
+			const TArray<ResourceContainerType*>& ParamPool = Manager_ParameterInt.GetPool();
+
+			const int32 Count = ParamPool.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				ResourceType* R = ParamPool[I]->Get();
+				R->SetIndex(I);
+			}
+		}
 		// Float
 		{
 			const int32& Size = PoolSizes[(uint8)ECsFXParameterValue::Float];
@@ -1012,6 +1039,10 @@ void UCsManager_FX_Actor::DeallocateValue(ParameterType* Value)
 	typedef NCsFX::NParameter::EValue ParameterValueType;
 
 	const ParameterValueType& ValueType = Value->GetValueType();
+
+	// Int
+	if (ValueType == ParameterValueType::Int)
+		DeallocateValue((NCsFX::NParameter::NInt::FIntType*)Value);
 	// Float
 	if (ValueType == ParameterValueType::Float)
 		DeallocateValue((NCsFX::NParameter::NFloat::FFloatType*)Value);

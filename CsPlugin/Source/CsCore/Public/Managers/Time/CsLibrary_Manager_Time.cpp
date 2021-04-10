@@ -42,7 +42,7 @@ namespace NCsTime
 			return GameInstance;
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
+		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
 		{
 			if (!WorldContext)
 				return nullptr;

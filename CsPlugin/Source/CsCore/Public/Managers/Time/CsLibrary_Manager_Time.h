@@ -33,9 +33,9 @@ namespace NCsTime
 			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsManager_Time
 			*/
-			static UObject* GetSafeContextRoot(UObject* WorldContext);
+			static UObject* GetSafeContextRoot(const UObject* WorldContext);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(UObject* WorldContext) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const UObject* WorldContext) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 			/**

@@ -19,3 +19,13 @@ FCsRoutineHandle UCsScriptLibrary_Routine::FCsRoutineHandle_New(FCsRoutineHandle
 	Handle.New();
 	return Handle;
 }
+
+bool UCsScriptLibrary_Routine::FCsRoutineHandle_IsValid(FCsRoutineHandle& Handle)
+{
+	return Handle.IsValid();
+}
+
+bool UCsScriptLibrary_Routine::EqualEqual_RoutineHandleRoutineHandle(const FCsRoutineHandle& A, const FCsRoutineHandle& B)
+{
+	return A == B;
+}

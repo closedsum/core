@@ -93,10 +93,21 @@ namespace NCsAnim
 				FORCEINLINE void DeallocatePlayParams(ParamsResourceType* Resource) { Manager_PlayParams.Deallocate(Resource); }
 
 				/**
+				* Play a Material 2D animation with the given Params.
+				* 
+				* @param Params
+				* return			Handle
 				*/
 				static const FCsRoutineHandle& Play(const ParamsType& Params);
 
 				/**
+				* Play a Material 2D animation with the given Params.
+				* NOTE: This assumes Params was allocated via AllocatePlayParams().
+				*		Use Play(const ParamsType& Params) if you do NOT want to allocate
+				*		the params upfront.
+				* 
+				* @param Params
+				* return			 Handle
 				*/
 				static const FCsRoutineHandle& Play(ParamsResourceType* Params);
 

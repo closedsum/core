@@ -338,15 +338,59 @@ public:
 	}
 
 	/**
+	*
+	* @param Resource	Resource to find the associated container for.
+	* return			Resource Container associated with the Resource
+	*/
+	ResourceContainerType* GetContainer(ResourceType* Resource) const
+	{
+		checkf(Resource, TEXT("%s::GetContainer: Resource is NULL."), *Name);
+
+		const int32 Count = Resources.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+
+			if (Resources[I] == Resource)
+			{
+				return Pool[I];
+			}
+		}
+		return nullptr;
+	}
+
+	/**
+	*
+	* @param Resource	Resource to find the associated container for.
+	* return			Resource Container associated with the Resource
+	*/
+	const ResourceContainerType* GetContainer(const ResourceType* Resource) const
+	{
+		checkf(Resource, TEXT("%s::GetContainer: Resource is NULL."), *Name);
+
+		const int32 Count = Resources.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			
+			if (Resources[I] == Resource)
+			{
+				return Pool[I];
+			}
+		}
+		return nullptr;
+	}
+
+	/**
 	* Get the container that holds the Resource of type: ResourceType.
 	* NOTE: This process is O(n).
 	*
 	* @param Resource	Resource to find the associated container for.
 	* return			Resource Container associated with the Resource.
 	*/
-	ResourceContainerType* GetContainer(ResourceType* Resource) const
+	ResourceContainerType* GetAllocatedContainer(ResourceType* Resource) const
 	{
-		checkf(Resource, TEXT("%s::GetContainer: Resource is NULL."), *Name);
+		checkf(Resource, TEXT("%s::GetAllocatedContainer: Resource is NULL."), *Name);
 
 		TCsDoubleLinkedList<ResourceContainerType*>* Current = AllocatedHead;
 		TCsDoubleLinkedList<ResourceContainerType*>* Next   = Current;
@@ -374,9 +418,9 @@ public:
 	* @param Resource	Resource to find the associated container for.
 	* return			Resource Container associated with the Resource.
 	*/
-	const ResourceContainerType* GetContainer(const ResourceType* Resource) const
+	const ResourceContainerType* GetAllocatedContainer(const ResourceType* Resource) const
 	{
-		checkf(Resource, TEXT("%s::GetContainer: Resource is NULL."), *Name);
+		checkf(Resource, TEXT("%s::GetAllocatedContainer: Resource is NULL."), *Name);
 
 		TCsDoubleLinkedList<ResourceContainerType*>* Current = AllocatedHead;
 		TCsDoubleLinkedList<ResourceContainerType*>* Next   = Current;
@@ -746,7 +790,7 @@ public:
 	{
 		checkf(Resource, TEXT("%s::Deallocate: Resource is NULL."), *Name);
 
-		ResourceContainerType* ResourceContainer = GetContainer(Resource);
+		ResourceContainerType* ResourceContainer = GetAllocatedContainer(Resource);
 
 		return Deallocate(ResourceContainer);
 	}

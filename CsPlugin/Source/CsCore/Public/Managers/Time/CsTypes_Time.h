@@ -79,6 +79,15 @@ public:
 		return *this;
 	}
 	
+	FORCEINLINE FCsDeltaTime operator+(const FCsDeltaTime& B) const
+	{
+		FCsDeltaTime A;
+		A.Time	   = Time + B.Time;
+		A.RealTime = RealTime + B.RealTime;
+		A.Timespan = Timespan + B.Timespan;
+		A.Frame	   = Frame + B.Frame;
+		return A;
+	}
 	/*
 	FORCEINLINE friend FCsDeltaTime operator-(const FCsTime& A, const FCsTime& B)
 	{

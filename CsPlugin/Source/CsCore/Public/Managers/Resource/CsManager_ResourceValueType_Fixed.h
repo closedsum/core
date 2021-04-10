@@ -303,9 +303,53 @@ public:
 	/**
 	*
 	* @param Resource	Resource to find the associated container for.
-	* return Resource Container associated with the Resource
+	* return			Resource Container associated with the Resource
 	*/
 	ResourceContainerType* GetContainer(ResourceType* Resource) const
+	{
+		checkf(Resource, TEXT("%s::GetContainer: Resource is NULL."), *Name);
+
+		const int32 Count = Resources.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+
+			if (&(Resources[I]) == Resource)
+			{
+				return Pool[I];
+			}
+		}
+		return nullptr;
+	}
+
+	/**
+	*
+	* @param Resource	Resource to find the associated container for.
+	* return			Resource Container associated with the Resource
+	*/
+	const ResourceContainerType* GetContainer(const ResourceType* Resource) const
+	{
+		checkf(Resource, TEXT("%s::GetContainer: Resource is NULL."), *Name);
+
+		const int32 Count = Resources.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			
+			if (&(Resources[I]) == Resource)
+			{
+				return Pool[I];
+			}
+		}
+		return nullptr;
+	}
+
+	/**
+	*
+	* @param Resource	Resource to find the associated container for.
+	* return			Resource Container associated with the Resource
+	*/
+	ResourceContainerType* GetAllocatedContainer(ResourceType* Resource) const
 	{
 		checkf(Resource, TEXT("%s::GetContainer: Resource is NULL."), *Name);
 
@@ -331,11 +375,11 @@ public:
 	/**
 	*
 	* @param Resource	Resource to find the associated container for.
-	* return Resource Container associated with the Resource
+	* return			Resource Container associated with the Resource
 	*/
-	const ResourceContainerType* GetContainer(const ResourceType* Resource) const
+	const ResourceContainerType* GetAllocatedContainer(const ResourceType* Resource) const
 	{
-		checkf(Resource, TEXT("%s::GetContainer: Resource is NULL."), *Name);
+		checkf(Resource, TEXT("%s::GetAllocatedContainer: Resource is NULL."), *Name);
 
 		TCsDoubleLinkedList<ResourceContainerType*>* Current = AllocatedHead;
 		TCsDoubleLinkedList<ResourceContainerType*>* Next    = Current;
@@ -354,6 +398,32 @@ public:
 			}
 		}
 		return nullptr;
+	}
+
+	/**
+	*/
+	bool Contains(const ResourceType* Resource) const
+	{
+		checkf(Resource, TEXT("%s::Contains: Resource is NULL."), *Name);
+
+		for (const ResourceType& R : Resources)
+		{
+			if (&R == Resource)
+				return true;
+		}
+		return false;
+	}
+
+	bool Contains(const ResourceContainerType* ResourceContainer) const
+	{
+		checkf(ResourceContainer, TEXT("%s::Contains: ResourceContainer is NULL."), *Name);
+
+		const int32& Index = ResourceContainer->GetIndex();
+
+		if (Index < 0 || Index >= PoolSize)
+			return false;
+
+		return Pool[Index] == ResourceContainer;
 	}
 
 #pragma endregion Pool
@@ -689,7 +759,7 @@ public:
 	{
 		checkf(Resource, TEXT("%s::Deallocate: Resource is NULL."), *Name);
 
-		ResourceContainerType* ResourceContainer = GetContainer(Resource);
+		ResourceContainerType* ResourceContainer = GetAllocatedContainer(Resource);
 
 		return Deallocate(ResourceContainer);
 	}

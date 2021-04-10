@@ -63,3 +63,13 @@ void UCsScriptLibrary_UpdateGroup::ECsUpdateGroup_GetAll(TArray<FECsUpdateGroup>
 
 	EnumLibrary::GetAll<EMCsUpdateGroup, FECsUpdateGroup>(OutTypes);
 }
+
+FECsUpdateGroup UCsScriptLibrary_UpdateGroup::ECsUpdateGroup_GetMax()
+{
+	return EMCsUpdateGroup::Get().GetMAX();
+}
+
+bool UCsScriptLibrary_UpdateGroup::EqualEqual_UpdateGroupUpdateGroup(const FECsUpdateGroup& A, const FECsUpdateGroup& B)
+{
+	return A == B;
+}

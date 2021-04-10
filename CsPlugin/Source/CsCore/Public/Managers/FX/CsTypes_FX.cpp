@@ -213,6 +213,15 @@ void FCsFXParameterInt::CopyParams(ParameterType* Params)
 	Params->SetValue(&Value);
 }
 
+bool FCsFXParameterInt::IsValid(const FString& Context) const
+{
+	if (Name == NAME_None)
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Name: None is NOT Valid."), *Context);
+	}
+	return false;
+}
+
 #pragma endregion FCsFXParameterInt
 
 // FCsFXParameterFloat
@@ -225,6 +234,15 @@ void FCsFXParameterFloat::CopyParams(ParameterType* Params)
 
 	Params->SetName(&Name);
 	Params->SetValue(&Value);
+}
+
+bool FCsFXParameterFloat::IsValid(const FString& Context) const
+{
+	if (Name == NAME_None)
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Name: None is NOT Valid."), *Context);
+	}
+	return false;
 }
 
 #pragma endregion FCsFXParameterFloat
@@ -241,10 +259,68 @@ void FCsFXParameterVector::CopyParams(ParameterType* Params)
 	Params->SetValue(&Value);
 }
 
+bool FCsFXParameterVector::IsValid(const FString& Context) const
+{
+	if (Name == NAME_None)
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Name: None is NOT Valid."), *Context);
+	}
+	return false;
+}
+
 #pragma endregion FCsFXParameterVector
 
 // FCsFX
 #pragma region
+
+bool FCsFX::IsValid(const FString& Context) const
+{
+	// Check FX Path is Valid.
+	if (!FX.ToSoftObjectPath().IsValid())
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: FX is NULL."), *Context);
+		return false;
+	}
+	// Check FX is Valid.
+	if (!FX_Internal)
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: FX has NOT been loaded from Path @ %s."), *Context, *(FX.ToSoftObjectPath().ToString()));
+		return false;
+	}
+	// Check Type is Valid.
+	if (!EMCsFX::Get().IsValidEnum(Type))
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s Type: %s is NOT Valid."), *Context, Type.ToChar());
+		return false;
+	}
+
+	if (!Transform.Equals(FTransform::Identity) &&
+		TransformRules == 0)
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
+		return false;
+	}
+	// Character Parameters are Valid.
+		// Int
+	for (const FCsFXParameterInt& Param : IntParameters)
+	{
+		if (!Param.IsValid(Context))
+			return false;
+	}
+	// Float
+	for (const FCsFXParameterFloat& Param : FloatParameters)
+	{
+		if (!Param.IsValid(Context))
+			return false;
+	}
+	// Vector
+	for (const FCsFXParameterVector& Param : VectorParameters)
+	{
+		if (!Param.IsValid(Context))
+			return false;
+	}
+	return true;
+}
 
 bool FCsFX::IsValidChecked(const FString& Context) const
 {
@@ -274,6 +350,24 @@ bool FCsFX::IsValidChecked(const FString& Context) const
 		check(Param.IsValidChecked(Context));
 	}
 	return true;
+}
+
+void FCsFX::Reset()
+{
+	FX = nullptr;
+	FX_LoadFlags = 0;
+	FX_Internal= nullptr;
+	Type = EMCsFX::Get().GetMAX();
+	DeallocateMethod = ECsFXDeallocateMethod::Complete;
+	DeallocateMethod_Internal = (NCsFX::EDeallocateMethod*)&DeallocateMethod;
+	LifeTime = 0.0f;
+	AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+	Bone = NAME_None;
+	TransformRules =7; // NCsTransformRules::All
+	Transform = FTransform::Identity;
+	IntParameters.Reset(IntParameters.Max());
+	FloatParameters.Reset(FloatParameters.Max());
+	VectorParameters.Reset(VectorParameters.Max());
 }
 
 #pragma endregion FCsFX

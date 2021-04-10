@@ -5,6 +5,8 @@
 #include "Managers/FX/Params/CsLibrary_Params_FX.h"
 // Types
 #include "Managers/FX/CsTypes_FX.h"
+// Pool
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 // FX
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 
@@ -52,6 +54,22 @@ namespace NCsFX
 			Payload->Bone					  = FX.Bone;
 			Payload->TransformRules			  = FX.TransformRules;
 			Payload->Transform				  = FX.Transform;
+		}
+
+		#define PayloadImplType NCsFX::NPayload::FImpl
+		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX)
+		{
+		#undef PayloadImplType
+		#undef PooledPayloadType
+
+			SetChecked(Context, Payload, FX);
+
+			Payload->Instigator						= PooledPayload->GetInstigator();
+			Payload->Owner							= PooledPayload->GetOwner();
+			Payload->Parent							= PooledPayload->GetParent();
+			Payload->Time							= PooledPayload->GetTime();
+			Payload->PreserveChangesFromDefaultMask = PooledPayload->GetPreserveChangesFromDefaultMask();
 		}
 	}
 }

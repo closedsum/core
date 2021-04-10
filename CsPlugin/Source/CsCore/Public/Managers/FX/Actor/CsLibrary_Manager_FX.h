@@ -2,11 +2,16 @@
 #pragma once
 // Types
 #include "Managers/FX/CsTypes_FX.h"
+// Log
+#include "Utility/CsLog.h"
 
 class UObject;
+struct FCsFXActorPooled;
 
 // NCsFX::NPayload::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, FImpl)
+// NCsPooledObject::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
 namespace NCsFX
 {
@@ -40,30 +45,31 @@ namespace NCsFX
 			*
 			* @parma Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log
 			* return				Context for UCsManager_FX.
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext);
+			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext)
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
 			{
 				return nullptr;
 			}
 		#endif // #if WITH_EDITOR
 
-		#define PayloadImplType NCsFX::NPayload::FImpl
+		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
 			/**
 			* 
 			* 
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Type
+			* @param PooledPayload
 			* @param FX
-			* return				Payload.
+			* return				Spawned FX
 			*/
-			static PayloadImplType* AllocatePayloadChecked(const FString& Context, UObject* WorldContext, const FECsFX& Type, const FCsFX& FX);
+			static const FCsFXActorPooled* SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX);
 
-		#undef PayloadImplType
+		#undef PooledPayloadType
 		};
 	}
 }

@@ -1,5 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Log
+#include "Utility/CsLog.h"
 
 class AActor;
 class UObject;
@@ -37,5 +39,51 @@ namespace NCsActor
 
 			return A;
 		}
+
+		/**
+		* Get an Actor with the given Name.
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Name
+		* @param Log
+		* return
+		*/
+		static AActor* GetSafeActorByName(const FString& Context, UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Get an Actor with the given Name.
+		*
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Name
+		* return
+		*/
+		static AActor* GetSafeActorByName(UObject* WorldContext, const FName& Name);
+
+		/**
+		* Get an Actor with the given Label.
+		* NOTE: - More than 1 Actor can have the SAME Label in Editor. In this case, the FIRST
+		*		  Actor found in the search will be returned.
+		*		- Only valid in Editor.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Name
+		* @param Log
+		* return
+		*/
+		static AActor* GetSafeActorByLabel(const FString& Context, UObject* WorldContext, const FString& Label, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Get an Actor with the given Label.
+		* NOTE: - More than 1 Actor can have the SAME Label in Editor. In this case, the FIRST
+		*		  Actor found in the search will be returned.
+		*		- Only valid in Editor.
+		*
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Name
+		* return
+		*/
+		static AActor* GetSafeActorByLabel(UObject* WorldContext, const FString& Label);
 	};
 }

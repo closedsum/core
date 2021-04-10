@@ -500,6 +500,7 @@ public:
 		checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
 		return true;
 	}
+	bool IsValid(const FString& Context) const;
 };
 
 #pragma endregion FCsFXParameterInt
@@ -540,6 +541,7 @@ public:
 		checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
 		return true;
 	}
+	bool IsValid(const FString& Context) const;
 };
 
 #pragma endregion FCsFXParameterFloat
@@ -581,6 +583,7 @@ public:
 		checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
 		return true;
 	}
+	bool IsValid(const FString& Context) const;
 };
 
 #pragma endregion FCsFXParameterVector
@@ -697,6 +700,43 @@ public:
 		DeallocateMethod_Internal = (NCsFX::EDeallocateMethod*)&DeallocateMethod;
 	}
 	
+	FORCEINLINE FCsFX& operator=(const FCsFX& B)
+	{
+		FX = B.FX;
+		FX_LoadFlags = B.FX_LoadFlags;
+		FX_Internal = B.FX_Internal;
+		Type = B.Type;
+		DeallocateMethod = B.DeallocateMethod;
+		DeallocateMethod_Internal = (NCsFX::EDeallocateMethod*)&DeallocateMethod;
+		LifeTime = B.LifeTime;
+		AttachmentTransformRules = B.AttachmentTransformRules;
+		Bone = B.Bone;
+		TransformRules = B.TransformRules;
+		Transform = B.Transform;
+
+		IntParameters.Reset(FMath::Max(IntParameters.Max(), B.IntParameters.Num()));
+
+		for (const FCsFXParameterInt& Param : B.IntParameters)
+		{
+			IntParameters.Add(Param);
+		}
+
+		FloatParameters.Reset(FMath::Max(FloatParameters.Max(), B.FloatParameters.Num()));
+
+		for (const FCsFXParameterFloat& Param : B.FloatParameters)
+		{
+			FloatParameters.Add(Param);
+		}
+
+		VectorParameters.Reset(FMath::Max(VectorParameters.Max(), B.VectorParameters.Num()));
+
+		for (const FCsFXParameterVector& Param : B.VectorParameters)
+		{
+			VectorParameters.Add(Param);
+		}
+		return *this;
+	}
+
 	FORCEINLINE void UpdateInternalPtrs()
 	{
 		UpdateDeallocateMethodPtr();
@@ -745,6 +785,9 @@ public:
 	}
 
 	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context) const;
+
+	void Reset();
 };
 
 #pragma endregion FCsFX

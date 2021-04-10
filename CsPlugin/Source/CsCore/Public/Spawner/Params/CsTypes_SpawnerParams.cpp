@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Spawner/Params/CsTypes_SpawnerParams.h"
+#include "CsCore.h"
 
 // Library
 #include "Library/CsLibrary_Array.h"
@@ -74,7 +75,103 @@ bool FCsSpawnerFrequencyParams::IsValidChecked(const FString& Context) const
 	return true;
 }
 
-void FCsSpawnerFrequencyParams::OnPostEditChange()
+bool FCsSpawnerFrequencyParams::IsValid(const FString& Context) const
+{
+	// Once
+	if (Type == ECsSpawnerFrequency::Once)
+	{
+		// No checks
+	}
+	// Count
+	else
+	if (Type == ECsSpawnerFrequency::Count)
+	{
+		if (Count < 1)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: Count MUST be >= 1 if Type == ECsSpawnerFrequency::Count."), *Context);
+			return false;
+		}
+	}
+	// TimeCount
+	else
+	if (Type == ECsSpawnerFrequency::TimeCount)
+	{
+		if (Count < 1)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: Count MUST be >= 1 if Type == ECsSpawnerFrequency::TimeCount."), *Context);
+			return false;
+		}
+	}
+	// TimeInterval
+	else
+	if (Type == ECsSpawnerFrequency::TimeInterval)
+	{
+		if (Interval <= 0.0f)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: Interval MUST be > 0.0f if Type == ECsSpawnerFrequency::TimeInterval."), *Context);
+			return false;
+		}
+	}
+	// Infinite
+	else
+	if (Type == ECsSpawnerFrequency::Infinite)
+	{
+		if (Interval <= 0.0f)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: Interval MUST be > 0.0f if Type == ECsSpawnerFrequency::Infinite."), *Context);
+		}
+	}
+	return true;
+}
+
+float FCsSpawnerFrequencyParams::CalculateTotalTime() const
+{
+	float TotalTime = 0.0f;
+
+	// Once
+	if (Type == ECsSpawnerFrequency::Once)
+	{
+		TotalTime += Delay;
+	}
+	// Count
+	else
+	if (Type == ECsSpawnerFrequency::Count)
+	{
+		TotalTime += Delay;
+		TotalTime += Count * Interval;
+	}
+	// TimeCount
+	else
+	if (Type == ECsSpawnerFrequency::TimeCount)
+	{
+		TotalTime += Delay;
+		TotalTime += Time;
+	}
+	// TimeInterval
+	else
+	if (Type == ECsSpawnerFrequency::TimeInterval)
+	{
+		TotalTime += Delay;
+		TotalTime += Count * Interval;
+	}
+	// Infinite
+	if (Type == ECsSpawnerFrequency::Infinite)
+	{
+		TotalTime = 0.0f;
+	}
+	return TotalTime;
+}
+
+void FCsSpawnerFrequencyParams::Reset()
+{
+	Type = ECsSpawnerFrequency::Once;
+	Delay = 0.0f;
+	Count = 0;
+	Interval = 0.0f;
+	Time = 0.0f;
+}
+
+void FCsSpawnerFrequencyParams::Update()
 {
 	if (Time > 0.0f)
 	{
@@ -96,6 +193,11 @@ void FCsSpawnerFrequencyParams::OnPostEditChange()
 			}
 		}
 	}
+}
+
+void FCsSpawnerFrequencyParams::OnPostEditChange()
+{
+	Update();
 }
 
 #pragma endregion FCsSpawnerFrequencyParams

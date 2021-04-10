@@ -17,3 +17,13 @@ FCsTime UCsScriptLibrary_Time::FCsTime_Copy(const FCsTime& Time)
 {
 	return Time;
 }
+
+FCsDeltaTime UCsScriptLibrary_Time::FCsDeltaTime_Copy(const FCsDeltaTime& DeltaTime)
+{
+	return DeltaTime;
+}
+
+FCsDeltaTime UCsScriptLibrary_Time::Add_DeltaTime(const FCsDeltaTime& A, const FCsDeltaTime& B)
+{
+	return A + B;
+}

@@ -1,9 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Types
 #include "Managers/Time/CsTypes_Time.h"
 #include "Managers/Time/CsTypes_Update.h"
 #include "Managers/Time/CsUpdateGroup.h"
+
 #include "CsManager_Time.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerTime_OnUpdate, const FECsUpdateGroup&, Group, const FCsDeltaTime&, DeltaTime);
 
 class ICsGetManagerTime;
 
@@ -185,6 +189,9 @@ public:
 	{
 		UpdateGroups[Group.GetValue()].RemoveOnUpdate(Handle);
 	}
+
+	UPROPERTY(BlueprintAssignable)
+	FCsManagerTime_OnUpdate OnUpdate_ScriptEvent;
 
 #undef OnUpdateType
 #undef OnUpdateDelegateType

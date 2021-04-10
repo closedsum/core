@@ -98,9 +98,9 @@ public:
 	/** Trigger Frequency
 		If Type == ECsSpawnerFrequency::Once,
 	     Ignore Count and Interval.
-		If Type == ECsStatusEffectTriggerFrequency::Count,
+		If Type == ECsSpawnerFrequency::Count,
 	     Count should be > 0, if NOT, it will be treated
-	     as ECsStatusEffectTriggerFrequency::Once.
+	     as ECsSpawnerFrequency::Once.
 		if Type == ECsSpawnerFrequency::TimeCount,
 		if Type == ECsSpawnerFrequency::TimeInterval,
 		If Type == ECsSpawnerFrequency::Infinite,
@@ -143,7 +143,13 @@ public:
 	}
 
 	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context) const;
 
+	float CalculateTotalTime() const;
+
+	void Reset();
+
+	void Update();
 	void OnPostEditChange();
 };
  

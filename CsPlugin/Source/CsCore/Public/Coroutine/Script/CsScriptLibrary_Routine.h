@@ -16,4 +16,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Routine", meta = (DisplayName = "FCsRoutineHandle - CreateNew"))
 	static FCsRoutineHandle FCsRoutineHandle_New(UPARAM(ref) FCsRoutineHandle& Handle);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Routine", meta = (DisplayName = "FCsRoutineHandle - IsValid"))
+	static bool FCsRoutineHandle_IsValid(UPARAM(ref) FCsRoutineHandle& Handle);
+
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (RoutineHandle)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|Routine")
+	static bool EqualEqual_RoutineHandleRoutineHandle(const FCsRoutineHandle& A, const FCsRoutineHandle& B);
 };

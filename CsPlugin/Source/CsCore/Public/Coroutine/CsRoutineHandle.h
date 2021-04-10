@@ -14,10 +14,10 @@ public:
 
 public:
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int32 Index;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FGuid Handle;
 
 	FCsRoutineHandle() :

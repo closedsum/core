@@ -28,4 +28,10 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|UpdateGroup", meta = (DisplayName = "ECsUpdateGroup - Get All"))
 	static void ECsUpdateGroup_GetAll(TArray<FECsUpdateGroup>& OutTypes);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|UpdateGroup", meta = (DisplayName = "ECsUpdateGroup - Get Max", AutoCreateRefTerm = "Name"))
+	static FECsUpdateGroup ECsUpdateGroup_GetMax();
+
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (UpdateGroup)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|UpdateGroup")
+	static bool EqualEqual_UpdateGroupUpdateGroup(const FECsUpdateGroup& A, const FECsUpdateGroup& B);
 };

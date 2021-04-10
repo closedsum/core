@@ -399,6 +399,9 @@ char UCsManager_Javascript::SetupGameStateEntryPoint_Internal(FCsRoutine* R)
 	// GameInstance
 	JavascriptCommonLibrary::ExposeObject(GameStateEntryPoint.Context, TEXT("GameInstance"), GameInstance);
 
+	// Manager_Time
+	JavascriptCommonLibrary::ExposeObject(GameStateEntryPoint.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GameInstance));
+
 	// World
 	CS_COROUTINE_WAIT_UNTIL(R, World);
 

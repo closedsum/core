@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Game
 #include "Engine/GameInstance.h"
 // World
@@ -17,6 +19,17 @@ namespace NCsCoroutine
 {
 	namespace NScheduler
 	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NScheduler::FLibrary, GetSafeContextRoot);
+				}
+			}
+		}
+
 	#if WITH_EDITOR
 
 		UObject* FLibrary::GetContextRoot(UObject* WorldContext)
@@ -55,15 +68,21 @@ namespace NCsCoroutine
 			return GameInstance;
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			if (!WorldContext)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: WorldContext is NULL."), *Context));
 				return nullptr;
+			}
 
 			UWorld* World = WorldContext->GetWorld();
 
 			if (!World)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName())));
 				return nullptr;
+			}
 
 			if (FCsLibrary_World::IsPlayInEditor(WorldContext->GetWorld()) ||
 				FCsLibrary_World::IsPlayInEditorPreview(WorldContext->GetWorld()))
@@ -75,6 +94,15 @@ namespace NCsCoroutine
 			{
 				return World->GetGameInstance();
 			}
+		}
+
+		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
+		{
+			using namespace NCsCoroutine::NScheduler::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeContextRoot;
+
+			return GetSafeContextRoot(Context, WorldContext, nullptr);
 		}
 
 	#endif // #if WITH_EDITOR

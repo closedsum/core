@@ -5,6 +5,8 @@
 
 // NCsFX::NPayload::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, FImpl)
+// NCsPooledObject::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
 namespace NCsFX
 {
@@ -33,6 +35,20 @@ namespace NCsFX
 			* @param FX
 			*/
 			static void SetChecked(const FString& Context, PayloadImplType* Payload, const FCsFX& FX);
+
+		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param Payload
+			* @param PooledPayload
+			* @param FX
+			*/
+			static void SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX);
+
+		#undef PooledPayloadType
 
 		#undef PayloadImplType
 		};

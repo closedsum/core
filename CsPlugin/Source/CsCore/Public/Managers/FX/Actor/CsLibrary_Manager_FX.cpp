@@ -6,6 +6,8 @@
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 // Managers
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
+// FX
+#include "Managers/FX/Payload/CsPayload_FXImpl.h"
 // Game
 #include "GameFramework/GameStateBase.h"
 // World
@@ -32,11 +34,11 @@ namespace NCsFX
 			return GameState;
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			if (!WorldContext)
 			{
-				UE_LOG(LogCs, Warning, TEXT("%s: WorldContext is NULL."), *Context);
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: WorldContext is NULL."), *Context));
 				return nullptr;
 			}
 
@@ -44,7 +46,7 @@ namespace NCsFX
 
 			if (!World)
 			{
-				UE_LOG(LogCs, Warning, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName())));
 				return nullptr;
 			}
 
@@ -52,30 +54,45 @@ namespace NCsFX
 
 			if (!GameState)
 			{
-				UE_LOG(LogCs, Warning, TEXT("%s: Failed to get GameState from World: %s."), *Context, *(World->GetName()));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get GameState from World: %s."), *Context, *(World->GetName())));
 			}
 			return GameState;
 		}
 
 	#endif // #if WITH_EDITOR
 
-		#define PayloadImplType NCsFX::NPayload::FImpl
-		PayloadImplType* FLibrary::AllocatePayloadChecked(const FString& Context, UObject* WorldContext, const FECsFX& Type, const FCsFX& FX)
+		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX)
 		{
+		#undef PooledPayloadType
+
+			// Get Context for Manager_FX
 			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
 
 			UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(ContextRoot);
+			// Allocate Payload
+			typedef NCsFX::NPayload::FImpl PayloadImplType;
 
-			PayloadImplType* Payload = Manager_FX->AllocatePayload<PayloadImplType>(Type);
-
+			PayloadImplType* Payload = Manager_FX->AllocatePayload<PayloadImplType>(FX.Type);
+			// Set Payload
 			typedef NCsFX::NPayload::FLibrary PayloadLibrary;
 
-			PayloadLibrary::SetChecked(Context, Payload, FX);
+			PayloadLibrary::SetChecked(Context, Payload, PooledPayload, FX);
 
-			//for ()
+			// Int
+			for (const FCsFXParameterInt& Param : FX.IntParameters)
+			{
+				typedef NCsFX::NParameter::NInt::FIntType ParameterIntType;
 
-			return Payload;
+				ParameterIntType* IntType = Manager_FX->AllocateValue<ParameterIntType>();
+
+				Payload->Parameters.Add(IntType);
+			}
+			// Float
+
+			// Vector
+
+			return Manager_FX->Spawn(FX.Type, Payload);
 		}
-		#undef PayloadImplType
 	}
 }

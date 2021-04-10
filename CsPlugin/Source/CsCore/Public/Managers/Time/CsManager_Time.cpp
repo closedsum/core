@@ -133,11 +133,15 @@ void UCsManager_Time::Start(const FECsUpdateGroup& Group)
 void UCsManager_Time::Update(const FECsUpdateGroup& Group, const float& DeltaTime)
 {
 	UpdateGroups[Group.GetValue()].Update(DeltaTime);
+
+	OnUpdate_ScriptEvent.Broadcast(Group, GetScaledDeltaTime(Group));
 }
 
 void UCsManager_Time::Update(const FECsUpdateGroup& Group, const float& DeltaTime, const float& Time, const float& RealTime)
 {
 	UpdateGroups[Group.GetValue()].Update(DeltaTime, Time, RealTime);
+
+	OnUpdate_ScriptEvent.Broadcast(Group, GetScaledDeltaTime(Group));
 }
 
 #pragma endregion Update

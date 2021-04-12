@@ -107,8 +107,10 @@ namespace NCsObject
 				// If Owner is Valid, check if the Object is Valid.
 				if (UObject* Owner = O.GetOwner())
 				{
+					typedef NCsWorld::FLibrary WorldLibrary;
+
 					if (Owner->IsPendingKill() ||
-						FCsLibrary_World::IsEditorPreviewOrphaned(Owner))
+						WorldLibrary::IsEditorPreviewOrphaned(Owner))
 					{
 						// If the Object is Valid, check if the Object is about to be destroyed.
 						if (UObject* Object = O.GetObject())
@@ -130,7 +132,7 @@ namespace NCsObject
 						{
 							// If the Object is NOT Valid, add it to the list to be removed.
 							if (Object->IsPendingKill() ||
-								FCsLibrary_World::IsEditorPreviewOrphaned(Object))
+								WorldLibrary::IsEditorPreviewOrphaned(Object))
 							{
 								ToRemove.Add(Handle);
 							}

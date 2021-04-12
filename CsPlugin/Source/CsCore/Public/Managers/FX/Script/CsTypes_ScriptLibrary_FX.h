@@ -7,8 +7,8 @@
 #include "CsTypes_ScriptLibrary_FX.generated.h"
 #pragma once
 
-// NCsFX::NSpawn::FParams
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NSpawn, FParams)
+// NCsFX::NSpawn::NParams::FParams
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NSpawn, NParams, FParams)
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsScriptLibrary_FX_Spawn_Params
@@ -37,8 +37,8 @@ public:
 	{
 	}
 
-#define ParamsType NCsFX::NSpawn::FParams
-	void CopyParams(ParamsType* Params);
+#define ParamsType NCsFX::NSpawn::NParams::FParams
+	void CopyParams(ParamsType* Params) const;
 #undef ParamsType
 
 	bool IsValid(const FString& Context) const;

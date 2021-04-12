@@ -1,5 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Log
+#include "Utility/CsLog.h"
 
 class UObject;
 
@@ -16,7 +18,7 @@ namespace NCsJs
 			* Get the Context (Root) for UCsManager_Javascript from a WorldContext.
 			*
 			* @param Context		The calling context.
-			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsManager_Javascript
 			*/
 			static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
@@ -28,7 +30,21 @@ namespace NCsJs
 			/**
 			* Safely get the Context (Root) for UCsManager_Javascript from a WorldContext.
 			*
-			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log
+			* return				Context for UCsManager_Javascript
+			*/
+			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
+		#else
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning) { return nullptr; }
+		#endif // #if WITH_EDITOR
+
+		#if WITH_EDITOR
+			/**
+			* Safely get the Context (Root) for UCsManager_Javascript from a WorldContext.
+			*
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsManager_Javascript
 			*/
 			static UObject* GetSafeContextRoot(UObject* WorldContext);

@@ -44,7 +44,7 @@ public:
 	* return
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Name"))
-	static AActor* GetActorByName(const FString& Context, UObject* WorldContextObject, const FName& Name);
+	static AActor* GetByName(const FString& Context, UObject* WorldContextObject, const FName& Name);
 
 	/**
 	* Get an Actor with the given Label.
@@ -58,5 +58,5 @@ public:
 	* return
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Label"))
-	static AActor* GetActorByLabel(const FString& Context, UObject* WorldContextObject, const FString& Label);
+	static AActor* GetByLabel(const FString& Context, UObject* WorldContextObject, const FString& Label);
 };

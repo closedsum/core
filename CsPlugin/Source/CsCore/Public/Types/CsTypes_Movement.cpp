@@ -1,10 +1,564 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Movement.h"
+#include "CsCore.h"
 
 // Library
 #include "Library/CsLibrary_Math.h"
+#include "Actor/CsLibrary_Actor.h"
 // Curve
 #include "Curves/CurveFloat.h"
+// Components
+#include "Components/SceneComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+
+// Mover
+#pragma region
+
+namespace NCsMover
+{
+	namespace Ref
+	{
+		typedef EMCsMover EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Actor);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Component);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsMover_MAX, "MAX");
+	}
+}
+
+namespace NCsMovement
+{
+	namespace NMover
+	{
+		namespace Ref
+		{
+			typedef EMMover EnumMapType;
+
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Actor);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Component);
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMover_MAX, "MAX");
+		}
+	}
+}
+
+#pragma endregion Mover
+
+// MoveDestination
+#pragma region
+
+namespace NCsMoveDestination
+{
+	namespace Ref
+	{
+		typedef EMCsMoveDestination EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Location);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Actor);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Component);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Bone);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsMoveDestination_MAX, "MAX");
+	}
+}
+
+namespace NCsMovement
+{
+	namespace NDestination
+	{
+		namespace Ref
+		{
+			typedef EMDestination EnumMapType;
+
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Location);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Actor);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Component);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Bone);
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EDestination_MAX, "MAX");
+		}
+	}
+}
+
+#pragma endregion MoveDestination
+
+// FCsMoveByInterp_Params
+#pragma region
+
+#define ParamsType NCsMovement::NTo::NInterp::NParams::FParams
+
+void FCsMoveByInterp_Params::CopyParams(ParamsType* Params)
+{
+	typedef NCsMovement::EMover MoverType;
+	typedef NCsMovement::EDestination DestinationType;
+
+	Params->SetEasing(&Easing);
+	Params->SetMover(&((MoverType)Mover));
+	Params->SetFromLocation(&FromLocation);
+	Params->SetMoveObjectName(&MoveObjectName);
+	Params->SetMoveActorLabel(&MoveActorLabel);
+	Params->SetMoveActor(MoveActor);
+	Params->SetMoveComponent(MoveComponent);
+	Params->SetDestination(&((DestinationType)Destination));
+	Params->SetToLocation(&ToLocation);
+	Params->SetToObjectName(&ToObjectName);
+	Params->SetToActorLabel(&ToActorLabel);
+	Params->SetToBone(&ToBone);
+	Params->SetToActor(ToActor);
+	Params->SetToComponent(ToComponent);
+	Params->SetToMeshComponent(ToMeshComponent);
+	Params->SetTime(&Time);
+	Params->SetGroup(&Group);
+}
+
+void FCsMoveByInterp_Params::CopyParamsAsValue(ParamsType* Params)
+{
+	typedef NCsMovement::EMover MoverType;
+	typedef NCsMovement::EDestination DestinationType;
+
+	Params->SetEasing(Easing);
+	Params->SetMover((MoverType)Mover);
+	Params->SetFromLocation(FromLocation);
+	Params->SetMoveObjectName(MoveObjectName);
+	Params->SetMoveActorLabel(MoveActorLabel);
+	Params->SetMoveActor(MoveActor);
+	Params->SetMoveComponent(MoveComponent);
+	Params->SetDestination((DestinationType)Destination);
+	Params->SetToLocation(ToLocation);
+	Params->SetToObjectName(ToObjectName);
+	Params->SetToActorLabel(ToActorLabel);
+	Params->SetToBone(ToBone);
+	Params->SetToActor(ToActor);
+	Params->SetToComponent(ToComponent);
+	Params->SetToMeshComponent(ToMeshComponent);
+	Params->SetTime(Time);
+	Params->SetGroup(Group);
+}
+
+#undef ParamsType
+
+void FCsMoveByInterp_Params::ConditionalSetSafeMoveObject(const FString& Context, UObject* WorldContext)
+{
+	// Actor
+	if (Mover == ECsMover::Actor)
+	{
+		if (MoveActor)
+		{
+			// Do Nothing, Move Actor already set.
+			return;
+		}
+		else
+		{
+			typedef NCsActor::FLibrary ActorLibrary;
+
+#if WITH_EDITOR
+			// Label
+			if (!MoveActorLabel.IsEmpty())
+			{
+				MoveActor = ActorLibrary::GetByLabelChecked(Context, WorldContext, MoveActorLabel);
+				return;
+			}
+			// Name
+			if (MoveObjectName != NAME_None)
+			{
+				MoveActor = ActorLibrary::GetByNameChecked(Context, WorldContext, MoveObjectName);
+				return;
+			}
+
+			UE_LOG(LogCs, Warning, TEXT("%s: Failed to set MoveActor. Label is EMPTY. Name: None is NOT Valid."), *Context);
+#else
+			// Name
+			if (MoveObjectName != NAME_None)
+			{
+				MoveActor = ActorLibrary::GetByNameChecked(Context, WorldContext, MoveObjectName);
+				return;
+			}
+
+			UE_LOG(LogCs, Warning, TEXT("%s: Failed to set MoveActor. Name: None is NOT Valid."), *Context);
+#endif // #if WITH_EDITOR
+		}
+	}
+	// Component
+	else
+	if (Mover == ECsMover::Component)
+	{
+		if (MoveComponent)
+		{
+			// Do Nothing, Move Component already set.
+			return;
+		}
+	}
+}
+
+void FCsMoveByInterp_Params::ConditionalSetSafeDestinationObject(const FString& Context, UObject* WorldContext)
+{
+	// Actor
+	if (Destination == ECsMoveDestination::Actor)
+	{
+		if (ToActor)
+		{
+			// Do Nothing, Move Actor already set.
+			return;
+		}
+		else
+		{
+			typedef NCsActor::FLibrary ActorLibrary;
+
+#if WITH_EDITOR
+			// Label
+			if (!ToActorLabel.IsEmpty())
+			{
+				ToActor = ActorLibrary::GetByLabelChecked(Context, WorldContext, ToActorLabel);
+				return;
+			}
+			// Name
+			if (ToObjectName != NAME_None)
+			{
+				ToActor = ActorLibrary::GetByNameChecked(Context, WorldContext, ToObjectName);
+				return;
+			}
+
+			UE_LOG(LogCs, Warning, TEXT("%s: Failed to set ToActor. Label is EMPTY. Name: None is NOT Valid."), *Context);
+#else
+			// Name
+			if (ToObjectName != NAME_None)
+			{
+				MoveActor = ActorLibrary::GetByNameChecked(Context, WorldContext, ToObjectName);
+				return;
+			}
+
+			UE_LOG(LogCs, Warning, TEXT("%s: Failed to set ToActor. Name: None is NOT Valid."), *Context);
+#endif // #if WITH_EDITOR
+		}
+	}
+	// Component
+	else
+	if (Destination == ECsMoveDestination::Component)
+	{
+		if (ToComponent ||
+			ToMeshComponent)
+		{
+			if (!ToComponent && ToMeshComponent)
+				ToComponent = ToMeshComponent;
+			return;
+		}
+		else
+		{
+		}
+	}
+	// Bone
+	else
+	if (Destination == ECsMoveDestination::Bone)
+	{
+		if (ToMeshComponent)
+		{
+			if (ToBone == NAME_None)
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s: ToBone: None is NOT Valid."), *Context);
+				return;
+			}
+
+			const int32 BoneIndex = ToMeshComponent->GetBoneIndex(ToBone);
+
+			if (BoneIndex == INDEX_NONE)
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s: ToMeshComponent: %s does NOT contain ToBone: %s."), *Context, *(ToMeshComponent->GetName()), *(ToBone.ToString()));
+				return;
+			}
+		}
+	}
+}
+
+bool FCsMoveByInterp_Params::IsValid(const FString& Context) const
+{
+	// Check Easing is Valid
+	if (!EMCsEasingType::Get().IsValidEnum(Easing))
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Easing: %s is NOT Valid."), *Context, EMCsEasingType::Get().ToChar(Easing));
+		return false;
+	}
+	// Check Move Object is Valid
+	if (!EMCsMover::Get().IsValidEnum(Mover))
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Mover: %s is NOT Valid."), *Context, EMCsMover::Get().ToChar(Mover));
+		return false;
+	}
+
+	if (Mover == ECsMover::Actor)
+	{
+		if (!MoveActor)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: No MoveActor set."), *Context);
+			return false;
+		}
+	}
+	else
+	if (Mover == ECsMover::Component)
+	{
+		if (!MoveComponent)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: No MoveComponent set."), *Context);
+			return false;
+		}
+	}
+	// Check Destination is Valid
+	if (!EMCsMoveDestination::Get().IsValidEnum(Destination))
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Destination: %s is NOT Valid."), *Context, EMCsMoveDestination::Get().ToChar(Destination));
+		return false;
+	}
+
+	if (Destination == ECsMoveDestination::Actor)
+	{
+		if (!ToActor)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: No ToActor set."), *Context);
+			return false;
+		}
+	}
+	else
+	if (Destination == ECsMoveDestination::Component)
+	{
+		if (!ToComponent &&
+			!ToMeshComponent)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: No ToComponent && ToMeshComponent are NOT set."), *Context);
+			return false;
+		}
+	}
+	else
+	if (Destination == ECsMoveDestination::Bone)
+	{
+		if (!ToMeshComponent)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: ToMeshComponent is NOT set."), *Context);
+			return false;
+		}
+
+		if (ToBone == NAME_None)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: ToBone: None is NOT Valid."), *Context);
+			return false;
+		}
+
+		const int32 BoneIndex = ToMeshComponent->GetBoneIndex(ToBone);
+
+		if (BoneIndex == INDEX_NONE)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: ToMeshComponent: %s does NOT contain ToBone: %s."), *Context, *(ToMeshComponent->GetName()), *(ToBone.ToString()));
+			return false;
+		}
+	}
+	// Check Time is Valid
+	if (Time < 0.0f)
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Time: %f is NOT >= 0.0f."), *Context, Time);
+		return false;
+	}
+	// Check Group is Valid
+	if (!EMCsUpdateGroup::Get().IsValidEnum(Group))
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Group: %s is NOT Valid."), *Context, Group.ToChar());
+		return false;
+	}
+	return true;
+}
+
+namespace NCsMovement
+{
+	namespace NTo
+	{
+		namespace NInterp
+		{
+			namespace NParams
+			{
+				#define MoverType NCsMovement::EMover
+				#define DestinationType NCsMovement::EDestination
+
+				AActor* FParams::GetMoveActor() const { return MoveActor.IsValid() ? MoveActor.Get() : nullptr; }
+
+				USceneComponent* FParams::GetMoveComponent() const { return MoveComponent.IsValid() ? MoveComponent.Get() : nullptr; }
+
+				AActor* FParams::GetToActor() const { return ToActor.IsValid() ? ToActor.Get() : nullptr; }
+
+				USceneComponent* FParams::GetToComponent() const { return ToComponent.IsValid() ? ToComponent.Get() : nullptr; }
+
+				USkeletalMeshComponent* FParams::GetToMeshComponent() const { return ToMeshComponent.IsValid() ? ToMeshComponent.Get() : nullptr; }
+
+				void FParams::ConditionalSetMoveObjectChecked(const FString& Context, UObject* WorldContext)
+				{
+					// Check Mover is Valid
+					typedef NCsMovement::EMMover MoverMapType;
+
+					check(MoverMapType::Get().IsValidEnumChecked(Context, GetMover()));
+					// Actor
+					if (GetMover() == MoverType::Actor)
+					{
+						if (AActor* A = GetMoveActor())
+						{
+							// Do Nothing, Move Actor already set.
+							return;
+						}
+						else
+						{
+							typedef NCsActor::FLibrary ActorLibrary;
+
+				#if WITH_EDITOR
+							// Label
+							if (!GetMoveActorLabel().IsEmpty())
+							{
+								MoveActor = ActorLibrary::GetByLabelChecked(Context, WorldContext, GetMoveActorLabel());
+								return;
+							}
+							// Name
+							if (GetMoveObjectName() != NAME_None)
+							{
+								MoveActor = ActorLibrary::GetByNameChecked(Context, WorldContext, GetMoveObjectName());
+								return;
+							}
+
+							checkf(0, TEXT("%s: Failed to set MoveActor. Label is EMPTY. Name: None is NOT Valid."), *Context);
+				#else
+							// Name
+							if (GetMoveObjectName() != NAME_None)
+							{
+								MoveActor = ActorLibrary::GetByNameChecked(Context, WorldContext, GetMoveObjectName());
+								return;
+							}
+
+							checkf(0, TEXT("%s: Failed to set MoveActor. Name: None is NOT Valid."), *Context);
+				#endif // #if WITH_EDITOR
+						}
+					}
+					// Component
+					else
+					if (GetMover() == MoverType::Component)
+					{
+						if (USceneComponent* C = GetMoveComponent())
+						{
+							// Do Nothing, Move Component already set.
+							return;
+						}
+					}
+				}
+
+				void FParams::ConditionalSetDestinationObjectChecked(const FString& Context, UObject* WorldContext)
+				{
+					// Check Destination is Valid
+					typedef NCsMovement::EMDestination DestinationMapType;
+
+					check(DestinationMapType::Get().IsValidEnumChecked(Context, GetDestination()));
+					// Actor
+					if (GetDestination() == DestinationType::Actor)
+					{
+						if (AActor* A = GetToActor())
+						{
+							// Do Nothing, To Actor already set.
+							return;
+						}
+						else
+						{
+							typedef NCsActor::FLibrary ActorLibrary;
+
+				#if WITH_EDITOR
+							// Label
+							if (!GetToActorLabel().IsEmpty())
+							{
+								ToActor = ActorLibrary::GetByLabelChecked(Context, WorldContext, GetToActorLabel());
+								return;
+							}
+							// Name
+							if (GetToObjectName() != NAME_None)
+							{
+								ToActor = ActorLibrary::GetByNameChecked(Context, WorldContext, GetToObjectName());
+								return;
+							}
+
+							checkf(0, TEXT("%s: Failed to set ToActor. Label is EMPTY. Name: None is NOT Valid."), *Context);
+				#else
+							// Name
+							if (GetToObjectName() != NAME_None)
+							{
+								ToActor = ActorLibrary::GetByNameChecked(Context, WorldContext, GetToObjectName());
+								return;
+							}
+
+							checkf(0, TEXT("%s: Failed to set ToActor. Name: None is NOT Valid."), *Context);
+				#endif // #if WITH_EDITOR
+						}
+					}
+					// Component
+					else
+					if (GetDestination() == DestinationType::Component)
+					{
+						if (USceneComponent* C = GetToComponent())
+						{
+							// Do Nothing, To Component already set.
+							return;
+						}
+					}
+				}
+
+				bool FParams::IsValidChecked(const FString& Context) const
+				{
+					// Check Easing is Valid
+					EMCsEasingType::Get().IsValidEnumChecked(Context, GetEasing());
+					// Check Mover is Valid
+					typedef NCsMovement::EMMover MoverMapType;
+
+					check(MoverMapType::Get().IsValidEnumChecked(Context, GetMover()));
+					// Check Move Object is Valid
+					if (GetMover() == MoverType::Actor)
+					{
+						checkf(GetMoveActor(), TEXT("%s: No MoveActor set."), *Context);
+					}
+					else
+					if (GetMover() == MoverType::Component)
+					{
+						checkf(GetMoveComponent(), TEXT("%s: No MoveComponent set."), *Context);
+					}
+					// Check Destination is Valid
+					typedef NCsMovement::EMDestination DestinationMapType;
+
+					check(DestinationMapType::Get().IsValidEnumChecked(Context, GetDestination()));
+					
+					if (GetDestination() == DestinationType::Actor)
+					{
+						checkf(GetToActor(), TEXT("%s: No ToActor set."), *Context);
+					}
+					else
+					if (GetDestination() == DestinationType::Component)
+					{
+						checkf(!GetToComponent() && !GetToMeshComponent(), TEXT("%s: No ToComponent && ToMeshComponent are NOT set."), *Context);
+					}
+					else
+					if (GetDestination() == DestinationType::Bone)
+					{
+						checkf(!GetToMeshComponent(), TEXT("%s: ToMeshComponent is NOT set."), *Context);
+
+						checkf(GetToBone() != NAME_None, TEXT("%s: ToBone: None is NOT Valid."), *Context);
+
+						const int32 BoneIndex = GetToMeshComponent()->GetBoneIndex(ToBone);
+
+						checkf(BoneIndex != INDEX_NONE, TEXT("%s: ToMeshComponent: %s does NOT contain ToBone: %s."), *Context, *(GetToMeshComponent()->GetName()), *(GetToBone().ToString()));
+					}
+					// Check Time is Valid
+					checkf(GetTime() >= 0.0f, TEXT("%s: Time: %f is NOT >= 0.0f."), *Context, GetTime());
+					// Check Group is Valid
+					EMCsUpdateGroup::Get().IsValidEnumChecked(Context, GetGroup());
+					return true;
+				}
+
+				void FParams::Reset()
+				{
+
+				}
+
+				#undef MoverType
+				#undef DestinationType
+			}
+		}
+	}
+}
+
+#pragma endregion FCsMoveByInterp_Params
 
 // SpeedFormat
 #pragma region

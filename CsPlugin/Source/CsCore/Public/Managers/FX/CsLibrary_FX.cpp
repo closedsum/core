@@ -46,6 +46,50 @@ namespace NCsFX
 		Manager_SpawnParams.Shutdown();
 	}
 
+	// Load
+	#pragma region
+
+	UNiagaraSystem* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (!Path.IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path is NOT Valid.")));
+			return nullptr;
+		}
+
+		UObject* Object = Path.TryLoad();
+
+		if (!Object)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to load Object at Path: %s."), *Context, *(Path.ToString())));
+			return nullptr;
+		}
+
+		UNiagaraSystem* System = Cast<UNiagaraSystem>(Object);
+
+		if (!System)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object: %s with Class: %s @ %s is NOT of type: UNiagaraSystem."), *Context, *(Object->GetName()), *(Object->GetClass()->GetName())));
+			return nullptr;
+		}
+		return System;
+	}
+
+	UNiagaraSystem* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (Path.IsEmpty())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path is EMPTY."), *Context));
+			return nullptr;
+		}
+
+		FSoftObjectPath SoftPath(Path);
+
+		return SafeLoad(Context, SoftPath, Log);
+	}
+
+	#pragma endregion Load
+
 	bool FLibrary::HasVariableNameChecked(const FString& Context, UNiagaraSystem* System, const FName& Name)
 	{
 		checkf(System, TEXT("%s: System is NULL."), *Context);
@@ -132,8 +176,55 @@ namespace NCsFX
 			Component->SetVariableVec3(Parameter->GetName(), ParameterLibrary::GetVectorChecked(Context, Parameter));
 	}
 
-	#define ParamsResourceType NCsFX::NSpawn::FResource
-	#define ParamsType NCsFX::NSpawn::FParams
+	#define ParamsResourceType NCsFX::NSpawn::NParams::FResource
+	#define ParamsType NCsFX::NSpawn::NParams::FParams
+
+	FCsRoutineHandle FLibrary::SpawnChecked(const FString& Context, UObject* WorldContext, ParamsResourceType* Params)
+	{
+		using namespace NCsFX::NLibrary::NCached;
+
+		typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+		UObject* ContextRoot = CoroutineSchedulerLibrary::GetContextRootChecked(Context, WorldContext);
+
+		UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(ContextRoot);
+		const FECsUpdateGroup& UpdateGroup = Params->Get()->Group;
+
+		typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+		PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+
+		#define COROUTINE Spawn_Internal
+
+		Payload->CoroutineImpl.BindStatic(&NCsFX::FLibrary::COROUTINE);
+		Payload->StartTime = UCsManager_Time::Get(ContextRoot)->GetTime(UpdateGroup);
+		Payload->Owner.SetObject(WorldContext);
+		Payload->SetName(Str::COROUTINE);
+		Payload->SetFName(Name::COROUTINE);
+
+		#undef COROUTINE
+
+		// Set End callback (to free any allocated references)
+		typedef NCsCoroutine::FOnEnd OnEndType;
+
+		Payload->OnEnds.AddDefaulted();
+		OnEndType& OnEnd = Payload->OnEnds.Last();
+		OnEnd.BindStatic(&FLibrary::Spawn_Internal_OnEnd);
+
+		static const int32 RESOURCE = 0;
+		Payload->SetValue_Void(RESOURCE, Params);
+
+		ParamsType* P = Params->Get();
+		P->Update();
+	
+		const FCsSpawnerFrequencyParams& FrequencyParams = Params->Get()->FrequencyParams;
+		const float TotalTime = FrequencyParams.CalculateTotalTime();
+
+		static const int32 TOTAL_TIME = 0;
+		Payload->SetValue_Float(TOTAL_TIME, TotalTime);
+
+		return Scheduler->Start(Payload);
+	}
 
 	FCsRoutineHandle FLibrary::SafeSpawn(const FString& Context, UObject* WorldContext, ParamsResourceType* Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
@@ -184,50 +275,6 @@ namespace NCsFX
 		}
 
 		return SpawnChecked(Context, WorldContext, Params);
-	}
-
-	FCsRoutineHandle FLibrary::SpawnChecked(const FString& Context, UObject* WorldContext, ParamsResourceType* Params)
-	{
-		using namespace NCsFX::NLibrary::NCached;
-
-		typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-		UObject* ContextRoot = CoroutineSchedulerLibrary::GetContextRootChecked(Context, WorldContext);
-
-		UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(ContextRoot);
-		const FECsUpdateGroup& UpdateGroup = Params->Get()->Group;
-
-		typedef NCsCoroutine::NPayload::FImpl PayloadType;
-
-		PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
-
-		#define COROUTINE Spawn_Internal
-
-		Payload->CoroutineImpl.BindStatic(&NCsFX::FLibrary::COROUTINE);
-		Payload->StartTime = UCsManager_Time::Get(ContextRoot)->GetTime(UpdateGroup);
-		Payload->Owner.SetObject(WorldContext);
-		Payload->SetName(Str::COROUTINE);
-		Payload->SetFName(Name::COROUTINE);
-
-		#undef COROUTINE
-
-		// Set End callback (to free any allocated references)
-		typedef NCsCoroutine::FOnEnd OnEndType;
-
-		Payload->OnEnds.AddDefaulted();
-		OnEndType& OnEnd = Payload->OnEnds.Last();
-		OnEnd.BindStatic(&FLibrary::Spawn_Internal_OnEnd);
-
-		static const int32 RESOURCE = 0;
-		Payload->SetValue_Void(RESOURCE, Params);
-
-		const FCsSpawnerFrequencyParams& FrequencyParams = Params->Get()->FrequencyParams;
-		const float TotalTime = FrequencyParams.CalculateTotalTime();
-
-		static const int32 TOTAL_TIME = 0;
-		Payload->SetValue_Float(TOTAL_TIME, TotalTime);
-
-		return Scheduler->Start(Payload);
 	}
 
 	char FLibrary::Spawn_Internal(FCsRoutine* R)

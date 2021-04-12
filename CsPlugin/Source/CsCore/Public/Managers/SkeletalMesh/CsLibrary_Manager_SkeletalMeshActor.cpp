@@ -1,21 +1,52 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/SkeletalMesh/CsLibrary_Manager_SkeletalMeshActor.h"
 
+#if WITH_EDITOR
+// Types
+#include "Types/CsTypes_Macro.h"
+// Library
+#include "Library/CsLibrary_World.h"
 // Game
 #include "GameFramework/GameStateBase.h"
 // World
 #include "Engine/World.h"
+#endif // #if WITH_EDITOR
 
 namespace NCsSkeletalMeshActor
 {
 	namespace NManager
 	{
-		UObject* FLibrary::GetContextRoot(UObject* WorldContext)
+		namespace NLibrary
 		{
-			if (!WorldContext)
-				return nullptr;
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSkeletalMeshActor::NManager::FLibrary, GetSafeContextRoot);
+				}
+			}
+		}
 
-			UWorld* World = WorldContext->GetWorld();
+	#if WITH_EDITOR
+
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
+		{
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+			AGameStateBase* GameState = World->GetGameState();
+
+			checkf(GameState, TEXT("%s: Failed to get GameState from World: %s."), *Context, *(World->GetName()));
+
+			return GameState;
+		}
+
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
 				return nullptr;
@@ -27,19 +58,15 @@ namespace NCsSkeletalMeshActor
 			return GameState;
 		}
 
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
+		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			using namespace NCsSkeletalMeshActor::NManager::NLibrary::NCached;
 
-			UWorld* World = WorldContext->GetWorld();
+			const FString& Context = Str::GetSafeContextRoot;
 
-			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
-
-			AGameStateBase* GameState = World->GetGameState();
-
-			checkf(GameState, TEXT("%s: Failed to get GameState from World: %s."), *Context, *(World->GetName()));
-
-			return GameState;
+			return GetSafeContextRoot(Context, WorldContext, nullptr);
 		}
+
+	#endif // #if WITH_EDITOR
 	}
 }

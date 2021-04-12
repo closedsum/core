@@ -2,6 +2,8 @@
 #include "Coordinators/GameEvent/CsLibrary_Coordinator_GameEvent.h"
 #include "CsCore.h"
 
+// Library
+#include "Library/CsLibrary_World.h"
 // Coordinators
 #include "Coordinators/GameEvent/CsCoordinator_GameEvent.h"
 // Game
@@ -13,13 +15,24 @@ namespace NCsGameEvent
 {
 	namespace NCoordinator
 	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameEvent::NCoordinator::FLibrary, GetSafeContextRoot);
+				}
+			}
+		}
+
+	#if WITH_EDITOR
+
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldContext->GetWorld();
-
-			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 			UGameInstance* GameInstance = World->GetGameInstance();
 
@@ -28,47 +41,36 @@ namespace NCsGameEvent
 			return GameInstance;
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
-		{
-			if (!WorldContext)
-				return nullptr;
-
-			UWorld* World = WorldContext->GetWorld();
-
-			if (!World)
-				return nullptr;
-
-			return World->GetGameInstance();
-		}
-
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) /*= nullptr*/)
 		{
-			// Check WorldContext is Valid.
-			if (!WorldContext)
-			{
-				if (Log)
-					Log(FString::Printf(TEXT("%s: WorldContext is NULL."), *Context));
-				return nullptr;
-			}
+			typedef NCsWorld::FLibrary WorldLibrary;
+
 			// Check World is Valid.
-			UWorld* World = WorldContext->GetWorld();
+			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
-			{
-				if (Log)
-					Log(FString::Printf(TEXT("%s: World is NULL."), *Context));
 				return nullptr;
-			}
+
 			// Check GameInstance is Valid.
 			UGameInstance* GameInstance = World->GetGameInstance();
 
 			if (!GameInstance)
 			{
-				if (Log)
-					Log(FString::Printf(TEXT("%s: GameInstance is NULL."), *Context));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GameInstance is NULL."), *Context));
 			}
 			return GameInstance;
 		}
+
+		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
+		{
+			using namespace NCsGameEvent::NCoordinator::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeContextRoot;
+
+			return GetSafeContextRoot(Context, WorldContext, nullptr);
+		}
+
+	#endif // #if WITH_EDITOR
 
 		void FLibrary::ProcessGameEventInfoChecked(const FString& Context, UObject* WorldContext, const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info)
 		{

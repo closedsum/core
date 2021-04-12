@@ -47,7 +47,7 @@ namespace NCsDataRootSet
 		{
 			typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-			UObject* ContextRoot = DataManagerLibrary::GetContextRoot(Context, WorldContext);
+			UObject* ContextRoot = DataManagerLibrary::GetSafeContextRoot(Context, WorldContext);
 
 			if (!ContextRoot)
 			{
@@ -84,11 +84,9 @@ namespace NCsDataRootSet
 
 	UObject* FLibrary::GetImplChecked(const FString& Context, UObject* WorldContext)
 	{
-		checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+		typedef NCsWorld::FLibrary WorldLibrary;
 
-		UWorld* World = WorldContext->GetWorld();
-
-		checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 		return GetImplChecked(Context, World->GetGameInstance());
 	}
@@ -147,7 +145,7 @@ namespace NCsDataRootSet
 		{
 			typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-			UObject* ContextRoot = DataManagerLibrary::GetContextRoot(Context, WorldContext);
+			UObject* ContextRoot = DataManagerLibrary::GetSafeContextRoot(Context, WorldContext);
 
 			if (!ContextRoot)
 			{

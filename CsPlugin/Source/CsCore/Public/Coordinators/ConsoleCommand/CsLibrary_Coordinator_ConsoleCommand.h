@@ -1,5 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Log
+#include "Utility/CsLog.h"
 
 class UObject;
 
@@ -17,7 +19,7 @@ namespace NCsConsoleCommand
 			/**
 			* Get the Context (Root) for UCsCoordinator_ConsoleCommand from a WorldContext.
 			* 
-			* @parma Context		The calling context.
+			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsCoordinator_ConsoleCommand.
 			*/
@@ -33,13 +35,29 @@ namespace NCsConsoleCommand
 			/**
 			* Safely get the Context (Root) for UCsCoordinator_ConsoleCommand from a WorldContext.
 			*
-			* @parma Context		The calling context.
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log
+			* return				Context for UCsCoordinator_ConsoleCommand.
+			*/
+			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+		#else
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				return nullptr;
+			}
+		#endif // #if WITH_EDITOR
+
+		#if WITH_EDITOR
+			/**
+			* Safely get the Context (Root) for UCsCoordinator_ConsoleCommand from a WorldContext.
+			*
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsCoordinator_ConsoleCommand.
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext);
+			static UObject* GetSafeContextRoot(UObject* WorldContext);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext)
+			FORCEINLINE static UObject* GetSafeContextRoot(UObject* WorldContext)
 			{
 				return nullptr;
 			}

@@ -30,8 +30,10 @@ void ACsManager_Singleton_Actor::PostActorCreated()
 {
 	Super::PostActorCreated();
 
-	if (FCsLibrary_World::IsPlayInEditor(GetWorld()) ||
-		FCsLibrary_World::IsPlayInEditorPreview(GetWorld()))
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditor(GetWorld()) ||
+		WorldLibrary::IsPlayInEditorPreview(GetWorld()))
 	{
 		SetupSingletons();
 

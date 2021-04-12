@@ -2,7 +2,9 @@
 #include "Managers/StaticMesh/CsStaticMeshActorPooledImpl.h"
 #include "CsCore.h"
 
+// Library
 #include "Library/CsLibrary_Common.h"
+#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Sound
 #include "Managers/StaticMesh/Cache/CsCache_StaticMeshActorImpl.h"
 #include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"
@@ -81,12 +83,6 @@ void ACsStaticMeshActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 	const FString& Context = Str::Update;
 
-	// TODO: This should be opaque
-	
-	typedef NCsStaticMeshActor::NCache::FImpl CacheImplType;
-
-	CacheImplType* CacheImpl = NCsInterfaceMap::PureStaticCastChecked<CacheImplType>(Context, Cache);
-
 	CacheImpl->Update(DeltaTime);
 }
 
@@ -96,7 +92,8 @@ void ACsStaticMeshActorPooledImpl::ConstructCache()
 {
 	typedef NCsStaticMeshActor::NCache::FImpl CacheImplType;
 
-	Cache = new CacheImplType();
+	CacheImpl = new CacheImplType();
+	Cache	  = CacheImpl;
 }
 
 // ICsPooledObject
@@ -114,8 +111,9 @@ void ACsStaticMeshActorPooledImpl::Allocate(PayloadType* Payload)
 	Cache->Allocate(Payload);
 
 	typedef NCsStaticMeshActor::NPayload::IPayload PayloadType;
+	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
 
-	PayloadType* StaticMeshPayload = NCsInterfaceMap::GetInterfaceChecked<PayloadType>(Context, Payload);
+	PayloadType* StaticMeshPayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	/*
 	checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Play: AudioComponent is NULL."));

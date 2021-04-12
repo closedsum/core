@@ -105,8 +105,10 @@ void ACsMannequin_Silhouette::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 #if WITH_EDITOR
-	if (FCsLibrary_World::IsPlayInEditor(GetWorld()) ||
-		FCsLibrary_World::IsPlayInEditorPreview(GetWorld()))
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditor(GetWorld()) ||
+		WorldLibrary::IsPlayInEditorPreview(GetWorld()))
 	{
 		OnObjectModifiedHandle = FCoreUObjectDelegates::OnObjectModified.AddUObject(this, &ACsMannequin_Silhouette::OnObjectModified);
 
@@ -120,8 +122,10 @@ void ACsMannequin_Silhouette::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 #if WITH_EDITOR
-	if (FCsLibrary_World::IsPlayInEditor(GetWorld()) ||
-		FCsLibrary_World::IsPlayInEditorPreview(GetWorld()))
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditor(GetWorld()) ||
+		WorldLibrary::IsPlayInEditorPreview(GetWorld()))
 	{
 		TickInEditor(DeltaSeconds);
 	}
@@ -131,8 +135,10 @@ void ACsMannequin_Silhouette::Tick(float DeltaSeconds)
 bool ACsMannequin_Silhouette::ShouldTickIfViewportsOnly() const
 {
 #if WITH_EDITOR
-	if (FCsLibrary_World::IsPlayInEditor(GetWorld()) ||
-		FCsLibrary_World::IsPlayInEditorPreview(GetWorld()))
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditor(GetWorld()) ||
+		WorldLibrary::IsPlayInEditorPreview(GetWorld()))
 	{
 		return true;
 	}
@@ -145,8 +151,10 @@ bool ACsMannequin_Silhouette::ShouldTickIfViewportsOnly() const
 void ACsMannequin_Silhouette::OnDestroy(AActor* Actor)
 {
 #if WITH_EDITOR
-	if (FCsLibrary_World::IsPlayInEditor(GetWorld()) ||
-		FCsLibrary_World::IsPlayInEditorPreview(GetWorld()))
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditor(GetWorld()) ||
+		WorldLibrary::IsPlayInEditorPreview(GetWorld()))
 	{
 		FCoreUObjectDelegates::OnObjectModified.Remove(OnObjectModifiedHandle);
 	}

@@ -142,3 +142,12 @@
 		delete __ptr; \
 		__ptr = nullptr; \
 	}
+
+#define CS_DEFINE_SET_GET_MEMBER_WITH_EMU(__Member, __ValueType) \
+	FORCEINLINE void Set##__Member(const __ValueType& __value) \
+	{ \
+		__Member = __value; \
+		__Member##_Emu = &__Member; \
+	} \
+	FORCEINLINE void Set##__Member(__ValueType* __value) { __Member##_Emu = __value; } \
+	FORCEINLINE const __ValueType& Get##__Member() const { return *(__Member##_Emu); }

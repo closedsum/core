@@ -605,25 +605,25 @@ struct CSCORE_API FCsFX
 public:
 
 	/** Soft reference to an FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<UNiagaraSystem> FX;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 FX_LoadFlags;
 
 	/** Hard reference to an FX System. */
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadWrite)
 	UNiagaraSystem* FX_Internal;
 
 	/** The FX Type. This is used to group FX into different categories 
 	    and can be used by a Manager pooling FX objects to Spawn the correct
 		FX object. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FECsFX Type;
-
+	
 	/** Condition to determine when to deallocate the FX object. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsFXDeallocateMethod DeallocateMethod;
 
 private:
@@ -642,41 +642,41 @@ public:
 		   LifeTime == 0.0f means the FX object will stay active forever.
 		   LifeTime > 0.0f means the FX will be deallocated after LifeTime amount of time after
 	        the FX object has been allocated. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
 	/** Valid if the FX is attached to a Parent object or when an FX object is
 		allocated, the Parent field of the payload is set.If the Parent object is NULL,
 		the FX will NOT be attached. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsAttachmentTransformRules AttachmentTransformRules;
 
 	/** Valid only when the FX is attached to a Parent object. 
 	    Bone or Socket to attach to. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the FX. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
 	int32 TransformRules;
 
 	/** The Transform to apply to the FX.
 		If the FX is attached to a parent object, the Transform is applied as a Relative Transform
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTransform Transform;
 
 	/** List of all Niagara Int Parameters to change on the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FCsFXParameterInt> IntParameters;
 
 	/** List of all Niagara Float Parameters to change on the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FCsFXParameterFloat> FloatParameters;
 
 	/** List of all Niagara Vector Parameters to change on the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FCsFXParameterVector> VectorParameters;
 
 public:

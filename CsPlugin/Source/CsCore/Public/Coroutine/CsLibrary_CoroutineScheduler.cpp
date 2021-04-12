@@ -25,6 +25,7 @@ namespace NCsCoroutine
 			{
 				namespace Str
 				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NScheduler::FLibrary, GetContextRoot);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NScheduler::FLibrary, GetSafeContextRoot);
 				}
 			}
@@ -34,10 +35,16 @@ namespace NCsCoroutine
 
 		UObject* FLibrary::GetContextRoot(UObject* WorldContext)
 		{
-			checkf(WorldContext, TEXT("FLibrary::GetContextRoot: WorldContext is NULL."));
+			using namespace NCsCoroutine::NScheduler::NLibrary::NCached;
 
-			if (FCsLibrary_World::IsPlayInEditor(WorldContext->GetWorld()) ||
-				FCsLibrary_World::IsPlayInEditorPreview(WorldContext->GetWorld()))
+			const FString& Context = Str::GetContextRoot;
+
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+			if (WorldLibrary::IsPlayInEditor(WorldContext->GetWorld()) ||
+				WorldLibrary::IsPlayInEditorPreview(WorldContext->GetWorld()))
 			{
 				return GEngine;
 			}
@@ -49,14 +56,12 @@ namespace NCsCoroutine
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldContext->GetWorld();
+			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
-			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
-
-			if (FCsLibrary_World::IsPlayInEditor(World) ||
-				FCsLibrary_World::IsPlayInEditorPreview(World))
+			if (WorldLibrary::IsPlayInEditor(World) ||
+				WorldLibrary::IsPlayInEditorPreview(World))
 			{
 				return GEngine;
 			}
@@ -70,22 +75,15 @@ namespace NCsCoroutine
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!WorldContext)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: WorldContext is NULL."), *Context));
-				return nullptr;
-			}
+			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldContext->GetWorld();
+			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName())));
 				return nullptr;
-			}
 
-			if (FCsLibrary_World::IsPlayInEditor(WorldContext->GetWorld()) ||
-				FCsLibrary_World::IsPlayInEditorPreview(WorldContext->GetWorld()))
+			if (WorldLibrary::IsPlayInEditor(WorldContext->GetWorld()) ||
+				WorldLibrary::IsPlayInEditorPreview(WorldContext->GetWorld()))
 			{
 				return GEngine;
 			}

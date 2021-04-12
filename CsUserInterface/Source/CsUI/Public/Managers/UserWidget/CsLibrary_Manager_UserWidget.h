@@ -26,7 +26,7 @@ namespace NCsUserWidget
 			* Get the Context (Root) for UCsManager_UserWidget from a WorldContext.
 			*
 			* @param Context		The calling context.
-			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsManager_UserWidget
 			*/
 			static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
@@ -38,7 +38,21 @@ namespace NCsUserWidget
 			/**
 			* Safely get the Context (Root) for UCsManager_UserWidget from a WorldContext.
 			*
-			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log
+			* return				Context for UCsManager_UserWidget
+			*/
+			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+		#else
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
+		#endif // #if WITH_EDITOR
+
+		#if WITH_EDITOR
+			/**
+			* Safely get the Context (Root) for UCsManager_UserWidget from a WorldContext.
+			*
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsManager_UserWidget
 			*/
 			static UObject* GetSafeContextRoot(UObject* WorldContext);

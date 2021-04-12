@@ -31,8 +31,10 @@ namespace NCsSound
 
 			/*
 #if WITH_EDITOR
-			if (FCsLibrary_World::IsPlayInEditor(WorldContext->GetWorld()) ||
-				FCsLibrary_World::IsPlayInEditorPreview(WorldContext->GetWorld()))
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			if (WorldLibrary::IsPlayInEditor(WorldContext->GetWorld()) ||
+				WorldLibrary::IsPlayInEditorPreview(WorldContext->GetWorld()))
 			{
 				return WorldContext;
 			}

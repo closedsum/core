@@ -2,6 +2,10 @@
 #include "Coordinators/ConsoleCommand/CsLibrary_Coordinator_ConsoleCommand.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
+// Library
+#include "Library/CsLibrary_World.h"
 // Game
 #include "Engine/GameInstance.h"
 // World
@@ -11,15 +15,24 @@ namespace NCsConsoleCommand
 {
 	namespace NCoordinator
 	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsConsoleCommand::NCoordinator::FLibrary, GetSafeContextRoot);
+				}
+			}
+		}
+
 	#if WITH_EDITOR
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldContext->GetWorld();
-
-			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 			UGameInstance* GameInstance = World->GetGameInstance();
 
@@ -28,29 +41,31 @@ namespace NCsConsoleCommand
 			return GameInstance;
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!WorldContext)
-			{
-				UE_LOG(LogCs, Warning, TEXT("%s: WorldContext is NULL."), *Context);
-				return nullptr;
-			}
+			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldContext->GetWorld();
+			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
-			{
-				UE_LOG(LogCs, Warning, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
 				return nullptr;
-			}
 
 			UGameInstance* GameInstance = World->GetGameInstance();
 
 			if (!GameInstance)
 			{
-				UE_LOG(LogCs, Warning, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName()));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName())));
 			}
 			return GameInstance;
+		}
+
+		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
+		{
+			using namespace NCsConsoleCommand::NCoordinator::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeContextRoot;
+
+			return GetSafeContextRoot(Context, WorldContext, nullptr);
 		}
 
 		#endif // #if WITH_EDITOR

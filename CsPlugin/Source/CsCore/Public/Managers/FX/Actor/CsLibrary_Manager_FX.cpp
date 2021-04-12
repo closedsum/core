@@ -8,10 +8,15 @@
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
 // FX
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
+
+#if WITH_EDITOR
+// Library
+#include "Library/CsLibrary_World.h"
 // Game
 #include "GameFramework/GameStateBase.h"
 // World
 #include "Engine/World.h"
+#endif // #if WITH_EDITOR
 
 namespace NCsFX
 {
@@ -21,11 +26,9 @@ namespace NCsFX
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldContext->GetWorld();
-
-			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 			AGameStateBase* GameState = World->GetGameState();
 
@@ -36,19 +39,12 @@ namespace NCsFX
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!WorldContext)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: WorldContext is NULL."), *Context));
-				return nullptr;
-			}
+			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldContext->GetWorld();
+			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName())));
 				return nullptr;
-			}
 
 			AGameStateBase* GameState = World->GetGameState();
 

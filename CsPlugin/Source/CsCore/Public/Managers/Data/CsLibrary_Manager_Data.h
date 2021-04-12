@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-
+// Log
+#include "Utility/CsLog.h"
 
 #pragma once
 
@@ -13,23 +14,7 @@ namespace NCsData
 		{
 		public:
 
-			/**
-			* Get the Context (Root) for UCsManager_Data from a WorldContext.
-			*
-			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* return				Context for UCsManager_Data
-			*/
-			static UObject* GetContextRoot(UObject* WorldContext);
-
-			/**
-			* Get the Context (Root) for UCsManager_Data from a WorldContext.
-			*
-			* @param Context		The calling context.
-			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* return				Context for UCsManager_Data
-			*/
-			static UObject* GetContextRoot(const FString& Context, UObject* WorldContext);
-
+		#if WITH_EDITOR
 			/**
 			* Get the Context (Root) for UCsManager_Data from a WorldContext.
 			*
@@ -38,6 +23,36 @@ namespace NCsData
 			* return				Context for UCsManager_Data
 			*/
 			static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
+		#else
+			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext) { return nullptr; }
+		#endif // #if WITH_EDITOR
+
+		#if WITH_EDITOR
+			/**
+			* Safely get the Context (Root) for UCsManager_Data from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log
+			* return				Context for UCsManager_Data
+			*/
+			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
+		#else
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning) { return nullptr; }
+		#endif // #if WITH_EDITOR
+
+		#if WITH_EDITOR
+			/**
+			* Get the Context (Root) for UCsManager_Data from a WorldContext.
+			*
+			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Context for UCsManager_Data
+			*/
+			static UObject* GetSafeContextRoot(UObject* WorldContext);
+		#else
+			FORCEINLINE static UObject* GetSafeContextRoot(UObject* WorldContext) { return nullptr; }
+		#endif // #if WITH_EDITOR
+
 		};
 	}
 }

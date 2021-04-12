@@ -1,6 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/CsLibrary_Manager_Javascript.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
+// Library
+#include "Library/CsLibrary_World.h"
 // World
 #include "Engine/World.h"
 
@@ -13,34 +17,55 @@ namespace NCsJs
 {
 	namespace NManager
 	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsJs::NManager::FLibrary, GetSafeContextRoot);
+				}
+			}
+		}
+
 	#if WITH_EDITOR
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldContext->GetWorld();
-
-			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 			UGameInstance* GameInstance = World->GetGameInstance();
 
-			checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, GameInstance);
+			checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName()));
 
+			return GameInstance;
+		}
+
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+
+			UGameInstance* GameInstance = World->GetGameInstance();
+
+			if (!GameInstance)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName())));
+				return nullptr;
+			}
 			return GameInstance;
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
 		{
-			if (!WorldContext)
-				return nullptr;
+			using namespace NCsJs::NManager::NLibrary::NCached;
 
-			UWorld* World = WorldContext->GetWorld();
+			const FString& Context = Str::GetSafeContextRoot;
 
-			if (!World)
-				return nullptr;
-
-			return World->GetGameInstance();
+			return GetSafeContextRoot(Context, WorldContext, nullptr);
 		}
 
 	#endif // #if WITH_EDITOR

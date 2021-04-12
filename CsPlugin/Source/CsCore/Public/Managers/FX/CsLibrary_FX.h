@@ -16,9 +16,9 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NParameter, IParameter)
 namespace NCsFX
 {
 	/**
-	* Library of function related to FX
+	* Library of functions related to FX
 	*/
-	class CSCORE_API FLibrary final
+	struct CSCORE_API FLibrary final
 	{
 	private:
 		FLibrary();
@@ -38,7 +38,25 @@ namespace NCsFX
 	#pragma region
 	public:
 
-		//static UNiagaraSystem* SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+		/**
+		* Load a NiagaraSystem at the given Path.
+		* 
+		* @param Context	The calling context.
+		* @param Path		SoftObjectPath to the NiagaraSystem to load.
+		* @param Log
+		* return			NiagaraSystem.
+		*/
+		static UNiagaraSystem* SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Load a NiagaraSystem at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		FString path to the NiagaraSystem to load.
+		* @param Log
+		* return			NiagaraSystem.
+		*/
+		static UNiagaraSystem* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Load
 
@@ -87,9 +105,9 @@ namespace NCsFX
 	#pragma region
 	private:
 
-	#define ParamsManagerType NCsFX::NSpawn::FManager
-	#define ParamsResourceType NCsFX::NSpawn::FResource
-	#define ParamsType NCsFX::NSpawn::FParams
+	#define ParamsManagerType NCsFX::NSpawn::NParams::FManager
+	#define ParamsResourceType NCsFX::NSpawn::NParams::FResource
+	#define ParamsType NCsFX::NSpawn::NParams::FParams
 
 		ParamsManagerType Manager_SpawnParams;
 
@@ -101,6 +119,17 @@ namespace NCsFX
 
 	public:
 
+
+		/**
+		* Spawn an FX with the given params.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param ParamsType
+		* return
+		*/
+		static FCsRoutineHandle SpawnChecked(const FString& Context, UObject* WorldContext, ParamsResourceType* Params);
+
 		/**
 		* Safely spawn an FX with the given params.
 		* 
@@ -111,16 +140,6 @@ namespace NCsFX
 		* return				Handle to the coroutine if the system is spawned via a coroutine.
 		*/
 		static FCsRoutineHandle SafeSpawn(const FString& Context, UObject* WorldContext, ParamsResourceType* Params, void(*Log)(const FString&) = &FCsLog::Warning);
-
-		/**
-		* Spawn an FX with the given params.
-		* 
-		* @param Context		The calling context.
-		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		* @param ParamsType
-		* return
-		*/
-		static FCsRoutineHandle SpawnChecked(const FString& Context, UObject* WorldContext, ParamsResourceType* Params);
 
 		static char Spawn_Internal(FCsRoutine* R);
 

@@ -55,8 +55,8 @@ namespace NCsAnim
 
 				checkf(Playback != PlaybackType::Custom, TEXT("%s: Playback: EPlayback::Custom is NOT Supported."), *Context)
 
-				UCsCoroutineScheduler* Scheduler  = UCsCoroutineScheduler::Get(Params.ContextRoot);
-				const FECsUpdateGroup UpdateGroup = Params.UpdateGroup;
+				UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(Params.ContextRoot);
+				const FECsUpdateGroup& UpdateGroup = Params.UpdateGroup;
 
 				typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
@@ -278,8 +278,8 @@ namespace NCsAnim
 
 				checkf(Playback != PlaybackType::Custom, TEXT("%s: Playback: EPlayback::Custom is NOT Supported."), *Context)
 
-				UCsCoroutineScheduler* Scheduler  = UCsCoroutineScheduler::Get(Params.ContextRoot);
-				const FECsUpdateGroup UpdateGroup = Params.UpdateGroup;
+				UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(Params.ContextRoot);
+				const FECsUpdateGroup& UpdateGroup = Params.UpdateGroup;
 
 				typedef NCsCoroutine::NPayload::FImpl PayloadType;
 

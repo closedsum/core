@@ -19,18 +19,27 @@ namespace NCsTime
 {
 	namespace NManager
 	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsTime::NManager::FLibrary, GetSafeContextRoot);
+				}
+			}
+		}
+
 	#if WITH_EDITOR
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldContext->GetWorld();
+			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
-			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
-
-			if (FCsLibrary_World::IsPlayInEditor(World) ||
-				FCsLibrary_World::IsPlayInEditorPreview(World))
+			if (WorldLibrary::IsPlayInEditor(World) ||
+				WorldLibrary::IsPlayInEditorPreview(World))
 			{
 				return GEngine;
 			}
@@ -42,18 +51,19 @@ namespace NCsTime
 			return GameInstance;
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!WorldContext)
-				return nullptr;
+			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldContext->GetWorld();
+			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
 				return nullptr;
 
-			if (FCsLibrary_World::IsPlayInEditor(WorldContext->GetWorld()) ||
-				FCsLibrary_World::IsPlayInEditorPreview(WorldContext->GetWorld()))
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			if (WorldLibrary::IsPlayInEditor(WorldContext->GetWorld()) ||
+				WorldLibrary::IsPlayInEditorPreview(WorldContext->GetWorld()))
 			{
 				return GEngine;
 			}
@@ -61,6 +71,15 @@ namespace NCsTime
 			{
 				return World->GetGameInstance();
 			}
+		}
+
+		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
+		{
+			using namespace NCsTime::NManager::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeContextRoot;
+
+			return GetSafeContextRoot(Context, WorldContext, nullptr);
 		}
 
 	#endif // #if WITH_EDITOR

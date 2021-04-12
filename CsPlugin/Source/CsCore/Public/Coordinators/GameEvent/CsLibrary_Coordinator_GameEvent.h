@@ -12,6 +12,7 @@ namespace NCsGameEvent
 	{
 		struct CSCORE_API FLibrary
 		{
+		#if WITH_EDITOR
 			/**
 			* Get the Context (Root) for UCsCoordinator_GameEvent from a WorldContext.
 			*
@@ -20,15 +21,11 @@ namespace NCsGameEvent
 			* return				Context for UCsCoordinator_GameEvent
 			*/
 			static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
+		#else
+			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext) { return nullptr; }
+		#endif // #if WITH_EDITOR
 
-			/**
-			* Safely get the Context (Root) for UCsCoordinator_GameEvent from a WorldContext.
-			*
-			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* return				Context for UCsCoordinator_GameEvent
-			*/
-			static UObject* GetSafeContextRoot(UObject* WorldContext);
-
+		#if WITH_EDITOR
 			/**
 			* Safely get the Context (Root) for UCsCoordinator_GameEvent from a WorldContext.
 			*
@@ -39,7 +36,22 @@ namespace NCsGameEvent
 			* return				Context for UCsCoordinator_GameEvent
 			*/
 			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = nullptr);
-			
+		#else
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = nullptr) { return nullptr; }
+		#endif // #if WITH_EDITOR
+
+		#if WITH_EDITOR
+			/**
+			* Safely get the Context (Root) for UCsCoordinator_GameEvent from a WorldContext.
+			*
+			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Context for UCsCoordinator_GameEvent
+			*/
+			static UObject* GetSafeContextRoot(UObject* WorldContext);
+		#else
+			FORCEINLINE static UObject* GetSafeContextRoot(UObject* WorldContext) { return nullptr; }
+		#endif // #if WITH_EDITOR
+
 			/**
 			* 
 			* 

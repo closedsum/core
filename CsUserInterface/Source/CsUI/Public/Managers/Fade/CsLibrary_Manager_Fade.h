@@ -2,6 +2,8 @@
 #pragma once
 // Types
 #include "Managers/Fade/CsTypes_Fade.h"
+// Log
+#include "Utility/CsLog.h"
 
 class UObject;
 
@@ -18,7 +20,7 @@ namespace NCsFade
 			* Get the Context (Root) for UCsManager_Fade from a WorldContext.
 			*
 			* @param Context		The calling context.
-			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsManager_Fade
 			*/
 			static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
@@ -31,7 +33,20 @@ namespace NCsFade
 			* Safely get the Context (Root) for UCsManager_Fade from a WorldContext.
 			*
 			* @param Context		The calling context.
-			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log
+			* return				Context for UCsManager_Fade
+			*/
+			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void (*Log)(const FString&) = &FCsLog::Warning);
+		#else
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void (*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
+		#endif // #if WITH_EDITOR
+
+		#if WITH_EDITOR
+			/**
+			* Safely get the Context (Root) for UCsManager_Fade from a WorldContext.
+			*
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsManager_Fade
 			*/
 			static UObject* GetSafeContextRoot(UObject* WorldContext);
@@ -45,7 +60,7 @@ namespace NCsFade
 			*
 			*
 			* @param Context		The calling context.
-			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			*/
 			static void CreateFadeWidget(const FString& Context, UObject* WorldContext);
 
@@ -53,7 +68,7 @@ namespace NCsFade
 			* 
 			* 
 			* @param Context		The calling context.
-			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Params
 			*/
 			static void FadeChecked(const FString& Context, UObject* WorldContext, const ParamsType& Params);
@@ -61,7 +76,7 @@ namespace NCsFade
 			/**
 			*
 			*
-			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Params
 			*/
 			static void SafeFade(UObject* WorldContext, const ParamsType& Params);
@@ -72,7 +87,7 @@ namespace NCsFade
 			* 
 			* 
 			* @param Context		The calling context.
-			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			*/
 			static void StopFadeChecked(const FString& Context, UObject* WorldContext);
 
@@ -80,7 +95,7 @@ namespace NCsFade
 			*
 			*
 			* @param Context		The calling context.
-			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			*/
 			static void ClearFadeChecked(const FString& Context, UObject* WorldContext);
 		};

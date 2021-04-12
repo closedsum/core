@@ -106,8 +106,10 @@ void ACsSpawnerImpl::Tick(float DeltaSeconds)
 bool ACsSpawnerImpl::ShouldTickIfViewportsOnly() const
 {
 #if WITH_EDITOR
-	if (FCsLibrary_World::IsPlayInEditor(GetWorld()) ||
-		FCsLibrary_World::IsPlayInEditorPreview(GetWorld()))
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditor(GetWorld()) ||
+		WorldLibrary::IsPlayInEditorPreview(GetWorld()))
 	{
 		return true;
 	}
@@ -175,9 +177,8 @@ void ACsSpawnerImpl::Start()
 
 	const FString& Context = Str::Start;
 
-	const FECsUpdateGroup UpdateGroup = NCsUpdateGroup::GameState;
-
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
+	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(GetGameInstance());
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	if (Scheduler->IsHandleValid(UpdateGroup, Start_Internal_Handle))
 	{
@@ -210,8 +211,6 @@ void ACsSpawnerImpl::Start()
 
 void ACsSpawnerImpl::ACsSpawnerImpl::Stop()
 {
-	const FECsUpdateGroup UpdateGroup = NCsUpdateGroup::GameState;
-
 #if !UE_BUILD_SHIPPING
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSpawnerTransactions))
 	{
@@ -219,7 +218,8 @@ void ACsSpawnerImpl::ACsSpawnerImpl::Stop()
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
+	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(GetGameInstance());
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	Scheduler->End(UpdateGroup, Start_Internal_Handle);
 
@@ -240,9 +240,8 @@ void ACsSpawnerImpl::Spawn()
 
 	const FString& Context = Str::Spawn;
 
-	const FECsUpdateGroup UpdateGroup = NCsUpdateGroup::GameState;
-
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
+	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(GetGameInstance());
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	if (Scheduler->IsHandleValid(UpdateGroup, Start_Internal_Handle))
 	{
@@ -356,8 +355,6 @@ void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 	
 	const FString& Context = Str::SpawnObjects;
 
-	const FECsUpdateGroup UpdateGroup = NCsUpdateGroup::GameState;
-
 #if !UE_BUILD_SHIPPING
 	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSpawnerTransactions))
 	{
@@ -375,7 +372,8 @@ void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetGameInstance());
+	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(GetGameInstance());
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	checkf(IsParamsValid(Context), TEXT("%s: Params is NOT Valid."), *Context);
 

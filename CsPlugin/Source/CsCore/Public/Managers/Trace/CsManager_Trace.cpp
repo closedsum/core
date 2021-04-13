@@ -196,19 +196,19 @@ UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 
 /*static*/ ICsGetManagerTrace* UCsManager_Trace::Get_GetManagerTrace(UObject* InRoot)
 {
-	checkf(InRoot, TEXT("UCsManager_Trace::Get_GetManagerDamage: InRoot is NULL."));
+	checkf(InRoot, TEXT("UCsManager_Trace::Get_GetManagerTrace: InRoot is NULL."));
 
 	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
-	checkf(GetManagerSingleton, TEXT("UCsManager_Trace::Get_GetManagerDamage: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
+	checkf(GetManagerSingleton, TEXT("UCsManager_Trace::Get_GetManagerTrace: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
-	checkf(Manager_Singleton, TEXT("UCsManager_Trace::Get_GetManagerDamage: Manager_Singleton is NULL."));
+	checkf(Manager_Singleton, TEXT("UCsManager_Trace::Get_GetManagerTrace: Manager_Singleton is NULL."));
 
 	ICsGetManagerTrace* GetManagerTrace = Cast<ICsGetManagerTrace>(Manager_Singleton);
 
-	checkf(GetManagerTrace, TEXT("UCsManager_Trace::Get_GetManagerDamage: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetManagerTrace."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
+	checkf(GetManagerTrace, TEXT("UCsManager_Trace::Get_GetManagerTrace: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetManagerTrace."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
 
 	return GetManagerTrace;
 }

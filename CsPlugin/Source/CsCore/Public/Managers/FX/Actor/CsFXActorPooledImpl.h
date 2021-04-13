@@ -99,6 +99,7 @@ protected:
 #pragma region
 public:
 
+	UFUNCTION(BlueprintPure, Category = "CsCore|FX")
 	FORCEINLINE ANiagaraActor* GetFX() const { return FX; }
 
 #pragma endregion ICsFXActorPooled

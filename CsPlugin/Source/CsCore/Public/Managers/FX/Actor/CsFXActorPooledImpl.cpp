@@ -9,7 +9,7 @@
 #include "Types/CsTypes_AttachDetach.h"
 #include "Types/CsTypes_Math.h"
 // Library
-#include "Managers/Pool/Cache/CsLibrary_PooledObjectCache.h"
+#include "Managers/Pool/Cache/CsLibrary_Cache_PooledObject.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Managers/FX/CsLibrary_FX.h"
 // Managers
@@ -453,11 +453,11 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 	typedef NCsFX::NPayload::EChange ChangeType;
 	typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
 
-	// If FX System is SET and meant to be PRESERVED, Do Nothing
+	// If FX System is SET and meant to be PRESERVED, Deactivate
 	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::FXSystem) &&
 		CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::FXSystem))
 	{
-		// Do Nothing
+		FX->GetNiagaraComponent()->Deactivate();
 		ChangeCounter::Get().AddPreserved();
 	}
 	else

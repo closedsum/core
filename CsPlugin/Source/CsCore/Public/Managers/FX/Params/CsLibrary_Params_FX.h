@@ -35,12 +35,20 @@ namespace NCsFX
 		public:
 
 			/**
-			* 
+			* Check if the Parameter is Valid with checks.
 			* 
 			* @param Context	The calling context.
 			* @param Parameter
 			*/
 			static bool IsValidChecked(const FString& Context, const ParameterType* Parameter);
+
+			/**
+			* Check if the Parameter is Valid.
+			*
+			* @param Context	The calling context.
+			* @param Parameter
+			*/
+			static bool IsValid(const FString& Context, const ParameterType* Parameter, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		// Int
 		#pragma region

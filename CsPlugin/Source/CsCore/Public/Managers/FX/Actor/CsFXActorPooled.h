@@ -1,8 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
+// Interfaces
 #include "UObject/Interface.h"
 #include "Managers/Pool/CsPooledObject.h"
+
 #include "CsFXActorPooled.generated.h"
 
 UINTERFACE(BlueprintType)

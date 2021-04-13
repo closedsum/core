@@ -389,6 +389,7 @@ void UCsManager_FX_Actor::SetupInternal()
 	// Delegates
 	{
 		// Log
+		Internal.Log_Impl.BindStatic(&FCsLog::Warning);
 		Internal.LogTransaction_Impl.BindUObject(this, &UCsManager_FX_Actor::LogTransaction);
 		// Container
 		Internal.ConstructContainer_Impl.BindUObject(this, &UCsManager_FX_Actor::ConstructContainer);

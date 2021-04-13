@@ -108,7 +108,7 @@ void FCsMoveByInterp_Params::CopyParams(ParamsType* Params)
 	Params->SetGroup(&Group);
 }
 
-void FCsMoveByInterp_Params::CopyParamsAsValue(ParamsType* Params)
+void FCsMoveByInterp_Params::CopyParamsAsValue(ParamsType* Params) const
 {
 	typedef NCsMovement::EMover MoverType;
 	typedef NCsMovement::EDestination DestinationType;
@@ -544,6 +544,128 @@ namespace NCsMovement
 					// Check Group is Valid
 					EMCsUpdateGroup::Get().IsValidEnumChecked(Context, GetGroup());
 					return true;
+				}
+
+				bool FParams::IsValid(const FString& Context) const
+				{
+					// Check Easing is Valid
+					if (!EMCsEasingType::Get().IsValidEnum(GetEasing()))
+					{
+						UE_LOG(LogCs, Warning, TEXT("%s: GetEasing(): %s is NOT Valid."), *Context, EMCsEasingType::Get().ToChar(GetEasing()));
+						return false;
+					}
+					// Check Mover is Valid
+					typedef NCsMovement::EMMover MoverMapType;
+
+					if (!MoverMapType::Get().IsValidEnum(GetMover()))
+					{
+						UE_LOG(LogCs, Warning, TEXT("%s: GetMover(): %s is NOT Valid."), *Context, MoverMapType::Get().ToChar(GetMover()));
+						return false;
+					}
+					// Check Move Object is Valid
+					if (GetMover() == MoverType::Actor)
+					{
+						if (!GetMoveActor())
+						{
+							UE_LOG(LogCs, Warning, TEXT("%s: No MoveActor set."), *Context);
+							return false;
+						}
+					}
+					else
+					if (GetMover() == MoverType::Component)
+					{
+						if (!GetMoveComponent())
+						{
+							UE_LOG(LogCs, Warning, TEXT("%s: No MoveComponent set."), *Context);
+							return false;
+						}
+					}
+					// Check Destination is Valid
+					typedef NCsMovement::EMDestination DestinationMapType;
+
+					if (!DestinationMapType::Get().IsValidEnum(GetDestination()))
+					{
+						UE_LOG(LogCs, Warning, TEXT("%s: GetDestination(): %s is NOT Valid."), *Context, DestinationMapType::Get().ToChar(GetDestination()));
+						return false;
+					}
+					
+					if (GetDestination() == DestinationType::Actor)
+					{
+						if (!GetToActor())
+						{
+							UE_LOG(LogCs, Warning, TEXT("%s: No ToActor set."), *Context);
+							return false;
+						}
+					}
+					else
+					if (GetDestination() == DestinationType::Component)
+					{
+						if (!GetToComponent() && 
+							!GetToMeshComponent())
+						{
+							UE_LOG(LogCs, Warning, TEXT("%s: No ToComponent && ToMeshComponent are NOT set."), *Context);
+							return false;
+						}
+					}
+					else
+					if (GetDestination() == DestinationType::Bone)
+					{
+						if (!GetToMeshComponent())
+						{
+							UE_LOG(LogCs, Warning, TEXT("%s: ToMeshComponent is NOT set."), *Context);
+							return false;
+						}
+
+						if (GetToBone() == NAME_None)
+						{
+							UE_LOG(LogCs, Warning, TEXT("%s: ToBone: None is NOT Valid."), *Context);
+							return false;
+						}
+
+						const int32 BoneIndex = GetToMeshComponent()->GetBoneIndex(ToBone);
+
+						if (BoneIndex == INDEX_NONE)
+						{
+							UE_LOG(LogCs, Warning, TEXT("%s: ToMeshComponent: %s does NOT contain ToBone: %s."), *Context, *(GetToMeshComponent()->GetName()), *(GetToBone().ToString()));
+							return false;
+						}
+					}
+					// Check Time is Valid
+					if (GetTime() < 0.0f)
+					{
+						UE_LOG(LogCs, Warning, TEXT("%s: GetTime(): %f is NOT >= 0.0f."), *Context, GetTime());
+						return false;
+					}
+					// Check Group is Valid
+					if (!EMCsUpdateGroup::Get().IsValidEnum(GetGroup()))
+					{
+						UE_LOG(LogCs, Warning, TEXT("%s: GetGroup(): %s is NOT Valid."), *Context, GetGroup().ToChar());
+						return false;
+					}
+					return true;
+				}
+
+				FVector FParams::GetEndLocation() const
+				{
+					// TODO: Need to do Relative Location (i.e. check MoveSpace: World or Relative)
+					
+					// Location
+					if (GetDestination() == DestinationType::Location)
+						return GetToLocation();
+					// Actor
+					if (GetDestination() == DestinationType::Actor)
+						return GetToActor()->GetActorLocation();
+					// Component
+					if (GetDestination() == DestinationType::Component)
+						return GetToComponent()->GetComponentLocation();
+					// Bone
+					if (GetDestination() == DestinationType::Bone)
+						return GetToMeshComponent()->GetBoneLocation(GetToBone());
+
+					typedef NCsMovement::EMDestination DestinationMapType;
+
+					checkf(0, TEXT("NCsMovement::NTo::NInterp::NParams::FParams::GetEndLocation: GetDestination(): %s is NOT Valid."), DestinationMapType::Get().ToChar(GetDestination()));
+					return FVector::ZeroVector;
 				}
 
 				void FParams::Reset()

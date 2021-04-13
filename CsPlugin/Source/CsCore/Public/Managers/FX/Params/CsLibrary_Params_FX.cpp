@@ -24,12 +24,36 @@ namespace NCsFX
 
 		bool FLibrary::IsValidChecked(const FString& Context, const ParameterType* Parameter)
 		{
+			// Check Parameter is Valid
 			checkf(Parameter, TEXT("%s: Parameter is NULL."), *Context);
-
+			// Check Name is Valid
 			checkf(Parameter->GetName() != NAME_None, TEXT("%s: Parameter->GetName(): None is NOT Valid."), *Context);
-
+			// Check ValueType is Valid
 			check(EMValue::Get().IsValidEnumChecked(Context, Parameter->GetValueType()));
 
+			return true;
+		}
+
+		bool FLibrary::IsValid(const FString& Context, const ParameterType* Parameter, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			// Check Parameter is Valid
+			if (!Parameter)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Parameter is NULL."), *Context));
+				return false;
+			}
+			// Check Name is Valid
+			if (Parameter->GetName() == NAME_None)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Parameter->GetName(): None is NOT Valid."), *Context));
+				return false;
+			}
+			// Check ValueType is Valid
+			if (!EMValue::Get().IsValidEnum(Parameter->GetValueType()))
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Parameter->GetValueType(): %s is NOT Valid."), *Context, EMValue::Get().ToChar(Parameter->GetValueType())));
+				return false;
+			}
 			return true;
 		}
 
@@ -40,7 +64,7 @@ namespace NCsFX
 		{
 			checkf(Parameter, TEXT("%s: Parameter is NULL."), *Context);
 
-			checkf(Parameter->GetValueType() == EValue::Float, TEXT("%s: Parameter->GetValueType(): %s != Float."), *Context, EMValue::Get().ToChar(Parameter->GetValueType()));
+			checkf(Parameter->GetValueType() == EValue::Int, TEXT("%s: Parameter->GetValueType(): %s != Int."), *Context, EMValue::Get().ToChar(Parameter->GetValueType()));
 
 			return *(int32*)(Parameter->GetValuePtr());
 		}

@@ -13,6 +13,61 @@
 
 namespace NCsMaterial
 {
+	namespace NLibrary
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::FLibrary, SetSafe);
+			}
+		}
+	}
+
+	// Load
+	#pragma region
+
+	UMaterialInterface* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (!Path.IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path is NOT Valid.")));
+			return nullptr;
+		}
+
+		UObject* Object = Path.TryLoad();
+
+		if (!Object)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to load Object at Path: %s."), *Context, *(Path.ToString())));
+			return nullptr;
+		}
+
+		UMaterialInterface* Material = Cast<UMaterialInterface>(Object);
+
+		if (!Material)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object: %s with Class: %s @ %s is NOT of type: UMaterialInterface."), *Context, *(Object->GetName()), *(Object->GetClass()->GetName())));
+			return nullptr;
+		}
+		return Material;
+	}
+
+	UMaterialInterface* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (Path.IsEmpty())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path is EMPTY."), *Context));
+			return nullptr;
+		}
+
+		FSoftObjectPath SoftPath(Path);
+
+		return SafeLoad(Context, SoftPath, Log);
+	}
+
+	#pragma endregion Load
+
 	bool FLibrary::IsValidChecked(const FString& Context, const TArray<UMaterialInterface*>& Materials)
 	{
 		checkf(Materials.Num() > CS_EMPTY, TEXT("%s: Materials.Num() is NOT > 0."), *Context);
@@ -22,6 +77,27 @@ namespace NCsMaterial
 		for (int32 I = 0; I < Count; ++I)
 		{
 			checkf(Materials[I], TEXT("%s: Materials[%d] is NULL."), *Context, I);
+		}
+		return true;
+	}
+
+	bool FLibrary::IsValid(const FString& Context, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (Materials.Num() == CS_EMPTY)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Materials.Num() is NOT > 0."), *Context));
+			return false;
+		}
+
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (!Materials[I])
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Materials[%d] is NULL."), *Context, I));
+				return false;
+			}
 		}
 		return true;
 	}
@@ -37,6 +113,101 @@ namespace NCsMaterial
 		checkf(Index < Component->GetNumMaterials(), TEXT("%s: Index: %d is NOT Valid for Component: %s with %d Material Slots."), *Context, Index, *(Component->GetName()), Component->GetNumMaterials());
 
 		Component->SetMaterial(Index, Material);
+	}
+
+	void FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (!Component)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Component is NULL."), *Context));
+			return;
+		}
+
+		if (!Material)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Material is NULL."), *Context));
+			return;
+		}
+
+		if (Index <= 0)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Index: %d is NOT >= 0."), *Context, Index));
+			return;
+		}
+
+		if (Index >= Component->GetNumMaterials())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Index: %d is NOT Valid for Component: %s with %d Material Slots."), *Context, Index, *(Component->GetName()), Component->GetNumMaterials()));
+			return;
+		}
+		Component->SetMaterial(Index, Material);
+	}
+
+	void FLibrary::SetSafe(UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index)
+	{
+		using namespace NCsMaterial::NLibrary::NCached;
+
+		const FString& Context = Str::SetSafe;
+
+		return SetSafe(Context, Component, Material, Index, nullptr);
+	}
+
+	void FLibrary::SetChecked(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials)
+	{
+		checkf(Component, TEXT("%s: Component is NULL."), *Context);
+
+		const int32 Count		  = Component->GetNumMaterials();
+		const int32 MaterialCount = Materials.Num();
+
+		checkf(Count == MaterialCount, TEXT("%s: Mismatch between Component (%s) material count (%d) != input material count (%d)"), *Context, *(Component->GetName()), Count, MaterialCount);
+
+		ClearOverrideChecked(Context, Component);
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			checkf(Materials[I], TEXT("%s: Materials[%d] is NULL."), *Context, I);
+
+			Component->SetMaterial(I, Materials[I]);
+		}
+	}
+
+	void FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (!Component)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Component is NULL."), *Context));
+			return;
+		}
+
+		const int32 Count		  = Component->GetNumMaterials();
+		const int32 MaterialCount = Materials.Num();
+
+		if (Count != MaterialCount)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mismatch between Component (%s) material count (%d) != input material count (%d)"), *Context, *(Component->GetName()), Count, MaterialCount));
+			return;
+		}
+
+		ClearOverrideChecked(Context, Component);
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (!Materials[I])
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Materials[%d] is NULL."), *Context, I));
+				return;
+			}
+			Component->SetMaterial(I, Materials[I]);
+		}
+	}
+
+	void FLibrary::SetSafe(UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials)
+	{
+		using namespace NCsMaterial::NLibrary::NCached;
+
+		const FString& Context = Str::SetSafe;
+
+		return SetSafe(Context, Component, Materials, nullptr);
 	}
 
 	void FLibrary::Set(UStaticMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
@@ -169,6 +340,24 @@ namespace NCsMaterial
 
 			Mesh->SetMaterial(Index, Materials[Index]);
 		}
+	}
+
+	void FLibrary::ClearOverrideChecked(const FString& Context, UPrimitiveComponent* Component)
+	{
+		checkf(Component, TEXT("%s: Component is NULL."), *Context);
+
+		if (UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(Component))
+		{
+			ClearOverride(Mesh);
+			return;
+		}
+
+		if (USkeletalMeshComponent* Mesh = Cast<USkeletalMeshComponent>(Component))
+		{
+			ClearOverride(Mesh);
+			return;
+		}
+		checkf(0, TEXT("%s: Component: %s with Class: %s is NOT of type: UStaticMeshComponent or USkeletalMeshComponent."), *Context, *(Component->GetName()), *(Component->GetClass()->GetName()));
 	}
 
 	void FLibrary::ClearOverride(UStaticMeshComponent* Mesh)

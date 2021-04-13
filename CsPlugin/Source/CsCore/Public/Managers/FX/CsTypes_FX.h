@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
+#include "Types/Enum/CsEnumFlagMap.h"
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_AttachDetach.h"
 
@@ -478,11 +479,11 @@ struct CSCORE_API FCsFXParameterInt
 public:
 
 	/** Name of the Niagara Int Parameter. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Name;
 
 	/** Value to set for the Niagara Int Parameter with Name. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Value;
 
 	FCsFXParameterInt() :
@@ -493,6 +494,7 @@ public:
 
 #define ParameterType NCsFX::NParameter::NInt::FIntType
 	void CopyParams(ParameterType* Params);
+	void CopyToParamsAsValue(ParameterType* Params) const;
 #undef ParameterType
 
 	FORCEINLINE bool IsValidChecked(const FString& Context) const
@@ -519,11 +521,11 @@ struct CSCORE_API FCsFXParameterFloat
 public:
 
 	/** Name of the Niagara Int Parameter. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Name;
 
 	/** Value to set for the Niagara Float Parameter with Name. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Value;
 
 	FCsFXParameterFloat() :
@@ -534,6 +536,7 @@ public:
 
 #define ParameterType NCsFX::NParameter::NFloat::FFloatType
 	void CopyParams(ParameterType* Params);
+	void CopyToParamsAsValue(ParameterType* Params) const;
 #undef ParameterType
 
 	FORCEINLINE bool IsValidChecked(const FString& Context) const
@@ -560,10 +563,10 @@ struct CSCORE_API FCsFXParameterVector
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Name;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector Value;
 
 public:
@@ -576,6 +579,7 @@ public:
 
 #define ParameterType NCsFX::NParameter::NVector::FVectorType
 	void CopyParams(ParameterType* Params);
+	void CopyToParamsAsValue(ParameterType* Params) const;
 #undef ParameterType
 
 	FORCEINLINE bool IsValidChecked(const FString& Context) const
@@ -794,6 +798,44 @@ public:
 
 // NCsFX::NPayload::EChange
 #pragma region
+
+UENUM(BlueprintType, meta = (Bitflags))
+enum class ECsFXPayloadChange : uint8
+{
+	FXSystem						UMETA(DisplayName = "FX System"),					// 0
+	KeepRelativeTransform			UMETA(DisplayName = "Keep Relative Transform"),		// 1
+	KeepWorldTransform				UMETA(DisplayName = "Keep World Transform"),		// 2
+	SnapToTargetNotIncludingScale	UMETA(DisplayName = "Game Third Person Low"),		// 3
+	SnapToTargetIncludingScale		UMETA(DisplayName = "Game VR"),						// 4
+	Transform						UMETA(DisplayName = "UI"),							// 5
+	Parameter						UMETA(DisplayName = "UI"),							// 6
+};
+
+struct CSCORE_API EMCsFXPayloadChange : public TCsEnumFlagMap<ECsFXPayloadChange>
+{
+	CS_ENUM_FLAG_MAP_BODY(EMCsFXPayloadChange, ECsFXPayloadChange)
+};
+
+namespace NCsFXPayloadChange
+{
+	typedef ECsFXPayloadChange Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type FXSystem;
+		extern CSCORE_API const Type KeepRelativeTransform;
+		extern CSCORE_API const Type KeepWorldTransform;
+		extern CSCORE_API const Type SnapToTargetNotIncludingScale;
+		extern CSCORE_API const Type SnapToTargetIncludingScale;
+		extern CSCORE_API const Type Transform;
+		extern CSCORE_API const Type Parameter;
+	}
+
+	extern CSCORE_API const int32 None;
+	extern CSCORE_API const int32 All;
+}
+
+#define CS_FX_PAYLOAD_CHANGE_NONE 0
 
 namespace NCsFX
 {

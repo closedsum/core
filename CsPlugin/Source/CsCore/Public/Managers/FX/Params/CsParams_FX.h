@@ -35,6 +35,18 @@ namespace NCsFX
 			}
 
 			extern CSCORE_API const uint8 MAX;
+
+			FORCEINLINE uint32 GetSizeInBytes(const Type& InType)
+			{
+				if (InType == Type::Int)
+					return sizeof(int32);
+				if (InType == Type::Float)
+					return sizeof(float);
+				if (InType == Type::Vector)
+					return sizeof(FVector);
+				checkf(0, TEXT("NCsFX::NParameter::NValue::GetSizeInBytes: InType is NOT Valid."));
+				return 0;
+			}
 		}
 
 		/**
@@ -52,6 +64,8 @@ namespace NCsFX
 			virtual const EValue& GetValueType() const = 0;
 
 			virtual void* GetValuePtr() const = 0;
+
+			virtual uint32 GetSizeInBytes() const = 0;
 		};
 
 		namespace NInt
@@ -93,19 +107,8 @@ namespace NCsFX
 
 				FORCEINLINE void SetIndex(const int32& InIndex) { Index = InIndex; }
 
-				FORCEINLINE void SetName(const FName& InName)
-				{
-					Name	 = InName;
-					Name_Emu = &Name;
-				}
-				FORCEINLINE void SetName(FName* InName) { Name_Emu = InName; }
-
-				FORCEINLINE void SetValue(const int32& InValue)
-				{
-					Value	  = InValue;
-					Value_Emu = &Value;
-				}
-				FORCEINLINE void SetValue(int32* InValue) { Value_Emu = InValue; }
+				CS_DEFINE_SET_MEMBER_WITH_EMU(Name, FName)
+				CS_DEFINE_SET_MEMBER_WITH_EMU(Value, int32)
 
 			// IParameter
 			#pragma region
@@ -115,6 +118,7 @@ namespace NCsFX
 				FORCEINLINE const FName& GetName() const { return *Name_Emu; }
 				FORCEINLINE const EValue& GetValueType() const { return ValueType; }
 				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<int32*>(Value_Emu); }
+				FORCEINLINE uint32 GetSizeInBytes() const { return sizeof(int32); }
 
 			#pragma endregion IParameter
 
@@ -170,19 +174,8 @@ namespace NCsFX
 
 				FORCEINLINE void SetIndex(const int32& InIndex) { Index = InIndex; }
 
-				FORCEINLINE void SetName(const FName& InName)
-				{
-					Name	 = InName;
-					Name_Emu = &Name;
-				}
-				FORCEINLINE void SetName(FName* InName) { Name_Emu = InName; }
-
-				FORCEINLINE void SetValue(const float& InValue)
-				{
-					Value	  = InValue;
-					Value_Emu = &Value;
-				}
-				FORCEINLINE void SetValue(float* InValue) { Value_Emu = InValue; }
+				CS_DEFINE_SET_MEMBER_WITH_EMU(Name, FName)
+				CS_DEFINE_SET_MEMBER_WITH_EMU(Value, float)
 
 			// IParameter
 			#pragma region
@@ -192,6 +185,7 @@ namespace NCsFX
 				FORCEINLINE const FName& GetName() const { return *Name_Emu; }
 				FORCEINLINE const EValue& GetValueType() const { return ValueType; }
 				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<float*>(Value_Emu); }
+				FORCEINLINE uint32 GetSizeInBytes() const { return sizeof(float); }
 
 			#pragma endregion IParameter
 
@@ -247,19 +241,8 @@ namespace NCsFX
 
 				FORCEINLINE void SetIndex(const int32& InIndex) { Index = InIndex; }
 
-				FORCEINLINE void SetName(const FName& InName)
-				{
-					Name	 = InName;
-					Name_Emu = &Name;
-				}
-				FORCEINLINE void SetName(FName* InName) { Name_Emu = InName; }
-
-				FORCEINLINE void SetValue(const FVector& InValue)
-				{
-					Value	  = InValue;
-					Value_Emu = &Value;
-				}
-				FORCEINLINE void SetValue(FVector* InValue) { Value_Emu = InValue; }
+				CS_DEFINE_SET_MEMBER_WITH_EMU(Name, FName)
+				CS_DEFINE_SET_MEMBER_WITH_EMU(Value, FVector)
 
 			// IParameter
 			#pragma region
@@ -269,6 +252,7 @@ namespace NCsFX
 				FORCEINLINE const FName& GetName() const { return *Name_Emu; }
 				FORCEINLINE const EValue& GetValueType() const { return ValueType; }
 				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<FVector*>(Value_Emu); }
+				FORCEINLINE uint32 GetSizeInBytes() const { return sizeof(FVector); }
 
 			#pragma endregion IParameter
 

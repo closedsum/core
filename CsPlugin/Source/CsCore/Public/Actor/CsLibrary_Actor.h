@@ -9,6 +9,7 @@
 class AActor;
 class UObject;
 struct FCsRoutine;
+class UMaterialInterface;
 
 namespace NCsActor
 {
@@ -149,19 +150,19 @@ namespace NCsActor
 
 	public:
 
-		FORCEINLINE ParamsResourceType* AllocateSpawnParams() { return Manager_MoveByInterpParams.Allocate(); }
+		FORCEINLINE ParamsResourceType* AllocateMoveByInterpParams() { return Manager_MoveByInterpParams.Allocate(); }
 
-		FORCEINLINE void DeallocateSpawnParams(ParamsResourceType* Resource) { Manager_MoveByInterpParams.Deallocate(Resource); }
+		FORCEINLINE void DeallocateMoveByInterpParams(ParamsResourceType* Resource) { Manager_MoveByInterpParams.Deallocate(Resource); }
 
 	public:
 
 		/**
-		* 
+		* Move an Object via interpolation (i.e. an simple easing function) with the given Params.
 		* 
 		* @param Context		The calling context.
-		* @param WorldContext
-		* @param Params
-		* return
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Params			Information describing how to interpolate the Object.
+		* return				Handle to the movement coroutine.
 		*/
 		static FCsRoutineHandle MoveByInterpChecked(const FString& Context, UObject* WorldContext, ParamsResourceType* Params);
 
@@ -178,5 +179,33 @@ namespace NCsActor
 	#pragma endregion Interp
 
 	#pragma endregion Move
+
+	// Material
+	#pragma region
+	public:
+
+		/**
+		* Set the Material at the given Index for the RootComponent, of type UPrimitiveComponent, on Actor.
+		* 
+		* @param Context	The calling context.
+		* @param Actor		Actor whose RootComponent would have the Material set at Index.
+		* @param Material
+		* @param Index
+		*/
+		
+		static void SetMaterialChecked(const FString& Context, AActor* Actor, UMaterialInterface* Material, const int32& Index);
+
+		/**
+		* Safely set the Material at the given Index for the RootComponent, of type UPrimitiveComponent, on Actor.
+		*
+		* @param Context	The calling context.
+		* @param Actor		Actor whose RootComponent would have the Material set at Index.
+		* @param Material
+		* @param Index
+		* @param Log
+		*/
+		static void SetSafeMaterial(const FString& Context, AActor* Actor, UMaterialInterface* Material, const int32& Index, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Material
 	};
 }

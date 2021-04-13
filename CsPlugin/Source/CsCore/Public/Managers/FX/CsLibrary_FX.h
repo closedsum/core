@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 // Types
 #include "Managers/FX/CsTypes_Library_FX.h"
+#include "Managers/FX/Params/CsParams_FX.h"
 #include "Coroutine/CsRoutineHandle.h"
 // Log
 #include "Utility/CsLog.h"
@@ -64,28 +65,72 @@ namespace NCsFX
 	#pragma region
 
 	#define ParameterType NCsFX::NParameter::IParameter
+	#define ParameterValueType NCsFX::NParameter::EValue
 
 	public:
 
 		/**
-		* 
+		* Check if the Niagara System has an exposed variable with name: Name.
 		* 
 		* @param Context	The calling context.
-		* @param System
-		* @param Name
-		* return
+		* @param System		Niagara System.
+		* @param Name		Name of the exposed variable.
+		* @param ValueType
+		* return			Whether the exposed variable with name: Name exists or not.
 		*/
-		static bool HasVariableNameChecked(const FString& Context, UNiagaraSystem* System, const FName& Name);
+		static bool HasVariableNameChecked(const FString& Context, UNiagaraSystem* System, const FName& Name, const ParameterValueType& ValueType);
 
 		/**
-		* 
+		* Safely check if the Niagara System has an exposed variable with name: Name.
+		*
+		* @param Context	The calling context.
+		* @param System		Niagara System.
+		* @param Name		Name of the exposed variable.
+		* @param ValueType
+		* @param Log
+		* return			Whether the exposed variable with name: Name exists or not.
+		*/
+		static bool SafeHasVariableName(const FString& Context, UNiagaraSystem* System, const FName& Name, const ParameterValueType& ValueType, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Safely check if the Niagara System has an exposed variable with name: Name.
+		*
+		* @param System		Niagara System.
+		* @param Name		Name of the exposed variable.
+		* @param ValueType
+		* return			Whether the exposed variable with name: Name exists or not.
+		*/
+		static bool SafeHasVariableName(UNiagaraSystem* System, const FName& Name, const ParameterValueType& ValueType);
+
+		/**
+		* Check if the Niagara System has an exposed variable: Parameter.
 		* 
 		* @param Context	The calling context.
-		* @param System
+		* @param System		Niagara System.
 		* @param Parameter
-		* return
+		* return			Whether the exposed variable: Parameter exists or not.
 		*/
 		static bool HasParameterChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter);
+
+		/**
+		* Safely check if the Niagara System has an exposed variable: Parameter.
+		*
+		* @param Context	The calling context.
+		* @param System		Niagara System.
+		* @param Parameter
+		* @param Log
+		* return			Whether the exposed variable: Parameter exists or not.
+		*/
+		static bool SafeHasParameter(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Safely check if the Niagara System has an exposed variable: Parameter.
+		*
+		* @param System		Niagara System.
+		* @param Parameter
+		* return			Whether the exposed variable: Parameter exists or not.
+		*/
+		static bool SafeHasParameter(UNiagaraSystem* System, const ParameterType* Parameter);
 
 		/**
 		* 
@@ -98,6 +143,7 @@ namespace NCsFX
 		static void SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter);
 
 	#undef ParameterType
+	#undef ParameterValueType
 
 	#pragma endregion Parameter
 

@@ -66,8 +66,11 @@ public:
 	/**
 	* Spawn a Niagara System over time with the give spawn params.
 	*
-	* @param Context	The calling context.
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Params
+	* return					Handle to spawn coroutine.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|FX", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|FX", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Params"))
 	static FCsRoutineHandle Spawn(const FString& Context, UObject* WorldContextObject, const FCsScriptLibrary_FX_Spawn_Params& Params);
 };

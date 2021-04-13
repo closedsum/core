@@ -17,19 +17,98 @@ namespace NCsMaterial
 	*/
 	struct CSCORE_API FLibrary final
 	{
+	// Load
+	#pragma region
 	public:
 
+		/**
+		* Load the Material Interface at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		SoftObjectPath to the Material Interface to load.
+		* @param Log
+		* return			NiagaraSystem.
+		*/
+		static UMaterialInterface* SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Load a Material Interface at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		FString path to the Material Interface to load.
+		* @param Log
+		* return			Material Interface.
+		*/
+		static UMaterialInterface* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Load
+
+	public:
+
+		/**
+		*/
 		static bool IsValidChecked(const FString& Context, const TArray<UMaterialInterface*>& Materials);
 
 		/**
-		* 
+		*/
+		static bool IsValid(const FString& Context, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Set the Material at the given Index on Component
 		* 
 		* @param Context	The calling context
-		* @param Component
+		* @param Component	
 		* @param Material
 		* @param Index
 		*/
 		static void SetChecked(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index);
+
+		/**
+		* Safely set the Material at the given Index on Component
+		*
+		* @param Context	The calling context
+		* @param Component
+		* @param Material
+		* @param Index
+		* @param Log
+		*/
+		static void SetSafe(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index, void(*Log)(const FString&) = &FCsLog::Warning);
+		
+		/**
+		* Safely set the Material at the given Index on Component
+		*
+		* @param Component
+		* @param Material
+		* @param Index
+		*/
+		static void SetSafe(UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index);
+
+		/**
+		* Set the Materials on Component
+		*
+		* @param Context	The calling context
+		* @param Component
+		* @param Materials
+		*/
+		static void SetChecked(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials);
+
+		/**
+		* Safely set the Materials on Component
+		*
+		* @param Context	The calling context
+		* @param Component
+		* @param Materials
+		* @param Log
+		*/
+		static void SetSafe(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) = &FCsLog::Warning);
+		
+		/**
+		* Safely set the Materials on Component
+		*
+		* @param Component
+		* @param Materials
+		*/
+		static void SetSafe(UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials);
 
 		/**
 		* Set the materials on a StaticMeshComponent.
@@ -80,6 +159,14 @@ namespace NCsMaterial
 		* @param Materials
 		*/
 		static void SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials);
+
+		/**
+		* Clear the override materials on Component.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		*/
+		static void ClearOverrideChecked(const FString& Context, UPrimitiveComponent* Component);
 
 		/**
 		* Clear the override materials on a StaticMeshComponent.

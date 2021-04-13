@@ -40,20 +40,21 @@ namespace NCsCached
 
 	namespace Ref
 	{
-		extern CSCORE_API const bool True;// = true;
-		extern CSCORE_API const bool False;// = false;
-		extern CSCORE_API const uint8 Byte;// = 0;
-		extern CSCORE_API const int8 SByte;// = 0;
-		extern CSCORE_API const uint16 Short;// = 0;
-		extern CSCORE_API const int16 SShort;// = 0;
-		extern CSCORE_API const uint32 Int;// = 0;
-		extern CSCORE_API const int32 SInt;// = 0;
-		extern CSCORE_API const uint64 Long;// = 0;
+		extern CSCORE_API const bool True;		// = true;
+		extern CSCORE_API const bool False;		// = false;
+		extern CSCORE_API const uint8 Byte;		// = 0;
+		extern CSCORE_API const int8 SByte;		// = 0;
+		extern CSCORE_API const uint16 Short;	// = 0;
+		extern CSCORE_API const int16 SShort;	// = 0;
+		extern CSCORE_API const uint32 Int;		// = 0;
+		extern CSCORE_API const int32 SInt;		// = 0;
+		extern CSCORE_API const uint64 Long;	// = 0;
 		extern CSCORE_API const uint64 Long_MAX;// = UINT64_MAX;
-		extern CSCORE_API const int64 SLong;// = 0;
-		extern CSCORE_API const float Float;// = 0.0f;
-		extern CSCORE_API const FString String;// = TEXT("");
-		extern CSCORE_API const FName Name;// = NAME_None;
+		extern CSCORE_API const int64 SLong;	// = 0;
+		extern CSCORE_API const float Float;	// = 0.0f;
+		extern CSCORE_API const int32 IndexNone;// = -1;
+		extern CSCORE_API const FString String;	// = TEXT("");
+		extern CSCORE_API const FName Name;		// = NAME_None;
 	}
 
 	namespace Name

@@ -12,6 +12,8 @@
 
 // NCsPooledObject::NCache::ICache
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
+// NCsUserWidget::NCache::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NCache, FImpl)
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 // NCsUserWidget::NPayload::IPayload
@@ -30,6 +32,7 @@ class CSUI_API UCsUserWidgetPooledImpl : public UObject,
 
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 #define CacheType NCsPooledObject::NCache::ICache
+#define CacheImplType NCsUserWidget::NCache::FImpl
 #define PayloadType NCsPooledObject::NPayload::IPayload
 #define UserWidgetPayloadType NCsUserWidget::NPayload::IPayload
 
@@ -73,6 +76,8 @@ protected:
 
 	CacheType* Cache;
 
+	CacheImplType* CacheImpl;
+
 	void ConstructCache();
 
 	uint32 PreserveChangesToDefaultMask;
@@ -100,6 +105,7 @@ protected:
 
 #undef ConstructParamsType
 #undef CacheType
+#undef CacheImplType
 #undef PayloadType
 #undef UserWidgetPayloadType
 };

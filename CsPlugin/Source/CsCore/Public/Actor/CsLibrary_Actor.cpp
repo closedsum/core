@@ -8,6 +8,7 @@
 // Library
 #include "Library/CsLibrary_World.h"
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
+#include "Library/CsLibrary_Math.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 // Utility
@@ -260,18 +261,18 @@ namespace NCsActor
 		ParamsType* P = Params->Get();
 
 		check(P->IsValidChecked(Context));
-
+		// Get Coroutine Scheduler
 		UObject* ContextRoot = CoroutineSchedulerLibrary::GetContextRootChecked(Context, WorldContext);
 
 		UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(ContextRoot);
 		const FECsUpdateGroup& UpdateGroup = Params->Get()->GetGroup();
-
+		// Allocate Payload
 		typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
 		PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
 
 		#define COROUTINE MoveByInterp_Internal
-
+		// Setup Payload
 		Payload->CoroutineImpl.BindStatic(&FLibrary::COROUTINE);
 		Payload->StartTime = UCsManager_Time::Get(ContextRoot)->GetTime(UpdateGroup);
 
@@ -297,12 +298,53 @@ namespace NCsActor
 		static const int32 RESOURCE = 0;
 		Payload->SetValue_Void(RESOURCE, Params);
 
+		// Calculate InterpSpeed
+		static const int32 INTERP_SPEED = 0;
+		const FVector Start		= P->GetFromLocation();
+		const FVector End		= P->GetEndLocation();
+		const float Distance    = (End - Start).Size();
+		const float InterpSpeed = Distance / P->GetTime();
+		Payload->SetValue_Float(INTERP_SPEED, InterpSpeed);
+
 		return Scheduler->Start(Payload);
 	}
 
 	FCsRoutineHandle FLibrary::SafeMoveByInterp(const FString& Context, UObject* WorldContext, ParamsResourceType* Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		return FCsRoutineHandle::Invalid;
+		// Check Params are Valid.
+		if (!Params)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Params is NULL."), *Context));
+			return FCsRoutineHandle::Invalid;
+		}
+		// Check Params's Resource is Valid.
+		if (!Params->Get())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Params's Resource is NULL."), *Context));
+			return FCsRoutineHandle::Invalid;
+		}
+
+		if (!Params->Get()->IsValid(Context))
+			return FCsRoutineHandle::Invalid;
+
+		if (!Get().Manager_MoveByInterpParams.Contains(Params))
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Params has NOT been allocated from pool. Use the method that passes by const reference."), *Context));
+			return FCsRoutineHandle::Invalid;
+		}
+		
+		// Check to get Context Root for CoroutineScheduler
+		{
+			typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+			UObject* ContextRoot = CoroutineSchedulerLibrary::GetSafeContextRoot(Context, WorldContext, Log);
+
+#if WITH_EDITOR
+			if (!ContextRoot)
+				return FCsRoutineHandle::Invalid;
+#endif // #if WITH_EDITOR
+		}
+		return MoveByInterpChecked(Context, WorldContext, Params);
 	}
 
 	char FLibrary::MoveByInterp_Internal(FCsRoutine* R)
@@ -311,37 +353,98 @@ namespace NCsActor
 
 		const FString& Context = Str::MoveByInterp_Internal;
 
+		// Get Params
 		static const int32 RESOURCE				  = 0;
 		const ParamsResourceType* ParamsContainer = R->GetValue_Void<ParamsResourceType>(RESOURCE);
 		const ParamsType* Params				  = ParamsContainer->Get();
+		// Cache appropriate values from Params
+		const ECsEasingType& Easing = Params->GetEasing();
+
+		typedef NCsMovement::EMover MoverType;
+
+		const MoverType& Mover = Params->GetMover();
+		const FVector& Start   = Params->GetFromLocation();
 
 		typedef NCsMovement::EDestination DestinationType;
 
 		const DestinationType& Destination = Params->GetDestination();
+		const float& Time				   = Params->GetTime();
 
-		static const int32 START = 0;
-		FVector& Start = R->GetValue_Vector(START);
+		static const int32 CURRENT= 0;
+		FVector& Current		  = R->GetValue_Vector(CURRENT);
 
-		const float& Time = Params->GetTime();
+		// Set End Location
+		static const int32 END = 1;
+		FVector& End		   = R->GetValue_Vector(END);
+		End					   = Params->GetEndLocation();
+
+		static const int32 INTERP_SPEED = 0;
+		const float& InterpSpeed		= R->GetValue_Float(INTERP_SPEED);
+
+		const float Percent = Time > 0.0f ? FMath::Clamp(R->ElapsedTime.Time / Time, 0.0f, 1.0f) : 1.0f;
 
 		CS_COROUTINE_BEGIN(R);
 
-		// Set Start
+		// TODO: Need to do Relative Location (i.e. check MoveSpace: World or Relative)
+
+		// Actor
+		if (Mover == MoverType::Actor)
 		{
-			
+			Params->GetMoveActor()->SetActorLocation(Start);
 		}
+		// Component
+		if (Mover == MoverType::Component)
+		{
+			Params->GetMoveComponent()->SetWorldLocation(Start);
+		}
+		Current = Start;
+
+		// TODO: Add CVar for logging
 
 		do
 		{
 			{
-				// Location
-				// Actor
-				// Component
-				// Bone
+				typedef FCsLibrary_Math MathLibrary;
 
+				// Linear
+				if (Easing == ECsEasingType::Linear)
+				{
+					Current = FMath::VInterpConstantTo(Current, End, R->DeltaTime.Time, InterpSpeed);
+				}
+				else
+				{					
+					const float Alpha		= MathLibrary::Ease(Easing, Percent, 0.0f, 1.0f, 1.0f);
+					// TODO: Optimize, get size and normal in one function.
+					const FVector Direction = (End - Start).GetSafeNormal();
+					const float Distance	= (End - Start).Size();
+					Current				    = Start + Alpha * Distance * Direction;
+				}
+
+				// Actor
+				if (Mover == MoverType::Actor)
+				{
+					Params->GetMoveActor()->SetActorLocation(Current);
+				}
+				// Component
+				if (Mover == MoverType::Component)
+				{
+					Params->GetMoveComponent()->SetWorldLocation(Current);
+				}
+				
 				CS_COROUTINE_YIELD(R);
 			}
 		} while (R->ElapsedTime.Time < Time);
+
+		// Actor
+		if (Mover == MoverType::Actor)
+		{
+			Params->GetMoveActor()->SetActorLocation(End);
+		}
+		// Component
+		if (Mover == MoverType::Component)
+		{
+			Params->GetMoveComponent()->SetWorldLocation(End);
+		}
 
 		CS_COROUTINE_END(R);
 	}
@@ -362,4 +465,21 @@ namespace NCsActor
 	#pragma endregion Interp
 
 	#pragma endregion Move
+
+	// Material
+	#pragma region
+
+	void FLibrary::SetMaterialChecked(const FString& Context, AActor* Actor, UMaterialInterface* Material, const int32& Index)
+	{
+		checkf(Actor, TEXT("%s: Actor is NULL."), *Context);
+
+
+	}
+
+	void FLibrary::SetSafeMaterial(const FString& Context, AActor* Actor, UMaterialInterface* Material, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+
+	}
+
+	#pragma endregion Material
 }

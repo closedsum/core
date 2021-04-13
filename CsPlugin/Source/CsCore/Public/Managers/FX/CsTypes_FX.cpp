@@ -2,6 +2,8 @@
 #include "Managers/FX/CsTypes_FX.h"
 #include "CsCore.h"
 
+// Library
+#include "Managers/FX/CsLibrary_FX.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Param
@@ -205,13 +207,20 @@ namespace NCsFXParameterValue
 #pragma region
 
 #define ParameterType NCsFX::NParameter::NInt::FIntType
+
 void FCsFXParameterInt::CopyParams(ParameterType* Params)
 {
-#undef ParameterType
-
 	Params->SetName(&Name);
 	Params->SetValue(&Value);
 }
+
+void FCsFXParameterInt::CopyToParamsAsValue(ParameterType* Params) const
+{
+	Params->SetName(Name);
+	Params->SetValue(Value);
+}
+
+#undef ParameterType
 
 bool FCsFXParameterInt::IsValid(const FString& Context) const
 {
@@ -228,13 +237,20 @@ bool FCsFXParameterInt::IsValid(const FString& Context) const
 #pragma region
 
 #define ParameterType NCsFX::NParameter::NFloat::FFloatType
+
 void FCsFXParameterFloat::CopyParams(ParameterType* Params)
 {
-#undef ParameterType
-
 	Params->SetName(&Name);
 	Params->SetValue(&Value);
 }
+
+void FCsFXParameterFloat::CopyToParamsAsValue(ParameterType* Params) const
+{
+	Params->SetName(Name);
+	Params->SetValue(Value);
+}
+
+#undef ParameterType
 
 bool FCsFXParameterFloat::IsValid(const FString& Context) const
 {
@@ -251,13 +267,20 @@ bool FCsFXParameterFloat::IsValid(const FString& Context) const
 #pragma region
 
 #define ParameterType NCsFX::NParameter::NVector::FVectorType
+
 void FCsFXParameterVector::CopyParams(ParameterType* Params)
 {
-#undef ParameterType
-
 	Params->SetName(&Name);
 	Params->SetValue(&Value);
 }
+
+void FCsFXParameterVector::CopyToParamsAsValue(ParameterType* Params) const
+{
+	Params->SetName(Name);
+	Params->SetValue(Value);
+}
+
+#undef ParameterType
 
 bool FCsFXParameterVector::IsValid(const FString& Context) const
 {
@@ -301,22 +324,25 @@ bool FCsFX::IsValid(const FString& Context) const
 		return false;
 	}
 	// Character Parameters are Valid.
+	typedef NCsFX::FLibrary FXLibrary;
+	typedef NCsFX::NParameter::EValue ParameterValueType;
+
 		// Int
 	for (const FCsFXParameterInt& Param : IntParameters)
 	{
-		if (!Param.IsValid(Context))
+		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Int))
 			return false;
 	}
 	// Float
 	for (const FCsFXParameterFloat& Param : FloatParameters)
 	{
-		if (!Param.IsValid(Context))
+		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Float))
 			return false;
 	}
 	// Vector
 	for (const FCsFXParameterVector& Param : VectorParameters)
 	{
-		if (!Param.IsValid(Context))
+		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Vector))
 			return false;
 	}
 	return true;
@@ -334,20 +360,23 @@ bool FCsFX::IsValidChecked(const FString& Context) const
 		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
 	}
 	// Character Parameters are Valid.
+	typedef NCsFX::FLibrary FXLibrary;
+	typedef NCsFX::NParameter::EValue ParameterValueType;
+
 		// Int
 	for (const FCsFXParameterInt& Param : IntParameters)
 	{
-		check(Param.IsValidChecked(Context));
+		check(FXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Int));
 	}
 		// Float
 	for (const FCsFXParameterFloat& Param : FloatParameters)
 	{
-		check(Param.IsValidChecked(Context));
+		check(FXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Float));
 	}
 		// Vector
 	for (const FCsFXParameterVector& Param : VectorParameters)
 	{
-		check(Param.IsValidChecked(Context));
+		check(FXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Vector));
 	}
 	return true;
 }
@@ -371,3 +400,27 @@ void FCsFX::Reset()
 }
 
 #pragma endregion FCsFX
+
+// FXPayloadChange
+#pragma region
+
+namespace NCsFXPayloadChange
+{
+	namespace Ref
+	{
+		typedef EMCsFXPayloadChange EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(FXSystem, "FX System");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(KeepRelativeTransform, "Keep Relative Transform");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(KeepWorldTransform, "Keep World Transform");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(SnapToTargetNotIncludingScale, "Snap to Target not Including Scale");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(SnapToTargetIncludingScale, "Snap to Target Including Scale");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Transform);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Parameter);
+	}
+
+	CSCORE_API const int32 None = 0;
+	CSCORE_API const int32 All = 127; // 1 + 2 + 4 + 8 + 16 + 32 + 64
+}
+
+#pragma endregion FXPayloadChange

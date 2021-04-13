@@ -2,8 +2,6 @@
 #include "Actor/Script/CsScriptLibrary_Actor.h"
 #include "CsCore.h"
 
-// Types
-#include "Types/CsTypes_Macro.h"
 // Library
 #include "Actor/CsLibrary_Actor.h"
 
@@ -20,6 +18,7 @@ namespace NCsScriptLibraryActor
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetRole);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByName);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByLabel);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, MoveByInterp);
 		}
 	}
 }
@@ -65,6 +64,9 @@ void UCsScriptLibrary_Actor::SetRole(const FString& Context, AActor* Actor, cons
 	Actor->SetRole(Role);
 }
 
+// Get
+#pragma region
+
 AActor* UCsScriptLibrary_Actor::GetByName(const FString& Context, UObject* WorldContextObject, const FName& Name)
 {
 	using namespace NCsScriptLibraryActor::NCached;
@@ -86,3 +88,35 @@ AActor* UCsScriptLibrary_Actor::GetByLabel(const FString& Context, UObject* Worl
 
 	return ActorLibrary::GetSafeByLabel(Ctxt, WorldContextObject, Label);
 }
+
+#pragma endregion Get
+
+// Move
+#pragma region
+
+FCsRoutineHandle UCsScriptLibrary_Actor::MoveByInterp(const FString& Context, UObject* WorldContextObject, FCsMoveByInterp_Params& Params)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::MoveByInterp : Context;
+
+	Params.ConditionalSetSafeMoveObject(Context, WorldContextObject);
+	Params.ConditionalSetSafeDestinationObject(Context, WorldContextObject);
+
+	if (!Params.IsValid(Ctxt))
+		return FCsRoutineHandle::Invalid;
+
+	// Copy script params to native params.
+	typedef NCsActor::FLibrary ActorLibrary;
+	typedef NCsMovement::NTo::NInterp::NParams::FResource ParamsResourceType;
+	typedef NCsMovement::NTo::NInterp::NParams::FParams ParamsType;
+
+	ParamsResourceType* ParmsContainer = ActorLibrary::Get().AllocateMoveByInterpParams();
+	ParamsType* Parms = ParmsContainer->Get();
+
+	Params.CopyParamsAsValue(Parms);
+
+	return ActorLibrary::SafeMoveByInterp(Ctxt, WorldContextObject, ParmsContainer);
+}
+
+#pragma endregion Move

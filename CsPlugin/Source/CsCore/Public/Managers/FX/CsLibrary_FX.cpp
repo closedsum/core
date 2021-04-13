@@ -13,7 +13,6 @@
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // FX
-#include "Managers/FX/Params/CsParams_FX.h"
 #include "Managers/FX/Params/CsLibrary_Params_FX.h"
 #include "NiagaraSystem.h"
 #include "NiagaraComponent.h"
@@ -26,6 +25,8 @@ namespace NCsFX
 		{
 			namespace Str
 			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsFX::FLibrary, SafeHasVariableName);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsFX::FLibrary, SafeHasParameter);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsFX::FLibrary, Spawn_Internal);
 			}
 
@@ -90,11 +91,18 @@ namespace NCsFX
 
 	#pragma endregion Load
 
-	bool FLibrary::HasVariableNameChecked(const FString& Context, UNiagaraSystem* System, const FName& Name)
-	{
-		checkf(System, TEXT("%s: System is NULL."), *Context);
+	#define ParameterValueType NCsFX::NParameter::EValue
 
+	bool FLibrary::HasVariableNameChecked(const FString& Context, UNiagaraSystem* System, const FName& Name, const ParameterValueType& ValueType)
+	{
+		// Check System is Valid
+		checkf(System, TEXT("%s: System is NULL."), *Context);
+		// Check Name is Valid
 		checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+		// Check ValueType is Valid
+		typedef NCsFX::NParameter::EMValue ParameterValueMapType;
+
+		check(ParameterValueMapType::Get().IsValidEnumChecked(Context, ValueType));
 
 		static TArray<FNiagaraVariable> Parameters;
 
@@ -114,13 +122,71 @@ namespace NCsFX
 		return true;
 	}
 
+	bool FLibrary::SafeHasVariableName(const FString& Context, UNiagaraSystem* System, const FName& Name, const ParameterValueType& ValueType, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		// Check System is Valid
+		if (!System)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: System is NULL."), *Context));
+			return false;
+		}
+		// Check Name is Valid
+		if (Name == NAME_None)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
+			return false;
+		}
+		// Check ValueType is Valid
+		typedef NCsFX::NParameter::EMValue ParameterValueMapType;
+
+		if (!ParameterValueMapType::Get().IsValidEnum(ValueType))
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ValueType: %s is NOT Valid."), *Context, ParameterValueMapType::Get().ToChar(ValueType)));
+			return false;
+		}
+
+		static TArray<FNiagaraVariable> Parameters;
+
+		Parameters.Reset(Parameters.Max());
+
+		System->GetExposedParameters().GetParameters(Parameters);
+
+		for (FNiagaraVariable& Var : Parameters)
+		{
+			if (Name == Var.GetName())
+			{
+				// Check ValueType is the same as Var's Type
+				if (NCsFX::NParameter::NValue::GetSizeInBytes(ValueType) != Var.GetSizeInBytes())
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ValueType: %s does NOT match variable type."), *Context, ParameterValueMapType::Get().ToChar(ValueType)));
+					return false;
+				}
+				return true;
+			}
+		}
+
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Parameter with Name: %s on System: %s."), *Context, *(Name.ToString()), *(System->GetName())));
+		return false;
+	}
+
+	bool FLibrary::SafeHasVariableName(UNiagaraSystem* System, const FName& Name, const ParameterValueType& ValueType)
+	{
+		using namespace NCsFX::NLibrary::NCached;
+
+		const FString& Context = Str::SafeHasVariableName;
+
+		return SafeHasVariableName(Context, System, Name, ValueType, nullptr);
+	}
+
+	#undef ParameterValueType
+
 	#define ParameterType NCsFX::NParameter::IParameter
+
 	bool FLibrary::HasParameterChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter)
 	{
-	#undef ParameterType
-
+		// Check System is Valid
 		checkf(System, TEXT("%s: System is NULL."), *Context);
-
+		// Check Parameter is Valid
 		typedef NCsFX::NParameter::FLibrary ParameterLibrary;
 
 		check(ParameterLibrary::IsValidChecked(Context, Parameter));
@@ -138,18 +204,73 @@ namespace NCsFX
 		for (FNiagaraVariable& Var : Parameters)
 		{
 			if (Name == Var.GetName())
+			{
+				// Check Parameter's Type is the same as Var's Type
+				typedef NCsFX::NParameter::EMValue ParameterValueMapType;
+
+				checkf(Parameter->GetSizeInBytes() == Var.GetSizeInBytes(), TEXT("%s: Parameter type: %s does NOT match variable type."), *Context, ParameterValueMapType::Get().ToChar(Parameter->GetValueType()));
+
 				Found = true;
+				break;
+			}
 		}
 
 		checkf(Found, TEXT("%s: Failed to find Parameter with Name: %s on System: %s."), *Context, *(Name.ToString()), *(System->GetName()));
 		return true;
 	}
 
-	#define ParameterType NCsFX::NParameter::IParameter
+	bool FLibrary::SafeHasParameter(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		// Check System is Valid
+		if (!System)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: System is NULL."), *Context));
+			return false;
+		}
+		// Check Parameter is Valid
+		typedef NCsFX::NParameter::FLibrary ParameterLibrary;
+
+		if (!ParameterLibrary::IsValid(Context, Parameter, Log))
+			return false;
+
+		const FName& Name = Parameter->GetName();
+
+		static TArray<FNiagaraVariable> Parameters;
+
+		Parameters.Reset(Parameters.Max());
+
+		System->GetExposedParameters().GetParameters(Parameters);
+
+		for (FNiagaraVariable& Var : Parameters)
+		{
+			if (Name == Var.GetName())
+			{
+				// Check Parameter's Type is the same as Var's Type
+				if (Parameter->GetSizeInBytes() != Var.GetSizeInBytes())
+				{
+					typedef NCsFX::NParameter::EMValue ParameterValueMapType;
+
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Parameter type: %s does NOT match variable type."), *Context, ParameterValueMapType::Get().ToChar(Parameter->GetValueType())));
+					return false;
+				}
+				return true;
+			}
+		}
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Parameter with Name: %s on System: %s."), *Context, *(Name.ToString()), *(System->GetName())));
+		return false;
+	}
+
+	bool FLibrary::SafeHasParameter(UNiagaraSystem* System, const ParameterType* Parameter)
+	{
+		using namespace NCsFX::NLibrary::NCached;
+
+		const FString& Context = Str::SafeHasVariableName;
+
+		return SafeHasParameter(Context, System, Parameter, nullptr);
+	}
+
 	void FLibrary::SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter)
 	{
-	#undef ParameterType
-
 		checkf(Component, TEXT("%s: Component is NULL."), *Context);
 
 		UNiagaraSystem* System = Component->GetAsset();
@@ -175,6 +296,9 @@ namespace NCsFX
 		if (ValueType == ParameterValueType::Vector)
 			Component->SetVariableVec3(Parameter->GetName(), ParameterLibrary::GetVectorChecked(Context, Parameter));
 	}
+
+	#undef ParameterType
+
 
 	#define ParamsResourceType NCsFX::NSpawn::NParams::FResource
 	#define ParamsType NCsFX::NSpawn::NParams::FParams

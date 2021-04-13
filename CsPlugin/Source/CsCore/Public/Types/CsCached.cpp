@@ -47,6 +47,7 @@ namespace NCsCached
 		CSCORE_API const uint64 Long_MAX = UINT64_MAX;
 		CSCORE_API const int64 SLong = 0;
 		CSCORE_API const float Float = 0.0f;
+		CSCORE_API const int32 IndexNone = -1;
 		CSCORE_API const FString String = TEXT("");
 		CSCORE_API const FName Name = NAME_None;
 	}

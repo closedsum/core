@@ -256,7 +256,7 @@ public:
 
 #define ParamsType NCsMovement::NTo::NInterp::NParams::FParams
 	void CopyParams(ParamsType* Params);
-	void CopyParamsAsValue(ParamsType* Params);
+	void CopyParamsAsValue(ParamsType* Params) const;
 #undef ParamsType
 
 	void ConditionalSetSafeMoveObject(const FString& Context, UObject* WorldContext);
@@ -430,6 +430,9 @@ namespace NCsMovement
 					void ConditionalSetDestinationObjectChecked(const FString& Context, UObject* WorldContext);
 
 					bool IsValidChecked(const FString& Context) const;
+					bool IsValid(const FString& Context) const;
+
+					FVector GetEndLocation() const;
 
 					void Reset();
 

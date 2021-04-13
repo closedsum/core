@@ -1458,20 +1458,20 @@ namespace NCsPooledObject
 				// Check if Index is valid
 				if (Index >= PoolSize)
 				{
-					//UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s with PoolIndex: %d is NOT in the Pool. Call AddToPool."), *Name, *(ConstructParams.ClassName), Index);
+					CS_NON_SHIPPING_EXPR(Log_Impl.ExecuteIfBound(FString::Printf(TEXT("%s::DeAllocate: %s with PoolIndex: %d is NOT in the Pool. Call AddToPool."), *Name, *(ConstructParams.Class->GetName()), Index)));
 					return false;
 				}
 				// Check if object is already deallocated
 				if (Links[Index] != AllocatedHead &&
 					!Links[Index]->IsLinked())
 				{
-					//UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s at PoolIndex: %d is already deallocated or not in the Pool."), *Name, *(ConstructParams.ClassName), Index);
+					CS_NON_SHIPPING_EXPR(Log_Impl.ExecuteIfBound(FString::Printf(TEXT("%s::DeAllocate: %s at PoolIndex: %d is already deallocated or not in the Pool."), *Name, *(ConstructParams.Class->GetName()), Index)));
 					return false;
 				}
 				// Check if object is already deallocated
 				if (AllocatedObjectsSize == CS_EMPTY)
 				{
-					//UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s at PoolIndex: %d is already deallocated or not in the Pool."), *Name, *(ConstructParams.ClassName), Index);
+					CS_NON_SHIPPING_EXPR(Log_Impl.ExecuteIfBound(FString::Printf(TEXT("%s::DeAllocate: %s at PoolIndex: %d is already deallocated or not in the Pool."), *Name, *(ConstructParams.Class->GetName()), Index)));
 					return false;
 				}
 

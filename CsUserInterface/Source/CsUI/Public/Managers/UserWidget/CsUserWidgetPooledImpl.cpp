@@ -7,7 +7,6 @@
 #include "Types/CsTypes_AttachDetach.h"
 #include "Types/CsTypes_Math.h"
 // Library
-#include "Managers/Pool/Cache/CsLibrary_PooledObjectCache.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Managers
 #include "Managers/UserWidget/CsManager_UserWidget.h"
@@ -39,6 +38,7 @@ namespace NCsUserWidgetPooledImpl
 UCsUserWidgetPooledImpl::UCsUserWidgetPooledImpl(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
 	Cache(nullptr),
+	CacheImpl(nullptr),
 	PreserveChangesToDefaultMask(0),
 	ChangesToDefaultMask(0),
 	UserWidget(nullptr)
@@ -55,6 +55,7 @@ void UCsUserWidgetPooledImpl::BeginDestroy()
 	{
 		delete Cache;
 		Cache = nullptr;
+		CacheImpl = nullptr;
 	}
 
 	if (UserWidget)
@@ -129,11 +130,6 @@ void UCsUserWidgetPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 	const FString& Context = Str::Update;
 
-	typedef NCsUserWidget::NCache::FImpl CacheImplType;
-	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
-
-	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
-
 	CacheImpl->Update(DeltaTime);
 }
 
@@ -150,11 +146,6 @@ void UCsUserWidgetPooledImpl::Allocate(PayloadType* Payload)
 	using namespace NCsUserWidgetPooledImpl::NCached;
 
 	const FString& Context = Str::Allocate;
-
-	typedef NCsUserWidget::NCache::FImpl CacheImplType;
-	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
-
-	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Allocate(Payload);
 
@@ -201,7 +192,8 @@ void UCsUserWidgetPooledImpl::ConstructCache()
 {
 	typedef NCsUserWidget::NCache::FImpl CacheImplType;
 
-	Cache = new CacheImplType();
+	CacheImpl = new CacheImplType();
+	Cache	  = CacheImpl;
 }
 
 #define UserWidgetPayloadType NCsUserWidget::NPayload::IPayload

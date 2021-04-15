@@ -1,5 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Types
 #include "Types/CsTypes_View.h"
+// Log
+#include "Utility/CsLog.h"
 
 #include "CsTypes_Anim.generated.h"
 #pragma once
@@ -81,13 +84,13 @@ struct CSCORE_API FCsAnimSequence
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<UAnimSequence> Anim;
 
-	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Anim_LoadFlags;
 
-	UPROPERTY(Transient)
+	UPROPERTY(Transient, BlueprintReadWrite)
 	UAnimSequence* Anim_Internal;
 
 public:
@@ -130,6 +133,41 @@ public:
 		checkf(Anim_Internal, TEXT("FCsAnimSequence::GetChecked: Failed to load Anim @ %s."), *(Anim.ToSoftObjectPath().ToString()));
 
 		return Anim_Internal;
+	}
+
+	UAnimSequence* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Anim.ToSoftObjectPath().IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Anim is NULL."), *Context));
+			return nullptr;
+		}
+
+		if (!Anim_Internal)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Anim has NOT been loaded from Path @ %s."), *Context, *(Anim.ToSoftObjectPath().ToString())));
+		}
+		return Anim_Internal;
+	}
+
+	UAnimSequence* GetSafe()
+	{
+		if (!Anim.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Anim_Internal;
+	}
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
 	}
 };
 
@@ -319,13 +357,13 @@ struct CSCORE_API FCsAnimMontage
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<UAnimMontage> Anim;
 
-	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Anim_LoadFlags;
 
-	UPROPERTY(Transient)
+	UPROPERTY(Transient, BlueprintReadWrite)
 	UAnimMontage* Anim_Internal;
 
 public:
@@ -337,7 +375,7 @@ public:
 	{
 	}
 
-	FORCEINLINE UAnimMontage* Get() { return Anim_Internal; }
+	FORCEINLINE UAnimMontage* Get() const { return Anim_Internal; }
 
 	FORCEINLINE UAnimMontage** GetPtr() { return &Anim_Internal; }
 
@@ -357,6 +395,41 @@ public:
 		checkf(Anim_Internal, TEXT("FCsAnimMontage::GetChecked: Failed to load Anim @ %s."), *(Anim.ToSoftObjectPath().ToString()));
 
 		return Anim_Internal;
+	}
+
+	UAnimMontage* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Anim.ToSoftObjectPath().IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Anim is NULL."), *Context));
+			return nullptr;
+		}
+
+		if (!Anim_Internal)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Anim has NOT been loaded from Path @ %s."), *Context, *(Anim.ToSoftObjectPath().ToString())));
+		}
+		return Anim_Internal;
+	}
+
+	UAnimMontage* GetSafe()
+	{
+		if (!Anim.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Anim_Internal;
+	}
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
 	}
 };
 
@@ -638,13 +711,13 @@ struct CSCORE_API FCsAnimBlueprint
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TSoftObjectPtr<UAnimBlueprint> Blueprint;
 
-	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;
 
-	UPROPERTY(Transient)
+	UPROPERTY(Transient, BlueprintReadWrite)
 	UAnimBlueprintGeneratedClass* Blueprint_Internal;
 
 public:
@@ -676,6 +749,41 @@ public:
 		checkf(Blueprint_Internal, TEXT("FCsAnimBlueprint::GetChecked: Failed to load Blueprint @ %s."), *(Blueprint.ToSoftObjectPath().ToString()));
 
 		return Blueprint_Internal;
+	}
+
+	UAnimBlueprintGeneratedClass* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Blueprint.ToSoftObjectPath().IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Blueprint is NULL."), *Context));
+			return nullptr;
+		}
+
+		if (!Blueprint_Internal)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Blueprint has NOT been loaded from Path @ %s."), *Context, *(Blueprint.ToSoftObjectPath().ToString())));
+		}
+		return Blueprint_Internal;
+	}
+
+	UAnimBlueprintGeneratedClass* GetSafe()
+	{
+		if (!Blueprint.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Blueprint_Internal;
+	}
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
 	}
 };
 

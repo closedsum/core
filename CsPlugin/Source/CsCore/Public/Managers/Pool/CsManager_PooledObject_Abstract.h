@@ -1107,7 +1107,7 @@ namespace NCsPooledObject
 			*/
 			FORCEINLINE const InterfaceContainerType* FindObject(const int32& Index)
 			{
-				checkf(Index > 0 && Index < PoolSize, TEXT("FCsManager_PooledObject::FindObject: Index: %d is NOT valid for pool."), Index);
+				checkf(Index > INDEX_NONE && Index < PoolSize, TEXT("FCsManager_PooledObject::FindObject: Index: %d is NOT valid for pool."), Index);
 
 				return Pool[Index];
 			}
@@ -1169,7 +1169,7 @@ namespace NCsPooledObject
 					return nullptr;
 				}
 	
-				checkf(Index != INDEX_NONE && Index < PoolSize, TEXT("%s::FindObject: Object: %s with Class: %s is already in a pool."), *Name, *(Object->GetName()), *(Class->GetName()));
+				checkf(Index > INDEX_NONE && Index < PoolSize, TEXT("%s::FindObject: Object: %s with Class: %s is already in a pool."), *Name, *(Object->GetName()), *(Class->GetName()));
 
 				InterfaceContainerType* O = Pool[Index];
 

@@ -19,6 +19,8 @@ namespace NCsScriptLibraryActor
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByName);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByLabel);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, MoveByInterp);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetMaterial);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetMaterials);
 		}
 	}
 }
@@ -120,3 +122,30 @@ FCsRoutineHandle UCsScriptLibrary_Actor::MoveByInterp(const FString& Context, UO
 }
 
 #pragma endregion Move
+
+// Material
+#pragma region
+
+void UCsScriptLibrary_Actor::SetMaterial(const FString& Context, AActor* Actor, UMaterialInterface* Material, const int32& Index)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::SetMaterial : Context;
+
+	typedef NCsActor::FLibrary ActorLibrary;
+
+	ActorLibrary::SetSafeMaterial(Ctxt, Actor, Material, Index);
+}
+
+void UCsScriptLibrary_Actor::SetMaterials(const FString& Context, AActor* Actor, const TArray<UMaterialInterface*>& Materials)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::SetMaterials : Context;
+
+	typedef NCsActor::FLibrary ActorLibrary;
+
+	ActorLibrary::SetSafeMaterials(Ctxt, Actor, Materials);
+}
+
+#pragma endregion Material

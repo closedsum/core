@@ -296,58 +296,6 @@ bool FCsFXParameterVector::IsValid(const FString& Context) const
 // FCsFX
 #pragma region
 
-bool FCsFX::IsValid(const FString& Context) const
-{
-	// Check FX Path is Valid.
-	if (!FX.ToSoftObjectPath().IsValid())
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: FX is NULL."), *Context);
-		return false;
-	}
-	// Check FX is Valid.
-	if (!FX_Internal)
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: FX has NOT been loaded from Path @ %s."), *Context, *(FX.ToSoftObjectPath().ToString()));
-		return false;
-	}
-	// Check Type is Valid.
-	if (!EMCsFX::Get().IsValidEnum(Type))
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s Type: %s is NOT Valid."), *Context, Type.ToChar());
-		return false;
-	}
-
-	if (!Transform.Equals(FTransform::Identity) &&
-		TransformRules == 0)
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
-		return false;
-	}
-	// Character Parameters are Valid.
-	typedef NCsFX::FLibrary FXLibrary;
-	typedef NCsFX::NParameter::EValue ParameterValueType;
-
-		// Int
-	for (const FCsFXParameterInt& Param : IntParameters)
-	{
-		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Int))
-			return false;
-	}
-	// Float
-	for (const FCsFXParameterFloat& Param : FloatParameters)
-	{
-		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Float))
-			return false;
-	}
-	// Vector
-	for (const FCsFXParameterVector& Param : VectorParameters)
-	{
-		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Vector))
-			return false;
-	}
-	return true;
-}
-
 bool FCsFX::IsValidChecked(const FString& Context) const
 {
 	// Check FX is Valid.
@@ -377,6 +325,58 @@ bool FCsFX::IsValidChecked(const FString& Context) const
 	for (const FCsFXParameterVector& Param : VectorParameters)
 	{
 		check(FXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Vector));
+	}
+	return true;
+}
+
+bool FCsFX::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	// Check FX Path is Valid.
+	if (!FX.ToSoftObjectPath().IsValid())
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: FX is NULL."), *Context));
+		return false;
+	}
+	// Check FX is Valid.
+	if (!FX_Internal)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: FX has NOT been loaded from Path @ %s."), *Context, *(FX.ToSoftObjectPath().ToString())));
+		return false;
+	}
+	// Check Type is Valid.
+	if (!EMCsFX::Get().IsValidEnum(Type))
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s Type: %s is NOT Valid."), *Context, Type.ToChar()));
+		return false;
+	}
+
+	if (!Transform.Equals(FTransform::Identity) &&
+		TransformRules == 0)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString())));
+		return false;
+	}
+	// Character Parameters are Valid.
+	typedef NCsFX::FLibrary FXLibrary;
+	typedef NCsFX::NParameter::EValue ParameterValueType;
+
+	// Int
+	for (const FCsFXParameterInt& Param : IntParameters)
+	{
+		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Int, Log))
+			return false;
+	}
+	// Float
+	for (const FCsFXParameterFloat& Param : FloatParameters)
+	{
+		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Float, Log))
+			return false;
+	}
+	// Vector
+	for (const FCsFXParameterVector& Param : VectorParameters)
+	{
+		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Vector, Log))
+			return false;
 	}
 	return true;
 }

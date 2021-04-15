@@ -74,7 +74,7 @@ namespace NCsFX
 			static const FCsFXActorPooled* SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX);
 
 			/**
-			* safely spawn an FX with the given payload.
+			* Safely spawn an FX with the given payload.
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
@@ -86,7 +86,7 @@ namespace NCsFX
 			static const FCsFXActorPooled* SafeSpawn(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
-			* safely spawn an FX with the given payload.
+			* Safely spawn an FX with the given payload.
 			*
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param PooledPayload

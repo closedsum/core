@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/FX/Payload/Script/CsScriptPayload_FX.h"
+#include "Managers/FX/Payload/CsTypes_Payload_FX.h"
 #include "CsCore.h"
 
 // Library
@@ -10,7 +10,7 @@
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 
 #define PayloadType NCsFX::NPayload::FImpl
-void FCsScriptPayload_FX::CopyToPayloadAsValueChecked(const FString& Context, UObject* WorldContext, PayloadType* Payload) const
+void FCsPayload_FX::CopyToPayloadAsValueChecked(const FString& Context, UObject* WorldContext, PayloadType* Payload) const
 {
 #undef PayloadType
 	
@@ -64,15 +64,15 @@ void FCsScriptPayload_FX::CopyToPayloadAsValueChecked(const FString& Context, UO
 	}
 }
 
-bool FCsScriptPayload_FX::IsValidChecked(const FString& Context) const
+bool FCsPayload_FX::IsValidChecked(const FString& Context) const
 {
 	check(FX.IsValidChecked(Context));
 	return true;
 }
 
-bool FCsScriptPayload_FX::IsValid(const FString& Context) const
+bool FCsPayload_FX::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
-	if (!FX.IsValid(Context))
+	if (!FX.IsValid(Context, Log))
 		return false;
 	return true;
 }

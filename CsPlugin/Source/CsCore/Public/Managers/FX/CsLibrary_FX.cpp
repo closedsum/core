@@ -7,6 +7,7 @@
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
+#include "Library/CsLibrary_Object.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
@@ -14,6 +15,7 @@
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // FX
 #include "Managers/FX/Params/CsLibrary_Params_FX.h"
+#include "NiagaraActor.h"
 #include "NiagaraSystem.h"
 #include "NiagaraComponent.h"
 
@@ -52,44 +54,22 @@ namespace NCsFX
 
 	UNiagaraSystem* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!Path.IsValid())
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path is NOT Valid.")));
-			return nullptr;
-		}
+		typedef NCsObject::FLibrary ObjectLibrary;
 
-		UObject* Object = Path.TryLoad();
-
-		if (!Object)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to load Object at Path: %s."), *Context, *(Path.ToString())));
-			return nullptr;
-		}
-
-		UNiagaraSystem* System = Cast<UNiagaraSystem>(Object);
-
-		if (!System)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object: %s with Class: %s @ %s is NOT of type: UNiagaraSystem."), *Context, *(Object->GetName()), *(Object->GetClass()->GetName())));
-			return nullptr;
-		}
-		return System;
+		return ObjectLibrary::SafeLoad<UNiagaraSystem>(Context, Path, Log);
 	}
 
 	UNiagaraSystem* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (Path.IsEmpty())
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path is EMPTY."), *Context));
-			return nullptr;
-		}
+		typedef NCsObject::FLibrary ObjectLibrary;
 
-		FSoftObjectPath SoftPath(Path);
-
-		return SafeLoad(Context, SoftPath, Log);
+		return ObjectLibrary::SafeLoad<UNiagaraSystem>(Context, Path, Log);
 	}
 
 	#pragma endregion Load
+
+	// Parameter
+	#pragma region
 
 	#define ParameterValueType NCsFX::NParameter::EValue
 
@@ -299,6 +279,10 @@ namespace NCsFX
 
 	#undef ParameterType
 
+	#pragma endregion Parameter
+
+	// Spawn
+	#pragma region
 
 	#define ParamsResourceType NCsFX::NSpawn::NParams::FResource
 	#define ParamsType NCsFX::NSpawn::NParams::FParams
@@ -498,4 +482,35 @@ namespace NCsFX
 
 	#undef ParamsResourceType
 	#undef ParamsType
+
+	#pragma endregion Spawn
+
+	// State
+	#pragma region
+
+	bool FLibrary::IsCompleteChecked(const FString& Context, ANiagaraActor* Actor)
+	{
+		checkf(Actor, TEXT("%s: Actor is NULL."), *Context);
+
+		UNiagaraComponent* Component = Actor->GetNiagaraComponent();
+
+		return IsCompleteChecked(Context, Component);
+	}
+
+	bool FLibrary::IsCompleteChecked(const FString& Context, UNiagaraComponent* Component)
+	{
+		checkf(Component, TEXT("%s: Component is NULL."), *Context);
+
+		FNiagaraSystemInstance* SystemInstance = Component->GetSystemInstance();
+
+		checkf(SystemInstance, TEXT("%s: SystemInstance is NULL on FXComponent: %s."), *Context, *(Component->GetName()));
+
+		const ENiagaraExecutionState ExecutionState = SystemInstance->GetActualExecutionState();
+
+		return ExecutionState == ENiagaraExecutionState::Inactive ||
+			   ExecutionState == ENiagaraExecutionState::Complete ||
+			   ExecutionState == ENiagaraExecutionState::Disabled;
+	}
+
+	#pragma endregion State
 }

@@ -9,6 +9,8 @@
 class AActor;
 class UObject;
 struct FCsRoutine;
+class USceneComponent;
+class UPrimitiveComponent;
 class UMaterialInterface;
 
 namespace NCsActor
@@ -135,6 +137,66 @@ namespace NCsActor
 
 	#pragma endregion Get
 
+	// RootComponent
+	#pragma region
+	public:
+
+		/**
+		* Get the Root Component from an Actor.
+		* 
+		* @param Context	The calling context.
+		* @param Actor
+		* return			RootComponent.
+		*/
+		static USceneComponent* GetRootComponentChecked(const FString& Context, AActor* Actor);
+
+		/**
+		* Get the Root Component from an Actor.
+		*
+		* @param Context	The calling context.
+		* @param Actor
+		* @param Log
+		* return			RootComponent.
+		*/
+		static USceneComponent* GetSafeRootComponent(const FString& Context, AActor* Actor, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Get the Root Component from an Actor.
+		*
+		* @param Actor
+		* return			RootComponent.
+		*/
+		static USceneComponent* GetSafeRootComponent(AActor* Actor);
+
+		/**
+		* Get the Root Component from an Actor.
+		*
+		* @param Context	The calling context.
+		* @param Actor
+		* return			RootComponent.
+		*/
+		static UPrimitiveComponent* GetRootPrimitiveComponentChecked(const FString& Context, AActor* Actor);
+
+		/**
+		* Get the Root Component from an Actor.
+		*
+		* @param Context	The calling context.
+		* @param Actor
+		* @param Log
+		* return			RootComponent.
+		*/
+		static UPrimitiveComponent* GetSafeRootPrimitiveComponent(const FString& Context, AActor* Actor, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Get the Root Component from an Actor.
+		*
+		* @param Actor
+		* return			RootComponent.
+		*/
+		static UPrimitiveComponent* GetSafeRootPrimitiveComponent(AActor* Actor);
+
+	#pragma endregion RootComponent
+
 	// Move
 	#pragma region
 
@@ -192,7 +254,6 @@ namespace NCsActor
 		* @param Material
 		* @param Index
 		*/
-		
 		static void SetMaterialChecked(const FString& Context, AActor* Actor, UMaterialInterface* Material, const int32& Index);
 
 		/**
@@ -205,6 +266,34 @@ namespace NCsActor
 		* @param Log
 		*/
 		static void SetSafeMaterial(const FString& Context, AActor* Actor, UMaterialInterface* Material, const int32& Index, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Safely set the Material at the given Index for the RootComponent, of type UPrimitiveComponent, on Actor.
+		*
+		* @param Actor		Actor whose RootComponent would have the Material set at Index.
+		* @param Material
+		* @param Index
+		*/
+		static void SetSafeMaterial(AActor* Actor, UMaterialInterface* Material, const int32& Index);
+
+		/**
+		* Set the Materials for the RootComponent, of type UPrimitiveComponent, on Actor.
+		*
+		* @param Context	The calling context.
+		* @param Actor		Actor whose RootComponent would have the Material set at Index.
+		* @param Materials
+		*/
+		static void SetMaterialsChecked(const FString& Context, AActor* Actor, const TArray<UMaterialInterface*>& Materials);
+
+		/**
+		* Safely set the Materials for the RootComponent, of type UPrimitiveComponent, on Actor.
+		*
+		* @param Context	The calling context.
+		* @param Actor		Actor whose RootComponent would have the Material set at Index.
+		* @param Materials
+		* @param Log
+		*/
+		static void SetSafeMaterials(const FString& Context, AActor* Actor, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Material
 	};

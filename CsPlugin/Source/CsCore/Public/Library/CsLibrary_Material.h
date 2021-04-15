@@ -54,6 +54,14 @@ namespace NCsMaterial
 		static bool IsValid(const FString& Context, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
+		*/
+		static bool IsValidChecked(const FString& Context, USkeletalMesh* Mesh, const TArray<UMaterialInterface*>& Materials);
+
+		/**
+		*/
+		static bool IsValid(const FString& Context, USkeletalMesh* Mesh, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
 		* Set the Material at the given Index on Component
 		* 
 		* @param Context	The calling context

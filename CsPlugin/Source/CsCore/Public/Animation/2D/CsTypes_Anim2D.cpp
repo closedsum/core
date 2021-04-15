@@ -150,7 +150,7 @@ namespace NCsAnim
 #pragma region
 
 #define FrameType NCsAnim::N2D::NTexture::NFlipbook::FFrame
-void FCsAnim2DFlipbookTextureFrame::CopyFrame(FrameType* Frame)
+void FCsAnim2DFlipbookTextureFrame::CopyToFrame(FrameType* Frame)
 {
 #undef FrameType
 
@@ -272,7 +272,7 @@ void FCsAnim2DFlipbookTexture::CopyFlipbook(FlipbookType* Flipbook)
 
 		FrameType& F = Flipbook->Frames.Last();
 
-		Frame.CopyFrame(&F);
+		Frame.CopyToFrame(&F);
 	}
 	Flipbook->SetTotalCount(&TotalCount);
 }
@@ -351,7 +351,7 @@ namespace NCsAnim
 #pragma region
 
 #define FrameType NCsAnim::N2D::NMaterial::NFlipbook::FFrame
-void FCsAnim2DMaterialFlipbookFrame::CopyFrame(FrameType* Frame)
+void FCsAnim2DMaterialFlipbookFrame::CopyToFrame(FrameType* Frame)
 {
 #undef FrameType
 
@@ -473,7 +473,7 @@ void FCsAnim2DMaterialFlipbook::CopyFlipbook(FlipbookType* Flipbook)
 
 		FrameType& F = Flipbook->Frames.Last();
 
-		Frame.CopyFrame(&F);
+		Frame.CopyToFrame(&F);
 	}
 	Flipbook->SetTotalCount(&TotalCount);
 }

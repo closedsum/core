@@ -12,6 +12,17 @@ namespace NCsSkeletalMeshActor
 {
 	namespace NPayload
 	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSkeletalMeshActor::NPayload::FLibrary, SetSafe);
+				}
+			}
+		}
+
 		#define PayloadType NCsSkeletalMeshActor::NPayload::IPayload
 		bool FLibrary::IsValidChecked(const FString& Context, PayloadType* Payload)
 		{
@@ -64,12 +75,12 @@ namespace NCsSkeletalMeshActor
 		}
 
 		#define PayloadImplType NCsSkeletalMeshActor::NPayload::FImpl
-		#define ShotType NCsSkeletalMeshActor::NAnim::NSequence::FOneShot
-		void FLibrary::SetPayload(const FString& Context, PayloadImplType* Payload, const ShotType& Shot)
-		{
-		#undef ShotType
-		#undef PayloadImplType
+		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
+		#define ShotType NCsSkeletalMeshActor::NAnim::NSequence::FOneShot
+
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, const ShotType& Shot)
+		{
 			checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
 
 			check(Shot.IsValidChecked(Context));
@@ -90,13 +101,75 @@ namespace NCsSkeletalMeshActor
 			Payload->Params	= const_cast<ParamsType*>(Shot.GetParamsPtr());
 		}
 
-		#define PayloadImplType NCsSkeletalMeshActor::NPayload::FImpl
-		#define ShotType NCsSkeletalMeshActor::NAnim::NMontage::FOneShot
-		void FLibrary::SetPayload(const FString& Context, PayloadImplType* Payload, const ShotType& Shot)
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload, const ShotType& Shot)
 		{
-		#undef ShotType
-		#undef PayloadImplType
+			SetChecked(Context, Payload, Shot);
 
+			Payload->Instigator						= PooledPayload->GetInstigator();
+			Payload->Owner							= PooledPayload->GetOwner();
+			Payload->Parent							= PooledPayload->GetParent();
+			Payload->Time							= PooledPayload->GetTime();
+			Payload->PreserveChangesFromDefaultMask = PooledPayload->GetPreserveChangesFromDefaultMask();
+		}
+
+		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const ShotType& Shot, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (!Payload)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload is NULL."), *Context));
+				return;
+			}
+
+			if (!Shot.IsValid(Context, Log))
+				return;
+
+			SetChecked(Context, Payload, Shot);
+		}
+
+		void FLibrary::SetSafe(PayloadImplType* Payload, const ShotType& Shot)
+		{
+			using namespace NCsSkeletalMeshActor::NPayload::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafe;
+
+			SetSafe(Context, Payload, Shot, nullptr);
+		}
+
+		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload, const ShotType& Shot, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (!Payload)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload is NULL."), *Context));
+				return;
+			}
+
+			if (!PooledPayload)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PooledPayload is NULL."), *Context));
+				return;
+			}
+
+			if (!Shot.IsValid(Context, Log))
+				return;
+
+			SetChecked(Context, Payload, PooledPayload, Shot);
+		}
+
+		void FLibrary::SetSafe(PayloadImplType* Payload, const PooledPayloadType* PooledPayload, const ShotType& Shot)
+		{
+			using namespace NCsSkeletalMeshActor::NPayload::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafe;
+
+			SetSafe(Context, Payload, PooledPayload, Shot, nullptr);
+		}
+
+		#undef ShotType
+
+		#define ShotType NCsSkeletalMeshActor::NAnim::NMontage::FOneShot
+
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, const ShotType& Shot)
+		{
 			checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
 
 			check(Shot.IsValidChecked(Context));
@@ -116,5 +189,73 @@ namespace NCsSkeletalMeshActor
 
 			Payload->Params	= const_cast<ParamsType*>(Shot.GetParamsPtr());
 		}
+
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload, const ShotType& Shot)
+		{
+			SetChecked(Context, Payload, Shot);
+
+			Payload->Instigator						= PooledPayload->GetInstigator();
+			Payload->Owner							= PooledPayload->GetOwner();
+			Payload->Parent							= PooledPayload->GetParent();
+			Payload->Time							= PooledPayload->GetTime();
+			Payload->PreserveChangesFromDefaultMask = PooledPayload->GetPreserveChangesFromDefaultMask();
+		}
+
+		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const ShotType& Shot, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (!Payload)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload is NULL."), *Context));
+				return;
+			}
+
+			if (!Shot.IsValid(Context, Log))
+				return;
+
+			SetChecked(Context, Payload, Shot);
+		}
+
+		void FLibrary::SetSafe(PayloadImplType* Payload, const ShotType& Shot)
+		{
+			using namespace NCsSkeletalMeshActor::NPayload::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafe;
+
+			SetSafe(Context, Payload, Shot, nullptr);
+		}
+
+		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload, const ShotType& Shot, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (!Payload)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload is NULL."), *Context));
+				return;
+			}
+
+			if (!PooledPayload)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PooledPayload is NULL."), *Context));
+				return;
+			}
+
+			if (!Shot.IsValid(Context, Log))
+				return;
+
+			SetChecked(Context, Payload, PooledPayload, Shot);
+		}
+
+		void FLibrary::SetSafe(PayloadImplType* Payload, const PooledPayloadType* PooledPayload, const ShotType& Shot)
+		{
+			using namespace NCsSkeletalMeshActor::NPayload::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafe;
+
+			SetSafe(Context, Payload, PooledPayload, Shot, nullptr);
+		}
+
+		#undef ShotType
+
+		#undef PayloadImplType
+		#undef PooledPayloadType
 	}
 }

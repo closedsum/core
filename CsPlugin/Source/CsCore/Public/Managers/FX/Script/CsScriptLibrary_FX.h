@@ -2,7 +2,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
-#include "Managers/FX/Script/CsTypes_ScriptLibrary_FX.h"
+#include "Managers/FX/CsTypes_Library_FX.h"
 #include "Coroutine/CsRoutineHandle.h"
 
 #include "CsScriptLibrary_FX.generated.h"
@@ -72,5 +72,5 @@ public:
 	* return					Handle to spawn coroutine.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|FX", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Params"))
-	static FCsRoutineHandle Spawn(const FString& Context, UObject* WorldContextObject, const FCsScriptLibrary_FX_Spawn_Params& Params);
+	static FCsRoutineHandle Spawn(const FString& Context, UObject* WorldContextObject, const FCsFX_Spawn_Params& Params);
 };

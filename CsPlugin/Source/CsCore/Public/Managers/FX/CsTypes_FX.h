@@ -1,9 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Types
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/Enum/CsEnumFlagMap.h"
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_AttachDetach.h"
+// Log
+#include "Utility/CsLog.h"
 
 #include "CsTypes_FX.generated.h"
 #pragma once
@@ -789,7 +792,7 @@ public:
 	}
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 	void Reset();
 };
@@ -802,13 +805,13 @@ public:
 UENUM(BlueprintType, meta = (Bitflags))
 enum class ECsFXPayloadChange : uint8
 {
-	FXSystem						UMETA(DisplayName = "FX System"),					// 0
-	KeepRelativeTransform			UMETA(DisplayName = "Keep Relative Transform"),		// 1
-	KeepWorldTransform				UMETA(DisplayName = "Keep World Transform"),		// 2
-	SnapToTargetNotIncludingScale	UMETA(DisplayName = "Game Third Person Low"),		// 3
-	SnapToTargetIncludingScale		UMETA(DisplayName = "Game VR"),						// 4
-	Transform						UMETA(DisplayName = "UI"),							// 5
-	Parameter						UMETA(DisplayName = "UI"),							// 6
+	FXSystem						UMETA(DisplayName = "FX System"),							// 0
+	KeepRelativeTransform			UMETA(DisplayName = "Keep Relative Transform"),				// 1
+	KeepWorldTransform				UMETA(DisplayName = "Keep World Transform"),				// 2
+	SnapToTargetNotIncludingScale	UMETA(DisplayName = "Snap to Target not Including Scale"),	// 3
+	SnapToTargetIncludingScale		UMETA(DisplayName = "Snap to Target Including Scale"),		// 4
+	Transform						UMETA(DisplayName = "Transform"),							// 5
+	Parameter						UMETA(DisplayName = "Parameter"),							// 6
 };
 
 struct CSCORE_API EMCsFXPayloadChange : public TCsEnumFlagMap<ECsFXPayloadChange>

@@ -40,18 +40,22 @@ FECsFX UCsScriptLibrary_FX::ECsFX_Get(const FString& Name)
 {
 	using namespace NCsScriptLibraryFX::NCached;
 
+	const FString& Context = Str::ECsFX_Get;
+
 	typedef NCsEnum::FLibrary EnumLibrary;
 
-	return EnumLibrary::Get<EMCsFX, FECsFX>(Str::ECsFX_Get, Str::FECsFX, Name);
+	return EnumLibrary::GetSafe<EMCsFX, FECsFX>(Context, Str::FECsFX, Name);
 }
 
 FECsFX UCsScriptLibrary_FX::ECsFX_GetByIndex(const int32& Index)
 {
 	using namespace NCsScriptLibraryFX::NCached;
 
+	const FString& Context = Str::ECsFX_GetByIndex;
+
 	typedef NCsEnum::FLibrary EnumLibrary;
 
-	return EnumLibrary::GetByIndex<EMCsFX, FECsFX>(Str::ECsFX_GetByIndex, Str::FECsFX, Index);
+	return EnumLibrary::GetSafeByIndex<EMCsFX, FECsFX>(Context, Str::FECsFX, Index);
 }
 
 FString UCsScriptLibrary_FX::ECsFX_ToString(const FECsFX& Enum)
@@ -97,7 +101,7 @@ UNiagaraSystem* UCsScriptLibrary_FX::LoadByStringPath(const FString& Context, co
 	return FXLibrary::SafeLoad(Context, Path);
 }
 
-FCsRoutineHandle UCsScriptLibrary_FX::Spawn(const FString& Context, UObject* WorldContextObject, const FCsScriptLibrary_FX_Spawn_Params& Params)
+FCsRoutineHandle UCsScriptLibrary_FX::Spawn(const FString& Context, UObject* WorldContextObject, const FCsFX_Spawn_Params& Params)
 {
 	using namespace NCsScriptLibraryFX::NCached;
 

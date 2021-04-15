@@ -6,7 +6,7 @@
 #include "Types/Property/Ref/CsProperty_Ref_bool.h"
 #include "Types/Property/Ref/CsProperty_Ref_float.h"
 #include "Animation/CsTypes_Anim.h"
-#include "Types/CsTypes_AnimInstance.h"
+#include "Animation/CsTypes_AnimInstance.h"
 
 #include "CsAnimInstance.generated.h"
 

@@ -2,6 +2,7 @@
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/Enum/CsEnumMap.h"
+#include "Types/Enum/CsEnumFlagMap.h"
 #include "Types/CsTypes_AttachDetach.h"
 #include "Types/CsTypes_SkeletalMesh.h"
 #include "Types/CsTypes_Material.h"
@@ -149,11 +150,11 @@ struct CSCORE_API FCsSkeletalMeshActorPooledInfo
 	GENERATED_USTRUCT_BODY()
 
 	/** Mesh */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCsSkeletalMesh Mesh;
 
 	/** Materials */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCsTArrayMaterialnterface Materials;
 
 	/** The SkeletalMeshActor Type. This is used to group SkeletalMeshActors into different categories 
@@ -162,11 +163,11 @@ struct CSCORE_API FCsSkeletalMeshActorPooledInfo
 		NOTE: SkeletalMeshActor mostly acts as a "container" for a USkeletalMesh. Unless there is a
 		need from some special logic, only one SkeletalMeshActor class (i.e. ACsStatMeshActorPooledImpl) 
 		that will be used. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FECsSkeletalMeshActor Type;
 
 	/** Condition to determine when to deallocate the SkeletalMeshActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsSkeletalMeshActorDeallocateMethod DeallocateMethod;
 
 private:
@@ -185,30 +186,39 @@ public:
 		   LifeTime == 0.0f means the Sound object will stay active forever.
 		   LifeTime > 0.0f means the Sound will be deallocated after LifeTime amount of time after
 	        the FX object has been allocated. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
 	/** Valid if the Sound is attached to a Parent object or when an Sound object is
 		allocated, the Parent field of the payload is set.If the Parent object is NULL,
 		the Sound will NOT be attached. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsAttachmentTransformRules AttachmentTransformRules;
 
 	/** Valid only when the Sound is attached to a Parent object. 
 	    Bone or Socket to attach to. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the FX. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
 	int32 TransformRules;
 
 	/** The Transform to apply to the FX.
 		If the Sound is attached to a parent object, the Transform is applied as a Relative Transform
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTransform Transform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bCastShadow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bReceivesDecals;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bUseAsOccluder;
 
 public:
 
@@ -222,7 +232,10 @@ public:
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
-		Transform(FTransform::Identity)
+		Transform(FTransform::Identity),
+		bCastShadow(false),
+		bReceivesDecals(false),
+		bUseAsOccluder(false)
 	{
 	}
 	
@@ -247,12 +260,53 @@ public:
 #undef DeallocateMethodType
 
 	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 #pragma endregion FCsSkeletalMeshActorPooledInfo
 
 // NCsSkeletalMeshActor::NPayload::EChange
 #pragma region
+
+UENUM(BlueprintType, meta = (Bitflags))
+enum class ECsSkeletalMeshPayloadChange : uint8
+{
+	SkeletalMesh					UMETA(DisplayName = "SkeletalMesh"),						// 0
+	Materials						UMETA(DisplayName = "Materials"),							// 1
+	KeepRelativeTransform			UMETA(DisplayName = "Keep Relative Transform"),				// 2
+	KeepWorldTransform				UMETA(DisplayName = "Keep World Transform"),				// 3
+	SnapToTargetNotIncludingScale	UMETA(DisplayName = "Snap to Target not Including Scale"),	// 4
+	SnapToTargetIncludingScale		UMETA(DisplayName = "Snap to Target Including Scale"),		// 5
+	Transform						UMETA(DisplayName = "Transform"),							// 6
+	AnimInstance					UMETA(DisplayName = "AnimInstance"),						// 7
+};
+
+struct CSCORE_API EMCsSkeletalMeshPayloadChange : public TCsEnumFlagMap<ECsSkeletalMeshPayloadChange>
+{
+	CS_ENUM_FLAG_MAP_BODY(EMCsSkeletalMeshPayloadChange, ECsSkeletalMeshPayloadChange)
+};
+
+namespace NCsSkeletalMeshPayloadChange
+{
+	typedef ECsSkeletalMeshPayloadChange Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type SkeletalMesh;
+		extern CSCORE_API const Type Materials;
+		extern CSCORE_API const Type KeepRelativeTransform;
+		extern CSCORE_API const Type KeepWorldTransform;
+		extern CSCORE_API const Type SnapToTargetNotIncludingScale;
+		extern CSCORE_API const Type SnapToTargetIncludingScale;
+		extern CSCORE_API const Type Transform;
+		extern CSCORE_API const Type AnimInstance;
+	}
+
+	extern CSCORE_API const int32 None;
+	extern CSCORE_API const int32 All;
+}
+
+#define CS_SKELETAL_MESH_PAYLOAD_CHANGE_NONE 0
 
 namespace NCsSkeletalMeshActor
 {

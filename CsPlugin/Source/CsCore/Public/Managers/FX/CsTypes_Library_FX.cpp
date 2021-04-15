@@ -19,10 +19,10 @@ namespace NCsFX
 				return true;
 			}
 
-			bool FParams::IsValid(const FString& Context) const
+			bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 			{
 				// Check FX is Valid.
-				if (!FX.IsValid(Context))
+				if (!FX.IsValid(Context, Log))
 					return false;
 				// Check Frequency Params are Valid.
 				if (!FrequencyParams.IsValid(Context))
@@ -30,7 +30,7 @@ namespace NCsFX
 				// Check Group is Valid.
 				if (!EMCsUpdateGroup::Get().IsValidEnum(Group))
 				{
-					UE_LOG(LogCs, Warning, TEXT("%s: Group: %s is NOT Valid."), *Context, Group.ToChar());
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Group: %s is NOT Valid."), *Context, Group.ToChar()));
 					return false;
 				}
 				return true;
@@ -53,4 +53,35 @@ namespace NCsFX
 			}
 		}
 	}
+}
+
+#define ParamsType NCsFX::NSpawn::NParams::FParams
+void FCsFX_Spawn_Params::CopyParams(ParamsType* Params) const
+{
+#undef ParamsType
+
+	Params->FX = FX;
+	Params->FX.UpdateInternalPtrs();
+	Params->Actor = Actor;
+	Params->FrequencyParams = FrequencyParams;
+	Params->Group = Group;
+}
+
+bool FCsFX_Spawn_Params::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	// Check FX is Valid
+	if (!FX.IsValid(Context, Log))
+		return false;
+	// Check FrequencyParams is Valid
+	if (!FrequencyParams.IsValid(Context))
+		return false;
+	// Check Group is Valid
+	if (!EMCsUpdateGroup::Get().IsValidEnum(Group))
+		return false;
+	return true;
+}
+
+void FCsFX_Spawn_Params::Update()
+{
+	FrequencyParams.Update();
 }

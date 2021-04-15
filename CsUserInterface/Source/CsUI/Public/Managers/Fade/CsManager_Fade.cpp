@@ -247,7 +247,7 @@ void UCsManager_Fade::CreateFadeWidget()
 
 	checkf(Class, TEXT("%s: FCsUIDataRootSet.FadeWidget is NULL."), *Context);
 
-	FadeWidget = CreateWidget<UCsUserWidget_Fade>(Cast<UGameInstance>(ContextRoot), Class);
+	FadeWidget = CreateWidget<UCsUserWidget_Fade>(Cast<UGameInstance>(MyRoot), Class);
 
 	static const int32 ZOrder = 1000;
 	FadeWidget->AddToViewport(ZOrder);

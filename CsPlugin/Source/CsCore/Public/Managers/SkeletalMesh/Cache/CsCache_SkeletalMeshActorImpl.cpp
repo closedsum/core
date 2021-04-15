@@ -100,7 +100,7 @@ namespace NCsSkeletalMeshActor
 					{
 						UAnimSequence* Anim = Shot->GetAnim();
 
-						LifeTime = Anim->RateScale * Anim->SequenceLength;
+						LifeTime = (1.0f / Anim->RateScale) * Anim->SequenceLength;
 					}
 				}
 				// OneShot - Anim Montage
@@ -111,7 +111,7 @@ namespace NCsSkeletalMeshActor
 					{
 						UAnimMontage* Anim = Shot->GetAnim();
 
-						LifeTime = Shot->GetPlayRate() * Anim->GetSectionLength(0);
+						LifeTime = (1.0f / Shot->GetPlayRate()) * Anim->GetSectionLength(0);
 					}
 				}
 			}

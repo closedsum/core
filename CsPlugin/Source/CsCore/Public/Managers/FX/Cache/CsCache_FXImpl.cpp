@@ -3,6 +3,7 @@
 
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+#include "Managers/FX/CsLibrary_FX.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 // FX
@@ -17,11 +18,16 @@ namespace NCsFX
 {
 	namespace NCache
 	{
-		namespace NImplCached
+		namespace NImpl
 		{
-			namespace Str
+			namespace NCached
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsFX::NCache::FImpl, Allocate);
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsFX::NCache::FImpl, Allocate);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsFX::NCache::FImpl, ShouldDeallocate);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsFX::NCache::FImpl, Update);
+				}
 			}
 		}
 
@@ -74,7 +80,9 @@ namespace NCsFX
 		{
 		#undef PooledPayloadType
 
-			using namespace NImplCached;
+			using namespace NCsFX::NCache::NImpl::NCached;
+
+			const FString& Context = Str::Allocate;
 
 			// NCsPooledObject::NCache::ICache
 			bAllocated = true;
@@ -88,7 +96,7 @@ namespace NCsFX
 			typedef NCsFX::NPayload::IPayload FXPayloadType;
 			typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
 
-			FXPayloadType* FXPayload = PooledPayloadLibrary::GetInterfaceChecked<FXPayloadType>(Str::Allocate, Payload);
+			FXPayloadType* FXPayload = PooledPayloadLibrary::GetInterfaceChecked<FXPayloadType>(Context, Payload);
 
 			DeallocateMethod = FXPayload->GetDeallocateMethod();
 			QueuedLifeTime   = FXPayload->GetLifeTime();
@@ -107,45 +115,21 @@ namespace NCsFX
 
 			FXComponent->Deactivate();
 
-			// LifeTime
+			// Transition to LifeTime
+			// This is to hopefully prevent the GameThread from stalling when
+			// Deactivating the System.
 			typedef NCsFX::EDeallocateMethod DeallocateMethodType;
 
-			if (DeallocateMethod == DeallocateMethodType::LifeTime)
-			{
-				// Reset ElapsedTime
-				ElapsedTime.Reset();
-				// Set LifeTime
-				LifeTime = QueuedLifeTime;
-			}
+			// Reset ElapsedTime
+			ElapsedTime.Reset();
+			// Set LifeTime
+			LifeTime = DeallocateMethod == DeallocateMethodType::LifeTime ? QueuedLifeTime : 1.0f;
+
+			DeallocateMethod = DeallocateMethodType::LifeTime;
 		}
 
 		bool FImpl::ShouldDeallocate() const
 		{
-			if (bQueueDeallocate)
-			{
-				typedef NCsFX::EDeallocateMethod DeallocateMethodType;
-
-				// LifeTime, let HasLifeTimeExpired handle deallocation
-				if (DeallocateMethod == DeallocateMethodType::LifeTime)
-				{
-					return false;
-				}
-				// Complete
-				if (DeallocateMethod == DeallocateMethodType::Complete)
-				{ 
-					checkf(FXComponent, TEXT("NCsFX::NCache::FImpl::ShouldDeallocate: FXComponent is NULL."));
-
-					FNiagaraSystemInstance* SystemInstance = FXComponent->GetSystemInstance();
-
-					checkf(SystemInstance, TEXT("NCsFX::NCache::FImpl::ShouldDeallocate: SystemInstance is NULL on FXComponent: %s."), *(FXComponent->GetName()));
-
-					const ENiagaraExecutionState ExecutionState = SystemInstance->GetActualExecutionState();
-
-					return ExecutionState == ENiagaraExecutionState::Inactive ||
-						   ExecutionState == ENiagaraExecutionState::Complete ||
-						   ExecutionState == ENiagaraExecutionState::Disabled;
-				}
-			}
 			return false;
 		}
 
@@ -175,6 +159,30 @@ namespace NCsFX
 
 		void FImpl::Update(const FCsDeltaTime& DeltaTime)
 		{
+			using namespace NCsFX::NCache::NImpl::NCached;
+
+			const FString& Context = Str::Update;
+
+			typedef NCsFX::FLibrary FXLibrary;
+			typedef NCsFX::EDeallocateMethod DeallocateMethodType;
+
+			// Complete
+			if (DeallocateMethod == DeallocateMethodType::Complete)
+			{
+				// If Complete, transition to LifeTime
+				// This is to hopefully prevent the GameThread from stalling when
+				// Deactivating the System.
+				if (FXLibrary::IsCompleteChecked(Context, FXComponent))
+				{
+					DeallocateMethod = DeallocateMethodType::LifeTime;
+
+					// Reset ElapsedTime
+					ElapsedTime.Reset();
+					// Set LifeTime
+					LifeTime = 1.0f;
+				}
+			}
+
 			ElapsedTime += DeltaTime;
 		}
 	}

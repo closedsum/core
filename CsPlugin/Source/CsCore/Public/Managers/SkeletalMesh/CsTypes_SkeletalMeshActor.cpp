@@ -134,4 +134,54 @@ bool FCsSkeletalMeshActorPooledInfo::IsValidChecked(const FString& Context) cons
 	return true;
 }
 
+bool FCsSkeletalMeshActorPooledInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	// Check Mesh is Valid.
+	if (!Mesh.IsValid(Context, Log))
+		return false;
+	// Check Materials is Valid
+	if (!Materials.IsValid(Context, Log))
+		return false;
+	// Check Type is Valid
+	if (!EMCsSkeletalMeshActor::Get().IsValidEnum(Type))
+	{
+		return false;
+	}
+
+	if (!Transform.Equals(FTransform::Identity))
+	{
+		if (TransformRules == 0)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString())));
+			return true;
+		}
+	}
+	return true;
+}
+
 #pragma endregion FCsSkeletalMeshActorPooledInfo
+
+// SkeletalMeshPayloadChange
+#pragma region
+
+namespace NCsSkeletalMeshPayloadChange
+{
+	namespace Ref
+	{
+		typedef EMCsSkeletalMeshPayloadChange EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(SkeletalMesh);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Materials);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(KeepRelativeTransform, "Keep Relative Transform");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(KeepWorldTransform, "Keep World Transform");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(SnapToTargetNotIncludingScale, "Snap to Target not Including Scale");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(SnapToTargetIncludingScale, "Snap to Target Including Scale");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Transform);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(AnimInstance);
+	}
+
+	CSCORE_API const int32 None = 0;
+	CSCORE_API const int32 All = 255; // 1 + 2 + 4 + 8 + 16 + 32 + 64 + 128
+}
+
+#pragma endregion SkeletalMeshPayloadChange

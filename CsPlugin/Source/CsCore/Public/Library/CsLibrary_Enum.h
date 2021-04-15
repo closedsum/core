@@ -13,33 +13,35 @@ namespace NCsEnum
 	public:
 
 		template<typename EnumStructMap, typename EnumStruct>
-		static EnumStruct Get(const FString& FunctionName, const FString& EnumStructName, const FString& Name)
+		FORCEINLINE static EnumStruct GetSafe(const FString& Context, const FString& EnumStructName, const FString& Name, void(*Log)(const FString&) = &FCsLog::Warning)
 		{
 			if (EnumStructMap::Get().IsValidEnum(Name))
 				return EnumStructMap::Get()[Name];
 
-			CS_NON_SHIPPING_EXPR(FCsLog::Warning(FString::Printf(TEXT("NCsEnum::FLibrary::%s: Enum of type %s and Name: %s does NOT exist."), *FunctionName, *EnumStructName, *Name)));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Enum of type %s and Name: %s does NOT exist."), *Context, *EnumStructName, *Name));
 
 			return EnumStruct(0, NCsCached::Str::INVALID);
 		}
 
 		template<typename EnumStructMap, typename EnumStruct>
-		static EnumStruct GetByIndex(const FString& FunctionName, const FString& EnumStructName, const int32& Index)
+		FORCEINLINE static EnumStruct GetSafeByIndex(const FString& Context, const FString& EnumStructName, const int32& Index, void(*Log)(const FString&) = &FCsLog::Warning)
 		{
 			const int32& Count = EnumStructMap::Get().Num();
 
 			if (Index < Count)
 				return EnumStructMap::Get().GetEnumAt(Index);
 
-			CS_NON_SHIPPING_EXPR(FCsLog::Warning(FString::Printf(TEXT("NCsEnum::FLibrary::%s: Enum of type %s and Index: %d (%d >= %d) does NOT exist."), *FunctionName, *EnumStructName, Index, Index, Count)));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Enum of type %s and Index: %d (%d >= %d) does NOT exist."), *Context, *EnumStructName, Index, Index, Count));
 
 			return EnumStruct(0, NCsCached::Str::INVALID);
 		}
 
 		template<typename EnumStructMap, typename EnumStruct>
-		static void GetAll(TArray<EnumStruct>& OutTypes)
+		FORCEINLINE static void GetAll(TArray<EnumStruct>& OutTypes)
 		{
 			const int32& Count = EnumStructMap::Get().Num();
+
+			OutTypes.Reset(FMath::Max(OutTypes.Max(), Count));
 
 			for (int32 I = 0; I < Count; ++I)
 			{

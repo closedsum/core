@@ -48,7 +48,7 @@ ACsSkeletalMeshActorPooledImpl::ACsSkeletalMeshActorPooledImpl(const FObjectInit
 	AttachToBone(NAME_None)
 {
 	PrimaryActorTick.bCanEverTick		   = true;
-	PrimaryActorTick.bStartWithTickEnabled = false;
+	PrimaryActorTick.bStartWithTickEnabled = true;
 
 	GetSkeletalMeshComponent()->SetNotifyRigidBodyCollision(false);
 	GetSkeletalMeshComponent()->SetGenerateOverlapEvents(false);
@@ -161,6 +161,7 @@ void ACsSkeletalMeshActorPooledImpl::Allocate(PooledPayloadType* Payload)
 	SetActorTickEnabled(true);
 
 	GetMeshComponent()->bNoSkeletonUpdate		 = false;
+	GetMeshComponent()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 	GetMeshComponent()->KinematicBonesUpdateType = EKinematicBonesUpdateToPhysics::SkipSimulatingBones;
 
 	GetMeshComponent()->SetHiddenInGame(false);
@@ -217,6 +218,7 @@ void ACsSkeletalMeshActorPooledImpl::Deallocate_Internal()
 	Handle_ClearAttachAndTransform();
 
 	Component->bNoSkeletonUpdate = true;
+	Component->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 	Component->KinematicBonesUpdateType = EKinematicBonesUpdateToPhysics::SkipAllBones;
 
 	Handle_ClearSkeletalMesh();

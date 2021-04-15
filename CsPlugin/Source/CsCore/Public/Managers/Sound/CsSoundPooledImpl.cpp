@@ -6,6 +6,7 @@
 #include "Managers/Sound/CsCVars_Sound.h"
 // Library
 #include "Library/CsLibrary_Common.h"
+#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Sound
 #include "Managers/Sound/Cache/CsCache_SoundImpl.h"
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
@@ -176,9 +177,10 @@ void ACsSoundPooledImpl::Allocate(PooledPayloadType* Payload)
 
 	PreserveChangesToDefaultMask = Payload->GetPreserveChangesFromDefaultMask();
 
+	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
 	typedef NCsSound::NPayload::IPayload SoundPayloadType;
 
-	SoundPayloadType* SoundPayload = NCsInterfaceMap::GetInterfaceChecked<SoundPayloadType>(Str::Allocate, Payload);
+	SoundPayloadType* SoundPayload = PooledPayloadLibrary::GetInterfaceChecked<SoundPayloadType>(Str::Allocate, Payload);
 
 	Play(SoundPayload);
 }

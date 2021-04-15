@@ -74,7 +74,7 @@ UObject* UCsScriptLibrary_Manager_FX::FindObject(const FString& Context, UObject
 
 #pragma endregion Pool
 
-int32 UCsScriptLibrary_Manager_FX::Spawn(const FString& Context, UObject* WorldContextObject, const FCsScriptPayload_FX& Payload)
+int32 UCsScriptLibrary_Manager_FX::Spawn(const FString& Context, UObject* WorldContextObject, const FCsPayload_FX& Payload)
 {
 	using namespace NCsScriptLibraryManagerFX::NCached;
 

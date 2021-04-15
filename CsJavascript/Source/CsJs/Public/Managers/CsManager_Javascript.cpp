@@ -23,12 +23,12 @@
 #include "Engine/Engine.h"
 
 #if WITH_EDITOR
+// Library
+#include "Library/CsLibrary_World.h"
+
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/CsGetManagerJavascript.h"
-
-#include "Library/CsLibrary_Common.h"
-
 #endif // #if WITH_EDITOR
 
 // Cache
@@ -40,6 +40,9 @@ namespace NCsManagerJavascript
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, GetSafe_GetManagerJavascript);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, GetSafe);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupAndRunGameInstanceEntryPoint_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupGameStateEntryPoint);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupGameStateEntryPoint_Internal);
@@ -183,11 +186,11 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 	return GetManagerJavascript;
 }
 
-/*static*/ ICsGetManagerJavascript* UCsManager_Javascript::GetSafe_GetManagerJavascript(UObject* Object)
+/*static*/ ICsGetManagerJavascript* UCsManager_Javascript::GetSafe_GetManagerJavascript(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 {
 	if (!Object)
 	{
-		UE_LOG(LogCsJs, Warning, TEXT("UCsManager_Javascript::GetSafe_GetManagerJavascript: Object is NULL."));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object is NULL."), *Context));
 		return nullptr;
 	}
 
@@ -195,7 +198,7 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 
 	if (!GetManagerSingleton)
 	{
-		UE_LOG(LogCsJs, Warning, TEXT("UCsManager_Javascript::GetSafe_GetManagerJavascript: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *Context, *(Object->GetName())));
 		return nullptr;
 	}
 	
@@ -203,36 +206,63 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 
 	if (!Manager_Singleton)
 	{
-		UE_LOG(LogCsJs, Warning, TEXT("UCsManager_Javascript::GetSafe_GetManagerJavascript: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get object of type: UCsManager_Singleton from Object: %s."), *Context, *(Object->GetName())));
 		return nullptr;
 	}
 
 	return Cast<ICsGetManagerJavascript>(Manager_Singleton);
 }
 
+/*static*/ ICsGetManagerJavascript* UCsManager_Javascript::GetSafe_GetManagerJavascript(UObject* Object)
+{
+	using namespace NCsManagerJavascript::NCached;
+
+	const FString& Context = Str::GetSafe_GetManagerJavascript;
+
+	return GetSafe_GetManagerJavascript(Context, Object, nullptr);
+}
+
+/*static*/ UCsManager_Javascript* UCsManager_Javascript::GetSafe(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+{
+	if (ICsGetManagerJavascript* GetManagerJavascript = GetSafe_GetManagerJavascript(Context, Object, Log))
+		return GetManagerJavascript->GetManager_Javascript();
+	return nullptr;
+}
+
 /*static*/ UCsManager_Javascript* UCsManager_Javascript::GetSafe(UObject* Object)
 {
-	if (ICsGetManagerJavascript* GetManagerJavascript = GetSafe_GetManagerJavascript(Object))
-		return GetManagerJavascript->GetManager_Javascript();
+	using namespace NCsManagerJavascript::NCached;
+
+	const FString& Context = Str::GetSafe;
+
+	return GetSafe(Context, Object, nullptr);
+}
+
+/*static*/ UCsManager_Javascript* UCsManager_Javascript::GetFromWorldContextObject(const FString& Context, const UObject* WorldContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+{
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	UWorld* World = WorldLibrary::GetSafe(Context, WorldContextObject, Log);
+
+	if (!World)
+		return nullptr;
+
+	// Game Instance
+	if (UCsManager_Javascript* Manager = GetSafe(Context, World->GetGameInstance(), Log))
+		return Manager;
+
+	CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to Manager Item of type UCsManager_Javascript from GameInstance."), *Context));
+
 	return nullptr;
 }
 
 /*static*/ UCsManager_Javascript* UCsManager_Javascript::GetFromWorldContextObject(const UObject* WorldContextObject)
 {
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
-	{
-		// Game Instance
-		if (UCsManager_Javascript* Manager = GetSafe(World->GetGameInstance()))
-			return Manager;
+	using namespace NCsManagerJavascript::NCached;
 
-		UE_LOG(LogCsJs, Warning, TEXT("UCsManager_Javascript::GetFromWorldContextObject: Failed to Manager Item of type UCsManager_Javascript from GameInstance."));
+	const FString& Context = Str::GetFromWorldContextObject;
 
-		return nullptr;
-	}
-	else
-	{
-		return nullptr;
-	}
+	return GetFromWorldContextObject(Context, WorldContextObject, nullptr);
 }
 
 #endif // #if WITH_EDITOR

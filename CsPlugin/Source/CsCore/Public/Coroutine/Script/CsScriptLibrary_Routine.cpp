@@ -20,7 +20,7 @@ FCsRoutineHandle UCsScriptLibrary_Routine::FCsRoutineHandle_New(FCsRoutineHandle
 	return Handle;
 }
 
-bool UCsScriptLibrary_Routine::FCsRoutineHandle_IsValid(FCsRoutineHandle& Handle)
+bool UCsScriptLibrary_Routine::FCsRoutineHandle_IsValid(const FCsRoutineHandle& Handle)
 {
 	return Handle.IsValid();
 }

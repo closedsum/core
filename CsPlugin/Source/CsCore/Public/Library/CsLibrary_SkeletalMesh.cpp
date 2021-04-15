@@ -4,11 +4,32 @@
 
 // Types
 #include "Types/CsTypes_Math.h"
+// Library
+#include "Library/CsLibrary_Object.h"
 // Components
 #include "Components/SkeletalMeshComponent.h"
 
 namespace NCsSkeletalMesh
 {
+	// Load
+	#pragma region
+
+	USkeletalMesh* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsObject::FLibrary ObjectLibrary;
+
+		return ObjectLibrary::SafeLoad<USkeletalMesh>(Context, Path, Log);
+	}
+
+	USkeletalMesh* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsObject::FLibrary ObjectLibrary;
+
+		return ObjectLibrary::SafeLoad<USkeletalMesh>(Context, Path, Log);
+	}
+
+	#pragma endregion Load
+
 	// Bone
 	#pragma region
 

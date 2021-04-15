@@ -7,6 +7,8 @@
 // Managers
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 
+#include "CsTypes_Library_FX.generated.h"
+
 class AActor;
 
 namespace NCsFX
@@ -41,7 +43,7 @@ namespace NCsFX
 				}
 
 				bool IsValidChecked(const FString& Context) const;
-				bool IsValid(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 				AActor* GetActor() const;
 
@@ -64,3 +66,42 @@ namespace NCsFX
 		}
 	}
 }
+
+// NCsFX::NSpawn::NParams::FParams
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NSpawn, NParams, FParams)
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsFX_Spawn_Params
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCsFX FX;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AActor* Actor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCsSpawnerFrequencyParams FrequencyParams;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsUpdateGroup Group;
+
+	FCsFX_Spawn_Params() :
+		FX(),
+		Actor(nullptr),
+		FrequencyParams(),
+		Group()
+	{
+	}
+
+#define ParamsType NCsFX::NSpawn::NParams::FParams
+	void CopyParams(ParamsType* Params) const;
+#undef ParamsType
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	void Update();
+	//void OnPostEditChange();
+};

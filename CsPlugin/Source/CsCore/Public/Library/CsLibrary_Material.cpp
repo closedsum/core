@@ -4,6 +4,8 @@
 
 // Types
 #include "Types/CsTypes_Macro.h"
+// Library
+#include "Library/CsLibrary_Object.h"
 // Mesh
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -29,41 +31,16 @@ namespace NCsMaterial
 
 	UMaterialInterface* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!Path.IsValid())
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path is NOT Valid.")));
-			return nullptr;
-		}
+		typedef NCsObject::FLibrary ObjectLibrary;
 
-		UObject* Object = Path.TryLoad();
-
-		if (!Object)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to load Object at Path: %s."), *Context, *(Path.ToString())));
-			return nullptr;
-		}
-
-		UMaterialInterface* Material = Cast<UMaterialInterface>(Object);
-
-		if (!Material)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object: %s with Class: %s @ %s is NOT of type: UMaterialInterface."), *Context, *(Object->GetName()), *(Object->GetClass()->GetName())));
-			return nullptr;
-		}
-		return Material;
+		return ObjectLibrary::SafeLoad<UMaterialInterface>(Context, Path, Log);
 	}
 
 	UMaterialInterface* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (Path.IsEmpty())
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path is EMPTY."), *Context));
-			return nullptr;
-		}
+		typedef NCsObject::FLibrary ObjectLibrary;
 
-		FSoftObjectPath SoftPath(Path);
-
-		return SafeLoad(Context, SoftPath, Log);
+		return ObjectLibrary::SafeLoad<UMaterialInterface>(Context, Path, Log);
 	}
 
 	#pragma endregion Load
@@ -99,6 +76,42 @@ namespace NCsMaterial
 				return false;
 			}
 		}
+		return true;
+	}
+
+	bool FLibrary::IsValidChecked(const FString& Context, USkeletalMesh* Mesh, const TArray<UMaterialInterface*>& Materials)
+	{
+		checkf(Mesh, TEXT("%s: Mesh is NULL."), *Context);
+
+		const int32 Count		  = Mesh->Materials.Num();
+		const int32 MaterialCount = Materials.Num();
+
+		checkf(Count == MaterialCount, TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *(Mesh->GetName()), Count, MaterialCount);
+
+		check(IsValidChecked(Context, Materials));
+
+		return true;
+	}
+
+	bool FLibrary::IsValid(const FString& Context, USkeletalMesh* Mesh, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (!Mesh)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh is NULL."), *Context));
+			return false;
+		}
+
+		const int32 Count		  = Mesh->Materials.Num();
+		const int32 MaterialCount = Materials.Num();
+
+		if (Count != MaterialCount)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *(Mesh->GetName()), Count, MaterialCount));
+			return false;
+		}
+
+		if (!IsValid(Context, Materials, Log))
+			return false;
 		return true;
 	}
 

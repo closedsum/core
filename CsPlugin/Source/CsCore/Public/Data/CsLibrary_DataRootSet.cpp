@@ -22,17 +22,13 @@ namespace NCsDataRootSet
 {
 	UObject* FLibrary::GetSafeImpl(const FString& Context, UObject* WorldContext)
 	{
+	#if WITH_EDITOR
 		// Check WorldContext is Valid.
 		if (!WorldContext)
 		{
-#if WITH_EDITOR
 			UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
 
 			return Settings->SafeLoadDataRootSet(Context);
-#else
-			UE_LOG(LogCs, Warning, TEXT("%s: WorldContext is NULL."), *Context);
-			return nullptr;
-#endif // #if WITH_EDITOR
 		}
 		// Check if World from WorldContext is Valid.
 		UWorld* World = WorldContext->GetWorld();
@@ -68,6 +64,15 @@ namespace NCsDataRootSet
 			return Settings->SafeLoadDataRootSet(Context);
 		}
 		return nullptr;
+	#else
+		typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+		UObject* ContextRoot		  = DataManagerLibrary::GetSafeContextRoot(Context, WorldContext);
+		UCsManager_Data* Manager_Data = UCsManager_Data::Get(ContextRoot);
+		UObject* DataRootSetImpl	  = Manager_Data->DataRootSet.GetObject();
+
+		return DataRootSetImpl;
+	#endif // #if WITH_EDITOR
 	}
 
 	UObject* FLibrary::GetImplChecked(const FString& Context, UGameInstance* GameInstance)
@@ -84,11 +89,15 @@ namespace NCsDataRootSet
 
 	UObject* FLibrary::GetImplChecked(const FString& Context, UObject* WorldContext)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
+		typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UObject* ContextRoot		  = DataManagerLibrary::GetContextRootChecked(Context, WorldContext);
+		UCsManager_Data* Manager_Data = UCsManager_Data::Get(ContextRoot);
+		UObject* DataRootSetImpl	  = Manager_Data->DataRootSet.GetObject();
 
-		return GetImplChecked(Context, World->GetGameInstance());
+		checkf(DataRootSetImpl, TEXT("%s: DataRootSetImpl is NULL. Failed to find DataRootSet."), *Context);
+
+		return DataRootSetImpl;
 	}
 
 	const FCsDataRootSet* FLibrary::GetSafe(const FString& Context, UObject* WorldContext)
@@ -108,9 +117,9 @@ namespace NCsDataRootSet
 
 	UDataTable* FLibrary::GetSafeDataTable(const FString& Context, UObject* WorldContext, const FString& InterfaceGetName, TSoftObjectPtr<UDataTable> DataTableSoftObject, const FString& DataTableName)
 	{
+	#if WITH_EDITOR
 		if (!WorldContext)
 		{
-#if WITH_EDITOR
 			const FSoftObjectPath& Path = DataTableSoftObject.ToSoftObjectPath();
 
 			if (!Path.IsValid())
@@ -127,10 +136,7 @@ namespace NCsDataRootSet
 			{
 				UE_LOG(LogCs, Warning, TEXT("%s: Failed to Load %s.%s @ %s."), *Context, *InterfaceGetName, *DataTableName, *(Path.ToString()));
 			}
-#else
-			UE_LOG(LogCs, Warning, TEXT("%s: WorldContext is NULL."), *Context);
 			return nullptr;
-#endif // #if WITH_EDITOR
 		}
 
 		UWorld* World = WorldContext->GetWorld();
@@ -192,6 +198,29 @@ namespace NCsDataRootSet
 			}
 		}
 		return nullptr;
+	#else
+		typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+		UObject* ContextRoot		= DataManagerLibrary::GetSafeContextRoot(Context, WorldContext);
+		const FSoftObjectPath& Path = DataTableSoftObject.ToSoftObjectPath();
+
+		if (Path.IsValid())
+		{
+			if (UDataTable* DataTable = UCsManager_Data::Get(ContextRoot)->GetDataTable(DataTableSoftObject))
+			{
+				return DataTable;
+			}
+			else
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s: Failed to Load %s.%s @ %s."), *Context, *InterfaceGetName, *DataTableName, *(Path.ToString()));
+			}
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s.%s.%s is NOT Valid."), *Context, *(WorldContext->GetName()), *InterfaceGetName, *DataTableName);
+		}
+		return nullptr;
+#	endif // #if WITH_EDITOR
 	}
 
 	UDataTable* FLibrary::GetDataTableChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject)

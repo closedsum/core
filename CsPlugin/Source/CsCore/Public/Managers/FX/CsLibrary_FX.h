@@ -7,6 +7,7 @@
 #include "Utility/CsLog.h"
 #pragma once
 
+class ANiagaraActor;
 class UNiagaraSystem;
 class UNiagaraComponent;
 struct FCsRoutine;
@@ -196,5 +197,36 @@ namespace NCsFX
 	#undef ParamsType
 
 	#pragma endregion Spawn
+
+	// State
+	#pragma region
+	public:
+
+		/**
+		* Check whether the NiagaraSystem on the RootComponent, a UNiagaraComponent, for Actor
+		* is "complete".
+		* Complete is:		
+		*	ActualExecutionState == ENiagaraExecutionState::Inactive ||
+		*	ActualExecutionState == ENiagaraExecutionState::Complete ||
+		*	ActualExecutionState == ENiagaraExecutionState::Disabled
+		* 
+		* @param Context	The calling context.
+		* @param Actor
+		*/
+		static bool IsCompleteChecked(const FString& Context, ANiagaraActor* Actor);
+
+		/**
+		* Check whether the NiagaraSystem on the NiagaraComponent is "complete".
+		* Complete is:
+		*	ActualExecutionState == ENiagaraExecutionState::Inactive ||
+		*	ActualExecutionState == ENiagaraExecutionState::Complete ||
+		*	ActualExecutionState == ENiagaraExecutionState::Disabled
+		*
+		* @param Context	The calling context.
+		* @param Component
+		*/
+		static bool IsCompleteChecked(const FString& Context, UNiagaraComponent* Component);
+
+	#pragma endregion State
 	};
 }

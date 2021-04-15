@@ -62,15 +62,16 @@ namespace NCsSkeletalMeshActor
 
 				#pragma endregion ICsGetInterfaceMap
 
-					FORCEINLINE void SetAnim(UAnimSequence* Value)
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Anim, UAnimSequence)
+
+					void Reset()
 					{
-						Anim = Value;
+						Anim = nullptr;
 						Anim_Emu = &Anim;
 					}
-					FORCEINLINE void SetAnim(UAnimSequence** Value) { Anim_Emu = Value; }
-					FORCEINLINE UAnimSequence* GetAnim() const { return *Anim_Emu; }
 
 					bool IsValidChecked(const FString& Context) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 				};
 			}
 
@@ -110,31 +111,22 @@ namespace NCsSkeletalMeshActor
 
 				#pragma endregion ICsGetInterfaceMap
 
-					FORCEINLINE void SetClass(UClass* Value)
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Class, UClass)
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Anim, UAnimMontage)
+					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(PlayRate, float)
+
+					void Reset()
 					{
-						Class = Value;
+						Class = nullptr;
 						Class_Emu = &Class;
-					}
-					FORCEINLINE void SetClass(UClass** Value) { Class_Emu = Value; }
-					FORCEINLINE UClass* GetClass() const { return *Class_Emu; }
-
-					FORCEINLINE void SetAnim(UAnimMontage* Value)
-					{
-						Anim = Value;
+						Anim = nullptr;
 						Anim_Emu = &Anim;
-					}
-					FORCEINLINE void SetAnim(UAnimMontage** Value) { Anim_Emu = Value; }
-					FORCEINLINE UAnimMontage* GetAnim() const { return *Anim_Emu; }
-
-					FORCEINLINE void SetPlayRate(const float& Value)
-					{
-						PlayRate = Value;
+						PlayRate = 1.0f;
 						PlayRate_Emu = &PlayRate;
 					}
-					FORCEINLINE void SetPlayRate(float* Value) { PlayRate_Emu = Value; }
-					FORCEINLINE const float& GetPlayRate() const { return *PlayRate_Emu; }
 
 					bool IsValidChecked(const FString& Context) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 				};
 			}
 		}
@@ -179,7 +171,7 @@ namespace NCsSkeletalMeshActor
 				float* LifeTime_Emu;
 
 				ECsAttachmentTransformRules AttachmentTransformRules;
-				ECsAttachmentTransformRules* AttachementTransformRules_Emu;
+				ECsAttachmentTransformRules* AttachmentTransformRules_Emu;
 
 				FName Bone;
 				FName* Bone_Emu;
@@ -208,7 +200,7 @@ namespace NCsSkeletalMeshActor
 					LifeTime(0.0f),
 					LifeTime_Emu(nullptr),
 					AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
-					AttachementTransformRules_Emu(nullptr),
+					AttachmentTransformRules_Emu(nullptr),
 					Bone(NAME_None),
 					Bone_Emu(nullptr),
 					TransformRules(0),
@@ -222,19 +214,13 @@ namespace NCsSkeletalMeshActor
 					Type_Emu = &Type;
 					DeallocateMethod_Emu = &DeallocateMethod;
 					LifeTime_Emu = &LifeTime;
-					AttachementTransformRules_Emu = &AttachmentTransformRules;
+					AttachmentTransformRules_Emu = &AttachmentTransformRules;
 					Bone_Emu = &Bone;
 					TransformRules_Emu = &TransformRules;
 					Transform_Emu = &Transform;
 				}
 
-				FORCEINLINE void SetMesh(USkeletalMesh* Value)
-				{
-					Mesh = Value;
-					Mesh_Emu = &Mesh;
-				}
-				FORCEINLINE void SetMesh(USkeletalMesh** Value) { Mesh_Emu = Value; }
-				FORCEINLINE USkeletalMesh* GetMesh() const { return *Mesh_Emu; }
+				CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Mesh, USkeletalMesh)
 
 				FORCEINLINE void SetMaterials(const TArray<UMaterialInterface*>& Value)
 				{
@@ -249,65 +235,41 @@ namespace NCsSkeletalMeshActor
 				FORCEINLINE void SetMaterials(TArray<UMaterialInterface*>* Value) { Materials_Emu = Value; }
 				FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return *Materials_Emu; }
 
-				FORCEINLINE void SetType(const FECsSkeletalMeshActor& Value)
-				{
-					Type = Value;
-					Type_Emu = &Type;
-				}
-				FORCEINLINE void SetType(FECsSkeletalMeshActor* Value) { Type_Emu = Value; }
-				FORCEINLINE const FECsSkeletalMeshActor& GetType() const { return *Type_Emu; }
-
-				FORCEINLINE void SetDeallocateMethod(const DeallocateMethodType& Value)
-				{
-					DeallocateMethod = Value;
-					DeallocateMethod_Emu = &DeallocateMethod;
-				}
-				FORCEINLINE void SetDeallocateMethod(DeallocateMethodType* Value) { DeallocateMethod_Emu = Value; }
-				FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *DeallocateMethod_Emu; }
-
-				FORCEINLINE void SetLifeTime(const float& Value)
-				{
-					LifeTime = Value;
-					LifeTime_Emu = &LifeTime;
-				}
-				FORCEINLINE void SetLifeTime(float* Value) { LifeTime_Emu = Value; }
-				FORCEINLINE const float& GetLifeTime() const { return *LifeTime_Emu; }
-
-				FORCEINLINE void SetAttachmentTransformRules(const ECsAttachmentTransformRules& Value)
-				{
-					AttachmentTransformRules = Value;
-					AttachementTransformRules_Emu = &AttachmentTransformRules;
-				}
-				FORCEINLINE void SetAttachmentTransformRules(ECsAttachmentTransformRules* Value) { AttachementTransformRules_Emu = Value; }
-				FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRules() const { return *AttachementTransformRules_Emu; }
-
-				FORCEINLINE void SetBone(const FName& Value)
-				{
-					Bone = Value;
-					Bone_Emu = &Bone;
-				}
-				FORCEINLINE void SetBone(FName* Value) { Bone_Emu = Value; }
-				FORCEINLINE const FName& GetBone() const { return *Bone_Emu; }
-
-				FORCEINLINE void SetTransformRules(const int32& Value)
-				{
-					TransformRules = Value;
-					TransformRules_Emu = &TransformRules;
-				}
-				FORCEINLINE void SetTransformRules(int32* Value) { TransformRules_Emu = Value; }
-				FORCEINLINE const int32& GetTransformRules() const { return *TransformRules_Emu; }
-
-				FORCEINLINE void SetTransform(const FTransform& Value)
-				{
-					Transform = Value;
-					Transform_Emu = &Transform;
-				}
-				FORCEINLINE void SetTransform(FTransform* Value) { Transform_Emu = Value; }
-				FORCEINLINE const FTransform& GetTransform() const { return *Transform_Emu; }
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Type, FECsSkeletalMeshActor)
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType)
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(LifeTime, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules)
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Bone, FName)
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TransformRules, int32)
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Transform, FTransform)
 
 				FORCEINLINE const ParamsType* GetParamsPtr() const { return &Params; }
 
+				void Reset()
+				{
+					Mesh = nullptr;
+					Mesh_Emu = &Mesh;
+					Materials.Reset(Materials.Max());
+					Materials_Emu = &Materials;
+					Type = EMCsSkeletalMeshActor::Get().GetMAX();
+					Type_Emu = &Type;
+					DeallocateMethod = DeallocateMethodType::LifeTime;
+					DeallocateMethod_Emu = &DeallocateMethod;
+					LifeTime = 0.0;
+					LifeTime_Emu = &LifeTime;
+					AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+					AttachmentTransformRules_Emu = &AttachmentTransformRules;
+					Bone = NAME_None;
+					Bone_Emu = &Bone;
+					TransformRules = 0;
+					TransformRules_Emu = &TransformRules;
+					Transform = FTransform::Identity;
+					Transform_Emu = &Transform;
+					Params.Reset();
+				}
+
 				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 			#undef DeallocateMethodType
 			#undef ParamsType
@@ -328,10 +290,10 @@ struct CSCORE_API FCsSkeletalMeshAnimSequenceOneShot
 
 public:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCsSkeletalMeshActorPooledInfo Mesh;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCsAnimSequence Anim;
 
 	FCsSkeletalMeshAnimSequenceOneShot() :
@@ -346,10 +308,12 @@ public:
 	}
 
 #define ShotType NCsSkeletalMeshActor::NAnim::NSequence::FOneShot
-	void CopyShot(ShotType* Shot);
+	void CopyToShot(ShotType* Shot);
+	void CopyToShotAsValue(ShotType* Shot) const;
 #undef ShotType
 
 	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 #pragma endregion FCsSkeletalMeshAnimSequenceOneShot
@@ -392,7 +356,7 @@ namespace NCsSkeletalMeshActor
 				float* LifeTime_Emu;
 
 				ECsAttachmentTransformRules AttachmentTransformRules;
-				ECsAttachmentTransformRules* AttachementTransformRules_Emu;
+				ECsAttachmentTransformRules* AttachmentTransformRules_Emu;
 
 				FName Bone;
 				FName* Bone_Emu;
@@ -421,7 +385,7 @@ namespace NCsSkeletalMeshActor
 					LifeTime(0.0f),
 					LifeTime_Emu(nullptr),
 					AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
-					AttachementTransformRules_Emu(nullptr),
+					AttachmentTransformRules_Emu(nullptr),
 					Bone(NAME_None),
 					Bone_Emu(nullptr),
 					TransformRules(0),
@@ -435,19 +399,13 @@ namespace NCsSkeletalMeshActor
 					Type_Emu = &Type;
 					DeallocateMethod_Emu = &DeallocateMethod;
 					LifeTime_Emu = &LifeTime;
-					AttachementTransformRules_Emu = &AttachmentTransformRules;
+					AttachmentTransformRules_Emu = &AttachmentTransformRules;
 					Bone_Emu = &Bone;
 					TransformRules_Emu = &TransformRules;
 					Transform_Emu = &Transform;
 				}
 
-				FORCEINLINE void SetMesh(USkeletalMesh* Value)
-				{
-					Mesh = Value;
-					Mesh_Emu = &Mesh;
-				}
-				FORCEINLINE void SetMesh(USkeletalMesh** Value) { Mesh_Emu = Value; }
-				FORCEINLINE USkeletalMesh* GetMesh() const { return *Mesh_Emu; }
+				CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Mesh, USkeletalMesh)
 
 				FORCEINLINE void SetMaterials(const TArray<UMaterialInterface*>& Value)
 				{
@@ -462,65 +420,41 @@ namespace NCsSkeletalMeshActor
 				FORCEINLINE void SetMaterials(TArray<UMaterialInterface*>* Value) { Materials_Emu = Value; }
 				FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return *Materials_Emu; }
 
-				FORCEINLINE void SetType(const FECsSkeletalMeshActor& Value)
-				{
-					Type = Value;
-					Type_Emu = &Type;
-				}
-				FORCEINLINE void SetType(FECsSkeletalMeshActor* Value) { Type_Emu = Value; }
-				FORCEINLINE const FECsSkeletalMeshActor& GetType() const { return *Type_Emu; }
-
-				FORCEINLINE void SetDeallocateMethod(const DeallocateMethodType& Value)
-				{
-					DeallocateMethod = Value;
-					DeallocateMethod_Emu = &DeallocateMethod;
-				}
-				FORCEINLINE void SetDeallocateMethod(DeallocateMethodType* Value) { DeallocateMethod_Emu = Value; }
-				FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *DeallocateMethod_Emu; }
-
-				FORCEINLINE void SetLifeTime(const float& Value)
-				{
-					LifeTime = Value;
-					LifeTime_Emu = &LifeTime;
-				}
-				FORCEINLINE void SetLifeTime(float* Value) { LifeTime_Emu = Value; }
-				FORCEINLINE const float& GetLifeTime() const { return *LifeTime_Emu; }
-
-				FORCEINLINE void SetAttachmentTransformRules(const ECsAttachmentTransformRules& Value)
-				{
-					AttachmentTransformRules = Value;
-					AttachementTransformRules_Emu = &AttachmentTransformRules;
-				}
-				FORCEINLINE void SetAttachmentTransformRules(ECsAttachmentTransformRules* Value) { AttachementTransformRules_Emu = Value; }
-				FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRules() const { return *AttachementTransformRules_Emu; }
-
-				FORCEINLINE void SetBone(const FName& Value)
-				{
-					Bone = Value;
-					Bone_Emu = &Bone;
-				}
-				FORCEINLINE void SetBone(FName* Value) { Bone_Emu = Value; }
-				FORCEINLINE const FName& GetBone() const { return *Bone_Emu; }
-
-				FORCEINLINE void SetTransformRules(const int32& Value)
-				{
-					TransformRules = Value;
-					TransformRules_Emu = &TransformRules;
-				}
-				FORCEINLINE void SetTransformRules(int32* Value) { TransformRules_Emu = Value; }
-				FORCEINLINE const int32& GetTransformRules() const { return *TransformRules_Emu; }
-
-				FORCEINLINE void SetTransform(const FTransform& Value)
-				{
-					Transform = Value;
-					Transform_Emu = &Transform;
-				}
-				FORCEINLINE void SetTransform(FTransform* Value) { Transform_Emu = Value; }
-				FORCEINLINE const FTransform& GetTransform() const { return *Transform_Emu; }
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Type, FECsSkeletalMeshActor)
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType)
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(LifeTime, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules)
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Bone, FName)
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TransformRules, int32)
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Transform, FTransform)
 
 				FORCEINLINE const ParamsType* GetParamsPtr() const { return &Params; }
 
+				void Reset()
+				{
+					Mesh = nullptr;
+					Mesh_Emu = &Mesh;
+					Materials.Reset(Materials.Max());
+					Materials_Emu = &Materials;
+					Type = EMCsSkeletalMeshActor::Get().GetMAX();
+					Type_Emu = &Type;
+					DeallocateMethod = DeallocateMethodType::LifeTime;
+					DeallocateMethod_Emu = &DeallocateMethod;
+					LifeTime = 0.0;
+					LifeTime_Emu = &LifeTime;
+					AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+					AttachmentTransformRules_Emu = &AttachmentTransformRules;
+					Bone = NAME_None;
+					Bone_Emu = &Bone;
+					TransformRules = 0;
+					TransformRules_Emu = &TransformRules;
+					Transform = FTransform::Identity;
+					Transform_Emu = &Transform;
+					Params.Reset();
+				}
+
 				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 			#undef DeallocateMethodType
 			#undef ParamsType
@@ -569,10 +503,12 @@ public:
 	FORCEINLINE float* GetPlayRatePtr() { return &PlayRate; }
 
 #define ShotType NCsSkeletalMeshActor::NAnim::NMontage::FOneShot
-	void CopyShot(ShotType* Shot);
+	void CopyToShot(ShotType* Shot);
+	void CopyToShotAsValue(ShotType* Shot) const;
 #undef ShotType
 
 	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 #pragma endregion FCsSkeletalMeshAnimMontageOneShot

@@ -90,13 +90,13 @@ void FCsMoveByInterp_Params::CopyParams(ParamsType* Params)
 	typedef NCsMovement::EDestination DestinationType;
 
 	Params->SetEasing(&Easing);
-	Params->SetMover(&((MoverType)Mover));
+	Params->SetMover((MoverType*)(&Mover));
 	Params->SetFromLocation(&FromLocation);
 	Params->SetMoveObjectName(&MoveObjectName);
 	Params->SetMoveActorLabel(&MoveActorLabel);
 	Params->SetMoveActor(MoveActor);
 	Params->SetMoveComponent(MoveComponent);
-	Params->SetDestination(&((DestinationType)Destination));
+	Params->SetDestination((DestinationType*)(&Destination));
 	Params->SetToLocation(&ToLocation);
 	Params->SetToObjectName(&ToObjectName);
 	Params->SetToActorLabel(&ToActorLabel);

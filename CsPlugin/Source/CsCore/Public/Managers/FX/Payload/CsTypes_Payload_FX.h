@@ -3,7 +3,7 @@
 #include "Managers/Time/CsTypes_Time.h"
 #include "Managers/FX/CsTypes_FX.h"
 
-#include "CsScriptPayload_FX.generated.h"
+#include "CsTypes_Payload_FX.generated.h"
 #pragma once
 
 class UObject;
@@ -13,7 +13,7 @@ class UNiagaraSystem;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, FImpl)
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsScriptPayload_FX
+struct CSCORE_API FCsPayload_FX
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -45,7 +45,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FCsFX FX;
 
-	FCsScriptPayload_FX() :
+	FCsPayload_FX() :
 		Instigator(nullptr),
 		Owner(nullptr),
 		Parent(nullptr),
@@ -60,5 +60,5 @@ public:
 #undef PayloadType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };

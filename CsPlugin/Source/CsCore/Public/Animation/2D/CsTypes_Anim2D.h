@@ -260,7 +260,7 @@ struct CSCORE_API FCsAnim2DFlipbookTextureFrame
 	}
 
 #define FrameType NCsAnim::N2D::NTexture::NFlipbook::FFrame
-	void CopyFrame(FrameType* Frame);
+	void CopyToFrame(FrameType* Frame);
 #undef FrameType
 
 private:
@@ -305,11 +305,8 @@ namespace NCsAnim
 						return *this;
 					}
 
-					FORCEINLINE void SetTexture(UTexture** Value) { Texture_Emu = Value; }
-					FORCEINLINE UTexture* GetTexture() const { return *Texture_Emu; }
-
-					FORCEINLINE void SetParameterName(FName* Value) { ParameterName_Emu = Value; }
-					FORCEINLINE const FName& GetParameterName() const { return *ParameterName_Emu; }
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Texture, UTexture)
+					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(ParameterName, FName)
 
 					bool IsValidChecked(const FString& Context) const;
 				};
@@ -462,20 +459,11 @@ namespace NCsAnim
 						return *this;
 					}
 
-					FORCEINLINE void SetPlayback(PlaybackType* Value) { Playback_Emu = Value; }
-					FORCEINLINE const PlaybackType& GetPlayback() const { return *Playback_Emu; }
-
-					FORCEINLINE void SetPlayRate(PlayRateType* Value) { PlayRate_Emu = Value; }
-					FORCEINLINE const PlayRateType& GetPlayRate() const { return *PlayRate_Emu; }
-
-					FORCEINLINE void SetDeltaTime(float* Value) { DeltaTime_Emu = Value; }
-					FORCEINLINE const float& GetDeltaTime() const { return *DeltaTime_Emu; }
-
-					FORCEINLINE void SetTotalTime(float* Value) { TotalTime_Emu = Value; }
-					FORCEINLINE const float& GetTotalTime() const { return *TotalTime_Emu; }
-
-					FORCEINLINE void SetTotalCount(int32* Value) { TotalCount_Emu = Value; }
-					FORCEINLINE const int32& GetTotalCount() const { return *TotalCount_Emu; }
+					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Playback, PlaybackType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(PlayRate, PlayRateType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(DeltaTime, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TotalTime, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TotalCount, int32)
 
 					FORCEINLINE bool IsLooping() const
 					{
@@ -545,7 +533,7 @@ struct CSCORE_API FCsAnim2DMaterialFlipbookFrame
 	}
 
 #define FrameType NCsAnim::N2D::NMaterial::NFlipbook::FFrame
-	void CopyFrame(FrameType* Frame);
+	void CopyToFrame(FrameType* Frame);
 #undef FrameType
 
 private:
@@ -590,11 +578,8 @@ namespace NCsAnim
 						return *this;
 					}
 
-					FORCEINLINE void SetMaterial(UMaterialInterface** Value) { Material_Emu = Value; }
-					FORCEINLINE UMaterialInterface* GetMaterial() const { return *Material_Emu; }
-
-					FORCEINLINE void SetIndex(int32* Value) { Index_Emu = Value; }
-					FORCEINLINE const int32& GetIndex() const { return *Index_Emu; }
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Material, UMaterialInterface)
+					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Index, int32)
 
 					bool IsValidChecked(const FString& Context) const;
 				};
@@ -746,20 +731,11 @@ namespace NCsAnim
 						return *this;
 					}
 
-					FORCEINLINE void SetPlayback(PlaybackType* Value) { Playback_Emu = Value; }
-					FORCEINLINE const PlaybackType& GetPlayback() const { return *Playback_Emu; }
-
-					FORCEINLINE void SetPlayRate(PlayRateType* Value) { PlayRate_Emu = Value; }
-					FORCEINLINE const PlayRateType& GetPlayRate() const { return *PlayRate_Emu; }
-
-					FORCEINLINE void SetDeltaTime(float* Value) { DeltaTime_Emu = Value; }
-					FORCEINLINE const float& GetDeltaTime() const { return *DeltaTime_Emu; }
-
-					FORCEINLINE void SetTotalTime(float* Value) { TotalTime_Emu = Value; }
-					FORCEINLINE const float& GetTotalTime() const { return *TotalTime_Emu; }
-
-					FORCEINLINE void SetTotalCount(int32* Value) { TotalCount_Emu = Value; }
-					FORCEINLINE const int32& GetTotalCount() const { return *TotalCount_Emu; }
+					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Playback, PlaybackType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(PlayRate, PlayRateType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(DeltaTime, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TotalTime, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TotalCount, int32)
 
 					FORCEINLINE bool IsLooping() const
 					{

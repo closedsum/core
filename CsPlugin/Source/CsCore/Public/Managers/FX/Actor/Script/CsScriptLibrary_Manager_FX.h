@@ -2,7 +2,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
-#include "Managers/FX/Payload/Script/CsScriptPayload_FX.h"
+#include "Managers/FX/Payload/CsTypes_Payload_FX.h"
 
 #include "CsScriptLibrary_Manager_FX.generated.h"
 
@@ -41,5 +41,5 @@ public:
 	* return					Index to spawned FX in pool.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|FX", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Payload"))
-	static int32 Spawn(const FString& Context, UObject* WorldContextObject, const FCsScriptPayload_FX& Payload);
+	static int32 Spawn(const FString& Context, UObject* WorldContextObject, const FCsPayload_FX& Payload);
 };

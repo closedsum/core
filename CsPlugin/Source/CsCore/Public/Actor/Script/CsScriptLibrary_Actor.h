@@ -85,4 +85,31 @@ public:
 	static FCsRoutineHandle MoveByInterp(const FString& Context, UObject* WorldContextObject, UPARAM(ref) FCsMoveByInterp_Params& Params);
 
 #pragma endregion Move
+
+// Material
+#pragma region
+public:
+
+	/**
+	* Set the Material at the given Index for the RootComponent, of type UPrimitiveComponent, on Actor.
+	*
+	* @param Context	The calling context.
+	* @param Actor		Actor whose RootComponent would have the Material set at Index.
+	* @param Material
+	* @param Index
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Index"))
+	static void SetMaterial(const FString& Context, AActor* Actor, UMaterialInterface* Material, const int32& Index);
+
+	/**
+	* Set the Materials for the RootComponent, of type UPrimitiveComponent, on Actor.
+	*
+	* @param Context	The calling context.
+	* @param Actor		Actor whose RootComponent would have the Material set at Index.
+	* @param Materials
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static void SetMaterials(const FString& Context, AActor* Actor, const TArray<UMaterialInterface*>& Materials);
+
+#pragma endregion Material
 };

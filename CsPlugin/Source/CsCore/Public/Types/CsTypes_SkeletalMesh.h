@@ -1,4 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Types
+#include "Types/CsTypes_Macro.h"
+// Log
+#include "Utility/CsLog.h"
+
 #include "CsTypes_SkeletalMesh.generated.h"
 #pragma once
 
@@ -12,13 +17,13 @@ struct CSCORE_API FCsSkeletalMesh
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Mesh")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<USkeletalMesh> Mesh;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Mesh_LoadFlags;
 
-	UPROPERTY(Transient)
+	UPROPERTY(Transient, BlueprintReadWrite)
 	USkeletalMesh* Mesh_Internal;
 
 public:
@@ -73,9 +78,38 @@ public:
 		return Mesh_Internal;
 	}
 
+	USkeletalMesh* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Mesh.ToSoftObjectPath().IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh is NULL."), *Context));
+			return nullptr;
+		}
+
+		if (!Mesh_Internal)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh has NOT been loaded from Path @ %s."), *Context, *(Mesh.ToSoftObjectPath().ToString())));
+		}
+		return Mesh_Internal;
+	}
+
+	USkeletalMesh* GetSafe()
+	{
+		if (!Mesh.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Mesh_Internal;
+	}
+
 	bool IsValidChecked(const FString& Context) const
 	{
 		check(GetChecked(Context));
+		return true;
+	}
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
 		return true;
 	}
 };

@@ -1,7 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Log
+#include "Utility/CsLog.h"
 #pragma once
 
 class UObject;
+class USkeletalMesh;
 class USkeletalMeshComponent;
 
 namespace NCsSkeletalMesh
@@ -11,7 +14,31 @@ namespace NCsSkeletalMesh
 	*/
 	class CSCORE_API FLibrary
 	{
+	// Load
+	#pragma region
 	public:
+
+		/**
+		* Load the SkeletalMesh at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		SoftObjectPath to the SkeletalMesh to load.
+		* @param Log
+		* return			NiagaraSystem.
+		*/
+		static USkeletalMesh* SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Load a SkeletalMesh at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		FString path to the SkeletalMesh to load.
+		* @param Log
+		* return			Material Interface.
+		*/
+		static USkeletalMesh* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Load
 
 	// Bone
 	#pragma region

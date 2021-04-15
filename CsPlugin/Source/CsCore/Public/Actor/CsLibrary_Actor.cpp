@@ -9,8 +9,11 @@
 #include "Library/CsLibrary_World.h"
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Library/CsLibrary_Math.h"
+#include "Library/CsLibrary_Material.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
+// Components
+#include "Components/PrimitiveComponent.h"
 // Utility
 #include "EngineUtils.h"
 // World
@@ -27,6 +30,10 @@ namespace NCsActor
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetSafeByName);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetSafeByLabel);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, MoveByInterp_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetSafeRootComponent);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetSafeRootPrimitiveComponent);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, SetSafeMaterial);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, SetSafeMaterials);
 			}
 
 			namespace Name
@@ -242,6 +249,84 @@ namespace NCsActor
 	}
 
 	#pragma endregion Get
+
+	// RootComponent
+	#pragma region
+
+	USceneComponent* FLibrary::GetRootComponentChecked(const FString& Context, AActor* Actor)
+	{
+		checkf(Actor, TEXT("%s: Actor is NULL."), *Context);
+
+		USceneComponent* RootComponent = Actor->GetRootComponent();
+
+		checkf(RootComponent, TEXT("%s: Actor: %s with Class: %s does NOT have a RootComponent."), *Context, *(Actor->GetName()), *(Actor->GetClass()->GetName()));
+
+		return RootComponent;
+	}
+
+	USceneComponent* FLibrary::GetSafeRootComponent(const FString& Context, AActor* Actor, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (!Actor)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Actor is NULL."), *Context));
+			return nullptr;
+		}
+
+		USceneComponent* RootComponent = Actor->GetRootComponent();
+
+		if (!RootComponent)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Actor: %s with Class: %s does NOT have a RootComponent."), *Context, *(Actor->GetName()), *(Actor->GetClass()->GetName())));
+			return nullptr;
+		}
+		return RootComponent;
+	}
+
+	USceneComponent* FLibrary::GetSafeRootComponent(AActor* Actor)
+	{
+		using namespace NCsActor::NLibrary::NCached;
+
+		const FString& Context = Str::GetSafeRootComponent;
+
+		return GetSafeRootComponent(Context, Actor, nullptr);
+	}
+
+	UPrimitiveComponent* FLibrary::GetRootPrimitiveComponentChecked(const FString& Context, AActor* Actor)
+	{
+		USceneComponent* RootComponent = GetRootComponentChecked(Context, Actor);
+		UPrimitiveComponent* Component = Cast<UPrimitiveComponent>(RootComponent);
+
+		checkf(Component, TEXT("%s: RootComponent: %s with Class: %s is not of type: UPrimitiveComponent."), *Context, *(Component->GetName()), *(Component->GetClass()->GetName()));
+
+		return Component;
+	}
+
+	UPrimitiveComponent* FLibrary::GetSafeRootPrimitiveComponent(const FString& Context, AActor* Actor, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (USceneComponent* RootComponent = GetSafeRootComponent(Context, Actor, Log))
+		{
+			UPrimitiveComponent* Component = Cast<UPrimitiveComponent>(RootComponent);
+
+			if (!Component)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: RootComponent: %s with Class: %s is not of type: UPrimitiveComponent."), *Context, *(Component->GetName()), *(Component->GetClass()->GetName())));
+				return nullptr;
+			}
+			return Component;
+		}
+		return nullptr;
+	}
+
+	UPrimitiveComponent* FLibrary::GetSafeRootPrimitiveComponent(AActor* Actor)
+	{
+		using namespace NCsActor::NLibrary::NCached;
+
+		const FString& Context = Str::GetSafeRootPrimitiveComponent;
+
+		return GetSafeRootPrimitiveComponent(Context, Actor, nullptr);
+	}
+
+	#pragma endregion RootComponent
 
 	// Move
 	#pragma region 
@@ -471,14 +556,49 @@ namespace NCsActor
 
 	void FLibrary::SetMaterialChecked(const FString& Context, AActor* Actor, UMaterialInterface* Material, const int32& Index)
 	{
-		checkf(Actor, TEXT("%s: Actor is NULL."), *Context);
+		UPrimitiveComponent* Component = GetRootPrimitiveComponentChecked(Context, Actor);
 
+		typedef NCsMaterial::FLibrary MaterialLibrary;
 
+		MaterialLibrary::SetChecked(Context, Component, Material, Index);
 	}
 
 	void FLibrary::SetSafeMaterial(const FString& Context, AActor* Actor, UMaterialInterface* Material, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
+		if (UPrimitiveComponent* Component = GetSafeRootPrimitiveComponent(Context, Actor, Log))
+		{
+			typedef NCsMaterial::FLibrary MaterialLibrary;
 
+			MaterialLibrary::SetSafe(Context, Component, Material, Index, Log);
+		}
+	}
+
+	void FLibrary::SetSafeMaterial(AActor* Actor, UMaterialInterface* Material, const int32& Index)
+	{
+		using namespace NCsActor::NLibrary::NCached;
+
+		const FString& Context = Str::SetSafeMaterial;
+
+		SetSafeMaterial(Context, Actor, Material, Index, nullptr);
+	}
+
+	void FLibrary::SetMaterialsChecked(const FString& Context, AActor* Actor, const TArray<UMaterialInterface*>& Materials)
+	{
+		UPrimitiveComponent* Component = GetRootPrimitiveComponentChecked(Context, Actor);
+
+		typedef NCsMaterial::FLibrary MaterialLibrary;
+
+		MaterialLibrary::SetChecked(Context, Component, Materials);
+	}
+
+	void FLibrary::SetSafeMaterials(const FString& Context, AActor* Actor, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (UPrimitiveComponent* Component = GetSafeRootPrimitiveComponent(Context, Actor, Log))
+		{
+			typedef NCsMaterial::FLibrary MaterialLibrary;
+
+			MaterialLibrary::SetSafe(Context, Component, Materials, Log);
+		}
 	}
 
 	#pragma endregion Material

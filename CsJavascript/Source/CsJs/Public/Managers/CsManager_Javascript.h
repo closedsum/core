@@ -3,6 +3,8 @@
 #include "UObject/Object.h"
 // Types
 #include "CsTypes_Javascript.h"
+// Log
+#include "Utility/CsLog.h"
 
 #include "CsManager_Javascript.generated.h"
 
@@ -48,12 +50,16 @@ public:
 protected:
 
 	static ICsGetManagerJavascript* Get_GetManagerJavascript(UObject* InRoot);
-	static ICsGetManagerJavascript* GetSafe_GetManagerJavascript(UObject* Object);
 
-	static UCsManager_Javascript* GetSafe(UObject* Object);
+	static ICsGetManagerJavascript* GetSafe_GetManagerJavascript(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+	static ICsGetManagerJavascript* GetSafe_GetManagerJavascript(UObject* Object);
 
 public:
 
+	static UCsManager_Javascript* GetSafe(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+	static UCsManager_Javascript* GetSafe(UObject* Object);
+
+	static UCsManager_Javascript* GetFromWorldContextObject(const FString& Context, const UObject* WorldContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 	static UCsManager_Javascript* GetFromWorldContextObject(const UObject* WorldContextObject);
 
 #endif // #if WITH_EDITOR

@@ -33,18 +33,22 @@ FECsUpdateGroup UCsScriptLibrary_UpdateGroup::ECsUpdateGroup_Get(const FString& 
 {
 	using namespace NCsScriptLibraryUpdateGroup::NCached;
 
+	const FString& Context = Str::ECsUpdateGroup_Get;
+
 	typedef NCsEnum::FLibrary EnumLibrary;
 
-	return EnumLibrary::Get<EMCsUpdateGroup, FECsUpdateGroup>(Str::ECsUpdateGroup_Get, Str::FECsUpdateGroup, Name);
+	return EnumLibrary::GetSafe<EMCsUpdateGroup, FECsUpdateGroup>(Context, Str::FECsUpdateGroup, Name);
 }
 
 FECsUpdateGroup UCsScriptLibrary_UpdateGroup::ECsUpdateGroup_GetByIndex(const int32& Index)
 {
 	using namespace NCsScriptLibraryUpdateGroup::NCached;
 
+	const FString& Context = Str::ECsUpdateGroup_GetByIndex;
+
 	typedef NCsEnum::FLibrary EnumLibrary;
 
-	return EnumLibrary::GetByIndex<EMCsUpdateGroup, FECsUpdateGroup>(Str::ECsUpdateGroup_GetByIndex, Str::FECsUpdateGroup, Index);
+	return EnumLibrary::GetSafeByIndex<EMCsUpdateGroup, FECsUpdateGroup>(Context, Str::FECsUpdateGroup, Index);
 }
 
 FString UCsScriptLibrary_UpdateGroup::ECsUpdateGroup_ToString(const FECsUpdateGroup& Enum)

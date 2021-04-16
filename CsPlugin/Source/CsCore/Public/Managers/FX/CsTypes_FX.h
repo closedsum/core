@@ -496,7 +496,7 @@ public:
 	}
 
 #define ParameterType NCsFX::NParameter::NInt::FIntType
-	void CopyParams(ParameterType* Params);
+	void CopyToParams(ParameterType* Params);
 	void CopyToParamsAsValue(ParameterType* Params) const;
 #undef ParameterType
 
@@ -505,7 +505,7 @@ public:
 		checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
 		return true;
 	}
-	bool IsValid(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 #pragma endregion FCsFXParameterInt
@@ -538,7 +538,7 @@ public:
 	}
 
 #define ParameterType NCsFX::NParameter::NFloat::FFloatType
-	void CopyParams(ParameterType* Params);
+	void CopyToParams(ParameterType* Params);
 	void CopyToParamsAsValue(ParameterType* Params) const;
 #undef ParameterType
 
@@ -547,7 +547,7 @@ public:
 		checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
 		return true;
 	}
-	bool IsValid(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 #pragma endregion FCsFXParameterFloat
@@ -581,7 +581,7 @@ public:
 	}
 
 #define ParameterType NCsFX::NParameter::NVector::FVectorType
-	void CopyParams(ParameterType* Params);
+	void CopyToParams(ParameterType* Params);
 	void CopyToParamsAsValue(ParameterType* Params) const;
 #undef ParameterType
 
@@ -590,7 +590,7 @@ public:
 		checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
 		return true;
 	}
-	bool IsValid(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 #pragma endregion FCsFXParameterVector

@@ -118,7 +118,7 @@ FCsRoutineHandle UCsScriptLibrary_FX::Spawn(const FString& Context, UObject* Wor
 	ParamsResourceType* ParmsContainer = FXLibrary::Get().AllocateSpawnParams();
 	ParamsType* Parms				   = ParmsContainer->Get();
 
-	Params.CopyParams(Parms);
+	Params.CopyToParams(Parms);
 
 	return FXLibrary::SafeSpawn(Ctxt, WorldContextObject, ParmsContainer);
 }

@@ -84,7 +84,7 @@ namespace NCsMovement
 
 #define ParamsType NCsMovement::NTo::NInterp::NParams::FParams
 
-void FCsMoveByInterp_Params::CopyParams(ParamsType* Params)
+void FCsMoveByInterp_Params::CopyToParams(ParamsType* Params)
 {
 	typedef NCsMovement::EMover MoverType;
 	typedef NCsMovement::EDestination DestinationType;
@@ -108,7 +108,7 @@ void FCsMoveByInterp_Params::CopyParams(ParamsType* Params)
 	Params->SetGroup(&Group);
 }
 
-void FCsMoveByInterp_Params::CopyParamsAsValue(ParamsType* Params) const
+void FCsMoveByInterp_Params::CopyToParamsAsValue(ParamsType* Params) const
 {
 	typedef NCsMovement::EMover MoverType;
 	typedef NCsMovement::EDestination DestinationType;
@@ -266,18 +266,18 @@ void FCsMoveByInterp_Params::ConditionalSetSafeDestinationObject(const FString& 
 	}
 }
 
-bool FCsMoveByInterp_Params::IsValid(const FString& Context) const
+bool FCsMoveByInterp_Params::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	// Check Easing is Valid
 	if (!EMCsEasingType::Get().IsValidEnum(Easing))
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Easing: %s is NOT Valid."), *Context, EMCsEasingType::Get().ToChar(Easing));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Easing: %s is NOT Valid."), *Context, EMCsEasingType::Get().ToChar(Easing)));
 		return false;
 	}
 	// Check Move Object is Valid
 	if (!EMCsMover::Get().IsValidEnum(Mover))
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Mover: %s is NOT Valid."), *Context, EMCsMover::Get().ToChar(Mover));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mover: %s is NOT Valid."), *Context, EMCsMover::Get().ToChar(Mover)));
 		return false;
 	}
 
@@ -285,7 +285,7 @@ bool FCsMoveByInterp_Params::IsValid(const FString& Context) const
 	{
 		if (!MoveActor)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: No MoveActor set."), *Context);
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No MoveActor set."), *Context));
 			return false;
 		}
 	}
@@ -294,14 +294,14 @@ bool FCsMoveByInterp_Params::IsValid(const FString& Context) const
 	{
 		if (!MoveComponent)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: No MoveComponent set."), *Context);
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No MoveComponent set."), *Context));
 			return false;
 		}
 	}
 	// Check Destination is Valid
 	if (!EMCsMoveDestination::Get().IsValidEnum(Destination))
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Destination: %s is NOT Valid."), *Context, EMCsMoveDestination::Get().ToChar(Destination));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Destination: %s is NOT Valid."), *Context, EMCsMoveDestination::Get().ToChar(Destination)));
 		return false;
 	}
 
@@ -309,7 +309,7 @@ bool FCsMoveByInterp_Params::IsValid(const FString& Context) const
 	{
 		if (!ToActor)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: No ToActor set."), *Context);
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No ToActor set."), *Context));
 			return false;
 		}
 	}
@@ -319,7 +319,7 @@ bool FCsMoveByInterp_Params::IsValid(const FString& Context) const
 		if (!ToComponent &&
 			!ToMeshComponent)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: No ToComponent && ToMeshComponent are NOT set."), *Context);
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No ToComponent && ToMeshComponent are NOT set."), *Context));
 			return false;
 		}
 	}
@@ -328,13 +328,13 @@ bool FCsMoveByInterp_Params::IsValid(const FString& Context) const
 	{
 		if (!ToMeshComponent)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: ToMeshComponent is NOT set."), *Context);
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ToMeshComponent is NOT set."), *Context));
 			return false;
 		}
 
 		if (ToBone == NAME_None)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: ToBone: None is NOT Valid."), *Context);
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ToBone: None is NOT Valid."), *Context));
 			return false;
 		}
 
@@ -342,20 +342,20 @@ bool FCsMoveByInterp_Params::IsValid(const FString& Context) const
 
 		if (BoneIndex == INDEX_NONE)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: ToMeshComponent: %s does NOT contain ToBone: %s."), *Context, *(ToMeshComponent->GetName()), *(ToBone.ToString()));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ToMeshComponent: %s does NOT contain ToBone: %s."), *Context, *(ToMeshComponent->GetName()), *(ToBone.ToString())));
 			return false;
 		}
 	}
 	// Check Time is Valid
 	if (Time < 0.0f)
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Time: %f is NOT >= 0.0f."), *Context, Time);
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Time: %f is NOT >= 0.0f."), *Context, Time));
 		return false;
 	}
 	// Check Group is Valid
 	if (!EMCsUpdateGroup::Get().IsValidEnum(Group))
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Group: %s is NOT Valid."), *Context, Group.ToChar());
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Group: %s is NOT Valid."), *Context, Group.ToChar()));
 		return false;
 	}
 	return true;
@@ -546,12 +546,12 @@ namespace NCsMovement
 					return true;
 				}
 
-				bool FParams::IsValid(const FString& Context) const
+				bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 				{
 					// Check Easing is Valid
 					if (!EMCsEasingType::Get().IsValidEnum(GetEasing()))
 					{
-						UE_LOG(LogCs, Warning, TEXT("%s: GetEasing(): %s is NOT Valid."), *Context, EMCsEasingType::Get().ToChar(GetEasing()));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetEasing(): %s is NOT Valid."), *Context, EMCsEasingType::Get().ToChar(GetEasing())));
 						return false;
 					}
 					// Check Mover is Valid
@@ -559,7 +559,7 @@ namespace NCsMovement
 
 					if (!MoverMapType::Get().IsValidEnum(GetMover()))
 					{
-						UE_LOG(LogCs, Warning, TEXT("%s: GetMover(): %s is NOT Valid."), *Context, MoverMapType::Get().ToChar(GetMover()));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetMover(): %s is NOT Valid."), *Context, MoverMapType::Get().ToChar(GetMover())));
 						return false;
 					}
 					// Check Move Object is Valid
@@ -567,7 +567,7 @@ namespace NCsMovement
 					{
 						if (!GetMoveActor())
 						{
-							UE_LOG(LogCs, Warning, TEXT("%s: No MoveActor set."), *Context);
+							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No MoveActor set."), *Context));
 							return false;
 						}
 					}
@@ -576,7 +576,7 @@ namespace NCsMovement
 					{
 						if (!GetMoveComponent())
 						{
-							UE_LOG(LogCs, Warning, TEXT("%s: No MoveComponent set."), *Context);
+							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No MoveComponent set."), *Context));
 							return false;
 						}
 					}
@@ -585,7 +585,7 @@ namespace NCsMovement
 
 					if (!DestinationMapType::Get().IsValidEnum(GetDestination()))
 					{
-						UE_LOG(LogCs, Warning, TEXT("%s: GetDestination(): %s is NOT Valid."), *Context, DestinationMapType::Get().ToChar(GetDestination()));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetDestination(): %s is NOT Valid."), *Context, DestinationMapType::Get().ToChar(GetDestination())));
 						return false;
 					}
 					
@@ -593,7 +593,7 @@ namespace NCsMovement
 					{
 						if (!GetToActor())
 						{
-							UE_LOG(LogCs, Warning, TEXT("%s: No ToActor set."), *Context);
+							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No ToActor set."), *Context));
 							return false;
 						}
 					}
@@ -603,7 +603,7 @@ namespace NCsMovement
 						if (!GetToComponent() && 
 							!GetToMeshComponent())
 						{
-							UE_LOG(LogCs, Warning, TEXT("%s: No ToComponent && ToMeshComponent are NOT set."), *Context);
+							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No ToComponent && ToMeshComponent are NOT set."), *Context));
 							return false;
 						}
 					}
@@ -612,13 +612,13 @@ namespace NCsMovement
 					{
 						if (!GetToMeshComponent())
 						{
-							UE_LOG(LogCs, Warning, TEXT("%s: ToMeshComponent is NOT set."), *Context);
+							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ToMeshComponent is NOT set."), *Context));
 							return false;
 						}
 
 						if (GetToBone() == NAME_None)
 						{
-							UE_LOG(LogCs, Warning, TEXT("%s: ToBone: None is NOT Valid."), *Context);
+							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ToBone: None is NOT Valid."), *Context));
 							return false;
 						}
 
@@ -626,20 +626,20 @@ namespace NCsMovement
 
 						if (BoneIndex == INDEX_NONE)
 						{
-							UE_LOG(LogCs, Warning, TEXT("%s: ToMeshComponent: %s does NOT contain ToBone: %s."), *Context, *(GetToMeshComponent()->GetName()), *(GetToBone().ToString()));
+							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ToMeshComponent: %s does NOT contain ToBone: %s."), *Context, *(GetToMeshComponent()->GetName()), *(GetToBone().ToString())));
 							return false;
 						}
 					}
 					// Check Time is Valid
 					if (GetTime() < 0.0f)
 					{
-						UE_LOG(LogCs, Warning, TEXT("%s: GetTime(): %f is NOT >= 0.0f."), *Context, GetTime());
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetTime(): %f is NOT >= 0.0f."), *Context, GetTime()));
 						return false;
 					}
 					// Check Group is Valid
 					if (!EMCsUpdateGroup::Get().IsValidEnum(GetGroup()))
 					{
-						UE_LOG(LogCs, Warning, TEXT("%s: GetGroup(): %s is NOT Valid."), *Context, GetGroup().ToChar());
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetGroup(): %s is NOT Valid."), *Context, GetGroup().ToChar()));
 						return false;
 					}
 					return true;

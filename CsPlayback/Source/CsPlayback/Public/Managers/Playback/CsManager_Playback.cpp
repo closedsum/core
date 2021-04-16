@@ -296,9 +296,9 @@ void UCsManager_Playback::SetPlaybackState(const EPlaybackState& NewState)
 	// Record
 	if (PlaybackState == EPlaybackState::Record)
 	{
-		typedef NCsLevel::FLibrary LevelLibrary;
+		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
 
-		FSoftObjectPath LevelPath(LevelLibrary::GetPersistentLevelNameChecked(Context, MyRoot));
+		FSoftObjectPath LevelPath(LevelLibrary::GetNameChecked(Context, MyRoot));
 
 		Record.Start(LevelPath);
 	}	

@@ -3,6 +3,7 @@
 #include "UObject/Object.h"
 // Types
 #include "CsTypes_Javascript.h"
+#include "EntryPoint/CsTypes_ScriptEntryPointInfo.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -98,52 +99,38 @@ public:
 private:
 
 	UPROPERTY(Transient)
-	FCsJavascriptFileObjects GameInstanceEntryPoint;
+	FCsJavascriptFileObjects EntryPoint;
+
+	FCsScriptEntryPointInfo EntryPointInfo;
 
 public:
 
-	void SetupAndRunGameInstanceEntryPoint();
+	FORCEINLINE void SetEntryPointInfo(const FCsScriptEntryPointInfo& Info) { EntryPointInfo = Info; }
+	FORCEINLINE const FCsScriptEntryPointInfo& GetEntryPointInfo() const { return EntryPointInfo; }
+
+	void CreateEntryPoint();
+	void SetupEntryPoint(UGameInstance* GameInstance = nullptr);
 
 private:
 
-	char SetupAndRunGameInstanceEntryPoint_Internal(FCsRoutine* R);
+	char SetupEntryPoint_Internal(FCsRoutine* R);
+
+	bool bSetupEntryPointComplete;
 
 public:
 
-	void RunGameInstanceEntryPoint();
+	FORCEINLINE bool IsSetupEntryPointComplete() const { return bSetupEntryPointComplete; }
+
+public:
+
+	void SetupAndRunEntryPoint(UGameInstance* GameInstance = nullptr);
 
 private:
 
-	UPROPERTY(Transient)
-	FCsJavascriptFileObjects GameStateEntryPoint;
+	char SetupAndRunEntryPoint_Internal(FCsRoutine* R);
 
 public:
 
-	void CreateGameStateEntryPoint();
-	void SetupGameStateEntryPoint(UGameInstance* GameInstance = nullptr);
-
-private:
-
-	char SetupGameStateEntryPoint_Internal(FCsRoutine* R);
-
-	bool bSetupGameStateEntryPointComplete;
-
-public:
-	
-	FORCEINLINE bool IsSetupGameStateEntryPointComplete() const { return bSetupGameStateEntryPointComplete; }
-
-public:
-
-	void SetupAndRunGameStateEntryPoint(UGameInstance* GameInstance = nullptr);
-
-private:
-
-	char SetupAndRunGameStateEntryPoint_Internal(FCsRoutine* R);
-
-public:
-
-	void RunGameStateEntryPoint();
-	void ShutdownGameStateEntryPoint();
-
-#pragma endregion Entry Point
+	void RunEntryPoint();
+	void ShutdownEntryPoint();
 };

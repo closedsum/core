@@ -56,7 +56,7 @@ namespace NCsFX
 }
 
 #define ParamsType NCsFX::NSpawn::NParams::FParams
-void FCsFX_Spawn_Params::CopyParams(ParamsType* Params) const
+void FCsFX_Spawn_Params::CopyToParams(ParamsType* Params) const
 {
 #undef ParamsType
 

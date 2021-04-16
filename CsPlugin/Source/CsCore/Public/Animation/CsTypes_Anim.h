@@ -199,7 +199,7 @@ public:
 	}
 
 #define InfoType NCsAnim::NSequence::FInfo
-	void CopyInfo(InfoType* Info);
+	void CopyToInfo(InfoType* Info);
 #undef InfoType
 
 private:
@@ -459,7 +459,7 @@ struct CSCORE_API FCsAnimMontageInfo
 	}
 
 #define InfoType NCsAnim::NMontage::FInfo
-	void CopyInfo(InfoType* Info);
+	void CopyToInfo(InfoType* Info);
 #undef InfoType
 
 private:

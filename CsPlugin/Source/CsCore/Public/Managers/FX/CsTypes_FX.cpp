@@ -208,7 +208,7 @@ namespace NCsFXParameterValue
 
 #define ParameterType NCsFX::NParameter::NInt::FIntType
 
-void FCsFXParameterInt::CopyParams(ParameterType* Params)
+void FCsFXParameterInt::CopyToParams(ParameterType* Params)
 {
 	Params->SetName(&Name);
 	Params->SetValue(&Value);
@@ -222,13 +222,14 @@ void FCsFXParameterInt::CopyToParamsAsValue(ParameterType* Params) const
 
 #undef ParameterType
 
-bool FCsFXParameterInt::IsValid(const FString& Context) const
+bool FCsFXParameterInt::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	if (Name == NAME_None)
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Name: None is NOT Valid."), *Context);
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
+		return false;
 	}
-	return false;
+	return true;
 }
 
 #pragma endregion FCsFXParameterInt
@@ -238,7 +239,7 @@ bool FCsFXParameterInt::IsValid(const FString& Context) const
 
 #define ParameterType NCsFX::NParameter::NFloat::FFloatType
 
-void FCsFXParameterFloat::CopyParams(ParameterType* Params)
+void FCsFXParameterFloat::CopyToParams(ParameterType* Params)
 {
 	Params->SetName(&Name);
 	Params->SetValue(&Value);
@@ -252,13 +253,14 @@ void FCsFXParameterFloat::CopyToParamsAsValue(ParameterType* Params) const
 
 #undef ParameterType
 
-bool FCsFXParameterFloat::IsValid(const FString& Context) const
+bool FCsFXParameterFloat::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	if (Name == NAME_None)
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Name: None is NOT Valid."), *Context);
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
+		return false;
 	}
-	return false;
+	return true;
 }
 
 #pragma endregion FCsFXParameterFloat
@@ -268,7 +270,7 @@ bool FCsFXParameterFloat::IsValid(const FString& Context) const
 
 #define ParameterType NCsFX::NParameter::NVector::FVectorType
 
-void FCsFXParameterVector::CopyParams(ParameterType* Params)
+void FCsFXParameterVector::CopyToParams(ParameterType* Params)
 {
 	Params->SetName(&Name);
 	Params->SetValue(&Value);
@@ -282,13 +284,14 @@ void FCsFXParameterVector::CopyToParamsAsValue(ParameterType* Params) const
 
 #undef ParameterType
 
-bool FCsFXParameterVector::IsValid(const FString& Context) const
+bool FCsFXParameterVector::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	if (Name == NAME_None)
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Name: None is NOT Valid."), *Context);
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
+		return false;
 	}
-	return false;
+	return true;
 }
 
 #pragma endregion FCsFXParameterVector

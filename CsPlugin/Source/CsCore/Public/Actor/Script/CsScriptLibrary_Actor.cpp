@@ -116,7 +116,7 @@ FCsRoutineHandle UCsScriptLibrary_Actor::MoveByInterp(const FString& Context, UO
 	ParamsResourceType* ParmsContainer = ActorLibrary::Get().AllocateMoveByInterpParams();
 	ParamsType* Parms = ParmsContainer->Get();
 
-	Params.CopyParamsAsValue(Parms);
+	Params.CopyToParamsAsValue(Parms);
 
 	return ActorLibrary::SafeMoveByInterp(Ctxt, WorldContextObject, ParmsContainer);
 }

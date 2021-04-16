@@ -98,7 +98,7 @@ public:
 	}
 
 #define ParamsType NCsFX::NSpawn::NParams::FParams
-	void CopyParams(ParamsType* Params) const;
+	void CopyToParams(ParamsType* Params) const;
 #undef ParamsType
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;

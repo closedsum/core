@@ -43,7 +43,7 @@ namespace NCsFpvAnimMember
 #pragma region
 
 #define InfoType NCsAnim::NSequence::FInfo
-void FCsAnimSequenceInfo::CopyInfo(InfoType* Info)
+void FCsAnimSequenceInfo::CopyToInfo(InfoType* Info)
 {
 #undef InfoType
 
@@ -57,7 +57,7 @@ void FCsAnimSequenceInfo::CopyInfo(InfoType* Info)
 #pragma region
 
 #define InfoType NCsAnim::NMontage::FInfo
-void FCsAnimMontageInfo::CopyInfo(InfoType* Info)
+void FCsAnimMontageInfo::CopyToInfo(InfoType* Info)
 {
 #undef InfoType
 

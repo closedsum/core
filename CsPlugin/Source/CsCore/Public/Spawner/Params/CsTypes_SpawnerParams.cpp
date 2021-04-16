@@ -75,7 +75,7 @@ bool FCsSpawnerFrequencyParams::IsValidChecked(const FString& Context) const
 	return true;
 }
 
-bool FCsSpawnerFrequencyParams::IsValid(const FString& Context) const
+bool FCsSpawnerFrequencyParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	// Once
 	if (Type == ECsSpawnerFrequency::Once)
@@ -88,7 +88,7 @@ bool FCsSpawnerFrequencyParams::IsValid(const FString& Context) const
 	{
 		if (Count < 1)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: Count MUST be >= 1 if Type == ECsSpawnerFrequency::Count."), *Context);
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Count MUST be >= 1 if Type == ECsSpawnerFrequency::Count."), *Context));
 			return false;
 		}
 	}
@@ -98,7 +98,7 @@ bool FCsSpawnerFrequencyParams::IsValid(const FString& Context) const
 	{
 		if (Count < 1)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: Count MUST be >= 1 if Type == ECsSpawnerFrequency::TimeCount."), *Context);
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Count MUST be >= 1 if Type == ECsSpawnerFrequency::TimeCount."), *Context));
 			return false;
 		}
 	}
@@ -108,7 +108,7 @@ bool FCsSpawnerFrequencyParams::IsValid(const FString& Context) const
 	{
 		if (Interval <= 0.0f)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: Interval MUST be > 0.0f if Type == ECsSpawnerFrequency::TimeInterval."), *Context);
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Interval MUST be > 0.0f if Type == ECsSpawnerFrequency::TimeInterval."), *Context));
 			return false;
 		}
 	}
@@ -118,7 +118,8 @@ bool FCsSpawnerFrequencyParams::IsValid(const FString& Context) const
 	{
 		if (Interval <= 0.0f)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: Interval MUST be > 0.0f if Type == ECsSpawnerFrequency::Infinite."), *Context);
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Interval MUST be > 0.0f if Type == ECsSpawnerFrequency::Infinite."), *Context));
+			return false;
 		}
 	}
 	return true;

@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UObject/Object.h"
+// Blueprint
+#include "Animation/AnimBlueprintGeneratedClass.h"
 
 #include "CsScriptLibrary_AnimInstance.generated.h"
 
@@ -42,7 +44,7 @@ public:
 #pragma region
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimInstance", meta = (AutoCreateRefTerm = "Context,Path"))
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimInstance", meta = (AutoCreateRefTerm = "Context"))
 	static UAnimBlueprintGeneratedClass* GetGeneratedClass(const FString& Context, UAnimBlueprint* Blueprint);
 
 #pragma endregion Get

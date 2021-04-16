@@ -1136,7 +1136,7 @@ void UCsLibrary_Load::GetObjectPaths_Internal(const void* StructValue, UStruct* 
 				{
 					TSoftClassPtr<UObject>* ObjectPtr = reinterpret_cast<TSoftClassPtr<UObject>*>(Helper.GetRawPtr(I));
 
-					if (ObjectPtr->IsValid())
+					if (ObjectPtr->ToSoftObjectPath().IsValid())
 					{
 						UObject* Object = ObjectPtr->LoadSynchronous();
 
@@ -1153,11 +1153,11 @@ void UCsLibrary_Load::GetObjectPaths_Internal(const void* StructValue, UStruct* 
 					continue;
 				}
 				// SoftObject
-				if (FSoftClassProperty* InnerSoftObjectProperty = CastField<FSoftClassProperty>(ArrayProperty->Inner))
+				if (FSoftObjectProperty* InnerSoftObjectProperty = CastField<FSoftObjectProperty>(ArrayProperty->Inner))
 				{
 					TSoftObjectPtr<UObject>* ObjectPtr = reinterpret_cast<TSoftObjectPtr<UObject>*>(Helper.GetRawPtr(I));
 
-					if (ObjectPtr->IsValid())
+					if (ObjectPtr->ToSoftObjectPath().IsValid())
 					{
 						if (UObject* Object = ObjectPtr->LoadSynchronous())
 						{

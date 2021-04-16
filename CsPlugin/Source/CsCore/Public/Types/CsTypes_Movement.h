@@ -4,6 +4,8 @@
 #include "Managers/Time/CsTypes_Update.h"
 // Managers
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
+// Log
+#include "Utility/CsLog.h"
 
 #include "CsTypes_Movement.generated.h"
 #pragma once
@@ -255,15 +257,15 @@ public:
 	}
 
 #define ParamsType NCsMovement::NTo::NInterp::NParams::FParams
-	void CopyParams(ParamsType* Params);
-	void CopyParamsAsValue(ParamsType* Params) const;
+	void CopyToParams(ParamsType* Params);
+	void CopyToParamsAsValue(ParamsType* Params) const;
 #undef ParamsType
 
 	void ConditionalSetSafeMoveObject(const FString& Context, UObject* WorldContext);
 
 	void ConditionalSetSafeDestinationObject(const FString& Context, UObject* WorldContext);
 
-	bool IsValid(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 class AActor;
@@ -430,7 +432,7 @@ namespace NCsMovement
 					void ConditionalSetDestinationObjectChecked(const FString& Context, UObject* WorldContext);
 
 					bool IsValidChecked(const FString& Context) const;
-					bool IsValid(const FString& Context) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 					FVector GetEndLocation() const;
 

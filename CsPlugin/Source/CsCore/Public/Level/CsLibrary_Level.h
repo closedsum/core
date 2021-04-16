@@ -1,5 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Types
+#include "Types/CsTypes_Macro.h"
+// Log
+#include "Utility/CsLog.h"
 
 class ULevel;
 class UWorld;
@@ -8,216 +12,364 @@ class ALevelScriptActor;
 
 namespace NCsLevel
 {
-	/**
-	*/
-	struct CSCORE_API FLibrary
+	namespace NPersistent
 	{
-	// Persistent
-	#pragma region
-	public:
-
-		/**
-		* Get the current Persistent Level.
-		*
-		* @param World	
-		* return		Level
-		*/
-		static ULevel* GetPersistentLevel(UWorld* World);
-
-		/**
-		* Get the current Persistent Level.
-		*
-		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		* return				Level
-		*/
-		static ULevel* GetPersistentLevel(UObject* WorldContext);
-
-		/**
-		* Get the current Persistent Level.
-		*
-		* @param Context	The calling context
-		* @param World
-		* return			Level
-		*/
-		static ULevel* GetPersistentLevelChecked(const FString& Context, UWorld* World);
-
-		/**
-		* Get the current Persistent Level.
-		*
-		* @param Context		The calling context
-		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		* return				Level
-		*/
-		static ULevel* GetPersistentLevelChecked(const FString& Context, UObject* WorldContext);
-
-		/**
-		* Get the current Persistent Level's name as a FString.
-		*
-		* @param World
-		* return		Level name
-		*/
-		static FString GetPersistentLevelName(UWorld* World);
-
-		/**
-		* Get the current Persistent Level's name as a FString.
-		*
-		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		* return				Level name
-		*/
-		static FString GetPersistentLevelName(UObject* WorldContext);
-
-		/**
-		* Get the current Persistent Level's name as a FString.
-		*
-		* @param Context	The calling context.
-		* @param World
-		* return			Level name
-		*/
-		static FString GetPersistentLevelNameChecked(const FString& Context, UWorld* World);
-
-		/**
-		* Get the current Persistent Level's name as a FString.
-		*
-		* @param Context		The calling context.
-		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		* return				Level name
-		*/
-		static FString GetPersistentLevelNameChecked(const FString& Context, UObject* WorldContext);
-
-		/**
-		* Get the current Persistent Level's name as a FName.
-		*
-		* @param World
-		* return		Level name
-		*/
-		static FName GetPersistentLevelFName(UWorld* World);
-
-		/**
-		* Get the current Persistent Level's name as a FName.
-		*
-		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		* return				Level name
-		*/
-		static FName GetPersistentLevelFName(UObject* WorldContext);
-
-		/**
-		* Get the current Persistent Level's name as a FName.
-		*
-		* @param Context	The calling context.
-		* @param World
-		* return			Level name
-		*/
-		static FName GetPersistentLevelFNameChecked(const FString& Context, UWorld* World);
-
-		/**
-		* Get the current Persistent Level's name as a FName.
-		*
-		* @param Context		The calling context.
-		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		* return				Level name
-		*/
-		static FName GetPersistentLevelFNameChecked(const FString& Context, UObject* WorldContext);
-
-		/**
-		*/
-		static bool IsPersistentLevelName(UWorld* World, const FString& MapPackageName);
-
-		/**
-		*/
-		static bool IsPersistentLevelName(UObject* WorldContext, const FString& MapPackageName);
-
-		/**
-		* Get the LevelScriptActor from the current Persistent Level.
-		* 
-		* @param World
-		* return		LevelScriptActor
-		*/
-		static ALevelScriptActor* GetPersistentLevelScriptActor(UWorld* World);
-
-		/**
-		* Get the LevelScriptActor of type: T from current Persistent Level.
-		* 
-		* @param World
-		* return		LevelScriptActor of type: T.
-		*/
-		template<typename T>
-		FORCEINLINE static T* GetPersistentLevelScriptActor(UWorld* World)
+		struct CSCORE_API FLibrary final
 		{
-			return Cast<T>(GetPersistentLevelScriptActor(World));
-		}
+		public:
 
-		/**
-		* Get the LevelScriptActor from the current Persistent Level.
-		*
-		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		* return				LevelScriptActor
-		*/
-		static ALevelScriptActor* GetPersistentLevelScriptActor(UObject* WorldContext);
+			/**
+			* Get the current Persistent Level.
+			*
+			* @param Context	The calling context
+			* @param World
+			* return			Level
+			*/
+			static ULevel* GetChecked(const FString& Context, UWorld* World);
 
-		/**
-		* Get the LevelScriptActor of type: T from current Persistent Level.
-		*
-		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		* return				LevelScriptActor of type: T.
-		*/
-		template<typename T>
-		FORCEINLINE static T* GetPersistentLevelScriptActor(UObject* WorldContext)
-		{
-			return Cast<T>(GetPersistentLevelScriptActor(WorldContext));
-		}
+			/**
+			* Get the current Persistent Level.
+			*
+			* @param Context		The calling context
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Level
+			*/
+			static ULevel* GetChecked(const FString& Context, UObject* WorldContext);
 
-		/**
-		* Get the LevelScriptActor from the current Persistent Level.
-		* 
-		* @param Context	The calling context.
-		* @param World
-		* return			LevelScriptActor
-		*/
-		static ALevelScriptActor* GetPersistentLevelScriptActorChecked(const FString& Context, UWorld* World);
+			/**
+			* Get the current Persistent Level.
+			*
+			* @param World
+			* return		Level
+			*/
+			static ULevel* GetSafe(const FString& Context, UWorld* World, void(*Log)(const FString& Context) = &FCsLog::Warning);
 
-		/**
-		* Get the LevelScriptActor of type: T from current Persistent Level.
-		* 
-		* @param Context	The calling context.
-		* @param World
-		* return			LevelScriptActor of type: T.
-		*/
-		template<typename T>
-		FORCEINLINE static T* GetPersistentLevelScriptActorChecked(const FString& Context, UWorld* World)
-		{
-			T* Slice = Cast<T>(GetPersistentLevelScriptActorChecked(Context, World));
+			/**
+			* Get the current Persistent Level.
+			*
+			* @param World
+			* return		Level
+			*/
+			static ULevel* GetSafe(UWorld* World);
 
-			checkf(Slice, TEXT("%s: Failed to cast LevelScriptActor to type: T."), *Context);
+			/**
+			* Get the current Persistent Level.
+			*
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Level
+			*/
+			static ULevel* GetSafe(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
 
-			return Slice;
-		}
+			/**
+			* Get the current Persistent Level.
+			*
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return		Level
+			*/
+			static ULevel* GetSafe(UObject* WorldContext);
 
-		/**
-		* Get the LevelScriptActor from the current Persistent Level.
-		*
-		* @param Context		The calling context.
-		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		* return				LevelScriptActor
-		*/
-		static ALevelScriptActor* GetPersistentLevelScriptActorChecked(const FString& Context, UObject* WorldContext);
+		// Name
+		#pragma region
+		public:
 
-		/**
-		* Get the LevelScriptActor of type: T from current Persistent Level.
-		*
-		* @param Context		The calling context.
-		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		* return				LevelScriptActor of type: T.
-		*/
-		template<typename T>
-		FORCEINLINE static T* GetPersistentLevelScriptActorChecked(const FString& Context, UObject* WorldContext)
-		{
-			T* Slice = Cast<T>(GetPersistentLevelScriptActorChecked(Context, WorldContext));
+			/**
+			* Get the current Persistent Level's name as a FString.
+			*
+			* @param Context	The calling context.
+			* @param World
+			* return			Level name
+			*/
+			static FString GetNameChecked(const FString& Context, UWorld* World);
 
-			checkf(Slice, TEXT("%s: Failed to cast LevelScriptActor to type: T."), *Context);
+			/**
+			* Get the current Persistent Level's name as a FString.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Level name
+			*/
+			static FString GetNameChecked(const FString& Context, UObject* WorldContext);
 
-			return Slice;
-		}
+			/**
+			* Get the current Persistent Level's name as a FString.
+			*
+			* @param Context	The calling context.
+			* @param World
+			* @param Log
+			* return			Level name
+			*/
+			static FString GetSafeName(const FString& Context, UWorld* World, void(*Log)(const FString& Context) = &FCsLog::Warning);
 
-	#pragma endregion Persistent
-	};
+			/**
+			* Get the current Persistent Level's name as a FString.
+			*
+			* @param World
+			* return			Level name
+			*/
+			static FString GetSafeName(UWorld* World);
+
+			/**
+			* Get the current Persistent Level's name as a FString.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log
+			* return				Level name
+			*/
+			static FString GetSafeName(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
+
+			/**
+			* Get the current Persistent Level's name as a FString.
+			*
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Level name
+			*/
+			static FString GetSafeName(UObject* WorldContext);
+
+		#pragma endregion Name
+
+		// FName
+		#pragma region
+		public:
+
+			/**
+			* Get the current Persistent Level's name as a FName.
+			*
+			* @param Context	The calling context.
+			* @param World
+			* return			Level name
+			*/
+			static FName GetFNameChecked(const FString& Context, UWorld* World);
+
+			/**
+			* Get the current Persistent Level's name as a FName.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Level name
+			*/
+			static FName GetFNameChecked(const FString& Context, UObject* WorldContext);
+
+			/**
+			* Get the current Persistent Level's name as a FName.
+			*
+			* @param Context	The calling context.
+			* @param World
+			* @param Log
+			* return			Level name
+			*/
+			static FName GetSafeFName(const FString& Context, UWorld* World, void(*Log)(const FString& Context) = &FCsLog::Warning);
+
+			/**
+			* Get the current Persistent Level's name as a FName.
+			*
+			* @param World
+			* return			Level name
+			*/
+			static FName GetSafeFName(UWorld* World);
+
+			/**
+			* Get the current Persistent Level's name as a FName.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log
+			* return				Level name
+			*/
+			static FName GetSafeFName(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
+
+			/**
+			* Get the current Persistent Level's name as a FName.
+			*
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Level name
+			*/
+			static FName GetSafeFName(UObject* WorldContext);
+
+		#pragma endregion FName
+
+		public:
+
+			/**
+			*/
+			static bool IsNameChecked(const FString& Context, UWorld* World, const FString& MapPackageName);
+
+			/**
+			*/
+			static bool IsNameChecked(const FString& Context, UObject* WorldContext, const FString& MapPackageName);
+
+			/**
+			*/
+			static bool SafeIsName(const FString& Context, UWorld* World, const FString& MapPackageName, void(*Log)(const FString& Context) = &FCsLog::Warning);
+
+			/**
+			*/
+			static bool SafeIsName(UWorld* World, const FString& MapPackageName);
+
+			/**
+			*/
+			static bool SafeIsName(const FString& Context, UObject* WorldContext, const FString& MapPackageName, void(*Log)(const FString& Context) = &FCsLog::Warning);
+
+			/**
+			*/
+			static bool SafeIsName(UObject* WorldContext, const FString& MapPackageName);
+
+		// LevelScriptActor
+		#pragma region
+		public:
+
+			/**
+			* Get the LevelScriptActor from the current Persistent Level.
+			*
+			* @param Context	The calling context.
+			* @param World
+			* return			LevelScriptActor
+			*/
+			static ALevelScriptActor* GetScriptActorChecked(const FString& Context, UWorld* World);
+
+			/**
+			* Get the LevelScriptActor of type: T from current Persistent Level.
+			*
+			* @param Context	The calling context.
+			* @param World
+			* return			LevelScriptActor of type: T.
+			*/
+			template<typename T>
+			FORCEINLINE static T* GetScriptActorChecked(const FString& Context, UWorld* World)
+			{
+				T* Slice = Cast<T>(GetScriptActorChecked(Context, World));
+
+				checkf(Slice, TEXT("%s: Failed to cast LevelScriptActor to type: T."), *Context);
+
+				return Slice;
+			}
+
+			/**
+			* Get the LevelScriptActor from the current Persistent Level.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				LevelScriptActor
+			*/
+			static ALevelScriptActor* GetScriptActorChecked(const FString& Context, UObject* WorldContext);
+
+			/**
+			* Get the LevelScriptActor of type: T from current Persistent Level.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				LevelScriptActor of type: T.
+			*/
+			template<typename T>
+			FORCEINLINE static T* GetScriptActorChecked(const FString& Context, UObject* WorldContext)
+			{
+				T* Slice = Cast<T>(GetScriptActorChecked(Context, WorldContext));
+
+				checkf(Slice, TEXT("%s: Failed to cast LevelScriptActor to type: T."), *Context);
+
+				return Slice;
+			}
+
+			/**
+			* Get the LevelScriptActor from the current Persistent Level.
+			*
+			* @param Context	The calling context.
+			* @param World
+			* @param Log
+			* return			LevelScriptActor
+			*/
+			static ALevelScriptActor* GetSafeScriptActor(const FString& Context, UWorld* World, void(*Log)(const FString& Context) = &FCsLog::Warning);
+
+			/**
+			* Get the LevelScriptActor of type: T from current Persistent Level.
+			*
+			* @param Context	The calling context.
+			* @param World
+			* @param Log
+			* return			LevelScriptActor of type: T.
+			*/
+			template<typename T>
+			FORCEINLINE static T* GetSafeScriptActor(const FString& Context, UWorld* World, void(*Log)(const FString& Context) = &FCsLog::Warning)
+			{
+				ALevelScriptActor* Actor = GetSafeScriptActor(Context, World, Log);
+
+				if (!Actor)
+					return nullptr;
+
+				T* Other = Cast<T>(Actor);
+
+				if (!Other)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast LevelScriptActor: %s with Class: %s is NOT of type: %s."), *Context, *(Actor->GetName()), *(Actor->GetClass()->GetName()), *(T::StaticClass()->GetName())));
+				}
+				return Other;
+			}
+
+			/**
+			* Get the LevelScriptActor from the current Persistent Level.
+			*
+			* @param World
+			* return			LevelScriptActor
+			*/
+			static ALevelScriptActor* GetSafeScriptActor(UWorld* World);
+
+			/**
+			* Get the LevelScriptActor of type: T from current Persistent Level.
+			*
+			* @param World
+			* return			LevelScriptActor of type: T.
+			*/
+			template<typename T>
+			FORCEINLINE static T* GetSafeScriptActor(UWorld* World)
+			{
+				return Cast<T>(GetSafeScriptActor(World));
+			}
+
+			/**
+			* Get the LevelScriptActor from the current Persistent Level.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log
+			* return				LevelScriptActor
+			*/
+			static ALevelScriptActor* GetSafeScriptActor(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
+
+			/**
+			* Get the LevelScriptActor of type: T from current Persistent Level.
+			*
+			* @parma Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @parma Log
+			* return				LevelScriptActor of type: T.
+			*/
+			template<typename T>
+			FORCEINLINE static T* GetSafeScriptActor(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning)
+			{
+				return Cast<T>(GetSafeScriptActor(Context, WorldContext, Log));
+			}
+
+			/**
+			* Get the LevelScriptActor from the current Persistent Level.
+			*
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				LevelScriptActor
+			*/
+			static ALevelScriptActor* GetSafeScriptActor(UObject* WorldContext);
+
+			/**
+			* Get the LevelScriptActor of type: T from current Persistent Level.
+			*
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				LevelScriptActor of type: T.
+			*/
+			template<typename T>
+			FORCEINLINE static T* GetSafeScriptActor(UObject* WorldContext)
+			{
+				return Cast<T>(GetSafeScriptActor(WorldContext));
+			}
+
+		#pragma endregion LevelScriptActor
+		};
+	}
 }

@@ -332,9 +332,9 @@ void UCsManager_Level::ChangeMap(const FChangeMapParams& Params)
 	static const int32 TRANSITION_MAP_INDEX = 1;
 	Payload->SetValue_String(TRANSITION_MAP_INDEX, Params.TransitionMap);
 
-	typedef NCsLevel::FLibrary LevelLibrary;
+	typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
 
-	CurrentMap = LevelLibrary::GetPersistentLevelName(MyRoot);
+	CurrentMap = LevelLibrary::GetSafeName(MyRoot);
 
 	bChangeMapCompleted = false;
 

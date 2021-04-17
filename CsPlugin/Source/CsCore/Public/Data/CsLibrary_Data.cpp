@@ -2,6 +2,8 @@
 #include "Data/CsLibrary_Data.h"
 #include "CsCore.h"
 
+// Library
+#include "Game/CsLibrary_GameInstance.h"
 // Managers
 #include "Managers/Data/CsManager_Data.h"
 // Game
@@ -18,21 +20,17 @@ namespace NCsData
 			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsData::FLibrary, SafeLoad);
 		}
 	}
+	
+	#if WITH_EDITOR
 
-	UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
+	UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
 	{
-		checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-		UWorld* World = WorldContext->GetWorld();
-
-		checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
-
-		UGameInstance* GameInstance = World->GetGameInstance();
-
-		checkf(GameInstance, TEXT("%s: Failed to get GameInstace from World: %s."), *Context, *(World->GetName()));
-
-		return GameInstance;
+		return GameInstanceLibrary::GetChecked(Context, ContextObject);
 	}
+
+	#endif // #if WITH_EDITOR
 
 	FString FLibrary::PrintObjectAndClass(UObject* Object)
 	{

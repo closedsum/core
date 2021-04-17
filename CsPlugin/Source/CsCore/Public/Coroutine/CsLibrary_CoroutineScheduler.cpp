@@ -11,6 +11,7 @@
 #if WITH_EDITOR
 // Library
 #include "Library/CsLibrary_World.h"
+#include "Game/CsLibrary_GameInstance.h"
 // Engine
 #include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
@@ -33,32 +34,11 @@ namespace NCsCoroutine
 
 	#if WITH_EDITOR
 
-		UObject* FLibrary::GetContextRoot(UObject* WorldContext)
-		{
-			using namespace NCsCoroutine::NScheduler::NLibrary::NCached;
-
-			const FString& Context = Str::GetContextRoot;
-
-			typedef NCsWorld::FLibrary WorldLibrary;
-
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
-
-			if (WorldLibrary::IsPlayInEditor(WorldContext->GetWorld()) ||
-				WorldLibrary::IsPlayInEditorPreview(WorldContext->GetWorld()))
-			{
-				return GEngine;
-			}
-			else
-			{
-				return WorldContext->GetWorld()->GetGameInstance();
-			}
-		}
-
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+			UWorld* World = WorldLibrary::GetSafe(Context, ContextObject, nullptr);
 
 			if (WorldLibrary::IsPlayInEditor(World) ||
 				WorldLibrary::IsPlayInEditorPreview(World))
@@ -66,41 +46,35 @@ namespace NCsCoroutine
 				return GEngine;
 			}
 
-			UGameInstance* GameInstance = World->GetGameInstance();
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName()));
-
-			return GameInstance;
+			return GameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+			UWorld* World = WorldLibrary::GetSafe(Context, ContextObject, Log);
 
-			if (!World)
-				return nullptr;
-
-			if (WorldLibrary::IsPlayInEditor(WorldContext->GetWorld()) ||
-				WorldLibrary::IsPlayInEditorPreview(WorldContext->GetWorld()))
+			if (WorldLibrary::IsPlayInEditor(World) ||
+				WorldLibrary::IsPlayInEditorPreview(World))
 			{
 				return GEngine;
 			}
-			else
 
-			{
-				return World->GetGameInstance();
-			}
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
+		UObject* FLibrary::GetSafeContextRoot(UObject* ContextObject)
 		{
 			using namespace NCsCoroutine::NScheduler::NLibrary::NCached;
 
 			const FString& Context = Str::GetSafeContextRoot;
 
-			return GetSafeContextRoot(Context, WorldContext, nullptr);
+			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
 
 	#endif // #if WITH_EDITOR

@@ -22,15 +22,21 @@ namespace NCsData
 	{
 	public:
 
+	#if WITH_EDITOR
 		/**
 		* Get the Root for Manager_Data.
 		* 
 		* @param Context		The calling context.
-		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+		*						or
+		*						A reference to the GameInstance.
 		*						Used to route to Manager_Data.
 		* return				Root for Manager_Data
 		*/
-		static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
+		static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject);
+	#else
+		FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject) { return nullptr; }
+	#endif // #if WITH_EDITOR
 
 		/**
 		* Print out Object as 'Object: %s with Class: %s'.

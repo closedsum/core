@@ -2,28 +2,26 @@
 #include "Managers/Menu/CsLibrary_Manager_Menu.h"
 #include "CsUI.h"
 
+#if WITH_EDITOR
+// Library
+#include "Game/CsLibrary_GameInstance.h"
 // Game
 #include "Engine/GameInstance.h"
-// World
-#include "Engine/World.h"
+#endif // #if WITH_EDITOR
 
 namespace NCsMenu
 {
 	namespace NManager
 	{
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
+	#if WITH_EDITOR
+
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			UWorld* World = WorldContext->GetWorld();
-
-			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
-
-			UGameInstance* GameInstance = World->GetGameInstance();
-
-			checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, GameInstance);
-
-			return GameInstance;
+			return GameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
+
+	#endif // #if WITH_EDITOR
 	}
 }

@@ -4,6 +4,7 @@
 
 // Library
 #include "Library/CsLibrary_World.h"
+#include "Game/CsLibrary_GameInstance.h"
 // Coordinators
 #include "Coordinators/GameEvent/CsCoordinator_GameEvent.h"
 // Game
@@ -28,53 +29,34 @@ namespace NCsGameEvent
 
 	#if WITH_EDITOR
 
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
-
-			UGameInstance* GameInstance = World->GetGameInstance();
-
-			checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName()));
-
-			return GameInstance;
+			return GameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) /*= nullptr*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*= nullptr*/)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			// Check World is Valid.
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
-
-			if (!World)
-				return nullptr;
-
-			// Check GameInstance is Valid.
-			UGameInstance* GameInstance = World->GetGameInstance();
-
-			if (!GameInstance)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GameInstance is NULL."), *Context));
-			}
-			return GameInstance;
+			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
+		UObject* FLibrary::GetSafeContextRoot(UObject* ContextObject)
 		{
 			using namespace NCsGameEvent::NCoordinator::NLibrary::NCached;
 
 			const FString& Context = Str::GetSafeContextRoot;
 
-			return GetSafeContextRoot(Context, WorldContext, nullptr);
+			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
 
 	#endif // #if WITH_EDITOR
 
-		void FLibrary::ProcessGameEventInfoChecked(const FString& Context, UObject* WorldContext, const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info)
+		void FLibrary::ProcessGameEventInfoChecked(const FString& Context, UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info)
 		{
-			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
 
 			// Check Group is Valid.
 			checkf(EMCsGameEventCoordinatorGroup::Get().IsValidEnum(Group), TEXT("%s: Group: %s is NOT Valid."), *Context, Group.ToChar());
@@ -92,9 +74,9 @@ namespace NCsGameEvent
 			}
 		}
 
-		void FLibrary::BroadcastGameEventChecked(const FString& Context, UObject* WorldContext, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value /*=0*/, const FVector& Location /*=FVector::ZeroVector*/)
+		void FLibrary::BroadcastGameEventChecked(const FString& Context, UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value /*=0*/, const FVector& Location /*=FVector::ZeroVector*/)
 		{
-			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
 
 			FCsGameEventInfo Info;
 			Info.Event = GameEvent;
@@ -117,9 +99,9 @@ namespace NCsGameEvent
 			}
 		}
 
-		void FLibrary::SafeBroadcastGameEvent(const FString& Context, UObject* WorldContext, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) /*= nullptr*/)
+		void FLibrary::SafeBroadcastGameEvent(const FString& Context, UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) /*= nullptr*/)
 		{
-			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
+			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
 			// Check ContextRoot is Valid.
 			if (!ContextRoot)

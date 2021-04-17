@@ -6,7 +6,7 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
-#include "Library/CsLibrary_World.h"
+#include "Game/CsLibrary_GameInstance.h"
 // Game
 #include "Engine/GameInstance.h"
 // World
@@ -30,44 +30,27 @@ namespace NCsData
 
 	#if WITH_EDITOR
 
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
-
-			UGameInstance* GameInstance = World->GetGameInstance();
-
-			checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName()));
-
-			return GameInstance;
+			return GameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
-
-			if (!World)
-				return nullptr;
-
-			UGameInstance* GameInstance = World->GetGameInstance();
-
-			if (!GameInstance)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName())));
-			}
-			return GameInstance;
+			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
+		UObject* FLibrary::GetSafeContextRoot(UObject* ContextObject)
 		{
 			using namespace NCsData::NManager::NLibrary::NCached;
 
 			const FString& Context = Str::GetSafeContextRoot;
 
-			return GetSafeContextRoot(Context, WorldContext, nullptr);
+			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
 
 	#endif // #if WITH_EDITOR

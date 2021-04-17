@@ -17,69 +17,81 @@ namespace NCsTime
 
 		#if WITH_EDITOR
 			/**
-			* Get the Context (Root) for UCsManager_Time from a WorldContext.
+			* Get the Context (Root) for UCsManager_Time from a ContextObject.
 			*
 			* @param Context		The calling context.
-			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
 			* return				Context for UCsManager_Time
 			*/
-			static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
+			static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject);
 		#else
-			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext) { return nullptr; }
+			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
 			/**
-			* Safely get the Context (Root) for UCsManager_Time from a WorldContext.
+			* Safely get the Context (Root) for UCsManager_Time from a ContextObject.
 			*
 			* @param Context		The calling context.
-			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
 			* @param Log
 			* return				Context for UCsManager_Time
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
 			/**
-			* Safely get the Context (Root) for UCsManager_Time from a WorldContext.
+			* Safely get the Context (Root) for UCsManager_Time from a ContextObject.
 			*
-			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
 			* return				Context for UCsManager_Time
 			*/
-			static UObject* GetSafeContextRoot(const UObject* WorldContext);
+			static UObject* GetSafeContextRoot(UObject* ContextObject);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const UObject* WorldContext) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(UObject* ContextObject) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 			/**
 			* 
 			* @param Context		The calling context.
-			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
 			* @param Group
 			*/
-			static void UpdateTimeAndCoroutineScheduler(const FString& Context, UObject* WorldContext, const FECsUpdateGroup& Group, const float& DeltaTime);
+			static void UpdateTimeAndCoroutineScheduler(const FString& Context, UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime);
 
 			/**
 			* 
 			* 
 			* @param Context		The calling context.
-			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
 			* @param Group
 			* @param Scale
 			*/
-			static void SetScaledDeltaTime(const FString& Context, UObject* WorldContext, const FECsUpdateGroup& Group, const float& Scale);
+			static void SetScaledDeltaTime(const FString& Context, UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale);
 
 			/**
 			* Resets the Scale (to 1.0f) applied to the delta time for the specified Group.
 			*
 			* @param Context		The calling context.
-			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
 			* @param Group
 			*/
-			static void ResetScaledDeltaTime(const FString& Context, UObject* WorldContext, const FECsUpdateGroup& Group);
+			static void ResetScaledDeltaTime(const FString& Context, UObject* ContextObject, const FECsUpdateGroup& Group);
 		};
 	}
 }

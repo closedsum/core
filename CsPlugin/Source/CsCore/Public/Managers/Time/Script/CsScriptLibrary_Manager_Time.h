@@ -33,7 +33,7 @@ public:
 	* @param Event / Delegate
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (DisplayName = "BindToEvent: OnUpdate", WorldContext = "WorldContextObject"))
-	static void BindToEvent_OnUpdate(const UObject* WorldContextObject, FCsScriptLibraryManagerTime_OnUpdate Delegate);
+	static void BindToEvent_OnUpdate(UObject* WorldContextObject, FCsScriptLibraryManagerTime_OnUpdate Delegate);
 	//UPARAM(DisplayName = "Event") 
 #pragma endregion Update
 };

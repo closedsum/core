@@ -13,6 +13,9 @@
 #if WITH_EDITOR
 // Library
 #include "Library/CsLibrary_World.h"
+#include "Game/CsLibrary_GameInstance.h"
+// Engine
+#include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
 
 namespace NCsTime
@@ -32,11 +35,11 @@ namespace NCsTime
 
 	#if WITH_EDITOR
 
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+			UWorld* World = WorldLibrary::GetSafe(Context, ContextObject, nullptr);
 
 			if (WorldLibrary::IsPlayInEditor(World) ||
 				WorldLibrary::IsPlayInEditorPreview(World))
@@ -44,49 +47,42 @@ namespace NCsTime
 				return GEngine;
 			}
 
-			UGameInstance* GameInstance = World->GetGameInstance();
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, GameInstance);
-
-			return GameInstance;
+			return GameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+			UWorld* World = WorldLibrary::GetSafe(Context, ContextObject, Log);
 
-			if (!World)
-				return nullptr;
-
-			typedef NCsWorld::FLibrary WorldLibrary;
-
-			if (WorldLibrary::IsPlayInEditor(WorldContext->GetWorld()) ||
-				WorldLibrary::IsPlayInEditorPreview(WorldContext->GetWorld()))
+			if (WorldLibrary::IsPlayInEditor(World) ||
+				WorldLibrary::IsPlayInEditorPreview(World))
 			{
 				return GEngine;
 			}
-			else
-			{
-				return World->GetGameInstance();
-			}
+
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
+		UObject* FLibrary::GetSafeContextRoot(UObject* ContextObject)
 		{
 			using namespace NCsTime::NManager::NLibrary::NCached;
 
 			const FString& Context = Str::GetSafeContextRoot;
 
-			return GetSafeContextRoot(Context, WorldContext, nullptr);
+			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
 
 	#endif // #if WITH_EDITOR
 
-		void FLibrary::UpdateTimeAndCoroutineScheduler(const FString& Context, UObject* WorldContext, const FECsUpdateGroup& Group, const float& DeltaTime)
+		void FLibrary::UpdateTimeAndCoroutineScheduler(const FString& Context, UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime)
 		{
-			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
 
 			UCsManager_Time* Manager_Time = UCsManager_Time::Get(ContextRoot);
 
@@ -98,14 +94,14 @@ namespace NCsTime
 			UCsCoroutineScheduler::Get(ContextRoot)->Update(Group, ScaledDeltaTime);
 		}
 
-		void FLibrary::SetScaledDeltaTime(const FString& Context, UObject* WorldContext, const FECsUpdateGroup& Group, const float& Scale)
+		void FLibrary::SetScaledDeltaTime(const FString& Context, UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale)
 		{
-			UCsManager_Time::Get(GetContextRootChecked(Context, WorldContext))->SetScaledDeltaTime(Group, Scale);
+			UCsManager_Time::Get(GetContextRootChecked(Context, ContextObject))->SetScaledDeltaTime(Group, Scale);
 		}
 
-		void FLibrary::ResetScaledDeltaTime(const FString& Context, UObject* WorldContext, const FECsUpdateGroup& Group)
+		void FLibrary::ResetScaledDeltaTime(const FString& Context, UObject* ContextObject, const FECsUpdateGroup& Group)
 		{
-			UCsManager_Time::Get(GetContextRootChecked(Context, WorldContext))->ResetScaledDeltaTime(Group);
+			UCsManager_Time::Get(GetContextRootChecked(Context, ContextObject))->ResetScaledDeltaTime(Group);
 		}
 	}
 }

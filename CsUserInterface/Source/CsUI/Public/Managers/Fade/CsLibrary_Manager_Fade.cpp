@@ -6,7 +6,7 @@
 
 #if WITH_EDITOR
 // Library
-#include "Library/CsLibrary_World.h"
+#include "Game/CsLibrary_GameInstance.h"
 // Game
 #include "Engine/GameInstance.h"
 // World
@@ -30,66 +30,55 @@ namespace NCsFade
 
 	#if WITH_EDITOR
 
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
-
-			UGameInstance* GameInstance = World->GetGameInstance();
-
-			checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName()));
-
-			return GameInstance;
+			return GameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
-
-			if (!World)
-				return nullptr;
-
-			return World->GetGameInstance();
+			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
+		UObject* FLibrary::GetSafeContextRoot(UObject* ContextObject)
 		{
 			using namespace NCsFade::NManager::NLibrary::NCached;
 
 			const FString& Context = Str::GetSafeContextRoot;
 
-			return GetSafeContextRoot(Context, WorldContext, nullptr);
+			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
 
 	#endif // #if WITH_EDITOR
 
-		void FLibrary::CreateFadeWidget(const FString& Context, UObject* WorldContext)
+		void FLibrary::CreateFadeWidget(const FString& Context, UObject* ContextObject)
 		{
-			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
 
 			UCsManager_Fade::Get(ContextRoot)->CreateFadeWidget();
 		}
 
 		#define ParamsType NCsFade::FParams
-		void FLibrary::FadeChecked(const FString& Context, UObject* WorldContext, const ParamsType& Params)
+		void FLibrary::FadeChecked(const FString& Context, UObject* ContextObject, const ParamsType& Params)
 		{
 		#undef ParamsType
 
-			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
 
 			UCsManager_Fade::Get(ContextRoot)->Fade(Params);
 		}
 
 		#define ParamsType NCsFade::FParams
-		void FLibrary::SafeFade(UObject* WorldContext, const ParamsType& Params)
+		void FLibrary::SafeFade(UObject* ContextObject, const ParamsType& Params)
 		{
 		#undef ParamsType
 
 		#if WITH_EDITOR
-			if (UObject* ContextRoot = GetSafeContextRoot(WorldContext))
+			if (UObject* ContextRoot = GetSafeContextRoot(ContextObject))
 			{
 				UCsManager_Fade::Get(ContextRoot)->SafeFade(Params);
 			}
@@ -98,16 +87,16 @@ namespace NCsFade
 		#endif // #if WITH_EDITOR
 		}
 
-		void FLibrary::StopFadeChecked(const FString& Context, UObject* WorldContext)
+		void FLibrary::StopFadeChecked(const FString& Context, UObject* ContextObject)
 		{
-			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
 
 			UCsManager_Fade::Get(ContextRoot)->StopFade();
 		}
 
-		void FLibrary::ClearFadeChecked(const FString& Context, UObject* WorldContext)
+		void FLibrary::ClearFadeChecked(const FString& Context, UObject* ContextObject)
 		{
-			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
 
 			UCsManager_Fade::Get(ContextRoot)->ClearFade();
 		}

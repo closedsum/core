@@ -299,6 +299,8 @@ bool FCsFXParameterVector::IsValid(const FString& Context, void(*Log)(const FStr
 // FCsFX
 #pragma region
 
+const FCsFX FCsFX::Invalid;
+
 bool FCsFX::IsValidChecked(const FString& Context) const
 {
 	// Check FX is Valid.

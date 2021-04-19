@@ -611,6 +611,10 @@ struct CSCORE_API FCsFX
 
 public:
 
+	static const FCsFX Invalid;
+
+public:
+
 	/** Soft reference to an FX System. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<UNiagaraSystem> FX;

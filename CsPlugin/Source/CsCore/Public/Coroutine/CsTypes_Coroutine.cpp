@@ -551,5 +551,3 @@ namespace NCsCoroutine
 		#pragma endregion FImpl
 	}
 }
-
-const FCsRoutineHandle FCsRoutineHandle::Invalid;

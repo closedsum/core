@@ -62,6 +62,7 @@ namespace NCsGameInstance
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName())));
 				return nullptr;
 			}
+			return GameInstance;
 		}
 
 		UGameInstance* GameInstance = Cast<UGameInstance>(ContextObject);

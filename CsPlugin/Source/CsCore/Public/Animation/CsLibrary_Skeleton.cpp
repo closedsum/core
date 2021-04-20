@@ -2,6 +2,8 @@
 #include "Animation/CsLibrary_Skeleton.h"
 #include "CsCore.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Mesh
 #include "Engine/SkeletalMesh.h"
 // Animation
@@ -14,9 +16,9 @@ namespace NCsSkeleton
 	bool FLibrary::IsValidChecked(const FString& Context, USkeletalMesh* Mesh, UAnimationAsset* Anim)
 	{
 		// Check Mesh is Valid
-		checkf(Mesh, TEXT("%s: Mesh is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(Mesh)
 		// Check Anim is Valid
-		checkf(Anim, TEXT("%s: Anim is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(Anim)
 		// Check Anim's Skeleton is Valid
 		const USkeleton* AnimSkeleton = Anim->GetSkeleton();
 
@@ -31,17 +33,9 @@ namespace NCsSkeleton
 	bool FLibrary::IsValid(const FString& Context, USkeletalMesh* Mesh, UAnimationAsset* Anim, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check Mesh is Valid
-		if (!Mesh)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh is NULL."), *Context));
-			return false;
-		}
+		CS_IS_PTR_NULL(Mesh)
 		// Check Anim is Valid
-		if (!Anim)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Anim is NULL."), *Context));
-			return false;
-		}
+		CS_IS_PTR_NULL(Anim)
 		// Check Anim's Skeleton is Valid
 		const USkeleton* AnimSkeleton = Anim->GetSkeleton();
 
@@ -68,9 +62,9 @@ namespace NCsSkeleton
 	bool FLibrary::IsValidChecked(const FString& Context, USkeletalMesh* Mesh, UClass* AnimClass)
 	{
 		// Check Mesh is Valid
-		checkf(Mesh, TEXT("%s: Mesh is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(Mesh)
 		// Check AnimClass is Valid
-		checkf(AnimClass, TEXT("%s: AnimClass is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(AnimClass)
 		// Check AnimClass implements the interface: IAnimClassInterface
 		IAnimClassInterface* AnimClassInterface = IAnimClassInterface::GetFromClass(AnimClass);
 
@@ -90,17 +84,9 @@ namespace NCsSkeleton
 	bool FLibrary::IsValid(const FString& Context, USkeletalMesh* Mesh, UClass* AnimClass, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check Mesh is Valid
-		if (!Mesh)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh is NULL."), *Context));
-			return false;
-		}
+		CS_IS_PTR_NULL(Mesh)
 		// Check AnimClass is Valid
-		if (!AnimClass)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: AnimClass is NULL."), *Context));
-			return false;
-		}
+		CS_IS_PTR_NULL(AnimClass)
 		// Check AnimClass implements the interface: IAnimClassInterface
 		IAnimClassInterface* AnimClassInterface = IAnimClassInterface::GetFromClass(AnimClass);
 
@@ -135,9 +121,9 @@ namespace NCsSkeleton
 	bool FLibrary::IsValidChecked(const FString& Context, UClass* AnimClass, UAnimationAsset* Anim)
 	{
 		// Check AnimClass is Valid
-		checkf(AnimClass, TEXT("%s: Anim is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(AnimClass)
 		// Check Anim is Valid
-		checkf(Anim, TEXT("%s: Anim is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(Anim)
 		// Check AnimClass implements the interface: IAnimClassInterface
 		IAnimClassInterface* AnimClassInterface = IAnimClassInterface::GetFromClass(AnimClass);
 
@@ -160,17 +146,9 @@ namespace NCsSkeleton
 	bool FLibrary::IsValid(const FString& Context, UClass* AnimClass, UAnimationAsset* Anim, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check AnimClass is Valid
-		if (!AnimClass)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: AnimClass is NULL."), *Context));
-			return false;
-		}
+		CS_IS_PTR_NULL(AnimClass)
 		// Check Anim is Valid
-		if (!Anim)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Anim is NULL."), *Context));
-			return false;
-		}
+		CS_IS_PTR_NULL(Anim)
 		// Check AnimClass implements the interface: IAnimClassInterface
 		IAnimClassInterface* AnimClassInterface = IAnimClassInterface::GetFromClass(AnimClass);
 

@@ -60,7 +60,7 @@ namespace NCsAnim
 						{
 						}
 
-						bool IsValidChecked(const FString& ContextName) const;
+						bool IsValidChecked(const FString& Context) const;
 
 						void Reset()
 						{
@@ -136,7 +136,7 @@ namespace NCsAnim
 						{
 						}
 
-						bool IsValidChecked(const FString& ContextName) const;
+						bool IsValidChecked(const FString& Context) const;
 
 						void Reset()
 						{

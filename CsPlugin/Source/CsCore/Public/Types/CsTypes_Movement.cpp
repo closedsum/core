@@ -5,6 +5,7 @@
 // Library
 #include "Library/CsLibrary_Math.h"
 #include "Actor/CsLibrary_Actor.h"
+#include "Library/CsLibrary_Valid.h"
 // Curve
 #include "Curves/CurveFloat.h"
 // Components
@@ -533,14 +534,14 @@ namespace NCsMovement
 					{
 						checkf(!GetToMeshComponent(), TEXT("%s: ToMeshComponent is NOT set."), *Context);
 
-						checkf(GetToBone() != NAME_None, TEXT("%s: ToBone: None is NOT Valid."), *Context);
+						CS_IS_NAME_NONE_CHECKED(GetToBone());
 
 						const int32 BoneIndex = GetToMeshComponent()->GetBoneIndex(ToBone);
 
 						checkf(BoneIndex != INDEX_NONE, TEXT("%s: ToMeshComponent: %s does NOT contain ToBone: %s."), *Context, *(GetToMeshComponent()->GetName()), *(GetToBone().ToString()));
 					}
 					// Check Time is Valid
-					checkf(GetTime() >= 0.0f, TEXT("%s: Time: %f is NOT >= 0.0f."), *Context, GetTime());
+					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetTime(), 0.0f)
 					// Check Group is Valid
 					EMCsUpdateGroup::Get().IsValidEnumChecked(Context, GetGroup());
 					return true;
@@ -616,11 +617,7 @@ namespace NCsMovement
 							return false;
 						}
 
-						if (GetToBone() == NAME_None)
-						{
-							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ToBone: None is NOT Valid."), *Context));
-							return false;
-						}
+						CS_IS_NAME_NONE(GetToBone())
 
 						const int32 BoneIndex = GetToMeshComponent()->GetBoneIndex(ToBone);
 
@@ -631,17 +628,9 @@ namespace NCsMovement
 						}
 					}
 					// Check Time is Valid
-					if (GetTime() < 0.0f)
-					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetTime(): %f is NOT >= 0.0f."), *Context, GetTime()));
-						return false;
-					}
+					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetTime(), 0.0f)
 					// Check Group is Valid
-					if (!EMCsUpdateGroup::Get().IsValidEnum(GetGroup()))
-					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetGroup(): %s is NOT Valid."), *Context, GetGroup().ToChar()));
-						return false;
-					}
+					CS_IS_ENUM_STRUCT_IS_VALID(EMCsUpdateGroup, FECsUpdateGroup, GetGroup())
 					return true;
 				}
 
@@ -654,13 +643,13 @@ namespace NCsMovement
 						return GetToLocation();
 					// Actor
 					if (GetDestination() == DestinationType::Actor)
-						return GetToActor()->GetActorLocation();
+						return GetToActor()->GetActorLocation() + GetToLocation();
 					// Component
 					if (GetDestination() == DestinationType::Component)
-						return GetToComponent()->GetComponentLocation();
+						return GetToComponent()->GetComponentLocation() + GetToLocation();
 					// Bone
 					if (GetDestination() == DestinationType::Bone)
-						return GetToMeshComponent()->GetBoneLocation(GetToBone());
+						return GetToMeshComponent()->GetBoneLocation(GetToBone()) + GetToLocation();
 
 					typedef NCsMovement::EMDestination DestinationMapType;
 

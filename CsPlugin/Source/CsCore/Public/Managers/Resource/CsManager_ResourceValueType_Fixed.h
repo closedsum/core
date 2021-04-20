@@ -414,6 +414,12 @@ public:
 		return false;
 	}
 
+	FORCEINLINE bool ContainsChecked(const FString& Context, const ResourceType* Resource) const
+	{
+		checkf(Contains(Resource), TEXT("%s: Resource is NOT apart of %s."), *Context, *Name);
+		return true;
+	}
+
 	bool Contains(const ResourceContainerType* ResourceContainer) const
 	{
 		checkf(ResourceContainer, TEXT("%s::Contains: ResourceContainer is NULL."), *Name);
@@ -424,6 +430,12 @@ public:
 			return false;
 
 		return Pool[Index] == ResourceContainer;
+	}
+
+	FORCEINLINE bool ContainsChecked(const FString& Context, const ResourceContainerType* ResourceContainer) const
+	{
+		checkf(Contains(ResourceContainer), TEXT("%s: ResourceContainer is NOT apart of %s."), *Context, *Name);
+		return true;
 	}
 
 #pragma endregion Pool

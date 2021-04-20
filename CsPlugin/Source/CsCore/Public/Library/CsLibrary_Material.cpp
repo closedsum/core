@@ -6,6 +6,7 @@
 #include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Object.h"
+#include "Library/CsLibrary_Valid.h"
 // Mesh
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -47,7 +48,8 @@ namespace NCsMaterial
 
 	bool FLibrary::IsValidChecked(const FString& Context, const TArray<UMaterialInterface*>& Materials)
 	{
-		checkf(Materials.Num() > CS_EMPTY, TEXT("%s: Materials.Num() is NOT > 0."), *Context);
+		// Check Materials is Valid
+		CS_IS_ARRAY_EMPTY_CHECKED(Materials, UMaterialInterface*)
 
 		const int32 Count = Materials.Num();
 
@@ -60,11 +62,8 @@ namespace NCsMaterial
 
 	bool FLibrary::IsValid(const FString& Context, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (Materials.Num() == CS_EMPTY)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Materials.Num() is NOT > 0."), *Context));
-			return false;
-		}
+		// Check Materials is Valid
+		CS_IS_ARRAY_EMPTY(Materials, UMaterialInterface*)
 
 		const int32 Count = Materials.Num();
 
@@ -81,7 +80,8 @@ namespace NCsMaterial
 
 	bool FLibrary::IsValidChecked(const FString& Context, USkeletalMesh* Mesh, const TArray<UMaterialInterface*>& Materials)
 	{
-		checkf(Mesh, TEXT("%s: Mesh is NULL."), *Context);
+		// Check Mesh is Valid
+		CS_IS_PTR_NULL_CHECKED(Mesh)
 
 		const int32 Count		  = Mesh->Materials.Num();
 		const int32 MaterialCount = Materials.Num();
@@ -95,11 +95,8 @@ namespace NCsMaterial
 
 	bool FLibrary::IsValid(const FString& Context, USkeletalMesh* Mesh, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!Mesh)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh is NULL."), *Context));
-			return false;
-		}
+		// Check Mesh is Valid
+		CS_IS_PTR_NULL(Mesh)
 
 		const int32 Count		  = Mesh->Materials.Num();
 		const int32 MaterialCount = Materials.Num();
@@ -117,11 +114,12 @@ namespace NCsMaterial
 
 	void FLibrary::SetChecked(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index)
 	{
-		checkf(Component, TEXT("%s: Component is NULL."), *Context);
-
-		checkf(Material, TEXT("%s: Material is NULL."), *Context);
-
-		checkf(Index > INDEX_NONE, TEXT("%s: Index: %d is NOT >= 0."), *Context, Index);
+		// Check Component is Valid
+		CS_IS_PTR_NULL_CHECKED(Component)
+		// Check Material is Valid
+		CS_IS_PTR_NULL_CHECKED(Material)
+		// Check Index is Valid
+		CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
 
 		checkf(Index < Component->GetNumMaterials(), TEXT("%s: Index: %d is NOT Valid for Component: %s with %d Material Slots."), *Context, Index, *(Component->GetName()), Component->GetNumMaterials());
 
@@ -130,23 +128,12 @@ namespace NCsMaterial
 
 	void FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!Component)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Component is NULL."), *Context));
-			return;
-		}
-
-		if (!Material)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Material is NULL."), *Context));
-			return;
-		}
-
-		if (Index <= 0)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Index: %d is NOT >= 0."), *Context, Index));
-			return;
-		}
+		// Check Component is Valid
+		CS_IS_PTR_NULL_EXIT(Component)
+		// Check Material is Valid
+		CS_IS_PTR_NULL_EXIT(Material)
+		// Check Index is Valid
+		CS_IS_INT_GREATER_THAN_OR_EQUAL_EXIT(Index, 0)
 
 		if (Index >= Component->GetNumMaterials())
 		{
@@ -167,7 +154,8 @@ namespace NCsMaterial
 
 	void FLibrary::SetChecked(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials)
 	{
-		checkf(Component, TEXT("%s: Component is NULL."), *Context);
+		// Check Component is Valid
+		CS_IS_PTR_NULL_CHECKED(Component)
 
 		const int32 Count		  = Component->GetNumMaterials();
 		const int32 MaterialCount = Materials.Num();
@@ -186,11 +174,8 @@ namespace NCsMaterial
 
 	void FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!Component)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Component is NULL."), *Context));
-			return;
-		}
+		// Check Component is Valid
+		CS_IS_PTR_NULL_EXIT(Component)
 
 		const int32 Count		  = Component->GetNumMaterials();
 		const int32 MaterialCount = Materials.Num();
@@ -277,7 +262,8 @@ namespace NCsMaterial
 
 	void FLibrary::SetChecked(const FString& Context, UStaticMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
 	{
-		checkf(Mesh, TEXT("%s: Mesh is NULL."), *Context);
+		// Check Mesh is Valid
+		CS_IS_PTR_NULL_CHECKED(Mesh)
 
 		const int32 Count		  = Mesh->GetStaticMesh()->StaticMaterials.Num();
 		const int32 MaterialCount = Materials.Num();
@@ -338,7 +324,8 @@ namespace NCsMaterial
 
 	void FLibrary::SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
 	{
-		checkf(Mesh, TEXT("%s: Mesh is NULL."), *Context);
+		// Check Mesh is Valid
+		CS_IS_PTR_NULL_CHECKED(Mesh)
 
 		const int32 Count		  = Mesh->SkeletalMesh->Materials.Num();
 		const int32 MaterialCount = Materials.Num();
@@ -520,7 +507,8 @@ namespace NCsMaterial
 
 		void FLibrary::SetChecked(const FString& Context, UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs)
 		{
-			checkf(Mesh, TEXT("%s: Mesh is NULL."), *Context);
+			// Check Mesh is Valid
+			CS_IS_PTR_NULL_CHECKED(Mesh)
 
 			check(IsValidChecked(Context, MIDs));
 
@@ -555,7 +543,8 @@ namespace NCsMaterial
 
 		void FLibrary::SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs)
 		{
-			checkf(Mesh, TEXT("%s: Mesh is NULL."), *Context);
+			// Check Mesh is Valid
+			CS_IS_PTR_NULL_CHECKED(Mesh)
 
 			check(IsValidChecked(Context, MIDs));
 
@@ -585,9 +574,10 @@ namespace NCsMaterial
 
 		bool FLibrary::IsScalarParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
 		{
-			checkf(MID, TEXT("%s: MID is NULL."), *Context);
-
-			checkf(ParamName != NAME_None, TEXT("%s: ParamName: None is NOT Valid."), *Context);
+			// Check MID is Valid
+			CS_IS_PTR_NULL_CHECKED(MID)
+			// Check ParamName is Valid
+			CS_IS_NAME_NONE_CHECKED(ParamName)
 
 			// MaterialInstance
 			if (UMaterialInstance* MI = Cast<UMaterialInstance>(MID->Parent))
@@ -623,17 +613,10 @@ namespace NCsMaterial
 
 		bool FLibrary::IsScalarParameterValid(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!MID)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: MID is NULL."), *Context));
-				return false;
-			}
-
-			if (ParamName == NAME_None)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ParamName: None is NOT Valid."), *Context));
-				return false;
-			}
+			// Check MID is Valid
+			CS_IS_PTR_NULL(MID)
+			// Check ParamName is Valid
+			CS_IS_NAME_NONE(ParamName)
 
 			// MaterialInstance
 			if (UMaterialInstance* MI = Cast<UMaterialInstance>(MID->Parent))
@@ -683,9 +666,10 @@ namespace NCsMaterial
 			MID->SetScalarParameterValue(ParamName, Value);
 		}
 
-		void FLibrary::SetScalarParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*> MIDs, const FName& ParamName, const float& Value)
+		void FLibrary::SetScalarParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value)
 		{
-			checkf(MIDs.Num() > CS_EMPTY, TEXT("%s: MIDs is EMPTY."), *Context);
+			// Check MIDs is Valid
+			CS_IS_ARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
 
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
@@ -712,11 +696,8 @@ namespace NCsMaterial
 
 		void FLibrary::SetSafeScalarParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (MIDs.Num() == CS_EMPTY)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: MIDs is EMPTY."), *Context));
-				return;
-			}
+			// Check MIDs is Valid
+			CS_IS_ARRAY_EMPTY_EXIT(MIDs, UMaterialInstanceDynamic*)
 
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
@@ -747,9 +728,10 @@ namespace NCsMaterial
 
 		bool FLibrary::IsVectorParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
 		{
-			checkf(MID, TEXT("%s: MID is NULL."), *Context);
-
-			checkf(ParamName != NAME_None, TEXT("%s: ParamName: None is NOT Valid."), *Context);
+			// Check MID is Valid
+			CS_IS_PTR_NULL_CHECKED(MID)
+			// Check ParamName is Valid
+			CS_IS_NAME_NONE_CHECKED(ParamName)
 
 			// MaterialInstance
 			if (UMaterialInstance* MI = Cast<UMaterialInstance>(MID->Parent))
@@ -785,17 +767,10 @@ namespace NCsMaterial
 
 		bool FLibrary::IsVectorParameterValid(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!MID)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: MID is NULL."), *Context));
-				return false;
-			}
-
-			if (ParamName == NAME_None)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ParamName: None is NOT Valid."), *Context));
-				return false;
-			}
+			// Check MID is Valid
+			CS_IS_PTR_NULL(MID)
+			// Check ParamName is Valid
+			CS_IS_NAME_NONE(ParamName)
 
 			// MaterialInstance
 			if (UMaterialInstance* MI = Cast<UMaterialInstance>(MID->Parent))
@@ -847,7 +822,8 @@ namespace NCsMaterial
 
 		void FLibrary::SetVectorParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
 		{
-			checkf(MIDs.Num() > CS_EMPTY, TEXT("%s: MIDs is EMPTY."), *Context);
+			// Check MIDs is Valid
+			CS_IS_ARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
 
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
@@ -874,11 +850,8 @@ namespace NCsMaterial
 
 		void FLibrary::SetSafeVectorParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (MIDs.Num() == CS_EMPTY)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: MIDs is EMPTY."), *Context));
-				return;
-			}
+			// Check MIDs is Valid
+			CS_IS_ARRAY_EMPTY_EXIT(MIDs, UMaterialInstanceDynamic*)
 
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
@@ -914,11 +887,8 @@ namespace NCsMaterial
 
 		void FLibrary::SetSafeVectorParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (MIDs.Num() == CS_EMPTY)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: MIDs is EMPTY."), *Context));
-				return;
-			}
+			// Check MIDs is Valid
+			CS_IS_ARRAY_EMPTY_EXIT(MIDs, UMaterialInstanceDynamic*)
 
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{

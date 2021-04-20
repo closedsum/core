@@ -222,6 +222,23 @@ namespace NCsSpawnerPoint
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsSpawnerPoint_MAX;
 }
 
+namespace NCsSpawner
+{
+	namespace NPoint
+	{
+		namespace Ref
+		{
+			typedef EMPoint EnumMapType;
+
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Self);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Transform);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Actor);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Custom);
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EPoint_MAX, "MAX");
+		}
+	}
+}
+
 #pragma endregion SpawnerPoint
 
 // SpawnerPointOrder

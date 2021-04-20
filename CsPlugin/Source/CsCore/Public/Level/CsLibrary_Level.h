@@ -218,6 +218,8 @@ namespace NCsLevel
 		#pragma region
 		public:
 
+			static FString PrintObjectAndClass(ALevelScriptActor* Actor);
+
 			/**
 			* Get the LevelScriptActor from the current Persistent Level.
 			*
@@ -300,7 +302,7 @@ namespace NCsLevel
 
 				if (!Other)
 				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast LevelScriptActor: %s with Class: %s is NOT of type: %s."), *Context, *(Actor->GetName()), *(Actor->GetClass()->GetName()), *(T::StaticClass()->GetName())));
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast %s is NOT of type: %s."), *Context, *PrintObjectAndClass(Actor), *(T::StaticClass()->GetName())));
 				}
 				return Other;
 			}

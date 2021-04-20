@@ -189,8 +189,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsMoveDestination Destination;
 
-	/** World location to move to.
-		Only valid if Destination == DestinationType::Location */
+	/** If Destination == DestinationType::Location,
+			World location to move to.
+		If Destination != DestinationType::Location (Actor, Component, or Bone),
+			Offset from the ToActor or ToComponent. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector ToLocation;
 
@@ -313,8 +315,10 @@ namespace NCsMovement
 					DestinationType Destination;
 					DestinationType* Destination_Emu;
 
-					/** World location to move to.
-						Only valid if Destination == DestinationType::Location */
+					/** If Destination == DestinationType::Location,
+							World location to move to.
+						If Destination != DestinationType::Location (Actor, Component, or Bone), 
+							Offset from the ToActor or ToComponent. */
 					FVector ToLocation;
 					FVector* ToLocation_Emu;
 					

@@ -198,6 +198,41 @@ namespace NCsSpawnerPoint
 	extern CSCORE_API const uint8 MAX;
 }
 
+namespace NCsSpawner
+{
+	enum class EPoint
+	{
+		/** Spawn using the Spawner's Transform */
+		Self,
+		/** Spawn from a predefined list of Transforms */
+		Transform,
+		/** Spawn using the an Actor's Transform */
+		Actor	,
+		/** Spawn using a custom method */
+		Custom,
+		EPoint_MAX
+	};
+
+	struct CSCORE_API EMPoint : public TCsEnumMap<EPoint>
+	{
+		CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMPoint, EPoint)
+	};
+
+	namespace NPoint
+	{
+		namespace Ref
+		{
+			typedef EPoint Type;
+
+			extern CSCORE_API const Type Self;
+			extern CSCORE_API const Type Transform;
+			extern CSCORE_API const Type Actor;
+			extern CSCORE_API const Type Custom;
+			extern CSCORE_API const Type EPoint_MAX;
+		}
+	}
+}
+
 #pragma endregion SpawnerPoint
 
 // SpawnerPointOrder

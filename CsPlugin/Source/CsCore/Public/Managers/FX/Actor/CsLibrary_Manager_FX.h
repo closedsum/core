@@ -56,6 +56,21 @@ namespace NCsFX
 			}
 		#endif // #if WITH_EDITOR
 
+		#if WITH_EDITOR
+			/**
+			* Safely get the Context (Root) for UCsManager_FX from a WorldContext.
+			*
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Context for UCsManager_FX.
+			*/
+			static UObject* GetSafeContextRoot(UObject* WorldContext);
+		#else
+			FORCEINLINE static UObject* GetSafeContextRoot(UObject* WorldContext)
+			{
+				return nullptr;
+			}
+		#endif // #if WITH_EDITOR
+
 		// Spawn
 		#pragma region
 		public:

@@ -291,6 +291,10 @@ namespace NCsFX
 	{
 		using namespace NCsFX::NLibrary::NCached;
 
+		check(Get().Manager_SpawnParams.ContainsChecked(Context, Params));
+
+		check(Params->Get()->IsValidChecked(Context));
+
 		typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 
 		UObject* ContextRoot = CoroutineSchedulerLibrary::GetContextRootChecked(Context, WorldContext);

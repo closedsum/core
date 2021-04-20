@@ -303,7 +303,7 @@ namespace NCsMaterial
 			* @param ParamName	Name of the Scalar Parameter Value to set.
 			* @param Value		The value to set.
 			*/
-			static void SetScalarParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*> MIDs, const FName& ParamName, const float& Value);
+			static void SetScalarParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value);
 
 			/**
 			* Safely set the Scalar Parameter Value with name: ParamName with value Value on MID.

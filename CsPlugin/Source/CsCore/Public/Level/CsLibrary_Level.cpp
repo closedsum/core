@@ -302,8 +302,15 @@ namespace NCsLevel
 			return SafeIsName(Context, WorldContext, MapPackageName, nullptr);
 		}
 
+		#pragma endregion FName
+
 		// LevelScriptActor
 		#pragma region
+
+		FString FLibrary::PrintObjectAndClass(ALevelScriptActor* Actor)
+		{
+			return FString::Printf(TEXT("LevelScriptActor: %s with Class: %s"), *(Actor->GetName()), *(Actor->GetClass()->GetName()));
+		}
 
 		ALevelScriptActor* FLibrary::GetScriptActorChecked(const FString& Context, UWorld* World)
 		{

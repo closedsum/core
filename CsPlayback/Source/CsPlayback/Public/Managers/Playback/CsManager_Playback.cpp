@@ -11,6 +11,8 @@
 #include "Managers/Runnable/CsManager_Runnable.h"
 // Json
 #include  "JsonObjectConverter.h"
+// Level
+#include "Engine/LevelScriptActor.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"

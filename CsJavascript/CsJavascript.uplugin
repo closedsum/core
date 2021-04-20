@@ -10,7 +10,7 @@
 	"DocsURL": "",
 	"MarketplaceURL": "",
 	"SupportURL": "",
-	"EngineVersion": "4.25.0",
+	"EngineVersion": "4.26.0",
 	"CanContainContent": true,
 	"Installed": true,
   "Modules": [
@@ -28,7 +28,11 @@
     {
       "Name": "UnrealJS",
       "Enabled": true,
-      "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/be751eedc4a14cc09e39945bc5a531c4"
+      "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/be751eedc4a14cc09e39945bc5a531c4",
+      "WhitelistPlatforms": [
+        "Win32",
+        "Win64"
+      ]
     }
   ]
 }

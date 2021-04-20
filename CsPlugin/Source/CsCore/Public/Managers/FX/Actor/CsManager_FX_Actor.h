@@ -263,7 +263,7 @@ public:
 	*
 	* return
 	*/
-	TBaseDelegate<FCsFXActorPooled*, const FECsFX&>& GetConstructContainer_Impl();
+	TDelegate<FCsFXActorPooled*(const FECsFX&)>& GetConstructContainer_Impl();
 
 	/**
 	*
@@ -278,7 +278,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsFXActorPooled*, const ConstructParamsType&>& GetOnConstructObject_Event(const FECsFX& Type);
+	TMulticastDelegate<void(const FCsFXActorPooled*, const ConstructParamsType&)>& GetOnConstructObject_Event(const FECsFX& Type);
 
 	/**
 	*

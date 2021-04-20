@@ -456,7 +456,7 @@ void UCsManager_SkeletalMeshActor::CreatePool(const FECsSkeletalMeshActor& Type,
 	Internal.CreatePool(Type, Size);
 }
 
-TBaseDelegate<FCsSkeletalMeshActorPooled*, const FECsSkeletalMeshActor&>& UCsManager_SkeletalMeshActor::GetConstructContainer_Impl()
+TDelegate<FCsSkeletalMeshActorPooled*(const FECsSkeletalMeshActor&)>& UCsManager_SkeletalMeshActor::GetConstructContainer_Impl()
 {
 	return Internal.ConstructContainer_Impl;
 }
@@ -467,7 +467,7 @@ FCsSkeletalMeshActorPooled* UCsManager_SkeletalMeshActor::ConstructContainer(con
 }
 
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-TMulticastDelegate<void, const FCsSkeletalMeshActorPooled*, const ConstructParamsType&>& UCsManager_SkeletalMeshActor::GetOnConstructObject_Event(const FECsSkeletalMeshActor& Type)
+TMulticastDelegate<void(const FCsSkeletalMeshActorPooled*, const ConstructParamsType&)>& UCsManager_SkeletalMeshActor::GetOnConstructObject_Event(const FECsSkeletalMeshActor& Type)
 {
 #undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);

@@ -12,15 +12,6 @@ class CSUI_API UCsWidgetComponent : public UWidgetComponent
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = UserInterface)
-	UUserWidget* GetWidget();
-
-	template<typename T>
-	T* GetWidget()
-	{
-		return Cast<T>(GetWidget());
-	}
-
 	void Show();
 	void Hide();
 

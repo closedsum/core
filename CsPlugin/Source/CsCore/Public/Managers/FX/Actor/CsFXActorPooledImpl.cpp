@@ -464,7 +464,7 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 	{
 		// NOTE: 4.25. Currently there is a BUG at Runtime when calling UNiagaraComponent->SetAsset(nullptr) where
 		//			   some code runs assuming the Asset is valid. The work around is to manually
-		//			   call DestroyInstanc() and then "null" out the Asset member on UNiagaraComponent.
+		//			   call DestroyInstance() and then "null" out the Asset member on UNiagaraComponent.
 #if WITH_EDITOR
 		FX->GetNiagaraComponent()->SetAsset(nullptr);
 #else

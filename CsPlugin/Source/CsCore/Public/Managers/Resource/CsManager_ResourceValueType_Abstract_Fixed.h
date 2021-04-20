@@ -194,7 +194,7 @@ public:
 	*
 	* return Resource
 	*/
-	TBaseDelegate<ResourceType* /*Resource*/> ConstructResourceType_Impl;
+	TDelegate<ResourceType* /*Resource*/()> ConstructResourceType_Impl;
 
 	/**
 	* Creates a pool of resource containers and resources of size PoolSize.

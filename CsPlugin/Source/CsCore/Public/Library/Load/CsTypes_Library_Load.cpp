@@ -21,8 +21,8 @@
 #include "Materials/MaterialInstance.h"
 #include "Materials/MaterialFunction.h"
 // FX
-#include "Particles/ParticleSystem.h"
 #include "NiagaraSystem.h"
+#include "NiagaraEmitter.h"
 // Sound
 #include "Sound/SoundBase.h"
 
@@ -131,10 +131,15 @@ void FCsLibraryLoad_GetObjectPaths::AddPath(const FSoftObjectPath& SoftPath)
 	}
 	// FX
 	else
-	if (Class->IsChildOf<UParticleSystem>() ||
-		Class->IsChildOf<UNiagaraSystem>())
+	if (Class->IsChildOf<UNiagaraSystem>())
 	{
 		PathSets[(uint8)ECsObjectPathDependencyGroup::FX].Add(SoftPath);
+	}
+	// FX - IGNORE. NOTE: 4.26. Niagara Emitter no longer get cooked
+	else
+	if (Class->IsChildOf<UNiagaraEmitter>())
+	{
+		return;
 	}
 	// Sound
 	else

@@ -7,30 +7,25 @@ UCsWidgetComponent::UCsWidgetComponent(const FObjectInitializer& ObjectInitializ
 {
 }
 
-UUserWidget* UCsWidgetComponent::GetWidget()
-{
-	return Widget;
-}
-
 void UCsWidgetComponent::Show()
 {
 	Activate();
 	SetHiddenInGame(false);
 	SetVisibility(true);
 
-	if (Widget)
+	if (GetWidget())
 	{
-		Widget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		Widget->SetIsEnabled(true);
+		GetWidget()->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		GetWidget()->SetIsEnabled(true);
 	}
 }
 
 void UCsWidgetComponent::Hide()
 {
-	if (Widget)
+	if (GetWidget())
 	{
-		Widget->SetIsEnabled(false);
-		Widget->SetVisibility(ESlateVisibility::Collapsed);
+		GetWidget()->SetIsEnabled(false);
+		GetWidget()->SetVisibility(ESlateVisibility::Collapsed);
 	}
 	SetVisibility(false);
 	SetHiddenInGame(true);
@@ -40,12 +35,12 @@ void UCsWidgetComponent::Hide()
 
 void UCsWidgetComponent::Enable()
 {
-	if (Widget)
-		Widget->SetIsEnabled(true);
+	if (GetWidget())
+		GetWidget()->SetIsEnabled(true);
 }
 
 void UCsWidgetComponent::Disable()
 {
-	if (Widget)
-		Widget->SetIsEnabled(false);
+	if (GetWidget())
+		GetWidget()->SetIsEnabled(false);
 }

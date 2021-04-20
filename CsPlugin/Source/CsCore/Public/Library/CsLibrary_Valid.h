@@ -308,6 +308,12 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Enum; \
 		if (!NCsValid::NEnum::NStruct::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return false; } \
 	}
+	// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ENUM_STRUCT_IS_VALID_RET_NULL(__EnumMapType, __EnumType, __Enum) \
+	{ \
+		static const FString __temp__str__ = #__Enum; \
+		if (!NCsValid::NEnum::NStruct::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return nullptr; } \
+	}
 
 // Array
 
@@ -369,6 +375,7 @@ namespace NCsValid
 #define CS_IS_NAME_NONE(__A)
 // EnumStruct
 #define CS_IS_ENUM_STRUCT_IS_VALID(__EnumMapType, __EnumType, __Enum)
+#define CS_IS_ENUM_STRUCT_IS_VALID_RET_NULL(__EnumMapType, __EnumType, __Enum)
 // Array
 #define CS_IS_ARRAY_EMPTY_CHECKED(__Array, __ValueType)
 #define CS_IS_ARRAY_EMPTY(__Array, __ValueType)

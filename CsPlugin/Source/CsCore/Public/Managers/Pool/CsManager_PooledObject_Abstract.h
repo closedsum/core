@@ -401,7 +401,7 @@ namespace NCsPooledObject
 			*
 			* return Container
 			*/
-			TBaseDelegate<InterfaceContainerType*> ConstructContainer_Impl;
+			TDelegate<InterfaceContainerType*()> ConstructContainer_Impl;
 
 		protected:
 
@@ -510,14 +510,14 @@ namespace NCsPooledObject
 			*
 			* return Object
 			*/
-			TBaseDelegate<InterfaceContainerType* /*Object*/, const FConstructParams& /*Params*/> ConstructObject_Impl;
+			TDelegate<InterfaceContainerType* /*Object*/(const FConstructParams& /*Params*/)> ConstructObject_Impl;
 
 			/**
 			*
 			*
 			* @param Object
 			*/
-			TMulticastDelegate<void, const InterfaceContainerType* /*Object*/, const FConstructParams& /*Params*/> OnConstructObject_Event;
+			TMulticastDelegate<void(const InterfaceContainerType* /*Object*/, const FConstructParams& /*Params*/)> OnConstructObject_Event;
 
 			/**
 			* Delete (or mark for deconstruction) a pooled object.
@@ -809,14 +809,14 @@ namespace NCsPooledObject
 			*
 			* @param Object
 			*/
-			TMulticastDelegate<void, const InterfaceContainerType* /*Object*/> OnAddToPool_Event;
+			TMulticastDelegate<void(const InterfaceContainerType* /*Object*/)> OnAddToPool_Event;
 
 			/**
 			* 
 			*
 			* @param Object
 			*/
-			TBaseDelegate<void, InterfaceContainerType* /*Object*/> OnAddToPool_UpdateScriptDelegates_Impl;
+			TDelegate<void(InterfaceContainerType* /*Object*/)> OnAddToPool_UpdateScriptDelegates_Impl;
 
 		#pragma endregion Pool
 
@@ -1358,7 +1358,7 @@ namespace NCsPooledObject
 			*
 			* @param Object
 			*/
-			TMulticastDelegate<void, const InterfaceContainerType* /*Object*/> OnUpdate_Object_Event;
+			TMulticastDelegate<void(const InterfaceContainerType* /*Object*/)> OnUpdate_Object_Event;
 
 		#pragma endregion Update
 
@@ -1522,7 +1522,7 @@ namespace NCsPooledObject
 			*
 			* @param Object
 			*/
-			TMulticastDelegate<void, const InterfaceContainerType* /*Object*/> OnDeallocate_Event;
+			TMulticastDelegate<void(const InterfaceContainerType* /*Object*/)> OnDeallocate_Event;
 
 			/**
 			* Deallocate an Object.
@@ -1636,7 +1636,7 @@ namespace NCsPooledObject
 			*
 			* @param Size
 			*/
-			TBaseDelegate<PayloadType*> ConstructPayload_Impl;
+			TDelegate<PayloadType*()> ConstructPayload_Impl;
 
 			/**
 			*
@@ -1724,9 +1724,9 @@ namespace NCsPooledObject
 		#pragma region
 		public:
 
-			TBaseDelegate<void, const FString& /*Str*/> Log_Impl;
+			TDelegate<void(const FString& /*Str*/)> Log_Impl;
 
-			TBaseDelegate<void, const FString& /*Context*/, const ECsPoolTransaction& /*Transaction*/, const InterfaceContainerType* /*Object*/> LogTransaction_Impl;
+			TDelegate<void(const FString& /*Context*/, const ECsPoolTransaction& /*Transaction*/, const InterfaceContainerType* /*Object*/)> LogTransaction_Impl;
 
 		protected:
 
@@ -1806,7 +1806,7 @@ namespace NCsPooledObject
 			*
 			* @param Object
 			*/
-			TMulticastDelegate<void, const InterfaceContainerType* /*Object*/> OnSpawn_Event;
+			TMulticastDelegate<void(const InterfaceContainerType* /*Object*/)> OnSpawn_Event;
 
 		#pragma endregion Spawn
 

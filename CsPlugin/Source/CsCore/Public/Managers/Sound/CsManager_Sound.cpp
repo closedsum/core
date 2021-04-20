@@ -534,7 +534,7 @@ void UCsManager_Sound::CreatePool(const FECsSound& Type, const int32& Size)
 	Internal.CreatePool(Type, Size);
 }
 
-TBaseDelegate<FCsSoundPooled*, const FECsSound&>& UCsManager_Sound::GetConstructContainer_Impl()
+TDelegate<FCsSoundPooled*(const FECsSound&)>& UCsManager_Sound::GetConstructContainer_Impl()
 {
 	return Internal.ConstructContainer_Impl;
 }
@@ -545,7 +545,7 @@ FCsSoundPooled* UCsManager_Sound::ConstructContainer(const FECsSound& Type)
 }
 
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-TMulticastDelegate<void, const FCsSoundPooled*, const ConstructParamsType&>& UCsManager_Sound::GetOnConstructObject_Event(const FECsSound& Type)
+TMulticastDelegate<void(const FCsSoundPooled*, const ConstructParamsType&)>& UCsManager_Sound::GetOnConstructObject_Event(const FECsSound& Type)
 {
 #undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);

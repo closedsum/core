@@ -15,6 +15,7 @@ public class CsJs : ModuleRules
                     "CoreUObject",
                     "Engine",
                     "AssetRegistry",
+                    "DeveloperSettings",
                     "CsCore",
                 }
             );

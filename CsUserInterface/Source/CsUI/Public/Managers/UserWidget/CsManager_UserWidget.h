@@ -261,7 +261,7 @@ public:
 	*
 	* return
 	*/
-	TBaseDelegate<FCsUserWidgetPooled*, const FECsUserWidgetPooled&>& GetConstructContainer_Impl();
+	TDelegate<FCsUserWidgetPooled*(const FECsUserWidgetPooled&)>& GetConstructContainer_Impl();
 
 	/**
 	*
@@ -276,7 +276,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsUserWidgetPooled*, const ConstructParamsType&>& GetOnConstructObject_Event(const FECsUserWidgetPooled& Type);
+	TMulticastDelegate<void(const FCsUserWidgetPooled*, const ConstructParamsType&)>& GetOnConstructObject_Event(const FECsUserWidgetPooled& Type);
 
 	/**
 	*

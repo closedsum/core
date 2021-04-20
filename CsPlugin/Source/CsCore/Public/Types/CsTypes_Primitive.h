@@ -75,7 +75,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Property bool")
 	bool IsDirty;
 public:
-	TMulticastDelegate<void, const bool&> OnChange_Event;
+	TMulticastDelegate<void(const bool&)> OnChange_Event;
 
 public:
 	FCsBpProperty_bool() :

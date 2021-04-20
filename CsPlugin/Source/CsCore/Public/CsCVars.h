@@ -154,7 +154,7 @@ public:
 protected:
 	bool bDirty;
 public:
-	TMulticastDelegate<void, const ValueType&> OnChange_Event;
+	TMulticastDelegate<void(const ValueType&)> OnChange_Event;
 
 public:
 	TCsAutoConsoleVariable()

@@ -607,7 +607,7 @@ void UCsManager_FX_Actor::CreatePool(const FECsFX& Type, const int32& Size)
 	Internal.CreatePool(Type, Size);
 }
 
-TBaseDelegate<FCsFXActorPooled*, const FECsFX&>& UCsManager_FX_Actor::GetConstructContainer_Impl()
+TDelegate<FCsFXActorPooled*(const FECsFX&)>& UCsManager_FX_Actor::GetConstructContainer_Impl()
 {
 	return Internal.ConstructContainer_Impl;
 }
@@ -618,7 +618,7 @@ FCsFXActorPooled* UCsManager_FX_Actor::ConstructContainer(const FECsFX& Type)
 }
 
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-TMulticastDelegate<void, const FCsFXActorPooled*, const ConstructParamsType&>& UCsManager_FX_Actor::GetOnConstructObject_Event(const FECsFX& Type)
+TMulticastDelegate<void(const FCsFXActorPooled*, const ConstructParamsType&)>& UCsManager_FX_Actor::GetOnConstructObject_Event(const FECsFX& Type)
 {
 #undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);

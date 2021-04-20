@@ -18,8 +18,8 @@ protected:
 
 	bool IsDirtys[SIZE];
 public:
-	TMulticastDelegate<void, const ValueType&> OnChange_Event;
-	TMulticastDelegate<void, const int32&, const ValueType&> OnChangeEX_Event;
+	TMulticastDelegate<void(const ValueType&)> OnChange_Event;
+	TMulticastDelegate<void(const int32&, const ValueType&)> OnChangeEX_Event;
 
 public:
 

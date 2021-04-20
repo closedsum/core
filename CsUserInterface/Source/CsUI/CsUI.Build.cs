@@ -15,6 +15,7 @@ public class CsUI : ModuleRules
                     "CoreUObject",
                     "Engine",
                     "AssetRegistry",
+                    "DeveloperSettings",
                     "CsCore",
                     "UMG",
                     "SlateCore"

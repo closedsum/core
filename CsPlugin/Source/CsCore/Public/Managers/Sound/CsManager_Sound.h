@@ -207,7 +207,7 @@ public:
 	*
 	* return
 	*/
-	TBaseDelegate<FCsSoundPooled*, const FECsSound&>& GetConstructContainer_Impl();
+	TDelegate<FCsSoundPooled*(const FECsSound&)>& GetConstructContainer_Impl();
 
 	/**
 	*
@@ -222,7 +222,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsSoundPooled*, const ConstructParamsType&>& GetOnConstructObject_Event(const FECsSound& Type);
+	TMulticastDelegate<void(const FCsSoundPooled*, const ConstructParamsType&)>& GetOnConstructObject_Event(const FECsSound& Type);
 
 	/**
 	*

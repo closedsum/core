@@ -196,7 +196,7 @@ public:
 	*
 	* return
 	*/
-	TBaseDelegate<FCsSkeletalMeshActorPooled*, const FECsSkeletalMeshActor&>& GetConstructContainer_Impl();
+	TDelegate<FCsSkeletalMeshActorPooled*(const FECsSkeletalMeshActor&)>& GetConstructContainer_Impl();
 
 	/**
 	*
@@ -211,7 +211,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsSkeletalMeshActorPooled*, const ConstructParamsType&>& GetOnConstructObject_Event(const FECsSkeletalMeshActor& Type);
+	TMulticastDelegate<void(const FCsSkeletalMeshActorPooled*, const ConstructParamsType&)>& GetOnConstructObject_Event(const FECsSkeletalMeshActor& Type);
 
 	/**
 	*

@@ -45,14 +45,14 @@ public:
 
 	TWeakObjectPtr<class UWorld> CurrentWorld;
 
-	TBaseDelegate<ObjectType*> ConstructObject_Call;
+	TDelegate<ObjectType*()> ConstructObject_Call;
 
-	TMulticastDelegate<void, ObjectType*> OnAddToPool_Event;
-	TMulticastDelegate<void, ObjectType*> OnDeAllocate_Event;
+	TMulticastDelegate<void(ObjectType*)> OnAddToPool_Event;
+	TMulticastDelegate<void(ObjectType*)> OnDeAllocate_Event;
 
 	TAutoConsoleVariable<int32>* LogTransactions;
 
-	TBaseDelegate<void, ObjectType*> OnTick_Handle_Object;
+	TDelegate<void(ObjectType*)> OnTick_Handle_Object;
 
 protected:
 	FString FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::ECsManagerPooledObjectsFunctionNames_MAX];
@@ -391,14 +391,14 @@ public:
 
 	TWeakObjectPtr<class UWorld> CurrentWorld;
 
-	TBaseDelegate<ObjectType*, const EnumType&> ConstructObject_Call;
+	TDelegate<ObjectType*(const EnumType&)> ConstructObject_Call;
 
-	TMulticastDelegate<void, const EnumType&, ObjectType*> OnAddToPool_Event;
-	TMulticastDelegate<void, const EnumType&, ObjectType*> OnDeAllocate_Event;
+	TMulticastDelegate<void(const EnumType&, ObjectType*)> OnAddToPool_Event;
+	TMulticastDelegate<void(const EnumType&, ObjectType*)> OnDeAllocate_Event;
 
 	TAutoConsoleVariable<int32>* LogTransactions;
 
-	TBaseDelegate<void, ObjectType*> OnTick_Handle_Object;
+	TDelegate<void(ObjectType*)> OnTick_Handle_Object;
 
 protected:
 	FString FunctionNames[(uint8)ECsManagerPooledObjectsFunctionNames::ECsManagerPooledObjectsFunctionNames_MAX];

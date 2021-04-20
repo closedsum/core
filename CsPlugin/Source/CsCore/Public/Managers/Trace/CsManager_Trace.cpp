@@ -556,13 +556,15 @@ bool UCsManager_Trace::ProcessAsyncRequest(FCsTraceRequest* Request)
 	else
 	if (Type == ECsTraceType::Sweep)
 	{
+		FQuat Quat = Request->Rotation.Quaternion();
+
 		// AsyncSweepByChannel
 		if (Query == ECsTraceQuery::Channel)
-			Request->CopyHandle(CurrentWorld->AsyncSweepByChannel(AsyncTraceType, Start, End, Channel, Shape, Params,  ResponseParam, &TraceDelegate));
+			Request->CopyHandle(CurrentWorld->AsyncSweepByChannel(AsyncTraceType, Start, End, Quat, Channel, Shape, Params,  ResponseParam, &TraceDelegate));
 		// AsyncSweepByObjectType
 		else
 		if (Query == ECsTraceQuery::ObjectType)
-			Request->CopyHandle(CurrentWorld->AsyncSweepByObjectType(AsyncTraceType, Start, End, ObjectParams, Shape, Params, &TraceDelegate));
+			Request->CopyHandle(CurrentWorld->AsyncSweepByObjectType(AsyncTraceType, Start, End, Quat, ObjectParams, Shape, Params, &TraceDelegate));
 		// NOT SUPPORTED
 		else
 		if (Query == ECsTraceQuery::Profile)

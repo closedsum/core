@@ -17,6 +17,8 @@ public class CsCore : ModuleRules
                     "AssetRegistry",
                     "Json",
                     "JsonUtilities",
+                    "DeveloperSettings",
+                    "PhysicsCore",
                     "HeadMountedDisplay",
                     "Niagara",
                 }

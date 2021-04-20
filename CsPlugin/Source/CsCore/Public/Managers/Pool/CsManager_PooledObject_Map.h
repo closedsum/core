@@ -283,7 +283,7 @@ namespace NCsPooledObject
 			* @param Type
 			* return		Event for OnConstructObject for Type.
 			*/
-			FORCEINLINE TMulticastDelegate<void, const InterfaceContainerType*, const FConstructParams&>& GetOnConstructObject_Event(const KeyType& Type)
+			FORCEINLINE TMulticastDelegate<void(const InterfaceContainerType*, const FConstructParams&)>& GetOnConstructObject_Event(const KeyType& Type)
 			{
 				checkf(IsValidKey(Type), TEXT("%s::GetOnConstructObject_Event: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
 
@@ -298,7 +298,7 @@ namespace NCsPooledObject
 			* @param Type
 			* return
 			*/
-			TBaseDelegate<InterfaceContainerType*, const KeyType& /*Type*/> ConstructContainer_Impl;
+			TDelegate<InterfaceContainerType*(const KeyType& /*Type*/)> ConstructContainer_Impl;
 
 		private:
 
@@ -348,7 +348,7 @@ namespace NCsPooledObject
 			* @param Type
 			* return		Object
 			*/
-			TBaseDelegate<ManagerAbstractType* /*Object*/, const KeyType& /*Type*/> ConstructManagerPooledObjects_Impl;
+			TDelegate<ManagerAbstractType* /*Object*/(const KeyType& /*Type*/)> ConstructManagerPooledObjects_Impl;
 
 			/**
 			*
@@ -387,7 +387,7 @@ namespace NCsPooledObject
 			* @param Type
 			* @param Object
 			*/
-			TMulticastDelegate<void, const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/, const FConstructParams& /*Params*/> OnConstructObject_Event;
+			TMulticastDelegate<void(const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/, const FConstructParams& /*Params*/)> OnConstructObject_Event;
 
 		protected:
 
@@ -517,7 +517,7 @@ namespace NCsPooledObject
 			* @param Type
 			* @param Object
 			*/
-			TMulticastDelegate<void, const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/> OnCreatePool_AddToPool_Event;
+			TMulticastDelegate<void(const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/)> OnCreatePool_AddToPool_Event;
 
 		private:
 
@@ -603,7 +603,7 @@ namespace NCsPooledObject
 			* @param Type
 			* @param Object
 			*/
-			TMulticastDelegate<void, const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/> OnAddToPool_Event;
+			TMulticastDelegate<void(const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/)> OnAddToPool_Event;
 
 		#pragma endregion Pool
 
@@ -673,7 +673,7 @@ namespace NCsPooledObject
 			* @param Type
 			* @param Object
 			*/
-			TMulticastDelegate<void, const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/> OnAddToAllocatedObjects_Event;
+			TMulticastDelegate<void(const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/)> OnAddToAllocatedObjects_Event;
 
 		#pragma endregion Allocated Objects
 
@@ -911,7 +911,7 @@ namespace NCsPooledObject
 			*
 			* @param KeyType	Current type of pool.
 			*/
-			TBaseDelegate<void, const KeyType& /*Type*/> OnPreUpdate_Pool_Impl;
+			TDelegate<void(const KeyType& /*Type*/)> OnPreUpdate_Pool_Impl;
 
 			/**
 			* Event called when updating a pooled object.
@@ -919,14 +919,14 @@ namespace NCsPooledObject
 			* @param Type		Current type of pool.
 			* @param Object		Container holding a pooled object.
 			*/
-			TMulticastDelegate<void, const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/> OnUpdate_Object_Event;
+			TMulticastDelegate<void(const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/)> OnUpdate_Object_Event;
 
 			/**
 			* Delegate called after a pool is updated.
 			*
 			* @param KeyType	Current type of pool.
 			*/
-			TBaseDelegate<void, const KeyType& /*Type*/> OnPostUpdate_Pool_Impl;
+			TDelegate<void(const KeyType& /*Type*/)> OnPostUpdate_Pool_Impl;
 
 		private:
 
@@ -986,7 +986,7 @@ namespace NCsPooledObject
 			* @param Type
 			* return
 			*/
-			TBaseDelegate<PayloadType*, const KeyType& /*Type*/> ConstructPayload_Impl;
+			TDelegate<PayloadType*(const KeyType& /*Type*/)> ConstructPayload_Impl;
 
 		private:
 
@@ -1066,9 +1066,9 @@ namespace NCsPooledObject
 		#pragma region
 		public:
 
-			TBaseDelegate<void, const FString& /*Str*/> Log_Impl;
+			TDelegate<void(const FString& /*Str*/)> Log_Impl;
 
-			TBaseDelegate<void, const FString& /*Context*/, const ECsPoolTransaction& /*Transaction*/, const InterfaceContainerType* /*Object*/> LogTransaction_Impl;
+			TDelegate<void(const FString& /*Context*/, const ECsPoolTransaction& /*Transaction*/, const InterfaceContainerType* /*Object*/)> LogTransaction_Impl;
 
 		protected:
 
@@ -1112,7 +1112,7 @@ namespace NCsPooledObject
 			* @param Type
 			* @param Object 
 			*/
-			TMulticastDelegate<void, const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/> OnSpawn_Event;
+			TMulticastDelegate<void(const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/)> OnSpawn_Event;
 
 		#pragma endregion Spawn
 
@@ -1281,7 +1281,7 @@ namespace NCsPooledObject
 			* @param Type
 			* @param Object
 			*/
-			TMulticastDelegate<void, const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/> OnDestroy_Event;
+			TMulticastDelegate<void(const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/)> OnDestroy_Event;
 
 		#pragma endregion Destroy
 

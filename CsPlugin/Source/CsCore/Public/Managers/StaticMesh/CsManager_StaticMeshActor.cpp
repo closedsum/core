@@ -418,7 +418,7 @@ void UCsManager_StaticMeshActor::CreatePool(const FECsStaticMeshActor& Type, con
 	Internal.CreatePool(Type, Size);
 }
 
-TBaseDelegate<FCsStaticMeshActorPooled*, const FECsStaticMeshActor&>& UCsManager_StaticMeshActor::GetConstructContainer_Impl()
+TDelegate<FCsStaticMeshActorPooled*(const FECsStaticMeshActor&)>& UCsManager_StaticMeshActor::GetConstructContainer_Impl()
 {
 	return Internal.ConstructContainer_Impl;
 }
@@ -429,7 +429,7 @@ FCsStaticMeshActorPooled* UCsManager_StaticMeshActor::ConstructContainer(const F
 }
 
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-TMulticastDelegate<void, const FCsStaticMeshActorPooled*, const ConstructParamsType&>& UCsManager_StaticMeshActor::GetOnConstructObject_Event(const FECsStaticMeshActor& Type)
+TMulticastDelegate<void(const FCsStaticMeshActorPooled*, const ConstructParamsType&)>& UCsManager_StaticMeshActor::GetOnConstructObject_Event(const FECsStaticMeshActor& Type)
 {
 #undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);

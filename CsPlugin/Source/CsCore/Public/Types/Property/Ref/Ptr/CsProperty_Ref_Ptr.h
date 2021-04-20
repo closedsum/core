@@ -12,7 +12,7 @@ public:
 protected:
 	bool IsDirty;
 public:
-	TMulticastDelegate<void, ClassType*> OnChange_Event;
+	TMulticastDelegate<void(ClassType*)> OnChange_Event;
 
 public:
 	TCsProperty_Ref_Ptr()

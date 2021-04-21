@@ -14,11 +14,25 @@ namespace NCsSkeletalMesh
 	// Load
 	#pragma region
 
+	USkeletalMesh* FLibrary::LoadChecked(const FString& Context, const FSoftObjectPath& Path)
+	{
+		typedef NCsObject::FLibrary ObjectLibrary;
+
+		return ObjectLibrary::LoadChecked<USkeletalMesh>(Context, Path);
+	}
+
 	USkeletalMesh* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		typedef NCsObject::FLibrary ObjectLibrary;
 
 		return ObjectLibrary::SafeLoad<USkeletalMesh>(Context, Path, Log);
+	}
+
+	USkeletalMesh* FLibrary::LoadChecked(const FString& Context, const FString& Path)
+	{
+		typedef NCsObject::FLibrary ObjectLibrary;
+
+		return ObjectLibrary::LoadChecked<USkeletalMesh>(Context, Path);
 	}
 
 	USkeletalMesh* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)

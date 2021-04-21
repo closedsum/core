@@ -322,7 +322,7 @@ void UCsManager_SkeletalMeshActor::SetupInternal()
 	//}
 	//else
 #endif // #if !UE_BUILD_SHIPPING
-		// If any settings have been set for Manager_Creep, apply them
+		// If any settings have been set for Manager_SkeletalMeshActor, apply them
 	{
 		UCsDeveloperSettings* ModuleSettings = GetMutableDefault<UCsDeveloperSettings>();
 

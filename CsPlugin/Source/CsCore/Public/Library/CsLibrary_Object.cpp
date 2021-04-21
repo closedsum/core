@@ -4,6 +4,8 @@
 
 // Types
 #include "Types/CsTypes_Macro.h"
+// Library
+#include "Library/CsLibrary_Valid.h"
 
 namespace NCsObject
 {
@@ -98,13 +100,22 @@ namespace NCsObject
 	// Load
 	#pragma region
 
+	UObject* FLibrary::LoadChecked(const FString& Context, const FSoftObjectPath& Path)
+	{
+		// Check Path is Valid
+		CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(Path)
+
+		UObject* Object = Path.TryLoad();
+
+		checkf(Object, TEXT("%s: Failed to load Object at Path: %s."), *Context, *(Path.ToString()));
+
+		return Object;
+	}
+
 	UObject* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!Path.IsValid())
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path is NOT Valid."), *Context));
-			return nullptr;
-		}
+		// Check Path is Valid
+		CS_IS_SOFT_OBJECT_PATH_VALID_RET_NULL(Path)
 
 		UObject* Object = Path.TryLoad();
 
@@ -116,13 +127,20 @@ namespace NCsObject
 		return Object;
 	}
 
+	UObject* FLibrary::LoadChecked(const FString& Context, const FString& Path)
+	{
+		// Check Path is Valid
+		CS_IS_STRING_EMPTY_CHECKED(Path)
+
+		FSoftObjectPath SoftPath(Path);
+
+		return LoadChecked(Context, SoftPath);
+	}
+
 	UObject* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (Path.IsEmpty())
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path is EMPTY."), *Context));
-			return nullptr;
-		}
+		// Check Path is Valid
+		CS_IS_STRING_EMPTY_RET_NULL(Path)
 
 		FSoftObjectPath SoftPath(Path);
 

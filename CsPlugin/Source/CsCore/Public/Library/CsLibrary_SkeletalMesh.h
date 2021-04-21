@@ -23,18 +23,36 @@ namespace NCsSkeletalMesh
 		*
 		* @param Context	The calling context.
 		* @param Path		SoftObjectPath to the SkeletalMesh to load.
+		* return			SkeletalMesh.
+		*/
+		static USkeletalMesh* LoadChecked(const FString& Context, const FSoftObjectPath& Path);
+
+		/**
+		* Safely load the SkeletalMesh at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		SoftObjectPath to the SkeletalMesh to load.
 		* @param Log
-		* return			NiagaraSystem.
+		* return			SkeletalMesh.
 		*/
 		static USkeletalMesh* SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
-		* Load a SkeletalMesh at the given Path.
+		* Load the SkeletalMesh at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		SoftObjectPath to the SkeletalMesh to load.
+		* return			SkeletalMesh.
+		*/
+		static USkeletalMesh* LoadChecked(const FString& Context, const FString& Path);
+
+		/**
+		* Safely load a SkeletalMesh at the given Path.
 		*
 		* @param Context	The calling context.
 		* @param Path		FString path to the SkeletalMesh to load.
 		* @param Log
-		* return			Material Interface.
+		* return			SkeletalMesh.
 		*/
 		static USkeletalMesh* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
 

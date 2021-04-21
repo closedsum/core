@@ -20,7 +20,7 @@ public:
 	* 
 	* @param Context	The calling context.
 	* @param Path		SoftObjectPath to the SkeletalMesh to load.
-	* return			Material Interface
+	* return			SkeletalMesh
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|SkeletalMesh", meta = (AutoCreateRefTerm = "Context,Path"))
 	static USkeletalMesh* LoadBySoftObjectPath(const FString& Context, const FSoftObjectPath& Path);
@@ -30,7 +30,7 @@ public:
 	* 
 	* @param Context	The calling context.
 	* @parma Path		FString path to the SkeletalMesh to load.
-	* return			Material Interface
+	* return			SkeletalMesh
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|SkeletalMesh", meta = (AutoCreateRefTerm = "Context,Path"))
 	static USkeletalMesh* LoadByStringPath(const FString& Context, const FString& Path);

@@ -14,7 +14,7 @@ struct CSCORE_API FCsSettings_Manager_SkeletalMeshActor_PoolParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsSkeletalMeshActorPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsSkeletalMeshActor"))
 	TSoftClassPtr<UObject> Class;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))

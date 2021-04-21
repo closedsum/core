@@ -137,6 +137,31 @@ namespace NCsValid
 		};
 	}
 
+	namespace NString
+	{
+		struct CSCORE_API FLibrary final
+		{
+		public:
+
+			FORCEINLINE static bool EmptyChecked(const FString& Context, const FString& A, const FString& AName)
+			{
+				checkf(!A.IsEmpty(), TEXT("%s: %s is EMPTY."), *Context, *AName);
+				return true;
+			}
+
+			FORCEINLINE static bool Empty(const FString& Context, const FString& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (A.IsEmpty())
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is EMPTY."), *Context, *AName));
+					return false;
+				}
+				return true;
+			}
+		};
+	}
+
 	namespace NEnum
 	{
 		namespace NStruct
@@ -201,6 +226,31 @@ namespace NCsValid
 				{
 					if (Log)
 						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *PtrName));
+					return false;
+				}
+				return true;
+			}
+		};
+	}
+
+	namespace NSoftObjectPath
+	{
+		struct CSCORE_API FLibrary final
+		{
+		public:
+
+			FORCEINLINE static bool IsValidChecked(const FString& Context, const FSoftObjectPath& A, const FString& AName)
+			{
+				checkf(A.IsValid(), TEXT("%s: %s is NOT Valid."), *Context, *AName);
+				return true;
+			}
+
+			FORCEINLINE static bool IsValid(const FString& Context, const FSoftObjectPath& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (!A.IsValid())
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NOT Valid."), *Context, *AName));
 					return false;
 				}
 				return true;
@@ -300,16 +350,37 @@ namespace NCsValid
 		if (!NCsValid::NName::FLibrary::None(Context, __A, __temp__str__, Log)) { return false; } \
 	}
 
+// FString
+
+// Assume const FString& Context has been defined
+#define CS_IS_STRING_EMPTY_CHECKED(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		check(NCsValid::NString::FLibrary::EmptyChecked(Context, __A, __temp__str__)); \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_STRING_EMPTY(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NString::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_STRING_EMPTY_RET_NULL(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NString::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return nullptr; } \
+	}
+
 // EnumStruct
 
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
-#define CS_IS_ENUM_STRUCT_IS_VALID(__EnumMapType, __EnumType, __Enum) \
+#define CS_IS_ENUM_STRUCT_VALID(__EnumMapType, __EnumType, __Enum) \
 	{ \
 		static const FString __temp__str__ = #__Enum; \
 		if (!NCsValid::NEnum::NStruct::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return false; } \
 	}
 	// Assume const FString& Context and void(Log*)(const FString&) have been defined
-#define CS_IS_ENUM_STRUCT_IS_VALID_RET_NULL(__EnumMapType, __EnumType, __Enum) \
+#define CS_IS_ENUM_STRUCT_VALID_RET_NULL(__EnumMapType, __EnumType, __Enum) \
 	{ \
 		static const FString __temp__str__ = #__Enum; \
 		if (!NCsValid::NEnum::NStruct::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return nullptr; } \
@@ -356,6 +427,27 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Ptr; \
 		if (!NCsValid::NPtr::FLibrary::Null(Context, __Ptr, __temp__str__, Log)) { return; } \
 	}
+
+// FSoftObjectPath
+
+// Assume const FString& Context has been defined
+#define CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		check(NCsValid::NSoftObjectPath::FLibrary::IsValidChecked(Context, __A, __temp__str__)); \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SOFT_OBJECT_PATH_VALID(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NSoftObjectPath::FLibrary::IsValid(Context, __A, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SOFT_OBJECT_PATH_VALID_RET_NULL(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NSoftObjectPath::FLibrary::IsValid(Context, __A, __temp__str__, Log)) { return nullptr; } \
+	}
 #else
 // Int
 #define CS_IS_INT_GREATER_THAN_CHECKED(__A, __B)
@@ -373,9 +465,13 @@ namespace NCsValid
 // FName
 #define CS_IS_NAME_NONE_CHECKED(__A)
 #define CS_IS_NAME_NONE(__A)
+// FString
+#define CS_IS_STRING_EMPTY_CHECKED(__A)
+#define CS_IS_STRING_EMPTY(__A)
+#define CS_IS_STRING_EMPTY_RET_NULL(__A)
 // EnumStruct
-#define CS_IS_ENUM_STRUCT_IS_VALID(__EnumMapType, __EnumType, __Enum)
-#define CS_IS_ENUM_STRUCT_IS_VALID_RET_NULL(__EnumMapType, __EnumType, __Enum)
+#define CS_IS_ENUM_STRUCT_VALID(__EnumMapType, __EnumType, __Enum)
+#define CS_IS_ENUM_STRUCT_VALID_RET_NULL(__EnumMapType, __EnumType, __Enum)
 // Array
 #define CS_IS_ARRAY_EMPTY_CHECKED(__Array, __ValueType)
 #define CS_IS_ARRAY_EMPTY(__Array, __ValueType)
@@ -384,4 +480,8 @@ namespace NCsValid
 #define CS_IS_PTR_NULL_CHECKED(__Ptr)
 #define CS_IS_PTR_NULL(__Ptr)
 #define CS_IS_PTR_NULL_EXIT(__Ptr)
+// FSoftObjectPath
+#define CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(__A)
+#define CS_IS_SOFT_OBJECT_PATH_VALID(__A)
+#define CS_IS_SOFT_OBJECT_PATH_VALID_RET_NULL(__A)
 #endif // #if !UE_BUILD_SHIPPING

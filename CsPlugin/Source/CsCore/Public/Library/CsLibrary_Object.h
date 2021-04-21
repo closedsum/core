@@ -32,13 +32,41 @@ namespace NCsObject
 		*
 		* @param Context	The calling context.
 		* @param Path		SoftObjectPath to the Object to load.
+		* return			Object.
+		*/
+		static UObject* LoadChecked(const FString& Context, const FSoftObjectPath& Path);
+
+		/**
+		* Load a Object of type: T at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		SoftObjectPath to type: T to load.
+		* return			Object of type: T.
+		*/
+		template<typename T>
+		static T* LoadChecked(const FString& Context, const FSoftObjectPath& Path)
+		{
+			UObject* Object = LoadChecked(Context, Path);
+
+			T* Other = Cast<T>(Object);
+
+			checkf(Other, TEXT("%s: Object: %s with Class: %s @ %s is NOT of type: %s."), *Context, *(Object->GetName()), *(Object->GetClass()->GetName()), *(Path.ToString()), *(T::StaticClass()->GetName()));
+
+			return Other;
+		}
+
+		/**
+		* Safely load a Object at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		SoftObjectPath to the Object to load.
 		* @param Log
 		* return			Object.
 		*/
 		static UObject* SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
-		* Load a Object of type: T at the given Path.
+		* Safely load a Object of type: T at the given Path.
 		*
 		* @param Context	The calling context.
 		* @param Path		SoftObjectPath to type: T to load.
@@ -57,7 +85,7 @@ namespace NCsObject
 
 			if (!Other)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object: %s with Class: %s @ %s is NOT of type: %s."), *Context, *(Object->GetName()), *(Object->GetClass()->GetName()), *(T::StaticClass()->GetName())));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object: %s with Class: %s @ %s is NOT of type: %s."), *Context, *(Object->GetName()), *(Object->GetClass()->GetName()), *(Path.ToString()), *(T::StaticClass()->GetName())));
 				return nullptr;
 			}
 			return Other;
@@ -68,13 +96,41 @@ namespace NCsObject
 		*
 		* @param Context	The calling context.
 		* @param Path		FString path to the Object to load.
+		* return			Object.
+		*/
+		static UObject* LoadChecked(const FString& Context, const FString& Path);
+
+		/**
+		* Load a Object of type: T at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		FString path to type: T to load.
+		* return			Object of type: T.
+		*/
+		template<typename T>
+		static T* LoadChecked(const FString& Context, const FString& Path)
+		{
+			UObject* Object = LoadChecked(Context, Path);
+
+			T* Other = Cast<T>(Object);
+
+			checkf(Other, TEXT("%s: Object: %s with Class: %s @ %s is NOT of type: %s."), *Context, *(Object->GetName()), *(Object->GetClass()->GetName()), *Path, *(T::StaticClass()->GetName()));
+
+			return Other;
+		}
+
+		/**
+		* Safely load a Object at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		FString path to the Object to load.
 		* @param Log
 		* return			Object.
 		*/
 		static UObject* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
-		* Load a Object of type: T at the given Path.
+		* Safely load a Object of type: T at the given Path.
 		*
 		* @param Context	The calling context.
 		* @param Path		FString path to type: T to load.

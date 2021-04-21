@@ -630,7 +630,7 @@ namespace NCsMovement
 					// Check Time is Valid
 					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetTime(), 0.0f)
 					// Check Group is Valid
-					CS_IS_ENUM_STRUCT_IS_VALID(EMCsUpdateGroup, FECsUpdateGroup, GetGroup())
+					CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, GetGroup())
 					return true;
 				}
 

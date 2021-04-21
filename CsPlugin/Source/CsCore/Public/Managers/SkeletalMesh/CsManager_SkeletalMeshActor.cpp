@@ -683,7 +683,7 @@ void UCsManager_SkeletalMeshActor::Log(const FString& Str)
 
 void UCsManager_SkeletalMeshActor::LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsSkeletalMeshActorPooled* Object)
 {
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSkeletalMeshActorTransactions))
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerSkeletalMeshActorTransactions))
 	{
 		const FString& TransactionAsString = EMCsPoolTransaction::Get().ToString(Transaction);
 

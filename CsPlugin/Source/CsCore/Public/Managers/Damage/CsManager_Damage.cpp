@@ -840,7 +840,7 @@ void UCsManager_Damage::LogEvent(const EventType* Event)
 
 	DataType* Data = Event->GetData();
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerDamageEvents))
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerDamageEvents))
 	{
 		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::ProcessDamageEvent:"));
 		// Data

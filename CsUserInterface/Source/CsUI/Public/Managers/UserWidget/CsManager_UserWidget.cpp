@@ -683,7 +683,7 @@ void UCsManager_UserWidget::Log(const FString& Str)
 
 void UCsManager_UserWidget::LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsUserWidgetPooled* Object)
 {
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerUserWidgetTransactions))
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerUserWidgetTransactions))
 	{
 		const FString& TransactionAsString = EMCsPoolTransaction::Get().ToString(Transaction);
 

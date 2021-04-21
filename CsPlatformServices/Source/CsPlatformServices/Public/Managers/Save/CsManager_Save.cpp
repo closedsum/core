@@ -15,8 +15,8 @@
 
 #include "Library/CsLibrary_Common.h"
 
-#include "Classes/Engine/World.h"
-#include "Classes/Engine/Engine.h"
+#include "Engine/World.h"
+#include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
 
 // static initializations
@@ -421,7 +421,7 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 			if (Action == ECsSaveAction::ReadAll)
 			{
 #if !UE_BUILD_SHIPPING
-				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+				if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 				{
 					const FString& ProfileName = ProfileNames[(uint8)Profile];
 
@@ -700,7 +700,7 @@ void UCsManager_Save::Enumerate()
 			if (!EnumerateUserFilesState.IsQueued())
 			{
 #if !UE_BUILD_SHIPPING
-				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+				if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 				{
 					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Enumerate: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 				}
@@ -747,7 +747,7 @@ void UCsManager_Save::Enumerate()
 			}
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Enumerate: Enumerating %d Files."), Count);
 			}
@@ -791,7 +791,7 @@ void UCsManager_Save::Enumerate()
 							Info.bValid			 = true;
 
 #if !UE_BUILD_SHIPPING
-							if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+							if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 							{
 								const FString& ProfileName = ProfileNames[(uint8)Profile];
 
@@ -815,7 +815,7 @@ void UCsManager_Save::Enumerate()
 				AllInfo.bValid			= true;
 
 #if !UE_BUILD_SHIPPING
-				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+				if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 				{
 					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Enumerate: %d. %s."), I, *FileNameWithExt);
 				}
@@ -847,7 +847,7 @@ void UCsManager_Save::Enumerate_Internal()
 			const FUniqueNetId& UserId = GetLocalPlayerIdRef();
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Enumerate_Internal: Starting Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
@@ -894,7 +894,7 @@ void UCsManager_Save::Read(const ECsPlayerProfile& Profile, const int32& Index)
 				!EnumerateUserFilesState.IsQueued())
 			{
 #if !UE_BUILD_SHIPPING
-				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+				if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 				{
 					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Read: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 				}
@@ -905,7 +905,7 @@ void UCsManager_Save::Read(const ECsPlayerProfile& Profile, const int32& Index)
 			}
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				const FString& FileNameWithExt = SaveFileInfos[(uint8)Profile][Index].FileNameWithExt;
 				const FString& ProfileName	   = ProfileNames[(uint8)Profile];
@@ -994,7 +994,7 @@ void UCsManager_Save::Read_Internal(FCsSaveActionInfo* ActionInfo)
 				FileInfo.bValid)
 			{
 #if !UE_BUILD_SHIPPING
-				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+				if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 				{
 					const FString& ProfileName = ProfileNames[(uint8)Profile];
 
@@ -1046,7 +1046,7 @@ void UCsManager_Save::ReadAll(const ECsPlayerProfile& Profile)
 				!EnumerateUserFilesState.IsQueued())
 			{
 #if !UE_BUILD_SHIPPING
-				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+				if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 				{
 					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::ReadAll: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 				}
@@ -1057,7 +1057,7 @@ void UCsManager_Save::ReadAll(const ECsPlayerProfile& Profile)
 			}
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				// All Profiles
 				if (Profile == NCsPlayerProfile::AllProfiles)
@@ -1167,7 +1167,7 @@ void UCsManager_Save::ReadAll_Internal(FCsSaveActionInfo* ActionInfo)
 			const FUniqueNetId& UserId = GetLocalPlayerIdRef();
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				if (Profile == NCsPlayerProfile::AllProfiles)
 				{
@@ -1221,7 +1221,7 @@ void UCsManager_Save::ReadAll_Internal(FCsSaveActionInfo* ActionInfo)
 							InfoContainer = ReadInfoContainer;
 
 #if !UE_BUILD_SHIPPING
-							if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+							if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 							{
 								const FString& ProfileName = ProfileNames[(uint8)PlayerProfile];
 
@@ -1284,7 +1284,7 @@ void UCsManager_Save::Write(const ECsPlayerProfile& Profile, const int32& Index)
 			const FUniqueNetId& UserId = GetLocalPlayerIdRef();
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				const FString& FileNameWithExt = SaveFileInfos[(uint8)Profile][Index].FileNameWithExt;
 				const FString& ProfileName	   = ProfileNames[(uint8)Profile];
@@ -1322,7 +1322,7 @@ void UCsManager_Save::Write(const ECsPlayerProfile& Profile, const int32& Index)
 		if (WasSuccessful)
 		{
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				const FString& ProfileName = ProfileNames[(uint8)Profile];
 
@@ -1366,7 +1366,7 @@ void UCsManager_Save::Write_Internal(FCsSaveActionInfo* ActionInfo)
 			// Write then Enumerate
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				const FString& ProfileName = ProfileNames[(uint8)Profile];
 
@@ -1415,7 +1415,7 @@ void UCsManager_Save::WriteAll(const ECsPlayerProfile& Profile)
 			const FUniqueNetId& UserId = GetLocalPlayerIdRef();
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				// All Profiles
 				if (Profile == NCsPlayerProfile::AllProfiles)
@@ -1471,7 +1471,7 @@ void UCsManager_Save::WriteAll(const ECsPlayerProfile& Profile)
 				if (WasSuccessful)
 				{
 #if !UE_BUILD_SHIPPING
-					if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+					if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 					{
 						const FString& ProfileName = ProfileNames[(uint8)Profile];
 
@@ -1515,7 +1515,7 @@ void UCsManager_Save::WriteAll_Internal(FCsSaveActionInfo* ActionInfo)
 			// Queue Write for all Files
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				// All Profiles
 				if (Profile == NCsPlayerProfile::AllProfiles)
@@ -1563,7 +1563,7 @@ void UCsManager_Save::WriteAll_Internal(FCsSaveActionInfo* ActionInfo)
 					InfoContainer = WriteInfoContainer;
 
 #if !UE_BUILD_SHIPPING
-					if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+					if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 					{
 						const FString& ProfileName = ProfileNames[(uint8)PlayerProfile];
 
@@ -1595,7 +1595,7 @@ void UCsManager_Save::WriteAll_Internal(FCsSaveActionInfo* ActionInfo)
 			EnumerateInfo->Action  = ECsSaveAction::Enumerate;
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::WriteAll_Internal: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
@@ -1639,7 +1639,7 @@ void UCsManager_Save::Delete(const ECsPlayerProfile& Profile, const int32& Index
 				!EnumerateUserFilesState.IsQueued())
 			{
 #if !UE_BUILD_SHIPPING
-				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+				if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 				{
 					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Delete: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 				}
@@ -1650,7 +1650,7 @@ void UCsManager_Save::Delete(const ECsPlayerProfile& Profile, const int32& Index
 			}
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				// All Profiles
 				if (Profile == NCsPlayerProfile::AllProfiles)
@@ -1784,7 +1784,7 @@ void UCsManager_Save::Delete_Internal(FCsSaveActionInfo* ActionInfo)
 					}
 
 #if !UE_BUILD_SHIPPING
-					if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+					if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 					{
 						UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Delete_Internal: Starting Delete for File: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 
@@ -1823,7 +1823,7 @@ void UCsManager_Save::Delete_Internal(FCsSaveActionInfo* ActionInfo)
 				ActionInfo->FileIndex = FileIndex;
 
 	#if !UE_BUILD_SHIPPING
-				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+				if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 				{
 					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Delete_Internal: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 
@@ -1864,7 +1864,7 @@ void UCsManager_Save::DeleteAll(const ECsPlayerProfile& Profile)
 				!EnumerateUserFilesState.IsQueued())
 			{
 #if !UE_BUILD_SHIPPING
-				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+				if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 				{
 					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAll: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 				}
@@ -1875,7 +1875,7 @@ void UCsManager_Save::DeleteAll(const ECsPlayerProfile& Profile)
 			}
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				// All Profiles
 				if (Profile == NCsPlayerProfile::AllProfiles)
@@ -1995,7 +1995,7 @@ void UCsManager_Save::DeleteAllContent()
 				!EnumerateUserFilesState.IsQueued())
 			{
 #if !UE_BUILD_SHIPPING
-				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+				if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 				{
 					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAllContent: Queueing Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 				}
@@ -2006,7 +2006,7 @@ void UCsManager_Save::DeleteAllContent()
 			}
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAllContent: Queueing DeleteAll for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
@@ -2092,7 +2092,7 @@ void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
 			// Queue Delete for all Files
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				// All Profiles
 				if (ActionInfo->IsAllProfiles())
@@ -2137,7 +2137,7 @@ void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
 						InfoContainer = DeleteInfoContainer;
 
 #if !UE_BUILD_SHIPPING
-						if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+						if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 						{
 							UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAll_Internal: Queueing Delete for File: %s for Player: %s at %s."), *(FileInfo.FileNameWithExt), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 						}
@@ -2172,7 +2172,7 @@ void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
 						InfoContainer = DeleteInfoContainer;
 
 #if !UE_BUILD_SHIPPING
-						if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+						if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 						{
 							const FString& ProfileName = ProfileNames[(uint8)Profile];
 
@@ -2292,7 +2292,7 @@ void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUn
 		}
 
 #if !UE_BUILD_SHIPPING
-		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+		if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 		{
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: Finished Enumerate for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
 
@@ -2351,7 +2351,7 @@ void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUn
 						Info.bValid			 = true;
 
 	#if !UE_BUILD_SHIPPING
-						if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+						if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 						{
 							const FString& ProfileName = ProfileNames[(uint8)Profile];
 
@@ -2375,7 +2375,7 @@ void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUn
 			AllInfo.bValid			= true;
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
 				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: %d. %s."), I, *(Header.DLName));
 			}
@@ -2441,7 +2441,7 @@ void UCsManager_Save::OnReadUserFileComplete(bool WasSuccessful, const FUniqueNe
 		}
 
 #if !UE_BUILD_SHIPPING
-		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+		if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 		{
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnReadUserFileComplete: Finished Read for File: %s for Profile: %s for Player: %s at %s."), *FileName, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 
@@ -2495,7 +2495,7 @@ void UCsManager_Save::OnWriteUserFileComplete(bool WasSuccessful, const FUniqueN
 		FileInfo.WriteTime = FDateTime::Now();
 
 #if !UE_BUILD_SHIPPING
-		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+		if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 		{
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::OnWriteUserFileComplete: Finished Write for File: %s for Profile: %s for Player: %s at %s."), *FileName, *ProfileName, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
@@ -2547,7 +2547,7 @@ void UCsManager_Save::OnDeleteUserFileComplete(bool WasSuccessful, const FUnique
 		FileInfo.bValid		= false;
 
 #if !UE_BUILD_SHIPPING
-		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSaveTransactions))
+		if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 		{
 			if (ActionInfo->IsAllProfiles())
 			{

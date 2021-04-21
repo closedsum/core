@@ -11,8 +11,8 @@
 
 #include "Library/CsLibrary_Common.h"
 
-#include "Classes/Engine/World.h"
-#include "Classes/Engine/Engine.h"
+#include "Engine/World.h"
+#include "Engine/Engine.h"
 
 #include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR

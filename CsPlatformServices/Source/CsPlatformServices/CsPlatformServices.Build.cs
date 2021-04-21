@@ -7,6 +7,7 @@ public class CsPlatformServices : ModuleRules
     public CsPlatformServices(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        bLegacyPublicIncludePaths = false;
 
         PublicDependencyModuleNames.AddRange(
                 new string[] {
@@ -16,6 +17,7 @@ public class CsPlatformServices : ModuleRules
                     "OnlineSubsystem",
                     "OnlineSubsystemUtils",
                     "AssetRegistry",
+                    "DeveloperSettings",
                     "CsCore",
                 }
             );
@@ -45,13 +47,6 @@ public class CsPlatformServices : ModuleRules
                 }
             );
             */
-        }
-        else
-        {
-            PublicDependencyModuleNames.AddRange(
-                new string[] {
-                }
-            );
         }
     }
 }

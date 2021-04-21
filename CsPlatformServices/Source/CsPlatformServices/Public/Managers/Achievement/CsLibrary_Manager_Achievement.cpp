@@ -8,6 +8,18 @@
 
 #include "Managers/PlayerProfile/CsPlayerProfile.h"
 
+namespace NCsScriptLibraryManagerAchievement
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsLibrary_Manager_Achievement, Complete);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsLibrary_Manager_Achievement, Reset);
+		}
+	}
+}
+
 UCsLibrary_Manager_Achievement::UCsLibrary_Manager_Achievement(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -18,15 +30,19 @@ UCsLibrary_Manager_Achievement::UCsLibrary_Manager_Achievement(const FObjectInit
 
 void UCsLibrary_Manager_Achievement::Complete(const UObject* WorldContextObject, const FECsAchievement& Achievement)
 {
+	using namespace NCsScriptLibraryManagerAchievement::NCached;
+
+	const FString& Context = Str::Complete;
+
 #if WITH_EDITOR
 	if (UCsManager_Achievement* Manager = UCsManager_Achievement::GetFromWorldContextObject(WorldContextObject))
 #else
 	if (UCsManager_Achievement* Manager = UCsManager_Achievement::Get())
 #endif // #if WITH_EDITOR
 	{
-		if (!Manager->IsValid(Achievement))
+		if (!Manager->IsValid(Context, Achievement))
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::Complete: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), *(Achievement.Name));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::Complete: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), Achievement.ToChar());
 			return;
 		}
 
@@ -109,15 +125,19 @@ int32 UCsLibrary_Manager_Achievement::GetNumCompleted(const UObject* WorldContex
 
 void UCsLibrary_Manager_Achievement::Reset(const UObject* WorldContextObject, const FECsAchievement& Achievement, const float& Percent /*= 0*/)
 {
+	using namespace NCsScriptLibraryManagerAchievement::NCached;
+
+	const FString& Context = Str::Reset;
+
 #if WITH_EDITOR
 	if (UCsManager_Achievement* Manager = UCsManager_Achievement::GetFromWorldContextObject(WorldContextObject))
 #else
 	if (UCsManager_Achievement* Manager = UCsManager_Achievement::Get())
 #endif // #if WITH_EDITOR
 	{
-		if (!Manager->IsValid(Achievement))
+		if (!Manager->IsValid(Context, Achievement))
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::Reset: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), *(Achievement.Name));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::Reset: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), Achievement.ToChar());
 			return;
 		}
 

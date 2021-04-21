@@ -824,7 +824,7 @@ void UCsManager_Sound::Log(const FString& Str)
 
 void UCsManager_Sound::LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsSoundPooled* Object)
 {
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerSoundTransactions))
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerSoundTransactions))
 	{
 		const FString& TransactionAsString = EMCsPoolTransaction::Get().ToString(Transaction);
 

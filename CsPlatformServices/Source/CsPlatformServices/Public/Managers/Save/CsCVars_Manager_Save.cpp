@@ -26,14 +26,14 @@ namespace NCsCVarLog
 	// Managers
 
 		// Save
-	CSPLATFORMSERVICES_API CS_CREATE_ENUM_STRUCT(EMCsCVarLog, LogManagerSaveTransactions);
+	CSPLATFORMSERVICES_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogManagerSaveTransactions, "Log Manager Save Transactions");
 
 	namespace Map
 	{
 		// Managers
 
 			// Save
-		CSPLATFORMSERVICES_API CS_ADD_TO_CVAR_MAP(FCsCVarLogMap, LogManagerSaveTransactions, CsCVarLogManagerSaveTransactions);
+		CSPLATFORMSERVICES_API CS_ADD_TO_CVAR_MAP(LogManagerSaveTransactions, CsCVarLogManagerSaveTransactions);
 	}
 }
 

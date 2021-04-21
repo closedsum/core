@@ -552,6 +552,16 @@ public:
 	}
 
 	/**
+	* Get the current resource at the head of the allocated linked list.
+	*
+	* return Allocated Head's Resource.
+	*/
+	FORCEINLINE ResourceType* GetAllocatedResourceHead()
+	{
+		return AllocatedHead ? (**AllocatedHead)->Get() : nullptr;
+	}
+
+	/**
 	* Get the current tail of the active linked list.
 	*
 	* return Active Tail.

@@ -202,7 +202,7 @@ void ACsLevelScriptActor::PopulatePayload(ULevel* Level)
 	//		 since ultimately a hard reference is needed to the asset. Using some
 	//		 sort of "grouping" makes it clearer and easier to use.
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogLevelPayloadPopulate))
+	if (CS_CVAR_LOG_IS_SHOWING(LogLevelPayloadPopulate))
 	{
 		UE_LOG(LogCs, Warning, TEXT("ACsLevelScriptActor::PopulatePayload: Setting up payload for Level: %s."), *(LevelName.ToString()));
 	}
@@ -211,7 +211,7 @@ void ACsLevelScriptActor::PopulatePayload(ULevel* Level)
 	TMap<FName, UDataTable*> OutDataTableMap;
 	UCsLibrary_Load::GetDataTables(Level, OutDataTableMap);
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogLevelPayloadPopulate))
+	if (CS_CVAR_LOG_IS_SHOWING(LogLevelPayloadPopulate))
 	{
 		const int32 Count = OutDataTableMap.Num();
 
@@ -268,7 +268,7 @@ void ACsLevelScriptActor::PopulatePayloadCombined()
 	Payload_Combined.BuildFromMaps();
 	Payload_Combined.Populate();
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogLevelPayloadPopulate))
+	if (CS_CVAR_LOG_IS_SHOWING(LogLevelPayloadPopulate))
 	{
 		UE_LOG(LogCs, Warning, TEXT("ACsLevelScriptActor::PopulatePayloadCombined: %s."), *GetName());
 

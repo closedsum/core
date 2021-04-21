@@ -189,7 +189,7 @@ void ACsSpawnerImpl::Start()
 	checkf(IsParamsValid(Context), TEXT("%s: Params is NOT Valid."), *Context);
 
 #if !UE_BUILD_SHIPPING
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSpawnerTransactions))
+	if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
 	{
 		UE_LOG(LogCs, Warning, TEXT("%s (%s): Starting"), *Context, *(GetName()));
 		LogParams();
@@ -212,7 +212,7 @@ void ACsSpawnerImpl::Start()
 void ACsSpawnerImpl::ACsSpawnerImpl::Stop()
 {
 #if !UE_BUILD_SHIPPING
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSpawnerTransactions))
+	if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
 	{
 		UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::Stop (%s): Stopping"), *(GetName()));
 	}
@@ -250,7 +250,7 @@ void ACsSpawnerImpl::Spawn()
 	}
 
 #if !UE_BUILD_SHIPPING
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSpawnerTransactions))
+	if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
 	{
 		UE_LOG(LogCs, Warning, TEXT("%s (%s): Spawning"), *(GetName()), *Context);
 	}
@@ -336,7 +336,7 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 	CS_COROUTINE_WAIT_UNTIL(R, R->ElapsedTime.Time >= *TotalTime);
 
 #if !UE_BUILD_SHIPPING
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSpawnerTransactions))
+	if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
 	{
 		UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::Start_Internal (%s): Finished Spawning %d Objects."), *(GetName()), CurrentSpawnCount);
 	}
@@ -356,7 +356,7 @@ void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 	const FString& Context = Str::SpawnObjects;
 
 #if !UE_BUILD_SHIPPING
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSpawnerTransactions))
+	if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
 	{
 		static const int32 FROM_SPAWN = -1;
 		
@@ -430,7 +430,7 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 			ElapsedTime.Reset();
 			
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSpawnerTransactions))
+			if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
 			{
 				static const int32 FROM_SPAWN = -1;
 
@@ -471,7 +471,7 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 	OnSpawnObjects_Event.Broadcast(this, Resource->Objects);
 
 #if !UE_BUILD_SHIPPING
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSpawnerTransactions))
+	if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
 	{
 		static const int32 FROM_SPAWN = -1;
 

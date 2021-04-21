@@ -37,7 +37,7 @@ public:
 #if WITH_EDITOR
 	static UCsCoroutineScheduler* Get(UObject* InRoot = nullptr);
 #else
-	static UCsCoroutineScheduler* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static UCsCoroutineScheduler* Get(UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? nullptr : s_Instance;
 	}

@@ -360,7 +360,7 @@ char UCsManager_Level::ChangeMap_Internal(FCsRoutine* R)
 		}
 		/*
 #if !UE_BUILD_SHIPPING
-		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogGameStartup))
+		if (CS_CVAR_LOG_IS_SHOWING(LogGameStartup))
 		{
 			UE_LOG(LogCs, Warning, TEXT("%s: Transition to Shell: %s."), *Context, *URL);
 		}

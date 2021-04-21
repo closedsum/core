@@ -239,7 +239,7 @@ void FCsPayload_DataTable::Populate()
 	const FString StructName    = Struct->GetName();
 	const FString DataTableName = DT->GetName();
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+	if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 	{
 		UE_LOG(LogCs, Warning, TEXT("FCsPayload_DataTable::Populate: %s."), *DataTableName);
 	}
@@ -258,7 +258,7 @@ void FCsPayload_DataTable::Populate()
 		int32 Size = DT->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 		PathAtId.Size.SetBytes(Size);
 
-		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+		if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 		{
 			UE_LOG(LogCs, Warning, TEXT("- Adding Path: %s [%s]."), *(Path.ToString()), *(PathAtId.Size.ToString()));
 		}
@@ -281,7 +281,7 @@ void FCsPayload_DataTable::Populate()
 	FCsLibraryLoad_GetObjectPaths Result;
 	FCsResourceSize Size;
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+	if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 	{
 		if (RowNames.Num() > CS_EMPTY)
 		{
@@ -304,7 +304,7 @@ void FCsPayload_DataTable::Populate()
 		if (Count != CS_EMPTY)
 		{
 			// Log Paths (number and name)
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+			if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 			{
 				UE_LOG(LogCs, Warning, TEXT("-- Row: %s: Found %d Paths."), *RowNameAsString, Count);
 			}
@@ -326,7 +326,7 @@ void FCsPayload_DataTable::Populate()
 				}
 				else
 				{
-					if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+					if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 					{
 						UE_LOG(LogCs, Warning, TEXT("--- Failed to load Path: %s @ %s."), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
 					}
@@ -354,7 +354,7 @@ void FCsPayload_DataTable::Populate()
 
 				PathByRowAtId.Size.SetBytes(Bytes);
 
-				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+				if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 				{
 					UE_LOG(LogCs, Warning, TEXT("---- [%d] [%s] %s @ %s."), I, *(PathAtId.Size.ToString()), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
 				}
@@ -363,7 +363,7 @@ void FCsPayload_DataTable::Populate()
 				++I;
 			}
 
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+			if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 			{
 				UE_LOG(LogCs, Warning, TEXT("--- Total: %s."), *(Size.ToString()));
 			}
@@ -378,7 +378,7 @@ void FCsPayload_DataTable::Populate()
 		Pair.Value.BuildFromSet();
 	}
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+	if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 	{
 		UE_LOG(LogCs, Warning, TEXT("- Summary: Populated %d Paths [%s]."), Paths.Internal.Num(), *(Paths.Size.ToString()));
 	}
@@ -512,7 +512,7 @@ void FCsDataEntry_Data::Populate()
 		if (Size > 0)
 			PathAtId.Size.SetBytes(Size);
 
-		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+		if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 		{
 			UE_LOG(LogCs, Warning, TEXT("- Adding Path: %s [%s]."), *(Path.ToString()), *(PathAtId.Size.ToString()));
 		}
@@ -539,7 +539,7 @@ void FCsDataEntry_Data::Populate()
 		}
 		else
 		{
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+			if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 			{
 				UE_LOG(LogCs, Warning, TEXT("--- Failed to load Path: %s @ %s."), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
 			}
@@ -559,7 +559,7 @@ void FCsDataEntry_Data::Populate()
 		if (Bytes > 0)
 			PathAtId.Size.SetBytes(Bytes);
 
-		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+		if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 		{
 			UE_LOG(LogCs, Warning, TEXT("---- [%d] [%s] %s @ %s."), I, *(PathAtId.Size.ToString()), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
 		}
@@ -571,7 +571,7 @@ void FCsDataEntry_Data::Populate()
 	// Update internal structures for fast search / look up
 	Paths.BuildFromSet();
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+	if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 	{
 		UE_LOG(LogCs, Warning, TEXT("- Summary: Populated %d Paths [%s]."), Paths.Internal.Num(), *(Paths.Size.ToString()));
 	}
@@ -608,7 +608,7 @@ void FCsDataEntry_DataTable::Populate()
 	const FString StructName    = Struct->GetName();
 	const FString DataTableName = DT->GetName();
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+	if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 	{
 		UE_LOG(LogCs, Warning, TEXT("FCsDataEntry_DataTable::Populate: %s."), *DataTableName);
 	}
@@ -630,7 +630,7 @@ void FCsDataEntry_DataTable::Populate()
 		if (Size > 0)
 			PathAtId.Size.SetBytes(Size);
 
-		if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+		if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 		{
 			UE_LOG(LogCs, Warning, TEXT("- Adding Path: %s [%s]."), *(Path.ToString()), *(PathAtId.Size.ToString()));
 		}
@@ -654,7 +654,7 @@ void FCsDataEntry_DataTable::Populate()
 	TArray<FName> Keys;
 	FCsResourceSize Size;
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+	if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 	{
 		if (RowNames.Num() > CS_EMPTY)
 		{
@@ -690,7 +690,7 @@ void FCsDataEntry_DataTable::Populate()
 		if (Count != CS_EMPTY)
 		{
 			// Log Paths (number and name)
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+			if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 			{
 				UE_LOG(LogCs, Warning, TEXT("-- Row: %s: Found %d Paths."), *RowNameAsString, Count);
 			}
@@ -712,7 +712,7 @@ void FCsDataEntry_DataTable::Populate()
 				}
 				else
 				{
-					if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+					if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 					{
 						UE_LOG(LogCs, Warning, TEXT("--- Failed to load Path: %s @ %s."), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
 					}
@@ -740,7 +740,7 @@ void FCsDataEntry_DataTable::Populate()
 				if (Bytes > 0)
 					PathByRowAtId.Size.SetBytes(Bytes);
 
-				if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+				if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 				{
 					UE_LOG(LogCs, Warning, TEXT("---- [%d] [%s] %s @ %s."), I, *(PathAtId.Size.ToString()), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
 				}
@@ -749,7 +749,7 @@ void FCsDataEntry_DataTable::Populate()
 				++I;
 			}
 
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+			if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 			{
 				UE_LOG(LogCs, Warning, TEXT("--- Total: %s."), *(Size.ToString()));
 			}
@@ -764,7 +764,7 @@ void FCsDataEntry_DataTable::Populate()
 		Pair.Value.BuildFromSet();
 	}
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogPayloadPopulate))
+	if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
 	{
 		UE_LOG(LogCs, Warning, TEXT("- Summary: Populated %d Paths [%s]."), Paths.Internal.Num(), *(Paths.Size.ToString()));
 	}

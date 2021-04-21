@@ -291,8 +291,8 @@ void UCsFXActorPooledImpl::Log_SetFXSystem(FXPayloadType* Payload)
 
 	const FString& Context = Str::Handle_SetFXSystem;
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogFXPooledChange) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogFXPooledChangeSet))
+	if (CS_CVAR_LOG_IS_SHOWING(LogFXPooledChange) ||
+		CS_CVAR_LOG_IS_SHOWING(LogFXPooledChangeSet))
 	{
 		UNiagaraComponent* FXComponent = FX->GetNiagaraComponent();
 		UNiagaraSystem* FXSystem	   = Payload->GetFXSystem();
@@ -524,7 +524,7 @@ void UCsFXActorPooledImpl::Handle_ClearAttachAndTransform()
 
 void UCsFXActorPooledImpl::LogChangeCounter()
 {
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogFXPooledChangeCounter))
+	if (CS_CVAR_LOG_IS_SHOWING(LogFXPooledChangeCounter))
 	{
 		typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
 

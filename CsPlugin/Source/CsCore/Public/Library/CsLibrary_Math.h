@@ -6,6 +6,17 @@
 */
 class CSCORE_API FCsLibrary_Math
 {
+// Abs
+#pragma region
+public:
+
+	FORCEINLINE static uint64 GetAbsDelta(const uint64& A, const uint64& B)
+	{
+		return A > B ? A - B : B - A;
+	}
+
+#pragma endregion Abs
+
 public:
 
 	FORCEINLINE static float BytesToKilobytes(const int32& Bytes)

@@ -279,8 +279,8 @@ void ACsSkeletalMeshActorPooledImpl::Log_SetSkeletalMesh(SkeletalMeshPayloadType
 
 	const FString& Context = Str::Handle_SetSkeletalMesh;
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSkeletalMeshActorPooledChange) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSkeletalMeshActorPooledChangeSet))
+	if (CS_CVAR_LOG_IS_SHOWING(LogSkeletalMeshActorPooledChange) ||
+		CS_CVAR_LOG_IS_SHOWING(LogSkeletalMeshActorPooledChangeSet))
 	{
 		USkeletalMesh* Mesh = Payload->GetSkeletalMesh();
 
@@ -375,8 +375,8 @@ void ACsSkeletalMeshActorPooledImpl::Log_SetMaterials(SkeletalMeshPayloadType* P
 
 	const FString& Context = Str::Handle_SetMaterials;
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSkeletalMeshActorPooledChange) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSkeletalMeshActorPooledChangeSet))
+	if (CS_CVAR_LOG_IS_SHOWING(LogSkeletalMeshActorPooledChange) ||
+		CS_CVAR_LOG_IS_SHOWING(LogSkeletalMeshActorPooledChangeSet))
 	{
 		typedef NCsSkeletalMeshActor::NPayload::EChange ChangeType;
 		typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
@@ -645,8 +645,8 @@ void ACsSkeletalMeshActorPooledImpl::Log_SetAnimInstance(ShotType* Shot)
 
 	const FString& Context = Str::Handle_SetAnimInstance;
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSkeletalMeshActorPooledChange) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSkeletalMeshActorPooledChangeSet))
+	if (CS_CVAR_LOG_IS_SHOWING(LogSkeletalMeshActorPooledChange) ||
+		CS_CVAR_LOG_IS_SHOWING(LogSkeletalMeshActorPooledChangeSet))
 	{
 		UClass* Class = Shot->GetClass();
 
@@ -763,7 +763,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_ClearAnimInstance()
 
 void ACsSkeletalMeshActorPooledImpl::LogChangeCounter()
 {
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSkeletalMeshActorPooledChangeCounter))
+	if (CS_CVAR_LOG_IS_SHOWING(LogSkeletalMeshActorPooledChangeCounter))
 	{
 		typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
 

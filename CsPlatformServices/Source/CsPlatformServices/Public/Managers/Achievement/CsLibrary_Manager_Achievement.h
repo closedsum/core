@@ -1,9 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "Runtime/CoreUObject/Public/UObject/Object.h"
+#include "UObject/Object.h"
+// Types
 #include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"
 #include "Managers/Achievement/CsTypes_Achievement.h"
+
 #include "CsLibrary_Manager_Achievement.generated.h"
 
 // Delegates

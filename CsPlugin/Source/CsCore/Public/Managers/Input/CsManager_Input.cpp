@@ -565,11 +565,11 @@ void UCsManager_Input::OnPostProcessInput_LogCaptureMouseInput()
 	FVector MousePosition = FVector::ZeroVector;
 
 	// Location | Location Event Change
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseLocation) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseLocationEventChange))
+	if (CS_CVAR_LOG_IS_SHOWING(LogInputMouseLocation) ||
+		CS_CVAR_LOG_IS_SHOWING(LogInputMouseLocationEventChange))
 	{
-		const bool LogLocation			  = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseLocation);
-		const bool LogLocationEventChange = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseLocationEventChange);
+		const bool LogLocation			  = CS_CVAR_LOG_IS_SHOWING(LogInputMouseLocation);
+		const bool LogLocationEventChange = CS_CVAR_LOG_IS_SHOWING(LogInputMouseLocationEventChange);
 
 		// Default__MousePositionXY__
 		{
@@ -629,11 +629,11 @@ void UCsManager_Input::OnPostProcessInput_LogCaptureMouseInput()
 		}
 	}
 	// Action | Action Event Changed
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseAction) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseActionEventChange))
+	if (CS_CVAR_LOG_IS_SHOWING(LogInputMouseAction) ||
+		CS_CVAR_LOG_IS_SHOWING(LogInputMouseActionEventChange))
 	{ 
-		const bool LogAction			= FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseAction);
-		const bool LogActionEventChange = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputMouseActionEventChange);
+		const bool LogAction			= CS_CVAR_LOG_IS_SHOWING(LogInputMouseAction);
+		const bool LogActionEventChange = CS_CVAR_LOG_IS_SHOWING(LogInputMouseActionEventChange);
 
 		const float& Time = CurrentInputFrame->Time.Time;
 
@@ -800,14 +800,14 @@ void UCsManager_Input::OnPostProcessInput_LogCaptureTouchInput()
 	const FString& Context = Str::OnPostProcessInput_CaptureTouchInput;
 
 	// Action | Action Event Change
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputTouchAction) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputTouchActionEventChange))
+	if (CS_CVAR_LOG_IS_SHOWING(LogInputTouchAction) ||
+		CS_CVAR_LOG_IS_SHOWING(LogInputTouchActionEventChange))
 	{
 		TArray<FECsInputAction> ActionsToPrint;
 		ActionsToPrint.Reset(TouchActions.Num());
 
-		const bool LogAction			= FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputTouchAction);
-		const bool LogActionEventChange = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputTouchActionEventChange);
+		const bool LogAction			= CS_CVAR_LOG_IS_SHOWING(LogInputTouchAction);
+		const bool LogActionEventChange = CS_CVAR_LOG_IS_SHOWING(LogInputTouchActionEventChange);
 
 		for (const FECsInputAction& Action : TouchActions)
 		{
@@ -866,7 +866,7 @@ void UCsManager_Input::OnPostProcessInput_LogCaptureTouchInput()
 		}
 	}
 	// Location
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputTouchLocation))
+	if (CS_CVAR_LOG_IS_SHOWING(LogInputTouchLocation))
 	{
 		UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
 
@@ -909,7 +909,7 @@ void UCsManager_Input::OnPostProcessInput_LogCaptureTouchInput()
 		}
 	}
 	// Location Event Change
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputTouchLocationEventChange))
+	if (CS_CVAR_LOG_IS_SHOWING(LogInputTouchLocationEventChange))
 	{
 		UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
 
@@ -1080,30 +1080,30 @@ void UCsManager_Input::OnPostProcessInput_LogInputAction()
 
 	const FString& Context = Str::PostProcessInput;
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInput) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputEventChange) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAction) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputActionEventChange) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAxis) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAxisEventChange) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputLocation) ||
-		FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputLocationEventChange))
+	if (CS_CVAR_LOG_IS_SHOWING(LogInput) ||
+		CS_CVAR_LOG_IS_SHOWING(LogInputEventChange) ||
+		CS_CVAR_LOG_IS_SHOWING(LogInputAction) ||
+		CS_CVAR_LOG_IS_SHOWING(LogInputActionEventChange) ||
+		CS_CVAR_LOG_IS_SHOWING(LogInputAxis) ||
+		CS_CVAR_LOG_IS_SHOWING(LogInputAxisEventChange) ||
+		CS_CVAR_LOG_IS_SHOWING(LogInputLocation) ||
+		CS_CVAR_LOG_IS_SHOWING(LogInputLocationEventChange))
 	{
 		TArray<FECsInputAction> ActionsToPrint;
 
 		ActionsToPrint.Reset(EMCsInputAction::Get().Num());
 		
-		const bool LogAll			 = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInput);
-		const bool LogAllEventChange = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputEventChange);
+		const bool LogAll			 = CS_CVAR_LOG_IS_SHOWING(LogInput);
+		const bool LogAllEventChange = CS_CVAR_LOG_IS_SHOWING(LogInputEventChange);
 		// Action
-		const bool LogAction			= FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAction);
-		const bool LogActionEventChange = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputActionEventChange);
+		const bool LogAction			= CS_CVAR_LOG_IS_SHOWING(LogInputAction);
+		const bool LogActionEventChange = CS_CVAR_LOG_IS_SHOWING(LogInputActionEventChange);
 		// Axis
-		const bool LogAxis			  = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAxis);
-		const bool LogAxisEventChange = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputAxisEventChange);
+		const bool LogAxis			  = CS_CVAR_LOG_IS_SHOWING(LogInputAxis);
+		const bool LogAxisEventChange = CS_CVAR_LOG_IS_SHOWING(LogInputAxisEventChange);
 		// Location
-		const bool LogLocation			  = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputLocation);
-		const bool LogLocationEventChange = FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputLocationEventChange);
+		const bool LogLocation			  = CS_CVAR_LOG_IS_SHOWING(LogInputLocation);
+		const bool LogLocationEventChange = CS_CVAR_LOG_IS_SHOWING(LogInputLocationEventChange);
 
 		
 		for (const FECsInputAction& Action : EMCsInputAction::Get())
@@ -1264,7 +1264,7 @@ void UCsManager_Input::OnPostProcessInput_LogCurrentInputFrame()
 
 	const FString& Context = Str::PostProcessInput;
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputFrame))
+	if (CS_CVAR_LOG_IS_SHOWING(LogInputFrame))
 	{
 		const int32 Count = CurrentInputFrame->Inputs.Num();
 
@@ -1295,7 +1295,7 @@ void UCsManager_Input::OnPostProcessInput_LogGameEventInfo()
 
 	const FString& Context = Str::PostProcessInput;
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputGameEvent))
+	if (CS_CVAR_LOG_IS_SHOWING(LogInputGameEvent))
 	{
 		int32 Count = 0;
 
@@ -1828,7 +1828,7 @@ void UCsManager_Input::SetupGameEventDefinitions()
 
 void UCsManager_Input::LogProcessGameEventDefinition(const FString& Context)
 {
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputGameEventDefinition))
+	if (CS_CVAR_LOG_IS_SHOWING(LogInputGameEventDefinition))
 	{
 		int32 Count = 0;
 
@@ -2210,7 +2210,7 @@ void UCsManager_Input::FActiveMode::OnPostProcessInput(const float& DeltaTime, c
 
 void UCsManager_Input::FActiveMode::PrintSet(const FString& Context, const FECsInputAction& Action, const FCsInputInfo& Info, const ECsInputMode& Mode)
 {
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputActiveMode))
+	if (CS_CVAR_LOG_IS_SHOWING(LogInputActiveMode))
 	{
 		const ECsInputType& Type   = Info.Type;
 		const ECsInputEvent& Event = Info.Event;
@@ -2231,7 +2231,7 @@ void UCsManager_Input::FActiveMode::PrintSet(const FString& Context, const FECsI
 
 void UCsManager_Input::FActiveMode::PrintSummary(const FString& Context)
 {
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogInputActiveMode))
+	if (CS_CVAR_LOG_IS_SHOWING(LogInputActiveMode))
 	{
 		UE_LOG(LogCs, Warning, TEXT("%s: Value (%s) -> (%s)"), *Context, *(EMCsInputMode::Get().MaskToString(Last_Value)), *(EMCsInputMode::Get().MaskToString(Value)));
 	}

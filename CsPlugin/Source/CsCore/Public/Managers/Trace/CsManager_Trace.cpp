@@ -1034,7 +1034,7 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 
 void UCsManager_Trace::LogTransaction(const FString& Context, const ECsTraceTransaction& Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response)
 {
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerTraceTransactions))
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerTraceTransactions))
 	{
 		const FString& TransactionAsString = NCsTraceTransaction::ToActionString(Transaction);
 

@@ -649,7 +649,7 @@ void UCsManager_StaticMeshActor::Log(const FString& Str)
 
 void UCsManager_StaticMeshActor::LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsStaticMeshActorPooled* Object)
 {
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerStaticMeshActorTransactions))
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerStaticMeshActorTransactions))
 	{
 		const FString& TransactionAsString = EMCsPoolTransaction::Get().ToString(Transaction);
 

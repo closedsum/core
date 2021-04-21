@@ -435,7 +435,7 @@ void ACsSoundPooledImpl::Handle_ClearAttachAndTransform()
 
 void ACsSoundPooledImpl::LogChangeCounter()
 {
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogSoundPooledChangeCounter))
+	if (CS_CVAR_LOG_IS_SHOWING(LogSoundPooledChangeCounter))
 	{
 		typedef NCsSound::NPayload::NChange::FCounter ChangeCounter;
 

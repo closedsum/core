@@ -860,7 +860,7 @@ void UCsManager_FX_Actor::Log(const FString& Str)
 
 void UCsManager_FX_Actor::LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsFXActorPooled* Object)
 {
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerFXActorTransactions))
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerFXActorTransactions))
 	{
 		const FString& TransactionAsString = EMCsPoolTransaction::Get().ToString(Transaction);
 

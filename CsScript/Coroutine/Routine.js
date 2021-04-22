@@ -212,7 +212,6 @@ module.exports = class JsRoutine
 		{
 			if (this.EndReason.Value === EndReasonType.EEndReason_MAX.Value)
 				this.End(EndReasonType.EndOfExecution);
-			console.log('exit');
 			return;
 		}
 
@@ -594,6 +593,16 @@ module.exports = class JsRoutine
 				break;
 			}
 		}
+	}
+
+	SetValue(index, value)
+	{
+		this.RegisterMap.SetValue(index, value);
+	}
+
+	GetValue(index)
+	{
+		return this.RegisterMap.GetValue(index);
 	}
 
 	AddMessage(messageType, message)

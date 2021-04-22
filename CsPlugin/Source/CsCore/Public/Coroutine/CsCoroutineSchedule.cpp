@@ -5,6 +5,25 @@
 // CVars
 #include "Coroutine/CsCVars_Coroutine.h"
 
+// Cached
+#pragma region
+
+namespace NCsCoroutine
+{
+	namespace NSchedule
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsCoroutineSchedule, Start);
+			}
+		}
+	}
+}
+
+#pragma endregion Cached
+
 FCsCoroutineSchedule::FCsCoroutineSchedule()
 {
 	// Set Index for fast look up
@@ -120,11 +139,17 @@ bool FCsCoroutineSchedule::IsRunning(const FCsRoutineHandle& Handle) const
 
 const FCsRoutineHandle& FCsCoroutineSchedule::Start(PayloadResourceType* PayloadContainer)
  {
+	using namespace NCsCoroutine::NSchedule::NCached;
+
+	const FString& Context = Str::Start;
+
 	PayloadType* Payload = PayloadContainer->Get();
 
-	checkf(Payload, TEXT("FCsCoroutineSchedule::Start: PayloadContainer does NOT contain a reference to a Payload."));
+	checkf(Payload, TEXT("%s: PayloadContainer does NOT contain a reference to a Payload."), *Context);
 
-	checkf(Group == Payload->Group, TEXT("FCsCoroutineSchedule::Start: Mismatch between Payload->Group: %s and Group: %s"), Payload->Group.ToChar(), Group.ToChar());
+	check(Payload->IsValidChecked(Context));
+
+	checkf(Group == Payload->Group, TEXT("%s: Mismatch between Payload->Group: %s and Group: %s"), *Context, Payload->Group.ToChar(), Group.ToChar());
 
 	FCsRoutine* R = Manager_Routine.AllocateResource();
 

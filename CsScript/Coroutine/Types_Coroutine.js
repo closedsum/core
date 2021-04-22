@@ -102,16 +102,16 @@ module.exports = class NJsCoroutine
 
             }
 
-            SetUsedValue(i)
+            SetUsedValue(index)
             {
-                if (!this.UsedValues[i])
+                if (!this.UsedValues[index])
                 {
-                    let info   = new FInfo();
-                    info.Index = i;
-                    
+                    let info   = new NJsCoroutine.NRegister.FInfo();
+                    info.Index = index;
+                   
                     this.Infos.push(info);
 
-                    this.UsedValues[i] = true;
+                    this.UsedValues[index] = true;
                 }
             }
 
@@ -131,7 +131,7 @@ module.exports = class NJsCoroutine
             {
                 for (const info of this.Infos)
                 {
-                    this.UseValues[info.Index] = false;
+                    this.UsedValues[info.Index] = false;
                 }
                 this.Infos = [];
             }

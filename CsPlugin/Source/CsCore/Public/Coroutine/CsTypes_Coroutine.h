@@ -230,6 +230,7 @@ namespace NCsCoroutine
 
 		void SetObject(UObject* InObject)
 		{
+			Owner = InObject;
 			Object = InObject;
 			WeakObject = Object;
 			bObject = true;
@@ -261,6 +262,8 @@ namespace NCsCoroutine
 			bObject = false;
 			Actor = nullptr;
 		}
+
+		bool IsValidChecked(const FString& Context) const;
 	};
 
 	#pragma endregion FOwner
@@ -676,6 +679,8 @@ namespace NCsCoroutine
 			}
 
 			void Reset();
+
+			bool IsValidChecked(const FString& Context) const;
 
 		// Registers
 		#pragma region

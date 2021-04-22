@@ -23,6 +23,11 @@ module.exports = class NJsCommon
             return func && getType.toString.call(func) === '[object Function]';
         }
 
+        static IsGenerator(o)
+        {
+            return this.IsValidObject(o) && ("" + o) === '[object Generator]';
+        }
+
         static IsClassOf(a, c) { return a instanceof c; }
 
         static IsInt(a) { return Number.isSafeInteger(a); }

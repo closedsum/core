@@ -56,6 +56,14 @@ namespace NCsManagerInput
 
 #pragma endregion Cached
 
+// Delegates
+#pragma region
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerInput_OnAnyKey_Pressed, const FKey&, Key);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerInput_OnAnyKey_Released, const FKey&, Key);
+
+#pragma endregion Delegates
+
 class AActor;
 class APlayerController;
 class UCsInputListener;
@@ -363,6 +371,18 @@ public:
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAnyKey_Pressed, const FKey& /*Key*/);
 
 	FOnAnyKey_Pressed OnAnyKey_Pressed_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Manager|Input")
+	FCsManagerInput_OnAnyKey_Pressed OnAnyKey_Pressed_ScriptEvent;
+
+	void OnAnyKey_Released(FKey Key);
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAnyKey_Released, const FKey& /*Key*/);
+
+	FOnAnyKey_Released OnAnyKey_Released_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Manager|Input")
+	FCsManagerInput_OnAnyKey_Released OnAnyKey_Released_ScriptEvent;
 
 	void OnAction_Pressed(const FECsInputAction& Action, const FKey& Key);
 

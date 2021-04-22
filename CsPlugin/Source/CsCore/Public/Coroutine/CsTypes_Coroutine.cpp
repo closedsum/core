@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Coroutine/CsTypes_Coroutine.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+
 namespace NCsCoroutine
 {
 	// State
@@ -95,6 +98,23 @@ namespace NCsCoroutine
 	}
 
 	#pragma endregion Transaction
+
+	// FOwner
+	#pragma region
+
+	bool FOwner::IsValidChecked(const FString& Context) const
+	{
+		// Check Owner is Valid
+		CS_IS_PTR_NULL_CHECKED(Owner)
+		// If UObject, Check Object is Valid
+		if (bObject)
+		{
+			CS_IS_PTR_NULL_CHECKED(Object)
+		}
+		return true;
+	}
+
+	#pragma endregion FOwner
 
 	namespace NRegister
 	{
@@ -546,6 +566,26 @@ namespace NCsCoroutine
 			AbortMessages.Reset(AbortMessages.Max());
 
 			RegisterMap.Reset();
+		}
+
+		bool FImpl::IsValidChecked(const FString& Context) const
+		{
+			// Check CoroutineImpl is Bound
+			checkf(CoroutineImpl.IsBound(), TEXT("%s: CoroutineImpl is NOT Bound to any method."), *Context);
+			// Check Group is Valid
+			check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Group));
+			// Check Owner is Valid
+			check(Owner.IsValidChecked(Context));
+			// Check AbortMessages is Valid
+			{
+				const int32 Count = AbortMessages.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					checkf(AbortMessages[I] != NAME_None, TEXT("%s: AbortMessages[%d]: None is NOT Valid."), *Context, I);
+				}
+			}
+			return true;
 		}
 
 		#pragma endregion FImpl

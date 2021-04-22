@@ -95,6 +95,9 @@ UCsManager_Input::UCsManager_Input(const FObjectInitializer& ObjectInitializer) 
 	OnGameEventInfo_Event(),
 	// Listener
 	Listeners(),
+	OnAnyKey_Pressed_Event(),
+	OnAnyKey_Pressed_ScriptEvent(),
+	OnAnyKey_Released_Event(),
 	// Actions
 	Infos(),
 	Actions(),
@@ -1430,6 +1433,11 @@ void UCsManager_Input::SetupInputActionEventInfos()
 			FInputActionBinding& Binding = InputComponent->BindAction<UCsManager_Input>(AnyKeyAction.GetFName(), EInputEvent::IE_Pressed, this, &UCsManager_Input::OnAnyKey_Pressed);
 			Binding.bConsumeInput = false;
 		}
+		// Released
+		{
+			FInputActionBinding& Binding = InputComponent->BindAction<UCsManager_Input>(AnyKeyAction.GetFName(), EInputEvent::IE_Released, this, &UCsManager_Input::OnAnyKey_Released);
+			Binding.bConsumeInput = false;
+		}
 	}
 	// Mouse
 	{
@@ -1944,6 +1952,13 @@ float UCsManager_Input::GetInputDuration(const FECsInputAction& Action)
 void UCsManager_Input::OnAnyKey_Pressed(FKey Key)
 {
 	OnAnyKey_Pressed_Event.Broadcast(Key);
+	OnAnyKey_Pressed_ScriptEvent.Broadcast(Key);
+}
+
+void UCsManager_Input::OnAnyKey_Released(FKey Key)
+{
+	OnAnyKey_Released_Event.Broadcast(Key);
+	OnAnyKey_Released_ScriptEvent.Broadcast(Key);
 }
 
 void UCsManager_Input::OnAction_Pressed(const FECsInputAction& Action, const FKey& Key)

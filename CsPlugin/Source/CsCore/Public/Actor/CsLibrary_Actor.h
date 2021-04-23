@@ -296,5 +296,33 @@ namespace NCsActor
 		static void SetSafeMaterials(const FString& Context, AActor* Actor, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Material
+
+	// Spawn
+	#pragma region
+	public:
+
+		/**
+		* Safely spawn an Actor in the World with the given Path.
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Path			SoftObjectPath to the Actor class to load and then spawn.
+		* @param Log
+		* return				Spawned Actor.
+		*/
+		static AActor* SafeSpawn(const FString& Context, UObject* WorldContext, const FSoftObjectPath& Path, void (*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Safely spawn an Actor in the World with the given Path.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Path			String path to the Actor class to load and then spawn.
+		* @param Log
+		* return				Spawned Actor.
+		*/
+		static AActor* SafeSpawn(const FString& Context, UObject* WorldContext, const FString& Path, void (*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Spawn
 	};
 }

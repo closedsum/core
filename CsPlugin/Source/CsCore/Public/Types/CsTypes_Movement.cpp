@@ -286,7 +286,21 @@ bool FCsMoveByInterp_Params::IsValid(const FString& Context, void(*Log)(const FS
 	{
 		if (!MoveActor)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No MoveActor set."), *Context));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mover == ECsMover::Actor and MoveActor is NULL."), *Context));
+			return false;
+		}
+
+		USceneComponent* RootComponent = MoveActor->GetRootComponent();
+
+		if (!RootComponent)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: MoveActor: %s has NO RootComponent."), *Context, *(MoveActor->GetName())));
+			return false;
+		}
+
+		if (RootComponent->Mobility != EComponentMobility::Movable)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: MoveActor: %s Mobility is NOT Movable."), *Context, *(MoveActor->GetName())));
 			return false;
 		}
 	}
@@ -295,7 +309,13 @@ bool FCsMoveByInterp_Params::IsValid(const FString& Context, void(*Log)(const FS
 	{
 		if (!MoveComponent)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No MoveComponent set."), *Context));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mover == ECsMover::Component and MoveComponent is NULL."), *Context));
+			return false;
+		}
+
+		if (MoveComponent->Mobility != EComponentMobility::Movable)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: MoveComponent: %s Mobility is NOT Movable."), *Context, *(MoveComponent->GetName())));
 			return false;
 		}
 	}
@@ -310,7 +330,7 @@ bool FCsMoveByInterp_Params::IsValid(const FString& Context, void(*Log)(const FS
 	{
 		if (!ToActor)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No ToActor set."), *Context));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Destination == ECsMoveDestination::Actor and ToActor is NULL."), *Context));
 			return false;
 		}
 	}
@@ -320,7 +340,7 @@ bool FCsMoveByInterp_Params::IsValid(const FString& Context, void(*Log)(const FS
 		if (!ToComponent &&
 			!ToMeshComponent)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No ToComponent && ToMeshComponent are NOT set."), *Context));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Destination == ECsMoveDestination::Component and ToComponent && ToMeshComponent are NULL."), *Context));
 			return false;
 		}
 	}
@@ -329,13 +349,13 @@ bool FCsMoveByInterp_Params::IsValid(const FString& Context, void(*Log)(const FS
 	{
 		if (!ToMeshComponent)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ToMeshComponent is NOT set."), *Context));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Destination == ECsMoveDestination::Bone and ToMeshComponent is NULL."), *Context));
 			return false;
 		}
 
 		if (ToBone == NAME_None)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ToBone: None is NOT Valid."), *Context));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Destination == ECsMoveDestination::Bone and ToBone: None is NOT Valid."), *Context));
 			return false;
 		}
 
@@ -508,12 +528,20 @@ namespace NCsMovement
 					// Check Move Object is Valid
 					if (GetMover() == MoverType::Actor)
 					{
-						checkf(GetMoveActor(), TEXT("%s: No MoveActor set."), *Context);
+						checkf(GetMoveActor(), TEXT("%s: GetMover() == NCsMovement::EMover::Actor and GetMoveActor() is NULL."), *Context);
+						// Check RootComponent is Valid
+						USceneComponent* RootComponent = MoveActor->GetRootComponent();
+
+						checkf(RootComponent, TEXT("%s: GetMoveActor(): %s has NO RootComponent."), *Context, *(GetMoveActor()->GetName()));
+						// Check RootComponent is Movable
+						checkf(RootComponent->Mobility == EComponentMobility::Movable, TEXT("%s: GetMoveActor(): %s Mobility is NOT Movable."), *Context, *(GetMoveActor()->GetName()));
 					}
 					else
 					if (GetMover() == MoverType::Component)
 					{
-						checkf(GetMoveComponent(), TEXT("%s: No MoveComponent set."), *Context);
+						checkf(GetMoveComponent(), TEXT("%s: GetMover() == NCsMovement::EMover::Component and GetMoveComponent() is NULL."), *Context);
+						// Check GetMoveComponent() is Movable
+						checkf(GetMoveComponent()->Mobility == EComponentMobility::Movable, TEXT("%s: GetMoveComponent(): %s Mobility is NOT Movable."), *Context, *(GetMoveComponent()->GetName()));
 					}
 					// Check Destination is Valid
 					typedef NCsMovement::EMDestination DestinationMapType;

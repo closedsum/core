@@ -3,6 +3,7 @@
 
 // Library
 #include "Managers/SkeletalMesh/Payload/CsLibrary_Payload_SkeletalMeshActor.h"
+#include "Library/CsLibrary_Valid.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 
@@ -21,7 +22,7 @@ void FCsPayload_SkeletalMesh_AnimSequence_OneShot::CopyToPayloadAsValueChecked(c
 #undef PayloadType
 #undef ShotType
 
-	checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
+	CS_IS_PTR_NULL_CHECKED(Payload)
 
 	typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadType;
 
@@ -34,7 +35,7 @@ void FCsPayload_SkeletalMesh_AnimSequence_OneShot::CopyToPayloadAsValueChecked(c
 
 	typedef NCsSkeletalMeshActor::NPayload::FLibrary SkeletalMeshPayloadLibrary;
 
-	checkf(InShot, TEXT("%s: InShot is NULL."), *Context);
+	CS_IS_PTR_NULL_CHECKED(InShot)
 
 	Shot.CopyToShotAsValue(InShot);
 
@@ -71,7 +72,7 @@ void FCsPayload_SkeletalMesh_AnimMontage_OneShot::CopyToPayloadAsValueChecked(co
 #undef PayloadType
 #undef ShotType
 
-	checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
+	CS_IS_PTR_NULL_CHECKED(Payload)
 
 	typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadType;
 
@@ -84,7 +85,7 @@ void FCsPayload_SkeletalMesh_AnimMontage_OneShot::CopyToPayloadAsValueChecked(co
 
 	typedef NCsSkeletalMeshActor::NPayload::FLibrary SkeletalMeshPayloadLibrary;
 
-	checkf(InShot, TEXT("%s: InShot is NULL."), *Context);
+	CS_IS_PTR_NULL_CHECKED(InShot)
 
 	Shot.CopyToShotAsValue(InShot);
 

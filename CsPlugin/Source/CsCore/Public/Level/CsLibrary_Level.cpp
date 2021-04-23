@@ -3,6 +3,7 @@
 
 // Library
 #include "Library/CsLibrary_World.h"
+#include "Library/CsLibrary_Valid.h"
 // Level
 #include "Engine/LevelScriptActor.h"
 // World
@@ -29,7 +30,7 @@ namespace NCsLevel
 
 		ULevel* FLibrary::GetChecked(const FString& Context, UWorld* World)
 		{
-			checkf(World, TEXT("%s: World is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(World)
 
 			const TArray<ULevel*>& Levels = World->GetLevels();
 
@@ -46,18 +47,14 @@ namespace NCsLevel
 
 		ULevel* FLibrary::GetChecked(const FString& Context, UObject* WorldContext)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 			return GetChecked(Context, WorldContext->GetWorld());
 		}
 
 		ULevel* FLibrary::GetSafe(const FString& Context, UWorld* World, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
-			if (!World)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: World is NULL."), *Context));
-				return nullptr;
-			}
+			CS_IS_PTR_NULL_RET_NULL(World)
 
 			const TArray<ULevel*>& Levels = World->GetLevels();
 
@@ -107,14 +104,14 @@ namespace NCsLevel
 
 		FString FLibrary::GetNameChecked(const FString& Context, UWorld* World)
 		{
-			checkf(World, TEXT("%s: World is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(World)
 
 			return UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
 		}
 
 		FString FLibrary::GetNameChecked(const FString& Context, UObject* WorldContext)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 			return GetNameChecked(Context, WorldContext->GetWorld());
 		}
@@ -173,7 +170,7 @@ namespace NCsLevel
 
 		FName FLibrary::GetFNameChecked(const FString& Context, UWorld* World)
 		{
-			checkf(World, TEXT("%s: World is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(World)
 
 			const FString Name = UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
 
@@ -182,7 +179,7 @@ namespace NCsLevel
 
 		FName FLibrary::GetFNameChecked(const FString& Context, UObject* WorldContext)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 			return GetFNameChecked(Context, WorldContext->GetWorld());
 		}
@@ -237,7 +234,7 @@ namespace NCsLevel
 
 		bool FLibrary::IsNameChecked(const FString& Context, UWorld* World, const FString& MapPackageName)
 		{
-			checkf(World, TEXT("World is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(World)
 
 			checkf(!MapPackageName.IsEmpty(), TEXT("MapPackageName is EMPTY."), *Context);
 
@@ -246,18 +243,14 @@ namespace NCsLevel
 
 		bool FLibrary::IsNameChecked(const FString& Context, UObject* WorldContext, const FString& MapPackageName)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 			return IsNameChecked(Context, WorldContext->GetWorld(), MapPackageName);
 ;		}
 
 		bool FLibrary::SafeIsName(const FString& Context, UWorld* World, const FString& MapPackageName, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
-			if (!World)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: World is NULL."), *Context));
-				return false;
-			}
+			CS_IS_PTR_NULL(World)
 
 			if (MapPackageName.IsEmpty())
 			{
@@ -314,7 +307,7 @@ namespace NCsLevel
 
 		ALevelScriptActor* FLibrary::GetScriptActorChecked(const FString& Context, UWorld* World)
 		{
-			checkf(World, TEXT("%s: World is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(World)
 
 			ULevel* Level = GetChecked(Context, World);
 
@@ -327,7 +320,7 @@ namespace NCsLevel
 
 		ALevelScriptActor* FLibrary::GetScriptActorChecked(const FString& Context, UObject* WorldContext)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 			return GetScriptActorChecked(Context, WorldContext->GetWorld());
 		}

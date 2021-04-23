@@ -8,6 +8,7 @@
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 #include "Library/CsLibrary_Object.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
@@ -76,9 +77,9 @@ namespace NCsFX
 	bool FLibrary::HasVariableNameChecked(const FString& Context, UNiagaraSystem* System, const FName& Name, const ParameterValueType& ValueType)
 	{
 		// Check System is Valid
-		checkf(System, TEXT("%s: System is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(System)
 		// Check Name is Valid
-		checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+		CS_IS_NAME_NONE_CHECKED(Name)
 		// Check ValueType is Valid
 		typedef NCsFX::NParameter::EMValue ParameterValueMapType;
 
@@ -105,17 +106,9 @@ namespace NCsFX
 	bool FLibrary::SafeHasVariableName(const FString& Context, UNiagaraSystem* System, const FName& Name, const ParameterValueType& ValueType, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check System is Valid
-		if (!System)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: System is NULL."), *Context));
-			return false;
-		}
+		CS_IS_PTR_NULL(System)
 		// Check Name is Valid
-		if (Name == NAME_None)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
-			return false;
-		}
+		CS_IS_NAME_NONE(Name)
 		// Check ValueType is Valid
 		typedef NCsFX::NParameter::EMValue ParameterValueMapType;
 
@@ -165,7 +158,7 @@ namespace NCsFX
 	bool FLibrary::HasParameterChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter)
 	{
 		// Check System is Valid
-		checkf(System, TEXT("%s: System is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(System)
 		// Check Parameter is Valid
 		typedef NCsFX::NParameter::FLibrary ParameterLibrary;
 
@@ -202,11 +195,7 @@ namespace NCsFX
 	bool FLibrary::SafeHasParameter(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check System is Valid
-		if (!System)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: System is NULL."), *Context));
-			return false;
-		}
+		CS_IS_PTR_NULL(System)
 		// Check Parameter is Valid
 		typedef NCsFX::NParameter::FLibrary ParameterLibrary;
 
@@ -251,7 +240,7 @@ namespace NCsFX
 
 	void FLibrary::SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter)
 	{
-		checkf(Component, TEXT("%s: Component is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(Component)
 
 		UNiagaraSystem* System = Component->GetAsset();
 
@@ -494,7 +483,7 @@ namespace NCsFX
 
 	bool FLibrary::IsCompleteChecked(const FString& Context, ANiagaraActor* Actor)
 	{
-		checkf(Actor, TEXT("%s: Actor is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(Actor)
 
 		UNiagaraComponent* Component = Actor->GetNiagaraComponent();
 
@@ -503,7 +492,7 @@ namespace NCsFX
 
 	bool FLibrary::IsCompleteChecked(const FString& Context, UNiagaraComponent* Component)
 	{
-		checkf(Component, TEXT("%s: Component is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(Component)
 
 		FNiagaraSystemInstance* SystemInstance = Component->GetSystemInstance();
 

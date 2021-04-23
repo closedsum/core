@@ -5,11 +5,14 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
 #include "Types/CsTypes_Macro.h"
+#include "Types/CsCached.h"
 // Library
 #include "Library/CsLibrary_World.h"
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Material.h"
+#include "Library/CsLibrary_Object.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 // Components
@@ -110,9 +113,9 @@ namespace NCsActor
 	
 	AActor* FLibrary::GetByNameChecked(const FString& Context, UObject* WorldContext, const FName& Name)
 	{
-		checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(WorldContext)
 
-		checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+		CS_IS_NAME_NONE_CHECKED(Name)
 
 		UWorld* World = WorldContext->GetWorld();
 
@@ -255,7 +258,7 @@ namespace NCsActor
 
 	USceneComponent* FLibrary::GetRootComponentChecked(const FString& Context, AActor* Actor)
 	{
-		checkf(Actor, TEXT("%s: Actor is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(Actor)
 
 		USceneComponent* RootComponent = Actor->GetRootComponent();
 
@@ -266,11 +269,7 @@ namespace NCsActor
 
 	USceneComponent* FLibrary::GetSafeRootComponent(const FString& Context, AActor* Actor, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!Actor)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Actor is NULL."), *Context));
-			return nullptr;
-		}
+		CS_IS_PTR_NULL_RET_NULL(Actor)
 
 		USceneComponent* RootComponent = Actor->GetRootComponent();
 
@@ -602,4 +601,45 @@ namespace NCsActor
 	}
 
 	#pragma endregion Material
+
+	// Spawn
+	#pragma region
+
+	AActor* FLibrary::SafeSpawn(const FString& Context, UObject* WorldContext, const FSoftObjectPath& Path, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+
+		if (!World)
+			return nullptr;
+
+		typedef NCsObject::FLibrary ObjectLibrary;
+
+		UClass* Class = ObjectLibrary::SafeLoad<UClass>(Context, Path, Log);
+
+		if (!Class)
+			return nullptr;
+
+		AActor* Actor = World->SpawnActor<AActor>(Class);
+
+		if (!Actor)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to Spawn Actor with Class: %s."), *Context, *(Class->GetName())));
+		}
+		return Actor;
+	}
+
+	AActor* FLibrary::SafeSpawn(const FString& Context, UObject* WorldContext, const FString& Path, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FSoftObjectPath SoftPath(Path);
+
+		if (!Path.EndsWith(NCsCached::Str::_C))
+		{
+			SoftPath = FSoftObjectPath(Path + NCsCached::Str::_C);
+		}
+		return SafeSpawn(Context, WorldContext, SoftPath, Log);
+	}
+
+	#pragma endregion Spawn
 }

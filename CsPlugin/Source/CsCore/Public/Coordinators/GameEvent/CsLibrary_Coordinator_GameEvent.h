@@ -3,6 +3,8 @@
 // Types
 #include "Managers/Input/CsTypes_Input.h"
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
+// Log
+#include "Utility/CsLog.h"
 
 class UObject;
 
@@ -35,9 +37,9 @@ namespace NCsGameEvent
 			*						the Context Root.
 			* return				Context for UCsCoordinator_GameEvent
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = nullptr);
+			static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = nullptr) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -88,7 +90,7 @@ namespace NCsGameEvent
 			* @param Log			Log function for logging conditions that result in NOT processing
 			*						the GameEvent.
 			*/
-			static void SafeBroadcastGameEvent(const FString& Context, UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) = nullptr);
+			static void SafeBroadcastGameEvent(const FString& Context, UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) = &FCsLog::Warning);
 		};
 	}
 }

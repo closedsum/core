@@ -344,7 +344,7 @@ namespace NCsMaterial
 
 	void FLibrary::ClearOverrideChecked(const FString& Context, UPrimitiveComponent* Component)
 	{
-		checkf(Component, TEXT("%s: Component is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(Component)
 
 		if (UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(Component))
 		{

@@ -27,6 +27,15 @@ var EndReasonType = NJsCoroutine.EEndReason;
 
 module.exports = class FJsCoroutineSchedule
 {
+    static NCached = class Cached
+    {
+        static NStr = class Str
+        {
+            static StartByContainer = "FJsCoroutineSchedule::StartByContainer";
+            static StartChildByContainer = "FJsCoroutineSchedule::Start";
+        }
+    }
+
     constructor()
     {
         this.Group = new ECsUpdateGroup();
@@ -183,14 +192,20 @@ module.exports = class FJsCoroutineSchedule
 	*/
     StartByContainer(payloadContainer)
     {
+        let Str = FJsCoroutineSchedule.NCached.NStr;
+
+        let context = Str.StartByContainer;
+
 	    let payload = payloadContainer.Get();
 
-        console.assert(IsValidObject(payload), "FJsCoroutineSchedule.StartByContainer: payloadContainer does NOT contain a reference to a payload.");
+        console.assert(IsValidObject(payload), context + ": payloadContainer does NOT contain a reference to a payload.");
+
+        console.assert(payload.IsValidChecked(context));
 
         let UpdateGroupLibrary = CsScriptLibrary_UpdateGroup;
         let IsEqual            = UpdateGroupLibrary.EqualEqual_UpdateGroupUpdateGroup;
 
-        console.assert(IsEqual(this.Group, payload.Group), "FJsCoroutineSchedule.StartByContainer: Mismatch between payload.Group: %s and Group: %s", payload.Group.Name_Internal, this.Group.Name_Internal);
+        console.assert(IsEqual(this.Group, payload.Group), context + ": Mismatch between payload.Group: %s and Group: %s", payload.Group.Name_Internal, this.Group.Name_Internal);
 
         let r = this.Manager_Routine.AllocateResource();
 
@@ -228,18 +243,24 @@ module.exports = class FJsCoroutineSchedule
 	*/
     StartChildByContainer(payloadContainer)
     {
+        let Str = FJsCoroutineSchedule.NCached.NStr;
+
+        let context = Str.StartChildByContainer;
+
         let payload = payloadContainer.Get();
 
-        console.assert(IsValidObject(payload), "FJsCoroutineSchedule.StartChildByContainer: payloadContainer does NOT contain a reference to a payload.");
+        console.assert(IsValidObject(payload), context + ": payloadContainer does NOT contain a reference to a payload.");
+
+        console.assert(payload.IsValidChecked(context));
 
         let UpdateGroupLibrary = CsScriptLibrary_UpdateGroup;
         let IsEqual            = UpdateGroupLibrary.EqualEQual_UpdateGroupUpdateGroup;
 
-        console.assert(IsEqual(Group, payload.Group), "FJsCoroutineSchedule.StartChildByContainer: Mismatch between payload.Group: %s and Group: %s", payload.Group.Name_Internal, Group.Name_Internal);
+        console.assert(IsEqual(Group, payload.Group), context + ": Mismatch between payload.Group: %s and Group: %s", payload.Group.Name_Internal, Group.Name_Internal);
 
 	    let parentContainer = this.GetRoutineContainer(payload.ParentHandle);
 
-        console.assert(IsValidObject(parentContainer), "FJsCoroutineSchedule.StartChildByContainer: Failed to find a container for payload.");
+        console.assert(IsValidObject(parentContainer), context + ": Failed to find a container for payload.");
 
         let parent    = parentContainer.Get();
 	    let lastChild = parent.GetLastChild();

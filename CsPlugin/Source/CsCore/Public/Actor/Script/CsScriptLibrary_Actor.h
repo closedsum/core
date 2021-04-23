@@ -112,4 +112,16 @@ public:
 	static void SetMaterials(const FString& Context, AActor* Actor, const TArray<UMaterialInterface*>& Materials);
 
 #pragma endregion Material
+
+// Spawn
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Path"))
+	static AActor* SpawnBySoftObjectPath(const FString& Context, UObject* WorldContextObject, const FSoftObjectPath& Path);
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Path"))
+	static AActor* SpawnByStringPath(const FString& Context, UObject* WorldContextObject, const FString& Path);
+
+#pragma endregion Spawn
 };

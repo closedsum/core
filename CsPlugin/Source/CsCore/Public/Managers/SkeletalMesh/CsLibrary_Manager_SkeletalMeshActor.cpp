@@ -5,6 +5,7 @@
 #include "Managers/SkeletalMesh/CsManager_SkeletalMeshActor.h"
 // Library
 #include "Managers/SkeletalMesh/Payload/CsLibrary_Payload_SkeletalMeshActor.h"
+#include "Library/CsLibrary_Valid.h"
 // SkeletalMesh
 #include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"
 #include "Managers/SkeletalMesh/Params/CsParams_SkeletalMeshActor.h"
@@ -114,11 +115,7 @@ namespace NCsSkeletalMeshActor
 				return nullptr;
 		#endif // #if WITH_EDITOR
 
-			if (!PooledPayload)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PooledPayload is NULL."), *Context));
-				return nullptr;
-			}
+			CS_IS_PTR_NULL_RET_NULL(PooledPayload)
 
 			if (!Shot.IsValid(Context))
 				return nullptr;
@@ -168,11 +165,7 @@ namespace NCsSkeletalMeshActor
 				return nullptr;
 		#endif // #if WITH_EDITOR
 
-			if (!PooledPayload)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PooledPayload is NULL."), *Context));
-				return nullptr;
-			}
+			CS_IS_PTR_NULL_RET_NULL(PooledPayload)
 
 			if (!Shot.IsValid(Context))
 				return nullptr;

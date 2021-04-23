@@ -6,6 +6,7 @@
 #include "Types/CsTypes_Load.h"
 // Library
 #include "Level/CsLibrary_Level.h"
+#include "Library/CsLibrary_Valid.h"
 
 // Cached
 #pragma region
@@ -22,25 +23,21 @@ namespace NCsDataRootSetCached
 
 #if WITH_EDITOR
 
-void FCsDataRootSet::AddDataTable(const FName& EntryName, const TSoftObjectPtr<UDataTable>& DataTable)
+void FCsDataRootSet::AddDataTable(const FName& EntryName, const TSoftObjectPtr<UDataTable>& DataTable, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 {
 	using namespace NCsDataRootSetCached;
 
 	const FString& Context = Str::AddDataTable;
 
 	// Check DataTables exists
-	if (!DataTables)
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: DataTables is NULL."), *Context);
-		return;
-	}
+	CS_IS_PTR_NULL_EXIT(DataTables)
 
 	// Check Path is valid
 	const FSoftObjectPath& Path = DataTable.ToSoftObjectPath();
 
 	if (!Path.IsValid())
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: DataTable is NOT Valid."), *Context);
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: DataTable is NOT Valid."), *Context));
 		return;
 	}
 
@@ -62,25 +59,21 @@ void FCsDataRootSet::AddDataTable(const FName& EntryName, const TSoftObjectPtr<U
 	DataTables->MarkPackageDirty();
 }
 
-void FCsDataRootSet::AddDataTable(const FName& EntryName, const TSoftObjectPtr<UDataTable>& DataTable, const TSet<FName>& RowNames)
+void FCsDataRootSet::AddDataTable(const FName& EntryName, const TSoftObjectPtr<UDataTable>& DataTable, const TSet<FName>& RowNames, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 {
 	using namespace NCsDataRootSetCached;
 
 	const FString& Context = Str::AddDataTable;
 
 	// Check Core_DataRootSet.DataTables exists
-	if (!DataTables)
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: DataTables is NULL."), *Context);
-		return;
-	}
+	CS_IS_PTR_NULL_EXIT(DataTables)
 
 	// Check Path is valid
 	const FSoftObjectPath& Path = DataTable.ToSoftObjectPath();
 
 	if (!Path.IsValid())
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: DataTable is NOT Valid."), *Context);
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: DataTable is NOT Valid."), *Context));
 		return;
 	}
 

@@ -3,9 +3,15 @@
 
 "use strict"
 
+// Library
+var NJsCommon = require('Cs/Library/Library_Common.js');
+
 const INDEX_NONE = -1;
 
 const ROUTINE_VALUE_SIZE = 16;
+
+// "typedefs" - class
+var CommonLibrary = NJsCommon.FLibrary;
 
 module.exports = class NJsCoroutine
 {
@@ -203,6 +209,11 @@ module.exports = class NJsCoroutine
                 this.AbortMessages = from.AbortMessages;
                 this.RegisterMap = from.RegisterMap;
                 this.Name = from.Name;
+            }
+
+            IsValidChecked(context)
+            {
+                CommonLibrary.IsGeneratorChecked(context, this.CoroutineImpl);
             }
         };
     };

@@ -5,6 +5,7 @@
 // Library
 #include "Library/CsLibrary_World.h"
 #include "Game/CsLibrary_GameInstance.h"
+#include "Library/CsLibrary_Valid.h"
 // Coordinators
 #include "Coordinators/GameEvent/CsCoordinator_GameEvent.h"
 // Game
@@ -36,7 +37,7 @@ namespace NCsGameEvent
 			return GameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*= nullptr*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
@@ -99,31 +100,16 @@ namespace NCsGameEvent
 			}
 		}
 
-		void FLibrary::SafeBroadcastGameEvent(const FString& Context, UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) /*= nullptr*/)
+		void FLibrary::SafeBroadcastGameEvent(const FString& Context, UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
 			// Check ContextRoot is Valid.
-			if (!ContextRoot)
-			{
-				if (Log)
-					Log(FString::Printf(TEXT("%s: ContextRoot is NULL."), *Context));
-				return;
-			}
+			CS_IS_PTR_NULL_EXIT(ContextRoot)
 			// Check Group is Valid.
-			if (!EMCsGameEventCoordinatorGroup::Get().IsValidEnum(Group))
-			{
-				if (Log)
-					Log(FString::Printf(TEXT("%s: Group: %s is NOT Valid."), *Context, Group.ToChar()));
-				return;
-			}
+			CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsGameEventCoordinatorGroup, FECsGameEventCoordinatorGroup, Group)
 			// Check GameEvent is Valid.
-			if (!EMCsGameEvent::Get().IsValidEnum(GameEvent))
-			{
-				if (Log)
-					Log(FString::Printf(TEXT("%s: GameEvent: %s is NOT Valid."), *Context, GameEvent.ToChar()));
-				return;
-			}
+			CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsGameEvent, FECsGameEvent, GameEvent)
 
 			FCsGameEventInfo Info;
 			Info.Event	  = GameEvent;

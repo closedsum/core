@@ -4,6 +4,8 @@
 
 // Types
 #include "Types/CsTypes_Math.h"
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Player
 #include "GameFramework/PlayerController.h"
 // Pawn
@@ -69,7 +71,7 @@ FVector FCsLibrary_Camera::GetLocation(UObject* Object, const int32& Rules)
 
 FVector FCsLibrary_Camera::GetLocationChecked(const FString& Context, UObject* Object)
 {
-	checkf(Object, TEXT("%s: Object is NULL."), *Context);
+	CS_IS_PTR_NULL_CHECKED(Object)
 
 	// Try to get camera through the object
 
@@ -155,7 +157,7 @@ FRotator FCsLibrary_Camera::GetRotation(UObject* Object, const int32& Rules)
 
 FRotator FCsLibrary_Camera::GetRotationChecked(const FString& Context, UObject* Object)
 {
-	checkf(Object, TEXT("%s: Object is NULL."), *Context);
+	CS_IS_PTR_NULL_CHECKED(Object)
 
 	// Try to get camera through the object
 

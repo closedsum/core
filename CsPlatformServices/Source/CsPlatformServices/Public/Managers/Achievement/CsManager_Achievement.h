@@ -24,31 +24,34 @@ namespace NCsAchievement
 {
 	namespace NAction
 	{
-	#define InfoType NCsAchievement::NAction::FInfo
-
-		/**
-		* Container for holding a reference to the object InfoType (NCsAchievement::NAction::FInfo).
-		* This serves as an easy way for a Manager Resource to keep track of the resource.
-		*/
-		struct CSPLATFORMSERVICES_API FResource : public TCsResourceContainer<InfoType>
+		namespace NInfo
 		{
-		};
+		#define InfoType NCsAchievement::NAction::NInfo::FInfo
 
-		/**
-		* A manager handling allocating and deallocating the object InfoType (NCsAchievement::NAction::FInfo) and
-		* are wrapped in the container: NCsAchievement::NAction::FResource.
-		*/
-		struct CSPLATFORMSERVICES_API FManager : public TCsManager_ResourceValueType_Fixed<InfoType, FResource, 256>
-		{
-		};
+			/**
+			* Container for holding a reference to the object InfoType (NCsAchievement::NAction::NInfo::FInfo).
+			* This serves as an easy way for a Manager Resource to keep track of the resource.
+			*/
+			struct CSPLATFORMSERVICES_API FResource : public TCsResourceContainer<InfoType>
+			{
+			};
 
-	#undef InfoType
+			/**
+			* A manager handling allocating and deallocating the object InfoType (NCsAchievement::NAction::NInfo::FInfo) and
+			* are wrapped in the container: NCsAchievement::NAction::NInfo::FResource.
+			*/
+			struct CSPLATFORMSERVICES_API FManager : public TCsManager_ResourceValueType_Fixed<InfoType, FResource, 256>
+			{
+			};
+
+		#undef InfoType
+		}
 	}
 }
 
 #pragma endregion Structs
 
-// Delegates
+// Delegates 
 #pragma region
 
 /**
@@ -131,8 +134,9 @@ class CSPLATFORMSERVICES_API UCsManager_Achievement : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-#define ActionInfoManagerType NCsAchievement::NAction::FManager
-#define ActionInfoType NCsAchievement::NAction::FInfo
+#define ActionType NCsAchievement::EAction
+#define ActionInfoManagerType NCsAchievement::NAction::NInfo::FManager
+#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 #define ActionAllocationType NCsAchievement::NAction::EAllocation
 #define ValueType NCsAchievement::FValue
 
@@ -269,7 +273,7 @@ protected:
 	* @param Achievement	The Achievement to perform the action on.
 	* @param Percent		The progress as a percent [0.0, 1.0] inclusive.
 	*/
-	void QueueAction(const ECsAchievementAction& Action, const FECsAchievement& Achievement, const float& Percent);
+	void QueueAction(const ActionType& Action, const FECsAchievement& Achievement, const float& Percent);
 
 	/**
 	* Queue an action (Write, Complete, or Reset) to perform on an achievement.
@@ -279,7 +283,7 @@ protected:
 	* @param Achievement	The Achievement to perform the action on.
 	* @param Count			Count.
 	*/
-	void QueueAction(const ECsAchievementAction& Action, const FECsAchievement& Achievement, const uint64& Count);
+	void QueueAction(const ActionType& Action, const FECsAchievement& Achievement, const uint64& Count);
 
 	/**
 	* Queue an action (Write, Complete, or Reset) to perform on an achievement.
@@ -289,7 +293,7 @@ protected:
 	* @param Achievement	The Achievement to perform the action on.
 	* @param Bitfield		String of 0s and 1s.
 	*/
-	void QueueAction(const ECsAchievementAction& Action, const FECsAchievement& Achievement, const FString& Bitfield);
+	void QueueAction(const ActionType& Action, const FECsAchievement& Achievement, const FString& Bitfield);
 
 	/**
 	* Queue an action (Create or Modify) to perform on an achievement.
@@ -298,7 +302,7 @@ protected:
 	* @param Action			Type of action to queue (Create or Modify).
 	* @param Entry			The data for the achievement.
 	*/
-	void QueueAction(const ECsAchievementAction& Action, const FCsAchievementEntry& Entry);
+	void QueueAction(const ActionType& Action, const FCsAchievementEntry& Entry);
 
 	/**
 	* Queue an action (Remove) to perform on an achievement.
@@ -308,7 +312,7 @@ protected:
 	* @param Achievement	The Achievement to perform the action on.
 	* @param Entry			The data for the achievement.
 	*/
-	void QueueAction(const ECsAchievementAction& Action, const FECsAchievement& Achievement, const FCsAchievementEntry& Entry);
+	void QueueAction(const ActionType& Action, const FECsAchievement& Achievement, const FCsAchievementEntry& Entry);
 
 	/**
 	* Queue an action (Remove) to perform on an achievement.
@@ -317,7 +321,7 @@ protected:
 	* @param Action			Type of action to queue (Remove).
 	* @param Achievement	The Achievement to perform the action on.
 	*/
-	void QueueAction(const ECsAchievementAction& Action, const FECsAchievement& Achievement);
+	void QueueAction(const ActionType& Action, const FECsAchievement& Achievement);
 
 	/**
 	* Queue an action (QueryIds, QueryDescriptions, Remove All, Complete All, or Reset All) to preform. 
@@ -325,12 +329,12 @@ protected:
 	*
 	* @param Action		Type of action to queue (QueryIds, QueryDescriptions, Remove All, Complete All, or Reset All).
 	*/
-	void QueueAction(const ECsAchievementAction& Action);
+	void QueueAction(const ActionType& Action);
 
-	ActionInfoType* QueueAction_Internal(const ActionAllocationType& Allocation, const ECsAchievementAction& Action);
-	ActionInfoType* QueueAction_Internal(const ActionAllocationType& Allocation, const ECsAchievementAction& Action, const FECsAchievement& Achievement);
-	ActionInfoType* QueueAction_Internal(const ActionAllocationType& Allocation, const ECsAchievementAction& Action, const FCsAchievementEntry& Entry);
-	ActionInfoType* QueueAction_Internal(const ActionAllocationType& Allocation, const ECsAchievementAction& Action, const FECsAchievement& Achievement, const FCsAchievementEntry& Entry);
+	ActionInfoType* QueueAction_Internal(const ActionAllocationType& Allocation, const ActionType& Action);
+	ActionInfoType* QueueAction_Internal(const ActionAllocationType& Allocation, const ActionType& Action, const FECsAchievement& Achievement);
+	ActionInfoType* QueueAction_Internal(const ActionAllocationType& Allocation, const ActionType& Action, const FCsAchievementEntry& Entry);
+	ActionInfoType* QueueAction_Internal(const ActionAllocationType& Allocation, const ActionType& Action, const FECsAchievement& Achievement, const FCsAchievementEntry& Entry);
 
 	/**
 	* Queue an action (QueryIds, QueryDescriptions, Complete All, or Reset All) as the first action (Head) to be processed.
@@ -339,14 +343,14 @@ protected:
 	* @param Achievement	The Achievement to perform the action on.
 	* @param Percent		if Action == Write, the progress as a percent [0.0, 1.0] inclusive.
 	*/
-	void QueueActionAsHead(const ECsAchievementAction& Action, const FECsAchievement& Achievement, const float& Percent = 0.0f);
+	void QueueActionAsHead(const ActionType& Action, const FECsAchievement& Achievement, const float& Percent = 0.0f);
 
 	/**
 	* Queue an action (QueryIds, QueryDescriptions, Complete All, or Reset All) as the first action (Head) to be processed.
 	*
 	* @param Action		Type of action to queue (QueryIds, QueryDescriptions, Complete All, or Reset All).
 	*/
-	void QueueActionAsHead(const ECsAchievementAction& Action);
+	void QueueActionAsHead(const ActionType& Action);
 
 	/**
 	* Queue an action (QueryIds, QueryDescriptions, Complete All, or Reset All) 
@@ -356,7 +360,7 @@ protected:
 	* @param Achievement	The Achievement to perform the action on.
 	* @param Percent		if Action == Write, the progress as a percent [0.0, 1.0] inclusive.
 	*/
-	void QueueActionAfterHead(const ECsAchievementAction& Action, const FECsAchievement& Achievement, const float& Percent = 0.0f);
+	void QueueActionAfterHead(const ActionType& Action, const FECsAchievement& Achievement, const float& Percent = 0.0f);
 
 	/**
 	* Queue an action (QueryIds, QueryDescriptions, Complete All, or Reset All)
@@ -364,7 +368,7 @@ protected:
 	*
 	* @param Action		Type of action to queue (Write, Complete, or Reset).
 	*/
-	void QueueActionAfterHead(const ECsAchievementAction& Action);
+	void QueueActionAfterHead(const ActionType& Action);
 
 #pragma endregion Action
 
@@ -1071,7 +1075,7 @@ public:
 	* Set the bit at Index of the Bitfield for Achievement.
 	*
 	* @param Achievement	The Achievement to set bit for.
-	*						The Achievement must have a progress type: ECsAchievementProgress::Bitfield.
+	*						The Achievement must have a progress type: NCsAchievement::EProgress::Bitfield.
 	* @param Index			Bit position in the Bitfield for the Achievement to set.
 	*/
 	void SetBit(const FECsAchievement& Achievement, const uint32& Index);
@@ -1118,7 +1122,9 @@ public:
 
 protected:
 
-	ECsAchievementQueryOrder QueryOrder;
+#define QueryOrderType NCsAchievement::NQuery::EOrder
+	QueryOrderType QueryOrder;
+#undef QueryOrderType
 
 	void OnQueryAchievementsComplete(const FUniqueNetId& PlayerId, const bool Success);
 
@@ -1155,7 +1161,9 @@ protected:
 
 	virtual void SetType(ICsAchievement* Achievement, const FECsAchievement& AchievementType);
 
-	virtual void SetProgressType(ICsAchievement* Achievement, const ECsAchievementProgress& ProgressType);
+#define ProgressType NCsAchievement::EProgress
+	virtual void SetProgressType(ICsAchievement* Achievement, const ProgressType& Type);
+#undef ProgressType
 
 	virtual void SetProgress(ICsAchievement* Achievement, const float& Percent);
 
@@ -1185,6 +1193,7 @@ protected:
 
 #pragma endregion Internals
 
+#undef ActionType
 #undef ActionInfoManagerType
 #undef ActionInfoType
 #undef ActionAllocationType

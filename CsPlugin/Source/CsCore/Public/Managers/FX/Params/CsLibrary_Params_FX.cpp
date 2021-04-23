@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/FX/Params/CsLibrary_Params_FX.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+// FX
 #include "Managers/FX/Params/CsParams_FX.h"
 
 namespace NCsFX
@@ -25,9 +28,9 @@ namespace NCsFX
 		bool FLibrary::IsValidChecked(const FString& Context, const ParameterType* Parameter)
 		{
 			// Check Parameter is Valid
-			checkf(Parameter, TEXT("%s: Parameter is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Parameter)
 			// Check Name is Valid
-			checkf(Parameter->GetName() != NAME_None, TEXT("%s: Parameter->GetName(): None is NOT Valid."), *Context);
+			CS_IS_NAME_NONE_CHECKED(Parameter->GetName())
 			// Check ValueType is Valid
 			check(EMValue::Get().IsValidEnumChecked(Context, Parameter->GetValueType()));
 
@@ -37,23 +40,11 @@ namespace NCsFX
 		bool FLibrary::IsValid(const FString& Context, const ParameterType* Parameter, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check Parameter is Valid
-			if (!Parameter)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Parameter is NULL."), *Context));
-				return false;
-			}
+			CS_IS_PTR_NULL(Parameter)
 			// Check Name is Valid
-			if (Parameter->GetName() == NAME_None)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Parameter->GetName(): None is NOT Valid."), *Context));
-				return false;
-			}
+			CS_IS_NAME_NONE(Parameter->GetName())
 			// Check ValueType is Valid
-			if (!EMValue::Get().IsValidEnum(Parameter->GetValueType()))
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Parameter->GetValueType(): %s is NOT Valid."), *Context, EMValue::Get().ToChar(Parameter->GetValueType())));
-				return false;
-			}
+			CS_IS_ENUM_VALID(EMValue, EValue, Parameter->GetValueType())
 			return true;
 		}
 
@@ -62,7 +53,7 @@ namespace NCsFX
 
 		const int32& FLibrary::GetIntChecked(const FString& Context, const ParameterType* Parameter)
 		{
-			checkf(Parameter, TEXT("%s: Parameter is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Parameter)
 
 			checkf(Parameter->GetValueType() == EValue::Int, TEXT("%s: Parameter->GetValueType(): %s != Int."), *Context, EMValue::Get().ToChar(Parameter->GetValueType()));
 
@@ -71,11 +62,7 @@ namespace NCsFX
 
 		bool FLibrary::GetSafeInt(const FString& Context, const ParameterType* Parameter, int32& OutValue, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
 		{
-			if (!Parameter)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Parameter is NULL."), *Context));
-				return false;
-			}
+			CS_IS_PTR_NULL(Parameter)
 
 			if (Parameter->GetValueType() == EValue::Int)
 			{
@@ -93,7 +80,7 @@ namespace NCsFX
 
 		const float& FLibrary::GetFloatChecked(const FString& Context, const ParameterType* Parameter)
 		{
-			checkf(Parameter, TEXT("%s: Parameter is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Parameter)
 
 			checkf(Parameter->GetValueType() == EValue::Float, TEXT("%s: Parameter->GetValueType(): %s != Float."), *Context, EMValue::Get().ToChar(Parameter->GetValueType()));
 
@@ -102,7 +89,7 @@ namespace NCsFX
 
 		bool FLibrary::GetSafeFloat(const FString& Context, const ParameterType* Parameter, float& OutValue)
 		{
-			checkf(Parameter, TEXT("%s: Parameter is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Parameter)
 
 			if (Parameter->GetValueType() == EValue::Float)
 			{
@@ -119,7 +106,7 @@ namespace NCsFX
 
 		const FVector& FLibrary::GetVectorChecked(const FString& Context, const ParameterType* Parameter)
 		{
-			checkf(Parameter, TEXT("%s: Parameter is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Parameter)
 
 			checkf(Parameter->GetValueType() == EValue::Vector, TEXT("%s: Parameter->GetValueType(): %s != Vector."), *Context, EMValue::Get().ToChar(Parameter->GetValueType()));
 
@@ -128,7 +115,7 @@ namespace NCsFX
 
 		bool FLibrary::GetSafeVector(const FString& Context, const ParameterType* Parameter, FVector& OutValue)
 		{
-			checkf(Parameter, TEXT("%s: Parameter is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Parameter)
 
 			if (Parameter->GetValueType() == EValue::Vector)
 			{

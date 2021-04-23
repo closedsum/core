@@ -21,6 +21,8 @@ namespace NCsScriptLibraryActor
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, MoveByInterp);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetMaterial);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetMaterials);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SpawnBySoftObjectPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SpawnByStringPath);
 		}
 	}
 }
@@ -149,3 +151,30 @@ void UCsScriptLibrary_Actor::SetMaterials(const FString& Context, AActor* Actor,
 }
 
 #pragma endregion Material
+
+// Spawn
+#pragma region
+
+AActor* UCsScriptLibrary_Actor::SpawnBySoftObjectPath(const FString& Context, UObject* WorldContextObject, const FSoftObjectPath& Path)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::SpawnBySoftObjectPath : Context;
+
+	typedef NCsActor::FLibrary ActorLibrary;
+
+	return ActorLibrary::SafeSpawn(Ctxt, WorldContextObject, Path);
+}
+
+AActor* UCsScriptLibrary_Actor::SpawnByStringPath(const FString& Context, UObject* WorldContextObject, const FString& Path)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::SpawnByStringPath : Context;
+
+	typedef NCsActor::FLibrary ActorLibrary;
+
+	return ActorLibrary::SafeSpawn(Ctxt, WorldContextObject, Path);
+}
+
+#pragma endregion Spawn

@@ -4,6 +4,8 @@
 
 // Types
 #include "Types/CsTypes_Macro.h"
+// Library
+#include "Library/CsLibrary_Valid.h"
 // World
 #include "Engine/World.h"
 #include "Engine/Engine.h"
@@ -28,7 +30,7 @@ namespace NCsWorld
 
 	UWorld* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 	{
-		checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 		UWorld* World = WorldContext->GetWorld();
 
@@ -39,11 +41,7 @@ namespace NCsWorld
 
 	UWorld* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!WorldContext)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: WorldContext is NULL."), *Context));
-			return nullptr;
-		}
+		CS_IS_PTR_NULL_RET_NULL(WorldContext)
 
 		UWorld* World = WorldContext->GetWorld();
 

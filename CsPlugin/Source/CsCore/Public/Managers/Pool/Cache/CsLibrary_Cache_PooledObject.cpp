@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Cache/CsLibrary_Cache_PooledObject.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Pool
 #include "Managers/Pool/CsPooledObject.h"
 
@@ -27,7 +29,7 @@ namespace NCsPooledObject
 		CacheType* FLibrary::GetChecked(const FString& Context, UObject* Object)
 		{
 			// Check Object is Valid
-			checkf(Object, TEXT("%s: Object is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Object)
 			// Check Object implements the interface: ICsPooledObject;
 			ICsPooledObject* Interface = Cast<ICsPooledObject>(Object);
 
@@ -43,11 +45,7 @@ namespace NCsPooledObject
 		CacheType* FLibrary::GetSafe(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check Object is Valid
-			if (!Object)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object is NULL."), *Context));
-				return nullptr;
-			}
+			CS_IS_PTR_NULL_RET_NULL(Object)
 			// Check Object implements the interface: ICsPooledObject;
 			ICsPooledObject* Interface = Cast<ICsPooledObject>(Object);
 

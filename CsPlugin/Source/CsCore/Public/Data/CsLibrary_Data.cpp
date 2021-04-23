@@ -4,6 +4,7 @@
 
 // Library
 #include "Game/CsLibrary_GameInstance.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Data/CsManager_Data.h"
 // Game
@@ -52,12 +53,7 @@ namespace NCsData
 	#define DataType NCsData::IData
 	DataType* FLibrary::SafeLoad(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!Object)
-		{
-			if (Log)
-				Log(FString::Printf(TEXT("%s: Object is NULL."), *Context));
-			return nullptr;
-		}
+		CS_IS_PTR_NULL_RET_NULL(Object)
 
 		ICsData* UData = Cast<ICsData>(Object);
 
@@ -95,19 +91,15 @@ namespace NCsData
 	}
 
 	#define DataType NCsData::IData
-	DataType* FLibrary::GetSafe(const FString& Context, UObject* Object)
+	DataType* FLibrary::GetSafe(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!Object)
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s: Object is NULL."), *Context);
-			return nullptr;
-		}
+		CS_IS_PTR_NULL_RET_NULL(Object)
 
 		ICsData* UData = Cast<ICsData>(Object);
 
 		if (!UData)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s does NOT implement interface: ICsData."), *Context, *PrintObjectAndClass(Object));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement interface: ICsData."), *Context, *PrintObjectAndClass(Object)));
 			return nullptr;
 		}
 
@@ -115,7 +107,7 @@ namespace NCsData
 
 		if (!Data)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
 			return nullptr;
 		}
 		return Data;
@@ -139,7 +131,7 @@ namespace NCsData
 	{
 	#undef DataType
 
-		checkf(Object, TEXT("%s: Object is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(Object)
 
 		ICsData* UData = Cast<ICsData>(Object);
 
@@ -151,7 +143,7 @@ namespace NCsData
 	#define DataType NCsData::IData
 	DataType* FLibrary::GetChecked(const FString& Context, ICsData* UData)
 	{
-		checkf(UData, TEXT("%s: UData is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(UData)
 
 		DataType* Data = UData->_getIData();
 

@@ -3,6 +3,7 @@
 
 // Library
 #include "Managers/Sound/Payload/CsLibrary_Payload_Sound.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Sound/CsManager_Sound.h"
 // Game
@@ -23,7 +24,7 @@ namespace NCsSound
 	{
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 			UWorld* World = WorldContext->GetWorld();
 

@@ -66,6 +66,22 @@ namespace NCsAchievementState
 	CSPLATFORMSERVICES_API const uint8 MAX = (uint8)Type::ECsAchievementState_MAX;
 }
 
+namespace NCsAchievement
+{
+	namespace NState
+	{
+		namespace Ref
+		{
+			typedef EMState EnumMapType;
+
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(None);
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(InProgress);
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(Completed);
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(EState_MAX, "MAX");
+		}
+	}
+}
+
 #pragma endregion AchievementState
 
 // AchievementProgress
@@ -88,27 +104,45 @@ namespace NCsAchievementProgress
 	CSPLATFORMSERVICES_API const uint8 MAX = (uint8)Type::ECsAchievementProgress_MAX;
 }
 
+namespace NCsAchievement
+{
+	namespace NProgress
+	{
+		namespace Ref
+		{
+			typedef EMProgress EnumMapType;
+
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(Normalized);
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(Standard);
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(Binary);
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(Count);
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(Bitfield);
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(EProgress_MAX, "MAX");
+		}
+	}
+}
+
 #pragma endregion AchievementProgress
 
 // FCsAchievement
 #pragma region
 
-void FCsAchievement::SetProgressType(const ECsAchievementProgress& InProgressType)
+void FCsAchievement::SetProgressType(const NCsAchievement::EProgress& InProgressType)
 {
 	ProgressType = InProgressType;
 
 	// Normalized
-	if (ProgressType == ECsAchievementProgress::Normalized)
+	if (ProgressType == NCsAchievement::EProgress::Normalized)
 	{
 		MinProgress = 0.0f;
 		MaxProgress = 1.0f;
 	}
 	// Standard | Count | Bitfield
 	else
-	if (ProgressType == ECsAchievementProgress::Standard ||
-		ProgressType == ECsAchievementProgress::Binary ||
-		ProgressType == ECsAchievementProgress::Count ||
-		ProgressType == ECsAchievementProgress::Bitfield)
+	if (ProgressType == NCsAchievement::EProgress::Standard ||
+		ProgressType == NCsAchievement::EProgress::Binary ||
+		ProgressType == NCsAchievement::EProgress::Count ||
+		ProgressType == NCsAchievement::EProgress::Bitfield)
 	{
 		MinProgress = 0.0f;
 		MaxProgress = 100.0f;
@@ -120,18 +154,20 @@ void FCsAchievement::SetProgress(const float& InPercent)
 	Percent	 = FMath::Clamp(InPercent, 0.0f, 1.0f);
 	Progress = (Percent * (MaxProgress - MinProgress)) + MinProgress;
 
+	typedef NCsAchievement::EState StateType;
+
 	if (Progress == MaxProgress)
 	{
-		State = ECsAchievementState::Completed;
+		State = StateType::Completed;
 	}
 	else
 	if (Progress > MinProgress)
 	{
-		State = ECsAchievementState::InProgress;
+		State = StateType::InProgress;
 	}
 	else
 	{
-		State = ECsAchievementState::None;
+		State = StateType::None;
 	}
 }
 
@@ -139,7 +175,7 @@ void FCsAchievement::SetCount(const uint64& InCount)
 {
 	Count = FMath::Min(InCount, MaxCount);
 
-	if (ProgressType == ECsAchievementProgress::Count)
+	if (ProgressType == NCsAchievement::EProgress::Count)
 	{
 		SetProgress((float)Count / (float)MaxCount);
 	}
@@ -150,7 +186,7 @@ void FCsAchievement::SetMaxCount(const uint64& InCount)
 	MaxCount = InCount;
 	Count    = FMath::Clamp(Count, 0ull, MaxCount);
 
-	if (ProgressType == ECsAchievementProgress::Count)
+	if (ProgressType == NCsAchievement::EProgress::Count)
 	{
 		SetProgress((float)Count / (float)MaxCount);
 	}
@@ -208,7 +244,7 @@ void FCsAchievement::SetBitfield(const FString& InBitfield)
 		}
 	}
 
-	if (ProgressType == ECsAchievementProgress::Bitfield)
+	if (ProgressType == NCsAchievement::EProgress::Bitfield)
 	{
 		SetProgress((float)NumBitsSet / (float)UnlockBitfieldLength);
 	}
@@ -229,7 +265,7 @@ void FCsAchievement::OrBitfield(const FString& InBitfield)
 				++NumBitsSet;
 		}
 
-		if (ProgressType == ECsAchievementProgress::Bitfield)
+		if (ProgressType == NCsAchievement::EProgress::Bitfield)
 		{
 			SetProgress((float)NumBitsSet / (float)UnlockBitfieldLength);
 		}
@@ -245,7 +281,7 @@ void FCsAchievement::SetBit(const uint32& Index)
 		Bitfield[Index] = '1';
 
 		if (HasChanged &&
-			ProgressType == ECsAchievementProgress::Bitfield)
+			ProgressType == NCsAchievement::EProgress::Bitfield)
 		{
 			++NumBitsSet;
 		
@@ -263,7 +299,7 @@ void FCsAchievement::ClearBit(const uint32& Index)
 		Bitfield[Index] = '0';
 
 		if (HasChanged &&
-			ProgressType == ECsAchievementProgress::Bitfield)
+			ProgressType == NCsAchievement::EProgress::Bitfield)
 		{
 			--NumBitsSet;
 
@@ -315,6 +351,31 @@ namespace NCsAchievementAction
 	}
 
 	CSPLATFORMSERVICES_API const uint8 MAX = (uint8)Type::ECsAchievementAction_MAX;
+}
+
+namespace NCsAchievement
+{
+	namespace NAction
+	{
+		namespace Ref
+		{
+			typedef EMAction EnumMapType;
+
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(QueryIds, "Query Ids");
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(QueryDescriptions, "Query Descriptions");
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(UpdateDescriptions, "Update Descriptions");
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(Create);
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(Modify);
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(Remove);
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(RemoveAll);
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(Write);
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(Complete);
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(CompleteAll, "Complete All");
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(Reset);
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(ResetAll, "Reset All");
+			CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(EAction_MAX, "MAX");
+		}
+	}
 }
 
 #pragma endregion AchievementAction
@@ -383,3 +444,40 @@ namespace NCsAchievementWritePolicy
 }
 
 #pragma endregion AchievementWritePolicy
+
+// AchievementQueryOrder
+#pragma region
+
+namespace NCsAchievementQueryOrder
+{
+	namespace Ref
+	{
+		typedef EMCsAchievementQueryOrder EnumMapType;
+
+		CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(IdsFirst, "Ids First");
+		CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(DescriptionsFirst, "Descriptions First");
+		CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsAchievementQueryOrder_MAX, "MAX");
+	}
+
+	CSPLATFORMSERVICES_API const uint8 MAX = (uint8)Type::ECsAchievementQueryOrder_MAX;
+}
+
+namespace NCsAchievement
+{
+	namespace NQuery
+	{
+		namespace NOrder
+		{
+			namespace Ref
+			{
+				typedef EMOrder EnumMapType;
+
+				CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(IdsFirst, "Ids First");
+				CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(DescriptionsFirst, "Descriptions First");
+				CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(EOrder_MAX, "MAX");
+			}
+		}
+	}
+}
+
+#pragma endregion AchievementProgress

@@ -4,6 +4,7 @@
 // Library
 #include "Library/CsLibrary_Material.h"
 #include "Animation/CsLibrary_Skeleton.h"
+#include "Library/CsLibrary_Valid.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
 // Animation
@@ -47,18 +48,14 @@ namespace NCsSkeletalMeshActor
 				bool FOneShot::IsValidChecked(const FString& Context) const
 				{
 					// Check Anim is Valid
-					checkf(GetAnim(), TEXT("%s: Anim is NULL."), *Context);
+					CS_IS_PTR_NULL_CHECKED(GetAnim())
 					return true;
 				}
 
 				bool FOneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 				{
 					// Check Anim is Valid
-					if (!GetAnim())
-					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Anim is NULL."), *Context));
-						return false;
-					}
+					CS_IS_PTR_NULL(GetAnim())
 					return true;
 				}
 			}
@@ -97,32 +94,24 @@ namespace NCsSkeletalMeshActor
 				bool FOneShot::IsValidChecked(const FString& Context) const
 				{
 					// Check Class is Valid
-					checkf(GetClass(), TEXT("%s: Class is NULL."), *Context);
+					CS_IS_PTR_NULL_CHECKED(GetClass())
 					// Check Anim is Valid
-					checkf(GetAnim(), TEXT("%s: Anim is NULL."), *Context);
+					CS_IS_PTR_NULL_CHECKED(GetAnim())
 					// Check Skeleton are compatible between Class and Anim
 					typedef NCsSkeleton::FLibrary SkeletonLibrary;
 
 					check(SkeletonLibrary::IsValidChecked(Context, GetClass(), GetAnim()));
 					// Check PlayRate is Valid
-					checkf(GetPlayRate() > 0.0f, TEXT("%s: PlayRate: %d is NOT > 0.0f."), *Context, GetPlayRate());
+					CS_IS_FLOAT_GREATER_THAN_CHECKED(GetPlayRate(), 0.0f)
 					return true;
 				}
 
 				bool FOneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 				{
 					// Check Class is Valid
-					if (!GetClass())
-					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Class is NULL."), *Context));
-						return false;
-					}
+					CS_IS_PTR_NULL(GetClass())
 					// Check Anim is Valid
-					if (!GetAnim())
-					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Anim is NULL."), *Context));
-						return false;
-					}
+					CS_IS_PTR_NULL(GetAnim())
 					// Check Skeleton are compatible between Class and Anim
 					typedef NCsSkeleton::FLibrary SkeletonLibrary;
 
@@ -130,11 +119,7 @@ namespace NCsSkeletalMeshActor
 						return false;
 
 					// Check PlayRate is Valid
-					if (GetPlayRate() <= 0.0f)
-					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PlayRate: %d is NOT > 0.0f."), *Context, GetPlayRate()));
-						return false;
-					}
+					CS_IS_FLOAT_GREATER_THAN(GetPlayRate(), 0.0f)
 					return true;
 				}
 			}
@@ -154,7 +139,7 @@ namespace NCsSkeletalMeshActor
 			bool FOneShot::IsValidChecked(const FString& Context) const
 			{
 				// Check Mesh is Valid
-				checkf(GetMesh(), TEXT("%s: Mesh is NULL."), *Context);
+				CS_IS_PTR_NULL_CHECKED(GetMesh())
 				// Check Materials is Valid
 				typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -183,11 +168,7 @@ namespace NCsSkeletalMeshActor
 			bool FOneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 			{
 				// Check Mesh is Valid
-				if (!GetMesh())
-				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh is NULL."), *Context));
-					return false;
-				}
+				CS_IS_PTR_NULL(GetMesh())
 				// Check Materials is Valid
 				typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -307,7 +288,7 @@ namespace NCsSkeletalMeshActor
 			bool FOneShot::IsValidChecked(const FString& Context) const
 			{
 				// Check Mesh is Valid
-				checkf(GetMesh(), TEXT("%s: Mesh is NULL."), *Context);
+				CS_IS_PTR_NULL_CHECKED(GetMesh())
 				// Check Materials is Valid
 				typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -336,11 +317,7 @@ namespace NCsSkeletalMeshActor
 			bool FOneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 			{
 				// Check Mesh is Valid
-				if (!GetMesh())
-				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh is NULL."), *Context));
-					return false;
-				}
+				CS_IS_PTR_NULL(GetMesh())
 				// Check Materials is Valid
 				typedef NCsMaterial::FLibrary MaterialLibrary;
 

@@ -4,6 +4,8 @@
 
 // Types
 #include "Types/CsTypes_Macro.h"
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Player
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/PlayerController.h"
@@ -19,7 +21,7 @@ namespace NCsPlayer
 {
 	ULocalPlayer* FLibrary::GetFirstLocalChecked(const FString& Context, UObject* WorldContext)
 	{
-		checkf(WorldContext, TEXT("%s: WorldContext is NULL."));
+		CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 		UWorld* World = WorldContext->GetWorld();
 
@@ -55,7 +57,7 @@ namespace NCsPlayer
 
 		APlayerController* FLibrary::GetFirstLocalChecked(const FString& Context, UObject* WorldContext)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."));
+			CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 			UWorld* World = WorldContext->GetWorld();
 
@@ -66,7 +68,7 @@ namespace NCsPlayer
 
 		APlayerController* FLibrary::GetLocal(const FString& Context, UWorld* World, const int32& ControllerId)
 		{
-			checkf(World, TEXT("%s: World is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(World)
 
 			checkf(ControllerId > INDEX_NONE, TEXT("%s: ControllerId: %d is NOT Valid. ControllerId must be >= 0."), *Context, ControllerId);
 
@@ -77,7 +79,7 @@ namespace NCsPlayer
 
 		APlayerController* FLibrary::GetLocalChecked(const FString& Context, UWorld* World, const int32& ControllerId)
 		{
-			checkf(World, TEXT("%s: World is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(World)
 
 			checkf(ControllerId > INDEX_NONE, TEXT("%s: ControllerId: %d is NOT Valid. ControllerId must be >= 0."), *Context, ControllerId);
 
@@ -94,7 +96,7 @@ namespace NCsPlayer
 
 		APlayerController* FLibrary::GetLocalChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 			UWorld* World = WorldContext->GetWorld();
 
@@ -105,7 +107,7 @@ namespace NCsPlayer
 
 		APlayerController* FLibrary::GetOrFirstLocalChecked(const FString& Context, APawn* Pawn)
 		{
-			checkf(Pawn, TEXT("%s: Pawn is NULL."));
+			CS_IS_PTR_NULL_CHECKED(Pawn)
 
 			if (APlayerController* PC = Cast<APlayerController>(Pawn->Controller))
 				return PC;
@@ -134,7 +136,7 @@ namespace NCsPlayer
 
 		void FLibrary::GetAllLocalChecked(const FString& Context, UWorld* World, TArray<APlayerController*>& OutControllers)
 		{
-			checkf(World, TEXT("%s: World is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(World)
 
 			for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
 			{
@@ -149,7 +151,7 @@ namespace NCsPlayer
 
 		void FLibrary::GetAllLocalChecked(const FString& Context, UObject* WorldContext, TArray<APlayerController*>& OutControllers)
 		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 			GetAllLocalChecked(Context, WorldContext->GetWorld(), OutControllers);
 		}

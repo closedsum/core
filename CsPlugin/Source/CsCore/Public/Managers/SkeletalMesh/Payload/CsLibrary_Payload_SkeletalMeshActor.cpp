@@ -4,6 +4,7 @@
 // Library
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Library/CsLibrary_SkeletalMesh.h"
+#include "Library/CsLibrary_Valid.h"
 // StaticMesh
 #include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"
 #include "Managers/SkeletalMesh/Params/CsParams_SkeletalMeshActor.h"
@@ -81,7 +82,7 @@ namespace NCsSkeletalMeshActor
 
 		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, const ShotType& Shot)
 		{
-			checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Payload)
 
 			check(Shot.IsValidChecked(Context));
 
@@ -114,11 +115,7 @@ namespace NCsSkeletalMeshActor
 
 		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const ShotType& Shot, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!Payload)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload is NULL."), *Context));
-				return;
-			}
+			CS_IS_PTR_NULL_EXIT(Payload)
 
 			if (!Shot.IsValid(Context, Log))
 				return;
@@ -137,17 +134,9 @@ namespace NCsSkeletalMeshActor
 
 		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload, const ShotType& Shot, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!Payload)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload is NULL."), *Context));
-				return;
-			}
+			CS_IS_PTR_NULL_CHECKED(Payload)
 
-			if (!PooledPayload)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PooledPayload is NULL."), *Context));
-				return;
-			}
+			CS_IS_PTR_NULL_CHECKED(PooledPayload)
 
 			if (!Shot.IsValid(Context, Log))
 				return;
@@ -170,7 +159,7 @@ namespace NCsSkeletalMeshActor
 
 		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, const ShotType& Shot)
 		{
-			checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Payload)
 
 			check(Shot.IsValidChecked(Context));
 
@@ -203,11 +192,7 @@ namespace NCsSkeletalMeshActor
 
 		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const ShotType& Shot, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!Payload)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload is NULL."), *Context));
-				return;
-			}
+			CS_IS_PTR_NULL_EXIT(Payload)
 
 			if (!Shot.IsValid(Context, Log))
 				return;
@@ -226,17 +211,9 @@ namespace NCsSkeletalMeshActor
 
 		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload, const ShotType& Shot, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!Payload)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload is NULL."), *Context));
-				return;
-			}
+			CS_IS_PTR_NULL_EXIT(Payload)
 
-			if (!PooledPayload)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PooledPayload is NULL."), *Context));
-				return;
-			}
+			CS_IS_PTR_NULL_EXIT(PooledPayload)
 
 			if (!Shot.IsValid(Context, Log))
 				return;

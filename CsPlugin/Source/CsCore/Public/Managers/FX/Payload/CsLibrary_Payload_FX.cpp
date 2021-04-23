@@ -3,6 +3,7 @@
 
 // Library
 #include "Managers/FX/Params/CsLibrary_Params_FX.h"
+#include "Library/CsLibrary_Valid.h"
 // Types
 #include "Managers/FX/CsTypes_FX.h"
 // Pool
@@ -29,7 +30,7 @@ namespace NCsFX
 		bool FLibrary::IsValidChecked(const FString& Context, PayloadType* Payload)
 		{
 			// Check Payload is Valid
-			checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Payload)
 			// Check FX System is Valid.
 			checkf(Payload->GetFXSystem(), TEXT("%s: FX System is NULL."), *Context);
 			// Check Parameters are Valid.
@@ -52,11 +53,7 @@ namespace NCsFX
 		bool FLibrary::IsValid(const FString& Context, PayloadType* Payload, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check Payload is Valid
-			if (!Payload)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload is NULL."), *Context));
-				return false;
-			}
+			CS_IS_PTR_NULL(Payload)
 			// Check FX System is Valid.
 			if (!Payload->GetFXSystem())
 			{
@@ -114,11 +111,7 @@ namespace NCsFX
 
 		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!Payload)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload is NULL."), *Context));
-				return;
-			}
+			CS_IS_PTR_NULL_EXIT(Payload)
 
 			if (!FX.IsValid(Context))
 				return;
@@ -137,17 +130,9 @@ namespace NCsFX
 
 		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!Payload)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload is NULL."), *Context));
-				return;
-			}
+			CS_IS_PTR_NULL_EXIT(Payload)
 
-			if (!PooledPayload)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PooledPayload is NULL."), *Context));
-				return;
-			}
+			CS_IS_PTR_NULL_EXIT(PooledPayload)
 
 			if (!FX.IsValid(Context))
 				return;

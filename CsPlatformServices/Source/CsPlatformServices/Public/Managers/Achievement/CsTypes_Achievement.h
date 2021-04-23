@@ -43,9 +43,9 @@ namespace NCsAchievement
 UENUM(BlueprintType)
 enum class ECsAchievementState : uint8
 {
-	None						UMETA(DisplayName = "None"),
-	InProgress					UMETA(DisplayName = "In Progress"),
-	Completed					UMETA(DisplayName = "Completed"),
+	None					UMETA(DisplayName = "None"),
+	InProgress				UMETA(DisplayName = "In Progress"),
+	Completed				UMETA(DisplayName = "Completed"),
 	ECsAchievementState_MAX	UMETA(Hidden),
 };
 
@@ -67,6 +67,35 @@ namespace NCsAchievementState
 	}
 
 	extern CSPLATFORMSERVICES_API const uint8 MAX;
+}
+
+namespace NCsAchievement
+{
+	enum class EState : uint8
+	{
+		None,
+		InProgress,
+		Completed,
+		EState_MAX
+	};
+
+	struct CSPLATFORMSERVICES_API EMState final : public TCsEnumMap<EState>
+	{
+		CS_ENUM_MAP_BODY(EMState, EState)
+	};
+
+	namespace NState
+	{
+		namespace Ref
+		{
+			typedef EState Type;
+
+			extern CSPLATFORMSERVICES_API const Type None;
+			extern CSPLATFORMSERVICES_API const Type InProgress;
+			extern CSPLATFORMSERVICES_API const Type Completed;
+			extern CSPLATFORMSERVICES_API const Type EState_MAX;
+		}
+	}
 }
 
 #pragma endregion AchievementState
@@ -110,6 +139,44 @@ namespace NCsAchievementProgress
 	}
 
 	extern CSPLATFORMSERVICES_API const uint8 MAX;
+}
+
+namespace NCsAchievement
+{
+	enum class EProgress : uint8 
+	{
+		// [0.0, 1.0] Inclusive.
+		Normalized,
+		// [0.0, 100.0] Inclusive.
+		Standard,
+		// [0.0, 100.0] Inclusive. Internally only values supported are 0.0 = Lock and 100.0 = Unlock.
+		Binary,
+		// [0.0, 100.0] Inclusive. Internally [0, N] Inclusive. X out of N.
+		Count,
+		// [0.0, 100.0] Inclusive. Internally check against bits set for a mask (i.e. 010010, ... etc).
+		Bitfield,
+		EProgress_MAX
+	};
+
+	struct CSPLATFORMSERVICES_API EMProgress final : public TCsEnumMap<EProgress>
+	{
+		CS_ENUM_MAP_BODY(EMProgress, EProgress)
+	};
+
+	namespace NProgress
+	{
+		namespace Ref
+		{
+			typedef EProgress Type;
+
+			extern CSPLATFORMSERVICES_API const Type Normalized;
+			extern CSPLATFORMSERVICES_API const Type Standard;
+			extern CSPLATFORMSERVICES_API const Type Binary;
+			extern CSPLATFORMSERVICES_API const Type Count;
+			extern CSPLATFORMSERVICES_API const Type Bitfield;
+			extern CSPLATFORMSERVICES_API const Type EProgress_MAX;
+		}
+	}
 }
 
 #pragma endregion AchievementProgress
@@ -157,6 +224,9 @@ public:
 
 	virtual ~ICsAchievement(){}
 
+#define ProgressType NCsAchievement::EProgress
+#define StateType NCsAchievement::EState
+
 	/**
 	* Get the Id of the Achievement. This is usually the internal name for
 	*  the Achievement.
@@ -187,23 +257,23 @@ public:
 
 	/**
 	* Get the Progress Type. The Progress Type dictates the value range of the Progress.
-	*  See ECsAchievementProgress (Normalized, Standard, ... etc).
+	*  See ProgressType (NCsAchievement::EProgress (Normalized, Standard, ... etc)).
 	*
 	* return Progress Type.
 	*/
-	virtual const ECsAchievementProgress& GetProgressType() const = 0;
+	virtual const ProgressType& GetProgressType() const = 0;
 
 	/**
 	* Set the Progress Type.
-	*  See ECsAchievementProgress (Normalized, Standard, ... etc).
+	*  See ProgressType (NCsAchievement::EProgress (Normalized, Standard, ... etc)).
 	*
 	* @param InProgressType		New Progress Type.
 	*/
-	virtual void SetProgressType(const ECsAchievementProgress& InProgressType) = 0;
+	virtual void SetProgressType(const ProgressType& InProgressType) = 0;
 
 	/**
 	* Get the current Progress. The value is in the range defined by the Progress Type.
-	*  See ECsAchievementProgress (Normalized, Standard, ... etc).
+	*  See ProgressType (NCsAchievement::EProgress (Normalized, Standard, ... etc)).
 	*
 	* return Progress.
 	*/
@@ -305,7 +375,7 @@ public:
 	*
 	* return State.
 	*/
-	virtual const ECsAchievementState& GetState() const = 0;
+	virtual const StateType& GetState() const = 0;
 
 	/**
 	* Get the Title of the Achievement (i.e. Achievement 1 Title).
@@ -346,6 +416,9 @@ public:
 	*
 	*/
 	virtual void Complete() = 0;
+
+#undef ProgressType
+#undef StateType
 };
 
 #pragma endregion ICsAchievement
@@ -357,6 +430,7 @@ struct CSPLATFORMSERVICES_API FCsAchievement : public ICsAchievement
 {
 public:
 
+#define StateType NCsAchievement::EState
 	/** */
 	FString Id;
 
@@ -366,7 +440,7 @@ protected:
 	bool bValid;
 
 	/** */
-	ECsAchievementProgress ProgressType;
+	NCsAchievement::EProgress ProgressType;
 
 	/** */
 	float Progress;
@@ -413,7 +487,7 @@ public:
 protected:
 
 	/** */
-	ECsAchievementState State;
+	StateType State;
 
 public:
 
@@ -435,7 +509,7 @@ public:
 	FCsAchievement() :
 		Id(),
 		bValid(true),
-		ProgressType(ECsAchievementProgress::Normalized),
+		ProgressType(NCsAchievement::EProgress::Normalized),
 		Progress(0.0f),
 		MinProgress(0.0f),
 		MaxProgress(1.0f),
@@ -450,7 +524,7 @@ public:
 		BitMaskComplete(),
 		Percent(0.0f),
 		Type(),
-		State(ECsAchievementState::None),
+		State(StateType::None),
 		Title(),
 		Description(),
 		UnlockDescription(),
@@ -471,7 +545,7 @@ public:
 	FORCEINLINE const bool& IsValid() const { return bValid; }
 	FORCEINLINE void SetValid() { bValid = true; }
 	FORCEINLINE void SetInvalid() { bValid = false; }
-	FORCEINLINE const ECsAchievementProgress& GetProgressType() const { return ProgressType; }
+	FORCEINLINE const NCsAchievement::EProgress& GetProgressType() const { return ProgressType; }
 	FORCEINLINE const float& GetProgress() const { return Progress; }
 	FORCEINLINE const float& GetProgressAsPercent() const { return Percent; }
 
@@ -492,7 +566,7 @@ public:
 	FORCEINLINE const uint32& GetNumBitsSet() const { return NumBitsSet; }
 	FORCEINLINE bool IsBitSet(const uint32& Index) const { return Index < (uint32)Bitfield.Len() ? Bitfield[Index] == '1' : false; }
 	FORCEINLINE const FECsAchievement& GetType() const { return Type; }
-	FORCEINLINE const ECsAchievementState& GetState() const { return State; }
+	FORCEINLINE const StateType& GetState() const { return State; }
 	FORCEINLINE const FText& GetTitle() const { return Title; }
 	FORCEINLINE const FText& GetDescription() const { return Description; }
 	FORCEINLINE const FText& GetUnlockedDescription() const { return UnlockDescription; }
@@ -508,7 +582,7 @@ public:
 		//Bitfield	   = UnlockBitfield;
 		//BitfieldLength = UnlockBitfieldLength;
 		Percent		   = 1.0f;
-		State		   = ECsAchievementState::Completed;
+		State		   = StateType::Completed;
 	}
 
 #pragma endregion ICsAchievement
@@ -519,7 +593,7 @@ public:
 	*
 	* @param InProgressType		New Progress Type.
 	*/
-	void SetProgressType(const ECsAchievementProgress& InProgressType);
+	void SetProgressType(const NCsAchievement::EProgress& InProgressType);
 
 	/**
 	* Set the Progress. The value is adjusted to range defined by the Progress Type.
@@ -600,6 +674,8 @@ public:
 	void ClearBit(const uint32& Index);
 
 	bool IsValidBitfield(const FString& InBitfield);
+
+#undef StateType
 };
 
 #pragma endregion FCsAchievement
@@ -652,6 +728,53 @@ namespace NCsAchievementAction
 	}
 
 	extern CSPLATFORMSERVICES_API const uint8 MAX;
+}
+
+namespace NCsAchievement
+{
+	enum class EAction : uint8
+	{
+		QueryIds,
+		QueryDescriptions,
+		UpdateDescriptions,
+		Create,
+		Modify,
+		Remove,
+		RemoveAll,
+		Write,
+		Complete,
+		CompleteAll,
+		Reset,
+		ResetAll,
+		EAction_MAX
+	};
+
+	struct CSPLATFORMSERVICES_API EMAction final : public TCsEnumMap<EAction>
+	{
+		CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMAction, EAction)
+	};
+
+	namespace NAction
+	{
+		namespace Ref
+		{
+			typedef EAction Type;
+
+			extern CSPLATFORMSERVICES_API const Type QueryIds;
+			extern CSPLATFORMSERVICES_API const Type QueryDescriptions;
+			extern CSPLATFORMSERVICES_API const Type UpdateDescriptions;
+			extern CSPLATFORMSERVICES_API const Type Create;
+			extern CSPLATFORMSERVICES_API const Type Modify;
+			extern CSPLATFORMSERVICES_API const Type Remove;
+			extern CSPLATFORMSERVICES_API const Type RemoveAll;
+			extern CSPLATFORMSERVICES_API const Type Write;
+			extern CSPLATFORMSERVICES_API const Type Complete;
+			extern CSPLATFORMSERVICES_API const Type CompleteAll;
+			extern CSPLATFORMSERVICES_API const Type Reset;
+			extern CSPLATFORMSERVICES_API const Type ResetAll;
+			extern CSPLATFORMSERVICES_API const Type EAction_MAX;
+		}
+	}
 }
 
 #pragma endregion AchievementAction
@@ -952,108 +1075,113 @@ struct CSPLATFORMSERVICES_API FCsAchievementEntry : public FTableRowBase
 
 #pragma endregion FCsAchievementEntry
 
-// NCsAchievement::NAction::FInfo
+// NCsAchievement::NAction::NInfo::FInfo
 #pragma region
 
 namespace NCsAchievement
 {
 	namespace NAction
 	{
-		struct CSPLATFORMSERVICES_API FInfo
+		namespace NInfo
 		{
-		public:
-
-		#define ValueType NCsAchievement::FValue
-
-			/** Action to processed. See ERsAchievementAction. */
-			ECsAchievementAction Action;
-
-			/** Achievement to perform Action on. */
-			FECsAchievement Achievement;
-
-			/** If Action == Remove, this will be the name of the
-				achievement removed. */
-			FString Name;
-
-			/** If Action == Write, value type to write. */
-			ValueType Value;
-
-			/** If Action == Create | Modify, the appropriate data to update. */
-			FCsAchievementEntry Entry;
-
-		private:
-
-			/** Current state of the action (i.e. In Progress, Complete, ... etc). */
-			ECsAchievementActionState State;
-
-			/** Whether the action completed successfully. */
-			bool bSuccess;
-
-		public:
-
-			FInfo() :
-				Action(ECsAchievementAction::ECsAchievementAction_MAX),
-				Achievement(),
-				Name(),
-				Value(),
-				Entry(),
-				State(ECsAchievementActionState::None),
-				bSuccess(false)
+			struct CSPLATFORMSERVICES_API FInfo
 			{
+			public:
 
-			}
+			#define ActionType NCsAchievement::EAction
+			#define ValueType NCsAchievement::FValue
 
-			FORCEINLINE bool IsReadyToProcess() const
-			{
-				return State == ECsAchievementActionState::None;
-			}
+				/** Action to processed. See ActionType (NCsAchievement::EAction). */
+				ActionType Action;
 
-			FORCEINLINE void StartProgress()
-			{
-				State = ECsAchievementActionState::InProgress;
-			}
+				/** Achievement to perform Action on. */
+				FECsAchievement Achievement;
 
-			FORCEINLINE bool InProgress() const
-			{
-				return State == ECsAchievementActionState::InProgress;
-			}
+				/** If Action == Remove, this will be the name of the
+					achievement removed. */
+				FString Name;
 
-			FORCEINLINE void Complete()
-			{
-				State = ECsAchievementActionState::Complete;
-			}
+				/** If Action == Write, value type to write. */
+				ValueType Value;
 
-			FORCEINLINE bool IsComplete() const
-			{
-				return State == ECsAchievementActionState::Complete;
-			}
+				/** If Action == Create | Modify, the appropriate data to update. */
+				FCsAchievementEntry Entry;
 
-			FORCEINLINE void Success()
-			{
-				bSuccess = true;
-			}
+			private:
 
-			FORCEINLINE bool WasSuccessful() const
-			{
-				return bSuccess;
-			}
+				/** Current state of the action (i.e. In Progress, Complete, ... etc). */
+				ECsAchievementActionState State;
 
-			void Reset()
-			{
-				Action = ECsAchievementAction::ECsAchievementAction_MAX;
-				Achievement = EMCsAchievement::Get().GetMAX();
-				Value.Reset();
-				Entry.Reset();
-				State = ECsAchievementActionState::None;
-				bSuccess = false;
-			}
+				/** Whether the action completed successfully. */
+				bool bSuccess;
 
-		#undef ValueType
-		};
+			public:
+
+				FInfo() :
+					Action(ActionType::EAction_MAX),
+					Achievement(),
+					Name(),
+					Value(),
+					Entry(),
+					State(ECsAchievementActionState::None),
+					bSuccess(false)
+				{
+
+				}
+
+				FORCEINLINE bool IsReadyToProcess() const
+				{
+					return State == ECsAchievementActionState::None;
+				}
+
+				FORCEINLINE void StartProgress()
+				{
+					State = ECsAchievementActionState::InProgress;
+				}
+
+				FORCEINLINE bool InProgress() const
+				{
+					return State == ECsAchievementActionState::InProgress;
+				}
+
+				FORCEINLINE void Complete()
+				{
+					State = ECsAchievementActionState::Complete;
+				}
+
+				FORCEINLINE bool IsComplete() const
+				{
+					return State == ECsAchievementActionState::Complete;
+				}
+
+				FORCEINLINE void Success()
+				{
+					bSuccess = true;
+				}
+
+				FORCEINLINE bool WasSuccessful() const
+				{
+					return bSuccess;
+				}
+
+				void Reset()
+				{
+					Action = ActionType::EAction_MAX;
+					Achievement = EMCsAchievement::Get().GetMAX();
+					Value.Reset();
+					Entry.Reset();
+					State = ECsAchievementActionState::None;
+					bSuccess = false;
+				}
+
+			#undef ActionType
+			#undef ValueType
+			};
+		}
 	}
 }
 
-#pragma endregion NCsAchievement::NAction::FInfo
+#pragma endregion NCsAchievement::NAction::NInfo::FInfo
 
 // NCsAchievement::NWrite::FState
 #pragma region
@@ -1168,159 +1296,201 @@ namespace NCsAchievementQueryOrder
 	extern CSPLATFORMSERVICES_API const uint8 MAX;
 }
 
+namespace NCsAchievement
+{
+	namespace NQuery
+	{
+		enum class EOrder : uint8 
+		{
+			IdsFirst,
+			DescriptionsFirst,
+			EOrder_MAX
+		};
+
+		struct CSPLATFORMSERVICES_API EMOrder final : public TCsEnumMap<EOrder>
+		{
+			CS_ENUM_MAP_BODY(EMOrder, EOrder)
+		};
+
+		namespace NOrder
+		{
+			namespace Ref
+			{
+				typedef EOrder Type;
+
+				extern CSPLATFORMSERVICES_API const Type IdsFirst;
+				extern CSPLATFORMSERVICES_API const Type DescriptionsFirst;
+				extern CSPLATFORMSERVICES_API const Type EOrder_MAX;
+			}
+		}
+	}
+}
+
 #pragma endregion AchievementQueryOrder
 
-// FCsAchievementQueryIdsState
+// NCsAchievement::NQuery::FIdsState
 #pragma region
 
-struct CSPLATFORMSERVICES_API FCsAchievementQueryIdsState
+namespace NCsAchievement
 {
-private:
-
-	bool bComplete;
-	bool bProcessing;
-	bool bQueue;
-
-public:
-
-	bool bSuccess;
-
-	FCsAchievementQueryIdsState() :
-		bComplete(false),
-		bProcessing(false),
-		bQueue(false),
-		bSuccess(false)
+	namespace NQuery
 	{
+		struct CSPLATFORMSERVICES_API FIdsState
+		{
+		private:
+
+			bool bComplete;
+			bool bProcessing;
+			bool bQueue;
+
+		public:
+
+			bool bSuccess;
+
+			FIdsState() :
+				bComplete(false),
+				bProcessing(false),
+				bQueue(false),
+				bSuccess(false)
+			{
+			}
+
+			FORCEINLINE bool IsQueued() const
+			{
+				return bQueue;
+			}
+
+			FORCEINLINE void Queue()
+			{
+				bQueue = true;
+			}
+
+			FORCEINLINE bool IsProcessing() const
+			{
+				return bProcessing;
+			}
+
+			FORCEINLINE void StartProcessing()
+			{
+				bProcessing = true;
+				bQueue = false;
+			}
+
+			FORCEINLINE bool IsComplete() const
+			{
+				return bComplete;
+			}
+
+			FORCEINLINE void Complete()
+			{
+				bComplete = true;
+				bProcessing = false;
+			}
+
+			FORCEINLINE bool IsSuccessful() const
+			{
+				return bSuccess;
+			}
+
+			FORCEINLINE void Success()
+			{
+				bSuccess = true;
+			}
+
+			void Reset()
+			{
+				bComplete = false;
+				bProcessing = false;
+				bQueue = false;
+				bSuccess = false;
+			}
+		};
 	}
+}
 
-	FORCEINLINE bool IsQueued() const
-	{
-		return bQueue;
-	}
+#pragma endregion NCsAchievement::NQuery::FIdsState
 
-	FORCEINLINE void Queue()
-	{
-		bQueue = true;
-	}
-
-	FORCEINLINE bool IsProcessing() const
-	{
-		return bProcessing;
-	}
-
-	FORCEINLINE void StartProcessing()
-	{
-		bProcessing = true;
-		bQueue = false;
-	}
-
-	FORCEINLINE bool IsComplete() const
-	{
-		return bComplete;
-	}
-
-	FORCEINLINE void Complete()
-	{
-		bComplete = true;
-		bProcessing = false;
-	}
-
-	FORCEINLINE bool IsSuccessful() const
-	{
-		return bSuccess;
-	}
-
-	FORCEINLINE void Success()
-	{
-		bSuccess = true;
-	}
-
-	void Reset()
-	{
-		bComplete = false;
-		bProcessing = false;
-		bQueue = false;
-		bSuccess = false;
-	}
-};
-
-#pragma endregion FCsAchievementQueryIdsState
-
-// FCsAchievementQueryDescriptionsState
+// NCsAchievement::NQuery::FDescriptionsState
 #pragma region
 
-struct CSPLATFORMSERVICES_API FCsAchievementQueryDescriptionsState
+namespace NCsAchievement
 {
-private:
-
-	bool bComplete;
-	bool bProcessing;
-	bool bQueue;
-
-public:
-
-	bool bSuccess;
-
-	FCsAchievementQueryDescriptionsState() :
-		bComplete(false),
-		bProcessing(false),
-		bQueue(false),
-		bSuccess(false)
+	namespace NQuery
 	{
-	}
+		struct CSPLATFORMSERVICES_API FDescriptionsState
+		{
+		private:
 
-	FORCEINLINE bool IsQueued() const
-	{
-		return bQueue;
-	}
+			bool bComplete;
+			bool bProcessing;
+			bool bQueue;
 
-	FORCEINLINE void Queue()
-	{
-		bQueue = true;
-	}
+		public:
 
-	FORCEINLINE bool IsProcessing() const
-	{
-		return bProcessing;
-	}
+			bool bSuccess;
 
-	FORCEINLINE void StartProcessing()
-	{
-		bProcessing = true;
-		bQueue = false;
-	}
+			FDescriptionsState() :
+				bComplete(false),
+				bProcessing(false),
+				bQueue(false),
+				bSuccess(false)
+			{
+			}
 
-	FORCEINLINE bool IsComplete() const
-	{
-		return bComplete;
-	}
+			FORCEINLINE bool IsQueued() const
+			{
+				return bQueue;
+			}
 
-	FORCEINLINE void Complete()
-	{
-		bComplete = true;
-		bProcessing = false;
-	}
+			FORCEINLINE void Queue()
+			{
+				bQueue = true;
+			}
 
-	FORCEINLINE bool IsSuccessful() const
-	{
-		return bSuccess;
-	}
+			FORCEINLINE bool IsProcessing() const
+			{
+				return bProcessing;
+			}
 
-	FORCEINLINE void Success()
-	{
-		bSuccess = true;
-	}
+			FORCEINLINE void StartProcessing()
+			{
+				bProcessing = true;
+				bQueue = false;
+			}
 
-	void Reset()
-	{
-		bComplete = false;
-		bProcessing = false;
-		bQueue = false;
-		bSuccess = false;
-	}
-};
+			FORCEINLINE bool IsComplete() const
+			{
+				return bComplete;
+			}
 
-#pragma endregion FCsAchievementQueryDescriptionsState
+			FORCEINLINE void Complete()
+			{
+				bComplete = true;
+				bProcessing = false;
+			}
+
+			FORCEINLINE bool IsSuccessful() const
+			{
+				return bSuccess;
+			}
+
+			FORCEINLINE void Success()
+			{
+				bSuccess = true;
+			}
+
+			void Reset()
+			{
+				bComplete = false;
+				bProcessing = false;
+				bQueue = false;
+				bSuccess = false;
+			}
+		};
+	}
+}
+
+#pragma endregion NCsAchievement::NQuery::FDescriptionsState
 
 // NCsAchievement::NQuery::FState
 #pragma region
@@ -1333,9 +1503,9 @@ namespace NCsAchievement
 		{
 		public:
 
-			FCsAchievementQueryIdsState Ids;
+			NCsAchievement::NQuery::FIdsState Ids;
 
-			FCsAchievementQueryDescriptionsState Descriptions;
+			NCsAchievement::NQuery::FDescriptionsState Descriptions;
 
 			FState() :
 				Ids(),

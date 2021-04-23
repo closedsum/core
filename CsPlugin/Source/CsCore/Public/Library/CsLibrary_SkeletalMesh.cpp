@@ -6,6 +6,7 @@
 #include "Types/CsTypes_Math.h"
 // Library
 #include "Library/CsLibrary_Object.h"
+#include "Library/CsLibrary_Valid.h"
 // Components
 #include "Components/SkeletalMeshComponent.h"
 
@@ -49,9 +50,9 @@ namespace NCsSkeletalMesh
 
 	bool FLibrary::IsBoneValidChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Bone)
 	{
-		checkf(Component, TEXT("%s: Component is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(Component)
 
-		checkf(Bone != NAME_None, TEXT("%s: Bone: None is NOT Valid."), *Context);
+		CS_IS_NAME_NONE_CHECKED(Bone)
 
 		USkeletalMesh* Mesh = Component->SkeletalMesh;
 
@@ -90,9 +91,9 @@ namespace NCsSkeletalMesh
 
 	bool FLibrary::IsSocketValidChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Socket)
 	{
-		checkf(Component, TEXT("%s: Component is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(Component)
 
-		checkf(Socket != NAME_None, TEXT("%s: Socket: None is NOT Valid."), *Context);
+		CS_IS_NAME_NONE_CHECKED(Socket)
 
 		USkeletalMesh* Mesh = Component->SkeletalMesh;
 

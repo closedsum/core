@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/CsLibrary_PooledObject.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Pool
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/Pool/Cache/CsCache_PooledObject.h"
@@ -9,7 +11,7 @@ namespace NCsPooledObject
 {
 	bool FLibrary::IsAllocated(const FString& Context, ICsPooledObject* Object)
 	{
-		checkf(Object, TEXT("%s: Object is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(Object)
 
 		typedef NCsPooledObject::NCache::ICache CacheType;
 
@@ -22,7 +24,7 @@ namespace NCsPooledObject
 
 	bool FLibrary::IsAllocated(const FString& Context, UObject* Object)
 	{
-		checkf(Object, TEXT("%s: Object is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(Object)
 
 		ICsPooledObject* PooledObject = Cast<ICsPooledObject>(Object);
 

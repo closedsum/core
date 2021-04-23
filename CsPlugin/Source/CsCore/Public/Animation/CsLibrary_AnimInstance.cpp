@@ -2,8 +2,11 @@
 #include "Animation/CsLibrary_AnimInstance.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsCached.h"
 // Library
 #include "Library/CsLibrary_Object.h"
+#include "Library/CsLibrary_Valid.h"
 // Blueprint
 #include "Animation/AnimBlueprintGeneratedClass.h"
 
@@ -33,18 +36,14 @@ namespace NCsAnimInstance
 
 	UAnimBlueprintGeneratedClass* FLibrary::GetSafeClass(const FString& Context, UAnimBlueprint* Blueprint, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!Blueprint)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Blueprint is NULL."), *Context));
-			return nullptr;
-		}
+		CS_IS_PTR_NULL_CHECKED(Blueprint)
 
 		TSoftObjectPtr<UAnimBlueprint> ABp(Blueprint);
 
 		FString Path = ABp.ToSoftObjectPath().ToString();
 
-		if (!Path.EndsWith(ECsLoadCached::Str::_C))
-			Path.Append(ECsLoadCached::Str::_C);
+		if (!Path.EndsWith(NCsCached::Str::_C))
+			Path.Append(NCsCached::Str::_C);
 
 		typedef NCsObject::FLibrary ObjectLibrary;
 

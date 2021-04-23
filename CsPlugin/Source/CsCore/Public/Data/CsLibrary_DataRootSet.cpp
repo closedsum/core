@@ -5,6 +5,7 @@
 // Library
 #include "Managers/Data/CsLibrary_Manager_Data.h"
 #include "Library/CsLibrary_World.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Utility
@@ -77,7 +78,7 @@ namespace NCsDataRootSet
 
 	UObject* FLibrary::GetImplChecked(const FString& Context, UGameInstance* GameInstance)
 	{
-		checkf(GameInstance, TEXT("%s: GameInstance is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(GameInstance)
 
 		UCsManager_Data* Manager_Data = UCsManager_Data::Get(GameInstance);
 		UObject* DataRootSetImpl	  = Manager_Data->DataRootSet.GetObject();

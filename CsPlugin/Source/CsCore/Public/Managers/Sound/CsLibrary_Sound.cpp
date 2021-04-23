@@ -2,6 +2,8 @@
 #include "Managers/Sound/CsLibrary_Sound.h"
 #include "CsCore.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Audio
 #include "AudioDeviceManager.h"
 #include "AudioDevice.h"
@@ -45,9 +47,9 @@ namespace NCsSound
 	{
 		check(CanPlayChecked(Context, WorldContext));
 
-		checkf(SoundMix, TEXT("%s: SoundMix is NULL."), *Context);
-
-		checkf(SoundClass, TEXT("%s: SoundClass is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(SoundMix)
+		
+		CS_IS_PTR_NULL_CHECKED(SoundClass)
 
 		UWorld* World				   = WorldContext->GetWorld();
 		FAudioDeviceHandle AudioDevice = World->GetAudioDevice();
@@ -59,7 +61,7 @@ namespace NCsSound
 	{
 		check(CanPlayChecked(Context, WorldContext));
 
-		checkf(SoundMix, TEXT("%s: SoundMix is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(SoundMix)
 
 		UWorld* World				   = WorldContext->GetWorld();
 		FAudioDeviceHandle AudioDevice = World->GetAudioDevice();
@@ -71,9 +73,9 @@ namespace NCsSound
 	{
 		check(CanPlayChecked(Context, WorldContext));
 
-		checkf(SoundMix, TEXT("%s: SoundMix is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(SoundMix)
 
-		checkf(SoundClass, TEXT("%s: SoundClass is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(SoundClass)
 
 		UWorld* World				   = WorldContext->GetWorld();
 		FAudioDeviceHandle AudioDevice = World->GetAudioDevice();

@@ -23,6 +23,8 @@ namespace NCsCached
 		CSCORE_API const FString Button = TEXT("Button");
 		CSCORE_API const FString Image = TEXT("Image");
 
+		CSCORE_API const FString _C = TEXT("_C");
+
 		// Vector to String
 		CSCORE_API const FString XEquals = TEXT("X=");
 		CSCORE_API const FString YEquals = TEXT("Y=");

@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Animation/2D/CsTypes_Anim2D.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+
 // Anim2DPlayRate
 #pragma region
 
@@ -168,9 +171,10 @@ namespace NCsAnim
 			{
 				bool FFrame::IsValidChecked(const FString& Context) const
 				{
-					checkf(GetTexture(), TEXT("%s: Texture is NULL."), *Context);
-
-					checkf(GetParameterName() != NAME_None, TEXT("%s: ParameterName: None is NOT Valid."), *Context);
+					// Check GetTexture() is Valid
+					CS_IS_PTR_NULL_CHECKED(GetTexture())
+					// Check GetParameterName() is Valid
+					CS_IS_NAME_NONE_CHECKED(GetParameterName())
 					return true;
 				}
 			}
@@ -369,9 +373,10 @@ namespace NCsAnim
 			{
 				bool FFrame::IsValidChecked(const FString& Context) const
 				{
-					checkf(GetMaterial(), TEXT("%s: Material is NULL."), *Context);
-
-					checkf(GetIndex() >= 0, TEXT("%s: Index: %d is NOT > 0."), *Context, GetIndex());
+					// Check GetMaterial() is Valid
+					CS_IS_PTR_NULL_CHECKED(GetMaterial())
+					// Check GetIndex() is Valid
+					CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetIndex(), 0)
 					return true;
 				}
 			}

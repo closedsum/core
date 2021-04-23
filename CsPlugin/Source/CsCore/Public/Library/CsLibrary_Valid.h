@@ -164,6 +164,23 @@ namespace NCsValid
 
 	namespace NEnum
 	{
+		struct CSCORE_API FLibrary final
+		{
+		public:
+
+			template<typename EnumMapType, typename EnumType>
+			FORCEINLINE static bool IsValid(const FString& Context, const EnumType& Enum, const FString& EnumName, void(*Log)(const FString&))
+			{
+				if (!EnumMapType::Get().IsValidEnum(Enum))
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: %s is NOT Valid."), *Context, *EnumName, EnumMapType::Get().ToChar(Enum)));
+					return false;
+				}
+				return true;
+			}
+		};
+
 		namespace NStruct
 		{
 			struct CSCORE_API FLibrary final
@@ -214,13 +231,13 @@ namespace NCsValid
 	{
 		struct CSCORE_API FLibrary final
 		{
-			FORCEINLINE static bool NullChecked(const FString& Context, void* Ptr, const FString& PtrName)
+			FORCEINLINE static bool NullChecked(const FString& Context, const void* Ptr, const FString& PtrName)
 			{
 				checkf(Ptr, TEXT("%s: %s is NULL."), *Context, *PtrName);
 				return true;
 			}
 
-			FORCEINLINE static bool Null(const FString& Context, void* Ptr, const FString& PtrName, void(*Log)(const FString&))
+			FORCEINLINE static bool Null(const FString& Context, const void* Ptr, const FString& PtrName, void(*Log)(const FString&))
 			{
 				if (!Ptr)
 				{
@@ -371,6 +388,27 @@ namespace NCsValid
 		if (!NCsValid::NString::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return nullptr; } \
 	}
 
+// Enum
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ENUM_VALID(__EnumMapType, __EnumType, __Enum) \
+	{ \
+		static const FString __temp__str__ = #__Enum; \
+		if (!NCsValid::NEnum::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ENUM_VALID_EXIT(__EnumMapType, __EnumType, __Enum) \
+	{ \
+		static const FString __temp__str__ = #__Enum; \
+		if (!NCsValid::NEnum::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ENUM_VALID_RET_NULL(__EnumMapType, __EnumType, __Enum) \
+	{ \
+		static const FString __temp__str__ = #__Enum; \
+		if (!NCsValid::NEnum::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return nullptr; } \
+	}
+
 // EnumStruct
 
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
@@ -379,7 +417,13 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Enum; \
 		if (!NCsValid::NEnum::NStruct::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return false; } \
 	}
-	// Assume const FString& Context and void(Log*)(const FString&) have been defined
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ENUM_STRUCT_VALID_EXIT(__EnumMapType, __EnumType, __Enum) \
+	{ \
+		static const FString __temp__str__ = #__Enum; \
+		if (!NCsValid::NEnum::NStruct::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_ENUM_STRUCT_VALID_RET_NULL(__EnumMapType, __EnumType, __Enum) \
 	{ \
 		static const FString __temp__str__ = #__Enum; \
@@ -427,6 +471,12 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Ptr; \
 		if (!NCsValid::NPtr::FLibrary::Null(Context, __Ptr, __temp__str__, Log)) { return; } \
 	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_PTR_NULL_RET_NULL(__Ptr) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		if (!NCsValid::NPtr::FLibrary::Null(Context, __Ptr, __temp__str__, Log)) { return nullptr; } \
+	}
 
 // FSoftObjectPath
 
@@ -471,6 +521,7 @@ namespace NCsValid
 #define CS_IS_STRING_EMPTY_RET_NULL(__A)
 // EnumStruct
 #define CS_IS_ENUM_STRUCT_VALID(__EnumMapType, __EnumType, __Enum)
+#define CS_IS_ENUM_STRUCT_VALID_EXIT(__EnumMapType, __EnumType, __Enum)
 #define CS_IS_ENUM_STRUCT_VALID_RET_NULL(__EnumMapType, __EnumType, __Enum)
 // Array
 #define CS_IS_ARRAY_EMPTY_CHECKED(__Array, __ValueType)
@@ -480,6 +531,7 @@ namespace NCsValid
 #define CS_IS_PTR_NULL_CHECKED(__Ptr)
 #define CS_IS_PTR_NULL(__Ptr)
 #define CS_IS_PTR_NULL_EXIT(__Ptr)
+#define CS_IS_PTR_NULL_RET_NULL(__Ptr)
 // FSoftObjectPath
 #define CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(__A)
 #define CS_IS_SOFT_OBJECT_PATH_VALID(__A)

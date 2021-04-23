@@ -97,7 +97,9 @@ UCsManager_Achievement::UCsManager_Achievement(const FObjectInitializer& ObjectI
 	bBitfieldIndexStartsAtZero = true;
 	bBitfieldAsOr = true;
 	// IOnlineAchievements
-	QueryOrder = ECsAchievementQueryOrder::IdsFirst;
+	typedef NCsAchievement::NQuery::EOrder QueryOrderType;
+
+	QueryOrder = QueryOrderType::IdsFirst;
 }
 
 // Singleton
@@ -263,13 +265,15 @@ void UCsManager_Achievement::Initialize()
 
 	Achievements.Reserve(Count);
 
+	typedef NCsAchievement::EProgress ProgressType;
+
 	for (const FECsAchievement& Enum : EMCsAchievement::Get())
 	{
 		Achievements.Add(ConstructAchievement());
 		ICsAchievement* A = Achievements.Last();
 		SetId(A, Enum.GetName());
 		SetType(A, Enum);
-		SetProgressType(A, ECsAchievementProgress::Standard);
+		SetProgressType(A, ProgressType::Standard);
 	}
 
 	for (const FECsAchievement& Enum : EMCsAchievement::Get())
@@ -342,19 +346,21 @@ void UCsManager_Achievement::Start()
 			A->SetInvalid();
 		}
 
+		typedef NCsAchievement::NQuery::EOrder QueryOrderType;
+
 		// Ids First
-		if (QueryOrder == ECsAchievementQueryOrder::IdsFirst)
+		if (QueryOrder == QueryOrderType::IdsFirst)
 		{
 			QueryIds();
 			QueryDescriptions();
 		}
 		// Descriptions First
 		else
-			if (QueryOrder == ECsAchievementQueryOrder::DescriptionsFirst)
-			{
-				QueryDescriptions();
-				QueryIds();
-			}
+		if (QueryOrder == QueryOrderType::DescriptionsFirst)
+		{
+			QueryDescriptions();
+			QueryIds();
+		}
 		UpdateDescriptions();
 	}
 	// Local
@@ -405,8 +411,10 @@ FString UCsManager_Achievement::GetLocalPlayerNickname()
 
 void UCsManager_Achievement::Update(const float& DeltaSeconds)
 {
-	typedef NCsAchievement::NAction::FResource InfoContainerType;
-	typedef NCsAchievement::NAction::FInfo InfoType;
+	typedef NCsAchievement::NAction::NInfo::FResource InfoContainerType;
+	typedef NCsAchievement::NAction::NInfo::FInfo InfoType;
+
+	typedef NCsAchievement::EAction ActionType;
 
 	TCsDoubleLinkedList<InfoContainerType*>* Current = Manager_Resource.GetAllocatedHead();
 	TCsDoubleLinkedList<InfoContainerType*>* Next    = Current;
@@ -421,7 +429,7 @@ void UCsManager_Achievement::Update(const float& DeltaSeconds)
 		
 		const FECsAchievement& Achievement = Info->Achievement;
 		const FString& Name				   = Info->Name;
-		const ECsAchievementAction& Action = Info->Action;
+		const ActionType& Action		   = Info->Action;
 		const float& Percent			   = Info->Value.Percent;
 		const FCsAchievementEntry& Entry   = Info->Entry;
 
@@ -439,77 +447,77 @@ void UCsManager_Achievement::Update(const float& DeltaSeconds)
 			const float Progress = IA ? IA->CalculateProgress(Percent) : 0.0f;
 
 			// Query Ids
-			if (Action == ECsAchievementAction::QueryIds)
+			if (Action == ActionType::QueryIds)
 			{
 				OnQueryIds_Event.Broadcast(WasSuccessful);
 				OnQueryIds_ScriptEvent.Broadcast(WasSuccessful);
 			}
 			// Query Descriptions
 			else
-			if (Action == ECsAchievementAction::QueryDescriptions)
+			if (Action == ActionType::QueryDescriptions)
 			{
 				OnQueryDescriptions_Event.Broadcast(WasSuccessful);
 				OnQueryDescriptions_ScriptEvent.Broadcast(WasSuccessful);
 			}
 			// Create
 			else
-			if (Action == ECsAchievementAction::Create)
+			if (Action == ActionType::Create)
 			{
 				OnCreate_Event.Broadcast(WasSuccessful, IA);
 				OnCreate_ScriptEvent.Broadcast(WasSuccessful, Achievement);
 			}
 			// Modify
 			else
-			if (Action == ECsAchievementAction::Modify)
+			if (Action == ActionType::Modify)
 			{
 				OnModify_Event.Broadcast(WasSuccessful, IA);
 				OnModify_ScriptEvent.Broadcast(WasSuccessful, Achievement);
 			}
 			// Remove
 			else
-			if (Action == ECsAchievementAction::Remove)
+			if (Action == ActionType::Remove)
 			{
 				OnRemove_Event.Broadcast(WasSuccessful, Name);
 				OnRemove_ScriptEvent.Broadcast(WasSuccessful, Name);
 			}
 			// Remove All
 			else
-			if (Action == ECsAchievementAction::RemoveAll)
+			if (Action == ActionType::RemoveAll)
 			{
 				OnRemoveAll_Event.Broadcast(WasSuccessful);
 				OnRemoveAll_ScriptEvent.Broadcast(WasSuccessful);
 			}
 			// Write
 			else
-			if (Action == ECsAchievementAction::Write)
+			if (Action == ActionType::Write)
 			{
 				OnProgress_Event.Broadcast(WasSuccessful, IA, Progress);
 				OnProgress_ScriptEvent.Broadcast(WasSuccessful, Achievement, Progress);
 			}
 			// Complete
 			else
-			if (Action == ECsAchievementAction::Complete)
+			if (Action == ActionType::Complete)
 			{
 				OnComplete_Event.Broadcast(WasSuccessful, IA);
 				OnComplete_ScriptEvent.Broadcast(WasSuccessful, Achievement);
 			}
 			// Complete All
 			else
-			if (Action == ECsAchievementAction::CompleteAll)
+			if (Action == ActionType::CompleteAll)
 			{
 				OnCompleteAll_Event.Broadcast();
 				OnCompleteAll_ScriptEvent.Broadcast();
 			}
 			// Reset
 			else
-			if (Action == ECsAchievementAction::Reset)
+			if (Action == ActionType::Reset)
 			{
 				OnReset_Event.Broadcast(WasSuccessful, IA, Progress);
 				OnReset_ScriptEvent.Broadcast(WasSuccessful, Achievement, Progress);
 			}
 			// Reset All
 			else
-			if (Action == ECsAchievementAction::ResetAll)
+			if (Action == ActionType::ResetAll)
 			{
 				OnResetAll_Event.Broadcast(WasSuccessful);
 				OnResetAll_ScriptEvent.Broadcast(WasSuccessful);
@@ -523,73 +531,73 @@ void UCsManager_Achievement::Update(const float& DeltaSeconds)
 			Info->StartProgress();
 
 			// Query Ids
-			if (Action == ECsAchievementAction::QueryIds)
+			if (Action == ActionType::QueryIds)
 			{
 				QueryIds_Internal();
 			}
 			// Query Descriptions
 			else
-			if (Action == ECsAchievementAction::QueryDescriptions)
+			if (Action == ActionType::QueryDescriptions)
 			{
 				QueryDescriptions_Internal();
 			}
 			// Update Descriptions
 			else
-			if (Action == ECsAchievementAction::UpdateDescriptions)
+			if (Action == ActionType::UpdateDescriptions)
 			{
 				UpdateDescriptions_Internal(Info);
 			}
 			// Create
 			else
-			if (Action == ECsAchievementAction::Create)
+			if (Action == ActionType::Create)
 			{
 				Create_Internal(Info);
 			}
 			// Modify
 			else
-			if (Action == ECsAchievementAction::Modify)
+			if (Action == ActionType::Modify)
 			{
 				ModifyAchievement_Internal(Info);
 			}
 			// Remove
 			else
-			if (Action == ECsAchievementAction::Remove)
+			if (Action == ActionType::Remove)
 			{
 				Remove_Internal(Info);
 			}
 			// Remove All
 			else
-			if (Action == ECsAchievementAction::RemoveAll)
+			if (Action == ActionType::RemoveAll)
 			{
 				RemoveAll_Internal(Info);
 			}
 			// Write
 			else
-			if (Action == ECsAchievementAction::Write)
+			if (Action == ActionType::Write)
 			{
 				Write_Internal(Info);
 			}
 			// Complete
 			else
-			if (Action == ECsAchievementAction::Complete)
+			if (Action == ActionType::Complete)
 			{
 				Complete_Internal(Info);
 			}
 			// Complete All
 			else
-			if (Action == ECsAchievementAction::CompleteAll)
+			if (Action == ActionType::CompleteAll)
 			{
 				CompleteAll_Internal(Info);
 			}
 			// Reset
 			else
-			if (Action == ECsAchievementAction::Reset)
+			if (Action == ActionType::Reset)
 			{
 				Reset_Internal(Info);
 			}
 			// Reset All
 			else
-			if (Action == ECsAchievementAction::ResetAll)
+			if (Action == ActionType::ResetAll)
 			{
 				ResetAll_Internal(Info);
 			}
@@ -612,52 +620,53 @@ void UCsManager_Achievement::Update(const float& DeltaSeconds)
 // Action
 #pragma region
 
-#define ActionInfoContainerType NCsAchievement::NAction::FResource
-#define ActionInfoType NCsAchievement::NAction::FInfo
+#define ActionType NCsAchievement::EAction
+#define ActionInfoContainerType NCsAchievement::NAction::NInfo::FResource
+#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 #define ActionAllocationType NCsAchievement::NAction::EAllocation
 
-void UCsManager_Achievement::QueueAction(const ECsAchievementAction& Action, const FECsAchievement& Achievement, const float& Percent)
+void UCsManager_Achievement::QueueAction(const ActionType& Action, const FECsAchievement& Achievement, const float& Percent)
 {
 	ActionInfoType* Info = QueueAction_Internal(ActionAllocationType::AfterTail, Action, Achievement);
 
 	Info->Value.SetPercent(Percent);
 }
 
-void UCsManager_Achievement::QueueAction(const ECsAchievementAction& Action, const FECsAchievement& Achievement, const uint64& Count)
+void UCsManager_Achievement::QueueAction(const ActionType& Action, const FECsAchievement& Achievement, const uint64& Count)
 {
 	ActionInfoType* Info = QueueAction_Internal(ActionAllocationType::AfterTail, Action, Achievement);
 
 	Info->Value.SetCount(Count);
 }
 
-void UCsManager_Achievement::QueueAction(const ECsAchievementAction& Action, const FECsAchievement& Achievement, const FString& Bitfield)
+void UCsManager_Achievement::QueueAction(const ActionType& Action, const FECsAchievement& Achievement, const FString& Bitfield)
 {
 	ActionInfoType* Info = QueueAction_Internal(ActionAllocationType::AfterTail, Action, Achievement);
 
 	Info->Value.SetBitfield(Bitfield);
 }
 
-void UCsManager_Achievement::QueueAction(const ECsAchievementAction& Action, const FCsAchievementEntry& Entry)
+void UCsManager_Achievement::QueueAction(const ActionType& Action, const FCsAchievementEntry& Entry)
 {
 	QueueAction_Internal(ActionAllocationType::AfterTail, Action, Entry);
 }
 
-void UCsManager_Achievement::QueueAction(const ECsAchievementAction& Action, const FECsAchievement& Achievement, const FCsAchievementEntry& Entry)
+void UCsManager_Achievement::QueueAction(const ActionType& Action, const FECsAchievement& Achievement, const FCsAchievementEntry& Entry)
 {
 	QueueAction_Internal(ActionAllocationType::AfterTail, Action, Achievement, Entry);
 }
 
-void UCsManager_Achievement::QueueAction(const ECsAchievementAction& Action, const FECsAchievement& Achievement)
+void UCsManager_Achievement::QueueAction(const ActionType& Action, const FECsAchievement& Achievement)
 {
 	QueueAction_Internal(ActionAllocationType::AfterTail, Action, Achievement);
 }
 
-void UCsManager_Achievement::QueueAction(const ECsAchievementAction& Action)
+void UCsManager_Achievement::QueueAction(const ActionType& Action)
 {
 	QueueAction_Internal(ActionAllocationType::AfterTail, Action);
 }
 
-ActionInfoType* UCsManager_Achievement::QueueAction_Internal(const ActionAllocationType& Allocation, const ECsAchievementAction& Action)
+ActionInfoType* UCsManager_Achievement::QueueAction_Internal(const ActionAllocationType& Allocation, const ActionType& Action)
 {
 	// Allocate AchievementActionInfo from a pool
 	ActionInfoContainerType* InfoContainer = nullptr;
@@ -683,7 +692,7 @@ ActionInfoType* UCsManager_Achievement::QueueAction_Internal(const ActionAllocat
 	return Info;
 }
 
-ActionInfoType* UCsManager_Achievement::QueueAction_Internal(const ActionAllocationType& Allocation, const ECsAchievementAction& Action, const FECsAchievement& Achievement)
+ActionInfoType* UCsManager_Achievement::QueueAction_Internal(const ActionAllocationType& Allocation, const ActionType& Action, const FECsAchievement& Achievement)
 {
 	ActionInfoType* Info = QueueAction_Internal(Allocation, Action);
 
@@ -692,7 +701,7 @@ ActionInfoType* UCsManager_Achievement::QueueAction_Internal(const ActionAllocat
 	return Info;
 }
 
-ActionInfoType* UCsManager_Achievement::QueueAction_Internal(const ActionAllocationType& Allocation, const ECsAchievementAction& Action, const FCsAchievementEntry& Entry)
+ActionInfoType* UCsManager_Achievement::QueueAction_Internal(const ActionAllocationType& Allocation, const ActionType& Action, const FCsAchievementEntry& Entry)
 {
 	ActionInfoType* Info = QueueAction_Internal(Allocation, Action);
 
@@ -701,7 +710,7 @@ ActionInfoType* UCsManager_Achievement::QueueAction_Internal(const ActionAllocat
 	return Info;
 }
 
-ActionInfoType* UCsManager_Achievement::QueueAction_Internal(const ActionAllocationType& Allocation, const ECsAchievementAction& Action, const FECsAchievement& Achievement, const FCsAchievementEntry& Entry)
+ActionInfoType* UCsManager_Achievement::QueueAction_Internal(const ActionAllocationType& Allocation, const ActionType& Action, const FECsAchievement& Achievement, const FCsAchievementEntry& Entry)
 {
 	ActionInfoType* Info = QueueAction_Internal(Allocation, Action, Achievement);
 
@@ -710,30 +719,31 @@ ActionInfoType* UCsManager_Achievement::QueueAction_Internal(const ActionAllocat
 	return Info;
 }
 
-void UCsManager_Achievement::QueueActionAsHead(const ECsAchievementAction& Action, const FECsAchievement& Achievement, const float& Percent)
+void UCsManager_Achievement::QueueActionAsHead(const ActionType& Action, const FECsAchievement& Achievement, const float& Percent)
 {
 	ActionInfoType* Info = QueueAction_Internal(ActionAllocationType::AsHead, Action, Achievement);
 
 	Info->Value.SetPercent(Percent);
 }
 
-void UCsManager_Achievement::QueueActionAsHead(const ECsAchievementAction& Action)
+void UCsManager_Achievement::QueueActionAsHead(const ActionType& Action)
 {
 	QueueAction_Internal(ActionAllocationType::AsHead, Action);
 }
 
-void UCsManager_Achievement::QueueActionAfterHead(const ECsAchievementAction& Action, const FECsAchievement& Achievement, const float& Percent)
+void UCsManager_Achievement::QueueActionAfterHead(const ActionType& Action, const FECsAchievement& Achievement, const float& Percent)
 {
 	ActionInfoType* Info = QueueAction_Internal(ActionAllocationType::AfterHead, Action, Achievement);
 
 	Info->Value.SetPercent(Percent);
 }
 
-void UCsManager_Achievement::QueueActionAfterHead(const ECsAchievementAction& Action)
+void UCsManager_Achievement::QueueActionAfterHead(const ActionType& Action)
 {
 	QueueAction_Internal(ActionAllocationType::AfterHead, Action);
 }
 
+#undef ActionType
 #undef ActionInfoContainerType
 #undef ActionInfoType
 #undef ActionAllocationType
@@ -767,7 +777,10 @@ void UCsManager_Achievement::QueryIds()
 
 		QueryState.Ids.Reset();
 		QueryState.Ids.Queue();
-		QueueAction(ECsAchievementAction::QueryIds);
+
+		typedef NCsAchievement::EAction ActionType;
+
+		QueueAction(ActionType::QueryIds);
 	}
 	// Local
 	else
@@ -832,7 +845,10 @@ void UCsManager_Achievement::QueryDescriptions()
 
 		QueryState.Descriptions.Reset();
 		QueryState.Descriptions.Queue();
-		QueueAction(ECsAchievementAction::QueryDescriptions);
+
+		typedef NCsAchievement::EAction ActionType;
+
+		QueueAction(ActionType::QueryDescriptions);
 	}
 	// Local
 	else
@@ -882,6 +898,8 @@ bool UCsManager_Achievement::CheckAndQueueQuery()
 	if (!IsEnabled(Context))
 		return false;
 
+	typedef NCsAchievement::EAction ActionType;
+
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
 	// Online
 	if (IAchievements.IsValid())
@@ -909,7 +927,7 @@ bool UCsManager_Achievement::CheckAndQueueQuery()
 #endif // #if !UE_BUILD_SHIPPING
 
 			QueryState.Ids.Queue();
-			QueueAction(ECsAchievementAction::QueryIds);
+			QueueAction(ActionType::QueryIds);
 		}
 
 		// Check Query Description
@@ -927,7 +945,7 @@ bool UCsManager_Achievement::CheckAndQueueQuery()
 #endif // #if !UE_BUILD_SHIPPING
 
 			QueryState.Descriptions.Queue();
-			QueueAction(ECsAchievementAction::QueryDescriptions);
+			QueueAction(ActionType::QueryDescriptions);
 		}
 
 		// Update Descriptions if Query Description has been Queued
@@ -939,7 +957,7 @@ bool UCsManager_Achievement::CheckAndQueueQuery()
 				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CheckAndQueueQuery: Queueing Update Descriptions for Player: %s - %s."), *GetLocalPlayerNickname(), *(UserId.ToString()));
 			}
 #endif // #if !UE_BUILD_SHIPPING
-			QueueAction(ECsAchievementAction::UpdateDescriptions);
+			QueueAction(ActionType::UpdateDescriptions);
 		}
 	}
 	// Local
@@ -997,7 +1015,9 @@ void UCsManager_Achievement::UpdateDescriptions()
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
-		QueueAction(ECsAchievementAction::UpdateDescriptions);
+		typedef NCsAchievement::EAction ActionType;
+
+		QueueAction(ActionType::UpdateDescriptions);
 	}
 	// Local
 	else
@@ -1020,7 +1040,7 @@ void UCsManager_Achievement::Reset_Local_OnlineAchievementDesc()
 	Local_OnlineAchievementDesc->UnlockTime = FDateTime::Now();
 }
 
-#define ActionInfoType NCsAchievement::NAction::FInfo
+#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::UpdateDescriptions_Internal(ActionInfoType* ActionInfo)
 {
 #undef ActionInfoType
@@ -1119,18 +1139,21 @@ void UCsManager_Achievement::PrintDescription(ICsAchievement* Achievement)
 	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - IsHIdden: %s."), *(Achievement->IsHidden() ? NCsCached::Str::True : NCsCached::Str::False));
 	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - Unlock Time: %s."), *(Achievement->GetUnlockTime().ToString()));
 
-	const ECsAchievementProgress& ProgressType = Achievement->GetProgressType();
+	typedef NCsAchievement::EMProgress ProgressMapType;
+	typedef NCsAchievement::EProgress ProgressType;
 
-	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - ProgressType: %s."), EMCsAchievementProgress::Get().ToChar(ProgressType));
+	const ProgressType& Type = Achievement->GetProgressType();
+
+	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - ProgressType: %s."), ProgressMapType::Get().ToChar(Type));
 
 	// Bitfield
-	if (ProgressType == ECsAchievementProgress::Bitfield)
+	if (Type == ProgressType::Bitfield)
 	{
 		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - Unlock Bitfield Length: %d."), Achievement->GetUnlockBitfieldLength());
 	}
 	// Count
 	else
-	if (ProgressType == ECsAchievementProgress::Count)
+	if (Type == ProgressType::Count)
 	{
 		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - Max Count: %d."), Achievement->GetMaxCount());
 	}
@@ -1305,7 +1328,7 @@ void UCsManager_Achievement::UpdateOrAddEntry(ICsAchievement* Achievement)
 	Entry.Name			= Type.GetName();
 	Entry.DisplayName	= Type.GetDisplayName();
 	Entry.bValid		= Achievement->IsValid();
-	Entry.ProgressType	= Achievement->GetProgressType();
+	Entry.ProgressType	= (ECsAchievementProgress)Achievement->GetProgressType();
 	Entry.Count			= Achievement->GetCount();
 	Entry.BitfieldLength = Achievement->GetBitfieldLength();
 
@@ -1331,7 +1354,9 @@ void UCsManager_Achievement::UpdateFromEntry(ICsAchievement* Achievement)
 	else
 		Achievement->SetInvalid();
 
-	SetProgressType(Achievement, Entry.ProgressType);
+	typedef NCsAchievement::EProgress ProgressType;
+
+	SetProgressType(Achievement, (ProgressType)Entry.ProgressType);
 	
 	// Count
 	if (Entry.ProgressType == ECsAchievementProgress::Count)
@@ -1428,7 +1453,10 @@ void UCsManager_Achievement::Create(const FCsAchievementEntry& Entry)
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- bHidden: %s."), Entry.bHidden ? TEXT("True") : TEXT("False"));
 		}
 #endif // #if !UE_BUILD_SHIPPING
-		QueueAction(ECsAchievementAction::Create, Entry);
+
+		typedef NCsAchievement::EAction ActionType;
+
+		QueueAction(ActionType::Create, Entry);
 	}
 	// Local
 	else
@@ -1437,7 +1465,7 @@ void UCsManager_Achievement::Create(const FCsAchievementEntry& Entry)
 	}
 }
 
-#define ActionInfoType NCsAchievement::NAction::FInfo
+#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::Create_Internal(ActionInfoType* ActionInfo)
 {
 #undef ActionInfoType
@@ -1508,7 +1536,10 @@ void UCsManager_Achievement::ModifyAchievement(const FCsAchievementEntry& Entry)
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- bHidden: %s."), Entry.bHidden ? TEXT("True") : TEXT("False"));
 		}
 #endif // #if !UE_BUILD_SHIPPING
-		QueueAction(ECsAchievementAction::Modify, Achievement, Entry);
+
+		typedef NCsAchievement::EAction ActionType;
+
+		QueueAction(ActionType::Modify, Achievement, Entry);
 	}
 	// Local
 	else
@@ -1517,7 +1548,7 @@ void UCsManager_Achievement::ModifyAchievement(const FCsAchievementEntry& Entry)
 	}
 }
 
-#define ActionInfoType NCsAchievement::NAction::FInfo
+#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::ModifyAchievement_Internal(ActionInfoType* ActionInfo)
 {
 #undef ActionInfoType
@@ -1566,7 +1597,9 @@ void UCsManager_Achievement::Remove(const FECsAchievement& Achievement)
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
-		QueueAction(ECsAchievementAction::Remove, Achievement);
+		typedef NCsAchievement::EAction ActionType;
+
+		QueueAction(ActionType::Remove, Achievement);
 	}
 	// Local
 	else
@@ -1575,7 +1608,7 @@ void UCsManager_Achievement::Remove(const FECsAchievement& Achievement)
 	}
 }
 
-#define ActionInfoType NCsAchievement::NAction::FInfo
+#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::Remove_Internal(ActionInfoType* ActionInfo)
 {
 #undef ActionInfoType
@@ -1594,7 +1627,7 @@ void UCsManager_Achievement::RemoveAll()
 		return;
 }
 
-#define ActionInfoType NCsAchievement::NAction::FInfo
+#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::RemoveAll_Internal(ActionInfoType* ActionInfo)
 {
 #undef ActionInfoType
@@ -1602,11 +1635,13 @@ void UCsManager_Achievement::RemoveAll_Internal(ActionInfoType* ActionInfo)
 
 bool UCsManager_Achievement::IsCurrentActionRemoveOrRemoveAll()
 {
-	typedef NCsAchievement::NAction::FInfo InfoType;
+	typedef NCsAchievement::NAction::NInfo::FInfo InfoType;
 
 	InfoType* Head = Manager_Resource.GetAllocatedResourceHead();
 
-	return Head ? (Head->Action == ECsAchievementAction::Remove || Head->Action == ECsAchievementAction::RemoveAll) : false;
+	typedef NCsAchievement::EAction ActionType;
+
+	return Head ? (Head->Action == ActionType::Remove || Head->Action == ActionType::RemoveAll) : false;
 }
 
 #pragma endregion Remove
@@ -1672,17 +1707,22 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const Val
 
 		ICsAchievement* IA = Achievements[Achievement.GetValue()];
 
-		const ECsAchievementProgress& ProgressType = IA->GetProgressType();
+		typedef NCsAchievement::EMProgress ProgressMapType;
+		typedef NCsAchievement::EProgress ProgressType;
+
+		const ProgressType& ProgType = IA->GetProgressType();
 
 		// Queue Write
 		typedef NCsAchievement::EValue ValueType;
 
 		const ValueType& ValType = Value.ValueType;
 
+		typedef NCsAchievement::EAction ActionType;
+
 		// Normalized | Standard | Binary
-		if (ProgressType == ECsAchievementProgress::Normalized ||
-			ProgressType == ECsAchievementProgress::Standard ||
-			ProgressType == ECsAchievementProgress::Binary)
+		if (ProgType == ProgressType::Normalized ||
+			ProgType == ProgressType::Standard ||
+			ProgType == ProgressType::Binary)
 		{
 			// Float
 			if (ValType == ValueType::Float)
@@ -1696,17 +1736,17 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const Val
 				}
 #endif // #if !UE_BUILD_SHIPPING
 
-				QueueAction(ECsAchievementAction::Write, Achievement, Percent);
+				QueueAction(ActionType::Write, Achievement, Percent);
 			}
 			else
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s has ProgressType: %s and the ValueType must be Float."), *Context, Achievement.ToChar(), EMCsAchievementProgress::Get().ToChar(ProgressType));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s has ProgressType: %s and the ValueType must be Float."), *Context, Achievement.ToChar(), ProgressMapType::Get().ToChar(ProgType));
 				return;
 			}
 		}
 		// Count
 		else
-		if (ProgressType == ECsAchievementProgress::Count)
+		if (ProgType == ProgressType::Count)
 		{
 			if (ValType == ValueType::String)
 			{
@@ -1736,11 +1776,11 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const Val
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			QueueAction(ECsAchievementAction::Write, Achievement, Count);
+			QueueAction(ActionType::Write, Achievement, Count);
 		}
 		// Bitfield
 		else
-		if (ProgressType == ECsAchievementProgress::Bitfield)
+		if (ProgType == ProgressType::Bitfield)
 		{
 			if (ValType == ValueType::Integer)
 			{
@@ -1795,7 +1835,7 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const Val
 				}
 #endif // #if !UE_BUILD_SHIPPING
 
-				QueueAction(ECsAchievementAction::Write, Achievement, NewBitfield);
+				QueueAction(ActionType::Write, Achievement, NewBitfield);
 			}
 			else
 			{
@@ -1812,7 +1852,7 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const Val
 #endif // #if !UE_BUILD_SHIPPING
 
 		QueryState.Descriptions.Queue();
-		QueueAction(ECsAchievementAction::QueryDescriptions);
+		QueueAction(ActionType::QueryDescriptions);
 	}
 	// Local
 	else
@@ -1821,7 +1861,7 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const Val
 	}
 }
 
-#define ActionInfoType NCsAchievement::NAction::FInfo
+#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 {
 #undef ActionInfoType
@@ -1831,7 +1871,9 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 
 	bool HasValueChanged = false;
 
-	const ECsAchievementProgress& ProgressType = IA->GetProgressType();
+	typedef NCsAchievement::EProgress ProgressType;
+
+	const ProgressType& ProgType = IA->GetProgressType();
 
 	FString NoChangeSnippet;
 	FString ChangeSnippet;
@@ -1850,14 +1892,16 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 	// Online
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
 
+	typedef NCsAchievement::EAction ActionType;
+
 	if (IAchievements.IsValid())
 	{
 		const FUniqueNetId& UserId = GetLocalPlayerIdRef();
 
 		// Normalized | Standard | Binary
-		if (ProgressType == ECsAchievementProgress::Normalized ||
-			ProgressType == ECsAchievementProgress::Standard ||
-			ProgressType == ECsAchievementProgress::Binary)
+		if (ProgType == ProgressType::Normalized ||
+			ProgType == ProgressType::Standard ||
+			ProgType == ProgressType::Binary)
 		{
 			HasValueChanged = CurrentProgress != NewProgress;
 
@@ -1873,7 +1917,7 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 		}
 		// Count
 		else
-		if (ProgressType == ECsAchievementProgress::Count)
+		if (ProgType == ProgressType::Count)
 		{
 			const uint64 NewCount = bCountAsAdd ? CurrentCount + CountToWrite : CountToWrite;
 			HasValueChanged		  = CurrentCount != NewCount;
@@ -1890,7 +1934,7 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 		}
 		// Bitfield
 		else
-		if (ProgressType == ECsAchievementProgress::Bitfield)
+		if (ProgType == ProgressType::Bitfield)
 		{
 			const uint32& BitfieldLength = IA->GetBitfieldLength();
 
@@ -1961,21 +2005,21 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 					WriteObject = MakeShareable(new FOnlineAchievementsWrite());
 
 					// Normalized | Standard | Binary
-					if (ProgressType == ECsAchievementProgress::Normalized ||
-						ProgressType == ECsAchievementProgress::Standard ||
-						ProgressType == ECsAchievementProgress::Binary)
+					if (ProgType == ProgressType::Normalized ||
+						ProgType == ProgressType::Standard ||
+						ProgType == ProgressType::Binary)
 					{
 						WriteObject->SetFloatStat(Achievement.GetFName(), NewProgress);
 					}
 					// Count
 					else
-					if (ProgressType == ECsAchievementProgress::Count)
+					if (ProgType == ProgressType::Count)
 					{
 						WriteObject->SetIntStat(Achievement.GetFName(), CountToWrite);
 					}
 					// Bitfield
 					else
-					if (ProgressType == ECsAchievementProgress::Bitfield)
+					if (ProgType == ProgressType::Bitfield)
 					{
 						FVariantData& Data = WriteObject->Properties.Add(Achievement.GetFName());
 						Data.SetValue(NewBitfield);
@@ -2009,23 +2053,23 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 #endif // #if !UE_BUILD_SHIPPING
 
 			// Normalized | Standard | Binary
-			if (ProgressType == ECsAchievementProgress::Normalized ||
-				ProgressType == ECsAchievementProgress::Standard ||
-				ProgressType == ECsAchievementProgress::Binary)
+			if (ProgType == ProgressType::Normalized ||
+				ProgType == ProgressType::Standard ||
+				ProgType == ProgressType::Binary)
 			{
-				QueueAction(ECsAchievementAction::Write, Achievement, Percent);
+				QueueAction(ActionType::Write, Achievement, Percent);
 			}
 			// Count
 			else
-			if (ProgressType == ECsAchievementProgress::Count)
+			if (ProgType == ProgressType::Count)
 			{
-				QueueAction(ECsAchievementAction::Write, Achievement, CountToWrite);
+				QueueAction(ActionType::Write, Achievement, CountToWrite);
 			}
 			// Bitfield
 			else
-			if (ProgressType == ECsAchievementProgress::Bitfield)
+			if (ProgType == ProgressType::Bitfield)
 			{
-				QueueAction(ECsAchievementAction::Write, Achievement, NewBitfield);
+				QueueAction(ActionType::Write, Achievement, NewBitfield);
 			}
 		}
 	}
@@ -2110,27 +2154,32 @@ void UCsManager_Achievement::Complete(const FECsAchievement& Achievement)
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
-		ICsAchievement* IA						   = Achievements[Achievement.GetValue()];
-		const ECsAchievementProgress& ProgressType = IA->GetProgressType();
+		ICsAchievement* IA = Achievements[Achievement.GetValue()];
+
+		typedef NCsAchievement::EProgress ProgressType;
+
+		const ProgressType& ProgType = IA->GetProgressType();
+
+		typedef NCsAchievement::EAction ActionType;
 
 		// Normalized | Standard | Binary
-		if (ProgressType == ECsAchievementProgress::Normalized ||
-			ProgressType == ECsAchievementProgress::Standard ||
-			ProgressType == ECsAchievementProgress::Binary)
+		if (ProgType == ProgressType::Normalized ||
+			ProgType == ProgressType::Standard ||
+			ProgType == ProgressType::Binary)
 		{
-			QueueAction(ECsAchievementAction::Complete, Achievement, 1.0f);
+			QueueAction(ActionType::Complete, Achievement, 1.0f);
 		}
 		// Count
 		else
-		if (ProgressType == ECsAchievementProgress::Count)
+		if (ProgType == ProgressType::Count)
 		{
-			QueueAction(ECsAchievementAction::Complete, Achievement, IA->GetMaxCount());
+			QueueAction(ActionType::Complete, Achievement, IA->GetMaxCount());
 		}
 		// Bitfield
 		else
-		if (ProgressType == ECsAchievementProgress::Bitfield)
+		if (ProgType == ProgressType::Bitfield)
 		{
-			QueueAction(ECsAchievementAction::Complete, Achievement, IA->GetBitMaskComplete());
+			QueueAction(ActionType::Complete, Achievement, IA->GetBitMaskComplete());
 		}
 
 		// Queue Query Descriptions
@@ -2142,7 +2191,7 @@ void UCsManager_Achievement::Complete(const FECsAchievement& Achievement)
 #endif // #if !UE_BUILD_SHIPPING
 
 		QueryState.Descriptions.Queue();
-		QueueAction(ECsAchievementAction::QueryDescriptions);
+		QueueAction(ActionType::QueryDescriptions);
 	}
 	// Local
 	else
@@ -2164,7 +2213,7 @@ void UCsManager_Achievement::SafeComplete(const FECsAchievement& Achievement)
 	}
 }
 
-#define ActionInfoType NCsAchievement::NAction::FInfo
+#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::Complete_Internal(ActionInfoType* ActionInfo)
 {
 #undef ActionInfoType
@@ -2174,12 +2223,14 @@ void UCsManager_Achievement::Complete_Internal(ActionInfoType* ActionInfo)
 
 	bool HasValueChanged = false;
 
-	const ECsAchievementProgress& ProgressType = IA->GetProgressType();
+	typedef NCsAchievement::EProgress ProgressType;
+
+	const ProgressType& ProgType = IA->GetProgressType();
 
 	// Normalized | Standard | Binary
-	if (ProgressType == ECsAchievementProgress::Normalized ||
-		ProgressType == ECsAchievementProgress::Standard ||
-		ProgressType == ECsAchievementProgress::Binary)
+	if (ProgType == ProgressType::Normalized ||
+		ProgType == ProgressType::Standard ||
+		ProgType == ProgressType::Binary)
 	{
 		const float& Percent		= ActionInfo->Value.Percent;
 		const float CurrentProgress = IA->GetProgress();
@@ -2189,7 +2240,7 @@ void UCsManager_Achievement::Complete_Internal(ActionInfoType* ActionInfo)
 	}
 	// Count
 	else
-	if (ProgressType == ECsAchievementProgress::Count)
+	if (ProgType == ProgressType::Count)
 	{
 		const uint64& CurrentCount = IA->GetCount();
 		const uint64& CountToWrite = ActionInfo->Value.Count;
@@ -2199,7 +2250,7 @@ void UCsManager_Achievement::Complete_Internal(ActionInfoType* ActionInfo)
 	}
 	// Bitfield
 	else
-	if (ProgressType == ECsAchievementProgress::Bitfield)
+	if (ProgType == ProgressType::Bitfield)
 	{
 		const FString& Bitfield	= IA->GetBitfield();
 		FString& NewBitfield	= ActionInfo->Value.Bitfield;
@@ -2283,7 +2334,9 @@ bool UCsManager_Achievement::IsCompleted(const FECsAchievement& Achievement)
 
 	check(IsValid(Context, Achievement));
 
-	return Achievements[Achievement.GetValue()]->GetState() == ECsAchievementState::Completed;
+	typedef NCsAchievement::EState StateType;
+
+	return Achievements[Achievement.GetValue()]->GetState() == StateType::Completed;
 }
 
 bool UCsManager_Achievement::IsSafeCompleted(const FECsAchievement& Achievement)
@@ -2333,7 +2386,9 @@ void UCsManager_Achievement::CompleteAll()
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
-		QueueAction(ECsAchievementAction::CompleteAll);
+		typedef NCsAchievement::EAction ActionType;
+
+		QueueAction(ActionType::CompleteAll);
 	}
 	// Local
 	else
@@ -2342,10 +2397,10 @@ void UCsManager_Achievement::CompleteAll()
 	}
 }
 
-#define ActionInfoType NCsAchievement::NAction::FInfo
+#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::CompleteAll_Internal(ActionInfoType* ActionInfo)
 {
-	typedef NCsAchievement::NAction::FResource ActionInfoContainerType;
+	typedef NCsAchievement::NAction::NInfo::FResource ActionInfoContainerType;
 
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
 	// Online
@@ -2378,26 +2433,31 @@ void UCsManager_Achievement::CompleteAll_Internal(ActionInfoType* ActionInfo)
 			const FECsAchievement& Achievement = IA->GetType();
 
 			CompleteInfo->Achievement = Achievement;
-			CompleteInfo->Action	  = ECsAchievementAction::Complete;
 
-			const ECsAchievementProgress& ProgressType = IA->GetProgressType();
+			typedef NCsAchievement::EAction ActionType;
+
+			CompleteInfo->Action = ActionType::Complete;
+
+			typedef NCsAchievement::EProgress ProgressType;
+
+			const ProgressType& ProgType = IA->GetProgressType();
 
 			// Normalized | Standard | Binary
-			if (ProgressType == ECsAchievementProgress::Normalized ||
-				ProgressType == ECsAchievementProgress::Standard ||
-				ProgressType == ECsAchievementProgress::Binary)
+			if (ProgType == ProgressType::Normalized ||
+				ProgType == ProgressType::Standard ||
+				ProgType == ProgressType::Binary)
 			{
 				CompleteInfo->Value.SetPercent(1.0f);
 			}
 			// Count
 			else
-			if (ProgressType == ECsAchievementProgress::Count)
+			if (ProgType == ProgressType::Count)
 			{
 				CompleteInfo->Value.SetCount(IA->GetMaxCount());
 			}
 			// Bitfield
 			else
-			if (ProgressType == ECsAchievementProgress::Bitfield)
+			if (ProgType == ProgressType::Bitfield)
 			{
 				const uint32& Length = IA->GetBitfieldLength();
 				FString Bitfield	 = TEXT("");
@@ -2426,7 +2486,9 @@ void UCsManager_Achievement::CompleteAll_Internal(ActionInfoType* ActionInfo)
 
 		CompleteAllInfo->Reset();
 
-		CompleteAllInfo->Action = ECsAchievementAction::CompleteAll;
+		typedef NCsAchievement::EAction ActionType;
+
+		CompleteAllInfo->Action = ActionType::CompleteAll;
 		CompleteAllInfo->Complete();
 
 		InfoContainer = CompleteAllInfoContainer;
@@ -2437,7 +2499,7 @@ void UCsManager_Achievement::CompleteAll_Internal(ActionInfoType* ActionInfo)
 
 		QueryDescriptionsInfo->Reset();
 
-		QueryDescriptionsInfo->Action = ECsAchievementAction::QueryDescriptions;
+		QueryDescriptionsInfo->Action = ActionType::QueryDescriptions;
 
 #if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
@@ -2463,7 +2525,9 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const flo
 {
 	ICsAchievement* IA = Achievements[Achievement.GetValue()];
 
-	const ECsAchievementProgress& ProgressType = IA->GetProgressType();
+	typedef NCsAchievement::EProgress ProgressType;
+
+	const ProgressType& ProgType = IA->GetProgressType();
 
 	typedef NCsAchievement::FValue ValueType;
 
@@ -2506,6 +2570,8 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const Val
 
 	check(IsValid(Context, Achievement));
 
+	typedef NCsAchievement::EAction ActionType;
+
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
 	// Online
 	if (IAchievements.IsValid())
@@ -2520,7 +2586,10 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const Val
 
 		ICsAchievement* IA = Achievements[Achievement.GetValue()];
 
-		const ECsAchievementProgress& ProgressType = IA->GetProgressType();
+		typedef NCsAchievement::EMProgress ProgressMapType;
+		typedef NCsAchievement::EProgress ProgressType;
+
+		const ProgressType& ProgType = IA->GetProgressType();
 
 		// Queue Reset
 		typedef NCsAchievement::EValue ValueType;
@@ -2528,9 +2597,9 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const Val
 		const ValueType& ValType = Value.ValueType;
 
 		// Normalized | Standard | Binary
-		if (ProgressType == ECsAchievementProgress::Normalized ||
-			ProgressType == ECsAchievementProgress::Standard ||
-			ProgressType == ECsAchievementProgress::Binary)
+		if (ProgType == ProgressType::Normalized ||
+			ProgType == ProgressType::Standard ||
+			ProgType == ProgressType::Binary)
 		{
 			// Float
 			if (ValType == ValueType::Float)
@@ -2544,17 +2613,17 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const Val
 				}
 #endif // #if !UE_BUILD_SHIPPING
 
-				QueueAction(bResetAsResetAll ? ECsAchievementAction::ResetAll : ECsAchievementAction::Reset, Achievement, Percent);
+				QueueAction(bResetAsResetAll ? ActionType::ResetAll : ActionType::Reset, Achievement, Percent);
 			}
 			else
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s has ProgressType: %s and the ValueType must be Float."), *Context, Achievement.ToChar(), EMCsAchievementProgress::Get().ToChar(ProgressType));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s has ProgressType: %s and the ValueType must be Float."), *Context, Achievement.ToChar(), ProgressMapType::Get().ToChar(ProgType));
 				return;
 			}
 		}
 		// Count
 		else
-		if (ProgressType == ECsAchievementProgress::Count)
+		if (ProgType == ProgressType::Count)
 		{
 			if (ValType == ValueType::String)
 			{
@@ -2584,11 +2653,11 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const Val
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			QueueAction(bResetAsResetAll ? ECsAchievementAction::ResetAll : ECsAchievementAction::Reset, Achievement, Count);
+			QueueAction(bResetAsResetAll ? ActionType::ResetAll : ActionType::Reset, Achievement, Count);
 		}
 		// Bitfield
 		else
-		if (ProgressType == ECsAchievementProgress::Bitfield)
+		if (ProgType == ProgressType::Bitfield)
 		{
 			if (ValType == ValueType::Integer)
 			{
@@ -2641,7 +2710,7 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const Val
 				}
 #endif // #if !UE_BUILD_SHIPPING
 
-				QueueAction(bResetAsResetAll ? ECsAchievementAction::ResetAll : ECsAchievementAction::Reset, Achievement, NewBitfield);
+				QueueAction(bResetAsResetAll ? ActionType::ResetAll : ActionType::Reset, Achievement, NewBitfield);
 			}
 			else
 			{
@@ -2660,7 +2729,7 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const Val
 #endif // #if !UE_BUILD_SHIPPING
 
 			QueryState.Descriptions.Queue();
-			QueueAction(ECsAchievementAction::QueryDescriptions);
+			QueueAction(ActionType::QueryDescriptions);
 		}
 	}
 	// Local
@@ -2718,7 +2787,7 @@ void UCsManager_Achievement::SafeReset(const FECsAchievement& Achievement, const
 	}
 }
 
-#define ActionInfoType NCsAchievement::NAction::FInfo
+#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::Reset_Internal(ActionInfoType* ActionInfo)
 {
 #undef ActionInfoType
@@ -2728,14 +2797,16 @@ void UCsManager_Achievement::Reset_Internal(ActionInfoType* ActionInfo)
 
 	bool HasValueChanged = false;
 
-	const ECsAchievementProgress& ProgressType = IA->GetProgressType();
+	typedef NCsAchievement::EProgress ProgressType;
+
+	const ProgressType& ProgType = IA->GetProgressType();
 
 	FString Snippet;
 
 	// Normalized | Standard | Binary
-	if (ProgressType == ECsAchievementProgress::Normalized ||
-		ProgressType == ECsAchievementProgress::Standard ||
-		ProgressType == ECsAchievementProgress::Binary)
+	if (ProgType == ProgressType::Normalized ||
+		ProgType == ProgressType::Standard ||
+		ProgType == ProgressType::Binary)
 	{
 		const float& Percent		= ActionInfo->Value.Percent;
 		const float CurrentProgress = IA->GetProgress();
@@ -2747,7 +2818,7 @@ void UCsManager_Achievement::Reset_Internal(ActionInfoType* ActionInfo)
 	}
 	// Count
 	else
-	if (ProgressType == ECsAchievementProgress::Count)
+	if (ProgType == ProgressType::Count)
 	{
 		const uint64& CurrentCount  = IA->GetCount();
 		const uint64& CountToWrite  = ActionInfo->Value.Count;
@@ -2760,7 +2831,7 @@ void UCsManager_Achievement::Reset_Internal(ActionInfoType* ActionInfo)
 	}
 	// Bitfield
 	else
-	if (ProgressType == ECsAchievementProgress::Bitfield)
+	if (ProgType == ProgressType::Bitfield)
 	{
 		const FString& Bitfield	= IA->GetBitfield();
 		FString& NewBitfield	= ActionInfo->Value.Bitfield;
@@ -2875,7 +2946,9 @@ void UCsManager_Achievement::ResetAll()
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
-		QueueAction(ECsAchievementAction::ResetAll);
+		typedef NCsAchievement::EAction ActionType;
+
+		QueueAction(ActionType::ResetAll);
 	}
 	// Local
 	else
@@ -2884,10 +2957,10 @@ void UCsManager_Achievement::ResetAll()
 	}
 }
 
-#define ActionInfoType NCsAchievement::NAction::FInfo
+#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::ResetAll_Internal(ActionInfoType* ActionInfo)
 {
-	typedef NCsAchievement::NAction::FResource ActionInfoContainerType;
+	typedef NCsAchievement::NAction::NInfo::FResource ActionInfoContainerType;
 
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
 	// Online
@@ -2920,26 +2993,31 @@ void UCsManager_Achievement::ResetAll_Internal(ActionInfoType* ActionInfo)
 			const FECsAchievement& Achievement = IA->GetType();
 
 			ResetInfo->Achievement = Achievement;
-			ResetInfo->Action	   = ECsAchievementAction::Reset;
 
-			const ECsAchievementProgress& ProgressType = IA->GetProgressType();
+			typedef NCsAchievement::EAction ActionType;
+
+			ResetInfo->Action = ActionType::Reset;
+
+			typedef NCsAchievement::EProgress ProgressType;
+
+			const ProgressType& ProgType = IA->GetProgressType();
 
 			// Normalized | Standard | Binary
-			if (ProgressType == ECsAchievementProgress::Normalized ||
-				ProgressType == ECsAchievementProgress::Standard ||
-				ProgressType == ECsAchievementProgress::Binary)
+			if (ProgType == ProgressType::Normalized ||
+				ProgType == ProgressType::Standard ||
+				ProgType == ProgressType::Binary)
 			{
 				ResetInfo->Value.SetPercent(0.0f);
 			}
 			// Count
 			else
-			if (ProgressType == ECsAchievementProgress::Count)
+			if (ProgType == ProgressType::Count)
 			{
 				ResetInfo->Value.SetCount(0ull);
 			}
 			// Bitfield
 			else
-			if (ProgressType == ECsAchievementProgress::Bitfield)
+			if (ProgType == ProgressType::Bitfield)
 			{
 				ResetInfo->Value.SetBitfield(IA->GetBitMaskNone());
 			}
@@ -2961,7 +3039,9 @@ void UCsManager_Achievement::ResetAll_Internal(ActionInfoType* ActionInfo)
 
 		ResetAllInfo->Reset();
 
-		ResetAllInfo->Action = ECsAchievementAction::ResetAll;
+		typedef NCsAchievement::EAction ActionType;
+
+		ResetAllInfo->Action = ActionType::ResetAll;
 		ResetAllInfo->Complete();
 
 		InfoContainer = ResetAllInfoContainer;
@@ -2972,7 +3052,7 @@ void UCsManager_Achievement::ResetAll_Internal(ActionInfoType* ActionInfo)
 
 		QueryDescriptionsInfo->Reset();
 
-		QueryDescriptionsInfo->Action = ECsAchievementAction::QueryDescriptions;
+		QueryDescriptionsInfo->Action = ActionType::QueryDescriptions;
 
 #if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
@@ -3009,11 +3089,16 @@ void UCsManager_Achievement::SetProgress(const FECsAchievement& Achievement, con
 
 	checkf(Percent >= 0.0f && Percent <= 1.0f, TEXT("%s: Percent: %f must be a value between [0, 1] inclusive."), *Context, Percent);
 
-	ICsAchievement* IA						   = Achievements[Achievement.GetValue()];
-	const ECsAchievementProgress& ProgressType = IA->GetProgressType();
+	ICsAchievement* IA = Achievements[Achievement.GetValue()];
+
+	typedef NCsAchievement::EProgress ProgressType;
+
+	const ProgressType& ProgType = IA->GetProgressType();
 
 	const float CurrentProgress = IA->GetProgress();
 	const float NewProgress		= IA->CalculateProgress(Percent);
+
+	typedef NCsAchievement::EAction ActionType;
 
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
 	// Online
@@ -3032,38 +3117,38 @@ void UCsManager_Achievement::SetProgress(const FECsAchievement& Achievement, con
 		FString Snippet;
 
 		// Normalized | Standard | Binary
-		if (ProgressType == ECsAchievementProgress::Normalized ||
-			ProgressType == ECsAchievementProgress::Standard ||
-			ProgressType == ECsAchievementProgress::Binary)
+		if (ProgType == ProgressType::Normalized ||
+			ProgType == ProgressType::Standard ||
+			ProgType == ProgressType::Binary)
 		{
 			// Queue Reset
 			if (QueueReset)
-				QueueAction(ECsAchievementAction::Reset, Achievement, 0.0f);
+				QueueAction(ActionType::Reset, Achievement, 0.0f);
 			// Queue Write
 			Snippet = FString::Printf(TEXT("Percent: %f"), Percent);
 
-			QueueAction(ECsAchievementAction::Write, Achievement, Percent);
+			QueueAction(ActionType::Write, Achievement, Percent);
 		}
 		// Count
 		else
-		if (ProgressType == ECsAchievementProgress::Count)
+		if (ProgType == ProgressType::Count)
 		{
 			// Queue Reset
 			if (QueueReset)
-				QueueAction(ECsAchievementAction::Reset, Achievement, 0ull);
+				QueueAction(ActionType::Reset, Achievement, 0ull);
 			// Queue Write
 			const uint64 NewCount = (uint64)FMath::FloorToInt(Percent * IA->GetMaxCount());
 			Snippet				  = FString::Printf(TEXT("Count: %d"), NewCount);
 
-			QueueAction(ECsAchievementAction::Write, Achievement, NewCount);
+			QueueAction(ActionType::Write, Achievement, NewCount);
 		}
 		// Bitfield
 		else
-		if (ProgressType == ECsAchievementProgress::Bitfield)
+		if (ProgType == ProgressType::Bitfield)
 		{
 			// Queue Reset
 			if (QueueReset)
-				QueueAction(ECsAchievementAction::Reset, Achievement, IA->GetBitMaskNone());
+				QueueAction(ActionType::Reset, Achievement, IA->GetBitMaskNone());
 			// Queue Write
 			const uint32& BitfieldLength  = IA->GetBitfieldLength();
 			const uint32& NumBitsToUnlock = IA->GetUnlockBitfieldLength();
@@ -3105,7 +3190,7 @@ void UCsManager_Achievement::SetProgress(const FECsAchievement& Achievement, con
 
 			Snippet = FString::Printf(TEXT("Bitfield: %s"), *NewBitfield);
 
-			QueueAction(ECsAchievementAction::Write, Achievement, NewBitfield);
+			QueueAction(ActionType::Write, Achievement, NewBitfield);
 		}
 
 #if !UE_BUILD_SHIPPING
@@ -3132,7 +3217,7 @@ void UCsManager_Achievement::SetProgress(const FECsAchievement& Achievement, con
 #endif // #if !UE_BUILD_SHIPPING
 
 		QueryState.Descriptions.Queue();
-		QueueAction(ECsAchievementAction::QueryDescriptions);
+		QueueAction(ActionType::QueryDescriptions);
 	}
 	// Local
 	else
@@ -3217,6 +3302,8 @@ void UCsManager_Achievement::CalculateTotalProgress()
 	int32 Count = 0;
 	NumCompleted = 0;
 
+	typedef NCsAchievement::EState StateType;
+
 	for (const FECsAchievement& Achievement : EMCsAchievement::Get())
 	{
 		ICsAchievement* IA = Achievements[Achievement.GetValue()];
@@ -3226,7 +3313,7 @@ void UCsManager_Achievement::CalculateTotalProgress()
 
 		++Count;
 
-		if (IA->GetState() != ECsAchievementState::Completed)
+		if (IA->GetState() != StateType::Completed)
 			continue;
 
 		++NumCompleted;
@@ -3257,10 +3344,14 @@ void UCsManager_Achievement::Increment(const FECsAchievement& Achievement, const
 	if (!IsValid(Context, Achievement))
 		return;
 
-	ICsAchievement* IA						   = Achievements[Achievement.GetValue()];
-	const ECsAchievementProgress& ProgressType = IA->GetProgressType();
+	ICsAchievement* IA = Achievements[Achievement.GetValue()];
 
-	checkf(SupportsCount(Achievement), TEXT("%s: Achievement: %s ProgressType: %s does NOT support Count."), *Context, Achievement.ToChar(), EMCsAchievementProgress::Get().ToChar(ProgressType));
+	typedef NCsAchievement::EMProgress ProgressMapType;
+	typedef NCsAchievement::EProgress ProgressType;
+
+	const ProgressType& ProgType = IA->GetProgressType();
+
+	checkf(SupportsCount(Achievement), TEXT("%s: Achievement: %s ProgressType: %s does NOT support Count."), *Context, Achievement.ToChar(), ProgressMapType::Get().ToChar(ProgType));
 
 	if (Count == 0)
 	{
@@ -3280,9 +3371,9 @@ void UCsManager_Achievement::Increment(const FECsAchievement& Achievement, const
 			return;
 		}
 
-		if (ProgressType != ECsAchievementProgress::Count)
+		if (ProgType != ProgressType::Count)
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s is NOT ProgressType: Count (currently = %s)."), *Context, Achievement.ToChar(), EMCsAchievementProgress::Get().ToChar(ProgressType));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s is NOT ProgressType: Count (currently = %s)."), *Context, Achievement.ToChar(), ProgressMapType::Get().ToChar(ProgType));
 			return;
 		}
 
@@ -3301,7 +3392,9 @@ void UCsManager_Achievement::Increment(const FECsAchievement& Achievement, const
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
-		QueueAction(ECsAchievementAction::Write, Achievement, CountToWrite);
+		typedef NCsAchievement::EAction ActionType;
+
+		QueueAction(ActionType::Write, Achievement, CountToWrite);
 	}
 }
 
@@ -3328,10 +3421,16 @@ void UCsManager_Achievement::SetCount(const FECsAchievement& Achievement, const 
 	if (!IsEnabled(Context))
 		return;
 
-	ICsAchievement* IA						   = Achievements[Achievement.GetValue()];
-	const ECsAchievementProgress& ProgressType = IA->GetProgressType();
+	ICsAchievement* IA = Achievements[Achievement.GetValue()];
+
+	typedef NCsAchievement::EMProgress ProgressMapType;
+	typedef NCsAchievement::EProgress ProgressType;
+
+	const ProgressType& ProgType = IA->GetProgressType();
 	
-	checkf(SupportsCount(Achievement), TEXT("%s: Achievement: %s ProgressType: %s does NOT support Count."), *Context, Achievement.ToChar(), EMCsAchievementProgress::Get().ToChar(ProgressType));
+	checkf(SupportsCount(Achievement), TEXT("%s: Achievement: %s ProgressType: %s does NOT support Count."), *Context, Achievement.ToChar(), ProgressMapType::Get().ToChar(ProgType));
+
+	typedef NCsAchievement::EAction ActionType;
 
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
 	// Online
@@ -3345,9 +3444,9 @@ void UCsManager_Achievement::SetCount(const FECsAchievement& Achievement, const 
 			return;
 		}
 
-		if (ProgressType != ECsAchievementProgress::Count)
+		if (ProgType != ProgressType::Count)
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s is NOT ProgressType: Count (currently = %s)."), *Context, Achievement.ToChar(), EMCsAchievementProgress::Get().ToChar(ProgressType));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s is NOT ProgressType: Count (currently = %s)."), *Context, Achievement.ToChar(), ProgressMapType::Get().ToChar(ProgType));
 			return;
 		}
 
@@ -3357,7 +3456,7 @@ void UCsManager_Achievement::SetCount(const FECsAchievement& Achievement, const 
 
 		// Queue Reset
 		if (QueueReset)
-			QueueAction(ECsAchievementAction::Reset, Achievement, 0ull);
+			QueueAction(ActionType::Reset, Achievement, 0ull);
 		// Queue Write
 		uint64 NewCount		= 0ull;
 		uint64 CountToWrite	= 0ull;
@@ -3373,7 +3472,7 @@ void UCsManager_Achievement::SetCount(const FECsAchievement& Achievement, const 
 			CountToWrite = bCountAsAdd ? NewCount - CurrentCount : NewCount;
 		}
 		
-		QueueAction(ECsAchievementAction::Write, Achievement, CountToWrite);
+		QueueAction(ActionType::Write, Achievement, CountToWrite);
 
 #if !UE_BUILD_SHIPPING
 		// Queue Write
@@ -3411,15 +3510,20 @@ void UCsManager_Achievement::SetSafeCount(const FECsAchievement& Achievement, co
 
 bool UCsManager_Achievement::SupportsCount(const FECsAchievement& Achievement)
 {
-	return Achievements[Achievement.GetValue()]->GetProgressType() == ECsAchievementProgress::Count;
+	typedef NCsAchievement::EProgress ProgressType;
+
+	return Achievements[Achievement.GetValue()]->GetProgressType() == ProgressType::Count;
 }
 
 bool UCsManager_Achievement::SupportsSafeCount(const FString& Context, const FECsAchievement& Achievement)
 {
-	if (Achievements[Achievement.GetValue()]->GetProgressType() != ECsAchievementProgress::Count)
+	typedef NCsAchievement::EMProgress ProgressMapType;
+	typedef NCsAchievement::EProgress ProgressType;
+
+	if (Achievements[Achievement.GetValue()]->GetProgressType() != ProgressType::Count)
 	{
-		const ECsAchievementProgress& ProgressType = Achievements[Achievement.GetValue()]->GetProgressType();
-		const TCHAR* Str						   = EMCsAchievementProgress::Get().ToChar(ProgressType);
+		const ProgressType& Type = Achievements[Achievement.GetValue()]->GetProgressType();
+		const TCHAR* Str		 = ProgressMapType::Get().ToChar(Type);
 
 		UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s ProgressType: %s does NOT support Count."), *Context, Achievement.ToChar(), Str);
 		return false;
@@ -3444,10 +3548,14 @@ void UCsManager_Achievement::SetBit(const FECsAchievement& Achievement, const ui
 	if (!IsValid(Context, Achievement))
 		return;
 
-	ICsAchievement* IA						   = Achievements[Achievement.GetValue()];
-	const ECsAchievementProgress& ProgressType = IA->GetProgressType();
+	ICsAchievement* IA = Achievements[Achievement.GetValue()];
 
-	checkf(SupportsBitfield(Achievement), TEXT("%s: Achievement: %s ProgressType: %s does NOT support Bitfield."), *Context, Achievement.ToChar(), EMCsAchievementProgress::Get().ToChar(ProgressType));
+	typedef NCsAchievement::EMProgress ProgressMapType;
+	typedef NCsAchievement::EProgress ProgressType;
+
+	const ProgressType& ProgType = IA->GetProgressType();
+
+	checkf(SupportsBitfield(Achievement), TEXT("%s: Achievement: %s ProgressType: %s does NOT support Bitfield."), *Context, Achievement.ToChar(), ProgressMapType::Get().ToChar(ProgType));
 
 	if (!bBitfieldIndexStartsAtZero && Index == 0)
 	{
@@ -3467,9 +3575,9 @@ void UCsManager_Achievement::SetBit(const FECsAchievement& Achievement, const ui
 			return;
 		}
 
-		if (ProgressType != ECsAchievementProgress::Bitfield)
+		if (ProgType != ProgressType::Bitfield)
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s is NOT ProgressType: Bitfield (currently = %s)."), *Context, Achievement.ToChar(), EMCsAchievementProgress::Get().ToChar(ProgressType));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s is NOT ProgressType: Bitfield (currently = %s)."), *Context, Achievement.ToChar(), ProgressMapType::Get().ToChar(ProgType));
 			return;
 		}
 
@@ -3520,7 +3628,9 @@ void UCsManager_Achievement::SetBit(const FECsAchievement& Achievement, const ui
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
-		QueueAction(ECsAchievementAction::Write, Achievement, NewBitfield);
+		typedef NCsAchievement::EAction ActionType;
+
+		QueueAction(ActionType::Write, Achievement, NewBitfield);
 	}
 }
 
@@ -3540,15 +3650,20 @@ void UCsManager_Achievement::SetSafeBit(const FECsAchievement& Achievement, cons
 
 bool UCsManager_Achievement::SupportsBitfield(const FECsAchievement& Achievement)
 {
-	return Achievements[Achievement.GetValue()]->GetProgressType() == ECsAchievementProgress::Bitfield;
+	typedef NCsAchievement::EProgress ProgressType;
+
+	return Achievements[Achievement.GetValue()]->GetProgressType() == ProgressType::Bitfield;
 }
 
 bool UCsManager_Achievement::SupportsSafeBitfield(const FString& Context, const FECsAchievement& Achievement)
 {
-	if (Achievements[Achievement.GetValue()]->GetProgressType() != ECsAchievementProgress::Bitfield)
+	typedef NCsAchievement::EMProgress ProgressMapType;
+	typedef NCsAchievement::EProgress ProgressType;
+
+	if (Achievements[Achievement.GetValue()]->GetProgressType() != ProgressType::Bitfield)
 	{
-		const ECsAchievementProgress& ProgressType = Achievements[Achievement.GetValue()]->GetProgressType();
-		const TCHAR* Str						   = EMCsAchievementProgress::Get().ToChar(ProgressType);
+		const ProgressType& Type = Achievements[Achievement.GetValue()]->GetProgressType();
+		const TCHAR* Str		 = ProgressMapType::Get().ToChar(Type);
 
 		UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s ProgressType: %s does NOT support Count."), *Context, Achievement.ToChar(), Str);
 		return false;
@@ -3611,8 +3726,8 @@ IOnlineAchievementsPtr UCsManager_Achievement::GetAchievementsInterface()
 
 void UCsManager_Achievement::OnQueryAchievementsComplete(const FUniqueNetId& PlayerId, const bool Success)
 {
-	typedef NCsAchievement::NAction::FResource ActionInfoContainerType;
-	typedef NCsAchievement::NAction::FInfo ActionInfoType;
+	typedef NCsAchievement::NAction::NInfo::FResource ActionInfoContainerType;
+	typedef NCsAchievement::NAction::NInfo::FInfo ActionInfoType;
 
 	TCsDoubleLinkedList<ActionInfoContainerType*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
 
@@ -3621,7 +3736,10 @@ void UCsManager_Achievement::OnQueryAchievementsComplete(const FUniqueNetId& Pla
 	ActionInfoContainerType* InfoContainer = **AllocatedHead;
 	ActionInfoType* ActionInfo		       = InfoContainer->Get();
 
-	checkf(ActionInfo->Action == ECsAchievementAction::QueryIds, TEXT("UCsManager_Achievement::OnQueryAchievementsComplete: Current Action: %s is NOT QueryIds."), *(EMCsAchievementAction::Get().ToChar(ActionInfo->Action)));
+	typedef NCsAchievement::EMAction ActionMapType;
+	typedef NCsAchievement::EAction ActionType;
+
+	checkf(ActionInfo->Action == ActionType::QueryIds, TEXT("UCsManager_Achievement::OnQueryAchievementsComplete: Current Action: %s is NOT QueryIds."), *(ActionMapType::Get().ToChar(ActionInfo->Action)));
 
 	if (!Success)
 	{
@@ -3648,8 +3766,8 @@ void UCsManager_Achievement::OnQueryAchievementsComplete(const FUniqueNetId& Pla
 
 void UCsManager_Achievement::OnQueryAchievementDescriptionsComplete(const FUniqueNetId& PlayerId, const bool Success)
 {
-	typedef NCsAchievement::NAction::FResource ActionInfoContainerType;
-	typedef NCsAchievement::NAction::FInfo ActionInfoType;
+	typedef NCsAchievement::NAction::NInfo::FResource ActionInfoContainerType;
+	typedef NCsAchievement::NAction::NInfo::FInfo ActionInfoType;
 
 	TCsDoubleLinkedList<ActionInfoContainerType*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
 
@@ -3658,7 +3776,10 @@ void UCsManager_Achievement::OnQueryAchievementDescriptionsComplete(const FUniqu
 	ActionInfoContainerType* InfoContainer = **AllocatedHead;
 	ActionInfoType* ActionInfo		       = InfoContainer->Get();
 
-	checkf(ActionInfo->Action == ECsAchievementAction::QueryDescriptions, TEXT("UCsManager_Achievement::OnQueryAchievementDescriptionsComplete: Current Action: %s is NOT QueryDescriptions."), *(EMCsAchievementAction::Get().ToChar(ActionInfo->Action)));
+	typedef NCsAchievement::EMAction ActionMapType;
+	typedef NCsAchievement::EAction ActionType;
+
+	checkf(ActionInfo->Action == ActionType::QueryDescriptions, TEXT("UCsManager_Achievement::OnQueryAchievementDescriptionsComplete: Current Action: %s is NOT QueryDescriptions."), *(ActionMapType::Get().ToChar(ActionInfo->Action)));
 
 	if (!Success)
 	{
@@ -3685,8 +3806,8 @@ void UCsManager_Achievement::OnQueryAchievementDescriptionsComplete(const FUniqu
 
 void UCsManager_Achievement::OnAchievementsWritten(const FUniqueNetId& PlayerId, bool Success)
 {
-	typedef NCsAchievement::NAction::FResource ActionInfoContainerType;
-	typedef NCsAchievement::NAction::FInfo ActionInfoType;
+	typedef NCsAchievement::NAction::NInfo::FResource ActionInfoContainerType;
+	typedef NCsAchievement::NAction::NInfo::FInfo ActionInfoType;
 
 	TCsDoubleLinkedList<ActionInfoContainerType*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
 
@@ -3696,7 +3817,10 @@ void UCsManager_Achievement::OnAchievementsWritten(const FUniqueNetId& PlayerId,
 	ActionInfoType* ActionInfo		       = InfoContainer->Get();
 
 	const FECsAchievement& Achievement = ActionInfo->Achievement;
-	const ECsAchievementAction& Action = ActionInfo->Action;
+
+	typedef NCsAchievement::EAction ActinoType;
+
+	const ActinoType& Action = ActionInfo->Action;
 
 	ICsAchievement* IA = Achievements[Achievement.GetValue()];
 
@@ -3707,21 +3831,21 @@ void UCsManager_Achievement::OnAchievementsWritten(const FUniqueNetId& PlayerId,
 		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::OnAchievementsWritten: Achievement: %s not written for Player: %s - %s."), Achievement.ToChar(), *GetLocalPlayerNickname(), *(PlayerId.ToString()));
 		
 		// Write
-		if (Action == ECsAchievementAction::Write)
+		if (Action == ActinoType::Write)
 		{
 			OnProgress_AsyncEvent.Broadcast(Success, IA, CurrentProgress);
 			OnProgress_AsyncScriptEvent.Broadcast(Success, Achievement, CurrentProgress);
 		}
 		// Complete
 		else
-		if (Action == ECsAchievementAction::Complete)
+		if (Action == ActinoType::Complete)
 		{
 			OnComplete_AsyncEvent.Broadcast(Success, IA);
 			OnComplete_AsyncScriptEvent.Broadcast(Success, Achievement);
 		}
 		// Reset
 		else
-		if (Action == ECsAchievementAction::Reset)
+		if (Action == ActinoType::Reset)
 		{
 			OnReset_AsyncEvent.Broadcast(Success, IA, CurrentProgress);
 			OnReset_AsyncScriptEvent.Broadcast(Success, Achievement, CurrentProgress);
@@ -3734,18 +3858,20 @@ void UCsManager_Achievement::OnAchievementsWritten(const FUniqueNetId& PlayerId,
 
 	FVariantData* Data = WriteObject->FindStatByName(Achievement.Name_Internal);
 
-	const ECsAchievementProgress& ProgressType = IA->GetProgressType();
-	float Progress							   = 0.0f;
+	typedef NCsAchievement::EProgress ProgressType;
+
+	const ProgressType& ProgType = IA->GetProgressType();
+	float Progress				 = 0.0f;
 
 	// Standard | Binary
-	if (ProgressType == ECsAchievementProgress::Standard ||
-		ProgressType == ECsAchievementProgress::Binary)
+	if (ProgType == ProgressType::Standard ||
+		ProgType == ProgressType::Binary)
 	{
 		GetWriteAchievementValue(Data, Progress);
 	}
 	// Count
 	else
-	if (ProgressType == ECsAchievementProgress::Count)
+	if (ProgType == ProgressType::Count)
 	{
 		uint64 Count = 0ull;
 
@@ -3760,7 +3886,7 @@ void UCsManager_Achievement::OnAchievementsWritten(const FUniqueNetId& PlayerId,
 	}
 	// Bitfield
 	else
-	if (ProgressType == ECsAchievementProgress::Bitfield)
+	if (ProgType == ProgressType::Bitfield)
 	{
 		FString Bitfield;
 
@@ -3783,7 +3909,7 @@ void UCsManager_Achievement::OnAchievementsWritten(const FUniqueNetId& PlayerId,
 
 	if (Progress < MaxProgress)
 	{
-		if (ProgressType != ECsAchievementProgress::Bitfield)
+		if (ProgType != ProgressType::Bitfield)
 			SetProgress(IA, Progress / MaxProgress);
 
 #if !UE_BUILD_SHIPPING
@@ -3793,14 +3919,16 @@ void UCsManager_Achievement::OnAchievementsWritten(const FUniqueNetId& PlayerId,
 		}
 #endif // #if !UE_BUILD_SHIPPING
 
+		typedef NCsAchievement::EAction ActionType;
+
 		// Write
-		if (Action == ECsAchievementAction::Write)
+		if (Action == ActionType::Write)
 		{
 			OnProgress_AsyncEvent.Broadcast(Success, IA, Progress);
 			OnProgress_AsyncScriptEvent.Broadcast(Success, Achievement, Progress);
 		}
 		// Reset
-		if (Action == ECsAchievementAction::Reset)
+		if (Action == ActionType::Reset)
 		{
 			OnReset_AsyncEvent.Broadcast(Success, IA, Progress);
 			OnReset_AsyncScriptEvent.Broadcast(Success, Achievement, Progress);
@@ -3981,20 +4109,25 @@ void UCsManager_Achievement::SetType(ICsAchievement* Achievement, const FECsAchi
 	A->Type = AchievementType;
 }
 
-void UCsManager_Achievement::SetProgressType(ICsAchievement* Achievement, const ECsAchievementProgress& ProgressType)
+#define ProgressType NCsAchievement::EProgress
+void UCsManager_Achievement::SetProgressType(ICsAchievement* Achievement, const ProgressType& Type)
 {
+#undef ProgressType
+
 	FCsAchievement* A = static_cast<FCsAchievement*>(Achievement);
-	A->SetProgressType(ProgressType);
+	A->SetProgressType(Type);
 }
 
 void UCsManager_Achievement::SetProgress(ICsAchievement* Achievement, const float& Percent)
 {
 	FCsAchievement* A = static_cast<FCsAchievement*>(Achievement);
 
-	const ECsAchievementProgress& ProgressType = A->GetProgressType();
+	typedef NCsAchievement::EProgress ProgressType;
+
+	const ProgressType& Type = A->GetProgressType();
 	
 	// Bitfield
-	if (ProgressType == ECsAchievementProgress::Bitfield)
+	if (Type == ProgressType::Bitfield)
 	{
 		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::SetProgress: Achievement: %s has ProgressType:: Bitfield and does NOT support SetProgress."), *(Achievement->GetId()));
 		return;
@@ -4003,7 +4136,7 @@ void UCsManager_Achievement::SetProgress(ICsAchievement* Achievement, const floa
 	A->SetProgress(Percent);
 
 	// Count
-	if (ProgressType == ECsAchievementProgress::Count)
+	if (Type == ProgressType::Count)
 	{
 		A->SetCount(A->GetProgressAsPercent() * A->GetMaxCount());
 	}

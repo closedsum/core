@@ -3,6 +3,8 @@
 
 // Types
 #include "Managers/Sound/CsTypes_Sound.h"
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 
@@ -64,9 +66,9 @@ namespace NCsSound
 		#undef PayloadImplType
 		#undef PooledPayloadType
 
-			checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Payload)
 
-			checkf(PooledPayload, TEXT("%s: PooledPayload is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(PooledPayload)
 
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			Payload->Instigator						= PooledPayload->GetInstigator();
@@ -91,7 +93,7 @@ namespace NCsSound
 		{
 		#undef PayloadImplType
 
-			checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Payload)
 
 			Payload->Sound					  = Sound.GetChecked(Context);
 			Payload->SoundAttenuation		  = Sound.GetAttenuation();
@@ -108,9 +110,9 @@ namespace NCsSound
 		{
 		#undef PayloadImplType
 
-			checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Payload)
 
-			checkf(Sound, TEXT("%s: Sound is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Sound)
 
 			Payload->Sound = Sound;
 

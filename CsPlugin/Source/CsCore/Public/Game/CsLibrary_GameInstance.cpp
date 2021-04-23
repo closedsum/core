@@ -4,6 +4,8 @@
 
 // Types
 #include "Types/CsTypes_Macro.h"
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Game
 #include "Engine/GameInstance.h"
 // World
@@ -24,7 +26,7 @@ namespace NCsGameInstance
 
 	UGameInstance* FLibrary::GetChecked(const FString& Context, UObject* ContextObject)
 	{
-		checkf(ContextObject, TEXT("%s: ContextObject is NULL."), *Context);
+		CS_IS_PTR_NULL_CHECKED(ContextObject)
 
 		UWorld* World = ContextObject->GetWorld();
 
@@ -45,11 +47,7 @@ namespace NCsGameInstance
 
 	UGameInstance* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!ContextObject)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ContextObject is NULL."), *Context));
-			return nullptr;
-		}
+		CS_IS_PTR_NULL_RET_NULL(ContextObject)
 
 		UWorld* World = ContextObject->GetWorld();
 

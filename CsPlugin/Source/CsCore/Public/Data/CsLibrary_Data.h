@@ -127,7 +127,7 @@ namespace NCsData
 		* @param Object		UObject that SHOULD implement the interface: ICsData.
 		* return			Data that implements the interface: DataType (NCsData::IData).
 		*/
-		static DataType* GetSafe(const FString& Context, UObject* Object);
+		static DataType* GetSafe(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Safely get the Data from Object.
@@ -138,9 +138,9 @@ namespace NCsData
 		* return			Data that implements the interface: InterfaceType.
 		*/
 		template<typename InterfaceType>
-		FORCEINLINE static InterfaceType* GetSafe(const FString& Context, UObject* Object)
+		FORCEINLINE static InterfaceType* GetSafe(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning)
 		{
-			DataType* Data = GetSafe(Context, Object);
+			DataType* Data = GetSafe(Context, Object, Log);
 
 			return Data ? GetSafeInterfaceChecked<InterfaceType>(Context, Data) : nullptr;
 		}

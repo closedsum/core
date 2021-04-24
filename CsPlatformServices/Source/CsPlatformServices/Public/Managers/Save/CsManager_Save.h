@@ -1,12 +1,16 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "CoreUObject/Public/UObject/Object.h"
+#include "UObject/Object.h"
+// Types
 #include "Managers/Save/CsTypes_Save.h"
+#include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"
+// Managers
+#include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
+// Online
 #include "OnlineSubsystem.h"
 #include "OnlineStats.h"
 #include "Interfaces/OnlineUserCloudInterface.h"
-#include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
-#include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"
+
 #include "CsManager_Save.generated.h"
 
 // Structs
@@ -15,13 +19,26 @@
 	// Memory Resource
 #pragma region
 
-struct CSPLATFORMSERVICES_API FCsResource_SaveActionInfo : public TCsResourceContainer<FCsSaveActionInfo>
+namespace NCsSave
 {
-};
+	namespace NAction
+	{
+		namespace NInfo
+		{
+		#define InfoType NCsSave::NAction::NInfo::FInfo
 
-struct CSPLATFORMSERVICES_API FCsManager_SaveActionInfo : public TCsManager_ResourceValueType_Fixed<FCsSaveActionInfo, FCsResource_SaveActionInfo, 64>
-{
-};
+			struct CSPLATFORMSERVICES_API FResource : public TCsResourceContainer<InfoType>
+			{
+			};
+
+			struct CSPLATFORMSERVICES_API FManager : public TCsManager_ResourceValueType_Fixed<InfoType, FResource, 64>
+			{
+			};
+
+		#undef InfoType
+		}
+	}
+}
 
 #pragma endregion Memory Resource
 
@@ -30,16 +47,53 @@ struct CSPLATFORMSERVICES_API FCsManager_SaveActionInfo : public TCsManager_Reso
 // Delegates
 #pragma region
 	
-	// Enumerate
+/**
+* OnStart
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerSave_OnStart);
+/**
+* OnEnumerate
+*
+* @param WasSuccessful
+*/
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerSave_OnEnumerate, bool, WasSuccessful);
-	// Read
+/**
+* OnRead
+*
+* @param WasSuccessful
+* @param Profile
+* @param Save
+*/
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsManagerSave_OnRead, bool, WasSuccessful, const ECsPlayerProfile&, Profile, const ECsSave&, Save);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerSave_OnReadAll);
-	// Write
+/**
+* OnReadAll
+*
+* @param Profile
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerSave_OnReadAll, const ECsPlayerProfile&, Profile);
+/**
+* OnWrite
+*
+* @param WasSuccessful
+* @param Profile
+* @param Save
+*/
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsManagerSave_OnWrite, bool, WasSuccessful, const ECsPlayerProfile&, Profile, const ECsSave&, Save);
+/**
+* OnWriteAll
+*/
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerSave_OnWriteAll);
-	// Delete
+/**
+* OnDelete
+*
+* @param WasSuccessful
+* @param Profile
+* @param Save
+*/
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsManagerSave_OnDelete, bool, WasSuccessful, const ECsPlayerProfile&, Profile, const ECsSave&, Save);
+/**
+* OnDeleteAll
+*/
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerSave_OnDeleteAll);
 
 #pragma endregion Delegates
@@ -56,11 +110,22 @@ class CSPLATFORMSERVICES_API UCsManager_Save : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+#define FileInfoType NCsSave::NFile::FInfo
+#define ActionType NCsSave::EAction
+#define ActionInfoType NCsSave::NAction::NInfo::FInfo
+
 // Singleton
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsManager_Save* Get(UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static UCsManager_Save* Get(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
 
 	template<typename T>
 	static T* Get(UObject* InRoot = nullptr)
@@ -116,9 +181,31 @@ public:
 
 #pragma endregion Singleton
 
+// Start
+#pragma region
 public:
 
-	virtual void Start();
+	void Start();
+
+	/**
+	*
+	*/
+	DECLARE_MULTICAST_DELEGATE(FOnStart);
+
+	/** */
+	FOnStart OnStart_Event;
+	/** */
+	FCsManagerSave_OnStart OnStart_ScriptEvent;
+
+protected:
+
+	bool bHasStarted;
+
+public:
+
+	FORCEINLINE bool HasStarted() { return bHasStarted; }
+
+#pragma endregion Start
 
 // Storage
 #pragma region
@@ -192,6 +279,13 @@ public:
 	* return	Id for Local Player.
 	*/
 	const FUniqueNetId& GetLocalPlayerIdRef();
+
+	/**
+	*
+	*
+	* return
+	*/
+	FString GetLocalPlayerNickname();
 
 #pragma endregion Player
 
@@ -273,10 +367,10 @@ public:
 protected:
 
 	/** */
-	TArray<TArray<FCsSaveFileInfo>> SaveFileInfos;
+	TArray<TArray<FileInfoType>> SaveFileInfos;
 
 	/** */
-	TArray<FCsSaveFileInfo> SaveFileInfosAll;
+	TArray<FileInfoType> SaveFileInfosAll;
 
 public:
 
@@ -287,7 +381,7 @@ public:
 	* @param Save
 	* return SaveFileInfo associated with Save.
 	*/
-	const FCsSaveFileInfo& GetSaveFileInfo(const ECsPlayerProfile& Profile, const ECsSave& Save);
+	const FileInfoType& GetSaveFileInfo(const ECsPlayerProfile& Profile, const ECsSave& Save);
 
 protected:
 
@@ -354,6 +448,11 @@ protected:
 	virtual void SetSaveData(const ECsPlayerProfile& Profile, const int32& Index);
 
 	/**
+	*
+	*/
+	void SetAllSaveData(const ECsPlayerProfile& Profile);
+
+	/**
 	* Called on action: Write or Write All. For Write or for each Write in Write All, get the data for the appropriate Profile
 	* and Save (slot) as a string. The details of how this is implemented is left for the child class as
 	* the structure and / or layout of the data could vary from project to project.
@@ -407,14 +506,30 @@ protected:
 	*/
 	virtual void ClearSaveData(const ECsPlayerProfile& Profile, const int32& Index);
 
+#define DataInfoType NCsSave::NData::FInfo
+	TArray<TArray<DataInfoType>> SaveDataInfos;
+#undef DataInfoType
+
+public:
+
+	bool HasSetSaveData(const ECsPlayerProfile& Profile, const ECsSave& Save);
+
+protected:
+
+	bool HasSetSaveData(const ECsPlayerProfile& Profile, const int32& Index);
+
 #pragma endregion Data
 
 // Action
 #pragma region
 protected:
 
-	/** Manager to handle a resource pool of FCsSaveActionInfo. */
-	FCsManager_SaveActionInfo Manager_Resource;
+#define ActionInfoManagerType NCsSave::NAction::NInfo::FManager
+
+	/** Manager to handle a resource pool of ActionInfoType (NCsSave::NAction::NInfo::FInfo). */
+	ActionInfoManagerType Manager_Resource;
+
+#undef ActionInfoManagerType
 
 public:
 
@@ -426,7 +541,7 @@ public:
 	* @param Save		The Save (slot) to perform the action on.
 	* @param Data		Data for the action.
 	*/
-	void QueueAction(const ECsPlayerProfile& Profile, const ECsSaveAction& Action, const ECsSave& Save, const FString& Data = NCsCached::Str::Empty);
+	void QueueAction(const ECsPlayerProfile& Profile, const ActionType& Action, const ECsSave& Save, const FString& Data = NCsCached::Str::Empty);
 
 protected:
 
@@ -438,7 +553,7 @@ protected:
 	* @param Index		The File Index to perform the action on.
 	* @param Data		Data for the action.
 	*/
-	void QueueAction(const ECsPlayerProfile& Profile, const ECsSaveAction& Action, const int32& Index, const FString& Data = NCsCached::Str::Empty);
+	void QueueAction(const ECsPlayerProfile& Profile, const ActionType& Action, const int32& Index, const FString& Data = NCsCached::Str::Empty);
 
 	/**
 	* Queue action. The action gets enqueued into the list of actions being processed.
@@ -446,11 +561,11 @@ protected:
 	* @param Profile
 	* @param Action		Type of action to queue (Enumerate, Read, Write, or Delete).
 	*/
-	void QueueAction(const ECsPlayerProfile& Profile, const ECsSaveAction& Action);
+	void QueueAction(const ECsPlayerProfile& Profile, const ActionType& Action);
 
 protected:
 
-	void QueueActionAsHead(const ECsPlayerProfile& Profile, const ECsSaveAction& Action, const int32& Index);
+	void QueueActionAsHead(const ECsPlayerProfile& Profile, const ActionType& Action, const int32& Index);
 
 	/**
 	* Queue action as the first action (Head) to be processed.
@@ -458,11 +573,11 @@ protected:
 	* @param Profile
 	* @param Action		Type of action to queue (Enumerate, Read, Write, or Delete).
 	*/
-	void QueueActionAsHead(const ECsPlayerProfile& Profile, const ECsSaveAction& Action);
+	void QueueActionAsHead(const ECsPlayerProfile& Profile, const ActionType& Action);
 
-	void QueueActionAfterHead(const ECsPlayerProfile& Profile, const ECsSaveAction& Action, const int32& Index);
+	void QueueActionAfterHead(const ECsPlayerProfile& Profile, const ActionType& Action, const int32& Index);
 
-	void QueueActionAfterHead(const ECsPlayerProfile& Profile, const ECsSaveAction& Action);
+	void QueueActionAfterHead(const ECsPlayerProfile& Profile, const ActionType& Action);
 
 #pragma endregion Action
 
@@ -501,6 +616,26 @@ public:
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
 	FCsManagerSave_OnEnumerate OnEnumerate_AsyncScriptEvent;
 
+	/**
+	*
+	*
+	* return
+	*/
+	FORCEINLINE bool IsEnumerateComplete() const
+	{
+		return EnumerateUserFilesState.IsComplete();
+	}
+
+	/**
+	*
+	*
+	* return
+	*/
+	FORCEINLINE bool IsEnumerateCompleteAndNotProcessing() const
+	{
+		return EnumerateUserFilesState.IsCompleteAndNotProcessing();
+	}
+
 #pragma endregion Enumerate
 
 // Read
@@ -524,7 +659,7 @@ protected:
 	* @param Index		Index of the save to read from.
 	*/
 	void Read(const ECsPlayerProfile& Profile, const int32& Index);
-	void Read_Internal(FCsSaveActionInfo* ActionInfo);
+	void Read_Internal(ActionInfoType* ActionInfo);
 
 public:
 
@@ -550,6 +685,32 @@ public:
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
 	FCsManagerSave_OnRead OnRead_AsyncScriptEvent;
 
+	/**
+	* Check whether the Read action has been performed at least once
+	* for the CurrentSaveIndex.
+	*
+	* @param Profile	Profile to check.
+	*/
+	bool HasPerformedRead(const ECsPlayerProfile& Profile) const;
+
+	/**
+	* Check whether the Read action has been performed at least once.
+	*
+	* @param Profile	Profile to check.
+	* @param Save		Save (slot) to check.
+	*/
+	bool HasPerformedRead(const ECsPlayerProfile& Profile, const ECsSave& Save) const;
+
+protected:
+
+	/**
+	* Check whether the Read action has been performed at least once.
+	*
+	* @param Profile	Profile to check.
+	* @param Save		Index of the save to check.
+	*/
+	bool HasPerformedRead(const ECsPlayerProfile& Profile, const int32& Index) const;
+
 public:
 
 	/**
@@ -561,20 +722,34 @@ public:
 
 protected:
 
-	void ReadAll_Internal(FCsSaveActionInfo* ActionInfo);
+	void ReadAll_Internal(ActionInfoType* ActionInfo);
 
 public:
 
-	/** Delegate type when successfully finished reading a all saves.
+	/**
+	* Delegate type when successfully finished reading a all saves.
 	*
+	* @param Profile
 	*/
-	DECLARE_MULTICAST_DELEGATE(FOnReadAll);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnReadAll, const ECsPlayerProfile& /*Profile*/);
 
 	/** Event for when successfully finished reading all saves. */
 	FOnReadAll OnReadAll_Event;
 
 	/** Script Event for when successfully finished reading all saves. */
 	FCsManagerSave_OnReadAll OnReadAll_ScriptEvent;
+
+	/**
+	* Check whether the Read All action has been performed at least once.
+	*
+	* @param Profile	Profile to check.
+	*/
+	bool HasPerformedReadAll(const ECsPlayerProfile& Profile) const;
+
+	/**
+	* Check whether the Read All action has been performed at least once.
+	*/
+	bool HasPerformedReadAll() const;
 
 #pragma endregion Read
 
@@ -599,7 +774,7 @@ protected:
 	* @param Index		Index of the save to write to.
 	*/
 	void Write(const ECsPlayerProfile& Profile, const int32& Index);
-	void Write_Internal(FCsSaveActionInfo* ActionInfo);
+	void Write_Internal(ActionInfoType* ActionInfo);
 
 public:
 
@@ -625,6 +800,24 @@ public:
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
 	FCsManagerSave_OnWrite OnWrite_AsyncScriptEvent;
 
+	/**
+	* Check whether the Write action has been performed at least once.
+	*
+	* @param Profile	Profile to check.
+	* @param Save		Save (slot) to check.
+	*/
+	bool HasPerformedWrite(const ECsPlayerProfile& Profile, const ECsSave& Save) const;
+
+protected:
+
+	/**
+	* Check whether the Write action has been performed at least once.
+	*
+	* @param Profile	Profile to check.
+	* @param Save		Index of the save to check.
+	*/
+	bool HasPerformedWrite(const ECsPlayerProfile& Profile, const int32& Index) const;
+
 public:
 
 	/**
@@ -636,7 +829,7 @@ public:
 
 protected:
 
-	void WriteAll_Internal(FCsSaveActionInfo* ActionInfo);
+	void WriteAll_Internal(ActionInfoType* ActionInfo);
 
 public:
 
@@ -674,7 +867,7 @@ protected:
 	* @param Index		Index of the save to delete to.
 	*/
 	void Delete(const ECsPlayerProfile& Profile, const int32& Index);
-	void Delete_Internal(FCsSaveActionInfo* ActionInfo);
+	void Delete_Internal(ActionInfoType* ActionInfo);
 
 public:
 
@@ -700,6 +893,24 @@ public:
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
 	FCsManagerSave_OnDelete OnDelete_AsyncScriptEvent;
 
+	/**
+	* Check whether the Delete action has been performed at least once.
+	*
+	* @param Profile	Profile to check.
+	* @param Save		Save (slot) to check.
+	*/
+	bool HasPerformedDelete(const ECsPlayerProfile& Profile, const ECsSave& Save) const;
+
+protected:
+
+	/**
+	* Check whether the Delete action has been performed at least once.
+	*
+	* @param Profile	Profile to check.
+	* @param Save		Index of the save to check.
+	*/
+	bool HasPerformedDelete(const ECsPlayerProfile& Profile, const int32& Index) const;
+
 public:
 
 	/**
@@ -716,7 +927,7 @@ public:
 
 protected:
 
-	void DeleteAll_Internal(FCsSaveActionInfo* ActionInfo);
+	void DeleteAll_Internal(ActionInfoType* ActionInfo);
 
 public:
 
@@ -741,7 +952,7 @@ protected:
 
 	IOnlineUserCloudPtr GetUserCloudInterface();
 
-	FCsSaveEnumerateUserFilesState EnumerateUserFilesState;
+	NCsSave::FEnumerateUserFilesState EnumerateUserFilesState;
 
 	void OnEnumerateUserFilesComplete(bool WasSuccessful, const FUniqueNetId& UserId);
 
@@ -752,4 +963,8 @@ protected:
 	void OnDeleteUserFileComplete(bool WasSuccessful, const FUniqueNetId& UserId, const FString& FileName);
 
 #pragma endregion IOnlineUserCloud
+
+#undef FileInfoType
+#undef ActionType
+#undef ActionInfoType
 };

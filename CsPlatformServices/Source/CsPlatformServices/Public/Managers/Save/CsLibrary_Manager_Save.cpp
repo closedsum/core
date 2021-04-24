@@ -1,395 +1,258 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-
 #include "Managers/Save/CsLibrary_Manager_Save.h"
 #include "CsPlatformServices.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
+// Library
+#include "Game/CsLibrary_GameInstance.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
-#include "Managers/PlayerProfile/CsManager_PlayerProfile.h"
 #include "Managers/Save/CsManager_Save.h"
+// Game
+#include "Engine/GameInstance.h"
 
-#include "Managers/PlayerProfile/CsPlayerProfile.h"
-
-UCsLibrary_Manager_Save::UCsLibrary_Manager_Save(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+namespace NCsSave
 {
-}
-
-
-// FileName
-#pragma region
-
-void UCsLibrary_Manager_Save::SetCurrentSave(const UObject* WorldContextObject, const ECsSave& Save)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
+	namespace NManager
 	{
-		Manager->SetCurrentSave(Save);
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::Enumerate: No Manager Save of type UCsManager_Save was created."));
-	}
-}
-
-#pragma endregion FileName
-
-// Enumerate
-#pragma region
-
-void UCsLibrary_Manager_Save::Enumerate(const UObject* WorldContextObject)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
-	{
-		Manager->Enumerate();
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::Enumerate: No Manager Save of type UCsManager_Save was created."));
-	}
-}
-
-void UCsLibrary_Manager_Save::BindToEvent_OnEnumerate(const UObject* WorldContextObject, FCsLibraryManagerSave_OnEnumerate Delegate)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
-	{
-		if (Delegate.IsBound())
+		namespace NLibrary
 		{
-			if (!Manager->OnEnumerate_ScriptEvent.Contains(Delegate))
+			namespace NCached
 			{
-				Manager->OnEnumerate_ScriptEvent.Add(Delegate);
-			}
-			else
-			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnEnumerate: Delegate is already bound."));
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSave::NManager::FLibrary, GetSafeContextRoot);
+				}
 			}
 		}
-		else
+
+		// ContextRoot
+		#pragma region
+
+	#if WITH_EDITOR
+
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnEnumerate: No Delegate Bound."));
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+			return GameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnEnumerate: No Manager Save of type UCsManager_Save was created."));
-	}
-}
 
-#pragma endregion Enumerate
-
-// Read
-#pragma region
-
-void UCsLibrary_Manager_Save::Read(const UObject* WorldContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
-	{
-		Manager->Read(Profile, Save);
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::Read: No Manager Save of type UCsManager_Save was created."));
-	}
-}
-
-void UCsLibrary_Manager_Save::BindToEvent_OnRead(const UObject* WorldContextObject, FCsLibraryManagerSave_OnRead Delegate)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
-	{
-		if (Delegate.IsBound())
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!Manager->OnRead_ScriptEvent.Contains(Delegate))
-			{
-				Manager->OnRead_ScriptEvent.Add(Delegate);
-			}
-			else
-			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnRead: Delegate is already bound."));
-			}
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
-		else
+
+		UObject* FLibrary::GetSafeContextRoot(UObject* ContextObject)
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnRead: No Delegate Bound."));
+			using namespace NCsAchievement::NManager::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeContextRoot;
+
+			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnRead: No Manager Save of type UCsManager_Save was created."));
-	}
-}
 
-void UCsLibrary_Manager_Save::ReadAll(const UObject* WorldContextObject, const ECsPlayerProfile& Profile)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
-	{
-		Manager->ReadAll(Profile);
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::ReadAll: No Manager Save of type UCsManager_Save was created."));
-	}
-}
+		#endif // #if WITH_EDITOR
 
-void UCsLibrary_Manager_Save::BindToEvent_OnReadAll(const UObject* WorldContextObject, FCsLibraryManagerSave_OnReadAll Delegate)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
-	{
-		if (Delegate.IsBound())
+		#pragma endregion ContextRoot
+
+		// Get
+		#pragma region
+
+		UCsManager_Save* FLibrary::GetChecked(const FString& Context, UObject* ContextObject)
 		{
-			if (!Manager->OnReadAll_ScriptEvent.Contains(Delegate))
+			UObject* ContextRoot		 = GetContextRootChecked(Context, ContextObject);
+			UCsManager_Save* Manager_Save = UCsManager_Save::Get(ContextRoot);
+
+			CS_IS_PTR_NULL_CHECKED(Manager_Save)
+			return Manager_Save;
+		}
+
+		UCsManager_Save* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+		{
+			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
+
+		#if WITH_EDITOR
+			if (!ContextRoot)
+				return nullptr;
+		#endif // #if WITH_EDITOR
+
+			UCsManager_Save* Manager_Save = UCsManager_Save::Get(ContextRoot);
+
+			if (!Manager_Save)
 			{
-				Manager->OnReadAll_ScriptEvent.Add(Delegate);
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Save."), *Context));
 			}
-			else
+			return Manager_Save;
+		}
+
+		#pragma endregion Get
+
+		// FileName
+		#pragma region
+
+		void FLibrary::SetCurrentSaveChecked(const FString& Context, UObject* ContextObject, const ECsSave& Save)
+		{
+			UCsManager_Save* Manager_Save = GetChecked(Context, ContextObject);
+			
+			check(EMCsSave::Get().IsValidEnumChecked(Context, Save));
+
+			Manager_Save->SetCurrentSave(Save);
+		}
+
+		void FLibrary::SetSafeCurrentSave(const FString& Context, UObject* ContextObject, const ECsSave& Save, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnReadAll: Delegate is already bound."));
+				CS_IS_ENUM_VALID_EXIT(EMCsSave, ECsSave, Save)
+
+				Manager_Save->SetCurrentSave(Save);
 			}
 		}
-		else
+
+		#pragma endregion FileName
+
+		// Enumerate
+		#pragma region
+
+		void FLibrary::EnumerateChecked(const FString& Context, UObject* ContextObject)
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnReadAll: No Delegate Bound."));
+			GetChecked(Context, ContextObject)->Enumerate();
 		}
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnReadAll: No Manager Save of type UCsManager_Save was created."));
-	}
-}
 
-#pragma endregion Read
-
-// Write
-#pragma region
-
-void UCsLibrary_Manager_Save::Write(const UObject* WorldContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
-	{
-		Manager->Write(Profile, Save);
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::Complete: No Manager Save of type UCsManager_Save was created."));
-	}
-}
-
-void UCsLibrary_Manager_Save::BindToEvent_OnWrite(const UObject* WorldContextObject, FCsLibraryManagerSave_OnWrite Delegate)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
-	{
-		if (Delegate.IsBound())
+		void FLibrary::SafeEnumerate(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!Manager->OnWrite_ScriptEvent.Contains(Delegate))
+			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
-				Manager->OnWrite_ScriptEvent.Add(Delegate);
-			}
-			else
-			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWrite: Delegate is already bound."));
+				Manager_Save->Enumerate();
 			}
 		}
-		else
+
+		#pragma endregion Enumerate
+
+		// Read
+		#pragma region
+		
+		void FLibrary::ReadChecked(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save)
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWrite: No Delegate Bound."));
+			GetChecked(Context, ContextObject)->Read(Profile, Save);
 		}
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWrite: No Manager Achievement of type UCsManager_Save was created."));
-	}
-}
 
-void UCsLibrary_Manager_Save::WriteAll(const UObject* WorldContextObject, const ECsPlayerProfile& Profile)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
-	{
-		Manager->WriteAll(Profile);
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::WriteAll: No Manager Save of type UCsManager_Save was created."));
-	}
-}
-
-void UCsLibrary_Manager_Save::BindToEvent_OnWriteAll(const UObject* WorldContextObject, FCsLibraryManagerSave_OnWriteAll Delegate)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
-	{
-		if (Delegate.IsBound())
+		void FLibrary::SafeRead(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!Manager->OnWriteAll_ScriptEvent.Contains(Delegate))
+			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
-				Manager->OnWriteAll_ScriptEvent.Add(Delegate);
-			}
-			else
-			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWriteAll: Delegate is already bound."));
+				CS_IS_ENUM_VALID_EXIT(EMCsPlayerProfile, ECsPlayerProfile, Profile)
+
+				CS_IS_ENUM_VALID_EXIT(EMCsSave, ECsSave, Save)
+
+				Manager_Save->Read(Profile, Save);
 			}
 		}
-		else
+
+		void FLibrary::ReadAllChecked(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile)
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWriteAll: No Delegate Bound."));
+			GetChecked(Context, ContextObject)->ReadAll(Profile);
 		}
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnWriteAll: No Manager Save of type UCsManager_Save was created."));
-	}
-}
 
-#pragma endregion Write
-
-// Delete
-#pragma region
-
-void UCsLibrary_Manager_Save::Delete(const UObject* WorldContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
-	{
-		Manager->Delete(Profile, Save);
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::Delete: No Manager Save of type UCsManager_Save was created."));
-	}
-}
-
-void UCsLibrary_Manager_Save::BindToEvent_OnDelete(const UObject* WorldContextObject, FCsLibraryManagerSave_OnDelete Delegate)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
-	{
-		if (Delegate.IsBound())
+		void FLibrary::SafeReadAll(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!Manager->OnDelete_ScriptEvent.Contains(Delegate))
+			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
-				Manager->OnDelete_ScriptEvent.Add(Delegate);
-			}
-			else
-			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDelete: Delegate is already bound."));
+				Manager_Save->ReadAll(Profile);
 			}
 		}
-		else
+
+		#pragma endregion Read
+
+		// Write
+		#pragma region
+
+		void FLibrary::WriteChecked(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save)
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDelete: No Delegate Bound."));
+			GetChecked(Context, ContextObject)->Write(Profile, Save);
 		}
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDelete: No Manager Achievement of type UCsManager_Save was created."));
-	}
-}
 
-void UCsLibrary_Manager_Save::DeleteAll(const UObject* WorldContextObject, const ECsPlayerProfile& Profile)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
-	{
-		Manager->DeleteAll(Profile);
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::DeleteAll: No Manager Save of type UCsManager_Save was created."));
-	}
-}
-
-void UCsLibrary_Manager_Save::BindToEvent_OnDeleteAll(const UObject* WorldContextObject, FCsLibraryManagerSave_OnDeleteAll Delegate)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
-	{
-		if (Delegate.IsBound())
+		void FLibrary::SafeWrite(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (!Manager->OnDeleteAll_ScriptEvent.Contains(Delegate))
+			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
-				Manager->OnDeleteAll_ScriptEvent.Add(Delegate);
-			}
-			else
-			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDeleteAll: Delegate is already bound."));
+				CS_IS_ENUM_VALID_EXIT(EMCsPlayerProfile, ECsPlayerProfile, Profile)
+
+				CS_IS_ENUM_VALID_EXIT(EMCsSave, ECsSave, Save)
+
+				Manager_Save->Write(Profile, Save);
 			}
 		}
-		else
+
+		void FLibrary::WriteAllChecked(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile)
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDeleteAll: No Delegate Bound."));
+			GetChecked(Context, ContextObject)->WriteAll(Profile);
 		}
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::BindToEvent_OnDeleteAll: No Manager Save of type UCsManager_Save was created."));
+
+		void FLibrary::SafeWriteAll(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
+			{
+				CS_IS_ENUM_VALID_EXIT(EMCsPlayerProfile, ECsPlayerProfile, Profile)
+
+				Manager_Save->WriteAll(Profile);
+			}
+		}
+
+		#pragma endregion Write
+
+		// Delete
+		#pragma region
+
+		void FLibrary::DeleteChecked(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save)
+		{
+			GetChecked(Context, ContextObject)->Delete(Profile, Save);
+		}
+
+		void FLibrary::SafeDelete(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
+			{
+				CS_IS_ENUM_VALID_EXIT(EMCsPlayerProfile, ECsPlayerProfile, Profile)
+
+				CS_IS_ENUM_VALID_EXIT(EMCsSave, ECsSave, Save)
+
+				Manager_Save->Delete(Profile, Save);
+			}
+		}
+
+		void FLibrary::DeleteAllChecked(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile)
+		{
+			GetChecked(Context, ContextObject)->DeleteAll(Profile);
+		}
+
+		void FLibrary::SafeDeleteAll(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
+			{
+				CS_IS_ENUM_VALID_EXIT(EMCsPlayerProfile, ECsPlayerProfile, Profile)
+
+				Manager_Save->DeleteAll(Profile);
+			}
+		}
+
+		void FLibrary::DeleteAllContentChecked(const FString& Context, UObject* ContextObject)
+		{
+			GetChecked(Context, ContextObject)->DeleteAllContent();
+		}
+
+		void FLibrary::SafeDeleteAllContent(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
+			{
+				Manager_Save->DeleteAllContent();
+			}
+		}
+
+		#pragma endregion Delete
 	}
 }
-
-void UCsLibrary_Manager_Save::DeleteAllContent(const UObject* WorldContextObject)
-{
-#if WITH_EDITOR
-	if (UCsManager_Save* Manager = UCsManager_Save::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Save* Manager = UCsManager_Save::Get())
-#endif // #if WITH_EDITOR
-	{
-		Manager->DeleteAll(NCsPlayerProfile::AllProfiles);
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Save::DeleteAllContent: No Manager Save of type UCsManager_Save was created."));
-	}
-}
-
-#pragma endregion Delete

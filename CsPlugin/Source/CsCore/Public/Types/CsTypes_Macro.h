@@ -168,3 +168,21 @@
 	} \
 	FORCEINLINE void Set##__Member(__ValueType** __value) { __Member##_Emu = __value; } \
 	FORCEINLINE __ValueType* Get##__Member() const { return *(__Member##_Emu); }
+
+#define CS_ADD_TO_DYNAMIC_MULITCAST_DELEGATE(__Context, __Owner, __MulticastDelegate, __Delegate, __Log) \
+	if (__Delegate.IsBound()) \
+	{ \
+		if (!__Owner->__MulticastDelegate.Contains(__Delegate)) \
+		{ \
+			__Owner->__MulticastDelegate.Add(__Delegate); \
+		} \
+		else \
+		{ \
+			static const FString __temp__str__ = #__MulticastDelegate; \
+			UE_LOG(__Log, Warning, TEXT("%s: Delegate has already been added to %s."), *__Context, *__temp__str__); \
+		} \
+	} \
+	else \
+	{ \
+		UE_LOG(__Log, Warning, TEXT("%s: Delegate is NOT bound to anything."), *__Context); \
+	}

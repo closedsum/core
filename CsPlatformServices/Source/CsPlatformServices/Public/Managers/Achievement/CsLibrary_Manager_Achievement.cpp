@@ -2,206 +2,124 @@
 #include "Managers/Achievement/CsLibrary_Manager_Achievement.h"
 #include "CsPlatformServices.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
+// Library
+#include "Game/CsLibrary_GameInstance.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
-#include "Managers/PlayerProfile/CsManager_PlayerProfile.h"
 #include "Managers/Achievement/CsManager_Achievement.h"
+// Game
+#include "Engine/GameInstance.h"
 
-#include "Managers/PlayerProfile/CsPlayerProfile.h"
-
-namespace NCsScriptLibraryManagerAchievement
+namespace NCsAchievement
 {
-	namespace NCached
+	namespace NManager
 	{
-		namespace Str
+		namespace NLibrary
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsLibrary_Manager_Achievement, Complete);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsLibrary_Manager_Achievement, Reset);
-		}
-	}
-}
-
-UCsLibrary_Manager_Achievement::UCsLibrary_Manager_Achievement(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-}
-
-// Complete
-#pragma region
-
-void UCsLibrary_Manager_Achievement::Complete(const UObject* WorldContextObject, const FECsAchievement& Achievement)
-{
-	using namespace NCsScriptLibraryManagerAchievement::NCached;
-
-	const FString& Context = Str::Complete;
-
-#if WITH_EDITOR
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::Get())
-#endif // #if WITH_EDITOR
-	{
-		if (!Manager->IsValid(Context, Achievement))
-		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::Complete: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), Achievement.ToChar());
-			return;
-		}
-
-		Manager->Complete(Achievement);
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::Complete: No Manager Achievement of type UCsManager_Achievement was created."));
-	}
-}
-
-void UCsLibrary_Manager_Achievement::BindToEvent_OnComplete(const UObject* WorldContextObject, const FECsAchievement& Achievement, FCsLibraryManagerAchievement_OnComplete Delegate)
-{
-#if WITH_EDITOR
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::Get())
-#endif // #if WITH_EDITOR
-	{
-		if (Delegate.IsBound())
-		{
-			if (!Manager->OnComplete_ScriptEvent.Contains(Delegate))
+			namespace NCached
 			{
-				Manager->OnComplete_ScriptEvent.Add(Delegate);
-			}
-			else
-			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_OnComplete: Delegate is already bound."));
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsAchievement::NManager::FLibrary, GetSafeContextRoot);
+				}
 			}
 		}
-		else
+
+		// ContextRoot
+		#pragma region
+
+		#if WITH_EDITOR
+
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_OnComplete: No Delegate Bound."));
-		}
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::BindToEvent_OnComplete: No Manager Achievement of type UCsManager_Achievement was created."));
-	}
-}
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-bool UCsLibrary_Manager_Achievement::IsCompleted(const UObject* WorldContextObject, const FECsAchievement& Achievement)
-{
-#if WITH_EDITOR
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::Get())
-#endif // #if WITH_EDITOR
-	{
-		return Manager->IsCompleted(Achievement);
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::IsCompleted: No Manager Achievement of type UCsManager_Achievement was created."));
-	}
-	return false;
-}
-
-int32 UCsLibrary_Manager_Achievement::GetNumCompleted(const UObject* WorldContextObject)
-{
-#if WITH_EDITOR
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::Get())
-#endif // #if WITH_EDITOR
-	{
-		return Manager->GetNumCompleted();
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::GetNumCompleted: No Manager Achievement of type UCsManager_Achievement was created."));
-	}
-	return 0;
-}
-
-#pragma endregion Complete
-
-// Reset
-#pragma region
-
-void UCsLibrary_Manager_Achievement::Reset(const UObject* WorldContextObject, const FECsAchievement& Achievement, const float& Percent /*= 0*/)
-{
-	using namespace NCsScriptLibraryManagerAchievement::NCached;
-
-	const FString& Context = Str::Reset;
-
-#if WITH_EDITOR
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::Get())
-#endif // #if WITH_EDITOR
-	{
-		if (!Manager->IsValid(Context, Achievement))
-		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::Reset: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), Achievement.ToChar());
-			return;
+			return GameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
-		Manager->Reset(Achievement, FMath::Clamp(Percent, 0.0f, 1.0f));
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::Reset: No Manager Achievement of type UCsManager_Achievement was created."));
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
+		}
+
+		UObject* FLibrary::GetSafeContextRoot(UObject* ContextObject)
+		{
+			using namespace NCsAchievement::NManager::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeContextRoot;
+
+			return GetSafeContextRoot(Context, ContextObject, nullptr);
+		}
+
+		#endif // #if WITH_EDITOR
+
+		#pragma endregion ContextRoot
+
+		// Get
+		#pragma region
+
+		UCsManager_Achievement* FLibrary::GetChecked(const FString& Context, UObject* ContextObject)
+		{
+			UObject* ContextRoot						= GetContextRootChecked(Context, ContextObject);
+			UCsManager_Achievement* Manager_Achievement = UCsManager_Achievement::Get(ContextRoot);
+
+			CS_IS_PTR_NULL_CHECKED(Manager_Achievement)
+			return Manager_Achievement;
+		}
+
+		UCsManager_Achievement* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+		{
+			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
+
+		#if WITH_EDITOR
+			if (!ContextRoot)
+				return nullptr;
+		#endif // #if WITH_EDITOR
+
+			UCsManager_Achievement* Manager_Achievement = UCsManager_Achievement::Get(ContextRoot);
+
+			if (!Manager_Achievement)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Achievement."), *Context));
+			}
+			return Manager_Achievement;
+		}
+
+		#pragma endregion Get
+
+		// Complete
+		#pragma region
+
+		void FLibrary::SafeComplete(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Achievement* Manager_Achievement = GetSafe(Context, ContextObject, Log))
+			{
+				Manager_Achievement->SafeComplete(Achievement);
+			}
+		}
+
+		bool FLibrary::SafeIsCompleted(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Achievement* Manager_Achievement = GetSafe(Context, ContextObject, Log))
+			{
+				return Manager_Achievement->IsSafeCompleted(Achievement);
+			}
+			return false;
+		}
+
+		int32 FLibrary::GetSafeNumCompleted(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /* &FCsLog::Warning*/)
+		{
+			if (UCsManager_Achievement* Manager_Achievement = GetSafe(Context, ContextObject, Log))
+			{
+				return Manager_Achievement->GetNumCompleted();
+			}
+			return 0;
+		}
+
+		#pragma endregion Complete
 	}
 }
-
-void UCsLibrary_Manager_Achievement::ResetAll(const UObject* WorldContextObject)
-{
-#if WITH_EDITOR
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::Get())
-#endif // #if WITH_EDITOR
-	{
-		Manager->ResetAll();
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::ResetAll: No Manager Achievement of type UCsManager_Achievement was created."));
-	}
-}
-
-#pragma endregion Reset
-
-// Progress
-#pragma region
-
-float UCsLibrary_Manager_Achievement::GetProgress(const UObject* WorldContextObject, const FECsAchievement& Achievement)
-{
-#if WITH_EDITOR
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::Get())
-#endif // #if WITH_EDITOR
-	{
-		return Manager->GetProgress(Achievement);
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::GetProgress: No Manager Achievement of type UCsManager_Achievement was created."));
-	}
-	return 0.0f;
-}
-
-float UCsLibrary_Manager_Achievement::GetTotalProgress(const UObject* WorldContextObject)
-{
-#if WITH_EDITOR
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Achievement* Manager = UCsManager_Achievement::Get())
-#endif // #if WITH_EDITOR
-	{
-		return Manager->GetTotalProgress();
-	}
-	else
-	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsLibrary_Manager_Achievement::GetTotalProgress: No Manager Achievement of type UCsManager_Achievement was created."));
-	}
-	return 0.0f;
-}
-
-#pragma endregion Progress

@@ -83,129 +83,173 @@ namespace NCsSave
 // FCsSaveFileInfo
 #pragma region
 
-struct CSPLATFORMSERVICES_API FCsSaveFileInfo
+namespace NCsSave
 {
-public:
-
-	static const FCsSaveFileInfo Invalid;
-
-public:
-
-	FString FileName;
-	FString FileNameWithExt;
-
-	bool bValid;
-
-// Read
-
-	bool bRead;
-
-	FDateTime ReadTime;
-
-	FString ReadContents;
-
-// Write
-
-	bool bWrite;
-
-	FDateTime WriteTime;
-
-	FString WriteContents;
-
-// Delete
-
-	bool bDelete;
-
-	FDateTime DeleteTime;
-
-	FCsSaveFileInfo() :
-		FileName(),
-		FileNameWithExt(),
-		bValid(false),
-		bRead(false),
-		ReadTime(),
-		ReadContents(),
-		bWrite(false),
-		WriteTime(),
-		WriteContents(),
-		bDelete(false),
-		DeleteTime()
+	namespace NFile
 	{
-	}
+		struct CSPLATFORMSERVICES_API FInfo
+		{
+		public:
 
-	void Reset()
+			static const FInfo Invalid;
+
+		public:
+
+			FString FileName;
+			FString FileNameWithExt;
+
+			bool bValid;
+
+		// Read
+
+			bool bRead;
+
+			FDateTime ReadTime;
+
+			FString ReadContents;
+
+			int32 ReadCount;
+
+		// Write
+
+			bool bWrite;
+
+			FDateTime WriteTime;
+
+			FString WriteContents;
+
+			int32 WriteCount;
+
+		// Delete
+
+			bool bDelete;
+
+			FDateTime DeleteTime;
+
+			int32 DeleteCount;
+
+			FInfo() :
+				FileName(),
+				FileNameWithExt(),
+				bValid(false),
+				bRead(false),
+				ReadTime(),
+				ReadContents(),
+				ReadCount(0),
+				bWrite(false),
+				WriteTime(),
+				WriteContents(),
+				WriteCount(0),
+				bDelete(false),
+				DeleteTime(),
+				DeleteCount(0)
+			{
+			}
+
+			void Reset()
+			{
+				FileName = NCsCached::Str::Empty;
+				FileNameWithExt = NCsCached::Str::Empty;
+				bValid = false;
+				bRead = false;
+				ReadTime = FDateTime::Now();
+				ReadContents.Empty();
+				ReadCount = 0;
+				bWrite = false;
+				WriteTime = FDateTime::Now();
+				WriteContents.Empty();
+				WriteCount = 0;
+				bDelete = false;
+				DeleteTime = FDateTime::Now();
+				DeleteCount = 0;
+			}
+		};
+	}
+}
+
+#pragma endregion NCsSave::NFile::FInfo
+
+namespace NCsSave
+{
+	namespace NData
 	{
-		FileName = NCsCached::Str::Empty;
-		FileNameWithExt = NCsCached::Str::Empty;
-		bValid = false;
-		bRead = false;
-		ReadTime = FDateTime::Now();
-		ReadContents.Empty();
-		bWrite = false;
-		WriteTime = FDateTime::Now();
-		WriteContents.Empty();
-		bDelete = false;
-		DeleteTime = FDateTime::Now();
+		struct CSPLATFORMSERVICES_API FInfo
+		{
+		public:
+
+			int32 SetCount;
+
+			FInfo() :
+				SetCount(0)
+			{
+
+			}
+		};
 	}
-};
+}
 
-#pragma endregion FCsSaveFileInfo
-
-// FCsSaveEnumerateUserFilesState
+// NCsSave::FEnumerateUserFilesState
 #pragma region
 
-struct CSPLATFORMSERVICES_API FCsSaveEnumerateUserFilesState
+namespace NCsSave
 {
-private:
-
-	/** Is complete. */
-	bool bComplete;
-
-	/** Is queued. */
-	bool bQueued;
-
-public:
-
-	/** Is Successful. */
-	bool bSuccess;
-
-	FCsSaveEnumerateUserFilesState() :
-		bComplete(false),
-		bQueued(false),
-		bSuccess(false)
+	struct CSPLATFORMSERVICES_API FEnumerateUserFilesState
 	{
-	}
+	private:
 
-	void Queue()
-	{
-		bQueued = true;
-	}
+		/** Is complete. */
+		bool bComplete;
 
-	bool IsQueued() const
-	{
-		return bQueued;
-	}
+		/** Is queued. */
+		bool bQueued;
 
-	void Complete()
-	{
-		bComplete = true;
-		bQueued	  = false;
-	}
+		/** Is processing (currently in async call / process). */
+		bool bProcessing;
 
-	bool IsComplete() const
-	{
-		return bComplete;
-	}
+	public:
 
-	void Reset()
-	{
-		bComplete = false;
-		bQueued = false;
-		bSuccess = false;
-	}
-};
+		/** Is Successful. */
+		bool bSuccess;
 
-#pragma endregion FCsSaveEnumerateUserFilesState
+		FEnumerateUserFilesState() :
+			bComplete(false),
+			bQueued(false),
+			bProcessing(false),
+			bSuccess(false)
+		{
+		}
+
+		void Complete()
+		{
+			bComplete = true;
+			bQueued = false;
+		}
+
+		FORCEINLINE bool IsComplete() const { return bComplete; }
+
+		FORCEINLINE void Queue() { bQueued = true; }
+
+		FORCEINLINE bool IsQueued() const { return bQueued; }
+
+		FORCEINLINE void StartProcessing() { bProcessing = true; }
+
+		FORCEINLINE bool IsProcessing() const { return bProcessing; }
+
+		FORCEINLINE void EndProcessing() { bProcessing = false; }
+
+		FORCEINLINE bool IsCompleteAndNotProcessing() const { return bComplete && !bProcessing; }
+
+		void Reset()
+		{
+			bComplete = false;
+			bQueued = false;
+			bProcessing = false;
+			bSuccess = false;
+		}
+	};
+}
+
+#pragma endregion NCsSave::FEnumerateUserFilesState
 
 // SaveAction
 #pragma region
@@ -247,6 +291,43 @@ namespace NCsSaveAction
 	extern CSPLATFORMSERVICES_API const uint8 MAX;
 }
 
+namespace NCsSave
+{
+	enum class EAction : uint8
+	{
+		Enumerate,
+		Read,
+		ReadAll,
+		Write,
+		WriteAll,
+		Delete,
+		DeleteAll,
+		EAction_MAX
+	};
+
+	struct CSPLATFORMSERVICES_API EMAction final : public TCsEnumMap<EAction>
+	{
+		CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMAction, EAction)
+	};
+
+	namespace NAction
+	{
+		namespace Ref
+		{
+			typedef EAction Type;
+
+			extern CSPLATFORMSERVICES_API const Type Enumerate;
+			extern CSPLATFORMSERVICES_API const Type Read;
+			extern CSPLATFORMSERVICES_API const Type ReadAll;
+			extern CSPLATFORMSERVICES_API const Type Write;
+			extern CSPLATFORMSERVICES_API const Type WriteAll;
+			extern CSPLATFORMSERVICES_API const Type Delete;
+			extern CSPLATFORMSERVICES_API const Type DeleteAll;
+			extern CSPLATFORMSERVICES_API const Type EAction_MAX;
+		}
+	}
+}
+
 #pragma endregion SaveAction
 
 // SaveActionState
@@ -281,98 +362,145 @@ namespace NCsSaveActionState
 	extern CSPLATFORMSERVICES_API const uint8 MAX;
 }
 
+namespace NCsSave
+{
+	namespace NAction
+	{
+		enum class EState : uint8
+		{
+			None,
+			InProgress,
+			Complete,
+			EState_MAX
+		};
+
+		struct CSPLATFORMSERVICES_API EMState final : public TCsEnumMap<EState>
+		{
+			CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMState, EState)
+		};
+
+		namespace NState
+		{
+			namespace Ref
+			{
+				typedef EState Type;
+
+				extern CSPLATFORMSERVICES_API const Type None;
+				extern CSPLATFORMSERVICES_API const Type InProgress;
+				extern CSPLATFORMSERVICES_API const Type Complete;
+				extern CSPLATFORMSERVICES_API const Type EState_MAX;
+			}
+		}
+	}
+}
+
 #pragma endregion SaveActionState
 
-// FCsSaveActionInfo
+// NCsSave::NAction::FInfo
 #pragma region
 
-struct CSPLATFORMSERVICES_API FCsSaveActionInfo
+namespace NCsSave
 {
-public:
-
-	/** Profile to perform the action on.
-		If Profile == ECsPlayerProfile_MAX, then perform action on ALL Profiles. */
-	ECsPlayerProfile Profile;
-
-	/** Index of File in SaveFileInfos in UCsManager_Save. */
-	int32 FileIndex;
-
-	/** Action to processed. See ECsSaveAction. */
-	ECsSaveAction Action;
-
-	/** Data to be used in the action. */
-	FString Data;
-
-private:
-
-	/** Current state of the action (i.e. In Progress, Complete, ... etc). */
-	ECsSaveActionState State;
-
-	/** Whether the action completed successfully. */
-	bool bSuccess;
-
-public:
-
-	FCsSaveActionInfo() :
-		Profile(ECsPlayerProfile::ECsPlayerProfile_MAX),
-		FileIndex(INDEX_NONE),
-		Action(ECsSaveAction::ECsSaveAction_MAX),
-		Data(),
-		State(ECsSaveActionState::None),
-		bSuccess(false)
+	namespace NAction
 	{
+		namespace NInfo
+		{
+			struct CSPLATFORMSERVICES_API FInfo
+			{
+			public:
 
-	}
+			#define ActionType NCsSave::EAction
+			#define ActionStateType NCsSave::NAction::EState
 
-	FORCEINLINE bool IsAllProfiles() const
-	{
-		return Profile == ECsPlayerProfile::ECsPlayerProfile_MAX;
-	}
+				/** Profile to perform the action on.
+					If Profile == ECsPlayerProfile_MAX, then perform action on ALL Profiles. */
+				ECsPlayerProfile Profile;
 
-	FORCEINLINE bool IsReadyToProcess() const
-	{
-		return State == ECsSaveActionState::None;
-	}
+				/** Index of File in SaveFileInfos in UCsManager_Save. */
+				int32 FileIndex;
 
-	FORCEINLINE void StartProgress()
-	{
-		State = ECsSaveActionState::InProgress;
-	}
+				/** Action to processed. See ECsSaveAction. */
+				ActionType Action;
 
-	FORCEINLINE bool InProgress() const
-	{
-		return State == ECsSaveActionState::InProgress;
-	}
+				/** Data to be used in the action. */
+				FString Data;
 
-	FORCEINLINE void Complete()
-	{
-		State = ECsSaveActionState::Complete;
-	}
+			private:
 
-	FORCEINLINE bool IsComplete() const
-	{
-		return State == ECsSaveActionState::Complete;
-	}
+				/** Current state of the action (i.e. In Progress, Complete, ... etc). */
+				ActionStateType State;
 
-	FORCEINLINE void Success()
-	{
-		bSuccess = true;
-	}
+				/** Whether the action completed successfully. */
+				bool bSuccess;
 
-	FORCEINLINE bool WasSuccessful() const
-	{
-		return bSuccess;
-	}
+			public:
 
-	void Reset()
-	{
-		Profile = ECsPlayerProfile::ECsPlayerProfile_MAX;
-		FileIndex = INDEX_NONE;
-		Action = ECsSaveAction::ECsSaveAction_MAX;
-		Data.Empty();
-		State = ECsSaveActionState::None;
-		bSuccess = false;
+				FInfo() :
+					Profile(ECsPlayerProfile::ECsPlayerProfile_MAX),
+					FileIndex(INDEX_NONE),
+					Action(ActionType::EAction_MAX),
+					Data(),
+					State(ActionStateType::None),
+					bSuccess(false)
+				{
+
+				}
+
+				FORCEINLINE bool IsAllProfiles() const
+				{
+					return Profile == ECsPlayerProfile::ECsPlayerProfile_MAX;
+				}
+
+				FORCEINLINE bool IsReadyToProcess() const
+				{
+					return State == ActionStateType::None;
+				}
+
+				FORCEINLINE void StartProgress()
+				{
+					State = ActionStateType::InProgress;
+				}
+
+				FORCEINLINE bool InProgress() const
+				{
+					return State == ActionStateType::InProgress;
+				}
+
+				FORCEINLINE void Complete()
+				{
+					State = ActionStateType::Complete;
+				}
+
+				FORCEINLINE bool IsComplete() const
+				{
+					return State == ActionStateType::Complete;
+				}
+
+				FORCEINLINE void Success()
+				{
+					bSuccess = true;
+				}
+
+				FORCEINLINE bool WasSuccessful() const
+				{
+					return bSuccess;
+				}
+
+				void Reset()
+				{
+					Profile = ECsPlayerProfile::ECsPlayerProfile_MAX;
+					FileIndex = INDEX_NONE;
+					Action = ActionType::EAction_MAX;
+					Data.Empty();
+					State = ActionStateType::None;
+					bSuccess = false;
+				}
+
+			#undef ActionType
+			#undef ActionStateType
+			};
+		}
 	}
-};
+}
 
 #pragma endregion FCsSaveActionInfo

@@ -398,6 +398,25 @@ namespace NCsAchievementActionState
 	CSPLATFORMSERVICES_API const uint8 MAX = (uint8)Type::ECsAchievementActionState_MAX;
 }
 
+namespace NCsAchievement
+{
+	namespace NAction
+	{
+		namespace NState
+		{
+			namespace Ref
+			{
+				typedef EMState EnumMapType;
+
+				CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(None);
+				CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(InProgress, "In Progress");
+				CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP(Complete);
+				CSPLATFORMSERVICES_API CS_ADD_TO_ENUM_MAP_CUSTOM(EState_MAX, "MAX");
+			}
+		}
+	}
+}
+
 #pragma endregion AchievementActionState
 
 // NCsAchievement::NAction::EAllocation

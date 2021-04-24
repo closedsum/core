@@ -1,117 +1,141 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
-#include "UObject/Object.h"
 // Types
-#include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"
 #include "Managers/Achievement/CsTypes_Achievement.h"
+// Log
+#include "Utility/CsLog.h"
 
-#include "CsLibrary_Manager_Achievement.generated.h"
+class UObject;
+class UCsManager_Achievement;
 
-// Delegates
-#pragma region
-
-// Complete
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FCsLibraryManagerAchievement_OnComplete, bool, WasSuccessful, const FECsAchievement&, Achievement);
-// Progress
-DECLARE_DYNAMIC_DELEGATE_ThreeParams(FCsLibraryManagerAchievement_OnProgress, bool, WasSuccessful, const FECsAchievement&, Achievement, const float&, Progress);
-
-#pragma endregion Delegates
-
-
-UCLASS()
-class CSPLATFORMSERVICES_API UCsLibrary_Manager_Achievement : public UObject
+namespace NCsAchievement
 {
-	GENERATED_UCLASS_BODY()
+	namespace NManager
+	{
+		/**
+		*/
+		struct CSPLATFORMSERVICES_API FLibrary final
+		{
+		// ContextRoot
+		#pragma region
+		public:
 
-// Complete
-#pragma region
-public:
+		#if WITH_EDITOR
+			/**
+			* Get the Context (Root) for UCsManager_Achievement from a ContextObject.
+			* 
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* return				Context for UCsManager_Achievement.
+			*/
+			static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject);
+		#else
+			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject)
+			{
+				return nullptr;
+			}
+		#endif // #if WITH_EDITOR
 
-	/**
-	* 
-	*
-	* @param WorldContextObject
-	* @param Achievement
-	*/
-	UFUNCTION(BlueprintCallable, Category = "Respawn|Library|Manager|Achievement", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Achievement"))
-	static void Complete(const UObject* WorldContextObject, const FECsAchievement& Achievement);
+		#if WITH_EDITOR
+			/**
+			* Safely get the Context (Root) for UCsManager_Achievement from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Log
+			* return				Context for UCsManager_Achievement.
+			*/
+			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+		#else
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				return nullptr;
+			}
+		#endif // #if WITH_EDITOR
 
-	/**
-	*
-	*
-	* @param WorldContextObject
-	* @param Event / Delegate
-	*/
-	UFUNCTION(BlueprintCallable, Category = "Respawn|Library|Manager|Achievement", meta = (DisplayName = "BindToEvent: OnComplete", WorldContext = "WorldContextObject", AutoCreateRefTerm = "Achievement"))
-	static void BindToEvent_OnComplete(const UObject* WorldContextObject, const FECsAchievement& Achievement, UPARAM(DisplayName = "Event") FCsLibraryManagerAchievement_OnComplete Delegate);
+		#if WITH_EDITOR
+			/**
+			* Safely get the Context (Root) for UCsManager_Achievement from a WorldContext.
+			*
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* return				Context for UCsManager_Achievement.
+			*/
+			static UObject* GetSafeContextRoot(UObject* WorldContext);
+		#else
+			FORCEINLINE static UObject* GetSafeContextRoot(UObject* WorldContext)
+			{
+				return nullptr;
+			}
+		#endif // #if WITH_EDITOR
 
-	/**
-	*
-	*
-	* @param WorldContextObject
-	* @param Achievement
-	* return						If the Achievement is already complete.
-	*/
-	UFUNCTION(BlueprintPure, Category = "Respawn|Library|Manager|Achievement", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Achievement"))
-	static bool IsCompleted(const UObject* WorldContextObject, const FECsAchievement& Achievement);
+		#pragma endregion ContextRoot
 
-	/**
-	*
-	*
-	* @param WorldContextObject
-	* return						Number of achievements already completed.
-	*/
-	UFUNCTION(BlueprintPure, Category = "Respawn|Library|Manager|Achievement", meta = (WorldContext = "WorldContextObject"))
-	static int32 GetNumCompleted(const UObject* WorldContextObject);
+		// Get
+		#pragma region
+		public:
 
-#pragma endregion Complete
+			/**
+			* Get the reference to UCsManager_Achievement from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* return				UCsManager_Achievement.
+			*/
+			static UCsManager_Achievement* GetChecked(const FString& Context, UObject* ContextObject);
 
-// Reset
-#pragma region
-public:
+			/**
+			* Safely get the reference to UCsManager_Achievement from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Log
+			* return				UCsManager_Achievement.
+			*/
+			static UCsManager_Achievement* GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 
-	/**
-	*
-	*
-	* @param WorldContextObject
-	* @param Achievement
-	*/
-	UFUNCTION(BlueprintCallable, Category = "Respawn|Library|Manager|Achievement", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Achievement,Percent"))
-	static void Reset(const UObject* WorldContextObject, const FECsAchievement& Achievement, const float& Percent = 0);
+		#pragma endregion Get
 
-	/**
-	*
-	*
-	* @param WorldContextObject
-	*/
-	UFUNCTION(BlueprintCallable, Category = "Respawn|Library|Manager|Achievement", meta = (WorldContext = "WorldContextObject"))
-	static void ResetAll(const UObject* WorldContextObject);
+		// Complete
+		#pragma region
+		public:
 
-#pragma endregion Reset
+			/**
+			* 
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Achievement
+			*/
+			static void SafeComplete(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, void(*Log)(const FString&) = &FCsLog::Warning);
 
-// Progress
-#pragma region
-public:
+			/**
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Achievement
+			* return				If the Achievement is already complete.
+			*/
+			static bool SafeIsCompleted(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, void(*Log)(const FString&) = &FCsLog::Warning);
 
-	/**
-	*
-	*
-	* @param WorldContextObject
-	* @param Achievement
-	* return						Progress completed. Value range is dictated by ProgressType.
-	*/
-	UFUNCTION(BlueprintPure, Category = "Respawn|Library|Manager|Achievement", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Achievement"))
-	static float GetProgress(const UObject* WorldContextObject, const FECsAchievement& Achievement);
+			/**
+			*
+			*
+			* @param Context			The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Number of achievements already completed.
+			*/
+			static int32 GetSafeNumCompleted(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 
-	/**
-	*
-	*
-	* @param WorldContextObject
-	* return						Total progress completed [0-1] as a percent.
-	*/
-	UFUNCTION(BlueprintPure, Category = "Respawn|Library|Manager|Achievement", meta = (WorldContext = "WorldContextObject"))
-	static float GetTotalProgress(const UObject* WorldContextObject);
-
-#pragma endregion Progress
-};
+		#pragma endregion Complete
+		};
+	}
+}

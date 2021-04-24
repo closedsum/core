@@ -19,6 +19,22 @@
 #include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
 
+// Cached
+#pragma region
+
+namespace NCsManagerSave
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Save, SetCurrentSave);
+		}
+	}
+}
+
+#pragma endregion Cached
+
 // static initializations
 UCsManager_Save* UCsManager_Save::s_Instance;
 bool UCsManager_Save::s_bShutdown = false;
@@ -26,8 +42,10 @@ bool UCsManager_Save::s_bShutdown = false;
 UCsManager_Save::UCsManager_Save(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	// Start
+	bHasStarted = false;
 	// Storage
-	CurrentStorage = ECsSaveStorage::Cloud;
+	CurrentStorage = ECsSaveStorage::Local;
 	// Save
 	CurrentSaveIndex = 0;
 	CurrentSave = ECsSave::Save1;
@@ -75,11 +93,13 @@ UCsManager_Save::UCsManager_Save(const FObjectInitializer& ObjectInitializer)
 
 			const int32& SaveCount = EMCsSave::Get().Num();
 
+			typedef NCsSave::NFile::FInfo FileInfoType;
+
 			for (const ECsPlayerProfile& Profile : EMCsPlayerProfile::Get())
 			{
 				SaveFileInfos.AddDefaulted();
 
-				TArray<FCsSaveFileInfo>& Infos = SaveFileInfos.Last();
+				TArray<FileInfoType>& Infos = SaveFileInfos.Last();
 
 				Infos.Reserve(SaveCount);
 
@@ -89,7 +109,7 @@ UCsManager_Save::UCsManager_Save(const FObjectInitializer& ObjectInitializer)
 
 					Infos.AddDefaulted();
 
-					FCsSaveFileInfo& Info = Infos.Last();
+					FileInfoType& Info = Infos.Last();
 
 					Info.FileName		 = ProfileFileNamePrefixesWithUnderscore[(uint8)Profile] + Name;
 					Info.FileNameWithExt = ProfileFileNamePrefixesWithUnderscore[(uint8)Profile] + Name + SaveFileNameExt;
@@ -98,23 +118,33 @@ UCsManager_Save::UCsManager_Save(const FObjectInitializer& ObjectInitializer)
 			}
 			SaveFileInfosAll.Reserve(ProfileCount * SaveCount);
 		}
+		// SaveDataInfos
+		{
+			SaveDataInfos.Reserve(ProfileCount);
+			SaveDataInfos.AddDefaulted(ProfileCount);
+
+			const int32& SaveCount = EMCsSave::Get().Num();
+
+			typedef NCsSave::NData::FInfo InfoType;
+
+			for (TArray<InfoType>& Infos : SaveDataInfos)
+			{
+				Infos.Reserve(SaveCount);
+				Infos.AddDefaulted(SaveCount);
+			}
+		}
 	}
 }
 
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
 /*static*/ UCsManager_Save* UCsManager_Save::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerSave(InRoot)->GetManager_Save();
-#else
-	if (s_bShutdown)
-		return nullptr;
-
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
 /*static*/ bool UCsManager_Save::IsValid()
 {
@@ -266,13 +296,15 @@ void UCsManager_Save::SetMyRoot(UObject* InRoot)
 void UCsManager_Save::Start()
 {
 	// Set the FileNames again. This could change depending on the Profile.
+	typedef NCsSave::NFile::FInfo FileInfoType;
+
 	for (const ECsPlayerProfile& Profile : EMCsPlayerProfile::Get())
 	{
 		for (const ECsSave& Save : EMCsSave::Get())
 		{
 			const FString& Name = EMCsSave::Get().ToString(Save);
 
-			FCsSaveFileInfo& Info = SaveFileInfos[(uint8)Profile][(uint8)Save];
+			FileInfoType& Info = SaveFileInfos[(uint8)Profile][(uint8)Save];
 
 			Info.FileName		 = ProfileFileNamePrefixesWithUnderscore[(uint8)Profile] + Name;
 			Info.FileNameWithExt = ProfileFileNamePrefixesWithUnderscore[(uint8)Profile] + Name + SaveFileNameExt;
@@ -305,6 +337,11 @@ void UCsManager_Save::Start()
 	{
 		ReadAll(Profile);
 	}
+
+	bHasStarted = true;
+
+	OnStart_Event.Broadcast();
+	OnStart_ScriptEvent.Broadcast();
 }
 
 // Storage
@@ -364,6 +401,13 @@ const FUniqueNetId& UCsManager_Save::GetLocalPlayerIdRef()
 	return *GetLocalPlayerId();
 }
 
+FString UCsManager_Save::GetLocalPlayerNickname()
+{
+	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+	IOnlineIdentityPtr Identity = OnlineSub->GetIdentityInterface();
+	return Identity->GetPlayerNickname(LocalPlayer->GetControllerId());
+}
+
 #pragma endregion Player
 
 // Profile
@@ -378,20 +422,26 @@ void UCsManager_Save::SetProfileName(const ECsPlayerProfile& Profile, const FStr
 
 void UCsManager_Save::Update(const float& DeltaSeconds)
 {
-	TCsDoubleLinkedList<FCsResource_SaveActionInfo*>* Current = Manager_Resource.GetAllocatedHead();
-	TCsDoubleLinkedList<FCsResource_SaveActionInfo*>* Next    = Current;
+	typedef NCsSave::NAction::NInfo::FResource ActionInfoContainerType;
+	typedef NCsSave::NAction::NInfo::FInfo ActionInfoType;
+
+	TCsDoubleLinkedList<ActionInfoContainerType*>* Current = Manager_Resource.GetAllocatedHead();
+	TCsDoubleLinkedList<ActionInfoContainerType*>* Next    = Current;
 
 	while (Next)
 	{
-		Current									  = Next;
-		FCsResource_SaveActionInfo* InfoContainer = **Current;
-		Next									  = Current->GetNextLink();
+		Current								   = Next;
+		ActionInfoContainerType* InfoContainer = **Current;
+		Next								   = Current->GetNextLink();
 
-		FCsSaveActionInfo* Info = InfoContainer->Get();
+		ActionInfoType* Info = InfoContainer->Get();
 		
 		const ECsPlayerProfile& Profile = Info->Profile;
 		const ECsSave Save				= (ECsSave)Info->FileIndex;
-		const ECsSaveAction& Action		= Info->Action;
+
+		typedef NCsSave::EAction ActionType;
+
+		const ActionType& Action = Info->Action;
 
 		// If In Progress, wait for Complete
 		if (Info->InProgress())
@@ -402,14 +452,16 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 			const bool WasSuccessful = Info->WasSuccessful();
 
 			// Enumerate
-			if (Action == ECsSaveAction::Enumerate)
+			if (Action == ActionType::Enumerate)
 			{
+				EnumerateUserFilesState.EndProcessing();
+
 				OnEnumerate_Event.Broadcast(WasSuccessful);
 				OnEnumerate_ScriptEvent.Broadcast(WasSuccessful);
 			}
 			// Read
 			else
-			if (Action == ECsSaveAction::Read)
+			if (Action == ActionType::Read)
 			{
 				SetSaveData(Profile, Save);
 
@@ -418,37 +470,46 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 			}
 			// Read All
 			else
-			if (Action == ECsSaveAction::ReadAll)
+			if (Action == ActionType::ReadAll)
 			{
 #if !UE_BUILD_SHIPPING
 				if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 				{
-					const FString& ProfileName = ProfileNames[(uint8)Profile];
+					if (Profile == NCsPlayerProfile::AllProfiles)
+					{
+						UE_LOG(LogCsPlatformServices, Warning, TEXT("URsManager_Save::Update: Completed ReadAll for All Profiles."));
+					}
+					else
+					{
+						const FString& ProfileName = ProfileNames[(uint8)Profile];
 
-					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Update: Completed ReadAll for Profile: %s at %s."), *ProfileName, *(FDateTime::Now().ToString()));
+						UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::Update: Completed ReadAll for Profile: %s at %s."), *ProfileName, *(FDateTime::Now().ToString()));
+					}
 				}
 #endif // #if !UE_BUILD_SHIPPING
 
-				OnReadAll_Event.Broadcast();
-				OnReadAll_ScriptEvent.Broadcast();
+				SetAllSaveData(Profile);
+
+				OnReadAll_Event.Broadcast(Profile);
+				OnReadAll_ScriptEvent.Broadcast(Profile);
 			}
 			// Write
 			else
-			if (Action == ECsSaveAction::Write)
+			if (Action == ActionType::Write)
 			{
 				OnWrite_Event.Broadcast(WasSuccessful, Profile, Save);
 				OnWrite_ScriptEvent.Broadcast(WasSuccessful, Profile, Save);
 			}
 			// Write All
 			else
-			if (Action == ECsSaveAction::WriteAll)
+			if (Action == ActionType::WriteAll)
 			{
 				OnWriteAll_Event.Broadcast();
 				OnWriteAll_ScriptEvent.Broadcast();
 			}
 			// Delete
 			else
-			if (Action == ECsSaveAction::Delete)
+			if (Action == ActionType::Delete)
 			{
 				ClearSaveData(Profile, Info->FileIndex);
 
@@ -457,7 +518,7 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 			}
 			// Delete All
 			else
-			if (Action == ECsSaveAction::DeleteAll)
+			if (Action == ActionType::DeleteAll)
 			{
 				OnDeleteAll_Event.Broadcast();
 				OnDeleteAll_ScriptEvent.Broadcast();
@@ -469,7 +530,7 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 		if (Info->IsReadyToProcess())
 		{
 			// Enumerate
-			if (Action == ECsSaveAction::Enumerate)
+			if (Action == ActionType::Enumerate)
 			{
 				Info->StartProgress();
 				Enumerate_Internal();
@@ -477,7 +538,7 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 			}
 			// Read
 			else
-			if (Action == ECsSaveAction::Read)
+			if (Action == ActionType::Read)
 			{
 				Info->StartProgress();
 				Read_Internal(Info);
@@ -485,7 +546,7 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 			}
 			// Read All
 			else
-			if (Action == ECsSaveAction::ReadAll)
+			if (Action == ActionType::ReadAll)
 			{
 				ReadAll_Internal(Info);
 
@@ -496,7 +557,7 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 			}
 			// Write
 			else
-			if (Action == ECsSaveAction::Write)
+			if (Action == ActionType::Write)
 			{
 				Info->StartProgress();
 				Write_Internal(Info);
@@ -504,7 +565,7 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 			}
 			// Write All
 			else
-			if (Action == ECsSaveAction::WriteAll)
+			if (Action == ActionType::WriteAll)
 			{
 				WriteAll_Internal(Info);
 
@@ -515,7 +576,7 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 			}
 			// Delete
 			else
-			if (Action == ECsSaveAction::Delete)
+			if (Action == ActionType::Delete)
 			{
 				Info->StartProgress();
 				Delete_Internal(Info);
@@ -523,7 +584,7 @@ void UCsManager_Save::Update(const float& DeltaSeconds)
 			}
 			// Delete All
 			else
-			if (Action == ECsSaveAction::DeleteAll)
+			if (Action == ActionType::DeleteAll)
 			{
 				DeleteAll_Internal(Info);
 
@@ -553,7 +614,9 @@ void UCsManager_Save::SetSaveFileNameExt(const FString& Ext)
 void UCsManager_Save::SetSaveFileName(const ECsPlayerProfile& Profile, const ECsSave& Save, const FString& FileName)
 {
 	// TODO: Need to Delete file if it already exists and then Write new file.
-	FCsSaveFileInfo& Info = SaveFileInfos[(uint8)Profile][(uint8)Save];
+	typedef NCsSave::NFile::FInfo FileInfoType;
+
+	FileInfoType& Info = SaveFileInfos[(uint8)Profile][(uint8)Save];
 
 	Info.FileName		 = FileName;
 	Info.FileNameWithExt = FileName + SaveFileNameExt;
@@ -564,8 +627,11 @@ const FString& UCsManager_Save::GetSaveFileName(const ECsPlayerProfile& Profile,
 	return SaveFileInfos[(uint8)Profile][(uint8)Save].FileName;
 }
 
-const FCsSaveFileInfo& UCsManager_Save::GetSaveFileInfo(const ECsPlayerProfile& Profile, const ECsSave& Save)
+#define FileInfoType NCsSave::NFile::FInfo
+const FileInfoType& UCsManager_Save::GetSaveFileInfo(const ECsPlayerProfile& Profile, const ECsSave& Save)
 {
+#undef FileInfoType
+
 	return SaveFileInfos[(uint8)Profile][(uint8)Save];
 }
 
@@ -576,6 +642,12 @@ void UCsManager_Save::SetCurrentSaveIndex(const int32& Index)
 
 void UCsManager_Save::SetCurrentSave(const ECsSave& Save)
 {
+	using namespace NCsManagerSave::NCached;
+
+	const FString& Context = Str::SetCurrentSave;
+
+	check(EMCsSave::Get().IsValidEnumChecked(Context, Save));
+
 	CurrentSave = Save;
 }
 
@@ -599,6 +671,53 @@ void UCsManager_Save::SetSaveData(const ECsPlayerProfile& Profile, const int32& 
 
 }
 
+void UCsManager_Save::SetAllSaveData(const ECsPlayerProfile& Profile)
+{
+	typedef NCsSave::NFile::FInfo FileInfoType;
+
+	// All
+	if (Profile == EMCsPlayerProfile::Get().GetMAX())
+	{
+		const int32 ProfileCount = SaveFileInfos.Num();
+
+		for (int32 I = 0; I < ProfileCount; ++I)
+		{
+			TArray<FileInfoType>& Infos = SaveFileInfos[I];
+
+			const int32 SaveCount = Infos.Num();
+
+			for (int32 J = 0; J < SaveCount; ++J)
+			{
+				FileInfoType& Info = Infos[J];
+
+				if (Info.bValid)
+				{
+					const ECsPlayerProfile& PlayerProfile = EMCsPlayerProfile::Get().GetEnumAt(I);
+
+					SetSaveData(PlayerProfile, J);
+				}
+			}
+		}
+	}
+	// Profile
+	else
+	{
+		TArray<FileInfoType>& Infos = SaveFileInfos[(uint8)Profile];
+
+		const int32 SaveCount = Infos.Num();
+
+		for (int32 J = 0; J < SaveCount; ++J)
+		{
+			FileInfoType& Info = Infos[J];
+
+			if (Info.bValid)
+			{
+				SetSaveData(Profile, J);
+			}
+		}
+	}
+}
+
 void UCsManager_Save::GetSaveData(const ECsPlayerProfile& Profile, const ECsSave& Save, FString& OutData)
 {
 	GetSaveData(Profile, (int32)Save, OutData);
@@ -618,21 +737,46 @@ void UCsManager_Save::ClearSaveData(const ECsPlayerProfile& Profile, const int32
 
 }
 
+bool UCsManager_Save::HasSetSaveData(const ECsPlayerProfile& Profile, const ECsSave& Save)
+{
+	checkf(Profile != ECsPlayerProfile::ECsPlayerProfile_MAX, TEXT("UCsManager_Save::HasSetSaveData: Profile = ECsPlayerProfile::ECsPlayerProfile_MAX is NOT Valid."));
+
+	checkf(Save != ECsSave::ECsSave_MAX, TEXT("UCsManager_Save::HasSetSaveData: Save = ECsSave::ECsSave_MAX is NOT Valid."));
+
+	return HasSetSaveData(Profile, (int32)Save);
+}
+
+bool UCsManager_Save::HasSetSaveData(const ECsPlayerProfile& Profile, const int32& Index)
+{
+	checkf(Index > INDEX_NONE, TEXT("UCsManager_Save::HasSetSaveData: Index < 0 is NOT Valid."));
+
+	return SaveDataInfos[(uint8)Profile][Index].SetCount > 0;
+}
+
 #pragma endregion Data
 
 // Action
 #pragma region
 
-void UCsManager_Save::QueueAction(const ECsPlayerProfile& Profile, const ECsSaveAction& Action, const ECsSave& Save, const FString& Data /*= NCsCached::Str::Empty*/)
+#define ActionType NCsSave::EAction
+void UCsManager_Save::QueueAction(const ECsPlayerProfile& Profile, const ActionType& Action, const ECsSave& Save, const FString& Data /*= NCsCached::Str::Empty*/)
 {
+#undef ActionType
+
 	QueueAction(Profile, Action, (int32)Save, Data);
 }
 
-void UCsManager_Save::QueueAction(const ECsPlayerProfile& Profile, const ECsSaveAction& Action, const int32& Index, const FString& Data /*= NCsCached::Str::Empty*/)
+#define ActionType NCsSave::EAction
+void UCsManager_Save::QueueAction(const ECsPlayerProfile& Profile, const ActionType& Action, const int32& Index, const FString& Data /*= NCsCached::Str::Empty*/)
 {
+#undef ActionType
+
 	// Allocate SaveActionInfo from a pool
-	FCsResource_SaveActionInfo* InfoContainer = Manager_Resource.Allocate();
-	FCsSaveActionInfo* Info					  = InfoContainer->Get();
+	typedef NCsSave::NAction::NInfo::FResource ActionInfoContainerType;
+	typedef NCsSave::NAction::NInfo::FInfo ActionInfoType;
+
+	ActionInfoContainerType* InfoContainer = Manager_Resource.Allocate();
+	ActionInfoType* Info				   = InfoContainer->Get();
 
 	Info->Reset();
 
@@ -642,15 +786,24 @@ void UCsManager_Save::QueueAction(const ECsPlayerProfile& Profile, const ECsSave
 	Info->Data		= Data;
 }
 
-void UCsManager_Save::QueueAction(const ECsPlayerProfile& Profile, const ECsSaveAction& Action)
+#define ActionType NCsSave::EAction
+void UCsManager_Save::QueueAction(const ECsPlayerProfile& Profile, const ActionType& Action)
 {
+#undef ActionType
+
 	QueueAction(Profile, Action, INDEX_NONE);
 }
 
-void UCsManager_Save::QueueActionAsHead(const ECsPlayerProfile& Profile, const ECsSaveAction& Action, const int32& Index)
+#define ActionType NCsSave::EAction
+void UCsManager_Save::QueueActionAsHead(const ECsPlayerProfile& Profile, const ActionType& Action, const int32& Index)
 {
-	FCsResource_SaveActionInfo* InfoContainer = Manager_Resource.AllocateBeforeHead();
-	FCsSaveActionInfo* Info					  = InfoContainer->Get();
+#undef ActionType
+
+	typedef NCsSave::NAction::NInfo::FResource ActionInfoContainerType;
+	typedef NCsSave::NAction::NInfo::FInfo ActionInfoType;
+
+	ActionInfoContainerType* InfoContainer = Manager_Resource.AllocateBeforeHead();
+	ActionInfoType* Info				   = InfoContainer->Get();
 
 	Info->Reset();
 
@@ -659,15 +812,24 @@ void UCsManager_Save::QueueActionAsHead(const ECsPlayerProfile& Profile, const E
 	Info->Profile   = Profile;
 }
 
-void UCsManager_Save::QueueActionAsHead(const ECsPlayerProfile& Profile, const ECsSaveAction& Action)
+#define ActionType NCsSave::EAction
+void UCsManager_Save::QueueActionAsHead(const ECsPlayerProfile& Profile, const ActionType& Action)
 {
+#undef ActionType
+
 	QueueActionAsHead(Profile, Action, INDEX_NONE);
 }
 
-void UCsManager_Save::QueueActionAfterHead(const ECsPlayerProfile& Profile, const ECsSaveAction& Action, const int32& Index)
+#define ActionType NCsSave::EAction
+void UCsManager_Save::QueueActionAfterHead(const ECsPlayerProfile& Profile, const ActionType& Action, const int32& Index)
 {
-	FCsResource_SaveActionInfo* InfoContainer = Manager_Resource.AllocateAfterHead();
-	FCsSaveActionInfo* Info					  = InfoContainer->Get();
+#undef ActionType
+
+	typedef NCsSave::NAction::NInfo::FResource ActionInfoContainerType;
+	typedef NCsSave::NAction::NInfo::FInfo ActionInfoType;
+
+	ActionInfoContainerType* InfoContainer = Manager_Resource.AllocateAfterHead();
+	ActionInfoType* Info				   = InfoContainer->Get();
 
 	Info->Reset();
 
@@ -676,8 +838,11 @@ void UCsManager_Save::QueueActionAfterHead(const ECsPlayerProfile& Profile, cons
 	Info->Profile	= Profile;
 }
 
-void UCsManager_Save::QueueActionAfterHead(const ECsPlayerProfile& Profile, const ECsSaveAction& Action)
+#define ActionType NCsSave::EAction
+void UCsManager_Save::QueueActionAfterHead(const ECsPlayerProfile& Profile, const ActionType& Action)
 {
+#undef ActionType
+
 	QueueActionAfterHead(Profile, Action, INDEX_NONE);
 }
 
@@ -688,6 +853,8 @@ void UCsManager_Save::QueueActionAfterHead(const ECsPlayerProfile& Profile, cons
 
 void UCsManager_Save::Enumerate()
 {
+	typedef NCsSave::NFile::FInfo FileInfoType;
+
 	// Cloud / Online
 	if (CurrentStorage == ECsSaveStorage::Cloud)
 	{
@@ -707,7 +874,10 @@ void UCsManager_Save::Enumerate()
 #endif // #if !UE_BUILD_SHIPPING
 
 				EnumerateUserFilesState.Queue();
-				QueueAction(NCsPlayerProfile::AllProfiles, ECsSaveAction::Enumerate);
+
+				typedef NCsSave::EAction ActionType;
+
+				QueueAction(NCsPlayerProfile::AllProfiles, ActionType::Enumerate);
 			}
 		}
 		else
@@ -733,9 +903,9 @@ void UCsManager_Save::Enumerate()
 			const int32 Count	  = FoundFiles.Num();
 			const int32 InfoCount = SaveFileInfosAll.Num();
 
-			for (TArray<FCsSaveFileInfo>& Infos : SaveFileInfos)
+			for (TArray<FileInfoType>& Infos : SaveFileInfos)
 			{
-				for (FCsSaveFileInfo& Info : Infos)
+				for (FileInfoType& Info : Infos)
 				{
 					Info.bValid = false;
 				}
@@ -784,7 +954,7 @@ void UCsManager_Save::Enumerate()
 							const ECsSave& Save = EMCsSave::Get().GetEnum(SaveAsName);
 							const int32 Index   = (int32)Save;
 
-							FCsSaveFileInfo& Info = SaveFileInfos[(uint8)Profile][Index];
+							FileInfoType& Info = SaveFileInfos[(uint8)Profile][Index];
 
 							Info.FileNameWithExt = FileNameWithExt;
 							Info.FileName		 = FileName;
@@ -808,7 +978,7 @@ void UCsManager_Save::Enumerate()
 				}
 				// All Profiles
 			
-				FCsSaveFileInfo& AllInfo = SaveFileInfosAll[I];
+				FileInfoType& AllInfo = SaveFileInfosAll[I];
 
 				AllInfo.FileNameWithExt = FileNameWithExt;
 				AllInfo.FileName		= FileName;
@@ -880,6 +1050,8 @@ void UCsManager_Save::Read(const ECsPlayerProfile& Profile, const int32& Index)
 {
 	checkf(Index > INDEX_NONE, TEXT("UCsManager_Save::Read: Index < 0 is NOT Valid."));
 
+	typedef NCsSave::EAction ActionType;
+
 	// Cloud / Online
 	if (CurrentStorage == ECsSaveStorage::Cloud)
 	{
@@ -901,7 +1073,7 @@ void UCsManager_Save::Read(const ECsPlayerProfile& Profile, const int32& Index)
 #endif // #if !UE_BUILD_SHIPPING
 
 				EnumerateUserFilesState.Queue();
-				QueueAction(NCsPlayerProfile::AllProfiles, ECsSaveAction::Enumerate);
+				QueueAction(NCsPlayerProfile::AllProfiles, ActionType::Enumerate);
 			}
 
 #if !UE_BUILD_SHIPPING
@@ -914,7 +1086,7 @@ void UCsManager_Save::Read(const ECsPlayerProfile& Profile, const int32& Index)
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			QueueAction(Profile, ECsSaveAction::Read, Index);
+			QueueAction(Profile, ActionType::Read, Index);
 		}
 		else
 		{
@@ -931,8 +1103,10 @@ void UCsManager_Save::Read(const ECsPlayerProfile& Profile, const int32& Index)
 			Enumerate();
 		}
 
-		FCsSaveFileInfo& FileInfo = SaveFileInfos[(uint8)Profile][Index];
-		const ECsSave Save		  = (ECsSave)Index;
+		typedef NCsSave::NFile::FInfo FileInfoType;
+
+		FileInfoType& FileInfo = SaveFileInfos[(uint8)Profile][Index];
+		const ECsSave Save	   = (ECsSave)Index;
 
 		bool WasSuccessful = false;
 
@@ -975,11 +1149,17 @@ void UCsManager_Save::Read(const ECsPlayerProfile& Profile, const int32& Index)
 	}
 }
 
-void UCsManager_Save::Read_Internal(FCsSaveActionInfo* ActionInfo)
+#define ActionInfoType NCsSave::NAction::NInfo::FInfo
+void UCsManager_Save::Read_Internal(ActionInfoType* ActionInfo)
 {
+#undef ActionInfoType
+
 	ECsPlayerProfile& Profile = ActionInfo->Profile;
-	FCsSaveFileInfo& FileInfo = SaveFileInfos[(uint8)Profile][ActionInfo->FileIndex];
-	FileInfo.bRead			  = false;
+
+	typedef NCsSave::NFile::FInfo FileInfoType;
+
+	FileInfoType& FileInfo = SaveFileInfos[(uint8)Profile][ActionInfo->FileIndex];
+	FileInfo.bRead		   = false;
 
 	// Cloud / Online
 	if (CurrentStorage == ECsSaveStorage::Cloud)
@@ -1031,6 +1211,27 @@ void UCsManager_Save::Read_Internal(FCsSaveActionInfo* ActionInfo)
 	}
 }
 
+bool UCsManager_Save::HasPerformedRead(const ECsPlayerProfile& Profile) const
+{
+	return HasPerformedRead(Profile, CurrentSaveIndex);
+}
+
+bool UCsManager_Save::HasPerformedRead(const ECsPlayerProfile& Profile, const ECsSave& Save) const
+{
+	checkf(Save != ECsSave::ECsSave_MAX, TEXT("UCsManager_Save::HasPerformedRead: Save = ECsSave::ECsSave_MAX is NOT Valid."));
+
+	return HasPerformedRead(Profile, (int32)Save);
+}
+
+bool UCsManager_Save::HasPerformedRead(const ECsPlayerProfile& Profile, const int32& Index) const
+{
+	checkf(Profile != ECsPlayerProfile::ECsPlayerProfile_MAX, TEXT("UCsManager_Save::HasPerformedRead: Profile = ECsPlayerProfile::ECsPlayerProfile_MAX is NOT Valid."));
+
+	checkf(Index > INDEX_NONE, TEXT("UCsManager_Save::HasPerformedRead: Index < 0 is NOT Valid."));
+
+	return SaveFileInfos[(uint8)Profile][Index].ReadCount > 0;
+}
+
 void UCsManager_Save::ReadAll(const ECsPlayerProfile& Profile)
 {
 	// Cloud / Online
@@ -1041,6 +1242,8 @@ void UCsManager_Save::ReadAll(const ECsPlayerProfile& Profile)
 		if (IUserCloud.IsValid())
 		{
 			const FUniqueNetId& UserId = GetLocalPlayerIdRef();
+
+			typedef NCsSave::EAction ActionType;
 
 			if (!EnumerateUserFilesState.IsComplete() &&
 				!EnumerateUserFilesState.IsQueued())
@@ -1053,7 +1256,7 @@ void UCsManager_Save::ReadAll(const ECsPlayerProfile& Profile)
 #endif // #if !UE_BUILD_SHIPPING
 
 				EnumerateUserFilesState.Queue();
-				QueueAction(NCsPlayerProfile::AllProfiles, ECsSaveAction::Enumerate);
+				QueueAction(NCsPlayerProfile::AllProfiles, ActionType::Enumerate);
 			}
 
 #if !UE_BUILD_SHIPPING
@@ -1073,7 +1276,7 @@ void UCsManager_Save::ReadAll(const ECsPlayerProfile& Profile)
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			QueueAction(Profile, ECsSaveAction::ReadAll);
+			QueueAction(Profile, ActionType::ReadAll);
 		}
 		else
 		{
@@ -1092,6 +1295,8 @@ void UCsManager_Save::ReadAll(const ECsPlayerProfile& Profile)
 
 		if (EnumerateUserFilesState.bSuccess)
 		{
+			typedef NCsSave::NFile::FInfo FileInfoType;
+
 			for (const ECsPlayerProfile& PlayerProfile : EMCsPlayerProfile::Get())
 			{
 				if (Profile != NCsPlayerProfile::AllProfiles &&
@@ -1100,14 +1305,14 @@ void UCsManager_Save::ReadAll(const ECsPlayerProfile& Profile)
 					continue;
 				}
 
-				TArray<FCsSaveFileInfo>& Infos = SaveFileInfos[(uint8)PlayerProfile];
+				TArray<FileInfoType>& Infos = SaveFileInfos[(uint8)PlayerProfile];
 
 				const int32 Count = Infos.Num();
 
 				for (int32 I = 0; I < Count; ++I)
 				{
-					FCsSaveFileInfo& FileInfo = Infos[I];
-					const ECsSave Save		  = (ECsSave)I;
+					FileInfoType& FileInfo = Infos[I];
+					const ECsSave Save	   = (ECsSave)I;
 
 					if (FileInfo.bValid)
 					{
@@ -1120,6 +1325,7 @@ void UCsManager_Save::ReadAll(const ECsPlayerProfile& Profile)
 						if (WasSuccessful)
 						{
 							FileInfo.bRead = true;
+							++(FileInfo.ReadCount);
 
 							SetSaveData(Profile, Save);
 						}
@@ -1148,13 +1354,16 @@ void UCsManager_Save::ReadAll(const ECsPlayerProfile& Profile)
 			}
 		}
 
-		OnReadAll_Event.Broadcast();
-		OnReadAll_ScriptEvent.Broadcast();
+		OnReadAll_Event.Broadcast(Profile);
+		OnReadAll_ScriptEvent.Broadcast(Profile);
 	}
 }
 
-void UCsManager_Save::ReadAll_Internal(FCsSaveActionInfo* ActionInfo)
+#define ActionInfoType NCsSave::NAction::NInfo::FInfo
+void UCsManager_Save::ReadAll_Internal(ActionInfoType* ActionInfo)
 {
+#undef ActionInfoType
+
 	const ECsPlayerProfile& Profile = ActionInfo->Profile;
 
 	// Cloud / Online
@@ -1181,13 +1390,19 @@ void UCsManager_Save::ReadAll_Internal(FCsSaveActionInfo* ActionInfo)
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			TCsDoubleLinkedList<FCsResource_SaveActionInfo*>* Current = Manager_Resource.GetAllocatedHead();
-			FCsResource_SaveActionInfo* InfoContainer				  = **Current;
-			FCsSaveActionInfo* ReadAllActionInfo					  = InfoContainer->Get();
+			typedef NCsSave::NAction::NInfo::FResource ActionInfoContainerType;
+			typedef NCsSave::NAction::NInfo::FInfo ActionInfoType;
+
+			TCsDoubleLinkedList<ActionInfoContainerType*>* Current = Manager_Resource.GetAllocatedHead();
+			ActionInfoContainerType* InfoContainer				  = **Current;
+			ActionInfoType* ReadAllActionInfo					  = InfoContainer->Get();
 
 			// Queue Read for all Files
 			if (EnumerateUserFilesState.bSuccess)
 			{
+				typedef NCsSave::NFile::FInfo FileInfoType;
+				typedef NCsSave::EAction ActionType;
+
 				for (const ECsPlayerProfile& PlayerProfile : EMCsPlayerProfile::Get())
 				{
 					if (Profile != NCsPlayerProfile::AllProfiles &&
@@ -1196,25 +1411,25 @@ void UCsManager_Save::ReadAll_Internal(FCsSaveActionInfo* ActionInfo)
 						continue;
 					}
 
-					TArray<FCsSaveFileInfo>& Infos = SaveFileInfos[(uint8)PlayerProfile];
+					TArray<FileInfoType>& Infos = SaveFileInfos[(uint8)PlayerProfile];
 
 					const int32 Count = Infos.Num();
 
 					for (int32 I = 0; I < Count; ++I) 
 					{
-						FCsSaveFileInfo& FileInfo = Infos[I];
+						FileInfoType& FileInfo = Infos[I];
 
 						if (FileInfo.bValid)
 						{
 							FileInfo.bRead = false;
 
-							FCsResource_SaveActionInfo* ReadInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
-							FCsSaveActionInfo* ReadInfo					  = ReadInfoContainer->Get();
+							ActionInfoContainerType* ReadInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
+							ActionInfoType* ReadInfo				   = ReadInfoContainer->Get();
 
 							ReadInfo->Reset();
 
 							ReadInfo->Profile   = PlayerProfile;
-							ReadInfo->Action    = ECsSaveAction::Read;
+							ReadInfo->Action    = ActionType::Read;
 							ReadInfo->FileIndex = I;
 
 							// Update InfoContainer so actions get queued in order
@@ -1233,13 +1448,13 @@ void UCsManager_Save::ReadAll_Internal(FCsSaveActionInfo* ActionInfo)
 				}
 
 				// Queue Read All event at end
-				FCsResource_SaveActionInfo* ReadAllInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
-				FCsSaveActionInfo* ReadAllInfo					 = ReadAllInfoContainer->Get();
+				ActionInfoContainerType* ReadAllInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
+				ActionInfoType* ReadAllInfo					  = ReadAllInfoContainer->Get();
 
 				ReadAllInfo->Reset();
 
 				ReadAllInfo->Profile = Profile;
-				ReadAllInfo->Action  = ECsSaveAction::ReadAll;
+				ReadAllInfo->Action  = ActionType::ReadAll;
 				ReadAllInfo->Complete();
 			}
 			// Abort / Complete
@@ -1262,6 +1477,37 @@ void UCsManager_Save::ReadAll_Internal(FCsSaveActionInfo* ActionInfo)
 	}
 }
 
+bool UCsManager_Save::HasPerformedReadAll(const ECsPlayerProfile& Profile) const
+{
+	checkf(Profile != ECsPlayerProfile::ECsPlayerProfile_MAX, TEXT("UCsManager_Save::HasPerformedReadAll: Profile = ECsPlayerProfile::ECsPlayerProfile_MAX is NOT Valid."));
+
+	typedef NCsSave::NFile::FInfo FileInfoType;
+
+	const TArray<FileInfoType>& Infos = SaveFileInfos[(uint8)Profile];
+
+	for (const FileInfoType& Info : Infos)
+	{
+		if (Info.ReadCount == 0)
+			return false;
+	}
+	return true;
+}
+
+bool UCsManager_Save::HasPerformedReadAll() const
+{
+	typedef NCsSave::NFile::FInfo FileInfoType;
+
+	for (const TArray<FileInfoType>& Infos : SaveFileInfos)
+	{
+		for (const FileInfoType& Info : Infos)
+		{
+			if (Info.ReadCount == 0)
+				return false;
+		}
+	}
+	return true;
+}
+
 #pragma endregion Read
 
 // Write
@@ -1269,11 +1515,17 @@ void UCsManager_Save::ReadAll_Internal(FCsSaveActionInfo* ActionInfo)
 
 void UCsManager_Save::Write(const ECsPlayerProfile& Profile, const ECsSave& Save)
 {
+	checkf(Profile != ECsPlayerProfile::ECsPlayerProfile_MAX, TEXT("UCsManager_Save::Write: Profile = ECsPlayerProfile::ECsPlayerProfile_MAX is NOT Valid."));
+
+	checkf(Save != ECsSave::ECsSave_MAX, TEXT("UCsManager_Save::Write: Save = ECsSave::ECsSave_MAX is NOT Valid."));
+
 	Write(Profile, (int32)Save);
 }
 
 void UCsManager_Save::Write(const ECsPlayerProfile& Profile, const int32& Index)
 {
+	checkf(Index > INDEX_NONE, TEXT("UCsManager_Save::Write: Index < 0 is NOT Valid."));
+
 	// Cloud / Online
 	if (CurrentStorage == ECsSaveStorage::Cloud)
 	{
@@ -1296,7 +1548,9 @@ void UCsManager_Save::Write(const ECsPlayerProfile& Profile, const int32& Index)
 			FString Data;
 			GetSaveData(Profile, Index, Data);
 
-			QueueAction(Profile, ECsSaveAction::Write, Index, Data);
+			typedef NCsSave::EAction ActionType;
+
+			QueueAction(Profile, ActionType::Write, Index, Data);
 		}
 		else
 		{
@@ -1306,8 +1560,10 @@ void UCsManager_Save::Write(const ECsPlayerProfile& Profile, const int32& Index)
 	// Local
 	else
 	{
-		FCsSaveFileInfo& FileInfo = SaveFileInfos[(uint8)Profile][Index];
-		const ECsSave Save		  = (ECsSave)Index;
+		typedef NCsSave::NFile::FInfo FileInfoType;
+
+		FileInfoType& FileInfo = SaveFileInfos[(uint8)Profile][Index];
+		const ECsSave Save	   = (ECsSave)Index;
 
 		FileInfo.bWrite = false;
 
@@ -1321,6 +1577,7 @@ void UCsManager_Save::Write(const ECsPlayerProfile& Profile, const int32& Index)
 
 		if (WasSuccessful)
 		{
+			++(FileInfo.WriteCount);
 #if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 			{
@@ -1346,13 +1603,19 @@ void UCsManager_Save::Write(const ECsPlayerProfile& Profile, const int32& Index)
 	}
 }
 
-void UCsManager_Save::Write_Internal(FCsSaveActionInfo* ActionInfo)
+#define ActionInfoType NCsSave::NAction::NInfo::FInfo
+void UCsManager_Save::Write_Internal(ActionInfoType* ActionInfo)
 {
+#undef ActionInfoType
+
 	const ECsPlayerProfile& Profile = ActionInfo->Profile;
 	const int32& FileIndex			= ActionInfo->FileIndex;
-	FCsSaveFileInfo& FileInfo		= SaveFileInfos[(uint8)Profile][FileIndex];
-	FileInfo.bWrite					= false;
-	FileInfo.WriteContents			= ActionInfo->Data;
+
+	typedef NCsSave::NFile::FInfo FileInfoType;
+
+	FileInfoType& FileInfo	= SaveFileInfos[(uint8)Profile][FileIndex];
+	FileInfo.bWrite			= false;
+	FileInfo.WriteContents	= ActionInfo->Data;
 
 	// Cloud / Online
 	if (CurrentStorage == ECsSaveStorage::Cloud)
@@ -1380,7 +1643,9 @@ void UCsManager_Save::Write_Internal(FCsSaveActionInfo* ActionInfo)
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			QueueActionAfterHead(NCsPlayerProfile::AllProfiles, ECsSaveAction::Enumerate);
+			typedef NCsSave::EAction ActionType;
+
+			QueueActionAfterHead(NCsPlayerProfile::AllProfiles, ActionType::Enumerate);
 
 			int32 Size = FileInfo.WriteContents.Len();
 			TArray<uint8> FileContents;
@@ -1401,6 +1666,22 @@ void UCsManager_Save::Write_Internal(FCsSaveActionInfo* ActionInfo)
 	{
 
 	}
+}
+
+bool UCsManager_Save::HasPerformedWrite(const ECsPlayerProfile& Profile, const ECsSave& Save) const
+{
+	checkf(Profile != ECsPlayerProfile::ECsPlayerProfile_MAX, TEXT("UCsManager_Save::HasPerformedWrite: Profile = ECsPlayerProfile::ECsPlayerProfile_MAX is NOT Valid."));
+
+	checkf(Save != ECsSave::ECsSave_MAX, TEXT("UCsManager_Save::HasPerformedWrite: Save = ECsSave::ECsSave_MAX is NOT Valid."));
+
+	return HasPerformedWrite(Profile, (int32)Save);
+}
+
+bool UCsManager_Save::HasPerformedWrite(const ECsPlayerProfile& Profile, const int32& Index) const
+{
+	checkf(Index > INDEX_NONE, TEXT("UCsManager_Save::HasPerformedWrite: Index < 0 is NOT Valid."));
+
+	return SaveFileInfos[(uint8)Profile][Index].WriteCount > 0;
 }
 
 void UCsManager_Save::WriteAll(const ECsPlayerProfile& Profile)
@@ -1431,7 +1712,9 @@ void UCsManager_Save::WriteAll(const ECsPlayerProfile& Profile)
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			QueueAction(Profile, ECsSaveAction::WriteAll);
+			typedef NCsSave::EAction ActionType;
+
+			QueueAction(Profile, ActionType::WriteAll);
 		}
 		else
 		{
@@ -1441,6 +1724,8 @@ void UCsManager_Save::WriteAll(const ECsPlayerProfile& Profile)
 	// Local
 	else
 	{
+		typedef NCsSave::NFile::FInfo FileInfoType;
+
 		for (const ECsPlayerProfile& PlayerProfile : EMCsPlayerProfile::Get())
 		{
 			if (Profile != NCsPlayerProfile::AllProfiles &&
@@ -1449,14 +1734,14 @@ void UCsManager_Save::WriteAll(const ECsPlayerProfile& Profile)
 				continue;
 			}
 
-			TArray<FCsSaveFileInfo>& Infos = SaveFileInfos[(uint8)PlayerProfile];
+			TArray<FileInfoType>& Infos = SaveFileInfos[(uint8)PlayerProfile];
 
 			const int32 Count = Infos.Num();
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				FCsSaveFileInfo& FileInfo = Infos[I];
-				const ECsSave Save		  = (ECsSave)I;
+				FileInfoType& FileInfo = Infos[I];
+				const ECsSave Save	   = (ECsSave)I;
 
 				FileInfo.bWrite = false;
 
@@ -1470,6 +1755,7 @@ void UCsManager_Save::WriteAll(const ECsPlayerProfile& Profile)
 
 				if (WasSuccessful)
 				{
+					++(FileInfo.WriteCount);
 #if !UE_BUILD_SHIPPING
 					if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
 					{
@@ -1499,8 +1785,11 @@ void UCsManager_Save::WriteAll(const ECsPlayerProfile& Profile)
 	}
 }
 
-void UCsManager_Save::WriteAll_Internal(FCsSaveActionInfo* ActionInfo)
+#define ActionInfoType NCsSave::NAction::NInfo::FInfo
+void UCsManager_Save::WriteAll_Internal(ActionInfoType* ActionInfo)
 {
+#undef ActionInfoType
+
 	// Cloud / Online
 	if (CurrentStorage == ECsSaveStorage::Cloud)
 	{
@@ -1531,8 +1820,14 @@ void UCsManager_Save::WriteAll_Internal(FCsSaveActionInfo* ActionInfo)
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			TCsDoubleLinkedList<FCsResource_SaveActionInfo*>* Current = Manager_Resource.GetAllocatedHead();
-			FCsResource_SaveActionInfo* InfoContainer				  = **Current;
+			typedef NCsSave::NAction::NInfo::FResource ActionInfoContainerType;
+			typedef NCsSave::NAction::NInfo::FInfo ActionInfoType;
+
+			TCsDoubleLinkedList<ActionInfoContainerType*>* Current = Manager_Resource.GetAllocatedHead();
+			ActionInfoContainerType* InfoContainer				   = **Current;
+
+			typedef NCsSave::NFile::FInfo FileInfoType;
+			typedef NCsSave::EAction ActionType;
 
 			for (const ECsPlayerProfile& PlayerProfile : EMCsPlayerProfile::Get())
 			{
@@ -1542,21 +1837,21 @@ void UCsManager_Save::WriteAll_Internal(FCsSaveActionInfo* ActionInfo)
 					continue;
 				}
 
-				TArray<FCsSaveFileInfo>& Infos = SaveFileInfos[(uint8)PlayerProfile];
+				TArray<FileInfoType>& Infos = SaveFileInfos[(uint8)PlayerProfile];
 
 				const int32 Count = Infos.Num();
 
 				for (int32 I = 0; I < Count; ++I) 
 				{
-					FCsSaveFileInfo& FileInfo = Infos[I];
+					FileInfoType& FileInfo = Infos[I];
 
-					FCsResource_SaveActionInfo* WriteInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
-					FCsSaveActionInfo* WriteInfo				   = WriteInfoContainer->Get();
+					ActionInfoContainerType* WriteInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
+					ActionInfoType* WriteInfo				    = WriteInfoContainer->Get();
 
 					WriteInfo->Reset();
 
 					WriteInfo->Profile	   = PlayerProfile;
-					WriteInfo->Action      = ECsSaveAction::Write;
+					WriteInfo->Action      = ActionType::Write;
 					WriteInfo->FileIndex   = I;
 
 					// Update InfoContainer so actions get queued in order
@@ -1574,25 +1869,25 @@ void UCsManager_Save::WriteAll_Internal(FCsSaveActionInfo* ActionInfo)
 			}
 
 			// Queue Write All event at end
-			FCsResource_SaveActionInfo* WriteAllInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
-			FCsSaveActionInfo* WriteAllInfo					  = WriteAllInfoContainer->Get();
+			ActionInfoContainerType* WriteAllInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
+			ActionInfoType* WriteAllInfo				   = WriteAllInfoContainer->Get();
 
 			WriteAllInfo->Reset();
 
 			WriteAllInfo->Profile = Profile;
-			WriteAllInfo->Action  = ECsSaveAction::WriteAll;
+			WriteAllInfo->Action  = ActionType::WriteAll;
 			WriteAllInfo->Complete();
 
 			InfoContainer = WriteAllInfoContainer;
 
 			// Queue Enumerate
-			FCsResource_SaveActionInfo* EnumerateInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
-			FCsSaveActionInfo* EnumerateInfo				   = EnumerateInfoContainer->Get();
+			ActionInfoContainerType* EnumerateInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
+			ActionInfoType* EnumerateInfo				    = EnumerateInfoContainer->Get();
 
 			EnumerateInfo->Reset();
 
 			EnumerateInfo->Profile = NCsPlayerProfile::AllProfiles;
-			EnumerateInfo->Action  = ECsSaveAction::Enumerate;
+			EnumerateInfo->Action  = ActionType::Enumerate;
 
 #if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
@@ -1625,6 +1920,8 @@ void UCsManager_Save::Delete(const ECsPlayerProfile& Profile, const ECsSave& Sav
 
 void UCsManager_Save::Delete(const ECsPlayerProfile& Profile, const int32& Index)
 {
+	checkf(Index > INDEX_NONE, TEXT("UCsManager_Save::Write: Index < 0 is NOT Valid."));
+
 	// Cloud / Online
 	if (CurrentStorage == ECsSaveStorage::Cloud)
 	{
@@ -1633,6 +1930,8 @@ void UCsManager_Save::Delete(const ECsPlayerProfile& Profile, const int32& Index
 		if (IUserCloud.IsValid())
 		{
 			const FUniqueNetId& UserId = GetLocalPlayerIdRef();
+
+			typedef NCsSave::EAction ActionType;
 
 			// Check to Queue Enumerate
 			if (!EnumerateUserFilesState.IsComplete() &&
@@ -1646,7 +1945,7 @@ void UCsManager_Save::Delete(const ECsPlayerProfile& Profile, const int32& Index
 #endif // #if !UE_BUILD_SHIPPING
 
 				EnumerateUserFilesState.Queue();
-				QueueAction(NCsPlayerProfile::AllProfiles, ECsSaveAction::Enumerate);
+				QueueAction(NCsPlayerProfile::AllProfiles, ActionType::Enumerate);
 			}
 
 #if !UE_BUILD_SHIPPING
@@ -1669,7 +1968,7 @@ void UCsManager_Save::Delete(const ECsPlayerProfile& Profile, const int32& Index
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			QueueAction(Profile, ECsSaveAction::Delete, Index);
+			QueueAction(Profile, ActionType::Delete, Index);
 		}
 		else
 		{
@@ -1688,8 +1987,10 @@ void UCsManager_Save::Delete(const ECsPlayerProfile& Profile, const int32& Index
 
 		bool WasSuccessful = false;
 
-		FCsSaveFileInfo& FileInfo = SaveFileInfos[(uint8)Profile][Index];
-		const ECsSave Save		  = (ECsSave)Index;
+		typedef NCsSave::NFile::FInfo FileInfoType;
+
+		FileInfoType& FileInfo = SaveFileInfos[(uint8)Profile][Index];
+		const ECsSave Save	   = (ECsSave)Index;
 
 		if (EnumerateUserFilesState.bSuccess)
 		{
@@ -1734,12 +2035,18 @@ void UCsManager_Save::Delete(const ECsPlayerProfile& Profile, const int32& Index
 	}
 }
 
-void UCsManager_Save::Delete_Internal(FCsSaveActionInfo* ActionInfo)
+#define ActionInfoType NCsSave::NAction::NInfo::FInfo
+void UCsManager_Save::Delete_Internal(ActionInfoType* ActionInfo)
 {
+#undef ActionInfoType
+
 	const ECsPlayerProfile& Profile = ActionInfo->Profile;
 	const int32& Index				= ActionInfo->FileIndex;
-	FCsSaveFileInfo& FileInfo		= ActionInfo->IsAllProfiles() ? SaveFileInfosAll[Index] : SaveFileInfos[(uint8)Profile][Index];
-	FileInfo.bDelete				= false;
+
+	typedef NCsSave::NFile::FInfo FileInfoType;
+
+	FileInfoType& FileInfo	= ActionInfo->IsAllProfiles() ? SaveFileInfosAll[Index] : SaveFileInfos[(uint8)Profile][Index];
+	FileInfo.bDelete		= false;
 
 	// Cloud / Online
 	if (CurrentStorage == ECsSaveStorage::Cloud)
@@ -1756,31 +2063,35 @@ void UCsManager_Save::Delete_Internal(FCsSaveActionInfo* ActionInfo)
 				if (FileInfo.bValid)
 				{
 					// Delete, Enumerate, then ReadAll
+					typedef NCsSave::NAction::NInfo::FResource ActionInfoContainerType;
+					typedef NCsSave::NAction::NInfo::FInfo ActionInfoType;
 
-					TCsDoubleLinkedList<FCsResource_SaveActionInfo*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
-					FCsResource_SaveActionInfo* InfoContainer						= **AllocatedHead;
+					TCsDoubleLinkedList<ActionInfoContainerType*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
+					ActionInfoContainerType* InfoContainer						 = **AllocatedHead;
+
+					typedef NCsSave::EAction ActionType;
 
 					// Enumerate
 					{
-						FCsResource_SaveActionInfo* EnumerateInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
-						FCsSaveActionInfo* EnumerateInfo				   = EnumerateInfoContainer->Get();
+						ActionInfoContainerType* EnumerateInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
+						ActionInfoType* EnumerateInfo				    = EnumerateInfoContainer->Get();
 
 						EnumerateInfo->Reset();
 
 						EnumerateInfo->Profile = NCsPlayerProfile::AllProfiles;
-						EnumerateInfo->Action  = ECsSaveAction::Enumerate;
+						EnumerateInfo->Action  = ActionType::Enumerate;
 
 						InfoContainer = EnumerateInfoContainer;
 					}
 					// ReadAll
 					{
-						FCsResource_SaveActionInfo* ReadAllInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
-						FCsSaveActionInfo* ReadAllInfo					 = ReadAllInfoContainer->Get();
+						ActionInfoContainerType* ReadAllInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
+						ActionInfoType* ReadAllInfo					  = ReadAllInfoContainer->Get();
 
 						ReadAllInfo->Reset();
 
 						ReadAllInfo->Profile = Profile;
-						ReadAllInfo->Action  = ECsSaveAction::ReadAll;
+						ReadAllInfo->Action  = ActionType::ReadAll;
 					}
 
 #if !UE_BUILD_SHIPPING
@@ -1812,14 +2123,14 @@ void UCsManager_Save::Delete_Internal(FCsSaveActionInfo* ActionInfo)
 
 				/*
 				// Push Enumerate to Top (Head)
-				QueueActionAsHead(ECsSaveAction::Enumerate);
+				QueueActionAsHead(ActionType::Enumerate);
 				// Push Read after Enumerate (Head)
-				QueueActionAfterHead(ECsSaveAction::Read, Index);
+				QueueActionAfterHead(ActionType::Read, Index);
 
 				// Reset Delete Action
 				int32 FileIndex = Index;
 				ActionInfo->Reset();
-				ActionInfo->Action = ECsSaveAction::Delete;
+				ActionInfo->Action = ActionType::Delete;
 				ActionInfo->FileIndex = FileIndex;
 
 	#if !UE_BUILD_SHIPPING
@@ -1848,6 +2159,22 @@ void UCsManager_Save::Delete_Internal(FCsSaveActionInfo* ActionInfo)
 	}
 }
 
+bool UCsManager_Save::HasPerformedDelete(const ECsPlayerProfile& Profile, const ECsSave& Save) const
+{
+	checkf(Profile != ECsPlayerProfile::ECsPlayerProfile_MAX, TEXT("UCsManager_Save::HasPerformedDelete: Profile = ECsPlayerProfile::ECsPlayerProfile_MAX is NOT Valid."));
+
+	checkf(Save != ECsSave::ECsSave_MAX, TEXT("UCsManager_Save::HasPerformedDelete: Save = ECsSave::ECsSave_MAX is NOT Valid."));
+
+	return HasPerformedDelete(Profile, (int32)Save);
+}
+
+bool UCsManager_Save::HasPerformedDelete(const ECsPlayerProfile& Profile, const int32& Index) const
+{
+	checkf(Index > INDEX_NONE, TEXT("UCsManager_Save::HasPerformedDelete: Index < 0 is NOT Valid."));
+
+	return SaveFileInfos[(uint8)Profile][Index].DeleteCount > 0;
+}
+
 void UCsManager_Save::DeleteAll(const ECsPlayerProfile& Profile)
 {
 	// Cloud / Online
@@ -1858,6 +2185,8 @@ void UCsManager_Save::DeleteAll(const ECsPlayerProfile& Profile)
 		if (IUserCloud.IsValid())
 		{
 			const FUniqueNetId& UserId = GetLocalPlayerIdRef();
+
+			typedef NCsSave::EAction ActionType;
 
 			// Check to Queue Enumerate
 			if (!EnumerateUserFilesState.IsComplete() &&
@@ -1871,7 +2200,7 @@ void UCsManager_Save::DeleteAll(const ECsPlayerProfile& Profile)
 #endif // #if !UE_BUILD_SHIPPING
 
 				EnumerateUserFilesState.Queue();
-				QueueAction(NCsPlayerProfile::AllProfiles, ECsSaveAction::Enumerate);
+				QueueAction(NCsPlayerProfile::AllProfiles, ActionType::Enumerate);
 			}
 
 #if !UE_BUILD_SHIPPING
@@ -1891,7 +2220,7 @@ void UCsManager_Save::DeleteAll(const ECsPlayerProfile& Profile)
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			QueueAction(Profile, ECsSaveAction::DeleteAll);
+			QueueAction(Profile, ActionType::DeleteAll);
 		}
 		else
 		{
@@ -1912,10 +2241,12 @@ void UCsManager_Save::DeleteAll(const ECsPlayerProfile& Profile)
 
 		if (EnumerateUserFilesState.bSuccess)
 		{
+			typedef NCsSave::NFile::FInfo FileInfoType;
+
 			// All Content
 			if (Profile == NCsPlayerProfile::AllProfiles)
 			{
-				for (FCsSaveFileInfo& FileInfo : SaveFileInfosAll)
+				for (FileInfoType& FileInfo : SaveFileInfosAll)
 				{
 					if (FileInfo.bValid)
 					{
@@ -1923,7 +2254,11 @@ void UCsManager_Save::DeleteAll(const ECsPlayerProfile& Profile)
 
 						const FString FileName = SaveDir + FileInfo.FileNameWithExt;
 
-						if (!IFileManager::Get().Delete(*FileName))
+						if (IFileManager::Get().Delete(*FileName))
+						{
+							++(FileInfo.DeleteCount);
+						}
+						else
 						{
 							UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAll: Failed to delete File: %s @ %s."), *(FileInfo.FileNameWithExt), *SaveDirAbsolute);
 						}
@@ -1932,14 +2267,14 @@ void UCsManager_Save::DeleteAll(const ECsPlayerProfile& Profile)
 			}
 			else
 			{
-				TArray<FCsSaveFileInfo>& Infos = SaveFileInfos[(uint8)Profile];
+				TArray<FileInfoType>& Infos = SaveFileInfos[(uint8)Profile];
 
 				const int32 Count = Infos.Num();
 
 				for (int32 I = 0; I < Count; ++I)
 				{
-					const ECsSave& Save		  = EMCsSave::Get().GetEnumAt(I);
-					FCsSaveFileInfo& FileInfo = Infos[I];
+					const ECsSave& Save	   = EMCsSave::Get().GetEnumAt(I);
+					FileInfoType& FileInfo = Infos[I];
 
 					if (FileInfo.bValid)
 					{
@@ -1951,7 +2286,11 @@ void UCsManager_Save::DeleteAll(const ECsPlayerProfile& Profile)
 
 						WasSuccessful |= Success;
 
-						if (!Success)
+						if (Success)
+						{
+							++(FileInfo.DeleteCount);
+						}
+						else
 						{
 							UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAll: Failed to delete Save: %s. File: %s @ %s."), EMCsSave::Get().ToChar(Save), *(FileInfo.FileNameWithExt), *SaveDirAbsolute);
 						}
@@ -1990,6 +2329,8 @@ void UCsManager_Save::DeleteAllContent()
 		{
 			const FUniqueNetId& UserId = GetLocalPlayerIdRef();
 
+			typedef NCsSave::EAction ActionType;
+
 			// Check to Queue Enumerate
 			if (!EnumerateUserFilesState.IsComplete() &&
 				!EnumerateUserFilesState.IsQueued())
@@ -2002,7 +2343,7 @@ void UCsManager_Save::DeleteAllContent()
 #endif // #if !UE_BUILD_SHIPPING
 
 				EnumerateUserFilesState.Queue();
-				QueueAction(NCsPlayerProfile::AllProfiles, ECsSaveAction::Enumerate);
+				QueueAction(NCsPlayerProfile::AllProfiles, ActionType::Enumerate);
 			}
 
 #if !UE_BUILD_SHIPPING
@@ -2013,12 +2354,15 @@ void UCsManager_Save::DeleteAllContent()
 #endif // #if !UE_BUILD_SHIPPING
 
 			// Allocate SaveActionInfo from a pool
-			FCsResource_SaveActionInfo* InfoContainer = Manager_Resource.Allocate();
-			FCsSaveActionInfo* Info					  = InfoContainer->Get();
+			typedef NCsSave::NAction::NInfo::FResource ActionInfoContainerType;
+			typedef NCsSave::NAction::NInfo::FInfo ActionInfoType;
+
+			ActionInfoContainerType* InfoContainer = Manager_Resource.Allocate();
+			ActionInfoType* Info				   = InfoContainer->Get();
 
 			Info->Reset();
 
-			Info->Action  = ECsSaveAction::DeleteAll;
+			Info->Action  = ActionType::DeleteAll;
 			Info->Profile = ECsPlayerProfile::ECsPlayerProfile_MAX;
 		}
 		else
@@ -2038,9 +2382,11 @@ void UCsManager_Save::DeleteAllContent()
 
 		bool WasSuccessful = false;
 
+		typedef NCsSave::NFile::FInfo FileInfoType;
+
 		if (EnumerateUserFilesState.bSuccess)
 		{
-			for (FCsSaveFileInfo& FileInfo : SaveFileInfosAll)
+			for (FileInfoType& FileInfo : SaveFileInfosAll)
 			{
 				if (FileInfo.bValid)
 				{
@@ -2052,7 +2398,11 @@ void UCsManager_Save::DeleteAllContent()
 
 					WasSuccessful |= Success;
 
-					if (!Success)
+					if (Success)
+					{
+						++(FileInfo.DeleteCount);
+					}
+					else
 					{
 						UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::DeleteAllContent: Failed to delete File: %s @ %s."), *(FileInfo.FileNameWithExt), *SaveDirAbsolute);
 					}
@@ -2076,9 +2426,14 @@ void UCsManager_Save::DeleteAllContent()
 	}
 }
 
-void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
+#define ActionInfoType NCsSave::NAction::NInfo::FInfo
+void UCsManager_Save::DeleteAll_Internal(ActionInfoType* ActionInfo)
 {
+#undef ActionInfoType
+
 	const ECsPlayerProfile& Profile = ActionInfo->Profile;
+
+	typedef NCsSave::EAction ActionType;
 
 	// Cloud / Online
 	if (CurrentStorage == ECsSaveStorage::Cloud)
@@ -2108,8 +2463,13 @@ void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
-			TCsDoubleLinkedList<FCsResource_SaveActionInfo*>* Current = Manager_Resource.GetAllocatedHead();
-			FCsResource_SaveActionInfo* InfoContainer				  = **Current;
+			typedef NCsSave::NAction::NInfo::FResource ActionInfoContainerType;
+			typedef NCsSave::NAction::NInfo::FInfo ActionInfoType;
+
+			TCsDoubleLinkedList<ActionInfoContainerType*>* Current = Manager_Resource.GetAllocatedHead();
+			ActionInfoContainerType* InfoContainer				   = **Current;
+
+			typedef NCsSave::NFile::FInfo FileInfoType;
 
 			// All Content
 			if (ActionInfo->IsAllProfiles())
@@ -2118,19 +2478,19 @@ void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
 
 				for (int32 I = 0; I < Count; ++I)
 				{
-					FCsSaveFileInfo& FileInfo = SaveFileInfosAll[I];
+					FileInfoType& FileInfo = SaveFileInfosAll[I];
 
 					if (FileInfo.bValid)
 					{
 						FileInfo.bRead = false;
 
-						FCsResource_SaveActionInfo* DeleteInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
-						FCsSaveActionInfo* DeleteInfo					= DeleteInfoContainer->Get();
+						ActionInfoContainerType* DeleteInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
+						ActionInfoType* DeleteInfo					 = DeleteInfoContainer->Get();
 
 						DeleteInfo->Reset();
 
 						DeleteInfo->Profile		= Profile;
-						DeleteInfo->Action      = ECsSaveAction::Delete;
+						DeleteInfo->Action      = ActionType::Delete;
 						DeleteInfo->FileIndex   = I;
 
 						// Update InfoContainer so actions get queued in order
@@ -2147,25 +2507,25 @@ void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
 			}
 			else
 			{
-				TArray<FCsSaveFileInfo>& Infos = SaveFileInfos[(uint8)Profile];
+				TArray<FileInfoType>& Infos = SaveFileInfos[(uint8)Profile];
 
 				const int32 Count = Infos.Num();
 
 				for (int32 I = 0; I < Count; ++I)
 				{
-					FCsSaveFileInfo& FileInfo = Infos[I];
+					FileInfoType& FileInfo = Infos[I];
 
 					if (FileInfo.bValid)
 					{
 						FileInfo.bRead = false;
 
-						FCsResource_SaveActionInfo* DeleteInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
-						FCsSaveActionInfo* DeleteInfo					= DeleteInfoContainer->Get();
+						ActionInfoContainerType* DeleteInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
+						ActionInfoType* DeleteInfo					 = DeleteInfoContainer->Get();
 
 						DeleteInfo->Reset();
 
 						DeleteInfo->Profile   = Profile;
-						DeleteInfo->Action    = ECsSaveAction::Delete;
+						DeleteInfo->Action    = ActionType::Delete;
 						DeleteInfo->FileIndex = I;
 
 						// Update InfoContainer so actions get queued in order
@@ -2184,13 +2544,13 @@ void UCsManager_Save::DeleteAll_Internal(FCsSaveActionInfo* ActionInfo)
 			}
 		
 			// Queue Delete All at end
-			FCsResource_SaveActionInfo* DeleteAllInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
-			FCsSaveActionInfo* DeleteAllInfo				   = DeleteAllInfoContainer->Get();
+			ActionInfoContainerType* DeleteAllInfoContainer = Manager_Resource.AllocateAfter(InfoContainer);
+			ActionInfoType* DeleteAllInfo				    = DeleteAllInfoContainer->Get();
 
 			DeleteAllInfo->Reset();
 
 			DeleteAllInfo->Profile = Profile;
-			DeleteAllInfo->Action  = ECsSaveAction::DeleteAll;
+			DeleteAllInfo->Action  = ActionType::DeleteAll;
 			DeleteAllInfo->Complete();
 		}
 		else
@@ -2257,14 +2617,22 @@ IOnlineUserCloudPtr UCsManager_Save::GetUserCloudInterface()
 
 void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUniqueNetId& UserId)
 {
-	TCsDoubleLinkedList<FCsResource_SaveActionInfo*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
+	typedef NCsSave::NAction::NInfo::FResource ActionInfoContainerType;
+	typedef NCsSave::NAction::NInfo::FInfo ActionInfoType;
+
+	TCsDoubleLinkedList<ActionInfoContainerType*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
 	
 	checkf(AllocatedHead, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: No Read Action was queued."));
 
-	FCsResource_SaveActionInfo* InfoContainer	= **AllocatedHead;
-	FCsSaveActionInfo* ActionInfo				= InfoContainer->Get();
+	ActionInfoContainerType* InfoContainer	= **AllocatedHead;
+	ActionInfoType* ActionInfo				= InfoContainer->Get();
 
-	checkf(ActionInfo->Action == ECsSaveAction::Enumerate, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: Current Action: %s is NOT Enumerate."), *(EMCsSaveAction::Get().ToChar(ActionInfo->Action)));
+	typedef NCsSave::EMAction ActionMapType;
+	typedef NCsSave::EAction ActionType;
+
+	checkf(ActionInfo->Action == ActionType::Enumerate, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: Current Action: %s is NOT Enumerate."), *(ActionMapType::Get().ToChar(ActionInfo->Action)));
+
+	typedef NCsSave::NFile::FInfo FileInfoType;
 
 	if (WasSuccessful)
 	{
@@ -2278,9 +2646,9 @@ void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUn
 		const int32 Count	  = UserFiles.Num();
 		const int32 InfoCount = SaveFileInfosAll.Num();
 
-		for (TArray<FCsSaveFileInfo>& Infos : SaveFileInfos)
+		for (TArray<FileInfoType>& Infos : SaveFileInfos)
 		{
-			for (FCsSaveFileInfo& Info : Infos)
+			for (FileInfoType& Info : Infos)
 			{
 				Info.bValid = false;
 			}
@@ -2344,7 +2712,7 @@ void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUn
 						const ECsSave& Save = EMCsSave::Get().GetEnum(SaveAsName);
 						const int32 Index   = (int32)Save;
 
-						FCsSaveFileInfo& Info = SaveFileInfos[(uint8)Profile][Index];
+						FileInfoType& Info = SaveFileInfos[(uint8)Profile][Index];
 
 						Info.FileNameWithExt = FileNameWithExt;
 						Info.FileName		 = FileName;
@@ -2368,7 +2736,7 @@ void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUn
 			}
 			// All Profiles
 			
-			FCsSaveFileInfo& AllInfo = SaveFileInfosAll[I];
+			FileInfoType& AllInfo = SaveFileInfosAll[I];
 
 			AllInfo.FileNameWithExt = FileNameWithExt;
 			AllInfo.FileName		= FileName;
@@ -2400,14 +2768,20 @@ void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUn
 
 void UCsManager_Save::OnReadUserFileComplete(bool WasSuccessful, const FUniqueNetId& UserId, const FString& FileName)
 {
-	TCsDoubleLinkedList<FCsResource_SaveActionInfo*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
+	typedef NCsSave::NAction::NInfo::FResource ActionInfoContainerType;
+	typedef NCsSave::NAction::NInfo::FInfo ActionInfoType;
+
+	TCsDoubleLinkedList<ActionInfoContainerType*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
 
 	checkf(AllocatedHead, TEXT("UCsManager_Save::OnReadUserFileComplete: No Read Action was queued."));
 
-	FCsResource_SaveActionInfo* InfoContainer = **AllocatedHead;
-	FCsSaveActionInfo* ActionInfo			  = InfoContainer->Get();
+	ActionInfoContainerType* InfoContainer = **AllocatedHead;
+	ActionInfoType* ActionInfo			   = InfoContainer->Get();
 
-	checkf(ActionInfo->Action == ECsSaveAction::Read, TEXT("UCsManager_Save::OnReadUserFileComplete: Current Action: %s is NOT Read."), *(EMCsSaveAction::Get().ToChar(ActionInfo->Action)));
+	typedef NCsSave::EMAction ActionMapType;
+	typedef NCsSave::EAction ActionType;
+
+	checkf(ActionInfo->Action == ActionType::Read, TEXT("UCsManager_Save::OnReadUserFileComplete: Current Action: %s is NOT Read."), *(ActionMapType::Get().ToChar(ActionInfo->Action)));
 
 	const ECsPlayerProfile& Profile = ActionInfo->Profile;
 	const FString& ProfileName		= ProfileNames[(uint8)Profile];
@@ -2427,13 +2801,16 @@ void UCsManager_Save::OnReadUserFileComplete(bool WasSuccessful, const FUniqueNe
 		// Do checks for SaveActionInfo
 		checkf(ActionInfo->FileIndex >= 0 && ActionInfo->FileIndex < SaveFileInfos.Num(), TEXT("UCsManager_Save::OnReadUserFileComplete: Invalid FileIndex: %d for SaveFileInfo."), ActionInfo->FileIndex);
 
-		FCsSaveFileInfo& FileInfo = SaveFileInfos[(uint8)Profile][ActionInfo->FileIndex];
+		typedef NCsSave::NFile::FInfo FileInfoType;
+
+		FileInfoType& FileInfo = SaveFileInfos[(uint8)Profile][ActionInfo->FileIndex];
 
 		checkf(FileInfo.FileNameWithExt == FileName, TEXT("UCsManager_Save::OnReadUserFileComplete: Mistach between FileNameWithExt: %s and FileName: %s."), *(FileInfo.FileNameWithExt), *FileName);
 
 		FileInfo.bRead		  = true;
 		FileInfo.ReadContents = Contents;
 		FileInfo.ReadTime     = FDateTime::Now();
+		++(FileInfo.ReadCount);
 
 		if (Contents.IsEmpty())
 		{
@@ -2468,14 +2845,20 @@ void UCsManager_Save::OnReadUserFileComplete(bool WasSuccessful, const FUniqueNe
 
 void UCsManager_Save::OnWriteUserFileComplete(bool WasSuccessful, const FUniqueNetId& UserId, const FString& FileName)
 {
-	TCsDoubleLinkedList<FCsResource_SaveActionInfo*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
+	typedef NCsSave::NAction::NInfo::FResource ActionInfoContainerType;
+	typedef NCsSave::NAction::NInfo::FInfo ActionInfoType;
+
+	TCsDoubleLinkedList<ActionInfoContainerType*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
 
 	checkf(AllocatedHead, TEXT("UCsManager_Save::OnWriteUserFileComplete: No Write Action was queued."));
 
-	FCsResource_SaveActionInfo* InfoContainer = **AllocatedHead;
-	FCsSaveActionInfo* ActionInfo			  = InfoContainer->Get();
+	ActionInfoContainerType* InfoContainer = **AllocatedHead;
+	ActionInfoType* ActionInfo			   = InfoContainer->Get();
 
-	checkf(ActionInfo->Action == ECsSaveAction::Write, TEXT("UCsManager_Save::OnWriteUserFileComplete: Current Action: %s is NOT Write."), *(EMCsSaveAction::Get().ToChar(ActionInfo->Action)));
+	typedef NCsSave::EMAction ActionMapType;
+	typedef NCsSave::EAction ActionType;
+
+	checkf(ActionInfo->Action == ActionType::Write, TEXT("UCsManager_Save::OnWriteUserFileComplete: Current Action: %s is NOT Write."), *(ActionMapType::Get().ToChar(ActionInfo->Action)));
 
 	const ECsPlayerProfile& Profile = ActionInfo->Profile;
 	const FString& ProfileName		= ProfileNames[(uint8)Profile];
@@ -2487,12 +2870,15 @@ void UCsManager_Save::OnWriteUserFileComplete(bool WasSuccessful, const FUniqueN
 		// Do checks for SaveActionInfo
 		checkf(ActionInfo->FileIndex >= CS_EMPTY && ActionInfo->FileIndex < SaveFileInfos.Num(), TEXT("UCsManager_Save::OnWriteUserFileComplete: Invalid FileIndex: %d for SaveFileInfo."), ActionInfo->FileIndex);
 
-		FCsSaveFileInfo& FileInfo = SaveFileInfos[(uint8)Profile][ActionInfo->FileIndex];
+		typedef NCsSave::NFile::FInfo FileInfoType;
+
+		FileInfoType& FileInfo = SaveFileInfos[(uint8)Profile][ActionInfo->FileIndex];
 
 		checkf(FileInfo.FileNameWithExt == FileName, TEXT("UCsManager_Save::OnWriteUserFileComplete: Mistach between FileNameWithExt: %s and FileName: %s."), *(FileInfo.FileNameWithExt), *FileName);
 
 		FileInfo.bWrite	   = true;
 		FileInfo.WriteTime = FDateTime::Now();
+		++(FileInfo.WriteCount);
 
 #if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))
@@ -2518,33 +2904,42 @@ void UCsManager_Save::OnWriteUserFileComplete(bool WasSuccessful, const FUniqueN
 
 void UCsManager_Save::OnDeleteUserFileComplete(bool WasSuccessful, const FUniqueNetId& UserId, const FString& FileName)
 {
-	TCsDoubleLinkedList<FCsResource_SaveActionInfo*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
+	typedef NCsSave::NAction::NInfo::FResource ActionInfoContainerType;
+	typedef NCsSave::NAction::NInfo::FInfo ActionInfoType;
+
+	TCsDoubleLinkedList<ActionInfoContainerType*>* AllocatedHead = Manager_Resource.GetAllocatedHead();
 
 	checkf(AllocatedHead, TEXT("UCsManager_Save::OnDeleteUserFileComplete: No Delete Action was queued."));
 
-	FCsResource_SaveActionInfo* InfoContainer = **AllocatedHead;
-	FCsSaveActionInfo* ActionInfo			  = InfoContainer->Get();
+	ActionInfoContainerType* InfoContainer = **AllocatedHead;
+	ActionInfoType* ActionInfo			   = InfoContainer->Get();
 
-	checkf(ActionInfo->Action == ECsSaveAction::Delete, TEXT("UCsManager_Save::OnDeleteUserFileComplete: Current Action: %s is NOT Delete."), *(EMCsSaveAction::Get().ToChar(ActionInfo->Action)));
+	typedef NCsSave::EMAction ActionMapType;
+	typedef NCsSave::EAction ActionType;
+
+	checkf(ActionInfo->Action == ActionType::Delete, TEXT("UCsManager_Save::OnDeleteUserFileComplete: Current Action: %s is NOT Delete."), *(ActionMapType::Get().ToChar(ActionInfo->Action)));
 
 	const ECsPlayerProfile& Profile = ActionInfo->Profile;
+
+	typedef NCsSave::NFile::FInfo FileInfoType;
 
 	if (WasSuccessful)
 	{
 		ActionInfo->Success();
 
 		// Do checks for SaveActionInfo
-		TArray<FCsSaveFileInfo>& FileInfos = ActionInfo->IsAllProfiles() ? SaveFileInfosAll : SaveFileInfos[(uint8)Profile];
+		TArray<FileInfoType>& FileInfos = ActionInfo->IsAllProfiles() ? SaveFileInfosAll : SaveFileInfos[(uint8)Profile];
 
 		checkf(ActionInfo->FileIndex >= CS_EMPTY && ActionInfo->FileIndex < FileInfos.Num(), TEXT("UCsManager_Save::OnDeleteUserFileComplete: Invalid FileIndex: %d for SaveFileInfo."), ActionInfo->FileIndex);
 
-		FCsSaveFileInfo& FileInfo = FileInfos[ActionInfo->FileIndex];
+		FileInfoType& FileInfo = FileInfos[ActionInfo->FileIndex];
 
 		checkf(FileInfo.FileNameWithExt == FileName, TEXT("UCsManager_Save::OnDeleteUserFileComplete: Mistach between FileNameWithExt: %s and FileName: %s."), *(FileInfo.FileNameWithExt), *FileName);
 
 		FileInfo.bDelete	= true;
 		FileInfo.DeleteTime = FDateTime::Now();
 		FileInfo.bValid		= false;
+		++(FileInfo.DeleteCount);
 
 #if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerSaveTransactions))

@@ -811,6 +811,38 @@ namespace NCsAchievementActionState
 	extern CSPLATFORMSERVICES_API const uint8 MAX;
 }
 
+namespace NCsAchievement
+{
+	namespace NAction
+	{
+		enum class EState : uint8 
+		{
+			None,
+			InProgress,
+			Complete,
+			EState_MAX
+		};
+
+		struct CSPLATFORMSERVICES_API EMState final : public TCsEnumMap<EState>
+		{
+			CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMState, EState)
+		};
+
+		namespace NState
+		{
+			namespace Ref
+			{
+				typedef EState Type;
+
+				extern CSPLATFORMSERVICES_API const Type None;
+				extern CSPLATFORMSERVICES_API const Type InProgress;
+				extern CSPLATFORMSERVICES_API const Type Complete;
+				extern CSPLATFORMSERVICES_API const Type EState_MAX;
+			}
+		}
+	}
+}
+
 #pragma endregion AchievementActionState
 
 // NCsAchievement::NAction::EAllocation
@@ -1090,6 +1122,7 @@ namespace NCsAchievement
 
 			#define ActionType NCsAchievement::EAction
 			#define ValueType NCsAchievement::FValue
+			#define ActionStateType NCsAchievement::NAction::EState
 
 				/** Action to processed. See ActionType (NCsAchievement::EAction). */
 				ActionType Action;
@@ -1110,7 +1143,7 @@ namespace NCsAchievement
 			private:
 
 				/** Current state of the action (i.e. In Progress, Complete, ... etc). */
-				ECsAchievementActionState State;
+				ActionStateType State;
 
 				/** Whether the action completed successfully. */
 				bool bSuccess;
@@ -1123,7 +1156,7 @@ namespace NCsAchievement
 					Name(),
 					Value(),
 					Entry(),
-					State(ECsAchievementActionState::None),
+					State(ActionStateType::None),
 					bSuccess(false)
 				{
 
@@ -1131,27 +1164,27 @@ namespace NCsAchievement
 
 				FORCEINLINE bool IsReadyToProcess() const
 				{
-					return State == ECsAchievementActionState::None;
+					return State == ActionStateType::None;
 				}
 
 				FORCEINLINE void StartProgress()
 				{
-					State = ECsAchievementActionState::InProgress;
+					State = ActionStateType::InProgress;
 				}
 
 				FORCEINLINE bool InProgress() const
 				{
-					return State == ECsAchievementActionState::InProgress;
+					return State == ActionStateType::InProgress;
 				}
 
 				FORCEINLINE void Complete()
 				{
-					State = ECsAchievementActionState::Complete;
+					State = ActionStateType::Complete;
 				}
 
 				FORCEINLINE bool IsComplete() const
 				{
-					return State == ECsAchievementActionState::Complete;
+					return State == ActionStateType::Complete;
 				}
 
 				FORCEINLINE void Success()
@@ -1170,12 +1203,13 @@ namespace NCsAchievement
 					Achievement = EMCsAchievement::Get().GetMAX();
 					Value.Reset();
 					Entry.Reset();
-					State = ECsAchievementActionState::None;
+					State = ActionStateType::None;
 					bSuccess = false;
 				}
 
 			#undef ActionType
 			#undef ValueType
+			#undef ActionStateType
 			};
 		}
 	}

@@ -15,6 +15,7 @@ const FJsDoubleLinkedListNode = require('Cs/Containers/DoubleLinkedListNode');
 var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - functions
+var checkf = CommonLibrary.checkf;
 var IsValidObject = CommonLibrary.IsValidObject;
 var IsNullObject = CommonLibrary.IsNullObject;
 
@@ -75,9 +76,9 @@ module.exports = class FJsManager_Resource_Fixed
     // public
     CreatePool(size, resourceClassType)
 	{
-		console.assert(CommonLibrary.IsInt(size), "FJsManager_Resource_Fixed.CreatePool. size is NOT an Integer.");
+		checkf(CommonLibrary.IsInt(size), "FJsManager_Resource_Fixed.CreatePool. size is NOT an Integer.");
 
-        console.assert(size > 0, "FJsManager_Resource_Fixed.CreatePool. size: %d is NOT > 0.", size);
+        checkf(size > 0, "FJsManager_Resource_Fixed.CreatePool. size: %d is NOT > 0.", size);
 
         this.Shutdown();
 
@@ -167,7 +168,7 @@ module.exports = class FJsManager_Resource_Fixed
 	*/
     GetAt(index)
 	{
-        console.assert(index > INDEX_NONE && index < this.PoolSize, "%s.GetAt: Index is >= 0 and < PoolSize: %d", this.Name, this.PoolSize);
+        checkf(index > INDEX_NONE && index < this.PoolSize, "%s.GetAt: Index is >= 0 and < PoolSize: %d", this.Name, this.PoolSize);
 
 		return this.Pool[index];
 	}
@@ -180,7 +181,7 @@ module.exports = class FJsManager_Resource_Fixed
 	*/
     GetResourceAt(index)
 	{
-        console.assert(index > INDEX_NONE && index < this.PoolSize, "%s.GetResourceAt: Index is >= 0 and < PoolSize: %d", this.Name, this.PoolSize);
+        checkf(index > INDEX_NONE && index < this.PoolSize, "%s.GetResourceAt: Index is >= 0 and < PoolSize: %d", this.Name, this.PoolSize);
 
 		return this.Pool[index].Get();
 	}
@@ -192,7 +193,7 @@ module.exports = class FJsManager_Resource_Fixed
 	*/
 	GetAllocatedContainer(resource)
 	{
-		console.assert(IsValidObject(resource), "%s.GetAllocatedContainer: Resource is NULL.", this.Name);
+		checkf(IsValidObject(resource), "%s.GetAllocatedContainer: Resource is NULL.", this.Name);
 
 		let current = this.AllocatedHead;
 		let next    = current;
@@ -344,7 +345,7 @@ module.exports = class FJsManager_Resource_Fixed
 	*/
 	Allocate()
 	{
-		console.assert(!this.IsExhausted(), "%s.Allocate: Pool is exhausted.", this.Name);
+		checkf(!this.IsExhausted(), "%s.Allocate: Pool is exhausted.", this.Name);
 
 		for (let i = 0; i < this.PoolSize; ++i)
 		{
@@ -354,7 +355,7 @@ module.exports = class FJsManager_Resource_Fixed
 
 			if (!m.IsAllocated())
 			{
-				console.assert(m.Get(), "%s.Allocate: Resource is NULL. Container %d no longer holds a reference to a resource.", this.Name, this.PoolIndex);
+				checkf(m.Get(), "%s.Allocate: Resource is NULL. Container %d no longer holds a reference to a resource.", this.Name, this.PoolIndex);
 
 				m.Allocate();
 				this.AddAllocatedLink(this.Links[this.PoolIndex]);
@@ -362,7 +363,7 @@ module.exports = class FJsManager_Resource_Fixed
 				return m;
 			}
 		}
-		console.assert(false, "%s::Allocate: Pool is exhausted.", this.Name);
+		checkf(false, "%s::Allocate: Pool is exhausted.", this.Name);
 		return null;
 	}
 
@@ -387,11 +388,11 @@ module.exports = class FJsManager_Resource_Fixed
 	*/
 	AllocateAfter(resourceContainer)
 	{
-		console.assert(IsValidObject(ResourceContainer), "%s::AllocateAfter: ResourceContainer is NULL.", this.Name);
+		checkf(IsValidObject(ResourceContainer), "%s::AllocateAfter: ResourceContainer is NULL.", this.Name);
 
-		console.assert(resourceContainer.IsAllocated(), "%s::AllocateAfter: ResourceContainer must be Allocated.", this.Name);
+		checkf(resourceContainer.IsAllocated(), "%s::AllocateAfter: ResourceContainer must be Allocated.", this.Name);
 
-		console.assert(!this.IsExhausted(), "%s::AllocateAfter: Pool is exhausted.", this.Name);
+		checkf(!this.IsExhausted(), "%s::AllocateAfter: Pool is exhausted.", this.Name);
 
 		// New Resource
 		let r	 = null;
@@ -404,7 +405,7 @@ module.exports = class FJsManager_Resource_Fixed
 
 			if (!m.IsAllocated())
 			{
-				console.assert(IsValidObject(m.Get()), "%s:AllocateAfter: Resource is NULL. Container %d no longer holds a reference to a resource.", this.Name, this.PoolIndex);
+				checkf(IsValidObject(m.Get()), "%s:AllocateAfter: Resource is NULL. Container %d no longer holds a reference to a resource.", this.Name, this.PoolIndex);
 
 				m.Allocate();
 				r    = m;
@@ -413,7 +414,7 @@ module.exports = class FJsManager_Resource_Fixed
 			}
 		}
 
-		console.assert(IsValidObject(r), "%s::AllocateAfter: Pool is exhausted.", this.Name);
+		checkf(IsValidObject(r), "%s::AllocateAfter: Pool is exhausted.", this.Name);
 
 		this.AddAllocatedLinkAfter(link, resourceContainer);
 		++this.AllocatedSize;
@@ -444,11 +445,11 @@ module.exports = class FJsManager_Resource_Fixed
 	*/
 	AllocateBefore(resourceContainer)
 	{
-		console.assert(IsValidObject(resourceContainer), "%s.AllocateBefore: ResourceContainer is NULL.", this.Name);
+		checkf(IsValidObject(resourceContainer), "%s.AllocateBefore: ResourceContainer is NULL.", this.Name);
 
-		console.assert(resourceContainer.IsAllocated(), "%s.AllocateBefore: ResourceContainer must be Allocated.", this.Name);
+		checkf(resourceContainer.IsAllocated(), "%s.AllocateBefore: ResourceContainer must be Allocated.", this.Name);
 
-		console.assert(!this.IsExhausted(), "%s.AllocateBefore: Pool is exhausted.", this.Name);
+		checkf(!this.IsExhausted(), "%s.AllocateBefore: Pool is exhausted.", this.Name);
 
 		// New Resource
 		let r	 = null;
@@ -461,7 +462,7 @@ module.exports = class FJsManager_Resource_Fixed
 
 			if (!m.IsAllocated())
 			{
-				console.assert(IsValidObject(m.Get()), "%s.AllocateBefore: Resource is NULL. Container %d no longer holds a reference to a resource.", this.Name, this.PoolIndex);
+				checkf(IsValidObject(m.Get()), "%s.AllocateBefore: Resource is NULL. Container %d no longer holds a reference to a resource.", this.Name, this.PoolIndex);
 
 				m.Allocate();
 				r    = m;
@@ -470,7 +471,7 @@ module.exports = class FJsManager_Resource_Fixed
 			}
 		}
 
-		console.assert(IsValidObject(r), "%s.AllocateBefore: Pool is exhausted.", this.Name);
+		checkf(IsValidObject(r), "%s.AllocateBefore: Pool is exhausted.", this.Name);
 
 		this.AddAllocatedLinkBefore(link, resourceContainer);
 		++this.AllocatedSize;
@@ -506,20 +507,20 @@ module.exports = class FJsManager_Resource_Fixed
 	*/
 	Deallocate(resourceContainer)
 	{
-		console.assert(IsValidObject(resourceContainer), "%s.Deallocate: ResourceContainer is NULL.", this.Name);
+		checkf(IsValidObject(resourceContainer), "%s.Deallocate: ResourceContainer is NULL.", this.Name);
 
 		if (!resourceContainer.IsAllocated())
 			return false;
 
-		console.assert(IsValidObject(resourceContainer.Get()), "%s.Deallocate: Resource is NULL.", this.Name);
+		checkf(IsValidObject(resourceContainer.Get()), "%s.Deallocate: Resource is NULL.", this.Name);
 
 		let index = resourceContainer.GetIndex();
 
-		console.assert(index >= 0 && index < this.PoolSize, "%s.Deallocate: index: %d (< 0 or >= %d) of Resource Container is NOT Valid.", this.Name, index, this.PoolSize);
+		checkf(index >= 0 && index < this.PoolSize, "%s.Deallocate: index: %d (< 0 or >= %d) of Resource Container is NOT Valid.", this.Name, index, this.PoolSize);
 
 		let m = this.Pool[index];
 
-		console.assert(m === resourceContainer, "%s.Deallocate: Resource is NOT contained in Pool.", this.Name);
+		checkf(m === resourceContainer, "%s.Deallocate: Resource is NOT contained in Pool.", this.Name);
 
 		m.Deallocate();
 		this.RemoveActiveLink(this.Links[index]);
@@ -537,7 +538,7 @@ module.exports = class FJsManager_Resource_Fixed
 	*/
 	DeallocateByResource(resource)
 	{
-		console.assert(IsValidObject(resource), "%s.Deallocate: Resource is NULL.", this.Name);
+		checkf(IsValidObject(resource), "%s.Deallocate: Resource is NULL.", this.Name);
 
 		let resourceContainer = this.GetAllocatedContainer(resource);
 
@@ -553,14 +554,14 @@ module.exports = class FJsManager_Resource_Fixed
 	*/
 	DeallocateAtByIndex(index)
 	{
-		console.assert(index >= 0 && index < this.PoolSize, "%s.DeallocateAt: index: %d (< 0 or >= %d) is NOT Valid.", this.Name, index, this.PoolSize);
+		checkf(index >= 0 && index < this.PoolSize, "%s.DeallocateAt: index: %d (< 0 or >= %d) is NOT Valid.", this.Name, index, this.PoolSize);
 
 		let m = this.Pool[index];
 
 		if (!m.IsAllocated())
 			return false;
 
-		console.assert(IsValidObject(m.Get()), "%s.DeallocateAt: Resource is NULL.", this.Name);
+		checkf(IsValidObject(m.Get()), "%s.DeallocateAt: Resource is NULL.", this.Name);
 
 		m.Deallocate();
 		this.RemoveActiveLink(this.Links[index]);
@@ -579,18 +580,18 @@ module.exports = class FJsManager_Resource_Fixed
 	*/
 	DeallocateAt(resource, index)
 	{
-		console.assert(IsValidObject(resource), "%s.Deallocate: resource is NULL.", this.Name);
+		checkf(IsValidObject(resource), "%s.Deallocate: resource is NULL.", this.Name);
 
-		console.assert(index >= 0 && index < this.PoolSize, "%s.DeallocateAt: index: %d (< 0 or >= %d) is NOT Valid.", this.Name, this.index, this.PoolSize);
+		checkf(index >= 0 && index < this.PoolSize, "%s.DeallocateAt: index: %d (< 0 or >= %d) is NOT Valid.", this.Name, this.index, this.PoolSize);
 
 		let m = this.Pool[index];
 
 		if (!m.IsAllocated())
 			return false;
 
-		console.assert(IsValidObject(m.Get()), "%s.DeallocateAt: resource is NULL.", this.Name);
+		checkf(IsValidObject(m.Get()), "%s.DeallocateAt: resource is NULL.", this.Name);
 
-		console.assert(resource === m.Get(), "%s.DeallocateAt: resource at index: %d is NOT contained in Pool.", this.Name, this.index);
+		checkf(resource === m.Get(), "%s.DeallocateAt: resource at index: %d is NOT contained in Pool.", this.Name, this.index);
 
 		m.Deallocate();
 		this.RemoveActiveLink(this.Links[index]);

@@ -22,6 +22,7 @@ const ROUTINE_FREE = -2;
 var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - function
+var checkf = CommonLibrary.checkf;
 var IsValidObject = CommonLibrary.IsValidObject;
 var IsClassOf = CommonLibrary.IsClassOf;
 
@@ -228,7 +229,7 @@ module.exports = class JsRoutine
                     this.WaitForFrame	  = 0;
                     this.WaitForFrameType = null;
 
-					console.assert(false, "FJsRoutine.Update: yield return value of type 'FJsRoutine.FrameType' is used for WaitForFrame. yield return value must be >= 0.");
+					checkf(false, "FJsRoutine.Update: yield return value of type 'FJsRoutine.FrameType' is used for WaitForFrame. yield return value must be >= 0.");
                 }
             }
 
@@ -255,7 +256,7 @@ module.exports = class JsRoutine
                     this.WaitForTime     = 0.0;
                     this.WaitForTimeType = null;
 
-					console.assert(false, "FJsRoutine.Update: yield return value of type 'FJsRoutine.TimeType' is used for WaitForTime. yield return value must be >= 0.0f.");
+					checkf(false, "FJsRoutine.Update: yield return value of type 'FJsRoutine.TimeType' is used for WaitForTime. yield return value must be >= 0.0f.");
                 }
             }
 
@@ -304,7 +305,7 @@ module.exports = class JsRoutine
 
                 if (this.WaitForListenMessage === INVALID_LISTEN_MESSAGE)
                 {
-					console.assert(false, "FJsRoutine.Update: yield return value of type 'FJsRoutine.ListenMessageType' is used for WaitForListenMessage. yield return value must NOT be empty.");
+					checkf(false, "FJsRoutine.Update: yield return value of type 'FJsRoutine.ListenMessageType' is used for WaitForListenMessage. yield return value must NOT be empty.");
                 }
             }
 
@@ -341,7 +342,7 @@ module.exports = class JsRoutine
 				// and the yieldCommand get interpretted as WaitForFrame
 				if ('WaitForTime' in yieldCommand)
 				{
-					console.assert(Number.isFinite(yieldCommand.WaitForTime), "FJsRoutine.Update: yieldCommand with key 'WaitForTime' does NOT have a numeric value.");
+					checkf(Number.isFinite(yieldCommand.WaitForTime), "FJsRoutine.Update: yieldCommand with key 'WaitForTime' does NOT have a numeric value.");
 
 					waitForTimeByObject = true;
                 }
@@ -359,7 +360,7 @@ module.exports = class JsRoutine
                 {
                     this.WaitForFrame = 0;
 
-					console.assert(false, "FJsRoutine.Update: yield return value of type 'int' is used for WaitForFrame. yield return value must be >= 0.");
+					checkf(false, "FJsRoutine.Update: yield return value of type 'int' is used for WaitForFrame. yield return value must be >= 0.");
                 }
                 else
                 {
@@ -378,7 +379,7 @@ module.exports = class JsRoutine
                 {
                     this.WaitForFrameType = null;
 
-					console.assert(false, "FJsRoutine.Update: yield return value of type 'FJsRoutine.FrameType' is used for WaitForFrame. yield return value must be >= 0.");
+					checkf(false, "FJsRoutine.Update: yield return value of type 'FJsRoutine.FrameType' is used for WaitForFrame. yield return value must be >= 0.");
                 }
                 else
                 {
@@ -397,7 +398,7 @@ module.exports = class JsRoutine
                 {
                     this.WaitForTime = 0.0;
 
-					console.assert(false, "FCgRoutine.Run: yield return value of type 'float' is used for WaitForTime. yield return value must be >= 0.0f.");
+					checkf(false, "FCgRoutine.Run: yield return value of type 'float' is used for WaitForTime. yield return value must be >= 0.0f.");
                 }
                 else
                 {
@@ -416,7 +417,7 @@ module.exports = class JsRoutine
                 {
                     this.WaitForTimeType = null;
 
-					console.assert(false, "FCgRoutine.Run: yield return value of type 'FCgRoutine.FTimeType' is used for WaitForTime. yield return value must be >= 0.0f.");
+					checkf(false, "FCgRoutine.Run: yield return value of type 'FCgRoutine.FTimeType' is used for WaitForTime. yield return value must be >= 0.0f.");
                 }
                 else
                 {
@@ -455,7 +456,7 @@ module.exports = class JsRoutine
 
                 if (this.WaitForListenMessage == INVALID_LISTEN_MESSAGE)
                 {
-					console.assert(false, "FJsRoutine.Update: yield return value of type 'string' is used for WaitForListenMessage. yield return value must NOT be empty.");
+					checkf(false, "FJsRoutine.Update: yield return value of type 'string' is used for WaitForListenMessage. yield return value must NOT be empty.");
                 }
                 else
                 {
@@ -471,7 +472,7 @@ module.exports = class JsRoutine
 
                 if (this.WaitForListenMessageType.Get() === INVALID_LISTEN_MESSAGE)
                 {
-					console.assert(false, "FJsRoutine.Update: yield return value of type 'string' is used for WaitForListenMessage. yield return value must NOT be empty.");
+					checkf(false, "FJsRoutine.Update: yield return value of type 'string' is used for WaitForListenMessage. yield return value must NOT be empty.");
                 }
                 else
                 {
@@ -481,7 +482,7 @@ module.exports = class JsRoutine
             // INVALID Type
             else
             {
-				console.assert(false, "FJsRoutine.Update: Invalid Type: %s for yield. yield return value must be of type: int, FJsRoutine.FrameType, float, FJsRoutine.TimeType, FJsRoutine, FJsRoutine.BoolType, string, or FJsRoutine.ListenMessageType.", typeof yieldCommand);
+				checkf(false, "FJsRoutine.Update: Invalid Type: %s for yield. yield return value must be of type: int, FJsRoutine.FrameType, float, FJsRoutine.TimeType, FJsRoutine, FJsRoutine.BoolType, string, or FJsRoutine.ListenMessageType.", typeof yieldCommand);
             }
         }
         // Finished

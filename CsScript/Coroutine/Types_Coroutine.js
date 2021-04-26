@@ -13,6 +13,9 @@ const ROUTINE_VALUE_SIZE = 16;
 // "typedefs" - class
 var CommonLibrary = NJsCommon.FLibrary;
 
+// "typedefs" - functions
+var check = CommonLibrary.check;
+
 module.exports = class NJsCoroutine
 {
     static EState =
@@ -213,7 +216,8 @@ module.exports = class NJsCoroutine
 
             IsValidChecked(context)
             {
-                CommonLibrary.IsGeneratorChecked(context, this.CoroutineImpl);
+                check(CommonLibrary.IsGeneratorChecked(context, this.CoroutineImpl));
+                return true;
             }
         };
     };

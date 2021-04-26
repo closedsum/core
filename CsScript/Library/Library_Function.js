@@ -9,6 +9,9 @@ var NJsCommon = require('Cs/Library/Library_Common.js');
 // "typedefs" - classes
 var CommonLibrary = NJsCommon.FLibrary;
 
+// "typedefs" - functions
+var checkf = CommonLibrary.checkf;
+
 module.exports = class NJsFunction
 {
     static FLibrary = class Library
@@ -25,7 +28,7 @@ module.exports = class NJsFunction
         {
             let Str = NJsFunction.FLibrary.NCached.NStr;
 
-            console.assert(typeof context === 'string', Str.IsArgFormatValidChecked + ": context is NOT a string.");
+            checkf(typeof context === 'string', Str.IsArgFormatValidChecked + ": context is NOT a string.");
 
             CommonLibrary.IsValidObjectChecked(context, param);
 
@@ -34,13 +37,13 @@ module.exports = class NJsFunction
             // Check 'key'.type exists
             if (param['type'] === undefined)
             {
-                console.assert(false, context + ": params[" + index + "].type is NOT defined.");
+                checkf(false, context + ": params[" + index + "].type is NOT defined.");
                 return false;
             }
             // check 'key'.value exists
             if (param['value'] === undefined)
             {
-                console.assert(false, context + ": params[" + index + "].value is NOT defined.");
+                checkf(false, context + ": params[" + index + "].value is NOT defined.");
                 return false;
             }
             return true;

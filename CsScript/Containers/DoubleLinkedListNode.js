@@ -10,6 +10,7 @@ var NJsCommon = require('Cs/Library/Library_Common.js');
 var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - functions
+var checkf = CommonLibrary.checkf;
 var IsValidObject = CommonLibrary.IsValidObject;
 var IsClassOf = CommonLibrary.IsClassOf;
 
@@ -36,9 +37,9 @@ module.exports = class FJsDoubleLinkedListNode
 
     LinkBefore(before)
     {
-        console.assert(IsValidObject(before), "FJsDoubleLinkedListNode.LinkBefore: is NULL.");
+        checkf(IsValidObject(before), "FJsDoubleLinkedListNode.LinkBefore: is NULL.");
 
-        console.assert(IsClassOf(before, FJsDoubleLinkedListNode), "FJsDoubleLinkedListNode.LinkBefore: n is NOT an instance of: FJsDoubleLinkedListNode.");
+        checkf(IsClassOf(before, FJsDoubleLinkedListNode), "FJsDoubleLinkedListNode.LinkBefore: n is NOT an instance of: FJsDoubleLinkedListNode.");
 
         if (IsValidObject(this.NextLink))
             this.NextLink.PrevLink = this.PrevLink;
@@ -57,9 +58,9 @@ module.exports = class FJsDoubleLinkedListNode
 
     LinkAfter(after)
     {
-        console.assert(IsValidObject(after), "FJsDoubleLinkedListNode.LinkBefore: is NULL.");
+        checkf(IsValidObject(after), "FJsDoubleLinkedListNode.LinkBefore: is NULL.");
 
-        console.assert(IsClassOf(after, FJsDoubleLinkedListNode), "FJsDoubleLinkedListNode.LinkBefore: n is NOT an instance of: FJsDoubleLinkedListNode.");
+        checkf(IsClassOf(after, FJsDoubleLinkedListNode), "FJsDoubleLinkedListNode.LinkBefore: n is NOT an instance of: FJsDoubleLinkedListNode.");
 
         if (IsValidObject(this.NextLink))
             this.NextLink.PrevLink = this.PrevLink;

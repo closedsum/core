@@ -12,6 +12,7 @@ const FJsDoubleLinkedListNode = require('Cs/Containers/DoubleLinkedListNode.js')
 var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - function
+var checkf = CommonLibrary.checkf;
 var IsNullObject = CommonLibrary.IsNullObject;
 
 module.exports = class FJsAllocationOrder
@@ -53,11 +54,11 @@ module.exports = class FJsAllocationOrder
 
     Create(size)
     {
-        console.assert(CommonLibrary.IsInt(size), "FJsAllocationOrder.Create: s is NOT an Integer.");
+        checkf(CommonLibrary.IsInt(size), "FJsAllocationOrder.Create: s is NOT an Integer.");
 
-        console.assert(size > 0, "FJsAllocationOrder.Create: size: %d is NOT > 0.", size);
+        checkf(size > 0, "FJsAllocationOrder.Create: size: %d is NOT > 0.", size);
 
-        console.assert(size !== this.Size, "FJsAllocationOrder.Create: Size is already size: %d.", size);
+        checkf(size !== this.Size, "FJsAllocationOrder.Create: Size is already size: %d.", size);
 
         this.Shutdown();
 

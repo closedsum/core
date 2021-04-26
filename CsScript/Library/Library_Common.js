@@ -7,6 +7,24 @@ module.exports = class NJsCommon
 {
     static FLibrary = class Library
     {
+        static checkf(condition, message)
+        {
+            if (!condition)
+            {   
+                // NOTE: Future add different "level" of errors. Maybe even a native / c++ checkf.
+                throw Error(message);
+            }
+        }
+
+        static check(condition)
+        {
+            if (!condition)
+            {
+                // NOTE: Future add different "level" of errors. Maybe even a native / c++ checkf.
+                throw Error();  
+            }
+        }
+
         static IsNullObject(o)
         {
             return o == null || typeof o !== "object";
@@ -15,7 +33,7 @@ module.exports = class NJsCommon
         static IsNullObjectChecked(context, o)
         {
             let result = this.IsNullObject(o);
-            console.assert(result, context + ": o: " + o + " is NOT NULL.");
+            this.checkf(result, context + ": o: " + o + " is NOT NULL.");
             return result;
         }
 
@@ -27,7 +45,7 @@ module.exports = class NJsCommon
         static IsValidObjectChecked(context, o)
         {
             let result = this.IsValidObject(o);
-            console.assert(result, context + ": o: " + o + " is NOT a Valid Object.");
+            this.checkf(result, context + ": o: " + o + " is NOT a Valid Object.");
             return result;
         }
 
@@ -40,7 +58,7 @@ module.exports = class NJsCommon
         static IsFunctionChecked(context, func)
         {
             let result = this.IsFunction(func);
-            console.assert(result, context + ": func: " + func + " is NOT a function.");
+            this.checkf(result, context + ": func: " + func + " is NOT a function.");
             return result;
         }
 
@@ -52,7 +70,7 @@ module.exports = class NJsCommon
         static IsGeneratorChecked(context, gen)
         {
             let result = this.IsGenerator(gen);
-            console.assert(result, context + ": gen: " + gen + " is NOT a function.");
+            this.checkf(result, context + ": gen: " + gen + " is NOT a function.");
             return result;
         }
 
@@ -61,7 +79,7 @@ module.exports = class NJsCommon
         static IsClassOfChecked(context, a, c)
         {
             let result = this.IsClassOf(a, c);
-            console.assert(result, context + ": a: " + a + " is NOT an instance of c: " + c);
+            this.checkf(result, context + ": a: " + a + " is NOT an instance of c: " + c);
             return result;
         }
 
@@ -70,7 +88,7 @@ module.exports = class NJsCommon
         static IsIntChecked(context, a)
         {
             let result = this.IsInt(a);
-            console.assert(result, context + ": a: " + a + " is NOT an integer.");
+            this.checkf(result, context + ": a: " + a + " is NOT an integer.");
             return result;
         }
 
@@ -79,14 +97,14 @@ module.exports = class NJsCommon
         static IsFloatChecked(context, a)
         {
             let result = this.IsFloat(a);
-            console.assert(result, context + ": a: " + a + " is NOT a float.");
+            this.checkf(result, context + ": a: " + a + " is NOT a float.");
             return result;
         }
 
         static IsStringChecked(context, s)
         {
             let result = typeof s === 'string';
-            console.assert(result, context + ": s: " + s + " is NOT a string.");
+            this.checkf(result, context + ": s: " + s + " is NOT a string.");
             return result;
         }
     };

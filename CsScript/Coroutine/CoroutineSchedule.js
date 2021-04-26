@@ -19,6 +19,8 @@ const INDEX_NONE = -1;
 var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - functions
+var checkf = CommonLibrary.checkf;
+var check = CommonLibrary.check;
 var IsValidObject = CommonLibrary.IsValidObject;
 
 // "typedefs" - enums
@@ -198,14 +200,14 @@ module.exports = class FJsCoroutineSchedule
 
 	    let payload = payloadContainer.Get();
 
-        console.assert(IsValidObject(payload), context + ": payloadContainer does NOT contain a reference to a payload.");
+        checkf(IsValidObject(payload), context + ": payloadContainer does NOT contain a reference to a payload.");
 
-        console.assert(payload.IsValidChecked(context));
+        check(payload.IsValidChecked(context));
 
         let UpdateGroupLibrary = CsScriptLibrary_UpdateGroup;
         let IsEqual            = UpdateGroupLibrary.EqualEqual_UpdateGroupUpdateGroup;
 
-        console.assert(IsEqual(this.Group, payload.Group), context + ": Mismatch between payload.Group: %s and Group: %s", payload.Group.Name_Internal, this.Group.Name_Internal);
+        checkf(IsEqual(this.Group, payload.Group), context + ": Mismatch between payload.Group: %s and Group: %s", payload.Group.Name_Internal, this.Group.Name_Internal);
 
         let r = this.Manager_Routine.AllocateResource();
 
@@ -249,18 +251,18 @@ module.exports = class FJsCoroutineSchedule
 
         let payload = payloadContainer.Get();
 
-        console.assert(IsValidObject(payload), context + ": payloadContainer does NOT contain a reference to a payload.");
+        checkf(IsValidObject(payload), context + ": payloadContainer does NOT contain a reference to a payload.");
 
-        console.assert(payload.IsValidChecked(context));
+        checkf(payload.IsValidChecked(context));
 
         let UpdateGroupLibrary = CsScriptLibrary_UpdateGroup;
         let IsEqual            = UpdateGroupLibrary.EqualEQual_UpdateGroupUpdateGroup;
 
-        console.assert(IsEqual(Group, payload.Group), context + ": Mismatch between payload.Group: %s and Group: %s", payload.Group.Name_Internal, Group.Name_Internal);
+        checkf(IsEqual(Group, payload.Group), context + ": Mismatch between payload.Group: %s and Group: %s", payload.Group.Name_Internal, Group.Name_Internal);
 
 	    let parentContainer = this.GetRoutineContainer(payload.ParentHandle);
 
-        console.assert(IsValidObject(parentContainer), context + ": Failed to find a container for payload.");
+        checkf(IsValidObject(parentContainer), context + ": Failed to find a container for payload.");
 
         let parent    = parentContainer.Get();
 	    let lastChild = parent.GetLastChild();

@@ -17,6 +17,22 @@
 #include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
+// Cached
+#pragma region
+
+namespace NCsManagerPlayerProfile
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_PlayerProfile, SetCurrentActiveProfile);
+		}
+	}
+}
+
+#pragma endregion Cached
+
 // static initializations
 UCsManager_PlayerProfile* UCsManager_PlayerProfile::s_Instance;
 bool UCsManager_PlayerProfile::s_bShutdown = false;
@@ -30,17 +46,14 @@ UCsManager_PlayerProfile::UCsManager_PlayerProfile(const FObjectInitializer& Obj
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
+
 /*static*/ UCsManager_PlayerProfile* UCsManager_PlayerProfile::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerPlayerProfile(InRoot)->GetManager_PlayerProfile();
-#else
-	if (s_bShutdown)
-		return nullptr;
-
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+
+#endif // #if WITH_EDITOR
 
 /*static*/ bool UCsManager_PlayerProfile::IsValid()
 {
@@ -251,16 +264,12 @@ UCsPlayerProfile* UCsManager_PlayerProfile::GetProfile(const ECsPlayerProfile& P
 
 void UCsManager_PlayerProfile::SetCurrentActiveProfile(const ECsPlayerProfile& ProfileType)
 {
+	using namespace NCsManagerPlayerProfile::NCached;
+
+	const FString& Context = Str::SetCurrentActiveProfile;
+
+	check(EMCsPlayerProfile::Get().IsValidEnumChecked(Context, ProfileType));
+
 	CurrentActiveProfile	 = ProfileMap[ProfileType];
 	CurrentActiveProfileType = ProfileType;
-}
-
-const UCsPlayerProfile* UCsManager_PlayerProfile::GetCurrentActiveProfile()
-{
-	return CurrentActiveProfile;
-}
-
-const ECsPlayerProfile& UCsManager_PlayerProfile::GetCurrentActiveProfileType()
-{
-	return CurrentActiveProfileType;
 }

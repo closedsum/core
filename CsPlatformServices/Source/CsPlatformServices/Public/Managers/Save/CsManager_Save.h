@@ -2,6 +2,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
+#include "Managers/Time/CsTypes_Time.h"
 #include "Managers/Save/CsTypes_Save.h"
 #include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"
 // Managers
@@ -310,7 +311,7 @@ public:
 
 public:
 
-	virtual void Update(const float& DeltaSeconds);
+	virtual void Update(const FCsDeltaTime& DeltaTime);
 
 // FileName
 #pragma region

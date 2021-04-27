@@ -110,10 +110,23 @@ namespace NCsAchievement
 		public:
 
 			/**
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Achievement
+			*/
+			static void CompleteChecked(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement);
+
+			/**
 			* 
 			* @param Context		The calling context.
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
 			* @param Achievement
+			* @param Log
 			*/
 			static void SafeComplete(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, void(*Log)(const FString&) = &FCsLog::Warning);
 
@@ -121,21 +134,149 @@ namespace NCsAchievement
 			*
 			* @param Context		The calling context.
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
 			* @param Achievement
 			* return				If the Achievement is already complete.
 			*/
-			static bool SafeIsCompleted(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool IsCompletedChecked(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement);
+
+			/**
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Achievement
+			* @param Log
+			* return				If the Achievement is already complete.
+			*/
+			static bool IsSafeCompleted(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			*
 			*
-			* @param Context			The calling context.
+			* @param Context		The calling context.
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* return				Number of achievements already completed.
+			*/
+			static int32 GetNumCompletedChecked(const FString& Context, UObject* ContextObject);
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Log
 			* return				Number of achievements already completed.
 			*/
 			static int32 GetSafeNumCompleted(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion Complete
+
+		// Reset
+		#pragma region
+		public:
+
+			/**
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Achievement
+			*/
+			static void ResetChecked(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, const float& Percent = 0.0f);
+
+			/**
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Achievement
+			* @param Log
+			*/
+			static void SafeReset(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, const float& Percent = 0.0f, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			*/
+			static void ResetAllChecked(const FString& Context, UObject* ContextObject);
+
+			/**
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Log
+			*/
+			static void SafeResetAll(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#pragma endregion Reset
+
+		// Progress
+		#pragma region
+		public:
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Achievement
+			* return				Progress completed. Value range is dictated by ProgressType.
+			*/
+			static float GetProgressChecked(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement);
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Achievement
+			* @param Log
+			* return				Progress completed. Value range is dictated by ProgressType.
+			*/
+			static float GetSafeProgress(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* return				Total progress completed [0-1] as a percent.
+			*/
+			static float GetTotalProgressChecked(const FString& Context, UObject* ContextObject);
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Log
+			* return				Total progress completed [0-1] as a percent.
+			*/
+			static float GetSafeTotalProgress(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#pragma endregion Progress
 		};
 	}
 }

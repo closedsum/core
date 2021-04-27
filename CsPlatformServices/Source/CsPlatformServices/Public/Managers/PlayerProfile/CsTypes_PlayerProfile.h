@@ -10,6 +10,7 @@
 UENUM(BlueprintType)
 enum class ECsPlayerProfile : uint8
 {
+	Common					UMETA(DisplayName = "Common"),
 	Profile1				UMETA(DisplayName = "Profile 1"),
 	Profile2				UMETA(DisplayName = "Profile 2"),
 	Profile3				UMETA(DisplayName = "Profile 3"),
@@ -32,6 +33,7 @@ namespace NCsPlayerProfile
 
 	namespace Ref
 	{
+		extern CSPLATFORMSERVICES_API const Type Common;
 		extern CSPLATFORMSERVICES_API const Type Profile1;
 		extern CSPLATFORMSERVICES_API const Type Profile2;
 		extern CSPLATFORMSERVICES_API const Type Profile3;

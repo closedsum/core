@@ -16,7 +16,15 @@ class CSPLATFORMSERVICES_API UCsManager_PlayerProfile : public UObject
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsManager_PlayerProfile* Get(UObject* InRoot = nullptr);
+#else
+FORCEINLINE static UCsManager_PlayerProfile* Get(UObject* InRoot = nullptr)
+{
+	return s_bShutdown ? nullptr : s_Instance;
+}
+#endif // #if WITH_EDITOR
+
 	static bool IsValid();
 	static void Init(UObject* InRoot);
 	static void Shutdown(UObject* InRoot = nullptr);
@@ -92,7 +100,13 @@ public:
 
 	void SetCurrentActiveProfile(const ECsPlayerProfile& ProfileType);
 
-	const UCsPlayerProfile* GetCurrentActiveProfile();
+	FORCEINLINE const UCsPlayerProfile* GetCurrentActiveProfile()
+	{
+		return CurrentActiveProfile;
+	}
 
-	const ECsPlayerProfile& GetCurrentActiveProfileType();
+	FORCEINLINE const ECsPlayerProfile& GetCurrentActiveProfileType()
+	{
+		return CurrentActiveProfileType;
+	}
 };

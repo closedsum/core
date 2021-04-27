@@ -420,7 +420,7 @@ void UCsManager_Save::SetProfileName(const ECsPlayerProfile& Profile, const FStr
 
 #pragma endregion Profile
 
-void UCsManager_Save::Update(const float& DeltaSeconds)
+void UCsManager_Save::Update(const FCsDeltaTime& DeltaTime)
 {
 	typedef NCsSave::NAction::NInfo::FResource ActionInfoContainerType;
 	typedef NCsSave::NAction::NInfo::FInfo ActionInfoType;
@@ -1345,12 +1345,12 @@ void UCsManager_Save::ReadAll(const ECsPlayerProfile& Profile)
 			// Enumeration failed
 			if (!EnumerateUserFilesState.bSuccess)
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::ReadAll: File: %s has NOT been enumerated properly."));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::ReadAll: Files have NOT been enumerated properly."));
 			}
 			// Not Valid
 			else
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::ReadAll: File: %s is NOT Valid."));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::ReadAll: Files are NOT Valid."));
 			}
 		}
 

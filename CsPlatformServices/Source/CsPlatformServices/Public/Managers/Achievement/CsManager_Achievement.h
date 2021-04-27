@@ -5,6 +5,8 @@
 #include "Managers/Achievement/CsTypes_Achievement.h"
 // Managers
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
+// Log
+#include "Utility/CsPlatformServicesLog.h"
 // Online
 #include "OnlineSubsystem.h"
 #include "OnlineStats.h"
@@ -1151,9 +1153,9 @@ protected:
 
 public:
 
-	bool IsValid(const FString& Context, const FECsAchievement& Achievement);
+	bool IsValidChecked(const FString& Context, const FECsAchievement& Achievement);
 
-	bool IsSafeValid(const FString& Context, const FECsAchievement& Achievement);
+	bool IsValid(const FString& Context, const FECsAchievement& Achievement, void(*Log)(const FString&) = &FCsPlatformServicesLog::Warning);
 
 protected:
 

@@ -1517,7 +1517,7 @@ void UCsManager_Achievement::ModifyAchievement(const FCsAchievementEntry& Entry)
 
 		const FECsAchievement& Achievement = EMCsAchievement::Get().GetEnum(Entry.Name);
 
-		check(IsValid(Context, Achievement));
+		check(IsValidChecked(Context, Achievement));
 
 #if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
@@ -1691,7 +1691,7 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const Val
 	if (!IsEnabled(Context))
 		return;
 
-	check(IsValid(Context, Achievement));
+	check(IsValidChecked(Context, Achievement));
 
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
 	// Online
@@ -2132,7 +2132,7 @@ void UCsManager_Achievement::Complete(const FECsAchievement& Achievement)
 	if (!IsEnabled(Context))
 		return;
 
-	check(IsValid(Context, Achievement));
+	check(IsValidChecked(Context, Achievement));
 
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
 	// Online
@@ -2206,7 +2206,7 @@ void UCsManager_Achievement::SafeComplete(const FECsAchievement& Achievement)
 
 	const FString& Context = Str::SafeComplete;
 
-	if (IsSafeValid(Context, Achievement) &&
+	if (IsValid(Context, Achievement) &&
 		!IsCompleted(Achievement))
 	{
 		Complete(Achievement);
@@ -2332,7 +2332,7 @@ bool UCsManager_Achievement::IsCompleted(const FECsAchievement& Achievement)
 
 	const FString& Context = Str::IsCompleted;
 
-	check(IsValid(Context, Achievement));
+	check(IsValidChecked(Context, Achievement));
 
 	typedef NCsAchievement::EState StateType;
 
@@ -2345,7 +2345,7 @@ bool UCsManager_Achievement::IsSafeCompleted(const FECsAchievement& Achievement)
 
 	const FString& Context = Str::IsSafeCompleted;
 
-	if (IsSafeValid(Context, Achievement))
+	if (IsValid(Context, Achievement))
 	{
 		return IsCompleted(Achievement);
 	}
@@ -2568,7 +2568,7 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const Val
 	if (!IsEnabled(Context))
 		return;
 
-	check(IsValid(Context, Achievement));
+	check(IsValidChecked(Context, Achievement));
 
 	typedef NCsAchievement::EAction ActionType;
 
@@ -2748,7 +2748,7 @@ void UCsManager_Achievement::SafeReset(const FECsAchievement& Achievement, const
 
 	const FString& Context = Str::SafeReset;
 
-	if (IsSafeValid(Context, Achievement))
+	if (IsValid(Context, Achievement))
 	{
 		ICsAchievement* IA = Achievements[Achievement.GetValue()];
 
@@ -3085,7 +3085,7 @@ void UCsManager_Achievement::SetProgress(const FECsAchievement& Achievement, con
 	if (!IsEnabled(Context))
 		return;
 
-	check(IsValid(Context, Achievement));
+	check(IsValidChecked(Context, Achievement));
 
 	checkf(Percent >= 0.0f && Percent <= 1.0f, TEXT("%s: Percent: %f must be a value between [0, 1] inclusive."), *Context, Percent);
 
@@ -3238,7 +3238,7 @@ void UCsManager_Achievement::SetSafeProgress(const FECsAchievement& Achievement,
 		return;
 	}
 
-	if (IsSafeValid(Context, Achievement))
+	if (IsValid(Context, Achievement))
 	{
 		ICsAchievement* IA = Achievements[Achievement.GetValue()];
 
@@ -3255,7 +3255,7 @@ float UCsManager_Achievement::GetProgress(const FECsAchievement& Achievement)
 
 	const FString& Context = Str::GetProgress;
 
-	check(IsValid(Context, Achievement));
+	check(IsValidChecked(Context, Achievement));
 
 	return Achievements[Achievement.GetValue()]->GetProgress();
 }
@@ -3266,7 +3266,7 @@ float UCsManager_Achievement::GetSafeProgress(const FECsAchievement& Achievement
 
 	const FString& Context = Str::GetSafeProgress;
 
-	if (IsSafeValid(Context, Achievement))
+	if (IsValid(Context, Achievement))
 	{
 		return GetProgress(Achievement);
 	}
@@ -3279,7 +3279,7 @@ float UCsManager_Achievement::GetProgressAsPercent(const FECsAchievement& Achiev
 
 	const FString& Context = Str::GetProgressAsPercent;
 
-	check(IsValid(Context, Achievement));
+	check(IsValidChecked(Context, Achievement));
 
 	return Achievements[Achievement.GetValue()]->GetProgressAsPercent();
 }
@@ -3290,7 +3290,7 @@ float UCsManager_Achievement::GetSafeProgressAsPercent(const FECsAchievement& Ac
 
 	const FString& Context = Str::GetSafeProgressAsPercent;
 
-	if (IsSafeValid(Context, Achievement))
+	if (IsValid(Context, Achievement))
 	{
 		return GetProgressAsPercent(Achievement);
 	}
@@ -3341,7 +3341,7 @@ void UCsManager_Achievement::Increment(const FECsAchievement& Achievement, const
 	if (!IsEnabled(Context))
 		return;
 
-	if (!IsValid(Context, Achievement))
+	if (!IsValidChecked(Context, Achievement))
 		return;
 
 	ICsAchievement* IA = Achievements[Achievement.GetValue()];
@@ -3404,7 +3404,7 @@ void UCsManager_Achievement::SafeIncrement(const FECsAchievement& Achievement, c
 
 	const FString& Context = Str::SafeIncrement;
 
-	if (IsSafeValid(Context, Achievement) &&
+	if (IsValid(Context, Achievement) &&
 		SupportsSafeCount(Context, Achievement) &&
 		!IsCompleted(Achievement))
 	{
@@ -3501,7 +3501,7 @@ void UCsManager_Achievement::SetSafeCount(const FECsAchievement& Achievement, co
 
 	const FString& Context = Str::SetSafeCount;
 
-	if (IsSafeValid(Context, Achievement) &&
+	if (IsValid(Context, Achievement) &&
 		!IsCompleted(Achievement))
 	{
 		SetCount(Achievement, Count);
@@ -3545,7 +3545,7 @@ void UCsManager_Achievement::SetBit(const FECsAchievement& Achievement, const ui
 	if (!IsEnabled(Context))
 		return;
 
-	if (!IsValid(Context, Achievement))
+	if (!IsValidChecked(Context, Achievement))
 		return;
 
 	ICsAchievement* IA = Achievements[Achievement.GetValue()];
@@ -3640,7 +3640,7 @@ void UCsManager_Achievement::SetSafeBit(const FECsAchievement& Achievement, cons
 
 	const FString& Context = Str::SetSafeBit;
 
-	if (IsSafeValid(Context, Achievement) &&
+	if (IsValid(Context, Achievement) &&
 		SupportsSafeBitfield(Context, Achievement) &&
 		!IsCompleted(Achievement))
 	{
@@ -4064,7 +4064,7 @@ bool UCsManager_Achievement::IsEnabled(const FString& Context)
 	return true;
 }
 
-bool UCsManager_Achievement::IsValid(const FString& Context, const FECsAchievement& Achievement)
+bool UCsManager_Achievement::IsValidChecked(const FString& Context, const FECsAchievement& Achievement)
 {
 	checkf(EMCsAchievement::Get().IsValidEnum(Achievement), TEXT("%s: Achievement: %s is NOT Valid."), *Context, Achievement.ToChar());
 
@@ -4075,23 +4075,23 @@ bool UCsManager_Achievement::IsValid(const FString& Context, const FECsAchieveme
 	return Achievements[Achievement.GetValue()]->IsValid();
 }
 
-bool UCsManager_Achievement::IsSafeValid(const FString& Context, const FECsAchievement& Achievement)
+bool UCsManager_Achievement::IsValid(const FString& Context, const FECsAchievement& Achievement, void(*Log)(const FString&) /*=&FCsPlatformServicesLog::Warning*/)
 {
 	if (!EMCsAchievement::Get().IsValidEnum(Achievement))
 	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s is NOT Valid."), *Context, Achievement.ToChar());
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Achievement: %s is NOT Valid."), *Context, Achievement.ToChar()));
 		return false;
 	}
 
 	if (Achievement.GetValue() >= Achievements.Num())
 	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s is NOT Valid."), *Context, Achievement.ToChar());
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Achievement: %s is NOT Valid."), *Context, Achievement.ToChar()));
 		return false;
 	}
 
 	if (!Achievements[Achievement.GetValue()])
 	{
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s of type: ICsAchievement has not been constructed.."), *Context, Achievement.ToChar());
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Achievement: %s of type: ICsAchievement has not been constructed.."), *Context, Achievement.ToChar()));
 		return false;
 	}
 	return Achievements[Achievement.GetValue()]->IsValid();

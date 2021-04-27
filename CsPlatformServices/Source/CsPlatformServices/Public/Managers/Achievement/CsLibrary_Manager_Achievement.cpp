@@ -94,6 +94,11 @@ namespace NCsAchievement
 		// Complete
 		#pragma region
 
+		void FLibrary::CompleteChecked(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement)
+		{
+			GetChecked(Context, ContextObject)->Complete(Achievement);
+		}
+
 		void FLibrary::SafeComplete(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			if (UCsManager_Achievement* Manager_Achievement = GetSafe(Context, ContextObject, Log))
@@ -102,13 +107,23 @@ namespace NCsAchievement
 			}
 		}
 
-		bool FLibrary::SafeIsCompleted(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::IsCompletedChecked(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement)
+		{
+			return GetChecked(Context, ContextObject)->IsCompleted(Achievement);
+		}
+
+		bool FLibrary::IsSafeCompleted(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			if (UCsManager_Achievement* Manager_Achievement = GetSafe(Context, ContextObject, Log))
 			{
 				return Manager_Achievement->IsSafeCompleted(Achievement);
 			}
 			return false;
+		}
+
+		int32 FLibrary::GetNumCompletedChecked(const FString& Context, UObject* ContextObject)
+		{
+			return GetChecked(Context, ContextObject)->GetNumCompleted();
 		}
 
 		int32 FLibrary::GetSafeNumCompleted(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /* &FCsLog::Warning*/)
@@ -121,5 +136,74 @@ namespace NCsAchievement
 		}
 
 		#pragma endregion Complete
+
+		// Reset
+		#pragma region
+
+		void FLibrary::ResetChecked(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, const float& Percent /*=0.0f*/)
+		{
+			GetChecked(Context, ContextObject)->Reset(Achievement, Percent);
+		}
+
+		void FLibrary::SafeReset(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, const float& Percent /*=0.0f*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Achievement* Manager_Achievement = GetSafe(Context, ContextObject, Log))
+			{
+				typedef NCsAchievement::FValue ValueType;
+
+				ValueType Value;
+				Value.SetPercent(Percent);
+
+				Manager_Achievement->SafeReset(Achievement, Value);
+			}
+		}
+
+		void FLibrary::ResetAllChecked(const FString& Context, UObject* ContextObject)
+		{
+			GetChecked(Context, ContextObject)->ResetAll();
+		}
+
+		void FLibrary::SafeResetAll(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*= FCsLog::Warning*/)
+		{
+			if (UCsManager_Achievement* Manager_Achievement = GetSafe(Context, ContextObject, Log))
+			{
+				Manager_Achievement->ResetAll();
+			}
+		}
+
+		#pragma endregion Reset
+
+		// Progress
+		#pragma region
+
+		float FLibrary::GetProgressChecked(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement)
+		{
+			return GetChecked(Context, ContextObject)->GetProgress(Achievement);
+		}
+
+		float FLibrary::GetSafeProgress(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Achievement* Manager_Achievement = GetSafe(Context, ContextObject, Log))
+			{
+				return Manager_Achievement->GetSafeProgress(Achievement);
+			}
+			return 0.0f;
+		}
+
+		float FLibrary::GetTotalProgressChecked(const FString& Context, UObject* ContextObject)
+		{
+			return GetChecked(Context, ContextObject)->GetTotalProgress();
+		}
+
+		float FLibrary::GetSafeTotalProgress(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Achievement* Manager_Achievement = GetSafe(Context, ContextObject, Log))
+			{
+				return Manager_Achievement->GetTotalProgress();
+			}
+			return 0.0f;
+		}
+
+		#pragma endregion Progress
 	}
 }

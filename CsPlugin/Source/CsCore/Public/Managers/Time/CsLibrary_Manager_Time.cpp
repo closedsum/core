@@ -29,11 +29,15 @@ namespace NCsTime
 				namespace Str
 				{
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsTime::NManager::FLibrary, GetSafeContextRoot);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsTime::NManager::FLibrary, GetSafe);
 				}
 			}
 		}
 
-	#if WITH_EDITOR
+		// ContextRoot
+		#pragma region
+
+		#if WITH_EDITOR
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
 		{
@@ -78,7 +82,50 @@ namespace NCsTime
 			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
 
-	#endif // #if WITH_EDITOR
+		#endif // #if WITH_EDITOR
+
+		#pragma endregion ContextRoot
+
+		// Get
+		#pragma region
+
+		UCsManager_Time* FLibrary::GetChecked(const FString& Context, UObject* ContextObject)
+		{
+			UObject* ContextRoot		  = GetContextRootChecked(Context, ContextObject);
+			UCsManager_Time* Manager_Time = UCsManager_Time::Get(ContextRoot);
+
+			CS_IS_PTR_NULL_CHECKED(Manager_Time)
+			return Manager_Time;
+		}
+
+		UCsManager_Time* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*= &NCsPlayback::FLog::Warning*/)
+		{
+			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
+
+		#if WITH_EDITOR
+			if (!ContextRoot)
+				return nullptr;
+		#endif // #if WITH_EDITOR
+
+			UCsManager_Time* Manager_Time = UCsManager_Time::Get(ContextRoot);
+
+			if (!Manager_Time)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Time."), *Context));
+			}
+			return Manager_Time;
+		}
+
+		UCsManager_Time* FLibrary::GetSafe(UObject* ContextObject)
+		{
+			using namespace NCsTime::NManager::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafe;
+
+			return GetSafe(Context, ContextObject, nullptr);
+		}
+
+		#pragma endregion Get
 
 		void FLibrary::UpdateTimeAndCoroutineScheduler(const FString& Context, UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime)
 		{

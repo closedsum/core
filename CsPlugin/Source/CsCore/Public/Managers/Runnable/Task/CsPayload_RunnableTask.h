@@ -12,19 +12,17 @@ namespace NCsRunnable
 {
 	namespace NTask
 	{
-		namespace NInfo
+		namespace NPayload
 		{
 			/**
 			*/
-			struct CSCORE_API FInfo
+			struct CSCORE_API FImpl
 			{
 			private:
 
 				int32 Index;
 
 			public:
-
-				FString* Name;
 
 				TWeakObjectPtr<UObject> Owner;
 
@@ -34,18 +32,12 @@ namespace NCsRunnable
 
 				FCsRunnableHandle Handle;
 
-				FInfo() :
+				FImpl() :
 					Index(INDEX_NONE),
-					Name(nullptr),
 					Owner(nullptr),
 					Task(nullptr),
 					Handle()
 				{
-				}
-
-				FORCEINLINE const int32& GetIndex() const
-				{
-					return Index;
 				}
 
 				FORCEINLINE void SetIndex(const int32& InIndex)
@@ -53,9 +45,18 @@ namespace NCsRunnable
 					Index = InIndex;
 				}
 
+				FORCEINLINE const int32& GetIndex() const
+				{
+					return Index;
+				}
+
+				FORCEINLINE bool IsPooled() const
+				{
+					return Index != INDEX_NONE;
+				}
+
 				void Reset()
 				{
-					Name = nullptr;
 					Owner.Reset();
 					Owner = nullptr;
 					Task = nullptr;

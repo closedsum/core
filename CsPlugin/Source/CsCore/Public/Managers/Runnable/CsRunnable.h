@@ -10,10 +10,15 @@
 #include "Managers/Runnable/CsTypes_Runnable.h"
 
 class FRunnableThread;
-struct FCsRunnableCache;
-struct FCsRunnablePayload;
-struct ICsRunnableTask;
-struct FCsRunnableTaskPayload;
+
+// NCsRunnable::FCache
+CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsRunnable, FCache)
+// NCsRunnable::NPayload::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsRunnable, NPayload, FImpl)
+// NCsRunnable::NTask::ITask
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsRunnable, NTask, ITask)
+// NCsRunnable::NTask::NPayload::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsRunnable, NTask, NPayload, FImpl)
 
 /**
 */
@@ -29,10 +34,10 @@ public:
 #pragma region
 public:
 
-	virtual bool Init();
-	virtual uint32 Run();
-	virtual void Stop();
-	virtual void Exit();
+	bool Init();
+	uint32 Run();
+	void Stop();
+	void Exit();
 
 #pragma endregion FRunnable interface
 
@@ -40,7 +45,9 @@ public:
 #pragma region
 public:
 
-	void Allocate(FCsRunnablePayload* Payload);
+#define PayloadType NCsRunnable::NPayload::FImpl
+	void Allocate(PayloadType* Payload);
+#undef PayloadType
 
 	void Deallocate();
 
@@ -67,16 +74,17 @@ public:
 
 #pragma endregion Thread
 
+#define CacheType NCsRunnable::FCache
+
 private:
 
-	FCsRunnableCache* Cache;
+	CacheType* Cache;
 
 public:
 
-	FORCEINLINE FCsRunnableCache* GetCache() const
-	{
-		return Cache;
-	}
+	FORCEINLINE CacheType* GetCache() const { return Cache; }
+
+#undef CacheType
 
 private:
 
@@ -84,10 +92,7 @@ private:
 
 public:
 
-	FORCEINLINE const FCsRunnableHandle& GetHandle() const
-	{
-		return Handle;
-	}
+	FORCEINLINE const FCsRunnableHandle& GetHandle() const { return Handle; }
 
 	void SetIndex(const int32& InIndex);
 
@@ -124,17 +129,19 @@ public:
 
 // Task
 #pragma region
+
+#define TaskType NCsRunnable::NTask::ITask
+
 private:
 
 	/** */
-	ICsRunnableTask* Task;
+	TaskType* Task;
 
 public:
 
-	FORCEINLINE ICsRunnableTask* GetTask() const
-	{
-		return Task;
-	}
+	FORCEINLINE TaskType* GetTask() const { return Task; }
+
+#undef TaskType
 
 private:
 
@@ -157,7 +164,9 @@ public:
 		return TaskState == ETaskState::Complete;
 	}
 
-	FCsRunnableHandle StartTask(FCsRunnableTaskPayload* Payload);
+#define TaskPayloadType NCsRunnable::NTask::NPayload::FImpl
+	FCsRunnableHandle StartTask(TaskPayloadType* Payload);
+#undef TaskPayloadType
 
 	void StopTask();
 

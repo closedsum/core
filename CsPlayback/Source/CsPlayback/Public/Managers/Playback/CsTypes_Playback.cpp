@@ -19,3 +19,5 @@ namespace NCsPlaybackEventRepeatedState
 }
 
 #pragma endregion PlaybackEventRepeatedState
+
+const FCsPlaybackByEvent FCsPlaybackByEvent::Invalid;

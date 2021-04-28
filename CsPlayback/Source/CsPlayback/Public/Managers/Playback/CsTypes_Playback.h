@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Input/CsTypes_Input.h"
 #include "Managers/Time/CsTypes_Time.h"
+#include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
 
 #include "CsTypes_Playback.generated.h"
 #pragma once
@@ -49,6 +50,13 @@ struct CSPLAYBACK_API FCsPlaybackByEvent
 
 public:
 
+	static const FCsPlaybackByEvent Invalid;
+
+public:
+
+	UPROPERTY()
+	FECsGameEventCoordinatorGroup Group;
+
 	UPROPERTY()
 	FECsGameEvent Event;
 
@@ -62,6 +70,7 @@ public:
 	ECsPlaybackEventRepeatedState RepeatedState;
 
 	FCsPlaybackByEvent() :
+		Group(),
 		Event(),
 		Value(0.0f),
 		Location(FVector::ZeroVector),
@@ -76,10 +85,20 @@ public:
 
 	void Reset()
 	{
+		Group = EMCsGameEventCoordinatorGroup::Get().GetMAX();
 		Event = EMCsGameEvent::Get().GetMAX();
 		Value = 0.0f;
 		Location = FVector::ZeroVector;
 		RepeatedState = ECsPlaybackEventRepeatedState::None;
+	}
+
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("Group: %s"), Group.ToChar()) + TEXT("\n") +
+			   FString::Printf(TEXT("Event: %s"), *(Event.ToString())) + TEXT("\n") +
+			   FString::Printf(TEXT("Value: %f"), Value) + TEXT("\n") +
+			   FString::Printf(TEXT("Location: %s"), *(Location.ToCompactString())) + TEXT("\n") +
+			   FString::Printf(TEXT("RepeatedState: %s"), EMCsPlaybackEventRepeatedState::Get().ToChar(RepeatedState));
 	}
 };
 
@@ -149,7 +168,15 @@ public:
 		{
 			for (int32 I = ToCount; I < FromCount; ++I)
 			{
-				Events.Add(From.Events[I]);
+				Events.AddDefaulted();
+				Events[I].DeltaTime = From.Events[I].DeltaTime;
+
+				Events[I].Events.Reset(From.Events[I].Events.Num());
+
+				for (const FCsPlaybackByEvent& Event : From.Events[I].Events)
+				{
+					Events[I].Events.Add(Event);
+				}
 			}
 			return true;
 		}

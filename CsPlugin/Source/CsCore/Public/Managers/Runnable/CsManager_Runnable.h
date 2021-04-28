@@ -5,9 +5,9 @@
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 // Runnable
 #include "Managers/Runnable/CsRunnable.h"
-#include "Managers/Runnable/Payload/CsRunnablePayload.h"
+#include "Managers/Runnable/Payload/CsPayload_Runnable.h"
 #include "Managers/Runnable/Task/CsRunnableTaskInfo.h"
-#include "Managers/Runnable/Task/CsRunnableTaskPayload.h"
+#include "Managers/Runnable/Task/CsPayload_RunnableTask.h"
 // Types
 #include "Managers/Runnable/CsTypes_Runnable.h"
 
@@ -36,64 +36,96 @@ struct CSCORE_API FCsManager_Runnable_Internal : public TCsManager_ResourceValue
 {
 };
 
-	// RunnablePayload
-
-/**
-* Container for holding a reference to a FCsRunnablePayload.
-* This serves as an easy way for a Manager Resource to keep track of the resource.
-*/
-struct CSCORE_API FCsResource_RunnablePayload : public TCsResourceContainer<FCsRunnablePayload>
+// Payload
+namespace NCsRunnable
 {
-};
+	namespace NPayload
+	{
+	#define PayloadType NCsRunnable::NPayload::FImpl
 
-/**
-* A manager handling allocating and deallocating of a FCsRunnablePayload and
-* are wrapped in the container: FCsResource_RunnablePayload.
-*/
-struct CSCORE_API FCsManager_RunnablePayload : public TCsManager_ResourceValueType_Fixed<FCsRunnablePayload, FCsResource_RunnablePayload, 0>
+		/**
+		* Container for holding a reference to a PayloadType (NCsRunnable::NPayload::FImpl).
+		* This serves as an easy way for a Manager Resource to keep track of the resource.
+		*/
+		struct CSCORE_API FResource : public TCsResourceContainer<PayloadType>
+		{
+		};
+
+		/**
+		* A manager handling allocating and deallocating of a PayloadType (NCsRunnable::NPayload::FImpl) and
+		* are wrapped in the container: FResource.
+		*/
+		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<PayloadType, FResource, 0>
+		{
+		};
+
+	#undef PayloadType
+	}
+}
+
+// TaskInfo
+namespace NCsRunnable
 {
-};
+	namespace NTask
+	{
+		namespace NInfo
+		{
+		#define InfoType NCsRunnable::NTask::NInfo::FInfo
 
-	// RunnableTaskInfo
+			/**
+			* Container for holding a reference to a InfoType (NCsRunnable::NTask::NInfo::Info).
+			* This serves as an easy way for a Manager Resource to keep track of the resource.
+			*/
+			struct CSCORE_API FResource : public TCsResourceContainer<InfoType>
+			{
+			};
 
-/**
-* Container for holding a reference to a FCsRunnableTaskInfo.
-* This serves as an easy way for a Manager Resource to keep track of the resource.
-*/
-struct CSCORE_API FCsResource_RunnableTaskInfo : public TCsResourceContainer<FCsRunnableTaskInfo>
+			/**
+			* A manager handling allocating and deallocating of a InfoType (NCsRunnable::NTask::NInfo::Info) and
+			* are wrapped in the container: FResource.
+			*/
+			struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<InfoType, FResource, 0>
+			{
+			};
+
+		#undef InfoType
+		}
+	}
+}
+
+// TaskPayload
+namespace NCsRunnable
 {
-};
+	namespace NTask
+	{
+		namespace NPayload
+		{
+		#define PayloadType NCsRunnable::NTask::NPayload::FImpl
 
-/**
-* A manager handling allocating and deallocating of a FCsRunnableTaskInfo and
-* are wrapped in the container: FCsResource_RunnableTaskInfo.
-*/
-struct CSCORE_API FCsManager_RunnableTaskInfo : public TCsManager_ResourceValueType_Fixed<FCsRunnableTaskInfo, FCsResource_RunnableTaskInfo, 0>
-{
-};
+			/**
+			* Container for holding a reference to a PayloadType (NCsRunnable::NTask::NPayload::FImpl).
+			* This serves as an easy way for a Manager Resource to keep track of the resource.
+			*/
+			struct CSCORE_API FResource : public TCsResourceContainer<PayloadType>
+			{
+			};
 
-	// RunnableTaskPayload
+			/**
+			* A manager handling allocating and deallocating of a PayloadType (NCsRunnable::NTask::NPayload::FImpl) and
+			* are wrapped in the container: FResource.
+			*/
+			struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<PayloadType, FResource, 0>
+			{
+			};
 
-/**
-* Container for holding a reference to a FCsRunnableTaskPayload.
-* This serves as an easy way for a Manager Resource to keep track of the resource.
-*/
-struct CSCORE_API FCsResource_RunnableTaskPayload : public TCsResourceContainer<FCsRunnableTaskPayload>
-{
-};
-
-/**
-* A manager handling allocating and deallocating of a FCsRunnableTaskPayload and
-* are wrapped in the container: FCsResource_RunnableTaskPayload.
-*/
-struct CSCORE_API FCsManager_RunnableTaskPayload : public TCsManager_ResourceValueType_Fixed<FCsRunnableTaskPayload, FCsResource_RunnableTaskPayload, 0>
-{
-};
+		#undef PayloadType
+		}
+	}
+}
 
 #pragma endregion Structs
 
 class ICsGetManagerRunnable;
-struct FCsRunnableTaskPayload;
 
 UCLASS(transient)
 class CSCORE_API UCsManager_Runnable : public UObject
@@ -173,13 +205,17 @@ public:
 
 	// Runnable
 #pragma region
+
+#define PayloadType NCsRunnable::NPayload::FImpl
+#define PayloadManagerType NCsRunnable::NPayload::FManager
+
 private:
 
-	FCsManager_RunnablePayload Manager_Payload;
+	PayloadManagerType Manager_Payload;
 
 public:
 
-	FORCEINLINE FCsRunnablePayload* AllocatePayload()
+	FORCEINLINE PayloadType* AllocatePayload()
 	{
 		return Manager_Payload.AllocateResource();
 	}
@@ -190,34 +226,47 @@ private:
 
 public:
 
-	FCsRunnable* Start(FCsRunnablePayload* Payload);
+	FCsRunnable* Start(PayloadType* Payload);
+
+#undef PayloadType
+#undef PayloadManagerType
 
 #pragma endregion Payload
 
 	// Task
 #pragma region
+
+#define TaskPayloadType NCsRunnable::NTask::NPayload::FImpl
+#define TaskPayloadManagerType NCsRunnable::NTask::NPayload::FManager
+
 private:
 
 	FCsRunnable* Runnable;
 
-	FCsManager_RunnableTaskPayload Manager_TaskPayload;
+	TaskPayloadManagerType Manager_TaskPayload;
 
 public:
 
-	FORCEINLINE FCsRunnableTaskPayload* AllocateTaskPayload()
+	FORCEINLINE TaskPayloadType* AllocateTaskPayload()
 	{
 		return Manager_TaskPayload.AllocateResource();
 	}
 
 private:
 
-	FCsManager_RunnableTaskInfo Manager_TaskInfo;
+#define TaskInfoManagerType NCsRunnable::NTask::NInfo::FManager
+	TaskInfoManagerType Manager_TaskInfo;
+#undef TaskInfoManagerType
 
 public:
 
-	FCsRunnableHandle StartTask(FCsRunnableTaskPayload* Payload);
+
+	FCsRunnableHandle StartTask(TaskPayloadType* Payload);
 
 	bool StopQueuedTask(const FCsRunnableHandle& Handle);
+
+#undef TaskPayloadType
+#undef TaskPayloadManagerType
 
 #pragma endregion Task
 

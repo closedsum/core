@@ -6,35 +6,41 @@ DECLARE_DELEGATE(FCsOnRunnableTaskComplete)
 
 class UObject;
 
-/**
-*/
-struct CSCORE_API ICsRunnableTask
+namespace NCsRunnable
 {
-public:
+	namespace NTask
+	{
+		/**
+		*/
+		struct CSCORE_API ITask
+		{
+		public:
 
-	virtual ~ICsRunnableTask(){}
+			virtual ~ITask(){}
 
-public:
+		public:
 
-	/**
-	*/
-	virtual void Execute() = 0;
+			/**
+			*/
+			virtual void Execute() = 0;
 
-	/**
-	*/
-	virtual bool IsRunning() const = 0;
+			/**
+			*/
+			virtual bool IsRunning() const = 0;
 
-	/**
-	*/
-	virtual bool IsComplete() const = 0;
+			/**
+			*/
+			virtual bool IsComplete() const = 0;
 
-	/**
-	*/
-	virtual TArray<FCsOnRunnableTaskComplete>& GetOnComplete_Events() = 0;
+			/**
+			*/
+			virtual TArray<FCsOnRunnableTaskComplete>& GetOnComplete_Events() = 0;
 
-	/**
-	*/
-	virtual TArray< FCsOnRunnableTaskComplete>& GetOnComplete_AsyncEvents() = 0;
+			/**
+			*/
+			virtual TArray< FCsOnRunnableTaskComplete>& GetOnComplete_AsyncEvents() = 0;
 
-	virtual void Reset() = 0;
-};
+			virtual void Reset() = 0;
+		};
+	}
+}

@@ -21,14 +21,14 @@ class CSPLAYBACK_API UCsManager_Playback : public UObject
 #pragma region
 public:
 
-#if !UE_BUILD_SHIPPING
+#if WITH_EDITOR
 	static UCsManager_Playback* Get(UObject* InRoot = nullptr);
 #else
 	FORCEINLINE static UCsManager_Playback* Get(UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? nullptr : s_Instance;
 	}
-#endif // #if !UE_BUILD_SHIPPING
+#endif // #if WITH_EDITOR
 
 #if WITH_EDITOR
 	static bool IsValid(UObject* InRoot = nullptr);
@@ -62,7 +62,7 @@ protected:
 
 public:
 
-	static UCsManager_Playback* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static UCsManager_Playback* GetFromWorldContextObject(UObject* WorldContextObject);
 
 #endif // #if WITH_EDITOR
 
@@ -137,9 +137,20 @@ private:
 	TArray<FCsPlaybackByEvent> Preview_Events;
 	TArray<FCsPlaybackByEvent> Final_Events;
 
+	TSet<FECsGameEvent> IgnoredGameEvents;
+
 public:
 
-	void OnGameEventInfos(const TArray<FCsGameEventInfo>& Infos);
+#define GameEventGroupType FECsGameEventCoordinatorGroup
+	void OnProcessGameEventInfo(const GameEventGroupType& Group, const FCsGameEventInfo& Info);
+#undef GameEventGroupType
+
+private:
+
+	bool bProcessedGameEventInfos;
+	bool Last_bProcessedGameEventInfos;
+
+	void ResolveEvents();
 
 #pragma endregion Event
 
@@ -153,17 +164,21 @@ private:
 
 	private:
 
+		UCsManager_Playback* Outer;
+
 		bool bActive;
 
 		FCsPlaybackByEvents PlaybackByEvents;
 
-		FCsTime StartTime;
+		FCsDeltaTime StartTime;
 
 		FCsDeltaTime ElapsedTime;
 
 		FCsRunnable* Runnable;
 
-		struct FTask : ICsRunnableTask
+	#define TaskType NCsRunnable::NTask::ITask
+
+		struct FTask : TaskType
 		{
 			friend struct FRecord;
 
@@ -205,7 +220,9 @@ private:
 
 			~FTask() {}
 
-			// ICsRunnableTask
+		// NCsRunnable::NTask::ITask
+		#pragma region
+		public:
 
 			void Execute();
 
@@ -243,13 +260,18 @@ private:
 			{
 				State = EState::Running;
 			}
+
+		#pragma endregion NCsRunnable::NTask::ITask
 		};
+
+		#undef TaskType
 
 		FTask* Task;
 
 	public:
 
 		FRecord() :
+			Outer(nullptr),
 			bActive(false),
 			PlaybackByEvents(),
 			StartTime(),

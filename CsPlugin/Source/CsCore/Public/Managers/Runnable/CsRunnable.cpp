@@ -3,20 +3,23 @@
 
 #include "Runtime/Core/Public/HAL/RunnableThread.h"
 // Runnable
-#include "Managers/Runnable/Cache/CsRunnableCache.h"
-#include "Managers/Runnable/Payload/CsRunnablePayload.h"
+#include "Managers/Runnable/Cache/CsCache_Runnable.h"
+#include "Managers/Runnable/Payload/CsPayload_Runnable.h"
 // Task
 #include "Managers/Runnable/Task/CsRunnableTask.h"
-#include "Managers/Runnable/Task/CsRunnableTaskPayload.h"
+#include "Managers/Runnable/Task/CsPayload_RunnableTask.h"
 
 // Cache
 #pragma region
 
-namespace NCsRunnableDelegateCached
+namespace NCsRunnableDelegate
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CsRunnable = TEXT("FCsRunnable");
+		namespace Str
+		{
+			const FString CsRunnable = TEXT("FCsRunnable");
+		}
 	}
 }
 
@@ -35,7 +38,9 @@ FCsRunnable::FCsRunnable() :
 	TaskState(ETaskState::None)
 
 {
-	Cache = new FCsRunnableCache();
+	typedef NCsRunnable::FCache CacheType;
+
+	Cache = new CacheType();
 }
 
 FCsRunnable::~FCsRunnable()
@@ -124,8 +129,11 @@ void FCsRunnable::Exit()
 // Pool
 #pragma region
 
-void FCsRunnable::Allocate(FCsRunnablePayload* Payload)
+#define PayloadType NCsRunnable::NPayload::FImpl
+void FCsRunnable::Allocate(PayloadType* Payload)
 {
+#undef PayloadType
+
 	Cache->Allocate(Payload);
 
 	Task = Payload->Task;
@@ -151,7 +159,7 @@ void FCsRunnable::Deallocate()
 
 void FCsRunnable::StartThread()
 {
-	using namespace NCsRunnableDelegateCached;
+	using namespace NCsRunnableDelegate::NCached;
 
 	// TODO: BUG: Issue with STAT groups being created and needing a unique name. This is a problem on NON-SHIPPING Builds
 #if UE_BUILD_SHIPPING
@@ -194,8 +202,11 @@ void FCsRunnable::SetIndex(const int32& InIndex)
 // Task
 #pragma region
 
-FCsRunnableHandle FCsRunnable::StartTask(FCsRunnableTaskPayload* Payload)
-{	
+#define TaskPayloadType NCsRunnable::NTask::NPayload::FImpl
+FCsRunnableHandle FCsRunnable::StartTask(TaskPayloadType* Payload)
+{
+#undef TaskPayloadType
+
 	checkf(Payload, TEXT("FCsRunnable::StartTask: Payload is NULL."));
 
 	Cache->Owner = Payload->Owner;

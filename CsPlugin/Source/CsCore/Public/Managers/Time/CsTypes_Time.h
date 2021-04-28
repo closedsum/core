@@ -70,6 +70,16 @@ public:
 	}
 	~FCsDeltaTime() {}
 
+	FORCEINLINE bool operator==(const FCsDeltaTime& B) const
+	{
+		return Time == B.Time && RealTime == B.RealTime && Timespan == B.Timespan && Frame == B.Frame;
+	}
+
+	FORCEINLINE bool operator!=(const FCsDeltaTime& B) const
+	{
+		return !(*this == B);
+	}
+
 	FORCEINLINE FCsDeltaTime& operator+=(const FCsDeltaTime& B)
 	{
 		Time += B.Time;
@@ -88,17 +98,17 @@ public:
 		A.Frame	   = Frame + B.Frame;
 		return A;
 	}
-	/*
-	FORCEINLINE friend FCsDeltaTime operator-(const FCsTime& A, const FCsTime& B)
+	
+	FORCEINLINE friend FCsDeltaTime operator-(const FCsDeltaTime& A, const FCsDeltaTime& B)
 	{
 		FCsDeltaTime DeltaTime;
 		DeltaTime.Time = A.Time - B.Time;
 		DeltaTime.RealTime = A.RealTime - B.RealTime;
-		DeltaTime.Timespan = A.Time - B.Time;
+		DeltaTime.Timespan = A.Timespan - B.Timespan;
 		DeltaTime.Frame = A.Frame - B.Frame;
 		return DeltaTime;
 	}
-	*/
+
 	void Reset()
 	{
 		Time = 0.0f;

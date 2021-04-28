@@ -7,19 +7,12 @@
 // Console Command
 #include "Coordinators/GameEvent/CsConsoleCommand_Coordinator_GameEvent.h"
 // Library
-#include "Library/CsLibrary_Common.h"
+#include "Coordinators/GameEvent/CsLibrary_Coordinator_GameEvent.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Coordinators/GameEvent/CsGetCoordinatorGameEvent.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/World.h"
-#include "Engine/Engine.h"
-
-#include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -31,6 +24,7 @@ namespace NCsCoordinatorGameEvent
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_GameEvent, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_GameEvent, ProcessGameEventInfo);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_GameEvent, QueueGameEventInfo);
 		}
@@ -193,22 +187,23 @@ UCsCoordinator_GameEvent::UCsCoordinator_GameEvent(const FObjectInitializer& Obj
 	return nullptr;
 }
 
-/*static*/ UCsCoordinator_GameEvent* UCsCoordinator_GameEvent::GetFromWorldContextObject(const UObject* WorldContextObject)
+/*static*/ UCsCoordinator_GameEvent* UCsCoordinator_GameEvent::GetFromWorldContextObject(UObject* WorldContextObject)
 {
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	using namespace NCsCoordinatorGameEvent::NCached;
+
+	const FString& Context = Str::GetFromWorldContextObject;
+
+	typedef NCsGameEvent::NCoordinator::FLibrary GameEventCoordinatorLibrary;
+
+	if (UObject* ContextRoot = GameEventCoordinatorLibrary::GetSafeContextRoot(Context, WorldContextObject))
 	{
 		// Game State
-		if (UCsCoordinator_GameEvent* Coordinator = GetSafe(World->GetGameInstance()))
+		if (UCsCoordinator_GameEvent* Coordinator = GetSafe(ContextRoot))
 			return Coordinator;
 
-		UE_LOG(LogCs, Warning, TEXT("UCsCoordinator_GameEvent::GetFromWorldContextObject: Failed to find Coordinator of type UCsCoordinator_GameEvent from GameInstance."));
-
-		return nullptr;
+		UE_LOG(LogCs, Warning, TEXT("%s: Failed to find Coordinator of type UCsCoordinator_GameEvent from ContextRoot."), *(ContextRoot->GetName()));
 	}
-	else
-	{
-		return nullptr;
-	}
+	return nullptr;
 }
 
 #endif // #if WITH_EDITOR

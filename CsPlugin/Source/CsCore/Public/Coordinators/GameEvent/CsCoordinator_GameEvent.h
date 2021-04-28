@@ -55,7 +55,7 @@ protected:
 
 public:
 
-	static UCsCoordinator_GameEvent* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static UCsCoordinator_GameEvent* GetFromWorldContextObject(UObject* WorldContextObject);
 
 #endif // #if WITH_EDITOR
 
@@ -135,7 +135,20 @@ public:
 
 	void QueueGameEventInfo(const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info);
 
+	/**
+	* Handle queued events for Group (FECsGameEventCoordinatorGroup): ManagerInput0.
+	* 
+	* @param DeltaTime
+	* @param bGamePaused
+	*/
 	void OnPostProcessInput_ManagerInput0(const float& DeltaTime, const bool bGamePaused);
+
+	/**
+	* Handle queued events for Group (FECsGameEventCoordinatorGroup): ManagerInput1.
+	*
+	* @param DeltaTime
+	* @param bGamePaused
+	*/
 	void OnPostProcessInput_ManagerInput1(const float& DeltaTime, const bool bGamePaused);
 
 	void ProcessQueuedGameEventInfos(const FECsGameEventCoordinatorGroup& Group);

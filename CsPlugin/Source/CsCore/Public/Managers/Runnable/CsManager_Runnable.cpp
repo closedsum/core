@@ -6,6 +6,7 @@
 #include "CsCVars.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
+#include "Managers/Runnable/CsLibrary_Manager_Runnable.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Task
@@ -17,13 +18,6 @@
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/Runnable/CsGetManagerRunnable.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/World.h"
-#include "Engine/Engine.h"
-
-#include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
 // static initializations
@@ -40,6 +34,7 @@ namespace NCsManagerRunnable
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Runnable, Start);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Runnable, GetFromWorldContextObject);
 		}
 	}
 }
@@ -54,19 +49,14 @@ UCsManager_Runnable::UCsManager_Runnable(const FObjectInitializer& ObjectInitial
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
+
 /*static*/ UCsManager_Runnable* UCsManager_Runnable::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerRunnable(InRoot)->GetManager_Runnable();
-#else
-	if (s_bShutdown)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Runnable::Get: Manager has already shutdown."));
-		return nullptr;
-	}
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+
+#endif // #if WITH_EDITOR
 
 /*static*/ bool UCsManager_Runnable::IsValid(UObject* InRoot /*=nullptr*/)
 {
@@ -200,22 +190,22 @@ UCsManager_Runnable::UCsManager_Runnable(const FObjectInitializer& ObjectInitial
 	return nullptr;
 }
 
-/*static*/ UCsManager_Runnable* UCsManager_Runnable::GetFromWorldContextObject(const UObject* WorldContextObject)
+/*static*/ UCsManager_Runnable* UCsManager_Runnable::GetFromWorldContextObject(UObject* WorldContextObject)
 {
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	using namespace NCsManagerRunnable::NCached;
+
+	const FString& Context = Str::GetFromWorldContextObject;
+
+	typedef NCsRunnable::NManager::FLibrary RunnableManagerLibrary;
+
+	if (UObject* ContextRoot = RunnableManagerLibrary::GetSafeContextRoot(Context, WorldContextObject))
 	{
-		// Game Instance
-		if (UCsManager_Runnable* Manager = GetSafe(World->GetGameInstance()))
+		if (UCsManager_Runnable* Manager = GetSafe(ContextRoot))
 			return Manager;
 
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Runnable::GetFromWorldContextObject: Failed to Manager Item of type UCsManager_Runnable from GameInstance."));
-
-		return nullptr;
+		UE_LOG(LogCs, Warning, TEXT("%s: Failed to Manager Item of type UCsManager_Runnable from ContextRoot: %s."), *(ContextRoot->GetName()));
 	}
-	else
-	{
-		return nullptr;
-	}
+	return nullptr;
 }
 
 #endif // #if WITH_EDITOR
@@ -232,9 +222,11 @@ void UCsManager_Runnable::Initialize()
 
 			Manager_Internal.CreatePool(Settings->Manager_Runnable.RunnablePoolSize);
 
-			const TArray<FCsResource_Runnable*>& Pool = Manager_Internal.GetPool();
+			typedef NCsRunnable::FResource ContainerType;
 
-			for (FCsResource_Runnable* Container : Pool)
+			const TArray<ContainerType*>& Pool = Manager_Internal.GetPool();
+
+			for (ContainerType* Container : Pool)
 			{
 				FCsRunnable* R		= Container->Get();
 				const int32& Index	= R->GetCache()->GetIndex();
@@ -411,14 +403,16 @@ void UCsManager_Runnable::Update(const FCsDeltaTime& DeltaTime)
 	}
 	// Runnables
 	{
-		TCsDoubleLinkedList<FCsResource_Runnable*>* Current = Manager_Internal.GetAllocatedHead();
-		TCsDoubleLinkedList<FCsResource_Runnable*>* Next    = Current;
+		typedef NCsRunnable::FResource ContainerType;
+
+		TCsDoubleLinkedList<ContainerType*>* Current = Manager_Internal.GetAllocatedHead();
+		TCsDoubleLinkedList<ContainerType*>* Next    = Current;
 
 		while (Next)
 		{
-			Current							= Next;
-			FCsResource_Runnable* Container = **Current;
-			Next							= Current->GetNextLink();
+			Current					 = Next;
+			ContainerType* Container = **Current;
+			Next					 = Current->GetNextLink();
 
 			FCsRunnable* R = Container->Get();
 

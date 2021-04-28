@@ -18,23 +18,25 @@
 // Structs
 #pragma region
 
-	// Runnable
-
-/**
-* Container for holding a reference to a FCsRunnable.
-* This serves as an easy way for a Manager Resource to keep track of the resource.
-*/
-struct CSCORE_API FCsResource_Runnable : public TCsResourceContainer<FCsRunnable>
+// Runnable
+namespace NCsRunnable
 {
-};
+	/**
+	* Container for holding a reference to a FCsRunnable.
+	* This serves as an easy way for a Manager Resource to keep track of the resource.
+	*/
+	struct CSCORE_API FResource : public TCsResourceContainer<FCsRunnable>
+	{
+	};
 
-/**
-* A manager handling allocating and deallocating of a FCsRunnable and
-* are wrapped in the container: FCsResource_Runnable.
-*/
-struct CSCORE_API FCsManager_Runnable_Internal : public TCsManager_ResourceValueType_Fixed<FCsRunnable, FCsResource_Runnable, 0>
-{
-};
+	/**
+	* A manager handling allocating and deallocating of a FCsRunnable and
+	* are wrapped in the container: FResource.
+	*/
+	struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FCsRunnable, FResource, 0>
+	{
+	};
+}
 
 // Payload
 namespace NCsRunnable
@@ -136,7 +138,14 @@ class CSCORE_API UCsManager_Runnable : public UObject
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsManager_Runnable* Get(UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static UCsManager_Runnable* Get(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
 
 	static bool IsValid(UObject* InRoot = nullptr);
 
@@ -157,7 +166,7 @@ protected:
 
 public:
 
-	static UCsManager_Runnable* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static UCsManager_Runnable* GetFromWorldContextObject(UObject* WorldContextObject);
 
 #endif // #if WITH_EDITOR
 
@@ -222,7 +231,9 @@ public:
 
 private:
 
-	FCsManager_Runnable_Internal Manager_Internal;
+#define RunnableManagerType NCsRunnable::FManager
+	RunnableManagerType Manager_Internal;
+#undef RunnableManagerType
 
 public:
 

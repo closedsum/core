@@ -15,8 +15,9 @@ public class CsPlayback : ModuleRules
                     "CoreUObject",
                     "Engine",
                     "AssetRegistry",
-                    "CsCore",
-                    "JsonUtilities"
+                    "Json",
+                    "JsonUtilities",
+                    "CsCore"
                 }
             );
 

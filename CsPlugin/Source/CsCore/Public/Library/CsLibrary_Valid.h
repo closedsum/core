@@ -498,6 +498,39 @@ namespace NCsValid
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NSoftObjectPath::FLibrary::IsValid(Context, __A, __temp__str__, Log)) { return nullptr; } \
 	}
+
+// Delegate
+
+// Assume const FString& Context has been defined
+#define CS_IS_DELEGATE_BOUND_CHECKED(__Delegate) \
+	{ \
+		static const FString __temp__str__ = #__Delegate; \
+		checkf(__Delegate.IsBound(), TEXT("%s: %s is NOT Bound."), *Context, *__temp__str__); \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_DELEGATE_BOUND(__Delegate) \
+	{ \
+		static const FString __temp__str__ = #__Delegate; \
+		if (!__Delegate.IsBound()) \
+		{ \
+			if (Log) \
+				Log(FString::Printf(TEXT("%s: %s is NOT Bound."), *Context, *__temp__str__)); \
+			return false; \
+		} \
+		return true; \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_DELEGATE_BOUND_EXIT(__Delegate) \
+	{ \
+		static const FString __temp__str__ = #__Delegate; \
+		if (!__Delegate.IsBound()) \
+		{ \
+			if (Log) \
+				Log(FString::Printf(TEXT("%s: %s is NOT Bound."), *Context, *__temp__str__)); \
+			return; \
+		} \
+	}
+
 #else
 // Int
 #define CS_IS_INT_GREATER_THAN_CHECKED(__A, __B)
@@ -536,4 +569,8 @@ namespace NCsValid
 #define CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(__A)
 #define CS_IS_SOFT_OBJECT_PATH_VALID(__A)
 #define CS_IS_SOFT_OBJECT_PATH_VALID_RET_NULL(__A)
+// Delegate
+#define CS_IS_DELEGATE_BOUND_CHECKED(__Delegate)
+#define CS_IS_DELEGATE_BOUND(__Delegate)
+#define CS_IS_DELEGATE_BOUND_EXIT(__Delegate)
 #endif // #if !UE_BUILD_SHIPPING

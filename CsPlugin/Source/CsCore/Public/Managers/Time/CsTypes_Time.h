@@ -109,6 +109,26 @@ public:
 		return DeltaTime;
 	}
 
+	FORCEINLINE friend bool operator>(const FCsDeltaTime& A, const FCsDeltaTime& B)
+	{
+		return A.Time > B.Time || A.RealTime > B.RealTime || A.Timespan > B.Timespan || A.Frame > B.Frame;
+	}
+
+	FORCEINLINE friend bool operator>=(const FCsDeltaTime& A, const FCsDeltaTime& B)
+	{
+		return A.Time >= B.Time || A.RealTime >= B.RealTime || A.Timespan >= B.Timespan || A.Frame >= B.Frame;
+	}
+
+	FORCEINLINE friend bool operator<(const FCsDeltaTime& A, const FCsDeltaTime& B)
+	{
+		return A.Time < B.Time || A.RealTime < B.RealTime || A.Timespan < B.Timespan || A.Frame < B.Frame;
+	}
+
+	FORCEINLINE friend bool operator<=(const FCsDeltaTime& A, const FCsDeltaTime& B)
+	{
+		return A.Time <= B.Time || A.RealTime <= B.RealTime || A.Timespan <= B.Timespan || A.Frame <= B.Frame;
+	}
+
 	void Reset()
 	{
 		Time = 0.0f;

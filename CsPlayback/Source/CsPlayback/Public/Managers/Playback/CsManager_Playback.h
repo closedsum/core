@@ -4,13 +4,18 @@
 // Types
 #include "Managers/Time/CsTypes_Time.h"
 #include "Managers/Playback/CsTypes_Playback.h"
+// Utility
+#include "Utility/CsPlaybackLog.h"
 // Runnable
 #include "Managers/Runnable/Task/CsRunnableTask.h"
+// Coroutine
+#include "Coroutine/CsRoutineHandle.h"
 
 #include "CsManager_Playback.generated.h"
 
 class ICsGetManagerPlayback;
 class FCsRunnable;
+struct FCsRoutine;
 
 UCLASS(transient)
 class CSPLAYBACK_API UCsManager_Playback : public UObject
@@ -106,22 +111,18 @@ public:
 
 // State
 #pragma region
-public:
 
-	enum class EPlaybackState : uint8
-	{
-		None,
-		Playback,
-		Record
-	};
+#define StateType NCsPlayback::EState
 
 private:
 
-	EPlaybackState PlaybackState;
+	StateType PlaybackState;
 
 public:
 
-	void SetPlaybackState(const EPlaybackState& NewState);
+	void SetPlaybackState(const StateType& NewState);
+
+#undef StateType
 
 #pragma endregion State
 
@@ -154,6 +155,18 @@ private:
 
 #pragma endregion Event
 
+// Save
+#pragma region
+private:
+
+	FString SaveDirAbsolute;
+
+public:
+
+	FORCEINLINE const FString& GetSaveDirAbsolute() const { return SaveDirAbsolute; }
+
+#pragma endregion Save
+
 // Record
 #pragma region
 private:
@@ -165,8 +178,6 @@ private:
 	private:
 
 		UCsManager_Playback* Outer;
-
-		bool bActive;
 
 		FCsPlaybackByEvents PlaybackByEvents;
 
@@ -272,18 +283,12 @@ private:
 
 		FRecord() :
 			Outer(nullptr),
-			bActive(false),
 			PlaybackByEvents(),
 			StartTime(),
 			ElapsedTime(),
 			Runnable(nullptr), 
 			Task(nullptr)
 		{
-		}
-
-		FORCEINLINE bool IsActive() const
-		{
-			return bActive;
 		}
 
 		void Start(const FSoftObjectPath& LevelPath);
@@ -299,7 +304,7 @@ public:
 
 	FORCEINLINE bool IsRecording() const
 	{
-		return PlaybackState == EPlaybackState::Record;
+		return PlaybackState == NCsPlayback::EState::Record;
 	}
 
 #pragma endregion Record
@@ -310,8 +315,78 @@ private:
 
 	struct FPlayback
 	{
+		friend class UCsManager_Playback;
 
+	private:
+
+		UCsManager_Playback* Outer;
+
+		FString FileName;
+
+		DECLARE_DELEGATE(FMakeReadyImpl);
+
+		FMakeReadyImpl MakeReadyImpl;
+
+		DECLARE_DELEGATE_RetVal(bool, FIsReadyImpl);
+
+		FIsReadyImpl IsReadyImpl;
+
+		FCsPlaybackByEvents PlaybackByEvents;
+
+		TArray<FCsPlaybackByEvent> QueuedSustainedEvents;
+		TSet<FCsPlaybackByEvent> SustainedEvents;
+		TSet<FECsGameEvent> SustainedGameEvents;
+
+		int32 Index;
+
+		FCsDeltaTime ElapsedTime;
+
+	public:
+
+		FPlayback() :
+			Outer(nullptr),
+			FileName(),
+			MakeReadyImpl(),
+			IsReadyImpl(),
+			PlaybackByEvents(),
+			QueuedSustainedEvents(),
+			SustainedEvents(),
+			SustainedGameEvents(),
+			Index(0),
+			ElapsedTime(),
+			PlayLatestHandle()
+		{
+		}
+
+		bool SetLatest(const FString& Context, void(*Log)(const FString&) = &NCsPlayback::FLog::Warning);
+
+		FMakeReadyImpl& GetMakeReadyImpl() { return MakeReadyImpl; }
+		FIsReadyImpl& GetIsReadyImpl() { return IsReadyImpl; }
+
+		const FSoftObjectPath& GetLevelPath() const { return PlaybackByEvents.Level; }
+
+		void PlayLatestChecked();
+		void SafePlayLatest(const FString& Context, void(*Log)(const FString&) = &NCsPlayback::FLog::Warning);
+
+	private:
+
+		char PlayLatest_Internal(FCsRoutine* R);
+
+		FCsRoutineHandle PlayLatestHandle;
+
+		void Update(const FCsDeltaTime& DeltaTime);
+
+	public:
+
+		FORCEINLINE bool IsSustainedGameEvent(const FECsGameEvent& Event) const
+		{
+			return SustainedGameEvents.Contains(Event);
+		}
 	};
+
+public:
+
+	FPlayback Playback;
 
 #pragma endregion Playback
 };

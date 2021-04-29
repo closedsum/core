@@ -1,10 +1,47 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Types
 #include "Managers/Input/CsTypes_Input.h"
 #include "Managers/Time/CsTypes_Time.h"
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
+// Log
+#include "Utility/CsPlaybackLog.h"
 
 #include "CsTypes_Playback.generated.h"
 #pragma once
+
+// NCsPlayback::EState
+#pragma region
+
+namespace NCsPlayback
+{
+	enum class EState : uint8
+	{
+		None,
+		Playback,
+		Record,
+		EState_MAX
+	};
+
+	struct CSPLAYBACK_API EMState : public TCsEnumMap<EState>
+	{
+		CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMState, EState)
+	};
+
+	namespace NState
+	{
+		namespace Ref
+		{
+			typedef EState Type;
+
+			extern CSPLAYBACK_API const Type None;
+			extern CSPLAYBACK_API const Type Playback;
+			extern CSPLAYBACK_API const Type Record;
+			extern CSPLAYBACK_API const Type EState_MAX;
+		}
+	}
+}
+
+#pragma endregion NCsPlayback::EState
 
 // PlaybackEventRepeatedState
 #pragma region
@@ -76,6 +113,21 @@ public:
 		Location(FVector::ZeroVector),
 		RepeatedState(ECsPlaybackEventRepeatedState::None)
 	{
+	}
+
+	FORCEINLINE bool operator==(const FCsPlaybackByEvent& B) const
+	{
+		return Group == B.Group && Event == B.Event && Value == B.Value && Location == B.Location;
+	}
+
+	FORCEINLINE bool operator!=(const FCsPlaybackByEvent& B) const
+	{
+		return !(*this == B);
+	}
+
+	friend uint32 GetTypeHash(const FCsPlaybackByEvent& B)
+	{
+		return GetTypeHash(B.Group) ^ GetTypeHash(B.Event) ^ GetTypeHash(B.Value) ^ GetTypeHash(B.Location);
 	}
 
 	FORCEINLINE bool IsValid() const
@@ -187,6 +239,9 @@ public:
 	{
 		Events.Reset(Events.Max());
 	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsPlayback::FLog::Warning) const;
 };
 
 #pragma endregion FCsPlaybackByEvents

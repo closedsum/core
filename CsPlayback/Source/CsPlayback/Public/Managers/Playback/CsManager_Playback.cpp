@@ -2,10 +2,13 @@
 #include "Managers/Playback/CsManager_Playback.h"
 #include "CsPlayback.h"
 
+// Coroutine
+#include "Coroutine/CsCoroutineScheduler.h"
 // Library
 #include "Level/CsLibrary_Level.h"
 #include "Managers/Playback/CsLibrary_Manager_Playback.h"
 #include "Managers/Runnable/CsLibrary_Manager_Runnable.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 //#include "Settings/CsDeveloperSettings.h"
 // Managers
@@ -37,6 +40,24 @@
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback, SetPlaybackState);
+		}
+	}
+
+	namespace NPlayback
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FPlayback, PlayLatestChecked);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FPlayback, SafePlayLatest);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FPlayback, PlayLatest_Internal);
+			}
+
+			namespace Name
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Playback::FPlayback, PlayLatest_Internal);
+			}
 		}
 	}
  }
@@ -235,10 +256,14 @@ void UCsManager_Playback::Initialize()
 		// Set FileName
 		{
 			const FString Dir		 = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir());
-			const FString SaveFolder = TEXT("Playback/") + FString(FPlatformProcess::UserName()) + TEXT("/");
-			const FString FileName	 = Dir + SaveFolder + FDateTime::Now().ToString(TEXT("%Y%m%d%H%M%S%s")) + TEXT("_") + FGuid::NewGuid().ToString(EGuidFormats::Digits) + TEXT(".json");
+			const FString SaveFolder = TEXT("Playback/") + FString(FPlatformProcess::UserName());
 
-			Record.Task->FileName = FileName;
+			SaveDirAbsolute = Dir + SaveFolder;
+
+			const FString FileName = FDateTime::Now().ToString(TEXT("%Y%m%d%H%M%S%s")) + TEXT("_") + FGuid::NewGuid().ToString(EGuidFormats::Digits) + TEXT(".json");
+			const FString FilePath = SaveDirAbsolute + TEXT("/") + FileName;
+
+			Record.Task->FileName = FilePath;
 		}
 
 		typedef NCsRunnable::NPayload::FImpl PayloadType;
@@ -308,44 +333,61 @@ void UCsManager_Playback::SetMyRoot(UObject* InRoot)
 // State
 #pragma region
 
-void UCsManager_Playback::SetPlaybackState(const EPlaybackState& NewState)
+#define StateType NCsPlayback::EState
+void UCsManager_Playback::SetPlaybackState(const StateType& NewState)
 {
 	using namespace NCsManagerPlayback::NCached;
 
 	const FString& Context = Str::SetPlaybackState;
 
+	typedef NCsPlayback::EMState StateMapType;
+
 	if (PlaybackState == NewState)
 	{
-		UE_LOG(LogCsPlayback, Warning, TEXT("%s: PlaybackStat is already: ."), *Context);
+		UE_LOG(LogCsPlayback, Warning, TEXT("%s: PlaybackState is already: %s."), *Context, StateMapType::Get().ToChar(PlaybackState));
 		return;
 	}
 
 	PlaybackState = NewState;
 
-	// Record
-	if (PlaybackState == EPlaybackState::Record)
-	{
-		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
+	typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
 
+	// Playback
+	if (PlaybackState == StateType::Playback)
+	{
+		checkf(!Playback.FileName.IsEmpty(), TEXT("%s: No FileName set for Playback."), *Context);
+
+		Playback.Index = CS_FIRST;
+		Playback.ElapsedTime.Reset();
+	}
+	// Record
+	else
+	if (PlaybackState == StateType::Record)
+	{
 		FSoftObjectPath LevelPath(LevelLibrary::GetNameChecked(Context, MyRoot));
 
 		Record.Start(LevelPath);
 	}
 }
+#undef StateType
 
 #pragma endregion State
 
 void UCsManager_Playback::Update(const FCsDeltaTime& DeltaTime)
 {
+	typedef NCsPlayback::EState StateType;
+
 	// Playback
-	// Record
-	if (PlaybackState == EPlaybackState::Record)
+	if (PlaybackState == StateType::Playback)
 	{
-		if (IsRecording())
-		{
-			ResolveEvents();
-			Record.Update(DeltaTime);
-		}
+		Playback.Update(DeltaTime);
+	}
+	// Record
+	else
+	if (PlaybackState == StateType::Record)
+	{
+		ResolveEvents();
+		Record.Update(DeltaTime);
 	}
 }
 
@@ -559,3 +601,206 @@ void UCsManager_Playback::FRecord::FTask::Execute()
 #pragma endregion Task
 
 #pragma endregion Record
+
+// Playback
+#pragma region
+
+bool UCsManager_Playback::FPlayback::SetLatest(const FString& Context, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+{
+	TArray<FString> FoundFiles;
+
+	const FString& Dir = Outer->GetSaveDirAbsolute();
+
+	if (Dir.IsEmpty())
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: SaveDirAbsolute is EMPTY."), *Context));
+		return false;
+	}
+
+	IFileManager::Get().FindFiles(FoundFiles, *Dir, *NCsCached::Ext::json);
+
+	if (FoundFiles.Num() > CS_EMPTY)
+	{
+		int32 LatestIndex	 = 0;
+		FileName			 = Dir + TEXT("/") + FoundFiles[LatestIndex];
+		FDateTime LatestTime = IFileManager::Get().GetTimeStamp(*FileName);
+
+		const int32 Count = FoundFiles.Num();
+
+		for (int32 I = 1; I < Count; ++I)
+		{
+			const FString& File = FoundFiles[I];
+			FString Path		= Dir + TEXT("/") + File;
+
+			FDateTime Time = IFileManager::Get().GetTimeStamp(*Path);
+
+			if (Time > LatestTime)
+			{
+				LatestIndex = I;
+				FileName    = Path;
+				LatestTime  = Time;
+			}
+		}
+
+		// File to String
+		FString OutString;
+		bool Success = FFileHelper::LoadFileToString(OutString, *FileName);
+
+		if (!Success)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to load File @ %s to string."), *Context, *FileName));
+
+			FileName = TEXT("");
+			return false;
+		}
+		// Json String to Struct
+		Success = FJsonObjectConverter::JsonObjectStringToUStruct<FCsPlaybackByEvents>(OutString, &PlaybackByEvents, 0, 0);
+
+		if (!Success)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to convert File @ %s to UStruct of type: FCsPlaybackByEvents."), *Context, *FileName));
+
+			FileName = TEXT("");
+			return false;
+		}
+
+		if (!PlaybackByEvents.IsValid(Context, Log))
+			return false;
+		return true;
+	}
+
+	CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Files found @ %s."), *Context, *Dir));
+	return false;
+}
+
+void UCsManager_Playback::FPlayback::PlayLatestChecked()
+{
+	using namespace NCsManagerPlayback::NPlayback::NCached;
+
+	const FString& Context = Str::PlayLatestChecked;
+
+	bool Success = SetLatest(Context);
+
+	checkf(Success, TEXT("%s: Failed to SetLatest."), *Context);
+
+	CS_IS_DELEGATE_BOUND_CHECKED(MakeReadyImpl)
+
+	CS_IS_DELEGATE_BOUND_CHECKED(IsReadyImpl)
+
+	UObject* ContextRoot = Outer->GetMyRoot();
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(ContextRoot);
+
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+
+	#define COROUTINE PlayLatest_Internal
+
+	Payload->CoroutineImpl.BindRaw(this, &UCsManager_Playback::FPlayback::COROUTINE);
+	Payload->StartTime = UCsManager_Time::Get(ContextRoot)->GetTime(UpdateGroup);
+	Payload->Owner.SetObject(Outer);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
+
+	#undef COROUTINE
+
+	Scheduler->Start(Payload);
+}
+
+void UCsManager_Playback::FPlayback::SafePlayLatest(const FString& Context, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+{
+	bool Success = SetLatest(Context, Log);
+
+	if (!Success)
+		return;
+
+	CS_IS_DELEGATE_BOUND_EXIT(MakeReadyImpl)
+
+	CS_IS_DELEGATE_BOUND_EXIT(IsReadyImpl)
+
+	PlayLatestChecked();
+}
+
+char UCsManager_Playback::FPlayback::PlayLatest_Internal(FCsRoutine* R)
+{
+	typedef NCsPlayback::EState StateType;
+
+	CS_COROUTINE_BEGIN(R);
+
+	Outer->SetPlaybackState(StateType::None);
+
+	MakeReadyImpl.Execute();
+
+	CS_COROUTINE_WAIT_UNTIL(R, IsReadyImpl.Execute());
+
+	Outer->SetPlaybackState(StateType::Playback);
+
+	CS_COROUTINE_END(R);
+}
+
+void UCsManager_Playback::FPlayback::Update(const FCsDeltaTime& DeltaTime)
+{
+	// TODO: Check for other ways to end Playback
+	if (Index >= PlaybackByEvents.Events.Num())
+	{
+		typedef NCsPlayback::EState StateType;
+
+		Outer->SetPlaybackState(StateType::None);
+		return;
+	}
+
+	UObject* ContextRoot							= Outer->GetMyRoot();
+	UCsCoordinator_GameEvent* Coordinator_GameEvent = UCsCoordinator_GameEvent::Get(ContextRoot);
+
+	const FCsPlaybackByEventsByDeltaTime& Events = PlaybackByEvents.Events[Index];
+
+	if (Events.DeltaTime >= ElapsedTime)
+	{
+		for (const FCsPlaybackByEvent& Event : Events.Events)
+		{
+			typedef ECsPlaybackEventRepeatedState RepeatedStateType;
+
+			const RepeatedStateType& RepeatedState = Event.RepeatedState;
+
+			// None | Start -> Broadcast Event
+			if (RepeatedState == RepeatedStateType::None ||
+				RepeatedState == RepeatedStateType::Start)
+			{
+				FCsGameEventInfo Info(Event.Event, Event.Value, Event.Location);
+
+				Coordinator_GameEvent->ProcessGameEventInfo(Event.Group, Info);
+
+				// Start -> Add to QueuedSustainedEvents
+				if (RepeatedState == RepeatedStateType::Start)
+				{
+					QueuedSustainedEvents.Add(Event);
+				}
+			}
+			// End -> Remove SustainedEvents
+			else
+			if (RepeatedState == RepeatedStateType::End)
+			{
+				SustainedEvents.Remove(Event);
+			}
+		}
+		++Index;
+	}
+	// Broadcast any Sustained Events
+	for (const FCsPlaybackByEvent& Event : SustainedEvents)
+	{
+		FCsGameEventInfo Info(Event.Event, Event.Value, Event.Location);
+
+		Coordinator_GameEvent->ProcessGameEventInfo(Event.Group, Info);
+	}
+	// Populated SustainedEvents and SustainedGameEvents
+	for (const FCsPlaybackByEvent& Event : QueuedSustainedEvents)
+	{
+		SustainedEvents.Add(Event);
+		SustainedGameEvents.Add(Event.Event);
+	}
+	QueuedSustainedEvents.Reset(QueuedSustainedEvents.Max());
+}
+
+#pragma endregion Playback

@@ -71,7 +71,7 @@ namespace NCsPlayback
 			return Manager_Playback;
 		}
 
-		UCsManager_Playback* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*= &NCsPlayback::FLog::Warning*/)
+		UCsManager_Playback* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -90,5 +90,18 @@ namespace NCsPlayback
 		}
 
 		#pragma endregion Get
+
+		// Playback
+		#pragma region
+
+		void FLibrary::SafePlayLatest(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+		{
+			if (UCsManager_Playback* Manager_Playback = GetSafe(Context, ContextObject, Log))
+			{
+				Manager_Playback->Playback.SafePlayLatest(Context, Log);
+			}
+		}
+
+		#pragma endregion Playback
 	}
 }

@@ -103,6 +103,23 @@ namespace NCsPlayback
 			static UCsManager_Playback* GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &NCsPlayback::FLog::Warning);
 
 		#pragma endregion Get
+
+		// Playback
+		#pragma region
+		public:
+
+			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Log
+			*/
+			static void SafePlayLatest(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &NCsPlayback::FLog::Warning);
+
+		#pragma endregion Playback
 		};
 	}
 } 

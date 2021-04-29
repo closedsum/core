@@ -1850,6 +1850,14 @@ public:
 	{
 	}
 
+	FCsGameEventInfo(const FECsGameEvent& InEvent, const float& InValue, const FVector& InLocation)
+	{
+		Event = InEvent;
+		Value = InValue;
+		Location = InLocation;
+		Definition = nullptr;
+	}
+
 	FORCEINLINE FCsGameEventInfo& operator=(const FCsGameEventInfo& B)
 	{
 		Event = B.Event;

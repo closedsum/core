@@ -44,7 +44,17 @@
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback, SetPlaybackState);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback, ResolveEvents);
+		}
+	}
+
+	namespace NRecord
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FRecord, ResolveEvents);
+			}
 		}
 	}
 
@@ -76,8 +86,21 @@
 UCsManager_Playback* UCsManager_Playback::s_Instance;
 bool UCsManager_Playback::s_bShutdown = false;
 
-UCsManager_Playback::UCsManager_Playback(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UCsManager_Playback::UCsManager_Playback(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	// Singleton
+	bInitialized(false),
+	MyRoot(nullptr),
+	// Console Command
+	Manager_ConsoleCommand(nullptr),
+	// State
+	PlaybackState(NCsPlayback::EState::None),
+	// Save
+	SaveDirAbsolute(),
+	// Record
+	Record(),
+	// Playback
+	Playback()
 {
 }
 
@@ -249,22 +272,9 @@ void UCsManager_Playback::Initialize()
 
 	// Record
 	{
-		// PlaybackByEvents
+		// Event
 		{
 			Record.Outer = this;
-
-			Last_Events.Reset(EMCsGameEvent::Get().Num());
-			Last_Events.AddDefaulted(EMCsGameEvent::Get().Num());
-
-			Preview_Events.Reset(EMCsGameEvent::Get().Num());
-			Preview_Events.AddDefaulted(EMCsGameEvent::Get().Num());
-
-			Final_Events.Reset(EMCsGameEvent::Get().Num());
-			Final_Events.AddDefaulted(EMCsGameEvent::Get().Num());
-
-			IgnoredGameEvents.Add(NCsGameEvent::Default__MousePositionXY__);
-			IgnoredGameEvents.Add(NCsGameEvent::Default__MouseLeftButtonPressed__);
-			IgnoredGameEvents.Add(NCsGameEvent::Default__MouseRightButtonPressed__);
 
 			Record.Task = new UCsManager_Playback::FRecord::FTask();
 
@@ -304,7 +314,7 @@ void UCsManager_Playback::Initialize()
 
 		for (const GroupType& Group : GroupMapType::Get())
 		{
-			Coordinator_GameEvent->GetOnProcessGameEventInfo_Event(Group).AddUObject(this, &UCsManager_Playback::OnProcessGameEventInfo);
+			Coordinator_GameEvent->GetOnProcessGameEventInfo_Event(Group).AddRaw(&Record, &UCsManager_Playback::FRecord::OnProcessGameEventInfo);
 		}
 	}
 
@@ -406,164 +416,9 @@ void UCsManager_Playback::Update(const FCsDeltaTime& DeltaTime)
 	else
 	if (PlaybackState == StateType::Record)
 	{
-		ResolveEvents();
 		Record.Update(DeltaTime);
 	}
 }
-
-// Event
-#pragma region
-
-#define GameEventGroupType FECsGameEventCoordinatorGroup
-void UCsManager_Playback::OnProcessGameEventInfo(const GameEventGroupType& Group, const FCsGameEventInfo& Info)
-{
-#undef GameEventGroupType
-
-	if (!IsRecording())
-		return;
-
-	if (IgnoredGameEvents.Contains(Info.Event))
-		return;
-
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	const FCsDeltaTime& CurrentTime	   = UCsManager_Time::Get(MyRoot)->GetTimeSinceStart(UpdateGroup);
-	Record.ElapsedTime				   = CurrentTime - Record.StartTime;
-
-	FCsPlaybackByEvent& Preview_Event = Preview_Events[Info.Event.GetValue()];
-
-	Preview_Event.Group	   = Group;
-	Preview_Event.Event	   = Info.Event;
-	Preview_Event.Value	   = Info.Value;
-	Preview_Event.Location = Info.Location;
-
-	bProcessedGameEventInfos = true;
-}
-
-void UCsManager_Playback::ResolveEvents()
-{
-	using namespace NCsManagerPlayback::NCached;
-
-	const FString& Context = Str::ResolveEvents;
-
-	if (bProcessedGameEventInfos ||
-		bProcessedGameEventInfos != Last_bProcessedGameEventInfos)
-	{
-		CS_NON_SHIPPING_EXPR(Record.LogEvent(FString::Printf(TEXT("%s: DeltaTime: %f"), *Context, Record.ElapsedTime.Time)));
-
-		Last_bProcessedGameEventInfos = bProcessedGameEventInfos;
-	}
-
-	typedef FECsGameEventCoordinatorGroup GroupType;
-
-	typedef ECsPlaybackEventRepeatedState RepeatedStateType;
-	typedef EMCsPlaybackEventRepeatedState RepeatedStateMapType;
-
-	bool AnyValid = false;
-
-	const int32 Count = EMCsGameEvent::Get().Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		FCsPlaybackByEvent& Preview_Event = Preview_Events[I];
-		FCsPlaybackByEvent& Last_Event	  = Last_Events[I];
-		FCsPlaybackByEvent& Final_Event   = Final_Events[I];
-
-		const GroupType& Group = Preview_Event.Group;
-
-		if (Preview_Event.IsValid())
-		{
-			if (Last_Event.IsValid())
-			{
-				if (Last_Event.Value == Preview_Event.Value &&
-					Last_Event.Location == Preview_Event.Location)
-				{
-					// Start Repeated
-					if (Last_Event.RepeatedState == RepeatedStateType::None)
-					{
-						Last_Event.RepeatedState = RepeatedStateType::Start;
-						Final_Event				 = Last_Event;
-
-						CS_NON_SHIPPING_EXPR(Record.LogEvent(FString::Printf(TEXT("%s: CHANGE: None -> Start\n%s"), *Context, *(Final_Event.ToString()))));
-						AnyValid = true;
-					}
-				}
-				else
-				{
-					// End Repeated
-					if (Last_Event.RepeatedState == RepeatedStateType::Start)
-					{
-						Final_Event.RepeatedState = RepeatedStateType::End;
-					}
-					else
-					{
-						Final_Event.RepeatedState = RepeatedStateType::None;
-					}
-
-					Final_Event.Group	 = Group;
-					Final_Event.Event    = Preview_Event.Event;
-					Final_Event.Value    = Preview_Event.Value;
-					Final_Event.Location = Preview_Event.Location;
-
-					CS_NON_SHIPPING_EXPR(Record.LogEvent(FString::Printf(TEXT("%s: CHANGE: %s -> %s\n%s"), *Context, RepeatedStateMapType::Get().ToChar(Last_Event.RepeatedState), RepeatedStateMapType::Get().ToChar(Final_Event.RepeatedState), *(Final_Event.ToString()))));
-
-					Last_Event = Final_Event;
-
-					AnyValid = true;
-				}
-			}
-			else
-			{
-				Final_Event.Group		  = Group;
-				Final_Event.Event		  = Preview_Event.Event;
-				Final_Event.Value		  = Preview_Event.Value;
-				Final_Event.Location	  = Preview_Event.Location;
-				Final_Event.RepeatedState = RepeatedStateType::None;
-
-				CS_NON_SHIPPING_EXPR(Record.LogEvent(FString::Printf(TEXT("%s: NEW\n%s"), *Context, *(Final_Event.ToString()))));
-
-				Last_Event = Final_Event;
-
-				AnyValid = true;
-			}
-		}
-		else
-		{
-			if (Last_Event.IsValid() &&
-				Last_Event.RepeatedState == RepeatedStateType::Start)
-			{
-				Final_Event				  = Last_Event;
-				Final_Event.RepeatedState = RepeatedStateType::End;
-
-				CS_NON_SHIPPING_EXPR(Record.LogEvent(FString::Printf(TEXT("%s: END\n%s"), *Context, *(Final_Event.ToString()))));
-				AnyValid = true;
-			}
-			Last_Event = FCsPlaybackByEvent::Invalid;
-		}
-		// Reset Preview Events
-		Preview_Event = FCsPlaybackByEvent::Invalid;
-	}
-
-	if (AnyValid)
-	{
-		FCsPlaybackByEventsByDeltaTime& Events = Record.PlaybackByEvents.Events.AddDefaulted_GetRef();
-
-		Events.DeltaTime = Record.ElapsedTime;
-
-		for (FCsPlaybackByEvent& Final_Event : Final_Events)
-		{
-			if (Final_Event.IsValid())
-			{
-				CS_NON_SHIPPING_EXPR(Record.LogEvent(FString::Printf(TEXT("%s: Adding Event\n%s"), *Context, *(Final_Event.ToString()))));
-				Events.Events.Add(Final_Event);
-			}
-			Final_Event = FCsPlaybackByEvent::Invalid;
-		}
-	}
-
-	bProcessedGameEventInfos = false;
-}
-
-#pragma endregion Event
 
 // Record
 #pragma region
@@ -606,6 +461,156 @@ void UCsManager_Playback::FRecord::Stop()
 {
 }
 
+#define GameEventGroupType FECsGameEventCoordinatorGroup
+void UCsManager_Playback::FRecord::OnProcessGameEventInfo(const GameEventGroupType& Group, const FCsGameEventInfo& Info)
+{
+#undef GameEventGroupType
+
+	if (!Outer->IsRecording())
+		return;
+
+	if (IgnoredGameEvents.Contains(Info.Event))
+		return;
+
+	UObject* ContextRoot			   = Outer->GetMyRoot();
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	const FCsDeltaTime& CurrentTime	   = UCsManager_Time::Get(ContextRoot)->GetTimeSinceStart(UpdateGroup);
+	ElapsedTime						   = CurrentTime - StartTime;
+
+	FCsPlaybackByEvent& Preview_Event = Preview_Events[Info.Event.GetValue()];
+
+	Preview_Event.Group	   = Group;
+	Preview_Event.Event	   = Info.Event;
+	Preview_Event.Value	   = Info.Value;
+	Preview_Event.Location = Info.Location;
+
+	bProcessedGameEventInfos = true;
+}
+
+void UCsManager_Playback::FRecord::ResolveEvents()
+{
+	using namespace NCsManagerPlayback::NRecord::NCached;
+
+	const FString& Context = Str::ResolveEvents;
+
+	if (bProcessedGameEventInfos ||
+		bProcessedGameEventInfos != Last_bProcessedGameEventInfos)
+	{
+		CS_NON_SHIPPING_EXPR(LogEvent(FString::Printf(TEXT("%s: DeltaTime: %f"), *Context, ElapsedTime.Time)));
+
+		Last_bProcessedGameEventInfos = bProcessedGameEventInfos;
+	}
+
+	typedef FECsGameEventCoordinatorGroup GroupType;
+
+	typedef ECsPlaybackEventRepeatedState RepeatedStateType;
+	typedef EMCsPlaybackEventRepeatedState RepeatedStateMapType;
+
+	bool AnyValid = false;
+
+	const int32 Count = EMCsGameEvent::Get().Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		FCsPlaybackByEvent& Preview_Event = Preview_Events[I];
+		FCsPlaybackByEvent& Last_Event	  = Last_Events[I];
+		FCsPlaybackByEvent& Final_Event   = Final_Events[I];
+
+		const GroupType& Group = Preview_Event.Group;
+
+		if (Preview_Event.IsValid())
+		{
+			if (Last_Event.IsValid())
+			{
+				if (Last_Event.Value == Preview_Event.Value &&
+					Last_Event.Location == Preview_Event.Location)
+				{
+					// Start Repeated
+					if (Last_Event.RepeatedState == RepeatedStateType::None)
+					{
+						Last_Event.RepeatedState = RepeatedStateType::Start;
+						Final_Event				 = Last_Event;
+
+						CS_NON_SHIPPING_EXPR(LogEvent(FString::Printf(TEXT("%s: CHANGE: None -> Start\n%s"), *Context, *(Final_Event.ToString()))));
+						AnyValid = true;
+					}
+				}
+				else
+				{
+					// End Repeated
+					if (Last_Event.RepeatedState == RepeatedStateType::Start)
+					{
+						Final_Event.RepeatedState = RepeatedStateType::End;
+					}
+					else
+					{
+						Final_Event.RepeatedState = RepeatedStateType::None;
+					}
+
+					Final_Event.Group	 = Group;
+					Final_Event.Event    = Preview_Event.Event;
+					Final_Event.Value    = Preview_Event.Value;
+					Final_Event.Location = Preview_Event.Location;
+
+					CS_NON_SHIPPING_EXPR(LogEvent(FString::Printf(TEXT("%s: CHANGE: %s -> %s\n%s"), *Context, RepeatedStateMapType::Get().ToChar(Last_Event.RepeatedState), RepeatedStateMapType::Get().ToChar(Final_Event.RepeatedState), *(Final_Event.ToString()))));
+
+					Last_Event = Final_Event;
+
+					AnyValid = true;
+				}
+			}
+			else
+			{
+				Final_Event.Group		  = Group;
+				Final_Event.Event		  = Preview_Event.Event;
+				Final_Event.Value		  = Preview_Event.Value;
+				Final_Event.Location	  = Preview_Event.Location;
+				Final_Event.RepeatedState = RepeatedStateType::None;
+
+				CS_NON_SHIPPING_EXPR(LogEvent(FString::Printf(TEXT("%s: NEW\n%s"), *Context, *(Final_Event.ToString()))));
+
+				Last_Event = Final_Event;
+
+				AnyValid = true;
+			}
+		}
+		else
+		{
+			if (Last_Event.IsValid() &&
+				Last_Event.RepeatedState == RepeatedStateType::Start)
+			{
+				Final_Event				  = Last_Event;
+				Final_Event.RepeatedState = RepeatedStateType::End;
+
+				CS_NON_SHIPPING_EXPR(LogEvent(FString::Printf(TEXT("%s: END\n%s"), *Context, *(Final_Event.ToString()))));
+				AnyValid = true;
+			}
+			Last_Event = FCsPlaybackByEvent::Invalid;
+		}
+		// Reset Preview Events
+		Preview_Event = FCsPlaybackByEvent::Invalid;
+	}
+
+	if (AnyValid)
+	{
+		FCsPlaybackByEventsByDeltaTime& Events = PlaybackByEvents.Events.AddDefaulted_GetRef();
+
+		Events.DeltaTime = ElapsedTime;
+
+		for (FCsPlaybackByEvent& Final_Event : Final_Events)
+		{
+			if (Final_Event.IsValid())
+			{
+				CS_NON_SHIPPING_EXPR(LogEvent(FString::Printf(TEXT("%s: Adding Event\n%s"), *Context, *(Final_Event.ToString()))));
+				Events.Events.Add(Final_Event);
+			}
+			Final_Event = FCsPlaybackByEvent::Invalid;
+		}
+	}
+
+	bProcessedGameEventInfos = false;
+}
+
 bool UCsManager_Playback::FRecord::CanUpdate() const
 {
 	return Runnable->IsIdle() && Task->IsReady();
@@ -613,6 +618,8 @@ bool UCsManager_Playback::FRecord::CanUpdate() const
 
 void UCsManager_Playback::FRecord::Update(const FCsDeltaTime& DeltaTime)
 {
+	ResolveEvents();
+
 	if (CanUpdate())
 	{
 		bool PerformWriteTask = Task->Events.CopyFrom(PlaybackByEvents);

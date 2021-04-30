@@ -144,31 +144,6 @@ public:
 
 	void Update(const FCsDeltaTime& DeltaTime);
 
-// Event
-#pragma region
-private:
-
-	TArray<FCsPlaybackByEvent> Last_Events;
-	TArray<FCsPlaybackByEvent> Preview_Events;
-	TArray<FCsPlaybackByEvent> Final_Events;
-
-	TSet<FECsGameEvent> IgnoredGameEvents;
-
-public:
-
-#define GameEventGroupType FECsGameEventCoordinatorGroup
-	void OnProcessGameEventInfo(const GameEventGroupType& Group, const FCsGameEventInfo& Info);
-#undef GameEventGroupType
-
-private:
-
-	bool bProcessedGameEventInfos;
-	bool Last_bProcessedGameEventInfos;
-
-	void ResolveEvents();
-
-#pragma endregion Event
-
 // Save
 #pragma region
 private:
@@ -198,6 +173,15 @@ private:
 		FCsDeltaTime StartTime;
 
 		FCsDeltaTime ElapsedTime;
+
+		TArray<FCsPlaybackByEvent> Last_Events;
+		TArray<FCsPlaybackByEvent> Preview_Events;
+		TArray<FCsPlaybackByEvent> Final_Events;
+
+		TSet<FECsGameEvent> IgnoredGameEvents;
+
+		bool bProcessedGameEventInfos;
+		bool Last_bProcessedGameEventInfos;
 
 		FCsRunnable* Runnable;
 
@@ -304,9 +288,27 @@ private:
 			PlaybackByEvents(),
 			StartTime(),
 			ElapsedTime(),
+			Last_Events(),
+			Preview_Events(),
+			Final_Events(),
+			IgnoredGameEvents(),
+			bProcessedGameEventInfos(false),
+			Last_bProcessedGameEventInfos(false),
 			Runnable(nullptr), 
 			Task(nullptr)
 		{
+			Last_Events.Reset(EMCsGameEvent::Get().Num());
+			Last_Events.AddDefaulted(EMCsGameEvent::Get().Num());
+
+			Preview_Events.Reset(EMCsGameEvent::Get().Num());
+			Preview_Events.AddDefaulted(EMCsGameEvent::Get().Num());
+
+			Final_Events.Reset(EMCsGameEvent::Get().Num());
+			Final_Events.AddDefaulted(EMCsGameEvent::Get().Num());
+
+			IgnoredGameEvents.Add(NCsGameEvent::Default__MousePositionXY__);
+			IgnoredGameEvents.Add(NCsGameEvent::Default__MouseLeftButtonPressed__);
+			IgnoredGameEvents.Add(NCsGameEvent::Default__MouseRightButtonPressed__);
 		}
 
 	private:
@@ -314,6 +316,12 @@ private:
 		void Start(const FSoftObjectPath& LevelPath);
 
 		void Stop();
+
+	#define GameEventGroupType FECsGameEventCoordinatorGroup
+		void OnProcessGameEventInfo(const GameEventGroupType& Group, const FCsGameEventInfo& Info);
+	#undef GameEventGroupType
+
+		void ResolveEvents();
 
 	public:
 

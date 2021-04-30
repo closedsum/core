@@ -89,7 +89,7 @@ namespace NCsGameInstance
 
 	UObject* FLibrary::GetSafeAsObject(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		return GetSafeAsObject(Context, WorldContext, Log);
+		return GetSafe(Context, WorldContext, Log);
 	}
 
 	UObject* FLibrary::GetSafeAsObject(const UObject* WorldContext)

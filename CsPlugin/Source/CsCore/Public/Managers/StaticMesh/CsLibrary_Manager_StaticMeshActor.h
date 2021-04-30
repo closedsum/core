@@ -81,7 +81,7 @@ namespace NCsStaticMeshActor
 			* @param Log
 			* return				UCsManager_StaticMeshActor.
 			*/
-			static UCsManager_StaticMeshActor* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsPlayback::FLog::Warning);
+			static UCsManager_StaticMeshActor* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion Get
 		};

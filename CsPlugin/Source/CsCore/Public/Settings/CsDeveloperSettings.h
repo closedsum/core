@@ -28,6 +28,8 @@
 #include "Managers/Trace/CsSettings_Manager_Trace.h"
 // Damage
 #include "Managers/Damage/CsSettings_Manager_Damage.h"
+// StaticMesh
+#include "Managers/StaticMesh/CsSettings_Manager_StaticMeshActor.h"
 // SkeletalMesh
 #include "Managers/SkeletalMesh/CsSettings_Manager_SkeletalMeshActor.h"
 
@@ -44,6 +46,7 @@ namespace NCsDeveloperSettings
 		extern CSCORE_API const FString GameEvent;
 		extern CSCORE_API const FString FX;
 		extern CSCORE_API const FString Sound;
+		extern CSCORE_API const FString StaticMeshActor;
 		extern CSCORE_API const FString SkeletalMeshActor;
 	}
 }
@@ -228,6 +231,31 @@ public:
 	FCsSettings_Manager_Damage Manager_Damage;
 
 #pragma endregion Damage
+
+// StaticMesh
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMeshActor", meta = (DisplayName = "ECsStaticMeshActor - Populate Enum Map Method"))
+	ECsPopulateEnumMapMethod ECsStaticMeshActor_PopulateEnumMapMethod;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMeshActor", meta = (DisplayName = "ECsStaticMeshActor", TitleProperty = "Name"))
+	TArray<FCsSettings_Enum> ECsStaticMeshActor;
+
+	template<>
+	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsStaticMeshActor>() const { return ECsStaticMeshActor; }
+	template<>
+	const FString& GetSettingsEnumPath<FECsStaticMeshActor>() const { return NCsDeveloperSettings::Str::StaticMeshActor; }
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMeshActor", meta = (DisplayName = "Manager StaticMeshActor"))
+	FCsSettings_Manager_StaticMeshActor Manager_StaticMeshActor;
+
+	// Unit Test
+#pragma region
+
+#pragma endregion Unit Test
+
+#pragma endregion StaticMesh
 
 // SkeletalMesh
 #pragma region

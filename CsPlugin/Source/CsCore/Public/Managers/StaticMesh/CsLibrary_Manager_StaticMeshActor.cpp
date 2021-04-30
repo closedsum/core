@@ -52,7 +52,7 @@ namespace NCsStaticMeshActor
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
 		{
-			using namespace NCsSkeletalMeshActor::NManager::NLibrary::NCached;
+			using namespace NCsStaticMeshActor::NManager::NLibrary::NCached;
 
 			const FString& Context = Str::GetSafeContextRoot;
 
@@ -75,7 +75,7 @@ namespace NCsStaticMeshActor
 			return Manager_StaticMeshActor;
 		}
 
-		UCsManager_StaticMeshActor* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+		UCsManager_StaticMeshActor* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 

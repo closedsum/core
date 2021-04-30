@@ -75,7 +75,7 @@ namespace NCsSkeletalMeshActor
 			return Manager_SkeletalMeshActor;
 		}
 
-		UCsManager_SkeletalMeshActor* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+		UCsManager_SkeletalMeshActor* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 

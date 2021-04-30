@@ -37,6 +37,7 @@ namespace NCsManagerStaticMeshActor
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StaticMeshActor, GetFromWorldContextObject);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StaticMeshActor, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StaticMeshActor, InitInternalFromSettings);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StaticMeshActor, Spawn);
 		}
@@ -303,6 +304,10 @@ void UCsManager_StaticMeshActor::SetMyRoot(UObject* InRoot)
 
 void UCsManager_StaticMeshActor::SetupInternal()
 {
+	using namespace NCsManagerStaticMeshActor::NCached;
+
+	const FString& Context = Str::SetupInternal;
+
 	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
 	// Populate EnumMaps

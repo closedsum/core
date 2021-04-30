@@ -2,14 +2,14 @@
 #include "Managers/Runnable/CsTypes_Runnable.h"
 #pragma once
 
-DECLARE_DELEGATE(FCsOnRunnableTaskComplete)
-
 class UObject;
 
 namespace NCsRunnable
 {
 	namespace NTask
 	{
+		DECLARE_DELEGATE(FOnComplete)
+
 		/**
 		*/
 		struct CSCORE_API ITask
@@ -34,11 +34,11 @@ namespace NCsRunnable
 
 			/**
 			*/
-			virtual TArray<FCsOnRunnableTaskComplete>& GetOnComplete_Events() = 0;
+			virtual TArray<FOnComplete>& GetOnComplete_Events() = 0;
 
 			/**
 			*/
-			virtual TArray< FCsOnRunnableTaskComplete>& GetOnComplete_AsyncEvents() = 0;
+			virtual TArray<FOnComplete>& GetOnComplete_AsyncEvents() = 0;
 
 			virtual void Reset() = 0;
 		};

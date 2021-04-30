@@ -207,6 +207,8 @@ private:
 		{
 			friend struct FRecord;
 
+		#define OnCompleteType NCsRunnable::NTask::FOnComplete
+
 		private:
 
 			enum class EState : uint8
@@ -218,9 +220,9 @@ private:
 
 			EState State;
 
-			TArray<FCsOnRunnableTaskComplete> OnComplete_Events;
+			TArray<OnCompleteType> OnComplete_Events;
 
-			TArray<FCsOnRunnableTaskComplete> OnComplete_AsyncEvents;
+			TArray<OnCompleteType> OnComplete_AsyncEvents;
 
 		public:
 
@@ -261,12 +263,12 @@ private:
 				return State == EState::Complete;
 			}
 
-			TArray<FCsOnRunnableTaskComplete>& GetOnComplete_Events()
+			TArray<OnCompleteType>& GetOnComplete_Events()
 			{
 				return OnComplete_Events;
 			}
 
-			TArray< FCsOnRunnableTaskComplete>& GetOnComplete_AsyncEvents()
+			TArray<OnCompleteType>& GetOnComplete_AsyncEvents()
 			{
 				return OnComplete_AsyncEvents;
 			}
@@ -287,6 +289,8 @@ private:
 			}
 
 		#pragma endregion NCsRunnable::NTask::ITask
+
+		#undef OnCompleteType
 		};
 
 	#undef TaskType

@@ -346,7 +346,9 @@ void UCsManager_Runnable::Update(const FCsDeltaTime& DeltaTime)
 			// Complete
 			if (Runnable->IsTaskComplete())
 			{
-				for (FCsOnRunnableTaskComplete& OnComplete : Runnable->GetTask()->GetOnComplete_Events())
+				typedef NCsRunnable::NTask::FOnComplete OnCompleteType;
+
+				for (OnCompleteType& OnComplete : Runnable->GetTask()->GetOnComplete_Events())
 				{
 					OnComplete.Execute();
 				}

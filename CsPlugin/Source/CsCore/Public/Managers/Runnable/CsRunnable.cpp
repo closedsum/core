@@ -87,7 +87,9 @@ uint32 FCsRunnable::Run()
 
 			Task->Execute();
 
-			for (FCsOnRunnableTaskComplete& OnComplete : Task->GetOnComplete_AsyncEvents())
+			typedef NCsRunnable::NTask::FOnComplete OnCompleteType;
+
+			for (OnCompleteType& OnComplete : Task->GetOnComplete_AsyncEvents())
 			{
 				OnComplete.Execute();
 			}

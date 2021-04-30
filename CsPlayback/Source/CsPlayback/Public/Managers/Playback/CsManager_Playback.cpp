@@ -247,47 +247,53 @@ void UCsManager_Playback::Initialize()
 
 	Manager_ConsoleCommand = new ConsoleCommandManagerType(MyRoot);
 
-	// PlaybackByEvents
+	// Record
 	{
-		Last_Events.Reset(EMCsGameEvent::Get().Num());
-		Last_Events.AddDefaulted(EMCsGameEvent::Get().Num());
-		
-		Preview_Events.Reset(EMCsGameEvent::Get().Num());
-		Preview_Events.AddDefaulted(EMCsGameEvent::Get().Num());
-
-		Final_Events.Reset(EMCsGameEvent::Get().Num());
-		Final_Events.AddDefaulted(EMCsGameEvent::Get().Num());
-
-		IgnoredGameEvents.Add(NCsGameEvent::Default__MousePositionXY__);
-		IgnoredGameEvents.Add(NCsGameEvent::Default__MouseLeftButtonPressed__);
-		IgnoredGameEvents.Add(NCsGameEvent::Default__MouseRightButtonPressed__);
-
-		Record.Outer = this;
-		Record.Task = new UCsManager_Playback::FRecord::FTask();
-
-		Playback.Outer = this;
-
-		// Set FileName
+		// PlaybackByEvents
 		{
-			const FString Dir		 = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir());
-			const FString SaveFolder = TEXT("Playback/") + FString(FPlatformProcess::UserName());
+			Record.Outer = this;
 
-			SaveDirAbsolute = Dir + SaveFolder;
+			Last_Events.Reset(EMCsGameEvent::Get().Num());
+			Last_Events.AddDefaulted(EMCsGameEvent::Get().Num());
 
-			const FString FileName = FDateTime::Now().ToString(TEXT("%Y%m%d%H%M%S%s")) + TEXT("_") + FGuid::NewGuid().ToString(EGuidFormats::Digits) + TEXT(".json");
-			const FString FilePath = SaveDirAbsolute + TEXT("/") + FileName;
+			Preview_Events.Reset(EMCsGameEvent::Get().Num());
+			Preview_Events.AddDefaulted(EMCsGameEvent::Get().Num());
 
-			Record.Task->FileName = FilePath;
-		}
+			Final_Events.Reset(EMCsGameEvent::Get().Num());
+			Final_Events.AddDefaulted(EMCsGameEvent::Get().Num());
 
-		typedef NCsRunnable::NPayload::FImpl PayloadType;
+			IgnoredGameEvents.Add(NCsGameEvent::Default__MousePositionXY__);
+			IgnoredGameEvents.Add(NCsGameEvent::Default__MouseLeftButtonPressed__);
+			IgnoredGameEvents.Add(NCsGameEvent::Default__MouseRightButtonPressed__);
 
-		PayloadType* Payload	= UCsManager_Runnable::Get(MyRoot)->AllocatePayload();
-		Payload->Owner			= this;
-		Payload->ThreadPriority = TPri_Normal;
-		Payload->Task			= Record.Task;
+			Record.Task = new UCsManager_Playback::FRecord::FTask();
+
+			// Set FileName
+			{
+				const FString Dir		 = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir());
+				const FString SaveFolder = TEXT("Playback/") + FString(FPlatformProcess::UserName());
+
+				SaveDirAbsolute = Dir + SaveFolder;
+
+				const FString FileName = FDateTime::Now().ToString(TEXT("%Y%m%d%H%M%S%s")) + TEXT("_") + FGuid::NewGuid().ToString(EGuidFormats::Digits) + TEXT(".json");
+				const FString FilePath = SaveDirAbsolute + TEXT("/") + FileName;
+
+				Record.Task->FileName = FilePath;
+			}
+
+			typedef NCsRunnable::NPayload::FImpl PayloadType;
+
+			PayloadType* Payload	= UCsManager_Runnable::Get(MyRoot)->AllocatePayload();
+			Payload->Owner			= this;
+			Payload->ThreadPriority = TPri_Normal;
+			Payload->Task			= Record.Task;
 	 
-		Record.Runnable = UCsManager_Runnable::Get(MyRoot)->Start(Payload);
+			Record.Runnable = UCsManager_Runnable::Get(MyRoot)->Start(Payload);
+		}
+	}
+	// Playback
+	{
+		Playback.Outer = this;
 	}
 	// Bind delegate for Game Events
 	{

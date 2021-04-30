@@ -3,10 +3,21 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
-#define PayloadType NCsStaticMeshActor::NPayload::IPayload
-
-struct CSCORE_API FCsLibrary_Payload_StaticMeshActor : public TCsLibrary_InterfaceMap<PayloadType>
+namespace NCsStaticMeshActor
 {
-};
+	namespace NPayload
+	{
+	#define PayloadType NCsStaticMeshActor::NPayload::IPayload
 
-#undef PayloadType
+		struct CSCORE_API FLibrary final : public TCsLibrary_InterfaceMap<PayloadType>
+		{
+		public:
+
+			/**
+			*/
+			static bool IsValidChecked(const FString& Context, PayloadType* Payload);
+		};
+
+	#undef PayloadType
+	}
+}

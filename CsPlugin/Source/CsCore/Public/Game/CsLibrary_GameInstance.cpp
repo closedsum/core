@@ -20,6 +20,7 @@ namespace NCsGameInstance
 			namespace Str
 			{
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameInstance::FLibrary, GetSafe);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameInstance::FLibrary, GetSafeAsObject);
 			}
 		}
 	}
@@ -79,5 +80,24 @@ namespace NCsGameInstance
 		const FString& Context = Str::GetSafe;
 
 		return GetSafe(Context, ContextObject, nullptr);
+	}
+
+	UObject* FLibrary::GetAsObjectChecked(const FString& Context, const UObject* WorldContext)
+	{
+		return GetChecked(Context, WorldContext);
+	}
+
+	UObject* FLibrary::GetSafeAsObject(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		return GetSafeAsObject(Context, WorldContext, Log);
+	}
+
+	UObject* FLibrary::GetSafeAsObject(const UObject* WorldContext)
+	{
+		using namespace NCsGameInstance::NLibrary::NCached;
+
+		const FString& Context = Str::GetSafeAsObject;
+
+		return GetSafeAsObject(Context, WorldContext, nullptr);
 	}
 }

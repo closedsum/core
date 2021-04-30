@@ -35,6 +35,7 @@ class CSCORE_API ACsStaticMeshActorPooledImpl : public AStaticMeshActor,
 #define CacheType NCsPooledObject::NCache::ICache
 #define CacheImplType NCsStaticMeshActor::NCache::FImpl
 #define PayloadType NCsPooledObject::NPayload::IPayload
+#define StaticMeshPayloadType NCsStaticMeshActor::NPayload::IPayload
 
 // UObject Interface
 #pragma region
@@ -72,6 +73,10 @@ protected:
 
 	void ConstructCache();
 
+	uint32 PreserveChangesToDefaultMask;
+	uint32 ChangesToDefaultMask;
+	uint32 ChangesFromLastMask;
+
 // ICsPooledObject
 #pragma region
 public:
@@ -102,4 +107,5 @@ protected:
 #undef CacheType
 #undef CacheImplType
 #undef PayloadType
+#undef StaticMeshPayloadType
 };

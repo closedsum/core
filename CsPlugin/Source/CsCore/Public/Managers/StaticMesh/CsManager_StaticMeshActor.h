@@ -70,7 +70,14 @@ public:
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsManager_StaticMeshActor* Get(UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static UCsManager_StaticMeshActor* Get(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
 	
 	template<typename T>
 	static T* Get(UObject* InRoot = nullptr)
@@ -83,7 +90,12 @@ public:
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_StaticMeshActor> ManagerSoundClass, UObject* InOuter = nullptr);
 	
 	static void Shutdown(UObject* InRoot = nullptr);
+
+#if WITH_EDITOR
 	static bool HasShutdown(UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static bool HasShutdown(UObject* InRoot = nullptr){ return s_bShutdown; }
+#endif // #if WITH_EDITOR
 
 #if WITH_EDITOR
 protected:
@@ -635,6 +647,15 @@ public:
 #pragma endregion 
 
 #pragma endregion Script
+
+// Class
+#pragma region
+private:
+
+	UPROPERTY()
+	TMap<FECsStaticMeshActor, UClass*> ClassMap;
+
+#pragma endregion Class
 
 #undef ManagerType
 #undef ManagerParamsType

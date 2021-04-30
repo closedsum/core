@@ -14,7 +14,7 @@ struct CSCORE_API FCsSettings_Manager_StaticMeshActor_PoolParams
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement ="CsStaticMeshActor"))
-	FECsStaticMeshActorClass Class; 
+	TSoftClassPtr<UObject> Class;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
 	int32 PoolSize;
@@ -23,7 +23,7 @@ public:
 	int32 PayloadSize;
 
 	FCsSettings_Manager_StaticMeshActor_PoolParams() :
-		Class(),
+		Class(nullptr),
 		PoolSize(4),
 		PayloadSize(4)
 	{

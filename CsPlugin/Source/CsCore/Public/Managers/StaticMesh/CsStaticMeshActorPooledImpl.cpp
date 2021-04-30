@@ -43,6 +43,7 @@ void ACsStaticMeshActorPooledImpl::BeginDestroy()
 	{
 		delete Cache;
 		Cache = nullptr;
+		CacheImpl = nullptr;
 	}
 }
 
@@ -110,10 +111,11 @@ void ACsStaticMeshActorPooledImpl::Allocate(PayloadType* Payload)
 
 	Cache->Allocate(Payload);
 
-	typedef NCsStaticMeshActor::NPayload::IPayload PayloadType;
 	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
+	typedef NCsStaticMeshActor::NPayload::IPayload StaticMeshPayloadType;
+	
 
-	PayloadType* StaticMeshPayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
+	StaticMeshPayloadType* StaticMeshPayload = PooledPayloadLibrary::GetInterfaceChecked<StaticMeshPayloadType>(Context, Payload);
 
 	/*
 	checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Play: AudioComponent is NULL."));

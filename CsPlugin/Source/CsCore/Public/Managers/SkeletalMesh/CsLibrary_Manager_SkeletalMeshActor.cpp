@@ -11,14 +11,8 @@
 #include "Managers/SkeletalMesh/Params/CsParams_SkeletalMeshActor.h"
 
 #if WITH_EDITOR
-// Types
-#include "Types/CsTypes_Macro.h"
 // Library
-#include "Library/CsLibrary_World.h"
-// Game
-#include "GameFramework/GameStateBase.h"
-// World
-#include "Engine/World.h"
+#include "Game/CsLibrary_GameState.h"
 #endif // #if WITH_EDITOR
 
 namespace NCsSkeletalMeshActor
@@ -37,38 +31,26 @@ namespace NCsSkeletalMeshActor
 			}
 		}
 
-	#if WITH_EDITOR
+		// ContextRoot
+		#pragma region
 
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
+		#if WITH_EDITOR
+
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* WorldContext)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
+			typedef NCsGameState::FLibrary GameStateLibrary;
 
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
-
-			AGameStateBase* GameState = World->GetGameState();
-
-			checkf(GameState, TEXT("%s: Failed to get GameState from World: %s."), *Context, *(World->GetName()));
-
-			return GameState;
+			return GameStateLibrary::GetAsObjectChecked(Context, WorldContext);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
+			typedef NCsGameState::FLibrary GameStateLibrary;
 
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
-
-			if (!World)
-				return nullptr;
-
-			AGameStateBase* GameState = World->GetGameState();
-
-			if (!GameState)
-				return nullptr;
-			return GameState;
+			return GameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
+		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
 		{
 			using namespace NCsSkeletalMeshActor::NManager::NLibrary::NCached;
 
@@ -77,7 +59,41 @@ namespace NCsSkeletalMeshActor
 			return GetSafeContextRoot(Context, WorldContext, nullptr);
 		}
 
-	#endif // #if WITH_EDITOR
+		#endif // #if WITH_EDITOR
+
+		#pragma endregion ContextRoot
+
+		// Get
+		#pragma region
+
+		UCsManager_SkeletalMeshActor* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
+		{
+			UObject* ContextRoot									= GetContextRootChecked(Context, ContextObject);
+			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = UCsManager_SkeletalMeshActor::Get(ContextRoot);
+
+			CS_IS_PTR_NULL_CHECKED(Manager_SkeletalMeshActor)
+			return Manager_SkeletalMeshActor;
+		}
+
+		UCsManager_SkeletalMeshActor* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+		{
+			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
+
+		#if WITH_EDITOR
+			if (!ContextRoot)
+				return nullptr;
+		#endif // #if WITH_EDITOR
+
+			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = UCsManager_SkeletalMeshActor::Get(ContextRoot);
+
+			if (!Manager_SkeletalMeshActor)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_SkeletalMeshActor."), *Context));
+			}
+			return Manager_SkeletalMeshActor;
+		}
+
+		#pragma endregion Get
 
 		// Spawn
 		#pragma region
@@ -86,12 +102,9 @@ namespace NCsSkeletalMeshActor
 
 		#define ShotType NCsSkeletalMeshActor::NAnim::NSequence::FOneShot
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot)
+		const FCsSkeletalMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot)
 		{
-			// Get Context for Manager_SkeletalMeshActor
-			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
-
-			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = UCsManager_SkeletalMeshActor::Get(ContextRoot);
+			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = GetChecked(Context, WorldContext);
 			// Allocate Payload
 			typedef NCsSkeletalMeshActor::NPayload::FImpl PayloadImplType;
 
@@ -106,14 +119,12 @@ namespace NCsSkeletalMeshActor
 			return nullptr;
 		}
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
+			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = GetSafe(Context, WorldContext, Log);
 
-		#if WITH_EDITOR
-			if (!ContextRoot)
+			if (!Manager_SkeletalMeshActor)
 				return nullptr;
-		#endif // #if WITH_EDITOR
 
 			CS_IS_PTR_NULL_RET_NULL(PooledPayload)
 
@@ -123,7 +134,7 @@ namespace NCsSkeletalMeshActor
 			return SpawnChecked(Context, WorldContext, PooledPayload, Shot);
 		}
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot)
+		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot)
 		{
 			using namespace NCsSkeletalMeshActor::NManager::NLibrary::NCached;
 
@@ -136,12 +147,9 @@ namespace NCsSkeletalMeshActor
 
 		#define ShotType NCsSkeletalMeshActor::NAnim::NMontage::FOneShot
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot)
+		const FCsSkeletalMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot)
 		{
-			// Get Context for Manager_SkeletalMeshActor
-			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
-
-			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = UCsManager_SkeletalMeshActor::Get(ContextRoot);
+			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = GetChecked(Context, WorldContext);
 			// Allocate Payload
 			typedef NCsSkeletalMeshActor::NPayload::FImpl PayloadImplType;
 
@@ -156,14 +164,12 @@ namespace NCsSkeletalMeshActor
 			return nullptr;
 		}
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
+			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = GetSafe(Context, WorldContext, Log);
 
-		#if WITH_EDITOR
-			if (!ContextRoot)
+			if (!Manager_SkeletalMeshActor)
 				return nullptr;
-		#endif // #if WITH_EDITOR
 
 			CS_IS_PTR_NULL_RET_NULL(PooledPayload)
 
@@ -173,7 +179,7 @@ namespace NCsSkeletalMeshActor
 			return SpawnChecked(Context, WorldContext, PooledPayload, Shot);
 		}
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot)
+		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot)
 		{
 			using namespace NCsSkeletalMeshActor::NManager::NLibrary::NCached;
 

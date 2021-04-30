@@ -29,9 +29,7 @@ namespace NCsStaticMeshActor
 {
 	typedef FECsStaticMeshActor Type;
 
-	namespace Ref
-	{
-	}
+	CSCORE_API void FromEnumSettings(const FString& Context);
 
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }

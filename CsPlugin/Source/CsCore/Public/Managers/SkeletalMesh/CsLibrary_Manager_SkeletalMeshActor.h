@@ -7,6 +7,7 @@
 #pragma once
 
 class UObject;
+class UCsManager_SkeletalMeshActor;
 struct FCsSkeletalMeshActorPooled;
 
 // NCsPooledObject::NPayload::FImpl
@@ -22,6 +23,8 @@ namespace NCsSkeletalMeshActor
 	{
 		struct CSCORE_API FLibrary final
 		{
+		// ContextRoot
+		#pragma region
 		public:
 
 		#if WITH_EDITOR
@@ -32,9 +35,9 @@ namespace NCsSkeletalMeshActor
 			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsManager_SkeletalMeshActor
 			*/
-			static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
+			static UObject* GetContextRootChecked(const FString& Context, const UObject* WorldContext);
 		#else
-			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext) { return nullptr; }
+			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, const UObject* WorldContext) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -46,9 +49,9 @@ namespace NCsSkeletalMeshActor
 			* @param Log
 			* return				Context for UCsManager_SkeletalMeshActor
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -58,10 +61,37 @@ namespace NCsSkeletalMeshActor
 			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsManager_SkeletalMeshActor
 			*/
-			static UObject* GetSafeContextRoot(UObject* WorldContext);
+			static UObject* GetSafeContextRoot(const UObject* WorldContext);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(UObject* WorldContext) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const UObject* WorldContext) { return nullptr; }
 		#endif // #if WITH_EDITOR
+
+		#pragma endregion ContextRoot
+
+		// Get
+		#pragma region
+		public:
+
+			/**
+			* Get the reference to UCsManager_SkeletalMeshActor from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				UCsManager_SkeletalMeshActor.
+			*/
+			static UCsManager_SkeletalMeshActor* GetChecked(const FString& Context, const UObject* WorldContext);
+
+			/**
+			* Safely get the reference to UCsManager_SkeletalMeshActor from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log
+			* return				UCsManager_SkeletalMeshActor.
+			*/
+			static UCsManager_SkeletalMeshActor* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsPlayback::FLog::Warning);
+
+		#pragma endregion Get
 
 		// Spawn
 		#pragma region
@@ -80,7 +110,7 @@ namespace NCsSkeletalMeshActor
 			* @param Shot
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SpawnChecked(const FString& Context, UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot);
+			static const FCsSkeletalMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot);
 
 			/**
 			* Safely spawn an SkeletalMeshActor with the given payload.
@@ -92,7 +122,7 @@ namespace NCsSkeletalMeshActor
 			* @param Log
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SafeSpawn(const FString& Context, UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, void(*Log)(const FString&) = &FCsLog::Warning);
+			static const FCsSkeletalMeshActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely spawn an SkeletalMeshActor with the given payload.
@@ -102,7 +132,7 @@ namespace NCsSkeletalMeshActor
 			* @param Shot
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SafeSpawn(UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot);
+			static const FCsSkeletalMeshActorPooled* SafeSpawn(const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot);
 
 		#undef ShotType
 
@@ -117,7 +147,7 @@ namespace NCsSkeletalMeshActor
 			* @param Shot
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SpawnChecked(const FString& Context, UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot);
+			static const FCsSkeletalMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot);
 
 			/**
 			* Safely spawn an SkeletalMeshActor with the given payload.
@@ -129,7 +159,7 @@ namespace NCsSkeletalMeshActor
 			* @param Log
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SafeSpawn(const FString& Context, UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, void(*Log)(const FString&) = &FCsLog::Warning);
+			static const FCsSkeletalMeshActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely spawn an SkeletalMeshActor with the given payload.
@@ -139,7 +169,7 @@ namespace NCsSkeletalMeshActor
 			* @param Shot
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SafeSpawn(UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot);
+			static const FCsSkeletalMeshActorPooled* SafeSpawn(const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot);
 
 		#undef ShotType
 

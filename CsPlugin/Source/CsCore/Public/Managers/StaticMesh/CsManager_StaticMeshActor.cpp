@@ -7,6 +7,8 @@
 #include "Managers/StaticMesh/CsCVars_Manager_StaticMeshActor.h"
 // Library
 #include "Library/CsLibrary_Property.h"
+#include "Managers/StaticMesh/Payload/CsLibrary_Payload_StaticMeshActor.h"
+#include "Game/CsLibrary_GameInstance.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Managers
@@ -17,16 +19,12 @@
 #include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"
 
 #if WITH_EDITOR
+// Library
+#include "Managers/StaticMesh/CsLibrary_Manager_StaticMeshActor.h"
+// Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/StaticMesh/CsGetManagerStaticMeshActor.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/World.h"
-#include "Engine/Engine.h"
-
-#include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -34,13 +32,18 @@
 
 namespace NCsManagerStaticMeshActor
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StaticMeshActor, InitInternalFromSettings);
-	}
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StaticMeshActor, GetFromWorldContextObject);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StaticMeshActor, InitInternalFromSettings);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StaticMeshActor, Spawn);
+		}
 
-	namespace Name
-	{
+		namespace Name
+		{
+		}
 	}
 }
 
@@ -63,27 +66,50 @@ namespace NCsStaticMeshActor
 UCsManager_StaticMeshActor* UCsManager_StaticMeshActor::s_Instance;
 bool UCsManager_StaticMeshActor::s_bShutdown = false;
 
-UCsManager_StaticMeshActor::UCsManager_StaticMeshActor(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UCsManager_StaticMeshActor::UCsManager_StaticMeshActor(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	// Singleton
+	bInitialized(false),
+	MyRoot(nullptr),
+	// Settings
+	Settings(),
+	// Internal
+	Internal(),
+		// Update
+	CurrentUpdatePoolType(),
+	CurrentUpdatePoolObjectIndex(0),
+		// Spawn
+	OnSpawn_Event(),
+	OnSpawn_ScriptEvent(),
+		// Destroy
+	OnDestroy_Event(),
+	// Pool
+	Pool(),
+	// Script
+		// ICsPooledObject
+	Script_GetCache_Impl(),
+	Script_Allocate_Impl(),
+	Script_Deallocate_Impl(),
+		// ICsUpdate
+	Script_Update_Impl(),
+		// ICsOnConstructObject
+	Script_OnConstructObject_Impl(),
+	// Class
+	ClassMap()
 {
 }
 
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
+
 /*static*/ UCsManager_StaticMeshActor* UCsManager_StaticMeshActor::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerStaticMeshActor(InRoot)->GetManager_StaticMeshActor();
-#else
-	if (s_bShutdown)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_StaticMeshActor::Get: Manager has already shutdown."));
-		return nullptr;
-	}
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+
+#endif // #if WITH_EDITOR
 
 /*static*/ bool UCsManager_StaticMeshActor::IsValid(UObject* InRoot /*=nullptr*/)
 {
@@ -153,14 +179,14 @@ UCsManager_StaticMeshActor::UCsManager_StaticMeshActor(const FObjectInitializer&
 #endif // #if WITH_EDITOR
 }
 
+#if WITH_EDITOR
+
 /*static*/ bool UCsManager_StaticMeshActor::HasShutdown(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerStaticMeshActor(InRoot)->GetManager_StaticMeshActor() == nullptr;
-#else
-	return s_bShutdown;
-#endif // #if WITH_EDITOR
 }
+
+#endif // #if WITH_EDITOR
 
 #if WITH_EDITOR
 
@@ -219,20 +245,21 @@ UCsManager_StaticMeshActor::UCsManager_StaticMeshActor(const FObjectInitializer&
 
 /*static*/ UCsManager_StaticMeshActor* UCsManager_StaticMeshActor::GetFromWorldContextObject(const UObject* WorldContextObject)
 {
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	using namespace NCsManagerStaticMeshActor::NCached;
+
+	const FString& Context = Str::GetFromWorldContextObject;
+
+	typedef NCsStaticMeshActor::NManager::FLibrary StaticMeshManagerLibrary;
+
+	if (UObject* ContextRoot = StaticMeshManagerLibrary::GetSafe(Context, WorldContextObject))
 	{
 		// Game State
-		if (UCsManager_StaticMeshActor* Manager = GetSafe(World->GetGameState()))
+		if (UCsManager_StaticMeshActor* Manager = GetSafe(ContextRoot))
 			return Manager;
 
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_StaticMeshActor::GetFromWorldContextObject: Failed to Manager FX Actor of type UCsManager_StaticMeshActor from GameState."));
-
-		return nullptr;
+		UE_LOG(LogCs, Warning, TEXT("%s: Failed to Manager FX Actor of type UCsManager_StaticMeshActor from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
 	}
-	else
-	{
-		return nullptr;
-	}
+	return nullptr;
 }
 
 #endif // #if WITH_EDITOR
@@ -276,6 +303,13 @@ void UCsManager_StaticMeshActor::SetMyRoot(UObject* InRoot)
 
 void UCsManager_StaticMeshActor::SetupInternal()
 {
+	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+	// Populate EnumMaps
+	UObject* ContextRoot = GameInstanceLibrary::GetSafeAsObject(MyRoot);
+
+	NCsStaticMeshActor::PopulateEnumMapFromSettings(Context, ContextRoot);
+
 	// Delegates
 	{
 		// Log
@@ -320,7 +354,7 @@ void UCsManager_StaticMeshActor::SetupInternal()
 
 void UCsManager_StaticMeshActor::InitInternalFromSettings()
 {
-	using namespace NCsManagerStaticMeshActor;
+	using namespace NCsManagerStaticMeshActor::NCached;
 
 	const FString& Context = Str::InitInternalFromSettings;
 
@@ -342,15 +376,33 @@ void UCsManager_StaticMeshActor::InitInternalFromSettings()
 
 			PoolParamsType& PoolParams = ManagerParams.ObjectParams.Add(Type);
 
+			checkf(Params.Class.ToSoftObjectPath().IsValid(), TEXT("%s: Class for Type: %s is NOT a Valid Path."), *Context, Type.ToChar());
+
+#if !UE_BUILD_SHIPPING
+			if (!Params.Class.Get())
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s: Class @ for Type: %s is NOT already loaded in memory."), *Context, *(Params.Class.ToString()), Type.ToChar());
+			}
+#endif // #if !UE_BUILD_SHIPPING
+
+			UClass* Class = Params.Class.LoadSynchronous();
+
+			checkf(Class, TEXT("%s: Failed to load Class @ for Type: %s."), *Context, *(Params.Class.ToString()), Type.ToChar());
+
+			ClassMap.Add(Type, Class);
+
+			// FUTURE: If needed implement getting class via Enum
+			/*
 			// Get Class
 			const FECsStaticMeshActorClass& ClassType = Params.Class;
 
 			checkf(EMCsStaticMeshActorClass::Get().IsValidEnum(ClassType), TEXT("%s: Class for NOT Valid."), *Context, ClassType.ToChar());
 
-			//FCsStaticMeshActorPooled* StaticMeshActor = GetStaticMeshActorChecked(Context, ClassType);
-			UClass* Class							  = nullptr;//StaticMeshActor->GetClass();
+			FCsStaticMeshActorPooled* StaticMeshActor = GetStaticMeshActorChecked(Context, ClassType);
+			UClass* Class							  = StaticMeshActor->GetClass();
 
 			checkf(Class, TEXT("%s: Failed to get class for Type: %s ClassType: %s."), *Context, Type.ToChar(), ClassType.ToChar());
+			*/
 
 			PoolParams.Name								= ManagerParams.Name + TEXT("_") + Type.ToChar();
 			PoolParams.World							= ManagerParams.World;
@@ -606,19 +658,15 @@ PayloadType* UCsManager_StaticMeshActor::AllocatePayload(const FECsStaticMeshAct
 const FCsStaticMeshActorPooled* UCsManager_StaticMeshActor::Spawn(const FECsStaticMeshActor& Type, PayloadType* Payload)
 {
 #undef PayloadType
-	if (Internal.IsExhausted(Type))
-	{
-		const FCsStaticMeshActorPooled* AllocatedHead = Internal.GetAllocatedHeadObject(Type);
 
-#if !UE_BUILD_SHIPPING
-		if (UObject* Object = AllocatedHead->GetObject())
-		{
-			UE_LOG(LogCs, Warning, TEXT("UCsManager_StaticMeshActor::Spawn: Deallocating object: %s as pool for Type: %s is exhausted."), *(Object->GetName()), Type.ToChar());
-		}
-#endif // #if !UE_BUILD_SHIPPING
+	using namespace NCsManagerStaticMeshActor::NCached;
 
-		Internal.Destroy(Type, AllocatedHead);
-	}
+	const FString& Context = Str::Spawn;
+
+	typedef NCsStaticMeshActor::NPayload::FLibrary PayloadLibrary;
+
+	check(PayloadLibrary::IsValidChecked(Context, Payload));
+
 	return Internal.Spawn(Type, Payload);
 }
 

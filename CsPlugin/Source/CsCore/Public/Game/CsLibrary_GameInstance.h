@@ -19,7 +19,7 @@ namespace NCsGameInstance
 		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
 		*						of
 		*						A reference to the GameInstance.
-		* return				World
+		* return				GameInstance
 		*/
 		static UGameInstance* GetChecked(const FString& Context, const UObject* ContextObject);
 
@@ -31,7 +31,7 @@ namespace NCsGameInstance
 		*						of
 		*						A reference to the GameInstance.
 		* @param Log
-		* return				World
+		* return				GameInstance
 		*/
 		static UGameInstance* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 
@@ -41,8 +41,41 @@ namespace NCsGameInstance
 		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
 		*						of
 		*						A reference to the GameInstance.
-		* return				World
+		* return				GameInstance
 		*/
 		static UGameInstance* GetSafe(const UObject* ContextObject);
+
+		/**
+		* Get GameInstance from ContextObject.
+		*
+		* @param Context		The calling context.
+		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+		*						of
+		*						A reference to the GameInstance.
+		* return				GameInstance
+		*/
+		static UObject* GetAsObjectChecked(const FString& Context, const UObject* ContextObject);
+
+		/**
+		* Safely get GameInstance from WorldContext.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid)
+		*						of
+		*						A reference to the GameInstance.
+		* @param Log
+		* return				GameInstance
+		*/
+		static UObject* GetSafeAsObject(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Safely get GameInstance from ContextObject.
+		*
+		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+		*						of
+		*						A reference to the GameInstance.
+		* return				GameInstance
+		*/
+		static UObject* GetSafeAsObject(const UObject* ContextObject);
 	};
 }

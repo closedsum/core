@@ -8,6 +8,7 @@
 // Library
 #include "Library/CsLibrary_Property.h"
 #include "Managers/SkeletalMesh/Payload/CsLibrary_Payload_SkeletalMeshActor.h"
+#include "Game/CsLibrary_GameInstance.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Managers
@@ -18,16 +19,12 @@
 #include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"
 
 #if WITH_EDITOR
+// Library
+#include "Managers/SkeletalMesh/CsLibrary_Manager_SkeletalMeshActor.h"
+// Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/SkeletalMesh/CsGetManagerSkeletalMeshActor.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/World.h"
-#include "Engine/Engine.h"
-
-#include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -39,9 +36,10 @@ namespace NCsManagerSkeletalMeshActor
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_SkeletalMeshActor, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_SkeletalMeshActor, SetupInternal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_SkeletalMeshActor, Spawn);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_SkeletalMeshActor, InitInternalFromSettings);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_SkeletalMeshActor, Spawn);
 		}
 
 		namespace Name
@@ -69,27 +67,50 @@ namespace NCsSkeletalMeshActor
 UCsManager_SkeletalMeshActor* UCsManager_SkeletalMeshActor::s_Instance;
 bool UCsManager_SkeletalMeshActor::s_bShutdown = false;
 
-UCsManager_SkeletalMeshActor::UCsManager_SkeletalMeshActor(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UCsManager_SkeletalMeshActor::UCsManager_SkeletalMeshActor(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	// Singleton
+	bInitialized(false),
+	MyRoot(nullptr),
+	// Settings
+	Settings(),
+	// Internal
+	Internal(),
+		// Update
+	CurrentUpdatePoolType(),
+	CurrentUpdatePoolObjectIndex(0),
+		// Spawn
+	OnSpawn_Event(),
+	OnSpawn_ScriptEvent(),
+		// Destroy
+	OnDestroy_Event(),
+	// Pool
+	Pool(),
+	// Script
+		// ICsPooledObject
+	Script_GetCache_Impl(),
+	Script_Allocate_Impl(),
+	Script_Deallocate_Impl(),
+		// ICsUpdate
+	Script_Update_Impl(),
+		// ICsOnConstructObject
+	Script_OnConstructObject_Impl(),
+	// Class
+	ClassMap()
 {
 }
 
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
+
 /*static*/ UCsManager_SkeletalMeshActor* UCsManager_SkeletalMeshActor::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerSkeletalMeshActor(InRoot)->GetManager_SkeletalMeshActor();
-#else
-	if (s_bShutdown)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_SkeletalMeshActor::Get: Manager has already shutdown."));
-		return nullptr;
-	}
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+
+#endif // #if WITH_EDITOR
 
 /*static*/ bool UCsManager_SkeletalMeshActor::IsValid(UObject* InRoot /*=nullptr*/)
 {
@@ -225,20 +246,21 @@ UCsManager_SkeletalMeshActor::UCsManager_SkeletalMeshActor(const FObjectInitiali
 
 /*static*/ UCsManager_SkeletalMeshActor* UCsManager_SkeletalMeshActor::GetFromWorldContextObject(const UObject* WorldContextObject)
 {
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	using namespace NCsManagerSkeletalMeshActor::NCached;
+
+	const FString& Context = Str::GetFromWorldContextObject;
+
+	typedef NCsSkeletalMeshActor::NManager::FLibrary SkeletalMeshManagerLibrary;
+
+	if (UObject* ContextRoot = SkeletalMeshManagerLibrary::GetSafeContextRoot(Context, WorldContextObject))
 	{
 		// Game State
-		if (UCsManager_SkeletalMeshActor* Manager = GetSafe(World->GetGameState()))
+		if (UCsManager_SkeletalMeshActor* Manager = GetSafe(ContextRoot))
 			return Manager;
 
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_SkeletalMeshActor::GetFromWorldContextObject: Failed to Manager FX Actor of type UCsManager_SkeletalMeshActor from GameState."));
-
-		return nullptr;
+		UE_LOG(LogCs, Warning, TEXT("%s: Failed to Manager FX Actor of type UCsManager_SkeletalMeshActor from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
 	}
-	else
-	{
-		return nullptr;
-	}
+	return nullptr;
 }
 
 #endif // #if WITH_EDITOR
@@ -286,11 +308,12 @@ void UCsManager_SkeletalMeshActor::SetupInternal()
 
 	const FString& Context = Str::SetupInternal;
 
-	// Populate EnumMaps
-	UWorld* World				= MyRoot->GetWorld();
-	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-	NCsSkeletalMeshActor::PopulateEnumMapFromSettings(Context, GameInstance);
+	// Populate EnumMaps
+	UObject* ContextRoot = GameInstanceLibrary::GetSafeAsObject(MyRoot);
+
+	NCsSkeletalMeshActor::PopulateEnumMapFromSettings(Context, ContextRoot);
 
 	// Delegates
 	{

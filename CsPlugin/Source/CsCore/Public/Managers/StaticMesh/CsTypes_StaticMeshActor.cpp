@@ -17,6 +17,12 @@ namespace NCsStaticMeshActor
 	{
 		const FString StaticMeshActor = TEXT("StaticMeshActor");
 	}
+
+	void FromEnumSettings(const FString& Context)
+	{
+		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsDeveloperSettings, EMCsStaticMeshActor, FECsStaticMeshActor>(Context, Str::StaticMeshActor, &FCsLog::Warning);
+	}
+
 	/*
 	const FCsDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot)
 	{
@@ -41,6 +47,8 @@ namespace NCsStaticMeshActor
 		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
 
 		EMCsStaticMeshActor::Get().ClearUserDefinedEnums();
+
+		FromEnumSettings(Context);
 
 		//FromDataTable(Context, ContextRoot);
 	}

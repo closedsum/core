@@ -20,7 +20,7 @@ namespace NCsSkeletalMeshActor
 	{
 	#define PayloadType NCsSkeletalMeshActor::NPayload::IPayload
 
-		struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<PayloadType>
+		struct CSCORE_API FLibrary final : public TCsLibrary_InterfaceMap<PayloadType>
 		{
 		public:
 

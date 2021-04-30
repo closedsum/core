@@ -24,7 +24,7 @@ namespace NCsGameInstance
 		}
 	}
 
-	UGameInstance* FLibrary::GetChecked(const FString& Context, UObject* ContextObject)
+	UGameInstance* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
 	{
 		CS_IS_PTR_NULL_CHECKED(ContextObject)
 
@@ -39,13 +39,13 @@ namespace NCsGameInstance
 			return GameInstance;
 		}
 		
-		UGameInstance* GameInstance = Cast<UGameInstance>(ContextObject);
+		UGameInstance* GameInstance = const_cast<UGameInstance*>(Cast<UGameInstance>(ContextObject));
 
 		checkf(GameInstance, TEXT("%s: ContextObject: %s does NOT contain to a World or is a reference to GameInstance."), *Context, *(ContextObject->GetName()));
 		return nullptr;
 	}
 
-	UGameInstance* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	UGameInstance* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_NULL(ContextObject)
 
@@ -63,7 +63,7 @@ namespace NCsGameInstance
 			return GameInstance;
 		}
 
-		UGameInstance* GameInstance = Cast<UGameInstance>(ContextObject);
+		UGameInstance* GameInstance = const_cast<UGameInstance*>(Cast<UGameInstance>(ContextObject));
 
 		if (!GameInstance)
 		{
@@ -72,7 +72,7 @@ namespace NCsGameInstance
 		return GameInstance;
 	}
 
-	UGameInstance* FLibrary::GetSafe(UObject* ContextObject)
+	UGameInstance* FLibrary::GetSafe(const UObject* ContextObject)
 	{
 		using namespace NCsGameInstance::NLibrary::NCached;
 

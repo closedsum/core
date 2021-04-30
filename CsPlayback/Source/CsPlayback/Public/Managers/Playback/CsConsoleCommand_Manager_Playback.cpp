@@ -157,17 +157,11 @@ namespace NCsPlayback
 
 				if (OutString.RemoveFromStart(Command))
 				{
-					if (OutString.IsEmpty())
-					{
-						UE_LOG(LogCsPlayback, Warning, TEXT("%s: Command: %s."), *Context, *Definition);
-						return false;
-					}
-
 					CS_IS_PTR_NULL(MyRoot)
 
-					typedef NCsPlayback::NManager::FLibrary PlaybackManagerLibrary;
+					typedef NCsPlayback::NManager::NPlayback::FLibrary PlaybackLibrary;
 
-					PlaybackManagerLibrary::SafePlayLatest(Context, MyRoot);
+					PlaybackLibrary::SafePlayLatest(Context, MyRoot);
 					return true;
 				}
 			}

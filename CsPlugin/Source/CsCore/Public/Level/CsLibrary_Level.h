@@ -126,6 +126,16 @@ namespace NCsLevel
 			*/
 			static FString GetSafeName(UObject* WorldContext);
 
+			/**
+			* Get the Long Package Name for the Persistent Level. This is usually in the form:
+			* LevelPath.LevelName
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				LevelPath.LevelName
+			*/
+			static FString GetLongPackageNameChecked(const FString& Context, UObject* WorldContext);
+
 		#pragma endregion Name
 
 		// FName

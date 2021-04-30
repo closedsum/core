@@ -32,21 +32,21 @@ namespace NCsPlayback
 
 		#if WITH_EDITOR
 
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
 			return GameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
 		{
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
 			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(UObject* ContextObject)
+		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
 		{
 			using namespace NCsPlayback::NManager::NLibrary::NCached;
 
@@ -62,7 +62,7 @@ namespace NCsPlayback
 		// Get
 		#pragma region
 
-		UCsManager_Playback* FLibrary::GetChecked(const FString& Context, UObject* ContextObject)
+		UCsManager_Playback* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
 		{
 			UObject* ContextRoot				  = GetContextRootChecked(Context, ContextObject);
 			UCsManager_Playback* Manager_Playback = UCsManager_Playback::Get(ContextRoot);
@@ -71,7 +71,7 @@ namespace NCsPlayback
 			return Manager_Playback;
 		}
 
-		UCsManager_Playback* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+		UCsManager_Playback* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -91,17 +91,49 @@ namespace NCsPlayback
 
 		#pragma endregion Get
 
-		// Playback
+		// State
 		#pragma region
 
-		void FLibrary::SafePlayLatest(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+		#define StateType NCsPlayback::EState
+
+		void FLibrary::SetPlaybackStateChecked(const FString& Context, const UObject* ContextObject, const StateType& State)
 		{
-			if (UCsManager_Playback* Manager_Playback = GetSafe(Context, ContextObject, Log))
-			{
-				Manager_Playback->Playback.SafePlayLatest(Context, Log);
-			}
+			GetChecked(Context, ContextObject)->SetPlaybackState(State);
 		}
 
-		#pragma endregion Playback
+		const StateType& FLibrary::GetPlaybackStateChecked(const FString& Context, const UObject* ContextObject)
+		{
+			return GetChecked(Context, ContextObject)->GetPlaybackState();
+		}
+
+		#undef StateType
+
+		#pragma endregion State
+
+		namespace NPlayback
+		{
+			void FLibrary::SafePlayLatest(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+			{
+				typedef NCsPlayback::NManager::FLibrary PlaybackManagerLibrary;
+
+				if (UCsManager_Playback* Manager_Playback = PlaybackManagerLibrary::GetSafe(Context, ContextObject, Log))
+				{
+					Manager_Playback->Playback.SafePlayLatest(Context, Log);
+				}
+			}
+
+			bool FLibrary::IsSafeSustainedGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEvent& Event, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+			{
+				typedef NCsPlayback::NManager::FLibrary PlaybackManagerLibrary;
+
+				if (UCsManager_Playback* Manager_Playback = PlaybackManagerLibrary::GetSafe(Context, ContextObject, Log))
+				{
+					CS_IS_ENUM_STRUCT_VALID(EMCsGameEvent, FECsGameEvent, Event)
+
+					return Manager_Playback->Playback.IsSustainedGameEvent(Event);
+				}
+				return false;
+			}
+		}
 	}
 }

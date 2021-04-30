@@ -28,23 +28,26 @@ namespace NCsGameEvent
 			}
 		}
 
-	#if WITH_EDITOR
+		// ContextRoot
+		#pragma region
 
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
+		#if WITH_EDITOR
+
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
 			return GameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
 			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(UObject* ContextObject)
+		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
 		{
 			using namespace NCsGameEvent::NCoordinator::NLibrary::NCached;
 
@@ -53,7 +56,41 @@ namespace NCsGameEvent
 			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
 
-	#endif // #if WITH_EDITOR
+		#endif // #if WITH_EDITOR
+
+		#pragma endregion ContextRoot
+
+		// Get
+		#pragma region
+
+		UCsCoordinator_GameEvent* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
+		{
+			UObject* ContextRoot						    = GetContextRootChecked(Context, ContextObject);
+			UCsCoordinator_GameEvent* Coordinator_GameEvent = UCsCoordinator_GameEvent::Get(ContextRoot);
+
+			CS_IS_PTR_NULL_CHECKED(Coordinator_GameEvent)
+			return Coordinator_GameEvent;
+		}
+
+		UCsCoordinator_GameEvent* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
+
+		#if WITH_EDITOR
+			if (!ContextRoot)
+				return nullptr;
+		#endif // #if WITH_EDITOR
+
+			UCsCoordinator_GameEvent* Coordinator_GameEvent = UCsCoordinator_GameEvent::Get(ContextRoot);
+
+			if (!Coordinator_GameEvent)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Coordinator_GameEvent."), *Context));
+			}
+			return Coordinator_GameEvent;
+		}
+
+		#pragma endregion Get
 
 		void FLibrary::ProcessGameEventInfoChecked(const FString& Context, UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info)
 		{

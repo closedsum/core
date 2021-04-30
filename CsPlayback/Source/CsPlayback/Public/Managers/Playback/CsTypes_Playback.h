@@ -17,6 +17,8 @@ namespace NCsPlayback
 	enum class EState : uint8
 	{
 		None,
+		PreparePlayback,
+		QueuePlayback,
 		Playback,
 		Record,
 		EState_MAX
@@ -203,11 +205,23 @@ public:
 	UPROPERTY()
 	TArray<FCsPlaybackByEventsByDeltaTime> Events;
 
+	/** File holding any GameState information that needs to be apart of the Playback. */
+	UPROPERTY()
+	FString GameStateFile;
+
+	/** The next file to process after this Playback finishes. There is more "time" instability
+		when transitioning / loading between levels. For now, its best to story Playbacks on a 
+		per level basis. */
+	UPROPERTY()
+	FString NextFile;
+
 	FCsPlaybackByEvents() :
 		Username(),
 		Date(1, 1, 1, 0, 0, 0, 0),
 		Level(),
-		Events()
+		Events(),
+		GameStateFile(),
+		NextFile()
 	{
 	}
 
@@ -233,6 +247,11 @@ public:
 			return true;
 		}
 		return false;
+	}
+
+	bool ShouldCopyFrom(const FCsPlaybackByEvents& From) const
+	{
+		return Events.Num() < From.Events.Num();
 	}
 
 	void Reset()

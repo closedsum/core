@@ -137,6 +137,11 @@ public:
 		Frame = 0;
 	}
 
+	FString ToCompactString() const
+	{
+		return FString::Printf(TEXT("Time: %3.3f RealTime: %3.3f Timespan: %s Frame: %lld"), Time, RealTime, *(Timespan.ToString()), Frame);
+	}
+
 	static FCsDeltaTime GetDeltaTime(const FCsTime& A, const FCsTime& B)
 	{
 		FCsDeltaTime DeltaTime;

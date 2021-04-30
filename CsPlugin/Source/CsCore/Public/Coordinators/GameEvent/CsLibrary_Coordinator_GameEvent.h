@@ -7,6 +7,7 @@
 #include "Utility/CsLog.h"
 
 class UObject;
+class UCsCoordinator_GameEvent;
 
 namespace NCsGameEvent
 {
@@ -14,6 +15,10 @@ namespace NCsGameEvent
 	{
 		struct CSCORE_API FLibrary
 		{
+		// ContextRoot
+		#pragma region
+		public:
+
 		#if WITH_EDITOR
 			/**
 			* Get the Context (Root) for UCsCoordinator_GameEvent from a WorldContext.
@@ -22,9 +27,9 @@ namespace NCsGameEvent
 			* @oaram ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsCoordinator_GameEvent
 			*/
-			static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject);
+			static UObject* GetContextRootChecked(const FString& Context, const UObject* ContextObject);
 		#else
-			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject) { return nullptr; }
+			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, const UObject* ContextObject) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -37,9 +42,9 @@ namespace NCsGameEvent
 			*						the Context Root.
 			* return				Context for UCsCoordinator_GameEvent
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -49,10 +54,41 @@ namespace NCsGameEvent
 			* @oaram ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsCoordinator_GameEvent
 			*/
-			static UObject* GetSafeContextRoot(UObject* ContextObject);
+			static UObject* GetSafeContextRoot(const UObject* ContextObject);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(UObject* ContextObject) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const UObject* ContextObject) { return nullptr; }
 		#endif // #if WITH_EDITOR
+
+		#pragma endregion ContextRoot
+
+		// Get
+		#pragma region
+		public:
+
+			/**
+			* Get the reference to UCsCoordinator_GameEvent from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* return				UCsCoordinator_GameEvent.
+			*/
+			static UCsCoordinator_GameEvent* GetChecked(const FString& Context, const UObject* ContextObject);
+
+			/**
+			* Safely get the reference to UCsCoordinator_GameEvent from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Log
+			* return				UCsCoordinator_GameEvent.
+			*/
+			static UCsCoordinator_GameEvent* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#pragma endregion Get
 
 			/**
 			* 

@@ -163,6 +163,18 @@ namespace NCsLevel
 			return GetSafeName(Context, WorldContext, nullptr);
 		}
 
+		FString FLibrary::GetLongPackageNameChecked(const FString& Context, UObject* WorldContext)
+		{
+			const FString LevelPath = GetNameChecked(Context, WorldContext);
+
+			int32 Index;
+			LevelPath.FindLastChar('/', Index);
+
+			const FString LevelName = LevelPath.Right(LevelPath.Len() - Index + 1);
+
+			return LevelPath + TEXT(".") + LevelName;
+		}
+
 		#pragma endregion Name
 
 		// FName

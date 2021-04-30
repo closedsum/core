@@ -17,6 +17,9 @@ class ICsGetManagerPlayback;
 class FCsRunnable;
 struct FCsRoutine;
 
+// NCsPlayback::NManager::FConsoleCommand
+CS_FWD_DECLARE_CLASS_NAMESPACE_2(NCsPlayback, NManager, FConsoleCommand)
+
 UCLASS(transient)
 class CSPLAYBACK_API UCsManager_Playback : public UObject
 {
@@ -109,6 +112,16 @@ public:
 
 #pragma endregion Singleton
 
+// Console Command
+#pragma region
+private:
+
+#define ConsoleCommandManagerType NCsPlayback::NManager::FConsoleCommand
+	ConsoleCommandManagerType* Manager_ConsoleCommand;
+#undef ConsoleCommandManagerType
+
+#pragma endregion Console Command
+
 // State
 #pragma region
 
@@ -121,6 +134,7 @@ private:
 public:
 
 	void SetPlaybackState(const StateType& NewState);
+	FORCEINLINE const StateType& GetPlaybackState() const { return PlaybackState; }
 
 #undef StateType
 
@@ -275,7 +289,7 @@ private:
 		#pragma endregion NCsRunnable::NTask::ITask
 		};
 
-		#undef TaskType
+	#undef TaskType
 
 		FTask* Task;
 
@@ -291,16 +305,30 @@ private:
 		{
 		}
 
+	private:
+
 		void Start(const FSoftObjectPath& LevelPath);
 
 		void Stop();
 
+	public:
+
+		bool CanUpdate() const;
+
+	private:
+
 		void Update(const FCsDeltaTime& DeltaTime);
+
+	public:
+
+		bool CanPerformWriteTask() const;
+
+		void LogEvent(const FString& Message) const;
 	};
 
-	FRecord Record;
-
 public:
+
+	FRecord Record;
 
 	FORCEINLINE bool IsRecording() const
 	{
@@ -333,9 +361,7 @@ private:
 
 		FCsPlaybackByEvents PlaybackByEvents;
 
-		TArray<FCsPlaybackByEvent> QueuedSustainedEvents;
-		TSet<FCsPlaybackByEvent> SustainedEvents;
-		TSet<FECsGameEvent> SustainedGameEvents;
+		TMap<FECsGameEvent, FCsPlaybackByEvent> SustainedEventMap;
 
 		int32 Index;
 
@@ -349,9 +375,7 @@ private:
 			MakeReadyImpl(),
 			IsReadyImpl(),
 			PlaybackByEvents(),
-			QueuedSustainedEvents(),
-			SustainedEvents(),
-			SustainedGameEvents(),
+			SustainedEventMap(),
 			Index(0),
 			ElapsedTime(),
 			PlayLatestHandle()
@@ -366,7 +390,6 @@ private:
 		const FSoftObjectPath& GetLevelPath() const { return PlaybackByEvents.Level; }
 
 		void PlayLatestChecked();
-		void SafePlayLatest(const FString& Context, void(*Log)(const FString&) = &NCsPlayback::FLog::Warning);
 
 	private:
 
@@ -374,19 +397,40 @@ private:
 
 		FCsRoutineHandle PlayLatestHandle;
 
+	public:
+
+		void SafePlayLatest(const FString& Context, void(*Log)(const FString&) = &NCsPlayback::FLog::Warning);
+
+	private:
+
+		char SafePlayLatest_Internal(FCsRoutine* R);
+
+	public:
+
+		void Start();
+
+	private:
+
 		void Update(const FCsDeltaTime& DeltaTime);
 
 	public:
 
 		FORCEINLINE bool IsSustainedGameEvent(const FECsGameEvent& Event) const
 		{
-			return SustainedGameEvents.Contains(Event);
+			return SustainedEventMap.Find(Event) != nullptr;
 		}
+
+		void LogEvent(const FCsPlaybackByEvent& Event) const;
 	};
 
 public:
 
 	FPlayback Playback;
+
+	FORCEINLINE bool IsPlayingBack() const
+	{
+		return PlaybackState == NCsPlayback::EState::Playback;
+	}
 
 #pragma endregion Playback
 };

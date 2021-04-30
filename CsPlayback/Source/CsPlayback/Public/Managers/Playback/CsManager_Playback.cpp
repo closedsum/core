@@ -2,8 +2,12 @@
 #include "Managers/Playback/CsManager_Playback.h"
 #include "CsPlayback.h"
 
+// CVars
+#include "Managers/Playback/CsCVars_Manager_Playback.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
+// Console Command
+#include "Managers/Playback/CsConsoleCommand_Manager_Playback.h"
 // Library
 #include "Level/CsLibrary_Level.h"
 #include "Managers/Playback/CsLibrary_Manager_Playback.h"
@@ -40,6 +44,7 @@
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback, SetPlaybackState);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback, ResolveEvents);
 		}
 	}
 
@@ -50,13 +55,16 @@
 			namespace Str
 			{
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FPlayback, PlayLatestChecked);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FPlayback, SafePlayLatest);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FPlayback, PlayLatest_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FPlayback, SafePlayLatest);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FPlayback, SafePlayLatest_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FPlayback, Start);
 			}
 
 			namespace Name
 			{
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Playback::FPlayback, PlayLatest_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Playback::FPlayback, SafePlayLatest_Internal);
 			}
 		}
 	}
@@ -235,6 +243,10 @@ UCsManager_Playback::UCsManager_Playback(const FObjectInitializer& ObjectInitial
 
 void UCsManager_Playback::Initialize()
 {
+	typedef NCsPlayback::NManager::FConsoleCommand ConsoleCommandManagerType;
+
+	Manager_ConsoleCommand = new ConsoleCommandManagerType(MyRoot);
+
 	// PlaybackByEvents
 	{
 		Last_Events.Reset(EMCsGameEvent::Get().Num());
@@ -252,6 +264,8 @@ void UCsManager_Playback::Initialize()
 
 		Record.Outer = this;
 		Record.Task = new UCsManager_Playback::FRecord::FTask();
+
+		Playback.Outer = this;
 
 		// Set FileName
 		{
@@ -300,6 +314,9 @@ void UCsManager_Playback::Initialize()
 
 void UCsManager_Playback::CleanUp()
 {
+	delete Manager_ConsoleCommand;
+	Manager_ConsoleCommand = nullptr;
+
 	typedef NCsRunnable::NManager::FLibrary RunnableManagerLibrary;
 
 	// If Manager_Runnable is still active, clear the Owner on Record.Runnable so the
@@ -355,16 +372,13 @@ void UCsManager_Playback::SetPlaybackState(const StateType& NewState)
 	// Playback
 	if (PlaybackState == StateType::Playback)
 	{
-		checkf(!Playback.FileName.IsEmpty(), TEXT("%s: No FileName set for Playback."), *Context);
-
-		Playback.Index = CS_FIRST;
-		Playback.ElapsedTime.Reset();
+		Playback.Start();
 	}
 	// Record
 	else
 	if (PlaybackState == StateType::Record)
 	{
-		FSoftObjectPath LevelPath(LevelLibrary::GetNameChecked(Context, MyRoot));
+		FSoftObjectPath LevelPath(LevelLibrary::GetLongPackageNameChecked(Context, MyRoot));
 
 		Record.Start(LevelPath);
 	}
@@ -421,10 +435,14 @@ void UCsManager_Playback::OnProcessGameEventInfo(const GameEventGroupType& Group
 
 void UCsManager_Playback::ResolveEvents()
 {
+	using namespace NCsManagerPlayback::NCached;
+
+	const FString& Context = Str::ResolveEvents;
+
 	if (bProcessedGameEventInfos ||
 		bProcessedGameEventInfos != Last_bProcessedGameEventInfos)
 	{
-		UE_LOG(LogCsPlayback, Warning, TEXT(": DeltaTime: %f"), Record.ElapsedTime.Time);
+		CS_NON_SHIPPING_EXPR(Record.LogEvent(FString::Printf(TEXT("%s: DeltaTime: %f"), *Context, Record.ElapsedTime.Time)));
 
 		Last_bProcessedGameEventInfos = bProcessedGameEventInfos;
 	}
@@ -459,8 +477,7 @@ void UCsManager_Playback::ResolveEvents()
 						Last_Event.RepeatedState = RepeatedStateType::Start;
 						Final_Event				 = Last_Event;
 
-						UE_LOG(LogCsPlayback, Warning, TEXT(": CHANGE: None -> Start\n%s"), *(Final_Event.ToString()));
-
+						CS_NON_SHIPPING_EXPR(Record.LogEvent(FString::Printf(TEXT("%s: CHANGE: None -> Start\n%s"), *Context, *(Final_Event.ToString()))));
 						AnyValid = true;
 					}
 				}
@@ -481,7 +498,7 @@ void UCsManager_Playback::ResolveEvents()
 					Final_Event.Value    = Preview_Event.Value;
 					Final_Event.Location = Preview_Event.Location;
 
-					UE_LOG(LogCsPlayback, Warning, TEXT(": CHANGE: %s -> %s\n%s"), RepeatedStateMapType::Get().ToChar(Last_Event.RepeatedState), RepeatedStateMapType::Get().ToChar(Final_Event.RepeatedState), *(Final_Event.ToString()));
+					CS_NON_SHIPPING_EXPR(Record.LogEvent(FString::Printf(TEXT("%s: CHANGE: %s -> %s\n%s"), *Context, RepeatedStateMapType::Get().ToChar(Last_Event.RepeatedState), RepeatedStateMapType::Get().ToChar(Final_Event.RepeatedState), *(Final_Event.ToString()))));
 
 					Last_Event = Final_Event;
 
@@ -496,7 +513,7 @@ void UCsManager_Playback::ResolveEvents()
 				Final_Event.Location	  = Preview_Event.Location;
 				Final_Event.RepeatedState = RepeatedStateType::None;
 
-				UE_LOG(LogCsPlayback, Warning, TEXT(": NEW\n%s"), *(Final_Event.ToString()));
+				CS_NON_SHIPPING_EXPR(Record.LogEvent(FString::Printf(TEXT("%s: NEW\n%s"), *Context, *(Final_Event.ToString()))));
 
 				Last_Event = Final_Event;
 
@@ -511,8 +528,7 @@ void UCsManager_Playback::ResolveEvents()
 				Final_Event				  = Last_Event;
 				Final_Event.RepeatedState = RepeatedStateType::End;
 
-				UE_LOG(LogCsPlayback, Warning, TEXT(": END\n%s"), *(Final_Event.ToString()));
-
+				CS_NON_SHIPPING_EXPR(Record.LogEvent(FString::Printf(TEXT("%s: END\n%s"), *Context, *(Final_Event.ToString()))));
 				AnyValid = true;
 			}
 			Last_Event = FCsPlaybackByEvent::Invalid;
@@ -531,8 +547,7 @@ void UCsManager_Playback::ResolveEvents()
 		{
 			if (Final_Event.IsValid())
 			{
-				UE_LOG(LogCsPlayback, Warning, TEXT(": Adding Event\n%s"), *(Final_Event.ToString()));
-
+				CS_NON_SHIPPING_EXPR(Record.LogEvent(FString::Printf(TEXT("%s: Adding Event\n%s"), *Context, *(Final_Event.ToString()))));
 				Events.Events.Add(Final_Event);
 			}
 			Final_Event = FCsPlaybackByEvent::Invalid;
@@ -546,39 +561,6 @@ void UCsManager_Playback::ResolveEvents()
 
 // Record
 #pragma region
-
-void UCsManager_Playback::FRecord::Start(const FSoftObjectPath& LevelPath)
-{
-	PlaybackByEvents.Reset();
-
-	PlaybackByEvents.Username = FString(FPlatformProcess::UserName());
-	PlaybackByEvents.Level	  = LevelPath;
-	PlaybackByEvents.Date	  = FDateTime::Now();
-
-	Task->Events = PlaybackByEvents;
-
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	StartTime = UCsManager_Time::Get(Outer->GetMyRoot())->GetTimeSinceStart(UpdateGroup);
-}
-
-void UCsManager_Playback::FRecord::Stop()
-{
-}
-
-void UCsManager_Playback::FRecord::Update(const FCsDeltaTime& DeltaTime)
-{
-	if (Runnable->IsIdle() &&
-		Task->IsReady())
-	{
-		bool PerformWriteTask = Task->Events.CopyFrom(PlaybackByEvents);
-
-		if (PerformWriteTask)
-		{
-			Task->Start();
-			Runnable->Start();
-		}
-	}
-}
 
 	// Task
 #pragma region
@@ -599,6 +581,56 @@ void UCsManager_Playback::FRecord::FTask::Execute()
 }
 
 #pragma endregion Task
+
+void UCsManager_Playback::FRecord::Start(const FSoftObjectPath& LevelPath)
+{
+	PlaybackByEvents.Reset();
+
+	PlaybackByEvents.Username = FString(FPlatformProcess::UserName());
+	PlaybackByEvents.Level	  = LevelPath;
+	PlaybackByEvents.Date	  = FDateTime::Now();
+
+	Task->Events = PlaybackByEvents;
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	StartTime = UCsManager_Time::Get(Outer->GetMyRoot())->GetTimeSinceStart(UpdateGroup);
+}
+
+void UCsManager_Playback::FRecord::Stop()
+{
+}
+
+bool UCsManager_Playback::FRecord::CanUpdate() const
+{
+	return Runnable->IsIdle() && Task->IsReady();
+}
+
+void UCsManager_Playback::FRecord::Update(const FCsDeltaTime& DeltaTime)
+{
+	if (CanUpdate())
+	{
+		bool PerformWriteTask = Task->Events.CopyFrom(PlaybackByEvents);
+
+		if (PerformWriteTask)
+		{
+			Task->Start();
+			Runnable->Start();
+		}
+	}
+}
+
+bool UCsManager_Playback::FRecord::CanPerformWriteTask() const
+{
+	return Task->Events.ShouldCopyFrom(PlaybackByEvents);
+}
+
+void UCsManager_Playback::FRecord::LogEvent(const FString& Message) const
+{
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerPlaybackRecordEvent))
+	{
+		UE_LOG(LogCsPlayback, Warning, TEXT("%s"), *Message);
+	}
+}
 
 #pragma endregion Record
 
@@ -679,10 +711,6 @@ void UCsManager_Playback::FPlayback::PlayLatestChecked()
 
 	const FString& Context = Str::PlayLatestChecked;
 
-	bool Success = SetLatest(Context);
-
-	checkf(Success, TEXT("%s: Failed to SetLatest."), *Context);
-
 	CS_IS_DELEGATE_BOUND_CHECKED(MakeReadyImpl)
 
 	CS_IS_DELEGATE_BOUND_CHECKED(IsReadyImpl)
@@ -709,27 +737,95 @@ void UCsManager_Playback::FPlayback::PlayLatestChecked()
 	Scheduler->Start(Payload);
 }
 
-void UCsManager_Playback::FPlayback::SafePlayLatest(const FString& Context, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
-{
-	bool Success = SetLatest(Context, Log);
-
-	if (!Success)
-		return;
-
-	CS_IS_DELEGATE_BOUND_EXIT(MakeReadyImpl)
-
-	CS_IS_DELEGATE_BOUND_EXIT(IsReadyImpl)
-
-	PlayLatestChecked();
-}
-
 char UCsManager_Playback::FPlayback::PlayLatest_Internal(FCsRoutine* R)
 {
+	using namespace NCsManagerPlayback::NPlayback::NCached;
+
+	const FString& Context = Str::PlayLatest_Internal;
+
 	typedef NCsPlayback::EState StateType;
 
 	CS_COROUTINE_BEGIN(R);
 
 	Outer->SetPlaybackState(StateType::None);
+
+	// Wait until the Record's Task is IDLE and NOT Writing
+	CS_COROUTINE_WAIT_UNTIL(R, Outer->Record.CanUpdate() && !Outer->Record.CanPerformWriteTask());
+
+	// Set Latest
+	{
+		bool Success = SetLatest(Context);
+
+		checkf(Success, TEXT("%s: Failed to SetLatest."), *Context);
+	}
+
+	MakeReadyImpl.Execute();
+
+	CS_COROUTINE_WAIT_UNTIL(R, IsReadyImpl.Execute());
+
+	Outer->SetPlaybackState(StateType::QueuePlayback);
+
+	CS_COROUTINE_END(R);
+}
+
+void UCsManager_Playback::FPlayback::SafePlayLatest(const FString& Context, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+{
+	using namespace NCsManagerPlayback::NPlayback::NCached;
+
+	CS_IS_DELEGATE_BOUND_EXIT(MakeReadyImpl)
+
+	CS_IS_DELEGATE_BOUND_EXIT(IsReadyImpl)
+
+	UObject* ContextRoot = Outer->GetMyRoot();
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(ContextRoot);
+
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+
+	#define COROUTINE SafePlayLatest_Internal
+
+	Payload->CoroutineImpl.BindRaw(this, &UCsManager_Playback::FPlayback::COROUTINE);
+	Payload->StartTime = UCsManager_Time::Get(ContextRoot)->GetTime(UpdateGroup);
+	Payload->Owner.SetObject(Outer);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
+
+	#undef COROUTINE
+
+	Scheduler->Start(Payload);
+}
+
+char UCsManager_Playback::FPlayback::SafePlayLatest_Internal(FCsRoutine* R)
+{
+	using namespace NCsManagerPlayback::NPlayback::NCached;
+
+	const FString& Context = Str::SafePlayLatest_Internal;
+
+	static const int32 LOG	   = 0;
+	void* Ptr				   = R->GetValue_Void(LOG);
+	void(*Log)(const FString&) = (void(*)(const FString&))Ptr;
+
+	typedef NCsPlayback::EState StateType;
+
+	CS_COROUTINE_BEGIN(R);
+
+	Outer->SetPlaybackState(StateType::None);
+	
+	// Wait until the Record's Task is IDLE and NOT Writing
+	CS_COROUTINE_WAIT_UNTIL(R, Outer->Record.CanUpdate() && !Outer->Record.CanPerformWriteTask());
+
+	// Set Latest
+	{
+		bool Success = SetLatest(Context, Log);
+
+		if (!Success)
+		{
+			CS_COROUTINE_EXIT(R);
+		}
+	}
 
 	MakeReadyImpl.Execute();
 
@@ -738,6 +834,18 @@ char UCsManager_Playback::FPlayback::PlayLatest_Internal(FCsRoutine* R)
 	Outer->SetPlaybackState(StateType::Playback);
 
 	CS_COROUTINE_END(R);
+}
+
+void UCsManager_Playback::FPlayback::Start()
+{
+	using namespace NCsManagerPlayback::NPlayback::NCached;
+
+	const FString& Context = Str::Start;
+
+	checkf(!FileName.IsEmpty(), TEXT("%s: No FileName set for Playback."), *Context);
+
+	Index = CS_FIRST;
+	ElapsedTime.Reset();
 }
 
 void UCsManager_Playback::FPlayback::Update(const FCsDeltaTime& DeltaTime)
@@ -754,9 +862,11 @@ void UCsManager_Playback::FPlayback::Update(const FCsDeltaTime& DeltaTime)
 	UObject* ContextRoot							= Outer->GetMyRoot();
 	UCsCoordinator_GameEvent* Coordinator_GameEvent = UCsCoordinator_GameEvent::Get(ContextRoot);
 
+	bool ProccessedGameEventInfo = false;
+
 	const FCsPlaybackByEventsByDeltaTime& Events = PlaybackByEvents.Events[Index];
 
-	if (Events.DeltaTime >= ElapsedTime)
+	if (ElapsedTime >= Events.DeltaTime)
 	{
 		for (const FCsPlaybackByEvent& Event : Events.Events)
 		{
@@ -764,43 +874,72 @@ void UCsManager_Playback::FPlayback::Update(const FCsDeltaTime& DeltaTime)
 
 			const RepeatedStateType& RepeatedState = Event.RepeatedState;
 
-			// None | Start -> Broadcast Event
-			if (RepeatedState == RepeatedStateType::None ||
-				RepeatedState == RepeatedStateType::Start)
+			// None Broadcast Event
+			if (RepeatedState == RepeatedStateType::None)
 			{
+				CS_NON_SHIPPING_EXPR(LogEvent(Event));
+
 				FCsGameEventInfo Info(Event.Event, Event.Value, Event.Location);
 
 				Coordinator_GameEvent->ProcessGameEventInfo(Event.Group, Info);
 
-				// Start -> Add to QueuedSustainedEvents
-				if (RepeatedState == RepeatedStateType::Start)
-				{
-					QueuedSustainedEvents.Add(Event);
-				}
+				ProccessedGameEventInfo = true;
 			}
-			// End -> Remove SustainedEvents
+			// Start -> Add to SustainedEvents
+			else
+			if (RepeatedState == RepeatedStateType::Start)
+			{
+				SustainedEventMap.Add(Event.Event, Event);
+			}
+			// End -> Remove SustainedEvents and Broadcast Event
 			else
 			if (RepeatedState == RepeatedStateType::End)
 			{
-				SustainedEvents.Remove(Event);
+				SustainedEventMap.Remove(Event.Event);
+
+				CS_NON_SHIPPING_EXPR(LogEvent(Event));
+
+				FCsGameEventInfo Info(Event.Event, Event.Value, Event.Location);
+
+				Coordinator_GameEvent->ProcessGameEventInfo(Event.Group, Info);
+
+				ProccessedGameEventInfo = true;
 			}
 		}
 		++Index;
 	}
 	// Broadcast any Sustained Events
-	for (const FCsPlaybackByEvent& Event : SustainedEvents)
+	for (const TPair<FECsGameEvent, FCsPlaybackByEvent>& Pair : SustainedEventMap)
 	{
+		const FCsPlaybackByEvent& Event = Pair.Value;
+
+		CS_NON_SHIPPING_EXPR(LogEvent(Event));
+
 		FCsGameEventInfo Info(Event.Event, Event.Value, Event.Location);
 
 		Coordinator_GameEvent->ProcessGameEventInfo(Event.Group, Info);
+		
+		ProccessedGameEventInfo = true;
 	}
-	// Populated SustainedEvents and SustainedGameEvents
-	for (const FCsPlaybackByEvent& Event : QueuedSustainedEvents)
+
+#if !UE_BUILD_SHIPPING
+	if (!ProccessedGameEventInfo &&
+		CS_CVAR_LOG_IS_SHOWING(LogManagerPlaybackPlaybackUpdate))
 	{
-		SustainedEvents.Add(Event);
-		SustainedGameEvents.Add(Event.Event);
+		UE_LOG(LogCsPlayback, Warning, TEXT("UCsManager_Playback::FPlayback::Update: None. [%s]"), *(ElapsedTime.ToCompactString()));
 	}
-	QueuedSustainedEvents.Reset(QueuedSustainedEvents.Max());
+#endif // #if !UE_BUILD_SHIPPING
+
+	ElapsedTime += DeltaTime;
+}
+
+void UCsManager_Playback::FPlayback::LogEvent(const FCsPlaybackByEvent& Event) const
+{
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerPlaybackPlaybackUpdate) ||
+		CS_CVAR_LOG_IS_SHOWING(LogManagerPlaybackPlaybackEvent))
+	{
+		UE_LOG(LogCsPlayback, Warning, TEXT("UCsManager_Playback::FPlayback::Update: Broadcasting. [%s]\n%s"), *(ElapsedTime.ToCompactString()), *(Event.ToString()));
+	}
 }
 
 #pragma endregion Playback

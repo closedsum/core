@@ -21,7 +21,7 @@ namespace NCsGameInstance
 		*						A reference to the GameInstance.
 		* return				World
 		*/
-		static UGameInstance* GetChecked(const FString& Context, UObject* ContextObject);
+		static UGameInstance* GetChecked(const FString& Context, const UObject* ContextObject);
 
 		/**
 		* Safely get GameInstance from WorldContext.
@@ -33,7 +33,7 @@ namespace NCsGameInstance
 		* @param Log
 		* return				World
 		*/
-		static UGameInstance* GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+		static UGameInstance* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Safely get GameInstance from ContextObject.
@@ -43,6 +43,6 @@ namespace NCsGameInstance
 		*						A reference to the GameInstance.
 		* return				World
 		*/
-		static UGameInstance* GetSafe(UObject* ContextObject);
+		static UGameInstance* GetSafe(const UObject* ContextObject);
 	};
 }

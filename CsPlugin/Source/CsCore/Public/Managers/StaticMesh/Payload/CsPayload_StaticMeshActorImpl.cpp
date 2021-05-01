@@ -22,12 +22,16 @@ namespace NCsStaticMeshActor
 			PreserveChangesFromDefaultMask(0),
 			// StaticMeshPayloadType (NCsStaticMeshActor::NPayload::IPayload)
 			Mesh(nullptr),
+			Materials(),
 			DeallocateMethod(DeallocateMethodType::Complete),
 			LifeTime(0.0f),
 			AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Bone(NAME_None),
 			TransformRules(0),
-			Transform(FTransform::Identity)
+			Transform(FTransform::Identity),
+			bCastShadow(false),
+			bReceivesDecals(false),
+			bUseAsOccluder(false)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -62,12 +66,16 @@ namespace NCsStaticMeshActor
 
 			// StaticMeshPayloadType (NCsStaticMeshActor::NPayload::IPayload)
 			Mesh = nullptr;
+			Materials.Reset(Materials.Max());
 			DeallocateMethod = DeallocateMethodType::Complete;
 			LifeTime = 0.0f;
 			AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Bone = NAME_None;
 			TransformRules = 0;
 			Transform = FTransform::Identity;
+			bCastShadow = false;
+			bReceivesDecals = false;
+			bUseAsOccluder = false;
 		}
 
 		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)

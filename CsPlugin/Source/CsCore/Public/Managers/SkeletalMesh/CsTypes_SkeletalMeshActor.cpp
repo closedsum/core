@@ -161,7 +161,7 @@ bool FCsSkeletalMeshActorPooledInfo::IsValid(const FString& Context, void(*Log)(
 
 #pragma endregion FCsSkeletalMeshActorPooledInfo
 
-// SkeletalMeshPayloadChange
+// NCsSkeletalMeshActor::NPayload::EChange
 #pragma region
 
 namespace NCsSkeletalMeshPayloadChange
@@ -184,4 +184,4 @@ namespace NCsSkeletalMeshPayloadChange
 	CSCORE_API const int32 All = 255; // 1 + 2 + 4 + 8 + 16 + 32 + 64 + 128
 }
 
-#pragma endregion SkeletalMeshPayloadChange
+#pragma endregion NCsSkeletalMeshActor::NPayload::EChange

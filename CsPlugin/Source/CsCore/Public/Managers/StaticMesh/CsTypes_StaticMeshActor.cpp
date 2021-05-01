@@ -121,7 +121,9 @@ namespace NCsStaticMeshActorDeallocateMethod
 bool FCsStaticMeshActorPooledInfo::IsValidChecked(const FString& Context) const
 {
 	// Check Mesh is Valid.
-	check(GetChecked(Context));
+	check(Mesh.GetChecked(Context));
+	// Check Materials is Valid
+	check(Materials.IsValidChecked(Context));
 	// Check Type is Valid
 	check(EMCsStaticMeshActor::Get().IsValidEnumChecked(Context, Type));
 
@@ -132,4 +134,53 @@ bool FCsStaticMeshActorPooledInfo::IsValidChecked(const FString& Context) const
 	return true;
 }
 
+bool FCsStaticMeshActorPooledInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	// Check Mesh is Valid.
+	if (!Mesh.IsValid(Context, Log))
+		return false;
+	// Check Materials is Valid
+	if (!Materials.IsValid(Context, Log))
+		return false;
+	// Check Type is Valid
+	if (!EMCsStaticMeshActor::Get().IsValidEnum(Type))
+	{
+		return false;
+	}
+
+	if (!Transform.Equals(FTransform::Identity))
+	{
+		if (TransformRules == 0)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString())));
+			return true;
+		}
+	}
+	return true;
+}
+
 #pragma endregion FCsStaticMeshActorPooledInfo
+
+// NCsStaticMeshActor::NPayload::EChange
+#pragma region
+
+namespace NCsStaticMeshPayloadChange
+{
+	namespace Ref
+	{
+		typedef EMCsStaticMeshPayloadChange EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(StaticMesh);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Materials);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(KeepRelativeTransform, "Keep Relative Transform");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(KeepWorldTransform, "Keep World Transform");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(SnapToTargetNotIncludingScale, "Snap to Target not Including Scale");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(SnapToTargetIncludingScale, "Snap to Target Including Scale");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Transform);
+	}
+
+	CSCORE_API const int32 None = 0;
+	CSCORE_API const int32 All = 255; // 1 + 2 + 4 + 8 + 16 + 32 + 64 + 128
+}
+
+#pragma endregion NCsStaticMeshActor::NPayload::EChange

@@ -31,6 +31,13 @@ namespace NCsStaticMeshActor
 			virtual UStaticMesh* GetStaticMesh() const = 0;
 
 			/**
+			* Get the Materials to apply to the StaticMesh asset.
+			*
+			* return Materials
+			*/
+			virtual const TArray<UMaterialInterface*>& GetMaterials() const = 0;
+
+			/**
 			* Get the Deallocate Method. Used to determine the conditions
 			* to deallocate a StaticMeshActor (Lifetime, Complete, ... etc).
 			* 
@@ -87,6 +94,28 @@ namespace NCsStaticMeshActor
 			* return Transform
 			*/
 			virtual const FTransform& GetTransform() const = 0;
+
+			/**
+			* Controls whether the StaticMeshActor should cast an shadow or not.
+			*
+			* return
+			*/
+			virtual const bool& CastShadow() const = 0;
+
+			/**
+			* Whether the StaticMeshActor receives decals.
+			*
+			* return
+			*/
+			virtual const bool& ReceivesDecals() const = 0;
+
+			/**
+			 * Whether to render the StaticMeshActor in the depth only pass.
+			 * This should generally be true for all objects, and let the renderer make decisions about whether to render objects in the depth only pass.
+			 *
+			 * return
+			 */
+			virtual const bool& UseAsOccluder() const = 0;
 
 		#undef DeallocateMethodType
 		};

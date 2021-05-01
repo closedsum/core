@@ -2,7 +2,10 @@
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/Enum/CsEnumMap.h"
+#include "Types/Enum/CsEnumFlagMap.h"
 #include "Types/CsTypes_AttachDetach.h"
+#include "Types/CsTypes_StaticMesh.h"
+#include "Types/CsTypes_Material.h"
 
 #include "CsTypes_StaticMeshActor.generated.h"
 #pragma once
@@ -146,17 +149,13 @@ struct CSCORE_API FCsStaticMeshActorPooledInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-	/** Soft reference to a UStaticMesh asset. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSoftObjectPtr<UStaticMesh> Mesh;
+	/** Mesh */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCsStaticMesh Mesh;
 
-	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
-	int32 Mesh_LoadFlags;
-
-	/** Hard reference to a UStaticMesh asset. */
-	UPROPERTY(Transient, BlueprintReadOnly)
-	UStaticMesh* Mesh_Internal;
+	/** Materials */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCsTArrayMaterialnterface Materials;
 
 	/** The StaticMeshActor Type. This is used to group StaticMeshActors into different categories 
 	    and can be used by a Manager pooling StaticMeshActors to Spawn the correct
@@ -212,12 +211,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FTransform Transform;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bCastShadow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bReceivesDecals;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bUseAsOccluder;
+
 public:
 
 	FCsStaticMeshActorPooledInfo() :
-		Mesh(nullptr),
-		Mesh_LoadFlags(0),
-		Mesh_Internal(nullptr),
+		Mesh(),
+		Materials(),
 		Type(),
 		DeallocateMethod(ECsStaticMeshActorDeallocateMethod::Complete),
 		DeallocateMethod_Internal(nullptr),
@@ -225,7 +232,10 @@ public:
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
-		Transform(FTransform::Identity)
+		Transform(FTransform::Identity),
+		bCastShadow(false),
+		bReceivesDecals(false),
+		bUseAsOccluder(false)
 	{
 	}
 	
@@ -237,46 +247,211 @@ public:
 	FORCEINLINE void UpdateDeallocateMethodPtr() { DeallocateMethod_Internal = (NCsStaticMeshActor::EDeallocateMethod*)&DeallocateMethod; }
 
 #define DeallocateMethodType NCsStaticMeshActor::EDeallocateMethod
+
+	FORCEINLINE FECsStaticMeshActor* GetTypePtr() { return &Type; }
 	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *DeallocateMethod_Internal; }
+	FORCEINLINE DeallocateMethodType* GetDeallocateMethodPtr() const { return DeallocateMethod_Internal; }
+	FORCEINLINE float* GetLifeTimePtr() { return &LifeTime; }
+	FORCEINLINE ECsAttachmentTransformRules* GetAttachmentTransformRulesPtr() { return &AttachmentTransformRules; }
+	FORCEINLINE FName* GetBonePtr() { return &Bone; }
+	FORCEINLINE int32* GetTransformRulesPtr() { return &TransformRules; }
+	FORCEINLINE FTransform* GetTransformPtr() { return &Transform; }
+
 #undef DeallocateMethodType
 
-	/**
-	* Get the Hard reference to the UStaticMesh asset.
-	*
-	* return Static Mesh
-	*/
-	FORCEINLINE UStaticMesh* Get() const { return Mesh_Internal; }
-
-	/**
-	* Get the Hard reference to the UStaticMesh asset.
-	*
-	* @param Context	The calling context.
-	* return			Static Mesh
-	*/
-	FORCEINLINE UStaticMesh* GetChecked(const FString& Context) const 
-	{ 
-		checkf(Mesh.ToSoftObjectPath().IsValid(), TEXT("%s: Mesh is NULL."), *Context);
-
-		checkf(Mesh_Internal, TEXT("%s: Mesh has NOT been loaded from Path @ %s."), *Context, *(Mesh.ToSoftObjectPath().ToString()));
-
-		return Mesh_Internal; 
-	}
-
-	/**
-	* Get the Hard reference to the UStaticMesh asset.
-	*
-	* return Static Mesh
-	*/
-	FORCEINLINE UStaticMesh* GetChecked() const
-	{
-		checkf(Mesh.ToSoftObjectPath().IsValid(), TEXT("FCsStaticMeshActorPooledInfo::GetChecked: Mesh is NULL."));
-
-		checkf(Mesh_Internal, TEXT("FCsStaticMeshActorPooledInfo::GetChecked: Mesh has NOT been loaded from Path @ %s."), *(Mesh.ToSoftObjectPath().ToString()));
-
-		return Mesh_Internal;
-	}
-
 	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 #pragma endregion FCsStaticMeshActorPooledInfo
+
+// NCsStaticMeshActor::NPayload::EChange
+#pragma region
+
+UENUM(BlueprintType, meta = (Bitflags))
+enum class ECsStaticMeshPayloadChange : uint8
+{
+	StaticMesh						UMETA(DisplayName = "StaticMesh"),							// 0
+	Materials						UMETA(DisplayName = "Materials"),							// 1
+	KeepRelativeTransform			UMETA(DisplayName = "Keep Relative Transform"),				// 2
+	KeepWorldTransform				UMETA(DisplayName = "Keep World Transform"),				// 3
+	SnapToTargetNotIncludingScale	UMETA(DisplayName = "Snap to Target not Including Scale"),	// 4
+	SnapToTargetIncludingScale		UMETA(DisplayName = "Snap to Target Including Scale"),		// 5
+	Transform						UMETA(DisplayName = "Transform"),							// 6
+	AnimInstance					UMETA(DisplayName = "AnimInstance"),						// 7
+};
+
+struct CSCORE_API EMCsStaticMeshPayloadChange : public TCsEnumFlagMap<ECsStaticMeshPayloadChange>
+{
+	CS_ENUM_FLAG_MAP_BODY(EMCsStaticMeshPayloadChange, ECsStaticMeshPayloadChange)
+};
+
+namespace NCsStaticMeshPayloadChange
+{
+	typedef ECsStaticMeshPayloadChange Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type StaticMesh;
+		extern CSCORE_API const Type Materials;
+		extern CSCORE_API const Type KeepRelativeTransform;
+		extern CSCORE_API const Type KeepWorldTransform;
+		extern CSCORE_API const Type SnapToTargetNotIncludingScale;
+		extern CSCORE_API const Type SnapToTargetIncludingScale;
+	}
+
+	extern CSCORE_API const int32 None;
+	extern CSCORE_API const int32 All;
+}
+
+#define CS_STATIC_MESH_PAYLOAD_CHANGE_NONE 0
+
+namespace NCsStaticMeshActor
+{
+	namespace NPayload
+	{
+		enum class EChange : uint32
+		{
+			StaticMesh						= 1 << 0,
+			Materials						= 1 << 1,
+			KeepRelativeTransform			= 1 << 2,
+			KeepWorldTransform				= 1 << 3,
+			SnapToTargetNotIncludingScale	= 1 << 4,
+			SnapToTargetIncludingScale		= 1 << 5,
+			Transform						= 1 << 6
+		};
+
+		namespace NChange
+		{
+			FORCEINLINE bool HasAttach(const uint32& Mask)
+			{
+				if (CS_TEST_BITFLAG(Mask, EChange::KeepRelativeTransform))
+					return true;
+				if (CS_TEST_BITFLAG(Mask, EChange::KeepWorldTransform))
+					return true;
+				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetNotIncludingScale))
+					return true;
+				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetIncludingScale))
+					return true;
+				return false;
+			}
+
+			FORCEINLINE bool HasAttach(const uint32& Mask, const ECsAttachmentTransformRules& Rules)
+			{
+				if (CS_TEST_BITFLAG(Mask, EChange::KeepRelativeTransform) &&
+					Rules == ECsAttachmentTransformRules::KeepRelativeTransform)
+					return true;
+				if (CS_TEST_BITFLAG(Mask, EChange::KeepWorldTransform) &&
+					Rules == ECsAttachmentTransformRules::KeepWorldTransform)
+					return true;
+				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetNotIncludingScale) &&
+					Rules == ECsAttachmentTransformRules::SnapToTargetNotIncludingScale)
+					return true;
+				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetIncludingScale) &&
+					Rules == ECsAttachmentTransformRules::SnapToTargetIncludingScale)
+					return true;
+				return false;
+			}
+
+			FORCEINLINE uint32 GetAttachAsMask(const uint32& Mask)
+			{
+				if (CS_TEST_BITFLAG(Mask, EChange::KeepRelativeTransform))
+					return (uint32)EChange::KeepRelativeTransform;
+				if (CS_TEST_BITFLAG(Mask, EChange::KeepWorldTransform))
+					return (uint32)EChange::KeepWorldTransform;
+				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetNotIncludingScale))
+					return (uint32)EChange::SnapToTargetNotIncludingScale;
+				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetIncludingScale))
+					return (uint32)EChange::SnapToTargetIncludingScale;
+				return 0;
+			}
+
+			FORCEINLINE EChange FromTransformAttachmentRule(const ECsAttachmentTransformRules& Rules)
+			{
+				if (Rules == ECsAttachmentTransformRules::KeepRelativeTransform)
+					return EChange::KeepRelativeTransform;
+				if (Rules == ECsAttachmentTransformRules::KeepWorldTransform)
+					return EChange::KeepWorldTransform;
+				if (Rules == ECsAttachmentTransformRules::SnapToTargetNotIncludingScale)
+					return EChange::SnapToTargetNotIncludingScale;
+				if (Rules == ECsAttachmentTransformRules::SnapToTargetIncludingScale)
+					return EChange::SnapToTargetIncludingScale;
+				return EChange::KeepRelativeTransform;
+			}
+
+			struct CSCORE_API FCounter
+			{
+			protected:
+				FCounter() :
+					Preserved(0),
+					PreservedPercent(0.0f),
+					Changed(0),
+					ChangedPercent(0.0f),
+					Cleared(0),
+					ClearedPercent(0.0f),
+					Total(0)
+				{
+				}
+				FCounter(const FCounter&) = delete;
+				FCounter(FCounter&&) = delete;
+			public:
+				virtual ~FCounter() {}
+			private:
+				uint32 Preserved;
+				float PreservedPercent;
+				uint32 Changed;
+				float ChangedPercent;
+				uint32 Cleared;
+				float ClearedPercent;
+				uint32 Total;
+			public:
+				static FCounter& Get()
+				{
+					static FCounter Instance;
+					return Instance;
+				}
+
+			public:
+
+				FORCEINLINE void AddPreserved()
+				{
+					++Preserved;
+					++Total;
+					PreservedPercent = (float)Preserved/(float)Total;
+				}
+
+				FORCEINLINE void AddChanged()
+				{
+					++Changed;
+					++Total;
+					ChangedPercent = (float)Changed/(float)Total;
+				}
+
+				FORCEINLINE void AddCleared()
+				{
+					++Cleared;
+					++Total;
+					ClearedPercent = (float)Cleared/(float)Total;
+				}
+
+				void Reset()
+				{
+					Preserved = 0;
+					PreservedPercent = 0.0f;
+					Changed = 0;
+					ChangedPercent = 0.0f;
+					Cleared = 0;
+					ClearedPercent = 0.0f;
+					Total = 0;
+				}
+
+				FORCEINLINE FString ToString() const
+				{
+					return FString::Printf(TEXT("Preserved: (%3.3f = %d/%d) Changed: (%3.3f = %d/%d) Cleared: (%3.3f = %d/%d)"), PreservedPercent, Preserved, Total, ChangedPercent, Changed, Total, ClearedPercent, Cleared, Total);
+				}
+			};
+		}
+	}
+}
+
+#pragma endregion NCsStaticMeshActor::NPayload::EChange

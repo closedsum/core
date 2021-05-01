@@ -34,7 +34,7 @@ class CSCORE_API ACsStaticMeshActorPooledImpl : public AStaticMeshActor,
 
 #define CacheType NCsPooledObject::NCache::ICache
 #define CacheImplType NCsStaticMeshActor::NCache::FImpl
-#define PayloadType NCsPooledObject::NPayload::IPayload
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 #define StaticMeshPayloadType NCsStaticMeshActor::NPayload::IPayload
 
 // UObject Interface
@@ -83,7 +83,7 @@ public:
 
 	FORCEINLINE CacheType* GetCache() const { return Cache; }
 
-	void Allocate(PayloadType* Payload);
+	void Allocate(PooledPayloadType* Payload);
 
 	void Deallocate();
 
@@ -104,8 +104,24 @@ protected:
 
 	void Deallocate_Internal();
 
+	void Handle_SetStaticMesh(StaticMeshPayloadType* Payload);
+	void Log_SetStaticMesh(StaticMeshPayloadType* Payload);
+
+	void Handle_SetMaterials(StaticMeshPayloadType* Payload);
+	void Log_SetMaterials(StaticMeshPayloadType* Payload);
+
+	FName AttachToBone;
+
+	void Handle_AttachAndSetTransform(PooledPayloadType* Payload, StaticMeshPayloadType* SkeletalMeshPayload);
+	void Log_AttachAndSetTransform(PooledPayloadType* Payload, StaticMeshPayloadType* SkeletalMeshPayload);
+
+	void Handle_ClearStaticMesh();
+	void Handle_ClearAttachAndTransform();
+
+	void LogChangeCounter();
+
 #undef CacheType
 #undef CacheImplType
-#undef PayloadType
+#undef PooledPayloadType
 #undef StaticMeshPayloadType
 };

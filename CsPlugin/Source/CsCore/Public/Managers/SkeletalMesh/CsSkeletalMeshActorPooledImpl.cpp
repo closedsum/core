@@ -234,11 +234,11 @@ void ACsSkeletalMeshActorPooledImpl::Deallocate_Internal()
 	CS_NON_SHIPPING_EXPR(LogChangeCounter());
 }
 
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 #define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
+
 void ACsSkeletalMeshActorPooledImpl::Handle_SetSkeletalMesh(SkeletalMeshPayloadType* Payload)
 {
-#undef SkeletalMeshPayloadType
-
 	CS_NON_SHIPPING_EXPR(Log_SetSkeletalMesh(Payload));
 
 	USkeletalMesh* Mesh = Payload->GetSkeletalMesh();
@@ -270,11 +270,8 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetSkeletalMesh(SkeletalMeshPayloadT
 	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::SkeletalMesh);
 }
 
-#define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
 void ACsSkeletalMeshActorPooledImpl::Log_SetSkeletalMesh(SkeletalMeshPayloadType* Payload)
 {
-#undef SkeletalMeshPayloadType
-
 	using namespace NCsSkeletalMeshActorImpl::NCached;
 
 	const FString& Context = Str::Handle_SetSkeletalMesh;
@@ -312,11 +309,8 @@ void ACsSkeletalMeshActorPooledImpl::Log_SetSkeletalMesh(SkeletalMeshPayloadType
 	}
 }
 
-#define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
 void ACsSkeletalMeshActorPooledImpl::Handle_SetMaterials(SkeletalMeshPayloadType* Payload)
 {
-#undef SkeletalMeshPayloadType
-
 	using namespace NCsSkeletalMeshActorImpl::NCached;
 
 	const FString& Context = Str::Handle_SetMaterials;
@@ -366,11 +360,8 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetMaterials(SkeletalMeshPayloadType
 	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Materials);
 }
 
-#define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
 void ACsSkeletalMeshActorPooledImpl::Log_SetMaterials(SkeletalMeshPayloadType* Payload)
 {
-#undef SkeletalMeshPayloadType
-
 	using namespace NCsSkeletalMeshActorImpl::NCached;
 
 	const FString& Context = Str::Handle_SetMaterials;
@@ -451,13 +442,8 @@ void ACsSkeletalMeshActorPooledImpl::Log_SetMaterials(SkeletalMeshPayloadType* P
 	}
 }
 
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
 void ACsSkeletalMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload, SkeletalMeshPayloadType* SkeletalMeshPayload)
 {
-#undef PooledPayloadType
-#undef SkeletalMeshPayloadType
-
 	CS_NON_SHIPPING_EXPR(Log_AttachAndSetTransform(Payload, SkeletalMeshPayload));
 
 	// If the Parent is set, attach the SkeletalMeshActor to the Parent
@@ -563,14 +549,12 @@ void ACsSkeletalMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadT
 	#undef ChangeHelper
 }
 
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
 void ACsSkeletalMeshActorPooledImpl::Log_AttachAndSetTransform(PooledPayloadType* Payload, SkeletalMeshPayloadType* SkeletalMeshPayload)
 {
-#undef PooledPayloadType
-#undef SkeletalMeshPayloadType
-
 }
+
+#undef SkeletalMeshPayloadType
+#undef PooledPayloadType
 
 #define ShotType NCsSkeletalMeshActor::NParams::NAnim::NMontage::FOneShot
 void ACsSkeletalMeshActorPooledImpl::Handle_SetAnimInstance(ShotType* Shot)

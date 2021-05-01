@@ -7,6 +7,7 @@
 class UObject;
 struct FCsInterfaceMap;
 class UStaticMesh;
+class UMaterialInterface;
 
 namespace NCsStaticMeshActor
 {
@@ -48,6 +49,8 @@ namespace NCsStaticMeshActor
 
 			UStaticMesh* Mesh;
 
+			TArray<UMaterialInterface*> Materials;
+
 			DeallocateMethodType DeallocateMethod;
 
 			float LifeTime;
@@ -59,6 +62,12 @@ namespace NCsStaticMeshActor
 			int32 TransformRules;
 
 			FTransform Transform;
+
+			bool bCastShadow;
+
+			bool bReceivesDecals;
+
+			bool bUseAsOccluder;
 
 		public:
 
@@ -101,17 +110,33 @@ namespace NCsStaticMeshActor
 			template<typename T>
 			FORCEINLINE T* GetParent() const { return Cast<T>(GetParent()); }
 
+			FORCEINLINE void SetMaterials(const TArray<UMaterialInterface*>& InMaterials)
+			{
+				const int32 Count = InMaterials.Num();
+
+				Materials.Reset(FMath::Max(Materials.Max(), Count));
+
+				for (UMaterialInterface* Material : InMaterials)
+				{
+					Materials.Add(Material);
+				}
+			}
+
 		// StaticMeshPayloadType (NCsStaticMeshActor::NPayload::IPayload)
 		#pragma region
 		public:
 
 			FORCEINLINE UStaticMesh* GetStaticMesh() const { return Mesh; }
+			FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return Materials; }
 			FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return DeallocateMethod; }
 			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
 			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
 			FORCEINLINE const FName& GetBone() const { return Bone; }
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
 			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
+			FORCEINLINE const bool& CastShadow() const { return bCastShadow; }
+			FORCEINLINE const bool& ReceivesDecals() const { return bReceivesDecals; }
+			FORCEINLINE const bool& UseAsOccluder() const { return bUseAsOccluder; }
 
 		#pragma endregion StaticMeshPayloadType (NCsStaticMeshActor::NPayload::IPayload)
 

@@ -46,7 +46,7 @@ namespace NCsDataRootSet
 
 			UCsManager_Data* Manager_Data = DataManagerLibrary::GetSafe(Context, WorldContext);
 
-			if (Manager_Data)
+			if (!Manager_Data)
 				return nullptr;
 
 			UObject* DataRootSetImpl = Manager_Data->DataRootSet.GetObject();

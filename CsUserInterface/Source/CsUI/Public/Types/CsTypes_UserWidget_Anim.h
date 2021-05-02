@@ -1,4 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Log
+#include "Utility/CsUILog.h"
+
 #include "CsTypes_UserWidget_Anim.generated.h"
 #pragma once
 
@@ -84,6 +87,7 @@ public:
 	}
 
 	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
 };
 
 namespace NCsUserWidget
@@ -130,6 +134,7 @@ namespace NCsUserWidget
 				}
 
 				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 				
 			#undef PlayModeType
 			};

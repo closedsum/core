@@ -13,6 +13,6 @@ class CSUI_API UCsScriptLibrary_Widget : public UObject
 
 public:
 
-	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget", meta = (AutoCreateRefTerm = "AnimName"))
-	static UWidgetAnimation* GetSafeAnimation(UUserWidget* Widget, const FName& AnimName);
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget", meta = (AutoCreateRefTerm = "Context,AnimName"))
+	static UWidgetAnimation* GetAnimation(const FString& Context, UUserWidget* Widget, const FName& AnimName);
 };

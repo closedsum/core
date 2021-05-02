@@ -2,8 +2,136 @@
 #include "Library/CsLibrary_Property.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
+// Library
+#include "Library/CsLibrary_Valid.h"
+
 namespace NCsProperty
 {
+	namespace NLibrary
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProperty::FLibrary, FindPropertyByName);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProperty::FLibrary, FindStructPropertyByName);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProperty::FLibrary, FindObjectPropertyByName);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProperty::FLibrary, GetObjectPropertyValue);
+			}
+		}
+	}
+
+	// Find
+	#pragma region
+
+	FProperty* FLibrary::FindPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName)
+	{
+		CS_IS_PTR_NULL_CHECKED(Struct)
+
+		CS_IS_NAME_NONE_CHECKED(PropertyName)
+
+		FProperty* Property = Struct->FindPropertyByName(PropertyName);
+		Property			= Property ? Property : Struct->CustomFindProperty(PropertyName);
+
+		checkf(Property, TEXT("%s: Failed to find Property with name: %s from Struct: %s."), *Context, *(PropertyName.ToString()), *(Struct->GetName()));
+		return Property;
+	}
+
+	FProperty* FLibrary::FindPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_RET_NULL(Struct)
+
+		CS_IS_NAME_NONE_RET_NULL(PropertyName)
+
+		FProperty* Property = Struct->FindPropertyByName(PropertyName);
+		Property			= Property ? Property : Struct->CustomFindProperty(PropertyName);
+
+		if (!Property)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Property with name: %s from Struct: %s."), *Context, *(PropertyName.ToString()), *(Struct->GetName())));
+		}
+		return  Property;
+	}
+
+	FStructProperty* FLibrary::FindStructPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FProperty* Property = FindPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!Property)
+			nullptr;
+
+		FStructProperty* Prop = CastField<FStructProperty>(Property);
+
+		if (!Prop)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NOT a struct."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+		}
+		return Prop;
+	}
+
+	FObjectProperty* FLibrary::FindObjectPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName)
+	{
+		FProperty* Property   = FindPropertyByNameChecked(Context, Struct, PropertyName);
+		FObjectProperty* Prop = CastField<FObjectProperty>(Property);
+
+		checkf(Prop, TEXT("%s: %s.%s is NOT a UObject."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+		return Prop;
+	}
+
+	FObjectProperty* FLibrary::FindObjectPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FProperty* Property = FindPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!Property)
+			nullptr;
+
+		FObjectProperty* Prop = CastField<FObjectProperty>(Property);
+
+		if (!Prop)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NOT a UObject."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+		}
+		return Prop;
+	}
+
+	#pragma endregion Find
+
+	// Get
+	#pragma region
+
+	UObject* FLibrary::GetObjectPropertyValueChecked(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName)
+	{
+		CS_IS_PTR_NULL_CHECKED(StructValue)
+
+		FObjectProperty* ObjectProperty = FindObjectPropertyByNameChecked(Context, Struct, PropertyName);
+		UObject* Value					= ObjectProperty->GetObjectPropertyValue_InContainer(StructValue);
+
+		checkf(Value, TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+		return Value;
+	}
+
+	UObject* FLibrary::GetObjectPropertyValue(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_RET_NULL(StructValue)
+
+		FObjectProperty* ObjectProperty = FindPropertyByName<FObjectProperty>(Context, Struct, PropertyName, Log);
+
+		if (!ObjectProperty)
+			return nullptr;
+		
+		UObject* Value = ObjectProperty->GetObjectPropertyValue_InContainer(StructValue);
+
+		if (!Value)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+		}
+		return Value;
+	}
+
+	#pragma endregion Get
+
 	#if WITH_EDITOR
 
 	TArrayView<const TMap<FString, int32>>& FLibrary::GetArrayIndicesPerObject(FPropertyChangedChainEvent& e)

@@ -1,48 +1,239 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Log
+#include "Utility/CsLog.h"
 
 class UStruct;
 class FProperty;
+class FStructProperty;
+class FObjectProperty;
 
 namespace NCsProperty
 {
+	namespace NLibrary
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				extern CSCORE_API const FString FindPropertyByName;
+				extern CSCORE_API const FString FindStructPropertyByName;
+				extern CSCORE_API const FString FindObjectPropertyByName;
+				extern CSCORE_API const FString GetObjectPropertyValue;
+			}
+		}
+	}
+
 	struct CSCORE_API FLibrary
 	{
+	// Find
+	#pragma region
 	public:
 
 		/**
+		* Find the Property from Struct with name: PropertyName.
 		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* return				Property.
+		*/
+		static FProperty* FindPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName);
+
+		/**
+		* Find the Property from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property.
+		*/
+		static FProperty* FindPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Find the Property from Struct with name: PropertyName.
 		*
 		* @param Struct
 		* @param PropertyName
-		* return
+		* return				Property.
+		*/
+		FORCEINLINE static FProperty* FindPropertyByName(const UStruct* Struct, const FName& PropertyName)
+		{
+			using namespace NCsProperty::NLibrary::NCached;
+
+			const FString& Context = Str::FindPropertyByName;
+
+			return FindPropertyByName(Context, Struct, PropertyName, nullptr);
+		}
+
+		/**
+		* Find the Property of type: T from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property of type: T.
 		*/
 		template<typename T>
-		static T* FindPropertyByName(const UStruct* Struct, const FName& PropertyName)
+		static T* FindPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName)
 		{
-			T* Property = CastField<T>(Struct->FindPropertyByName(PropertyName));
-			Property	= Property ? Property : CastField<T>(Struct->CustomFindProperty(PropertyName));
+			FProperty* Property = FindPropertyByNameChecked(Context, Struct, PropertyName, Log);
+			T* Prop				= CastField<T>(Property);
 
+			checkf(Prop, TEXT("%s: %s.%s is NOT of type: T."), *(Struct->GetName()), *(PropertyName.ToString()));
+			return Prop;
+		}
+
+		/**
+		* Find the Property of type: T from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property of type: T.
+		*/
+		template<typename T>
+		static T* FindPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FProperty* Property = FindPropertyByName(Context, Struct, PropertyName, Log);
+
+			if (!Property)
+				return nullptr;
+
+			T* Prop = CastField<T>(Property);
+
+			if (!Prop)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: T."), *(Struct->GetName()), *(PropertyName.ToString())));
+			}
+			return Prop;
+		}
+
+		/**
+		* Find the Property of type: T from Struct with name: PropertyName.
+		*
+		* @param Struct
+		* @param PropertyName
+		* return				Property of type: T.
+		*/
+		template<typename T>
+		FORCEINLINE static T* FindPropertyByName(const UStruct* Struct, const FName& PropertyName)
+		{
+			using namespace NCsProperty::NLibrary::NCached;
+
+			const FString& Context = Str::FindPropertyByName;
+
+			return FindPropertyByName<T>(Context, Struct, PropertyName, nullptr);
+		}
+
+		/**
+		* Find the Struct Property of type: T from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property.
+		*/
+		static FStructProperty* FindStructPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Find the Struct Property of type: T from Struct with name: PropertyName.
+		*
+		* @param Struct
+		* @param PropertyName
+		* return				Property.
+		*/
+		FORCEINLINE static FStructProperty* FindStructPropertyByName(const UStruct* Struct, const FName& PropertyName)
+		{
+			using namespace NCsProperty::NLibrary::NCached;
+
+			const FString& Context = Str::FindStructPropertyByName;
+
+			return FindStructPropertyByName(Context, Struct, PropertyName, nullptr);
+		}
+
+		/**
+		* Find the Struct Property of type: T from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property.
+		*/
+		template<typename StructType>
+		static FStructProperty* FindStructPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FStructProperty* Property = FindStructPropertyByName(Context, Struct, PropertyName, Log);
+
+			if (!Property)
+				return nullptr;
+
+			if (Property->Struct != StructType::StaticStruct())
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: %s.%s of type: T is NOT of type: T."), *(Struct->GetName()), *(PropertyName.ToString()), *(Property->Struct->GetName()), *(StructType::StaticStruct()->GetName())));
+			}
 			return Property;
 		}
 
 		/**
-		*
+		* Find the Struct Property of type: T from Struct with name: PropertyName.
 		*
 		* @param Struct
 		* @param PropertyName
-		* return
+		* return				Property.
 		*/
 		template<typename StructType>
-		static FStructProperty* FindStructPropertyByName(const UStruct* Struct, const FName& PropertyName)
+		FORCEINLINE static FStructProperty* FindStructPropertyByName(const UStruct* Struct, const FName& PropertyName)
 		{
-			FStructProperty* Property = CastField<FStructProperty>(Struct->FindPropertyByName(PropertyName));
-			Property				  = Property ? Property : CastField<FStructProperty>(Struct->CustomFindProperty(PropertyName));
+			using namespace NCsProperty::NLibrary::NCached;
 
-			if (Property &&
-				Property->Struct == StructType::StaticStruct())
-				return Property;
-			return nullptr;
+			const FString& Context = Str::FindStructPropertyByName;
+
+			return FindStructPropertyByName<StructType>(Context, Struct, PropertyName, nullptr);
+		}
+
+		/**
+		* Find the Object Property of type: T from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* return				Property.
+		*/
+		static FObjectProperty* FindObjectPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName);
+
+		/**
+		* Find the Object Property of type: T from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property.
+		*/
+		static FObjectProperty* FindObjectPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Find the Object Property of type: T from Struct with name: PropertyName.
+		*
+		* @param Struct
+		* @param PropertyName
+		* return				Property.
+		*/
+		FORCEINLINE static FObjectProperty* FindObjectPropertyByName(const UStruct* Struct, const FName& PropertyName)
+		{
+			using namespace NCsProperty::NLibrary::NCached;
+
+			const FString& Context = Str::FindObjectPropertyByName;
+
+			return FindObjectPropertyByName(Context, Struct, PropertyName, nullptr);
 		}
 
 		/**
@@ -87,6 +278,11 @@ namespace NCsProperty
 			return Property;
 		}
 
+		#pragma endregion Find
+
+		// Get
+		#pragma region
+
 		/**
 		*
 		*
@@ -106,52 +302,107 @@ namespace NCsProperty
 		}
 
 		/**
-		* 
-		* 
-		* @param StructValue
-		* @param Struct
-		* @param PropertyName
-		*/
-		template<typename T>
-		static T* GetObjectPropertyValue(void* StructValue, UStruct* const& Struct, const FName& PropertyName)
-		{
-			if (FObjectProperty* ObjectProperty = FindPropertyByName<FObjectProperty>(Struct, PropertyName))
-			{
-				return Cast<T>(ObjectProperty->GetObjectPropertyValue_InContainer(StructValue));
-			}
-			return nullptr;
-		}
-
-		/**
-		*
+		* Get the UObject value of type: T for the Property with name: PropertyName from StructValue.
 		*
 		* @param Context		The calling context.
 		* @param StructValue
 		* @param Struct
 		* @param PropertyName
+		* return				UObject.
+		*/
+		static UObject* GetObjectPropertyValueChecked(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName);
+
+		/**
+		* Get the UObject value of type: T for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				UObject.
+		*/
+		static UObject* GetObjectPropertyValue(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Get the UObject value of type: T for the Property with name: PropertyName from StructValue.
+		*
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* return				UObject.
+		*/
+		FORCEINLINE static UObject* GetObjectPropertyValue(void* StructValue, UStruct* const& Struct, const FName& PropertyName)
+		{
+			using namespace NCsProperty::NLibrary::NCached;
+
+			const FString& Context = Str::GetObjectPropertyValue;
+
+			return GetObjectPropertyValue(Context, StructValue, Struct, PropertyName, nullptr);
+		}
+
+		/**
+		* Get the UObject value of type: T for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* return				UObject of type: T.
 		*/
 		template<typename T>
 		static T* GetObjectPropertyValueChecked(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName)
 		{
-			checkf(StructValue, TEXT("%s: StructValue is NULL."), *Context);
-
-			checkf(Struct, TEXT("%s: Struct is NULL."), *Context);
-
-			checkf(PropertyName != NAME_None, TEXT("%s: PropertyName: None is NOT Valid."), *Context);
-
-			FObjectProperty* ObjectProperty = FindPropertyByName<FObjectProperty>(Struct, PropertyName);
-
-			checkf(ObjectProperty, TEXT("%s: Failed to find ObjectProperty with Name: %s from Struct: %s."), *Context, *(PropertyName.ToString()), *(Struct->GetName()));
-	
-			UObject* O = ObjectProperty->GetObjectPropertyValue_InContainer(StructValue);
-
-			checkf(O, TEXT("%s: StructValue's (Class: %s) Property: %s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
-
-			T* Ptr = Cast<T>(ObjectProperty->GetObjectPropertyValue_InContainer(StructValue));
+			UObject* Object = GetObjectPropertyValueChecked(Context, StructValue, Struct, PropertyName);
+			T* O			= Cast<T>(Object);
 			
-			checkf(Ptr, TEXT("%s: Failed to cast Object: %s with Class: %s to type: T."), *Context, *(O->GetName()), *(O->GetClass()->GetName()));
+			checkf(O, TEXT("%s: %s.%s = %s with Class: %s is NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(Object->GetName()), *(Object->GetClass()->GetName()), *(T::StaticClass()->GetName()));
+			return O;
+		}
 
-			return Ptr;
+		/**
+		* Get the UObject value of type: T for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* return				UObject of type: T.
+		*/
+		template<typename T>
+		static T* GetObjectPropertyValue(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			UObject* Object = GetObjectPropertyValue(Context, StructValue, Struct, PropertyName, Log);
+
+			if (!Object)
+				return nullptr;
+
+			T* O = Cast<T>(Object);
+
+			if (!O)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: %s.%s = %s with Class: %s is NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(Object->GetName()), *(Object->GetClass()->GetName()), *(T::StaticClass()->GetName())));
+			}
+			return O;
+		}
+
+		/**
+		* Get the UObject value for the Property with name: PropertyName from StructValue.
+		* 
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* return				UObject of type: T
+		*/
+		template<typename T>
+		FORCEINLINE static T* GetObjectPropertyValue(void* StructValue, UStruct* const& Struct, const FName& PropertyName)
+		{
+			using namespace NCsProperty::NLibrary::NCached;
+
+			const FString& Context = Str::GetObjectPropertyValue;
+
+			return GetObjectPropertyValue<T>(Context, StructValue, Struct, PropertyName, nullptr);
 		}
 
 		/**
@@ -183,6 +434,7 @@ namespace NCsProperty
 			}
 		}
 
+		#pragma endregion Get
 
 	#if WITH_EDITOR
 

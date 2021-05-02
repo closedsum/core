@@ -25,7 +25,7 @@ namespace NCsUserWidget
 
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsUserInterfaceSettings, EMCsUserWidget, FECsUserWidget>(Context, Str::UserWidget, &FCsUILog::Warning);
+		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsUserInterfaceSettings, EMCsUserWidget, FECsUserWidget>(Context, Str::UserWidget, &NCsUI::FLog::Warning);
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
@@ -35,7 +35,7 @@ namespace NCsUserWidget
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsUserWidget>(Context, ContextRoot, DataRootSet->UserWidgets, Str::UserWidget, &FCsUILog::Warning);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsUserWidget>(Context, ContextRoot, DataRootSet->UserWidgets, Str::UserWidget, &NCsUI::FLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
@@ -83,7 +83,7 @@ namespace NCsUserWidgetClass
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsUserWidgetClass>(Context, ContextRoot, DataRootSet->UserWidgetClasses, Str::UserWidgetClass, &FCsUILog::Warning);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsUserWidgetClass>(Context, ContextRoot, DataRootSet->UserWidgetClasses, Str::UserWidgetClass, &NCsUI::FLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
@@ -125,7 +125,7 @@ namespace NCsUserWidgetPooled
 
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsUserInterfaceSettings, EMCsUserWidgetPooled, FECsUserWidgetPooled>(Context, Str::UserWidgetPooled, &FCsUILog::Warning);
+		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsUserInterfaceSettings, EMCsUserWidgetPooled, FECsUserWidgetPooled>(Context, Str::UserWidgetPooled, &NCsUI::FLog::Warning);
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
@@ -135,7 +135,7 @@ namespace NCsUserWidgetPooled
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsUserWidgetPooled>(Context, ContextRoot, DataRootSet->UserWidgetPooled, Str::UserWidgetPooled, &FCsUILog::Warning);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsUserWidgetPooled>(Context, ContextRoot, DataRootSet->UserWidgetPooled, Str::UserWidgetPooled, &NCsUI::FLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
@@ -183,7 +183,7 @@ namespace NCsUserWidgetPooledClass
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsUserWidgetPooledClass>(Context, ContextRoot, DataRootSet->UserWidgetPooledClasses, Str::UserWidgetPooledClass, &FCsUILog::Warning);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsUserWidgetPooledClass>(Context, ContextRoot, DataRootSet->UserWidgetPooledClasses, Str::UserWidgetPooledClass, &NCsUI::FLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)

@@ -2,17 +2,35 @@
 #include "Library/Script/CsScriptLibrary_Widget.h"
 #include "CsUI.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Property.h"
 // Widget
 #include "Blueprint/UserWidget.h"
+
+// Cached
+#pragma region
+
+namespace NCsScriptLibraryWidget
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetAnimation);
+		}
+	}
+}
+
+#pragma endregion Cached
 
 UCsScriptLibrary_Widget::UCsScriptLibrary_Widget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-UWidgetAnimation* UCsScriptLibrary_Widget::GetSafeAnimation(UUserWidget* Widget, const FName& AnimName)
+UWidgetAnimation* UCsScriptLibrary_Widget::GetAnimation(const FString& Context, UUserWidget* Widget, const FName& AnimName)
 {
 	if (!Widget)
 	{

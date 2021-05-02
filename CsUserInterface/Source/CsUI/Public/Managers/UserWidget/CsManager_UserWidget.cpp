@@ -731,7 +731,7 @@ void UCsManager_UserWidget::ConstructClassHandler()
 	ClassHandler = new ClassHandlerType();
 	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
-	ClassHandler->Log = &FCsUILog::Warning;
+	ClassHandler->Log = &NCsUI::FLog::Warning;
 }
 
 FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidgetPooled(const FECsUserWidgetPooled& Type)
@@ -764,7 +764,7 @@ void UCsManager_UserWidget::ConstructPooledClassHandler()
 	PooledClassHandler = new ClassHandlerType();
 	PooledClassHandler->Outer = this;
 	PooledClassHandler->MyRoot = MyRoot;
-	PooledClassHandler->Log = &FCsUILog::Warning;
+	PooledClassHandler->Log = &NCsUI::FLog::Warning;
 }
 
 FCsUserWidgetPtr* UCsManager_UserWidget::GetUserWidget(const FECsUserWidget& Type)
@@ -807,7 +807,7 @@ void UCsManager_UserWidget::ConstructDataHandler()
 	DataHandler = new DataHandlerType();
 	DataHandler->Outer = this;
 	DataHandler->MyRoot = MyRoot;
-	DataHandler->Log = &FCsUILog::Warning;
+	DataHandler->Log = &NCsUI::FLog::Warning;
 }
 
 #define DataType NCsUserWidget::NData::IData

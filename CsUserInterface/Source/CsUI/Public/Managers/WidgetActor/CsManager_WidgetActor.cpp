@@ -735,7 +735,7 @@ void UCsManager_WidgetActor::ConstructClassHandler()
 	ClassHandler = new ClassHandlerType();
 	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
-	ClassHandler->Log = &FCsUILog::Warning;
+	ClassHandler->Log = &NCsUI::FLog::Warning;
 }
 
 FCsWidgetActorPooled* UCsManager_WidgetActor::GetWidgetActor(const FECsWidgetActor& Type)
@@ -769,7 +769,7 @@ void UCsManager_WidgetActor::ConstructDataHandler()
 	DataHandler = new DataHandlerType();
 	DataHandler->Outer = this;
 	DataHandler->MyRoot = MyRoot;
-	DataHandler->Log = &FCsUILog::Warning;
+	DataHandler->Log = &NCsUI::FLog::Warning;
 }
 
 #define DataType NCsWidgetActor::NData::IData

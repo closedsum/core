@@ -2,7 +2,10 @@
 #include "Utility/CsUILog.h"
 #include "CsUI.h"
 
-void FCsUILog::Warning(const FString& Str)
+namespace NCsUI
 {
-	UE_LOG(LogCsUI, Warning, TEXT("%s"), *Str);
+	void FLog::Warning(const FString& Str)
+	{
+		UE_LOG(LogCsUI, Warning, TEXT("%s"), *Str);
+	}
 }

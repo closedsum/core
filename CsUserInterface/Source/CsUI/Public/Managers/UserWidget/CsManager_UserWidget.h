@@ -41,6 +41,11 @@ namespace NCsUserWidget
 		{
 			return Type.GetName();
 		}
+
+		FORCEINLINE virtual bool IsValidKey(const FECsUserWidgetPooled& Type) override
+		{
+			return EMCsUserWidgetPooled::Get().IsValidEnum(Type);
+		}
 	};
 
 #undef ManagerMapType

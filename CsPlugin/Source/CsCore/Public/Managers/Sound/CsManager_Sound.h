@@ -47,6 +47,11 @@ namespace NCsSound
 		{
 			return Type.GetName();
 		}
+
+		FORCEINLINE virtual bool IsValidKey(const FECsSound& Type) override
+		{
+			return EMCsSound::Get().IsValidEnum(Type);
+		}
 	};
 
 #undef ManagerMapType

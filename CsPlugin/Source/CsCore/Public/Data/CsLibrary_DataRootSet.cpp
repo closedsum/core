@@ -21,7 +21,7 @@
 
 namespace NCsDataRootSet
 {
-	UObject* FLibrary::GetSafeImpl(const FString& Context, UObject* WorldContext)
+	UObject* FLibrary::GetSafeImpl(const FString& Context, const UObject* WorldContext)
 	{
 	#if WITH_EDITOR
 		// Check WorldContext is Valid.
@@ -44,16 +44,12 @@ namespace NCsDataRootSet
 		{
 			typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-			UObject* ContextRoot = DataManagerLibrary::GetSafeContextRoot(Context, WorldContext);
+			UCsManager_Data* Manager_Data = DataManagerLibrary::GetSafe(Context, WorldContext);
 
-			if (!ContextRoot)
-			{
-				UE_LOG(LogCs, Warning, TEXT("%s: Failed to get ContextRoot for UCsManager_Data."), *Context);
+			if (Manager_Data)
 				return nullptr;
-			}
 
-			UCsManager_Data* Manager_Data = UCsManager_Data::Get(ContextRoot);
-			UObject* DataRootSetImpl	  = Manager_Data->DataRootSet.GetObject();
+			UObject* DataRootSetImpl = Manager_Data->DataRootSet.GetObject();
 
 			return DataRootSetImpl;
 		}
@@ -68,19 +64,20 @@ namespace NCsDataRootSet
 	#else
 		typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-		UObject* ContextRoot		  = DataManagerLibrary::GetSafeContextRoot(Context, WorldContext);
-		UCsManager_Data* Manager_Data = UCsManager_Data::Get(ContextRoot);
+		UCsManager_Data* Manager_Data = DataManagerLibrary::GetSafe(Context, WorldContext);
 		UObject* DataRootSetImpl	  = Manager_Data->DataRootSet.GetObject();
 
 		return DataRootSetImpl;
 	#endif // #if WITH_EDITOR
 	}
 
-	UObject* FLibrary::GetImplChecked(const FString& Context, UGameInstance* GameInstance)
+	UObject* FLibrary::GetImplChecked(const FString& Context, const UGameInstance* GameInstance)
 	{
 		CS_IS_PTR_NULL_CHECKED(GameInstance)
 
-		UCsManager_Data* Manager_Data = UCsManager_Data::Get(GameInstance);
+		typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+		UCsManager_Data* Manager_Data = DataManagerLibrary::GetChecked(Context, GameInstance);
 		UObject* DataRootSetImpl	  = Manager_Data->DataRootSet.GetObject();
 
 		checkf(DataRootSetImpl, TEXT("%s: DataRootSetImpl is NULL. Failed to find DataRootSet."), *Context);
@@ -88,12 +85,11 @@ namespace NCsDataRootSet
 		return DataRootSetImpl;
 	}
 
-	UObject* FLibrary::GetImplChecked(const FString& Context, UObject* WorldContext)
+	UObject* FLibrary::GetImplChecked(const FString& Context, const UObject* WorldContext)
 	{
 		typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-		UObject* ContextRoot		  = DataManagerLibrary::GetContextRootChecked(Context, WorldContext);
-		UCsManager_Data* Manager_Data = UCsManager_Data::Get(ContextRoot);
+		UCsManager_Data* Manager_Data = DataManagerLibrary::GetChecked(Context, WorldContext);
 		UObject* DataRootSetImpl	  = Manager_Data->DataRootSet.GetObject();
 
 		checkf(DataRootSetImpl, TEXT("%s: DataRootSetImpl is NULL. Failed to find DataRootSet."), *Context);
@@ -101,22 +97,22 @@ namespace NCsDataRootSet
 		return DataRootSetImpl;
 	}
 
-	const FCsDataRootSet* FLibrary::GetSafe(const FString& Context, UObject* WorldContext)
+	const FCsDataRootSet* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext)
 	{
 		return GetSafe<FCsDataRootSet, ICsGetDataRootSet, &ICsGetDataRootSet::GetCsDataRootSet>(Context, WorldContext, &FCsLog::Warning);
 	}
 
-	const FCsDataRootSet& FLibrary::GetChecked(const FString& Context, UGameInstance* GameInstance)
+	const FCsDataRootSet& FLibrary::GetChecked(const FString& Context, const UGameInstance* GameInstance)
 	{
 		return GetChecked<FCsDataRootSet, ICsGetDataRootSet, &ICsGetDataRootSet::GetCsDataRootSet>(Context, GameInstance);
 	}
 
-	const FCsDataRootSet& FLibrary::GetChecked(const FString& Context, UObject* WorldContext)
+	const FCsDataRootSet& FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 	{
 		return GetChecked<FCsDataRootSet, ICsGetDataRootSet, &ICsGetDataRootSet::GetCsDataRootSet>(Context, WorldContext);
 	}
 
-	UDataTable* FLibrary::GetSafeDataTable(const FString& Context, UObject* WorldContext, const FString& InterfaceGetName, TSoftObjectPtr<UDataTable> DataTableSoftObject, const FString& DataTableName)
+	UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* WorldContext, const FString& InterfaceGetName, TSoftObjectPtr<UDataTable> DataTableSoftObject, const FString& DataTableName)
 	{
 	#if WITH_EDITOR
 		if (!WorldContext)
@@ -224,7 +220,7 @@ namespace NCsDataRootSet
 #	endif // #if WITH_EDITOR
 	}
 
-	UDataTable* FLibrary::GetDataTableChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject)
+	UDataTable* FLibrary::GetDataTableChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject)
 	{
 		typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
@@ -233,7 +229,7 @@ namespace NCsDataRootSet
 		return UCsManager_Data::Get(ContextRoot)->GetDataTableChecked(Context, DataTableSoftObject);
 	}
 
-	uint8* FLibrary::GetDataTableRowChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const FName& RowName)
+	uint8* FLibrary::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const FName& RowName)
 	{
 		typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
@@ -242,7 +238,7 @@ namespace NCsDataRootSet
 		return UCsManager_Data::Get(ContextRoot)->GetDataTableRowChecked(Context, DataTableSoftObject, RowName);
 	}
 
-	uint8* FLibrary::GetDataTableRowChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const UScriptStruct* RowStruct, const FName& RowName)
+	uint8* FLibrary::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const UScriptStruct* RowStruct, const FName& RowName)
 	{
 		typedef NCsData::NManager::FLibrary DataManagerLibrary;
 

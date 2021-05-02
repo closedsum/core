@@ -2,6 +2,8 @@
 #include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"
 #include "CsCore.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Utility
@@ -143,10 +145,7 @@ bool FCsSkeletalMeshActorPooledInfo::IsValid(const FString& Context, void(*Log)(
 	if (!Materials.IsValid(Context, Log))
 		return false;
 	// Check Type is Valid
-	if (!EMCsSkeletalMeshActor::Get().IsValidEnum(Type))
-	{
-		return false;
-	}
+	CS_IS_ENUM_STRUCT_VALID(EMCsSkeletalMeshActor, FECsSkeletalMeshActor, Type)
 
 	if (!Transform.Equals(FTransform::Identity))
 	{

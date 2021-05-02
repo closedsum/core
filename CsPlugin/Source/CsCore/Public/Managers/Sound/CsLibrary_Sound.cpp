@@ -12,12 +12,12 @@
 
 namespace NCsSound
 {
-	bool FLibrary::CanPlayChecked(const FString& Context, UObject* WorldContext)
+	bool FLibrary::CanPlayChecked(const FString& Context, const UObject* WorldContext)
 	{
 		return true;
 	}
 
-	bool FLibrary::CanPlay(UObject* WorldContext)
+	bool FLibrary::CanPlay(const UObject* WorldContext)
 	{
 		if (!WorldContext)
 			return false;
@@ -43,7 +43,7 @@ namespace NCsSound
 		return true;
 	}
 
-	void FLibrary::SetMixClassOverrideChecked(const FString& Context, UObject* WorldContext, USoundMix* SoundMix, USoundClass* SoundClass, const float& Volume /*=1.0f*/, const float& Pitch /*=1.0f*/, const float& FadeInTime /*=1.0f*/, bool bApplyToChildren /*=true*/)
+	void FLibrary::SetMixClassOverrideChecked(const FString& Context, const UObject* WorldContext, USoundMix* SoundMix, USoundClass* SoundClass, const float& Volume /*=1.0f*/, const float& Pitch /*=1.0f*/, const float& FadeInTime /*=1.0f*/, bool bApplyToChildren /*=true*/)
 	{
 		check(CanPlayChecked(Context, WorldContext));
 
@@ -57,7 +57,7 @@ namespace NCsSound
 		AudioDevice->SetSoundMixClassOverride(SoundMix, SoundClass, Volume, Pitch, FadeInTime, bApplyToChildren);
 	}
 
-	void FLibrary::PushMixModifierChecked(const FString& Context, UObject* WorldContext, USoundMix* SoundMix)
+	void FLibrary::PushMixModifierChecked(const FString& Context, const UObject* WorldContext, USoundMix* SoundMix)
 	{
 		check(CanPlayChecked(Context, WorldContext));
 
@@ -69,7 +69,7 @@ namespace NCsSound
 		AudioDevice->PushSoundMixModifier(SoundMix);
 	}
 		
-	void FLibrary::SetAndPushMixClassOverrideChecked(const FString& Context, UObject* WorldContext, USoundMix* SoundMix, USoundClass* SoundClass, const float& Volume /*=1.0f*/, const float& Pitch /*=1.0f*/, const float& FadeInTime /*=1.0f*/, bool bApplyToChildren /*=true*/)
+	void FLibrary::SetAndPushMixClassOverrideChecked(const FString& Context, const UObject* WorldContext, USoundMix* SoundMix, USoundClass* SoundClass, const float& Volume /*=1.0f*/, const float& Pitch /*=1.0f*/, const float& FadeInTime /*=1.0f*/, bool bApplyToChildren /*=true*/)
 	{
 		check(CanPlayChecked(Context, WorldContext));
 

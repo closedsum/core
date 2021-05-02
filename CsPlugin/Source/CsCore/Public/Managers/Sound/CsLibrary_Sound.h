@@ -22,7 +22,7 @@ namespace NCsSound
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 		* return				Whether it is possible to play any audio.
 		*/
-		static bool CanPlayChecked(const FString& Context, UObject* WorldContext);
+		static bool CanPlayChecked(const FString& Context, const UObject* WorldContext);
 
 		/**
 		* Check whether it is possible to play any audio.
@@ -31,7 +31,7 @@ namespace NCsSound
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 		* return				Whether it is possible to play any audio.
 		*/
-		static bool CanPlay(UObject* WorldContext);
+		static bool CanPlay(const UObject* WorldContext);
 
 		/** 
 		* Overrides the sound class adjuster in the given sound mix. 
@@ -49,7 +49,7 @@ namespace NCsSound
 		* @param bApplyToChildren	Whether or not to apply this override to the sound class' 
 									children or to just the specified sound class.
 		*/
-		static void SetMixClassOverrideChecked(const FString& Context, UObject* WorldContext, USoundMix* SoundMix, USoundClass* SoundClass, const float& Volume = 1.0f, const float& Pitch = 1.0f, const float& FadeInTime = 1.0f, bool bApplyToChildren = true);
+		static void SetMixClassOverrideChecked(const FString& Context, const UObject* WorldContext, USoundMix* SoundMix, USoundClass* SoundClass, const float& Volume = 1.0f, const float& Pitch = 1.0f, const float& FadeInTime = 1.0f, bool bApplyToChildren = true);
 
 		/** 
 		* Push a sound mix modifier onto the audio system
@@ -58,7 +58,7 @@ namespace NCsSound
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 		* @param SoundMix
 		*/
-		static void PushMixModifierChecked(const FString& Context, UObject* WorldContext, USoundMix* SoundMix);
+		static void PushMixModifierChecked(const FString& Context, const UObject* WorldContext, USoundMix* SoundMix);
 
 		/**
 		* Overrides the sound class adjuster in the given sound mix.
@@ -77,6 +77,6 @@ namespace NCsSound
 		* @param bApplyToChildren	Whether or not to apply this override to the sound class'
 									children or to just the specified sound class.
 		*/
-		static void SetAndPushMixClassOverrideChecked(const FString& Context, UObject* WorldContext, USoundMix* SoundMix, USoundClass* SoundClass, const float& Volume = 1.0f, const float& Pitch = 1.0f, const float& FadeInTime = 1.0f, bool bApplyToChildren = true);
+		static void SetAndPushMixClassOverrideChecked(const FString& Context, const UObject* WorldContext, USoundMix* SoundMix, USoundClass* SoundClass, const float& Volume = 1.0f, const float& Pitch = 1.0f, const float& FadeInTime = 1.0f, bool bApplyToChildren = true);
 	};
 }

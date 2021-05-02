@@ -20,7 +20,7 @@ public:
 	* given Type and Index.
 	* 
 	* @param Context			The calling context.
-	* @param WorldContextObject
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 	* @param Type
 	* @param Index
 	* return
@@ -36,7 +36,7 @@ public:
 	* Spawn a SkeletalMeshActor with the given Payload. 
 	*
 	* @param Context			The calling context.
-	* @param WorldContextObject
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 	* @param Payload
 	* return					Index to spawned SkeletalMeshActor in pool.
 	*/
@@ -47,7 +47,7 @@ public:
 	* Spawn a SkeletalMeshActor with the given Payload. 
 	*
 	* @param Context			The calling context.
-	* @param WorldContextObject
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 	* @param Payload
 	* return					Index to spawned SkeletalMeshActor in pool.
 	*/

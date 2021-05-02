@@ -44,6 +44,11 @@ namespace NCsSkeletalMeshActor
 		{
 			return Type.GetName();
 		}
+
+		FORCEINLINE virtual bool IsValidKey(const FECsSkeletalMeshActor& Type) override
+		{
+			return EMCsSkeletalMeshActor::Get().IsValidEnum(Type);
+		}
 	};
 #undef PayloadType
 }

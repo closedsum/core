@@ -42,6 +42,11 @@ namespace NCsWidgetActor
 		{
 			return Type.GetName();
 		}
+
+		FORCEINLINE virtual bool IsValidKey(const FECsWidgetActor& Type) override
+		{
+			return EMCsWidgetActor::Get().IsValidEnum(Type);
+		}
 	};
 
 #undef ManagerMapType

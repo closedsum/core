@@ -23,7 +23,7 @@ namespace NCsDataRootSet
 		* @param WorldContext	Object that has reference to a World (GetWorld() is Valid).
 		* return				UObject for the DataRootSet
 		*/
-		static UObject* GetSafeImpl(const FString& Context, UObject* WorldContext);
+		static UObject* GetSafeImpl(const FString& Context, const UObject* WorldContext);
 		
 		/**
 		* Get the UObject implementation of the DataRootSet.
@@ -32,7 +32,7 @@ namespace NCsDataRootSet
 		* @param GameInstance	Route to Manager_Data, whose root is a GameInstance.
 		* return				UObject for the DataRootSet
 		*/
-		static UObject* GetImplChecked(const FString& Context, UGameInstance* GameInstance);
+		static UObject* GetImplChecked(const FString& Context, const UGameInstance* GameInstance);
 
 		/**
 		* Get the UObject implementation of the DataRootSet.
@@ -41,7 +41,7 @@ namespace NCsDataRootSet
 		* @param WorldContext	Object that has reference to a World (GetWorld() is Valid).
 		* return				UObject for the DataRootSet
 		*/
-		static UObject* GetImplChecked(const FString& Context, UObject* WorldContext);
+		static UObject* GetImplChecked(const FString& Context, const UObject* WorldContext);
 
 		/**
 		* 
@@ -50,7 +50,7 @@ namespace NCsDataRootSet
 		* @param WorldContext	Object that has reference to a World (GetWorld() is Valid).
 		* return
 		*/
-		static const FCsDataRootSet* GetSafe(const FString& Context, UObject* WorldContext);
+		static const FCsDataRootSet* GetSafe(const FString& Context, const UObject* WorldContext);
 
 		/**
 		* 
@@ -61,7 +61,7 @@ namespace NCsDataRootSet
 		* return
 		*/
 		template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType& (GetDataRootSetType::* GetDataRootSetFn)() const>
-		static const DataRootSetType* GetSafe(const FString& Context, UObject* WorldContext, void(*Log)(const FString&))
+		static const DataRootSetType* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&))
 		{
 			// Get DataRootSetImpl
 			UObject* DataRootSetImpl = GetSafeImpl(Context, WorldContext);
@@ -87,7 +87,7 @@ namespace NCsDataRootSet
 		* @param GameInstance	Root for UCsManager_Data.
 		* return
 		*/
-		static const FCsDataRootSet& GetChecked(const FString& Context, UGameInstance* GameInstance);
+		static const FCsDataRootSet& GetChecked(const FString& Context, const UGameInstance* GameInstance);
 
 		/**
 		* 
@@ -95,7 +95,7 @@ namespace NCsDataRootSet
 		* @param Context		The calling context.
 		* @param WorldContext	Object that has reference to a World (GetWorld() is Valid).
 		*/
-		static const FCsDataRootSet& GetChecked(const FString& Context, UObject* WorldContext);
+		static const FCsDataRootSet& GetChecked(const FString& Context, const UObject* WorldContext);
 
 		/**
 		* 
@@ -105,7 +105,7 @@ namespace NCsDataRootSet
 		* return
 		*/
 		template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType& (GetDataRootSetType::* GetDataRootSetFn)() const>
-		static const DataRootSetType& GetChecked(const FString& Context, UGameInstance* GameInstance)
+		static const DataRootSetType& GetChecked(const FString& Context, const UGameInstance* GameInstance)
 		{
 			// Get DataRootSetImpl
 			UObject* DataRootSetImpl = GetImplChecked(Context, GameInstance);
@@ -126,7 +126,7 @@ namespace NCsDataRootSet
 		* return
 		*/
 		template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType&(GetDataRootSetType::*GetDataRootSetFn)() const>
-		static const DataRootSetType& GetChecked(const FString& Context, UObject* WorldContext)
+		static const DataRootSetType& GetChecked(const FString& Context, const UObject* WorldContext)
 		{
 			// Get DataRootSetImpl
 			UObject* DataRootSetImpl = GetImplChecked(Context, WorldContext);
@@ -149,7 +149,7 @@ namespace NCsDataRootSet
 		* @param DataTableName			Name of the DataTable.
 		* return						DataTable
 		*/
-		static UDataTable* GetSafeDataTable(const FString& Context, UObject* WorldContext, const FString& InterfaceGetName, TSoftObjectPtr<UDataTable> DataTableSoftObject, const FString& DataTableName);
+		static UDataTable* GetSafeDataTable(const FString& Context, const UObject* WorldContext, const FString& InterfaceGetName, TSoftObjectPtr<UDataTable> DataTableSoftObject, const FString& DataTableName);
 
 		/**
 		* 
@@ -159,7 +159,7 @@ namespace NCsDataRootSet
 		* @param DataTableSoftObject	FSoftObjectPtr to a DataTable.
 		* return						DataTable
 		*/
-		static UDataTable* GetDataTableChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject);
+		static UDataTable* GetDataTableChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject);
 
 		/**
 		* 
@@ -170,7 +170,7 @@ namespace NCsDataRootSet
 		* @param RowName				Name of the row in the DataTable.
 		* return						Pointer to row.
 		*/
-		static uint8* GetDataTableRowChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const FName& RowName);
+		static uint8* GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const FName& RowName);
 
 		/**
 		*
@@ -182,6 +182,6 @@ namespace NCsDataRootSet
 		* @param RowName				Name of the row in the DataTable.
 		* return						Pointer to row.
 		*/
-		static uint8* GetDataTableRowChecked(const FString& Context, UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const UScriptStruct* RowStruct, const FName& RowName);
+		static uint8* GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const UScriptStruct* RowStruct, const FName& RowName);
 	};
 }

@@ -111,6 +111,11 @@ namespace NCsFX
 		{
 			return Type.GetName();
 		}
+
+		FORCEINLINE virtual bool IsValidKey(const FECsFX& Type) override
+		{
+			return EMCsFX::Get().IsValidEnum(Type);
+		}
 	};
 
 #undef PayloadType

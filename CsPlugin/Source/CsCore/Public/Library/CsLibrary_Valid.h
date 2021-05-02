@@ -42,6 +42,23 @@ namespace NCsValid
 				}
 				return true;
 			}
+
+			FORCEINLINE static bool GreaterThanAndLessThanOrEqualChecked(const FString& Context, const int32& A, const FString& AName, const int32& B, const int32& C)
+			{
+				checkf(A >= B && A < C, TEXT("%s: %s is NOT in the range: [%d, %d)."), *Context, *AName, B, C);
+				return true;
+			}
+
+			FORCEINLINE static bool GreaterThanAndLessThanOrEqual(const FString& Context, const int32& A, const FString& AName, const int32& B, const int32& C, void(*Log)(const FString&))
+			{
+				if (A < B || A >= C)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NOT in the range: [%d, %d)."), *Context, *AName, B, C));
+					return false;
+				}
+				return true;
+			}
 		};
 	}
 
@@ -309,6 +326,24 @@ namespace NCsValid
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NInt::FLibrary::GreaterThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return; } \
 	}
+// Assume const FString& Context has been defined
+#define CS_IS_INT_GREATER_THAN_AND_LESS_THAN_OR_EQUAL_CHECKED(__A, __B, __C) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		check(NCsValid::NInt::FLibrary::GreaterThanAndLessThanOrEqualChecked(Context, __A, __temp__str__, __B, __C)); \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_GREATER_THAN_AND_LESS_THAN_OR_EQUAL(__A, __B, __C) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NInt::FLibrary::GreaterThanAndLessThanOrEqual(Context, __A, __temp__str__, __B, __C, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_GREATER_THAN_AND_LESS_THAN_OR_EQUAL_RET_NULL(__A, __B, __C) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NInt::FLibrary::GreaterThanAndLessThanOrEqual(Context, __A, __temp__str__, __B, __C, Log)) { return nullptr; } \
+	}
 
 // Float
 
@@ -538,6 +573,9 @@ namespace NCsValid
 #define CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(__A, __B)
 #define CS_IS_INT_GREATER_THAN_OR_EQUAL(__A, __B)
 #define CS_IS_INT_GREATER_THAN_OR_EQUAL_EXIT(__A, __B)
+#define CS_IS_INT_GREATER_THAN_AND_LESS_THAN_OR_EQUAL_CHECKED(__A, __B, __C)
+#define CS_IS_INT_GREATER_THAN_AND_LESS_THAN_OR_EQUAL(__A, __B, __C)
+#define CS_IS_INT_GREATER_THAN_AND_LESS_THAN_OR_EQUAL_RET_NULL(__A, __B, __C)
 // Float
 #define CS_IS_FLOAT_GREATER_THAN_CHECKED(__A, __B)
 #define CS_IS_FLOAT_GREATER_THAN(__A, __B)

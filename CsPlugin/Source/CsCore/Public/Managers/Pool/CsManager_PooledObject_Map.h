@@ -362,7 +362,7 @@ namespace NCsPooledObject
 			}
 
 			/**
-			*
+			* Get the Manager associated with Type.
 			*
 			* @param Type
 			* return
@@ -371,15 +371,37 @@ namespace NCsPooledObject
 			{
 				checkf(IsValidKey(Type), TEXT("%s::GetManagerPooledObjects: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
 
-		#if WITH_EDITOR
+			#if WITH_EDITOR
 				ManagerAbstractType** PoolPtr = Pools.Find(Type);
 
 				checkf(PoolPtr, TEXT("%s::GetManagerPooledObjects: No Pool found for Type: %s. Call CreatePool."), *Name, *KeyTypeToString(Type));
 
 				return *PoolPtr;
-		#else
+			#else
 				return Pools[Type];
-		#endif // #if WITH_EDITOR
+			#endif // #if WITH_EDITOR
+			}
+
+			/**
+			* Safely get the Manager associated with Type.
+			*
+			* @param Type
+			* return
+			*/
+			ManagerAbstractType* GetSafeManagerPooledObjects(const KeyType& Type)
+			{
+				if (!IsValidKey(Type))
+				{
+					CS_NON_SHIPPING_EXPR(Log_Impl.Execute(FString::Printf(TEXT("%s::GetManagerPooledObjects: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type))));
+					return nullptr;
+				}
+
+				ManagerAbstractType** PoolPtr = Pools.Find(Type);
+
+				if (!PoolPtr)
+					CS_NON_SHIPPING_EXPR(Log_Impl.Execute(FString::Printf(TEXT("%s::GetManagerPooledObjects: No Pool found for Type: %s. Call CreatePool."), *Name, *KeyTypeToString(Type))));
+
+				return *PoolPtr;
 			}
 
 			/** Event called after constructing an Object of specified Type when creating a pool. 
@@ -843,7 +865,9 @@ namespace NCsPooledObject
 			*/
 			FORCEINLINE const InterfaceContainerType* FindSafeObject(const KeyType& Type, const int32& Index)
 			{
-				return GetManagerPooledObjects(Type)->FindSafeObject(Index);
+				if (ManagerAbstractType* Manager = GetSafeManagerPooledObjects(Type))
+					return Manager->FindSafeObject(Index);
+				return nullptr;
 			}
 
 			/**
@@ -857,7 +881,9 @@ namespace NCsPooledObject
 			*/
 			FORCEINLINE const InterfaceContainerType* FindSafeObject(const KeyType& Type, InterfaceType* Object)
 			{
-				return GetManagerPooledObjects(Type)->FindSafeObject(Object);
+				if (ManagerAbstractType* Manager = GetSafeManagerPooledObjects(Type))
+					return Manager->FindSafeObject(Object);
+				return nullptr;
 			}
 
 			/**
@@ -872,7 +898,9 @@ namespace NCsPooledObject
 			*/
 			FORCEINLINE const InterfaceContainerType* FindSafeObject(const KeyType& Type, UObject* Object)
 			{
-				return GetManagerPooledObjects(Type)->FindObject(Object);
+				if (ManagerAbstractType* Manager = GetSafeManagerPooledObjects(Type))
+					return Manager->FindSafeObject(Object);
+				return nullptr;
 			}
 
 		#pragma endregion Find

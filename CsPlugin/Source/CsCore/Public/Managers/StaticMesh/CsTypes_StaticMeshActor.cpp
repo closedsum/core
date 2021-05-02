@@ -2,6 +2,8 @@
 #include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
 #include "CsCore.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Utility
@@ -143,10 +145,7 @@ bool FCsStaticMeshActorPooledInfo::IsValid(const FString& Context, void(*Log)(co
 	if (!Materials.IsValid(Context, Log))
 		return false;
 	// Check Type is Valid
-	if (!EMCsStaticMeshActor::Get().IsValidEnum(Type))
-	{
-		return false;
-	}
+	CS_IS_ENUM_STRUCT_VALID(EMCsStaticMeshActor, FECsStaticMeshActor, Type)
 
 	if (!Transform.Equals(FTransform::Identity))
 	{

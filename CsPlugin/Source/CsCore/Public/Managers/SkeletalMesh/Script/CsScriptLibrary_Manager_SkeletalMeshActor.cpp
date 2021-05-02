@@ -4,8 +4,11 @@
 
 // Library
 #include "Managers/SkeletalMesh/CsLibrary_Manager_SkeletalMeshActor.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/SkeletalMesh/CsManager_SkeletalMeshActor.h"
+// Log
+#include "Utility/CsLog.h"
 // SkeletalMesh
 #include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"
 
@@ -40,35 +43,27 @@ UObject* UCsScriptLibrary_Manager_SkeletalMeshActor::FindObject(const FString& C
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::FindObject : Context;
 
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
 	typedef NCsSkeletalMeshActor::NManager::FLibrary SkeletalMeshManagerLibrary;
 
-	UObject* ContextRoot = SkeletalMeshManagerLibrary::GetSafeContextRoot(Ctxt, WorldContextObject);
+	UCsManager_SkeletalMeshActor* Manager_SkeletalMesh = SkeletalMeshManagerLibrary::GetSafe(Ctxt, WorldContextObject);
 
-#if WITH_EDITOR
-	if (!ContextRoot)
+	if (!Manager_SkeletalMesh)
 		return nullptr;
-#endif // #if WITH_EDITOR
 
-	if (!EMCsSkeletalMeshActor::Get().IsValidEnum(Type))
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar());
-		return nullptr;
-	}
+	// Check Type is Valid
+	CS_IS_ENUM_STRUCT_VALID_RET_NULL(EMCsSkeletalMeshActor, FECsSkeletalMeshActor, Type)
+	// Check Index is Valid
+	CS_IS_INT_GREATER_THAN_AND_LESS_THAN_OR_EQUAL_RET_NULL(Index, 0, Manager_SkeletalMesh->GetPoolSize(Type))
 
-	UCsManager_SkeletalMeshActor* Manager_SkeletalMesh = UCsManager_SkeletalMeshActor::Get(ContextRoot);
-
-	if (Index < 0 || Index >= Manager_SkeletalMesh->GetPoolSize(Type))
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Index: %d is NOT [0, %d] Inclusive."), *Context, Index, Manager_SkeletalMesh->GetPoolSize(Type));
-		return nullptr;
-	}
-	
-	const FCsSkeletalMeshActorPooled* SkeletalMeshPooled = Manager_SkeletalMesh->FindObject(Type, Index);
+	const FCsSkeletalMeshActorPooled* SkeletalMeshPooled = Manager_SkeletalMesh->FindSafeObject(Type, Index);
 
 	if (SkeletalMeshPooled)
 	{
 		return SkeletalMeshPooled->GetSafeObject();
 	}
+	UE_LOG(LogCs, Warning, TEXT("%s, Failed to Find Object of Type: %s at Index: %d."), Type.ToChar(), Index);
 	return nullptr;
 }
 
@@ -80,21 +75,17 @@ int32 UCsScriptLibrary_Manager_SkeletalMeshActor::SpawnByAnimSequenceOneShot(con
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SpawnByAnimSequenceOneShot : Context;
 
-	typedef NCsSkeletalMeshActor::NManager::FLibrary SkeletalMeshManagerLibrary;
-
 	// Check Payload is Valid
 	if (!Payload.IsValid(Ctxt))
 		return INDEX_NONE;
 
+	typedef NCsSkeletalMeshActor::NManager::FLibrary SkeletalMeshManagerLibrary;
+
 	// Try to allocate a native payload
-	UObject* ContextRoot = SkeletalMeshManagerLibrary::GetSafeContextRoot(Ctxt, WorldContextObject);
+	UCsManager_SkeletalMeshActor* Manager_SkeletalMesh = SkeletalMeshManagerLibrary::GetSafe(Ctxt, WorldContextObject);
 
-#if WITH_EDITOR
-	if (!ContextRoot)
+	if (!Manager_SkeletalMesh)
 		return INDEX_NONE;
-#endif // #if WITH_EDITOR
-
-	UCsManager_SkeletalMeshActor* Manager_SkeletalMesh = UCsManager_SkeletalMeshActor::Get(ContextRoot);
 
 	typedef NCsSkeletalMeshActor::NPayload::FImpl PayloadImplType;
 
@@ -121,21 +112,17 @@ int32 UCsScriptLibrary_Manager_SkeletalMeshActor::SpawnByAnimMontageOneShot(cons
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SpawnByAnimSequenceOneShot : Context;
 
-	typedef NCsSkeletalMeshActor::NManager::FLibrary SkeletalMeshManagerLibrary;
-
 	// Check Payload is Valid
 	if (!Payload.IsValid(Ctxt))
 		return INDEX_NONE;
 
+	typedef NCsSkeletalMeshActor::NManager::FLibrary SkeletalMeshManagerLibrary;
+
 	// Try to allocate a native payload
-	UObject* ContextRoot = SkeletalMeshManagerLibrary::GetSafeContextRoot(Ctxt, WorldContextObject);
+	UCsManager_SkeletalMeshActor* Manager_SkeletalMesh = SkeletalMeshManagerLibrary::GetSafe(Ctxt, WorldContextObject);
 
-#if WITH_EDITOR
-	if (!ContextRoot)
+	if (!Manager_SkeletalMesh)
 		return INDEX_NONE;
-#endif // #if WITH_EDITOR
-
-	UCsManager_SkeletalMeshActor* Manager_SkeletalMesh = UCsManager_SkeletalMeshActor::Get(ContextRoot);
 
 	typedef NCsSkeletalMeshActor::NPayload::FImpl PayloadImplType;
 

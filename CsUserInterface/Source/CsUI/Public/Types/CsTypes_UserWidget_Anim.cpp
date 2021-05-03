@@ -26,7 +26,7 @@ bool FCsUserWidgetAnimPlayParams::IsValidChecked(const FString& Context) const
 	return true;
 }
 
-bool FCsUserWidgetAnimPlayParams::IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const
+bool FCsUserWidgetAnimPlayParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
 {
 	// Check Name is Valid
 	CS_IS_NAME_NONE(Name)

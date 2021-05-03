@@ -14,200 +14,226 @@
 
 namespace NCsWidget
 {
-	namespace NLibrary
+	namespace NPosition
 	{
-		namespace NCached
+		namespace NLibrary
 		{
-			namespace Str
+			namespace NCached
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWidget::FLibrary, GetSafePositionBySlot);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWidget::FLibrary, GetSafeAnimation);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWidget::FLibrary, SafePlayAnimation);
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWidget::NPosition::FLibrary, GetSafeBySlot);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWidget::NPosition::FLibrary, GetSafeAbsoluteByCachedGeometry);
+				}
 			}
 		}
-	}
 
-	// Position
-	#pragma region
-
-	FVector2D FLibrary::GetPositionBySlotChecked(const FString& Context, UUserWidget* Widget)
-	{
-		CS_IS_PTR_NULL_CHECKED(Widget)
-
-		checkf(Widget->Slot, TEXT("%s: Widget: %s's Slot is NULL."), *Context, *(Widget->GetName()));
-
-		UCanvasPanelSlot* Slot = Cast<UCanvasPanelSlot>(Widget->Slot);
-
-		checkf(Slot, TEXT("%s: Widget: %s's Slot is NOT of type: UCavnasPanelSlot."), *Context, *(Widget->GetName()));
-
-		return Slot->GetPosition();
-	}
-
-	FVector2D FLibrary::GetSafePositionBySlot(const FString& Context, UUserWidget* Widget, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
-	{
-		if (!Widget)
+		FVector2D FLibrary::GetBySlotChecked(const FString& Context, UUserWidget* Widget)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Widget is NULL."), *Context));
-			return FVector2D(-1.0f);
+			CS_IS_PTR_NULL_CHECKED(Widget)
+
+			checkf(Widget->Slot, TEXT("%s: Widget: %s's Slot is NULL."), *Context, *(Widget->GetName()));
+
+			UCanvasPanelSlot* Slot = Cast<UCanvasPanelSlot>(Widget->Slot);
+
+			checkf(Slot, TEXT("%s: Widget: %s's Slot is NOT of type: UCavnasPanelSlot."), *Context, *(Widget->GetName()));
+
+			return Slot->GetPosition();
 		}
 
-		if (!Widget->Slot)
+		FVector2D FLibrary::GetSafeBySlot(const FString& Context, UUserWidget* Widget, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Widget: %s's Slot is NULL."), *Context, *(Widget->GetName())));
-			return FVector2D(-1.0f);
+			if (!Widget)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Widget is NULL."), *Context));
+				return FVector2D(-1.0f);
+			}
+
+			if (!Widget->Slot)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Widget: %s's Slot is NULL."), *Context, *(Widget->GetName())));
+				return FVector2D(-1.0f);
+			}
+
+			UCanvasPanelSlot* Slot = Cast<UCanvasPanelSlot>(Widget->Slot);
+
+			if (!Slot)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Widget: %s's Slot is NOT of type: UCavnasPanelSlot."), *Context, *(Widget->GetName())));
+				return FVector2D(-1.0f);
+			}
+			return Slot->GetPosition();
 		}
 
-		UCanvasPanelSlot* Slot = Cast<UCanvasPanelSlot>(Widget->Slot);
-
-		if (!Slot)
+		FVector2D FLibrary::GetSafeBySlot(UUserWidget* Widget)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Widget: %s's Slot is NOT of type: UCavnasPanelSlot."), *Context, *(Widget->GetName())));
-			return FVector2D(-1.0f);
+			using namespace NCsWidget::NPosition::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeBySlot;
+
+			return GetSafeBySlot(Context, Widget, nullptr);
 		}
-		return Slot->GetPosition();
+
+		FVector2D FLibrary::GetAbsoluteByCachedGeometryChecked(const FString& Context, UUserWidget* Widget)
+		{
+			CS_IS_PTR_NULL_CHECKED(Widget)
+
+			return Widget->GetCachedGeometry().GetAbsolutePosition();
+		}
+
+		FVector2D FLibrary::GetSafeAbsoluteByCachedGeometry(const FString& Context, UUserWidget* Widget, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+		{
+			if (!Widget)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Widget is NULL."), *Context));
+				return FVector2D(-1.0f);
+			}
+			return Widget->GetCachedGeometry().GetAbsolutePosition();
+		}
+
+		FVector2D FLibrary::GetSafeAbsoluteByCachedGeometry(UUserWidget* Widget)
+		{
+			using namespace NCsWidget::NPosition::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeAbsoluteByCachedGeometry;
+
+			return GetSafeAbsoluteByCachedGeometry(Context, Widget, nullptr);
+		}
 	}
 
-	FVector2D FLibrary::GetSafePositionBySlot(UUserWidget* Widget)
+	namespace NAnimation
 	{
-		using namespace NCsWidget::NLibrary::NCached;
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWidget::NAnimation::FLibrary, GetSafe);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWidget::NAnimation::FLibrary, SafePlay);
+				}
+			}
+		}
 
-		const FString& Context = Str::GetSafePositionBySlot;
+		UWidgetAnimation* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& AnimName)
+		{
+			CS_IS_PTR_NULL_CHECKED(Widget)
 
-		return GetSafePositionBySlot(Context, Widget, nullptr);
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			return PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), AnimName);
+		}
+
+		UWidgetAnimation* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& AnimName, void(*Log)(const FString&) /*=&NCsUI::FLog; :Warning*/)
+		{
+			CS_IS_PTR_NULL_RET_NULL(Widget)
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			return PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), AnimName, Log);
+		}
+
+		UWidgetAnimation* FLibrary::GetSafe(UUserWidget* Widget, const FName& AnimName)
+		{
+			using namespace NCsWidget::NAnimation::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafe;
+
+			return GetSafe(Context, Widget, AnimName, nullptr);
+		}
+
+		#define ParamsType NCsUserWidget::NAnim::NPlay::FParams
+
+		void FLibrary::PlayChecked(const FString& Context, UUserWidget* Widget, const ParamsType& Params)
+		{
+			CS_IS_PTR_NULL_CHECKED(Widget)
+
+			check(Params.IsValidChecked(Context));
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name);
+
+			if (Params.EndAtTime > 0.0f)
+				Widget->PlayAnimationTimeRange(Animation, Params.StartAtTime, Params.EndAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+			else
+				Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+		}
+
+		void FLibrary::SafePlay(const FString& Context, UUserWidget* Widget, const ParamsType& Params, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+		{
+			CS_IS_PTR_NULL_EXIT(Widget)
+
+			if (!Params.IsValid(Context, Log))
+				return;
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name, Log);
+
+			if (!Animation)
+				return;
+
+			if (Params.EndAtTime > 0.0f)
+				Widget->PlayAnimationTimeRange(Animation, Params.StartAtTime, Params.EndAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+			else
+				Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+		}
+
+		void FLibrary::SafePlay(UUserWidget* Widget, const ParamsType& Params)
+		{
+			using namespace NCsWidget::NAnimation::NLibrary::NCached;
+
+			const FString& Context = Str::SafePlay;
+
+			return SafePlay(Context, Widget, Params, nullptr);
+		}
+
+		#undef ParamsType
+
+		void FLibrary::PlayChecked(const FString& Context, UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params)
+		{
+			CS_IS_PTR_NULL_CHECKED(Widget)
+
+			check(Params.IsValidChecked(Context));
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name);
+
+			if (Params.EndAtTime > 0.0f)
+				Widget->PlayAnimationTimeRange(Animation, Params.StartAtTime, Params.EndAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+			else
+				Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+		}
+
+		void FLibrary::SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+		{
+			CS_IS_PTR_NULL_EXIT(Widget)
+
+			if (!Params.IsValid(Context, Log))
+				return;
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name, Log);
+
+			if (!Animation)
+				return;
+
+			if (Params.EndAtTime > 0.0f)
+				Widget->PlayAnimationTimeRange(Animation, Params.StartAtTime, Params.EndAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+			else
+				Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+		}
+
+		void FLibrary::SafePlay(UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params)
+		{
+			using namespace NCsWidget::NAnimation::NLibrary::NCached;
+
+			const FString& Context = Str::SafePlay;
+
+			return SafePlay(Context, Widget, Params, nullptr);
+		}
 	}
-
-	FVector2D FLibrary::GetAbsolutePositionByCachedGeometryChecked(const FString& Context, UUserWidget* Widget)
-	{
-		CS_IS_PTR_NULL_CHECKED(Widget)
-
-		return Widget->GetCachedGeometry().GetAbsolutePosition();
-	}
-
-	#pragma endregion Position
-
-	// Animation
-	#pragma region
-
-	UWidgetAnimation* FLibrary::GetAnimationChecked(const FString& Context, UUserWidget* Widget, const FName& AnimName)
-	{
-		CS_IS_PTR_NULL_CHECKED(Widget)
-
-		typedef NCsProperty::FLibrary PropertyLibrary;
-
-		return PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), AnimName);
-	}
-
-	UWidgetAnimation* FLibrary::GetSafeAnimation(const FString& Context, UUserWidget* Widget, const FName& AnimName, void(*Log)(const FString&) /*=&NCsUI::FLog; :Warning*/)
-	{
-		CS_IS_PTR_NULL_RET_NULL(Widget)
-
-		typedef NCsProperty::FLibrary PropertyLibrary;
-
-		return PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), AnimName, Log);
-	}
-
-	UWidgetAnimation* FLibrary::GetSafeAnimation(UUserWidget* Widget, const FName& AnimName)
-	{
-		using namespace NCsWidget::NLibrary::NCached;
-
-		const FString& Context = Str::GetSafeAnimation;
-
-		return GetSafeAnimation(Context, Widget, AnimName, nullptr);
-	}
-
-	#define ParamsType NCsUserWidget::NAnim::NPlay::FParams
-
-	void FLibrary::PlayAnimationChecked(const FString& Context, UUserWidget* Widget, const ParamsType& Params)
-	{
-		CS_IS_PTR_NULL_CHECKED(Widget)
-
-		check(Params.IsValidChecked(Context));
-
-		typedef NCsProperty::FLibrary PropertyLibrary;
-
-		UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name);
-
-		if (Params.EndAtTime > 0.0f)
-			Widget->PlayAnimationTimeRange(Animation, Params.StartAtTime, Params.EndAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
-		else
-			Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
-	}
-
-	void FLibrary::SafePlayAnimation(const FString& Context, UUserWidget* Widget, const ParamsType& Params, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
-	{
-		CS_IS_PTR_NULL_EXIT(Widget)
-
-		if (!Params.IsValid(Context, Log))
-			return;
-
-		typedef NCsProperty::FLibrary PropertyLibrary;
-
-		UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name, Log);
-
-		if (!Animation)
-			return;
-
-		if (Params.EndAtTime > 0.0f)
-			Widget->PlayAnimationTimeRange(Animation, Params.StartAtTime, Params.EndAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
-		else
-			Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
-	}
-
-	void FLibrary::SafePlayAnimation(UUserWidget* Widget, const ParamsType& Params)
-	{
-		using namespace NCsWidget::NLibrary::NCached;
-
-		const FString& Context = Str::SafePlayAnimation;
-
-		return SafePlayAnimation(Context, Widget, Params, nullptr);
-	}
-
-	#undef ParamsType
-
-	void FLibrary::PlayAnimationChecked(const FString& Context, UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params)
-	{
-		CS_IS_PTR_NULL_CHECKED(Widget)
-
-		check(Params.IsValidChecked(Context));
-
-		typedef NCsProperty::FLibrary PropertyLibrary;
-
-		UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name);
-
-		if (Params.EndAtTime > 0.0f)
-			Widget->PlayAnimationTimeRange(Animation, Params.StartAtTime, Params.EndAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
-		else
-			Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
-	}
-
-	void FLibrary::SafePlayAnimation(const FString& Context, UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
-	{
-		CS_IS_PTR_NULL_EXIT(Widget)
-
-		if (!Params.IsValid(Context, Log))
-			return;
-
-		typedef NCsProperty::FLibrary PropertyLibrary;
-
-		UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name, Log);
-
-		if (!Animation)
-			return;
-
-		if (Params.EndAtTime > 0.0f)
-			Widget->PlayAnimationTimeRange(Animation, Params.StartAtTime, Params.EndAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
-		else
-			Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
-	}
-
-	void FLibrary::SafePlayAnimation(UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params)
-	{
-		using namespace NCsWidget::NLibrary::NCached;
-
-		const FString& Context = Str::SafePlayAnimation;
-
-		return SafePlayAnimation(Context, Widget, Params, nullptr);
-	}
-
-	#pragma endregion Animation
 }

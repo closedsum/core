@@ -5,9 +5,7 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
-#include "Library/CsLibrary_Property.h"
-// Widget
-#include "Blueprint/UserWidget.h"
+#include "Library/CsLibrary_Widget.h"
 
 // Cached
 #pragma region
@@ -18,6 +16,8 @@ namespace NCsScriptLibraryWidget
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetPositionBySlot);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetAbsolutePositionByCachedGeometry);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetAnimation);
 		}
 	}
@@ -30,27 +30,45 @@ UCsScriptLibrary_Widget::UCsScriptLibrary_Widget(const FObjectInitializer& Objec
 {
 }
 
+// Position
+#pragma region
+
+FVector2D UCsScriptLibrary_Widget::GetPositionBySlot(const FString& Context, UUserWidget* Widget)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetPositionBySlot : Context;
+
+	typedef NCsWidget::NPosition::FLibrary WidgetPositionLibrary;
+
+	return WidgetPositionLibrary::GetSafeBySlot(Context, Widget);
+}
+
+FVector2D UCsScriptLibrary_Widget::GetAbsolutePositionByCachedGeometry(const FString& Context, UUserWidget* Widget)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetAbsolutePositionByCachedGeometry : Context;
+
+	typedef NCsWidget::NPosition::FLibrary WidgetPositionLibrary;
+
+	return WidgetPositionLibrary::GetSafeAbsoluteByCachedGeometry(Context, Widget);
+}
+
+#pragma endregion Position
+
+// Animation
+#pragma region
+
 UWidgetAnimation* UCsScriptLibrary_Widget::GetAnimation(const FString& Context, UUserWidget* Widget, const FName& AnimName)
 {
-	if (!Widget)
-	{
-		UE_LOG(LogCsUI, Warning, TEXT("UCsScriptLibrary_Widget::GetSafeAnimation: Widget is NULL."));
-		return nullptr;
-	}
+	using namespace NCsScriptLibraryWidget::NCached;
 
-	if (AnimName == NAME_None)
-	{
-		UE_LOG(LogCsUI, Warning, TEXT("UCsScriptLibrary_Widget::GetSafeAnimation: AnimName: None is NULL."));
-		return nullptr;
-	}
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetAnimation : Context;
 
-	typedef NCsProperty::FLibrary PropertyLibrary;
+	typedef NCsWidget::NAnimation::FLibrary WidgetAnimationLibrary;
 
-	UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Widget, Widget->GetClass(), AnimName);
-
-	if (!Animation)
-	{
-		UE_LOG(LogCsUI, Warning, TEXT("UCsScriptLibrary_Widget::GetSafeAnimation: Failed to get animation with Name: %s from Widget: %s."), *(AnimName.ToString()), *(Widget->GetName()));
-	}
-	return Animation;
+	return WidgetAnimationLibrary::GetSafe(Context, Widget, AnimName);
 }
+
+#pragma endregion Animation

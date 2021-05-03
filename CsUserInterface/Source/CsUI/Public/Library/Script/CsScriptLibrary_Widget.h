@@ -11,8 +11,24 @@ class CSUI_API UCsScriptLibrary_Widget : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+// Position
+#pragma region
 public:
 
-	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget", meta = (AutoCreateRefTerm = "Context,AnimName"))
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Position", meta = (AutoCreateRefTerm = "Context"))
+	static FVector2D GetPositionBySlot(const FString& Context, UUserWidget* Widget);
+
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Position", meta = (AutoCreateRefTerm = "Context"))
+	static FVector2D GetAbsolutePositionByCachedGeometry(const FString& Context, UUserWidget* Widget);
+
+#pragma endregion Position
+
+// Animation
+#pragma region
+public:
+
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Animation", meta = (AutoCreateRefTerm = "Context,AnimName"))
 	static UWidgetAnimation* GetAnimation(const FString& Context, UUserWidget* Widget, const FName& AnimName);
+
+#pragma endregion Animation
 };

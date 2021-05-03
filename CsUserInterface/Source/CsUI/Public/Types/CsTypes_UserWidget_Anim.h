@@ -134,7 +134,7 @@ namespace NCsUserWidget
 				}
 
 				bool IsValidChecked(const FString& Context) const;
-				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
 				
 			#undef PlayModeType
 			};

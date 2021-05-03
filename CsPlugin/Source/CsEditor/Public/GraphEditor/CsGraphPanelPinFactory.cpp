@@ -14,6 +14,7 @@
 //#include "Types/CsTypes_Recipe.h"
 #include "Managers/Damage/CsTypes_Damage.h"
 #include "Managers/Sound/CsTypes_Sound.h"
+#include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
 #include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"
 //#include "Types/CsTypes_Interactive.h"
 //#include "AI/CsTypes_AI.h"
@@ -54,6 +55,8 @@
 //#include "GraphEditor/EnumStruct/Interactive/SCsGraphPin_ECsInteractiveType.h"
 	// Sound
 #include "GraphEditor/EnumStruct/Sound/SCsGraphPin_ECsSound.h"
+	// StaticMesh
+#include "GraphEditor/EnumStruct/StaticMesh/SCsGraphPin_ECsStaticMeshActor.h"
 	// SkeletalMesh
 #include "GraphEditor/EnumStruct/SkeletalMesh/SCsGraphPin_ECsSkeletalMeshActor.h"
 	// AI
@@ -150,6 +153,11 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	{
 		// FECsSound
 		CS_TEMP_CREATE(ECsSound)
+	}
+	// StaticMesh
+	{
+		// FECsStaticMeshActor
+		CS_TEMP_CREATE(ECsStaticMeshActor)
 	}
 	// SkeletalMesh
 	{

@@ -31,6 +31,8 @@
 #include "DetailCustomizations/EnumStruct/Damage/ECsHitTypeCustomization.h"
 		// Sound
 #include "DetailCustomizations/EnumStruct/Sound/ECsSoundCustomization.h"
+		// StaticMesh
+#include "DetailCustomizations/EnumStruct/StaticMesh/ECsStaticMeshActorCustomization.h"
 		// SkeletalMesh
 #include "DetailCustomizations/EnumStruct/SkeletalMesh/ECsSkeletalMeshActorCustomization.h"
 		// Sense
@@ -75,6 +77,10 @@ void FCsRegisterDetailCustomization::Register()
 		CS_TEMP_REGISTER(ECsHitType);
 		// Sound
 		CS_TEMP_REGISTER(ECsSound);
+		// StaticMesh
+		{
+			CS_TEMP_REGISTER(ECsStaticMeshActor);
+		}
 		// SkeletalMesh
 		{
 			CS_TEMP_REGISTER(ECsSkeletalMeshActor);

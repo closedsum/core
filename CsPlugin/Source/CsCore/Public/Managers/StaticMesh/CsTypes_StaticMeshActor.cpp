@@ -4,6 +4,7 @@
 
 // Library
 #include "Library/CsLibrary_Valid.h"
+#include "Library/CsLibrary_Material.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Utility
@@ -125,7 +126,14 @@ bool FCsStaticMeshActorPooledInfo::IsValidChecked(const FString& Context) const
 	// Check Mesh is Valid.
 	check(Mesh.GetChecked(Context));
 	// Check Materials is Valid
-	check(Materials.IsValidChecked(Context));
+	if (Materials.Materials.Num() > CS_EMPTY)
+	{
+		check(Materials.IsValidChecked(Context));
+
+		typedef NCsMaterial::FLibrary MaterialLibrary;
+
+		check(MaterialLibrary::IsValidChecked(Context, Mesh.Get(), Materials.Get()));
+	}
 	// Check Type is Valid
 	check(EMCsStaticMeshActor::Get().IsValidEnumChecked(Context, Type));
 
@@ -142,8 +150,16 @@ bool FCsStaticMeshActorPooledInfo::IsValid(const FString& Context, void(*Log)(co
 	if (!Mesh.IsValid(Context, Log))
 		return false;
 	// Check Materials is Valid
-	if (!Materials.IsValid(Context, Log))
-		return false;
+	if (Materials.Materials.Num() > CS_EMPTY)
+	{
+		if (!Materials.IsValid(Context, Log))
+			return false;
+
+		typedef NCsMaterial::FLibrary MaterialLibrary;
+
+		if (!MaterialLibrary::IsValid(Context, Mesh.Get(), Materials.Get(), Log))
+			return false;
+	}
 	// Check Type is Valid
 	CS_IS_ENUM_STRUCT_VALID(EMCsStaticMeshActor, FECsStaticMeshActor, Type)
 

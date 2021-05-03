@@ -78,6 +78,40 @@ namespace NCsMaterial
 		return true;
 	}
 
+	bool FLibrary::IsValidChecked(const FString& Context, UStaticMesh* Mesh, const TArray<UMaterialInterface*>& Materials)
+	{
+		// Check Mesh is Valid
+		CS_IS_PTR_NULL_CHECKED(Mesh)
+
+		const int32 Count		 = Mesh->StaticMaterials.Num();
+		const int32 MaterialCount = Materials.Num();
+
+		checkf(Count == MaterialCount, TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *(Mesh->GetName()), Count, MaterialCount);
+
+		check(IsValidChecked(Context, Materials));
+
+		return true;
+	}
+
+	bool FLibrary::IsValid(const FString& Context, UStaticMesh* Mesh, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		// Check Mesh is Valid
+		CS_IS_PTR_NULL(Mesh)
+
+		const int32 Count		  = Mesh->StaticMaterials.Num();
+		const int32 MaterialCount = Materials.Num();
+
+		if (Count != MaterialCount)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *(Mesh->GetName()), Count, MaterialCount));
+			return false;
+		}
+
+		if (!IsValid(Context, Materials, Log))
+			return false;
+		return true;
+	}
+
 	bool FLibrary::IsValidChecked(const FString& Context, USkeletalMesh* Mesh, const TArray<UMaterialInterface*>& Materials)
 	{
 		// Check Mesh is Valid

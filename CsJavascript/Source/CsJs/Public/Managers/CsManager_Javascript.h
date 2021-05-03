@@ -115,6 +115,18 @@ private:
 
 	char SetupEntryPoint_Internal(FCsRoutine* R);
 
+public:
+
+	DECLARE_DELEGATE(FAdditionalSetupEntryPoint_Impl);
+
+	FAdditionalSetupEntryPoint_Impl AdditionalSetupEntryPoint_Impl;
+
+	DECLARE_DELEGATE_RetVal(bool, FIsAdditionalSetupEntryPointComplete_Impl);
+
+	FIsAdditionalSetupEntryPointComplete_Impl IsAdditionalSetupEntryPointComplete_Impl;
+
+private:
+
 	bool bSetupEntryPointComplete;
 
 public:

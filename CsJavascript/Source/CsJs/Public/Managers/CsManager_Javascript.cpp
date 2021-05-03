@@ -333,6 +333,10 @@ void UCsManager_Javascript::SetupEntryPoint(UGameInstance* GameInstance /*=nullp
 
 char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
 {
+	using namespace NCsManagerJavascript::NCached;
+
+	const FString& Context = Str::SetupAndRunEntryPoint_Internal;
+
 	static const int32 GAME_INSTANCE = 0;
 	UGameInstance* GameInstance	= R->GetValue_Void<UGameInstance>(GAME_INSTANCE);
 
@@ -379,6 +383,16 @@ char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
 	CS_COROUTINE_WAIT_UNTIL(R, PlayerPawn);
 
 	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("PlayerPawn"), PlayerPawn);
+
+	// Additional Setup
+	if (AdditionalSetupEntryPoint_Impl.IsBound())
+	{
+		checkf(IsAdditionalSetupEntryPointComplete_Impl.IsBound(), TEXT("%s: AdditionalSetupEntryPoint_Impl is Bound but IsAdditionalSetupEntryPointComplete_Impl is NOT Bound."), *Context);
+
+		AdditionalSetupEntryPoint_Impl.Execute();
+
+		CS_COROUTINE_WAIT_UNTIL(R, IsAdditionalSetupEntryPointComplete_Impl.Execute());
+	}
 
 	bSetupEntryPointComplete = true;
 

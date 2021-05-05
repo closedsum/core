@@ -6,6 +6,8 @@
 #include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
+#include "Library/CsLibrary_World.h"
+#include "Game/CsLibrary_GameInstance.h"
 // Player
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/PlayerController.h"
@@ -21,17 +23,10 @@ namespace NCsPlayer
 {
 	ULocalPlayer* FLibrary::GetFirstLocalChecked(const FString& Context, UObject* WorldContext)
 	{
-		CS_IS_PTR_NULL_CHECKED(WorldContext)
+		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-		UWorld* World = WorldContext->GetWorld();
-
-		checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
-
-		UGameInstance* GameInstance = World->GetGameInstance();
-
-		checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName()));
-
-		ULocalPlayer* LocalPlayer = GameInstance->GetFirstGamePlayer();
+		UGameInstance* GameInstance = GameInstanceLibrary::GetChecked(Context, WorldContext);
+		ULocalPlayer* LocalPlayer   = GameInstance->GetFirstGamePlayer();
 
 		checkf(LocalPlayer, TEXT("%s: Failed to get LocalPlayer from GameInstance: %s."), *Context, *(GameInstance->GetName()));
 
@@ -45,7 +40,7 @@ namespace NCsPlayer
 			namespace Str
 			{
 				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetFirstLocalChecked);
-
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetSafeLocal);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetAllLocal);
 			}
 		}
@@ -57,11 +52,9 @@ namespace NCsPlayer
 
 		APlayerController* FLibrary::GetFirstLocalChecked(const FString& Context, UObject* WorldContext)
 		{
-			CS_IS_PTR_NULL_CHECKED(WorldContext)
+			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldContext->GetWorld();
-
-			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 			return GetFirstLocalChecked(Context, World);
 		}
@@ -96,13 +89,48 @@ namespace NCsPlayer
 
 		APlayerController* FLibrary::GetLocalChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId)
 		{
-			CS_IS_PTR_NULL_CHECKED(WorldContext)
+			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldContext->GetWorld();
-
-			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 			return GetLocalChecked(Context, World, ControllerId);
+		}
+
+		APlayerController* FLibrary::GetSafeLocal(const FString& Context, UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+
+			if (!World)
+				return nullptr;
+
+			CS_IS_INT_GREATER_THAN_OR_EQUAL_RET_NULL(ControllerId, 0)
+
+			ULocalPlayer* Player = GEngine->GetLocalPlayerFromControllerId(World, ControllerId);
+
+			if (!Player)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Local Player with ControllerId: %d."), *Context, ControllerId));
+				return nullptr;
+			}
+
+			APlayerController* PC = Player->PlayerController;
+
+			if (!PC)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get PlayerController from Local Player: %s with ControllerId: %d."), *Context, *(Player->GetName()), ControllerId));
+			}
+			return PC;
+		}
+
+		APlayerController* FLibrary::GetSafeLocal(UObject* WorldContext, const int32& ControllerId)
+		{
+			using namespace NCsPlayer::NController::NCached;
+
+			const FString& Context = Str::GetSafeLocal;
+
+			return GetSafeLocal(Context, WorldContext, ControllerId, nullptr);
 		}
 
 		APlayerController* FLibrary::GetOrFirstLocalChecked(const FString& Context, APawn* Pawn)

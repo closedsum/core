@@ -15,11 +15,29 @@ class CSUI_API UCsScriptLibrary_Widget : public UObject
 #pragma region
 public:
 
-	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Position", meta = (AutoCreateRefTerm = "Context"))
-	static FVector2D GetPositionBySlot(const FString& Context, UUserWidget* Widget);
+	// Screen
+#pragma region
+public:
 
 	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Position", meta = (AutoCreateRefTerm = "Context"))
-	static FVector2D GetAbsolutePositionByCachedGeometry(const FString& Context, UUserWidget* Widget);
+	static FVector2D GetScreenPositionBySlot(const FString& Context, UUserWidget* Widget);
+
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Position", meta = (AutoCreateRefTerm = "Context"))
+	static FVector2D GetAbsoluteScreenPositionByCachedGeometry(const FString& Context, UUserWidget* Widget);
+
+#pragma endregion Screen
+
+	// World
+#pragma region
+public:
+
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Position", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ControllerId,OutPosition,OutDirection"))
+	static bool GetWorldPositionBySlot(const FString& Context, UObject* WorldContextObject, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection);
+
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Position", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ControllerId,OutPosition,OutDirection"))
+	static bool GetWorldPositionByCachedGeometry(const FString& Context, UObject* WorldContextObject, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection);
+
+#pragma endregion World
 
 #pragma endregion Position
 

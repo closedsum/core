@@ -16,8 +16,10 @@ namespace NCsScriptLibraryWidget
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetPositionBySlot);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetAbsolutePositionByCachedGeometry);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetScreenPositionBySlot);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetAbsoluteScreenPositionByCachedGeometry);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetWorldPositionBySlot);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetWorldPositionByCachedGeometry);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetAnimation);
 		}
 	}
@@ -33,27 +35,59 @@ UCsScriptLibrary_Widget::UCsScriptLibrary_Widget(const FObjectInitializer& Objec
 // Position
 #pragma region
 
-FVector2D UCsScriptLibrary_Widget::GetPositionBySlot(const FString& Context, UUserWidget* Widget)
+	// Screen
+#pragma region
+
+FVector2D UCsScriptLibrary_Widget::GetScreenPositionBySlot(const FString& Context, UUserWidget* Widget)
 {
 	using namespace NCsScriptLibraryWidget::NCached;
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetPositionBySlot : Context;
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetScreenPositionBySlot : Context;
 
-	typedef NCsWidget::NPosition::FLibrary WidgetPositionLibrary;
+	typedef NCsWidget::NPosition::NScreen::FLibrary WidgetPositionLibrary;
 
 	return WidgetPositionLibrary::GetSafeBySlot(Context, Widget);
 }
 
-FVector2D UCsScriptLibrary_Widget::GetAbsolutePositionByCachedGeometry(const FString& Context, UUserWidget* Widget)
+FVector2D UCsScriptLibrary_Widget::GetAbsoluteScreenPositionByCachedGeometry(const FString& Context, UUserWidget* Widget)
 {
 	using namespace NCsScriptLibraryWidget::NCached;
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetAbsolutePositionByCachedGeometry : Context;
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetAbsoluteScreenPositionByCachedGeometry : Context;
 
-	typedef NCsWidget::NPosition::FLibrary WidgetPositionLibrary;
+	typedef NCsWidget::NPosition::NScreen::FLibrary WidgetPositionLibrary;
 
 	return WidgetPositionLibrary::GetSafeAbsoluteByCachedGeometry(Context, Widget);
 }
+
+#pragma endregion Screen
+
+	// World
+#pragma region
+
+bool UCsScriptLibrary_Widget::GetWorldPositionBySlot(const FString& Context, UObject* WorldContextObject, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetWorldPositionBySlot : Context;
+
+	typedef NCsWidget::NPosition::NWorld::FLibrary WidgetPositionLibrary;
+
+	return WidgetPositionLibrary::GetSafeBySlot(Context, WorldContextObject, ControllerId, Widget, OutPosition, OutDirection);
+}
+
+bool UCsScriptLibrary_Widget::GetWorldPositionByCachedGeometry(const FString& Context, UObject* WorldContextObject, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetWorldPositionByCachedGeometry : Context;
+
+	typedef NCsWidget::NPosition::NWorld::FLibrary WidgetPositionLibrary;
+
+	return WidgetPositionLibrary::GetSafeByCachedGeometry(Context, WorldContextObject, ControllerId, Widget, OutPosition, OutDirection);
+}
+
+#pragma endregion World
 
 #pragma endregion Position
 

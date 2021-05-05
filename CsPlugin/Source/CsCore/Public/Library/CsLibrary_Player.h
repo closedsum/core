@@ -1,5 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Log
+#include "Utility/CsLog.h"
 
 class UWorld;
 class APlayerController;
@@ -86,6 +88,10 @@ namespace NCsPlayer
 			static APlayerController* GetLocalChecked(const FString& Context, UWorld* World, const int32& ControllerId);
 
 			static APlayerController* GetLocalChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId);
+
+			static APlayerController* GetSafeLocal(const FString& Context, UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			static APlayerController* GetSafeLocal(UObject* WorldContext, const int32& ControllerId);
 
 			static APlayerController* GetOrFirstLocalChecked(const FString& Context, APawn* Pawn);
 

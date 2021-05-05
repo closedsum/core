@@ -1548,7 +1548,9 @@ char UCsLibrary_Common::ScaleActorOverTime_Internal(FCsRoutine* R)
 			}
 			else
 			{
-				float Time = FCsLibrary_Math::Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
+				typedef NCsMath::FLibrary MathLibrary;
+
+				float Time = MathLibrary::Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
 				Scale	   = ClampVectorComponents(FMath::Lerp(StartScale, EndScale, Time), CS_ACTOR_SMALLEST_SCALE);
 			}
 
@@ -1744,8 +1746,10 @@ char UCsLibrary_Common::MoveActorOverTime_Internal(FCsRoutine* R)
 	do
 	{
 		{
+			typedef NCsMath::FLibrary MathLibrary;
+
 			const float Percent    = FMath::Clamp((CurrentTime.Time - StartTime.Time) / MaxTime, 0.0f, 1.0f);
-			float Time			   = FCsLibrary_Math::Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
+			float Time			   = MathLibrary::Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
 			const FVector Location = FMath::Lerp(StartLocation, EndLocation, Time);
 
 			if (IsRelativeLocation)
@@ -1893,8 +1897,10 @@ char UCsLibrary_Common::FadeCameraOverTime_Internal(FCsRoutine* R)
 	do
 	{
 		{
+			typedef NCsMath::FLibrary MathLibrary;
+
 			const float Percent = FMath::Clamp((CurrentTime.Time - StartTime.Time) / MaxTime, 0.0f, 1.0f);
-			const float Time    = FCsLibrary_Math::Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
+			const float Time    = MathLibrary::Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
 			const float Alpha	= IsFadeOut ? 1.0f - (Min + Percent * Delta) : Min + Percent * Delta;
 
 			PC->PlayerCameraManager->SetManualCameraFade(Alpha, Color, false);

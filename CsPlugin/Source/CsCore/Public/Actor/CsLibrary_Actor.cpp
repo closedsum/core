@@ -488,7 +488,7 @@ namespace NCsActor
 		do
 		{
 			{
-				typedef FCsLibrary_Math MathLibrary;
+				typedef NCsMath::FLibrary MathLibrary;
 
 				// Linear
 				if (Easing == ECsEasingType::Linear)

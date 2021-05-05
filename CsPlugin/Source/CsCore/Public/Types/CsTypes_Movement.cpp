@@ -1142,8 +1142,10 @@ namespace NCsSpeed
 			{
 				const float AdjustedDeltaTime = DeltaTime / Info->GetTime();
 
+				typedef NCsMath::FLibrary MathLibrary;
+
 				CurrentAlpha				= FMath::Clamp(CurrentAlpha + AdjustedDeltaTime, 0.0f, 1.0f);
-				const float Percent		    = FCsLibrary_Math::Ease(Info->GetEasing(), CurrentAlpha, 0.0f, 1.0f, 1.0f);
+				const float Percent		    = MathLibrary::Ease(Info->GetEasing(), CurrentAlpha, 0.0f, 1.0f, 1.0f);
 				const float AdjustedPercent = Info->GetDirection() == DirectionType::Increasing ? Percent : 1.0f - Percent;
 
 				// Remap Percent from [0.0f, 1.0f] to [MinSpeedAsPercent, 1.0f]

@@ -112,9 +112,11 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath()
 	++Count;
 
 	// Get Memory loaded and the time it took
+	typedef NCsMath::FLibrary MathLibrary;
+
 	const int32 Bytes	  = Object->GetResourceSizeBytes(EResourceSizeMode::Exclusive);
-	const float Kilobytes = FCsLibrary_Math::BytesToKilobytes(Bytes);
-	const float Megabytes = FCsLibrary_Math::BytesToMegabytes(Bytes);
+	const float Kilobytes = MathLibrary::BytesToKilobytes(Bytes);
+	const float Megabytes = MathLibrary::BytesToMegabytes(Bytes);
 
 	SizeLoaded.Bytes	 += Bytes;
 	SizeLoaded.Kilobytes += Kilobytes;
@@ -162,9 +164,11 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPaths()
 		checkf(Object, TEXT("UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPaths: Failed to Resolve Path @ %s."), *(Path.ToString()));
 
 		// Get Memory loaded and the time it took
+		typedef NCsMath::FLibrary MathLibrary;
+
 		const int32 Bytes	  = Object->GetResourceSizeBytes(EResourceSizeMode::Exclusive);
-		const float Kilobytes = FCsLibrary_Math::BytesToKilobytes(Bytes);
-		const float Megabytes = FCsLibrary_Math::BytesToMegabytes(Bytes);
+		const float Kilobytes = MathLibrary::BytesToKilobytes(Bytes);
+		const float Megabytes = MathLibrary::BytesToMegabytes(Bytes);
 
 		SizeLoaded.Bytes	 += Bytes;
 		SizeLoaded.Kilobytes += Kilobytes;

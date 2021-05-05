@@ -1929,7 +1929,7 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 			}
 			else
 			{
-				ChangeSnippet = FString::Printf(TEXT("Count from %d to %d (%d)"), CurrentCount, NewCount, FCsLibrary_Math::GetAbsDelta(NewCount, CurrentCount));
+				ChangeSnippet = FString::Printf(TEXT("Count from %d to %d (%d)"), CurrentCount, NewCount, NCsMath::FLibrary::GetAbsDelta(NewCount, CurrentCount));
 			}
 		}
 		// Bitfield

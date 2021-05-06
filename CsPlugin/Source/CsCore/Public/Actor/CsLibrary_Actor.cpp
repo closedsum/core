@@ -30,6 +30,7 @@ namespace NCsActor
 		{
 			namespace Str
 			{
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetSafeByTag);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetSafeByName);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetSafeByLabel);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, MoveByInterp_Internal);
@@ -59,13 +60,13 @@ namespace NCsActor
 	// Get
 	#pragma region
 
-	AActor* FLibrary::GetWithTagChecked(const FString& Context, UObject* WorldContext, const FName& Tag)
+	AActor* FLibrary::GetByTagChecked(const FString& Context, UObject* WorldContext, const FName& Tag)
 	{
 		typedef NCsWorld::FLibrary WorldLibrary;
 
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
-		checkf(Tag != NAME_None, TEXT("%s: Tag: None is NOT Valid."), *Context);
+		CS_IS_NAME_NONE_CHECKED(Tag)
 
 #if UE_BUILD_SHIPPING
 		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
@@ -110,7 +111,62 @@ namespace NCsActor
 		checkf(0, TEXT("%s: Failed to find Actor with Tag: %s."), *Context, *(Tag.ToString()));
 		return nullptr;
 	}
-	
+
+	AActor* FLibrary::GetSafeByTag(const FString& Context, UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+
+		if (!World)
+			return nullptr;
+
+		CS_IS_NAME_NONE_RET_NULL(Tag)
+
+#if UE_BUILD_SHIPPING
+		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!A || A->IsPendingKill())
+				continue;
+			if (A->Tags.Contains(Tag))
+			{
+				return A;
+			}
+		}
+#else
+		AActor* Actor = nullptr;
+
+		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!A || A->IsPendingKill())
+				continue;
+			if (A->Tags.Contains(Tag))
+			{
+				if (!Actor)
+				{
+					Actor = A;
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: There are more than one Actors with the Tag: %s."), *Context, *(Tag.ToString())));
+				}
+			}
+		}
+
+		if (Actor)
+			return Actor;
+#endif // UE_BUILD_SHIPPING
+
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Actor with Tag: %s."), *Context, *(Tag.ToString())));
+		return nullptr;
+	}
+
 	AActor* FLibrary::GetByNameChecked(const FString& Context, UObject* WorldContext, const FName& Name)
 	{
 		CS_IS_PTR_NULL_CHECKED(WorldContext)

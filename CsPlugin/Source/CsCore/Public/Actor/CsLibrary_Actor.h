@@ -15,6 +15,17 @@ class UMaterialInterface;
 
 namespace NCsActor
 {
+	namespace NLibrary
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				extern CSCORE_API const FString GetSafeByTag;
+			}
+		}
+	}
+
 	/**
 	* Library of functions related to Actor
 	*/
@@ -46,7 +57,7 @@ namespace NCsActor
 		* @param Tag
 		* return
 		*/
-		static AActor* GetWithTagChecked(const FString& Context, UObject* WorldContext, const FName& Tag);
+		static AActor* GetByTagChecked(const FString& Context, UObject* WorldContext, const FName& Tag);
 
 		/**
 		* Get an Actor (casted to type T) with the given Tag (checks AActor->Tags)
@@ -57,13 +68,79 @@ namespace NCsActor
 		* return
 		*/
 		template<typename T>
-		FORCEINLINE static T* GetWithTagChecked(const FString& Context, UObject* WorldContext, const FName& Tag)
+		FORCEINLINE static T* GetByTagChecked(const FString& Context, UObject* WorldContext, const FName& Tag)
 		{
-			T* A = Cast<T>(GetWithTagChecked(Context, WorldContext, Tag));
+			T* A = Cast<T>(GetByTagChecked(Context, WorldContext, Tag));
 
 			checkf(A, TEXT("%s: Failed to cast Actor to type: %s."), *Context, *(T::StaticClass()->GetName()));
 
 			return A;
+		}
+
+		/**
+		* Safely get an Actor with the given Tag (checks AActor->Tags)
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Tag
+		* @param Log
+		* return				Actor
+		*/
+		static AActor* GetSafeByTag(const FString& Context, UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Safely get an Actor (casted to type T) with the given Tag (checks AActor->Tags)
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Tag
+		* @param Log
+		* return				Actor
+		*/
+		template<typename T>
+		FORCEINLINE static T* GetSafeByTag(const FString& Context, UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			T* A = Cast<T>(GetSafeByTag(Context, WorldContext, Tag, Log));
+
+			if (!A)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Failed to cast Actor to type: %s."), *Context, *(T::StaticClass()->GetName())));
+			}
+			return A;
+		}
+
+		/**
+		* Safely get an Actor with the given Tag (checks AActor->Tags)
+		*
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Tag
+		* return				Actor
+		*/
+		FORCEINLINE static AActor* GetSafeByTag(UObject* WorldContext, const FName& Tag)
+		{
+			using namespace NCsActor::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeByTag;
+
+			return GetSafeByTag(Context, WorldContext, Tag, nullptr);
+		}
+
+		/**
+		* Safely get an Actor (casted to type T) with the given Tag (checks AActor->Tags)
+		*
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Tag
+		* return				Actor
+		*/
+		template<typename T>
+		FORCEINLINE static T* GetSafeByTag(UObject* WorldContext, const FName& Tag)
+		{
+			using namespace NCsActor::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeByTag;
+
+			return GetSafeByTag<T>(Context, WorldContext, Tag, nullptr);
 		}
 
 		/**

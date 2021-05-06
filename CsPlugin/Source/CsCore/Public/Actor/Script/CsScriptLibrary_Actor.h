@@ -43,12 +43,24 @@ public:
 public:
 
 	/**
+	* Get an Actor with the given Tag (checks AActor->Tags)
+	* NOTE: Find the FIRST Actor the given Tag.
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Tag
+	* return				Actor
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Tag"))
+	static AActor* GetByTag(const FString& Context, UObject* WorldContextObject, const FName& Tag);
+
+	/**
 	* Get an Actor with the given Name.
 	*
 	* @param Context		The calling context.
 	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 	* @param Name
-	* return
+	* return				Actor
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Name"))
 	static AActor* GetByName(const FString& Context, UObject* WorldContextObject, const FName& Name);
@@ -62,7 +74,7 @@ public:
 	* @param Context		The calling context.
 	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 	* @param Name
-	* return
+	* return				Actor
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Label"))
 	static AActor* GetByLabel(const FString& Context, UObject* WorldContextObject, const FString& Label);

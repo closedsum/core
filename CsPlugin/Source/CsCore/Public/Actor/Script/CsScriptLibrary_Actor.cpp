@@ -16,6 +16,7 @@ namespace NCsScriptLibraryActor
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetRootComponent);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetRole);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByTag);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByName);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByLabel);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, MoveByInterp);
@@ -70,6 +71,17 @@ void UCsScriptLibrary_Actor::SetRole(const FString& Context, AActor* Actor, cons
 
 // Get
 #pragma region
+
+AActor* UCsScriptLibrary_Actor::GetByTag(const FString& Context, UObject* WorldContextObject, const FName& Tag)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetByTag : Context;
+
+	typedef NCsActor::FLibrary ActorLibrary;
+
+	return ActorLibrary::GetSafeByTag(Ctxt, WorldContextObject, Tag);
+}
 
 AActor* UCsScriptLibrary_Actor::GetByName(const FString& Context, UObject* WorldContextObject, const FName& Name)
 {

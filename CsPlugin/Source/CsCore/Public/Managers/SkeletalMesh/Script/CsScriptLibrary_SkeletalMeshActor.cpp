@@ -15,12 +15,8 @@ namespace NCsScriptLibrarySkeletalMeshActor
 		namespace Str
 		{
 			const FString FECsSkeletalMeshActor = TEXT("FECsSkeletalMeshActor");
-			const FString ECsSkeletalMeshActor_Get = TEXT("ECsSkeletalMeshActor_Get");
-			const FString ECsSkeletalMeshActor_GetByIndex = TEXT("ECsSkeletalMeshActor_GetByIndex");
-
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_SkeletalMeshActor, LoadBySoftObjectPath);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_SkeletalMeshActor, LoadByStringPath);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_SkeletalMeshActor, Spawn);
+			const FString Get = TEXT("Get");
+			const FString GetByIndex = TEXT("GetByIndex");
 		}
 	}
 }
@@ -35,51 +31,51 @@ UCsScriptLibrary_SkeletalMeshActor::UCsScriptLibrary_SkeletalMeshActor(const FOb
 // Enum
 #pragma region
 
-FECsSkeletalMeshActor UCsScriptLibrary_SkeletalMeshActor::ECsSkeletalMeshActor_Get(const FString& Name)
+FECsSkeletalMeshActor UCsScriptLibrary_SkeletalMeshActor::Get(const FString& Name)
 {
 	using namespace NCsScriptLibrarySkeletalMeshActor::NCached;
 
-	const FString& Context = Str::ECsSkeletalMeshActor_Get;
+	const FString& Context = Str::Get;
 
 	typedef NCsEnum::FLibrary EnumLibrary;
 
 	return EnumLibrary::GetSafe<EMCsSkeletalMeshActor, FECsSkeletalMeshActor>(Context, Str::FECsSkeletalMeshActor, Name);
 }
 
-FECsSkeletalMeshActor UCsScriptLibrary_SkeletalMeshActor::ECsSkeletalMeshActor_GetByIndex(const int32& Index)
+FECsSkeletalMeshActor UCsScriptLibrary_SkeletalMeshActor::GetByIndex(const int32& Index)
 {
 	using namespace NCsScriptLibrarySkeletalMeshActor::NCached;
 
-	const FString& Context = Str::ECsSkeletalMeshActor_GetByIndex;
+	const FString& Context = Str::GetByIndex;
 
 	typedef NCsEnum::FLibrary EnumLibrary;
 
 	return EnumLibrary::GetSafeByIndex<EMCsSkeletalMeshActor, FECsSkeletalMeshActor>(Context, Str::FECsSkeletalMeshActor, Index);
 }
 
-FString UCsScriptLibrary_SkeletalMeshActor::ECsSkeletalMeshActor_ToString(const FECsSkeletalMeshActor& Enum)
+FString UCsScriptLibrary_SkeletalMeshActor::ToString(const FECsSkeletalMeshActor& Enum)
 {
 	return Enum.ToString();
 }
 
-uint8 UCsScriptLibrary_SkeletalMeshActor::ECsSkeletalMeshActor_GetCount()
+uint8 UCsScriptLibrary_SkeletalMeshActor::GetCount()
 {
 	return EMCsSkeletalMeshActor::Get().Num();
 }
 
-void UCsScriptLibrary_SkeletalMeshActor::ECsSkeletalMeshActor_GetAll(TArray<FECsSkeletalMeshActor>& OutTypes)
+void UCsScriptLibrary_SkeletalMeshActor::GetAll(TArray<FECsSkeletalMeshActor>& OutTypes)
 {
 	typedef NCsEnum::FLibrary EnumLibrary;
 
 	EnumLibrary::GetAll<EMCsSkeletalMeshActor, FECsSkeletalMeshActor>(OutTypes);
 }
 
-FECsSkeletalMeshActor UCsScriptLibrary_SkeletalMeshActor::ECsSkeletalMeshActor_GetMax()
+FECsSkeletalMeshActor UCsScriptLibrary_SkeletalMeshActor::GetMax()
 {
 	return EMCsSkeletalMeshActor::Get().GetMAX();
 }
 
-bool UCsScriptLibrary_SkeletalMeshActor::EqualEqual_SkeletalMeshActorSkeletalMeshActor(const FECsSkeletalMeshActor& A, const FECsSkeletalMeshActor& B)
+bool UCsScriptLibrary_SkeletalMeshActor::EqualEqual(const FECsSkeletalMeshActor& A, const FECsSkeletalMeshActor& B)
 {
 	return A == B;
 }

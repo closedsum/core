@@ -15,26 +15,26 @@ class CSCORE_API UCsScriptLibrary_SkeletalMeshActor : public UObject
 #pragma region
 public:
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|StaticMeshActor", meta = (DisplayName = "ECsSkeletalMeshActor - Get", AutoCreateRefTerm = "Name"))
-	static FECsSkeletalMeshActor ECsSkeletalMeshActor_Get(const FString& Name);
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|SkeletalMeshActor", meta = (AutoCreateRefTerm = "Name"))
+	static FECsSkeletalMeshActor Get(const FString& Name);
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|StaticMeshActor", meta = (DisplayName = "ECsSkeletalMeshActor - Get by Index", AutoCreateRefTerm = "Index"))
-	static FECsSkeletalMeshActor ECsSkeletalMeshActor_GetByIndex(const int32& Index);
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|SkeletalMeshActor", meta = (AutoCreateRefTerm = "Index"))
+	static FECsSkeletalMeshActor GetByIndex(const int32& Index);
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|StaticMeshActor", meta = (DisplayName = "ECsSkeletalMeshActor - To String", AutoCreateRefTerm = "Enum"))
-	static FString ECsSkeletalMeshActor_ToString(const FECsSkeletalMeshActor& Enum);
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|SkeletalMeshActor", meta = (AutoCreateRefTerm = "Enum"))
+	static FString ToString(const FECsSkeletalMeshActor& Enum);
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|StaticMeshActor", meta = (DisplayName = "ECsSkeletalMeshActor - Get Count"))
-	static uint8 ECsSkeletalMeshActor_GetCount();
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|SkeletalMeshActor")
+	static uint8 GetCount();
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|StaticMeshActor", meta = (DisplayName = "ECsECsSkeletalMeshActorFX - Get All"))
-	static void ECsSkeletalMeshActor_GetAll(TArray<FECsSkeletalMeshActor>& OutTypes);
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|SkeletalMeshActor")
+	static void GetAll(TArray<FECsSkeletalMeshActor>& OutTypes);
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|StaticMeshActor", meta = (DisplayName = "ECsSkeletalMeshActor - Get Max", AutoCreateRefTerm = "Name"))
-	static FECsSkeletalMeshActor ECsSkeletalMeshActor_GetMax();
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|SkeletalMeshActor", meta = (AutoCreateRefTerm = "Name"))
+	static FECsSkeletalMeshActor GetMax();
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (StaticMeshActor)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|FX")
-	static bool EqualEqual_SkeletalMeshActorSkeletalMeshActor(const FECsSkeletalMeshActor& A, const FECsSkeletalMeshActor& B);
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (SkeletalMeshActor)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|SkeletalMeshActor")
+	static bool EqualEqual(const FECsSkeletalMeshActor& A, const FECsSkeletalMeshActor& B);
 
 #pragma endregion Enum
 };

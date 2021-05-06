@@ -23,6 +23,7 @@ namespace NCsMaterial
 			namespace Str
 			{
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::FLibrary, SetSafe);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::FLibrary, Set);
 			}
 		}
 	}
@@ -244,14 +245,19 @@ namespace NCsMaterial
 
 	void FLibrary::Set(UStaticMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
 	{
-		checkf(Mesh, TEXT("NCsMaterial::FLibrary::Set: Mesh is NULL."));
+		using namespace NCsMaterial::NLibrary::NCached;
+
+		const FString& Context = Str::Set;
+
+		// Check Mesh is Valid
+		CS_IS_PTR_NULL_CHECKED(Mesh)
 
 		const int32 Count		  = Mesh->GetStaticMesh()->StaticMaterials.Num();
 		const int32 MaterialCount = Materials.Num();
 
 		if (Count != MaterialCount)
 		{
-			UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::Set: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Mesh->GetStaticMesh()->GetName(), Count, MaterialCount);
+			UE_LOG(LogCs, Warning, TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *Mesh->GetStaticMesh()->GetName(), Count, MaterialCount);
 			return;
 		}
 
@@ -261,7 +267,7 @@ namespace NCsMaterial
 		{
 			if (!Materials[Index])
 			{
-				UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::SetMaterials: Materials[%d] is NULL."), Index);
+				UE_LOG(LogCs, Warning, TEXT("%s: Materials[%d] is NULL."), *Context, Index);
 			}
 
 			Mesh->SetMaterial(Index, Materials[Index]);
@@ -270,14 +276,19 @@ namespace NCsMaterial
 
 	void FLibrary::Set(UStaticMeshComponent* Mesh, const TArray<UMaterialInstanceConstant*>& Materials)
 	{
-		checkf(Mesh, TEXT("NCsMaterial::FLibrary::Set: Mesh is NULL."));
+		using namespace NCsMaterial::NLibrary::NCached;
+
+		const FString& Context = Str::Set;
+
+		// Check Mesh is Valid
+		CS_IS_PTR_NULL_CHECKED(Mesh)
 
 		const int32 Count		  = Mesh->GetStaticMesh()->StaticMaterials.Num();
 		const int32 MaterialCount = Materials.Num();
 
 		if (Count != MaterialCount)
 		{
-			UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::Set: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Mesh->GetStaticMesh()->GetName(), Count, MaterialCount);
+			UE_LOG(LogCs, Warning, TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *Mesh->GetStaticMesh()->GetName(), Count, MaterialCount);
 			return;
 		}
 
@@ -287,7 +298,7 @@ namespace NCsMaterial
 		{
 			if (!Materials[Index])
 			{
-				UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::Set: Materials[%d] is NULL."), Index);
+				UE_LOG(LogCs, Warning, TEXT("%s: Materials[%d] is NULL."), *Context, Index);
 			}
 
 			Mesh->SetMaterial(Index, Materials[Index]);
@@ -316,14 +327,19 @@ namespace NCsMaterial
 
 	void FLibrary::Set(USkeletalMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
 	{
-		checkf(Mesh, TEXT("NCsMaterial::FLibrary::Set: Mesh is NULL."));
+		using namespace NCsMaterial::NLibrary::NCached;
+
+		const FString& Context = Str::Set;
+
+		// Check Mesh is Valid
+		CS_IS_PTR_NULL_CHECKED(Mesh)
 
 		const int32 Count		  = Mesh->SkeletalMesh->Materials.Num();
 		const int32 MaterialCount = Materials.Num();
 
 		if (Count != MaterialCount)
 		{
-			UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::Set: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Mesh->SkeletalMesh->GetName(), Count, MaterialCount);
+			UE_LOG(LogCs, Warning, TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *Mesh->SkeletalMesh->GetName(), Count, MaterialCount);
 			return;
 		}
 
@@ -331,20 +347,29 @@ namespace NCsMaterial
 
 		for (int32 Index = 0; Index < Count; ++Index)
 		{
+			if (!Materials[Index])
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s: Materials[%d] is NULL."), *Context, Index);
+			}
 			Mesh->SetMaterial(Index, Materials[Index]);
 		}
 	}
 
 	void FLibrary::Set(USkeletalMeshComponent* Mesh, const TArray<UMaterialInstanceConstant*>& Materials)
 	{
-		checkf(Mesh, TEXT("NCsMaterial::FLibrary::Set: Mesh is NULL."));
+		using namespace NCsMaterial::NLibrary::NCached;
+
+		const FString& Context = Str::Set;
+
+		// Check Mesh is Valid
+		CS_IS_PTR_NULL_CHECKED(Mesh)
 
 		const int32 Count		  = Mesh->SkeletalMesh->Materials.Num();
 		const int32 MaterialCount = Materials.Num();
 
 		if (Count != MaterialCount)
 		{
-			UE_LOG(LogCs, Warning, TEXT("NCsMaterial::FLibrary::Set: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Mesh->SkeletalMesh->GetName(), Count, MaterialCount);
+			UE_LOG(LogCs, Warning, TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *Mesh->SkeletalMesh->GetName(), Count, MaterialCount);
 			return;
 		}
 
@@ -352,6 +377,10 @@ namespace NCsMaterial
 
 		for (int32 Index = 0; Index < Count; ++Index)
 		{
+			if (!Materials[Index])
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s: Materials[%d] is NULL."), *Context, Index);
+			}
 			Mesh->SetMaterial(Index, Materials[Index]);
 		}
 	}

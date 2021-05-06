@@ -271,6 +271,8 @@ void FCsSpawnerPointHelper::PrepareSpawns()
 	if (Params->Type == ECsSpawnerPoint::Self)
 		return;
 
+	typedef NCsArray::FLibrary ArrayLibrary;
+
 	// Transform
 	if (Params->Type == ECsSpawnerPoint::Transform)
 	{
@@ -281,7 +283,7 @@ void FCsSpawnerPointHelper::PrepareSpawns()
 
 		// RandomShuffle
 		if (Params->Order == ECsSpawnerPointOrder::RandomShuffle)
-			FCsLibrary_Array::ShuffleTArray<FTransform>(Transforms);
+			ArrayLibrary::Shuffle<FTransform>(Transforms);
 	}
 	// Actor
 	else
@@ -294,7 +296,7 @@ void FCsSpawnerPointHelper::PrepareSpawns()
 
 		// RandomShuffle
 		if (Params->Order == ECsSpawnerPointOrder::RandomShuffle)
-			FCsLibrary_Array::ShuffleTArray<AActor*>(Actors);
+			ArrayLibrary::Shuffle<AActor*>(Actors);
 	}
 }
 

@@ -47,6 +47,7 @@ ACsStaticMeshActorPooledImpl::ACsStaticMeshActorPooledImpl(const FObjectInitiali
 	GetStaticMeshComponent()->SetCastShadow(false);
 	GetStaticMeshComponent()->SetReceivesDecals(false);
 	GetStaticMeshComponent()->bUseAsOccluder = false;
+	GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
 	GetStaticMeshComponent()->SetComponentTickEnabled(false);
 }
 
@@ -297,8 +298,11 @@ void ACsStaticMeshActorPooledImpl::Handle_SetMaterials(StaticMeshPayloadType* Pa
 	}
 	else
 	{
-		MaterialLibrary::SetChecked(Context, GetMeshComponent(), Materials);
-		ChangeCounter::Get().AddChanged();
+		if (Materials.Num() > CS_EMPTY)
+		{
+			MaterialLibrary::SetChecked(Context, GetMeshComponent(), Materials);
+			ChangeCounter::Get().AddChanged();
+		}
 	}
 	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Materials);
 }

@@ -354,8 +354,11 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetMaterials(SkeletalMeshPayloadType
 	}
 	else
 	{
-		MaterialLibrary::SetChecked(Context, GetMeshComponent(), Materials);
-		ChangeCounter::Get().AddChanged();
+		if (Materials.Num() > CS_EMPTY)
+		{
+			MaterialLibrary::SetChecked(Context, GetMeshComponent(), Materials);
+			ChangeCounter::Get().AddChanged();
+		}
 	}
 	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Materials);
 }

@@ -5,11 +5,8 @@
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
-// Sound
+// StaticMesh
 #include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActor.h"
-//#include "Components/AudioComponent.h"
-// Component
-//#include "Components/SceneComponent.h"
 
 const FName NCsStaticMeshActor::NCache::FImpl::Name = FName("NCsStaticMeshActor::NCache::FImpl");
 
@@ -17,17 +14,20 @@ namespace NCsStaticMeshActor
 {
 	namespace NCache
 	{
-		namespace NImplCached
+		namespace NImpl
 		{
-			namespace Str
+			namespace NCached
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStaticMeshActor::NCache::FImpl, Allocate);
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStaticMeshActor::NCache::FImpl, Allocate);
+				}
 			}
 		}
 
 		FImpl::FImpl() :
 			InterfaceMap(nullptr),
-			// NCsPooledObject::NCache::ICache
+			// PooledCacheType (NCsPooledObject::NCache::ICache)
 			Index(INDEX_NONE),
 			bAllocated(false),
 			bQueueDeallocate(false),
@@ -40,14 +40,17 @@ namespace NCsStaticMeshActor
 			LifeTime(0.0f),
 			StartTime(),
 			ElapsedTime()
-			// NCsStaticMeshActor::NCache::ICache
+			// StaticMeshCacheType (NCsStaticMeshActor::NCache::ICache)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
 			InterfaceMap->SetRootName(FImpl::Name);
 
-			InterfaceMap->Add<NCsPooledObject::NCache::ICache>(static_cast<NCsPooledObject::NCache::ICache*>(this));
-			InterfaceMap->Add<NCsStaticMeshActor::NCache::ICache>(static_cast<NCsStaticMeshActor::NCache::ICache*>(this));
+			typedef NCsPooledObject::NCache::ICache PooledCacheType;
+			typedef NCsStaticMeshActor::NCache::ICache StaticMeshCacheType;
+
+			InterfaceMap->Add<PooledCacheType>(static_cast<PooledCacheType*>(this));
+			InterfaceMap->Add<StaticMeshCacheType>(static_cast<StaticMeshCacheType*>(this));
 		}
 
 		FImpl::~FImpl()
@@ -55,14 +58,19 @@ namespace NCsStaticMeshActor
 			delete InterfaceMap;
 		}
 
-		// NCsPooledObject::NCache::ICache
+		// PooledCacheType (NCsPooledObject::NCache::ICache)
 		#pragma region
 
-		void FImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
+		#define PayloadType NCsPooledObject::NPayload::IPayload
+		void FImpl::Allocate(PayloadType* Payload)
 		{
-			using namespace NImplCached;
+		#undef PayloadType
 
-			// NCsPooledObject::NCache::ICache
+			using namespace NImpl::NCached;
+
+			const FString& Context = Str::Allocate;
+
+			// PooledCacheType (NCsPooledObject::NCache::ICache)
 			bAllocated = true;
 			State	   = ECsPooledObjectState::Active;
 			Instigator = Payload->GetInstigator();
@@ -70,9 +78,13 @@ namespace NCsStaticMeshActor
 			Parent	   = Payload->GetParent();
 			StartTime  = Payload->GetTime();
 
-			// NCsStaticMeshActor::NCache::ICache
-			/*
-			*/
+			// StaticMeshCacheType (NCsStaticMeshActor::NCache::ICache)
+			typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
+			typedef NCsStaticMeshActor::NPayload::IPayload StaticMeshPayloadType;
+
+			StaticMeshPayloadType* StaticMeshPayload = PooledPayloadLibrary::GetInterfaceChecked<StaticMeshPayloadType>(Context, Payload);
+
+			LifeTime = StaticMeshPayload->GetLifeTime();
 		}
 
 		void FImpl::Deallocate()
@@ -82,52 +94,12 @@ namespace NCsStaticMeshActor
 
 		void FImpl::QueueDeallocate()
 		{
-			//bQueueDeallocate = true;
-			// Deactivate Audio Component
-			//checkf(AudioComponent, TEXT("NCsStaticMeshActor::NCache::FImpl::QueueDeallocate: AudioComponent is NULL."));
-
-			/*
-			AudioComponent->Deactivate();
-
-			// LifeTime
-			if (DeallocateMethod == ECsSoundDeallocateMethod::LifeTime)
-			{
-				// Reset ElapsedTime
-				ElapsedTime.Reset();
-				// Set LifeTime
-				LifeTime = QueuedLifeTime;
-			}
-			*/
+			bQueueDeallocate = true;
 		}
 
 		bool FImpl::ShouldDeallocate() const
 		{
-			//if (bQueueDeallocate)
-			{
-				// LifeTime, let HasLifeTimeExpired handle deallocation
-				//if (DeallocateMethod == ECsSoundDeallocateMethod::LifeTime)
-				{
-					return false;
-				}
-				// Complete
-				//if (DeallocateMethod == ECsSoundDeallocateMethod::Complete)
-				{ 
-					/*
-					checkf(SoundComponent, TEXT("NCsStaticMeshActor::NCache::FImpl::ShouldDeallocate: SoundComponent is NULL."));
-
-					FNiagaraSystemInstance* SystemInstance = FXComponent->GetSystemInstance();
-
-					checkf(SystemInstance, TEXT("NCsStaticMeshActor::NCache::FImpl::ShouldDeallocate: SystemInstance is NULL on FXComponent: %s."), *(FXComponent->GetName()));
-
-					const ENiagaraExecutionState ExecutionState = SystemInstance->GetActualExecutionState();
-
-					return ExecutionState == ENiagaraExecutionState::Inactive ||
-						   ExecutionState == ENiagaraExecutionState::Complete ||
-						   ExecutionState == ENiagaraExecutionState::Disabled;
-						   */
-				}
-			}
-			return false;
+			return bQueueDeallocate;
 		}
 
 		bool FImpl::HasLifeTimeExpired()
@@ -137,7 +109,7 @@ namespace NCsStaticMeshActor
 
 		void FImpl::Reset()
 		{
-			// NCsPooledObject::NCache::ICache
+			// PooledCacheType (NCsPooledObject::NCache::ICache)
 			bAllocated = false;
 			bQueueDeallocate = false;
 			State = ECsPooledObjectState::Inactive;
@@ -148,10 +120,7 @@ namespace NCsStaticMeshActor
 			LifeTime = 0.0f;
 			StartTime.Reset();
 			ElapsedTime.Reset();
-			// NCsStaticMeshActor::NCache::ICache
-			//AudioComponent = nullptr;
-			//DeallocateMethod = ECsSoundDeallocateMethod::Complete;
-			//QueuedLifeTime = 0.0f;
+			// StaticMeshCacheType (NCsStaticMeshActor::NCache::ICache)
 		}
 
 		#pragma endregion NCsPooledObject::NCache::ICache

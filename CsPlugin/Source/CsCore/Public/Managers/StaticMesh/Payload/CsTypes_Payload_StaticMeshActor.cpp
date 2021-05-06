@@ -4,8 +4,11 @@
 // Library
 #include "Managers/StaticMesh/Payload/CsLibrary_Payload_StaticMeshActor.h"
 #include "Library/CsLibrary_Valid.h"
+#include "Library/CsLibrary_Array.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
+// StaticMesh
+#include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"
 
 // FCsPayload_StaticMesh
 #pragma region
@@ -30,6 +33,25 @@ void FCsPayload_StaticMesh::CopyToPayloadAsValueChecked(const FString& Context, 
 	PooledPayload.Parent						 = Parent;
 	PooledPayload.Time							 = Time;
 	PooledPayload.PreserveChangesFromDefaultMask = PreserveChangesFromDefaultMask;
+
+	Payload->Mesh = Mesh.Mesh.GetChecked(Context);
+
+	if (Mesh.Materials.Materials.Num() > CS_EMPTY)
+	{
+		typedef NCsArray::FLibrary ArrayLibrary;
+
+		ArrayLibrary::Copy<UMaterialInterface>(Payload->Materials, Mesh.Materials.GetChecked(Context));
+	}
+
+	Payload->DeallocateMethod			= Mesh.GetDeallocateMethod();
+	Payload->LifeTime					= Mesh.LifeTime;
+	Payload->AttachmentTransformRules	= Mesh.AttachmentTransformRules;
+	Payload->Bone						= Mesh.Bone;
+	Payload->TransformRules				= Mesh.TransformRules;
+	Payload->Transform					= Mesh.Transform;
+	Payload->bCastShadow				= Mesh.bCastShadow;
+	Payload->bReceivesDecals			= Mesh.bReceivesDecals;
+	Payload->bUseAsOccluder				= Mesh.bUseAsOccluder;
 
 	typedef NCsStaticMeshActor::NPayload::FLibrary StaticMeshPayloadLibrary;
 

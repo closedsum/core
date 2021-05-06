@@ -351,7 +351,7 @@ void UCsManager_StaticMeshActor::SetupInternal()
 
 		checkf(ModuleSettings, TEXT("UCsManager_StaticMeshActor::SetupInternal: Failed to get settings of type: UCsDeveloperSettings."));
 
-		//Settings = ModuleSettings->Manager_StaticMeshActor;
+		Settings = ModuleSettings->Manager_StaticMeshActor;
 
 		InitInternalFromSettings();
 	}

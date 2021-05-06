@@ -48,7 +48,7 @@ namespace NCsFX
 		{
 			typedef NCsGameState::FLibrary GameStateLibrary;
 
-			return GameStateLibrary::GetSafeAsObject(Context, WorldContext);
+			return GameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)

@@ -6,6 +6,7 @@
 #include "Utility/CsLog.h"
 
 class UObject;
+class UCsManager_FX_Actor;
 struct FCsFXActorPooled;
 
 // NCsFX::NPayload::FImpl
@@ -21,6 +22,8 @@ namespace NCsFX
 		*/
 		struct CSCORE_API FLibrary final
 		{
+		// ContextRoot
+		#pragma region
 		public:
 
 		#if WITH_EDITOR
@@ -70,6 +73,41 @@ namespace NCsFX
 				return nullptr;
 			}
 		#endif // #if WITH_EDITOR
+
+		#pragma endregion ContextRoot
+
+		// Get
+		#pragma region
+		public:
+
+			/**
+			* Get the reference to UCsManager_FX_Actor from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				UCsManager_FX_Actor.
+			*/
+			static UCsManager_FX_Actor* GetChecked(const FString& Context, UObject* WorldContext);
+
+			/**
+			* Safely get the reference to UCsManager_FX_Actor from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log
+			* return				UCsManager_FX_Actor.
+			*/
+			static UCsManager_FX_Actor* GetSafe(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get the reference to UCsManager_Time from a WorldContext.
+			*
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				UCsManager_Time.
+			*/
+			static UCsManager_FX_Actor* GetSafe(UObject* WorldContext);
+
+		#pragma endregion Get
 
 		// Spawn
 		#pragma region

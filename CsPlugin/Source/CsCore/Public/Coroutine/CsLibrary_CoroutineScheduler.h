@@ -5,6 +5,7 @@
 #pragma once
 
 class UObject;
+class UCsCoroutineScheduler;
 
 namespace NCsCoroutine
 {
@@ -12,6 +13,8 @@ namespace NCsCoroutine
 	{
 		struct CSCORE_API FLibrary final
 		{
+		// ContextRoot
+		#pragma region
 		public:
 
 		#if WITH_EDITOR
@@ -58,6 +61,47 @@ namespace NCsCoroutine
 		#else
 			FORCEINLINE static UObject* GetSafeContextRoot(UObject* ContextObject) { return nullptr; }
 		#endif // #if WITH_EDITOR
+
+		#pragma endregion ContextRoot
+
+		// Get
+		#pragma region
+		public:
+
+			/**
+			* Get the reference to UCsCoroutineScheduler from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* return				UCsCoroutineScheduler.
+			*/
+			static UCsCoroutineScheduler* GetChecked(const FString& Context, UObject* ContextObject);
+
+			/**
+			* Safely get the reference to UCsCoroutineScheduler from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Log
+			* return				UCsCoroutineScheduler.
+			*/
+			static UCsCoroutineScheduler* GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get the reference to UCsManager_Time from a ContextObject.
+			*
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* return				UCsManager_Time.
+			*/
+			static UCsCoroutineScheduler* GetSafe(UObject* ContextObject);
+
+		#pragma endregion Get
 		};
 	}
 }

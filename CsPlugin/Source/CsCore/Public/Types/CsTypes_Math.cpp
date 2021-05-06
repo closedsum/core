@@ -268,7 +268,7 @@ bool FCsRay::IsValidChecked(const FString& Context) const
 	// Check Distance is Valid
 	CS_IS_FLOAT_GREATER_THAN_CHECKED(Distance, 0.0f)
 	// Check End is Valid
-	checkf(Origin == End, TEXT("%s: Origin == End (%s)."), *Context, *(Origin.ToCompactString()));
+	checkf(Origin != End, TEXT("%s: Origin == End (%s)."), *Context, *(Origin.ToCompactString()));
 
 	checkf(End == CalculateEnd(), TEXT("%s: End != CalculateEnd() (%s != %s). End has NOT been properly calculated."), *Context, *(End.ToCompactString()), *(CalculateEnd().ToCompactString()));
 	return true;
@@ -285,7 +285,7 @@ bool FCsRay::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsL
 	// Check Distance is Valid
 	CS_IS_FLOAT_GREATER_THAN(Distance, 0.0f)
 	// Check End is Valid
-	if (Origin != End)
+	if (Origin == End)
 	{
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Origin == End (%s)."), *Context, *(Origin.ToCompactString())));
 		return false;

@@ -26,7 +26,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Ray", meta = (Keywords = "construct build", NativeMakeFunc, AutoCreateRefTerm = "Origin,Direction,Distance"))
 	static FCsRay MakeRay(const FVector& Origin, const FVector& Direction, const float& Distance);
 
-	/**
+	/*
 	* Make a Ray from origin and direction.
 	* Assume distance is a very large value.
 	* 

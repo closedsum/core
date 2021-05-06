@@ -78,7 +78,7 @@ namespace NCsMath
 
 		check(IsValidChecked(Context, Plane));
 
-		const FVector& RayDir	  = Ray.Direction;
+		const FVector& RayDir	  = Ray.End - Ray.Origin;
 		const FVector PlaneNormal = Plane.GetNormal();
 
 		// Check ray is not parallel to plane

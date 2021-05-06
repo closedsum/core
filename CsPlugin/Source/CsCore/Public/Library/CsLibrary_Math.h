@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+#include "Types/CsTypes_Math.h"
 #include "Types/CsTypes_Interpolation.h"
 
 /**
@@ -206,5 +207,46 @@ namespace NCsMath
 			const int32 C = A % B;
 			return C < 0 ? C + B : C;
 		}
+
+	// Plane
+	#pragma region
+	public:
+
+		static bool IsValidChecked(const FString& Context, const FPlane& Plane);
+
+		static bool IsValid(const FString& Context, const FPlane& Plane, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Plane
+
+	// Intersection
+	#pragma region
+	public:
+
+		/**
+		* Computes the intersection point between a ray and a plane.
+		* 
+		* @param Context			The calling context.
+		* @param Ray				The t of the intersection between the line and the plane.
+		* @param Plane
+		* @param OutT				(out)
+		* @param OutIntersection	(out) The point of intersection between the line and the plane.
+		* return					True if the intersection test was successful.
+		*/
+		static bool RayPlaneIntersectionChecked(const FString& Context, const FCsRay& Ray, const FPlane& Plane, float& OutT, FVector& OutIntersection);
+
+		/**
+		* Computes the intersection point between a ray and a plane.
+		*
+		* @param Context			The calling context.
+		* @param Ray				The t of the intersection between the line and the plane.
+		* @param Plane
+		* @param OutT				(out)
+		* @param OutIntersection	(out) The point of intersection between the line and the plane.
+		* @param Log
+		* return					True if the intersection test was successful.
+		*/
+		static bool SafeRayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane& Plane, float& OutT, FVector& OutIntersection, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Intersection
 	};
 }

@@ -1,4 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Types
+#include "Types/CsTypes_Macro.h"
 // Log
 #include "Utility/CsLog.h"
 

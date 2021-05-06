@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Math.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+// Actor
 #include "GameFramework/Actor.h"
 // Components
 #include "Components/SceneComponent.h"
@@ -254,3 +257,46 @@ namespace NCsRotationRules
 }
 
 #pragma endregion RotationRules
+
+// FCsRay
+#pragma region
+
+bool FCsRay::IsValidChecked(const FString& Context) const
+{
+	// Check Direction is Valid
+	checkf(Direction.IsNormalized(), TEXT("%s: Direction is NOT normalized."), *Context);
+	// Check Distance is Valid
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(Distance, 0.0f)
+	// Check End is Valid
+	checkf(Origin == End, TEXT("%s: Origin == End (%s)."), *Context, *(Origin.ToCompactString()));
+
+	checkf(End == CalculateEnd(), TEXT("%s: End != CalculateEnd() (%s != %s). End has NOT been properly calculated."), *Context, *(End.ToCompactString()), *(CalculateEnd().ToCompactString()));
+	return true;
+}
+
+bool FCsRay::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	// Check Direction is Valid
+	if (!Direction.IsNormalized())
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Direction is NOT normalized."), *Context));
+		return false;
+	}
+	// Check Distance is Valid
+	CS_IS_FLOAT_GREATER_THAN(Distance, 0.0f)
+	// Check End is Valid
+	if (Origin != End)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Origin == End (%s)."), *Context, *(Origin.ToCompactString())));
+		return false;
+	}
+
+	if (End != CalculateEnd())
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: End != CalculateEnd() (%s != %s). End has NOT been properly calculated."), *Context, *(End.ToCompactString()), *(CalculateEnd().ToCompactString())));
+		return false;
+	}
+	return true;
+}
+
+#pragma endregion FCsRay

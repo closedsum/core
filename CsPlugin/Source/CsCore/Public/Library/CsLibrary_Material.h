@@ -54,7 +54,7 @@ namespace NCsMaterial
 		/**
 		*/
 		static bool IsValid(const FString& Context, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) = &FCsLog::Warning);
-
+		 
 		/**
 		*/
 		static bool IsValidChecked(const FString& Context, UStaticMesh* Mesh, const TArray<UMaterialInterface*>& Materials);

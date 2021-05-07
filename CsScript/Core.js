@@ -21,7 +21,7 @@ module.exports = class FJsCore
     GetGameInstance() { return this.GameInstance; }
     GetManager_Time() { return this.Manager_Time; }
     GetWorld() { return this.World; }
-    GetGameState() { return this.GameStates; }
+    GetGameState() { return this.GameState; }
     GetPlayerController() { return this.PlayerController; }
     GetPlayerState() { this.PlayerState; }
     GetPlayerPawn() { this.PlayerPawn; }

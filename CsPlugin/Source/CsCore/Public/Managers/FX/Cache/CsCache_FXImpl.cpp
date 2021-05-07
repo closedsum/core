@@ -52,7 +52,7 @@ namespace NCsFX
 			// FXCacheType (NCsFX::NCache::ICache)
 			FXComponent(nullptr),
 			DeallocateMethod(DeallocateMethodType::Complete),
-			QueuedLifeTime(0.0f)
+			DeallocateState(EDeallocateState::None)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -99,7 +99,7 @@ namespace NCsFX
 			FXPayloadType* FXPayload = PooledPayloadLibrary::GetInterfaceChecked<FXPayloadType>(Context, Payload);
 
 			DeallocateMethod = FXPayload->GetDeallocateMethod();
-			QueuedLifeTime   = FXPayload->GetLifeTime();
+			LifeTime		 = FXPayload->GetLifeTime();
 		}
 
 		void FImpl::Deallocate()
@@ -109,23 +109,19 @@ namespace NCsFX
 
 		void FImpl::QueueDeallocate()
 		{
+			if (bQueueDeallocate)
+				return;
+
 			bQueueDeallocate = true;
 			// Deactivate FX Component
 			checkf(FXComponent, TEXT("NCsFX::NCache::FImpl::QueueDeallocate: FXComponent is NULL."));
 
 			FXComponent->Deactivate();
 
-			// Transition to LifeTime
+			// Transition to EDeallocateState::Complete
 			// This is to hopefully prevent the GameThread from stalling when
 			// Deactivating the System.
-			typedef NCsFX::EDeallocateMethod DeallocateMethodType;
-
-			// Reset ElapsedTime
-			ElapsedTime.Reset();
-			// Set LifeTime
-			LifeTime = DeallocateMethod == DeallocateMethodType::LifeTime ? QueuedLifeTime : 1.0f;
-
-			DeallocateMethod = DeallocateMethodType::LifeTime;
+			DeallocateState = EDeallocateState::Complete;
 		}
 
 		bool FImpl::ShouldDeallocate() const
@@ -153,6 +149,7 @@ namespace NCsFX
 			ElapsedTime.Reset();
 			// NCsFX::NCache::ICache
 			FXComponent = nullptr;
+			DeallocateState = EDeallocateState::None;
 		}
 
 		#pragma endregion NCsPooledObject::NCache::ICache
@@ -166,24 +163,77 @@ namespace NCsFX
 			typedef NCsFX::FLibrary FXLibrary;
 			typedef NCsFX::EDeallocateMethod DeallocateMethodType;
 
+			
 			// Complete
 			if (DeallocateMethod == DeallocateMethodType::Complete)
 			{
-				// If Complete, transition to LifeTime
-				// This is to hopefully prevent the GameThread from stalling when
-				// Deactivating the System.
-				if (FXLibrary::IsCompleteChecked(Context, FXComponent))
+				// None | Complete
+				if (DeallocateState == EDeallocateState::None ||
+					DeallocateState == EDeallocateState::Complete)
 				{
-					DeallocateMethod = DeallocateMethodType::LifeTime;
+					// (None | Complete) -> LifeTime
+					
+					// If Complete, transition to EDeallocateState::LifeTime
+					// This is to hopefully prevent the GameThread from stalling when
+					// Deactivating the System.
+					if (FXLibrary::IsCompleteChecked(Context, FXComponent))
+					{
+						// Reset ElapsedTime
+						ElapsedTime.Reset();
+						// Set LifeTime
+						LifeTime = 1.0f;
 
-					// Reset ElapsedTime
-					ElapsedTime.Reset();
-					// Set LifeTime
-					LifeTime = 1.0f;
+						DeallocateState = EDeallocateState::LifeTime;
+					}
 				}
 			}
 
 			ElapsedTime += DeltaTime;
+
+			// LifeTime
+			if (DeallocateMethod == DeallocateMethodType::LifeTime)
+			{
+				// None
+				if (DeallocateState == EDeallocateState::None)
+				{
+					// None -> Complete
+					if (HasLifeTimeExpired())
+					{
+						// Deactivate FX Component
+						checkf(FXComponent, TEXT("%s: FXComponent is NULL."), *Context);
+
+						FXComponent->Deactivate();
+
+						LifeTime = 0.0f;
+
+						DeallocateState = EDeallocateState::Complete;
+					}
+				}
+				// Complete
+				else
+				if (DeallocateState == EDeallocateState::Complete)
+				{
+					// Complete -> Lifetime
+					
+					// If Complete, transition to EDeallocateState::LifeTime
+					// This is to hopefully prevent the GameThread from stalling when
+					// Deactivating the System.
+					if (FXLibrary::IsCompleteChecked(Context, FXComponent))
+					{
+						// Reset ElapsedTime
+						ElapsedTime.Reset();
+						// Set LifeTime
+						LifeTime = 1.0f;
+
+						DeallocateState = EDeallocateState::LifeTime;
+					}
+					// Wait until System is "Complete"
+					else
+					{
+						LifeTime = 0.0f;
+					}
+				}	
+			}
 		}
 	}
 }

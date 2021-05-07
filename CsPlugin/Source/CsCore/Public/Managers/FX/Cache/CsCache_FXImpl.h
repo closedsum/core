@@ -14,6 +14,13 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
 namespace NCsFX
 {
+	enum class EDeallocateState : uint8
+	{
+		None,
+		Complete,
+		LifeTime
+	};
+
 	namespace NCache
 	{
 	#define PooledCacheType NCsPooledObject::NCache::ICache
@@ -74,7 +81,7 @@ namespace NCsFX
 
 			DeallocateMethodType DeallocateMethod;
 
-			float QueuedLifeTime;
+			EDeallocateState DeallocateState;
 
 		public:
 

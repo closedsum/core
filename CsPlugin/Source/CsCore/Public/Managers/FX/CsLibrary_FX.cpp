@@ -500,8 +500,7 @@ namespace NCsFX
 
 		const ENiagaraExecutionState ExecutionState = SystemInstance->GetActualExecutionState();
 
-		return ExecutionState == ENiagaraExecutionState::Inactive ||
-			   ExecutionState == ENiagaraExecutionState::Complete ||
+		return ExecutionState == ENiagaraExecutionState::Complete ||
 			   ExecutionState == ENiagaraExecutionState::Disabled;
 	}
 

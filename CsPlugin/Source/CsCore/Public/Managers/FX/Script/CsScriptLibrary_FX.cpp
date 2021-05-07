@@ -10,14 +10,14 @@
 #pragma region
 
 namespace NCsScriptLibraryFX
-{
+{ 
 	namespace NCached
 	{
 		namespace Str
 		{
 			const FString FECsFX = TEXT("FECsFX");
-			const FString ECsFX_Get = TEXT("ECsFX_Get");
-			const FString ECsFX_GetByIndex = TEXT("ECsFX_GetByIndex");
+			const FString Get = TEXT("Get");
+			const FString GetByIndex = TEXT("GetByIndex");
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_FX, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_FX, LoadByStringPath);
@@ -36,51 +36,51 @@ UCsScriptLibrary_FX::UCsScriptLibrary_FX(const FObjectInitializer& ObjectInitial
 // Enum
 #pragma region
 
-FECsFX UCsScriptLibrary_FX::ECsFX_Get(const FString& Name)
+FECsFX UCsScriptLibrary_FX::Get(const FString& Name)
 {
 	using namespace NCsScriptLibraryFX::NCached;
 
-	const FString& Context = Str::ECsFX_Get;
+	const FString& Context = Str::Get;
 
 	typedef NCsEnum::FLibrary EnumLibrary;
 
 	return EnumLibrary::GetSafe<EMCsFX, FECsFX>(Context, Str::FECsFX, Name);
 }
 
-FECsFX UCsScriptLibrary_FX::ECsFX_GetByIndex(const int32& Index)
+FECsFX UCsScriptLibrary_FX::GetByIndex(const int32& Index)
 {
 	using namespace NCsScriptLibraryFX::NCached;
 
-	const FString& Context = Str::ECsFX_GetByIndex;
+	const FString& Context = Str::GetByIndex;
 
 	typedef NCsEnum::FLibrary EnumLibrary;
 
 	return EnumLibrary::GetSafeByIndex<EMCsFX, FECsFX>(Context, Str::FECsFX, Index);
 }
 
-FString UCsScriptLibrary_FX::ECsFX_ToString(const FECsFX& Enum)
+FString UCsScriptLibrary_FX::ToString(const FECsFX& Enum)
 {
 	return Enum.ToString();
 }
 
-uint8 UCsScriptLibrary_FX::ECsFX_GetCount()
+uint8 UCsScriptLibrary_FX::GetCount()
 {
 	return EMCsFX::Get().Num();
 }
 
-void UCsScriptLibrary_FX::ECsFX_GetAll(TArray<FECsFX>& OutTypes)
+void UCsScriptLibrary_FX::GetAll(TArray<FECsFX>& OutTypes)
 {
 	typedef NCsEnum::FLibrary EnumLibrary;
 
 	EnumLibrary::GetAll<EMCsFX, FECsFX>(OutTypes);
 }
 
-FECsFX UCsScriptLibrary_FX::ECsFX_GetMax()
+FECsFX UCsScriptLibrary_FX::GetMax()
 {
 	return EMCsFX::Get().GetMAX();
 }
 
-bool UCsScriptLibrary_FX::EqualEqual_FXFX(const FECsFX& A, const FECsFX& B)
+bool UCsScriptLibrary_FX::EqualEqual(const FECsFX& A, const FECsFX& B)
 {
 	return A == B;
 }

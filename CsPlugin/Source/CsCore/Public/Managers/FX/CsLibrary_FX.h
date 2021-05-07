@@ -206,7 +206,6 @@ namespace NCsFX
 		* Check whether the NiagaraSystem on the RootComponent, a UNiagaraComponent, for Actor
 		* is "complete".
 		* Complete is:		
-		*	ActualExecutionState == ENiagaraExecutionState::Inactive ||
 		*	ActualExecutionState == ENiagaraExecutionState::Complete ||
 		*	ActualExecutionState == ENiagaraExecutionState::Disabled
 		* 
@@ -218,7 +217,6 @@ namespace NCsFX
 		/**
 		* Check whether the NiagaraSystem on the NiagaraComponent is "complete".
 		* Complete is:
-		*	ActualExecutionState == ENiagaraExecutionState::Inactive ||
 		*	ActualExecutionState == ENiagaraExecutionState::Complete ||
 		*	ActualExecutionState == ENiagaraExecutionState::Disabled
 		*

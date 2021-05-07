@@ -18,26 +18,26 @@ class CSCORE_API UCsScriptLibrary_FX : public UObject
 #pragma region
 public:
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|FX", meta = (DisplayName = "ECsFX - Get", AutoCreateRefTerm = "Name"))
-	static FECsFX ECsFX_Get(const FString& Name);
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|FX", meta = (AutoCreateRefTerm = "Name"))
+	static FECsFX Get(const FString& Name);
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|FX", meta = (DisplayName = "ECsFX - Get by Index", AutoCreateRefTerm = "Index"))
-	static FECsFX ECsFX_GetByIndex(const int32& Index);
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|FX", meta = (AutoCreateRefTerm = "Index"))
+	static FECsFX GetByIndex(const int32& Index);
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|FX", meta = (DisplayName = "ECsFX - To String", AutoCreateRefTerm = "Enum"))
-	static FString ECsFX_ToString(const FECsFX& Enum);
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|FX", meta = (AutoCreateRefTerm = "Enum"))
+	static FString ToString(const FECsFX& Enum);
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|FX", meta = (DisplayName = "ECsFX - Get Count"))
-	static uint8 ECsFX_GetCount();
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|FX")
+	static uint8 GetCount();
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|FX", meta = (DisplayName = "ECsFX - Get All"))
-	static void ECsFX_GetAll(TArray<FECsFX>& OutTypes);
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|FX")
+	static void GetAll(TArray<FECsFX>& OutTypes);
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|FX", meta = (DisplayName = "ECsFX - Get Max", AutoCreateRefTerm = "Name"))
-	static FECsFX ECsFX_GetMax();
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|FX", meta = (AutoCreateRefTerm = "Name"))
+	static FECsFX GetMax();
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (FX)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|FX")
-	static bool EqualEqual_FXFX(const FECsFX& A, const FECsFX& B);
+	static bool EqualEqual(const FECsFX& A, const FECsFX& B);
 
 #pragma endregion Enum
 

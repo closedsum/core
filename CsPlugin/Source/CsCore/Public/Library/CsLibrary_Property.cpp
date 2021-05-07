@@ -60,7 +60,7 @@ namespace NCsProperty
 		FProperty* Property = FindPropertyByName(Context, Struct, PropertyName, Log);
 
 		if (!Property)
-			nullptr;
+			return nullptr;
 
 		FStructProperty* Prop = CastField<FStructProperty>(Property);
 
@@ -85,7 +85,7 @@ namespace NCsProperty
 		FProperty* Property = FindPropertyByName(Context, Struct, PropertyName, Log);
 
 		if (!Property)
-			nullptr;
+			return nullptr;
 
 		FObjectProperty* Prop = CastField<FObjectProperty>(Property);
 

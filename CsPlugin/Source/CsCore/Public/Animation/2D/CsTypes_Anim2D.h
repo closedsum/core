@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/CsTypes_Texture.h"
-#include "Types/CsTypes_Material.h"
+#include "Material/CsTypes_Material.h"
 
 #include "CsTypes_Anim2D.generated.h"
 #pragma once

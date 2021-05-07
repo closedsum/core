@@ -210,7 +210,7 @@ namespace NCsArray
 		template<typename T>
 		static bool AreAllElementsAssetPtrNotNull(TArray<TSoftObjectPtr<T>>& A)
 		{
-			return !IsAnyElementInTArrayTSoftObjectPtrNull<T>(A);
+			return !IsAnyElementTSoftObjectPtrNull<T>(A);
 		}
 
 		template<typename T>

@@ -79,10 +79,10 @@ namespace NCsProperty
 		template<typename T>
 		static T* FindPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName)
 		{
-			FProperty* Property = FindPropertyByNameChecked(Context, Struct, PropertyName, Log);
+			FProperty* Property = FindPropertyByNameChecked(Context, Struct, PropertyName);
 			T* Prop				= CastField<T>(Property);
 
-			checkf(Prop, TEXT("%s: %s.%s is NOT of type: T."), *(Struct->GetName()), *(PropertyName.ToString()));
+			checkf(Prop, TEXT("%s: %s.%s is NOT of type: T."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
 			return Prop;
 		}
 
@@ -108,7 +108,7 @@ namespace NCsProperty
 			if (!Prop)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: T."), *(Struct->GetName()), *(PropertyName.ToString())));
+					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: T."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
 			}
 			return Prop;
 		}
@@ -177,7 +177,7 @@ namespace NCsProperty
 			if (Property->Struct != StructType::StaticStruct())
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s of type: T is NOT of type: T."), *(Struct->GetName()), *(PropertyName.ToString()), *(Property->Struct->GetName()), *(StructType::StaticStruct()->GetName())));
+					Log(FString::Printf(TEXT("%s: %s.%s of type: T is NOT of type: T."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(Property->Struct->GetName()), *(StructType::StaticStruct()->GetName())));
 			}
 			return Property;
 		}

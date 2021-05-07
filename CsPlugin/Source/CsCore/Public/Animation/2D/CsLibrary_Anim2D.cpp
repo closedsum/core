@@ -4,7 +4,7 @@
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Library
-#include "Library/CsLibrary_Material.h"
+#include "Material/CsLibrary_Material.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 // Components

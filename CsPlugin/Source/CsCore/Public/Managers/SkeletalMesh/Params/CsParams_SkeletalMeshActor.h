@@ -3,7 +3,7 @@
 #include "Containers/CsGetInterfaceMap.h"
 // Types
 #include "Types/CsTypes_SkeletalMesh.h"
-#include "Types/CsTypes_Material.h"
+#include "Material/CsTypes_Material.h"
 #include "Animation/CsTypes_Anim.h"
 #include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"
 

@@ -3,7 +3,7 @@
 #include "CsCore.h"
 
 // Library
-#include "Library/CsLibrary_Material.h"
+#include "Material/CsLibrary_Material.h"
 
 // Cached
 #pragma region

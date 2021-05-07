@@ -2,7 +2,7 @@
 #include "Managers/SkeletalMesh/Params/CsParams_SkeletalMeshActor.h"
 
 // Library
-#include "Library/CsLibrary_Material.h"
+#include "Material/CsLibrary_Material.h"
 #include "Animation/CsLibrary_Skeleton.h"
 #include "Library/CsLibrary_Valid.h"
 // Containers

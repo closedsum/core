@@ -10,7 +10,7 @@
 #include "Library/CsLibrary_World.h"
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Library/CsLibrary_Math.h"
-#include "Library/CsLibrary_Material.h"
+#include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers

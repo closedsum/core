@@ -10,7 +10,7 @@
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Managers/StaticMesh/Payload/CsLibrary_Payload_StaticMeshActor.h"
-#include "Library/CsLibrary_Material.h"
+#include "Material/CsLibrary_Material.h"
 // StaticMesh
 #include "Managers/StaticMesh/Cache/CsCache_StaticMeshActorImpl.h"
 #include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"

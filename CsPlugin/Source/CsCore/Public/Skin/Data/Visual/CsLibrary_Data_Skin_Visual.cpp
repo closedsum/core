@@ -2,7 +2,7 @@
 #include "Skin/Data/Visual/CsLibrary_Data_Skin_Visual.h"
 
 // Library
-#include "Library/CsLibrary_Material.h"
+#include "Material/CsLibrary_Material.h"
 // Data
 #include "Skin/Data/Visual/CsData_Skin_VisualStaticMesh.h"
 #include "Skin/Data/Visual/CsData_Skin_VisualSkeletalMesh.h"

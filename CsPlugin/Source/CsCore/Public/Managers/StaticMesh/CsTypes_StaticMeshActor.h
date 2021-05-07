@@ -5,7 +5,7 @@
 #include "Types/Enum/CsEnumFlagMap.h"
 #include "Types/CsTypes_AttachDetach.h"
 #include "Types/CsTypes_StaticMesh.h"
-#include "Types/CsTypes_Material.h"
+#include "Material/CsTypes_Material.h"
 
 #include "CsTypes_StaticMeshActor.generated.h"
 #pragma once

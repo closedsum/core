@@ -10,7 +10,7 @@
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Managers/SkeletalMesh/Payload/CsLibrary_Payload_SkeletalMeshActor.h"
-#include "Library/CsLibrary_Material.h"
+#include "Material/CsLibrary_Material.h"
 // SkeletalMesh
 #include "Managers/SkeletalMesh/Cache/CsCache_SkeletalMeshActorImpl.h"
 #include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"

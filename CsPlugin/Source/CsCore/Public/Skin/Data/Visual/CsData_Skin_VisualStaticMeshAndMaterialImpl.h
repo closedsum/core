@@ -8,7 +8,7 @@
 #include "Skin/Data/Visual/CsData_Skin_VisualMaterial.h"
 // Types
 #include "Types/CsTypes_StaticMesh.h"
-#include "Types/CsTypes_Material.h"
+#include "Material/CsTypes_Material.h"
 
 #include "CsData_Skin_VisualStaticMeshAndMaterialImpl.generated.h"
 

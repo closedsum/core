@@ -8,7 +8,7 @@
 #include "Types/CsTypes_Interpolation.h"
 // Library
 #include "Library/CsLibrary_Math.h"
-#include "Library/CsLibrary_Material.h"
+#include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Player.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"

@@ -12,13 +12,13 @@ module.exports = class FJCoroutineScheduler
 		this.Schedules = [];
 
 		let UpdateGroupLibrary = CsScriptLibrary_UpdateGroup;
-		let count			   = UpdateGroupLibrary.ECsUpdateGroup_GetCount();
+		let count			   = UpdateGroupLibrary.GetCount();
 
 		for (let i = 0; i < count; ++i)
 		{
 			let schedule = new FJsCoroutineSchedule();
 
-			schedule.SetGroup(UpdateGroupLibrary.ECsUpdateGroup_GetByIndex(i));
+			schedule.SetGroup(UpdateGroupLibrary.GetByIndex(i));
 
 			this.Schedules.push(schedule);
         }

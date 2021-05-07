@@ -205,7 +205,7 @@ module.exports = class FJsCoroutineSchedule
         check(payload.IsValidChecked(context));
 
         let UpdateGroupLibrary = CsScriptLibrary_UpdateGroup;
-        let IsEqual            = UpdateGroupLibrary.EqualEqual_UpdateGroupUpdateGroup;
+        let IsEqual            = UpdateGroupLibrary.EqualEqual;
 
         checkf(IsEqual(this.Group, payload.Group), context + ": Mismatch between payload.Group: %s and Group: %s", payload.Group.Name_Internal, this.Group.Name_Internal);
 
@@ -443,7 +443,7 @@ module.exports = class FJsCoroutineSchedule
 		    if (state.Value === StateType.End.Value)
 		    {
 			    //LogTransaction(NCsCoroutineCached::ToUpdate(ScheduleType), TransactionType::End, R);
-
+                
 			    r.Reset();
 			    this.Manager_Routine.Deallocate(routineContainer);
 		    }

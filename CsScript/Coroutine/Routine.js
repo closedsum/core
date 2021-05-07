@@ -38,7 +38,7 @@ module.exports = class JsRoutine
 		this.self = this;
 
 		let UpdateGroupLibrary	= CsScriptLibrary_UpdateGroup;
-		this.Group				= UpdateGroupLibrary.ECsUpdateGroup_GetMax();
+		this.Group				= UpdateGroupLibrary.GetMax();
 
 		// Time
 		this.StartTime = new CsTime();
@@ -322,7 +322,7 @@ module.exports = class JsRoutine
 
 		this.DeltaTime   = TimeLibrary.FCsDeltaTime_Copy(deltaTime);
 		this.ElapsedTime = TimeLibrary.Add_DeltaTime(this.ElapsedTime, deltaTime);
-
+		
 		if (!move)
 			return;
 
@@ -562,6 +562,20 @@ module.exports = class JsRoutine
 				this.Messages_Recieved.push([]);
 			}
 		}
+
+		this.bWaitForFrame = false;
+		this.WaitForFrameCounter = 0;
+		this.WaitForFrame = 0;
+		this.WaitForFrameType = null;
+		this.bWaitForTime = false;
+		this.WaitForTime = 0.0;
+		this.WaitForTimeTimer = 0.0;
+		this.WaitForTimeType = null;
+		this.bWaitForFlag = false;
+		this.WaitForFlagType = null;
+		this.bWaitForListenMessage = false;
+		this.WaitForListenMessage = null;
+		this.WaitForListenMessageType = null;
 	}
 
     AddChild(child)

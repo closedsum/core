@@ -156,7 +156,7 @@ module.exports = class NJsCoroutine
                 this.Index = INDEX_NONE;
 
                 let UpdateGroupLibrary = CsScriptLibrary_UpdateGroup;
-                this.Group             = UpdateGroupLibrary.ECsUpdateGroup_GetMax();
+                this.Group             = UpdateGroupLibrary.GetMax();
 
                 this.CoroutineImpl = null;
                 this.StartTime = new CsTime();

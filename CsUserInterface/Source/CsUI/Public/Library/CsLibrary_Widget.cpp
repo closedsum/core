@@ -9,10 +9,13 @@
 #include "Library/CsLibrary_Property.h"
 #include "Kismet/GameplayStatics.h"
 #include "Library/CsLibrary_Player.h"
+#include "Blueprint/SlateBlueprintLibrary.h"
 // Widget
 #include "Blueprint/UserWidget.h"
 // Components
 #include "Components/CanvasPanelSlot.h"
+// World
+#include "Engine/World.h"
 
 namespace NCsWidget
 {
@@ -105,6 +108,54 @@ namespace NCsWidget
 			}
 		}
 
+		namespace NViewport
+		{
+			namespace NLibrary
+			{
+				namespace NCached
+				{
+					namespace Str
+					{
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWidget::NPosition::NScreen::FLibrary, GetSafeByCachedGeometry);
+					}
+				}
+			}
+
+			void FLibrary::GetByCachedGeometryChecked(const FString& Context, UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition)
+			{
+				typedef NCsWidget::NPosition::NScreen::FLibrary WidgetScreenPositionLibrary;
+
+				const FVector2D AbsolutePosition = WidgetScreenPositionLibrary::GetAbsoluteByCachedGeometryChecked(Context, Widget);
+
+				USlateBlueprintLibrary::AbsoluteToViewport(Widget->GetWorld(), AbsolutePosition, OutPixelPosition, OutViewportPosition);
+			}
+
+			void FLibrary::GetSafeByCachedGeometry(const FString& Context, UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			{
+				typedef NCsWidget::NPosition::NScreen::FLibrary WidgetScreenPositionLibrary;
+
+				const FVector2D AbsolutePosition = WidgetScreenPositionLibrary::GetSafeAbsoluteByCachedGeometry(Context, Widget, Log);
+
+				if (AbsolutePosition == FVector2D(-1.0f))
+				{
+					OutPixelPosition = FVector2D(-1.0f);
+					OutViewportPosition = FVector2D(-1.0f);
+					return;
+				}
+
+				USlateBlueprintLibrary::AbsoluteToViewport(Widget->GetWorld(), AbsolutePosition, OutPixelPosition, OutViewportPosition);
+			}
+
+			void FLibrary::GetSafeByCachedGeometry(UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition)
+			{
+				using namespace NCsWidget::NPosition::NViewport::NLibrary::NCached;
+
+				const FString& Context = Str::GetSafeByCachedGeometry;
+
+				GetSafeByCachedGeometry(Context, Widget, OutPixelPosition, OutViewportPosition, nullptr);
+			}
+		}
+
 		namespace NWorld
 		{
 			namespace NLibrary
@@ -166,12 +217,14 @@ namespace NCsWidget
 				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
 
 				APlayerController* PC = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
-				// Get Screen Position of the Widget
-				typedef NCsWidget::NPosition::NScreen::FLibrary WidgetScreenPositionLibrary;
+				// Get Pixel Position of the Widget
+				typedef NCsWidget::NPosition::NViewport::FLibrary WidgetScreenPositionLibrary;
 
-				FVector2D ScreenPosition = WidgetScreenPositionLibrary::GetAbsoluteByCachedGeometryChecked(Context, Widget);
+				FVector2D PixelPosition;
+				FVector2D ViewportPosition;
+				WidgetScreenPositionLibrary::GetByCachedGeometryChecked(Context, Widget, PixelPosition, ViewportPosition);
 				// Deproject Screen to World
-				return UGameplayStatics::DeprojectScreenToWorld(PC, ScreenPosition, OutPosition, OutDirection);
+				return UGameplayStatics::DeprojectScreenToWorld(PC, PixelPosition, OutPosition, OutDirection);
 			}
 
 			bool FLibrary::GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
@@ -181,15 +234,18 @@ namespace NCsWidget
 
 				APlayerController* PC = PlayerControllerLibrary::GetSafeLocal(Context, WorldContext, ControllerId, Log);
 				// Get Screen Position of the Widget
-				typedef NCsWidget::NPosition::NScreen::FLibrary WidgetScreenPositionLibrary;
+				// Get Pixel Position of the Widget
+				typedef NCsWidget::NPosition::NViewport::FLibrary WidgetScreenPositionLibrary;
 
-				FVector2D ScreenPosition = WidgetScreenPositionLibrary::GetSafeAbsoluteByCachedGeometry(Context, Widget);
+				FVector2D PixelPosition;
+				FVector2D ViewportPosition;
+				WidgetScreenPositionLibrary::GetSafeByCachedGeometry(Context, Widget, PixelPosition, ViewportPosition, Log);
 
-				if (ScreenPosition == FVector2D(-1.0f))
+				if (PixelPosition == FVector2D(-1.0f))
 					return false;
 
 				// Deproject Screen to World
-				return UGameplayStatics::DeprojectScreenToWorld(PC, ScreenPosition, OutPosition, OutDirection);
+				return UGameplayStatics::DeprojectScreenToWorld(PC, PixelPosition, OutPosition, OutDirection);
 			}
 
 			bool FLibrary::GetSafeByCachedGeometry(UObject* WorldContext, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection)

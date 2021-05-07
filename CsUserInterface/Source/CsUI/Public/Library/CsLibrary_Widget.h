@@ -73,6 +73,54 @@ namespace NCsWidget
 			};
 		}
 
+		namespace NViewport
+		{
+			struct CSUI_API FLibrary final
+			{
+				/**
+				* Get the pixel and viewport position of the Widget by transform the absolute position:
+				* NCsWidget::NScreen::GetAbsoluteByCachedGeometryChecked to viewport space.
+				*
+				* @param Context				The calling context.
+				* @param Widget
+				* @param OutPixelPosition		(out) The position in the game's viewport, usable for line traces and
+				*									  other uses where you need a coordinate in the space of viewport resolution units.
+				* @param OutViewportPosition	(out) The position in the space of other widgets in the viewport.  Like if you wanted
+				*									  to add another widget to the viewport at the same position in viewport space as this location, 
+				*									  this is what you would use.
+				*/
+				static void GetByCachedGeometryChecked(const FString& Context, UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition);
+
+				/**
+				* Safely get the pixel and viewport position of the Widget by transform the absolute position:
+				* NCsWidget::NScreen::GetAbsoluteByCachedGeometryChecked to viewport space.
+				*
+				* @param Context	The calling context.
+				* @param Widget
+				* @param OutPixelPosition		(out) The position in the game's viewport, usable for line traces and
+				*									  other uses where you need a coordinate in the space of viewport resolution units.
+				* @param OutViewportPosition	(out) The position in the space of other widgets in the viewport.  Like if you wanted
+				*									  to add another widget to the viewport at the same position in viewport space as this location,
+				*									  this is what you would use.
+				* @param Log
+				*/
+				static void GetSafeByCachedGeometry(const FString& Context, UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+				/**
+				* Safely get the viewport position of the Widget by transform the absolute position:
+				* NCsWidget::NScreen::GetAbsoluteByCachedGeometryChecked to viewport space.
+				*
+				* @param Widget
+				* @param OutPixelPosition		(out) The position in the game's viewport, usable for line traces and
+				*									  other uses where you need a coordinate in the space of viewport resolution units.
+				* @param OutViewportPosition	(out) The position in the space of other widgets in the viewport.  Like if you wanted
+				*									  to add another widget to the viewport at the same position in viewport space as this location,
+				*									  this is what you would use.
+				*/
+				static void GetSafeByCachedGeometry(UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition);
+			};
+		}
+
 		namespace NWorld
 		{
 			struct CSUI_API FLibrary final

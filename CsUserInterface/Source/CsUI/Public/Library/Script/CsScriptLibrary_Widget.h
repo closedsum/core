@@ -27,6 +27,15 @@ public:
 
 #pragma endregion Screen
 
+	// Viewport
+#pragma region
+public:
+
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Position", meta = (AutoCreateRefTerm = "Context,OutPixelPosition,OutViewportPosition"))
+	static void GetPixelAndViewportPositionByCachedGeometry(const FString& Context, UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition);
+
+#pragma endregion Viewport
+
 	// World
 #pragma region
 public:

@@ -18,6 +18,7 @@ namespace NCsScriptLibraryWidget
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetScreenPositionBySlot);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetAbsoluteScreenPositionByCachedGeometry);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetPixelAndViewportPositionByCachedGeometry);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetWorldPositionBySlot);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetWorldPositionByCachedGeometry);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetAnimation);
@@ -46,7 +47,7 @@ FVector2D UCsScriptLibrary_Widget::GetScreenPositionBySlot(const FString& Contex
 
 	typedef NCsWidget::NPosition::NScreen::FLibrary WidgetPositionLibrary;
 
-	return WidgetPositionLibrary::GetSafeBySlot(Context, Widget);
+	return WidgetPositionLibrary::GetSafeBySlot(Ctxt, Widget);
 }
 
 FVector2D UCsScriptLibrary_Widget::GetAbsoluteScreenPositionByCachedGeometry(const FString& Context, UUserWidget* Widget)
@@ -57,10 +58,26 @@ FVector2D UCsScriptLibrary_Widget::GetAbsoluteScreenPositionByCachedGeometry(con
 
 	typedef NCsWidget::NPosition::NScreen::FLibrary WidgetPositionLibrary;
 
-	return WidgetPositionLibrary::GetSafeAbsoluteByCachedGeometry(Context, Widget);
+	return WidgetPositionLibrary::GetSafeAbsoluteByCachedGeometry(Ctxt, Widget);
 }
 
 #pragma endregion Screen
+
+// Viewport
+#pragma region
+
+void UCsScriptLibrary_Widget::GetPixelAndViewportPositionByCachedGeometry(const FString& Context, UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetPixelAndViewportPositionByCachedGeometry : Context;
+
+	typedef NCsWidget::NPosition::NViewport::FLibrary WidgetPositionLibrary;
+
+	return WidgetPositionLibrary::GetSafeByCachedGeometry(Ctxt, Widget, OutPixelPosition, OutViewportPosition);
+}
+
+#pragma endregion Viewport
 
 	// World
 #pragma region
@@ -73,7 +90,7 @@ bool UCsScriptLibrary_Widget::GetWorldPositionBySlot(const FString& Context, UOb
 
 	typedef NCsWidget::NPosition::NWorld::FLibrary WidgetPositionLibrary;
 
-	return WidgetPositionLibrary::GetSafeBySlot(Context, WorldContextObject, ControllerId, Widget, OutPosition, OutDirection);
+	return WidgetPositionLibrary::GetSafeBySlot(Ctxt, WorldContextObject, ControllerId, Widget, OutPosition, OutDirection);
 }
 
 bool UCsScriptLibrary_Widget::GetWorldPositionByCachedGeometry(const FString& Context, UObject* WorldContextObject, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection)
@@ -84,7 +101,7 @@ bool UCsScriptLibrary_Widget::GetWorldPositionByCachedGeometry(const FString& Co
 
 	typedef NCsWidget::NPosition::NWorld::FLibrary WidgetPositionLibrary;
 
-	return WidgetPositionLibrary::GetSafeByCachedGeometry(Context, WorldContextObject, ControllerId, Widget, OutPosition, OutDirection);
+	return WidgetPositionLibrary::GetSafeByCachedGeometry(Ctxt, WorldContextObject, ControllerId, Widget, OutPosition, OutDirection);
 }
 
 #pragma endregion World
@@ -102,7 +119,7 @@ UWidgetAnimation* UCsScriptLibrary_Widget::GetAnimation(const FString& Context, 
 
 	typedef NCsWidget::NAnimation::FLibrary WidgetAnimationLibrary;
 
-	return WidgetAnimationLibrary::GetSafe(Context, Widget, AnimName);
+	return WidgetAnimationLibrary::GetSafe(Ctxt, Widget, AnimName);
 }
 
 #pragma endregion Animation

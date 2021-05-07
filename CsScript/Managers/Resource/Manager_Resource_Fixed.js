@@ -229,7 +229,7 @@ module.exports = class FJsManager_Resource_Fixed
 	AddAllocatedLink(link)
 	{
 		if (IsValidObject(this.AllocatedTail))
-		{ 
+		{
 			link.LinkAfter(this.AllocatedTail);
 			this.AllocatedTail = link;
 		}
@@ -301,16 +301,16 @@ module.exports = class FJsManager_Resource_Fixed
 		{
 			this.AllocatedHead = link.GetNextLink();
 
-			if (IsValidObject(this.AllocatedHead))
+			if (!IsValidObject(this.AllocatedHead))
 			{
 				this.AllocatedTail = null;
 			}
 		}
 		// Check to Update TAIL
 		else
-		if (link === AllocatedTail)
+		if (link === this.AllocatedTail)
 		{
-			AllocatedTail = link.GetPrevLink();
+			this.AllocatedTail = link.GetPrevLink();
 		}
 		link.Unlink();
 	}

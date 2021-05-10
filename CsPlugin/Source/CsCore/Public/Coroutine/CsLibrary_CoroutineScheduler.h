@@ -27,9 +27,9 @@ namespace NCsCoroutine
 			*						A reference to the GameInstance.
 			* return				Context for CoroutineScheduler
 			*/
-			static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject);
+			static UObject* GetContextRootChecked(const FString& Context, const UObject* ContextObject);
 		#else
-			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject) { return nullptr; }
+			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, const UObject* ContextObject) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -43,9 +43,9 @@ namespace NCsCoroutine
 			* @param Log
 			* return				Context for CoroutineScheduler
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -57,9 +57,9 @@ namespace NCsCoroutine
 			*						A reference to the GameInstance.
 			* return				Context for CoroutineScheduler
 			*/
-			static UObject* GetSafeContextRoot(UObject* ContextObject);
+			static UObject* GetSafeContextRoot(const UObject* ContextObject);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(UObject* ContextObject) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const UObject* ContextObject) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#pragma endregion ContextRoot
@@ -77,7 +77,7 @@ namespace NCsCoroutine
 			*						A reference to the GameInstance.
 			* return				UCsCoroutineScheduler.
 			*/
-			static UCsCoroutineScheduler* GetChecked(const FString& Context, UObject* ContextObject);
+			static UCsCoroutineScheduler* GetChecked(const FString& Context, const UObject* ContextObject);
 
 			/**
 			* Safely get the reference to UCsCoroutineScheduler from a ContextObject.
@@ -89,7 +89,7 @@ namespace NCsCoroutine
 			* @param Log
 			* return				UCsCoroutineScheduler.
 			*/
-			static UCsCoroutineScheduler* GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UCsCoroutineScheduler* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely get the reference to UCsManager_Time from a ContextObject.
@@ -99,7 +99,7 @@ namespace NCsCoroutine
 			*						A reference to the GameInstance.
 			* return				UCsManager_Time.
 			*/
-			static UCsCoroutineScheduler* GetSafe(UObject* ContextObject);
+			static UCsCoroutineScheduler* GetSafe(const UObject* ContextObject);
 
 		#pragma endregion Get
 		};

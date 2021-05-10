@@ -40,7 +40,7 @@ namespace NCsCoroutine
 
 		#if WITH_EDITOR
 
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -57,7 +57,7 @@ namespace NCsCoroutine
 			return GameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -74,7 +74,7 @@ namespace NCsCoroutine
 			return GameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(UObject* ContextObject)
+		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
 		{
 			using namespace NCsCoroutine::NScheduler::NLibrary::NCached;
 
@@ -90,7 +90,7 @@ namespace NCsCoroutine
 		// Get
 		#pragma region
 
-		UCsCoroutineScheduler* FLibrary::GetChecked(const FString& Context, UObject* ContextObject)
+		UCsCoroutineScheduler* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
 		{
 			UObject* ContextRoot			 = GetContextRootChecked(Context, ContextObject);
 			UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(ContextRoot);
@@ -99,7 +99,7 @@ namespace NCsCoroutine
 			return Scheduler;
 		}
 
-		UCsCoroutineScheduler* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+		UCsCoroutineScheduler* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -117,7 +117,7 @@ namespace NCsCoroutine
 			return Scheduler;
 		}
 
-		UCsCoroutineScheduler* FLibrary::GetSafe(UObject* ContextObject)
+		UCsCoroutineScheduler* FLibrary::GetSafe(const UObject* ContextObject)
 		{
 			using namespace NCsCoroutine::NScheduler::NLibrary::NCached;
 

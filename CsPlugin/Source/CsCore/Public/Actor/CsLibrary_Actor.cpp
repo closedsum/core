@@ -410,9 +410,9 @@ namespace NCsActor
 		typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
 		PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
-
-		#define COROUTINE MoveByInterp_Internal
 		// Setup Payload
+		#define COROUTINE MoveByInterp_Internal
+		
 		Payload->CoroutineImpl.BindStatic(&FLibrary::COROUTINE);
 		Payload->StartTime = UCsManager_Time::Get(ContextRoot)->GetTime(UpdateGroup);
 
@@ -431,8 +431,7 @@ namespace NCsActor
 		// Set End callback (to free any allocated references)
 		typedef NCsCoroutine::FOnEnd OnEndType;
 
-		Payload->OnEnds.AddDefaulted();
-		OnEndType& OnEnd = Payload->OnEnds.Last();
+		OnEndType& OnEnd = Payload->OnEnds.AddDefaulted_GetRef();
 		OnEnd.BindStatic(&FLibrary::MoveByInterp_Internal_OnEnd);
 
 		static const int32 RESOURCE = 0;

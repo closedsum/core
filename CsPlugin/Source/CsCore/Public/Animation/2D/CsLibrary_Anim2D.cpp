@@ -307,8 +307,7 @@ namespace NCsAnim
 
 				if (Params.OnAbort.IsBound())
 				{
-					Payload->OnAborts.AddDefaulted();
-					OnAbortType& OnAbort = Payload->OnAborts.Last();
+					OnAbortType& OnAbort = Payload->OnAborts.AddDefaulted_GetRef();
 					OnAbort				 = Params.OnAbort;
 				}
 
@@ -317,13 +316,11 @@ namespace NCsAnim
 
 				if (Params.OnEnd.IsBound())
 				{
-					Payload->OnEnds.AddDefaulted();
-					OnEndType& OnEnd = Payload->OnEnds.Last();
+					OnEndType& OnEnd = Payload->OnEnds.AddDefaulted_GetRef();
 					OnEnd			 = Params.OnEnd;
 				}
 
-				Payload->OnEnds.AddDefaulted();
-				OnEndType& OnEnd = Payload->OnEnds.Last();
+				OnEndType& OnEnd = Payload->OnEnds.AddDefaulted_GetRef();
 				OnEnd.BindStatic(&FLibrary::Play_Internal_OnEnd);
 			
 				static const int32 RESOURCE = 0;

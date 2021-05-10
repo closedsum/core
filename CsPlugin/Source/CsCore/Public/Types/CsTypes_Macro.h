@@ -169,6 +169,18 @@
 	FORCEINLINE void Set##__Member(__ValueType** __value) { __Member##_Emu = __value; } \
 	FORCEINLINE __ValueType* Get##__Member() const { return *(__Member##_Emu); }
 
+#define CS_DEFINE_IS_EMU_PTR_DEFAULT_CHECKED(__Member) \
+	FORCEINLINE bool IsEmuPtrDefault_##__Member##_Checked(const FString& Context) const \
+	{ \
+		static const FString __temp__str__ = #__Member; \
+		static const FString __temp__str__emu__ = CS_STRINGIFY(__Member##_Emu); \
+		checkf(__Member##_Emu == &__Member, TEXT("%s: %s does NOT reference %s."), *Context, *__temp__str__, *__temp__str__emu__); \
+		return true; \
+	}
+
+// Assume const FString& Context has been defined
+#define CS_IS_EMU_PTR_DEFAULT_CHECKED(__Member) check(IsEmuPtrDefault_##__Member##_Checked(Context))
+
 #define CS_ADD_TO_DYNAMIC_MULITCAST_DELEGATE(__Context, __Owner, __MulticastDelegate, __Delegate, __Log) \
 	if (__Delegate.IsBound()) \
 	{ \

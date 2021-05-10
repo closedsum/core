@@ -13,15 +13,15 @@ class CSCORE_API UCsScriptLibrary_Routine : public UObject
 
 public:
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Routine", meta = (DisplayName = "FCsRoutineHandle - CreateNew"))
-	static FCsRoutineHandle FCsRoutineHandle_CreateNew();
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Routine")
+	static FCsRoutineHandle CreateNew();
 
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Routine", meta = (DisplayName = "FCsRoutineHandle - CreateNew"))
-	static FCsRoutineHandle FCsRoutineHandle_New(UPARAM(ref) FCsRoutineHandle& Handle);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Routine")
+	static FCsRoutineHandle New(UPARAM(ref) FCsRoutineHandle& Handle);
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Routine", meta = (DisplayName = "FCsRoutineHandle - IsValid"))
-	static bool FCsRoutineHandle_IsValid(const FCsRoutineHandle& Handle);
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Routine")
+	static bool IsValid(const FCsRoutineHandle& Handle);
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (RoutineHandle)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|Routine")
-	static bool EqualEqual_RoutineHandleRoutineHandle(const FCsRoutineHandle& A, const FCsRoutineHandle& B);
+	static bool EqualEqual(const FCsRoutineHandle& A, const FCsRoutineHandle& B);
 };

@@ -7,25 +7,25 @@ UCsScriptLibrary_Routine::UCsScriptLibrary_Routine(const FObjectInitializer& Obj
 {
 }
 
-FCsRoutineHandle UCsScriptLibrary_Routine::FCsRoutineHandle_CreateNew()
+FCsRoutineHandle UCsScriptLibrary_Routine::CreateNew()
 {
 	FCsRoutineHandle Handle;
 	Handle.New();
 	return Handle;
 }
 
-FCsRoutineHandle UCsScriptLibrary_Routine::FCsRoutineHandle_New(FCsRoutineHandle& Handle)
+FCsRoutineHandle UCsScriptLibrary_Routine::New(FCsRoutineHandle& Handle)
 {
 	Handle.New();
 	return Handle;
 }
 
-bool UCsScriptLibrary_Routine::FCsRoutineHandle_IsValid(const FCsRoutineHandle& Handle)
+bool UCsScriptLibrary_Routine::IsValid(const FCsRoutineHandle& Handle)
 {
 	return Handle.IsValid();
 }
 
-bool UCsScriptLibrary_Routine::EqualEqual_RoutineHandleRoutineHandle(const FCsRoutineHandle& A, const FCsRoutineHandle& B)
+bool UCsScriptLibrary_Routine::EqualEqual(const FCsRoutineHandle& A, const FCsRoutineHandle& B)
 {
 	return A == B;
 }

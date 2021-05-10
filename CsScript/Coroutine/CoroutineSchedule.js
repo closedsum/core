@@ -127,7 +127,7 @@ module.exports = class FJsCoroutineSchedule
     {
         let RoutineLibrary = CsScriptLibrary_Routine;
 
-        if (!RoutineLibrary.FCsRoutine_IsValid(handle))
+        if (!RoutineLibrary.IsValid(handle))
             return null;
 
         let poolSize = this.Manager_Routine.GetPoolSize();

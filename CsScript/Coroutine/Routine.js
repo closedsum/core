@@ -147,7 +147,7 @@ module.exports = class JsRoutine
 		}
 
 		let RoutineLibrary = CsScriptLibrary_Routine;
-		this.Handle		   = RoutineLibrary.FCsRoutineHandle_New(this.Handle);
+		this.Handle		   = RoutineLibrary.New(this.Handle);
     }
 
 	StartUpdate() { this.State = NJsCoroutine.EState.Update; }

@@ -208,6 +208,79 @@ namespace NCsMath
 			return C < 0 ? C + B : C;
 		}
 
+	// Vector
+	#pragma region
+	public:
+		
+		/**
+		* Mostly copied from:  Core\Public\Math\Vector.h
+		* 
+		* Gets a normalized copy of the vector, checking it is safe to do so based on the length.
+		* Returns zero vector if vector length is too small to safely normalize.
+		*
+		* @param V					The vector to the the normal for.
+		* @param OutSizeSquared		V.SizeSquared().
+		* @param OutSize			V.Size().
+		* @param Tolerance			Minimum squared vector length.
+		* @return					A normalized copy if safe, (0,0,0) otherwise.
+		*/
+		FORCEINLINE static FVector GetSafeNormal(const FVector& V, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
+		{
+			OutSizeSquared = V.X*V.X + V.Y*V.Y + V.Z*V.Z;
+
+			// Not sure if it's safe to add tolerance in there. Might introduce too many errors
+			if(OutSizeSquared == 1.0f)
+			{
+				OutSize = 1.0f;
+				return V;
+			}		
+			else 
+			if (OutSizeSquared < Tolerance)
+			{
+				OutSize = 0.0f;
+				return FVector::ZeroVector;
+			}
+
+			OutSize = FMath::Sqrt(OutSizeSquared);
+
+			return OutSize * V;
+		}
+
+		/**
+		* Mostly copied from:  Core\Public\Math\Vector.h
+		* 
+		* Gets a normalized copy of the vector, checking it is safe to do so based on the length.
+		* Returns zero vector if vector length is too small to safely normalize.
+		*
+		* @param V					The vector to the the normal for.
+		* @param OutSizeSquared		V.SizeSquared().
+		* @param OutSize			V.Size().
+		* @param Tolerance			Minimum squared vector length.
+		* @return					A normalized copy if safe, (0,0,0) otherwise.
+		*/
+		FORCEINLINE static FVector4 GetSafeNormal(const FVector4& V, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
+		{
+			OutSizeSquared = V.X*V.X + V.Y*V.Y + V.Z*V.Z + V.W*V.W;
+
+			// Not sure if it's safe to add tolerance in there. Might introduce too many errors
+			if(OutSizeSquared == 1.0f)
+			{
+				OutSize = 1.0f;
+				return V;
+			}		
+			else 
+			if (OutSizeSquared < Tolerance)
+			{
+				OutSize = 0.0f;
+				return FVector4(0.0f);
+			}
+
+			OutSize = FMath::Sqrt(OutSizeSquared);
+
+			return OutSize * V;
+		}
+	#pragma endregion Vector
+
 	// Plane
 	#pragma region
 	public:
@@ -248,5 +321,28 @@ namespace NCsMath
 		static bool SafeRayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane& Plane, float& OutT, FVector& OutIntersection, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Intersection
+
+	// LinearColor
+	#pragma region
+	public:
+
+		/**
+		* Mostly copied from:  Core\Public\Math\Vector.h
+		* 
+		* Gets a "normalized" copy of the linear color, checking it is safe to do so based on the length.
+		* Returns "zero" (clear) linear color if linear color's "length" is too small to safely normalize.
+		*
+		* @param Color				The color to get the "normal" for.
+		* @param OutSizeSquared		Equivalent to FVector4::SizeSquared().
+		* @param OutSize			Equivlanet to FVector4::Size().
+		* @param Tolerance			Minimum squared linear color "length".
+		* @return					A normalized copy if safe, (0.0f, 0.0f, 0.0f, 0.0f) otherwise.
+		*/
+		FORCEINLINE static FLinearColor GetSafeNormal(const FLinearColor& Color, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
+		{
+			return GetSafeNormal(FVector4(Color), OutSizeSquared, OutSize, Tolerance);
+		}
+
+	#pragma endregion LinearColor
 	};
 }

@@ -563,6 +563,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMaterialInstanceDynamic* MID;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* MIDAsObject;
+
 	/** Owner of the Animation */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UObject* Owner;
@@ -573,10 +576,13 @@ public:
 	FCsMaterialAnim_Params() :
 		Anim(),
 		MID(nullptr),
+		MIDAsObject(nullptr),
 		Owner(nullptr),
 		Group()
 	{
 	}
+
+	void ConditionalSetSafeMID(const FString& Context);
 
 #define ParamsType NCsMaterial::NAnim::NParams::FParams
 	void CopyToParamsAsValue(ParamsType* Params) const;

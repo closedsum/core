@@ -1120,8 +1120,6 @@ namespace NCsMaterial
 
 			const PlaybackType& Playback = Params->Anim.GetPlayback();
 			const bool LoopingForever	 = Params->Anim.IsLoopingForever();
-			const float& DeltaTime		 = Anim.GetDeltaTime();
-			const float& TotalTime		 = Anim.GetTotalTime();
 			const int32 FrameCount		 = Anim.Frames.Num();
 			const int32& TotalCount		 = Anim.GetTotalCount();
 
@@ -1139,8 +1137,8 @@ namespace NCsMaterial
 			FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 			ElapsedTime += R->DeltaTime;
 
-			const float& Time = Frame.GetDuration();
-			float Percent	  = FMath::Clamp(R->ElapsedTime.Time / Time, 0.0f, 1.0f);
+			const float& Duration = Frame.GetDuration();
+			float Percent		   = FMath::Clamp(R->ElapsedTime.Time / Duration, 0.0f, 1.0f);
 
 			static const int32 DIRECTION = 2;
 			int32& Direction = R->GetValue_Int(DIRECTION);
@@ -1224,7 +1222,7 @@ namespace NCsMaterial
 						};
 					}
 
-					CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= DeltaTime);
+					CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= Duration);
 
 					// Vector
 					for (const VectorType& Param : Frame.VectorParameters)

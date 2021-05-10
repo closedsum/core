@@ -1,9 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Material/CsTypes_Material_Anim.h"
+#include "CsCore.h"
 
 // Library
 #include "Library/CsLibrary_Valid.h"
 #include "Material/CsLibrary_Material.h"
+// Material
+#include "Materials/MaterialInstanceDynamic.h"
  
 // FCsMaterialAnimParameterVector
 #pragma region
@@ -320,7 +323,30 @@ void FCsMaterialAnim::UpdateFromPlaybackAndPlayRate()
 	else
 	if (PlayRate == ECsAnimPlayRate::PR_Custom)
 	{
-		// Do Nothing
+		const int32 Count = Frames.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const FCsMaterialAnimFrame& Frame = Frames[I];
+
+			if (Playback == ECsAnimPlayback::PingPong)
+			{
+				TotalTime += I == Count - 1 ? Frame.Duration : 2.0f * Frame.Duration;
+			}
+			else
+			{
+				TotalTime += Frame.Duration;
+			}
+		}
+
+		if (Playback == ECsAnimPlayback::PingPong)
+		{
+			TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+		}
+		else
+		{
+			TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+		}
 	}
 	else
 	{
@@ -760,6 +786,28 @@ namespace NCsMaterial
 
 // FCsMaterialAnim_Params
 #pragma region
+
+void FCsMaterialAnim_Params::ConditionalSetSafeMID(const FString& Context)
+{
+	if (MID)
+	{
+		MIDAsObject = MID;
+	}
+	else
+	if (MIDAsObject)
+	{
+		MID = Cast<UMaterialInstanceDynamic>(MIDAsObject);
+
+		if (!MID)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: MIDAsObject: %s with Class: %s is NOT of type: UMaterialInstanceDynamic."), *Context, *(MIDAsObject->GetName()), *(MIDAsObject->GetClass()->GetName()));
+		}
+	}
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: MID is NULL and MIDAsObject is NULL."), *Context);
+	}
+}
 
 #define ParamsType NCsMaterial::NAnim::NParams::FParams
 void FCsMaterialAnim_Params::CopyToParamsAsValue(ParamsType* Params) const

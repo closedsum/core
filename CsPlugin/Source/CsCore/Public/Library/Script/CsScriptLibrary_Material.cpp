@@ -95,9 +95,10 @@ FCsRoutineHandle UCsScriptLibrary_Material::PlayAnim(const FString& Context, con
 
 	FCsMaterialAnim_Params* ParamsPtr = const_cast<FCsMaterialAnim_Params*>(&Params);
 
+	ParamsPtr->ConditionalSetSafeMID(Ctxt);
 	ParamsPtr->Anim.UpdateFromPlaybackAndPlayRate();
 
-	if (!Params.IsValid(Context))
+	if (!Params.IsValid(Ctxt))
 		return FCsRoutineHandle::Invalid;
 
 	// Copy script params to native params.
@@ -110,7 +111,7 @@ FCsRoutineHandle UCsScriptLibrary_Material::PlayAnim(const FString& Context, con
 
 	Params.CopyToParamsAsValue(Parms);
 
-	return MaterialLibrary::SafePlayAnim(Context, WorldContextObject, ParmsContainer);
+	return MaterialLibrary::SafePlayAnim(Ctxt, WorldContextObject, ParmsContainer);
 }
 
 #pragma endregion Anim

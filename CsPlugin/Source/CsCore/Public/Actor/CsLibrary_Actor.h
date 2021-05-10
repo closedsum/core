@@ -57,7 +57,7 @@ namespace NCsActor
 		* @param Tag
 		* return
 		*/
-		static AActor* GetByTagChecked(const FString& Context, UObject* WorldContext, const FName& Tag);
+		static AActor* GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag);
 
 		/**
 		* Get an Actor (casted to type T) with the given Tag (checks AActor->Tags)
@@ -68,7 +68,7 @@ namespace NCsActor
 		* return
 		*/
 		template<typename T>
-		FORCEINLINE static T* GetByTagChecked(const FString& Context, UObject* WorldContext, const FName& Tag)
+		FORCEINLINE static T* GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag)
 		{
 			T* A = Cast<T>(GetByTagChecked(Context, WorldContext, Tag));
 
@@ -86,7 +86,7 @@ namespace NCsActor
 		* @param Log
 		* return				Actor
 		*/
-		static AActor* GetSafeByTag(const FString& Context, UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) = &FCsLog::Warning);
+		static AActor* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Safely get an Actor (casted to type T) with the given Tag (checks AActor->Tags)
@@ -98,7 +98,7 @@ namespace NCsActor
 		* return				Actor
 		*/
 		template<typename T>
-		FORCEINLINE static T* GetSafeByTag(const FString& Context, UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) = &FCsLog::Warning)
+		FORCEINLINE static T* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) = &FCsLog::Warning)
 		{
 			T* A = Cast<T>(GetSafeByTag(Context, WorldContext, Tag, Log));
 
@@ -117,7 +117,7 @@ namespace NCsActor
 		* @param Tag
 		* return				Actor
 		*/
-		FORCEINLINE static AActor* GetSafeByTag(UObject* WorldContext, const FName& Tag)
+		FORCEINLINE static AActor* GetSafeByTag(const UObject* WorldContext, const FName& Tag)
 		{
 			using namespace NCsActor::NLibrary::NCached;
 
@@ -134,7 +134,7 @@ namespace NCsActor
 		* return				Actor
 		*/
 		template<typename T>
-		FORCEINLINE static T* GetSafeByTag(UObject* WorldContext, const FName& Tag)
+		FORCEINLINE static T* GetSafeByTag(const UObject* WorldContext, const FName& Tag)
 		{
 			using namespace NCsActor::NLibrary::NCached;
 
@@ -151,7 +151,7 @@ namespace NCsActor
 		* @param Name
 		* return
 		*/
-		static AActor* GetByNameChecked(const FString& Context, UObject* WorldContext, const FName& Name);
+		static AActor* GetByNameChecked(const FString& Context, const UObject* WorldContext, const FName& Name);
 
 		/**
 		* Get an Actor with the given Name.
@@ -162,7 +162,7 @@ namespace NCsActor
 		* @param Log
 		* return
 		*/
-		static AActor* GetSafeByName(const FString& Context, UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning);
+		static AActor* GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Get an Actor with the given Name.
@@ -171,7 +171,7 @@ namespace NCsActor
 		* @param Name
 		* return
 		*/
-		static AActor* GetSafeByName(UObject* WorldContext, const FName& Name);
+		static AActor* GetSafeByName(const UObject* WorldContext, const FName& Name);
 
 		/**
 		* Get an Actor with the given Label.
@@ -184,7 +184,7 @@ namespace NCsActor
 		* @param Level
 		* return
 		*/
-		static AActor* GetByLabelChecked(const FString& Context, UObject* WorldContext, const FString& Label);
+		static AActor* GetByLabelChecked(const FString& Context, const UObject* WorldContext, const FString& Label);
 
 		/**
 		* Get an Actor with the given Label.
@@ -198,7 +198,7 @@ namespace NCsActor
 		* @param Log
 		* return
 		*/
-		static AActor* GetSafeByLabel(const FString& Context, UObject* WorldContext, const FString& Label, void(*Log)(const FString&) = &FCsLog::Warning);
+		static AActor* GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Get an Actor with the given Label.
@@ -210,7 +210,7 @@ namespace NCsActor
 		* @param Name
 		* return
 		*/
-		static AActor* GetSafeByLabel(UObject* WorldContext, const FString& Label);
+		static AActor* GetSafeByLabel(const UObject* WorldContext, const FString& Label);
 
 	#pragma endregion Get
 
@@ -303,9 +303,18 @@ namespace NCsActor
 		* @param Params			Information describing how to interpolate the Object.
 		* return				Handle to the movement coroutine.
 		*/
-		static FCsRoutineHandle MoveByInterpChecked(const FString& Context, UObject* WorldContext, ParamsResourceType* Params);
+		static FCsRoutineHandle MoveByInterpChecked(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params);
 
-		static FCsRoutineHandle SafeMoveByInterp(const FString& Context, UObject* WorldContext, ParamsResourceType* Params, void(*Log)(const FString&) = &FCsLog::Warning);
+		/**
+		* Safely move an Object via interpolation (i.e. an simple easing function) with the given Params.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Params			Information describing how to interpolate the Object.
+		* @param Log
+		* return				Handle to the movement coroutine.
+		*/
+		static FCsRoutineHandle SafeMoveByInterp(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		static char MoveByInterp_Internal(FCsRoutine* R);
 
@@ -387,7 +396,7 @@ namespace NCsActor
 		* @param Log
 		* return				Spawned Actor.
 		*/
-		static AActor* SafeSpawn(const FString& Context, UObject* WorldContext, const FSoftObjectPath& Path, void (*Log)(const FString&) = &FCsLog::Warning);
+		static AActor* SafeSpawn(const FString& Context, const UObject* WorldContext, const FSoftObjectPath& Path, void (*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Safely spawn an Actor in the World with the given Path.
@@ -398,7 +407,7 @@ namespace NCsActor
 		* @param Log
 		* return				Spawned Actor.
 		*/
-		static AActor* SafeSpawn(const FString& Context, UObject* WorldContext, const FString& Path, void (*Log)(const FString&) = &FCsLog::Warning);
+		static AActor* SafeSpawn(const FString& Context, const UObject* WorldContext, const FString& Path, void (*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Spawn
 	};

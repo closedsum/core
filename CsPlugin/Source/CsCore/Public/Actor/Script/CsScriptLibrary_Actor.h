@@ -94,7 +94,7 @@ public:
 	* return					Handle to the movement coroutine.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Params"))
-	static FCsRoutineHandle MoveByInterp(const FString& Context, UObject* WorldContextObject, UPARAM(ref) FCsMoveByInterp_Params& Params);
+	static FCsRoutineHandle MoveByInterp(const FString& Context, const UObject* WorldContextObject, const FCsMoveByInterp_Params& Params);
 
 #pragma endregion Move
 
@@ -130,10 +130,10 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Path"))
-	static AActor* SpawnBySoftObjectPath(const FString& Context, UObject* WorldContextObject, const FSoftObjectPath& Path);
+	static AActor* SpawnBySoftObjectPath(const FString& Context, const UObject* WorldContextObject, const FSoftObjectPath& Path);
 
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Path"))
-	static AActor* SpawnByStringPath(const FString& Context, UObject* WorldContextObject, const FString& Path);
+	static AActor* SpawnByStringPath(const FString& Context, const UObject* WorldContextObject, const FString& Path);
 
 #pragma endregion Spawn
 };

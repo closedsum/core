@@ -135,7 +135,7 @@ void FCsMoveByInterp_Params::CopyToParamsAsValue(ParamsType* Params) const
 
 #undef ParamsType
 
-void FCsMoveByInterp_Params::ConditionalSetSafeMoveObject(const FString& Context, UObject* WorldContext)
+void FCsMoveByInterp_Params::ConditionalSetSafeMoveObject(const FString& Context, const UObject* WorldContext)
 {
 	// Actor
 	if (Mover == ECsMover::Actor)
@@ -188,7 +188,7 @@ void FCsMoveByInterp_Params::ConditionalSetSafeMoveObject(const FString& Context
 	}
 }
 
-void FCsMoveByInterp_Params::ConditionalSetSafeDestinationObject(const FString& Context, UObject* WorldContext)
+void FCsMoveByInterp_Params::ConditionalSetSafeDestinationObject(const FString& Context, const UObject* WorldContext)
 {
 	// Actor
 	if (Destination == ECsMoveDestination::Actor)

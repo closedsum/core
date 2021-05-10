@@ -263,9 +263,9 @@ public:
 	void CopyToParamsAsValue(ParamsType* Params) const;
 #undef ParamsType
 
-	void ConditionalSetSafeMoveObject(const FString& Context, UObject* WorldContext);
+	void ConditionalSetSafeMoveObject(const FString& Context, const UObject* WorldContext);
 
-	void ConditionalSetSafeDestinationObject(const FString& Context, UObject* WorldContext);
+	void ConditionalSetSafeDestinationObject(const FString& Context, const UObject* WorldContext);
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };

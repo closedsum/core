@@ -60,7 +60,7 @@ namespace NCsActor
 	// Get
 	#pragma region
 
-	AActor* FLibrary::GetByTagChecked(const FString& Context, UObject* WorldContext, const FName& Tag)
+	AActor* FLibrary::GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag)
 	{
 		typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -112,7 +112,7 @@ namespace NCsActor
 		return nullptr;
 	}
 
-	AActor* FLibrary::GetSafeByTag(const FString& Context, UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	AActor* FLibrary::GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -167,7 +167,7 @@ namespace NCsActor
 		return nullptr;
 	}
 
-	AActor* FLibrary::GetByNameChecked(const FString& Context, UObject* WorldContext, const FName& Name)
+	AActor* FLibrary::GetByNameChecked(const FString& Context, const UObject* WorldContext, const FName& Name)
 	{
 		CS_IS_PTR_NULL_CHECKED(WorldContext)
 
@@ -193,7 +193,7 @@ namespace NCsActor
 		return nullptr;
 	}
 
-	AActor* FLibrary::GetSafeByName(const FString& Context, UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	AActor* FLibrary::GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -224,7 +224,7 @@ namespace NCsActor
 		return nullptr;
 	}
 
-	AActor* FLibrary::GetSafeByName(UObject* WorldContext, const FName& Name)
+	AActor* FLibrary::GetSafeByName(const UObject* WorldContext, const FName& Name)
 	{
 		using namespace NCsActor::NLibrary::NCached;
 
@@ -233,7 +233,7 @@ namespace NCsActor
 		return GetSafeByName(Context, WorldContext, Name, nullptr);
 	}
 
-	AActor* FLibrary::GetByLabelChecked(const FString& Context, UObject* WorldContext, const FString& Label)
+	AActor* FLibrary::GetByLabelChecked(const FString& Context, const UObject* WorldContext, const FString& Label)
 	{
 	#if WITH_EDITOR
 		typedef NCsWorld::FLibrary WorldLibrary;
@@ -262,7 +262,7 @@ namespace NCsActor
 	#endif // #if WITH_EDITOR
 	}
 
-	AActor* FLibrary::GetSafeByLabel(const FString& Context, UObject* WorldContext, const FString& Label, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	AActor* FLibrary::GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 	#if WITH_EDITOR
 		typedef NCsWorld::FLibrary WorldLibrary;
@@ -298,7 +298,7 @@ namespace NCsActor
 #endif // #if !WITH_EDITOR
 	}
 
-	AActor* FLibrary::GetSafeByLabel(UObject* WorldContext, const FString& Label)
+	AActor* FLibrary::GetSafeByLabel(const UObject* WorldContext, const FString& Label)
 	{
 		using namespace NCsActor::NLibrary::NCached;
 
@@ -392,7 +392,7 @@ namespace NCsActor
 	#define ParamsResourceType NCsMovement::NTo::NInterp::NParams::FResource
 	#define ParamsType NCsMovement::NTo::NInterp::NParams::FParams
 
-	FCsRoutineHandle FLibrary::MoveByInterpChecked(const FString& Context, UObject* WorldContext, ParamsResourceType* Params)
+	FCsRoutineHandle FLibrary::MoveByInterpChecked(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params)
 	{
 		using namespace NCsActor::NLibrary::NCached;
 
@@ -448,7 +448,7 @@ namespace NCsActor
 		return Scheduler->Start(Payload);
 	}
 
-	FCsRoutineHandle FLibrary::SafeMoveByInterp(const FString& Context, UObject* WorldContext, ParamsResourceType* Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	FCsRoutineHandle FLibrary::SafeMoveByInterp(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check Params are Valid.
 		if (!Params)
@@ -660,7 +660,7 @@ namespace NCsActor
 	// Spawn
 	#pragma region
 
-	AActor* FLibrary::SafeSpawn(const FString& Context, UObject* WorldContext, const FSoftObjectPath& Path, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
+	AActor* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FSoftObjectPath& Path, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -685,7 +685,7 @@ namespace NCsActor
 		return Actor;
 	}
 
-	AActor* FLibrary::SafeSpawn(const FString& Context, UObject* WorldContext, const FString& Path, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
+	AActor* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FString& Path, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		FSoftObjectPath SoftPath(Path);
 

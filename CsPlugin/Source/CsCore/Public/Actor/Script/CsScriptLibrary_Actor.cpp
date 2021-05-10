@@ -110,14 +110,16 @@ AActor* UCsScriptLibrary_Actor::GetByLabel(const FString& Context, UObject* Worl
 // Move
 #pragma region
 
-FCsRoutineHandle UCsScriptLibrary_Actor::MoveByInterp(const FString& Context, UObject* WorldContextObject, FCsMoveByInterp_Params& Params)
+FCsRoutineHandle UCsScriptLibrary_Actor::MoveByInterp(const FString& Context, const UObject* WorldContextObject, const FCsMoveByInterp_Params& Params)
 {
 	using namespace NCsScriptLibraryActor::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::MoveByInterp : Context;
 
-	Params.ConditionalSetSafeMoveObject(Context, WorldContextObject);
-	Params.ConditionalSetSafeDestinationObject(Context, WorldContextObject);
+	FCsMoveByInterp_Params* ParamsPtr = const_cast<FCsMoveByInterp_Params*>(&Params);
+
+	ParamsPtr->ConditionalSetSafeMoveObject(Context, WorldContextObject);
+	ParamsPtr->ConditionalSetSafeDestinationObject(Context, WorldContextObject);
 
 	if (!Params.IsValid(Ctxt))
 		return FCsRoutineHandle::Invalid;
@@ -128,7 +130,7 @@ FCsRoutineHandle UCsScriptLibrary_Actor::MoveByInterp(const FString& Context, UO
 	typedef NCsMovement::NTo::NInterp::NParams::FParams ParamsType;
 
 	ParamsResourceType* ParmsContainer = ActorLibrary::Get().AllocateMoveByInterpParams();
-	ParamsType* Parms = ParmsContainer->Get();
+	ParamsType* Parms				   = ParmsContainer->Get();
 
 	Params.CopyToParamsAsValue(Parms);
 
@@ -167,7 +169,7 @@ void UCsScriptLibrary_Actor::SetMaterials(const FString& Context, AActor* Actor,
 // Spawn
 #pragma region
 
-AActor* UCsScriptLibrary_Actor::SpawnBySoftObjectPath(const FString& Context, UObject* WorldContextObject, const FSoftObjectPath& Path)
+AActor* UCsScriptLibrary_Actor::SpawnBySoftObjectPath(const FString& Context, const UObject* WorldContextObject, const FSoftObjectPath& Path)
 {
 	using namespace NCsScriptLibraryActor::NCached;
 
@@ -178,7 +180,7 @@ AActor* UCsScriptLibrary_Actor::SpawnBySoftObjectPath(const FString& Context, UO
 	return ActorLibrary::SafeSpawn(Ctxt, WorldContextObject, Path);
 }
 
-AActor* UCsScriptLibrary_Actor::SpawnByStringPath(const FString& Context, UObject* WorldContextObject, const FString& Path)
+AActor* UCsScriptLibrary_Actor::SpawnByStringPath(const FString& Context, const UObject* WorldContextObject, const FString& Path)
 {
 	using namespace NCsScriptLibraryActor::NCached;
 

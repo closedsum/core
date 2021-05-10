@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UObject/Object.h"
+// Types
+#include "Coroutine/CsRoutineHandle.h"
+#include "Material/CsTypes_Material_Anim.h"
 
 #include "CsScriptLibrary_Material.generated.h"
 
@@ -48,7 +51,6 @@ public:
 	* @param Component
 	* @param Material
 	* @param Index
-	* @param Log
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,Index"))
 	static void SetAt(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index);
@@ -59,10 +61,26 @@ public:
 	* @param Context	The calling context
 	* @param Component
 	* @param Materials
-	* @param Log
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context"))
 	static void Set(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials);
 
 #pragma endregion Set
+
+// Anim
+#pragma region
+public:
+
+	/**
+	* Animate any number of parameters on a MaterialInstanceDynamic with the given Params.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Params				Information describing how to animate any number of parameters on a MaterialInstanceDynamic.
+	* return					Handle to the movement coroutine.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Params"))
+	static FCsRoutineHandle PlayAnim(const FString& Context, const UObject* WorldContextObject, const FCsMaterialAnim_Params& Params);
+
+#pragma endregion Anim
 };

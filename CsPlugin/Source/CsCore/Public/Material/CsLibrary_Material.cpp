@@ -2,11 +2,17 @@
 #include "Material/CsLibrary_Material.h"
 #include "CsCore.h"
 
+// Coroutine
+#include "Coroutine/CsCoroutineScheduler.h"
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
+#include "Coroutine/CsLibrary_CoroutineScheduler.h"
+#include "Library/CsLibrary_Math.h"
+// Managers
+#include "Managers/Time/CsManager_Time.h"
 // Mesh
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -459,15 +465,34 @@ namespace NCsMaterial
 
 	namespace NMID
 	{
-		namespace NCached 
+		namespace NLibrary
 		{
-			namespace Str
+			namespace NCached 
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, IsScalarParameterValid);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, IsVectorParameterValid);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, SetSafeScalarParameterValue);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, SetSafeVectorParameterValue);
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, IsScalarParameterValid);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, SetSafeScalarParameterValue);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, IsVectorParameterValid);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, SetSafeVectorParameterValue);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, PlayAnim_Internal);
+				}
+
+				namespace Name
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(NCsMaterial::NMID::FLibrary, PlayAnim_Internal);
+				}
 			}
+		}
+
+		FLibrary::FLibrary() :
+			Manager_AnimParams()
+		{
+		}
+
+		FLibrary::~FLibrary()
+		{
+			Manager_AnimParams.Shutdown();
 		}
 
 		bool FLibrary::IsValidChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs)
@@ -632,8 +657,8 @@ namespace NCsMaterial
 			MIDs.SetNum(0, true);
 		}
 
-	// Scalar
-	#pragma region
+		// Scalar
+		#pragma region
 
 		bool FLibrary::IsScalarParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
 		{
@@ -715,7 +740,7 @@ namespace NCsMaterial
 
 		bool FLibrary::IsScalarParameterValid(UMaterialInstanceDynamic* MID, const FName& ParamName)
 		{
-			using namespace NCached;
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
 
 			const FString& Context = Str::IsScalarParameterValid;
 
@@ -750,7 +775,7 @@ namespace NCsMaterial
 
 		void FLibrary::SetSafeScalarParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, const float& Value)
 		{
-			using namespace NCached;
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
 
 			const FString& Context = Str::SetSafeScalarParameterValue;
 
@@ -770,7 +795,7 @@ namespace NCsMaterial
 
 		void FLibrary::SetSafeScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value)
 		{
-			using namespace NCached;
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
 
 			const FString& Context = Str::SetSafeScalarParameterValue;
 
@@ -784,10 +809,10 @@ namespace NCsMaterial
 			return MID->K2_GetScalarParameterValue(ParamName);
 		}
 
-	#pragma endregion Scalar
+		#pragma endregion Scalar
 
-	// Vector
-	#pragma region
+		// Vector
+		#pragma region
 
 		bool FLibrary::IsVectorParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
 		{
@@ -869,7 +894,7 @@ namespace NCsMaterial
 
 		bool FLibrary::IsVectorParameterValid(UMaterialInstanceDynamic* MID, const FName& ParamName)
 		{
-			using namespace NCached;
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
 
 			const FString& Context = Str::IsVectorParameterValid;
 
@@ -904,7 +929,7 @@ namespace NCsMaterial
 
 		void FLibrary::SetSafeVectorParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value)
 		{
-			using namespace NCached;
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
 
 			const FString& Context = Str::SetSafeVectorParameterValue;
 
@@ -924,11 +949,18 @@ namespace NCsMaterial
 
 		void FLibrary::SetSafeVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
 		{
-			using namespace NCached;
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
 
 			const FString& Context = Str::SetSafeVectorParameterValue;
 
 			SetSafeVectorParameterValue(Context, MIDs, ParamName, Value, nullptr);
+		}
+
+		void FLibrary::SetVectorParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value)
+		{
+			check(IsVectorParameterValidChecked(Context, MID, ParamName));
+
+			MID->SetVectorParameterValue(ParamName, Value);
 		}
 
 		void FLibrary::SetSafeVectorParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -941,11 +973,22 @@ namespace NCsMaterial
 
 		void FLibrary::SetSafeVectorParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value)
 		{
-			using namespace NCached;
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
 
 			const FString& Context = Str::SetSafeVectorParameterValue;
 
 			SetSafeVectorParameterValue(Context, MID, ParamName, Value, nullptr);
+		}
+
+		void FLibrary::SetVectorParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value)
+		{
+			// Check MIDs is Valid
+			CS_IS_ARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
+
+				for (UMaterialInstanceDynamic* MID : MIDs)
+				{
+					SetVectorParameterValueChecked(Context, MID, ParamName, Value);
+				}
 		}
 
 		void FLibrary::SetSafeVectorParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -961,13 +1004,292 @@ namespace NCsMaterial
 
 		void FLibrary::SetSafeVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value)
 		{
-			using namespace NCached;
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
 
 			const FString& Context = Str::SetSafeVectorParameterValue;
 
 			SetSafeVectorParameterValue(Context, MIDs, ParamName, Value, nullptr);
 		}
 
-	#pragma endregion Vector
+		#pragma endregion Vector
+
+		// Anim
+		#pragma region
+
+		#define ParamsResourceType NCsMaterial::NAnim::NParams::FResource
+		#define ParamsType NCsMaterial::NAnim::NParams::FParams
+
+		FCsRoutineHandle FLibrary::PlayAnimChecked(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params)
+		{
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
+
+			typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+			ParamsType* P = Params->Get();
+
+			check(P->IsValidChecked(Context));
+
+			// Get Coroutine Scheduler
+			UObject* ContextRoot = CoroutineSchedulerLibrary::GetContextRootChecked(Context, WorldContext);
+
+			UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(ContextRoot);
+			const FECsUpdateGroup& UpdateGroup = Params->Get()->GetGroup();
+			// Allocate Payload
+			typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+			PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+			// Setup Payload
+#define COROUTINE PlayAnim_Internal
+
+			Payload->CoroutineImpl.BindStatic(&FLibrary::COROUTINE);
+			Payload->StartTime = UCsManager_Time::Get(ContextRoot)->GetTime(UpdateGroup);
+			Payload->Owner.SetObject(P->GetOwner());
+			Payload->SetName(Str::COROUTINE);
+			Payload->SetFName(Name::COROUTINE);
+
+#undef COROUTINE
+
+			// Set End callback (to free any allocated references)
+			typedef NCsCoroutine::FOnEnd OnEndType;
+
+			OnEndType& OnEnd = Payload->OnEnds.AddDefaulted_GetRef();
+			OnEnd.BindStatic(&FLibrary::PlayAnim_Internal_OnEnd);
+
+			static const int32 RESOURCE = 0;
+			Payload->SetValue_Void(RESOURCE, Params);
+
+			return Scheduler->Start(Payload);
+		}
+
+		FCsRoutineHandle FLibrary::SafePlayAnim(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			// Check Params are Valid.
+			if (!Params)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Params is NULL."), *Context));
+				return FCsRoutineHandle::Invalid;
+			}
+			// Check Params's Resource is Valid.
+			if (!Params->Get())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Params's Resource is NULL."), *Context));
+				return FCsRoutineHandle::Invalid;
+			}
+
+			if (!Params->Get()->IsValid(Context))
+				return FCsRoutineHandle::Invalid;
+
+			if (!Get().Manager_AnimParams.Contains(Params))
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Params has NOT been allocated from pool. Use the method that passes by const reference."), *Context));
+				return FCsRoutineHandle::Invalid;
+			}
+
+			// Check to get Context Root for CoroutineScheduler
+			{
+				typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+				UObject* ContextRoot = CoroutineSchedulerLibrary::GetSafeContextRoot(Context, WorldContext, Log);
+
+#if WITH_EDITOR
+				if (!ContextRoot)
+					return FCsRoutineHandle::Invalid;
+#endif // #if WITH_EDITOR
+			}
+			return PlayAnimChecked(Context, WorldContext, Params);
+		}
+
+		char FLibrary::PlayAnim_Internal(FCsRoutine* R)
+		{
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
+
+			const FString& Context = Str::PlayAnim_Internal;
+
+			static const int32 RESOURCE = 0;
+			ParamsResourceType* Resource = R->GetValue_Void<ParamsResourceType>(RESOURCE);
+			ParamsType* Params			 = Resource->Get();
+
+			UMaterialInstanceDynamic* MID = Params->GetMIDChecked(Context);
+
+			// Anim
+			typedef NCsMaterial::NAnim::FAnim AnimType;
+
+			const AnimType& Anim = Params->Anim;
+
+			typedef NCsAnim::EPlayback PlaybackType;
+
+			const PlaybackType& Playback = Params->Anim.GetPlayback();
+			const bool LoopingForever	 = Params->Anim.IsLoopingForever();
+			const float& DeltaTime		 = Anim.GetDeltaTime();
+			const float& TotalTime		 = Anim.GetTotalTime();
+			const int32 FrameCount		 = Anim.Frames.Num();
+			const int32& TotalCount		 = Anim.GetTotalCount();
+
+			static const int32 COUNT = 0;
+			int32& Count = R->GetValue_Int(COUNT);
+
+			static const int32 FRAME_INDEX = 1;
+			int32& FrameIndex = R->GetValue_Int(FRAME_INDEX);
+
+			// Frames
+			typedef NCsMaterial::NAnim::FFrame FrameType;
+
+			const FrameType& Frame = Anim.Frames[FrameIndex];
+
+			FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
+			ElapsedTime += R->DeltaTime;
+
+			const float& Time = Frame.GetDuration();
+			float Percent	  = FMath::Clamp(R->ElapsedTime.Time / Time, 0.0f, 1.0f);
+
+			static const int32 DIRECTION = 2;
+			int32& Direction = R->GetValue_Int(DIRECTION);
+
+			// Play Animation
+			CS_COROUTINE_BEGIN(R);
+
+			FrameIndex = Anim.ShouldStartReverse() ? FrameCount - 1 : 0;
+			Direction  = Anim.ShouldStartReverse() ? -1 : 1;
+
+			ElapsedTime.Reset();
+
+			Percent = 0.0f;
+
+			do
+			{
+				{
+					typedef NCsMaterial::NAnim::NParameter::FVectorType VectorType;
+					typedef NCsMaterial::NAnim::NParameter::FScalarType ScalarType;
+
+					// Vector
+					for (const VectorType& Param : Frame.VectorParameters)
+					{
+						// TODO: HSV
+						//FLinearColor::LerpUsingHSV()
+
+						const FLinearColor& Start = Param.GetFrom();
+						const FLinearColor& End	  = Param.GetTo();
+
+						// If SAME, set END ONCE
+						if (Start == End)
+						{
+							if (Percent == 0.0f)
+							{
+								SetVectorParameterValueChecked(Context, MID, Param.GetName(), End);
+							}
+						}
+						else
+						{
+							const FLinearColor StartToEnd = End - Start;
+
+							typedef NCsMath::FLibrary MathLibrary;
+
+							float DistanceSq;
+							float Distance;
+							const FLinearColor Normal = MathLibrary::GetSafeNormal(StartToEnd, DistanceSq, Distance);
+						
+							const ECsEasingType& Easing = Param.GetEasing();
+							const float Alpha			= MathLibrary::Ease(Easing, Percent, 0.0f, 1.0f, 1.0f);
+
+							FLinearColor Current = Start + Alpha * Distance * Normal;
+
+							SetVectorParameterValueChecked(Context, MID, Param.GetName(), Current);
+						};
+					}
+					// Scalar
+					for (const ScalarType& Param : Frame.ScalarParameters)
+					{
+						const float& Start = Param.GetFrom();
+						const float& End   = Param.GetTo();
+
+						// If SAME, set END ONCE
+						if (Start == End)
+						{
+							if (Percent == 0.0f)
+							{
+								SetScalarParameterValueChecked(Context, MID, Param.GetName(), End);
+							}
+						}
+						else
+						{
+							typedef NCsMath::FLibrary MathLibrary;
+
+							const ECsEasingType& Easing = Param.GetEasing();
+							const float Alpha			= MathLibrary::Ease(Easing, Percent, 0.0f, 1.0f, 1.0f);
+
+							const float Delta = End - Start;
+							float Final		  = Start + Alpha * Delta;
+
+							SetScalarParameterValueChecked(Context, MID, Param.GetName(), Final);
+						};
+					}
+
+					CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= DeltaTime);
+
+					// Vector
+					for (const VectorType& Param : Frame.VectorParameters)
+					{
+						SetVectorParameterValueChecked(Context, MID, Param.GetName(), Param.GetTo());
+					}
+					// Float
+					for (const ScalarType& Param : Frame.ScalarParameters)
+					{
+						SetScalarParameterValueChecked(Context, MID, Param.GetName(), Param.GetTo());
+					}
+
+					ElapsedTime.Reset();
+
+					// Forward
+					if (Playback == PlaybackType::Forward)
+						++FrameIndex;
+					// Reverse
+					else
+					if (Playback == PlaybackType::Reverse)
+						--FrameIndex;
+					// PingPong
+					else
+					if (Playback == PlaybackType::PingPong)
+					{
+						if (FrameIndex == FrameCount - 1)
+						{
+							Direction = -1;
+						}
+	
+						FrameIndex += Direction;
+					}
+					// Loop
+					else
+					if (Playback == PlaybackType::Loop)
+					{
+						FrameIndex = (FrameIndex + 1) % FrameCount;
+					}
+					// Loop Reverse
+					else
+					if (Playback == PlaybackType::LoopReverse)
+					{
+						FrameIndex = FrameIndex == 0 ? FrameCount - 1 : FrameIndex - 1;
+					}
+					// TODO: LoopPingPong
+					++Count;
+				}
+			} while (LoopingForever || Count < TotalCount);
+
+			CS_COROUTINE_END(R);
+		}
+
+		void FLibrary::PlayAnim_Internal_OnEnd(FCsRoutine* R)
+		{
+			static const int32 RESOURCE  = 0;
+			ParamsResourceType* Resource = R->GetValue_Void<ParamsResourceType>(RESOURCE);
+			ParamsType* Params			 = Resource->Get();
+			Params->Reset();
+
+			Get().Manager_AnimParams.Deallocate(Resource);
+		}
+
+		#undef ParamsResourceType
+		#undef ParamsType
+
+		#pragma endregion Anim
 	}
 }

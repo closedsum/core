@@ -18,6 +18,7 @@ namespace NCsScriptLibraryMaterial
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, LoadByStringPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetAt);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, Set);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, PlayAnim);
 		}
 	}
 }
@@ -82,3 +83,34 @@ void UCsScriptLibrary_Material::Set(const FString& Context, UPrimitiveComponent*
 }
 
 #pragma endregion Set
+
+// Anim
+#pragma region
+
+FCsRoutineHandle UCsScriptLibrary_Material::PlayAnim(const FString& Context, const UObject* WorldContextObject, const FCsMaterialAnim_Params& Params)
+{
+	using namespace NCsScriptLibraryMaterial::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::PlayAnim : Context;
+
+	FCsMaterialAnim_Params* ParamsPtr = const_cast<FCsMaterialAnim_Params*>(&Params);
+
+	ParamsPtr->Anim.UpdateFromPlaybackAndPlayRate();
+
+	if (!Params.IsValid(Context))
+		return FCsRoutineHandle::Invalid;
+
+	// Copy script params to native params.
+	typedef NCsMaterial::NMID::FLibrary MaterialLibrary;
+	typedef NCsMaterial::NAnim::NParams::FResource ParamsResourceType;
+	typedef NCsMaterial::NAnim::NParams::FParams ParamsType;
+
+	ParamsResourceType* ParmsContainer = MaterialLibrary::Get().AllocateAnimParams();
+	ParamsType* Parms				   = ParmsContainer->Get();
+
+	Params.CopyToParamsAsValue(Parms);
+
+	return MaterialLibrary::SafePlayAnim(Context, WorldContextObject, ParmsContainer);
+}
+
+#pragma endregion Anim

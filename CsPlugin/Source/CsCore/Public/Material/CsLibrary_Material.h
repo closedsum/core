@@ -1,5 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Types
+#include "Material/CsTypes_Material_Anim.h"
+#include "Coroutine/CsRoutineHandle.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -12,10 +15,12 @@ class UMaterialInterface;
 class UMaterialInstanceConstant;
 class UMaterialInstanceDynamic;
 struct FSkeletalMaterial;
+struct FCsRoutine;
 
 namespace NCsMaterial
 {
 	/**
+	* Library of functions related to MaterialInterface
 	*/
 	struct CSCORE_API FLibrary final
 	{
@@ -203,8 +208,25 @@ namespace NCsMaterial
 
 	namespace NMID
 	{
+		/**
+		* Library of functions related to MaterialInstanceDynamic
+		*/
 		struct CSCORE_API FLibrary
 		{
+		private:
+			FLibrary();
+
+			FLibrary(const FLibrary&) = delete;
+			FLibrary(FLibrary&&) = delete;
+		public:
+			~FLibrary();
+
+			FORCEINLINE static FLibrary& Get()
+			{
+				static FLibrary Instance;
+				return Instance;
+			}
+
 		public:
 
 			/**
@@ -462,6 +484,16 @@ namespace NCsMaterial
 			static void SetSafeVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
 
 			/**
+			* Set the Vector Parameter Value with name: ParamName with value: Value on MID.
+			*
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			*/
+			static void SetVectorParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value);
+
+			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MID.
 			*
 			* @param Context	The calling context.
@@ -480,6 +512,16 @@ namespace NCsMaterial
 			* @param Value		The value to set.
 			*/
 			static void SetSafeVectorParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value);
+
+			/**
+			* Set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
+			*
+			* @param Context	The calling context.
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			*/
+			static void SetVectorParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value);
 
 			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
@@ -502,6 +544,57 @@ namespace NCsMaterial
 			static void SetSafeVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value);
 
 		#pragma endregion Vector
+
+		// Anim
+		#pragma region
+		private:
+
+		#define ParamsManagerType NCsMaterial::NAnim::NParams::FManager
+		#define ParamsResourceType NCsMaterial::NAnim::NParams::FResource
+		#define ParamsType NCsMaterial::NAnim::NParams::FParams
+
+			ParamsManagerType Manager_AnimParams;
+
+		public:
+
+			FORCEINLINE ParamsResourceType* AllocateAnimParams() { return Manager_AnimParams.Allocate(); }
+
+			FORCEINLINE void DeallocateAnimParams(ParamsResourceType* Resource) { Manager_AnimParams.Deallocate(Resource); }
+
+		public:
+
+			/**
+			* Animate any number of parameters on a MaterialInstanceDynamic with the given Params.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Params			Information describing how to animate any number of parameters on a MaterialInstanceDynamic.
+			* return				Handle to the movement coroutine.
+			*/
+			static FCsRoutineHandle PlayAnimChecked(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params);
+
+			/**
+			* Safely animate any number of parameters on a MaterialInstanceDynamic with the given Params.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Params			Information describing how to animate any number of parameters on a MaterialInstanceDynamic.
+			* @param Log
+			* return				Handle to the movement coroutine.
+			*/
+			static FCsRoutineHandle SafePlayAnim(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		private:
+
+			static char PlayAnim_Internal(FCsRoutine* R);
+
+			static void PlayAnim_Internal_OnEnd(FCsRoutine* R);
+
+		#undef ParamsManagerType
+		#undef ParamsResourceType
+		#undef ParamsType
+
+		#pragma endregion Anim
 		};
 	}
 }

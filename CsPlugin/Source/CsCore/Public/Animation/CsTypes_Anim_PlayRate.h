@@ -28,9 +28,16 @@ enum class ECsAnimPlayRate : uint8
 	PR_59_94Fps						UMETA(DisplayName = "59.94 fps (NTSC/60)"),
 	PR_60Fps						UMETA(DisplayName = "60 fps"),
 	PR_120Fps						UMETA(DisplayName = "120 fps"),
+	/** DeltaTime and the number of frames are used to calculate the
+		TotalTime and TotalCount. */
 	PR_CustomDeltaTime				UMETA(DisplayName = "Custom Delta Time"),
+	/** TotalTime and the number of frames are used to calculate the
+		DeltaTime and TotalCount. */
 	PR_CustomTotalTime				UMETA(DisplayName = "Custom Total Time"),
+	/** TotalTime and DeltaTime are used to calculate the TotalCount. */
 	PR_CustomDeltaTimeAndTotalTime	UMETA(DisplayName = "Custom Delta Time and Total Time"),
+	/** DeltaTime, TotalTime, and TotalCount are determined by a custom
+		implementation */
 	PR_Custom						UMETA(DisplayName = "Custom"),
 	ECsAnimPlayRate_MAX				UMETA(Hidden),
 };
@@ -94,9 +101,16 @@ namespace NCsAnim
 		PR_59_94Fps	,
 		PR_60Fps,
 		PR_120Fps,
+		/** DeltaTime and the number of frames are used to calculate the
+			TotalTime and TotalCount. */
 		PR_CustomDeltaTime,
+		/** TotalTime and the number of frames are used to calculate the
+			DeltaTime and TotalCount. */
 		PR_CustomTotalTime,
+		/** TotalTime and DeltaTime are used to calculate the TotalCount. */
 		PR_CustomDeltaTimeAndTotalTime,
+		/** DeltaTime, TotalTime, and TotalCount are determined by a custom
+			implementation */
 		PR_Custom,
 		EPlayRate_MAX
 	};

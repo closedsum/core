@@ -41,7 +41,8 @@ UCsCoordinator_GameEvent::UCsCoordinator_GameEvent(const FObjectInitializer& Obj
 	Super(ObjectInitializer),
 	// Console Command
 	Manager_ConsoleCommand(nullptr),
-	OnProcessGameEventInfo_Events()
+	OnProcessGameEventInfo_Events(),
+	OnProcessGameEventInfo_ManagerInput0_ScriptEvent()
 {
 }
 
@@ -260,6 +261,11 @@ void UCsCoordinator_GameEvent::SetMyRoot(UObject* InRoot)
 
 #pragma endregion Singleton
 
+void UCsCoordinator_GameEvent::Update(const FCsDeltaTime& DeltaTime)
+{
+
+}
+
 void UCsCoordinator_GameEvent::OnGameEventInfo_ManagerInput0(const FCsGameEventInfo& Info)
 {
 	ProcessGameEventInfo(NCsGameEventCoordinatorGroup::ManagerInput0, Info);
@@ -279,6 +285,9 @@ void UCsCoordinator_GameEvent::ProcessGameEventInfo(const FECsGameEventCoordinat
 	check(EMCsGameEventCoordinatorGroup::Get().IsValidEnumChecked(Context, Group));
 
 	OnProcessGameEventInfo_Events[Group.GetValue()].Broadcast(Group, Info);
+
+	if (Group == NCsGameEventCoordinatorGroup::ManagerInput0)
+		OnProcessGameEventInfo_ManagerInput0_ScriptEvent.Broadcast(Group, Info);
 }
 
 void UCsCoordinator_GameEvent::QueueGameEventInfo(const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info)

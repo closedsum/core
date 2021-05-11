@@ -9,6 +9,8 @@
 #include "Coroutine/CsRoutine.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
+// Coordinators
+#include "Coordinators/GameEvent/CsCoordinator_GameEvent.h"
 // Game
 #include "Engine/GameInstance.h"
 #include "GameFramework/GameStateBase.h"
@@ -359,6 +361,9 @@ char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
 	// Manager_Time
 	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GameInstance));
 
+	// Coordinator_GameEvent
+	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("Coordinator_GameEvent"), UCsCoordinator_GameEvent::Get(GameInstance));
+	
 	// World
 	CS_COROUTINE_WAIT_UNTIL(R, World);
 

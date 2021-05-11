@@ -15,7 +15,7 @@ UCsScriptLibrary_Manager_Time::UCsScriptLibrary_Manager_Time(const FObjectInitia
 // Update
 #pragma region
 
-void UCsScriptLibrary_Manager_Time::BindToEvent_OnUpdate(UObject* WorldContextObject, FCsScriptLibraryManagerTime_OnUpdate Delegate)
+void UCsScriptLibrary_Manager_Time::BindToEvent_OnUpdate(UObject* WorldContextObject, const FCsScriptLibraryManagerTime_OnUpdate& Delegate)
 {
 	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 

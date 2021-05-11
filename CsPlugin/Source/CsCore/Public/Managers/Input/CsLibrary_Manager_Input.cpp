@@ -24,23 +24,8 @@ namespace NCsInput
 			namespace Str
 			{
 				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NManager::FLibrary, GetFirstChecked);
-				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NManager::FLibrary, SetFirstInputActionMapChecked);
-				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NManager::FLibrary, ClearFirstInputActionMapChecked);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NManager::FLibrary, GetSafeFirst);
 			}
-		}
-
-		UCsManager_Input* FLibrary::GetFirst(UWorld* World)
-		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
-			if (APlayerController* PC = PlayerControllerLibrary::GetFirstLocal(World))
-			{
-				if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
-				{
-					return GetManagerInput->GetManager_Input();
-				}
-			}
-			return nullptr;
 		}
 
 		UCsManager_Input* FLibrary::GetFirstChecked(const FString& Context, UWorld* World)
@@ -52,7 +37,16 @@ namespace NCsInput
 			return GetChecked(Context, PC);
 		}
 
-		UCsManager_Input* FLibrary::GetFirstChecked(const FString& Context, UObject* WorldContext)
+		UCsManager_Input* FLibrary::GetFirstChecked(UWorld* World)
+		{
+			using namespace NCsInput::NManager::NCached;
+
+			const FString& Context = Str::GetFirstChecked;
+
+			return GetFirstChecked(Context, World);
+		}
+
+		UCsManager_Input* FLibrary::GetFirstChecked(const FString& Context, const UObject* WorldContext)
 		{
 			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
 
@@ -61,13 +55,67 @@ namespace NCsInput
 			return GetChecked(Context, PC);
 		}
 
-		UCsManager_Input* FLibrary::GetFirstChecked(UWorld* World)
+		UCsManager_Input* FLibrary::GetFirstChecked(const UObject* WorldContext)
 		{
-			using namespace NCached;
+			using namespace NCsInput::NManager::NCached;
 
 			const FString& Context = Str::GetFirstChecked;
 
-			return GetFirstChecked(Context, World);
+			return GetFirstChecked(Context, WorldContext);
+		}
+
+		UCsManager_Input* FLibrary::GetSafeFirst(const FString& Context, UWorld* World, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+			if (APlayerController* PC = PlayerControllerLibrary::GetFirstLocal(Context, World, Log))
+			{
+				if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
+				{
+					return GetManagerInput->GetManager_Input();
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PlayerController: %s with Class: %s does NOT implement interface: ICsGetInterfaceMap."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName())));
+				}
+			}
+			return nullptr;
+		}
+
+		UCsManager_Input* FLibrary::GetSafeFirst(UWorld* World)
+		{
+			using namespace NCsInput::NManager::NCached;
+
+			const FString& Context = Str::GetFirstChecked;
+
+			return GetSafeFirst(Context, World, nullptr);
+		}
+
+		UCsManager_Input* FLibrary::GetSafeFirst(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+			if (APlayerController* PC = PlayerControllerLibrary::GetFirstLocal(Context, WorldContext, Log))
+			{
+				if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
+				{
+					return GetManagerInput->GetManager_Input();
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PlayerController: %s with Class: %s does NOT implement interface: ICsGetInterfaceMap."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName())));
+				}
+			}
+			return nullptr;
+		}
+
+		UCsManager_Input* FLibrary::GetSafeFirst(const UObject* WorldContext)
+		{
+			using namespace NCsInput::NManager::NCached;
+
+			const FString& Context = Str::GetFirstChecked;
+
+			return GetSafeFirst(Context, WorldContext, nullptr);
 		}
 
 		UCsManager_Input* FLibrary::GetChecked(const FString& Context, APlayerController* PC)
@@ -128,270 +176,323 @@ namespace NCsInput
 			return Count == NumLocalPlayers;
 		}
 
-		// InputActionMap
-		#pragma region
+		namespace NInputActionMap
+		{
+			namespace NLibrary
+			{
+				namespace NCached
+				{
+					namespace Str
+					{
+						CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NManager::NInputActionMap::FLibrary, SetFirstChecked);
+						CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NManager::NInputActionMap::FLibrary, SetSafeFirst);
+						CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NManager::NInputActionMap::FLibrary, ClearFirstChecked);
+					}
+				}
+			}
 
 			// Set
-		#pragma region
+			#pragma region
 
-		void FLibrary::SetFirstInputActionMap(UWorld* World, const FECsInputActionMap& Map)
-		{
-			if (UCsManager_Input* Manager_Input = GetFirst(World))
+					// First
+			#pragma region
+
+			void FLibrary::SetFirstChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map)
 			{
-				Manager_Input->SetCurrentInputActionMap(Map);
+				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, World);
+
+				Manager_Input->SetCurrentInputActionMap(Context, Map);
 			}
-		}
 
-		void FLibrary::SetFirstInputActionMapChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map)
-		{
-			UCsManager_Input* Manager_Input = GetFirstChecked(Context, World);
-
-			Manager_Input->SetCurrentInputActionMap(Context, Map);
-		}
-
-		void FLibrary::SetFirstInputActionMapChecked(const FString& Context, UObject* WorldContext, const FECsInputActionMap& Map)
-		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."));
-
-			SetFirstInputActionMapChecked(Context, WorldContext->GetWorld(), Map);
-		}
-
-		void FLibrary::SetFirstInputActionMapChecked(UWorld* World, const FECsInputActionMap& Map)
-		{
-			using namespace NCached;
-
-			const FString& Context = Str::SetFirstInputActionMapChecked;
-
-			SetFirstInputActionMapChecked(Context, World, Map);
-		}
-
-		void FLibrary::SetFirstInputActionMap(UWorld* World, const int32& Map)
-		{
-			if (UCsManager_Input* Manager_Input = GetFirst(World))
+			void FLibrary::SetFirstChecked(UWorld* World, const FECsInputActionMap& Map)
 			{
-				Manager_Input->SetCurrentInputActionMap(Map);
+				using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
+
+				const FString& Context = Str::SetFirstChecked;
+
+				SetFirstChecked(Context, World, Map);
 			}
-		}
 
-		void FLibrary::SetFirstInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map)
-		{
-			UCsManager_Input* Manager_Input = GetFirstChecked(Context, World);
-
-			Manager_Input->SetCurrentInputActionMap(Context, Map);
-		}
-
-		void FLibrary::SetFirstInputActionMapChecked(UWorld* World, const int32& Map)
-		{
-			using namespace NCached;
-
-			const FString& Context = Str::SetFirstInputActionMapChecked;
-
-			SetFirstInputActionMapChecked(Context, World, Map);
-		}
-
-		void FLibrary::SetInputActionMapChecked(const FString& Context, APlayerController* PC, const FECsInputActionMap& Map)
-		{
-			UCsManager_Input* Manager_Input = GetChecked(Context, PC);
-
-			Manager_Input->SetCurrentInputActionMap(Context, Map);
-		}
-
-		void FLibrary::SetInputActionMapChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map)
-		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
-			TArray<APlayerController*> PlayerControllers;
-
-			PlayerControllerLibrary::GetAllLocalChecked(Context, World, PlayerControllers);
-
-			for (APlayerController* PC : PlayerControllers)
+			void FLibrary::SetFirstChecked(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map)
 			{
-				SetInputActionMapChecked(Context, PC, Map);
+				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, WorldContext);
+
+				Manager_Input->SetCurrentInputActionMap(Context, Map);
 			}
-		}
 
-		void FLibrary::SetInputActionMapChecked(const FString& Context, UObject* WorldContext, const FECsInputActionMap& Map)
-		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."));
-
-			SetInputActionMapChecked(Context, WorldContext->GetWorld(), Map);
-		}
-
-		void FLibrary::SetInputActionMapChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, const FECsInputActionMap& Map)
-		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
-			APlayerController* PC = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
-
-			SetInputActionMapChecked(Context, PC, Map);
-		}
-
-		#pragma endregion Set
-
-			// Clear
-		#pragma region
-
-		void FLibrary::ClearFirstInputActionMap(UWorld* World, const FECsInputActionMap& Map)
-		{
-			if (UCsManager_Input* Manager_Input = GetFirst(World))
+			void FLibrary::SetSafeFirst(const UObject* WorldContext, const FECsInputActionMap& Map)
 			{
-				Manager_Input->ClearCurrentInputActionMap(Map);
+				using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
+
+				const FString& Context = Str::SetSafeFirst;
+
+				if (UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafeFirst(Context, WorldContext, nullptr))
+				{
+					Manager_Input->SetCurrentInputActionMap(Map);
+				}
 			}
-		}
 
-		void FLibrary::ClearFirstInputActionMapChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map)
-		{
-			UCsManager_Input* Manager_Input = GetFirstChecked(Context, World);
-
-			Manager_Input->ClearCurrentInputActionMap(Context, Map);
-		}
-
-		void FLibrary::ClearFirstInputActionMapChecked(const FString& Context, UObject* WorldContext, const FECsInputActionMap& Map)
-		{
-			UCsManager_Input* Manager_Input = GetFirstChecked(Context, WorldContext);
-
-			Manager_Input->ClearCurrentInputActionMap(Context, Map);
-		}
-
-		void FLibrary::ClearFirstInputActionMapChecked(UWorld* World, const FECsInputActionMap& Map)
-		{
-			using namespace NCached;
-
-			const FString& Context = Str::ClearFirstInputActionMapChecked;
-
-			ClearFirstInputActionMapChecked(Context, World, Map);
-		}
-
-		void FLibrary::ClearFirstInputActionMap(UWorld* World, const int32& Map)
-		{
-			if (UCsManager_Input* Manager_Input = GetFirst(World))
+			void FLibrary::SetSafeFirst(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
-				Manager_Input->ClearCurrentInputActionMap(Map);
+				if (UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafeFirst(Context, WorldContext, Log))
+				{
+					Manager_Input->SetCurrentInputActionMap(Map);
+				}
 			}
-		}
 
-		void FLibrary::ClearFirstInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map)
-		{
-			UCsManager_Input* Manager_Input = GetFirstChecked(Context, World);
-
-			Manager_Input->ClearCurrentInputActionMap(Context, Map);
-		}
-
-		void FLibrary::ClearFirstInputActionMapChecked(const FString& Context, UObject* WorldContext, const int32& Map)
-		{
-			UCsManager_Input* Manager_Input = GetFirstChecked(Context, WorldContext);
-
-			Manager_Input->ClearCurrentInputActionMap(Context, Map);
-		}
-
-		void FLibrary::ClearFirstInputActionMapChecked(UWorld* World, const int32& Map)
-		{
-			using namespace NCached;
-
-			const FString& Context = Str::ClearFirstInputActionMapChecked;
-
-			ClearFirstInputActionMapChecked(Context, World, Map);
-		}
-
-		void FLibrary::ClearInputActionMapChecked(const FString& Context, APlayerController* PC, const FECsInputActionMap& Map)
-		{
-			UCsManager_Input* Manager_Input = GetChecked(Context, PC);
-
-			Manager_Input->ClearCurrentInputActionMap(Context, Map);
-		}
-
-		void FLibrary::ClearInputActionMapChecked(const FString& Context, UWorld* World, const int32& Map)
-		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
-			TArray<APlayerController*> PlayerControllers;
-
-			PlayerControllerLibrary::GetAllLocalChecked(Context, World, PlayerControllers);
-
-			for (APlayerController* PC : PlayerControllers)
+			void FLibrary::SetFirstChecked(const FString& Context, UWorld* World, const int32& Map)
 			{
-				UCsManager_Input* Manager_Input = GetChecked(Context, PC);
+				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, World);
+
+				Manager_Input->SetCurrentInputActionMap(Context, Map);
+			}
+
+			void FLibrary::SetFirstChecked(UWorld* World, const int32& Map)
+			{
+				using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
+
+				const FString& Context = Str::SetFirstChecked;
+
+				SetFirstChecked(Context, World, Map);
+			}
+
+			void FLibrary::SetSafeFirst(const FString& Context, UWorld* World, const int32& Map, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				if (UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafeFirst(Context, World, Log))
+				{
+					Manager_Input->SetCurrentInputActionMap(Map);
+				}
+			}
+
+			#pragma endregion First
+
+			void FLibrary::SetChecked(const FString& Context, APlayerController* PC, const FECsInputActionMap& Map)
+			{
+				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetChecked(Context, PC);
+
+				Manager_Input->SetCurrentInputActionMap(Context, Map);
+			}
+
+			void FLibrary::SetChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map)
+			{
+				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+				TArray<APlayerController*> PlayerControllers;
+
+				PlayerControllerLibrary::GetAllLocalChecked(Context, World, PlayerControllers);
+
+				for (APlayerController* PC : PlayerControllers)
+				{
+					SetChecked(Context, PC, Map);
+				}
+			}
+
+			void FLibrary::SetChecked(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map)
+			{
+				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+				TArray<APlayerController*> PlayerControllers;
+
+				PlayerControllerLibrary::GetAllLocalChecked(Context, WorldContext, PlayerControllers);
+
+				for (APlayerController* PC : PlayerControllers)
+				{
+					SetChecked(Context, PC, Map);
+				}
+			}
+
+			void FLibrary::SetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FECsInputActionMap& Map)
+			{
+				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+				APlayerController* PC = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
+
+				SetChecked(Context, PC, Map);
+			}
+
+			#pragma endregion Set
+
+				// Clear
+			#pragma region
+
+			void FLibrary::ClearFirst(UWorld* World, const FECsInputActionMap& Map)
+			{
+				if (UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafeFirst(World))
+				{
+					Manager_Input->ClearCurrentInputActionMap(Map);
+				}
+			}
+
+			void FLibrary::ClearFirstChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map)
+			{
+				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, World);
 
 				Manager_Input->ClearCurrentInputActionMap(Context, Map);
 			}
-		}
 
-		void FLibrary::ClearInputActionMapChecked(const FString& Context, UObject* WorldContext, const int32& Map)
-		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."));
-
-			ClearInputActionMapChecked(Context, WorldContext->GetWorld(), Map);
-		}
-
-		void FLibrary::ClearInputActionMapChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, const int32& Map)
-		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
-			APlayerController* PC = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
-
-			ClearInputActionMapChecked(Context, PC, Map);
-		}
-
-		#pragma endregion Clear
-
-			// Reset
-		#pragma region
-
-		void FLibrary::ResetFirstInputActionMapChecked(const FString& Context, UWorld* World)
-		{
-			UCsManager_Input* Manager_Input = GetFirstChecked(Context, World);
-
-			Manager_Input->ResetCurrentInputActionMap();
-		}
-
-		void FLibrary::ResetFirstInputActionMapChecked(const FString& Context, UObject* WorldContext)
-		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."));
-
-			ResetFirstInputActionMapChecked(Context, WorldContext->GetWorld());
-		}
-
-		void FLibrary::ResetInputActionMapChecked(const FString& Context, APlayerController* PC)
-		{
-			UCsManager_Input* Manager_Input = GetChecked(Context, PC);
-
-			Manager_Input->ResetCurrentInputActionMap();
-		}
-
-		void FLibrary::ResetInputActionMapChecked(const FString& Context, UWorld* World)
-		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
-			TArray<APlayerController*> PlayerControllers;
-
-			PlayerControllerLibrary::GetAllLocalChecked(Context, World, PlayerControllers);
-
-			for (APlayerController* PC : PlayerControllers)
+			void FLibrary::ClearFirstChecked(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map)
 			{
-				UCsManager_Input* Manager_Input = GetChecked(Context, PC);
+				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, WorldContext);
+
+				Manager_Input->ClearCurrentInputActionMap(Context, Map);
+			}
+
+			void FLibrary::ClearFirstChecked(UWorld* World, const FECsInputActionMap& Map)
+			{
+				using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
+
+				const FString& Context = Str::ClearFirstChecked;
+
+				ClearFirstChecked(Context, World, Map);
+			}
+
+			void FLibrary::ClearFirst(UWorld* World, const int32& Map)
+			{
+				if (UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafeFirst(World))
+				{
+					Manager_Input->ClearCurrentInputActionMap(Map);
+				}
+			}
+
+			void FLibrary::ClearFirstChecked(const FString& Context, UWorld* World, const int32& Map)
+			{
+				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, World);
+
+				Manager_Input->ClearCurrentInputActionMap(Context, Map);
+			}
+
+			void FLibrary::ClearFirstChecked(const FString& Context, const UObject* WorldContext, const int32& Map)
+			{
+				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, WorldContext);
+
+				Manager_Input->ClearCurrentInputActionMap(Context, Map);
+			}
+
+			void FLibrary::ClearFirstChecked(UWorld* World, const int32& Map)
+			{
+				using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
+
+				const FString& Context = Str::ClearFirstChecked;
+
+				ClearFirstChecked(Context, World, Map);
+			}
+
+			void FLibrary::ClearChecked(const FString& Context, APlayerController* PC, const FECsInputActionMap& Map)
+			{
+				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetChecked(Context, PC);
+
+				Manager_Input->ClearCurrentInputActionMap(Context, Map);
+			}
+
+			void FLibrary::ClearChecked(const FString& Context, UWorld* World, const int32& Map)
+			{
+				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+				TArray<APlayerController*> PlayerControllers;
+
+				PlayerControllerLibrary::GetAllLocalChecked(Context, World, PlayerControllers);
+
+				for (APlayerController* PC : PlayerControllers)
+				{
+					UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetChecked(Context, PC);
+
+					Manager_Input->ClearCurrentInputActionMap(Context, Map);
+				}
+			}
+
+			void FLibrary::ClearChecked(const FString& Context, const UObject* WorldContext, const int32& Map)
+			{
+				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+				TArray<APlayerController*> PlayerControllers;
+
+				PlayerControllerLibrary::GetAllLocalChecked(Context, WorldContext, PlayerControllers);
+
+				for (APlayerController* PC : PlayerControllers)
+				{
+					UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetChecked(Context, PC);
+
+					Manager_Input->ClearCurrentInputActionMap(Context, Map);
+				}
+			}
+
+			void FLibrary::ClearChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const int32& Map)
+			{
+				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+				APlayerController* PC = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
+
+				ClearChecked(Context, PC, Map);
+			}
+
+			#pragma endregion Clear
+
+				// Reset
+			#pragma region
+
+			void FLibrary::ResetFirstChecked(const FString& Context, UWorld* World)
+			{
+				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, World);
 
 				Manager_Input->ResetCurrentInputActionMap();
 			}
+
+			void FLibrary::ResetFirstChecked(const FString& Context, const UObject* WorldContext)
+			{
+				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, WorldContext);
+
+				Manager_Input->ResetCurrentInputActionMap();
+			}
+
+			void FLibrary::ResetChecked(const FString& Context, APlayerController* PC)
+			{
+				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetChecked(Context, PC);
+
+				Manager_Input->ResetCurrentInputActionMap();
+			}
+
+			void FLibrary::ResetChecked(const FString& Context, UWorld* World)
+			{
+				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+				TArray<APlayerController*> PlayerControllers;
+
+				PlayerControllerLibrary::GetAllLocalChecked(Context, World, PlayerControllers);
+
+				for (APlayerController* PC : PlayerControllers)
+				{
+					UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetChecked(Context, PC);
+
+					Manager_Input->ResetCurrentInputActionMap();
+				}
+			}
+
+			void FLibrary::ResetChecked(const FString& Context, const UObject* WorldContext)
+			{
+				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+				TArray<APlayerController*> PlayerControllers;
+
+				PlayerControllerLibrary::GetAllLocalChecked(Context, WorldContext, PlayerControllers);
+
+				for (APlayerController* PC : PlayerControllers)
+				{
+					UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetChecked(Context, PC);
+
+					Manager_Input->ResetCurrentInputActionMap();
+				}
+			}
+
+			void FLibrary::ResetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+			{
+				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+				APlayerController* PC = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
+
+				ResetChecked(Context, PC);
+			}
+
+			#pragma endregion Reset
 		}
-
-		void FLibrary::ResetInputActionMapChecked(const FString& Context, UObject* WorldContext)
-		{
-			checkf(WorldContext, TEXT("%s: WorldContext is NULL."));
-
-			ResetInputActionMapChecked(Context, WorldContext->GetWorld());
-		}
-
-		void FLibrary::ResetInputActionMapChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId)
-		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
-			APlayerController* PC = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
-
-			ResetInputActionMapChecked(Context, PC);
-		}
-
-		#pragma endregion Reset
-
-		#pragma endregion InputActionMap
 	}
 }

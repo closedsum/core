@@ -4,8 +4,16 @@
 // Types
 #include "Managers/Input/CsTypes_Input.h"
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
+#include "Managers/Time/CsTypes_Time.h"
 
 #include "CsCoordinator_GameEvent.generated.h"
+
+// Delegates
+#pragma region
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsCoordinatorGameEvent_OnProcessGameEventInfo, const FECsGameEventCoordinatorGroup&, Group, const FCsGameEventInfo&, Info);
+
+#pragma endregion Delegates
 
 class ICsGetCoordinatorGameEvent;
 
@@ -107,6 +115,8 @@ private:
 
 public:
 
+	void Update(const FCsDeltaTime& DeltaTime);
+
 	void OnGameEventInfo_ManagerInput0(const FCsGameEventInfo& Info);
 	void OnGameEventInfo_ManagerInput1(const FCsGameEventInfo& Info);
 
@@ -126,6 +136,9 @@ public:
 	{
 		return OnProcessGameEventInfo_Events[Group.GetValue()];
 	}
+
+	UPROPERTY(BlueprintAssignable)
+	FCsCoordinatorGameEvent_OnProcessGameEventInfo OnProcessGameEventInfo_ManagerInput0_ScriptEvent;
 
 private:
 

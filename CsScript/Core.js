@@ -9,6 +9,7 @@ module.exports = class FJsCore
     {
         this.GameInstance = null;
         this.Manager_Time = null;
+        this.Coordinator_GameEvent = null;
         this.World = null;
         this.GameState = null;
         this.PlayerController = null;
@@ -20,6 +21,7 @@ module.exports = class FJsCore
 
     GetGameInstance() { return this.GameInstance; }
     GetManager_Time() { return this.Manager_Time; }
+    GetCoordinator_GameEvent() { return this.Coordinator_GameEvent; }
     GetWorld() { return this.World; }
     GetGameState() { return this.GameState; }
     GetPlayerController() { return this.PlayerController; }

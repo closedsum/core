@@ -35,22 +35,49 @@ namespace NCsPlayer
 
 	namespace NController
 	{
-		namespace NCached
+		namespace NLibrary
 		{
-			namespace Str
+			namespace NCached
 			{
-				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetFirstLocalChecked);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetSafeLocal);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetAllLocal);
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetFirstLocal);
+					CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetFirstLocalChecked);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetSafeLocal);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetAllLocal);
+				}
 			}
+		}
+
+		APlayerController* FLibrary::GetFirstLocal(const FString& Context, UWorld* World, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_PTR_NULL_RET_NULL(World)
+
+			return GEngine->GetFirstLocalPlayerController(World);
 		}
 
 		APlayerController* FLibrary::GetFirstLocal(UWorld* World)
 		{
-			return GEngine->GetFirstLocalPlayerController(World);
+			using namespace NCsPlayer::NController::NLibrary::NCached;
+
+			const FString& Context = Str::GetFirstLocal;
+
+			return GetFirstLocal(Context, World, nullptr);
 		}
 
-		APlayerController* FLibrary::GetFirstLocalChecked(const FString& Context, UObject* WorldContext)
+		APlayerController* FLibrary::GetFirstLocal(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+
+			if (!World)
+				return nullptr;
+
+			return GetFirstLocal(World);
+		}
+
+		APlayerController* FLibrary::GetFirstLocalChecked(const FString& Context, const UObject* WorldContext)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -87,7 +114,7 @@ namespace NCsPlayer
 			return PC;
 		}
 
-		APlayerController* FLibrary::GetLocalChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId)
+		APlayerController* FLibrary::GetLocalChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -96,7 +123,7 @@ namespace NCsPlayer
 			return GetLocalChecked(Context, World, ControllerId);
 		}
 
-		APlayerController* FLibrary::GetSafeLocal(const FString& Context, UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		APlayerController* FLibrary::GetSafeLocal(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -124,9 +151,9 @@ namespace NCsPlayer
 			return PC;
 		}
 
-		APlayerController* FLibrary::GetSafeLocal(UObject* WorldContext, const int32& ControllerId)
+		APlayerController* FLibrary::GetSafeLocal(const UObject* WorldContext, const int32& ControllerId)
 		{
-			using namespace NCsPlayer::NController::NCached;
+			using namespace NCsPlayer::NController::NLibrary::NCached;
 
 			const FString& Context = Str::GetSafeLocal;
 
@@ -144,7 +171,7 @@ namespace NCsPlayer
 
 		void FLibrary::GetAllLocal(UWorld* World, TArray<APlayerController*>& OutControllers)
 		{
-			using namespace NCsPlayer::NController::NCached;
+			using namespace NCsPlayer::NController::NLibrary::NCached;
 
 			const FString& Context = Str::GetAllLocal;
 
@@ -177,9 +204,11 @@ namespace NCsPlayer
 			}
 		}
 
-		void FLibrary::GetAllLocalChecked(const FString& Context, UObject* WorldContext, TArray<APlayerController*>& OutControllers)
+		void FLibrary::GetAllLocalChecked(const FString& Context, const UObject* WorldContext, TArray<APlayerController*>& OutControllers)
 		{
-			CS_IS_PTR_NULL_CHECKED(WorldContext)
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 			GetAllLocalChecked(Context, WorldContext->GetWorld(), OutControllers);
 		}

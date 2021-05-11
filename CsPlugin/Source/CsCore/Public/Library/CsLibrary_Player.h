@@ -27,11 +27,14 @@ namespace NCsPlayer
 
 	namespace NController
 	{
-		namespace NCached
+		namespace NLibrary
 		{
-			namespace Str
+			namespace NCached
 			{
-				extern CSCORE_API const FString GetFirstLocalChecked;
+				namespace Str
+				{
+					extern CSCORE_API const FString GetFirstLocalChecked;
+				}
 			}
 		}
 
@@ -39,12 +42,28 @@ namespace NCsPlayer
 		{
 		public:
 
+			static APlayerController* GetFirstLocal(const FString& Context, UWorld* World, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			template<typename T>
+			FORCEINLINE static T* GetFirstLocal(const FString& Context, UWorld* World, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				return Cast<T>(GetFirstLocal(Context, World, Log));
+			}
+
 			static APlayerController* GetFirstLocal(UWorld* World);
 
 			template<typename T>
 			FORCEINLINE static T* GetFirstLocal(UWorld* World)
 			{
 				return Cast<T>(GetFirstLocal(World));
+			}
+
+			static APlayerController* GetFirstLocal(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			template<typename T>
+			FORCEINLINE static T* GetFirstLocal(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				return Cast<T>(GetFirstLocal(Context, WorldContext, Log));
 			}
 
 			FORCEINLINE static APlayerController* GetFirstLocalChecked(const FString& Context, UWorld* World)
@@ -58,7 +77,7 @@ namespace NCsPlayer
 
 			FORCEINLINE static APlayerController* GetFirstLocalChecked(UWorld* World)
 			{
-				using namespace NCsPlayer::NController::NCached;
+				using namespace NCsPlayer::NController::NLibrary::NCached;
 
 				return GetFirstLocalChecked(Str::GetFirstLocalChecked, World);
 			}
@@ -76,22 +95,22 @@ namespace NCsPlayer
 			template<typename T>
 			FORCEINLINE static T* GetFirstLocalChecked(UWorld* World)
 			{
-				using namespace NCsPlayer::NController::NCached;
+				using namespace NCsPlayer::NController::NLibrary::NCached;
 
 				return GetFirstLocalChecked<T>(Str::GetFirstLocalChecked, World);
 			}
 
-			static APlayerController* GetFirstLocalChecked(const FString& Context, UObject* WorldContext);
+			static APlayerController* GetFirstLocalChecked(const FString& Context, const UObject* WorldContext);
 
 			static APlayerController* GetLocal(const FString& Context, UWorld* World, const int32& ControllerId);
 
 			static APlayerController* GetLocalChecked(const FString& Context, UWorld* World, const int32& ControllerId);
 
-			static APlayerController* GetLocalChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId);
+			static APlayerController* GetLocalChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
 
-			static APlayerController* GetSafeLocal(const FString& Context, UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
+			static APlayerController* GetSafeLocal(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
 
-			static APlayerController* GetSafeLocal(UObject* WorldContext, const int32& ControllerId);
+			static APlayerController* GetSafeLocal(const UObject* WorldContext, const int32& ControllerId);
 
 			static APlayerController* GetOrFirstLocalChecked(const FString& Context, APawn* Pawn);
 
@@ -101,7 +120,7 @@ namespace NCsPlayer
 
 			static void GetAllLocalChecked(const FString& Context, UWorld* World, TArray<APlayerController*>& OutControllers);
 
-			static void GetAllLocalChecked(const FString& Context, UObject* WorldContext, TArray<APlayerController*>& OutControllers);
+			static void GetAllLocalChecked(const FString& Context, const UObject* WorldContext, TArray<APlayerController*>& OutControllers);
 		};
 	}
 

@@ -22,7 +22,7 @@ namespace NCsViewport
 				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 				* return				Whether the projection is possible or not.
 				*/
-				static bool CanProjectWorldToScreenChecked(const FString& Context, UObject* WorldContext);
+				static bool CanProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext);
 
 				/**
 				* Check whether the First Local Player's Viewport can de-project a screen position to a 
@@ -32,7 +32,7 @@ namespace NCsViewport
 				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 				* return				Whether the de-projection is possible or not.
 				*/
-				static bool CanDeprojectScreenToWorldChecked(const FString& Context, UObject* WorldContext);
+				static bool CanDeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext);
 
 				/**
 				* Transforms the given 2D screen space coordinate into a 3D world-space point and direction.
@@ -43,7 +43,7 @@ namespace NCsViewport
 				* @param WorldPosition		(out) Corresponding 3D position in world space.
 				* @param WorldDirection		(out) World space direction vector away from the camera at the given 2d point.
 				*/
-				static bool DeprojectScreenToWorldChecked(const FString& Context, UObject* WorldContext, const FVector2D& ScreenPosition, FVector& WorldPosition, FVector& WorldDirection);
+				static bool DeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& WorldPosition, FVector& WorldDirection);
 
 				/**
 				* Get the Viewport associated with the First Local Player.
@@ -52,7 +52,7 @@ namespace NCsViewport
 				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 				* return				Viewport
 				*/
-				static FSceneViewport* GetViewportChecked(const FString& Context, UObject* WorldContext);
+				static FSceneViewport* GetViewportChecked(const FString& Context, const UObject* WorldContext);
 
 				/**
 				* Get the current Size (GetSizeXY()) of the Viewport associated with the First Local Player.
@@ -61,7 +61,7 @@ namespace NCsViewport
 				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 				* return				Size of the viewport.
 				*/
-				static FIntPoint GetSizeChecked(const FString& Context, UObject* WorldContext);
+				static FIntPoint GetSizeChecked(const FString& Context, const UObject* WorldContext);
 			};
 		}
 	}

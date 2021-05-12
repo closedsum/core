@@ -161,10 +161,14 @@ protected:
 
 	int32 MaxRequestsProcessedPerTick;
 
+#define CountInfoType NCsTrace::NManager::FCountInfo
+
 	/** */
-	FCsManagerTraceCountInfo LifetimeCountInfo;
+	CountInfoType LifetimeCountInfo;
 	/** */
-	FCsManagerTraceCountInfo ThisFrameCountInfo;
+	CountInfoType ThisFrameCountInfo;
+
+#undef CountInfoType
 
 private:
 
@@ -186,7 +190,9 @@ private:
 
 	void DeallocateRequest(RequestType* Request);
 
-	FCsManagerTracePendingRequests PendingRequests;
+#define PendingRequestsType NCsTrace::NManager::FPendingRequests
+	PendingRequestsType PendingRequests;
+#undef PendingRequestsType
 
 	bool ProcessAsyncRequest(RequestType* Request);
 

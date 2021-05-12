@@ -22,7 +22,7 @@ namespace NCsPlayer
 		* @param Context		The calling context.
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 		*/
-		static ULocalPlayer* GetFirstLocalChecked(const FString& Context, UObject* WorldContext);
+		static ULocalPlayer* GetFirstLocalChecked(const FString& Context, const UObject* WorldContext);
 	};
 
 	namespace NController

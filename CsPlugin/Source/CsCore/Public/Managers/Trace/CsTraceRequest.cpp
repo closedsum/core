@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Trace/CsTraceRequest.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+
 #include "UniqueObject/CsUniqueObject.h"
 
 namespace NCsTraceRequest
@@ -16,55 +19,64 @@ namespace NCsTraceRequest
 	}
 }
 
-bool FCsTraceRequest::IsValidChecked(const FString& Context) const
+#define RequestType NCsTrace::NRequest::FRequest
+void FCsTraceRequest::CopyToRequestAsValue(RequestType* Request) const
+{
+#undef RequestType
+
+	Request->StaleTime = StaleTime;
+	Request->SetCaller(Caller);
+	Request->bAsync = bAsync;
+	Request->Type = Type;
+	Request->Method = Method;
+	Request->Query = Query;
+	Request->Start = Start;
+	Request->End = End;
+	Request->Rotation = Rotation;
+	Request->Channel = Channel;
+	Request->ProfileName = ProfileName;
+	Request->Shape = Shape.ToShape();
+	Params.CopyToParams(Request->Params);
+	ObjectParams.CopyToParams(Request->ObjectParams);
+	ResponseParams.CopyToParams(Request->ResponseParams);
+
+	Request->OnResponse_ScriptEvent = OnResponse_Event;
+	Request->OnResponse_AsyncScriptEvent = OnResponse_AsyncEvent;
+}
+
+bool FCsTraceRequest::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	using namespace NCsTraceRequest::NCached;
 
 	// Check Type is Valid
-	check(EMCsTraceType::Get().IsValidEnumChecked(Context, Str::Type, Type));
+	CS_IS_ENUM_VALID(EMCsTraceType, ECsTraceType, Type)
 	// Check Method is Valid
-	check(EMCsTraceMethod::Get().IsValidEnumChecked(Context, Str::Method, Method));
+	CS_IS_ENUM_VALID(EMCsTraceMethod, ECsTraceMethod, Method)
 	// Check Query is Valid
-	check(EMCsTraceQuery::Get().IsValidEnumChecked(Context, Str::Query, Query));
+	CS_IS_ENUM_VALID(EMCsTraceQuery, ECsTraceQuery, Query)
 
 	// Check Shape
+	if (!Shape.IsValid(Context, Log))
+		return false;
+
 	if (Type == ECsTraceType::Sweep)
 	{
-		checkf(!Shape.IsLine(), TEXT("%s: Shape should be Box, Sphere, or Capsule"), *Context);
+		if (!Shape.IsLine())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Shape should be Box, Sphere, or Capsule"), *Context));
+			return false;
+		}
 	}
 	// Check ObjectParams
 	if (Query == ECsTraceQuery::ObjectType)
 	{
-		checkf(ObjectParams.IsValid(), TEXT("%s: ObjectParams is NOT Valid."), *Context);
+		if (!ObjectParams.IsValid(Context, Log))
+			return false;
 	}
+
+	if (!Params.IsValid(Context, Log))
+		return false;
 	return true;
-}
-
-void FCsTraceRequest::SetCaller(UObject* InCaller)
-{
-	Caller = InCaller;
-
-	UClass* Class = InCaller->GetClass();
-
-	if (Class->ImplementsInterface(UCsUniqueObject::StaticClass()))
-	{
-		// Interface
-		if (ICsUniqueObject* Interface = Cast<ICsUniqueObject>(InCaller))
-		{
-			UniqueObject = Interface;
-		}
-		// Script Interface
-	}
-}
-
-UObject* FCsTraceRequest::GetCaller() const
-{
-	return Caller.IsValid() ? Caller.Get() : nullptr;
-}
-
-void FCsTraceRequest::Update(const FCsDeltaTime& DeltaTime)
-{
-	ElapsedTime += DeltaTime;
 }
 
 namespace NCsTrace
@@ -92,6 +104,8 @@ namespace NCsTrace
 			// Check Query is Valid
 			check(EMCsTraceQuery::Get().IsValidEnumChecked(Context, Str::Query, Query));
 
+			checkf(Start != End, TEXT("%s: Start == End."), *Context);
+
 			// Check Shape
 			if (Type == ECsTraceType::Sweep)
 			{
@@ -101,6 +115,42 @@ namespace NCsTrace
 			if (Query == ECsTraceQuery::ObjectType)
 			{
 				checkf(ObjectParams.IsValid(), TEXT("%s: ObjectParams is NOT Valid."), *Context);
+			}
+			return true;
+		}
+
+		bool FRequest::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
+			// Check Type is Valid
+			CS_IS_ENUM_VALID(EMCsTraceType, ECsTraceType, Type)
+			// Check Method is Valid
+			CS_IS_ENUM_VALID(EMCsTraceMethod, ECsTraceMethod, Method)
+			// Check Query is Valid
+			CS_IS_ENUM_VALID(EMCsTraceQuery, ECsTraceQuery, Query)
+
+			if (Start == End)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Start == End."), *Context));
+				return false;
+			}
+
+			// Check Shape
+			if (Type == ECsTraceType::Sweep)
+			{
+				if (!Shape.IsLine())
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Shape should be Box, Sphere, or Capsule"), *Context));
+					return false;
+				}
+			}
+			// Check ObjectParams
+			if (Query == ECsTraceQuery::ObjectType)
+			{
+				if (!ObjectParams.IsValid())
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ObjectParams is NOT Valid."), *Context));
+					return false;
+				}
 			}
 			return true;
 		}

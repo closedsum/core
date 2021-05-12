@@ -1,8 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Types
+#include "Types/CsTypes_Macro.h"
 #include "Engine/EngineTypes.h"
 
 #include "CsTraceResponse.generated.h"
 #pragma once
+
+// NCsTrace::NResponse::FResponse
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NResponse, FResponse)
 
 /**
 */
@@ -10,14 +15,6 @@ USTRUCT(BlueprintType)
 struct CSCORE_API FCsTraceResponse
 {
 	GENERATED_USTRUCT_BODY()
-
-	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 Index;
-
-	/** Whether the response should be queued for deallocation. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	bool bDeallocate;
 
 	/** Whether the trace successful hit something. */
 	UPROPERTY(BlueprintReadOnly)
@@ -36,8 +33,6 @@ struct CSCORE_API FCsTraceResponse
 	TArray<FOverlapResult> OutOverlaps;
 
 	FCsTraceResponse() :
-		Index(INDEX_NONE),
-		bDeallocate(false),
 		bResult(false),
 		ElapsedTime(0.0f),
 		OutHits(),
@@ -45,29 +40,12 @@ struct CSCORE_API FCsTraceResponse
 	{
 	}
 
-	void SetIndex(const int32& InIndex)
-	{
-		Index = InIndex;
-	}
-
-	FORCEINLINE const int32& GetIndex()
-	{
-		return Index;
-	}
-
-	FORCEINLINE void QueueDeallocate()
-	{
-		bDeallocate = true;
-	}
-
-	FORCEINLINE bool ShouldDeallocate() const
-	{
-		return bDeallocate;
-	}
+#define ResponseType NCsTrace::NResponse::FResponse
+	void CopyFromResponse(ResponseType* Response);
+#undef ResponseType
 
 	FORCEINLINE void Reset()
 	{
-		bDeallocate = false;
 		bResult = false;
 		ElapsedTime = 0.0f;
 

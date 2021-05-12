@@ -11,7 +11,9 @@
 class UObject;
 class UCsManager_Trace;
 
-// NCsTrace::FResponse
+// NCsTrace::NRequest::FRequest
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)
+// NCsTrace::NResponse::FResponse
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NResponse, FResponse)
 
 namespace NCsTrace
@@ -85,7 +87,7 @@ namespace NCsTrace
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				UCsManager_Trace.
 			*/
-			static UCsManager_Trace* GetChecked(const FString& Context, UObject* WorldContext);
+			static UCsManager_Trace* GetChecked(const FString& Context, const UObject* WorldContext);
 
 			/**
 			* Safely get the reference to UCsManager_Trace from a WorldContext.
@@ -95,7 +97,7 @@ namespace NCsTrace
 			* @param Log
 			* return				UCsManager_Trace.
 			*/
-			static UCsManager_Trace* GetSafe(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UCsManager_Trace* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely get the reference to UCsManager_Trace from a WorldContext.
@@ -108,8 +110,39 @@ namespace NCsTrace
 		#pragma endregion Get
 
 		#define ResponseType NCsTrace::NResponse::FResponse
+		#define RequestType NCsTrace::NRequest::FRequest
 
 		public:
+
+			/**
+			* Perform a trace with the given Request.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Request
+			* return				Response
+			*/
+			static ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request);
+
+			/**
+			* Safely perform a trace with the given Request.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Request
+			* @param Log
+			* return				Response
+			*/
+			static ResponseType* SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely perform a trace with the given Request.
+			*
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Request
+			* return				Response
+			*/
+			static ResponseType* SafeTrace(const UObject* WorldContext, RequestType* Request);
 
 			/**
 			* 
@@ -121,9 +154,10 @@ namespace NCsTrace
 			* @param Channel	
 			* return				Trace response for the given trace. NULL if result was found.
 			*/
-			static ResponseType* TraceScreenToWorldChecked(const FString& Context, UObject* WorldContext, const FVector2D& ScreenPosition, const float& Distance, const ECollisionChannel& Channel);
+			static ResponseType* TraceScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const float& Distance, const ECollisionChannel& Channel);
 
 		#undef ResponseType
+		#undef RequestType
 		};
 	}
 }

@@ -1,6 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Collision.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Components
 #include "Components/SkeletalMeshComponent.h"
 
@@ -107,6 +109,48 @@ namespace NCsCollisionShape
 
 #pragma endregion CollisionShape
 
+
+// FCsCollisionShape
+#pragma region
+
+FCollisionShape FCsCollisionShape::ToShape() const
+{
+	if (Type == ECsCollisionShapeType::Line)
+		return FCollisionShape();
+	if (Type == ECsCollisionShapeType::Box)
+		return FCollisionShape::MakeBox(HalfExtent);
+	if (Type == ECsCollisionShapeType::Sphere)
+		return FCollisionShape::MakeSphere(Radius);
+	if (Type == ECsCollisionShapeType::Capsule)
+		return FCollisionShape::MakeCapsule(Radius, HalfHeight);
+	return FCollisionShape();
+}
+
+bool FCsCollisionShape::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	// Box
+	if (Type == ECsCollisionShapeType::Box)
+	{
+		CS_IS_FLOAT_GREATER_THAN(HalfExtent.X, 0.0f)
+		CS_IS_FLOAT_GREATER_THAN(HalfExtent.Y, 0.0f)
+		CS_IS_FLOAT_GREATER_THAN(HalfExtent.Z, 0.0f)
+	}
+	// Sphere
+	if (Type == ECsCollisionShapeType::Sphere)
+	{
+		CS_IS_FLOAT_GREATER_THAN(Radius, 0.0f)
+	}
+	// Capsule
+	if (Type == ECsCollisionShapeType::Capsule)
+	{
+		CS_IS_FLOAT_GREATER_THAN(Radius, 0.0f)
+		CS_IS_FLOAT_GREATER_THAN(HalfHeight, 0.0f)
+	}
+	return true;
+}
+
+#pragma endregion FCsCollisionShape
+
 // FCsCollisionPreset
 #pragma region
 
@@ -132,3 +176,32 @@ void FCsCollisionPreset::Apply(USkeletalMeshComponent* Mesh) const
 CSCORE_API const FHitResult NCsCollision::NHit::Default = FHitResult();
 
 #pragma endregion Collision
+
+// FCsCollisionQueryParams
+#pragma region
+
+bool FCsCollisionQueryParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	CS_IS_ARRAY_LESS_THAN_OR_EQUAL_SIZE(IgnoreComponents, UPrimitiveComponent*, 8)
+
+	CS_IS_ARRAY_ANY_NULL(IgnoreComponents, UPrimitiveComponent)
+
+	CS_IS_ARRAY_LESS_THAN_OR_EQUAL_SIZE(IgnoreActors, AActor*, 4)
+
+	CS_IS_ARRAY_ANY_NULL(IgnoreActors, AActor)
+
+	return true;
+}
+
+#pragma endregion FCsCollisionQueryParams
+
+// FCsCollisionObjectQueryParams
+#pragma region
+
+bool FCsCollisionObjectQueryParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	CS_IS_ARRAY_EMPTY(ObjectTypesToQuery, TEnumAsByte<EObjectTypeQuery>)
+	return true;
+}
+
+#pragma endregion FCsCollisionObjectQueryParams

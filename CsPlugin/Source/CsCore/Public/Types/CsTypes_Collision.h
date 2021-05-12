@@ -3,6 +3,8 @@
 #include "Engine/EngineTypes.h"
 #include "Types/Enum/CsEnumMap.h"
 #include "CollisionShape.h"
+// Log
+#include "Utility/CsLog.h"
 
 #include "CsTypes_Collision.generated.h"
 #pragma once
@@ -135,7 +137,72 @@ namespace NCsCollisionShape
 	}
 }
 
+UENUM(BlueprintType)
+enum class ECsCollisionShapeType : uint8
+{
+	Line						UMETA(DisplayName = "Line"),
+	Box							UMETA(DisplayName = "Box"),
+	Sphere						UMETA(DisplayName = "Sphere"),
+	Capsule						UMETA(DisplayName = "Capsule"),
+	ECsCollisionShapeType_MAX	UMETA(Hidden),
+};
+
 #pragma endregion CollisionShape
+
+// FCsCollisionShape
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsCollisionShape
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsCollisionShapeType Type;
+
+	/** Only Valid if Type == ECsCollisionShapeType::Box. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector HalfExtent;
+
+	/** Only Valid if 
+		 Type == ECsCollisionShapeType::Sphere
+		 Type == ECsCollisionShapeType::Capsule */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float Radius;
+
+	/** Only Valid if Type == ECsCollisionShapeType::Capsule */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float HalfHeight;
+
+	FCsCollisionShape() :
+		Type(ECsCollisionShapeType::Line),
+		HalfExtent(FVector::ZeroVector),
+		Radius(0.0f),
+		HalfHeight(0.0f)
+	{
+	}
+
+	FCollisionShape ToShape() const;
+
+	FORCEINLINE bool IsLine() const { return Type == ECsCollisionShapeType::Line; }
+	FORCEINLINE bool IsBox() const { return Type == ECsCollisionShapeType::Box; }
+	FORCEINLINE bool IsSphere() const { return Type == ECsCollisionShapeType::Sphere; }
+	FORCEINLINE bool IsCapsule() const { return Type == ECsCollisionShapeType::Capsule; }
+
+	void Reset()
+	{
+		Type = ECsCollisionShapeType::Line;
+		HalfExtent = FVector::ZeroVector;
+		Radius = 0.0f;
+		HalfHeight = 0.0f;
+	}
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
+
+#pragma endregion FCsCollisionShape
 
 // FCsCollisionPreset
 #pragma region
@@ -238,7 +305,6 @@ struct FCsOnComponentBeginOverlapInfo
 
 #pragma endregion FCsOnComponentBeginOverlapInfo
 
-
 // Collision
 #pragma region
 
@@ -251,3 +317,202 @@ namespace NCsCollision
 }
 
 #pragma endregion Collision
+
+// QueryMobilityType
+#pragma region
+
+UENUM(BlueprintType)
+enum class ECsQueryMobilityType : uint8
+{
+	Any							UMETA(DisplayName = "Any"),
+	/** Any shape that is considered static by physx (static mobility) */
+	Static						UMETA(DisplayName = "Static"),
+	/** Any shape that is considered dynamic by physx (movable/stationary mobility) */
+	Dynamic						UMETA(DisplayName = "Dynamic"),
+	ECsQueryMobilityType_MAX	UMETA(Hidden),
+};
+
+#pragma endregion QueryMobilityType
+
+// FCsCollisionQueryParams
+#pragma region
+
+class UPrimitiveComponent;
+class AActor;
+
+/** 
+* Structure that defines parameters passed into collision function 
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsCollisionQueryParams
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Tag used to provide extra information or filtering for debugging of the trace (e.g. Collision Analyzer) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName TraceTag;
+
+	/** Tag used to indicate an owner for this trace */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName OwnerTag;
+
+	/** Whether we should trace against complex collision */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bTraceComplex;
+
+	/** Whether we want to find out initial overlap or not. If true, it will return if this was initial overlap. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bFindInitialOverlaps;
+
+	/** Whether we want to return the triangle face index for complex static mesh traces */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bReturnFaceIndex;
+
+	/** Whether we want to include the physical material in the results. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bReturnPhysicalMaterial;
+
+	/** Whether to ignore blocking results. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIgnoreBlocks;
+
+	/** Whether to ignore touch/overlap results. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIgnoreTouches;
+
+	/** Whether to skip narrow phase checks (only for overlaps). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bSkipNarrowPhase;
+
+	/** Filters query by mobility types (static vs stationary/movable)*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsQueryMobilityType MobilityType;
+
+	/** TArray typedef of components to ignore. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UPrimitiveComponent*> IgnoreComponents;
+
+	/** TArray typedef of actors to ignore. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AActor*> IgnoreActors;
+
+	FCsCollisionQueryParams() :
+		TraceTag(NAME_None),
+		OwnerTag(NAME_None),
+		bTraceComplex(false),
+		bFindInitialOverlaps(false),
+		bReturnFaceIndex(false),
+		bReturnPhysicalMaterial(false),
+		bIgnoreBlocks(false),
+		bIgnoreTouches(false),
+		bSkipNarrowPhase(false),
+		MobilityType(ECsQueryMobilityType::Any),
+		IgnoreComponents(),
+		IgnoreActors()
+	{
+	}
+
+	void CopyToParams(FCollisionQueryParams& Params) const
+	{
+		Params.TraceTag = TraceTag;
+		Params.OwnerTag = OwnerTag;
+		Params.bTraceComplex = bTraceComplex;
+		Params.bFindInitialOverlaps = bFindInitialOverlaps;
+		Params.bReturnFaceIndex = bReturnFaceIndex;
+		Params.bReturnPhysicalMaterial = bReturnPhysicalMaterial;
+		Params.bIgnoreBlocks = bIgnoreBlocks;
+		Params.bIgnoreTouches = bIgnoreTouches;
+		Params.bSkipNarrowPhase = bSkipNarrowPhase;
+		Params.MobilityType = (EQueryMobilityType)MobilityType;
+
+		Params.AddIgnoredActors(IgnoreActors);
+		Params.AddIgnoredComponents(IgnoreComponents);
+	}
+
+	void Reset()
+	{
+		TraceTag = NAME_None;
+		OwnerTag = NAME_None;
+		bTraceComplex = false;
+		bFindInitialOverlaps = false;
+		bReturnFaceIndex = false;
+		bReturnPhysicalMaterial = false;
+		bIgnoreBlocks = false;
+		bIgnoreTouches = false;
+		bSkipNarrowPhase = false;
+		MobilityType = ECsQueryMobilityType::Any;
+		IgnoreComponents.Reset(8);
+		IgnoreActors.Reset(4);
+	}
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
+
+#pragma endregion FCsCollisionQueryParams
+
+// FCsCollisionObjectQueryParams
+#pragma region
+
+/** 
+* Structure that contains list of object types the query is interested in.
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsCollisionObjectQueryParams
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Set of object type queries that it is interested in **/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypesToQuery;
+
+	FCsCollisionObjectQueryParams() :
+		ObjectTypesToQuery()
+	{
+	}
+
+	void CopyToParams(FCollisionObjectQueryParams& Params) const
+	{
+		Params = FCollisionObjectQueryParams(ObjectTypesToQuery);
+	}
+
+	void Reset()
+	{
+		ObjectTypesToQuery.Reset(ObjectTypesToQuery.Max());
+	}
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
+
+#pragma endregion FCsCollisionObjectQueryParams
+
+// FCsCollisionResponseParams
+#pragma region
+
+/** 
+* Structure that defines response container for the query. Advanced option. 
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsCollisionResponseParams
+{
+	/** Collision Response container for trace filtering. If you'd like to ignore certain channel for this trace, use this struct.
+		By default, every channel will be blocked. */
+	GENERATED_USTRUCT_BODY()
+	FCollisionResponseContainer CollisionResponse;
+
+	FCsCollisionResponseParams() :
+		CollisionResponse()
+	{
+	}
+
+	void CopyToParams(FCollisionResponseParams& Params) const
+	{
+		Params = FCollisionResponseParams(CollisionResponse);
+	}
+
+	void Reset()
+	{
+		CollisionResponse = FCollisionResponseContainer::GetDefaultResponseContainer();
+	}
+};
+
+#pragma endregion FCsCollisionResponseParams

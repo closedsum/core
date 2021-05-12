@@ -3,26 +3,76 @@
 #include "Managers/Trace/Script/CsScriptLibrary_Manager_Trace.h"
 #include "CsCore.h"
 
+// Library
+#include "Managers/Trace/CsLibrary_Manager_Trace.h"
 // Managers
 #include "Managers/Trace/CsManager_Trace.h"
 // Actor
 #include "GameFramework/Actor.h"
+
+// Cached
+#pragma region
+
+namespace NCsScriptLibraryManagerTrace
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Trace, Trace);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Trace, LineTraceSingleByChannel);
+		}
+	}
+}
+
+#pragma endregion Cached
 
 UCsScriptLibrary_Manager_Trace::UCsScriptLibrary_Manager_Trace(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
+void UCsScriptLibrary_Manager_Trace::Trace(const FString& Context, const UObject* WorldContextObject, const FCsTraceRequest& Request, FCsTraceResponse& OutResponse)
+{
+	using namespace NCsScriptLibraryManagerTrace::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Trace : Context;
+
+	if (!Request.IsValid(Ctxt))
+		return;
+
+	typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
+
+	if (UCsManager_Trace* Manager = TraceManagerLibrary::GetSafe(Ctxt, WorldContextObject))
+	{
+		typedef NCsTrace::NRequest::FRequest RequestType;
+		typedef NCsTrace::NResponse::FResponse ResponseType;
+
+		RequestType* RequestPtr = Manager->AllocateRequest();
+
+		Request.CopyToRequestAsValue(RequestPtr);
+
+		ResponseType* ResponsePtr = TraceManagerLibrary::SafeTrace(Ctxt, WorldContextObject, RequestPtr);
+
+		if (ResponsePtr)
+		{
+			OutResponse.CopyFromResponse(ResponsePtr);
+		}
+	}
+}
+
 // Line
 #pragma region
 
-bool UCsScriptLibrary_Manager_Trace::LineTraceSingleByChannel(UObject* WorldContextObject, const FVector Start, const FVector End, const TEnumAsByte<ECollisionChannel>& Channel, bool bTraceComplex, bool bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit)
+bool UCsScriptLibrary_Manager_Trace::LineTraceSingleByChannel(const FString& Context, UObject* WorldContextObject, const FVector& Start, const FVector& End, const TEnumAsByte<ECollisionChannel>& Channel, bool bTraceComplex, bool bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit)
 {
-#if WITH_EDITOR
-	if (UCsManager_Trace* Manager = UCsManager_Trace::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Trace* Manager = UCsManager_Trace::Get())
-#endif // #if WITH_EDITOR
+	using namespace NCsScriptLibraryManagerTrace::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::LineTraceSingleByChannel : Context;
+
+	typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
+
+	if (UCsManager_Trace* Manager = TraceManagerLibrary::GetSafe(Ctxt, WorldContextObject))
 	{
 		// Fill out Request
 		typedef NCsTrace::NRequest::FRequest RequestType;
@@ -53,10 +103,6 @@ bool UCsScriptLibrary_Manager_Trace::LineTraceSingleByChannel(UObject* WorldCont
 			return Response->bResult;
 		}
 		return false;
-	}
-	else
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsScriptLibrary_Manager_Trace::LineTraceSingleByChannel: No Manager Trace of type UCsManager_Trace was created."));
 	}
 	return false;
 }

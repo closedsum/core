@@ -21,7 +21,7 @@
 
 namespace NCsPlayer
 {
-	ULocalPlayer* FLibrary::GetFirstLocalChecked(const FString& Context, UObject* WorldContext)
+	ULocalPlayer* FLibrary::GetFirstLocalChecked(const FString& Context, const UObject* WorldContext)
 	{
 		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 

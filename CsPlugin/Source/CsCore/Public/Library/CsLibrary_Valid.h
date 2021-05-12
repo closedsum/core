@@ -241,6 +241,54 @@ namespace NCsValid
 				}
 				return true;
 			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool LessThanOrEqualSizeChecked(const FString& Context, const TArray<ValueType>& Array, const FString& ArrayName, const int32& Size)
+			{
+				checkf(Array.Num() <= Size, TEXT("%s: %s.Num() > %d."), *Context, *ArrayName, Size);
+				return true;
+			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool LessThanOrEqualSize(const FString& Context, const TArray<ValueType>& Array, const FString& ArrayName, const int32& Size, void(*Log)(const FString&))
+			{
+				if (Array.Num() > Size)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s.Num() > %d."), *Context, *ArrayName, Size));
+					return false;
+				}
+				return true;
+			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool IsAnyNullChecked(const FString& Context, const TArray<ValueType*>& Array, const FString& ArrayName)
+			{
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					checkf(Array[I], TEXT("%s: %s[%d] is NULL."), *Context, *ArrayName, I);
+				}
+				return true;
+			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool IsAnyNull(const FString& Context, const TArray<ValueType*>& Array, const FString& ArrayName, void(*Log)(const FString&))
+			{
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					if (!Array[I])
+					{
+						if (Log)
+							Log(FString::Printf(TEXT("%s: %s[%d] is NULL."), *Context, *ArrayName, I));
+						return false;
+					}
+				}
+				return true;
+			}
 		};
 	}
 
@@ -522,6 +570,30 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Array; \
 		if (!NCsValid::NArray::FLibrary::Empty<__ValueType>(Context, __Array, __temp__str__, Log)) { return; } \
 	}
+// Assume const FString& Context has been defined
+#define CS_IS_ARRAY_LESS_THAN_OR_EQUAL_SIZE_CHECKED(__Array, __ValueType, __Size) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		check(NCsValid::NArray::FLibrary::LessThanOrEqualSizeChecked<__ValueType>(Context, __Array, __temp__str__, __Size)); \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ARRAY_LESS_THAN_OR_EQUAL_SIZE(__Array, __ValueType, __Size) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NArray::FLibrary::LessThanOrEqualSize<__ValueType>(Context, __Array, __temp__str__, __Size, Log)) { return false; } \
+	}
+// Assume const FString& Context has been defined
+#define CS_IS_ARRAY_ANY_NULL_CHECKED(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		check(NCsValid::NArray::FLibrary::IsAnyNullChecked<__ValueType>(Context, __Array, __temp__str__)); \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ARRAY_ANY_NULL(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NArray::FLibrary::IsAnyNull<__ValueType>(Context, __Array, __temp__str__, Log)) { return false; } \
+	}
 
 #pragma endregion Array
 
@@ -649,6 +721,10 @@ namespace NCsValid
 #define CS_IS_ARRAY_EMPTY_CHECKED(__Array, __ValueType)
 #define CS_IS_ARRAY_EMPTY(__Array, __ValueType)
 #define CS_IS_ARRAY_EMPTY_EXIT(__Array, __ValueType)
+#define CS_IS_ARRAY_LESS_THAN_OR_EQUAL_SIZE_CHECKED(__Array, __ValueType, __Size)
+#define CS_IS_ARRAY_LESS_THAN_OR_EQUAL_SIZE(__Array, __ValueType, __Size)
+#define CS_IS_ARRAY_ANY_NULL_CHECKED(__Array, __ValueType)
+#define CS_IS_ARRAY_ANY_NULL(__Array, __ValueType)
 // Ptr
 #define CS_IS_PTR_NULL_CHECKED(__Ptr)
 #define CS_IS_PTR_NULL(__Ptr)

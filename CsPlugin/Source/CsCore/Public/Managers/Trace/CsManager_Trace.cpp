@@ -12,18 +12,16 @@
 #include "Managers/ScopedTimer/CsManager_ScopedTimer.h"
 // UniqueObject
 #include "UniqueObject/CsUniqueObject.h"
-
-//#include "Game/CsGameState_DEPRECATED.h"
+// World
+#include "Engine/World.h"
 
 #if WITH_EDITOR
+// Library
+#include "Managers/Trace/CsLibrary_Manager_Trace.h"
+// Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/Trace/CsGetManagerTrace.h"
-
-#include "Engine/World.h"
-#include "Engine/Engine.h"
-
-#include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
 // Cache
@@ -35,6 +33,7 @@ namespace NCsManagerTrace
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, Update);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, ProcessAsyncRequest);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Trace, OnTraceResponse);
@@ -249,20 +248,21 @@ UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 
 /*static*/ UCsManager_Trace* UCsManager_Trace::GetFromWorldContextObject(const UObject* WorldContextObject)
 {
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	using namespace NCsManagerTrace::NCached;
+
+	const FString& Context = Str::GetFromWorldContextObject;
+
+	typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
+
+	if (UObject* ContextRoot = TraceManagerLibrary::GetSafeContextRoot(Context, WorldContextObject))
 	{
 		// Game State
-		if (UCsManager_Trace* Manager = GetSafe(World->GetGameState()))
+		if (UCsManager_Trace* Manager = GetSafe(ContextRoot))
 			return Manager;
 
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Trace::GetFromWorldContextObject: Failed to Manager Item of type UCsManager_Trace from GameState."));
-
-		return nullptr;
+		UE_LOG(LogCs, Warning, TEXT("%s: Failed to Manager Trace of type UCsManager_Trace from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
 	}
-	else
-	{
-		return nullptr;
-	}
+	return nullptr;
 }
 
 #endif // #if WITH_EDITOR
@@ -550,7 +550,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(RequestType* Request)
 	const FCollisionShape& Shape					= Request->Shape;
 	const FCollisionQueryParams& Params				= Request->Params;
 	const FCollisionObjectQueryParams& ObjectParams = Request->ObjectParams;
-	const FCollisionResponseParams& ResponseParam	= Request->ResponseParam;
+	const FCollisionResponseParams& ResponseParams	= Request->ResponseParams;
 
 	const FString& TraceMethodAsString = EMCsTraceMethod::Get().ToString(Method);
 
@@ -559,7 +559,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(RequestType* Request)
 	{
 		// AsyncLineTraceByChannel
 		if (Query == ECsTraceQuery::Channel)
-			Request->CopyHandle(CurrentWorld->AsyncLineTraceByChannel(AsyncTraceType, Start, End, Channel, Params, ResponseParam, &TraceDelegate));
+			Request->CopyHandle(CurrentWorld->AsyncLineTraceByChannel(AsyncTraceType, Start, End, Channel, Params, ResponseParams, &TraceDelegate));
 		// AsyncLineTraceByObjectType
 		else
 		if (Query == ECsTraceQuery::ObjectType)
@@ -583,7 +583,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(RequestType* Request)
 
 		// AsyncSweepByChannel
 		if (Query == ECsTraceQuery::Channel)
-			Request->CopyHandle(CurrentWorld->AsyncSweepByChannel(AsyncTraceType, Start, End, Quat, Channel, Shape, Params,  ResponseParam, &TraceDelegate));
+			Request->CopyHandle(CurrentWorld->AsyncSweepByChannel(AsyncTraceType, Start, End, Quat, Channel, Shape, Params,  ResponseParams, &TraceDelegate));
 		// AsyncSweepByObjectType
 		else
 		if (Query == ECsTraceQuery::ObjectType)
@@ -607,7 +607,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(RequestType* Request)
 
 		// AsyncOverlapByChannel
 		if (Query == ECsTraceQuery::Channel)
-			Request->CopyHandle(CurrentWorld->AsyncOverlapByChannel(Start, Quat, Channel, Shape, Params, ResponseParam, &OverlapDelegate));
+			Request->CopyHandle(CurrentWorld->AsyncOverlapByChannel(Start, Quat, Channel, Shape, Params, ResponseParams, &OverlapDelegate));
 		// AsyncOverlapByObjectType
 		else
 		if (Query == ECsTraceQuery::ObjectType)
@@ -870,7 +870,7 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 		const FCollisionShape& Shape					= Request->Shape;
 		const FCollisionQueryParams& Params				= Request->Params;
 		const FCollisionObjectQueryParams& ObjectParams = Request->ObjectParams;
-		const FCollisionResponseParams& ResponseParam	= Request->ResponseParam;
+		const FCollisionResponseParams& ResponseParams	= Request->ResponseParams;
 
 		// Response Members
 		TArray<FHitResult>& OutHits			= Response->OutHits;
@@ -884,7 +884,7 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 			{
 				// LineTraceTestByChannel
 				if (Query == ECsTraceQuery::Channel)
-					Response->bResult = CurrentWorld->LineTraceTestByChannel(Start, End, Channel, Params, ResponseParam);
+					Response->bResult = CurrentWorld->LineTraceTestByChannel(Start, End, Channel, Params, ResponseParams);
 				// LineTraceTestByObjectType
 				else
 				if (Query == ECsTraceQuery::ObjectType)
@@ -902,7 +902,7 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 
 				// LineTraceSingleByChannel
 				if (Query == ECsTraceQuery::Channel)
-					Response->bResult = CurrentWorld->LineTraceSingleByChannel(OutHits[CS_FIRST], Start, End, Channel, Params, ResponseParam);
+					Response->bResult = CurrentWorld->LineTraceSingleByChannel(OutHits[CS_FIRST], Start, End, Channel, Params, ResponseParams);
 				// LineTraceSingleByObjectType
 				else
 				if (Query == ECsTraceQuery::ObjectType)
@@ -918,7 +918,7 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 			{
 				// LineTraceMultiByChannel
 				if (Query == ECsTraceQuery::Channel)
-					Response->bResult = CurrentWorld->LineTraceMultiByChannel(OutHits, Start, End, Channel, Params, ResponseParam);
+					Response->bResult = CurrentWorld->LineTraceMultiByChannel(OutHits, Start, End, Channel, Params, ResponseParams);
 				// LineTraceMultiByObjectType
 				else
 				if (Query == ECsTraceQuery::ObjectType)
@@ -940,7 +940,7 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 			{
 				// SweepTestByChannel
 				if (Query == ECsTraceQuery::Channel)
-					Response->bResult = CurrentWorld->SweepTestByChannel(Start, End, Quat, Channel, Shape, Params, ResponseParam);
+					Response->bResult = CurrentWorld->SweepTestByChannel(Start, End, Quat, Channel, Shape, Params, ResponseParams);
 				// SweepTestByObjectType
 				else
 				if (Query == ECsTraceQuery::ObjectType)
@@ -958,7 +958,7 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 
 				// SweepSingleByChannel
 				if (Query == ECsTraceQuery::Channel)
-					Response->bResult = CurrentWorld->SweepSingleByChannel(OutHits[CS_FIRST], Start, End, Quat, Channel, Shape, Params, ResponseParam);
+					Response->bResult = CurrentWorld->SweepSingleByChannel(OutHits[CS_FIRST], Start, End, Quat, Channel, Shape, Params, ResponseParams);
 				// SweepSingleByObjectType
 				else
 				if (Query == ECsTraceQuery::ObjectType)
@@ -974,7 +974,7 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 			{
 				// SweepMultiByChannel
 				if (Query == ECsTraceQuery::Channel)
-					Response->bResult = CurrentWorld->SweepMultiByChannel(OutHits, Start, End, Quat, Channel, Shape, Params, ResponseParam);
+					Response->bResult = CurrentWorld->SweepMultiByChannel(OutHits, Start, End, Quat, Channel, Shape, Params, ResponseParams);
 				// SweepMultiByObjectType
 				else
 				if (Query == ECsTraceQuery::ObjectType)
@@ -996,7 +996,7 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 			{
 				// OverlapAnyTestByChannel
 				if (Query == ECsTraceQuery::Channel)
-					Response->bResult = CurrentWorld->OverlapAnyTestByChannel(Start, Quat, Channel, Shape, Params, ResponseParam);
+					Response->bResult = CurrentWorld->OverlapAnyTestByChannel(Start, Quat, Channel, Shape, Params, ResponseParams);
 				// OverlapAnyTestByObjectType
 				else
 				if (Query == ECsTraceQuery::ObjectType)
@@ -1021,7 +1021,7 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 			{
 				// OverlapMultiByChannel
 				if (Query == ECsTraceQuery::Channel)
-					Response->bResult = CurrentWorld->OverlapMultiByChannel(OutOverlaps, Start, Quat, Channel, Shape, Params, ResponseParam);
+					Response->bResult = CurrentWorld->OverlapMultiByChannel(OutOverlaps, Start, Quat, Channel, Shape, Params, ResponseParams);
 				// OverlapMultiByObjectType
 				else
 				if (Query == ECsTraceQuery::ObjectType)
@@ -1043,7 +1043,7 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 			{
 				// OverlapBlockingTestByChannel
 				if (Query == ECsTraceQuery::Channel)
-					Response->bResult = CurrentWorld->OverlapBlockingTestByChannel(Start, Quat, Channel, Shape, Params, ResponseParam);
+					Response->bResult = CurrentWorld->OverlapBlockingTestByChannel(Start, Quat, Channel, Shape, Params, ResponseParams);
 				else
 				if (Query == ECsTraceQuery::ObjectType)
 				{
@@ -1179,10 +1179,10 @@ void UCsManager_Trace::LogTransaction(const FString& Context, const ECsTraceTran
 		// Response Params
 		if (Query == ECsTraceQuery::Channel)
 		{
-			const FCollisionResponseParams& ResponseParam		 = Request->ResponseParam;
-			const FCollisionResponseContainer& ResponseContainer = ResponseParam.CollisionResponse;
+			const FCollisionResponseParams& ResponseParams		 = Request->ResponseParams;
+			const FCollisionResponseContainer& ResponseContainer = ResponseParams.CollisionResponse;
 
-			UE_LOG(LogCs, Warning, TEXT("-- ResponseParam"));
+			UE_LOG(LogCs, Warning, TEXT("-- ResponseParams"));
 			
 			// Log Response for the appropriate Channel
 			for (const ECollisionChannel& Channel : EMCsCollisionChannel::Get())

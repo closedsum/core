@@ -19,7 +19,7 @@ namespace NCsViewport
 	{
 		namespace NPlayer
 		{
-			bool FLibrary::CanProjectWorldToScreenChecked(const FString& Context, UObject* WorldContext)
+			bool FLibrary::CanProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext)
 			{
 				typedef NCsPlayer::FLibrary PlayerLibrary;
 
@@ -30,7 +30,7 @@ namespace NCsViewport
 				return true;
 			}
 
-			bool FLibrary::CanDeprojectScreenToWorldChecked(const FString& Context, UObject* WorldContext)
+			bool FLibrary::CanDeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext)
 			{
 				typedef NCsPlayer::FLibrary PlayerLibrary;
 
@@ -41,7 +41,7 @@ namespace NCsViewport
 				return true;
 			}
 
-			bool FLibrary::DeprojectScreenToWorldChecked(const FString& Context, UObject* WorldContext, const FVector2D& ScreenPosition, FVector& WorldPosition, FVector& WorldDirection)
+			bool FLibrary::DeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& WorldPosition, FVector& WorldDirection)
 			{
 				check(CanDeprojectScreenToWorldChecked(Context, WorldContext));
 
@@ -72,7 +72,7 @@ namespace NCsViewport
 				return false;
 			}
 
-			FSceneViewport* FLibrary::GetViewportChecked(const FString& Context, UObject* WorldContext)
+			FSceneViewport* FLibrary::GetViewportChecked(const FString& Context, const UObject* WorldContext)
 			{
 				typedef NCsPlayer::FLibrary PlayerLibrary;
 
@@ -88,7 +88,7 @@ namespace NCsViewport
 				return SV;
 			}
 
-			FIntPoint FLibrary::GetSizeChecked(const FString& Context, UObject* WorldContext)
+			FIntPoint FLibrary::GetSizeChecked(const FString& Context, const UObject* WorldContext)
 			{
 				FSceneViewport* SV = GetViewportChecked(Context, WorldContext);
 

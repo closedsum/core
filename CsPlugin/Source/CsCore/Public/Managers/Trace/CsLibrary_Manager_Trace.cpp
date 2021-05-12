@@ -22,6 +22,7 @@ namespace NCsTrace
 				{
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsTrace::NManager::FLibrary, GetSafeContextRoot);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsTrace::NManager::FLibrary, GetSafe);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsTrace::NManager::FLibrary, SafeTrace);
 				}
 
 				namespace Name
@@ -66,18 +67,18 @@ namespace NCsTrace
 		// Get
 		#pragma region
 
-		UCsManager_Trace* FLibrary::GetChecked(const FString& Context, UObject* ContextObject)
+		UCsManager_Trace* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 		{
-			UObject* ContextRoot			 = GetContextRootChecked(Context, ContextObject);
+			UObject* ContextRoot			 = GetContextRootChecked(Context, WorldContext);
 			UCsManager_Trace* Manager_Trace  = UCsManager_Trace::Get(ContextRoot);
 
 			CS_IS_PTR_NULL_CHECKED(Manager_Trace)
 			return Manager_Trace;
 		}
 
-		UCsManager_Trace* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+		UCsManager_Trace* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
 		{
-			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
+			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
 
 		#if WITH_EDITOR
 			if (!ContextRoot)
@@ -105,10 +106,43 @@ namespace NCsTrace
 		#pragma endregion Get
 
 		#define ResponseType NCsTrace::NResponse::FResponse
-		ResponseType* FLibrary::TraceScreenToWorldChecked(const FString& Context, UObject* WorldContext, const FVector2D& ScreenPosition, const float& Distance, const ECollisionChannel& Channel)
-		{
-		#undef ResponseType
+		#define RequestType NCsTrace::NRequest::FRequest
 
+		ResponseType* FLibrary::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request)
+		{
+			CS_IS_PTR_NULL_CHECKED(Request);
+
+			check(Request->IsValidChecked(Context));
+
+			return GetChecked(Context, WorldContext)->Trace(Request);
+		}
+
+		ResponseType* FLibrary::SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_PTR_NULL(Request)
+
+			if (!Request->IsValid(Context, Log))
+				return nullptr;
+
+			UCsManager_Trace* Manager_Trace = GetSafe(Context, WorldContext, Log);
+
+			if (!Manager_Trace)
+				return nullptr;
+
+			return Manager_Trace->Trace(Request);
+		}
+
+		ResponseType* FLibrary::SafeTrace(const UObject* WorldContext, RequestType* Request)
+		{
+			using namespace NCsTrace::NManager::NLibrary::NCached;
+
+			const FString& Context = Str::SafeTrace;
+
+			return SafeTrace(Context, WorldContext, Request, nullptr);
+		}
+
+		ResponseType* FLibrary::TraceScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const float& Distance, const ECollisionChannel& Channel)
+		{
 			using namespace NCsTrace::NManager::NLibrary::NCached;
 
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Distance, 0.0f)
@@ -122,11 +156,7 @@ namespace NCsTrace
 
 			if (ViewportLibrary::DeprojectScreenToWorldChecked(Context, WorldContext, ScreenPosition, WorldOrigin, WorldDirection))
 			{
-				UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
-
-				UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(ContextRoot);
-
-				typedef NCsTrace::NRequest::FRequest RequestType;
+				UCsManager_Trace* Manager_Trace = GetChecked(Context, WorldContext);
 
 				RequestType* Request    = Manager_Trace->AllocateRequest();
 				Request->ProfileName	= Name::TraceScreenToWorldChecked;
@@ -141,5 +171,8 @@ namespace NCsTrace
 			}
 			return nullptr;
 		}
+
+		#undef ResponseType
+		#undef RequestType
 	}
 }

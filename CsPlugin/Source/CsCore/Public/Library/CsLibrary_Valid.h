@@ -309,6 +309,12 @@ namespace NCsValid
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NInt::FLibrary::GreaterThan(Context, __A, __temp__str__, __B, Log)) { return false; } \
 	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_GREATER_THAN_EXIT(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NInt::FLibrary::GreaterThan(Context, __A, __temp__str__, __B, Log)) { return; } \
+	}
 // Assume const FString& Context has been defined
 #define CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(__A, __B) \
 	{ \
@@ -612,6 +618,7 @@ namespace NCsValid
 // Int
 #define CS_IS_INT_GREATER_THAN_CHECKED(__A, __B)
 #define CS_IS_INT_GREATER_THAN(__A, __B)
+#define CS_IS_INT_GREATER_THAN_EXIT(__A, __B)
 #define CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(__A, __B)
 #define CS_IS_INT_GREATER_THAN_OR_EQUAL(__A, __B)
 #define CS_IS_INT_GREATER_THAN_OR_EQUAL_EXIT(__A, __B)

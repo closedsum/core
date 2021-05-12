@@ -75,3 +75,59 @@ struct CSCORE_API FCsTraceResponse
 		OutOverlaps.Reset(OutOverlaps.Max());
 	}
 };
+
+namespace NCsTrace
+{
+	namespace NResponse
+	{
+		struct CSCORE_API FResponse
+		{
+		public:
+
+			/** */
+			int32 Index;
+
+			/** Whether the response should be queued for deallocation. */
+			bool bDeallocate;
+
+			/** Whether the trace successful hit something. */
+			bool bResult;
+
+			/** */
+			float ElapsedTime;
+
+			/** All hit results as a result of the trace. */
+			TArray<FHitResult> OutHits;
+
+			/** All overlap results as a result of the trace. */
+			TArray<FOverlapResult> OutOverlaps;
+
+			FResponse() :
+				Index(INDEX_NONE),
+				bDeallocate(false),
+				bResult(false),
+				ElapsedTime(0.0f),
+				OutHits(),
+				OutOverlaps()
+			{
+			}
+
+			void SetIndex(const int32& InIndex) { Index = InIndex; }
+
+			FORCEINLINE const int32& GetIndex() { return Index; }
+
+			FORCEINLINE void QueueDeallocate() { bDeallocate = true; }
+			FORCEINLINE bool ShouldDeallocate() const { return bDeallocate; }
+
+			FORCEINLINE void Reset()
+			{
+				bDeallocate = false;
+				bResult = false;
+				ElapsedTime = 0.0f;
+
+				OutHits.Reset(OutHits.Max());
+				OutOverlaps.Reset(OutOverlaps.Max());
+			}
+		};
+	}
+}

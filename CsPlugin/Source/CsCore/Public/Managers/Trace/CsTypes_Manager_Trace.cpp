@@ -20,8 +20,11 @@ namespace NCsManagerTraceCountInfo
 	}
 }
 
-void FCsManagerTraceCountInfo::Increment(FCsTraceRequest* Request)
+#define RequestType NCsTrace::NRequest::FRequest
+void FCsManagerTraceCountInfo::Increment(RequestType* Request)
 {
+#undef RequestType
+
 	using namespace NCsManagerTraceCountInfo::NCached;
 
 	const FString& Context = Str::Increment;
@@ -49,12 +52,14 @@ void FCsManagerTraceCountInfo::Increment(FCsTraceRequest* Request)
 // FCsManagerTracePendingRequests
 #pragma region
 
-FCsTraceRequest* FCsManagerTracePendingRequests::Get(const FTraceHandle& Handle) const
+#define RequestType NCsTrace::NRequest::FRequest
+
+RequestType* FCsManagerTracePendingRequests::Get(const FTraceHandle& Handle) const
 {
 	return RequestsByTraceHandle[Handle];
 }
 
-void FCsManagerTracePendingRequests::Add(FCsTraceRequest* Request)
+void FCsManagerTracePendingRequests::Add(RequestType* Request)
 {
 	const FTraceHandle& Handle = Request->Handle;
 
@@ -65,7 +70,7 @@ void FCsManagerTracePendingRequests::Add(FCsTraceRequest* Request)
 	{
 		const FCsUniqueObjectId& Id = UniqueObject->GetId();
 
-		TMap<FTraceHandle, FCsTraceRequest*>& Map = RequestsById.FindOrAdd(Id);
+		TMap<FTraceHandle, RequestType*>& Map = RequestsById.FindOrAdd(Id);
 
 		Map.Add(Handle, Request);
 	}
@@ -77,7 +82,7 @@ void FCsManagerTracePendingRequests::Add(FCsTraceRequest* Request)
 	RequestsByQuery[Request->Query].Add(Handle, Request);
 }
 
-void FCsManagerTracePendingRequests::Remove(FCsTraceRequest* Request)
+void FCsManagerTracePendingRequests::Remove(RequestType* Request)
 {
 	const FTraceHandle& Handle = Request->Handle;
 
@@ -88,7 +93,7 @@ void FCsManagerTracePendingRequests::Remove(FCsTraceRequest* Request)
 	{
 		const FCsUniqueObjectId& Id = UniqueObject->GetId();
 
-		if (TMap<FTraceHandle, FCsTraceRequest*>* Map = RequestsById.Find(Id))
+		if (TMap<FTraceHandle, RequestType*>* Map = RequestsById.Find(Id))
 		{
 			Map->Remove(Handle);
 		}
@@ -100,5 +105,7 @@ void FCsManagerTracePendingRequests::Remove(FCsTraceRequest* Request)
 	// Query
 	RequestsByQuery[Request->Query].Remove(Handle);
 }
+
+#undef RequestType
 
 #pragma endregion FCsManagerTracePendingRequests

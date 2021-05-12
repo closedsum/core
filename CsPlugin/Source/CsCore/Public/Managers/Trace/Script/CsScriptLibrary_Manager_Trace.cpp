@@ -25,7 +25,9 @@ bool UCsScriptLibrary_Manager_Trace::LineTraceSingleByChannel(UObject* WorldCont
 #endif // #if WITH_EDITOR
 	{
 		// Fill out Request
-		FCsTraceRequest* Request = Manager->AllocateRequest();
+		typedef NCsTrace::NRequest::FRequest RequestType;
+
+		RequestType* Request		  = Manager->AllocateRequest();
 		Request->Start				  = Start;
 		Request->End				  = End;
 		Request->Channel			  = Channel;
@@ -40,7 +42,9 @@ bool UCsScriptLibrary_Manager_Trace::LineTraceSingleByChannel(UObject* WorldCont
 		Request->Params.AddIgnoredActors(ActorsToIgnore);
 
 		// Check Response
-		if (FCsTraceResponse* Response = Manager->Trace(Request))
+		typedef NCsTrace::NResponse::FResponse ResponseType;
+
+		if (ResponseType* Response = Manager->Trace(Request))
 		{
 			if (Response->bResult)
 			{

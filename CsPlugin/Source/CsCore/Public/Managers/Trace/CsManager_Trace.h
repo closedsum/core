@@ -13,25 +13,43 @@
 #pragma region
 
 	// TraceRequest
-
-struct CSCORE_API FCsResource_TraceRequest : public TCsResourceContainer<FCsTraceRequest>
+namespace NCsTrace
 {
-};
+	namespace NRequest
+	{
+	#define RequestType NCsTrace::NRequest::FRequest
 
-struct CSCORE_API FCsManager_TraceRequest : public TCsManager_ResourceValueType_Fixed<FCsTraceRequest, FCsResource_TraceRequest, 0>
-{
-};
+		struct CSCORE_API FResource : public TCsResourceContainer<RequestType>
+		{
+		};
+
+		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<RequestType, FResource, 0>
+		{
+		};
+
+	#undef RequestType
+	}
+}
 
 	// TraceResponse
-
-struct CSCORE_API FCsResource_TraceResponse : public TCsResourceContainer<FCsTraceResponse>
+namespace NCsTrace
 {
-};
+	namespace NResponse
+	{
+	#define ResponseType NCsTrace::NResponse::FResponse
 
-struct CSCORE_API FCsManager_TraceResponse : public TCsManager_ResourceValueType_Fixed<FCsTraceResponse, FCsResource_TraceResponse, 0>
-{
+		struct CSCORE_API FResource : public TCsResourceContainer<ResponseType>
+		{
+		};
 
-};
+		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<ResponseType, FResource, 0>
+		{
+		};
+
+	#undef ResponseType
+	}
+}
+
 #pragma endregion Structs
 
 class ICsGetManagerTrace;
@@ -40,6 +58,9 @@ UCLASS()
 class CSCORE_API UCsManager_Trace : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+#define RequestType NCsTrace::NRequest::FRequest
+#define ResponseType NCsTrace::NResponse::FResponse
 
 public:
 
@@ -147,27 +168,29 @@ protected:
 
 private:
 
-	void IncrementTraceCount(FCsTraceRequest* Request);
+	void IncrementTraceCount(RequestType* Request);
 
 // Request
 #pragma region
 private:
 
-	FCsManager_TraceRequest Manager_Request;
+#define RequestManagerType NCsTrace::NRequest::FManager
+	RequestManagerType Manager_Request;
+#undef RequestManagerType
 
 public:
 	
-	FCsTraceRequest* AllocateRequest();
+	RequestType* AllocateRequest();
 
 private:
 
-	void DeallocateRequest(FCsTraceRequest* Request);
+	void DeallocateRequest(RequestType* Request);
 
 	FCsManagerTracePendingRequests PendingRequests;
 
-	bool ProcessAsyncRequest(FCsTraceRequest* Request);
+	bool ProcessAsyncRequest(RequestType* Request);
 
-	void DrawRequest(const FCsTraceRequest* Request) const;
+	void DrawRequest(const RequestType* Request) const;
 
 #pragma endregion Request
 
@@ -175,15 +198,17 @@ private:
 #pragma region
 private:
 
-	FCsManager_TraceResponse Manager_Response;
+#define ResponseManagerType NCsTrace::NResponse::FManager
+	ResponseManagerType Manager_Response;
+#undef ResponseManagerType
 
 public:
 
-	FCsTraceResponse* AllocateResponse();
+	ResponseType* AllocateResponse();
 
 private:
 
-	void DeallocateResponse(FCsTraceResponse* Response);
+	void DeallocateResponse(ResponseType* Response);
 
 public:
 
@@ -195,15 +220,18 @@ private:
 	void OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& Datum);
 	void OnOverlapResponse(const FTraceHandle& Handle, FOverlapDatum& Datum);
 
-	void DrawResponse(const FCsTraceRequest* Request, const FCsTraceResponse* Response) const;
+	void DrawResponse(const RequestType* Request, const ResponseType* Response) const;
 
 #pragma endregion Response
 
 public:
 
-	FCsTraceResponse* Trace(FCsTraceRequest* Request);
+	ResponseType* Trace(RequestType* Request);
 
 protected:
 
-	void LogTransaction(const FString& Context, const ECsTraceTransaction& Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response);
+	void LogTransaction(const FString& Context, const ECsTraceTransaction& Transaction, RequestType* Request, ResponseType* Response);
+
+#undef RequestType
+#undef ResponseType
 };

@@ -3,10 +3,13 @@
 #include "UniqueObject/CsTypes_UniqueObject.h"
 #pragma once
 
-struct FCsTraceRequest;
+// NCsTrace::NRequest::FRequest
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)
 
 struct CSCORE_API FCsManagerTraceCountInfo
 {
+#define RequestType NCsTrace::NRequest::FRequest
+
 public:
 
 	/** */
@@ -45,7 +48,7 @@ public:
 		}
 	}
 
-	void Increment(FCsTraceRequest* Reqeust);
+	void Increment(RequestType* Reqeust);
 
 	void Reset()
 	{
@@ -69,28 +72,33 @@ public:
 			Count = 0ll;
 		}
 	}
+
+#undef RequestType
 };
 
-struct FCsTraceRequest;
+// NCsTrace::NRequest::FRequest
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)
 
 struct CSCORE_API FCsManagerTracePendingRequests
 {
+#define RequestType NCsTrace::NRequest::FRequest
+
 public:
 
 	/** */
-	TMap<FTraceHandle, FCsTraceRequest*> RequestsByTraceHandle;
+	TMap<FTraceHandle, RequestType*> RequestsByTraceHandle;
 
 	/** */
-	TMap<FCsUniqueObjectId, TMap<FTraceHandle, FCsTraceRequest*>> RequestsById;
+	TMap<FCsUniqueObjectId, TMap<FTraceHandle, RequestType*>> RequestsById;
 
 	/** */
-	TMap<ECsTraceType, TMap<FTraceHandle, FCsTraceRequest*>> RequestsByType;
+	TMap<ECsTraceType, TMap<FTraceHandle, RequestType*>> RequestsByType;
 
 	/** */
-	TMap<ECsTraceMethod, TMap<FTraceHandle, FCsTraceRequest*>> RequestsByMethod;
+	TMap<ECsTraceMethod, TMap<FTraceHandle, RequestType*>> RequestsByMethod;
 
 	/** */
-	TMap<ECsTraceQuery, TMap<FTraceHandle, FCsTraceRequest*>> RequestsByQuery;
+	TMap<ECsTraceQuery, TMap<FTraceHandle, RequestType*>> RequestsByQuery;
 
 	FCsManagerTracePendingRequests() :
 		RequestsByTraceHandle(),
@@ -116,8 +124,10 @@ public:
 		}
 	}
 
-	FCsTraceRequest* Get(const FTraceHandle& Handle) const;
+	RequestType* Get(const FTraceHandle& Handle) const;
 
-	void Add(FCsTraceRequest* Request);
-	void Remove(FCsTraceRequest* Request);
+	void Add(RequestType* Request);
+	void Remove(RequestType* Request);
+
+#undef RequestType
 };

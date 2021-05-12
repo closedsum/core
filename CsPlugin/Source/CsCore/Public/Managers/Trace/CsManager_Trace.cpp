@@ -293,13 +293,16 @@ void UCsManager_Trace::Initialize()
 
 	// Request
 	{
+		typedef NCsTrace::NRequest::FResource RequestContainerType;
+		typedef NCsTrace::NRequest::FRequest RequestType;
+
 		Manager_Request.CreatePool(PoolSize);
 
-		const TArray<FCsResource_TraceRequest*>& Pool = Manager_Request.GetPool();
+		const TArray<RequestContainerType*>& Pool = Manager_Request.GetPool();
 
-		for (FCsResource_TraceRequest* Container : Pool)
+		for (RequestContainerType* Container : Pool)
 		{
-			FCsTraceRequest* R = Container->Get();
+			RequestType* R	   = Container->Get();
 			const int32& Index = Container->GetIndex();
 			R->SetIndex(Index);
 		}
@@ -308,11 +311,14 @@ void UCsManager_Trace::Initialize()
 	{
 		Manager_Response.CreatePool(PoolSize);
 
-		const TArray<FCsResource_TraceResponse*>& Pool = Manager_Response.GetPool();
+		typedef NCsTrace::NResponse::FResource ResponseContainerType;
+		typedef NCsTrace::NResponse::FResponse ResponseType;
 
-		for (FCsResource_TraceResponse* Container : Pool)
+		const TArray<ResponseContainerType*>& Pool = Manager_Response.GetPool();
+
+		for (ResponseContainerType* Container : Pool)
 		{
-			FCsTraceResponse* R = Container->Get();
+			ResponseType* R     = Container->Get();
 			const int32& Index  = Container->GetIndex();
 			R->SetIndex(Index);
 		}
@@ -375,16 +381,19 @@ void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 
 		int32 I = 0;
 
-		TCsDoubleLinkedList<FCsResource_TraceRequest*>* Current = Manager_Request.GetAllocatedHead();
-		TCsDoubleLinkedList<FCsResource_TraceRequest*>* Next	= Current;
+		typedef NCsTrace::NRequest::FResource RequestContainerType;
+		typedef NCsTrace::NRequest::FRequest RequestType;
+
+		TCsDoubleLinkedList<RequestContainerType*>* Current = Manager_Request.GetAllocatedHead();
+		TCsDoubleLinkedList<RequestContainerType*>* Next	= Current;
 
 		while (Next)
 		{
-			Current								= Next;
-			FCsResource_TraceRequest* Container = **Current;
-			Next								= Current->GetNextLink();
+			Current							= Next;
+			RequestContainerType* Container = **Current;
+			Next							= Current->GetNextLink();
 
-			FCsTraceRequest* Request = Container->Get();
+			RequestType* Request = Container->Get();
 
 			check(Request->IsValidChecked(Context));
 
@@ -396,7 +405,9 @@ void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 			{
 				CS_NON_SHIPPING_EXPR(LogTransaction(Context, ECsTraceTransaction::Complete, Request, Request->Response));
 
-				if (FCsTraceResponse* Response = Request->Response)
+				typedef NCsTrace::NResponse::FResponse ResponseType;
+
+				if (ResponseType* Response = Request->Response)
 				{
 					CS_NON_SHIPPING_EXPR(DrawResponse(Request, Response));
 					Request->OnResponse_Event.Broadcast(Response);
@@ -430,16 +441,19 @@ void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 	}
 	// Process Responses
 	{
-		TCsDoubleLinkedList<FCsResource_TraceResponse*>* Current = Manager_Response.GetAllocatedHead();
-		TCsDoubleLinkedList<FCsResource_TraceResponse*>* Next	= Current;
+		typedef NCsTrace::NResponse::FResource ResponseContainerType;
+		typedef NCsTrace::NResponse::FResponse ResponseType;
+
+		TCsDoubleLinkedList<ResponseContainerType*>* Current = Manager_Response.GetAllocatedHead();
+		TCsDoubleLinkedList<ResponseContainerType*>* Next	= Current;
 
 		while (Next)
 		{
-			Current							     = Next;
-			FCsResource_TraceResponse* Container = **Current;
-			Next								 = Current->GetNextLink();
+			Current							 = Next;
+			ResponseContainerType* Container = **Current;
+			Next							 = Current->GetNextLink();
 
-			FCsTraceResponse* Response = Container->Get();
+			ResponseType* Response = Container->Get();
 
 			// Check to deallocate Response
 			if (Response->ShouldDeallocate())
@@ -450,8 +464,11 @@ void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 	}
 }
 
-void UCsManager_Trace::IncrementTraceCount(FCsTraceRequest* Request)
+#define RequestType NCsTrace::NRequest::FRequest
+void UCsManager_Trace::IncrementTraceCount(RequestType* Request)
 {
+#undef RequestType
+
 	// Lifetime
 	LifetimeCountInfo.Increment(Request);
 	// Frame
@@ -461,23 +478,29 @@ void UCsManager_Trace::IncrementTraceCount(FCsTraceRequest* Request)
 // Request
 #pragma region
 
-FCsTraceRequest* UCsManager_Trace::AllocateRequest()
+#define RequestType NCsTrace::NRequest::FRequest
+
+RequestType* UCsManager_Trace::AllocateRequest()
 {
-	FCsResource_TraceRequest* Container = Manager_Request.Allocate();
+	typedef NCsTrace::NRequest::FResource RequestResourceType;
+
+	RequestResourceType* Container = Manager_Request.Allocate();
 
 	return Container->Get();
 }
 
-void UCsManager_Trace::DeallocateRequest(FCsTraceRequest* Request)
+void UCsManager_Trace::DeallocateRequest(RequestType* Request)
 {
-	if (FCsTraceResponse* Response = Request->Response)
+	typedef NCsTrace::NResponse::FResponse ResponseType;
+
+	if (ResponseType* Response = Request->Response)
 		DeallocateResponse(Response);
 
 	Request->Reset();
 	Manager_Request.DeallocateAt(Request->GetIndex());
 }
 
-bool UCsManager_Trace::ProcessAsyncRequest(FCsTraceRequest* Request)
+bool UCsManager_Trace::ProcessAsyncRequest(RequestType* Request)
 {
 	CS_SCOPED_TIMER_NAMESPACE_2(NCsManagerTrace, NScopedTimer, ProcessAsyncRequest);
 
@@ -621,7 +644,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(FCsTraceRequest* Request)
 	return true;
 }
 
-void UCsManager_Trace::DrawRequest(const FCsTraceRequest* Request) const
+void UCsManager_Trace::DrawRequest(const RequestType* Request) const
 {
 	if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceRequests))
 	{
@@ -635,20 +658,30 @@ void UCsManager_Trace::DrawRequest(const FCsTraceRequest* Request) const
 	}
 }
 
+#undef RequestType
+
 #pragma endregion Request
 
 // Response
 #pragma region
 
-FCsTraceResponse* UCsManager_Trace::AllocateResponse()
+#define ResponseType NCsTrace::NResponse::FResponse
+ResponseType* UCsManager_Trace::AllocateResponse()
 {
-	FCsResource_TraceResponse* Container = Manager_Response.Allocate();
+#undef ResponseType
+
+	typedef NCsTrace::NResponse::FResource ResponseContainerType;
+
+	ResponseContainerType* Container = Manager_Response.Allocate();
 
 	return Container->Get();
 }
 
-void UCsManager_Trace::DeallocateResponse(FCsTraceResponse* Response)
+#define ResponseType NCsTrace::NResponse::FResponse
+void UCsManager_Trace::DeallocateResponse(ResponseType* Response)
 {
+#undef ResponseType
+
 	Response->Reset();
 	Manager_Response.DeallocateAt(Response->GetIndex());
 }
@@ -659,10 +692,13 @@ void UCsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 
 	const FString& Context = Str::OnTraceResponse;
 
+	typedef NCsTrace::NRequest::FRequest RequestType;
+	typedef NCsTrace::NResponse::FResponse ResponseType;
+
 	// Get Request
-	FCsTraceRequest* Request = PendingRequests.Get(Handle);
+	RequestType* Request = PendingRequests.Get(Handle);
 	// Setup Response
-	FCsTraceResponse* Response = AllocateResponse();
+	ResponseType* Response = AllocateResponse();
 
 	Response->bResult	  = Datum.OutHits.Num() > CS_EMPTY && Datum.OutHits[CS_FIRST].bBlockingHit;
 	Response->ElapsedTime = CurrentWorld->GetTimeSeconds() - Request->StartTime;
@@ -702,10 +738,13 @@ void UCsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 
 void UCsManager_Trace::OnOverlapResponse(const FTraceHandle& Handle, FOverlapDatum& Datum)
 {
+	typedef NCsTrace::NRequest::FRequest RequestType;
+	typedef NCsTrace::NResponse::FResponse ResponseType;
+
 	// Get Request
-	FCsTraceRequest* Request = PendingRequests.Get(Handle);
+	RequestType* Request = PendingRequests.Get(Handle);
 	// Setup Response
-	FCsTraceResponse* Response = AllocateResponse();
+	ResponseType* Response = AllocateResponse();
 
 	Response->bResult	  = Datum.OutOverlaps.Num() > CS_EMPTY && Datum.OutOverlaps[CS_FIRST].bBlockingHit;
 	Response->ElapsedTime = CurrentWorld->GetTimeSeconds() - Request->StartTime;
@@ -737,8 +776,13 @@ void UCsManager_Trace::OnOverlapResponse(const FTraceHandle& Handle, FOverlapDat
 #endif // #if !UE_BUILD_SHIPPING
 }
 
-void UCsManager_Trace::DrawResponse(const FCsTraceRequest* Request, const FCsTraceResponse* Response) const
+#define RequestType NCsTrace::NRequest::FRequest
+#define ResponseType NCsTrace::NResponse::FResponse
+void UCsManager_Trace::DrawResponse(const RequestType* Request, const ResponseType* Response) const
 {
+#undef RequestType
+#undef ResponseType
+
 	if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceRequests))
 	{
 		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
@@ -755,7 +799,9 @@ void UCsManager_Trace::DrawResponse(const FCsTraceRequest* Request, const FCsTra
 
 #pragma endregion Response
 
-FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
+#define ResponseType NCsTrace::NResponse::FResponse
+#define RequestType NCsTrace::NRequest::FRequest
+ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 {
 	CS_SCOPED_TIMER_NAMESPACE_2(NCsManagerTrace, NScopedTimer, Trace);
 
@@ -806,7 +852,7 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 	{
 		CS_NON_SHIPPING_EXPR(DrawRequest(Request));
 
-		FCsTraceResponse* Response = AllocateResponse();
+		ResponseType* Response = AllocateResponse();
 		Response->QueueDeallocate();
 
 		Response->ElapsedTime = CurrentWorld->GetTimeSeconds() - Request->StartTime;
@@ -1031,9 +1077,16 @@ FCsTraceResponse* UCsManager_Trace::Trace(FCsTraceRequest* Request)
 	DeallocateRequest(Request);
 	return nullptr;
 }
+#undef ResponseType
+#undef RequestType
 
-void UCsManager_Trace::LogTransaction(const FString& Context, const ECsTraceTransaction& Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response)
+#define RequestType NCsTrace::NRequest::FRequest
+#define ResponseType NCsTrace::NResponse::FResponse
+void UCsManager_Trace::LogTransaction(const FString& Context, const ECsTraceTransaction& Transaction, RequestType* Request, ResponseType* Response)
 {
+#undef RequestType
+#undef ResponseType
+
 	if (CS_CVAR_LOG_IS_SHOWING(LogManagerTraceTransactions))
 	{
 		const FString& TransactionAsString = NCsTraceTransaction::ToActionString(Transaction);

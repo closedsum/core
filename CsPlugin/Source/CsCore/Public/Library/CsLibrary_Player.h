@@ -61,12 +61,12 @@ namespace NCsPlayer
 		{
 		public:
 
-			static APlayerController* GetFirstLocal(const FString& Context, UWorld* World, void(*Log)(const FString&) = &FCsLog::Warning);
+			static APlayerController* GetFirstLocal(const FString& Context, UWorld* World);
 
 			template<typename T>
-			FORCEINLINE static T* GetFirstLocal(const FString& Context, UWorld* World, void(*Log)(const FString&) = &FCsLog::Warning)
+			FORCEINLINE static T* GetFirstLocal(const FString& Context, UWorld* World)
 			{
-				return Cast<T>(GetFirstLocal(Context, World, Log));
+				return Cast<T>(GetFirstLocal(Context, World));
 			}
 
 			static APlayerController* GetFirstLocal(UWorld* World);
@@ -77,22 +77,7 @@ namespace NCsPlayer
 				return Cast<T>(GetFirstLocal(World));
 			}
 
-			static APlayerController* GetFirstLocal(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
-
-			template<typename T>
-			FORCEINLINE static T* GetFirstLocal(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
-			{
-				return Cast<T>(GetFirstLocal(Context, WorldContext, Log));
-			}
-
-			FORCEINLINE static APlayerController* GetFirstLocalChecked(const FString& Context, UWorld* World)
-			{
-				APlayerController* PC = GetFirstLocal(World);
-
-				checkf(PC, TEXT("%s: Failed to get PlayerController from World."), *Context);
-
-				return PC;
-			}
+			static APlayerController* GetFirstLocalChecked(const FString& Context, UWorld* World);
 
 			FORCEINLINE static APlayerController* GetFirstLocalChecked(UWorld* World)
 			{
@@ -119,7 +104,31 @@ namespace NCsPlayer
 				return GetFirstLocalChecked<T>(Str::GetFirstLocalChecked, World);
 			}
 
+			static APlayerController* GetSafeFirstLocal(const FString& Context, UWorld* World, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			template<typename T>
+			FORCEINLINE static T* GetSafeFirstLocal(const FString& Context, UWorld* World, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				return Cast<T>(GetSafeFirstLocal(Context, World, Log));
+			}
+
+			static APlayerController* GetSafeFirstLocal(UWorld* World);
+
+			template<typename T>
+			FORCEINLINE static T* GetSafeFirstLocal(UWorld* World)
+			{
+				return Cast<T>(GetSafeFirstLocal(World));
+			}
+
 			static APlayerController* GetFirstLocalChecked(const FString& Context, const UObject* WorldContext);
+
+			static APlayerController* GetSafeFirstLocal(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			template<typename T>
+			FORCEINLINE static T* GetSafeFirstLocal(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				return Cast<T>(GetSafeFirstLocal(Context, WorldContext, Log));
+			}
 
 			static APlayerController* GetLocal(const FString& Context, UWorld* World, const int32& ControllerId);
 

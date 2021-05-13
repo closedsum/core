@@ -81,15 +81,16 @@ namespace NCsPlayer
 				{
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetFirstLocal);
 					CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetFirstLocalChecked);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetSafeFirstLocal);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetSafeLocal);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetAllLocal);
 				}
 			}
 		}
 
-		APlayerController* FLibrary::GetFirstLocal(const FString& Context, UWorld* World, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		APlayerController* FLibrary::GetFirstLocal(const FString& Context, UWorld* World)
 		{
-			CS_IS_PTR_NULL_RET_NULL(World)
+			CS_IS_PTR_NULL_CHECKED(World)
 
 			return GEngine->GetFirstLocalPlayerController(World);
 		}
@@ -100,19 +101,34 @@ namespace NCsPlayer
 
 			const FString& Context = Str::GetFirstLocal;
 
-			return GetFirstLocal(Context, World, nullptr);
+			return GetFirstLocal(Context, World);
 		}
 
-		APlayerController* FLibrary::GetFirstLocal(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		APlayerController* FLibrary::GetFirstLocalChecked(const FString& Context, UWorld* World)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
+			CS_IS_PTR_NULL_CHECKED(World)
 
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+			APlayerController* PC = GEngine->GetFirstLocalPlayerController(World);
 
-			if (!World)
-				return nullptr;
+			CS_IS_PTR_NULL_CHECKED(PC)
 
-			return GetFirstLocal(World);
+			return PC;
+		}
+
+		APlayerController* FLibrary::GetSafeFirstLocal(const FString& Context, UWorld* World, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_PTR_NULL_RET_NULL(World)
+
+			return GEngine->GetFirstLocalPlayerController(World);
+		}
+
+		APlayerController* FLibrary::GetSafeFirstLocal(UWorld* World)
+		{
+			using namespace NCsPlayer::NController::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeFirstLocal;
+
+			return GetSafeFirstLocal(Context, World, nullptr);
 		}
 
 		APlayerController* FLibrary::GetFirstLocalChecked(const FString& Context, const UObject* WorldContext)
@@ -122,6 +138,15 @@ namespace NCsPlayer
 			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 			return GetFirstLocalChecked(Context, World);
+		}
+
+		APlayerController* FLibrary::GetSafeFirstLocal(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/) 
+		{
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+
+			return GetSafeFirstLocal(Context, World, Log);
 		}
 
 		APlayerController* FLibrary::GetLocal(const FString& Context, UWorld* World, const int32& ControllerId)

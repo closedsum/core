@@ -72,7 +72,7 @@ namespace NCsInput
 		{
 			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
 
-			if (APlayerController* PC = PlayerControllerLibrary::GetFirstLocal(Context, World, Log))
+			if (APlayerController* PC = PlayerControllerLibrary::GetSafeFirstLocal(Context, World, Log))
 			{
 				if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
 				{
@@ -99,7 +99,7 @@ namespace NCsInput
 		{
 			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
 
-			if (APlayerController* PC = PlayerControllerLibrary::GetFirstLocal(Context, WorldContext, Log))
+			if (APlayerController* PC = PlayerControllerLibrary::GetSafeFirstLocal(Context, WorldContext, Log))
 			{
 				if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
 				{

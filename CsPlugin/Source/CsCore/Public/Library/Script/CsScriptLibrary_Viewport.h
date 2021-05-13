@@ -34,7 +34,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Viewport", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
 	static FIntPoint GetSize(const FString& Context, const UObject* WorldContextObject);
 
-
 	/**
 	* Safely get the intersection between the de-projection of the screen position to a world ray (location and direction)
 	* with a world plane (location and normal).

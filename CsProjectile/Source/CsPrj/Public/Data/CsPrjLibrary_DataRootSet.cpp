@@ -8,5 +8,5 @@
 
 const FCsPrjDataRootSet& FCsPrjLibrary_DataRootSet::GetChecked(const FString& Context, UObject* ContextRoot)
 {
-	return FCsLibrary_DataRootSet::GetChecked<FCsPrjDataRootSet, ICsPrjGetDataRootSet, &ICsPrjGetDataRootSet::GetCsPrjDataRootSet>(Context, ContextRoot);
+	return NCsDataRootSet::FLibrary::GetChecked<FCsPrjDataRootSet, ICsPrjGetDataRootSet, &ICsPrjGetDataRootSet::GetCsPrjDataRootSet>(Context, ContextRoot);
 }

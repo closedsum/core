@@ -244,7 +244,7 @@ public:
 	*
 	* return
 	*/
-	TBaseDelegate<FCsProjectilePooled*, const FECsProjectile&>& GetConstructContainer_Impl();
+	TDelegate<FCsProjectilePooled*(const FECsProjectile&)>& GetConstructContainer_Impl();
 
 	/**
 	*
@@ -259,7 +259,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsProjectilePooled*, const ConstructParamsType&>& GetOnConstructObject_Event(const FECsProjectile& Type);
+	TMulticastDelegate<void(const FCsProjectilePooled*, const ConstructParamsType&)>& GetOnConstructObject_Event(const FECsProjectile& Type);
 
 		// Add
 #pragma region

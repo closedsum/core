@@ -6,8 +6,8 @@
 #include "Managers/Projectile/CsCVars_Projectile.h"
 // Library
 #include "Library/CsLibrary_Common.h"
-#include "Library/CsLibrary_Material.h"
-#include "Managers/Pool/Cache/CsLibrary_PooledObjectCache.h"
+#include "Material/CsLibrary_Material.h"
+#include "Managers/Pool/Cache/CsLibrary_Cache_PooledObject.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Data/CsLibrary_Data_Projectile.h"
 #include "Payload/CsLibrary_Payload_Projectile.h"
@@ -333,9 +333,10 @@ void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
 		// TODO: Need to determine best place to set LifeTime from Data
 
 		// Set Data on Cache
-		 typedef NCsProjectile::NCache::FImplPooled CacheImplType;
+		typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
+		typedef NCsProjectile::NCache::FImplPooled CacheImplType;
 
-		CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, Cache);
+		CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 		CacheImpl->SetData(Data);
 	}
@@ -493,9 +494,10 @@ void ACsProjectilePooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 	const FString& Context = Str::Update;
 
+	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
 	typedef NCsProjectile::NCache::FImplPooled CacheImplType;
 
-	CacheImplType* CacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, Cache);
+	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Update(DeltaTime);
 }
@@ -545,11 +547,12 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	if (TrailFXPooled)
 	{
 		// Deactivate the Trail FX
+		typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
 		typedef NCsPooledObject::NCache::ICache CacheType;
 		typedef NCsFX::NCache::FImpl CacheImplType;
 
 		CacheType* FXCache		   = TrailFXPooled->GetCache();
-		CacheImplType* FXCacheImpl = FCsLibrary_PooledObjectCache::PureStaticCastChecked<CacheImplType>(Context, FXCache);
+		CacheImplType* FXCacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, FXCache);
 
 		FXCacheImpl->QueueDeallocate();
 
@@ -574,7 +577,7 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	// Mesh
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
-	MaterialLibrary::ClearOverrideMaterials(MeshComponent);
+	MaterialLibrary::ClearOverride(MeshComponent);
 	MeshComponent->SetStaticMesh(nullptr);
 	MeshComponent->SetVisibility(false);
 	MeshComponent->SetHiddenInGame(true);
@@ -621,9 +624,10 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 	PayloadType* ProjectilePayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	// Get Projectile Cache
+	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
 	typedef NCsProjectile::NCache::ICache CacheType;
 
-	CacheType* ProjectileCache = FCsLibrary_PooledObjectCache::GetInterfaceChecked<CacheType>(Context, Cache);
+	CacheType* ProjectileCache = PooledCacheLibrary::GetInterfaceChecked<CacheType>(Context, Cache);
 
 	// Set Damage Value if the projectile supports damage
 	OnLaunch_SetModifiers(ProjectilePayload);

@@ -15,6 +15,7 @@ public class CsPrj : ModuleRules
                     "CoreUObject",
                     "Engine",
                     "AssetRegistry",
+                    "DeveloperSettings",
                     "CsCore",
                 }
             );

@@ -38,7 +38,7 @@ namespace NCsProjectile
 
 			void FData::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 			{
-				UObject* DataRootSetImpl			 = FCsLibrary_DataRootSet::GetImplChecked(Context, MyRoot);
+				UObject* DataRootSetImpl			 = NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
 				const FCsPrjDataRootSet& DataRootSet = FCsPrjLibrary_DataRootSet::GetChecked(Context, MyRoot);
 
 				for (const FCsProjectileSettings_DataTable_Projectiles& Projectiles : DataRootSet.Projectiles)
@@ -61,7 +61,7 @@ namespace NCsProjectile
 
 			bool FData::HasEmulatedDataInterfaces(const FString& Context, const int32& Index) const
 			{
-				UObject* DataRootSetImpl			 = FCsLibrary_DataRootSet::GetImplChecked(Context, MyRoot);
+				UObject* DataRootSetImpl			 = NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
 				const FCsPrjDataRootSet& DataRootSet = FCsPrjLibrary_DataRootSet::GetChecked(Context, MyRoot);
 
 				checkf(Index < DataRootSet.Projectiles.Num(), TEXT("%s: Index < %s.GetCsPrjDataRootSet().Projectiles.Num() (%d >= %d)."), *Context, *(DataRootSetImpl->GetName()), DataRootSet.Projectiles.Num());
@@ -79,16 +79,18 @@ namespace NCsProjectile
 
 				checkf(EmulatedDataInterfaces.Find(NCsProjectileData::Projectile), TEXT("%s: Emulated Data Interfaces must include ICsData_Projecitle."), *Context);
 
+				typedef NCsProperty::FLibrary PropertyLibrary;
+
 				// ICsData_Projectile
 				bool Emulates_ICsDataProjectile = true;
 					// LifeTime
-				FFloatProperty* LifeTimeProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<FFloatProperty>(Context, RowStruct, Name::LifeTime, NCsProjectileData::Projectile.GetDisplayName());
+				FFloatProperty* LifeTimeProperty = PropertyLibrary::FindPropertyByNameForInterfaceChecked<FFloatProperty>(Context, RowStruct, Name::LifeTime, NCsProjectileData::Projectile.GetDisplayName());
 					// InitialSpeed
-				FFloatProperty* InitialSpeedProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<FFloatProperty>(Context, RowStruct, Name::InitialSpeed, NCsProjectileData::Projectile.GetDisplayName());
+				FFloatProperty* InitialSpeedProperty = PropertyLibrary::FindPropertyByNameForInterfaceChecked<FFloatProperty>(Context, RowStruct, Name::InitialSpeed, NCsProjectileData::Projectile.GetDisplayName());
 					// MaxSpeed
-				FFloatProperty* MaxSpeedProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<FFloatProperty>(Context, RowStruct, Name::MaxSpeed, NCsProjectileData::Projectile.GetDisplayName());
+				FFloatProperty* MaxSpeedProperty = PropertyLibrary::FindPropertyByNameForInterfaceChecked<FFloatProperty>(Context, RowStruct, Name::MaxSpeed, NCsProjectileData::Projectile.GetDisplayName());
 					// GravityScale
-				FFloatProperty* GravityScaleProperty = FCsLibrary_Property::FindPropertyByNameForInterfaceChecked<FFloatProperty>(Context, RowStruct, Name::GravityScale, NCsProjectileData::Projectile.GetDisplayName());
+				FFloatProperty* GravityScaleProperty = PropertyLibrary::FindPropertyByNameForInterfaceChecked<FFloatProperty>(Context, RowStruct, Name::GravityScale, NCsProjectileData::Projectile.GetDisplayName());
 
 				// ICsData_ProjectileCollision
 				bool Emulates_ICsData_ProjectileCollision = false;
@@ -111,7 +113,7 @@ namespace NCsProjectile
 
 				if (EmulatedDataInterfaces.Find(NCsProjectileData::ProjectileCollision))
 				{
-					CollisionPresetProperty = FCsLibrary_Property::FindStructPropertyByNameForInterfaceChecked<FCsCollisionPreset>(Context, RowStruct, Name::GravityScale, NCsProjectileData::ProjectileCollision.GetDisplayName());
+					CollisionPresetProperty = PropertyLibrary::FindStructPropertyByNameForInterfaceChecked<FCsCollisionPreset>(Context, RowStruct, Name::GravityScale, NCsProjectileData::ProjectileCollision.GetDisplayName());
 				}
 
 				// Get Manager_Data
@@ -160,25 +162,25 @@ namespace NCsProjectile
 
 						// LifeTime
 						{
-							float* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<float>(Context, LifeTimeProperty, RowPtr);
+							float* Value = PropertyLibrary::ContainerPtrToValuePtrChecked<float>(Context, LifeTimeProperty, RowPtr);
 
 							Data->SetLifeTime(Value);
 						}
 						// InitialSpeed
 						{
-							float* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<float>(Context, InitialSpeedProperty, RowPtr);
+							float* Value = PropertyLibrary::ContainerPtrToValuePtrChecked<float>(Context, InitialSpeedProperty, RowPtr);
 
 							Data->SetInitialSpeed(Value);
 						}
 						// MaxSpeed
 						{
-							float* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<float>(Context, MaxSpeedProperty, RowPtr);
+							float* Value = PropertyLibrary::ContainerPtrToValuePtrChecked<float>(Context, MaxSpeedProperty, RowPtr);
 
 							Data->SetMaxSpeed(Value);
 						}
 						// GravityScale
 						{
-							float* Value = FCsLibrary_Property::ContainerPtrToValuePtrChecked<float>(Context, GravityScaleProperty, RowPtr);
+							float* Value = PropertyLibrary::ContainerPtrToValuePtrChecked<float>(Context, GravityScaleProperty, RowPtr);
 
 							Data->SetGravityScale(Value);
 						}
@@ -213,7 +215,7 @@ namespace NCsProjectile
 
 			const TSet<FECsProjectileData>& FData::GetEmulatedDataInterfaces(const FString& Context, const int32& Index)
 			{
-				UObject* DataRootSetImpl			 = FCsLibrary_DataRootSet::GetImplChecked(Context, MyRoot);
+				UObject* DataRootSetImpl			 = NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
 				const FCsPrjDataRootSet& DataRootSet = FCsPrjLibrary_DataRootSet::GetChecked(Context, MyRoot);
 
 				return DataRootSet.Projectiles[Index].EmulatedDataInterfaces;

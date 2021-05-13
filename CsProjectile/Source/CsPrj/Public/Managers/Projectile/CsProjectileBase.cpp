@@ -6,7 +6,7 @@
 #include "Managers/Projectile/CsCVars_Projectile.h"
 // Library
 #include "Library/CsLibrary_Common.h"
-#include "Library/CsLibrary_Material.h"
+#include "Material/CsLibrary_Material.h"
 #include "Managers/Projectile/CsProjectileMovementComponent.h"
 
 // Data
@@ -448,7 +448,7 @@ void ACsProjectileBase::DeAllocate()
 	// Mesh
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
-	MaterialLibrary::ClearOverrideMaterials(MeshComponent);
+	MaterialLibrary::ClearOverride(MeshComponent);
 	MeshComponent->SetStaticMesh(nullptr);
 	MeshComponent->SetVisibility(false);
 	MeshComponent->SetHiddenInGame(true);

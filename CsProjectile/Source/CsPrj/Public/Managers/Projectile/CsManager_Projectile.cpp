@@ -512,7 +512,7 @@ void UCsManager_Projectile::CreatePool(const FECsProjectile& Type, const int32& 
 	Internal.CreatePool(Type, Size);
 }
 
-TBaseDelegate<FCsProjectilePooled*, const FECsProjectile&>& UCsManager_Projectile::GetConstructContainer_Impl()
+TDelegate<FCsProjectilePooled*(const FECsProjectile&)>& UCsManager_Projectile::GetConstructContainer_Impl()
 {
 	return Internal.ConstructContainer_Impl;
 }
@@ -523,7 +523,7 @@ FCsProjectilePooled* UCsManager_Projectile::ConstructContainer(const FECsProject
 }
 
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-TMulticastDelegate<void, const FCsProjectilePooled*, const ConstructParamsType&>& UCsManager_Projectile::GetOnConstructObject_Event(const FECsProjectile& Type)
+TMulticastDelegate<void(const FCsProjectilePooled*, const ConstructParamsType&)>& UCsManager_Projectile::GetOnConstructObject_Event(const FECsProjectile& Type)
 {
 #undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);

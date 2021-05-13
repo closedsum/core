@@ -2,8 +2,11 @@
 #include "Library/CsLibrary_Viewport.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Player.h"
+#include "Library/CsLibrary_Math.h"
 // Player
 #include "GameFramework/PlayerController.h"
 #include "Engine/LocalPlayer.h"
@@ -19,6 +22,22 @@ namespace NCsViewport
 	{
 		namespace NPlayer
 		{
+			namespace NLibrary
+			{
+				namespace NCached
+				{
+					namespace Str
+					{
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsViewport::NLocal::NPlayer::FLibrary, CanSafeProjectWorldToScreen);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsViewport::NLocal::NPlayer::FLibrary, CanSafeDeprojectScreenToWorld);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsViewport::NLocal::NPlayer::FLibrary, SafeDeprojectScreenToWorld);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsViewport::NLocal::NPlayer::FLibrary, GetSafeViewport);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsViewport::NLocal::NPlayer::FLibrary, GetSafeSize);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsViewport::NLocal::NPlayer::FLibrary, GetSafeScreenWorldIntersection);
+					}
+				}
+			}
+
 			bool FLibrary::CanProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext)
 			{
 				typedef NCsPlayer::FLibrary PlayerLibrary;
@@ -30,6 +49,32 @@ namespace NCsViewport
 				return true;
 			}
 
+			bool FLibrary::CanSafeProjectWorldToScreen(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				typedef NCsPlayer::FLibrary PlayerLibrary;
+
+				ULocalPlayer* LocalPlayer = PlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
+
+				if (!LocalPlayer)
+					return false;
+
+				if (!LocalPlayer->ViewportClient)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName())));
+					return false;
+				}
+				return true;
+			}
+
+			bool FLibrary::CanSafeProjectWorldToScreen(const UObject* WorldContext)
+			{
+				using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
+
+				const FString& Context = Str::CanSafeProjectWorldToScreen;
+
+				return CanSafeProjectWorldToScreen(Context, WorldContext, nullptr);
+			}
+
 			bool FLibrary::CanDeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext)
 			{
 				typedef NCsPlayer::FLibrary PlayerLibrary;
@@ -39,6 +84,32 @@ namespace NCsViewport
 				checkf(LocalPlayer->ViewportClient, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
 
 				return true;
+			}
+
+			bool FLibrary::CanSafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				typedef NCsPlayer::FLibrary PlayerLibrary;
+
+				ULocalPlayer* LocalPlayer = PlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
+
+				if (!LocalPlayer)
+					return false;
+
+				if (!LocalPlayer->ViewportClient)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName())));
+					return false;
+				}
+				return true;
+			}
+
+			bool FLibrary::CanSafeDeprojectScreenToWorld(const UObject* WorldContext)
+			{
+				using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
+
+				const FString& Context = Str::CanSafeDeprojectScreenToWorld;
+
+				return CanSafeDeprojectScreenToWorld(Context, WorldContext, nullptr);
 			}
 
 			bool FLibrary::DeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& WorldPosition, FVector& WorldDirection)
@@ -72,6 +143,59 @@ namespace NCsViewport
 				return false;
 			}
 
+			bool FLibrary::SafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& WorldPosition, FVector& WorldDirection, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				WorldPosition = FVector::ZeroVector;
+				WorldDirection = FVector::ZeroVector;
+
+				if (!CanSafeDeprojectScreenToWorld(Context, WorldContext, Log))
+					return false;
+
+				typedef NCsPlayer::FLibrary PlayerLibrary;
+
+				ULocalPlayer* LocalPlayer = PlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
+
+				if (!LocalPlayer)
+					return false;
+
+				UGameViewportClient* GVC = LocalPlayer->ViewportClient;
+
+				if (!GVC)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName())));
+					return false;
+				}
+
+				FViewport* Viewport = GVC->Viewport;
+
+				if (!Viewport)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Viewport from ViewportClient: %s for LocalPlayer: %s."), *Context, *(GVC->GetName()), *(LocalPlayer->GetName())));
+					return false;
+				}
+
+				// Get the projection data
+				FSceneViewProjectionData ProjectionData;
+				if (LocalPlayer->GetProjectionData(Viewport, eSSP_FULL, /*out*/ ProjectionData))
+				{
+					FMatrix const InvViewProjMatrix = ProjectionData.ComputeViewProjectionMatrix().InverseFast();
+					FSceneView::DeprojectScreenToWorld(ScreenPosition, ProjectionData.GetConstrainedViewRect(), InvViewProjMatrix, /*out*/ WorldPosition, /*out*/ WorldDirection);
+					return true;
+				}
+
+				// Something went wrong, zero things and return false
+				return false;
+			}
+
+			bool FLibrary::SafeDeprojectScreenToWorld(const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& WorldPosition, FVector& WorldDirection)
+			{
+				using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
+
+				const FString& Context = Str::CanSafeDeprojectScreenToWorld;
+
+				return SafeDeprojectScreenToWorld(Context, WorldContext, ScreenPosition, WorldPosition, WorldDirection);
+			}
+
 			FSceneViewport* FLibrary::GetViewportChecked(const FString& Context, const UObject* WorldContext)
 			{
 				typedef NCsPlayer::FLibrary PlayerLibrary;
@@ -88,11 +212,110 @@ namespace NCsViewport
 				return SV;
 			}
 
+			FSceneViewport* FLibrary::GetSafeViewport(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				typedef NCsPlayer::FLibrary PlayerLibrary;
+
+				ULocalPlayer* LocalPlayer = PlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
+
+				if (!LocalPlayer)
+					return nullptr;
+
+				UGameViewportClient* GVC = LocalPlayer->ViewportClient;
+
+				if (!GVC)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName())));
+					return nullptr;
+				}
+
+				FSceneViewport* SV = GVC->GetGameViewport();
+
+				if (!SV)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed get Viewport from LocalPlayer: %s with ViewportClient: %s."), *Context, *(LocalPlayer->GetName()), *(GVC->GetName())));
+				}
+				return SV;
+			}
+
+			FSceneViewport* FLibrary::GetSafeViewport(const UObject* WorldContext)
+			{
+				using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
+
+				const FString& Context = Str::GetSafeViewport;
+
+				return GetSafeViewport(Context, WorldContext, nullptr);
+			}
+
 			FIntPoint FLibrary::GetSizeChecked(const FString& Context, const UObject* WorldContext)
 			{
 				FSceneViewport* SV = GetViewportChecked(Context, WorldContext);
 
 				return SV->GetSizeXY();
+			}
+
+			FIntPoint FLibrary::GetSafeSize(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				FSceneViewport* SV = GetSafeViewport(Context, WorldContext, Log);
+
+				if (!SV)
+					return FIntPoint::NoneValue;
+
+				return SV->GetSizeXY();
+			}
+
+			FIntPoint FLibrary::GetSafeSize(const UObject* WorldContext)
+			{
+				using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
+
+				const FString& Context = Str::GetSafeSize;
+
+				return GetSafeSize(Context, WorldContext, nullptr);
+			}
+
+			bool FLibrary::GetScreenWorldIntersectionChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection)
+			{
+				FVector WorldPosition;
+				FVector WorldDirection;
+				bool Success = DeprojectScreenToWorldChecked(Context, WorldContext, ScreenPosition, WorldPosition, WorldDirection);
+
+				checkf(Success, TEXT("%s: Failed to deproject ScreenPosition: %s."), *Context, *(ScreenPosition.ToString()));
+
+				typedef NCsMath::FLibrary MathLibrary;
+
+				FCsRay Ray(WorldPosition, WorldDirection, true);
+				float T;
+
+				return MathLibrary::RayPlaneIntersectionChecked(Context, Ray, Plane, T, OutIntersection);
+			}
+
+			bool FLibrary::GetSafeScreenWorldIntersection(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				FVector WorldPosition = FVector::ZeroVector;
+				FVector WorldDirection = FVector::ZeroVector;
+				bool Success = SafeDeprojectScreenToWorld(Context, WorldContext, ScreenPosition, WorldPosition, WorldDirection, Log);
+
+				if (!Success)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to deproject ScreenPosition: %s."), *Context, *(ScreenPosition.ToString())));
+					return false;
+				}
+
+				typedef NCsMath::FLibrary MathLibrary;
+
+				FCsRay Ray(WorldPosition, WorldDirection, true);
+				float T;
+
+				return MathLibrary::SafeRayPlaneIntersection(Context, Ray, Plane, T, OutIntersection, Log);
+			}
+
+			bool FLibrary::GetSafeScreenWorldIntersection(const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection)
+			{
+				using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
+
+				const FString& Context = Str::GetSafeScreenWorldIntersection;
+
+				return GetSafeScreenWorldIntersection(Context, WorldContext, ScreenPosition, Plane, OutIntersection, nullptr);
 			}
 		}
 	}

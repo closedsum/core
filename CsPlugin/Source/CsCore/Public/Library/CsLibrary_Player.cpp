@@ -21,6 +21,17 @@
 
 namespace NCsPlayer
 {
+	namespace NLibrary
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::FLibrary, GetSafeFirstLocal);
+			}
+		}
+	}
+
 	ULocalPlayer* FLibrary::GetFirstLocalChecked(const FString& Context, const UObject* WorldContext)
 	{
 		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
@@ -31,6 +42,33 @@ namespace NCsPlayer
 		checkf(LocalPlayer, TEXT("%s: Failed to get LocalPlayer from GameInstance: %s."), *Context, *(GameInstance->GetName()));
 
 		return LocalPlayer;
+	}
+
+	ULocalPlayer* FLibrary::GetSafeFirstLocal(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+		UGameInstance* GameInstance = GameInstanceLibrary::GetSafe(Context, WorldContext, Log);
+
+		if (!GameInstance)
+			return nullptr;
+
+		ULocalPlayer* LocalPlayer = GameInstance->GetFirstGamePlayer();
+
+		if (!LocalPlayer)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get LocalPlayer from GameInstance: %s."), *Context, *(GameInstance->GetName())));
+		}
+		return LocalPlayer;
+	}
+
+	ULocalPlayer* FLibrary::GetSafeFirstLocal(const UObject* WorldContext)
+	{
+		using namespace NCsPlayer::NLibrary::NCached;
+
+		const FString& Context = Str::GetSafeFirstLocal;
+
+		return GetSafeFirstLocal(Context, WorldContext, nullptr);
 	}
 
 	namespace NController

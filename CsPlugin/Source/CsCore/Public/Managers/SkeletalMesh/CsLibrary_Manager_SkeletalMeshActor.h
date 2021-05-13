@@ -10,8 +10,8 @@ class UObject;
 class UCsManager_SkeletalMeshActor;
 struct FCsSkeletalMeshActorPooled;
 
-// NCsPooledObject::NPayload::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, FImpl)
+// NCsPooledObject::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 // NCsSkeletalMeshActor::NAnim::NSequence::FOneShot
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsSkeletalMeshActor, NAnim, NSequence, FOneShot)
 // NCsSkeletalMeshActor::NAnim::NMontage::FOneShot

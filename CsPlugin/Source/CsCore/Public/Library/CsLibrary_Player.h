@@ -17,12 +17,31 @@ namespace NCsPlayer
 	public:
 
 		/**
-		*
+		* Get the first local player.
 		*
 		* @param Context		The calling context.
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* return				Local Player
 		*/
 		static ULocalPlayer* GetFirstLocalChecked(const FString& Context, const UObject* WorldContext);
+
+		/**
+		* Safely get the first local player.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Log
+		* return				Local Player
+		*/
+		static ULocalPlayer* GetSafeFirstLocal(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Safely get the first local player.
+		*
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* return				Local Player
+		*/
+		static ULocalPlayer* GetSafeFirstLocal(const UObject* WorldContext);
 	};
 
 	namespace NController

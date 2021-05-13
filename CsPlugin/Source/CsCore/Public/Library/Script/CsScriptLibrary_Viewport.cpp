@@ -2,6 +2,8 @@
 #include "Library/Script/CsScriptLibrary_Viewport.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Viewport.h"
 

@@ -2,6 +2,8 @@
 #include "Managers/Input/Script/CsScriptLibrary_Mouse.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Managers/Input/CsLibrary_Input.h"
 

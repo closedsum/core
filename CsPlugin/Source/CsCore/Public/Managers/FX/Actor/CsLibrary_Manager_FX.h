@@ -100,10 +100,10 @@ namespace NCsFX
 			static UCsManager_FX_Actor* GetSafe(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
-			* Safely get the reference to UCsManager_Time from a WorldContext.
+			* Safely get the reference to UCsManager_FX_Actor from a WorldContext.
 			*
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* return				UCsManager_Time.
+			* return				UCsManager_FX_Actor.
 			*/
 			static UCsManager_FX_Actor* GetSafe(UObject* WorldContext);
 

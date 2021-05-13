@@ -6,32 +6,41 @@
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Sound/CsManager_Sound.h"
-// Game
-#include "GameFramework/GameStateBase.h"
-// World
-#include "Engine/World.h"
 
 #if WITH_EDITOR
 // Library
-#include "Library/CsLibrary_World.h"
-// Engine
-#include "Engine/Engine.h"
+#include "Game/CsLibrary_GameState.h"
 #endif // #if WITH_EDITOR
 
 namespace NCsSound
 {
 	namespace NManager
 	{
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
+		namespace NLibrary
 		{
-			CS_IS_PTR_NULL_CHECKED(WorldContext)
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSound::NManager::FLibrary, GetSafeContextRoot);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSound::NManager::FLibrary, GetSafe);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSound::NManager::FLibrary, SafeSpawn);
+				}
+			}
+		}
 
-			UWorld* World = WorldContext->GetWorld();
+		// ContextRoot
+		#pragma region
 
-			checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
+		#if WITH_EDITOR
 
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* WorldContext)
+		{
+			typedef NCsGameState::FLibrary GameStateLibrary;
+
+			return GameStateLibrary::GetAsObjectChecked(Context, WorldContext);
 			/*
-#if WITH_EDITOR
+		#if WITH_EDITOR
 			typedef NCsWorld::FLibrary WorldLibrary;
 
 			if (WorldLibrary::IsPlayInEditor(WorldContext->GetWorld()) ||
@@ -40,17 +49,73 @@ namespace NCsSound
 				return WorldContext;
 			}
 			else
-#endif // #if WITH_EDITOR
+		#endif // #if WITH_EDITOR
 			{	
 				return World->GetGameInstance();
 			}
 			*/
-			AGameStateBase* GameState = World->GetGameState();
-
-			checkf(GameState, TEXT("%s: Failed to get GameState from World: %s."), *Context, *(World->GetName()));
-
-			return GameState;
 		}
+
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsGameState::FLibrary GameStateLibrary;
+
+			return GameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
+		}
+
+		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
+		{
+			using namespace NCsSound::NManager::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeContextRoot;
+
+			return GetSafeContextRoot(Context, WorldContext, nullptr);
+		}
+
+		#endif // #if WITH_EDITOR
+
+		#pragma endregion ContextRoot
+
+		// Get
+		#pragma region
+
+		UCsManager_Sound* FLibrary::GetChecked(const FString& Context, UObject* ContextObject)
+		{
+			UObject* ContextRoot		    = GetContextRootChecked(Context, ContextObject);
+			UCsManager_Sound* Manager_Sound = UCsManager_Sound::Get(ContextRoot);
+
+			CS_IS_PTR_NULL_CHECKED(Manager_Sound)
+			return Manager_Sound;
+		}
+
+		UCsManager_Sound* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+		{
+			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
+
+		#if WITH_EDITOR
+			if (!ContextRoot)
+				return nullptr;
+		#endif // #if WITH_EDITOR
+
+			UCsManager_Sound* Manager_Sound = UCsManager_Sound::Get(ContextRoot);
+
+			if (!Manager_Sound)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Sound."), *Context));
+			}
+			return Manager_Sound;
+		}
+
+		UCsManager_Sound* FLibrary::GetSafe(UObject* ContextObject)
+		{
+			using namespace NCsSound::NManager::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafe;
+
+			return GetSafe(Context, ContextObject, nullptr);
+		}
+
+		#pragma endregion Get
 
 		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, UObject* WorldContext, const FCsSound& Sound)
 		{

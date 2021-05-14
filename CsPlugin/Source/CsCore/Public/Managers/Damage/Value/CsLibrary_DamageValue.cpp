@@ -8,44 +8,49 @@
 #include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRangeEmu.h"
 
-#define ValueType NCsDamage::NValue::IValue
-bool FCsLibrary_DamageValue::CopyChecked(const FString& Context, const ValueType* From, ValueType* To)
+namespace NCsDamage
 {
-#undef ValueType
-	// Point
+	namespace NValue
 	{
-		typedef NCsDamage::NValue::IValue ValueType;
-		typedef NCsDamage::NValue::NPoint::IPoint PointType;
-
-		if (PointType* IFromPoint = GetSafeInterfaceChecked<PointType>(Context, const_cast<ValueType*>(From)))
+		#define ValueType NCsDamage::NValue::IValue
+		bool FLibrary::CopyChecked(const FString& Context, const ValueType* From, ValueType* To)
 		{
-			// NCsDamage::NValue::NPoint::FImpl (NCsDamage::NValue::NPoint::IPoint)
-			typedef NCsDamage::NValue::NPoint::FImpl ImplType;
 
-			if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
+			// Point
 			{
-				ToImpl->Value = IFromPoint->GetValue();
-				return true;
+				typedef NCsDamage::NValue::NPoint::IPoint PointType;
+
+				if (PointType* IFromPoint = GetSafeInterfaceChecked<PointType>(Context, const_cast<ValueType*>(From)))
+				{
+					// NCsDamage::NValue::NPoint::FImpl (NCsDamage::NValue::NPoint::IPoint)
+					typedef NCsDamage::NValue::NPoint::FImpl ImplType;
+
+					if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
+					{
+						ToImpl->Value = IFromPoint->GetValue();
+						return true;
+					}
+				}
 			}
-		}
-	}
-	// Range
-	{
-		typedef NCsDamage::NValue::IValue ValueType;
-		typedef NCsDamage::NValue::NRange::IRange RangeType;
-
-		if (RangeType* IFromRange = GetSafeInterfaceChecked<RangeType>(Context, const_cast<ValueType*>(From)))
-		{
-			// NCsDamage::NValue::NRange::FImpl (NCsDamage::NValue::NRange::IRange)
-			typedef NCsDamage::NValue::NRange::FImpl ImplType;
-
-			if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
+			// Range
 			{
-				ToImpl->MinValue = IFromRange->GetMinValue();
-				ToImpl->MaxValue = IFromRange->GetMaxValue();
-				return true;
+				typedef NCsDamage::NValue::NRange::IRange RangeType;
+
+				if (RangeType* IFromRange = GetSafeInterfaceChecked<RangeType>(Context, const_cast<ValueType*>(From)))
+				{
+					// NCsDamage::NValue::NRange::FImpl (NCsDamage::NValue::NRange::IRange)
+					typedef NCsDamage::NValue::NRange::FImpl ImplType;
+
+					if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
+					{
+						ToImpl->MinValue = IFromRange->GetMinValue();
+						ToImpl->MaxValue = IFromRange->GetMaxValue();
+						return true;
+					}
+				}
 			}
+			return false;
 		}
+		#undef ValueType
 	}
-	return false;
 }

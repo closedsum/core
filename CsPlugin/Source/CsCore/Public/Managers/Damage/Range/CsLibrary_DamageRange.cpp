@@ -5,20 +5,26 @@
 // Damage
 #include "Managers/Damage/Range/CsDamageRangeImpl.h"
 
-#define RangeType NCsDamage::NRange::IRange
-bool FCsLibrary_DamageRange::CopyChecked(const FString& Context, const RangeType* From, RangeType* To)
+namespace NCsDamage
 {
-#undef RangeType
-	// NCsDamage::NRange::FImpl (NCsDamage::NRange::IRange)
+	namespace NRange
 	{
-		typedef NCsDamage::NRange::FImpl ImplType;
-
-		if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
+		#define RangeType NCsDamage::NRange::IRange
+		bool FLibrary::CopyChecked(const FString& Context, const RangeType* From, RangeType* To)
 		{
-			ToImpl->MinRange = From->GetMinRange();
-			ToImpl->MaxRange = From->GetMaxRange();
-			return true;
+		#undef RangeType
+			// NCsDamage::NRange::FImpl (NCsDamage::NRange::IRange)
+			{
+				typedef NCsDamage::NRange::FImpl ImplType;
+
+				if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
+				{
+					ToImpl->MinRange = From->GetMinRange();
+					ToImpl->MaxRange = From->GetMaxRange();
+					return true;
+				}
+			}
+			return false;
 		}
 	}
-	return false;
 }

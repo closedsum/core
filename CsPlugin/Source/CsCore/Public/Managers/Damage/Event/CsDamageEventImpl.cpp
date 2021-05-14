@@ -4,6 +4,7 @@
 // Library
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Library/CsLibrary_Valid.h"
 // Damage
 #include "Managers/Damage/Data/CsData_Damage.h"
 #include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
@@ -62,14 +63,15 @@ namespace NCsDamage
 
 		bool FImpl::SetDamageChecked(const FString& Context)
 		{
-			checkf(Data, TEXT("%s: Data is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Data)
 
-			checkf(DamageValue.GetValue(), TEXT("%s: DamageValue.Value is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(DamageValue.GetValue())
 
 			// Shape
+			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
 
-			if (ShapeDataType* Shape = FCsLibrary_Data_Damage::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
+			if (ShapeDataType* Shape = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 			{
 				Damage = Shape->CalculateDamage(DamageValue.GetValue(), DamageRange.GetRange(), Origin.ImpactPoint, HitResult.ImpactPoint);
 				return true;
@@ -77,9 +79,10 @@ namespace NCsDamage
 			// Point
 			else
 			{
+				typedef NCsDamage::NValue::FLibrary ValueLibrary;
 				typedef NCsDamage::NValue::NPoint::IPoint PointType;
 
-				PointType* DamageValuePoint = FCsLibrary_DamageValue::GetInterfaceChecked<PointType>(Context, DamageValue.Value);
+				PointType* DamageValuePoint = ValueLibrary::GetInterfaceChecked<PointType>(Context, DamageValue.Value);
 				Damage						= DamageValuePoint->GetValue();
 				return true;
 			}

@@ -3,23 +3,30 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
-#define ValueType NCsDamage::NValue::IValue
-/**
-* Library for interface: ICsDamageValue
-*/
-struct CSCORE_API FCsLibrary_DamageValue : public TCsLibrary_InterfaceMap<ValueType>
+namespace NCsDamage
 {
-	/**
-	* Copy the values from From to To with checks.
-	* Currently supports To types of:
-	*  NCsDamage::NValue::NPoint::Impl (NCsDamage::NValue::NPoint::IPoint)
-	*  NCsDamage::NValue::NRange::Impl (NCsDamage::NValue::NRange::IRange)
-	*
-	* @param Context	The calling context.
-	* @param From		What to copy.
-	* @param To			What to copy to.
-	*/
-	static bool CopyChecked(const FString& Context, const ValueType* From, ValueType* To);
-};
+	namespace NValue
+	{
+	#define ValueType NCsDamage::NValue::IValue
 
-#undef ValueType
+		/**
+		* Library for interface: ValueType (NCsDamage::NValue::IValue)
+		*/
+		struct CSCORE_API FLibrary final : public TCsLibrary_InterfaceMap<ValueType>
+		{
+			/**
+			* Copy the values from From to To with checks.
+			* Currently supports To types of:
+			*  NCsDamage::NValue::NPoint::Impl (NCsDamage::NValue::NPoint::IPoint)
+			*  NCsDamage::NValue::NRange::Impl (NCsDamage::NValue::NRange::IRange)
+			*
+			* @param Context	The calling context.
+			* @param From		What to copy.
+			* @param To			What to copy to.
+			*/
+			static bool CopyChecked(const FString& Context, const ValueType* From, ValueType* To);
+		};
+
+	#undef ValueType
+	}
+}

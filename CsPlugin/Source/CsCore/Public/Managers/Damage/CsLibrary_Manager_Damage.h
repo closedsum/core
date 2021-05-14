@@ -5,9 +5,9 @@
 #pragma once
 
 class UObject;
-class UCsManager_StaticMeshActor;
+class UCsManager_Damage;
 
-namespace NCsStaticMeshActor
+namespace NCsDamage
 {
 	namespace NManager
 	{
@@ -19,11 +19,11 @@ namespace NCsStaticMeshActor
 
 		#if WITH_EDITOR
 			/**
-			* Get the Context (Root) for UCsManager_StaticMeshActor from a WorldContext.
+			* Get the Context (Root) for UCsManager_Damage from a WorldContext.
 			*
 			* @param Context		The calling context.
 			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* return				Context for UCsManager_StaticMeshActor
+			* return				Context for UCsManager_Damage
 			*/
 			static UObject* GetContextRootChecked(const FString& Context, const UObject* WorldContext);
 		#else
@@ -32,12 +32,12 @@ namespace NCsStaticMeshActor
 
 		#if WITH_EDITOR
 			/**
-			* Get the Context (Root) for UCsManager_StaticMeshActor from a WorldContext.
+			* Get the Context (Root) for UCsManager_Damage from a WorldContext.
 			*
 			* @param Context		The calling context.
 			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Log
-			* return				Context for UCsManager_StaticMeshActor
+			* @param Log			(optional)
+			* return				Context for UCsManager_Damage
 			*/
 			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 		#else
@@ -46,10 +46,10 @@ namespace NCsStaticMeshActor
 
 		#if WITH_EDITOR
 			/**
-			* Get the Context (Root) for UCsManager_StaticMeshActor from a WorldContext.
+			* Get the Context (Root) for UCsManager_Damage from a WorldContext.
 			*
 			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* return				Context for UCsManager_StaticMeshActor
+			* return				Context for UCsManager_Damage
 			*/
 			static UObject* GetSafeContextRoot(const UObject* WorldContext);
 		#else
@@ -63,23 +63,31 @@ namespace NCsStaticMeshActor
 		public:
 
 			/**
-			* Get the reference to UCsManager_StaticMeshActor from a WorldContext.
+			* Get the reference to UCsManager_Damage from a WorldContext.
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* return				UCsManager_StaticMeshActor.
+			* return				UCsManager_Damage.
 			*/
-			static UCsManager_StaticMeshActor* GetChecked(const FString& Context, const UObject* WorldContext);
+			static UCsManager_Damage* GetChecked(const FString& Context, const UObject* WorldContext);
 
 			/**
-			* Safely get the reference to UCsManager_StaticMeshActor from a WorldContext.
+			* Safely get the reference to UCsManager_Damage from a WorldContext.
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Log
-			* return				UCsManager_StaticMeshActor.
+			* @param Log			(optional)
+			* return				UCsManager_Damage.
 			*/
-			static UCsManager_StaticMeshActor* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UCsManager_Damage* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get the reference to UCsManager_Damage from a WorldContext.
+			*
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				UCsManager_Damage.
+			*/
+			static UCsManager_Damage* GetSafe(const UObject* WorldContext);
 
 		#pragma endregion Get
 		};

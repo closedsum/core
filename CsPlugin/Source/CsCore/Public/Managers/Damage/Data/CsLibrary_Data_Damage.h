@@ -4,32 +4,38 @@
 #pragma once
 
 // NCsDamage::NRange::IRange
-namespace NCsDamage {
-	namespace NRange {
-		struct IRange; } }
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 
-#define DataType NCsDamage::NData::IData
 
-/**
-* Library for interface: ICsData_Damage
-*/
-struct CSCORE_API FCsLibrary_Data_Damage : public TCsLibrary_InterfaceMap<DataType>
+
+namespace NCsDamage
 {
+	namespace NData
+	{
+	#define DataType NCsDamage::NData::IData
 
-#define RangeType NCsDamage::NRange::IRange
+		/**
+		* Library for interface: DataType (NCsDamage::NData::IData)
+		*/
+		struct CSCORE_API FLibrary final : public TCsLibrary_InterfaceMap<DataType>
+		{
 
-public:
+		#define RangeType NCsDamage::NRange::IRange
 
-	/**
-	*
-	*
-	* @param Context	The calling context.
-	* @param Data
-	* return			
-	*/
-	static const RangeType* GetRangeChecked(const FString& Context, const DataType* Data);
+		public:
 
-#undef RangeType
-};
+			/**
+			*
+			*
+			* @param Context	The calling context.
+			* @param Data
+			* return			
+			*/
+			static const RangeType* GetRangeChecked(const FString& Context, const DataType* Data);
 
-#undef DataType
+		#undef RangeType
+		};
+
+	#undef DataType
+	}
+}

@@ -3,32 +3,39 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
-#define EventType NCsDamage::NEvent::IEvent
-/**
-* Library for interface: NCsDamage::NEvent::IEvent
-*/
-struct CSCORE_API FCsLibrary_DamageEvent : public TCsLibrary_InterfaceMap<EventType>
+namespace NCsDamage
 {
-	/**
-	* Copy the values from From to To with checks.
-	* Currently supports To types of:
-	*  NCsDamage::NEvent::FImpl (NCsDamage::NEvent::IEvent)
-	*
-	* @param Context	The calling context.
-	* @param From		What to copy.
-	* @param To			What to copy to.
-	* return			Whether the copy was performed successfully.
-	*/
-	static bool CopyChecked(const FString& Context, const EventType* From, EventType* To);
+	namespace NEvent
+	{
+	#define EventType NCsDamage::NEvent::IEvent
 
-	/**
-	* Set the damage on the Event with checks.
-	*
-	* @param Context	The calling context.
-	* @param Event
-	* return			Whether the damage was set successfully.
-	*/
-	static bool SetDamageChecked(const FString&, EventType* Event);
-};
+		/**
+		* Library for interface: (EventType) NCsDamage::NEvent::IEvent
+		*/
+		struct CSCORE_API FLibrary final : public TCsLibrary_InterfaceMap<EventType>
+		{
+			/**
+			* Copy the values from From to To with checks.
+			* Currently supports To types of:
+			*  NCsDamage::NEvent::FImpl (NCsDamage::NEvent::IEvent)
+			*
+			* @param Context	The calling context.
+			* @param From		What to copy.
+			* @param To			What to copy to.
+			* return			Whether the copy was performed successfully.
+			*/
+			static bool CopyChecked(const FString& Context, const EventType* From, EventType* To);
 
-#undef EventType
+			/**
+			* Set the damage on the Event with checks.
+			*
+			* @param Context	The calling context.
+			* @param Event
+			* return			Whether the damage was set successfully.
+			*/
+			static bool SetDamageChecked(const FString&, EventType* Event);
+		};
+
+	#undef EventType
+	}
+}

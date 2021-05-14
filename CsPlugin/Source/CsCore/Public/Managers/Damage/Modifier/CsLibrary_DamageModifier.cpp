@@ -2,31 +2,49 @@
 #include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
 #include "CsCore.h"
 
-#define ModifierType NCsDamage::NModifier::IModifier
-bool FCsLibrary_DamageModifier::CopyChecked(const FString& Context, const ModifierType* From, ModifierType* To)
-{
-#undef ModifierType
-	return false;
-}
+// Library
+#include "Library/CsLibrary_Valid.h"
 
-#define ModifierType NCsDamage::NModifier::IModifier
-#define DataType NCsDamage::NData::IData
-#define ValueType NCsDamage::NValue::IValue
-bool FCsLibrary_DamageModifier::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, ValueType* Value)
+namespace NCsDamage
 {
-#undef ModifierType
-#undef DataType
-#undef ValueType
-	return false;
-}
+	namespace NModifier
+	{
+		#define ModifierType NCsDamage::NModifier::IModifier
+		#define DataType NCsDamage::NData::IData
+		#define ValueType NCsDamage::NValue::IValue
+		#define RangeType NCsDamage::NRange::IRange
 
-#define ModifierType NCsDamage::NModifier::IModifier
-#define DataType NCsDamage::NData::IData
-#define RangeType NCsDamage::NRange::IRange
-bool FCsLibrary_DamageModifier::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, RangeType* Range)
-{
-#undef ModifierType
-#undef DataType
-#undef RangeType
-	return false;	 
+		bool FLibrary::CopyChecked(const FString& Context, const ModifierType* From, ModifierType* To)
+		{
+			CS_IS_PTR_NULL_CHECKED(From)
+
+			CS_IS_PTR_NULL_CHECKED(To)
+			return false;
+		}
+
+		bool FLibrary::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, ValueType* Value)
+		{
+			CS_IS_PTR_NULL_CHECKED(Modifier)
+
+			CS_IS_PTR_NULL_CHECKED(Data)
+
+			CS_IS_PTR_NULL_CHECKED(Value)
+			return false;
+		}
+
+		bool FLibrary::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, RangeType* Range)
+		{
+			CS_IS_PTR_NULL_CHECKED(Modifier)
+
+			CS_IS_PTR_NULL_CHECKED(Data)
+
+			CS_IS_PTR_NULL_CHECKED(Range)
+			return false;	 
+		}
+
+		#undef ModifierType
+		#undef DataType
+		#undef ValueType
+		#undef RangeType
+	}
 }

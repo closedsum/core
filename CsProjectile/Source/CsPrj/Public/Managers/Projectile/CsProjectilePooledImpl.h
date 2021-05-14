@@ -212,46 +212,68 @@ public:
 
 // Damage
 #pragma region
-protected:
-
-	TArray<DamageModifierResourceType*> DamageModifiers;
-
 public:
 
-	/**
-	* Event to broadcast a damage event of type: NCsDamage::NEvent::IEvent.
-	*
-	* @param Event	DamageEvent.
-	*/
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBroadcastDamage, const DamageEventType* /*Event*/);
+	struct FDamageImpl
+	{
+		friend class ACsProjectilePooledImpl;
 
-	/** */
-	FOnBroadcastDamage OnBroadcastDamage_Event;
+	private:
 
-	/**
-	* Event to broadcast a damage event container of type: NCsDamage::NDamage::FResource.
-	*
-	* @param Event	DamageEvent Container.
-	*/
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBroadcastDamageContainer, const DamageEventResourceType* /*Event*/);
+		ACsProjectilePooledImpl* Outer;
 
-	/** */
-	FOnBroadcastDamageContainer OnBroadcastDamageContainer_Event;
 
-protected:
+		TArray<DamageModifierResourceType*> Modifiers;
+		
+	public:
 
-	/**
-	* Get an allocated DamageEvent container from Manager_Event and set the appropriate members for 
-	* broadcasting the event.
-	* The DamageEvent will get deallocated / reset after the scope of the broadcast event 
-	* completes.
-	*
-	* @param HitResult	The HitResult from a OnComponentHit event
-	* return			DamageEvent
-	*/
-	virtual const DamageEventResourceType* OnHit_CreateDamageEvent(const FHitResult& HitResult);
+		/**
+		* Event to broadcast a damage event of type: (DamageEventType) NCsDamage::NEvent::IEvent.
+		*
+		* @param Event	DamageEvent.
+		*/
+		DECLARE_MULTICAST_DELEGATE_OneParam(FOnBroadcast, const DamageEventType* /*Event*/);
 
-	virtual const DamageEventResourceType* OnHit_CreateDamageEvent(const FHitResult& HitResult, DamageDataType* DamageData);
+		/** */
+		FOnBroadcast OnBroadcast_Event;
+
+		/**
+		* Event to broadcast a damage event container of type: (DamageEventResourceType) NCsDamage::NDamage::FResource.
+		*
+		* @param Event	DamageEvent Container.
+		*/
+		DECLARE_MULTICAST_DELEGATE_OneParam(FOnBroadcastContainer, const DamageEventResourceType* /*Event*/);
+
+		/** */
+		FOnBroadcastContainer OnBroadcastContainer_Event;
+
+		FDamageImpl() :
+			Outer(nullptr),
+			Modifiers(),
+			OnBroadcast_Event(),
+			OnBroadcastContainer_Event()
+		{
+		}
+
+		virtual ~FDamageImpl(){}
+
+	protected:
+
+		/**
+		* Get an allocated DamageEvent container from Manager_Event and set the appropriate members for 
+		* broadcasting the event.
+		* The DamageEvent will get deallocated / reset after the scope of the broadcast event 
+		* completes.
+		*
+		* @param HitResult	The HitResult from a OnComponentHit event
+		* return			DamageEvent
+		*/
+		virtual const DamageEventResourceType* OnHit_CreateEvent(const FHitResult& HitResult);
+
+		virtual const DamageEventResourceType* OnHit_CreateEvent(const FHitResult& HitResult, DamageDataType* DamageData);
+	};
+
+	FDamageImpl DamageImpl;
 
 #pragma endregion Damage
 

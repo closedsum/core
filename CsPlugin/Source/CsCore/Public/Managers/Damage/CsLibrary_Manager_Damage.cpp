@@ -1,10 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/StaticMesh/CsLibrary_Manager_StaticMeshActor.h"
+#include "Managers/Damage/CsLibrary_Manager_Damage.h"
 
 // Types
 #include "Types/CsTypes_Macro.h"
 // Managers
-#include "Managers/StaticMesh/CsManager_StaticMeshActor.h"
+#include "Managers/Damage/CsManager_Damage.h"
 #include "Library/CsLibrary_Valid.h"
 
 #if WITH_EDITOR
@@ -12,7 +12,7 @@
 #include "Game/CsLibrary_GameState.h"
 #endif // #if WITH_EDITOR
 
-namespace NCsStaticMeshActor
+namespace NCsDamage
 {
 	namespace NManager
 	{
@@ -22,8 +22,8 @@ namespace NCsStaticMeshActor
 			{
 				namespace Str
 				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStaticMeshActor::NManager::FLibrary, GetSafeContextRoot);
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStaticMeshActor::NManager::FLibrary, SafeSpawn);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NManager::FLibrary, GetSafeContextRoot);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NManager::FLibrary, GetSafe);
 				}
 			}
 		}
@@ -49,7 +49,7 @@ namespace NCsStaticMeshActor
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
 		{
-			using namespace NCsStaticMeshActor::NManager::NLibrary::NCached;
+			using namespace NCsDamage::NManager::NLibrary::NCached;
 
 			const FString& Context = Str::GetSafeContextRoot;
 
@@ -63,16 +63,16 @@ namespace NCsStaticMeshActor
 		// Get
 		#pragma region
 
-		UCsManager_StaticMeshActor* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
+		UCsManager_Damage* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 		{
-			UObject* ContextRoot								= GetContextRootChecked(Context, WorldContext);
-			UCsManager_StaticMeshActor* Manager_StaticMeshActor = UCsManager_StaticMeshActor::Get(ContextRoot);
+			UObject* ContextRoot			  = GetContextRootChecked(Context, WorldContext);
+			UCsManager_Damage* Manager_Damage = UCsManager_Damage::Get(ContextRoot);
 
-			CS_IS_PTR_NULL_CHECKED(Manager_StaticMeshActor)
-			return Manager_StaticMeshActor;
+			CS_IS_PTR_NULL_CHECKED(Manager_Damage)
+			return Manager_Damage;
 		}
 
-		UCsManager_StaticMeshActor* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UCsManager_Damage* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
 
@@ -81,13 +81,22 @@ namespace NCsStaticMeshActor
 				return nullptr;
 		#endif // #if WITH_EDITOR
 
-			UCsManager_StaticMeshActor* Manager_StaticMeshActor = UCsManager_StaticMeshActor::Get(ContextRoot);
+			UCsManager_Damage* Manager_Damage = UCsManager_Damage::Get(ContextRoot);
 
-			if (!Manager_StaticMeshActor)
+			if (!Manager_Damage)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_StaticMeshActor."), *Context));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Damage."), *Context));
 			}
-			return Manager_StaticMeshActor;
+			return Manager_Damage;
+		}
+
+		UCsManager_Damage* FLibrary::GetSafe(const UObject* WorldContext)
+		{
+			using namespace NCsDamage::NManager::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafe;
+
+			return GetSafe(Context, WorldContext, nullptr);
 		}
 
 		#pragma endregion Get

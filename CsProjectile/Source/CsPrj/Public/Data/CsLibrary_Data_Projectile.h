@@ -3,10 +3,16 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
-#define DataType NCsProjectile::NData::IData
-
-struct CSPRJ_API FCsLibrary_Data_Projectile : public TCsLibrary_InterfaceMap<DataType>
+namespace NCsProjectile
 {
-};
+	namespace NData
+	{
+	#define DataType NCsProjectile::NData::IData
 
-#undef DataType
+		struct CSPRJ_API FLibrary final : public TCsLibrary_InterfaceMap<DataType>
+		{
+		};
+
+	#undef DataType
+	}
+}

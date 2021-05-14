@@ -195,4 +195,34 @@ bool FCsSound::IsValidChecked(const FString& Context) const
 	return true;
 }
 
+bool FCsSound::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	// Check Sound Path is Valid.
+	if (!Sound.ToSoftObjectPath().IsValid())
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Sound is NULL."), *Context));
+		return false;
+	}
+	// Check Sound is Valid.
+	if (!Sound_Internal)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Sound has NOT been loaded from Path @ %s."), *Context, *(Sound.ToSoftObjectPath().ToString())));
+		return false;
+	}
+	// Check Type is Valid.
+	if (!EMCsSound::Get().IsValidEnum(Type))
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s Type: %s is NOT Valid."), *Context, Type.ToChar()));
+		return false;
+	}
+
+	if (!Transform.Equals(FTransform::Identity) &&
+		TransformRules == 0)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString())));
+		return false;
+	}
+	return true;
+}
+
 #pragma endregion FCsSound

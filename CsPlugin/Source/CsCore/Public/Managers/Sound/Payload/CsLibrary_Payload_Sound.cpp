@@ -12,29 +12,45 @@ namespace NCsSound
 {
 	namespace NPayload
 	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSound::NPayload::FLibrary, SetSafe);
+				}
+			}
+		}
+
 		#define PayloadType NCsSound::NPayload::IPayload
+
 		bool FLibrary::IsValidChecked(const FString& Context, PayloadType* Payload)
 		{
-		#undef PayloadType
+		
 			
+			// Check Payload is Valid
+			CS_IS_PTR_NULL_CHECKED(Payload)
 			// Check Sound is Valid
 			checkf(Payload->GetSound(), TEXT("%s: Sound is NULL."), *Context);
 
 			return true;
 		}
 		
+		#undef PayloadType
+
 		#define PayloadType NCsSound::NPayload::IPayload
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-		void FLibrary::Set(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound)
+
+		void FLibrary::SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound)
 		{
-		#undef PayloadType
-		#undef PooledPayloadType
+			CS_IS_PTR_NULL_CHECKED(Payload)
 
 			typedef NCsSound::NPayload::FImpl PayloadImplType;
 
 			if (PayloadImplType* PayloadImpl = SafeStaticCastChecked<PayloadImplType>(Context, Payload))
 			{
-				Set(Context, PayloadImpl, PooledPayload, Sound);
+				SetChecked(Context, PayloadImpl, PooledPayload, Sound);
 			}
 			else
 			{
@@ -42,16 +58,38 @@ namespace NCsSound
 			}
 		}
 		
-		#define PayloadType NCsSound::NPayload::IPayload
-		void FLibrary::Set(const FString& Context, PayloadType* Payload, const FCsSound& Sound)
+		void FLibrary::SetSafe(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-		#undef PayloadType
+			CS_IS_PTR_NULL_EXIT(Payload)
 
 			typedef NCsSound::NPayload::FImpl PayloadImplType;
 
 			if (PayloadImplType* PayloadImpl = SafeStaticCastChecked<PayloadImplType>(Context, Payload))
 			{
-				Set(Context, PayloadImpl, Sound);
+				SetChecked(Context, PayloadImpl, PooledPayload, Sound);
+			}
+			else
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Unsupported Payload Type."), *Context));
+			}
+		}
+
+		void FLibrary::SetSafe(PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound)
+		{
+			using namespace NCsSound::NPayload::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafe;
+
+			return SetSafe(Context, Payload, PooledPayload, Sound, nullptr);
+		}
+
+		void FLibrary::SetChecked(const FString& Context, PayloadType* Payload, const FCsSound& Sound)
+		{
+			typedef NCsSound::NPayload::FImpl PayloadImplType;
+
+			if (PayloadImplType* PayloadImpl = SafeStaticCastChecked<PayloadImplType>(Context, Payload))
+			{
+				SetChecked(Context, PayloadImpl, Sound);
 			}
 			else
 			{
@@ -59,16 +97,40 @@ namespace NCsSound
 			}
 		}
 		
-		#define PayloadImplType NCsSound::NPayload::FImpl
-		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-		void FLibrary::Set(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound)
+		void FLibrary::SetSafe(const FString& Context, PayloadType* Payload, const FCsSound& Sound, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-		#undef PayloadImplType
-		#undef PooledPayloadType
+			CS_IS_PTR_NULL_EXIT(Payload)
 
+			typedef NCsSound::NPayload::FImpl PayloadImplType;
+
+			if (PayloadImplType* PayloadImpl = SafeStaticCastChecked<PayloadImplType>(Context, Payload))
+			{
+				SetChecked(Context, PayloadImpl, Sound);
+			}
+			else
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Unsupported Payload Type."), *Context));
+			}
+		}
+
+		void FLibrary::SetSafe(PayloadType* Payload, const FCsSound& Sound)
+		{
+			using namespace NCsSound::NPayload::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafe;
+
+			return SetSafe(Context, Payload, Sound, nullptr);
+		}
+
+		#define PayloadImplType NCsSound::NPayload::FImpl
+
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound)
+		{
 			CS_IS_PTR_NULL_CHECKED(Payload)
 
 			CS_IS_PTR_NULL_CHECKED(PooledPayload)
+
+			check(Sound.IsValidChecked(Context));
 
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			Payload->Instigator						= PooledPayload->GetInstigator();
@@ -88,12 +150,32 @@ namespace NCsSound
 			Payload->Transform				  = Sound.Transform;
 		}
 		
-		#define PayloadImplType NCsSound::NPayload::FImpl
-		void FLibrary::Set(const FString& Context, PayloadImplType* Payload, const FCsSound& Sound)
+		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-		#undef PayloadImplType
+			CS_IS_PTR_NULL_EXIT(Payload)
 
+			CS_IS_PTR_NULL_EXIT(PooledPayload)
+
+			if (!Sound.IsValid(Context, Log))
+				return;
+
+			SetChecked(Context, Payload, PooledPayload, Sound);
+		}
+
+		void FLibrary::SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound)
+		{
+			using namespace NCsSound::NPayload::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafe;
+
+			return SetSafe(Context, Payload, PooledPayload, Sound, nullptr);
+		}
+
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, const FCsSound& Sound)
+		{
 			CS_IS_PTR_NULL_CHECKED(Payload)
+
+			check(Sound.IsValidChecked(Context));
 
 			Payload->Sound					  = Sound.GetChecked(Context);
 			Payload->SoundAttenuation		  = Sound.GetAttenuation();
@@ -105,11 +187,27 @@ namespace NCsSound
 			Payload->Transform				  = Sound.Transform;
 		}
 
-		#define PayloadImplType NCsSound::NPayload::FImpl
-		void FLibrary::Set(const FString& Context, PayloadImplType* Payload, USoundBase* Sound)
+		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const FCsSound& Sound, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-		#undef PayloadImplType
+			CS_IS_PTR_NULL_EXIT(Payload)
 
+			if (!Sound.IsValid(Context, Log))
+				return;
+
+			SetChecked(Context, Payload, Sound);
+		}
+
+		void FLibrary::SetSafe(PayloadImplType* Payload, const FCsSound& Sound)
+		{
+			using namespace NCsSound::NPayload::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafe;
+
+			return SetSafe(Context, Payload, Sound, nullptr);
+		}
+
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, USoundBase* Sound)
+		{
 			CS_IS_PTR_NULL_CHECKED(Payload)
 
 			CS_IS_PTR_NULL_CHECKED(Sound)
@@ -120,5 +218,32 @@ namespace NCsSound
 
 			Payload->DeallocateMethod = DeallocateMethodType::Complete;
 		}
+
+		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, USoundBase* Sound, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_PTR_NULL_EXIT(Payload)
+
+			CS_IS_PTR_NULL_EXIT(Sound)
+
+			Payload->Sound = Sound;
+
+			typedef NCsSound::EDeallocateMethod DeallocateMethodType;
+
+			Payload->DeallocateMethod = DeallocateMethodType::Complete;
+		}
+
+		void FLibrary::SetSafe(PayloadImplType* Payload, USoundBase* Sound)
+		{
+			using namespace NCsSound::NPayload::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafe;
+
+			return SetSafe(Context, Payload, Sound, nullptr);
+		}
+
+		#undef PayloadImplType
+
+		#undef PayloadType
+		#undef PooledPayloadType
 	}
 }

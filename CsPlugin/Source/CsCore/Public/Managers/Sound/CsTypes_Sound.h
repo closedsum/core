@@ -3,6 +3,8 @@
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_AttachDetach.h"
+// Log
+#include "Utility/CsLog.h"
 
 #include "CsTypes_Sound.generated.h"
 #pragma once
@@ -541,6 +543,7 @@ public:
 	}
 
 	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 #pragma endregion FCsSound

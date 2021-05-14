@@ -3,6 +3,8 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Types
 #include "Managers/Sound/CsTypes_Sound.h"
+// Log
+#include "Utility/CsLog.h"
 #pragma once
 
 // NCsPooledObject::NPayload::IPayload
@@ -18,65 +20,159 @@ namespace NCsSound
 	{
 	#define PayloadType NCsSound::NPayload::IPayload
 
-		struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<NCsSound::NPayload::IPayload>
+		struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<PayloadType>
 		{
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 		#define PayloadImplType NCsSound::NPayload::FImpl
 
 			/**
-			* 
+			* Check if the Payload is Valid with checks.
 			* 
 			* @param Context	The calling context.
 			* @param Payload
 			*/
-			static bool IsValidChecked(const FString& Context, NCsSound::NPayload::IPayload* Payload);
+			static bool IsValidChecked(const FString& Context, PayloadType* Payload);
 
 			/**
-			*
+			* Set the contents of Payload with PoolePayload and Sound
 			*
 			* @param Context		The calling context.
 			* @param Payload
 			* @param PooledPayload
 			* @param Sound
 			*/
-			static void Set(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound);
+			static void SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound);
 
 			/**
+			* Safely set the contents of Payload with PoolePayload and Sound
 			*
+			* @param Context		The calling context.
+			* @param Payload
+			* @param PooledPayload
+			* @param Sound
+			* @param Log
+			*/
+			static void SetSafe(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely set the contents of Payload with PoolePayload and Sound
+			*
+			* @param Payload
+			* @param PooledPayload
+			* @param Sound
+			*/
+			static void SetSafe(PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound);
+
+			/**
+			* Set the contents of Payload with Sound
 			*
 			* @param Context	The calling context.
 			* @param Payload
 			* @param Sound
 			*/
-			static void Set(const FString& Context, NCsSound::NPayload::IPayload* Payload, const FCsSound& Sound);
+			static void SetChecked(const FString& Context, PayloadType* Payload, const FCsSound& Sound);
 
 			/**
+			* Safely set the contents of Payload with Sound
 			*
+			* @param Context	The calling context.
+			* @param Payload
+			* @param Sound
+			* @param Log
+			*/
+			static void SetSafe(const FString& Context, PayloadType* Payload, const FCsSound& Sound, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely set the contents of Payload with Sound
+			*
+			* @param Context	The calling context.
+			* @param Payload
+			* @param Sound
+			* @param Log
+			*/
+			static void SetSafe(PayloadType* Payload, const FCsSound& Sound);
+
+			/**
+			* Set the contents of Payload with PoolePayload and Sound
 			*
 			* @param Context		The calling context.
 			* @param Payload
 			* @param PooledPayload
 			* @param Sound
 			*/
-			static void Set(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound);
+			static void SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound);
 
 			/**
-			* 
-			* 
+			* Safely set the contents of Payload with PoolePayload and Sound
+			*
+			* @param Context		The calling context.
+			* @param Payload
+			* @param PooledPayload
+			* @param Sound
+			* @param Log
+			*/
+			static void SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely set the contents of Payload with PoolePayload and Sound
+			*
+			* @param Payload
+			* @param PooledPayload
+			* @param Sound
+			*/
+			static void SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound);
+
+			/**
+			* Set the contents of Payload with Sound
+			*
 			* @param Context	The calling context.
 			* @param Payload
 			* @param Sound
 			*/
-			static void Set(const FString& Context, NCsSound::NPayload::FImpl* Payload, const FCsSound& Sound);
+			static void SetChecked(const FString& Context, PayloadImplType* Payload, const FCsSound& Sound);
 
 			/**
-			*
+			* Set the contents of Payload with Sound
 			*
 			* @param Context	The calling context.
 			* @param Payload
 			* @param Sound
 			*/
-			static void Set(const FString& Context, NCsSound::NPayload::FImpl* Payload, USoundBase* Sound);
+			static void SetSafe(const FString& Context, PayloadImplType* Payload, const FCsSound& Sound, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Set the contents of Payload with Sound
+			*
+			* @param Payload
+			* @param Sound
+			*/
+			static void SetSafe(PayloadImplType* Payload, const FCsSound&);
+
+			/**
+			* Set the contents of Payload with Sound
+			*
+			* @param Context	The calling context.
+			* @param Payload
+			* @param Sound
+			*/
+			static void SetChecked(const FString& Context, PayloadImplType* Payload, USoundBase* Sound);
+
+			/**
+			* Set the contents of Payload with Sound
+			*
+			* @param Context	The calling context.
+			* @param Payload
+			* @param Sound
+			*/
+			static void SetSafe(const FString& Context, PayloadImplType* Payload, USoundBase* Sound, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Set the contents of Payload with Sound
+			*
+			* @param Payload
+			* @param Sound
+			*/
+			static void SetSafe(PayloadImplType* Payload, USoundBase* Sound);
 
 		#undef PooledPayloadType
 		#undef PayloadImplType

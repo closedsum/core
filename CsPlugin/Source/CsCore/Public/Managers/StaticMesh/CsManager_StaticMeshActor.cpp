@@ -254,7 +254,6 @@ UCsManager_StaticMeshActor::UCsManager_StaticMeshActor(const FObjectInitializer&
 
 	if (UObject* ContextRoot = StaticMeshManagerLibrary::GetSafe(Context, WorldContextObject))
 	{
-		// Game State
 		if (UCsManager_StaticMeshActor* Manager = GetSafe(ContextRoot))
 			return Manager;
 

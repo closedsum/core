@@ -12,11 +12,14 @@
 // Cached
 #pragma region
 
-namespace NCsManagerStatusEffectCached
+namespace NCsManagerStatusEffect
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StatusEffect, Shutdown);
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StatusEffect, Shutdown);
+		}
 	}
 }
 
@@ -39,7 +42,7 @@ void UCsManager_StatusEffect::Init(UObject* InRoot)
 
 void UCsManager_StatusEffect::Shutdown(UObject* InRoot)
 {
-	using namespace NCsManagerStatusEffectCached;
+	using namespace NCsManagerStatusEffect::NCached;
 
 	const FString& Context = Str::Shutdown;
 

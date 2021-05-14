@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UObject/Object.h"
+
 #include "Event/CsResource_StatusEffectEvent.h"
 #include "UniqueObject/CsTypes_UniqueObject.h"
 #include "CsTypes_StatusEffect.h"
@@ -23,15 +24,29 @@ class CSSE_API UCsCoordinator_StatusEffect : public UObject
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsCoordinator_StatusEffect* Get(UObject* InRoot = nullptr);
-	
+#else
+	FORCEINLINE static UCsCoordinator_StatusEffect* Get(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
 	template<typename T>
 	static T* Get(UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
 
+#if WITH_EDITOR
 	static bool IsValid(UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static bool IsValid(UObject* InRoot = nullptr)
+	{
+		return s_Instance != nullptr;
+	}
+#endif // #if WITH_EDITOR
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsCoordinator_StatusEffect> CoordinatorStatusEffectClass, UObject* InOuter = nullptr);
 	

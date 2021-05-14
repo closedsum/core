@@ -5,33 +5,39 @@
 #include "Event/CsStatusEffectEventImpl.h"
 #include "Event/Damage/CsStatusEffectEvent_DamageImpl.h"
 
-#define EventType NCsStatusEffect::NEvent::IEvent
-bool FCsLibrary_StatusEffectEvent::CopyChecked(const FString& Context, const EventType* From, EventType* To)
+namespace NCsStatusEffect
 {
-#undef EventType
-	// NCsStatusEffect::NEvent::FImpl (NCsStatusEffect::NEvent::IEvent)
+	namespace NEvent
 	{
-		typedef NCsStatusEffect::NEvent::FImpl ImplType;
-
-		if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
+		#define EventType NCsStatusEffect::NEvent::IEvent
+		bool FLibrary::CopyChecked(const FString& Context, const EventType* From, EventType* To)
 		{
-			const ImplType* FromImpl = PureStaticCastChecked<ImplType>(Context, From);
+		#undef EventType
+			// NCsStatusEffect::NEvent::FImpl (NCsStatusEffect::NEvent::IEvent)
+			{
+				typedef NCsStatusEffect::NEvent::FImpl ImplType;
 
-			ToImpl->CopyFrom(FromImpl);
-			return true;
+				if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
+				{
+					const ImplType* FromImpl = PureStaticCastChecked<ImplType>(Context, From);
+
+					ToImpl->CopyFrom(FromImpl);
+					return true;
+				}
+			}
+			// NCsStatusEffect::NEvent::NDamage::FImpl (NCsStatusEffect::NEvent::NDamage::IDamage)
+			{
+				typedef NCsStatusEffect::NEvent::NDamage::FImpl ImplType;
+
+				if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
+				{
+					const ImplType* FromImpl = PureStaticCastChecked<ImplType>(Context, From);
+
+					ToImpl->CopyFrom(FromImpl);
+					return true;
+				}
+			}
+			return false;
 		}
 	}
-	// NCsStatusEffect::NEvent::NDamage::FImpl (NCsStatusEffect::NEvent::NDamage::IDamage)
-	{
-		typedef NCsStatusEffect::NEvent::NDamage::FImpl ImplType;
-
-		if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
-		{
-			const ImplType* FromImpl = PureStaticCastChecked<ImplType>(Context, From);
-
-			ToImpl->CopyFrom(FromImpl);
-			return true;
-		}
-	}
-	return false;
 }

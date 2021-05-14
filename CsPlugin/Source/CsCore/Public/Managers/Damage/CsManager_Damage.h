@@ -125,8 +125,15 @@ class CSCORE_API UCsManager_Damage : public UObject
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsManager_Damage* Get(UObject* InRoot = nullptr);
-	
+#else
+FORCEINLINE static UCsManager_Damage* Get(UObject* InRoot = nullptr)
+{
+	return s_bShutdown ? nullptr : s_Instance;
+}
+#endif // #if WITH_EDITOR
+
 	template<typename T>
 	static T* Get(UObject* InRoot = nullptr)
 	{

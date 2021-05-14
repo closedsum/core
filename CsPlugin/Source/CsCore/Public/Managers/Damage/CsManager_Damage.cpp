@@ -27,16 +27,12 @@
 #include "UniqueObject/CsUniqueObject.h"
 
 #if WITH_EDITOR
+// Library
+#include "Managers/Damage/CsLibrary_Manager_Damage.h"
+// Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/Damage/CsGetManagerDamage.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/World.h"
-#include "Engine/Engine.h"
-
-#include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -48,6 +44,7 @@ namespace NCsManagerDamage
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, ProcessDamageEvent);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, ProcessDamageEventContainer);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, LogEvent);
@@ -68,19 +65,12 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
 /*static*/ UCsManager_Damage* UCsManager_Damage::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerDamage(InRoot)->GetManager_Damage();
-#else
-	if (s_bShutdown)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::Get: Manager has already shutdown."));
-		return nullptr;
-	}
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+#endif // #if WITH_EDITOR
 
 /*static*/ bool UCsManager_Damage::IsValid(UObject* InRoot /*=nullptr*/)
 {
@@ -216,20 +206,20 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 
 /*static*/ UCsManager_Damage* UCsManager_Damage::GetFromWorldContextObject(const UObject* WorldContextObject)
 {
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	using namespace NCsManagerDamage::NCached;
+
+	const FString& Context = Str::GetFromWorldContextObject;
+
+	typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+
+	if (UObject* ContextRoot = DamageManagerLibrary::GetSafe(Context, WorldContextObject))
 	{
-		// Game State
-		if (UCsManager_Damage* Manager = GetSafe(World->GetGameState()))
+		if (UCsManager_Damage* Manager = GetSafe(ContextRoot))
 			return Manager;
 
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::GetFromWorldContextObject: Failed to Manager Item of type UCsManager_Damage from GameState."));
-
-		return nullptr;
+		UE_LOG(LogCs, Warning, TEXT("%s: Failed to Manager Damage of type UCsManager_Damage from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
 	}
-	else
-	{
-		return nullptr;
-	}
+	return nullptr;
 }
 
 #endif // #if WITH_EDITOR

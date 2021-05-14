@@ -3,9 +3,19 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once
 
-/**
-* Library for interface: NCsStatusEffect::NModifier::IModifier
-*/
-struct CSSE_API FCsLibrary_StatusEffectModifier : public TCsLibrary_InterfaceMap<NCsStatusEffect::NModifier::IModifier>
+namespace NCsStatusEffect
 {
-};
+	namespace NModifier
+	{
+	#define ModifierType NCsStatusEffect::NModifier::IModifier
+
+		/**
+		* Library for interface: ModifierType (NCsStatusEffect::NModifier::IModifier)
+		*/
+		struct CSSE_API FLibrary final : public TCsLibrary_InterfaceMap<ModifierType>
+		{
+		};
+
+	#undef ModifierType
+	}
+}

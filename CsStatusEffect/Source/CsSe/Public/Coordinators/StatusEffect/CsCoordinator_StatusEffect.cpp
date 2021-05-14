@@ -8,6 +8,7 @@
 #include "Library/CsLibrary_Common.h"
 #include "Data/CsLibrary_Data_StatusEffect.h"
 #include "Event/CsLibrary_StatusEffectEvent.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/StatusEffect/CsManager_StatusEffect.h"
 #include "Managers/StatusEffect/CsGetManagerStatusEffect.h"
@@ -22,28 +23,28 @@
 #include "UniqueObject/CsUniqueObject.h"
 
 #if WITH_EDITOR
+// Library
+#include "Coordinators/StatusEffect/CsLibrary_Coordinator_StatusEffect.h"
+// Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Coordinators/StatusEffect/CsGetCoordinatorStatusEffect.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/World.h"
-#include "Engine/Engine.h"
-
-#include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
 // Cached
 #pragma region
 
-namespace NCsCoordinator_StatusEffectCached
+namespace NCsCoordinatorStatusEffect
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, GetTypeFromEvent);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, ProcessStatusEffectEvent);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, ProcessStatusEffectEventContainer);
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, GetFromWorldContextObject);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, GetTypeFromEvent);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, ProcessStatusEffectEvent);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, ProcessStatusEffectEventContainer);
+		}
 	}
 }
 
@@ -60,28 +61,19 @@ UCsCoordinator_StatusEffect::UCsCoordinator_StatusEffect(const FObjectInitialize
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
+
 /*static*/ UCsCoordinator_StatusEffect* UCsCoordinator_StatusEffect::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetCoordinatorStatusEffect(InRoot)->GetCoordinator_StatusEffect();
-#else
-	if (s_bShutdown)
-	{
-		UE_LOG(LogCsSe, Warning, TEXT("UCsCoordinator_StatusEffect::Get: Coordinator has already shutdown."));
-		return nullptr;
-	}
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
 
 /*static*/ bool UCsCoordinator_StatusEffect::IsValid(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetCoordinatorStatusEffect(InRoot)->GetCoordinator_StatusEffect() != nullptr;
-#else
-	return s_Instance != nullptr;
-#endif // #if WITH_EDITOR
 }
+
+#endif // #if WITH_EDITOR
 
 /*static*/ void UCsCoordinator_StatusEffect::Init(UObject* InRoot, TSubclassOf<UCsCoordinator_StatusEffect> CoordinatorStatusEffectClass, UObject* InOuter /*=nullptr*/)
 {
@@ -208,24 +200,24 @@ UCsCoordinator_StatusEffect::UCsCoordinator_StatusEffect(const FObjectInitialize
 
 /*static*/ UCsCoordinator_StatusEffect* UCsCoordinator_StatusEffect::GetFromWorldContextObject(const UObject* WorldContextObject)
 {
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
-	{
-		// Game State
-		if (UCsCoordinator_StatusEffect* Manager = GetSafe(World->GetGameState()))
-			return Manager;
+	using namespace NCsCoordinatorStatusEffect::NCached;
 
-		UE_LOG(LogCsSe, Warning, TEXT("UCsCoordinator_StatusEffect::GetFromWorldContextObject: Failed to Manager Item of type UCsCoordinator_StatusEffect from GameState."));
+	const FString& Context = Str::GetFromWorldContextObject;
 
-		return nullptr;
-	}
-	else
+	typedef NCsStatusEffect::NCoordinator::FLibrary StaticMeshCoordinatorLibrary;
+
+	if (UObject* ContextRoot = StaticMeshCoordinatorLibrary::GetSafe(Context, WorldContextObject))
 	{
-		return nullptr;
+		if (UCsCoordinator_StatusEffect* Coordinator = StaticMeshCoordinatorLibrary::GetSafe(ContextRoot))
+			return Coordinator;
+
+		UE_LOG(LogCsSe, Warning, TEXT("%s: Failed to Coordinator Status Effect of type UCsCoordinator_StatusEffect from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
 	}
+	return nullptr;
 }
 
-#endif // #if WITH_EDITOR
 
+#endif // #if WITH_EDITOR
 void UCsCoordinator_StatusEffect::Initialize()
 {
 	// TODO: Poll config in future
@@ -351,7 +343,10 @@ void UCsCoordinator_StatusEffect::Remove(ICsReceiveStatusEffect* Object)
 // Event
 #pragma region
 
-NCsStatusEffect::NEvent::IEvent* UCsCoordinator_StatusEffect::ConstructEvent(const FECsStatusEffectEvent& Type)
+#define EventResourceType NCsStatusEffect::NEvent::FResource
+#define EventType NCsStatusEffect::NEvent::IEvent
+
+EventType* UCsCoordinator_StatusEffect::ConstructEvent(const FECsStatusEffectEvent& Type)
 {
 	// Default
 	if (Type == NCsStatusEffectEvent::Default)
@@ -362,55 +357,46 @@ NCsStatusEffect::NEvent::IEvent* UCsCoordinator_StatusEffect::ConstructEvent(con
 	return nullptr;
 }
 
-#define EventResourceType NCsStatusEffect::NEvent::FResource
 EventResourceType* UCsCoordinator_StatusEffect::AllocateEvent(const FECsStatusEffectEvent& Type)
 {
-#undef EventResourceType
 	return Manager_Events[Type.GetValue()].Allocate();
 }
 
 const FECsStatusEffectEvent& UCsCoordinator_StatusEffect::GetEventType(const FString& Context, const NCsStatusEffect::NEvent::IEvent* Event)
 {
-	checkf(Event, TEXT("%s: Event is NULL."), *Context);
+	typedef NCsStatusEffect::NEvent::FLibrary SeEventLibrary;
 
 	// Damage
-	if (FCsLibrary_StatusEffectEvent::GetSafeInterfaceChecked<NCsStatusEffect::NEvent::NDamage::IDamage>(Context, Event))
+	if (SeEventLibrary::GetSafeInterfaceChecked<NCsStatusEffect::NEvent::NDamage::IDamage>(Context, Event))
 		return NCsStatusEffectEvent::Damage;
 	return NCsStatusEffectEvent::Default;
 }
 
-#define EventResourceType NCsStatusEffect::NEvent::FResource
 const FECsStatusEffectEvent& UCsCoordinator_StatusEffect::GetEventType(const FString& Context, const EventResourceType* Event)
 {
-#undef EventResourceType
-	checkf(Event, TEXT("%s: Event is NULL."), *Context);
+	CS_IS_PTR_NULL_CHECKED(Event)
 
 	return GetEventType(Context, Event->Get());
 }
 
-#define EventResourceType NCsStatusEffect::NEvent::FResource
 void UCsCoordinator_StatusEffect::DeallocateEvent(const FString& Context, EventResourceType* Event)
 {
-#undef EventResourceType
-
 	const FECsStatusEffectEvent& Type = GetEventType(Context, Event);
 
+	typedef NCsStatusEffect::NEvent::FLibrary SeEventLibrary;
+
 	// Reset
-	if (ICsReset* IReset = FCsLibrary_StatusEffectEvent::GetSafeInterfaceChecked<ICsReset>(Context, Event->Get()))
+	if (ICsReset* IReset = SeEventLibrary::GetSafeInterfaceChecked<ICsReset>(Context, Event->Get()))
 		IReset->Reset();
 
 	Manager_Events[Type.GetValue()].Deallocate(Event);
 }
 
-#define EventType NCsStatusEffect::NEvent::IEvent
 bool UCsCoordinator_StatusEffect::CopyEvent(const FString& Context, const EventType* From, EventType* To)
 {
-#undef EventType
-	return FCsLibrary_StatusEffectEvent::CopyChecked(Context, From, To);
+	return NCsStatusEffect::NEvent::FLibrary::CopyChecked(Context, From, To);
 }
 
-#define EventResourceType NCsStatusEffect::NEvent::FResource
-#define EventType NCsStatusEffect::NEvent::IEvent
 EventResourceType* UCsCoordinator_StatusEffect::CreateCopyOfEvent(const FString& Context, const EventType* Event)
 {
 	const FECsStatusEffectEvent& Type = GetEventType(Context, Event);
@@ -426,26 +412,21 @@ EventResourceType* UCsCoordinator_StatusEffect::CreateCopyOfEvent(const FString&
 
 	return Container;
 }
-#undef EventResourceType
-#undef EventType
 
-#define EventResourceType NCsStatusEffect::NEvent::FResource
 EventResourceType* UCsCoordinator_StatusEffect::CreateCopyOfEvent(const FString& Context, const EventResourceType* Event)
 {
-#undef EventResourceType
+	CS_IS_PTR_NULL_CHECKED(Event)
+
 	return CreateCopyOfEvent(Context, Event->Get());
 }
 
-#define EventType NCsStatusEffect::NEvent::IEvent
 void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Event)
 {
-#undef EventType
-
-	using namespace NCsCoordinator_StatusEffectCached;
+	using namespace NCsCoordinatorStatusEffect::NCached;
 
 	const FString& Context = Str::ProcessStatusEffectEvent;
 
-	checkf(Event, TEXT("%s: Event is NULL."), *Context);
+	CS_IS_PTR_NULL_CHECKED(Event)
 
 	typedef NCsStatusEffect::NData::IData DataType;
 
@@ -468,10 +449,12 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Even
 	if (TriggerParams.Type == TriggerFrequencyType::Once &&
 		TransferParams.Type == TransferFrequencyType::None)
 	{
-		// NCsStatusEffect::NEvent::NDamage::IDamage
+		// SeDamageEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
+
+		typedef NCsStatusEffect::NEvent::FLibrary SeEventLibrary;
 		typedef NCsStatusEffect::NEvent::NDamage::IDamage SeDamageEventType;
 
-		if (const SeDamageEventType* SeDamageEvent = FCsLibrary_StatusEffectEvent::GetSafeInterfaceChecked<SeDamageEventType>(Context, Event))
+		if (const SeDamageEventType* SeDamageEvent = SeEventLibrary::GetSafeInterfaceChecked<SeDamageEventType>(Context, Event))
 		{
 			// Get the DamageEvent
 			typedef NCsDamage::NEvent::IEvent DamageEventType;
@@ -490,9 +473,10 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Even
 	else
 	{
 		// ShapeDataType
+		typedef NCsStatusEffect::NData::FLibrary SeDataLibrary;
 		typedef NCsStatusEffect::NData::NShape::IShape ShapeDataType;
 
-		if (ShapeDataType* ShapeData = FCsLibrary_Data_StatusEffect::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
+		if (ShapeDataType* ShapeData = SeDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 		{
 
 		}
@@ -507,8 +491,6 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Even
 					Local_Receivers.Last().SetObject(Receiver);
 
 					// Copy the Event
-					typedef NCsStatusEffect::NEvent::FResource EventResourceType;
-
 					EventResourceType* EventContainer = CreateCopyOfEvent(Context, Event);
 
 					Local_Events.Add(EventContainer);
@@ -521,9 +503,6 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Even
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		typedef NCsStatusEffect::NEvent::FResource EventResourceType;
-		typedef NCsStatusEffect::NEvent::IEvent EventType;
-
 		FCsReceiveStatusEffect& Receiver  = Local_Receivers[I];
 		EventResourceType* EventContainer = Local_Events[I];
 
@@ -554,10 +533,9 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Even
 	Local_Events.Reset(Local_Events.Max());
 }
 
-#define EventResourceType NCsStatusEffect::NEvent::FResource
 void UCsCoordinator_StatusEffect::ProcessStatusEffectEventContainer(const EventResourceType* Event)
 {
-	using namespace NCsCoordinator_StatusEffectCached;
+	using namespace NCsCoordinatorStatusEffect::NCached;
 
 	const FString& Context = Str::ProcessStatusEffectEventContainer;
 
@@ -569,15 +547,15 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEventContainer(const EventR
 
 	check(Manager_Event.IsValidChecked(Context, Event));
 
-	typedef NCsStatusEffect::NEvent::IEvent EventType;
-
 	const EventType* IEvent = Event->Get();
 	// Process Event
 	ProcessStatusEffectEvent(IEvent);
 	// Deallocate Event when finished
 	DeallocateEvent(Context, const_cast<EventResourceType*>(Event));
 }
+
 #undef EventResourceType
+#undef EventType
 
 #pragma endregion Event
 

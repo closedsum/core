@@ -37,21 +37,21 @@ namespace NCsFX
 
 		#if WITH_EDITOR
 
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* WorldContext)
 		{
 			typedef NCsGameState::FLibrary GameStateLibrary;
 
 			return GameStateLibrary::GetAsObjectChecked(Context, WorldContext);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsGameState::FLibrary GameStateLibrary;
 
 			return GameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
+		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
 		{
 			using namespace NCsFX::NManager::NLibrary::NCached;
 
@@ -67,7 +67,7 @@ namespace NCsFX
 		// Get
 		#pragma region
 
-		UCsManager_FX_Actor* FLibrary::GetChecked(const FString& Context, UObject* ContextObject)
+		UCsManager_FX_Actor* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
 		{
 			UObject* ContextRoot			 = GetContextRootChecked(Context, ContextObject);
 			UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(ContextRoot);
@@ -76,7 +76,7 @@ namespace NCsFX
 			return Manager_FX;
 		}
 
-		UCsManager_FX_Actor* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+		UCsManager_FX_Actor* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -94,7 +94,7 @@ namespace NCsFX
 			return Manager_FX;
 		}
 
-		UCsManager_FX_Actor* FLibrary::GetSafe(UObject* ContextObject)
+		UCsManager_FX_Actor* FLibrary::GetSafe(const UObject* ContextObject)
 		{
 			using namespace NCsFX::NManager::NLibrary::NCached;
 
@@ -110,7 +110,7 @@ namespace NCsFX
 
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
-		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			// Get Context for Manager_FX
 			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
@@ -158,7 +158,7 @@ namespace NCsFX
 			return Manager_FX->Spawn(FX.Type, Payload);
 		}
 
-		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
 
@@ -179,7 +179,7 @@ namespace NCsFX
 			return SpawnChecked(Context, WorldContext, PooledPayload, FX, Transform);
 		}
 		
-		const FCsFXActorPooled* FLibrary::SafeSpawn(UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		const FCsFXActorPooled* FLibrary::SafeSpawn(const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			using namespace NCsFX::NManager::NLibrary::NCached;
 

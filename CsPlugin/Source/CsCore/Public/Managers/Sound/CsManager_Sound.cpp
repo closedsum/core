@@ -21,15 +21,12 @@
 #include "Engine/World.h"
 
 #if WITH_EDITOR
+// Library
+#include "Managers/Sound/CsLibrary_Manager_Sound.h"
+// Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/Sound/CsGetManagerSound.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/Engine.h"
-
-#include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -41,6 +38,7 @@ namespace NCsManagerSound
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, Spawn);
 		}
@@ -250,20 +248,20 @@ UCsManager_Sound::UCsManager_Sound(const FObjectInitializer& ObjectInitializer)
 
 /*static*/ UCsManager_Sound* UCsManager_Sound::GetFromWorldContextObject(const UObject* WorldContextObject)
 {
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	using namespace NCsManagerSound::NCached;
+
+	const FString& Context = Str::GetFromWorldContextObject;
+
+	typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
+
+	if (UObject* ContextRoot = SoundManagerLibrary::GetSafeContextRoot(Context, WorldContextObject))
 	{
-		// Game State
-		if (UCsManager_Sound* Manager = GetSafe(World->GetGameState()))
+		if (UCsManager_Sound* Manager = GetSafe(ContextRoot))
 			return Manager;
 
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Sound::GetFromWorldContextObject: Failed to Manager FX Actor of type UCsManager_Sound from GameState."));
-
-		return nullptr;
+		UE_LOG(LogCs, Warning, TEXT("%s: Failed to Manager Actor of type UCsManager_Sound from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
 	}
-	else
-	{
-		return nullptr;
-	}
+	return nullptr;
 }
 
 #endif // #if WITH_EDITOR

@@ -56,14 +56,14 @@ namespace NCsSound
 			*/
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsGameState::FLibrary GameStateLibrary;
 
 			return GameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(UObject* WorldContext)
+		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
 		{
 			using namespace NCsSound::NManager::NLibrary::NCached;
 
@@ -79,7 +79,7 @@ namespace NCsSound
 		// Get
 		#pragma region
 
-		UCsManager_Sound* FLibrary::GetChecked(const FString& Context, UObject* ContextObject)
+		UCsManager_Sound* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
 		{
 			UObject* ContextRoot		    = GetContextRootChecked(Context, ContextObject);
 			UCsManager_Sound* Manager_Sound = UCsManager_Sound::Get(ContextRoot);
@@ -88,7 +88,7 @@ namespace NCsSound
 			return Manager_Sound;
 		}
 
-		UCsManager_Sound* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+		UCsManager_Sound* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -106,7 +106,7 @@ namespace NCsSound
 			return Manager_Sound;
 		}
 
-		UCsManager_Sound* FLibrary::GetSafe(UObject* ContextObject)
+		UCsManager_Sound* FLibrary::GetSafe(const UObject* ContextObject)
 		{
 			using namespace NCsSound::NManager::NLibrary::NCached;
 
@@ -117,7 +117,7 @@ namespace NCsSound
 
 		#pragma endregion Get
 
-		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, UObject* WorldContext, const FCsSound& Sound)
+		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FCsSound& Sound)
 		{
 			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
 
@@ -137,7 +137,7 @@ namespace NCsSound
 		
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
-		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/)
+		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
 

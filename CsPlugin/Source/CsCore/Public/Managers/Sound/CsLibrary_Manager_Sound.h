@@ -47,9 +47,9 @@ namespace NCsSound
 			* @param Log
 			* return				Context for UCsManager_Sound.
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
 			{
 				return nullptr;
 			}
@@ -62,9 +62,9 @@ namespace NCsSound
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsManager_Sound.
 			*/
-			static UObject* GetSafeContextRoot(UObject* WorldContext);
+			static UObject* GetSafeContextRoot(const UObject* WorldContext);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(UObject* WorldContext)
+			FORCEINLINE static UObject* GetSafeContextRoot(const UObject* WorldContext)
 			{
 				return nullptr;
 			}
@@ -83,7 +83,7 @@ namespace NCsSound
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				UCsManager_Sound.
 			*/
-			static UCsManager_Sound* GetChecked(const FString& Context, UObject* WorldContext);
+			static UCsManager_Sound* GetChecked(const FString& Context, const UObject* WorldContext);
 
 			/**
 			* Safely get the reference to UCsManager_Sound from a WorldContext.
@@ -93,7 +93,7 @@ namespace NCsSound
 			* @param Log
 			* return				UCsManager_Sound.
 			*/
-			static UCsManager_Sound* GetSafe(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UCsManager_Sound* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely get the reference to UCsManager_Sound from a WorldContext.
@@ -101,7 +101,7 @@ namespace NCsSound
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				UCsManager_Sound.
 			*/
-			static UCsManager_Sound* GetSafe(UObject* WorldContext);
+			static UCsManager_Sound* GetSafe(const UObject* WorldContext);
 
 		#pragma endregion Get
 
@@ -117,7 +117,7 @@ namespace NCsSound
 			* @param Sound
 			* return				Spawned Sound in a pooled container.
 			*/
-			static const FCsSoundPooled* SpawnChecked(const FString& Context, UObject* WorldContext, const FCsSound& Sound);
+			static const FCsSoundPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FCsSound& Sound);
 		
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
@@ -131,7 +131,7 @@ namespace NCsSound
 			*						Sound.Transform is applied as an "offset".
 			* return				Spawned Sound in a pooled container.
 			*/
-			static const FCsSoundPooled* SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity);
+			static const FCsSoundPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity);
 
 		#undef PooledPayloadType
 

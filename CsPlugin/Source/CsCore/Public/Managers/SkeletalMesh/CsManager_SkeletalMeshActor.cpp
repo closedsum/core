@@ -254,11 +254,10 @@ UCsManager_SkeletalMeshActor::UCsManager_SkeletalMeshActor(const FObjectInitiali
 
 	if (UObject* ContextRoot = SkeletalMeshManagerLibrary::GetSafeContextRoot(Context, WorldContextObject))
 	{
-		// Game State
 		if (UCsManager_SkeletalMeshActor* Manager = GetSafe(ContextRoot))
 			return Manager;
 
-		UE_LOG(LogCs, Warning, TEXT("%s: Failed to Manager FX Actor of type UCsManager_SkeletalMeshActor from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("%s: Failed to Manager Skeletal Mesh Actor of type UCsManager_SkeletalMeshActor from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
 	}
 	return nullptr;
 }

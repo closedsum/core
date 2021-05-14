@@ -34,9 +34,9 @@ namespace NCsFX
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsManager_FX.
 			*/
-			static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext);
+			static UObject* GetContextRootChecked(const FString& Context, const UObject* WorldContext);
 		#else
-			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, UObject* WorldContext)
+			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, const UObject* WorldContext)
 			{
 				return nullptr;
 			}
@@ -51,9 +51,9 @@ namespace NCsFX
 			* @param Log
 			* return				Context for UCsManager_FX.
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
 			{
 				return nullptr;
 			}
@@ -66,9 +66,9 @@ namespace NCsFX
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsManager_FX.
 			*/
-			static UObject* GetSafeContextRoot(UObject* WorldContext);
+			static UObject* GetSafeContextRoot(const UObject* WorldContext);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(UObject* WorldContext)
+			FORCEINLINE static UObject* GetSafeContextRoot(const UObject* WorldContext)
 			{
 				return nullptr;
 			}
@@ -87,7 +87,7 @@ namespace NCsFX
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				UCsManager_FX_Actor.
 			*/
-			static UCsManager_FX_Actor* GetChecked(const FString& Context, UObject* WorldContext);
+			static UCsManager_FX_Actor* GetChecked(const FString& Context, const UObject* WorldContext);
 
 			/**
 			* Safely get the reference to UCsManager_FX_Actor from a WorldContext.
@@ -97,7 +97,7 @@ namespace NCsFX
 			* @param Log
 			* return				UCsManager_FX_Actor.
 			*/
-			static UCsManager_FX_Actor* GetSafe(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UCsManager_FX_Actor* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely get the reference to UCsManager_FX_Actor from a WorldContext.
@@ -105,7 +105,7 @@ namespace NCsFX
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				UCsManager_FX_Actor.
 			*/
-			static UCsManager_FX_Actor* GetSafe(UObject* WorldContext);
+			static UCsManager_FX_Actor* GetSafe(const UObject* WorldContext);
 
 		#pragma endregion Get
 
@@ -126,7 +126,7 @@ namespace NCsFX
 			*						Sound.Transform is applied as an "offset".
 			* return				Spawned FX
 			*/
-			static const FCsFXActorPooled* SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
+			static const FCsFXActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			* Safely spawn an FX with the given payload.
@@ -140,7 +140,7 @@ namespace NCsFX
 			* @param Log			(optional)
 			* return				Spawned FX
 			*/
-			static const FCsFXActorPooled* SafeSpawn(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
+			static const FCsFXActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely spawn an FX with the given payload.
@@ -152,7 +152,7 @@ namespace NCsFX
 			*						Sound.Transform is applied as an "offset".
 			* return				Spawned FX
 			*/
-			static const FCsFXActorPooled* SafeSpawn(UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
+			static const FCsFXActorPooled* SafeSpawn(const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
 		#undef PooledPayloadType
 

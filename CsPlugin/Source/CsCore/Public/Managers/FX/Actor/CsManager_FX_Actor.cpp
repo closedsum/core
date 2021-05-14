@@ -19,18 +19,12 @@
 
 #if WITH_EDITOR
 // Library
-#include "Library/CsLibrary_Common.h"
 #include "Managers/Time/CsLibrary_Manager_Time.h"
+#include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 // Managers
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/FX/Actor/CsGetManagerFXActor.h"
-// World
-#include "Engine/World.h"
-// Engine
-#include "Engine/Engine.h"
-// Game
-#include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -42,6 +36,7 @@ namespace NCsManagerFXActor
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, PopulateDataMapFromSettings);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, Spawn);
@@ -261,20 +256,20 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 
 /*static*/ UCsManager_FX_Actor* UCsManager_FX_Actor::GetFromWorldContextObject(const UObject* WorldContextObject)
 {
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	using namespace NCsManagerFXActor::NCached;
+
+	const FString& Context = Str::GetFromWorldContextObject;
+
+	typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+
+	if (UObject* ContextRoot = FXManagerLibrary::GetSafeContextRoot(Context, WorldContextObject))
 	{
-		// Game State
-		if (UCsManager_FX_Actor* Manager = GetSafe(World->GetGameState()))
+		if (UCsManager_FX_Actor* Manager = GetSafe(ContextRoot))
 			return Manager;
 
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::GetFromWorldContextObject: Failed to Manager FX Actor of type UCsManager_FX_Actor from GameState."));
-
-		return nullptr;
+		UE_LOG(LogCs, Warning, TEXT("%s: Failed to Manager FX Actor of type UCsManager_FX_Actor from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
 	}
-	else
-	{
-		return nullptr;
-	}
+	return nullptr;
 }
 
 #endif // #if WITH_EDITOR

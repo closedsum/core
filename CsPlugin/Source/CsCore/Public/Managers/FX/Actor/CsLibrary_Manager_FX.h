@@ -122,9 +122,11 @@ namespace NCsFX
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param PooledPayload
 			* @param FX
+			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
+			*						Sound.Transform is applied as an "offset".
 			* return				Spawned FX
 			*/
-			static const FCsFXActorPooled* SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX);
+			static const FCsFXActorPooled* SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			* Safely spawn an FX with the given payload.
@@ -133,10 +135,12 @@ namespace NCsFX
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param PooledPayload
 			* @param FX
-			* @param Log
+			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
+			*						Sound.Transform is applied as an "offset".
+			* @param Log			(optional)
 			* return				Spawned FX
 			*/
-			static const FCsFXActorPooled* SafeSpawn(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, void(*Log)(const FString&) = &FCsLog::Warning);
+			static const FCsFXActorPooled* SafeSpawn(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely spawn an FX with the given payload.
@@ -144,9 +148,11 @@ namespace NCsFX
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param PooledPayload
 			* @param FX
+			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
+			*						Sound.Transform is applied as an "offset".
 			* return				Spawned FX
 			*/
-			static const FCsFXActorPooled* SafeSpawn(UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX);
+			static const FCsFXActorPooled* SafeSpawn(UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
 		#undef PooledPayloadType
 

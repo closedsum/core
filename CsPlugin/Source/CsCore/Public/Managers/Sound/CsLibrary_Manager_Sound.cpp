@@ -137,7 +137,7 @@ namespace NCsSound
 		
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
-		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound)
+		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
 
@@ -150,14 +150,9 @@ namespace NCsSound
 			// Allocate Payload
 			PayloadType* Payload = Manager_Sound->AllocatePayload(Sound.Type);
 			// Set Payload
-			PayloadLibrary::SetChecked(Context, Payload, PooledPayload, Sound);
+			PayloadLibrary::SetChecked(Context, Payload, PooledPayload, Sound, Transform);
 			// Spawn
 			return Manager_Sound->Spawn(Sound.Type, Payload);
-		}
-
-		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform)
-		{
-			return nullptr;
 		}
 
 		#undef PooledPayloadType

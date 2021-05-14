@@ -127,21 +127,11 @@ namespace NCsSound
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Sound
-			* return				Spawned Sound in a pooled container.
-			*/
-			static const FCsSoundPooled* SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound);
-
-			/**
-			* Spawn a sound for UCsManager_Sound from PooledPayload and Sound.
-			*
-			* @param Context		The calling context.
-			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Sound
-			* @param Transform		Transform to apply the sound after allocation and before playing.
+			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
 			*						Sound.Transform is applied as an "offset".
 			* return				Spawned Sound in a pooled container.
 			*/
-			static const FCsSoundPooled* SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform);
+			static const FCsSoundPooled* SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity);
 
 		#undef PooledPayloadType
 

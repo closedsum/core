@@ -110,7 +110,7 @@ namespace NCsFX
 
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
-		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX)
+		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			// Get Context for Manager_FX
 			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
@@ -123,7 +123,7 @@ namespace NCsFX
 			// Set Payload
 			typedef NCsFX::NPayload::FLibrary PayloadLibrary;
 
-			PayloadLibrary::SetChecked(Context, Payload, PooledPayload, FX);
+			PayloadLibrary::SetChecked(Context, Payload, PooledPayload, FX, Transform);
 
 			// Int
 			for (const FCsFXParameterInt& Param : FX.IntParameters)
@@ -158,7 +158,7 @@ namespace NCsFX
 			return Manager_FX->Spawn(FX.Type, Payload);
 		}
 
-		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
 
@@ -176,16 +176,16 @@ namespace NCsFX
 			if (!FX.IsValid(Context))
 				return nullptr;
 
-			return SpawnChecked(Context, WorldContext, PooledPayload, FX);
+			return SpawnChecked(Context, WorldContext, PooledPayload, FX, Transform);
 		}
 		
-		const FCsFXActorPooled* FLibrary::SafeSpawn(UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX)
+		const FCsFXActorPooled* FLibrary::SafeSpawn(UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			using namespace NCsFX::NManager::NLibrary::NCached;
 
 			const FString& Context = Str::SafeSpawn;
 
-			return SafeSpawn(Context, WorldContext, PooledPayload, FX, nullptr);
+			return SafeSpawn(Context, WorldContext, PooledPayload, FX, Transform, nullptr);
 		}
 
 		#undef PooledPayloadType

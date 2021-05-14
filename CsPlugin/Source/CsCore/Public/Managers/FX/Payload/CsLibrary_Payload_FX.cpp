@@ -83,7 +83,7 @@ namespace NCsFX
 		#define PayloadImplType NCsFX::NPayload::FImpl
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
-		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, const FCsFX& FX)
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
 
@@ -95,12 +95,34 @@ namespace NCsFX
 			Payload->AttachmentTransformRules = FX.AttachmentTransformRules;
 			Payload->Bone					  = FX.Bone;
 			Payload->TransformRules			  = FX.TransformRules;
-			Payload->Transform				  = FX.Transform;
+
+			Payload->Transform.SetTranslation(Transform.GetTranslation() + FX.Transform.GetTranslation());
+			Payload->Transform.SetRotation(Transform.GetRotation() + FX.Transform.GetRotation());
+			Payload->Transform.SetScale3D(Transform.GetScale3D() * FX.Transform.GetScale3D());
 		}
 
-		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX)
+		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			SetChecked(Context, Payload, FX);
+			CS_IS_PTR_NULL_EXIT(Payload)
+
+			if (!FX.IsValid(Context))
+				return;
+
+			SetChecked(Context, Payload, FX, Transform);
+		}
+
+		void FLibrary::SetSafe(PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		{
+			using namespace NCsFX::NPayload::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafe;
+
+			SetSafe(Context, Payload, FX, Transform, nullptr);
+		}
+
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		{
+			SetChecked(Context, Payload, FX, Transform);
 
 			Payload->Instigator						= PooledPayload->GetInstigator();
 			Payload->Owner							= PooledPayload->GetOwner();
@@ -109,26 +131,7 @@ namespace NCsFX
 			Payload->PreserveChangesFromDefaultMask = PooledPayload->GetPreserveChangesFromDefaultMask();
 		}
 
-		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
-		{
-			CS_IS_PTR_NULL_EXIT(Payload)
-
-			if (!FX.IsValid(Context))
-				return;
-
-			SetChecked(Context, Payload, FX);
-		}
-
-		void FLibrary::SetSafe(PayloadImplType* Payload, const FCsFX& FX)
-		{
-			using namespace NCsFX::NPayload::NLibrary::NCached;
-
-			const FString& Context = Str::SetSafe;
-
-			SetSafe(Context, Payload, FX, nullptr);
-		}
-
-		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_PTR_NULL_EXIT(Payload)
 
@@ -137,16 +140,16 @@ namespace NCsFX
 			if (!FX.IsValid(Context))
 				return;
 
-			SetChecked(Context, Payload, PooledPayload, FX);
+			SetChecked(Context, Payload, PooledPayload, FX, Transform);
 		}
 
-		void FLibrary::SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX)
+		void FLibrary::SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			using namespace NCsFX::NPayload::NLibrary::NCached;
 
 			const FString& Context = Str::SetSafe;
 
-			SetSafe(Context, Payload, PooledPayload, FX, nullptr);
+			SetSafe(Context, Payload, PooledPayload, FX, Transform, nullptr);
 		}
 
 		#undef PayloadImplType

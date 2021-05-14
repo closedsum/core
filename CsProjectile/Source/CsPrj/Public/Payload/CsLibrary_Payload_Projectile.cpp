@@ -6,24 +6,33 @@
 // Projectile
 #include "Payload/CsPayload_ProjectileImplSlice.h"
 
-bool FCsLibrary_Payload_Projectile::CopyChecked(const FString& Context, const NCsProjectile::NPayload::IPayload* From, NCsProjectile::NPayload::IPayload* To)
+namespace NCsProjectile
 {
-	bool Result = false;
-
-	// PooledObject
+	namespace NPayload
 	{
-		typedef NCsPooledObject::NPayload::FImplSlice SliceType;
-		typedef NCsPooledObject::NPayload::IPayload PayloadInterfaceType;
+		#define PayloadType NCsProjectile::NPayload::IPayload
+		bool FLibrary::CopyChecked(const FString& Context, const PayloadType* From, PayloadType* To)
+		{
+		#undef PayloadType
 
-		Result |= CopySliceChecked<SliceType, PayloadInterfaceType>(Context, From, To);
+			bool Result = false;
+
+			// PooledObject
+			{
+				typedef NCsPooledObject::NPayload::FImplSlice SliceType;
+				typedef NCsPooledObject::NPayload::IPayload PayloadInterfaceType;
+
+				Result |= CopySliceChecked<SliceType, PayloadInterfaceType>(Context, From, To);
+			}
+			// Projectile
+			{
+				typedef NCsProjectile::NPayload::FImplSlice SliceType;
+				typedef NCsProjectile::NPayload::IPayload PayloadInterfaceType;
+
+				Result |= CopySliceChecked<SliceType, PayloadInterfaceType>(Context, From, To);
+			}
+
+			return Result;
+		}
 	}
-	// Projectile
-	{
-		typedef NCsProjectile::NPayload::FImplSlice SliceType;
-		typedef NCsProjectile::NPayload::IPayload PayloadInterfaceType;
-
-		Result |= CopySliceChecked<SliceType, PayloadInterfaceType>(Context, From, To);
-	}
-
-	return Result;
 }

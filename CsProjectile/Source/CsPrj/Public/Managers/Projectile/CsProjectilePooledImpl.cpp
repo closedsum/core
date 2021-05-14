@@ -17,6 +17,7 @@
 #include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
+#include "Library/CsLibrary_Valid.h"
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
 // Components
@@ -67,6 +68,7 @@ namespace NCsProjectilePooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, SetType);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnHit);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Update);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Allocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Deallocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnLaunch_SetModifiers);
@@ -502,7 +504,11 @@ void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
 {
 #undef PooledPayloadType
 
-	checkf(Payload, TEXT("ACsProjectilePooledImpl::Allocate: Payload is NULL."));
+	using namespace NCsProjectilePooledImpl::NCached;
+
+	const FString& Context = Str::Allocate;
+
+	CS_IS_PTR_NULL_CHECKED(Payload)
 
 	Cache->Allocate(Payload);
 
@@ -598,7 +604,7 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 
 	const FString& Context = Str::Launch;
 
-	checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
+	CS_IS_PTR_NULL_CHECKED(Payload)
 
 	// Get Projectile Payload
 	typedef NCsProjectile::NPayload::IPayload PayloadType;
@@ -768,9 +774,10 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 
 	// NCsProjectile::NPayload::NModifier::NDamage::IDamage
 	{
+		typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
 		typedef NCsProjectile::NPayload::NModifier::NDamage::IDamage ModDamagePayloadType;
 
-		if (ModDamagePayloadType* DmgModifierPayload = FCsLibrary_Payload_Projectile::GetSafeInterfaceChecked<ModDamagePayloadType>(Context, Payload))
+		if (ModDamagePayloadType* DmgModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<ModDamagePayloadType>(Context, Payload))
 		{
 			typedef NCsDamage::NModifier::IModifier ModifierType;
 
@@ -792,10 +799,10 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 #pragma region
 
 #define DamageEventResourceType NCsDamage::NEvent::FResource
+#define DamageDataType NCsDamage::NData::IData
+
 const DamageEventResourceType* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(const FHitResult& HitResult)
 {
-#undef DamageEventResourceType
-
 	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::OnHit_CreateDamageEvent;
@@ -803,22 +810,18 @@ const DamageEventResourceType* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(
 	// ICsData_ProjectileDamage
 	ICsData_ProjectileDamage* PrjDamageData = FCsLibrary_Data_Projectile::GetInterfaceChecked<ICsData_ProjectileDamage>(Context, Data);
 	// Get Damage Data
-	typedef NCsDamage::NData::IData DamageDataType;
-
 	DamageDataType* DamageData = PrjDamageData->GetDamageData();
 
 	return OnHit_CreateDamageEvent(HitResult, DamageData);
 }
 
-#define DamageEventResourceType NCsDamage::NEvent::FResource
-#define DamageDataType NCsDamage::NData::IData
 const DamageEventResourceType* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(const FHitResult& HitResult, DamageDataType* DamageData)
 {
 	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::OnHit_CreateDamageEvent;
 
-	checkf(DamageData, TEXT("%s: DamageData is NULL."), *Context);
+	CS_IS_PTR_NULL_CHECKED(DamageData)
 
 	UObject* ContextRoot			  = GetWorld()->GetGameState();
 	UCsManager_Damage* Manager_Damage = UCsManager_Damage::Get(ContextRoot);
@@ -828,18 +831,15 @@ const DamageEventResourceType* ACsProjectilePooledImpl::OnHit_CreateDamageEvent(
 
 		// Event
 	typedef NCsDamage::NEvent::IEvent DamageEventType;
-
-	DamageEventType* Event = Container->Get();
-		// Event Impl
 	typedef NCsDamage::NEvent::FImpl DamageEventImplType;
 
+	DamageEventType* Event		   = Container->Get();
 	DamageEventImplType* EventImpl = FCsLibrary_DamageEvent::PureStaticCastChecked<DamageEventImplType>(Context, Event);
 
 		// Value
-	EventImpl->DamageValue.CopyFrom(ContextRoot, DamageData->GetValue());
-
 	typedef NCsDamage::NValue::IValue DamageValueType;
 
+	EventImpl->DamageValue.CopyFrom(ContextRoot, DamageData->GetValue());
 	DamageValueType* DamageValue = EventImpl->DamageValue.Value;
 
 		// Range

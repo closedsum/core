@@ -549,20 +549,20 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: NCsProjectile::NPayload::IPayload.
+	*  Payload implements the interface: PayloadType (NCsProjectile::NPayload::IPayload).
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: NCsProjectile::NPayload::IPayload.
+	* return		Payload that implements the interface: PayloadType (NCsProjectile::NPayload::IPayload).
 	*/
 	PayloadType* AllocatePayload(const FECsProjectile& Type);
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: NCsProjectile::NPayload::IPayload.
+	*  Payload implements the interface: PayloadType (NCsProjectile::NPayload::IPayload).
 	*
 	* @param Context	Calling context.
 	* @param Type		Type of payload.
-	* return			Payload that implements the interface: NCsProjectile::NPayload::IPayload.
+	* return			Payload that implements the interface: PayloadType (NCsProjectile::NPayload::IPayload).
 	*/
 	template<typename PayloadTypeImpl>
 	PayloadTypeImpl* AllocatePayload(const FString& Context, const FECsProjectile& Type)
@@ -572,10 +572,10 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: NCsProjectile::NPayload::IPayload.
+	*  Payload implements the interface: PayloadType (NCsProjectile::NPayload::IPayload).
 	*
 	* @param Type	Type of payload.
-	* return		Payload that implements the interface: NCsProjectile::NPayload::IPayload.
+	* return		Payload that implements the interface: PayloadType (NCsProjectile::NPayload::IPayload).
 	*/
 	template<typename PayloadTypeImpl>
 	PayloadTypeImpl* AllocatePayload(const FECsProjectile& Type)
@@ -597,7 +597,7 @@ public:
 	* @param Type
 	* @param Payload
 	*/
-	const FCsProjectilePooled* Spawn(const FECsProjectile& Type, NCsProjectile::NPayload::IPayload* Payload);
+	const FCsProjectilePooled* Spawn(const FECsProjectile& Type, PayloadType* Payload);
 
 	/**
 	*

@@ -6,7 +6,13 @@
 #include "Data/CsPrjGetDataRootSet.h"
 #include "Data/CsPrjDataRootSet.h"
 
-const FCsPrjDataRootSet& FCsPrjLibrary_DataRootSet::GetChecked(const FString& Context, UObject* ContextRoot)
+namespace NCsProjectile
 {
-	return NCsDataRootSet::FLibrary::GetChecked<FCsPrjDataRootSet, ICsPrjGetDataRootSet, &ICsPrjGetDataRootSet::GetCsPrjDataRootSet>(Context, ContextRoot);
+	namespace NDataRootSet
+	{
+		const FCsPrjDataRootSet& FLibrary::GetChecked(const FString& Context, UObject* ContextRoot)
+		{
+			return NCsDataRootSet::FLibrary::GetChecked<FCsPrjDataRootSet, ICsPrjGetDataRootSet, &ICsPrjGetDataRootSet::GetCsPrjDataRootSet>(Context, ContextRoot);
+		}
+	}
 }

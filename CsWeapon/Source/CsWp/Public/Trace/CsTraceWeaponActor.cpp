@@ -14,10 +14,11 @@
 #include "Skin/Data/Visual/CsLibrary_Data_Skin_Visual.h"
 #include "Library/CsLibrary_Camera.h"
 #include "Material/CsLibrary_Material.h"
+#include "Coroutine/CsLibrary_CoroutineScheduler.h"
+#include "Managers/Time/CsLibrary_Manager_Time.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Managers
-#include "Managers/Time/CsManager_Time.h"
 #include "Managers/Weapon/CsManager_Weapon.h"
 // Data
 #include "Data/CsData_Weapon.h"
@@ -322,7 +323,9 @@ void ACsTraceWeaponActor::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTime)
 
 	const FString& Context = Str::OnUpdate_HandleStates;
 
-	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponTraceState))
@@ -403,7 +406,9 @@ bool ACsTraceWeaponActor::CanFire() const
 
 	const FString& Context = Str::CanFire;
 	
-	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 	typedef NCsWeapon::NTrace::NData::IData TraceDataType;
 	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
@@ -448,12 +453,16 @@ void ACsTraceWeaponActor::Fire()
 
 	const FString& Context = Str::Fire;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetWorld()->GetGameInstance());
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, this);
 
 	// End previous Fire Routine
 	Scheduler->End(UpdateGroup, FireRoutineHandle);
 
-	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 	Fire_StartTime = TimeSinceStart.Time;
 
@@ -462,14 +471,18 @@ void ACsTraceWeaponActor::Fire()
 
 	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
 
-	Payload->CoroutineImpl.BindUObject(this, &ACsTraceWeaponActor::Fire_Internal);
-	Payload->StartTime = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTime(UpdateGroup);
+	#define COROUTINE Fire_Internal
+
+	Payload->CoroutineImpl.BindUObject(this, &ACsTraceWeaponActor::COROUTINE);
+	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
 	Payload->Owner.SetObject(this);
-	Payload->SetName(Str::Fire_Internal);
-	Payload->SetFName(Name::Fire_Internal);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
 	Payload->OnEnds.AddDefaulted();
 	Payload->OnEnds.Last().BindUObject(this, &ACsTraceWeaponActor::Fire_Internal_OnEnd);
 	Payload->AbortMessages.Add(Name::Abort_Fire_Internal);
+
+	#undef COROUTINE
 
 	// Cache pointer to TraceDataType (NCsWeapon::NTrace::NData::IData)
 	typedef NCsWeapon::NTrace::NData::IData TraceDataType;
@@ -549,18 +562,26 @@ void ACsTraceWeaponActor::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	const FString& Context = Str::OnElapsedTime;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(Outer->GetWorld()->GetGameInstance());
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, Outer);
 
 	// Setup Routine
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
 	PayloadType* Payload = Scheduler->AllocatePayload(Outer->GetUpdateGroup());
 
-	Payload->CoroutineImpl.BindRaw(this, &ACsTraceWeaponActor::FTimeBetweenShotsImpl::OnElapsedTime_Internal);
-	Payload->StartTime = UCsManager_Time::Get(Outer->GetWorld()->GetGameInstance())->GetTime(Outer->GetUpdateGroup());
+	#define COROUTINE OnElapsedTime_Internal
+
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+	Payload->CoroutineImpl.BindRaw(this, &ACsTraceWeaponActor::FTimeBetweenShotsImpl::COROUTINE);
+	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, Outer, Outer->GetUpdateGroup());
 	Payload->Owner.SetObject(Outer);
-	Payload->SetName(Str::OnElapsedTime_Internal);
-	Payload->SetFName(Name::OnElapsedTime_Internal);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
+
+	#undef COROUTINE
 
 	// Get total elapsed time (= TimeBetweenShots)
 	typedef NCsWeapon::NTrace::NData::IData TraceDataType;

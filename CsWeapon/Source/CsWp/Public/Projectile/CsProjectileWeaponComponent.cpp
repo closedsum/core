@@ -842,7 +842,9 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		// Try to get camera through the owner
 		if (UObject* TheOwner = Outer->GetMyOwner())
 		{
-			return FCsLibrary_Camera::GetDirectionChecked(Context, TheOwner);
+			typedef NCsCamera::FLibrary CameraLibrary;
+
+			return CameraLibrary::GetDirectionChecked(Context, TheOwner);
 		}
 		checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(Outer->PrintNameAndClass()));
 	}
@@ -888,7 +890,9 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 			// Try to get camera through the owner
 			if (UObject* TheOwner = Outer->GetMyOwner())
 			{
-				Start = FCsLibrary_Camera::GetLocationChecked(Context, TheOwner);
+				typedef NCsCamera::FLibrary CameraLibrary;
+
+				Start = CameraLibrary::GetLocationChecked(Context, TheOwner);
 			}
 			// TODO: For now assert
 			else
@@ -930,7 +934,9 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 			// Try to get camera through the owner
 			if (UObject* TheOwner = Outer->GetMyOwner())
 			{
-				Dir = FCsLibrary_Camera::GetDirectionChecked(Context, TheOwner, DirectionRules);
+				typedef NCsCamera::FLibrary CameraLibrary;
+
+				Dir = CameraLibrary::GetDirectionChecked(Context, TheOwner, DirectionRules);
 			}
 			// TODO: For now assert
 			else

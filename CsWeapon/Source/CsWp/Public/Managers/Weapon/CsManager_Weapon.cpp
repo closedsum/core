@@ -980,6 +980,8 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 		TMap<FName, uint8*>& Map = DataTableRowByPathMap.FindOrAdd(DataTableSoftObject.ToSoftObjectPath());
 		Map.Add(Name, RowPtr);
 
+		typedef NCsWeapon::NData::FInterfaceMap DataInterfaceMapType;
+
 		// ICsData_Weapon
 		if (Emulates_ICsDataWeapon)
 		{
@@ -993,7 +995,7 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 
 			EmulatedDataMap.Add(Name, Data);
 
-			FCsData_WeaponInterfaceMap* EmulatedInterfaceMap = new FCsData_WeaponInterfaceMap();
+			DataInterfaceMapType* EmulatedInterfaceMap = new DataInterfaceMapType();
 
 			checkf(EmulatedDataInterfaceMap.Find(Name) == nullptr, TEXT("%s: Emulated Interface Map has already been created for Row: %s."), *Context, *(Name.ToString()));
 
@@ -1019,8 +1021,8 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 
 			DataEmuSliceType* Data = new DataEmuSliceType();
 
-			FCsData_WeaponInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap[Name];
-			FCsInterfaceMap* InterfaceMap					 = EmulatedInterfaceMap->GetInterfaceMap();
+			DataInterfaceMapType* EmulatedInterfaceMap = EmulatedDataInterfaceMap[Name];
+			FCsInterfaceMap* InterfaceMap			   = EmulatedInterfaceMap->GetInterfaceMap();
 
 			InterfaceMap->Add<DataType>(DataEmuSliceType::Name, static_cast<DataType*>(Data));
 
@@ -1090,8 +1092,8 @@ void UCsManager_Weapon::CreateEmulatedDataFromDataTable(UDataTable* DataTable, c
 
 			SoundDataImplType* Data = new SoundDataImplType();
 
-			FCsData_WeaponInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap[Name];
-			FCsInterfaceMap* InterfaceMap					 = EmulatedInterfaceMap->GetInterfaceMap();
+			DataInterfaceMapType* EmulatedInterfaceMap = EmulatedDataInterfaceMap[Name];
+			FCsInterfaceMap* InterfaceMap			   = EmulatedInterfaceMap->GetInterfaceMap();
 
 			InterfaceMap->Add<SoundDataType>(SoundDataImplType::Name, static_cast<SoundDataType*>(Data));
 
@@ -1305,9 +1307,11 @@ void UCsManager_Weapon::ResetDataContainers()
 	EmulatedDataMap.Reset();
 	EmulatedDataInterfaceImplMap.Reset();
 
-	for (TPair<FName, FCsData_WeaponInterfaceMap*>& Pair : EmulatedDataInterfaceMap)
+	typedef NCsWeapon::NData::FInterfaceMap DataInterfaceMapType;
+
+	for (TPair<FName, DataInterfaceMapType*>& Pair : EmulatedDataInterfaceMap)
 	{
-		FCsData_WeaponInterfaceMap* Ptr = Pair.Value;
+		DataInterfaceMapType* Ptr = Pair.Value;
 		delete Ptr;
 		Pair.Value = nullptr;
 	}

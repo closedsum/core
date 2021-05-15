@@ -55,8 +55,9 @@ class UWorld;
 
 // NCsWeapon::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
+// NCsWeapon::NData::FInterfaceMap
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, FInterfaceMap)
 
-struct FCsData_WeaponInterfaceMap;
 class UDataTable;
 struct FCsWeaponPtr;
 struct FCsProjectileWeaponPtr;
@@ -706,7 +707,9 @@ protected:
 	TMap<FName, DataType*> EmulatedDataMap;
 
 	/** <DataName, InterfaceMapPtr> */
-	TMap<FName, FCsData_WeaponInterfaceMap*> EmulatedDataInterfaceMap;
+#define DataInterfaceMapType NCsWeapon::NData::FInterfaceMap
+	TMap<FName, DataInterfaceMapType*> EmulatedDataInterfaceMap;
+#undef DataInterfaceMapType
 
 	/** <DataName, <InterfaceImplName, InterfaceImplPtr>> */
 	TMap<FName, TMap<FName, void*>> EmulatedDataInterfaceImplMap;
@@ -734,7 +737,9 @@ public:
 
 		checkf(Name != NAME_None, TEXT("UCsManager_Weapon::GetEmulatedData: Name = None is NOT Valid."));
 
-		FCsData_ProjectileInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap.Find(Name);
+		typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
+
+		DataInterfaceMapType* EmulatedInterfaceMap = EmulatedDataInterfaceMap.Find(Name);
 
 		checkf(EmulatedInterfaceMap, TEXT("UCsManager_Weapon::GetEmulatedData: EmulatedInterfaceMap is NULL. Failed to find InterfaceMap associated with %s."), *(Name.ToString()));
 
@@ -756,7 +761,9 @@ public:
 
 		checkf(Name != NAME_None, TEXT("UCsManager_Weapon::GetEmulatedDataImpl: Name = None is NOT Valid."));
 
-		FCsData_ProjectileInterfaceMap* EmulatedInterfaceMap = EmulatedDataInterfaceMap.Find(Name);
+		typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
+
+		DataInterfaceMapType* EmulatedInterfaceMap = EmulatedDataInterfaceMap.Find(Name);
 
 		checkf(EmulatedInterfaceMap, TEXT("UCsManager_Weapon::GetEmulatedData: EmulatedInterfaceMap is NULL. Failed to find InterfaceMap associated with %s."), *(Name.ToString()));
 

@@ -72,7 +72,9 @@ namespace NCsPooledObject {
 			class TData; } } }
 
 struct FCsInterfaceMap;
-struct FCsData_ProjectileInterfaceMap;
+
+// NCsProjectile::NData::FInterfaceMap
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, FInterfaceMap)
 
 UCLASS()
 class CSPRJ_API UCsManager_Projectile : public UObject
@@ -774,7 +776,9 @@ public:
 #pragma region
 protected:
 
-	DataHandlerType<DataType, FCsData_ProjectilePtr, FCsData_ProjectileInterfaceMap>* DataHandler;
+#define DataInterfaceMapType NCsProjectile::NData::FInterfaceMap
+	DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler;
+#undef DataInterfaceMapType
 
 	virtual void ConstructDataHandler();
 

@@ -22,7 +22,7 @@ namespace NCsProjectile
 			void FClass::GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
 			{
 				UObject* DataRootSetImpl			 = NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
-				const FCsPrjDataRootSet& DataRootSet = FCsPrjLibrary_DataRootSet::GetChecked(Context, MyRoot);
+				const FCsPrjDataRootSet& DataRootSet = NCsProjectile::NDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
 				OutDataTableSoftObject = DataRootSet.ProjectileClasses;
 
@@ -39,7 +39,7 @@ namespace NCsProjectile
 			void FClass::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 			{
 				UObject* DataRootSetImpl			 = NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
-				const FCsPrjDataRootSet& DataRootSet = FCsPrjLibrary_DataRootSet::GetChecked(Context, MyRoot);
+				const FCsPrjDataRootSet& DataRootSet = NCsProjectile::NDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
 				for (const FCsProjectileSettings_DataTable_Projectiles& Projectiles : DataRootSet.Projectiles)
 				{

@@ -15,14 +15,15 @@ namespace NCsProjectile
 		{
 #define DataHandlerType NCsPooledObject::NManager::NHandler::TData
 #define DataType NCsProjectile::NData::IData
+#define DataInterfaceMapType NCsProjectile::NData::FInterfaceMap
 
 			/**
 			*/
-			class CSPRJ_API FData : public DataHandlerType<DataType, FCsData_ProjectilePtr, FCsData_ProjectileInterfaceMap>
+			class CSPRJ_API FData : public DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>
 			{
 			private:
 
-				typedef DataHandlerType<DataType, FCsData_ProjectilePtr, FCsData_ProjectileInterfaceMap> Super;
+				typedef DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType> Super;
 
 			public:
 
@@ -49,6 +50,7 @@ namespace NCsProjectile
 
 #undef DataHandlerType
 #undef DataType
+#undef DataInterfaceMapType
 		}
 	}
 

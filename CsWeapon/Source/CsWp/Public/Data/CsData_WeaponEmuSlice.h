@@ -10,6 +10,9 @@ namespace NCsWeapon
 	namespace NData
 	{
 		/**
+		* "Emulates" WeaponDataType (NCsWeapon::NData::IData) by mimicking the interfaces and having pointers to the appropriate
+		* members. The idea behind this struct is to "build" the data via composition of separate objects that each implementation
+		* a specific interface.
 		*/
 		struct CSWP_API FEmuSlice : public IData
 		{
@@ -19,6 +22,10 @@ namespace NCsWeapon
 
 		private:
 
+			// ICsGetInterfaceMap
+
+			/** Pointer to the "root" object for all "Emu Slices". That object acts as the hub for the separate objects (via composition)
+				that describe the data. */
 			FCsInterfaceMap* InterfaceMap;
 
 		public:
@@ -33,19 +40,13 @@ namespace NCsWeapon
 
 		public:
 
-			FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map)
-			{
-				InterfaceMap = Map;
-			}
+			FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map) { InterfaceMap = Map; }
 
 		// ICsGetInterfaceMap
 		#pragma region
 		public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return InterfaceMap;
-			}
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
 		};

@@ -5,11 +5,17 @@
 
 class UObject;
 
-/**
-*/
-class CSPRJ_API FCsPrjLibrary_DataRootSet
+namespace NCsProjectile
 {
-public:
+	namespace NDataRootSet
+	{
+		/**
+		*/
+		struct CSPRJ_API FLibrary final
+		{
+		public:
 
-	static const FCsPrjDataRootSet& GetChecked(const FString& Context, UObject* ContextRoot);
-};
+			static const FCsPrjDataRootSet& GetChecked(const FString& Context, UObject* ContextRoot);
+		};
+	}
+}

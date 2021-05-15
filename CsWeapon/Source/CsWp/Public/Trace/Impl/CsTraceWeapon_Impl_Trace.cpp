@@ -215,7 +215,9 @@ namespace NCsWeapon
 						// Try to get camera through the owner
 						if (Owner)
 						{
-							return FCsLibrary_Camera::GetLocationChecked(Context, Owner);
+							typedef NCsCamera::FLibrary CameraLibrary;
+
+							return CameraLibrary::GetLocationChecked(Context, Owner);
 						}
 						checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(PrintOuterNameAndClass()));
 					}
@@ -314,7 +316,9 @@ namespace NCsWeapon
 						// Try to get camera through the owner
 						if (Owner)
 						{
-							return FCsLibrary_Camera::GetDirectionChecked(Context, Owner, DirectionRules);
+							typedef NCsCamera::FLibrary CameraLibrary;
+
+							return CameraLibrary::GetDirectionChecked(Context, Owner, DirectionRules);
 						}
 						checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(PrintOuterNameAndClass()));
 					}
@@ -326,8 +330,10 @@ namespace NCsWeapon
 						// direction the Owner's Camera is looking
 						if (Owner)
 						{
-							const FVector CameraStart = FCsLibrary_Camera::GetLocationChecked(Context, Owner);
-							const FVector Dir		  = FCsLibrary_Camera::GetDirectionChecked(Context, Owner, DirectionRules);
+							typedef NCsCamera::FLibrary CameraLibrary;
+
+							const FVector CameraStart = CameraLibrary::GetLocationChecked(Context, Owner);
+							const FVector Dir		  = CameraLibrary::GetDirectionChecked(Context, Owner, DirectionRules);
 							const FVector End		  = CameraStart + TraceParams->GetDistance() * Dir;
 
 							FHitResult Hit;

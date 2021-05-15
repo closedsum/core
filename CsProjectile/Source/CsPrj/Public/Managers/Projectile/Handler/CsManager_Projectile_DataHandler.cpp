@@ -39,7 +39,7 @@ namespace NCsProjectile
 			void FData::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 			{
 				UObject* DataRootSetImpl			 = NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
-				const FCsPrjDataRootSet& DataRootSet = FCsPrjLibrary_DataRootSet::GetChecked(Context, MyRoot);
+				const FCsPrjDataRootSet& DataRootSet = NCsProjectile::NDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
 				for (const FCsProjectileSettings_DataTable_Projectiles& Projectiles : DataRootSet.Projectiles)
 				{
@@ -62,7 +62,7 @@ namespace NCsProjectile
 			bool FData::HasEmulatedDataInterfaces(const FString& Context, const int32& Index) const
 			{
 				UObject* DataRootSetImpl			 = NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
-				const FCsPrjDataRootSet& DataRootSet = FCsPrjLibrary_DataRootSet::GetChecked(Context, MyRoot);
+				const FCsPrjDataRootSet& DataRootSet = NCsProjectile::NDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
 				checkf(Index < DataRootSet.Projectiles.Num(), TEXT("%s: Index < %s.GetCsPrjDataRootSet().Projectiles.Num() (%d >= %d)."), *Context, *(DataRootSetImpl->GetName()), DataRootSet.Projectiles.Num());
 
@@ -143,7 +143,9 @@ namespace NCsProjectile
 
 						EmulatedDataMap.Add(Name, Data);
 
-						FCsData_ProjectileInterfaceMap* EmulatedInterfaceMap = new FCsData_ProjectileInterfaceMap();
+						typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
+
+						DataInterfaceMapType* EmulatedInterfaceMap = new DataInterfaceMapType();
 
 						checkf(EmulatedDataInterfaceMap.Find(Name) == nullptr, TEXT("%s: Emulated Interface Map has already been created for Row: %s."), *Context, *(Name.ToString()));
 
@@ -216,7 +218,7 @@ namespace NCsProjectile
 			const TSet<FECsProjectileData>& FData::GetEmulatedDataInterfaces(const FString& Context, const int32& Index)
 			{
 				UObject* DataRootSetImpl			 = NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
-				const FCsPrjDataRootSet& DataRootSet = FCsPrjLibrary_DataRootSet::GetChecked(Context, MyRoot);
+				const FCsPrjDataRootSet& DataRootSet = NCsProjectile::NDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
 				return DataRootSet.Projectiles[Index].EmulatedDataInterfaces;
 			}

@@ -3,17 +3,23 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsData_WeaponInterfaceMap::Name = FName("FCsData_WeaponInterfaceMap");
+const FName NCsWeapon::NData::FInterfaceMap::Name = FName("NCsWeapon::NData::FInterfaceMap");
 
-FCsData_WeaponInterfaceMap::FCsData_WeaponInterfaceMap() :
-		InterfaceMap(nullptr)
+namespace NCsWeapon
 {
-	InterfaceMap = new FCsInterfaceMap();
+	namespace NData
+	{
+		FInterfaceMap::FInterfaceMap() :
+				InterfaceMap(nullptr)
+		{
+			InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsData_WeaponInterfaceMap::Name);
-	InterfaceMap->SetUniqueBasedSlices();
-}
+			InterfaceMap->SetRootName(FInterfaceMap::Name);
+			InterfaceMap->SetUniqueBasedSlices();
+		}
 
-FCsData_WeaponInterfaceMap::~FCsData_WeaponInterfaceMap()
-{
+		FInterfaceMap::~FInterfaceMap()
+		{
+		}
+	}
 }

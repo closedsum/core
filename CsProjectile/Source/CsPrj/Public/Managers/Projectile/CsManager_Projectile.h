@@ -93,7 +93,14 @@ public:
 #pragma region
 public:
 
-	static UCsManager_Projectile* Get(UObject* InRoot = nullptr);
+#if WITH_EDITOR
+	static UCsManager_Projectile * Get(UObject * InRoot = nullptr);
+#else
+FORCEINLINE static UCsManager_Projectile* Get(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
 	
 	template<typename T>
 	static T* Get(UObject* InRoot = nullptr)
@@ -101,7 +108,14 @@ public:
 		return Cast<T>(Get(InRoot));
 	}
 
+#if WITH_EDITOR
 	static bool IsValid(UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static bool IsValid(UObject* InRoot = nullptr)
+	{
+		return s_Instance != nullptr;
+	}
+#endif // #if WITH_EDITOR
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Projectile> ManagerProjectileClass, UObject* InOuter = nullptr);
 	

@@ -3,6 +3,9 @@
 
 #include "UObject/Interface.h"
 #include "Containers/CsInterfaceObject.h"
+// Types
+#include "Types/CsTypes_Macro.h"
+
 #include "CsReceiveStatusEffect.generated.h"
 
 UINTERFACE(BlueprintType, meta = (CannotImplementInterfaceInBlueprint))
@@ -11,9 +14,8 @@ class CSSE_API UCsReceiveStatusEffect : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
-namespace NCsStatusEffect {
-	namespace NEvent {
-		struct IEvent; } }
+// NCsStatusEffect::NEvent::IEVent
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NEvent, IEvent)
 
 /**
 */
@@ -21,13 +23,13 @@ class CSSE_API ICsReceiveStatusEffect
 {
 	GENERATED_IINTERFACE_BODY()
 
-private:
-
-	typedef NCsStatusEffect::NEvent::IEvent EventType;
+#define EventType NCsStatusEffect::NEvent::IEvent
 
 public:
 
 	virtual void ApplyStatusEffect(const EventType* Event) = 0;
+
+#undef EventType
 };
 
 // FCsReceiveStatusEffect

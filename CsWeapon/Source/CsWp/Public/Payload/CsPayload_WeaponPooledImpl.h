@@ -11,13 +11,18 @@ namespace NCsWeapon
 {
 	namespace NPayload
 	{
-		struct CSWP_API FImplPooled : public NCsPooledObject::NPayload::IPayload,
-									  public NCsWeapon::NPayload::IPayload
+	#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+	#define PayloadType NCsWeapon::NPayload::IPayload
+
+		struct CSWP_API FImplPooled : public PooledPayloadType,
+									  public PayloadType
 		{
 		private:
 
+			// ICsGetInterfaceMap
 			FCsInterfaceMap* InterfaceMap;
 
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bool bAllocated;
 
 		public:
@@ -30,6 +35,8 @@ namespace NCsWeapon
 
 			FCsTime Time;
 
+			uint32 PreserveChangesFromDefaultMask;
+
 		public:
 
 			FImplPooled();
@@ -39,50 +46,26 @@ namespace NCsWeapon
 		#pragma region
 		public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return InterfaceMap;
-			}
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// NCsPooledObject::NPayload::IPayload
+		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		#pragma region
 		public:
 
-			FORCEINLINE const bool& IsAllocated() const
-			{
-				return bAllocated;
-			}
-
-			FORCEINLINE UObject* GetInstigator() const
-			{
-				return Instigator;
-			}
-
-			FORCEINLINE UObject* GetOwner() const
-			{
-				return Owner;
-			}
-
-			FORCEINLINE UObject* GetParent() const
-			{
-				return Parent;
-			}
-
-			FORCEINLINE const FCsTime& GetTime() const
-			{
-				return Time;
-			}
-
-			FORCEINLINE void Allocate()
-			{
-				bAllocated = true;
-			}
+			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
+			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
+			FORCEINLINE UObject* GetOwner() const { return Owner; }
+			FORCEINLINE UObject* GetParent() const { return Parent; }
+			FORCEINLINE const FCsTime& GetTime() const { return Time; }
+			FORCEINLINE void Allocate() { bAllocated = true; }
 
 			void Reset();
 
-		#pragma endregion NCsPooledObject::NPayload::IPayload
+			FORCEINLINE const uint32& GetPreserveChangesFromDefaultMask() const { return PreserveChangesFromDefaultMask; }
+
+		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
 		public:
 
@@ -104,11 +87,14 @@ namespace NCsWeapon
 				return Cast<T>(GetParent());
 			}
 
-		// NCsWeapon::NPayload::IPayload
+		// PayloadType (NCsWeapon::NPayload::IPayload)
 		#pragma region
 		public:
 
-		#pragma endregion NCsWeapon::NPayload::IPayload
+		#pragma endregion PayloadType (NCsWeapon::NPayload::IPayload)
 		};
+
+	#undef PooledPayloadType
+	#undef PayloadType
 	}
 }

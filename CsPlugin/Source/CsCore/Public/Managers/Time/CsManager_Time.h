@@ -198,6 +198,8 @@ public:
 
 #pragma endregion Update
 
+public:
+
 	/**
 	*
 	*
@@ -227,7 +229,6 @@ public:
 	{
 		return UpdateGroups[Group.GetValue()].GetTimeSinceStart();
 	}
-
 
 	/**
 	*

@@ -13,6 +13,7 @@
 #include "Library/CsLibrary_SkeletalMesh.h"
 #include "Library/CsLibrary_Camera.h"
 #include "Trace/Data/Params/CsLibrary_Params_TraceWeapon_Trace.h"
+#include "Managers/Trace/CsLibrary_Manager_Trace.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Managers
@@ -446,9 +447,12 @@ namespace NCsWeapon
 
 					const FString& Context = Str::LineTrace;
 
-					UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(Outer->GetWorld()->GetGameState());
+					typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
+					typedef NCsTrace::NRequest::FRequest RequestType;
 
-					FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
+					UCsManager_Trace* Manager_Trace = TraceManagerLibrary::GetChecked(Context, Outer);
+
+					RequestType* Request = Manager_Trace->AllocateRequest();
 					Request->Start	= Start;
 					Request->End	= End;
 
@@ -480,7 +484,9 @@ namespace NCsWeapon
 						Request->ObjectParams.AddObjectTypesToQuery(ObjectType);
 					}
 
-					FCsTraceResponse* Response = Manager_Trace->Trace(Request);
+					typedef NCsTrace::NResponse::FResponse ResponseType;
+
+					ResponseType* Response = Manager_Trace->Trace(Request);
 
 					OutHit = Response->bResult ? Response->OutHits[CS_FIRST] : NCsCollision::NHit::Default;
 
@@ -508,9 +514,12 @@ namespace NCsWeapon
 					const FVector Start = GetStart(Data);
 					const FVector End	= GetEnd(Data, Start);
 
-					UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(Outer->GetWorld()->GetGameState());
+					typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
+					typedef NCsTrace::NRequest::FRequest RequestType;
+					
+					UCsManager_Trace* Manager_Trace = TraceManagerLibrary::GetChecked(Context, Outer);
 	
-					FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
+					RequestType* Request = Manager_Trace->AllocateRequest();
 					Request->Start = Start;
 					Request->End   = End;
 
@@ -553,7 +562,9 @@ namespace NCsWeapon
 						Request->ObjectParams.AddObjectTypesToQuery(ObjectType);
 					}
 
-					FCsTraceResponse* Response = Manager_Trace->Trace(Request);
+					typedef NCsTrace::NResponse::FResponse ResponseType;
+
+					ResponseType* Response = Manager_Trace->Trace(Request);
 	
 				#if !UE_BUILD_SHIPPING
 					if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawWeaponTraceTrace))

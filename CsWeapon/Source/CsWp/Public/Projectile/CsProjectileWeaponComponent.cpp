@@ -16,6 +16,8 @@
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 #include "Projectile/Params/Launch/CsLibrary_Params_ProjectileWeapon_Launch.h"
 #include "Library/CsLibrary_Camera.h"
+#include "Managers/Trace/CsLibrary_Manager_Trace.h"
+#include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Managers
@@ -650,18 +652,19 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetType(const FString& Conte
 }
 
 #define ProjectilePayloadType NCsProjectile::NPayload::IPayload
+
 bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Context, ProjectilePayloadType* Payload)
 {
-#undef ProjectilePayloadType
-
 	bool Result = true;
+
+	typedef NCsProjectile::NPayload::FLibrary PrjPayloadLibrary;
 
 	// PooledObject
 	{
 		typedef NCsPooledObject::NPayload::FImplSlice SliceType;
 		typedef NCsPooledObject::NPayload::IPayload SliceInterfaceType;
 
-		if (SliceType* Slice = FCsLibrary_Payload_Projectile::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
+		if (SliceType* Slice = PrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
 			Slice->Instigator = Outer;
 			Slice->Owner	  = Outer->GetMyOwner();
@@ -676,7 +679,7 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 		typedef NCsProjectile::NPayload::FImplSlice SliceType;
 		typedef NCsProjectile::NPayload::IPayload SliceInterfaceType;
 
-		if (SliceType* Slice = FCsLibrary_Payload_Projectile::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
+		if (SliceType* Slice = PrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
 
 			Slice->Location = GetLaunchLocation();
@@ -690,12 +693,12 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 	return Result;
 }
 
-#define ProjectilePayloadType NCsProjectile::NPayload::IPayload
 bool UCsProjectileWeaponComponent::FProjectileImpl::CopyPayload(const FString& Context, const ProjectilePayloadType* From, ProjectilePayloadType* To)
 {
-#undef ProjectilePayloadType
-	return FCsLibrary_Payload_Projectile::CopyChecked(Context, From, To);
+	return NCsProjectile::NPayload::FLibrary::CopyChecked(Context, From, To);
 }
+
+#undef ProjectilePayloadType
 
 FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 {
@@ -922,20 +925,24 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		const FVector End = Start + Distance * Dir;
 
 		// Perform Trace
-		UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(Outer->GetWorld()->GetGameState());
+		typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
+		typedef NCsTrace::NRequest::FRequest RequestType;
 
-		FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
-		Request->Start = Start;
-		Request->End = End;
+		UCsManager_Trace* Manager_Trace = TraceManagerLibrary::GetChecked(Context, Outer);
+
+		RequestType* Request = Manager_Trace->AllocateRequest();
+		Request->Start		 = Start;
+		Request->End		 = End;
 
 		// Get collision information related to the projectile to be used in the trace.
+
+		typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+		typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
 		typedef NCsProjectile::NData::IData PrjDataType;
-
-		PrjDataType* PrjData = UCsManager_Projectile::Get(Outer->GetWorld()->GetGameState())->GetDataChecked(Context, Outer->GetProjectileType());
-
 		typedef NCsProjectile::NData::NCollision::ICollision PrjCollisionDataType;
 
-		PrjCollisionDataType* PrjCollisionData = FCsLibrary_Data_Projectile::GetInterfaceChecked<PrjCollisionDataType>(Context, PrjData);
+		PrjDataType* PrjData				   = PrjManagerLibrary::GetChecked(Context, Outer)->GetDataChecked(Context, Outer->GetProjectileType());
+		PrjCollisionDataType* PrjCollisionData = PrjDataLibrary::GetInterfaceChecked<PrjCollisionDataType>(Context, PrjData);
 
 		const FCsCollisionPreset& CollisionPreset		 = PrjCollisionData->GetCollisionPreset();
 		const TEnumAsByte<ECollisionChannel>& ObjectType = CollisionPreset.ObjectType;
@@ -949,7 +956,9 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 			//Request->Shape = 
 		}
 		
-		FCsTraceResponse* Response = Manager_Trace->Trace(Request);
+		typedef NCsTrace::NResponse::FResponse ResponseType;
+
+		ResponseType* Response = Manager_Trace->Trace(Request);
 
 		FVector LookAtLocation = FVector::ZeroVector;
 

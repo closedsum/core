@@ -13,7 +13,7 @@
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Skin/Data/Visual/CsLibrary_Data_Skin_Visual.h"
 #include "Library/CsLibrary_Camera.h"
-#include "Library/CsLibrary_Material.h"
+#include "Material/CsLibrary_Material.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Managers

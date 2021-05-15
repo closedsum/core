@@ -216,8 +216,8 @@ UCsCoordinator_StatusEffect::UCsCoordinator_StatusEffect(const FObjectInitialize
 	return nullptr;
 }
 
-
 #endif // #if WITH_EDITOR
+
 void UCsCoordinator_StatusEffect::Initialize()
 {
 	// TODO: Poll config in future

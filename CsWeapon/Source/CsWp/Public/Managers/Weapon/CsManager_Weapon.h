@@ -223,7 +223,7 @@ public:
 	*
 	* return
 	*/
-	TBaseDelegate<FCsWeaponPooled*, const FECsWeapon&>& GetConstructContainer_Impl();
+	TDelegate<FCsWeaponPooled*(const FECsWeapon&)>& GetConstructContainer_Impl();
 
 	/**
 	*
@@ -238,7 +238,7 @@ public:
 	* @param Type
 	* return
 	*/
-	TMulticastDelegate<void, const FCsWeaponPooled*, const ConstructParamsType&>& GetOnConstructObject_Event(const FECsWeapon& Type);
+	TMulticastDelegate<void(const FCsWeaponPooled*, const ConstructParamsType&)>& GetOnConstructObject_Event(const FECsWeapon& Type);
 
 		// Add
 #pragma region

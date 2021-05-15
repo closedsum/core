@@ -26,6 +26,7 @@ namespace NCsSkeletalMeshActor
 				namespace Str
 				{
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSkeletalMeshActor::NManager::FLibrary, GetSafeContextRoot);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSkeletalMeshActor::NManager::FLibrary, GetSafe);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSkeletalMeshActor::NManager::FLibrary, SafeSpawn);
 				}
 			}
@@ -66,18 +67,18 @@ namespace NCsSkeletalMeshActor
 		// Get
 		#pragma region
 
-		UCsManager_SkeletalMeshActor* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
+		UCsManager_SkeletalMeshActor* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 		{
-			UObject* ContextRoot									= GetContextRootChecked(Context, ContextObject);
+			UObject* ContextRoot									= GetContextRootChecked(Context, WorldContext);
 			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = UCsManager_SkeletalMeshActor::Get(ContextRoot);
 
 			CS_IS_PTR_NULL_CHECKED(Manager_SkeletalMeshActor)
 			return Manager_SkeletalMeshActor;
 		}
 
-		UCsManager_SkeletalMeshActor* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UCsManager_SkeletalMeshActor* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
+			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
 
 		#if WITH_EDITOR
 			if (!ContextRoot)
@@ -91,6 +92,15 @@ namespace NCsSkeletalMeshActor
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_SkeletalMeshActor."), *Context));
 			}
 			return Manager_SkeletalMeshActor;
+		}
+
+		UCsManager_SkeletalMeshActor* FLibrary::GetSafe(const UObject* WorldContext)
+		{
+			using namespace NCsSkeletalMeshActor::NManager::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafe;
+
+			return GetSafe(Context, WorldContext, nullptr);
 		}
 
 		#pragma endregion Get

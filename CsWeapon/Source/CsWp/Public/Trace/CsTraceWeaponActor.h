@@ -32,7 +32,6 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NImpl, NSound, FImpl)
 class USceneComponent;
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
-struct FCsTraceResponse;
 
 UCLASS(BlueprintType, Blueprintable)
 class CSWP_API ACsTraceWeaponActor : public AActor,

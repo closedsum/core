@@ -15,6 +15,7 @@ public class CsWp : ModuleRules
                     "CoreUObject",
                     "Engine",
                     "AssetRegistry",
+                    "DeveloperSettings",
                     "CsCore",
                     "CsPrj"
                 }

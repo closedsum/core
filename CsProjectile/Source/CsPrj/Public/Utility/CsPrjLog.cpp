@@ -2,7 +2,10 @@
 #include "Utility/CsPrjLog.h"
 #include "CsPrj.h"
 
-void FCsPrjLog::Warning(const FString& Str)
+namespace NCsProjectile
 {
-	UE_LOG(LogCsPrj, Warning, TEXT("%s"), *Str);
+	void FLog::Warning(const FString& Str)
+	{
+		UE_LOG(LogCsPrj, Warning, TEXT("%s"), *Str);
+	}
 }

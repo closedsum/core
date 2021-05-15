@@ -8,17 +8,24 @@ namespace NCsWeapon
 	namespace NPayload
 	{
 		FImplPooled::FImplPooled() :
+			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated(false),
 			Instigator(nullptr),
 			Owner(nullptr),
 			Parent(nullptr),
-			Time()
+			Time(),
+			PreserveChangesFromDefaultMask(0)
+			// PayloadType (NCsWeapon::NPayload::IPayload)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
-			InterfaceMap->Add<NCsPooledObject::NPayload::IPayload>(static_cast<NCsPooledObject::NPayload::IPayload*>(this));
-			InterfaceMap->Add<NPayload::IPayload>(static_cast<NPayload::IPayload*>(this));
+			typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
+			typedef NCsWeapon::NPayload::IPayload PayloadType;
+
+			InterfaceMap->Add<PooledPayloadType>(static_cast<PooledPayloadType*>(this));
+			InterfaceMap->Add<PayloadType>(static_cast<PayloadType*>(this));
 		}
 
 		FImplPooled::~FImplPooled()
@@ -26,7 +33,7 @@ namespace NCsWeapon
 			delete InterfaceMap;
 		}
 
-		// NCsPooledObject::NPayload::IPayload
+		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		#pragma region
 
 		void FImplPooled::Reset()
@@ -37,8 +44,10 @@ namespace NCsWeapon
 			Parent = nullptr;
 
 			Time.Reset();
+
+			PreserveChangesFromDefaultMask = 0;
 		}
 
-		#pragma endregion NCsPooledObject::NPayload::IPayload
+		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 	}
 }

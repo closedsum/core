@@ -46,7 +46,7 @@ namespace NCsSkeletalMeshActor
 			*
 			* @param Context		The calling context.
 			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Log
+			* @param Log			(optional)
 			* return				Context for UCsManager_SkeletalMeshActor
 			*/
 			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
@@ -86,10 +86,20 @@ namespace NCsSkeletalMeshActor
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Log
+			* @param Log			(optional)
 			* return				UCsManager_SkeletalMeshActor.
 			*/
 			static UCsManager_SkeletalMeshActor* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get the reference to UCsManager_SkeletalMeshActor from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log
+			* return				UCsManager_SkeletalMeshActor.
+			*/
+			static UCsManager_SkeletalMeshActor* GetSafe(const UObject* WorldContext);
 
 		#pragma endregion Get
 

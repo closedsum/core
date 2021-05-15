@@ -190,6 +190,78 @@ namespace NCsFX
 
 		#undef PooledPayloadType
 
+		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		{
+			// Get Context for Manager_FX
+			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+
+			UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(ContextRoot);
+			// Allocate Payload
+			typedef NCsFX::NPayload::FImpl PayloadImplType;
+
+			PayloadImplType* Payload = Manager_FX->AllocatePayload<PayloadImplType>(FX.Type);
+			// Set Payload
+			typedef NCsFX::NPayload::FLibrary PayloadLibrary;
+
+			PayloadLibrary::SetChecked(Context, Payload, FX, Transform);
+
+			// Int
+			for (const FCsFXParameterInt& Param : FX.IntParameters)
+			{
+				typedef NCsFX::NParameter::NInt::FIntType ParameterIntType;
+
+				ParameterIntType* IntType = Manager_FX->AllocateValue<ParameterIntType>();
+				
+				Param.CopyToParamsAsValue(IntType);
+				Payload->Parameters.Add(IntType);
+			}
+			// Float
+			for (const FCsFXParameterFloat& Param : FX.FloatParameters)
+			{
+				typedef NCsFX::NParameter::NFloat::FFloatType ParameterFloatType;
+
+				ParameterFloatType* FloatType = Manager_FX->AllocateValue<ParameterFloatType>();
+
+				Param.CopyToParamsAsValue(FloatType);
+				Payload->Parameters.Add(FloatType);
+			}
+			// Vector
+			for (const FCsFXParameterVector& Param : FX.VectorParameters)
+			{
+				typedef NCsFX::NParameter::NVector::FVectorType ParameterVectorType;
+
+				ParameterVectorType* VectorType = Manager_FX->AllocateValue<ParameterVectorType>();
+
+				Param.CopyToParamsAsValue(VectorType);
+				Payload->Parameters.Add(VectorType);
+			}
+			return Manager_FX->Spawn(FX.Type, Payload);
+		}
+
+		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
+
+		#if WITH_EDITOR
+			if (!ContextRoot)
+				return nullptr;
+		#endif // #if WITH_EDITOR
+
+			if (!FX.IsValid(Context))
+				return nullptr;
+
+			return SpawnChecked(Context, WorldContext, FX, Transform);
+		}
+
+		const FCsFXActorPooled* FLibrary::SafeSpawn(const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		{
+			using namespace NCsFX::NManager::NLibrary::NCached;
+
+			const FString& Context = Str::SafeSpawn;
+
+			return SafeSpawn(Context, WorldContext, FX, Transform, nullptr);
+		}
+
 		#pragma endregion Spawn
 	}
 }

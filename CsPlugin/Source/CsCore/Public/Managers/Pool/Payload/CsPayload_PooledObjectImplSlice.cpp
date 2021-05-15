@@ -55,6 +55,8 @@ namespace NCsPooledObject
 			{
 				R->Reset();
 			}
+
+			PreserveChangesFromDefaultMask = 0;
 		}
 
 		#pragma endregion IPayload

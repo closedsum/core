@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 // Types
+#include "Managers/Time/CsTypes_Time.h"
 #include "Managers/Time/CsTypes_Update.h"
 // Log
 #include "Utility/CsLog.h"
@@ -28,9 +29,9 @@ namespace NCsTime
 			*						A reference to the GameInstance.
 			* return				Context for UCsManager_Time
 			*/
-			static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject);
+			static UObject* GetContextRootChecked(const FString& Context, const UObject* ContextObject);
 		#else
-			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject) { return nullptr; }
+			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, const UObject* ContextObject) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -44,9 +45,9 @@ namespace NCsTime
 			* @param Log
 			* return				Context for UCsManager_Time
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -58,9 +59,9 @@ namespace NCsTime
 			*						A reference to the GameInstance.
 			* return				Context for UCsManager_Time
 			*/
-			static UObject* GetSafeContextRoot(UObject* ContextObject);
+			static UObject* GetSafeContextRoot(const UObject* ContextObject);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(UObject* ContextObject) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const UObject* ContextObject) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#pragma endregion ContextRoot
@@ -78,7 +79,7 @@ namespace NCsTime
 			*						A reference to the GameInstance.
 			* return				UCsManager_Time.
 			*/
-			static UCsManager_Time* GetChecked(const FString& Context, UObject* ContextObject);
+			static UCsManager_Time* GetChecked(const FString& Context, const UObject* ContextObject);
 
 			/**
 			* Safely get the reference to UCsManager_Time from a ContextObject.
@@ -90,7 +91,7 @@ namespace NCsTime
 			* @param Log
 			* return				UCsManager_Time.
 			*/
-			static UCsManager_Time* GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UCsManager_Time* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely get the reference to UCsManager_Time from a ContextObject.
@@ -100,7 +101,7 @@ namespace NCsTime
 			*						A reference to the GameInstance.
 			* return				UCsManager_Time.
 			*/
-			static UCsManager_Time* GetSafe(UObject* ContextObject);
+			static UCsManager_Time* GetSafe(const UObject* ContextObject);
 
 		#pragma endregion Get
 
@@ -114,7 +115,30 @@ namespace NCsTime
 			*						A reference to the GameInstance.
 			* @param Group
 			*/
-			static void UpdateTimeAndCoroutineScheduler(const FString& Context, UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime);
+			static void UpdateTimeAndCoroutineScheduler(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime);
+
+			/**
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* return
+			*/
+			static const FCsTime& GetTimeChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group);
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* return
+			*/
+			static const FCsDeltaTime& GetTimeSinceStartChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group);
 
 			/**
 			* 
@@ -126,7 +150,7 @@ namespace NCsTime
 			* @param Group
 			* @param Scale
 			*/
-			static void SetScaledDeltaTime(const FString& Context, UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale);
+			static void SetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale);
 
 			/**
 			* Resets the Scale (to 1.0f) applied to the delta time for the specified Group.
@@ -137,7 +161,7 @@ namespace NCsTime
 			*						A reference to the GameInstance.
 			* @param Group
 			*/
-			static void ResetScaledDeltaTime(const FString& Context, UObject* ContextObject, const FECsUpdateGroup& Group);
+			static void ResetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group);
 		};
 	}
 }

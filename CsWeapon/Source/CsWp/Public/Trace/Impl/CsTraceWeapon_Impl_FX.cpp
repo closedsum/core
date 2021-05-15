@@ -7,6 +7,8 @@
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 #include "Managers/Trace/Data/CsLibrary_Data_Trace.h"
+#include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
+#include "Managers/Trace/CsLibrary_Manager_Trace.h"
 // Managers
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
 // Data
@@ -15,6 +17,8 @@
 #include "Managers/Trace/Data/CsData_Trace.h"
 #include "Managers/Trace/Data/Visual/CsData_Trace_VisualTracer.h"
 #include "Managers/Trace/Data/Visual/CsData_Trace_VisualImpact.h"
+// Pool
+#include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Weapon
 #include "Trace/CsTraceWeapon.h"
 #include "Trace/Data/Visual/CsParams_TraceWeapon_VisualFire.h"
@@ -64,10 +68,11 @@ namespace NCsWeapon
 
 					if (FXDataType* FXData = WeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Data))
 					{
+						typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 						typedef NCsWeapon::NTrace::NData::NVisual::NFire::NParams::IParams ParamsType;
 
 						// Get Manager
-						UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(Outer->GetWorld()->GetGameState());
+						UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
 						// Allocate payload
 						typedef NCsFX::NPayload::IPayload PayloadType;
 
@@ -84,10 +89,9 @@ namespace NCsWeapon
 				}
 
 				#define TraceDataType NCsTrace::NData::IData
+
 				void FImpl::TryTracer(TraceDataType* Data, const FVector& End)
 				{
-				#undef TraceDataType
-
 					using namespace NCached;
 
 					const FString& Context = Str::TryTracer;
@@ -98,8 +102,9 @@ namespace NCsWeapon
 
 					if (TracerVisualDataType* TracerVisualData = TraceDataLibrary::GetSafeInterfaceChecked<TracerVisualDataType>(Context, Data))
 					{
+						typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 						// Get Manager
-						UCsManager_FX_Actor* Manager_FX_Actor = UCsManager_FX_Actor::Get(Outer->GetWorld()->GetGameState());
+						UCsManager_FX_Actor* Manager_FX_Actor = FXManagerLibrary::GetChecked(Context, Outer);
 						// Get Payload
 						typedef NCsFX::NPayload::FImpl PayloadImplType;
 
@@ -114,8 +119,8 @@ namespace NCsWeapon
 
 						ParameterVectorType* Parameter = Manager_FX_Actor->AllocateValue<ParameterVectorType>();
 
-						Parameter->Name  = TracerVisualData->GetTracerEndParameterName();
-						Parameter->Value = End;
+						Parameter->SetName(TracerVisualData->GetTracerEndParameterName());
+						Parameter->SetValue(End);
 
 						Payload->Parameters.Reset(FMath::Max(Payload->Parameters.Max(), 1));
 						Payload->Parameters.Add(Parameter);
@@ -125,11 +130,8 @@ namespace NCsWeapon
 					}
 				}
 
-				#define TraceDataType NCsTrace::NData::IData
 				void FImpl::TryImpact(TraceDataType* Data, const FHitResult& Hit)
 				{
-				#undef TraceDataType
-
 					using namespace NCached;
 
 					const FString& Context = Str::TryImpact;
@@ -140,8 +142,10 @@ namespace NCsWeapon
 
 					if (ImpactVisualDataType* ImpactVisualData = TraceDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
 					{
+						typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+
 						// Get Manager
-						UCsManager_FX_Actor* Manager_FX_Actor = UCsManager_FX_Actor::Get(Outer->GetWorld()->GetGameState());
+						UCsManager_FX_Actor* Manager_FX_Actor = FXManagerLibrary::GetChecked(Context, Outer);
 						
 						// Get Physics Surface
 						UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
@@ -149,21 +153,16 @@ namespace NCsWeapon
 
 						const FCsFX& FX = ImpactVisualData->GetImpactFX(SurfaceType);
 
-						// Get Payload
-						// TODO: MAYBE: FUTURE: Add virtual method to set Payload (defaults to PayloadImplType)
-						typedef NCsFX::NPayload::FImpl PayloadImplType;
-
-						PayloadImplType* Payload = Manager_FX_Actor->AllocatePayload<PayloadImplType>(FX.Type);
-						// Set appropriate data on Payload
-						SetPayload(Payload, FX);
-
-						Payload->Transform.SetLocation(Hit.Location);
-						Payload->Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+						FTransform Transform;
+						Transform.SetLocation(Hit.Location);
+						Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
 
 						// Spawn FX
-						Manager_FX_Actor->Spawn(FX.Type, Payload);
+						FXManagerLibrary::SpawnChecked(Context, Outer, FX, Transform);
 					}
 				}
+
+				#undef TraceDataType
 
 				#define FXPayloadType NCsFX::NPayload::IPayload
 				void FImpl::SetPayload(FXPayloadType* Payload, const FCsFX& FX)
@@ -191,10 +190,10 @@ namespace NCsWeapon
 				}
 
 				#define FXPayloadType NCsFX::NPayload::IPayload
+
 				#define FireVisualDataType NCsWeapon::NTrace::NData::NVisual::NFire::IFire
 				void FImpl::SetPayload(FXPayloadType* Payload, FireVisualDataType* FireVisualData)
 				{
-				#undef FXPayloadType
 				#undef FireVisualDataType
 
 					using namespace NCached;
@@ -202,12 +201,10 @@ namespace NCsWeapon
 					const FString& Context = Str::SetPayload;
 
 					typedef NCsWeapon::NTrace::NData::NVisual::NFire::NParams::IParams ParamsType;
-
-					const ParamsType* Params = FireVisualData->GetFireFXParams();
-
 					typedef NCsWeapon::NTrace::NData::NVisual::NFire::NParams::EAttach AttachType;
 
-					const AttachType& Type = Params->GetAttachType();
+					const ParamsType* Params = FireVisualData->GetFireFXParams();
+					const AttachType& Type   = Params->GetAttachType();
 
 					typedef NCsFX::NPayload::FImpl PayloadImplType;
 					typedef NCsFX::NPayload::FLibrary PayloadLibrary;
@@ -240,11 +237,9 @@ namespace NCsWeapon
 					}
 				}
 
-				#define FXPayloadType NCsFX::NPayload::IPayload
 				#define TracerVisualDataType NCsTrace::NData::NVisual::NTracer::ITracer
 				void FImpl::SetPayload(FXPayloadType* Payload, TracerVisualDataType* TracerVisualData)
 				{
-				#undef FXPayloadType
 				#undef TracerVisualDataType
 
 					const FCsFX& FX = TracerVisualData->GetTracerFX();
@@ -352,6 +347,8 @@ namespace NCsWeapon
 						PayloadImpl->Transform.SetScale3D(Scale);
 					}
 				}
+
+				#undef FXPayloadType
 			}
 		}
 	}

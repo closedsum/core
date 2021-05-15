@@ -3,6 +3,8 @@
 
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 // Game
@@ -39,7 +41,7 @@ namespace NCsTime
 
 		#if WITH_EDITOR
 
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -53,10 +55,10 @@ namespace NCsTime
 
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			return GameInstanceLibrary::GetChecked(Context, ContextObject);
+			return GameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -70,10 +72,10 @@ namespace NCsTime
 
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
+			return GameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(UObject* ContextObject)
+		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
 		{
 			using namespace NCsTime::NManager::NLibrary::NCached;
 
@@ -89,7 +91,7 @@ namespace NCsTime
 		// Get
 		#pragma region
 
-		UCsManager_Time* FLibrary::GetChecked(const FString& Context, UObject* ContextObject)
+		UCsManager_Time* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
 		{
 			UObject* ContextRoot		  = GetContextRootChecked(Context, ContextObject);
 			UCsManager_Time* Manager_Time = UCsManager_Time::Get(ContextRoot);
@@ -98,7 +100,7 @@ namespace NCsTime
 			return Manager_Time;
 		}
 
-		UCsManager_Time* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*= &NCsPlayback::FLog::Warning*/)
+		UCsManager_Time* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*= &NCsPlayback::FLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -116,7 +118,7 @@ namespace NCsTime
 			return Manager_Time;
 		}
 
-		UCsManager_Time* FLibrary::GetSafe(UObject* ContextObject)
+		UCsManager_Time* FLibrary::GetSafe(const UObject* ContextObject)
 		{
 			using namespace NCsTime::NManager::NLibrary::NCached;
 
@@ -127,7 +129,7 @@ namespace NCsTime
 
 		#pragma endregion Get
 
-		void FLibrary::UpdateTimeAndCoroutineScheduler(const FString& Context, UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime)
+		void FLibrary::UpdateTimeAndCoroutineScheduler(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime)
 		{
 			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
 
@@ -141,14 +143,24 @@ namespace NCsTime
 			UCsCoroutineScheduler::Get(ContextRoot)->Update(Group, ScaledDeltaTime);
 		}
 
-		void FLibrary::SetScaledDeltaTime(const FString& Context, UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale)
+		const FCsTime& FLibrary::GetTimeChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
 		{
-			UCsManager_Time::Get(GetContextRootChecked(Context, ContextObject))->SetScaledDeltaTime(Group, Scale);
+			return GetChecked(Context, ContextObject)->GetTime(Group);
 		}
 
-		void FLibrary::ResetScaledDeltaTime(const FString& Context, UObject* ContextObject, const FECsUpdateGroup& Group)
+		const FCsDeltaTime& FLibrary::GetTimeSinceStartChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
 		{
-			UCsManager_Time::Get(GetContextRootChecked(Context, ContextObject))->ResetScaledDeltaTime(Group);
+			return GetChecked(Context, ContextObject)->GetTimeSinceStart(Group);
+		}
+
+		void FLibrary::SetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale)
+		{
+			GetChecked(Context, ContextObject)->SetScaledDeltaTime(Group, Scale);
+		}
+
+		void FLibrary::ResetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
+		{
+			GetChecked(Context, ContextObject)->ResetScaledDeltaTime(Group);
 		}
 	}
 }

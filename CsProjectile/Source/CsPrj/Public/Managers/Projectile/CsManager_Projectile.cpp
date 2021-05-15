@@ -99,28 +99,19 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
+
 /*static*/ UCsManager_Projectile* UCsManager_Projectile::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerProjectile(InRoot)->GetManager_Projectile();
-#else
-	if (s_bShutdown)
-	{
-		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::Get: Manager has already shutdown."));
-		return nullptr;
-	}
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
 
 /*static*/ bool UCsManager_Projectile::IsValid(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerProjectile(InRoot)->GetManager_Projectile() != nullptr;
-#else
-	return s_Instance != nullptr;
-#endif // #if WITH_EDITOR
 }
+
+#endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_Projectile::Init(UObject* InRoot, TSubclassOf<UCsManager_Projectile> ManagerProjectileClass, UObject* InOuter /*=nullptr*/)
 {
@@ -889,7 +880,7 @@ void UCsManager_Projectile::ConstructClassHandler()
 	ClassHandler = new ClassHandlerType();
 	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
-	ClassHandler->Log = &FCsPrjLog::Warning;
+	ClassHandler->Log = &NCsProjectile::FLog::Warning;
 }
 
 FCsProjectilePooled* UCsManager_Projectile::GetProjectile(const FECsProjectile& Type)
@@ -927,7 +918,7 @@ void UCsManager_Projectile::ConstructDataHandler()
 	DataHandler = new DataHandlerType();
 	DataHandler->Outer = this;
 	DataHandler->MyRoot = MyRoot;
-	DataHandler->Log = &FCsPrjLog::Warning;
+	DataHandler->Log = &NCsProjectile::FLog::Warning;
 }
 
 #define DataType NCsProjectile::NData::IData

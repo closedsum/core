@@ -567,7 +567,7 @@ void UCsCoordinator_StatusEffect::LogEventPoint(const NCsDamage::NEvent::IEvent*
 {
 	ICsData_Damage* Data = Event->GetData();
 
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerDamageEvents))
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerDamageEvents))
 	{
 		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::OnEvent:"));
 		// Data

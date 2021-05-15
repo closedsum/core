@@ -18,6 +18,9 @@
 #include "Library/CsLibrary_Camera.h"
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
+#include "Coroutine/CsLibrary_CoroutineScheduler.h"
+#include "Managers/Time/CsLibrary_Manager_Time.h"
+#include "Managers/Sound/CsLibrary_Manager_Sound.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Managers
@@ -365,7 +368,7 @@ void UCsProjectileWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& Del
 	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
 
 #if !UE_BUILD_SHIPPING
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogWeaponProjectileState))
+	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponProjectileState))
 	{
 		UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: %s."), *Context, CurrentState.ToChar());
 	}
@@ -383,7 +386,7 @@ void UCsProjectileWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& Del
 			CurrentState = FireState;
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogWeaponProjectileStateTransition))
+			if (CS_CVAR_LOG_IS_SHOWING(LogWeaponProjectileStateTransition))
 			{
 				UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: Idle -> Fire."), *Context);
 			}
@@ -408,7 +411,7 @@ void UCsProjectileWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& Del
 			CurrentState = IdleState;
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogWeaponProjectileStateTransition))
+			if (CS_CVAR_LOG_IS_SHOWING(LogWeaponProjectileStateTransition))
 			{
 				UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: Fire -> Idle."), *Context);
 			}
@@ -460,7 +463,7 @@ bool UCsProjectileWeaponComponent::CanFire() const
 	const bool Pass_Ammo = PrjData->HasInfiniteAmmo() || CurrentAmmo > 0;
 
 #if !UE_BUILD_SHIPPING
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogWeaponProjectileCanFire))
+	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponProjectileCanFire))
 	{
 		using namespace NCsCached;
 
@@ -488,12 +491,16 @@ void UCsProjectileWeaponComponent::Fire()
 
 	const FString& Context = Str::Fire;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(GetWorld()->GetGameInstance());
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, this);
 
 	// End previous Fire Routine
 	Scheduler->End(UpdateGroup, FireRoutineHandle);
 
-	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 	Fire_StartTime = TimeSinceStart.Time;
 
@@ -502,14 +509,18 @@ void UCsProjectileWeaponComponent::Fire()
 
 	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
 
-	Payload->CoroutineImpl.BindUObject(this, &UCsProjectileWeaponComponent::Fire_Internal);
-	Payload->StartTime = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTime(UpdateGroup);
+	#define COROUTINE Fire_Internal
+
+	Payload->CoroutineImpl.BindUObject(this, &UCsProjectileWeaponComponent::COROUTINE);
+	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
 	Payload->Owner.SetObject(this);
-	Payload->SetName(Str::Fire_Internal);
-	Payload->SetFName(Name::Fire_Internal);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
 	Payload->OnEnds.AddDefaulted();
 	Payload->OnEnds.Last().BindUObject(this, &UCsProjectileWeaponComponent::Fire_Internal_OnEnd);
 	Payload->AbortMessages.Add(Name::Abort_Fire_Internal);
+
+	#undef COROUTINE
 
 	// Cache pointer to ICsData_ProjectileWeapon
 	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
@@ -581,18 +592,26 @@ void UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	const FString& Context = Str::OnElapsedTime;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(Outer->GetWorld()->GetGameInstance());
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, Outer);
 
 	// Setup Routine
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
 	PayloadType* Payload = Scheduler->AllocatePayload(Outer->GetUpdateGroup());
 
-	Payload->CoroutineImpl.BindRaw(this, &UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime_Internal);
-	Payload->StartTime = UCsManager_Time::Get(Outer->GetWorld()->GetGameInstance())->GetTime(Outer->GetUpdateGroup());
+	#define COROUTINE OnElapsedTime_Internal
+
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+	Payload->CoroutineImpl.BindRaw(this, &UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::COROUTINE);
+	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, Outer, Outer->GetUpdateGroup());
 	Payload->Owner.SetObject(Outer);
-	Payload->SetName(Str::OnElapsedTime_Internal);
-	Payload->SetFName(Name::OnElapsedTime_Internal);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
+
+	#undef COROUTINE
 
 	// Get total elapsed time (= TimeBetweenShots)
 	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
@@ -1075,45 +1094,16 @@ void UCsProjectileWeaponComponent::FSoundImpl::Play()
 		ParamsType* Params	  = SoundData->GetFireSoundParams();
 		const FCsSound& Sound = Params->GetSound();
 
-		USoundBase* SoundAsset = Sound.GetChecked(Context);
+		typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
 
-		// Get Manager
-		UCsManager_Sound* Manager_Sound = UCsManager_Sound::Get(Weapon->GetWorld()->GetGameState());
-		// Allocate payload
-		typedef NCsSound::NPayload::IPayload PayloadType;
+		PayloadImplType Payload;
+		Payload.Instigator = Weapon;
+		Payload.Owner = Weapon->GetMyOwner();
 
-		PayloadType* Payload = Manager_Sound->AllocatePayload(Sound.Type);
-		// Set appropriate values on payload
-		SetPayload(Payload, Sound);
-
-		Manager_Sound->Spawn(Sound.Type, Payload);
+		typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
+		// TODO: Make sure Outer is defined
+		SoundManagerLibrary::SpawnChecked(Context, Weapon, &Payload, Sound);
 	}
-}
-
-#define SoundPayloadType NCsSound::NPayload::IPayload
-void UCsProjectileWeaponComponent::FSoundImpl::SetPayload(SoundPayloadType* Payload, const FCsSound& Sound)
-{
-#undef SoundPayloadType
-
-	using namespace NCsProjectileWeaponComponent::NCached::SoundImpl;
-
-	const FString& Context = Str::SetPayload;
-
-	typedef NCsSound::NPayload::FImpl PayloadImplType;
-	typedef NCsSound::NPayload::FLibrary PayloadLibrary;
-
-	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
-
-	PayloadImpl->Instigator					= Weapon;
-	PayloadImpl->Owner						= Weapon->GetMyOwner();
-	PayloadImpl->Sound						= Sound.GetChecked(Context);
-	PayloadImpl->SoundAttenuation			= Sound.GetAttenuation();
-	PayloadImpl->DeallocateMethod			= Sound.GetDeallocateMethod();
-	PayloadImpl->LifeTime					= Sound.LifeTime;
-	PayloadImpl->AttachmentTransformRules	= Sound.AttachmentTransformRules;
-	PayloadImpl->Bone						= Sound.Bone;
-	PayloadImpl->TransformRules				= Sound.TransformRules;
-	PayloadImpl->Transform					= Sound.Transform;
 }
 
 UCsProjectileWeaponComponent::FSoundImpl* UCsProjectileWeaponComponent::ConstructSoundImpl()

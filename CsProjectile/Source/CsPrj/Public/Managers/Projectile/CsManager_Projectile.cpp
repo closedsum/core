@@ -832,7 +832,7 @@ void UCsManager_Projectile::Log(const FString& Str)
 
 void UCsManager_Projectile::LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsProjectilePooled* Object)
 {
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogManagerProjectileTransactions))
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerProjectileTransactions))
 	{
 		const FString& TransactionAsString = EMCsPoolTransaction::Get().ToString(Transaction);
 

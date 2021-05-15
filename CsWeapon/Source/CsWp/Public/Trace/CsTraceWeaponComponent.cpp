@@ -328,7 +328,7 @@ void UCsTraceWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTim
 	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 #if !UE_BUILD_SHIPPING
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogWeaponTraceState))
+	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponTraceState))
 	{
 		UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: %s."), *Context, CurrentState.ToChar());
 	}
@@ -346,7 +346,7 @@ void UCsTraceWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTim
 			CurrentState = FireState;
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogWeaponTraceStateTransition))
+			if (CS_CVAR_LOG_IS_SHOWING(LogWeaponTraceStateTransition))
 			{
 				UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: Idle -> Fire."), *Context);
 			}
@@ -371,7 +371,7 @@ void UCsTraceWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTim
 			CurrentState = IdleState;
 
 #if !UE_BUILD_SHIPPING
-			if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogWeaponTraceStateTransition))
+			if (CS_CVAR_LOG_IS_SHOWING(LogWeaponTraceStateTransition))
 			{
 				UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: Fire -> Idle."), *Context);
 			}
@@ -425,7 +425,7 @@ bool UCsTraceWeaponComponent::CanFire() const
 	const bool Pass_Ammo = PrjData->HasInfiniteAmmo() || CurrentAmmo > 0;
 
 #if !UE_BUILD_SHIPPING
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogWeaponTraceCanFire))
+	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponTraceCanFire))
 	{
 		using namespace NCsCached;
 

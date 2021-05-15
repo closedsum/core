@@ -421,16 +421,6 @@ public:
 		/**
 		*/
 		void Play();
-
-	public:
-
-		/**
-		*
-		*
-		* @param Payload
-		* @param Sound
-		*/
-		void SetPayload(SoundPayloadType* Payload, const FCsSound& Sound);
 	};
 
 	FSoundImpl* SoundImpl;

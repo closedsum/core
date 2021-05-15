@@ -379,7 +379,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 	const FString& Context = Str::OnHit;
 
 #if !UE_BUILD_SHIPPING
-	if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogProjectileCollision))
+	if (CS_CVAR_LOG_IS_SHOWING(LogProjectileCollision))
 	{
 		UE_LOG(LogCsPrj, Warning, TEXT("%s (%s):"), *Context, *(GetName()));
 

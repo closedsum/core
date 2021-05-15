@@ -382,7 +382,7 @@ namespace NCsWeapon
 					const FString& Context = Str::OnHit;
 
 				#if !UE_BUILD_SHIPPING
-					if (FCsCVarLogMap::Get().IsShowing(NCsCVarLog::LogWeaponTraceTraceCollision))
+					if (CS_CVAR_LOG_IS_SHOWING(LogWeaponTraceTraceCollision))
 					{
 						UE_LOG(LogCsWp, Warning, TEXT("%s (%s):"), *Context, *(Outer->GetName()));
 

@@ -2,12 +2,9 @@
 
 // Library
 #include "Library/CsLibrary_Property.h"
+#include "Managers/Data/CsLibrary_Manager_Data.h"
 // Managers
 #include "Managers/Data/CsManager_Data.h"
-// Game
-#include "Engine/GameInstance.h"
-// World
-#include "Engine/World.h"
 #pragma once
 
 // Cached
@@ -108,8 +105,9 @@ namespace NCsPooledObject
 						}
 
 						// Cache any class related information that is loaded.
-						UWorld* World				  = MyRoot->GetWorld();
-						UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+						typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+						UCsManager_Data* Manager_Data = DataManagerLibrary::GetChecked(Context, MyRoot);
 
 						const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
@@ -168,8 +166,9 @@ namespace NCsPooledObject
 							}
 
 							// Cache any class related information that is loaded.
-							UWorld* World				  = MyRoot->GetWorld();
-							UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+							typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+							UCsManager_Data* Manager_Data = DataManagerLibrary::GetChecked(Context, MyRoot);
 
 							const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 

@@ -1,11 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Handler/CsManager_PooledObject_ClassHandler.h"
 // Types
-#include "Managers/Projectile/CsTypes_Projectile.h"
-#include "Managers/Projectile/CsProjectilePooled.h"
+#include "CsTypes_Weapon.h"
+#include "CsWeaponPooled.h"
 #pragma once
 
-namespace NCsProjectile
+namespace NCsWeapon
 {
 	namespace NManager
 	{
@@ -15,11 +15,11 @@ namespace NCsProjectile
 
 			/**
 			*/
-			class CSPRJ_API FClass : public ClassHandlerType<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass>
+			class CSWP_API FClass : public ClassHandlerType<FCsWeaponPooled, FCsWeaponPtr, FECsWeaponClass>
 			{
 			private:
 
-				typedef ClassHandlerType<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass> Super;
+				typedef ClassHandlerType<FCsWeaponPooled, FCsWeaponPtr, FECsWeaponClass> Super;
 
 			public:
 

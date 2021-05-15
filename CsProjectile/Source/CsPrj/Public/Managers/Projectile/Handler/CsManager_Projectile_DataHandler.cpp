@@ -2,12 +2,10 @@
 #include "Managers/Projectile/Handler/CsManager_Projectile_Datahandler.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_Collision.h"
 // Library
 #include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsPrjLibrary_DataRootSet.h"
-#include "Library/CsLibrary_Property.h"
 // Projectile
 #include "Data/CsData_ProjectileEmuSlice.h"
 
@@ -47,12 +45,9 @@ namespace NCsProjectile
 
 					checkf(DataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsPrjDataRootSet().Projectiles is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
 
-					UWorld* World				  = MyRoot->GetWorld();
-					UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+					typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-					UDataTable* DataTable = Manager_Data->GetDataTable(DataTableSoftObject);
-
-					checkf(DataTable, TEXT("%s: Failed to get DataTable @ %s."), *Context, *(DataTableSoftObject.ToSoftObjectPath().ToString()));
+					UDataTable* DataTable = DataManagerLibrary::GetDataTableChecked(Context, MyRoot, DataTableSoftObject);
 
 					OutDataTables.Add(DataTable);
 					OutDataTableSoftObjects.Add(DataTableSoftObject);
@@ -117,8 +112,9 @@ namespace NCsProjectile
 				}
 
 				// Get Manager_Data
-				UWorld* World				  = MyRoot->GetWorld();
-				UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+				typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+				UCsManager_Data* Manager_Data = DataManagerLibrary::GetChecked(Context, MyRoot);
 
 				// Check which rows from the DataTable have been loaded
 				const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();

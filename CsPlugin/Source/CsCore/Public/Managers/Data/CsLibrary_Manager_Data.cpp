@@ -26,6 +26,7 @@ namespace NCsData
 				{
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsData::NManager::FLibrary, GetSafeContextRoot);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsData::NManager::FLibrary, GetSafe);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsData::NManager::FLibrary, GetSafeDataTable);
 				}
 			}
 		}
@@ -102,5 +103,68 @@ namespace NCsData
 		}
 
 		#pragma endregion Get
+
+		// DataTabe
+		#pragma region
+		
+		UDataTable* FLibrary::GetDataTableChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path)
+		{
+			return GetChecked(Context, ContextObject)->GetDataTableChecked(Context, Path);
+		}
+
+		UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
+
+			if (!Manager_Data)
+				return nullptr;
+
+			CS_IS_SOFT_OBJECT_PATH_VALID_RET_NULL(Path)
+
+			return Manager_Data->GetDataTable(Path);
+		}
+
+		UDataTable* FLibrary::GetSafeDataTable(const UObject* ContextObject, const FSoftObjectPath& Path)
+		{
+			using namespace NCsData::NManager::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeDataTable;
+
+			return GetSafeDataTable(Context, ContextObject, Path, nullptr);
+		}
+
+		UDataTable* FLibrary::GetDataTableChecked(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject)
+		{
+			return GetChecked(Context, ContextObject)->GetDataTableChecked(Context, SoftObject);
+		}
+
+		UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
+
+			if (!Manager_Data)
+				return nullptr;
+
+			const FSoftObjectPath& Path = SoftObject.ToSoftObjectPath();
+
+			if (!Path.IsValid())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: SoftObject is NOT Valid."), *Context));
+				return nullptr;
+			}
+		
+			return Manager_Data->GetDataTable(SoftObject);
+		}
+
+		UDataTable* FLibrary::GetSafeDataTable(const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject)
+		{
+			using namespace NCsData::NManager::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeDataTable;
+
+			return GetSafeDataTable(Context, ContextObject, SoftObject, nullptr);
+		}
+
+		#pragma endregion DataTable
 	}
 }

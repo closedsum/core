@@ -50,7 +50,7 @@ namespace NCsPlayer
 
 			UObject* FLibrary::GetSafeContextRoot(UObject* ContextObject)
 			{
-				using namespace NCsAchievement::NManager::NLibrary::NCached;
+				using namespace NCsPlayer::NProfile::NManager::NLibrary::NCached;
 
 				const FString& Context = Str::GetSafeContextRoot;
 

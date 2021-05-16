@@ -37,13 +37,12 @@
 #include "Engine/World.h"
 
 #if WITH_EDITOR
+// Library
+#include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
+// Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/Projectile/CsGetManagerProjectile.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -55,6 +54,7 @@ namespace NCsManagerProjectile
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, InitInternalFromSettings);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateClassMapFromSettings);
@@ -238,20 +238,20 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 
 /*static*/ UCsManager_Projectile* UCsManager_Projectile::GetFromWorldContextObject(const UObject* WorldContextObject)
 {
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	using namespace NCsManagerProjectile::NCached;
+
+	const FString& Context = Str::GetFromWorldContextObject;
+
+	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+	if (UObject* ContextRoot = PrjManagerLibrary::GetSafe(Context, WorldContextObject))
 	{
-		// Game State
-		if (UCsManager_Projectile* Manager = GetSafe(World->GetGameState()))
+		if (UCsManager_Projectile* Manager = GetSafe(ContextRoot))
 			return Manager;
 
-		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::GetFromWorldContextObject: Failed to Manager Item of type UCsManager_Projectile from GameState."));
-
-		return nullptr;
+		UE_LOG(LogCsPrj, Warning, TEXT("%s: Failed to Manager Projectile of type UCsManager_Projectile from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
 	}
-	else
-	{
-		return nullptr;
-	}
+	return nullptr;
 }
 
 #endif // #if WITH_EDITOR

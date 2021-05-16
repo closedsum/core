@@ -2,6 +2,8 @@
 #include "Library/Script/CsScriptLibrary_SkeletalMesh.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_SkeletalMesh.h"
 
@@ -43,7 +45,7 @@ USkeletalMesh* UCsScriptLibrary_SkeletalMesh::LoadBySoftObjectPath(const FString
 
 USkeletalMesh* UCsScriptLibrary_SkeletalMesh::LoadByStringPath(const FString& Context, const FString& Path)
 {
-	using namespace NCsScriptLibraryMaterial::NCached;
+	using namespace NCsScriptLibrarySkeletalMesh::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
 

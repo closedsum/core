@@ -2,6 +2,8 @@
 #include "Library/Script/CsScriptLibrary_StaticMesh.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_StaticMesh.h"
 

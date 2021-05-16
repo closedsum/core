@@ -6,6 +6,8 @@
 #include "Managers/UserWidget/CsManager_UserWidget.h"
 // Data
 #include "Managers/UserWidget/Data/CsData_UserWidget.h"
+// Log
+#include "Utility/CsUILog.h"
 #pragma once
 
 class UObject;
@@ -43,9 +45,9 @@ namespace NCsUserWidget
 			* @param Log
 			* return				Context for UCsManager_UserWidget
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, void(*Log)(const FString&) = &NCsUI::FLog::Warning) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR

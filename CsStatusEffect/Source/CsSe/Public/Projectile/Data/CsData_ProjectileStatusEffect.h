@@ -3,6 +3,9 @@
 
 #include "UObject/Interface.h"
 #include "Containers/CsGetInterfaceMap.h"
+// Types
+#include "Types/CsTypes_Macro.h"
+
 #include "CsData_ProjectileStatusEffect.generated.h"
 
 // NCsStatusEffect::NData::IData

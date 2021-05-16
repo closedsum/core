@@ -3,7 +3,7 @@
 #include "CsSeEditor.h"
 
 // Types
-
+#include "CsTypes_StatusEffect.h"
 // EnumStructs
 	// Status Effect
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsStatusEffectTriggerCondition.h"

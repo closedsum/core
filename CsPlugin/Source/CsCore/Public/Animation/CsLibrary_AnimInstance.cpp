@@ -9,6 +9,7 @@
 #include "Library/CsLibrary_Valid.h"
 // Blueprint
 #include "Animation/AnimBlueprintGeneratedClass.h"
+#include "Animation/AnimBlueprint.h"
 
 namespace NCsAnimInstance
 {

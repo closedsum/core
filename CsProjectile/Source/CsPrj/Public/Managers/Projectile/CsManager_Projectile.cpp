@@ -12,6 +12,7 @@
 #include "Data/CsLibrary_Data_Projectile.h"
 #include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsPrjLibrary_DataRootSet.h"
+#include "Level/CsLibrary_Level.h"
 // Utility
 #include "Utility/CsPrjLog.h"
 // Settings
@@ -19,11 +20,13 @@
 #include "Settings/CsProjectileSettings.h"
 // Managers
 #include "Managers/Data/CsManager_Data.h"
+#include "Managers/Time/CsManager_Time.h"
 // Data
 #include "Data/CsPrjGetDataRootSet.h"
 #include "Data/CsData_Projectile.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
+#include "Settings/CsGetSettingsManagerProjectilePoolParams.h"
 // Projectile
 #include "Managers/Projectile/Handler/CsManager_Projectile_ClassHandler.h"
 #include "Managers/Projectile/Handler/CsManager_Projectile_DataHandler.h"
@@ -92,7 +95,33 @@ UCsManager_Projectile* UCsManager_Projectile::s_Instance;
 bool UCsManager_Projectile::s_bShutdown = false;
 
 UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer),
+	// Singleton
+	bInitialized(false),
+	MyRoot(nullptr),
+	// Settings
+	Settings(),
+	// Internal
+	Internal(),
+	// Update
+	bTypesByUpdateGroup(false),
+	TypesByUpdateGroup(),
+	CurrentUpdatePoolType(),
+	CurrentUpdatePoolObjectIndex(0),
+	// Pause
+	OnPauseHandleByGroupMap(),
+	// Spawn
+	OnSpawn_Event(),
+	OnSpawn_ScriptEvent(),
+	// Destroy
+	OnDestroy_Event(),
+	// Pool
+	Pool(),
+	// Script
+	Script_GetCache_Impl(),
+	Script_Allocate_Impl(),
+	Script_Deallocate_Impl(),
+	Script_Update_Impl()
 {
 }
 
@@ -371,7 +400,7 @@ void UCsManager_Projectile::SetupInternal()
 	//}
 	//else
 #endif // #if !UE_BUILD_SHIPPING
-		// If any settings have been set for Manager_WidgetActor, apply them
+		// If any settings have been set for Manager_Projectile, apply them
 	{
 		UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>();
 
@@ -394,6 +423,32 @@ void UCsManager_Projectile::SetupInternal()
 			{
 				TypeMapArray[Pair.Key.GetValue()] = Pair.Value;
 			}
+		}
+
+		// Populate TypesByUpdateGroup
+		{
+			TypesByUpdateGroup.Reset(EMCsUpdateGroup::Get().Num());
+			TypesByUpdateGroup.AddDefaulted(EMCsUpdateGroup::Get().Num());
+
+			for (TPair<FECsUpdateGroup, FCsSettings_Manager_Projectile_TypeArray>& Pair : Settings.TypesByUpdateGroupMap)
+			{
+				const FECsUpdateGroup& Group						  = Pair.Key;
+				const FCsSettings_Manager_Projectile_TypeArray& Array = Pair.Value;
+
+				checkf(Array.Types.Num() > CS_EMPTY, TEXT("%s: No Types added for UCsDeveloperSettings.Manager_Sound.TypesByUpdateGroupMap[%s]."), *Context, Group.ToChar());
+
+				TypesByUpdateGroup[Group.GetValue()].Append(Array.Types);
+
+				bTypesByUpdateGroup = true;
+			}
+		}
+
+		// Check if there any pool params from the LevelScriptActor
+		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
+
+		if (ICsGetSettingsManagerProjectilePoolParams* GetPoolParams = LevelLibrary::GetSafeScriptActor<ICsGetSettingsManagerProjectilePoolParams>(MyRoot))
+		{
+			Settings.PoolParams = GetPoolParams->GetSettingsManagerProjectilePoolParams();
 		}
 
 		InitInternalFromSettings();
@@ -420,7 +475,7 @@ void UCsManager_Projectile::InitInternalFromSettings()
 
 		for (const TPair<FECsProjectile, FCsSettings_Manager_Projectile_PoolParams>& Pair : Settings.PoolParams)
 		{
-			const FECsProjectile& Type									= Pair.Key;
+			const FECsProjectile& Type								= Pair.Key;
 			const FCsSettings_Manager_Projectile_PoolParams& Params = Pair.Value;
 
 			typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
@@ -646,6 +701,21 @@ void UCsManager_Projectile::Update(const FCsDeltaTime& DeltaTime)
 	Internal.Update(DeltaTime);
 }
 
+void UCsManager_Projectile::Update(const FECsUpdateGroup& Group, const FCsDeltaTime& DeltaTime)
+{
+	checkf(TypesByUpdateGroup[Group.GetValue()].Num() > CS_EMPTY, TEXT("UCsManager_Projectile::Update: No Types associated with Group: %s."), Group.ToChar());
+
+	for (const FECsProjectile& Type : TypesByUpdateGroup[Group.GetValue()])
+	{
+		Internal.Update(Type, DeltaTime);
+	}
+}
+
+void UCsManager_Projectile::Update(const FECsProjectile& Type, const FCsDeltaTime& DeltaTime)
+{
+	Internal.Update(Type, DeltaTime);
+}
+
 void UCsManager_Projectile::OnPreUpdate_Pool(const FECsProjectile& Type)
 {
 	CurrentUpdatePoolType		 = Type;
@@ -662,6 +732,40 @@ void UCsManager_Projectile::OnPostUpdate_Pool(const FECsProjectile& Type)
 }
 
 #pragma endregion Update
+
+	// Pause
+#pragma region
+
+void UCsManager_Projectile::Pause(const FECsUpdateGroup& Group, bool bPaused)
+{
+	if (bTypesByUpdateGroup)
+	{
+		checkf(TypesByUpdateGroup[Group.GetValue()].Num() > CS_EMPTY, TEXT("UCsManager_Projectile::Update: No Types associated with Group: %s."), Group.ToChar());
+
+		for (const FECsProjectile& Type : TypesByUpdateGroup[Group.GetValue()])
+		{
+			Internal.Pause(Type, bPaused);
+		}
+	}
+	else
+	{
+		Internal.Pause(bPaused);
+	}
+}
+
+void UCsManager_Projectile::Pause(const FECsProjectile& Type, bool bPaused)
+{
+	Internal.Pause(Type, bPaused);
+}
+
+void UCsManager_Projectile::BindToOnPause(const FECsUpdateGroup& Group)
+{
+	FDelegateHandle Handle = UCsManager_Time::Get(GetOuter())->GetOnPause_Event(Group).AddUObject(this, &UCsManager_Projectile::Pause);
+
+	OnPauseHandleByGroupMap.Add(Group, Handle);
+}
+
+#pragma endregion Pause
 
 	// Payload
 #pragma region

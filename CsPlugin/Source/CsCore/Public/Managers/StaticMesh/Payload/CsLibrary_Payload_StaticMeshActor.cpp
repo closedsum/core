@@ -6,7 +6,7 @@
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 // StaticMesh
-#include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"
+#include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"
 
 namespace NCsStaticMeshActor
 {

@@ -2,7 +2,7 @@
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 
 // Coroutine
-#include "Coroutine/CsCoroutineSchedule.h"
+#include "Coroutine/CsCoroutineScheduler.h"
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library

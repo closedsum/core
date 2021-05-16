@@ -2,7 +2,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
-#include "Managers/Time/CsUpdateGroup.h"
+#include "Managers/Time/CsTypes_Update.h"
 #include "Coroutine/CsRoutineHandle.h"
 
 #include "CsScriptLibrary_CoroutineScheduler.generated.h"

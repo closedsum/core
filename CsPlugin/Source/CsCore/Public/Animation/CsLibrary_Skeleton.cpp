@@ -2,6 +2,8 @@
 #include "Animation/CsLibrary_Skeleton.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Mesh

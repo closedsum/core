@@ -9,6 +9,10 @@
 // FCsSettings_Manager_Sound_PoolParams
 #pragma region
 
+/**
+* Describes any pool parameters (i.e. class, pool size, payload size, ... etc) for each Sound type.
+* These parameters are used when initially creating the pool.
+*/
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsSettings_Manager_Sound_PoolParams
 {
@@ -16,12 +20,13 @@ struct CSCORE_API FCsSettings_Manager_Sound_PoolParams
 
 public:
 
+	/** The class of the pooled Sound. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement ="CsSoundPooled"))
 	TSoftClassPtr<UObject> Class; 
-
+	/** The maximum size of the pool. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
 	int32 PoolSize;
-
+	/** The maximum payload size. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
 	int32 PayloadSize;
 
@@ -69,9 +74,12 @@ struct CSCORE_API FCsSettings_Manager_Sound
 
 public:
 
+	/** Mapping between Update Groups, the "tick" / update group, and Sound types. This
+		is important to indicate when a particular Sound type WILL or will NOT get "ticked" or updated. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsUpdateGroup, FCsSettings_Manager_Sound_TypeArray> TypesByUpdateGroupMap;
 
+	/** Describes any pool parameters (i.e. class, pool size, payload size, ... etc) for each Sound type. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsSound, FCsSettings_Manager_Sound_PoolParams> PoolParams;
 

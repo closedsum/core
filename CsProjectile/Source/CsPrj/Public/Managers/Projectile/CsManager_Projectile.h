@@ -507,9 +507,38 @@ public:
 
 	// Update
 #pragma region
+private:
+
+	/** Whether TypesByUpdateGroup is used or not. */
+	bool bTypesByUpdateGroup;
+
+	TArray<TArray<FECsProjectile>> TypesByUpdateGroup;
+
 public:
 
-	virtual void Update(const FCsDeltaTime& DeltaTime);
+	/**
+	* Update ALL sounds of ALL types (FECsSound) with DeltaTime.
+	*
+	* @param DeltaTime
+	*/
+	void Update(const FCsDeltaTime& DeltaTime);
+
+	/**
+	* Update ALL sounds associated with Group (TypesByUpdateGroup[Group.GetValue()])
+	* with DeltaTime
+	*
+	* @param Group		UpdateGroup sounds are associated with.
+	* @param DeltaTime
+	*/
+	void Update(const FECsUpdateGroup& Group, const FCsDeltaTime& DeltaTime);
+
+	/**
+	* Update ALL sounds of Type (FECsProjectile) with DeltaTime.
+	*
+	* @param Type
+	* @param DeltaTime
+	*/
+	void Update(const FECsProjectile& Type, const FCsDeltaTime& DeltaTime);
 
 private:
 
@@ -526,6 +555,36 @@ protected:
 	void OnPostUpdate_Pool(const FECsProjectile& Type);
 
 #pragma endregion Update
+
+	// Pause
+#pragma region
+public:
+
+	/**
+	* Set the pause flag for ALL sounds associated with the Group (TypesByUpdateGroup[Group.GetValue()]).
+	*
+	* @param Group
+	* @param bPaused	True = pause. False = un-pause.
+	*/
+	void Pause(const FECsUpdateGroup& Group, bool bPaused);
+
+	/**
+	* Set th pause flag for ALL sounds associated with Type: (FECsProjectile).
+	*
+	* @param Type
+	* @param bPaused	True = pause. False = un-pause.
+	*/
+	void Pause(const FECsProjectile& Type, bool bPaused);
+
+private:
+
+	TMap<FECsUpdateGroup, FDelegateHandle> OnPauseHandleByGroupMap;
+
+public:
+
+	void BindToOnPause(const FECsUpdateGroup& Group);
+
+#pragma endregion Pause
 
 	// Payload
 #pragma region

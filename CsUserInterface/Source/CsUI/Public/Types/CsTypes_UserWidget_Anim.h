@@ -1,4 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// DataTable
+#include "Engine/DataTable.h"
 // Log
 #include "Utility/CsUILog.h"
 

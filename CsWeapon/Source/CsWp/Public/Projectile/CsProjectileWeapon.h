@@ -3,7 +3,10 @@
 
 #include "UObject/Interface.h"
 #include "Containers/CsInterfaceObject.h"
+// Types
 #include "Managers/Time/CsTypes_Time.h"
+#include "Types/CsTypes_Macro.h"
+
 #include "CsProjectileWeapon.generated.h"
 
 UINTERFACE(BlueprintType)

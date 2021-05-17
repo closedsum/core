@@ -2,12 +2,10 @@
 #include "Managers/StatusEffect/CsManager_StatusEffect.h"
 #include "CsSe.h"
 
+// Library
+#include "Coordinators/StatusEffect/CsLibrary_Coordinator_StatusEffect.h"
 // Coordinator
 #include "Coordinators/StatusEffect/CsCoordinator_StatusEffect.h"
-// Game
-#include "GameFramework/GameStateBase.h"
-// World
-#include "Engine/World.h"
 
 // Cached
 #pragma region
@@ -46,27 +44,21 @@ void UCsManager_StatusEffect::Shutdown(UObject* InRoot)
 
 	const FString& Context = Str::Shutdown;
 
-	// Deallocate any NCsStatusEffect::NEvent::IEvent objects from UCsStatusEffectCoordinator 
-	UObject* Object			  = MyRoot.GetObject();
-	UWorld* World			  = Object ? Object->GetWorld() : nullptr;
-	AGameStateBase* GameState = World ? World->GetGameState() : nullptr;
-	
+	// Deallocate any NCsStatusEffect::NEvent::IEvent objects from UCsStatusEffectCoordinator
+	typedef NCsStatusEffect::NCoordinator::FLibrary SeCoordinatorLibrary;
 	typedef NCsStatusEffect::NEvent::NInfo::FResource EventInfoResourceType;
 	typedef NCsStatusEffect::NEvent::NInfo::FImpl EventInfoType;
 
-	if (GameState &&
-		UCsCoordinator_StatusEffect::IsValid(GameState))
+	if (UCsCoordinator_StatusEffect* StatusEffectCoordinator = SeCoordinatorLibrary::GetSafe(MyRoot.GetObject()))
 	{
-		UCsCoordinator_StatusEffect* StatusEffectCoordinator = UCsCoordinator_StatusEffect::Get(GameState);
-
 		TCsDoubleLinkedList<EventInfoResourceType*>* Current = Manager_Event.GetAllocatedHead();
 		TCsDoubleLinkedList<EventInfoResourceType*>* Next	 = Current;
 
 		while (Next)
 		{
-			Current										 = Next;
+			Current							 = Next;
 			EventInfoResourceType* Container = **Current;
-			Next										 = Current->GetNextLink();
+			Next							 = Current->GetNextLink();
 
 			EventInfoType* Info = Container->Get();
 
@@ -98,9 +90,9 @@ void UCsManager_StatusEffect::Update(const FCsDeltaTime& DeltaTime)
 
 	while (Next)
 	{
-		Current										 = Next;
+		Current							 = Next;
 		EventInfoResourceType* Container = **Current;
-		Next										 = Current->GetNextLink();
+		Next							 = Current->GetNextLink();
 
 		EventInfoType* Info = Container->Get();
 

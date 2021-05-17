@@ -8,6 +8,7 @@ public class CsPlaybackEditor : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         bLegacyPublicIncludePaths = false;
+        bUseUnity = System.Environment.ProcessorCount < 64;
 
         PublicDependencyModuleNames.AddRange(
                 new string[] {

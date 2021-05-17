@@ -3,6 +3,9 @@
 
 #include "UObject/Interface.h"
 #include "Containers/CsInterfaceObject.h"
+// Types
+#include "Types/CsTypes_Macro.h"
+
 #include "CsReceiveDamage.generated.h"
 
 UINTERFACE(BlueprintType, meta = (CannotImplementInterfaceInBlueprint))
@@ -11,9 +14,8 @@ class CSCORE_API UCsReceiveDamage : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
-namespace NCsDamage {
-	namespace NEvent {
-		struct IEvent; } }
+// NCsDamage::NEvent::IEvent
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, IEvent)
 
 /**
 */
@@ -21,9 +23,13 @@ class CSCORE_API ICsReceiveDamage
 {
 	GENERATED_IINTERFACE_BODY()
 
+#define EventType NCsDamage::NEvent::IEvent
+
 public:
 
-	virtual void Damage(const NCsDamage::NEvent::IEvent* Event) = 0;
+	virtual void Damage(const EventType* Event) = 0;
+
+#undef EventType
 };
 
 // FCsReceiveDamage
@@ -41,6 +47,8 @@ public:
 
 	static const FCsReceiveDamage Empty;
 
+#define EventType NCsDamage::NEvent::IEvent
+
 // Script
 #pragma region
 public:
@@ -56,7 +64,7 @@ public:
 	* @param Object		A Object of type: ICsReceiveDamage.
 	* @param Event
 	*/
-	DECLARE_DELEGATE_TwoParams(FScript_Damage, UObject* /*Object*/, const NCsDamage::NEvent::IEvent* /*Event*/);
+	DECLARE_DELEGATE_TwoParams(FScript_Damage, UObject* /*Object*/, const EventType* /*Event*/);
 
 	/** Delegate for .
 		 The Object implements a script interface of type: ICsReceiveDamage. */
@@ -86,7 +94,7 @@ public:
 #pragma region
 public:
 
-	void Damage(const NCsDamage::NEvent::IEvent* Event)
+	void Damage(const EventType* Event)
 	{
 		if (bScript)
 			Script_Damage_Impl.Execute(Object, Event);
@@ -95,6 +103,8 @@ public:
 	}
 
 #pragma endregion ICsReceiveDamage
+
+#undef EventType
 };
 
 #pragma endregion FCsReceiveDamage

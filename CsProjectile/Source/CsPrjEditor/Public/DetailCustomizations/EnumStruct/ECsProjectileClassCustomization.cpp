@@ -9,11 +9,14 @@
 // Cached
 #pragma region
 
-namespace NCsProjectileClassCustomizationCached
+namespace NCsProjectileClassCustomization
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CustomPopulateEnumMap = TEXT("FECsProjectileClassCustomization::CustomPopulateEnumMap");
+		namespace Str
+		{
+			const FString CustomPopulateEnumMap = TEXT("FECsProjectileClassCustomization::CustomPopulateEnumMap");
+		}
 	}
 }
 
@@ -27,7 +30,7 @@ FECsProjectileClassCustomization::FECsProjectileClassCustomization() :
 
 void FECsProjectileClassCustomization::CustomPopulateEnumMap()
 {
-	using namespace NCsProjectileClassCustomizationCached;
+	using namespace NCsProjectileClassCustomization::NCached;
 
 	NCsProjectileClass::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }

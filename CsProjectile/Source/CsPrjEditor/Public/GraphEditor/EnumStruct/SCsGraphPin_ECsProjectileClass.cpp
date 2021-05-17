@@ -7,11 +7,14 @@
 // Cached
 #pragma region
 
-namespace NCsGraphPinProjectileClassCached
+namespace NCsGraphPinProjectileClass
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsProjectileClass::CustomPopulateEnumMap");
+		namespace Str
+		{
+			const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsProjectileClass::CustomPopulateEnumMap");
+		}
 	}
 }
 
@@ -26,7 +29,7 @@ void SCsGraphPin_ECsProjectileClass::Construct(const FArguments& InArgs, UEdGrap
 
 void SCsGraphPin_ECsProjectileClass::CustomPopulateEnumMap()
 {
-	using namespace NCsGraphPinProjectileClassCached;
+	using namespace NCsGraphPinProjectileClass::NCached;
 
 	NCsProjectileClass::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }

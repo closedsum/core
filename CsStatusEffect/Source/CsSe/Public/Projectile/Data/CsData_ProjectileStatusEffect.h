@@ -17,7 +17,7 @@ namespace NCsProjectile
 	{
 		namespace NStatusEffect
 		{
-#define StatusEffectDataType NCsStatusEffect::NData::IData
+		#define StatusEffectDataType NCsStatusEffect::NData::IData
 
 			/**
 			*
@@ -35,7 +35,7 @@ namespace NCsProjectile
 				virtual const TArray<StatusEffectDataType*>& GetStatusEffects() const = 0;
 			};
 
-#undef StatusEffectDataType
+		#undef StatusEffectDataType
 		}
 	}
 }

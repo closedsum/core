@@ -119,7 +119,7 @@ namespace NCsTrace
 
 		ResponseType* FLibrary::SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			CS_IS_PTR_NULL(Request)
+			CS_IS_PTR_NULL_RET_NULL(Request)
 
 			if (!Request->IsValid(Context, Log))
 				return nullptr;

@@ -1,8 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"
 
-#pragma once
-
 // PlayerProfile
 #pragma region
 

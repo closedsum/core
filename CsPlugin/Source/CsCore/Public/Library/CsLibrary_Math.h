@@ -279,6 +279,7 @@ namespace NCsMath
 
 			return OutSize * V;
 		}
+
 	#pragma endregion Vector
 
 	// Plane
@@ -340,7 +341,7 @@ namespace NCsMath
 		*/
 		FORCEINLINE static FLinearColor GetSafeNormal(const FLinearColor& Color, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
 		{
-			return GetSafeNormal(FVector4(Color), OutSizeSquared, OutSize, Tolerance);
+			return FLinearColor(GetSafeNormal(FVector4(Color), OutSizeSquared, OutSize, Tolerance));
 		}
 
 	#pragma endregion LinearColor

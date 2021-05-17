@@ -155,7 +155,7 @@ bool FCsMaterialAnimFrame::IsValid(const FString& Context, void(*Log)(const FStr
 bool FCsMaterialAnimFrame::IsValid(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
-		return nullptr;
+		return false;
 
 	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
@@ -248,7 +248,7 @@ namespace NCsMaterial
 		bool FFrame::IsValid(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 		{
 			if (!IsValid(Context, Log))
-				return nullptr;
+				return false;
 
 			typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 

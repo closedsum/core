@@ -2,6 +2,7 @@
 #include "Managers/Damage/CsTypes_Damage.h"
 #include "Types/CsTypes_Interpolation.h"
 #include "Types/CsTypes_Curve.h"
+
 #include "CsTypes_Data_ProjectileDamage.generated.h"
 #pragma once
 

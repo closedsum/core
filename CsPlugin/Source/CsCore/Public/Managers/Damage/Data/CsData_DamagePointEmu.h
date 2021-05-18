@@ -13,7 +13,7 @@ namespace NCsDamage
 	{
 		namespace NPoint
 		{
-#define DataType NCsDamage::NData::IData
+		#define DataType NCsDamage::NData::IData
 
 			/**
 			*
@@ -32,7 +32,7 @@ namespace NCsDamage
 
 			public:
 
-				// ICsData_Damage
+				// DataType (NCsDamage::NData::IData)
 
 				ValueType* Value;
 
@@ -56,22 +56,21 @@ namespace NCsDamage
 			public:
 
 				void SetValue(float* InValue);
-
 				void SetType(FECsDamageType* InValue) { Type = InValue; }
 
-			// ICsData_Damage
+			// DataType (NCsDamage::NData::IData)
 			#pragma region
 			public:
 
 				FORCEINLINE const ValueType* GetValue() const { return Value; }
 				FORCEINLINE const FECsDamageType& GetType() const { return const_cast<FECsDamageType&>(*Type); }
 
-			#pragma endregion ICsData_Damage
+			#pragma endregion DataType (NCsDamage::NData::IData)
 
 			#undef ValueType
 			};
 
-#undef DataType
+		#undef DataType
 		}
 	}
 }

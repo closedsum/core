@@ -87,8 +87,8 @@ namespace NCsProjectile
 					// GravityScale
 				FFloatProperty* GravityScaleProperty = PropertyLibrary::FindPropertyByNameForInterfaceChecked<FFloatProperty>(Context, RowStruct, Name::GravityScale, NCsProjectileData::Projectile.GetDisplayName());
 
-				// ICsData_ProjectileCollision
-				bool Emulates_ICsData_ProjectileCollision = false;
+				// ICsData_Projectile_Collision
+				bool Emulates_ICsData_Projectile_Collision = false;
 
 				// ICsData_Projectile_VisualStaticMesh
 				bool Emulates_ICsData_Projectile_VisualStaticMesh = false;
@@ -183,8 +183,8 @@ namespace NCsProjectile
 							Data->SetGravityScale(Value);
 						}
 					}
-					// ICsData_ProjectileCollision
-					if (Emulates_ICsData_ProjectileCollision)
+					// ICsData_Projectile_Collision
+					if (Emulates_ICsData_Projectile_Collision)
 					{
 
 					}

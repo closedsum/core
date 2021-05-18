@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Data/Visual/CsData_Projectile_VisualStaticMesh.h"
+#include "Data/Visual/StaticMesh/CsData_Projectile_VisualStaticMesh.h"
 #include "CsPrj.h"
 
 const FName NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh::Name = FName("NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh");

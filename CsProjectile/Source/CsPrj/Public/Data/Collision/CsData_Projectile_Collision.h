@@ -3,8 +3,10 @@
 
 #include "UObject/Interface.h"
 #include "Containers/CsGetInterfaceMap.h"
+// Types
 #include "Types/CsTypes_Collision.h"
-#include "CsData_ProjectileCollision.generated.h"
+
+#include "CsData_Projectile_Collision.generated.h"
 
 namespace NCsProjectile
 {
@@ -38,7 +40,7 @@ namespace NCsProjectile
 }
 
 UINTERFACE(BlueprintType)
-class CSPRJ_API UCsData_ProjectileCollision : public UCsGetInterfaceMap
+class CSPRJ_API UCsData_Projectile_Collision : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
@@ -46,7 +48,7 @@ class CSPRJ_API UCsData_ProjectileCollision : public UCsGetInterfaceMap
 /**
 * Interface for describing any collision associated with a Projectile.
 */
-class CSPRJ_API ICsData_ProjectileCollision : public ICsGetInterfaceMap
+class CSPRJ_API ICsData_Projectile_Collision : public ICsGetInterfaceMap
 {
 	GENERATED_IINTERFACE_BODY()
 

@@ -141,7 +141,7 @@ namespace NCsStaticMeshActor
 class UStaticMesh;
 
 /**
-* Container holding general information for a Sound Asset.
+* Container holding general information for a Static Mesh Actor.
 *  This is mostly used by object pooled by a Manager
 */
 USTRUCT(BlueprintType)
@@ -163,11 +163,11 @@ struct CSCORE_API FCsStaticMeshActorPooledInfo
 		NOTE: StaticMeshActor mostly acts as a "container" for a UStaticMesh. Unless there is a
 		need from some special logic, only one StaticMeshActor class (i.e. ACsStatMeshActorPooledImpl) 
 		that will be used. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FECsStaticMeshActor Type;
 
 	/** Condition to determine when to deallocate the StaticMeshActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsStaticMeshActorDeallocateMethod DeallocateMethod;
 
 private:
@@ -186,29 +186,29 @@ public:
 		   LifeTime == 0.0f means the Sound object will stay active forever.
 		   LifeTime > 0.0f means the Sound will be deallocated after LifeTime amount of time after
 	        the FX object has been allocated. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
 	/** Valid if the Sound is attached to a Parent object or when an Sound object is
 		allocated, the Parent field of the payload is set.If the Parent object is NULL,
 		the Sound will NOT be attached. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsAttachmentTransformRules AttachmentTransformRules;
 
 	/** Valid only when the Sound is attached to a Parent object. 
 	    Bone or Socket to attach to. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the FX. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
 	int32 TransformRules;
 
 	/** The Transform to apply to the FX.
 		If the Sound is attached to a parent object, the Transform is applied as a Relative Transform
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTransform Transform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

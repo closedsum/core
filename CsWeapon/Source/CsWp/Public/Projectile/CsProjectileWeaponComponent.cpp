@@ -36,7 +36,7 @@
 #include "Projectile/Data/Sound/CsData_ProjectileWeapon_SoundFire.h"
 #include "Projectile/Data/Visual/CsData_ProjectileWeapon_VisualFire.h"
 #include "Data/CsData_Projectile.h"
-#include "Data/CsData_ProjectileCollision.h"
+#include "Data/Collision/CsData_Projectile_Collision.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
 // Pooled

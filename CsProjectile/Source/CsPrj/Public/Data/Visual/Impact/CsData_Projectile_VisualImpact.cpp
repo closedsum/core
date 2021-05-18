@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Data/Visual/CsData_Projectile_VisualImpact.h"
+#include "Data/Visual/Impact/CsData_Projectile_VisualImpact.h"
 #include "CsPrj.h"
 
 const FName NCsProjectile::NData::NVisual::NImpact::IImpact::Name = FName("NCsProjectile::NData::NVisual::NImpact::IImpact");

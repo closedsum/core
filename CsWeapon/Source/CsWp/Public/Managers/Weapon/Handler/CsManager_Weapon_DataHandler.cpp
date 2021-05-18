@@ -38,7 +38,7 @@ namespace NCsWeapon
 			FData::FData()
 			{
 			}
-
+			 
 			// DataHandlerType (NCsPooledObject::NManager::NHandler::TData)
 			#pragma region
 

@@ -29,10 +29,10 @@
 #include "Managers/Damage/CsManager_Damage.h"
 // Data
 #include "Data/CsData_Projectile.h"
-#include "Data/CsData_ProjectileCollision.h"
-#include "Data/Visual/CsData_Projectile_VisualStaticMesh.h"
+#include "Data/Collision/CsData_Projectile_Collision.h"
+#include "Data/Visual/StaticMesh/CsData_Projectile_VisualStaticMesh.h"
 #include "Data/Visual/CsData_Projectile_VisualTrail.h"
-#include "Data/Visual/CsData_Projectile_VisualImpact.h"
+#include "Data/Visual/Impact/CsData_Projectile_VisualImpact.h"
 #include "Data/Sound/CsData_Projectile_SoundImpact.h"
 #include "Data/Damage/CsData_ProjectileDamage.h"
 // Pool
@@ -659,9 +659,7 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 
 			MeshComponent->AttachToComponent(CollisionComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
-			UStaticMesh* Mesh = VisualData->GetStaticMesh().Get();
-
-			checkf(Mesh, TEXT("%s: Mesh is NULL from Visual Data interface: ICsData_Projectile_VisualStaticMesh"), *Context);
+			UStaticMesh* Mesh = VisualData->GetStaticMesh().Mesh.GetChecked(Context);
 
 			MeshComponent->SetStaticMesh(Mesh);
 			MeshComponent->SetWorldScale3D(VisualData->GetStaticMesh().Scale);

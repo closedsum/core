@@ -27,7 +27,7 @@ namespace NCsDamage
 
 					if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
 					{
-						ToImpl->Value = IFromPoint->GetValue();
+						ToImpl->SetValue(IFromPoint->GetValue());
 						return true;
 					}
 				}

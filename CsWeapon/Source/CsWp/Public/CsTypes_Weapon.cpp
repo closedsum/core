@@ -24,7 +24,7 @@ namespace NCsWeapon
 
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsWeaponSettings, EMCsWeapon, FECsWeapon>(Context, Str::Weapon, &FCsWpLog::Warning);
+		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsWeaponSettings, EMCsWeapon, FECsWeapon>(Context, Str::Weapon, &NCsWeapon::FLog::Warning);
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
@@ -36,7 +36,7 @@ namespace NCsWeapon
 
 		for (const FCsWeaponSettings_DataTable_Weapons& Weapons : DataRootSet->Weapons)
 		{
-			FCsPopulateEnumMapFromSettings::FromDataTable<EMCsWeapon>(Context, ContextRoot, Weapons.Weapons, Str::Weapon, &FCsWpLog::Warning);
+			FCsPopulateEnumMapFromSettings::FromDataTable<EMCsWeapon>(Context, ContextRoot, Weapons.Weapons, Str::Weapon, &NCsWeapon::FLog::Warning);
 		}
 	}
 
@@ -80,7 +80,7 @@ namespace NCsWeaponClass
 
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsWeaponSettings, EMCsWeaponClass, FECsWeaponClass>(Context, Str::WeaponClass, &FCsWpLog::Warning);
+		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsWeaponSettings, EMCsWeaponClass, FECsWeaponClass>(Context, Str::WeaponClass, &NCsWeapon::FLog::Warning);
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
@@ -90,7 +90,7 @@ namespace NCsWeaponClass
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsWeaponClass>(Context, ContextRoot, DataRootSet->WeaponClasses, Str::WeaponClass, &FCsWpLog::Warning);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsWeaponClass>(Context, ContextRoot, DataRootSet->WeaponClasses, Str::WeaponClass, &NCsWeapon::FLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
@@ -133,7 +133,7 @@ namespace NCsWeaponState
 
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsWeaponSettings, EMCsWeaponState, FECsWeaponState>(Context, Str::WeaponState, &FCsWpLog::Warning);
+		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsWeaponSettings, EMCsWeaponState, FECsWeaponState>(Context, Str::WeaponState, &NCsWeapon::FLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)

@@ -51,10 +51,34 @@ namespace NCsWeapon
 #pragma endregion Internal
 
 class ICsGetManagerWeapon;
-class UWorld;
 
 // NCsWeapon::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
+// NCsWeapon::NData::FInterfaceMap
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, FInterfaceMap)
+
+// NCsPooledObject::NManager::NHandler::TClass
+namespace NCsPooledObject {
+	namespace NManager {
+		namespace NHandler {
+			template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumType>
+			class TClass;
+		}
+	}
+}
+
+// NCsPooledObject::NManager::NHandler::TData
+namespace NCsPooledObject {
+	namespace NManager {
+		namespace NHandler {
+			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
+			class TData;
+		}
+	}
+}
+
+struct FCsInterfaceMap;
+
 // NCsWeapon::NData::FInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, FInterfaceMap)
 
@@ -71,6 +95,8 @@ class CSWP_API UCsManager_Weapon : public UObject
 #define ManagerParamsType NCsWeapon::FManager::FParams
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 #define PayloadType NCsWeapon::NPayload::IPayload
+#define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
+#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
 #define DataType NCsWeapon::NData::IData
 
 public:	
@@ -79,15 +105,29 @@ public:
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsManager_Weapon* Get(UObject* InRoot = nullptr);
-	
+#else
+FORCEINLINE static UCsManager_Weapon* Get(UObject* InRoot = nullptr)
+{
+	return s_bShutdown ? nullptr : s_Instance;
+}
+#endif // #if WITH_EDITOR
+
 	template<typename T>
 	static T* Get(UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
 
+#if WITH_EDITOR
 	static bool IsValid(UObject* InRoot = nullptr);
+#else
+FORCEINLINE static bool IsValid(UObject* InRoot = nullptr)
+{
+	return s_Instance != nullptr;
+}
+#endif // #if WITH_EDITOR
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Weapon> ManagerWeaponClass, UObject* InOuter = nullptr);
 	
@@ -641,19 +681,13 @@ public:
 #pragma region
 protected:
 
-	// <Weapon (type), Weapon Class>
-	TMap<FName, FCsWeapon> WeaponClassByTypeMap;
+	ClassHandlerType<FCsWeapon, FCsWeaponPtr, FECsWeaponClass>* ClassHandler;
 
-	void GetWeaponClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject);
-
-	void PopulateClassMapFromSettings();
-
-	// <Weapon Class (type), Weapon Class>
-	TMap<FName, FCsWeapon> WeaponClassByClassTypeMap;
+	virtual void ConstructClassHandler();
 
 public:
 
-/**
+	/**
 	* Get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
 	* with the weapon Type.
 	*
@@ -693,98 +727,17 @@ public:
 	*/
 	FCsWeapon* GetWeaponChecked(const FString& Context, const FECsWeaponClass& Type);
 
-protected:
-
-	void ResetClassContainers();
-
 #pragma endregion Class
 
 // Data
 #pragma region
 protected:
 
-	/** <DataName, InterfacePtr> */
-	TMap<FName, DataType*> EmulatedDataMap;
-
-	/** <DataName, InterfaceMapPtr> */
 #define DataInterfaceMapType NCsWeapon::NData::FInterfaceMap
-	TMap<FName, DataInterfaceMapType*> EmulatedDataInterfaceMap;
+	DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* DataHandler;
 #undef DataInterfaceMapType
 
-	/** <DataName, <InterfaceImplName, InterfaceImplPtr>> */
-	TMap<FName, TMap<FName, void*>> EmulatedDataInterfaceImplMap;
-
-public:
-
-	void PopulateDataMapFromSettings();
-
-protected:
-
-	virtual void CreateEmulatedDataFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const TSet<FECsWeaponData>& EmulatedDataInterfaces);
-
-	virtual void DeconstructEmulatedData(const FName& InterfaceImplName, void* Data);
-
-public:
-
-	/**
-	*/
-	template<typename InterfaceType>
-	InterfaceType* GetEmulatedData(const FName& Name)
-	{
-		static_assert(std::is_abstract<InterfaceType>(), "UCsManager_Weapon::GetEmulatedData InterfaceType is NOT abstract.");
-		
-		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "UCsManager_Weapon::GetEmulatedData: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
-
-		checkf(Name != NAME_None, TEXT("UCsManager_Weapon::GetEmulatedData: Name = None is NOT Valid."));
-
-		typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
-
-		DataInterfaceMapType* EmulatedInterfaceMap = EmulatedDataInterfaceMap.Find(Name);
-
-		checkf(EmulatedInterfaceMap, TEXT("UCsManager_Weapon::GetEmulatedData: EmulatedInterfaceMap is NULL. Failed to find InterfaceMap associated with %s."), *(Name.ToString()));
-
-		FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
-
-		checkf(InterfaceMap, TEXT("UCsManager_Weapon::GetEmulatedData: InterfaceMap is NULL. Interface failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
-
-		return InterfaceMap->Get<InterfaceType>();
-	}
-
-	/**
-	*/
-	template<typename InterfaceImplType>
-	InterfaceImplType* GetEmulatedDataImpl(const FName& Name)
-	{
-		static_assert(!std::is_abstract<InterfaceImplType>(), "UCsManager_Weapon::GetEmulatedDataImpl InterfaceImplType is NOT abstract.");
-
-		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceImplType>(), "UCsManager_Weapon::GetEmulatedDataImpl: InterfaceImplType is NOT a child of: ICsGetInterfaceMap.");
-
-		checkf(Name != NAME_None, TEXT("UCsManager_Weapon::GetEmulatedDataImpl: Name = None is NOT Valid."));
-
-		typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
-
-		DataInterfaceMapType* EmulatedInterfaceMap = EmulatedDataInterfaceMap.Find(Name);
-
-		checkf(EmulatedInterfaceMap, TEXT("UCsManager_Weapon::GetEmulatedData: EmulatedInterfaceMap is NULL. Failed to find InterfaceMap associated with %s."), *(Name.ToString()));
-
-		FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
-
-		checkf(InterfaceMap, TEXT("UCsManager_Weapon::GetEmulatedData: InterfaceMap is NULL. Interface failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
-
-		return InterfaceMap->StaticCastChecked<InterfaceImplType>();
-	}
-
-protected:
-
-	// <EntryName, Data>
-	TMap<FName, DataType*> DataMap;
-
-	TArray<UDataTable*> DataTables;
-
-	// <Path, <RowName, RowPtr>>
-	TMap<FSoftObjectPath, TMap<FName, uint8*>> DataTableRowByPathMap;
-
-	void PopulateDataMapFromDataTable(UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject);
+	virtual void ConstructDataHandler();
 
 public:
 
@@ -826,8 +779,6 @@ public:
 
 protected:
 
-	void ResetDataContainers();
-
 	void OnPayloadUnloaded(const FName& Payload);
 
 #pragma endregion Data
@@ -836,5 +787,7 @@ protected:
 #undef ManagerParamsType
 #undef ConstructParamsType
 #undef PayloadType
+#undef ClassHandlerType
+#undef DataHandlerType
 #undef DataType
 };

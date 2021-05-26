@@ -800,7 +800,7 @@ protected:
 
 public:
 
-/**
+	/**
 	* Get the Projectile container (Interface (ICsProjectile), UObject, and / or UClass) associated
 	* with the projectile Type.
 	*

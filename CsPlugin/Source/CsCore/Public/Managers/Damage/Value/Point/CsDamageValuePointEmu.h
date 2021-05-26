@@ -46,10 +46,7 @@ namespace NCsDamage
 			#pragma region
 			public:
 
-				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-				{
-					return InterfaceMap;
-				}
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 			#pragma endregion ICsGetInterfaceMap
 
@@ -63,19 +60,13 @@ namespace NCsDamage
 			#pragma region
 			public:
 
-				FORCEINLINE const float& GetValue() const
-				{
-					return *Value;
-				}
+				FORCEINLINE const float& GetValue() const { return *Value; }
 
 			#pragma endregion IPoint
 
 			public:
 
-				void SetValue(float* InValue)
-				{
-					Value = InValue;
-				}
+				void SetValue(float* InValue) { Value = InValue; }
 			};
 		}
 	}

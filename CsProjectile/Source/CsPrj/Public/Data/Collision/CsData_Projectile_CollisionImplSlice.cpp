@@ -20,13 +20,37 @@ void FCsData_Projectile_CollisionImplSlice::CopyToSliceAsValue(SliceType* Slice)
 
 #undef SliceType
 
-bool FCsData_Projectile_CollisionImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+bool FCsData_Projectile_CollisionImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 {
 	// TODO: Add Check for Preset
 
 	CS_IS_FLOAT_GREATER_THAN(Radius, 0.0f)
-
 	return true;
 }
 
 const FName NCsProjectile::NData::NCollision::FImplSlice::Name = FName("NCsProjectile::NData::NCollision::FImplSlice");
+
+namespace NCsProjectile
+{
+	namespace NData
+	{
+		namespace NCollision
+		{
+			bool FImplSlice::IsValidChecked(const FString& Context) const
+			{
+				// TODO: Add Check for Preset
+
+				CS_IS_FLOAT_GREATER_THAN_CHECKED(CollisionRadius, 0.0f)
+				return true;
+			}
+
+			bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&)/*=&NCsProjectile::FLog::Warning*/) const
+			{
+				// TODO: Add Check for Preset
+
+				CS_IS_FLOAT_GREATER_THAN(CollisionRadius, 0.0f)
+				return true;
+			}
+		}
+	}
+}

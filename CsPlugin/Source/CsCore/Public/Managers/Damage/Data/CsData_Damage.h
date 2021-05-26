@@ -2,6 +2,7 @@
 #include "Containers/CsGetInterfaceMap.h"
 #include "Managers/Damage/CsTypes_Damage.h"
 #include "Engine/EngineTypes.h"
+
 #include "CsData_Damage.generated.h"
 #pragma once
 

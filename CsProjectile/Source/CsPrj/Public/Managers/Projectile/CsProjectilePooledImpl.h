@@ -159,10 +159,7 @@ protected:
 #pragma region
 public:
 
-	FORCEINLINE PooledCacheType* GetCache() const
-	{
-		return Cache;
-	}
+	FORCEINLINE PooledCacheType* GetCache() const { return Cache; }
 
 	void Allocate(PooledPayloadType* Payload);
 
@@ -182,10 +179,7 @@ protected:
 #pragma region
 public:
 
-	FORCEINLINE DataType* GetData() const
-	{
-		return Data;
-	}
+	FORCEINLINE DataType* GetData() const { return Data; }
 
 	UObject* GetOwner() const;
 

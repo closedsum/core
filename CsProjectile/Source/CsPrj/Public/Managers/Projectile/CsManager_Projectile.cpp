@@ -33,11 +33,6 @@
 #include "Payload/CsPayload_ProjectileInterfaceMap.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
 #include "Payload/Damage/CsPayload_ProjectileModifierDamageImplSlice.h"
-// Game
-#include "Engine/GameInstance.h"
-#include "GameFramework/GameStateBase.h"
-
-#include "Engine/World.h"
 
 #if WITH_EDITOR
 // Library

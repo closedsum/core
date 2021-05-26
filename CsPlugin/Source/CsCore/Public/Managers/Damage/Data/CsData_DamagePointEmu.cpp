@@ -7,7 +7,7 @@
 #include "Containers/CsInterfaceMap.h"
 // Damage
 #include "Managers/Damage/Value/CsDamageValue.h"
-#include "Managers/Damage/Value/Point/CsDamageValuePointEmu.h"
+#include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
 
 const FName NCsDamage::NData::NPoint::FEmu::Name = FName("NCsDamage::NData::NPoint::FEmu");
 
@@ -35,9 +35,9 @@ namespace NCsDamage
 				InterfaceMap->Add<DataType>(static_cast<DataType*>(this));
 
 				// NCsDamage::NData::IData
-				typedef NCsDamage::NValue::NPoint::FEmu ValuePointEmuType;
+				typedef NCsDamage::NValue::NPoint::FImpl ValuePointImplType;
 
-				Value = new ValuePointEmuType();
+				Value = new ValuePointImplType();
 			}
 
 			FEmu::~FEmu()
@@ -50,10 +50,10 @@ namespace NCsDamage
 
 			void FEmu::SetValue(float* InValue)
 			{
-				typedef NCsDamage::NValue::NPoint::FEmu EnumType;
+				typedef NCsDamage::NValue::NPoint::FImpl ValuePointImplType;
 
-				EnumType* Emu = static_cast<EnumType*>(Value);
-				Emu->SetValue(InValue);
+				ValuePointImplType* Impl = static_cast<ValuePointImplType*>(Value);
+				Impl->SetValue(InValue);
 			}
 		}
 	}

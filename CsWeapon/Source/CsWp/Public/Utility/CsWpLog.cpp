@@ -2,7 +2,10 @@
 #include "Utility/CsWpLog.h"
 #include "CsWp.h"
 
-void FCsWpLog::Warning(const FString& Str)
+namespace NCsWeapon
 {
-	UE_LOG(LogCsWp, Warning, TEXT("%s"), *Str);
+	void FLog::Warning(const FString& Str)
+	{
+		UE_LOG(LogCsWp, Warning, TEXT("%s"), *Str);
+	}
 }

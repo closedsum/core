@@ -149,7 +149,7 @@
 		__Member = __value; \
 		__Member##_Emu = &__Member; \
 	} \
-	FORCEINLINE void Set##__Member(__ValueType* __value) { __Member##_Emu = __value; } \
+	FORCEINLINE void Set##__Member(__ValueType* __value) { check(__value); __Member##_Emu = __value; } \
 	FORCEINLINE const __ValueType& Get##__Member() const { return *(__Member##_Emu); }
 
 #define CS_DEFINE_SET_MEMBER_WITH_EMU(__Member, __ValueType) \
@@ -158,7 +158,11 @@
 		__Member = __value; \
 		__Member##_Emu = &__Member; \
 	} \
-	FORCEINLINE void Set##__Member(__ValueType* __value) { __Member##_Emu = __value; }
+	FORCEINLINE void Set##__Member(__ValueType* __value) \
+	{ \
+		check(__value); \
+		__Member##_Emu = __value; \
+	}
 
 #define CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(__Member, __ValueType) \
 	FORCEINLINE void Set##__Member(__ValueType* __value) \
@@ -166,7 +170,11 @@
 		__Member = __value; \
 		__Member##_Emu = &__Member; \
 	} \
-	FORCEINLINE void Set##__Member(__ValueType** __value) { __Member##_Emu = __value; } \
+	FORCEINLINE void Set##__Member(__ValueType** __value) \
+	{ \
+		check(__value); \
+		__Member##_Emu = __value; \
+	} \
 	FORCEINLINE __ValueType* Get##__Member() const { return *(__Member##_Emu); }
 
 #define CS_DEFINE_IS_EMU_PTR_DEFAULT_CHECKED(__Member) \

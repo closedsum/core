@@ -14,7 +14,8 @@ namespace NCsDamage
 				// ICsGetInterfaceMap
 				InterfaceMap(),
 				// IPoint
-				Value(0.0f)
+				Value(0.0f),
+				Value_Emu(nullptr)
 			{
 				// ICsGetInterfaceMap
 				InterfaceMap.SetRootName(FImpl::Name);
@@ -22,6 +23,8 @@ namespace NCsDamage
 				InterfaceMap.Add<IValue>(static_cast<IValue*>(this));
 				InterfaceMap.Add<IPoint>(static_cast<IPoint*>(this));
 				InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));
+
+				Value_Emu = &Value;
 			}
 
 			// ICsReset
@@ -30,6 +33,7 @@ namespace NCsDamage
 			void FImpl::Reset()
 			{
 				Value = 0.0f;
+				Value_Emu = &Value;
 			}
 
 			#pragma endregion ICsReset

@@ -8,6 +8,7 @@
 // Types
 #include "CsTypes_StatusEffect.h"
 #include "Managers/Damage/Data/CsTypes_Data_Damage.h"
+
 #include "CsData_StatusEffect_DamagePoint.generated.h"
 
 // Emu

@@ -5,6 +5,8 @@
 #include "Reset/CsReset.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
+// Types
+#include "Types/CsTypes_Macro.h"
 #pragma once
 
 namespace NCsDamage
@@ -30,11 +32,10 @@ namespace NCsDamage
 
 				FCsInterfaceMap InterfaceMap;
 
-			public:
-
 				// IPoint
 
 				float Value;
+				float* Value_Emu;
 
 			public:
 
@@ -49,10 +50,7 @@ namespace NCsDamage
 			#pragma region
 			public:
 
-				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-				{
-					return const_cast<FCsInterfaceMap*>(&InterfaceMap);
-				}
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return const_cast<FCsInterfaceMap*>(&InterfaceMap); }
 
 			#pragma endregion ICsGetInterfaceMap
 
@@ -66,10 +64,7 @@ namespace NCsDamage
 			#pragma region
 			public:
 
-				FORCEINLINE const float& GetValue() const
-				{
-					return Value;
-				}
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Value, float)
 
 			#pragma endregion IPoint
 

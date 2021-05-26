@@ -43,7 +43,7 @@ public:
 	void CopyToSliceAsValue(SliceType* Slice) const;
 #undef SliceType
 
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 };
 
 struct FCsInterfaceMap;
@@ -124,6 +124,11 @@ namespace NCsProjectile
 				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(CollisionRadius, float)
 
 			#pragma endregion CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
+
+			public:
+
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 			};
 
 		#undef CollisionDataType

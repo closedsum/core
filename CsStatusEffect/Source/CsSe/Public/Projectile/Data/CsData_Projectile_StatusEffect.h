@@ -6,7 +6,7 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 
-#include "CsData_ProjectileStatusEffect.generated.h"
+#include "CsData_Projectile_StatusEffect.generated.h"
 
 // NCsStatusEffect::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
@@ -41,7 +41,7 @@ namespace NCsProjectile
 }
 
 UINTERFACE(BlueprintType)
-class CSSE_API UCsData_ProjectileStatusEffect : public UCsGetInterfaceMap
+class CSSE_API UCsData_Projectile_StatusEffect : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
@@ -52,7 +52,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
 /**
 *
 */
-class CSSE_API ICsData_ProjectileStatusEffect : public ICsGetInterfaceMap
+class CSSE_API ICsData_Projectile_StatusEffect : public ICsGetInterfaceMap
 {
 	GENERATED_IINTERFACE_BODY()
 

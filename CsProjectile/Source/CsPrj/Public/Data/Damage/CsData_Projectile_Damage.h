@@ -5,7 +5,7 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 
-#include "CsData_ProjectileDamage.generated.h"
+#include "CsData_Projectile_Damage.generated.h"
 
 // NCsDamage::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
@@ -35,7 +35,7 @@ namespace NCsProjectile
 }
 
 UINTERFACE(BlueprintType)
-class CSPRJ_API UCsData_ProjectileDamage : public UCsGetInterfaceMap
+class CSPRJ_API UCsData_Projectile_Damage : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
@@ -46,7 +46,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 /**
 *
 */
-class CSPRJ_API ICsData_ProjectileDamage : public ICsGetInterfaceMap
+class CSPRJ_API ICsData_Projectile_Damage : public ICsGetInterfaceMap
 {
 	GENERATED_IINTERFACE_BODY()
 

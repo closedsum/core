@@ -34,7 +34,7 @@
 #include "Data/Visual/CsData_Projectile_VisualTrail.h"
 #include "Data/Visual/Impact/CsData_Projectile_VisualImpact.h"
 #include "Data/Sound/CsData_Projectile_SoundImpact.h"
-#include "Data/Damage/CsData_ProjectileDamage.h"
+#include "Data/Damage/CsData_Projectile_Damage.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Projectile
@@ -820,9 +820,9 @@ const DamageEventResourceType* ACsProjectilePooledImpl::FDamageImpl::OnHit_Creat
 	const FString& Context = Str::OnHit_CreateEvent;
 
 	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
+	typedef NCsProjectile::NData::NDamage::IDamage PrjDamageDataType;
 
-	// ICsData_ProjectileDamage
-	ICsData_ProjectileDamage* PrjDamageData = PrjDataLibrary::GetInterfaceChecked<ICsData_ProjectileDamage>(Context, Outer->GetData());
+	PrjDamageDataType* PrjDamageData = PrjDataLibrary::GetInterfaceChecked<PrjDamageDataType>(Context, Outer->GetData());
 	// Get Damage Data
 	DamageDataType* DamageData = PrjDamageData->GetDamageData();
 

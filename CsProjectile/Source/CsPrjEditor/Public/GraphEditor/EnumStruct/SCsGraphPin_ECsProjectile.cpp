@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsProjectile.h"
 #include "CsPrjEditor.h"
 
-#include "Managers/Projectile/CsTypes_Projectile.h"
+#include "Types/CsTypes_Projectile.h"
 
 // Cached
 #pragma region

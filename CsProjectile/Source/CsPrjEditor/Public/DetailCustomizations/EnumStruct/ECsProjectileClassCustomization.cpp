@@ -2,7 +2,7 @@
 #include "DetailCustomizations/EnumStruct/ECsProjectileClassCustomization.h"
 
 // Types
-#include "Managers/Projectile/CsTypes_Projectile.h"
+#include "Types/CsTypes_Projectile.h"
 
 #define LOCTEXT_NAMESPACE "ECsProjectileClassCustomization"
 

@@ -3,7 +3,7 @@
 #include "CsPrjEditor.h"
 
 // Types
-#include "Managers/Projectile/CsTypes_Projectile.h"
+#include "Types/CsTypes_Projectile.h"
 #include "Payload/CsTypes_Payload_Projectile.h"
 
 // EnumStructs

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "UObject/Object.h"
-#include "Managers/Projectile/CsTypes_Projectile.h"
+#include "Types/CsTypes_Projectile.h"
 #include "CsScriptLibrary_Manager_Projectile.generated.h"
 
 // Delegates

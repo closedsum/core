@@ -6,7 +6,7 @@
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/Projectile/CsProjectile.h"
 // Types
-#include "Managers/Projectile/CsTypes_Projectile.h"
+#include "Types/CsTypes_Projectile.h"
 #include "Managers/Damage/Value/CsTypes_DamageValue.h"
 
 #include "CsProjectilePooledImpl.generated.h"

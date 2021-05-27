@@ -2,7 +2,7 @@
 #include "DetailCustomizations/EnumStruct/ECsProjectileCustomization.h"
 
 // Managers
-#include "Managers/Projectile/CsTypes_Projectile.h"
+#include "Types/CsTypes_Projectile.h"
 // Settings
 #include "Settings/CsProjectileSettings.h"
 

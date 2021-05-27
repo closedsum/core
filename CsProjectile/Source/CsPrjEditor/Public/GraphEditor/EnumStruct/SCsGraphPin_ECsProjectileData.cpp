@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsProjectileData.h"
 #include "CsPrjEditor.h"
 
-#include "Managers/Projectile/CsTypes_Projectile.h"
+#include "Types/CsTypes_Projectile.h"
 
 void SCsGraphPin_ECsProjectileData::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {

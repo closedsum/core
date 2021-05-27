@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 // Types
-#include "Managers/Projectile/CsTypes_Projectile.h"
+#include "Types/CsTypes_Projectile.h"
 #include "Payload/CsTypes_Payload_Projectile.h"
 #include "Managers/Time/CsTypes_Update.h"
 

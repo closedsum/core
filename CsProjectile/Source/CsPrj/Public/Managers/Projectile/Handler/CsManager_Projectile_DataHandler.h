@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Handler/CsManager_PooledObject_DataHandler.h"
 // Types
-#include "Managers/Projectile/CsTypes_Projectile.h"
+#include "Types/CsTypes_Projectile.h"
 // Data
 #include "Data/CsData_Projectile.h"
 #include "Data/CsData_ProjectileInterfaceMap.h"

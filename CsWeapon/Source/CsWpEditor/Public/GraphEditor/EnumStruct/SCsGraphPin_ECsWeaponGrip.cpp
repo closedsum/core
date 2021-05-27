@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponGrip.h"
 #include "CsWpEditor.h"
 
-#include "CsTypes_Weapon.h"
+#include "Types/CsTypes_Weapon.h"
 
 
 void SCsGraphPin_ECsWeaponGrip::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)

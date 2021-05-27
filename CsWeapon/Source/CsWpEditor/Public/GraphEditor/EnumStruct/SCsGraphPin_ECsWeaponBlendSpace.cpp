@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponBlendSpace.h"
 #include "CsWpEditor.h"
 
-#include "CsTypes_Weapon.h"
+#include "Types/CsTypes_Weapon.h"
 
 
 void SCsGraphPin_ECsWeaponBlendSpace::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)

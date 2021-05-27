@@ -217,7 +217,7 @@ namespace NCsPooledObject
 				template<typename EnumMap, typename EnumType>
 				FORCEINLINE InterfaceContainerType* GetClassByType(const FString& Context, const EnumType& Type)
 				{
-					checkf(EnumMap::Get().IsValidEnum(Type), TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar());
+					check(EnumMap::Get().IsValidEnumChecked(Context, Type));
 
 					return ClassByTypeMap.Find(Type.GetFName());
 				}
@@ -232,10 +232,28 @@ namespace NCsPooledObject
 					return Ptr;
 				}
 
+				template<typename EnumMap, typename EnumType>
+				FORCEINLINE InterfaceContainerType* GetSafeClassByType(const FString& Context, const EnumType& Type)
+				{
+					if (!EnumMap::Get().IsValidEnum(Type))
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar()));
+						return nullptr;
+					}
+
+					InterfaceContainerType* Ptr = ClassByTypeMap.Find(Type.GetFName());
+
+					if (!Ptr)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find a Class associated with Type: %s."), *Context, Type.ToChar()));
+					}
+					return Ptr;
+				}
+
 				template<typename EnumClassMap>
 				FORCEINLINE InterfaceContainerType* GetClassByClassType(const FString& Context, const EnumClassType& Type)
 				{
-					checkf(EnumClassMap::Get().IsValidEnum(Type), TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar());
+					check(EnumClassMap::Get().IsValidEnumChecked(Context, Type));
 
 					return ClassByClassTypeMap.Find(Type.GetFName());
 				}
@@ -247,6 +265,24 @@ namespace NCsPooledObject
 
 					checkf(Ptr, TEXT("%s: Failed to find a Class associated with Type: %s."), *Context, Type.ToChar());
 
+					return Ptr;
+				}
+
+				template<typename EnumClassMap>
+				FORCEINLINE InterfaceContainerType* GetSafeClassByClassType(const FString& Context, const EnumClassType& Type)
+				{
+					if (!EnumClassMap::Get().IsValidEnum(Type))
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar()));
+						return nullptr;
+					}
+
+					InterfaceContainerType* Ptr = ClassByClassTypeMap.Find(Type.GetFName());
+
+					if (!Ptr)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find a Class associated with Type: %s."), *Context, Type.ToChar()));
+					}
 					return Ptr;
 				}
 

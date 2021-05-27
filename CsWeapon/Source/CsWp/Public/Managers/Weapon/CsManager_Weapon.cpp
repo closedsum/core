@@ -22,8 +22,8 @@
 #include "Data/CsWpGetDataRootSet.h"
 #include "Data/CsData_WeaponInterfaceMap.h"
 #include "Data/CsData.h"
-#include "Data/CsData_WeaponEmuSlice.h"
-#include "Projectile/Data/CsData_ProjectileWeaponEmuSlice.h"
+#include "Data/CsData_WeaponImplSlice.h"
+#include "Projectile/Data/CsData_ProjectileWeaponImplSlice.h"
 #include "Projectile/Data/Sound/CsData_ProjectileWeapon_SoundFireImpl.h"
 // Weapon
 #include "Managers/Weapon/Handler/CsManager_Weapon_ClassHandler.h"
@@ -305,6 +305,16 @@ void UCsManager_Weapon::SetupInternal()
 	NCsWeapon::PopulateEnumMapFromSettings(Context, GameInstance);
 	NCsWeaponClass::PopulateEnumMapFromSettings(Context, GameInstance);
 	NCsWeaponState::PopulateEnumMapFromSettings(Context, GameInstance);
+
+	// Class Handler
+	ConstructClassHandler();
+
+	checkf(ClassHandler, TEXT("%s: Failed to construct ClassHandler."), *Context);
+
+	// Data Handler
+	ConstructDataHandler();
+
+	checkf(DataHandler, TEXT("%s: Failed to construct DataHandler."), *Context);
 
 	// Delegates
 	{
@@ -691,6 +701,11 @@ FCsWeapon* UCsManager_Weapon::GetWeaponChecked(const FString& Context, const FEC
 	return ClassHandler->GetClassByTypeChecked<EMCsWeapon>(Context, Type);
 }
 
+FCsWeapon* UCsManager_Weapon::GetSafeWeapon(const FString& Context, const FECsWeapon& Type)
+{
+	return ClassHandler->GetSafeClassByType<EMCsWeapon>(Context, Type);
+}
+
 FCsWeapon* UCsManager_Weapon::GetWeapon(const FECsWeaponClass& Type)
 {
 	using namespace NCsManagerWeapon::NCached;
@@ -703,6 +718,11 @@ FCsWeapon* UCsManager_Weapon::GetWeapon(const FECsWeaponClass& Type)
 FCsWeapon* UCsManager_Weapon::GetWeaponChecked(const FString& Context, const FECsWeaponClass& Type)
 {
 	return ClassHandler->GetClassByClassTypeChecked<EMCsWeaponClass>(Context, Type);
+}
+
+FCsWeapon* UCsManager_Weapon::GetSafeWeapon(const FString& Context, const FECsWeaponClass& Type)
+{
+	return ClassHandler->GetSafeClassByClassType<EMCsWeaponClass>(Context, Type);
 }
 
 #pragma endregion Class
@@ -731,6 +751,16 @@ DataType* UCsManager_Weapon::GetData(const FName& Name)
 	return DataHandler->GetData(Context, Name);
 }
 
+DataType* UCsManager_Weapon::GetDataChecked(const FString& Context, const FName& Name)
+{
+	return DataHandler->GetDataChecked(Context, Name);
+}
+
+DataType* UCsManager_Weapon::GetSafeData(const FString& Context, const FName& Name)
+{
+	return DataHandler->GetSafeData(Context, Name);
+}
+
 DataType* UCsManager_Weapon::GetData(const FECsWeapon& Type)
 {
 	using namespace NCsManagerWeapon::NCached;
@@ -740,14 +770,14 @@ DataType* UCsManager_Weapon::GetData(const FECsWeapon& Type)
 	return DataHandler->GetData<EMCsWeapon, FECsWeapon>(Context, Type);
 }
 
-DataType* UCsManager_Weapon::GetDataChecked(const FString& Context, const FName& Name)
-{
-	return DataHandler->GetDataChecked(Context, Name);
-}
-
 DataType* UCsManager_Weapon::GetDataChecked(const FString& Context, const FECsWeapon& Type)
 {
 	return DataHandler->GetDataChecked<EMCsWeapon, FECsWeapon>(Context, Type);
+}
+
+DataType* UCsManager_Weapon::GetSafeData(const FString& Context, const FECsWeapon& Type)
+{
+	return DataHandler->GetSafeData<EMCsWeapon, FECsWeapon>(Context, Type);
 }
 
 #undef DataType

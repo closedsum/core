@@ -238,6 +238,32 @@ namespace NCsPooledObject
 					return nullptr;
 				}
 
+				FORCEINLINE InterfaceDataType* GetDataChecked(const FString& Context, const FName& Name)
+				{
+					InterfaceDataType* Ptr = GetData(Context, Name);
+
+					checkf(Ptr, TEXT("%s: Failed to find a Data associated with Name: %s."), *Context, *(Name.ToString()));
+
+					return Ptr;
+				}
+
+				FORCEINLINE InterfaceDataType* GetSafeData(const FString& Context, const FName& Name)
+				{
+					if (Name == NAME_None)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
+						return nullptr;
+					}
+
+					InterfaceDataType* Ptr = GetData(Context, Name);
+
+					if (!Ptr)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find a Data associated with Name: %s."), *Context, *(Name.ToString())));
+					}
+					return Ptr;
+				}
+
 				template<typename EnumMap, typename EnumType>
 				FORCEINLINE InterfaceDataType* GetData(const FString& Context, const EnumType& Type)
 				{
@@ -248,15 +274,6 @@ namespace NCsPooledObject
 					return GetData(Context, Type.GetFName());
 				}
 
-				FORCEINLINE InterfaceDataType* GetDataChecked(const FString& Context, const FName& Name)
-				{
-					InterfaceDataType* Ptr = GetData(Context, Name);
-
-					checkf(Ptr, TEXT("%s: Failed to find a Data associated with Name: %s."), *Context, *(Name.ToString()));
-
-					return Ptr;
-				}
-
 				template<typename EnumMap, typename EnumType>
 				FORCEINLINE InterfaceDataType* GetDataChecked(const FString& Context, const EnumType& Type)
 				{
@@ -264,6 +281,24 @@ namespace NCsPooledObject
 
 					checkf(Ptr, TEXT("%s: Failed to find a Data associated with Type: %s."), *Context, Type.ToChar());
 
+					return Ptr;
+				}
+
+				template<typename EnumMap, typename EnumType>
+				FORCEINLINE InterfaceDataType* GetSafeData(const FString& Context, const EnumType& Type)
+				{
+					if (!EnumMap::Get().IsValidEnum(Type))
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar()));
+						return nullptr;
+					}
+
+					InterfaceDataType* Ptr = GetData<EnumMap, EnumType>(Context, Type);
+
+					if (!Ptr)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find a Data associated with Type: %s."), *Context, Type.ToChar()));
+					}
 					return Ptr;
 				}
 

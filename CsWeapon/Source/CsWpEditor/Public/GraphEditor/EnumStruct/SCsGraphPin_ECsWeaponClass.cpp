@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponClass.h"
 #include "CsWpEditor.h"
 
-#include "CsTypes_Weapon.h"
+#include "Types/CsTypes_Weapon.h"
 
 // Cached
 #pragma region

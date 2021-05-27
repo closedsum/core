@@ -460,9 +460,10 @@ struct CSWP_API FCsWeaponEntry : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString DisplayName;
 
-	/** Soft Reference to a weapon of type: ICsWeapon. */
+	/** Class Type. This is used to get the actual class from a data table
+		of weapon classes (FCsWpDataRootSet.WeaponClasses). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FCsWeaponPtr Class;
+	FECsWeaponClass Class;
 
 	/** Soft Reference to a weapon data of type: ICsData_Weapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

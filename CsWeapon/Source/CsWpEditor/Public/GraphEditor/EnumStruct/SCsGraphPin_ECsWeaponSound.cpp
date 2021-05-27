@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponSound.h"
 #include "CsWpEditor.h"
 
-#include "CsTypes_Weapon.h"
+#include "Types/CsTypes_Weapon.h"
 
 
 void SCsGraphPin_ECsWeaponSound::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)

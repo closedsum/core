@@ -9,7 +9,7 @@
 #include "CsData_ProjectileImplSlice.generated.h"
 #pragma once
 
-// NCsProjectile::NData::FEmuSlice
+// NCsProjectile::NData::FImplSlice
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, FImplSlice)
 
 /**

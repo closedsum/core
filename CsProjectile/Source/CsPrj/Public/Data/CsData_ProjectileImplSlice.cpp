@@ -3,8 +3,6 @@
 
 // Library
 #include "Library/CsLibrary_Valid.h"
-// Data
-#include "Data/CsData_ProjectileEmuSlice.h"
 
 #define SliceType NCsProjectile::NData::FImplSlice
 
@@ -38,3 +36,5 @@ bool FCsData_ProjectileImplSlice::IsValid(const FString& Context, void(*Log)(con
 
 	return true;
 }
+
+const FName NCsProjectile::NData::FImplSlice::Name = FName("NCsProjectile::NData::FImplSlice");

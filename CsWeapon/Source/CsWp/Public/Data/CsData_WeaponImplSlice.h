@@ -10,11 +10,16 @@ namespace NCsWeapon
 	namespace NData
 	{
 		/**
-		* "Emulates" WeaponDataType (NCsWeapon::NData::IData) by mimicking the interfaces and having pointers to the appropriate
-		* members. The idea behind this struct is to "build" the data via composition of separate objects that each implementation
-		* a specific interface.
+		* Represents a "slice" of data, WeaponDataType (NCsWeapon::NData::IData).
+		*
+		* If members are set via points to an "owning" data, then
+		* "Emulates" WeaponDataType (NCsWeapon::NData::IData) by mimicking
+		* the interfaces and having pointers to the appropriate members.
+		*
+		* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
+		* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 		*/
-		struct CSWP_API FEmuSlice : public IData
+		struct CSWP_API FImplSlice : public IData
 		{
 		public:
 
@@ -30,11 +35,11 @@ namespace NCsWeapon
 
 		public:
 
-			FEmuSlice() :
+			FImplSlice() :
 				InterfaceMap(nullptr)
 			{
 			}
-			~FEmuSlice(){}
+			~FImplSlice(){}
 
 			FORCEINLINE UObject* _getUObject() const { return nullptr; }
 

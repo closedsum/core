@@ -101,5 +101,75 @@ namespace NCsWeapon
 		}
 
 		#pragma endregion Get
+
+		// Class
+		#pragma region
+
+		FCsWeapon* FLibrary::GetWeaponChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type)
+		{
+			return GetChecked(Context, WorldContext)->GetWeaponChecked(Context, Type);
+		}
+
+		FCsWeapon* FLibrary::GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		{
+			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
+			{
+				return Manager_Weapon->GetSafeWeapon(Context, Type);
+			}
+			return nullptr;
+		}
+
+		FCsWeapon* FLibrary::GetWeaponChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type)
+		{
+			return GetChecked(Context, WorldContext)->GetWeaponChecked(Context, Type);
+		}
+
+		FCsWeapon* FLibrary::GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		{
+			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
+			{
+				return Manager_Weapon->GetSafeWeapon(Context, Type);
+			}
+			return nullptr;
+		}
+
+		#pragma endregion Class
+
+		// Data
+		#pragma region
+
+		#define DataType NCsWeapon::NData::IData
+
+		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const FName& Name)
+		{
+			return GetChecked(Context, WorldContext)->GetDataChecked(Context, Name);
+		}
+
+		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		{
+			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
+			{
+				return Manager_Weapon->GetSafeData(Context, Name);
+			}
+			return nullptr;
+		}
+
+		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type)
+		{
+			return GetChecked(Context, WorldContext)->GetDataChecked(Context, Type);
+		}
+
+		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		{
+			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
+			{
+				return Manager_Weapon->GetSafeData(Context, Type);
+			}
+			return nullptr;
+		}
+
+		#undef DataType
+
+		#pragma endregion Data
 	}
 }

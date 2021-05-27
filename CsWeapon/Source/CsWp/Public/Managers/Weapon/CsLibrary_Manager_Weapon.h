@@ -1,4 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Types
+#include "Types/CsTypes_Weapon.h"
 // Log
 #include "Utility/CsWpLog.h"
 
@@ -6,6 +8,10 @@
 
 class UObject;
 class UCsManager_Weapon;
+struct FCsWeapon;
+
+// NCsWeapon::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
 
 namespace NCsWeapon
 {
@@ -91,6 +97,114 @@ namespace NCsWeapon
 			static UCsManager_Weapon* GetSafe(const UObject* WorldContext);
 
 		#pragma endregion Get
+
+		// Class
+		#pragma region
+		public:
+
+			/**
+			* Get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
+			* with the weapon Type.
+			* "Checked" in regards to returning a valid pointer.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			Type of the weapon.
+			* return				Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
+			*/
+			static FCsWeapon* GetWeaponChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type);
+
+			/**
+			* Safely get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
+			* with the weapon Type.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			Type of the weapon.
+			* @param Log			(optional)
+			* return				Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
+			*/
+			static FCsWeapon* GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+			/**
+			* Get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
+			* with the weapon class Type.
+			* "Checked" in regards to returning a valid pointer.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			Class type of the weapon.
+			* return				Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
+			*/
+			static FCsWeapon* GetWeaponChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type);
+
+			/**
+			* Safely get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
+			* with the weapon class Type.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			Class type of the weapon.
+			* @param Log			(optional)
+			* return				Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
+			*/
+			static FCsWeapon* GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+		#pragma endregion Class
+
+		// Data
+		#pragma region
+		public:
+
+		#define DataType NCsWeapon::NData::IData
+
+			/**
+			* Get the Data (implements interface: NCsWeapon::NData::IData) associated with Name of the weapon type.
+			* "Checked" in regards to returning a valid pointer.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Name			Name of the Weapon.
+			* return				Data that implements the interface: NCsWeapon::NData::IData.
+			*/
+			static DataType* GetDataChecked(const FString& Context, const UObject* WorldContext, const FName& Name);
+
+			/**
+			* Safely get the Data (implements interface: NCsWeapon::NData::IData) associated with Name of the weapon type.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Name			Name of the Weapon.
+			* @param Log			(optional)
+			* return				Data that implements the interface: NCsWeapon::NData::IData.
+			*/
+			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+			/**
+			* Get the Data (implements interface: NCsWeapon::NData::IData) associated with Type.
+			* "Checked" in regards to returning a valid pointer.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			Weapon type.
+			* return				Data that implements the interface: NCsWeapon::NData::IData.
+			*/
+			static DataType* GetDataChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type);
+
+			/**
+			* Get the Data (implements interface: NCsWeapon::NData::IData) associated with Type.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			Weapon type.
+			* @param Log			(optional)
+			* return				Data that implements the interface: NCsWeapon::NData::IData.
+			*/
+			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+		#undef DataType
+
+		#pragma endregion Data
 		};
 	}
 }

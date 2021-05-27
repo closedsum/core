@@ -38,7 +38,7 @@ struct FCsProjectilePooled;
 
 class USceneComponent;
 
-UCLASS()
+UCLASS(BlueprintType)
 class CSWP_API UCsProjectileWeaponComponent : public UActorComponent,
 											  public ICsUpdate,
 											  public ICsWeapon,
@@ -82,12 +82,10 @@ protected:
 
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Update")
 	void SetUpdateGroup(const FECsUpdateGroup& Group);
 
-	FORCEINLINE const FECsUpdateGroup& GetUpdateGroup() const 
-	{
-		return UpdateGroup;
-	}
+	FORCEINLINE const FECsUpdateGroup& GetUpdateGroup() const { return UpdateGroup; }
 
 protected:
 
@@ -96,6 +94,7 @@ protected:
 
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Type")
 	void SetWeaponType(const FECsWeapon& Type);
 
 protected:
@@ -106,15 +105,9 @@ protected:
 #pragma region
 public:
 
-	FORCEINLINE DataType* GetData() const
-	{
-		return Data;
-	}
+	FORCEINLINE DataType* GetData() const { return Data; }
 
-	FORCEINLINE const FECsWeaponState& GetCurrentState() const
-	{
-		return CurrentState;
-	}
+	FORCEINLINE const FECsWeaponState& GetCurrentState() const { return CurrentState; }
 
 #pragma endregion ICsWeapon
 
@@ -125,12 +118,10 @@ protected:
 
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Projectile")
 	void SetProjectileType(const FECsProjectile& Type);
 
-	FORCEINLINE const FECsProjectile& GetProjectileType() const
-	{
-		return ProjectileType;
-	}
+	FORCEINLINE const FECsProjectile& GetProjectileType() const { return ProjectileType; }
 
 // ICsProjectileWeapon
 #pragma region

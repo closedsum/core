@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "CsTypes_Weapon.h"
+#include "Types/CsTypes_Weapon.h"
 #include "Debug/CsTypes_Debug.h"
 
 #include "CsTypes_WeaponSettings.generated.h"

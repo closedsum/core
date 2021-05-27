@@ -7,7 +7,7 @@
 #include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsPrjLibrary_DataRootSet.h"
 // Projectile
-#include "Data/CsData_ProjectileEmuSlice.h"
+#include "Data/CsData_ProjectileImplSlice.h"
 
 namespace NCsProjectile
 {
@@ -131,9 +131,9 @@ namespace NCsProjectile
 					if (Emulates_ICsDataProjectile)
 					{
 						typedef NCsProjectile::NData::IData DataType;
-						typedef NCsProjectile::NData::FEmuSlice DataEmuSliceType;
+						typedef NCsProjectile::NData::FImplSlice DataSliceType;
 
-						DataEmuSliceType* Data = new DataEmuSliceType();
+						DataSliceType* Data = new DataSliceType();
 
 						checkf(EmulatedDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s."), *Context, *(Name.ToString()));
 
@@ -149,12 +149,12 @@ namespace NCsProjectile
 
 						FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
 
-						InterfaceMap->Add<DataType>(DataEmuSliceType::Name, static_cast<DataType*>(Data));
+						InterfaceMap->Add<DataType>(DataSliceType::Name, static_cast<DataType*>(Data));
 
 						Data->SetInterfaceMap(InterfaceMap);
 
 						TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
-						InterfaceImplMap.Add(DataEmuSliceType::Name, Data);
+						InterfaceImplMap.Add(DataSliceType::Name, Data);
 
 						DataMap.Add(Name, Data);
 
@@ -198,14 +198,14 @@ namespace NCsProjectile
 
 			bool FData::DeconstructEmulatedData(const FName& InterfaceImplName, void* Data)
 			{
-				// NCsProjectile::NData::FEmuSlice
-				if (InterfaceImplName == NCsProjectile::NData::FEmuSlice::Name)
+				// NCsProjectile::NData::FImplSlice
+				if (InterfaceImplName == NCsProjectile::NData::FImplSlice::Name)
 				{
-					delete static_cast<NCsProjectile::NData::FEmuSlice*>(Data);
+					delete static_cast<NCsProjectile::NData::FImplSlice*>(Data);
 					return true;
 				}
-				// FCsData_ProjecitleVisualEmuSlice
-				// FCsData_ProjectileCollisionEmuSlice
+				// FCsData_ProjecitleVisualImplSlice
+				// FCsData_ProjectileCollisionImplSlice
 				return false;
 			}
 

@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Managers/Pool/CsPooledObject.h"
-#include "CsTypes_Weapon.h"
+#include "Types/CsTypes_Weapon.h"
 
 class ICsWeapon;
 

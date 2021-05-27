@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/EnumStruct/ECsWeaponGripCustomization.h"
 
-#include "CsTypes_Weapon.h"
+#include "Types/CsTypes_Weapon.h"
 
 #define LOCTEXT_NAMESPACE "ECsWeaponGripCustomization"
 

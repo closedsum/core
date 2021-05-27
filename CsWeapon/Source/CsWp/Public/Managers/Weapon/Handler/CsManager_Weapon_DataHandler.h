@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Handler/CsManager_PooledObject_DataHandler.h"
 // Types
-#include "CsTypes_Weapon.h"
+#include "Types/CsTypes_Weapon.h"
 // Data
 #include "Data/CsData_Weapon.h"
 #include "Data/CsData_WeaponInterfaceMap.h"

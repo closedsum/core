@@ -364,7 +364,7 @@ void UCsManager_Projectile::SetupInternal()
 	// Data Handler
 	ConstructDataHandler();
 
-	checkf(DataHandler, TEXT("%s: Failed to construct DataHandler."), *Context)
+	checkf(DataHandler, TEXT("%s: Failed to construct DataHandler."), *Context);
 
 	// Delegates
 	{

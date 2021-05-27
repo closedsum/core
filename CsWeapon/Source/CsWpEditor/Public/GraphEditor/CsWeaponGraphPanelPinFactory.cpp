@@ -3,7 +3,7 @@
 #include "CsWpEditor.h"
 
 // Types
-#include "CsTypes_Weapon.h"
+#include "Types/CsTypes_Weapon.h"
 
 // EnumStructs
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeapon.h"

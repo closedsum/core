@@ -1,7 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Projectile/Params/Launch/CsTypes_Params_ProjectileWeapon_LaunchTrace.h"
 
-#include "Projectile/Params/Launch/CsParams_ProjectileWeapon_LaunchTraceEmu.h"
+// Library
+#include "Library/CsLibrary_Valid.h"
+// Params
+#include "Projectile/Params/Launch/CsParams_ProjectileWeapon_LaunchTraceImpl.h"
 
 // ProjectileWeaponLaunchTraceStart
 #pragma region
@@ -51,19 +54,26 @@ namespace NCsProjectileWeaponLaunchTraceDirection
 // FCsProjectileWeaponLaunchTraceParams
 #pragma region
 
-#define EmuType NCsWeapon::NProjectile::NParams::NLaunch::FTraceEmu
-void FCsProjectileWeaponLaunchTraceParams::CopyParams(EmuType* Emu)
-{
-#undef EmuType
+#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl
 
-	Emu->SetLocationType(&Location);
-	Emu->SetDirectionType(&Direction);
-	Emu->SetDirectionRules(&DirectionRules);
-	Emu->SetTraceType(&TraceType);
-	Emu->SetTraceMethod(&TraceMethod);
-	Emu->SetTraceStartType(&TraceStart);
-	Emu->SetTraceDirectionType(&TraceDirection);
-	Emu->SetTraceDistance(&TraceDistance);
+void FCsProjectileWeaponLaunchTraceParams::CopyToParams(ParamsType* Params)
+{
+	Params->SetLocationType(&Location);
+	Params->SetDirectionType(&Direction);
+	Params->SetDirectionRules(&DirectionRules);
+	Params->SetTraceType(&TraceType);
+	Params->SetTraceMethod(&TraceMethod);
+	Params->SetTraceStartType(&TraceStart);
+	Params->SetTraceDirectionType(&TraceDirection);
+	Params->SetTraceDistance(&TraceDistance);
+}
+
+#undef ParamsType
+
+bool FCsProjectileWeaponLaunchTraceParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+{
+	CS_IS_FLOAT_GREATER_THAN(TraceDistance, 0.0f)
+	return true;
 }
 
 #pragma endregion FCsProjectileWeaponLaunchTraceParams

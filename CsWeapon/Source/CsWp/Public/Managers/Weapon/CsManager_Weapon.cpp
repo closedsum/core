@@ -11,6 +11,8 @@
 #include "Library/CsLibrary_Property.h"
 #include "Library/Load/CsLibrary_Load.h"
 #include "Data/CsLibrary_Data.h"
+// Utility
+#include "Utility/CsWpLog.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 #include "Settings/CsWeaponSettings.h"
@@ -266,10 +268,11 @@ void UCsManager_Weapon::CleanUp()
 	Internal.Shutdown();
 	Pool.Reset();
 
-	// Class
-	ResetClassContainers();
-	// Data
-	ResetDataContainers();
+	delete ClassHandler;
+	ClassHandler = nullptr;
+
+	delete DataHandler;
+	DataHandler = nullptr;
 
 	bInitialized = false;
 }
@@ -365,8 +368,8 @@ void UCsManager_Weapon::InitInternalFromSettings()
 
 	const FString& Context = Str::InitInternalFromSettings;
 
-	PopulateClassMapFromSettings();
-	PopulateDataMapFromSettings();
+	ClassHandler->PopulateClassMapFromSettings(Context);
+	DataHandler->PopulateDataMapFromSettings(Context);
 
 	// Setup Pool
 	if (Settings.PoolParams.Num() > CS_EMPTY)
@@ -694,14 +697,13 @@ FCsWeapon* UCsManager_Weapon::GetWeapon(const FECsWeaponClass& Type)
 
 	const FString& Context = Str::GetWeapon;
 
-	return ClassHandler->GetClassByClassType<EMCsWeaponClass, FECsWeaponClass>(Context, Type);
+	return ClassHandler->GetClassByClassType<EMCsWeaponClass>(Context, Type);
 }
 
 FCsWeapon* UCsManager_Weapon::GetWeaponChecked(const FString& Context, const FECsWeaponClass& Type)
 {
-	return ClassHandler->GetClassByClassTypeChecked<FECsWeaponClass>(Context, Type);
+	return ClassHandler->GetClassByClassTypeChecked<EMCsWeaponClass>(Context, Type);
 }
-
 
 #pragma endregion Class
 
@@ -722,47 +724,30 @@ void UCsManager_Weapon::ConstructDataHandler()
 
 DataType* UCsManager_Weapon::GetData(const FName& Name)
 {
-	checkf(Name != NAME_None, TEXT("UCsManager_Weapon::GetData: Name: None is NOT Valid."));
-
-	// Check emulated data
-	if (DataType** EmuDataPtr = EmulatedDataMap.Find(Name))
-		return *EmuDataPtr;
-
-	// Check data
-	if (DataType** DataPtr = DataMap.Find(Name))
-		return *DataPtr;
-
-	return nullptr;
-}
-
-DataType* UCsManager_Weapon::GetData(const FECsWeapon& Type)
-{
-
 	using namespace NCsManagerWeapon::NCached;
 
 	const FString& Context = Str::GetData;
 
-	check(EMCsWeapon::Get().IsValidEnumChecked(Context, Str::Type, Type));
+	return DataHandler->GetData(Context, Name);
+}
 
-	return GetData(Type.GetFName());
+DataType* UCsManager_Weapon::GetData(const FECsWeapon& Type)
+{
+	using namespace NCsManagerWeapon::NCached;
+
+	const FString& Context = Str::GetData;
+
+	return DataHandler->GetData<EMCsWeapon, FECsWeapon>(Context, Type);
 }
 
 DataType* UCsManager_Weapon::GetDataChecked(const FString& Context, const FName& Name)
 {
-	DataType* Ptr = GetData(Name);
-
-	checkf(Ptr, TEXT("%s: Failed to find a Data associated with Name: %s."), *(Name.ToString()));
-
-	return Ptr;
+	return DataHandler->GetDataChecked(Context, Name);
 }
 
 DataType* UCsManager_Weapon::GetDataChecked(const FString& Context, const FECsWeapon& Type)
 {
-	DataType* Ptr = GetData(Type);
-
-	checkf(Ptr, TEXT("%s: Failed to find a Data associated with Type: %s."), Type.ToChar());
-
-	return Ptr;
+	return DataHandler->GetDataChecked<EMCsWeapon, FECsWeapon>(Context, Type);
 }
 
 #undef DataType

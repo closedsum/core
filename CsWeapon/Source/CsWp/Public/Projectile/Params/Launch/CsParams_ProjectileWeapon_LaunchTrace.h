@@ -61,53 +61,56 @@ namespace NCsWeapon
 
 			#pragma endregion TraceDirection
 
-				/**
-				*/
-				struct CSWP_API ITrace : public ICsGetInterfaceMap
+				namespace NTrace
 				{
-				public:
-
-					static const FName Name;
-
-				public:
-
-					virtual ~ITrace() {}
-
 					/**
-					*
-					*
-					* return Trace Type
 					*/
-					virtual const ECsTraceType& GetTraceType() const = 0;
+					struct CSWP_API ITrace : public ICsGetInterfaceMap
+					{
+					public:
 
-					/**
-					*
-					*
-					* return Trace Method
-					*/
-					virtual const ECsTraceMethod& GetTraceMethod() const = 0;
+						static const FName Name;
 
-					/**
-					*
-					*
-					* return Trace Start Type
-					*/
-					virtual const ETraceStart& GetTraceStartType() const = 0;
+					public:
 
-					/**
-					*
-					*
-					* return Trace Direction Type
-					*/
-					virtual const ETraceDirection& GetTraceDirectionType() const = 0;
+						virtual ~ITrace() {}
 
-					/**
-					*
-					*
-					* return Distance
-					*/
-					virtual const float& GetTraceDistance() const = 0;
-				};
+						/**
+						*
+						*
+						* return Trace Type
+						*/
+						virtual const ECsTraceType& GetTraceType() const = 0;
+
+						/**
+						*
+						*
+						* return Trace Method
+						*/
+						virtual const ECsTraceMethod& GetTraceMethod() const = 0;
+
+						/**
+						*
+						*
+						* return Trace Start Type
+						*/
+						virtual const ETraceStart& GetTraceStartType() const = 0;
+
+						/**
+						*
+						*
+						* return Trace Direction Type
+						*/
+						virtual const ETraceDirection& GetTraceDirectionType() const = 0;
+
+						/**
+						*
+						*
+						* return Distance
+						*/
+						virtual const float& GetTraceDistance() const = 0;
+					};
+				}
 			}
 		}
 	}

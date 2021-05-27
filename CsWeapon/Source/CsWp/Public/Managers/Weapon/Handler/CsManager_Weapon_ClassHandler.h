@@ -2,7 +2,7 @@
 #include "Managers/Pool/Handler/CsManager_PooledObject_ClassHandler.h"
 // Types
 #include "CsTypes_Weapon.h"
-#include "CsWeaponPooled.h"
+#include "CsWeapon.h"
 #pragma once
 
 namespace NCsWeapon
@@ -15,11 +15,11 @@ namespace NCsWeapon
 
 			/**
 			*/
-			class CSWP_API FClass : public ClassHandlerType<FCsWeaponPooled, FCsWeaponPtr, FECsWeaponClass>
+			class CSWP_API FClass : public ClassHandlerType<FCsWeapon, FCsWeaponPtr, FECsWeaponClass>
 			{
 			private:
 
-				typedef ClassHandlerType<FCsWeaponPooled, FCsWeaponPtr, FECsWeaponClass> Super;
+				typedef ClassHandlerType<FCsWeapon, FCsWeaponPtr, FECsWeaponClass> Super;
 
 			public:
 

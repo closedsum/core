@@ -851,6 +851,8 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 	// ITrace | Get Launch Trace Params
 	if (DirectionType == EDirection::Trace)
 	{
+		using namespace NCsWeapon::NProjectile::NParams::NLaunch::NTrace;
+
 		const ITrace* LaunchTraceParams = FLibrary::GetInterfaceChecked<ITrace>(Context, LaunchParams);
 		
 		// Start
@@ -1190,7 +1192,7 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, c
 
 	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::EAttach AttachType;
 
-	const AttachType& Type = Params.GetAttachType();
+	const AttachType& Type = Params.GetAttach();
 
 	// None
 	if (Type == AttachType::None)
@@ -1233,7 +1235,7 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, F
 
 	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::EAttach AttachType;
 
-	const AttachType& Type = Params.GetAttachType();
+	const AttachType& Type = Params.GetAttach();
 
 	typedef NCsFX::NPayload::FImpl PayloadImplType;
 	typedef NCsFX::NPayload::FLibrary PayloadLibrary;

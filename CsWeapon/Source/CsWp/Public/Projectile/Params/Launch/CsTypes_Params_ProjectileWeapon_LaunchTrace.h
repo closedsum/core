@@ -1,7 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Types
 #include "Projectile/Params/Launch/CsTypes_Params_ProjectileWeapon_Launch.h"
 #include "Managers/Trace/CsTypes_Trace.h"
 #include "Types/CsTypes_Math.h"
+// Log
+#include "Utility/CsWpLog.h"
 
 #include "CsTypes_Params_ProjectileWeapon_LaunchTrace.generated.h"
 #pragma once
@@ -108,11 +111,8 @@ namespace NCsProjectileWeaponLaunchTraceDirection
 // FCsScriptProjectileWeaponLaunchTraceParams
 #pragma region
 
-namespace NCsWeapon {
-	namespace NProjectile {
-		namespace NParams {
-			namespace NLaunch {
-				struct FTraceEmu; } } } }
+// NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NTrace, FImpl)
 
 USTRUCT(BlueprintType)
 struct CSWP_API FCsProjectileWeaponLaunchTraceParams
@@ -157,15 +157,11 @@ public:
 	{
 	}
 
-#define EmuType NCsWeapon::NProjectile::NParams::NLaunch::FTraceEmu
+#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl
+	void CopyToParams(ParamsType* Params);
+#undef ParamsType
 
-	void CopyParams(EmuType* Emu);
-
-#undef EmuType
-	
-	// NOTE: Added to get around compiler error when using #undef
-private:
-	FORCEINLINE void _Nothing(){}
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 };
 
 #pragma endregion FCsScriptProjectileWeaponLaunchTraceParams

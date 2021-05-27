@@ -78,4 +78,4 @@ private:
 	FORCEINLINE void _Nothing(){}
 };
 
-#pragma endregion FCsProjectileWeaponVisualFireParams
+#pragma endregion FCsProjectileWeaponSoundFireParams

@@ -162,6 +162,7 @@ namespace NCsWeapon
 
 				if (!WeaponDataLibrary::IsValid(Context, Data, Log))
 					return nullptr;
+				return Data;
 			}
 			return nullptr;
 		}
@@ -187,6 +188,7 @@ namespace NCsWeapon
 
 				if (!WeaponDataLibrary::IsValid(Context, Data, Log))
 					return nullptr;
+				return Data;
 			}
 			return nullptr;
 		}

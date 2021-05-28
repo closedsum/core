@@ -71,6 +71,7 @@ public:
 #pragma region
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Update")
 	void Update(const FCsDeltaTime& DeltaTime);
 
 #pragma endregion ICsUpdate
@@ -127,8 +128,10 @@ public:
 #pragma region
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Weapon|ICsProjectileWeapon")
 	void StartFire();
 
+	UFUNCTION(BlueprintCallable, Category = "Weapon|ICsProjectileWeapon")
 	void StopFire();
 
 #pragma endregion ICsProjectileWeapon

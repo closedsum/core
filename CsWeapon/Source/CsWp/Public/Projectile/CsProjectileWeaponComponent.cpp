@@ -1013,12 +1013,15 @@ void UCsProjectileWeaponComponent::FProjectileImpl::StartLaunch()
 
 	const FString& Context = Str::StartLaunch;
 
+	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 	typedef NCsProjectile::NPayload::IPayload PayloadType;
 
-	UCsManager_Projectile* Manager_Projectile = UCsManager_Projectile::Get(Outer->GetWorld()->GetGameState());
+	UCsManager_Projectile* Manager_Projectile = PrjManagerLibrary::GetChecked(Context, Outer);
 
 	// Get Payload
-	PayloadType* Payload1 = Manager_Projectile->AllocatePayload(Outer->GetProjectileType());
+	const FECsProjectile& PrjType = Outer->GetProjectileType();
+
+	PayloadType* Payload1 = Manager_Projectile->AllocatePayload(PrjType);
 
 	// Set appropriate members on Payload
 	const bool SetSuccess = SetPayload(Context, Payload1);
@@ -1026,14 +1029,14 @@ void UCsProjectileWeaponComponent::FProjectileImpl::StartLaunch()
 	checkf(SetSuccess, TEXT("%s: Failed to set Payload1."), *Context);
 
 	// Cache copy of Payload for Launch
-	PayloadType* Payload2 = Manager_Projectile->AllocatePayload(Outer->GetProjectileType());
+	PayloadType* Payload2 = Manager_Projectile->AllocatePayload(PrjType);
 
 	const bool CopySuccess = CopyPayload(Context, Payload1, Payload2);
 
 	checkf(CopySuccess, TEXT("%s: Failed to copy Payload1 to Payload2."), *Context);
 
 	// Spawn
-	const FCsProjectilePooled* ProjectilePooled = Manager_Projectile->Spawn(Outer->GetProjectileType(), Payload1);
+	const FCsProjectilePooled* ProjectilePooled = Manager_Projectile->Spawn(PrjType, Payload1);
 
 	const bool TypeSuccess = SetType(Context, ProjectilePooled);
 

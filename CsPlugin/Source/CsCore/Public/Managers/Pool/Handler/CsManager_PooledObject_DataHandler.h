@@ -223,6 +223,95 @@ namespace NCsPooledObject
 
 			public:
 
+				template<typename DataSliceType>
+				DataSliceType* SafeConstructData(const FString& Context, const FName& Name)
+				{
+					static_assert(!std::is_abstract<DataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: DataSliceType IS abstract.");
+
+					static_assert(std::is_base_of<InterfaceDataType, DataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: DataSliceType is NOT a child of: InterfaceDataType.");
+
+					if (Name == NAME_None)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
+						return nullptr;
+					}
+
+					if (EmulatedDataMap.Find(Name))
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data has already been created for %s."), *Context, *(Name.ToString())));
+						return nullptr;
+					}
+
+					if (EmulatedDataInterfaceMap.Find(Name))
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Emulated Interface Map has already been created for %s."), *Context, *(Name.ToString())));
+						return nullptr;
+					}
+
+					// Construct the slice
+					DataSliceType* Data = new DataSliceType();
+
+					EmulatedDataMap.Add(Name, Data);
+					// Construct Map to store all slices
+					DataInterfaceMapType* EmulatedInterfaceMap = new DataInterfaceMapType();
+
+					EmulatedDataInterfaceMap.Add(Name, EmulatedInterfaceMap);
+
+					FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
+					// Add slice as type InterfaceDataType
+					InterfaceMap->Add<InterfaceDataType>(DataSliceType::Name, static_cast<InterfaceDataType*>(Data));
+					// Set the InterfaceMap of Data to the "root" InterfaceMap
+					Data->SetInterfaceMap(InterfaceMap);
+					// Store a reference to the slice 
+					TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
+					InterfaceImplMap.Add(DataSliceType::Name, Data);
+					// Add the "base" slice to the map of all data.
+					DataMap.Add(Name, Data);
+
+					return Data;
+				}
+
+				template<typename DataSliceType, typename InterfaceType>
+				DataSliceType* AddSafeDataSlice(const FString& Context, const FName& Name)
+				{
+					static_assert(!std::is_abstract<DataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: DataSliceType IS abstract.");
+
+					static_assert(std::is_base_of<InterfaceType, DataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: DataSliceType is NOT a child of: InterfaceType.");
+
+					if (Name == NAME_None)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
+						return nullptr;
+					}
+
+					if (!EmulatedDataMap.Find(Name))
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data has NOT been created for %s."), *Context, *(Name.ToString())));
+						return nullptr;
+					}
+
+					if (!EmulatedDataInterfaceMap.Find(Name))
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Emulated Interface Map has NOT been created for %s."), *Context, *(Name.ToString())));
+						return nullptr;
+					}
+
+					// Construct the slice
+					DataSliceType* Data = new DataSliceType();
+
+					DataInterfaceMapType* EmulatedInterfaceMap = EmulatedDataInterfaceMap[Name];
+					FCsInterfaceMap* InterfaceMap			   = EmulatedInterfaceMap->GetInterfaceMap();
+					// Add slice as type InterfaceDataType
+					InterfaceMap->Add<InterfaceDataType>(DataSliceType::Name, static_cast<InterfaceDataType*>(Data));
+					// Set the InterfaceMap of Data to the "root" InterfaceMap
+					Data->SetInterfaceMap(InterfaceMap);
+					// Store a reference to the slice 
+					TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
+					InterfaceImplMap.Add(DataSliceType::Name, Data);
+
+					return Data;
+				}
+
 				InterfaceDataType* GetData(const FString& Context, const FName& Name)
 				{
 					checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);

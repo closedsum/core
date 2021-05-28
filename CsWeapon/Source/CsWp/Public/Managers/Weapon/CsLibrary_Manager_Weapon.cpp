@@ -7,6 +7,7 @@
 #include "Managers/Weapon/CsManager_Weapon.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
+#include "Data/CsLibrary_Data_Weapon.h"
 
 #if WITH_EDITOR
 // Library
@@ -142,28 +143,50 @@ namespace NCsWeapon
 
 		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const FName& Name)
 		{
-			return GetChecked(Context, WorldContext)->GetDataChecked(Context, Name);
+			DataType* Data = GetChecked(Context, WorldContext)->GetDataChecked(Context, Name);
+
+			typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
+
+			check(WeaponDataLibrary::IsValidChecked(Context, Data));
+
+			return Data;
 		}
 
 		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
 			{
-				return Manager_Weapon->GetSafeData(Context, Name);
+				DataType* Data = Manager_Weapon->GetSafeData(Context, Name);
+
+				typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
+
+				if (!WeaponDataLibrary::IsValid(Context, Data, Log))
+					return nullptr;
 			}
 			return nullptr;
 		}
 
 		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type)
 		{
-			return GetChecked(Context, WorldContext)->GetDataChecked(Context, Type);
+			DataType* Data = GetChecked(Context, WorldContext)->GetDataChecked(Context, Type);
+
+			typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
+
+			check(WeaponDataLibrary::IsValidChecked(Context, Data));
+
+			return Data;
 		}
 
 		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
 			{
-				return Manager_Weapon->GetSafeData(Context, Type);
+				DataType* Data = Manager_Weapon->GetSafeData(Context, Type);
+
+				typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
+
+				if (!WeaponDataLibrary::IsValid(Context, Data, Log))
+					return nullptr;
 			}
 			return nullptr;
 		}

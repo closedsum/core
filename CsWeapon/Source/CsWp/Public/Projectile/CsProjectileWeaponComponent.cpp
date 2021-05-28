@@ -21,11 +21,11 @@
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Managers/Time/CsLibrary_Manager_Time.h"
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
+#include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
-#include "Managers/Weapon/CsManager_Weapon.h"
 #include "Managers/Projectile/CsManager_Projectile.h"
 #include "Managers/Sound/CsManager_Sound.h"
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
@@ -325,30 +325,21 @@ void UCsProjectileWeaponComponent::Init()
 	check(EMCsWeapon::Get().IsValidEnumChecked(Context, Str::WeaponType, WeaponType));
 
 	// Get Data
-	Data = UCsManager_Weapon::Get(GetWorld()->GetGameState())->GetData(WeaponType.GetFName());
+	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 
-	checkf(Data, TEXT("%s: Data is NULL. Failed to get Data of type: ICsData_Weapon for Weapon: %s"), *Context, WeaponType.ToChar());
-
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	checkf(WeaponDataLibrary::IsValidChecked(Context, Data), TEXT("%s: Data is NOT Valid."), *Context);
+	Data = WeaponManagerLibrary::GetDataChecked(Context, this, WeaponType);
 
 	check(EMCsProjectile::Get().IsValidEnumChecked(Context, Str::ProjectileType, ProjectileType));
 
 	// Set States
 	UCsWeaponSettings* Settings = GetMutableDefault<UCsWeaponSettings>();
 
-	IdleState = Settings->ProjectileWeaponImpl.IdleState;
-
-	check(EMCsWeaponState::Get().IsValidEnumChecked(Context, Str::IdleState, IdleState));
-
-	FireState = Settings->ProjectileWeaponImpl.FireState;
-
-	check(EMCsWeaponState::Get().IsValidEnumChecked(Context, Str::FireState, FireState));
+	check(Settings->ProjectileWeaponImpl.IsValidChecked(Context));
 
 	CurrentState = IdleState;
 
 	// Ammo
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
 
 	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
@@ -1080,6 +1071,11 @@ UCsProjectileWeaponComponent::FProjectileImpl* UCsProjectileWeaponComponent::Con
 	return new UCsProjectileWeaponComponent::FProjectileImpl();
 }
 
+void UCsProjectileWeaponComponent::ProjectileImpl_SetLaunchComponentTransform(USceneComponent* Component)
+{
+	ProjectileImpl->SetLaunchComponentTransform(Component);
+}
+
 #pragma endregion Projectile
 
 	// Sound
@@ -1269,6 +1265,11 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, F
 UCsProjectileWeaponComponent::FFXImpl* UCsProjectileWeaponComponent::ConstructFXImpl()
 {
 	return new UCsProjectileWeaponComponent::FFXImpl();
+}
+
+void UCsProjectileWeaponComponent::FXImpl_SetComponent(USceneComponent* Component)
+{
+	FXImpl->SetComponent(Component);
 }
 
 #pragma endregion FX

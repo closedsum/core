@@ -145,6 +145,7 @@ public:
 		return MyOwner;
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	virtual void Init();
 
 // State
@@ -376,6 +377,11 @@ protected:
 
 	virtual FProjectileImpl* ConstructProjectileImpl();
 
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Fire|Projectile")
+	void ProjectileImpl_SetLaunchComponentTransform(USceneComponent* Component);
+
 #pragma endregion Projectile
 	
 	// Sound
@@ -482,6 +488,11 @@ public:
 protected:
 
 	virtual FFXImpl* ConstructFXImpl();
+
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Fire|FX")
+	void FXImpl_SetComponent(USceneComponent* Component);
 
 #pragma endregion FX
 

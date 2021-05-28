@@ -44,7 +44,7 @@ UClass* UCsScriptLibrary_Manager_Weapon::GetWeaponClassByType(const FString& Con
 
 	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 
-	if (FCsWeapon* Weapon = WeaponManagerLibrary::GetSafeWeapon(Context, WorldContextObject, Type, Log))
+	if (FCsWeapon* Weapon = WeaponManagerLibrary::GetSafeWeapon(Ctxt, WorldContextObject, Type, Log))
 	{
 		return Weapon->GetClass();
 	}
@@ -61,7 +61,7 @@ UClass* UCsScriptLibrary_Manager_Weapon::GetWeaponClassByClassType(const FString
 
 	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 
-	if (FCsWeapon* Weapon = WeaponManagerLibrary::GetSafeWeapon(Context, WorldContextObject, Type, Log))
+	if (FCsWeapon* Weapon = WeaponManagerLibrary::GetSafeWeapon(Ctxt, WorldContextObject, Type, Log))
 	{
 		return Weapon->GetClass();
 	}

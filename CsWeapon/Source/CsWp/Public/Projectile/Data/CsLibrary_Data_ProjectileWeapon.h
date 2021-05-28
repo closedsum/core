@@ -2,6 +2,8 @@
 #pragma once
 #include "Projectile/Data/CsData_ProjectileWeapon.h"
 #include "Containers/CsLibrary_InterfaceMap.h"
+// Log
+#include "Utility/CsWpLog.h"
 
 namespace NCsWeapon
 {
@@ -10,7 +12,7 @@ namespace NCsWeapon
 		namespace NData
 		{
 
-#define DataType NCsWeapon::NProjectile::NData::IData
+		#define DataType NCsWeapon::NProjectile::NData::IData
 
 			/**
 			*/
@@ -19,14 +21,24 @@ namespace NCsWeapon
 				/**
 				*
 				*
-				* @param Context
+				* @param Context	The calling context.
 				* @param Data
 				* return
 				*/
-				static bool IsValidChecked(const FString& Context, DataType* Data);
+				static bool IsValidChecked(const FString& Context, const DataType* Data);
+
+				/**
+				*
+				*
+				* @param Context	The calling context.
+				* @param Data
+				* @param Log		(optional)
+				* return
+				*/
+				static bool IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
 			};
 
-#undef DataType
+		#undef DataType
 		}
 	}
 }

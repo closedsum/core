@@ -151,6 +151,13 @@ namespace NCsWeapon
 				}
 
 			#pragma endregion PrjWeaponDataType (NCsWeapon::NProjectile::NData::IData)
+
+			public:
+
+				static void Deconstruct(void* Ptr)
+				{
+					delete static_cast<NCsWeapon::NProjectile::NData::FImplSlice*>(Ptr);
+				}
 			};
 		}
 	}

@@ -79,6 +79,12 @@ namespace NCsWeapon
 
 					#pragma endregion ICsData_ProjectileWeapon_SoundFire
 					*/
+					public:
+
+						static void Deconstruct(void* Ptr)
+						{
+							delete static_cast<NCsWeapon::NProjectile::NData::NSound::NFire::FImpl*>(Ptr);
+						}
 					};
 				}
 			}

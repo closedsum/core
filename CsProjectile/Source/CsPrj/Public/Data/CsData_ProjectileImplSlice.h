@@ -143,6 +143,13 @@ namespace NCsProjectile
 			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(GravityScale, float)
 
 		#pragma endregion ICsData_Projectile
+
+		public:
+
+			static void Deconstruct(void* Ptr)
+			{
+				delete static_cast<NCsProjectile::NData::FImplSlice*>(Ptr);
+			}
 		};
 	}
 }

@@ -129,6 +129,11 @@ namespace NCsProjectile
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+
+				static void Deconstruct(void* Ptr)
+				{
+					delete static_cast<NCsProjectile::NData::NCollision::FImplSlice*>(Ptr);
+				}
 			};
 
 		#undef CollisionDataType

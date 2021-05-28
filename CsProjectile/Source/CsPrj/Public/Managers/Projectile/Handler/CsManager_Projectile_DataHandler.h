@@ -39,8 +39,6 @@ namespace NCsProjectile
 
 				virtual void CreateEmulatedDataFromDataTable(const FString& Context, const int32& Index, UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject) override;
 
-				virtual bool DeconstructEmulatedData(const FName& InterfaceImplName, void* Data) override;
-
 			#pragma endregion DataHandlerType (NCsPooledObject::NManager::NHandler::TData)
 
 			protected:

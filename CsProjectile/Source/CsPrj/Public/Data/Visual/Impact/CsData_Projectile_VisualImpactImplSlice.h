@@ -128,6 +128,11 @@ namespace NCsProjectile
 				public:
 
 					void GenerateCached();
+
+					static void Deconstruct(void* Ptr)
+					{
+						delete static_cast<NCsProjectile::NData::NVisual::NImpact::FImplSlice*>(Ptr);
+					}
 				};
 
 			#undef VisualImpactDataType

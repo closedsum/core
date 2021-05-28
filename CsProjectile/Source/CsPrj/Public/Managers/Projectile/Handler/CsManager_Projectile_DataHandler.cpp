@@ -135,28 +135,31 @@ namespace NCsProjectile
 
 						DataSliceType* Data = new DataSliceType();
 
-						checkf(EmulatedDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s."), *Context, *(Name.ToString()));
+						checkf(ImplDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s."), *Context, *(Name.ToString()));
 
-						EmulatedDataMap.Add(Name, Data);
+						ImplDataMap.Add(Name, Data);
 
 						typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
 
-						DataInterfaceMapType* EmulatedInterfaceMap = new DataInterfaceMapType();
+						DataInterfaceMapType* ImplInterfaceMap = new DataInterfaceMapType();
 
-						checkf(EmulatedDataInterfaceMap.Find(Name) == nullptr, TEXT("%s: Emulated Interface Map has already been created for Row: %s."), *Context, *(Name.ToString()));
+						checkf(ImplDataInterfaceMap.Find(Name) == nullptr, TEXT("%s: Emulated Interface Map has already been created for Row: %s."), *Context, *(Name.ToString()));
 
-						EmulatedDataInterfaceMap.Add(Name, EmulatedInterfaceMap);
+						ImplDataInterfaceMap.Add(Name, ImplInterfaceMap);
 
-						FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
+						FCsInterfaceMap* InterfaceMap = ImplInterfaceMap->GetInterfaceMap();
 
 						InterfaceMap->Add<DataType>(DataSliceType::Name, static_cast<DataType*>(Data));
 
 						Data->SetInterfaceMap(InterfaceMap);
 
-						TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
+						TMap<FName, void*>& InterfaceImplMap = ImplDataSliceByNameMap.FindOrAdd(Name);
 						InterfaceImplMap.Add(DataSliceType::Name, Data);
 
 						DataMap.Add(Name, Data);
+
+						TMap<FName, void(*)(void*)>& ImplDataDeconstructMap = ImplDataDeconstructByNameMap.FindOrAdd(Name);
+						ImplDataDeconstructMap.Add(DataSliceType::Name, &DataSliceType::Deconstruct);
 
 						// LifeTime
 						{
@@ -194,19 +197,6 @@ namespace NCsProjectile
 
 					}
 				}
-			}
-
-			bool FData::DeconstructEmulatedData(const FName& InterfaceImplName, void* Data)
-			{
-				// NCsProjectile::NData::FImplSlice
-				if (InterfaceImplName == NCsProjectile::NData::FImplSlice::Name)
-				{
-					delete static_cast<NCsProjectile::NData::FImplSlice*>(Data);
-					return true;
-				}
-				// FCsData_ProjecitleVisualImplSlice
-				// FCsData_ProjectileCollisionImplSlice
-				return false;
 			}
 
 			#pragma endregion DataHandlerType (NCsPooledObject::NManager::NHandler::TData)

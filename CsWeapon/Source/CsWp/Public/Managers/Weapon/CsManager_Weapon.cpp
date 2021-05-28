@@ -59,7 +59,6 @@ namespace NCsManagerWeapon
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, GetData);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, PopulateDataMapFromSettings);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, CreateEmulatedDataFromDataTable);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, DeconstructEmulatedData);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, PopulateDataMapFromDataTable);
 		}
 	}

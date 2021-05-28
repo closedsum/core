@@ -122,6 +122,13 @@ namespace NCsProjectile
 					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(StaticMesh, FCsPrjStaticMesh)
 
 				#pragma endregion StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
+
+				public:
+
+					static void Deconstruct(void* Ptr)
+					{
+						delete static_cast<NCsProjectile::NData::NVisual::NStaticMesh::FImplSlice*>(Ptr);
+					}
 				};
 
 			#undef StaticMeshVisualDataType

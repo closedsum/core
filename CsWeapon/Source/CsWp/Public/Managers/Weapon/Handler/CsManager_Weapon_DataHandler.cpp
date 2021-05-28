@@ -173,26 +173,29 @@ namespace NCsWeapon
 
 						DataSliceType* Data = new DataSliceType();
 
-						checkf(EmulatedDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s."), *Context, *(Name.ToString()));
+						checkf(ImplDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s."), *Context, *(Name.ToString()));
 
-						EmulatedDataMap.Add(Name, Data);
+						ImplDataMap.Add(Name, Data);
 
-						DataInterfaceMapType* EmulatedInterfaceMap = new DataInterfaceMapType();
+						DataInterfaceMapType* ImplInterfaceMap = new DataInterfaceMapType();
 
-						checkf(EmulatedDataInterfaceMap.Find(Name) == nullptr, TEXT("%s: Emulated Interface Map has already been created for Row: %s."), *Context, *(Name.ToString()));
+						checkf(ImplDataInterfaceMap.Find(Name) == nullptr, TEXT("%s: Emulated Interface Map has already been created for Row: %s."), *Context, *(Name.ToString()));
 
-						EmulatedDataInterfaceMap.Add(Name, EmulatedInterfaceMap);
+						ImplDataInterfaceMap.Add(Name, ImplInterfaceMap);
 
-						FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
+						FCsInterfaceMap* InterfaceMap = ImplInterfaceMap->GetInterfaceMap();
 
 						InterfaceMap->Add<DataType>(DataSliceType::Name, static_cast<DataType*>(Data));
 
 						Data->SetInterfaceMap(InterfaceMap);
 
-						TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
+						TMap<FName, void*>& InterfaceImplMap = ImplDataSliceByNameMap.FindOrAdd(Name);
 						InterfaceImplMap.Add(DataSliceType::Name, Data);
 
 						DataMap.Add(Name, Data);
+
+						TMap<FName, void(*)(void*)>& ImplDataDeconstructMap = ImplDataDeconstructByNameMap.FindOrAdd(Name);
+						ImplDataDeconstructMap.Add(DataSliceType::Name, &DataSliceType::Deconstruct);
 					}
 					// ICsData_ProjectileWeapon
 					if (Emulates_ICsData_ProjectileWeapon)
@@ -203,15 +206,18 @@ namespace NCsWeapon
 
 						DataSliceType* Data = new DataSliceType();
 
-						DataInterfaceMapType* EmulatedInterfaceMap = EmulatedDataInterfaceMap[Name];
-						FCsInterfaceMap* InterfaceMap			   = EmulatedInterfaceMap->GetInterfaceMap();
+						DataInterfaceMapType* ImplInterfaceMap = ImplDataInterfaceMap[Name];
+						FCsInterfaceMap* InterfaceMap		   = ImplInterfaceMap->GetInterfaceMap();
 
 						InterfaceMap->Add<DataType>(DataSliceType::Name, static_cast<DataType*>(Data));
 
 						Data->SetInterfaceMap(InterfaceMap);
 
-						TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
+						TMap<FName, void*>& InterfaceImplMap = ImplDataSliceByNameMap.FindOrAdd(Name);
 						InterfaceImplMap.Add(DataSliceType::Name, Data);
+
+						TMap<FName, void(*)(void*)>& ImplDataDeconstructMap = ImplDataDeconstructByNameMap.FindOrAdd(Name);
+						ImplDataDeconstructMap.Add(DataSliceType::Name, &DataSliceType::Deconstruct);
 
 						// bDoFireOnRelease
 						{
@@ -274,14 +280,14 @@ namespace NCsWeapon
 
 						SoundDataImplType* Data = new SoundDataImplType();
 
-						DataInterfaceMapType* EmulatedInterfaceMap = EmulatedDataInterfaceMap[Name];
-						FCsInterfaceMap* InterfaceMap			   = EmulatedInterfaceMap->GetInterfaceMap();
+						DataInterfaceMapType* ImplInterfaceMap = ImplDataInterfaceMap[Name];
+						FCsInterfaceMap* InterfaceMap		   = ImplInterfaceMap->GetInterfaceMap();
 
 						InterfaceMap->Add<SoundDataType>(SoundDataImplType::Name, static_cast<SoundDataType*>(Data));
 
 						Data->SetInterfaceMap(InterfaceMap);
 
-						TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
+						TMap<FName, void*>& InterfaceImplMap = ImplDataSliceByNameMap.FindOrAdd(Name);
 						InterfaceImplMap.Add(SoundDataImplType::Name, Data);
 
 						// FireSound
@@ -293,29 +299,6 @@ namespace NCsWeapon
 						*/
 					}
 				}
-			}
-
-			bool FData::DeconstructEmulatedData(const FName& InterfaceImplName, void* Data)
-			{
-				// NCsWeapon::NData::FImplSlice
-				if (InterfaceImplName == NCsWeapon::NData::FImplSlice::Name)
-				{
-					delete static_cast<NCsWeapon::NData::FImplSlice*>(Data);
-					return true;
-				}
-				// NCsWeapon::NProjectile::NData::FImplSlice
-				if (InterfaceImplName == NCsWeapon::NProjectile::NData::FImplSlice::Name)
-				{
-					delete static_cast<NCsWeapon::NProjectile::NData::FImplSlice*>(Data);
-					return true;
-				}
-				// NCsWeapon::NProjectile::NData::NSound::NFire::FImpl
-				if (InterfaceImplName == NCsWeapon::NProjectile::NData::NSound::NFire::FImpl::Name)
-				{
-					delete static_cast<NCsWeapon::NProjectile::NData::NSound::NFire::FImpl*>(Data);
-					return true;
-				}
-				return false;
 			}
 
 			#pragma endregion DataHandlerType (NCsPooledObject::NManager::NHandler::TData)

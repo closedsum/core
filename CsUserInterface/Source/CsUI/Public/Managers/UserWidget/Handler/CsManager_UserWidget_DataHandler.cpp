@@ -88,43 +88,30 @@ namespace NCsUserWidget
 					{
 						FCsData_UserWidgetEnumSlice* Data = new FCsData_UserWidgetEnumSlice();
 
-						checkf(EmulatedDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s."), *Context, *(Name.ToString()));
+						checkf(ImplDataMap.Find(Name) == nullptr, TEXT("%s: Data has already been created for Row: %s."), *Context, *(Name.ToString()));
 
-						EmulatedDataMap.Add(Name, Data);
+						ImplDataMap.Add(Name, Data);
 
 						typedef NCsUserWidget::NData::FInterfaceMap InterfaceMapType;
 
-						InterfaceMapType* EmulatedInterfaceMap = new InterfaceMapType();
+						InterfaceMapType* ImplInterfaceMap = new InterfaceMapType();
 
-						checkf(EmulatedDataInterfaceMap.Find(Name) == nullptr, TEXT("%s: Emulated Interface Map has already been created for Row: %s."), *Context, *(Name.ToString()));
+						checkf(ImplDataInterfaceMap.Find(Name) == nullptr, TEXT("%s: Emulated Interface Map has already been created for Row: %s."), *Context, *(Name.ToString()));
 
-						EmulatedDataInterfaceMap.Add(Name, EmulatedInterfaceMap);
+						ImplDataInterfaceMap.Add(Name, ImplInterfaceMap);
 
-						FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
+						FCsInterfaceMap* InterfaceMap = ImplInterfaceMap->GetInterfaceMap();
 
 						InterfaceMap->Add<ICsData_UserWidget>(FCsData_UserWidgetEnumSlice::Name, static_cast<ICsData_UserWidget*>(Data));
 
 						Data->SetInterfaceMap(InterfaceMap);
 
-						TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
+						TMap<FName, void*>& InterfaceImplMap = ImplDataSliceByNameMap.FindOrAdd(Name);
 						InterfaceImplMap.Add(FCsData_UserWidgetEnumSlice::Name, Data);
 
 						DataMap.Add(Name, Data);
 					}
 				}
-			}
-			*/
-
-			/*
-			bool FData::DeconstructEmulatedData(const FName& InterfaceImplName, void* Data)
-			{
-				// FCsData_UserWidgetEnumSlice
-				if (InterfaceImplName == FCsData_UserWidgetEnumSlice::Name)
-				{
-					delete static_cast<FCsData_UserWidgetEnumSlice*>(Data);
-					return true;
-				}
-				return false;
 			}
 			*/
 

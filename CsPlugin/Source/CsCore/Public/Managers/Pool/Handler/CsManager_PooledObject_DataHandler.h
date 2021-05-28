@@ -46,9 +46,10 @@ namespace NCsPooledObject
 					MyRoot(nullptr),
 					DataMap(),
 					DataTableRowByPathMap(),
-					EmulatedDataMap(),
-					EmulatedDataInterfaceMap(),
-					EmulatedDataInterfaceImplMap(),
+					ImplDataMap(),
+					ImplDataInterfaceMap(),
+					ImplDataSliceByNameMap(),
+					ImplDataDeconstructByNameMap(),
 					Log(nullptr)
 				{
 				}
@@ -80,13 +81,16 @@ namespace NCsPooledObject
 				TMap<FSoftObjectPath, TMap<FName, uint8*>> DataTableRowByPathMap;
 
 				/** <DataName, InterfacePtr> */
-				TMap<FName, InterfaceDataType*> EmulatedDataMap;
+				TMap<FName, InterfaceDataType*> ImplDataMap;
 
 				/** <DataName, InterfaceMapPtr> */
-				TMap<FName, DataInterfaceMapType*> EmulatedDataInterfaceMap;
+				TMap<FName, DataInterfaceMapType*> ImplDataInterfaceMap;
 
 				/** <DataName, <InterfaceImplName, InterfaceImplPtr>> */
-				TMap<FName, TMap<FName, void*>> EmulatedDataInterfaceImplMap;
+				TMap<FName, TMap<FName, void*>> ImplDataSliceByNameMap;
+
+				/** <DataName, <InterfaceImplName, DeconstructFnPtr>> */
+				TMap<FName, TMap<FName, void(*)(void*)>> ImplDataDeconstructByNameMap;
 
 			public:
 
@@ -163,11 +167,6 @@ namespace NCsPooledObject
 				{
 				}
 
-				virtual bool DeconstructEmulatedData(const FName& InterfaceImplName, void* Data)
-				{
-					return false;
-				}
-
 				void PopulateDataMapFromDataTable(const FString& Context, const int32& Index, UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject)
 				{
 					using namespace NCached;
@@ -236,13 +235,13 @@ namespace NCsPooledObject
 						return nullptr;
 					}
 
-					if (EmulatedDataMap.Find(Name))
+					if (ImplDataMap.Find(Name))
 					{
 						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data has already been created for %s."), *Context, *(Name.ToString())));
 						return nullptr;
 					}
 
-					if (EmulatedDataInterfaceMap.Find(Name))
+					if (ImplDataInterfaceMap.Find(Name))
 					{
 						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Emulated Interface Map has already been created for %s."), *Context, *(Name.ToString())));
 						return nullptr;
@@ -251,19 +250,19 @@ namespace NCsPooledObject
 					// Construct the slice
 					DataSliceType* Data = new DataSliceType();
 
-					EmulatedDataMap.Add(Name, Data);
+					ImplDataMap.Add(Name, Data);
 					// Construct Map to store all slices
-					DataInterfaceMapType* EmulatedInterfaceMap = new DataInterfaceMapType();
+					DataInterfaceMapType* ImplInterfaceMap = new DataInterfaceMapType();
 
-					EmulatedDataInterfaceMap.Add(Name, EmulatedInterfaceMap);
+					ImplDataInterfaceMap.Add(Name, ImplInterfaceMap);
 
-					FCsInterfaceMap* InterfaceMap = EmulatedInterfaceMap->GetInterfaceMap();
+					FCsInterfaceMap* InterfaceMap = ImplInterfaceMap->GetInterfaceMap();
 					// Add slice as type InterfaceDataType
 					InterfaceMap->Add<InterfaceDataType>(DataSliceType::Name, static_cast<InterfaceDataType*>(Data));
 					// Set the InterfaceMap of Data to the "root" InterfaceMap
 					Data->SetInterfaceMap(InterfaceMap);
 					// Store a reference to the slice 
-					TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
+					TMap<FName, void*>& InterfaceImplMap = ImplDataSliceByNameMap.FindOrAdd(Name);
 					InterfaceImplMap.Add(DataSliceType::Name, Data);
 					// Add the "base" slice to the map of all data.
 					DataMap.Add(Name, Data);
@@ -284,13 +283,13 @@ namespace NCsPooledObject
 						return nullptr;
 					}
 
-					if (!EmulatedDataMap.Find(Name))
+					if (!ImplDataMap.Find(Name))
 					{
 						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data has NOT been created for %s."), *Context, *(Name.ToString())));
 						return nullptr;
 					}
 
-					if (!EmulatedDataInterfaceMap.Find(Name))
+					if (!ImplDataInterfaceMap.Find(Name))
 					{
 						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Emulated Interface Map has NOT been created for %s."), *Context, *(Name.ToString())));
 						return nullptr;
@@ -299,14 +298,14 @@ namespace NCsPooledObject
 					// Construct the slice
 					DataSliceType* Data = new DataSliceType();
 
-					DataInterfaceMapType* EmulatedInterfaceMap = EmulatedDataInterfaceMap[Name];
-					FCsInterfaceMap* InterfaceMap			   = EmulatedInterfaceMap->GetInterfaceMap();
+					DataInterfaceMapType* ImplInterfaceMap = ImplDataInterfaceMap[Name];
+					FCsInterfaceMap* InterfaceMap		   = ImplInterfaceMap->GetInterfaceMap();
 					// Add slice as type InterfaceDataType
 					InterfaceMap->Add<InterfaceDataType>(DataSliceType::Name, static_cast<InterfaceDataType*>(Data));
 					// Set the InterfaceMap of Data to the "root" InterfaceMap
 					Data->SetInterfaceMap(InterfaceMap);
 					// Store a reference to the slice 
-					TMap<FName, void*>& InterfaceImplMap = EmulatedDataInterfaceImplMap.FindOrAdd(Name);
+					TMap<FName, void*>& InterfaceImplMap = ImplDataSliceByNameMap.FindOrAdd(Name);
 					InterfaceImplMap.Add(DataSliceType::Name, Data);
 
 					return Data;
@@ -316,8 +315,8 @@ namespace NCsPooledObject
 				{
 					checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
 
-					// Check emulated data
-					if (InterfaceDataType** EmuDataPtr = EmulatedDataMap.Find(Name))
+					// Check implemented data
+					if (InterfaceDataType** EmuDataPtr = ImplDataMap.Find(Name))
 						return *EmuDataPtr;
 
 					// Check data
@@ -395,29 +394,34 @@ namespace NCsPooledObject
 
 				void ResetDataContainers()
 				{
-					for (TPair<FName, TMap<FName, void*>>& DataPair : EmulatedDataInterfaceImplMap)
+					for (TPair<FName, TMap<FName, void*>>& DataPair : ImplDataSliceByNameMap)
 					{
+						const FName& DataName				= DataPair.Key;
 						TMap<FName, void*> InterfaceImplMap = DataPair.Value;
 
 						for (TPair<FName, void*>& ImplPair : InterfaceImplMap)
 						{
-							const bool Success = DeconstructEmulatedData(ImplPair.Key, ImplPair.Value);
+							const FName& ImplName = ImplPair.Key;
 
-							checkf(Success, TEXT("Failed to deconstruct emulated data @ DataName: %s InterfaceImplName: %s."), *(DataPair.Key.ToString()), *(ImplPair.Key.ToString()));
+							void(*DeconstructImpl)(void*) = ImplDataDeconstructByNameMap[DataName][ImplName];
+
+							checkf(DeconstructImpl, TEXT("Failed to find DeconstructImpl for DataName: %s InterfaceImplName: %s."), *(DataName.ToString()), *(ImplName.ToString()));
+
+							DeconstructImpl(ImplPair.Value);
 
 							ImplPair.Value = nullptr;
 						}
 					}
-					EmulatedDataMap.Reset();
-					EmulatedDataInterfaceImplMap.Reset();
+					ImplDataMap.Reset();
+					ImplDataSliceByNameMap.Reset();
 
-					for (TPair<FName, DataInterfaceMapType*>& Pair : EmulatedDataInterfaceMap)
+					for (TPair<FName, DataInterfaceMapType*>& Pair : ImplDataInterfaceMap)
 					{
 						DataInterfaceMapType* Ptr = Pair.Value;
 						delete Ptr;
 						Pair.Value = nullptr;
 					}
-					EmulatedDataInterfaceMap.Reset();
+					ImplDataInterfaceMap.Reset();
 
 					DataMap.Reset();
 					DataTableRowByPathMap.Reset();

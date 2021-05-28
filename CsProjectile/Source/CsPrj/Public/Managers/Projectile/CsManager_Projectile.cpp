@@ -58,7 +58,6 @@ namespace NCsManagerProjectile
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateClassMapFromSettings);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateDataMapFromSettings);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, CreateEmulatedDataFromDataTable);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, DeconstructEmulatedData);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateDataMapFromDataTable);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, GetProjectile);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, GetData);

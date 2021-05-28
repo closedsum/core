@@ -122,6 +122,11 @@ namespace NCsWeapon
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 
+						static void Deconstruct(void* Ptr)
+						{
+							delete static_cast<NCsWeapon::NProjectile::NData::NVisual::NFire::FImplSlice*>(Ptr);
+						}
+
 					#undef ParamsType
 					};
 

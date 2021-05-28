@@ -54,6 +54,13 @@ namespace NCsWeapon
 			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
+
+		public:
+
+			static void Deconstruct(void* Ptr)
+			{
+				delete static_cast<NCsWeapon::NData::FImplSlice*>(Ptr);
+			}
 		};
 	}
 }

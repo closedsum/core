@@ -32,7 +32,11 @@ namespace NCsProjectile
 
 		private:
 
+			// ICsGetInterfaceMap
+
 			FCsInterfaceMap* InterfaceMap;
+
+			// PooledCacheType (NCsPooledObject::NCache::ICache)
 
 			int32 Index;
 

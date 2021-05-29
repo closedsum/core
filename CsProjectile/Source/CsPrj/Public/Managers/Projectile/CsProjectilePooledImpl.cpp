@@ -17,6 +17,7 @@
 #include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
+#include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
 #include "Library/CsLibrary_Valid.h"
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
@@ -25,7 +26,6 @@
 #include "Managers/Projectile/CsProjectileMovementComponent.h"
 #include "Components/StaticMeshComponent.h"
 // Managers
-#include "Managers/Projectile/CsManager_Projectile.h"
 #include "Managers/Damage/CsManager_Damage.h"
 // Data
 #include "Data/CsData_Projectile.h"
@@ -334,27 +334,27 @@ void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
 
 	const FString& Context = Str::SetType;
 
-	checkf(EMCsProjectile::Get().IsValidEnum(InType), TEXT("%s: InType: %s is NOT Valid."), *Context, InType.ToChar());
+	check(EMCsProjectile::Get().IsValidEnumChecked(Context, InType));
 
 	if (Type != InType)
 	{
 		Type = InType;
 
-		UCsManager_Projectile* Manager_Projectile = UCsManager_Projectile::Get(GetWorld()->GetGameState());
+		typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 
 		// Get Data associated with Type
-		Data = Manager_Projectile->GetDataChecked(Context, Type);
-
-		// TODO: Need to determine best place to set LifeTime from Data
-
-		// Set Data on Cache
-		typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
-		typedef NCsProjectile::NCache::FImplPooled CacheImplType;
-
-		CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
-
-		CacheImpl->SetData(Data);
+		Data = PrjManagerLibrary::GetDataChecked(Context, this, Type);
 	}
+
+	// TODO: Need to determine best place to set LifeTime from Data
+
+	// Set Data on Cache
+	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
+	typedef NCsProjectile::NCache::FImplPooled CacheImplType;
+
+	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
+
+	CacheImpl->SetData(Data);
 }
 
 // Collision

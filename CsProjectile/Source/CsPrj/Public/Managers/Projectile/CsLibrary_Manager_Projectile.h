@@ -1,4 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Types
+#include "Types/CsTypes_Projectile.h"
 // Log
 #include "Utility/CsPrjLog.h"
 
@@ -6,6 +8,9 @@
 
 class UObject;
 class UCsManager_Projectile;
+
+// NCsProjectile::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
 
 namespace NCsProjectile
 {
@@ -91,6 +96,60 @@ namespace NCsProjectile
 			static UCsManager_Projectile* GetSafe(const UObject* WorldContext);
 
 		#pragma endregion Get
+
+		// Data
+		#pragma region
+		public:
+
+		#define DataType NCsProjectile::NData::IData
+
+			/**
+			* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Name of the weapon type.
+			* "Checked" in regards to returning a valid pointer.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Name			Name of the Weapon.
+			* return				Data that implements the interface: DataType (NCsProjectile::NData::IData).
+			*/
+			static DataType* GetDataChecked(const FString& Context, const UObject* WorldContext, const FName& Name);
+
+			/**
+			* Safely get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Name of the weapon type.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Name			Name of the Weapon.
+			* @param Log			(optional)
+			* return				Data that implements the interface: DataType (NCsProjectile::NData::IData).
+			*/
+			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+			/**
+			* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Type.
+			* "Checked" in regards to returning a valid pointer.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			Weapon type.
+			* return				Data that implements the interface: DataType (NCsProjectile::NData::IData).
+			*/
+			static DataType* GetDataChecked(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type);
+
+			/**
+			* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Type.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			Weapon type.
+			* @param Log			(optional)
+			* return				Data that implements the interface: DataType (NCsProjectile::NData::IData).
+			*/
+			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+		#undef DataType
+
+		#pragma endregion Data
 		};
 	}
 }

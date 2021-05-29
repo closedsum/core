@@ -154,6 +154,7 @@ UCsProjectileWeaponComponent::UCsProjectileWeaponComponent(const FObjectInitiali
 	// Ammo
 	CurrentAmmo(0),
 	// Fire
+	bHasFired(false),
 	bFire(false),
 	bFire_Last(false),
 	Fire_StartTime(0.0f),
@@ -445,7 +446,7 @@ bool UCsProjectileWeaponComponent::CanFire() const
 	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
 
 	// Check if enough time has elapsed to fire again.
-	const bool Pass_Time = (TimeSinceStart.Time - Fire_StartTime > PrjData->GetTimeBetweenShots());
+	const bool Pass_Time = !bHasFired || (TimeSinceStart.Time - Fire_StartTime > PrjData->GetTimeBetweenShots());
 	// Check if bFire is set, its not on release, and its either bFire is just set or FullAuto.
 	const bool Pass_Fire = bFire && !PrjData->DoFireOnRelease() && (PrjData->IsFullAuto() || !bFire_Last);
 	// Check if bFire has just been unset and on release.
@@ -522,6 +523,8 @@ void UCsProjectileWeaponComponent::Fire()
 	Payload->SetValue_Flag(CS_FIRST, PrjData->HasInfiniteAmmo());
 	Payload->SetValue_Int(CS_FIRST, PrjData->GetProjectilesPerShot());
 	Payload->SetValue_Float(CS_FIRST, PrjData->GetTimeBetweenProjectilesPerShot());
+
+	bHasFired = true;
 
 	FireRoutineHandle = Scheduler->Start(Payload);
 }

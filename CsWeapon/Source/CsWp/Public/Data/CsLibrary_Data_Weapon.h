@@ -13,6 +13,8 @@ namespace NCsWeapon
 
 		struct CSWP_API FLibrary : TCsLibrary_InterfaceMap<DataType>
 		{
+		public:
+
 			/**
 			*
 			*

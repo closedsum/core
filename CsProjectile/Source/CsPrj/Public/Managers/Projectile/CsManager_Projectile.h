@@ -840,12 +840,16 @@ public:
 protected:
 
 #define DataInterfaceMapType NCsProjectile::NData::FInterfaceMap
+
 	DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler;
-#undef DataInterfaceMapType
 
 	virtual void ConstructDataHandler();
 
 public:
+
+	FORCEINLINE DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* GetDataHandler() const { return DataHandler; }
+
+#undef DataInterfaceMapType
 
 	/**
 	* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Name of the projectile type.
@@ -855,6 +859,24 @@ public:
 	*/
 	DataType* GetData(const FName& Name);
 
+	/**
+	* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Name of the projectile type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Name		Name of the Projectile.
+	* return			Data that implements the interface: DataType (NCsProjectile::NData::IData).
+	*/
+	DataType* GetDataChecked(const FString& Context, const FName& Name);
+
+	/**
+	* Safely get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Name of the weapon type.
+	*
+	* @param Context	The calling context.
+	* @param Name		Name of the Weapon.
+	* return			Data that implements the interface: DataType (NCsProjectile::NData::IData).
+	*/
+	DataType* GetSafeData(const FString& Context, const FName& Name);
 
 	/**
 	* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Type.
@@ -865,17 +887,6 @@ public:
 	DataType* GetData(const FECsProjectile& Type);
 
 	/**
-	* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Name of the projectile type.
-	* "Checked" in regards to returning a valid pointer.
-	*
-	* @param Context	The calling context.
-	* @param Name		Name of the Projectile.
-	* return			Data that implements the interface: DataType (NCsProjectile::NData::IData).
-	*/
-	
-	DataType* GetDataChecked(const FString& Context, const FName& Name);
-
-	/**
 	* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Type.
 	* "Checked" in regards to returning a valid pointer.
 	*
@@ -884,6 +895,15 @@ public:
 	* return			Data that implements the interface: DataType (NCsProjectile::NData::IData).
 	*/
 	DataType* GetDataChecked(const FString& Context, const FECsProjectile& Type);
+
+	/**
+	* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Type.
+	*
+	* @param Context	The calling context.
+	* @param Type		Weapon type.
+	* return			Data that implements the interface: DataType (NCsProjectile::NData::IData).
+	*/
+	DataType* GetSafeData(const FString& Context, const FECsProjectile& Type);
 
 	void OnPayloadUnloaded(const FName& Payload);
 

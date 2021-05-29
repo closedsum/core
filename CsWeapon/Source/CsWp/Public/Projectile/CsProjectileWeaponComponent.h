@@ -188,6 +188,9 @@ protected:
 
 	bool CanFire() const;
 
+	/** Whether Fire has been called at least once. */
+	bool bHasFired;
+
 	/** Whether to fire the weapon. */
 	bool bFire;
 

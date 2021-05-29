@@ -15,6 +15,7 @@ namespace NCsProjectile
 		FImplPooled::FImplPooled() :
 			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
+			// PooledCacheType (NCsPooledObject::NCache::ICache)
 			Index(INDEX_NONE),
 			bAllocated(false),
 			bQueueDeallocate(false),
@@ -68,11 +69,7 @@ namespace NCsProjectile
 
 		bool FImplPooled::HasLifeTimeExpired()
 		{
-			if (LifeTime > 0.0f)
-			{
-				return ElapsedTime.Time > LifeTime;
-			}
-			return false;
+			return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
 		}
 
 		void FImplPooled::Reset()

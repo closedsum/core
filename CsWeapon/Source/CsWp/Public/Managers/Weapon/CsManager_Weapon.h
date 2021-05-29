@@ -762,56 +762,56 @@ protected:
 public:
 
 	/**
-	* Get the Data (implements interface: NCsWeapon::NData::IData) associated with Name of the weapon type.
+	* Get the Data (implements interface: DataType (NCsWeapon::NData::IData)) associated with Name of the weapon type.
 	*
 	* @param Name	Name of the Weapon.
-	* return		Data that implements the interface: NCsWeapon::NData::IData.
+	* return		Data that implements the interface: DataType (NCsWeapon::NData::IData).
 	*/
 	DataType* GetData(const FName& Name);
 
 	/**
-	* Get the Data (implements interface: NCsWeapon::NData::IData) associated with Name of the weapon type.
+	* Get the Data (implements interface: DataType (NCsWeapon::NData::IData)) associated with Name of the weapon type.
 	* "Checked" in regards to returning a valid pointer.
 	*
 	* @param Context	The calling context.
 	* @param Name		Name of the Weapon.
-	* return			Data that implements the interface: NCsWeapon::NData::IData.
+	* return			Data that implements the interface: DataType (NCsWeapon::NData::IData).
 	*/
 	DataType* GetDataChecked(const FString& Context, const FName& Name);
 
 	/**
-	* Safely get the Data (implements interface: NCsWeapon::NData::IData) associated with Name of the weapon type.
+	* Safely get the Data (implements interface: DataType (NCsWeapon::NData::IData)) associated with Name of the weapon type.
 	*
 	* @param Context	The calling context.
 	* @param Name		Name of the Weapon.
-	* return			Data that implements the interface: NCsWeapon::NData::IData.
+	* return			Data that implements the interface: DataType (NCsWeapon::NData::IData).
 	*/
 	DataType* GetSafeData(const FString& Context, const FName& Name);
 
 	/**
-	* Get the Data (implements interface: NCsWeapon::NData::IData) associated with Type.
+	* Get the Data (implements interface: DataType (NCsWeapon::NData::IData)) associated with Type.
 	*
 	* @param Type	Weapon type.
-	* return		Data that implements the interface: NCsWeapon::NData::IData.
+	* return		Data that implements the interface: DataType (NCsWeapon::NData::IData).
 	*/
 	DataType* GetData(const FECsWeapon& Type);
 
 	/**
-	* Get the Data (implements interface: NCsWeapon::NData::IData) associated with Type.
+	* Get the Data (implements interface: DataType (NCsWeapon::NData::IData)) associated with Type.
 	* "Checked" in regards to returning a valid pointer.
 	*
 	* @param Context	The calling context.
 	* @param Type		Weapon type.
-	* return			Data that implements the interface: NCsWeapon::NData::IData.
+	* return			Data that implements the interface: DataType (NCsWeapon::NData::IData).
 	*/
 	DataType* GetDataChecked(const FString& Context, const FECsWeapon& Type);
 
 	/**
-	* Get the Data (implements interface: NCsWeapon::NData::IData) associated with Type.
+	* Get the Data (implements interface: DataType (NCsWeapon::NData::IData)) associated with Type.
 	*
 	* @param Context	The calling context.
 	* @param Type		Weapon type.
-	* return			Data that implements the interface: NCsWeapon::NData::IData.
+	* return			Data that implements the interface: DataType (NCsWeapon::NData::IData).
 	*/
 	DataType* GetSafeData(const FString& Context, const FECsWeapon& Type);
 

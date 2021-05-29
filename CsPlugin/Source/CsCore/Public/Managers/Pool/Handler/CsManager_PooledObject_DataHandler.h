@@ -270,12 +270,14 @@ namespace NCsPooledObject
 					return Data;
 				}
 
-				template<typename DataSliceType, typename InterfaceType>
+				template<typename DataSliceType, typename InterfaceDataSliceType>
 				DataSliceType* AddSafeDataSlice(const FString& Context, const FName& Name)
 				{
 					static_assert(!std::is_abstract<DataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: DataSliceType IS abstract.");
 
-					static_assert(std::is_base_of<InterfaceType, DataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: DataSliceType is NOT a child of: InterfaceType.");
+					static_assert(std::is_abstract<InterfaceDataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: InterfaceDataSliceType is NOT abstract.");
+
+					static_assert(std::is_base_of<InterfaceDataSliceType, DataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: DataSliceType is NOT a child of: InterfaceDataSliceType.");
 
 					if (Name == NAME_None)
 					{
@@ -301,7 +303,7 @@ namespace NCsPooledObject
 					DataInterfaceMapType* ImplInterfaceMap = ImplDataInterfaceMap[Name];
 					FCsInterfaceMap* InterfaceMap		   = ImplInterfaceMap->GetInterfaceMap();
 					// Add slice as type InterfaceDataType
-					InterfaceMap->Add<InterfaceDataType>(DataSliceType::Name, static_cast<InterfaceDataType*>(Data));
+					InterfaceMap->Add<InterfaceDataSliceType>(DataSliceType::Name, static_cast<InterfaceDataSliceType*>(Data));
 					// Set the InterfaceMap of Data to the "root" InterfaceMap
 					Data->SetInterfaceMap(InterfaceMap);
 					// Store a reference to the slice 

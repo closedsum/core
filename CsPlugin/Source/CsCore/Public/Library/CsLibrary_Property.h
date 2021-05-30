@@ -136,7 +136,17 @@ namespace NCsProperty
 		* @param Context		The calling context.
 		* @param Struct
 		* @param PropertyName
-		* @param Log
+		* return				Property.
+		*/
+		static FStructProperty* FindStructPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName);
+
+		/**
+		* Find the Struct Property of type: T from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log			(optional)
 		* return				Property.
 		*/
 		static FStructProperty* FindStructPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
@@ -163,7 +173,24 @@ namespace NCsProperty
 		* @param Context		The calling context.
 		* @param Struct
 		* @param PropertyName
-		* @param Log
+		* return				Property.
+		*/
+		template<typename StructType>
+		static FStructProperty* FindStructPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName)
+		{
+			FStructProperty* Property = FindStructPropertyByNameChecked(Context, Struct, PropertyName);
+
+			checkf(Property->Struct == StructType::StaticStruct(), TEXT("%s: %s.%s of type: T is NOT of type: T."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(Property->Struct->GetName()), *(StructType::StaticStruct()->GetName()));
+			return Property;
+		}
+
+		/**
+		* Find the Struct Property of type: T from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log			(optional)
 		* return				Property.
 		*/
 		template<typename StructType>
@@ -280,8 +307,9 @@ namespace NCsProperty
 
 		#pragma endregion Find
 
-		// Get
-		#pragma region
+	// Get
+	#pragma region
+	public:
 
 		/**
 		*
@@ -299,6 +327,39 @@ namespace NCsProperty
 			checkf(ValuePtr, TEXT("%s: Failed get Value Ptr from %s: %s."), *Context, *(Property->GetClass()->GetName()), *(Property->GetName()));
 
 			return ValuePtr;
+		}
+
+		static float* GetFloatPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName);
+
+		static float* GetFloatPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		template<typename StructType>
+		static StructType* GetStructPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName)
+		{
+			FStructProperty* StructProperty = FindStructPropertyByNameChecked<StructType>(Context, Struct, PropertyName);
+			StructType* Value				= StructProperty->ContainerPtrToValuePtr<StructType>(StructValue);
+
+			checkf(Value, TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+			return Value;
+		}
+
+		template<typename StructType>
+		static StructType* GetStructPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FStructProperty* StructProperty = FindStructPropertyByName<StructType>(Context, Struct, PropertyName, Log);
+
+			if (!StructProperty)
+				return nullptr;
+
+			StructType* Value = StructProperty->ContainerPtrToValuePtr<StructType>(StructValue);
+
+			if (!Value)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+				return nullptr;
+			}
+			return Value;
 		}
 
 		/**
@@ -434,7 +495,7 @@ namespace NCsProperty
 			}
 		}
 
-		#pragma endregion Get
+	#pragma endregion Get
 
 	#if WITH_EDITOR
 

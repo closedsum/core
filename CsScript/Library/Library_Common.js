@@ -101,6 +101,15 @@ module.exports = class NJsCommon
             return result;
         }
 
+        static IsNumberChecked(context, a)
+        {
+            let result = this.IsNumber(a);
+            this.checkf(result, context + ": a " + a + " is NOT a Number.");
+            return result;
+        }
+
+        static IsNumber(a) { return Number.isFinite(a); }
+
         static IsStringChecked(context, s)
         {
             let result = typeof s === 'string';

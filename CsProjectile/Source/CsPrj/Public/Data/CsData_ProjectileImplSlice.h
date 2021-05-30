@@ -47,14 +47,20 @@ public:
 	}
 
 #define SliceType NCsProjectile::NData::FImplSlice
+
+	SliceType* SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+	SliceType* SafeConstructAsValue(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
+
 #undef SliceType
 
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 };
 
 struct FCsInterfaceMap;
+class UObject;
 
 namespace NCsProjectile
 {
@@ -150,6 +156,11 @@ namespace NCsProjectile
 			{
 				delete static_cast<NCsProjectile::NData::FImplSlice*>(Ptr);
 			}
+
+			static FImplSlice* SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& DataName, UObject* Object, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+			bool IsValidChecked(const FString& Context) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 		};
 	}
 }

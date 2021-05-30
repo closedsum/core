@@ -55,6 +55,15 @@ namespace NCsProperty
 		return  Property;
 	}
 
+	FStructProperty* FLibrary::FindStructPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName)
+	{
+		FProperty* Property   = FindPropertyByNameChecked(Context, Struct, PropertyName);
+		FStructProperty* Prop = CastField<FStructProperty>(Property);
+
+		checkf(Prop, TEXT("%s: %s.%s is NOT a struct."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+		return Prop;
+	}
+
 	FStructProperty* FLibrary::FindStructPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		FProperty* Property = FindPropertyByName(Context, Struct, PropertyName, Log);
@@ -100,6 +109,36 @@ namespace NCsProperty
 
 	// Get
 	#pragma region
+
+	float* FLibrary::GetFloatPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName)
+	{
+		CS_IS_PTR_NULL_CHECKED(StructValue)
+
+		FFloatProperty* FloatProperty = FindPropertyByNameChecked<FFloatProperty>(Context, Struct, PropertyName);
+		float* Value				  = FloatProperty->ContainerPtrToValuePtr<float>(StructValue);
+
+		checkf(Value, TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+		return Value;
+	}
+
+	float* FLibrary::GetFloatPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_RET_NULL(StructValue)
+
+		FFloatProperty* FloatProperty = FindPropertyByName<FFloatProperty>(Context, Struct, PropertyName, Log);
+
+		if (!FloatProperty)
+			return nullptr;
+
+		float* Value = FloatProperty->ContainerPtrToValuePtr<float>(StructValue);
+
+		if (!Value)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+			return nullptr;
+		}
+		return Value;
+	}
 
 	UObject* FLibrary::GetObjectPropertyValueChecked(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName)
 	{

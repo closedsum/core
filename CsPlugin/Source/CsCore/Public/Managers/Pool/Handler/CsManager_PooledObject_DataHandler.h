@@ -222,39 +222,53 @@ namespace NCsPooledObject
 
 			public:
 
-				template<typename DataSliceType>
-				DataSliceType* SafeConstructData(const FString& Context, const FName& Name)
+				template<typename DataSliceType, typename EnumMapType>
+				DataSliceType* SafeConstructData(const FString& Context, const FString& Name)
 				{
 					static_assert(!std::is_abstract<DataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: DataSliceType IS abstract.");
 
 					static_assert(std::is_base_of<InterfaceDataType, DataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: DataSliceType is NOT a child of: InterfaceDataType.");
 
-					if (Name == NAME_None)
+					const FName Name_Internal = FName(*Name);
+
+					if (Name.IsEmpty())
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name is EMPTY."), *Context));
+						return nullptr;
+					}
+
+					if (Name_Internal == NAME_None)
 					{
 						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
 						return nullptr;
 					}
 
-					if (ImplDataMap.Find(Name))
+					if (ImplDataMap.Find(Name_Internal))
 					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data has already been created for %s."), *Context, *(Name.ToString())));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data has already been created for %s."), *Context, *Name));
 						return nullptr;
 					}
 
-					if (ImplDataInterfaceMap.Find(Name))
+					if (ImplDataInterfaceMap.Find(Name_Internal))
 					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Emulated Interface Map has already been created for %s."), *Context, *(Name.ToString())));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Impl Interface Map has already been created for %s."), *Context, *Name));
+						return nullptr;
+					}
+
+					if (EnumMapType::Get().IsValidEnum(Name_Internal))
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s::%s already exists."), *Context, *(EnumMapType::Get().GetEnumName()), *Name));
 						return nullptr;
 					}
 
 					// Construct the slice
 					DataSliceType* Data = new DataSliceType();
 
-					ImplDataMap.Add(Name, Data);
+					ImplDataMap.Add(Name_Internal, Data);
 					// Construct Map to store all slices
 					DataInterfaceMapType* ImplInterfaceMap = new DataInterfaceMapType();
 
-					ImplDataInterfaceMap.Add(Name, ImplInterfaceMap);
+					ImplDataInterfaceMap.Add(Name_Internal, ImplInterfaceMap);
 
 					FCsInterfaceMap* InterfaceMap = ImplInterfaceMap->GetInterfaceMap();
 					// Add slice as type InterfaceDataType
@@ -262,10 +276,15 @@ namespace NCsPooledObject
 					// Set the InterfaceMap of Data to the "root" InterfaceMap
 					Data->SetInterfaceMap(InterfaceMap);
 					// Store a reference to the slice 
-					TMap<FName, void*>& InterfaceImplMap = ImplDataSliceByNameMap.FindOrAdd(Name);
+					TMap<FName, void*>& InterfaceImplMap = ImplDataSliceByNameMap.FindOrAdd(Name_Internal);
 					InterfaceImplMap.Add(DataSliceType::Name, Data);
 					// Add the "base" slice to the map of all data.
-					DataMap.Add(Name, Data);
+					DataMap.Add(Name_Internal, Data);
+					// Add deconstruct function pointer for slice.
+					TMap<FName, void(*)(void*)>& ImplDataDeconstructMap = ImplDataDeconstructByNameMap.FindOrAdd(Name_Internal);
+					ImplDataDeconstructMap.Add(DataSliceType::Name, &DataSliceType::Deconstruct);
+					// Add Enum with name: Name.
+					EnumMapType::Get().Create(Name, true);
 
 					return Data;
 				}
@@ -309,6 +328,9 @@ namespace NCsPooledObject
 					// Store a reference to the slice 
 					TMap<FName, void*>& InterfaceImplMap = ImplDataSliceByNameMap.FindOrAdd(Name);
 					InterfaceImplMap.Add(DataSliceType::Name, Data);
+					// Add deconstruct function pointer for slice.
+					TMap<FName, void(*)(void*)>& ImplDataDeconstructMap = ImplDataDeconstructByNameMap.FindOrAdd(Name);
+					ImplDataDeconstructMap.Add(DataSliceType::Name, &DataSliceType::Deconstruct);
 
 					return Data;
 				}

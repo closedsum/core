@@ -4,6 +4,18 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+bool FCsPrjStaticMesh::IsValidChecked(const FString& Context) const
+{
+	check(Mesh.IsValidChecked(Context));
+
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(Scale.X, 0.0f)
+
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(Scale.Y, 0.0f)
+
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(Scale.Z, 0.0f)
+	return true;
+}
+
 bool FCsPrjStaticMesh::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 {
 	if (!Mesh.IsValid(Context, Log))
@@ -14,6 +26,5 @@ bool FCsPrjStaticMesh::IsValid(const FString& Context, void(*Log)(const FString&
 	CS_IS_FLOAT_GREATER_THAN(Scale.Y, 0.0f)
 
 	CS_IS_FLOAT_GREATER_THAN(Scale.Z, 0.0f)
-
 	return true;
 }

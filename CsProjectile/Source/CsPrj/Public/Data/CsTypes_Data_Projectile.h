@@ -22,12 +22,14 @@ struct CSPRJ_API FCsPrjStaticMesh
 	FVector Scale;
 
 public:
+
 	FCsPrjStaticMesh() :
 		Mesh(),
 		Scale(1.0f)
 	{
 	}
 
+	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 };
 

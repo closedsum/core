@@ -17,6 +17,8 @@ module.exports = class FJsCore
         this.PlayerPawn = null;
 
         this.CoroutineScheduler = null;
+
+        this.Classes = new Map();
     }
 
     GetGameInstance() { return this.GameInstance; }

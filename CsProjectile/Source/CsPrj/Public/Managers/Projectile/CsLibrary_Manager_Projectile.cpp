@@ -108,6 +108,20 @@ namespace NCsProjectile
 
 		#define DataType NCsProjectile::NData::IData
 
+		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataInterfaceMapType NCsProjectile::NData::FInterfaceMap
+		DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		{
+		#undef DataHandlerType
+		#undef DataInterfaceMapType
+
+			if (UCsManager_Projectile* Manager_Projectile = GetSafe(Context, WorldContext, Log))
+			{
+				return Manager_Projectile->GetDataHandler();
+			}
+			return nullptr;
+		}
+
 		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const FName& Name)
 		{
 			DataType* Data = GetChecked(Context, WorldContext)->GetDataChecked(Context, Name);

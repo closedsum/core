@@ -11,6 +11,7 @@ var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - functions
 var checkf = CommonLibrary.checkf;
+var check = CommonLibrary.check;
 
 module.exports = class NJsFunction
 {
@@ -59,6 +60,98 @@ module.exports = class NJsFunction
 
                 this.IsArgFormatValidChecked(context, arg, i);
             }
+            return true;
+        }
+
+        static IsReturn_Int_Checked(context, fn, caller)
+        {
+            // Check fn is a function
+            CommonLibrary.IsFunctionChecked(context, fn);
+
+            // If caller is valid, user caller to call fn
+            if (CommonLibrary.IsValidObject(caller))
+                return CommonLibrary.IsIntChecked(context, fn.call(caller));
+            return CommonLibrary.IsIntChecked(context, fn());
+        }
+
+        static IsReturn_Int(fn, caller)
+        {
+            // Check fn is a function
+            if (!CommonLibrary.IsFunction(fn))
+                return false;
+            // If caller is valid, user caller to call fn
+            if (CommonLibrary.IsValidObject(caller))
+                return CommonLibrary.IsInt(fn.call(caller));
+            return CommonLibrary.IsInt(fn());
+        }
+
+        static IsReturn_Number_Checked(context, fn, caller)
+        {
+            // Check fn is a function
+            CommonLibrary.IsFunctionChecked(context, fn);
+
+            // If caller is valid, user caller to call fn
+            if (CommonLibrary.IsValidObject(caller))
+                return CommonLibrary.IsNumberChecked(context, fn.call(caller));
+            return CommonLibrary.IsNumberChecked(context, fn());
+        }
+
+        static IsReturn_Number(fn, caller)
+        {
+            // Check fn is a function
+            if (!CommonLibrary.IsFunction(fn))
+                return false;
+            // If caller is valid, user caller to call fn
+            if (CommonLibrary.IsValidObject(caller))
+                return CommonLibrary.IsNumber(fn.call(caller));
+            return CommonLibrary.IsNumber(fn());
+        }
+
+        static IsArgCountAndReturn_Int_Checked(context, fn, argCount, caller)
+        {
+            check(this.IsReturn_Int_Checked(context, fn, caller));
+
+            // Check argCount is an int
+            CommonLibrary.IsIntChecked(context, argCount);
+
+            checkf(fn.length === argCount, context + ": fn: " + fn.name + " argument count: " + fn.length + " != " + argCount);
+
+            return true;
+        }
+
+        static IsArgCountAndReturn_Int(fn, argCount, caller)
+        {
+            if (!this.IsReturn_Int(fn, caller))
+                return false;
+            // Check argCount is an int
+            if (!CommonLibrary.IsInt(argCount))
+                return false;
+            if (fn.length !== argCount)
+                return false;
+            return true;
+        }
+
+        static IsArgCountAndReturn_Number_Checked(context, fn, argCount, caller)
+        {
+            check(this.IsReturn_Number_Checked(context, fn, caller));
+
+            // Check argCount is an int
+            CommonLibrary.IsIntChecked(context, argCount);
+
+            checkf(fn.length === argCount, context + ": fn: " + fn.name + " argument count: " + fn.length + " != " + argCount);
+
+            return true;
+        }
+
+        static IsArgCountAndReturn_Number(fn, argCount, caller)
+        {
+           if (!this.IsReturn_Number(fn, caller))
+                return false;
+            // Check argCount is an int
+            if (!CommonLibrary.IsInt(argCount))
+                return false;
+            if (fn.length !== argCount)
+                return false;
             return true;
         }
     };

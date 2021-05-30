@@ -9,8 +9,20 @@
 class UObject;
 class UCsManager_Projectile;
 
+// NCsPooledObject::NManager::NHandler::TData
+namespace NCsPooledObject {
+	namespace NManager {
+		namespace NHandler {
+			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
+			class TData;
+		}
+	}
+}
+
 // NCsProjectile::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
+// NCsProjectile::NData::FInterfaceMap
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, FInterfaceMap)
 
 namespace NCsProjectile
 {
@@ -102,6 +114,21 @@ namespace NCsProjectile
 		public:
 
 		#define DataType NCsProjectile::NData::IData
+
+		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataInterfaceMapType NCsProjectile::NData::FInterfaceMap
+
+			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log			(optional)
+			*/
+			static DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+		#undef DataHandlerType
+		#undef DataInterfaceMapType
 
 			/**
 			* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Name of the weapon type.
